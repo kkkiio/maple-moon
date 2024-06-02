@@ -1,0 +1,15 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/ms/EquipStat",
+    "KKKIIO/maple-moon-client/lib/ms/Buffstat",
+    "KKKIIO/maple-moon-client/lib/ms/Constants",
+    "KKKIIO/maple-moon-client/lib/ms/KeyType"
+  ],
+  "link": {
+    "js": {
+      "exports": [
+        "get_resource_claims"
+      ]
+    }
+  }
+}

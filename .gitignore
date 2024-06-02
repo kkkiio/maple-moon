@@ -1,2 +1,5 @@
 target/
 .mooncakes/
+nx/files
+.xmake
+build

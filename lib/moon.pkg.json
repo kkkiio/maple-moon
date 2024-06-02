@@ -1,0 +1,12 @@
+{
+    "import": [
+        "KKKIIO/maple-moon-client/lib/ms"
+    ],
+    "link": {
+        "js": {
+            "exports": [
+                "start"
+            ]
+        }
+    }
+}

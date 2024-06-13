@@ -55,12 +55,12 @@ fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
 
 // ActiveBuffs
 struct ActiveBuffs {
-  buffs : EnumMap[@Buffstat.Id, ActiveBuff]
+  buffs : Map[@Buffstat.Id, ActiveBuff]
 }
 
 fn ActiveBuffs::new() -> ActiveBuffs {
-  let buffs : EnumMap[@Buffstat.Id, ActiveBuff] = EnumMap::make(
-    @Buffstat.values,
+  let buffs : Map[@Buffstat.Id, ActiveBuff] = Map::new(
+    capacity=@Buffstat.all_buff_id_map.size(),
   )
   buffs[@Buffstat.Id::MAPLE_WARRIOR] = MapleWarriorBuff::default()
   buffs[@Buffstat.Id::STANCE] = StanceBuff::default()

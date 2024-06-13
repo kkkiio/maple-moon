@@ -131,38 +131,36 @@
 // }
 // }  // namespace ms
 
-type Bitmap
-
-fn id(self : Bitmap) -> Int64 = "bitmap" "id"
-
-fn width(self : Bitmap) -> Int = "bitmap" "width"
-
-fn height(self : Bitmap) -> Int = "bitmap" "height"
-
 struct Texture {
-  bitmap : Option[Bitmap]
+  bitmap : Bitmap?
   origin : Point[Int]
   dimensions : Point[Int]
+} derive(Default)
+
+fn Texture::from_resource(src : NxNode) -> Texture {
+  let bitmap = src["bid"].desc.as_number().map(fn(it) { it.to_int() }).map(
+    fn(bid) { src.loader.load_bitmap(bid) },
+  )
+  let dimensions = match bitmap {
+    Some(bmp) => { x: bmp.width(), y: bmp.height() }
+    None => { x: 0, y: 0 }
+  }
+  { bitmap, origin: { x: 0, y: 0 }, dimensions }
 }
 
-fn draw(self : Texture, g : Gl_g, args : DrawArgument) -> Unit {
+fn draw(self : Texture, args : DrawArgument) -> Unit {
   match self.bitmap {
     None => ()
     Some(bitmap) => {
-      let rect = args.get_rectangle(self.origin, self.dimensions)
-      let color = args.color
-      g.draw(
-        bitmap,
-        rect.left(),
-        rect.top(),
-        rect.right(),
-        rect.bottom(),
-        color.r(),
-        color.g(),
-        color.b(),
-        color.a(),
-        args.angle,
+      // let rect = args.get_rectangle(self.origin, self.dimensions)
+      let rect = Rectangle::from4(
+        args.pos.x,
+        args.pos.x + self.dimensions.x,
+        args.pos.y,
+        args.pos.y + self.dimensions.y,
       )
+      let color = args.color
+      GraphicsGL::get().draw_bitmap(bitmap, rect, color, args.angle)
     }
   }
 }

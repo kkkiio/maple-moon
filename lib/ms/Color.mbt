@@ -151,9 +151,17 @@ pub fn int_value(self : Name) -> Int {
 
 pub struct Color {
   rgba : FixedArray[Double]
+} derive(Debug)
+
+pub fn to_string(self : Color) -> String {
+  let r = self.r()
+  let g = self.g()
+  let b = self.b()
+  let a = self.a()
+  return "rgba(\(r),\(g),\(b),\(a))"
 }
 
-pub fn new_rgba(
+pub fn Color::new_rgba(
   red : Double,
   green : Double,
   blue : Double,

@@ -1,72 +1,18 @@
 // app/src/main/cpp/src/Template/Rectangle.h
-// template<class T>
-// class Rectangle {
-// public:
-//     Rectangle(const nl::node &sourceLeftTop,
-//               const nl::node &sourceRightBottom) :
-//         left_top_(sourceLeftTop),
-//         right_bottom_(sourceRightBottom) {}
-//     Rectangle(const nl::node &source) :
-//         left_top_(source["lt"]),
-//         right_bottom_(source["rb"]) {}
-
-//     constexpr Rectangle(Point<T> leftTop, Point<T> rightBottom) :
-//         left_top_(leftTop),
-//         right_bottom_(rightBottom) {}
-//     constexpr Rectangle(T left, T right, T top, T bottom) :
-//         left_top_(left, top),
-//         right_bottom_(right, bottom) {}
-//     constexpr Rectangle() = default;
-
-//     constexpr T width() const { return std::abs(left() - right()); }
-
-//     constexpr T height() const { return std::abs(top() - bottom()); }
-
-//     constexpr T left() const { return left_top_.x(); }
-
-//     constexpr T top() const { return left_top_.y(); }
-
-//     constexpr T right() const { return right_bottom_.x(); }
-
-//     constexpr T bottom() const { return right_bottom_.y(); }
-
-//     constexpr bool contains(const Point<T> &v) const {
-//         return !straight() && v.x() >= left() && v.x() <= right()
-//                && v.y() >= top() && v.y() <= bottom();
-//     }
-
-//     constexpr bool overlaps(const Rectangle<T> &ar) const {
-//         return get_horizontal().overlaps(Range<T>(ar.left(), ar.right()))
-//                && get_vertical().overlaps(Range<T>(ar.top(), ar.bottom()));
-//     }
-
-//     constexpr bool straight() const { return left_top_ == right_bottom_; }
-
-//     constexpr bool empty() const {
-//         return left_top_.straight() && right_bottom_.straight() && straight();
-//     }
-
-//     constexpr const Point<T> &get_left_top() const { return left_top_; }
-
-//     constexpr const Point<T> &get_right_bottom() const { return right_bottom_; }
-
-//     constexpr Range<T> get_horizontal() const { return { left(), right() }; }
-
-//     constexpr Range<T> get_vertical() const { return { top(), bottom() }; }
-
-//     void shift(const Point<T> &v) {
-//         left_top_ = left_top_ + v;
-//         right_bottom_ = right_bottom_ + v;
-//     }
-
-// private:
-//     Point<T> left_top_;
-//     Point<T> right_bottom_;
-// };
 
 struct Rectangle[T] {
   left_top : Point[T]
   right_bottom : Point[T]
+} derive(Eq, Default, Debug)
+
+pub fn to_string[T : Show](self : Rectangle[T]) -> String {
+  let lt = self.left_top
+  let rb = self.right_bottom
+  "Rect[\(lt),\(rb)]"
+}
+
+pub fn Rectangle::new[T](lt : Point[T], rb : Point[T]) -> Rectangle[T] {
+  { left_top: lt, right_bottom: rb }
 }
 
 pub fn Rectangle::from4[T](
@@ -92,4 +38,24 @@ pub fn right[T](self : Rectangle[T]) -> T {
 
 pub fn bottom[T](self : Rectangle[T]) -> T {
   self.right_bottom.y
+}
+
+pub trait FromResource {
+  from_resource(NxNode) -> Self
+}
+
+pub fn Rectangle::from_resource(src : NxNode) -> Rectangle[Int] {
+  {
+    left_top: Point::from_resource(src["lt"]),
+    right_bottom: Point::from_resource(src["rb"]),
+  }
+}
+
+fn straight[T : Eq](self : Rectangle[T]) -> Bool {
+  self.left_top == self.right_bottom
+}
+
+fn contains[T : Eq + Compare](self : Rectangle[T], v : Point[T]) -> Bool {
+  self.straight().not() && v.x >= self.left() && v.x <= self.right() && v.y >= self.top() &&
+  v.y <= self.bottom()
 }

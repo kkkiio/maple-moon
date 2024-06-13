@@ -3,9 +3,22 @@
         "KKKIIO/maple-moon-client/lib/ms"
     ],
     "link": {
+        "wasm-gc": {
+            "exports": [
+                "game_update",
+                "onmousemove",
+                "onmousedown",
+                "onmouseup"
+            ]
+        },
         "js": {
             "exports": [
-                "start"
+                "game_start",
+                "game_update",
+                "onmousemove",
+                "onmousedown",
+                "onmouseup",
+                "transit_to"
             ]
         }
     }

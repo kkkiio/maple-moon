@@ -1,48 +1,5 @@
 // app/src/main/cpp/src/Template/Interpolated.h
 // template<typename T>
-// class Nominal {
-// public:
-//     constexpr Nominal() : now_(T()), before_(T()), threshold_(0.0f) {}
-
-//     T get() const { return now_; }
-
-//     T get(float alpha) const { return alpha >= threshold_ ? now_ : before_; }
-
-//     T last() const { return before_; }
-
-//     void set(T value) {
-//         now_ = value;
-//         before_ = value;
-//     }
-
-//     void normalize() { before_ = now_; }
-
-//     bool normalized() const { return before_ == now_; }
-
-//     void next(T value, float thrs) {
-//         before_ = now_;
-//         now_ = value;
-//         threshold_ = thrs;
-//     }
-
-//     bool operator==(T value) const { return now_ == value; }
-
-//     bool operator!=(T value) const { return now_ != value; }
-
-//     T operator+(T value) const { return now_ + value; }
-
-//     T operator-(T value) const { return now_ - value; }
-
-//     T operator*(T value) const { return now_ * value; }
-
-//     T operator/(T value) const { return now_ / value; }
-
-// private:
-//     T now_;
-//     T before_;
-//     float threshold_;
-// };
-
 // template<typename T>
 // class Linear {
 //     static_assert(
@@ -116,7 +73,7 @@
 struct Nominal[T] {
   mut now : T
   mut before : T
-  threshold : Double
+  mut threshold : Double
 }
 
 fn Nominal::default[T : Default]() -> Nominal[T] {
@@ -140,11 +97,51 @@ pub fn set[T](self : Nominal[T], value : T) -> Unit {
   self.now = value
 }
 
+pub fn normalize[T](self : Nominal[T]) -> Unit {
+  self.before = self.now
+}
+
+pub fn normalized[T : Eq](self : Nominal[T]) -> Bool {
+  self.before == self.now
+}
+
+pub fn next[T](self : Nominal[T], value : T, thrs : Double) -> Unit {
+  self.before = self.now
+  self.now = value
+  self.threshold = thrs
+}
+
 struct Linear {
-  now : Double
-  before : Double
+  mut now : Double
+  mut before : Double
 } derive(Default)
 
 pub fn get(self : Linear, alpha : Double) -> Double {
   lerp(self.before, self.now, alpha)
+}
+
+pub fn set(self : Linear, value : Double) -> Unit {
+  self.before = self.now
+  self.now = value
+}
+
+pub fn last(self : Linear) -> Double {
+  self.before
+}
+
+fn add(self : Linear, value : Double) -> Unit {
+  self.before = self.now
+  self.now += value
+}
+
+pub fn normalize(self : Linear) -> Unit {
+  self.before = self.now
+}
+
+pub fn normalized(self : Linear) -> Bool {
+  self.before == self.now
+}
+
+fn plus(self : Linear, value : Double) -> Double {
+  self.now + value
 }

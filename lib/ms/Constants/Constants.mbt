@@ -1,23 +1,17 @@
 // Timestep, e.g. the granularity in which the game advances.
 pub let timestep = 8
 
-// class Constants : public Singleton<Constants> {
-// public:
-//     Constants() : VIEWWIDTH(1366), VIEWHEIGHT(768) {}
+pub struct Constants {
+  viewWidth : Int
+  viewHeight : Int
+}
 
-//     ~Constants() override = default;
+pub let constants : Constants = { viewWidth: 1366, viewHeight: 768 }
 
-//     int16_t get_viewwidth() { return VIEWWIDTH; }
+pub fn get_viewwidth(self : Constants) -> Int {
+  self.viewWidth
+}
 
-//     void set_viewwidth(int16_t width) { VIEWWIDTH = width; }
-
-//     int16_t get_viewheight() { return VIEWHEIGHT; }
-
-//     void set_viewheight(int16_t height) { VIEWHEIGHT = height; }
-
-// private:
-//     // Window and screen width.
-//     int16_t VIEWWIDTH;
-//     // Window and screen height.
-//     int16_t VIEWHEIGHT;
-// };
+pub fn get_viewheight(self : Constants) -> Int {
+  self.viewHeight
+}

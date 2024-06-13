@@ -1,128 +1,138 @@
 // app/src/main/cpp/src/IO/UIState.h
-// #pragma once
-
-// #include <list>
-// #include <memory>
-
-// #include "../Components/Icon.h"
-// #include "../Template/EnumMap.h"
-// #include "Components/Tooltip.h"
-// #include "Keyboard.h"
-// #include "UIElement.h"
-
-// namespace ms {
-// class UIState {
-// public:
-//     using Iterator = EnumMap<UIElement::Type,
-//                              std::unique_ptr<UIElement>,
-//                              UIElement::Type::NUM_TYPES>::iterator;
-
-//     virtual ~UIState() = default;
-
-//     virtual void draw(float inter, Point<int16_t> cursor) const = 0;
-
-//     virtual void update() = 0;
-
-//     virtual void doubleclick(Point<int16_t> pos) = 0;
-
-//     virtual void rightclick(Point<int16_t> pos) = 0;
-
-//     virtual void send_key(KeyType::Id type,
-//                           int32_t action,
-//                           bool pressed,
-//                           bool escape) = 0;
-
-//     virtual Cursor::State send_cursor(Cursor::State mst,
-//                                       Point<int16_t> pos) = 0;
-
-//     virtual void send_scroll(double yoffset) = 0;
-
-//     virtual void send_close() = 0;
-
-//     virtual void drag_icon(Icon *icon) = 0;
-
-//     virtual void clear_tooltip(Tooltip::Parent parent) = 0;
-
-//     virtual void show_equip(Tooltip::Parent parent, int16_t slot) = 0;
-
-//     virtual void show_item(Tooltip::Parent parent, int32_t itemid) = 0;
-
-//     virtual void show_skill(Tooltip::Parent parent,
-//                             int32_t skill_id,
-//                             int32_t level,
-//                             int32_t masterlevel,
-//                             int64_t expiration) = 0;
-
-//     virtual void show_text(Tooltip::Parent parent, std::string text) = 0;
-
-//     virtual void show_map(Tooltip::Parent parent,
-//                           std::string name,
-//                           std::string description,
-//                           int32_t mapid,
-//                           bool bolded) = 0;
-
-//     virtual Iterator pre_add(UIElement::Type type,
-//                              bool toggled,
-//                              bool focused) = 0;
-
-//     virtual void remove(UIElement::Type type) = 0;
-
-//     virtual UIElement *get(UIElement::Type type) = 0;
-
-//     virtual UIElement *get_front(std::list<UIElement::Type> types) = 0;
-
-//     virtual UIElement *get_front(Point<int16_t> pos) = 0;
-// };
-
-// class UIStateNull : public UIState {
-//     void draw(float, Point<int16_t>) const override {}
-//     void update() override {}
-//     void doubleclick(Point<int16_t>) override {}
-//     void rightclick(Point<int16_t>) override {}
-//     void send_key(KeyType::Id, int32_t, bool, bool) override {}
-//     Cursor::State send_cursor(Cursor::State, Point<int16_t>) override {
-//         return Cursor::State::IDLE;
-//     }
-//     void send_scroll(double) override {}
-//     void send_close() override {}
-//     void drag_icon(Icon *) override {}
-//     void clear_tooltip(Tooltip::Parent) override {}
-//     void show_equip(Tooltip::Parent, int16_t) override {}
-//     void show_item(Tooltip::Parent, int32_t) override {}
-//     void show_skill(Tooltip::Parent,
-//                     int32_t,
-//                     int32_t,
-//                     int32_t,
-//                     int64_t) override {}
-//     void show_text(Tooltip::Parent, std::string) override {}
-//     void show_map(Tooltip::Parent,
-//                   std::string,
-//                   std::string,
-//                   int32_t,
-//                   bool) override {}
-//     Iterator pre_add(UIElement::Type, bool, bool) override {
-//         return { nullptr, UIElement::Type::NUM_TYPES };
-//     }
-//     void remove(UIElement::Type) override {}
-//     UIElement *get(UIElement::Type) override { return nullptr; }
-//     UIElement *get_front(std::list<UIElement::Type>) override {
-//         return nullptr;
-//     }
-//     UIElement *get_front(Point<int16_t>) override { return nullptr; }
-// };
-// }  // namespace ms
 
 trait UIState {
-  draw(Double, Point[Int]) -> Unit
-  update() -> Unit
-  doubleclick(Point[Int]) -> Unit
-  rightclick(Point[Int]) -> Unit
-  send_key(@KeyType.Id, Int, Bool, Bool) -> Unit
-  send_cursor(State, Point[Int]) -> State
-  send_scroll(Double) -> Unit
-  send_close() -> Unit
+  draw(Self, Double, Point[Int]) -> Unit
+  update(Self) -> Unit
+  doubleclick(Self, Point[Int]) -> Unit
+  rightclick(Self, Point[Int]) -> Unit
+  send_key(Self, @KeyType.Id, Int, Bool, Bool) -> Unit
+  send_cursor(Self, CursorState, Point[Int]) -> CursorState
+  send_scroll(Self, Double) -> Unit
+  send_close(Self) -> Unit
+  drag_icon(Self, Icon) -> Unit
+  clear_tooltip(Self, TooltipParent) -> Unit
+  show_equip(Self, TooltipParent, Int) -> Unit
+  show_item(Self, TooltipParent, Int) -> Unit
+  show_skill(Self, TooltipParent, Int, Int, Int, Int64) -> Unit
+  show_text(Self, TooltipParent, String) -> Unit
+  show_map(Self, TooltipParent, String, String, Int, Bool) -> Unit
+  pre_add(Self, UIElementType, Bool, Bool) -> Iter[(UIElementType, UIElement)]
+  remove(Self, UIElementType) -> Unit
+  get(Self, UIElementType) -> UIElement?
+  get_front_by_types(Self, Array[UIElementType]) -> UIElement?
+  get_front_by_pos(Self, Point[Int]) -> UIElement?
+}
 
-  // drag_icon(Icon) -> Unit
+struct UIStateNull {} derive(Default)
 
-  // clear_tooltip(Tooltip::Parent) -> Unit
+fn draw(self : UIStateNull, a : Double, b : Point[Int]) -> Unit {
+
+}
+
+fn update(self : UIStateNull) -> Unit {
+
+}
+
+fn doubleclick(self : UIStateNull, a : Point[Int]) -> Unit {
+
+}
+
+fn rightclick(self : UIStateNull, a : Point[Int]) -> Unit {
+
+}
+
+fn send_key(
+  self : UIStateNull,
+  a : @KeyType.Id,
+  b : Int,
+  c : Bool,
+  d : Bool
+) -> Unit {
+
+}
+
+fn send_cursor(
+  self : UIStateNull,
+  a : CursorState,
+  b : Point[Int]
+) -> CursorState {
+  CursorState::IDLE
+}
+
+fn send_scroll(self : UIStateNull, a : Double) -> Unit {
+
+}
+
+fn send_close(self : UIStateNull) -> Unit {
+
+}
+
+fn drag_icon(self : UIStateNull, a : Icon) -> Unit {
+
+}
+
+fn clear_tooltip(self : UIStateNull, a : TooltipParent) -> Unit {
+
+}
+
+fn show_equip(self : UIStateNull, a : TooltipParent, b : Int) -> Unit {
+
+}
+
+fn show_item(self : UIStateNull, a : TooltipParent, b : Int) -> Unit {
+
+}
+
+fn show_skill(
+  self : UIStateNull,
+  a : TooltipParent,
+  b : Int,
+  c : Int,
+  d : Int,
+  e : Int64
+) -> Unit {
+
+}
+
+fn show_text(self : UIStateNull, a : TooltipParent, b : String) -> Unit {
+
+}
+
+fn show_map(
+  self : UIStateNull,
+  a : TooltipParent,
+  b : String,
+  c : String,
+  d : Int,
+  e : Bool
+) -> Unit {
+
+}
+
+fn pre_add(
+  self : UIStateNull,
+  a : UIElementType,
+  b : Bool,
+  c : Bool
+) -> Iter[(UIElementType, UIElement)] {
+  Iter::empty()
+}
+
+fn remove(self : UIStateNull, a : UIElementType) -> Unit {
+
+}
+
+fn get(self : UIStateNull, a : UIElementType) -> UIElement? {
+  None
+}
+
+fn get_front_by_types(
+  self : UIStateNull,
+  a : Array[UIElementType]
+) -> UIElement? {
+  None
+}
+
+fn get_front_by_pos(self : UIStateNull, a : Point[Int]) -> UIElement? {
+  None
 }

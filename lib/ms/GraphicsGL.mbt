@@ -1,72 +1,106 @@
 // app/src/main/cpp/src/Graphics/GraphicsGL.h
 // app/src/main/cpp/src/Graphics/GraphicsGL.cpp
-// struct Quad {
-//     struct Vertex {
-//         // Local Space Position
-//         GLshort localcoord_x;
-//         GLshort localcoord_y;
-
-//         // Texture Coordinates
-//         GLshort texcoord_x;
-//         GLshort texcoord_y;
-
-//         Color color;
-//     };
-
-//     static const size_t LENGTH = 4;
-//     Vertex vertices[LENGTH];
-
-//     Quad(GLshort left,
-//          GLshort right,
-//          GLshort top,
-//          GLshort bottom,
-//          const Offset &offset,
-//          const Color &color,
-//          GLfloat rotation) {
-//         vertices[0] = {left, top, offset.left, offset.top, color};
-//         vertices[1] = {left, bottom, offset.left, offset.bottom, color};
-//         vertices[2] = {right, bottom, offset.right, offset.bottom, color};
-//         vertices[3] = {right, top, offset.right, offset.top, color};
-
-//         if (rotation != 0.0f) {
-//             GLfloat cos = std::cos(rotation);
-//             GLfloat sin = std::sin(rotation);
-//             GLshort center_x = (left + right) / 2;
-//             GLshort center_y = (top + bottom) / 2;
-
-//             for (size_t i = 0; i < LENGTH; i++) {
-//                 GLshort vertice_x = vertices[i].localcoord_x - center_x;
-//                 GLshort vertice_y = vertices[i].localcoord_y - center_y;
-//                 GLfloat rounded_x =
-//                         std::roundf(vertice_x * cos - vertice_y * sin);
-//                 GLfloat rounded_y =
-//                         std::roundf(vertice_x * sin + vertice_y * cos);
-//                 vertices[i].localcoord_x =
-//                         static_cast<GLshort>(rounded_x + center_x);
-//                 vertices[i].localcoord_y =
-//                         static_cast<GLshort>(rounded_y + center_y);
-//             }
-//         }
-//     }
-// };
-
 struct GraphicsGL {
   quads : Array[Quad]
-  offsets : @hashmap.HashMap[Int64, Offset]
+  vwidth : Int
+  vheight : Int
+  screen : Rectangle[Int]
+  atlas : Atlas
+  mut locked : Bool
 }
 
-pub fn draw(
+struct Atlas {
+  width : Int
+  height : Int
+  minlosize : Int
+  leftovers : @quadtree.Tree[Int, Leftover]
+  offsets : @hashmap.HashMap[Int, Offset]
+  mut wasted : Int
+  mut next_id : Int
+  mut border : Point[Int]
+  mut y_range : Range[Int]
+  debug : Bool
+}
+
+fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
+  {
+    quads: [],
+    atlas: {
+      width: 8192,
+      height: 8192,
+      minlosize: 32,
+      leftovers: @quadtree.Tree::new(),
+      offsets: @hashmap.HashMap::new(),
+      wasted: 0,
+      next_id: 1,
+      border: { x: 0, y: font_ymax },
+      y_range: Range::default(),
+      debug: false,
+    },
+    vwidth,
+    vheight,
+    screen: Rectangle::from4(0, vwidth, 0, vheight),
+    locked: false,
+  }
+}
+
+let gl : GraphicsGL = GraphicsGL::new(1366, 768)
+
+pub fn GraphicsGL::get() -> GraphicsGL {
+  gl
+}
+
+pub fn lock(self : GraphicsGL) -> Unit {
+  self.locked = true
+}
+
+pub fn unlock(self : GraphicsGL) -> Unit {
+  self.locked = false
+}
+
+pub fn draw_screen_fill(
   self : GraphicsGL,
-  g : Gl_g,
+  red : Double,
+  green : Double,
+  blue : Double,
+  alpha : Double
+) -> Unit {
+  self.draw_rectangle(0, 0, self.vwidth, self.vheight, red, green, blue, alpha)
+}
+
+pub fn draw_rectangle(
+  self : GraphicsGL,
+  x : Int,
+  y : Int,
+  width : Int,
+  height : Int,
+  red : Double,
+  green : Double,
+  blue : Double,
+  alpha : Double
+) -> Unit {
+  if self.locked {
+    return
+  }
+  let color = Color::new_rgba(red, green, blue, alpha)
+  // println(
+  //   "draw_rectangle x=\(x), y=\(y), width=\(width), height=\(height), color=\(color)",
+  // )
+  self.quads.push(
+    Quad::new(x, x + width, y, y + height, Offset::default(), color, 0.0),
+  )
+}
+
+pub fn draw_bitmap(
+  self : GraphicsGL,
   bmp : Bitmap,
   rect : Rectangle[Int],
   color : Color,
   angle : Double
 ) -> Unit {
-  // if (locked_) {
-  //     return;
-  // }
-
+  if self.locked {
+    return
+  }
   if color.invisible() {
     return
   }
@@ -75,153 +109,216 @@ pub fn draw(
   //     return;
   // }
 
+  // println("draw_bitmap, rect=\(rect), color=\(color)")
   self.quads.push(
     Quad::new(
       rect.left(),
       rect.right(),
       rect.top(),
       rect.bottom(),
-      self.get_offset(g, bmp),
+      self.atlas.get_offset(bmp),
       color,
       angle,
     ),
   )
 }
 
-fn get_offset(self : GraphicsGL, g : Gl_g, bmp : Bitmap) -> Offset {
+fn flush(self : GraphicsGL, opacity : Double) -> Unit {
+  let coverscene = opacity != 1.0
+  if coverscene {
+    let complement = 1.0 - opacity
+    let color = Color::new_rgba(0.0, 0.0, 0.0, complement)
+    self.quads.push(
+      Quad::new(
+        self.screen.left(),
+        self.screen.right(),
+        self.screen.top(),
+        self.screen.bottom(),
+        Offset::default(),
+        color,
+        0.0,
+      ),
+    )
+  }
+  let triangles = Vertices::new(self.quads.length() * 6)
+  self.quads.iteri(
+    fn(i, quad) {
+      // debug(quad)
+      setv(triangles, i * 6 + 0, quad.vertices[0])
+      setv(triangles, i * 6 + 1, quad.vertices[1])
+      setv(triangles, i * 6 + 2, quad.vertices[2])
+      // 
+      setv(triangles, i * 6 + 3, quad.vertices[0])
+      setv(triangles, i * 6 + 4, quad.vertices[2])
+      setv(triangles, i * 6 + 5, quad.vertices[3])
+    },
+  )
+  glFlush(triangles)
+  if coverscene {
+    self.quads.pop() |> ignore
+  }
+}
+
+fn clear(self : GraphicsGL) -> Unit {
+  self.atlas.clear()
+}
+
+fn clear(self : Atlas) -> Unit {
+  let used = self.width * self.border.y + self.border.x * self.y_range.b
+  let usedpercent = used.to_double() / (self.width * self.height).to_double()
+  if usedpercent > 80.0 {
+    self.clear_internal()
+  }
+}
+
+fn clear_scene(self : GraphicsGL) -> Unit {
+  if self.locked.not() {
+    self.quads.clear()
+    // self.circles.clear();
+  }
+}
+
+fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
   let id = bmp.id()
   match self.offsets.get(id) {
     Some(c) => return c
     None => ()
   }
-  let x = 0
-  let y = 0
   let width = bmp.width()
   let height = bmp.height()
   if width <= 0 || height <= 0 {
     return Offset::default()
   }
-
-  //     Leftover value = Leftover(x, y, width, height);
-
-  //     size_t lid = leftovers_.findnode(
-  //             value,
-  //             [](const Leftover &val, const Leftover &leaf) {
-  //                 return val.width() <= leaf.width() && val.height() <= leaf.height();
-  //             });
-
-  //     if (lid > 0) {
-  //         const Leftover &leftover = leftovers_[lid];
-
-  //         x = leftover.left;
-  //         y = leftover.top;
-
-  //         GLshort width_delta = leftover.width() - width;
-  //         GLshort height_delta = leftover.height() - height;
-
-  //         leftovers_.erase(lid);
-
-  //         wasted_ -= width * height;
-
-  //         if (width_delta >= MINLOSIZE && height_delta >= MINLOSIZE) {
-  //             leftovers_.add(
-  //                     rlid_,
-  //                     Leftover(x + width, y + height, width_delta, height_delta));
-  //             rlid_++;
-
-  //             if (width >= MINLOSIZE) {
-  //                 leftovers_.add(rlid_,
-  //                                Leftover(x, y + height, width, height_delta));
-  //                 rlid_++;
-  //             }
-
-  //             if (height >= MINLOSIZE) {
-  //                 leftovers_.add(rlid_,
-  //                                Leftover(x + width, y, width_delta, height));
-  //                 rlid_++;
-  //             }
-  //         } else if (width_delta >= MINLOSIZE) {
-  //             leftovers_.add(
-  //                     rlid_,
-  //                     Leftover(x + width, y, width_delta, height + height_delta));
-  //             rlid_++;
-  //         } else if (height_delta >= MINLOSIZE) {
-  //             leftovers_.add(
-  //                     rlid_,
-  //                     Leftover(x, y + height, width + width_delta, height_delta));
-  //             rlid_++;
-  //         }
-  //     } else {
-  //         if (border_.x() + width > ATLASW) {
-  //             border_.set_x(0);
-  //             border_.shift_y(y_range_.second());
-
-  //             if (border_.y() + height > ATLASH) {
-  //                 clear_internal();
-  //             } else {
-  //                 y_range_ = Range<GLshort>();
-  //             }
-  //         }
-
-  //         x = border_.x();
-  //         y = border_.y();
-
-  //         border_.shift_x(width);
-
-  //         if (height > y_range_.second()) {
-  //             if (x >= MINLOSIZE && height - y_range_.second() >= MINLOSIZE) {
-  //                 leftovers_.add(rlid_,
-  //                                Leftover(0,
-  //                                         y_range_.first(),
-  //                                         x,
-  //                                         height - y_range_.second()));
-  //                 rlid_++;
-  //             }
-
-  //             wasted_ += x * (height - y_range_.second());
-
-  //             y_range_ = Range<int16_t>(y + height, height);
-  //         } else if (height < y_range_.first() - y) {
-  //             if (width >= MINLOSIZE
-  //                 && y_range_.first() - y - height >= MINLOSIZE) {
-  //                 leftovers_.add(rlid_,
-  //                                Leftover(x,
-  //                                         y + height,
-  //                                         width,
-  //                                         y_range_.first() - y - height));
-  //                 rlid_++;
-  //             }
-
-  //             wasted_ += width * (y_range_.first() - y - height);
-  //         }
-  //     }
-
-  //     // size_t used = ATLASW * border.y() + border.x() * yrange.second();
-  //     //
-  //     // double usedpercent = static_cast<double>(used) / (ATLASW * ATLASH);
-  //     // double wastedpercent = static_cast<double>(wasted) / used;
-  //     //
-  //     // std::cout << "Used: [" << usedpercent << "] Wasted: [" << wastedpercent
-  //     // << "]" << std::endl;
-
-  //     glTexSubImage2D(GL_TEXTURE_2D,
-  //                     0,
-  //                     x,
-  //                     y,
-  //                     width,
-  //                     height,
-  //                     GL_RGBA,
-  //                     GL_UNSIGNED_BYTE,
-  //                     bmp.data());
-
+  let (x, y) = match
+    self.leftovers.ceiling_key(Leftover::fromxywh(0, 0, width, height)) {
+    Some(k) => {
+      let leftover = self.leftovers.remove(k).unwrap()
+      let x = leftover.left
+      let y = leftover.top
+      let width_delta = leftover.width() - width
+      let height_delta = leftover.height() - height
+      self.wasted -= width * height
+      if width_delta >= self.minlosize && height_delta >= self.minlosize {
+        let ok = self.leftovers.add(
+          self.next_id,
+          Leftover::fromxywh(x + width, y + height, width_delta, height_delta),
+        )
+        if ok.not() {
+          abort("Atlas.get_offset: failed to add leftover")
+        }
+        self.next_id += 1
+        if width >= self.minlosize {
+          let ok = self.leftovers.add(
+            self.next_id,
+            Leftover::fromxywh(x, y + height, width, height_delta),
+          )
+          if ok.not() {
+            abort("Atlas.get_offset: failed to add leftover")
+          }
+          self.next_id += 1
+        }
+        if height >= self.minlosize {
+          let ok = self.leftovers.add(
+            self.next_id,
+            Leftover::fromxywh(x + width, y, width_delta, height),
+          )
+          if ok.not() {
+            abort("Atlas.get_offset: failed to add leftover")
+          }
+          self.next_id += 1
+        }
+      } else if width_delta >= self.minlosize {
+        let ok = self.leftovers.add(
+          self.next_id,
+          Leftover::fromxywh(x + width, y, width_delta, height + height_delta),
+        )
+        if ok.not() {
+          abort("Atlas.get_offset: failed to add leftover")
+        }
+        self.next_id += 1
+      } else if height_delta >= self.minlosize {
+        let ok = self.leftovers.add(
+          self.next_id,
+          Leftover::fromxywh(x, y + height, width + width_delta, height_delta),
+        )
+        if ok.not() {
+          abort("Atlas.get_offset: failed to add leftover")
+        }
+        self.next_id += 1
+      }
+      (x, y)
+    }
+    None => {
+      if self.border.x + width > self.width {
+        self.border.x = 0
+        self.border.shift_y(self.y_range.b)
+        if self.border.y + height > self.height {
+          self.clear_internal()
+        } else {
+          self.y_range = Range::default()
+        }
+      }
+      let x = self.border.x
+      let y = self.border.y
+      self.border.shift_x(width)
+      if height > self.y_range.b {
+        if x >= self.minlosize && height - self.y_range.b >= self.minlosize {
+          let ok = self.leftovers.add(
+            self.next_id,
+            Leftover::fromxywh(0, self.y_range.a, x, height - self.y_range.b),
+          )
+          if ok.not() {
+            abort("Atlas.get_offset: failed to add leftover")
+          }
+          self.next_id += 1
+        }
+        self.wasted += x * (height - self.y_range.b)
+        self.y_range = Range::new(y + height, height)
+      } else if height < self.y_range.a - y {
+        if width >= self.minlosize && self.y_range.a - y - height >= self.minlosize {
+          let ok = self.leftovers.add(
+            self.next_id,
+            Leftover::fromxywh(
+              x,
+              y + height,
+              width,
+              self.y_range.a - y - height,
+            ),
+          )
+          if ok.not() {
+            abort("Atlas.get_offset: failed to add leftover")
+          }
+          self.next_id += 1
+        }
+        self.wasted += width * (self.y_range.a - y - height)
+      }
+      (x, y)
+    }
+  }
+  if self.debug {
+    let used = self.width * self.border.y + self.border.x * self.y_range.b
+    let usedpercent = used.to_double() / (self.width * self.height).to_double()
+    let wastedpercent = self.wasted.to_double() / used.to_double()
+    println("Used: [\(usedpercent)] Wasted: [\(wastedpercent)]")
+  }
+  glTexSubImage2D(x, y, bmp)
   let offset = Offset::new(x, y, width, height)
   self.offsets.set(id, offset)
   offset
 }
 
+fn clear_internal(self : Atlas) -> Unit {
+  self.border = { x: 0, y: font_ymax }
+  self.y_range = Range::default()
+  self.offsets.clear()
+  self.leftovers.clear()
+  self.next_id = 1
+  self.wasted = 0
+}
+
 struct Quad {
   vertices : FixedArray[Vertex]
-}
+} derive(Debug)
 
 fn Quad::new(
   left : Int,
@@ -232,6 +329,9 @@ fn Quad::new(
   color : Color,
   rotation : Double
 ) -> Quad {
+  if left >= right || top >= bottom {
+    abort("Invalid Quad: left >= right || top >= bottom")
+  }
   let vertices : FixedArray[Vertex] = [
     Vertex::new(left, top, offset.left, offset.top, color),
     Vertex::new(left, bottom, offset.left, offset.bottom, color),
@@ -263,7 +363,7 @@ struct Vertex {
   texcoord_x : Int
   texcoord_y : Int
   color : Color
-}
+} derive(Debug)
 
 fn Vertex::new(
   localcoord_x : Int,
@@ -273,6 +373,40 @@ fn Vertex::new(
   color : Color
 ) -> Vertex {
   { localcoord_x, localcoord_y, texcoord_x, texcoord_y, color }
+}
+
+struct Leftover {
+  left : Int
+  right : Int
+  top : Int
+  bottom : Int
+}
+
+fn Leftover::fromxywh(x : Int, y : Int, width : Int, height : Int) -> Leftover {
+  let left = x
+  let right = x + width
+  let top = y
+  let bottom = y + height
+  { left, right, top, bottom }
+}
+
+fn width(self : Leftover) -> Int {
+  self.right - self.left
+}
+
+fn height(self : Leftover) -> Int {
+  self.bottom - self.top
+}
+
+fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
+  let wg = self.width() >= other.width()
+  let hg = self.height() >= other.height()
+  match (wg, hg) {
+    (true, true) => @quadtree.Direction::TR
+    (true, false) => @quadtree.Direction::BR
+    (false, true) => @quadtree.Direction::TL
+    (false, false) => @quadtree.Direction::BL
+  }
 }
 
 struct Offset {
@@ -289,3 +423,40 @@ fn Offset::new(x : Int, y : Int, width : Int, height : Int) -> Offset {
 fn Offset::default() -> Offset {
   { left: 0, right: 0, top: 0, bottom: 0 }
 }
+
+fn setv(vs : Vertices, i : Int, v : Vertex) -> Unit {
+  vs.set(
+    i,
+    v.localcoord_x,
+    v.localcoord_y,
+    v.texcoord_x,
+    v.texcoord_y,
+    v.color.r(),
+    v.color.g(),
+    v.color.b(),
+    v.color.a(),
+  )
+}
+
+fn glFlush(v : Vertices) = "gl" "flush"
+
+type Vertices
+
+fn Vertices::new(length : Int) -> Vertices = "vertices" "new"
+
+fn set(
+  self : Vertices,
+  i : Int,
+  localcoord_x : Int,
+  localcoord_y : Int,
+  texcoord_x : Int,
+  texcoord_y : Int,
+  color_r : Double,
+  color_g : Double,
+  color_b : Double,
+  color_a : Double
+) = "vertices" "set"
+
+fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : Bitmap) = "gl" "texSubImage2D"
+
+let font_ymax = 0

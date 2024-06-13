@@ -1,393 +1,136 @@
-// #pragma once
-
-// #include <vector>
-
-// #include "../Template/Interpolated.h"
-// #include "../Template/Rectangle.h"
-// #include "Texture.h"
-
-// namespace ms {
-// // A single frame within an animation.
-// class Frame {
-// public:
-//     Frame(const nl::node &src);
-
-//     Frame();
-
-//     void draw(const DrawArgument &args) const;
-
-//     uint8_t start_opacity() const;
-
-//     uint16_t start_scale() const;
-
-//     uint16_t get_delay() const;
-
-//     Point<int16_t> get_origin() const;
-
-//     Point<int16_t> get_dimensions() const;
-
-//     Point<int16_t> get_head() const;
-
-//     Rectangle<int16_t> get_bounds() const;
-
-//     float opcstep(uint16_t timestep) const;
-
-//     float scalestep(uint16_t timestep) const;
-
-// private:
-//     Texture texture_;
-//     uint16_t delay_;
-//     std::pair<uint8_t, uint8_t> opacities_;
-//     std::pair<int16_t, int16_t> scales_;
-//     Rectangle<int16_t> bounds_;
-//     Point<int16_t> head_;
-// };
-
-// // Class which consists of multiple textures to make an Animation.
-// class Animation {
-// public:
-//     Animation(const nl::node &source);
-
-//     Animation();
-
-//     bool update();
-
-//     bool update(uint16_t timestep);
-
-//     void reset();
-
-//     void stop();
-
-//     void draw(const DrawArgument &arguments, float alpha) const;
-
-//     uint16_t get_delay(int16_t frame) const;
-
-//     uint16_t getdelayuntil(int16_t frame) const;
-
-//     Point<int16_t> get_origin() const;
-
-//     Point<int16_t> get_dimensions() const;
-
-//     Point<int16_t> get_head() const;
-
-//     Rectangle<int16_t> get_bounds() const;
-
-// private:
-//     const Frame &get_frame() const;
-
-//     std::vector<Frame> frames_;
-//     bool animated_;
-//     bool zigzag_;
-
-//     Nominal<int16_t> frame_;
-//     Linear<float> opacity_;
-//     Linear<float> xyscale_;
-
-//     uint16_t delay_;
-//     int16_t frame_step_;
-//     float opc_step_;
-// };
-// }  // namespace ms
-
-// #include "Animation.h"
-
-// #include <set>
-
-// #include "../Constants.h"
-// #include "StringHandling.h"
-
-// namespace ms {
-// Frame::Frame(const nl::node &src) {
-//     texture_ = src;
-//     bounds_ = src;
-//     head_ = src["head"];
-//     delay_ = src["delay"];
-
-//     if (delay_ == 0) {
-//         delay_ = 100;
-//     }
-
-//     bool hasa0 = src["a0"].data_type() == nl::node::type::integer;
-//     bool hasa1 = src["a1"].data_type() == nl::node::type::integer;
-
-//     if (hasa0 && hasa1) {
-//         opacities_ = { src["a0"], src["a1"] };
-//     } else if (hasa0) {
-//         uint8_t a0 = src["a0"];
-//         opacities_ = { a0, 255 - a0 };
-//     } else if (hasa1) {
-//         uint8_t a1 = src["a1"];
-//         opacities_ = { 255 - a1, a1 };
-//     } else {
-//         opacities_ = { 255, 255 };
-//     }
-
-//     bool hasz0 = src["z0"].data_type() == nl::node::type::integer;
-//     bool hasz1 = src["z1"].data_type() == nl::node::type::integer;
-
-//     if (hasz0 && hasz1) {
-//         scales_ = { src["z0"], src["z1"] };
-//     } else if (hasz0) {
-//         scales_ = { src["z0"], 0 };
-//     } else if (hasz1) {
-//         scales_ = { 100, src["z1"] };
-//     } else {
-//         scales_ = { 100, 100 };
-//     }
-// }
-
-// Frame::Frame() : delay_(0), opacities_({ 0, 0 }), scales_({ 0, 0 }) {}
-
-// void Frame::draw(const DrawArgument &args) const {
-//     texture_.draw(args);
-// }
-
-// uint8_t Frame::start_opacity() const {
-//     return opacities_.first;
-// }
-
-// uint16_t Frame::start_scale() const {
-//     return scales_.first;
-// }
-
-// uint16_t Frame::get_delay() const {
-//     return delay_;
-// }
-
-// Point<int16_t> Frame::get_origin() const {
-//     return texture_.get_origin();
-// }
-
-// Point<int16_t> Frame::get_dimensions() const {
-//     return texture_.get_dimensions();
-// }
-
-// Point<int16_t> Frame::get_head() const {
-//     return head_;
-// }
-
-// Rectangle<int16_t> Frame::get_bounds() const {
-//     return bounds_;
-// }
-
-// float Frame::opcstep(uint16_t timestep) const {
-//     return timestep * static_cast<float>(opacities_.second - opacities_.first)
-//            / delay_;
-// }
-
-// float Frame::scalestep(uint16_t timestep) const {
-//     return timestep * static_cast<float>(scales_.second - scales_.first)
-//            / delay_;
-// }
-
-// Animation::Animation(const nl::node &src) {
-//     bool istexture = src.data_type() == nl::node::type::bitmap;
-
-//     if (istexture) {
-//         frames_.emplace_back(src);
-//     } else {
-//         std::set<int16_t> frameids;
-
-//         for (const auto &sub : src) {
-//             if (sub.data_type() == nl::node::type::bitmap) {
-//                 auto fid =
-//                     string_conversion::or_default<int16_t>(sub.name(), -1);
-
-//                 if (fid >= 0) {
-//                     frameids.insert(fid);
-//                 }
-//             }
-//         }
-
-//         for (const auto &fid : frameids) {
-//             auto sub = src[std::to_string(fid)];
-//             frames_.emplace_back(sub);
-//         }
-
-//         if (frames_.empty()) {
-//             frames_.emplace_back();
-//         }
-//     }
-
-//     animated_ = frames_.size() > 1;
-//     zigzag_ = src["zigzag"].get_bool();
-
-//     reset();
-// }
-
-// Animation::Animation() : animated_(false), zigzag_(false) {
-//     frames_.emplace_back();
-//     reset();
-// }
-
-// void Animation::reset() {
-//     frame_.set(0);
-//     opacity_.set(frames_[0].start_opacity());
-//     xyscale_.set(frames_[0].start_scale());
-//     delay_ = frames_[0].get_delay();
-//     frame_step_ = 1;
-// }
-
-// void Animation::stop() {
-//     auto lastframe = static_cast<int16_t>(frames_.size() - 1);
-//     frame_.set(lastframe);
-//     frame_step_ = -1;
-// }
-
-// void Animation::draw(const DrawArgument &args, float alpha) const {
-//     int16_t interframe = frame_.get(alpha);
-//     float interopc = opacity_.get(alpha) / 255;
-//     float interscale = xyscale_.get(alpha) / 100;
-
-//     bool modifyopc = interopc != 1.0f;
-//     bool modifyscale = interscale != 1.0f;
-
-//     if (modifyopc || modifyscale) {
-//         frames_[interframe].draw(
-//             args + DrawArgument(interscale, interscale, interopc));
-//     } else {
-//         frames_[interframe].draw(args);
-//     }
-// }
-
-// bool Animation::update() {
-//     return update(Constants::TIMESTEP);
-// }
-
-// bool Animation::update(uint16_t timestep) {
-//     const Frame &framedata = get_frame();
-
-//     opacity_ += framedata.opcstep(timestep);
-
-//     if (opacity_.last() < 0.0f) {
-//         opacity_.set(0.0f);
-//     } else if (opacity_.last() > 255.0f) {
-//         opacity_.set(255.0f);
-//     }
-
-//     xyscale_ += framedata.scalestep(timestep);
-
-//     if (xyscale_.last() < 0.0f) {
-//         opacity_.set(0.0f);
-//     }
-
-//     if (timestep >= delay_) {
-//         int16_t lastframe = static_cast<int16_t>(frames_.size() - 1);
-//         int16_t nextframe = 0;
-//         bool ended = false;
-
-//         if (zigzag_ && lastframe > 0) {
-//             if (frame_step_ == 1 && frame_ == lastframe) {
-//                 frame_step_ = -frame_step_;
-//                 ended = false;
-//             } else if (frame_step_ == -1 && frame_ == 0) {
-//                 frame_step_ = -frame_step_;
-//                 ended = true;
-//             }
-
-//             nextframe = frame_ + frame_step_;
-//         } else {
-//             if (frame_ == lastframe) {
-//                 nextframe = 0;
-//                 ended = true;
-//             } else {
-//                 nextframe = frame_ + 1;
-//                 ended = false;
-//             }
-//         }
-
-//         uint16_t delta = timestep - delay_;
-//         float threshold = static_cast<float>(delta) / timestep;
-//         frame_.next(nextframe, threshold);
-
-//         delay_ = frames_[nextframe].get_delay();
-
-//         if (delay_ >= delta) {
-//             delay_ -= delta;
-//         }
-
-//         opacity_.set(frames_[nextframe].start_opacity());
-//         xyscale_.set(frames_[nextframe].start_scale());
-
-//         return ended;
-//     }
-
-//     frame_.normalize();
-//     delay_ -= timestep;
-
-//     return false;
-// }
-
-// uint16_t Animation::get_delay(int16_t frame_id) const {
-//     return frame_id < frames_.size() ? frames_[frame_id].get_delay() : 0;
-// }
-
-// uint16_t Animation::getdelayuntil(int16_t frame_id) const {
-//     uint16_t total = 0;
-
-//     for (int i = 0; i < frame_id; i++) {
-//         if (i >= frames_.size()) {
-//             break;
-//         }
-
-//         total += frames_[frame_id].get_delay();
-//     }
-
-//     return total;
-// }
-
-// Point<int16_t> Animation::get_origin() const {
-//     return get_frame().get_origin();
-// }
-
-// Point<int16_t> Animation::get_dimensions() const {
-//     return get_frame().get_dimensions();
-// }
-
-// Point<int16_t> Animation::get_head() const {
-//     return get_frame().get_head();
-// }
-
-// Rectangle<int16_t> Animation::get_bounds() const {
-//     return get_frame().get_bounds();
-// }
-
-// const Frame &Animation::get_frame() const {
-//     return frames_[frame_.get()];
-// }
-// }  // namespace ms
-
+// app/src/main/cpp/src/Graphics/Animation.h
+// app/src/main/cpp/src/Graphics/Animation.cpp
 struct Frame {
   texture : Texture
+  delay : Int
+  bounds : Rectangle[Int]
+  head : Point[Int]
+  opacities : (Int, Int)
+  scales : (Int, Int)
 }
 
-pub fn draw(self : Frame, g : Gl_g, args : DrawArgument) -> Unit {
-  self.texture.draw(g, args)
+fn Frame::from_resource(src : NxNode) -> Frame {
+  let delay = match src["delay"].get_int() {
+    0 => 100
+    it => it
+  }
+  let head = Point::from_resource(src["head"])
+  let bounds = Rectangle::from_resource(src)
+  let texture = Texture::from_resource(src)
+  { texture, delay, head, bounds, opacities: (255, 255), scales: (100, 100) }
+}
+
+fn Frame::default() -> Frame {
+  {
+    texture: Texture::default(),
+    head: Point::default(),
+    bounds: Rectangle::default(),
+    delay: 0,
+    opacities: (0, 0),
+    scales: (0, 0),
+  }
+}
+
+pub fn start_opacity(self : Frame) -> Int {
+  self.opacities.0
+}
+
+pub fn start_scale(self : Frame) -> Int {
+  self.scales.0
+}
+
+pub fn get_delay(self : Frame) -> Int {
+  self.delay
+}
+
+pub fn get_origin(self : Frame) -> Point[Int] {
+  self.texture.origin
+}
+
+pub fn get_dimensions(self : Frame) -> Point[Int] {
+  self.texture.dimensions
+}
+
+pub fn get_head(self : Frame) -> Point[Int] {
+  self.head
+}
+
+pub fn get_bounds(self : Frame) -> Rectangle[Int] {
+  self.bounds
+}
+
+pub fn opcstep(self : Frame, timestep : Int) -> Double {
+  timestep.to_double() * (self.opacities.1 - self.opacities.0).to_double() / self.delay.to_double()
+}
+
+pub fn scalestep(self : Frame, timestep : Int) -> Double {
+  timestep.to_double() * (self.scales.1 - self.scales.0).to_double() / self.delay.to_double()
+}
+
+pub fn draw(self : Frame, args : DrawArgument) -> Unit {
+  self.texture.draw(args)
 }
 
 // Class which consists of multiple textures to make an Animation.
 struct Animation {
   frames : FixedArray[Frame]
+  zigzag : Bool
   frame : Nominal[Int]
-  opacity : Linear
-  xyscale : Linear
+  mut opacity : Linear
+  mut xyscale : Linear
+  mut frame_step : Int
+  mut delay : Int
 }
 
-pub fn Animation::new() -> Animation {
-  {
-    frames: [],
+pub fn Animation::from_resource(src : NxNode) -> Animation {
+  let frames = match src.desc.as_object() {
+    Some(obj) =>
+      if obj.contains("bid") {
+        FixedArray::[Frame::from_resource(src)]
+      } else {
+        let fs = obj.as_iter().filter(
+            fn(it) { @strconv.parse_int(it.0).is_ok() },
+          ).map(
+            fn(it) { Frame::from_resource({ loader: src.loader, desc: it.1 }) },
+          ).collect()
+          |> to_fixarray
+        if fs.length() <= 0 {
+          debug(obj)
+          abort("Animation must have at least one frame.")
+        }
+        fs
+      }
+    None => [Frame::default()]
+  }
+  let zigzag = src["zigzag"].get_bool()
+  let a = {
+    frames,
+    zigzag,
     frame: Nominal::default(),
     opacity: Linear::default(),
     xyscale: Linear::default(),
+    frame_step: 0,
+    delay: 0,
   }
+  a.reset()
+  a
 }
 
-pub fn draw(
-  self : Animation,
-  g : Gl_g,
-  args : DrawArgument,
-  alpha : Double
-) -> Unit {
+pub fn Animation::default() -> Animation {
+  let a = {
+    frames: [Frame::default()],
+    zigzag: false,
+    frame: Nominal::default(),
+    opacity: Linear::default(),
+    xyscale: Linear::default(),
+    frame_step: 0,
+    delay: 0,
+  }
+  a.reset()
+  a
+}
+
+pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
   let interframe = self.frame.get(alpha)
   let interopc = self.opacity.get(alpha) / 255.0
   let interscale = self.xyscale.get(alpha) / 100.0
@@ -395,18 +138,106 @@ pub fn draw(
   let modifyscale = interscale != 1.0
   if modifyopc || modifyscale {
     self.frames[interframe].draw(
-      g,
       args + DrawArgument::new12(interscale, interscale, interopc),
     )
   } else {
-    self.frames[interframe].draw(g, args)
+    self.frames[interframe].draw(args)
   }
 }
 
 pub fn update(self : Animation, ~timestep : Int = @Constants.timestep) -> Bool {
-  abort("TODO")
+  let framedata = self.get_frame()
+  self.opacity.add(framedata.opcstep(timestep))
+  if self.opacity.last() < 0.0 {
+    self.opacity.set(0.0)
+  } else if self.opacity.last() > 255.0 {
+    self.opacity.set(255.0)
+  }
+  self.xyscale.add(framedata.scalestep(timestep))
+  if self.xyscale.last() < 0.0 {
+    self.xyscale.set(0.0)
+  }
+  if timestep >= self.delay {
+    let lastframe = self.frames.length() - 1
+    let mut nextframe = 0
+    let mut ended = false
+    if self.zigzag && lastframe > 0 {
+      if self.frame_step == 1 && self.frame.now == lastframe {
+        self.frame_step = -self.frame_step
+        ended = false
+      } else if self.frame_step == -1 && self.frame.now == 0 {
+        self.frame_step = -self.frame_step
+        ended = true
+      }
+      nextframe = self.frame.now + self.frame_step
+    } else if self.frame.now == lastframe {
+      nextframe = 0
+      ended = true
+    } else {
+      nextframe = self.frame.now + 1
+      ended = false
+    }
+    let delta = timestep - self.delay
+    let threshold = delta.to_double() / timestep.to_double()
+    self.frame.next(nextframe, threshold)
+    self.delay = self.frames[nextframe].get_delay()
+    if self.delay >= delta {
+      self.delay -= delta
+    }
+    self.opacity.set(self.frames[nextframe].start_opacity().to_double())
+    self.xyscale.set(self.frames[nextframe].start_scale().to_double())
+    return ended
+  }
+  self.frame.normalize()
+  self.delay -= timestep
+  false
 }
 
 pub fn reset(self : Animation) -> Unit {
-  abort("TODO")
+  self.frame.set(0)
+  self.opacity.set(self.frames[0].start_opacity().to_double())
+  self.xyscale.set(self.frames[0].start_scale().to_double())
+  self.delay = self.frames[0].get_delay()
+  self.frame_step = 1
+}
+
+fn get_frame(self : Animation) -> Frame {
+  self.frames[self.frame.now]
+}
+
+fn get_delay(self : Animation, frame_id : Int) -> Int {
+  if frame_id < self.frames.length() {
+    self.frames[frame_id].get_delay()
+  } else {
+    0
+  }
+}
+
+pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
+  let mut total : Int = 0
+  let mut i = 0
+  while i < frame_id {
+    if i >= self.frames.length() {
+      break
+    }
+    total += self.frames[i].get_delay()
+    i += 1
+  }
+  total
+}
+
+pub fn get_origin(self : Animation) -> Point[Int] {
+  self.get_frame().get_origin()
+}
+
+pub fn get_dimensions(self : Animation) -> Point[Int] {
+  self.get_frame().get_dimensions()
+}
+
+pub fn get_head(self : Animation) -> Point[Int] {
+  self.get_frame().get_head()
+}
+
+pub fn get_bounds(self : Animation) -> Rectangle[Int] {
+  self.get_frame().get_bounds()
 }

@@ -1,68 +1,69 @@
-// class Timer : public Singleton<Timer> {
-// public:
-//     Timer() { start(); }
+pub type TimePoint Int64 derive(Eq, Compare)
 
-//     ~Timer() override = default;
+pub fn TimePoint::from_micro(i : Double) -> TimePoint {
+  i.to_int64()
+}
 
-//     // Start the timer by setting the last measurement to now.
-//     void start() { point = clock::now(); }
+fn now_micro() -> Double = "time" "now_micro"
 
-//     // Return time elapsed since the last measurement.
-//     int64_t stop() {
-//         clock::time_point last = point;
-//         point = clock::now();
+pub type Duration Int derive(Eq, Compare, Debug, Show)
 
-//         auto duration =
-//             std::chrono::duration_cast<std::chrono::microseconds>(point - last);
-//         return duration.count();
-//     }
+pub fn Duration::from_micro(i : Int) -> Duration {
+  i
+}
 
-// private:
-//     using clock = std::chrono::high_resolution_clock;
+fn to_micro_seconds(self : Duration) -> Int {
+  self.0
+}
 
-//     clock::time_point point;
-// };
+fn since(self : TimePoint, other : TimePoint) -> Duration {
+  (self.0 - other.0).to_int()
+}
 
 // Small class for measuring elapsed time between game loops.
 // Time measures are in microseconds.
 struct Timer {
-  mut point : Int64
+  mut point : TimePoint
 }
 
 fn Timer::new() -> Timer {
   { point: 0L }
 }
 
-fn start(self : Timer, nowMicro : Int64) -> Unit {
-  self.point = nowMicro
+let timer : Timer = Timer::new()
+
+fn Timer::get() -> Timer {
+  timer
 }
 
-fn stop(self : Timer, nowMicro : Int64) -> Int64 {
-  let duration = nowMicro - self.point
-  self.point = nowMicro
+fn start(self : Timer) -> Unit {
+  self.point = now_micro() |> TimePoint::from_micro
+}
+
+fn stop(self : Timer, now : TimePoint) -> Duration {
+  if now <= self.point {
+    return 0
+  }
+  let duration = now.since(self.point)
+  self.point = now
   duration
 }
-// // Small class for measuring elapsed time given a specific start time.
-// class ContinuousTimer : public Singleton<ContinuousTimer> {
-// public:
-//     using point = std::chrono::time_point<std::chrono::steady_clock>;
 
-//     ContinuousTimer() { start(); }
+fn now(self : Timer) -> TimePoint {
+  now_micro() |> TimePoint::from_micro
+}
 
-//     ~ContinuousTimer() override = default;
+struct PerfTimer {
+  mut last : TimePoint
+}
 
-//     // Return now from the clock to be used to calculate elapsed time later.
-//     point start() { return clock::now(); }
+pub fn PerfTimer::start() -> PerfTimer {
+  { last: now_micro() |> TimePoint::from_micro }
+}
 
-//     // Return time elapsed since the last measurement provided.
-//     int64_t stop(point last) {
-//         auto now = clock::now();
-
-//         auto duration =
-//             std::chrono::duration_cast<std::chrono::microseconds>(now - last);
-//         return duration.count();
-//     }
-
-// private:
-//     using clock = std::chrono::steady_clock;
-// };
+pub fn tap(self : PerfTimer) -> Duration {
+  let now = now_micro() |> TimePoint::from_micro
+  let duration = now.since(self.last)
+  self.last = now
+  duration
+}

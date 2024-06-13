@@ -1,4 +1,4 @@
-pub enum State {
+pub enum CursorState {
   IDLE
   CAN_CLICK
   GAME
@@ -19,32 +19,9 @@ pub enum State {
   CHAT_BAR_BLTRDRAG
   CHAT_BAR_MOVE
   CHAT_BAR_BRTLDRAG
-} derive(Eq, Compare)
-// enum State {
-//     IDLE,
-//     CAN_CLICK,
-//     GAME,
-//     HOUSE,
-//     CAN_CLICK2,
-//     CAN_GRAB,
-//     GIFT,
-//     VSCROLL,
-//     HSCROLL,
-//     VSCROLL_IDLE,
-//     HSCROLL_IDLE,
-//     GRABBING,
-//     CLICKING,
-//     RCLICK,
-//     LEAF = 18,
-//     CHAT_BAR_VDRAG = 67,
-//     CHAT_BAR_HDRAG,
-//     CHAT_BAR_BLTRDRAG,
-//     CHAT_BAR_MOVE = 72,
-//     CHAT_BAR_BRTLDRAG,
-//     LENGTH
-// };
+} derive(Eq, Compare, Debug)
 
-pub let all_cursor_states : @map.Map[State, Int] = @map.from_array(
+pub let all_cursor_states : @immut/sorted_map.Map[CursorState, Int] = @immut/sorted_map.from_array(
   [
     (IDLE, 0),
     (CAN_CLICK, 1),
@@ -69,55 +46,67 @@ pub let all_cursor_states : @map.Map[State, Int] = @map.from_array(
   ],
 )
 
-pub fn by_id(id : Int) -> State {
-  all_cursor_states.as_iter().find_first(fn(it) -> Bool { id == it.1 }).map(
-    fn(it) -> State { it.0 },
-  ).unwrap()
-}
-
-pub fn int_value(self : State) -> Int {
+pub fn int_value(self : CursorState) -> Int {
   all_cursor_states[self].unwrap()
 }
 
-fn hash(self : State) -> Int {
+fn hash(self : CursorState) -> Int {
   self.int_value()
 }
 
+pub fn by_id(id : Int) -> CursorState {
+  all_cursor_states.as_iter().find_first(fn(it) -> Bool { id == it.1 }).map(
+    fn(it) -> CursorState { it.0 },
+  ).unwrap()
+}
+
 pub struct Cursor {
-  mut state : State
+  mut state : CursorState
   mut position : Point[Int]
   mut hide_counter : Int
-  animations : @immut/hashmap.Map[State, Animation]
+  animations : @immut/sorted_map.Map[CursorState, Animation]
 }
 
 pub let hide_time : Int = 15_000
 
-pub fn Cursor::new(animations : @immut/hashmap.Map[State, Animation]) -> Cursor {
-  { state: State::IDLE, position: { x: 0, y: 0 }, hide_counter: 0, animations }
+fn to_fixarray[T](arr : Array[T]) -> FixedArray[T] {
+  FixedArray::new_with_index(arr.length(), fn(i) { arr[i] })
 }
 
-pub fn draw(self : Cursor, g : Gl_g, alpha : Double) -> Unit {
+pub fn Cursor::new() -> Cursor {
+  let loader = ui_loader()
+  let animations = all_cursor_states.map(
+    fn(value) {
+      Animation::from_resource(loader.load_res("Basic.img/Cursor/\(value)"))
+    },
+  )
+  {
+    state: CursorState::IDLE,
+    position: { x: 0, y: 0 },
+    hide_counter: 0,
+    animations,
+  }
+}
+
+pub fn draw(self : Cursor, alpha : Double) -> Unit {
   let hide_after = hide_time / @Constants.timestep
   if self.hide_counter < hide_after {
-    self.animations[self.state].unwrap().draw(
-      g,
-      DrawArgument::new2(self.position),
-      alpha,
-    )
+    self.animations[self.state].unwrap().draw(from_point(self.position), alpha)
   }
 }
 
 pub fn update(self : Cursor) -> Unit {
   self.animations[self.state].unwrap().update() |> ignore
   match self.state {
-    State::CAN_CLICK
-    | State::CAN_CLICK2 | State::CAN_GRAB | State::CLICKING | State::GRABBING =>
+    CursorState::CAN_CLICK
+    | CursorState::CAN_CLICK2
+    | CursorState::CAN_GRAB | CursorState::CLICKING | CursorState::GRABBING =>
       self.hide_counter = 0
     _ => self.hide_counter += 1
   }
 }
 
-pub fn set_state(self : Cursor, state : State) -> Unit {
+pub fn set_state(self : Cursor, state : CursorState) -> Unit {
   if self.state != state {
     self.state = state
     self.animations[self.state].unwrap().reset()
@@ -130,7 +119,7 @@ pub fn set_position(self : Cursor, position : Point[Int]) -> Unit {
   self.hide_counter = 0
 }
 
-pub fn get_state(self : Cursor) -> State {
+pub fn get_state(self : Cursor) -> CursorState {
   self.state
 }
 

@@ -1,9 +1,9 @@
 struct UIStateLogin {
-  // ui_element : UIElement
+  ui_element : UIElement
 }
 
-fn UIStateLogin::new() -> UIStateLogin {
-  {  }
+fn UIStateLogin::new(ui_element : UIElement) -> UIStateLogin {
+  { ui_element, }
 }
 
 // fn draw(self, inter: Double, cursor: Point[Int16]) -> Unit {
@@ -31,7 +31,7 @@ fn send_cursor(
   mst : CursorState,
   pos : Point[Int]
 ) -> CursorState {
-  // return self.ui_element.send_cursor(clicked, cursorpos)
+  // self.ui_element.send_cursor(clicked, cursorpos)
   CursorState::IDLE
 }
 
@@ -105,12 +105,6 @@ fn send_cursor(
 //   // Update logic here
 // }
 
-// fn send_cursor(self, clicked: Bool, cursorpos: Point[Int16]) -> CursorState {
-//   // Send cursor logic here
-//   CursorState::IDLE
-// }
-// }
-
 // impl UIStateLogin {
 // fn login(self) -> Unit {
 //   // Login logic here
@@ -123,11 +117,6 @@ fn send_cursor(
 // fn button_pressed(self, id: UInt16) -> ButtonState {
 //   // Button pressed logic here
 //   ButtonState::NORMAL
-// }
-
-// fn send_cursor(self, clicked: Bool, cursorpos: Point[Int16]) -> CursorState {
-//   // Send cursor logic here
-//   CursorState::IDLE
 // }
 
 // fn get_type(self) -> UIElementType {

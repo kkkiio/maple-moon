@@ -1,9 +1,29 @@
 struct EntryPoint {
-  mut game : Option[@ms.Game]
+  mut game : @ms.Game?
 }
 
 let entrypoint : EntryPoint = { game: None }
 
-pub fn start(g : @ms.Gl_g, nowMicro : Int64) -> Unit {
-  entrypoint.game = Some(@ms.Game::start(g, nowMicro))
+pub fn game_start() -> Unit {
+  entrypoint.game = Some(@ms.Game::start())
+}
+
+pub fn game_update(time : Double) -> Unit {
+  entrypoint.game.unwrap().on_draw(time |> @ms.TimePoint::from_micro)
+}
+
+pub fn onmousemove(x : Int, y : Int) -> Unit {
+  @ms.Window::get().onmousemove(x, y)
+}
+
+pub fn onmousedown() -> Unit {
+  @ms.Window::get().onmousedown()
+}
+
+pub fn onmouseup() -> Unit {
+  @ms.Window::get().onmouseup()
+}
+
+pub fn transit_to(map_id : Int) -> Unit {
+  @ms.SetFieldHandler::default().transition(map_id, 0)
 }

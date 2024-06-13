@@ -3,7 +3,9 @@
     "KKKIIO/maple-moon-client/lib/ms/EquipStat",
     "KKKIIO/maple-moon-client/lib/ms/Buffstat",
     "KKKIIO/maple-moon-client/lib/ms/Constants",
-    "KKKIIO/maple-moon-client/lib/ms/KeyType"
+    "KKKIIO/maple-moon-client/lib/ms/KeyType",
+    "KKKIIO/maple-moon-client/lib/ms/string_format",
+    "KKKIIO/maple-moon-client/lib/ms/quadtree"
   ],
   "link": {
     "js": {

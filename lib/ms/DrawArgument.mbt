@@ -137,12 +137,6 @@
 //                  yscale_,       color_,           angle_ };
 //     }
 
-//     constexpr DrawArgument operator+(float argopc) const {
-//         return { pos_,    center_, stretch_,
-//                  xscale_, yscale_, color_.a() * argopc,
-//                  angle_ };
-//     }
-
 //     constexpr DrawArgument operator+(const DrawArgument &o) const {
 //         return { pos_ + o.pos_,         center_ + o.center_,
 //                  stretch_ + o.stretch_, xscale_ * o.xscale_,
@@ -208,15 +202,15 @@ struct DrawArgument {
   color : Color
 }
 
-pub fn DrawArgument::new0() -> DrawArgument {
-  DrawArgument::new1(0, 0)
+pub fn DrawArgument::default() -> DrawArgument {
+  from_xy(0, 0)
 }
 
-pub fn DrawArgument::new1(x : Int, y : Int) -> DrawArgument {
-  DrawArgument::new2({ x, y })
+pub fn DrawArgument::from_xy(x : Int, y : Int) -> DrawArgument {
+  from_point({ x, y })
 }
 
-pub fn DrawArgument::new2(position : Point[Int]) -> DrawArgument {
+pub fn DrawArgument::from_point(position : Point[Int]) -> DrawArgument {
   DrawArgument::new7(position, 1.0)
 }
 
@@ -359,7 +353,7 @@ pub fn DrawArgument::new16(
     stretch,
     xscale,
     yscale,
-    new_rgba(1.0, 1.0, 1.0, opacity),
+    Color::new_rgba(1.0, 1.0, 1.0, opacity),
     angle,
   )
 }

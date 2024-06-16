@@ -1,0 +1,32 @@
+// Represents a tile on a map.
+struct Tile {
+  texture : Texture
+  pos : Point[Int]
+  z : Int
+}
+
+pub fn Tile::from_resource(src : NxNode, tileset : String) -> Tile {
+  let map_loader = map_loader()
+  let src_u = src["u"].get_string()
+  let src_no = src["no"].get_string()
+  let dsrc = map_loader.load_res("Tile/\(tileset)/\(src_u)/\(src_no)")
+  let mut z = dsrc["z"].get_int()
+  if z == 0 {
+    z = dsrc["zM"].get_int()
+  }
+  {
+    texture: Texture::from_resource(
+      map_loader.load_res("Tile/\(tileset)/\(src_u)/\(src_no)"),
+    ),
+    pos: Point::new(src["x"].get_int(), src["y"].get_int()),
+    z,
+  }
+}
+
+pub fn draw(self : Tile, viewpos : Point[Int]) -> Unit {
+  self.texture.draw(DrawArgument::from_point(self.pos + viewpos))
+}
+
+pub fn get_z(self : Tile) -> Int {
+  self.z
+}

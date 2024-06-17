@@ -171,9 +171,9 @@ pub fn is_active(self : UIElementBase) -> Bool {
 
 pub fn toggle_active(self : UIElementBase) -> Unit {
   if self.active {
-    deactivate(self)
+    self.deactivate()
   } else {
-    makeactive(self)
+    self.makeactive()
   }
 }
 

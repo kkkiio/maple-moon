@@ -179,7 +179,8 @@ function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
 }
 
 class ResourceLoader {
-  constructor() {
+  constructor(name) {
+    this.name = name;
     this.nxJson = null;
   }
   async loadNxJson(path) {
@@ -217,37 +218,62 @@ class SpriteLoader {
     const spriteJsonFetch = fetch(jsonFilename).then((response) =>
       response.json()
     );
-    return Promise.all([imageLoad, spriteJsonFetch]).then(([img, json]) =>
-      this.onLoad(img, json)
-    );
-  }
-  onLoad(img, json) {
-    const canvas = document.createElement("canvas");
-    canvas.width = json.meta.size.w;
-    canvas.height = json.meta.size.h;
-    const ctx = canvas.getContext("2d", {
-      willReadFrequently: true,
-    });
-    ctx.drawImage(img, 0, 0);
+    return Promise.all([imageLoad, spriteJsonFetch]).then(([img, json]) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = json.meta.size.w;
+      canvas.height = json.meta.size.h;
+      const ctx = canvas.getContext("2d", {
+        willReadFrequently: true,
+      });
+      ctx.drawImage(img, 0, 0);
 
-    for (const key in json.frames) {
-      const frame = json.frames[key].frame;
-      const bid = bidRegex.exec(key)[1];
-      const data = ctx.getImageData(frame.x, frame.y, frame.w, frame.h);
-      this.bitmaps[bid] = {
-        id: this.i * 100000 + bid,
-        data,
-        w: frame.w,
-        h: frame.h,
-      };
-    }
+      for (const key in json.frames) {
+        const frame = json.frames[key].frame;
+        const bid = bidRegex.exec(key)[1];
+        const data = ctx.getImageData(frame.x, frame.y, frame.w, frame.h);
+        this.bitmaps[bid] = {
+          id: this.i * 100000 + bid,
+          data,
+          w: frame.w,
+          h: frame.h,
+        };
+      }
+    });
   }
   loadBitmap(bid) {
     const bmp = this.bitmaps[bid];
     if (!bmp) {
       throw new Error(`Bitmap ${bid} not found`);
     }
-    console.log("loading bitmap", this.i, bid);
+    return bmp;
+  }
+}
+
+class DirectBmpLoader {
+  constructor(i, bmpFolderPath) {
+    this.i = i;
+    this.bmpFolderPath = bmpFolderPath;
+    this.bitmaps = {};
+  }
+  loadBitmap(bid) {
+    let bmp = this.bitmaps[bid];
+    if (bmp) {
+      return bmp;
+    }
+    const img = new Image();
+    const bmpPath = `${this.bmpFolderPath}/${bid}.png`;
+    bmp = {
+      id: this.i * 100000 + bid,
+      data: img,
+      loading: true,
+    };
+    this.bitmaps[bid] = bmp;
+    img.onload = () => {
+      bmp.w = img.width;
+      bmp.h = img.height;
+      bmp.loading = false;
+    };
+    img.src = bmpPath;
     return bmp;
   }
 }
@@ -334,29 +360,35 @@ function main() {
   //   gl.bindVertexArray(null);
 
   const prepareResourcePromises = [];
-  const uiLoader = new ResourceLoader();
+  const uiLoader = new ResourceLoader("UI.nx");
   prepareResourcePromises.push(
     uiLoader.loadNxJson("nx/files/raw/UI.nx/nx.json")
   );
-  const uiSpriteLoader = new SpriteLoader(0);
-  uiLoader.spriteLoader = uiSpriteLoader;
-  prepareResourcePromises.push(
-    uiSpriteLoader.loadSprite("nx/files/raw/UI.nx/spritesheet.png")
-  );
 
-  const mapLoader = new ResourceLoader();
+  const uiBmpLoader = new DirectBmpLoader(0, "nx/files/raw/UI.nx/bitmaps");
+  uiLoader.bmpLoader = uiBmpLoader;
+
+  const mapLoader = new ResourceLoader("Map.nx");
   prepareResourcePromises.push(
     mapLoader.loadNxJson("nx/files/raw/Map.nx/nx.json")
   );
-  const mapSpriteLoader = new SpriteLoader(1);
-  mapLoader.spriteLoader = mapSpriteLoader;
-  prepareResourcePromises.push(
-    mapSpriteLoader.loadSprite("nx/files/raw/Map.nx/spritesheet.png")
-  );
 
-  const soundLoader = new ResourceLoader();
+  const mapBmpLoader = new DirectBmpLoader(1, "nx/files/raw/Map.nx/bitmaps");
+  mapLoader.bmpLoader = mapBmpLoader;
+
+  const soundLoader = new ResourceLoader("Sound.nx");
   prepareResourcePromises.push(
     soundLoader.loadNxJson("nx/files/raw/Sound.nx/nx.json")
+  );
+
+  const characterLoader = new ResourceLoader("Character.nx");
+  prepareResourcePromises.push(
+    characterLoader.loadNxJson("nx/files/raw/Character.nx/nx.json")
+  );
+
+  const stringLoader = new ResourceLoader("String.nx");
+  prepareResourcePromises.push(
+    stringLoader.loadNxJson("nx/files/raw/String.nx/nx.json")
   );
 
   let requestAnimationFrameId = null;
@@ -524,12 +556,15 @@ function main() {
       ui_loader: () => uiLoader,
       map_loader: () => mapLoader,
       sound_loader: () => soundLoader,
-      load_bitmap: (loader, bid) => loader.spriteLoader.loadBitmap(bid),
+      character_loader: () => characterLoader,
+      string_loader: () => stringLoader,
+      load_bitmap: (loader, bid) => loader.bmpLoader.loadBitmap(bid),
     },
     bitmap: {
       id: (bmp) => bmp.id,
       width: (bmp) => bmp.w,
       height: (bmp) => bmp.h,
+      loading: (bmp) => bmp.loading === true,
     },
     time: {
       now_micro: () => {

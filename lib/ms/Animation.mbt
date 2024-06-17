@@ -85,14 +85,12 @@ struct Animation {
 pub fn Animation::from_resource(src : NxNode) -> Animation {
   let frames = match src.desc.as_object() {
     Some(obj) =>
-      if obj.contains("bid") {
+      if obj.contains("__b") {
         FixedArray::[Frame::from_resource(src)]
       } else {
         let fs = obj.as_iter().filter(
             fn(it) { @strconv.parse_int(it.0).is_ok() },
-          ).map(
-            fn(it) { Frame::from_resource({ loader: src.loader, desc: it.1 }) },
-          ).collect()
+          ).map(fn(it) { Frame::from_resource(src[it.0]) }).collect()
           |> to_fixarray
         if fs.length() <= 0 {
           debug(obj)

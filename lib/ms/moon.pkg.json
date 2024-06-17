@@ -5,7 +5,9 @@
     "KKKIIO/maple-moon-client/lib/ms/Constants",
     "KKKIIO/maple-moon-client/lib/ms/KeyType",
     "KKKIIO/maple-moon-client/lib/ms/string_format",
-    "KKKIIO/maple-moon-client/lib/ms/quadtree"
+    "KKKIIO/maple-moon-client/lib/ms/quadtree",
+    "KKKIIO/maple-moon-client/lib/ms/Layer",
+    "KKKIIO/maple-moon-client/lib/ms/Stance"
   ],
   "link": {
     "js": {

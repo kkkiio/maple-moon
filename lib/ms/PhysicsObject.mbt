@@ -5,7 +5,7 @@ struct MovingObject {
   mut vspeed : Double
 }
 
-pub fn MovingObject::new() -> MovingObject {
+pub fn MovingObject::default() -> MovingObject {
   { x: Linear::default(), y: Linear::default(), hspeed: 0.0, vspeed: 0.0 }
 }
 
@@ -140,7 +140,7 @@ pub enum PhysicsObjectType {
   SWIMMING
   FLYING
   FIXATED
-}derive(Eq,Compare,Debug,Show)
+} derive(Eq, Compare, Debug, Show)
 
 pub enum PhysicsObjectFlag {
   NO_GRAVITY
@@ -174,9 +174,9 @@ struct PhysicsObject {
   mut vacc : Double
 }
 
-pub fn PhysicsObject::new() -> PhysicsObject {
+pub fn PhysicsObject::default() -> PhysicsObject {
   {
-    moving_object: MovingObject::new(),
+    moving_object: MovingObject::default(),
     type_: PhysicsObjectType::NORMAL,
     flags: 0,
     fhid: 0,
@@ -210,4 +210,61 @@ pub fn clear_flag(self : PhysicsObject, f : PhysicsObjectFlag) -> Unit {
 
 pub fn clear_flags(self : PhysicsObject) -> Unit {
   self.flags = 0
+}
+
+pub fn move(self : PhysicsObject) -> Unit {
+  self.moving_object.move()
+}
+
+pub fn set_x(self : PhysicsObject, x : Double) -> Unit {
+  self.moving_object.set_x(x)
+}
+
+pub fn set_y(self : PhysicsObject, y : Double) -> Unit {
+  self.moving_object.set_y(y)
+}
+
+pub fn limitx(self : PhysicsObject, x : Double) -> Unit {
+  self.moving_object.limitx(x)
+}
+
+pub fn limity(self : PhysicsObject, y : Double) -> Unit {
+  self.moving_object.limity(y)
+}
+
+pub fn get_x(self : PhysicsObject) -> Int {
+  self.moving_object.get_x()
+}
+
+pub fn get_y(self : PhysicsObject) -> Int {
+  self.moving_object.get_y()
+}
+
+pub fn get_position(self : PhysicsObject) -> Point[Int] {
+  self.moving_object.get_position()
+}
+
+pub fn get_absolute_x(
+  self : PhysicsObject,
+  viewx : Double,
+  alpha : Double
+) -> Int {
+  self.moving_object.get_absolute_x(viewx, alpha)
+}
+
+pub fn get_absolute_y(
+  self : PhysicsObject,
+  viewy : Double,
+  alpha : Double
+) -> Int {
+  self.moving_object.get_absolute_y(viewy, alpha)
+}
+
+pub fn get_absolute(
+  self : PhysicsObject,
+  viewx : Double,
+  viewy : Double,
+  alpha : Double
+) -> Point[Int] {
+  self.moving_object.get_absolute(viewx, viewy, alpha)
 }

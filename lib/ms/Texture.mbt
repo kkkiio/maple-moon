@@ -133,19 +133,21 @@
 
 struct Texture {
   bitmap : Bitmap?
-  origin : Point[Int]
+  mut origin : Point[Int]
   dimensions : Point[Int]
 } derive(Default)
 
 fn Texture::from_resource(src : NxNode) -> Texture {
-  let bitmap = src["bid"].desc.as_number().map(fn(it) { it.to_int() }).map(
-    fn(bid) { src.loader.load_bitmap(bid) },
-  )
-  let dimensions = match bitmap {
-    Some(bmp) => { x: bmp.width(), y: bmp.height() }
-    None => { x: 0, y: 0 }
+  println("loading texture from resource " + src.loader.name() + " " + src.path)
+  match src["__b"].desc.as_number() {
+    Some(bid) =>
+      {
+        bitmap: Some(src.loader.load_bitmap(bid.to_int())),
+        origin: { x: 0, y: 0 },
+        dimensions: { x: src["__w"].get_int(), y: src["__h"].get_int() },
+      }
+    None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
   }
-  { bitmap, origin: { x: 0, y: 0 }, dimensions }
 }
 
 fn draw(self : Texture, args : DrawArgument) -> Unit {
@@ -163,4 +165,8 @@ fn draw(self : Texture, args : DrawArgument) -> Unit {
       GraphicsGL::get().draw_bitmap(bitmap, rect, color, args.angle)
     }
   }
+}
+
+pub fn shift(self : Texture, amount : Point[Int]) -> Unit {
+  self.origin -= amount
 }

@@ -63,16 +63,12 @@ fn Audio::new() -> Result[Audio, String] {
   // }
 
   let loader = sound_loader()
-  let uisrc = loader.load_desc("UI.img").as_moonjson().as_object().unwrap()
+  let uisrc = loader.load_res("UI.img")
   let samples = []
   let soundids = []
   let itemids = []
-  let add_sound_by_enum = fn(name : SoundName, v : @json.JsonValue?) -> Unit {
-    let desc = match v {
-      Some(v) => v
-      None => return
-    }
-    match sound_from_resource({ loader, desc }) {
+  let add_sound_by_enum = fn(name : SoundName, src : NxNode) -> Unit {
+    match sound_from_resource(src) {
       Some((id, sample_id)) => {
         samples.push((id, sample_id))
         soundids.push((name, id))
@@ -94,7 +90,7 @@ fn Audio::new() -> Result[Audio, String] {
   add_sound_by_enum(SoundName::DRAG_END, uisrc["DragEnd"])
   add_sound_by_enum(SoundName::WORLD_MAP_OPEN, uisrc["WorldmapOpen"])
   add_sound_by_enum(SoundName::WORLD_MAP_CLOSE, uisrc["WorldmapClose"])
-  let gamesrc = loader.load_desc("Game.img").as_moonjson().as_object().unwrap()
+  let gamesrc = loader.load_res("Game.img")
   add_sound_by_enum(SoundName::GAME_START, gamesrc["GameIn"])
   add_sound_by_enum(SoundName::JUMP, gamesrc["Jump"])
   add_sound_by_enum(SoundName::DROP, gamesrc["DropItem"])
@@ -102,22 +98,16 @@ fn Audio::new() -> Result[Audio, String] {
   add_sound_by_enum(SoundName::PORTAL, gamesrc["Portal"])
   add_sound_by_enum(SoundName::LEVEL_UP, gamesrc["LevelUp"])
   add_sound_by_enum(SoundName::TOMBSTONE, gamesrc["Tombstone"])
-  let itemsrc = loader.load_desc("Item.img").as_moonjson().as_object().unwrap()
-  let add_sound_by_name = fn(itemid : String, v : @json.JsonValue?) -> Unit {
-    let desc = match v {
-      Some(v) => v
-      None => return
-    }
-    match sound_from_resource({ loader, desc }) {
+  let add_sound_by_name = fn(itemid : String, src : NxNode) -> Unit {
+    match sound_from_resource(src) {
       Some((id, sample_id)) => {
         samples.push((id, sample_id))
         itemids.push((itemid, id))
       }
     }
   }
-  itemsrc.iter(
-    fn(name, node) { add_sound_by_name(name, node.as_object().unwrap()["Use"]) },
-  )
+  let itemsrc = loader.load_res("Item.img").get_object()
+  itemsrc.iter(fn(name, node) { add_sound_by_name(name, node["Use"]) })
 
   // let volume = Setting.SFXVolume.get().load()
 
@@ -155,7 +145,7 @@ pub fn play_impl(self : Audio, id : Int) -> Unit {
 
 pub fn sound_from_resource(src : NxNode) -> (Int, Int)? {
   let desc = src.desc
-  let aid = desc.as_object().bind(fn(obj) { obj["aid"] })
+  let aid = desc.as_object().bind(fn(obj) { obj["__a"] })
   match aid {
     Some(aid) => {
       let id = aid.as_number().unwrap().to_int()

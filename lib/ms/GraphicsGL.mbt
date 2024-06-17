@@ -104,6 +104,9 @@ pub fn draw_bitmap(
   if color.invisible() {
     return
   }
+  if bmp.loading() {
+    return
+  }
 
   // if (rect.overlaps(SCREEN).not()) {
   //     return;

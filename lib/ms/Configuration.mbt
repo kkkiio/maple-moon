@@ -69,6 +69,8 @@ fn Configuration::default() -> Configuration {
   }
 }
 
+let configuration : Configuration = Configuration::default()
+
 fn set_hwid(
   self : Configuration,
   hwid : String,
@@ -85,6 +87,228 @@ fn set_macs(self : Configuration, macs : String) -> Unit {
   self.macs = macs
 }
 
-let default_settings : @immut/hashmap.Map[String, String] = @immut/hashmap.from_array(
-  [],
+pub trait ConfigEntry {
+  name(Self) -> String
+  new(String, String) -> Self
+}
+
+struct StringEntry {
+  name : String
+  mut value : String
+}
+
+pub fn name(self : StringEntry) -> String {
+  self.name
+}
+
+pub fn StringEntry::new(name : String, value : String) -> StringEntry {
+  { name, value }
+}
+
+pub fn load(self : StringEntry) -> String {
+  self.value
+}
+
+pub fn save(self : StringEntry, value : String) -> Unit {
+  self.value = value
+}
+
+struct BoolEntry {
+  name : String
+  mut value : String
+}
+
+pub fn name(self : BoolEntry) -> String {
+  self.name
+}
+
+pub fn BoolEntry::new(name : String, value : String) -> BoolEntry {
+  { name, value }
+}
+
+pub fn load(self : BoolEntry) -> Bool {
+  self.value == "true"
+}
+
+pub fn save(self : BoolEntry, value : String) -> Unit {
+  self.value = value
+}
+
+struct IntEntry {
+  name : String
+  mut value : String
+}
+
+pub fn name(self : IntEntry) -> String {
+  self.name
+}
+
+pub fn IntEntry::new(name : String, value : String) -> IntEntry {
+  { name, value }
+}
+
+pub fn load(self : IntEntry) -> Int {
+  @strconv.parse_int(self.value).or(0)
+}
+
+pub fn save(self : IntEntry, value : String) -> Unit {
+  self.value = value
+}
+
+struct PointEntry {
+  name : String
+  mut value : String
+}
+
+pub fn name(self : PointEntry) -> String {
+  self.name
+}
+
+pub fn PointEntry::new(name : String, value : String) -> PointEntry {
+  { name, value }
+}
+
+pub fn load(self : PointEntry) -> Point[Int] {
+  // (\d+,\d+)
+  abort("TODO")
+}
+
+pub fn save(self : PointEntry, value : Point[Int]) -> Unit {
+  let x = value.x
+  let y = value.y
+  self.value = "(\(x),\(y))"
+}
+
+// IP Address which the client will connect to
+let configServerIP : StringEntry = StringEntry::new("ServerIP", "127.0.0.1")
+
+// Port which the client will connect to
+let configServerPort : StringEntry = StringEntry::new("ServerPort", "8484")
+
+// Whether to start in full screen mode
+let configFullscreen : BoolEntry = BoolEntry::new("Fullscreen", "false")
+
+// The width of the screen
+let configWidth : IntEntry = IntEntry::new("Width", "1366")
+
+// The height of the screen
+let configHeight : IntEntry = IntEntry::new("Height", "768")
+
+// Whether to use VSync
+let configVSync : BoolEntry = BoolEntry::new("VSync", "true")
+
+// The normal font which will be used
+let configFontPathNormal : StringEntry = StringEntry::new(
+  "FontPathNormal", "Roboto-Regular.ttf",
 )
+
+// The bold font which will be used
+let configFontPathBold : StringEntry = StringEntry::new(
+  "FontPathBold", "Roboto-Bold.ttf",
+)
+
+// Music Volume
+// Number from 0 to 100
+let configBGMVolume : IntEntry = IntEntry::new("BGMVolume", "50")
+
+// Sound Volume
+// Number from 0 to 100
+let configSFXVolume : IntEntry = IntEntry::new("SFXVolume", "50")
+
+// Whether to save the last used account name
+let configSaveLogin : BoolEntry = BoolEntry::new("SaveLogin", "false")
+
+// The last used account name
+let configDefaultAccount : StringEntry = StringEntry::new("Account", "")
+
+// The last used world
+let configDefaultWorld : IntEntry = IntEntry::new("World", "0")
+
+// The last used channel
+let configDefaultChannel : IntEntry = IntEntry::new("Channel", "0")
+
+// The last used region
+let configDefaultRegion : IntEntry = IntEntry::new("Region", "5")
+
+// The last used character
+let configDefaultCharacter : IntEntry = IntEntry::new("Character", "0")
+
+// Whether to show UIChatBar
+let configChatopen : BoolEntry = BoolEntry::new("Chatopen", "false")
+
+// The default position of UIStatsInfo
+// configLet posSTATS : PointEntry = PointEntry::new("PosSTATS", { x: 72, y: 72 })
+
+// The default position of UIEquipInventory
+// configLet posEQINV : PointEntry = PointEntry::new("PosEQINV", { x: 250, y: 160 })
+
+// The default position of UIItemInventory
+// configLet posINV : PointEntry = PointEntry::new("PosINV", { x: 300, y: 160 })
+
+// The default position of UISkillBook
+// configLet posSKILL : PointEntry = PointEntry::new("PosSKILL", { x: 96, y: 96 })
+
+// The default position of UIQuestLog
+// configLet posQUEST : PointEntry = PointEntry::new("PosQUEST", { x: 300, y: 160 })
+
+// The default position of UIWorldMap
+// configLet posMAP : PointEntry = PointEntry::new("PosMAP", { x: 100, y: 35 })
+
+// The default position of UIUserList
+// configLet posUSERLIST : PointEntry = PointEntry::new("PosUSERLIST", { x: 104, y: 104 })
+
+// The default position of UIChatBar
+// configLet posCHAT : PointEntry = PointEntry::new("PosCHAT", { x: 0, y: 572 })
+
+// The default position of UIMiniMap
+// configLet posMINIMAP : PointEntry = PointEntry::new("PosMINIMAP", { x: 0, y: 0 })
+
+// The default position of UIShop
+// configLet posSHOP : PointEntry = PointEntry::new("PosSHOP", { x: 146, y: 48 })
+
+// The default position of UINotice
+// configLet posNOTICE : PointEntry = PointEntry::new("PosNOTICE", { x: 400, y: 285 })
+
+// The default position of UIChat and UIRank
+// configLet posMAPLECHAT : PointEntry = PointEntry::new("PosMAPLECHAT", { x: 50, y: 46 })
+
+// The default position of UIChannel
+// configLet posCHANNEL : PointEntry = PointEntry::new("PosCHANNEL", { x: 215, y: 100 })
+
+// The default position of UIJoypad
+// configLet posJOYPAD : PointEntry = PointEntry::new("PosJOYPAD", { x: 312, y: 134 })
+
+// The default position of UIEvent
+// configLet posEVENT : PointEntry = PointEntry::new("PosEVENT", { x: 99, y: 100 })
+
+// The default position of UIKeyConfig
+// configLet posKEYCONFIG : PointEntry = PointEntry::new("PosKEYCONFIG", { x: 65, y: 50 })
+
+// The default position of UIOptionMenu
+// configLet posOPTIONMENU : PointEntry = PointEntry::new("PosUSERLIST", { x: 170, y: -1 })
+
+// The default position of UICharInfo
+// configLet posCHARINFO : PointEntry = PointEntry::new("PosCHARINFO", { x: 264, y: 264 })
+
+// The default type of UIMiniMap
+let configMiniMapType : IntEntry = IntEntry::new("MiniMapType", "0")
+
+// Whether to use a simple version of UIMiniMap
+let configMiniMapSimpleMode : BoolEntry = BoolEntry::new(
+  "MiniMapSimpleMode", "false",
+)
+
+// Whether to use default helpers for UIMiniMap
+let configMiniMapDefaultHelpers : BoolEntry = BoolEntry::new(
+  "MiniMapDefaultHelpers", "false",
+)
+
+// Can be used to access settings.
+type Setting
+
+// Access a setting.
+pub fn Setting::get[T : ConfigEntry](e : T) -> T {
+  // { raw: configuration.settings[e.0.0].unwrap() }
+  let name = e.name()
+  T::new(name, configuration.settings[name].unwrap())
+}

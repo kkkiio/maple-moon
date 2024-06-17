@@ -71,7 +71,7 @@ pub fn Background::from_resource(src : NxNode) -> Background {
   let cy_ = src["cy"].get_int()
   let rx_ = src["rx"].get_float()
   let ry_ = src["ry"].get_float()
-  let move_obj_ = MovingObject::new()
+  let move_obj_ = MovingObject::default()
   move_obj_.set_x(src["x"].get_float())
   move_obj_.set_y(src["y"].get_float())
   let t = Background::typebyid(src["type"].get_int())
@@ -212,19 +212,18 @@ pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
   let backgrounds_ = Array::new()
   let foregrounds_ = Array::new()
   let mut no = 0
-  loop src.desc.as_object().bind(fn(it) { it[no.to_string()] }) {
-    None => break
-    Some(back) => {
-      let res = { loader: src.loader, desc: back }
-      let front = res["front"].get_bool()
-      if front {
-        foregrounds_.push(Background::from_resource(res))
-      } else {
-        backgrounds_.push(Background::from_resource(res))
-      }
-      no += 1
-      continue back.as_object().bind(fn(it) { it[no.to_string()] })
+  while true {
+    let back = src[no.to_string()]
+    if back.is_null() {
+      break
     }
+    let front = back["front"].get_bool()
+    if front {
+      foregrounds_.push(Background::from_resource(back))
+    } else {
+      backgrounds_.push(Background::from_resource(back))
+    }
+    no += 1
   }
   let black = src["0"]["bS"].get_string().length() <= 0
   { backgrounds: backgrounds_, foregrounds: foregrounds_, black }

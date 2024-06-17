@@ -10,26 +10,18 @@ pub enum Code {
   CPURPLE
 } derive(Eq)
 
-pub let color_codes : FixedArray[Code] = [
-  CNONE,
-  CWHITE,
-  CBLACK,
-  CRED,
-  CGREEN,
-  CBLUE,
-  CYELLOW,
-  CTURQUOISE,
-  CPURPLE,
-]
-
 pub fn int_value(self : Code) -> Int {
-  color_codes.search(self).unwrap()
+  match self {
+    CNONE => 0x00000000
+    CWHITE => 0xFFFFFFFF
+    CBLACK => 0x000000FF
+    CRED => 0xFF0000FF
+    CGREEN => 0x00FF00FF
+    CBLUE => 0x0000FFFF
+    CYELLOW => 0xFFFF00FF
+    CTURQUOISE => 0x00FFFFFF
+  }
 }
-
-pub let code_values : FixedArray[Int] = [
-  0x00000000, 0xFFFFFFFF, 0x000000FF, 0xFF0000FF, 0x00FF00FF, 0x0000FFFF, 0xFFFF00FF,
-  0x00FFFFFF, 0xFF00FFFF,
-]
 
 pub enum Name {
   BLACK
@@ -174,7 +166,7 @@ pub fn new_array(comps : FixedArray[Double]) -> Color {
   { rgba: comps }
 }
 
-pub fn Color::new_code(code : Int) -> Color {
+pub fn Color::from_value(code : Int) -> Color {
   {
     rgba: [
       // (code >> 24 & 0xFF) as Double / 255.0,
@@ -189,8 +181,8 @@ pub fn Color::new_code(code : Int) -> Color {
   }
 }
 
-pub fn new_name(name : Code) -> Color {
-  Color::new_code(code_values[name.int_value()])
+pub fn Color::from_code(name : Code) -> Color {
+  from_value(name.int_value())
 }
 
 pub fn invisible(self : Color) -> Bool {

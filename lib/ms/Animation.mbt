@@ -10,14 +10,28 @@ struct Frame {
 }
 
 fn Frame::from_resource(src : NxNode) -> Frame {
+  let texture = Texture::from_resource(src)
+  let bounds = Rectangle::from_resource(src)
+  let head = Point::from_resource(src["head"])
   let delay = match src["delay"].get_int() {
     0 => 100
     it => it
   }
-  let head = Point::from_resource(src["head"])
-  let bounds = Rectangle::from_resource(src)
-  let texture = Texture::from_resource(src)
-  { texture, delay, head, bounds, opacities: (255, 255), scales: (100, 100) }
+  let opacities = match (src["a0"].desc, src["a1"].desc) {
+    (@json.JsonValue::Number(a0), @json.JsonValue::Number(a1)) =>
+      (a0.to_int(), a1.to_int())
+    (@json.JsonValue::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
+    (_, @json.JsonValue::Number(a1)) => (255 - a1.to_int(), a1.to_int())
+    _ => (255, 255)
+  }
+  let scales = match (src["z0"].desc, src["z1"].desc) {
+    (@json.JsonValue::Number(z0), @json.JsonValue::Number(z1)) =>
+      (z0.to_int(), z1.to_int())
+    (@json.JsonValue::Number(z0), _) => (z0.to_int(), 0)
+    (_, @json.JsonValue::Number(z1)) => (100, z1.to_int())
+    _ => (100, 100)
+  }
+  { texture, delay, head, bounds, opacities, scales }
 }
 
 fn Frame::default() -> Frame {

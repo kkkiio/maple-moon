@@ -284,7 +284,9 @@ const ATLASW = 8192;
 const ATLASH = 8192;
 function main() {
   const canvas = document.getElementById("canvas");
-  const gl = canvas.getContext("webgl2");
+  const gl = canvas.getContext("webgl2", {
+    // premultipliedAlpha: false,
+  });
   if (!gl) {
     throw new Error("WebGL not supported");
   }
@@ -301,6 +303,7 @@ function main() {
   const coordAttributeLocation = gl.getAttribLocation(program, "coord");
   const colorAttributeLocation = gl.getAttribLocation(program, "color");
   // look up uniform locations
+  const textureLocation = gl.getUniformLocation(program, "u_texture");
   const screensizeUniformLocation = gl.getUniformLocation(
     program,
     "screensize"
@@ -357,6 +360,11 @@ function main() {
   );
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.enable(gl.BLEND); // enable alpha blending
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // specify how alpha must blend: fragment color * alpha + clear color * (1 - alpha)
+  // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
   //   gl.bindVertexArray(null);
 
   const prepareResourcePromises = [];
@@ -484,13 +492,14 @@ function main() {
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         // Clear the canvas
-        gl.clearColor(0, 0, 0, 0);
+        gl.clearColor(1, 1, 1, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         // Tell it to use our program (pair of shaders)
         gl.useProgram(program);
         // Bind the attribute/buffer set we want.
         gl.bindVertexArray(vao);
 
+        gl.uniform1i(textureLocation, 0);
         // Pass in the canvas resolution so we can convert from
         // pixels to clipspace in the shader
         gl.uniform2f(

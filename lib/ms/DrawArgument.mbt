@@ -423,14 +423,8 @@ pub fn get_rectangle(
   origin : Point[Int],
   dimensions : Point[Int]
 ) -> Rectangle[Int] {
-  let mut w = self.stretch.x
-  if w == 0 {
-    w = dimensions.x
-  }
-  let mut h = self.stretch.y
-  if h == 0 {
-    h = dimensions.y
-  }
+  let w = if self.stretch.x == 0 { dimensions.x } else { self.stretch.x }
+  let h = if self.stretch.y == 0 { dimensions.y } else { self.stretch.y }
   let rlt = self.pos - self.center - origin
   let rl = rlt.x
   let rr = rlt.x + w

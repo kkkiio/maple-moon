@@ -332,9 +332,9 @@ fn Quad::new(
   color : Color,
   rotation : Double
 ) -> Quad {
-  if left >= right || top >= bottom {
-    abort("Invalid Quad: left >= right || top >= bottom")
-  }
+  // if left >= right || top >= bottom {
+  //   abort("Invalid Quad: left >= right || top >= bottom")
+  // }
   let vertices : FixedArray[Vertex] = [
     Vertex::new(left, top, offset.left, offset.top, color),
     Vertex::new(left, bottom, offset.left, offset.bottom, color),

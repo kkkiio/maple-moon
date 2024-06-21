@@ -9,18 +9,22 @@ pub enum BackgroundType {
   VMOVEB
 } derive(Eq, Compare, Debug)
 
-pub let all_background_types : @immut/sorted_map.Map[BackgroundType, Int] = @immut/sorted_map.from_array(
-  [
-    (BackgroundType::NORMAL, 0),
-    (BackgroundType::HTILED, 1),
-    (BackgroundType::VTILED, 2),
-    (BackgroundType::TILED, 3),
-    (BackgroundType::HMOVEA, 4),
-    (BackgroundType::VMOVEA, 5),
-    (BackgroundType::HMOVEB, 6),
-    (BackgroundType::VMOVEB, 7),
-  ],
-)
+pub fn int_value(self : BackgroundType) -> Int {
+  match self {
+    BackgroundType::NORMAL => 0
+    BackgroundType::HTILED => 1
+    BackgroundType::VTILED => 2
+    BackgroundType::TILED => 3
+    BackgroundType::HMOVEA => 4
+    BackgroundType::VMOVEA => 5
+    BackgroundType::HMOVEB => 6
+    BackgroundType::VMOVEB => 7
+  }
+}
+
+pub fn hash(self : BackgroundType) -> Int {
+  self.int_value()
+}
 
 struct Background {
   mut animation : Animation
@@ -44,6 +48,8 @@ let woffset : Int = vwidth / 2
 let hoffset : Int = vheight / 2
 
 pub fn Background::from_resource(src : NxNode) -> Background {
+  let srcpath = src.path
+  println("load background \(srcpath)")
   let loader = map_loader()
   let animated = src["ani"].get_bool()
   let animation = match src["bS"].get_string() {
@@ -61,7 +67,7 @@ pub fn Background::from_resource(src : NxNode) -> Background {
           src["no"].get_int().to_string(),
         ],
       )
-      println("load background \(animation_nodepath)")
+      // println("load background animation \(animation_nodepath)")
       Animation::from_resource(loader.load_res(animation_nodepath))
     }
   }
@@ -91,17 +97,21 @@ pub fn Background::from_resource(src : NxNode) -> Background {
   background
 }
 
+let int_background_type_map : @immut/sorted_map.Map[Int, BackgroundType] = @immut/sorted_map.from_array(
+  [
+    (0, BackgroundType::NORMAL),
+    (1, BackgroundType::HTILED),
+    (2, BackgroundType::VTILED),
+    (3, BackgroundType::TILED),
+    (4, BackgroundType::HMOVEA),
+    (5, BackgroundType::VMOVEA),
+    (6, BackgroundType::HMOVEB),
+    (7, BackgroundType::VMOVEB),
+  ],
+)
+
 pub fn Background::typebyid(id : Int) -> BackgroundType {
-  // if id >= BackgroundType::NORMAL.hash() && id <= BackgroundType::VMOVEB.hash() {
-  //   BackgroundType::from_int(id).unwrap()
-  // } else {
-  //   println("Unknown Background::Type id: [" + id.to_string() + "]")
-  //   BackgroundType::NORMAL
-  // }
-  match
-    all_background_types.as_iter().find_first(fn(it) { it.1 == id }).map(
-      fn(it) { it.0 },
-    ) {
+  match int_background_type_map[id] {
     Some(t) => t
     None => {
       println("Unknown Background::Type id: [" + id.to_string() + "]")

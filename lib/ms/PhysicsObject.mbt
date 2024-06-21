@@ -3,7 +3,7 @@ struct MovingObject {
   mut y : Linear
   mut hspeed : Double
   mut vspeed : Double
-}
+} derive(Debug, Show)
 
 pub fn MovingObject::default() -> MovingObject {
   { x: Linear::default(), y: Linear::default(), hspeed: 0.0, vspeed: 0.0 }
@@ -15,6 +15,9 @@ pub fn normalize(self : MovingObject) -> Unit {
 }
 
 pub fn move(self : MovingObject) -> Unit {
+  if self.vspeed != 0.0 {
+    println("MovingObject::move y \(self)")
+  }
   self.x.set(self.x.now + self.hspeed)
   self.y.set(self.y.now + self.vspeed)
 }
@@ -24,6 +27,7 @@ pub fn set_x(self : MovingObject, d : Double) -> Unit {
 }
 
 pub fn set_y(self : MovingObject, d : Double) -> Unit {
+  println("MovingObject::set_y d=\(d)")
   self.y.set(d)
 }
 
@@ -33,6 +37,7 @@ pub fn limitx(self : MovingObject, d : Double) -> Unit {
 }
 
 pub fn limity(self : MovingObject, d : Double) -> Unit {
+  println("MovingObject::limity d=\(d)")
   self.y.set(d)
   self.vspeed = 0.0
 }
@@ -267,4 +272,12 @@ pub fn get_absolute(
   alpha : Double
 ) -> Point[Int] {
   self.moving_object.get_absolute(viewx, viewy, alpha)
+}
+
+pub fn get_last_x(self : PhysicsObject) -> Int {
+  self.moving_object.get_last_x()
+}
+
+pub fn get_last_y(self : PhysicsObject) -> Int {
+  self.moving_object.get_last_y()
 }

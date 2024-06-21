@@ -91,18 +91,6 @@ pub fn get_float(self : NxNode) -> Double {
   self.desc.as_number().or(0.0)
 }
 
-pub fn get_array(self : NxNode) -> Array[NxNode] {
-  self.desc.as_array().map(
-    fn(it) {
-      it.mapi(
-        fn(i, it) {
-          { loader: self.loader, desc: it, path: self.path + "/\(i)" }
-        },
-      )
-    },
-  ).or(Array::new())
-}
-
 pub fn get_object(self : NxNode) -> Map[String, NxNode] {
   match self.desc.as_object() {
     Some(obj) => {

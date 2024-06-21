@@ -25,7 +25,7 @@ pub fn hash(self : HairLayer) -> Int {
 }
 
 struct Hair {
-  stances : Map[@Stance.Id, Map[HairLayer, Map[Int, Texture]]]
+  stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]]
   name : String
   color : String
 }
@@ -43,9 +43,9 @@ pub let layers_by_name : @immut/sorted_map.Map[String, HairLayer] = @immut/sorte
 
 pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
   let character_loader = character_loader()
-  let stances : Map[@Stance.Id, Map[HairLayer, Map[Int, Texture]]] = Map::new()
+  let stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
   let hairnode = character_loader.load_res("Hair/000\(hairid).img")
-  @Stance.names.iter(
+  stance_id_names.iter(
     fn(stancename, stance) {
       let stancenode = hairnode[stancename]
       if stancenode.is_null() {
@@ -57,23 +57,22 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
         if framenode.is_null() {
           break
         }
-        framenode.get_array().iter(
-          fn(layernode) {
-            let layername = layernode.get_string()
-            let layer = layers_by_name[layername]
-            if layer.is_empty() {
-              println("Unknown Hair::Layer name: [" + layername + "]")
-              return
+        framenode.get_object().iter(
+          fn(layername, layernode) {
+            let layer = match layers_by_name[layername] {
+              Some(v) => v
+              None => {
+                println("Unknown Hair::Layer name: [" + layername + "]")
+                return
+              }
             }
             let brow = Point::from_resource(layernode["map"]["brow"])
             let shift = drawinfo.get_hair_pos(stance, frame) - brow
-            stances[stance].unwrap()[layer.unwrap()].unwrap().set(
-              frame,
-              Texture::from_resource(layernode),
+            let tex = Texture::from_resource(layernode)
+            (stances |> set_defaultm(stance) |> set_defaultm(layer)).set(
+              frame, tex,
             )
-            stances[stance].unwrap()[layer.unwrap()].unwrap()[frame].unwrap().shift(
-              shift,
-            )
+            tex.shift(shift)
           },
         )
         frame += 1
@@ -92,12 +91,14 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
 
 pub fn draw(
   self : Hair,
-  stance : @Stance.Id,
+  stance : StanceId,
   layer : HairLayer,
   frame : Int,
   args : DrawArgument
 ) -> Unit {
-  let frameit = self.stances[stance].unwrap()[layer].unwrap().get(frame)
+  let frameit = self.stances[stance].bind(fn(it) { it[layer] }).bind(
+    fn(it) { it.get(frame) },
+  )
   match frameit {
     None => ()
     Some(frameit) => frameit.draw(args)

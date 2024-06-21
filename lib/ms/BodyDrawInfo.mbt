@@ -1,5 +1,5 @@
 struct BodyAction {
-  stance : @Stance.Id
+  stance : StanceId
   frame : Int
   delay : Int
   move : Point[Int]
@@ -7,7 +7,7 @@ struct BodyAction {
 }
 
 pub fn BodyAction::new(src : NxNode) -> BodyAction {
-  let stance = @Stance.by_string(src["action"].get_string())
+  let stance = StanceId::by_string(src["action"].get_string())
   let frame = src["frame"].get_int()
   let move = Point::from_resource(src["move"])
   let mut sgndelay = src["delay"].get_int()
@@ -24,7 +24,7 @@ pub fn BodyAction::new(src : NxNode) -> BodyAction {
 
 pub fn BodyAction::default() -> BodyAction {
   {
-    stance: @Stance.Id::default(),
+    stance: StanceId::default(),
     frame: 0,
     delay: 0,
     move: Point::default(),
@@ -48,7 +48,7 @@ pub fn get_move(self : BodyAction) -> Point[Int] {
   self.move
 }
 
-pub fn get_stance(self : BodyAction) -> @Stance.Id {
+pub fn get_stance(self : BodyAction) -> StanceId {
   self.stance
 }
 
@@ -65,26 +65,20 @@ struct BodyDrawInfo {
 }
 
 pub fn BodyDrawInfo::new() -> BodyDrawInfo {
-  {
-    body_positions: FixedArray::default(),
-    arm_positions: FixedArray::default(),
-    hand_positions: FixedArray::default(),
-    head_positions: FixedArray::default(),
-    hair_positions: FixedArray::default(),
-    face_positions: FixedArray::default(),
-    stance_delays: FixedArray::default(),
-    body_actions: Map::new(),
-    attack_delays: Map::new(),
-  }
-}
-
-pub fn initialize(self : BodyDrawInfo) -> Unit {
+  let body_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let arm_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let hand_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let head_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let hair_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let face_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let stance_delays = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let body_actions = Map::new()
+  let attack_delays = Map::new()
   let character_loader = character_loader()
   let bodynode = character_loader.load_res("00002000.img")
   let headnode = character_loader.load_res("00012000.img")
-  bodynode.get_array().iter(
-    fn(stancenode) {
-      let ststr = stancenode.get_string()
+  bodynode.get_object().iter(
+    fn(ststr, stancenode) {
       let mut attackdelay : Int = 0
       let mut frame : Int = 0
       while stancenode[frame.to_string()].desc != @json.JsonValue::Null {
@@ -92,29 +86,42 @@ pub fn initialize(self : BodyDrawInfo) -> Unit {
         let isaction = framenode["action"].get_string() != ""
         if isaction {
           let action = BodyAction::new(framenode)
-          self.body_actions[ststr].unwrap().set(frame, action)
+          (match body_actions[ststr] {
+            Some(v) => v
+            None => {
+              let v = Map::new()
+              body_actions.set(ststr, v)
+              v
+            }
+          }).set(frame, action)
           if action.is_attack_frame() {
-            self.attack_delays[ststr].unwrap().push(attackdelay)
+            (match attack_delays[ststr] {
+              Some(v) => v
+              None => {
+                let v = Array::new()
+                attack_delays.set(ststr, v)
+                v
+              }
+            }).push(attackdelay)
           }
           attackdelay += action.get_delay()
         } else {
-          let stance = @Stance.by_string(ststr)
+          let stance = StanceId::by_string(ststr)
           let mut delay = framenode["delay"].get_int()
           if delay <= 0 {
             delay = 100
           }
-          self.stance_delays[stance.int_value()].set(frame, delay)
+          stance_delays[stance.int_value()].set(frame, delay)
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
-          framenode.get_array().iter(
-            fn(partnode) {
-              let part = partnode.get_string()
+          framenode.get_object().iter(
+            fn(part, partnode) {
               if part != "delay" && part != "face" {
                 let zstr = partnode["z"].get_string()
                 let z = Body::layer_by_name(zstr)
-                partnode["map"].get_array().iter(
-                  fn(mapnode) {
-                    bodyshiftmap[z].unwrap().set(
-                      mapnode.get_string(),
+                partnode["map"].get_object().iter(
+                  fn(mapnodename, mapnode) {
+                    set_defaultm(bodyshiftmap, z).set(
+                      mapnodename,
                       Point::from_resource(mapnode),
                     )
                   },
@@ -122,57 +129,109 @@ pub fn initialize(self : BodyDrawInfo) -> Unit {
               }
             },
           )
-          headnode[ststr][frame.to_string()]["head"]["map"].get_array().iter(
-            fn(mapnode) {
-              bodyshiftmap[BodyLayer::HEAD].unwrap().set(
-                mapnode.get_string(),
+          headnode[ststr][frame.to_string()]["head"]["map"].get_object().iter(
+            fn(mapnodename, mapnode) {
+              set_defaultm(bodyshiftmap, BodyLayer::HEAD).set(
+                mapnodename,
                 Point::from_resource(mapnode),
               )
             },
           )
-          self.body_positions[stance.int_value()].set(
+          body_positions[stance.int_value()].set(
             frame,
-            bodyshiftmap[BodyLayer::BODY].unwrap()["navel"].unwrap(),
+            bodyshiftmap[BodyLayer::BODY].bind(fn(it) { it["navel"] }).or(
+              Point::default(),
+            ),
           )
-          self.arm_positions[stance.int_value()].set(
+          arm_positions[stance.int_value()].set(
             frame,
             if bodyshiftmap.contains(BodyLayer::ARM) {
-              bodyshiftmap[BodyLayer::ARM].unwrap()["hand"].unwrap() - bodyshiftmap[BodyLayer::ARM].unwrap()["navel"].unwrap() +
-              bodyshiftmap[BodyLayer::BODY].unwrap()["navel"].unwrap()
+              bodyshiftmap[BodyLayer::ARM].bind(fn(it) { it["hand"] }).or(
+                Point::default(),
+              ) - bodyshiftmap[BodyLayer::ARM].bind(fn(it) { it["navel"] }).or(
+                Point::default(),
+              ) + bodyshiftmap[BodyLayer::BODY].bind(fn(it) { it["navel"] }).or(
+                Point::default(),
+              )
             } else {
-              bodyshiftmap[BodyLayer::ARM_OVER_HAIR].unwrap()["hand"].unwrap() -
-              bodyshiftmap[BodyLayer::ARM_OVER_HAIR].unwrap()["navel"].unwrap() +
-              bodyshiftmap[BodyLayer::BODY].unwrap()["navel"].unwrap()
+              bodyshiftmap[BodyLayer::ARM_OVER_HAIR].bind(fn(it) { it["hand"] }).or(
+                Point::default(),
+              ) - bodyshiftmap[BodyLayer::ARM_OVER_HAIR].bind(
+                fn(it) { it["navel"] },
+              ).or(Point::default()) + bodyshiftmap[BodyLayer::BODY].bind(
+                fn(it) { it["navel"] },
+              ).or(Point::default())
             },
           )
-          self.hand_positions[stance.int_value()].set(
+          hand_positions[stance.int_value()].set(
             frame,
-            bodyshiftmap[BodyLayer::HAND_BELOW_WEAPON].unwrap()["handMove"].unwrap(),
+            bodyshiftmap[BodyLayer::HAND_BELOW_WEAPON].bind(
+              fn(it) { it["handMove"] },
+            ).or(Point::default()),
           )
-          self.head_positions[stance.int_value()].set(
+          head_positions[stance.int_value()].set(
             frame,
-            bodyshiftmap[BodyLayer::BODY].unwrap()["neck"].unwrap() - bodyshiftmap[BodyLayer::HEAD].unwrap()["neck"].unwrap(),
+            bodyshiftmap[BodyLayer::BODY].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ) - bodyshiftmap[BodyLayer::HEAD].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ),
           )
-          self.face_positions[stance.int_value()].set(
+          face_positions[stance.int_value()].set(
             frame,
-            bodyshiftmap[BodyLayer::BODY].unwrap()["neck"].unwrap() - bodyshiftmap[BodyLayer::HEAD].unwrap()["neck"].unwrap() +
-            bodyshiftmap[BodyLayer::HEAD].unwrap()["brow"].unwrap(),
+            bodyshiftmap[BodyLayer::BODY].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ) - bodyshiftmap[BodyLayer::HEAD].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ) + bodyshiftmap[BodyLayer::HEAD].bind(fn(it) { it["brow"] }).or(
+              Point::default(),
+            ),
           )
-          self.hair_positions[stance.int_value()].set(
+          hair_positions[stance.int_value()].set(
             frame,
-            bodyshiftmap[BodyLayer::HEAD].unwrap()["brow"].unwrap() - bodyshiftmap[BodyLayer::HEAD].unwrap()["neck"].unwrap() +
-            bodyshiftmap[BodyLayer::BODY].unwrap()["neck"].unwrap(),
+            bodyshiftmap[BodyLayer::HEAD].bind(fn(it) { it["brow"] }).or(
+              Point::default(),
+            ) - bodyshiftmap[BodyLayer::HEAD].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ) + bodyshiftmap[BodyLayer::BODY].bind(fn(it) { it["neck"] }).or(
+              Point::default(),
+            ),
           )
         }
         frame += 1
       }
     },
   )
+  {
+    body_positions,
+    arm_positions,
+    hand_positions,
+    head_positions,
+    face_positions,
+    hair_positions,
+    stance_delays,
+    body_actions,
+    attack_delays,
+  }
+}
+
+fn set_defaultm[K : Hash + Eq, K1, V](
+  m : Map[K, Map[K1, V]],
+  k : K
+) -> Map[K1, V] {
+  match m[k] {
+    Some(v) => v
+    None => {
+      let v = Map::new()
+      m.set(k, v)
+      v
+    }
+  }
 }
 
 pub fn get_body_position(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.body_positions[stance.int_value()].get(frame).or(Point::default())
@@ -180,7 +239,7 @@ pub fn get_body_position(
 
 pub fn get_arm_position(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.arm_positions[stance.int_value()].get(frame).or(Point::default())
@@ -188,7 +247,7 @@ pub fn get_arm_position(
 
 pub fn get_hand_position(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.hand_positions[stance.int_value()].get(frame).or(Point::default())
@@ -196,7 +255,7 @@ pub fn get_hand_position(
 
 pub fn get_head_position(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.head_positions[stance.int_value()].get(frame).or(Point::default())
@@ -204,7 +263,7 @@ pub fn get_head_position(
 
 pub fn get_hair_pos(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.hair_positions[stance.int_value()].get(frame).or(Point::default())
@@ -212,13 +271,13 @@ pub fn get_hair_pos(
 
 pub fn get_face_pos(
   self : BodyDrawInfo,
-  stance : @Stance.Id,
+  stance : StanceId,
   frame : Int
 ) -> Point[Int] {
   self.face_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
-pub fn next_frame(self : BodyDrawInfo, stance : @Stance.Id, frame : Int) -> Int {
+pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
   if self.stance_delays[stance.int_value()].contains(frame + 1) {
     frame + 1
   } else {
@@ -226,12 +285,12 @@ pub fn next_frame(self : BodyDrawInfo, stance : @Stance.Id, frame : Int) -> Int 
   }
 }
 
-pub fn get_delay(self : BodyDrawInfo, stance : @Stance.Id, frame : Int) -> Int {
+pub fn get_delay(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
   self.stance_delays[stance.int_value()].get(frame).or(100)
 }
 
 pub fn get_attack_delay(self : BodyDrawInfo, action : String, no : Int) -> Int {
-  self.attack_delays[action].unwrap().get(no).or(0)
+  self.attack_delays[action].bind(fn(it) { it.get(no) }).or(0)
 }
 
 pub fn next_action_frame(
@@ -239,10 +298,9 @@ pub fn next_action_frame(
   action : String,
   frame : Int
 ) -> Int {
-  if self.body_actions[action].unwrap().contains(frame + 1) {
-    frame + 1
-  } else {
-    0
+  match self.body_actions[action].bind(fn(it) { it[frame + 1] }) {
+    Some(_) => frame + 1
+    None => 0
   }
 }
 
@@ -251,5 +309,5 @@ pub fn get_action(
   action : String,
   frame : Int
 ) -> BodyAction? {
-  self.body_actions[action].unwrap().get(frame)
+  self.body_actions[action].bind(fn(it) { it.get(frame) })
 }

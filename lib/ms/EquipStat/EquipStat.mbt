@@ -17,6 +17,30 @@ pub enum Id {
   JUMP
 } derive(Eq)
 
+pub fn int_value(self : Id) -> Int {
+  match self {
+    STR => 0
+    DEX => 1
+    INT => 2
+    LUK => 3
+    HP => 4
+    MP => 5
+    WATK => 6
+    MAGIC => 7
+    WDEF => 8
+    MDEF => 9
+    ACC => 10
+    AVOID => 11
+    HANDS => 12
+    SPEED => 13
+    JUMP => 14
+  }
+}
+
+pub fn hash(self : Id) -> Int {
+  self.int_value()
+}
+
 pub let values : FixedArray[Id] = [
   STR,
   DEX,
@@ -41,10 +65,6 @@ fn by_id(id : Int) -> Id {
 
 fn value_of(value : Id) -> Int {
   value.int_value()
-}
-
-pub fn int_value(self : Id) -> Int {
-  values.search(self).unwrap()
 }
 
 fn to_string(self : Id) -> String {

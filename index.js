@@ -394,6 +394,9 @@ function main() {
     characterLoader.loadNxJson("nx/files/raw/Character.nx/nx.json")
   );
 
+  const characterBmpLoader = new DirectBmpLoader(1, "nx/files/raw/Character.nx/bitmaps");
+  characterLoader.bmpLoader = characterBmpLoader;
+
   const stringLoader = new ResourceLoader("String.nx");
   prepareResourcePromises.push(
     stringLoader.loadNxJson("nx/files/raw/String.nx/nx.json")
@@ -405,74 +408,23 @@ function main() {
   let game_win = null;
   let game_lose = null;
   let game_update = null;
-  let keydown_up = null;
-  let keydown_down = null;
-  let keydown_left = null;
-  let keydown_right = null;
-  let keydown_B = null;
-  let keyup_up = null;
-  let keyup_down = null;
-  let keyup_left = null;
-  let keyup_right = null;
+  let onkeyup = null;
+  let onkeydown = null;
   let onmousemove = null;
   let onmousedown = null;
   let onmouseup = null;
 
-  // window.addEventListener("keydown", (e) => {
-  //   if (halt && e.keyCode === 32) {
-  //     halt = false;
-  //     start();
-  //     return;
-  //   }
+  canvas.addEventListener("keydown", (e) => {
+    if (onkeydown) {
+      onkeydown(e.code);
+    }
+  });
 
-  //   if (!requestAnimationFrameId) return;
-  //   switch (e.keyCode) {
-  //     case 37:
-  //     case 65:
-  //       keydown_left();
-  //       break;
-  //     case 39:
-  //     case 68:
-  //       keydown_right();
-  //       break;
-  //     case 32:
-  //     case 38:
-  //     case 87:
-  //       keydown_up();
-  //       break;
-  //     case 40:
-  //     case 83:
-  //       keydown_down();
-  //       break;
-  //     case 66:
-  //       keydown_B();
-  //   }
-  // });
-
-  // window.addEventListener("keyup", (e) => {
-  //   if (!requestAnimationFrameId) return;
-  //   switch (e.keyCode) {
-  //     case 37:
-  //     case 65:
-  //       keyup_left();
-  //       break;
-  //     case 39:
-  //     case 68:
-  //       keyup_right();
-  //       break;
-  //     case 32:
-  //     case 38:
-  //     case 87:
-  //       keyup_up();
-  //       break;
-  //     case 40:
-  //     case 83:
-  //       keyup_down();
-  //       break;
-  //     case 66:
-  //       keyup_B();
-  //   }
-  // });
+  canvas.addEventListener("keyup", (e) => {
+    if (onkeyup) {
+      onkeyup(e.code);
+    }
+  });
   canvas.onmousemove = (evt) => {
     const x = evt.offsetX;
     const y = evt.offsetY;
@@ -602,7 +554,10 @@ function main() {
       onmousemove = m.onmousemove;
       onmousedown = m.onmousedown;
       onmouseup = m.onmouseup;
+      onkeydown = m.onkeydown;
+      onkeyup = m.onkeyup;
       globalThis.transit_to = m.transit_to;
+      globalThis.load_player = m.load_player;
       m.game_start();
       requestAnimationFrameId = requestAnimationFrame(update);
     });

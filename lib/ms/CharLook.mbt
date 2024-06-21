@@ -1,5 +1,5 @@
 struct CharLook {
-  mut stance : Nominal[@Stance.Id]
+  mut stance : Nominal[StanceId]
   mut st_frame : Nominal[Int]
   mut st_elapsed : Int
   mut expression : Nominal[ExpressionId]
@@ -11,24 +11,37 @@ struct CharLook {
   mut body : Body?
   mut hair : Hair?
   mut face : Face?
+  mut action : BodyAction?
 }
-// mut action : BodyAction?
 // mut equips : CharEquips
 // mut randomizer : Randomizer
 // mut alerted : TimedBool
 
 let draw_info : BodyDrawInfo = BodyDrawInfo::new()
 
-let hairstyles : Map[Int, Hair] = Map::new()
+let hair_styles : Map[Int, Hair] = Map::new()
 
 let face_types : Map[Int, Face] = Map::new()
 
-let bodytypes : Map[Int, Body] = Map::new()
+let body_types : Map[Int, Body] = Map::new()
 
-pub fn CharLook::new(
-// entry : LookEntry
-) -> CharLook {
-  {
+pub fn CharLook::new(entry : LookEntry) -> CharLook {
+  let l = CharLook::default()
+  l.set_body(entry.skin)
+  l.set_hair(entry.hairid)
+  l.set_face(entry.faceid)
+  // self.add_equip(Clothing::TOP_DEFAULT_ID)
+  // self.add_equip(Clothing::BOTTOM_DEFAULT_ID)
+
+  // entry.equips.iter().for_each(fn(equip) {
+  //     self.add_equip(equip.second);
+  // })
+  l
+}
+
+pub fn CharLook::default() -> CharLook {
+  // LookEntry::default()
+  let l = {
     stance: Nominal::default(),
     st_frame: Nominal::default(),
     st_elapsed: 0,
@@ -36,7 +49,7 @@ pub fn CharLook::new(
     exp_frame: Nominal::default(),
     exp_elapsed: 0,
     flip: false,
-    // action: None,
+    action: None,
     actionstr: "",
     actframe: 0,
     body: None,
@@ -46,11 +59,8 @@ pub fn CharLook::new(
     // randomizer: Randomizer::new(),
     // alerted: TimedBool::new(),
   }
-}
-
-pub fn CharLook::default() -> CharLook {
-  // LookEntry::default()
-  CharLook::new()
+  l.reset()
+  l
 }
 
 pub fn reset(self : CharLook) -> Unit {
@@ -72,20 +82,6 @@ pub fn reset(self : CharLook) -> Unit {
   // self.alerted = TimedBool::new()
 }
 
-// pub fn draw(self : CharLook, args : DrawArgument, alpha : Double) -> Unit {
-//   // Implementation of draw method
-// }
-
-// pub fn draw(
-//   self : CharLook,
-//   pos : Point[Int],
-//   flip : Bool,
-//   stance : @Stance.Id,
-//   expression : ExpressionId
-// ) -> Unit {
-//   // Implementation of draw method
-// }
-
 fn updatetwohanded(self : CharLook) -> Unit {
   // Implementation of updatetwohanded method
 }
@@ -93,7 +89,7 @@ fn updatetwohanded(self : CharLook) -> Unit {
 fn draw_impl(
   self : CharLook,
   args : DrawArgument,
-  interstance : @Stance.Id,
+  interstance : StanceId,
   interexpression : ExpressionId,
   interframe : Int,
   interexpframe : Int
@@ -116,14 +112,14 @@ fn draw_impl(
       false,
       Point::default(),
     )
-  if interstance == @Stance.Id::DEAD {
-    let faceshift = draw_info.get_face_pos(@Stance.Id::STAND1, 1)
+  if interstance == StanceId::DEAD {
+    let faceshift = draw_info.get_face_pos(StanceId::STAND1, 1)
     let faceargs = args + DrawArgument::new9(faceshift, false, Point::default())
     hair.draw(interstance, HairLayer::BELOW_BODY, interframe, args)
     // self.equips.draw(EquipSlotId::HAT, interstance, ClothingLayer::CAP_BELOW_BODY, interframe, args)
     body.draw(interstance, BodyLayer::BODY, interframe, args)
     hair.draw(interstance, HairLayer::DEFAULT, interframe, args)
-    body.draw(@Stance.Id::STAND1, BodyLayer::HEAD, 1, args)
+    body.draw(StanceId::STAND1, BodyLayer::HEAD, 1, args)
     hair.draw(interstance, HairLayer::SHADE, interframe, args)
     hair.draw(interstance, HairLayer::DEFAULT, interframe, args)
     body.draw(interstance, BodyLayer::HEAD, interframe, args)
@@ -133,21 +129,21 @@ fn draw_impl(
     // match self.equips.getcaptype() {
     //   CharEquipsCapType::NONE => hair.draw(interstance, HairLayer::OVER_HEAD, interframe, args)
     //   CharEquipsCapType::HEADBAND => {
-    //     self.equips.draw(EquipSlotId::HAT, @Stance.Id::STAND1, ClothingLayer::CAP, 1, args)
-    //     hair.draw(@Stance.Id::STAND1, HairLayer::DEFAULT, 1, args)
-    //     hair.draw(@Stance.Id::STAND1, HairLayer::OVER_HEAD, 1, args)
-    //     self.equips.draw(EquipSlotId::HAT, @Stance.Id::STAND1, ClothingLayer::CAP_OVER_HAIR, 1, args)
+    //     self.equips.draw(EquipSlotId::HAT, StanceId::STAND1, ClothingLayer::CAP, 1, args)
+    //     hair.draw(StanceId::STAND1, HairLayer::DEFAULT, 1, args)
+    //     hair.draw(StanceId::STAND1, HairLayer::OVER_HEAD, 1, args)
+    //     self.equips.draw(EquipSlotId::HAT, StanceId::STAND1, ClothingLayer::CAP_OVER_HAIR, 1, args)
     //   }
     //   CharEquipsCapType::HALF_COVER => {
-    //     hair.draw(@Stance.Id::STAND1, HairLayer::DEFAULT, 1, args)
-    //     self.equips.draw(EquipSlotId::HAT, @Stance.Id::STAND1, ClothingLayer::CAP, 1, args)
+    //     hair.draw(StanceId::STAND1, HairLayer::DEFAULT, 1, args)
+    //     self.equips.draw(EquipSlotId::HAT, StanceId::STAND1, ClothingLayer::CAP, 1, args)
     //   }
-    //   CharEquipsCapType::FULL_COVER => self.equips.draw(EquipSlotId::HAT, @Stance.Id::STAND1, ClothingLayer::CAP, 1, args)
+    //   CharEquipsCapType::FULL_COVER => self.equips.draw(EquipSlotId::HAT, StanceId::STAND1, ClothingLayer::CAP, 1, args)
     // }
 
     return
   }
-  if @Stance.is_climbing(interstance) {
+  if StanceId::is_climbing(interstance) {
     body.draw(interstance, BodyLayer::BODY, interframe, args)
     // self.equips.draw(EquipSlotId::GLOVES, interstance, ClothingLayer::GLOVE, interframe, args)
     // self.equips.draw(EquipSlotId::SHOES, interstance, ClothingLayer::SHOES, interframe, args)
@@ -278,11 +274,155 @@ pub fn draw(self : CharLook, args : DrawArgument, alpha : Double) -> Unit {
   )
 }
 
-pub fn is_twohanded(self : CharLook, st : @Stance.Id) -> Bool {
+pub fn is_twohanded(self : CharLook, st : StanceId) -> Bool {
   match st {
-    @Stance.Id::STAND1 | @Stance.Id::WALK1 => false
-    @Stance.Id::STAND2 | @Stance.Id::WALK2 => true
+    StanceId::STAND1 | StanceId::WALK1 => false
+    StanceId::STAND2 | StanceId::WALK2 => true
     // _ => self.equips.is_twohanded()
     _ => false
   }
+}
+
+pub fn set_direction(self : CharLook, f : Bool) -> Unit {
+  self.flip = f
+}
+
+pub fn set_stance(self : CharLook, st : StanceId) -> Unit {
+  if self.action.is_empty().not() || st == StanceId::NONE {
+    return
+  }
+  // let adjstance = self.equips.adjust_stance(st)
+  let adjstance = st
+  if self.stance.now != adjstance {
+    self.stance.set(adjstance)
+    self.st_frame.set(0)
+    self.st_elapsed = 0
+  }
+}
+
+fn set_body(self : CharLook, skin_id : Int) -> Unit {
+  self.body = body_types[skin_id].or_else(
+      fn() {
+        let body = Body::new(skin_id, draw_info)
+        body_types[skin_id] = body
+        body
+      },
+    )
+    |> @option.some
+}
+
+fn set_hair(self : CharLook, hair_id : Int) -> Unit {
+  self.hair = hair_styles[hair_id].or_else(
+      fn() {
+        let hair = Hair::new(hair_id, draw_info)
+        hair_styles[hair_id] = hair
+        hair
+      },
+    )
+    |> @option.some
+}
+
+fn set_face(self : CharLook, face_id : Int) -> Unit {
+  self.face = face_types[face_id].or_else(
+      fn() {
+        let face = Face::new(face_id)
+        face_types[face_id] = face
+        face
+      },
+    )
+    |> @option.some
+}
+
+pub fn update(self : CharLook, timestep : Int) -> Bool {
+  if timestep == 0 {
+    self.stance.normalize()
+    self.st_frame.normalize()
+    self.expression.normalize()
+    self.exp_frame.normalize()
+    return false
+  }
+  // self.alerted.update()
+  let mut aniend : Bool = false
+  match self.action {
+    None => {
+      let delay : Int = self.get_delay(self.stance.now, self.st_frame.now)
+      let delta : Int = delay - self.st_elapsed
+      if timestep >= delta {
+        self.st_elapsed = timestep - delta
+        let nextframe : Int = self.getnextframe(
+          self.stance.now,
+          self.st_frame.now,
+        )
+        let threshold : Double = delta.to_double() / timestep.to_double()
+        self.st_frame.next(nextframe, threshold)
+        if self.st_frame.now == 0 {
+          aniend = true
+        }
+      } else {
+        self.stance.normalize()
+        self.st_frame.normalize()
+        self.st_elapsed += timestep
+      }
+    }
+    Some(action) => {
+      let delay : Int = action.get_delay()
+      let delta : Int = delay - self.st_elapsed
+      if timestep >= delta {
+        self.st_elapsed = timestep - delta
+        self.actframe = draw_info.next_action_frame(
+          self.actionstr,
+          self.actframe,
+        )
+        if self.actframe > 0 {
+          self.action = draw_info.get_action(self.actionstr, self.actframe)
+          let threshold : Double = delta.to_double() / timestep.to_double()
+          self.stance.next(action.get_stance(), threshold)
+          self.st_frame.next(action.get_frame(), threshold)
+        } else {
+          aniend = true
+          self.action = None
+          self.actionstr = ""
+          self.set_stance(StanceId::STAND1)
+        }
+      } else {
+        self.stance.normalize()
+        self.st_frame.normalize()
+        self.st_elapsed += timestep
+      }
+    }
+  }
+  let expdelay : Int = self.face.unwrap().get_delay(
+    self.expression.now,
+    self.exp_frame.now,
+  )
+  let expdelta : Int = expdelay - self.exp_elapsed
+  if timestep >= expdelta {
+    self.exp_elapsed = timestep - expdelta
+    let nextexpframe : Int = self.face.unwrap().nextframe(
+      self.expression.now,
+      self.exp_frame.now,
+    )
+    let fcthreshold : Double = expdelta.to_double() / timestep.to_double()
+    self.exp_frame.next(nextexpframe, fcthreshold)
+    if self.exp_frame.now == 0 {
+      if self.expression.now == ExpressionId::DEFAULT {
+        self.expression.next(ExpressionId::BLINK, fcthreshold)
+      } else {
+        self.expression.next(ExpressionId::DEFAULT, fcthreshold)
+      }
+    }
+  } else {
+    self.expression.normalize()
+    self.exp_frame.normalize()
+    self.exp_elapsed += timestep
+  }
+  aniend
+}
+
+pub fn get_delay(self : CharLook, st : StanceId, fr : Int) -> Int {
+  draw_info.get_delay(st, fr)
+}
+
+pub fn getnextframe(self : CharLook, st : StanceId, fr : Int) -> Int {
+  draw_info.next_frame(st, fr)
 }

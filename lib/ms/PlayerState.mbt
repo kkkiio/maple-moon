@@ -1,0 +1,356 @@
+trait PlayerState {
+  initialize(Self, Player) -> Unit
+  send_action(Self, Player, @KeyAction.Id, Bool) -> Unit
+  update(Self, Player) -> Unit
+  update_state(Self, Player) -> Unit
+}
+
+fn play_jumpsound() -> Unit {
+  Sound::new(SoundName::JUMP).play()
+}
+
+struct PlayerNullState {} derive(Default)
+
+pub fn initialize(self : PlayerNullState, player : Player) -> Unit {
+
+}
+
+pub fn send_action(
+  self : PlayerNullState,
+  player : Player,
+  ka : @KeyAction.Id,
+  pressed : Bool
+) -> Unit {
+
+}
+
+pub fn update(self : PlayerNullState, player : Player) -> Unit {
+
+}
+
+pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
+  let state : CharState = if player.get_phobj().onground {
+    if player.is_key_down(@KeyAction.Id::LEFT) {
+      player.set_direction(false)
+      CharState::WALK
+    } else if player.is_key_down(@KeyAction.Id::RIGHT) {
+      player.set_direction(true)
+      CharState::WALK
+    } else if player.is_key_down(@KeyAction.Id::DOWN) {
+      CharState::PRONE
+    } else {
+      CharState::STAND
+    }
+  } else {
+    abort("TODO")
+    // let ladder = player.get_ladder()
+    // match ladder {
+    //      Some(l) =>if l.is_ladder()  { CharState::LADDER } else { CharState::ROPE }
+    //      None => CharState::FALL
+    // }
+  }
+  player.get_phobj().clear_flags()
+  player.set_state(state)
+}
+
+struct PlayerStandState {} derive(Default)
+
+pub fn initialize(self : PlayerStandState, player : Player) -> Unit {
+  player.get_phobj().type_ = PhysicsObjectType::NORMAL
+}
+
+pub fn send_action(
+  self : PlayerStandState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if player.is_attacking() {
+    return
+  }
+  if down {
+    match ka {
+      @KeyAction.Id::LEFT => {
+        player.set_direction(false)
+        player.set_state(CharState::WALK)
+      }
+      @KeyAction.Id::RIGHT => {
+        player.set_direction(true)
+        player.set_state(CharState::WALK)
+      }
+      @KeyAction.Id::JUMP => {
+        play_jumpsound()
+        player.get_phobj().vforce = -player.get_jumpforce()
+      }
+      @KeyAction.Id::DOWN => player.set_state(CharState::PRONE)
+      _ => ()
+    }
+  }
+}
+
+pub fn update(self : PlayerStandState, player : Player) -> Unit {
+  if player.get_phobj().enablejd.not() {
+    player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
+  }
+}
+
+pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
+  if player.get_phobj().onground.not() {
+    player.set_state(CharState::FALL)
+  }
+}
+
+struct PlayerWalkState {} derive(Default)
+
+pub fn initialize(self : PlayerWalkState, player : Player) -> Unit {
+  player.get_phobj().type_ = PhysicsObjectType::NORMAL
+}
+
+pub fn send_action(
+  self : PlayerWalkState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if player.is_attacking() {
+    return
+  }
+  if down {
+    match ka {
+      @KeyAction.Id::LEFT => player.set_direction(false)
+      @KeyAction.Id::RIGHT => player.set_direction(true)
+      @KeyAction.Id::JUMP => {
+        play_jumpsound()
+        player.get_phobj().vforce = -player.get_jumpforce()
+      }
+      @KeyAction.Id::DOWN => player.set_state(CharState::PRONE)
+      _ => ()
+    }
+  }
+}
+
+pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
+  player.is_key_down(@KeyAction.Id::LEFT) || player.is_key_down(
+    @KeyAction.Id::RIGHT,
+  )
+}
+
+pub fn update(self : PlayerWalkState, player : Player) -> Unit {
+  if player.is_attacking().not() && self.haswalkinput(player) {
+    let hforce = if player.getflip() {
+      player.get_walkforce()
+    } else {
+      -player.get_walkforce()
+    }
+    player.get_phobj().hforce += hforce
+  }
+  if player.get_phobj().enablejd.not() {
+    player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
+  }
+}
+
+pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
+  if player.get_phobj().onground {
+    if self.haswalkinput(player).not() || player.get_phobj().moving_object.hspeed ==
+    0.0 {
+      player.set_state(CharState::STAND)
+    }
+  } else {
+    player.set_state(CharState::FALL)
+  }
+}
+
+struct PlayerFallState {} derive(Default)
+
+pub fn initialize(self : PlayerFallState, player : Player) -> Unit {
+  player.get_phobj().type_ = PhysicsObjectType::NORMAL
+}
+
+pub fn send_action(
+  self : PlayerFallState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if down {
+    match ka {
+      @KeyAction.Id::LEFT => player.set_direction(false)
+      @KeyAction.Id::RIGHT => player.set_direction(true)
+      _ => ()
+    }
+  }
+}
+
+pub fn update(self : PlayerFallState, player : Player) -> Unit {
+  let hspeed = player.get_phobj().moving_object.hspeed
+  if player.is_key_down(@KeyAction.Id::LEFT) && hspeed > 0.0 {
+    player.get_phobj().moving_object.hspeed -= 0.025
+    if player.get_phobj().moving_object.hspeed < 0.0 {
+      player.get_phobj().moving_object.hspeed = 0.0
+    }
+  } else if player.is_key_down(@KeyAction.Id::RIGHT) && hspeed < 0.0 {
+    player.get_phobj().moving_object.hspeed += 0.025
+    if player.get_phobj().moving_object.hspeed > 0.0 {
+      player.get_phobj().moving_object.hspeed = 0.0
+    }
+  }
+}
+
+pub fn update_state(self : PlayerFallState, player : Player) -> Unit {
+  if player.get_phobj().onground {
+    if player.is_key_down(@KeyAction.Id::LEFT) {
+      player.set_direction(false)
+      player.set_state(CharState::WALK)
+    } else if player.is_key_down(@KeyAction.Id::RIGHT) {
+      player.set_direction(true)
+      player.set_state(CharState::WALK)
+    } else if player.is_key_down(@KeyAction.Id::DOWN) {
+      player.set_state(CharState::PRONE)
+    } else {
+      player.set_state(CharState::STAND)
+    }
+  } else if player.is_underwater() {
+    player.set_state(CharState::SWIM)
+  }
+}
+
+// The prone state (Lying down)
+struct PlayerProneState {} derive(Default)
+
+pub fn initialize(self : PlayerProneState, player : Player) -> Unit {
+
+}
+
+pub fn update_state(self : PlayerProneState, player : Player) -> Unit {
+
+}
+
+pub fn send_action(
+  self : PlayerProneState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if down {
+    match ka {
+      @KeyAction.Id::JUMP =>
+        if player.get_phobj().enablejd && player.is_key_down(
+          @KeyAction.Id::DOWN,
+        ) {
+          play_jumpsound()
+          player.get_phobj().moving_object.set_y(player.get_phobj().groundbelow)
+          player.set_state(CharState::FALL)
+        }
+      _ => ()
+    }
+  } else {
+    match ka {
+      @KeyAction.Id::DOWN => player.set_state(CharState::STAND)
+      _ => ()
+    }
+  }
+}
+
+pub fn update(self : PlayerProneState, player : Player) -> Unit {
+  if player.get_phobj().enablejd.not() {
+    player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
+  }
+}
+
+struct PlayerSitState {} derive(Default)
+
+pub fn initialize(self : PlayerSitState, player : Player) -> Unit {
+
+}
+
+pub fn update(self : PlayerSitState, player : Player) -> Unit {
+
+}
+
+pub fn update_state(self : PlayerSitState, player : Player) -> Unit {
+
+}
+
+pub fn send_action(
+  self : PlayerSitState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if down {
+    match ka {
+      @KeyAction.Id::LEFT => {
+        player.set_direction(false)
+        player.set_state(CharState::WALK)
+      }
+      @KeyAction.Id::RIGHT => {
+        player.set_direction(true)
+        player.set_state(CharState::WALK)
+      }
+      @KeyAction.Id::JUMP => {
+        play_jumpsound()
+        player.set_state(CharState::STAND)
+      }
+      @KeyAction.Id::UP => player.set_state(CharState::STAND)
+      _ => ()
+    }
+  }
+}
+
+struct PlayerFlyState {} derive(Default)
+
+pub fn initialize(self : PlayerFlyState, player : Player) -> Unit {
+  player.get_phobj().type_ = if player.is_underwater() {
+    PhysicsObjectType::SWIMMING
+  } else {
+    PhysicsObjectType::FLYING
+  }
+}
+
+pub fn send_action(
+  self : PlayerFlyState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if down {
+    match ka {
+      @KeyAction.Id::LEFT => player.set_direction(false)
+      @KeyAction.Id::RIGHT => player.set_direction(true)
+      _ => ()
+    }
+  }
+}
+
+pub fn update(self : PlayerFlyState, player : Player) -> Unit {
+  if player.is_attacking() {
+    return
+  }
+  if player.is_key_down(@KeyAction.Id::LEFT) {
+    player.get_phobj().hforce = -player.get_flyforce()
+  } else if player.is_key_down(@KeyAction.Id::RIGHT) {
+    player.get_phobj().hforce = player.get_flyforce()
+  }
+  if player.is_key_down(@KeyAction.Id::UP) {
+    player.get_phobj().vforce = -player.get_flyforce()
+  } else if player.is_key_down(@KeyAction.Id::DOWN) {
+    player.get_phobj().vforce = player.get_flyforce()
+  }
+}
+
+pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
+  if player.get_phobj().onground && player.is_underwater() {
+    let state = if player.is_key_down(@KeyAction.Id::LEFT) {
+      player.set_direction(false)
+      CharState::WALK
+    } else if player.is_key_down(@KeyAction.Id::RIGHT) {
+      player.set_direction(true)
+      CharState::WALK
+    } else if player.is_key_down(@KeyAction.Id::DOWN) {
+      CharState::PRONE
+    } else {
+      CharState::STAND
+    }
+    player.set_state(state)
+  }
+}

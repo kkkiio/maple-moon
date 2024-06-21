@@ -34,13 +34,14 @@ pub fn hash(self : CharState) -> Hash {
 
 // Base for characters, e.g. the player and other clients on the same map.
 struct CharBase {
+  sub : CharSubClass
   base : MapObjectBase
   look : CharLook
   // look_preview: CharLook
   // pets: Array[PetLook, 3]
   mut state : CharState
-  // mut attacking: Bool
-  // mut facing_right: Bool
+  mut attacking : Bool
+  mut facing_right : Bool
   // name_label: Text
   // chat_balloon: ChatBalloon
   // effects: EffectLayer
@@ -67,11 +68,10 @@ trait Char {
   // is_invincible(Self) -> Bool
   // get_level(Self) -> Int
   // get_skilllevel(Self, Int) -> Int
-  // get_integer_attackspeed(Self) -> Int
   // get_real_attackspeed(Self) -> Double
   // get_attackdelay(Self, Int) -> Int
   // set_direction(Self, Bool) -> Unit
-  // set_state(Self, CharState) -> Unit
+  set_state(Self, CharState) -> Unit
   // attack_by_action(Self, String) -> Unit
   // attack_by_stance(Self, StanceId) -> Unit
   // attack_by_bool(Self, Bool) -> Unit
@@ -89,7 +89,7 @@ trait Char {
   // set_expression(Self, Int) -> Unit
   // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
   // remove_pet(Self, Int, Bool) -> Unit
-  // getflip(Self) -> Bool
+  getflip(Self) -> Bool
   // get_name(Self) -> String
   // is_sitting(Self) -> Bool
   // is_climbing(Self) -> Bool
@@ -97,15 +97,31 @@ trait Char {
   // get_weapontype(Self) -> WeaponType
   // get_look(Self) -> CharLook
   // get_look_const(Self) -> CharLook
-  // get_phobj(Self) -> PhysicsObject
   // init() -> Unit
   // new_char(Int, CharLook, String) -> Char
   // update_with_speed(Self, Physics, Double) -> Bool
   // get_stancespeed(Self) -> Double
 }
 
-pub fn CharBase::new(oid : Int, look : CharLook, _name : String) -> CharBase {
-  { base: MapObjectBase::new(oid), look, state: CharState::STAND }
+pub trait CharSubClass {
+  // Return the character's base attacking speed.
+  get_integer_attackspeed(Self) -> Int
+}
+
+pub fn CharBase::new(
+  sub : CharSubClass,
+  oid : Int,
+  look : CharLook,
+  _name : String
+) -> CharBase {
+  {
+    sub,
+    base: MapObjectBase::new(oid),
+    look,
+    attacking: false,
+    facing_right: false,
+    state: CharState::STAND,
+  }
 }
 
 pub fn is_climbing(self : CharBase) -> Bool {
@@ -123,14 +139,12 @@ pub fn get_layer(self : CharBase) -> Int {
   }
 }
 
-// void Char::draw(double viewx, double viewy, float alpha) const {
 pub fn draw(
   self : CharBase,
   viewx : Double,
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  //     Point<int16_t> absp = phobj_.get_absolute(viewx, viewy, alpha);
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
 
   //     effects_.drawbelow(absp, alpha);
@@ -178,4 +192,80 @@ pub fn draw(
   //     for (const auto &number : damage_numbers_) {
   //         number.draw(viewx, viewy, alpha);
   //     }
+}
+
+pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
+  //     damage_numbers_.remove_if(
+  //         [](DamageNumber &number) { return number.update(); });
+
+  //     effects_.update();
+  //     recurring_effects_.update();
+  //     chat_balloon_.update();
+  //     invincible_.update();
+  //     iron_body_.update();
+
+  //     for (auto &pet : pets_) {
+  //         if (pet.get_itemid()) {
+  //             switch (state_) {
+  //                 case State::LADDER:
+  //                 case State::ROPE: pet.set_stance(PetLook::Stance::HANG); break;
+  //                 case State::SWIM: pet.set_stance(PetLook::Stance::FLY); break;
+  //                 default:
+  //                     if (pet.get_stance() == PetLook::Stance::HANG
+  //                         || pet.get_stance() == PetLook::Stance::FLY) {
+  //                         pet.set_stance(PetLook::Stance::STAND);
+  //                     }
+
+  //                     break;
+  //             }
+
+  //             pet.update(physics, get_position());
+  //         }
+  //     }
+
+  let stancespeed = if speed >= 1.0 / @Constants.timestep.to_double() {
+    (@Constants.timestep.to_double() * speed).to_int()
+  } else {
+    0
+  }
+
+  //     after_image_.update(look_.get_frame(), stancespeed);
+
+  self.look.update(stancespeed)
+}
+
+pub fn get_phobj(self : CharBase) -> PhysicsObject {
+  self.base.phobj
+}
+
+pub fn set_direction(self : CharBase, f : Bool) -> Unit {
+  self.facing_right = f
+  self.look.set_direction(f)
+}
+
+pub fn set_state(self : CharBase, st : CharState) -> Unit {
+  self.state = st
+  self.look.set_stance(StanceId::by_state(st.int_value()))
+}
+
+pub fn getflip(self : CharBase) -> Bool {
+  self.facing_right
+}
+
+// Get a speed modifier for the current stance.
+pub fn get_stancespeed(self : CharBase) -> Double {
+  if self.attacking {
+    return self.get_real_attackspeed()
+  }
+  match self.state {
+    CharState::WALK => self.base.phobj.moving_object.hspeed.abs()
+    CharState::LADDER => self.base.phobj.moving_object.vspeed.abs()
+    CharState::ROPE => self.base.phobj.moving_object.vspeed.abs()
+    _ => 1.0
+  }
+}
+
+// Return the attack speed as a multiplier
+pub fn get_real_attackspeed(self : CharBase) -> Double {
+  return 1.7 - self.sub.get_integer_attackspeed().to_double() / 10.0
 }

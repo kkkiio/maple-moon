@@ -1,5 +1,3 @@
-type Icon
-
 type TooltipParent
 
 pub enum UIElementType {
@@ -104,12 +102,28 @@ fn hash(self : UIElementType) -> Int {
 
 pub trait UIElement {
   send_cursor(Self, Bool, Point[Int]) -> CursorState
+  send_key(Self, Int, Bool, Bool) -> Unit
   button_pressed(Self, Int) -> ButtonState
   get_buttons(Self) -> Map[Int, Button]
   get_position(Self) -> Point[Int]
   is_active(Self) -> Bool
   get_type(Self) -> UIElementType
   is_in_range(Self, Point[Int]) -> Bool
+  toggle_active(Self) -> Unit
+  remove_cursor(Self) -> Unit
+  deactivate(Self) -> Unit
+  set_position(Self, Point[Int]) -> Unit
+  set_dimension(Self, Point[Int]) -> Unit
+  set_active(Self, Bool) -> Unit
+  set_type(Self, UIElementType) -> Unit
+  set_buttons(Self, Map[Int, Button]) -> Unit
+  set_sprites(Self, Array[Sprite]) -> Unit
+}
+
+pub trait UIElementDescriptor {
+  const_type() -> UIElementType
+  const_toggled() -> Bool
+  const_focused() -> Bool
 }
 
 struct UIElementBase {

@@ -91,8 +91,12 @@ pub fn MapInfo::from_resource(
   let bgm = bgmpath.substring(start=0, end=split) + ".img/" + bgmpath.substring(
       start=split + 1,
     )
-  let seats = src["seat"].get_array().map(Seat::from_resource)
-  let ladders = src["ladderRope"].get_array().map(Ladder::from_resource)
+  let seats = src["seat"].get_object().as_iter().map(fn(it) { it.1 }).map(
+    Seat::from_resource,
+  ).collect()
+  let ladders = src["ladderRope"].get_object().as_iter().map(fn(it) { it.1 }).map(
+    Ladder::from_resource,
+  ).collect()
   {
     field_limit: info["fieldLimit"].get_int(),
     cloud: info["cloud"].get_bool(),

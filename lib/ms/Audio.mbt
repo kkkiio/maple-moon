@@ -73,6 +73,7 @@ fn Audio::new() -> Result[Audio, String] {
         samples.push((id, sample_id))
         soundids.push((name, id))
       }
+      None => ()
     }
   }
   add_sound_by_enum(SoundName::BUTTON_CLICK, uisrc["BtMouseClick"])
@@ -104,6 +105,7 @@ fn Audio::new() -> Result[Audio, String] {
         samples.push((id, sample_id))
         itemids.push((itemid, id))
       }
+      None => ()
     }
   }
   let itemsrc = loader.load_res("Item.img").get_object()
@@ -163,7 +165,7 @@ pub fn sound_from_resource(src : NxNode) -> (Int, Int)? {
       //   Some((id,sample2))
       // }
       // }
-      abort("TODO")
+      Some((id, 0))
     }
     None => None
   }

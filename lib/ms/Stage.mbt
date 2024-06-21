@@ -7,22 +7,25 @@ enum StageState {
   ACTIVE
 } derive(Eq, Debug, Show)
 
-struct Stage {
+pub struct Stage {
   camera : Camera
   mut physics : Physics
   mut player : Player
+  priv mut playable : Playable?
   mut state : StageState
   mut backgrounds : MapBackgrounds?
   mut tiles_objs : MapTilesObjs
   mut map_id : Int
   mut map_info : MapInfo
   mut portals : MapPortals
+  mut start : TimePoint
 }
 
-fn Stage::default() -> Stage {
+pub fn Stage::default() -> Stage {
   {
     camera: Camera::new(),
     player: Player::default(),
+    playable: None,
     physics: Physics::new(),
     state: StageState::INACTIVE,
     backgrounds: None,
@@ -30,14 +33,15 @@ fn Stage::default() -> Stage {
     map_id: 10000,
     map_info: MapInfo::new(),
     portals: MapPortals::default(),
+    start: TimePoint::default(),
   }
 }
 
-fn Stage::get() -> Stage {
+pub fn Stage::get() -> Stage {
   stage
 }
 
-fn clear(self : Stage) -> Unit {
+pub fn clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
 }
 
@@ -55,6 +59,21 @@ pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
   self.state = StageState::ACTIVE
 }
 
+pub fn load_player(
+  self : Stage,
+  entry : CharEntry,
+  wid : Int,
+  channel_id : Int
+) -> Unit {
+  self.player = Player::from_entry(entry, wid, channel_id)
+  self.playable = Some(self.player)
+  self.start = now_micro() |> TimePoint::from_micro
+
+  // CharStats stats = player_.get_stats();
+  // level_before_ = stats.get_stat(MapleStat::Id::LEVEL);
+  // exp_before_ = stats.get_exp();
+}
+
 fn load_map(self : Stage, mapid : Int) -> Unit {
   self.map_id = mapid
   let strid = @string_format.extend_id(mapid, 9)
@@ -66,7 +85,7 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
   }
   self.tiles_objs = MapTilesObjs::from_resource(src)
   self.backgrounds = Some(MapBackgrounds::new(src["back"]))
-  self.physics = Physics::from_resource(src["foothold"])
+  self.physics = Physics::from_resource(src["foothold"])!!
   self.map_info = MapInfo::from_resource(
     src,
     self.physics.get_fht().get_walls(),
@@ -76,11 +95,10 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
 }
 
 pub fn respawn(self : Stage, portalid : Int) -> Unit {
-  // TODO
+  // Music(map_info_.get_bgm()).play();
   let spawnpoint = self.portals.get_portal_by_id(portalid)
   let startpos = self.physics.get_y_below(spawnpoint)
-  // self.player.respawn(startpos, self.map_info.is_underwater());
-  self.player.respawn(startpos, false)
+  self.player.respawn(startpos, self.map_info.is_underwater())
   self.camera.set_position(startpos)
   self.camera.set_view(self.map_info.get_walls(), self.map_info.get_borders())
 }
@@ -135,7 +153,7 @@ fn update(self : Stage) -> Unit {
   // mobs_.update(physics_);
   // chars_.update(physics_);
   // drops_.update(physics_);
-  self.player.update(self.physics)
+  self.player.update(self.physics) |> ignore
   self.portals.update(self.player.get_position())
   self.camera.update(self.player.get_position())
   if self.player.is_invincible() {
@@ -172,5 +190,42 @@ fn send_cursor(
     CursorState::CLICKING
   } else {
     CursorState::IDLE
+  }
+}
+
+pub fn send_key(
+  self : Stage,
+  t : @KeyType.Id,
+  action : Int,
+  down : Bool
+) -> Unit {
+  if self.state != StageState::ACTIVE {
+    return
+  }
+  match self.playable {
+    Some(playable) =>
+      match t {
+        @KeyType.Id::ACTION => {
+          if down {
+            match @KeyAction.get_action_by_id(action)!! {
+              // @KeyAction.Id::UP => {
+              //   self.check_ladders(true)
+              //   self.check_portals()
+              // }
+              // @KeyAction.Id::DOWN => self.check_ladders(false)
+              // @KeyAction.Id::SIT => self.check_seats()
+              // @KeyAction.Id::ATTACK => self.combat.use_move(0)
+              // @KeyAction.Id::PICKUP => self.check_drops()
+              _ => ()
+            }
+          }
+          playable.send_action(@KeyAction.get_action_by_id(action)!!, down)
+        }
+        // @KeyType.Id::SKILL => self.combat.use_move(action)
+        // @KeyType.Id::ITEM => self.player.use_item(action)
+        // @KeyType.Id::FACE => self.player.set_expression(action)
+        _ => ()
+      }
+    None => ()
   }
 }

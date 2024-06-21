@@ -16,8 +16,17 @@ struct UIStateGame {
   mut dragged_icon : Icon?
   mut time_rel_grabbed : TimePoint
   channel_count : Int
-  // icon_map : Map[Icon.IconType, UIElement.Type]
 }
+
+let icon_map : @immut/hashmap.Map[IconType, UIElementType] = @immut/hashmap.from_array(
+  [
+    (IconType::NONE, UIElementType::NONE),
+    (IconType::SKILL, UIElementType::SKILL_BOOK),
+    (IconType::EQUIP, UIElementType::EQUIP_INVENTORY),
+    (IconType::ITEM, UIElementType::ITEM_INVENTORY),
+    (IconType::KEY, UIElementType::KEY_CONFIG),
+  ],
+)
 
 pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
   {
@@ -70,7 +79,147 @@ pub fn send_key(
   pressed : Bool,
   escape : Bool
 ) -> Unit {
-  // Implementation goes here
+  match self.get(self.focused) {
+    Some(focusedelement) => {
+      if focusedelement.is_active() {
+        return focusedelement.send_key(action, pressed, escape)
+      }
+      self.focused = UIElementType::NONE
+      return
+    }
+    None => ()
+  }
+  match t {
+    @KeyType.Id::MENU =>
+      // if pressed {
+      //     match @KeyAction.get_action_by_id(action)!! {
+      //         @KeyAction.Id::EQUIPMENT => {
+      //             self.emplace(UIEquipInventory::new(Stage::get().get_player().get_inventory()))
+      //         }
+      //         @KeyAction.Id::ITEMS => {
+      //             self.emplace(UIItemInventory::new(Stage::get().get_player().get_inventory()))
+      //         }
+      //         @KeyAction.Id::STATS => {
+      //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
+      //         }
+      //         @KeyAction.Id::SKILLS => {
+      //             self.emplace(UISkillBook::new(Stage::get().get_player().get_stats(), Stage::get().get_player().get_skills()))
+      //         }
+      //         // @KeyAction.Id::FRIENDS => {
+      //         //     self.handle_user_list(@KeyAction.Id::FRIENDS)
+      //         // }
+      //         // @KeyAction.Id::PARTY => {
+      //         //     self.handle_user_list(@KeyAction.Id::PARTY)
+      //         // }
+      //         // @KeyAction.Id::BOSS_PARTY => {
+      //         //     self.handle_user_list(@KeyAction.Id::BOSS_PARTY)
+      //         // }
+      //         @KeyAction.Id::WORLD_MAP => {
+      //             self.emplace(UIWorldMap::new())
+      //         }
+      //         @KeyAction.Id::MAPLE_CHAT => {
+      //           match  UI::get().get_element(UIElementType::CHAT) {
+      //             Some(chat) =>
+      //                 if chat.is_active().not() {
+      //                     self.emplace(UIChat::new)
+      //                 }
+      //             None=> {
+      //                 self.emplace(UIChat::new)
+      //             }
+      //           }
+      //         }
+      //         @KeyAction.Id::MINI_MAP => {
+      //             match UI::get().get_element(UIElementType::MINI_MAP) {
+      //                 Some(minimap) => minimap.send_key(action, pressed, escape)
+      //                 None => ()
+      //             }
+      //         }
+      //         @KeyAction.Id::QUEST_LOG => {
+      //             self.emplace(UIQuestLog::new(Stage::get().get_player().get_quests()))
+      //         }
+      //         @KeyAction.Id::MENU => {
+      //             match UI::get().get_element(UIElementType::STATUS_BAR) {
+      //                 Some(statusbar) => statusbar.toggle_menu()
+      //                 None => ()
+      //             }
+      //         }
+      //         @KeyAction.Id::QUICK_SLOTS => {
+      //             match UI::get().get_element(UIElementType::STATUS_BAR) {
+      //                 Some(statusbar) => statusbar.toggle_qs()
+      //                 None => (),
+      //             }
+      //         }
+      //         @KeyAction.Id::CASHSHOP => {
+      //             fn_enter_cashshop()
+      //         }
+      //         @KeyAction.Id::TOGGLE_CHAT => {
+      //             match UI::get().get_element(UIElementType::CHAT_BAR) {
+      //                 Some(chatbar) => {
+      //                     if !chatbar.is_chatfield_open() {
+      //                         chatbar.toggle_chat()
+      //                     }
+      //                 }
+      //                 None => ()
+      //             }
+      //         }
+      //         @KeyAction.Id::KEY_BINDINGS => {
+      //         match UI::get().get_element(UIElementType::KEY_CONFIG) {
+      //             Some(keyconfig) =>
+      //                 if keyconfig.is_active() {
+      //                     keyconfig.close()
+      //                 } else {
+      //                     self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
+      //                 }
+      //             None=> {
+      //                 self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
+      //             }
+      //           }
+      //         }
+      //         // @KeyAction.Id::MAIN_MENU => {
+      //         //     match UI::get().get_element(UIElementType::StatusBar) {
+      //         //         Some(statusbar) => statusbar.send_key(action, pressed, escape),
+      //         //         None => (),
+      //         //     }
+      //         // }
+      //         // @KeyAction.Id::EVENT => {
+      //         //     self.emplace(UIEvent::new)
+      //         // }
+      //         // @KeyAction.Id::CHANGE_CHANNEL => {
+      //         //     self.emplace(fn(){UIChannel::new(Stage::get().get_player().get_world_id(), Stage::get().get_player().get_channel_id(), self.channel_count)})
+      //         // }
+      //         _ => {
+      //             println("Action \(action) not handled!")
+      //         }
+      //     }
+      // }
+      ()
+    @KeyType.Id::ACTION
+    | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
+      Stage::get().send_key(t, action, pressed)
+  }
+}
+
+type UIUserListTab
+
+pub fn handle_user_list(self : UIStateGame, tab : UIUserListTab) -> Unit {
+  // let tab = match action {
+  //     @KeyAction.Id::FRIENDS => UIUserListTab::FRIEND,
+  //     @KeyAction.Id::PARTY => UIUserListTab::PARTY,
+  //     @KeyAction.Id::BOSS_PARTY => UIUserListTab::BOSS,
+  //     _ => return,
+  // }
+  // if let Some(userlist) = UI::get().get_element(UIElementType::UserList) {
+  //     if userlist.get_tab() != tab && userlist.is_active() {
+  //         userlist.change_tab(tab)
+  //     } else {
+  //         self.emplace(UIUserList::new(tab))
+  //         if userlist.get_tab() != tab && userlist.is_active() {
+  //             userlist.change_tab(tab)
+  //         }
+  //     }
+  // } else {
+  //     self.emplace(UIUserList::new(tab))
+  // }
 }
 
 pub fn send_cursor(
@@ -219,19 +368,75 @@ pub fn show_map(
   // Implementation goes here
 }
 
-pub fn pre_add(
+pub fn set_element(
   self : UIStateGame,
   t : UIElementType,
-  toggled : Bool,
-  focused : Bool
-) -> Iter[(UIElementType, UIElement)] {
-  // Implementation goes here
-  abort("TODO")
+  is_toggled : Bool,
+  is_focused : Bool,
+  f : () -> UIElement
+) -> Unit {
+  match (self.elements[t], is_toggled) {
+    (Some(element), true) => {
+      match self.element_order.search(t) {
+        Some(i) => self.element_order.remove(i) |> ignore
+        None => ()
+      }
+      self.element_order.push(t)
+      let active = element.is_active()
+      element.toggle_active()
+      if active != element.is_active() {
+        if element.is_active() {
+          if t == UIElementType::WORLD_MAP {
+            Sound::new(SoundName::WORLD_MAP_OPEN).play()
+          } else {
+            Sound::new(SoundName::MENU_UP).play()
+          }
+          UI::get().send_cursor_pressed(false)
+        } else {
+          if t == UIElementType::WORLD_MAP {
+            Sound::new(SoundName::WORLD_MAP_CLOSE).play()
+          } else {
+            Sound::new(SoundName::MENU_DOWN).play()
+          }
+          element.remove_cursor()
+          match self.dragged_icon {
+            Some(dragged_icon) =>
+              if (element.get_type() |> @option.some) == icon_map[dragged_icon.get_type()] {
+                self.remove_icon()
+              }
+            None => ()
+          }
+          UI::get().send_cursor_pressed(false)
+        }
+      }
+    }
+    _ => {
+      self.remove(t)
+      self.element_order.push(t)
+      if is_focused {
+        self.focused = t
+      }
+      self.elements[t] = f()
+    }
+  }
 }
 
 pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
-  // Implementation goes here
-  abort("TODO")
+  if t == self.focused {
+    self.focused = UIElementType::NONE
+  }
+  // if (type == tooltip_parent_) {
+  //     clear_tooltip(tooltip_parent_);
+  // }
+  match self.element_order.search(t) {
+    Some(i) => self.element_order.remove(i) |> ignore
+    None => ()
+  }
+  match self.elements.get(t) {
+    Some(element) => element.deactivate()
+    None => ()
+  }
+  self.elements.remove(t)
 }
 
 fn get(self : UIStateGame, t : UIElementType) -> UIElement? {
@@ -273,14 +478,14 @@ pub fn remove_cursor(self : UIStateGame, t : UIElementType) -> Unit {
 // }
 
 // UIElement *UIStateGame::get_front(Point<int16_t> pos) {
-//     auto begin = element_order_.rbegin();
-//     auto end = element_order_.rend();
+//     auto begin = self.element_order.rbegin();
+//     auto end = self.element_order.rend();
 
 //     for (auto iter = begin; iter != end; ++iter) {
 //         auto &element = elements_[*iter];
 
 //         if (element && element->is_active() && element->is_in_range(pos)) {
-//             return element.get();
+//             return element;
 //         }
 //     }
 

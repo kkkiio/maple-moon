@@ -6,6 +6,17 @@ struct Texture {
   dimensions : Point[Int]
 } derive(Default)
 
+pub fn to_string(self : Texture) -> String {
+  let bid = self.bitmap.map_or(-1, fn(bitmap) { bitmap.id() })
+  let origin = self.origin
+  let dimensions = self.dimensions
+  "Texture{bid=\(bid), origin=\(origin), dimensions=\(dimensions)}"
+}
+
+pub fn debug_write(self : Texture, buffer : Buffer) -> Unit {
+  buffer.write_string(self.to_string())
+}
+
 fn Texture::from_resource(src : NxNode) -> Texture {
   println("loading texture from resource " + src.loader.name() + " " + src.path)
   // TODO: source,_outlink,_inlink
@@ -23,7 +34,7 @@ fn Texture::from_resource(src : NxNode) -> Texture {
 fn draw(self : Texture, args : DrawArgument) -> Unit {
   match self.bitmap {
     None => ()
-    Some(bitmap) => 
+    Some(bitmap) =>
       GraphicsGL::get().draw_bitmap(
         bitmap,
         args.get_rectangle(self.origin, self.dimensions),
@@ -35,4 +46,16 @@ fn draw(self : Texture, args : DrawArgument) -> Unit {
 
 pub fn shift(self : Texture, amount : Point[Int]) -> Unit {
   self.origin -= amount
+}
+
+pub fn is_valid(self : Texture) -> Bool {
+  self.bitmap.is_empty().not()
+}
+
+pub fn width(self : Texture) -> Int {
+  self.dimensions.x
+}
+
+pub fn height(self : Texture) -> Int {
+  self.dimensions.y
 }

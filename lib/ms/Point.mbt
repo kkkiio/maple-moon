@@ -3,7 +3,7 @@ pub struct Point[T] {
   mut y : T
 } derive(Eq, Debug)
 
-pub fn to_string[T : Show](self : Point[T]) -> String {
+pub fn to_string(self : Point[Int]) -> String {
   let x = self.x
   let y = self.y
   "(\(x),\(y))"

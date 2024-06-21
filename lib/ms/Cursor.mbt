@@ -54,7 +54,7 @@ fn hash(self : CursorState) -> Int {
   self.int_value()
 }
 
-pub fn by_id(id : Int) -> CursorState {
+pub fn CursorState::by_id(id : Int) -> CursorState {
   all_cursor_states.as_iter().find_first(fn(it) -> Bool { id == it.1 }).map(
     fn(it) -> CursorState { it.0 },
   ).unwrap()
@@ -74,10 +74,10 @@ fn to_fixarray[T](arr : Array[T]) -> FixedArray[T] {
 }
 
 pub fn Cursor::new() -> Cursor {
-  let loader = ui_loader()
+  let ui_loader = ui_loader()
   let animations = all_cursor_states.map(
     fn(value) {
-      Animation::from_resource(loader.load_res("Basic.img/Cursor/\(value)"))
+      Animation::from_resource(ui_loader.load_res("Basic.img/Cursor/\(value)"))
     },
   )
   {

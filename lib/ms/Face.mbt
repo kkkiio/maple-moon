@@ -130,9 +130,6 @@ pub fn draw(
   frame : Int,
   args : DrawArgument
 ) -> Unit {
-  // if let Some(frameit) = self.expressions[expression].get(frame) {
-  //   frameit.texture.draw(args)
-  // }
   match self.expressions[expression].unwrap().get(frame) {
     Some(frameit) => frameit.texture.draw(args)
     None => ()

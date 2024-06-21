@@ -29,8 +29,8 @@ pub trait Button {
   set_state(Self, ButtonState) -> Unit
   is_active(Self) -> Bool
   set_active(Self, Bool) -> Unit
+  in_combobox(Self, Point[Int]) -> Bool
   // get_selected(Self) -> Int
-  // in_combobox(Self, Point[Int]) -> Bool
   // set_position(Self, Point[Int]) -> Unit
   // toggle_pressed(Self) -> Unit
   // is_pressed(Self) -> Bool

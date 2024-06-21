@@ -50,7 +50,7 @@ pub let body_layer_int_map : @immut/sorted_map.Map[BodyLayer, Int] = @immut/sort
 
 pub struct Body {
   stances : @immut/sorted_map.Map[
-    @Stance.Id,
+    StanceId,
     @immut/sorted_map.Map[BodyLayer, Map[Int, Texture]],
   ]
   name : String
@@ -61,7 +61,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
   let character_loader = character_loader()
   let bodynode : NxNode = character_loader.load_res("000020" + strid + ".img")
   let headnode : NxNode = character_loader.load_res("000120" + strid + ".img")
-  let stances = @Stance.names.as_iter().map(
+  let stances = stance_id_names.as_iter().map(
       fn(it) {
         let (stance_name, stance) = it
         let body_texture_map = body_layer_int_map.map(
@@ -90,7 +90,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
                         let mut shift = drawinfo.get_body_position(
                           stance, frame,
                         )
-                        if stance == @Stance.Id::DEAD {
+                        if stance == StanceId::DEAD {
                           shift -= Point::new(5, 4)
                         }
                         shift -= partnode["map"]["navel"]
@@ -130,7 +130,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
 
 pub fn Body::draw(
   self : Body,
-  stance : @Stance.Id,
+  stance : StanceId,
   layer : BodyLayer,
   frame : Int,
   args : DrawArgument

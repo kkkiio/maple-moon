@@ -1,4 +1,4 @@
-pub type TimePoint Int64 derive(Eq, Compare)
+pub type TimePoint Int64 derive(Eq, Compare, Default, Debug)
 
 pub fn TimePoint::from_micro(i : Double) -> TimePoint {
   i.to_int64()

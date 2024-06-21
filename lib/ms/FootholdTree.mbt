@@ -18,29 +18,31 @@ pub fn FootholdTree::default() -> FootholdTree {
   }
 }
 
-pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
+pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree!String {
   let tree = FootholdTree::default()
   let mut leftw : Int = 30000
   let mut rightw : Int = -30000
   let mut botb : Int = -30000
   let mut topb : Int = 30000
-  src.get_array().iter(
-    fn(basef) {
-      let layer = match @strconv.parse_int(basef.get_string()) {
+  src.get_object().iter(
+    fn(basefname, basef) {
+      let layer = match @strconv.parse_int(basefname) {
         Ok(v) => v
         Err(err) => {
-          println("Invalid layer: \(err). node=\(basef)")
+          let path = basef.path
+          println("Invalid layer: \(err). node=\(path)")
           return
         }
       }
-      basef.get_array().iter(
-        fn(midf) {
-          midf.get_array().iter(
-            fn(lastf) {
-              let id = match @strconv.parse_int(lastf.get_string()) {
+      basef.get_object().iter(
+        fn(_midfname, midf) {
+          midf.get_object().iter(
+            fn(lastfname, lastf) {
+              let id = match @strconv.parse_int(lastfname) {
                 Ok(v) => v
                 Err(err) => {
-                  println("Invalid foothold id: \(err). node=\(lastf)")
+                  let path = lastf.path
+                  println("Invalid foothold id: \(err). node=\(path)")
                   return
                 }
               }
@@ -82,8 +84,16 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
       )
     },
   )
-  tree.walls = Range::new(leftw + 25, rightw - 25)
-  tree.borders = Range::new(topb - 300, botb + 100)
+  let walls = Range::new(leftw + 25, rightw - 25)
+  if walls.a > walls.b {
+    raise "invalid walls=\(walls)"
+  }
+  tree.walls = walls
+  let borders = Range::new(topb - 300, botb + 100)
+  if borders.a > borders.b {
+    raise "invalid borders=\(borders)"
+  }
+  tree.borders = borders
   tree
 }
 
@@ -167,9 +177,9 @@ pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
     }
     if curfh.slope() != 0.0 || nextfh.slope() != 0.0 {
       if phobj.moving_object.hspeed > 0.0 && vdelta <= phobj.moving_object.hspeed {
-        phobj.moving_object.y.set(ground)
+        phobj.moving_object.set_y(ground)
       } else if phobj.moving_object.hspeed < 0.0 && vdelta >= phobj.moving_object.hspeed {
-        phobj.moving_object.y.set(ground)
+        phobj.moving_object.set_y(ground)
       }
     }
   }

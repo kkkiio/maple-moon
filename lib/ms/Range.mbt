@@ -1,7 +1,7 @@
 pub struct Range[T] {
   a : T
   b : T
-} derive(Eq)
+} derive(Eq, Debug, Show)
 
 pub fn Range::new[T](first : T, second : T) -> Range[T] {
   { a: first, b: second }

@@ -1,13 +1,19 @@
 {
   "import": [
+    "KKKIIO/maple-moon-client/lib/ms/MapleStat",
     "KKKIIO/maple-moon-client/lib/ms/EquipStat",
     "KKKIIO/maple-moon-client/lib/ms/Buffstat",
     "KKKIIO/maple-moon-client/lib/ms/Constants",
     "KKKIIO/maple-moon-client/lib/ms/KeyType",
+    "KKKIIO/maple-moon-client/lib/ms/KeyAction",
     "KKKIIO/maple-moon-client/lib/ms/string_format",
     "KKKIIO/maple-moon-client/lib/ms/quadtree",
     "KKKIIO/maple-moon-client/lib/ms/Layer",
-    "KKKIIO/maple-moon-client/lib/ms/Stance"
+    {
+      "path": "KKKIIO/maple-moon-client/lib/io/keyboard",
+      "alias": "kb"
+    },
+    "KKKIIO/maple-moon-client/lib/ms/InventoryType"
   ],
   "link": {
     "js": {

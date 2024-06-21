@@ -21,6 +21,35 @@ pub enum Id {
   GACHAEXP
 } derive(Eq)
 
+pub fn int_value(self : Id) -> Int {
+  match self {
+    SKIN => 0
+    FACE => 1
+    HAIR => 2
+    LEVEL => 3
+    JOB => 4
+    STR => 5
+    DEX => 6
+    INT => 7
+    LUK => 8
+    HP => 9
+    MAXHP => 10
+    MP => 11
+    MAXMP => 12
+    AP => 13
+    SP => 14
+    EXP => 15
+    FAME => 16
+    MESO => 17
+    PET => 18
+    GACHAEXP => 19
+  }
+}
+
+pub fn hash(self : Id) -> Int {
+  self.int_value()
+}
+
 pub let values : FixedArray[Id] = [
   SKIN,
   FACE,
@@ -46,14 +75,6 @@ pub let values : FixedArray[Id] = [
 
 pub fn by_id(id : Int) -> Id {
   values[id]
-}
-
-pub fn int_value(self : Id) -> Int {
-  values.search(self).unwrap()
-}
-
-fn hash(self : Id) -> Int {
-  self.int_value()
 }
 
 pub let codes : @immut/hashmap.Map[Id, Int] = @immut/hashmap.from_array(

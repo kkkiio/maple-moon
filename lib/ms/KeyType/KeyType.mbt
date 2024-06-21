@@ -8,7 +8,7 @@ pub enum Id {
   FACE
   MACRO
   TEXT
-} derive(Eq)
+} derive(Eq, Compare)
 
 pub let values : FixedArray[Id] = [
   NONE,

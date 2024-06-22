@@ -394,7 +394,10 @@ function main() {
     characterLoader.loadNxJson("nx/files/raw/Character.nx/nx.json")
   );
 
-  const characterBmpLoader = new DirectBmpLoader(1, "nx/files/raw/Character.nx/bitmaps");
+  const characterBmpLoader = new DirectBmpLoader(
+    1,
+    "nx/files/raw/Character.nx/bitmaps"
+  );
   characterLoader.bmpLoader = characterBmpLoader;
 
   const stringLoader = new ResourceLoader("String.nx");

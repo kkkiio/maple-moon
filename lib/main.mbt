@@ -24,11 +24,11 @@ pub fn onmouseup() -> Unit {
   @ms.Window::get().onmouseup()
 }
 
-pub fn onkeydown(key : Int) -> Unit {
+pub fn onkeydown(key : String) -> Unit {
   @ms.Window::get().key_callback(key, true)
 }
 
-pub fn onkeyup(key : Int) -> Unit {
+pub fn onkeyup(key : String) -> Unit {
   @ms.Window::get().key_callback(key, false)
 }
 

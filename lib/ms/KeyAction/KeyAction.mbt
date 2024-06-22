@@ -77,7 +77,7 @@ pub enum Id {
   END
   COPY
   PASTE
-} derive(Debug, Eq, Compare)
+} derive(Debug, Show, Eq, Compare)
 
 pub fn int_value(self : Id) -> Int {
   match self {

@@ -1,309 +1,309 @@
-pub let escape = 0x0001
+pub let escape = "Escape"
 
-pub let digit1 = 0x0002
+pub let digit1 = "Digit1"
 
-pub let digit2 = 0x0003
+pub let digit2 = "Digit2"
 
-pub let digit3 = 0x0004
+pub let digit3 = "Digit3"
 
-pub let digit4 = 0x0005
+pub let digit4 = "Digit4"
 
-pub let digit5 = 0x0006
+pub let digit5 = "Digit5"
 
-pub let digit6 = 0x0007
+pub let digit6 = "Digit6"
 
-pub let digit7 = 0x0008
+pub let digit7 = "Digit7"
 
-pub let digit8 = 0x0009
+pub let digit8 = "Digit8"
 
-pub let digit9 = 0x000A
+pub let digit9 = "Digit9"
 
-pub let digit0 = 0x000B
+pub let digit0 = "Digit0"
 
-pub let minus = 0x000C
+pub let minus = "Minus"
 
-pub let equal = 0x000D
+pub let equal = "Equal"
 
-pub let backspace = 0x000E
+pub let backspace = "Backspace"
 
-pub let tab = 0x000F
+pub let tab = "Tab"
 
-pub let keyQ = 0x0010
+pub let keyQ = "KeyQ"
 
-pub let keyW = 0x0011
+pub let keyW = "KeyW"
 
-pub let keyE = 0x0012
+pub let keyE = "KeyE"
 
-pub let keyR = 0x0013
+pub let keyR = "KeyR"
 
-pub let keyT = 0x0014
+pub let keyT = "KeyT"
 
-pub let keyY = 0x0015
+pub let keyY = "KeyY"
 
-pub let keyU = 0x0016
+pub let keyU = "KeyU"
 
-pub let keyI = 0x0017
+pub let keyI = "KeyI"
 
-pub let keyO = 0x0018
+pub let keyO = "KeyO"
 
-pub let keyP = 0x0019
+pub let keyP = "KeyP"
 
-pub let bracketLeft = 0x001A
+pub let bracketLeft = "BracketLeft"
 
-pub let bracketRight = 0x001B
+pub let bracketRight = "BracketRight"
 
-pub let enter = 0x001C
+pub let enter = "Enter"
 
-pub let controlLeft = 0x001D
+pub let controlLeft = "ControlLeft"
 
-pub let keyA = 0x001E
+pub let keyA = "KeyA"
 
-pub let keyS = 0x001F
+pub let keyS = "KeyS"
 
-pub let keyD = 0x0020
+pub let keyD = "KeyD"
 
-pub let keyF = 0x0021
+pub let keyF = "KeyF"
 
-pub let keyG = 0x0022
+pub let keyG = "KeyG"
 
-pub let keyH = 0x0023
+pub let keyH = "KeyH"
 
-pub let keyJ = 0x0024
+pub let keyJ = "KeyJ"
 
-pub let keyK = 0x0025
+pub let keyK = "KeyK"
 
-pub let keyL = 0x0026
+pub let keyL = "KeyL"
 
-pub let semicolon = 0x0027
+pub let semicolon = "Semicolon"
 
-pub let quote = 0x0028
+pub let quote = "Quote"
 
-pub let backquote = 0x0029
+pub let backquote = "Backquote"
 
-pub let shiftLeft = 0x002A
+pub let shiftLeft = "ShiftLeft"
 
-pub let backslash = 0x002B
+pub let backslash = "Backslash"
 
-pub let keyZ = 0x002C
+pub let keyZ = "KeyZ"
 
-pub let keyX = 0x002D
+pub let keyX = "KeyX"
 
-pub let keyC = 0x002E
+pub let keyC = "KeyC"
 
-pub let keyV = 0x002F
+pub let keyV = "KeyV"
 
-pub let keyB = 0x0030
+pub let keyB = "KeyB"
 
-pub let keyN = 0x0031
+pub let keyN = "KeyN"
 
-pub let keyM = 0x0032
+pub let keyM = "KeyM"
 
-pub let comma = 0x0033
+pub let comma = "Comma"
 
-pub let period = 0x0034
+pub let period = "Period"
 
-pub let slash = 0x0035
+pub let slash = "Slash"
 
-pub let shiftRight = 0x0036
+pub let shiftRight = "ShiftRight"
 
-pub let numpadMultiply = 0x0037
+pub let numpadMultiply = "NumpadMultiply"
 
-pub let altLeft = 0x0038
+pub let altLeft = "AltLeft"
 
-pub let space = 0x0039
+pub let space = "Space"
 
-pub let capsLock = 0x003A
+pub let capsLock = "CapsLock"
 
-pub let f1 = 0x003B
+pub let f1 = "F1"
 
-pub let f2 = 0x003C
+pub let f2 = "F2"
 
-pub let f3 = 0x003D
+pub let f3 = "F3"
 
-pub let f4 = 0x003E
+pub let f4 = "F4"
 
-pub let f5 = 0x003F
+pub let f5 = "F5"
 
-pub let f6 = 0x0040
+pub let f6 = "F6"
 
-pub let f7 = 0x0041
+pub let f7 = "F7"
 
-pub let f8 = 0x0042
+pub let f8 = "F8"
 
-pub let f9 = 0x0043
+pub let f9 = "F9"
 
-pub let f10 = 0x0044
+pub let f10 = "F10"
 
-pub let pause = 0x0045
+pub let scrollLock = "ScrollLock"
 
-pub let scrollLock = 0x0046
+pub let numpad7 = "Numpad7"
 
-pub let numpad7 = 0x0047
+pub let numpad8 = "Numpad8"
 
-pub let numpad8 = 0x0048
+pub let numpad9 = "Numpad9"
 
-pub let numpad9 = 0x0049
+pub let numpadSubtract = "NumpadSubtract"
 
-pub let numpadSubtract = 0x004A
+pub let numpad4 = "Numpad4"
 
-pub let numpad4 = 0x004B
+pub let numpad5 = "Numpad5"
 
-pub let numpad5 = 0x004C
+pub let numpad6 = "Numpad6"
 
-pub let numpad6 = 0x004D
+pub let numpadAdd = "NumpadAdd"
 
-pub let numpadAdd = 0x004E
+pub let numpad1 = "Numpad1"
 
-pub let numpad1 = 0x004F
+pub let numpad2 = "Numpad2"
 
-pub let numpad2 = 0x0050
+pub let numpad3 = "Numpad3"
 
-pub let numpad3 = 0x0051
+pub let numpad0 = "Numpad0"
 
-pub let numpad0 = 0x0052
+pub let numpadDecimal = "NumpadDecimal"
 
-pub let numpadDecimal = 0x0053
+pub let intlBackslash = "IntlBackslash"
 
-pub let intlBackslash = 0x0056
+pub let f11 = "F11"
 
-pub let f11 = 0x0057
+pub let f12 = "F12"
 
-pub let f12 = 0x0058
+pub let numpadEqual = "NumpadEqual"
 
-pub let numpadEqual = 0x0059
+pub let f13 = "F13"
 
-pub let f13 = 0x0064
+pub let f14 = "F14"
 
-pub let f14 = 0x0065
+pub let f15 = "F15"
 
-pub let f15 = 0x0066
+pub let f16 = "F16"
 
-pub let f16 = 0x0067
+pub let f17 = "F17"
 
-pub let f17 = 0x0068
+pub let f18 = "F18"
 
-pub let f18 = 0x0069
+pub let f19 = "F19"
 
-pub let f19 = 0x006A
+pub let f20 = "F20"
 
-pub let f20 = 0x006B
+pub let f21 = "F21"
 
-pub let f21 = 0x006C
+pub let f22 = "F22"
 
-pub let f22 = 0x006D
+pub let f23 = "F23"
 
-pub let f23 = 0x006E
+pub let kanaMode = "KanaMode"
 
-pub let kanaMode = 0x0070
+pub let lang2 = "Lang2"
 
-pub let intlRo = 0x0073
+pub let lang1 = "Lang1"
 
-pub let unidentified = 0x0074
+pub let intlRo = "IntlRo"
 
-pub let f24 = 0x0076
+pub let f24 = "F24"
 
-pub let lang4 = 0x0077
+pub let lang4 = "Lang4"
 
-pub let lang3 = 0x0078
+pub let lang3 = "Lang3"
 
-pub let convert = 0x0079
+pub let convert = "Convert"
 
-pub let nonConvert = 0x007B
+pub let nonConvert = "NonConvert"
 
-pub let intlYen = 0x007D
+pub let intlYen = "IntlYen"
 
-pub let numpadComma = 0x007E
+pub let numpadComma = "NumpadComma"
 
-pub let undo = 0xE008
+pub let undo = "Undo"
 
-pub let paste = 0xE00A
+pub let paste = "Paste"
 
-pub let mediaTrackPrevious = 0xE010
+pub let mediaTrackPrevious = "MediaTrackPrevious"
 
-pub let cut = 0xE017
+pub let cut = "Cut"
 
-pub let copy = 0xE018
+pub let copy = "Copy"
 
-pub let mediaTrackNext = 0xE019
+pub let mediaTrackNext = "MediaTrackNext"
 
-pub let numpadEnter = 0xE01C
+pub let numpadEnter = "NumpadEnter"
 
-pub let controlRight = 0xE01D
+pub let controlRight = "ControlRight"
 
-pub let audioVolumeMute = 0xE020
+pub let audioVolumeMute = "AudioVolumeMute"
 
-pub let launchApp2 = 0xE021
+pub let launchApp2 = "LaunchApp2"
 
-pub let mediaPlayPause = 0xE022
+pub let mediaPlayPause = "MediaPlayPause"
 
-pub let mediaStop = 0xE024
+pub let mediaStop = "MediaStop"
 
-pub let eject = 0xE02C
+pub let eject = "Eject"
 
-pub let audioVolumeDown = 0xE02E
+pub let audioVolumeDown = "AudioVolumeDown"
 
-pub let audioVolumeUp = 0xE030
+pub let audioVolumeUp = "AudioVolumeUp"
 
-pub let browserHome = 0xE032
+pub let browserHome = "BrowserHome"
 
-pub let numpadDivide = 0xE035
+pub let numpadDivide = "NumpadDivide"
 
-pub let printScreen = 0xE037
+pub let printScreen = "PrintScreen"
 
-pub let altRight = 0xE038
+pub let altRight = "AltRight"
 
-pub let help = 0xE03B
+pub let help = "Help"
 
-pub let numLock = 0xE045
+pub let numLock = "NumLock"
 
-pub let home = 0xE047
+pub let pause = "Pause"
 
-pub let arrowUp = 0xE048
+pub let home = "Home"
 
-pub let pageUp = 0xE049
+pub let arrowUp = "ArrowUp"
 
-pub let arrowLeft = 0xE04B
+pub let pageUp = "PageUp"
 
-pub let arrowRight = 0xE04D
+pub let arrowLeft = "ArrowLeft"
 
-pub let end = 0xE04F
+pub let arrowRight = "ArrowRight"
 
-pub let arrowDown = 0xE050
+pub let end = "End"
 
-pub let pageDown = 0xE051
+pub let arrowDown = "ArrowDown"
 
-pub let insert = 0xE052
+pub let pageDown = "PageDown"
 
-pub let delete = 0xE053
+pub let insert = "Insert"
 
-pub let metaLeft = 0xE05B
+pub let delete = "Delete"
 
-pub let metaRight = 0xE05C
+pub let metaLeft = "MetaLeft"
 
-pub let contextMenu = 0xE05D
+pub let metaRight = "MetaRight"
 
-pub let power = 0xE05E
+pub let contextMenu = "ContextMenu"
 
-pub let sleep = 0xE05F
+pub let power = "Power"
 
-pub let wakeUp = 0xE063
+pub let sleep = "Sleep"
 
-pub let browserSearch = 0xE065
+pub let wakeUp = "WakeUp"
 
-pub let browserFavorites = 0xE066
+pub let browserSearch = "BrowserSearch"
 
-pub let browserRefresh = 0xE067
+pub let browserFavorites = "BrowserFavorites"
 
-pub let browserStop = 0xE068
+pub let browserRefresh = "BrowserRefresh"
 
-pub let browserForward = 0xE069
+pub let browserStop = "BrowserStop"
 
-pub let browserBack = 0xE06A
+pub let browserForward = "BrowserForward"
 
-pub let launchApp1 = 0xE06B
+pub let browserBack = "BrowserBack"
 
-pub let launchMail = 0xE06C
+pub let launchApp1 = "LaunchApp1"
 
-pub let mediaSelect = 0xE06D
+pub let launchMail = "LaunchMail"
 
-// pub let pause = 0xE046
+pub let mediaSelect = "MediaSelect"

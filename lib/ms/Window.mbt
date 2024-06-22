@@ -35,6 +35,6 @@ pub fn onmousedown(self : Window) -> Unit {
 // fn fadeout(self : Window, step : Double, fadeproc : () -> Unit) -> Unit {
 //   fadeproc()
 // }
-pub fn key_callback(self : Window, keyCode : Int, pressed : Bool) -> Unit {
+pub fn key_callback(self : Window, keyCode : String, pressed : Bool) -> Unit {
   UI::get().send_key(keyCode, pressed)
 }

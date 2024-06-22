@@ -18,7 +18,7 @@ struct UI {
 
   //         std::optional<std::reference_wrapper<Textfield>> focused_text_field_;
   focused_text_field : Textfield?
-  is_key_down : Map[Int, Bool]
+  is_key_down : Map[String, Bool]
   mut enabled : Bool
   mut quitted : Bool
   mut caps_lock_enabled : Bool
@@ -126,7 +126,7 @@ fn opt_as_iter[T](opt : T?) -> Iter[T] {
   }
 }
 
-pub fn send_key(self : UI, keycode : Int, pressed : Bool) -> Unit {
+pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   if (self.is_key_down.get_or_default(@kb.altLeft, false) || self.is_key_down.get_or_default(
     @kb.altRight, false,
   )) && (self.is_key_down.get_or_default(@kb.enter, false) || self.is_key_down.get_or_default(
@@ -257,16 +257,16 @@ pub fn send_key(self : UI, keycode : Int, pressed : Bool) -> Unit {
           // if chatbar && chatbar.get().is_chat_open() {
           //   chatbar.get().send_key(mapping.action, pressed, escape)
           // } else {
-          self.state.send_key(mapping.type_, mapping.action, pressed, escape)
+          self.state.send_key(mapping.t, mapping.action, pressed, escape)
           // }
         } else if enter {
           // if chatbar {
           // chatbar.get().send_key(mapping.action, pressed, escape)
           // } else {
-          self.state.send_key(mapping.type_, mapping.action, pressed, escape)
+          self.state.send_key(mapping.t, mapping.action, pressed, escape)
           // }
         } else {
-          self.state.send_key(mapping.type_, mapping.action, pressed, escape)
+          self.state.send_key(mapping.t, mapping.action, pressed, escape)
         }
       }
     }

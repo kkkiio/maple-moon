@@ -1,16 +1,16 @@
 pub struct Mapping {
-  type_ : @KeyType.Id
+  t : @KeyType.Id
   action : Int
 } derive(Eq, Compare)
 
 pub fn Mapping::new(in_type : @KeyType.Id, in_action : Int) -> Mapping {
-  { type_: in_type, action: in_action }
+  { t: in_type, action: in_action }
 }
 
 pub struct Keyboard {
-  keymap : Map[Int, Mapping]
+  keymap : Map[String, Mapping]
   maple_keys : Map[Int, Mapping]
-  text_actions : Map[Int, @KeyAction.Id]
+  // text_actions : Map[String, @KeyAction.Id]
   key_state : Map[Int, Bool]
 }
 
@@ -54,26 +54,31 @@ pub fn Keyboard::default() -> Keyboard {
   text_actions.set(@kb.home, @KeyAction.Id::HOME)
   text_actions.set(@kb.end, @KeyAction.Id::END)
   text_actions.set(@kb.delete, @KeyAction.Id::DELETE)
-  { keymap, maple_keys: Map::new(), text_actions, key_state: Map::new() }
+  {
+    keymap,
+    maple_keys: Map::new(),
+    // text_actions, 
+    key_state: Map::new(),
+  }
 }
 
-pub fn left_shift_code(self : Keyboard) -> Int {
+pub fn left_shift_code(self : Keyboard) -> String {
   @kb.shiftLeft
 }
 
-pub fn right_shift_code(self : Keyboard) -> Int {
+pub fn right_shift_code(self : Keyboard) -> String {
   @kb.shiftRight
 }
 
-pub fn capslock_code(self : Keyboard) -> Int {
+pub fn capslock_code(self : Keyboard) -> String {
   @kb.capsLock
 }
 
-pub fn left_ctrl_code(self : Keyboard) -> Int {
+pub fn left_ctrl_code(self : Keyboard) -> String {
   @kb.controlLeft
 }
 
-pub fn right_ctrl_code(self : Keyboard) -> Int {
+pub fn right_ctrl_code(self : Keyboard) -> String {
   @kb.controlRight
 }
 
@@ -81,7 +86,7 @@ pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {
   self.maple_keys
 }
 
-pub fn get_ctrl_action(self : Keyboard, keycode : Int) -> @KeyAction.Id? {
+pub fn get_ctrl_action(self : Keyboard, keycode : String) -> @KeyAction.Id? {
   // match keycode {
   //   @kb.keyC => @KeyAction.Id::COPY
   //   @kb.keyV => @KeyAction.Id::PASTE
@@ -113,62 +118,76 @@ pub fn remove(self : Keyboard, key : Int) -> Unit {
   self.maple_keys.set(key, mapping)
 }
 
-pub fn get_text_mapping(
-  self : Keyboard,
-  keycode : Int,
-  shift : Bool
-) -> Mapping {
-  if self.text_actions.contains(keycode) {
-    return Mapping::new(
-      @KeyType.Id::ACTION,
-      self.text_actions[keycode].unwrap().int_value(),
-    )
-  }
-  if keycode == 39 || keycode >= 44 && keycode <= 57 || keycode == 59 || keycode ==
-  61 || keycode >= 91 && keycode <= 93 || keycode == 96 {
-    if shift.not() {
-      return Mapping::new(@KeyType.Id::TEXT, keycode)
-    }
-    return Mapping::new(@KeyType.Id::TEXT, specialtable[keycode - 1])
-  }
-  if keycode >= 33 && keycode <= 126 {
-    if shift {
-      return Mapping::new(@KeyType.Id::TEXT, keycode)
-    }
-    return Mapping::new(@KeyType.Id::TEXT, shifttable[keycode - 1])
-  }
+// pub fn get_text_mapping(
+//   self : Keyboard,
+//   keycode : String,
+//   shift : Bool
+// ) -> Mapping {
+//   if self.text_actions.contains(keycode) {
+//     return Mapping::new(
+//       @KeyType.Id::ACTION,
+//       self.text_actions[keycode].unwrap().int_value(),
+//     )
+//   }
+//     // GLFMKeyCodeComma             = 0x2C,
+//     // GLFMKeyCodeMinus             = 0x2D,
+//     // GLFMKeyCodePeriod            = 0x2E,
+//     // GLFMKeyCodeSlash             = 0x2F,
+//     // GLFMKeyCode0                 = 0x30,
+//     // GLFMKeyCode1                 = 0x31,
+//     // GLFMKeyCode2                 = 0x32,
+//     // GLFMKeyCode3                 = 0x33,
+//     // GLFMKeyCode4                 = 0x34,
+//     // GLFMKeyCode5                 = 0x35,
+//     // GLFMKeyCode6                 = 0x36,
+//     // GLFMKeyCode7                 = 0x37,
+//     // GLFMKeyCode8                 = 0x38,
+//     // GLFMKeyCode9                 = 0x39,
+//   if keycode == @kb.quote || keycode >= 44 && keycode <= 57 || keycode == 59 || keycode ==
+//   61 || keycode >= 91 && keycode <= 93 || keycode == 96 {
+//     if shift.not() {
+//       return Mapping::new(@KeyType.Id::TEXT, keycode)
+//     }
+//     return Mapping::new(@KeyType.Id::TEXT, specialtable[keycode - 1])
+//   }
+//   if keycode >= 33 && keycode <= 126 {
+//     if shift {
+//       return Mapping::new(@KeyType.Id::TEXT, keycode)
+//     }
+//     return Mapping::new(@KeyType.Id::TEXT, shifttable[keycode - 1])
+//   }
 
-  // match keycode {
-  //   @kb.arrowLeft| @kb.arrowRight| @kb.arrowUp| @kb.arrowDown => self.keymap[keycode].unwrap()
-  //   _ => Mapping::new(@KeyType.Id::NONE, 0)
-  // }
-  if keycode == @kb.arrowLeft || keycode == @kb.arrowRight || keycode == @kb.arrowUp ||
-  keycode == @kb.arrowDown {
-    return self.keymap[keycode].unwrap()
-  }
-  Mapping::new(@KeyType.Id::NONE, 0)
-}
+//   // match keycode {
+//   //   @kb.arrowLeft| @kb.arrowRight| @kb.arrowUp| @kb.arrowDown => self.keymap[keycode].unwrap()
+//   //   _ => Mapping::new(@KeyType.Id::NONE, 0)
+//   // }
+//   if keycode == @kb.arrowLeft || keycode == @kb.arrowRight || keycode == @kb.arrowUp ||
+//   keycode == @kb.arrowDown {
+//     return self.keymap[keycode].unwrap()
+//   }
+//   Mapping::new(@KeyType.Id::NONE, 0)
+// }
 
-pub fn get_mapping(self : Keyboard, keycode : Int) -> Mapping {
+pub fn get_mapping(self : Keyboard, keycode : String) -> Mapping {
   self.keymap.get(keycode).or(Mapping::new(@KeyType.Id::NONE, 0))
 }
 
-pub fn get_maple_mapping(self : Keyboard, keycode : Int) -> Mapping {
-  self.maple_keys.get(keycode).or(Mapping::new(@KeyType.Id::NONE, 0))
+pub fn get_maple_mapping(self : Keyboard, key : Int) -> Mapping {
+  self.maple_keys.get(key).or(Mapping::new(@KeyType.Id::NONE, 0))
 }
 
-let keytable : FixedArray[Int] = [
-  0, 0, @kb.digit0, @kb.digit1, @kb.digit2, @kb.digit3, @kb.digit4, @kb.digit5, @kb.digit6,
-  @kb.digit7, @kb.digit8, @kb.digit9, @kb.minus, @kb.equal, 0, 0, @kb.keyQ, @kb.keyW,
-  @kb.keyE, @kb.keyR, @kb.keyT, @kb.keyY, @kb.keyU, @kb.keyI, @kb.keyO, @kb.keyP,
-  @kb.bracketLeft, @kb.bracketRight, 0, @kb.controlLeft, @kb.keyA, @kb.keyS, @kb.keyD,
-  @kb.keyF, @kb.keyG, @kb.keyH, @kb.keyJ, @kb.keyK, @kb.keyL, @kb.semicolon, @kb.quote,
-  @kb.backquote, @kb.shiftLeft, @kb.backslash, @kb.keyZ, @kb.keyX, @kb.keyC, @kb.keyV,
-  @kb.keyB, @kb.keyN, @kb.keyM, @kb.comma, @kb.period, 0, 0, 0, @kb.altLeft, @kb.space,
-  0, @kb.f1, @kb.f2, @kb.f3, @kb.f4, @kb.f5, @kb.f6, @kb.f7, @kb.f8, @kb.f9, @kb.f10,
-  @kb.f11, @kb.f12, @kb.home, 0, @kb.pageUp, 0, 0, 0, 0, 0, @kb.end, @kb.capsLock,
-  @kb.pageDown, @kb.insert, @kb.delete, @kb.escape, @kb.controlRight, @kb.shiftRight,
-  @kb.altRight, @kb.scrollLock,
+let keytable : FixedArray[String] = [
+  "", "", @kb.digit0, @kb.digit1, @kb.digit2, @kb.digit3, @kb.digit4, @kb.digit5,
+  @kb.digit6, @kb.digit7, @kb.digit8, @kb.digit9, @kb.minus, @kb.equal, "", "", @kb.keyQ,
+  @kb.keyW, @kb.keyE, @kb.keyR, @kb.keyT, @kb.keyY, @kb.keyU, @kb.keyI, @kb.keyO,
+  @kb.keyP, @kb.bracketLeft, @kb.bracketRight, "", @kb.controlLeft, @kb.keyA, @kb.keyS,
+  @kb.keyD, @kb.keyF, @kb.keyG, @kb.keyH, @kb.keyJ, @kb.keyK, @kb.keyL, @kb.semicolon,
+  @kb.quote, @kb.backquote, @kb.shiftLeft, @kb.backslash, @kb.keyZ, @kb.keyX, @kb.keyC,
+  @kb.keyV, @kb.keyB, @kb.keyN, @kb.keyM, @kb.comma, @kb.period, "", "", "", @kb.altLeft,
+  @kb.space, "", @kb.f1, @kb.f2, @kb.f3, @kb.f4, @kb.f5, @kb.f6, @kb.f7, @kb.f8,
+  @kb.f9, @kb.f10, @kb.f11, @kb.f12, @kb.home, "", @kb.pageUp, "", "", "", "", "",
+  @kb.end, @kb.capsLock, @kb.pageDown, @kb.insert, @kb.delete, @kb.escape, @kb.controlRight,
+  @kb.shiftRight, @kb.altRight, @kb.scrollLock,
 ]
 
 let shifttable : FixedArray[Int] = [

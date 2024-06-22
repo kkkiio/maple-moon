@@ -196,6 +196,7 @@ pub fn send_key(
     @KeyType.Id::ACTION
     | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
       Stage::get().send_key(t, action, pressed)
+    _ => ()
   }
 }
 
@@ -447,13 +448,35 @@ pub fn get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
 ) -> UIElement? {
-  // Implementation goes here
-  abort("TODO")
+  let mut i = self.element_order.length() - 1
+  while i >= 0 {
+    let t = self.element_order[i]
+    if types.contains(t) {
+      let res = self.elements[t].filter(fn(it) { it.is_active() })
+      match res {
+        Some(_) as r => return r
+        None => ()
+      }
+    }
+    i -= 1
+  }
+  return None
 }
 
 pub fn get_front_by_pos(self : UIStateGame, pos : Point[Int]) -> UIElement? {
-  // Implementation goes here
-  abort("TODO")
+  let mut i = self.element_order.length() - 1
+  while i >= 0 {
+    let t = self.element_order[i]
+    let res = self.elements[t].filter(
+      fn(it) { it.is_active() && it.is_in_range(pos) },
+    )
+    match res {
+      Some(_) as r => return r
+      None => ()
+    }
+    i -= 1
+  }
+  return None
 }
 
 pub fn drop_icon(self : UIStateGame, icon : Icon, pos : Point[Int]) -> Bool {

@@ -16,8 +16,8 @@ pub let flyfriction : Double = 0.05
 
 pub let swimfriction : Double = 0.08
 
-pub fn Physics::from_resource(src : NxNode) -> Physics!String {
-  let fh_tree = FootholdTree::from_resource(src)!
+pub fn Physics::from_resource(src : NxNode) -> Physics {
+  let fh_tree = FootholdTree::from_resource(src)
   { fh_tree, }
 }
 

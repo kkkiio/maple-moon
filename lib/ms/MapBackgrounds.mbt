@@ -51,36 +51,35 @@ pub fn Background::from_resource(src : NxNode) -> Background {
   let srcpath = src.path
   println("load background \(srcpath)")
   let loader = map_loader()
-  let animated = src["ani"].get_bool()
+  let animated = src["ani"].get_bool().unwrap()
   let animation = match src["bS"].get_string() {
     "" => Animation::default()
-    bs => {
-      let animation_nodepath = make_nodepath(
-        [
-          "Back",
-          bs + ".img",
-          if animated {
-            "ani"
-          } else {
-            "back"
-          },
-          src["no"].get_int().to_string(),
-        ],
+    bs =>
+      Animation::from_resource(
+        loader.load_res(
+          [
+            "Back",
+            bs + ".img",
+            if animated {
+              "ani"
+            } else {
+              "back"
+            },
+            src["no"].get_int().unwrap().to_string(),
+          ],
+        ),
       )
-      // println("load background animation \(animation_nodepath)")
-      Animation::from_resource(loader.load_res(animation_nodepath))
-    }
   }
-  let opacity_ = src["a"].get_float()
-  let flipped_ = src["f"].get_bool()
-  let cx_ = src["cx"].get_int()
-  let cy_ = src["cy"].get_int()
-  let rx_ = src["rx"].get_float()
-  let ry_ = src["ry"].get_float()
+  let opacity_ = src["a"].get_float().unwrap()
+  let flipped_ = src["f"].get_bool().unwrap()
+  let cx_ = src["cx"].get_int().unwrap()
+  let cy_ = src["cy"].get_int().unwrap()
+  let rx_ = src["rx"].get_float().unwrap()
+  let ry_ = src["ry"].get_float().unwrap()
   let move_obj_ = MovingObject::default()
-  move_obj_.set_x(src["x"].get_float())
-  move_obj_.set_y(src["y"].get_float())
-  let t = Background::typebyid(src["type"].get_int())
+  move_obj_.set_x(src["x"].get_float().unwrap())
+  move_obj_.set_y(src["y"].get_float().unwrap())
+  let t = Background::typebyid(src["type"].get_int().unwrap())
   let background = {
     animation,
     cx: cx_,
@@ -227,7 +226,7 @@ pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
     if back.is_null() {
       break
     }
-    let front = back["front"].get_bool()
+    let front = back["front"].get_bool().unwrap()
     if front {
       foregrounds_.push(Background::from_resource(back))
     } else {

@@ -10,11 +10,17 @@ struct Foothold {
 
 pub fn Foothold::from_resource(src : NxNode, id : Int, ly : Int) -> Foothold {
   let m_id = id
-  let m_prev = src["prev"].get_int()
-  let m_next = src["next"].get_int()
+  let m_prev = src["prev"].get_int().unwrap()
+  let m_next = src["next"].get_int().unwrap()
   let m_layer = ly
-  let m_horizontal = Range::new(src["x1"].get_int(), src["x2"].get_int())
-  let m_vertical = Range::new(src["y1"].get_int(), src["y2"].get_int())
+  let m_horizontal = Range::new(
+    src["x1"].get_int().unwrap(),
+    src["x2"].get_int().unwrap(),
+  )
+  let m_vertical = Range::new(
+    src["y1"].get_int().unwrap(),
+    src["y2"].get_int().unwrap(),
+  )
   { m_id, m_prev, m_next, m_layer, m_horizontal, m_vertical }
 }
 

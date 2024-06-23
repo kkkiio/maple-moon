@@ -12,7 +12,7 @@ fn string_loader() -> ResourceLoader = "resource" "string_loader"
 
 type JsJson
 
-extern "js" fn load_desc(self : ResourceLoader, nodepath : String) -> JsJson =
+extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
   #| (l,n) => {
   #|   return l.load(n)
   #| }
@@ -31,13 +31,21 @@ fn as_moonjson(self : JsJson) -> @json.JsonValue {
   @json.parse(as_jsonstring(self)).unwrap()
 }
 
-pub fn load_res(self : ResourceLoader, nodepath : String) -> NxNode {
-  { loader: self, desc: self.load_desc(nodepath).as_moonjson(), path: nodepath }
+pub fn load_res(self : ResourceLoader, path : Array[String]) -> NxNode {
+  if path.contains("") {
+    abort("path contains empty part, path=\(path)")
+  }
+  {
+    loader: self,
+    name: path[path.length() - 1],
+    desc: self.load_desc(join_path(path)).as_moonjson(),
+    path: path |> @immut/array.from_array,
+  }
 }
 
 fn load_bitmap(self : ResourceLoader, bid : Int) -> Bitmap = "resource" "load_bitmap"
 
-pub fn make_nodepath(parts : Array[String]) -> String {
+fn join_path(parts : Array[String]) -> String {
   let total = parts.fold_left(fn(acc, it) { acc + it.length() }, init=0)
   let buf = Buffer::make(total + parts.length() - 1)
   parts.iteri(
@@ -53,26 +61,30 @@ pub fn make_nodepath(parts : Array[String]) -> String {
 
 struct NxNode {
   loader : ResourceLoader
+  name : String
   desc : @json.JsonValue
-  path : String
+  path : @immut/array.ImmutableVec[String]
 }
 
 pub fn to_string(self : NxNode) -> String {
-  self.desc.to_string()
+  let name = self.name
+  let desc = self.desc
+  "(\(name)=\(desc))"
 }
 
 pub fn op_get(self : NxNode, key : String) -> NxNode {
   {
     loader: self.loader,
+    name: key,
     desc: self.desc.as_object().bind(fn(it) { it[key] }).or(
       @json.JsonValue::Null,
     ),
-    path: self.path + "/\(key)",
+    path: self.path.push(key),
   }
 }
 
-pub fn get_bool(self : NxNode) -> Bool {
-  self.desc.as_number().map(fn(it) { it.to_int() != 0 }).or(false)
+pub fn get_bool(self : NxNode) -> Result[Bool, String] {
+  self.get_int().map(fn(it) { it != 0 })
 }
 
 pub fn get_string(self : NxNode) -> String {
@@ -83,12 +95,24 @@ pub fn get_string(self : NxNode) -> String {
   }
 }
 
-pub fn get_int(self : NxNode) -> Int {
-  self.desc.as_number().map(fn(it) { it.to_int() }).or(0)
+pub fn as_string(self : NxNode) -> Result[String, String] {
+  match self.desc {
+    @json.JsonValue::String(it) => Ok(it)
+    _ as a => Err("expect string, got\(a)")
+  }
 }
 
-pub fn get_float(self : NxNode) -> Double {
-  self.desc.as_number().or(0.0)
+pub fn get_int(self : NxNode) -> Result[Int, String] {
+  self.get_float().map(fn(it) { it.to_int() })
+}
+
+pub fn get_float(self : NxNode) -> Result[Double, String] {
+  match self.desc {
+    @json.JsonValue::Number(it) => Ok(it)
+    @json.JsonValue::Null => Ok(0.0)
+    @json.JsonValue::String(it) => @strconv.parse_double(it)
+    _ as a => Err("expect number, got\(a)")
+  }
 }
 
 pub fn get_object(self : NxNode) -> Map[String, NxNode] {
@@ -99,13 +123,28 @@ pub fn get_object(self : NxNode) -> Map[String, NxNode] {
         fn(k, v) {
           res.set(
             k,
-            { loader: self.loader, desc: v, path: self.path + "/\(k)" },
+            { loader: self.loader, name: k, desc: v, path: self.path.push(k) },
           )
         },
       )
       res
     }
     None => Map::new()
+  }
+}
+
+pub fn iter(self : NxNode, iter : (NxNode) -> Unit) -> Unit {
+  match self.desc {
+    @json.JsonValue::Object(it) =>
+      it.iter(
+        fn(k, v) {
+          iter(
+            { loader: self.loader, name: k, desc: v, path: self.path.push(k) },
+          )
+        },
+      )
+    @json.JsonValue::Null => ()
+    _ as a => abort("expect object, got\(a)")
   }
 }
 

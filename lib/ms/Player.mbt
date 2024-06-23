@@ -173,14 +173,7 @@ pub fn get_flyforce(self : Player) -> Double {
   0.25
 }
 
-// Returns the current jumping force, calculated from the total ES_JUMP
-// stat.
-
-// float Player::get_jumpforce() const {
-//     return 1.0f
-//            + 3.5f * static_cast<float>(stats_.get_total(EquipStat::Id::JUMP))
-//                  / 100;
-// }
+/// Returns the current jumping force, calculated from the total ES_JUMP stat.
 pub fn get_jumpforce(self : Player) -> Double {
   1.0 + 3.5 * self.stats.get_total(@EquipStat.Id::JUMP).to_double() / 100.0
 }
@@ -188,9 +181,8 @@ pub fn get_jumpforce(self : Player) -> Double {
 pub fn getflip(self : Player) -> Bool {
   self.char_base.getflip()
 }
-// Returns the current walking force, calculated from the total ES_SPEED
-// stat.
 
+/// Returns the current walking force, calculated from the total ES_SPEED stat.
 pub fn get_walkforce(self : Player) -> Double {
   0.05 + 0.11 * self.stats.get_total(@EquipStat.Id::SPEED).to_double() / 100.0
 }

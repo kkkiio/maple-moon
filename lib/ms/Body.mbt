@@ -59,8 +59,8 @@ pub struct Body {
 pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
   let strid : String = @string_format.extend_id(skin, 2)
   let character_loader = character_loader()
-  let bodynode : NxNode = character_loader.load_res("000020" + strid + ".img")
-  let headnode : NxNode = character_loader.load_res("000120" + strid + ".img")
+  let bodynode : NxNode = character_loader.load_res(["000020" + strid + ".img"])
+  let headnode : NxNode = character_loader.load_res(["000120" + strid + ".img"])
   let stances = stance_id_names.as_iter().map(
       fn(it) {
         let (stance_name, stance) = it
@@ -75,9 +75,9 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
             if framenode.is_null() {
               break
             }
-            framenode.get_object().iter(
-              fn(name, partnode) {
-                let part : String = name
+            framenode.iter(
+              fn(partnode) {
+                let part : String = partnode.name
                 if part != "delay" && part != "face" {
                   let z : String = partnode["z"].get_string()
                   let layer : BodyLayer = Body::layer_by_name(z)
@@ -85,7 +85,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
                     let shift = match layer {
                       BodyLayer::HAND_BELOW_WEAPON =>
                         drawinfo.get_hand_position(stance, frame) - (partnode["map"]["handMove"]
-                        |> Point::from_resource)
+                        |> Point::from_resource).unwrap()
                       _ => {
                         let mut shift = drawinfo.get_body_position(
                           stance, frame,
@@ -93,8 +93,8 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
                         if stance == StanceId::DEAD {
                           shift -= Point::new(5, 4)
                         }
-                        shift -= partnode["map"]["navel"]
-                          |> Point::from_resource
+                        shift -= (partnode["map"]["navel"]
+                        |> Point::from_resource).unwrap()
                         shift
                       }
                     }

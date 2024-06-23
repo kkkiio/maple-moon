@@ -18,7 +18,7 @@ pub fn FootholdTree::default() -> FootholdTree {
   }
 }
 
-pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree!String {
+pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   let tree = FootholdTree::default()
   let mut leftw : Int = 30000
   let mut rightw : Int = -30000
@@ -86,12 +86,12 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree!String {
   )
   let walls = Range::new(leftw + 25, rightw - 25)
   if walls.a > walls.b {
-    raise "invalid walls=\(walls)"
+    abort("invalid walls=\(walls)")
   }
   tree.walls = walls
   let borders = Range::new(topb - 300, botb + 100)
   if borders.a > borders.b {
-    raise "invalid borders=\(borders)"
+    abort("invalid borders=\(borders)")
   }
   tree.borders = borders
   tree

@@ -44,7 +44,7 @@ pub let layers_by_name : @immut/sorted_map.Map[String, HairLayer] = @immut/sorte
 pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
   let character_loader = character_loader()
   let stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
-  let hairnode = character_loader.load_res("Hair/000\(hairid).img")
+  let hairnode = character_loader.load_res(["Hair", "000\(hairid).img"])
   stance_id_names.iter(
     fn(stancename, stance) {
       let stancenode = hairnode[stancename]
@@ -66,7 +66,7 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
                 return
               }
             }
-            let brow = Point::from_resource(layernode["map"]["brow"])
+            let brow = Point::from_resource(layernode["map"]["brow"]).unwrap()
             let shift = drawinfo.get_hair_pos(stance, frame) - brow
             let tex = Texture::from_resource(layernode)
             (stances |> set_defaultm(stance) |> set_defaultm(layer)).set(
@@ -80,7 +80,9 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
     },
   )
   let string_loader = string_loader()
-  let name = string_loader.load_res("Eqp.img/Eqp/Hair/\(hairid)/name").get_string()
+  let name = string_loader.load_res(
+    ["Eqp.img", "Eqp", "Hair", "\(hairid)", "name"],
+  ).get_string()
   let haircolors = [
     "Black", "Red", "Orange", "Blonde", "Green", "Blue", "Violet", "Brown",
   ]

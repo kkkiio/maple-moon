@@ -8,9 +8,9 @@ struct BodyAction {
 
 pub fn BodyAction::new(src : NxNode) -> BodyAction {
   let stance = StanceId::by_string(src["action"].get_string())
-  let frame = src["frame"].get_int()
-  let move = Point::from_resource(src["move"])
-  let mut sgndelay = src["delay"].get_int()
+  let frame = src["frame"].get_int().unwrap()
+  let move = Point::from_resource(src["move"]).unwrap()
+  let mut sgndelay = src["delay"].get_int().unwrap()
   if sgndelay == 0 {
     sgndelay = 100
   }
@@ -75,8 +75,8 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
   let body_actions = Map::new()
   let attack_delays = Map::new()
   let character_loader = character_loader()
-  let bodynode = character_loader.load_res("00002000.img")
-  let headnode = character_loader.load_res("00012000.img")
+  let bodynode = character_loader.load_res(["00002000.img"])
+  let headnode = character_loader.load_res(["00012000.img"])
   bodynode.get_object().iter(
     fn(ststr, stancenode) {
       let mut attackdelay : Int = 0
@@ -107,7 +107,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
           attackdelay += action.get_delay()
         } else {
           let stance = StanceId::by_string(ststr)
-          let mut delay = framenode["delay"].get_int()
+          let mut delay = framenode["delay"].get_int().unwrap()
           if delay <= 0 {
             delay = 100
           }
@@ -122,7 +122,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
                   fn(mapnodename, mapnode) {
                     set_defaultm(bodyshiftmap, z).set(
                       mapnodename,
-                      Point::from_resource(mapnode),
+                      Point::from_resource(mapnode).unwrap(),
                     )
                   },
                 )
@@ -133,7 +133,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
             fn(mapnodename, mapnode) {
               set_defaultm(bodyshiftmap, BodyLayer::HEAD).set(
                 mapnodename,
-                Point::from_resource(mapnode),
+                Point::from_resource(mapnode).unwrap(),
               )
             },
           )
@@ -212,6 +212,17 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
     stance_delays,
     body_actions,
     attack_delays,
+  }
+}
+
+fn set_defaulta[K : Hash + Eq, V](m : Map[K, Array[V]], k : K) -> Array[V] {
+  match m[k] {
+    Some(v) => v
+    None => {
+      let v = Array::new()
+      m.set(k, v)
+      v
+    }
   }
 }
 

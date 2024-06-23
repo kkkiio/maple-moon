@@ -14,18 +14,24 @@ let map_portals_animations : MapPortalAnimations = {
   animations: @immut/sorted_map.empty(),
 }
 
-pub fn MapPortals::from_resource(src : NxNode, mapid : Int) -> MapPortals {
+pub fn MapPortals::from_resource(
+  src : NxNode,
+  mapid : Int
+) -> MapPortals {
   let mut portals_by_id = @immut/sorted_map.empty()
   let mut portal_ids_by_name = @immut/sorted_map.empty()
-  src.get_object().iter(
-    fn(_k, sub) {
-      let portal_id = @strconv.parse_int(sub["name"].get_string()).or(-1)
+  src.iter(
+    fn(sub) {
+      let portal_id = @strconv.parse_int(sub.name).or(-1)
       if portal_id >= 0 {
-        let portal_type = PortalType::typebyid(sub["pt"].get_int())
+        let portal_type = PortalType::typebyid(sub["pt"].get_int().unwrap())
         let name = sub["pn"].get_string()
         let target_name = sub["tn"].get_string()
-        let target_id = sub["tm"].get_int()
-        let position = Point::new(sub["x"].get_int(), sub["y"].get_int())
+        let target_id = sub["tm"].get_int().unwrap()
+        let position = Point::new(
+          sub["x"].get_int().unwrap(),
+          sub["y"].get_int().unwrap(),
+        )
         let animation = map_portals_animations.animations[portal_type]
         let intramap = target_id == mapid
         portals_by_id = portals_by_id.insert(
@@ -112,9 +118,9 @@ pub fn find_warp_at(
 pub fn MapPortalAnimations::load(self : MapPortalAnimations) -> Unit {
   let loader = map_loader()
   let src1 = loader.load_res(
-    "MapHelper.img/portal/game/ph/default/portalContinue",
+    ["MapHelper.img", "portal", "game", "ph", "default", "portalContinue"],
   )
-  let src2 = loader.load_res("MapHelper.img/portal/game/pv")
+  let src2 = loader.load_res(["MapHelper.img", "portal", "game", "pv"])
   self.animations = @immut/sorted_map.from_array(
     [
       (PortalType::HIDDEN, Animation::from_resource(src1)),

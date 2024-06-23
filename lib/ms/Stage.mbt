@@ -79,13 +79,13 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
   let strid = @string_format.extend_id(mapid, 9)
   let prefix = (mapid / 100000000).to_string()
   let src = if mapid == -1 {
-    ui_loader().load_res("CashShopPreview.img")
+    ui_loader().load_res(["CashShopPreview.img"])
   } else {
-    map_loader().load_res("Map/Map\(prefix)/\(strid).img")
+    map_loader().load_res(["Map", "Map\(prefix)", "\(strid).img"])
   }
   self.tiles_objs = MapTilesObjs::from_resource(src)
   self.backgrounds = Some(MapBackgrounds::new(src["back"]))
-  self.physics = Physics::from_resource(src["foothold"])!!
+  self.physics = Physics::from_resource(src["foothold"])
   self.map_info = MapInfo::from_resource(
     src,
     self.physics.get_fht().get_walls(),

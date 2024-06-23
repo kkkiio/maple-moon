@@ -11,9 +11,9 @@ struct Frame {
 
 fn Frame::from_resource(src : NxNode) -> Frame {
   let texture = Texture::from_resource(src)
-  let bounds = Rectangle::from_resource(src)
-  let head = Point::from_resource(src["head"])
-  let delay = match src["delay"].get_int() {
+  let bounds = Rectangle::from_resource(src).unwrap()
+  let head = Point::from_resource(src["head"]).unwrap()
+  let delay = match src["delay"].get_int().unwrap() {
     0 => 100
     it => it
   }
@@ -114,7 +114,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
       }
     None => [Frame::default()]
   }
-  let zigzag = src["zigzag"].get_bool()
+  let zigzag = src["zigzag"].get_bool().unwrap()
   let a = {
     frames,
     zigzag,

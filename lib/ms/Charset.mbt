@@ -14,8 +14,9 @@ pub fn Charset::from_resource(
   alignment : CharsetAlignment
 ) -> Charset {
   let chars = Map::new()
-  src.get_object().iter(
-    fn(name, sub) {
+  src.iter(
+    fn(sub) {
+      let name = sub.name
       if sub["__b"].is_null() || name == "" {
         return
       }

@@ -83,9 +83,9 @@ struct FaceFrame {
 
 pub fn FaceFrame::from_resource(src : NxNode) -> FaceFrame {
   let texture = Texture::from_resource(src["face"])
-  let shift : Point[Int] = Point::from_resource(src["face"]["map"]["brow"])
+  let shift : Point[Int] = Point::from_resource(src["face"]["map"]["brow"]).unwrap()
   texture.shift(-shift)
-  let mut delay : Int = src["delay"].get_int()
+  let mut delay : Int = src["delay"].get_int().unwrap()
   if delay == 0 {
     delay = 2500
   }
@@ -95,7 +95,7 @@ pub fn FaceFrame::from_resource(src : NxNode) -> FaceFrame {
 pub fn Face::new(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
   let loader = character_loader()
-  let facenode = loader.load_res("Face/\(strid).img")
+  let facenode = loader.load_res(["Face", "\(strid).img"])
   let expressions = expression_names.map_with_key(
     fn(exp, _v) {
       let frames = Map::new()
@@ -120,7 +120,9 @@ pub fn Face::new(faceid : Int) -> Face {
     },
   )
   let string_loader = string_loader()
-  let name = string_loader.load_res("Eqp.img/Eqp/Face/\(faceid)/name").get_string()
+  let name = string_loader.load_res(
+    ["Eqp.img", "Eqp", "Face", "\(faceid)", "name"],
+  ).get_string()
   { expressions, name }
 }
 

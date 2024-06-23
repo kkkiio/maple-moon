@@ -39,13 +39,16 @@ pub fn shift_y(self : Point[Int], v : Int) -> Unit {
   self.y += v
 }
 
-pub fn Point::from_resource(src : NxNode) -> Point[Int] {
-  match src.desc.as_array() {
-    Some(arr) =>
-      {
-        x: arr[0].as_number().unwrap().to_int(),
-        y: arr[1].as_number().unwrap().to_int(),
-      }
-    None => Point::default()
+pub fn Point::from_resource(src : NxNode) -> Result[Point[Int], String] {
+  match src.desc {
+    @json.JsonValue::Array(arr) =>
+      Ok(
+        {
+          x: arr[0].as_number().unwrap().to_int(),
+          y: arr[1].as_number().unwrap().to_int(),
+        },
+      )
+    @json.JsonValue::Null => Ok(Point::default())
+    _ as a => Err("expect array, got \(a)")
   }
 }

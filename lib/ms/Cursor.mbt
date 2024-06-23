@@ -77,7 +77,9 @@ pub fn Cursor::new() -> Cursor {
   let ui_loader = ui_loader()
   let animations = all_cursor_states.map(
     fn(value) {
-      Animation::from_resource(ui_loader.load_res("Basic.img/Cursor/\(value)"))
+      Animation::from_resource(
+        ui_loader.load_res(["Basic.img", "Cursor", "\(value)"]),
+      )
     },
   )
   {

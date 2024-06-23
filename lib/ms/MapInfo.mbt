@@ -4,7 +4,7 @@ struct Seat {
 }
 
 pub fn Seat::from_resource(src : NxNode) -> Seat {
-  { pos: Point::from_resource(src) }
+  { pos: Point::from_resource(src).unwrap() }
 }
 
 pub fn inrange(self : Seat, position : Point[Int]) -> Bool {
@@ -27,10 +27,10 @@ struct Ladder {
 
 pub fn Ladder::from_resource(src : NxNode) -> Ladder {
   {
-    x: src["x"].get_int(),
-    y1: src["y1"].get_int(),
-    y2: src["y2"].get_int(),
-    ladder: src["l"].get_bool(),
+    x: src["x"].get_int().unwrap(),
+    y1: src["y1"].get_int().unwrap(),
+    y2: src["y2"].get_int().unwrap(),
+    ladder: src["l"].get_bool().unwrap(),
   }
 }
 
@@ -81,8 +81,14 @@ pub fn MapInfo::from_resource(
   let (map_walls, map_borders) = match info["VRLeft"].desc.as_number() {
     Some(_) =>
       (
-        Range::new(info["VRLeft"].get_int(), info["VRRight"].get_int()),
-        Range::new(info["VRTop"].get_int(), info["VRBottom"].get_int()),
+        Range::new(
+          info["VRLeft"].get_int().unwrap(),
+          info["VRRight"].get_int().unwrap(),
+        ),
+        Range::new(
+          info["VRTop"].get_int().unwrap(),
+          info["VRBottom"].get_int().unwrap(),
+        ),
       )
     None => (walls, borders)
   }
@@ -91,23 +97,21 @@ pub fn MapInfo::from_resource(
   let bgm = bgmpath.substring(start=0, end=split) + ".img/" + bgmpath.substring(
       start=split + 1,
     )
-  let seats = src["seat"].get_object().as_iter().map(fn(it) { it.1 }).map(
-    Seat::from_resource,
-  ).collect()
-  let ladders = src["ladderRope"].get_object().as_iter().map(fn(it) { it.1 }).map(
-    Ladder::from_resource,
-  ).collect()
+  let seats = Array::new()
+  src["seat"].iter(fn(it) { seats.push(Seat::from_resource(it)) })
+  let ladders = Array::new()
+  src["ladderRope"].iter(fn(it) { ladders.push(Ladder::from_resource(it)) })
   {
-    field_limit: info["fieldLimit"].get_int(),
-    cloud: info["cloud"].get_bool(),
+    field_limit: info["fieldLimit"].get_int().unwrap(),
+    cloud: info["cloud"].get_bool().unwrap(),
     bgm,
     map_desc: info["mapDesc"].get_string(),
     map_name: info["mapName"].get_string(),
     street_name: info["streetName"].get_string(),
     map_mark: info["mapMark"].get_string(),
-    swim: info["swim"].get_bool(),
-    town: info["town"].get_bool(),
-    hide_minimap: info["hideMinimap"].get_bool(),
+    swim: info["swim"].get_bool().unwrap(),
+    town: info["town"].get_bool().unwrap(),
+    hide_minimap: info["hideMinimap"].get_bool().unwrap(),
     map_walls,
     map_borders,
     seats,

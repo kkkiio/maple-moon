@@ -18,14 +18,19 @@ pub fn debug_write(self : Texture, buffer : Buffer) -> Unit {
 }
 
 fn Texture::from_resource(src : NxNode) -> Texture {
-  println("loading texture from resource " + src.loader.name() + " " + src.path)
+  let loader_name = src.loader.name()
+  let src_path = src.path
+  println("loading texture from resource \(loader_name) \(src_path)")
   // TODO: source,_outlink,_inlink
   match src["__b"].desc.as_number() {
     Some(bid) =>
       {
         bitmap: Some(src.loader.load_bitmap(bid.to_int())),
-        origin: src["origin"] |> Point::from_resource,
-        dimensions: { x: src["__w"].get_int(), y: src["__h"].get_int() },
+        origin: (src["origin"] |> Point::from_resource).unwrap(),
+        dimensions: {
+          x: src["__w"].get_int().unwrap(),
+          y: src["__h"].get_int().unwrap(),
+        },
       }
     None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
   }

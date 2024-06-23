@@ -63,7 +63,7 @@ fn Audio::new() -> Result[Audio, String] {
   // }
 
   let loader = sound_loader()
-  let uisrc = loader.load_res("UI.img")
+  let uisrc = loader.load_res(["UI.img"])
   let samples = []
   let soundids = []
   let itemids = []
@@ -91,7 +91,7 @@ fn Audio::new() -> Result[Audio, String] {
   add_sound_by_enum(SoundName::DRAG_END, uisrc["DragEnd"])
   add_sound_by_enum(SoundName::WORLD_MAP_OPEN, uisrc["WorldmapOpen"])
   add_sound_by_enum(SoundName::WORLD_MAP_CLOSE, uisrc["WorldmapClose"])
-  let gamesrc = loader.load_res("Game.img")
+  let gamesrc = loader.load_res(["Game.img"])
   add_sound_by_enum(SoundName::GAME_START, gamesrc["GameIn"])
   add_sound_by_enum(SoundName::JUMP, gamesrc["Jump"])
   add_sound_by_enum(SoundName::DROP, gamesrc["DropItem"])
@@ -108,7 +108,7 @@ fn Audio::new() -> Result[Audio, String] {
       None => ()
     }
   }
-  let itemsrc = loader.load_res("Item.img").get_object()
+  let itemsrc = loader.load_res([ "Item.img" ]).get_object()
   itemsrc.iter(fn(name, node) { add_sound_by_name(name, node["Use"]) })
 
   // let volume = Setting.SFXVolume.get().load()

@@ -44,11 +44,10 @@ pub trait FromResource {
   from_resource(NxNode) -> Self
 }
 
-pub fn Rectangle::from_resource(src : NxNode) -> Rectangle[Int] {
-  {
-    left_top: Point::from_resource(src["lt"]),
-    right_bottom: Point::from_resource(src["rb"]),
-  }
+pub fn Rectangle::from_resource(src : NxNode) -> Result[Rectangle[Int], String] {
+  let left_top = Point::from_resource(src["lt"])?
+  let right_bottom = Point::from_resource(src["rb"])?
+  Ok({ left_top, right_bottom })
 }
 
 fn straight[T : Eq](self : Rectangle[T]) -> Bool {

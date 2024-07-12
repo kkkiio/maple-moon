@@ -121,5 +121,5 @@ fn send_cursor(
 
 // fn get_type(self) -> UIElementType {
 //   // Get type logic here
-//   UIElementType::NONE
+//   UIElementType::UI_ELEMENT_NONE
 // }

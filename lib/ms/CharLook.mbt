@@ -33,7 +33,7 @@ pub fn CharLook::new(entry : LookEntry) -> CharLook {
   // self.add_equip(Clothing::TOP_DEFAULT_ID)
   // self.add_equip(Clothing::BOTTOM_DEFAULT_ID)
 
-  // entry.equips.iter().for_each(fn(equip) {
+  // entry.equips.each().for_each(fn(equip) {
   //     self.add_equip(equip.second);
   // })
   l
@@ -118,10 +118,10 @@ fn draw_impl(
     hair.draw(interstance, HairLayer::BELOW_BODY, interframe, args)
     // self.equips.draw(EquipSlotId::HAT, interstance, ClothingLayer::CAP_BELOW_BODY, interframe, args)
     body.draw(interstance, BodyLayer::BODY, interframe, args)
-    hair.draw(interstance, HairLayer::DEFAULT, interframe, args)
+    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
     body.draw(StanceId::STAND1, BodyLayer::HEAD, 1, args)
     hair.draw(interstance, HairLayer::SHADE, interframe, args)
-    hair.draw(interstance, HairLayer::DEFAULT, interframe, args)
+    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
     body.draw(interstance, BodyLayer::HEAD, interframe, args)
     hair.draw(interstance, HairLayer::SHADE, interframe, args)
     face.draw(interexpression, interexpframe, faceargs)
@@ -198,7 +198,7 @@ fn draw_impl(
       interframe,
       args,
     )
-    hair.draw(interstance, HairLayer::DEFAULT, interframe, args)
+    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
     // self.equips.draw(EquipSlotId::SHIELD, interstance, ClothingLayer::SHIELD_OVER_HAIR, interframe, args)
     // self.equips.draw(EquipSlotId::EARACC, interstance, ClothingLayer::EARRINGS, interframe, args)
     body.draw(interstance, BodyLayer::HEAD, interframe, args)

@@ -178,17 +178,23 @@ function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
   return shader;
 }
 
+let resourceLoaderNo = 0;
+
 class ResourceLoader {
   constructor(name) {
     this.name = name;
     this.nxJson = null;
+    const no = resourceLoaderNo;
+    resourceLoaderNo += 1
+    this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
   }
-  async loadNxJson(path) {
+  async load() {
+    const path = `resource/${this.name}/nx.json`
     const response = await fetch(path);
     const json = await response.json();
     this.nxJson = json;
   }
-  load(nodepath) {
+  loadDesc(nodepath) {
     let parts = nodepath.split("/");
     return parts.reduce((acc, part) => {
       if (part in acc) return acc[part];
@@ -370,39 +376,42 @@ function main() {
   const prepareResourcePromises = [];
   const uiLoader = new ResourceLoader("UI.nx");
   prepareResourcePromises.push(
-    uiLoader.loadNxJson("nx/files/raw/UI.nx/nx.json")
+    uiLoader.load()
   );
-
-  const uiBmpLoader = new DirectBmpLoader(0, "nx/files/raw/UI.nx/bitmaps");
-  uiLoader.bmpLoader = uiBmpLoader;
 
   const mapLoader = new ResourceLoader("Map.nx");
   prepareResourcePromises.push(
-    mapLoader.loadNxJson("nx/files/raw/Map.nx/nx.json")
+    mapLoader.load()
   );
-
-  const mapBmpLoader = new DirectBmpLoader(1, "nx/files/raw/Map.nx/bitmaps");
-  mapLoader.bmpLoader = mapBmpLoader;
 
   const soundLoader = new ResourceLoader("Sound.nx");
   prepareResourcePromises.push(
-    soundLoader.loadNxJson("nx/files/raw/Sound.nx/nx.json")
+    soundLoader.load()
   );
 
   const characterLoader = new ResourceLoader("Character.nx");
   prepareResourcePromises.push(
-    characterLoader.loadNxJson("nx/files/raw/Character.nx/nx.json")
+    characterLoader.load()
   );
-
-  const characterBmpLoader = new DirectBmpLoader(
-    1,
-    "nx/files/raw/Character.nx/bitmaps"
-  );
-  characterLoader.bmpLoader = characterBmpLoader;
 
   const stringLoader = new ResourceLoader("String.nx");
   prepareResourcePromises.push(
-    stringLoader.loadNxJson("nx/files/raw/String.nx/nx.json")
+    stringLoader.load()
+  );
+
+  const reactorLoader = new ResourceLoader("Reactor.nx");
+  prepareResourcePromises.push(
+    reactorLoader.load()
+  );
+
+  const map001Loader = new ResourceLoader("Map001.nx");
+  prepareResourcePromises.push(
+    map001Loader.load()
+  );
+
+  const mapPrettyLoader = new ResourceLoader("MapPretty.nx");
+  prepareResourcePromises.push(
+    mapPrettyLoader.load()
   );
 
   let requestAnimationFrameId = null;
@@ -522,6 +531,9 @@ function main() {
       sound_loader: () => soundLoader,
       character_loader: () => characterLoader,
       string_loader: () => stringLoader,
+      reactor_loader: () => reactorLoader,
+      map001_loader: () => map001Loader,
+      map_pretty_loader: () => mapPrettyLoader,
       load_bitmap: (loader, bid) => loader.bmpLoader.loadBitmap(bid),
     },
     bitmap: {
@@ -534,6 +546,12 @@ function main() {
       now_micro: () => {
         return performance.now() * 1000;
       },
+    },
+    socket: {
+      new: () => null,
+      open: (socket) => { },
+      close: (socket) => { },
+      is_connected: (socket) => false,
     },
     spectest: {
       print_i32: (x) => console.log(String(x)),
@@ -551,7 +569,7 @@ function main() {
 
   Object.assign(globalThis, importObject);
   Promise.all(prepareResourcePromises)
-    .then(() => import("./target/js/release/build/lib/lib.js"))
+    .then(() => import("./lib/lib.js"))
     .then((m) => {
       game_update = m.game_update;
       onmousemove = m.onmousemove;

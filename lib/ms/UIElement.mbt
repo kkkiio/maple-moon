@@ -1,16 +1,16 @@
 type TooltipParent
 
 pub enum UIElementType {
-  NONE
+  UI_ELEMENT_NONE
   START
   LOGIN
   TOS
   GENDER
   WORLD_SELECT
   REGION
-  CHAR_SELECT
+  UI_ELEMENT_CHAR_SELECT
   LOGIN_WAIT
-  RACE_SELECT
+  UI_ELEMENT_RACE_SELECT
   CLASS_CREATION
   SOFT_KEYBOARD
   LOGIN_NOTICE
@@ -47,16 +47,16 @@ pub enum UIElementType {
 
 pub let all_types : @immut/sorted_map.Map[UIElementType, Int] = @immut/sorted_map.from_array(
   [
-    (NONE, 0),
+    (UI_ELEMENT_NONE, 0),
     (START, 1),
     (LOGIN, 2),
     (TOS, 3),
     (GENDER, 4),
     (WORLD_SELECT, 5),
     (REGION, 6),
-    (CHAR_SELECT, 7),
+    (UI_ELEMENT_CHAR_SELECT, 7),
     (LOGIN_WAIT, 8),
-    (RACE_SELECT, 9),
+    (UI_ELEMENT_RACE_SELECT, 9),
     (CLASS_CREATION, 10),
     (SOFT_KEYBOARD, 11),
     (LOGIN_NOTICE, 12),
@@ -159,16 +159,16 @@ pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
 }
 
 pub fn draw_sprites(self : UIElementBase, alpha : Double) -> Unit {
-  self.sprites.iter(fn(sprite) { sprite.draw(self.position, alpha) })
+  self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
 }
 
 pub fn draw_buttons(self : UIElementBase, _alpha : Double) -> Unit {
-  self.buttons.iter(fn(_k, button) { button.draw(self.position) })
+  self.buttons.each(fn(_k, button) { button.draw(self.position) })
 }
 
 pub fn update(self : UIElementBase) -> Unit {
-  self.sprites.iter(fn(sprite) { sprite.update() |> ignore })
-  self.buttons.iter(fn(_k, button) { button.update() })
+  self.sprites.each(fn(sprite) { sprite.update() |> ignore })
+  self.buttons.each(fn(_k, button) { button.update() })
 }
 
 pub fn makeactive(self : UIElementBase) -> Unit {
@@ -197,7 +197,7 @@ pub fn is_in_range(self : UIElementBase, cursorpos : Point[Int]) -> Bool {
 }
 
 pub fn remove_cursor(self : UIElementBase) -> Unit {
-  self.buttons.iter(
+  self.buttons.each(
     fn(_k, button) {
       if button.get_state() == ButtonState::MOUSEOVER {
         button.set_state(ButtonState::NORMAL)
@@ -212,7 +212,7 @@ pub fn base_send_cursor(
   pos : Point[Int]
 ) -> CursorState {
   let mut ret = if down { CursorState::CLICKING } else { CursorState::IDLE }
-  elem.get_buttons().iter(
+  elem.get_buttons().each(
     fn(k, button) {
       if button.is_active() && button.bounds(elem.get_position()).contains(pos) {
         match button.get_state() {

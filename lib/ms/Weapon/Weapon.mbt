@@ -43,7 +43,7 @@ let values : FixedArray[(Type, Int)] = [
 ]
 
 pub fn by_value(value : Int) -> Type {
-  let r = values.as_iter().find_first(fn(it) { it.1 == value }).map(
+  let r = values.iter().find_first(fn(it) { it.1 == value }).map(
     fn(it) { it.0 },
   )
   match r {

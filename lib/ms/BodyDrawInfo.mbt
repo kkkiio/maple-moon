@@ -77,7 +77,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
   let character_loader = character_loader()
   let bodynode = character_loader.load_res(["00002000.img"])
   let headnode = character_loader.load_res(["00012000.img"])
-  bodynode.get_object().iter(
+  bodynode.get_object().each(
     fn(ststr, stancenode) {
       let mut attackdelay : Int = 0
       let mut frame : Int = 0
@@ -113,12 +113,12 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
           }
           stance_delays[stance.int_value()].set(frame, delay)
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
-          framenode.get_object().iter(
+          framenode.get_object().each(
             fn(part, partnode) {
               if part != "delay" && part != "face" {
                 let zstr = partnode["z"].get_string()
                 let z = Body::layer_by_name(zstr)
-                partnode["map"].get_object().iter(
+                partnode["map"].get_object().each(
                   fn(mapnodename, mapnode) {
                     set_defaultm(bodyshiftmap, z).set(
                       mapnodename,
@@ -129,7 +129,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
               }
             },
           )
-          headnode[ststr][frame.to_string()]["head"]["map"].get_object().iter(
+          headnode[ststr][frame.to_string()]["head"]["map"].get_object().each(
             fn(mapnodename, mapnode) {
               set_defaultm(bodyshiftmap, BodyLayer::HEAD).set(
                 mapnodename,

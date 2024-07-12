@@ -1,5 +1,5 @@
 pub enum BodyLayer {
-  NONE
+  BODY_NONE
   BODY
   ARM
   ARM_BELOW_HEAD
@@ -14,7 +14,7 @@ pub enum BodyLayer {
 
 pub fn int_value(self : BodyLayer) -> Int {
   match self {
-    BodyLayer::NONE => 0
+    BodyLayer::BODY_NONE => 0
     BodyLayer::BODY => 1
     BodyLayer::ARM => 2
     BodyLayer::ARM_BELOW_HEAD => 3
@@ -34,7 +34,7 @@ pub fn hash(self : BodyLayer) -> Int {
 
 pub let body_layer_int_map : @immut/sorted_map.Map[BodyLayer, Int] = @immut/sorted_map.from_array(
   [
-    (BodyLayer::NONE, 0),
+    (BodyLayer::BODY_NONE, 0),
     (BodyLayer::BODY, 1),
     (BodyLayer::ARM, 2),
     (BodyLayer::ARM_BELOW_HEAD, 3),
@@ -61,7 +61,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
   let character_loader = character_loader()
   let bodynode : NxNode = character_loader.load_res(["000020" + strid + ".img"])
   let headnode : NxNode = character_loader.load_res(["000120" + strid + ".img"])
-  let stances = stance_id_names.as_iter().map(
+  let stances = stance_id_names.iter().map(
       fn(it) {
         let (stance_name, stance) = it
         let body_texture_map = body_layer_int_map.map(
@@ -75,13 +75,13 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
             if framenode.is_null() {
               break
             }
-            framenode.iter(
+            framenode.each(
               fn(partnode) {
                 let part : String = partnode.name
                 if part != "delay" && part != "face" {
                   let z : String = partnode["z"].get_string()
                   let layer : BodyLayer = Body::layer_by_name(z)
-                  if layer != BodyLayer::NONE {
+                  if layer != BodyLayer::BODY_NONE {
                     let shift = match layer {
                       BodyLayer::HAND_BELOW_WEAPON =>
                         drawinfo.get_hand_position(stance, frame) - (partnode["map"]["handMove"]
@@ -153,7 +153,7 @@ pub fn Body::layer_by_name(name : String) -> BodyLayer {
       if name != "" {
         print("Unknown BodyLayer name: [" + name + "]")
       }
-      BodyLayer::NONE
+      BodyLayer::BODY_NONE
     }
     Some(v) => v
   }

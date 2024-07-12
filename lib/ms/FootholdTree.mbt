@@ -24,9 +24,9 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   let mut rightw : Int = -30000
   let mut botb : Int = -30000
   let mut topb : Int = 30000
-  src.get_object().iter(
+  src.get_object().each(
     fn(basefname, basef) {
-      let layer = match @strconv.parse_int(basefname) {
+      let layer = match @strconv.parse_int(basefname)!! {
         Ok(v) => v
         Err(err) => {
           let path = basef.path
@@ -34,11 +34,11 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
           return
         }
       }
-      basef.get_object().iter(
+      basef.get_object().each(
         fn(_midfname, midf) {
-          midf.get_object().iter(
+          midf.get_object().each(
             fn(lastfname, lastf) {
-              let id = match @strconv.parse_int(lastfname) {
+              let id = match @strconv.parse_int(lastfname)!! {
                 Ok(v) => v
                 Err(err) => {
                   let path = lastf.path
@@ -268,7 +268,7 @@ pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
   let mut comp = self.borders.second().to_double()
   let x = fx.to_int()
   let range = self.footholds_by_x.get(x).or(Array::new())
-  range.iter(
+  range.each(
     fn(id) {
       let fh = self.footholds.get(id).unwrap()
       let ycomp = fh.ground_below(fx)

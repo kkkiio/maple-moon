@@ -2,8 +2,8 @@
 pub fn extend_id(id : Int, length : Int) -> String {
   let strid = id.to_string()
   if strid.length() < length {
-    let buf = Buffer::make(length)
-    Iter::repeat('0').take(length - strid.length()).iter(
+    let buf = Buffer::new(size_hint=length)
+    Iter::repeat('0').take(length - strid.length()).each(
       fn(c) { buf.write_char(c) },
     )
     buf.write_string(strid)

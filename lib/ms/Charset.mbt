@@ -14,7 +14,7 @@ pub fn Charset::from_resource(
   alignment : CharsetAlignment
 ) -> Charset {
   let chars = Map::new()
-  src.iter(
+  src.each(
     fn(sub) {
       let name = sub.name
       if sub["__b"].is_null() || name == "" {
@@ -52,7 +52,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
   let mut total : Int = 0
   match self.alignment {
     CharsetAlignment::CENTER => {
-      text.to_array().iter(
+      text.to_array().each(
         fn(c) {
           let width = self.getw(c.to_int())
           self.draw_char(
@@ -67,7 +67,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
     }
     CharsetAlignment::LEFT =>
       // for c in text.chars() {
-      text.to_array().iter(
+      text.to_array().each(
         fn(c) {
           self.draw_char(
             c.to_int(),
@@ -77,7 +77,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
         },
       )
     CharsetAlignment::RIGHT =>
-      text.to_array().iter_rev(
+      text.to_array().rev_each(
         fn(c) {
           shift += self.getw(c.to_int())
           self.draw_char(
@@ -101,7 +101,7 @@ pub fn draw_text_with_hspace(
   match self.alignment {
     CharsetAlignment::CENTER => shift -= hspace * length / 2
     CharsetAlignment::LEFT =>
-      text.to_array().iter(
+      text.to_array().each(
         fn(c) {
           self.draw_char(
             c.to_int(),
@@ -111,7 +111,7 @@ pub fn draw_text_with_hspace(
         },
       )
     CharsetAlignment::RIGHT =>
-      text.to_array().iter_rev(
+      text.to_array().rev_each(
         fn(c) {
           shift += hspace
           self.draw_char(

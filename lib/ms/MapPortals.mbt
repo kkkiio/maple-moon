@@ -14,15 +14,12 @@ let map_portals_animations : MapPortalAnimations = {
   animations: @immut/sorted_map.empty(),
 }
 
-pub fn MapPortals::from_resource(
-  src : NxNode,
-  mapid : Int
-) -> MapPortals {
+pub fn MapPortals::from_resource(src : NxNode, mapid : Int) -> MapPortals {
   let mut portals_by_id = @immut/sorted_map.empty()
   let mut portal_ids_by_name = @immut/sorted_map.empty()
-  src.iter(
+  src.each(
     fn(sub) {
-      let portal_id = @strconv.parse_int(sub.name).or(-1)
+      let portal_id = @strconv.parse_int(sub.name)!!.or(-1)
       if portal_id >= 0 {
         let portal_type = PortalType::typebyid(sub["pt"].get_int().unwrap())
         let name = sub["pn"].get_string()
@@ -64,7 +61,7 @@ pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
     timestep=@Constants.timestep,
   )
   |> ignore
-  self.portals_by_id.iter(
+  self.portals_by_id.each(
     fn(_k, portal) {
       match portal.get_type() {
         PortalType::HIDDEN | PortalType::TOUCH => portal.update(playerpos)
@@ -78,7 +75,7 @@ pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
 }
 
 pub fn draw(self : MapPortals, viewpos : Point[Int], inter : Double) -> Unit {
-  self.portals_by_id.iter(fn(_k, portal) { portal.draw(viewpos, inter) })
+  self.portals_by_id.each(fn(_k, portal) { portal.draw(viewpos, inter) })
 }
 
 pub fn get_portal_by_id(self : MapPortals, portal_id : Int) -> Point[Int] {
@@ -105,7 +102,7 @@ pub fn find_warp_at(
   if self.cooldown == 0 {
     self.cooldown = warpcd
     match
-      self.portals_by_id.as_iter().map(fn(it) { it.1 }).find_first(
+      self.portals_by_id.iter().map(fn(it) { it.1 }).find_first(
         fn(portal) { portal.bounds().contains(playerpos) },
       ) {
       Some(portal) => return portal.getwarpinfo()

@@ -98,9 +98,9 @@ pub fn MapInfo::from_resource(
       start=split + 1,
     )
   let seats = Array::new()
-  src["seat"].iter(fn(it) { seats.push(Seat::from_resource(it)) })
+  src["seat"].each(fn(it) { seats.push(Seat::from_resource(it)) })
   let ladders = Array::new()
-  src["ladderRope"].iter(fn(it) { ladders.push(Ladder::from_resource(it)) })
+  src["ladderRope"].each(fn(it) { ladders.push(Ladder::from_resource(it)) })
   {
     field_limit: info["fieldLimit"].get_int().unwrap(),
     cloud: info["cloud"].get_bool().unwrap(),
@@ -155,7 +155,7 @@ pub fn get_borders(self : MapInfo) -> Range[Int] {
 }
 
 pub fn findseat(self : MapInfo, position : Point[Int]) -> Seat? {
-  self.seats.as_iter().find_first(fn(seat) { seat.inrange(position) })
+  self.seats.iter().find_first(fn(seat) { seat.inrange(position) })
 }
 
 pub fn findladder(
@@ -163,7 +163,7 @@ pub fn findladder(
   position : Point[Int],
   upwards : Bool
 ) -> Ladder? {
-  self.ladders.as_iter().find_first(
+  self.ladders.iter().find_first(
     fn(ladder) { ladder.inrange(position, upwards) },
   )
 }

@@ -14,7 +14,7 @@ type JsJson
 
 extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
   #| (l,n) => {
-  #|   return l.load(n)
+  #|   return l.loadDesc(n)
   #| }
 
 extern "js" fn name(self : ResourceLoader) -> String =
@@ -28,7 +28,7 @@ extern "js" fn as_jsonstring(v : JsJson) -> String =
   #|}
 
 fn as_moonjson(self : JsJson) -> @json.JsonValue {
-  @json.parse(as_jsonstring(self)).unwrap()
+  @json.parse(as_jsonstring(self))!!.unwrap()
 }
 
 pub fn load_res(self : ResourceLoader, path : Array[String]) -> NxNode {
@@ -47,8 +47,8 @@ fn load_bitmap(self : ResourceLoader, bid : Int) -> Bitmap = "resource" "load_bi
 
 fn join_path(parts : Array[String]) -> String {
   let total = parts.fold_left(fn(acc, it) { acc + it.length() }, init=0)
-  let buf = Buffer::make(total + parts.length() - 1)
-  parts.iteri(
+  let buf = Buffer::new(size_hint=total + parts.length() - 1)
+  parts.eachi(
     fn(i, it) {
       if i > 0 {
         buf.write_char('/')
@@ -110,7 +110,7 @@ pub fn get_float(self : NxNode) -> Result[Double, String] {
   match self.desc {
     @json.JsonValue::Number(it) => Ok(it)
     @json.JsonValue::Null => Ok(0.0)
-    @json.JsonValue::String(it) => @strconv.parse_double(it)
+    @json.JsonValue::String(it) => @strconv.parse_double(it)!!
     _ as a => Err("expect number, got\(a)")
   }
 }
@@ -119,7 +119,7 @@ pub fn get_object(self : NxNode) -> Map[String, NxNode] {
   match self.desc.as_object() {
     Some(obj) => {
       let res = Map::new(capacity=obj.size())
-      obj.iter(
+      obj.each(
         fn(k, v) {
           res.set(
             k,
@@ -133,14 +133,12 @@ pub fn get_object(self : NxNode) -> Map[String, NxNode] {
   }
 }
 
-pub fn iter(self : NxNode, iter : (NxNode) -> Unit) -> Unit {
+pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   match self.desc {
     @json.JsonValue::Object(it) =>
-      it.iter(
+      it.each(
         fn(k, v) {
-          iter(
-            { loader: self.loader, name: k, desc: v, path: self.path.push(k) },
-          )
+          f({ loader: self.loader, name: k, desc: v, path: self.path.push(k) })
         },
       )
     @json.JsonValue::Null => ()

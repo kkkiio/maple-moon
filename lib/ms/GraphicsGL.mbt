@@ -144,7 +144,7 @@ fn flush(self : GraphicsGL, opacity : Double) -> Unit {
     )
   }
   let triangles = Vertices::new(self.quads.length() * 6)
-  self.quads.iteri(
+  self.quads.eachi(
     fn(i, quad) {
       // debug(quad)
       setv(triangles, i * 6 + 0, quad.vertices[0])
@@ -346,7 +346,7 @@ fn Quad::new(
     let sin = @math.sin(rotation)
     let center_x = (left + right) / 2
     let center_y = (top + bottom) / 2
-    vertices.iter(
+    vertices.each(
       fn(v) -> Unit {
         let vertice_x = v.localcoord_x - center_x
         let vertice_y = v.localcoord_y - center_y

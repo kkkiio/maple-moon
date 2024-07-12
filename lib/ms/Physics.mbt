@@ -31,7 +31,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
 
   // Use the appropriate physics for the terrain the object is on
   match tomove.type_ {
-    PhysicsObjectType::NORMAL => {
+    PhysicsObjectType::PHYSICS_OBJECT_NORMAL => {
       self.move_normal(tomove)
       self.fh_tree.limit_movement(tomove)
     }

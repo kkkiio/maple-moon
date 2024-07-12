@@ -1,5 +1,5 @@
 pub enum BackgroundType {
-  NORMAL
+  BG_NORMAL
   HTILED
   VTILED
   TILED
@@ -11,7 +11,7 @@ pub enum BackgroundType {
 
 pub fn int_value(self : BackgroundType) -> Int {
   match self {
-    BackgroundType::NORMAL => 0
+    BackgroundType::BG_NORMAL => 0
     BackgroundType::HTILED => 1
     BackgroundType::VTILED => 2
     BackgroundType::TILED => 3
@@ -98,7 +98,7 @@ pub fn Background::from_resource(src : NxNode) -> Background {
 
 let int_background_type_map : @immut/sorted_map.Map[Int, BackgroundType] = @immut/sorted_map.from_array(
   [
-    (0, BackgroundType::NORMAL),
+    (0, BackgroundType::BG_NORMAL),
     (1, BackgroundType::HTILED),
     (2, BackgroundType::VTILED),
     (3, BackgroundType::TILED),
@@ -114,7 +114,7 @@ pub fn Background::typebyid(id : Int) -> BackgroundType {
     Some(t) => t
     None => {
       println("Unknown Background::Type id: [" + id.to_string() + "]")
-      BackgroundType::NORMAL
+      BackgroundType::BG_NORMAL
     }
   }
 }
@@ -251,7 +251,7 @@ pub fn MapBackgrounds::drawbackgrounds(
   if self.black {
     GraphicsGL::get().draw_screen_fill(0.0, 0.0, 0.0, 1.0)
   }
-  self.backgrounds.iter(fn(background) { background.draw(viewx, viewy, alpha) })
+  self.backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
 }
 
 pub fn MapBackgrounds::drawforegrounds(
@@ -260,10 +260,10 @@ pub fn MapBackgrounds::drawforegrounds(
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  self.foregrounds.iter(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
+  self.foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
 }
 
 pub fn MapBackgrounds::update(self : MapBackgrounds) -> Unit {
-  self.backgrounds.iter(fn(background) { background.update() })
-  self.foregrounds.iter(fn(foreground) { foreground.update() })
+  self.backgrounds.each(fn(background) { background.update() })
+  self.foregrounds.each(fn(foreground) { foreground.update() })
 }

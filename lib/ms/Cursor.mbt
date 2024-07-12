@@ -55,7 +55,7 @@ fn hash(self : CursorState) -> Int {
 }
 
 pub fn CursorState::by_id(id : Int) -> CursorState {
-  all_cursor_states.as_iter().find_first(fn(it) -> Bool { id == it.1 }).map(
+  all_cursor_states.iter().find_first(fn(it) -> Bool { id == it.1 }).map(
     fn(it) -> CursorState { it.0 },
   ).unwrap()
 }

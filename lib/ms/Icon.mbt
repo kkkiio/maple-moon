@@ -1,5 +1,5 @@
 pub enum IconType {
-  NONE
+  ICON_NONE
   SKILL
   EQUIP
   ITEM
@@ -8,7 +8,7 @@ pub enum IconType {
 
 pub fn int_value(self : IconType) -> Int {
   match self {
-    IconType::NONE => 0
+    IconType::ICON_NONE => 0
     IconType::SKILL => 1
     IconType::EQUIP => 2
     IconType::ITEM => 3
@@ -62,7 +62,7 @@ pub fn set_count(self : NullType, _count : Int) -> Unit {
 }
 
 pub fn get_type(self : NullType) -> IconType {
-  IconType::NONE
+  IconType::ICON_NONE
 }
 
 pub struct Icon {

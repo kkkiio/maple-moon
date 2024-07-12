@@ -199,7 +199,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
         [
           npctalk, statusbar, channel, worldmap, optionmenu, shop, joypad, rank,
           quit,
-        ].as_iter().flat_map(fn(it) { it |> opt_as_iter }).find_first(
+        ].iter().flat_map(fn(it) { it |> opt_as_iter }).find_first(
           fn { _ => true },
         ) {
         Some(it) => {
@@ -209,8 +209,8 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
         None => {
           if escape || tab || enter || arrows {
             types.push(UIElementType::WORLD_SELECT)
-            types.push(UIElementType::CHAR_SELECT)
-            types.push(UIElementType::RACE_SELECT)
+            types.push(UIElementType::UI_ELEMENT_CHAR_SELECT)
+            types.push(UIElementType::UI_ELEMENT_RACE_SELECT)
             types.push(UIElementType::CLASS_CREATION)
             types.push(UIElementType::LOGIN_NOTICE)
             types.push(UIElementType::LOGIN_NOTICE_CONFIRM)

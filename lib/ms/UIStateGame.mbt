@@ -20,7 +20,7 @@ struct UIStateGame {
 
 let icon_map : @immut/hashmap.Map[IconType, UIElementType] = @immut/hashmap.from_array(
   [
-    (IconType::NONE, UIElementType::NONE),
+    (IconType::ICON_NONE, UIElementType::UI_ELEMENT_NONE),
     (IconType::SKILL, UIElementType::SKILL_BOOK),
     (IconType::EQUIP, UIElementType::EQUIP_INVENTORY),
     (IconType::ITEM, UIElementType::ITEM_INVENTORY),
@@ -33,7 +33,7 @@ pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
     // stats: CharStats::default(),
     elements: Map::new(),
     element_order: [],
-    focused: UIElementType::NONE,
+    focused: UIElementType::UI_ELEMENT_NONE,
     dragged: None,
     // eq_tooltip: @Tooltip.EquipTooltip::default(),
     // it_tooltip: @Tooltip.ItemTooltip::default(),
@@ -84,7 +84,7 @@ pub fn send_key(
       if focusedelement.is_active() {
         return focusedelement.send_key(action, pressed, escape)
       }
-      self.focused = UIElementType::NONE
+      self.focused = UIElementType::UI_ELEMENT_NONE
       return
     }
     None => ()
@@ -248,7 +248,7 @@ pub fn send_cursor(
         self.remove_cursor(focusedelement.get_type())
         return focusedelement.send_cursor(clicked, cursorpos)
       }
-      self.focused = UIElementType::NONE
+      self.focused = UIElementType::UI_ELEMENT_NONE
       return cursorstate
     }
     None => ()
@@ -259,7 +259,7 @@ pub fn send_cursor(
       Some(front) => {
         let front_type = front.get_type()
 
-        // if self.tooltip_parent != UIElementType::NONE {
+        // if self.tooltip_parent != UIElementType::UI_ELEMENT_NONE {
         //   if front_type != self.tooltip_parent {
         //     clear_tooltip(self, self.tooltip_parent)
         //   }
@@ -274,7 +274,7 @@ pub fn send_cursor(
     return Stage::get().send_cursor(clicked, cursorpos)
   }
   if self.dragged.is_empty() {
-    let mut drag_element_type = UIElementType::NONE
+    let mut drag_element_type = UIElementType::UI_ELEMENT_NONE
     let mut i = self.element_order.length()
     while i > 0 {
       i -= 1
@@ -289,7 +289,7 @@ pub fn send_cursor(
         None => ()
       }
     }
-    if drag_element_type != UIElementType::NONE {
+    if drag_element_type != UIElementType::UI_ELEMENT_NONE {
       match self.element_order.search(drag_element_type) {
         Some(i) => self.element_order.remove(i) |> ignore
         None => ()
@@ -424,7 +424,7 @@ pub fn set_element(
 
 pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
   if t == self.focused {
-    self.focused = UIElementType::NONE
+    self.focused = UIElementType::UI_ELEMENT_NONE
   }
   // if (type == tooltip_parent_) {
   //     clear_tooltip(tooltip_parent_);
@@ -516,7 +516,7 @@ pub fn remove_cursor(self : UIStateGame, t : UIElementType) -> Unit {
 // }
 
 fn get_front(self : UIStateGame, pos : Point[Int]) -> UIElement? {
-  self.element_order.as_iter().flat_map(
+  self.element_order.iter().flat_map(
     fn(t) {
       let res = self.elements[t].filter(
         fn(it) { it.is_active() && it.is_in_range(pos) },

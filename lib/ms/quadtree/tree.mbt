@@ -124,7 +124,7 @@ pub fn remove[K : Hash + Eq, V : QuadCompare](self : Tree[K, V], key : K) -> V? 
     Some(p) => p.remove_child(key)
     None => self.root = None
   }
-  [node.bl, node.tr, node.tl, node.br].iter(
+  [node.bl, node.tr, node.tl, node.br].each(
     fn(it) {
       match it {
         Some(child) => {

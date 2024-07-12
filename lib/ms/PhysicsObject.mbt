@@ -135,7 +135,7 @@ pub fn get_absolute(
 }
 
 pub enum PhysicsObjectType {
-  NORMAL
+  PHYSICS_OBJECT_NORMAL
   ICE
   SWIMMING
   FLYING
@@ -148,14 +148,12 @@ pub enum PhysicsObjectFlag {
   CHECK_BELOW
 } derive(Eq, Compare)
 
-pub let all_physic_object_flags : @immut/sorted_map.Map[PhysicsObjectFlag, Int] = @immut/sorted_map.Map::[
-  (PhysicsObjectFlag::NO_GRAVITY, 0x0001),
-  (PhysicsObjectFlag::TURN_AT_EDGES, 0x0002),
-  (PhysicsObjectFlag::CHECK_BELOW, 0x0004),
-]
-
 pub fn int_value(self : PhysicsObjectFlag) -> Int {
-  all_physic_object_flags[self].unwrap()
+  match self {
+    PhysicsObjectFlag::NO_GRAVITY => 0x0001
+    PhysicsObjectFlag::TURN_AT_EDGES => 0x0002
+    PhysicsObjectFlag::CHECK_BELOW => 0x0004
+  }
 }
 
 struct PhysicsObject {
@@ -177,7 +175,7 @@ struct PhysicsObject {
 pub fn PhysicsObject::default() -> PhysicsObject {
   {
     moving_object: MovingObject::default(),
-    type_: PhysicsObjectType::NORMAL,
+    type_: PhysicsObjectType::PHYSICS_OBJECT_NORMAL,
     flags: 0,
     fhid: 0,
     fhslope: 0.0,

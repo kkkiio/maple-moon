@@ -9,13 +9,13 @@ pub enum SoundName {
   SCROLL_UP
   SELECT_MAP
   TAB
-  WORLD_SELECT
+  SOUND_NAME_WORLD_SELECT
   DRAG_START
   DRAG_END
   WORLD_MAP_OPEN
   WORLD_MAP_CLOSE
   GAME_START
-  JUMP
+  SOUND_NAME_JUMP
   DROP
   PICKUP
   PORTAL
@@ -86,14 +86,14 @@ fn Audio::new() -> Result[Audio, String] {
   add_sound_by_enum(SoundName::SCROLL_UP, uisrc["ScrollUp"])
   add_sound_by_enum(SoundName::SELECT_MAP, uisrc["SelectMap"])
   add_sound_by_enum(SoundName::TAB, uisrc["Tab"])
-  add_sound_by_enum(SoundName::WORLD_SELECT, uisrc["WorldSelect"])
+  add_sound_by_enum(SoundName::SOUND_NAME_WORLD_SELECT, uisrc["WorldSelect"])
   add_sound_by_enum(SoundName::DRAG_START, uisrc["DragStart"])
   add_sound_by_enum(SoundName::DRAG_END, uisrc["DragEnd"])
   add_sound_by_enum(SoundName::WORLD_MAP_OPEN, uisrc["WorldmapOpen"])
   add_sound_by_enum(SoundName::WORLD_MAP_CLOSE, uisrc["WorldmapClose"])
   let gamesrc = loader.load_res(["Game.img"])
   add_sound_by_enum(SoundName::GAME_START, gamesrc["GameIn"])
-  add_sound_by_enum(SoundName::JUMP, gamesrc["Jump"])
+  add_sound_by_enum(SoundName::SOUND_NAME_JUMP, gamesrc["Jump"])
   add_sound_by_enum(SoundName::DROP, gamesrc["DropItem"])
   add_sound_by_enum(SoundName::PICKUP, gamesrc["PickUpItem"])
   add_sound_by_enum(SoundName::PORTAL, gamesrc["Portal"])
@@ -108,8 +108,8 @@ fn Audio::new() -> Result[Audio, String] {
       None => ()
     }
   }
-  let itemsrc = loader.load_res([ "Item.img" ]).get_object()
-  itemsrc.iter(fn(name, node) { add_sound_by_name(name, node["Use"]) })
+  let itemsrc = loader.load_res(["Item.img"]).get_object()
+  itemsrc.each(fn(name, node) { add_sound_by_name(name, node["Use"]) })
 
   // let volume = Setting.SFXVolume.get().load()
 

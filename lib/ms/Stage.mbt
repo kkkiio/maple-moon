@@ -112,7 +112,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   let viewx = viewrpos.x
   let viewy = viewrpos.y
   self.backgrounds.unwrap().drawbackgrounds(viewx, viewy, alpha)
-  @Layer.ids.iter(
+  @Layer.ids.each(
     fn(id) {
       self.tiles_objs.draw(id, viewpos, alpha)
       // reactors_.draw(id, viewx, viewy, alpha);
@@ -123,7 +123,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
       // drops_.draw(id, viewx, viewy, alpha);
     },
   )
-  @Layer.ids.iter(fn(id) { self.player.draw(id, viewx, viewy, alpha) })
+  @Layer.ids.each(fn(id) { self.player.draw(id, viewx, viewy, alpha) })
 
   //     combat_.draw(viewx, viewy, alpha);
   //     mob_combat_.draw(viewx, viewy, alpha);
@@ -207,7 +207,7 @@ pub fn send_key(
       match t {
         @KeyType.Id::ACTION => {
           if down {
-            match @KeyAction.get_action_by_id(action)!! {
+            match @KeyAction.get_action_by_id(action)!!.unwrap() {
               // @KeyAction.Id::UP => {
               //   self.check_ladders(true)
               //   self.check_portals()
@@ -219,7 +219,10 @@ pub fn send_key(
               _ => ()
             }
           }
-          playable.send_action(@KeyAction.get_action_by_id(action)!!, down)
+          playable.send_action(
+            @KeyAction.get_action_by_id(action)!!.unwrap(),
+            down,
+          )
         }
         // @KeyType.Id::SKILL => self.combat.use_move(action)
         // @KeyType.Id::ITEM => self.player.use_item(action)

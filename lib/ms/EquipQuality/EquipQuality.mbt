@@ -16,7 +16,7 @@ pub enum Id {
 // ) -> Id {
 //   let data = @ms.EquipData::get(item_id)
 //   let mut delta : Int = 0
-//   stats.iter(
+//   stats.each(
 //     fn(es, stat) {
 //       let defstat = data.get_defstat(es)
 //       delta += stat - defstat

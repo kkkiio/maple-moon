@@ -148,7 +148,11 @@ pub fn IntEntry::new(name : String, value : String) -> IntEntry {
 }
 
 pub fn load(self : IntEntry) -> Int {
-  @strconv.parse_int(self.value).or(0)
+  try {
+    @strconv.parse_int(self.value)!
+  } catch {
+    s => 0
+  }
 }
 
 pub fn save(self : IntEntry, value : String) -> Unit {

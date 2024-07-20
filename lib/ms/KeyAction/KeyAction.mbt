@@ -164,6 +164,10 @@ pub fn hash(self : Id) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 pub fn get_action_by_id(id : Int) -> Id!String {
   match id {
     0 => Id::NONE

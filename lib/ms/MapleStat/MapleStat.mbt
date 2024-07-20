@@ -50,6 +50,10 @@ pub fn hash(self : Id) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 pub let values : FixedArray[Id] = [
   SKIN,
   FACE,

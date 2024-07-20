@@ -123,7 +123,7 @@ fn available(self : ChainedReadBytes) -> Int {
 }
 
 fn read_bytes(self : ChainedReadBytes, length : Int) -> Bytes {
-  let res = Bytes::make(length)
+  let res = Bytes::new(length)
   let mut offset = 0
   while offset < length {
     let bs = self.dq.front().unwrap()

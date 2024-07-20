@@ -55,25 +55,27 @@ fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
 
 // ActiveBuffs
 struct ActiveBuffs {
-  buffs : Map[@Buffstat.Id, ActiveBuff]
+  buffs : @immut/sorted_map.Map[@Buffstat.Id, ActiveBuff]
 }
 
 fn ActiveBuffs::new() -> ActiveBuffs {
-  let buffs : Map[@Buffstat.Id, ActiveBuff] = Map::new(
-    capacity=@Buffstat.all_buff_id_map.size(),
-  )
-  buffs[@Buffstat.Id::MAPLE_WARRIOR] = MapleWarriorBuff::default()
-  buffs[@Buffstat.Id::STANCE] = StanceBuff::default()
-  buffs[@Buffstat.Id::BOOSTER] = BoosterBuff::default()
-  buffs[@Buffstat.Id::WATK] = SimpleStatBuff::new(@EquipStat.Id::WATK)
-  buffs[@Buffstat.Id::WDEF] = SimpleStatBuff::new(@EquipStat.Id::WDEF)
-  buffs[@Buffstat.Id::MATK] = SimpleStatBuff::new(@EquipStat.Id::MAGIC)
-  buffs[@Buffstat.Id::MDEF] = SimpleStatBuff::new(@EquipStat.Id::MDEF)
-  buffs[@Buffstat.Id::SPEED] = SimpleStatBuff::new(@EquipStat.Id::SPEED)
-  buffs[@Buffstat.Id::JUMP] = SimpleStatBuff::new(@EquipStat.Id::JUMP)
-  buffs[@Buffstat.Id::HYPERBODYHP] = PercentageStatBuff::new(@EquipStat.Id::HP)
-  buffs[@Buffstat.Id::HYPERBODYMP] = PercentageStatBuff::new(@EquipStat.Id::MP)
-  { buffs, }
+  {
+    buffs: @immut/sorted_map.from_array(
+      [
+        (@Buffstat.Id::MAPLE_WARRIOR, MapleWarriorBuff::default()),
+        (@Buffstat.Id::STANCE, StanceBuff::default()),
+        (@Buffstat.Id::BOOSTER, BoosterBuff::default()),
+        (@Buffstat.Id::WATK, SimpleStatBuff::new(@EquipStat.Id::WATK)),
+        (@Buffstat.Id::WDEF, SimpleStatBuff::new(@EquipStat.Id::WDEF)),
+        (@Buffstat.Id::MATK, SimpleStatBuff::new(@EquipStat.Id::MAGIC)),
+        (@Buffstat.Id::MDEF, SimpleStatBuff::new(@EquipStat.Id::MDEF)),
+        (@Buffstat.Id::SPEED, SimpleStatBuff::new(@EquipStat.Id::SPEED)),
+        (@Buffstat.Id::JUMP, SimpleStatBuff::new(@EquipStat.Id::JUMP)),
+        (@Buffstat.Id::HYPERBODYHP, PercentageStatBuff::new(@EquipStat.Id::HP)),
+        (@Buffstat.Id::HYPERBODYMP, PercentageStatBuff::new(@EquipStat.Id::MP)),
+      ],
+    ),
+  }
 }
 
 fn apply_buff(
@@ -84,5 +86,6 @@ fn apply_buff(
 ) -> Unit {
   match self.buffs[stat] {
     Some(buff) => buff.apply_to(stats, value)
+    None => ()
   }
 }

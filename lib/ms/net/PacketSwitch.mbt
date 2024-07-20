@@ -312,6 +312,10 @@ pub fn hash(self : Opcode) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 struct PacketSwitch {
   handlers : @immut/hashmap.Map[Opcode, PacketHandler]
 }
@@ -433,7 +437,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   match self.handlers[opcode] {
     Some(handler) =>
       try {
-        handler.handle(recv)!
+        handler.handle!(recv)
       } catch {
         PacketError(err) => self.warn(err, opcode)
       }

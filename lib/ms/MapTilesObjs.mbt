@@ -16,8 +16,8 @@ pub fn TilesObjs::from_resource(src : NxNode) -> TilesObjs {
         set_defaulta(tileZMap, z).push(tile)
       },
     )
-    src["obj"].get_object().each(
-      fn(_k, objnode) {
+    src["obj"].each(
+      fn(objnode) {
         let obj = Obj::from_resource(objnode)
         let z = obj.get_z()
         set_defaulta(objZMap, z).push(obj)

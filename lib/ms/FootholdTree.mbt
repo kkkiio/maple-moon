@@ -24,8 +24,9 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   let mut rightw : Int = -30000
   let mut botb : Int = -30000
   let mut topb : Int = 30000
-  src.get_object().each(
-    fn(basefname, basef) {
+  src.each(
+    fn(basef) {
+      let basefname = basef.name
       let layer = match @strconv.parse_int(basefname)!! {
         Ok(v) => v
         Err(err) => {
@@ -34,10 +35,11 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
           return
         }
       }
-      basef.get_object().each(
-        fn(_midfname, midf) {
-          midf.get_object().each(
-            fn(lastfname, lastf) {
+      basef.each(
+        fn(midf) {
+          midf.each(
+            fn(lastf) {
+              let lastfname = lastf.name
               let id = match @strconv.parse_int(lastfname)!! {
                 Ok(v) => v
                 Err(err) => {

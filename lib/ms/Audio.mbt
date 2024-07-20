@@ -108,8 +108,8 @@ fn Audio::new() -> Result[Audio, String] {
       None => ()
     }
   }
-  let itemsrc = loader.load_res(["Item.img"]).get_object()
-  itemsrc.each(fn(name, node) { add_sound_by_name(name, node["Use"]) })
+  let itemsrc = loader.load_res(["Item.img"])
+  itemsrc.each(fn(node) { add_sound_by_name(node.name, node["Use"]) })
 
   // let volume = Setting.SFXVolume.get().load()
 

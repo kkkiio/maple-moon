@@ -1,6 +1,7 @@
 pub struct StatsEntry {
   name : String
   stats : Map[@MapleStat.Id, Int]
+  mapid : Int
 }
 
 pub struct LookEntry {
@@ -11,7 +12,7 @@ pub struct LookEntry {
   // std::map<int8_t, int32_t> equips;
   // std::map<int8_t, int32_t> maskedequips;
   // std::vector<int32_t> petids;
-} 
+}
 
 pub struct CharEntry {
   stats : StatsEntry

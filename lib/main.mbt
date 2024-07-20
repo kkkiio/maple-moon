@@ -41,7 +41,7 @@ pub fn load_player() -> Unit {
     {
       id: 0,
       look: { skin: 0, faceid: 20000, hairid: 30000 },
-      stats: { name: "KKKIIO", stats: Map::new() },
+      stats: { name: "KKKIIO", stats: Map::new(), mapid: 0 },
     },
     0,
     0,

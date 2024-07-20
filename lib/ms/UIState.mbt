@@ -4,18 +4,18 @@ trait UIState {
   draw(Self, Double, Point[Int]) -> Unit
   update(Self) -> Unit
   doubleclick(Self, Point[Int]) -> Unit
-  rightclick(Self, Point[Int]) -> Unit
+  // rightclick(Self, Point[Int]) -> Unit
   send_key(Self, @KeyType.Id, Int, Bool, Bool) -> Unit
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
-  send_scroll(Self, Double) -> Unit
+  // send_scroll(Self, Double) -> Unit
   send_close(Self) -> Unit
-  drag_icon(Self, Icon) -> Unit
+  // drag_icon(Self, Icon) -> Unit
   clear_tooltip(Self, TooltipParent) -> Unit
-  show_equip(Self, TooltipParent, Int) -> Unit
-  show_item(Self, TooltipParent, Int) -> Unit
-  show_skill(Self, TooltipParent, Int, Int, Int, Int64) -> Unit
-  show_text(Self, TooltipParent, String) -> Unit
-  show_map(Self, TooltipParent, String, String, Int, Bool) -> Unit
+  // show_equip(Self, TooltipParent, Int) -> Unit
+  // show_item(Self, TooltipParent, Int) -> Unit
+  // show_skill(Self, TooltipParent, Int, Int, Int, Int64) -> Unit
+  // show_text(Self, TooltipParent, String) -> Unit
+  // show_map(Self, TooltipParent, String, String, Int, Bool) -> Unit
   set_element(Self, UIElementType, Bool, Bool, () -> UIElement) -> Unit
   remove(Self, UIElementType) -> Unit
   get(Self, UIElementType) -> UIElement?

@@ -32,6 +32,10 @@ pub fn hash(self : BodyLayer) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : BodyLayer, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 pub let body_layer_int_map : @immut/sorted_map.Map[BodyLayer, Int] = @immut/sorted_map.from_array(
   [
     (BodyLayer::BODY_NONE, 0),

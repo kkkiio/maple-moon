@@ -7,10 +7,7 @@ pub fn new_sprite(animation : Animation, state_args : DrawArgument) -> Sprite {
   { animation, state_args }
 }
 
-pub fn new_sprite_from_node(
-  src : NxNode,
-  state_args : DrawArgument
-) -> Sprite {
+pub fn new_sprite_from_node(src : NxNode, state_args : DrawArgument) -> Sprite {
   { animation: Animation::from_resource(src), state_args }
 }
 

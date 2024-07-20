@@ -130,8 +130,8 @@ pub fn load(self : BoolEntry) -> Bool {
   self.value == "true"
 }
 
-pub fn save(self : BoolEntry, value : String) -> Unit {
-  self.value = value
+pub fn save(self : BoolEntry, value : Bool) -> Unit {
+  self.value = value.to_string()
 }
 
 struct IntEntry {
@@ -149,7 +149,7 @@ pub fn IntEntry::new(name : String, value : String) -> IntEntry {
 
 pub fn load(self : IntEntry) -> Int {
   try {
-    @strconv.parse_int(self.value)!
+    @strconv.parse_int!(self.value)
   } catch {
     s => 0
   }

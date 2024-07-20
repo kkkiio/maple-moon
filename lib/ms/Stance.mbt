@@ -219,3 +219,7 @@ pub let stance_id_names : @immut/sorted_map.Map[String, StanceId] = @immut/sorte
 pub fn StanceId::by_string(name : String) -> StanceId {
   stance_id_names[name].unwrap()
 }
+
+pub fn hash_combine(self : StanceId, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}

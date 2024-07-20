@@ -1,13 +1,7 @@
 pub struct Point[T] {
   mut x : T
   mut y : T
-} derive(Eq, Debug)
-
-pub fn to_string[T : Show](self : Point[T]) -> String {
-  let x = self.x
-  let y = self.y
-  "(\(x),\(y))"
-}
+} derive(Eq, Debug, Show)
 
 pub fn Point::new[T](x : T, y : T) -> Point[T] {
   { x, y }

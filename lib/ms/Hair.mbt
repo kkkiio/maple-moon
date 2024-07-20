@@ -24,6 +24,10 @@ pub fn hash(self : HairLayer) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : HairLayer, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 struct Hair {
   stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]]
   name : String
@@ -57,8 +61,9 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
         if framenode.is_null() {
           break
         }
-        framenode.get_object().each(
-          fn(layername, layernode) {
+        framenode.each(
+          fn(layernode) {
+            let layername = layernode.name
             let layer = match layers_by_name[layername] {
               Some(v) => v
               None => {

@@ -141,17 +141,7 @@ pub fn int_value(self : Name) -> Int {
   color_names.search(self).unwrap()
 }
 
-pub struct Color {
-  rgba : FixedArray[Double]
-} derive(Debug)
-
-pub fn to_string(self : Color) -> String {
-  let r = self.r()
-  let g = self.g()
-  let b = self.b()
-  let a = self.a()
-  return "rgba(\(r),\(g),\(b),\(a))"
-}
+pub type Color (Double, Double, Double, Double) derive(Debug, Show)
 
 pub fn Color::new_rgba(
   red : Double,
@@ -159,26 +149,24 @@ pub fn Color::new_rgba(
   blue : Double,
   alpha : Double
 ) -> Color {
-  { rgba: [red, green, blue, alpha] }
+  (red, green, blue, alpha)
 }
 
 pub fn new_array(comps : FixedArray[Double]) -> Color {
-  { rgba: comps }
+  (comps[0], comps[1], comps[2], comps[3])
 }
 
 pub fn Color::from_value(code : Int) -> Color {
-  {
-    rgba: [
-      // (code >> 24 & 0xFF) as Double / 255.0,
-      code.lsr(24).land(0xFF).to_double() / 255.0,
-      // (code >> 16 & 0xFF) as Double / 255.0,
-      code.lsr(16).land(0xFF).to_double() / 255.0,
-      // (code >> 8 & 0xFF) as Double / 255.0,
-      code.lsr(8).land(0xFF).to_double() / 255.0,
-      // (code & 0xFF) as Double / 255.0
-      code.land(0xFF).to_double() / 255.0,
-    ],
-  }
+  (
+    // code >> 24 & 0xFF as Double / 255.0,
+    code.lsr(24).land(0xFF).to_double() / 255.0,
+    // (code >> 16 & 0xFF) as Double / 255.0,
+    code.lsr(16).land(0xFF).to_double() / 255.0,
+    // (code >> 8 & 0xFF) as Double / 255.0,
+    code.lsr(8).land(0xFF).to_double() / 255.0,
+    // (code & 0xFF) as Double / 255.0
+    code.land(0xFF).to_double() / 255.0,
+  )
 }
 
 pub fn Color::from_code(name : Code) -> Color {
@@ -186,59 +174,46 @@ pub fn Color::from_code(name : Code) -> Color {
 }
 
 pub fn invisible(self : Color) -> Bool {
-  self.rgba[3] <= 0.0
+  self.0.3 <= 0.0
 }
 
 pub fn r(self : Color) -> Double {
-  self.rgba[0]
+  self.0.0
 }
 
 pub fn g(self : Color) -> Double {
-  self.rgba[1]
+  self.0.1
 }
 
 pub fn b(self : Color) -> Double {
-  self.rgba[2]
+  self.0.2
 }
 
 pub fn a(self : Color) -> Double {
-  self.rgba[3]
-}
-
-pub fn data(self : Color) -> FixedArray[Double] {
-  self.rgba
+  self.0.3
 }
 
 pub fn blend(self : Color, other : Color, alpha : Double) -> Color {
-  { rgba: self.rgba.mapi(fn(i, f) { lerp(f, other.rgba[i], alpha) }) }
+  (
+    lerp(self.0.0, other.0.0, alpha),
+    lerp(self.0.1, other.0.1, alpha),
+    lerp(self.0.2, other.0.2, alpha),
+    lerp(self.0.3, other.0.3, alpha),
+  )
 }
 
 pub fn op_mul(self : Color, o : Color) -> Color {
-  {
-    rgba: [
-      self.r() * o.r(),
-      self.g() * o.g(),
-      self.b() * o.b(),
-      self.a() * o.a(),
-    ],
-  }
+  (self.r() * o.r(), self.g() * o.g(), self.b() * o.b(), self.a() * o.a())
 }
 
 pub fn op_div(self : Color, o : Color) -> Color {
-  {
-    rgba: [
-      self.r() / o.r(),
-      self.g() / o.g(),
-      self.b() / o.b(),
-      self.a() / o.a(),
-    ],
-  }
+  (self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
 }
 
 //https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
 fn lerp(a : Double, b : Double, t : Double) -> Double {
   // Exact, monotonic, bounded, determinate, and (for a=b=0) consistent:
-  if a <= 0.0 && b >= 0.0 || a >= 0.0 && b <= 0.0 {
+  if (a <= 0.0 && b >= 0.0) || (a >= 0.0 && b <= 0.0) {
     return t * b + (1.0 - t) * a
   }
   // exact

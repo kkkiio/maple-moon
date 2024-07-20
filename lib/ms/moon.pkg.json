@@ -14,12 +14,11 @@
       "alias": "kb"
     },
     "KKKIIO/maple-moon-client/lib/ms/InventoryType"
+    // "KKKIIO/maple-moon-client/lib/ms/net"
   ],
   "link": {
     "js": {
-      "exports": [
-        "get_resource_claims"
-      ]
+      "exports": []
     }
   }
 }

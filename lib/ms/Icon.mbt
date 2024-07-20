@@ -20,6 +20,10 @@ pub fn hash(self : IconType) -> Int {
   self.int_value()
 }
 
+pub fn hash_combine(self : IconType, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
 pub trait IconTypeTrait {
   drop_on_stage(Self) -> Unit
   drop_on_equips(Self, @EquipStat.Id) -> Unit

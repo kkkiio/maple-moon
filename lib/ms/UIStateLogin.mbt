@@ -1,125 +1,231 @@
 struct UIStateLogin {
-  ui_element : UIElement
+  elements : @sorted_map.T[UIElementType, UIElement]
+  mut focused : UIElementType
+  uis_to_remove : Array[UIElementType]
 }
 
-fn UIStateLogin::new(ui_element : UIElement) -> UIStateLogin {
-  { ui_element, }
+fn UIStateLogin::new() -> UIStateLogin {
+  let state = {
+    elements: @sorted_map.new(),
+    focused: UIElementType::UI_ELEMENT_NONE,
+    uis_to_remove: [],
+  }
+  // let start_shown = Configuration::get().get_start_shown()
+  // if start_shown {
+  //   state.emplace(UILogo::new())
+  // } else {
+  state.emplace(fn() { UILogin::new() })
+  // }
+  state
 }
 
-// fn draw(self, inter: Double, cursor: Point[Int16]) -> Unit {
-//   // Drawing logic here
-// }
+fn draw(self : UIStateLogin, inter : Double, cursor : Point[Int]) -> Unit {
+  self.elements.each(fn(_t, elem) { if elem.is_active() { elem.draw(inter) } })
 
-// fn update(self) -> Unit {
-//   // Update logic here
-// }
+  // if (tooltip_) {
+  //     tooltip_->get().draw(cursor + Point<int16_t>(0, 22));
+  // }
 
-// fn doubleclick(self, pos: Point[Int16]) -> Unit {
-//   // Double click logic here
-// }
+}
 
-// fn rightclick(self, pos: Point[Int16]) -> Unit {
-//   // Right click logic here
-// }
+fn update(self : UIStateLogin) -> Unit {
+  self.uis_to_remove.each(fn(t) { self.elements.remove(t) })
+  self.elements.each(fn(_t, elem) { if elem.is_active() { elem.update() } })
+}
 
-// fn send_key(self, type: KeyType::Id, action: Int32, pressed: Bool, escape: Bool) -> Unit {
-//   // Key send logic here
-// }
+pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {
+  match UI::get().get_element(UIElementType::UI_ELEMENT_CHAR_SELECT) {
+    Some(charselect) => charselect.doubleclick(pos)
+    None => ()
+  }
+}
 
-fn send_cursor(
+pub fn send_key(
   self : UIStateLogin,
-  mst : CursorState,
-  pos : Point[Int]
-) -> CursorState {
-  // self.ui_element.send_cursor(clicked, cursorpos)
-  CursorState::IDLE
+  t : @KeyType.Id,
+  action : Int,
+  pressed : Bool,
+  escape : Bool
+) -> Unit {
+  match self.get(self.focused) {
+    Some(focusedelement) =>
+      if focusedelement.is_active() {
+        focusedelement.send_key(action, pressed, escape)
+      } else {
+        self.focused = UIElementType::UI_ELEMENT_NONE
+      }
+    None => ()
+  }
 }
 
-// fn send_scroll(self, yoffset: Double) -> Unit {
-//   // Scroll send logic here
-// }
+pub fn send_cursor(
+  self : UIStateLogin,
+  cursorstate : CursorState,
+  cursorpos : Point[Int]
+) -> CursorState {
+  let clicked = cursorstate == CursorState::CLICKING || cursorstate == CursorState::VSCROLL_IDLE
+  match self.get(self.focused) {
+    Some(focusedelement) =>
+      if focusedelement.is_active() {
+        self.remove_cursor(focusedelement.get_type())
+        return focusedelement.send_cursor(clicked, cursorpos)
+      } else {
+        self.focused = UIElementType::UI_ELEMENT_NONE
+        return cursorstate
+      }
+    None => ()
+  }
+  match self.get_front() {
+    Some(front) => {
+      self.remove_cursor(front.get_type())
+      front.send_cursor(clicked, cursorpos)
+    }
+    None => CursorState::IDLE
+  }
+}
 
-// fn send_close(self) -> Unit {
-//   // Close send logic here
-// }
+pub fn send_close(self : UIStateLogin) -> Unit {
+  let logo = UI::get().get_element(UIElementType::START)
+  let login = UI::get().get_element(UIElementType::LOGIN)
+  let region = UI::get().get_element(UIElementType::REGION)
+  if [logo, login, region].iter().flat_map(@option.iter).find_first(
+    fn(it) { it.is_active() },
+  ).is_empty() {
+    // UI::get().emplace(fn(){UIQuitConfirm::new()})
+  } else {
+    UI::get().quit()
+  }
+}
 
-// fn drag_icon(self, icon: Icon) -> Unit {
-//   // Drag icon logic here
-// }
+pub fn clear_tooltip(self : UIStateLogin, parent : TooltipParent) -> Unit {
+  // if parent == self.tooltip_parent {
+  //     self.te_tooltip.set_text("")
+  //     self.tooltip = None
+  //     self.tooltip_parent = TooltipParent::NONE
+  // }
+}
 
-// fn clear_tooltip(self, parent: TooltipParent) -> Unit {
-//   // Clear tooltip logic here
-// }
+pub fn show_text(
+  self : UIStateLogin,
+  parent : TooltipParent,
+  text : String
+) -> Unit {
+  // self.te_tooltip.set_text(text)
+  // if text.is_empty().not() {
+  //     self.tooltip = Some(self.te_tooltip)
+  //     self.tooltip_parent = parent
+  // }
+}
 
-// fn show_equip(self, parent: TooltipParent, slot: Int16) -> Unit {
-//   // Show equip logic here
-// }
+pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
+  if self.focused == type_ {
+    self.focused = UIElementType::UI_ELEMENT_NONE
+  }
+  match self.elements.get(type_) {
+    Some(element) => {
+      element.deactivate()
+      self.uis_to_remove.push(type_)
+    }
+    None => ()
+  }
+}
 
-// fn show_item(self, parent: TooltipParent, itemid: Int32) -> Unit {
-//   // Show item logic here
-// }
+pub fn get(self : UIStateLogin, type_ : UIElementType) -> UIElement? {
+  // self.elements.get(type_)
+  None
+}
 
-// fn show_skill(self, parent: TooltipParent, skill_id: Int32, level: Int32, masterlevel: Int32, expiration: Int64) -> Unit {
-//   // Show skill logic here
-// }
+pub fn get_front(self : UIStateLogin) -> UIElement? {
+  // TODO: use rev_iter
+  self.elements.iter().fold(
+    fn(acc, it) { if it.1.is_active() { Some(it.1) } else { acc } },
+    None,
+  )
+}
 
-// fn show_text(self, parent: TooltipParent, text: String) -> Unit {
-//   // Show text logic here
-// }
+pub fn get_front_by_types(
+  self : UIStateLogin,
+  types : Array[UIElementType]
+) -> UIElement? {
+  let mut front : UIElement? = None
+  types.rev_each(
+    fn(t) {
+      if front.is_empty().not() {
+        return
+      }
+      match self.elements.get(t) {
+        Some(elem) => if elem.is_active() { front = Some(elem) }
+        None => ()
+      }
+      // let elem = 
+      // if elem.map(UIElement::is_active).or(false) {
+      //   front = elem
+      // }
+    },
+  )
+  front
+}
 
-// fn show_map(self, parent: TooltipParent, name: String, description: String, mapid: Int32, bolded: Bool) -> Unit {
-//   // Show map logic here
-// }
+pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
+  // let mut front : UIElement? = None
+  // all_types.rev_each(
+  //   fn(t) {
+  //     if front.is_empty().not() {
+  //       return
+  //     }
+  //     let element = self.elements[t]
+  //     if element.filter(UIElement::is_active).map(fn(e) { e.is_in_range(pos) }).or(
+  //       false,
+  //     ) {
+  //       front = element
+  //     }
+  //   },
+  // )
+  // TODO: use rev_iter
+  self.elements.iter().fold(
+    fn(acc, it) {
+      if it.1.is_active() && it.1.is_in_range(pos) {
+        Some(it.1)
+      } else {
+        acc
+      }
+    },
+    None,
+  )
+}
 
-// fn pre_add(self, type: UIElementType, toggled: Bool, focused: Bool) -> @iter.Iter[(UIElementType, UIElement)] {
-//   // Pre add logic here
-//   @iter.empty()
-// }
+pub fn remove_cursor(self : UIStateLogin, type_ : UIElementType) -> Unit {
+  self.elements.each(
+    fn(_type, element) {
+      if element.is_active() && element.get_type() != type_ {
+        element.remove_cursor()
+      }
+    },
+  )
+}
 
-// fn remove(self, type: UIElementType) -> Unit {
-//   // Remove logic here
-// }
+pub fn emplace[T : UIElement + UIElementDescriptor](
+  self : UIStateLogin,
+  f : () -> T
+) -> Unit {
+  self.set_element(
+    T::const_type(),
+    T::const_toggled(),
+    T::const_focused(),
+    fn() { f() },
+  )
+}
 
-// fn get(self, type: UIElementType) -> UIElement? {
-//   // Get element logic here
-//   None
-// }
-
-// fn get_front_by_types(self, types: Array[UIElementType]) -> UIElement? {
-//   // Get front element by types logic here
-//   None
-// }
-
-// fn get_front_by_pos(self, pos: Point[Int16]) -> UIElement? {
-//   // Get front element by position logic here
-//   None
-// }
-// }
-
-// impl UIElement for UIStateLogin {
-// fn draw(self, alpha: Double) -> Unit {
-//   // Draw logic here
-// }
-
-// fn update(self) -> Unit {
-//   // Update logic here
-// }
-
-// impl UIStateLogin {
-// fn login(self) -> Unit {
-//   // Login logic here
-// }
-
-// fn open_url(self, id: UInt16) -> Unit {
-//   // Open URL logic here
-// }
-
-// fn button_pressed(self, id: UInt16) -> ButtonState {
-//   // Button pressed logic here
-//   ButtonState::NORMAL
-// }
-
-// fn get_type(self) -> UIElementType {
-//   // Get type logic here
-//   UIElementType::UI_ELEMENT_NONE
-// }
+pub fn set_element(
+  self : UIStateLogin,
+  t : UIElementType,
+  _toggled : Bool,
+  focused : Bool,
+  f : () -> UIElement
+) -> Unit {
+  self.remove(t)
+  if focused {
+    self.focused = t
+  }
+  self.elements[t] = f()
+}

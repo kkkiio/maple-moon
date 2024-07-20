@@ -100,9 +100,9 @@ pub fn send_cursor(
 }
 
 fn change_state(self : UI, id : UiState) -> Unit {
-  self.state = match id {
-    // UiState::LOGIN => UIStateLogin::new()
-    UiState::GAME => UIStateGame::new(20)
+  match id {
+    UiState::LOGIN => self.state = UIStateLogin::new()
+    UiState::GAME => self.state = UIStateGame::new(20)
     // UiState::CASHSHOP => UIStateCashShop::default(),
   }
 }
@@ -285,4 +285,8 @@ fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit 
     T::const_focused(),
     fn() { f() },
   )
+}
+
+pub fn quit(self : UI) -> Unit {
+  self.quitted = true
 }

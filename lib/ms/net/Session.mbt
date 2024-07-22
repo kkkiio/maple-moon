@@ -6,7 +6,7 @@ struct Session {
 
 enum Connection {
   CLOSED
-  OPEN(Socket)
+  OPENED(Socket)
   CONNECTED(~socket : Socket, ~cryptography : Cryptography, mut ~length : Int)
 }
 
@@ -22,7 +22,7 @@ pub fn Session::new(forwarder : Forwarder) -> Session {
 
 pub fn close(self : Session) -> Unit {
   match self.conn {
-    OPEN(socket) => {
+    OPENED(socket) => {
       socket.close()
       self.conn = CLOSED
     }
@@ -35,20 +35,30 @@ pub fn close(self : Session) -> Unit {
 }
 
 pub fn initialize(self : Session) -> Unit {
-  self.connect()
+  self.connect("/login")
 }
 
-pub fn connect(self : Session) -> Unit {
+pub fn connect(self : Session, path : String) -> Unit {
   // Connect to the server
   match self.conn {
-    CLOSED => self.conn = OPEN(Socket::connect())
+    CLOSED => self.conn = OPENED(Socket::open(path.to_js_string()))
     _ => ()
   }
 }
 
 /// Send a packet to the server
 pub fn write(self : Session, bytes : Bytes) -> Unit {
-
+  match self.conn {
+    CLOSED => ()
+    OPENED(_) => () // maybe raise error?
+    CONNECTED(~socket, ~cryptography, ..) => {
+      let packet = Bytes::new(header_length + bytes.length())
+      packet.blit(header_length, bytes, 0, bytes.length())
+      cryptography.create_header(packet, bytes.length())
+      cryptography.encrypt(bytes)
+      socket.write(packet)
+    }
+  }
 }
 
 /// Check for incoming packets and handle them
@@ -57,9 +67,33 @@ pub fn read(self : Session) -> Unit {
   // (header) + 2 bytes (opcode) = 6 bytes.
   match self.conn {
     CLOSED => ()
-    OPEN(socket) => panic()
+    OPENED(socket) => {
+      let res = socket.read()
+      if res.eof {
+        socket.close()
+        self.conn = CLOSED
+        return
+      }
+      if res.bytes.length() <= 0 {
+        return
+      }
+      if res.bytes.length() != handshake_len {
+        let actual = res.bytes.length()
+        println("expected handshake length, got \(actual)")
+        socket.close()
+        self.conn = CLOSED
+        return
+      }
+      let cryptography = Cryptography::from_handshake(res.bytes)
+      self.conn = CONNECTED(~socket, ~cryptography, length=0)
+    }
     CONNECTED(_) as conn => {
-      let res = conn.socket.receive()
+      let res = conn.socket.read()
+      if res.eof {
+        conn.socket.close()
+        self.conn = CLOSED
+        return
+      }
       if res.bytes.length() <= 0 {
         return
       }
@@ -92,14 +126,15 @@ pub fn read(self : Session) -> Unit {
 
 /// Closes the current connection and opens a new one with default connection
 /// settings
-pub fn reconnect_default(self : Session) -> Unit {
-
+pub fn reconnect_login(self : Session) -> Unit {
+  self.close()
+  self.connect("/login")
 }
 
 /// Closes the current connection and opens a new one
-pub fn reconnect(self : Session, address : String, port : String) -> Unit {
+pub fn connect_channel(self : Session, channel : Int) -> Unit {
   self.close()
-  self.connect()
+  self.connect("/channel\(channel)")
 }
 
 /// Check if the connection is alive
@@ -108,7 +143,7 @@ pub fn reconnect(self : Session, address : String, port : String) -> Unit {
 // }
 
 struct ChainedReadBytes {
-  dq : @deque.Deque[Bytes]
+  dq : @deque.T[Bytes]
   mut fpos : Int
   mut length : Int
 }
@@ -141,16 +176,17 @@ fn read_bytes(self : ChainedReadBytes, length : Int) -> Bytes {
 
 type Socket
 
-fn Socket::connect() -> Socket = "socket" "connect"
+fn Socket::open(path : Js_string) -> Socket = "socket" "open"
 
 fn close(self : Socket) -> Unit = "socket" "close"
 
 struct ReadResult {
   bytes : Bytes
-  connected : Bool
+  eof : Bool
 }
 
-extern "js" fn receive(self : Socket) -> ReadResult =
-  #| (s) => ({bytes:null,connected:false})
+extern "js" fn read(self : Socket) -> ReadResult =
+  #| (s) => s.read()
 
-// fn is_connected(self : Socket) -> Bool = "socket" "is_connected"
+extern "js" fn write(self : Socket, packet : Bytes) -> Unit =
+  #| (s,p) => s.write(p)

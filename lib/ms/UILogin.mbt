@@ -341,5 +341,5 @@ fn doubleclick(self : UILogin, point : Point[Int]) -> Unit {
 }
 
 fn fn_login_start() -> Unit {
-  // @net.LoginStartPacket::new().dispatch()
+  @net.LoginStartPacket::new().dispatch()
 }

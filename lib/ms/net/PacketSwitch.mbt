@@ -204,8 +204,8 @@ pub fn int_value(self : Opcode) -> Int {
   }
 }
 
-pub fn Opcode::from_int(int : Int) -> Opcode {
-  match int {
+pub fn Opcode::from_int(v : Int) -> Opcode!String {
+  match v {
     /// Login 1
     0 => LOGIN_RESULT
     3 => SERVER_STATUS
@@ -305,6 +305,9 @@ pub fn Opcode::from_int(int : Int) -> Opcode {
 
     /// Cash Shop
     127 => SET_CASH_SHOP
+    _ => {
+      raise "unknown opcode \(v)"
+    }
   }
 }
 
@@ -317,14 +320,10 @@ pub fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
 }
 
 struct PacketSwitch {
-  handlers : @immut/hashmap.Map[Opcode, PacketHandler]
+  handlers : @immut/hashmap.T[Opcode, PacketHandler]
 }
 
 let msg_unhandled : String = "Unhandled packet detected"
-
-let msg_out_of_bounds : String = "Large opcode detected"
-
-let msg_reregister : String = "Handler was registered twice"
 
 pub fn PacketSwitch::new() -> PacketSwitch {
   let packet_switch = Array::new()
@@ -426,7 +425,14 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   let recv = InPacket::new(bytes)
 
   // Read the opcode to determine handler responsible
-  let opcode = recv.read_ushort() |> Opcode::from_int
+  let opcode = try {
+    Opcode::from_int!(recv.read_ushort())
+  } catch {
+    err => {
+      println(err)
+      return
+    }
+  }
   // if @config.Configuration::get().get_show_packets() {
   //   if opcode == PING {
   //     println("Received Packet: PING")
@@ -445,6 +451,6 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   }
 }
 
-pub fn warn(self : PacketSwitch, message : String, opcode : Opcode) -> Unit {
+fn warn(self : PacketSwitch, message : String, opcode : Opcode) -> Unit {
   println("Opcode [\(opcode)] Error: \(message)")
 }

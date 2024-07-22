@@ -81,7 +81,7 @@ pub fn by_id(id : Int) -> Id {
   values[id]
 }
 
-pub let codes : @immut/hashmap.Map[Id, Int] = @immut/hashmap.from_array(
+pub let codes : @immut/hashmap.T[Id, Int] = @immut/hashmap.from_array(
   [
     (Id::SKIN, 0x1),
     (Id::FACE, 0x2),

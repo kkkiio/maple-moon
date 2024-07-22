@@ -49,7 +49,7 @@ struct Configuration {
   mut worldid : Int
   mut channelid : Int
   mut admin : Bool
-  settings : @hashmap.HashMap[String, String]
+  settings : Map[String, String]
 }
 
 fn Configuration::default() -> Configuration {
@@ -65,7 +65,7 @@ fn Configuration::default() -> Configuration {
     worldid: 0,
     channelid: 0,
     admin: false,
-    settings: @hashmap.HashMap::new(),
+    settings: Map::new(),
   }
 }
 

@@ -283,6 +283,39 @@ class DirectBmpLoader {
     return bmp;
   }
 }
+class Socket {
+  constructor(path) {
+    console.log("connect server", path)
+    this.ws = new WebSocket("ws://" + location.host + path, "binary");
+    this.ws.binaryType = "arraybuffer";
+    this.pendingData = [];
+    this.ws.addEventListener("open", (event) => {
+      console.log("connect server success", event)
+    })
+    this.ws.addEventListener("message", (event) => {
+      this.pendingData.push(new Uint8Array(event.data));
+    })
+    this.ws.addEventListener("error", (event) => {
+      console.log("connect server error", event)
+    })
+  }
+  close() {
+    this.ws.close()
+  }
+  read() {
+    if (this.pendingData.length > 0) {
+      const data = this.pendingData.shift();
+      return {
+        bytes: data,
+        eof: false,
+      }
+    }
+    return { bytes: new Uint8Array(), eof: this.ws.readyState === WebSocket.CLOSED }
+  }
+  write(bytes) {
+    this.ws.send(bytes.buffer);
+  }
+}
 
 const VWIDTH = 1366;
 const VHEIGHT = 768;
@@ -548,15 +581,12 @@ function main() {
       },
     },
     socket: {
-      new: () => null,
-      open: (socket) => { },
-      close: (socket) => { },
-      is_connected: (socket) => false,
+      open: (path) => new Socket(path),
+      close: (socket) => { socket.close() },
     },
     spectest: {
       print_i32: (x) => console.log(String(x)),
       print_f64: (x) => console.log(String(x)),
-      print_char: (x) => console.log(String.fromCharCode(x)),
     },
   };
 

@@ -55,7 +55,7 @@ fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
 
 // ActiveBuffs
 struct ActiveBuffs {
-  buffs : @immut/sorted_map.Map[@Buffstat.Id, ActiveBuff]
+  buffs : @immut/sorted_map.T[@Buffstat.Id, ActiveBuff]
 }
 
 fn ActiveBuffs::new() -> ActiveBuffs {

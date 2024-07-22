@@ -29,7 +29,7 @@ pub fn ExpressionId::default() -> ExpressionId {
   ExpressionId::DEFAULT
 }
 
-pub let expression_names : @immut/sorted_map.Map[ExpressionId, String] = @immut/sorted_map.from_array(
+pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/sorted_map.from_array(
   [
     (ExpressionId::DEFAULT, "default"),
     (ExpressionId::BLINK, "blink"),
@@ -72,7 +72,7 @@ pub fn byaction(action : Int) -> ExpressionId {
 }
 
 struct Face {
-  expressions : @immut/sorted_map.Map[ExpressionId, Map[Int, FaceFrame]]
+  expressions : @immut/sorted_map.T[ExpressionId, Map[Int, FaceFrame]]
   name : String
 }
 

@@ -36,7 +36,7 @@ pub fn hash_combine(self : BodyLayer, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
-pub let body_layer_int_map : @immut/sorted_map.Map[BodyLayer, Int] = @immut/sorted_map.from_array(
+pub let body_layer_int_map : @immut/sorted_map.T[BodyLayer, Int] = @immut/sorted_map.from_array(
   [
     (BodyLayer::BODY_NONE, 0),
     (BodyLayer::BODY, 1),
@@ -53,9 +53,9 @@ pub let body_layer_int_map : @immut/sorted_map.Map[BodyLayer, Int] = @immut/sort
 )
 
 pub struct Body {
-  stances : @immut/sorted_map.Map[
+  stances : @immut/sorted_map.T[
     StanceId,
-    @immut/sorted_map.Map[BodyLayer, Map[Int, Texture]],
+    @immut/sorted_map.T[BodyLayer, Map[Int, Texture]],
   ]
   name : String
 }
@@ -155,7 +155,7 @@ pub fn Body::layer_by_name(name : String) -> BodyLayer {
   match layer_iter {
     None => {
       if name != "" {
-        print("Unknown BodyLayer name: [" + name + "]")
+        println("Unknown BodyLayer name: [" + name + "]")
       }
       BodyLayer::BODY_NONE
     }
@@ -163,7 +163,7 @@ pub fn Body::layer_by_name(name : String) -> BodyLayer {
   }
 }
 
-pub let layers_by_name_ : @immut/sorted_map.Map[String, BodyLayer] = @immut/sorted_map.from_array(
+pub let layers_by_name_ : @immut/sorted_map.T[String, BodyLayer] = @immut/sorted_map.from_array(
   [
     ("body", BodyLayer::BODY),
     ("backBody", BodyLayer::BODY),

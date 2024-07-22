@@ -21,7 +21,7 @@ pub enum CursorState {
   CHAT_BAR_BRTLDRAG
 } derive(Eq, Compare, Debug)
 
-pub let all_cursor_states : @immut/sorted_map.Map[CursorState, Int] = @immut/sorted_map.from_array(
+pub let all_cursor_states : @immut/sorted_map.T[CursorState, Int] = @immut/sorted_map.from_array(
   [
     (IDLE, 0),
     (CAN_CLICK, 1),
@@ -64,7 +64,7 @@ pub struct Cursor {
   mut state : CursorState
   mut position : Point[Int]
   mut hide_counter : Int
-  animations : @immut/sorted_map.Map[CursorState, Animation]
+  animations : @immut/sorted_map.T[CursorState, Animation]
 }
 
 pub let hide_time : Int = 15_000

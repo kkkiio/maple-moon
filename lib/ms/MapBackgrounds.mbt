@@ -96,7 +96,7 @@ pub fn Background::from_resource(src : NxNode) -> Background {
   background
 }
 
-let int_background_type_map : @immut/sorted_map.Map[Int, BackgroundType] = @immut/sorted_map.from_array(
+let int_background_type_map : @immut/sorted_map.T[Int, BackgroundType] = @immut/sorted_map.from_array(
   [
     (0, BackgroundType::BG_NORMAL),
     (1, BackgroundType::HTILED),

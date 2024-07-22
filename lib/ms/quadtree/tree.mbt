@@ -20,12 +20,12 @@ pub struct Node[K, V] {
 }
 
 struct Tree[K, V] {
-  nodes : @hashmap.HashMap[K, Node[K, V]]
+  nodes : Map[K, Node[K, V]]
   mut root : Node[K, V]?
 }
 
 pub fn Tree::new[K, V]() -> Tree[K, V] {
-  { nodes: @hashmap.HashMap::new(), root: None }
+  { nodes: Map::new(), root: None }
 }
 
 pub fn add[K : Hash + Eq, V : QuadCompare](

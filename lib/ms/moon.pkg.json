@@ -13,8 +13,8 @@
       "path": "KKKIIO/maple-moon-client/lib/io/keyboard",
       "alias": "kb"
     },
-    "KKKIIO/maple-moon-client/lib/ms/InventoryType"
-    // "KKKIIO/maple-moon-client/lib/ms/net"
+    "KKKIIO/maple-moon-client/lib/ms/InventoryType",
+    "KKKIIO/maple-moon-client/lib/ms/net"
   ],
   "link": {
     "js": {

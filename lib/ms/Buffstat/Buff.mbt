@@ -73,85 +73,81 @@ pub enum Id {
   SLOW
 } derive(Eq, Debug, Compare)
 
-pub let all_buff_id_map : @immut/sorted_map.Map[Id, Int] = @immut/sorted_map.from_array(
-  [
-    (NONE, 0),
-    (MORPH, 1),
-    (RECOVERY, 2),
-    (MAPLE_WARRIOR, 3),
-    (STANCE, 4),
-    (SHARP_EYES, 5),
-    (MANA_REFLECTION, 6),
-    (SHADOW_CLAW, 7),
-    (INFINITY_, 8),
-    (HOLY_SHIELD, 9),
-    (HAMSTRING, 10),
-    (BLIND, 11),
-    (CONCENTRATE, 12),
-    (ECHO_OF_HERO, 13),
-    (GHOST_MORPH, 14),
-    (AURA, 15),
-    (CONFUSE, 16),
-    (BERSERK_FURY, 17),
-    (DIVINE_BODY, 18),
-    (SPARK, 19),
-    (FINALATTACK, 20),
-    (BATTLESHIP, 21),
-    (WATK, 22),
-    (WDEF, 23),
-    (MATK, 24),
-    (MDEF, 25),
-    (ACC, 26),
-    (AVOID, 27),
-    (HANDS, 28),
-    (SHOWDASH, 29),
-    (SPEED, 30),
-    (JUMP, 31),
-    (MAGIC_GUARD, 32),
-    (DARKSIGHT, 33),
-    (BOOSTER, 34),
-    (POWERGUARD, 35),
-    (HYPERBODYHP, 36),
-    (HYPERBODYMP, 37),
-    (INVINCIBLE, 38),
-    (SOULARROW, 39),
-    (STUN, 40),
-    (POISON, 41),
-    (SEAL, 42),
-    (DARKNESS, 43),
-    (COMBO, 44),
-    (SUMMON, 45),
-    (WK_CHARGE, 46),
-    (DRAGONBLOOD, 47),
-    (HOLY_SYMBOL, 48),
-    (MESOUP, 49),
-    (SHADOWPARTNER, 50),
-    (PICKPOCKET, 51),
-    (PUPPET, 52),
-    (MESOGUARD, 53),
-    (WEAKEN, 54),
-    (DASH, 55),
-    (DASH2, 56),
-    (ELEMENTAL_RESET, 57),
-    (ARAN_COMBO, 58),
-    (COMBO_DRAIN, 59),
-    (COMBO_BARRIER, 60),
-    (BODY_PRESSURE, 61),
-    (SMART_KNOCKBACK, 62),
-    (PYRAMID_PQ, 63),
-    (ENERGY_CHARGE, 64),
-    (MONSTER_RIDING, 65),
-    (HOMING_BEACON, 66),
-    (SPEED_INFUSION, 67),
-    (ZOMBIFY, 68),
-    (CURSE, 69),
-    (SEDUCE, 70),
-    (SLOW, 71),
-  ],
-)
-
 pub fn int_value(self : Id) -> Int {
-  all_buff_id_map[self].unwrap()
+  match self {
+    NONE => 0
+    MORPH => 1
+    RECOVERY => 2
+    MAPLE_WARRIOR => 3
+    STANCE => 4
+    SHARP_EYES => 5
+    MANA_REFLECTION => 6
+    SHADOW_CLAW => 7
+    INFINITY_ => 8
+    HOLY_SHIELD => 9
+    HAMSTRING => 10
+    BLIND => 11
+    CONCENTRATE => 12
+    ECHO_OF_HERO => 13
+    GHOST_MORPH => 14
+    AURA => 15
+    CONFUSE => 16
+    BERSERK_FURY => 17
+    DIVINE_BODY => 18
+    SPARK => 19
+    FINALATTACK => 20
+    BATTLESHIP => 21
+    WATK => 22
+    WDEF => 23
+    MATK => 24
+    MDEF => 25
+    ACC => 26
+    AVOID => 27
+    HANDS => 28
+    SHOWDASH => 29
+    SPEED => 30
+    JUMP => 31
+    MAGIC_GUARD => 32
+    DARKSIGHT => 33
+    BOOSTER => 34
+    POWERGUARD => 35
+    HYPERBODYHP => 36
+    HYPERBODYMP => 37
+    INVINCIBLE => 38
+    SOULARROW => 39
+    STUN => 40
+    POISON => 41
+    SEAL => 42
+    DARKNESS => 43
+    COMBO => 44
+    SUMMON => 45
+    WK_CHARGE => 46
+    DRAGONBLOOD => 47
+    HOLY_SYMBOL => 48
+    MESOUP => 49
+    SHADOWPARTNER => 50
+    PICKPOCKET => 51
+    PUPPET => 52
+    MESOGUARD => 53
+    WEAKEN => 54
+    DASH => 55
+    DASH2 => 56
+    ELEMENTAL_RESET => 57
+    ARAN_COMBO => 58
+    COMBO_DRAIN => 59
+    COMBO_BARRIER => 60
+    BODY_PRESSURE => 61
+    SMART_KNOCKBACK => 62
+    PYRAMID_PQ => 63
+    ENERGY_CHARGE => 64
+    MONSTER_RIDING => 65
+    HOMING_BEACON => 66
+    SPEED_INFUSION => 67
+    ZOMBIFY => 68
+    CURSE => 69
+    SEDUCE => 70
+    SLOW => 71
+  }
 }
 
 pub fn hash(self : Id) -> Int {
@@ -166,7 +162,7 @@ pub fn is_disease(buff_id : Id) -> Bool {
   diseases.find(buff_id).is_empty().not()
 }
 
-pub let first_codes : @immut/hashmap.Map[Id, Int64] = @immut/hashmap.from_array(
+pub let first_codes : @immut/hashmap.T[Id, Int64] = @immut/hashmap.from_array(
   [
     (Id::DASH2, 0x8000000000000L),
     (Id::DASH, 0x10000000000000L),
@@ -184,7 +180,7 @@ pub let first_codes : @immut/hashmap.Map[Id, Int64] = @immut/hashmap.from_array(
   ],
 )
 
-pub let second_codes : @immut/hashmap.Map[Id, Int64] = @immut/hashmap.from_array(
+pub let second_codes : @immut/hashmap.T[Id, Int64] = @immut/hashmap.from_array(
   [
     (Id::NONE, 0x0L),
     (Id::SLOW, 0x1L),
@@ -248,7 +244,7 @@ pub let second_codes : @immut/hashmap.Map[Id, Int64] = @immut/hashmap.from_array
   ],
 )
 
-pub let diseases : @immut/hashmap.Map[Id, Int64] = @immut/hashmap.from_array(
+pub let diseases : @immut/hashmap.T[Id, Int64] = @immut/hashmap.from_array(
   [
     (Id::SLOW, 0x1L),
     (Id::SEDUCE, 0x80L),

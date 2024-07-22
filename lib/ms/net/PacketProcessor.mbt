@@ -21,15 +21,15 @@ pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
 }
 
 pub fn process_in(self : PacketProcessor) -> Unit {
-
+  self.session.read()
 }
 
-pub fn reconnect_default(self : PacketProcessor) -> Unit {
-  g_packet_processor.session.reconnect_default()
+pub fn reconnect_login(self : PacketProcessor) -> Unit {
+  g_packet_processor.session.reconnect_login()
 }
 
-pub fn reconnect(self : PacketProcessor, ip : String, port : String) -> Unit {
-  g_packet_processor.session.reconnect(ip, port)
+pub fn connect_channel(self : PacketProcessor, channel : Int) -> Unit {
+  g_packet_processor.session.connect_channel(channel)
 }
 
 // pub fn is_connected(self : PacketProcessor) -> Bool {

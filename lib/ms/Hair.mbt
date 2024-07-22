@@ -34,7 +34,7 @@ struct Hair {
   color : String
 }
 
-pub let layers_by_name : @immut/sorted_map.Map[String, HairLayer] = @immut/sorted_map.from_array(
+pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_map.from_array(
   [
     ("hair", HairLayer::HAIR_LAYER_DEFAULT),
     ("hairBelowBody", HairLayer::BELOW_BODY),

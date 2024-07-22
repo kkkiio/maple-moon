@@ -12,7 +12,7 @@ pub enum Id {
 // pub fn check_quality(
 //   item_id : Int,
 //   scrolled : Bool,
-//   stats : @immut/hashmap.Map[@EquipStat.Id, Int]
+//   stats : @immut/hashmap.T[@EquipStat.Id, Int]
 // ) -> Id {
 //   let data = @ms.EquipData::get(item_id)
 //   let mut delta : Int = 0

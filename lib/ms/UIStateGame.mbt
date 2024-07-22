@@ -18,7 +18,7 @@ struct UIStateGame {
   channel_count : Int
 }
 
-let icon_map : @immut/hashmap.Map[IconType, UIElementType] = @immut/hashmap.from_array(
+let icon_map : @immut/hashmap.T[IconType, UIElementType] = @immut/hashmap.from_array(
   [
     (IconType::ICON_NONE, UIElementType::UI_ELEMENT_NONE),
     (IconType::SKILL, UIElementType::SKILL_BOOK),
@@ -526,5 +526,5 @@ fn get_front(self : UIStateGame, pos : Point[Int]) -> UIElement? {
         None => Iter::empty()
       }
     },
-  ).find_first(fn(it) { true })
+  ).find_first(fn(_it) { true })
 }

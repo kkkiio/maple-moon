@@ -20,6 +20,7 @@ pub fn int_value(self : Code) -> Int {
     CBLUE => 0x0000FFFF
     CYELLOW => 0xFFFF00FF
     CTURQUOISE => 0x00FFFFFF
+    CPURPLE => 0xFF00FFFF
   }
 }
 

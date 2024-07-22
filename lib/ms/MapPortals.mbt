@@ -1,13 +1,13 @@
 struct MapPortals {
-  mut portals_by_id : @immut/sorted_map.Map[Int, Portal]
-  mut portal_ids_by_name : @immut/sorted_map.Map[String, Int]
+  mut portals_by_id : @immut/sorted_map.T[Int, Portal]
+  mut portal_ids_by_name : @immut/sorted_map.T[String, Int]
   mut cooldown : Int
 }
 
 let warpcd : Int = 48
 
 struct MapPortalAnimations {
-  mut animations : @immut/sorted_map.Map[PortalType, Animation]
+  mut animations : @immut/sorted_map.T[PortalType, Animation]
 }
 
 let map_portals_animations : MapPortalAnimations = {

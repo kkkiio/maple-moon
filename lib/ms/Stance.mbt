@@ -110,7 +110,7 @@ pub fn StanceId::by_state(state : Int) -> StanceId {
   return state_values[index]
 }
 
-let int_id_map : @immut/sorted_map.Map[Int, StanceId] = @immut/sorted_map.from_array(
+let int_id_map : @immut/sorted_map.T[Int, StanceId] = @immut/sorted_map.from_array(
   [
     (0, StanceId::NONE),
     (1, StanceId::ALERT),
@@ -175,7 +175,7 @@ pub fn secondof(value : StanceId) -> StanceId {
   }
 }
 
-pub let stance_id_names : @immut/sorted_map.Map[String, StanceId] = @immut/sorted_map.from_array(
+pub let stance_id_names : @immut/sorted_map.T[String, StanceId] = @immut/sorted_map.from_array(
   [
     ("", StanceId::NONE),
     ("alert", StanceId::ALERT),

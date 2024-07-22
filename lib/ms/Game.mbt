@@ -6,12 +6,13 @@ pub struct Game {
 pub fn Game::start() -> Game {
   let c = Configuration::default()
   c.set_hardware_info()
+  @net.PacketProcessor::get().initialize()
   timer.start()
   map_portals_animations.load()
   { config: c, accumulator: 0 }
 }
 
-pub fn stop(self : Game, nowMicro : Int64) -> Unit {
+pub fn stop(self : Game) -> Unit {
   // Sound::close();
 }
 
@@ -21,12 +22,9 @@ pub fn on_draw(self : Game, time : TimePoint) -> Unit {
 
   // Update game with constant timestep as many times as possible.
   self.accumulator += elapsed.to_micro_seconds()
-  let mut times = self.accumulator / timestep
+  let times = self.accumulator / timestep
   self.accumulator -= timestep * times
-  while times > 0 {
-    self.update()
-    times -= 1
-  }
+  (0).until(times).each(fn(_i) { self.update() })
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
@@ -38,7 +36,7 @@ pub fn update(self : Game) -> Unit {
   // Window::get().update()
   Stage::get().update()
   UI::get().update()
-  // PacketProcessor::get().process();
+  @net.PacketProcessor::get().process_in()
   // Music::update_context();
 }
 

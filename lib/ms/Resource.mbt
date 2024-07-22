@@ -53,7 +53,7 @@ struct NxNode {
   loader : ResourceLoader
   name : String
   desc : @json.JsonValue
-  path : @immut/array.ImmutableVec[String]
+  path : @immut/array.T[String]
 }
 
 pub fn op_get(self : NxNode, key : String) -> NxNode {
@@ -94,24 +94,6 @@ pub fn get_float(self : NxNode) -> Result[Double, String] {
         s => Err(s)
       }
     _ as a => Err("expect number, got\(a)")
-  }
-}
-
-pub fn get_object(self : NxNode) -> Map[String, NxNode] {
-  match self.desc.as_object() {
-    Some(obj) => {
-      let res = Map::new(capacity=obj.size())
-      obj.each(
-        fn(k, v) {
-          res.set(
-            k,
-            { loader: self.loader, name: k, desc: v, path: self.path.push(k) },
-          )
-        },
-      )
-      res
-    }
-    None => Map::new()
   }
 }
 

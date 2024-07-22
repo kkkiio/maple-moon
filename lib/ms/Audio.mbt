@@ -251,9 +251,9 @@ pub fn update_context() -> Unit {
 }
 
 struct Audio {
-  samples : @immut/sorted_map.Map[Int, Int]
-  soundids : @immut/sorted_map.Map[SoundName, Int]
-  itemids : @immut/sorted_map.Map[String, Int]
+  samples : @immut/sorted_map.T[Int, Int]
+  soundids : @immut/sorted_map.T[SoundName, Int]
+  itemids : @immut/sorted_map.T[String, Int]
 }
 
 let audio : Audio = Audio::new().unwrap()

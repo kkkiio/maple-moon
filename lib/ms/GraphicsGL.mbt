@@ -14,7 +14,7 @@ struct Atlas {
   height : Int
   minlosize : Int
   leftovers : @quadtree.Tree[Int, Leftover]
-  offsets : @hashmap.HashMap[Int, Offset]
+  offsets : Map[Int, Offset]
   mut wasted : Int
   mut next_id : Int
   mut border : Point[Int]
@@ -30,7 +30,7 @@ fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
       height: 8192,
       minlosize: 32,
       leftovers: @quadtree.Tree::new(),
-      offsets: @hashmap.HashMap::new(),
+      offsets: Map::new(),
       wasted: 0,
       next_id: 1,
       border: { x: 0, y: font_ymax },

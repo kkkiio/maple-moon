@@ -1,8 +1,8 @@
 // The collection of platforms in a maple map
 // Used for collision-detection
 struct FootholdTree {
-  mut footholds : @hashmap.HashMap[Int, Foothold]
-  mut footholds_by_x : @hashmap.HashMap[Int, Array[Int]]
+  mut footholds : Map[Int, Foothold]
+  mut footholds_by_x : Map[Int, Array[Int]]
   mut null_fh : Foothold
   mut walls : Range[Int]
   mut borders : Range[Int]
@@ -10,8 +10,8 @@ struct FootholdTree {
 
 pub fn FootholdTree::default() -> FootholdTree {
   {
-    footholds: @hashmap.HashMap::new(),
-    footholds_by_x: @hashmap.HashMap::new(),
+    footholds: Map::new(),
+    footholds_by_x: Map::new(),
     null_fh: Foothold::default(),
     walls: Range::default(),
     borders: Range::default(),

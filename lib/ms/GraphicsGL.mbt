@@ -321,7 +321,7 @@ fn clear_internal(self : Atlas) -> Unit {
 
 struct Quad {
   vertices : FixedArray[Vertex]
-} derive(Debug)
+} derive(Show)
 
 fn Quad::new(
   left : Int,
@@ -366,7 +366,7 @@ struct Vertex {
   texcoord_x : Int
   texcoord_y : Int
   color : Color
-} derive(Debug)
+} derive(Show)
 
 fn Vertex::new(
   localcoord_x : Int,

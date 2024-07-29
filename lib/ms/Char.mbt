@@ -11,7 +11,7 @@ enum CharState {
   ROPE
   DIED
   SIT
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn int_value(self : CharState) -> Int {
   match self {

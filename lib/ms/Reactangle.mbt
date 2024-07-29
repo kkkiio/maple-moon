@@ -3,7 +3,7 @@
 struct Rectangle[T] {
   left_top : Point[T]
   right_bottom : Point[T]
-} derive(Eq, Default, Debug)
+} derive(Eq, Default)
 
 pub fn to_string[T : Show](self : Rectangle[T]) -> String {
   let lt = self.left_top
@@ -45,9 +45,13 @@ pub trait FromResource {
 }
 
 pub fn Rectangle::from_resource(src : NxNode) -> Result[Rectangle[Int], String] {
-  let left_top = Point::from_resource(src["lt"])?
-  let right_bottom = Point::from_resource(src["rb"])?
-  Ok({ left_top, right_bottom })
+  try {
+    let left_top = Point::from_resource(src["lt"]).unwrap_or_error!()
+    let right_bottom = Point::from_resource(src["rb"]).unwrap_or_error!()
+    Ok({ left_top, right_bottom })
+  } catch {
+    e => Err(e)
+  }
 }
 
 fn straight[T : Eq](self : Rectangle[T]) -> Bool {

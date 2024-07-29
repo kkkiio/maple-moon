@@ -10,7 +10,7 @@ pub enum BodyLayer {
   HAND_OVER_HAIR
   HAND_OVER_WEAPON
   HEAD
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub fn int_value(self : BodyLayer) -> Int {
   match self {

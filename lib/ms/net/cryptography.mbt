@@ -4,12 +4,12 @@ struct Cryptography {
 }
 
 pub fn Cryptography::from_handshake(handshake : Bytes) -> Cryptography {
-  let sendiv = FixedArray::new_with_index(
+  let sendiv = FixedArray::makei(
       header_length,
       fn(i) { handshake[i + 7].to_int() },
     )
     |> @bytes.of
-  let recviv = FixedArray::new_with_index(
+  let recviv = FixedArray::makei(
       header_length,
       fn(i) { handshake[i + 11].to_int() },
     )
@@ -20,7 +20,7 @@ pub fn Cryptography::from_handshake(handshake : Bytes) -> Cryptography {
 pub fn check_length(self : Cryptography, bytes : Bytes) -> Int {
   let headermask : Int = (0).until(4).fold(
     fn(headermask, i) { headermask | (bytes[i].to_int() << (8 * i)) },
-    0,
+    init=0,
   )
   (headermask >> 16) ^ (headermask & 0xFFFF)
 }
@@ -65,7 +65,38 @@ pub fn mapleencrypt(self : Cryptography, bytes : Bytes) -> Unit {
 }
 
 pub fn decrypt(self : Cryptography, bytes : Bytes) -> Unit {
+  aesofb(bytes, self.recviv)
+  self.mapledecrypt(bytes)
+}
 
+pub fn mapledecrypt(self : Cryptography, bytes : Bytes) -> Unit {
+  let length = bytes.length()
+  (0).until(3).each(
+    fn(i) {
+      let mut remember = 0
+      let mut datalen = length & 0xFF
+      length.until(-1, step=-1).each(
+        fn(j) {
+          let cur = rollleft(bytes[j], 3).to_int() ^ 0x13
+          bytes[j] = rollright(((cur ^ remember) - datalen).to_byte(), 4)
+          remember = cur
+          datalen -= 1
+        },
+      )
+      remember = 0
+      datalen = length & 0xFF
+      (0).until(length).each(
+        fn(j) {
+          let b : Byte = bytes[i]
+          let mut cur = (b.to_int() - 0x48).lnot() & 0xFF
+          cur = rollleft(cur.to_byte(), datalen & 0xFF).to_int()
+          bytes[j] = rollright(((cur ^ remember) - datalen).to_byte(), 3)
+          remember = cur
+          datalen -= 1
+        },
+      )
+    },
+  )
 }
 
 fn rollleft(data : Byte, count : Int) -> Byte {

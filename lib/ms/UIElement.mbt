@@ -43,7 +43,7 @@ pub enum UIElementType {
   GAUGE_BOSS
   NOTIFICATION
   TRADE
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub let all_types : FixedArray[UIElementType] = [
   UI_ELEMENT_NONE,

@@ -142,7 +142,7 @@ pub fn int_value(self : Name) -> Int {
   color_names.search(self).unwrap()
 }
 
-pub type Color (Double, Double, Double, Double) derive(Debug, Show)
+pub type Color (Double, Double, Double, Double) derive(Show)
 
 pub fn Color::new_rgba(
   red : Double,

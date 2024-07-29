@@ -9,7 +9,7 @@ struct DrawArgument {
   angle : Double
   radius : Int
   color : Color
-} derive(Debug, Show)
+} derive(Show)
 
 pub fn DrawArgument::default() -> DrawArgument {
   from_xy(0, 0)

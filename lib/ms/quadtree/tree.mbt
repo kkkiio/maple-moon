@@ -3,7 +3,7 @@ pub enum Direction {
   TR
   TL
   BR
-} derive(Eq, Debug, Show)
+} derive(Eq, Show)
 
 pub trait QuadCompare {
   compare_to(Self, Self) -> Direction
@@ -69,7 +69,10 @@ fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
   start : Node[K, V]?,
   value : V
 ) -> Node[K, V]? {
-  let start_node = start?
+  let start_node = match start {
+    Some(n) => n
+    None => return None
+  }
   match value.compare_to(start_node.value) {
     TR =>
       if is_enough(start_node.value, value) {

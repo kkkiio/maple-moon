@@ -98,7 +98,7 @@ enum Opcode {
 
   /// Cash Shop
   SET_CASH_SHOP
-} derive(Eq, Compare, Debug, Show)
+} derive(Eq, Compare, Show)
 
 pub fn int_value(self : Opcode) -> Int {
   match self {
@@ -305,9 +305,7 @@ pub fn Opcode::from_int(v : Int) -> Opcode!String {
 
     /// Cash Shop
     127 => SET_CASH_SHOP
-    _ => {
-      raise "unknown opcode \(v)"
-    }
+    _ => raise "unknown opcode \(v)"
   }
 }
 

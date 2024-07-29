@@ -1,17 +1,21 @@
 struct Session {
   forwarder : Forwarder
   mut conn : Connection
-  buffer : ChainedReadBytes
 }
 
 enum Connection {
   CLOSED
   OPENED(Socket)
-  CONNECTED(~socket : Socket, ~cryptography : Cryptography, mut ~length : Int)
+  CONNECTED(
+    ~socket : Socket,
+    ~cryptography : Cryptography,
+    ~input_stream : ByteStream,
+    mut ~length : Int
+  )
 }
 
 pub fn Session::new(forwarder : Forwarder) -> Session {
-  { forwarder, conn: CLOSED, buffer: { dq: @deque.new(), fpos: 0, length: 0 } }
+  { forwarder, conn: CLOSED }
 }
 
 // fn Connection::new() -> Connection {
@@ -69,6 +73,9 @@ pub fn read(self : Session) -> Unit {
     CLOSED => ()
     OPENED(socket) => {
       let res = socket.read()
+      // let bsize = res.bytes.length()
+      // let eof = res.eof
+      // println("read handshake, bytes=\(bsize) bytes, eof=\(eof)")
       if res.eof {
         socket.close()
         self.conn = CLOSED
@@ -85,7 +92,13 @@ pub fn read(self : Session) -> Unit {
         return
       }
       let cryptography = Cryptography::from_handshake(res.bytes)
-      self.conn = CONNECTED(~socket, ~cryptography, length=0)
+      println("handshake success")
+      self.conn = CONNECTED(
+        ~socket,
+        ~cryptography,
+        input_stream=ByteStream::new(),
+        length=0,
+      )
     }
     CONNECTED(_) as conn => {
       let res = conn.socket.read()
@@ -97,27 +110,27 @@ pub fn read(self : Session) -> Unit {
       if res.bytes.length() <= 0 {
         return
       }
-      self.buffer.push(res.bytes)
+      conn.input_stream.add(res.bytes)
       while true {
         // Retrieve buffer from the socket and process it
         if conn.length == 0 {
-          if self.buffer.available() < header_length {
+          if conn.input_stream.available() < header_length {
             return
           }
           // Position is zero, meaning this is the start of a new packet. Start by
           // determining length.
           conn.length = conn.cryptography.check_length(
-            self.buffer.read_bytes(header_length),
+            conn.input_stream.read_bytes?(header_length).unwrap(),
           )
         }
 
         // Check if the current packet has been fully processed
-        if self.buffer.available() < conn.length {
+        if conn.input_stream.available() < conn.length {
           return
         }
-        let bs = self.buffer.read_bytes(conn.length)
-        conn.cryptography.decrypt(bs)
-        self.forwarder.forward(bs)
+        let bytes = conn.input_stream.read_bytes?(conn.length).unwrap()
+        conn.cryptography.decrypt(bytes)
+        self.forwarder.forward(bytes)
         conn.length = 0
       }
     }
@@ -141,38 +154,6 @@ pub fn connect_channel(self : Session, channel : Int) -> Unit {
 // pub fn is_connected(self : Session) -> Bool {
 //   self.socket.is_connected()
 // }
-
-struct ChainedReadBytes {
-  dq : @deque.T[Bytes]
-  mut fpos : Int
-  mut length : Int
-}
-
-fn push(self : ChainedReadBytes, bytes : Bytes) -> Unit {
-  self.dq.push_back(bytes)
-  self.length = self.length + bytes.length()
-}
-
-fn available(self : ChainedReadBytes) -> Int {
-  self.length - self.fpos
-}
-
-fn read_bytes(self : ChainedReadBytes, length : Int) -> Bytes {
-  let res = Bytes::new(length)
-  let mut offset = 0
-  while offset < length {
-    let bs = self.dq.front().unwrap()
-    let readn = @math.minimum(bs.length() - self.fpos, length - offset)
-    res.blit(offset, bs, self.fpos, readn)
-    if self.fpos + readn == bs.length() {
-      self.dq.pop_front() |> ignore
-      self.fpos = 0
-      self.length = self.length - bs.length()
-    }
-    offset = offset + readn
-  }
-  res
-}
 
 type Socket
 

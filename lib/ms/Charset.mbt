@@ -2,7 +2,7 @@ pub enum CharsetAlignment {
   LEFT
   CENTER
   RIGHT
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 struct Charset {
   chars : Map[Int, Texture]

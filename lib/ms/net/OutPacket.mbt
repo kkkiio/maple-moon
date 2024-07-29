@@ -340,7 +340,7 @@ pub enum OutPacketOpcode {
   DAMAGE_REACTOR
   PLAYER_MAP_TRANSFER
   PLAYER_UPDATE
-} derive(Eq, Compare, Debug, Show)
+} derive(Eq, Compare, Show)
 
 pub fn int_value(self : OutPacketOpcode) -> Int {
   match self {

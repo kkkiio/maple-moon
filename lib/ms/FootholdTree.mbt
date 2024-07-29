@@ -27,7 +27,7 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   src.each(
     fn(basef) {
       let basefname = basef.name
-      let layer = match @strconv.parse_int(basefname)!! {
+      let layer = match @strconv.parse_int?(basefname) {
         Ok(v) => v
         Err(err) => {
           let path = basef.path
@@ -40,7 +40,7 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
           midf.each(
             fn(lastf) {
               let lastfname = lastf.name
-              let id = match @strconv.parse_int(lastfname)!! {
+              let id = match @strconv.parse_int?(lastfname) {
                 Ok(v) => v
                 Err(err) => {
                   let path = lastf.path

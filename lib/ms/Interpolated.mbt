@@ -44,7 +44,7 @@ pub fn next[T](self : Nominal[T], value : T, thrs : Double) -> Unit {
 struct Linear {
   mut now : Double
   mut before : Double
-} derive(Default, Debug, Show)
+} derive(Default, Show)
 
 pub fn get(self : Linear, alpha : Double) -> Double {
   lerp(self.before, self.now, alpha)

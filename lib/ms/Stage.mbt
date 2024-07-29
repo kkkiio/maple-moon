@@ -5,7 +5,7 @@ enum StageState {
   INACTIVE
   TRANSITION
   ACTIVE
-} derive(Eq, Debug, Show)
+} derive(Eq, Show)
 
 pub struct Stage {
   camera : Camera
@@ -207,7 +207,7 @@ pub fn send_key(
       match t {
         @KeyType.Id::ACTION => {
           if down {
-            match @KeyAction.get_action_by_id(action)!!.unwrap() {
+            match @KeyAction.get_action_by_id?(action).unwrap() {
               // @KeyAction.Id::UP => {
               //   self.check_ladders(true)
               //   self.check_portals()
@@ -220,7 +220,7 @@ pub fn send_key(
             }
           }
           playable.send_action(
-            @KeyAction.get_action_by_id(action)!!.unwrap(),
+            @KeyAction.get_action_by_id?(action).unwrap(),
             down,
           )
         }

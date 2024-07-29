@@ -14,6 +14,6 @@ pub fn read_ushort(self : InPacket) -> Int {
 pub fn read_int(self : InPacket, ~size : Int = 4) -> Int {
   (0).until(size).fold(
     fn(acc, i) { acc + self.bytes[self.pos + i].to_int().lsl(8 * i) },
-    0,
+    init=0,
   )
 }

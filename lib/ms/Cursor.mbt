@@ -19,7 +19,7 @@ pub enum CursorState {
   CHAT_BAR_BLTRDRAG
   CHAT_BAR_MOVE
   CHAT_BAR_BRTLDRAG
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub let all_cursor_states : @immut/sorted_map.T[CursorState, Int] = @immut/sorted_map.from_array(
   [

@@ -19,7 +19,7 @@ pub fn MapPortals::from_resource(src : NxNode, mapid : Int) -> MapPortals {
   let mut portal_ids_by_name = @immut/sorted_map.empty()
   src.each(
     fn(sub) {
-      let portal_id = @strconv.parse_int(sub.name)!!.or(-1)
+      let portal_id = @strconv.parse_int?(sub.name).or(-1)
       if portal_id >= 0 {
         let portal_type = PortalType::typebyid(sub["pt"].get_int().unwrap())
         let name = sub["pn"].get_string()

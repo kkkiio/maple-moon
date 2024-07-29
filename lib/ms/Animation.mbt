@@ -102,13 +102,14 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
       if obj.contains("__b") {
         ([Frame::from_resource(src)] : FixedArray[Frame])
       } else {
-        let fs = obj.iter().filter(
-            fn(it) { @strconv.parse_int(it.0)!!.is_ok() },
-          ).map(fn(it) { Frame::from_resource(src[it.0]) }).collect()
+        let fs = obj.iter().filter(fn(it) { @strconv.parse_int?(it.0).is_ok() }).map(
+            fn(it) { Frame::from_resource(src[it.0]) },
+          ).collect()
           |> to_fixarray
         if fs.length() <= 0 {
-          debug(obj)
-          abort("Animation must have at least one frame.")
+          println("Animation must have at least one frame.")
+          println(obj)
+          panic()
         }
         fs
       }

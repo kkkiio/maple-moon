@@ -4,7 +4,7 @@ pub enum IconType {
   EQUIP
   ITEM
   KEY
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn int_value(self : IconType) -> Int {
   match self {

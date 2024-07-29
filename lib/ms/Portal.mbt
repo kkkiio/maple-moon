@@ -14,7 +14,7 @@ pub enum PortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub let all_portal_types : FixedArray[PortalType] = [
   SPAWN,

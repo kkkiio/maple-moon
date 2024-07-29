@@ -6,7 +6,7 @@ pub enum HairLayer {
   SHADE
   BACK
   BELOW_CAP
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn int_value(self : HairLayer) -> Int {
   match self {

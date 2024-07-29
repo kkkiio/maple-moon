@@ -35,7 +35,7 @@ pub enum StanceId {
   SWINGTF
   WALK1
   WALK2
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 pub fn int_value(self : StanceId) -> Int {
   match self {

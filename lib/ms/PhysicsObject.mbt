@@ -3,7 +3,7 @@ struct MovingObject {
   mut y : Linear
   mut hspeed : Double
   mut vspeed : Double
-} derive(Debug, Show)
+} derive(Show)
 
 pub fn MovingObject::default() -> MovingObject {
   { x: Linear::default(), y: Linear::default(), hspeed: 0.0, vspeed: 0.0 }
@@ -140,7 +140,7 @@ pub enum PhysicsObjectType {
   SWIMMING
   FLYING
   FIXATED
-} derive(Eq, Compare, Debug, Show)
+} derive(Eq, Compare, Show)
 
 pub enum PhysicsObjectFlag {
   NO_GRAVITY

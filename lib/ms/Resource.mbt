@@ -34,7 +34,7 @@ extern "js" fn as_jsonstring(v : JsJson) -> String =
   #|}
 
 fn as_moonjson(self : JsJson) -> @json.JsonValue {
-  @json.parse(as_jsonstring(self))!!.unwrap()
+  @json.parse?(as_jsonstring(self)).unwrap()
 }
 
 pub fn load_res(self : ResourceLoader, path : Array[String]) -> NxNode {

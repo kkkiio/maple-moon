@@ -7,7 +7,7 @@ pub enum BackgroundType {
   VMOVEA
   HMOVEB
   VMOVEB
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub fn int_value(self : BackgroundType) -> Int {
   match self {

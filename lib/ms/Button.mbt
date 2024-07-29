@@ -4,7 +4,7 @@ pub enum ButtonState {
   MOUSEOVER
   PRESSED
   IDENTITY
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub let all_button_states : @immut/sorted_map.T[ButtonState, Int] = @immut/sorted_map.from_array(
   [(NORMAL, 0), (DISABLED, 1), (MOUSEOVER, 2), (PRESSED, 3), (IDENTITY, 4)],

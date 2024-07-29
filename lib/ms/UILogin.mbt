@@ -6,7 +6,7 @@ enum UILoginButtons {
   BT_IDLOST
   BT_SAVEID
   BT_QUIT
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub fn int_value(self : UILoginButtons) -> Int {
   match self {

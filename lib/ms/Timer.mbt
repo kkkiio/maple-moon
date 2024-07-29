@@ -1,4 +1,4 @@
-pub type TimePoint Int64 derive(Eq, Compare, Default, Debug)
+pub type TimePoint Int64 derive(Eq, Compare, Default)
 
 pub fn TimePoint::from_micro(i : Double) -> TimePoint {
   i.to_int64()
@@ -6,7 +6,7 @@ pub fn TimePoint::from_micro(i : Double) -> TimePoint {
 
 fn now_micro() -> Double = "time" "now_micro"
 
-pub type Duration Int derive(Eq, Compare, Debug, Show)
+pub type Duration Int derive(Eq, Compare, Show)
 
 pub fn Duration::from_micro(i : Int) -> Duration {
   i

@@ -77,7 +77,7 @@ pub enum Id {
   END
   COPY
   PASTE
-} derive(Debug, Show, Eq, Compare)
+} derive(Show, Eq, Compare)
 
 pub fn int_value(self : Id) -> Int {
   match self {
@@ -246,8 +246,6 @@ pub fn get_action_by_id(id : Int) -> Id!String {
     118 => Id::END
     119 => Id::COPY
     120 => Id::PASTE
-    _ => {
-      raise "unknown action id=\(id)"
-    }
+    _ => raise "unknown action id=\(id)"
   }
 }

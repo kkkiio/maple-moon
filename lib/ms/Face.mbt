@@ -23,7 +23,7 @@ pub enum ExpressionId {
   SHINE
   VOMIT
   WINK
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 pub fn ExpressionId::default() -> ExpressionId {
   ExpressionId::DEFAULT

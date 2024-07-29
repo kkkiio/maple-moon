@@ -139,7 +139,7 @@ pub fn get_front(self : UIStateLogin) -> UIElement? {
   // TODO: use rev_iter
   self.elements.iter().fold(
     fn(acc, it) { if it.1.is_active() { Some(it.1) } else { acc } },
-    None,
+    init=None,
   )
 }
 
@@ -190,7 +190,7 @@ pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
         acc
       }
     },
-    None,
+    init=None,
   )
 }
 

@@ -71,7 +71,7 @@ pub enum Id {
   CURSE
   SEDUCE
   SLOW
-} derive(Eq, Debug, Compare)
+} derive(Eq, Compare)
 
 pub fn int_value(self : Id) -> Int {
   match self {

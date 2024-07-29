@@ -4,7 +4,7 @@ enum MovementType {
   RELATIVE
   CHAIR
   JUMPDOWN
-} derive(Debug, Eq, Compare)
+} derive(Eq, Compare)
 
 struct Movement {
   t : MovementType

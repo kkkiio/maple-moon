@@ -1,7 +1,7 @@
 pub struct Point[T] {
   mut x : T
   mut y : T
-} derive(Eq, Debug, Show)
+} derive(Eq, Show)
 
 pub fn Point::new[T](x : T, y : T) -> Point[T] {
   { x, y }

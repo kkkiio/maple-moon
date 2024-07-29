@@ -21,7 +21,7 @@ pub enum SoundName {
   PORTAL
   LEVEL_UP
   TOMBSTONE
-} derive(Eq, Compare, Debug)
+} derive(Eq, Compare)
 
 struct Sound {
   id : Int

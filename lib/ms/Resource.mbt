@@ -67,7 +67,7 @@ pub fn op_get(self : NxNode, key : String) -> NxNode {
   }
 }
 
-pub fn get_bool(self : NxNode) -> Result[Bool, String] {
+pub fn get_bool(self : NxNode) -> Result[Bool, Error] {
   self.get_int().map(fn(it) { it != 0 })
 }
 
@@ -79,11 +79,11 @@ pub fn get_string(self : NxNode) -> String {
   }
 }
 
-pub fn get_int(self : NxNode) -> Result[Int, String] {
+pub fn get_int(self : NxNode) -> Result[Int, Error] {
   self.get_float().map(fn(it) { it.to_int() })
 }
 
-pub fn get_float(self : NxNode) -> Result[Double, String] {
+pub fn get_float(self : NxNode) -> Result[Double, Error] {
   match self.desc {
     @json.JsonValue::Number(it) => Ok(it)
     @json.JsonValue::Null => Ok(0.0)
@@ -93,7 +93,7 @@ pub fn get_float(self : NxNode) -> Result[Double, String] {
       } catch {
         s => Err(s)
       }
-    _ as a => Err("expect number, got\(a)")
+    _ as a => Err(Failure("expect number, got\(a)"))
   }
 }
 

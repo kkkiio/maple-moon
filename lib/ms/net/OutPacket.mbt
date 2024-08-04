@@ -191,11 +191,10 @@ pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
 }
 
 pub fn OutPacket::dispatch(self : OutPacket) -> Unit {
-  PacketProcessor::get().process_out(self.buf.to_bytes())
-  // if @config.Configuration::get().get_show_packets() {
-  //   let opcode = self.opcode
-  //   println("Sent Packet: \(opcode)\n")
+  // if @Configuration::get().get_show_packets() {
   // }
+  @log.debug({ "opcode": self.opcode }, "dispatching packet")
+  PacketProcessor::get().process_out(self.buf.to_bytes())
 }
 
 pub fn OutPacket::build(self : OutPacket) -> Bytes {
@@ -257,22 +256,22 @@ pub fn OutPacket::write_time(self : OutPacket) -> Unit {
 //   self.write_short(position.y)
 // }
 
-// pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
-//   buf_write_utf8(self.buf, str)
-// }
+pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
+  self.write_short(str.length())
+  buf_write_utf8(self.buf, str)
+}
 
-// pub fn buf_write_utf8(buf : Buffer, str : String) -> Unit {
-//   // buf.grow_if_necessary(buf.len + str.length() * 4)
-//   let bytes = Bytes::make(4)
-//   str.iter().each(
-//     fn(c) {
-//       let len = bytes.set_utf8_char(0, c)
-//       for i = 0; i < len; i = i + 1 {
-//         buf.write_byte(bytes[i])
-//       }
-//     },
-//   )
-// }
+pub fn buf_write_utf8(buf : Buffer, str : String) -> Unit {
+  let bytes = Bytes::make(4, b'\x00')
+  str.iter().each(
+    fn(c) {
+      let len = bytes.set_utf8_char(0, c)
+      for i = 0; i < len; i = i + 1 {
+        buf.write_byte(bytes[i])
+      }
+    },
+  )
+}
 
 // pub fn OutPacket::write_random(self : OutPacket) -> Unit {
 //   let randomizer = @basic.Randomizer::default()
@@ -287,8 +286,8 @@ pub fn OutPacket::write_time(self : OutPacket) -> Unit {
 //   self.write_string(hwid)
 // }
 
-pub fn hex_to_dec(hex_val : String) -> Int!String {
-  @strconv.parse_int!(hex_val, base=16)
+pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
+  @strconv.parse_int!(hex_val, base=16).to_byte()
 }
 
 // Opcodes for OutPackets associated with version 83 of the game

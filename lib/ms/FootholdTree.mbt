@@ -31,7 +31,7 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
         Ok(v) => v
         Err(err) => {
           let path = basef.path
-          println("Invalid layer: \(err). node=\(path)")
+          @log.warn({ "err": err, "path": path }, "Invalid layer")
           return
         }
       }
@@ -43,8 +43,10 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
               let id = match @strconv.parse_int?(lastfname) {
                 Ok(v) => v
                 Err(err) => {
-                  let path = lastf.path
-                  println("Invalid foothold id: \(err). node=\(path)")
+                  @log.warn(
+                    { "err": err, "path": lastf.path },
+                    "Invalid foothold id",
+                  )
                   return
                 }
               }

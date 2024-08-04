@@ -259,15 +259,15 @@ pub fn update(self : PlayerProneState, player : Player) -> Unit {
 
 struct PlayerSitState {} derive(Default)
 
-pub fn initialize(self : PlayerSitState, player : Player) -> Unit {
+pub fn initialize(self : PlayerSitState, _player : Player) -> Unit {
 
 }
 
-pub fn update(self : PlayerSitState, player : Player) -> Unit {
+pub fn update(self : PlayerSitState, _player : Player) -> Unit {
 
 }
 
-pub fn update_state(self : PlayerSitState, player : Player) -> Unit {
+pub fn update_state(self : PlayerSitState, _player : Player) -> Unit {
 
 }
 

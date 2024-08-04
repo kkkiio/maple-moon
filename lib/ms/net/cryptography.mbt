@@ -4,25 +4,23 @@ struct Cryptography {
 }
 
 pub fn Cryptography::from_handshake(handshake : Bytes) -> Cryptography {
-  let sendiv = FixedArray::makei(
-      header_length,
-      fn(i) { handshake[i + 7].to_int() },
-    )
+  let sendiv = FixedArray::makei(header_length, fn(i) { handshake[i + 7] })
     |> @bytes.of
-  let recviv = FixedArray::makei(
-      header_length,
-      fn(i) { handshake[i + 11].to_int() },
-    )
+  let recviv = FixedArray::makei(header_length, fn(i) { handshake[i + 11] })
     |> @bytes.of
+  Cryptography::new(sendiv, recviv)
+}
+
+pub fn Cryptography::new(sendiv : Bytes, recviv : Bytes) -> Cryptography {
   { sendiv, recviv }
 }
 
 pub fn check_length(self : Cryptography, bytes : Bytes) -> Int {
-  let headermask : Int = (0).until(4).fold(
-    fn(headermask, i) { headermask | (bytes[i].to_int() << (8 * i)) },
+  let headermask : UInt = (0).until(4).fold(
+    fn(headermask, i) { headermask | (bytes[i].to_int().to_uint() << (8 * i)) },
     init=0,
   )
-  (headermask >> 16) ^ (headermask & 0xFFFF)
+  (headermask.lsr(16) ^ (headermask & 0xFFFF)).to_int()
 }
 
 let mapleversion = 83
@@ -30,18 +28,22 @@ let mapleversion = 83
 fn create_header(self : Cryptography, buffer : Bytes, length : Int) -> Unit {
   let a = ((self.sendiv[3].to_int() << 8) | self.sendiv[2].to_int()) ^ mapleversion
   let b = a ^ length
-  buffer[0] = (a % 0x100).to_byte()
-  buffer[1] = (a / 0x100).to_byte()
-  buffer[2] = (b % 0x100).to_byte()
-  buffer[3] = (b / 0x100).to_byte()
+  // iv2^mapleversion0
+  buffer[0] = (a & 0xFF).to_byte()
+  // iv3^mapleversion1
+  buffer[1] = (a >> 8).to_byte()
+  // iv2^mapleversion0^len0
+  buffer[2] = (b & 0xFF).to_byte()
+  // iv3^mapleversion1^len1 
+  buffer[3] = (b >> 8).to_byte()
 }
 
 pub fn encrypt(self : Cryptography, bytes : Bytes) -> Unit {
-  self.mapleencrypt(bytes)
+  mapleencrypt(bytes)
   aesofb(bytes, self.sendiv)
 }
 
-pub fn mapleencrypt(self : Cryptography, bytes : Bytes) -> Unit {
+fn mapleencrypt(bytes : Bytes) -> Unit {
   let length = bytes.length()
   for j = 0; j < 3; j = j + 1 {
     let mut remember = 0
@@ -66,10 +68,10 @@ pub fn mapleencrypt(self : Cryptography, bytes : Bytes) -> Unit {
 
 pub fn decrypt(self : Cryptography, bytes : Bytes) -> Unit {
   aesofb(bytes, self.recviv)
-  self.mapledecrypt(bytes)
+  mapledecrypt(bytes)
 }
 
-pub fn mapledecrypt(self : Cryptography, bytes : Bytes) -> Unit {
+fn mapledecrypt(bytes : Bytes) -> Unit {
   let length = bytes.length()
   (0).until(3).each(
     fn(i) {

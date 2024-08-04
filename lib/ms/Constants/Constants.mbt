@@ -16,10 +16,10 @@ pub fn get_viewheight(self : Constants) -> Int {
   self.viewHeight
 }
 
-pub fn set_viewwidth(self : Constants, value : Int) ->Unit {
+pub fn set_viewwidth(self : Constants, value : Int) -> Unit {
   self.viewWidth = value
 }
 
-pub fn set_viewheight(self : Constants, value : Int) ->Unit {
+pub fn set_viewheight(self : Constants, value : Int) -> Unit {
   self.viewHeight = value
 }

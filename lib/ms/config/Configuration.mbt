@@ -1,6 +1,6 @@
 // app/src/main/cpp/src/Configuration.h
 // app/src/main/cpp/src/Configuration.cpp
-fn set_hardware_info(self : Configuration) -> Unit {
+pub fn set_hardware_info(self : Configuration) -> Unit {
   self.set_hwid("9A9A9A9A9A9A", "9A9A9A9A")
   self.set_macs("11-22-33-44-55-66")
 }
@@ -45,7 +45,7 @@ struct Configuration {
   mut hwid : String
   mut max_width : Int
   mut max_height : Int
-  mut volumeSerialNumber : String
+  mut volume_serial_number : String
   mut worldid : Int
   mut channelid : Int
   mut admin : Bool
@@ -61,7 +61,7 @@ fn Configuration::default() -> Configuration {
     hwid: "",
     max_width: 2560,
     max_height: 1440,
-    volumeSerialNumber: "",
+    volume_serial_number: "",
     worldid: 0,
     channelid: 0,
     admin: false,
@@ -71,20 +71,33 @@ fn Configuration::default() -> Configuration {
 
 let configuration : Configuration = Configuration::default()
 
+pub fn global() -> Configuration {
+  configuration
+}
+
+pub fn get_volume_serial_number(self : Configuration) -> String {
+  self.volume_serial_number
+}
+
 fn set_hwid(
   self : Configuration,
   hwid : String,
-  volumeSerialNumber : String
+  volume_serial_number : String
 ) -> Unit {
-  let part1 = volumeSerialNumber.substring(start=0, end=2)
-  let part2 = volumeSerialNumber.substring(start=2, end=4)
-  let part3 = volumeSerialNumber.substring(start=4, end=6)
-  let part4 = volumeSerialNumber.substring(start=6, end=8)
+  self.volume_serial_number = volume_serial_number
+  let part1 = volume_serial_number.substring(start=0, end=2)
+  let part2 = volume_serial_number.substring(start=2, end=4)
+  let part3 = volume_serial_number.substring(start=4, end=6)
+  let part4 = volume_serial_number.substring(start=6, end=8)
   self.hwid = "\(hwid)_\(part4)\(part3)\(part2)\(part1)"
 }
 
 fn set_macs(self : Configuration, macs : String) -> Unit {
   self.macs = macs
+}
+
+pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
+  self.admin = admin
 }
 
 pub trait ConfigEntry {
@@ -159,29 +172,29 @@ pub fn save(self : IntEntry, value : String) -> Unit {
   self.value = value
 }
 
-struct PointEntry {
-  name : String
-  mut value : String
-}
+// struct PointEntry {
+//   name : String
+//   mut value : String
+// }
 
-pub fn name(self : PointEntry) -> String {
-  self.name
-}
+// pub fn name(self : PointEntry) -> String {
+//   self.name
+// }
 
-pub fn PointEntry::new(name : String, value : String) -> PointEntry {
-  { name, value }
-}
+// pub fn PointEntry::new(name : String, value : String) -> PointEntry {
+//   { name, value }
+// }
 
-pub fn load(self : PointEntry) -> Point[Int] {
-  // (\d+,\d+)
-  abort("TODO")
-}
+// pub fn load(self : PointEntry) -> Point[Int] {
+//   // (\d+,\d+)
+//   abort("TODO")
+// }
 
-pub fn save(self : PointEntry, value : Point[Int]) -> Unit {
-  let x = value.x
-  let y = value.y
-  self.value = "(\(x),\(y))"
-}
+// pub fn save(self : PointEntry, value : Point[Int]) -> Unit {
+//   let x = value.x
+//   let y = value.y
+//   self.value = "(\(x),\(y))"
+// }
 
 // IP Address which the client will connect to
 let configServerIP : StringEntry = StringEntry::new("ServerIP", "127.0.0.1")
@@ -307,11 +320,8 @@ let configMiniMapDefaultHelpers : BoolEntry = BoolEntry::new(
   "MiniMapDefaultHelpers", "false",
 )
 
-// Can be used to access settings.
-type Setting
-
-// Access a setting.
-pub fn Setting::get[T : ConfigEntry](e : T) -> T {
+/// Access a setting.
+pub fn get_setting[T : ConfigEntry](e : T) -> T {
   // { raw: configuration.settings[e.0.0].unwrap() }
   let name = e.name()
   T::new(name, configuration.settings[name].unwrap())

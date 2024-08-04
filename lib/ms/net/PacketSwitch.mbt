@@ -1,4 +1,4 @@
-enum Opcode {
+pub enum Opcode {
   /// Login 1
   LOGIN_RESULT
   SERVER_STATUS
@@ -204,7 +204,7 @@ pub fn int_value(self : Opcode) -> Int {
   }
 }
 
-pub fn Opcode::from_int(v : Int) -> Opcode!String {
+pub fn Opcode::from_int(v : Int) -> Opcode!Error {
   match v {
     /// Login 1
     0 => LOGIN_RESULT
@@ -305,7 +305,7 @@ pub fn Opcode::from_int(v : Int) -> Opcode!String {
 
     /// Cash Shop
     127 => SET_CASH_SHOP
-    _ => raise "unknown opcode \(v)"
+    _ => fail!("unknown opcode \(v)")
   }
 }
 
@@ -323,99 +323,10 @@ struct PacketSwitch {
 
 let msg_unhandled : String = "Unhandled packet detected"
 
-pub fn PacketSwitch::new() -> PacketSwitch {
-  let packet_switch = Array::new()
-
-  // Common handlers
-  // packet_switch.push((PING, PingHandler::new()))
-
-  // Login handlers
-  // packet_switch.push((LOGIN_RESULT, LoginResultHandler::new()))
-  // packet_switch.push((SERVER_STATUS, ServerStatusHandler::new()))
-  // packet_switch.push((SERVER_LIST, ServerlistHandler::new()))
-  // packet_switch.push((CHAR_LIST, CharlistHandler::new()))
-  // packet_switch.push((SERVER_IP, ServerIPHandler::new()))
-  // packet_switch.push((CHARNAME_RESPONSE, CharnameResponseHandler::new()))
-  // packet_switch.push((ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler::new()))
-  // packet_switch.push((DELCHAR_RESPONSE, DeleteCharResponseHandler::new()))
-  // packet_switch.push((RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()))
-
-  // SetField handlers
-  // packet_switch.push((SET_FIELD, SetFieldHandler::new()))
-
-  // MapObject handlers
-  // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
-  // packet_switch.push((CHAR_MOVED, CharMovedHandler::new()))
-  // packet_switch.push((UPDATE_CHARLOOK, UpdateCharLookHandler::new()))
-  // packet_switch.push((SHOW_FOREIGN_EFFECT, ShowForeignEffectHandler::new()))
-  // packet_switch.push((GIVE_FOREIGN_BUFF, GiveForeignBuffHandler::new()))
-  // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
-  // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
-  // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
-  // packet_switch.push((SPAWN_NPC, SpawnNpcHandler::new()))
-  // packet_switch.push((SPAWN_NPC_C, SpawnNpcControllerHandler::new()))
-  // packet_switch.push((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
-  // packet_switch.push((SPAWN_MOB, SpawnMobHandler::new()))
-  // packet_switch.push((SPAWN_MOB_C, SpawnMobControllerHandler::new()))
-  // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
-  // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
-  // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
-  // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
-  // packet_switch.push((SHOW_MOB_HP, ShowMobHpHandler::new()))
-  // packet_switch.push((KILL_MOB, KillMobHandler::new()))
-  // packet_switch.push((DROP_LOOT, DropLootHandler::new()))
-  // packet_switch.push((REMOVE_LOOT, RemoveLootHandler::new()))
-  // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
-  // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
-  // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
-
-  // Attack handlers
-  // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
-  // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
-  // packet_switch.push((ATTACKED_MAGIC, MagicAttackHandler::new()))
-
-  // Player handlers
-  // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
-  // packet_switch.push((KEYMAP, KeymapHandler::new()))
-  // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-  // packet_switch.push((CHANGE_STATS, ChangeStatsHandler::new()))
-  // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
-  // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-  // packet_switch.push((RECALCULATE_STATS, RecalculateStatsHandler::new()))
-  // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
-  // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
-  // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
-
-  // Messaging handlers
-  // packet_switch.push((SHOW_STATUS_INFO, ShowStatusInfoHandler::new()))
-  // packet_switch.push((CHAT_RECEIVED, ChatReceivedHandler::new()))
-  // packet_switch.push((SCROLL_RESULT, ScrollResultHandler::new()))
-  // packet_switch.push((SERVER_MESSAGE, ServerMessageHandler::new()))
-  // packet_switch.push((WEEK_EVENT_MESSAGE, WeekEventMessageHandler::new()))
-  // packet_switch.push((WHISPER, WhisperReceivedHandler::new()))
-  // packet_switch.push((SHOW_ITEM_GAIN_INCHAT, ShowItemGainInChatHandler::new()))
-
-  // Inventory Handlers
-  // packet_switch.push((MODIFY_INVENTORY, ModifyInventoryHandler::new()))
-  // packet_switch.push((GATHER_RESULT, GatherResultHandler::new()))
-  // packet_switch.push((SORT_RESULT, SortResultHandler::new()))
-
-  // NPC Interaction Handlers
-  // packet_switch.push((NPC_DIALOGUE, NpcDialogueHandler::new()))
-  // packet_switch.push((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
-
-  // Player Interaction
-  // packet_switch.push((CHAR_INFO, CharInfoHandler::new()))
-  // packet_switch.push((PLAYER_INTERACTION, PlayerInteractionHandler::new()))
-
-  // Cash Shop
-  // packet_switch.push((SET_CASH_SHOP, SetCashShopHandler::new()))
-
-  // TODO: New handlers, they need coded and moved to a proper file.
-  // packet_switch.push((CHECK_SPW_RESULT, CheckSpwResultHandler::new()))
-  // packet_switch.push((FIELD_EFFECT, FieldEffectHandler::new()))
-
-  { handlers: @immut/hashmap.from_array(packet_switch) }
+pub fn PacketSwitch::new(
+  handlers : @immut/hashmap.T[Opcode, PacketHandler]
+) -> PacketSwitch {
+  { handlers, }
 }
 
 pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
@@ -424,31 +335,32 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
 
   // Read the opcode to determine handler responsible
   let opcode = try {
-    Opcode::from_int!(recv.read_ushort())
+    Opcode::from_int!(recv.read_ushort!())
   } catch {
     err => {
-      println(err)
+      @log.warn(
+        { "blen": bytes.length() },
+        // "err": err 
+        "read opcode failed",
+      )
       return
     }
   }
   // if @config.Configuration::get().get_show_packets() {
-  //   if opcode == PING {
-  //     println("Received Packet: PING")
-  //   } else {
-  //     println("Received Packet: \(opcode)")
-  //   }
+  @log.debug({ "opcode": opcode }, "Received packet")
   // }
   match self.handlers[opcode] {
     Some(handler) =>
       try {
         handler.handle!(recv)
       } catch {
-        PacketError(err) => self.warn(err, opcode)
+        err =>
+          @log.warn(
+            { "opcode": opcode },
+            // "err": err 
+            "handle packet failed",
+          )
       }
-    None => self.warn(msg_unhandled, opcode)
+    None => @log.warn({ "opcode": opcode }, msg_unhandled)
   }
-}
-
-fn warn(self : PacketSwitch, message : String, opcode : Opcode) -> Unit {
-  println("Opcode [\(opcode)] Error: \(message)")
 }

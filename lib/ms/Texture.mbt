@@ -20,7 +20,7 @@ pub fn debug_write(self : Texture, buffer : Buffer) -> Unit {
 fn Texture::from_resource(src : NxNode) -> Texture {
   let loader_name = src.loader.name()
   let src_path = src.path
-  println("loading texture from resource \(loader_name) \(src_path)")
+  // println("loading texture from resource \(loader_name) \(src_path)")
   // TODO: source,_outlink,_inlink
   match src["__b"].desc.as_number() {
     Some(bid) =>

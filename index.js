@@ -290,17 +290,23 @@ class Socket {
     this.ws.binaryType = "arraybuffer";
     this.pendingData = [];
     this.ws.addEventListener("open", (event) => {
-      console.log("connect server success", event)
+      console.info("connect server success", event)
     })
     this.ws.addEventListener("message", (event) => {
       this.pendingData.push(new Uint8Array(event.data));
     })
     this.ws.addEventListener("error", (event) => {
-      console.log("connect server error", event)
+      console.error("connect server error", event)
+    })
+    this.ws.addEventListener("close", (event) => {
+      console.info("connect server close", event)
     })
   }
   close() {
     this.ws.close()
+  }
+  isConnected() {
+    return this.ws.readyState === WebSocket.OPEN
   }
   read() {
     if (this.pendingData.length > 0) {
@@ -583,6 +589,12 @@ function main() {
     socket: {
       open: (path) => new Socket(path),
       close: (socket) => { socket.close() },
+      is_connected: (socket) => socket.isConnected(),
+    },
+    log: {
+      debug: (msg) => console.debug(msg),
+      info: (msg) => console.info(msg),
+      warn: (msg) => console.warn(msg),
     },
     spectest: {
       print_i32: (x) => console.log(String(x)),

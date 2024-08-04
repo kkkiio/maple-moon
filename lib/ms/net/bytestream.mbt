@@ -17,11 +17,11 @@ pub fn available(self : ByteStream) -> Int {
   self.length - self.fpos
 }
 
-pub fn read_bytes(self : ByteStream, length : Int) -> Bytes!String {
+pub fn read_bytes(self : ByteStream, length : Int) -> Bytes!Error {
   let res = Bytes::new(length)
   let mut offset = 0
   while offset < length {
-    let bs = self.dq.front().or_error!("not enough bytes available")
+    let bs = self.dq.front().or_error!(Failure("not enough bytes available"))
     let n = @math.minimum(bs.length() - self.fpos, length - offset)
     res.blit(offset, bs, self.fpos, n)
     self.fpos += n

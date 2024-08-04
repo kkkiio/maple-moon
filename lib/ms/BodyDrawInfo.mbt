@@ -65,13 +65,34 @@ struct BodyDrawInfo {
 }
 
 pub fn BodyDrawInfo::new() -> BodyDrawInfo {
-  let body_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let arm_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let hand_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let head_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let hair_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let face_positions = FixedArray::new(StanceId::count(), fn() { Map::new() })
-  let stance_delays = FixedArray::new(StanceId::count(), fn() { Map::new() })
+  let body_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let arm_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let hand_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let head_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let hair_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let face_positions = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
+  let stance_delays = FixedArray::makei(
+    StanceId::count(),
+    fn(_i) { Map::new() },
+  )
   let body_actions = Map::new()
   let attack_delays = Map::new()
   let character_loader = character_loader()

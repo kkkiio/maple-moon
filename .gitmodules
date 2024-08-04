@@ -1,0 +1,4 @@
+[submodule "Cosmic"]
+	path = Cosmic
+	url = https://github.com/KKKIIO/Cosmic.git
+	branch = websocket

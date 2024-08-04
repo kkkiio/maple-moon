@@ -62,7 +62,10 @@ pub fn MapTilesObjs::from_resource(src : NxNode) -> MapTilesObjs {
 
 pub fn MapTilesObjs::default() -> MapTilesObjs {
   {
-    layers: FixedArray::new(@Layer.ids.length(), fn() { TilesObjs::default() }),
+    layers: FixedArray::makei(
+      @Layer.ids.length(),
+      fn(_i) { TilesObjs::default() },
+    ),
   }
 }
 

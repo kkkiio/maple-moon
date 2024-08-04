@@ -1,0 +1,12 @@
+struct PingHandler {} derive(Default)
+
+pub fn PingHandler::new() -> PingHandler {
+  PingHandler::default()
+}
+
+pub fn handle(self : PingHandler, packet : InPacket) -> Unit!Error {
+  OutPacket::new(OutPacketOpcode::PONG).dispatch()
+  if false {
+    fail!("test")
+  }
+}

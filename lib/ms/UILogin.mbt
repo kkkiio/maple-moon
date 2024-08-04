@@ -33,6 +33,12 @@ pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
   }
 }
 
+enum LoginStage {
+  INIT
+  START_SEND
+  LOGIN_SEND
+}
+
 struct UILogin {
   base : UIElementBase
   // mut version : Text
@@ -42,14 +48,15 @@ struct UILogin {
   // mut passwordbg : Texture
   // mut checkbox : BoolPair[Texture]
   mut saveid : Bool
+  mut login_stage : LoginStage
 }
 
 pub fn UILogin::new() -> UILogin {
   let obj = {
     base: UIElementBase::new(Point::new(0, 0), Point::new(800, 600)),
     saveid: false,
+    login_stage: INIT,
   }
-  fn_login_start()
   // version: Text::new(),
   // account: Textfield::new(),
   // password: Textfield::new(),
@@ -177,16 +184,6 @@ pub fn UILogin::new() -> UILogin {
   //   obj.account.set_state(Textfield::State::FOCUSED)
   // }
 
-  // if Configuration::get().get_auto_login() {
-  //   UI::get().emplace(UILoginWait::new(|| {}))
-
-  //   let loginwait = UI::get().get_element[UILoginWait]()
-
-  //   if loginwait && loginwait.get().is_active() {
-  //     fn_login(Configuration::get().get_auto_acc(), Configuration::get().get_auto_pass())
-  //   }
-  // }
-
   obj
 }
 
@@ -210,61 +207,63 @@ pub fn draw(self : UILogin, alpha : Double) -> Unit {
 
 pub fn update(self : UILogin) -> Unit {
   self.base.update()
-
-  // self.account.update(self.position)
-  // self.password.update(self.position)
+  let p = @net.PacketProcessor::get()
+  match p.get_status() {
+    READY =>
+      match self.login_stage {
+        INIT => {
+          fn_login_start()
+          self.login_stage = START_SEND
+        }
+        START_SEND => { // UI::get().emplace(UILoginWait::new(|| {}))
+          // let loginwait = UI::get().get_element[UILoginWait]()
+          // if loginwait && loginwait.get().is_active() {
+          fn_login("kkkiio", "kkkiio")
+          self.login_stage = LOGIN_SEND
+        }
+        LOGIN_SEND => ()
+      }
+    OPENED => ()
+    CLOSED => {
+      p.connect_login()
+      self.login_stage = INIT
+    }
+  }
 }
 
-pub fn login(self : UILogin) -> Unit {
-  // self.account.set_state(Textfield::State::DISABLED)
-  // self.password.set_state(Textfield::State::DISABLED)
+// pub fn login(self : UILogin) -> Unit {
+//   // let okhandler = || {
+//   //   self.account.set_state(Textfield::State::NORMAL)
+//   //   self.password.set_state(Textfield::State::NORMAL)
 
-  // let account_text = self.account.get_text()
-  // let password_text = self.password.get_text()
+//   //   if !password_text.empty() {
+//   //     self.password.set_state(Textfield::State::FOCUSED)
+//   //   } else {
+//   //     self.account.set_state(Textfield::State::FOCUSED)
+//   //   }
+//   // }
 
-  // let okhandler = || {
-  //   self.account.set_state(Textfield::State::NORMAL)
-  //   self.password.set_state(Textfield::State::NORMAL)
+//   // UI::get().emplace(UILoginWait::new(okhandler))
 
-  //   if !password_text.empty() {
-  //     self.password.set_state(Textfield::State::FOCUSED)
-  //   } else {
-  //     self.account.set_state(Textfield::State::FOCUSED)
-  //   }
-  // }
+//   // let loginwait = UI::get().get_element[UILoginWait]()
 
-  // if account_text.empty() {
-  //   UI::get().emplace(UILoginNotice::new(UILoginNotice::Message::NOT_REGISTERED, okhandler))
-  //   return
-  // }
-
-  // if password_text.length() <= 4 {
-  //   UI::get().emplace(UILoginNotice::new(UILoginNotice::Message::WRONG_PASSWORD, okhandler))
-  //   return
-  // }
-
-  // UI::get().emplace(UILoginWait::new(okhandler))
-
-  // let loginwait = UI::get().get_element[UILoginWait]()
-
-  // if loginwait && loginwait.get().is_active() {
-  //   fn_login(account_text, password_text)
-  // }
-}
+//   // if loginwait && loginwait.get().is_active() {
+//   //   fn_login(account_text, password_text)
+//   // }
+// }
 
 pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
   match UILoginButtons::from_int(id) {
-    Some(UILoginButtons::BT_LOGIN) => {
-      self.login()
+    Some(UILoginButtons::BT_LOGIN) =>
+      // self.login()
       ButtonState::NORMAL
-    }
     // UILoginButtons::BT_REGISTER | UILoginButtons::BT_HOMEPAGE | UILoginButtons::BT_PASSLOST | UILoginButtons::BT_IDLOST => {
     //   self.open_url(id)
     //   ButtonState::NORMAL
     // }
     Some(UILoginButtons::BT_SAVEID) => {
       self.saveid = self.saveid.not()
-      Setting::get(configSaveLogin).save(self.saveid)
+      // Setting::get(configSaveLogin).save(self.saveid)
       ButtonState::MOUSEOVER
     }
     Some(UILoginButtons::BT_QUIT) =>
@@ -341,5 +340,9 @@ fn doubleclick(self : UILogin, point : Point[Int]) -> Unit {
 }
 
 fn fn_login_start() -> Unit {
-  @net.LoginStartPacket::new().dispatch()
+  new_login_start_packet().dispatch()
+}
+
+fn fn_login(account : String, password : String) -> Unit {
+  new_login_packet(account, password).dispatch()
 }

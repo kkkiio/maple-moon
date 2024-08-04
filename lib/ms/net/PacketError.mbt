@@ -1,1 +1,0 @@
-type PacketError String

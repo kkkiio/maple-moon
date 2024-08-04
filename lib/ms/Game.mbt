@@ -1,15 +1,110 @@
 pub struct Game {
-  config : Configuration
   mut accumulator : Int
 }
 
 pub fn Game::start() -> Game {
-  let c = Configuration::default()
-  c.set_hardware_info()
-  @net.PacketProcessor::get().initialize()
+  @config.global().set_hardware_info()
+  // ( 
+  // // Login handlers
+  // // packet_switch.push((LOGIN_RESULT, LoginResultHandler::new()))
+  // // packet_switch.push((SERVER_STATUS, ServerStatusHandler::new()))
+  // // packet_switch.push((SERVER_LIST, ServerlistHandler::new()))
+  // // packet_switch.push((CHAR_LIST, CharlistHandler::new()))
+  // // packet_switch.push((SERVER_IP, ServerIPHandler::new()))
+  // // packet_switch.push((CHARNAME_RESPONSE, CharnameResponseHandler::new()))
+  // // packet_switch.push((ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler::new()))
+  // // packet_switch.push((DELCHAR_RESPONSE, DeleteCharResponseHandler::new()))
+  // // packet_switch.push((RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()))
+
+  // // SetField handlers
+  // // packet_switch.push((SET_FIELD, SetFieldHandler::new()))
+
+  // // MapObject handlers
+  // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
+  // // packet_switch.push((CHAR_MOVED, CharMovedHandler::new()))
+  // // packet_switch.push((UPDATE_CHARLOOK, UpdateCharLookHandler::new()))
+  // // packet_switch.push((SHOW_FOREIGN_EFFECT, ShowForeignEffectHandler::new()))
+  // // packet_switch.push((GIVE_FOREIGN_BUFF, GiveForeignBuffHandler::new()))
+  // // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
+  // // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
+  // // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
+  // // packet_switch.push((SPAWN_NPC, SpawnNpcHandler::new()))
+  // // packet_switch.push((SPAWN_NPC_C, SpawnNpcControllerHandler::new()))
+  // // packet_switch.push((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
+  // // packet_switch.push((SPAWN_MOB, SpawnMobHandler::new()))
+  // // packet_switch.push((SPAWN_MOB_C, SpawnMobControllerHandler::new()))
+  // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
+  // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
+  // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
+  // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
+  // // packet_switch.push((SHOW_MOB_HP, ShowMobHpHandler::new()))
+  // // packet_switch.push((KILL_MOB, KillMobHandler::new()))
+  // // packet_switch.push((DROP_LOOT, DropLootHandler::new()))
+  // // packet_switch.push((REMOVE_LOOT, RemoveLootHandler::new()))
+  // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
+  // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
+  // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
+
+  // // Attack handlers
+  // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
+  // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
+  // // packet_switch.push((ATTACKED_MAGIC, MagicAttackHandler::new()))
+
+  // // Player handlers
+  // // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
+  // // packet_switch.push((KEYMAP, KeymapHandler::new()))
+  // // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
+  // // packet_switch.push((CHANGE_STATS, ChangeStatsHandler::new()))
+  // // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
+  // // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
+  // // packet_switch.push((RECALCULATE_STATS, RecalculateStatsHandler::new()))
+  // // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
+  // // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
+  // // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
+
+  // // Messaging handlers
+  // // packet_switch.push((SHOW_STATUS_INFO, ShowStatusInfoHandler::new()))
+  // // packet_switch.push((CHAT_RECEIVED, ChatReceivedHandler::new()))
+  // // packet_switch.push((SCROLL_RESULT, ScrollResultHandler::new()))
+  // // packet_switch.push((SERVER_MESSAGE, ServerMessageHandler::new()))
+  // // packet_switch.push((WEEK_EVENT_MESSAGE, WeekEventMessageHandler::new()))
+  // // packet_switch.push((WHISPER, WhisperReceivedHandler::new()))
+  // // packet_switch.push((SHOW_ITEM_GAIN_INCHAT, ShowItemGainInChatHandler::new()))
+
+  // // Inventory Handlers
+  // // packet_switch.push((MODIFY_INVENTORY, ModifyInventoryHandler::new()))
+  // // packet_switch.push((GATHER_RESULT, GatherResultHandler::new()))
+  // // packet_switch.push((SORT_RESULT, SortResultHandler::new()))
+
+  // // NPC Interaction Handlers
+  // // packet_switch.push((NPC_DIALOGUE, NpcDialogueHandler::new()))
+  // // packet_switch.push((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
+
+  // // Player Interaction
+  // // packet_switch.push((CHAR_INFO, CharInfoHandler::new()))
+  // // packet_switch.push((PLAYER_INTERACTION, PlayerInteractionHandler::new()))
+
+  // // Cash Shop
+  // // packet_switch.push((SET_CASH_SHOP, SetCashShopHandler::new()))
+
+  // // TODO: New handlers, they need coded and moved to a proper file.
+  // // packet_switch.push((CHECK_SPW_RESULT, CheckSpwResultHandler::new()))
+  // // packet_switch.push((FIELD_EFFECT, FieldEffectHandler::new()))
+
+  //  )
+
+  @net.PacketProcessor::initialize(
+    // Common handlers
+    @immut/hashmap.of(
+      [
+        (@net.PING, @net.PingHandler::default()),
+        (@net.LOGIN_RESULT, LoginResultHandler::new()),
+      ],
+    ),
+  )
   timer.start()
   map_portals_animations.load()
-  { config: c, accumulator: 0 }
+  { accumulator: 0 }
 }
 
 pub fn stop(self : Game) -> Unit {

@@ -41,7 +41,7 @@ fn UI::new() -> UI {
     quitted: false,
     caps_lock_enabled: false,
   }
-  ui.change_state(UiState::GAME) // for test
+  ui.change_state(UiState::LOGIN) // for test
   ui
 }
 
@@ -57,9 +57,8 @@ pub fn draw(self : UI, alpha : Double) -> Unit {
 }
 
 fn update(self : UI) -> Unit {
-  //         state_->update();
+          self.state.update()
   //         scrolling_notice_.update();
-  //         cursor_.update();
   self.cursor.update()
   //         mobile_input_.update();
 }

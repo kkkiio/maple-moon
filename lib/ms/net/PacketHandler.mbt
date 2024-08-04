@@ -1,3 +1,3 @@
-trait PacketHandler {
-  handle(Self, InPacket) -> Unit!PacketError
+pub trait PacketHandler {
+  handle(Self, InPacket) -> Unit!Error
 }

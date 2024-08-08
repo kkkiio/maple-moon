@@ -10,7 +10,7 @@ pub fn to_string(self : Texture) -> String {
   let bid = self.bitmap.map_or(-1, fn(bitmap) { bitmap.id() })
   let origin = self.origin
   let dimensions = self.dimensions
-  "Texture{bid=\(bid), origin=\(origin), dimensions=\(dimensions)}"
+  "Texture{bid=\{bid}, origin=\{origin}, dimensions=\{dimensions}}"
 }
 
 pub fn debug_write(self : Texture, buffer : Buffer) -> Unit {
@@ -18,14 +18,14 @@ pub fn debug_write(self : Texture, buffer : Buffer) -> Unit {
 }
 
 fn Texture::from_resource(src : NxNode) -> Texture {
-  let loader_name = src.loader.name()
-  let src_path = src.path
+  // let loader_name = src.loader.name()
+  // let src_path = src.path
   // println("loading texture from resource \(loader_name) \(src_path)")
   // TODO: source,_outlink,_inlink
-  match src["__b"].desc.as_number() {
+  match src["__b"].get_int().to_option() {
     Some(bid) =>
       {
-        bitmap: Some(src.loader.load_bitmap(bid.to_int())),
+        bitmap: Some(src.get_loader().load_bitmap(bid)),
         origin: (src["origin"] |> Point::from_resource).unwrap(),
         dimensions: {
           x: src["__w"].get_int().unwrap(),

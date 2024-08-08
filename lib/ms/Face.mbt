@@ -66,7 +66,7 @@ pub fn byaction(action : Int) -> ExpressionId {
   if adjusted_action < all_expressions.length() {
     all_expressions[adjusted_action]
   } else {
-    println("Unknown Expression::Id action: [\(action)]")
+    println("Unknown Expression::Id action: [\{action}]")
     ExpressionId::DEFAULT
   }
 }
@@ -92,10 +92,12 @@ pub fn FaceFrame::from_resource(src : NxNode) -> FaceFrame {
   { texture, delay }
 }
 
+let string_loader = @resource.string_loader
+
 pub fn Face::new(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
   let loader = character_loader()
-  let facenode = loader.load_res(["Face", "\(strid).img"])
+  let facenode = loader.load_res(["Face", "\{strid}.img"])
   let expressions = expression_names.map_with_key(
     fn(exp, _v) {
       let frames = Map::new()
@@ -107,12 +109,11 @@ pub fn Face::new(faceid : Int) -> Face {
         let mut frame = 0
         while true {
           let framenode = expnode[frame.to_string()]
-          match framenode.desc {
-            @json.JsonValue::Null => break
-            _ => {
-              frames.set(frame, FaceFrame::from_resource(framenode))
-              frame += 1
-            }
+          if framenode.is_null() {
+            break
+          } else {
+            frames.set(frame, FaceFrame::from_resource(framenode))
+            frame += 1
           }
         }
       }
@@ -121,7 +122,7 @@ pub fn Face::new(faceid : Int) -> Face {
   )
   let string_loader = string_loader()
   let name = string_loader.load_res(
-    ["Eqp.img", "Eqp", "Face", "\(faceid)", "name"],
+    ["Eqp.img", "Eqp", "Face", "\{faceid}", "name"],
   ).get_string()
   { expressions, name }
 }

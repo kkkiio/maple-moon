@@ -48,7 +48,7 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
 pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
   let character_loader = character_loader()
   let stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
-  let hairnode = character_loader.load_res(["Hair", "000\(hairid).img"])
+  let hairnode = character_loader.load_res(["Hair", "000\{hairid}.img"])
   stance_id_names.each(
     fn(stancename, stance) {
       let stancenode = hairnode[stancename]
@@ -63,7 +63,7 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
         }
         framenode.each(
           fn(layernode) {
-            let layername = layernode.name
+            let layername = layernode.name()
             let layer = match layers_by_name[layername] {
               Some(v) => v
               None => {
@@ -86,7 +86,7 @@ pub fn Hair::new(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
   )
   let string_loader = string_loader()
   let name = string_loader.load_res(
-    ["Eqp.img", "Eqp", "Hair", "\(hairid)", "name"],
+    ["Eqp.img", "Eqp", "Hair", "\{hairid}", "name"],
   ).get_string()
   let haircolors = [
     "Black", "Red", "Orange", "Blonde", "Green", "Blue", "Violet", "Brown",

@@ -204,7 +204,7 @@ pub fn int_value(self : Opcode) -> Int {
   }
 }
 
-pub fn Opcode::from_int(v : Int) -> Opcode!Error {
+pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
   match v {
     /// Login 1
     0 => LOGIN_RESULT
@@ -305,9 +305,11 @@ pub fn Opcode::from_int(v : Int) -> Opcode!Error {
 
     /// Cash Shop
     127 => SET_CASH_SHOP
-    _ => fail!("unknown opcode \(v)")
+    _ => raise UnknownOpCodeError(v)
   }
 }
+
+type! UnknownOpCodeError Int
 
 pub fn hash(self : Opcode) -> Int {
   self.int_value()
@@ -337,12 +339,12 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   let opcode = try {
     Opcode::from_int!(recv.read_ushort!())
   } catch {
+    UnknownOpCodeError(opcode) => {
+      @log.warn({ "opcode": opcode }, "unknown opcode")
+      return
+    }
     err => {
-      @log.warn(
-        { "blen": bytes.length() },
-        // "err": err 
-        "read opcode failed",
-      )
+      @log.warn({ "blen": bytes.length(), "err": err }, "read opcode failed")
       return
     }
   }
@@ -354,12 +356,10 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
       try {
         handler.handle!(recv)
       } catch {
+        Failure(err) =>
+          @log.warn({ "opcode": opcode, "err": err }, "handle packet failed")
         err =>
-          @log.warn(
-            { "opcode": opcode },
-            // "err": err 
-            "handle packet failed",
-          )
+          @log.warn({ "opcode": opcode, "err": err }, "handle packet failed")
       }
     None => @log.warn({ "opcode": opcode }, msg_unhandled)
   }

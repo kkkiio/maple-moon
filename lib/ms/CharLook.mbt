@@ -25,7 +25,7 @@ let face_types : Map[Int, Face] = Map::new()
 
 let body_types : Map[Int, Body] = Map::new()
 
-pub fn CharLook::new(entry : LookEntry) -> CharLook {
+pub fn CharLook::new(entry : @login.LookEntry) -> CharLook {
   let l = CharLook::default()
   l.set_body(entry.skin)
   l.set_hair(entry.hairid)

@@ -44,7 +44,7 @@ pub trait FromResource {
   from_resource(NxNode) -> Self
 }
 
-pub fn Rectangle::from_resource(src : NxNode) -> Result[Rectangle[Int], String] {
+pub fn Rectangle::from_resource(src : NxNode) -> Result[Rectangle[Int], Error] {
   try {
     let left_top = Point::from_resource(src["lt"]).unwrap_or_error!()
     let right_bottom = Point::from_resource(src["rb"]).unwrap_or_error!()

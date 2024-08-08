@@ -60,11 +60,13 @@ pub struct Body {
   name : String
 }
 
+let character_loader = @resource.character_loader
+
 pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
   let strid : String = @string_format.extend_id(skin, 2)
   let character_loader = character_loader()
-  let bodynode : NxNode = character_loader.load_res(["000020" + strid + ".img"])
-  let headnode : NxNode = character_loader.load_res(["000120" + strid + ".img"])
+  let bodynode = character_loader.load_res(["000020" + strid + ".img"])
+  let headnode = character_loader.load_res(["000120" + strid + ".img"])
   let stances = stance_id_names.iter().map(
       fn(it) {
         let (stance_name, stance) = it
@@ -75,13 +77,13 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
         if stancenode.is_null().not() {
           let mut frame : Int = 0
           while true {
-            let framenode : NxNode = stancenode[frame.to_string()]
+            let framenode = stancenode[frame.to_string()]
             if framenode.is_null() {
               break
             }
             framenode.each(
               fn(partnode) {
-                let part : String = partnode.name
+                let part : String = partnode.name()
                 if part != "delay" && part != "face" {
                   let z : String = partnode["z"].get_string()
                   let layer : BodyLayer = Body::layer_by_name(z)
@@ -109,7 +111,7 @@ pub fn Body::new(skin : Int, drawinfo : BodyDrawInfo) -> Body {
                 }
               },
             )
-            let headsfnode : NxNode = headnode[stance_name][frame.to_string()]["head"]
+            let headsfnode = headnode[stance_name][frame.to_string()]["head"]
             if headsfnode.is_null().not() {
               let shift : Point[Int] = drawinfo.get_head_position(stance, frame)
               let texture = Texture::from_resource(headsfnode)

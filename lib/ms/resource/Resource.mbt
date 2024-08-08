@@ -1,20 +1,22 @@
 type ResourceLoader
 
-fn ui_loader() -> ResourceLoader = "resource" "ui_loader"
+pub fn ui_loader() -> ResourceLoader = "resource" "ui_loader"
 
-fn sound_loader() -> ResourceLoader = "resource" "sound_loader"
+pub fn sound_loader() -> ResourceLoader = "resource" "sound_loader"
 
-fn map_loader() -> ResourceLoader = "resource" "map_loader"
+pub fn map_loader() -> ResourceLoader = "resource" "map_loader"
 
-fn character_loader() -> ResourceLoader = "resource" "character_loader"
+pub fn character_loader() -> ResourceLoader = "resource" "character_loader"
 
-fn string_loader() -> ResourceLoader = "resource" "string_loader"
+pub fn string_loader() -> ResourceLoader = "resource" "string_loader"
 
-fn reactor_loader() -> ResourceLoader = "resource" "reactor_loader"
+pub fn reactor_loader() -> ResourceLoader = "resource" "reactor_loader"
 
-fn map001_loader() -> ResourceLoader = "resource" "map001_loader"
+pub fn map001_loader() -> ResourceLoader = "resource" "map001_loader"
 
-fn map_pretty_loader() -> ResourceLoader = "resource" "map_pretty_loader"
+pub fn map_pretty_loader() -> ResourceLoader = "resource" "map_pretty_loader"
+
+pub fn etc_loader() -> ResourceLoader = "resource" "etc_loader"
 
 type JsJson
 
@@ -39,7 +41,7 @@ fn as_moonjson(self : JsJson) -> @json.JsonValue {
 
 pub fn load_res(self : ResourceLoader, path : Array[String]) -> NxNode {
   if path.contains("") {
-    abort("path contains empty part, path=\(path)")
+    abort("path contains empty part, path=\{path}")
   }
   {
     loader: self,
@@ -54,6 +56,18 @@ struct NxNode {
   name : String
   desc : @json.JsonValue
   path : @immut/array.T[String]
+}
+
+pub fn name(self : NxNode) -> String {
+  self.name
+}
+
+pub fn value(self : NxNode) -> @json.JsonValue {
+  self.desc
+}
+
+pub fn get_loader(self : NxNode) -> ResourceLoader {
+  self.loader
 }
 
 pub fn op_get(self : NxNode, key : String) -> NxNode {
@@ -93,7 +107,7 @@ pub fn get_float(self : NxNode) -> Result[Double, Error] {
       } catch {
         s => Err(s)
       }
-    _ as a => Err(Failure("expect number, got\(a)"))
+    _ as a => Err(Failure("expect number, got\{a}"))
   }
 }
 
@@ -106,7 +120,7 @@ pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
         },
       )
     @json.JsonValue::Null => ()
-    _ as a => abort("expect object, got\(a)")
+    _ as a => abort("expect object, got\{a}")
   }
 }
 
@@ -120,45 +134,31 @@ pub fn is_null(self : NxNode) -> Bool {
 pub fn as_string(self : NxNode) -> Result[String, String] {
   match self.desc {
     @json.JsonValue::String(it) => Ok(it)
-    _ as a => Err("expect string, got\(a)")
+    _ as a => Err("expect string, got\{a}")
   }
 }
 
 pub fn to_string(self : NxNode) -> String {
   let name = self.name
   let desc = self.desc
-  "(\(name)=\(desc))"
+  "(\{name}=\{desc})"
 }
 
-fn load_bitmap(self : ResourceLoader, bid : Int) -> Bitmap = "resource" "load_bitmap"
+pub fn load_bitmap(self : ResourceLoader, bid : Int) -> Bitmap = "resource" "load_bitmap"
 
-type Bitmap
+pub type Bitmap
 
 /// Global unique id
-fn id(self : Bitmap) -> Int = "bitmap" "id"
+pub fn id(self : Bitmap) -> Int = "bitmap" "id"
 
-fn width(self : Bitmap) -> Int = "bitmap" "width"
+pub fn width(self : Bitmap) -> Int = "bitmap" "width"
 
-fn height(self : Bitmap) -> Int = "bitmap" "height"
+pub fn height(self : Bitmap) -> Int = "bitmap" "height"
 
-fn loading(self : Bitmap) -> Bool = "bitmap" "loading"
+pub fn loading(self : Bitmap) -> Bool = "bitmap" "loading"
 
 fn join_path(parts : Array[String]) -> String {
   parts.join("/")
 }
 
 pub type ResPath Array[String] derive(Eq)
-
-pub fn get_point(self : NxNode) -> Result[Point[Int], String] {
-  match self.desc {
-    @json.JsonValue::Array(arr) =>
-      Ok(
-        {
-          x: arr[0].as_number().unwrap().to_int(),
-          y: arr[1].as_number().unwrap().to_int(),
-        },
-      )
-    @json.JsonValue::Null => Point::default() |> Ok
-    _ as a => Err("expect array, got \(a)")
-  }
-}

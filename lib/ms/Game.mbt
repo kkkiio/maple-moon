@@ -5,16 +5,6 @@ pub struct Game {
 pub fn Game::start() -> Game {
   @config.global().set_hardware_info()
   // ( 
-  // // Login handlers
-  // // packet_switch.push((LOGIN_RESULT, LoginResultHandler::new()))
-  // // packet_switch.push((SERVER_STATUS, ServerStatusHandler::new()))
-  // // packet_switch.push((SERVER_LIST, ServerlistHandler::new()))
-  // // packet_switch.push((CHAR_LIST, CharlistHandler::new()))
-  // // packet_switch.push((SERVER_IP, ServerIPHandler::new()))
-  // // packet_switch.push((CHARNAME_RESPONSE, CharnameResponseHandler::new()))
-  // // packet_switch.push((ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler::new()))
-  // // packet_switch.push((DELCHAR_RESPONSE, DeleteCharResponseHandler::new()))
-  // // packet_switch.push((RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()))
 
   // // SetField handlers
   // // packet_switch.push((SET_FIELD, SetFieldHandler::new()))
@@ -98,8 +88,22 @@ pub fn Game::start() -> Game {
     @immut/hashmap.of(
       [
         (@net.PING, @net.PingHandler::default()),
-        (@net.LOGIN_RESULT, LoginResultHandler::new()),
+        // Login handlers
+        (@net.LOGIN_RESULT, @login.LoginResultHandler::new()),
+        (SERVER_STATUS, @login.ServerStatusHandler::new()),
+        (SERVER_LIST, @login.ServerlistHandler::new()),
+        (CHAR_LIST, @login.CharlistHandler::new()),
+        (CHARNAME_RESPONSE, @login.CharnameResponseHandler::new()),
+        (
+          SERVER_IP,
+          @login.ServerIPHandler::new(
+            fn(ip, port, cid) { UI::get().on_login_finished(ip, port, cid) },
+          ),
+        ),
       ],
+      // (ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler::new()),
+      // (DELCHAR_RESPONSE, DeleteCharResponseHandler::new()),
+      // (RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()),
     ),
   )
   timer.start()

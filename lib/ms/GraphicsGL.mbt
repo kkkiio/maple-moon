@@ -302,7 +302,7 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
     let used = self.width * self.border.y + self.border.x * self.y_range.b
     let usedpercent = used.to_double() / (self.width * self.height).to_double()
     let wastedpercent = self.wasted.to_double() / used.to_double()
-    println("Used: [\(usedpercent)] Wasted: [\(wastedpercent)]")
+    println("Used: [\{usedpercent}] Wasted: [\{wastedpercent}]")
   }
   glTexSubImage2D(x, y, bmp)
   let offset = Offset::new(x, y, width, height)
@@ -460,6 +460,8 @@ fn set(
   color_a : Double
 ) = "vertices" "set"
 
-fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : Bitmap) = "gl" "texSubImage2D"
+fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.Bitmap) = "gl" "texSubImage2D"
 
 let font_ymax = 0
+
+pub typealias Bitmap = @resource.Bitmap

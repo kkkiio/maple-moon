@@ -1,16 +1,23 @@
 pub struct CharStats {
+  map_id : Int
+  portal : Int
   base_stats : Map[@MapleStat.Id, Int]
   total_stats : Map[@EquipStat.Id, Int]
 }
 
-pub fn CharStats::from_entry(s : StatsEntry) -> CharStats {
-  let cs = { base_stats: s.stats, total_stats: Map::new() }
+pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
+  let cs = {
+    map_id: s.mapid,
+    portal: s.portal,
+    base_stats: s.stats,
+    total_stats: Map::new(),
+  }
   cs.init_totalstats()
   cs
 }
 
 pub fn CharStats::default() -> CharStats {
-  { base_stats: Map::new(), total_stats: Map::new() }
+  { map_id: 0, portal: 0, base_stats: Map::new(), total_stats: Map::new() }
 }
 
 pub fn init_totalstats(self : CharStats) -> Unit {

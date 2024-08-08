@@ -6,6 +6,8 @@ struct Player {
   mut last_move : Movement
 }
 
+pub typealias CharEntry = @login.CharEntry
+
 // Construct a player object from the given character entry.
 pub fn Player::from_entry(
   entry : CharEntry,
@@ -205,4 +207,8 @@ fn get_integer_attackspeed(self : PlayerSub) -> Int {
   // let weapon_speed = weapon.get_speed();
 
   // base_speed + weapon_speed
+}
+
+pub fn get_stats(self : Player) -> CharStats {
+  self.stats
 }

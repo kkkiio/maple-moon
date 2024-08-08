@@ -48,12 +48,9 @@ pub fn connect_login(self : PacketProcessor) -> Unit {
   self.session.connect("/login")
 }
 
-pub fn reconnect_login(self : PacketProcessor) -> Unit {
-  self.session.reconnect("/login")
-}
-
 pub fn connect_channel(self : PacketProcessor, channel : Int) -> Unit {
-  self.session.connect("/channel/\(channel)")
+  self.session.close()
+  self.session.connect("/channel/\{channel}")
 }
 
 pub fn get_status(self : PacketProcessor) -> ConnectionStatus {

@@ -100,10 +100,10 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
   let headnode = character_loader.load_res(["00012000.img"])
   bodynode.each(
     fn(stancenode) {
-      let ststr = stancenode.name
+      let ststr = stancenode.name()
       let mut attackdelay : Int = 0
       let mut frame : Int = 0
-      while stancenode[frame.to_string()].desc != @json.JsonValue::Null {
+      while stancenode[frame.to_string()].is_null().not() {
         let framenode = stancenode[frame.to_string()]
         let isaction = framenode["action"].get_string() != ""
         if isaction {
@@ -137,13 +137,13 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
           framenode.each(
             fn(partnode) {
-              let part = partnode.name
+              let part = partnode.name()
               if part != "delay" && part != "face" {
                 let zstr = partnode["z"].get_string()
                 let z = Body::layer_by_name(zstr)
                 partnode["map"].each(
                   fn(mapnode) {
-                    let mapnodename = mapnode.name
+                    let mapnodename = mapnode.name()
                     set_defaultm(bodyshiftmap, z).set(
                       mapnodename,
                       Point::from_resource(mapnode).unwrap(),
@@ -155,7 +155,7 @@ pub fn BodyDrawInfo::new() -> BodyDrawInfo {
           )
           headnode[ststr][frame.to_string()]["head"]["map"].each(
             fn(mapnode) {
-              let mapnodename = mapnode.name
+              let mapnodename = mapnode.name()
               set_defaultm(bodyshiftmap, BodyLayer::HEAD).set(
                 mapnodename,
                 Point::from_resource(mapnode).unwrap(),

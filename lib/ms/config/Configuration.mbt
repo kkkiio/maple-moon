@@ -79,6 +79,10 @@ pub fn get_volume_serial_number(self : Configuration) -> String {
   self.volume_serial_number
 }
 
+pub fn get_hwid(self : Configuration) -> String {
+  self.hwid
+}
+
 fn set_hwid(
   self : Configuration,
   hwid : String,
@@ -89,7 +93,11 @@ fn set_hwid(
   let part2 = volume_serial_number.substring(start=2, end=4)
   let part3 = volume_serial_number.substring(start=4, end=6)
   let part4 = volume_serial_number.substring(start=6, end=8)
-  self.hwid = "\(hwid)_\(part4)\(part3)\(part2)\(part1)"
+  self.hwid = "\{hwid}_\{part4}\{part3}\{part2}\{part1}"
+}
+
+pub fn get_macs(self : Configuration) -> String {
+  self.macs
 }
 
 fn set_macs(self : Configuration, macs : String) -> Unit {
@@ -98,6 +106,22 @@ fn set_macs(self : Configuration, macs : String) -> Unit {
 
 pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
   self.admin = admin
+}
+
+pub fn get_worldid(self : Configuration) -> Int {
+  self.worldid
+}
+
+pub fn set_worldid(self : Configuration, worldid : Int) -> Unit {
+  self.worldid = worldid
+}
+
+pub fn get_channelid(self : Configuration) -> Int {
+  self.channelid
+}
+
+pub fn set_channelid(self : Configuration, channelid : Int) -> Unit {
+  self.channelid = channelid
 }
 
 pub trait ConfigEntry {

@@ -279,12 +279,12 @@ pub fn buf_write_utf8(buf : Buffer, str : String) -> Unit {
 // self.write_int(rand)
 // }
 
-// pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
-//   let macs = @config.Configuration::get().get_macs()
-//   let hwid = @config.Configuration::get().get_hwid()
-//   self.write_string(macs)
-//   self.write_string(hwid)
-// }
+pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
+  let macs = @config.global().get_macs()
+  let hwid = @config.global().get_hwid()
+  self.write_string(macs)
+  self.write_string(hwid)
+}
 
 pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
   @strconv.parse_int!(hex_val, base=16).to_byte()

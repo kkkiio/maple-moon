@@ -9,6 +9,8 @@ struct Frame {
   scales : (Int, Int)
 }
 
+pub typealias NxNode = @resource.NxNode
+
 fn Frame::from_resource(src : NxNode) -> Frame {
   let texture = Texture::from_resource(src)
   let bounds = Rectangle::from_resource(src).unwrap()
@@ -17,14 +19,14 @@ fn Frame::from_resource(src : NxNode) -> Frame {
     0 => 100
     it => it
   }
-  let opacities = match (src["a0"].desc, src["a1"].desc) {
+  let opacities = match (src["a0"].value(), src["a1"].value()) {
     (@json.JsonValue::Number(a0), @json.JsonValue::Number(a1)) =>
       (a0.to_int(), a1.to_int())
     (@json.JsonValue::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
     (_, @json.JsonValue::Number(a1)) => (255 - a1.to_int(), a1.to_int())
     _ => (255, 255)
   }
-  let scales = match (src["z0"].desc, src["z1"].desc) {
+  let scales = match (src["z0"].value(), src["z1"].value()) {
     (@json.JsonValue::Number(z0), @json.JsonValue::Number(z1)) =>
       (z0.to_int(), z1.to_int())
     (@json.JsonValue::Number(z0), _) => (z0.to_int(), 0)
@@ -97,7 +99,7 @@ struct Animation {
 }
 
 pub fn Animation::from_resource(src : NxNode) -> Animation {
-  let frames = match src.desc.as_object() {
+  let frames = match src.value().as_object() {
     Some(obj) =>
       if obj.contains("__b") {
         ([Frame::from_resource(src)] : FixedArray[Frame])

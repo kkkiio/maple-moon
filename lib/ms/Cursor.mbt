@@ -70,15 +70,17 @@ pub struct Cursor {
 pub let hide_time : Int = 15_000
 
 fn to_fixarray[T](arr : Array[T]) -> FixedArray[T] {
-  FixedArray::new_with_index(arr.length(), fn(i) { arr[i] })
+  FixedArray::makei(arr.length(), fn(i) { arr[i] })
 }
+
+let ui_loader = @resource.ui_loader
 
 pub fn Cursor::new() -> Cursor {
   let ui_loader = ui_loader()
   let animations = all_cursor_states.map(
     fn(value) {
       Animation::from_resource(
-        ui_loader.load_res(["Basic.img", "Cursor", "\(value)"]),
+        ui_loader.load_res(["Basic.img", "Cursor", "\{value}"]),
       )
     },
   )

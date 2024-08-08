@@ -51,6 +51,10 @@ struct UILogin {
   mut login_stage : LoginStage
 }
 
+let map001_loader = @resource.map001_loader
+
+let map_pretty_loader = @resource.map_pretty_loader
+
 pub fn UILogin::new() -> UILogin {
   let obj = {
     base: UIElementBase::new(Point::new(0, 0), Point::new(800, 600)),
@@ -340,9 +344,9 @@ fn doubleclick(self : UILogin, point : Point[Int]) -> Unit {
 }
 
 fn fn_login_start() -> Unit {
-  new_login_start_packet().dispatch()
+  @login.new_login_start_packet().dispatch()
 }
 
 fn fn_login(account : String, password : String) -> Unit {
-  new_login_packet(account, password).dispatch()
+  @login.new_login_packet(account, password).dispatch()
 }

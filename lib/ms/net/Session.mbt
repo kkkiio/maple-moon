@@ -31,7 +31,10 @@ pub fn connect(self : Session, path : String) -> Unit {
   // Connect to the server
   match self.conn {
     CLOSED => self.conn = OPENED(Socket::open(path.to_js_string()))
-    _ => ()
+    _ => {
+      @log.warn({ "path": path }, "previous connection still open")
+      panic()
+    }
   }
 }
 
@@ -66,17 +69,11 @@ pub fn read(self : Session) -> Unit {
   }
 }
 
-/// Closes the current connection and opens a new one
-pub fn reconnect(self : Session, path : String) -> Unit {
-  self.close()
-  self.connect(path)
-}
-
 pub enum ConnectionStatus {
   CLOSED
   OPENED
   READY
-}
+} derive(Show, Eq)
 
 /// Check if the connection is alive
 pub fn get_status(self : Session) -> ConnectionStatus {

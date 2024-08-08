@@ -2,7 +2,7 @@
 // or warps the player to a different map
 struct SetFieldHandler {} derive(Default)
 
-pub fn transition(self : SetFieldHandler, mapid : Int, portalid : Int) -> Unit {
+pub fn transition(mapid : Int, portalid : Int) -> Unit {
   // GraphicsGL::get().lock()
   Stage::get().clear()
   Timer::get().start()
@@ -14,15 +14,73 @@ pub fn transition(self : SetFieldHandler, mapid : Int, portalid : Int) -> Unit {
   Stage::get().transfer_player()
 }
 
-pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit {
+pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
   // @Constants.constants.set_viewwidth(Setting::get(configWidth).load())
   // @Constants.constants.set_viewheight(Setting::get(configHeight).load())
-  // let channel = recv.read_int()
-  // let mode1 = recv.read_byte()
-  // let mode2 = recv.read_byte()
-  // if mode1 == 0 && mode2 == 0 {
-  //   change_map(recv, channel)
-  // } else {
-  //   set_field(recv)
-  // }
+  let channel = recv.read_int!()
+  let mode1 = recv.read_byte!()
+  let mode2 = recv.read_byte!()
+  if mode1 == 0 && mode2 == 0 {
+    change_map!(recv)
+  } else {
+    set_field!(recv)
+  }
+}
+
+fn change_map(recv : @net.InPacket) -> Unit! {
+  recv.skip!(3)
+  let mapid = recv.read_int!()
+  let portalid = recv.read_byte!()
+  transition(mapid, portalid)
+}
+
+fn set_field(recv : @net.InPacket) -> Unit! {
+  recv.skip!(23)
+  let cid = recv.read_int!()
+
+  // update with stats that was loaded on server side after character
+  // selection. hp, mp, maxhp, maxmp, mapid...
+  let stats = @login.parse_stats!(recv)
+  // charselect.get().update_character(cid, );
+
+  @log.info({  }, "TODO")
+  // Stage::get().load_player(
+  //   playerentry,
+  //   @config.global().get_worldid(),
+  //   @config.global().get_channelid(),
+  // )
+  // let player = Stage::get().get_player()
+  // recv.read_byte!() |> ignore // 'buddycap'
+  // if recv.read_bool!() {
+  //   recv.read_string!() |> ignore
+  // } // 'linkedname'
+
+  // // CharacterParser::parse_inventory(recv, player.get_inventory());
+  // // CharacterParser::parse_skillbook(recv, player.get_skills());
+  // // CharacterParser::parse_cooldowns(recv, player);
+  // // CharacterParser::parse_questlog(recv, player.get_quests());
+  // // CharacterParser::parse_minigame(recv);
+  // // CharacterParser::parse_ring1(recv);
+  // // CharacterParser::parse_ring2(recv);
+  // // CharacterParser::parse_ring3(recv);
+  // // CharacterParser::parse_teleportrock(recv, player.get_teleport_rock());
+  // // CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
+  // // CharacterParser::parse_nyinfo(recv);
+  // // CharacterParser::parse_areainfo(recv);
+
+  // // player.recalc_stats(true);
+
+  // new_player_update_packet().dispatch()
+  // let portalid = player.get_stats().portal
+  // let mapid = player.get_stats().map_id
+  // transition(mapid, portalid)
+
+  // // Sound(Sound::Name::GAME_START).play();
+
+  // UI::get().change_state(UiState::GAME)
+}
+
+/// Finished updating player stats
+fn new_player_update_packet() -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_UPDATE)
 }

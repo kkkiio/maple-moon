@@ -57,6 +57,8 @@ pub fn play(self : Sound) -> Unit {
   }
 }
 
+let sound_loader = @resource.sound_loader
+
 fn Audio::new() -> Result[Audio, String] {
   // if !BASS_Init(-1, 44100, 0, null, 0) {
   //   return Err("BASS_Init failed")
@@ -109,7 +111,7 @@ fn Audio::new() -> Result[Audio, String] {
     }
   }
   let itemsrc = loader.load_res(["Item.img"])
-  itemsrc.each(fn(node) { add_sound_by_name(node.name, node["Use"]) })
+  itemsrc.each(fn(node) { add_sound_by_name(node.name(), node["Use"]) })
 
   // let volume = Setting.SFXVolume.get().load()
 
@@ -146,11 +148,10 @@ pub fn play_impl(self : Audio, id : Int) -> Unit {
 }
 
 pub fn sound_from_resource(src : NxNode) -> (Int, Int)? {
-  let desc = src.desc
-  let aid = desc.as_object().bind(fn(obj) { obj["__a"] })
+  let aid = src["__a"].get_int().to_option()
   match aid {
     Some(aid) => {
-      let id = aid.as_number().unwrap().to_int()
+      let id = aid
 
       // let sample = BASS_SampleLoad(true, data, 82, ad.length(), 4, BASS_SAMPLE_OVER_POS)
       // if sample != 0 {

@@ -33,8 +33,8 @@ pub fn shift_y(self : Point[Int], v : Int) -> Unit {
   self.y += v
 }
 
-pub fn Point::from_resource(src : NxNode) -> Result[Point[Int], String] {
-  match src.desc {
+pub fn Point::from_resource(src : NxNode) -> Result[Point[Int], Error] {
+  match src.value() {
     @json.JsonValue::Array(arr) =>
       Ok(
         {
@@ -43,6 +43,6 @@ pub fn Point::from_resource(src : NxNode) -> Result[Point[Int], String] {
         },
       )
     @json.JsonValue::Null => Ok(Point::default())
-    _ as a => Err("expect array, got \(a)")
+    _ as a => Err(Failure("expect array, got \{a}"))
   }
 }

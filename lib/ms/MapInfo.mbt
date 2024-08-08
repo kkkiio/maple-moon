@@ -78,7 +78,7 @@ pub fn MapInfo::from_resource(
   borders : Range[Int]
 ) -> MapInfo {
   let info = src["info"]
-  let (map_walls, map_borders) = match info["VRLeft"].desc.as_number() {
+  let (map_walls, map_borders) = match info["VRLeft"].get_int().to_option() {
     Some(_) =>
       (
         Range::new(

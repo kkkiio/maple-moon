@@ -26,12 +26,11 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   let mut topb : Int = 30000
   src.each(
     fn(basef) {
-      let basefname = basef.name
+      let basefname = basef.name()
       let layer = match @strconv.parse_int?(basefname) {
         Ok(v) => v
         Err(err) => {
-          let path = basef.path
-          @log.warn({ "err": err, "path": path }, "Invalid layer")
+          @log.warn({ "err": err, "basefname": basefname }, "Invalid layer")
           return
         }
       }
@@ -39,12 +38,12 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
         fn(midf) {
           midf.each(
             fn(lastf) {
-              let lastfname = lastf.name
+              let lastfname = lastf.name()
               let id = match @strconv.parse_int?(lastfname) {
                 Ok(v) => v
                 Err(err) => {
                   @log.warn(
-                    { "err": err, "path": lastf.path },
+                    { "err": err, "lastfname": lastfname },
                     "Invalid foothold id",
                   )
                   return
@@ -90,12 +89,12 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
   )
   let walls = Range::new(leftw + 25, rightw - 25)
   if walls.a > walls.b {
-    abort("invalid walls=\(walls)")
+    abort("invalid walls=\{walls}")
   }
   tree.walls = walls
   let borders = Range::new(topb - 300, botb + 100)
   if borders.a > borders.b {
-    abort("invalid borders=\(borders)")
+    abort("invalid borders=\{borders}")
   }
   tree.borders = borders
   tree

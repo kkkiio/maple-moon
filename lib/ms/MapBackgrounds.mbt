@@ -47,6 +47,8 @@ let woffset : Int = vwidth / 2
 
 let hoffset : Int = vheight / 2
 
+let map_loader = @resource.map_loader
+
 pub fn Background::from_resource(src : NxNode) -> Background {
   // let srcpath = src.path
   // println("load background \(srcpath)")

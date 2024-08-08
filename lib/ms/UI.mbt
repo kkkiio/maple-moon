@@ -22,6 +22,7 @@ struct UI {
   mut enabled : Bool
   mut quitted : Bool
   mut caps_lock_enabled : Bool
+  mut to_login_cid : Int?
 
   //         std::function<void()> fn_toggle_full_screen_;
   //         std::function<void()> fn_set_clipboard_;
@@ -40,6 +41,7 @@ fn UI::new() -> UI {
     enabled: true,
     quitted: false,
     caps_lock_enabled: false,
+    to_login_cid: None,
   }
   ui.change_state(UiState::LOGIN) // for test
   ui
@@ -57,10 +59,18 @@ pub fn draw(self : UI, alpha : Double) -> Unit {
 }
 
 fn update(self : UI) -> Unit {
-          self.state.update()
+  self.state.update()
   //         scrolling_notice_.update();
   self.cursor.update()
   //         mobile_input_.update();
+  match self.to_login_cid {
+    Some(cid) =>
+      if @net.PacketProcessor::get().get_status() == @net.READY {
+        self.to_login_cid = None
+        @login.new_player_login_packet(cid).dispatch()
+      }
+    None => ()
+  }
 }
 
 pub fn send_cursor_pos(self : UI, pos : Point[Int]) -> Unit {
@@ -288,4 +298,15 @@ fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit 
 
 pub fn quit(self : UI) -> Unit {
   self.quitted = true
+}
+
+pub fn on_login_finished(
+  self : UI,
+  _ip : String,
+  port : Int,
+  cid : Int
+) -> Unit {
+  // Attempt to reconnect to the server
+  @net.PacketProcessor::get().connect_channel(port)
+  self.to_login_cid = Some(cid)
 }

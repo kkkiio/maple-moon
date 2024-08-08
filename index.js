@@ -183,7 +183,7 @@ let resourceLoaderNo = 0;
 class ResourceLoader {
   constructor(name) {
     this.name = name;
-    this.nxJson = null;
+    this.rawNxJson = null;
     const no = resourceLoaderNo;
     resourceLoaderNo += 1
     this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
@@ -191,17 +191,18 @@ class ResourceLoader {
   async load() {
     const path = `resource/${this.name}/nx.json`
     const response = await fetch(path);
-    const json = await response.json();
-    this.nxJson = json;
+    const rawjson = await response.text();
+    this.rawNxJson = rawjson;
   }
   loadDesc(nodepath) {
     let parts = nodepath.split("/");
+    let nxJson = JSON.parse(this.rawNxJson);
     return parts.reduce((acc, part) => {
       if (part in acc) return acc[part];
       throw new Error(
         `resolve resource failed, path=${nodepath}, missing part=${part}`
       );
-    }, this.nxJson);
+    }, nxJson);
   }
 }
 
@@ -453,6 +454,11 @@ function main() {
     mapPrettyLoader.load()
   );
 
+  const etcLoader = new ResourceLoader("Etc.nx");
+  prepareResourcePromises.push(
+    etcLoader.load()
+  );
+
   let requestAnimationFrameId = null;
 
   let halt = false;
@@ -573,6 +579,7 @@ function main() {
       reactor_loader: () => reactorLoader,
       map001_loader: () => map001Loader,
       map_pretty_loader: () => mapPrettyLoader,
+      etc_loader: () => etcLoader,
       load_bitmap: (loader, bid) => loader.bmpLoader.loadBitmap(bid),
     },
     bitmap: {

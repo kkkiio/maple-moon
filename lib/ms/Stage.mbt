@@ -74,6 +74,10 @@ pub fn load_player(
   // exp_before_ = stats.get_exp();
 }
 
+pub fn get_player(self : Stage) -> Player {
+  self.player
+}
+
 fn load_map(self : Stage, mapid : Int) -> Unit {
   self.map_id = mapid
   let strid = @string_format.extend_id(mapid, 9)
@@ -81,7 +85,7 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
   let src = if mapid == -1 {
     ui_loader().load_res(["CashShopPreview.img"])
   } else {
-    map_loader().load_res(["Map", "Map\(prefix)", "\(strid).img"])
+    map_loader().load_res(["Map", "Map\{prefix}", "\{strid}.img"])
   }
   self.tiles_objs = MapTilesObjs::from_resource(src)
   self.backgrounds = Some(MapBackgrounds::new(src["back"]))

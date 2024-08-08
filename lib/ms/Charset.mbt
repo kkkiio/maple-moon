@@ -16,7 +16,7 @@ pub fn Charset::from_resource(
   let chars = Map::new()
   src.each(
     fn(sub) {
-      let name = sub.name
+      let name = sub.name()
       if sub["__b"].is_null() || name == "" {
         return
       }

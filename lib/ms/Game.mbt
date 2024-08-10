@@ -42,18 +42,6 @@ pub fn Game::start() -> Game {
   // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
   // // packet_switch.push((ATTACKED_MAGIC, MagicAttackHandler::new()))
 
-  // // Player handlers
-  // // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
-  // // packet_switch.push((KEYMAP, KeymapHandler::new()))
-  // // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-  // // packet_switch.push((CHANGE_STATS, ChangeStatsHandler::new()))
-  // // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
-  // // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-  // // packet_switch.push((RECALCULATE_STATS, RecalculateStatsHandler::new()))
-  // // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
-  // // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
-  // // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
-
   // // Messaging handlers
   // // packet_switch.push((SHOW_STATUS_INFO, ShowStatusInfoHandler::new()))
   // // packet_switch.push((CHAT_RECEIVED, ChatReceivedHandler::new()))
@@ -92,6 +80,18 @@ pub fn Game::start() -> Game {
       |> Iter::singleton
       |> Iter::concat(login_module.make_handlers().iter())
       |> Iter::append((SET_FIELD, SetFieldHandler::new(login_module)))
+      // Player handlers
+      // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
+      // packet_switch.push((KEYMAP, KeymapHandler::new()))
+      // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
+      |> Iter::append((@net.CHANGE_STATS, ChangeStatsHandler::new()))
+      // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
+      // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
+      // packet_switch.push((RECALCULATE_STATS, RecalculateStatsHandler::new()))
+      // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
+      // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
+      // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
+
       |> Iter::collect,
     ),
   )

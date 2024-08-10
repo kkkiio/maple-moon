@@ -1,5 +1,5 @@
 pub struct CharStats {
-  map_id : Int
+  mut map_id : Int
   portal : Int
   base_stats : Map[@MapleStat.Id, Int]
   total_stats : Map[@EquipStat.Id, Int]
@@ -58,4 +58,12 @@ pub fn get_total(self : CharStats, stat : @EquipStat.Id) -> Int {
 
 pub fn get_stat(self : CharStats, stat : @MapleStat.Id) -> Int {
   self.base_stats[stat].or(0)
+}
+
+pub fn set_stat(self : CharStats, stat : @MapleStat.Id, value : Int) -> Unit {
+  self.base_stats.set(stat, value)
+}
+
+fn set_mapid(self : CharStats, id : Int) -> Unit {
+  self.map_id = id
 }

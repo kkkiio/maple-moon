@@ -104,6 +104,10 @@ fn set_macs(self : Configuration, macs : String) -> Unit {
   self.macs = macs
 }
 
+pub fn get_admin(self : Configuration) -> Bool {
+  self.admin
+}
+
 pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
   self.admin = admin
 }

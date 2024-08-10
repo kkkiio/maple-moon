@@ -84,7 +84,7 @@ trait Char {
   // show_iron_body(Self) -> Unit
   // show_damage(Self, Int) -> Unit
   // speak(Self, String) -> Unit
-  // change_look(Self, MapleStatId, Int) -> Unit
+  change_look(Self, @MapleStat.Id, Int) -> Unit
   // set_state_by_byte(Self, Int) -> Unit
   // set_expression(Self, Int) -> Unit
   // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
@@ -268,4 +268,29 @@ pub fn get_stancespeed(self : CharBase) -> Double {
 // Return the attack speed as a multiplier
 pub fn get_real_attackspeed(self : CharBase) -> Double {
   return 1.7 - self.sub.get_integer_attackspeed().to_double() / 10.0
+}
+
+fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
+  match stat {
+    @MapleStat.Id::SKIN => self.look.set_body(id)
+    @MapleStat.Id::FACE => self.look.set_face(id)
+    @MapleStat.Id::HAIR => self.look.set_hair(id)
+    @MapleStat.Id::LEVEL => ()
+    @MapleStat.Id::JOB => ()
+    @MapleStat.Id::STR => ()
+    @MapleStat.Id::DEX => ()
+    @MapleStat.Id::INT => ()
+    @MapleStat.Id::LUK => ()
+    @MapleStat.Id::HP => ()
+    @MapleStat.Id::MAXHP => ()
+    @MapleStat.Id::MP => ()
+    @MapleStat.Id::MAXMP => ()
+    @MapleStat.Id::AP => ()
+    @MapleStat.Id::SP => ()
+    @MapleStat.Id::EXP => ()
+    @MapleStat.Id::FAME => ()
+    @MapleStat.Id::MESO => ()
+    @MapleStat.Id::PET => ()
+    @MapleStat.Id::GACHAEXP => ()
+  }
 }

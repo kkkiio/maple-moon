@@ -67,15 +67,12 @@ pub fn update(self : Player, physics : Physics) -> Int {
     }
     None => ()
   }
-  let stancebyte = self.char_base.state.int_value() + if self.char_base.facing_right {
-      0
-    } else {
-      1
-    }
+  let stancebyte = self.char_base.state.int_value() +
+    if self.char_base.facing_right { 0 } else { 1 }
   let newmove = Movement::from_physics_object(self.get_phobj(), stancebyte)
   let needupdate = self.last_move.hasmoved(newmove)
   if needupdate {
-    // fn_move_player(newmove)
+    new_move_player_packet(newmove).dispatch()
     self.last_move = newmove
   }
   self.char_base.get_layer()
@@ -211,4 +208,32 @@ fn get_integer_attackspeed(self : PlayerSub) -> Int {
 
 pub fn get_stats(self : Player) -> CharStats {
   self.stats
+}
+
+/// Recalculates the total stats from base stats, inventories and skills.
+fn recalc_stats(self : Player, equipchanged : Bool) -> Unit {
+  // TODO
+}
+
+fn new_move_player_packet(movement : Movement) -> @net.OutPacket {
+  let packet = @net.OutPacket::new(@net.OutPacketOpcode::MOVE_PLAYER)
+  packet.skip(9)
+  packet.write_byte((1).to_byte())
+  write_movement(packet, movement)
+  packet
+}
+
+fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
+  out.write_byte(movement.command.to_byte())
+  out.write_short(movement.xpos)
+  out.write_short(movement.ypos)
+  out.write_short(movement.lastx)
+  out.write_short(movement.lasty)
+  out.write_short(movement.fh)
+  out.write_byte(movement.newstate.to_byte())
+  out.write_short(movement.duration)
+}
+
+fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
+  self.char_base.change_look(stat, id)
 }

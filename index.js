@@ -191,18 +191,16 @@ class ResourceLoader {
   async load() {
     const path = `resource/${this.name}/nx.json`
     const response = await fetch(path);
-    const rawjson = await response.text();
-    this.rawNxJson = rawjson;
+    this.nxJson = await response.json();
   }
   loadDesc(nodepath) {
     let parts = nodepath.split("/");
-    let nxJson = JSON.parse(this.rawNxJson);
     return parts.reduce((acc, part) => {
       if (part in acc) return acc[part];
       throw new Error(
         `resolve resource failed, path=${nodepath}, missing part=${part}`
       );
-    }, nxJson);
+    }, this.nxJson);
   }
 }
 

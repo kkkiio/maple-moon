@@ -1,13 +1,15 @@
 pub struct Game {
+  task_scheduler : TaskScheduler
   mut accumulator : Int
 }
 
 pub fn Game::start() -> Game {
   @config.global().set_hardware_info()
+  let task_scheduler = { tasks: [] }
+  let login_module = @login.Module::new(
+    fn(x) { task_scheduler.add_new_task(x) },
+  )
   // ( 
-
-  // // SetField handlers
-  // // packet_switch.push((SET_FIELD, SetFieldHandler::new()))
 
   // // MapObject handlers
   // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
@@ -85,30 +87,17 @@ pub fn Game::start() -> Game {
 
   @net.PacketProcessor::initialize(
     // Common handlers
-    @immut/hashmap.of(
-      [
-        (@net.PING, @net.PingHandler::default()),
-        // Login handlers
-        (@net.LOGIN_RESULT, @login.LoginResultHandler::new()),
-        (SERVER_STATUS, @login.ServerStatusHandler::new()),
-        (SERVER_LIST, @login.ServerlistHandler::new()),
-        (CHAR_LIST, @login.CharlistHandler::new()),
-        (CHARNAME_RESPONSE, @login.CharnameResponseHandler::new()),
-        (
-          SERVER_IP,
-          @login.ServerIPHandler::new(
-            fn(ip, port, cid) { UI::get().on_login_finished(ip, port, cid) },
-          ),
-        ),
-      ],
-      // (ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler::new()),
-      // (DELCHAR_RESPONSE, DeleteCharResponseHandler::new()),
-      // (RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()),
+    @immut/hashmap.from_array(
+      (@net.PING, @net.PingHandler::default())
+      |> Iter::singleton
+      |> Iter::concat(login_module.make_handlers().iter())
+      |> Iter::append((SET_FIELD, SetFieldHandler::new(login_module)))
+      |> Iter::collect,
     ),
   )
   timer.start()
   map_portals_animations.load()
-  { accumulator: 0 }
+  { accumulator: 0, task_scheduler }
 }
 
 pub fn stop(self : Game) -> Unit {
@@ -137,6 +126,7 @@ pub fn update(self : Game) -> Unit {
   UI::get().update()
   @net.PacketProcessor::get().process_in()
   // Music::update_context();
+  self.task_scheduler.update_tasks()
 }
 
 pub fn draw(self : Game, alpha : Double) -> Unit {
@@ -168,3 +158,15 @@ pub fn draw(self : Game, alpha : Double) -> Unit {
 // return Error::NONE;
 // Ok(())
 // }
+
+struct TaskScheduler {
+  tasks : Array[@login.BgTask]
+}
+
+fn add_new_task(self : TaskScheduler, task : @login.BgTask) -> Unit {
+  self.tasks.push(task)
+}
+
+fn update_tasks(self : TaskScheduler) -> Unit {
+  self.tasks.retain(fn(task) { task.update().not() })
+}

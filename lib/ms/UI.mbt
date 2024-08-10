@@ -22,7 +22,6 @@ struct UI {
   mut enabled : Bool
   mut quitted : Bool
   mut caps_lock_enabled : Bool
-  mut to_login_cid : Int?
 
   //         std::function<void()> fn_toggle_full_screen_;
   //         std::function<void()> fn_set_clipboard_;
@@ -41,7 +40,6 @@ fn UI::new() -> UI {
     enabled: true,
     quitted: false,
     caps_lock_enabled: false,
-    to_login_cid: None,
   }
   ui.change_state(UiState::LOGIN) // for test
   ui
@@ -63,14 +61,6 @@ fn update(self : UI) -> Unit {
   //         scrolling_notice_.update();
   self.cursor.update()
   //         mobile_input_.update();
-  match self.to_login_cid {
-    Some(cid) =>
-      if @net.PacketProcessor::get().get_status() == @net.READY {
-        self.to_login_cid = None
-        @login.new_player_login_packet(cid).dispatch()
-      }
-    None => ()
-  }
 }
 
 pub fn send_cursor_pos(self : UI, pos : Point[Int]) -> Unit {
@@ -136,11 +126,14 @@ fn opt_as_iter[T](opt : T?) -> Iter[T] {
 }
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
-  if (self.is_key_down.get_or_default(@kb.altLeft, false) || self.is_key_down.get_or_default(
-    @kb.altRight, false,
-  )) && (self.is_key_down.get_or_default(@kb.enter, false) || self.is_key_down.get_or_default(
-    @kb.numpadEnter, false,
-  )) {
+  if (
+      self.is_key_down.get_or_default(@kb.altLeft, false) ||
+      self.is_key_down.get_or_default(@kb.altRight, false)
+    ) &&
+    (
+      self.is_key_down.get_or_default(@kb.enter, false) ||
+      self.is_key_down.get_or_default(@kb.numpadEnter, false)
+    ) {
     // Window::get().toggle_fullscreen()
 
     self.is_key_down[@kb.altLeft] = false
@@ -208,9 +201,10 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
         [
           npctalk, statusbar, channel, worldmap, optionmenu, shop, joypad, rank,
           quit,
-        ].iter().flat_map(fn(it) { it |> opt_as_iter }).find_first(
-          fn { _ => true },
-        ) {
+        ]
+        .iter()
+        .flat_map(fn(it) { it |> opt_as_iter })
+        .find_first(fn { _ => true }) {
         Some(it) => {
           it.send_key(mapping.action, pressed, escape) |> ignore
           sent = true
@@ -298,15 +292,4 @@ fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit 
 
 pub fn quit(self : UI) -> Unit {
   self.quitted = true
-}
-
-pub fn on_login_finished(
-  self : UI,
-  _ip : String,
-  port : Int,
-  cid : Int
-) -> Unit {
-  // Attempt to reconnect to the server
-  @net.PacketProcessor::get().connect_channel(port)
-  self.to_login_cid = Some(cid)
 }

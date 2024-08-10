@@ -1,3 +1,31 @@
+struct Module {
+  mut characters : Array[CharEntry]
+  mut selected_index : Int?
+  task_scheduler : (BgTask) -> Unit
+}
+
+pub fn Module::new(task_scheduler : (BgTask) -> Unit) -> Module {
+  { characters: [], selected_index: None, task_scheduler }
+}
+
+pub fn make_handlers(self : Module) -> Array[(@net.Opcode, @net.PacketHandler)] {
+  [
+    (@net.LOGIN_RESULT, LoginResultHandler::new()),
+    (SERVER_STATUS, ServerStatusHandler::new()),
+    (SERVER_LIST, ServerlistHandler::new()),
+    (CHAR_LIST, ({ module: self } : CharlistHandler)),
+    (CHARNAME_RESPONSE, CharnameResponseHandler::new()),
+    (SERVER_IP, ServerIPHandler::new(self)),
+    (ADD_NEWCHAR_ENTRY, ({ module: self } : AddNewCharEntryHandler)),
+  ]
+  // (DELCHAR_RESPONSE, DeleteCharResponseHandler::new()),
+  // (RECOMMENDED_WORLDS, RecommendedWorldsHandler::new()),
+}
+
+pub fn get_selected_char(self : Module) -> CharEntry? {
+  self.selected_index.map(fn(index) { self.characters[index] })
+}
+
 pub fn new_login_start_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
 }
@@ -160,10 +188,8 @@ fn new_char_list_request_packet(
   ..write_byte(channelId.to_byte())
 }
 
-struct CharlistHandler {} derive(Default)
-
-pub fn CharlistHandler::new() -> CharlistHandler {
-  CharlistHandler::default()
+struct CharlistHandler {
+  module : Module
 }
 
 pub fn handle(self : CharlistHandler, recv : @net.InPacket) -> Unit!Error {
@@ -175,6 +201,8 @@ pub fn handle(self : CharlistHandler, recv : @net.InPacket) -> Unit!Error {
   for i = 0; i < charcount; i = i + 1 {
     characters.push(parse_charentry!(recv))
   }
+  self.module.characters = characters
+  self.module.selected_index = None
   let pic = recv.read_byte!()
   let slots = recv.read_int!()
 
@@ -193,20 +221,24 @@ pub fn handle(self : CharlistHandler, recv : @net.InPacket) -> Unit!Error {
 }
 
 struct ServerIPHandler {
-  callback : (String, Int, Int) -> Unit
+  module : Module
 }
 
-pub fn ServerIPHandler::new(
-  callback : (String, Int, Int) -> Unit
-) -> ServerIPHandler {
-  { callback, }
+fn ServerIPHandler::new(module : Module) -> ServerIPHandler {
+  { module, }
 }
 
 pub fn handle(self : ServerIPHandler, recv : @net.InPacket) -> Unit! {
   recv.skip_byte!()
-  let (ip, port) = parse_login!(recv)
+  let (_, port) = parse_login!(recv)
   let cid = recv.read_int!()
-  (self.callback)(ip, port, cid)
+  match self.module.characters.find_index(fn(c) { c.id == cid }) {
+    Some(i) => self.module.selected_index = Some(i)
+    None => fail!("no character with id=\{cid}")
+  }
+  // Attempt to reconnect to the server
+  @net.PacketProcessor::get().connect_channel(port)
+  (self.module.task_scheduler)({ cid, })
 }
 
 struct CharnameResponseHandler {} derive(Default)
@@ -219,12 +251,20 @@ pub fn handle(self : CharnameResponseHandler, recv : @net.InPacket) -> Unit! {
   let name = recv.read_string!()
   let used = recv.read_bool!()
   let c = ExplorerCreator::new(
-    @resource.etc_loader().load_res(["MakeCharInfo.img", "Info"]),
+    etc_loader().load_res(["MakeCharInfo.img", "Info"]),
   )
   c.send_naming_result(name, used)
 }
 
-struct AddNewCharEntryHandler {} derive(Default)
+struct AddNewCharEntryHandler {
+  module : Module
+}
+
+pub fn handle(self : AddNewCharEntryHandler, recv : @net.InPacket) -> Unit! {
+  recv.skip!(1)
+  let character = parse_charentry!(recv)
+  self.module.characters.push(character)
+}
 
 struct DeleteCharResponseHandler {} derive(Default)
 
@@ -462,3 +502,22 @@ pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
 //     _ => fn_register_pic(cid, entered_pic)
 //   }
 // }
+
+fn etc_loader() -> @resource.ResourceLoader = "resource" "etc_loader"
+
+pub trait BgTask {
+  update(Self) -> Bool
+}
+
+struct ConnectChannelTask {
+  cid : Int
+}
+
+pub fn update(self : ConnectChannelTask) -> Bool {
+  if @net.PacketProcessor::get().get_status() == @net.READY {
+    new_player_login_packet(self.cid).dispatch()
+    true
+  } else {
+    false
+  }
+}

@@ -1,4 +1,4 @@
-type ResourceLoader
+pub type ResourceLoader
 
 pub fn ui_loader() -> ResourceLoader = "resource" "ui_loader"
 
@@ -15,8 +15,6 @@ pub fn reactor_loader() -> ResourceLoader = "resource" "reactor_loader"
 pub fn map001_loader() -> ResourceLoader = "resource" "map001_loader"
 
 pub fn map_pretty_loader() -> ResourceLoader = "resource" "map_pretty_loader"
-
-pub fn etc_loader() -> ResourceLoader = "resource" "etc_loader"
 
 type JsJson
 
@@ -74,9 +72,10 @@ pub fn op_get(self : NxNode, key : String) -> NxNode {
   {
     loader: self.loader,
     name: key,
-    desc: self.desc.as_object().bind(fn(it) { it[key] }).or(
-      @json.JsonValue::Null,
-    ),
+    desc: self.desc
+    .as_object()
+    .bind(fn(it) { it[key] })
+    .or(@json.JsonValue::Null),
     path: self.path.push(key),
   }
 }

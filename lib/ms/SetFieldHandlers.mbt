@@ -1,6 +1,12 @@
 // Handler for a packet which contains all character information on first login
 // or warps the player to a different map
-struct SetFieldHandler {} derive(Default)
+struct SetFieldHandler {
+  login_module : @login.Module
+}
+
+pub fn SetFieldHandler::new(login_module : @login.Module) -> SetFieldHandler {
+  { login_module, }
+}
 
 pub fn transition(mapid : Int, portalid : Int) -> Unit {
   // GraphicsGL::get().lock()
@@ -23,7 +29,7 @@ pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
   if mode1 == 0 && mode2 == 0 {
     change_map!(recv)
   } else {
-    set_field!(recv)
+    set_field!(recv, self.login_module.get_selected_char().unwrap())
   }
 }
 
@@ -34,7 +40,7 @@ fn change_map(recv : @net.InPacket) -> Unit! {
   transition(mapid, portalid)
 }
 
-fn set_field(recv : @net.InPacket) -> Unit! {
+fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
   recv.skip!(23)
   let cid = recv.read_int!()
 
@@ -43,41 +49,40 @@ fn set_field(recv : @net.InPacket) -> Unit! {
   let stats = @login.parse_stats!(recv)
   // charselect.get().update_character(cid, );
 
-  @log.info({  }, "TODO")
-  // Stage::get().load_player(
-  //   playerentry,
-  //   @config.global().get_worldid(),
-  //   @config.global().get_channelid(),
-  // )
-  // let player = Stage::get().get_player()
-  // recv.read_byte!() |> ignore // 'buddycap'
-  // if recv.read_bool!() {
-  //   recv.read_string!() |> ignore
-  // } // 'linkedname'
+  Stage::get().load_player(
+    playerentry,
+    @config.global().get_worldid(),
+    @config.global().get_channelid(),
+  )
+  let player = Stage::get().get_player()
+  recv.read_byte!() |> ignore // 'buddycap'
+  if recv.read_bool!() {
+    recv.read_string!() |> ignore // 'linkedname'
+  }
 
-  // // CharacterParser::parse_inventory(recv, player.get_inventory());
-  // // CharacterParser::parse_skillbook(recv, player.get_skills());
-  // // CharacterParser::parse_cooldowns(recv, player);
-  // // CharacterParser::parse_questlog(recv, player.get_quests());
-  // // CharacterParser::parse_minigame(recv);
-  // // CharacterParser::parse_ring1(recv);
-  // // CharacterParser::parse_ring2(recv);
-  // // CharacterParser::parse_ring3(recv);
-  // // CharacterParser::parse_teleportrock(recv, player.get_teleport_rock());
-  // // CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
-  // // CharacterParser::parse_nyinfo(recv);
-  // // CharacterParser::parse_areainfo(recv);
+  // CharacterParser::parse_inventory(recv, player.get_inventory());
+  // CharacterParser::parse_skillbook(recv, player.get_skills());
+  // CharacterParser::parse_cooldowns(recv, player);
+  // CharacterParser::parse_questlog(recv, player.get_quests());
+  // CharacterParser::parse_minigame(recv);
+  // CharacterParser::parse_ring1(recv);
+  // CharacterParser::parse_ring2(recv);
+  // CharacterParser::parse_ring3(recv);
+  // CharacterParser::parse_teleportrock(recv, player.get_teleport_rock());
+  // CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
+  // CharacterParser::parse_nyinfo(recv);
+  // CharacterParser::parse_areainfo(recv);
 
-  // // player.recalc_stats(true);
+  // player.recalc_stats(true);
 
-  // new_player_update_packet().dispatch()
-  // let portalid = player.get_stats().portal
-  // let mapid = player.get_stats().map_id
-  // transition(mapid, portalid)
+  new_player_update_packet().dispatch()
+  let portalid = player.get_stats().portal
+  let mapid = player.get_stats().map_id
+  transition(mapid, portalid)
 
-  // // Sound(Sound::Name::GAME_START).play();
+  // Sound(Sound::Name::GAME_START).play();
 
-  // UI::get().change_state(UiState::GAME)
+  UI::get().change_state(UiState::GAME)
 }
 
 /// Finished updating player stats

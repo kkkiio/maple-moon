@@ -7,7 +7,7 @@ pub enum BackgroundType {
   VMOVEA
   HMOVEB
   VMOVEB
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
 
 pub fn int_value(self : BackgroundType) -> Int {
   match self {
@@ -28,30 +28,22 @@ pub fn hash(self : BackgroundType) -> Int {
 
 struct Background {
   mut animation : Animation
-  mut cx : Int
-  mut cy : Int
-  mut rx : Double
-  mut ry : Double
-  mut htile : Int
-  mut vtile : Int
-  mut opacity : Double
-  mut flipped : Bool
-  mut move_obj : MovingObject
+  cx : Int
+  cy : Int
+  rx : Double
+  ry : Double
+  htile : Int
+  vtile : Int
+  opacity : Double
+  flipped : Bool
+  move_obj : MovingObject
+  woffset : Int
+  hoffset : Int
 }
-
-let vwidth : Int = @Constants.constants.viewWidth
-
-let vheight : Int = @Constants.constants.viewHeight
-
-let woffset : Int = vwidth / 2
-
-let hoffset : Int = vheight / 2
 
 let map_loader = @resource.map_loader
 
-pub fn Background::from_resource(src : NxNode) -> Background {
-  // let srcpath = src.path
-  // println("load background \(srcpath)")
+pub fn Background::from_resource(src : NxNode) -> Background! {
   let loader = map_loader()
   let animated = src["ani"].get_bool().unwrap()
   let animation = match src["bS"].get_string() {
@@ -72,29 +64,64 @@ pub fn Background::from_resource(src : NxNode) -> Background {
         ),
       )
   }
-  let opacity_ = src["a"].get_float().unwrap()
-  let flipped_ = src["f"].get_bool().unwrap()
-  let cx_ = src["cx"].get_int().unwrap()
-  let cy_ = src["cy"].get_int().unwrap()
-  let rx_ = src["rx"].get_float().unwrap()
-  let ry_ = src["ry"].get_float().unwrap()
-  let move_obj_ = MovingObject::default()
-  move_obj_.set_x(src["x"].get_float().unwrap())
-  move_obj_.set_y(src["y"].get_float().unwrap())
-  let t = Background::typebyid(src["type"].get_int().unwrap())
+  let t = Background::typebyid!(src["type"].req_int!())
+  @log.debug({ "type": t, "path": src.path() }, "load background")
+  let dim_x = animation.get_dimensions().x
+  let dim_y = animation.get_dimensions().y
+  let opacity = src["a"].get_float().unwrap()
+  let flipped = src["f"].get_bool().unwrap()
+  let cx = match src["cx"].get_int().unwrap() {
+    0 => if dim_x > 0 { dim_x } else { 1 }
+    cx => cx
+  }
+  let cy = match src["cy"].get_int().unwrap() {
+    0 => if dim_y > 0 { dim_y } else { 1 }
+    cy => cy
+  }
+  let vwidth = @Constants.constants.get_viewwidth()
+  let vheight = @Constants.constants.get_viewheight()
+  let woffset = vwidth / 2
+  let hoffset = vheight / 2
+  let htile = match t {
+    BackgroundType::HTILED
+    | BackgroundType::HMOVEA
+    | BackgroundType::TILED | BackgroundType::HMOVEB | BackgroundType::VMOVEB =>
+      vwidth / cx + 3
+    _ => 1
+  }
+  let vtile = match t {
+    BackgroundType::VTILED
+    | BackgroundType::VMOVEA
+    | BackgroundType::TILED | BackgroundType::HMOVEB | BackgroundType::VMOVEB =>
+      vheight / cy + 3
+    _ => 1
+  }
+  let rx = src["rx"].get_float().unwrap()
+  let ry = src["ry"].get_float().unwrap()
+  let move_obj = MovingObject::default()
+  move_obj.set_x(src["x"].get_float().unwrap())
+  move_obj.set_y(src["y"].get_float().unwrap())
+  match t {
+    BackgroundType::HMOVEA | BackgroundType::HMOVEB =>
+      move_obj.hspeed = rx / 16.0
+    BackgroundType::VMOVEA | BackgroundType::VMOVEB =>
+      move_obj.vspeed = ry / 16.0
+    _ => ()
+  }
   let background = {
     animation,
-    cx: cx_,
-    cy: cy_,
-    rx: rx_,
-    ry: ry_,
-    htile: 1,
-    vtile: 1,
-    opacity: opacity_,
-    flipped: flipped_,
-    move_obj: move_obj_,
+    cx,
+    cy,
+    rx,
+    ry,
+    htile,
+    vtile,
+    opacity,
+    flipped,
+    move_obj,
+    woffset,
+    hoffset,
   }
-  background.settype(t)
   background
 }
 
@@ -111,44 +138,10 @@ let int_background_type_map : @immut/sorted_map.T[Int, BackgroundType] = @immut/
   ],
 )
 
-pub fn Background::typebyid(id : Int) -> BackgroundType {
+pub fn Background::typebyid(id : Int) -> BackgroundType! {
   match int_background_type_map[id] {
     Some(t) => t
-    None => {
-      println("Unknown Background::Type id: [" + id.to_string() + "]")
-      BackgroundType::BG_NORMAL
-    }
-  }
-}
-
-pub fn Background::settype(self : Background, t : BackgroundType) -> Unit {
-  let dim_x = self.animation.get_dimensions().x
-  let dim_y = self.animation.get_dimensions().y
-  if self.cx == 0 {
-    self.cx = if dim_x > 0 { dim_x } else { 1 }
-  }
-  if self.cy == 0 {
-    self.cy = if dim_y > 0 { dim_y } else { 1 }
-  }
-  self.htile = 1
-  self.vtile = 1
-  match t {
-    BackgroundType::HTILED | BackgroundType::HMOVEA =>
-      self.htile = vwidth / self.cx + 3
-    BackgroundType::VTILED | BackgroundType::VMOVEA =>
-      self.vtile = vheight / self.cy + 3
-    BackgroundType::TILED | BackgroundType::HMOVEB | BackgroundType::VMOVEB => {
-      self.htile = vwidth / self.cx + 3
-      self.vtile = vheight / self.cy + 3
-    }
-    _ => ()
-  }
-  match t {
-    BackgroundType::HMOVEA | BackgroundType::HMOVEB =>
-      self.move_obj.hspeed = self.rx / 16.0
-    BackgroundType::VMOVEA | BackgroundType::VMOVEB =>
-      self.move_obj.vspeed = self.ry / 16.0
-    _ => ()
+    None => fail!("Unknown Background::Type id: [" + id.to_string() + "]")
   }
 }
 
@@ -161,13 +154,15 @@ pub fn Background::draw(
   let mut x = if self.move_obj.hmobile() {
     self.move_obj.get_absolute_x(viewx, alpha)
   } else {
-    let shift_x = self.rx * (woffset.to_double() - viewx) / 100.0 + woffset.to_double()
+    let shift_x = self.rx * (self.woffset.to_double() - viewx) / 100.0 +
+      self.woffset.to_double()
     self.move_obj.get_absolute_x(shift_x, alpha)
   }
   let mut y = if self.move_obj.vmobile() {
     self.move_obj.get_absolute_y(viewy, alpha)
   } else {
-    let shift_y = self.ry * (hoffset.to_double() - viewy) / 100.0 + hoffset.to_double()
+    let shift_y = self.ry * (self.hoffset.to_double() - viewy) / 100.0 +
+      self.hoffset.to_double()
     self.move_obj.get_absolute_y(shift_y, alpha)
   }
   if self.htile > 1 {
@@ -220,8 +215,8 @@ pub struct MapBackgrounds {
 }
 
 pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
-  let backgrounds_ = Array::new()
-  let foregrounds_ = Array::new()
+  let backgrounds = Array::new()
+  let foregrounds = Array::new()
   let mut no = 0
   while true {
     let back = src[no.to_string()]
@@ -230,14 +225,14 @@ pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
     }
     let front = back["front"].get_bool().unwrap()
     if front {
-      foregrounds_.push(Background::from_resource(back))
+      foregrounds.push(Background::from_resource?(back).unwrap())
     } else {
-      backgrounds_.push(Background::from_resource(back))
+      backgrounds.push(Background::from_resource?(back).unwrap())
     }
     no += 1
   }
   let black = src["0"]["bS"].get_string().length() <= 0
-  { backgrounds: backgrounds_, foregrounds: foregrounds_, black }
+  { backgrounds, foregrounds, black }
 }
 
 pub fn MapBackgrounds::default() -> MapBackgrounds {

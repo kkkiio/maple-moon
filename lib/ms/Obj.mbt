@@ -14,7 +14,7 @@ pub fn Obj::from_resource(src : NxNode) -> Obj {
   let src_l2 = src["l2"].as_string().unwrap()
   {
     animation: Animation::from_resource(
-      map_loader.load_res(["Obj", "\(src_oS).img", src_l0, src_l1, src_l2]),
+      map_loader.load_res(["Obj", "\{src_oS}.img", src_l0, src_l1, src_l2]),
     ),
     pos: Point::new(src["x"].get_int().unwrap(), src["y"].get_int().unwrap()),
     flip: src["f"].get_bool().unwrap(),

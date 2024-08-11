@@ -64,6 +64,10 @@ pub fn value(self : NxNode) -> @json.JsonValue {
   self.desc
 }
 
+pub fn path(self : NxNode) -> @immut/array.T[String] {
+  self.path
+}
+
 pub fn get_loader(self : NxNode) -> ResourceLoader {
   self.loader
 }
@@ -94,6 +98,13 @@ pub fn get_string(self : NxNode) -> String {
 
 pub fn get_int(self : NxNode) -> Result[Int, Error] {
   self.get_float().map(fn(it) { it.to_int() })
+}
+
+pub fn req_int(self : NxNode) -> Int! {
+  match self.desc {
+    @json.JsonValue::Number(it) => it.to_int()
+    _ as a => fail!("expect number, got\{a}")
+  }
 }
 
 pub fn get_float(self : NxNode) -> Result[Double, Error] {

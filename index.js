@@ -183,7 +183,7 @@ let resourceLoaderNo = 0;
 class ResourceLoader {
   constructor(name) {
     this.name = name;
-    this.rawNxJson = null;
+    this.nxJson = null;
     const no = resourceLoaderNo;
     resourceLoaderNo += 1
     this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
@@ -192,6 +192,46 @@ class ResourceLoader {
     const path = `resource/${this.name}/nx.json`
     const response = await fetch(path);
     this.nxJson = await response.json();
+  }
+  loadDesc(nodepath) {
+    let parts = nodepath.split("/");
+    return parts.reduce((acc, part) => {
+      if (part in acc) return acc[part];
+      throw new Error(
+        `resolve resource failed, path=${nodepath}, missing part=${part}`
+      );
+    }, this.nxJson);
+  }
+}
+
+class MergeResourceLoader {
+  constructor(name, mappings) {
+    this.name = name;
+    this.mappings = mappings;
+    this.nxJson = null;
+    const no = resourceLoaderNo;
+    resourceLoaderNo += 1
+    this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
+  }
+  async load() {
+    this.nxJson = {}
+    for (let mapping of this.mappings) {
+      const path = `resource/${this.name}/${mapping.filename}`
+      const response = await fetch(path);
+      const subJson = await response.json();
+      let root = this.nxJson
+      let parts = mapping.nodepath.split("/");
+      for (let i = 0; i < parts.length; i++) {
+        if (i == parts.length - 1) {
+          root[parts[i]] = subJson
+        } else {
+          if (!(parts[i] in root)) {
+            root[parts[i]] = {}
+          }
+          root = root[parts[i]]
+        }
+      }
+    }
   }
   loadDesc(nodepath) {
     let parts = nodepath.split("/");
@@ -417,7 +457,13 @@ function main() {
     uiLoader.load()
   );
 
-  const mapLoader = new ResourceLoader("Map.nx");
+  const mapLoader = new MergeResourceLoader("Map.nx", [
+    { nodepath: "Map/Map0", filename: "map0.nx.json" },
+    { nodepath: "MapHelper.img", filename: "helper.nx.json" },
+    { nodepath: "Tile", filename: "tile.nx.json" },
+    { nodepath: "Obj", filename: "obj.nx.json" },
+    { nodepath: "Back", filename: "back.nx.json" },
+  ]);
   prepareResourcePromises.push(
     mapLoader.load()
   );

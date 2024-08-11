@@ -502,6 +502,10 @@ function main() {
   prepareResourcePromises.push(
     etcLoader.load()
   );
+  const npcLoader = new ResourceLoader("Npc.nx");
+  prepareResourcePromises.push(
+    npcLoader.load()
+  );
 
   let requestAnimationFrameId = null;
 
@@ -624,6 +628,7 @@ function main() {
       map001_loader: () => map001Loader,
       map_pretty_loader: () => mapPrettyLoader,
       etc_loader: () => etcLoader,
+      npc_loader: () => npcLoader,
       load_bitmap: (loader, bid) => loader.bmpLoader.loadBitmap(bid),
     },
     bitmap: {

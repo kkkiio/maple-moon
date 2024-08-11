@@ -1,4 +1,5 @@
-trait MapObject {
+pub trait MapObject {
+  get_oid(Self) -> Int
   draw(Self, Double, Double, Double) -> Unit
   update(Self, Physics) -> Int
   makeactive(Self) -> Unit

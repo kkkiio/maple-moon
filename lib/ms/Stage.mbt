@@ -13,11 +13,12 @@ pub struct Stage {
   mut player : Player
   priv mut playable : Playable?
   mut state : StageState
-  mut backgrounds : MapBackgrounds?
-  mut tiles_objs : MapTilesObjs
   mut map_id : Int
   mut map_info : MapInfo
+  mut tiles_objs : MapTilesObjs
+  mut backgrounds : MapBackgrounds?
   mut portals : MapPortals
+  npcs : MapNpcs
   mut start : TimePoint
 }
 
@@ -33,6 +34,7 @@ pub fn Stage::default() -> Stage {
     map_id: 10000,
     map_info: MapInfo::new(),
     portals: MapPortals::default(),
+    npcs: MapNpcs::new(),
     start: TimePoint::default(),
   }
 }
@@ -43,6 +45,11 @@ pub fn Stage::get() -> Stage {
 
 pub fn clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
+  // self.chars.clear()
+  self.npcs.clear()
+  // self.mobs.clear()
+  // self.drops.clear()
+  // self.reactors.clear()
 }
 
 let stage : Stage = Stage::default()
@@ -76,6 +83,10 @@ pub fn load_player(
 
 pub fn get_player(self : Stage) -> Player {
   self.player
+}
+
+pub fn get_npcs(self : Stage) -> MapNpcs {
+  self.npcs
 }
 
 fn load_map(self : Stage, mapid : Int) -> Unit {
@@ -120,7 +131,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
     fn(id) {
       self.tiles_objs.draw(id, viewpos, alpha)
       // reactors_.draw(id, viewx, viewy, alpha);
-      // npcs_.draw(id, viewx, viewy, alpha);
+      self.npcs.draw(id, viewx, viewy, alpha)
       // mobs_.draw(id, viewx, viewy, alpha);
       // chars_.draw(id, viewx, viewy, alpha);
       self.player.draw(id, viewx, viewy, alpha)
@@ -157,7 +168,7 @@ fn update(self : Stage) -> Unit {
   self.tiles_objs.update()
 
   // reactors_.update(self.physics);
-  // npcs_.update(self.physics);
+  self.npcs.update(self.physics)
   // mobs_.update(self.physics);
   // chars_.update(self.physics);
   // drops_.update(self.physics);
@@ -193,12 +204,7 @@ fn send_cursor(
   //     }
   // }
 
-  // return npcs_.send_cursor(pressed, position, self.camera.position());
-  if pressed {
-    CursorState::CLICKING
-  } else {
-    CursorState::IDLE
-  }
+  self.npcs.send_cursor(pressed, position, self.camera.position())
 }
 
 pub fn send_key(

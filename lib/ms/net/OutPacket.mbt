@@ -263,7 +263,9 @@ pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
 
 pub fn buf_write_utf8(buf : Buffer, str : String) -> Unit {
   let bytes = Bytes::make(4, b'\x00')
-  str.iter().each(
+  str
+  .iter()
+  .each(
     fn(c) {
       let len = bytes.set_utf8_char(0, c)
       for i = 0; i < len; i = i + 1 {

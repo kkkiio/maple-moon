@@ -1,6 +1,6 @@
 pub struct Point[T] {
-  mut x : T
-  mut y : T
+  x : T
+  y : T
 } derive(Eq, Show)
 
 pub fn Point::new[T](x : T, y : T) -> Point[T] {
@@ -24,13 +24,13 @@ pub fn op_neg(self : Point[Int]) -> Point[Int] {
 }
 
 /// Shift the x-coordinate by the specified amount
-pub fn shift_x(self : Point[Int], v : Int) -> Unit {
-  self.x += v
+pub fn shift_x(self : Point[Int], v : Int) -> Point[Int] {
+  { x: self.x + v, y: self.y }
 }
 
 /// Shift the y-coordinate by the specified amount
-pub fn shift_y(self : Point[Int], v : Int) -> Unit {
-  self.y += v
+pub fn shift_y(self : Point[Int], v : Int) -> Point[Int] {
+  { x: self.x, y: self.y + v }
 }
 
 pub fn Point::from_resource(src : NxNode) -> Result[Point[Int], Error] {

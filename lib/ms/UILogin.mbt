@@ -41,6 +41,7 @@ enum LoginStage {
 
 struct UILogin {
   base : UIElementBase
+  buttons : UIButtons[Int]
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield
@@ -58,6 +59,7 @@ let map_pretty_loader = @resource.map_pretty_loader
 pub fn UILogin::new() -> UILogin {
   let obj = {
     base: UIElementBase::new(Point::new(0, 0), Point::new(800, 600)),
+    buttons: UIButtons::default(),
     saveid: false,
     login_stage: INIT,
   }
@@ -191,6 +193,10 @@ pub fn UILogin::new() -> UILogin {
   obj
 }
 
+pub fn get_ui_element_base(self : UILogin) -> UIElementBase {
+  self.base
+}
+
 pub fn draw(self : UILogin, alpha : Double) -> Unit {
   self.base.draw(alpha)
 
@@ -290,7 +296,12 @@ pub fn send_cursor(
   //   Some(new_state) => return new_state
   //   None => ()
   // }
-  self.base.send_cursor(self, clicked, cursor_pos)
+  self.buttons.send_cursor(
+    self.base.position,
+    fn(bid) { self.button_pressed(bid) },
+    clicked,
+    cursor_pos,
+  )
 }
 
 pub fn get_type(self : UILogin) -> UIElementType {
@@ -316,7 +327,7 @@ pub fn send_key(
   pressed : Bool,
   repeat : Bool
 ) -> Unit {
-  self.base.send_key(key, pressed, repeat)
+
 }
 
 pub fn is_active(self : UILogin) -> Bool {
@@ -332,7 +343,7 @@ pub fn toggle_active(self : UILogin) -> Unit {
 }
 
 pub fn remove_cursor(self : UILogin) -> Unit {
-  self.base.remove_cursor()
+  self.buttons.remove_cursor()
 }
 
 pub fn deactivate(self : UILogin) -> Unit {
@@ -340,7 +351,7 @@ pub fn deactivate(self : UILogin) -> Unit {
 }
 
 fn doubleclick(self : UILogin, point : Point[Int]) -> Unit {
-  self.base.doubleclick(point)
+
 }
 
 fn fn_login_start() -> Unit {

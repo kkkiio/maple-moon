@@ -14,13 +14,19 @@ fn UIStateLogin::new() -> UIStateLogin {
   // if start_shown {
   //   state.emplace(UILogo::new())
   // } else {
-  state.emplace(fn() { UILogin::new() })
+  state.set_element(UILogin::const_focused(), UILogin::new())
   // }
   state
 }
 
 fn draw(self : UIStateLogin, inter : Double, cursor : Point[Int]) -> Unit {
-  self.elements.each(fn(_t, elem) { if elem.is_active() { elem.draw(inter) } })
+  self.elements.each(
+    fn(_t, elem) {
+      if elem.get_ui_element_base().is_active() {
+        elem.draw(inter)
+      }
+    },
+  )
 
   // if (tooltip_) {
   //     tooltip_->get().draw(cursor + Point<int16_t>(0, 22));
@@ -30,7 +36,9 @@ fn draw(self : UIStateLogin, inter : Double, cursor : Point[Int]) -> Unit {
 
 fn update(self : UIStateLogin) -> Unit {
   self.uis_to_remove.each(fn(t) { self.elements.remove(t) })
-  self.elements.each(fn(_t, elem) { if elem.is_active() { elem.update() } })
+  self.elements.each(
+    fn(_t, elem) { if elem.get_ui_element_base().is_active() { elem.update() } },
+  )
 }
 
 pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {
@@ -49,7 +57,7 @@ pub fn send_key(
 ) -> Unit {
   match self.get(self.focused) {
     Some(focusedelement) =>
-      if focusedelement.is_active() {
+      if focusedelement.get_ui_element_base().is_active() {
         focusedelement.send_key(action, pressed, escape)
       } else {
         self.focused = UIElementType::UI_ELEMENT_NONE
@@ -63,10 +71,11 @@ pub fn send_cursor(
   cursorstate : CursorState,
   cursorpos : Point[Int]
 ) -> CursorState {
-  let clicked = cursorstate == CursorState::CLICKING || cursorstate == CursorState::VSCROLL_IDLE
+  let clicked = cursorstate == CursorState::CLICKING ||
+    cursorstate == CursorState::VSCROLL_IDLE
   match self.get(self.focused) {
     Some(focusedelement) =>
-      if focusedelement.is_active() {
+      if focusedelement.get_ui_element_base().is_active() {
         self.remove_cursor(focusedelement.get_type())
         return focusedelement.send_cursor(clicked, cursorpos)
       } else {
@@ -88,9 +97,11 @@ pub fn send_close(self : UIStateLogin) -> Unit {
   let logo = UI::get().get_element(UIElementType::START)
   let login = UI::get().get_element(UIElementType::LOGIN)
   let region = UI::get().get_element(UIElementType::REGION)
-  if [logo, login, region].iter().flat_map(@option.iter).find_first(
-    fn(it) { it.is_active() },
-  ).is_empty() {
+  if [logo, login, region]
+    .iter()
+    .flat_map(@option.iter)
+    .find_first(fn(it) { it.get_ui_element_base().is_active() })
+    .is_empty() {
     // UI::get().emplace(fn(){UIQuitConfirm::new()})
   } else {
     UI::get().quit()
@@ -123,7 +134,7 @@ pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
   }
   match self.elements.get(type_) {
     Some(element) => {
-      element.deactivate()
+      element.get_ui_element_base().deactivate()
       self.uis_to_remove.push(type_)
     }
     None => ()
@@ -137,8 +148,16 @@ pub fn get(self : UIStateLogin, type_ : UIElementType) -> UIElement? {
 
 pub fn get_front(self : UIStateLogin) -> UIElement? {
   // TODO: use rev_iter
-  self.elements.iter().fold(
-    fn(acc, it) { if it.1.is_active() { Some(it.1) } else { acc } },
+  self.elements
+  .iter()
+  .fold(
+    fn(acc, it) {
+      if it.1.get_ui_element_base().is_active() {
+        Some(it.1)
+      } else {
+        acc
+      }
+    },
     init=None,
   )
 }
@@ -154,7 +173,10 @@ pub fn get_front_by_types(
         return
       }
       match self.elements.get(t) {
-        Some(elem) => if elem.is_active() { front = Some(elem) }
+        Some(elem) =>
+          if elem.get_ui_element_base().is_active() {
+            front = Some(elem)
+          }
         None => ()
       }
       // let elem = 
@@ -182,9 +204,11 @@ pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
   //   },
   // )
   // TODO: use rev_iter
-  self.elements.iter().fold(
+  self.elements
+  .iter()
+  .fold(
     fn(acc, it) {
-      if it.1.is_active() && it.1.is_in_range(pos) {
+      if it.1.get_ui_element_base().is_active() && it.1.is_in_range(pos) {
         Some(it.1)
       } else {
         acc
@@ -197,35 +221,32 @@ pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
 pub fn remove_cursor(self : UIStateLogin, type_ : UIElementType) -> Unit {
   self.elements.each(
     fn(_type, element) {
-      if element.is_active() && element.get_type() != type_ {
+      if element.get_ui_element_base().is_active() &&
+        element.get_type() != type_ {
         element.remove_cursor()
       }
     },
   )
 }
 
-pub fn emplace[T : UIElement + UIElementDescriptor](
-  self : UIStateLogin,
-  f : () -> T
-) -> Unit {
-  self.set_element(
-    T::const_type(),
-    T::const_toggled(),
-    T::const_focused(),
-    fn() { f() },
-  )
-}
-
 pub fn set_element(
   self : UIStateLogin,
-  t : UIElementType,
-  _toggled : Bool,
   focused : Bool,
-  f : () -> UIElement
+  elem : UIElement
 ) -> Unit {
+  let t = elem.get_type()
   self.remove(t)
   if focused {
     self.focused = t
   }
-  self.elements[t] = f()
+  self.elements[t] = elem
+}
+
+pub fn set_or_toggle_element(
+  self : UIStateLogin,
+  t : UIElementType,
+  focused : Bool,
+  f : () -> UIElement
+) -> Unit {
+  self.set_element(focused, f())
 }

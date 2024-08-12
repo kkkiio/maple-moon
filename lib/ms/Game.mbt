@@ -30,10 +30,6 @@ pub fn Game::start() -> Game {
   // // packet_switch.push((GATHER_RESULT, GatherResultHandler::new()))
   // // packet_switch.push((SORT_RESULT, SortResultHandler::new()))
 
-  // // NPC Interaction Handlers
-  // // packet_switch.push((NPC_DIALOGUE, NpcDialogueHandler::new()))
-  // // packet_switch.push((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
-
   // // Player Interaction
   // // packet_switch.push((CHAR_INFO, CharInfoHandler::new()))
   // // packet_switch.push((PLAYER_INTERACTION, PlayerInteractionHandler::new()))
@@ -91,7 +87,9 @@ pub fn Game::start() -> Game {
       // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
-
+      // NPC Interaction Handlers
+      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new()))
+      // |> Iter::append((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
       |> Iter::collect,
     ),
   )

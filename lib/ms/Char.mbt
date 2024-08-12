@@ -294,3 +294,8 @@ fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
     @MapleStat.Id::GACHAEXP => ()
   }
 }
+
+pub fn get_name(self : CharBase) -> String {
+  // TODO
+  "kkkiio"
+}

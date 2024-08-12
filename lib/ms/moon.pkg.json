@@ -15,6 +15,7 @@
     },
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/ms/InventoryType",
+    "KKKIIO/maple-moon-client/lib/ms/npc",
     "KKKIIO/maple-moon-client/lib/ms/net",
     "KKKIIO/maple-moon-client/lib/ms/config",
     "KKKIIO/maple-moon-client/lib/ms/login",

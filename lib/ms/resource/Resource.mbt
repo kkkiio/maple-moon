@@ -84,6 +84,13 @@ pub fn op_get(self : NxNode, key : String) -> NxNode {
   }
 }
 
+pub fn get_children_count(self : NxNode) -> Int {
+  match self.desc {
+    @json.JsonValue::Object(it) => it.size()
+    _ => 0
+  }
+}
+
 pub fn get_bool(self : NxNode) -> Result[Bool, Error] {
   self.get_int().map(fn(it) { it != 0 })
 }

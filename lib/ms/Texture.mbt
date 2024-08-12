@@ -64,3 +64,11 @@ pub fn width(self : Texture) -> Int {
 pub fn height(self : Texture) -> Int {
   self.dimensions.y
 }
+
+pub fn get_origin(self : Texture) -> Point[Int] {
+  self.origin
+}
+
+pub fn get_dimensions(self : Texture) -> Point[Int] {
+  self.dimensions
+}

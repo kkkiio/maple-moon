@@ -146,15 +146,13 @@ pub fn hash_combine(self : UIElementType, hasher : Hasher) -> Unit {
 }
 
 pub trait UIElement {
+  get_ui_element_base(Self) -> UIElementBase
   send_cursor(Self, Bool, Point[Int]) -> CursorState
   send_key(Self, Int, Bool, Bool) -> Unit
-  button_pressed(Self, Int) -> ButtonState
-  is_active(Self) -> Bool
   get_type(Self) -> UIElementType
   is_in_range(Self, Point[Int]) -> Bool
   toggle_active(Self) -> Unit
   remove_cursor(Self) -> Unit
-  deactivate(Self) -> Unit
   draw(Self, Double) -> Unit
   update(Self) -> Unit
   doubleclick(Self, Point[Int]) -> Unit
@@ -173,11 +171,18 @@ pub trait UIElementDescriptor {
 }
 
 struct UIElementBase {
-  buttons : Map[Int, Button]
   sprites : Array[Sprite]
-  position : Point[Int]
-  dimension : Point[Int]
+  mut position : Point[Int]
+  mut dimension : Point[Int]
   mut active : Bool
+}
+
+struct UIButtons[BID] {
+  buttons : Map[BID, Button]
+}
+
+pub fn UIButtons::default[BID]() -> UIButtons[BID] {
+  { buttons: Map::new() }
 }
 
 pub fn UIElementBase::new(
@@ -185,7 +190,7 @@ pub fn UIElementBase::new(
   d : Point[Int],
   ~active : Bool = true
 ) -> UIElementBase {
-  { position: p, dimension: d, active, sprites: [], buttons: Map::new() }
+  { position: p, dimension: d, active, sprites: [] }
 }
 
 pub fn UIElementBase::default() -> UIElementBase {
@@ -193,20 +198,22 @@ pub fn UIElementBase::default() -> UIElementBase {
 }
 
 pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
-  draw_sprites(self, alpha)
-  draw_buttons(self, alpha)
-}
-
-pub fn draw_sprites(self : UIElementBase, alpha : Double) -> Unit {
   self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
 }
 
-pub fn draw_buttons(self : UIElementBase, _alpha : Double) -> Unit {
-  self.buttons.each(fn(_k, button) { button.draw(self.position) })
+pub fn draw[BID](
+  self : UIButtons[BID],
+  alpha : Double,
+  position : Point[Int]
+) -> Unit {
+  self.buttons.each(fn(_k, button) { button.draw(position) })
 }
 
 pub fn update(self : UIElementBase) -> Unit {
   self.sprites.each(fn(sprite) { sprite.update() |> ignore })
+}
+
+pub fn update[BID](self : UIButtons[BID]) -> Unit {
   self.buttons.each(fn(_k, button) { button.update() })
 }
 
@@ -235,59 +242,48 @@ pub fn is_in_range(self : UIElementBase, cursorpos : Point[Int]) -> Bool {
   bounds.contains(cursorpos)
 }
 
-pub fn remove_cursor(self : UIElementBase) -> Unit {
+pub fn remove_cursor[BID](self : UIButtons[BID]) -> Unit {
   self.buttons.each(
     fn(_k, button) {
-      if button.get_state() == ButtonState::MOUSEOVER {
-        button.set_state(ButtonState::NORMAL)
+      if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
+        button.get_button_base().set_state(ButtonState::NORMAL)
       }
     },
   )
 }
 
-pub fn send_cursor(
-  self : UIElementBase,
-  elem : UIElement,
+pub fn send_cursor[BID](
+  self : UIButtons[BID],
+  self_position : Point[Int],
+  get_state_under_pressed : (BID) -> ButtonState,
   down : Bool,
   pos : Point[Int]
 ) -> CursorState {
   let mut ret = if down { CursorState::CLICKING } else { CursorState::IDLE }
   self.buttons.each(
     fn(k, button) {
-      if button.is_active() && button.bounds(self.position).contains(pos) {
-        match button.get_state() {
+      if button.get_button_base().is_active() &&
+        button.bounds(self_position).contains(pos) {
+        match button.get_button_base().get_state() {
           ButtonState::NORMAL => {
             Sound::new(SoundName::BUTTON_OVER).play()
-            button.set_state(ButtonState::MOUSEOVER)
+            button.get_button_base().set_state(ButtonState::MOUSEOVER)
             ret = CursorState::CAN_CLICK
           }
           ButtonState::MOUSEOVER =>
             if down {
               Sound::new(SoundName::BUTTON_CLICK).play()
-              button.set_state(elem.button_pressed(k))
+              button.get_button_base().set_state(get_state_under_pressed(k))
               ret = CursorState::IDLE
             } else {
               ret = CursorState::CAN_CLICK
             }
           _ => ()
         }
-      } else if button.get_state() == ButtonState::MOUSEOVER {
-        button.set_state(ButtonState::NORMAL)
+      } else if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
+        button.get_button_base().set_state(ButtonState::NORMAL)
       }
     },
   )
   ret
-}
-
-pub fn send_key(
-  self : UIElementBase,
-  _keycode : Int,
-  _pressed : Bool,
-  _escape : Bool
-) -> Unit {
-  self |> ignore
-}
-
-fn doubleclick(self : UIElementBase, _point : Point[Int]) -> Unit {
-  self |> ignore
 }

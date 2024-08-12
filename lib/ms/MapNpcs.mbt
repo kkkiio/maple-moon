@@ -68,11 +68,9 @@ pub fn send_cursor(
         if pressed {
           npc.talk(
             fn(id, msgtype, b0, b1, speaker, str) {
-              // UI::get().emplace(UINpcTalk)
-              // if let Some(npctalk) = UI::get().get_element(UINpcTalk) {
-              //   npctalk.change_text(id, msgtype, b0, b1, speaker, str)
-              // }
-
+              let ui = UINpcTalk::new()
+              UI::get().set_element(ui)
+              ui.change_text(id, msgtype, b0, b1, speaker, str)
             },
           )
           new_talk_to_npc_packet(npc.get_oid()).dispatch()
@@ -178,7 +176,7 @@ pub fn Npc::new(
   let dialogue = {  }
   let mut i = 0
   while true {
-    let key = @string_format.extend_id(i, 1) + "d"
+    let key = "d\{i}"
     let str = strsrc[key].get_string()
     if str.is_empty() {
       break
@@ -370,4 +368,32 @@ pub fn handle(self : SpawnNpcControllerHandler, recv : @net.InPacket) -> Unit! {
 
 fn read_point(recv : @net.InPacket) -> Point[Int]!@net.ReadPacketError {
   { x: recv.read_short!(), y: recv.read_short!() }
+}
+
+struct NpcDialogueHandler {} derive(Default)
+
+pub fn NpcDialogueHandler::new() -> NpcDialogueHandler {
+  NpcDialogueHandler::default()
+}
+
+pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
+  recv.skip!(1)
+  let npcid = recv.read_int!()
+  let msgtype = recv.read_byte!() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
+  let speaker = recv.read_byte!()
+  let text = recv.read_string!()
+  let (style_b0, style_b1) = if recv.available() && msgtype == 0 {
+    // {b0, b1}
+    // {0, 1} = next
+    // {1, 0} = prev
+    // {1, 1} = nextPrev
+    // {0, 0} = ok
+    (recv.read_ubyte!(), recv.read_ubyte!())
+  } else {
+    (0, 0)
+  }
+  let ui = UINpcTalk::new()
+  UI::get().set_element(ui)
+  UI::get().enable()
+  ui.change_text(npcid, msgtype, style_b0, style_b1, speaker, text)
 }

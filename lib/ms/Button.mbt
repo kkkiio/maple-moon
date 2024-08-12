@@ -4,19 +4,7 @@ pub enum ButtonState {
   MOUSEOVER
   PRESSED
   IDENTITY
-} derive(Eq, Compare)
-
-pub let all_button_states : @immut/sorted_map.T[ButtonState, Int] = @immut/sorted_map.from_array(
-  [(NORMAL, 0), (DISABLED, 1), (MOUSEOVER, 2), (PRESSED, 3), (IDENTITY, 4)],
-)
-
-pub fn int_value(self : ButtonState) -> Int {
-  all_button_states[self].unwrap()
-}
-
-fn hash(self : ButtonState) -> Int {
-  self.int_value()
-}
+} derive(Eq, Hash)
 
 pub trait Button {
   draw(Self, Point[Int]) -> Unit
@@ -25,16 +13,12 @@ pub trait Button {
   width(Self) -> Int
   origin(Self) -> Point[Int]
   send_cursor(Self, Bool, Point[Int]) -> CursorState
-  get_state(Self) -> ButtonState
-  set_state(Self, ButtonState) -> Unit
-  is_active(Self) -> Bool
-  set_active(Self, Bool) -> Unit
   in_combobox(Self, Point[Int]) -> Bool
+  get_button_base(Self) -> ButtonBase
   // get_selected(Self) -> Int
   // set_position(Self, Point[Int]) -> Unit
   // toggle_pressed(Self) -> Unit
   // is_pressed(Self) -> Bool
-  // hash(Self) -> Int
 }
 
 struct ButtonBase {
@@ -42,6 +26,15 @@ struct ButtonBase {
   mut position : Point[Int]
   mut active : Bool
   mut pressed : Bool
+}
+
+pub fn ButtonBase::default() -> ButtonBase {
+  {
+    state: ButtonState::NORMAL,
+    position: Point::default(),
+    active: true,
+    pressed: false,
+  }
 }
 
 pub fn in_combobox(self : ButtonBase, point : Point[Int]) -> Bool {

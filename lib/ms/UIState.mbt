@@ -16,7 +16,8 @@ trait UIState {
   // show_skill(Self, TooltipParent, Int, Int, Int, Int64) -> Unit
   // show_text(Self, TooltipParent, String) -> Unit
   // show_map(Self, TooltipParent, String, String, Int, Bool) -> Unit
-  set_element(Self, UIElementType, Bool, Bool, () -> UIElement) -> Unit
+  set_element(Self, Bool, UIElement) -> Unit
+  set_or_toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit
   remove(Self, UIElementType) -> Unit
   get(Self, UIElementType) -> UIElement?
   get_front_by_types(Self, Array[UIElementType]) -> UIElement?
@@ -109,10 +110,13 @@ fn show_map(
 
 }
 
-fn set_element(
+fn set_element(self : UIStateNull, c : Bool, d : UIElement) -> Unit {
+
+}
+
+fn set_or_toggle_element(
   self : UIStateNull,
-  a : UIElementType,
-  b : Bool,
+  t : UIElementType,
   c : Bool,
   d : () -> UIElement
 ) -> Unit {

@@ -237,3 +237,7 @@ fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
 fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
   self.char_base.change_look(stat, id)
 }
+
+pub fn get_name(self : Player) -> String {
+  self.char_base.get_name()
+}

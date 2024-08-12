@@ -265,6 +265,10 @@ fn check_portals(self : Stage) -> Unit {
   // Sound(Sound::Name::PORTAL).play();
 }
 
+pub fn doubleclick(self : Stage, pos : Point[Int]) -> Unit {
+  // TODO
+}
+
 fn new_change_map_packet(
   died : Bool,
   targetid : Int,

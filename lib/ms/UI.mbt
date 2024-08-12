@@ -50,7 +50,7 @@ fn UI::get() -> UI {
 }
 
 pub fn draw(self : UI, alpha : Double) -> Unit {
-  //         state_->draw(alpha, cursor_.get_position());
+  self.state.draw(alpha, self.cursor.get_position())
   //         scrolling_notice_.draw(alpha);
   self.cursor.draw(alpha)
   //         mobile_input_.draw();
@@ -281,10 +281,32 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
   self.state.get(element_type)
 }
 
+/// @alert deprecated "Use set_element/set_or_toggle_element instead"
 fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit {
-  self.state.set_element(
+  if T::const_toggled() {
+    self.state.set_or_toggle_element(
+      T::const_type(),
+      T::const_focused(),
+      fn() { f() },
+    )
+  } else {
+    self.state.set_element(T::const_focused(), f())
+  }
+}
+
+pub fn set_element[T : UIElement + UIElementDescriptor](
+  self : UI,
+  elem : T
+) -> Unit {
+  self.state.set_element(T::const_focused(), elem)
+}
+
+pub fn set_or_toggle_element[T : UIElement + UIElementDescriptor](
+  self : UI,
+  f : () -> T
+) -> Unit {
+  self.state.set_or_toggle_element(
     T::const_type(),
-    T::const_toggled(),
     T::const_focused(),
     fn() { f() },
   )

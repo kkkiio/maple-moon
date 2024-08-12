@@ -253,8 +253,7 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
     }
     None => {
       if self.border.x + width > self.width {
-        self.border.x = 0
-        self.border.shift_y(self.y_range.b)
+        self.border = { x: 0, y: self.border.y + self.y_range.b }
         if self.border.y + height > self.height {
           self.clear_internal()
         } else {
@@ -263,7 +262,7 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
       }
       let x = self.border.x
       let y = self.border.y
-      self.border.shift_x(width)
+      self.border = self.border.shift_x(width)
       if height > self.y_range.b {
         if x >= self.minlosize && height - self.y_range.b >= self.minlosize {
           let ok = self.leftovers.add(
@@ -278,7 +277,8 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
         self.wasted += x * (height - self.y_range.b)
         self.y_range = Range::new(y + height, height)
       } else if height < self.y_range.a - y {
-        if width >= self.minlosize && self.y_range.a - y - height >= self.minlosize {
+        if width >= self.minlosize &&
+          self.y_range.a - y - height >= self.minlosize {
           let ok = self.leftovers.add(
             self.next_id,
             Leftover::fromxywh(
@@ -350,8 +350,10 @@ fn Quad::new(
       fn(v) -> Unit {
         let vertice_x = v.localcoord_x - center_x
         let vertice_y = v.localcoord_y - center_y
-        let rounded_x = (vertice_x.to_double() * cos - vertice_y.to_double() * sin).round()
-        let rounded_y = (vertice_x.to_double() * sin + vertice_y.to_double() * cos).round()
+        let rounded_x = (vertice_x.to_double() * cos -
+        vertice_y.to_double() * sin).round()
+        let rounded_y = (vertice_x.to_double() * sin +
+        vertice_y.to_double() * cos).round()
         v.localcoord_x = rounded_x.to_int() + center_x
         v.localcoord_y = rounded_y.to_int() + center_y
       },

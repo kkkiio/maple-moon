@@ -24,7 +24,7 @@ pub fn int_value(self : Code) -> Int {
   }
 }
 
-pub enum Name {
+pub enum ColorName {
   BLACK
   WHITE
   YELLOW
@@ -62,7 +62,7 @@ pub enum Name {
   MALIBU
 } derive(Eq)
 
-pub let color_names : FixedArray[Name] = [
+pub let color_names : FixedArray[ColorName] = [
   BLACK,
   WHITE,
   YELLOW,
@@ -100,49 +100,49 @@ pub let color_names : FixedArray[Name] = [
   MALIBU,
 ]
 
-pub let colors : FixedArray[FixedArray[Double]] = [
-  [0.00, 0.00, 0.00], // Black
-  [1.00, 1.00, 1.00], // White
-  [1.00, 1.00, 0.00], // Yellow
-  [0.00, 0.00, 1.00], // Blue
-  [1.00, 0.00, 0.00], // Red
-  [0.80, 0.30, 0.30], // DarkRed
-  [0.50, 0.25, 0.00], // Brown
-  [0.34, 0.20, 0.07], // Jambalaya
-  [0.50, 0.50, 0.50], // Lightgrey
-  [0.25, 0.25, 0.25], // Darkgrey
-  [1.00, 0.50, 0.00], // Orange
-  [0.00, 0.75, 1.00], // Mediumblue
-  [0.50, 0.00, 0.50], // Violet
-  [0.47, 0.40, 0.27], // Tobacco Brown
-  [0.74, 0.74, 0.67], // Eagle
-  [0.60, 0.60, 0.54], // Lemon Grass
-  [0.20, 0.20, 0.27], // Tuna
-  [0.94, 0.94, 0.94], // Gallery
-  [0.60, 0.60, 0.60], // Dusty Gray
-  [0.34, 0.34, 0.34], // Emperor
-  [0.20, 0.20, 0.20], // Mine Shaft
-  [1.00, 1.00, 0.87], // Half and Half
-  [0.00, 0.40, 0.67], // Endeavour
-  [0.30, 0.20, 0.10], // Brown Derby
-  [0.94, 0.95, 0.95], // Porcelain
-  [0.34, 0.27, 0.14], // Irish Coffee
-  [0.47, 0.47, 0.47], // Boulder
-  [0.00, 0.75, 0.00], // Green (Mob HP Bar)
-  [0.00, 1.00, 0.00], // Light Green (Mob HP Bar)
-  [0.00, 0.50, 0.00], // Japanese Laurel (Mob HP Bar)
-  [0.67, 0.67, 0.60], // Gray Olive
-  [0.80, 1.00, 0.00], // Electric Lime
-  [1.00, 0.80, 0.00], // Supernova
-  [0.47, 1.00, 0.00], // Chartreuse
-  [0.47, 0.80, 1.00], // Malibu
+let colors : FixedArray[Color] = [
+  Color::new_rgba(0.00, 0.00, 0.00, 1.0), // Black
+  Color::new_rgba(1.00, 1.00, 1.00, 1.0), // White
+  Color::new_rgba(1.00, 1.00, 0.00, 1.0), // Yellow
+  Color::new_rgba(0.00, 0.00, 1.00, 1.0), // Blue
+  Color::new_rgba(1.00, 0.00, 0.00, 1.0), // Red
+  Color::new_rgba(0.80, 0.30, 0.30, 1.0), // DarkRed
+  Color::new_rgba(0.50, 0.25, 0.00, 1.0), // Brown
+  Color::new_rgba(0.34, 0.20, 0.07, 1.0), // Jambalaya
+  Color::new_rgba(0.50, 0.50, 0.50, 1.0), // Lightgrey
+  Color::new_rgba(0.25, 0.25, 0.25, 1.0), // Darkgrey
+  Color::new_rgba(1.00, 0.50, 0.00, 1.0), // Orange
+  Color::new_rgba(0.00, 0.75, 1.00, 1.0), // Mediumblue
+  Color::new_rgba(0.50, 0.00, 0.50, 1.0), // Violet
+  Color::new_rgba(0.47, 0.40, 0.27, 1.0), // Tobacco Brown
+  Color::new_rgba(0.74, 0.74, 0.67, 1.0), // Eagle
+  Color::new_rgba(0.60, 0.60, 0.54, 1.0), // Lemon Grass
+  Color::new_rgba(0.20, 0.20, 0.27, 1.0), // Tuna
+  Color::new_rgba(0.94, 0.94, 0.94, 1.0), // Gallery
+  Color::new_rgba(0.60, 0.60, 0.60, 1.0), // Dusty Gray
+  Color::new_rgba(0.34, 0.34, 0.34, 1.0), // Emperor
+  Color::new_rgba(0.20, 0.20, 0.20, 1.0), // Mine Shaft
+  Color::new_rgba(1.00, 1.00, 0.87, 1.0), // Half and Half
+  Color::new_rgba(0.00, 0.40, 0.67, 1.0), // Endeavour
+  Color::new_rgba(0.30, 0.20, 0.10, 1.0), // Brown Derby
+  Color::new_rgba(0.94, 0.95, 0.95, 1.0), // Porcelain
+  Color::new_rgba(0.34, 0.27, 0.14, 1.0), // Irish Coffee
+  Color::new_rgba(0.47, 0.47, 0.47, 1.0), // Boulder
+  Color::new_rgba(0.00, 0.75, 0.00, 1.0), // Green (Mob HP Bar)
+  Color::new_rgba(0.00, 1.00, 0.00, 1.0), // Light Green (Mob HP Bar)
+  Color::new_rgba(0.00, 0.50, 0.00, 1.0), // Japanese Laurel (Mob HP Bar)
+  Color::new_rgba(0.67, 0.67, 0.60, 1.0), // Gray Olive
+  Color::new_rgba(0.80, 1.00, 0.00, 1.0), // Electric Lime
+  Color::new_rgba(1.00, 0.80, 0.00, 1.0), // Supernova
+  Color::new_rgba(0.47, 1.00, 0.00, 1.0), // Chartreuse
+  Color::new_rgba(0.47, 0.80, 1.00, 1.0), // Malibu
 ]
 
-pub fn int_value(self : Name) -> Int {
+pub fn int_value(self : ColorName) -> Int {
   color_names.search(self).unwrap()
 }
 
-pub type Color (Double, Double, Double, Double) derive(Show)
+pub type Color (Double, Double, Double, Double) derive(Show, Eq)
 
 pub fn Color::new_rgba(
   red : Double,
@@ -172,6 +172,10 @@ pub fn Color::from_value(code : Int) -> Color {
 
 pub fn Color::from_code(name : Code) -> Color {
   from_value(name.int_value())
+}
+
+pub fn Color::from_name(name : ColorName) -> Color {
+  colors[name.int_value()]
 }
 
 pub fn invisible(self : Color) -> Bool {

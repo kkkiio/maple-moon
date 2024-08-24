@@ -43,13 +43,14 @@ let values : FixedArray[(Type, Int)] = [
 ]
 
 pub fn by_value(value : Int) -> Type {
-  let r = values.iter().find_first(fn(it) { it.1 == value }).map(
-    fn(it) { it.0 },
-  )
+  let r = values
+    .iter()
+    .find_first(fn(it) { it.1 == value })
+    .map(fn(it) { it.0 })
   match r {
     Some(it) => it
     None => {
-      println("Unknown weapon value=\(value)")
+      println("Unknown weapon value=\{value}")
       NONE
     }
   }

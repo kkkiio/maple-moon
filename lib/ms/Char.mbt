@@ -60,7 +60,7 @@ pub fn set_position(self : CharBase, pos : Point[Int]) -> Unit {
   self.base.set_position(pos)
 }
 
-trait Char {
+trait Character {
   // draw(Self, Double, Double, Double) -> Unit
   // draw_preview(Self, Point[Int], Double) -> Unit
   // update(Self, Physics) -> Int

@@ -177,12 +177,12 @@ struct UIElementBase {
   mut active : Bool
 }
 
-struct UIButtons[BID] {
-  buttons : Map[BID, Button]
+struct UIButtons {
+  buttons : Map[Int, Button]
 }
 
-pub fn UIButtons::default[BID]() -> UIButtons[BID] {
-  { buttons: Map::new() }
+pub fn UIButtons::default() -> UIButtons {
+  { buttons: {  } }
 }
 
 pub fn UIElementBase::new(
@@ -201,11 +201,7 @@ pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
   self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
 }
 
-pub fn draw[BID](
-  self : UIButtons[BID],
-  alpha : Double,
-  position : Point[Int]
-) -> Unit {
+pub fn draw(self : UIButtons, alpha : Double, position : Point[Int]) -> Unit {
   self.buttons.each(fn(_k, button) { button.draw(position) })
 }
 
@@ -213,7 +209,7 @@ pub fn update(self : UIElementBase) -> Unit {
   self.sprites.each(fn(sprite) { sprite.update() |> ignore })
 }
 
-pub fn update[BID](self : UIButtons[BID]) -> Unit {
+pub fn update(self : UIButtons) -> Unit {
   self.buttons.each(fn(_k, button) { button.update() })
 }
 
@@ -242,7 +238,7 @@ pub fn is_in_range(self : UIElementBase, cursorpos : Point[Int]) -> Bool {
   bounds.contains(cursorpos)
 }
 
-pub fn remove_cursor[BID](self : UIButtons[BID]) -> Unit {
+pub fn remove_cursor(self : UIButtons) -> Unit {
   self.buttons.each(
     fn(_k, button) {
       if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
@@ -252,10 +248,10 @@ pub fn remove_cursor[BID](self : UIButtons[BID]) -> Unit {
   )
 }
 
-pub fn send_cursor[BID](
-  self : UIButtons[BID],
+pub fn send_cursor(
+  self : UIButtons,
   self_position : Point[Int],
-  get_state_under_pressed : (BID) -> ButtonState,
+  get_state_under_pressed : (Int) -> ButtonState,
   down : Bool,
   pos : Point[Int]
 ) -> CursorState {

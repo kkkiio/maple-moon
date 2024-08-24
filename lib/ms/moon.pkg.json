@@ -21,10 +21,5 @@
     "KKKIIO/maple-moon-client/lib/ms/login",
     "KKKIIO/maple-moon-client/lib/ms/resource",
     "KKKIIO/maple-moon-client/lib/ms/rand"
-  ],
-  "link": {
-    "js": {
-      "exports": []
-    }
-  }
+  ]
 }

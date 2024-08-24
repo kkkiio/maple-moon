@@ -41,7 +41,7 @@ enum LoginStage {
 
 struct UILogin {
   base : UIElementBase
-  buttons : UIButtons[Int]
+  buttons : UIButtons
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield

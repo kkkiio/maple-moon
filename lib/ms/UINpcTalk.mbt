@@ -1,17 +1,17 @@
 struct UINpcTalk {
   base : UIElementBase
-  buttons : UIButtons[Buttons]
+  buttons : UIButtons
   top : Texture
   fill : Texture
   bottom : Texture
   nametag : Texture
   mut speaker : Texture
-  content : NPCTalkContent
-  // name:Text
+  mut content : NPCTalkContent
+  name : Text
   mut height : Int
   offset : Int
-  unit_rows : Int
-  row_max : Int
+  mut unit_rows : Int
+  mut row_max : Int
   min_height : Int
   mut show_slider : Bool
   mut draw_text : Bool
@@ -34,26 +34,55 @@ pub fn UINpcTalk::const_toggled() -> Bool {
   false
 }
 
-struct NPCTalkContent {} derive(Default)
+struct NPCTalkContent {
+  text : Text
+  text_content : Array[Text]
+  text_button_content : Array[TextButton]
+  line_color : ColorName
+  selection : Int
+}
 
-enum Buttons {
-  ALL_LEVEL
-  CLOSE
-  MY_LEVEL
-  NEXT
-  NO
-  OK
-  PREV
-  QAFTER
-  QCNO
-  QCYES
-  QGIVEUP
-  QNO
-  QSTART
-  QYES
-  YES
-  TEXT_BUTTON
-} derive(Eq, Hash, Show)
+fn NPCTalkContent::default() -> NPCTalkContent {
+  {
+    text: Text::default(),
+    text_content: [],
+    text_button_content: [],
+    line_color: ColorName::BLACK,
+    selection: 0,
+  }
+}
+
+let bid_all_level = 0
+
+let bid_close = 1
+
+let bid_my_level = 2
+
+let bid_next = 3
+
+let bid_no = 4
+
+let bid_ok = 5
+
+let bid_prev = 6
+
+let bid_qafter = 7
+
+let bid_qcno = 8
+
+let bid_qcyes = 9
+
+let bid_qgiveup = 10
+
+let bid_qno = 11
+
+let bid_qstart = 12
+
+let bid_qyes = 13
+
+let bid_yes = 14
+
+let bid_text_button = 15
 
 pub fn UINpcTalk::new() -> UINpcTalk {
   let base = UIElementBase::default()
@@ -73,48 +102,37 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let nametag = Texture::from_resource(util_dlg_ex["bar"])
   let min_height = 8 * fill.height() + 14
   let buttons = UIButtons::default()
-  buttons.buttons[Buttons::ALL_LEVEL] = MapleButton::from_resource(
+  buttons.buttons[bid_all_level] = MapleButton::from_resource(
     util_dlg_ex["BtAllLevel"],
   )
-  buttons.buttons[Buttons::CLOSE] = MapleButton::from_resource(
+  buttons.buttons[bid_close] = MapleButton::from_resource(
     util_dlg_ex["BtClose"],
   )
-  buttons.buttons[Buttons::MY_LEVEL] = MapleButton::from_resource(
+  buttons.buttons[bid_my_level] = MapleButton::from_resource(
     util_dlg_ex["BtMyLevel"],
   )
-  buttons.buttons[Buttons::NEXT] = MapleButton::from_resource(
-    util_dlg_ex["BtNext"],
-  )
+  buttons.buttons[bid_next] = MapleButton::from_resource(util_dlg_ex["BtNext"])
   let quest = ui_window2["Quest"]
-  buttons.buttons[Buttons::NO] = MapleButton::from_resource(quest["BtNo"])
-  buttons.buttons[Buttons::OK] = MapleButton::from_resource(util_dlg_ex["BtOK"])
-  buttons.buttons[Buttons::PREV] = MapleButton::from_resource(
-    util_dlg_ex["BtPrev"],
-  )
-  buttons.buttons[Buttons::QAFTER] = MapleButton::from_resource(
+  buttons.buttons[bid_no] = MapleButton::from_resource(quest["BtNo"])
+  buttons.buttons[bid_ok] = MapleButton::from_resource(util_dlg_ex["BtOK"])
+  buttons.buttons[bid_prev] = MapleButton::from_resource(util_dlg_ex["BtPrev"])
+  buttons.buttons[bid_qafter] = MapleButton::from_resource(
     util_dlg_ex["BtQAfter"],
   )
-  buttons.buttons[Buttons::QCNO] = MapleButton::from_resource(
-    util_dlg_ex["BtQCNo"],
-  )
-  buttons.buttons[Buttons::QCYES] = MapleButton::from_resource(
+  buttons.buttons[bid_qcno] = MapleButton::from_resource(util_dlg_ex["BtQCNo"])
+  buttons.buttons[bid_qcyes] = MapleButton::from_resource(
     util_dlg_ex["BtQCYes"],
   )
-  buttons.buttons[Buttons::QGIVEUP] = MapleButton::from_resource(
+  buttons.buttons[bid_qgiveup] = MapleButton::from_resource(
     util_dlg_ex["BtQGiveup"],
   )
-  buttons.buttons[Buttons::QNO] = MapleButton::from_resource(
-    util_dlg_ex["BtQNo"],
-  )
-  buttons.buttons[Buttons::QSTART] = MapleButton::from_resource(
+  buttons.buttons[bid_qno] = MapleButton::from_resource(util_dlg_ex["BtQNo"])
+  buttons.buttons[bid_qstart] = MapleButton::from_resource(
     util_dlg_ex["BtQStart"],
   )
-  buttons.buttons[Buttons::QYES] = MapleButton::from_resource(
-    util_dlg_ex["BtQYes"],
-  )
-  buttons.buttons[Buttons::YES] = MapleButton::from_resource(
-    util_dlg_ex["BtYes"],
-  )
+  buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
+  buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
+  let name = Text::new(FontId::A11M, TextAlignment::CENTER, ColorName::WHITE)
   {
     base,
     buttons,
@@ -132,6 +150,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     nametag,
     min_height,
     t: None,
+    name,
     height: 0,
     speaker: Texture::default(),
     content: NPCTalkContent::default(),
@@ -156,107 +175,139 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let center_pos = speaker_pos + Point::new(self.nametag.width() / 2, 0)
   self.speaker.draw(DrawArgument::new5(center_pos, true))
   self.nametag.draw(speaker_pos |> DrawArgument::from_point)
-  // self.name.draw(center_pos + Point::new(0, -4))
+  self.name.draw(center_pos + Point::new(0, -4) |> DrawArgument::from_point)
   if self.show_slider {
     let text_min_height = self.base.position.y + self.top.height() - 1
-    let init_height = 19
-    // TODO: draw text
+    let mut init_height = 19
+    for element in self.content.text_content {
+      element.draw(
+        self.base.position + Point::new(162, init_height - self.offset * 248)
+        |> DrawArgument::from_point,
+        vertical=Range::new(text_min_height, text_min_height + self.height),
+      )
+      init_height += element.height()
+    }
+    for element in self.content.text_button_content {
+      element.draw_in_range(
+        self.base.position + Point::new(162, init_height - self.offset * 248),
+        Range::new(text_min_height, text_min_height + self.height),
+      )
+      init_height += element.height()
+    }
+    // TODO: draw slider
   } else {
-    let init_height = 19
-    // TODO: draw text
+    let mut init_height = 19
+    for element in self.content.text_button_content {
+      element.draw(self.base.position + Point::new(166, init_height))
+      init_height += element.height()
+    }
+    for element in self.content.text_content {
+      element.draw(
+        self.base.position + Point::new(166, init_height)
+        |> DrawArgument::from_point,
+      )
+      init_height += element.height()
+    }
   }
 }
 
 pub fn update(self : UINpcTalk) -> Unit {
   self.base.update()
   self.buttons.update()
-  // TODO: update text
+  // TODO: show text gradually when open NPC dialog
 }
 
-fn button_pressed(self : UINpcTalk, bid : Buttons) -> ButtonState {
+fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   self.base.deactivate()
   match self.t {
     Some(t) =>
       match t {
         @npc.TalkType::SEND_NEXT | @npc.TalkType::SEND_OK =>
-          match bid {
-            Buttons::NEXT =>
-              new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-            Buttons::PREV =>
-              new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            _ => ()
+          // match bid {
+          //   bid_next => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          //   bid_prev => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   _ => ()
+          // }
+          if bid == bid_next {
+            new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          } else if bid == bid_prev {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
         @npc.TalkType::SEND_NEXT_PREV =>
-          match bid {
-            Buttons::CLOSE =>
-              new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-            Buttons::NEXT =>
-              new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-            Buttons::PREV =>
-              new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            _ => ()
+          // match bid {
+          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          //   bid_next => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          //   bid_prev => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   _ => ()
+          // }
+          if bid == bid_close {
+            new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          } else if bid == bid_next {
+            new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          } else if bid == bid_prev {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
         @npc.TalkType::SEND_YESNO =>
-          match bid {
-            Buttons::CLOSE =>
-              new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-            Buttons::NO => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            Buttons::YES =>
-              new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-            _ => ()
+          // match bid {
+          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          //   bid_no => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   bid_yes => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          //   _ => ()
+          // }
+          if bid == bid_close {
+            new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          } else if bid == bid_no {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          } else if bid == bid_yes {
+            new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
         @npc.TalkType::SEND_ACCEPT_DECLINE =>
-          match bid {
-            Buttons::CLOSE =>
-              new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-            Buttons::QNO =>
-              new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            Buttons::QYES =>
-              new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-            _ => ()
+          // match bid {
+          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          //   bid_qno => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   bid_qyes => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          //   _ => ()
+          // }
+          if bid == bid_close {
+            new_npc_talk_more_packet(t.int_value(), -1).dispatch()
+          } else if bid == bid_qno {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          } else if bid == bid_qyes {
+            new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
         @npc.TalkType::SEND_GET_TEXT => ()
         @npc.TalkType::SEND_GET_NUMBER =>
-          match bid {
-            Buttons::CLOSE =>
-              new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            Buttons::OK => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-            _ => ()
+          // match bid {
+          //   bid_close => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   bid_ok => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
+          //   _ => ()
+          // }
+          if bid == bid_close {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          } else if bid == bid_ok {
+            new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
-
-        //             case TalkType::SEND_SIMPLE:
-        //                 // Type = 4
-        //                 switch (buttonid) {
-        //                     case Buttons::CLOSE:
-        //                         fn_npc_talk_more(type_, 0);
-        //                         break;
-        //                     default:
-        //                         fn_npc_talk_more(content_.text_button_content_[buttonid -
-        //                                                                        Buttons::TEXT_BUTTON].get_option_number());
-        //                         break;
-        //                 }
-        //                 break;
         @npc.TalkType::SEND_SIMPLE =>
-          match bid {
-            Buttons::CLOSE =>
-              new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-            _ =>
-              // new_npc_talk_more_packet(self.t.int_value(), self.t.text_button_content().get(bid - Buttons::TEXT_BUTTON).unwrap().get_option_number()).dispatch()
-              // TODO: content
-              ()
+          // match bid {
+          //   bid_close => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          //   _ => {
+          //     let btn = self.content.text_button_content[bid - bid_text_button]
+          //     new_npc_talk_more_packet_with_selection(btn.option_number).dispatch()
+          //   }
+          // }
+          if bid == bid_close {
+            new_npc_talk_more_packet(t.int_value(), 0).dispatch()
+          } else {
+            let btn = self.content.text_button_content[bid - bid_text_button]
+            new_npc_talk_more_packet_with_selection(btn.option_number).dispatch()
           }
         _ => ()
       }
     None => ()
   }
-  //         for (auto &element: content_.text_button_content_) {
-  //             auto it = buttons_.find(Buttons::TEXT_BUTTON + element.get_option_number());
-  //             if (it != buttons_.end()) {
-  //                 buttons_.erase(it);
-  //             }
-  //         }
-  //TODO:content
-
+  for _, element in self.content.text_button_content {
+    self.buttons.buttons.remove(bid_text_button + element.option_number)
+  }
   ButtonState::NORMAL
 }
 
@@ -276,16 +327,14 @@ pub fn send_cursor(
   if estate == CursorState::CLICKING && clicked {
     if self.draw_text {
       self.draw_text = false
-      // self.content.text.change_text(self.formatted_text)
+      self.content.text.change_text(self.formatted_text)
     } else {
-      // for element in self.content.text_button_content.iter() {
-      //   if element.bounds(self.base.position).contains(cursorpos) {
-      //     self.button_pressed(
-      //       Buttons::TEXT_BUTTON + element.get_option_number(),
-      //     )
-      //     break
-      //   }
-      // }
+      for element in self.content.text_button_content.iter() {
+        if element.bounds(self.base.position).contains(cursorpos) {
+          self.button_pressed(bid_text_button + element.option_number) |> ignore
+          break
+        }
+      }
     }
   }
   estate
@@ -315,7 +364,7 @@ pub fn get_type(self : UINpcTalk) -> UIElementType {
   UIElementType::NPC_TALK
 }
 
-fn format_text(self : UINpcTalk, tx : String, npcid : Int) -> String {
+fn format_text(tx : String, npcid : Int) -> String {
   let mut formatted_text = tx
   let begin = formatted_text.index_of("#p")
   if begin >= 0 {
@@ -387,24 +436,13 @@ pub fn change_text(
   self.timestep = 0
   self.draw_text = true
   self.formatted_text_pos = 0
-  self.formatted_text = self.format_text(tx, npcid)
-  // self.content = convert_npc_text(self.formatted_text)
-
-  //         for (auto &element: content_.text_button_content_) {
-  //             buttons_[Buttons::TEXT_BUTTON +
-  //                      element.get_option_number()] = std::make_unique<TextButton>(element);
-  //         }
-
-  //         content_.text_ = Text(Text::Font::A18M,
-  //                               Text::Alignment::LEFT,
-  //                               Color::Name::DARKGREY,
-  //                               formatted_text_,
-  //                               320);
-
-  //         int16_t text_height = content_.text_.height();
-
-  //         content_.text_.change_text("");
-
+  self.formatted_text = format_text(tx, npcid)
+  self.content = convert_npc_text(self.formatted_text)
+  for element in self.content.text_button_content {
+    self.buttons.buttons[bid_text_button + element.option_number] = element
+  }
+  let text_height = self.content.text.height()
+  self.content.text.change_text("")
   if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
@@ -412,41 +450,38 @@ pub fn change_text(
     let namestr = string_loader()
       .load_res(["Npc.img", npcid.to_string(), "name"])
       .get_string()
-    // TODO: name
+    self.name.change_text(namestr)
   } else {
     self.speaker = Texture::default()
-    // TODO: name
+    self.name.change_text("")
   }
   self.height = self.min_height + 20
   self.show_slider = false
-
-  //         if (text_height > min_height_) {
-  //             if (text_height > MAX_HEIGHT_) {
-  //                 height_ = MAX_HEIGHT_;
-  //                 show_slider_ = true;
-  //                 row_max_ = text_height / 248 + 1;
-  //                 unit_rows_ = 1;
-
-  //                 int16_t slider_y = top_.height() - 7;
-  //                 slider_ = Slider(Slider::Type::DEFAULT_SILVER,
-  //                                  Range<int16_t>(slider_y, slider_y + height_),
-  //                                  top_.width() - 26,
-  //                                  unit_rows_,
-  //                                  row_max_,
-  //                                  onmoved_);
-  //             } else {
-  //                 height_ = text_height;
-  //             }
-  //         }
-
-  //         reset_content_pos();
-
+  if text_height > self.min_height {
+    if text_height > max_height {
+      self.height = max_height
+      self.show_slider = true
+      self.row_max = text_height / 248 + 1
+      self.unit_rows = 1
+      let slider_y = self.top.height() - 7
+      // TODO: update slider
+      //                 slider_ = Slider(Slider::Type::DEFAULT_SILVER,
+      //                                  Range<int16_t>(slider_y, slider_y + height_),
+      //                                  top_.width() - 26,
+      //                                  unit_rows_,
+      //                                  row_max_,
+      //                                  onmoved_);
+    } else {
+      self.height = text_height
+    }
+  }
+  self.reset_content_pos()
   for _, button in self.buttons.buttons {
     button.get_button_base().set_active(false)
     button.get_button_base().set_state(ButtonState::NORMAL)
   }
   let y_cord = self.height + 48
-  self.buttons.buttons[Buttons::CLOSE]
+  self.buttons.buttons[bid_close]
   .unwrap()
   .get_button_base()
   ..set_position(Point::new(9, y_cord))
@@ -455,55 +490,55 @@ pub fn change_text(
     Some(t) =>
       match t {
         @npc.TalkType::SEND_OK =>
-          self.buttons.buttons[Buttons::OK]
+          self.buttons.buttons[bid_ok]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(469, y_cord))
           .set_active(true)
         @npc.TalkType::SEND_YESNO => {
           let yes_position = Point::new(389, y_cord)
-          self.buttons.buttons[Buttons::YES]
+          self.buttons.buttons[bid_yes]
           .unwrap()
           .get_button_base()
           ..set_position(yes_position)
           .set_active(true)
-          self.buttons.buttons[Buttons::NO]
+          self.buttons.buttons[bid_no]
           .unwrap()
           .get_button_base()
           ..set_position(yes_position + Point::new(65, 0))
           .set_active(true)
         }
         @npc.TalkType::SEND_NEXT =>
-          self.buttons.buttons[Buttons::NEXT]
+          self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(461, y_cord - 30))
           .set_active(true)
         @npc.TalkType::SEND_PREV =>
-          self.buttons.buttons[Buttons::PREV]
+          self.buttons.buttons[bid_prev]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(367, y_cord))
           .set_active(true)
         @npc.TalkType::SEND_NEXT_PREV => {
-          self.buttons.buttons[Buttons::NEXT]
+          self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(461, y_cord - 30))
           .set_active(true)
-          self.buttons.buttons[Buttons::PREV]
+          self.buttons.buttons[bid_prev]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(367, y_cord))
           .set_active(true)
         }
         @npc.TalkType::SEND_ACCEPT_DECLINE => {
-          self.buttons.buttons[Buttons::QYES]
+          self.buttons.buttons[bid_qyes]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(386, y_cord))
           .set_active(true)
-          self.buttons.buttons[Buttons::QNO]
+          self.buttons.buttons[bid_qno]
           .unwrap()
           .get_button_base()
           ..set_position(Point::new(451, y_cord))
@@ -518,6 +553,30 @@ pub fn change_text(
     240 - self.height / 2,
   )
   self.base.dimension = Point::new(self.top.width(), self.height + 120)
+}
+
+fn reset_content_pos(self : UINpcTalk) -> Unit {
+  if self.show_slider {
+    let mut init_height = 19
+    for element in self.content.text_content {
+      init_height += element.height()
+    }
+    for element in self.content.text_button_content {
+      element
+      .get_button_base()
+      .set_position(Point::new(162, init_height - self.offset * 248))
+      init_height += element.height()
+    }
+  } else {
+    let mut init_height = 19
+    for element in self.content.text_content {
+      init_height += element.height()
+    }
+    for element in self.content.text_button_content {
+      element.get_button_base().set_position(Point::new(166, init_height))
+      init_height += element.height()
+    }
+  }
 }
 
 pub fn is_in_range(self : UINpcTalk, cursorpos : Point[Int]) -> Bool {
@@ -608,4 +667,94 @@ struct NxMapInfo {
   name : String
   street_name : String
   full_name : String
+}
+
+fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
+  let s = formatted_text
+  let t = s.replace_all(old="\r\n", new="\n").replace_all(old="\r", new="\n")
+  let builder = {
+    text_content: [],
+    text_button_content: [],
+    line_color: ColorName::BLACK,
+    selection: 0,
+  }
+  for line in t.split("\n") {
+    builder.set_content(line)
+  }
+  let text = Text::new(
+    FontId::A18M,
+    TextAlignment::LEFT,
+    ColorName::DARKGREY,
+    text=formatted_text,
+    max_width=320,
+  )
+  {
+    text,
+    text_content: builder.text_content,
+    text_button_content: builder.text_button_content,
+    line_color: builder.line_color,
+    selection: builder.selection,
+  }
+}
+
+let max_height = 248
+
+struct NPCTalkContentBuilder {
+  text_content : Array[Text]
+  text_button_content : Array[TextButton]
+  mut line_color : ColorName
+  mut selection : Int
+}
+
+fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
+  match try_parse_button_selection(line) {
+    Some(selection) => {
+      if line.contains("#b") {
+        self.line_color = ColorName::BLUE
+      }
+      self.selection = selection
+      let button = TextButton::new(
+        Text::new(
+          FontId::A18M,
+          TextAlignment::LEFT,
+          self.line_color,
+          text=line,
+          max_width=320,
+        ),
+        self.selection,
+      )
+      self.text_button_content.push(button)
+    }
+    None => {
+      self.text_content.push(
+        Text::new(
+          FontId::A18M,
+          TextAlignment::LEFT,
+          ColorName::DARKGREY,
+          text=line,
+          max_width=320,
+        ),
+      )
+      if line.ends_with("#b") {
+        self.line_color = ColorName::BLUE
+      }
+    }
+  }
+}
+
+fn try_parse_button_selection(line : String) -> Int? {
+  let placeholder_start = line.index_of("#L")
+  if placeholder_start < 0 {
+    return None
+  }
+  let digit_start = placeholder_start + 2
+  let digits = if digit_start + 2 < line.length() &&
+    line[digit_start + 2] == '#' {
+    line.substring(start=digit_start, end=digit_start + 2)
+  } else if digit_start + 1 < line.length() && line[digit_start + 1] == '#' {
+    line.substring(start=digit_start, end=digit_start + 1)
+  } else {
+    return None
+  }
+  @strconv.parse_int?(digits, base=10).to_option()
 }

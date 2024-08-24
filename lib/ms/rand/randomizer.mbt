@@ -1,9 +1,9 @@
 struct Randomizer {
-  state : @random.RandomState
+  state : @random.Rand
 }
 
 pub fn Randomizer::default() -> Randomizer {
-  { state: @random.init_state() }
+  { state: @random.new() }
 }
 
 pub fn next_bool(self : Randomizer) -> Bool {
@@ -26,12 +26,12 @@ pub fn next_real(
   if from >= to {
     return from
   }
-  self.state.gen_double() * (to - from) + from
+  self.state.double() * (to - from) + from
 }
 
 pub fn next_int(self : Randomizer, ~from : Int = 0, to : Int) -> Int {
   if from >= to {
     return from
   }
-  self.state.gen_int() % (to - from) + from
+  self.state.int(limit=to - from) + from
 }

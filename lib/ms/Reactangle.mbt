@@ -8,7 +8,7 @@ struct Rectangle[T] {
 pub fn to_string[T : Show](self : Rectangle[T]) -> String {
   let lt = self.left_top
   let rb = self.right_bottom
-  "Rect[\(lt),\(rb)]"
+  "Rect[\{lt},\{rb}]"
 }
 
 pub fn Rectangle::new[T](lt : Point[T], rb : Point[T]) -> Rectangle[T] {
@@ -59,6 +59,9 @@ fn straight[T : Eq](self : Rectangle[T]) -> Bool {
 }
 
 fn contains[T : Eq + Compare](self : Rectangle[T], v : Point[T]) -> Bool {
-  self.straight().not() && v.x >= self.left() && v.x <= self.right() && v.y >= self.top() &&
+  self.straight().not() &&
+  v.x >= self.left() &&
+  v.x <= self.right() &&
+  v.y >= self.top() &&
   v.y <= self.bottom()
 }

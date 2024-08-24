@@ -135,23 +135,23 @@ pub trait ConfigEntry {
 
 struct StringEntry {
   name : String
-  mut value : String
+  default : String
 }
 
 pub fn name(self : StringEntry) -> String {
   self.name
 }
 
-pub fn StringEntry::new(name : String, value : String) -> StringEntry {
-  { name, value }
+pub fn StringEntry::new(name : String, default : String) -> StringEntry {
+  { name, default }
 }
 
 pub fn load(self : StringEntry) -> String {
-  self.value
+  configuration.settings.get(self.name).or(self.default)
 }
 
 pub fn save(self : StringEntry, value : String) -> Unit {
-  self.value = value
+  configuration.settings[self.name] = value
 }
 
 struct BoolEntry {
@@ -243,13 +243,13 @@ let configHeight : IntEntry = IntEntry::new("Height", "768")
 let configVSync : BoolEntry = BoolEntry::new("VSync", "true")
 
 // The normal font which will be used
-let configFontPathNormal : StringEntry = StringEntry::new(
-  "FontPathNormal", "Roboto-Regular.ttf",
+pub let configFontPathNormal : StringEntry = StringEntry::new(
+  "FontPathNormal", "Roboto-Regular",
 )
 
 // The bold font which will be used
-let configFontPathBold : StringEntry = StringEntry::new(
-  "FontPathBold", "Roboto-Bold.ttf",
+pub let configFontPathBold : StringEntry = StringEntry::new(
+  "FontPathBold", "Roboto-Bold",
 )
 
 // Music Volume
@@ -347,10 +347,3 @@ let configMiniMapSimpleMode : BoolEntry = BoolEntry::new(
 let configMiniMapDefaultHelpers : BoolEntry = BoolEntry::new(
   "MiniMapDefaultHelpers", "false",
 )
-
-/// Access a setting.
-pub fn get_setting[T : ConfigEntry](e : T) -> T {
-  // { raw: configuration.settings[e.0.0].unwrap() }
-  let name = e.name()
-  T::new(name, configuration.settings[name].unwrap())
-}

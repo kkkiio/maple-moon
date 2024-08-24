@@ -381,15 +381,13 @@ fn parse_charentry(recv : @net.InPacket) -> CharEntry! {
     let rankmv = recv.read_int!()
     let curjobrank = recv.read_int!()
     let jobrankmv = recv.read_int!()
-    let rankmc = match rankmv.signum() {
-      1 => '+'
-      -1 => '-'
-      _ => '='
-    }
-    let jobrankmc = match jobrankmv.signum() {
-      1 => '+'
-      -1 => '-'
-      _ => '='
+    let rankmc = if rankmv > 0 { '+' } else if rankmv < 0 { '-' } else { '=' }
+    let jobrankmc = if jobrankmv > 0 {
+      '+'
+    } else if jobrankmv < 0 {
+      '-'
+    } else {
+      '='
     }
     // stats.rank = (currank, rankmc)
     // stats.jobrank = (curjobrank, jobrankmc)

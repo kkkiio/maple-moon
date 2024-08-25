@@ -118,13 +118,6 @@ fn is_enabled(self : UI) -> Bool {
   self.enabled
 }
 
-fn opt_as_iter[T](opt : T?) -> Iter[T] {
-  match opt {
-    Some(v) => Iter::singleton(v)
-    None => Iter::empty()
-  }
-}
-
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   if (
       self.is_key_down.get_or_default(@kb.altLeft, false) ||
@@ -203,8 +196,8 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
           quit,
         ]
         .iter()
-        .flat_map(fn(it) { it |> opt_as_iter })
-        .find_first(fn { _ => true }) {
+        .flat_map(fn(it) { it |> @option.iter })
+        .find_first(fn(it) { it.get_ui_element_base().is_active() }) {
         Some(it) => {
           it.send_key(mapping.action, pressed, escape) |> ignore
           sent = true

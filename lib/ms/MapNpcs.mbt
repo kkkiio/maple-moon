@@ -58,33 +58,28 @@ pub fn send_cursor(
   position : Point[Int],
   viewpos : Point[Int]
 ) -> CursorState {
-  let mut npc_cursor : CursorState? = None
-  self.npcs
-  .iter2()
-  .run(
-    fn(id, map_object) {
-      let npc = map_object
-      if npc.is_active() && npc.inrange(position, viewpos) {
-        if pressed {
-          npc.talk(
-            fn(id, msgtype, b0, b1, speaker, str) {
-              let ui = UINpcTalk::new()
-              UI::get().set_element(ui)
-              ui.change_text(id, msgtype, b0, b1, speaker, str)
-            },
-          )
-          new_talk_to_npc_packet(npc.get_oid()).dispatch()
-          npc_cursor = CursorState::IDLE |> @option.some
-        }
-        npc_cursor = CursorState::CAN_CLICK |> @option.some
-        IterEnd
-      } else {
-        IterContinue
+  for _, map_object in self.npcs {
+    let npc = map_object
+    if npc.is_active() && npc.inrange(position, viewpos) {
+      if pressed {
+        npc.talk(
+          fn(id, msgtype, b0, b1, speaker, str) {
+            let ui = UINpcTalk::new()
+            UI::get().set_element(ui)
+            ui.change_text(id, msgtype, b0, b1, speaker, str)
+          },
+        )
+        new_talk_to_npc_packet(npc.get_oid()).dispatch()
+        return CursorState::IDLE
       }
-    },
-  )
-  |> ignore
-  npc_cursor.or(if pressed { CursorState::CLICKING } else { CursorState::IDLE })
+      return CursorState::CAN_CLICK
+    }
+  }
+  if pressed {
+    CursorState::CLICKING
+  } else {
+    CursorState::IDLE
+  }
 }
 
 struct NpcSpawn {
@@ -93,16 +88,6 @@ struct NpcSpawn {
   position : Point[Int]
   flip : Bool
   fh : Int
-}
-
-pub fn NpcSpawn::new(
-  o : Int,
-  i : Int,
-  p : Point[Int],
-  fl : Bool,
-  f : Int
-) -> NpcSpawn {
-  { oid: o, id: i, position: p, flip: fl, fh: f }
 }
 
 pub fn get_oid(self : NpcSpawn) -> Int {

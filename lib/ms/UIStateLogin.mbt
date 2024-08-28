@@ -116,18 +116,6 @@ pub fn clear_tooltip(self : UIStateLogin, parent : TooltipParent) -> Unit {
   // }
 }
 
-pub fn show_text(
-  self : UIStateLogin,
-  parent : TooltipParent,
-  text : String
-) -> Unit {
-  // self.te_tooltip.set_text(text)
-  // if text.is_empty().not() {
-  //     self.tooltip = Some(self.te_tooltip)
-  //     self.tooltip_parent = parent
-  // }
-}
-
 pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
   if self.focused == type_ {
     self.focused = UIElementType::UI_ELEMENT_NONE

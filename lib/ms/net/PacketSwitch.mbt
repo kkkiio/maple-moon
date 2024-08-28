@@ -323,8 +323,6 @@ struct PacketSwitch {
   handlers : @immut/hashmap.T[Opcode, PacketHandler]
 }
 
-let msg_unhandled : String = "Unhandled packet detected"
-
 pub fn PacketSwitch::new(
   handlers : @immut/hashmap.T[Opcode, PacketHandler]
 ) -> PacketSwitch {
@@ -356,11 +354,9 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
       try {
         handler.handle!(recv)
       } catch {
-        Failure(err) =>
-          @log.warn({ "opcode": opcode, "err": err }, "handle packet failed")
         err =>
           @log.warn({ "opcode": opcode, "err": err }, "handle packet failed")
       }
-    None => @log.warn({ "opcode": opcode }, msg_unhandled)
+    None => @log.warn({ "opcode": opcode }, "Unhandled packet detected")
   }
 }

@@ -61,13 +61,6 @@ pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
 }
 
 pub fn draw(self : UIStateGame, inter : Double, cursor : Point[Int]) -> Unit {
-  // for (const auto &type: element_order_) {
-  //     const auto &element = elements_[type];
-
-  //     if (element && element->is_active()) {
-  //         element->draw(inter);
-  //     }
-  // }
   self.element_order.each(
     fn(t) {
       match self.elements.get(t) {
@@ -412,14 +405,6 @@ pub fn show_skill(
   level : Int,
   masterlevel : Int,
   expiration : Int64
-) -> Unit {
-  // Implementation goes here
-}
-
-pub fn show_text(
-  self : UIStateGame,
-  parent : TooltipParent,
-  text : String
 ) -> Unit {
   // Implementation goes here
 }

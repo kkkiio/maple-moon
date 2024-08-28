@@ -1,5 +1,5 @@
 struct Session {
-  forwarder : Forwarder
+  forwarder : (Bytes) -> Unit
   mut conn : Connection
 }
 
@@ -9,7 +9,7 @@ enum Connection {
   READY(~socket : Socket)
 }
 
-pub fn Session::new(forwarder : Forwarder) -> Session {
+pub fn Session::new(forwarder : (Bytes) -> Unit) -> Session {
   { forwarder, conn: CLOSED }
 }
 
@@ -58,7 +58,7 @@ pub fn read(self : Session) -> Unit {
     READY(_) as conn => {
       let res = conn.socket.read()
       if res.bytes.length() > 0 {
-        self.forwarder.forward(res.bytes)
+        (self.forwarder)(res.bytes)
       }
       if res.eof {
         conn.socket.close()

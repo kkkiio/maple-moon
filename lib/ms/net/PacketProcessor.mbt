@@ -5,7 +5,8 @@ struct PacketProcessor {
 fn PacketProcessor::new(
   handlers : @immut/hashmap.T[Opcode, PacketHandler]
 ) -> PacketProcessor {
-  { session: Session::new(PacketSwitch::new(handlers)) }
+  let switch = PacketSwitch::new(handlers)
+  { session: Session::new(fn(it) { switch.forward(it) }) }
 }
 
 struct Singleton[T] {

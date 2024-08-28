@@ -16,7 +16,7 @@ struct UINpcTalk {
   mut show_slider : Bool
   mut draw_text : Bool
   // slider:Slider
-  t : @npc.TalkType?
+  mut t : @npc.TalkType?
   mut formatted_text : String
   mut formatted_text_pos : Int
   mut timestep : Int
@@ -223,23 +223,12 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
     Some(t) =>
       match t {
         @npc.TalkType::SEND_NEXT | @npc.TalkType::SEND_OK =>
-          // match bid {
-          //   bid_next => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-          //   bid_prev => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   _ => ()
-          // }
           if bid == bid_next {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           } else if bid == bid_prev {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
         @npc.TalkType::SEND_NEXT_PREV =>
-          // match bid {
-          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-          //   bid_next => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-          //   bid_prev => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   _ => ()
-          // }
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_next {
@@ -248,12 +237,6 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
         @npc.TalkType::SEND_YESNO =>
-          // match bid {
-          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-          //   bid_no => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   bid_yes => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-          //   _ => ()
-          // }
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_no {
@@ -262,12 +245,6 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
         @npc.TalkType::SEND_ACCEPT_DECLINE =>
-          // match bid {
-          //   bid_close => new_npc_talk_more_packet(t.int_value(), -1).dispatch()
-          //   bid_qno => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   bid_qyes => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-          //   _ => ()
-          // }
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_qno {
@@ -277,24 +254,12 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
           }
         @npc.TalkType::SEND_GET_TEXT => ()
         @npc.TalkType::SEND_GET_NUMBER =>
-          // match bid {
-          //   bid_close => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   bid_ok => new_npc_talk_more_packet(t.int_value(), 1).dispatch()
-          //   _ => ()
-          // }
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           } else if bid == bid_ok {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
         @npc.TalkType::SEND_SIMPLE =>
-          // match bid {
-          //   bid_close => new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-          //   _ => {
-          //     let btn = self.content.text_button_content[bid - bid_text_button]
-          //     new_npc_talk_more_packet_with_selection(btn.option_number).dispatch()
-          //   }
-          // }
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           } else {
@@ -432,7 +397,7 @@ pub fn change_text(
   speakerbyte : Int,
   tx : String
 ) -> Unit {
-  let t = @npc.TalkType::from_int(msgtype, style_b0, style_b1)
+  self.t = @npc.TalkType::from_int(msgtype, style_b0, style_b1)
   self.timestep = 0
   self.draw_text = true
   self.formatted_text_pos = 0
@@ -486,7 +451,7 @@ pub fn change_text(
   .get_button_base()
   ..set_position(Point::new(9, y_cord))
   .set_active(true)
-  match t {
+  match self.t {
     Some(t) =>
       match t {
         @npc.TalkType::SEND_OK =>

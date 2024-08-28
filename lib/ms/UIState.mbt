@@ -14,7 +14,6 @@ trait UIState {
   // show_equip(Self, TooltipParent, Int) -> Unit
   // show_item(Self, TooltipParent, Int) -> Unit
   // show_skill(Self, TooltipParent, Int, Int, Int, Int64) -> Unit
-  // show_text(Self, TooltipParent, String) -> Unit
   // show_map(Self, TooltipParent, String, String, Int, Bool) -> Unit
   set_element(Self, Bool, UIElement) -> Unit
   set_or_toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit
@@ -92,10 +91,6 @@ fn show_skill(
   d : Int,
   e : Int64
 ) -> Unit {
-
-}
-
-fn show_text(self : UIStateNull, a : TooltipParent, b : String) -> Unit {
 
 }
 

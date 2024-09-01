@@ -501,7 +501,9 @@ pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
 //   }
 // }
 
-fn etc_loader() -> @resource.ResourceLoader = "resource" "etc_loader"
+fn etc_loader() -> @resource.Loader {
+  @resource.Loader::new("etc")
+}
 
 pub trait BgTask {
   update(Self) -> Bool

@@ -61,7 +61,7 @@ pub fn get_button_base(self : TextButton) -> ButtonBase {
 // }
 pub fn draw(self : TextButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
-    self.text.draw(parentpos |> DrawArgument::from_point)
+    self.text.draw(parentpos)
   }
 }
 
@@ -76,7 +76,7 @@ pub fn draw_in_range(
   range : Range[Int]
 ) -> Unit {
   if self.base.active {
-    self.text.draw(parentpos |> DrawArgument::from_point, vertical=range)
+    self.text.draw(parentpos, text_y_clip=range |> @option.some)
   }
 }
 

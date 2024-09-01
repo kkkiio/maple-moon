@@ -1,20 +1,50 @@
-pub type ResourceLoader
+type ResourceLoader
 
-pub fn ui_loader() -> ResourceLoader = "resource" "ui_loader"
+fn get_resource_loader(name : Js_string) -> ResourceLoader = "resource" "get_loader"
 
-pub fn sound_loader() -> ResourceLoader = "resource" "sound_loader"
+struct Loader {
+  name : String
+  loader : ResourceLoader
+}
 
-pub fn map_loader() -> ResourceLoader = "resource" "map_loader"
+pub fn Loader::new(name : String) -> Loader {
+  { name, loader: get_resource_loader(name.to_js_string()) }
+}
 
-pub fn character_loader() -> ResourceLoader = "resource" "character_loader"
+pub fn ui_loader() -> Loader {
+  { name: "ui", loader: get_resource_loader("ui".to_js_string()) }
+}
 
-pub fn string_loader() -> ResourceLoader = "resource" "string_loader"
+pub fn sound_loader() -> Loader {
+  { name: "sound", loader: get_resource_loader("sound".to_js_string()) }
+}
 
-pub fn reactor_loader() -> ResourceLoader = "resource" "reactor_loader"
+pub fn map_loader() -> Loader {
+  { name: "map", loader: get_resource_loader("map".to_js_string()) }
+}
 
-pub fn map001_loader() -> ResourceLoader = "resource" "map001_loader"
+pub fn character_loader() -> Loader {
+  { name: "character", loader: get_resource_loader("character".to_js_string()) }
+}
 
-pub fn map_pretty_loader() -> ResourceLoader = "resource" "map_pretty_loader"
+pub fn string_loader() -> Loader {
+  { name: "string", loader: get_resource_loader("string".to_js_string()) }
+}
+
+pub fn reactor_loader() -> Loader {
+  { name: "reactor", loader: get_resource_loader("reactor".to_js_string()) }
+}
+
+pub fn map001_loader() -> Loader {
+  { name: "map001", loader: get_resource_loader("map001".to_js_string()) }
+}
+
+pub fn map_pretty_loader() -> Loader {
+  {
+    name: "map_pretty",
+    loader: get_resource_loader("map_pretty".to_js_string()),
+  }
+}
 
 type JsJson
 
@@ -37,20 +67,20 @@ fn as_moonjson(self : JsJson) -> @json.JsonValue {
   @json.parse?(as_jsonstring(self)).unwrap()
 }
 
-pub fn load_res(self : ResourceLoader, path : Array[String]) -> NxNode {
+pub fn load_res(self : Loader, path : Array[String]) -> NxNode {
   if path.contains("") {
     abort("path contains empty part, path=\{path}")
   }
   {
     loader: self,
     name: path[path.length() - 1],
-    desc: self.load_desc(join_path(path)).as_moonjson(),
+    desc: self.loader.load_desc(join_path(path)).as_moonjson(),
     path: path |> @immut/array.from_array,
   }
 }
 
 struct NxNode {
-  loader : ResourceLoader
+  loader : Loader
   name : String
   desc : @json.JsonValue
   path : @immut/array.T[String]
@@ -68,7 +98,7 @@ pub fn path(self : NxNode) -> @immut/array.T[String] {
   self.path
 }
 
-pub fn get_loader(self : NxNode) -> ResourceLoader {
+pub fn get_loader(self : NxNode) -> Loader {
   self.loader
 }
 
@@ -161,18 +191,47 @@ pub fn to_string(self : NxNode) -> String {
   "(\{name}=\{desc})"
 }
 
-pub fn load_bitmap(self : ResourceLoader, bid : Int) -> Bitmap = "resource" "load_bitmap"
+pub fn get_bitmap(self : NxNode) -> Bitmap? {
+  self["__b"]
+  .get_int()
+  .to_option()
+  .map(
+    fn(bid) {
+      {
+        image: self.loader.loader.load_bitmap(bid),
+        id: self.loader.name + "/" + bid.to_string(),
+        width: self["__w"].get_int().unwrap(),
+        height: self["__h"].get_int().unwrap(),
+      }
+    },
+  )
+}
 
-pub type Bitmap
+fn load_bitmap(self : ResourceLoader, bid : Int) -> @graphics.Image = "resource" "load_bitmap"
+
+struct Bitmap {
+  image : @graphics.Image
+  id : String
+  width : Int
+  height : Int
+}
+
+pub fn image(self : Bitmap) -> @graphics.Image {
+  self.image
+}
 
 /// Global unique id
-pub fn id(self : Bitmap) -> Int = "bitmap" "id"
+pub fn id(self : Bitmap) -> String {
+  self.id
+}
 
-pub fn width(self : Bitmap) -> Int = "bitmap" "width"
+pub fn width(self : Bitmap) -> Int {
+  self.width
+}
 
-pub fn height(self : Bitmap) -> Int = "bitmap" "height"
-
-pub fn loading(self : Bitmap) -> Bool = "bitmap" "loading"
+pub fn height(self : Bitmap) -> Int {
+  self.height
+}
 
 fn join_path(parts : Array[String]) -> String {
   parts.join("/")

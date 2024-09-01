@@ -309,7 +309,9 @@ pub fn get_layer(self : Npc) -> Int {
   self.base.get_layer()
 }
 
-fn npc_loader() -> @resource.ResourceLoader = "resource" "npc_loader"
+fn npc_loader() -> @resource.Loader {
+  @resource.Loader::new("npc")
+}
 
 struct SpawnNpcHandler {} derive(Default)
 

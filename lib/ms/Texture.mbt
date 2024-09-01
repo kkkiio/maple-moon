@@ -1,13 +1,13 @@
 // app/src/main/cpp/src/Graphics/Texture.h
 
 struct Texture {
-  bitmap : Bitmap?
+  bitmap : @resource.Bitmap?
   mut origin : Point[Int]
   dimensions : Point[Int]
 } derive(Default)
 
 pub fn to_string(self : Texture) -> String {
-  let bid = self.bitmap.map_or(-1, fn(bitmap) { bitmap.id() })
+  let bid = self.bitmap.map_or("", fn(bitmap) { bitmap.id() })
   let origin = self.origin
   let dimensions = self.dimensions
   "Texture{bid=\{bid}, origin=\{origin}, dimensions=\{dimensions}}"
@@ -22,15 +22,12 @@ fn Texture::from_resource(src : NxNode) -> Texture {
   // let src_path = src.path
   // println("loading texture from resource \(loader_name) \(src_path)")
   // TODO: source,_outlink,_inlink
-  match src["__b"].get_int().to_option() {
-    Some(bid) =>
+  match src.get_bitmap() {
+    Some(bmp) =>
       {
-        bitmap: Some(src.get_loader().load_bitmap(bid)),
+        bitmap: Some(bmp),
         origin: (src["origin"] |> Point::from_resource).unwrap(),
-        dimensions: {
-          x: src["__w"].get_int().unwrap(),
-          y: src["__h"].get_int().unwrap(),
-        },
+        dimensions: { x: bmp.width(), y: bmp.height() },
       }
     None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
   }

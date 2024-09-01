@@ -175,15 +175,15 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let center_pos = speaker_pos + Point::new(self.nametag.width() / 2, 0)
   self.speaker.draw(DrawArgument::new5(center_pos, true))
   self.nametag.draw(speaker_pos |> DrawArgument::from_point)
-  self.name.draw(center_pos + Point::new(0, -4) |> DrawArgument::from_point)
+  self.name.draw(center_pos + Point::new(0, -4))
   if self.show_slider {
     let text_min_height = self.base.position.y + self.top.height() - 1
     let mut init_height = 19
     for element in self.content.text_content {
       element.draw(
-        self.base.position + Point::new(162, init_height - self.offset * 248)
-        |> DrawArgument::from_point,
-        vertical=Range::new(text_min_height, text_min_height + self.height),
+        self.base.position + Point::new(162, init_height - self.offset * 248),
+        text_y_clip=Range::new(text_min_height, text_min_height + self.height)
+          |> @option.some,
       )
       init_height += element.height()
     }
@@ -202,10 +202,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
       init_height += element.height()
     }
     for element in self.content.text_content {
-      element.draw(
-        self.base.position + Point::new(166, init_height)
-        |> DrawArgument::from_point,
-      )
+      element.draw(self.base.position + Point::new(166, init_height))
       init_height += element.height()
     }
   }

@@ -3,7 +3,6 @@ struct GraphicsGL {
   vwidth : Int
   vheight : Int
   screen : Rectangle[Int]
-  fonts : @immut/hashmap.T[FontId, Font]
   atlas : Atlas
   mut locked : Bool
 }
@@ -14,44 +13,29 @@ struct Atlas {
   minlosize : Int
   font_ymax : Int
   leftovers : @quadtree.Tree[Int, Leftover]
-  offsets : Map[Int, Offset]
+  offsets : Map[String, TexOffset]
   mut wasted : Int
   mut next_id : Int
   mut border : Point[Int]
   mut y_range : Range[Int]
-  debug : Bool
 }
 
 fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
   let atlasw = 8192
   let atlash = 8192
-  let loader = FontsLoader::new(atlasw)
-  let font_normal = @config.configFontPathNormal.load()
-  let font_bold = @config.configFontPathBold.load()
-  loader.add_font(font_normal, FontId::A11M, 11)
-  loader.add_font(font_bold, FontId::A11B, 11)
-  loader.add_font(font_normal, FontId::A12M, 12)
-  loader.add_font(font_bold, FontId::A12B, 12)
-  loader.add_font(font_normal, FontId::A13M, 13)
-  loader.add_font(font_bold, FontId::A13B, 13)
-  loader.add_font(font_bold, FontId::A15B, 15)
-  loader.add_font(font_normal, FontId::A18M, 18)
-  let font_ymax = loader.font_ymax
   {
     quads: [],
-    fonts: loader.fonts.iter() |> @immut/hashmap.from_iter,
     atlas: {
       width: atlasw,
       height: atlash,
       minlosize: 32,
-      font_ymax,
+      font_ymax: 0,
       leftovers: @quadtree.Tree::new(),
       offsets: Map::new(),
       wasted: 0,
       next_id: 1,
-      border: { x: 0, y: font_ymax },
+      border: { x: 0, y: 0 },
       y_range: Range::default(),
-      debug: false,
     },
     vwidth,
     vheight,
@@ -100,13 +84,13 @@ pub fn draw_rectangle(
   }
   let color = Color::new_rgba(red, green, blue, alpha)
   self.quads.push(
-    Quad::new(x, x + width, y, y + height, Offset::default(), color, 0.0),
+    Quad::new(x, x + width, y, y + height, TexOffset::default(), color, 0.0),
   )
 }
 
 pub fn draw_bitmap(
   self : GraphicsGL,
-  bmp : Bitmap,
+  bmp : @resource.Bitmap,
   rect : Rectangle[Int],
   color : Color,
   angle : Double
@@ -131,7 +115,7 @@ pub fn draw_bitmap(
       rect.right(),
       rect.top(),
       rect.bottom(),
-      self.atlas.get_offset(bmp),
+      self.atlas.get_offset(bmp.id(), bmp.image()),
       color,
       angle,
     ),
@@ -140,161 +124,54 @@ pub fn draw_bitmap(
 
 pub fn draw_text(
   self : GraphicsGL,
-  args : DrawArgument,
-  vertical : Range[Int],
-  layout : TextLayout,
-  id : FontId,
-  colorid : ColorName,
-  background : TextBackground
+  image : @graphics.Image,
+  textId : String,
+  point : Point[Int],
+  ~text_y_clip : Range[Int]? = None
 ) -> Unit {
   if self.locked {
     return
   }
-  let color = args.color
-  let text = layout.text
-  if text.is_empty() || color.invisible() {
+  if image.loading() {
     return
   }
-  let font = self.fonts[id].unwrap()
-  let x = args.pos.x
-  let y = args.pos.y
-  let w = layout.width()
-  let h = layout.height()
-  let minheight = if vertical.first() > 0 {
-    vertical.first()
-  } else {
-    self.screen.top()
-  }
-  let maxheight = if vertical.second() > 0 {
-    vertical.second()
-  } else {
-    self.screen.bottom()
-  }
-  match background {
-    // If ever changing code in here confirm placements with map 10000
-    NAMETAG =>
-      for line in layout {
-        let left = x + line.position.x - 1
-        let right = left + w + 3
-        let top = y + line.position.y - font.linespace() + 6
-        let bottom = top + h - 2
-        let ntcolor = Color::new_rgba(0.0, 0.0, 0.0, 0.6)
-        self.quads.push(
-          Quad::new(left, right, top, bottom, Offset::default(), ntcolor, 0.0),
-        )
-        self.quads.push(
-          Quad::new(
-            left - 1,
-            left,
-            top + 1,
-            bottom - 1,
-            Offset::default(),
-            ntcolor,
-            0.0,
-          ),
-        )
-        self.quads.push(
-          Quad::new(
-            right,
-            right + 1,
-            top + 1,
-            bottom - 1,
-            Offset::default(),
-            ntcolor,
-            0.0,
-          ),
-        )
-      }
-    TextBackground::NONE => ()
-  }
-  for line in layout {
-    let position = line.position
-    for word in line.words {
-      let mut ax = position.x + layout.advance(word.first)
-      let ay = position.y
-      let abscolor = Color::from_name(word.color.or(colorid))
-      for pos in word.first.until(word.last) {
-        let c = text[pos]
-        let ch = font.chars[c.to_int()]
-        let char_x = x + ax + ch.bl
-        let char_y = y + ay - ch.bt
-        let char_width = ch.bw
-        let char_height = ch.bh
-        let mut char_bottom = char_y + char_height
-        let offset = if char_bottom > maxheight {
-          let bottom_adjust = char_bottom - maxheight
-          if bottom_adjust < 10 {
-            char_bottom -= bottom_adjust
-            { ..ch.offset, bottom: ch.offset.bottom - bottom_adjust }
-          } else {
-            continue
-          }
-        } else {
-          ch.offset
-        }
-        if char_y < minheight {
-          continue
-        }
-        if ax == 0 && c == ' ' {
-          continue
-        }
-        ax += ch.ax
-        if char_width <= 0 || char_height <= 0 {
-          continue
-        }
-        self.quads.push(
-          Quad::new(
-            char_x,
-            char_x + char_width,
-            char_y,
-            char_bottom,
-            offset,
-            abscolor,
-            0.0,
-          ),
-        )
-      }
-    }
-  }
+
+  // if (rect.overlaps(SCREEN).not()) {
+  //     return;
+  // }
+
+  let offset = self.atlas.get_offset(textId, image)
+  // TODO: add text_y_clip
+  self.quads.push(
+    Quad::new(
+      point.x,
+      point.x + image.width(),
+      point.y,
+      point.y + image.height(),
+      offset,
+      Color::from_name(ColorName::BLACK),
+      0.0,
+    ),
+  )
 }
 
-pub fn create_layout(
+pub fn create_text_image(
   self : GraphicsGL,
-  chars : Array[Char],
+  text : String,
   id : FontId,
-  alignment : TextAlignment,
-  maxwidth : Int,
-  formatted : Bool,
-  line_adj : Int
-) -> TextLayout {
-  let length = chars.length()
-  if length == 0 {
-    return TextLayout::new([])
+  max_width : Int
+) -> @graphics.Image {
+  let fontName = if id.is_bold() {
+    @config.configFontPathBold.load()
+  } else {
+    @config.configFontPathNormal.load()
   }
-  let builder = LayoutBuilder::new(
-    chars,
-    self.fonts[id].unwrap(),
-    alignment,
-    maxwidth,
-    formatted,
-    line_adj,
+  text_create_image(
+    text.to_js_string(),
+    id.height(),
+    fontName.to_js_string(),
+    max_width,
   )
-  let mut first = 0
-  let mut offset = 0
-  while offset < length {
-    let last = (offset + 1)
-      .until(length)
-      .find_first(
-        fn(i) {
-          let u = chars[i]
-          u == ' ' || u == '\\' || u == '#'
-        },
-      )
-      .or(length)
-    first = builder.add(first, offset, last)
-    offset = last
-  }
-  builder.finish(first, offset)
 }
 
 fn flush(self : GraphicsGL, opacity : Double) -> Unit {
@@ -308,7 +185,7 @@ fn flush(self : GraphicsGL, opacity : Double) -> Unit {
         self.screen.right(),
         self.screen.top(),
         self.screen.bottom(),
-        Offset::default(),
+        TexOffset::default(),
         color,
         0.0,
       ),
@@ -317,7 +194,6 @@ fn flush(self : GraphicsGL, opacity : Double) -> Unit {
   let triangles = Vertices::new(self.quads.length() * 6)
   self.quads.eachi(
     fn(i, quad) {
-      // debug(quad)
       setv(triangles, i * 6 + 0, quad.vertices[0])
       setv(triangles, i * 6 + 1, quad.vertices[1])
       setv(triangles, i * 6 + 2, quad.vertices[2])
@@ -352,8 +228,7 @@ fn clear_scene(self : GraphicsGL) -> Unit {
   }
 }
 
-fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
-  let id = bmp.id()
+fn get_offset(self : Atlas, id : String, bmp : @graphics.Image) -> TexOffset {
   match self.offsets.get(id) {
     Some(c) => return c
     None => ()
@@ -361,7 +236,7 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
   let width = bmp.width()
   let height = bmp.height()
   if width <= 0 || height <= 0 {
-    return Offset::default()
+    return TexOffset::default()
   }
   let (x, y) = match
     self.leftovers.ceiling_key(Leftover::fromxywh(0, 0, width, height)) {
@@ -469,14 +344,8 @@ fn get_offset(self : Atlas, bmp : Bitmap) -> Offset {
       (x, y)
     }
   }
-  if self.debug {
-    let used = self.width * self.border.y + self.border.x * self.y_range.b
-    let usedpercent = used.to_double() / (self.width * self.height).to_double()
-    let wastedpercent = self.wasted.to_double() / used.to_double()
-    println("Used: [\{usedpercent}] Wasted: [\{wastedpercent}]")
-  }
   glTexSubImage2D(x, y, bmp)
-  let offset = Offset::new(x, y, width, height)
+  let offset = TexOffset::new(x, y, width, height)
   self.offsets.set(id, offset)
   offset
 }
@@ -499,7 +368,7 @@ fn Quad::new(
   right : Int,
   top : Int,
   bottom : Int,
-  offset : Offset,
+  offset : TexOffset,
   color : Color,
   rotation : Double
 ) -> Quad {
@@ -585,18 +454,18 @@ fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
   }
 }
 
-struct Offset {
+struct TexOffset {
   left : Int
   right : Int
   top : Int
   bottom : Int
 }
 
-fn Offset::new(x : Int, y : Int, width : Int, height : Int) -> Offset {
+fn TexOffset::new(x : Int, y : Int, width : Int, height : Int) -> TexOffset {
   { left: x, right: x + width, top: y, bottom: y + height }
 }
 
-fn Offset::default() -> Offset {
+fn TexOffset::default() -> TexOffset {
   { left: 0, right: 0, top: 0, bottom: 0 }
 }
 
@@ -633,105 +502,7 @@ fn set(
   color_a : Double
 ) = "vertices" "set"
 
-fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.Bitmap) = "gl" "texSubImage2D"
-
-pub typealias Bitmap = @resource.Bitmap
-
-struct FontsLoader {
-  gloader : FtFontsLoader
-  atlasw : Int
-  fonts : Map[FontId, Font]
-  mut font_ymax : Int
-  mut font_border : Point[Int]
-}
-
-fn FontsLoader::new(atlasw : Int) -> FontsLoader {
-  {
-    gloader: FtFontsLoader::new(),
-    atlasw,
-    fonts: {  },
-    font_ymax: 0,
-    font_border: { x: 0, y: 0 },
-  }
-}
-
-fn add_font(
-  self : FontsLoader,
-  name : String,
-  id : FontId,
-  pixelh : Int
-) -> Unit {
-  let mut width = 0
-  let mut height = 0
-  for c in (32).until(256) {
-    let bmp = self.gloader.load_glyph(
-      name.to_js_string(),
-      pixelh,
-      Char::from_int(c).to_string().to_js_string(),
-    )
-    let w = bmp.width()
-    let h = bmp.height()
-    width = width + w
-    if h > height {
-      height = h
-    }
-  }
-  if self.font_border.x + width > self.atlasw {
-    self.font_border = { x: 0, y: self.font_ymax }
-    self.font_ymax = 0
-  }
-  let x = self.font_border.x
-  let y = self.font_border.y
-  self.font_border = { x: x + width, y }
-  if height > self.font_ymax {
-    self.font_ymax = height
-  }
-  let f = Font::new(~height)
-  let mut ox = x
-  let oy = y
-  for c in (32).until(256) {
-    let fc = self.gloader.load_glyph(
-      name.to_js_string(),
-      pixelh,
-      Char::from_int(c).to_string().to_js_string(),
-    )
-    let ax = fc.advance_x()
-    let bl = fc.bearing_x()
-    let bt = fc.bearing_y()
-    let bw = fc.width()
-    let bh = fc.height()
-    glTexSubImage2D(ox, oy, fc.load_bitmap())
-    let offset = Offset::new(ox, oy, bw, bh)
-    f.chars[c] = { ax, bw, bh, bl, bt, offset }
-    ox += bw
-  }
-  self.fonts[id] = f
-}
-
-type FtFontsLoader
-
-fn FtFontsLoader::new() -> FtFontsLoader = "font" "new_ftloader"
-
-fn load_glyph(
-  self : FtFontsLoader,
-  name : Js_string,
-  pixelh : Int,
-  c : Js_string
-) -> FtGlyph = "font" "load_glyph"
-
-type FtGlyph
-
-fn width(self : FtGlyph) -> Int = "font" "width"
-
-fn height(self : FtGlyph) -> Int = "font" "height"
-
-fn advance_x(self : FtGlyph) -> Int = "font" "advance_x"
-
-fn bearing_x(self : FtGlyph) -> Int = "font" "bearing_x"
-
-fn bearing_y(self : FtGlyph) -> Int = "font" "bearing_y"
-
-fn load_bitmap(self : FtGlyph) -> Bitmap = "font" "load_bitmap"
+fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @graphics.Image) = "gl" "texSubImage2D"
 
 pub enum FontId {
   A11M
@@ -744,287 +515,26 @@ pub enum FontId {
   A18M
 } derive(Eq, Show, Hash)
 
-struct Font {
-  height : Int
-  chars : FixedArray[FontChar]
-}
-
-struct FontChar {
-  ax : Int
-  bw : Int
-  bh : Int
-  bl : Int
-  bt : Int
-  offset : Offset
-}
-
-fn Font::new(~height : Int = 0) -> Font {
-  {
-    height,
-    chars: FixedArray::make(
-      256,
-      { ax: 0, bw: 0, bh: 0, bl: 0, bt: 0, offset: Offset::new(0, 0, 0, 0) },
-    ),
+pub fn is_bold(self : FontId) -> Bool {
+  match self {
+    A11B | A12B | A13B | A15B => true
+    _ => false
   }
 }
 
-fn linespace(self : Font) -> Int {
-  (self.height.to_double() * 1.35 + 1).to_int()
-}
-
-struct TextLayout {
-  text : Array[Char]
-  lines : Array[TextLine]
-  advances : Array[Int]
-  dimensions : Point[Int]
-  end_offset : Point[Int]
-}
-
-fn TextLayout::new(
-  text : Array[Char],
-  ~lines : Array[TextLine] = [],
-  ~advances : Array[Int] = [],
-  ~w : Int = 0,
-  ~h : Int = 0,
-  ~ex : Int = 0,
-  ~ey : Int = 0
-) -> TextLayout {
-  {
-    text,
-    lines,
-    advances,
-    dimensions: Point::new(w, h),
-    end_offset: Point::new(ex, ey),
+pub fn height(self : FontId) -> Int {
+  match self {
+    A11M | A11B => 11
+    A12M | A12B => 12
+    A13M | A13B => 13
+    A15B => 15
+    A18M => 18
   }
 }
 
-fn width(self : TextLayout) -> Int {
-  self.dimensions.x
-}
-
-fn height(self : TextLayout) -> Int {
-  self.dimensions.y
-}
-
-fn advance(self : TextLayout, index : Int) -> Int {
-  if index < self.advances.length() {
-    self.advances[index]
-  } else {
-    0
-  }
-}
-
-fn get_dimensions(self : TextLayout) -> Point[Int] {
-  self.dimensions
-}
-
-fn get_endoffset(self : TextLayout) -> Point[Int] {
-  self.end_offset
-}
-
-fn iter(self : TextLayout) -> Iter[TextLine] {
-  self.lines.iter()
-}
-
-struct TextLine {
-  words : FixedArray[TextWord]
-  position : Point[Int]
-}
-
-struct TextWord {
-  first : Int
-  last : Int
-  color : ColorName?
-}
-
-pub enum TextBackground {
-  NONE
-  NAMETAG
-}
-
-struct LayoutBuilder {
-  text : Array[Char]
-  font : Font
-  alignment : TextAlignment
-  mut color : ColorName?
+fn text_create_image(
+  text : Js_string,
+  font_size : Int,
+  font_name : Js_string,
   max_width : Int
-  formatted : Bool
-  mut ax : Int
-  mut ay : Int
-  lines : Array[TextLine]
-  words : Array[TextWord]
-  advances : Array[Int]
-  mut width : Int
-  mut endy : Int
-  line_adj : Int
-}
-
-fn LayoutBuilder::new(
-  text : Array[Char],
-  font : Font,
-  alignment : TextAlignment,
-  max_width : Int,
-  formatted : Bool,
-  line_adj : Int
-) -> LayoutBuilder {
-  {
-    text,
-    font,
-    alignment,
-    max_width: if max_width == 0 {
-      800
-    } else {
-      max_width
-    },
-    formatted,
-    line_adj,
-    color: None,
-    ax: 0,
-    ay: font.linespace(),
-    lines: [],
-    words: [],
-    advances: [],
-    width: 0,
-    endy: 0,
-  }
-}
-
-fn add(self : LayoutBuilder, prev : Int, first : Int, last : Int) -> Int {
-  let text = self.text
-  if first == last {
-    return prev
-  }
-  let last_color = self.color
-  let mut skip = 0
-  let mut linebreak = false
-  if self.formatted {
-    if text[first] == '\\' {
-      if first + 1 < last {
-        if text[first + 1] == 'n' {
-          linebreak = true
-        } else if text[first + 1] == 'r' {
-          linebreak = self.ax > 0
-        }
-        skip += 1
-      }
-      skip += 1
-    } else if text[first] == '#' {
-      if first + 1 < last {
-        if text[first + 1] == 'k' {
-          self.color = ColorName::DARKGREY |> @option.some
-          skip += 1
-        } else if text[first + 1] == 'b' {
-          self.color = ColorName::BLUE |> @option.some
-          skip += 1
-        } else if text[first + 1] == 'r' {
-          self.color = ColorName::RED |> @option.some
-          skip += 1
-        } else if text[first + 1] == 'c' {
-          self.color = ColorName::ORANGE |> @option.some
-          skip += 1
-        } else if text[first + 1] == 'L' {
-          skip += 1
-        } else if text[first + 1] == 'l' {
-          skip += 1
-        }
-      }
-      skip += 1
-    }
-  }
-  let mut wordwidth = 0
-  if linebreak.not() {
-    for i in first.until(last) {
-      let c = text[i]
-      if c.to_int() < 32 {
-        if c == '\n' {
-          linebreak = true
-        } else if c == '\r' {
-          linebreak = self.ax > 0
-        }
-        continue
-      }
-      wordwidth += self.font.chars[c.to_int()].ax
-      if wordwidth > self.max_width {
-        if last - first == 1 {
-          return last
-        }
-        let prev = self.add(prev, first, i)
-        return self.add(prev, i, last)
-      }
-    }
-  }
-  let newword = skip > 0
-  let newline = linebreak || self.ax + wordwidth > self.max_width
-  if newword || newline {
-    self.add_word(prev, first, last_color)
-  }
-  if newline {
-    self.add_line()
-    self.endy = self.ay
-    self.ax = 0
-    self.ay += self.font.linespace()
-    if self.lines.is_empty().not() {
-      self.ay -= self.line_adj
-    }
-  }
-  for pos in first.until(last) {
-    let c = text[pos]
-    let ch = self.font.chars[c.to_int()]
-    self.advances.push(self.ax)
-    if pos < first + skip || (newline && c == ' ') {
-      continue
-    }
-    if c.to_int() < 32 {
-      continue
-    }
-    self.ax += ch.ax
-    if self.width < self.ax {
-      self.width = self.ax
-    }
-  }
-  if newword || newline {
-    return first + skip
-  }
-  prev
-}
-
-fn add_word(
-  self : LayoutBuilder,
-  first : Int,
-  last : Int,
-  color : ColorName?
-) -> Unit {
-  self.words.push({ first, last, color })
-}
-
-fn add_line(self : LayoutBuilder) -> Unit {
-  let mut line_x = 0
-  let line_y = self.ay
-  match self.alignment {
-    TextAlignment::CENTER => line_x -= self.ax / 2
-    TextAlignment::RIGHT => line_x -= self.ax
-    TextAlignment::LEFT => ()
-  }
-  self.lines.push(
-    {
-      words: self.words |> FixedArray::from_array,
-      position: { x: line_x, y: line_y },
-    },
-  )
-  self.words.clear()
-}
-
-fn finish(self : LayoutBuilder, first : Int, last : Int) -> TextLayout {
-  self.add_word(first, last, self.color)
-  self.add_line()
-  self.advances.push(self.ax)
-  TextLayout::new(
-    self.text,
-    lines=self.lines,
-    advances=self.advances,
-    w=self.width,
-    h=self.ay,
-    ex=self.ax,
-    ey=self.endy,
-  )
-}
+) -> @graphics.Image = "text" "create_image"

@@ -131,25 +131,21 @@ fn read_le_uint16(bytes : Bytes, offset : Int) -> UInt {
 }
 
 fn read_le_uint32(bytes : Bytes, offset : Int) -> UInt {
-  bytes[offset].to_uint() + bytes[offset + 1].to_uint().lsl(8) + bytes[offset + 2]
-  .to_uint()
-  .lsl(16) + bytes[offset + 3].to_uint().lsl(24)
+  bytes[offset].to_uint() +
+  bytes[offset + 1].to_uint().lsl(8) +
+  bytes[offset + 2].to_uint().lsl(16) +
+  bytes[offset + 3].to_uint().lsl(24)
 }
 
 fn read_le_uint64(bytes : Bytes, offset : Int) -> UInt64 {
-  bytes[offset].to_uint().to_uint64() + bytes[offset + 1]
-  .to_uint()
-  .to_uint64()
-  .lsl(8) + bytes[offset + 2].to_uint().to_uint64().lsl(16) + bytes[offset + 3]
-  .to_uint()
-  .to_uint64()
-  .lsl(24) + bytes[offset + 4].to_uint().to_uint64().lsl(32) + bytes[offset + 5]
-  .to_uint()
-  .to_uint64()
-  .lsl(40) + bytes[offset + 6].to_uint().to_uint64().lsl(48) + bytes[offset + 7]
-  .to_uint()
-  .to_uint64()
-  .lsl(56)
+  bytes[offset].to_uint().to_uint64() +
+  bytes[offset + 1].to_uint().to_uint64().lsl(8) +
+  bytes[offset + 2].to_uint().to_uint64().lsl(16) +
+  bytes[offset + 3].to_uint().to_uint64().lsl(24) +
+  bytes[offset + 4].to_uint().to_uint64().lsl(32) +
+  bytes[offset + 5].to_uint().to_uint64().lsl(40) +
+  bytes[offset + 6].to_uint().to_uint64().lsl(48) +
+  bytes[offset + 7].to_uint().to_uint64().lsl(56)
 }
 
 pub type! ReadPacketError String

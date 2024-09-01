@@ -2,8 +2,7 @@ struct Text {
   font : FontId
   alignment : TextAlignment
   color : ColorName
-  background : TextBackground
-  mut layout : TextLayout?
+  mut image : @graphics.Image?
   mut text : String
   max_width : Int
   formatted : Bool
@@ -14,23 +13,12 @@ pub fn Text::new(
   font : FontId,
   alignment : TextAlignment,
   color : ColorName,
-  ~background : TextBackground = TextBackground::NONE,
   ~text : String = "",
   ~max_width : Int = 0,
   ~formatted : Bool = true,
   ~line_adj : Int = 0
 ) -> Text {
-  {
-    font,
-    alignment,
-    color,
-    background,
-    layout: None,
-    text,
-    max_width,
-    formatted,
-    line_adj,
-  }
+  { font, alignment, color, image: None, text, max_width, formatted, line_adj }
 }
 
 pub fn Text::default() -> Text {
@@ -45,18 +33,11 @@ pub enum TextAlignment {
 
 pub fn draw(
   self : Text,
-  args : DrawArgument,
-  ~vertical : Range[Int] = Range::new(0, 0)
+  point : Point[Int],
+  ~text_y_clip : Range[Int]? = None
 ) -> Unit {
-  let layout = self.get_or_calc_layout()
-  GraphicsGL::get().draw_text(
-    args,
-    vertical,
-    layout,
-    self.font,
-    self.color,
-    self.background,
-  )
+  let image = self.get_or_calc_image()
+  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }
 
 pub fn change_text(self : Text, text : String) -> Unit {
@@ -64,39 +45,35 @@ pub fn change_text(self : Text, text : String) -> Unit {
     return
   }
   self.text = text
-  self.layout = None
+  self.image = None
 }
 
 pub fn dimensions(self : Text) -> Point[Int] {
-  let layout = self.get_or_calc_layout()
-  layout.get_dimensions()
+  let image = self.get_or_calc_image()
+  { x: image.width(), y: image.height() }
 }
 
 pub fn width(self : Text) -> Int {
-  let layout = self.get_or_calc_layout()
-  layout.width()
+  let image = self.get_or_calc_image()
+  image.width()
 }
 
 pub fn height(self : Text) -> Int {
-  let layout = self.get_or_calc_layout()
-  layout.height()
+  let image = self.get_or_calc_image()
+  image.height()
 }
 
-fn get_or_calc_layout(self : Text) -> TextLayout {
-  match self.layout {
-    Some(layout) => layout
+fn get_or_calc_image(self : Text) -> @graphics.Image {
+  match self.image {
+    Some(image) => image
     None => {
-      let unicodes = self.text.iter().collect()
-      let layout = GraphicsGL::get().create_layout(
-        unicodes,
+      let image = GraphicsGL::get().create_text_image(
+        self.text,
         self.font,
-        self.alignment,
         self.max_width,
-        self.formatted,
-        self.line_adj,
       )
-      self.layout = Some(layout)
-      layout
+      self.image = Some(image)
+      image
     }
   }
 }

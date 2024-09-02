@@ -53,11 +53,6 @@ extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
   #|   return l.loadDesc(p)
   #| }
 
-extern "js" fn name(self : ResourceLoader) -> String =
-  #| (l) => {
-  #|   return l.name
-  #| }
-
 extern "js" fn as_jsonstring(v : JsJson) -> String =
   #|(v)=> {
   #|  return JSON.stringify(v);
@@ -209,28 +204,11 @@ pub fn get_bitmap(self : NxNode) -> Bitmap? {
 
 fn load_bitmap(self : ResourceLoader, bid : Int) -> @graphics.Image = "resource" "load_bitmap"
 
-struct Bitmap {
+pub struct Bitmap {
   image : @graphics.Image
   id : String
   width : Int
   height : Int
-}
-
-pub fn image(self : Bitmap) -> @graphics.Image {
-  self.image
-}
-
-/// Global unique id
-pub fn id(self : Bitmap) -> String {
-  self.id
-}
-
-pub fn width(self : Bitmap) -> Int {
-  self.width
-}
-
-pub fn height(self : Bitmap) -> Int {
-  self.height
 }
 
 fn join_path(parts : Array[String]) -> String {

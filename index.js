@@ -323,9 +323,8 @@ class TextBitmapGenerator {
     this.textCtx.canvas.height = VHEIGHT;
   }
   // TODO: allow individual font style
-  createImage(text, fontSize, fontName, maxWidth) {
-    maxWidth = maxWidth || VWIDTH;
-    const htmlSvg = `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${maxWidth}" height="${VHEIGHT}"><foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml"><span style="font-size: ${fontSize}px; font-family: ${fontName}; color: black;">${text}</span></body></foreignObject></svg>`;
+  createImage(text, fontSize, fontName, maxWidth, textAlign) {
+    const htmlSvg = `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${maxWidth}" height="${VHEIGHT}"><foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px"><p style="margin: 0px; font-size: ${fontSize}px; font-family: ${fontName}; color: black; text-align: ${textAlign};">${text}</p></body></foreignObject></svg>`;
     const img = new Image();
     const bmp = {
       data: null,
@@ -571,9 +570,7 @@ function main() {
       },
     },
     text: {
-      create_image: (text, fontSize, fontName, maxWidth) => {
-        return textBitmapGenerator.createImage(text, fontSize, fontName, maxWidth);
-      }
+      create_image: textBitmapGenerator.createImage.bind(textBitmapGenerator)
     },
     resource: {
       get_loader: (name) => {

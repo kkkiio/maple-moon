@@ -101,7 +101,7 @@ pub fn draw_bitmap(
   if color.invisible() {
     return
   }
-  if bmp.loading() {
+  if bmp.image.loading() {
     return
   }
 
@@ -115,7 +115,7 @@ pub fn draw_bitmap(
       rect.right(),
       rect.top(),
       rect.bottom(),
-      self.atlas.get_offset(bmp.id(), bmp.image()),
+      self.atlas.get_offset(bmp.id, bmp.image),
       color,
       angle,
     ),
@@ -159,18 +159,25 @@ pub fn create_text_image(
   self : GraphicsGL,
   text : String,
   id : FontId,
-  max_width : Int
+  max_width : Int,
+  alignment : TextAlignment
 ) -> @graphics.Image {
   let fontName = if id.is_bold() {
     @config.configFontPathBold.load()
   } else {
     @config.configFontPathNormal.load()
   }
+  let text_alignment = match alignment {
+    TextAlignment::LEFT => "start"
+    TextAlignment::CENTER => "center"
+    TextAlignment::RIGHT => "end"
+  }
   text_create_image(
     text.to_js_string(),
     id.height(),
     fontName.to_js_string(),
     max_width,
+    text_alignment.to_js_string(),
   )
 }
 
@@ -536,5 +543,6 @@ fn text_create_image(
   text : Js_string,
   font_size : Int,
   font_name : Js_string,
-  max_width : Int
+  max_width : Int,
+  text_align : Js_string
 ) -> @graphics.Image = "text" "create_image"

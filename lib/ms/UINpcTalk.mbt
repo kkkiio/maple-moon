@@ -6,7 +6,7 @@ struct UINpcTalk {
   bottom : Texture
   nametag : Texture
   mut speaker : Texture
-  mut content : NPCTalkContent
+  mut content : NPCTalkContent?
   name : Text
   mut height : Int
   offset : Int
@@ -40,16 +40,6 @@ struct NPCTalkContent {
   text_button_content : Array[TextButton]
   line_color : ColorName
   selection : Int
-}
-
-fn NPCTalkContent::default() -> NPCTalkContent {
-  {
-    text: Text::default(),
-    text_content: [],
-    text_button_content: [],
-    line_color: ColorName::BLACK,
-    selection: 0,
-  }
 }
 
 let bid_all_level = 0
@@ -132,7 +122,12 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   )
   buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
   buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
-  let name = Text::new(FontId::A11M, TextAlignment::CENTER, ColorName::WHITE)
+  let name = Text::new(
+    FontId::A11M,
+    TextAlignment::CENTER,
+    ColorName::WHITE,
+    nametag.width(),
+  )
   {
     base,
     buttons,
@@ -153,7 +148,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     name,
     height: 0,
     speaker: Texture::default(),
-    content: NPCTalkContent::default(),
+    content: None,
   }
 }
 
@@ -175,36 +170,45 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let center_pos = speaker_pos + Point::new(self.nametag.width() / 2, 0)
   self.speaker.draw(DrawArgument::new5(center_pos, true))
   self.nametag.draw(speaker_pos |> DrawArgument::from_point)
-  self.name.draw(center_pos + Point::new(0, -4))
-  if self.show_slider {
-    let text_min_height = self.base.position.y + self.top.height() - 1
-    let mut init_height = 19
-    for element in self.content.text_content {
-      element.draw(
-        self.base.position + Point::new(162, init_height - self.offset * 248),
-        text_y_clip=Range::new(text_min_height, text_min_height + self.height)
-          |> @option.some,
-      )
-      init_height += element.height()
-    }
-    for element in self.content.text_button_content {
-      element.draw_in_range(
-        self.base.position + Point::new(162, init_height - self.offset * 248),
-        Range::new(text_min_height, text_min_height + self.height),
-      )
-      init_height += element.height()
-    }
-    // TODO: draw slider
-  } else {
-    let mut init_height = 19
-    for element in self.content.text_button_content {
-      element.draw(self.base.position + Point::new(166, init_height))
-      init_height += element.height()
-    }
-    for element in self.content.text_content {
-      element.draw(self.base.position + Point::new(166, init_height))
-      init_height += element.height()
-    }
+  self.name.draw(speaker_pos.shift_y(1))
+  match self.content {
+    Some(content) =>
+      if self.show_slider {
+        let text_min_height = self.base.position.y + self.top.height() - 1
+        let mut init_height = 19
+        for element in content.text_content {
+          element.draw(
+            self.base.position +
+            Point::new(162, init_height - self.offset * 248),
+            text_y_clip=Range::new(
+                text_min_height,
+                text_min_height + self.height,
+              )
+              |> @option.some,
+          )
+          init_height += element.height()
+        }
+        for element in content.text_button_content {
+          element.draw_in_range(
+            self.base.position +
+            Point::new(162, init_height - self.offset * 248),
+            Range::new(text_min_height, text_min_height + self.height),
+          )
+          init_height += element.height()
+        }
+        // TODO: draw slider
+      } else {
+        let mut init_height = 19
+        for element in content.text_button_content {
+          element.draw(self.base.position + Point::new(166, init_height))
+          init_height += element.height()
+        }
+        for element in content.text_content {
+          element.draw(self.base.position + Point::new(166, init_height))
+          init_height += element.height()
+        }
+      }
+    None => ()
   }
 }
 
@@ -260,15 +264,20 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           } else {
-            let btn = self.content.text_button_content[bid - bid_text_button]
+            let btn = self.content.unwrap().text_button_content[bid -
+              bid_text_button]
             new_npc_talk_more_packet_with_selection(btn.option_number).dispatch()
           }
         _ => ()
       }
     None => ()
   }
-  for _, element in self.content.text_button_content {
-    self.buttons.buttons.remove(bid_text_button + element.option_number)
+  match self.content {
+    Some(content) =>
+      for _, element in content.text_button_content {
+        self.buttons.buttons.remove(bid_text_button + element.option_number)
+      }
+    None => ()
   }
   ButtonState::NORMAL
 }
@@ -287,16 +296,21 @@ pub fn send_cursor(
     cursorpos,
   )
   if estate == CursorState::CLICKING && clicked {
-    if self.draw_text {
-      self.draw_text = false
-      self.content.text.change_text(self.formatted_text)
-    } else {
-      for element in self.content.text_button_content.iter() {
-        if element.bounds(self.base.position).contains(cursorpos) {
-          self.button_pressed(bid_text_button + element.option_number) |> ignore
-          break
+    match self.content {
+      Some(content) =>
+        if self.draw_text {
+          self.draw_text = false
+          content.text.change_text(self.formatted_text)
+        } else {
+          for element in content.text_button_content.iter() {
+            if element.bounds(self.base.position).contains(cursorpos) {
+              self.button_pressed(bid_text_button + element.option_number)
+              |> ignore
+              break
+            }
+          }
         }
-      }
+      None => ()
     }
   }
   estate
@@ -399,12 +413,13 @@ pub fn change_text(
   self.draw_text = true
   self.formatted_text_pos = 0
   self.formatted_text = format_text(tx, npcid)
-  self.content = convert_npc_text(self.formatted_text)
-  for element in self.content.text_button_content {
+  let content = convert_npc_text(self.formatted_text)
+  self.content = content |> @option.some
+  for element in content.text_button_content {
     self.buttons.buttons[bid_text_button + element.option_number] = element
   }
-  let text_height = self.content.text.height()
-  self.content.text.change_text("")
+  let text_height = content.text.height()
+  content.text.change_text("")
   if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
@@ -518,12 +533,16 @@ pub fn change_text(
 }
 
 fn reset_content_pos(self : UINpcTalk) -> Unit {
+  let content = match self.content {
+    Some(content) => content
+    None => return
+  }
   if self.show_slider {
     let mut init_height = 19
-    for element in self.content.text_content {
+    for element in content.text_content {
       init_height += element.height()
     }
-    for element in self.content.text_button_content {
+    for element in content.text_button_content {
       element
       .get_button_base()
       .set_position(Point::new(162, init_height - self.offset * 248))
@@ -531,10 +550,10 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
     }
   } else {
     let mut init_height = 19
-    for element in self.content.text_content {
+    for element in content.text_content {
       init_height += element.height()
     }
-    for element in self.content.text_button_content {
+    for element in content.text_button_content {
       element.get_button_base().set_position(Point::new(166, init_height))
       init_height += element.height()
     }
@@ -647,8 +666,8 @@ fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
     FontId::A18M,
     TextAlignment::LEFT,
     ColorName::DARKGREY,
+    320,
     text=formatted_text,
-    max_width=320,
   )
   {
     text,
@@ -680,8 +699,8 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
           FontId::A18M,
           TextAlignment::LEFT,
           self.line_color,
+          320,
           text=line,
-          max_width=320,
         ),
         self.selection,
       )
@@ -693,8 +712,8 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
           FontId::A18M,
           TextAlignment::LEFT,
           ColorName::DARKGREY,
+          320,
           text=line,
-          max_width=320,
         ),
       )
       if line.ends_with("#b") {

@@ -13,16 +13,12 @@ pub fn Text::new(
   font : FontId,
   alignment : TextAlignment,
   color : ColorName,
+  max_width : Int,
   ~text : String = "",
-  ~max_width : Int = 0,
   ~formatted : Bool = true,
   ~line_adj : Int = 0
 ) -> Text {
   { font, alignment, color, image: None, text, max_width, formatted, line_adj }
-}
-
-pub fn Text::default() -> Text {
-  Text::new(FontId::A11M, TextAlignment::LEFT, ColorName::BLACK)
 }
 
 pub enum TextAlignment {
@@ -71,6 +67,7 @@ fn get_or_calc_image(self : Text) -> @graphics.Image {
         self.text,
         self.font,
         self.max_width,
+        self.alignment,
       )
       self.image = Some(image)
       image

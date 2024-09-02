@@ -7,7 +7,7 @@ struct Texture {
 } derive(Default)
 
 pub fn to_string(self : Texture) -> String {
-  let bid = self.bitmap.map_or("", fn(bitmap) { bitmap.id() })
+  let bid = self.bitmap.map_or("", fn(bitmap) { bitmap.id })
   let origin = self.origin
   let dimensions = self.dimensions
   "Texture{bid=\{bid}, origin=\{origin}, dimensions=\{dimensions}}"
@@ -27,7 +27,7 @@ fn Texture::from_resource(src : NxNode) -> Texture {
       {
         bitmap: Some(bmp),
         origin: (src["origin"] |> Point::from_resource).unwrap(),
-        dimensions: { x: bmp.width(), y: bmp.height() },
+        dimensions: { x: bmp.width, y: bmp.height },
       }
     None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
   }

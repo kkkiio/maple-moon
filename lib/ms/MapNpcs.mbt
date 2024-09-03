@@ -66,7 +66,7 @@ pub fn send_cursor(
           fn(id, msgtype, b0, b1, speaker, str) {
             let ui = UINpcTalk::new()
             UI::get().set_element(ui)
-            ui.change_text(id, msgtype, b0, b1, speaker, str)
+            ui.change_text?(id, msgtype, b0, b1, speaker, str).unwrap()
           },
         )
         new_talk_to_npc_packet(npc.get_oid()).dispatch()
@@ -382,5 +382,5 @@ pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
   let ui = UINpcTalk::new()
   UI::get().set_element(ui)
   UI::get().enable()
-  ui.change_text(npcid, msgtype, style_b0, style_b1, speaker, text)
+  ui.change_text!(npcid, msgtype, style_b0, style_b1, speaker, text)
 }

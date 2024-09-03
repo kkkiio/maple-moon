@@ -21,6 +21,7 @@
     "KKKIIO/maple-moon-client/lib/ms/login",
     "KKKIIO/maple-moon-client/lib/ms/resource",
     "KKKIIO/maple-moon-client/lib/ms/rand",
-    "KKKIIO/maple-moon-client/lib/graphics"
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/ms/text_tmpl"
   ]
 }

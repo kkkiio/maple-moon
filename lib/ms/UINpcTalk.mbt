@@ -340,63 +340,34 @@ pub fn get_type(self : UINpcTalk) -> UIElementType {
   UIElementType::NPC_TALK
 }
 
-fn format_text(tx : String, npcid : Int) -> String {
-  let mut formatted_text = tx
-  let begin = formatted_text.index_of("#p")
-  if begin >= 0 {
-    let end = formatted_text.index_of("#", from=begin + 1)
-    if end >= 0 {
-      let namestr = string_loader()
-        .load_res(["Npc.img", npcid.to_string(), "name"])
-        .get_string()
-      formatted_text = formatted_text.substring(end=begin) +
-        namestr +
-        formatted_text.substring(start=end)
-    }
-  }
-  let begin = formatted_text.index_of("#h")
-  if begin >= 0 {
-    let end = formatted_text.index_of("#", from=begin + 1)
-    if end >= 0 {
-      let charstr = Stage::get().get_player().get_name()
-      formatted_text = formatted_text.substring(end=begin) +
-        charstr +
-        formatted_text.substring(start=end)
-    }
-  }
-  let begin = formatted_text.index_of("#t")
-  if begin >= 0 {
-    let end = formatted_text.index_of("#", from=begin + 1)
-    if end >= 0 {
-      let b = begin + 2
-      let itemid = @strconv.parse_int?(formatted_text.substring(start=b, ~end)).unwrap()
-      let itemname = string_loader()
-        .load_res(["Consume.img", itemid.to_string(), "name"])
-        .get_string()
-      formatted_text = formatted_text.substring(end=begin) +
-        itemname +
-        formatted_text.substring(start=end)
-    }
-  }
-  let mut begin = 0
-  while true {
-    begin = formatted_text.index_of("#m", from=begin)
-    if begin < 0 {
-      break
-    }
-    let end = formatted_text.index_of("#", from=begin + 1)
-    if end < 0 {
-      break
-    }
-    let b = begin + 2
-    let mapid = @strconv.parse_int?(formatted_text.substring(start=b, ~end)).unwrap()
-    let map_info = get_map_info_by_id(mapid)
-    formatted_text = formatted_text.substring(end=begin) +
-      map_info.name +
-      formatted_text.substring(start=end)
-    begin = end
-  }
-  formatted_text
+fn format_text(tx : String, npcid : Int) -> String! {
+  @text_tmpl.format_text!(
+    tx,
+    {
+      variable_map: {
+        "p": fn(_v) {
+          string_loader()
+          .load_res(["Npc.img", npcid.to_string(), "name"])
+          .get_string()
+        },
+        "h": fn(_v) { Stage::get().get_player().get_name() },
+        "t": fn(v) {
+          let itemid = @strconv.parse_int!(v)
+          let itemname = string_loader()
+            .load_res(["Consume.img", itemid.to_string(), "name"])
+            .get_string()
+          itemname
+        },
+        "m": fn(v) {
+          let mapid = @strconv.parse_int!(v)
+          let map_info = get_map_info_by_id(mapid)
+          map_info.name
+        },
+        "e": fn(v) { "<b>\{v}</b>" },
+        "b": fn(v) { "<span style=\"color: blue;\">\{v}</span>" },
+      },
+    },
+  )
 }
 
 pub fn change_text(
@@ -407,12 +378,12 @@ pub fn change_text(
   style_b1 : Int,
   speakerbyte : Int,
   tx : String
-) -> Unit {
+) -> Unit! {
   self.t = @npc.TalkType::from_int(msgtype, style_b0, style_b1)
   self.timestep = 0
   self.draw_text = true
   self.formatted_text_pos = 0
-  self.formatted_text = format_text(tx, npcid)
+  self.formatted_text = format_text!(tx, npcid)
   let content = convert_npc_text(self.formatted_text)
   self.content = content |> @option.some
   for element in content.text_button_content {

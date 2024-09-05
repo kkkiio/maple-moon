@@ -45,32 +45,6 @@ pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
-pub let values : FixedArray[Id] = [
-  STR,
-  DEX,
-  INT,
-  LUK,
-  HP,
-  MP,
-  WATK,
-  MAGIC,
-  WDEF,
-  MDEF,
-  ACC,
-  AVOID,
-  HANDS,
-  SPEED,
-  JUMP,
-]
-
-fn by_id(id : Int) -> Id {
-  values[id]
-}
-
-fn value_of(value : Id) -> Int {
-  value.int_value()
-}
-
 fn to_string(self : Id) -> String {
   match self {
     STR => "STR"

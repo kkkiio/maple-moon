@@ -350,7 +350,7 @@ fn format_text(tx : String, npcid : Int) -> String! {
           .load_res(["Npc.img", npcid.to_string(), "name"])
           .get_string()
         },
-        "h": fn(_v) { Stage::get().get_player().get_name() },
+        "h": fn(_v) { Stage::get().get_player().unwrap().get_name() },
         "t": fn(v) {
           let itemid = @strconv.parse_int!(v)
           let itemname = string_loader()

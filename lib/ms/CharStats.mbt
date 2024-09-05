@@ -1,4 +1,4 @@
-pub struct CharStats {
+struct CharStats {
   mut map_id : Int
   portal : Int
   base_stats : Map[@MapleStat.Id, Int]
@@ -14,10 +14,6 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
   }
   cs.init_totalstats()
   cs
-}
-
-pub fn CharStats::default() -> CharStats {
-  { map_id: 0, portal: 0, base_stats: Map::new(), total_stats: Map::new() }
 }
 
 pub fn init_totalstats(self : CharStats) -> Unit {

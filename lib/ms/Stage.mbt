@@ -10,8 +10,7 @@ enum StageState {
 pub struct Stage {
   camera : Camera
   mut physics : Physics
-  mut player : Player
-  priv mut playable : Playable?
+  mut player : Player?
   mut state : StageState
   mut map_id : Int
   mut map_info : MapInfo
@@ -25,8 +24,7 @@ pub struct Stage {
 pub fn Stage::default() -> Stage {
   {
     camera: Camera::new(),
-    player: Player::default(),
-    playable: None,
+    player: None,
     physics: Physics::new(),
     state: StageState::INACTIVE,
     backgrounds: None,
@@ -71,17 +69,18 @@ pub fn load_player(
   entry : CharEntry,
   wid : Int,
   channel_id : Int
-) -> Unit {
-  self.player = Player::from_entry(entry, wid, channel_id)
-  self.playable = Some(self.player)
+) -> Player {
+  let player = Player::from_entry(entry, wid, channel_id)
+  self.player = Some(player)
   self.start = now_micro() |> TimePoint::from_micro
 
   // CharStats stats = self.player.get_stats();
   // level_before_ = stats.get_stat(@MapleStat.Id::LEVEL);
   // exp_before_ = stats.get_exp();
+  player
 }
 
-pub fn get_player(self : Stage) -> Player {
+pub fn get_player(self : Stage) -> Player? {
   self.player
 }
 
@@ -113,7 +112,7 @@ pub fn respawn(self : Stage, portalid : Int) -> Unit {
   // Music(self.map_info.get_bgm()).play();
   let spawnpoint = self.portals.get_portal_by_id(portalid)
   let startpos = self.physics.get_y_below(spawnpoint)
-  self.player.respawn(startpos, self.map_info.is_underwater())
+  self.player.unwrap().respawn(startpos, self.map_info.is_underwater())
   self.camera.set_position(startpos)
   self.camera.set_view(self.map_info.get_walls(), self.map_info.get_borders())
 }
@@ -134,11 +133,13 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
       self.npcs.draw(id, viewx, viewy, alpha)
       // mobs_.draw(id, viewx, viewy, alpha);
       // chars_.draw(id, viewx, viewy, alpha);
-      self.player.draw(id, viewx, viewy, alpha)
+      self.player
+      .unwrap()
+      .draw(id, viewx, viewy, alpha)
       // drops_.draw(id, viewx, viewy, alpha);
     },
   )
-  @Layer.ids.each(fn(id) { self.player.draw(id, viewx, viewy, alpha) })
+  @Layer.ids.each(fn(id) { self.player.unwrap().draw(id, viewx, viewy, alpha) })
 
   //     combat_.draw(viewx, viewy, alpha);
   //     mob_combat_.draw(viewx, viewy, alpha);
@@ -172,10 +173,11 @@ fn update(self : Stage) -> Unit {
   // mobs_.update(self.physics);
   // chars_.update(self.physics);
   // drops_.update(self.physics);
-  self.player.update(self.physics) |> ignore
-  self.portals.update(self.player.get_position())
-  self.camera.update(self.player.get_position())
-  if self.player.is_invincible() {
+  let player = self.player.unwrap()
+  player.update(self.physics) |> ignore
+  self.portals.update(player.get_position())
+  self.camera.update(player.get_position())
+  if player.is_invincible() {
     return
   }
 
@@ -216,23 +218,24 @@ pub fn send_key(
   if self.state != StageState::ACTIVE {
     return
   }
-  match self.playable {
-    Some(playable) =>
+  match self.player {
+    Some(player) =>
       match t {
         @KeyType.Id::ACTION => {
           if down {
             match @KeyAction.get_action_by_id?(action).unwrap() {
-              @KeyAction.Id::UP =>
-                // self.check_ladders(true)
+              @KeyAction.Id::UP => {
+                self.check_ladders(player, true)
                 self.check_portals()
-              // @KeyAction.Id::DOWN => self.check_ladders(false)
+              }
+              @KeyAction.Id::DOWN => self.check_ladders(player, false)
               // @KeyAction.Id::SIT => self.check_seats()
               // @KeyAction.Id::ATTACK => self.combat.use_move(0)
               // @KeyAction.Id::PICKUP => self.check_drops()
               _ => ()
             }
           }
-          playable.send_action(
+          player.send_action(
             @KeyAction.get_action_by_id?(action).unwrap(),
             down,
           )
@@ -247,18 +250,19 @@ pub fn send_key(
 }
 
 fn check_portals(self : Stage) -> Unit {
-  if self.player.is_attacking() {
+  let player = self.player.unwrap()
+  if player.is_attacking() {
     return
   }
-  let playerpos = self.player.get_position()
+  let playerpos = player.get_position()
   let warpinfo = self.portals.find_warp_at(playerpos)
   if warpinfo.intramap {
     let spawnpoint = self.portals.get_portal_by_name(warpinfo.toname)
     let startpos = self.physics.get_y_below(spawnpoint)
-    self.player.respawn(startpos, self.map_info.is_underwater())
+    player.respawn(startpos, self.map_info.is_underwater())
   } else if warpinfo.valid {
     new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
-    let stats = Stage::get().get_player().get_stats()
+    let stats = player.get_stats()
     stats.set_mapid(warpinfo.mapid)
   }
 
@@ -301,7 +305,7 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
   //   },
   // )
   if recalculate {
-    Stage::get().get_player().recalc_stats(false)
+    Stage::get().get_player().unwrap().recalc_stats(false)
   }
   UI::get().enable()
 }
@@ -311,7 +315,7 @@ fn handle_stat(
   stat : @MapleStat.Id,
   recv : @net.InPacket
 ) -> Bool! {
-  let player = Stage::get().get_player()
+  let player = Stage::get().get_player().unwrap()
   let mut recalculate = false
   match stat {
     @MapleStat.Id::SKIN => player.change_look(stat, recv.read_short!())
@@ -361,4 +365,12 @@ fn handle_stat(
 
 pub fn new_player_map_transfer_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
+}
+
+fn check_ladders(self : Stage, player : Player, up : Bool) -> Unit {
+  if player.is_climbing() || player.is_attacking() {
+    return
+  }
+  let ladder = self.map_info.find_ladder(player.get_position(), up)
+  player.set_ladder(ladder)
 }

@@ -94,9 +94,9 @@ pub fn MapInfo::from_resource(
   }
   let bgmpath = info["bgm"].get_string()
   let split = bgmpath.to_array().search('/').unwrap()
-  let bgm = bgmpath.substring(start=0, end=split) + ".img/" + bgmpath.substring(
-      start=split + 1,
-    )
+  let bgm = bgmpath.substring(start=0, end=split) +
+    ".img/" +
+    bgmpath.substring(start=split + 1)
   let seats = Array::new()
   src["seat"].each(fn(it) { seats.push(Seat::from_resource(it)) })
   let ladders = Array::new()
@@ -158,12 +158,12 @@ pub fn findseat(self : MapInfo, position : Point[Int]) -> Seat? {
   self.seats.iter().find_first(fn(seat) { seat.inrange(position) })
 }
 
-pub fn findladder(
+pub fn find_ladder(
   self : MapInfo,
   position : Point[Int],
   upwards : Bool
 ) -> Ladder? {
-  self.ladders.iter().find_first(
-    fn(ladder) { ladder.inrange(position, upwards) },
-  )
+  self.ladders
+  .iter()
+  .find_first(fn(ladder) { ladder.inrange(position, upwards) })
 }

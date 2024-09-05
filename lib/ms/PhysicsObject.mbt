@@ -274,3 +274,11 @@ pub fn get_last_x(self : PhysicsObject) -> Int {
 pub fn get_last_y(self : PhysicsObject) -> Int {
   self.moving_object.get_last_y()
 }
+
+pub fn set_hspeed(self : PhysicsObject, hspeed : Double) -> Unit {
+  self.moving_object.hspeed = hspeed
+}
+
+pub fn set_vspeed(self : PhysicsObject, vspeed : Double) -> Unit {
+  self.moving_object.vspeed = vspeed
+}

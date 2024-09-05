@@ -4,6 +4,7 @@ struct Player {
   keys_down : Map[@KeyAction.Id, Bool]
   mut underwater : Bool
   mut last_move : Movement
+  mut ladder : Ladder?
 }
 
 pub typealias CharEntry = @login.CharEntry
@@ -25,20 +26,11 @@ pub fn Player::from_entry(
     keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
+    ladder: None,
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
   p
-}
-
-pub fn Player::default() -> Player {
-  {
-    char_base: CharBase::new(PlayerSub::default(), 0, CharLook::default(), ""),
-    stats: CharStats::default(),
-    underwater: false,
-    keys_down: Map::new(),
-    last_move: Movement::default(),
-  }
 }
 
 pub fn get_position(self : Player) -> Point[Int] {
@@ -115,7 +107,7 @@ struct PlayerStates {
   walking : PlayerWalkState
   falling : PlayerFallState
   lying : PlayerProneState
-  // climbing : PlayerClimbState
+  climbing : PlayerClimbState
   sitting : PlayerSitState
   flying : PlayerFlyState
 } derive(Default)
@@ -128,9 +120,9 @@ fn get_player_state(state : CharState) -> PlayerState? {
     CharState::WALK => Some(g_player_states.walking)
     CharState::FALL => Some(g_player_states.falling)
     CharState::PRONE => Some(g_player_states.lying)
-    // CharState::LADDER=>
-    // Some(g_player_states.climbing)
+    CharState::LADDER | CharState::ROPE => Some(g_player_states.climbing)
     CharState::SIT => Some(g_player_states.sitting)
+    CharState::SWIM => Some(g_player_states.flying)
     _ => None
   }
 }
@@ -175,6 +167,14 @@ pub fn get_flyforce(self : Player) -> Double {
 /// Returns the current jumping force, calculated from the total ES_JUMP stat.
 pub fn get_jumpforce(self : Player) -> Double {
   1.0 + 3.5 * self.stats.get_total(@EquipStat.Id::JUMP).to_double() / 100.0
+}
+
+pub fn is_climbing(self : Player) -> Bool {
+  self.char_base.is_climbing()
+}
+
+pub fn get_climbforce(self : Player) -> Double {
+  self.stats.get_total(@EquipStat.Id::SPEED).to_double() / 100.0
 }
 
 pub fn getflip(self : Player) -> Bool {
@@ -240,4 +240,28 @@ fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
 
 pub fn get_name(self : Player) -> String {
   self.char_base.get_name()
+}
+
+pub fn get_ladder(self : Player) -> Ladder? {
+  self.ladder
+}
+
+pub fn set_ladder(self : Player, ladder : Ladder?) -> Unit {
+  self.ladder = ladder
+  match ladder {
+    Some(ladder) => {
+      self.get_phobj().set_x(ladder.get_x().to_double())
+      self.get_phobj().moving_object.hspeed = 0.0
+      self.get_phobj().moving_object.vspeed = 0.0
+      self.get_phobj().fhlayer = 7
+      self.set_state(
+        if ladder.is_ladder() {
+          CharState::LADDER
+        } else {
+          CharState::ROPE
+        },
+      )
+    }
+    None => ()
+  }
 }

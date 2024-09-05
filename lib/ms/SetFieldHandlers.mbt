@@ -49,12 +49,11 @@ fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
   let stats = @login.parse_stats!(recv)
   // charselect.get().update_character(cid, );
 
-  Stage::get().load_player(
+  let player = Stage::get().load_player(
     playerentry,
     @config.global().get_worldid(),
     @config.global().get_channelid(),
   )
-  let player = Stage::get().get_player()
   recv.read_byte!() |> ignore // 'buddycap'
   if recv.read_bool!() {
     recv.read_string!() |> ignore // 'linkedname'

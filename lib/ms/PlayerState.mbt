@@ -130,9 +130,8 @@ pub fn send_action(
 }
 
 pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
-  player.is_key_down(@KeyAction.Id::LEFT) || player.is_key_down(
-    @KeyAction.Id::RIGHT,
-  )
+  player.is_key_down(@KeyAction.Id::LEFT) ||
+  player.is_key_down(@KeyAction.Id::RIGHT)
 }
 
 pub fn update(self : PlayerWalkState, player : Player) -> Unit {
@@ -151,8 +150,8 @@ pub fn update(self : PlayerWalkState, player : Player) -> Unit {
 
 pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
   if player.get_phobj().onground {
-    if self.haswalkinput(player).not() || player.get_phobj().moving_object.hspeed ==
-    0.0 {
+    if self.haswalkinput(player).not() ||
+      player.get_phobj().moving_object.hspeed == 0.0 {
       player.set_state(CharState::STAND)
     }
   } else {
@@ -234,9 +233,8 @@ pub fn send_action(
   if down {
     match ka {
       @KeyAction.Id::JUMP =>
-        if player.get_phobj().enablejd && player.is_key_down(
-          @KeyAction.Id::DOWN,
-        ) {
+        if player.get_phobj().enablejd &&
+          player.is_key_down(@KeyAction.Id::DOWN) {
           play_jumpsound()
           player.get_phobj().moving_object.set_y(player.get_phobj().groundbelow)
           player.set_state(CharState::FALL)
@@ -353,4 +351,67 @@ pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
     }
     player.set_state(state)
   }
+}
+
+struct PlayerClimbState {} derive(Default)
+
+pub fn initialize(self : PlayerClimbState, player : Player) -> Unit {
+  player.get_phobj().type_ = PhysicsObjectType::FIXATED
+}
+
+pub fn send_action(
+  self : PlayerClimbState,
+  player : Player,
+  ka : @KeyAction.Id,
+  down : Bool
+) -> Unit {
+  if down {
+    match ka {
+      @KeyAction.Id::JUMP =>
+        if player.is_key_down(@KeyAction.Id::LEFT) {
+          play_jumpsound()
+          player.set_direction(false)
+          player.get_phobj().moving_object.hspeed = -player.get_walkforce() *
+            8.0
+          player.get_phobj().moving_object.vspeed = -player.get_jumpforce() /
+            1.5
+          self.cancel_ladder(player)
+        } else if player.is_key_down(@KeyAction.Id::RIGHT) {
+          play_jumpsound()
+          player.set_direction(true)
+          player.get_phobj().moving_object.hspeed = player.get_walkforce() * 8.0
+          player.get_phobj().moving_object.vspeed = -player.get_jumpforce() /
+            1.5
+          self.cancel_ladder(player)
+        }
+      _ => ()
+    }
+  }
+}
+
+pub fn update(self : PlayerClimbState, player : Player) -> Unit {
+  if player.is_key_down(@KeyAction.Id::UP) {
+    player.get_phobj().set_vspeed(-player.get_climbforce())
+  } else if player.is_key_down(@KeyAction.Id::DOWN) {
+    player.get_phobj().set_vspeed(player.get_climbforce())
+  } else {
+    player.get_phobj().set_vspeed(0.0)
+  }
+}
+
+pub fn update_state(self : PlayerClimbState, player : Player) -> Unit {
+  let y = player.get_phobj().get_y()
+  let downwards = player.is_key_down(@KeyAction.Id::DOWN)
+  match player.get_ladder() {
+    Some(ladder) =>
+      if ladder.felloff(y, downwards) {
+        self.cancel_ladder(player)
+      }
+    None => ()
+  }
+}
+
+pub fn cancel_ladder(self : PlayerClimbState, player : Player) -> Unit {
+  player.set_state(CharState::FALL)
+  player.set_ladder(None)
 }

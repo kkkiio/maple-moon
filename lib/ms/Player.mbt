@@ -5,21 +5,24 @@ struct Player {
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : Ladder?
+  inventory : @inventory.Inventory
+  buffs : Map[@buff.StatId, @buff.Buff]
+  active_buffs : ActiveBuffs
 }
 
 pub typealias CharEntry = @login.CharEntry
 
-// Construct a player object from the given character entry.
+/// Construct a player object from the given character entry.
 pub fn Player::from_entry(
   entry : CharEntry,
   wid : Int,
   channel_id : Int
-) -> Player {
+) -> Player! {
   let p = {
     char_base: CharBase::new(
       PlayerSub::default(),
       entry.id,
-      CharLook::new(entry.look),
+      CharLook::new!(entry.look),
       entry.stats.name,
     ),
     stats: CharStats::from_entry(entry.stats),
@@ -27,6 +30,9 @@ pub fn Player::from_entry(
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
+    inventory: @inventory.Inventory::new(),
+    buffs: Map::new(),
+    active_buffs: ActiveBuffs::new(),
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
@@ -60,7 +66,7 @@ pub fn update(self : Player, physics : Physics) -> Int {
     None => ()
   }
   let stancebyte = self.char_base.state.int_value() +
-    if self.char_base.facing_right { 0 } else { 1 }
+    (if self.char_base.facing_right { 0 } else { 1 })
   let newmove = Movement::from_physics_object(self.get_phobj(), stancebyte)
   let needupdate = self.last_move.hasmoved(newmove)
   if needupdate {
@@ -166,7 +172,7 @@ pub fn get_flyforce(self : Player) -> Double {
 
 /// Returns the current jumping force, calculated from the total ES_JUMP stat.
 pub fn get_jumpforce(self : Player) -> Double {
-  1.0 + 3.5 * self.stats.get_total(@EquipStat.Id::JUMP).to_double() / 100.0
+  1.0 + 3.5 * self.stats.get_total(@stat.Id::JUMP).to_double() / 100.0
 }
 
 pub fn is_climbing(self : Player) -> Bool {
@@ -174,7 +180,7 @@ pub fn is_climbing(self : Player) -> Bool {
 }
 
 pub fn get_climbforce(self : Player) -> Double {
-  self.stats.get_total(@EquipStat.Id::SPEED).to_double() / 100.0
+  self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
 }
 
 pub fn getflip(self : Player) -> Bool {
@@ -183,7 +189,7 @@ pub fn getflip(self : Player) -> Bool {
 
 /// Returns the current walking force, calculated from the total ES_SPEED stat.
 pub fn get_walkforce(self : Player) -> Double {
-  0.05 + 0.11 * self.stats.get_total(@EquipStat.Id::SPEED).to_double() / 100.0
+  0.05 + 0.11 * self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
 }
 
 let nullstate : PlayerNullState = PlayerNullState::default()
@@ -211,8 +217,23 @@ pub fn get_stats(self : Player) -> CharStats {
 }
 
 /// Recalculates the total stats from base stats, inventories and skills.
-fn recalc_stats(self : Player, equipchanged : Bool) -> Unit {
-  // TODO
+fn recalc_stats(self : Player, equipchanged : Bool) -> Unit! {
+  let weapontype = self.char_base.get_weapontype!()
+  self.stats.set_weapontype(weapontype)
+  self.stats.init_totalstats()
+  if equipchanged {
+    self.inventory.recalc_stats(weapontype)
+  }
+  for stat in @stat.all_stats {
+    let inventory_total = self.inventory.get_stat(stat)
+    self.stats.add_value(stat, inventory_total)
+  }
+  // TODO: Implement passive skills
+  for buff in self.buffs.values() {
+    self.active_buffs.apply_buff(self.stats, buff.stat, buff.value)
+  }
+  self.stats.close_totalstats()
+  // TODO: Update stats info ui
 }
 
 fn new_move_player_packet(movement : Movement) -> @net.OutPacket {

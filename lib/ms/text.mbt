@@ -1,8 +1,8 @@
 struct Text {
-  font : FontId
-  alignment : TextAlignment
-  color : ColorName
-  mut image : @graphics.Image?
+  font : @graphics.FontId
+  alignment : @graphics.TextAlignment
+  color : @struct.ColorName
+  mut image : @resource.Image?
   mut text : String
   max_width : Int
   formatted : Bool
@@ -10,9 +10,9 @@ struct Text {
 }
 
 pub fn Text::new(
-  font : FontId,
-  alignment : TextAlignment,
-  color : ColorName,
+  font : @graphics.FontId,
+  alignment : @graphics.TextAlignment,
+  color : @struct.ColorName,
   max_width : Int,
   ~text : String = "",
   ~formatted : Bool = true,
@@ -21,19 +21,13 @@ pub fn Text::new(
   { font, alignment, color, image: None, text, max_width, formatted, line_adj }
 }
 
-pub enum TextAlignment {
-  LEFT
-  CENTER
-  RIGHT
-}
-
 pub fn draw(
   self : Text,
   point : Point[Int],
   ~text_y_clip : Range[Int]? = None
 ) -> Unit {
   let image = self.get_or_calc_image()
-  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
+  @graphics.GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }
 
 pub fn change_text(self : Text, text : String) -> Unit {
@@ -59,11 +53,11 @@ pub fn height(self : Text) -> Int {
   image.height()
 }
 
-fn get_or_calc_image(self : Text) -> @graphics.Image {
+fn get_or_calc_image(self : Text) -> @resource.Image {
   match self.image {
     Some(image) => image
     None => {
-      let image = GraphicsGL::get().create_text_image(
+      let image = @graphics.GraphicsGL::get().create_text_image(
         self.text,
         self.font,
         self.max_width,

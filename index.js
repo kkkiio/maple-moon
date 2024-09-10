@@ -196,10 +196,9 @@ class ResourceLoader {
   loadDesc(nodepath) {
     let parts = nodepath.split("/");
     return parts.reduce((acc, part) => {
+      if (acc === null) return null;
       if (part in acc) return acc[part];
-      throw new Error(
-        `resolve resource failed, path=${nodepath}, missing part=${part}`
-      );
+      return null;
     }, this.nxJson);
   }
 }
@@ -236,10 +235,9 @@ class MergeResourceLoader {
   loadDesc(nodepath) {
     let parts = nodepath.split("/");
     return parts.reduce((acc, part) => {
+      if (acc === null) return null;
       if (part in acc) return acc[part];
-      throw new Error(
-        `resolve resource failed, path=${nodepath}, missing part=${part}`
-      );
+      return null;
     }, this.nxJson);
   }
 }
@@ -449,7 +447,16 @@ function main() {
     soundLoader.load()
   );
 
-  const characterLoader = new ResourceLoader("Character.nx");
+  const characterLoader = new MergeResourceLoader("Character.nx", [
+    { nodepath: "00002000.img", filename: "00002000.nx.json" },
+    { nodepath: "00012000.img", filename: "00012000.nx.json" },
+    { nodepath: "Hair/00030030.img", filename: "hair00030030.nx.json" },
+    { nodepath: "Face/00020000.img", filename: "face00020000.nx.json" },
+    { nodepath: "Coat/01040002.img", filename: "coat01040002.nx.json" },
+    { nodepath: "Pants/01060002.img", filename: "pants01060002.nx.json" },
+    { nodepath: "Shoes/01072001.img", filename: "shoes01072001.nx.json" },
+    { nodepath: "Weapon/01302000.img", filename: "weapon01302000.nx.json" },
+  ]);
   prepareResourcePromises.push(
     characterLoader.load()
   );
@@ -481,6 +488,10 @@ function main() {
   const npcLoader = new ResourceLoader("Npc.nx");
   prepareResourcePromises.push(
     npcLoader.load()
+  );
+  const itemLoader = new ResourceLoader("Item.nx");
+  prepareResourcePromises.push(
+    itemLoader.load()
   );
 
   const textBitmapGenerator = new TextBitmapGenerator();
@@ -595,6 +606,8 @@ function main() {
             return etcLoader;
           case "npc":
             return npcLoader;
+          case "item":
+            return itemLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

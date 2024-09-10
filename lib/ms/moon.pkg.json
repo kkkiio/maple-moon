@@ -1,27 +1,38 @@
 {
   "import": [
     "KKKIIO/maple-moon-client/lib/ms/MapleStat",
-    "KKKIIO/maple-moon-client/lib/ms/EquipStat",
-    "KKKIIO/maple-moon-client/lib/ms/Buffstat",
+    "KKKIIO/maple-moon-client/lib/ms/buff",
     "KKKIIO/maple-moon-client/lib/ms/Constants",
     "KKKIIO/maple-moon-client/lib/ms/KeyType",
     "KKKIIO/maple-moon-client/lib/ms/KeyAction",
     "KKKIIO/maple-moon-client/lib/ms/string_format",
-    "KKKIIO/maple-moon-client/lib/ms/quadtree",
     "KKKIIO/maple-moon-client/lib/ms/Layer",
     {
       "path": "KKKIIO/maple-moon-client/lib/io/keyboard",
       "alias": "kb"
     },
     "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/ms/InventoryType",
     "KKKIIO/maple-moon-client/lib/ms/npc",
     "KKKIIO/maple-moon-client/lib/ms/net",
-    "KKKIIO/maple-moon-client/lib/ms/config",
+    "KKKIIO/maple-moon-client/lib/config",
     "KKKIIO/maple-moon-client/lib/ms/login",
-    "KKKIIO/maple-moon-client/lib/ms/resource",
+    "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/ms/rand",
     "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/ms/text_tmpl"
+    "KKKIIO/maple-moon-client/lib/ms/text_tmpl",
+    "KKKIIO/maple-moon-client/lib/ms/equip",
+    "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+    "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+    "KKKIIO/maple-moon-client/lib/ms/inventory",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/inventory/proto",
+      "alias": "inventory_proto"
+    },
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/ms/Weapon",
+    "KKKIIO/maple-moon-client/lib/ms/job",
+    "KKKIIO/maple-moon-client/lib/ms/clothing",
+    "KKKIIO/maple-moon-client/lib/ms/char_look"
   ]
 }

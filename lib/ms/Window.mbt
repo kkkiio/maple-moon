@@ -13,11 +13,11 @@ pub fn Window::get() -> Window {
 }
 
 fn begin(self : Window) -> Unit {
-  GraphicsGL::get().clear_scene()
+  @graphics.GraphicsGL::get().clear_scene()
 }
 
 fn end(self : Window) -> Unit {
-  GraphicsGL::get().flush(self.opacity)
+  @graphics.GraphicsGL::get().flush(self.opacity)
 }
 
 pub fn onmousemove(self : Window, x : Int, y : Int) -> Unit {

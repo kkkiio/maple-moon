@@ -1,5 +1,13 @@
-// app/src/main/cpp/src/Graphics/Animation.h
-// app/src/main/cpp/src/Graphics/Animation.cpp
+typealias Texture = @graphics.Texture
+
+typealias Point[T] = @struct.Point[T]
+
+typealias Rectangle[T] = @struct.Rectangle[T]
+
+typealias DrawArgument = @graphics.DrawArgument
+
+typealias Range[T] = @struct.Range[T]
+
 struct Frame {
   texture : Texture
   delay : Int
@@ -13,9 +21,9 @@ pub typealias NxNode = @resource.NxNode
 
 fn Frame::from_resource(src : NxNode) -> Frame {
   let texture = Texture::from_resource(src)
-  let bounds = Rectangle::from_resource(src).unwrap()
-  let head = Point::from_resource(src["head"]).unwrap()
-  let delay = match src["delay"].get_int().unwrap() {
+  let bounds = src.as_rectangle?().unwrap()
+  let head = src["head"].as_point?().unwrap()
+  let delay = match src["delay"].get_int?().unwrap() {
     0 => 100
     it => it
   }
@@ -60,11 +68,11 @@ pub fn get_delay(self : Frame) -> Int {
 }
 
 pub fn get_origin(self : Frame) -> Point[Int] {
-  self.texture.origin
+  self.texture.get_origin()
 }
 
 pub fn get_dimensions(self : Frame) -> Point[Int] {
-  self.texture.dimensions
+  self.texture.get_dimensions()
 }
 
 pub fn get_head(self : Frame) -> Point[Int] {
@@ -76,11 +84,15 @@ pub fn get_bounds(self : Frame) -> Rectangle[Int] {
 }
 
 pub fn opcstep(self : Frame, timestep : Int) -> Double {
-  timestep.to_double() * (self.opacities.1 - self.opacities.0).to_double() / self.delay.to_double()
+  timestep.to_double() *
+  (self.opacities.1 - self.opacities.0).to_double() /
+  self.delay.to_double()
 }
 
 pub fn scalestep(self : Frame, timestep : Int) -> Double {
-  timestep.to_double() * (self.scales.1 - self.scales.0).to_double() / self.delay.to_double()
+  timestep.to_double() *
+  (self.scales.1 - self.scales.0).to_double() /
+  self.delay.to_double()
 }
 
 pub fn draw(self : Frame, args : DrawArgument) -> Unit {
@@ -104,9 +116,11 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
       if obj.contains("__b") {
         ([Frame::from_resource(src)] : FixedArray[Frame])
       } else {
-        let fs = obj.iter().filter(fn(it) { @strconv.parse_int?(it.0).is_ok() }).map(
-            fn(it) { Frame::from_resource(src[it.0]) },
-          ).collect()
+        let fs = obj
+          .iter()
+          .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
+          .map(fn(it) { Frame::from_resource(src[it.0]) })
+          .collect()
           |> to_fixarray
         if fs.length() <= 0 {
           println("Animation must have at least one frame.")
@@ -117,7 +131,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
       }
     None => [Frame::default()]
   }
-  let zigzag = src["zigzag"].get_bool().unwrap()
+  let zigzag = src["zigzag"].get_bool?().unwrap()
   let a = {
     frames,
     zigzag,

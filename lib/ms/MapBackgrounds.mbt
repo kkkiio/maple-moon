@@ -45,7 +45,7 @@ let map_loader = @resource.map_loader
 
 pub fn Background::from_resource(src : NxNode) -> Background! {
   let loader = map_loader()
-  let animated = src["ani"].get_bool().unwrap()
+  let animated = src["ani"].get_bool?().unwrap()
   let animation = match src["bS"].get_string() {
     "" => Animation::default()
     bs =>
@@ -59,22 +59,22 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
             } else {
               "back"
             },
-            src["no"].get_int().unwrap().to_string(),
+            src["no"].get_int?().unwrap().to_string(),
           ],
         ),
       )
   }
-  let t = Background::typebyid!(src["type"].req_int!())
+  let t = Background::typebyid!(src["type"].as_strict_int!())
   @log.debug({ "type": t, "path": src.path() }, "load background")
   let dim_x = animation.get_dimensions().x
   let dim_y = animation.get_dimensions().y
-  let opacity = src["a"].get_float().unwrap()
-  let flipped = src["f"].get_bool().unwrap()
-  let cx = match src["cx"].get_int().unwrap() {
+  let opacity = src["a"].get_float?().unwrap()
+  let flipped = src["f"].get_bool?().unwrap()
+  let cx = match src["cx"].get_int?().unwrap() {
     0 => if dim_x > 0 { dim_x } else { 1 }
     cx => cx
   }
-  let cy = match src["cy"].get_int().unwrap() {
+  let cy = match src["cy"].get_int?().unwrap() {
     0 => if dim_y > 0 { dim_y } else { 1 }
     cy => cy
   }
@@ -96,11 +96,11 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
       vheight / cy + 3
     _ => 1
   }
-  let rx = src["rx"].get_float().unwrap()
-  let ry = src["ry"].get_float().unwrap()
+  let rx = src["rx"].get_float?().unwrap()
+  let ry = src["ry"].get_float?().unwrap()
   let move_obj = MovingObject::default()
-  move_obj.set_x(src["x"].get_float().unwrap())
-  move_obj.set_y(src["y"].get_float().unwrap())
+  move_obj.set_x(src["x"].get_float?().unwrap())
+  move_obj.set_y(src["y"].get_float?().unwrap())
   match t {
     BackgroundType::HMOVEA | BackgroundType::HMOVEB =>
       move_obj.hspeed = rx / 16.0
@@ -125,23 +125,30 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
   background
 }
 
-let int_background_type_map : @immut/sorted_map.T[Int, BackgroundType] = @immut/sorted_map.from_array(
-  [
-    (0, BackgroundType::BG_NORMAL),
-    (1, BackgroundType::HTILED),
-    (2, BackgroundType::VTILED),
-    (3, BackgroundType::TILED),
-    (4, BackgroundType::HMOVEA),
-    (5, BackgroundType::VMOVEA),
-    (6, BackgroundType::HMOVEB),
-    (7, BackgroundType::VMOVEB),
-  ],
-)
+// let int_background_type_map : @immut/sorted_map.T[Int, BackgroundType] = @immut/sorted_map.from_array(
+//   [
+//     (0, BackgroundType::BG_NORMAL),
+//     (1, BackgroundType::HTILED),
+//     (2, BackgroundType::VTILED),
+//     (3, BackgroundType::TILED),
+//     (4, BackgroundType::HMOVEA),
+//     (5, BackgroundType::VMOVEA),
+//     (6, BackgroundType::HMOVEB),
+//     (7, BackgroundType::VMOVEB),
+//   ],
+// )
 
-pub fn Background::typebyid(id : Int) -> BackgroundType! {
-  match int_background_type_map[id] {
-    Some(t) => t
-    None => fail!("Unknown Background::Type id: [" + id.to_string() + "]")
+pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
+  match id {
+    0 => BackgroundType::BG_NORMAL
+    1 => BackgroundType::HTILED
+    2 => BackgroundType::VTILED
+    3 => BackgroundType::TILED
+    4 => BackgroundType::HMOVEA
+    5 => BackgroundType::VMOVEA
+    6 => BackgroundType::HMOVEB
+    7 => BackgroundType::VMOVEB
+    _ => raise @utils.UnknownEnum(id)
   }
 }
 
@@ -223,7 +230,7 @@ pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
     if back.is_null() {
       break
     }
-    let front = back["front"].get_bool().unwrap()
+    let front = back["front"].get_bool?().unwrap()
     if front {
       foregrounds.push(Background::from_resource?(back).unwrap())
     } else {
@@ -246,7 +253,7 @@ pub fn MapBackgrounds::drawbackgrounds(
   alpha : Double
 ) -> Unit {
   if self.black {
-    GraphicsGL::get().draw_screen_fill(0.0, 0.0, 0.0, 1.0)
+    @graphics.GraphicsGL::get().draw_screen_fill(0.0, 0.0, 0.0, 1.0)
   }
   self.backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
 }

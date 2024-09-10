@@ -1,3 +1,7 @@
 {
-
+  "import": [
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/ms/equip",
+    "KKKIIO/maple-moon-client/lib/utils"
+  ]
 }

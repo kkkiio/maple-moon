@@ -7,6 +7,6 @@ pub fn PingHandler::new() -> PingHandler {
 pub fn handle(self : PingHandler, _packet : InPacket) -> Unit!Error {
   OutPacket::new(OutPacketOpcode::PONG).dispatch()
   if false {
-    fail!("test")
+    fail!("WORKAROUND: implement trait")
   }
 }

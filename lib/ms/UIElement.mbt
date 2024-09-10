@@ -201,7 +201,7 @@ pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
   self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
 }
 
-pub fn draw(self : UIButtons, alpha : Double, position : Point[Int]) -> Unit {
+pub fn draw(self : UIButtons, position : Point[Int]) -> Unit {
   self.buttons.each(fn(_k, button) { button.draw(position) })
 }
 

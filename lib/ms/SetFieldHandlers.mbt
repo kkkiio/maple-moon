@@ -12,7 +12,7 @@ pub fn transition(mapid : Int, portalid : Int) -> Unit {
   // GraphicsGL::get().lock()
   Stage::get().clear()
   Timer::get().start()
-  GraphicsGL::get().clear()
+  @graphics.GraphicsGL::get().clear()
   Stage::get().load(mapid, portalid)
   UI::get().enable()
   Timer::get().start()
@@ -49,7 +49,7 @@ fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
   let stats = @login.parse_stats!(recv)
   // charselect.get().update_character(cid, );
 
-  let player = Stage::get().load_player(
+  let player = Stage::get().load_player!(
     playerentry,
     @config.global().get_worldid(),
     @config.global().get_channelid(),
@@ -58,19 +58,18 @@ fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
   if recv.read_bool!() {
     recv.read_string!() |> ignore // 'linkedname'
   }
-
-  // CharacterParser::parse_inventory(recv, player.get_inventory());
-  // CharacterParser::parse_skillbook(recv, player.get_skills());
-  // CharacterParser::parse_cooldowns(recv, player);
-  // CharacterParser::parse_questlog(recv, player.get_quests());
-  // CharacterParser::parse_minigame(recv);
-  // CharacterParser::parse_ring1(recv);
-  // CharacterParser::parse_ring2(recv);
-  // CharacterParser::parse_ring3(recv);
-  // CharacterParser::parse_teleportrock(recv, player.get_teleport_rock());
-  // CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
-  // CharacterParser::parse_nyinfo(recv);
-  // CharacterParser::parse_areainfo(recv);
+  parse_inventory!(recv, player.inventory)
+  // parse_skillbook(recv, player.get_skills());
+  // parse_cooldowns(recv, player);
+  // parse_questlog(recv, player.get_quests());
+  // parse_minigame(recv);
+  // parse_ring1(recv);
+  // parse_ring2(recv);
+  // parse_ring3(recv);
+  // parse_teleportrock(recv, player.get_teleport_rock());
+  // parse_monsterbook(recv, player.get_monsterbook());
+  // parse_nyinfo(recv);
+  // parse_areainfo(recv);
 
   // player.recalc_stats(true);
 
@@ -87,4 +86,44 @@ fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
 /// Finished updating player stats
 fn new_player_update_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_UPDATE)
+}
+
+fn parse_inventory(
+  recv : @net.InPacket,
+  invent : @inventory.Inventory
+) -> Unit! {
+  invent.set_meso(recv.read_int!())
+  invent.set_slotmax(@inventory.TypeId::EQUIP, recv.read_ubyte!())
+  invent.set_slotmax(@inventory.TypeId::USE, recv.read_ubyte!())
+  invent.set_slotmax(@inventory.TypeId::SETUP, recv.read_ubyte!())
+  invent.set_slotmax(@inventory.TypeId::ETC, recv.read_ubyte!())
+  invent.set_slotmax(@inventory.TypeId::CASH, recv.read_ubyte!())
+  recv.skip!(8)
+  for i in 0..<3 {
+    let inv = if i == 0 {
+      @inventory.TypeId::EQUIPPED
+    } else {
+      @inventory.TypeId::EQUIP
+    }
+    let mut pos = recv.read_short!()
+    while pos != 0 {
+      let slot = if i == 1 { -pos } else { pos }
+      @inventory_proto.parse_item!(recv, inv, slot, invent)
+      pos = recv.read_short!()
+    }
+  }
+  recv.skip!(2)
+  let toparse = [
+    @inventory.TypeId::USE,
+    @inventory.TypeId::SETUP,
+    @inventory.TypeId::ETC,
+    @inventory.TypeId::CASH,
+  ]
+  for inv in toparse {
+    let mut pos = recv.read_byte!()
+    while pos != 0 {
+      @inventory_proto.parse_item!(recv, inv, pos, invent)
+      pos = recv.read_byte!()
+    }
+  }
 }

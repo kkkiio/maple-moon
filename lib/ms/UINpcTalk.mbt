@@ -38,7 +38,7 @@ struct NPCTalkContent {
   text : Text
   text_content : Array[Text]
   text_button_content : Array[TextButton]
-  line_color : ColorName
+  line_color : @struct.ColorName
   selection : Int
 }
 
@@ -123,9 +123,9 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
   buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
   let name = Text::new(
-    FontId::A11M,
-    TextAlignment::CENTER,
-    ColorName::WHITE,
+    @graphics.FontId::A11M,
+    @graphics.TextAlignment::CENTER,
+    @struct.ColorName::WHITE,
     nametag.width(),
   )
   {
@@ -158,18 +158,20 @@ pub fn get_ui_element_base(self : UINpcTalk) -> UIElementBase {
 
 pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let mut drawpos = self.base.position
-  self.top.draw(drawpos |> DrawArgument::from_point)
+  self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.top.height())
-  self.fill.draw(DrawArgument::new4(drawpos, Point::new(0, self.height)))
+  self.fill.draw(
+    @graphics.DrawArgument::new4(drawpos, Point::new(0, self.height)),
+  )
   drawpos = drawpos.shift_y(self.height)
-  self.bottom.draw(drawpos |> DrawArgument::from_point)
+  self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.bottom.height())
-  self.buttons.draw(inter, self.base.position)
+  self.buttons.draw(self.base.position)
   let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
   let speaker_pos = self.base.position + Point::new(22, 11 + speaker_y)
   let center_pos = speaker_pos + Point::new(self.nametag.width() / 2, 0)
-  self.speaker.draw(DrawArgument::new5(center_pos, true))
-  self.nametag.draw(speaker_pos |> DrawArgument::from_point)
+  self.speaker.draw(@graphics.DrawArgument::new5(center_pos, true))
+  self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
   self.name.draw(speaker_pos.shift_y(1))
   match self.content {
     Some(content) =>
@@ -180,7 +182,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
           element.draw(
             self.base.position +
             Point::new(162, init_height - self.offset * 248),
-            text_y_clip=Range::new(
+            text_y_clip=@struct.Range::new(
                 text_min_height,
                 text_min_height + self.height,
               )
@@ -192,7 +194,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
           element.draw_in_range(
             self.base.position +
             Point::new(162, init_height - self.offset * 248),
-            Range::new(text_min_height, text_min_height + self.height),
+            @struct.Range::new(text_min_height, text_min_height + self.height),
           )
           init_height += element.height()
         }
@@ -285,7 +287,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
 pub fn send_cursor(
   self : UINpcTalk,
   clicked : Bool,
-  cursorpos : Point[Int]
+  cursorpos : @struct.Point[Int]
 ) -> CursorState {
   let cursor_relative = cursorpos - self.base.position
   // TODO: check slider
@@ -531,7 +533,7 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
   }
 }
 
-pub fn is_in_range(self : UINpcTalk, cursorpos : Point[Int]) -> Bool {
+pub fn is_in_range(self : UINpcTalk, cursorpos : @struct.Point[Int]) -> Bool {
   self.base.is_in_range(cursorpos)
 }
 
@@ -539,7 +541,7 @@ pub fn toggle_active(self : UINpcTalk) -> Unit {
   self.base.toggle_active()
 }
 
-pub fn doubleclick(self : UINpcTalk, cursorpos : Point[Int]) -> Unit {
+pub fn doubleclick(self : UINpcTalk, cursorpos : @struct.Point[Int]) -> Unit {
 
 }
 
@@ -627,16 +629,16 @@ fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
   let builder = {
     text_content: [],
     text_button_content: [],
-    line_color: ColorName::BLACK,
+    line_color: @struct.ColorName::BLACK,
     selection: 0,
   }
   for line in t.split("\n") {
     builder.set_content(line)
   }
   let text = Text::new(
-    FontId::A18M,
-    TextAlignment::LEFT,
-    ColorName::DARKGREY,
+    @graphics.FontId::A18M,
+    @graphics.TextAlignment::LEFT,
+    @struct.ColorName::DARKGREY,
     320,
     text=formatted_text,
   )
@@ -654,7 +656,7 @@ let max_height = 248
 struct NPCTalkContentBuilder {
   text_content : Array[Text]
   text_button_content : Array[TextButton]
-  mut line_color : ColorName
+  mut line_color : @struct.ColorName
   mut selection : Int
 }
 
@@ -662,13 +664,13 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
   match try_parse_button_selection(line) {
     Some(selection) => {
       if line.contains("#b") {
-        self.line_color = ColorName::BLUE
+        self.line_color = @struct.ColorName::BLUE
       }
       self.selection = selection
       let button = TextButton::new(
         Text::new(
-          FontId::A18M,
-          TextAlignment::LEFT,
+          @graphics.FontId::A18M,
+          @graphics.TextAlignment::LEFT,
           self.line_color,
           320,
           text=line,
@@ -680,15 +682,15 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
     None => {
       self.text_content.push(
         Text::new(
-          FontId::A18M,
-          TextAlignment::LEFT,
-          ColorName::DARKGREY,
+          @graphics.FontId::A18M,
+          @graphics.TextAlignment::LEFT,
+          @struct.ColorName::DARKGREY,
           320,
           text=line,
         ),
       )
       if line.ends_with("#b") {
-        self.line_color = ColorName::BLUE
+        self.line_color = @struct.ColorName::BLUE
       }
     }
   }

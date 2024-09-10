@@ -69,8 +69,8 @@ pub fn load_player(
   entry : CharEntry,
   wid : Int,
   channel_id : Int
-) -> Player {
-  let player = Player::from_entry(entry, wid, channel_id)
+) -> Player! {
+  let player = Player::from_entry!(entry, wid, channel_id)
   self.player = Some(player)
   self.start = now_micro() |> TimePoint::from_micro
 
@@ -305,7 +305,7 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
   //   },
   // )
   if recalculate {
-    Stage::get().get_player().unwrap().recalc_stats(false)
+    Stage::get().get_player().unwrap().recalc_stats!(false)
   }
   UI::get().enable()
 }

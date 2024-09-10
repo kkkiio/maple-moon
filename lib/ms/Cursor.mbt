@@ -55,9 +55,11 @@ fn hash(self : CursorState) -> Int {
 }
 
 pub fn CursorState::by_id(id : Int) -> CursorState {
-  all_cursor_states.iter().find_first(fn(it) -> Bool { id == it.1 }).map(
-    fn(it) -> CursorState { it.0 },
-  ).unwrap()
+  all_cursor_states
+  .iter()
+  .find_first(fn(it) -> Bool { id == it.1 })
+  .map(fn(it) -> CursorState { it.0 })
+  .unwrap()
 }
 
 pub struct Cursor {
@@ -95,7 +97,9 @@ pub fn Cursor::new() -> Cursor {
 pub fn draw(self : Cursor, alpha : Double) -> Unit {
   let hide_after = hide_time / @Constants.timestep
   if self.hide_counter < hide_after {
-    self.animations[self.state].unwrap().draw(from_point(self.position), alpha)
+    self.animations[self.state]
+    .unwrap()
+    .draw(@graphics.DrawArgument::from_point(self.position), alpha)
   }
 }
 

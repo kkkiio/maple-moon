@@ -154,10 +154,10 @@ pub fn Npc::new(
     src = npc_loader().load_res([link + ".img"])
   }
   let info = src["info"]
-  let hide_name = info["hideName"].get_bool().unwrap()
-  let mouse_only = info["talkMouseOnly"].get_bool().unwrap()
+  let hide_name = info["hideName"].get_bool?().unwrap()
+  let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
   let scripted = info["script"].is_null().not() ||
-    info["shop"].get_bool().unwrap()
+    info["shop"].get_bool?().unwrap()
   let dialogue = {  }
   let mut i = 0
   while true {
@@ -357,10 +357,12 @@ fn read_point(recv : @net.InPacket) -> Point[Int]!@net.ReadPacketError {
   { x: recv.read_short!(), y: recv.read_short!() }
 }
 
-struct NpcDialogueHandler {} derive(Default)
+struct NpcDialogueHandler {
+  ui : UI
+}
 
-pub fn NpcDialogueHandler::new() -> NpcDialogueHandler {
-  NpcDialogueHandler::default()
+pub fn NpcDialogueHandler::new(ui : UI) -> NpcDialogueHandler {
+  { ui, }
 }
 
 pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
@@ -380,7 +382,7 @@ pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
     (0, 0)
   }
   let ui = UINpcTalk::new()
-  UI::get().set_element(ui)
-  UI::get().enable()
+  self.ui.set_element(ui)
+  self.ui.enable()
   ui.change_text!(npcid, msgtype, style_b0, style_b1, speaker, text)
 }

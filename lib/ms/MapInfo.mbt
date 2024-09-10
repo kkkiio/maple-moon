@@ -4,7 +4,7 @@ struct Seat {
 }
 
 pub fn Seat::from_resource(src : NxNode) -> Seat {
-  { pos: Point::from_resource(src).unwrap() }
+  { pos: src.as_point?().unwrap() }
 }
 
 pub fn inrange(self : Seat, position : Point[Int]) -> Bool {
@@ -27,10 +27,10 @@ struct Ladder {
 
 pub fn Ladder::from_resource(src : NxNode) -> Ladder {
   {
-    x: src["x"].get_int().unwrap(),
-    y1: src["y1"].get_int().unwrap(),
-    y2: src["y2"].get_int().unwrap(),
-    ladder: src["l"].get_bool().unwrap(),
+    x: src["x"].get_int?().unwrap(),
+    y1: src["y1"].get_int?().unwrap(),
+    y2: src["y2"].get_int?().unwrap(),
+    ladder: src["l"].get_bool?().unwrap(),
   }
 }
 
@@ -78,16 +78,16 @@ pub fn MapInfo::from_resource(
   borders : Range[Int]
 ) -> MapInfo {
   let info = src["info"]
-  let (map_walls, map_borders) = match info["VRLeft"].get_int().to_option() {
+  let (map_walls, map_borders) = match info["VRLeft"].get_int?().to_option() {
     Some(_) =>
       (
         Range::new(
-          info["VRLeft"].get_int().unwrap(),
-          info["VRRight"].get_int().unwrap(),
+          info["VRLeft"].get_int?().unwrap(),
+          info["VRRight"].get_int?().unwrap(),
         ),
         Range::new(
-          info["VRTop"].get_int().unwrap(),
-          info["VRBottom"].get_int().unwrap(),
+          info["VRTop"].get_int?().unwrap(),
+          info["VRBottom"].get_int?().unwrap(),
         ),
       )
     None => (walls, borders)
@@ -102,16 +102,16 @@ pub fn MapInfo::from_resource(
   let ladders = Array::new()
   src["ladderRope"].each(fn(it) { ladders.push(Ladder::from_resource(it)) })
   {
-    field_limit: info["fieldLimit"].get_int().unwrap(),
-    cloud: info["cloud"].get_bool().unwrap(),
+    field_limit: info["fieldLimit"].get_int?().unwrap(),
+    cloud: info["cloud"].get_bool?().unwrap(),
     bgm,
     map_desc: info["mapDesc"].get_string(),
     map_name: info["mapName"].get_string(),
     street_name: info["streetName"].get_string(),
     map_mark: info["mapMark"].get_string(),
-    swim: info["swim"].get_bool().unwrap(),
-    town: info["town"].get_bool().unwrap(),
-    hide_minimap: info["hideMinimap"].get_bool().unwrap(),
+    swim: info["swim"].get_bool?().unwrap(),
+    town: info["town"].get_bool?().unwrap(),
+    hide_minimap: info["hideMinimap"].get_bool?().unwrap(),
     map_walls,
     map_borders,
     seats,

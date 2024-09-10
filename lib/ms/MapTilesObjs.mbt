@@ -13,14 +13,14 @@ pub fn TilesObjs::from_resource(src : NxNode) -> TilesObjs {
       fn(tilenode) {
         let tile = Tile::from_resource(tilenode, tileset)
         let z = tile.get_z()
-        set_defaulta(tileZMap, z).push(tile)
+        tileZMap.get_or_init(z, fn() { [] }).push(tile)
       },
     )
     src["obj"].each(
       fn(objnode) {
         let obj = Obj::from_resource(objnode)
         let z = obj.get_z()
-        set_defaulta(objZMap, z).push(obj)
+        objZMap.get_or_init(z, fn() { [] }).push(obj)
       },
     )
   }

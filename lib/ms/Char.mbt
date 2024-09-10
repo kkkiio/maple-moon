@@ -161,8 +161,11 @@ pub fn draw(
   //     } else {
   //         color = Color::Code::CWHITE;
   //     }
-  let color = Code::CWHITE
-  self.look.draw(DrawArgument::new8(absp, color |> Color::from_code), alpha)
+  let color = @struct.Code::CWHITE
+  self.look.draw(
+    DrawArgument::new8(absp, color |> @struct.Color::from_code),
+    alpha,
+  )
 
   //     after_image_.draw(self.look.get_frame(),
   //                       DrawArgument(absp, facing_right_),
@@ -245,7 +248,7 @@ pub fn set_direction(self : CharBase, f : Bool) -> Unit {
 
 pub fn set_state(self : CharBase, st : CharState) -> Unit {
   self.state = st
-  self.look.set_stance(StanceId::by_state(st.int_value()))
+  self.look.set_stance(@char_look.StanceId::by_state(st.int_value()))
 }
 
 pub fn getflip(self : CharBase) -> Bool {
@@ -298,4 +301,12 @@ fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
 pub fn get_name(self : CharBase) -> String {
   // TODO
   "kkkiio"
+}
+
+pub fn get_weapontype(self : CharBase) -> @Weapon.Type! {
+  let weapon_id = self.look.get_equips().get_weapon()
+  if weapon_id <= 0 {
+    return @Weapon.Type::NONE
+  }
+  return @Weapon.WeaponData::get!(weapon_id).get_type()
 }

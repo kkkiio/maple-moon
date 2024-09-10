@@ -148,7 +148,7 @@ pub fn play_impl(self : Audio, id : Int) -> Unit {
 }
 
 pub fn sound_from_resource(src : NxNode) -> (Int, Int)? {
-  let aid = src["__a"].get_int().to_option()
+  let aid = src["__a"].as_strict_int?().to_option()
   match aid {
     Some(aid) => {
       let id = aid

@@ -1,35 +1,25 @@
 let test_name = "kkkiio1"
 
-type BoolPair[T] (T, T)
-
-fn op_get[T](self : BoolPair[T], b : Bool) -> T {
-  if b {
-    self.0.1
-  } else {
-    self.0.0
-  }
-}
-
 struct ExplorerCreator {
-  skins : BoolPair[Array[Int]]
-  haircolors : BoolPair[Array[Int]]
-  faces : BoolPair[Array[Int]]
-  hairs : BoolPair[Array[Int]]
-  tops : BoolPair[Array[Int]]
-  bots : BoolPair[Array[Int]]
-  shoes : BoolPair[Array[Int]]
-  weapons : BoolPair[Array[Int]]
+  skins : @utils.BoolPair[Array[Int]]
+  haircolors : @utils.BoolPair[Array[Int]]
+  faces : @utils.BoolPair[Array[Int]]
+  hairs : @utils.BoolPair[Array[Int]]
+  tops : @utils.BoolPair[Array[Int]]
+  bots : @utils.BoolPair[Array[Int]]
+  shoes : @utils.BoolPair[Array[Int]]
+  weapons : @utils.BoolPair[Array[Int]]
 }
 
 fn ExplorerCreator::new(src : @resource.NxNode) -> ExplorerCreator {
-  let faces = BoolPair(([], []))
-  let hairs = BoolPair(([], []))
-  let haircolors = BoolPair(([], []))
-  let skins = BoolPair(([], []))
-  let tops = BoolPair(([], []))
-  let bots = BoolPair(([], []))
-  let shoes = BoolPair(([], []))
-  let weapons = BoolPair(([], []))
+  let faces = @utils.BoolPair::new([], [])
+  let hairs = @utils.BoolPair::new([], [])
+  let haircolors = @utils.BoolPair::new([], [])
+  let skins = @utils.BoolPair::new([], [])
+  let tops = @utils.BoolPair::new([], [])
+  let bots = @utils.BoolPair::new([], [])
+  let shoes = @utils.BoolPair::new([], [])
+  let weapons = @utils.BoolPair::new([], [])
   let mkinfo = src
   for i = 0; i < 2; i = i + 1 {
     let (f, char) = if i == 0 {
@@ -42,7 +32,7 @@ fn ExplorerCreator::new(src : @resource.NxNode) -> ExplorerCreator {
         let num = @strconv.parse_int?(node.name()).unwrap()
         node.each(
           fn(idnode) {
-            let value = idnode.get_int().unwrap()
+            let value = idnode.get_int?().unwrap()
             match num {
               0 => faces[f].push(value)
               1 => hairs[f].push(value)

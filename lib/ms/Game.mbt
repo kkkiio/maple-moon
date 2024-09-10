@@ -88,7 +88,7 @@ pub fn Game::start() -> Game {
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers
-      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new()))
+      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new(UI::get())))
       // |> Iter::append((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
       |> Iter::collect,
     ),

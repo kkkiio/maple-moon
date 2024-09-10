@@ -539,7 +539,7 @@ pub fn get_front_by_pos(self : UIStateGame, pos : Point[Int]) -> UIElement? {
   return None
 }
 
-pub fn drop_icon(self : UIStateGame, icon : Icon, pos : Point[Int]) -> Bool {
+pub fn drop_icon(self : UIStateGame, _icon : Icon, _pos : Point[Int]) -> Bool {
   // Implementation goes here
   abort("TODO")
 }
@@ -552,7 +552,7 @@ pub fn remove_cursors(self : UIStateGame) -> Unit {
   // Implementation goes here
 }
 
-pub fn remove_cursor(self : UIStateGame, t : UIElementType) -> Unit {
+pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
   // Implementation goes here
 }
 

@@ -47,7 +47,7 @@ struct Linear {
 } derive(Default, Show)
 
 pub fn get(self : Linear, alpha : Double) -> Double {
-  lerp(self.before, self.now, alpha)
+  @utils.lerp(self.before, self.now, alpha)
 }
 
 pub fn set(self : Linear, value : Double) -> Unit {

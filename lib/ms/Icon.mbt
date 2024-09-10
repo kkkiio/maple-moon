@@ -26,8 +26,8 @@ pub fn hash_combine(self : IconType, hasher : Hasher) -> Unit {
 
 pub trait IconTypeTrait {
   drop_on_stage(Self) -> Unit
-  drop_on_equips(Self, @EquipStat.Id) -> Unit
-  drop_on_items(Self, @InventoryType.Id, @EquipStat.Id, Int, Bool) -> Bool
+  drop_on_equips(Self, @stat.Id) -> Unit
+  drop_on_items(Self, @inventory.TypeId, @stat.Id, Int, Bool) -> Bool
   drop_on_bindings(Self, Point[Int], Bool) -> Unit
   set_count(Self, Int) -> Unit
   get_type(Self) -> IconType
@@ -39,14 +39,14 @@ pub fn drop_on_stage(self : NullType) -> Unit {
 
 }
 
-pub fn drop_on_equips(self : NullType, _eqslot : @EquipStat.Id) -> Unit {
+pub fn drop_on_equips(self : NullType, _eqslot : @stat.Id) -> Unit {
 
 }
 
 pub fn drop_on_items(
   self : NullType,
-  _tab : @InventoryType.Id,
-  _eqslot : @EquipStat.Id,
+  _tab : @inventory.TypeId,
+  _eqslot : @stat.Id,
   _slot : Int,
   _equip : Bool
 ) -> Bool {
@@ -129,7 +129,9 @@ pub fn draw(self : Icon, position : Point[Int]) -> Unit {
   let opacity : Double = if self.dragged { 0.5 } else { 1.0 }
   self.get_texture().draw(DrawArgument::new7(position, opacity))
   if self.show_count {
-    countset.get().draw_text(
+    countset
+    .get()
+    .draw_text(
       self.count.to_string(),
       DrawArgument::from_point(position + Point::new(0, 20)),
     )
@@ -147,14 +149,14 @@ pub fn drop_on_stage(self : Icon) -> Unit {
   self.t.drop_on_stage()
 }
 
-pub fn drop_on_equips(self : Icon, eqslot : @EquipStat.Id) -> Unit {
+pub fn drop_on_equips(self : Icon, eqslot : @stat.Id) -> Unit {
   self.t.drop_on_equips(eqslot)
 }
 
 pub fn drop_on_items(
   self : Icon,
-  tab : @InventoryType.Id,
-  eqslot : @EquipStat.Id,
+  tab : @inventory.TypeId,
+  eqslot : @stat.Id,
   slot : Int,
   equip : Bool
 ) -> Bool {

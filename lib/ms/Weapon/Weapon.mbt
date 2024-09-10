@@ -1,5 +1,3 @@
-// app/src/main/cpp/src/Character/Inventory/Weapon.h
-// app/src/main/cpp/src/Character/Inventory/Weapon.cpp
 pub enum Type {
   NONE
   SWORD_1H
@@ -21,37 +19,49 @@ pub enum Type {
   CASH
 } derive(Eq)
 
-let values : FixedArray[(Type, Int)] = [
-  (NONE, 0),
-  (SWORD_1H, 130),
-  (AXE_1H, 131),
-  (MACE_1H, 132),
-  (DAGGER, 133),
-  (WAND, 137),
-  (STAFF, 138),
-  (SWORD_2H, 140),
-  (AXE_2H, 141),
-  (MACE_2H, 142),
-  (SPEAR, 143),
-  (POLEARM, 144),
-  (BOW, 145),
-  (CROSSBOW, 146),
-  (CLAW, 147),
-  (KNUCKLE, 148),
-  (GUN, 149),
-  (CASH, 170),
-]
+pub fn int_value(self : Type) -> Int {
+  match self {
+    NONE => 0
+    SWORD_1H => 130
+    AXE_1H => 131
+    MACE_1H => 132
+    DAGGER => 133
+    WAND => 137
+    STAFF => 138
+    SWORD_2H => 140
+    AXE_2H => 141
+    MACE_2H => 142
+    SPEAR => 143
+    POLEARM => 144
+    BOW => 145
+    CROSSBOW => 146
+    CLAW => 147
+    KNUCKLE => 148
+    GUN => 149
+    CASH => 170
+  }
+}
 
-pub fn by_value(value : Int) -> Type {
-  let r = values
-    .iter()
-    .find_first(fn(it) { it.1 == value })
-    .map(fn(it) { it.0 })
-  match r {
-    Some(it) => it
-    None => {
-      println("Unknown weapon value=\{value}")
-      NONE
-    }
+pub fn by_value(value : Int) -> Type!@utils.UnknownEnum {
+  match value {
+    0 => NONE
+    130 => SWORD_1H
+    131 => AXE_1H
+    132 => MACE_1H
+    133 => DAGGER
+    137 => WAND
+    138 => STAFF
+    140 => SWORD_2H
+    141 => AXE_2H
+    142 => MACE_2H
+    143 => SPEAR
+    144 => POLEARM
+    145 => BOW
+    146 => CROSSBOW
+    147 => CLAW
+    148 => KNUCKLE
+    149 => GUN
+    170 => CASH
+    _ => raise @utils.UnknownEnum(value)
   }
 }

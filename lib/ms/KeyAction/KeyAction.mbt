@@ -168,7 +168,7 @@ pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
-pub fn get_action_by_id(id : Int) -> Id!Error {
+pub fn get_action_by_id(id : Int) -> Id!@utils.UnknownEnum {
   match id {
     0 => Id::NONE
     1 => Id::EQUIPMENT
@@ -246,6 +246,6 @@ pub fn get_action_by_id(id : Int) -> Id!Error {
     118 => Id::END
     119 => Id::COPY
     120 => Id::PASTE
-    _ => fail!("unknown action id=\{id}")
+    _ => raise @utils.UnknownEnum(id)
   }
 }

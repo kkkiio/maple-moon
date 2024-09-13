@@ -95,7 +95,7 @@ pub fn Cursor::new() -> Cursor {
 }
 
 pub fn draw(self : Cursor, alpha : Double) -> Unit {
-  let hide_after = hide_time / @Constants.timestep
+  let hide_after = hide_time / @constants.timestep
   if self.hide_counter < hide_after {
     self.animations[self.state]
     .unwrap()

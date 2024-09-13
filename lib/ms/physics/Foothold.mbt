@@ -4,20 +4,24 @@ struct Foothold {
   m_prev : Int
   m_next : Int
   m_layer : Int
-  m_horizontal : Range[Int]
-  m_vertical : Range[Int]
+  m_horizontal : @struct.Range[Int]
+  m_vertical : @struct.Range[Int]
 } derive(Default)
 
-pub fn Foothold::from_resource(src : NxNode, id : Int, ly : Int) -> Foothold {
+pub fn Foothold::from_resource(
+  src : @resource.NxNode,
+  id : Int,
+  ly : Int
+) -> Foothold {
   let m_id = id
   let m_prev = src["prev"].get_int?().unwrap()
   let m_next = src["next"].get_int?().unwrap()
   let m_layer = ly
-  let m_horizontal = Range::new(
+  let m_horizontal = @struct.Range::new(
     src["x1"].get_int?().unwrap(),
     src["x2"].get_int?().unwrap(),
   )
-  let m_vertical = Range::new(
+  let m_vertical = @struct.Range::new(
     src["y1"].get_int?().unwrap(),
     src["y2"].get_int?().unwrap(),
   )
@@ -40,11 +44,11 @@ pub fn layer(self : Foothold) -> Int {
   self.m_layer
 }
 
-pub fn horizontal(self : Foothold) -> Range[Int] {
+pub fn horizontal(self : Foothold) -> @struct.Range[Int] {
   self.m_horizontal
 }
 
-pub fn vertical(self : Foothold) -> Range[Int] {
+pub fn vertical(self : Foothold) -> @struct.Range[Int] {
   self.m_vertical
 }
 
@@ -104,7 +108,7 @@ pub fn vcontains(self : Foothold, y : Int) -> Bool {
   self.m_id != 0 && self.m_vertical.contains(y)
 }
 
-pub fn is_blocking(self : Foothold, vertical : Range[Int]) -> Bool {
+pub fn is_blocking(self : Foothold, vertical : @struct.Range[Int]) -> Bool {
   self.is_wall() && self.m_vertical.overlaps(vertical)
 }
 

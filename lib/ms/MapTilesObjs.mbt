@@ -54,7 +54,7 @@ struct MapTilesObjs {
 }
 
 pub fn MapTilesObjs::from_resource(src : NxNode) -> MapTilesObjs {
-  let layers = @Layer.ids.map(
+  let layers = @layer.ids.map(
     fn(layer_id) { TilesObjs::from_resource(src[layer_id.to_string()]) },
   )
   { layers, }
@@ -63,7 +63,7 @@ pub fn MapTilesObjs::from_resource(src : NxNode) -> MapTilesObjs {
 pub fn MapTilesObjs::default() -> MapTilesObjs {
   {
     layers: FixedArray::makei(
-      @Layer.ids.length(),
+      @layer.ids.length(),
       fn(_i) { TilesObjs::default() },
     ),
   }

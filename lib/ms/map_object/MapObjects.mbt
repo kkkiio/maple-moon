@@ -4,7 +4,7 @@ struct MapObjects[T] {
 }
 
 pub fn MapObjects::new[T]() -> MapObjects[T] {
-  { objects: {  }, layers: @Layer.ids.map(fn(_id) { {  } }) }
+  { objects: {}, layers: @layer.ids.map(fn(_id) { {} }) }
 }
 
 pub fn get[T](self : MapObjects[T], oid : Int) -> T? {
@@ -13,7 +13,7 @@ pub fn get[T](self : MapObjects[T], oid : Int) -> T? {
 
 pub fn draw[T : MapObject](
   self : MapObjects[T],
-  layer : @Layer.Id,
+  layer : @layer.Id,
   viewx : Double,
   viewy : Double,
   alpha : Double
@@ -28,7 +28,10 @@ pub fn draw[T : MapObject](
   )
 }
 
-pub fn update[T : MapObject](self : MapObjects[T], physics : Physics) -> Unit {
+pub fn update[T : MapObject](
+  self : MapObjects[T],
+  physics : @physics.Physics
+) -> Unit {
   self.objects.each(
     fn(oid, mmo) {
       let oldlayer = mmo.get_layer()

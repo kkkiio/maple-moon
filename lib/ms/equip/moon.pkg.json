@@ -4,7 +4,7 @@
     "KKKIIO/maple-moon-client/lib/ms/equip/stat",
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/equip/quality",
-    "KKKIIO/maple-moon-client/lib/ms/net",
+    "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/config",
     "KKKIIO/maple-moon-client/lib/ms/MapleStat",
     "KKKIIO/maple-moon-client/lib/resource",

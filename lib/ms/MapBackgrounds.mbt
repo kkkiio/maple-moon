@@ -1,3 +1,5 @@
+typealias MovingObject = @physics.MovingObject
+
 pub enum BackgroundType {
   BG_NORMAL
   HTILED
@@ -36,7 +38,7 @@ struct Background {
   vtile : Int
   opacity : Double
   flipped : Bool
-  move_obj : MovingObject
+  move_obj : @physics.MovingObject
   woffset : Int
   hoffset : Int
 }
@@ -78,8 +80,8 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
     0 => if dim_y > 0 { dim_y } else { 1 }
     cy => cy
   }
-  let vwidth = @Constants.constants.get_viewwidth()
-  let vheight = @Constants.constants.get_viewheight()
+  let vwidth = @constants.constants.get_viewwidth()
+  let vheight = @constants.constants.get_viewheight()
   let woffset = vwidth / 2
   let hoffset = vheight / 2
   let htile = match t {
@@ -98,7 +100,7 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
   }
   let rx = src["rx"].get_float?().unwrap()
   let ry = src["ry"].get_float?().unwrap()
-  let move_obj = MovingObject::default()
+  let move_obj = @physics.MovingObject::default()
   move_obj.set_x(src["x"].get_float?().unwrap())
   move_obj.set_y(src["y"].get_float?().unwrap())
   match t {

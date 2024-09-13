@@ -9,23 +9,7 @@ fn PacketProcessor::new(
   { session: Session::new(fn(it) { switch.forward(it) }) }
 }
 
-struct Singleton[T] {
-  mut instance : T?
-}
-
-pub fn Singleton::new[T]() -> Singleton[T] {
-  { instance: None }
-}
-
-pub fn Singleton::set[T](self : Singleton[T], value : T) -> Unit {
-  self.instance = Some(value)
-}
-
-pub fn must_get[T](self : Singleton[T]) -> T {
-  self.instance.unwrap()
-}
-
-let g_packet_processor : Singleton[PacketProcessor] = Singleton::new()
+let g_packet_processor : @utils.Singleton[PacketProcessor] = @utils.Singleton::new()
 
 pub fn PacketProcessor::get() -> PacketProcessor {
   g_packet_processor.must_get()

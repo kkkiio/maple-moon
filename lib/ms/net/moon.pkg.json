@@ -1,6 +1,0 @@
-{
-    "import": [
-        "KKKIIO/maple-moon-client/lib/log",
-        "KKKIIO/maple-moon-client/lib/config"
-    ]
-}

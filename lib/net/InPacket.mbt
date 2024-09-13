@@ -148,6 +148,10 @@ fn read_le_uint64(bytes : Bytes, offset : Int) -> UInt64 {
   bytes[offset + 7].to_uint().to_uint64().lsl(56)
 }
 
+pub fn read_point(self : InPacket) -> @struct.Point[Int]!ReadPacketError {
+  { x: self.read_short!(), y: self.read_short!() }
+}
+
 pub type! ReadPacketError String
 
 pub impl Show for ReadPacketError with output(self, logger) {

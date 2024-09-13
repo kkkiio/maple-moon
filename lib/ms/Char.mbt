@@ -1,3 +1,7 @@
+typealias MapObjectBase = @map_object.MapObjectBase
+
+typealias PhysicsObject = @physics.PhysicsObject
+
 // Player states which determine animation and state
 // Values are used in movement packets (Add one if facing left)
 enum CharState {
@@ -226,8 +230,8 @@ pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
   //         }
   //     }
 
-  let stancespeed = if speed >= 1.0 / @Constants.timestep.to_double() {
-    (@Constants.timestep.to_double() * speed).to_int()
+  let stancespeed = if speed >= 1.0 / @constants.timestep.to_double() {
+    (@constants.timestep.to_double() * speed).to_int()
   } else {
     0
   }

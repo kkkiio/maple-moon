@@ -355,7 +355,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
         handler.handle!(recv)
       } catch {
         err =>
-          @log.warn({ "opcode": opcode, "err": err }, "handle packet failed")
+          @log.error({ "opcode": opcode, "err": err }, "handle packet failed")
       }
     None => @log.warn({ "opcode": opcode }, "Unhandled packet detected")
   }

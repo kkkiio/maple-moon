@@ -1,3 +1,5 @@
+typealias Sprite = @graphics.Sprite
+
 type TooltipParent
 
 pub enum UIElementType {
@@ -182,7 +184,7 @@ struct UIButtons {
 }
 
 pub fn UIButtons::default() -> UIButtons {
-  { buttons: {  } }
+  { buttons: {} }
 }
 
 pub fn UIElementBase::new(

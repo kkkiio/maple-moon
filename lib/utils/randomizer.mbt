@@ -35,3 +35,7 @@ pub fn next_int(self : Randomizer, ~from : Int = 0, to : Int) -> Int {
   }
   self.state.int(limit=to - from) + from
 }
+
+pub fn choose[T](self : Randomizer, items : FixedArray[T]) -> T {
+  items[self.next_int(items.length())]
+}

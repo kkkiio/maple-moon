@@ -1,3 +1,5 @@
+typealias NxNode = @resource.NxNode
+
 pub enum SoundName {
   BUTTON_CLICK
   BUTTON_OVER

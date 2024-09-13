@@ -46,8 +46,8 @@ pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
     // tooltip_parent: TooltipParent::NONE,
     dragged_icon: None,
     time_rel_grabbed: Timer::get().now(),
-    vwidth: @Constants.constants.get_viewwidth(),
-    vheight: @Constants.constants.get_viewheight(),
+    vwidth: @constants.constants.get_viewwidth(),
+    vheight: @constants.constants.get_viewheight(),
     channel_count,
   }
   // icon_map: Map::from_array([
@@ -60,7 +60,11 @@ pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
   // ]),
 }
 
-pub fn draw(self : UIStateGame, inter : Double, cursor : Point[Int]) -> Unit {
+pub fn draw(
+  self : UIStateGame,
+  inter : Double,
+  cursor : @struct.Point[Int]
+) -> Unit {
   self.element_order.each(
     fn(t) {
       match self.elements.get(t) {
@@ -86,8 +90,8 @@ pub fn draw(self : UIStateGame, inter : Double, cursor : Point[Int]) -> Unit {
 
 pub fn update(self : UIStateGame) -> Unit {
   let mut update_screen = false
-  let new_width = @Constants.constants.get_viewwidth()
-  let new_height = @Constants.constants.get_viewheight()
+  let new_width = @constants.constants.get_viewwidth()
+  let new_height = @constants.constants.get_viewheight()
   if self.vwidth != new_width || self.vheight != new_height {
     update_screen = true
     self.vwidth = new_width
@@ -111,7 +115,7 @@ pub fn update(self : UIStateGame) -> Unit {
   )
 }
 
-pub fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
+pub fn doubleclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
   match self.get_front(pos) {
     Some(front) => {
       front.doubleclick(pos)
@@ -121,7 +125,7 @@ pub fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
   }
 }
 
-pub fn rightclick(self : UIStateGame, pos : Point[Int]) -> Unit {
+pub fn rightclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
   // TODO: add rightclick to UIElement
   // match self.get_front(pos) {
   //   Some(front) => front.rightclick(pos)
@@ -283,7 +287,7 @@ pub fn handle_user_list(self : UIStateGame, tab : UIUserListTab) -> Unit {
 pub fn send_cursor(
   self : UIStateGame,
   cursorstate : CursorState,
-  cursorpos : Point[Int]
+  cursorpos : @struct.Point[Int]
 ) -> CursorState {
   match self.dragged_icon {
     Some(dragged_icon) => {
@@ -523,7 +527,10 @@ pub fn get_front_by_types(
   return None
 }
 
-pub fn get_front_by_pos(self : UIStateGame, pos : Point[Int]) -> UIElement? {
+pub fn get_front_by_pos(
+  self : UIStateGame,
+  pos : @struct.Point[Int]
+) -> UIElement? {
   let mut i = self.element_order.length() - 1
   while i >= 0 {
     let t = self.element_order[i]
@@ -539,7 +546,11 @@ pub fn get_front_by_pos(self : UIStateGame, pos : Point[Int]) -> UIElement? {
   return None
 }
 
-pub fn drop_icon(self : UIStateGame, _icon : Icon, _pos : Point[Int]) -> Bool {
+pub fn drop_icon(
+  self : UIStateGame,
+  _icon : Icon,
+  _pos : @struct.Point[Int]
+) -> Bool {
   // Implementation goes here
   abort("TODO")
 }
@@ -575,7 +586,10 @@ pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
 //     return nullptr;
 // }
 
-fn get_front(self : UIStateGame, pos : Point[Int]) -> UIElement? {
+fn get_front(
+  self : UIStateGame,
+  pos : @struct.Point[Int]
+) -> UIElement? {
   self.element_order
   .iter()
   .flat_map(

@@ -1,13 +1,3 @@
-typealias Texture = @graphics.Texture
-
-typealias Point[T] = @struct.Point[T]
-
-typealias Rectangle[T] = @struct.Rectangle[T]
-
-typealias DrawArgument = @graphics.DrawArgument
-
-typealias Range[T] = @struct.Range[T]
-
 struct Frame {
   texture : Texture
   delay : Int
@@ -103,9 +93,9 @@ pub fn draw(self : Frame, args : DrawArgument) -> Unit {
 struct Animation {
   frames : FixedArray[Frame]
   zigzag : Bool
-  frame : Nominal[Int]
-  mut opacity : Linear
-  mut xyscale : Linear
+  frame : @utils.Nominal[Int]
+  mut opacity : @utils.Linear
+  mut xyscale : @utils.Linear
   mut frame_step : Int
   mut delay : Int
 }
@@ -120,8 +110,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
           .iter()
           .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
           .map(fn(it) { Frame::from_resource(src[it.0]) })
-          .collect()
-          |> to_fixarray
+          |> FixedArray::from_iter
         if fs.length() <= 0 {
           println("Animation must have at least one frame.")
           println(obj)
@@ -135,9 +124,9 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
   let a = {
     frames,
     zigzag,
-    frame: Nominal::default(),
-    opacity: Linear::default(),
-    xyscale: Linear::default(),
+    frame: @utils.Nominal::default(),
+    opacity: @utils.Linear::default(),
+    xyscale: @utils.Linear::default(),
     frame_step: 0,
     delay: 0,
   }
@@ -149,9 +138,9 @@ pub fn Animation::default() -> Animation {
   let a = {
     frames: [Frame::default()],
     zigzag: false,
-    frame: Nominal::default(),
-    opacity: Linear::default(),
-    xyscale: Linear::default(),
+    frame: @utils.Nominal::default(),
+    opacity: @utils.Linear::default(),
+    xyscale: @utils.Linear::default(),
     frame_step: 0,
     delay: 0,
   }
@@ -160,9 +149,9 @@ pub fn Animation::default() -> Animation {
 }
 
 pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
-  let interframe = self.frame.get(alpha)
-  let interopc = self.opacity.get(alpha) / 255.0
-  let interscale = self.xyscale.get(alpha) / 100.0
+  let interframe = self.frame.get(~alpha)
+  let interopc = self.opacity.get(~alpha) / 255.0
+  let interscale = self.xyscale.get(~alpha) / 100.0
   let modifyopc = interopc != 1.0
   let modifyscale = interscale != 1.0
   if modifyopc || modifyscale {
@@ -174,7 +163,7 @@ pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
   }
 }
 
-pub fn update(self : Animation, ~timestep : Int = @Constants.timestep) -> Bool {
+pub fn update(self : Animation, ~timestep : Int = @constants.timestep) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))
   if self.opacity.last() < 0.0 {
@@ -191,19 +180,19 @@ pub fn update(self : Animation, ~timestep : Int = @Constants.timestep) -> Bool {
     let mut nextframe = 0
     let mut ended = false
     if self.zigzag && lastframe > 0 {
-      if self.frame_step == 1 && self.frame.now == lastframe {
+      if self.frame_step == 1 && self.frame.get() == lastframe {
         self.frame_step = -self.frame_step
         ended = false
-      } else if self.frame_step == -1 && self.frame.now == 0 {
+      } else if self.frame_step == -1 && self.frame.get() == 0 {
         self.frame_step = -self.frame_step
         ended = true
       }
-      nextframe = self.frame.now + self.frame_step
-    } else if self.frame.now == lastframe {
+      nextframe = self.frame.get() + self.frame_step
+    } else if self.frame.get() == lastframe {
       nextframe = 0
       ended = true
     } else {
-      nextframe = self.frame.now + 1
+      nextframe = self.frame.get() + 1
       ended = false
     }
     let delta = timestep - self.delay
@@ -231,7 +220,7 @@ pub fn reset(self : Animation) -> Unit {
 }
 
 fn get_frame(self : Animation) -> Frame {
-  self.frames[self.frame.now]
+  self.frames[self.frame.get()]
 }
 
 fn get_delay(self : Animation, frame_id : Int) -> Int {

@@ -16,7 +16,7 @@ pub let flyfriction : Double = 0.05
 
 pub let swimfriction : Double = 0.08
 
-pub fn Physics::from_resource(src : NxNode) -> Physics {
+pub fn Physics::from_resource(src : @resource.NxNode) -> Physics {
   let fh_tree = FootholdTree::from_resource(src)
   { fh_tree, }
 }
@@ -30,7 +30,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   self.fh_tree.update_fh(tomove)
 
   // Use the appropriate physics for the terrain the object is on
-  match tomove.type_ {
+  match tomove.t {
     PhysicsObjectType::PHYSICS_OBJECT_NORMAL => {
       self.move_normal(tomove)
       self.fh_tree.limit_movement(tomove)
@@ -43,7 +43,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
       self.move_swimming(tomove)
       self.fh_tree.limit_movement(tomove)
     }
-    PhysicsObjectType::FIXATED => ()
+    _ => ()
   }
 
   // Move the object forward
@@ -56,8 +56,9 @@ fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
   if phobj.onground {
     phobj.vacc += phobj.vforce
     phobj.hacc += phobj.hforce
-    if phobj.hacc == 0.0 && phobj.moving_object.hspeed < 0.1 && phobj.moving_object.hspeed >
-    -0.1 {
+    if phobj.hacc == 0.0 &&
+      phobj.moving_object.hspeed < 0.1 &&
+      phobj.moving_object.hspeed > -0.1 {
       phobj.moving_object.hspeed = 0.0
     } else {
       let inertia = phobj.moving_object.hspeed / groundslip
@@ -67,7 +68,8 @@ fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
       } else if slopef < -0.5 {
         slopef = -0.5
       }
-      phobj.hacc -= (friction + slopefactor * (1.0 + slopef * -inertia)) * inertia
+      phobj.hacc -= (friction + slopefactor * (1.0 + slopef * -inertia)) *
+        inertia
     }
   } else if phobj.is_flag_not_set(PhysicsObjectFlag::NO_GRAVITY) {
     phobj.vacc += gravforce
@@ -87,12 +89,14 @@ fn move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.vacc -= flyfriction * phobj.moving_object.vspeed
   phobj.moving_object.hspeed += phobj.hacc
   phobj.moving_object.vspeed += phobj.vacc
-  if phobj.hacc == 0.0 && phobj.moving_object.hspeed < 0.1 && phobj.moving_object.hspeed >
-  -0.1 {
+  if phobj.hacc == 0.0 &&
+    phobj.moving_object.hspeed < 0.1 &&
+    phobj.moving_object.hspeed > -0.1 {
     phobj.moving_object.hspeed = 0.0
   }
-  if phobj.vacc == 0.0 && phobj.moving_object.vspeed < 0.1 && phobj.moving_object.vspeed >
-  -0.1 {
+  if phobj.vacc == 0.0 &&
+    phobj.moving_object.vspeed < 0.1 &&
+    phobj.moving_object.vspeed > -0.1 {
     phobj.moving_object.vspeed = 0.0
   }
 }
@@ -109,12 +113,14 @@ fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
   }
   phobj.moving_object.hspeed += phobj.hacc
   phobj.moving_object.vspeed += phobj.vacc
-  if phobj.hacc == 0.0 && phobj.moving_object.hspeed < 0.1 && phobj.moving_object.hspeed >
-  -0.1 {
+  if phobj.hacc == 0.0 &&
+    phobj.moving_object.hspeed < 0.1 &&
+    phobj.moving_object.hspeed > -0.1 {
     phobj.moving_object.hspeed = 0.0
   }
-  if phobj.vacc == 0.0 && phobj.moving_object.vspeed < 0.1 && phobj.moving_object.vspeed >
-  -0.1 {
+  if phobj.vacc == 0.0 &&
+    phobj.moving_object.vspeed < 0.1 &&
+    phobj.moving_object.vspeed > -0.1 {
     phobj.moving_object.vspeed = 0.0
   }
 }

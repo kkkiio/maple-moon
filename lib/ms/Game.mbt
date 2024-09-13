@@ -9,6 +9,8 @@ pub fn Game::start() -> Game {
   let login_module = @login.Module::new(
     fn(x) { task_scheduler.add_new_task(x) },
   )
+  let monster_module = @monster.Module::new()
+  stage.set(Stage::new(monster_module.get_map_mobs()))
   // ( 
 
   // // Attack handlers
@@ -68,8 +70,7 @@ pub fn Game::start() -> Game {
       |> Iter::append((SPAWN_NPC, SpawnNpcHandler::new()))
       |> Iter::append((SPAWN_NPC_C, SpawnNpcControllerHandler::new()))
       // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
-      // // packet_switch.push((SPAWN_MOB, SpawnMobHandler::new()))
-      // // packet_switch.push((SPAWN_MOB_C, SpawnMobControllerHandler::new()))
+      |> Iter::concat(monster_module.make_handlers().iter())
       // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
       // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
       // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
@@ -103,7 +104,7 @@ pub fn stop(self : Game) -> Unit {
 }
 
 pub fn on_draw(self : Game, time : TimePoint) -> Unit {
-  let timestep = @Constants.timestep * 1000
+  let timestep = @constants.timestep * 1000
   let elapsed = Timer::get().stop(time)
 
   // Update game with constant timestep as many times as possible.

@@ -1,12 +1,19 @@
-struct MovingObject {
-  mut x : Linear
-  mut y : Linear
+typealias Point[T] = @struct.Point[T]
+
+pub struct MovingObject {
+  mut x : @utils.Linear
+  mut y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
 } derive(Show)
 
 pub fn MovingObject::default() -> MovingObject {
-  { x: Linear::default(), y: Linear::default(), hspeed: 0.0, vspeed: 0.0 }
+  {
+    x: @utils.Linear::default(),
+    y: @utils.Linear::default(),
+    hspeed: 0.0,
+    vspeed: 0.0,
+  }
 }
 
 pub fn normalize(self : MovingObject) -> Unit {
@@ -15,8 +22,8 @@ pub fn normalize(self : MovingObject) -> Unit {
 }
 
 pub fn move(self : MovingObject) -> Unit {
-  self.x.set(self.x.now + self.hspeed)
-  self.y.set(self.y.now + self.vspeed)
+  self.x.set(self.x.get() + self.hspeed)
+  self.y.set(self.y.get() + self.vspeed)
 }
 
 pub fn set_x(self : MovingObject, d : Double) -> Unit {
@@ -39,15 +46,15 @@ pub fn limity(self : MovingObject, d : Double) -> Unit {
 
 pub fn movexuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
   if delay != 0 {
-    let hdelta = d - self.x.now
-    self.hspeed = @Constants.timestep.to_double() * hdelta / delay.to_double()
+    let hdelta = d - self.x.get()
+    self.hspeed = @constants.timestep.to_double() * hdelta / delay.to_double()
   }
 }
 
 pub fn moveyuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
   if delay != 0 {
-    let vdelta = d - self.y.now
-    self.vspeed = @Constants.timestep.to_double() * vdelta / delay.to_double()
+    let vdelta = d - self.y.get()
+    self.vspeed = @constants.timestep.to_double() * vdelta / delay.to_double()
   }
 }
 
@@ -64,11 +71,11 @@ pub fn mobile(self : MovingObject) -> Bool {
 }
 
 pub fn crnt_x(self : MovingObject) -> Double {
-  self.x.now
+  self.x.get()
 }
 
 pub fn crnt_y(self : MovingObject) -> Double {
-  self.y.now
+  self.y.get()
 }
 
 pub fn next_x(self : MovingObject) -> Double {
@@ -80,11 +87,11 @@ pub fn next_y(self : MovingObject) -> Double {
 }
 
 pub fn get_x(self : MovingObject) -> Int {
-  self.x.now.round().to_int()
+  self.x.get().round().to_int()
 }
 
 pub fn get_y(self : MovingObject) -> Int {
-  self.y.now.round().to_int()
+  self.y.get().round().to_int()
 }
 
 pub fn get_last_x(self : MovingObject) -> Int {
@@ -105,9 +112,9 @@ pub fn get_absolute_x(
   alpha : Double
 ) -> Int {
   let interx = if self.x.normalized() {
-    self.x.now.round()
+    self.x.get().round()
   } else {
-    self.x.get(alpha)
+    self.x.get(~alpha)
   }
   (interx + viewx).round().to_int()
 }
@@ -118,9 +125,9 @@ pub fn get_absolute_y(
   alpha : Double
 ) -> Int {
   let intery = if self.y.normalized() {
-    self.y.now.round()
+    self.y.get().round()
   } else {
-    self.y.get(alpha)
+    self.y.get(~alpha)
   }
   (intery + viewy).round().to_int()
 }
@@ -156,9 +163,9 @@ pub fn int_value(self : PhysicsObjectFlag) -> Int {
   }
 }
 
-struct PhysicsObject {
+pub struct PhysicsObject {
   moving_object : MovingObject
-  mut type_ : PhysicsObjectType
+  mut t : PhysicsObjectType
   mut flags : Int
   mut fhid : Int
   mut fhslope : Double
@@ -175,7 +182,7 @@ struct PhysicsObject {
 pub fn PhysicsObject::default() -> PhysicsObject {
   {
     moving_object: MovingObject::default(),
-    type_: PhysicsObjectType::PHYSICS_OBJECT_NORMAL,
+    t: PhysicsObjectType::PHYSICS_OBJECT_NORMAL,
     flags: 0,
     fhid: 0,
     fhslope: 0.0,

@@ -1,3 +1,7 @@
+typealias Point[T] = @struct.Point[T]
+
+typealias DrawArgument = @graphics.DrawArgument
+
 enum UILoginButtons {
   BT_LOGIN
   BT_REGISTER
@@ -86,49 +90,49 @@ pub fn UILogin::new() -> UILogin {
     ["Back", "login.img", "ani", "16"],
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       back["11"],
       DrawArgument::from_point(Point::new(400, 300)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       ani["17"],
       DrawArgument::from_point(Point::new(129, 283)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       ani["18"],
       DrawArgument::from_point(Point::new(306, 252)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       ani["19"],
       DrawArgument::from_point(Point::new(379, 207)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       back["35"],
       DrawArgument::from_point(Point::new(399, 260)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       prettyLogo,
       DrawArgument::from_point(Point::new(394, 173)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       title["signboard"],
       DrawArgument::from_point(Point::new(391, 330)),
     ),
   )
   obj.base.sprites.push(
-    new_sprite_from_node(
+    @graphics.new_sprite_from_node(
       common["frame"],
       DrawArgument::from_point(Point::new(400, 300)),
     ),

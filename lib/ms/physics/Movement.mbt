@@ -6,7 +6,7 @@ enum MovementType {
   JUMPDOWN
 } derive(Eq, Compare)
 
-struct Movement {
+pub struct Movement {
   t : MovementType
   command : Int
   xpos : Int
@@ -75,6 +75,20 @@ pub fn Movement::from_physics_object(
 }
 
 pub fn hasmoved(self : Movement, newmove : Movement) -> Bool {
-  newmove.newstate != self.newstate || newmove.xpos != self.xpos || newmove.ypos !=
-  self.ypos || newmove.lastx != self.lastx || newmove.lasty != self.lasty
+  newmove.newstate != self.newstate ||
+  newmove.xpos != self.xpos ||
+  newmove.ypos != self.ypos ||
+  newmove.lastx != self.lastx ||
+  newmove.lasty != self.lasty
+}
+
+pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
+  out.write_byte(movement.command.to_byte())
+  out.write_short(movement.xpos)
+  out.write_short(movement.ypos)
+  out.write_short(movement.lastx)
+  out.write_short(movement.lasty)
+  out.write_short(movement.fh)
+  out.write_byte(movement.newstate.to_byte())
+  out.write_short(movement.duration)
 }

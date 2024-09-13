@@ -4,8 +4,8 @@ struct FootholdTree {
   mut footholds : Map[Int, Foothold]
   mut footholds_by_x : Map[Int, Array[Int]]
   mut null_fh : Foothold
-  mut walls : Range[Int]
-  mut borders : Range[Int]
+  mut walls : @struct.Range[Int]
+  mut borders : @struct.Range[Int]
 }
 
 pub fn FootholdTree::default() -> FootholdTree {
@@ -13,12 +13,12 @@ pub fn FootholdTree::default() -> FootholdTree {
     footholds: Map::new(),
     footholds_by_x: Map::new(),
     null_fh: Foothold::default(),
-    walls: Range::default(),
-    borders: Range::default(),
+    walls: @struct.Range::default(),
+    borders: @struct.Range::default(),
   }
 }
 
-pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
+pub fn FootholdTree::from_resource(src : @resource.NxNode) -> FootholdTree {
   let tree = FootholdTree::default()
   let mut leftw : Int = 30000
   let mut rightw : Int = -30000
@@ -30,7 +30,7 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
       let layer = match @strconv.parse_int?(basefname) {
         Ok(v) => v
         Err(err) => {
-          @log.warn({ "err": err, "basefname": basefname }, "Invalid layer")
+          @log.error({ "err": err, "basefname": basefname }, "Invalid layer")
           return
         }
       }
@@ -42,7 +42,7 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
               let id = match @strconv.parse_int?(lastfname) {
                 Ok(v) => v
                 Err(err) => {
-                  @log.warn(
+                  @log.error(
                     { "err": err, "lastfname": lastfname },
                     "Invalid foothold id",
                   )
@@ -87,12 +87,12 @@ pub fn FootholdTree::from_resource(src : NxNode) -> FootholdTree {
       )
     },
   )
-  let walls = Range::new(leftw + 25, rightw - 25)
+  let walls = @struct.Range::new(leftw + 25, rightw - 25)
   if walls.a > walls.b {
     abort("invalid walls=\{walls}")
   }
   tree.walls = walls
-  let borders = Range::new(topb - 300, botb + 100)
+  let borders = @struct.Range::new(topb - 300, botb + 100)
   if borders.a > borders.b {
     abort("invalid borders=\{borders}")
   }
@@ -127,7 +127,7 @@ pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   if phobj.moving_object.vmobile() {
     let crnt_y = phobj.moving_object.crnt_y()
     let next_y = phobj.moving_object.next_y()
-    let ground = Range::new(
+    let ground = @struct.Range::new(
       self.get_fh(phobj.fhid).ground_below(phobj.moving_object.crnt_x()),
       self.get_fh(phobj.fhid).ground_below(phobj.moving_object.next_x()),
     )
@@ -144,7 +144,7 @@ pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
 }
 
 pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
-  if phobj.type_ == PhysicsObjectType::FIXATED && phobj.fhid > 0 {
+  if phobj.t == PhysicsObjectType::FIXATED && phobj.fhid > 0 {
     return
   }
   let curfh = self.get_fh(phobj.fhid)
@@ -179,14 +179,16 @@ pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
       vdelta *= y - ground
     }
     if curfh.slope() != 0.0 || nextfh.slope() != 0.0 {
-      if phobj.moving_object.hspeed > 0.0 && vdelta <= phobj.moving_object.hspeed {
+      if phobj.moving_object.hspeed > 0.0 &&
+        vdelta <= phobj.moving_object.hspeed {
         phobj.moving_object.set_y(ground)
-      } else if phobj.moving_object.hspeed < 0.0 && vdelta >= phobj.moving_object.hspeed {
+      } else if phobj.moving_object.hspeed < 0.0 &&
+        vdelta >= phobj.moving_object.hspeed {
         phobj.moving_object.set_y(ground)
       }
     }
   }
-  phobj.onground = phobj.moving_object.y.now == ground
+  phobj.onground = phobj.moving_object.y.get() == ground
   if phobj.enablejd || phobj.is_flag_set(PhysicsObjectFlag::CHECK_BELOW) {
     let belowid = self.get_fhid_below(x, nextfh.ground_below(x) + 1.0)
     if belowid > 0 {
@@ -218,7 +220,7 @@ pub fn get_wall(
   fy : Double
 ) -> Double {
   let shorty = fy.to_int()
-  let vertical = Range::new(shorty - 50, shorty - 1)
+  let vertical = @struct.Range::new(shorty - 50, shorty - 1)
   let cur = self.get_fh(curid)
   if left {
     let prev = self.get_fh(cur.prev())
@@ -293,10 +295,10 @@ pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {
   self.borders.second()
 }
 
-pub fn get_walls(self : FootholdTree) -> Range[Int] {
+pub fn get_walls(self : FootholdTree) -> @struct.Range[Int] {
   self.walls
 }
 
-pub fn get_borders(self : FootholdTree) -> Range[Int] {
+pub fn get_borders(self : FootholdTree) -> @struct.Range[Int] {
   self.borders
 }

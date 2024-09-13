@@ -1,3 +1,6 @@
+typealias Movement = @physics.Movement
+
+// typealias 
 struct Player {
   char_base : CharBase
   stats : CharStats
@@ -8,6 +11,7 @@ struct Player {
   inventory : @inventory.Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
+  randomizer : @utils.Randomizer
 }
 
 pub typealias CharEntry = @login.CharEntry
@@ -33,13 +37,14 @@ pub fn Player::from_entry(
     inventory: @inventory.Inventory::new(),
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
+    randomizer: @utils.Randomizer::default(),
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
   p
 }
 
-pub fn get_position(self : Player) -> Point[Int] {
+pub fn get_position(self : Player) -> @struct.Point[Int] {
   self.char_base.get_position()
 }
 
@@ -47,7 +52,7 @@ pub fn is_invincible(self : Player) -> Bool {
   true
 }
 
-pub fn update(self : Player, physics : Physics) -> Int {
+pub fn update(self : Player, physics : @physics.Physics) -> Int {
   match get_player_state(self.char_base.state) {
     Some(pst) => {
       pst.update(self)
@@ -77,13 +82,17 @@ pub fn update(self : Player, physics : Physics) -> Int {
 }
 
 // Respawn the player at the given position
-pub fn respawn(self : Player, pos : Point[Int], underwater : Bool) -> Unit {
+pub fn respawn(
+  self : Player,
+  pos : @struct.Point[Int],
+  underwater : Bool
+) -> Unit {
   self.set_position(pos.x, pos.y)
   self.underwater = underwater
 }
 
 pub fn set_position(self : Player, x : Int, y : Int) -> Unit {
-  self.char_base.set_position({ x, y })
+  self.char_base.set_position(@struct.Point::new(x, y))
 }
 
 pub fn draw(
@@ -133,7 +142,7 @@ fn get_player_state(state : CharState) -> PlayerState? {
   }
 }
 
-pub fn get_phobj(self : Player) -> PhysicsObject {
+pub fn get_phobj(self : Player) -> @physics.PhysicsObject {
   self.char_base.get_phobj()
 }
 
@@ -244,7 +253,7 @@ fn new_move_player_packet(movement : Movement) -> @net.OutPacket {
   packet
 }
 
-fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
+fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
   out.write_byte(movement.command.to_byte())
   out.write_short(movement.xpos)
   out.write_short(movement.ypos)
@@ -285,4 +294,24 @@ pub fn set_ladder(self : Player, ladder : Ladder?) -> Unit {
     }
     None => ()
   }
+}
+
+pub fn damage(
+  self : Player,
+  attack : @combat.MobAttack
+) -> @combat.MobAttackResult {
+  let damage = self.stats.calculate_damage(attack.watk)
+  // TODO: Show damage
+  // self.char_base.show_damage(damage)
+  let fromleft = attack.origin.x > self.get_phobj().get_x()
+  let missed = damage <= 0
+  let immovable = self.get_ladder().is_empty().not() ||
+    self.char_base.state == CharState::DIED
+  let knockback = missed.not() && immovable.not()
+  if knockback && self.randomizer.above(self.stats.get_stance()) {
+    self.get_phobj().moving_object.hspeed = if fromleft { -1.5 } else { 1.5 }
+    self.get_phobj().vforce -= 3.5
+  }
+  let direction = if fromleft { 0 } else { 1 }
+  @combat.MobAttackResult::new(attack, damage, direction)
 }

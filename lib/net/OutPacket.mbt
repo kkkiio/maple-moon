@@ -248,13 +248,13 @@ pub fn OutPacket::write_time(self : OutPacket) -> Unit {
   self.write_int(0)
 }
 
-// pub fn OutPacket::write_point(
-//   self : OutPacket,
-//   position : Point[Int]
-// ) -> Unit {
-//   self.write_short(position.x)
-//   self.write_short(position.y)
-// }
+pub fn OutPacket::write_point(
+  self : OutPacket,
+  position : @struct.Point[Int]
+) -> Unit {
+  self.write_short(position.x)
+  self.write_short(position.y)
+}
 
 pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
   self.write_short(str.length())

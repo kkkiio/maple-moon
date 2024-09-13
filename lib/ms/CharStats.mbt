@@ -10,6 +10,8 @@ struct CharStats {
   mut min_damage : Int
   mut mastery : Double
   mut damage_percent : Double
+  mut stance : Double
+  mut reduce_damage : Double
 }
 
 pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
@@ -26,6 +28,8 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
     min_damage: 0,
     mastery: 0.0,
     damage_percent: 0.0,
+    stance: 0.0,
+    reduce_damage: 0.0,
   }
   cs.init_totalstats()
   cs
@@ -55,10 +59,9 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.damage_percent = 0.0
   // boss_dmg_ = 0.0f;
   // ignore_def_ = 0.0f;
-  // stance_ = 0.0f;
+  self.stance = 0.0
   // resist_status_ = 0.0f;
-  // reduce_damage_ = 0.0f;
-
+  self.reduce_damage = 0.0
 }
 
 pub fn get_total(self : CharStats, stat : @stat.Id) -> Int {
@@ -71,6 +74,10 @@ pub fn get_stat(self : CharStats, stat : @MapleStat.Id) -> Int {
 
 pub fn set_stat(self : CharStats, stat : @MapleStat.Id, value : Int) -> Unit {
   self.base_stats.set(stat, value)
+}
+
+pub fn get_stance(self : CharStats) -> Double {
+  self.stance
 }
 
 fn set_mapid(self : CharStats, id : Int) -> Unit {
@@ -169,3 +176,13 @@ let eqstat_caps : Map[@stat.Id, Int] = Map::from_array(
     (@stat.Id::JUMP, 123),
   ],
 )
+
+pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
+  // TODO: Random stuff, need to find the actual formula somewhere.
+  let weapon_def = self.get_total(@stat.Id::WDEF)
+  if weapon_def == 0 {
+    return mobatk
+  }
+  let reduceatk = mobatk / 2 + mobatk / weapon_def
+  reduceatk - (reduceatk.to_double() * self.reduce_damage).to_int()
+}

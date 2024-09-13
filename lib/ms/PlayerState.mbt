@@ -1,3 +1,7 @@
+typealias PhysicsObjectType = @physics.PhysicsObjectType
+
+typealias PhysicsObjectFlag = @physics.PhysicsObjectFlag
+
 trait PlayerState {
   initialize(Self, Player) -> Unit
   send_action(Self, Player, @KeyAction.Id, Bool) -> Unit
@@ -56,7 +60,7 @@ pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
 struct PlayerStandState {} derive(Default)
 
 pub fn initialize(self : PlayerStandState, player : Player) -> Unit {
-  player.get_phobj().type_ = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
 }
 
 pub fn send_action(
@@ -103,7 +107,7 @@ pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
 struct PlayerWalkState {} derive(Default)
 
 pub fn initialize(self : PlayerWalkState, player : Player) -> Unit {
-  player.get_phobj().type_ = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
 }
 
 pub fn send_action(
@@ -162,7 +166,7 @@ pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
 struct PlayerFallState {} derive(Default)
 
 pub fn initialize(self : PlayerFallState, player : Player) -> Unit {
-  player.get_phobj().type_ = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = @physics.PhysicsObjectType::PHYSICS_OBJECT_NORMAL
 }
 
 pub fn send_action(
@@ -298,10 +302,10 @@ pub fn send_action(
 struct PlayerFlyState {} derive(Default)
 
 pub fn initialize(self : PlayerFlyState, player : Player) -> Unit {
-  player.get_phobj().type_ = if player.is_underwater() {
-    PhysicsObjectType::SWIMMING
+  player.get_phobj().t = if player.is_underwater() {
+    @physics.PhysicsObjectType::SWIMMING
   } else {
-    PhysicsObjectType::FLYING
+    @physics.PhysicsObjectType::FLYING
   }
 }
 
@@ -356,7 +360,7 @@ pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
 struct PlayerClimbState {} derive(Default)
 
 pub fn initialize(self : PlayerClimbState, player : Player) -> Unit {
-  player.get_phobj().type_ = PhysicsObjectType::FIXATED
+  player.get_phobj().t = @physics.PhysicsObjectType::FIXATED
 }
 
 pub fn send_action(

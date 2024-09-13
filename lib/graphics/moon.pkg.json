@@ -4,6 +4,7 @@
     "KKKIIO/maple-moon-client/lib/quadtree",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/config"
+    "KKKIIO/maple-moon-client/lib/config",
+    "KKKIIO/maple-moon-client/lib/constants"
   ]
 }

@@ -55,11 +55,11 @@ pub fn MapPortals::default() -> MapPortals {
 pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
   map_portals_animations.animations[PortalType::REGULAR]
   .unwrap()
-  .update(timestep=@Constants.timestep)
+  .update(timestep=@constants.timestep)
   |> ignore
   map_portals_animations.animations[PortalType::HIDDEN]
   .unwrap()
-  .update(timestep=@Constants.timestep)
+  .update(timestep=@constants.timestep)
   |> ignore
   self.portals_by_id.each(
     fn(_k, portal) {

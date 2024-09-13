@@ -1,3 +1,4 @@
+typealias Range[T] = @struct.Range[T]
 // Define the Seat struct and its methods
 struct Seat {
   pos : Point[Int]

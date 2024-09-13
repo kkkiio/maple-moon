@@ -1,6 +1,3 @@
-// app/src/main/cpp/src/Gameplay/Stage.h
-// app/src/main/cpp/src/Gameplay/Stage.cpp
-
 enum StageState {
   INACTIVE
   TRANSITION
@@ -18,10 +15,11 @@ pub struct Stage {
   mut backgrounds : MapBackgrounds?
   mut portals : MapPortals
   npcs : MapNpcs
+  mobs : @monster.MapMobs
   mut start : TimePoint
 }
 
-pub fn Stage::default() -> Stage {
+pub fn Stage::new(mobs : @monster.MapMobs) -> Stage {
   {
     camera: Camera::new(),
     player: None,
@@ -33,24 +31,25 @@ pub fn Stage::default() -> Stage {
     map_info: MapInfo::new(),
     portals: MapPortals::default(),
     npcs: MapNpcs::new(),
+    mobs,
     start: TimePoint::default(),
   }
 }
 
 pub fn Stage::get() -> Stage {
-  stage
+  stage.must_get()
 }
 
 pub fn clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
   // self.chars.clear()
   self.npcs.clear()
-  // self.mobs.clear()
+  self.mobs.clear()
   // self.drops.clear()
   // self.reactors.clear()
 }
 
-let stage : Stage = Stage::default()
+let stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
 pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
   match self.state {
@@ -126,12 +125,12 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   let viewx = viewrpos.x
   let viewy = viewrpos.y
   self.backgrounds.unwrap().drawbackgrounds(viewx, viewy, alpha)
-  @Layer.ids.each(
+  @layer.ids.each(
     fn(id) {
       self.tiles_objs.draw(id, viewpos, alpha)
       // reactors_.draw(id, viewx, viewy, alpha);
       self.npcs.draw(id, viewx, viewy, alpha)
-      // mobs_.draw(id, viewx, viewy, alpha);
+      self.mobs.draw(id, viewx, viewy, alpha)
       // chars_.draw(id, viewx, viewy, alpha);
       self.player
       .unwrap()
@@ -139,7 +138,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
       // drops_.draw(id, viewx, viewy, alpha);
     },
   )
-  @Layer.ids.each(fn(id) { self.player.unwrap().draw(id, viewx, viewy, alpha) })
+  @layer.ids.each(fn(id) { self.player.unwrap().draw(id, viewx, viewy, alpha) })
 
   //     combat_.draw(viewx, viewy, alpha);
   //     mob_combat_.draw(viewx, viewy, alpha);
@@ -170,7 +169,7 @@ fn update(self : Stage) -> Unit {
 
   // reactors_.update(self.physics);
   self.npcs.update(self.physics)
-  // mobs_.update(self.physics);
+  self.mobs.update?(self.physics).unwrap()
   // chars_.update(self.physics);
   // drops_.update(self.physics);
   let player = self.player.unwrap()
@@ -180,13 +179,17 @@ fn update(self : Stage) -> Unit {
   if player.is_invincible() {
     return
   }
-
-  // if (int32_t oid_id = mobs_.find_colliding(self.player.get_phobj())) {
-  //     if (MobAttack attack = mobs_.create_attack(oid_id)) {
-  //         MobAttackResult result = self.player.damage(attack);
-  //         fn_take_damage(result, TakeDamagePacket::From::TOUCH);
-  //     }
-  // }
+  match self.mobs.find_colliding(player.get_phobj().moving_object) {
+    Some(oid_id) =>
+      match self.mobs.create_attack(oid_id) {
+        Some(attack) => {
+          let result = player.damage(attack)
+          new_take_damage_packet_from_mob(result, TakeDamageFrom::TOUCH).dispatch()
+        }
+        None => ()
+      }
+    None => ()
+  }
 }
 
 fn send_cursor(
@@ -373,4 +376,52 @@ fn check_ladders(self : Stage, player : Player, up : Bool) -> Unit {
   }
   let ladder = self.map_info.find_ladder(player.get_position(), up)
   player.set_ladder(ladder)
+}
+
+pub fn get_mobs(self : Stage) -> @monster.MapMobs {
+  self.mobs
+}
+
+/// Tells the server that the player took damage.
+enum TakeDamageFrom {
+  TOUCH
+}
+
+fn int_value(self : TakeDamageFrom) -> Int {
+  match self {
+    TakeDamageFrom::TOUCH => -1
+  }
+}
+
+fn new_take_damage_packet(
+  from : TakeDamageFrom,
+  element : Int,
+  damage : Int,
+  mobid : Int,
+  oid : Int,
+  direction : Int
+) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::TAKE_DAMAGE)
+  ..write_time()
+  ..write_byte(from.int_value().to_byte())
+  ..write_byte(element.to_byte())
+  ..write_int(damage)
+  ..write_int(mobid)
+  ..write_int(oid)
+  ..write_byte(direction.to_byte())
+}
+
+/// From mob attack result.
+fn new_take_damage_packet_from_mob(
+  result : @combat.MobAttackResult,
+  from : TakeDamageFrom
+) -> @net.OutPacket {
+  new_take_damage_packet(
+    from,
+    0,
+    result.damage,
+    result.mobid,
+    result.oid,
+    result.direction,
+  )
 }

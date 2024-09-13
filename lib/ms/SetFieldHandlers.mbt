@@ -21,8 +21,8 @@ pub fn transition(mapid : Int, portalid : Int) -> Unit {
 }
 
 pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
-  // @Constants.constants.set_viewwidth(Setting::get(configWidth).load())
-  // @Constants.constants.set_viewheight(Setting::get(configHeight).load())
+  // @constants.constants.set_viewwidth(Setting::get(configWidth).load())
+  // @constants.constants.set_viewheight(Setting::get(configHeight).load())
   let channel = recv.read_int!()
   let mode1 = recv.read_byte!()
   let mode2 = recv.read_byte!()

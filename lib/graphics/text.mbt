@@ -1,6 +1,6 @@
 struct Text {
-  font : @graphics.FontId
-  alignment : @graphics.TextAlignment
+  font : FontId
+  alignment : TextAlignment
   color : @struct.ColorName
   mut image : @resource.Image?
   mut text : String
@@ -10,8 +10,8 @@ struct Text {
 }
 
 pub fn Text::new(
-  font : @graphics.FontId,
-  alignment : @graphics.TextAlignment,
+  font : FontId,
+  alignment : TextAlignment,
   color : @struct.ColorName,
   max_width : Int,
   ~text : String = "",
@@ -27,7 +27,7 @@ pub fn draw(
   ~text_y_clip : Range[Int]? = None
 ) -> Unit {
   let image = self.get_or_calc_image()
-  @graphics.GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
+  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }
 
 pub fn change_text(self : Text, text : String) -> Unit {
@@ -57,7 +57,7 @@ fn get_or_calc_image(self : Text) -> @resource.Image {
   match self.image {
     Some(image) => image
     None => {
-      let image = @graphics.GraphicsGL::get().create_text_image(
+      let image = GraphicsGL::get().create_text_image(
         self.text,
         self.font,
         self.max_width,

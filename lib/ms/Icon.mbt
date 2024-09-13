@@ -1,3 +1,5 @@
+typealias Texture = @graphics.Texture
+
 pub enum IconType {
   ICON_NONE
   SKILL

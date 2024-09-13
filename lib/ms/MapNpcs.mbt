@@ -1,10 +1,16 @@
+typealias Physics = @physics.Physics
+
+typealias Rectangle[T] = @struct.Rectangle[T]
+
+typealias Animation = @graphics.Animation
+
 struct MapNpcs {
-  npcs : MapObjects[Npc]
+  npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
 }
 
 pub fn MapNpcs::new() -> MapNpcs {
-  { npcs: MapObjects::new(), spawns: @queue.new() }
+  { npcs: @map_object.MapObjects::new(), spawns: @queue.new() }
 }
 
 /// Packet which requests a dialog with a server-sided NPC
@@ -14,7 +20,7 @@ fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
 
 fn draw(
   self : MapNpcs,
-  layer : @Layer.Id,
+  layer : @layer.Id,
   viewx : Double,
   viewy : Double,
   alpha : Double
@@ -101,7 +107,7 @@ pub fn instantiate(self : NpcSpawn, physics : Physics) -> Npc {
 
 /// Represents a NPC on the current map
 struct Npc {
-  base : MapObjectBase
+  base : @map_object.MapObjectBase
   animations : Map[String, Animation]
   lines : Map[String, Array[String]]
   dialogue : Map[String, Array[String]]
@@ -116,7 +122,7 @@ struct Npc {
   flip : Bool
   mut stance : String
   control : Bool
-  random : @rand.Randomizer
+  random : @utils.Randomizer
   // name_label:Text
   // func_label:Text
 }
@@ -145,7 +151,7 @@ pub fn Npc::new(
   cnt : Bool,
   position : Point[Int]
 ) -> Npc {
-  let base = MapObjectBase::new(o)
+  let base = @map_object.MapObjectBase::new(o)
   let strid = @string_format.extend_id(id, 7) + ".img"
   let mut src = npc_loader().load_res([strid])
   let strsrc = @resource.string_loader().load_res(["Npc.img", id.to_string()])
@@ -158,7 +164,7 @@ pub fn Npc::new(
   let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
   let scripted = info["script"].is_null().not() ||
     info["shop"].get_bool?().unwrap()
-  let dialogue = {  }
+  let dialogue = {}
   let mut i = 0
   while true {
     let key = "d\{i}"
@@ -169,9 +175,9 @@ pub fn Npc::new(
     dialogue.get_or_init(key, fn() { Array::new() }).push(str)
     i += 1
   }
-  let animations = {  }
+  let animations = {}
   let states = []
-  let lines = {  }
+  let lines = {}
   src.each(
     fn(npcnode) {
       let state = npcnode.name()
@@ -212,7 +218,7 @@ pub fn Npc::new(
     flip,
     stance,
     control,
-    random: @rand.Randomizer::default(),
+    random: @utils.Randomizer::default(),
   }
 }
 
@@ -322,7 +328,7 @@ pub fn SpawnNpcHandler::new() -> SpawnNpcHandler {
 pub fn handle(self : SpawnNpcHandler, recv : @net.InPacket) -> Unit! {
   let oid = recv.read_int!()
   let id = recv.read_int!()
-  let position = recv |> read_point!()
+  let position = recv.read_point!()
   let flip = recv.read_bool!()
   let fh = recv.read_ushort!()
   recv.read_short!() |> ignore // 'rx'
@@ -343,7 +349,7 @@ pub fn handle(self : SpawnNpcControllerHandler, recv : @net.InPacket) -> Unit! {
     Stage::get().get_npcs().remove(oid)
   } else {
     let id = recv.read_int!()
-    let position = recv |> read_point!()
+    let position = recv.read_point!()
     let flip = recv.read_bool!()
     let fh = recv.read_ushort!()
     recv.read_short!() |> ignore // 'rx'
@@ -351,10 +357,6 @@ pub fn handle(self : SpawnNpcControllerHandler, recv : @net.InPacket) -> Unit! {
     recv.read_bool!() |> ignore // 'minimap'
     Stage::get().get_npcs().spawn({ oid, id, position, flip, fh })
   }
-}
-
-fn read_point(recv : @net.InPacket) -> Point[Int]!@net.ReadPacketError {
-  { x: recv.read_short!(), y: recv.read_short!() }
 }
 
 struct NpcDialogueHandler {

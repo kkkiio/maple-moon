@@ -493,6 +493,10 @@ function main() {
   prepareResourcePromises.push(
     itemLoader.load()
   );
+  const mobLoader = new ResourceLoader("Mob.nx");
+  prepareResourcePromises.push(
+    mobLoader.load()
+  );
 
   const textBitmapGenerator = new TextBitmapGenerator();
 
@@ -608,6 +612,8 @@ function main() {
             return npcLoader;
           case "item":
             return itemLoader;
+          case "mob":
+            return mobLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }
@@ -634,6 +640,7 @@ function main() {
       debug: (msg) => console.debug(msg),
       info: (msg) => console.info(msg),
       warn: (msg) => console.warn(msg),
+      error: (msg) => console.error(msg),
     },
     spectest: {
       print_i32: (x) => console.log(String(x)),

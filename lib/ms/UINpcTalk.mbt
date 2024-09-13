@@ -1,13 +1,13 @@
 struct UINpcTalk {
   base : UIElementBase
   buttons : UIButtons
-  top : Texture
-  fill : Texture
-  bottom : Texture
-  nametag : Texture
-  mut speaker : Texture
+  top : @graphics.Texture
+  fill : @graphics.Texture
+  bottom : @graphics.Texture
+  nametag : @graphics.Texture
+  mut speaker : @graphics.Texture
   mut content : NPCTalkContent?
-  name : Text
+  name : @graphics.Text
   mut height : Int
   offset : Int
   mut unit_rows : Int
@@ -35,8 +35,8 @@ pub fn UINpcTalk::const_toggled() -> Bool {
 }
 
 struct NPCTalkContent {
-  text : Text
-  text_content : Array[Text]
+  text : @graphics.Text
+  text_content : Array[@graphics.Text]
   text_button_content : Array[TextButton]
   line_color : @struct.ColorName
   selection : Int
@@ -86,10 +86,10 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let timestep = 0
   let ui_window2 = ui_loader().load_res(["UIWindow2.img"])
   let util_dlg_ex = ui_window2["UtilDlgEx"]
-  let top = Texture::from_resource(util_dlg_ex["t"])
-  let fill = Texture::from_resource(util_dlg_ex["c"])
-  let bottom = Texture::from_resource(util_dlg_ex["s"])
-  let nametag = Texture::from_resource(util_dlg_ex["bar"])
+  let top = @graphics.Texture::from_resource(util_dlg_ex["t"])
+  let fill = @graphics.Texture::from_resource(util_dlg_ex["c"])
+  let bottom = @graphics.Texture::from_resource(util_dlg_ex["s"])
+  let nametag = @graphics.Texture::from_resource(util_dlg_ex["bar"])
   let min_height = 8 * fill.height() + 14
   let buttons = UIButtons::default()
   buttons.buttons[bid_all_level] = MapleButton::from_resource(
@@ -122,7 +122,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   )
   buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
   buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
-  let name = Text::new(
+  let name = @graphics.Text::new(
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
@@ -147,7 +147,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     t: None,
     name,
     height: 0,
-    speaker: Texture::default(),
+    speaker: @graphics.Texture::default(),
     content: None,
   }
 }
@@ -161,15 +161,15 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.top.height())
   self.fill.draw(
-    @graphics.DrawArgument::new4(drawpos, Point::new(0, self.height)),
+    @graphics.DrawArgument::new4(drawpos, @struct.Point::new(0, self.height)),
   )
   drawpos = drawpos.shift_y(self.height)
   self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.bottom.height())
   self.buttons.draw(self.base.position)
   let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
-  let speaker_pos = self.base.position + Point::new(22, 11 + speaker_y)
-  let center_pos = speaker_pos + Point::new(self.nametag.width() / 2, 0)
+  let speaker_pos = self.base.position + @struct.Point::new(22, 11 + speaker_y)
+  let center_pos = speaker_pos + @struct.Point::new(self.nametag.width() / 2, 0)
   self.speaker.draw(@graphics.DrawArgument::new5(center_pos, true))
   self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
   self.name.draw(speaker_pos.shift_y(1))
@@ -181,7 +181,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
         for element in content.text_content {
           element.draw(
             self.base.position +
-            Point::new(162, init_height - self.offset * 248),
+            @struct.Point::new(162, init_height - self.offset * 248),
             text_y_clip=@struct.Range::new(
                 text_min_height,
                 text_min_height + self.height,
@@ -193,7 +193,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
         for element in content.text_button_content {
           element.draw_in_range(
             self.base.position +
-            Point::new(162, init_height - self.offset * 248),
+            @struct.Point::new(162, init_height - self.offset * 248),
             @struct.Range::new(text_min_height, text_min_height + self.height),
           )
           init_height += element.height()
@@ -202,11 +202,15 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
       } else {
         let mut init_height = 19
         for element in content.text_button_content {
-          element.draw(self.base.position + Point::new(166, init_height))
+          element.draw(
+            self.base.position + @struct.Point::new(166, init_height),
+          )
           init_height += element.height()
         }
         for element in content.text_content {
-          element.draw(self.base.position + Point::new(166, init_height))
+          element.draw(
+            self.base.position + @struct.Point::new(166, init_height),
+          )
           init_height += element.height()
         }
       }
@@ -396,13 +400,13 @@ pub fn change_text(
   if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
-      |> Texture::from_resource
+      |> @graphics.Texture::from_resource
     let namestr = string_loader()
       .load_res(["Npc.img", npcid.to_string(), "name"])
       .get_string()
     self.name.change_text(namestr)
   } else {
-    self.speaker = Texture::default()
+    self.speaker = @graphics.Texture::default()
     self.name.change_text("")
   }
   self.height = self.min_height + 20
@@ -434,7 +438,7 @@ pub fn change_text(
   self.buttons.buttons[bid_close]
   .unwrap()
   .get_button_base()
-  ..set_position(Point::new(9, y_cord))
+  ..set_position(@struct.Point::new(9, y_cord))
   .set_active(true)
   match self.t {
     Some(t) =>
@@ -443,10 +447,10 @@ pub fn change_text(
           self.buttons.buttons[bid_ok]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(469, y_cord))
+          ..set_position(@struct.Point::new(469, y_cord))
           .set_active(true)
         @npc.TalkType::SEND_YESNO => {
-          let yes_position = Point::new(389, y_cord)
+          let yes_position = @struct.Point::new(389, y_cord)
           self.buttons.buttons[bid_yes]
           .unwrap()
           .get_button_base()
@@ -455,54 +459,54 @@ pub fn change_text(
           self.buttons.buttons[bid_no]
           .unwrap()
           .get_button_base()
-          ..set_position(yes_position + Point::new(65, 0))
+          ..set_position(yes_position + @struct.Point::new(65, 0))
           .set_active(true)
         }
         @npc.TalkType::SEND_NEXT =>
           self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(461, y_cord - 30))
+          ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
         @npc.TalkType::SEND_PREV =>
           self.buttons.buttons[bid_prev]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(367, y_cord))
+          ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         @npc.TalkType::SEND_NEXT_PREV => {
           self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(461, y_cord - 30))
+          ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
           self.buttons.buttons[bid_prev]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(367, y_cord))
+          ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         }
         @npc.TalkType::SEND_ACCEPT_DECLINE => {
           self.buttons.buttons[bid_qyes]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(386, y_cord))
+          ..set_position(@struct.Point::new(386, y_cord))
           .set_active(true)
           self.buttons.buttons[bid_qno]
           .unwrap()
           .get_button_base()
-          ..set_position(Point::new(451, y_cord))
+          ..set_position(@struct.Point::new(451, y_cord))
           .set_active(true)
         }
         _ => ()
       }
     None => ()
   }
-  self.base.position = Point::new(
+  self.base.position = @struct.Point::new(
     400 - self.top.width() / 2,
     240 - self.height / 2,
   )
-  self.base.dimension = Point::new(self.top.width(), self.height + 120)
+  self.base.dimension = @struct.Point::new(self.top.width(), self.height + 120)
 }
 
 fn reset_content_pos(self : UINpcTalk) -> Unit {
@@ -518,7 +522,7 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
     for element in content.text_button_content {
       element
       .get_button_base()
-      .set_position(Point::new(162, init_height - self.offset * 248))
+      .set_position(@struct.Point::new(162, init_height - self.offset * 248))
       init_height += element.height()
     }
   } else {
@@ -527,7 +531,9 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
       init_height += element.height()
     }
     for element in content.text_button_content {
-      element.get_button_base().set_position(Point::new(166, init_height))
+      element
+      .get_button_base()
+      .set_position(@struct.Point::new(166, init_height))
       init_height += element.height()
     }
   }
@@ -635,7 +641,7 @@ fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
   for line in t.split("\n") {
     builder.set_content(line)
   }
-  let text = Text::new(
+  let text = @graphics.Text::new(
     @graphics.FontId::A18M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::DARKGREY,
@@ -654,7 +660,7 @@ fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
 let max_height = 248
 
 struct NPCTalkContentBuilder {
-  text_content : Array[Text]
+  text_content : Array[@graphics.Text]
   text_button_content : Array[TextButton]
   mut line_color : @struct.ColorName
   mut selection : Int
@@ -668,7 +674,7 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
       }
       self.selection = selection
       let button = TextButton::new(
-        Text::new(
+        @graphics.Text::new(
           @graphics.FontId::A18M,
           @graphics.TextAlignment::LEFT,
           self.line_color,
@@ -681,7 +687,7 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
     }
     None => {
       self.text_content.push(
-        Text::new(
+        @graphics.Text::new(
           @graphics.FontId::A18M,
           @graphics.TextAlignment::LEFT,
           @struct.ColorName::DARKGREY,

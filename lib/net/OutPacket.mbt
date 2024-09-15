@@ -193,7 +193,11 @@ pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
 pub fn OutPacket::dispatch(self : OutPacket) -> Unit {
   // if @Configuration::get().get_show_packets() {
   // }
-  @log.debug({ "opcode": self.opcode }, "dispatching packet")
+  @log.log(
+    self.opcode.log_level(),
+    { "opcode": self.opcode },
+    "dispatching packet",
+  )
   PacketProcessor::get().process_out(self.buf.to_bytes())
 }
 
@@ -397,4 +401,11 @@ pub fn int_value(self : OutPacketOpcode) -> Int {
 
 pub fn hash(self : OutPacketOpcode) -> Hash {
   self.int_value()
+}
+
+pub fn log_level(self : OutPacketOpcode) -> @log.Level {
+  match self {
+    MOVE_PLAYER | MOVE_MONSTER => @log.Level::DEBUG
+    _ => @log.Level::INFO
+  }
 }

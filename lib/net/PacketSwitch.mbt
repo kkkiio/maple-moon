@@ -319,6 +319,13 @@ pub fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+pub fn log_level(self : Opcode) -> @log.Level {
+  match self {
+    MOB_MOVE_RESPONSE => @log.Level::DEBUG
+    _ => @log.Level::INFO
+  }
+}
+
 struct PacketSwitch {
   handlers : @immut/hashmap.T[Opcode, PacketHandler]
 }
@@ -347,7 +354,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
     }
   }
   // if @config.Configuration::get().get_show_packets() {
-  @log.debug({ "opcode": opcode }, "Received packet")
+  @log.log(opcode.log_level(), { "opcode": opcode }, "Received packet")
   // }
   match self.handlers[opcode] {
     Some(handler) =>

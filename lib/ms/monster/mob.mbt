@@ -92,7 +92,7 @@ struct Mob {
   hp_percent : Int
   mut fading : Bool
   mut fade_in : Bool
-  mut opacity : @utils.Linear
+  opacity : @utils.Linear
 }
 
 enum FlyDirection {
@@ -280,14 +280,13 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
   // let headpos = self.get_head_position(absp)
   // self.effects.drawbelow(absp, alpha)
   if self.dead.not() {
-    let interopc = self.opacity.get(~alpha)
     match self.animations[self.stance.t] {
       Some(anim) =>
         anim.draw(
           @graphics.DrawArgument::new14(
             absp,
             self.stance.face_right && self.no_flip.not(),
-            opacity=interopc,
+            opacity=self.opacity.get(~alpha),
           ),
           alpha,
         )

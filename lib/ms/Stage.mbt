@@ -125,6 +125,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   let viewx = viewrpos.x
   let viewy = viewrpos.y
   self.backgrounds.unwrap().drawbackgrounds(viewx, viewy, alpha)
+  let player = self.player.unwrap()
   @layer.ids.each(
     fn(id) {
       self.tiles_objs.draw(id, viewpos, alpha)
@@ -132,13 +133,11 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
       self.npcs.draw(id, viewx, viewy, alpha)
       self.mobs.draw(id, viewx, viewy, alpha)
       // chars_.draw(id, viewx, viewy, alpha);
-      self.player
-      .unwrap()
-      .draw(id, viewx, viewy, alpha)
+      player.draw(id, viewx, viewy, alpha)
       // drops_.draw(id, viewx, viewy, alpha);
     },
   )
-  @layer.ids.each(fn(id) { self.player.unwrap().draw(id, viewx, viewy, alpha) })
+  @layer.ids.each(fn(id) { player.draw(id, viewx, viewy, alpha) })
 
   //     combat_.draw(viewx, viewy, alpha);
   self.portals.draw(viewpos, alpha)

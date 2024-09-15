@@ -43,8 +43,8 @@ struct Linear {
   mut before : Double
 } derive(Default, Show)
 
-pub fn Linear::new(now : Double) -> Linear {
-  { now, before: 0 }
+pub fn Linear::new(init : Double) -> Linear {
+  { now: init, before: init }
 }
 
 pub fn get(self : Linear, ~alpha? : Double) -> Double {

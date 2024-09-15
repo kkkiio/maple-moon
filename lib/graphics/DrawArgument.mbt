@@ -42,10 +42,6 @@ pub fn DrawArgument::new4(
   DrawArgument::new16(position, position, stretch, 1.0, 1.0, 1.0, 0.0)
 }
 
-pub fn DrawArgument::new5(position : Point[Int], flip : Bool) -> DrawArgument {
-  DrawArgument::new14(position, flip, 1.0)
-}
-
 pub fn DrawArgument::new6(
   angle : Double,
   position : Point[Int],
@@ -58,7 +54,7 @@ pub fn DrawArgument::new7(
   position : Point[Int],
   opacity : Double
 ) -> DrawArgument {
-  DrawArgument::new14(position, false, opacity)
+  DrawArgument::new14(position, false, ~opacity)
 }
 
 pub fn DrawArgument::new8(position : Point[Int], color : Color) -> DrawArgument {
@@ -115,7 +111,7 @@ pub fn DrawArgument::new13(
 pub fn DrawArgument::new14(
   position : Point[Int],
   flip : Bool,
-  opacity : Double
+  ~opacity : Double = 1.0
 ) -> DrawArgument {
   DrawArgument::new10(
     position,

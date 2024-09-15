@@ -225,7 +225,7 @@ pub fn Npc::new(
 pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   match self.animations.get(self.stance) {
-    Some(ani) => ani.draw(DrawArgument::new5(absp, self.flip), alpha)
+    Some(ani) => ani.draw(DrawArgument::new14(absp, self.flip), alpha)
     None => ()
   }
   if self.hide_name.not() {

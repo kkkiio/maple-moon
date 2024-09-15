@@ -27,7 +27,7 @@ pub fn update(self : Obj) -> Unit {
 }
 
 pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
-  self.animation.draw(DrawArgument::new5(self.pos + viewpos, self.flip), inter)
+  self.animation.draw(DrawArgument::new14(self.pos + viewpos, self.flip), inter)
 }
 
 pub fn get_z(self : Obj) -> Int {

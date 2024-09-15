@@ -170,7 +170,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
   let speaker_pos = self.base.position + @struct.Point::new(22, 11 + speaker_y)
   let center_pos = speaker_pos + @struct.Point::new(self.nametag.width() / 2, 0)
-  self.speaker.draw(@graphics.DrawArgument::new5(center_pos, true))
+  self.speaker.draw(@graphics.DrawArgument::new14(center_pos, true))
   self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
   self.name.draw(speaker_pos.shift_y(1))
   match self.content {

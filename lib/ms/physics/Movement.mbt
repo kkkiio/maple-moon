@@ -92,3 +92,67 @@ pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
   out.write_byte(movement.newstate.to_byte())
   out.write_short(movement.duration)
 }
+
+pub fn parse_movements(recv : @net.InPacket) -> Array[Movement]! {
+  let movements = []
+  let length = recv.read_byte!()
+  for i in 0..<length {
+    let command = recv.read_byte!()
+    let mut t = MovementType::NONE
+    let mut xpos = 0
+    let mut ypos = 0
+    let mut lastx = 0
+    let mut lasty = 0
+    let mut fh = 0
+    let mut newstate = 0
+    let mut duration = 0
+    match command {
+      0 | 5 | 17 => {
+        t = MovementType::ABSOLUTE
+        xpos = recv.read_short!()
+        ypos = recv.read_short!()
+        lastx = recv.read_short!()
+        lasty = recv.read_short!()
+        fh = recv.read_short!()
+        newstate = recv.read_byte!()
+        duration = recv.read_short!()
+      }
+      1 | 2 | 6 | 12 | 13 | 16 => {
+        t = MovementType::RELATIVE
+        xpos = recv.read_short!()
+        ypos = recv.read_short!()
+        newstate = recv.read_byte!()
+        duration = recv.read_short!()
+      }
+      11 => {
+        t = MovementType::CHAIR
+        xpos = recv.read_short!()
+        ypos = recv.read_short!()
+        recv.skip!(2)
+        newstate = recv.read_byte!()
+        duration = recv.read_short!()
+      }
+      15 => {
+        t = MovementType::JUMPDOWN
+        xpos = recv.read_short!()
+        ypos = recv.read_short!()
+        lastx = recv.read_short!()
+        lasty = recv.read_short!()
+        recv.skip!(2)
+        fh = recv.read_short!()
+        newstate = recv.read_byte!()
+        duration = recv.read_short!()
+      }
+      3 | 4 | 7 | 8 | 9 | 14 => t = MovementType::NONE
+      10 => t = MovementType::NONE
+      _ => ()
+    }
+    // Change equip
+    movements.push(
+      Movement::new(
+        t, command, xpos, ypos, lastx, lasty, fh, newstate, duration,
+      ),
+    )
+  }
+  movements
+}

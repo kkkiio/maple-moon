@@ -202,7 +202,7 @@ pub fn Background::draw(
         DrawArgument::new14(
           { x: ix + tx, y: iy + ty },
           self.flipped,
-          self.opacity / 255.0,
+          opacity=self.opacity / 255.0,
         ),
         alpha,
       )

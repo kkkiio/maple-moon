@@ -2,13 +2,6 @@ pub struct Pet {
   pet_name : String
 }
 
-pub fn Pet::new(
-  item_id : Int,
-  expiration : Int64,
-  petname : String,
-  level : Int,
-  closeness : Int,
-  fullness : Int
-) -> Pet {
+pub fn Pet::new(petname : String) -> Pet {
   { pet_name: petname }
 }

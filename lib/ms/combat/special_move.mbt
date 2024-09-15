@@ -1,0 +1,11 @@
+pub enum ForbidReason {
+  FBR_NONE
+  FBR_WEAPONTYPE
+  FBR_HPCOST
+  FBR_MPCOST
+  FBR_BULLETCOST
+  FBR_COOLDOWN
+  FBR_OTHER
+}
+
+trait SpecialMove {}

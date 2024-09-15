@@ -141,7 +141,6 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   @layer.ids.each(fn(id) { self.player.unwrap().draw(id, viewx, viewy, alpha) })
 
   //     combat_.draw(viewx, viewy, alpha);
-  //     mob_combat_.draw(viewx, viewy, alpha);
   self.portals.draw(viewpos, alpha)
   self.backgrounds.unwrap().drawforegrounds(viewx, viewy, alpha)
   //     effect_.draw();
@@ -162,7 +161,6 @@ fn update(self : Stage) -> Unit {
   }
 
   // combat_.update();
-  // mob_combat_.update();
   self.backgrounds.unwrap().update()
   // effect_.update();
   self.tiles_objs.update()

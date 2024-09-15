@@ -10,6 +10,7 @@ pub fn Game::start() -> Game {
     fn(x) { task_scheduler.add_new_task(x) },
   )
   let monster_module = @monster.Module::new()
+  let mob_combat = @monster_combat.MobCombat::new(monster_module.get_map_mobs())
   stage.set(Stage::new(monster_module.get_map_mobs()))
   // ( 
 
@@ -71,6 +72,13 @@ pub fn Game::start() -> Game {
       |> Iter::append((SPAWN_NPC_C, SpawnNpcControllerHandler::new()))
       // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
       |> Iter::concat(monster_module.make_handlers().iter())
+      |> Iter::append(
+        (
+          MOB_MOVED,
+          MobMovedHandler::new(monster_module.get_map_mobs(), mob_combat),
+        ),
+      )
+      // (@net.MOB_MOVE_RESPONSE, MobMoveResponseHandler::new(self.map_mobs)),
       // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
       // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
       // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))

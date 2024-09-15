@@ -5,8 +5,6 @@ struct Text {
   mut image : @resource.Image?
   mut text : String
   max_width : Int
-  formatted : Bool
-  line_adj : Int
 }
 
 pub fn Text::new(
@@ -14,11 +12,9 @@ pub fn Text::new(
   alignment : TextAlignment,
   color : @struct.ColorName,
   max_width : Int,
-  ~text : String = "",
-  ~formatted : Bool = true,
-  ~line_adj : Int = 0
+  ~text : String = ""
 ) -> Text {
-  { font, alignment, color, image: None, text, max_width, formatted, line_adj }
+  { font, alignment, color, image: None, text, max_width }
 }
 
 pub fn draw(

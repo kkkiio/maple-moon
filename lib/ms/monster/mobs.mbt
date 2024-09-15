@@ -77,6 +77,22 @@ pub fn create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
   }
 }
 
+pub fn send_movement(
+  self : MapMobs,
+  oid : Int,
+  start : @struct.Point[Int],
+  movements : Array[@physics.Movement]
+) -> Unit {
+  match self.mobs.get(oid) {
+    Some(mob) => mob.send_movement(start, movements)
+    None => ()
+  }
+}
+
+pub fn get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
+  self.mobs
+}
+
 struct MobSpawn {
   oid : Int
   id : Int

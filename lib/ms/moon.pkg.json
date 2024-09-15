@@ -36,6 +36,7 @@
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/ms/monster",
     "KKKIIO/maple-moon-client/lib/ms/physics",
-    "KKKIIO/maple-moon-client/lib/ms/combat"
+    "KKKIIO/maple-moon-client/lib/ms/combat",
+    "KKKIIO/maple-moon-client/lib/ms/monster_combat"
   ]
 }

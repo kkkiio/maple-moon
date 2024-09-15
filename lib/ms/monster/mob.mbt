@@ -43,11 +43,11 @@ pub fn Stance::from_type(t : StanceType) -> Stance {
 struct Mob {
   base : @map_object.MapObjectBase
   animations : Map[StanceType, @graphics.Animation]
-  // skills : Map[Int, MobSkill]
-  // attacks : Map[Int, MobSpecialAttack]
+  skills : Map[Int, MobSkill]
+  attacks : Map[Int, MobSpecialAttack]
   skill_stands : Map[Int, @graphics.Animation]
   attack_stands : Map[Int, @graphics.Animation]
-  // buffs : Array[MobBuff]
+  buffs : Array[MobBuff]
   name : String
   level : Int
   speed : Double
@@ -72,7 +72,7 @@ struct Mob {
   // hp_bar : MobHpBar
   randomizer : @utils.Randomizer
   show_hp : @utils.TimedBool
-  movements : Array[@physics.Movement]
+  mut movements : Array[@physics.Movement]
   mut counter : Int
   id : Int
   effect : Int
@@ -220,11 +220,11 @@ pub fn Mob::new(
   {
     base,
     animations,
-    // skills,
-    // attacks,
+    skills: Map::new(),
+    attacks: Map::new(),
     skill_stands,
     attack_stands,
-    // buffs,
+    buffs: [],
     name,
     level,
     speed,
@@ -284,7 +284,7 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
           @graphics.DrawArgument::new14(
             absp,
             self.stance.flip && self.no_flip.not(),
-            interopc,
+            opacity=interopc,
           ),
           alpha,
         )
@@ -510,6 +510,54 @@ pub fn update_movement(self : Mob) -> Unit {
   ).dispatch()
 }
 
+pub fn update_movement_ex(
+  self : Mob,
+  t : Int,
+  nibbles : Int,
+  action : Int,
+  skill : Int,
+  skill_level : Int,
+  option : Int
+) -> Unit {
+  new_move_mob_packet(
+    self.base.get_oid(),
+    t,
+    nibbles,
+    action,
+    skill,
+    skill_level,
+    option,
+    self.base.get_position(),
+    @physics.Movement::from_physics_object(
+      self.base.phobj,
+      self.stance.int_value(),
+    ),
+  ).dispatch()
+}
+
+pub fn give_buff(self : Mob, buff : MobBuff) -> Unit {
+  self.buffs.push(buff)
+}
+
+pub fn use_skill(self : Mob, skill : MobSkill) -> Unit {
+  match self.skill_stands.get(skill.get_id()) {
+    Some(anim) => self.animations[StanceType::SKILL] = anim
+    None => self.animations.remove(StanceType::SKILL)
+  }
+  self.set_stance(Stance::from_type(StanceType::SKILL))
+  if skill.is_buff() && self.buffs.is_empty() {
+    self.buffs.push(skill.get_buff())
+  }
+}
+
+pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
+  match self.attack_stands.get(attack.get_id()) {
+    Some(anim) => self.animations[StanceType::SKILL] = anim
+    None => self.animations.remove(StanceType::SKILL)
+  }
+  self.set_stance(Stance::from_type(StanceType::SKILL))
+}
+
 pub fn get_head_position(
   self : Mob,
   position : @struct.Point[Int]
@@ -527,4 +575,117 @@ pub fn get_head_position(
     },
   )
   .shift_y(head.y)
+}
+
+pub fn send_movement(
+  self : Mob,
+  start : @struct.Point[Int],
+  movements : Array[@physics.Movement]
+) -> Unit {
+  if self.control {
+    return
+  }
+  self.base.set_position(start)
+  self.movements = movements
+  if self.movements.is_empty() {
+    return
+  }
+  let lastmove = self.movements[0]
+  let laststance = lastmove.newstate
+  self.set_stance(laststance |> from_byte)
+  self.base.phobj.fhid = lastmove.fh
+}
+
+pub fn get_move_skill(self : Mob, move_id : Int, level : Int) -> MobSkill! {
+  match self.skills.get(move_id) {
+    Some(skill) => skill
+    None => {
+      let skill = MobSkill::new!(move_id, level)
+      self.skills.set(move_id, skill)
+      skill
+    }
+  }
+}
+
+pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
+  match self.attacks.get(move_id) {
+    Some(attack) => attack
+    None => {
+      let new_attack = MobSpecialAttack::new!(self.id, move_id)
+      self.attacks.set(move_id, new_attack)
+      new_attack
+    }
+  }
+}
+
+pub fn get_position(self : Mob) -> @struct.Point[Int] {
+  self.base.get_position()
+}
+
+struct MobSpecialAttack {
+  use_effect : MobSkillUseEffect
+  // hit_effect : MobSkillHitEffect
+  move_id : Int
+}
+
+pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
+  self.move_id
+}
+
+pub fn MobSpecialAttack::new(mob_id : Int, move_id : Int) -> MobSpecialAttack! {
+  let mut strid = ""
+  if mob_id < 10000000 {
+    strid = @string_format.extend_id(mob_id, 7)
+  } else {
+    strid = mob_id.to_string()
+  }
+  let src = mob_loader().load_res(
+    [strid + ".img", "attack" + move_id.to_string(), "info"],
+  )
+
+  // sound_ = SingleSkillSound::new(strid)
+
+  let has_multi_effect = src["effect0"].get_children_count() > 0
+  let has_area_warning_effect = src["areaWarning"].get_children_count() > 0
+  let use_effect = if has_multi_effect || has_area_warning_effect {
+    let effect : MobSkillUseEffect = MobMultiUseEffect::new!(
+      src, has_area_warning_effect,
+    )
+    effect
+  } else {
+    let effect : MobSkillUseEffect = MobSingleUseEffect::new!(src)
+    effect
+  }
+  { move_id, use_effect }
+
+  // hit_effect_ = std::make_unique<MobSingleHitEffect>(src["level"][4]);
+
+  // hit_effect_ =
+  // std::make_unique<MobSingleHitEffect>(src["attack1"]["info"]); hit_effect_
+  // = std::make_unique<NoHitEffect>();
+
+  // action_ = std::make_unique<NoAction>();
+}
+
+pub fn show_effect(
+  self : Mob,
+  animation : @graphics.Animation,
+  pos : Int,
+  z : Int,
+  f : Bool
+) -> Unit {
+  if self.base.is_active().not() {
+    return
+  }
+  let shift = match pos {
+    0 => self.get_head_position(@struct.Point::default())
+    _ => @struct.Point::default()
+  }
+  let args = @graphics.DrawArgument::new14(shift, f)
+  self.effects.add(animation, ~args, ~z)
+}
+
+pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
+  self.use_effect.apply(mob)
+  // sound_->play_use();
 }

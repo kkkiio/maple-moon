@@ -607,7 +607,7 @@ pub fn draw(
   alpha : Double
 ) -> Unit {
   let acmove = @struct.Point::default()
-  let relargs = @graphics.DrawArgument::new5(acmove, self.flip)
+  let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
   let interstance = self.stance.get(~alpha)
   let interexpression = self.expression.get(~alpha)
   let interframe = self.st_frame.get(~alpha)

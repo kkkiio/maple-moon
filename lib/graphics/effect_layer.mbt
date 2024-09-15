@@ -45,6 +45,20 @@ pub fn EffectLayer::update(self : EffectLayer) -> Unit {
   }
 }
 
+pub fn EffectLayer::add(
+  self : EffectLayer,
+  animation : Animation,
+  ~args : DrawArgument = DrawArgument::default(),
+  ~z : Int = 0,
+  ~speed : Double = 1.0
+) -> Unit {
+  match self.effects[z] {
+    Some(effects) =>
+      effects.push({ sprite: new_sprite(animation, args), speed })
+    None => self.effects[z] = [{ sprite: new_sprite(animation, args), speed }]
+  }
+}
+
 struct Effect {
   sprite : Sprite
   speed : Double

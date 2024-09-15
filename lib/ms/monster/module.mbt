@@ -14,7 +14,5 @@ pub fn make_handlers(self : Module) -> Array[(@net.Opcode, @net.PacketHandler)] 
   [
     (@net.SPAWN_MOB, SpawnMobHandler::new(self.map_mobs)),
     (@net.SPAWN_MOB_C, SpawnMobControllerHandler::new(self.map_mobs)),
-    // (@net.MOB_MOVED, MobMovedHandler::new(self.map_mobs)),
-    // (@net.MOB_MOVE_RESPONSE, MobMoveResponseHandler::new(self.map_mobs)),
   ]
 }

@@ -9,11 +9,11 @@ pub enum StanceType {
 
 pub struct Stance {
   t : StanceType
-  flip : Bool
+  face_right : Bool
 } derive(Eq)
 
 pub fn Stance::from_byte(b : Int) -> Stance {
-  let flip = b % 2 == 0
+  let face_right = b % 2 == 0
   let t = match b / 2 {
     1 => StanceType::MOVE
     2 => StanceType::JUMP
@@ -21,23 +21,28 @@ pub fn Stance::from_byte(b : Int) -> Stance {
     4 => StanceType::DIE
     _ => StanceType::MOVE
   }
-  { t, flip }
+  { t, face_right }
 }
 
 pub fn int_value(self : Stance) -> Int {
   (match self.t {
-    StanceType::MOVE => 2
-    StanceType::STAND => 4
-    StanceType::JUMP => 6
-    StanceType::HIT => 8
-    StanceType::DIE => 10
-    StanceType::SKILL => 12
-  }) +
-  (if self.flip { 0 } else { 1 })
+    StanceType::MOVE => 1
+    StanceType::STAND => 2
+    StanceType::JUMP => 3
+    StanceType::HIT => 4
+    StanceType::DIE => 5
+    StanceType::SKILL => 6
+  }) *
+  2 +
+  (if self.face_right { 0 } else { 1 })
 }
 
 pub fn Stance::from_type(t : StanceType) -> Stance {
-  { t, flip: true }
+  { t, face_right: true }
+}
+
+pub fn flip(self : Stance) -> Stance {
+  { t: self.t, face_right: self.face_right.not() }
 }
 
 struct Mob {
@@ -200,7 +205,6 @@ pub fn Mob::new(
   let hp_percent = 0
   let dying = false
   let dead = false
-  let fading = false
   let stance = Stance::from_byte(st)
   match animations[stance.t] {
     Some(anim) => anim.reset()
@@ -216,7 +220,6 @@ pub fn Mob::new(
     200, // TODO: find out name tag width
     text=name,
   )
-  let (fade_in, opacity) = if newspawn { (true, 0.0) } else { (false, 1.0) }
   {
     base,
     animations,
@@ -262,9 +265,9 @@ pub fn Mob::new(
     fly_direction,
     walk_force: 0,
     hp_percent,
-    fading,
-    fade_in,
-    opacity: @utils.Linear::new(opacity),
+    fading: false,
+    fade_in: newspawn,
+    opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
   }
 }
 
@@ -274,8 +277,8 @@ pub fn get_oid(self : Mob) -> Int {
 
 pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-  let headpos = self.get_head_position(absp)
-  self.effects.drawbelow(absp, alpha)
+  // let headpos = self.get_head_position(absp)
+  // self.effects.drawbelow(absp, alpha)
   if self.dead.not() {
     let interopc = self.opacity.get(~alpha)
     match self.animations[self.stance.t] {
@@ -283,7 +286,7 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
         anim.draw(
           @graphics.DrawArgument::new14(
             absp,
-            self.stance.flip && self.no_flip.not(),
+            self.stance.face_right && self.no_flip.not(),
             opacity=interopc,
           ),
           alpha,
@@ -293,12 +296,11 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
     if self.show_hp.get() {
       self.name_label.draw(absp)
       if self.dying.not() && self.hp_percent > 0 {
-
+        // self.hp_bar.draw(headpos, self.hp_percent)
       }
     }
   }
-  // TODO: hp bar
-  self.effects.drawabove(absp, alpha)
+  // self.effects.drawabove(absp, alpha)
 }
 
 pub fn update(self : Mob, physics : @physics.Physics) -> Int {
@@ -317,14 +319,14 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
   }
   if self.fading {
     self.opacity.add(-0.025)
-    if self.opacity.get() < 0.025 {
+    if self.opacity.last() < 0.025 {
       self.opacity.set(0.0)
       self.fading = false
       self.dead = true
     }
   } else if self.fade_in {
     self.opacity.add(0.025)
-    if self.opacity.get() > 0.975 {
+    if self.opacity.last() > 0.975 {
       self.opacity.set(1.0)
       self.fade_in = false
     }
@@ -336,13 +338,13 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
   self.effects.update()
   self.show_hp.update()
 
-  // TODO: add buffer animation?
+  // TODO: add buffs animation?
   if self.dying.not() {
     if self.can_fly.not() {
       if self.base.phobj.is_flag_not_set(
           @physics.PhysicsObjectFlag::TURN_AT_EDGES,
         ) {
-        self.stance = { t: self.stance.t, flip: self.stance.flip.not() }
+        self.stance = self.stance.flip()
         self.base.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
         if self.stance.t == StanceType::HIT {
           self.set_stance(Stance::from_type(StanceType::STAND))
@@ -352,7 +354,7 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
     match self.stance.t {
       StanceType::MOVE =>
         if self.can_fly {
-          self.base.phobj.hforce = if self.stance.flip {
+          self.base.phobj.hforce = if self.stance.face_right {
             self.fly_speed
           } else {
             -self.fly_speed
@@ -363,16 +365,16 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
             _ => ()
           }
         } else {
-          self.base.phobj.hforce = if self.stance.flip {
-            -self.speed
-          } else {
+          self.base.phobj.hforce = if self.stance.face_right {
             self.speed
+          } else {
+            -self.speed
           }
         }
       StanceType::HIT =>
         if self.can_move {
           let kbforce = if self.base.phobj.onground { 0.2 } else { 0.1 }
-          self.base.phobj.hforce = if self.stance.flip {
+          self.base.phobj.hforce = if self.stance.face_right { // backwards
             -kbforce
           } else {
             kbforce
@@ -407,7 +409,7 @@ fn next_move(self : Mob) -> Unit {
     match self.stance.t {
       StanceType::HIT | StanceType::STAND =>
         self.set_stance(
-          { t: StanceType::MOVE, flip: self.randomizer.next_bool() },
+          { t: StanceType::MOVE, face_right: self.randomizer.next_bool() },
         )
       StanceType::MOVE | StanceType::JUMP =>
         if self.can_jump &&
@@ -417,10 +419,11 @@ fn next_move(self : Mob) -> Unit {
         } else {
           match self.randomizer.next_int(3) {
             0 => self.set_stance(Stance::from_type(StanceType::STAND))
-            1 => self.set_stance({ t: StanceType::MOVE, flip: false })
-            2 => self.set_stance({ t: StanceType::MOVE, flip: true })
+            1 => self.set_stance({ t: StanceType::MOVE, face_right: false })
+            _ => self.set_stance({ t: StanceType::MOVE, face_right: true })
           }
         }
+      _ => ()
     }
     if self.stance.t == StanceType::MOVE && self.can_fly {
       self.fly_direction = self.randomizer.choose(
@@ -568,7 +571,7 @@ pub fn get_head_position(
   }
   position
   .shift_x(
-    if self.stance.flip && self.no_flip.not() {
+    if self.stance.face_right && self.no_flip.not() {
       -head.x
     } else {
       head.x

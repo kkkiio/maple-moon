@@ -55,7 +55,7 @@ pub fn get(self : Linear, ~alpha? : Double) -> Double {
 }
 
 pub fn set(self : Linear, value : Double) -> Unit {
-  self.before = self.now
+  self.before = value
   self.now = value
 }
 

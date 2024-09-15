@@ -78,7 +78,9 @@ pub fn Game::start() -> Game {
           MobMovedHandler::new(monster_module.get_map_mobs(), mob_combat),
         ),
       )
-      // (@net.MOB_MOVE_RESPONSE, MobMoveResponseHandler::new(self.map_mobs)),
+      |> Iter::append(
+        (@net.MOB_MOVE_RESPONSE, MobMoveResponseHandler::new(mob_combat)),
+      )
       // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
       // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
       // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))

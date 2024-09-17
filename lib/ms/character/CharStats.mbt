@@ -1,5 +1,6 @@
 pub struct CharStats {
   job : @job.Job
+  mut exp : Int64
   mut map_id : Int
   portal : Int
   base_stats : Map[@MapleStat.Id, Int]
@@ -22,6 +23,7 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
   let job = s.stats[@MapleStat.Id::JOB].or(0) |> @job.Job::from_id
   let cs = {
     job,
+    exp: s.exp,
     map_id: s.mapid,
     portal: s.portal,
     base_stats: s.stats,
@@ -225,4 +227,8 @@ pub fn get_job(self : CharStats) -> @job.Job {
 
 pub fn get_weapontype(self : CharStats) -> @Weapon.Type {
   self.weapon_type
+}
+
+pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
+  self.exp = exp
 }

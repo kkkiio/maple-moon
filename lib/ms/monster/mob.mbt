@@ -808,13 +808,9 @@ fn calculate_hitchance(
   leveldelta : Int,
   player_accuracy : Int
 ) -> Double {
-  let faccuracy = player_accuracy.to_double()
-  let mut hitchance = faccuracy /
+  let hitchance = player_accuracy.to_double() /
     ((1.84 + 0.07 * leveldelta.to_double()) * self.avoid.to_double() + 1.0)
-  if hitchance < 0.01 {
-    hitchance = 0.01
-  }
-  return hitchance
+  @math.maximum(hitchance, 0.01)
 }
 
 pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {

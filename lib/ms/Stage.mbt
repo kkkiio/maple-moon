@@ -39,7 +39,7 @@ pub fn Stage::new(mobs : @monster.MapMobs) -> Stage {
 }
 
 pub fn Stage::get() -> Stage {
-  stage.must_get()
+  g_stage.must_get()
 }
 
 pub fn clear(self : Stage) -> Unit {
@@ -51,7 +51,7 @@ pub fn clear(self : Stage) -> Unit {
   // self.reactors.clear()
 }
 
-let stage : @utils.Singleton[Stage] = @utils.Singleton::new()
+let g_stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
 pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
   match self.state {
@@ -288,35 +288,36 @@ fn new_change_map_packet(
   ..write_short(if usewheel { 1 } else { 0 })
 }
 
-struct ChangeStatsHandler {} derive(Default)
+struct ChangeStatsHandler {
+  stage : Stage
+}
 
-fn ChangeStatsHandler::new() -> ChangeStatsHandler {
-  ChangeStatsHandler::default()
+fn ChangeStatsHandler::new(stage : Stage) -> ChangeStatsHandler {
+  { stage, }
 }
 
 fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
   recv.read_bool!() |> ignore // 'itemreaction'
   let updatemask = recv.read_int!()
-  let recalculate = false
-  // @MapleStat.codes.each(
-  //   fn(stat_id, stat_mask) {
-  //     if (updatemask & stat_mask) != 0 {
-  //       recalculate = recalculate || self.handle_stat!(stat_id, recv)
-  //     }
-  //   },
-  // )
+  let mut recalculate = false
+  let player = self.stage.get_player().unwrap()
+  for it in @MapleStat.codes {
+    let (stat_id, stat_mask) = it
+    if (updatemask & stat_mask) != 0 {
+      recalculate = recalculate || handle_stat!(player, stat_id, recv)
+    }
+  }
   if recalculate {
-    Stage::get().get_player().unwrap().recalc_stats!(false)
+    player.recalc_stats!(false)
   }
   UI::get().enable()
 }
 
 fn handle_stat(
-  self : ChangeStatsHandler,
+  player : @player.Player,
   stat : @MapleStat.Id,
   recv : @net.InPacket
 ) -> Bool! {
-  let player = Stage::get().get_player().unwrap()
   let mut recalculate = false
   match stat {
     @MapleStat.Id::SKIN => player.change_look(stat, recv.read_short!())
@@ -335,8 +336,9 @@ fn handle_stat(
         new_change_map_packet(died, targetid, "sp", false).dispatch()
       }
     }
-    // @MapleStat.Id::EXP => player.get_stats().set_exp(recv.read_int!())
-    // @MapleStat.Id::MESO => player.get_inventory().set_meso(recv.read_int!())
+    @MapleStat.Id::EXP =>
+      player.get_stats().set_exp(recv.read_int!().to_int64())
+    @MapleStat.Id::MESO => player.get_inventory().set_meso(recv.read_int!())
     _ => {
       player.get_stats().set_stat(stat, recv.read_short!())
       recalculate = true

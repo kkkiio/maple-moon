@@ -215,7 +215,7 @@ pub fn handle(self : CharlistHandler, recv : @net.InPacket) -> Unit!Error {
       _ => fail!("pic=\{pic} not ok")
     }
   } else {
-    @log.info({  }, "no characters, creating new one")
+    @log.info({}, "no characters, creating new one")
     new_name_char_packet(test_name).dispatch()
   }
 }
@@ -319,6 +319,7 @@ struct Account {
 pub struct StatsEntry {
   name : String
   stats : Map[@MapleStat.Id, Int]
+  exp : Int64
   mapid : Int
   portal : Int
 }
@@ -406,7 +407,7 @@ pub fn parse_stats(recv : @net.InPacket) -> StatsEntry! {
   for i = 0; i < 3; i = i + 1 {
     petids.push(recv.read_long!())
   }
-  let stats = {  }
+  let stats = {}
   stats.set(@MapleStat.Id::LEVEL, recv.read_ubyte!())
   stats.set(@MapleStat.Id::JOB, recv.read_ushort!())
   stats.set(@MapleStat.Id::STR, recv.read_ushort!())
@@ -427,6 +428,7 @@ pub fn parse_stats(recv : @net.InPacket) -> StatsEntry! {
   recv.skip!(4) // timestamp
   {
     name,
+    exp: exp.to_int64(),
     // female, petids, 
     stats,
     mapid,
@@ -441,13 +443,13 @@ fn parse_look(recv : @net.InPacket) -> LookEntry! {
   recv.read_bool!() |> ignore // megaphone
   let hairid = recv.read_int!()
   let mut eqslot = recv.read_ubyte!()
-  let equips = {  }
+  let equips = {}
   while eqslot != 0xFF {
     equips.set(eqslot, recv.read_int!())
     eqslot = recv.read_ubyte!()
   }
   let mut mskeqslot = recv.read_ubyte!()
-  let maskedequips = {  }
+  let maskedequips = {}
   while mskeqslot != 0xFF {
     maskedequips.set(mskeqslot, recv.read_int!())
     mskeqslot = recv.read_ubyte!()

@@ -503,3 +503,7 @@ pub fn get_weapontype(self : Player) -> @Weapon.Type! {
 pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
   self.char_base.regular_attack!(degenerate)
 }
+
+pub fn get_inventory(self : Player) -> @inventory.Inventory {
+  self.inventory
+}

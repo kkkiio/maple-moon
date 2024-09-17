@@ -11,7 +11,8 @@ pub fn Game::start() -> Game {
   )
   let monster_module = @monster.Module::new()
   let mob_combat = @monster_combat.MobCombat::new(monster_module.get_map_mobs())
-  stage.set(Stage::new(monster_module.get_map_mobs()))
+  let stage = Stage::new(monster_module.get_map_mobs())
+  g_stage.set(stage)
   // ( 
 
   // // Attack handlers
@@ -57,7 +58,7 @@ pub fn Game::start() -> Game {
       // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
       // packet_switch.push((KEYMAP, KeymapHandler::new()))
       // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-      |> Iter::append((@net.CHANGE_STATS, ChangeStatsHandler::new()))
+      |> Iter::append((@net.CHANGE_STATS, ChangeStatsHandler::new(stage)))
 
       // MapObject handlers
       // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
@@ -96,7 +97,7 @@ pub fn Game::start() -> Game {
       // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
       // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
       // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-      // packet_switch.push((RECALCULATE_STATS, RecalculateStatsHandler::new()))
+      |> Iter::append((RECALCULATE_STATS, RecalculateStatsHandler::new(stage)))
       // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))

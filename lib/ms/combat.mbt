@@ -106,9 +106,7 @@ fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
     }
     let mob_objs = self.mobs.get_mobs()
     // let reactor_objs = self.reactors.get_reactors()
-    let mob_targets = self.find_closest_mob(
-      mob_objs, range, origin, mobcount, true,
-    )
+    let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
     // let reactor_targets = self.find_closest_reactor(
     //   reactor_objs, range, origin, mobcount, false,
     // )
@@ -159,12 +157,10 @@ fn apply_rush(self : Combat, result : @combat.AttackResult) -> Unit {
 }
 
 fn find_closest_mob(
-  self : Combat,
   objs : @map_object.MapObjects[@monster.Mob],
   range : @struct.Rectangle[Int],
   origin : @struct.Point[Int],
-  objcount : Int,
-  use_mobs : Bool
+  objcount : Int
 ) -> Array[Int] {
   let arr = Array::new()
   for _, mob in objs {

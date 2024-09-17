@@ -74,7 +74,7 @@ struct Mob {
   is_boss : Bool
   effects : @graphics.EffectLayer
   name_label : @graphics.Text
-  // hp_bar : MobHpBar
+  hp_bar : @ui.MobHpBar
   randomizer : @utils.Randomizer
   show_hp : @utils.TimedBool
   mut movements : Array[@physics.Movement]
@@ -89,7 +89,7 @@ struct Mob {
   mut stance : Stance
   mut fly_direction : FlyDirection
   walk_force : Double
-  hp_percent : Int
+  mut hp_percent : Int
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
@@ -215,7 +215,7 @@ pub fn Mob::new(
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
     // @graphics.TextBackground::NAMETAG,
-    200, // TODO: find out name tag width
+    100, // TODO: find out name tag width
     text=name,
   )
   {
@@ -247,7 +247,7 @@ pub fn Mob::new(
     is_boss,
     effects: @graphics.EffectLayer::default(),
     name_label,
-    // hp_bar,
+    hp_bar: @ui.MobHpBar::default(),
     randomizer: @utils.Randomizer::default(),
     show_hp: @utils.TimedBool::default(),
     movements: [],
@@ -275,8 +275,8 @@ pub fn get_oid(self : Mob) -> Int {
 
 pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-  // let headpos = self.get_head_position(absp)
-  // self.effects.drawbelow(absp, alpha)
+  let headpos = self.get_head_position(position=absp)
+  self.effects.drawbelow(absp, alpha)
   if self.dead.not() {
     match self.animations[self.stance.t] {
       Some(anim) =>
@@ -293,11 +293,11 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
     if self.show_hp.get() {
       self.name_label.draw(absp)
       if self.dying.not() && self.hp_percent > 0 {
-        // self.hp_bar.draw(headpos, self.hp_percent)
+        self.hp_bar.draw(headpos, self.hp_percent)
       }
     }
   }
-  // self.effects.drawabove(absp, alpha)
+  self.effects.drawabove(absp, alpha)
 }
 
 pub fn update(self : Mob, physics : @physics.Physics) -> Int {
@@ -826,4 +826,18 @@ pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
     self.update_movement()
   }
+}
+
+pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
+  if self.hp_percent == 0 {
+    let delta = playerlevel - self.level
+    if delta > 9 {
+      self.name_label.change_color(@struct.ColorName::YELLOW)
+    } else if delta < -9 {
+      self.name_label.change_color(@struct.ColorName::RED)
+    }
+  }
+  let percent = percent |> @math.minimum(100) |> @math.maximum(0)
+  self.hp_percent = percent
+  self.show_hp.set_for(2000)
 }

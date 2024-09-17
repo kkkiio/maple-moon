@@ -314,8 +314,8 @@ class TextBitmapGenerator {
     this.textCtx.canvas.height = VHEIGHT;
   }
   // TODO: allow individual font style
-  createImage(innerHtml, fontSize, fontName, maxWidth, textAlign) {
-    const htmlSvg = `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${maxWidth}" height="${VHEIGHT}"><foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px"><p style="margin: 0px; font-size: ${fontSize}px; font-family: ${fontName}; color: black; text-align: ${textAlign};">${innerHtml}</p></body></foreignObject></svg>`;
+  createImage(innerHtml, fontSize, fontName, maxWidth, textAlign, color) {
+    const htmlSvg = `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${maxWidth}" height="${VHEIGHT}"><foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px"><p style="margin: 0px; font-size: ${fontSize}px; font-family: ${fontName}; color: ${color}; text-align: ${textAlign};">${innerHtml}</p></body></foreignObject></svg>`;
     const img = new Image();
     const bmp = {
       data: null,
@@ -335,9 +335,7 @@ class TextBitmapGenerator {
 }
 function main() {
   const canvas = document.getElementById("canvas");
-  const gl = canvas.getContext("webgl2", {
-    // premultipliedAlpha: false,
-  });
+  const gl = canvas.getContext("webgl2", {});
   if (!gl) {
     throw new Error("WebGL not supported");
   }
@@ -414,8 +412,11 @@ function main() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.enable(gl.BLEND); // enable alpha blending
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // specify how alpha must blend: fragment color * alpha + clear color * (1 - alpha)
-  // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  // The Canvas 2D API produces only premultiplied alpha values.
+  // https://webgl2fundamentals.org/webgl/lessons/webgl-text-texture.html
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); 
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   //   gl.bindVertexArray(null);
 
   const prepareResourcePromises = [];

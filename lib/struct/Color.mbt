@@ -100,7 +100,7 @@ pub let color_names : FixedArray[ColorName] = [
   MALIBU,
 ]
 
-let colors : FixedArray[Color] = [
+let built_colors : FixedArray[Color] = [
   Color::new_rgba(0.00, 0.00, 0.00, 1.0), // Black
   Color::new_rgba(1.00, 1.00, 1.00, 1.0), // White
   Color::new_rgba(1.00, 1.00, 0.00, 1.0), // Yellow
@@ -175,7 +175,7 @@ pub fn Color::from_code(name : Code) -> Color {
 }
 
 pub fn Color::from_name(name : ColorName) -> Color {
-  colors[name.int_value()]
+  built_colors[name.int_value()]
 }
 
 pub fn invisible(self : Color) -> Bool {

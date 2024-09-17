@@ -9,6 +9,7 @@
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/layer",
-    "KKKIIO/maple-moon-client/lib/ms/combat"
+    "KKKIIO/maple-moon-client/lib/ms/combat",
+    "KKKIIO/maple-moon-client/lib/ms/ui"
   ]
 }

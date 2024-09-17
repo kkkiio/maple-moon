@@ -1,7 +1,7 @@
 struct Text {
   font : FontId
   alignment : TextAlignment
-  color : @struct.ColorName
+  mut color : @struct.ColorName
   mut image : @resource.Image?
   mut text : String
   max_width : Int
@@ -22,7 +22,7 @@ pub fn draw(
   point : Point[Int],
   ~text_y_clip : Range[Int]? = None
 ) -> Unit {
-  let image = self.get_or_calc_image()
+  let image = self.get_or_init_image()
   GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }
 
@@ -35,21 +35,21 @@ pub fn change_text(self : Text, text : String) -> Unit {
 }
 
 pub fn dimensions(self : Text) -> Point[Int] {
-  let image = self.get_or_calc_image()
+  let image = self.get_or_init_image()
   { x: image.width(), y: image.height() }
 }
 
 pub fn width(self : Text) -> Int {
-  let image = self.get_or_calc_image()
+  let image = self.get_or_init_image()
   image.width()
 }
 
 pub fn height(self : Text) -> Int {
-  let image = self.get_or_calc_image()
+  let image = self.get_or_init_image()
   image.height()
 }
 
-fn get_or_calc_image(self : Text) -> @resource.Image {
+fn get_or_init_image(self : Text) -> @resource.Image {
   match self.image {
     Some(image) => image
     None => {
@@ -58,9 +58,18 @@ fn get_or_calc_image(self : Text) -> @resource.Image {
         self.font,
         self.max_width,
         self.alignment,
+        self.color |> Color::from_name,
       )
       self.image = Some(image)
       image
     }
   }
+}
+
+pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
+  if self.color == color {
+    return
+  }
+  self.color = color
+  self.image = None
 }

@@ -158,6 +158,18 @@ pub fn apply_damage(
   }
 }
 
+pub fn send_mobhp(
+  self : MapMobs,
+  oid : Int,
+  percent : Int,
+  playerlevel : Int
+) -> Unit {
+  match self.mobs.get(oid) {
+    Some(mob) => mob.show_hp(percent, playerlevel)
+    None => ()
+  }
+}
+
 struct MobSpawn {
   oid : Int
   id : Int

@@ -86,7 +86,9 @@ pub fn Game::start() -> Game {
       // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
       // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
       // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
-      // // packet_switch.push((SHOW_MOB_HP, ShowMobHpHandler::new()))
+      |> Iter::append(
+        (SHOW_MOB_HP, ShowMobHpHandler::new(monster_module.get_map_mobs())),
+      )
       |> Iter::append(
         (KILL_MOB, KillMobHandler::new(monster_module.get_map_mobs())),
       )

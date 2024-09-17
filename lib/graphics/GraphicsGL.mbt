@@ -162,7 +162,8 @@ pub fn create_text_image(
   text : String,
   id : FontId,
   max_width : Int,
-  alignment : TextAlignment
+  alignment : TextAlignment,
+  color : Color
 ) -> @resource.Image {
   let fontName = if id.is_bold() {
     @config.configFontPathBold.load()
@@ -180,6 +181,7 @@ pub fn create_text_image(
     fontName.to_js_string(),
     max_width,
     text_alignment.to_js_string(),
+    "rgb(\{color.r()} \{color.g()} \{color.b()} / \{color.a()})".to_js_string(), // rgb($r $g $b / $a)
   )
 }
 
@@ -552,5 +554,6 @@ fn text_create_image(
   font_size : Int,
   font_name : Js_string,
   max_width : Int,
-  text_align : Js_string
+  text_align : Js_string,
+  color : Js_string
 ) -> @resource.Image = "text" "create_image"

@@ -284,47 +284,8 @@ fn extract_effects(
     flip: result.toleft.not(),
   }
   if result.bullet != 0 {
-
+    // TODO: Implement bullet effects
   } else {
-    // let bullet ={ move.get_bullet(user, result.bullet),
-    //                 user.get_position(),
-    //                 result.toleft };
-
-    // for oid, vec in result.damage_lines {
-    //     if (self.mobs.contains(oid)) {
-    //         let numbers = place_numbers(oid, vec);
-    //         let head = self.mobs.get_mob_head_position(oid);
-
-    //         let mut i = 0;
-
-    //         for number in numbers {
-    //             let effect ={
-    //                 attack_user,   number, vec[i].first,
-    //                 result.toleft, oid,    move.get_id()
-    //             };
-
-    //             self.bullet_effects.push( user.get_attackdelay(i),
-    //                                     {damageeffect:effect,
-    //                                     bullet,
-    //                                     target:head });
-    //             i+=1
-    //         }
-    //     }
-    // }
-
-    // if (result.damage_lines.empty()) {
-    //     int16_t xshift = result.toleft ? -400 : 400;
-    //     Point<int16_t> target =
-    //         user.get_position() + Point<int16_t>(xshift, -26);
-
-    //     for (int i = 0; i < result.hitcount; i++) {
-    //         DamageEffect effect { attack_user, {}, 0, false, 0, 0 };
-    //         bullet_effects_.emplace(user.get_attackdelay(i),
-    //                                 std::move(effect),
-    //                                 bullet,
-    //                                 target);
-    //     }
-    // }
     for oid, vec in result.damage_lines {
       if self.mobs.contains(oid) {
         let numbers = self.place_numbers(oid, vec)

@@ -67,9 +67,10 @@ pub fn DamageNumber::draw(
   }
 }
 
-pub fn DamageNumber::update(self : DamageNumber) -> Bool {
+let fade_step : Double = @constants.timestep.to_double() / 500
+
+pub fn update(self : DamageNumber) -> Bool {
   self.move_obj.move()
-  let fade_step = @constants.timestep.to_double() * 1.0 / 1.5
   self.opacity.add(-fade_step)
   self.opacity.last() <= 0.0
 }

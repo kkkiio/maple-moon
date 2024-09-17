@@ -1,3 +1,5 @@
+typealias Texture = @graphics.Texture
+
 pub enum HairLayer {
   HAIR_LAYER_NONE
   HAIR_LAYER_DEFAULT

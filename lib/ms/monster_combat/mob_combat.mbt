@@ -2,7 +2,6 @@ struct MobCombat {
   // player : Player
   // chars : MapChars
   mobs : @monster.MapMobs
-  skills : Map[Int, @combat.Skill]
   // regular_attack : @combat.RegularAttack
   // attack_results : @utils.TimedQueue[@combat.AttackResult]
   // damage_effects : @utils.TimedQueue[DamageEffect]
@@ -10,7 +9,7 @@ struct MobCombat {
 }
 
 pub fn MobCombat::new(mobs : @monster.MapMobs) -> MobCombat {
-  { mobs, skills: Map::new() }
+  { mobs, }
 }
 
 pub fn use_move(
@@ -26,20 +25,16 @@ pub fn use_move(
     Some(mob) =>
       if 0 < action_id && action_id < 7 {
         let move = mob.get_move_attack!(action_id)
-        self.apply_move_attack(move, mob)
+        apply_move_attack(move, mob)
       } else if skill_id != 0 {
         let move = mob.get_move_skill!(skill_id, level)
-        self.apply_move_skill(move, mob)
+        apply_move_skill(move, mob)
       }
     None => ()
   }
 }
 
-pub fn apply_move_skill(
-  self : MobCombat,
-  move : @monster.MobSkill,
-  mob : @monster.Mob
-) -> Unit {
+pub fn apply_move_skill(move : @monster.MobSkill, mob : @monster.Mob) -> Unit {
   mob.update_movement_ex(1, 1, 47, move.get_id(), move.get_level(), 0)
   if move.is_buff() {
     mob.give_buff(move.get_buff())
@@ -50,7 +45,6 @@ pub fn apply_move_skill(
 }
 
 pub fn apply_move_attack(
-  self : MobCombat,
   move : @monster.MobSpecialAttack,
   mob : @monster.Mob
 ) -> Unit {

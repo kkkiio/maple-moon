@@ -32,7 +32,7 @@ pub fn draw(self : TextButton, parentpos : Point[Int]) -> Unit {
 pub fn draw_in_range(
   self : TextButton,
   parentpos : Point[Int],
-  range : Range[Int]
+  range : @struct.Range[Int]
 ) -> Unit {
   if self.base.active {
     self.text.draw(parentpos, text_y_clip=range |> @option.some)

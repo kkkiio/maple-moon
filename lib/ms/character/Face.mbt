@@ -1,3 +1,7 @@
+typealias NxNode = @resource.NxNode
+
+typealias Point[T] = @struct.Point[T]
+
 pub enum ExpressionId {
   DEFAULT
   BLINK

@@ -38,13 +38,13 @@ pub fn set_hardware_info(self : Configuration) -> Unit {
 // TypeMap<Entry> settings;
 
 struct Configuration {
-  mut rightclicksell : Bool
-  mut show_weekly : Bool
-  mut start_shown : Bool
+  // mut rightclicksell : Bool
+  // mut show_weekly : Bool
+  // mut start_shown : Bool
   mut macs : String
   mut hwid : String
-  mut max_width : Int
-  mut max_height : Int
+  // mut max_width : Int
+  // mut max_height : Int
   mut volume_serial_number : String
   mut worldid : Int
   mut channelid : Int
@@ -54,13 +54,13 @@ struct Configuration {
 
 fn Configuration::default() -> Configuration {
   {
-    rightclicksell: false,
-    show_weekly: true,
-    start_shown: false,
+    // rightclicksell: false,
+    // show_weekly: true,
+    // start_shown: false,
     macs: "",
     hwid: "",
-    max_width: 2560,
-    max_height: 1440,
+    // max_width: 2560,
+    // max_height: 1440,
     volume_serial_number: "",
     worldid: 0,
     channelid: 0,
@@ -189,11 +189,7 @@ pub fn IntEntry::new(name : String, value : String) -> IntEntry {
 }
 
 pub fn load(self : IntEntry) -> Int {
-  try {
-    @strconv.parse_int!(self.value)
-  } catch {
-    s => 0
-  }
+  @strconv.parse_int?(self.value).or(0)
 }
 
 pub fn save(self : IntEntry, value : String) -> Unit {
@@ -225,22 +221,22 @@ pub fn save(self : IntEntry, value : String) -> Unit {
 // }
 
 // IP Address which the client will connect to
-let configServerIP : StringEntry = StringEntry::new("ServerIP", "127.0.0.1")
+// let configServerIP : StringEntry = StringEntry::new("ServerIP", "127.0.0.1")
 
 // Port which the client will connect to
-let configServerPort : StringEntry = StringEntry::new("ServerPort", "8484")
+// let configServerPort : StringEntry = StringEntry::new("ServerPort", "8484")
 
 // Whether to start in full screen mode
-let configFullscreen : BoolEntry = BoolEntry::new("Fullscreen", "false")
+// let configFullscreen : BoolEntry = BoolEntry::new("Fullscreen", "false")
 
 // The width of the screen
-let configWidth : IntEntry = IntEntry::new("Width", "1366")
+// let configWidth : IntEntry = IntEntry::new("Width", "1366")
 
 // The height of the screen
-let configHeight : IntEntry = IntEntry::new("Height", "768")
+// let configHeight : IntEntry = IntEntry::new("Height", "768")
 
 // Whether to use VSync
-let configVSync : BoolEntry = BoolEntry::new("VSync", "true")
+// let configVSync : BoolEntry = BoolEntry::new("VSync", "true")
 
 // The normal font which will be used
 pub let configFontPathNormal : StringEntry = StringEntry::new(
@@ -254,32 +250,32 @@ pub let configFontPathBold : StringEntry = StringEntry::new(
 
 // Music Volume
 // Number from 0 to 100
-let configBGMVolume : IntEntry = IntEntry::new("BGMVolume", "50")
+// let configBGMVolume : IntEntry = IntEntry::new("BGMVolume", "50")
 
 // Sound Volume
 // Number from 0 to 100
-let configSFXVolume : IntEntry = IntEntry::new("SFXVolume", "50")
+// let configSFXVolume : IntEntry = IntEntry::new("SFXVolume", "50")
 
 // Whether to save the last used account name
-let configSaveLogin : BoolEntry = BoolEntry::new("SaveLogin", "false")
+// let configSaveLogin : BoolEntry = BoolEntry::new("SaveLogin", "false")
 
 // The last used account name
-let configDefaultAccount : StringEntry = StringEntry::new("Account", "")
+// let configDefaultAccount : StringEntry = StringEntry::new("Account", "")
 
 // The last used world
-let configDefaultWorld : IntEntry = IntEntry::new("World", "0")
+// let configDefaultWorld : IntEntry = IntEntry::new("World", "0")
 
 // The last used channel
-let configDefaultChannel : IntEntry = IntEntry::new("Channel", "0")
+// let configDefaultChannel : IntEntry = IntEntry::new("Channel", "0")
 
 // The last used region
-let configDefaultRegion : IntEntry = IntEntry::new("Region", "5")
+// let configDefaultRegion : IntEntry = IntEntry::new("Region", "5")
 
 // The last used character
-let configDefaultCharacter : IntEntry = IntEntry::new("Character", "0")
+// let configDefaultCharacter : IntEntry = IntEntry::new("Character", "0")
 
 // Whether to show UIChatBar
-let configChatopen : BoolEntry = BoolEntry::new("Chatopen", "false")
+// let configChatopen : BoolEntry = BoolEntry::new("Chatopen", "false")
 
 // The default position of UIStatsInfo
 // configLet posSTATS : PointEntry = PointEntry::new("PosSTATS", { x: 72, y: 72 })
@@ -336,14 +332,14 @@ let configChatopen : BoolEntry = BoolEntry::new("Chatopen", "false")
 // configLet posCHARINFO : PointEntry = PointEntry::new("PosCHARINFO", { x: 264, y: 264 })
 
 // The default type of UIMiniMap
-let configMiniMapType : IntEntry = IntEntry::new("MiniMapType", "0")
+// let configMiniMapType : IntEntry = IntEntry::new("MiniMapType", "0")
 
 // Whether to use a simple version of UIMiniMap
-let configMiniMapSimpleMode : BoolEntry = BoolEntry::new(
-  "MiniMapSimpleMode", "false",
-)
+// let configMiniMapSimpleMode : BoolEntry = BoolEntry::new(
+//   "MiniMapSimpleMode", "false",
+// )
 
 // Whether to use default helpers for UIMiniMap
-let configMiniMapDefaultHelpers : BoolEntry = BoolEntry::new(
-  "MiniMapDefaultHelpers", "false",
-)
+// let configMiniMapDefaultHelpers : BoolEntry = BoolEntry::new(
+//   "MiniMapDefaultHelpers", "false",
+// )

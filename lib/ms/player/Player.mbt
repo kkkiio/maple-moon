@@ -1,17 +1,24 @@
 typealias Movement = @physics.Movement
 
-// typealias 
-struct Player {
+typealias CharBase = @character.CharBase
+
+typealias CharStats = @character.CharStats
+
+typealias CharLook = @character.CharLook
+
+pub struct Player {
   char_base : CharBase
   stats : CharStats
   keys_down : Map[@KeyAction.Id, Bool]
   mut underwater : Bool
   mut last_move : Movement
-  mut ladder : Ladder?
+  mut ladder : @map.Ladder?
   inventory : @inventory.Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
+  skill_book : @character.SkillBook
+  cooldowns : Map[Int, Int]
 }
 
 pub typealias CharEntry = @login.CharEntry
@@ -38,6 +45,8 @@ pub fn Player::from_entry(
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::default(),
+    skill_book: @character.SkillBook::new(),
+    cooldowns: Map::new(),
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
@@ -49,7 +58,20 @@ pub fn get_position(self : Player) -> @struct.Point[Int] {
 }
 
 pub fn is_invincible(self : Player) -> Bool {
-  true
+  if self.char_base.state == CharState::DIED {
+    return true
+  }
+  if self.has_buff(@buff.StatId::DARKSIGHT) {
+    return true
+  }
+  self.char_base.is_invincible()
+}
+
+pub fn has_buff(self : Player, stat : @buff.StatId) -> Bool {
+  match self.buffs.get(stat) {
+    Some(buff) => buff.value > 0
+    None => false
+  }
 }
 
 pub fn update(self : Player, physics : @physics.Physics) -> Int {
@@ -226,7 +248,7 @@ pub fn get_stats(self : Player) -> CharStats {
 }
 
 /// Recalculates the total stats from base stats, inventories and skills.
-fn recalc_stats(self : Player, equipchanged : Bool) -> Unit! {
+pub fn recalc_stats(self : Player, equipchanged : Bool) -> Unit! {
   let weapontype = self.char_base.get_weapontype!()
   self.stats.set_weapontype(weapontype)
   self.stats.init_totalstats()
@@ -264,7 +286,7 @@ fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
   out.write_short(movement.duration)
 }
 
-fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
+pub fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
   self.char_base.change_look(stat, id)
 }
 
@@ -272,11 +294,11 @@ pub fn get_name(self : Player) -> String {
   self.char_base.get_name()
 }
 
-pub fn get_ladder(self : Player) -> Ladder? {
+pub fn get_ladder(self : Player) -> @map.Ladder? {
   self.ladder
 }
 
-pub fn set_ladder(self : Player, ladder : Ladder?) -> Unit {
+pub fn set_ladder(self : Player, ladder : @map.Ladder?) -> Unit {
   self.ladder = ladder
   match ladder {
     Some(ladder) => {
@@ -314,4 +336,170 @@ pub fn damage(
   }
   let direction = if fromleft { 0 } else { 1 }
   @combat.MobAttackResult::new(attack, damage, direction)
+}
+
+pub fn get_skills(self : Player) -> @character.SkillBook {
+  self.skill_book
+}
+
+pub fn prepare_attack(self : Player, skill : Bool) -> @combat.Attack! {
+  let (degenerate, attacktype) = if self.char_base.state == CharState::PRONE {
+    (true, @combat.AttackType::CLOSE)
+  } else {
+    let weapontype = self.char_base.get_weapontype!()
+    match weapontype {
+      @Weapon.Type::BOW
+      | @Weapon.Type::CROSSBOW | @Weapon.Type::CLAW | @Weapon.Type::GUN => {
+        let degenerate = self.inventory.has_projectile().not()
+        (
+          degenerate,
+          if degenerate {
+            @combat.AttackType::CLOSE
+          } else {
+            @combat.AttackType::RANGED
+          },
+        )
+      }
+      @Weapon.Type::WAND | @Weapon.Type::STAFF => {
+        let degenerate = skill.not()
+        (
+          degenerate,
+          if degenerate {
+            @combat.AttackType::CLOSE
+          } else {
+            @combat.AttackType::MAGIC
+          },
+        )
+      }
+      _ => (false, @combat.AttackType::CLOSE)
+    }
+  }
+  let t = attacktype
+  let mut mindamage = self.stats.get_mindamage().to_double()
+  let mut maxdamage = self.stats.get_maxdamage().to_double()
+  if degenerate {
+    mindamage /= 10
+    maxdamage /= 10
+  }
+  let critical = self.stats.get_critical()
+  let ignoredef = self.stats.get_ignoredef()
+  let accuracy = self.stats.get_total(@stat.Id::ACC)
+  let playerlevel = self.stats.get_stat(@MapleStat.Id::LEVEL)
+  let range = self.stats.get_range()
+  let bullet = self.inventory.get_bulletid()
+  let origin = self.get_position()
+  let toleft = self.char_base.facing_right.not()
+  let speed = self.get_integer_attackspeed!()
+  let d = @combat.Attack::default()
+  {
+    ..d,
+    t,
+    mindamage,
+    maxdamage,
+    critical,
+    ignoredef,
+    accuracy,
+    playerlevel,
+    range,
+    bullet,
+    origin,
+    toleft,
+    speed,
+  }
+}
+
+fn get_integer_attackspeed(self : Player) -> Int! {
+  let weapon_id = self.char_base.look.get_equips().get_weapon()
+  if weapon_id <= 0 {
+    return 0
+  }
+  let weapon = @Weapon.WeaponData::get!(weapon_id)
+  let base_speed = self.stats.get_attackspeed()
+  let weapon_speed = weapon.get_speed()
+  base_speed + weapon_speed
+}
+
+pub fn can_attack(self : Player) -> Bool {
+  self.char_base.attacking.not() &&
+  self.char_base.is_climbing().not() &&
+  self.char_base.is_sitting().not() &&
+  self.char_base.look.get_equips().has_weapon()
+}
+
+pub fn can_use(
+  self : Player,
+  move : @combat.SpecialMove
+) -> @combat.ForbidReason! {
+  if move.is_skill() && self.char_base.state == CharState::PRONE {
+    return @combat.ForbidReason::FBR_OTHER
+  }
+  if move.is_attack() &&
+    (
+      self.char_base.state == CharState::LADDER ||
+      self.char_base.state == CharState::ROPE
+    ) {
+    return @combat.ForbidReason::FBR_OTHER
+  }
+  if self.has_cooldown(move.get_id()) {
+    return @combat.ForbidReason::FBR_COOLDOWN
+  }
+  let level = self.skill_book.get_level(move.get_id())
+  let weapontype = self.char_base.get_weapontype!()
+  let job = self.stats.get_job()
+  let hp = self.stats.get_stat(@MapleStat.Id::HP)
+  let mp = self.stats.get_stat(@MapleStat.Id::MP)
+  let bullets = self.inventory.get_bulletcount()
+  move.can_use(level, weapontype, job, hp, mp, bullets)
+}
+
+fn has_cooldown(self : Player, skill_id : Int) -> Bool {
+  self.cooldowns[skill_id].or(0) > 0
+}
+
+pub fn set_afterimage(self : Player, skill_id : Int) -> Unit {
+  self.char_base.set_afterimage(skill_id)
+}
+
+pub fn get_oid(self : Player) -> Int {
+  self.char_base.get_oid()
+}
+
+pub fn get_level(self : Player) -> Int {
+  self.stats.get_stat(@MapleStat.Id::LEVEL)
+}
+
+pub fn get_skilllevel(self : Player, skill_id : Int) -> Int {
+  self.skill_book.get_level(skill_id)
+}
+
+pub fn is_twohanded(self : Player) -> Bool {
+  self.char_base.is_twohanded()
+}
+
+pub fn get_attackdelay(self : Player, no : Int) -> Int {
+  self.char_base.get_attackdelay(no)
+}
+
+pub fn rush(self : Player, targetx : Double) -> Unit {
+  if self.get_phobj().onground {
+    let delay = self.get_attackdelay(1)
+    self.get_phobj().moving_object.movexuntil(targetx, delay)
+    self.get_phobj().set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
+  }
+}
+
+pub fn get_look(self : Player) -> @character.CharLook {
+  self.char_base.look
+}
+
+pub fn get_afterimage(self : Player) -> @char_look.Afterimage {
+  self.char_base.after_image
+}
+
+pub fn get_weapontype(self : Player) -> @Weapon.Type! {
+  self.char_base.get_weapontype!()
+}
+
+pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
+  self.char_base.regular_attack!(degenerate)
 }

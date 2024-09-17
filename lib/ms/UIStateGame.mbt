@@ -256,7 +256,7 @@ pub fn send_key(
       ()
     @KeyType.Id::ACTION
     | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
-      Stage::get().send_key(t, action, pressed)
+      Stage::get().send_key?(t, action, pressed).unwrap()
     _ => ()
   }
 }
@@ -586,10 +586,7 @@ pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
 //     return nullptr;
 // }
 
-fn get_front(
-  self : UIStateGame,
-  pos : @struct.Point[Int]
-) -> UIElement? {
+fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> UIElement? {
   self.element_order
   .iter()
   .flat_map(

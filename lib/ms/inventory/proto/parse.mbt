@@ -112,11 +112,11 @@ fn add_pet(
   if cash {
     recv.skip!(8)
   } // unique id
-  let expire = recv.read_long!()
+  recv.read_long!() |> ignore // expire
   let petname = recv.read_padded_string!(13)
-  let petlevel = recv.read_byte!()
-  let closeness = recv.read_short!()
-  let fullness = recv.read_byte!()
+  recv.read_byte!() |> ignore // petlevel
+  recv.read_short!() |> ignore // closeness
+  recv.read_byte!() |> ignore // fullness
 
   // Some unused bytes
   recv.skip!(18)

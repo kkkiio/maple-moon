@@ -48,6 +48,10 @@ pub fn Keyboard::default() -> Keyboard {
     @kb.space,
     Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::JUMP.int_value()),
   )
+  keymap.set(
+    @kb.keyX,
+    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::ATTACK.int_value()),
+  )
   let text_actions = Map::new()
   text_actions.set(@kb.backspace, @KeyAction.Id::BACK)
   text_actions.set(@kb.enter, @KeyAction.Id::RETURN)
@@ -66,24 +70,8 @@ pub fn Keyboard::default() -> Keyboard {
   }
 }
 
-pub fn left_shift_code(self : Keyboard) -> String {
-  @kb.shiftLeft
-}
-
-pub fn right_shift_code(self : Keyboard) -> String {
-  @kb.shiftRight
-}
-
 pub fn capslock_code(self : Keyboard) -> String {
   @kb.capsLock
-}
-
-pub fn left_ctrl_code(self : Keyboard) -> String {
-  @kb.controlLeft
-}
-
-pub fn right_ctrl_code(self : Keyboard) -> String {
-  @kb.controlRight
 }
 
 pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {

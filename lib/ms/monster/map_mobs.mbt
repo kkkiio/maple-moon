@@ -93,6 +93,71 @@ pub fn get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
   self.mobs
 }
 
+pub fn remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
+  match self.mobs.get(oid) {
+    Some(mob) => mob.kill(animation)
+    None => ()
+  }
+  if animation == 0 {
+    self.mobs.remove(oid)
+  }
+}
+
+pub fn send_attack(
+  self : MapMobs,
+  result : @combat.AttackResult,
+  attack : @combat.Attack,
+  targets : Array[Int],
+  mobcount : Int
+) -> Unit {
+  for target in targets {
+    match self.mobs.get(target) {
+      Some(mob) => {
+        result.damage_lines[target] = mob.calculate_damage(attack)
+        result.mobcount += 1
+        if result.mobcount == 1 {
+          result.first_oid = target
+        }
+        if result.mobcount == mobcount {
+          result.last_oid = target
+        }
+      }
+      None => ()
+    }
+  }
+}
+
+pub fn contains(self : MapMobs, oid : Int) -> Bool {
+  self.mobs.contains(oid)
+}
+
+pub fn get_mob_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
+  self.mobs
+  .get(oid)
+  .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_position() })
+}
+
+pub fn get_mob_head_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
+  self.mobs
+  .get(oid)
+  .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
+}
+
+pub fn apply_damage(
+  self : MapMobs,
+  oid : Int,
+  damage : Int,
+  toleft : Bool,
+  _user : @combat.AttackUser,
+  _move : @combat.SpecialMove
+) -> Unit {
+  match self.mobs.get(oid) {
+    Some(mob) => mob.apply_damage(damage, toleft)
+    // TODO: apply_hiteffects
+    None => ()
+  }
+}
+
 struct MobSpawn {
   oid : Int
   id : Int

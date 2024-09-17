@@ -27,6 +27,24 @@ pub fn DrawArgument::from_point(position : Point[Int]) -> DrawArgument {
   DrawArgument::new7(position, 1.0)
 }
 
+pub fn DrawArgument::new(
+  position : Point[Int],
+  ~flip : Bool = false,
+  ~opacity : Double = 1.0
+) -> DrawArgument {
+  DrawArgument::new10(
+    position,
+    position,
+    if flip {
+      -1.0
+    } else {
+      1.0
+    },
+    1.0,
+    opacity,
+  )
+}
+
 pub fn DrawArgument::new3(
   position : Point[Int],
   xscale : Double,

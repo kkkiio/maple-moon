@@ -117,12 +117,12 @@ pub fn get[T](self : LazyVar[T]) -> T {
   }
 }
 
-let countset : LazyVar[Charset] = LazyVar::make(
+let countset : LazyVar[@graphics.Charset] = LazyVar::make(
   fn() {
     let ui_loader = ui_loader()
-    Charset::from_resource(
+    @graphics.Charset::from_resource(
       ui_loader.load_res(["Basic.img", "ItemNo"]),
-      CharsetAlignment::LEFT,
+      @graphics.CharsetAlignment::LEFT,
     )
   },
 )

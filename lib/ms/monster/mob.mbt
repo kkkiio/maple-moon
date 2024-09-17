@@ -82,7 +82,7 @@ struct Mob {
   id : Int
   effect : Int
   team : Int
-  dying : Bool
+  mut dying : Bool
   mut dead : Bool
   mut control : Bool
   mut aggro : Bool
@@ -123,8 +123,8 @@ pub fn Mob::new(
   let accuracy = info["acc"].get_int!()
   let avoid = info["eva"].get_int!()
   let knockback = info["pushed"].get_int!()
-  let speed = info["speed"].get_int!()
-  let fly_speed = info["flySpeed"].get_int!()
+  let mut speed = info["speed"].get_float!()
+  let mut fly_speed = info["flySpeed"].get_float!()
   let touch_damage = info["bodyAttack"].get_bool!()
   let undead = info["undead"].get_bool!()
   let is_boss = info["boss"].get_bool!()
@@ -186,10 +186,8 @@ pub fn Mob::new(
     Some(stand) => animations[StanceType::SKILL] = stand
     None => ()
   }
-  let mut speed = 0.0
   speed += 100
   speed *= 0.001
-  let mut fly_speed = 0.0
   fly_speed += 100
   fly_speed *= 0.0005
   if can_fly {
@@ -562,7 +560,7 @@ pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
 
 pub fn get_head_position(
   self : Mob,
-  position : @struct.Point[Int]
+  ~position : @struct.Point[Int] = self.get_position()
 ) -> @struct.Point[Int] {
   let head = match self.animations[self.stance.t] {
     Some(anim) => anim.get_head()
@@ -680,14 +678,156 @@ pub fn show_effect(
     return
   }
   let shift = match pos {
-    0 => self.get_head_position(@struct.Point::default())
+    0 => self.get_head_position(position=@struct.Point::default())
     _ => @struct.Point::default()
   }
   let args = @graphics.DrawArgument::new14(shift, f)
   self.effects.add(animation, ~args, ~z)
 }
 
+pub fn kill(self : Mob, animation : Int) -> Unit {
+  match animation {
+    0 => self.base.deactivate()
+    1 => {
+      self.dying = true
+      self.apply_death()
+    }
+    2 => {
+      self.fading = true
+      self.dying = true
+    }
+    _ => ()
+  }
+}
+
+fn apply_death(self : Mob) -> Unit {
+  self.set_stance(Stance::from_type(StanceType::DIE))
+  // die_sound_.play();
+  self.dying = true
+}
+
 pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
   self.use_effect.apply(mob)
   // sound_->play_use();
+}
+
+pub fn calculate_damage(
+  self : Mob,
+  attack : @combat.Attack
+) -> Array[(Int, Bool)] {
+  let leveldelta = @math.maximum(self.level - attack.playerlevel, 0)
+  let damagetype = attack.damagetype
+  let (mindamage, maxdamage, hitchance, critical) = match damagetype {
+    @combat.AttackDamageType::DMG_WEAPON | @combat.AttackDamageType::DMG_MAGIC => {
+      let mindamage = self.calculate_mindamage(
+        leveldelta,
+        attack.mindamage,
+        damagetype == @combat.AttackDamageType::DMG_MAGIC,
+      )
+      let maxdamage = self.calculate_maxdamage(
+        leveldelta,
+        attack.maxdamage,
+        damagetype == @combat.AttackDamageType::DMG_MAGIC,
+      )
+      let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
+      let critical = attack.critical
+      (mindamage, maxdamage, hitchance, critical)
+    }
+    @combat.AttackDamageType::DMG_FIXED => {
+      let mindamage = attack.fixdamage
+      let maxdamage = attack.fixdamage
+      let hitchance = 1.0
+      let critical = 0.0
+      (mindamage.to_double(), maxdamage.to_double(), hitchance, critical)
+    }
+  }
+  let result = Array::makei(
+    attack.hitcount,
+    fn(_i) { self.next_damage(mindamage, maxdamage, hitchance, critical) },
+  )
+  self.update_movement()
+  result
+}
+
+fn next_damage(
+  self : Mob,
+  mindamage : Double,
+  maxdamage : Double,
+  hitchance : Double,
+  critical : Double
+) -> (Int, Bool) {
+  let hit = self.randomizer.below(hitchance)
+  if hit.not() {
+    return (0, false)
+  }
+  let damagecap = 999999.0
+  let mut damage = self.randomizer.next_real(from=mindamage, maxdamage)
+  let iscritical = self.randomizer.below(critical)
+  if iscritical {
+    damage *= 1.5
+  }
+  if damage < 1 {
+    damage = 1
+  } else if damage > damagecap {
+    damage = damagecap
+  }
+  let intdamage = damage.to_int()
+  return (intdamage, iscritical)
+}
+
+fn calculate_mindamage(
+  self : Mob,
+  leveldelta : Int,
+  damage : Double,
+  magic : Bool
+) -> Double {
+  let mindamage = if magic {
+    damage - (1.0 + 0.01 * leveldelta.to_double()) * self.mdef.to_double() * 0.6
+  } else {
+    damage * (1.0 - 0.01 * leveldelta.to_double()) - self.wdef.to_double() * 0.6
+  }
+  return @math.maximum(mindamage, 1.0)
+}
+
+fn calculate_maxdamage(
+  self : Mob,
+  leveldelta : Int,
+  damage : Double,
+  magic : Bool
+) -> Double {
+  let maxdamage = if magic {
+    damage - (1.0 + 0.01 * leveldelta.to_double()) * self.mdef.to_double() * 0.5
+  } else {
+    damage * (1.0 - 0.01 * leveldelta.to_double()) - self.wdef.to_double() * 0.5
+  }
+  return @math.maximum(maxdamage, 1.0)
+}
+
+fn calculate_hitchance(
+  self : Mob,
+  leveldelta : Int,
+  player_accuracy : Int
+) -> Double {
+  let faccuracy = player_accuracy.to_double()
+  let mut hitchance = faccuracy /
+    ((1.84 + 0.07 * leveldelta.to_double()) * self.avoid.to_double() + 1.0)
+  if hitchance < 0.01 {
+    hitchance = 0.01
+  }
+  return hitchance
+}
+
+pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
+  // self.hit_sound.play()
+
+  if self.dying && self.stance.t != StanceType::DIE {
+    self.apply_death()
+  } else if self.control &&
+    self.is_alive() &&
+    damage >= self.knockback &&
+    self.is_boss.not() {
+    self.counter = 170
+    self.set_stance({ t: StanceType::HIT, face_right: toleft })
+    self.update_movement()
+  }
 }

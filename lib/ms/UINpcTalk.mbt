@@ -352,14 +352,14 @@ fn format_text(tx : String, npcid : Int) -> String! {
     {
       variable_map: {
         "p": fn(_v) {
-          string_loader()
+          @resource.string_loader()
           .load_res(["Npc.img", npcid.to_string(), "name"])
           .get_string()
         },
         "h": fn(_v) { Stage::get().get_player().unwrap().get_name() },
         "t": fn(v) {
           let itemid = @strconv.parse_int!(v)
-          let itemname = string_loader()
+          let itemname = @resource.string_loader()
             .load_res(["Consume.img", itemid.to_string(), "name"])
             .get_string()
           itemname
@@ -401,7 +401,7 @@ pub fn change_text(
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
-    let namestr = string_loader()
+    let namestr = @resource.string_loader()
       .load_res(["Npc.img", npcid.to_string(), "name"])
       .get_string()
     self.name.change_text(namestr)
@@ -567,7 +567,7 @@ fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
 
 fn get_map_info_by_id(mapid : Int) -> NxMapInfo {
   let map_category = get_map_category(mapid)
-  let map_info = string_loader().load_res(
+  let map_info = @resource.string_loader().load_res(
     ["Map.img", map_category, mapid.to_string()],
   )
   {

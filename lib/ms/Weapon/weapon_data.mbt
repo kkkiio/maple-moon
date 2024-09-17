@@ -49,3 +49,19 @@ pub fn get_type(self : WeaponData) -> Type {
 pub fn is_twohanded(self : WeaponData) -> Bool {
   self.two_handed
 }
+
+pub fn get_speed(self : WeaponData) -> Int {
+  self.attack_speed
+}
+
+pub fn get_afterimage(self : WeaponData) -> String {
+  self.after_image
+}
+
+pub fn get_equipdata(self : WeaponData) -> @equip.EquipData {
+  self.equip_data
+}
+
+pub fn get_attack(self : WeaponData) -> Int {
+  self.attack
+}

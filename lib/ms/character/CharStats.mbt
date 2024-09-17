@@ -1,15 +1,19 @@
-struct CharStats {
+pub struct CharStats {
   job : @job.Job
   mut map_id : Int
   portal : Int
   base_stats : Map[@MapleStat.Id, Int]
   total_stats : @utils.Counter[@stat.Id]
   percentages : Map[@stat.Id, Double]
+  mut attack_speed : Int
+  mut projectile_range : Int
   mut weapon_type : @Weapon.Type
+  mut critical : Double
   mut max_damage : Int
   mut min_damage : Int
   mut mastery : Double
   mut damage_percent : Double
+  mut ignore_def : Double
   mut stance : Double
   mut reduce_damage : Double
 }
@@ -23,11 +27,15 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
     base_stats: s.stats,
     total_stats: @utils.Counter::new(),
     percentages: Map::new(),
+    attack_speed: 0,
+    projectile_range: 400,
     weapon_type: @Weapon.Type::NONE,
+    critical: 0.05,
     max_damage: 0,
     min_damage: 0,
     mastery: 0.0,
     damage_percent: 0.0,
+    ignore_def: 0.0,
     stance: 0.0,
     reduce_damage: 0.0,
   }
@@ -50,15 +58,15 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.max_damage = 0
   self.min_damage = 0
   // honor_ = 0;
-  // attack_speed_ = 0;
-  // projectile_range_ = 400;
+  self.attack_speed = 0
+  self.projectile_range = 400
   self.mastery = 0.0
-  // critical_ = 0.05f;
+  self.critical = 0.05
   // min_crit_ = 0.5f;
   // max_crit_ = 0.75f;
   self.damage_percent = 0.0
   // boss_dmg_ = 0.0f;
-  // ignore_def_ = 0.0f;
+  self.ignore_def = 0.0
   self.stance = 0.0
   // resist_status_ = 0.0f;
   self.reduce_damage = 0.0
@@ -80,11 +88,11 @@ pub fn get_stance(self : CharStats) -> Double {
   self.stance
 }
 
-fn set_mapid(self : CharStats, id : Int) -> Unit {
+pub fn set_mapid(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
-fn set_weapontype(self : CharStats, w : @Weapon.Type) -> Unit {
+pub fn set_weapontype(self : CharStats, w : @Weapon.Type) -> Unit {
   self.weapon_type = w
 }
 
@@ -185,4 +193,36 @@ pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
   }
   let reduceatk = mobatk / 2 + mobatk / weapon_def
   reduceatk - (reduceatk.to_double() * self.reduce_damage).to_int()
+}
+
+pub fn get_maxdamage(self : CharStats) -> Int {
+  self.max_damage
+}
+
+pub fn get_mindamage(self : CharStats) -> Int {
+  self.min_damage
+}
+
+pub fn get_critical(self : CharStats) -> Double {
+  self.critical
+}
+
+pub fn get_ignoredef(self : CharStats) -> Double {
+  self.ignore_def
+}
+
+pub fn get_range(self : CharStats) -> @struct.Rectangle[Int] {
+  @struct.Rectangle::from4(-self.projectile_range, -5, -50, 50)
+}
+
+pub fn get_attackspeed(self : CharStats) -> Int {
+  self.attack_speed
+}
+
+pub fn get_job(self : CharStats) -> @job.Job {
+  self.job
+}
+
+pub fn get_weapontype(self : CharStats) -> @Weapon.Type {
+  self.weapon_type
 }

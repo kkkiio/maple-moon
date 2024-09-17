@@ -119,22 +119,6 @@ fn is_enabled(self : UI) -> Bool {
 }
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
-  if (
-      self.is_key_down.get_or_default(@kb.altLeft, false) ||
-      self.is_key_down.get_or_default(@kb.altRight, false)
-    ) &&
-    (
-      self.is_key_down.get_or_default(@kb.enter, false) ||
-      self.is_key_down.get_or_default(@kb.numpadEnter, false)
-    ) {
-    // Window::get().toggle_fullscreen()
-
-    self.is_key_down[@kb.altLeft] = false
-    self.is_key_down[@kb.altRight] = false
-    self.is_key_down[@kb.enter] = false
-    self.is_key_down[@kb.numpadEnter] = false
-    return
-  }
   if self.is_key_down.get_or_default(self.keyboard.capslock_code(), false) {
     self.caps_lock_enabled = self.caps_lock_enabled.not()
   }

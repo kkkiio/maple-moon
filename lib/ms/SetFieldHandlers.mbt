@@ -40,7 +40,7 @@ fn change_map(recv : @net.InPacket) -> Unit! {
   transition(mapid, portalid)
 }
 
-fn set_field(recv : @net.InPacket, playerentry : CharEntry) -> Unit! {
+fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   recv.skip!(23)
   let cid = recv.read_int!()
 

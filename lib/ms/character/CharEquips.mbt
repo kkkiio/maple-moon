@@ -85,4 +85,8 @@ pub fn add_equip(
   self.clothes[slot] = cloth
 }
 
+pub fn CharEquips::has_weapon(self : CharEquips) -> Bool {
+  self.get_weapon() != 0
+}
+
 let cloth_cache : Map[Int, @clothing.Clothing] = Map::new()

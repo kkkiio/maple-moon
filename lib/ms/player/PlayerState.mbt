@@ -2,6 +2,8 @@ typealias PhysicsObjectType = @physics.PhysicsObjectType
 
 typealias PhysicsObjectFlag = @physics.PhysicsObjectFlag
 
+typealias CharState = @character.CharState
+
 trait PlayerState {
   initialize(Self, Player) -> Unit
   send_action(Self, Player, @KeyAction.Id, Bool) -> Unit
@@ -10,7 +12,7 @@ trait PlayerState {
 }
 
 fn play_jumpsound() -> Unit {
-  Sound::new(SoundName::SOUND_NAME_JUMP).play()
+  //   Sound::new(SoundName::SOUND_NAME_JUMP).play()
 }
 
 struct PlayerNullState {} derive(Default)
@@ -46,12 +48,11 @@ pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
       CharState::STAND
     }
   } else {
-    abort("TODO")
-    // let ladder = player.get_ladder()
-    // match ladder {
-    //      Some(l) =>if l.is_ladder()  { CharState::LADDER } else { CharState::ROPE }
-    //      None => CharState::FALL
-    // }
+    let ladder = player.get_ladder()
+    match ladder {
+      Some(l) => if l.is_ladder() { CharState::LADDER } else { CharState::ROPE }
+      None => CharState::FALL
+    }
   }
   player.get_phobj().clear_flags()
   player.set_state(state)

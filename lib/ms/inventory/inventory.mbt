@@ -198,6 +198,30 @@ pub fn Inventory::add_equip(
   )
 }
 
-pub fn Inventory::get_stat(self : Inventory, stat : @stat.Id) -> Int {
+pub fn get_stat(self : Inventory, stat : @stat.Id) -> Int {
   self.total_stats[stat]
+}
+
+pub fn has_projectile(self : Inventory) -> Bool {
+  self.bullet_slot > 0
+}
+
+pub fn get_bulletid(self : Inventory) -> Int {
+  self.get_item_id(TypeId::USE, self.bullet_slot)
+}
+
+pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
+  self.inventories[t].get(slot).map(fn(it) { it.item_id }).or(0)
+}
+
+pub fn get_bulletcount(self : Inventory) -> Int {
+  self.get_item_count(TypeId::USE, self.bullet_slot)
+}
+
+pub fn Inventory::get_item_count(
+  self : Inventory,
+  t : TypeId,
+  slot : Int
+) -> Int {
+  self.inventories[t].get(slot).map(fn(it) { it.count }).or(0)
 }

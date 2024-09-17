@@ -7,15 +7,16 @@ enum StageState {
 pub struct Stage {
   camera : Camera
   mut physics : Physics
-  mut player : Player?
+  mut player : @player.Player?
   mut state : StageState
   mut map_id : Int
-  mut map_info : MapInfo
+  mut map_info : @map.MapInfo
   mut tiles_objs : MapTilesObjs
   mut backgrounds : MapBackgrounds?
   mut portals : MapPortals
   npcs : MapNpcs
   mobs : @monster.MapMobs
+  mut combat : Combat?
   mut start : TimePoint
 }
 
@@ -28,9 +29,10 @@ pub fn Stage::new(mobs : @monster.MapMobs) -> Stage {
     backgrounds: None,
     tiles_objs: MapTilesObjs::default(),
     map_id: 10000,
-    map_info: MapInfo::new(),
+    map_info: @map.MapInfo::new(),
     portals: MapPortals::default(),
     npcs: MapNpcs::new(),
+    combat: None,
     mobs,
     start: TimePoint::default(),
   }
@@ -65,12 +67,13 @@ pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
 
 pub fn load_player(
   self : Stage,
-  entry : CharEntry,
+  entry : @login.CharEntry,
   wid : Int,
   channel_id : Int
-) -> Player! {
-  let player = Player::from_entry!(entry, wid, channel_id)
+) -> @player.Player! {
+  let player = @player.Player::from_entry!(entry, wid, channel_id)
   self.player = Some(player)
+  self.combat = Some(Combat::new(player, self.mobs))
   self.start = now_micro() |> TimePoint::from_micro
 
   // CharStats stats = self.player.get_stats();
@@ -79,7 +82,7 @@ pub fn load_player(
   player
 }
 
-pub fn get_player(self : Stage) -> Player? {
+pub fn get_player(self : Stage) -> @player.Player? {
   self.player
 }
 
@@ -99,7 +102,7 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
   self.tiles_objs = MapTilesObjs::from_resource(src)
   self.backgrounds = Some(MapBackgrounds::new(src["back"]))
   self.physics = Physics::from_resource(src["foothold"])
-  self.map_info = MapInfo::from_resource(
+  self.map_info = @map.MapInfo::from_resource(
     src,
     self.physics.get_fht().get_walls(),
     self.physics.get_fht().get_borders(),
@@ -138,8 +141,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
     },
   )
   @layer.ids.each(fn(id) { player.draw(id, viewx, viewy, alpha) })
-
-  //     combat_.draw(viewx, viewy, alpha);
+  self.combat.unwrap().draw(viewx, viewy, alpha)
   self.portals.draw(viewpos, alpha)
   self.backgrounds.unwrap().drawforegrounds(viewx, viewy, alpha)
   //     effect_.draw();
@@ -158,8 +160,7 @@ fn update(self : Stage) -> Unit {
   if self.state != StageState::ACTIVE {
     return
   }
-
-  // combat_.update();
+  self.combat.unwrap().update()
   self.backgrounds.unwrap().update()
   // effect_.update();
   self.tiles_objs.update()
@@ -214,7 +215,7 @@ pub fn send_key(
   t : @KeyType.Id,
   action : Int,
   down : Bool
-) -> Unit {
+) -> Unit! {
   if self.state != StageState::ACTIVE {
     return
   }
@@ -230,7 +231,7 @@ pub fn send_key(
               }
               @KeyAction.Id::DOWN => self.check_ladders(player, false)
               // @KeyAction.Id::SIT => self.check_seats()
-              // @KeyAction.Id::ATTACK => self.combat.use_move(0)
+              @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(0)
               // @KeyAction.Id::PICKUP => self.check_drops()
               _ => ()
             }
@@ -240,7 +241,7 @@ pub fn send_key(
             down,
           )
         }
-        // @KeyType.Id::SKILL => self.combat.use_move(action)
+        @KeyType.Id::SKILL => self.combat.unwrap().use_move!(action)
         // @KeyType.Id::ITEM => self.player.use_item(action)
         // @KeyType.Id::FACE => self.player.set_expression(action)
         _ => ()
@@ -328,7 +329,7 @@ fn handle_stat(
       player.get_stats().set_stat(stat, current_hp)
       recalculate = true
       if current_hp <= 0 {
-        player.set_state(CharState::DIED)
+        player.set_state(@character.CharState::DIED)
         let died = true
         let targetid = 0
         new_change_map_packet(died, targetid, "sp", false).dispatch()
@@ -367,7 +368,7 @@ pub fn new_player_map_transfer_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
 }
 
-fn check_ladders(self : Stage, player : Player, up : Bool) -> Unit {
+fn check_ladders(self : Stage, player : @player.Player, up : Bool) -> Unit {
   if player.is_climbing() || player.is_attacking() {
     return
   }

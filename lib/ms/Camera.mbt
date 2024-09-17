@@ -3,8 +3,8 @@ typealias Linear = @utils.Linear
 struct Camera {
   x : Linear
   y : Linear
-  mut hbounds : Range[Int]
-  mut vbounds : Range[Int]
+  mut hbounds : @struct.Range[Int]
+  mut vbounds : @struct.Range[Int]
   mut vwidth : Int
   mut vheight : Int
 }
@@ -15,8 +15,8 @@ fn Camera::new() -> Camera {
   let camera = {
     x: Linear::default(),
     y: Linear::default(),
-    hbounds: Range::default(),
-    vbounds: Range::default(),
+    hbounds: @struct.Range::default(),
+    vbounds: @struct.Range::default(),
     vwidth: 0,
     vheight: 0,
   }
@@ -84,8 +84,8 @@ pub fn Camera::set_position(self : Camera, position : Point[Int]) -> Unit {
 
 pub fn Camera::set_view(
   self : Camera,
-  hborders : Range[Int],
-  vborders : Range[Int]
+  hborders : @struct.Range[Int],
+  vborders : @struct.Range[Int]
 ) -> Unit {
   self.hbounds = -hborders
   self.vbounds = -vborders

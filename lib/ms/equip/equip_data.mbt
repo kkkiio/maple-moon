@@ -110,3 +110,7 @@ pub fn get_eqslot(self : EquipData) -> @slot.Id {
 pub fn get_itemdata(self : EquipData) -> @item.ItemData {
   self.item_data
 }
+
+pub fn get_reqstat(self : EquipData, stat : @MapleStat.Id) -> Int {
+  self.req_stats.get(stat).or(0)
+}

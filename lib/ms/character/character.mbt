@@ -2,9 +2,13 @@ typealias MapObjectBase = @map_object.MapObjectBase
 
 typealias PhysicsObject = @physics.PhysicsObject
 
+typealias DrawArgument = @graphics.DrawArgument
+
+typealias Physics = @physics.Physics
+
 // Player states which determine animation and state
 // Values are used in movement packets (Add one if facing left)
-enum CharState {
+pub enum CharState {
   WALK
   STAND
   FALL
@@ -37,7 +41,7 @@ pub fn hash(self : CharState) -> Hash {
 }
 
 // Base for characters, e.g. the player and other clients on the same map.
-struct CharBase {
+pub struct CharBase {
   sub : CharSubClass
   base : MapObjectBase
   look : CharLook
@@ -46,12 +50,13 @@ struct CharBase {
   mut state : CharState
   mut attacking : Bool
   mut facing_right : Bool
+  name : String
   // name_label: Text
   // chat_balloon: ChatBalloon
   // effects: EffectLayer
   // recurring_effects: RecurringEffect
-  // after_image: Afterimage
-  // invincible: TimedBool
+  mut after_image : @char_look.Afterimage
+  invincible : @utils.TimedBool
   // iron_body: TimedBool
   // mut damage_numbers: @immut/list.List[DamageNumber]
 }
@@ -64,23 +69,23 @@ pub fn set_position(self : CharBase, pos : Point[Int]) -> Unit {
   self.base.set_position(pos)
 }
 
-trait Character {
+pub trait Character {
   // draw(Self, Double, Double, Double) -> Unit
   // draw_preview(Self, Point[Int], Double) -> Unit
   // update(Self, Physics) -> Int
   // get_layer(Self) -> Int
   // is_invincible(Self) -> Bool
-  // get_level(Self) -> Int
-  // get_skilllevel(Self, Int) -> Int
+  get_level(Self) -> Int
+  get_skilllevel(Self, Int) -> Int
   // get_real_attackspeed(Self) -> Double
-  // get_attackdelay(Self, Int) -> Int
+  get_attackdelay(Self, Int) -> Int
   // set_direction(Self, Bool) -> Unit
   set_state(Self, CharState) -> Unit
   // attack_by_action(Self, String) -> Unit
   // attack_by_stance(Self, StanceId) -> Unit
-  // attack_by_bool(Self, Bool) -> Unit
+  regular_attack(Self, Bool) -> Unit!
   // set_afterimage(Self, Int) -> Unit
-  // get_afterimage(Self) -> Afterimage
+  get_afterimage(Self) -> @char_look.Afterimage
   // show_attack_effect(Self, Animation, Int) -> Unit
   // show_effect_id(Self, CharEffectId) -> Unit
   // add_recurring_effect(Self, Int, Animation, Int) -> Unit
@@ -97,9 +102,9 @@ trait Character {
   // get_name(Self) -> String
   // is_sitting(Self) -> Bool
   // is_climbing(Self) -> Bool
-  // is_twohanded(Self) -> Bool
-  // get_weapontype(Self) -> WeaponType
-  // get_look(Self) -> CharLook
+  is_twohanded(Self) -> Bool
+  get_weapontype(Self) -> @Weapon.Type!
+  get_look(Self) -> CharLook
   // get_look_const(Self) -> CharLook
   // init() -> Unit
   // new_char(Int, CharLook, String) -> Char
@@ -116,7 +121,7 @@ pub fn CharBase::new(
   sub : CharSubClass,
   oid : Int,
   look : CharLook,
-  _name : String
+  name : String
 ) -> CharBase {
   {
     sub,
@@ -124,7 +129,10 @@ pub fn CharBase::new(
     look,
     attacking: false,
     facing_right: false,
+    name,
     state: CharState::STAND,
+    after_image: @char_look.Afterimage::default(),
+    invincible: @utils.TimedBool::default(),
   }
 }
 
@@ -157,19 +165,14 @@ pub fn draw(
 
   //     Color color;
 
-  //     if (invincible_) {
-  //         float phi = invincible_.alpha() * 30;
-  //         float rgb = 0.9f - 0.5f * std::abs(std::sin(phi));
-
-  //         color = Color(rgb, rgb, rgb, 1.0f);
-  //     } else {
-  //         color = Color::Code::CWHITE;
-  //     }
-  let color = @struct.Code::CWHITE
-  self.look.draw(
-    DrawArgument::new8(absp, color |> @struct.Color::from_code),
-    alpha,
-  )
+  let color = if self.invincible.get() {
+    let phi = self.invincible.alpha() * 30
+    let rgb = 0.9 - 0.5 * @math.sin(phi).abs()
+    @struct.Color::new_rgba(rgb, rgb, rgb, 1.0)
+  } else {
+    @struct.Code::CWHITE |> @struct.Color::from_code
+  }
+  self.look.draw(DrawArgument::new8(absp, color), alpha)
 
   //     after_image_.draw(self.look.get_frame(),
   //                       DrawArgument(absp, facing_right_),
@@ -208,7 +211,7 @@ pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
   //     effects_.update();
   //     recurring_effects_.update();
   //     chat_balloon_.update();
-  //     invincible_.update();
+  self.invincible.update()
   //     iron_body_.update();
 
   //     for (auto &pet : pets_) {
@@ -277,7 +280,7 @@ pub fn get_real_attackspeed(self : CharBase) -> Double {
   return 1.7 - self.sub.get_integer_attackspeed().to_double() / 10.0
 }
 
-fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
+pub fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
   match stat {
     @MapleStat.Id::SKIN => self.look.set_body(id)
     @MapleStat.Id::FACE => self.look.set_face(id)
@@ -303,8 +306,7 @@ fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
 }
 
 pub fn get_name(self : CharBase) -> String {
-  // TODO
-  "kkkiio"
+  self.name
 }
 
 pub fn get_weapontype(self : CharBase) -> @Weapon.Type! {
@@ -313,4 +315,47 @@ pub fn get_weapontype(self : CharBase) -> @Weapon.Type! {
     return @Weapon.Type::NONE
   }
   return @Weapon.WeaponData::get!(weapon_id).get_type()
+}
+
+pub fn is_invincible(self : CharBase) -> Bool {
+  self.invincible.get()
+}
+
+pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
+  let weapon_id = self.look.get_equips().get_weapon()
+  if weapon_id <= 0 {
+    return
+  }
+  let weapon = @Weapon.WeaponData::get?(weapon_id).unwrap()
+  let stance_name = self.look.get_stance().name()
+  let weapon_level = weapon.get_equipdata().get_reqstat(@MapleStat.Id::LEVEL)
+  let ai_name = weapon.get_afterimage()
+  self.after_image = @char_look.Afterimage::new(
+    skill_id, ai_name, stance_name, weapon_level,
+  )
+}
+
+pub fn is_sitting(self : CharBase) -> Bool {
+  self.state == CharState::SIT
+}
+
+pub fn get_oid(self : CharBase) -> Int {
+  self.base.get_oid()
+}
+
+pub fn get_attackdelay(self : CharBase, no : Int) -> Int {
+  let first_frame = self.after_image.get_first_frame()
+  let delay = self.look.get_attackdelay(no, first_frame)
+  let fspeed = self.get_real_attackspeed()
+  (delay.to_double() / fspeed).to_int()
+}
+
+pub fn is_twohanded(self : CharBase) -> Bool {
+  self.look.get_equips().is_twohanded()
+}
+
+pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit! {
+  self.look.attack!(degenerate)
+  self.attacking = true
+  self.look.set_alerted(5000)
 }

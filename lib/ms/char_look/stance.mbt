@@ -220,6 +220,47 @@ pub fn StanceId::by_string(name : String) -> StanceId {
   stance_id_names[name].unwrap()
 }
 
+pub fn name(self : StanceId) -> String {
+  match self {
+    StanceId::NONE => ""
+    StanceId::ALERT => "alert"
+    StanceId::DEAD => "dead"
+    StanceId::FLY => "fly"
+    StanceId::HEAL => "heal"
+    StanceId::JUMP => "jump"
+    StanceId::LADDER => "ladder"
+    StanceId::PRONE => "prone"
+    StanceId::PRONESTAB => "proneStab"
+    StanceId::ROPE => "rope"
+    StanceId::SHOT => "shot"
+    StanceId::SHOOT1 => "shoot1"
+    StanceId::SHOOT2 => "shoot2"
+    StanceId::SHOOTF => "shootF"
+    StanceId::SIT => "sit"
+    StanceId::STABO1 => "stabO1"
+    StanceId::STABO2 => "stabO2"
+    StanceId::STABOF => "stabOF"
+    StanceId::STABT1 => "stabT1"
+    StanceId::STABT2 => "stabT2"
+    StanceId::STABTF => "stabTF"
+    StanceId::STAND1 => "stand1"
+    StanceId::STAND2 => "stand2"
+    StanceId::SWINGO1 => "swingO1"
+    StanceId::SWINGO2 => "swingO2"
+    StanceId::SWINGO3 => "swingO3"
+    StanceId::SWINGOF => "swingOF"
+    StanceId::SWINGP1 => "swingP1"
+    StanceId::SWINGP2 => "swingP2"
+    StanceId::SWINGPF => "swingPF"
+    StanceId::SWINGT1 => "swingT1"
+    StanceId::SWINGT2 => "swingT2"
+    StanceId::SWINGT3 => "swingT3"
+    StanceId::SWINGTF => "swingTF"
+    StanceId::WALK1 => "walk1"
+    StanceId::WALK2 => "walk2"
+  }
+}
+
 pub fn hash_combine(self : StanceId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }

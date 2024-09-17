@@ -1,4 +1,9 @@
 typealias Range[T] = @struct.Range[T]
+
+typealias Point[T] = @struct.Point[T]
+
+typealias NxNode = @resource.NxNode
+
 // Define the Seat struct and its methods
 struct Seat {
   pos : Point[Int]

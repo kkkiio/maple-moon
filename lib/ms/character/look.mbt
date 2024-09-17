@@ -13,9 +13,9 @@ struct CharLook {
   mut face : Face?
   mut action : @char_look.BodyAction?
   mut equips : CharEquips
+  mut randomizer : @utils.Randomizer
+  mut alerted : @utils.TimedBool
 }
-// mut randomizer : Randomizer
-// mut alerted : TimedBool
 
 let draw_info : @char_look.BodyDrawInfo = @char_look.BodyDrawInfo::new()
 
@@ -39,7 +39,6 @@ pub fn CharLook::new(entry : @login.LookEntry) -> CharLook! {
 }
 
 pub fn CharLook::default() -> CharLook {
-  // LookEntry::default()
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
@@ -55,8 +54,8 @@ pub fn CharLook::default() -> CharLook {
     hair: None,
     face: None,
     equips: CharEquips::new(),
-    // randomizer: Randomizer::new(),
-    // alerted: TimedBool::new(),
+    randomizer: @utils.Randomizer::default(),
+    alerted: @utils.TimedBool::default(),
   }
   l.reset()
   l
@@ -77,8 +76,8 @@ pub fn reset(self : CharLook) -> Unit {
   self.hair = None
   self.face = None
   self.equips = CharEquips::new()
-  // self.randomizer = Randomizer::new()
-  // self.alerted = TimedBool::new()
+  self.randomizer = @utils.Randomizer::default()
+  self.alerted = @utils.TimedBool::default()
 }
 
 fn updatetwohanded(self : CharLook) -> Unit {
@@ -688,7 +687,7 @@ pub fn update(self : CharLook, timestep : Int) -> Bool {
     self.exp_frame.normalize()
     return false
   }
-  // self.alerted.update()
+  self.alerted.update(~timestep)
   let mut aniend : Bool = false
   match self.action {
     None => {
@@ -779,4 +778,142 @@ pub fn get_equips(self : CharLook) -> CharEquips {
 pub fn add_equip(self : CharLook, itemid : Int) -> Unit! {
   self.equips.add_equip!(itemid, draw_info)
   self.updatetwohanded()
+}
+
+pub fn get_stance(self : CharLook) -> @char_look.StanceId {
+  self.stance.get()
+}
+
+pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
+  match self.action {
+    Some(action) => return draw_info.get_attack_delay(self.actionstr, no)
+    None => ()
+  }
+  let mut delay : Int = 0
+  for frame in 0..<first_frame {
+    delay += self.get_delay(self.stance.get(), frame)
+  }
+  return delay
+}
+
+pub fn attack(self : CharLook, degenerate : Bool) -> Unit! {
+  let weapon_id = self.equips.get_weapon()
+  if weapon_id <= 0 {
+    return
+  }
+  let weapon = @Weapon.WeaponData::get!(weapon_id)
+  let attacktype = weapon.get_attack()
+  if attacktype == 9 && degenerate.not() {
+    self.set_stance(@char_look.StanceId::SHOT)
+    self.set_action("handgun")
+  } else {
+    self.set_stance(self.getattackstance(attacktype, degenerate))
+    self.st_frame.set(0)
+    self.st_elapsed = 0
+  }
+  // TODO: weapon sound
+  // weapon.get_usesound(degenerate).play()
+}
+
+pub fn set_action(self : CharLook, acstr : String) -> Unit {
+  if acstr == self.actionstr || acstr.is_empty() {
+    return
+  }
+  let ac_stance = @char_look.StanceId::by_string(acstr)
+  if ac_stance != NONE {
+    self.set_stance(ac_stance)
+  } else {
+    self.action = draw_info.get_action(acstr, 0)
+    match self.action {
+      Some(action) => {
+        self.actframe = 0
+        self.st_elapsed = 0
+        self.actionstr = acstr
+        self.set_stance(action.get_stance())
+        self.st_frame.set(action.get_frame())
+      }
+      None => ()
+    }
+  }
+}
+
+fn getattackstance(
+  self : CharLook,
+  attack : Int,
+  degenerate : Bool
+) -> @char_look.StanceId {
+  if self.stance.get() == @char_look.StanceId::PRONE {
+    return @char_look.StanceId::PRONESTAB
+  }
+  if attack <= 0 || attack >= degen_stances.length() {
+    return @char_look.StanceId::STAND1
+  }
+  let stances = if degenerate {
+    degen_stances[attack]
+  } else {
+    attack_stances[attack]
+  }
+  if stances.length() == 0 {
+    return @char_look.StanceId::STAND1
+  }
+  let index = self.randomizer.next_int(stances.length())
+  return stances[index]
+}
+
+let attack_S1A1M1D = 1
+
+let attack_SPEAR = 2
+
+let attack_BOW = 3
+
+let attack_CROSSBOW = 4
+
+let attack_S2A2M2 = 5
+
+let attack_WAND = 6
+
+let attack_CLAW = 7
+
+let attack_GUN = 9
+
+let degen_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::SWINGT1, @char_look.StanceId::SWINGT3],
+  [@char_look.StanceId::SWINGT1, @char_look.StanceId::STABT1],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::SWINGT1, @char_look.StanceId::STABT1],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::SWINGP1, @char_look.StanceId::STABT2],
+]
+
+let attack_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
+  [@char_look.StanceId::NONE],
+  [
+    @char_look.StanceId::STABO1,
+    @char_look.StanceId::STABO2,
+    @char_look.StanceId::SWINGO1,
+    @char_look.StanceId::SWINGO2,
+    @char_look.StanceId::SWINGO3,
+  ],
+  [@char_look.StanceId::STABT1, @char_look.StanceId::SWINGP1],
+  [@char_look.StanceId::SHOOT1],
+  [@char_look.StanceId::SHOOT2],
+  [
+    @char_look.StanceId::STABO1,
+    @char_look.StanceId::STABO2,
+    @char_look.StanceId::SWINGT1,
+    @char_look.StanceId::SWINGT2,
+    @char_look.StanceId::SWINGT3,
+  ],
+  [@char_look.StanceId::SWINGO1, @char_look.StanceId::SWINGO2],
+  [@char_look.StanceId::SWINGO1, @char_look.StanceId::SWINGO2],
+  [@char_look.StanceId::NONE],
+  [@char_look.StanceId::SHOT],
+]
+
+pub fn set_alerted(self : CharLook, millis : Int) -> Unit {
+  self.alerted.set_for(millis)
 }

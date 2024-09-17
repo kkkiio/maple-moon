@@ -6,6 +6,14 @@ pub enum ForbidReason {
   FBR_BULLETCOST
   FBR_COOLDOWN
   FBR_OTHER
-}
+} derive(Eq)
 
-trait SpecialMove {}
+pub trait SpecialMove {
+  get_id(Self) -> Int
+  is_attack(Self) -> Bool
+  is_skill(Self) -> Bool
+  apply_useeffects(Self, @character.Character) -> Unit
+  apply_actions(Self, @character.Character, AttackType) -> Unit!
+  apply_stats(Self, @character.Character, Attack) -> Unit
+  can_use(Self, Int, @Weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+}

@@ -178,15 +178,11 @@ function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
   return shader;
 }
 
-let resourceLoaderNo = 0;
-
 class ResourceLoader {
   constructor(name) {
     this.name = name;
     this.nxJson = null;
-    const no = resourceLoaderNo;
-    resourceLoaderNo += 1
-    this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
+    this.bmpLoader = new DirectBmpLoader(`resource/${name}/bitmaps`)
   }
   async load() {
     const path = `resource/${this.name}/nx.json`
@@ -208,9 +204,7 @@ class MergeResourceLoader {
     this.name = name;
     this.mappings = mappings;
     this.nxJson = null;
-    const no = resourceLoaderNo;
-    resourceLoaderNo += 1
-    this.bmpLoader = new DirectBmpLoader(no, `resource/${name}/bitmaps`)
+    this.bmpLoader = new DirectBmpLoader(`resource/${name}/bitmaps`)
   }
   async load() {
     this.nxJson = {}
@@ -243,8 +237,7 @@ class MergeResourceLoader {
 }
 
 class DirectBmpLoader {
-  constructor(i, bmpFolderPath) {
-    this.i = i;
+  constructor(bmpFolderPath) {
     this.bmpFolderPath = bmpFolderPath;
     this.bitmaps = {};
   }
@@ -456,6 +449,7 @@ function main() {
     { nodepath: "Pants/01060002.img", filename: "pants01060002.nx.json" },
     { nodepath: "Shoes/01072001.img", filename: "shoes01072001.nx.json" },
     { nodepath: "Weapon/01302000.img", filename: "weapon01302000.nx.json" },
+    { nodepath: "Afterimage", filename: "afterimage.nx.json" },
   ]);
   prepareResourcePromises.push(
     characterLoader.load()
@@ -496,6 +490,10 @@ function main() {
   const mobLoader = new ResourceLoader("Mob.nx");
   prepareResourcePromises.push(
     mobLoader.load()
+  );
+  const effectLoader = new ResourceLoader("Effect.nx");
+  prepareResourcePromises.push(
+    effectLoader.load()
   );
 
   const textBitmapGenerator = new TextBitmapGenerator();
@@ -614,6 +612,8 @@ function main() {
             return itemLoader;
           case "mob":
             return mobLoader;
+          case "effect":
+            return effectLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

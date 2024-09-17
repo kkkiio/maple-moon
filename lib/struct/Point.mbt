@@ -32,3 +32,7 @@ pub fn shift_x(self : Point[Int], v : Int) -> Point[Int] {
 pub fn shift_y(self : Point[Int], v : Int) -> Point[Int] {
   { x: self.x, y: self.y + v }
 }
+
+pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
+  (self.x - v.x).abs() + (self.y - v.y).abs()
+}

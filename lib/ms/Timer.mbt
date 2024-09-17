@@ -13,11 +13,11 @@ pub fn Duration::from_micro(i : Int) -> Duration {
 }
 
 fn to_micro_seconds(self : Duration) -> Int {
-  self.0
+  self._
 }
 
 fn since(self : TimePoint, other : TimePoint) -> Duration {
-  (self.0 - other.0).to_int()
+  (self._ - other._).to_int()
 }
 
 // Small class for measuring elapsed time between game loops.

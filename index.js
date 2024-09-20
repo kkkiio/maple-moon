@@ -310,27 +310,49 @@ class TextBitmapGenerator {
     this.textCtx = document.createElement("canvas").getContext("2d", {
       willReadFrequently: true,
     });
-    this.textCtx.canvas.width = VWIDTH;
-    this.textCtx.canvas.height = VHEIGHT;
+    this.listDom = document.getElementById("list");
+    this.testDom = document.getElementById("test");
   }
   // TODO: allow individual font style
-  createImage(innerHtml, fontSize, fontName, maxWidth, textAlign, color) {
-    const htmlSvg = `data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="${maxWidth}" height="${VHEIGHT}"><foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px"><p style="margin: 0px; font-size: ${fontSize}px; font-family: ${fontName}; color: ${color}; text-align: ${textAlign};">${innerHtml}</p></body></foreignObject></svg>`;
-    const img = new Image();
+  createImage(textHtml, fontSize, fontName, color, textAlign, maxWidth) {
+    const html =
+      `<p style="font-size: ${fontSize}px; font-family: ${fontName}; color: ${color}; text-align: ${textAlign};">${textHtml}</p>`;
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    this.listDom.appendChild(div);
+    const tmpImg = document.createElement('img');
+    const [width, height] = this.calculateTextSize(html, maxWidth);
     const bmp = {
-      data: null,
+      data: tmpImg,
       loading: true,
+      w: width,
+      h: height,
     }
-    img.onload = () => {
+    tmpImg.onload = () => {
+      this.textCtx.canvas.width = tmpImg.width;
+      this.textCtx.canvas.height = tmpImg.height;
       this.textCtx.clearRect(0, 0, this.textCtx.canvas.width, this.textCtx.canvas.height);
-      this.textCtx.drawImage(img, 0, 0);
-      bmp.data = this.textCtx.getImageData(0, 0, img.width, img.height);
-      bmp.w = img.width;
-      bmp.h = img.height;
-      bmp.loading = false;
+      this.textCtx.drawImage(tmpImg, 0, 0);
+      const dataurl = this.textCtx.canvas.toDataURL();
+      console.info(dataurl)
+      const targetImg = document.createElement('img');
+      bmp.data = targetImg;
+      targetImg.onload = () => {
+        bmp.loading = false;
+      }
+      targetImg.src = dataurl;
     };
-    img.src = htmlSvg;
+    tmpImg.src = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>p{margin:0}</style>${html}</div></foreignObject></svg>`)
     return bmp;
+  }
+  calculateTextSize(html, maxWidth) {
+    if (maxWidth) {
+      this.testDom.style.maxWidth = `${maxWidth}px`;
+    } else {
+      this.testDom.style.maxWidth = "unset";
+    }
+    this.testDom.innerHTML = html;
+    return [this.testDom.clientWidth + 1, this.testDom.clientHeight + 1];
   }
 }
 function main() {

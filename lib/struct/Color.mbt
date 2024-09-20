@@ -214,3 +214,28 @@ pub fn op_mul(self : Color, o : Color) -> Color {
 pub fn op_div(self : Color, o : Color) -> Color {
   (self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
 }
+
+type IntColor Int derive(Show, Eq, Hash)
+
+pub fn IntColor::from_color(color : Color) -> IntColor {
+  ((color.r() * 255).to_int() << 24) |
+  ((color.g() * 255).to_int() << 16) |
+  ((color.b() * 255).to_int() << 8) |
+  (color.a() * 255).to_int()
+}
+
+pub fn r(self : IntColor) -> Int {
+  self._.lsr(24) & 0xFF
+}
+
+pub fn g(self : IntColor) -> Int {
+  self._.lsr(16) & 0xFF
+}
+
+pub fn b(self : IntColor) -> Int {
+  self._.lsr(8) & 0xFF
+}
+
+pub fn a(self : IntColor) -> Int {
+  self._ & 0xFF
+}

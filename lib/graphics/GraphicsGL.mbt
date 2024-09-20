@@ -6,6 +6,7 @@ struct GraphicsGL {
   vheight : Int
   screen : Rectangle[Int]
   atlas : Atlas
+  text_cache : @lru_cache.Cache[TextKey, @resource.Image]
   mut locked : Bool
 }
 
@@ -42,6 +43,7 @@ fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
     vwidth,
     vheight,
     screen: Rectangle::from4(0, vwidth, 0, vheight),
+    text_cache: @lru_cache.Cache::new(32),
     locked: false,
   }
 }
@@ -157,39 +159,46 @@ pub fn draw_text(
   )
 }
 
-pub fn create_text_image(
-  self : GraphicsGL,
-  text : String,
-  id : FontId,
-  max_width : Int,
-  alignment : TextAlignment,
-  color : Color
-) -> @resource.Image {
-  let fontName = if id.is_bold() {
+pub fn create_text_image(self : GraphicsGL, key : TextKey) -> @resource.Image {
+  guard let None = self.text_cache.get(key) else { Some(image) => return image }
+  let fontName = if key.font_id.is_bold() {
     @config.configFontPathBold.load()
   } else {
     @config.configFontPathNormal.load()
   }
-  let text_alignment = match alignment {
+  let text_align = match key.text_alignment {
     TextAlignment::LEFT => "start"
     TextAlignment::CENTER => "center"
     TextAlignment::RIGHT => "end"
   }
-  text_create_image(
-    text.to_js_string(),
-    id.height(),
+  let r = key.color.r()
+  let g = key.color.g()
+  let b = key.color.b()
+  let img = text_create_image(
+    key.text.to_js_string(),
+    key.font_id.height(),
     fontName.to_js_string(),
-    max_width,
-    text_alignment.to_js_string(),
-    "rgb(\{color.r()} \{color.g()} \{color.b()} / \{color.a()})".to_js_string(), // rgb($r $g $b / $a)
+    "rgb(\{r} \{g} \{b} / \{key.color.a()/255})".to_js_string(), // rgb($r $g $b / $a)
+    text_align.to_js_string(),
+    key.max_width.or(0),
   )
+  self.text_cache.set(key, img)
+  img
 }
+
+struct TextKey {
+  text : String
+  font_id : FontId
+  text_alignment : TextAlignment
+  color : @struct.IntColor
+  max_width : Int?
+} derive(Eq, Hash)
 
 pub enum TextAlignment {
   LEFT
   CENTER
   RIGHT
-}
+} derive(Eq, Hash)
 
 pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
   let coverscene = opacity != 1.0
@@ -228,6 +237,7 @@ pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
 
 pub fn clear(self : GraphicsGL) -> Unit {
   self.atlas.clear()
+  self.text_cache.clear()
 }
 
 fn clear(self : Atlas) -> Unit {
@@ -553,7 +563,7 @@ fn text_create_image(
   text : Js_string,
   font_size : Int,
   font_name : Js_string,
-  max_width : Int,
+  color : Js_string,
   text_align : Js_string,
-  color : Js_string
+  max_width : Int
 ) -> @resource.Image = "text" "create_image"

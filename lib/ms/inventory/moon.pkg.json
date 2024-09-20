@@ -1,10 +1,11 @@
 {
-    "import": [
-      "KKKIIO/maple-moon-client/lib/ms/equip",
-      "KKKIIO/maple-moon-client/lib/ms/equip/stat",
-      "KKKIIO/maple-moon-client/lib/ms/equip/slot",
-      "KKKIIO/maple-moon-client/lib/ms/equip/quality",
-      "KKKIIO/maple-moon-client/lib/ms/Weapon",
-      "KKKIIO/maple-moon-client/lib/utils"
-    ]
+  "import": [
+    "KKKIIO/maple-moon-client/lib/ms/equip",
+    "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+    "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+    "KKKIIO/maple-moon-client/lib/ms/equip/quality",
+    "KKKIIO/maple-moon-client/lib/ms/Weapon",
+    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/ms/pet"
+  ]
 }

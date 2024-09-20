@@ -354,10 +354,6 @@ pub fn deactivate(self : UILogin) -> Unit {
   self.base.deactivate()
 }
 
-fn doubleclick(self : UILogin, point : Point[Int]) -> Unit {
-
-}
-
 fn fn_login_start() -> Unit {
   @login.new_login_start_packet().dispatch()
 }

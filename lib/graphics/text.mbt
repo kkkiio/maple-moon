@@ -1,18 +1,18 @@
 struct Text {
   font : FontId
   alignment : TextAlignment
-  mut color : @struct.ColorName
+  color : @struct.ColorName
+  text : String
+  max_width : Int?
   mut image : @resource.Image?
-  mut text : String
-  max_width : Int
 }
 
 pub fn Text::new(
+  text : String,
   font : FontId,
   alignment : TextAlignment,
   color : @struct.ColorName,
-  max_width : Int,
-  ~text : String = ""
+  ~max_width? : Int
 ) -> Text {
   { font, alignment, color, image: None, text, max_width }
 }
@@ -23,15 +23,15 @@ pub fn draw(
   ~text_y_clip : Range[Int]? = None
 ) -> Unit {
   let image = self.get_or_init_image()
-  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
-}
-
-pub fn change_text(self : Text, text : String) -> Unit {
-  if self.text == text {
-    return
+  let point = match self.alignment {
+    TextAlignment::CENTER => {
+      let width = image.width()
+      let x = point.x - width / 2
+      { ..point, x, }
+    }
+    _ => point
   }
-  self.text = text
-  self.image = None
+  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }
 
 pub fn dimensions(self : Text) -> Point[Int] {
@@ -54,11 +54,13 @@ fn get_or_init_image(self : Text) -> @resource.Image {
     Some(image) => image
     None => {
       let image = GraphicsGL::get().create_text_image(
-        self.text,
-        self.font,
-        self.max_width,
-        self.alignment,
-        self.color |> Color::from_name,
+        {
+          text: self.text,
+          font_id: self.font,
+          max_width: self.max_width,
+          text_alignment: self.alignment,
+          color: self.color |> Color::from_name |> @struct.IntColor::from_color,
+        },
       )
       self.image = Some(image)
       image
@@ -66,10 +68,16 @@ fn get_or_init_image(self : Text) -> @resource.Image {
   }
 }
 
-pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
-  if self.color == color {
-    return
+pub fn change_text(self : Text, text : String) -> Text {
+  if self.text == text {
+    return self
   }
-  self.color = color
-  self.image = None
+  { ..self, text, image: None }
+}
+
+pub fn change_color(self : Text, color : @struct.ColorName) -> Text {
+  if self.color == color {
+    return self
+  }
+  { ..self, color, image: None }
 }

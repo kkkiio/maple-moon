@@ -14,7 +14,8 @@
                 "onkeyup",
                 "transit_to",
                 "load_player"
-            ]
+            ],
+            "format": "esm"
         }
     }
 }

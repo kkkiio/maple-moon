@@ -1,26 +1,19 @@
-// app/src/main/cpp/src/IO/UI.h
-// app/src/main/cpp/src/IO/UI.cpp
-
 enum UiState {
   LOGIN
   GAME
-  CASHSHOP
+  // CASHSHOP
 }
 
 struct Textfield {}
 
 struct UI {
-  mut state : UIState
+  mut state : UIState?
   keyboard : Keyboard
   cursor : Cursor
-  //         ScrollingNotice scrolling_notice_;
-  //         UIMobileInput mobile_input_;
-
   //         std::optional<std::reference_wrapper<Textfield>> focused_text_field_;
   focused_text_field : Textfield?
   is_key_down : Map[String, Bool]
   mut enabled : Bool
-  mut quitted : Bool
   mut caps_lock_enabled : Bool
 
   //         std::function<void()> fn_toggle_full_screen_;
@@ -32,13 +25,12 @@ let g_ui : UI = UI::new()
 
 fn UI::new() -> UI {
   let ui = {
-    state: UIStateNull::default(),
+    state: None,
     cursor: Cursor::new(),
     keyboard: Keyboard::default(),
     focused_text_field: None,
     is_key_down: Map::new(),
     enabled: true,
-    quitted: false,
     caps_lock_enabled: false,
   }
   ui.change_state(UiState::LOGIN) // for test
@@ -50,17 +42,19 @@ fn UI::get() -> UI {
 }
 
 pub fn draw(self : UI, alpha : Double) -> Unit {
-  self.state.draw(alpha, self.cursor.get_position())
-  //         scrolling_notice_.draw(alpha);
+  match self.state {
+    Some(state) => state.draw(alpha, self.cursor.get_position())
+    None => ()
+  }
   self.cursor.draw(alpha)
-  //         mobile_input_.draw();
 }
 
 fn update(self : UI) -> Unit {
-  self.state.update()
-  //         scrolling_notice_.update();
+  match self.state {
+    Some(state) => state.update()
+    None => ()
+  }
   self.cursor.update()
-  //         mobile_input_.update();
 }
 
 pub fn send_cursor_pos(self : UI, pos : Point[Int]) -> Unit {
@@ -93,15 +87,18 @@ pub fn send_cursor(
   cursorpos : Point[Int],
   cursorstate : CursorState
 ) -> Unit {
-  let nextstate = self.state.send_cursor(cursorstate, cursorpos)
+  let nextstate = match self.state {
+    Some(state) => state.send_cursor(cursorstate, cursorpos)
+    None => CursorState::IDLE
+  }
   self.cursor.set_state(nextstate)
   self.cursor.set_position(cursorpos)
 }
 
 fn change_state(self : UI, id : UiState) -> Unit {
   match id {
-    UiState::LOGIN => self.state = UIStateLogin::new()
-    UiState::GAME => self.state = UIStateGame::new(20)
+    UiState::LOGIN => self.state = Some(UIStateLogin::new())
+    UiState::GAME => self.state = Some(UIStateGame::new())
     // UiState::CASHSHOP => UIStateCashShop::default(),
   }
 }
@@ -119,6 +116,7 @@ fn is_enabled(self : UI) -> Bool {
 }
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
+  guard let Some(state) = self.state else { None => return  }
   if self.is_key_down.get_or_default(self.keyboard.capslock_code(), false) {
     self.caps_lock_enabled = self.caps_lock_enabled.not()
   }
@@ -221,7 +219,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
             types.push(UIElementType::USER_LIST)
           }
           if types.length() > 0 {
-            match self.state.get_front_by_types(types) {
+            match state.get_front_by_types(types) {
               Some(element) => {
                 element.send_key(mapping.action, pressed, escape)
                 sent = true
@@ -237,16 +235,16 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
           // if chatbar && chatbar.get().is_chat_open() {
           //   chatbar.get().send_key(mapping.action, pressed, escape)
           // } else {
-          self.state.send_key(mapping.t, mapping.action, pressed, escape)
+          state.send_key(mapping.t, mapping.action, pressed, escape)
           // }
         } else if enter {
           // if chatbar {
           // chatbar.get().send_key(mapping.action, pressed, escape)
           // } else {
-          self.state.send_key(mapping.t, mapping.action, pressed, escape)
+          state.send_key(mapping.t, mapping.action, pressed, escape)
           // }
         } else {
-          self.state.send_key(mapping.t, mapping.action, pressed, escape)
+          state.send_key(mapping.t, mapping.action, pressed, escape)
         }
       }
     }
@@ -255,19 +253,23 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
 }
 
 fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
-  self.state.get(element_type)
+  match self.state {
+    Some(state) => state.get(element_type)
+    None => None
+  }
 }
 
 /// @alert deprecated "Use set_element/set_or_toggle_element instead"
 fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit {
+  guard let Some(state) = self.state else { None => return  }
   if T::const_toggled() {
-    self.state.set_or_toggle_element(
+    state.set_or_toggle_element(
       T::const_type(),
       T::const_focused(),
       fn() { f() },
     )
   } else {
-    self.state.set_element(T::const_focused(), f())
+    state.set_element(T::const_focused(), f())
   }
 }
 
@@ -275,20 +277,14 @@ pub fn set_element[T : UIElement + UIElementDescriptor](
   self : UI,
   elem : T
 ) -> Unit {
-  self.state.set_element(T::const_focused(), elem)
+  guard let Some(state) = self.state else { None => return  }
+  state.set_element(T::const_focused(), elem)
 }
 
 pub fn set_or_toggle_element[T : UIElement + UIElementDescriptor](
   self : UI,
   f : () -> T
 ) -> Unit {
-  self.state.set_or_toggle_element(
-    T::const_type(),
-    T::const_focused(),
-    fn() { f() },
-  )
-}
-
-pub fn quit(self : UI) -> Unit {
-  self.quitted = true
+  guard let Some(state) = self.state else { None => return  }
+  state.set_or_toggle_element(T::const_type(), T::const_focused(), fn() { f() })
 }

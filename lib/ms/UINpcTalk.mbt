@@ -7,7 +7,7 @@ struct UINpcTalk {
   nametag : @graphics.Texture
   mut speaker : @graphics.Texture
   mut content : NPCTalkContent?
-  name : @graphics.Text
+  mut name : @graphics.Text
   mut height : Int
   offset : Int
   mut unit_rows : Int
@@ -35,7 +35,7 @@ pub fn UINpcTalk::const_toggled() -> Bool {
 }
 
 struct NPCTalkContent {
-  text : @graphics.Text
+  mut text : @graphics.Text
   text_content : Array[@graphics.Text]
   text_button_content : Array[TextButton]
   line_color : @struct.ColorName
@@ -123,10 +123,11 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
   buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
   let name = @graphics.Text::new(
+    "",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
-    nametag.width(),
+    max_width=nametag.width(),
   )
   {
     base,
@@ -156,7 +157,7 @@ pub fn get_ui_element_base(self : UINpcTalk) -> UIElementBase {
   self.base
 }
 
-pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
+pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
   let mut drawpos = self.base.position
   self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.top.height())
@@ -172,7 +173,7 @@ pub fn draw(self : UINpcTalk, inter : Double) -> Unit {
   let center_pos = speaker_pos + @struct.Point::new(self.nametag.width() / 2, 0)
   self.speaker.draw(@graphics.DrawArgument::new14(center_pos, true))
   self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
-  self.name.draw(speaker_pos.shift_y(1))
+  self.name.draw(center_pos + @struct.Point::new(0, -4))
   match self.content {
     Some(content) =>
       if self.show_slider {
@@ -306,7 +307,7 @@ pub fn send_cursor(
       Some(content) =>
         if self.draw_text {
           self.draw_text = false
-          content.text.change_text(self.formatted_text)
+          content.text = content.text.change_text(self.formatted_text)
         } else {
           for element in content.text_button_content.iter() {
             if element.bounds(self.base.position).contains(cursorpos) {
@@ -396,8 +397,8 @@ pub fn change_text(
     self.buttons.buttons[bid_text_button + element.option_number] = element
   }
   let text_height = content.text.height()
-  content.text.change_text("")
-  if speakerbyte == 0 {
+  content.text = content.text.change_text("")
+  self.name = if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
@@ -547,10 +548,6 @@ pub fn toggle_active(self : UINpcTalk) -> Unit {
   self.base.toggle_active()
 }
 
-pub fn doubleclick(self : UINpcTalk, cursorpos : @struct.Point[Int]) -> Unit {
-
-}
-
 fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::NPC_TALK_MORE)
   ..write_byte(lastmsg.to_byte())
@@ -642,11 +639,11 @@ fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
     builder.set_content(line)
   }
   let text = @graphics.Text::new(
+    formatted_text,
     @graphics.FontId::A18M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::DARKGREY,
-    320,
-    text=formatted_text,
+    max_width=320,
   )
   {
     text,
@@ -675,11 +672,11 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
       self.selection = selection
       let button = TextButton::new(
         @graphics.Text::new(
+          line,
           @graphics.FontId::A18M,
           @graphics.TextAlignment::LEFT,
           self.line_color,
-          320,
-          text=line,
+          max_width=320,
         ),
         self.selection,
       )
@@ -688,11 +685,11 @@ fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
     None => {
       self.text_content.push(
         @graphics.Text::new(
+          line,
           @graphics.FontId::A18M,
           @graphics.TextAlignment::LEFT,
           @struct.ColorName::DARKGREY,
-          320,
-          text=line,
+          max_width=320,
         ),
       )
       if line.ends_with("#b") {

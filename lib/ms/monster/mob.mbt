@@ -73,7 +73,7 @@ struct Mob {
   can_fly : Bool
   is_boss : Bool
   effects : @graphics.EffectLayer
-  name_label : @graphics.Text
+  mut name_label : @graphics.Text
   hp_bar : @ui.MobHpBar
   randomizer : @utils.Randomizer
   show_hp : @utils.TimedBool
@@ -211,12 +211,11 @@ pub fn Mob::new(
   let fly_direction = STRAIGHT
   let counter = 0
   let name_label = @graphics.Text::new(
+    name,
     @graphics.FontId::A13M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
     // @graphics.TextBackground::NAMETAG,
-    100, // TODO: find out name tag width
-    text=name,
   )
   {
     base,
@@ -832,9 +831,9 @@ pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   if self.hp_percent == 0 {
     let delta = playerlevel - self.level
     if delta > 9 {
-      self.name_label.change_color(@struct.ColorName::YELLOW)
+      self.name_label = self.name_label.change_color(@struct.ColorName::YELLOW)
     } else if delta < -9 {
-      self.name_label.change_color(@struct.ColorName::RED)
+      self.name_label = self.name_label.change_color(@struct.ColorName::RED)
     }
   }
   let percent = percent |> @math.minimum(100) |> @math.maximum(0)

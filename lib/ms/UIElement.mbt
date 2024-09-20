@@ -157,13 +157,6 @@ pub trait UIElement {
   remove_cursor(Self) -> Unit
   draw(Self, Double) -> Unit
   update(Self) -> Unit
-  doubleclick(Self, Point[Int]) -> Unit
-  // set_position(Self, Point[Int]) -> Unit
-  // set_dimension(Self, Point[Int]) -> Unit
-  // set_active(Self, Bool) -> Unit
-  // set_type(Self, UIElementType) -> Unit
-  // set_buttons(Self, Map[Int, Button]) -> Unit
-  // set_sprites(Self, Array[Sprite]) -> Unit
 }
 
 pub trait UIElementDescriptor {

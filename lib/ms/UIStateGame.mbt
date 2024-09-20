@@ -17,7 +17,6 @@ struct UIStateGame {
   mut time_rel_grabbed : TimePoint
   mut vwidth : Int
   mut vheight : Int
-  channel_count : Int
 }
 
 let icon_map : @immut/hashmap.T[IconType, UIElementType] = @immut/hashmap.from_array(
@@ -30,7 +29,7 @@ let icon_map : @immut/hashmap.T[IconType, UIElementType] = @immut/hashmap.from_a
   ],
 )
 
-pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
+pub fn UIStateGame::new() -> UIStateGame {
   {
     // stats: CharStats::default(),
     elements: Map::new(),
@@ -48,7 +47,6 @@ pub fn UIStateGame::new(channel_count : Int) -> UIStateGame {
     time_rel_grabbed: Timer::get().now(),
     vwidth: @constants.constants.get_viewwidth(),
     vheight: @constants.constants.get_viewheight(),
-    channel_count,
   }
   // icon_map: Map::from_array([
   //   (Icon.IconType::NONE, UIElement.Type::NONE),
@@ -113,24 +111,6 @@ pub fn update(self : UIStateGame) -> Unit {
       }
     },
   )
-}
-
-pub fn doubleclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
-  match self.get_front(pos) {
-    Some(front) => {
-      front.doubleclick(pos)
-      self.dragged_icon = None //Fix UIItemInventory crash when doubleclick equipment happens after dragging
-    }
-    None => Stage::get().doubleclick(pos)
-  }
-}
-
-pub fn rightclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
-  // TODO: add rightclick to UIElement
-  // match self.get_front(pos) {
-  //   Some(front) => front.rightclick(pos)
-  //   None => ()
-  // }
 }
 
 pub fn send_key(
@@ -370,57 +350,11 @@ pub fn send_cursor(
   return Stage::get().send_cursor(clicked, cursorpos)
 }
 
-pub fn send_scroll(self : UIStateGame, yoffset : Double) -> Unit {
-  // Implementation goes here
-}
-
-pub fn send_close(self : UIStateGame) -> Unit {
-  // Implementation goes here
-}
-
 pub fn drag_icon(self : UIStateGame, icon : Icon) -> Unit {
   // Implementation goes here
 }
 
 pub fn clear_tooltip(self : UIStateGame, parent : TooltipParent) -> Unit {
-  // Implementation goes here
-}
-
-pub fn show_equip(
-  self : UIStateGame,
-  parent : TooltipParent,
-  slot : Int
-) -> Unit {
-  // Implementation goes here
-}
-
-pub fn show_item(
-  self : UIStateGame,
-  parent : TooltipParent,
-  itemid : Int
-) -> Unit {
-  // Implementation goes here
-}
-
-pub fn show_skill(
-  self : UIStateGame,
-  parent : TooltipParent,
-  skill_id : Int,
-  level : Int,
-  masterlevel : Int,
-  expiration : Int64
-) -> Unit {
-  // Implementation goes here
-}
-
-pub fn show_map(
-  self : UIStateGame,
-  parent : TooltipParent,
-  name : String,
-  description : String,
-  mapid : Int,
-  bolded : Bool
-) -> Unit {
   // Implementation goes here
 }
 
@@ -566,25 +500,6 @@ pub fn remove_cursors(self : UIStateGame) -> Unit {
 pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
   // Implementation goes here
 }
-
-// pub fn emplace[T, Args](self : UIStateGame, args : Args...) -> Unit {
-//   // Implementation goes here
-// }
-
-// UIElement *UIStateGame::get_front(Point<int16_t> pos) {
-//     auto begin = self.element_order.rbegin();
-//     auto end = self.element_order.rend();
-
-//     for (auto iter = begin; iter != end; ++iter) {
-//         auto &element = elements_[*iter];
-
-//         if (element && element->is_active() && element->is_in_range(pos)) {
-//             return element;
-//         }
-//     }
-
-//     return nullptr;
-// }
 
 fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> UIElement? {
   self.element_order

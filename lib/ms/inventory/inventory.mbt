@@ -48,7 +48,7 @@ struct Inventory {
   inventories : @utils.DefaultMap[TypeId, Map[Int, Slot]]
   items : Map[Int, Item]
   equips : Map[Int, @equip.Equip]
-  pets : Map[Int, Pet]
+  pets : Map[Int, @pet.Pet]
   mut running_uid : Int
   total_stats : @utils.DefaultMap[@stat.Id, Int]
   slot_maxima : Map[TypeId, Int]

@@ -41,13 +41,6 @@ fn update(self : UIStateLogin) -> Unit {
   )
 }
 
-pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {
-  match UI::get().get_element(UIElementType::UI_ELEMENT_CHAR_SELECT) {
-    Some(charselect) => charselect.doubleclick(pos)
-    None => ()
-  }
-}
-
 pub fn send_key(
   self : UIStateLogin,
   t : @KeyType.Id,
@@ -90,21 +83,6 @@ pub fn send_cursor(
       front.send_cursor(clicked, cursorpos)
     }
     None => CursorState::IDLE
-  }
-}
-
-pub fn send_close(self : UIStateLogin) -> Unit {
-  let logo = UI::get().get_element(UIElementType::START)
-  let login = UI::get().get_element(UIElementType::LOGIN)
-  let region = UI::get().get_element(UIElementType::REGION)
-  if [logo, login, region]
-    .iter()
-    .flat_map(@option.iter)
-    .find_first(fn(it) { it.get_ui_element_base().is_active() })
-    .is_empty() {
-    // UI::get().emplace(fn(){UIQuitConfirm::new()})
-  } else {
-    UI::get().quit()
   }
 }
 

@@ -1,10 +1,15 @@
 struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
   spawns : @queue.T[MobSpawn]
+  randomizer : @utils.Randomizer
 }
 
 pub fn MapMobs::new() -> MapMobs {
-  { mobs: @map_object.MapObjects::new(), spawns: @queue.T::new() }
+  {
+    mobs: @map_object.MapObjects::new(),
+    spawns: @queue.T::new(),
+    randomizer: @utils.Randomizer::default(),
+  }
 }
 
 pub fn spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
@@ -22,7 +27,7 @@ pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit! {
           }
           mob.makeactive()
         }
-        None => self.mobs.add(spawn.instantiate!())
+        None => self.mobs.add(spawn.instantiate!(self.randomizer))
       }
       continue self.spawns.pop()
     }
@@ -181,7 +186,7 @@ struct MobSpawn {
   position : @struct.Point[Int]
 }
 
-pub fn instantiate(self : MobSpawn) -> Mob! {
+pub fn instantiate(self : MobSpawn, randomizer : @utils.Randomizer) -> Mob! {
   Mob::new!(
     self.oid,
     self.id,
@@ -191,6 +196,7 @@ pub fn instantiate(self : MobSpawn) -> Mob! {
     self.new_spawn,
     self.team,
     self.position,
+    randomizer,
   )
 }
 

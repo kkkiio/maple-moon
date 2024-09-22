@@ -2,7 +2,7 @@ pub trait MapObject {
   get_oid(Self) -> Int
   draw(Self, Double, Double, Double) -> Unit
   update(Self, @physics.Physics) -> Int
-  // makeactive(Self) -> Unit
+  makeactive(Self) -> Unit
   // deactivate(Self) -> Unit
   is_active(Self) -> Bool
   get_layer(Self) -> Int

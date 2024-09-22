@@ -109,7 +109,8 @@ pub fn Mob::new(
   fh : Int,
   newspawn : Bool,
   tm : Int,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
+  randomizer : @utils.Randomizer
 ) -> Mob! {
   let base = @map_object.MapObjectBase::new(oi)
   let strid = @string_format.extend_id(mid, 7)
@@ -247,7 +248,7 @@ pub fn Mob::new(
     effects: @graphics.EffectLayer::default(),
     name_label,
     hp_bar: @ui.MobHpBar::default(),
-    randomizer: @utils.Randomizer::default(),
+    randomizer,
     show_hp: @utils.TimedBool::default(),
     movements: [],
     counter,

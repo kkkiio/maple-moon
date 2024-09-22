@@ -30,7 +30,7 @@ fn ItemData::load(item_id : Int) -> ItemData! {
       let strsrc = @resource.string_loader().load_res(
         ["Eqp.img", "Eqp", category, item_id.to_string()],
       )
-      (category, Some(src), Some(strsrc))
+      (category, src, strsrc)
     }
     2 => {
       let category = "Consume"
@@ -40,7 +40,7 @@ fn ItemData::load(item_id : Int) -> ItemData! {
       let strsrc = @resource.string_loader().load_res(
         ["Consume.img", item_id.to_string()],
       )
-      (category, Some(src), Some(strsrc))
+      (category, src, strsrc)
     }
     3 => {
       let category = "Install"
@@ -50,7 +50,7 @@ fn ItemData::load(item_id : Int) -> ItemData! {
       let strsrc = @resource.string_loader().load_res(
         ["Ins.img", item_id.to_string()],
       )
-      (category, Some(src), Some(strsrc))
+      (category, src, strsrc)
     }
     4 => {
       let category = "Etc"
@@ -60,7 +60,7 @@ fn ItemData::load(item_id : Int) -> ItemData! {
       let strsrc = @resource.string_loader().load_res(
         ["Etc.img", item_id.to_string()],
       )
-      (category, Some(src), Some(strsrc))
+      (category, src, strsrc)
     }
     5 => {
       let category = "Cash"
@@ -70,57 +70,35 @@ fn ItemData::load(item_id : Int) -> ItemData! {
       let strsrc = @resource.string_loader().load_res(
         ["Cash.img", item_id.to_string()],
       )
-      (category, Some(src), Some(strsrc))
+      (category, src, strsrc)
     }
-    _ => ("", None, None)
+    _ => raise ItemDataError("data not found for item_id=\{item_id}")
   }
-  match src {
-    Some(src) => {
-      let icons = @utils.BoolPair::new(
-        src["icon"] |> @graphics.Texture::from_resource,
-        src["iconRaw"] |> @graphics.Texture::from_resource,
-      )
-      let price = src["price"].get_int!()
-      let untradable = src["tradeBlock"].get_bool!()
-      let unique = src["only"].get_bool!()
-      let unsellable = src["notSale"].get_bool!()
-      let cash_item = src["cash"].get_bool!()
-      let gender = get_item_gender(item_id)
-      let name = strsrc.unwrap()["name"].get_string()
-      let desc = strsrc.unwrap()["desc"].get_string()
-      {
-        icons,
-        item_id,
-        price,
-        gender,
-        name,
-        desc,
-        category,
-        valid: true,
-        untradable,
-        unique,
-        unsellable,
-        cash_item,
-      }
-    }
-    None =>
-      {
-        icons: @utils.BoolPair::new(
-          @graphics.Texture::default(),
-          @graphics.Texture::default(),
-        ),
-        item_id,
-        price: 0,
-        untradable: false,
-        valid: false,
-        unique: false,
-        unsellable: false,
-        cash_item: false,
-        gender: 0,
-        name: "",
-        desc: "",
-        category: "",
-      }
+  let icons = @utils.BoolPair::new(
+    src["icon"] |> @graphics.Texture::from_resource,
+    src["iconRaw"] |> @graphics.Texture::from_resource,
+  )
+  let price = src["price"].get_int!()
+  let untradable = src["tradeBlock"].get_bool!()
+  let unique = src["only"].get_bool!()
+  let unsellable = src["notSale"].get_bool!()
+  let cash_item = src["cash"].get_bool!()
+  let gender = get_item_gender(item_id)
+  let name = strsrc["name"].get_string()
+  let desc = strsrc["desc"].get_string()
+  {
+    icons,
+    item_id,
+    price,
+    gender,
+    name,
+    desc,
+    category,
+    valid: true,
+    untradable,
+    unique,
+    unsellable,
+    cash_item,
   }
 }
 
@@ -178,10 +156,14 @@ fn ItemData::get_item_gender(id : Int) -> Int {
   gender_digit
 }
 
-fn get_item_loader() -> @resource.Loader {
+pub fn get_item_loader() -> @resource.Loader {
   @resource.Loader::new("item")
 }
 
 pub fn get_category(self : ItemData) -> String {
   self.category
+}
+
+pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
+  self.icons[raw]
 }

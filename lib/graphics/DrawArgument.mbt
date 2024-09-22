@@ -30,11 +30,13 @@ pub fn DrawArgument::from_point(position : Point[Int]) -> DrawArgument {
 pub fn DrawArgument::new(
   position : Point[Int],
   ~flip : Bool = false,
-  ~opacity : Double = 1.0
+  ~opacity : Double = 1.0,
+  ~angle : Double = 0.0
 ) -> DrawArgument {
-  DrawArgument::new10(
+  DrawArgument::new16(
     position,
     position,
+    { x: 0, y: 0 },
     if flip {
       -1.0
     } else {
@@ -42,6 +44,7 @@ pub fn DrawArgument::new(
     },
     1.0,
     opacity,
+    angle,
   )
 }
 

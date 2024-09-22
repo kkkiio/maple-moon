@@ -16,11 +16,12 @@ pub struct Stage {
   mut portals : MapPortals
   npcs : MapNpcs
   mobs : @monster.MapMobs
+  drops : @drop.MapDrops
   mut combat : Combat?
   mut start : TimePoint
 }
 
-pub fn Stage::new(mobs : @monster.MapMobs) -> Stage {
+pub fn Stage::new(mobs : @monster.MapMobs, drops : @drop.MapDrops) -> Stage {
   {
     camera: Camera::new(),
     player: None,
@@ -34,6 +35,7 @@ pub fn Stage::new(mobs : @monster.MapMobs) -> Stage {
     npcs: MapNpcs::new(),
     combat: None,
     mobs,
+    drops,
     start: TimePoint::default(),
   }
 }
@@ -47,7 +49,7 @@ pub fn clear(self : Stage) -> Unit {
   // self.chars.clear()
   self.npcs.clear()
   self.mobs.clear()
-  // self.drops.clear()
+  self.drops.clear()
   // self.reactors.clear()
 }
 
@@ -137,7 +139,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
       self.mobs.draw(id, viewx, viewy, alpha)
       // chars_.draw(id, viewx, viewy, alpha);
       player.draw(id, viewx, viewy, alpha)
-      // drops_.draw(id, viewx, viewy, alpha);
+      self.drops.draw(id, viewx, viewy, alpha)
     },
   )
   @layer.ids.each(fn(id) { player.draw(id, viewx, viewy, alpha) })
@@ -169,7 +171,7 @@ fn update(self : Stage) -> Unit {
   self.npcs.update(self.physics)
   self.mobs.update?(self.physics).unwrap()
   // chars_.update(self.physics);
-  // drops_.update(self.physics);
+  self.drops.update(self.physics)
   let player = self.player.unwrap()
   player.update(self.physics) |> ignore
   self.portals.update(player.get_position())
@@ -232,7 +234,7 @@ pub fn send_key(
               @KeyAction.Id::DOWN => self.check_ladders(player, false)
               // @KeyAction.Id::SIT => self.check_seats()
               @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(0)
-              // @KeyAction.Id::PICKUP => self.check_drops()
+              @KeyAction.Id::PICKUP => self.check_drops()
               _ => ()
             }
           }
@@ -420,4 +422,8 @@ fn new_take_damage_packet_from_mob(
     result.oid,
     result.direction,
   )
+}
+
+fn check_drops(self : Stage) -> Unit {
+  // TODO: implement
 }

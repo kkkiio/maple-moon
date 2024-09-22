@@ -1,32 +1,31 @@
 pub fn parse_item(
   recv : @net.InPacket,
-  invtype : @inventory.TypeId,
+  invtype : TypeId,
   slot : Int,
-  inventory : @inventory.Inventory
+  inventory : Inventory
 ) -> Unit! {
   // Read type and item id
   recv.read_byte!() |> ignore // 'type' byte
   let iid = recv.read_int!()
-  if invtype == @inventory.TypeId::EQUIP ||
-    invtype == @inventory.TypeId::EQUIPPED {
+  if invtype == TypeId::EQUIP || invtype == TypeId::EQUIPPED {
     // Parse an equip
-    add_equip!(recv, invtype, slot, iid, inventory)
+    parse_add_equip!(recv, invtype, slot, iid, inventory)
   } else if iid >= 5000000 && iid <= 5000102 {
     // Parse a pet
-    add_pet!(recv, invtype, slot, iid, inventory)
+    parse_add_pet!(recv, invtype, slot, iid, inventory)
   } else {
     // Parse a normal item
-    add_item!(recv, invtype, slot, iid, inventory)
+    parse_add_item!(recv, invtype, slot, iid, inventory)
   }
 }
 
 // Parse an equip from a packet
-fn add_equip(
+fn parse_add_equip(
   recv : @net.InPacket,
-  invtype : @inventory.TypeId,
+  invtype : TypeId,
   slot : Int,
   id : Int,
-  inventory : @inventory.Inventory
+  inventory : Inventory
 ) -> Unit! {
   // Read equip information
   let cash = recv.read_bool!()
@@ -65,7 +64,7 @@ fn add_equip(
   let mut invtype = invtype
   let mut slot = slot
   if slot < 0 {
-    invtype = @inventory.TypeId::EQUIPPED
+    invtype = TypeId::EQUIPPED
     slot = -slot
   }
   inventory.add_equip!(
@@ -75,12 +74,12 @@ fn add_equip(
 }
 
 // Parse a normal item from a packet
-fn add_item(
+fn parse_add_item(
   recv : @net.InPacket,
-  invtype : @inventory.TypeId,
+  invtype : TypeId,
   slot : Int,
   id : Int,
-  inventory : @inventory.Inventory
+  inventory : Inventory
 ) -> Unit! {
   // Read all item stats
   let cash = recv.read_bool!()
@@ -100,12 +99,12 @@ fn add_item(
 }
 
 // Parse a pet from a packet
-fn add_pet(
+fn parse_add_pet(
   recv : @net.InPacket,
-  invtype : @inventory.TypeId,
+  invtype : TypeId,
   slot : Int,
   id : Int,
-  inventory : @inventory.Inventory
+  inventory : Inventory
 ) -> Unit! {
   // Read all pet stats
   let cash = recv.read_bool!()

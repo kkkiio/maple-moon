@@ -12,9 +12,11 @@ pub fn Game::start() -> Game {
   let monster_module = @monster.Module::new()
   let mob_combat = @monster_combat.MobCombat::new(monster_module.get_map_mobs())
   let drop_module = @drop.Module::new()
+  let inventory_module = @inventory.Module::new()
   let stage = Stage::new(
     monster_module.get_map_mobs(),
     drop_module.get_map_drops(),
+    inventory_module.get_inventory(),
   )
   g_stage.set(stage)
   // ( 
@@ -34,7 +36,6 @@ pub fn Game::start() -> Game {
   // // packet_switch.push((SHOW_ITEM_GAIN_INCHAT, ShowItemGainInChatHandler::new()))
 
   // // Inventory Handlers
-  // // packet_switch.push((MODIFY_INVENTORY, ModifyInventoryHandler::new()))
   // // packet_switch.push((GATHER_RESULT, GatherResultHandler::new()))
   // // packet_switch.push((SORT_RESULT, SortResultHandler::new()))
 
@@ -98,6 +99,10 @@ pub fn Game::start() -> Game {
       )
       |> Iter::concat(
         drop_module.make_handlers(fn(id) { stage.get_character(id) }).iter(),
+      )
+      |> Iter::concat(
+        // TODO: allow dynamic handler registration/unregistration
+        inventory_module.make_handlers(fn() { stage.get_player() }).iter(),
       )
       // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
       // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))

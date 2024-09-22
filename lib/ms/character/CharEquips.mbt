@@ -85,7 +85,11 @@ pub fn add_equip(
   self.clothes[slot] = cloth
 }
 
-pub fn CharEquips::has_weapon(self : CharEquips) -> Bool {
+pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
+  self.clothes.remove(slot)
+}
+
+pub fn has_weapon(self : CharEquips) -> Bool {
   self.get_weapon() != 0
 }
 

@@ -58,7 +58,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   if recv.read_bool!() {
     recv.read_string!() |> ignore // 'linkedname'
   }
-  parse_inventory!(recv, player.inventory)
+  parse_inventory!(recv, Stage::get().get_inventory())
   // parse_skillbook(recv, player.get_skills());
   // parse_cooldowns(recv, player);
   // parse_questlog(recv, player.get_quests());
@@ -108,7 +108,7 @@ fn parse_inventory(
     let mut pos = recv.read_short!()
     while pos != 0 {
       let slot = if i == 1 { -pos } else { pos }
-      @inventory_proto.parse_item!(recv, inv, slot, invent)
+      @inventory.parse_item!(recv, inv, slot, invent)
       pos = recv.read_short!()
     }
   }
@@ -122,7 +122,7 @@ fn parse_inventory(
   for inv in toparse {
     let mut pos = recv.read_byte!()
     while pos != 0 {
-      @inventory_proto.parse_item!(recv, inv, pos, invent)
+      @inventory.parse_item!(recv, inv, pos, invent)
       pos = recv.read_byte!()
     }
   }

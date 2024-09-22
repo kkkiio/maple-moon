@@ -6,6 +6,10 @@
     "KKKIIO/maple-moon-client/lib/ms/equip/quality",
     "KKKIIO/maple-moon-client/lib/ms/Weapon",
     "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/ms/pet"
+    "KKKIIO/maple-moon-client/lib/ms/pet",
+    "KKKIIO/maple-moon-client/lib/net",
+    "KKKIIO/maple-moon-client/lib/ms/player",
+    "KKKIIO/maple-moon-client/lib/ms/character",
+    "KKKIIO/maple-moon-client/lib/ms/item"
   ]
 }

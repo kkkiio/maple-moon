@@ -81,3 +81,41 @@ pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
 pub fn Id::length() -> Int {
   62
 }
+
+pub fn Id::from_int(slot : Int) -> Id {
+  match slot {
+    0 => NONE
+    1 => HAT
+    2 => FACE
+    3 => EYE_ACC
+    4 => EARACC
+    5 => TOP
+    6 => BOTTOM
+    7 => SHOES
+    8 => GLOVES
+    9 => CAPE
+    10 => SHIELD
+    11 => WEAPON
+    12 => RING1
+    13 => RING2
+    15 => RING3
+    16 => RING4
+    17 => PENDANT1
+    18 => TAMEDMOB
+    19 => SADDLE
+    49 => MEDAL
+    50 => BELT
+    51 => POCKET
+    52 => BOOK
+    53 => PENDANT2
+    54 => SHOULDER
+    55 => ANDROID_
+    56 => EMBLEM
+    57 => BADGE
+    58 => SUBWEAPON
+    59 => HEART
+    60 => TOP_DEFAULT
+    61 => BOTTOM_DEFAULT
+    _ => NONE
+  }
+}

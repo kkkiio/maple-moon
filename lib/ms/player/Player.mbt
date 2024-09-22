@@ -13,12 +13,20 @@ pub struct Player {
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
-  inventory : @inventory.Inventory
+  inventory : Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
   skill_book : @character.SkillBook
   cooldowns : Map[Int, Int]
+}
+
+pub trait Inventory {
+  recalc_stats(Self, @Weapon.Type) -> Unit
+  get_stat(Self, @stat.Id) -> Int
+  has_projectile(Self) -> Bool
+  get_bulletid(Self) -> Int
+  get_bulletcount(Self) -> Int
 }
 
 pub typealias CharEntry = @login.CharEntry
@@ -27,7 +35,8 @@ pub typealias CharEntry = @login.CharEntry
 pub fn Player::from_entry(
   entry : CharEntry,
   wid : Int,
-  channel_id : Int
+  channel_id : Int,
+  inventory : Inventory
 ) -> Player! {
   let p = {
     char_base: CharBase::new(
@@ -41,7 +50,7 @@ pub fn Player::from_entry(
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
-    inventory: @inventory.Inventory::new(),
+    inventory,
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::default(),
@@ -502,10 +511,6 @@ pub fn get_weapontype(self : Player) -> @Weapon.Type! {
 
 pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
   self.char_base.regular_attack!(degenerate)
-}
-
-pub fn get_inventory(self : Player) -> @inventory.Inventory {
-  self.inventory
 }
 
 pub fn change_level(self : Player, level : Int) -> Unit {

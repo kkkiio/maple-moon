@@ -23,10 +23,6 @@
     "KKKIIO/maple-moon-client/lib/ms/equip/stat",
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/inventory",
-    {
-      "path": "KKKIIO/maple-moon-client/lib/ms/inventory/proto",
-      "alias": "inventory_proto"
-    },
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/ms/Weapon",

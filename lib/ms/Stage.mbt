@@ -17,11 +17,16 @@ pub struct Stage {
   npcs : MapNpcs
   mobs : @monster.MapMobs
   drops : @drop.MapDrops
+  inventory : @inventory.Inventory
   mut combat : Combat?
   mut start : TimePoint
 }
 
-pub fn Stage::new(mobs : @monster.MapMobs, drops : @drop.MapDrops) -> Stage {
+pub fn Stage::new(
+  mobs : @monster.MapMobs,
+  drops : @drop.MapDrops,
+  inventory : @inventory.Inventory
+) -> Stage {
   {
     camera: Camera::new(),
     player: None,
@@ -36,6 +41,7 @@ pub fn Stage::new(mobs : @monster.MapMobs, drops : @drop.MapDrops) -> Stage {
     combat: None,
     mobs,
     drops,
+    inventory,
     start: TimePoint::default(),
   }
 }
@@ -73,7 +79,12 @@ pub fn load_player(
   wid : Int,
   channel_id : Int
 ) -> @player.Player! {
-  let player = @player.Player::from_entry!(entry, wid, channel_id)
+  let player = @player.Player::from_entry!(
+    entry,
+    wid,
+    channel_id,
+    self.inventory,
+  )
   self.player = Some(player)
   self.combat = Some(Combat::new(player, self.mobs))
   self.start = now_micro() |> TimePoint::from_micro
@@ -311,7 +322,7 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
   for it in @MapleStat.codes {
     let (stat_id, stat_mask) = it
     if (updatemask & stat_mask) != 0 {
-      recalculate = recalculate || handle_stat!(player, stat_id, recv)
+      recalculate = recalculate || self.handle_stat!(player, stat_id, recv)
     }
   }
   if recalculate {
@@ -321,6 +332,7 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
 }
 
 fn handle_stat(
+  self : ChangeStatsHandler,
   player : @player.Player,
   stat : @MapleStat.Id,
   recv : @net.InPacket
@@ -345,7 +357,7 @@ fn handle_stat(
     }
     @MapleStat.Id::EXP =>
       player.get_stats().set_exp(recv.read_int!().to_int64())
-    @MapleStat.Id::MESO => player.get_inventory().set_meso(recv.read_int!())
+    @MapleStat.Id::MESO => self.stage.inventory.set_meso(recv.read_int!())
     _ => {
       player.get_stats().set_stat(stat, recv.read_short!())
       recalculate = true
@@ -386,6 +398,10 @@ fn check_ladders(self : Stage, player : @player.Player, up : Bool) -> Unit {
 
 pub fn get_mobs(self : Stage) -> @monster.MapMobs {
   self.mobs
+}
+
+pub fn get_inventory(self : Stage) -> @inventory.Inventory {
+  self.inventory
 }
 
 /// Tells the server that the player took damage.

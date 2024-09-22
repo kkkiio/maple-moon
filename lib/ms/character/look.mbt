@@ -780,6 +780,13 @@ pub fn add_equip(self : CharLook, itemid : Int) -> Unit! {
   self.updatetwohanded()
 }
 
+pub fn remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
+  self.equips.remove_equip(slot)
+  if slot == @slot.Id::WEAPON {
+    self.updatetwohanded()
+  }
+}
+
 pub fn get_stance(self : CharLook) -> @char_look.StanceId {
   self.stance.get()
 }

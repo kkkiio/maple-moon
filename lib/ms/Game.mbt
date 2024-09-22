@@ -96,8 +96,9 @@ pub fn Game::start() -> Game {
       |> Iter::append(
         (KILL_MOB, KillMobHandler::new(monster_module.get_map_mobs())),
       )
-      |> Iter::concat(drop_module.make_handlers().iter())
-      // // packet_switch.push((REMOVE_LOOT, RemoveLootHandler::new()))
+      |> Iter::concat(
+        drop_module.make_handlers(fn(id) { stage.get_character(id) }).iter(),
+      )
       // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
       // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
       // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))

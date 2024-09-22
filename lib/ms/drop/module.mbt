@@ -10,6 +10,15 @@ pub fn get_map_drops(self : Module) -> MapDrops {
   self.map_drops
 }
 
-pub fn make_handlers(self : Module) -> Array[(@net.Opcode, @net.PacketHandler)] {
-  [(@net.DROP_LOOT, DropLootHandler::new(self.map_drops))]
+pub fn make_handlers(
+  self : Module,
+  get_character_by_id_fn : (Int) -> @character.Character?
+) -> Array[(@net.Opcode, @net.PacketHandler)] {
+  [
+    (@net.DROP_LOOT, DropLootHandler::new(self.map_drops)),
+    (
+      @net.REMOVE_LOOT,
+      RemoveLootHandler::new(self.map_drops, get_character_by_id_fn),
+    ),
+  ]
 }

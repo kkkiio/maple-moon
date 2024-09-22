@@ -142,7 +142,7 @@ pub fn get_absolute(
 }
 
 pub enum PhysicsObjectType {
-  PHYSICS_OBJECT_NORMAL
+  NORMAL
   ICE
   SWIMMING
   FLYING
@@ -182,7 +182,7 @@ pub struct PhysicsObject {
 pub fn PhysicsObject::default() -> PhysicsObject {
   {
     moving_object: MovingObject::default(),
-    t: PhysicsObjectType::PHYSICS_OBJECT_NORMAL,
+    t: PhysicsObjectType::NORMAL,
     flags: 0,
     fhid: 0,
     fhslope: 0.0,
@@ -198,7 +198,7 @@ pub fn PhysicsObject::default() -> PhysicsObject {
 }
 
 pub fn is_flag_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
-  self.flags.land(f.int_value()) != 0
+  (self.flags & f.int_value()) != 0
 }
 
 pub fn is_flag_not_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
@@ -206,11 +206,11 @@ pub fn is_flag_not_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
 }
 
 pub fn set_flag(self : PhysicsObject, f : PhysicsObjectFlag) -> Unit {
-  self.flags = self.flags.lor(f.int_value())
+  self.flags = self.flags | f.int_value()
 }
 
 pub fn clear_flag(self : PhysicsObject, f : PhysicsObjectFlag) -> Unit {
-  self.flags = self.flags.land(f.int_value().lnot())
+  self.flags = self.flags & f.int_value().lnot()
 }
 
 pub fn clear_flags(self : PhysicsObject) -> Unit {

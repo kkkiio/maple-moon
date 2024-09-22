@@ -272,6 +272,15 @@ fn check_portals(self : Stage) -> Unit {
   // Sound(Sound::Name::PORTAL).play();
 }
 
+fn get_character(self : Stage, cid : Int) -> @character.Character? {
+  match self.player {
+    Some(player) => if player.get_oid() == cid { return Some(player) }
+    None => ()
+  }
+  // TODO: chars
+  None
+}
+
 fn new_change_map_packet(
   died : Bool,
   targetid : Int,
@@ -321,7 +330,7 @@ fn handle_stat(
     @MapleStat.Id::SKIN => player.change_look(stat, recv.read_short!())
     @MapleStat.Id::FACE | @MapleStat.Id::HAIR =>
       player.change_look(stat, recv.read_int!())
-    // @MapleStat.Id::LEVEL => player.change_level(recv.read_ubyte())
+    @MapleStat.Id::LEVEL => player.change_level(recv.read_ubyte!())
     // @MapleStat.Id::JOB => player.change_job(recv.read_ushort())
     @MapleStat.Id::HP => {
       let current_hp = recv.read_short!()
@@ -342,8 +351,7 @@ fn handle_stat(
       recalculate = true
     }
   }
-
-  // bool update_statsinfo = need_statsinfo_update(stat);
+  // let update_statsinfo = need_statsinfo_update(stat)
 
   // if (update_statsinfo && !recalculate) {
   //     if (auto statsinfo = UI::get().get_element<UIStatsInfo>()) {
@@ -425,5 +433,21 @@ fn new_take_damage_packet_from_mob(
 }
 
 fn check_drops(self : Stage) -> Unit {
-  // TODO: implement
+  let playerpos = self.player.unwrap().get_position()
+  match self.drops.find_loot_at(playerpos) {
+    Some((drop_oid, drop_pos)) =>
+      new_pickup_item_packet(drop_oid, drop_pos).dispatch()
+    None => ()
+  }
+}
+
+fn new_pickup_item_packet(
+  oid : Int,
+  position : @struct.Point[Int]
+) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::PICKUP_ITEM)
+  ..write_int(0)
+  ..write_byte((0).to_byte())
+  ..write_point(position)
+  ..write_int(oid)
 }

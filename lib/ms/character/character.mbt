@@ -53,7 +53,7 @@ pub struct CharBase {
   name : String
   // name_label: Text
   // chat_balloon: ChatBalloon
-  // effects: EffectLayer
+  effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
   mut after_image : @char_look.Afterimage
   invincible : @utils.TimedBool
@@ -70,6 +70,7 @@ pub fn set_position(self : CharBase, pos : Point[Int]) -> Unit {
 }
 
 pub trait Character {
+  get_phobj(Self) -> PhysicsObject
   // draw(Self, Double, Double, Double) -> Unit
   // draw_preview(Self, Point[Int], Double) -> Unit
   // update(Self, Physics) -> Int
@@ -130,6 +131,7 @@ pub fn CharBase::new(
     attacking: false,
     facing_right: false,
     name,
+    effects: @graphics.EffectLayer::default(),
     state: CharState::STAND,
     after_image: @char_look.Afterimage::default(),
     invincible: @utils.TimedBool::default(),
@@ -158,8 +160,7 @@ pub fn draw(
   alpha : Double
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-
-  //     effects_.drawbelow(absp, alpha);
+  self.effects.drawbelow(absp, alpha)
 
   //     recurring_effects_.drawbelow(absp, alpha);
 
@@ -196,7 +197,7 @@ pub fn draw(
   //     name_label_.draw(absp + Point<int16_t>(0, -4));
   //     chat_balloon_.draw(absp - Point<int16_t>(0, 85));
 
-  //     effects_.drawabove(absp, alpha);
+  self.effects.drawabove(absp, alpha)
   //     recurring_effects_.drawabove(absp, alpha);
 
   //     for (const auto &number : damage_numbers_) {
@@ -208,7 +209,7 @@ pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
   //     damage_numbers_.remove_if(
   //         [](DamageNumber &number) { return number.update(); });
 
-  //     effects_.update();
+  self.effects.update()
   //     recurring_effects_.update();
   //     chat_balloon_.update();
   self.invincible.update()
@@ -358,4 +359,8 @@ pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit! {
   self.look.attack!(degenerate)
   self.attacking = true
   self.look.set_alerted(5000)
+}
+
+pub fn show_effect_id(self : CharBase, toshow : CharEffectId) -> Unit {
+  // TODO: Implement
 }

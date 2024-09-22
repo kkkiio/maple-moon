@@ -507,3 +507,11 @@ pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
 pub fn get_inventory(self : Player) -> @inventory.Inventory {
   self.inventory
 }
+
+pub fn change_level(self : Player, level : Int) -> Unit {
+  let oldlevel = self.get_level()
+  if level > oldlevel {
+    self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
+  }
+  self.stats.set_stat(@MapleStat.Id::LEVEL, level)
+}

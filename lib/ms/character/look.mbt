@@ -860,21 +860,14 @@ fn getattackstance(
   return stances[index]
 }
 
-let attack_S1A1M1D = 1
-
-let attack_SPEAR = 2
-
-let attack_BOW = 3
-
-let attack_CROSSBOW = 4
-
-let attack_S2A2M2 = 5
-
-let attack_WAND = 6
-
-let attack_CLAW = 7
-
-let attack_GUN = 9
+// let attack_S1A1M1D = 1
+// let attack_SPEAR = 2
+// let attack_BOW = 3
+// let attack_CROSSBOW = 4
+// let attack_S2A2M2 = 5
+// let attack_WAND = 6
+// let attack_CLAW = 7
+// let attack_GUN = 9
 
 let degen_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
   [@char_look.StanceId::NONE],

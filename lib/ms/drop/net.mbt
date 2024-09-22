@@ -43,3 +43,36 @@ fn handle(self : DropLootHandler, recv : @net.InPacket) -> Unit! {
     },
   )
 }
+
+struct RemoveLootHandler {
+  map_drops : MapDrops
+  get_character_by_id_fn : (Int) -> @character.Character?
+}
+
+pub fn RemoveLootHandler::new(
+  map_drops : MapDrops,
+  get_character_by_id_fn : (Int) -> @character.Character?
+) -> RemoveLootHandler {
+  { map_drops, get_character_by_id_fn }
+}
+
+fn handle(self : RemoveLootHandler, recv : @net.InPacket) -> Unit! {
+  let mode = recv.read_byte!()
+  let oid = recv.read_int!()
+  let looter = if mode > 1 {
+    let cid = recv.read_int!()
+    if recv.available() {
+      recv.read_byte!() |> ignore // pet
+      None
+    } else {
+      match (self.get_character_by_id_fn)(cid) {
+        Some(character) => Some(character.get_phobj())
+        None => None
+      }
+    }
+    // TODO: sound
+  } else {
+    None
+  }
+  self.map_drops.remove(oid, mode, looter)
+}

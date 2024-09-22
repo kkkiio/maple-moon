@@ -1,3 +1,8 @@
+trait Drop: @map_object.MapObject {
+  bounds(Self) -> @struct.Rectangle[Int]
+  expire(Self, Int, @physics.PhysicsObject?) -> Unit
+}
+
 struct DropBase {
   base : @map_object.MapObjectBase
   opacity : @utils.Linear
@@ -5,7 +10,7 @@ struct DropBase {
   owner : Int
   pickup_type : Int
   player_drop : Bool
-  looter : @physics.PhysicsObject?
+  mut looter : @physics.PhysicsObject?
   mut state : DropState
   dest : @struct.Point[Int]
   base_y : Double
@@ -99,6 +104,31 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
   self.base.phobj.fhlayer
 }
 
+fn bounds(self : DropBase) -> @struct.Rectangle[Int] {
+  let lt = self.base.get_position()
+  let rb = lt + @struct.Point::new(32, 32)
+  @struct.Rectangle::new(lt, rb)
+}
+
+fn DropBase::expire(
+  self : DropBase,
+  t : Int,
+  lt : @physics.PhysicsObject?
+) -> Unit {
+  match t {
+    0 => self.state = DropState::PICKED_UP
+    1 => self.base.deactivate()
+    2 => {
+      self.angle.set(0.0)
+      self.state = DropState::PICKED_UP
+      self.looter = lt
+      self.base.phobj.moving_object.vspeed = -4.5
+      self.base.phobj.t = @physics.PhysicsObjectType::NORMAL
+    }
+    _ => abort("Invalid drop type: \{t}")
+  }
+}
+
 struct MesoDrop {
   base : DropBase
   icon : @graphics.Animation
@@ -158,6 +188,18 @@ pub fn get_layer(self : MesoDrop) -> Int {
   self.base.base.get_layer()
 }
 
+pub fn get_position(self : MesoDrop) -> @struct.Point[Int] {
+  self.base.base.get_position()
+}
+
+pub fn bounds(self : MesoDrop) -> @struct.Rectangle[Int] {
+  self.base.bounds()
+}
+
+pub fn expire(self : MesoDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
+  self.base.expire(t, lt)
+}
+
 struct ItemDrop {
   base : DropBase
   icon : @graphics.Texture
@@ -215,4 +257,16 @@ pub fn makeactive(self : ItemDrop) -> Unit {
 
 pub fn get_layer(self : ItemDrop) -> Int {
   self.base.base.get_layer()
+}
+
+pub fn get_position(self : ItemDrop) -> @struct.Point[Int] {
+  self.base.base.get_position()
+}
+
+pub fn bounds(self : ItemDrop) -> @struct.Rectangle[Int] {
+  self.base.bounds()
+}
+
+pub fn expire(self : ItemDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
+  self.base.expire(t, lt)
 }

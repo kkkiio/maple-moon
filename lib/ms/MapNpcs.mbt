@@ -315,6 +315,10 @@ pub fn get_layer(self : Npc) -> Int {
   self.base.get_layer()
 }
 
+pub fn get_position(self : Npc) -> Point[Int] {
+  self.base.get_position()
+}
+
 fn npc_loader() -> @resource.Loader {
   @resource.Loader::new("npc")
 }

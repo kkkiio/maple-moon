@@ -6,6 +6,7 @@ pub trait MapObject {
   // deactivate(Self) -> Unit
   is_active(Self) -> Bool
   get_layer(Self) -> Int
+  get_position(Self) -> @struct.Point[Int]
 }
 
 pub struct MapObjectBase {

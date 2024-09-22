@@ -1,5 +1,5 @@
 struct MapDrops {
-  drops : @map_object.MapObjects[@map_object.MapObject]
+  drops : @map_object.MapObjects[Drop]
   spawns : @queue.T[DropSpawn]
   meso_icons : Map[MesoIcon, @graphics.Animation]
   mut loot_enabled : Bool
@@ -80,6 +80,33 @@ pub fn MapDrops::clear(self : MapDrops) -> Unit {
   self.drops.clear()
 }
 
+pub fn MapDrops::find_loot_at(
+  self : MapDrops,
+  playerpos : @struct.Point[Int]
+) -> (Int, @struct.Point[Int])? {
+  guard self.loot_enabled else { return None }
+  for oid, drop in self.drops {
+    if drop.bounds().contains(playerpos) {
+      self.loot_enabled = false
+      let position = drop.get_position()
+      return Some((oid, position))
+    }
+  }
+  None
+}
+
+pub fn MapDrops::remove(
+  self : MapDrops,
+  oid : Int,
+  mode : Int,
+  looter : @physics.PhysicsObject?
+) -> Unit {
+  match self.drops.get(oid) {
+    Some(drop) => drop.expire(mode, looter)
+    None => ()
+  }
+}
+
 struct DropSpawn {
   oid : Int
   item_id : Int
@@ -92,10 +119,10 @@ struct DropSpawn {
   player_drop : Bool
 }
 
-pub fn DropSpawn::instantiate_meso(
+fn DropSpawn::instantiate_meso(
   self : DropSpawn,
   icon : @graphics.Animation
-) -> @map_object.MapObject {
+) -> Drop {
   MesoDrop::new(
     self.oid,
     self.owner,
@@ -108,10 +135,10 @@ pub fn DropSpawn::instantiate_meso(
   )
 }
 
-pub fn DropSpawn::instantiate_item(
+fn DropSpawn::instantiate_item(
   self : DropSpawn,
   icon : @graphics.Texture
-) -> @map_object.MapObject {
+) -> Drop {
   ItemDrop::new(
     self.oid,
     self.owner,

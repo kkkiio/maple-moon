@@ -61,7 +61,7 @@ pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
 struct PlayerStandState {} derive(Default)
 
 pub fn initialize(self : PlayerStandState, player : Player) -> Unit {
-  player.get_phobj().t = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = PhysicsObjectType::NORMAL
 }
 
 pub fn send_action(
@@ -108,7 +108,7 @@ pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
 struct PlayerWalkState {} derive(Default)
 
 pub fn initialize(self : PlayerWalkState, player : Player) -> Unit {
-  player.get_phobj().t = PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = PhysicsObjectType::NORMAL
 }
 
 pub fn send_action(
@@ -167,7 +167,7 @@ pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
 struct PlayerFallState {} derive(Default)
 
 pub fn initialize(self : PlayerFallState, player : Player) -> Unit {
-  player.get_phobj().t = @physics.PhysicsObjectType::PHYSICS_OBJECT_NORMAL
+  player.get_phobj().t = @physics.PhysicsObjectType::NORMAL
 }
 
 pub fn send_action(

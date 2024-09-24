@@ -1,7 +1,5 @@
 typealias Sprite = @graphics.Sprite
 
-type TooltipParent
-
 pub enum UIElementType {
   UI_ELEMENT_NONE
   START
@@ -165,19 +163,11 @@ pub trait UIElementDescriptor {
   const_focused() -> Bool
 }
 
-struct UIElementBase {
+pub struct UIElementBase {
   sprites : Array[Sprite]
   mut position : Point[Int]
   mut dimension : Point[Int]
   mut active : Bool
-}
-
-struct UIButtons {
-  buttons : Map[Int, Button]
-}
-
-pub fn UIButtons::default() -> UIButtons {
-  { buttons: {} }
 }
 
 pub fn UIElementBase::new(
@@ -196,16 +186,8 @@ pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
   self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
 }
 
-pub fn draw(self : UIButtons, position : Point[Int]) -> Unit {
-  self.buttons.each(fn(_k, button) { button.draw(position) })
-}
-
 pub fn update(self : UIElementBase) -> Unit {
   self.sprites.each(fn(sprite) { sprite.update() |> ignore })
-}
-
-pub fn update(self : UIButtons) -> Unit {
-  self.buttons.each(fn(_k, button) { button.update() })
 }
 
 pub fn makeactive(self : UIElementBase) -> Unit {
@@ -229,52 +211,9 @@ pub fn toggle_active(self : UIElementBase) -> Unit {
 }
 
 pub fn is_in_range(self : UIElementBase, cursorpos : Point[Int]) -> Bool {
-  let bounds = Rectangle::new(self.position, self.position + self.dimension)
+  let bounds = @struct.Rectangle::new(
+    self.position,
+    self.position + self.dimension,
+  )
   bounds.contains(cursorpos)
-}
-
-pub fn remove_cursor(self : UIButtons) -> Unit {
-  self.buttons.each(
-    fn(_k, button) {
-      if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
-        button.get_button_base().set_state(ButtonState::NORMAL)
-      }
-    },
-  )
-}
-
-pub fn send_cursor(
-  self : UIButtons,
-  self_position : Point[Int],
-  get_state_under_pressed : (Int) -> ButtonState,
-  down : Bool,
-  pos : Point[Int]
-) -> CursorState {
-  let mut ret = if down { CursorState::CLICKING } else { CursorState::IDLE }
-  self.buttons.each(
-    fn(k, button) {
-      if button.get_button_base().is_active() &&
-        button.bounds(self_position).contains(pos) {
-        match button.get_button_base().get_state() {
-          ButtonState::NORMAL => {
-            Sound::new(SoundName::BUTTON_OVER).play()
-            button.get_button_base().set_state(ButtonState::MOUSEOVER)
-            ret = CursorState::CAN_CLICK
-          }
-          ButtonState::MOUSEOVER =>
-            if down {
-              Sound::new(SoundName::BUTTON_CLICK).play()
-              button.get_button_base().set_state(get_state_under_pressed(k))
-              ret = CursorState::IDLE
-            } else {
-              ret = CursorState::CAN_CLICK
-            }
-          _ => ()
-        }
-      } else if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
-        button.get_button_base().set_state(ButtonState::NORMAL)
-      }
-    },
-  )
-  ret
 }

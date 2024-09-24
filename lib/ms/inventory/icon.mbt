@@ -1,5 +1,7 @@
 typealias Texture = @graphics.Texture
 
+typealias DrawArgument = @graphics.DrawArgument
+
 pub enum IconType {
   ICON_NONE
   SKILL
@@ -29,8 +31,8 @@ pub fn hash_combine(self : IconType, hasher : Hasher) -> Unit {
 pub trait IconTypeTrait {
   drop_on_stage(Self) -> Unit
   drop_on_equips(Self, @stat.Id) -> Unit
-  drop_on_items(Self, @inventory.TypeId, @stat.Id, Int, Bool) -> Bool
-  drop_on_bindings(Self, Point[Int], Bool) -> Unit
+  drop_on_items(Self, TypeId, @stat.Id, Int, Bool) -> Bool
+  drop_on_bindings(Self, @struct.Point[Int], Bool) -> Unit
   set_count(Self, Int) -> Unit
   get_type(Self) -> IconType
 }
@@ -47,7 +49,7 @@ pub fn drop_on_equips(self : NullType, _eqslot : @stat.Id) -> Unit {
 
 pub fn drop_on_items(
   self : NullType,
-  _tab : @inventory.TypeId,
+  _tab : TypeId,
   _eqslot : @stat.Id,
   _slot : Int,
   _equip : Bool
@@ -57,7 +59,7 @@ pub fn drop_on_items(
 
 pub fn drop_on_bindings(
   self : NullType,
-  _cursorposition : Point[Int],
+  _cursorposition : @struct.Point[Int],
   _remove : Bool
 ) -> Unit {
 
@@ -77,7 +79,7 @@ pub struct Icon {
   mut count : Int
   texture : Texture
   mut dragged : Bool
-  mut cursor_offset : Point[Int]
+  mut cursor_offset : @struct.Point[Int]
 }
 
 pub fn Icon::new(t : IconTypeTrait, texture : Texture, count : Int) -> Icon {
@@ -87,9 +89,9 @@ pub fn Icon::new(t : IconTypeTrait, texture : Texture, count : Int) -> Icon {
     count,
     texture,
     dragged: false,
-    cursor_offset: Point::default(),
+    cursor_offset: @struct.Point::default(),
   }
-  icon.texture.shift(Point::new(0, 32))
+  icon.texture.shift(@struct.Point::new(0, 32))
   icon
 }
 
@@ -119,7 +121,7 @@ pub fn get[T](self : LazyVar[T]) -> T {
 
 let countset : LazyVar[@graphics.Charset] = LazyVar::make(
   fn() {
-    let ui_loader = ui_loader()
+    let ui_loader = @resource.ui_loader()
     @graphics.Charset::from_resource(
       ui_loader.load_res(["Basic.img", "ItemNo"]),
       @graphics.CharsetAlignment::LEFT,
@@ -127,7 +129,7 @@ let countset : LazyVar[@graphics.Charset] = LazyVar::make(
   },
 )
 
-pub fn draw(self : Icon, position : Point[Int]) -> Unit {
+pub fn draw(self : Icon, position : @struct.Point[Int]) -> Unit {
   let opacity : Double = if self.dragged { 0.5 } else { 1.0 }
   self.get_texture().draw(DrawArgument::new7(position, opacity))
   if self.show_count {
@@ -135,13 +137,13 @@ pub fn draw(self : Icon, position : Point[Int]) -> Unit {
     .get()
     .draw_text(
       self.count.to_string(),
-      DrawArgument::from_point(position + Point::new(0, 20)),
+      DrawArgument::from_point(position + @struct.Point::new(0, 20)),
     )
     |> ignore
   }
 }
 
-pub fn dragdraw(self : Icon, cursorpos : Point[Int]) -> Unit {
+pub fn dragdraw(self : Icon, cursorpos : @struct.Point[Int]) -> Unit {
   if self.dragged && self.texture.is_valid() {
     self.texture.draw(DrawArgument::new7(cursorpos - self.cursor_offset, 0.5))
   }
@@ -157,7 +159,7 @@ pub fn drop_on_equips(self : Icon, eqslot : @stat.Id) -> Unit {
 
 pub fn drop_on_items(
   self : Icon,
-  tab : @inventory.TypeId,
+  tab : TypeId,
   eqslot : @stat.Id,
   slot : Int,
   equip : Bool
@@ -167,23 +169,23 @@ pub fn drop_on_items(
   }
   let remove_icon : Bool = self.t.drop_on_items(tab, eqslot, slot, equip)
   if remove_icon {
-    Sound::new(SoundName::DRAG_END).play()
+    // Sound::new(SoundName::DRAG_END).play()
   }
   remove_icon
 }
 
 pub fn drop_on_bindings(
   self : Icon,
-  cursorposition : Point[Int],
+  cursorposition : @struct.Point[Int],
   remove : Bool
 ) -> Unit {
   self.t.drop_on_bindings(cursorposition, remove)
 }
 
-pub fn start_drag(self : Icon, offset : Point[Int]) -> Unit {
+pub fn start_drag(self : Icon, offset : @struct.Point[Int]) -> Unit {
   self.cursor_offset = offset
   self.dragged = true
-  Sound::new(SoundName::DRAG_START).play()
+  // Sound::new(SoundName::DRAG_START).play()
 }
 
 pub fn reset(self : Icon) -> Unit {

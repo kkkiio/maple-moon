@@ -12,3 +12,24 @@ pub fn extend_id(id : Int, length : Int) -> String {
     strid
   }
 }
+
+/// Format a number so that each 3 decimal points are seperated by a ',' character.
+pub fn format_decimal_separator(num : Int) -> String {
+  if num < 0 {
+    return abort("num must be positive")
+  }
+  if num == 0 {
+    return "0"
+  }
+  let buf = Buffer::new()
+  let mut count = 0
+  for acc = num; acc > 0; acc = acc / 10 {
+    let digit = acc % 10
+    if count % 3 == 0 && count != 0 {
+      buf.write_char(',')
+    }
+    buf.write_char(Char::from_int(digit + 48))
+    count += 1
+  }
+  buf.to_string().rev()
+}

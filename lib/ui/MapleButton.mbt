@@ -1,8 +1,8 @@
 /// A standard maplestory-button with 4 states and a texture for each state.
 struct MapleButton {
   base : ButtonBase
-  textures : @immut/hashmap.T[ButtonState, Texture]
-  animations : @immut/hashmap.T[ButtonState, Animation]
+  textures : @immut/hashmap.T[ButtonState, @graphics.Texture]
+  animations : @immut/hashmap.T[ButtonState, @graphics.Animation]
 }
 
 pub fn get_button_base(self : MapleButton) -> ButtonBase {
@@ -18,23 +18,29 @@ pub fn send_cursor(
 }
 
 pub fn MapleButton::from_resource_with_pos(
-  src : NxNode,
+  src : @resource.NxNode,
   pos : Point[Int]
 ) -> MapleButton {
   let base = ButtonBase::default()
   let normal = src["normal"]
-  let textures = {  }
-  let animations = {  }
+  let textures = {}
+  let animations = {}
   if normal.get_children_count() > 1 {
-    animations[ButtonState::NORMAL] = Animation::from_resource(normal)
+    animations[ButtonState::NORMAL] = @graphics.Animation::from_resource(normal)
   } else {
-    textures[ButtonState::NORMAL] = Texture::from_resource(normal["0"])
+    textures[ButtonState::NORMAL] = @graphics.Texture::from_resource(
+      normal["0"],
+    )
   }
-  textures[ButtonState::PRESSED] = Texture::from_resource(src["pressed"]["0"])
-  textures[ButtonState::MOUSEOVER] = Texture::from_resource(
+  textures[ButtonState::PRESSED] = @graphics.Texture::from_resource(
+    src["pressed"]["0"],
+  )
+  textures[ButtonState::MOUSEOVER] = @graphics.Texture::from_resource(
     src["mouseOver"]["0"],
   )
-  textures[ButtonState::DISABLED] = Texture::from_resource(src["disabled"]["0"])
+  textures[ButtonState::DISABLED] = @graphics.Texture::from_resource(
+    src["disabled"]["0"],
+  )
   base.active = true
   base.position = pos
   base.state = ButtonState::NORMAL
@@ -46,14 +52,14 @@ pub fn MapleButton::from_resource_with_pos(
 }
 
 pub fn MapleButton::from_resource_with_x_y(
-  src : NxNode,
+  src : @resource.NxNode,
   x : Int,
   y : Int
 ) -> MapleButton {
   MapleButton::from_resource_with_pos(src, Point::new(x, y))
 }
 
-pub fn MapleButton::from_resource(src : NxNode) -> MapleButton {
+pub fn MapleButton::from_resource(src : @resource.NxNode) -> MapleButton {
   MapleButton::from_resource_with_pos(src, Point::default())
 }
 
@@ -61,13 +67,15 @@ pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
     match self.textures[self.base.state] {
       Some(texture) =>
-        texture.draw(DrawArgument::from_point(self.base.position + parentpos))
+        texture.draw(
+          @graphics.DrawArgument::from_point(self.base.position + parentpos),
+        )
       None => ()
     }
     match self.animations[self.base.state] {
       Some(animation) =>
         animation.draw(
-          DrawArgument::from_point(self.base.position + parentpos),
+          @graphics.DrawArgument::from_point(self.base.position + parentpos),
           1.0,
         )
       None => ()
@@ -84,7 +92,10 @@ pub fn update(self : MapleButton) -> Unit {
   }
 }
 
-pub fn bounds(self : MapleButton, parentpos : Point[Int]) -> Rectangle[Int] {
+pub fn bounds(
+  self : MapleButton,
+  parentpos : Point[Int]
+) -> @struct.Rectangle[Int] {
   let (lt, rb) = match self.textures[self.base.state] {
     Some(texture) =>
       (
@@ -105,7 +116,7 @@ pub fn bounds(self : MapleButton, parentpos : Point[Int]) -> Rectangle[Int] {
         self.animations[self.base.state].unwrap().get_dimensions(),
       )
   }
-  Rectangle::new(lt, rb)
+  @struct.Rectangle::new(lt, rb)
 }
 
 pub fn width(self : MapleButton) -> Int {
@@ -120,8 +131,4 @@ pub fn origin(self : MapleButton) -> Point[Int] {
     Some(texture) => texture.get_origin()
     None => Point::default()
   }
-}
-
-pub fn in_combobox(self : MapleButton, _p : Point[Int]) -> Bool {
-  false
 }

@@ -1,7 +1,7 @@
 typealias Text = @graphics.Text
 
 struct TextButton {
-  base : ButtonBase
+  base : @ui.ButtonBase
   text : Text
   option_number : Int
 }
@@ -19,7 +19,7 @@ pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
   }
 }
 
-pub fn get_button_base(self : TextButton) -> ButtonBase {
+pub fn get_button_base(self : TextButton) -> @ui.ButtonBase {
   self.base
 }
 
@@ -63,10 +63,6 @@ pub fn origin(self : TextButton) -> Point[Int] {
 
 pub fn get_option_number(self : TextButton) -> Int {
   self.option_number
-}
-
-pub fn in_combobox(self : TextButton, _p : Point[Int]) -> Bool {
-  false
 }
 
 pub fn send_cursor(

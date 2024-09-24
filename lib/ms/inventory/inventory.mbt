@@ -124,6 +124,10 @@ pub fn recalc_stats(self : Inventory, weapontype : @Weapon.Type) -> Unit {
   // }
 }
 
+pub fn get_meso(self : Inventory) -> Int {
+  self.meso
+}
+
 /// Set the meso amount.
 pub fn set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
@@ -308,4 +312,12 @@ pub fn change_count(
     Some(slot) => slot.count = count
     None => ()
   }
+}
+
+pub fn get_bulletslot(self : Inventory) -> Int {
+  self.bullet_slot
+}
+
+pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
+  self.slot_maxima.get(t).or(0)
 }

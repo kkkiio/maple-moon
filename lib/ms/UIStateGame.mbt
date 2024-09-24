@@ -13,19 +13,19 @@ struct UIStateGame {
   // ma_tooltip : MapTooltip
   // mut tooltip : Option[Tooltip]
   // tooltip_parent : TooltipParent
-  mut dragged_icon : Icon?
+  mut dragged_icon : @inventory.Icon?
   mut time_rel_grabbed : TimePoint
   mut vwidth : Int
   mut vheight : Int
 }
 
-let icon_map : @immut/hashmap.T[IconType, UIElementType] = @immut/hashmap.from_array(
+let icon_map : @immut/hashmap.T[@inventory.IconType, UIElementType] = @immut/hashmap.from_array(
   [
-    (IconType::ICON_NONE, UIElementType::UI_ELEMENT_NONE),
-    (IconType::SKILL, UIElementType::SKILL_BOOK),
-    (IconType::EQUIP, UIElementType::EQUIP_INVENTORY),
-    (IconType::ITEM, UIElementType::ITEM_INVENTORY),
-    (IconType::KEY, UIElementType::KEY_CONFIG),
+    (@inventory.IconType::ICON_NONE, UIElementType::UI_ELEMENT_NONE),
+    (@inventory.IconType::SKILL, UIElementType::SKILL_BOOK),
+    (@inventory.IconType::EQUIP, UIElementType::EQUIP_INVENTORY),
+    (@inventory.IconType::ITEM, UIElementType::ITEM_INVENTORY),
+    (@inventory.IconType::KEY, UIElementType::KEY_CONFIG),
   ],
 )
 
@@ -132,108 +132,110 @@ pub fn send_key(
   }
   match t {
     @KeyType.Id::MENU =>
-      // if pressed {
-      //     match @KeyAction.get_action_by_id(action)!! {
-      //         @KeyAction.Id::EQUIPMENT => {
-      //             self.emplace(UIEquipInventory::new(Stage::get().get_player().get_inventory()))
-      //         }
-      //         @KeyAction.Id::ITEMS => {
-      //             self.emplace(UIItemInventory::new(Stage::get().get_player().get_inventory()))
-      //         }
-      //         @KeyAction.Id::STATS => {
-      //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
-      //         }
-      //         @KeyAction.Id::SKILLS => {
-      //             self.emplace(UISkillBook::new(Stage::get().get_player().get_stats(), Stage::get().get_player().get_skills()))
-      //         }
-      //         // @KeyAction.Id::FRIENDS => {
-      //         //     self.handle_user_list(@KeyAction.Id::FRIENDS)
-      //         // }
-      //         // @KeyAction.Id::PARTY => {
-      //         //     self.handle_user_list(@KeyAction.Id::PARTY)
-      //         // }
-      //         // @KeyAction.Id::BOSS_PARTY => {
-      //         //     self.handle_user_list(@KeyAction.Id::BOSS_PARTY)
-      //         // }
-      //         @KeyAction.Id::WORLD_MAP => {
-      //             self.emplace(UIWorldMap::new())
-      //         }
-      //         @KeyAction.Id::MAPLE_CHAT => {
-      //           match  UI::get().get_element(UIElementType::CHAT) {
-      //             Some(chat) =>
-      //                 if chat.is_active().not() {
-      //                     self.emplace(UIChat::new)
-      //                 }
-      //             None=> {
-      //                 self.emplace(UIChat::new)
-      //             }
-      //           }
-      //         }
-      //         @KeyAction.Id::MINI_MAP => {
-      //             match UI::get().get_element(UIElementType::MINI_MAP) {
-      //                 Some(minimap) => minimap.send_key(action, pressed, escape)
-      //                 None => ()
-      //             }
-      //         }
-      //         @KeyAction.Id::QUEST_LOG => {
-      //             self.emplace(UIQuestLog::new(Stage::get().get_player().get_quests()))
-      //         }
-      //         @KeyAction.Id::MENU => {
-      //             match UI::get().get_element(UIElementType::STATUS_BAR) {
-      //                 Some(statusbar) => statusbar.toggle_menu()
-      //                 None => ()
-      //             }
-      //         }
-      //         @KeyAction.Id::QUICK_SLOTS => {
-      //             match UI::get().get_element(UIElementType::STATUS_BAR) {
-      //                 Some(statusbar) => statusbar.toggle_qs()
-      //                 None => (),
-      //             }
-      //         }
-      //         @KeyAction.Id::CASHSHOP => {
-      //             fn_enter_cashshop()
-      //         }
-      //         @KeyAction.Id::TOGGLE_CHAT => {
-      //             match UI::get().get_element(UIElementType::CHAT_BAR) {
-      //                 Some(chatbar) => {
-      //                     if !chatbar.is_chatfield_open() {
-      //                         chatbar.toggle_chat()
-      //                     }
-      //                 }
-      //                 None => ()
-      //             }
-      //         }
-      //         @KeyAction.Id::KEY_BINDINGS => {
-      //         match UI::get().get_element(UIElementType::KEY_CONFIG) {
-      //             Some(keyconfig) =>
-      //                 if keyconfig.is_active() {
-      //                     keyconfig.close()
-      //                 } else {
-      //                     self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
-      //                 }
-      //             None=> {
-      //                 self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
-      //             }
-      //           }
-      //         }
-      //         // @KeyAction.Id::MAIN_MENU => {
-      //         //     match UI::get().get_element(UIElementType::StatusBar) {
-      //         //         Some(statusbar) => statusbar.send_key(action, pressed, escape),
-      //         //         None => (),
-      //         //     }
-      //         // }
-      //         // @KeyAction.Id::EVENT => {
-      //         //     self.emplace(UIEvent::new)
-      //         // }
-      //         // @KeyAction.Id::CHANGE_CHANNEL => {
-      //         //     self.emplace(fn(){UIChannel::new(Stage::get().get_player().get_world_id(), Stage::get().get_player().get_channel_id(), self.channel_count)})
-      //         // }
-      //         _ => {
-      //             println("Action \(action) not handled!")
-      //         }
-      //     }
-      // }
-      ()
+      if pressed {
+        match @KeyAction.get_action_by_id?(action).unwrap() {
+          //         @KeyAction.Id::EQUIPMENT => {
+          //             self.emplace(UIEquipInventory::new(Stage::get().get_player().get_inventory()))
+          //         }
+          @KeyAction.Id::ITEMS =>
+            self.set_element(
+              @inventory.UIItemInventory::is_focused(),
+              @inventory.UIItemInventory::new(Stage::get().get_inventory()),
+            )
+          //         @KeyAction.Id::STATS => {
+          //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
+          //         }
+          //         @KeyAction.Id::SKILLS => {
+          //             self.emplace(UISkillBook::new(Stage::get().get_player().get_stats(), Stage::get().get_player().get_skills()))
+          //         }
+          //         // @KeyAction.Id::FRIENDS => {
+          //         //     self.handle_user_list(@KeyAction.Id::FRIENDS)
+          //         // }
+          //         // @KeyAction.Id::PARTY => {
+          //         //     self.handle_user_list(@KeyAction.Id::PARTY)
+          //         // }
+          //         // @KeyAction.Id::BOSS_PARTY => {
+          //         //     self.handle_user_list(@KeyAction.Id::BOSS_PARTY)
+          //         // }
+          //         @KeyAction.Id::WORLD_MAP => {
+          //             self.emplace(UIWorldMap::new())
+          //         }
+          //         @KeyAction.Id::MAPLE_CHAT => {
+          //           match  UI::get().get_element(UIElementType::CHAT) {
+          //             Some(chat) =>
+          //                 if chat.is_active().not() {
+          //                     self.emplace(UIChat::new)
+          //                 }
+          //             None=> {
+          //                 self.emplace(UIChat::new)
+          //             }
+          //           }
+          //         }
+          //         @KeyAction.Id::MINI_MAP => {
+          //             match UI::get().get_element(UIElementType::MINI_MAP) {
+          //                 Some(minimap) => minimap.send_key(action, pressed, escape)
+          //                 None => ()
+          //             }
+          //         }
+          //         @KeyAction.Id::QUEST_LOG => {
+          //             self.emplace(UIQuestLog::new(Stage::get().get_player().get_quests()))
+          //         }
+          //         @KeyAction.Id::MENU => {
+          //             match UI::get().get_element(UIElementType::STATUS_BAR) {
+          //                 Some(statusbar) => statusbar.toggle_menu()
+          //                 None => ()
+          //             }
+          //         }
+          //         @KeyAction.Id::QUICK_SLOTS => {
+          //             match UI::get().get_element(UIElementType::STATUS_BAR) {
+          //                 Some(statusbar) => statusbar.toggle_qs()
+          //                 None => (),
+          //             }
+          //         }
+          //         @KeyAction.Id::CASHSHOP => {
+          //             fn_enter_cashshop()
+          //         }
+          //         @KeyAction.Id::TOGGLE_CHAT => {
+          //             match UI::get().get_element(UIElementType::CHAT_BAR) {
+          //                 Some(chatbar) => {
+          //                     if !chatbar.is_chatfield_open() {
+          //                         chatbar.toggle_chat()
+          //                     }
+          //                 }
+          //                 None => ()
+          //             }
+          //         }
+          //         @KeyAction.Id::KEY_BINDINGS => {
+          //         match UI::get().get_element(UIElementType::KEY_CONFIG) {
+          //             Some(keyconfig) =>
+          //                 if keyconfig.is_active() {
+          //                     keyconfig.close()
+          //                 } else {
+          //                     self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
+          //                 }
+          //             None=> {
+          //                 self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
+          //             }
+          //           }
+          //         }
+          //         // @KeyAction.Id::MAIN_MENU => {
+          //         //     match UI::get().get_element(UIElementType::StatusBar) {
+          //         //         Some(statusbar) => statusbar.send_key(action, pressed, escape),
+          //         //         None => (),
+          //         //     }
+          //         // }
+          //         // @KeyAction.Id::EVENT => {
+          //         //     self.emplace(UIEvent::new)
+          //         // }
+          //         // @KeyAction.Id::CHANGE_CHANNEL => {
+          //         //     self.emplace(fn(){UIChannel::new(Stage::get().get_player().get_world_id(), Stage::get().get_player().get_channel_id(), self.channel_count)})
+          //         // }
+          //         _ => {
+          //             println("Action \(action) not handled!")
+          //         }
+          _ => ()
+        }
+      }
     @KeyType.Id::ACTION
     | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
       Stage::get().send_key?(t, action, pressed).unwrap()
@@ -350,11 +352,7 @@ pub fn send_cursor(
   return Stage::get().send_cursor(clicked, cursorpos)
 }
 
-pub fn drag_icon(self : UIStateGame, icon : Icon) -> Unit {
-  // Implementation goes here
-}
-
-pub fn clear_tooltip(self : UIStateGame, parent : TooltipParent) -> Unit {
+pub fn drag_icon(self : UIStateGame, icon : @inventory.Icon) -> Unit {
   // Implementation goes here
 }
 
@@ -482,7 +480,7 @@ pub fn get_front_by_pos(
 
 pub fn drop_icon(
   self : UIStateGame,
-  _icon : Icon,
+  _icon : @inventory.Icon,
   _pos : @struct.Point[Int]
 ) -> Bool {
   // Implementation goes here

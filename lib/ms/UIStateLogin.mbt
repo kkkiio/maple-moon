@@ -86,14 +86,6 @@ pub fn send_cursor(
   }
 }
 
-pub fn clear_tooltip(self : UIStateLogin, parent : TooltipParent) -> Unit {
-  // if parent == self.tooltip_parent {
-  //     self.te_tooltip.set_text("")
-  //     self.tooltip = None
-  //     self.tooltip_parent = TooltipParent::NONE
-  // }
-}
-
 pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
   if self.focused == type_ {
     self.focused = UIElementType::UI_ELEMENT_NONE

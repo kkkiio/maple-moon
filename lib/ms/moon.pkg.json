@@ -37,6 +37,7 @@
     "KKKIIO/maple-moon-client/lib/ms/player",
     "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/character",
-    "KKKIIO/maple-moon-client/lib/ms/drop"
+    "KKKIIO/maple-moon-client/lib/ms/drop",
+    "KKKIIO/maple-moon-client/lib/ui"
   ]
 }

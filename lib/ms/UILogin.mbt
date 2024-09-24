@@ -82,7 +82,7 @@ pub fn UILogin::new() -> UILogin {
   let map = map001_loader.load_res(["Back", "login.img"])
   let back = map["back"]
   let ani = map["ani"]
-  let ui_loader = ui_loader()
+  let ui_loader = @resource.ui_loader()
   let title = ui_loader.load_res(["Login.img", "Title"])
   let common = ui_loader.load_res(["Login.img", "Common"])
   let map_pretty_loader = map_pretty_loader()

@@ -9,7 +9,7 @@ struct Textfield {}
 struct UI {
   mut state : UIState?
   keyboard : Keyboard
-  cursor : Cursor
+  cursor : @ui.Cursor
   //         std::optional<std::reference_wrapper<Textfield>> focused_text_field_;
   focused_text_field : Textfield?
   is_key_down : Map[String, Bool]
@@ -26,7 +26,7 @@ let g_ui : UI = UI::new()
 fn UI::new() -> UI {
   let ui = {
     state: None,
-    cursor: Cursor::new(),
+    cursor: @ui.Cursor::new(),
     keyboard: Keyboard::default(),
     focused_text_field: None,
     is_key_down: Map::new(),
@@ -230,22 +230,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
         }
       }
       if sent.not() {
-        // let chatbar = self.get_element(UIElementType::CHAT_BAR)
-        if escape {
-          // if chatbar && chatbar.get().is_chat_open() {
-          //   chatbar.get().send_key(mapping.action, pressed, escape)
-          // } else {
-          state.send_key(mapping.t, mapping.action, pressed, escape)
-          // }
-        } else if enter {
-          // if chatbar {
-          // chatbar.get().send_key(mapping.action, pressed, escape)
-          // } else {
-          state.send_key(mapping.t, mapping.action, pressed, escape)
-          // }
-        } else {
-          state.send_key(mapping.t, mapping.action, pressed, escape)
-        }
+        state.send_key(mapping.t, mapping.action, pressed, escape)
       }
     }
   }
@@ -260,7 +245,10 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
 }
 
 /// @alert deprecated "Use set_element/set_or_toggle_element instead"
-fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit {
+fn emplace[T : @ui.UIElement + @ui.UIElementDescriptor](
+  self : UI,
+  f : () -> T
+) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   if T::const_toggled() {
     state.set_or_toggle_element(
@@ -273,7 +261,7 @@ fn emplace[T : UIElement + UIElementDescriptor](self : UI, f : () -> T) -> Unit 
   }
 }
 
-pub fn set_element[T : UIElement + UIElementDescriptor](
+pub fn set_element[T : @ui.UIElement + @ui.UIElementDescriptor](
   self : UI,
   elem : T
 ) -> Unit {
@@ -281,7 +269,7 @@ pub fn set_element[T : UIElement + UIElementDescriptor](
   state.set_element(T::const_focused(), elem)
 }
 
-pub fn set_or_toggle_element[T : UIElement + UIElementDescriptor](
+pub fn set_or_toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](
   self : UI,
   f : () -> T
 ) -> Unit {

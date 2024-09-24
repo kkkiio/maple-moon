@@ -108,7 +108,7 @@ fn load_map(self : Stage, mapid : Int) -> Unit {
   let strid = @string_format.extend_id(mapid, 9)
   let prefix = (mapid / 100000000).to_string()
   let src = if mapid == -1 {
-    ui_loader().load_res(["CashShopPreview.img"])
+    @resource.ui_loader().load_res(["CashShopPreview.img"])
   } else {
     map_loader().load_res(["Map", "Map\{prefix}", "\{strid}.img"])
   }

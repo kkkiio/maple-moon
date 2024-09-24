@@ -4,7 +4,6 @@ trait UIState {
   send_key(Self, @KeyType.Id, Int, Bool, Bool) -> Unit
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
   // drag_icon(Self, Icon) -> Unit
-  clear_tooltip(Self, TooltipParent) -> Unit
   set_element(Self, Bool, UIElement) -> Unit
   set_or_toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit
   remove(Self, UIElementType) -> Unit

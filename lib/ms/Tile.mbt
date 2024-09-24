@@ -1,6 +1,6 @@
-// Represents a tile on a map.
+/// Represents a tile on a map.
 struct Tile {
-  texture : Texture
+  texture : @graphics.Texture
   pos : Point[Int]
   z : Int
 }
@@ -15,7 +15,7 @@ pub fn Tile::from_resource(src : NxNode, tileset : String) -> Tile {
     z = dsrc["zM"].get_int?().unwrap()
   }
   {
-    texture: Texture::from_resource(dsrc),
+    texture: @graphics.Texture::from_resource(dsrc),
     pos: Point::new(src["x"].get_int?().unwrap(), src["y"].get_int?().unwrap()),
     z,
   }

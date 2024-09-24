@@ -1,3 +1,15 @@
+typealias UIButtons = @ui.UIButtons
+
+typealias ButtonState = @ui.ButtonState
+
+typealias CursorState = @ui.CursorState
+
+typealias UIElementBase = @ui.UIElementBase
+
+typealias UIElementType = @ui.UIElementType
+
+typealias UIElement = @ui.UIElement
+
 struct UINpcTalk {
   base : UIElementBase
   buttons : UIButtons
@@ -74,6 +86,8 @@ let bid_yes = 14
 
 let bid_text_button = 15
 
+typealias MapleButton = @ui.MapleButton
+
 pub fn UINpcTalk::new() -> UINpcTalk {
   let base = UIElementBase::default()
   let offset = 0
@@ -84,7 +98,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let formatted_text = ""
   let formatted_text_pos = 0
   let timestep = 0
-  let ui_window2 = ui_loader().load_res(["UIWindow2.img"])
+  let ui_window2 = @resource.ui_loader().load_res(["UIWindow2.img"])
   let util_dlg_ex = ui_window2["UtilDlgEx"]
   let top = @graphics.Texture::from_resource(util_dlg_ex["t"])
   let fill = @graphics.Texture::from_resource(util_dlg_ex["c"])

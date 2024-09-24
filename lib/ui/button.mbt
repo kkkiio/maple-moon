@@ -9,11 +9,10 @@ pub enum ButtonState {
 pub trait Button {
   draw(Self, Point[Int]) -> Unit
   update(Self) -> Unit
-  bounds(Self, Point[Int]) -> Rectangle[Int]
+  bounds(Self, Point[Int]) -> @struct.Rectangle[Int]
   width(Self) -> Int
   origin(Self) -> Point[Int]
   send_cursor(Self, Bool, Point[Int]) -> CursorState
-  in_combobox(Self, Point[Int]) -> Bool
   get_button_base(Self) -> ButtonBase
   // get_selected(Self) -> Int
   // set_position(Self, Point[Int]) -> Unit
@@ -21,7 +20,7 @@ pub trait Button {
   // is_pressed(Self) -> Bool
 }
 
-struct ButtonBase {
+pub struct ButtonBase {
   mut state : ButtonState
   mut position : Point[Int]
   mut active : Bool
@@ -35,10 +34,6 @@ pub fn ButtonBase::default() -> ButtonBase {
     active: true,
     pressed: false,
   }
-}
-
-pub fn in_combobox(self : ButtonBase, point : Point[Int]) -> Bool {
-  false
 }
 
 pub fn get_selected(self : ButtonBase) -> Int {

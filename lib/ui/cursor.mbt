@@ -84,12 +84,10 @@ pub struct Cursor {
   mut state : CursorState
   mut position : Point[Int]
   mut hide_counter : Int
-  animations : Map[CursorState, Animation]
+  animations : Map[CursorState, @graphics.Animation]
 }
 
 pub let hide_time : Int = 15_000
-
-let ui_loader = @resource.ui_loader
 
 pub fn Cursor::new() -> Cursor {
   {
@@ -141,12 +139,12 @@ pub fn get_position(self : Cursor) -> Point[Int] {
   self.position
 }
 
-fn get_or_init_animation(self : Cursor) -> Animation {
+fn get_or_init_animation(self : Cursor) -> @graphics.Animation {
   let state = self.state
   match self.animations.get(state) {
     Some(animation) => animation
     None => {
-      let animation = Animation::from_resource(
+      let animation = @graphics.Animation::from_resource(
         @resource.ui_loader().load_res(
           ["Basic.img", "Cursor", "\{state.int_value()}"],
         ),

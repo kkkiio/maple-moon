@@ -323,7 +323,6 @@ class TextBitmapGenerator {
     const tmpImg = document.createElement('img');
     const [width, height] = this.calculateTextSize(html, maxWidth);
     const bmp = {
-      data: tmpImg,
       loading: true,
       w: width,
       h: height,
@@ -333,14 +332,14 @@ class TextBitmapGenerator {
       this.textCtx.canvas.height = tmpImg.height;
       this.textCtx.clearRect(0, 0, this.textCtx.canvas.width, this.textCtx.canvas.height);
       this.textCtx.drawImage(tmpImg, 0, 0);
-      const dataurl = this.textCtx.canvas.toDataURL();
-      console.info(dataurl)
+      const dataUrl = this.textCtx.canvas.toDataURL();
+      console.info(dataUrl)
       const targetImg = document.createElement('img');
       bmp.data = targetImg;
       targetImg.onload = () => {
         bmp.loading = false;
       }
-      targetImg.src = dataurl;
+      targetImg.src = dataUrl;
     };
     tmpImg.src = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>p{margin:0}</style>${html}</div></foreignObject></svg>`)
     return bmp;

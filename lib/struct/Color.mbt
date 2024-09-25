@@ -62,6 +62,46 @@ pub enum ColorName {
   MALIBU
 } derive(Eq)
 
+pub fn color(self : ColorName) -> Color {
+  match self {
+    BLACK => clr_black
+    WHITE => clr_white
+    YELLOW => clr_yellow
+    BLUE => clr_blue
+    RED => clr_red
+    DARKRED => clr_dark_red
+    BROWN => clr_brown
+    JAMBALAYA => clr_jambalaya
+    LIGHTGREY => clr_light_grey
+    DARKGREY => clr_dark_grey
+    ORANGE => clr_orange
+    MEDIUMBLUE => clr_medium_blue
+    VIOLET => clr_violet
+    TOBACCOBROWN => clr_tobacco_brown
+    EAGLE => clr_eagle
+    LEMONGRASS => clr_lemon_grass
+    TUNA => clr_tuna
+    GALLERY => clr_gallery
+    DUSTYGRAY => clr_dusty_gray
+    EMPEROR => clr_emperor
+    MINESHAFT => clr_mine_shaft
+    HALFANDHALF => clr_half_and_half
+    ENDEAVOUR => clr_endeavour
+    BROWNDERBY => clr_brown_derby
+    PORCELAIN => clr_porcelain
+    IRISHCOFFEE => clr_irish_coffee
+    BOULDER => clr_boulder
+    GREEN => clr_green
+    LIGHTGREEN => clr_light_green
+    JAPANESELAUREL => clr_japanese_laurel
+    GRAYOLIVE => clr_gray_olive
+    ELECTRICLIME => clr_electric_lime
+    SUPERNOVA => clr_supernova
+    CHARTREUSE => clr_chartreuse
+    MALIBU => clr_malibu
+  }
+}
+
 pub let color_names : FixedArray[ColorName] = [
   BLACK,
   WHITE,
@@ -100,43 +140,77 @@ pub let color_names : FixedArray[ColorName] = [
   MALIBU,
 ]
 
-let built_colors : FixedArray[Color] = [
-  Color::new_rgba(0.00, 0.00, 0.00, 1.0), // Black
-  Color::new_rgba(1.00, 1.00, 1.00, 1.0), // White
-  Color::new_rgba(1.00, 1.00, 0.00, 1.0), // Yellow
-  Color::new_rgba(0.00, 0.00, 1.00, 1.0), // Blue
-  Color::new_rgba(1.00, 0.00, 0.00, 1.0), // Red
-  Color::new_rgba(0.80, 0.30, 0.30, 1.0), // DarkRed
-  Color::new_rgba(0.50, 0.25, 0.00, 1.0), // Brown
-  Color::new_rgba(0.34, 0.20, 0.07, 1.0), // Jambalaya
-  Color::new_rgba(0.50, 0.50, 0.50, 1.0), // Lightgrey
-  Color::new_rgba(0.25, 0.25, 0.25, 1.0), // Darkgrey
-  Color::new_rgba(1.00, 0.50, 0.00, 1.0), // Orange
-  Color::new_rgba(0.00, 0.75, 1.00, 1.0), // Mediumblue
-  Color::new_rgba(0.50, 0.00, 0.50, 1.0), // Violet
-  Color::new_rgba(0.47, 0.40, 0.27, 1.0), // Tobacco Brown
-  Color::new_rgba(0.74, 0.74, 0.67, 1.0), // Eagle
-  Color::new_rgba(0.60, 0.60, 0.54, 1.0), // Lemon Grass
-  Color::new_rgba(0.20, 0.20, 0.27, 1.0), // Tuna
-  Color::new_rgba(0.94, 0.94, 0.94, 1.0), // Gallery
-  Color::new_rgba(0.60, 0.60, 0.60, 1.0), // Dusty Gray
-  Color::new_rgba(0.34, 0.34, 0.34, 1.0), // Emperor
-  Color::new_rgba(0.20, 0.20, 0.20, 1.0), // Mine Shaft
-  Color::new_rgba(1.00, 1.00, 0.87, 1.0), // Half and Half
-  Color::new_rgba(0.00, 0.40, 0.67, 1.0), // Endeavour
-  Color::new_rgba(0.30, 0.20, 0.10, 1.0), // Brown Derby
-  Color::new_rgba(0.94, 0.95, 0.95, 1.0), // Porcelain
-  Color::new_rgba(0.34, 0.27, 0.14, 1.0), // Irish Coffee
-  Color::new_rgba(0.47, 0.47, 0.47, 1.0), // Boulder
-  Color::new_rgba(0.00, 0.75, 0.00, 1.0), // Green (Mob HP Bar)
-  Color::new_rgba(0.00, 1.00, 0.00, 1.0), // Light Green (Mob HP Bar)
-  Color::new_rgba(0.00, 0.50, 0.00, 1.0), // Japanese Laurel (Mob HP Bar)
-  Color::new_rgba(0.67, 0.67, 0.60, 1.0), // Gray Olive
-  Color::new_rgba(0.80, 1.00, 0.00, 1.0), // Electric Lime
-  Color::new_rgba(1.00, 0.80, 0.00, 1.0), // Supernova
-  Color::new_rgba(0.47, 1.00, 0.00, 1.0), // Chartreuse
-  Color::new_rgba(0.47, 0.80, 1.00, 1.0), // Malibu
-]
+let clr_black : Color = Color::new_rgba(0.00, 0.00, 0.00, 1.0)
+
+let clr_white : Color = Color::new_rgba(1.00, 1.00, 1.00, 1.0)
+
+let clr_yellow : Color = Color::new_rgba(1.00, 1.00, 0.00, 1.0)
+
+let clr_blue : Color = Color::new_rgba(0.00, 0.00, 1.00, 1.0)
+
+let clr_red : Color = Color::new_rgba(1.00, 0.00, 0.00, 1.0)
+
+let clr_dark_red : Color = Color::new_rgba(0.80, 0.30, 0.30, 1.0)
+
+let clr_brown : Color = Color::new_rgba(0.50, 0.25, 0.00, 1.0)
+
+let clr_jambalaya : Color = Color::new_rgba(0.34, 0.20, 0.07, 1.0)
+
+let clr_light_grey : Color = Color::new_rgba(0.50, 0.50, 0.50, 1.0)
+
+let clr_dark_grey : Color = Color::new_rgba(0.25, 0.25, 0.25, 1.0)
+
+let clr_orange : Color = Color::new_rgba(1.00, 0.50, 0.00, 1.0)
+
+let clr_medium_blue : Color = Color::new_rgba(0.00, 0.75, 1.00, 1.0)
+
+let clr_violet : Color = Color::new_rgba(0.50, 0.00, 0.50, 1.0)
+
+let clr_tobacco_brown : Color = Color::new_rgba(0.47, 0.40, 0.27, 1.0)
+
+let clr_eagle : Color = Color::new_rgba(0.74, 0.74, 0.67, 1.0)
+
+let clr_lemon_grass : Color = Color::new_rgba(0.60, 0.60, 0.54, 1.0)
+
+let clr_tuna : Color = Color::new_rgba(0.20, 0.20, 0.27, 1.0)
+
+let clr_gallery : Color = Color::new_rgba(0.94, 0.94, 0.94, 1.0)
+
+let clr_dusty_gray : Color = Color::new_rgba(0.60, 0.60, 0.60, 1.0)
+
+let clr_emperor : Color = Color::new_rgba(0.34, 0.34, 0.34, 1.0)
+
+let clr_mine_shaft : Color = Color::new_rgba(0.20, 0.20, 0.20, 1.0)
+
+let clr_half_and_half : Color = Color::new_rgba(1.00, 1.00, 0.87, 1.0)
+
+let clr_endeavour : Color = Color::new_rgba(0.00, 0.40, 0.67, 1.0)
+
+let clr_brown_derby : Color = Color::new_rgba(0.30, 0.20, 0.10, 1.0)
+
+let clr_porcelain : Color = Color::new_rgba(0.94, 0.95, 0.95, 1.0)
+
+let clr_irish_coffee : Color = Color::new_rgba(0.34, 0.27, 0.14, 1.0)
+
+let clr_boulder : Color = Color::new_rgba(0.47, 0.47, 0.47, 1.0)
+
+let clr_green : Color = Color::new_rgba(0.00, 0.75, 0.00, 1.0)
+
+let clr_light_green : Color = Color::new_rgba(0.00, 1.00, 0.00, 1.0)
+
+let clr_japanese_laurel : Color = Color::new_rgba(0.00, 0.50, 0.00, 1.0)
+
+let clr_gray_olive : Color = Color::new_rgba(0.67, 0.67, 0.60, 1.0)
+
+let clr_electric_lime : Color = Color::new_rgba(0.80, 1.00, 0.00, 1.0)
+
+let clr_supernova : Color = Color::new_rgba(1.00, 0.80, 0.00, 1.0)
+
+let clr_chartreuse : Color = Color::new_rgba(0.47, 1.00, 0.00, 1.0)
+
+let clr_malibu : Color = Color::new_rgba(0.47, 0.80, 1.00, 1.0)
+
+pub let clr_opaque : Color = clr_white
 
 pub fn int_value(self : ColorName) -> Int {
   color_names.search(self).unwrap()
@@ -175,7 +249,7 @@ pub fn Color::from_code(name : Code) -> Color {
 }
 
 pub fn Color::from_name(name : ColorName) -> Color {
-  built_colors[name.int_value()]
+  color(name)
 }
 
 pub fn invisible(self : Color) -> Bool {

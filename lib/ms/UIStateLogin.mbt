@@ -200,7 +200,7 @@ pub fn set_element(
   self.elements[t] = elem
 }
 
-pub fn set_or_toggle_element(
+pub fn toggle_element(
   self : UIStateLogin,
   t : UIElementType,
   focused : Bool,

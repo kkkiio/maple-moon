@@ -138,9 +138,12 @@ pub fn send_key(
           //             self.emplace(UIEquipInventory::new(Stage::get().get_player().get_inventory()))
           //         }
           @KeyAction.Id::ITEMS =>
-            self.set_element(
+            self.toggle_element(
+              UIElementType::ITEM_INVENTORY,
               @inventory.UIItemInventory::is_focused(),
-              @inventory.UIItemInventory::new(Stage::get().get_inventory()),
+              fn() {
+                @inventory.UIItemInventory::new(Stage::get().get_inventory())
+              },
             )
           //         @KeyAction.Id::STATS => {
           //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
@@ -370,7 +373,7 @@ pub fn set_element(
   self.elements[t] = elem
 }
 
-pub fn set_or_toggle_element(
+pub fn toggle_element(
   self : UIStateGame,
   t : UIElementType,
   is_focused : Bool,

@@ -153,7 +153,7 @@ pub fn draw_text(
       point.y,
       point.y + image.height(),
       offset,
-      Color::from_name(@struct.ColorName::BLACK),
+      @struct.clr_opaque,
       0.0,
     ),
   )

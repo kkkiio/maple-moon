@@ -15,10 +15,6 @@ struct UI {
   is_key_down : Map[String, Bool]
   mut enabled : Bool
   mut caps_lock_enabled : Bool
-
-  //         std::function<void()> fn_toggle_full_screen_;
-  //         std::function<void()> fn_set_clipboard_;
-  //         std::function<std::string()> fn_get_clipboard_;
 }
 
 let g_ui : UI = UI::new()
@@ -244,18 +240,14 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
   }
 }
 
-/// @alert deprecated "Use set_element/set_or_toggle_element instead"
+/// @alert deprecated "Use set_element/toggle_element instead"
 fn emplace[T : @ui.UIElement + @ui.UIElementDescriptor](
   self : UI,
   f : () -> T
 ) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   if T::const_toggled() {
-    state.set_or_toggle_element(
-      T::const_type(),
-      T::const_focused(),
-      fn() { f() },
-    )
+    state.toggle_element(T::const_type(), T::const_focused(), fn() { f() })
   } else {
     state.set_element(T::const_focused(), f())
   }
@@ -269,10 +261,10 @@ pub fn set_element[T : @ui.UIElement + @ui.UIElementDescriptor](
   state.set_element(T::const_focused(), elem)
 }
 
-pub fn set_or_toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](
+pub fn toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](
   self : UI,
   f : () -> T
 ) -> Unit {
   guard let Some(state) = self.state else { None => return  }
-  state.set_or_toggle_element(T::const_type(), T::const_focused(), fn() { f() })
+  state.toggle_element(T::const_type(), T::const_focused(), fn() { f() })
 }

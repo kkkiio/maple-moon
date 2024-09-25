@@ -24,12 +24,17 @@ pub fn draw(
 ) -> Unit {
   let image = self.get_or_init_image()
   let point = match self.alignment {
+    TextAlignment::LEFT => point
     TextAlignment::CENTER => {
       let width = image.width()
       let x = point.x - width / 2
       { ..point, x, }
     }
-    _ => point
+    TextAlignment::RIGHT => {
+      let width = image.width()
+      let x = point.x - width
+      { ..point, x, }
+    }
   }
   GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
 }

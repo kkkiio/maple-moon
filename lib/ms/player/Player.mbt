@@ -34,9 +34,8 @@ pub typealias CharEntry = @login.CharEntry
 /// Construct a player object from the given character entry.
 pub fn Player::from_entry(
   entry : CharEntry,
-  wid : Int,
-  channel_id : Int,
-  inventory : Inventory
+  inventory : Inventory,
+  damage_number_set : @combat_ui.DamageNumberSet
 ) -> Player! {
   let p = {
     char_base: CharBase::new(
@@ -44,6 +43,7 @@ pub fn Player::from_entry(
       entry.id,
       CharLook::new!(entry.look),
       entry.stats.name,
+      damage_number_set,
     ),
     stats: CharStats::from_entry(entry.stats),
     keys_down: Map::new(),
@@ -332,8 +332,7 @@ pub fn damage(
   attack : @combat.MobAttack
 ) -> @combat.MobAttackResult {
   let damage = self.stats.calculate_damage(attack.watk)
-  // TODO: Show damage
-  // self.char_base.show_damage(damage)
+  self.char_base.show_damage(damage)
   let fromleft = attack.origin.x > self.get_phobj().get_x()
   let missed = damage <= 0
   let immovable = self.get_ladder().is_empty().not() ||

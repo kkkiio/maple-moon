@@ -18,6 +18,7 @@ pub struct Stage {
   mobs : @monster.MapMobs
   drops : @drop.MapDrops
   inventory : @inventory.Inventory
+  damage_number_set : @combat_ui.DamageNumberSet
   mut combat : Combat?
   mut start : TimePoint
 }
@@ -38,6 +39,7 @@ pub fn Stage::new(
     map_info: @map.MapInfo::new(),
     portals: MapPortals::default(),
     npcs: MapNpcs::new(),
+    damage_number_set: @combat_ui.DamageNumberSet::new(),
     combat: None,
     mobs,
     drops,
@@ -81,12 +83,11 @@ pub fn load_player(
 ) -> @player.Player! {
   let player = @player.Player::from_entry!(
     entry,
-    wid,
-    channel_id,
     self.inventory,
+    self.damage_number_set,
   )
   self.player = Some(player)
-  self.combat = Some(Combat::new(player, self.mobs))
+  self.combat = Some(Combat::new(self.damage_number_set, player, self.mobs))
   self.start = now_micro() |> TimePoint::from_micro
 
   // CharStats stats = self.player.get_stats();

@@ -24,6 +24,10 @@ pub fn int_value(self : Code) -> Int {
   }
 }
 
+pub fn color(self : Code) -> Color {
+  self.int_value() |> Color::from_value
+}
+
 pub enum ColorName {
   BLACK
   WHITE
@@ -245,11 +249,11 @@ pub fn Color::from_value(code : Int) -> Color {
 }
 
 pub fn Color::from_code(name : Code) -> Color {
-  from_value(name.int_value())
+  name.color()
 }
 
 pub fn Color::from_name(name : ColorName) -> Color {
-  color(name)
+  name.color()
 }
 
 pub fn invisible(self : Color) -> Bool {

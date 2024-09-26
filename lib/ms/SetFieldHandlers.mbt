@@ -47,8 +47,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   // update with stats that was loaded on server side after character
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = @login.parse_stats!(recv)
-  // charselect.get().update_character(cid, );
-
+  let playerentry = { ..playerentry, stats, }
   let player = Stage::get().load_player!(
     playerentry,
     @config.global().get_worldid(),
@@ -71,8 +70,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   // parse_nyinfo(recv);
   // parse_areainfo(recv);
 
-  // player.recalc_stats(true);
-
+  player.recalc_stats!(true)
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id

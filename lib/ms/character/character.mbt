@@ -51,14 +51,15 @@ pub struct CharBase {
   mut attacking : Bool
   mut facing_right : Bool
   name : String
-  // name_label: Text
+  name_label : @graphics.Text
   // chat_balloon: ChatBalloon
   effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
   mut after_image : @char_look.Afterimage
   invincible : @utils.TimedBool
   // iron_body: TimedBool
-  // mut damage_numbers: @immut/list.List[DamageNumber]
+  damage_number_set : @combat_ui.DamageNumberSet
+  damage_numbers : Array[@combat_ui.DamageNumber]
 }
 
 pub fn get_position(self : CharBase) -> Point[Int] {
@@ -122,7 +123,8 @@ pub fn CharBase::new(
   sub : CharSubClass,
   oid : Int,
   look : CharLook,
-  name : String
+  name : String,
+  damage_number_set : @combat_ui.DamageNumberSet
 ) -> CharBase {
   {
     sub,
@@ -131,10 +133,19 @@ pub fn CharBase::new(
     attacking: false,
     facing_right: false,
     name,
+    name_label: @graphics.Text::new(
+      name,
+      @graphics.FontId::A13M,
+      @graphics.TextAlignment::CENTER,
+      @struct.ColorName::WHITE,
+      nametag=true,
+    ),
     effects: @graphics.EffectLayer::default(),
     state: CharState::STAND,
     after_image: @char_look.Afterimage::default(),
     invincible: @utils.TimedBool::default(),
+    damage_number_set,
+    damage_numbers: Array::new(),
   }
 }
 
@@ -164,16 +175,14 @@ pub fn draw(
 
   //     recurring_effects_.drawbelow(absp, alpha);
 
-  //     Color color;
-
   let color = if self.invincible.get() {
     let phi = self.invincible.alpha() * 30
     let rgb = 0.9 - 0.5 * @math.sin(phi).abs()
     @struct.Color::new_rgba(rgb, rgb, rgb, 1.0)
   } else {
-    @struct.Code::CWHITE |> @struct.Color::from_code
+    @struct.Code::CWHITE.color()
   }
-  self.look.draw(DrawArgument::new8(absp, color), alpha)
+  self.look.draw(DrawArgument::from_point_and_color(absp, color), alpha)
 
   //     after_image_.draw(self.look.get_frame(),
   //                       DrawArgument(absp, facing_right_),
@@ -193,22 +202,23 @@ pub fn draw(
   //         }
   //     }
 
-  //     // If ever changing code for namelabel confirm placements with map 10000
-  //     name_label_.draw(absp + Point<int16_t>(0, -4));
-  //     chat_balloon_.draw(absp - Point<int16_t>(0, 85));
+  // If ever changing code for namelabel confirm placements with map 10000
+  self.name_label.draw(absp + Point::new(0, -4))
+  // chat_balloon_.draw(absp - Point<int16_t>(0, 85));
 
   self.effects.drawabove(absp, alpha)
   //     recurring_effects_.drawabove(absp, alpha);
 
-  //     for (const auto &number : damage_numbers_) {
-  //         number.draw(viewx, viewy, alpha);
-  //     }
+  for number in self.damage_numbers {
+    number.draw(viewx, viewy, alpha)
+  }
 }
 
 pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
-  //     damage_numbers_.remove_if(
-  //         [](DamageNumber &number) { return number.update(); });
-
+  @utils.remove_if(
+    self.damage_numbers,
+    fn(number : @combat_ui.DamageNumber) { number.update() },
+  )
   self.effects.update()
   //     recurring_effects_.update();
   //     chat_balloon_.update();
@@ -363,4 +373,19 @@ pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit! {
 
 pub fn show_effect_id(self : CharBase, toshow : CharEffectId) -> Unit {
   // TODO: Implement
+}
+
+pub fn show_damage(self : CharBase, damage : Int) -> Unit {
+  let start_y = self.base.phobj.get_y() - 60
+  let x = self.base.phobj.get_x() - 10
+  self.damage_numbers.push(
+    self.damage_number_set.new_damage_number(
+      @combat_ui.DamageNumberType::TOPLAYER,
+      damage,
+      start_y,
+      ~x,
+    ),
+  )
+  self.look.set_alerted(5000)
+  self.invincible.set_for(2000)
 }

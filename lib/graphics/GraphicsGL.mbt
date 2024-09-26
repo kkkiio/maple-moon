@@ -14,12 +14,12 @@ struct Atlas {
   width : Int
   height : Int
   minlosize : Int
-  font_ymax : Int
   leftovers : @quadtree.Tree[Int, Leftover]
   offsets : Map[String, TexOffset]
   mut wasted : Int
   mut next_id : Int
-  mut border : Point[Int]
+  mut border_x : Int
+  mut border_y : Int
   mut y_range : Range[Int]
 }
 
@@ -28,23 +28,27 @@ fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
   let atlash = 8192
   {
     quads: [],
-    atlas: {
-      width: atlasw,
-      height: atlash,
-      minlosize: 32,
-      font_ymax: 0,
-      leftovers: @quadtree.Tree::new(),
-      offsets: Map::new(),
-      wasted: 0,
-      next_id: 1,
-      border: { x: 0, y: 0 },
-      y_range: Range::default(),
-    },
+    atlas: Atlas::new(atlasw, atlash),
     vwidth,
     vheight,
     screen: Rectangle::from4(0, vwidth, 0, vheight),
     text_cache: @lru_cache.Cache::new(32),
     locked: false,
+  }
+}
+
+fn Atlas::new(width : Int, height : Int) -> Atlas {
+  {
+    width,
+    height,
+    minlosize: 32,
+    leftovers: @quadtree.Tree::new(),
+    offsets: Map::new(),
+    wasted: 0,
+    next_id: 1,
+    border_x: 0,
+    border_y: 1, // reserve (0,0) for color_fill
+    y_range: Range::default(),
   }
 }
 
@@ -131,6 +135,7 @@ pub fn draw_text(
   image : @resource.Image,
   textId : String,
   point : Point[Int],
+  nametag : Bool,
   ~text_y_clip : Range[Int]? = None
 ) -> Unit {
   if self.locked {
@@ -144,6 +149,34 @@ pub fn draw_text(
   //     return;
   // }
 
+  if nametag {
+    // If ever changing code in here confirm placements with map 10000
+    let x = point.x
+    let y = point.y
+    let left = x - 1
+    let right = left + 1 + image.width() + 1
+    let top = y - 1
+    let bottom = top + image.height() + 1
+    let ntcolor = Color::new_rgba(0.0, 0.0, 0.0, 0.6)
+    let null_offset = TexOffset::default()
+    self.quads.push(
+      Quad::new(left, right, top, bottom, null_offset, ntcolor, 0.0),
+    )
+    self.quads.push(
+      Quad::new(left - 1, left, top + 1, bottom - 1, null_offset, ntcolor, 0.0),
+    )
+    self.quads.push(
+      Quad::new(
+        right,
+        right + 1,
+        top + 1,
+        bottom - 1,
+        null_offset,
+        ntcolor,
+        0.0,
+      ),
+    )
+  }
   let offset = self.atlas.get_offset(textId, image)
   // TODO: add text_y_clip
   self.quads.push(
@@ -241,7 +274,7 @@ pub fn clear(self : GraphicsGL) -> Unit {
 }
 
 fn clear(self : Atlas) -> Unit {
-  let used = self.width * self.border.y + self.border.x * self.y_range.b
+  let used = self.width * self.border_y + self.border_x * self.y_range.b
   let usedpercent = used.to_double() / (self.width * self.height).to_double()
   if usedpercent > 80.0 {
     self.clear_internal()
@@ -325,17 +358,18 @@ fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
       (x, y)
     }
     None => {
-      if self.border.x + width > self.width {
-        self.border = { x: 0, y: self.border.y + self.y_range.b }
-        if self.border.y + height > self.height {
+      if self.border_x + width > self.width {
+        self.border_x = 0
+        self.border_y = self.border_y + self.y_range.b
+        if self.border_y + height > self.height {
           self.clear_internal()
         } else {
           self.y_range = Range::default()
         }
       }
-      let x = self.border.x
-      let y = self.border.y
-      self.border = self.border.shift_x(width)
+      let x = self.border_x
+      let y = self.border_y
+      self.border_x = self.border_x + width
       if height > self.y_range.b {
         if x >= self.minlosize && height - self.y_range.b >= self.minlosize {
           let ok = self.leftovers.add(
@@ -378,7 +412,8 @@ fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
 }
 
 fn clear_internal(self : Atlas) -> Unit {
-  self.border = { x: 0, y: self.font_ymax }
+  self.border_x = 0
+  self.border_y = 1
   self.y_range = Range::default()
   self.offsets.clear()
   self.leftovers.clear()

@@ -38,6 +38,10 @@
     "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/character",
     "KKKIIO/maple-moon-client/lib/ms/drop",
-    "KKKIIO/maple-moon-client/lib/ui"
+    "KKKIIO/maple-moon-client/lib/ui",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
+      "alias": "combat_ui"
+    }
   ]
 }

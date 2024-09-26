@@ -78,7 +78,10 @@ pub fn DrawArgument::new7(
   DrawArgument::new14(position, false, ~opacity)
 }
 
-pub fn DrawArgument::new8(position : Point[Int], color : Color) -> DrawArgument {
+pub fn DrawArgument::from_point_and_color(
+  position : Point[Int],
+  color : Color
+) -> DrawArgument {
   DrawArgument::new17(position, position, { x: 0, y: 0 }, 1.0, 1.0, color, 0.0)
 }
 

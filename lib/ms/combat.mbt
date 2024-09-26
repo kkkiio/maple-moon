@@ -1,5 +1,5 @@
 struct Combat {
-  damage_number_set : @combat.DamageNumberSet
+  damage_number_set : @combat_ui.DamageNumberSet
   player : @player.Player
   mobs : @monster.MapMobs
   skills : Map[Int, @combat.Skill]
@@ -7,12 +7,16 @@ struct Combat {
   // TODO: Add reactors
   damage_effects : @utils.TimedQueue[DamageEffect]
   bullets : Array[BulletEffect]
-  damage_numbers : Array[@combat.DamageNumber]
+  damage_numbers : Array[@combat_ui.DamageNumber]
 }
 
-pub fn Combat::new(player : @player.Player, mobs : @monster.MapMobs) -> Combat {
+pub fn Combat::new(
+  damage_number_set : @combat_ui.DamageNumberSet,
+  player : @player.Player,
+  mobs : @monster.MapMobs
+) -> Combat {
   {
-    damage_number_set: @combat.DamageNumberSet::new(),
+    damage_number_set,
     player,
     mobs,
     skills: Map::new(),
@@ -176,7 +180,7 @@ fn find_closest_mob(
 
 struct DamageEffect {
   user : @combat.AttackUser
-  number : @combat.DamageNumber
+  number : @combat_ui.DamageNumber
   damage : Int
   toleft : Bool
   target_oid : Int
@@ -313,18 +317,18 @@ fn place_numbers(
   self : Combat,
   oid : Int,
   damage_lines : Array[(Int, Bool)]
-) -> Array[@combat.DamageNumber] {
+) -> Array[@combat_ui.DamageNumber] {
   let numbers = Array::new()
   let mut head = self.mobs.get_mob_head_position(oid).y
   for it in damage_lines {
     let (amount, is_critical) = it
     let t = if is_critical {
-      @combat.DamageNumberType::CRITICAL
+      @combat_ui.DamageNumberType::CRITICAL
     } else {
-      @combat.DamageNumberType::NORMAL
+      @combat_ui.DamageNumberType::NORMAL
     }
     numbers.push(self.damage_number_set.new_damage_number(t, amount, head))
-    head -= @combat.DamageNumber::row_height(is_critical)
+    head -= @combat_ui.DamageNumber::row_height(is_critical)
   }
   return numbers
 }

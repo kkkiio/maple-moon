@@ -30,7 +30,11 @@ out vec4 FragColor;
 
 void main(void)
 {
-  FragColor = texture(u_texture, texpos / atlassize) * colormod;
+  if (texpos.y == 0.0) {
+    FragColor = colormod;
+  } else {
+    FragColor = texture(u_texture, texpos / atlassize) * colormod;
+  }
 }
 `;
 /**

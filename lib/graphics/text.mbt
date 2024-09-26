@@ -4,6 +4,7 @@ struct Text {
   color : @struct.ColorName
   text : String
   max_width : Int?
+  nametag : Bool
   mut image : @resource.Image?
 }
 
@@ -12,9 +13,10 @@ pub fn Text::new(
   font : FontId,
   alignment : TextAlignment,
   color : @struct.ColorName,
+  ~nametag : Bool = false,
   ~max_width? : Int
 ) -> Text {
-  { font, alignment, color, image: None, text, max_width }
+  { font, alignment, color, image: None, text, max_width, nametag }
 }
 
 pub fn draw(
@@ -36,7 +38,13 @@ pub fn draw(
       { ..point, x, }
     }
   }
-  GraphicsGL::get().draw_text(image, self.text, point, ~text_y_clip)
+  GraphicsGL::get().draw_text(
+    image,
+    self.text,
+    point,
+    self.nametag,
+    ~text_y_clip,
+  )
 }
 
 pub fn dimensions(self : Text) -> Point[Int] {

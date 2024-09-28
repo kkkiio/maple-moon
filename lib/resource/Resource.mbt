@@ -113,11 +113,11 @@ pub fn get_children_count(self : NxNode) -> Int {
   }
 }
 
-pub fn get_bool(self : NxNode) -> Bool! {
+pub fn get_bool(self : NxNode) -> Bool!LoadError {
   self.get_int!() != 0
 }
 
-pub fn as_strict_bool(self : NxNode) -> Bool! {
+pub fn as_strict_bool(self : NxNode) -> Bool!LoadError {
   self.as_strict_int!() != 0
 }
 
@@ -129,24 +129,32 @@ pub fn get_string(self : NxNode) -> String {
   }
 }
 
-pub fn get_int(self : NxNode) -> Int! {
+pub fn get_int(self : NxNode) -> Int!LoadError {
   self.get_float!().to_int()
 }
 
-pub type! TypeMismatch String derive(Show)
+pub type! LoadError {
+  TypeMismatch(String)
+  ParseNumber(@strconv.StrConvError)
+}
 
-pub fn as_strict_int(self : NxNode) -> Int!TypeMismatch {
+pub fn as_strict_int(self : NxNode) -> Int!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it.to_int()
     _ as a => raise TypeMismatch("expect number, got \{a}, path=\{self.path}")
   }
 }
 
-pub fn get_float(self : NxNode) -> Double! {
+pub fn get_float(self : NxNode) -> Double!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it
     @json.JsonValue::Null => 0.0
-    @json.JsonValue::String(it) => @strconv.parse_double!(it)
+    @json.JsonValue::String(it) =>
+      try {
+        @strconv.parse_double!(it)
+      } catch {
+        e => raise ParseNumber(e)
+      }
     _ as a => raise TypeMismatch("expect number, got \{a}, path=\{self.path}")
   }
 }
@@ -186,10 +194,10 @@ pub fn is_null(self : NxNode) -> Bool {
   }
 }
 
-pub fn as_string(self : NxNode) -> Result[String, String] {
+pub fn as_string(self : NxNode) -> String!LoadError {
   match self.desc {
-    @json.JsonValue::String(it) => Ok(it)
-    _ as a => Err("expect string, got\{a}")
+    @json.JsonValue::String(it) => it
+    _ as a => raise TypeMismatch("expect string, got \{a}")
   }
 }
 
@@ -234,7 +242,7 @@ fn join_path(parts : Array[String]) -> String {
 
 pub type ResPath Array[String] derive(Eq)
 
-pub fn as_point(self : NxNode) -> @struct.Point[Int]!TypeMismatch {
+pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
   match self.value() {
     @json.JsonValue::Array(arr) =>
       {

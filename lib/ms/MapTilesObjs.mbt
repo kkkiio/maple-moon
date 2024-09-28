@@ -1,28 +1,26 @@
-// A tile and obj layer.
+/// A tile and obj layer.
 struct TilesObjs {
   tiles : FixedArray[Tile]
   objs : FixedArray[Obj]
 }
 
-pub fn TilesObjs::from_resource(src : NxNode) -> TilesObjs {
+pub fn TilesObjs::from_resource(src : NxNode) -> TilesObjs! {
   let tileZMap = Map::new()
   let objZMap = Map::new()
-  if src["info"].is_null().not() {
-    let tileset = src["info"]["tS"].as_string().unwrap() + ".img"
-    src["tile"].each(
-      fn(tilenode) {
-        let tile = Tile::from_resource(tilenode, tileset)
-        let z = tile.get_z()
-        tileZMap.get_or_init(z, fn() { [] }).push(tile)
-      },
-    )
-    src["obj"].each(
-      fn(objnode) {
-        let obj = Obj::from_resource(objnode)
-        let z = obj.get_z()
-        objZMap.get_or_init(z, fn() { [] }).push(obj)
-      },
-    )
+  let tileset = if src["info"].is_null() {
+    ""
+  } else {
+    src["info"]["tS"].as_string!() + ".img"
+  }
+  for tilenode in src["tile"] {
+    let tile = Tile::from_resource(tilenode, tileset)
+    let z = tile.get_z()
+    tileZMap.get_or_init(z, fn() { [] }).push(tile)
+  }
+  for objnode in src["obj"] {
+    let obj = Obj::from_resource!(objnode)
+    let z = obj.get_z()
+    objZMap.get_or_init(z, fn() { [] }).push(obj)
   }
   let zTiles = tileZMap.to_array()
   zTiles.sort_by_key(fn(it) { it.0 })
@@ -40,23 +38,31 @@ pub fn TilesObjs::default() -> TilesObjs {
 }
 
 pub fn update(self : TilesObjs) -> Unit {
-  self.objs.each(fn(obj) { obj.update() })
+  for obj in self.objs {
+    obj.update()
+  }
 }
 
 pub fn draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
-  self.objs.each(fn(obj) { obj.draw(viewpos, alpha) })
-  self.tiles.each(fn(tile) { tile.draw(viewpos) })
+  for obj in self.objs {
+    obj.draw(viewpos, alpha)
+  }
+  for tile in self.tiles {
+    tile.draw(viewpos)
+  }
 }
 
-// The collection of tile and obj layers on a map.
+/// The collection of tile and obj layers on a map.
 struct MapTilesObjs {
   layers : FixedArray[TilesObjs]
 }
 
-pub fn MapTilesObjs::from_resource(src : NxNode) -> MapTilesObjs {
-  let layers = @layer.ids.map(
-    fn(layer_id) { TilesObjs::from_resource(src[layer_id.to_string()]) },
-  )
+pub fn MapTilesObjs::from_resource(src : NxNode) -> MapTilesObjs! {
+  let layers = Array::new()
+  for layer_id in @layer.ids {
+    layers.push(TilesObjs::from_resource!(src[layer_id.to_string()]))
+  }
+  let layers = FixedArray::from_array(layers)
   { layers, }
 }
 
@@ -70,7 +76,9 @@ pub fn MapTilesObjs::default() -> MapTilesObjs {
 }
 
 pub fn update(self : MapTilesObjs) -> Unit {
-  self.layers.each(fn(layer) { layer.update() })
+  for layer in self.layers {
+    layer.update()
+  }
 }
 
 pub fn draw(

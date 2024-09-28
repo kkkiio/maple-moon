@@ -63,10 +63,10 @@ pub fn clear(self : Stage) -> Unit {
 
 let g_stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
-pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
+pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit! {
   match self.state {
     StageState::INACTIVE => {
-      self.load_map(mapid)
+      self.load_map!(mapid)
       self.respawn(portalid)
     }
     StageState::TRANSITION => self.respawn(portalid)
@@ -75,12 +75,7 @@ pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit {
   self.state = StageState::ACTIVE
 }
 
-pub fn load_player(
-  self : Stage,
-  entry : @login.CharEntry,
-  wid : Int,
-  channel_id : Int
-) -> @player.Player! {
+pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
   let player = @player.Player::from_entry!(
     entry,
     self.inventory,
@@ -104,16 +99,18 @@ pub fn get_npcs(self : Stage) -> MapNpcs {
   self.npcs
 }
 
-fn load_map(self : Stage, mapid : Int) -> Unit {
+fn load_map(self : Stage, mapid : Int) -> Unit! {
   self.map_id = mapid
-  let strid = @string_format.extend_id(mapid, 9)
-  let prefix = (mapid / 100000000).to_string()
   let src = if mapid == -1 {
     @resource.ui_loader().load_res(["CashShopPreview.img"])
   } else {
-    map_loader().load_res(["Map", "Map\{prefix}", "\{strid}.img"])
+    let prefix = (mapid / 100000000).to_string()
+    let strid = @string_format.extend_id(mapid, 9)
+    let path = ["Map", "Map\{prefix}", "\{strid}.img"]
+    @log.info({ "path": path }, "loading map")
+    map_loader().load_res(path)
   }
-  self.tiles_objs = MapTilesObjs::from_resource(src)
+  self.tiles_objs = MapTilesObjs::from_resource!(src)
   self.backgrounds = Some(MapBackgrounds::new(src["back"]))
   self.physics = Physics::from_resource(src["foothold"])
   self.map_info = @map.MapInfo::from_resource(
@@ -162,12 +159,8 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   // 
 }
 
-pub fn transfer_player(self : Stage) -> Unit {
+pub fn transfer_player() -> Unit {
   new_player_map_transfer_packet().dispatch()
-
-  // if (@config.global().get_admin()) {
-  //     fn_admin_enter_map(AdminEnterMapPacket::Operation::ALERT_ADMINS);
-  // }
 }
 
 fn update(self : Stage) -> Unit {

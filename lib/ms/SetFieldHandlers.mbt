@@ -8,22 +8,22 @@ pub fn SetFieldHandler::new(login_module : @login.Module) -> SetFieldHandler {
   { login_module, }
 }
 
-pub fn transition(mapid : Int, portalid : Int) -> Unit {
+pub fn transition(mapid : Int, portalid : Int) -> Unit! {
   // GraphicsGL::get().lock()
   Stage::get().clear()
   Timer::get().start()
   @graphics.GraphicsGL::get().clear()
-  Stage::get().load(mapid, portalid)
+  Stage::get().load!(mapid, portalid)
   UI::get().enable()
   Timer::get().start()
   // GraphicsGL::get().unlock()
-  Stage::get().transfer_player()
+  transfer_player()
 }
 
 pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
   // @constants.constants.set_viewwidth(Setting::get(configWidth).load())
   // @constants.constants.set_viewheight(Setting::get(configHeight).load())
-  let channel = recv.read_int!()
+  recv.read_int!() |> ignore // channel
   let mode1 = recv.read_byte!()
   let mode2 = recv.read_byte!()
   if mode1 == 0 && mode2 == 0 {
@@ -37,22 +37,18 @@ fn change_map(recv : @net.InPacket) -> Unit! {
   recv.skip!(3)
   let mapid = recv.read_int!()
   let portalid = recv.read_byte!()
-  transition(mapid, portalid)
+  transition!(mapid, portalid)
 }
 
 fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   recv.skip!(23)
-  let cid = recv.read_int!()
+  recv.read_int!() |> ignore // cid
 
   // update with stats that was loaded on server side after character
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = @login.parse_stats!(recv)
   let playerentry = { ..playerentry, stats, }
-  let player = Stage::get().load_player!(
-    playerentry,
-    @config.global().get_worldid(),
-    @config.global().get_channelid(),
-  )
+  let player = Stage::get().load_player!(playerentry)
   recv.read_byte!() |> ignore // 'buddycap'
   if recv.read_bool!() {
     recv.read_string!() |> ignore // 'linkedname'
@@ -74,7 +70,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id
-  transition(mapid, portalid)
+  transition!(mapid, portalid)
 
   // Sound(Sound::Name::GAME_START).play();
 

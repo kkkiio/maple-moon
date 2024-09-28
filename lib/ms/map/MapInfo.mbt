@@ -104,9 +104,13 @@ pub fn MapInfo::from_resource(
     ".img/" +
     bgmpath.substring(start=split + 1)
   let seats = Array::new()
-  src["seat"].each(fn(it) { seats.push(Seat::from_resource(it)) })
+  for it in src["seat"] {
+    seats.push(Seat::from_resource(it))
+  }
   let ladders = Array::new()
-  src["ladderRope"].each(fn(it) { ladders.push(Ladder::from_resource(it)) })
+  for it in src["ladderRope"] {
+    ladders.push(Ladder::from_resource(it))
+  }
   {
     field_limit: info["fieldLimit"].get_int?().unwrap(),
     cloud: info["cloud"].get_bool?().unwrap(),

@@ -100,27 +100,47 @@ struct Animation {
   mut delay : Int
 }
 
+pub type! LoadError {
+  NotFound
+  InvalidFormat(String)
+}
+
 pub fn Animation::from_resource(src : NxNode) -> Animation {
-  let frames = match src.value().as_object() {
-    Some(obj) =>
-      if obj.contains("__b") {
-        ([Frame::from_resource(src)] : FixedArray[Frame])
-      } else {
-        let fs = obj
-          .iter()
-          .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
-          .map(fn(it) { Frame::from_resource(src[it.0]) })
-          |> FixedArray::from_iter
-        if fs.length() <= 0 {
-          println("Animation must have at least one frame.")
-          println(obj)
-          panic()
-        }
-        fs
-      }
-    None => [Frame::default()]
+  try {
+    Animation::from_resource_ex!(src)
+  } catch {
+    NotFound => Animation::default()
+    e => {
+      @log.error(
+        //  "err": e 
+        {},
+        "Failed to load animation",
+      )
+      panic()
+    }
   }
-  let zigzag = src["zigzag"].get_bool?().unwrap()
+}
+
+pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
+  guard let Some(obj) = src.value().as_object() else { _ => raise NotFound }
+  let frames = if obj.contains("__b") {
+    ([Frame::from_resource(src)] : FixedArray[Frame])
+  } else {
+    let fs = obj
+      .iter()
+      .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
+      .map(fn(it) { Frame::from_resource(src[it.0]) })
+      |> FixedArray::from_iter
+    if fs.length() <= 0 {
+      raise InvalidFormat("Animation must have at least one frame.")
+    }
+    fs
+  }
+  let zigzag = try {
+    src["zigzag"].get_bool!()
+  } catch {
+    _ => raise InvalidFormat("zigzag must be a bool")
+  }
   let a = {
     frames,
     zigzag,

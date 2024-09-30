@@ -7,10 +7,10 @@ struct MapPortals {
 let warpcd : Int = 48
 
 struct MapPortalAnimations {
-  mut animations : @immut/sorted_map.T[PortalType, Animation]
+  mut animations : @immut/sorted_map.T[PortalType, @graphics.Animation]
 }
 
-let map_portals_animations : MapPortalAnimations = {
+pub let map_portals_animations : MapPortalAnimations = {
   animations: @immut/sorted_map.empty(),
 }
 
@@ -115,14 +115,20 @@ pub fn find_warp_at(
 
 pub fn MapPortalAnimations::load(self : MapPortalAnimations) -> Unit {
   let loader = map_loader()
-  let src1 = loader.load_res(
-    ["MapHelper.img", "portal", "game", "ph", "default", "portalContinue"],
-  )
-  let src2 = loader.load_res(["MapHelper.img", "portal", "game", "pv"])
+  let src1 = loader
+    .load_res(
+      ["MapHelper.img", "portal", "game", "ph", "default", "portalContinue"],
+    )
+    .poll()
+    .unwrap() // TODO: handle loading error
+  let src2 = loader
+    .load_res(["MapHelper.img", "portal", "game", "pv"])
+    .poll()
+    .unwrap() // TODO: handle loading error
   self.animations = @immut/sorted_map.from_array(
     [
-      (PortalType::HIDDEN, Animation::from_resource(src1)),
-      (PortalType::REGULAR, Animation::from_resource(src2)),
+      (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
+      (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
     ],
   )
 }

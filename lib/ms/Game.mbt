@@ -120,7 +120,7 @@ pub fn Game::start() -> Game {
     ),
   )
   timer.start()
-  map_portals_animations.load()
+  @map.map_portals_animations.load()
   { accumulator: 0, task_scheduler }
 }
 
@@ -146,7 +146,10 @@ pub fn on_draw(self : Game, time : TimePoint) -> Unit {
 pub fn update(self : Game) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
-  Stage::get().update()
+  match Stage::get().update?() {
+    Ok(_) => ()
+    Err(e) => @log.error({ "err": e }, "failed to update stage")
+  }
   UI::get().update()
   @net.PacketProcessor::get().process_in()
   // Music::update_context();

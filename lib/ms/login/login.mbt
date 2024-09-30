@@ -503,8 +503,8 @@ pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
 //   }
 // }
 
-fn etc_loader() -> @resource.Loader {
-  @resource.Loader::new("etc")
+fn etc_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("etc")
 }
 
 pub trait BgTask {

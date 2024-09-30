@@ -182,11 +182,23 @@ function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
   return shader;
 }
 
+function getByPath(obj, path) {
+  if (!path) {
+    return obj;
+  }
+  const parts = path.split("/");
+  return parts.reduce((acc, part) => {
+    if (acc === null) return null;
+    if (part in acc) return acc[part];
+    return null;
+  }, obj);
+}
+
 class ResourceLoader {
   constructor(name) {
     this.name = name;
     this.nxJson = null;
-    this.bmpLoader = new DirectBmpLoader(`resource/${name}/bitmaps`)
+    this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
   }
   async load() {
     const path = `resource/${this.name}/nx.json`
@@ -194,12 +206,7 @@ class ResourceLoader {
     this.nxJson = await response.json();
   }
   loadDesc(nodepath) {
-    let parts = nodepath.split("/");
-    return parts.reduce((acc, part) => {
-      if (acc === null) return null;
-      if (part in acc) return acc[part];
-      return null;
-    }, this.nxJson);
+    return getByPath(this.nxJson, nodepath)
   }
 }
 
@@ -208,7 +215,7 @@ class MergeResourceLoader {
     this.name = name;
     this.mappings = mappings;
     this.nxJson = null;
-    this.bmpLoader = new DirectBmpLoader(`resource/${name}/bitmaps`)
+    this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
   }
   async load() {
     this.nxJson = {}
@@ -231,21 +238,16 @@ class MergeResourceLoader {
     }
   }
   loadDesc(nodepath) {
-    let parts = nodepath.split("/");
-    return parts.reduce((acc, part) => {
-      if (acc === null) return null;
-      if (part in acc) return acc[part];
-      return null;
-    }, this.nxJson);
+    return getByPath(this.nxJson, nodepath)
   }
 }
 
-class DirectBmpLoader {
+class LazyBmpLoader {
   constructor(bmpFolderPath) {
     this.bmpFolderPath = bmpFolderPath;
     this.bitmaps = {};
   }
-  loadBitmap(bid) {
+  loadImage(bid) {
     let bmp = this.bitmaps[bid];
     if (bmp) {
       return bmp;
@@ -266,6 +268,89 @@ class DirectBmpLoader {
     return bmp;
   }
 }
+
+class LazyResourceLoader {
+  constructor(name, mappings) {
+    this.name = name;
+    this.mappings = mappings;
+    this.instant = null;
+    this.folderLoaders = [];
+    this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
+  }
+  async start() {
+    this.instant = {}
+    for (let mapping of this.mappings) {
+      if (mapping.folder) {
+        this.folderLoaders.push({
+          prefix: mapping.nodepath + "/",
+          loader: new FolderResourceLoader(`resource/${this.name}/${mapping.folder}`)
+        })
+        continue
+      }
+      const path = `resource/${this.name}/${mapping.filename}`
+      const response = await fetch(path);
+      const subJson = await response.json();
+      let root = this.instant
+      let parts = mapping.nodepath.split("/");
+      for (let i = 0; i < parts.length; i++) {
+        if (i == parts.length - 1) {
+          root[parts[i]] = subJson
+        } else {
+          if (!(parts[i] in root)) {
+            root[parts[i]] = {}
+          }
+          root = root[parts[i]]
+        }
+      }
+    }
+  }
+  loadDesc(nodepath) {
+    if (this.folderLoaders.length > 0) {
+      for (let pair of this.folderLoaders) {
+        if (nodepath.startsWith(pair.prefix)) {
+          return pair.loader.loadDesc(nodepath.substring(pair.prefix.length))
+        }
+      }
+    }
+    return {
+      ready: true,
+      value: getByPath(this.instant, nodepath),
+    }
+  }
+}
+
+class FolderResourceLoader {
+  constructor(folderPath) {
+    this.folderPath = folderPath;
+    this.cache = {};
+  }
+  /**
+   * 
+   * @param {string} nodepath 
+   * @returns 
+   */
+  loadDesc(nodepath) {
+    const [child, rest] = nodepath.split("/", 1)
+    if (child in this.cache) {
+      const json = this.cache[child]
+      return {
+        ready: true,
+        value: getByPath(json, rest),
+      }
+    }
+    const path = `${this.folderPath}/${child}.json`
+    const pollable = {
+      ready: false,
+    }
+    fetch(path).then(response => response.json()).then(json => {
+      this.cache[child] = json;
+      pollable.value = getByPath(json, rest)
+      pollable.ready = true
+    });
+    return pollable;
+  }
+}
+
 class Socket {
   constructor(path) {
     console.log("connect server", path)
@@ -450,15 +535,16 @@ function main() {
     uiLoader.load()
   );
 
-  const mapLoader = new MergeResourceLoader("Map.nx", [
+  const mapLoader = new LazyResourceLoader("Map.nx", [
     { nodepath: "Map/Map0", filename: "map0.nx.json" },
     { nodepath: "MapHelper.img", filename: "helper.nx.json" },
     { nodepath: "Tile", filename: "tile.nx.json" },
     { nodepath: "Obj", filename: "obj.nx.json" },
     { nodepath: "Back", filename: "back.nx.json" },
+    { nodepath: "Map/Map1", folder: "map1" },
   ]);
   prepareResourcePromises.push(
-    mapLoader.load()
+    mapLoader.start()
   );
 
   const soundLoader = new ResourceLoader("Sound.nx");
@@ -616,8 +702,6 @@ function main() {
         switch (name) {
           case "ui":
             return uiLoader;
-          case "map":
-            return mapLoader;
           case "sound":
             return soundLoader;
           case "character":
@@ -644,7 +728,18 @@ function main() {
             throw new Error(`Unknown resource loader: ${name}`);
         }
       },
-      load_bitmap: (loader, bid) => loader.bmpLoader.loadBitmap(bid),
+      get_async_loader: (name) => {
+        switch (name) {
+          case "map":
+            return mapLoader;
+          default:
+            throw new Error(`Unknown resource loader: ${name}`);
+        }
+      },
+      load_image: (loader, bid) => loader.loadImage(bid),
+      get_image_loader: (loader) => loader.bmpLoader,
+      is_ready: (pollable) => pollable.ready,
+      get_result: (pollable) => pollable.value,
     },
     bitmap: {
       id: (bmp) => bmp.id,

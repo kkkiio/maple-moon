@@ -193,6 +193,6 @@ pub fn new_damage_number(
   }
 }
 
-pub fn effect_loader() -> @resource.Loader {
-  @resource.Loader::new("effect")
+pub fn effect_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("effect")
 }

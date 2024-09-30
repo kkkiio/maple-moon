@@ -1,51 +1,40 @@
 typealias Linear = @utils.Linear
 
+/// View on stage which follows the player object.
 struct Camera {
+  /// Movement variables.
   x : Linear
   y : Linear
+  /// View limits.
   mut hbounds : @struct.Range[Int]
   mut vbounds : @struct.Range[Int]
-  mut vwidth : Int
-  mut vheight : Int
+  vwidth : Int
+  vheight : Int
 }
 
+/// offset y to see more above the player
 let y_offset : Int = 80
 
 fn Camera::new() -> Camera {
-  let camera = {
-    x: Linear::default(),
-    y: Linear::default(),
+  let constants = @constants.constants
+  {
+    x: Linear::new(0.0),
+    y: Linear::new(0.0 + y_offset.to_double()),
     hbounds: @struct.Range::default(),
     vbounds: @struct.Range::default(),
-    vwidth: 0,
-    vheight: 0,
+    vwidth: constants.get_viewwidth(),
+    vheight: constants.get_viewheight(),
   }
-  camera.x.set(0.0)
-  camera.y.set(0.0 + y_offset.to_double())
-  let constants = @constants.constants
-  camera.vwidth = constants.get_viewwidth()
-  camera.vheight = constants.get_viewheight()
-  camera
 }
 
-pub fn Camera::update(self : Camera, position : Point[Int]) -> Unit {
-  let constants = @constants.constants
-  let new_width = constants.get_viewwidth()
-  let new_height = constants.get_viewheight()
-  if self.vwidth != new_width || self.vheight != new_height {
-    self.vwidth = new_width
-    self.vheight = new_height
-  }
+pub fn update(self : Camera, position : Point[Int]) -> Unit {
   let mut next_x = self.x.get()
-  let hdelta = self.vwidth.to_double() / 2.0 - position.x.to_double() - next_x
+  let hdelta = (self.vwidth / 2 - position.x).to_double() - next_x
   if hdelta.abs() >= 5.0 {
     next_x += hdelta * (12.0 / self.vwidth.to_double())
   }
   let mut next_y = self.y.get()
-  let vdelta = self.vheight.to_double() / 2.0 -
-    position.y.to_double() +
-    y_offset.to_double() -
-    next_y
+  let vdelta = (self.vheight / 2 - position.y + y_offset).to_double() - next_y
   if vdelta.abs() >= 5.0 {
     next_y += vdelta * (12.0 / self.vheight.to_double())
   }
@@ -67,22 +56,12 @@ pub fn Camera::update(self : Camera, position : Point[Int]) -> Unit {
 }
 
 pub fn Camera::set_position(self : Camera, position : Point[Int]) -> Unit {
-  let constants = @constants.constants
-  let new_width = constants.get_viewwidth()
-  let new_height = constants.get_viewheight()
-  if self.vwidth != new_width || self.vheight != new_height {
-    self.vwidth = new_width
-    self.vheight = new_height
-  }
-  self.x.set(self.vwidth.to_double() / 2.0 - position.x.to_double())
-  self.y.set(
-    self.vheight.to_double() / 2.0 -
-    position.y.to_double() +
-    y_offset.to_double(),
-  )
+  self.x.set((self.vwidth / 2 - position.x).to_double())
+  self.y.set((self.vheight / 2 - position.y + y_offset).to_double())
 }
 
-pub fn Camera::set_view(
+/// Updates the view's boundaries. Determined by mapinfo or footholds.
+pub fn set_view(
   self : Camera,
   hborders : @struct.Range[Int],
   vborders : @struct.Range[Int]

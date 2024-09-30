@@ -68,8 +68,8 @@ pub fn MobSkill::get_buff(self : MobSkill) -> MobBuff {
   self.buff
 }
 
-fn skill_loader() -> @resource.Loader {
-  @resource.Loader::new("Skill.nx")
+fn skill_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("Skill.nx")
 }
 
 struct Effect {

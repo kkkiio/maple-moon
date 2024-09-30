@@ -29,7 +29,7 @@ pub fn hash(self : BackgroundType) -> Int {
 }
 
 struct Background {
-  mut animation : Animation
+  mut animation : @graphics.Animation
   cx : Int
   cy : Int
   rx : Double
@@ -43,16 +43,15 @@ struct Background {
   hoffset : Int
 }
 
-let map_loader = @resource.map_loader
-
-pub fn Background::from_resource(src : NxNode) -> Background! {
+pub fn Background::from_resource(src : @resource.NxNode) -> Background! {
   let loader = map_loader()
   let animated = src["ani"].get_bool?().unwrap()
   let animation = match src["bS"].get_string() {
-    "" => Animation::default()
+    "" => @graphics.Animation::default()
     bs =>
-      Animation::from_resource(
-        loader.load_res(
+      @graphics.Animation::from_resource(
+        loader
+        .load_res(
           [
             "Back",
             bs + ".img",
@@ -63,7 +62,9 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
             },
             src["no"].get_int?().unwrap().to_string(),
           ],
-        ),
+        )
+        .poll()
+        .unwrap(), // TODO: handle loading error
       )
   }
   let t = Background::typebyid!(src["type"].as_strict_int!())
@@ -127,19 +128,6 @@ pub fn Background::from_resource(src : NxNode) -> Background! {
   background
 }
 
-// let int_background_type_map : @immut/sorted_map.T[Int, BackgroundType] = @immut/sorted_map.from_array(
-//   [
-//     (0, BackgroundType::BG_NORMAL),
-//     (1, BackgroundType::HTILED),
-//     (2, BackgroundType::VTILED),
-//     (3, BackgroundType::TILED),
-//     (4, BackgroundType::HMOVEA),
-//     (5, BackgroundType::VMOVEA),
-//     (6, BackgroundType::HMOVEB),
-//     (7, BackgroundType::VMOVEB),
-//   ],
-// )
-
 pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
   match id {
     0 => BackgroundType::BG_NORMAL
@@ -199,9 +187,9 @@ pub fn Background::draw(
     let mut ty = 0
     while ty < th {
       self.animation.draw(
-        DrawArgument::new14(
+        @graphics.DrawArgument::new(
           { x: ix + tx, y: iy + ty },
-          self.flipped,
+          flip=self.flipped,
           opacity=self.opacity / 255.0,
         ),
         alpha,

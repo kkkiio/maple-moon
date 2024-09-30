@@ -1,57 +1,4 @@
-type ResourceLoader
-
-fn get_resource_loader(name : Js_string) -> ResourceLoader = "resource" "get_loader"
-
-struct Loader {
-  name : String
-  loader : ResourceLoader
-}
-
-pub fn Loader::new(name : String) -> Loader {
-  { name, loader: get_resource_loader(name.to_js_string()) }
-}
-
-pub fn ui_loader() -> Loader {
-  { name: "ui", loader: get_resource_loader("ui".to_js_string()) }
-}
-
-pub fn sound_loader() -> Loader {
-  { name: "sound", loader: get_resource_loader("sound".to_js_string()) }
-}
-
-pub fn map_loader() -> Loader {
-  { name: "map", loader: get_resource_loader("map".to_js_string()) }
-}
-
-pub fn character_loader() -> Loader {
-  { name: "character", loader: get_resource_loader("character".to_js_string()) }
-}
-
-pub fn string_loader() -> Loader {
-  { name: "string", loader: get_resource_loader("string".to_js_string()) }
-}
-
-pub fn reactor_loader() -> Loader {
-  { name: "reactor", loader: get_resource_loader("reactor".to_js_string()) }
-}
-
-pub fn map001_loader() -> Loader {
-  { name: "map001", loader: get_resource_loader("map001".to_js_string()) }
-}
-
-pub fn map_pretty_loader() -> Loader {
-  {
-    name: "map_pretty",
-    loader: get_resource_loader("map_pretty".to_js_string()),
-  }
-}
-
 type JsJson
-
-extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
-  #| (l,p) => {
-  #|   return l.loadDesc(p)
-  #| }
 
 extern "js" fn as_jsonstring(v : JsJson) -> String =
   #|(v)=> {
@@ -62,9 +9,65 @@ fn as_moonjson(self : JsJson) -> @json.JsonValue {
   @json.parse?(as_jsonstring(self)).unwrap()
 }
 
-pub fn load_res(self : Loader, path : Array[String]) -> NxNode {
+type ImageLoader
+
+type ResourceLoader
+
+fn get_resource_loader(name : Js_string) -> ResourceLoader = "resource" "get_loader"
+
+extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
+  #| (l,p) => {
+  #|   return l.loadDesc(p)
+  #| }
+
+fn get_image_loader(self : ResourceLoader) -> ImageLoader = "resource" "get_image_loader"
+
+fn load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
+
+struct SyncLoader {
+  name : String
+  loader : ResourceLoader
+}
+
+pub fn SyncLoader::new(name : String) -> SyncLoader {
+  { name, loader: get_resource_loader(name.to_js_string()) }
+}
+
+pub fn ui_loader() -> SyncLoader {
+  { name: "ui", loader: get_resource_loader("ui".to_js_string()) }
+}
+
+pub fn sound_loader() -> SyncLoader {
+  { name: "sound", loader: get_resource_loader("sound".to_js_string()) }
+}
+
+pub fn character_loader() -> SyncLoader {
+  { name: "character", loader: get_resource_loader("character".to_js_string()) }
+}
+
+pub fn string_loader() -> SyncLoader {
+  { name: "string", loader: get_resource_loader("string".to_js_string()) }
+}
+
+pub fn reactor_loader() -> SyncLoader {
+  { name: "reactor", loader: get_resource_loader("reactor".to_js_string()) }
+}
+
+pub fn map001_loader() -> SyncLoader {
+  { name: "map001", loader: get_resource_loader("map001".to_js_string()) }
+}
+
+pub fn map_pretty_loader() -> SyncLoader {
   {
-    loader: self,
+    name: "map_pretty",
+    loader: get_resource_loader("map_pretty".to_js_string()),
+  }
+}
+
+pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
+  {
+    loader_name: self.name,
+    image_loader: self.loader.get_image_loader(),
     name: path.last().unwrap(),
     desc: self.loader.load_desc(join_path(path)).as_moonjson(),
     path: path |> @immut/array.from_array,
@@ -72,7 +75,8 @@ pub fn load_res(self : Loader, path : Array[String]) -> NxNode {
 }
 
 struct NxNode {
-  loader : Loader
+  loader_name : String
+  image_loader : ImageLoader
   name : String
   desc : @json.JsonValue
   path : @immut/array.T[String]
@@ -90,19 +94,22 @@ pub fn path(self : NxNode) -> @immut/array.T[String] {
   self.path
 }
 
-pub fn get_loader(self : NxNode) -> Loader {
-  self.loader
-}
-
-pub fn op_get(self : NxNode, key : String) -> NxNode {
+pub fn op_get(self : NxNode, name : String) -> NxNode {
   {
-    loader: self.loader,
-    name: key,
+    ..self,
+    name,
     desc: self.desc
     .as_object()
-    .bind(fn(it) { it[key] })
+    .bind(fn(it) { it[name] })
     .or(@json.JsonValue::Null),
-    path: self.path.push(key),
+    path: self.path.push(name),
+  }
+}
+
+pub fn contains(self : NxNode, name : String) -> Bool {
+  match self.desc {
+    @json.JsonValue::Object(it) => it.contains(name)
+    _ => false
   }
 }
 
@@ -163,9 +170,7 @@ pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   match self.desc {
     @json.JsonValue::Object(it) =>
       it.each(
-        fn(k, v) {
-          f({ loader: self.loader, name: k, desc: v, path: self.path.push(k) })
-        },
+        fn(k, v) { f({ ..self, name: k, desc: v, path: self.path.push(k) }) },
       )
     @json.JsonValue::Null => ()
     _ as a => abort("expect object, got\{a}")
@@ -180,7 +185,7 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
       .map(
         fn(kv) {
           let (k, v) = kv
-          { loader: self.loader, name: k, desc: v, path: self.path.push(k) }
+          { ..self, name: k, desc: v, path: self.path.push(k) }
         },
       )
     _ => Iter::empty()
@@ -214,16 +219,14 @@ pub fn get_bitmap(self : NxNode) -> Bitmap? {
   .map(
     fn(bid) {
       {
-        image: self.loader.loader.load_bitmap(bid),
-        id: self.loader.name + "/" + bid.to_string(),
+        image: self.image_loader.load_image(bid),
+        id: self.loader_name + "/" + bid.to_string(),
         width: self["__w"].as_strict_int?().unwrap(),
         height: self["__h"].as_strict_int?().unwrap(),
       }
     },
   )
 }
-
-fn load_bitmap(self : ResourceLoader, bid : Int) -> Image = "resource" "load_bitmap"
 
 pub struct Bitmap {
   image : Image

@@ -61,8 +61,8 @@ pub fn Afterimage::default() -> Afterimage {
   }
 }
 
-pub fn skill_loader() -> @resource.Loader {
-  @resource.Loader::new("skill")
+pub fn skill_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("skill")
 }
 
 pub fn get_first_frame(self : Afterimage) -> Int {

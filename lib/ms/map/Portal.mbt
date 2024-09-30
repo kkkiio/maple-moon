@@ -38,7 +38,7 @@ pub fn PortalType::typebyid(id : Int) -> PortalType {
   all_portal_types[id]
 }
 
-struct PortalWarpInfo {
+pub struct PortalWarpInfo {
   mapid : Int
   toname : String
   name : String
@@ -60,7 +60,7 @@ fn PortalWarpInfo::default() -> PortalWarpInfo {
 }
 
 struct Portal {
-  animation : Animation?
+  animation : @graphics.Animation?
   type_ : PortalType
   name : String
   position : Point[Int]
@@ -69,7 +69,7 @@ struct Portal {
 }
 
 pub fn Portal::new(
-  animation : Animation?,
+  animation : @graphics.Animation?,
   type_ : PortalType,
   name : String,
   intramap : Bool,
@@ -127,10 +127,10 @@ pub fn get_position(self : Portal) -> Point[Int] {
   self.position
 }
 
-pub fn bounds(self : Portal) -> Rectangle[Int] {
+pub fn bounds(self : Portal) -> @struct.Rectangle[Int] {
   let lt = self.position + Point::new(-25, -100)
   let rb = self.position + Point::new(25, 25)
-  Rectangle::new(lt, rb)
+  @struct.Rectangle::new(lt, rb)
 }
 
 pub fn getwarpinfo(self : Portal) -> PortalWarpInfo {

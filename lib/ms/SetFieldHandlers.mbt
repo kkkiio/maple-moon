@@ -8,12 +8,12 @@ pub fn SetFieldHandler::new(login_module : @login.Module) -> SetFieldHandler {
   { login_module, }
 }
 
-pub fn transition(mapid : Int, portalid : Int) -> Unit! {
+pub fn transition(mapid : Int, portalid : Int) -> Unit {
   // GraphicsGL::get().lock()
   Stage::get().clear()
   Timer::get().start()
   @graphics.GraphicsGL::get().clear()
-  Stage::get().load!(mapid, portalid)
+  Stage::get().load(mapid, portalid)
   UI::get().enable()
   Timer::get().start()
   // GraphicsGL::get().unlock()
@@ -37,7 +37,7 @@ fn change_map(recv : @net.InPacket) -> Unit! {
   recv.skip!(3)
   let mapid = recv.read_int!()
   let portalid = recv.read_byte!()
-  transition!(mapid, portalid)
+  transition(mapid, portalid)
 }
 
 fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
@@ -70,7 +70,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id
-  transition!(mapid, portalid)
+  transition(mapid, portalid)
 
   // Sound(Sound::Name::GAME_START).play();
 

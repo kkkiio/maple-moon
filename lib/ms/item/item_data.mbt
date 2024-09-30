@@ -156,8 +156,8 @@ fn ItemData::get_item_gender(id : Int) -> Int {
   gender_digit
 }
 
-pub fn get_item_loader() -> @resource.Loader {
-  @resource.Loader::new("item")
+pub fn get_item_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("item")
 }
 
 pub fn get_category(self : ItemData) -> String {

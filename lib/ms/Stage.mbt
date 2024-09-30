@@ -1,19 +1,20 @@
 enum StageState {
   INACTIVE
-  TRANSITION
-  ACTIVE
-} derive(Eq, Show)
+  TRANSITION(~portal_id : Int, ~poll_fn : () -> @map.MapStruct?!)
+  ACTIVE(
+    ~tiles_objs : @map.MapTilesObjs,
+    ~backgrounds : @map.MapBackgrounds,
+    ~physics : @physics.Physics,
+    ~map_info : @map.MapInfo,
+    ~portals : @map.MapPortals
+  )
+}
 
 pub struct Stage {
   camera : Camera
-  mut physics : Physics
   mut player : @player.Player?
   mut state : StageState
   mut map_id : Int
-  mut map_info : @map.MapInfo
-  mut tiles_objs : MapTilesObjs
-  mut backgrounds : MapBackgrounds?
-  mut portals : MapPortals
   npcs : MapNpcs
   mobs : @monster.MapMobs
   drops : @drop.MapDrops
@@ -31,13 +32,8 @@ pub fn Stage::new(
   {
     camera: Camera::new(),
     player: None,
-    physics: Physics::new(),
     state: StageState::INACTIVE,
-    backgrounds: None,
-    tiles_objs: MapTilesObjs::default(),
     map_id: 10000,
-    map_info: @map.MapInfo::new(),
-    portals: MapPortals::default(),
     npcs: MapNpcs::new(),
     damage_number_set: @combat_ui.DamageNumberSet::new(),
     combat: None,
@@ -63,16 +59,18 @@ pub fn clear(self : Stage) -> Unit {
 
 let g_stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
-pub fn load(self : Stage, mapid : Int, portalid : Int) -> Unit! {
+pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
-      self.load_map!(mapid)
-      self.respawn(portalid)
+      self.map_id = map_id
+      let poll_fn = @map.load_map(map_id)
+      self.state = StageState::TRANSITION(~portal_id, ~poll_fn)
     }
-    StageState::TRANSITION => self.respawn(portalid)
-    _ => ()
+    StageState::TRANSITION(_) =>
+      // TODO: respawn?
+      @log.warn({ "map_id": map_id }, "map already loading")
+    StageState::ACTIVE(_) => ()
   }
-  self.state = StageState::ACTIVE
 }
 
 pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
@@ -99,87 +97,95 @@ pub fn get_npcs(self : Stage) -> MapNpcs {
   self.npcs
 }
 
-fn load_map(self : Stage, mapid : Int) -> Unit! {
-  self.map_id = mapid
-  let src = if mapid == -1 {
-    @resource.ui_loader().load_res(["CashShopPreview.img"])
-  } else {
-    let prefix = (mapid / 100000000).to_string()
-    let strid = @string_format.extend_id(mapid, 9)
-    let path = ["Map", "Map\{prefix}", "\{strid}.img"]
-    @log.info({ "path": path }, "loading map")
-    map_loader().load_res(path)
-  }
-  self.tiles_objs = MapTilesObjs::from_resource!(src)
-  self.backgrounds = Some(MapBackgrounds::new(src["back"]))
-  self.physics = Physics::from_resource(src["foothold"])
-  self.map_info = @map.MapInfo::from_resource(
-    src,
-    self.physics.get_fht().get_walls(),
-    self.physics.get_fht().get_borders(),
-  )
-  self.portals = MapPortals::from_resource(src["portal"], mapid)
-}
-
-pub fn respawn(self : Stage, portalid : Int) -> Unit {
-  // Music(self.map_info.get_bgm()).play();
-  let spawnpoint = self.portals.get_portal_by_id(portalid)
-  let startpos = self.physics.get_y_below(spawnpoint)
-  self.player.unwrap().respawn(startpos, self.map_info.is_underwater())
+pub fn respawn(
+  self : Stage,
+  portal_id : Int,
+  map_info : @map.MapInfo,
+  portals : @map.MapPortals,
+  physics : @physics.Physics
+) -> Unit {
+  // TODO: Music
+  let spawnpoint = portals.get_portal_by_id(portal_id)
+  let startpos = physics.get_y_below(spawnpoint)
+  @log.info({ "spawnpoint": spawnpoint, "startpos": startpos }, "respawn")
+  self.player.unwrap().respawn(startpos, map_info.is_underwater())
   self.camera.set_position(startpos)
-  self.camera.set_view(self.map_info.get_walls(), self.map_info.get_borders())
+  self.camera.set_view(map_info.get_walls(), map_info.get_borders())
 }
 
 pub fn draw(self : Stage, alpha : Double) -> Unit {
-  if self.state != StageState::ACTIVE {
-    return
+  guard let StageState::ACTIVE(~tiles_objs, ~backgrounds, ~portals, ..) = self.state else {
+    StageState::INACTIVE => return
+    StageState::TRANSITION(_) => return
   }
   let viewpos = self.camera.position_interpolated(alpha)
   let viewrpos = self.camera.real_position(alpha)
   let viewx = viewrpos.x
   let viewy = viewrpos.y
-  self.backgrounds.unwrap().drawbackgrounds(viewx, viewy, alpha)
+  backgrounds.drawbackgrounds(viewx, viewy, alpha)
   let player = self.player.unwrap()
-  @layer.ids.each(
-    fn(id) {
-      self.tiles_objs.draw(id, viewpos, alpha)
-      // reactors_.draw(id, viewx, viewy, alpha);
-      self.npcs.draw(id, viewx, viewy, alpha)
-      self.mobs.draw(id, viewx, viewy, alpha)
-      // chars_.draw(id, viewx, viewy, alpha);
-      player.draw(id, viewx, viewy, alpha)
-      self.drops.draw(id, viewx, viewy, alpha)
-    },
-  )
-  @layer.ids.each(fn(id) { player.draw(id, viewx, viewy, alpha) })
+  for id in @layer.ids {
+    tiles_objs.draw(id, viewpos, alpha)
+    // reactors_.draw(id, viewx, viewy, alpha);
+    self.npcs.draw(id, viewx, viewy, alpha)
+    self.mobs.draw(id, viewx, viewy, alpha)
+    // chars_.draw(id, viewx, viewy, alpha);
+    player.draw(id, viewx, viewy, alpha)
+    self.drops.draw(id, viewx, viewy, alpha)
+  }
   self.combat.unwrap().draw(viewx, viewy, alpha)
-  self.portals.draw(viewpos, alpha)
-  self.backgrounds.unwrap().drawforegrounds(viewx, viewy, alpha)
+  portals.draw(viewpos, alpha)
+  backgrounds.drawforegrounds(viewx, viewy, alpha)
   //     effect_.draw();
-  // 
 }
 
 pub fn transfer_player() -> Unit {
   new_player_map_transfer_packet().dispatch()
 }
 
-fn update(self : Stage) -> Unit {
-  if self.state != StageState::ACTIVE {
-    return
+fn update(self : Stage) -> Unit! {
+  guard let StageState::ACTIVE(
+    ~tiles_objs,
+    ~backgrounds,
+    ~physics,
+    ~portals,
+    ..
+  ) = self.state else {
+    StageState::INACTIVE => return
+    StageState::TRANSITION(~portal_id, ~poll_fn) =>
+      match poll_fn!() {
+        Some(map_struct) => {
+          self.state = StageState::ACTIVE(
+            tiles_objs=map_struct.tiles_objs,
+            backgrounds=map_struct.backgrounds,
+            physics=map_struct.physics,
+            map_info=map_struct.map_info,
+            portals=map_struct.portals,
+          )
+          self.respawn(
+            portal_id,
+            map_struct.map_info,
+            map_struct.portals,
+            map_struct.physics,
+          )
+          return  // for simplicity, just wait for the next update
+        }
+        None => return ()
+      }
   }
   self.combat.unwrap().update()
-  self.backgrounds.unwrap().update()
+  backgrounds.update()
   // effect_.update();
-  self.tiles_objs.update()
+  tiles_objs.update()
 
   // reactors_.update(self.physics);
-  self.npcs.update(self.physics)
-  self.mobs.update?(self.physics).unwrap()
+  self.npcs.update(physics)
+  self.mobs.update?(physics).unwrap()
   // chars_.update(self.physics);
-  self.drops.update(self.physics)
+  self.drops.update(physics)
   let player = self.player.unwrap()
-  player.update(self.physics) |> ignore
-  self.portals.update(player.get_position())
+  player.update(physics) |> ignore
+  portals.update(player.get_position())
   self.camera.update(player.get_position())
   if player.is_invincible() {
     return
@@ -223,8 +229,9 @@ pub fn send_key(
   action : Int,
   down : Bool
 ) -> Unit! {
-  if self.state != StageState::ACTIVE {
-    return
+  guard let StageState::ACTIVE(~physics, ~map_info, ~portals, ..) = self.state else {
+    StageState::INACTIVE => return
+    StageState::TRANSITION(_) => return
   }
   match self.player {
     Some(player) =>
@@ -233,10 +240,10 @@ pub fn send_key(
           if down {
             match @KeyAction.get_action_by_id?(action).unwrap() {
               @KeyAction.Id::UP => {
-                self.check_ladders(player, true)
-                self.check_portals()
+                check_ladders(player, map_info, true)
+                self.check_portals(map_info, portals, physics)
               }
-              @KeyAction.Id::DOWN => self.check_ladders(player, false)
+              @KeyAction.Id::DOWN => check_ladders(player, map_info, false)
               // @KeyAction.Id::SIT => self.check_seats()
               @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(0)
               @KeyAction.Id::PICKUP => self.check_drops()
@@ -257,17 +264,22 @@ pub fn send_key(
   }
 }
 
-fn check_portals(self : Stage) -> Unit {
+fn check_portals(
+  self : Stage,
+  map_info : @map.MapInfo,
+  portals : @map.MapPortals,
+  physics : @physics.Physics
+) -> Unit {
   let player = self.player.unwrap()
   if player.is_attacking() {
     return
   }
   let playerpos = player.get_position()
-  let warpinfo = self.portals.find_warp_at(playerpos)
+  let warpinfo = portals.find_warp_at(playerpos)
   if warpinfo.intramap {
-    let spawnpoint = self.portals.get_portal_by_name(warpinfo.toname)
-    let startpos = self.physics.get_y_below(spawnpoint)
-    player.respawn(startpos, self.map_info.is_underwater())
+    let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
+    let startpos = physics.get_y_below(spawnpoint)
+    player.respawn(startpos, map_info.is_underwater())
   } else if warpinfo.valid {
     new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
     let stats = player.get_stats()
@@ -382,11 +394,15 @@ pub fn new_player_map_transfer_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
 }
 
-fn check_ladders(self : Stage, player : @player.Player, up : Bool) -> Unit {
+fn check_ladders(
+  player : @player.Player,
+  map_info : @map.MapInfo,
+  up : Bool
+) -> Unit {
   if player.is_climbing() || player.is_attacking() {
     return
   }
-  let ladder = self.map_info.find_ladder(player.get_position(), up)
+  let ladder = map_info.find_ladder(player.get_position(), up)
   player.set_ladder(ladder)
 }
 

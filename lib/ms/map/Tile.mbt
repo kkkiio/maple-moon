@@ -12,7 +12,10 @@ pub fn Tile::from_resource(src : NxNode, tileset : String) -> Tile {
   let (z, texture) = match tileset {
     "" => (0, @graphics.Texture::default())
     tileset => {
-      let dsrc = map_loader.load_res(["Tile", tileset, src_u, src_no])
+      let dsrc = map_loader
+        .load_res(["Tile", tileset, src_u, src_no])
+        .poll()
+        .unwrap() // TODO: handle loading error
       let mut z = dsrc["z"].get_int?().unwrap()
       if z == 0 {
         z = dsrc["zM"].get_int?().unwrap()
@@ -28,7 +31,7 @@ pub fn Tile::from_resource(src : NxNode, tileset : String) -> Tile {
 }
 
 pub fn draw(self : Tile, viewpos : Point[Int]) -> Unit {
-  self.texture.draw(DrawArgument::from_point(self.pos + viewpos))
+  self.texture.draw(@graphics.DrawArgument::new(self.pos + viewpos))
 }
 
 pub fn get_z(self : Tile) -> Int {

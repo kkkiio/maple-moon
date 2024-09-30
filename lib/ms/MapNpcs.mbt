@@ -319,8 +319,8 @@ pub fn get_position(self : Npc) -> Point[Int] {
   self.base.get_position()
 }
 
-fn npc_loader() -> @resource.Loader {
-  @resource.Loader::new("npc")
+fn npc_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("npc")
 }
 
 struct SpawnNpcHandler {} derive(Default)

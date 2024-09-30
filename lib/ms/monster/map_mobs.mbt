@@ -200,6 +200,6 @@ pub fn instantiate(self : MobSpawn, randomizer : @utils.Randomizer) -> Mob! {
   )
 }
 
-fn mob_loader() -> @resource.Loader {
-  @resource.Loader::new("mob")
+fn mob_loader() -> @resource.SyncLoader {
+  @resource.SyncLoader::new("mob")
 }

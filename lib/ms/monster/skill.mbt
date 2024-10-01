@@ -14,7 +14,7 @@ pub struct MobSkill {
 }
 
 pub fn MobSkill::new(id : Int, level : Int) -> MobSkill! {
-  let src = skill_loader().load_res(["MobSkill.img", id.to_string()])
+  let src = @skill.skill_loader().load_res(["MobSkill.img", id.to_string()])
   // let use_effect = MobSingleUseEffect::new(src["level"][level.to_string()])
   let is_buff = src["level"][level.to_string()]["mob"].get_children_count() > 0
   let buff = if is_buff {
@@ -66,10 +66,6 @@ pub fn MobSkill::get_level(self : MobSkill) -> Int {
 
 pub fn MobSkill::get_buff(self : MobSkill) -> MobBuff {
   self.buff
-}
-
-fn skill_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("Skill.nx")
 }
 
 struct Effect {

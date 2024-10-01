@@ -13,7 +13,7 @@ pub fn Afterimage::new(
 ) -> Afterimage {
   let src_opt = if skill_id > 0 {
     let strid = @string_format.extend_id(skill_id, 7)
-    let src = skill_loader().load_res(
+    let src = @skill.skill_loader().load_res(
       [
         strid.substring(end=3) + ".img",
         "skill",
@@ -59,10 +59,6 @@ pub fn Afterimage::default() -> Afterimage {
     first_frame: 0,
     displayed: true,
   }
-}
-
-pub fn skill_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("skill")
 }
 
 pub fn get_first_frame(self : Afterimage) -> Int {

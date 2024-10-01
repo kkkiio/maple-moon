@@ -607,6 +607,10 @@ function main() {
   prepareResourcePromises.push(
     effectLoader.load()
   );
+  const skillLoader = new ResourceLoader("Skill.nx");
+  prepareResourcePromises.push(
+    skillLoader.load()
+  );
 
   const textBitmapGenerator = new TextBitmapGenerator();
 
@@ -724,6 +728,8 @@ function main() {
             return mobLoader;
           case "effect":
             return effectLoader;
+          case "skill":
+            return skillLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

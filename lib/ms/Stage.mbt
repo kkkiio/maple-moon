@@ -143,12 +143,13 @@ pub fn transfer_player() -> Unit {
   new_player_map_transfer_packet().dispatch()
 }
 
-fn update(self : Stage) -> Unit! {
+fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   guard let StageState::ACTIVE(
     ~tiles_objs,
     ~backgrounds,
     ~physics,
     ~portals,
+    ~map_info,
     ..
   ) = self.state else {
     StageState::INACTIVE => return
@@ -184,7 +185,7 @@ fn update(self : Stage) -> Unit! {
   // chars_.update(self.physics);
   self.drops.update(physics)
   let player = self.player.unwrap()
-  player.update(physics) |> ignore
+  player.update(physics, map_info) |> ignore // Pass map_info here
   portals.update(player.get_position())
   self.camera.update(player.get_position())
   if player.is_invincible() {
@@ -239,11 +240,8 @@ pub fn send_key(
         @KeyType.Id::ACTION => {
           if down {
             match @KeyAction.get_action_by_id?(action).unwrap() {
-              @KeyAction.Id::UP => {
-                check_ladders(player, map_info, true)
+              @KeyAction.Id::UP =>
                 self.check_portals(map_info, portals, physics)
-              }
-              @KeyAction.Id::DOWN => check_ladders(player, map_info, false)
               // @KeyAction.Id::SIT => self.check_seats()
               @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(0)
               @KeyAction.Id::PICKUP => self.check_drops()
@@ -392,18 +390,6 @@ fn handle_stat(
 
 pub fn new_player_map_transfer_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
-}
-
-fn check_ladders(
-  player : @player.Player,
-  map_info : @map.MapInfo,
-  up : Bool
-) -> Unit {
-  if player.is_climbing() || player.is_attacking() {
-    return
-  }
-  let ladder = map_info.find_ladder(player.get_position(), up)
-  player.set_ladder(ladder)
 }
 
 pub fn get_mobs(self : Stage) -> @monster.MapMobs {

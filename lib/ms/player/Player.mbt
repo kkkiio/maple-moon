@@ -83,11 +83,22 @@ pub fn has_buff(self : Player, stat : @buff.StatId) -> Bool {
   }
 }
 
-pub fn update(self : Player, physics : @physics.Physics) -> Int {
+pub fn update(
+  self : Player,
+  physics : @physics.Physics,
+  map_info : @map.MapInfo
+) -> Int {
   match get_player_state(self.char_base.state) {
     Some(pst) => {
       pst.update(self)
       physics.move_object(self.get_phobj())
+
+      // Check for ladder interaction
+      if self.keys_down[@KeyAction.Id::UP].or(false) {
+        self.check_ladders(map_info, true)
+      } else if self.keys_down[@KeyAction.Id::DOWN].or(false) {
+        self.check_ladders(map_info, false)
+      }
       let aniend = self.char_base.update(
         physics,
         self.char_base.get_stancespeed(),
@@ -518,4 +529,12 @@ pub fn change_level(self : Player, level : Int) -> Unit {
     self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
   }
   self.stats.set_stat(@MapleStat.Id::LEVEL, level)
+}
+
+pub fn check_ladders(self : Player, map_info : @map.MapInfo, up : Bool) -> Unit {
+  if self.is_climbing() || self.is_attacking() {
+    return
+  }
+  let ladder = map_info.find_ladder(self.get_position(), up)
+  self.set_ladder(ladder)
 }

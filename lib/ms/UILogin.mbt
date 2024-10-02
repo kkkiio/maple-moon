@@ -90,51 +90,51 @@ pub fn UILogin::new() -> UILogin {
     ["Back", "login.img", "ani", "16"],
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       back["11"],
-      DrawArgument::from_point(Point::new(400, 300)),
+      state_args=DrawArgument::from_point(Point::new(400, 300)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       ani["17"],
-      DrawArgument::from_point(Point::new(129, 283)),
+      state_args=DrawArgument::from_point(Point::new(129, 283)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       ani["18"],
-      DrawArgument::from_point(Point::new(306, 252)),
+      state_args=DrawArgument::from_point(Point::new(306, 252)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       ani["19"],
-      DrawArgument::from_point(Point::new(379, 207)),
+      state_args=DrawArgument::from_point(Point::new(379, 207)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       back["35"],
-      DrawArgument::from_point(Point::new(399, 260)),
+      state_args=DrawArgument::from_point(Point::new(399, 260)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       prettyLogo,
-      DrawArgument::from_point(Point::new(394, 173)),
+      state_args=DrawArgument::from_point(Point::new(394, 173)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       title["signboard"],
-      DrawArgument::from_point(Point::new(391, 330)),
+      state_args=DrawArgument::from_point(Point::new(391, 330)),
     ),
   )
   obj.base.sprites.push(
-    @graphics.new_sprite_from_node(
+    @graphics.Sprite::from_resource(
       common["frame"],
-      DrawArgument::from_point(Point::new(400, 300)),
+      state_args=DrawArgument::from_point(Point::new(400, 300)),
     ),
   )
   // obj.base.buttons[UILoginButtons::BT_LOGIN.int_value()] = MapleButton::new(

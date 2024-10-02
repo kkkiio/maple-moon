@@ -1,7 +1,6 @@
 let min_delay_next_grab : Duration = 10 |> Duration::from_micro
 
 struct UIStateGame {
-  // stats : CharStats
   elements : Map[UIElementType, UIElement]
   element_order : Array[UIElementType]
   mut focused : UIElementType
@@ -31,7 +30,6 @@ let icon_map : @immut/hashmap.T[@inventory.IconType, UIElementType] = @immut/has
 
 pub fn UIStateGame::new() -> UIStateGame {
   {
-    // stats: CharStats::default(),
     elements: Map::new(),
     element_order: [],
     focused: UIElementType::UI_ELEMENT_NONE,

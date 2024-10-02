@@ -159,23 +159,27 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
       let up_down = keycode == @kb.arrowUp || keycode == @kb.arrowDown
       let left_right = keycode == @kb.arrowLeft || keycode == @kb.arrowRight
       let arrows = up_down || left_right
-      let npctalk = self.get_element(UIElementType::NPC_TALK)
-      let statusbar = self.get_element(UIElementType::STATUS_BAR)
-      let channel = self.get_element(UIElementType::CHANNEL)
-      let worldmap = self.get_element(UIElementType::WORLD_MAP)
-      let optionmenu = self.get_element(UIElementType::OPTION_MENU)
-      let shop = self.get_element(UIElementType::SHOP)
-      let joypad = self.get_element(UIElementType::JOYPAD)
-      let rank = self.get_element(UIElementType::CHAT_RANK)
-      let quit = self.get_element(UIElementType::QUIT)
-      match
-        [
-          npctalk, statusbar, channel, worldmap, optionmenu, shop, joypad, rank,
-          quit,
+      fn get_active_ui_by_type(t : UIElementType) -> UIElement? {
+        self
+        .get_element(t)
+        .filter(fn(it) { it.get_ui_element_base().is_active() })
+      }
+
+      let active_ui = [
+          get_active_ui_by_type(UIElementType::NPC_TALK),
+          // get_active_ui_by_type(UIElementType::STATUS_BAR), // TODO: check menu active
+          get_active_ui_by_type(UIElementType::CHANNEL),
+          get_active_ui_by_type(UIElementType::WORLD_MAP),
+          get_active_ui_by_type(UIElementType::OPTION_MENU),
+          get_active_ui_by_type(UIElementType::SHOP),
+          get_active_ui_by_type(UIElementType::JOYPAD),
+          get_active_ui_by_type(UIElementType::CHAT_RANK),
+          get_active_ui_by_type(UIElementType::QUIT),
         ]
         .iter()
         .flat_map(fn(it) { it |> @option.iter })
-        .find_first(fn(it) { it.get_ui_element_base().is_active() }) {
+        .find_first(fn(it) { it.get_ui_element_base().is_active() })
+      match active_ui {
         Some(it) => {
           it.send_key(mapping.action, pressed, escape) |> ignore
           sent = true
@@ -253,12 +257,13 @@ fn emplace[T : @ui.UIElement + @ui.UIElementDescriptor](
   }
 }
 
-pub fn set_element[T : @ui.UIElement + @ui.UIElementDescriptor](
+pub fn set_element[T : @ui.UIElement](
   self : UI,
+  focused : Bool,
   elem : T
 ) -> Unit {
   guard let Some(state) = self.state else { None => return  }
-  state.set_element(T::const_focused(), elem)
+  state.set_element(focused, elem)
 }
 
 pub fn toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](

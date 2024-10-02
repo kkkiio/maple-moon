@@ -3,16 +3,15 @@ pub struct Sprite {
   mut state_args : DrawArgument
 } derive(Default)
 
-pub fn new_sprite(animation : Animation, state_args : DrawArgument) -> Sprite {
+pub fn Sprite::new(animation : Animation, state_args : DrawArgument) -> Sprite {
   { animation, state_args }
 }
 
-pub fn new_sprite_from_node(src : NxNode, state_args : DrawArgument) -> Sprite {
-  { animation: Animation::from_resource(src), state_args }
-}
-
-pub fn new_sprite_from_node_only(src : NxNode) -> Sprite {
-  new_sprite_from_node(src, DrawArgument::default())
+pub fn Sprite::from_resource(
+  src : NxNode,
+  ~state_args : DrawArgument = DrawArgument::default()
+) -> Sprite {
+  Sprite::new(Animation::from_resource(src), state_args)
 }
 
 pub fn draw(self : Sprite, parentpos : Point[Int], alpha : Double) -> Unit {

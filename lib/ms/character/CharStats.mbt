@@ -229,6 +229,10 @@ pub fn get_weapontype(self : CharStats) -> @Weapon.Type {
   self.weapon_type
 }
 
+pub fn get_exp(self : CharStats) -> Int64 {
+  self.exp
+}
+
 pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
   self.exp = exp
 }

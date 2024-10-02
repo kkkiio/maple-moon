@@ -171,11 +171,11 @@ pub struct UIElementBase {
 }
 
 pub fn UIElementBase::new(
-  p : Point[Int],
-  d : Point[Int],
+  position : Point[Int],
+  dimension : Point[Int],
   ~active : Bool = true
 ) -> UIElementBase {
-  { position: p, dimension: d, active, sprites: [] }
+  { position, dimension, active, sprites: [] }
 }
 
 pub fn UIElementBase::default() -> UIElementBase {

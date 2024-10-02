@@ -82,10 +82,6 @@ pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
   self.player = Some(player)
   self.combat = Some(Combat::new(self.damage_number_set, player, self.mobs))
   self.start = now_micro() |> TimePoint::from_micro
-
-  // CharStats stats = self.player.get_stats();
-  // level_before_ = stats.get_stat(@MapleStat.Id::LEVEL);
-  // exp_before_ = stats.get_exp();
   player
 }
 

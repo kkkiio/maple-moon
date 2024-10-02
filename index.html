@@ -38,8 +38,9 @@
     }
 
     #container {
-      display: grid;
-      grid-template-columns: auto 1fr;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     #canvas {
@@ -63,7 +64,6 @@
 <body>
   <div id="container">
     <canvas id="canvas"></canvas>
-    <div id="list"></div>
   </div>
   <div id="test"></div>
 </body>

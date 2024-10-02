@@ -54,8 +54,8 @@ pub fn EffectLayer::add(
 ) -> Unit {
   match self.effects[z] {
     Some(effects) =>
-      effects.push({ sprite: new_sprite(animation, args), speed })
-    None => self.effects[z] = [{ sprite: new_sprite(animation, args), speed }]
+      effects.push({ sprite: Sprite::new(animation, args), speed })
+    None => self.effects[z] = [{ sprite: Sprite::new(animation, args), speed }]
   }
 }
 

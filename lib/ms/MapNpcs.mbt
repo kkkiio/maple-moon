@@ -71,7 +71,7 @@ pub fn send_cursor(
         npc.talk(
           fn(id, msgtype, b0, b1, speaker, str) {
             let ui = UINpcTalk::new()
-            UI::get().set_element(ui)
+            UI::get().set_element(UINpcTalk::const_focused(), ui)
             ui.change_text?(id, msgtype, b0, b1, speaker, str).unwrap()
           },
         )
@@ -388,7 +388,7 @@ pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
     (0, 0)
   }
   let ui = UINpcTalk::new()
-  self.ui.set_element(ui)
+  self.ui.set_element(UINpcTalk::const_focused(), ui)
   self.ui.enable()
   ui.change_text!(npcid, msgtype, style_b0, style_b1, speaker, text)
 }

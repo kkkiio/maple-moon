@@ -399,16 +399,12 @@ class TextBitmapGenerator {
     this.textCtx = document.createElement("canvas").getContext("2d", {
       willReadFrequently: true,
     });
-    this.listDom = document.getElementById("list");
     this.testDom = document.getElementById("test");
   }
   // TODO: allow individual font style
   createImage(textHtml, fontSize, fontName, color, textAlign, maxWidth) {
     const html =
       `<p style="font-size: ${fontSize}px; font-family: ${fontName}; color: ${color}; text-align: ${textAlign};">${textHtml}</p>`;
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    this.listDom.appendChild(div);
     const tmpImg = document.createElement('img');
     const [width, height] = this.calculateTextSize(html, maxWidth);
     const bmp = {

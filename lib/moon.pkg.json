@@ -11,9 +11,7 @@
                 "onmousedown",
                 "onmouseup",
                 "onkeydown",
-                "onkeyup",
-                "transit_to",
-                "load_player"
+                "onkeyup"
             ],
             "format": "esm"
         }

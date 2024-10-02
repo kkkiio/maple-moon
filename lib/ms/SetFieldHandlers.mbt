@@ -75,6 +75,9 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   // Sound(Sound::Name::GAME_START).play();
 
   UI::get().change_state(UiState::GAME)
+  let stats = player.get_stats()
+  let stats_bar = @player.UIStatusBar::new(stats)
+  UI::get().set_element(false, stats_bar)
 }
 
 /// Finished updating player stats

@@ -136,7 +136,7 @@ pub enum SkillId {
 
   // Bandit
   MESO_EXPLOSION
-}
+} derive(Eq)
 
 pub fn int_value(self : SkillId) -> Int {
   match self {
@@ -278,4 +278,85 @@ pub fn int_value(self : SkillId) -> Int {
     // Bandit
     SkillId::MESO_EXPLOSION => 4211006
   }
+}
+
+pub fn SkillId::from_int(value : Int) -> SkillId!@utils.UnknownEnum {
+  match value {
+    1000 => SkillId::FOLLOW_THE_LEAD
+    1001 => SkillId::ANGEL_BLESSING
+    1002 => SkillId::THREE_SNAILS
+    1003 => SkillId::HEAL
+    1004 => SkillId::FEATHER
+    1005 => SkillId::LEGENDARY_SPIRIT
+    1006 => SkillId::MONSTER_RIDER
+    1007 => SkillId::ECHO_OF_THE_HERO
+    1000000 => SkillId::IMPROVED_HP_RECOVERY
+    1000001 => SkillId::IMPROVED_MAX_HP
+    1000002 => SkillId::IMPROVED_LADDER_RECOVERY
+    1001003 => SkillId::IRON_BODY
+    1001004 => SkillId::POWER_STRIKE
+    1001005 => SkillId::SLASH_BLAST
+    1100000 => SkillId::SWORD_MASTERY_FIGHTER
+    1100001 => SkillId::AXE_MASTERY
+    1100002 => SkillId::SWORD_FA_FIGHTER
+    1100003 => SkillId::AXE_FA
+    1101004 => SkillId::SWORD_BOOSTER_FIGHTER
+    1101005 => SkillId::AXE_BOOSTER
+    1101006 => SkillId::RAGE
+    1101007 => SkillId::POWER_GUARD_FIGHTER
+    1110000 => SkillId::IMPROVED_MP_RECOVERY_CRUSADER
+    1110001 => SkillId::SHIELD_MASTERY
+    1111003 => SkillId::SWORD_PANIC
+    1111004 => SkillId::AXE_PANIC
+    1111005 => SkillId::SWORD_COMA
+    1111006 => SkillId::AXE_COMA
+    1111008 => SkillId::SHOUT
+    1120003 => SkillId::ADVANCED_COMBO_ATTACK
+    1120004 => SkillId::ACHILLES_HERO
+    1120005 => SkillId::GUARDIAN_HERO
+    1121006 => SkillId::RUSH_HERO
+    1121008 => SkillId::BRANDISH
+    1200000 => SkillId::SWORD_MASTERY_PAGE
+    1200001 => SkillId::BW_MASTERY
+    1200002 => SkillId::SWORD_FA_PAGE
+    1200003 => SkillId::BW_FA
+    2000000 => SkillId::IMPROVE_HP_RECOVERY
+    2000001 => SkillId::IMPROVE_MAX_HP
+    2001002 => SkillId::MAGIC_GUARD
+    2001003 => SkillId::MAGIC_ARMOR
+    2001004 => SkillId::ENERGY_BOLT
+    2001005 => SkillId::MAGIC_CLAW
+    2100000 => SkillId::MP_EATER_FP
+    2101001 => SkillId::MEDITATION_FP
+    2101002 => SkillId::TELEPORT_FP
+    2101003 => SkillId::SLOW_FP
+    2101004 => SkillId::FIRE_ARROW
+    2101005 => SkillId::POISON_BREATH
+    2110000 => SkillId::PARTIAL_RESISTANCE_FP
+    2110001 => SkillId::ELEMENT_AMPLIFICATION_FP
+    2111002 => SkillId::EXPLOSION
+    2111003 => SkillId::POISON_MIST
+    2111004 => SkillId::SEAL_FP
+    2111005 => SkillId::SPELL_BOOSTER_FP
+    2111006 => SkillId::ELEMENT_COMPOSITION_FP
+    2121003 => SkillId::FIRE_DEMON
+    2121005 => SkillId::ELQUINES
+    2121006 => SkillId::PARALYZE
+    2121007 => SkillId::METEOR_SHOWER
+    2201002 => SkillId::IL_TELEPORT
+    2301001 => SkillId::PRIEST_TELEPORT
+    4111005 => SkillId::AVENGER
+    4111006 => SkillId::FLASH_JUMP
+    4121007 => SkillId::TRIPLE_THROW
+    4211006 => SkillId::MESO_EXPLOSION
+    _ => raise @utils.UnknownEnum(value)
+  }
+}
+
+pub fn hash(self : SkillId) -> Int {
+  self.int_value()
+}
+
+pub fn hash_combine(self : SkillId, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
 }

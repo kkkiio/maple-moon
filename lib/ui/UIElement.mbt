@@ -173,9 +173,10 @@ pub struct UIElementBase {
 pub fn UIElementBase::new(
   position : Point[Int],
   dimension : Point[Int],
-  ~active : Bool = true
+  ~active : Bool = true,
+  ~sprites : Array[Sprite] = [],
 ) -> UIElementBase {
-  { position, dimension, active, sprites: [] }
+  { position, dimension, active, sprites }
 }
 
 pub fn UIElementBase::default() -> UIElementBase {

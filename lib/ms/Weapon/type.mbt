@@ -42,7 +42,7 @@ pub fn int_value(self : Type) -> Int {
   }
 }
 
-pub fn by_value(value : Int) -> Type!@utils.UnknownEnum {
+pub fn Type::by_value(value : Int) -> Type!@utils.UnknownEnum {
   match value {
     0 => NONE
     130 => SWORD_1H

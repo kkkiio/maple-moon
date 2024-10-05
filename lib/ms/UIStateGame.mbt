@@ -156,9 +156,16 @@ pub fn send_key(
           //         @KeyAction.Id::STATS => {
           //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
           //         }
-          //         @KeyAction.Id::SKILLS => {
-          //             self.emplace(UISkillBook::new(Stage::get().get_player().get_stats(), Stage::get().get_player().get_skills()))
-          //         }
+          @KeyAction.Id::SKILLS =>
+            self.toggle_element(
+              UIElementType::SKILL_BOOK,
+              @player.SkillBookUI::is_focused(),
+              fn() {
+                @player.SkillBookUI::new(
+                  Stage::get().get_player().unwrap().get_skills(),
+                )
+              },
+            )
           //         // @KeyAction.Id::FRIENDS => {
           //         //     self.handle_user_list(@KeyAction.Id::FRIENDS)
           //         // }
@@ -300,7 +307,7 @@ pub fn send_cursor(
   match self.get(self.focused) {
     Some(focusedelement) => {
       if focusedelement.get_ui_element_base().is_active() {
-        self.remove_cursor(focusedelement.get_type())
+        self.remove_cursor(self.focused)
         return focusedelement.send_cursor(clicked, cursorpos)
       }
       self.focused = UIElementType::UI_ELEMENT_NONE

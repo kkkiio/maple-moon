@@ -41,6 +41,7 @@
     {
       "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
       "alias": "combat_ui"
-    }
+    },
+    "KKKIIO/maple-moon-client/lib/ms/skill"
   ]
 }

@@ -272,3 +272,7 @@ pub fn get_rectangle(
     cy + (self.yscale * rb.to_double()).to_int(),
   )
 }
+
+pub fn get_pos(self : DrawArgument) -> Point[Int] {
+  self.pos
+}

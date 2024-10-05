@@ -4,6 +4,7 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/constants",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/utils"
+    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/ms/equip/stat"
   ]
 }

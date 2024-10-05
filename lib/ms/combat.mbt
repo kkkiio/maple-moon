@@ -144,9 +144,9 @@ fn apply_result_movement(
   move : @combat.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
-  if move.get_id() == @character.SkillId::RUSH_HERO.int_value() ||
-    move.get_id() == @character.SkillId::RUSH_PALADIN.int_value() ||
-    move.get_id() == @character.SkillId::RUSH_DK.int_value() {
+  if move.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
+    move.get_id() == @skill.SkillId::RUSH_PALADIN.int_value() ||
+    move.get_id() == @skill.SkillId::RUSH_DK.int_value() {
     self.apply_rush(result)
   }
 }

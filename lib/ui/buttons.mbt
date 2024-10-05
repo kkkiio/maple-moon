@@ -8,6 +8,10 @@ pub fn UIButtons::default() -> UIButtons {
   { buttons: {} }
 }
 
+pub fn UIButtons::new() -> UIButtons {
+  { buttons: {} }
+}
+
 pub fn draw(self : UIButtons, position : Point[Int]) -> Unit {
   self.buttons.each(fn(_k, button) { button.draw(position) })
 }

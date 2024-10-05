@@ -1,5 +1,6 @@
 pub fn log(level : Level, context : Map[String, Show], msg : String) -> Unit {
   match level {
+    Level::TRACE => () // do nothing
     Level::DEBUG => log_debug(to_logstr(context, msg))
     Level::INFO => log_info(to_logstr(context, msg))
     Level::WARN => log_warn(to_logstr(context, msg))
@@ -39,6 +40,7 @@ fn log_warn(msg : Js_string) -> Unit = "log" "warn"
 fn log_error(msg : Js_string) -> Unit = "log" "error"
 
 pub enum Level {
+  TRACE
   DEBUG
   INFO
   WARN

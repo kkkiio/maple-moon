@@ -321,7 +321,7 @@ pub fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
 
 pub fn log_level(self : Opcode) -> @log.Level {
   match self {
-    MOB_MOVE_RESPONSE => @log.Level::DEBUG
+    MOB_MOVE_RESPONSE => @log.Level::TRACE
     _ => @log.Level::INFO
   }
 }

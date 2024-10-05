@@ -26,10 +26,8 @@ struct UINpcTalk {
   mut row_max : Int
   min_height : Int
   mut show_slider : Bool
-  mut draw_text : Bool
   // slider:Slider
-  mut t : @npc.TalkType?
-  mut formatted_text : String
+  mut t : TalkType?
   mut formatted_text_pos : Int
   mut timestep : Int
 }
@@ -47,11 +45,8 @@ pub fn UINpcTalk::const_toggled() -> Bool {
 }
 
 struct NPCTalkContent {
-  mut text : @graphics.Text
   text_content : Array[@graphics.Text]
-  text_button_content : Array[TextButton]
-  line_color : @struct.ColorName
-  selection : Int
+  text_button_content : Array[@ui.TextButton]
 }
 
 let bid_all_level = 0
@@ -94,7 +89,6 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let unit_rows = 0
   let row_max = 0
   let show_slider = false
-  let draw_text = false
   let formatted_text = ""
   let formatted_text_pos = 0
   let timestep = 0
@@ -150,8 +144,6 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     unit_rows,
     row_max,
     show_slider,
-    draw_text,
-    formatted_text,
     formatted_text_pos,
     timestep,
     top,
@@ -161,7 +153,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     min_height,
     t: None,
     name,
-    height: 0,
+    height: max_height, // TODO: fit height to text
     speaker: @graphics.Texture::default(),
     content: None,
   }
@@ -216,13 +208,13 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
         // TODO: draw slider
       } else {
         let mut init_height = 19
-        for element in content.text_button_content {
+        for element in content.text_content {
           element.draw(
             self.base.position + @struct.Point::new(166, init_height),
           )
           init_height += element.height()
         }
-        for element in content.text_content {
+        for element in content.text_button_content {
           element.draw(
             self.base.position + @struct.Point::new(166, init_height),
           )
@@ -244,13 +236,13 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   match self.t {
     Some(t) =>
       match t {
-        @npc.TalkType::SEND_NEXT | @npc.TalkType::SEND_OK =>
+        TalkType::SEND_NEXT | TalkType::SEND_OK =>
           if bid == bid_next {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           } else if bid == bid_prev {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
-        @npc.TalkType::SEND_NEXT_PREV =>
+        TalkType::SEND_NEXT_PREV =>
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_next {
@@ -258,7 +250,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
           } else if bid == bid_prev {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           }
-        @npc.TalkType::SEND_YESNO =>
+        TalkType::SEND_YESNO =>
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_no {
@@ -266,7 +258,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
           } else if bid == bid_yes {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
-        @npc.TalkType::SEND_ACCEPT_DECLINE =>
+        TalkType::SEND_ACCEPT_DECLINE =>
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), -1).dispatch()
           } else if bid == bid_qno {
@@ -274,20 +266,20 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
           } else if bid == bid_qyes {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
-        @npc.TalkType::SEND_GET_TEXT => ()
-        @npc.TalkType::SEND_GET_NUMBER =>
+        TalkType::SEND_GET_TEXT => ()
+        TalkType::SEND_GET_NUMBER =>
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           } else if bid == bid_ok {
             new_npc_talk_more_packet(t.int_value(), 1).dispatch()
           }
-        @npc.TalkType::SEND_SIMPLE =>
+        TalkType::SEND_SIMPLE =>
           if bid == bid_close {
             new_npc_talk_more_packet(t.int_value(), 0).dispatch()
           } else {
             let btn = self.content.unwrap().text_button_content[bid -
               bid_text_button]
-            new_npc_talk_more_packet_with_selection(btn.option_number).dispatch()
+            new_npc_talk_more_packet_with_selection(btn.get_option_number()).dispatch()
           }
         _ => ()
       }
@@ -296,7 +288,9 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   match self.content {
     Some(content) =>
       for _, element in content.text_button_content {
-        self.buttons.buttons.remove(bid_text_button + element.option_number)
+        self.buttons.buttons.remove(
+          bid_text_button + element.get_option_number(),
+        )
       }
     None => ()
   }
@@ -319,16 +313,11 @@ pub fn send_cursor(
   if estate == CursorState::CLICKING && clicked {
     match self.content {
       Some(content) =>
-        if self.draw_text {
-          self.draw_text = false
-          content.text = content.text.change_text(self.formatted_text)
-        } else {
-          for element in content.text_button_content.iter() {
-            if element.bounds(self.base.position).contains(cursorpos) {
-              self.button_pressed(bid_text_button + element.option_number)
-              |> ignore
-              break
-            }
+        for element in content.text_button_content.iter() {
+          if element.bounds(self.base.position).contains(cursorpos) {
+            self.button_pressed(bid_text_button + element.get_option_number())
+            |> ignore
+            break
           }
         }
       None => ()
@@ -361,36 +350,6 @@ pub fn get_type(self : UINpcTalk) -> UIElementType {
   UIElementType::NPC_TALK
 }
 
-fn format_text(tx : String, npcid : Int) -> String! {
-  @text_tmpl.format_text!(
-    tx,
-    {
-      variable_map: {
-        "p": fn(_v) {
-          @resource.string_loader()
-          .load_res(["Npc.img", npcid.to_string(), "name"])
-          .get_string()
-        },
-        "h": fn(_v) { Stage::get().get_player().unwrap().get_name() },
-        "t": fn(v) {
-          let itemid = @strconv.parse_int!(v)
-          let itemname = @resource.string_loader()
-            .load_res(["Consume.img", itemid.to_string(), "name"])
-            .get_string()
-          itemname
-        },
-        "m": fn(v) {
-          let mapid = @strconv.parse_int!(v)
-          let map_info = get_map_info_by_id(mapid)
-          map_info.name
-        },
-        "e": fn(v) { "<b>\{v}</b>" },
-        "b": fn(v) { "<span style=\"color: blue;\">\{v}</span>" },
-      },
-    },
-  )
-}
-
 pub fn change_text(
   self : UINpcTalk,
   npcid : Int,
@@ -398,20 +357,17 @@ pub fn change_text(
   style_b0 : Int,
   style_b1 : Int,
   speakerbyte : Int,
-  tx : String
+  tx : String,
+  player_name : String
 ) -> Unit! {
-  self.t = @npc.TalkType::from_int(msgtype, style_b0, style_b1)
+  self.t = TalkType::from_int(msgtype, style_b0, style_b1)
   self.timestep = 0
-  self.draw_text = true
   self.formatted_text_pos = 0
-  self.formatted_text = format_text!(tx, npcid)
-  let content = convert_npc_text(self.formatted_text)
+  let content = convert_npc_text!(tx, npcid, player_name)
   self.content = content |> @option.some
   for element in content.text_button_content {
-    self.buttons.buttons[bid_text_button + element.option_number] = element
+    self.buttons.buttons[bid_text_button + element.get_option_number()] = element
   }
-  let text_height = content.text.height()
-  content.text = content.text.change_text("")
   self.name = if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
@@ -426,27 +382,11 @@ pub fn change_text(
   }
   self.height = self.min_height + 20
   self.show_slider = false
-  if text_height > self.min_height {
-    if text_height > max_height {
-      self.height = max_height
-      self.show_slider = true
-      self.row_max = text_height / 248 + 1
-      self.unit_rows = 1
-      let slider_y = self.top.height() - 7
-      // TODO: update slider
-      //                 slider_ = Slider(Slider::Type::DEFAULT_SILVER,
-      //                                  Range<int16_t>(slider_y, slider_y + height_),
-      //                                  top_.width() - 26,
-      //                                  unit_rows_,
-      //                                  row_max_,
-      //                                  onmoved_);
-    } else {
-      self.height = text_height
-    }
-  }
   self.reset_content_pos()
-  for _, button in self.buttons.buttons {
-    button.get_button_base().set_active(false)
+  for i, button in self.buttons.buttons {
+    if i < bid_text_button { // enable selection buttons
+      button.get_button_base().set_active(false)
+    }
     button.get_button_base().set_state(ButtonState::NORMAL)
   }
   let y_cord = self.height + 48
@@ -458,13 +398,13 @@ pub fn change_text(
   match self.t {
     Some(t) =>
       match t {
-        @npc.TalkType::SEND_OK =>
+        TalkType::SEND_OK =>
           self.buttons.buttons[bid_ok]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(469, y_cord))
           .set_active(true)
-        @npc.TalkType::SEND_YESNO => {
+        TalkType::SEND_YESNO => {
           let yes_position = @struct.Point::new(389, y_cord)
           self.buttons.buttons[bid_yes]
           .unwrap()
@@ -477,19 +417,19 @@ pub fn change_text(
           ..set_position(yes_position + @struct.Point::new(65, 0))
           .set_active(true)
         }
-        @npc.TalkType::SEND_NEXT =>
+        TalkType::SEND_NEXT =>
           self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
-        @npc.TalkType::SEND_PREV =>
+        TalkType::SEND_PREV =>
           self.buttons.buttons[bid_prev]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
-        @npc.TalkType::SEND_NEXT_PREV => {
+        TalkType::SEND_NEXT_PREV => {
           self.buttons.buttons[bid_next]
           .unwrap()
           .get_button_base()
@@ -501,7 +441,7 @@ pub fn change_text(
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         }
-        @npc.TalkType::SEND_ACCEPT_DECLINE => {
+        TalkType::SEND_ACCEPT_DECLINE => {
           self.buttons.buttons[bid_qyes]
           .unwrap()
           .get_button_base()
@@ -640,92 +580,71 @@ struct NxMapInfo {
   full_name : String
 }
 
-fn convert_npc_text(formatted_text : String) -> NPCTalkContent {
-  let s = formatted_text
-  let t = s.replace_all(old="\r\n", new="\n").replace_all(old="\r", new="\n")
-  let builder = {
-    text_content: [],
-    text_button_content: [],
-    line_color: @struct.ColorName::BLACK,
-    selection: 0,
-  }
-  for line in t.split("\n") {
-    builder.set_content(line)
-  }
-  let text = @graphics.Text::new(
-    formatted_text,
-    @graphics.FontId::A18M,
-    @graphics.TextAlignment::LEFT,
-    @struct.ColorName::DARKGREY,
-    max_width=320,
+fn convert_npc_text(
+  tx : String,
+  npcid : Int,
+  player_name : String
+) -> NPCTalkContent! {
+  let content = parse_talk_content!(
+    tx,
+    new_variable_context(npcid, player_name),
   )
+  @log.info({ "tx": tx, "content": content }, "npc talk")
+  let text_button_content = []
+  match content.selections {
+    Some(selections) =>
+      for selection in selections.selections {
+        let button = @ui.TextButton::new(
+          @graphics.Text::new(
+            selection.1,
+            @graphics.FontId::A18M,
+            @graphics.TextAlignment::LEFT,
+            selections.color,
+            max_width=320,
+          ),
+          selection.0,
+        )
+        text_button_content.push(button)
+      }
+    None => ()
+  }
   {
-    text,
-    text_content: builder.text_content,
-    text_button_content: builder.text_button_content,
-    line_color: builder.line_color,
-    selection: builder.selection,
+    text_content: [
+      @graphics.Text::new(
+        content.text_html,
+        @graphics.FontId::A18M,
+        @graphics.TextAlignment::LEFT,
+        @struct.ColorName::DARKGREY,
+        max_width=320,
+      ),
+    ],
+    text_button_content,
   }
 }
 
 let max_height = 248
 
-struct NPCTalkContentBuilder {
-  text_content : Array[@graphics.Text]
-  text_button_content : Array[TextButton]
-  mut line_color : @struct.ColorName
-  mut selection : Int
-}
-
-fn set_content(self : NPCTalkContentBuilder, line : String) -> Unit {
-  match try_parse_button_selection(line) {
-    Some(selection) => {
-      if line.contains("#b") {
-        self.line_color = @struct.ColorName::BLUE
-      }
-      self.selection = selection
-      let button = TextButton::new(
-        @graphics.Text::new(
-          line,
-          @graphics.FontId::A18M,
-          @graphics.TextAlignment::LEFT,
-          self.line_color,
-          max_width=320,
-        ),
-        self.selection,
-      )
-      self.text_button_content.push(button)
-    }
-    None => {
-      self.text_content.push(
-        @graphics.Text::new(
-          line,
-          @graphics.FontId::A18M,
-          @graphics.TextAlignment::LEFT,
-          @struct.ColorName::DARKGREY,
-          max_width=320,
-        ),
-      )
-      if line.ends_with("#b") {
-        self.line_color = @struct.ColorName::BLUE
-      }
-    }
+fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
+  {
+    fn_map: {
+      'p': fn(_v) {
+        @resource.string_loader()
+        .load_res(["Npc.img", npcid.to_string(), "name"])
+        .get_string()
+      },
+      'h': fn(_v) { player_name },
+      't': fn(v) {
+        let itemid = @strconv.parse_int!(v)
+        let itemname = @resource.string_loader()
+          .load_res(["Consume.img", itemid.to_string(), "name"])
+          .get_string()
+        itemname
+      },
+      'm': fn(v) {
+        let mapid = @strconv.parse_int!(v)
+        let map_info = get_map_info_by_id(mapid)
+        map_info.name
+      },
+    },
   }
-}
-
-fn try_parse_button_selection(line : String) -> Int? {
-  let placeholder_start = line.index_of("#L")
-  if placeholder_start < 0 {
-    return None
-  }
-  let digit_start = placeholder_start + 2
-  let digits = if digit_start + 2 < line.length() &&
-    line[digit_start + 2] == '#' {
-    line.substring(start=digit_start, end=digit_start + 2)
-  } else if digit_start + 1 < line.length() && line[digit_start + 1] == '#' {
-    line.substring(start=digit_start, end=digit_start + 1)
-  } else {
-    return None
-  }
-  @strconv.parse_int?(digits, base=10).to_option()
 }

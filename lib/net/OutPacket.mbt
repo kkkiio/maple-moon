@@ -405,7 +405,7 @@ pub fn hash(self : OutPacketOpcode) -> Hash {
 
 pub fn log_level(self : OutPacketOpcode) -> @log.Level {
   match self {
-    MOVE_PLAYER | MOVE_MONSTER => @log.Level::DEBUG
+    MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE
     _ => @log.Level::INFO
   }
 }

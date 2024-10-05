@@ -1,3 +1,5 @@
+typealias CursorState = @ui.CursorState
+
 typealias Physics = @physics.Physics
 
 typealias Rectangle[T] = @struct.Rectangle[T]
@@ -68,13 +70,24 @@ pub fn send_cursor(
     let npc = map_object
     if npc.is_active() && npc.inrange(position, viewpos) {
       if pressed {
-        npc.talk(
-          fn(id, msgtype, b0, b1, speaker, str) {
-            let ui = UINpcTalk::new()
-            UI::get().set_element(UINpcTalk::const_focused(), ui)
-            ui.change_text?(id, msgtype, b0, b1, speaker, str).unwrap()
-          },
-        )
+        match npc.talk() {
+          Some({ id, msgtype, b0, b1, speaker, str }) => {
+            let ui = @npc.UINpcTalk::new()
+            UI::get().set_element(@npc.UINpcTalk::const_focused(), ui)
+            ui
+            .change_text?(
+              id,
+              msgtype,
+              b0,
+              b1,
+              speaker,
+              str,
+              Stage::get().get_player().unwrap().get_name(),
+            )
+            .unwrap()
+          }
+          None => ()
+        }
         new_talk_to_npc_packet(npc.get_oid()).dispatch()
         return CursorState::IDLE
       }
@@ -127,19 +140,26 @@ struct Npc {
   // func_label:Text
 }
 
-pub fn talk(
-  self : Npc,
-  talk_func : (Int, Int, Int, Int, Int, String) -> Unit
-) -> Unit {
+pub struct TalkArgs {
+  id : Int
+  msgtype : Int
+  b0 : Int
+  b1 : Int
+  speaker : Int
+  str : String
+}
+
+pub fn talk(self : Npc) -> TalkArgs? {
   if self.scripted {
-    return
+    return None
   }
   match
     self.dialogue["d0"]
     .filter(fn(strs) { strs.is_empty().not() })
     .map(fn(strs) { strs[0] }) {
-    Some(str) => talk_func(self.npc_id, 0, 0, 1, 0, str)
-    None => ()
+    Some(str) =>
+      Some({ id: self.npc_id, msgtype: 0, b0: 0, b1: 1, speaker: 0, str })
+    None => None
   }
 }
 
@@ -153,11 +173,11 @@ pub fn Npc::new(
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
   let strid = @string_format.extend_id(id, 7) + ".img"
-  let mut src = npc_loader().load_res([strid])
+  let mut src = @npc.npc_loader().load_res([strid])
   let strsrc = @resource.string_loader().load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
   if link.is_empty().not() {
-    src = npc_loader().load_res([link + ".img"])
+    src = @npc.npc_loader().load_res([link + ".img"])
   }
   let info = src["info"]
   let hide_name = info["hideName"].get_bool?().unwrap()
@@ -319,10 +339,6 @@ pub fn get_position(self : Npc) -> Point[Int] {
   self.base.get_position()
 }
 
-fn npc_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("npc")
-}
-
 struct SpawnNpcHandler {} derive(Default)
 
 pub fn SpawnNpcHandler::new() -> SpawnNpcHandler {
@@ -387,8 +403,16 @@ pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
   } else {
     (0, 0)
   }
-  let ui = UINpcTalk::new()
-  self.ui.set_element(UINpcTalk::const_focused(), ui)
+  let npcTalk = @npc.UINpcTalk::new()
+  self.ui.set_element(@npc.UINpcTalk::const_focused(), npcTalk)
   self.ui.enable()
-  ui.change_text!(npcid, msgtype, style_b0, style_b1, speaker, text)
+  npcTalk.change_text!(
+    npcid,
+    msgtype,
+    style_b0,
+    style_b1,
+    speaker,
+    text,
+    Stage::get().get_player().unwrap().get_name(),
+  )
 }

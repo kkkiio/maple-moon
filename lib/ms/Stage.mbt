@@ -114,7 +114,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
     StageState::INACTIVE => return
     StageState::TRANSITION(_) => return
   }
-  let viewpos = self.camera.position_interpolated(alpha)
+  let viewpos = self.camera.get_position(~alpha)
   let viewrpos = self.camera.real_position(alpha)
   let viewx = viewrpos.x
   let viewy = viewrpos.y
@@ -217,7 +217,7 @@ fn send_cursor(
   //     }
   // }
 
-  self.npcs.send_cursor(pressed, position, self.camera.position())
+  self.npcs.send_cursor(pressed, position, self.camera.get_position())
 }
 
 pub fn send_key(

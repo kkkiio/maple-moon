@@ -1,3 +1,13 @@
+typealias UIButtons = @ui.UIButtons
+
+typealias ButtonState = @ui.ButtonState
+
+typealias UIElementBase = @ui.UIElementBase
+
+typealias UIElementType = @ui.UIElementType
+
+typealias UIElement = @ui.UIElement
+
 let min_delay_next_grab : Duration = 10 |> Duration::from_micro
 
 struct UIStateGame {

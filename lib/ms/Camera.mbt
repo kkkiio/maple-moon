@@ -70,18 +70,9 @@ pub fn set_view(
   self.vbounds = -vborders
 }
 
-pub fn Camera::position(self : Camera) -> Point[Int] {
-  let shortx = self.x.get().round().to_int()
-  let shorty = self.y.get().round().to_int()
-  Point::new(shortx, shorty)
-}
-
-pub fn Camera::position_interpolated(
-  self : Camera,
-  alpha : Double
-) -> Point[Int] {
-  let interx = self.x.get(~alpha).round().to_int()
-  let intery = self.y.get(~alpha).round().to_int()
+pub fn Camera::get_position(self : Camera, ~alpha? : Double) -> Point[Int] {
+  let interx = self.x.get(~alpha?).round().to_int()
+  let intery = self.y.get(~alpha?).round().to_int()
   Point::new(interx, intery)
 }
 

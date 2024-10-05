@@ -1,7 +1,7 @@
 typealias Text = @graphics.Text
 
 struct TextButton {
-  base : @ui.ButtonBase
+  base : ButtonBase
   text : Text
   option_number : Int
 }
@@ -19,7 +19,7 @@ pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
   }
 }
 
-pub fn get_button_base(self : TextButton) -> @ui.ButtonBase {
+pub fn get_button_base(self : TextButton) -> ButtonBase {
   self.base
 }
 
@@ -43,10 +43,13 @@ pub fn update(self : TextButton) -> Unit {
 
 }
 
-pub fn bounds(self : TextButton, parentpos : Point[Int]) -> Rectangle[Int] {
+pub fn bounds(
+  self : TextButton,
+  parentpos : Point[Int]
+) -> @struct.Rectangle[Int] {
   let lt = parentpos + self.base.position
   let rb = lt + self.text.dimensions()
-  Rectangle::new(lt, rb)
+  @struct.Rectangle::new(lt, rb)
 }
 
 pub fn height(self : TextButton) -> Int {

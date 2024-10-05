@@ -66,6 +66,21 @@ pub enum ColorName {
   MALIBU
 } derive(Eq)
 
+pub fn css_name(self : ColorName) -> String {
+  match self {
+    BLACK => "black"
+    WHITE => "white"
+    YELLOW => "yellow"
+    BLUE => "blue"
+    RED => "red"
+    _ => abort("TODO")
+  }
+}
+
+pub fn output(self : ColorName, logger : Logger) -> Unit {
+  logger.write_string(self.css_name())
+}
+
 pub fn color(self : ColorName) -> Color {
   match self {
     BLACK => clr_black

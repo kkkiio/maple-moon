@@ -20,7 +20,7 @@ pub struct CharStats {
 }
 
 pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
-  let job = s.stats[@MapleStat.Id::JOB].or(0) |> @job.Job::from_id
+  let job = @job.Job::new(id=s.stats[@MapleStat.Id::JOB].or(0))
   let cs = {
     job,
     exp: s.exp,

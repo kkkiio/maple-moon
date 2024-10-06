@@ -1,11 +1,11 @@
 /// A standard maplestory-button with 4 states and a texture for each state.
 struct MapleButton {
-  base : ButtonBase
+  base : ButtonModel
   textures : @immut/hashmap.T[ButtonState, @graphics.Texture]
   animations : @immut/hashmap.T[ButtonState, @graphics.Animation]
 }
 
-pub fn get_button_base(self : MapleButton) -> ButtonBase {
+pub fn get_button_base(self : MapleButton) -> ButtonModel {
   self.base
 }
 
@@ -21,7 +21,7 @@ pub fn MapleButton::from_resource_with_pos(
   src : @resource.NxNode,
   pos : Point[Int]
 ) -> MapleButton {
-  let base = ButtonBase::default()
+  let base = ButtonModel::default()
   let normal = src["normal"]
   let textures = {}
   let animations = {}
@@ -96,26 +96,15 @@ pub fn bounds(
   self : MapleButton,
   parentpos : Point[Int]
 ) -> @struct.Rectangle[Int] {
-  let (lt, rb) = match self.textures[self.base.state] {
-    Some(texture) =>
-      (
-        parentpos + self.base.position - texture.get_origin(),
-        parentpos +
-        self.base.position -
-        texture.get_origin() +
-        texture.get_dimensions(),
-      )
-    None =>
-      (
-        parentpos +
-        self.base.position -
-        self.animations[self.base.state].unwrap().get_origin(),
-        parentpos +
-        self.base.position -
-        self.animations[self.base.state].unwrap().get_origin() +
-        self.animations[self.base.state].unwrap().get_dimensions(),
-      )
+  let (origin, dimensions) = match self.textures[self.base.state] {
+    Some(texture) => (texture.get_origin(), texture.get_dimensions())
+    None => {
+      let animation = self.animations[self.base.state].unwrap()
+      (animation.get_origin(), animation.get_dimensions())
+    }
   }
+  let lt = parentpos + self.base.position - origin
+  let rb = lt + dimensions
   @struct.Rectangle::new(lt, rb)
 }
 

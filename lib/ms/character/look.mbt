@@ -917,3 +917,7 @@ let attack_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
 pub fn set_alerted(self : CharLook, millis : Int) -> Unit {
   self.alerted.set_for(millis)
 }
+
+pub fn get_frame(self : CharLook) -> Int {
+  self.st_frame.get()
+}

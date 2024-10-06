@@ -1,7 +1,7 @@
 typealias Text = @graphics.Text
 
 struct TextButton {
-  base : ButtonBase
+  base : ButtonModel
   text : Text
   option_number : Int
 }
@@ -19,7 +19,7 @@ pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
   }
 }
 
-pub fn get_button_base(self : TextButton) -> ButtonBase {
+pub fn get_button_base(self : TextButton) -> ButtonModel {
   self.base
 }
 

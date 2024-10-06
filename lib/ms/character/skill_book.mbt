@@ -27,3 +27,11 @@ pub fn collect_required(
     return @immut/hashmap.T::new()
   }
 }
+
+pub fn get_masterlevel(self : SkillBook, id : Int) -> Int {
+  let iter = self.skill_entries.get(id)
+  match iter {
+    Some(entry) => entry.masterlevel
+    None => 0
+  }
+}

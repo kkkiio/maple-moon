@@ -249,9 +249,7 @@ pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
   } else {
     0
   }
-
-  //     after_image_.update(look_.get_frame(), stancespeed);
-
+  self.after_image.update(self.look.get_frame(), stancespeed)
   self.look.update(stancespeed)
 }
 

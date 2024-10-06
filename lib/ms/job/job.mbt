@@ -4,6 +4,20 @@ pub enum Level {
   SECOND
   THIRD
   FOURTH
+} derive(Eq)
+
+pub fn int_value(self : Level) -> Int {
+  match self {
+    BEGINNER => 0
+    FIRST => 1
+    SECOND => 2
+    THIRD => 3
+    FOURTH => 4
+  }
+}
+
+pub fn compare(self : Level, other : Level) -> Int {
+  self.int_value().compare(other.int_value())
 }
 
 pub fn get_next_level(level : Level) -> Level {
@@ -21,7 +35,7 @@ struct Job {
   level : Level
 }
 
-pub fn Job::from_id(id : Int) -> Job {
+pub fn Job::new(~id : Int = 0) -> Job {
   let name = get_name(id)
   let level = if id == 0 {
     Level::BEGINNER
@@ -93,6 +107,10 @@ pub fn get_name(jid : Int) -> String {
   }
 }
 
+pub fn get_level(self : Job) -> Level {
+  self.level
+}
+
 pub fn get_primary(self : Job, weapontype : @Weapon.Type) -> @stat.Id {
   match self.id / 100 {
     2 => return @stat.Id::INT
@@ -120,5 +138,19 @@ pub fn get_secondary(self : Job, weapontype : @Weapon.Type) -> @stat.Id {
         @stat.Id::DEX
       }
     _ => return @stat.Id::DEX
+  }
+}
+
+pub fn get_subjob(self : Job, level : Level) -> Int {
+  if level <= self.level {
+    match level {
+      Level::BEGINNER => 0
+      Level::FIRST => self.id / 100 * 100
+      Level::SECOND => self.id / 10 * 10
+      Level::THIRD => if level == Level::FOURTH { self.id - 1 } else { self.id }
+      Level::FOURTH => self.id
+    }
+  } else {
+    0
   }
 }

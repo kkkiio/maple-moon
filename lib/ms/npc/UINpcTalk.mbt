@@ -173,7 +173,9 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
   drawpos = drawpos.shift_y(self.height)
   self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.bottom.height())
-  self.buttons.draw(self.base.position)
+  for _, button in self.buttons.buttons {
+    button.draw(self.base.position)
+  }
   let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
   let speaker_pos = self.base.position + @struct.Point::new(22, 11 + speaker_y)
   let center_pos = speaker_pos + @struct.Point::new(self.nametag.width() / 2, 0)
@@ -227,7 +229,9 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
 
 pub fn update(self : UINpcTalk) -> Unit {
   self.base.update()
-  self.buttons.update()
+  for _, button in self.buttons.buttons {
+    button.update()
+  }
   // TODO: show text gradually when open NPC dialog
 }
 
@@ -302,9 +306,9 @@ pub fn send_cursor(
   clicked : Bool,
   cursorpos : @struct.Point[Int]
 ) -> CursorState {
-  let cursor_relative = cursorpos - self.base.position
   // TODO: check slider
-  let estate = self.buttons.send_cursor(
+  let estate = @ui.send_cursor_to_buttons(
+    self.buttons.buttons.iter2(),
     self.base.position,
     fn(bid) { self.button_pressed(bid) },
     clicked,

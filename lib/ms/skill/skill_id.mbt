@@ -280,22 +280,29 @@ pub fn int_value(self : SkillId) -> Int {
   }
 }
 
-pub fn SkillId::from_int(value : Int) -> SkillId!@utils.UnknownEnum {
+pub type! UnknownSkillId Int derive(Show)
+
+pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
   match value {
-    1000 => SkillId::FOLLOW_THE_LEAD
-    1001 => SkillId::ANGEL_BLESSING
-    1002 => SkillId::THREE_SNAILS
-    1003 => SkillId::HEAL
-    1004 => SkillId::FEATHER
-    1005 => SkillId::LEGENDARY_SPIRIT
-    1006 => SkillId::MONSTER_RIDER
-    1007 => SkillId::ECHO_OF_THE_HERO
+    // Beginner
+    8 => SkillId::FOLLOW_THE_LEAD
+    12 => SkillId::ANGEL_BLESSING
+    1000 => SkillId::THREE_SNAILS
+    1001 => SkillId::HEAL
+    1002 => SkillId::FEATHER
+    1003 => SkillId::LEGENDARY_SPIRIT
+    1004 => SkillId::MONSTER_RIDER
+    1005 => SkillId::ECHO_OF_THE_HERO
+
+    // Swordman
     1000000 => SkillId::IMPROVED_HP_RECOVERY
     1000001 => SkillId::IMPROVED_MAX_HP
     1000002 => SkillId::IMPROVED_LADDER_RECOVERY
     1001003 => SkillId::IRON_BODY
     1001004 => SkillId::POWER_STRIKE
     1001005 => SkillId::SLASH_BLAST
+
+    // Fighter
     1100000 => SkillId::SWORD_MASTERY_FIGHTER
     1100001 => SkillId::AXE_MASTERY
     1100002 => SkillId::SWORD_FA_FIGHTER
@@ -304,34 +311,87 @@ pub fn SkillId::from_int(value : Int) -> SkillId!@utils.UnknownEnum {
     1101005 => SkillId::AXE_BOOSTER
     1101006 => SkillId::RAGE
     1101007 => SkillId::POWER_GUARD_FIGHTER
+
+    // Crusader
     1110000 => SkillId::IMPROVED_MP_RECOVERY_CRUSADER
     1110001 => SkillId::SHIELD_MASTERY
     1111003 => SkillId::SWORD_PANIC
     1111004 => SkillId::AXE_PANIC
     1111005 => SkillId::SWORD_COMA
-    1111006 => SkillId::AXE_COMA
+    // 1111005 => SkillId::AXE_COMA // ???
     1111008 => SkillId::SHOUT
+
+    // Hero
     1120003 => SkillId::ADVANCED_COMBO_ATTACK
     1120004 => SkillId::ACHILLES_HERO
     1120005 => SkillId::GUARDIAN_HERO
     1121006 => SkillId::RUSH_HERO
     1121008 => SkillId::BRANDISH
+
+    // Page
     1200000 => SkillId::SWORD_MASTERY_PAGE
     1200001 => SkillId::BW_MASTERY
     1200002 => SkillId::SWORD_FA_PAGE
     1200003 => SkillId::BW_FA
+    1201004 => SkillId::SWORD_BOOSTER_PAGE
+    1201005 => SkillId::BW_BOOSTER
+    1201006 => SkillId::THREATEN
+    1201007 => SkillId::POWER_GUARD_PAGE
+
+    // White Knight
+    1211002 => SkillId::CHARGE
+
+    // Paladin
+    1220005 => SkillId::ACHILLES_PALADIN
+    1220006 => SkillId::GUARDIAN_PALADIN
+    1220010 => SkillId::ADVANCED_CHARGE
+    1221007 => SkillId::RUSH_PALADIN
+    1221009 => SkillId::BLAST
+    1221011 => SkillId::HEAVENS_HAMMER
+
+    // Spearman
+    1300000 => SkillId::SPEAR_MASTERY
+    1300001 => SkillId::PA_MASTERY
+    1300002 => SkillId::SPEAR_FA
+    1300003 => SkillId::PA_FA
+    1301004 => SkillId::SPEAR_BOOSTER
+    1301005 => SkillId::PA_BOOSTER
+    1301006 => SkillId::IRON_WILL
+    1301007 => SkillId::HYPER_BODY
+
+    // Dragon Knight
+    1311001 => SkillId::DRAGON_BUSTER
+    1311002 => SkillId::DRAGON_FURY
+    1311003 => SkillId::PA_BUSTER
+    1311004 => SkillId::PA_FURY
+    1311005 => SkillId::SACRIFICE
+    1311006 => SkillId::DRAGONS_ROAR
+
+    // Dark Knight
+    1320005 => SkillId::ACHILLES_DK
+    1320006 => SkillId::BERSERK
+    1320008 => SkillId::BEHOLDER_HEAL
+    1320009 => SkillId::BEHOLDER_BUFF
+    1321003 => SkillId::RUSH_DK
+    1321007 => SkillId::BEHOLDER
+
+    // Magician
     2000000 => SkillId::IMPROVE_HP_RECOVERY
     2000001 => SkillId::IMPROVE_MAX_HP
     2001002 => SkillId::MAGIC_GUARD
     2001003 => SkillId::MAGIC_ARMOR
     2001004 => SkillId::ENERGY_BOLT
     2001005 => SkillId::MAGIC_CLAW
+
+    // F/P Mage
     2100000 => SkillId::MP_EATER_FP
     2101001 => SkillId::MEDITATION_FP
     2101002 => SkillId::TELEPORT_FP
     2101003 => SkillId::SLOW_FP
     2101004 => SkillId::FIRE_ARROW
     2101005 => SkillId::POISON_BREATH
+
+    // F/P Archmage
     2110000 => SkillId::PARTIAL_RESISTANCE_FP
     2110001 => SkillId::ELEMENT_AMPLIFICATION_FP
     2111002 => SkillId::EXPLOSION
@@ -339,17 +399,29 @@ pub fn SkillId::from_int(value : Int) -> SkillId!@utils.UnknownEnum {
     2111004 => SkillId::SEAL_FP
     2111005 => SkillId::SPELL_BOOSTER_FP
     2111006 => SkillId::ELEMENT_COMPOSITION_FP
+
+    // TODO: ?
     2121003 => SkillId::FIRE_DEMON
     2121005 => SkillId::ELQUINES
     2121006 => SkillId::PARALYZE
     2121007 => SkillId::METEOR_SHOWER
+
+    // I/L Mage
     2201002 => SkillId::IL_TELEPORT
+
+    // Priest
     2301001 => SkillId::PRIEST_TELEPORT
+
+    // Hermit
     4111005 => SkillId::AVENGER
     4111006 => SkillId::FLASH_JUMP
+
+    // Night Lord
     4121007 => SkillId::TRIPLE_THROW
+
+    // Bandit
     4211006 => SkillId::MESO_EXPLOSION
-    _ => raise @utils.UnknownEnum(value)
+    _ => raise UnknownSkillId(value)
   }
 }
 

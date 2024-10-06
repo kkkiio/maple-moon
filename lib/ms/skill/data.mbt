@@ -49,7 +49,7 @@ pub fn SkillData::load(id : Int) -> SkillData! {
   /// Locate sources
   let strid = @string_format.extend_id(id, 7)
   let jobid = strid.substring(end=3)
-  let src = skill_loader().load_res(["Skill.img", "skill", strid])
+  let src = skill_loader().load_res([jobid + ".img", "skill", strid])
   let strsrc = @resource.string_loader().load_res(["Skill.img", strid])
 
   // Load icons
@@ -123,11 +123,16 @@ pub fn SkillData::load(id : Int) -> SkillData! {
   let req_weapon = if jobid == "900" || jobid == "910" {
     @Weapon.Type::NONE
   } else {
-    @Weapon.Type::by_value!(100 + src["weapon"].get_int!())
+    let weapon = src["weapon"]
+    if weapon.is_null() {
+      @Weapon.Type::NONE
+    } else {
+      @Weapon.Type::by_value!(100 + weapon.get_int!())
+    }
   }
   let master_level = stats.size()
   let passive = id % 10000 / 1000 == 0
-  let flags = flags_of(SkillId::from_int!(id))
+  let flags = flags_of(id)
   let invisible = src["invisible"].get_bool!()
 
   /// Load required skills
@@ -161,7 +166,8 @@ let flag_attack : Int = 0x0001
 
 let flag_ranged : Int = 0x0002
 
-fn flags_of(id : SkillId) -> Int {
+fn flags_of(id : Int) -> Int {
+  guard let Ok(id) = SkillId::from_int?(id) else { _ => flag_none }
   skill_flags[id].or(flag_none)
 }
 

@@ -300,7 +300,8 @@ pub fn send_cursor(
   //   Some(new_state) => return new_state
   //   None => ()
   // }
-  self.buttons.send_cursor(
+  @ui.send_cursor_to_buttons(
+    self.buttons.buttons.iter2(),
     self.base.position,
     fn(bid) { self.button_pressed(bid) },
     clicked,

@@ -62,6 +62,10 @@ pub fn height(self : Text) -> Int {
   image.height()
 }
 
+pub fn get_text(self : Text) -> String {
+  self.text
+}
+
 fn get_or_init_image(self : Text) -> @resource.Image {
   match self.image {
     Some(image) => image

@@ -1,5 +1,5 @@
 struct TwoSpriteButton {
-  base : ButtonBase
+  base : ButtonModel
   textures : @utils.BoolPair[@graphics.Texture]
   npos : Point[Int]
   spos : Point[Int]
@@ -15,7 +15,7 @@ pub fn TwoSpriteButton::new(
     nsrc |> @graphics.Texture::from_resource,
     ssrc |> @graphics.Texture::from_resource,
   )
-  { base: ButtonBase::default(), textures, npos: np, spos: sp }
+  { base: ButtonModel::default(), textures, npos: np, spos: sp }
 }
 
 pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
@@ -66,7 +66,7 @@ pub fn origin(self : TwoSpriteButton) -> Point[Int] {
   return self.textures.op_get(selected).get_origin()
 }
 
-pub fn get_button_base(self : TwoSpriteButton) -> ButtonBase {
+pub fn get_button_base(self : TwoSpriteButton) -> ButtonModel {
   self.base
 }
 

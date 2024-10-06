@@ -1,1 +1,2 @@
 Don't use "type" as an identifier.
+Use `not` method instead of `!` to negate a boolean.

@@ -42,7 +42,9 @@ pub fn int_value(self : Type) -> Int {
   }
 }
 
-pub fn Type::by_value(value : Int) -> Type!@utils.UnknownEnum {
+pub type! UnknownWeaponType Int derive(Show)
+
+pub fn Type::by_value(value : Int) -> Type!UnknownWeaponType {
   match value {
     0 => NONE
     130 => SWORD_1H
@@ -62,6 +64,6 @@ pub fn Type::by_value(value : Int) -> Type!@utils.UnknownEnum {
     148 => KNUCKLE
     149 => GUN
     170 => CASH
-    _ => raise @utils.UnknownEnum(value)
+    _ => raise UnknownWeaponType(value)
   }
 }

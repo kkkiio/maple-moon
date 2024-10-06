@@ -156,7 +156,9 @@ pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
   }
   // TODO: bulletslot
   // TODO: new_tab
-  self.buttons.draw(position)
+  for _, button in self.buttons.buttons {
+    button.draw(position)
+  }
 }
 
 pub fn update(self : UIItemInventory) -> Unit {
@@ -310,7 +312,8 @@ pub fn send_cursor(
   cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
   // TODO: implement
-  self.buttons.send_cursor(
+  @ui.send_cursor_to_buttons(
+    self.buttons.buttons.iter2(),
     self.base.position,
     fn(buttonid) { self.button_pressed(buttonid) },
     pressed,

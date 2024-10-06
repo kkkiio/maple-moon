@@ -282,7 +282,8 @@ pub fn send_cursor(
   pressed : Bool,
   cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
-  self.ui_buttons.send_cursor(
+  @ui.send_cursor_to_buttons(
+    self.ui_buttons.buttons.iter2(),
     self.base.position,
     fn(buttonid) { self.button_pressed(buttonid) },
     pressed,

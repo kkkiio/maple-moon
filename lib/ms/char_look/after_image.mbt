@@ -2,7 +2,7 @@ struct Afterimage {
   animation : @graphics.Animation
   range : @struct.Rectangle[Int]
   first_frame : Int
-  displayed : Bool
+  mut displayed : Bool
 }
 
 pub fn Afterimage::new(
@@ -67,4 +67,10 @@ pub fn get_first_frame(self : Afterimage) -> Int {
 
 pub fn get_range(self : Afterimage) -> @struct.Rectangle[Int] {
   self.range
+}
+
+pub fn update(self : Afterimage, stframe : Int, timestep : Int) -> Unit {
+  if self.displayed.not() && stframe >= self.first_frame {
+    self.displayed = self.animation.update(~timestep)
+  }
 }

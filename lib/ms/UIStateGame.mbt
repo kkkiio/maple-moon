@@ -161,8 +161,10 @@ pub fn send_key(
               UIElementType::SKILL_BOOK,
               @player.SkillBookUI::is_focused(),
               fn() {
+                let player = Stage::get().get_player().unwrap()
                 @player.SkillBookUI::new(
-                  Stage::get().get_player().unwrap().get_skills(),
+                  player.get_skills(),
+                  player.get_stats(),
                 )
               },
             )

@@ -9,7 +9,7 @@ pub fn SkillBook::new() -> SkillBook {
 
 struct SkillEntry {
   level : Int
-  masterlevel : Int
+  master_level : Int
   expiration : Int
 }
 
@@ -31,7 +31,17 @@ pub fn collect_required(
 pub fn get_masterlevel(self : SkillBook, id : Int) -> Int {
   let iter = self.skill_entries.get(id)
   match iter {
-    Some(entry) => entry.masterlevel
+    Some(entry) => entry.master_level
     None => 0
   }
+}
+
+pub fn set_skill(
+  self : SkillBook,
+  id : Int,
+  level : Int,
+  master_level : Int,
+  expiration : Int
+) -> Unit {
+  self.skill_entries.set(id, { level, master_level, expiration })
 }

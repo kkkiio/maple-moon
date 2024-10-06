@@ -159,10 +159,10 @@ pub fn send_key(
           @KeyAction.Id::SKILLS =>
             self.toggle_element(
               UIElementType::SKILL_BOOK,
-              @player.SkillBookUI::is_focused(),
+              @skill_book.SkillBookUI::is_focused(),
               fn() {
                 let player = Stage::get().get_player().unwrap()
-                @player.SkillBookUI::new(
+                @skill_book.SkillBookUI::new(
                   player.get_skills(),
                   player.get_stats(),
                 )

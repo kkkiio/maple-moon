@@ -538,3 +538,17 @@ pub fn check_ladders(self : Player, map_info : @map.MapInfo, up : Bool) -> Unit 
   let ladder = map_info.find_ladder(self.get_position(), up)
   self.set_ladder(ladder)
 }
+
+pub fn change_skill(
+  self : Player,
+  skill_id : Int,
+  skill_level : Int,
+  masterlevel : Int,
+  expiration : Int
+) -> Unit! {
+  let old_level = self.skill_book.get_level(skill_id)
+  self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
+  if old_level != skill_level {
+    self.recalc_stats!(false)
+  }
+}

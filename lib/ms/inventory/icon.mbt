@@ -212,3 +212,37 @@ pub fn get_count(self : Icon) -> Int {
 pub fn get_drag(self : Icon) -> Bool {
   self.dragged
 }
+
+pub struct IconModel {
+  show_count : Bool
+  mut count : Int
+  mut dragged : Bool
+  mut cursor_offset : @struct.Point[Int]
+}
+
+pub fn IconModel::new(count : Int) -> IconModel {
+  {
+    show_count: count > -1,
+    count,
+    dragged: false,
+    cursor_offset: @struct.Point::default(),
+  }
+}
+
+pub fn draw(
+  self : IconModel,
+  position : @struct.Point[Int],
+  texture : @graphics.Texture
+) -> Unit {
+  let opacity = if self.dragged { 0.5 } else { 1.0 }
+  texture.draw(DrawArgument::new7(position, opacity))
+  if self.show_count {
+    countset
+    .get()
+    .draw_text(
+      self.count.to_string(),
+      DrawArgument::from_point(position + @struct.Point::new(0, 20)),
+    )
+    |> ignore
+  }
+}

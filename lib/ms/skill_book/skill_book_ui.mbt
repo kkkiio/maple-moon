@@ -22,7 +22,7 @@ pub fn SkillDisplayMeta::draw(
   self : SkillDisplayMeta,
   args : @graphics.DrawArgument
 ) -> Unit {
-  // self.icon.draw(args.get_pos()) // TODO: draw icon
+  self.icon.draw(args.get_pos())
   self.name_text.draw(args.get_pos() + @struct.Point::new(38, -5))
   self.level_text.draw(args.get_pos() + @struct.Point::new(38, 13))
 }
@@ -782,8 +782,8 @@ fn change_sp(self : SkillBookUI) -> Unit! {
       self.sp_label = self.sp_label.change_text(self.beginner_sp.to_string())
     }
     _ => {
-      let sp_ = self.stats.get_stat(@MapleStat.Id::SP)
-      self.sp_label = self.sp_label.change_text(sp_.to_string())
+      self.sp = self.stats.get_stat(@MapleStat.Id::SP)
+      self.sp_label = self.sp_label.change_text(self.sp.to_string())
     }
   }
   self.change_offset!(self.offset)
@@ -901,7 +901,7 @@ fn send_spup(self : SkillBookUI, row : Int) -> Unit! {
     .get_button_base()
     .set_state(@ui.ButtonState::NORMAL)
   }
-  if self.sp_enabled {
+  if self.sp_enabled.not() {
     self.set_skillpoint(true)
   }
 }

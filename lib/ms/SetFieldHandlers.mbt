@@ -54,7 +54,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
     recv.read_string!() |> ignore // 'linkedname'
   }
   parse_inventory!(recv, Stage::get().get_inventory())
-  // parse_skillbook(recv, player.get_skills());
+  parse_skillbook!(recv, player.get_skills())
   // parse_cooldowns(recv, player);
   // parse_questlog(recv, player.get_quests());
   // parse_minigame(recv);
@@ -122,5 +122,20 @@ fn parse_inventory(
       @inventory.parse_item!(recv, inv, pos, invent)
       pos = recv.read_byte!()
     }
+  }
+}
+
+fn parse_skillbook(
+  recv : @net.InPacket,
+  skills : @character.SkillBook
+) -> Unit! {
+  let size = recv.read_short!()
+  for i in 0..<size {
+    let skill_id = recv.read_int!()
+    let level = recv.read_int!()
+    let expiration = recv.read_long!()
+    let fourthtjob = skill_id % 100000 / 10000 == 2
+    let masterlevel = if fourthtjob { recv.read_int!() } else { 0 }
+    skills.set_skill(skill_id, level, masterlevel, expiration.to_int())
   }
 }

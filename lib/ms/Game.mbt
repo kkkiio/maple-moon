@@ -19,6 +19,7 @@ pub fn Game::start() -> Game {
     inventory_module.get_inventory(),
   )
   g_stage.set(stage)
+  let skill_book_module = @skill_book.Module::new()
   // ( 
 
   // // Attack handlers
@@ -101,7 +102,6 @@ pub fn Game::start() -> Game {
         drop_module.make_handlers(fn(id) { stage.get_character(id) }).iter(),
       )
       |> Iter::concat(
-        // TODO: allow dynamic handler registration/unregistration
         inventory_module.make_handlers(fn() { stage.get_player() }).iter(),
       )
       // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
@@ -110,7 +110,9 @@ pub fn Game::start() -> Game {
       // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
       // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
       |> Iter::append((RECALCULATE_STATS, RecalculateStatsHandler::new(stage)))
-      // packet_switch.push((UPDATE_SKILL, UpdateSkillHandler::new()))
+      |> Iter::concat(
+        skill_book_module.make_handlers(fn() { stage.get_player() }).iter(),
+      )
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers

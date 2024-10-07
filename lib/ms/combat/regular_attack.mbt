@@ -51,9 +51,9 @@ pub fn RegularAction::apply(
   target : @character.Character,
   atype : AttackType
 ) -> Unit! {
-  let weapontype = target.get_weapontype!()
+  let weapontype = target.get_weapontype()
   let degenerate = match weapontype {
-    @Weapon.BOW | @Weapon.CROSSBOW | @Weapon.CLAW | @Weapon.GUN =>
+    @weapon.BOW | @weapon.CROSSBOW | @weapon.CLAW | @weapon.GUN =>
       atype != AttackType::RANGED
     _ => false
   }
@@ -63,14 +63,14 @@ pub fn RegularAction::apply(
 pub fn RegularAttack::can_use(
   self : RegularAttack,
   _level : Int,
-  weapon : @Weapon.Type,
+  weapon : @weapon.Type,
   _job : @job.Job,
   _hp : Int,
   _mp : Int,
   bullets : Int
 ) -> ForbidReason {
   match weapon {
-    @Weapon.BOW | @Weapon.CROSSBOW | @Weapon.CLAW | @Weapon.GUN =>
+    @weapon.BOW | @weapon.CROSSBOW | @weapon.CLAW | @weapon.GUN =>
       if bullets > 0 {
         FBR_NONE
       } else {

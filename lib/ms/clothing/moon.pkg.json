@@ -7,7 +7,7 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/ms/equip",
-    "KKKIIO/maple-moon-client/lib/ms/Weapon",
+    "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/struct"
   ]
 }

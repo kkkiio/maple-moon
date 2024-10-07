@@ -36,3 +36,8 @@ pub fn shift_y(self : Point[Int], v : Int) -> Point[Int] {
 pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
   (self.x - v.x).abs() + (self.y - v.y).abs()
 }
+
+/// Check whether the coordinates are equal
+pub fn straight[T : Eq](self : Point[T]) -> Bool {
+  self.x == self.y
+}

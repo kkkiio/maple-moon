@@ -64,6 +64,10 @@ pub fn Keyboard::default() -> Keyboard {
     @kb.keyO,
     Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::SKILLS.int_value()),
   )
+  keymap.set(
+    @kb.keyA,
+    Mapping::new(@KeyType.Id::SKILL, @skill.SkillId::MAGIC_CLAW.int_value()),
+  )
   let text_actions = Map::new()
   text_actions.set(@kb.backspace, @KeyAction.Id::BACK)
   text_actions.set(@kb.enter, @KeyAction.Id::RETURN)

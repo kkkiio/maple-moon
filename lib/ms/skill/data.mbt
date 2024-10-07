@@ -1,7 +1,7 @@
 pub struct SkillData {
   stats : Map[Int, Stats]
   element : String
-  req_weapon : @Weapon.Type
+  req_weapon : @weapon.Type
   master_level : Int
   flags : Int
   passive : Bool
@@ -30,7 +30,7 @@ pub struct Stats {
   ignoredef : Double
   hrange : Double
   range : @struct.Rectangle[Int]
-}
+} derive(Default)
 
 let cache : Map[Int, SkillData] = {}
 
@@ -121,13 +121,13 @@ pub fn SkillData::load(id : Int) -> SkillData! {
   }
   let element = src["elemAttr"].get_string()
   let req_weapon = if jobid == "900" || jobid == "910" {
-    @Weapon.Type::NONE
+    @weapon.Type::NONE
   } else {
     let weapon = src["weapon"]
     if weapon.is_null() {
-      @Weapon.Type::NONE
+      @weapon.Type::NONE
     } else {
-      @Weapon.Type::by_value!(100 + weapon.get_int!())
+      @weapon.Type::by_value!(100 + weapon.get_int!())
     }
   }
   let master_level = stats.size()
@@ -223,3 +223,13 @@ let skill_flags : @immut/hashmap.T[SkillId, Int] = @immut/hashmap.from_array(
     (SkillId::METEOR_SHOWER, flag_attack),
   ],
 )
+
+pub fn is_attack(self : SkillData) -> Bool {
+  self.passive.not() && (self.flags & flag_attack) != 0
+}
+
+let null_stats : Stats = Stats::default()
+
+pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats {
+  self.stats.get(level).or(null_stats)
+}

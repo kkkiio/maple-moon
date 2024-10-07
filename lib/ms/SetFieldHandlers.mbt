@@ -66,7 +66,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   // parse_nyinfo(recv);
   // parse_areainfo(recv);
 
-  player.recalc_stats!(true)
+  player.recalc_stats(true)
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id

@@ -55,6 +55,7 @@ pub fn handle(self : ModifyInventoryHandler, recv : @net.InPacket) -> Unit! {
       Modification::REMOVE =>
         // TODO: ui
         inventory.modify(t, pos, mode, arg, Movement::MOVE_INTERNAL)
+      _ => ()
     }
     mods.push({ mode, t, pos, arg })
   }
@@ -91,9 +92,10 @@ pub fn handle(self : ModifyInventoryHandler, recv : @net.InPacket) -> Unit! {
           // TODO: ui
           change_equip!(inventory, player, -mod.arg)
         }
+      _ => ()
     }
   }
-  player.recalc_stats!(true)
+  player.recalc_stats(true)
   // UI::get().enable();
 }
 

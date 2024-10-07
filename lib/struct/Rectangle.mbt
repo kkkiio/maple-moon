@@ -66,3 +66,7 @@ pub fn get_horizontal(self : Rectangle[Int]) -> Range[Int] {
 pub fn get_vertical(self : Rectangle[Int]) -> Range[Int] {
   Range::new(self.top(), self.bottom())
 }
+
+pub fn is_empty[T : Eq](self : Rectangle[T]) -> Bool {
+  self.lt.straight() && self.rb.straight() && self.straight()
+}

@@ -19,7 +19,7 @@ impl @net.PacketHandler for UpdateSkillHandler with handle(
   let expire = recv.read_long!()
   match (self.player_getter)() {
     Some(player) =>
-      player.change_skill!(skillid, level, masterlevel, expire.to_int())
+      player.change_skill(skillid, level, masterlevel, expire.to_int())
     None => ()
   }
   // TODO: update ui

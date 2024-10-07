@@ -7,5 +7,9 @@ pub fn RecalculateStatsHandler::new(stage : Stage) -> RecalculateStatsHandler {
 }
 
 pub fn handle(self : RecalculateStatsHandler, _recv : @net.InPacket) -> Unit! {
-  self.stage.get_player().unwrap().recalc_stats!(false)
+  guard let Some(player) = self.stage.get_player() else { None => return  }
+  player.recalc_stats(false)
+  if false {
+    fail!("WORKAROUND")
+  }
 }

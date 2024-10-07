@@ -62,7 +62,7 @@ pub fn Clothing::new(
     eq_slot = @slot.Id::BOTTOM_DEFAULT
   }
   let two_handed = if eq_slot == @slot.Id::WEAPON {
-    @Weapon.WeaponData::get!(item_id).is_twohanded()
+    @weapon.WeaponData::get!(item_id).is_twohanded()
   } else {
     false
   }

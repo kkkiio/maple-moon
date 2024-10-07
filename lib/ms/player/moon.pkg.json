@@ -12,7 +12,7 @@
     "KKKIIO/maple-moon-client/lib/ms/combat",
     "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/ms/MapleStat",
-    "KKKIIO/maple-moon-client/lib/ms/Weapon",
+    "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     {
       "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",

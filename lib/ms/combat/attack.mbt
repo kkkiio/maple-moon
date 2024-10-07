@@ -13,23 +13,23 @@ pub enum AttackDamageType {
 pub struct Attack {
   t : AttackType
   mut damagetype : AttackDamageType
-  mindamage : Double
-  maxdamage : Double
-  critical : Double
-  ignoredef : Double
-  matk : Int
+  mut mindamage : Double
+  mut maxdamage : Double
+  mut critical : Double
+  mut ignoredef : Double
+  mut matk : Int
   accuracy : Int
-  fixdamage : Int
+  mut fixdamage : Int
   playerlevel : Int
   mut hitcount : Int
   mut mobcount : Int
   speed : Int
   mut stance : Int
   mut skill : Int
-  bullet : Int
+  mut bullet : Int
   origin : @struct.Point[Int]
   mut range : @struct.Rectangle[Int]
-  hrange : Double
+  mut hrange : Double
   toleft : Bool
 }
 

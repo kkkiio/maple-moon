@@ -89,7 +89,7 @@ pub fn Inventory::new() -> Inventory {
 }
 
 /// Recalculate sums of equip stats
-pub fn recalc_stats(self : Inventory, weapontype : @Weapon.Type) -> Unit {
+pub fn recalc_stats(self : Inventory, weapontype : @weapon.Type) -> Unit {
   self.total_stats.map.clear()
   for _, slot in self.inventories[TypeId::EQUIPPED] {
     match self.equips.get(slot.unique_id) {
@@ -102,10 +102,10 @@ pub fn recalc_stats(self : Inventory, weapontype : @Weapon.Type) -> Unit {
   }
   let mut prefix = 0
   match weapontype {
-    @Weapon.Type::BOW => prefix = 2060
-    @Weapon.Type::CROSSBOW => prefix = 2061
-    @Weapon.Type::CLAW => prefix = 2070
-    @Weapon.Type::GUN => prefix = 2330
+    @weapon.Type::BOW => prefix = 2060
+    @weapon.Type::CROSSBOW => prefix = 2061
+    @weapon.Type::CLAW => prefix = 2070
+    @weapon.Type::GUN => prefix = 2330
     _ => prefix = 0
   }
   self.bullet_slot = 0

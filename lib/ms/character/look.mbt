@@ -808,7 +808,7 @@ pub fn attack(self : CharLook, degenerate : Bool) -> Unit! {
   if weapon_id <= 0 {
     return
   }
-  let weapon = @Weapon.WeaponData::get!(weapon_id)
+  let weapon = @weapon.WeaponData::get!(weapon_id)
   let attacktype = weapon.get_attack()
   if attacktype == 9 && degenerate.not() {
     self.set_stance(@char_look.StanceId::SHOT)

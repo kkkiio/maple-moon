@@ -170,7 +170,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
         None => return ()
       }
   }
-  self.combat.unwrap().update()
+  self.combat.unwrap().update!()
   backgrounds.update()
   // effect_.update();
   tiles_objs.update()
@@ -326,7 +326,7 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
     }
   }
   if recalculate {
-    player.recalc_stats!(false)
+    player.recalc_stats(false)
   }
   UI::get().enable()
 }

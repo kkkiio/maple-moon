@@ -83,16 +83,16 @@ pub trait Character {
   get_attackdelay(Self, Int) -> Int
   // set_direction(Self, Bool) -> Unit
   set_state(Self, CharState) -> Unit
-  // attack_by_action(Self, String) -> Unit
+  attack_by_action(Self, String) -> Unit
   // attack_by_stance(Self, StanceId) -> Unit
   regular_attack(Self, Bool) -> Unit!
   // set_afterimage(Self, Int) -> Unit
   get_afterimage(Self) -> @char_look.Afterimage
-  // show_attack_effect(Self, Animation, Int) -> Unit
+  show_attack_effect(Self, @graphics.Animation, Int) -> Unit
   // show_effect_id(Self, CharEffectId) -> Unit
   // add_recurring_effect(Self, Int, Animation, Int) -> Unit
   // remove_recurring_effect(Self) -> Unit
-  // show_iron_body(Self) -> Unit
+  show_iron_body(Self) -> Unit
   // show_damage(Self, Int) -> Unit
   // speak(Self, String) -> Unit
   change_look(Self, @MapleStat.Id, Int) -> Unit
@@ -105,7 +105,7 @@ pub trait Character {
   // is_sitting(Self) -> Bool
   // is_climbing(Self) -> Bool
   is_twohanded(Self) -> Bool
-  get_weapontype(Self) -> @Weapon.Type!
+  get_weapontype(Self) -> @weapon.Type
   get_look(Self) -> CharLook
   // get_look_const(Self) -> CharLook
   // init() -> Unit
@@ -318,12 +318,12 @@ pub fn get_name(self : CharBase) -> String {
   self.name
 }
 
-pub fn get_weapontype(self : CharBase) -> @Weapon.Type! {
+pub fn get_weapontype(self : CharBase) -> @weapon.Type {
   let weapon_id = self.look.get_equips().get_weapon()
   if weapon_id <= 0 {
-    return @Weapon.Type::NONE
+    return @weapon.Type::NONE
   }
-  return @Weapon.WeaponData::get!(weapon_id).get_type()
+  @weapon.WeaponData::get?(weapon_id).unwrap().get_type() // TODO: Handle error
 }
 
 pub fn is_invincible(self : CharBase) -> Bool {
@@ -335,7 +335,7 @@ pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
   if weapon_id <= 0 {
     return
   }
-  let weapon = @Weapon.WeaponData::get?(weapon_id).unwrap()
+  let weapon = @weapon.WeaponData::get?(weapon_id).unwrap()
   let stance_name = self.look.get_stance().name()
   let weapon_level = weapon.get_equipdata().get_reqstat(@MapleStat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
@@ -386,4 +386,28 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   )
   self.look.set_alerted(5000)
   self.invincible.set_for(2000)
+}
+
+pub fn show_attack_effect(
+  self : CharBase,
+  toshow : @graphics.Animation,
+  z : Int
+) -> Unit {
+  let attackspeed = self.get_real_attackspeed()
+  self.effects.add(
+    toshow,
+    args=DrawArgument::new11(self.facing_right),
+    ~z,
+    speed=attackspeed,
+  )
+}
+
+pub fn show_iron_body(self : CharBase) -> Unit {
+  // self.iron_body.set_for(500) // TODO: Implement
+}
+
+pub fn attack_by_action(self : CharBase, action : String) -> Unit {
+  self.look.set_action(action)
+  self.attacking = true
+  self.look.set_alerted(5000)
 }

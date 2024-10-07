@@ -22,7 +22,7 @@ pub struct Player {
 }
 
 pub trait Inventory {
-  recalc_stats(Self, @Weapon.Type) -> Unit
+  recalc_stats(Self, @weapon.Type) -> Unit
   get_stat(Self, @stat.Id) -> Int
   has_projectile(Self) -> Bool
   get_bulletid(Self) -> Int
@@ -268,8 +268,8 @@ pub fn get_stats(self : Player) -> CharStats {
 }
 
 /// Recalculates the total stats from base stats, inventories and skills.
-pub fn recalc_stats(self : Player, equipchanged : Bool) -> Unit! {
-  let weapontype = self.char_base.get_weapontype!()
+pub fn recalc_stats(self : Player, equipchanged : Bool) -> Unit {
+  let weapontype = self.char_base.get_weapontype()
   self.stats.set_weapontype(weapontype)
   self.stats.init_totalstats()
   if equipchanged {
@@ -365,10 +365,10 @@ pub fn prepare_attack(self : Player, skill : Bool) -> @combat.Attack! {
   let (degenerate, attacktype) = if self.char_base.state == CharState::PRONE {
     (true, @combat.AttackType::CLOSE)
   } else {
-    let weapontype = self.char_base.get_weapontype!()
+    let weapontype = self.char_base.get_weapontype()
     match weapontype {
-      @Weapon.Type::BOW
-      | @Weapon.Type::CROSSBOW | @Weapon.Type::CLAW | @Weapon.Type::GUN => {
+      @weapon.Type::BOW
+      | @weapon.Type::CROSSBOW | @weapon.Type::CLAW | @weapon.Type::GUN => {
         let degenerate = self.inventory.has_projectile().not()
         (
           degenerate,
@@ -379,7 +379,7 @@ pub fn prepare_attack(self : Player, skill : Bool) -> @combat.Attack! {
           },
         )
       }
-      @Weapon.Type::WAND | @Weapon.Type::STAFF => {
+      @weapon.Type::WAND | @weapon.Type::STAFF => {
         let degenerate = skill.not()
         (
           degenerate,
@@ -432,7 +432,7 @@ fn get_integer_attackspeed(self : Player) -> Int! {
   if weapon_id <= 0 {
     return 0
   }
-  let weapon = @Weapon.WeaponData::get!(weapon_id)
+  let weapon = @weapon.WeaponData::get!(weapon_id)
   let base_speed = self.stats.get_attackspeed()
   let weapon_speed = weapon.get_speed()
   base_speed + weapon_speed
@@ -448,7 +448,7 @@ pub fn can_attack(self : Player) -> Bool {
 pub fn can_use(
   self : Player,
   move : @combat.SpecialMove
-) -> @combat.ForbidReason! {
+) -> @combat.ForbidReason {
   if move.is_skill() && self.char_base.state == CharState::PRONE {
     return @combat.ForbidReason::FBR_OTHER
   }
@@ -463,7 +463,7 @@ pub fn can_use(
     return @combat.ForbidReason::FBR_COOLDOWN
   }
   let level = self.skill_book.get_level(move.get_id())
-  let weapontype = self.char_base.get_weapontype!()
+  let weapontype = self.char_base.get_weapontype()
   let job = self.stats.get_job()
   let hp = self.stats.get_stat(@MapleStat.Id::HP)
   let mp = self.stats.get_stat(@MapleStat.Id::MP)
@@ -515,8 +515,8 @@ pub fn get_afterimage(self : Player) -> @char_look.Afterimage {
   self.char_base.after_image
 }
 
-pub fn get_weapontype(self : Player) -> @Weapon.Type! {
-  self.char_base.get_weapontype!()
+pub fn get_weapontype(self : Player) -> @weapon.Type {
+  self.char_base.get_weapontype()
 }
 
 pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
@@ -545,10 +545,26 @@ pub fn change_skill(
   skill_level : Int,
   masterlevel : Int,
   expiration : Int
-) -> Unit! {
+) -> Unit {
   let old_level = self.skill_book.get_level(skill_id)
   self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
   if old_level != skill_level {
-    self.recalc_stats!(false)
+    self.recalc_stats(false)
   }
+}
+
+pub fn show_attack_effect(
+  self : Player,
+  toshow : @graphics.Animation,
+  z : Int
+) -> Unit {
+  self.char_base.show_attack_effect(toshow, z)
+}
+
+pub fn show_iron_body(self : Player) -> Unit {
+  self.char_base.show_iron_body()
+}
+
+pub fn attack_by_action(self : Player, action : String) -> Unit {
+  self.char_base.attack_by_action(action)
 }

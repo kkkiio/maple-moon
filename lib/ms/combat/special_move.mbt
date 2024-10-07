@@ -15,5 +15,5 @@ pub trait SpecialMove {
   apply_useeffects(Self, @character.Character) -> Unit
   apply_actions(Self, @character.Character, AttackType) -> Unit!
   apply_stats(Self, @character.Character, Attack) -> Unit
-  can_use(Self, Int, @Weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+  can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 }

@@ -111,13 +111,13 @@ pub fn get_level(self : Job) -> Level {
   self.level
 }
 
-pub fn get_primary(self : Job, weapontype : @Weapon.Type) -> @stat.Id {
+pub fn get_primary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   match self.id / 100 {
     2 => return @stat.Id::INT
     3 => return @stat.Id::DEX
     4 => return @stat.Id::LUK
     5 =>
-      return if weapontype == @Weapon.Type::GUN {
+      return if weapontype == @weapon.Type::GUN {
         @stat.Id::DEX
       } else {
         @stat.Id::STR
@@ -126,13 +126,13 @@ pub fn get_primary(self : Job, weapontype : @Weapon.Type) -> @stat.Id {
   }
 }
 
-pub fn get_secondary(self : Job, weapontype : @Weapon.Type) -> @stat.Id {
+pub fn get_secondary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   match self.id / 100 {
     2 => return @stat.Id::LUK
     3 => return @stat.Id::STR
     4 => return @stat.Id::DEX
     5 =>
-      return if weapontype == @Weapon.Type::GUN {
+      return if weapontype == @weapon.Type::GUN {
         @stat.Id::STR
       } else {
         @stat.Id::DEX
@@ -153,4 +153,25 @@ pub fn get_subjob(self : Job, level : Level) -> Int {
   } else {
     0
   }
+}
+
+pub fn can_use(self : Job, skill_id : Int) -> Bool {
+  let required = skill_id / 10000
+  self.is_sub_job(required)
+}
+
+pub fn is_sub_job(self : Job, subid : Int) -> Bool {
+  for
+    lv in [
+      Level::BEGINNER,
+      Level::FIRST,
+      Level::SECOND,
+      Level::THIRD,
+      Level::FOURTH,
+    ] {
+    if subid == self.get_subjob(lv) {
+      return true
+    }
+  }
+  false
 }

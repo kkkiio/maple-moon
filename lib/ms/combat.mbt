@@ -2,7 +2,7 @@ struct Combat {
   damage_number_set : @combat_ui.DamageNumberSet
   player : @player.Player
   mobs : @monster.MapMobs
-  skills : Map[Int, @combat.Skill]
+  skills : Map[Int, @combat_do.Skill]
   regular_attack : @combat.RegularAttack
   // TODO: Add reactors
   damage_effects : @utils.TimedQueue[DamageEffect]
@@ -41,8 +41,10 @@ pub fn draw(
   }
 }
 
-pub fn update(self : Combat) -> Unit {
-  self.damage_effects.update(fn(dmg_eff) { self.apply_damage_effect(dmg_eff) })
+pub fn update(self : Combat) -> Unit! {
+  for dmg_eff in self.damage_effects.process() {
+    self.apply_damage_effect!(dmg_eff)
+  }
   self.bullets.retain(
     fn(mb) {
       let target_oid = mb.damageeffect.target_oid
@@ -50,7 +52,7 @@ pub fn update(self : Combat) -> Unit {
         mb.target = self.mobs.get_mob_head_position(target_oid)
         let apply = mb.bullet.update(mb.target)
         if apply {
-          self.apply_damage_effect(mb.damageeffect)
+          self.apply_damage_effect?(mb.damageeffect).unwrap() // TODO: Handle error
         }
         return apply.not()
       }
@@ -64,8 +66,8 @@ pub fn use_move(self : Combat, move_id : Int) -> Unit! {
   if self.player.can_attack().not() {
     return
   }
-  let move = self.get_move(move_id)
-  let reason = self.player.can_use!(move)
+  let move = self.get_move!(move_id)
+  let reason = self.player.can_use(move)
   if reason == @combat.ForbidReason::FBR_NONE {
     self.apply_move!(move)
   } else {
@@ -270,9 +272,18 @@ fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
   }
 }
 
-pub fn get_move(self : Combat, _move_id : Int) -> @combat.SpecialMove {
-  self.regular_attack
-  // TODO: support skills
+pub fn get_move(self : Combat, move_id : Int) -> @combat.SpecialMove! {
+  if move_id == 0 {
+    return self.regular_attack
+  }
+  match self.skills.get(move_id) {
+    Some(skill) => skill
+    None => {
+      let skill = @combat_do.Skill::new!(move_id)
+      self.skills.set(move_id, skill)
+      skill
+    }
+  }
 }
 
 fn extract_effects(
@@ -333,12 +344,12 @@ fn place_numbers(
   return numbers
 }
 
-fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
+fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let number = effect.number
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
-  let move = self.get_move(effect.move_id)
+  let move = self.get_move!(effect.move_id)
   self.mobs.apply_damage(
     effect.target_oid,
     effect.damage,

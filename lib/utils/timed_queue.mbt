@@ -11,23 +11,29 @@ pub fn push[T](self : TimedQueue[T], delay : Int64, t : T) -> Unit {
   self.queue.push((delay, t))
 }
 
-pub fn update[T](
+pub fn process[T](
   self : TimedQueue[T],
-  action : (T) -> Unit,
   ~timestep : Int64 = @constants.timestep.to_int64()
-) -> Unit {
+) -> Iter[T] {
   self.time += timestep
-  loop self.queue.peek() {
-    Some(top) => {
-      if top._.0 > self.time {
-        break
+  Iter::new(
+    fn(yield) {
+      loop self.queue.peek() {
+        Some(top) => {
+          if top._.0 > self.time {
+            break
+          }
+          if yield(top._.1) == IterEnd {
+            return IterEnd
+          }
+          self.queue.pop() |> ignore
+          continue self.queue.peek()
+        }
+        None => break
       }
-      action(top._.1)
-      self.queue.pop() |> ignore
-      continue self.queue.peek()
-    }
-    None => break
-  }
+      IterContinue
+    },
+  )
 }
 
 type Timed[T] (Int64, T)

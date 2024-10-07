@@ -8,7 +8,7 @@ pub struct CharStats {
   percentages : Map[@stat.Id, Double]
   mut attack_speed : Int
   mut projectile_range : Int
-  mut weapon_type : @Weapon.Type
+  mut weapon_type : @weapon.Type
   mut critical : Double
   mut max_damage : Int
   mut min_damage : Int
@@ -31,7 +31,7 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
     percentages: Map::new(),
     attack_speed: 0,
     projectile_range: 400,
-    weapon_type: @Weapon.Type::NONE,
+    weapon_type: @weapon.Type::NONE,
     critical: 0.05,
     max_damage: 0,
     min_damage: 0,
@@ -94,7 +94,7 @@ pub fn set_mapid(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
-pub fn set_weapontype(self : CharStats, w : @Weapon.Type) -> Unit {
+pub fn set_weapontype(self : CharStats, w : @weapon.Type) -> Unit {
   self.weapon_type = w
 }
 
@@ -146,22 +146,22 @@ fn calculate_accuracy(self : CharStats) -> Int {
 
 fn get_multiplier(self : CharStats) -> Double {
   match self.weapon_type {
-    @Weapon.Type::SWORD_1H => 4.0
-    @Weapon.Type::AXE_1H => 4.0
-    @Weapon.Type::MACE_1H => 4.0
-    @Weapon.Type::WAND => 4.0
-    @Weapon.Type::STAFF => 4.0
-    @Weapon.Type::DAGGER => 3.6
-    @Weapon.Type::CROSSBOW => 3.6
-    @Weapon.Type::CLAW => 3.6
-    @Weapon.Type::GUN => 3.6
-    @Weapon.Type::SWORD_2H => 4.6
-    @Weapon.Type::AXE_2H => 4.6
-    @Weapon.Type::MACE_2H => 4.6
-    @Weapon.Type::KNUCKLE => 4.8
-    @Weapon.Type::SPEAR => 5.0
-    @Weapon.Type::POLEARM => 5.0
-    @Weapon.Type::BOW => 3.4
+    @weapon.Type::SWORD_1H => 4.0
+    @weapon.Type::AXE_1H => 4.0
+    @weapon.Type::MACE_1H => 4.0
+    @weapon.Type::WAND => 4.0
+    @weapon.Type::STAFF => 4.0
+    @weapon.Type::DAGGER => 3.6
+    @weapon.Type::CROSSBOW => 3.6
+    @weapon.Type::CLAW => 3.6
+    @weapon.Type::GUN => 3.6
+    @weapon.Type::SWORD_2H => 4.6
+    @weapon.Type::AXE_2H => 4.6
+    @weapon.Type::MACE_2H => 4.6
+    @weapon.Type::KNUCKLE => 4.8
+    @weapon.Type::SPEAR => 5.0
+    @weapon.Type::POLEARM => 5.0
+    @weapon.Type::BOW => 3.4
     _ => 0.0
   }
 }
@@ -225,7 +225,7 @@ pub fn get_job(self : CharStats) -> @job.Job {
   self.job
 }
 
-pub fn get_weapontype(self : CharStats) -> @Weapon.Type {
+pub fn get_weapontype(self : CharStats) -> @weapon.Type {
   self.weapon_type
 }
 

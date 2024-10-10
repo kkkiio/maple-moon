@@ -7,7 +7,7 @@ typealias CharStats = @character.CharStats
 typealias CharLook = @character.CharLook
 
 pub struct Player {
-  char_base : CharBase
+  char_base : @character.CharBase
   stats : CharStats
   keys_down : Map[@KeyAction.Id, Bool]
   mut underwater : Bool
@@ -39,7 +39,6 @@ pub fn Player::from_entry(
 ) -> Player! {
   let p = {
     char_base: CharBase::new(
-      PlayerSub::default(),
       entry.id,
       CharLook::new!(entry.look),
       entry.stats.name,
@@ -100,8 +99,7 @@ pub fn update(
         self.check_ladders(map_info, false)
       }
       let aniend = self.char_base.update(
-        physics,
-        self.char_base.get_stancespeed(),
+        self.char_base.get_stancespeed(self.get_integer_attackspeed()),
       )
       if aniend && self.char_base.attacking {
         self.char_base.attacking = false
@@ -234,8 +232,8 @@ pub fn get_climbforce(self : Player) -> Double {
   self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
 }
 
-pub fn getflip(self : Player) -> Bool {
-  self.char_base.getflip()
+pub fn is_facing_right(self : Player) -> Bool {
+  self.char_base.is_facing_right()
 }
 
 /// Returns the current walking force, calculated from the total ES_SPEED stat.
@@ -244,24 +242,6 @@ pub fn get_walkforce(self : Player) -> Double {
 }
 
 let nullstate : PlayerNullState = PlayerNullState::default()
-
-struct PlayerSub {} derive(Default)
-
-fn get_integer_attackspeed(self : PlayerSub) -> Int {
-  0
-  // let weapon_id = self.look.get_equips().get_weapon();
-
-  // if weapon_id <= 0 {
-  //   return 0;
-  // }
-
-  // let weapon = WeaponData::get(weapon_id);
-
-  // let base_speed = self.stats.get_attackspeed();
-  // let weapon_speed = weapon.get_speed();
-
-  // base_speed + weapon_speed
-}
 
 pub fn get_stats(self : Player) -> CharStats {
   self.stats
@@ -361,78 +341,12 @@ pub fn get_skills(self : Player) -> @character.SkillBook {
   self.skill_book
 }
 
-pub fn prepare_attack(self : Player, skill : Bool) -> @combat.Attack! {
-  let (degenerate, attacktype) = if self.char_base.state == CharState::PRONE {
-    (true, @combat.AttackType::CLOSE)
-  } else {
-    let weapontype = self.char_base.get_weapontype()
-    match weapontype {
-      @weapon.Type::BOW
-      | @weapon.Type::CROSSBOW | @weapon.Type::CLAW | @weapon.Type::GUN => {
-        let degenerate = self.inventory.has_projectile().not()
-        (
-          degenerate,
-          if degenerate {
-            @combat.AttackType::CLOSE
-          } else {
-            @combat.AttackType::RANGED
-          },
-        )
-      }
-      @weapon.Type::WAND | @weapon.Type::STAFF => {
-        let degenerate = skill.not()
-        (
-          degenerate,
-          if degenerate {
-            @combat.AttackType::CLOSE
-          } else {
-            @combat.AttackType::MAGIC
-          },
-        )
-      }
-      _ => (false, @combat.AttackType::CLOSE)
-    }
-  }
-  let t = attacktype
-  let mut mindamage = self.stats.get_mindamage().to_double()
-  let mut maxdamage = self.stats.get_maxdamage().to_double()
-  if degenerate {
-    mindamage /= 10
-    maxdamage /= 10
-  }
-  let critical = self.stats.get_critical()
-  let ignoredef = self.stats.get_ignoredef()
-  let accuracy = self.stats.get_total(@stat.Id::ACC)
-  let playerlevel = self.stats.get_stat(@MapleStat.Id::LEVEL)
-  let range = self.stats.get_range()
-  let bullet = self.inventory.get_bulletid()
-  let origin = self.get_position()
-  let toleft = self.char_base.facing_right.not()
-  let speed = self.get_integer_attackspeed!()
-  let d = @combat.Attack::default()
-  {
-    ..d,
-    t,
-    mindamage,
-    maxdamage,
-    critical,
-    ignoredef,
-    accuracy,
-    playerlevel,
-    range,
-    bullet,
-    origin,
-    toleft,
-    speed,
-  }
-}
-
-fn get_integer_attackspeed(self : Player) -> Int! {
+pub fn get_integer_attackspeed(self : Player) -> Int {
   let weapon_id = self.char_base.look.get_equips().get_weapon()
   if weapon_id <= 0 {
     return 0
   }
-  let weapon = @weapon.WeaponData::get!(weapon_id)
+  let weapon = @weapon.WeaponData::get?(weapon_id).unwrap() // TODO: Handle error
   let base_speed = self.stats.get_attackspeed()
   let weapon_speed = weapon.get_speed()
   base_speed + weapon_speed
@@ -496,7 +410,7 @@ pub fn is_twohanded(self : Player) -> Bool {
 }
 
 pub fn get_attackdelay(self : Player, no : Int) -> Int {
-  self.char_base.get_attackdelay(no)
+  self.char_base.get_attackdelay(no, self.get_integer_attackspeed())
 }
 
 pub fn rush(self : Player, targetx : Double) -> Unit {
@@ -558,7 +472,7 @@ pub fn show_attack_effect(
   toshow : @graphics.Animation,
   z : Int
 ) -> Unit {
-  self.char_base.show_attack_effect(toshow, z)
+  self.char_base.show_attack_effect(toshow, z, self.get_integer_attackspeed())
 }
 
 pub fn show_iron_body(self : Player) -> Unit {
@@ -567,4 +481,8 @@ pub fn show_iron_body(self : Player) -> Unit {
 
 pub fn attack_by_action(self : Player, action : String) -> Unit {
   self.char_base.attack_by_action(action)
+}
+
+pub fn attack_by_stance(self : Player, stance : @char_look.StanceId) -> Unit {
+  self.char_base.attack_by_stance(stance)
 }

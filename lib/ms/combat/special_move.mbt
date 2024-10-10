@@ -15,5 +15,6 @@ pub trait SpecialMove {
   apply_useeffects(Self, @character.Character) -> Unit
   apply_actions(Self, @character.Character, AttackType) -> Unit!
   apply_stats(Self, @character.Character, Attack) -> Unit
+  get_bullet(Self, @character.Character, Int) -> @graphics.Animation
   can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 }

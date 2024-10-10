@@ -167,7 +167,10 @@ pub fn apply_stats(
 ) -> Unit {
   attack.skill = self.skill_id
   let level = user.get_skilllevel(self.skill_id)
-  let stats = @skill.SkillData::get?(self.skill_id).unwrap().get_stats(level) // TODO: Handle error
+  let stats = @skill.SkillData::get?(self.skill_id)
+    .unwrap()
+    .get_stats(level)
+    .unwrap() // TODO: Handle error
   if stats.fixdamage != 0 {
     attack.fixdamage = stats.fixdamage
     attack.damagetype = @combat.AttackDamageType::DMG_FIXED
@@ -226,7 +229,7 @@ pub fn can_use(
   if job.can_use(self.skill_id) == false {
     return FBR_OTHER
   }
-  let stats = data.get_stats(level)
+  let stats = data.get_stats(level).unwrap()
   if hp <= stats.hpcost {
     return FBR_HPCOST
   }
@@ -246,4 +249,12 @@ pub fn can_use(
       }
     _ => FBR_NONE
   }
+}
+
+pub fn Skill::get_bullet(
+  self : Skill,
+  user : @character.Character,
+  bulletid : Int
+) -> @graphics.Animation {
+  self.bullet.get(user, bulletid)
 }

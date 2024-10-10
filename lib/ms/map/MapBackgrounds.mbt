@@ -67,7 +67,7 @@ pub fn Background::from_resource(src : @resource.NxNode) -> Background! {
         .unwrap(), // TODO: handle loading error
       )
   }
-  let t = Background::typebyid!(src["type"].as_strict_int!())
+  let t = Background::typebyid!(src["type"].as_int!())
   @log.debug({ "type": t, "path": src.path() }, "load background")
   let dim_x = animation.get_dimensions().x
   let dim_y = animation.get_dimensions().y

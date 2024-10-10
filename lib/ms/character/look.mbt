@@ -822,6 +822,19 @@ pub fn attack(self : CharLook, degenerate : Bool) -> Unit! {
   // weapon.get_usesound(degenerate).play()
 }
 
+pub fn attack_by_stance(
+  self : CharLook,
+  newstance : @char_look.StanceId
+) -> Unit {
+  if self.action.is_empty().not() || newstance == @char_look.StanceId::NONE {
+    return
+  }
+  match newstance {
+    @char_look.StanceId::SHOT => self.set_action("handgun")
+    _ => self.set_stance(newstance)
+  }
+}
+
 pub fn set_action(self : CharLook, acstr : String) -> Unit {
   if acstr == self.actionstr || acstr.is_empty() {
     return

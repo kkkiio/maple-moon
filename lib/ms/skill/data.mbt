@@ -30,7 +30,7 @@ pub struct Stats {
   ignoredef : Double
   hrange : Double
   range : @struct.Rectangle[Int]
-} derive(Default)
+}
 
 let cache : Map[Int, SkillData] = {}
 
@@ -87,17 +87,24 @@ pub fn SkillData::load(id : Int) -> SkillData! {
     let fixdamage = sub["fixdamage"].get_int!()
     let mastery = sub["mastery"].get_int!()
     let attackcount = sub["attackCount"].get_int?().or(1)
-    let mobcount = sub["mobCount"].get_int?().or(1)
+    let mobcount = sub.get_int_field!("mobCount", default=1)
     let bulletcount = sub["bulletCount"].get_int?().or(1)
     let bulletcost = sub["bulletConsume"].get_int!()
     let hpcost = sub["hpCon"].get_int!()
     let mpcost = sub["mpCon"].get_int!()
-    let chance = sub["prop"].get_float!() / 100
+    let chance = sub.get_float_field!("prop", default=100) / 100
     let critical = 0.0
     let ignoredef = 0.0
-    let hrange = sub["range"].get_float!() / 100
-    let range = sub.as_rectangle!()
     let level = sub.name() |> @strconv.parse_int?() |> @result.or(-1)
+    let hrange = sub.get_float_field!("range", default=100) / 100
+    if mobcount == 0 || hrange == 0 {
+      @log.error(
+        { "id": id, "level": level, "hrange": hrange },
+        "invalid range",
+      )
+      panic()
+    }
+    let range = sub.as_rectangle!()
     stats.set(
       level,
       {
@@ -228,8 +235,6 @@ pub fn is_attack(self : SkillData) -> Bool {
   self.passive.not() && (self.flags & flag_attack) != 0
 }
 
-let null_stats : Stats = Stats::default()
-
-pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats {
-  self.stats.get(level).or(null_stats)
+pub fn get_stats(self : SkillData, level : Int) -> Stats? {
+  self.stats.get(level)
 }

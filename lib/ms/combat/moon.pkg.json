@@ -13,6 +13,7 @@
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/skill",
     "KKKIIO/maple-moon-client/lib/ms/string_format",
-    "KKKIIO/maple-moon-client/lib/ui"
+    "KKKIIO/maple-moon-client/lib/ui",
+    "KKKIIO/maple-moon-client/lib/ms/bullet"
   ]
 }

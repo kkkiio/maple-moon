@@ -5,6 +5,7 @@ struct Combat {
   skills : Map[Int, @combat_do.Skill]
   regular_attack : @combat.RegularAttack
   // TODO: Add reactors
+  bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
   bullets : Array[BulletEffect]
   damage_numbers : Array[@combat_ui.DamageNumber]
@@ -21,6 +22,7 @@ pub fn Combat::new(
     mobs,
     skills: Map::new(),
     regular_attack: @combat.RegularAttack::default(),
+    bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
@@ -42,6 +44,9 @@ pub fn draw(
 }
 
 pub fn update(self : Combat) -> Unit! {
+  for bullet_effect in self.bullet_effects.process() {
+    self.apply_bullet_effect!(bullet_effect)
+  }
   for dmg_eff in self.damage_effects.process() {
     self.apply_damage_effect!(dmg_eff)
   }
@@ -80,30 +85,22 @@ pub fn use_move(self : Combat, move_id : Int) -> Unit! {
 fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
   let player = self.player
   if move.is_attack() {
-    let attack = player.prepare_attack!(move.is_skill())
+    let attack = prepare_attack(player, move.is_skill())
     move.apply_useeffects(player)
     move.apply_actions!(player, attack.t)
     player.set_afterimage(move.get_id())
     move.apply_stats(player, attack)
     let origin = attack.origin
-    let mut range = attack.range
-    let hrange = (range.left().to_double() * attack.hrange).to_int()
-    range = if attack.toleft {
-      @struct.Rectangle::from4(
-        origin.x + hrange,
-        origin.x + range.right(),
-        origin.y + range.top(),
-        origin.y + range.bottom(),
-      )
-    } else {
-      @struct.Rectangle::from4(
-        origin.x - range.right(),
-        origin.x - hrange,
-        origin.y + range.top(),
-        origin.y + range.bottom(),
-      )
-    }
-
+    let hrange = (attack.range.left().to_double() * attack.hrange).to_int()
+    let rel_range = @struct.Rectangle::from4(
+      hrange,
+      attack.range.right(),
+      attack.range.top(),
+      attack.range.bottom(),
+    )
+    let range = (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(
+      origin,
+    )
     // This approach should also make it easier to implement PvP
     let mobcount = attack.mobcount
     let result = {
@@ -168,6 +165,9 @@ fn find_closest_mob(
   origin : @struct.Point[Int],
   objcount : Int
 ) -> Array[Int] {
+  if objcount <= 0 {
+    panic()
+  }
   let arr = Array::new()
   for _, mob in objs {
     if mob.is_alive() && mob.is_in_range(range) {
@@ -225,9 +225,12 @@ fn new_damage_reactor_packet(
   packet
 }
 
-// Notifies the server of an attack. The opcode is determined by the attack
-// type. Attack::CLOSE = CLOSE_ATTACK(44) Attack::RANGED = RANGED_ATTACK(45)
-// Attack::MAGIC = MAGIC_ATTACK(46)
+/// Notifies the server of an attack. 
+/// 
+/// The opcode is determined by the attack type. 
+/// Attack::CLOSE = CLOSE_ATTACK(44) 
+/// Attack::RANGED = RANGED_ATTACK(45)
+/// Attack::MAGIC = MAGIC_ATTACK(46)
 fn new_attack_packet(attack : @combat.AttackResult) -> @net.OutPacket {
   let packet = @net.OutPacket::new(opcodefor(attack.t))
   packet.skip(1)
@@ -299,7 +302,55 @@ fn extract_effects(
     flip: result.toleft.not(),
   }
   if result.bullet != 0 {
-    // TODO: Implement bullet effects
+    let bullet = @combat.Bullet::new(
+      move.get_bullet(user, result.bullet),
+      user.get_position(),
+      result.toleft,
+    )
+    for oid, vec in result.damage_lines {
+      if self.mobs.contains(oid) {
+        let numbers = self.place_numbers(oid, vec)
+        let head = self.mobs.get_mob_head_position(oid)
+        let mut i = 0
+        for number in numbers {
+          let effect : DamageEffect = {
+            user: attack_user,
+            number,
+            damage: vec[i].0,
+            toleft: result.toleft,
+            target_oid: oid,
+            move_id: move.get_id(),
+          }
+          self.bullet_effects.push(
+            user.get_attackdelay(i).to_int64(),
+            { damageeffect: effect, bullet, target: head },
+          )
+          i += 1
+        }
+      }
+    }
+    if result.damage_lines.is_empty() { // TODO: what does this mean?
+      let xshift = if result.toleft { -400 } else { 400 }
+      let target = user.get_position() + Point::new(xshift, -26)
+      for i in 0..<result.hitcount {
+        let effect : DamageEffect = {
+          user: attack_user,
+          number: self.damage_number_set.new_damage_number(
+            @combat_ui.DamageNumberType::NORMAL,
+            0,
+            user.get_position().y,
+          ),
+          damage: 0,
+          toleft: false,
+          target_oid: 0,
+          move_id: 0,
+        }
+        self.bullet_effects.push(
+          user.get_attackdelay(i).to_int64(),
+          { damageeffect: effect, bullet, target },
+        )
+      }
+    }
   } else {
     for oid, vec in result.damage_lines {
       if self.mobs.contains(oid) {
@@ -357,4 +408,80 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
     effect.user,
     move,
   )
+}
+
+fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit! {
+  if effect.bullet.set_target(effect.target) {
+    self.apply_damage_effect!(effect.damageeffect)
+  } else {
+    self.bullets.push(effect)
+  }
+}
+
+pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
+  let (degenerate, attacktype) = if player.char_base.state ==
+    @character.CharState::PRONE {
+    (true, @combat.AttackType::CLOSE)
+  } else if skill {
+    (false, @combat.AttackType::MAGIC) // FIXME: test only
+  } else {
+    match player.get_weapontype() {
+      @weapon.Type::BOW
+      | @weapon.Type::CROSSBOW | @weapon.Type::CLAW | @weapon.Type::GUN => {
+        let degenerate = player.inventory.has_projectile().not()
+        (
+          degenerate,
+          if degenerate {
+            @combat.AttackType::CLOSE
+          } else {
+            @combat.AttackType::RANGED
+          },
+        )
+      }
+      @weapon.Type::WAND | @weapon.Type::STAFF => {
+        let degenerate = skill.not()
+        (
+          degenerate,
+          if degenerate {
+            @combat.AttackType::CLOSE
+          } else {
+            @combat.AttackType::MAGIC
+          },
+        )
+      }
+      _ => (false, @combat.AttackType::CLOSE)
+    }
+  }
+  let t = attacktype
+  let mut mindamage = player.stats.get_mindamage().to_double()
+  let mut maxdamage = player.stats.get_maxdamage().to_double()
+  if degenerate {
+    mindamage /= 10
+    maxdamage /= 10
+  }
+  let critical = player.stats.get_critical()
+  let ignoredef = player.stats.get_ignoredef()
+  let accuracy = player.stats.get_total(@stat.Id::ACC)
+  let playerlevel = player.stats.get_stat(@MapleStat.Id::LEVEL)
+  let range = player.stats.get_range()
+  let bullet = player.inventory.get_bulletid()
+  let origin = player.get_position()
+  let toleft = player.char_base.facing_right.not()
+  let speed = player.get_integer_attackspeed()
+  let d = @combat.Attack::default()
+  {
+    ..d,
+    t,
+    mindamage,
+    maxdamage,
+    critical,
+    ignoredef,
+    accuracy,
+    playerlevel,
+    range,
+    bullet,
+    origin,
+    toleft,
+    speed,
+  }
 }

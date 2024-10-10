@@ -6,8 +6,7 @@ typealias DrawArgument = @graphics.DrawArgument
 
 typealias Physics = @physics.Physics
 
-// Player states which determine animation and state
-// Values are used in movement packets (Add one if facing left)
+/// Player states which determine animation and state
 pub enum CharState {
   WALK
   STAND
@@ -21,6 +20,7 @@ pub enum CharState {
   SIT
 } derive(Eq, Compare)
 
+/// Values are used in movement packets (Add one if facing left)
 pub fn int_value(self : CharState) -> Int {
   match self {
     WALK => 2
@@ -42,7 +42,6 @@ pub fn hash(self : CharState) -> Hash {
 
 // Base for characters, e.g. the player and other clients on the same map.
 pub struct CharBase {
-  sub : CharSubClass
   base : MapObjectBase
   look : CharLook
   // look_preview: CharLook
@@ -84,7 +83,7 @@ pub trait Character {
   // set_direction(Self, Bool) -> Unit
   set_state(Self, CharState) -> Unit
   attack_by_action(Self, String) -> Unit
-  // attack_by_stance(Self, StanceId) -> Unit
+  attack_by_stance(Self, @char_look.StanceId) -> Unit
   regular_attack(Self, Bool) -> Unit!
   // set_afterimage(Self, Int) -> Unit
   get_afterimage(Self) -> @char_look.Afterimage
@@ -100,7 +99,6 @@ pub trait Character {
   // set_expression(Self, Int) -> Unit
   // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
   // remove_pet(Self, Int, Bool) -> Unit
-  getflip(Self) -> Bool
   // get_name(Self) -> String
   // is_sitting(Self) -> Bool
   // is_climbing(Self) -> Bool
@@ -112,22 +110,16 @@ pub trait Character {
   // new_char(Int, CharLook, String) -> Char
   // update_with_speed(Self, Physics, Double) -> Bool
   // get_stancespeed(Self) -> Double
-}
-
-pub trait CharSubClass {
-  // Return the character's base attacking speed.
-  get_integer_attackspeed(Self) -> Int
+  get_position(Self) -> Point[Int]
 }
 
 pub fn CharBase::new(
-  sub : CharSubClass,
   oid : Int,
   look : CharLook,
   name : String,
   damage_number_set : @combat_ui.DamageNumberSet
 ) -> CharBase {
   {
-    sub,
     base: MapObjectBase::new(oid),
     look,
     attacking: false,
@@ -214,7 +206,7 @@ pub fn draw(
   }
 }
 
-pub fn update(self : CharBase, physics : Physics, speed : Double) -> Bool {
+pub fn update(self : CharBase, speed : Double) -> Bool {
   @utils.remove_if(
     self.damage_numbers,
     fn(number : @combat_ui.DamageNumber) { number.update() },
@@ -267,14 +259,14 @@ pub fn set_state(self : CharBase, st : CharState) -> Unit {
   self.look.set_stance(@char_look.StanceId::by_state(st.int_value()))
 }
 
-pub fn getflip(self : CharBase) -> Bool {
+pub fn is_facing_right(self : CharBase) -> Bool {
   self.facing_right
 }
 
 // Get a speed modifier for the current stance.
-pub fn get_stancespeed(self : CharBase) -> Double {
+pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   if self.attacking {
-    return self.get_real_attackspeed()
+    return get_real_attackspeed(base_attack_speed)
   }
   match self.state {
     CharState::WALK => self.base.phobj.moving_object.hspeed.abs()
@@ -285,8 +277,8 @@ pub fn get_stancespeed(self : CharBase) -> Double {
 }
 
 // Return the attack speed as a multiplier
-pub fn get_real_attackspeed(self : CharBase) -> Double {
-  return 1.7 - self.sub.get_integer_attackspeed().to_double() / 10.0
+pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
+  return 1.7 - base_attack_speed.to_double() / 10.0
 }
 
 pub fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
@@ -352,10 +344,14 @@ pub fn get_oid(self : CharBase) -> Int {
   self.base.get_oid()
 }
 
-pub fn get_attackdelay(self : CharBase, no : Int) -> Int {
+pub fn get_attackdelay(
+  self : CharBase,
+  no : Int,
+  base_attack_speed : Int
+) -> Int {
   let first_frame = self.after_image.get_first_frame()
   let delay = self.look.get_attackdelay(no, first_frame)
-  let fspeed = self.get_real_attackspeed()
+  let fspeed = get_real_attackspeed(base_attack_speed)
   (delay.to_double() / fspeed).to_int()
 }
 
@@ -391,9 +387,10 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
 pub fn show_attack_effect(
   self : CharBase,
   toshow : @graphics.Animation,
-  z : Int
+  z : Int,
+  base_attack_speed : Int
 ) -> Unit {
-  let attackspeed = self.get_real_attackspeed()
+  let attackspeed = get_real_attackspeed(base_attack_speed)
   self.effects.add(
     toshow,
     args=DrawArgument::new11(self.facing_right),
@@ -408,6 +405,12 @@ pub fn show_iron_body(self : CharBase) -> Unit {
 
 pub fn attack_by_action(self : CharBase, action : String) -> Unit {
   self.look.set_action(action)
+  self.attacking = true
+  self.look.set_alerted(5000)
+}
+
+pub fn attack_by_stance(self : CharBase, stance : @char_look.StanceId) -> Unit {
+  self.look.attack_by_stance(stance)
   self.attacking = true
   self.look.set_alerted(5000)
 }

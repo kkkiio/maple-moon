@@ -1,7 +1,7 @@
 struct Bullet {
   animation : @graphics.Animation
   move_obj : @physics.MovingObject
-  flip : Bool
+  mut flip : Bool
 }
 
 pub fn Bullet::new(
@@ -26,7 +26,7 @@ pub fn draw(
   self.animation.draw(args, alpha)
 }
 
-pub fn Bullet::update(self : Bullet, target : @struct.Point[Int]) -> Bool {
+pub fn update(self : Bullet, target : @struct.Point[Int]) -> Bool {
   self.animation.update() |> ignore
   self.move_obj.move()
   let xdelta = target.x - self.move_obj.get_x()
@@ -35,4 +35,31 @@ pub fn Bullet::update(self : Bullet, target : @struct.Point[Int]) -> Bool {
   } else {
     xdelta > 10
   }
+}
+
+pub fn set_target(self : Bullet, target : @struct.Point[Int]) -> Bool {
+  let xdelta = target.x - self.move_obj.get_x()
+  let ydelta = target.y - self.move_obj.get_y()
+  if xdelta.abs() < 10 {
+    return true
+  }
+  self.flip = xdelta > 0
+  self.move_obj.hspeed = xdelta.to_double() / 32.0
+  if xdelta > 0 {
+    if self.move_obj.hspeed < 3.0 {
+      self.move_obj.hspeed = 3.0
+    } else if self.move_obj.hspeed > 6.0 {
+      self.move_obj.hspeed = 6.0
+    }
+  } else if xdelta < 0 {
+    if self.move_obj.hspeed > -3.0 {
+      self.move_obj.hspeed = -3.0
+    } else if self.move_obj.hspeed < -6.0 {
+      self.move_obj.hspeed = -6.0
+    }
+  }
+  self.move_obj.vspeed = self.move_obj.hspeed *
+    ydelta.to_double() /
+    xdelta.to_double()
+  return false
 }

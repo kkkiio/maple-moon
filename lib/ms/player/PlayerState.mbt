@@ -141,7 +141,7 @@ pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
 
 pub fn update(self : PlayerWalkState, player : Player) -> Unit {
   if player.is_attacking().not() && self.haswalkinput(player) {
-    let hforce = if player.getflip() {
+    let hforce = if player.is_facing_right() {
       player.get_walkforce()
     } else {
       -player.get_walkforce()

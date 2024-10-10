@@ -1,13 +1,7 @@
 struct Rectangle[T] {
   lt : Point[T]
   rb : Point[T]
-} derive(Eq, Default)
-
-pub fn to_string[T : Show](self : Rectangle[T]) -> String {
-  let lt = self.lt
-  let rb = self.rb
-  "Rect[\{lt},\{rb}]"
-}
+} derive(Eq, Default, Show)
 
 pub fn Rectangle::new[T](lt : Point[T], rb : Point[T]) -> Rectangle[T] {
   { lt, rb }
@@ -69,4 +63,11 @@ pub fn get_vertical(self : Rectangle[Int]) -> Range[Int] {
 
 pub fn is_empty[T : Eq](self : Rectangle[T]) -> Bool {
   self.lt.straight() && self.rb.straight() && self.straight()
+}
+
+pub fn flip_x(self : Rectangle[Int]) -> Rectangle[Int] {
+  {
+    lt: { x: -self.right(), y: self.top() },
+    rb: { x: -self.left(), y: self.bottom() },
+  }
 }

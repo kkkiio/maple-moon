@@ -47,6 +47,10 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   // update with stats that was loaded on server side after character
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = @login.parse_stats!(recv)
+  stats.stats.set(
+    @MapleStat.Id::MP,
+    stats.stats.get(@MapleStat.Id::MAXMP).unwrap(),
+  ) // FIXME: test only
   let playerentry = { ..playerentry, stats, }
   let player = Stage::get().load_player!(playerentry)
   recv.read_byte!() |> ignore // 'buddycap'

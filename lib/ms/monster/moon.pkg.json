@@ -11,6 +11,7 @@
     "KKKIIO/maple-moon-client/lib/layer",
     "KKKIIO/maple-moon-client/lib/ms/combat",
     "KKKIIO/maple-moon-client/lib/ui",
-    "KKKIIO/maple-moon-client/lib/ms/skill"
+    "KKKIIO/maple-moon-client/lib/ms/skill",
+    "KKKIIO/maple-moon-client/lib/log"
   ]
 }

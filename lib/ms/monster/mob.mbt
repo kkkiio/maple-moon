@@ -466,6 +466,11 @@ pub fn is_alive(self : Mob) -> Bool {
 }
 
 pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
+  if range.get_horizontal().delta().is_neg() ||
+    range.get_vertical().delta().is_neg() {
+    @log.error({ "range": range }, "invalid range")
+    panic()
+  }
   if self.base.is_active().not() {
     return false
   }

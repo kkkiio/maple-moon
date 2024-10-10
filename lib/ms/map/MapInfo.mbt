@@ -86,8 +86,8 @@ pub fn MapInfo::from_resource(
   let info = src["info"]
   let (map_walls, map_borders) = if info.contains("VRLeft") {
     (
-      Range::new(info["VRLeft"].as_strict_int!(), info["VRRight"].as_strict_int!()),
-      Range::new(info["VRTop"].as_strict_int!(), info["VRBottom"].as_strict_int!()),
+      Range::new(info["VRLeft"].as_int!(), info["VRRight"].as_int!()),
+      Range::new(info["VRTop"].as_int!(), info["VRBottom"].as_int!()),
     )
   } else {
     (walls, borders)

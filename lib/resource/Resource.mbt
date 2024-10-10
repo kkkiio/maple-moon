@@ -125,7 +125,7 @@ pub fn get_bool(self : NxNode) -> Bool!LoadError {
 }
 
 pub fn as_strict_bool(self : NxNode) -> Bool!LoadError {
-  self.as_strict_int!() != 0
+  self.as_int!() != 0
 }
 
 pub fn get_string(self : NxNode) -> String {
@@ -143,12 +143,45 @@ pub fn get_int(self : NxNode) -> Int!LoadError {
 pub type! LoadError {
   TypeMismatch(String)
   ParseNumber(@strconv.StrConvError)
+  MissingKey(String)
 }
 
-pub fn as_strict_int(self : NxNode) -> Int!LoadError {
+pub fn as_int(self : NxNode) -> Int!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it.to_int()
     _ as a => raise TypeMismatch("expect number, got \{a}, path=\{self.path}")
+  }
+}
+
+pub fn get_int_field(
+  self : NxNode,
+  key : String,
+  ~default? : Int
+) -> Int!LoadError {
+  match self.desc.as_object().unwrap()[key] {
+    Some(@json.JsonValue::Number(it)) => it.to_int()
+    None =>
+      match default {
+        Some(it) => it
+        None => raise LoadError::MissingKey(key)
+      }
+    _ as a => raise TypeMismatch("expect number, got \{a}, key=\{key}")
+  }
+}
+
+pub fn get_float_field(
+  self : NxNode,
+  key : String,
+  ~default? : Double
+) -> Double!LoadError {
+  match self.desc.as_object().unwrap()[key] {
+    Some(@json.JsonValue::Number(it)) => it
+    None =>
+      match default {
+        Some(it) => it
+        None => raise LoadError::MissingKey(key)
+      }
+    _ as a => raise TypeMismatch("expect number, got \{a}, key=\{key}")
   }
 }
 
@@ -214,15 +247,15 @@ pub fn to_string(self : NxNode) -> String {
 
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
   self["__b"]
-  .as_strict_int?()
+  .as_int?()
   .to_option()
   .map(
     fn(bid) {
       {
         image: self.image_loader.load_image(bid),
         id: self.loader_name + "/" + bid.to_string(),
-        width: self["__w"].as_strict_int?().unwrap(),
-        height: self["__h"].as_strict_int?().unwrap(),
+        width: self["__w"].as_int?().unwrap(),
+        height: self["__h"].as_int?().unwrap(),
       }
     },
   )
@@ -240,7 +273,7 @@ pub fn to_string(self : Bitmap) -> String {
 }
 
 fn join_path(parts : Array[String]) -> String {
-  parts.join("/")
+  String::concat(parts, separator="/")
 }
 
 pub type ResPath Array[String] derive(Eq)

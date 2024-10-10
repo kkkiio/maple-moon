@@ -9,7 +9,7 @@ struct WeaponData {
 
 let cache : Map[Int, WeaponData] = Map::new()
 
-fn WeaponData::load(equipid : Int) -> WeaponData! {
+fn WeaponData::fetch(equipid : Int) -> WeaponData! {
   let equip_data = @equip.EquipData::get!(equipid)
   let prefix = equipid / 10000
   let t = by_value!(prefix)
@@ -35,7 +35,7 @@ pub fn WeaponData::get(equipid : Int) -> WeaponData! {
   match cache.get(equipid) {
     Some(data) => data
     None => {
-      let data = WeaponData::load!(equipid)
+      let data = WeaponData::fetch!(equipid)
       cache.set(equipid, data)
       data
     }

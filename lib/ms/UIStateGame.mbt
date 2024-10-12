@@ -21,21 +21,10 @@ struct UIStateGame {
   // ma_tooltip : MapTooltip
   // mut tooltip : Option[Tooltip]
   // tooltip_parent : TooltipParent
-  mut dragged_icon : @inventory.Icon?
   mut time_rel_grabbed : TimePoint
   mut vwidth : Int
   mut vheight : Int
 }
-
-let icon_map : @immut/hashmap.T[@inventory.IconType, UIElementType] = @immut/hashmap.from_array(
-  [
-    (@inventory.IconType::ICON_NONE, UIElementType::UI_ELEMENT_NONE),
-    (@inventory.IconType::SKILL, UIElementType::SKILL_BOOK),
-    (@inventory.IconType::EQUIP, UIElementType::EQUIP_INVENTORY),
-    (@inventory.IconType::ITEM, UIElementType::ITEM_INVENTORY),
-    (@inventory.IconType::KEY, UIElementType::KEY_CONFIG),
-  ],
-)
 
 pub fn UIStateGame::new(timer : Timer) -> UIStateGame {
   {
@@ -51,7 +40,6 @@ pub fn UIStateGame::new(timer : Timer) -> UIStateGame {
     // ma_tooltip: @Tooltip.MapTooltip::default(),
     // tooltip: None,
     // tooltip_parent: TooltipParent::NONE,
-    dragged_icon: None,
     time_rel_grabbed: timer.now(),
     vwidth: @constants.constants.get_viewwidth(),
     vheight: @constants.constants.get_viewheight(),
@@ -88,10 +76,6 @@ pub fn draw(
   // }
   //TODO: draw tooltip
 
-  match self.dragged_icon {
-    Some(icon) => icon.dragdraw(cursor)
-    None => ()
-  }
 }
 
 pub fn update(self : UIStateGame) -> Unit {
@@ -291,19 +275,6 @@ pub fn send_cursor(
   cursorstate : CursorState,
   cursorpos : @struct.Point[Int]
 ) -> CursorState {
-  match self.dragged_icon {
-    Some(dragged_icon) => {
-      if cursorstate == CursorState::CLICKING {
-        if self.drop_icon(dragged_icon, cursorpos) {
-          remove_icon(self)
-          self.time_rel_grabbed = self.timer.now()
-        }
-        return cursorstate
-      }
-      return CursorState::GRABBING
-    }
-    None => ()
-  }
   let clicked = cursorstate == CursorState::CLICKING ||
     cursorstate == CursorState::VSCROLL_IDLE
   match self.get(self.focused) {
@@ -372,10 +343,6 @@ pub fn send_cursor(
   return Stage::get().send_cursor(clicked, cursorpos)
 }
 
-pub fn drag_icon(self : UIStateGame, icon : @inventory.Icon) -> Unit {
-  // Implementation goes here
-}
-
 pub fn set_element(
   self : UIStateGame,
   is_focused : Bool,
@@ -420,14 +387,6 @@ pub fn toggle_element(
             Sound::new(SoundName::MENU_DOWN).play()
           }
           element.remove_cursor()
-          match self.dragged_icon {
-            Some(dragged_icon) =>
-              if (element.get_type() |> @option.some) ==
-                icon_map[dragged_icon.get_type()] {
-                self.remove_icon()
-              }
-            None => ()
-          }
           UI::get().send_cursor_pressed(false)
         }
       }
@@ -496,15 +455,6 @@ pub fn get_front_by_pos(
     i -= 1
   }
   return None
-}
-
-pub fn drop_icon(
-  self : UIStateGame,
-  _icon : @inventory.Icon,
-  _pos : @struct.Point[Int]
-) -> Bool {
-  // Implementation goes here
-  abort("TODO")
 }
 
 pub fn remove_icon(self : UIStateGame) -> Unit {

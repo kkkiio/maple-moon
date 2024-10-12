@@ -8,7 +8,7 @@ struct UIItemInventory {
   inventory : Inventory
   mut meso_label : @graphics.Text
   maple_points_label : @graphics.Text
-  icons : Map[Int, Icon]
+  icons : Map[Int, (IconModel, @graphics.Texture)]
   mut tab : TypeId
   disabled : @graphics.Texture
   full_backgrnd : @graphics.Texture
@@ -62,41 +62,11 @@ pub fn UIItemInventory::new(
     tabdis["4"],
     taben["4"],
   )
-  buttons[ItemInventoryUIButton::BT_COIN] = @ui.MapleButton::from_resource(
-    item["BtCoin3"],
-  )
-  buttons[ItemInventoryUIButton::BT_POINT] = @ui.MapleButton::from_resource(
-    item["BtPoint0"],
-  )
   buttons[ItemInventoryUIButton::BT_GATHER] = @ui.MapleButton::from_resource(
     item["BtGather3"],
   )
   buttons[ItemInventoryUIButton::BT_SORT] = @ui.MapleButton::from_resource(
     item["BtSort3"],
-  )
-  buttons[ItemInventoryUIButton::BT_FULL] = @ui.MapleButton::from_resource(
-    item["BtFull3"],
-  )
-  buttons[ItemInventoryUIButton::BT_SMALL] = @ui.MapleButton::from_resource(
-    item["BtSmall3"],
-  )
-  buttons[ItemInventoryUIButton::BT_POT] = @ui.MapleButton::from_resource(
-    item["BtPot3"],
-  )
-  buttons[ItemInventoryUIButton::BT_UPGRADE] = @ui.MapleButton::from_resource(
-    item["BtUpgrade3"],
-  )
-  buttons[ItemInventoryUIButton::BT_APPRAISE] = @ui.MapleButton::from_resource(
-    item["BtAppraise3"],
-  )
-  buttons[ItemInventoryUIButton::BT_EXTRACT] = @ui.MapleButton::from_resource(
-    item["BtExtract3"],
-  )
-  buttons[ItemInventoryUIButton::BT_DISASSEMBLE] = @ui.MapleButton::from_resource(
-    item["BtDisassemble3"],
-  )
-  buttons[ItemInventoryUIButton::BT_TOAD] = @ui.MapleButton::from_resource(
-    item["BtToad3"],
   )
   buttons[ItemInventoryUIButton::BT_COIN_SM] = @ui.MapleButton::from_resource(
     item["BtCoin4"],
@@ -109,12 +79,6 @@ pub fn UIItemInventory::new(
   )
   buttons[ItemInventoryUIButton::BT_SORT_SM] = @ui.MapleButton::from_resource(
     item["BtSort4"],
-  )
-  buttons[ItemInventoryUIButton::BT_FULL_SM] = @ui.MapleButton::from_resource(
-    item["BtFull4"],
-  )
-  buttons[ItemInventoryUIButton::BT_SMALL_SM] = @ui.MapleButton::from_resource(
-    item["BtSmall4"],
   )
   buttons[ItemInventoryUIButton::BT_POT_SM] = @ui.MapleButton::from_resource(
     item["BtPot4"],
@@ -134,33 +98,6 @@ pub fn UIItemInventory::new(
   buttons[ItemInventoryUIButton::BT_TOAD_SM] = @ui.MapleButton::from_resource(
     item["BtToad4"],
   )
-  buttons[ItemInventoryUIButton::BT_CASHSHOP] = @ui.MapleButton::from_resource(
-    item["BtCashshop"],
-  )
-  buttons[ItemInventoryUIButton::BT_POT]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
-  buttons[ItemInventoryUIButton::BT_POT_SM]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
-  buttons[ItemInventoryUIButton::BT_EXTRACT]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
-  buttons[ItemInventoryUIButton::BT_EXTRACT_SM]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
-  buttons[ItemInventoryUIButton::BT_DISASSEMBLE]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
-  buttons[ItemInventoryUIButton::BT_DISASSEMBLE_SM]
-  .unwrap()
-  .get_button_base()
-  .set_state(@ui.ButtonState::DISABLED)
   buttons[button_by_tab(tab)]
   .unwrap()
   .get_button_base()
@@ -222,7 +159,7 @@ pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
     match self.icons.get(i) {
       Some(icon) =>
         if i >= firstslot && i <= lastslot {
-          icon.draw(position + slotpos)
+          icon.0.draw(position + slotpos, icon.1)
         }
       None =>
         if i > numslots && i <= lastslot {
@@ -299,7 +236,7 @@ pub fn update_slot(self : UIItemInventory, slot : Int) -> Unit! {
     self.inventory.get_item_count(self.tab, slot)
   }
   let texture = @item.ItemData::get!(item_id).get_icon(false)
-  self.icons[slot] = Icon::new(NullType::default(), texture, count) // TODO: support drop
+  self.icons[slot] = (IconModel::new(count), texture) // TODO: support drop
 }
 
 enum ItemInventoryUIButton {
@@ -309,68 +246,19 @@ enum ItemInventoryUIButton {
   BT_TAB_ETC
   BT_TAB_SETUP
   BT_TAB_CASH
-  BT_COIN
-  BT_POINT
   BT_GATHER
   BT_SORT
-  BT_FULL
-  BT_SMALL
-  BT_POT
-  BT_UPGRADE
-  BT_APPRAISE
-  BT_EXTRACT
-  BT_DISASSEMBLE
-  BT_TOAD
   BT_COIN_SM
   BT_POINT_SM
   BT_GATHER_SM
   BT_SORT_SM
-  BT_FULL_SM
-  BT_SMALL_SM
   BT_POT_SM
   BT_UPGRADE_SM
   BT_APPRAISE_SM
   BT_EXTRACT_SM
   BT_DISASSEMBLE_SM
   BT_TOAD_SM
-  BT_CASHSHOP
 } derive(Eq, Hash)
-
-pub fn int_value(self : ItemInventoryUIButton) -> Int {
-  match self {
-    ItemInventoryUIButton::BT_CLOSE => 0
-    ItemInventoryUIButton::BT_TAB_EQUIP => 1
-    ItemInventoryUIButton::BT_TAB_USE => 2
-    ItemInventoryUIButton::BT_TAB_ETC => 3
-    ItemInventoryUIButton::BT_TAB_SETUP => 4
-    ItemInventoryUIButton::BT_TAB_CASH => 5
-    ItemInventoryUIButton::BT_COIN => 6
-    ItemInventoryUIButton::BT_POINT => 7
-    ItemInventoryUIButton::BT_GATHER => 8
-    ItemInventoryUIButton::BT_SORT => 9
-    ItemInventoryUIButton::BT_FULL => 10
-    ItemInventoryUIButton::BT_SMALL => 11
-    ItemInventoryUIButton::BT_POT => 12
-    ItemInventoryUIButton::BT_UPGRADE => 13
-    ItemInventoryUIButton::BT_APPRAISE => 14
-    ItemInventoryUIButton::BT_EXTRACT => 15
-    ItemInventoryUIButton::BT_DISASSEMBLE => 16
-    ItemInventoryUIButton::BT_TOAD => 17
-    ItemInventoryUIButton::BT_COIN_SM => 18
-    ItemInventoryUIButton::BT_POINT_SM => 19
-    ItemInventoryUIButton::BT_GATHER_SM => 20
-    ItemInventoryUIButton::BT_SORT_SM => 21
-    ItemInventoryUIButton::BT_FULL_SM => 22
-    ItemInventoryUIButton::BT_SMALL_SM => 23
-    ItemInventoryUIButton::BT_POT_SM => 24
-    ItemInventoryUIButton::BT_UPGRADE_SM => 25
-    ItemInventoryUIButton::BT_APPRAISE_SM => 26
-    ItemInventoryUIButton::BT_EXTRACT_SM => 27
-    ItemInventoryUIButton::BT_DISASSEMBLE_SM => 28
-    ItemInventoryUIButton::BT_TOAD_SM => 29
-    ItemInventoryUIButton::BT_CASHSHOP => 30
-  }
-}
 
 pub fn button_by_tab(tb : TypeId) -> ItemInventoryUIButton {
   match tb {

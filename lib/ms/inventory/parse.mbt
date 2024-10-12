@@ -39,7 +39,7 @@ fn parse_add_equip(
   // Read equip stats
   // EnumMap<EquipStat::Id, uint16_t> stats;
   let stats = Map::new()
-  for id in @stat.all_stats {
+  for id in @equip_stat.all_stats {
     stats[id] = recv.read_short!()
   }
 

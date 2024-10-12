@@ -1,31 +1,19 @@
 typealias Point[T] = @struct.Point[T]
 
-pub struct UIButtons {
-  buttons : Map[Int, Button]
-}
-
-pub fn UIButtons::default() -> UIButtons {
-  { buttons: {} }
-}
-
-pub fn UIButtons::new() -> UIButtons {
-  { buttons: {} }
-}
-
-pub fn remove_cursor(self : UIButtons) -> Unit {
-  for _, button in self.buttons {
+pub fn remove_cursor[K, V : Button](buttons : Iter2[K, V]) -> Unit {
+  for _, button in buttons {
     if button.get_button_base().get_state() == ButtonState::MOUSEOVER {
       button.get_button_base().set_state(ButtonState::NORMAL)
     }
   }
 }
 
-pub fn send_cursor_to_buttons[K](
-  buttons : Iter2[K, Button],
-  self_position : Point[Int],
+pub fn send_cursor_to_buttons[K, V : Button](
+  buttons : Iter2[K, V],
+  self_position : @struct.Point[Int],
   on_btn_pressed : (K) -> ButtonState,
   down : Bool,
-  pos : Point[Int]
+  pos : @struct.Point[Int]
 ) -> CursorState {
   let mut ret = if down { CursorState::CLICKING } else { CursorState::IDLE }
   for k, button in buttons {

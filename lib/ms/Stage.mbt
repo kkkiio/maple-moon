@@ -459,3 +459,7 @@ fn new_pickup_item_packet(
   ..write_point(position)
   ..write_int(oid)
 }
+
+pub fn doubleclick(self : Stage, pos : Point[Int]) -> Unit {
+  // TODO: Implement
+}

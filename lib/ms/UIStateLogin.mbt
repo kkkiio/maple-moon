@@ -208,3 +208,7 @@ pub fn toggle_element(
 ) -> Unit {
   self.set_element(focused, f())
 }
+
+pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {
+
+}

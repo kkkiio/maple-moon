@@ -318,6 +318,7 @@ struct Account {
 
 pub struct StatsEntry {
   name : String
+  female : Bool
   stats : Map[@MapleStat.Id, Int]
   exp : Int64
   mapid : Int
@@ -429,7 +430,8 @@ pub fn parse_stats(recv : @net.InPacket) -> StatsEntry! {
   {
     name,
     exp: exp.to_int64(),
-    // female, petids, 
+    female,
+    //petids, 
     stats,
     mapid,
     portal,

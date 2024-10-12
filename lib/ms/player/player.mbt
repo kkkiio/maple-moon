@@ -248,11 +248,11 @@ pub fn get_stats(self : Player) -> CharStats {
 }
 
 /// Recalculates the total stats from base stats, inventories and skills.
-pub fn recalc_stats(self : Player, equipchanged : Bool) -> Unit {
+pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   let weapontype = self.char_base.get_weapontype()
   self.stats.set_weapontype(weapontype)
   self.stats.init_totalstats()
-  if equipchanged {
+  if equip_changed {
     self.inventory.recalc_stats(weapontype)
   }
   for stat in @stat.all_stats {

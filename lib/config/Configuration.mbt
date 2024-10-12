@@ -196,30 +196,6 @@ pub fn save(self : IntEntry, value : String) -> Unit {
   self.value = value
 }
 
-// struct PointEntry {
-//   name : String
-//   mut value : String
-// }
-
-// pub fn name(self : PointEntry) -> String {
-//   self.name
-// }
-
-// pub fn PointEntry::new(name : String, value : String) -> PointEntry {
-//   { name, value }
-// }
-
-// pub fn load(self : PointEntry) -> Point[Int] {
-//   // (\d+,\d+)
-//   abort("TODO")
-// }
-
-// pub fn save(self : PointEntry, value : Point[Int]) -> Unit {
-//   let x = value.x
-//   let y = value.y
-//   self.value = "(\(x),\(y))"
-// }
-
 // IP Address which the client will connect to
 // let configServerIP : StringEntry = StringEntry::new("ServerIP", "127.0.0.1")
 
@@ -282,9 +258,6 @@ pub let configFontPathBold : StringEntry = StringEntry::new(
 
 // The default position of UIEquipInventory
 // configLet posEQINV : PointEntry = PointEntry::new("PosEQINV", { x: 250, y: 160 })
-
-// The default position of UIItemInventory
-// configLet posINV : PointEntry = PointEntry::new("PosINV", { x: 300, y: 160 })
 
 // The default position of UISkillBook
 // configLet posSKILL : PointEntry = PointEntry::new("PosSKILL", { x: 96, y: 96 })

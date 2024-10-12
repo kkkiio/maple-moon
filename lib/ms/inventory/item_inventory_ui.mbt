@@ -1,11 +1,15 @@
+/// ItemInventory Dialog
+/// 
+/// support full display mode only for now
 struct UIItemInventory {
+  // player_getter : () -> @player.Player?
   base : @ui.UIElementBase
-  buttons : @ui.UIButtons
+  buttons : Map[ItemInventoryUIButton, @ui.Button]
   inventory : Inventory
   mut meso_label : @graphics.Text
   maple_points_label : @graphics.Text
   icons : Map[Int, Icon]
-  tab : TypeId
+  mut tab : TypeId
   disabled : @graphics.Texture
   full_backgrnd : @graphics.Texture
   full_backgrnd2 : @graphics.Texture
@@ -13,7 +17,10 @@ struct UIItemInventory {
   // TODO: support projectile 
 }
 
-pub fn UIItemInventory::new(inventory : Inventory) -> UIItemInventory {
+pub fn UIItemInventory::new(
+  inventory : Inventory
+  // player_getter : () -> @player.Player?
+) -> UIItemInventory {
   let tab = TypeId::EQUIP
   let ui_loader = @resource.ui_loader()
   let item = ui_loader.load_res(["UIWindow2.img", "Item"])
@@ -22,6 +29,7 @@ pub fn UIItemInventory::new(inventory : Inventory) -> UIItemInventory {
   let full_backgrnd = item["FullBackgrnd"] |> @graphics.Texture::from_resource
   let full_backgrnd2 = item["FullBackgrnd2"] |> @graphics.Texture::from_resource
   let full_backgrnd3 = item["FullBackgrnd3"] |> @graphics.Texture::from_resource
+  let bg_full_dimensions = full_backgrnd.get_dimensions()
 
   // TODO: new tab
 
@@ -30,63 +38,126 @@ pub fn UIItemInventory::new(inventory : Inventory) -> UIItemInventory {
   let taben = srctab["enabled"]
   let tabdis = srctab["disabled"]
   let close = ui_loader.load_res(["Basic.img", "BtClose3"])
-  let buttons : Map[Int, @ui.Button] = {}
-  buttons[bid_close] = @ui.MapleButton::from_resource(close)
-  buttons[bid_tab_equip] = @ui.TwoSpriteButton::new(tabdis["0"], taben["0"])
-  buttons[bid_tab_use] = @ui.TwoSpriteButton::new(tabdis["1"], taben["1"])
-  buttons[bid_tab_etc] = @ui.TwoSpriteButton::new(tabdis["2"], taben["2"])
-  buttons[bid_tab_setup] = @ui.TwoSpriteButton::new(tabdis["3"], taben["3"])
-  buttons[bid_tab_cash] = @ui.TwoSpriteButton::new(tabdis["4"], taben["4"])
-  buttons[bid_coin] = @ui.MapleButton::from_resource(item["BtCoin3"])
-  buttons[bid_point] = @ui.MapleButton::from_resource(item["BtPoint0"])
-  buttons[bid_gather] = @ui.MapleButton::from_resource(item["BtGather3"])
-  buttons[bid_sort] = @ui.MapleButton::from_resource(item["BtSort3"])
-  buttons[bid_full] = @ui.MapleButton::from_resource(item["BtFull3"])
-  buttons[bid_small] = @ui.MapleButton::from_resource(item["BtSmall3"])
-  buttons[bid_pot] = @ui.MapleButton::from_resource(item["BtPot3"])
-  buttons[bid_upgrade] = @ui.MapleButton::from_resource(item["BtUpgrade3"])
-  buttons[bid_appraise] = @ui.MapleButton::from_resource(item["BtAppraise3"])
-  buttons[bid_extract] = @ui.MapleButton::from_resource(item["BtExtract3"])
-  buttons[bid_disassemble] = @ui.MapleButton::from_resource(
+  let buttons : Map[ItemInventoryUIButton, @ui.Button] = {}
+  buttons[ItemInventoryUIButton::BT_CLOSE] = @ui.MapleButton::from_resource(
+    close,
+  )
+  buttons[ItemInventoryUIButton::BT_TAB_EQUIP] = @ui.TwoSpriteButton::new(
+    tabdis["0"],
+    taben["0"],
+  )
+  buttons[ItemInventoryUIButton::BT_TAB_USE] = @ui.TwoSpriteButton::new(
+    tabdis["1"],
+    taben["1"],
+  )
+  buttons[ItemInventoryUIButton::BT_TAB_ETC] = @ui.TwoSpriteButton::new(
+    tabdis["2"],
+    taben["2"],
+  )
+  buttons[ItemInventoryUIButton::BT_TAB_SETUP] = @ui.TwoSpriteButton::new(
+    tabdis["3"],
+    taben["3"],
+  )
+  buttons[ItemInventoryUIButton::BT_TAB_CASH] = @ui.TwoSpriteButton::new(
+    tabdis["4"],
+    taben["4"],
+  )
+  buttons[ItemInventoryUIButton::BT_COIN] = @ui.MapleButton::from_resource(
+    item["BtCoin3"],
+  )
+  buttons[ItemInventoryUIButton::BT_POINT] = @ui.MapleButton::from_resource(
+    item["BtPoint0"],
+  )
+  buttons[ItemInventoryUIButton::BT_GATHER] = @ui.MapleButton::from_resource(
+    item["BtGather3"],
+  )
+  buttons[ItemInventoryUIButton::BT_SORT] = @ui.MapleButton::from_resource(
+    item["BtSort3"],
+  )
+  buttons[ItemInventoryUIButton::BT_FULL] = @ui.MapleButton::from_resource(
+    item["BtFull3"],
+  )
+  buttons[ItemInventoryUIButton::BT_SMALL] = @ui.MapleButton::from_resource(
+    item["BtSmall3"],
+  )
+  buttons[ItemInventoryUIButton::BT_POT] = @ui.MapleButton::from_resource(
+    item["BtPot3"],
+  )
+  buttons[ItemInventoryUIButton::BT_UPGRADE] = @ui.MapleButton::from_resource(
+    item["BtUpgrade3"],
+  )
+  buttons[ItemInventoryUIButton::BT_APPRAISE] = @ui.MapleButton::from_resource(
+    item["BtAppraise3"],
+  )
+  buttons[ItemInventoryUIButton::BT_EXTRACT] = @ui.MapleButton::from_resource(
+    item["BtExtract3"],
+  )
+  buttons[ItemInventoryUIButton::BT_DISASSEMBLE] = @ui.MapleButton::from_resource(
     item["BtDisassemble3"],
   )
-  buttons[bid_toad] = @ui.MapleButton::from_resource(item["BtToad3"])
-  buttons[bid_coin_sm] = @ui.MapleButton::from_resource(item["BtCoin4"])
-  buttons[bid_point_sm] = @ui.MapleButton::from_resource(item["BtPoint1"])
-  buttons[bid_gather_sm] = @ui.MapleButton::from_resource(item["BtGather4"])
-  buttons[bid_sort_sm] = @ui.MapleButton::from_resource(item["BtSort4"])
-  buttons[bid_full_sm] = @ui.MapleButton::from_resource(item["BtFull4"])
-  buttons[bid_small_sm] = @ui.MapleButton::from_resource(item["BtSmall4"])
-  buttons[bid_pot_sm] = @ui.MapleButton::from_resource(item["BtPot4"])
-  buttons[bid_upgrade_sm] = @ui.MapleButton::from_resource(item["BtUpgrade4"])
-  buttons[bid_appraise_sm] = @ui.MapleButton::from_resource(item["BtAppraise4"])
-  buttons[bid_extract_sm] = @ui.MapleButton::from_resource(item["BtExtract4"])
-  buttons[bid_disassemble_sm] = @ui.MapleButton::from_resource(
+  buttons[ItemInventoryUIButton::BT_TOAD] = @ui.MapleButton::from_resource(
+    item["BtToad3"],
+  )
+  buttons[ItemInventoryUIButton::BT_COIN_SM] = @ui.MapleButton::from_resource(
+    item["BtCoin4"],
+  )
+  buttons[ItemInventoryUIButton::BT_POINT_SM] = @ui.MapleButton::from_resource(
+    item["BtPoint1"],
+  )
+  buttons[ItemInventoryUIButton::BT_GATHER_SM] = @ui.MapleButton::from_resource(
+    item["BtGather4"],
+  )
+  buttons[ItemInventoryUIButton::BT_SORT_SM] = @ui.MapleButton::from_resource(
+    item["BtSort4"],
+  )
+  buttons[ItemInventoryUIButton::BT_FULL_SM] = @ui.MapleButton::from_resource(
+    item["BtFull4"],
+  )
+  buttons[ItemInventoryUIButton::BT_SMALL_SM] = @ui.MapleButton::from_resource(
+    item["BtSmall4"],
+  )
+  buttons[ItemInventoryUIButton::BT_POT_SM] = @ui.MapleButton::from_resource(
+    item["BtPot4"],
+  )
+  buttons[ItemInventoryUIButton::BT_UPGRADE_SM] = @ui.MapleButton::from_resource(
+    item["BtUpgrade4"],
+  )
+  buttons[ItemInventoryUIButton::BT_APPRAISE_SM] = @ui.MapleButton::from_resource(
+    item["BtAppraise4"],
+  )
+  buttons[ItemInventoryUIButton::BT_EXTRACT_SM] = @ui.MapleButton::from_resource(
+    item["BtExtract4"],
+  )
+  buttons[ItemInventoryUIButton::BT_DISASSEMBLE_SM] = @ui.MapleButton::from_resource(
     item["BtDisassemble4"],
   )
-  buttons[bid_toad_sm] = @ui.MapleButton::from_resource(item["BtToad4"])
-  buttons[bid_cashshop] = @ui.MapleButton::from_resource(item["BtCashshop"])
-  buttons[bid_pot]
+  buttons[ItemInventoryUIButton::BT_TOAD_SM] = @ui.MapleButton::from_resource(
+    item["BtToad4"],
+  )
+  buttons[ItemInventoryUIButton::BT_CASHSHOP] = @ui.MapleButton::from_resource(
+    item["BtCashshop"],
+  )
+  buttons[ItemInventoryUIButton::BT_POT]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
-  buttons[bid_pot_sm]
+  buttons[ItemInventoryUIButton::BT_POT_SM]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
-  buttons[bid_extract]
+  buttons[ItemInventoryUIButton::BT_EXTRACT]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
-  buttons[bid_extract_sm]
+  buttons[ItemInventoryUIButton::BT_EXTRACT_SM]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
-  buttons[bid_disassemble]
+  buttons[ItemInventoryUIButton::BT_DISASSEMBLE]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
-  buttons[bid_disassemble_sm]
+  buttons[ItemInventoryUIButton::BT_DISASSEMBLE_SM]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
@@ -107,9 +178,14 @@ pub fn UIItemInventory::new(inventory : Inventory) -> UIItemInventory {
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
   )
-  let ui = {
-    base: @ui.UIElementBase::default(),
-    buttons: { buttons, },
+  let base = @ui.UIElementBase::new(
+    @struct.Point::new(300, 160),
+    bg_full_dimensions,
+  )
+  let ui : UIItemInventory = {
+    // player_getter,
+    base,
+    buttons,
     inventory,
     meso_label,
     maple_points_label,
@@ -156,7 +232,7 @@ pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
   }
   // TODO: bulletslot
   // TODO: new_tab
-  for _, button in self.buttons.buttons {
+  for _, button in self.buttons {
     button.draw(position)
   }
 }
@@ -226,75 +302,83 @@ pub fn update_slot(self : UIItemInventory, slot : Int) -> Unit! {
   self.icons[slot] = Icon::new(NullType::default(), texture, count) // TODO: support drop
 }
 
-let bid_close = 0
+enum ItemInventoryUIButton {
+  BT_CLOSE
+  BT_TAB_EQUIP
+  BT_TAB_USE
+  BT_TAB_ETC
+  BT_TAB_SETUP
+  BT_TAB_CASH
+  BT_COIN
+  BT_POINT
+  BT_GATHER
+  BT_SORT
+  BT_FULL
+  BT_SMALL
+  BT_POT
+  BT_UPGRADE
+  BT_APPRAISE
+  BT_EXTRACT
+  BT_DISASSEMBLE
+  BT_TOAD
+  BT_COIN_SM
+  BT_POINT_SM
+  BT_GATHER_SM
+  BT_SORT_SM
+  BT_FULL_SM
+  BT_SMALL_SM
+  BT_POT_SM
+  BT_UPGRADE_SM
+  BT_APPRAISE_SM
+  BT_EXTRACT_SM
+  BT_DISASSEMBLE_SM
+  BT_TOAD_SM
+  BT_CASHSHOP
+} derive(Eq, Hash)
 
-let bid_tab_equip = 1
+pub fn int_value(self : ItemInventoryUIButton) -> Int {
+  match self {
+    ItemInventoryUIButton::BT_CLOSE => 0
+    ItemInventoryUIButton::BT_TAB_EQUIP => 1
+    ItemInventoryUIButton::BT_TAB_USE => 2
+    ItemInventoryUIButton::BT_TAB_ETC => 3
+    ItemInventoryUIButton::BT_TAB_SETUP => 4
+    ItemInventoryUIButton::BT_TAB_CASH => 5
+    ItemInventoryUIButton::BT_COIN => 6
+    ItemInventoryUIButton::BT_POINT => 7
+    ItemInventoryUIButton::BT_GATHER => 8
+    ItemInventoryUIButton::BT_SORT => 9
+    ItemInventoryUIButton::BT_FULL => 10
+    ItemInventoryUIButton::BT_SMALL => 11
+    ItemInventoryUIButton::BT_POT => 12
+    ItemInventoryUIButton::BT_UPGRADE => 13
+    ItemInventoryUIButton::BT_APPRAISE => 14
+    ItemInventoryUIButton::BT_EXTRACT => 15
+    ItemInventoryUIButton::BT_DISASSEMBLE => 16
+    ItemInventoryUIButton::BT_TOAD => 17
+    ItemInventoryUIButton::BT_COIN_SM => 18
+    ItemInventoryUIButton::BT_POINT_SM => 19
+    ItemInventoryUIButton::BT_GATHER_SM => 20
+    ItemInventoryUIButton::BT_SORT_SM => 21
+    ItemInventoryUIButton::BT_FULL_SM => 22
+    ItemInventoryUIButton::BT_SMALL_SM => 23
+    ItemInventoryUIButton::BT_POT_SM => 24
+    ItemInventoryUIButton::BT_UPGRADE_SM => 25
+    ItemInventoryUIButton::BT_APPRAISE_SM => 26
+    ItemInventoryUIButton::BT_EXTRACT_SM => 27
+    ItemInventoryUIButton::BT_DISASSEMBLE_SM => 28
+    ItemInventoryUIButton::BT_TOAD_SM => 29
+    ItemInventoryUIButton::BT_CASHSHOP => 30
+  }
+}
 
-let bid_tab_use = 2
-
-let bid_tab_etc = 3
-
-let bid_tab_setup = 4
-
-let bid_tab_cash = 5
-
-let bid_coin = 6
-
-let bid_point = 7
-
-let bid_gather = 8
-
-let bid_sort = 9
-
-let bid_full = 10
-
-let bid_small = 11
-
-let bid_pot = 12
-
-let bid_upgrade = 13
-
-let bid_appraise = 14
-
-let bid_extract = 15
-
-let bid_disassemble = 16
-
-let bid_toad = 17
-
-let bid_coin_sm = 18
-
-let bid_point_sm = 19
-
-let bid_gather_sm = 20
-
-let bid_sort_sm = 21
-
-let bid_full_sm = 22
-
-let bid_small_sm = 23
-
-let bid_pot_sm = 24
-
-let bid_upgrade_sm = 25
-
-let bid_appraise_sm = 26
-
-let bid_extract_sm = 27
-
-let bid_disassemble_sm = 28
-
-let bid_toad_sm = 29
-
-let bid_cashshop = 30
-
-pub fn button_by_tab(tb : TypeId) -> Int {
+pub fn button_by_tab(tb : TypeId) -> ItemInventoryUIButton {
   match tb {
-    TypeId::EQUIP => bid_tab_equip
-    TypeId::USE => bid_tab_use
-    TypeId::SETUP => bid_tab_setup
-    TypeId::ETC => bid_tab_etc
-    _ => bid_tab_cash
+    TypeId::EQUIP => ItemInventoryUIButton::BT_TAB_EQUIP
+    TypeId::USE => ItemInventoryUIButton::BT_TAB_USE
+    TypeId::SETUP => ItemInventoryUIButton::BT_TAB_SETUP
+    TypeId::ETC => ItemInventoryUIButton::BT_TAB_ETC
+    _ => ItemInventoryUIButton::BT_TAB_CASH
   }
 }
 
@@ -313,7 +397,7 @@ pub fn send_cursor(
 ) -> @ui.CursorState {
   // TODO: implement
   @ui.send_cursor_to_buttons(
-    self.buttons.buttons.iter2(),
+    self.buttons.iter2(),
     self.base.position,
     fn(buttonid) { self.button_pressed(buttonid) },
     pressed,
@@ -323,9 +407,36 @@ pub fn send_cursor(
 
 pub fn button_pressed(
   self : UIItemInventory,
-  buttonid : Int
+  buttonid : ItemInventoryUIButton
 ) -> @ui.ButtonState {
-  // TODO: implement
+  let old_tab = self.tab
+  match buttonid {
+    ItemInventoryUIButton::BT_CLOSE => {
+      self.toggle_active()
+      return @ui.ButtonState::NORMAL
+    }
+    ItemInventoryUIButton::BT_TAB_EQUIP => self.tab = TypeId::EQUIP
+    ItemInventoryUIButton::BT_TAB_USE => self.tab = TypeId::USE
+    ItemInventoryUIButton::BT_TAB_SETUP => self.tab = TypeId::SETUP
+    ItemInventoryUIButton::BT_TAB_ETC => self.tab = TypeId::ETC
+    ItemInventoryUIButton::BT_TAB_CASH => self.tab = TypeId::CASH
+    // ItemInventoryUIButton::BT_GATHER | ItemInventoryUIButton::BT_GATHER_SM =>
+    //   self.fn_gather_items(self.tab)
+    // ItemInventoryUIButton::BT_SORT | ItemInventoryUIButton::BT_SORT_SM =>
+    //   self.fn_sort_items(self.tab)
+    _ => return @ui.ButtonState::NORMAL
+  }
+  if self.tab != old_tab {
+    self.buttons[button_by_tab(old_tab)]
+    .unwrap()
+    .get_button_base()
+    .set_state(@ui.ButtonState::NORMAL)
+    self.buttons[button_by_tab(self.tab)]
+    .unwrap()
+    .get_button_base()
+    .set_state(@ui.ButtonState::PRESSED)
+    self.load_icons?().unwrap() // TODO: handle error
+  }
   @ui.ButtonState::IDENTITY
 }
 
@@ -358,4 +469,121 @@ pub fn toggle_active(self : UIItemInventory) -> Unit {
 pub fn remove_cursor(self : UIItemInventory) -> Unit {
   // TODO: implement
   // self.slider_.remove_cursor()
+}
+
+pub fn doubleclick(
+  self : UIItemInventory,
+  cursorpos : @struct.Point[Int]
+) -> Unit {
+  let slot = self.slot_by_position(cursorpos - self.base.position)
+  if self.icons.contains(slot) && self.is_visible(slot) {
+    let item_id = self.inventory.get_item_id(self.tab, slot)
+    if item_id != 0 {
+      match self.tab {
+        TypeId::EQUIP =>
+          // TODO: implement
+          // if self.can_wear_equip(slot) {
+          //   self.equip_item(slot, self.inventory.find_equipslot(item_id))
+          // }
+          ()
+        TypeId::USE => new_use_item_packet(slot, item_id).dispatch()
+        _ => ()
+      }
+    }
+  }
+}
+
+fn slot_by_position(
+  self : UIItemInventory,
+  cursorpos : @struct.Point[Int]
+) -> Int {
+  let xoff = cursorpos.x - 11
+  let yoff = cursorpos.y - 51
+  if xoff < 1 || xoff > 143 || yoff < 1 {
+    return 0
+  }
+  let slot = 1 + xoff / icon_width + columns * (yoff / icon_height)
+  if self.is_visible(slot) {
+    slot
+  } else {
+    0
+  }
+}
+
+// pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
+//   guard let Some(player) = (self.player_getter)() else { None => false }
+//   let stats = player.get_stats()
+//   let look = player.get_look()
+//   let alerted = look.get_alerted()
+//   if alerted {
+//     // TODO: alert
+//     return false
+//   }
+//   let item_id = self.inventory.get_item_id(TypeId::EQUIP, slot)
+//   let equipdata = @equip.EquipData::get?(item_id).unwrap() // TODO: handle error
+//   let itemdata = equipdata.get_itemdata()
+//   let reqGender = itemdata.gender
+//   let female = stats.get_female()
+//   match reqGender {
+//     0 => // Male
+//       if female {
+//         return false
+//       }
+//     1 => // Female
+//       if female.not() {
+//         return false
+//       }
+//     2 => () // Unisex
+//     _ => ()
+//   }
+//   let jobname = stats.get_job().get_name()
+//   if jobname == "GM" || jobname == "SuperGM" {
+//     return true
+//   }
+//   let reqJOB = equipdata.get_reqstat(@MapleStat.Id::JOB)
+//   if stats.get_job().is_sub_job(reqJOB).not() {
+//     // TODO: show hint message
+//     return false
+//   }
+//   let reqLevel = equipdata.get_reqstat(@MapleStat.Id::LEVEL)
+//   let reqDEX = equipdata.get_reqstat(@MapleStat.Id::DEX)
+//   let reqSTR = equipdata.get_reqstat(@MapleStat.Id::STR)
+//   let reqLUK = equipdata.get_reqstat(@MapleStat.Id::LUK)
+//   let reqINT = equipdata.get_reqstat(@MapleStat.Id::INT)
+//   let reqFAME = equipdata.get_reqstat(@MapleStat.Id::FAME)
+//   let mut i = 0
+//   if reqLevel > stats.get_stat(@MapleStat.Id::LEVEL) {
+//     i += 1
+//   } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
+//     i += 1
+//   } else if reqSTR > stats.get_total(@equip_stat.Id::STR) {
+//     i += 1
+//   } else if reqLUK > stats.get_total(@equip_stat.Id::LUK) {
+//     i += 1
+//   } else if reqINT > stats.get_total(@equip_stat.Id::INT) {
+//     i += 1
+//   } else if reqFAME > stats.get_honor() {
+//     i += 1
+//   }
+//   if i > 0 {
+//     // TODO: show hint message
+//     return false
+//   }
+//   return true
+// }
+
+pub fn new_use_item_packet(slot : Int, itemid : Int) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
+  ..write_time()
+  ..write_short(slot)
+  ..write_int(itemid)
+}
+
+// Update the button_pressed function to use the new enum
+fn change_tab(
+  self : UIItemInventory,
+  tab : ItemInventoryUIButton
+) -> @ui.ButtonState {
+  // Implementation
+  @ui.ButtonState::PRESSED
 }

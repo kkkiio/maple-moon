@@ -1,15 +1,16 @@
 struct Window {
   opacity : Double
+  mut last_click : TimePoint
 }
 
-let window : Window = Window::new()
+let g_window : @utils.Singleton[Window] = @utils.Singleton::new()
 
 fn Window::new() -> Window {
-  { opacity: 1.0 }
+  { opacity: 1.0, last_click: TimePoint::default() }
 }
 
 pub fn Window::get() -> Window {
-  window
+  g_window.must_get()
 }
 
 fn begin(self : Window) -> Unit {
@@ -21,15 +22,21 @@ fn end(self : Window) -> Unit {
 }
 
 pub fn onmousemove(self : Window, x : Int, y : Int) -> Unit {
-  g_ui.send_cursor_pos({ x, y })
+  UI::get().send_cursor_pos({ x, y })
 }
 
 pub fn onmouseup(self : Window) -> Unit {
-  g_ui.send_cursor_pressed(false)
+  UI::get().send_cursor_pressed(false)
 }
 
 pub fn onmousedown(self : Window) -> Unit {
-  g_ui.send_cursor_pressed(true)
+  let now = TimePoint::from_micro(now_micro())
+  let diff_ms = now.since(self.last_click).to_milliseconds()
+  self.last_click = now
+  if diff_ms > 10 && diff_ms < 200 {
+    UI::get().doubleclick()
+  }
+  UI::get().send_cursor_pressed(true)
 }
 
 // fn fadeout(self : Window, step : Double, fadeproc : () -> Unit) -> Unit {

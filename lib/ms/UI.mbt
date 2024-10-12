@@ -7,6 +7,7 @@ enum UiState {
 struct Textfield {}
 
 struct UI {
+  timer : Timer
   mut state : UIState?
   keyboard : Keyboard
   cursor : @ui.Cursor
@@ -17,10 +18,11 @@ struct UI {
   mut caps_lock_enabled : Bool
 }
 
-let g_ui : UI = UI::new()
+let g_ui : @utils.Singleton[UI] = @utils.Singleton::new()
 
-fn UI::new() -> UI {
+fn UI::new(timer : Timer) -> UI {
   let ui = {
+    timer,
     state: None,
     cursor: @ui.Cursor::new(),
     keyboard: Keyboard::default(),
@@ -33,8 +35,8 @@ fn UI::new() -> UI {
   ui
 }
 
-fn UI::get() -> UI {
-  g_ui
+pub fn UI::get() -> UI {
+  g_ui.must_get()
 }
 
 pub fn draw(self : UI, alpha : Double) -> Unit {
@@ -94,7 +96,7 @@ pub fn send_cursor(
 fn change_state(self : UI, id : UiState) -> Unit {
   match id {
     UiState::LOGIN => self.state = Some(UIStateLogin::new())
-    UiState::GAME => self.state = Some(UIStateGame::new())
+    UiState::GAME => self.state = Some(UIStateGame::new(self.timer))
     // UiState::CASHSHOP => UIStateCashShop::default(),
   }
 }
@@ -105,10 +107,6 @@ fn enable(self : UI) -> Unit {
 
 fn disable(self : UI) -> Unit {
   self.enabled = false
-}
-
-fn is_enabled(self : UI) -> Bool {
-  self.enabled
 }
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
@@ -272,4 +270,10 @@ pub fn toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](
 ) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.toggle_element(T::const_type(), T::const_focused(), fn() { f() })
+}
+
+pub fn doubleclick(self : UI) -> Unit {
+  guard let Some(state) = self.state else { None => return  }
+  let pos = self.cursor.get_position()
+  state.doubleclick(pos)
 }

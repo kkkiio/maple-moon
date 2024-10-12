@@ -1,7 +1,10 @@
 {
   "import": [
     "KKKIIO/maple-moon-client/lib/ms/equip",
-    "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+      "alias": "equip_stat"
+    },
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/equip/quality",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
@@ -15,6 +18,8 @@
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/ms/string_format"
+    "KKKIIO/maple-moon-client/lib/ms/string_format",
+    "KKKIIO/maple-moon-client/lib/ms/MapleStat",
+    "KKKIIO/maple-moon-client/lib/ms/job"
   ]
 }

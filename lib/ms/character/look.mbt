@@ -934,3 +934,7 @@ pub fn set_alerted(self : CharLook, millis : Int) -> Unit {
 pub fn get_frame(self : CharLook) -> Int {
   self.st_frame.get()
 }
+
+pub fn get_alerted(self : CharLook) -> Bool {
+  self.alerted.get()
+}

@@ -45,7 +45,7 @@ enum LoginStage {
 
 struct UILogin {
   base : UIElementBase
-  buttons : UIButtons
+  buttons : Map[Int, @ui.Button]
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield
@@ -63,7 +63,7 @@ let map_pretty_loader = @resource.map_pretty_loader
 pub fn UILogin::new() -> UILogin {
   let obj = {
     base: UIElementBase::new(Point::new(0, 0), Point::new(800, 600)),
-    buttons: UIButtons::default(),
+    buttons: Map::new(),
     saveid: false,
     login_stage: INIT,
   }
@@ -301,7 +301,7 @@ pub fn send_cursor(
   //   None => ()
   // }
   @ui.send_cursor_to_buttons(
-    self.buttons.buttons.iter2(),
+    self.buttons.iter2(),
     self.base.position,
     fn(bid) { self.button_pressed(bid) },
     clicked,
@@ -348,7 +348,7 @@ pub fn toggle_active(self : UILogin) -> Unit {
 }
 
 pub fn remove_cursor(self : UILogin) -> Unit {
-  self.buttons.remove_cursor()
+  @ui.remove_cursor(self.buttons.iter2())
 }
 
 pub fn deactivate(self : UILogin) -> Unit {
@@ -361,4 +361,8 @@ fn fn_login_start() -> Unit {
 
 fn fn_login(account : String, password : String) -> Unit {
   @login.new_login_packet(account, password).dispatch()
+}
+
+pub fn doubleclick(self : UILogin, pos : Point[Int]) -> Unit {
+
 }

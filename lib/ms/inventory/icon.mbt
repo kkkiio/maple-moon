@@ -30,8 +30,8 @@ pub fn hash_combine(self : IconType, hasher : Hasher) -> Unit {
 
 pub trait IconTypeTrait {
   drop_on_stage(Self) -> Unit
-  drop_on_equips(Self, @stat.Id) -> Unit
-  drop_on_items(Self, TypeId, @stat.Id, Int, Bool) -> Bool
+  drop_on_equips(Self, @equip_stat.Id) -> Unit
+  drop_on_items(Self, TypeId, @equip_stat.Id, Int, Bool) -> Bool
   drop_on_bindings(Self, @struct.Point[Int], Bool) -> Unit
   set_count(Self, Int) -> Unit
   get_type(Self) -> IconType
@@ -43,14 +43,14 @@ pub fn drop_on_stage(self : NullType) -> Unit {
 
 }
 
-pub fn drop_on_equips(self : NullType, _eqslot : @stat.Id) -> Unit {
+pub fn drop_on_equips(self : NullType, _eqslot : @equip_stat.Id) -> Unit {
 
 }
 
 pub fn drop_on_items(
   self : NullType,
   _tab : TypeId,
-  _eqslot : @stat.Id,
+  _eqslot : @equip_stat.Id,
   _slot : Int,
   _equip : Bool
 ) -> Bool {
@@ -153,14 +153,14 @@ pub fn drop_on_stage(self : Icon) -> Unit {
   self.t.drop_on_stage()
 }
 
-pub fn drop_on_equips(self : Icon, eqslot : @stat.Id) -> Unit {
+pub fn drop_on_equips(self : Icon, eqslot : @equip_stat.Id) -> Unit {
   self.t.drop_on_equips(eqslot)
 }
 
 pub fn drop_on_items(
   self : Icon,
   tab : TypeId,
-  eqslot : @stat.Id,
+  eqslot : @equip_stat.Id,
   slot : Int,
   equip : Bool
 ) -> Bool {

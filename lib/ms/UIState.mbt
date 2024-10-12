@@ -3,6 +3,7 @@ trait UIState {
   update(Self) -> Unit
   send_key(Self, @KeyType.Id, Int, Bool, Bool) -> Unit
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
+  doubleclick(Self, Point[Int]) -> Unit
   // drag_icon(Self, Icon) -> Unit
   set_element(Self, Bool, UIElement) -> Unit
   toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit

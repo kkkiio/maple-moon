@@ -1,5 +1,3 @@
-typealias UIButtons = @ui.UIButtons
-
 typealias ButtonState = @ui.ButtonState
 
 typealias UIElementBase = @ui.UIElementBase
@@ -11,6 +9,7 @@ typealias UIElement = @ui.UIElement
 let min_delay_next_grab : Duration = 10 |> Duration::from_micro
 
 struct UIStateGame {
+  timer : Timer
   elements : Map[UIElementType, UIElement]
   element_order : Array[UIElementType]
   mut focused : UIElementType
@@ -38,8 +37,9 @@ let icon_map : @immut/hashmap.T[@inventory.IconType, UIElementType] = @immut/has
   ],
 )
 
-pub fn UIStateGame::new() -> UIStateGame {
+pub fn UIStateGame::new(timer : Timer) -> UIStateGame {
   {
+    timer,
     elements: Map::new(),
     element_order: [],
     focused: UIElementType::UI_ELEMENT_NONE,
@@ -52,7 +52,7 @@ pub fn UIStateGame::new() -> UIStateGame {
     // tooltip: None,
     // tooltip_parent: TooltipParent::NONE,
     dragged_icon: None,
-    time_rel_grabbed: Timer::get().now(),
+    time_rel_grabbed: timer.now(),
     vwidth: @constants.constants.get_viewwidth(),
     vheight: @constants.constants.get_viewheight(),
   }
@@ -296,7 +296,7 @@ pub fn send_cursor(
       if cursorstate == CursorState::CLICKING {
         if self.drop_icon(dragged_icon, cursorpos) {
           remove_icon(self)
-          self.time_rel_grabbed = Timer::get().now()
+          self.time_rel_grabbed = self.timer.now()
         }
         return cursorstate
       }
@@ -362,7 +362,7 @@ pub fn send_cursor(
       self.element_order.push(drag_element_type)
     }
   }
-  if Timer::get().now().since(self.time_rel_grabbed) < min_delay_next_grab {
+  if self.timer.now().since(self.time_rel_grabbed) < min_delay_next_grab {
     return CursorState::IDLE
   }
   match self.dragged {
@@ -534,4 +534,11 @@ fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> UIElement? {
     },
   )
   .find_first(fn(_it) { true })
+}
+
+fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
+  match self.get_front_by_pos(pos) {
+    Some(front) => front.doubleclick(pos)
+    None => Stage::get().doubleclick(pos)
+  }
 }

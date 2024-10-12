@@ -17,6 +17,7 @@ pub struct CharStats {
   mut ignore_def : Double
   mut stance : Double
   mut reduce_damage : Double
+  female : Bool
 }
 
 pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
@@ -40,6 +41,7 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
     ignore_def: 0.0,
     stance: 0.0,
     reduce_damage: 0.0,
+    female: s.female,
   }
   cs.init_totalstats()
   cs
@@ -235,4 +237,8 @@ pub fn get_exp(self : CharStats) -> Int64 {
 
 pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
   self.exp = exp
+}
+
+pub fn get_female(self : CharStats) -> Bool {
+  self.female
 }

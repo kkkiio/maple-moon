@@ -1,7 +1,7 @@
 struct UIStatusBar {
   stats : @character.CharStats
   base : @ui.UIElementBase
-  ui_buttons : @ui.UIButtons
+  buttons : Map[Int, @ui.Button]
   exp_bar : @ui.Gauge
   hp_bar : @ui.Gauge
   mp_bar : @ui.Gauge
@@ -109,7 +109,7 @@ pub fn UIStatusBar::new(stats : @character.CharStats) -> UIStatusBar {
   {
     stats,
     base: @ui.UIElementBase::new(position, dimension),
-    ui_buttons: @ui.UIButtons::default(),
+    buttons: Map::new(),
     exp_bar,
     hp_bar: hp_bar_,
     mp_bar: mp_bar_,
@@ -283,7 +283,7 @@ pub fn send_cursor(
   cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
   @ui.send_cursor_to_buttons(
-    self.ui_buttons.buttons.iter2(),
+    self.buttons.iter2(),
     self.base.position,
     fn(buttonid) { self.button_pressed(buttonid) },
     pressed,
@@ -318,5 +318,9 @@ pub fn toggle_active(self : UIStatusBar) -> Unit {
 }
 
 pub fn remove_cursor(self : UIStatusBar) -> Unit {
+  // TODO: implement
+}
+
+pub fn doubleclick(self : UIStatusBar, pos : @struct.Point[Int]) -> Unit {
   // TODO: implement
 }

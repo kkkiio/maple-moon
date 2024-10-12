@@ -2,20 +2,24 @@
 // or warps the player to a different map
 struct SetFieldHandler {
   login_module : @login.Module
+  timer : Timer
 }
 
-pub fn SetFieldHandler::new(login_module : @login.Module) -> SetFieldHandler {
-  { login_module, }
+pub fn SetFieldHandler::new(
+  login_module : @login.Module,
+  timer : Timer
+) -> SetFieldHandler {
+  { login_module, timer }
 }
 
-pub fn transition(mapid : Int, portalid : Int) -> Unit {
+pub fn transition(self : SetFieldHandler, mapid : Int, portalid : Int) -> Unit {
   // GraphicsGL::get().lock()
   Stage::get().clear()
-  Timer::get().start()
+  self.timer.start()
   @graphics.GraphicsGL::get().clear()
   Stage::get().load(mapid, portalid)
   UI::get().enable()
-  Timer::get().start()
+  self.timer.start()
   // GraphicsGL::get().unlock()
   transfer_player()
 }
@@ -27,30 +31,30 @@ pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
   let mode1 = recv.read_byte!()
   let mode2 = recv.read_byte!()
   if mode1 == 0 && mode2 == 0 {
-    change_map!(recv)
+    self.change_map!(recv)
   } else {
-    set_field!(recv, self.login_module.get_selected_char().unwrap())
+    self.set_field!(recv, self.login_module.get_selected_char().unwrap())
   }
 }
 
-fn change_map(recv : @net.InPacket) -> Unit! {
+fn change_map(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
   recv.skip!(3)
   let mapid = recv.read_int!()
   let portalid = recv.read_byte!()
-  transition(mapid, portalid)
+  self.transition(mapid, portalid)
 }
 
-fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
+fn set_field(
+  self : SetFieldHandler,
+  recv : @net.InPacket,
+  playerentry : @login.CharEntry
+) -> Unit! {
   recv.skip!(23)
   recv.read_int!() |> ignore // cid
 
   // update with stats that was loaded on server side after character
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = @login.parse_stats!(recv)
-  stats.stats.set(
-    @MapleStat.Id::MP,
-    stats.stats.get(@MapleStat.Id::MAXMP).unwrap(),
-  ) // FIXME: test only
   let playerentry = { ..playerentry, stats, }
   let player = Stage::get().load_player!(playerentry)
   recv.read_byte!() |> ignore // 'buddycap'
@@ -74,7 +78,7 @@ fn set_field(recv : @net.InPacket, playerentry : @login.CharEntry) -> Unit! {
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id
-  transition(mapid, portalid)
+  self.transition(mapid, portalid)
 
   // Sound(Sound::Name::GAME_START).play();
 

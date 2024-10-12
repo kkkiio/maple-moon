@@ -16,6 +16,10 @@ fn to_micro_seconds(self : Duration) -> Int {
   self._
 }
 
+fn to_milliseconds(self : Duration) -> Int {
+  self._ / 1000
+}
+
 fn since(self : TimePoint, other : TimePoint) -> Duration {
   (self._ - other._).to_int()
 }
@@ -23,34 +27,32 @@ fn since(self : TimePoint, other : TimePoint) -> Duration {
 // Small class for measuring elapsed time between game loops.
 // Time measures are in microseconds.
 struct Timer {
-  mut point : TimePoint
+  mut current_time : TimePoint
 }
 
 fn Timer::new() -> Timer {
-  { point: 0L }
-}
-
-let timer : Timer = Timer::new()
-
-fn Timer::get() -> Timer {
-  timer
+  { current_time: 0L }
 }
 
 fn start(self : Timer) -> Unit {
-  self.point = now_micro() |> TimePoint::from_micro
+  self.current_time = now_micro() |> TimePoint::from_micro
 }
 
 fn stop(self : Timer, now : TimePoint) -> Duration {
-  if now <= self.point {
-    return 0
-  }
-  let duration = now.since(self.point)
-  self.point = now
+  let duration = self.since(now)
+  self.current_time = now
   duration
 }
 
-fn now(self : Timer) -> TimePoint {
-  now_micro() |> TimePoint::from_micro
+pub fn since(self : Timer, now : TimePoint) -> Duration {
+  if now <= self.current_time {
+    return 0
+  }
+  now.since(self.current_time)
+}
+
+pub fn now(self : Timer) -> TimePoint {
+  self.current_time
 }
 
 struct PerfTimer {

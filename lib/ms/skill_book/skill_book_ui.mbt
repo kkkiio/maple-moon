@@ -935,3 +935,7 @@ fn btn_id_to_joblevel(btn : SkillBookUIButton) -> @job.Level {
     _ => panic()
   }
 }
+
+pub fn doubleclick(self : SkillBookUI, pos : @struct.Point[Int]) -> Unit {
+  // TODO: implement
+}

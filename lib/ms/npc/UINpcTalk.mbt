@@ -1,5 +1,3 @@
-typealias UIButtons = @ui.UIButtons
-
 typealias ButtonState = @ui.ButtonState
 
 typealias CursorState = @ui.CursorState
@@ -12,7 +10,7 @@ typealias UIElement = @ui.UIElement
 
 struct UINpcTalk {
   base : UIElementBase
-  buttons : UIButtons
+  buttons : Map[Int, @ui.Button]
   top : @graphics.Texture
   fill : @graphics.Texture
   bottom : @graphics.Texture
@@ -84,7 +82,10 @@ let bid_text_button = 15
 typealias MapleButton = @ui.MapleButton
 
 pub fn UINpcTalk::new() -> UINpcTalk {
-  let base = UIElementBase::default()
+  let base = UIElementBase::new(
+    @struct.Point::default(),
+    @struct.Point::default(),
+  ) // update later
   let offset = 0
   let unit_rows = 0
   let row_max = 0
@@ -99,37 +100,23 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let bottom = @graphics.Texture::from_resource(util_dlg_ex["s"])
   let nametag = @graphics.Texture::from_resource(util_dlg_ex["bar"])
   let min_height = 8 * fill.height() + 14
-  let buttons = UIButtons::default()
-  buttons.buttons[bid_all_level] = MapleButton::from_resource(
-    util_dlg_ex["BtAllLevel"],
-  )
-  buttons.buttons[bid_close] = MapleButton::from_resource(
-    util_dlg_ex["BtClose"],
-  )
-  buttons.buttons[bid_my_level] = MapleButton::from_resource(
-    util_dlg_ex["BtMyLevel"],
-  )
-  buttons.buttons[bid_next] = MapleButton::from_resource(util_dlg_ex["BtNext"])
+  let buttons : Map[Int, @ui.Button] = Map::new()
+  buttons[bid_all_level] = MapleButton::from_resource(util_dlg_ex["BtAllLevel"])
+  buttons[bid_close] = MapleButton::from_resource(util_dlg_ex["BtClose"])
+  buttons[bid_my_level] = MapleButton::from_resource(util_dlg_ex["BtMyLevel"])
+  buttons[bid_next] = MapleButton::from_resource(util_dlg_ex["BtNext"])
   let quest = ui_window2["Quest"]
-  buttons.buttons[bid_no] = MapleButton::from_resource(quest["BtNo"])
-  buttons.buttons[bid_ok] = MapleButton::from_resource(util_dlg_ex["BtOK"])
-  buttons.buttons[bid_prev] = MapleButton::from_resource(util_dlg_ex["BtPrev"])
-  buttons.buttons[bid_qafter] = MapleButton::from_resource(
-    util_dlg_ex["BtQAfter"],
-  )
-  buttons.buttons[bid_qcno] = MapleButton::from_resource(util_dlg_ex["BtQCNo"])
-  buttons.buttons[bid_qcyes] = MapleButton::from_resource(
-    util_dlg_ex["BtQCYes"],
-  )
-  buttons.buttons[bid_qgiveup] = MapleButton::from_resource(
-    util_dlg_ex["BtQGiveup"],
-  )
-  buttons.buttons[bid_qno] = MapleButton::from_resource(util_dlg_ex["BtQNo"])
-  buttons.buttons[bid_qstart] = MapleButton::from_resource(
-    util_dlg_ex["BtQStart"],
-  )
-  buttons.buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
-  buttons.buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
+  buttons[bid_no] = MapleButton::from_resource(quest["BtNo"])
+  buttons[bid_ok] = MapleButton::from_resource(util_dlg_ex["BtOK"])
+  buttons[bid_prev] = MapleButton::from_resource(util_dlg_ex["BtPrev"])
+  buttons[bid_qafter] = MapleButton::from_resource(util_dlg_ex["BtQAfter"])
+  buttons[bid_qcno] = MapleButton::from_resource(util_dlg_ex["BtQCNo"])
+  buttons[bid_qcyes] = MapleButton::from_resource(util_dlg_ex["BtQCYes"])
+  buttons[bid_qgiveup] = MapleButton::from_resource(util_dlg_ex["BtQGiveup"])
+  buttons[bid_qno] = MapleButton::from_resource(util_dlg_ex["BtQNo"])
+  buttons[bid_qstart] = MapleButton::from_resource(util_dlg_ex["BtQStart"])
+  buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
+  buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
   let name = @graphics.Text::new(
     "",
     @graphics.FontId::A11M,
@@ -173,7 +160,7 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
   drawpos = drawpos.shift_y(self.height)
   self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
   drawpos = drawpos.shift_y(self.bottom.height())
-  for _, button in self.buttons.buttons {
+  for _, button in self.buttons {
     button.draw(self.base.position)
   }
   let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
@@ -229,7 +216,7 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
 
 pub fn update(self : UINpcTalk) -> Unit {
   self.base.update()
-  for _, button in self.buttons.buttons {
+  for _, button in self.buttons {
     button.update()
   }
   // TODO: show text gradually when open NPC dialog
@@ -292,9 +279,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   match self.content {
     Some(content) =>
       for _, element in content.text_button_content {
-        self.buttons.buttons.remove(
-          bid_text_button + element.get_option_number(),
-        )
+        self.buttons.remove(bid_text_button + element.get_option_number())
       }
     None => ()
   }
@@ -308,7 +293,7 @@ pub fn send_cursor(
 ) -> CursorState {
   // TODO: check slider
   let estate = @ui.send_cursor_to_buttons(
-    self.buttons.buttons.iter2(),
+    self.buttons.iter2(),
     self.base.position,
     fn(bid) { self.button_pressed(bid) },
     clicked,
@@ -331,7 +316,7 @@ pub fn send_cursor(
 }
 
 pub fn remove_cursor(self : UINpcTalk) -> Unit {
-  self.buttons.remove_cursor()
+  @ui.remove_cursor(self.buttons.iter2())
 }
 
 pub fn send_key(
@@ -370,7 +355,7 @@ pub fn change_text(
   let content = convert_npc_text!(tx, npcid, player_name)
   self.content = content |> @option.some
   for element in content.text_button_content {
-    self.buttons.buttons[bid_text_button + element.get_option_number()] = element
+    self.buttons[bid_text_button + element.get_option_number()] = element
   }
   self.name = if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
@@ -387,14 +372,14 @@ pub fn change_text(
   self.height = self.min_height + 20
   self.show_slider = false
   self.reset_content_pos()
-  for i, button in self.buttons.buttons {
+  for i, button in self.buttons {
     if i < bid_text_button { // enable selection buttons
       button.get_button_base().set_active(false)
     }
     button.get_button_base().set_state(ButtonState::NORMAL)
   }
   let y_cord = self.height + 48
-  self.buttons.buttons[bid_close]
+  self.buttons[bid_close]
   .unwrap()
   .get_button_base()
   ..set_position(@struct.Point::new(9, y_cord))
@@ -403,55 +388,55 @@ pub fn change_text(
     Some(t) =>
       match t {
         TalkType::SEND_OK =>
-          self.buttons.buttons[bid_ok]
+          self.buttons[bid_ok]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(469, y_cord))
           .set_active(true)
         TalkType::SEND_YESNO => {
           let yes_position = @struct.Point::new(389, y_cord)
-          self.buttons.buttons[bid_yes]
+          self.buttons[bid_yes]
           .unwrap()
           .get_button_base()
           ..set_position(yes_position)
           .set_active(true)
-          self.buttons.buttons[bid_no]
+          self.buttons[bid_no]
           .unwrap()
           .get_button_base()
           ..set_position(yes_position + @struct.Point::new(65, 0))
           .set_active(true)
         }
         TalkType::SEND_NEXT =>
-          self.buttons.buttons[bid_next]
+          self.buttons[bid_next]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
         TalkType::SEND_PREV =>
-          self.buttons.buttons[bid_prev]
+          self.buttons[bid_prev]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         TalkType::SEND_NEXT_PREV => {
-          self.buttons.buttons[bid_next]
+          self.buttons[bid_next]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
-          self.buttons.buttons[bid_prev]
+          self.buttons[bid_prev]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         }
         TalkType::SEND_ACCEPT_DECLINE => {
-          self.buttons.buttons[bid_qyes]
+          self.buttons[bid_qyes]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(386, y_cord))
           .set_active(true)
-          self.buttons.buttons[bid_qno]
+          self.buttons[bid_qno]
           .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(451, y_cord))
@@ -651,4 +636,8 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
       },
     },
   }
+}
+
+pub fn doubleclick(self : UINpcTalk, pos : @struct.Point[Int]) -> Unit {
+
 }

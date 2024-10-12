@@ -148,6 +148,7 @@ pub fn hash_combine(self : UIElementType, hasher : Hasher) -> Unit {
 pub trait UIElement {
   get_ui_element_base(Self) -> UIElementBase
   send_cursor(Self, Bool, Point[Int]) -> CursorState
+  doubleclick(Self, Point[Int]) -> Unit
   send_key(Self, Int, Bool, Bool) -> Unit
   get_type(Self) -> UIElementType
   is_in_range(Self, Point[Int]) -> Bool
@@ -174,13 +175,9 @@ pub fn UIElementBase::new(
   position : Point[Int],
   dimension : Point[Int],
   ~active : Bool = true,
-  ~sprites : Array[Sprite] = [],
+  ~sprites : Array[Sprite] = []
 ) -> UIElementBase {
   { position, dimension, active, sprites }
-}
-
-pub fn UIElementBase::default() -> UIElementBase {
-  UIElementBase::new(Point::default(), Point::default())
 }
 
 pub fn draw(self : UIElementBase, alpha : Double) -> Unit {

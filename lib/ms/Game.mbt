@@ -1,6 +1,9 @@
 pub struct Game {
+  timer : Timer
   task_scheduler : TaskScheduler
   mut accumulator : Int
+  stage : Stage
+  ui : UI
 }
 
 pub fn Game::start() -> Game {
@@ -19,6 +22,11 @@ pub fn Game::start() -> Game {
     inventory_module.get_inventory(),
   )
   g_stage.set(stage)
+  let timer = Timer::new()
+  let ui = UI::new(timer)
+  g_ui.set(ui)
+  let window = Window::new()
+  g_window.set(window)
   let skill_book_module = @skill_book.Module::new()
   // ( 
 
@@ -59,7 +67,7 @@ pub fn Game::start() -> Game {
       (@net.PING, @net.PingHandler::default())
       |> Iter::singleton
       |> Iter::concat(login_module.make_handlers().iter())
-      |> Iter::append((SET_FIELD, SetFieldHandler::new(login_module)))
+      |> Iter::append((SET_FIELD, SetFieldHandler::new(login_module, timer)))
       // Player handlers
       // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
       // packet_switch.push((KEYMAP, KeymapHandler::new()))
@@ -116,23 +124,20 @@ pub fn Game::start() -> Game {
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers
-      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new(UI::get())))
+      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new(ui)))
       // |> Iter::append((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
       |> Iter::collect,
     ),
   )
   timer.start()
   @map.map_portals_animations.load()
-  { accumulator: 0, task_scheduler }
+  { timer, accumulator: 0, task_scheduler, stage, ui }
 }
 
-pub fn stop(self : Game) -> Unit {
-  // Sound::close();
-}
-
-pub fn on_draw(self : Game, time : TimePoint) -> Unit {
+pub fn on_draw(self : Game, current_time : TimePoint) -> Unit {
   let timestep = @constants.timestep * 1000
-  let elapsed = Timer::get().stop(time)
+  let elapsed = self.timer.stop(current_time)
+  // TODO: reset game state if elapsed is too high
 
   // Update game with constant timestep as many times as possible.
   self.accumulator += elapsed.to_micro_seconds()
@@ -148,11 +153,11 @@ pub fn on_draw(self : Game, time : TimePoint) -> Unit {
 pub fn update(self : Game) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
-  match Stage::get().update?() {
+  match self.stage.update?() {
     Ok(_) => ()
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }
-  UI::get().update()
+  self.ui.update()
   @net.PacketProcessor::get().process_in()
   // Music::update_context();
   self.task_scheduler.update_tasks()
@@ -160,8 +165,8 @@ pub fn update(self : Game) -> Unit {
 
 pub fn draw(self : Game, alpha : Double) -> Unit {
   Window::get().begin()
-  Stage::get().draw(alpha)
-  UI::get().draw(alpha)
+  self.stage.draw(alpha)
+  self.ui.draw(alpha)
   Window::get().end()
 }
 

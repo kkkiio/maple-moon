@@ -146,12 +146,11 @@ pub fn hash_combine(self : UIElementType, hasher : Hasher) -> Unit {
 }
 
 pub trait UIElement {
-  get_ui_element_base(Self) -> UIElementBase
+  get_ui_model(Self) -> UIModel
   send_cursor(Self, Bool, Point[Int]) -> CursorState
   doubleclick(Self, Point[Int]) -> Unit
   send_key(Self, Int, Bool, Bool) -> Unit
   get_type(Self) -> UIElementType
-  is_in_range(Self, Point[Int]) -> Bool
   toggle_active(Self) -> Unit
   remove_cursor(Self) -> Unit
   draw(Self, Double) -> Unit
@@ -164,43 +163,45 @@ pub trait UIElementDescriptor {
   const_focused() -> Bool
 }
 
-pub struct UIElementBase {
-  sprites : Array[Sprite]
+pub struct UIModel {
   mut position : Point[Int]
   mut dimension : Point[Int]
   mut active : Bool
 }
 
-pub fn UIElementBase::new(
+pub fn UIModel::new(
   position : Point[Int],
   dimension : Point[Int],
-  ~active : Bool = true,
-  ~sprites : Array[Sprite] = []
-) -> UIElementBase {
-  { position, dimension, active, sprites }
+  ~active : Bool = true
+) -> UIModel {
+  { position, dimension, active }
 }
 
-pub fn draw(self : UIElementBase, alpha : Double) -> Unit {
-  self.sprites.each(fn(sprite) { sprite.draw(self.position, alpha) })
+pub fn draw_sprites(
+  sprites : Iter[Sprite],
+  position : Point[Int],
+  alpha : Double
+) -> Unit {
+  sprites.each(fn(sprite) { sprite.draw(position, alpha) })
 }
 
-pub fn update(self : UIElementBase) -> Unit {
-  self.sprites.each(fn(sprite) { sprite.update() |> ignore })
+pub fn update_sprites(sprites : Iter[Sprite]) -> Unit {
+  sprites.each(fn(sprite) { sprite.update() |> ignore })
 }
 
-pub fn makeactive(self : UIElementBase) -> Unit {
+pub fn makeactive(self : UIModel) -> Unit {
   self.active = true
 }
 
-pub fn deactivate(self : UIElementBase) -> Unit {
+pub fn deactivate(self : UIModel) -> Unit {
   self.active = false
 }
 
-pub fn is_active(self : UIElementBase) -> Bool {
+pub fn is_active(self : UIModel) -> Bool {
   self.active
 }
 
-pub fn toggle_active(self : UIElementBase) -> Unit {
+pub fn toggle_active(self : UIModel) -> Unit {
   if self.active {
     self.deactivate()
   } else {
@@ -208,7 +209,7 @@ pub fn toggle_active(self : UIElementBase) -> Unit {
   }
 }
 
-pub fn is_in_range(self : UIElementBase, cursorpos : Point[Int]) -> Bool {
+pub fn is_in_range(self : UIModel, cursorpos : Point[Int]) -> Bool {
   let bounds = @struct.Rectangle::new(
     self.position,
     self.position + self.dimension,

@@ -1,6 +1,7 @@
 struct UIStatusBar {
   stats : @character.CharStats
-  base : @ui.UIElementBase
+  base : @ui.UIModel
+  sprites : Array[@graphics.Sprite]
   buttons : Map[Int, @ui.Button]
   exp_bar : @ui.Gauge
   hp_bar : @ui.Gauge
@@ -108,7 +109,8 @@ pub fn UIStatusBar::new(stats : @character.CharStats) -> UIStatusBar {
   let dimension = @struct.Point::new(vwidth - position_x, 75)
   {
     stats,
-    base: @ui.UIElementBase::new(position, dimension),
+    base: @ui.UIModel::new(position, dimension),
+    sprites,
     buttons: Map::new(),
     exp_bar,
     hp_bar: hp_bar_,
@@ -127,7 +129,7 @@ pub fn UIStatusBar::new(stats : @character.CharStats) -> UIStatusBar {
 }
 
 pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
-  self.base.draw(alpha)
+  @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
   // for i in 0..=bt_event {
   //   self.ui_buttons.buttons[i].unwrap().draw(self.base.position)
   // }
@@ -173,7 +175,7 @@ pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
 }
 
 pub fn update(self : UIStatusBar) -> Unit {
-  self.base.update()
+  @ui.update_sprites(self.sprites.iter())
   for sprite in self.hpmp_sprites {
     sprite.update() |> ignore
   }
@@ -273,7 +275,7 @@ fn getmppercent(stats : @character.CharStats) -> Double {
   mp.to_double() / maxmp.to_double()
 }
 
-pub fn get_ui_element_base(self : UIStatusBar) -> @ui.UIElementBase {
+pub fn get_ui_model(self : UIStatusBar) -> @ui.UIModel {
   self.base
 }
 
@@ -307,10 +309,6 @@ pub fn send_key(
 
 pub fn get_type(self : UIStatusBar) -> @ui.UIElementType {
   @ui.UIElementType::STATUS_BAR
-}
-
-pub fn is_in_range(self : UIStatusBar, position : @struct.Point[Int]) -> Bool {
-  self.base.is_in_range(position)
 }
 
 pub fn toggle_active(self : UIStatusBar) -> Unit {

@@ -28,7 +28,8 @@ pub fn SkillDisplayMeta::draw(
 }
 
 struct SkillBookUI {
-  base : @ui.UIElementBase
+  base : @ui.UIModel
+  sprites : Array[@graphics.Sprite]
   stats : @character.CharStats
   skillbook : @character.SkillBook
   buttons : Map[SkillBookUIButton, @ui.Button]
@@ -253,14 +254,11 @@ pub fn SkillBookUI::new(
   // TODO: slider
   // TODO: job
   let dimension = bg_dimensions
-  let base = @ui.UIElementBase::new(
-    @struct.Point::default(),
-    dimension,
-    ~sprites,
-  )
+  let base = @ui.UIModel::new(@struct.Point::default(), dimension)
   let drag_area = @struct.Point::new(dimension.x, 20)
   let ui : SkillBookUI = {
     base,
+    sprites,
     stats,
     skillbook,
     buttons,
@@ -304,7 +302,7 @@ pub fn SkillBookUI::new(
 }
 
 pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
-  self.base.draw(alpha)
+  @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
   self.book_icon.draw(
     self.base.position + @struct.Point::new(11, 85)
     |> @graphics.DrawArgument::from_point,
@@ -431,12 +429,12 @@ pub fn SkillBookUI::is_focused() -> Bool {
   return false
 }
 
-pub fn get_ui_element_base(self : SkillBookUI) -> @ui.UIElementBase {
+pub fn get_ui_model(self : SkillBookUI) -> @ui.UIModel {
   return self.base
 }
 
 pub fn update(self : SkillBookUI) -> Unit {
-  self.base.update()
+  @ui.update_sprites(self.sprites.iter())
   for _, button in self.buttons {
     button.update()
   }
@@ -592,10 +590,6 @@ pub fn send_key(
   escape : Bool
 ) -> Unit {
   // TODO: implement
-}
-
-pub fn is_in_range(self : SkillBookUI, pos : @struct.Point[Int]) -> Bool {
-  self.base.is_in_range(pos)
 }
 
 pub fn toggle_active(self : SkillBookUI) -> Unit {

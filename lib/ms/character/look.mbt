@@ -30,8 +30,6 @@ pub fn CharLook::new(entry : @login.LookEntry) -> CharLook! {
   l.set_body(entry.skin)
   l.set_hair(entry.hairid)
   l.set_face(entry.faceid)
-  l.add_equip!(@clothing.top_default_id)
-  l.add_equip!(@clothing.bottom_default_id)
   for _, itemid in entry.equips {
     l.add_equip!(itemid)
   }
@@ -618,6 +616,23 @@ pub fn draw(
     interexpression,
     interframe,
     interexpframe,
+  )
+}
+
+pub fn draw_with_stance(
+  self : CharLook,
+  position : @struct.Point[Int],
+  flip : Bool,
+  interstance : @char_look.StanceId,
+  interexpression : ExpressionId
+) -> Unit {
+  let interstance = self.equips.adjust_stance(interstance)
+  self.draw_impl(
+    @graphics.DrawArgument::new(position, ~flip),
+    interstance,
+    interexpression,
+    0,
+    0,
   )
 }
 

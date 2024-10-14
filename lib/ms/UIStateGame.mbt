@@ -1,7 +1,5 @@
 typealias ButtonState = @ui.ButtonState
 
-typealias UIElementBase = @ui.UIElementBase
-
 typealias UIElementType = @ui.UIElementType
 
 typealias UIElement = @ui.UIElement
@@ -63,7 +61,7 @@ pub fn draw(
     fn(t) {
       match self.elements.get(t) {
         Some(element) =>
-          if element.get_ui_element_base().is_active() {
+          if element.get_ui_model().is_active() {
             element.draw(inter)
           }
         None => ()
@@ -92,7 +90,7 @@ pub fn update(self : UIStateGame) -> Unit {
     fn(t) {
       match self.elements.get(t) {
         Some(element) =>
-          if element.get_ui_element_base().is_active() {
+          if element.get_ui_model().is_active() {
             element.update()
             if update_screen {
               //TODO: update screen
@@ -114,7 +112,7 @@ pub fn send_key(
 ) -> Unit {
   match self.get(self.focused) {
     Some(focusedelement) => {
-      if focusedelement.get_ui_element_base().is_active() {
+      if focusedelement.get_ui_model().is_active() {
         return focusedelement.send_key(action, pressed, escape)
       }
       self.focused = UIElementType::UI_ELEMENT_NONE
@@ -279,7 +277,7 @@ pub fn send_cursor(
     cursorstate == CursorState::VSCROLL_IDLE
   match self.get(self.focused) {
     Some(focusedelement) => {
-      if focusedelement.get_ui_element_base().is_active() {
+      if focusedelement.get_ui_model().is_active() {
         self.remove_cursor(self.focused)
         return focusedelement.send_cursor(clicked, cursorpos)
       }
@@ -316,8 +314,8 @@ pub fn send_cursor(
       let t = self.element_order[i]
       match self.elements[t] {
         Some(element) =>
-          if element.get_ui_element_base().is_active() &&
-            element.is_in_range(cursorpos) {
+          if element.get_ui_model().is_active() &&
+            element.get_ui_model().is_in_range(cursorpos) {
             self.dragged = Some(element)
             drag_element_type = t
             break
@@ -370,10 +368,10 @@ pub fn toggle_element(
         None => ()
       }
       self.element_order.push(t)
-      let active = element.get_ui_element_base().is_active()
+      let active = element.get_ui_model().is_active()
       element.toggle_active()
-      if active != element.get_ui_element_base().is_active() {
-        if element.get_ui_element_base().is_active() {
+      if active != element.get_ui_model().is_active() {
+        if element.get_ui_model().is_active() {
           if t == UIElementType::WORLD_MAP {
             Sound::new(SoundName::WORLD_MAP_OPEN).play()
           } else {
@@ -407,7 +405,7 @@ pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
     None => ()
   }
   match self.elements.get(t) {
-    Some(element) => element.get_ui_element_base().deactivate()
+    Some(element) => element.get_ui_model().deactivate()
     None => ()
   }
   self.elements.remove(t)
@@ -426,7 +424,7 @@ pub fn get_front_by_types(
     let t = self.element_order[i]
     if types.contains(t) {
       let res = self.elements[t].filter(
-        fn(it) { it.get_ui_element_base().is_active() },
+        fn(it) { it.get_ui_model().is_active() },
       )
       match res {
         Some(_) as r => return r
@@ -446,7 +444,9 @@ pub fn get_front_by_pos(
   while i >= 0 {
     let t = self.element_order[i]
     let res = self.elements[t].filter(
-      fn(it) { it.get_ui_element_base().is_active() && it.is_in_range(pos) },
+      fn(it) {
+        it.get_ui_model().is_active() && it.get_ui_model().is_in_range(pos)
+      },
     )
     match res {
       Some(_) as r => return r
@@ -475,7 +475,9 @@ fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> UIElement? {
   .flat_map(
     fn(t) {
       let res = self.elements[t].filter(
-        fn(it) { it.get_ui_element_base().is_active() && it.is_in_range(pos) },
+        fn(it) {
+          it.get_ui_model().is_active() && it.get_ui_model().is_in_range(pos)
+        },
       )
       match res {
         Some(e) => Iter::singleton(e)

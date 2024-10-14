@@ -55,12 +55,7 @@ pub fn Clothing::new(
   drawinfo : @char_look.BodyDrawInfo
 ) -> Clothing! {
   let equipdata = @equip.EquipData::get!(item_id)
-  let mut eq_slot = equipdata.get_eqslot()
-  if item_id == top_default_id {
-    eq_slot = @slot.Id::TOP_DEFAULT
-  } else if item_id == bottom_default_id {
-    eq_slot = @slot.Id::BOTTOM_DEFAULT
-  }
+  let eq_slot = equipdata.get_eqslot()
   let two_handed = if eq_slot == @slot.Id::WEAPON {
     @weapon.WeaponData::get!(item_id).is_twohanded()
   } else {
@@ -87,11 +82,7 @@ pub fn Clothing::new(
     Layer::MEDAL,
   ]
   let index = item_id / 10000 - 100
-  let chlayer = if item_id == top_default_id {
-    Layer::TOP_DEFAULT
-  } else if item_id == bottom_default_id {
-    Layer::PANTS_DEFAULT
-  } else if index < non_weapon_types {
+  let chlayer = if index < non_weapon_types {
     layers[index]
   } else if index >= weapon_offset && index < weapon_offset + weapon_types {
     Layer::WEAPON
@@ -201,9 +192,6 @@ pub fn Clothing::new(
       },
     )
     |> Map::from_iter
-
-  // static const std::unordered_set<int32_t> transparents = { 1002186 };
-
   let transparent = item_id == 1002186
   { stances, item_id, eq_slot, vslot, two_handed, transparent, walk, stand }
 }
@@ -244,11 +232,6 @@ pub fn get_eqslot(self : Clothing) -> @slot.Id {
   self.eq_slot
 }
 
-/// Defaults when no clothes are equipped
-pub let top_default_id : Int = 1042399
-
-pub let bottom_default_id : Int = 1060026
-
 let sub_layer_names : Map[String, Layer] = {
   "weaponOverHand": Layer::WEAPON_OVER_HAND,
   "weaponOverGlove": Layer::WEAPON_OVER_GLOVE,
@@ -266,4 +249,12 @@ let sub_layer_names : Map[String, Layer] = {
   "gloveWristOverBody": Layer::WRIST_OVER_BODY,
   "capOverHair": Layer::CAP_OVER_HAIR,
   "capBelowBody": Layer::CAP_BELOW_BODY,
+}
+
+pub fn get_stand(self : Clothing) -> @char_look.StanceId {
+  self.stand
+}
+
+pub fn get_walk(self : Clothing) -> @char_look.StanceId {
+  self.walk
 }

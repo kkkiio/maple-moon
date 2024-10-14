@@ -44,7 +44,8 @@ enum LoginStage {
 }
 
 struct UILogin {
-  base : UIElementBase
+  base : @ui.UIModel
+  sprites : Array[@graphics.Sprite]
   buttons : Map[Int, @ui.Button]
   // mut version : Text
   // mut account : Textfield
@@ -61,8 +62,54 @@ let map001_loader = @resource.map001_loader
 let map_pretty_loader = @resource.map_pretty_loader
 
 pub fn UILogin::new() -> UILogin {
+  let map001_loader = map001_loader()
+  let map = map001_loader.load_res(["Back", "login.img"])
+  let back = map["back"]
+  let ani = map["ani"]
+  let ui_loader = @resource.ui_loader()
+  let title = ui_loader.load_res(["Login.img", "Title"])
+  let common = ui_loader.load_res(["Login.img", "Common"])
+  let map_pretty_loader = map_pretty_loader()
+  let prettyLogo = map_pretty_loader.load_res(
+    ["Back", "login.img", "ani", "16"],
+  )
+  let sprites = [
+    @graphics.Sprite::from_resource(
+      back["11"],
+      state_args=DrawArgument::from_point(Point::new(400, 300)),
+    ),
+    @graphics.Sprite::from_resource(
+      ani["17"],
+      state_args=DrawArgument::from_point(Point::new(129, 283)),
+    ),
+    @graphics.Sprite::from_resource(
+      ani["18"],
+      state_args=DrawArgument::from_point(Point::new(306, 252)),
+    ),
+    @graphics.Sprite::from_resource(
+      ani["19"],
+      state_args=DrawArgument::from_point(Point::new(379, 207)),
+    ),
+    @graphics.Sprite::from_resource(
+      back["35"],
+      state_args=DrawArgument::from_point(Point::new(399, 260)),
+    ),
+    @graphics.Sprite::from_resource(
+      prettyLogo,
+      state_args=DrawArgument::from_point(Point::new(394, 173)),
+    ),
+    @graphics.Sprite::from_resource(
+      title["signboard"],
+      state_args=DrawArgument::from_point(Point::new(391, 330)),
+    ),
+    @graphics.Sprite::from_resource(
+      common["frame"],
+      state_args=DrawArgument::from_point(Point::new(400, 300)),
+    ),
+  ]
   let obj = {
-    base: UIElementBase::new(Point::new(0, 0), Point::new(800, 600)),
+    base: @ui.UIModel::new(Point::new(0, 0), Point::new(800, 600)),
+    sprites,
     buttons: Map::new(),
     saveid: false,
     login_stage: INIT,
@@ -78,65 +125,6 @@ pub fn UILogin::new() -> UILogin {
   // let version_text = Configuration::get().get_version()
   // obj.version = Text::new(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text)
 
-  let map001_loader = map001_loader()
-  let map = map001_loader.load_res(["Back", "login.img"])
-  let back = map["back"]
-  let ani = map["ani"]
-  let ui_loader = @resource.ui_loader()
-  let title = ui_loader.load_res(["Login.img", "Title"])
-  let common = ui_loader.load_res(["Login.img", "Common"])
-  let map_pretty_loader = map_pretty_loader()
-  let prettyLogo = map_pretty_loader.load_res(
-    ["Back", "login.img", "ani", "16"],
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      back["11"],
-      state_args=DrawArgument::from_point(Point::new(400, 300)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      ani["17"],
-      state_args=DrawArgument::from_point(Point::new(129, 283)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      ani["18"],
-      state_args=DrawArgument::from_point(Point::new(306, 252)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      ani["19"],
-      state_args=DrawArgument::from_point(Point::new(379, 207)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      back["35"],
-      state_args=DrawArgument::from_point(Point::new(399, 260)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      prettyLogo,
-      state_args=DrawArgument::from_point(Point::new(394, 173)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      title["signboard"],
-      state_args=DrawArgument::from_point(Point::new(391, 330)),
-    ),
-  )
-  obj.base.sprites.push(
-    @graphics.Sprite::from_resource(
-      common["frame"],
-      state_args=DrawArgument::from_point(Point::new(400, 300)),
-    ),
-  )
   // obj.base.buttons[UILoginButtons::BT_LOGIN.int_value()] = MapleButton::new(
   //   title["BtLogin"],
   //   Point::new(454, 279),
@@ -197,12 +185,12 @@ pub fn UILogin::new() -> UILogin {
   obj
 }
 
-pub fn get_ui_element_base(self : UILogin) -> UIElementBase {
+pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
   self.base
 }
 
 pub fn draw(self : UILogin, alpha : Double) -> Unit {
-  self.base.draw(alpha)
+  @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
 
   // self.version.draw(self.position + Point[Int](707, 1))
   // self.account.draw(self.position)
@@ -220,7 +208,7 @@ pub fn draw(self : UILogin, alpha : Double) -> Unit {
 }
 
 pub fn update(self : UILogin) -> Unit {
-  self.base.update()
+  @ui.update_sprites(self.sprites.iter())
   let p = @net.PacketProcessor::get()
   match p.get_status() {
     READY =>
@@ -337,10 +325,6 @@ pub fn send_key(
 
 pub fn is_active(self : UILogin) -> Bool {
   self.base.is_active()
-}
-
-pub fn is_in_range(self : UILogin, pos : Point[Int]) -> Bool {
-  self.base.is_in_range(pos)
 }
 
 pub fn toggle_active(self : UILogin) -> Unit {

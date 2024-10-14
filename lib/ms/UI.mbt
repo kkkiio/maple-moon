@@ -11,8 +11,6 @@ struct UI {
   mut state : UIState?
   keyboard : Keyboard
   cursor : @ui.Cursor
-  //         std::optional<std::reference_wrapper<Textfield>> focused_text_field_;
-  focused_text_field : Textfield?
   is_key_down : Map[String, Bool]
   mut enabled : Bool
   mut caps_lock_enabled : Bool
@@ -26,7 +24,6 @@ fn UI::new(timer : Timer) -> UI {
     state: None,
     cursor: @ui.Cursor::new(),
     keyboard: Keyboard::default(),
-    focused_text_field: None,
     is_key_down: Map::new(),
     enabled: true,
     caps_lock_enabled: false,
@@ -67,17 +64,6 @@ pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
   }
   let cursorpos = self.cursor.get_position()
   self.send_cursor(cursorpos, cursorstate)
-
-  // if (focused_text_field_ && pressed) {
-  //     Cursor::State tstate =
-  //             focused_text_field_->get().send_cursor(cursorpos, pressed);
-
-  //     switch (tstate) {
-  //         case Cursor::State::IDLE:
-  //             focused_text_field_ = {};
-  //             break;
-  //     }
-  // }
 }
 
 pub fn send_cursor(
@@ -114,123 +100,85 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   if self.is_key_down.get_or_default(self.keyboard.capslock_code(), false) {
     self.caps_lock_enabled = self.caps_lock_enabled.not()
   }
-  match self.focused_text_field {
-    Some(_focused_text_field) =>
-      // let ctrl = self.is_key_down.get_or_default(
-      //     self.keyboard.left_ctrl_code(),
-      //     false,
-      //   ) || self.is_key_down.get_or_default(
-      //     self.keyboard.right_ctrl_code(),
-      //     false,
-      //   )
-      // if ctrl {
-      //   if pressed.not() {
-      //     let action = self.keyboard.get_ctrl_action(keycode)
+  let mapping = self.keyboard.get_mapping(keycode)
+  let mut sent = false
+  let types = Array::new()
+  let escape = keycode == @kb.escape
+  let tab = keycode == @kb.tab
+  let enter = keycode == @kb.enter || keycode == @kb.numpadEnter
+  let up_down = keycode == @kb.arrowUp || keycode == @kb.arrowDown
+  let left_right = keycode == @kb.arrowLeft || keycode == @kb.arrowRight
+  let arrows = up_down || left_right
+  fn get_active_ui_by_type(t : UIElementType) -> UIElement? {
+    self.get_element(t).filter(fn(it) { it.get_ui_model().is_active() })
+  }
 
-      //     match action {
-      //         @KeyAction.Id::COPY => Window::get().set_clipboard(focused_text_field.get_text())
-      //         @KeyAction.Id::PASTE => self.focused_text_field.get().add_string(Window::get().get_clipboard())
-      //         _ => ()
-      //     }
-      //   }
-      // } else {
-      //   let shift = self.is_key_down.get_or_default(
-      //       self.keyboard.left_shift_code(),
-      //       false,
-      //     ) || self.is_key_down.get_or_default(
-      //       self.keyboard.right_shift_code(),
-      //       false,
-      //     ) || self.caps_lock_enabled
-      //   let mapping = self.keyboard.get_text_mapping(keycode, shift)
-      //   if mapping.type_ != @KeyType.Id::TEXT {
-      //     focused_text_field.send_key(mapping.type_, mapping.action, pressed)
-      //   }
-      // }
-      ()
+  let active_ui = [
+      get_active_ui_by_type(UIElementType::NPC_TALK),
+      // get_active_ui_by_type(UIElementType::STATUS_BAR), // TODO: check menu active
+      get_active_ui_by_type(UIElementType::CHANNEL),
+      get_active_ui_by_type(UIElementType::WORLD_MAP),
+      get_active_ui_by_type(UIElementType::OPTION_MENU),
+      get_active_ui_by_type(UIElementType::SHOP),
+      get_active_ui_by_type(UIElementType::JOYPAD),
+      get_active_ui_by_type(UIElementType::CHAT_RANK),
+      get_active_ui_by_type(UIElementType::QUIT),
+    ]
+    .iter()
+    .flat_map(fn(it) { it |> @option.iter })
+    .find_first(fn(it) { it.get_ui_model().is_active() })
+  match active_ui {
+    Some(it) => {
+      it.send_key(mapping.action, pressed, escape) |> ignore
+      sent = true
+    }
     None => {
-      let mapping = self.keyboard.get_mapping(keycode)
-      let mut sent = false
-      let types = Array::new()
-      let escape = keycode == @kb.escape
-      let tab = keycode == @kb.tab
-      let enter = keycode == @kb.enter || keycode == @kb.numpadEnter
-      let up_down = keycode == @kb.arrowUp || keycode == @kb.arrowDown
-      let left_right = keycode == @kb.arrowLeft || keycode == @kb.arrowRight
-      let arrows = up_down || left_right
-      fn get_active_ui_by_type(t : UIElementType) -> UIElement? {
-        self
-        .get_element(t)
-        .filter(fn(it) { it.get_ui_element_base().is_active() })
+      if escape || tab || enter || arrows {
+        types.push(UIElementType::WORLD_SELECT)
+        types.push(UIElementType::UI_ELEMENT_CHAR_SELECT)
+        types.push(UIElementType::UI_ELEMENT_RACE_SELECT)
+        types.push(UIElementType::CLASS_CREATION)
+        types.push(UIElementType::LOGIN_NOTICE)
+        types.push(UIElementType::LOGIN_NOTICE_CONFIRM)
+        types.push(UIElementType::LOGIN_WAIT)
       }
-
-      let active_ui = [
-          get_active_ui_by_type(UIElementType::NPC_TALK),
-          // get_active_ui_by_type(UIElementType::STATUS_BAR), // TODO: check menu active
-          get_active_ui_by_type(UIElementType::CHANNEL),
-          get_active_ui_by_type(UIElementType::WORLD_MAP),
-          get_active_ui_by_type(UIElementType::OPTION_MENU),
-          get_active_ui_by_type(UIElementType::SHOP),
-          get_active_ui_by_type(UIElementType::JOYPAD),
-          get_active_ui_by_type(UIElementType::CHAT_RANK),
-          get_active_ui_by_type(UIElementType::QUIT),
-        ]
-        .iter()
-        .flat_map(fn(it) { it |> @option.iter })
-        .find_first(fn(it) { it.get_ui_element_base().is_active() })
-      match active_ui {
-        Some(it) => {
-          it.send_key(mapping.action, pressed, escape) |> ignore
-          sent = true
-        }
-        None => {
-          if escape || tab || enter || arrows {
-            types.push(UIElementType::WORLD_SELECT)
-            types.push(UIElementType::UI_ELEMENT_CHAR_SELECT)
-            types.push(UIElementType::UI_ELEMENT_RACE_SELECT)
-            types.push(UIElementType::CLASS_CREATION)
-            types.push(UIElementType::LOGIN_NOTICE)
-            types.push(UIElementType::LOGIN_NOTICE_CONFIRM)
-            types.push(UIElementType::LOGIN_WAIT)
-          }
-          if escape {
-            types.push(UIElementType::SOFT_KEYBOARD)
-            types.push(UIElementType::NOTICE)
-            types.push(UIElementType::KEY_CONFIG)
-            types.push(UIElementType::CHAT)
-            types.push(UIElementType::EVENT)
-            types.push(UIElementType::STATS_INFO)
-            types.push(UIElementType::ITEM_INVENTORY)
-            types.push(UIElementType::EQUIP_INVENTORY)
-            types.push(UIElementType::SKILL_BOOK)
-            types.push(UIElementType::QUEST_LOG)
-            types.push(UIElementType::USER_LIST)
-            types.push(UIElementType::NPC_TALK)
-            types.push(UIElementType::CHAR_INFO)
-          } else if enter {
-            types.push(UIElementType::SOFT_KEYBOARD)
-            types.push(UIElementType::NOTICE)
-          } else if tab {
-            types.push(UIElementType::ITEM_INVENTORY)
-            types.push(UIElementType::EQUIP_INVENTORY)
-            types.push(UIElementType::SKILL_BOOK)
-            types.push(UIElementType::QUEST_LOG)
-            types.push(UIElementType::USER_LIST)
-          }
-          if types.length() > 0 {
-            match state.get_front_by_types(types) {
-              Some(element) => {
-                element.send_key(mapping.action, pressed, escape)
-                sent = true
-              }
-              None => ()
-            }
-          }
-        }
+      if escape {
+        types.push(UIElementType::SOFT_KEYBOARD)
+        types.push(UIElementType::NOTICE)
+        types.push(UIElementType::KEY_CONFIG)
+        types.push(UIElementType::CHAT)
+        types.push(UIElementType::EVENT)
+        types.push(UIElementType::STATS_INFO)
+        types.push(UIElementType::ITEM_INVENTORY)
+        types.push(UIElementType::EQUIP_INVENTORY)
+        types.push(UIElementType::SKILL_BOOK)
+        types.push(UIElementType::QUEST_LOG)
+        types.push(UIElementType::USER_LIST)
+        types.push(UIElementType::NPC_TALK)
+        types.push(UIElementType::CHAR_INFO)
+      } else if enter {
+        types.push(UIElementType::SOFT_KEYBOARD)
+        types.push(UIElementType::NOTICE)
+      } else if tab {
+        types.push(UIElementType::ITEM_INVENTORY)
+        types.push(UIElementType::EQUIP_INVENTORY)
+        types.push(UIElementType::SKILL_BOOK)
+        types.push(UIElementType::QUEST_LOG)
+        types.push(UIElementType::USER_LIST)
       }
-      if sent.not() {
-        state.send_key(mapping.t, mapping.action, pressed, escape)
+      if types.length() > 0 {
+        match state.get_front_by_types(types) {
+          Some(element) => {
+            element.send_key(mapping.action, pressed, escape)
+            sent = true
+          }
+          None => ()
+        }
       }
     }
+  }
+  if sent.not() {
+    state.send_key(mapping.t, mapping.action, pressed, escape)
   }
   self.is_key_down[keycode] = pressed
 }
@@ -259,6 +207,16 @@ pub fn set_element[T : @ui.UIElement](
   self : UI,
   focused : Bool,
   elem : T
+) -> Unit {
+  guard let Some(state) = self.state else { None => return  }
+  state.set_element(focused, elem)
+}
+
+impl @ui.Container for UI with add_ui(
+  self : UI,
+  _elem_type : @ui.UIElementType, // TODO: remove get_type method from UIElement
+  elem : @ui.UIElement,
+  focused : Bool
 ) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.set_element(focused, elem)

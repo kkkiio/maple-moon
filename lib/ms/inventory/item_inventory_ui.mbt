@@ -3,7 +3,7 @@
 /// support full display mode only for now
 struct UIItemInventory {
   // player_getter : () -> @player.Player?
-  base : @ui.UIElementBase
+  base : @ui.UIModel
   buttons : Map[ItemInventoryUIButton, @ui.Button]
   inventory : Inventory
   mut meso_label : @graphics.Text
@@ -115,10 +115,7 @@ pub fn UIItemInventory::new(
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
   )
-  let base = @ui.UIElementBase::new(
-    @struct.Point::new(300, 160),
-    bg_full_dimensions,
-  )
+  let base = @ui.UIModel::new(@struct.Point::new(300, 160), bg_full_dimensions)
   let ui : UIItemInventory = {
     // player_getter,
     base,
@@ -138,7 +135,6 @@ pub fn UIItemInventory::new(
 }
 
 pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
-  self.base.draw(alpha)
   let position = self.base.position
   let mesolabel_pos = position + @struct.Point::new(127, 262)
   let maplepointslabel_pos = position + @struct.Point::new(159, 279)
@@ -175,7 +171,6 @@ pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
 }
 
 pub fn update(self : UIItemInventory) -> Unit {
-  self.base.update()
   let meso_str = @string_format.format_decimal_separator(
     self.inventory.get_meso(),
   )
@@ -274,7 +269,7 @@ pub fn UIItemInventory::is_focused() -> Bool {
   false
 }
 
-pub fn get_ui_element_base(self : UIItemInventory) -> @ui.UIElementBase {
+pub fn get_ui_model(self : UIItemInventory) -> @ui.UIModel {
   self.base
 }
 
@@ -339,10 +334,6 @@ pub fn send_key(
 
 pub fn get_type(self : UIItemInventory) -> @ui.UIElementType {
   @ui.UIElementType::ITEM_INVENTORY
-}
-
-pub fn is_in_range(self : UIItemInventory, pos : @struct.Point[Int]) -> Bool {
-  self.base.is_in_range(pos)
 }
 
 pub fn toggle_active(self : UIItemInventory) -> Unit {

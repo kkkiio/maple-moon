@@ -94,3 +94,20 @@ pub fn has_weapon(self : CharEquips) -> Bool {
 }
 
 let cloth_cache : Map[Int, @clothing.Clothing] = Map::new()
+
+pub fn adjust_stance(
+  self : CharEquips,
+  stance : @char_look.StanceId
+) -> @char_look.StanceId {
+  match self.clothes[@slot.Id::WEAPON] {
+    Some(weapon) =>
+      match stance {
+        @char_look.StanceId::STAND1 | @char_look.StanceId::STAND2 =>
+          weapon.get_stand()
+        @char_look.StanceId::WALK1 | @char_look.StanceId::WALK2 =>
+          weapon.get_walk()
+        _ => stance
+      }
+    None => stance
+  }
+}

@@ -74,6 +74,12 @@ fn ItemData::load(item_id : Int) -> ItemData! {
     }
     _ => raise ItemDataError("data not found for item_id=\{item_id}")
   }
+  if src.is_null() {
+    @log.warn(
+      { "item_id": item_id, "category": category },
+      "item data not found",
+    ) // TODO: raise error
+  }
   let icons = @utils.BoolPair::new(
     src["icon"] |> @graphics.Texture::from_resource,
     src["iconRaw"] |> @graphics.Texture::from_resource,
@@ -128,7 +134,7 @@ let categorynames = [
 
 type! ItemDataError String derive(Show)
 
-fn ItemData::get_eqcategory(id : Int) -> String!ItemDataError {
+fn get_eqcategory(id : Int) -> String!ItemDataError {
   let index = get_item_prefix(id) - 100
   if index < 0 {
     raise ItemDataError("invalid item id \{id}")
@@ -139,7 +145,7 @@ fn ItemData::get_eqcategory(id : Int) -> String!ItemDataError {
   if index >= 30 && index <= 70 {
     return "Weapon"
   }
-  ""
+  raise ItemDataError("invalid item id \{id}") // TODO: what category it is
 }
 
 fn ItemData::get_item_gender(id : Int) -> Int {

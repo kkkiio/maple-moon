@@ -28,6 +28,7 @@ pub fn Game::start() -> Game {
   let window = Window::new()
   g_window.set(window)
   let skill_book_module = @skill_book.Module::new()
+  let shop_module = @shop.Module::new(ui)
   // ( 
 
   // // Attack handlers
@@ -125,7 +126,14 @@ pub fn Game::start() -> Game {
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers
       |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new(ui)))
-      // |> Iter::append((OPEN_NPC_SHOP, OpenNpcShopHandler::new()))
+      |> Iter::concat(
+        shop_module
+        .make_handlers(
+          fn() { stage.get_player().map(fn(p) { p.get_look() }) },
+          fn() { Some(stage.get_inventory()) },
+        )
+        .iter(),
+      )
       |> Iter::collect,
     ),
   )

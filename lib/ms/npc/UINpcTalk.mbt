@@ -2,14 +2,14 @@ typealias ButtonState = @ui.ButtonState
 
 typealias CursorState = @ui.CursorState
 
-typealias UIElementBase = @ui.UIElementBase
+typealias UIModel = @ui.UIModel
 
 typealias UIElementType = @ui.UIElementType
 
 typealias UIElement = @ui.UIElement
 
 struct UINpcTalk {
-  base : UIElementBase
+  base : UIModel
   buttons : Map[Int, @ui.Button]
   top : @graphics.Texture
   fill : @graphics.Texture
@@ -82,7 +82,7 @@ let bid_text_button = 15
 typealias MapleButton = @ui.MapleButton
 
 pub fn UINpcTalk::new() -> UINpcTalk {
-  let base = UIElementBase::new(
+  let base = @ui.UIModel::new(
     @struct.Point::default(),
     @struct.Point::default(),
   ) // update later
@@ -146,7 +146,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   }
 }
 
-pub fn get_ui_element_base(self : UINpcTalk) -> UIElementBase {
+pub fn get_ui_model(self : UINpcTalk) -> UIModel {
   self.base
 }
 
@@ -215,7 +215,6 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
 }
 
 pub fn update(self : UINpcTalk) -> Unit {
-  self.base.update()
   for _, button in self.buttons {
     button.update()
   }
@@ -481,10 +480,6 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
       init_height += element.height()
     }
   }
-}
-
-pub fn is_in_range(self : UINpcTalk, cursorpos : @struct.Point[Int]) -> Bool {
-  self.base.is_in_range(cursorpos)
 }
 
 pub fn toggle_active(self : UINpcTalk) -> Unit {

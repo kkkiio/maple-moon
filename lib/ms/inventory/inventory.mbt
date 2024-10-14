@@ -321,3 +321,27 @@ pub fn get_bulletslot(self : Inventory) -> Int {
 pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
   self.slot_maxima.get(t).or(0)
 }
+
+pub fn find_equipslot(self : Inventory, item_id : Int) -> @slot.Id {
+  guard let Ok(cloth) = @equip.EquipData::get?(item_id) else {
+    Err(_) => return @slot.Id::NONE // TODO: handle error
+  }
+  let eqslot = cloth.get_eqslot()
+  if eqslot == @slot.Id::RING1 {
+    if self.has_equipped(@slot.Id::RING2).not() {
+      return @slot.Id::RING2
+    }
+    if self.has_equipped(@slot.Id::RING3).not() {
+      return @slot.Id::RING3
+    }
+    if self.has_equipped(@slot.Id::RING4).not() {
+      return @slot.Id::RING4
+    }
+    return @slot.Id::RING1
+  }
+  eqslot
+}
+
+pub fn has_equipped(self : Inventory, slot : @slot.Id) -> Bool {
+  self.inventories[TypeId::EQUIPPED].contains(slot.int_value())
+}

@@ -132,7 +132,10 @@ pub fn send_key(
               UIElementType::ITEM_INVENTORY,
               @inventory.UIItemInventory::is_focused(),
               fn() {
-                @inventory.UIItemInventory::new(Stage::get().get_inventory())
+                @inventory.UIItemInventory::new(
+                  Stage::get().get_inventory(),
+                  fn() { Stage::get().get_player() },
+                )
               },
             )
           //         @KeyAction.Id::STATS => {

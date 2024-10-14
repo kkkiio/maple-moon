@@ -36,7 +36,7 @@ struct Job {
 }
 
 pub fn Job::new(~id : Int = 0) -> Job {
-  let name = get_name(id)
+  let name = get_name_by_id(id)
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -51,7 +51,11 @@ pub fn Job::new(~id : Int = 0) -> Job {
   { name, id, level }
 }
 
-pub fn get_name(jid : Int) -> String {
+pub fn get_name(self : Job) -> String {
+  self.name
+}
+
+fn get_name_by_id(jid : Int) -> String {
   match jid {
     0 => "Beginner"
     100 => "Swordsman"

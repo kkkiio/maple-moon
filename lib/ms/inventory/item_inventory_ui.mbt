@@ -2,7 +2,7 @@
 /// 
 /// support full display mode only for now
 struct UIItemInventory {
-  // player_getter : () -> @player.Player?
+  player_getter : () -> @player.Player?
   base : @ui.UIModel
   buttons : Map[ItemInventoryUIButton, @ui.Button]
   inventory : Inventory
@@ -18,8 +18,8 @@ struct UIItemInventory {
 }
 
 pub fn UIItemInventory::new(
-  inventory : Inventory
-  // player_getter : () -> @player.Player?
+  inventory : Inventory,
+  player_getter : () -> @player.Player?
 ) -> UIItemInventory {
   let tab = TypeId::EQUIP
   let ui_loader = @resource.ui_loader()
@@ -117,7 +117,7 @@ pub fn UIItemInventory::new(
   )
   let base = @ui.UIModel::new(@struct.Point::new(300, 160), bg_full_dimensions)
   let ui : UIItemInventory = {
-    // player_getter,
+    player_getter,
     base,
     buttons,
     inventory,
@@ -360,11 +360,9 @@ pub fn doubleclick(
     if item_id != 0 {
       match self.tab {
         TypeId::EQUIP =>
-          // TODO: implement
-          // if self.can_wear_equip(slot) {
-          //   self.equip_item(slot, self.inventory.find_equipslot(item_id))
-          // }
-          ()
+          if self.can_wear_equip(slot) {
+            new_equip_item_packet(slot, self.inventory.find_equipslot(item_id)).dispatch()
+          }
         TypeId::USE => new_use_item_packet(slot, item_id).dispatch()
         _ => ()
       }
@@ -389,67 +387,58 @@ fn slot_by_position(
   }
 }
 
-// pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
-//   guard let Some(player) = (self.player_getter)() else { None => false }
-//   let stats = player.get_stats()
-//   let look = player.get_look()
-//   let alerted = look.get_alerted()
-//   if alerted {
-//     // TODO: alert
-//     return false
-//   }
-//   let item_id = self.inventory.get_item_id(TypeId::EQUIP, slot)
-//   let equipdata = @equip.EquipData::get?(item_id).unwrap() // TODO: handle error
-//   let itemdata = equipdata.get_itemdata()
-//   let reqGender = itemdata.gender
-//   let female = stats.get_female()
-//   match reqGender {
-//     0 => // Male
-//       if female {
-//         return false
-//       }
-//     1 => // Female
-//       if female.not() {
-//         return false
-//       }
-//     2 => () // Unisex
-//     _ => ()
-//   }
-//   let jobname = stats.get_job().get_name()
-//   if jobname == "GM" || jobname == "SuperGM" {
-//     return true
-//   }
-//   let reqJOB = equipdata.get_reqstat(@MapleStat.Id::JOB)
-//   if stats.get_job().is_sub_job(reqJOB).not() {
-//     // TODO: show hint message
-//     return false
-//   }
-//   let reqLevel = equipdata.get_reqstat(@MapleStat.Id::LEVEL)
-//   let reqDEX = equipdata.get_reqstat(@MapleStat.Id::DEX)
-//   let reqSTR = equipdata.get_reqstat(@MapleStat.Id::STR)
-//   let reqLUK = equipdata.get_reqstat(@MapleStat.Id::LUK)
-//   let reqINT = equipdata.get_reqstat(@MapleStat.Id::INT)
-//   let reqFAME = equipdata.get_reqstat(@MapleStat.Id::FAME)
-//   let mut i = 0
-//   if reqLevel > stats.get_stat(@MapleStat.Id::LEVEL) {
-//     i += 1
-//   } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
-//     i += 1
-//   } else if reqSTR > stats.get_total(@equip_stat.Id::STR) {
-//     i += 1
-//   } else if reqLUK > stats.get_total(@equip_stat.Id::LUK) {
-//     i += 1
-//   } else if reqINT > stats.get_total(@equip_stat.Id::INT) {
-//     i += 1
-//   } else if reqFAME > stats.get_honor() {
-//     i += 1
-//   }
-//   if i > 0 {
-//     // TODO: show hint message
-//     return false
-//   }
-//   return true
-// }
+pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
+  guard let Some(player) = (self.player_getter)() else { None => false }
+  let stats = player.get_stats()
+  let look = player.get_look()
+  let alerted = look.get_alerted()
+  if alerted {
+    // TODO: alert
+    return false
+  }
+  let item_id = self.inventory.get_item_id(TypeId::EQUIP, slot)
+  let equipdata = @equip.EquipData::get?(item_id).unwrap() // TODO: handle error
+  let itemdata = equipdata.get_itemdata()
+  let reqGender = itemdata.gender
+  let female = stats.get_female()
+  match reqGender {
+    0 => // Male
+      if female {
+        return false
+      }
+    1 => // Female
+      if female.not() {
+        return false
+      }
+    2 => () // Unisex
+    _ => ()
+  }
+  let reqLevel = equipdata.get_reqstat(@MapleStat.Id::LEVEL)
+  let reqDEX = equipdata.get_reqstat(@MapleStat.Id::DEX)
+  let reqSTR = equipdata.get_reqstat(@MapleStat.Id::STR)
+  let reqLUK = equipdata.get_reqstat(@MapleStat.Id::LUK)
+  let reqINT = equipdata.get_reqstat(@MapleStat.Id::INT)
+  let reqFAME = equipdata.get_reqstat(@MapleStat.Id::FAME)
+  let mut i = 0
+  if reqLevel > stats.get_stat(@MapleStat.Id::LEVEL) {
+    i += 1
+  } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
+    i += 1
+  } else if reqSTR > stats.get_total(@equip_stat.Id::STR) {
+    i += 1
+  } else if reqLUK > stats.get_total(@equip_stat.Id::LUK) {
+    i += 1
+  } else if reqINT > stats.get_total(@equip_stat.Id::INT) {
+    i += 1
+  } else if reqFAME > 0 { // TODO: support honor
+    i += 1
+  }
+  if i > 0 {
+    // TODO: show hint message
+    return false
+  }
+  return true
+}
 
 pub fn new_use_item_packet(slot : Int, itemid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
@@ -465,4 +454,26 @@ fn change_tab(
 ) -> @ui.ButtonState {
   // Implementation
   @ui.ButtonState::PRESSED
+}
+
+// Packet which requests that an item is moved
+// Opcode: MOVE_ITEM(71)
+pub fn new_move_item_packet(
+  type_id : TypeId,
+  slot : Int,
+  action : Int,
+  qty : Int
+) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::MOVE_ITEM)
+  ..write_time()
+  ..write_byte(type_id.int_value().to_byte())
+  ..write_short(slot)
+  ..write_short(action)
+  ..write_short(qty)
+}
+
+// Packet which requests that an item is equipped
+// Opcode: MOVE_ITEM(71)
+pub fn new_equip_item_packet(src : Int, dest : @slot.Id) -> @net.OutPacket {
+  new_move_item_packet(TypeId::EQUIP, src, -dest.int_value(), 1)
 }

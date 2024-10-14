@@ -82,6 +82,34 @@ pub fn SkillData::load(id : Int) -> SkillData! {
   let levelsrc = src["level"]
   let stats = {}
   for sub in levelsrc {
+    let level = sub.name() |> @strconv.parse_int!()
+    if sub.is_null() {
+      // TODO: don't add invalid stats
+      stats.set(
+        level,
+        {
+          damage: 0,
+          matk: 0,
+          fixdamage: 0,
+          mastery: 0,
+          attackcount: 0,
+          mobcount: 0,
+          bulletcount: 0,
+          bulletcost: 0,
+          hpcost: 0,
+          mpcost: 0,
+          chance: 0,
+          critical: 0,
+          ignoredef: 0,
+          hrange: 0,
+          range: @struct.Rectangle::new(
+            @struct.Point::new(0, 0),
+            @struct.Point::new(0, 0),
+          ),
+        },
+      )
+      continue
+    }
     let damage = sub["damage"].get_float!() / 100
     let matk = sub["mad"].get_int!()
     let fixdamage = sub["fixdamage"].get_int!()
@@ -95,7 +123,6 @@ pub fn SkillData::load(id : Int) -> SkillData! {
     let chance = sub.get_float_field!("prop", default=100) / 100
     let critical = 0.0
     let ignoredef = 0.0
-    let level = sub.name() |> @strconv.parse_int?() |> @result.or(-1)
     let hrange = sub.get_float_field!("range", default=100) / 100
     if mobcount == 0 || hrange == 0 {
       @log.error(

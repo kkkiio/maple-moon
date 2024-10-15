@@ -91,8 +91,8 @@ pub enum SkillId {
   BEHOLDER
 
   // Magician
-  IMPROVE_HP_RECOVERY
-  IMPROVE_MAX_HP
+  IMPROVE_MP_RECOVERY
+  IMPROVE_MAX_MP
   MAGIC_GUARD
   MAGIC_ARMOR
   ENERGY_BOLT
@@ -232,8 +232,8 @@ pub fn int_value(self : SkillId) -> Int {
     SkillId::BEHOLDER => 1321007
 
     // Magician
-    SkillId::IMPROVE_HP_RECOVERY => 2000000
-    SkillId::IMPROVE_MAX_HP => 2000001
+    SkillId::IMPROVE_MP_RECOVERY => 2000000
+    SkillId::IMPROVE_MAX_MP => 2000001
     SkillId::MAGIC_GUARD => 2001002
     SkillId::MAGIC_ARMOR => 2001003
     SkillId::ENERGY_BOLT => 2001004
@@ -376,8 +376,8 @@ pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
     1321007 => SkillId::BEHOLDER
 
     // Magician
-    2000000 => SkillId::IMPROVE_HP_RECOVERY
-    2000001 => SkillId::IMPROVE_MAX_HP
+    2000000 => SkillId::IMPROVE_MP_RECOVERY
+    2000001 => SkillId::IMPROVE_MAX_MP
     2001002 => SkillId::MAGIC_GUARD
     2001003 => SkillId::MAGIC_ARMOR
     2001004 => SkillId::ENERGY_BOLT

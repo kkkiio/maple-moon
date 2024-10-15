@@ -13,22 +13,22 @@ pub fn apply_useeffects(
 pub fn apply_actions(
   self : RegularAttack,
   user : @character.Character,
-  t : AttackType
-) -> Unit! {
-  self.action.apply!(user, t)
+  t : @combat.AttackType
+) -> Unit {
+  self.action.apply(user, t)
 }
 
 pub fn apply_stats(
   self : RegularAttack,
   user : @character.Character,
-  attack : Attack
+  attack : @combat.Attack
 ) -> Unit {
-  attack.damagetype = AttackDamageType::DMG_WEAPON
+  attack.damagetype = @combat.AttackDamageType::DMG_WEAPON
   attack.skill = 0
   attack.mobcount = 1
   attack.hitcount = 1
   attack.stance = user.get_look().get_stance().int_value()
-  if attack.t == AttackType::CLOSE {
+  if attack.t == @combat.AttackType::CLOSE {
     attack.range = user.get_afterimage().get_range()
   }
 }
@@ -55,21 +55,21 @@ pub fn RegularAttack::get_bullet(
 
 struct RegularAction {} derive(Default)
 
-pub fn RegularAction::apply(
+pub fn apply(
   self : RegularAction,
   target : @character.Character,
-  atype : AttackType
-) -> Unit! {
+  atype : @combat.AttackType
+) -> Unit {
   let weapontype = target.get_weapontype()
   let degenerate = match weapontype {
     @weapon.BOW | @weapon.CROSSBOW | @weapon.CLAW | @weapon.GUN =>
-      atype != AttackType::RANGED
+      atype != @combat.AttackType::RANGED
     _ => false
   }
-  target.regular_attack!(degenerate)
+  target.regular_attack?(degenerate).unwrap() // TODO: Handle error
 }
 
-pub fn RegularAttack::can_use(
+pub fn can_use(
   self : RegularAttack,
   _level : Int,
   weapon : @weapon.Type,
@@ -93,4 +93,12 @@ struct RegularBullet {} derive(Default)
 
 pub fn get(self : RegularBullet, bulletid : Int) -> @graphics.Animation {
   @bullet.BulletData::get?(bulletid).unwrap().bullet // TODO: Handle error
+}
+
+pub fn apply_hit_effects(
+  self : RegularAttack,
+  _user : @combat.AttackUser,
+  _target : @monster.Mob
+) -> Unit {
+
 }

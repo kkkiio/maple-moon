@@ -41,7 +41,7 @@ pub fn apply_move_skill(move : @monster.MobSkill, mob : @monster.Mob) -> Unit {
   }
   mob.use_skill(move)
   move.apply_useeffects(mob)
-  // move.apply_hiteffects(mob);
+  // move.apply_hit_effects(mob);
 }
 
 pub fn apply_move_attack(
@@ -51,5 +51,5 @@ pub fn apply_move_attack(
   mob.update_movement_ex(1, 1, 2 * (move.get_id() + 24), 0, 0, 0)
   mob.use_attack(move)
   move.apply_useeffects(mob)
-  // move.apply_hiteffects(mob);
+  // move.apply_hit_effects(mob);
 }

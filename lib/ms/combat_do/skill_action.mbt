@@ -16,27 +16,6 @@ fn apply(
   // Do nothing
 }
 
-struct RegularAction {} derive(Default)
-
-fn RegularAction::new() -> RegularAction {
-  RegularAction::default()
-}
-
-fn apply(
-  self : RegularAction,
-  target : @character.Character,
-  atype : @combat.AttackType
-) -> Unit {
-  let weapontype = target.get_weapontype()
-  let degenerate = match weapontype {
-    @weapon.Type::BOW
-    | @weapon.Type::CROSSBOW | @weapon.Type::CLAW | @weapon.Type::GUN =>
-      atype != @combat.AttackType::RANGED
-    _ => false
-  }
-  target.regular_attack?(degenerate).unwrap() // TODO: Handle error
-}
-
 struct SingleAction {
   action : String
 }

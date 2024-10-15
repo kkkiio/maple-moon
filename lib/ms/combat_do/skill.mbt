@@ -98,7 +98,7 @@ pub fn Skill::new(skill_id : Int) -> Skill! {
       action
     } else {
       over_regular = true
-      let action : SkillAction = RegularAction::new()
+      let action : SkillAction = RegularAction::default()
       action
     }
   } else {
@@ -115,7 +115,7 @@ pub fn Skill::new(skill_id : Int) -> Skill! {
     bullet
   } else {
     projectile = false
-    let bullet : SkillBullet = RegularBullet::new()
+    let bullet : SkillBullet = SkillRegularBullet::default()
     bullet
   }
   {
@@ -149,15 +149,12 @@ pub fn Skill::apply_useeffects(
   self.use_effect.apply(user)
 }
 
-pub fn Skill::apply_actions(
+pub fn apply_actions(
   self : Skill,
   user : @character.Character,
   attack_type : @combat.AttackType
-) -> Unit! {
+) -> Unit {
   self.action.apply(user, attack_type)
-  if false {
-    fail!("WORKAROUND")
-  }
 }
 
 pub fn apply_stats(
@@ -219,12 +216,12 @@ pub fn can_use(
   weapon : @weapon.Type,
   job : @job.Job,
   hp : Int,
-  mp : Int,
+  _mp : Int,
   bullets : Int
-) -> @combat.ForbidReason {
+) -> ForbidReason {
   let data = @skill.SkillData::get?(self.skill_id).unwrap() // TODO: Handle error
   if level <= 0 || level > data.master_level {
-    return @combat.FBR_OTHER
+    return FBR_OTHER
   }
   if job.can_use(self.skill_id) == false {
     return FBR_OTHER
@@ -233,9 +230,10 @@ pub fn can_use(
   if hp <= stats.hpcost {
     return FBR_HPCOST
   }
-  if mp < stats.mpcost {
-    return FBR_MPCOST
-  }
+  // TODO: support cost plugins
+  // if mp < stats.mpcost {
+  //   return FBR_MPCOST
+  // }
   let reqweapon = data.req_weapon
   if weapon != reqweapon && reqweapon != @weapon.Type::NONE {
     return FBR_WEAPONTYPE
@@ -257,4 +255,12 @@ pub fn Skill::get_bullet(
   bulletid : Int
 ) -> @graphics.Animation {
   self.bullet.get(user, bulletid)
+}
+
+pub fn apply_hit_effects(
+  self : Skill,
+  user : @combat.AttackUser,
+  target : @monster.Mob
+) -> Unit {
+  self.hit_effect.apply(user, target)
 }

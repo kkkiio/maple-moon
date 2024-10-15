@@ -13,8 +13,9 @@ pub trait SpecialMove {
   is_attack(Self) -> Bool
   is_skill(Self) -> Bool
   apply_useeffects(Self, @character.Character) -> Unit
-  apply_actions(Self, @character.Character, AttackType) -> Unit!
-  apply_stats(Self, @character.Character, Attack) -> Unit
+  apply_actions(Self, @character.Character, @combat.AttackType) -> Unit
+  apply_stats(Self, @character.Character, @combat.Attack) -> Unit
   get_bullet(Self, @character.Character, Int) -> @graphics.Animation
   can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+  apply_hit_effects(Self, @combat.AttackUser, @monster.Mob) -> Unit
 }

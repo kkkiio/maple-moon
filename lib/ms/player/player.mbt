@@ -18,7 +18,6 @@ pub struct Player {
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
   skill_book : @character.SkillBook
-  cooldowns : Map[Int, Int]
 }
 
 pub trait Inventory {
@@ -54,7 +53,6 @@ pub fn Player::from_entry(
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::default(),
     skill_book: @character.SkillBook::new(),
-    cooldowns: Map::new(),
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
@@ -357,36 +355,6 @@ pub fn can_attack(self : Player) -> Bool {
   self.char_base.is_climbing().not() &&
   self.char_base.is_sitting().not() &&
   self.char_base.look.get_equips().has_weapon()
-}
-
-pub fn can_use(
-  self : Player,
-  move : @combat.SpecialMove
-) -> @combat.ForbidReason {
-  if move.is_skill() && self.char_base.state == CharState::PRONE {
-    return @combat.ForbidReason::FBR_OTHER
-  }
-  if move.is_attack() &&
-    (
-      self.char_base.state == CharState::LADDER ||
-      self.char_base.state == CharState::ROPE
-    ) {
-    return @combat.ForbidReason::FBR_OTHER
-  }
-  if self.has_cooldown(move.get_id()) {
-    return @combat.ForbidReason::FBR_COOLDOWN
-  }
-  let level = self.skill_book.get_level(move.get_id())
-  let weapontype = self.char_base.get_weapontype()
-  let job = self.stats.get_job()
-  let hp = self.stats.get_stat(@MapleStat.Id::HP)
-  let mp = self.stats.get_stat(@MapleStat.Id::MP)
-  let bullets = self.inventory.get_bulletcount()
-  move.can_use(level, weapontype, job, hp, mp, bullets)
-}
-
-fn has_cooldown(self : Player, skill_id : Int) -> Bool {
-  self.cooldowns[skill_id].or(0) > 0
 }
 
 pub fn set_afterimage(self : Player, skill_id : Int) -> Unit {

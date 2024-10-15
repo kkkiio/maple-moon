@@ -80,7 +80,7 @@ pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
     self.damage_number_set,
   )
   self.player = Some(player)
-  self.combat = Some(Combat::new(self.damage_number_set, player, self.mobs))
+  self.combat = Some(Combat::new(self.damage_number_set, self.mobs))
   self.start = now_micro() |> TimePoint::from_micro
   player
 }
@@ -239,7 +239,7 @@ pub fn send_key(
               @KeyAction.Id::UP =>
                 self.check_portals(map_info, portals, physics)
               // @KeyAction.Id::SIT => self.check_seats()
-              @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(0)
+              @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(player, 0)
               @KeyAction.Id::PICKUP => self.check_drops()
               _ => ()
             }
@@ -249,7 +249,7 @@ pub fn send_key(
             down,
           )
         }
-        @KeyType.Id::SKILL => self.combat.unwrap().use_move!(action)
+        @KeyType.Id::SKILL => self.combat.unwrap().use_move!(player, action)
         // @KeyType.Id::ITEM => self.player.use_item(action)
         // @KeyType.Id::FACE => self.player.set_expression(action)
         _ => ()

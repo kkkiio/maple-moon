@@ -1,31 +1,30 @@
 struct Combat {
   damage_number_set : @combat_ui.DamageNumberSet
-  player : @player.Player
   mobs : @monster.MapMobs
   skills : Map[Int, @combat_do.Skill]
-  regular_attack : @combat.RegularAttack
+  regular_attack : @combat_do.RegularAttack
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
   bullets : Array[BulletEffect]
   damage_numbers : Array[@combat_ui.DamageNumber]
+  cooldowns : Map[Int, Int]
 }
 
 pub fn Combat::new(
   damage_number_set : @combat_ui.DamageNumberSet,
-  player : @player.Player,
   mobs : @monster.MapMobs
 ) -> Combat {
   {
     damage_number_set,
-    player,
     mobs,
     skills: Map::new(),
-    regular_attack: @combat.RegularAttack::default(),
+    regular_attack: @combat_do.RegularAttack::default(),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
+    cooldowns: Map::new(),
   }
 }
 
@@ -67,14 +66,14 @@ pub fn update(self : Combat) -> Unit! {
   self.damage_numbers.retain(fn(dn) { dn.update().not() })
 }
 
-pub fn use_move(self : Combat, move_id : Int) -> Unit! {
-  if self.player.can_attack().not() {
+pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit! {
+  if player.can_attack().not() {
     return
   }
   let move = self.get_move!(move_id)
-  let reason = self.player.can_use(move)
-  if reason == @combat.ForbidReason::FBR_NONE {
-    self.apply_move!(move)
+  let reason = self.can_use(player, move)
+  if reason == @combat_do.ForbidReason::FBR_NONE {
+    self.apply_move(player, move)
   } else {
     // TODO: Implement this
     // let weapontype = self.player.get_stats().get_weapontype()
@@ -82,12 +81,15 @@ pub fn use_move(self : Combat, move_id : Int) -> Unit! {
   }
 }
 
-fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
-  let player = self.player
+fn apply_move(
+  self : Combat,
+  player : @player.Player,
+  move : @combat_do.SpecialMove
+) -> Unit {
   if move.is_attack() {
     let attack = prepare_attack(player, move.is_skill())
     move.apply_useeffects(player)
-    move.apply_actions!(player, attack.t)
+    move.apply_actions(player, attack.t)
     player.set_afterimage(move.get_id())
     move.apply_stats(player, attack)
     let origin = attack.origin
@@ -115,7 +117,7 @@ fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
     // )
     self.mobs.send_attack(result, attack, mob_targets, mobcount)
     self.extract_effects(player, move, result)
-    self.apply_result_movement(move, result)
+    self.apply_result_movement(player, move, result)
     new_attack_packet(result).dispatch()
     // if reactor_targets.is_empty().not() {
     //   match reactor_objs.get(reactor_targets[0]) {
@@ -131,7 +133,7 @@ fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
     // }
   } else {
     move.apply_useeffects(player)
-    move.apply_actions!(player, @combat.AttackType::MAGIC)
+    move.apply_actions(player, @combat.AttackType::MAGIC)
     let moveid = move.get_id()
     let level = player.get_skills().get_level(moveid)
     new_use_skill_packet(moveid, level).dispatch()
@@ -140,23 +142,28 @@ fn apply_move(self : Combat, move : @combat.SpecialMove) -> Unit! {
 
 fn apply_result_movement(
   self : Combat,
-  move : @combat.SpecialMove,
+  player : @player.Player,
+  move : @combat_do.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
   if move.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
     move.get_id() == @skill.SkillId::RUSH_PALADIN.int_value() ||
     move.get_id() == @skill.SkillId::RUSH_DK.int_value() {
-    self.apply_rush(result)
+    self.apply_rush(player, result)
   }
 }
 
-fn apply_rush(self : Combat, result : @combat.AttackResult) -> Unit {
+fn apply_rush(
+  self : Combat,
+  player : @player.Player,
+  result : @combat.AttackResult
+) -> Unit {
   if result.mobcount == 0 {
     return
   }
   let mob_position = self.mobs.get_mob_position(result.last_oid)
   let targetx = mob_position.x
-  self.player.rush(targetx.to_double())
+  player.rush(targetx.to_double())
 }
 
 fn find_closest_mob(
@@ -275,7 +282,7 @@ fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
   }
 }
 
-pub fn get_move(self : Combat, move_id : Int) -> @combat.SpecialMove! {
+pub fn get_move(self : Combat, move_id : Int) -> @combat_do.SpecialMove! {
   if move_id == 0 {
     return self.regular_attack
   }
@@ -292,7 +299,7 @@ pub fn get_move(self : Combat, move_id : Int) -> @combat.SpecialMove! {
 fn extract_effects(
   self : Combat,
   user : @character.Character,
-  move : @combat.SpecialMove,
+  move : @combat_do.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
   let attack_user : @combat.AttackUser = {
@@ -401,13 +408,11 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
   let move = self.get_move!(effect.move_id)
-  self.mobs.apply_damage(
-    effect.target_oid,
-    effect.damage,
-    effect.toleft,
-    effect.user,
-    move,
-  )
+  guard let Some(mob) = self.mobs.get_mobs().get(effect.target_oid) else {
+    None => return
+  }
+  mob.apply_damage(effect.damage, effect.toleft)
+  move.apply_hit_effects(effect.user, mob)
 }
 
 fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit! {
@@ -484,4 +489,35 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
     toleft,
     speed,
   }
+}
+
+pub fn can_use(
+  self : Combat,
+  player : @player.Player,
+  move : @combat_do.SpecialMove
+) -> @combat_do.ForbidReason {
+  if move.is_skill() && player.char_base.state == @character.CharState::PRONE {
+    return @combat_do.ForbidReason::FBR_OTHER
+  }
+  if move.is_attack() &&
+    (
+      player.char_base.state == @character.CharState::LADDER ||
+      player.char_base.state == @character.CharState::ROPE
+    ) {
+    return @combat_do.ForbidReason::FBR_OTHER
+  }
+  if self.has_cooldown(move.get_id()) {
+    return @combat_do.ForbidReason::FBR_COOLDOWN
+  }
+  let level = player.skill_book.get_level(move.get_id())
+  let weapontype = player.char_base.get_weapontype()
+  let job = player.stats.get_job()
+  let hp = player.stats.get_stat(@MapleStat.Id::HP)
+  let mp = player.stats.get_stat(@MapleStat.Id::MP)
+  let bullets = player.inventory.get_bulletcount()
+  move.can_use(level, weapontype, job, hp, mp, bullets)
+}
+
+fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
+  self.cooldowns[skill_id].or(0) > 0
 }

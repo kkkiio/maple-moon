@@ -40,7 +40,7 @@ pub fn MobSkill::apply_useeffects(self : MobSkill, mob : Mob) -> Unit {
   // self.use_effect.apply(mob)
 }
 
-pub fn MobSkill::apply_hiteffects(self : MobSkill, mob : Mob) -> Unit {
+pub fn MobSkill::apply_hit_effects(self : MobSkill, mob : Mob) -> Unit {
   // self.hit_effect.apply(mob)
 }
 

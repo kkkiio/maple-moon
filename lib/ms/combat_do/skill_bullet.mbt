@@ -10,14 +10,14 @@ fn Ball::new(src : @resource.NxNode) -> Ball! {
   { animation: src |> @graphics.Animation::from_resource_ex!() }
 }
 
-struct RegularBullet {} derive(Default)
+struct SkillRegularBullet {} derive(Default)
 
-fn RegularBullet::new() -> RegularBullet {
-  RegularBullet::default()
+fn SkillRegularBullet::new() -> SkillRegularBullet {
+  SkillRegularBullet::default()
 }
 
 fn get(
-  self : RegularBullet,
+  self : SkillRegularBullet,
   user : @character.Character,
   bulletid : Int
 ) -> @graphics.Animation {

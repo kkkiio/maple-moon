@@ -148,21 +148,6 @@ pub fn get_mob_head_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
 }
 
-pub fn apply_damage(
-  self : MapMobs,
-  oid : Int,
-  damage : Int,
-  toleft : Bool,
-  _user : @combat.AttackUser,
-  _move : @combat.SpecialMove
-) -> Unit {
-  match self.mobs.get(oid) {
-    Some(mob) => mob.apply_damage(damage, toleft)
-    // TODO: apply_hiteffects
-    None => ()
-  }
-}
-
 pub fn send_mobhp(
   self : MapMobs,
   oid : Int,

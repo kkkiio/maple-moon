@@ -116,18 +116,14 @@ pub fn send_attack(
   mobcount : Int
 ) -> Unit {
   for target in targets {
-    match self.mobs.get(target) {
-      Some(mob) => {
-        result.damage_lines[target] = mob.calculate_damage(attack)
-        result.mobcount += 1
-        if result.mobcount == 1 {
-          result.first_oid = target
-        }
-        if result.mobcount == mobcount {
-          result.last_oid = target
-        }
-      }
-      None => ()
+    guard let Some(mob) = self.mobs.get(target) else { None => continue }
+    result.damage_lines[target] = mob.calculate_damage(attack)
+    result.mobcount += 1
+    if result.mobcount == 1 {
+      result.first_oid = target
+    }
+    if result.mobcount == mobcount {
+      result.last_oid = target
     }
   }
 }

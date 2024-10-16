@@ -1,9 +1,9 @@
 // The collection of platforms in a maple map
 // Used for collision-detection
 struct FootholdTree {
-  mut footholds : Map[Int, Foothold]
-  mut footholds_by_x : Map[Int, Array[Int]]
-  mut null_fh : Foothold
+  footholds : Map[Int, Foothold]
+  footholds_by_x : Map[Int, Array[Int]]
+  null_fh : Foothold
   mut walls : @struct.Range[Int]
   mut borders : @struct.Range[Int]
 }

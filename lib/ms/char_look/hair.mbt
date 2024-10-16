@@ -1,5 +1,3 @@
-typealias Texture = @graphics.Texture
-
 pub enum HairLayer {
   HAIR_LAYER_NONE
   HAIR_LAYER_DEFAULT
@@ -31,7 +29,7 @@ pub fn hash_combine(self : HairLayer, hasher : Hasher) -> Unit {
 }
 
 struct Hair {
-  stances : Map[@char_look.StanceId, Map[HairLayer, Map[Int, Texture]]]
+  stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]]
   name : String
   color : String
 }
@@ -47,45 +45,46 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
   ],
 )
 
-pub fn Hair::new(hairid : Int, drawinfo : @char_look.BodyDrawInfo) -> Hair {
+pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
   let character_loader = @resource.character_loader()
-  let stances : Map[@char_look.StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
+  let stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
   let hairnode = character_loader.load_res(["Hair", "000\{hairid}.img"])
-  @char_look.stance_id_names.each(
-    fn(stancename, stance) {
-      let stancenode = hairnode[stancename]
-      if stancenode.is_null() {
-        return
+  if hairnode.is_null() {
+    @log.warn({ "hair_id": hairid }, "Hair node is null")
+  }
+  for stancename, stance in stance_id_names {
+    let stancenode = hairnode[stancename]
+    if stancenode.is_null() {
+      continue
+    }
+    let mut frame = 0
+    while true {
+      let framenode = stancenode[frame.to_string()]
+      if framenode.is_null() {
+        break
       }
-      let mut frame = 0
-      while true {
-        let framenode = stancenode[frame.to_string()]
-        if framenode.is_null() {
-          break
-        }
-        for layernode in framenode {
-          let layername = layernode.name()
-          let layer = match layers_by_name[layername] {
-            Some(v) => v
-            None => {
-              println("Unknown Hair::Layer name: [" + layername + "]")
-              continue
-            }
+      for layernode in framenode {
+        let layername = layernode.name()
+        let layer = match layers_by_name[layername] {
+          Some(v) => v
+          None => {
+            @log.warn({ "layer_name": layername }, "Unknown Hair::Layer name")
+            continue
           }
-          let brow = layernode["map"]["brow"].as_point?().unwrap()
-          let shift = drawinfo.get_hair_pos(stance, frame) - brow
-          let tex = Texture::from_resource(layernode)
-          stances
-          .get_or_init(stance, fn() { Map::new() })
-          .get_or_init(layer, fn() { Map::new() })
-          .set(frame, tex)
-          tex.shift(shift)
         }
-        frame += 1
+        let brow = layernode["map"]["brow"].as_point?().unwrap()
+        let shift = drawinfo.get_hair_pos(stance, frame) - brow
+        let tex = Texture::from_resource(layernode)
+        stances
+        .get_or_init(stance, fn() { Map::new() })
+        .get_or_init(layer, fn() { Map::new() })
+        .set(frame, tex)
+        tex.shift(shift)
       }
-    },
-  )
-  let string_loader = string_loader()
+      frame += 1
+    }
+  }
+  let string_loader = @resource.string_loader()
   let name = string_loader
     .load_res(["Eqp.img", "Eqp", "Hair", "\{hairid}", "name"])
     .get_string()
@@ -99,10 +98,10 @@ pub fn Hair::new(hairid : Int, drawinfo : @char_look.BodyDrawInfo) -> Hair {
 
 pub fn draw(
   self : Hair,
-  stance : @char_look.StanceId,
+  stance : StanceId,
   layer : HairLayer,
   frame : Int,
-  args : DrawArgument
+  args : @graphics.DrawArgument
 ) -> Unit {
   let frameit = self.stances[stance]
     .bind(fn(it) { it[layer] })

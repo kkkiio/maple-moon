@@ -19,7 +19,7 @@ struct UIStateGame {
   // ma_tooltip : MapTooltip
   // mut tooltip : Option[Tooltip]
   // tooltip_parent : TooltipParent
-  mut time_rel_grabbed : TimePoint
+  time_rel_grabbed : TimePoint
   mut vwidth : Int
   mut vheight : Int
 }

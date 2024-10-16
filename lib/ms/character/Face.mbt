@@ -1,5 +1,7 @@
 typealias NxNode = @resource.NxNode
 
+typealias Texture = @graphics.Texture
+
 typealias Point[T] = @struct.Point[T]
 
 pub enum ExpressionId {

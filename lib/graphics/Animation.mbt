@@ -94,8 +94,8 @@ struct Animation {
   frames : FixedArray[Frame]
   zigzag : Bool
   frame : @utils.Nominal[Int]
-  mut opacity : @utils.Linear
-  mut xyscale : @utils.Linear
+  opacity : @utils.Linear
+  xyscale : @utils.Linear
   mut frame_step : Int
   mut delay : Int
 }

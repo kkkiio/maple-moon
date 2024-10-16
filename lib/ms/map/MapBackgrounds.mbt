@@ -1,5 +1,3 @@
-typealias MovingObject = @physics.MovingObject
-
 pub enum BackgroundType {
   BG_NORMAL
   HTILED
@@ -29,7 +27,7 @@ pub fn hash(self : BackgroundType) -> Int {
 }
 
 struct Background {
-  mut animation : @graphics.Animation
+  animation : @graphics.Animation
   cx : Int
   cy : Int
   rx : Double

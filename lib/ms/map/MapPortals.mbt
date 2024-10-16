@@ -1,6 +1,6 @@
 struct MapPortals {
-  mut portals_by_id : @immut/sorted_map.T[Int, Portal]
-  mut portal_ids_by_name : @immut/sorted_map.T[String, Int]
+  portals_by_id : @immut/sorted_map.T[Int, Portal]
+  portal_ids_by_name : @immut/sorted_map.T[String, Int]
   mut cooldown : Int
 }
 

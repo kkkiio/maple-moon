@@ -1,42 +1,38 @@
 struct CharLook {
-  mut stance : @utils.Nominal[@char_look.StanceId]
-  mut st_frame : @utils.Nominal[Int]
+  stance : @utils.Nominal[@char_look.StanceId]
+  st_frame : @utils.Nominal[Int]
   mut st_elapsed : Int
-  mut expression : @utils.Nominal[ExpressionId]
-  mut exp_frame : @utils.Nominal[Int]
+  expression : @utils.Nominal[ExpressionId]
+  exp_frame : @utils.Nominal[Int]
   mut exp_elapsed : Int
   mut flip : Bool
   mut actionstr : String
   mut actframe : Int
   mut body : @char_look.Body?
-  mut hair : Hair?
+  mut hair : @char_look.Hair
   mut face : Face?
   mut action : @char_look.BodyAction?
-  mut equips : CharEquips
-  mut randomizer : @utils.Randomizer
-  mut alerted : @utils.TimedBool
+  equips : CharEquips
+  randomizer : @utils.Randomizer
+  alerted : @utils.TimedBool
 }
 
 let draw_info : @char_look.BodyDrawInfo = @char_look.BodyDrawInfo::new()
 
-let hair_styles : Map[Int, Hair] = Map::new()
+let hair_styles : Map[Int, @char_look.Hair] = Map::new()
+
+fn get_hair_by_id(hair_id : Int) -> @char_look.Hair {
+  hair_styles.get_or_init(
+    hair_id,
+    fn() { @char_look.Hair::load(hair_id, draw_info) },
+  )
+}
 
 let face_types : Map[Int, Face] = Map::new()
 
 let body_types : Map[Int, @char_look.Body] = Map::new()
 
 pub fn CharLook::new(entry : @login.LookEntry) -> CharLook! {
-  let l = CharLook::default()
-  l.set_body(entry.skin)
-  l.set_hair(entry.hairid)
-  l.set_face(entry.faceid)
-  for _, itemid in entry.equips {
-    l.add_equip!(itemid)
-  }
-  l
-}
-
-pub fn CharLook::default() -> CharLook {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
@@ -49,33 +45,18 @@ pub fn CharLook::default() -> CharLook {
     actionstr: "",
     actframe: 0,
     body: None,
-    hair: None,
+    hair: get_hair_by_id(entry.hairid),
     face: None,
     equips: CharEquips::new(),
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
   }
-  l.reset()
+  l.set_body(entry.skin)
+  l.set_face(entry.faceid)
+  for _, itemid in entry.equips {
+    l.add_equip!(itemid)
+  }
   l
-}
-
-pub fn reset(self : CharLook) -> Unit {
-  self.stance = @utils.Nominal::default()
-  self.st_frame = @utils.Nominal::default()
-  self.st_elapsed = 0
-  self.expression = @utils.Nominal::default()
-  self.exp_frame = @utils.Nominal::default()
-  self.exp_elapsed = 0
-  self.flip = false
-  // self.action = None
-  self.actionstr = ""
-  self.actframe = 0
-  self.body = None
-  self.hair = None
-  self.face = None
-  self.equips = CharEquips::new()
-  self.randomizer = @utils.Randomizer::default()
-  self.alerted = @utils.TimedBool::default()
 }
 
 fn updatetwohanded(self : CharLook) -> Unit {
@@ -95,10 +76,7 @@ fn draw_impl(
     Some(body) => body
     None => return
   }
-  let hair = match self.hair {
-    Some(hair) => hair
-    None => return
-  }
+  let hair = self.hair
   let face = match self.face {
     Some(face) => face
     None => return
@@ -112,7 +90,7 @@ fn draw_impl(
     let faceshift = draw_info.get_face_pos(@char_look.StanceId::STAND1, 1)
     let faceargs = args +
       @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
-    hair.draw(interstance, HairLayer::BELOW_BODY, interframe, args)
+    hair.draw(interstance, @char_look.HairLayer::BELOW_BODY, interframe, args)
     self.equips.draw(
       @slot.Id::HAT,
       interstance,
@@ -121,16 +99,31 @@ fn draw_impl(
       args,
     )
     body.draw(interstance, @char_look.BodyLayer::BODY, interframe, args)
-    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
+    hair.draw(
+      interstance,
+      @char_look.HairLayer::HAIR_LAYER_DEFAULT,
+      interframe,
+      args,
+    )
     body.draw(@char_look.StanceId::STAND1, @char_look.BodyLayer::HEAD, 1, args)
-    hair.draw(interstance, HairLayer::SHADE, interframe, args)
-    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
+    hair.draw(interstance, @char_look.HairLayer::SHADE, interframe, args)
+    hair.draw(
+      interstance,
+      @char_look.HairLayer::HAIR_LAYER_DEFAULT,
+      interframe,
+      args,
+    )
     body.draw(interstance, @char_look.BodyLayer::HEAD, interframe, args)
-    hair.draw(interstance, HairLayer::SHADE, interframe, args)
+    hair.draw(interstance, @char_look.HairLayer::SHADE, interframe, args)
     face.draw(interexpression, interexpframe, faceargs)
     match self.equips.getcaptype() {
       CapType::NONE =>
-        hair.draw(interstance, HairLayer::OVER_HEAD, interframe, args)
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::OVER_HEAD,
+          interframe,
+          args,
+        )
       CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
@@ -141,11 +134,16 @@ fn draw_impl(
         )
         hair.draw(
           @char_look.StanceId::STAND1,
-          HairLayer::HAIR_LAYER_DEFAULT,
+          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
           1,
           args,
         )
-        hair.draw(@char_look.StanceId::STAND1, HairLayer::OVER_HEAD, 1, args)
+        hair.draw(
+          @char_look.StanceId::STAND1,
+          @char_look.HairLayer::OVER_HEAD,
+          1,
+          args,
+        )
         self.equips.draw(
           @slot.Id::HAT,
           @char_look.StanceId::STAND1,
@@ -157,7 +155,7 @@ fn draw_impl(
       CapType::HALF_COVER => {
         hair.draw(
           @char_look.StanceId::STAND1,
-          HairLayer::HAIR_LAYER_DEFAULT,
+          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
           1,
           args,
         )
@@ -248,7 +246,8 @@ fn draw_impl(
       args,
     )
     match self.equips.getcaptype() {
-      CapType::NONE => hair.draw(interstance, HairLayer::BACK, interframe, args)
+      CapType::NONE =>
+        hair.draw(interstance, @char_look.HairLayer::BACK, interframe, args)
       CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
@@ -257,10 +256,15 @@ fn draw_impl(
           interframe,
           args,
         )
-        hair.draw(interstance, HairLayer::BACK, interframe, args)
+        hair.draw(interstance, @char_look.HairLayer::BACK, interframe, args)
       }
       CapType::HALF_COVER => {
-        hair.draw(interstance, HairLayer::BELOW_CAP, interframe, args)
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::BELOW_CAP,
+          interframe,
+          args,
+        )
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -294,7 +298,7 @@ fn draw_impl(
       args,
     )
   } else {
-    hair.draw(interstance, HairLayer::BELOW_BODY, interframe, args)
+    hair.draw(interstance, @char_look.HairLayer::BELOW_BODY, interframe, args)
     self.equips.draw(
       @slot.Id::CAPE,
       interstance,
@@ -395,7 +399,12 @@ fn draw_impl(
       interframe,
       args,
     )
-    hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
+    hair.draw(
+      interstance,
+      @char_look.HairLayer::HAIR_LAYER_DEFAULT,
+      interframe,
+      args,
+    )
     self.equips.draw(
       @slot.Id::SHIELD,
       interstance,
@@ -411,7 +420,7 @@ fn draw_impl(
       args,
     )
     body.draw(interstance, @char_look.BodyLayer::HEAD, interframe, args)
-    hair.draw(interstance, HairLayer::SHADE, interframe, args)
+    hair.draw(interstance, @char_look.HairLayer::SHADE, interframe, args)
     face.draw(interexpression, interexpframe, faceargs)
     self.equips.draw(
       @slot.Id::FACE,
@@ -436,7 +445,12 @@ fn draw_impl(
     )
     match self.equips.getcaptype() {
       CapType::NONE =>
-        hair.draw(interstance, HairLayer::OVER_HEAD, interframe, args)
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::OVER_HEAD,
+          interframe,
+          args,
+        )
       CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
@@ -445,8 +459,18 @@ fn draw_impl(
           interframe,
           args,
         )
-        hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
-        hair.draw(interstance, HairLayer::OVER_HEAD, interframe, args)
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
+          interframe,
+          args,
+        )
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::OVER_HEAD,
+          interframe,
+          args,
+        )
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -456,7 +480,12 @@ fn draw_impl(
         )
       }
       CapType::HALF_COVER => {
-        hair.draw(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe, args)
+        hair.draw(
+          interstance,
+          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
+          interframe,
+          args,
+        )
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -673,14 +702,7 @@ fn set_body(self : CharLook, skin_id : Int) -> Unit {
 }
 
 fn set_hair(self : CharLook, hair_id : Int) -> Unit {
-  self.hair = hair_styles[hair_id].or_else(
-      fn() {
-        let hair = Hair::new(hair_id, draw_info)
-        hair_styles[hair_id] = hair
-        hair
-      },
-    )
-    |> @option.some
+  self.hair = get_hair_by_id(hair_id)
 }
 
 fn set_face(self : CharLook, face_id : Int) -> Unit {

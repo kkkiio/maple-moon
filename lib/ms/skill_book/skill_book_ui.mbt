@@ -47,7 +47,7 @@ struct SkillBookUI {
   skilld : @graphics.Texture
   skillb : @graphics.Texture
   line : @graphics.Texture
-  mut bg_dimensions : @struct.Point[Int]
+  bg_dimensions : @struct.Point[Int]
   mut macro_enabled : Bool
   macro_backgrnd : @graphics.Texture
   macro_backgrnd2 : @graphics.Texture

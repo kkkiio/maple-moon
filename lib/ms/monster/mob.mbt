@@ -723,16 +723,31 @@ pub fn calculate_damage(
   let leveldelta = @math.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
   let (mindamage, maxdamage, hitchance, critical) = match damagetype {
-    @combat.AttackDamageType::DMG_WEAPON | @combat.AttackDamageType::DMG_MAGIC => {
+    @combat.AttackDamageType::DMG_WEAPON => {
       let mindamage = self.calculate_mindamage(
         leveldelta,
         attack.mindamage,
-        damagetype == @combat.AttackDamageType::DMG_MAGIC,
+        false,
       )
       let maxdamage = self.calculate_maxdamage(
         leveldelta,
         attack.maxdamage,
-        damagetype == @combat.AttackDamageType::DMG_MAGIC,
+        false,
+      )
+      let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
+      let critical = attack.critical
+      (mindamage, maxdamage, hitchance, critical)
+    }
+    @combat.AttackDamageType::DMG_MAGIC => {
+      let mindamage = self.calculate_mindamage(
+        leveldelta,
+        attack.matk.to_double(),
+        true,
+      )
+      let maxdamage = self.calculate_maxdamage(
+        leveldelta,
+        attack.matk.to_double(),
+        true,
       )
       let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
       let critical = attack.critical
@@ -765,18 +780,15 @@ fn next_damage(
   if hit.not() {
     return (0, false)
   }
-  let damagecap = 999999.0
-  let mut damage = self.randomizer.next_real(from=mindamage, maxdamage)
+  let damagecap = 999999
   let iscritical = self.randomizer.below(critical)
+  let mut damage = self.randomizer.next_real(from=mindamage, maxdamage)
   if iscritical {
     damage *= 1.5
   }
-  if damage < 1 {
-    damage = 1
-  } else if damage > damagecap {
-    damage = damagecap
-  }
   let intdamage = damage.to_int()
+    |> @math.maximum(1)
+    |> @math.minimum(damagecap)
   return (intdamage, iscritical)
 }
 

@@ -1,0 +1,21 @@
+{
+    "import": [
+        "KKKIIO/maple-moon-client/lib/ms/map",
+        "KKKIIO/maple-moon-client/lib/struct",
+        "KKKIIO/maple-moon-client/lib/layer",
+        "KKKIIO/maple-moon-client/lib/log",
+        "KKKIIO/maple-moon-client/lib/graphics",
+        "KKKIIO/maple-moon-client/lib/io/keyboard"
+    ],
+    "link": {
+        "js": {
+            "exports": [
+                "update",
+                "load_map",
+                "onkeydown",
+                "onkeyup"
+            ],
+            "format": "esm"
+        }
+    }
+}

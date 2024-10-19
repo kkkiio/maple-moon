@@ -549,7 +549,7 @@ fn glFlush(v : Vertices) = "gl" "flush"
 
 type Vertices
 
-fn Vertices::new(length : Int) -> Vertices = "vertices" "new"
+fn Vertices::new(length : Int) -> Vertices = "gl" "newVertices"
 
 fn set(
   self : Vertices,
@@ -562,7 +562,7 @@ fn set(
   color_g : Double,
   color_b : Double,
   color_a : Double
-) = "vertices" "set"
+) = "gl" "setVertices"
 
 fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.Image) = "gl" "texSubImage2D"
 

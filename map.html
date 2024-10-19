@@ -1,0 +1,150 @@
+<html lang="en">
+
+<head>
+    <style>
+        html {
+            width: 100%;
+        }
+
+        body {
+            background-color: white;
+            margin: 0 0;
+            padding: 0;
+            font-family: "Droid Sans", "sans-serif";
+        }
+
+        div,
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #canvas {
+            padding: 0;
+            margin: 0;
+            display: block;
+            border-style: solid;
+            border-width: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+    </div>
+</body>
+<script src="gl.js"></script>
+<script src="resource.js"></script>
+<script>
+    (function () {
+        const VWIDTH = 1366;
+        const VHEIGHT = 768;
+        const gl = document.getElementById("canvas").getContext("webgl2", {});
+        gl.canvas.width = VWIDTH;
+        gl.canvas.height = VHEIGHT;
+        const glModule = setupGl(gl);
+
+        const prepareResourcePromises = [];
+        const stringLoader = new ResourceLoader("String.nx");
+        prepareResourcePromises.push(
+            stringLoader.load()
+        );
+        const map001Loader = new ResourceLoader("Map001.nx");
+        prepareResourcePromises.push(
+            map001Loader.load()
+        );
+        const mapPrettyLoader = new ResourceLoader("MapPretty.nx");
+        prepareResourcePromises.push(
+            mapPrettyLoader.load()
+        );
+        const mapLoader = new LazyResourceLoader("Map.nx", [
+            { nodepath: "Map/Map0", filename: "map0.nx.json" },
+            { nodepath: "MapHelper.img", filename: "helper.nx.json" },
+            { nodepath: "Tile", filename: "tile.nx.json" },
+            { nodepath: "Obj", filename: "obj.nx.json" },
+            { nodepath: "Back", filename: "back.nx.json" },
+            { nodepath: "Map/Map1", folder: "map1" },
+        ]);
+        prepareResourcePromises.push(
+            mapLoader.start()
+        );
+
+        const importObject = {
+            gl: glModule,
+            resource: {
+                get_loader: (name) => {
+                    switch (name) {
+                        case "string":
+                            return stringLoader;
+                        case "map001":
+                            return map001Loader;
+                        case "map_pretty":
+                            return mapPrettyLoader;
+                        case "npc":
+                            return npcLoader;
+                        default:
+                            throw new Error(`Unknown resource loader: ${name}`);
+                    }
+                },
+                get_async_loader: (name) => {
+                    switch (name) {
+                        case "map":
+                            return mapLoader;
+                        default:
+                            throw new Error(`Unknown resource loader: ${name}`);
+                    }
+                },
+                load_image: (loader, bid) => loader.loadImage(bid),
+                get_image_loader: (loader) => loader.bmpLoader,
+                is_ready: (pollable) => pollable.ready,
+                get_result: (pollable) => pollable.value,
+            },
+            bitmap: {
+                id: (bmp) => bmp.id,
+                width: (bmp) => bmp.w,
+                height: (bmp) => bmp.h,
+                loading: (bmp) => bmp.loading === true,
+            },
+            log: {
+                debug: (msg) => console.debug(msg),
+                info: (msg) => console.info(msg),
+                warn: (msg) => console.warn(msg),
+                error: (msg) => console.error(msg),
+            },
+        }
+
+        let requestAnimationFrameId = 0;
+        let program_update = undefined;
+        function update(time = 0) {
+            program_update(time * 1000);
+            requestAnimationFrameId = requestAnimationFrame(update);
+        }
+
+        Object.assign(globalThis, importObject);
+        Promise.all(prepareResourcePromises)
+            .then(() => import("./lib/map_editor/map_editor.js"))
+            .then((m) => {
+                program_update = m.update;
+                globalThis.load_map = m.load_map;
+
+                const onkeydown = m.onkeydown;
+                const onkeyup = m.onkeyup;
+                window.addEventListener("keydown", (e) => {
+                    onkeydown(e.code);
+                });
+                window.addEventListener("keyup", (e) => {
+                    onkeyup(e.code);
+                });
+                requestAnimationFrameId = requestAnimationFrame(update);
+            });
+    })()
+</script>
+
+</html>

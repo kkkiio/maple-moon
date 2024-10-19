@@ -11,25 +11,25 @@ pub fn Point::default[T : Default]() -> Point[T] {
   { x: T::default(), y: T::default() }
 }
 
-pub fn op_add(self : Point[Int], p2 : Point[Int]) -> Point[Int] {
+pub fn op_add[T : Scalar](self : Point[T], p2 : Point[T]) -> Point[T] {
   { x: self.x + p2.x, y: self.y + p2.y }
 }
 
-pub fn op_sub(self : Point[Int], p2 : Point[Int]) -> Point[Int] {
+pub fn op_sub[T : Scalar](self : Point[T], p2 : Point[T]) -> Point[T] {
   { x: self.x - p2.x, y: self.y - p2.y }
 }
 
-pub fn op_neg(self : Point[Int]) -> Point[Int] {
+pub fn op_neg[T : Scalar](self : Point[T]) -> Point[T] {
   { x: -self.x, y: -self.y }
 }
 
 /// Shift the x-coordinate by the specified amount
-pub fn shift_x(self : Point[Int], v : Int) -> Point[Int] {
+pub fn shift_x[T : Scalar](self : Point[T], v : T) -> Point[T] {
   { x: self.x + v, y: self.y }
 }
 
 /// Shift the y-coordinate by the specified amount
-pub fn shift_y(self : Point[Int], v : Int) -> Point[Int] {
+pub fn shift_y[T : Scalar](self : Point[T], v : T) -> Point[T] {
   { x: self.x, y: self.y + v }
 }
 
@@ -40,4 +40,10 @@ pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
 /// Check whether the coordinates are equal
 pub fn straight[T : Eq](self : Point[T]) -> Bool {
   self.x == self.y
+}
+
+pub trait Scalar {
+  op_add(Self, Self) -> Self
+  op_sub(Self, Self) -> Self
+  op_neg(Self) -> Self
 }

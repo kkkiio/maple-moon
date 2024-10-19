@@ -99,7 +99,7 @@ pub fn Cursor::new() -> Cursor {
 }
 
 pub fn draw(self : Cursor, alpha : Double) -> Unit {
-  let hide_after = hide_time / @constants.timestep
+  let hide_after = hide_time / @constants.step_time_ms
   if self.hide_counter < hide_after {
     self
     .get_or_init_animation()

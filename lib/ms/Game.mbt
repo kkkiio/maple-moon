@@ -17,6 +17,7 @@ pub fn Game::start() -> Game {
   let drop_module = @drop.Module::new()
   let inventory_module = @inventory.Module::new()
   let stage = Stage::new(
+    @map.MapPortalAnimations::load(),
     monster_module.get_map_mobs(),
     drop_module.get_map_drops(),
     inventory_module.get_inventory(),
@@ -138,12 +139,11 @@ pub fn Game::start() -> Game {
     ),
   )
   timer.start()
-  @map.map_portals_animations.load()
   { timer, accumulator: 0, task_scheduler, stage, ui }
 }
 
 pub fn on_draw(self : Game, current_time : TimePoint) -> Unit {
-  let timestep = @constants.timestep * 1000
+  let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
   // TODO: reset game state if elapsed is too high
 

@@ -1,4 +1,5 @@
 struct MapPortals {
+  map_portals_animations : MapPortalAnimations
   portals_by_id : @immut/sorted_map.T[Int, Portal]
   portal_ids_by_name : @immut/sorted_map.T[String, Int]
   mut cooldown : Int
@@ -7,14 +8,14 @@ struct MapPortals {
 let warpcd : Int = 48
 
 struct MapPortalAnimations {
-  mut animations : @immut/sorted_map.T[PortalType, @graphics.Animation]
+  animations : @immut/sorted_map.T[PortalType, @graphics.Animation]
 }
 
-pub let map_portals_animations : MapPortalAnimations = {
-  animations: @immut/sorted_map.empty(),
-}
-
-pub fn MapPortals::from_resource(src : NxNode, mapid : Int) -> MapPortals {
+pub fn MapPortals::load(
+  src : NxNode,
+  mapid : Int,
+  map_portals_animations : MapPortalAnimations
+) -> MapPortals {
   let mut portals_by_id = @immut/sorted_map.empty()
   let mut portal_ids_by_name = @immut/sorted_map.empty()
   src.each(
@@ -41,34 +42,29 @@ pub fn MapPortals::from_resource(src : NxNode, mapid : Int) -> MapPortals {
       }
     },
   )
-  { portals_by_id, portal_ids_by_name, cooldown: warpcd }
-}
-
-pub fn MapPortals::default() -> MapPortals {
   {
-    portals_by_id: @immut/sorted_map.empty(),
-    portal_ids_by_name: @immut/sorted_map.empty(),
+    portals_by_id,
+    portal_ids_by_name,
     cooldown: warpcd,
+    map_portals_animations,
   }
 }
 
 pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
-  map_portals_animations.animations[PortalType::REGULAR]
+  self.map_portals_animations.animations[PortalType::REGULAR]
   .unwrap()
-  .update(timestep=@constants.timestep)
+  .update(timestep=@constants.step_time_ms)
   |> ignore
-  map_portals_animations.animations[PortalType::HIDDEN]
+  self.map_portals_animations.animations[PortalType::HIDDEN]
   .unwrap()
-  .update(timestep=@constants.timestep)
+  .update(timestep=@constants.step_time_ms)
   |> ignore
-  self.portals_by_id.each(
-    fn(_k, portal) {
-      match portal.get_type() {
-        PortalType::HIDDEN | PortalType::TOUCH => portal.update(playerpos)
-        _ => ()
-      }
-    },
-  )
+  for _, portal in self.portals_by_id {
+    match portal.get_type() {
+      PortalType::HIDDEN | PortalType::TOUCH => portal.update(playerpos)
+      _ => ()
+    }
+  }
   if self.cooldown > 0 {
     self.cooldown -= 1
   }
@@ -113,7 +109,7 @@ pub fn find_warp_at(
   PortalWarpInfo::default()
 }
 
-pub fn MapPortalAnimations::load(self : MapPortalAnimations) -> Unit {
+pub fn MapPortalAnimations::load() -> MapPortalAnimations {
   let loader = map_loader()
   let src1 = loader
     .load_res(
@@ -125,10 +121,12 @@ pub fn MapPortalAnimations::load(self : MapPortalAnimations) -> Unit {
     .load_res(["MapHelper.img", "portal", "game", "pv"])
     .poll()
     .unwrap() // TODO: handle loading error
-  self.animations = @immut/sorted_map.from_array(
-    [
-      (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
-      (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
-    ],
-  )
+  {
+    animations: @immut/sorted_map.from_array(
+      [
+        (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
+        (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
+      ],
+    ),
+  }
 }

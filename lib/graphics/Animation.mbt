@@ -183,7 +183,10 @@ pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
   }
 }
 
-pub fn update(self : Animation, ~timestep : Int = @constants.timestep) -> Bool {
+pub fn update(
+  self : Animation,
+  ~timestep : Int = @constants.step_time_ms
+) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))
   if self.opacity.last() < 0.0 {

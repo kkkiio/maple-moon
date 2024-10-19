@@ -67,7 +67,7 @@ pub fn DamageNumber::draw(
   }
 }
 
-let fade_step : Double = @constants.timestep.to_double() / 500
+let fade_step : Double = @constants.step_time_ms.to_double() / 500
 
 pub fn update(self : DamageNumber) -> Bool {
   self.move_obj.move()

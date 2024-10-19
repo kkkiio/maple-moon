@@ -1,4 +1,5 @@
 struct EntryPoint {
+  map_portals_animations : @map.MapPortalAnimations
   mut state : State
   down_keys : Map[String, Bool]
   mut speed : Int
@@ -11,13 +12,14 @@ enum State {
 }
 
 let g_state : EntryPoint = {
+  map_portals_animations: @map.MapPortalAnimations::load(),
   state: State::NONE,
   down_keys: Map::new(),
   speed: 2,
 }
 
 pub fn load_map(map_id : Int) -> Unit {
-  let poll_fn = @map.load_map(map_id)
+  let poll_fn = @map.load_map(map_id, g_state.map_portals_animations)
   g_state.state = State::LOADING(~poll_fn)
 }
 
@@ -40,6 +42,7 @@ pub fn update(_time : Double) -> Unit {
       state.viewpos = viewpos
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
+      update_map(map.backgrounds, map.tiles_objs, map.portals)
       draw_map(map, viewpos, alpha)
       @graphics.GraphicsGL::get().flush(1.0)
     }
@@ -76,6 +79,16 @@ fn draw_map(
   }
   portals.draw(int_viewpos, alpha)
   backgrounds.drawforegrounds(viewpos.x, viewpos.y, alpha)
+}
+
+fn update_map(
+  backgrounds : @map.MapBackgrounds,
+  tiles_objs : @map.MapTilesObjs,
+  portals : @map.MapPortals
+) -> Unit {
+  backgrounds.update()
+  tiles_objs.update()
+  portals.update(@struct.Point::default()) // TODO: add player
 }
 
 fn update_viewpos(

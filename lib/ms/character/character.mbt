@@ -236,8 +236,8 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   //         }
   //     }
 
-  let stancespeed = if speed >= 1.0 / @constants.timestep.to_double() {
-    (@constants.timestep.to_double() * speed).to_int()
+  let stancespeed = if speed >= 1.0 / @constants.step_time_ms.to_double() {
+    (@constants.step_time_ms.to_double() * speed).to_int()
   } else {
     0
   }

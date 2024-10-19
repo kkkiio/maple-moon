@@ -12,6 +12,7 @@ enum StageState {
 
 pub struct Stage {
   camera : Camera
+  map_portals_animations : @map.MapPortalAnimations
   mut player : @player.Player?
   mut state : StageState
   mut map_id : Int
@@ -25,11 +26,13 @@ pub struct Stage {
 }
 
 pub fn Stage::new(
+  map_portals_animations : @map.MapPortalAnimations,
   mobs : @monster.MapMobs,
   drops : @drop.MapDrops,
   inventory : @inventory.Inventory
 ) -> Stage {
   {
+    map_portals_animations,
     camera: Camera::new(),
     player: None,
     state: StageState::INACTIVE,
@@ -63,7 +66,7 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
       self.map_id = map_id
-      let poll_fn = @map.load_map(map_id)
+      let poll_fn = @map.load_map(map_id, self.map_portals_animations)
       self.state = StageState::TRANSITION(~portal_id, ~poll_fn)
     }
     StageState::TRANSITION(_) =>

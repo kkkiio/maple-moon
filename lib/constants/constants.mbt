@@ -1,5 +1,5 @@
 // Timestep, e.g. the granularity in which the game advances.
-pub let timestep = 8
+pub let step_time_ms = 8
 
 pub struct Constants {
   mut viewWidth : Int

@@ -8,7 +8,10 @@ pub struct MapStruct {
 
 typealias MapLoader = () -> MapStruct?!Error
 
-pub fn load_map(map_id : Int) -> MapLoader {
+pub fn load_map(
+  map_id : Int,
+  map_portals_animations : MapPortalAnimations
+) -> MapLoader {
   // TODO: CashShopPreview
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
@@ -27,7 +30,11 @@ pub fn load_map(map_id : Int) -> MapLoader {
       physics.get_fht().get_walls(),
       physics.get_fht().get_borders(),
     )
-    let portals = MapPortals::from_resource(src["portal"], map_id)
+    let portals = MapPortals::load(
+      src["portal"],
+      map_id,
+      map_portals_animations,
+    )
     Some({ tiles_objs, backgrounds, physics, map_info, portals })
   }
 }

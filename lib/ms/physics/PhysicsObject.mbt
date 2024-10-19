@@ -47,14 +47,18 @@ pub fn limity(self : MovingObject, d : Double) -> Unit {
 pub fn movexuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
   if delay != 0 {
     let hdelta = d - self.x.get()
-    self.hspeed = @constants.timestep.to_double() * hdelta / delay.to_double()
+    self.hspeed = @constants.step_time_ms.to_double() *
+      hdelta /
+      delay.to_double()
   }
 }
 
 pub fn moveyuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
   if delay != 0 {
     let vdelta = d - self.y.get()
-    self.vspeed = @constants.timestep.to_double() * vdelta / delay.to_double()
+    self.vspeed = @constants.step_time_ms.to_double() *
+      vdelta /
+      delay.to_double()
   }
 }
 

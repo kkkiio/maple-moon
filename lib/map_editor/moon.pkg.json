@@ -13,7 +13,8 @@
                 "update",
                 "load_map",
                 "onkeydown",
-                "onkeyup"
+                "onkeyup",
+                "set_speed"
             ],
             "format": "esm"
         }

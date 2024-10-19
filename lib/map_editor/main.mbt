@@ -1,6 +1,7 @@
 struct EntryPoint {
   mut state : State
   down_keys : Map[String, Bool]
+  mut speed : Int
 }
 
 enum State {
@@ -9,7 +10,11 @@ enum State {
   ACTIVE(~map : @map.MapStruct, mut ~viewpos : @struct.Point[Double])
 }
 
-let g_state : EntryPoint = { state: State::NONE, down_keys: Map::new() }
+let g_state : EntryPoint = {
+  state: State::NONE,
+  down_keys: Map::new(),
+  speed: 2,
+}
 
 pub fn load_map(map_id : Int) -> Unit {
   let poll_fn = @map.load_map(map_id)
@@ -31,7 +36,7 @@ pub fn update(_time : Double) -> Unit {
       g_state.state = State::ACTIVE(~map, viewpos=@struct.Point::default())
     }
     State::ACTIVE(~map, ~viewpos) as state => {
-      let viewpos = update_viewpos(g_state.down_keys, viewpos)
+      let viewpos = update_viewpos(g_state.down_keys, viewpos, g_state.speed)
       state.viewpos = viewpos
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
@@ -47,6 +52,10 @@ pub fn onkeydown(key : String) -> Unit {
 
 pub fn onkeyup(key : String) -> Unit {
   g_state.down_keys.set(key, false)
+}
+
+pub fn set_speed(new_speed : Int) -> Unit {
+  g_state.speed = clamp(new_speed, 1, 10)
 }
 
 fn draw_map(
@@ -71,20 +80,32 @@ fn draw_map(
 
 fn update_viewpos(
   down_keys : Map[String, Bool],
-  viewpos : @struct.Point[Double]
+  viewpos : @struct.Point[Double],
+  speed : Int
 ) -> @struct.Point[Double] {
   let mut viewpos = viewpos
+  let speed_f = speed.to_double()
   if down_keys.get_or_default(@keyboard.arrowLeft, false) {
-    viewpos = viewpos.shift_x(2.0)
+    viewpos = viewpos.shift_x(speed_f)
   }
   if down_keys.get_or_default(@keyboard.arrowRight, false) {
-    viewpos = viewpos.shift_x(-2.0)
+    viewpos = viewpos.shift_x(-speed_f)
   }
   if down_keys.get_or_default(@keyboard.arrowUp, false) {
-    viewpos = viewpos.shift_y(2.0)
+    viewpos = viewpos.shift_y(speed_f)
   }
   if down_keys.get_or_default(@keyboard.arrowDown, false) {
-    viewpos = viewpos.shift_y(-2.0)
+    viewpos = viewpos.shift_y(-speed_f)
   }
   viewpos
+}
+
+fn clamp[T : Compare](x : T, min : T, max : T) -> T {
+  if x < min {
+    min
+  } else if x > max {
+    max
+  } else {
+    x
+  }
 }

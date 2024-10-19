@@ -32,12 +32,33 @@
             border-style: solid;
             border-width: 1px;
         }
+
+        #map-input {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #map-id {
+            margin-right: 10px;
+            padding: 5px;
+        }
+
+        #load-map-btn {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
     <div id="container">
         <canvas id="canvas"></canvas>
+    </div>
+    <div id="map-input">
+        <input type="number" id="map-id" placeholder="Enter Map ID">
+        <button id="load-map-btn">Load Map</button>
     </div>
 </body>
 <script src="gl.js"></script>
@@ -142,6 +163,18 @@
                 window.addEventListener("keyup", (e) => {
                     onkeyup(e.code);
                 });
+
+                // Add event listener for the load map button
+                const loadMapBtn = document.getElementById('load-map-btn');
+                loadMapBtn.addEventListener('click', () => {
+                    const mapId = parseInt(document.getElementById('map-id').value);
+                    if (!isNaN(mapId)) {
+                        m.load_map(mapId);
+                    } else {
+                        console.error('Invalid Map ID');
+                    }
+                });
+
                 requestAnimationFrameId = requestAnimationFrame(update);
             });
     })()

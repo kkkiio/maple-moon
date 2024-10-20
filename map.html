@@ -58,6 +58,16 @@
         label {
             margin-right: 5px;
         }
+
+        #toggle-tiles-checkbox {
+            margin-right: 5px;
+        }
+
+        label[for="toggle-tiles-checkbox"] {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -75,6 +85,10 @@
         <button id="load-map-btn">Load Map</button>
         <label for="speed-input">Speed:</label>
         <input type="number" id="speed-input" placeholder="Speed" value="5" min="1" max="10" step="1">
+        <label for="toggle-tiles-checkbox">
+            <input type="checkbox" id="toggle-tiles-checkbox" checked>
+            Show Tiles
+        </label>
     </div>
 </body>
 <script src="gl.js"></script>
@@ -214,43 +228,45 @@
                         console.error('Invalid Speed');
                     }
                 }
-
-                function setupEventListeners() {
-                    const landSelect = document.getElementById('land-select');
-                    const mapSelect = document.getElementById('map-select');
-                    const loadMapBtn = document.getElementById('load-map-btn');
-
-                    landSelect.addEventListener('change', updateMapSelect);
-                    loadMapBtn.addEventListener('click', loadSelectedMap);
-
-                    function updateMapSelect() {
-                        const selectedLand = landSelect.value;
-                        mapSelect.innerHTML = '<option value="">Select Map</option>';
-
-                        if (selectedLand && mapData[selectedLand]) {
-                            for (const [mapId, mapInfo] of Object.entries(mapData[selectedLand])) {
-                                const option = document.createElement('option');
-                                option.value = mapId;
-                                option.textContent = mapInfo.mapName;
-                                mapSelect.appendChild(option);
-                            }
-                        }
-                    }
-
-                    function loadSelectedMap() {
-                        const mapId = parseInt(mapSelect.value);
-                        if (!isNaN(mapId)) {
-                            m.load_map(mapId);
-                        } else {
-                            console.error('Invalid Map ID');
-                        }
-                    }
-
-                }
-                setupEventListeners();
-
                 // Initial speed setup
                 updateSpeed(m);
+
+                const toggleTilesCheckbox = document.getElementById('toggle-tiles-checkbox');
+                toggleTilesCheckbox.addEventListener('change', () => {
+                    m.set_draw_tiles(toggleTilesCheckbox.checked);
+                });
+                // Set initial button text
+                document.getElementById('toggle-tiles-checkbox').checked = true;
+
+                const landSelect = document.getElementById('land-select');
+                const mapSelect = document.getElementById('map-select');
+                const loadMapBtn = document.getElementById('load-map-btn');
+
+                landSelect.addEventListener('change', updateMapSelect);
+                loadMapBtn.addEventListener('click', loadSelectedMap);
+
+                function updateMapSelect() {
+                    const selectedLand = landSelect.value;
+                    mapSelect.innerHTML = '<option value="">Select Map</option>';
+
+                    if (selectedLand && mapData[selectedLand]) {
+                        for (const [mapId, mapInfo] of Object.entries(mapData[selectedLand])) {
+                            const option = document.createElement('option');
+                            option.value = mapId;
+                            option.textContent = mapInfo.mapName;
+                            mapSelect.appendChild(option);
+                        }
+                    }
+                }
+
+                function loadSelectedMap() {
+                    const mapId = parseInt(mapSelect.value);
+                    if (!isNaN(mapId)) {
+                        m.load_map(mapId);
+                    } else {
+                        console.error('Invalid Map ID');
+                    }
+                }
 
                 requestAnimationFrameId = requestAnimationFrame(update);
             });

@@ -3,6 +3,7 @@ struct EntryPoint {
   mut state : State
   down_keys : Map[String, Bool]
   mut speed : Int
+  mut draw_tiles : Bool
 }
 
 enum State {
@@ -16,6 +17,7 @@ let g_state : EntryPoint = {
   state: State::NONE,
   down_keys: Map::new(),
   speed: 5,
+  draw_tiles: true,
 }
 
 pub fn load_map(map_id : Int) -> Unit {
@@ -61,6 +63,10 @@ pub fn set_speed(new_speed : Int) -> Unit {
   g_state.speed = clamp(new_speed, 1, 10)
 }
 
+pub fn set_draw_tiles(draw_tiles : Bool) -> Unit {
+  g_state.draw_tiles = draw_tiles
+}
+
 fn draw_map(
   map : @map.MapStruct,
   viewpos : @struct.Point[Double],
@@ -74,8 +80,10 @@ fn draw_map(
     x: viewpos.x.round().to_int(),
     y: viewpos.y.round().to_int(),
   }
-  for id in @layer.ids {
-    tiles_objs.draw(id, int_viewpos, alpha)
+  if g_state.draw_tiles {
+    for id in @layer.ids {
+      tiles_objs.draw(id, int_viewpos, alpha)
+    }
   }
   portals.draw(int_viewpos, alpha)
   backgrounds.drawforegrounds(viewpos.x, viewpos.y, alpha)

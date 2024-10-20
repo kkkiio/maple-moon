@@ -38,13 +38,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        #map-id,
+        #land-select,
+        #map-select,
         #speed-input {
             margin-right: 10px;
             padding: 5px;
-            width: 100px;
+            width: 200px;
         }
 
         #load-map-btn {
@@ -64,10 +66,15 @@
         <canvas id="canvas"></canvas>
     </div>
     <div id="map-input">
-        <input type="number" id="map-id" placeholder="Enter Map ID">
+        <select id="land-select">
+            <option value="">Select Land</option>
+        </select>
+        <select id="map-select">
+            <option value="">Select Map</option>
+        </select>
         <button id="load-map-btn">Load Map</button>
         <label for="speed-input">Speed:</label>
-        <input type="number" id="speed-input" placeholder="Speed" value="2" min="1" max="10" step="1">
+        <input type="number" id="speed-input" placeholder="Speed" value="5" min="1" max="10" step="1">
     </div>
 </body>
 <script src="gl.js"></script>
@@ -100,10 +107,34 @@
             { nodepath: "Tile", filename: "tile.nx.json" },
             { nodepath: "Obj", filename: "obj.nx.json" },
             { nodepath: "Back", filename: "back.nx.json" },
-            { nodepath: "Map/Map1", folder: "map1" },
+            { nodepath: "Map/Map1", folder: "Map/Map1" },
         ]);
         prepareResourcePromises.push(
             mapLoader.start()
+        );
+
+        const mapData = {};
+
+        // get map list from string.nx
+        prepareResourcePromises.push(
+            fetch("resource/String.nx/nx.json")
+                .then(res => res.json())
+                .then(json => {
+                    const landSelect = document.getElementById('land-select');
+                    for (const [landName, land] of Object.entries(json["Map.img"])) {
+                        mapData[landName] = {};
+                        const option = document.createElement('option');
+                        option.value = landName;
+                        option.textContent = landName;
+                        landSelect.appendChild(option);
+
+                        for (const [mapId, map] of Object.entries(land)) {
+                            const { mapName, mapDesc, streetName } = map;
+                            mapData[landName][mapId] = { mapName, mapDesc, streetName };
+                        }
+                    }
+
+                })
         );
 
         const importObject = {
@@ -173,32 +204,50 @@
                     onkeyup(e.code);
                 });
 
-                // Add event listener for the load map button
-                const loadMapBtn = document.getElementById('load-map-btn');
-                loadMapBtn.addEventListener('click', () => {
-                    const mapId = parseInt(document.getElementById('map-id').value);
-                    if (!isNaN(mapId)) {
-                        m.load_map(mapId);
-                    } else {
-                        console.error('Invalid Map ID');
-                    }
-                });
-
-                // Add event listener for speed input changes
                 const speedInput = document.getElementById('speed-input');
-                speedInput.addEventListener('input', () => {
-                    updateSpeed(m);
-                });
-
-                // Function to update speed
+                speedInput.addEventListener('input', () => updateSpeed(m));
                 function updateSpeed(m) {
-                    const speed = parseInt(document.getElementById('speed-input').value);
+                    const speed = parseInt(speedInput.value);
                     if (!isNaN(speed)) {
                         m.set_speed(speed);
                     } else {
                         console.error('Invalid Speed');
                     }
                 }
+
+                function setupEventListeners() {
+                    const landSelect = document.getElementById('land-select');
+                    const mapSelect = document.getElementById('map-select');
+                    const loadMapBtn = document.getElementById('load-map-btn');
+
+                    landSelect.addEventListener('change', updateMapSelect);
+                    loadMapBtn.addEventListener('click', loadSelectedMap);
+
+                    function updateMapSelect() {
+                        const selectedLand = landSelect.value;
+                        mapSelect.innerHTML = '<option value="">Select Map</option>';
+
+                        if (selectedLand && mapData[selectedLand]) {
+                            for (const [mapId, mapInfo] of Object.entries(mapData[selectedLand])) {
+                                const option = document.createElement('option');
+                                option.value = mapId;
+                                option.textContent = mapInfo.mapName;
+                                mapSelect.appendChild(option);
+                            }
+                        }
+                    }
+
+                    function loadSelectedMap() {
+                        const mapId = parseInt(mapSelect.value);
+                        if (!isNaN(mapId)) {
+                            m.load_map(mapId);
+                        } else {
+                            console.error('Invalid Map ID');
+                        }
+                    }
+
+                }
+                setupEventListeners();
 
                 // Initial speed setup
                 updateSpeed(m);

@@ -15,7 +15,7 @@ let g_state : EntryPoint = {
   map_portals_animations: @map.MapPortalAnimations::load(),
   state: State::NONE,
   down_keys: Map::new(),
-  speed: 2,
+  speed: 5,
 }
 
 pub fn load_map(map_id : Int) -> Unit {

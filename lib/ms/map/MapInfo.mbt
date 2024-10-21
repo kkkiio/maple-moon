@@ -82,15 +82,20 @@ pub fn MapInfo::from_resource(
   src : NxNode,
   walls : Range[Int],
   borders : Range[Int]
-) -> MapInfo! {
+) -> MapInfo {
   let info = src["info"]
-  let (map_walls, map_borders) = if info.contains("VRLeft") {
-    (
-      Range::new(info["VRLeft"].as_int!(), info["VRRight"].as_int!()),
-      Range::new(info["VRTop"].as_int!(), info["VRBottom"].as_int!()),
-    )
-  } else {
-    (walls, borders)
+  let (map_walls, map_borders) = match info.value() {
+    {
+      "VRLeft": Json::Number(vrLeft),
+      "VRRight": Json::Number(vrRight),
+      "VRTop": Json::Number(vrTop),
+      "VRBottom": Json::Number(vrBottom),
+    } =>
+      (
+        Range::new(vrLeft.to_int(), vrRight.to_int()),
+        Range::new(vrTop.to_int(), vrBottom.to_int()),
+      )
+    _ => (walls, borders)
   }
   let bgmpath = info["bgm"].get_string()
   let split = bgmpath.to_array().search('/').unwrap()

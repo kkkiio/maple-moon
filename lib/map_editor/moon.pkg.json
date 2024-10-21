@@ -17,7 +17,12 @@
                 "onkeydown",
                 "onkeyup",
                 "set_speed",
-                "set_draw_tiles"
+                "set_draw_tiles",
+                "set_show_background",
+                "set_show_foreground",
+                "get_background_count",
+                "get_foreground_count",
+                "is_loaded"
             ],
             "format": "esm"
         }

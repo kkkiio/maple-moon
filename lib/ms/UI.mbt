@@ -4,8 +4,6 @@ enum UiState {
   // CASHSHOP
 }
 
-struct Textfield {}
-
 struct UI {
   timer : Timer
   mut state : UIState?
@@ -13,7 +11,6 @@ struct UI {
   cursor : @ui.Cursor
   is_key_down : Map[String, Bool]
   mut enabled : Bool
-  mut caps_lock_enabled : Bool
 }
 
 let g_ui : @utils.Singleton[UI] = @utils.Singleton::new()
@@ -26,7 +23,6 @@ fn UI::new(timer : Timer) -> UI {
     keyboard: Keyboard::default(),
     is_key_down: Map::new(),
     enabled: true,
-    caps_lock_enabled: false,
   }
   ui.change_state(UiState::LOGIN) // for test
   ui
@@ -97,9 +93,6 @@ fn disable(self : UI) -> Unit {
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   guard let Some(state) = self.state else { None => return  }
-  if self.is_key_down.get_or_default(self.keyboard.capslock_code(), false) {
-    self.caps_lock_enabled = self.caps_lock_enabled.not()
-  }
   let mapping = self.keyboard.get_mapping(keycode)
   let mut sent = false
   let types = Array::new()

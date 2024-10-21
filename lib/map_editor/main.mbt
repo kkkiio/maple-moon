@@ -9,7 +9,12 @@ struct EntryPoint {
 enum State {
   NONE
   LOADING(~poll_fn : () -> @map.MapStruct?!)
-  ACTIVE(~map : @map.MapStruct, mut ~viewpos : @struct.Point[Double])
+  ACTIVE(
+    ~map : @map.MapStruct,
+    mut ~viewpos : @struct.Point[Double],
+    ~hide_backgrounds : Map[Int, Bool],
+    ~hide_foregrounds : Map[Int, Bool]
+  )
 }
 
 let g_state : EntryPoint = {
@@ -37,15 +42,20 @@ pub fn update(_time : Double) -> Unit {
           return
         }
       }
-      g_state.state = State::ACTIVE(~map, viewpos=@struct.Point::default())
+      g_state.state = State::ACTIVE(
+        ~map,
+        viewpos=@struct.Point::default(),
+        hide_backgrounds=Map::new(),
+        hide_foregrounds=Map::new(),
+      )
     }
-    State::ACTIVE(~map, ~viewpos) as state => {
+    State::ACTIVE(~map, ~viewpos, ~hide_backgrounds, ~hide_foregrounds) as state => {
       let viewpos = update_viewpos(g_state.down_keys, viewpos, g_state.speed)
       state.viewpos = viewpos
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
-      update_map(map.backgrounds, map.tiles_objs, map.portals)
-      draw_map(map, viewpos, alpha)
+      update_map(map.backgrounds, map.foregrounds, map.tiles_objs, map.portals)
+      draw_map(map, viewpos, hide_backgrounds, hide_foregrounds, alpha)
       @graphics.GraphicsGL::get().flush(1.0)
     }
   }
@@ -67,15 +77,58 @@ pub fn set_draw_tiles(draw_tiles : Bool) -> Unit {
   g_state.draw_tiles = draw_tiles
 }
 
+pub fn is_loaded() -> Bool {
+  match g_state.state {
+    State::ACTIVE(..) => true
+    _ => false
+  }
+}
+
+pub fn get_background_count() -> Int {
+  match g_state.state {
+    State::ACTIVE(~map, ..) => map.backgrounds.length()
+    _ => 0
+  }
+}
+
+pub fn get_foreground_count() -> Int {
+  match g_state.state {
+    State::ACTIVE(~map, ..) => map.foregrounds.length()
+    _ => 0
+  }
+}
+
+pub fn set_show_background(index : Int, show_background : Bool) -> Unit {
+  guard let State::ACTIVE(~hide_backgrounds, ..) = g_state.state else {
+    _ => return
+  }
+  hide_backgrounds.set(index, show_background.not())
+}
+
+pub fn set_show_foreground(index : Int, show_foreground : Bool) -> Unit {
+  guard let State::ACTIVE(~hide_foregrounds, ..) = g_state.state else {
+    _ => return
+  }
+  hide_foregrounds.set(index, show_foreground.not())
+}
+
 fn draw_map(
   map : @map.MapStruct,
   viewpos : @struct.Point[Double],
+  hide_backgrounds : Map[Int, Bool],
+  hide_foregrounds : Map[Int, Bool],
   alpha : Double
 ) -> Unit {
   let backgrounds = map.backgrounds
+  let foregrounds = map.foregrounds
   let tiles_objs = map.tiles_objs
   let portals = map.portals
-  backgrounds.drawbackgrounds(viewpos.x, viewpos.y, alpha)
+  for i, background in backgrounds {
+    if hide_backgrounds.get_or_default(i, false) {
+      continue
+    }
+    background.draw(viewpos.x, viewpos.y, alpha)
+  }
   let int_viewpos : @struct.Point[Int] = {
     x: viewpos.x.round().to_int(),
     y: viewpos.y.round().to_int(),
@@ -86,15 +139,21 @@ fn draw_map(
     }
   }
   portals.draw(int_viewpos, alpha)
-  backgrounds.drawforegrounds(viewpos.x, viewpos.y, alpha)
+  for i, background in foregrounds {
+    if hide_foregrounds.get_or_default(i, false) {
+      continue
+    }
+    background.draw(viewpos.x, viewpos.y, alpha)
+  }
 }
 
 fn update_map(
-  backgrounds : @map.MapBackgrounds,
+  backgrounds : Array[@map.Background],
+  foregrounds : Array[@map.Background],
   tiles_objs : @map.MapTilesObjs,
   portals : @map.MapPortals
 ) -> Unit {
-  backgrounds.update()
+  @map.update_backgrounds(backgrounds, foregrounds)
   tiles_objs.update()
   portals.update(@struct.Point::default()) // TODO: add player
 }

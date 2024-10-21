@@ -2,8 +2,6 @@ typealias CursorState = @ui.CursorState
 
 typealias Physics = @physics.Physics
 
-typealias Rectangle[T] = @struct.Rectangle[T]
-
 typealias Animation = @graphics.Animation
 
 struct MapNpcs {
@@ -245,7 +243,7 @@ pub fn Npc::new(
 pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   match self.animations.get(self.stance) {
-    Some(ani) => ani.draw(DrawArgument::new14(absp, self.flip), alpha)
+    Some(ani) => ani.draw(@graphics.DrawArgument::new14(absp, self.flip), alpha)
     None => ()
   }
   if self.hide_name.not() {
@@ -299,7 +297,7 @@ pub fn inrange(
   let dim = self.animations[self.stance]
     .map(fn(ani) { ani.get_dimensions() })
     .or_default()
-  Rectangle::from4(
+  @struct.Rectangle::from4(
     absp.x - dim.x / 2,
     absp.x + dim.x / 2,
     absp.y - dim.y,

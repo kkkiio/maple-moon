@@ -376,16 +376,16 @@ pub fn toggle_element(
       if active != element.get_ui_model().is_active() {
         if element.get_ui_model().is_active() {
           if t == UIElementType::WORLD_MAP {
-            Sound::new(SoundName::WORLD_MAP_OPEN).play()
+            // Sound::new(SoundName::WORLD_MAP_OPEN).play()
           } else {
-            Sound::new(SoundName::MENU_UP).play()
+            // Sound::new(SoundName::MENU_UP).play()
           }
           UI::get().send_cursor_pressed(false)
         } else {
           if t == UIElementType::WORLD_MAP {
-            Sound::new(SoundName::WORLD_MAP_CLOSE).play()
+            // Sound::new(SoundName::WORLD_MAP_CLOSE).play()
           } else {
-            Sound::new(SoundName::MENU_DOWN).play()
+            // Sound::new(SoundName::MENU_DOWN).play()
           }
           element.remove_cursor()
           UI::get().send_cursor_pressed(false)
@@ -458,10 +458,6 @@ pub fn get_front_by_pos(
     i -= 1
   }
   return None
-}
-
-pub fn remove_icon(self : UIStateGame) -> Unit {
-  // Implementation goes here
 }
 
 pub fn remove_cursors(self : UIStateGame) -> Unit {

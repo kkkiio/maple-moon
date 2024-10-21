@@ -1,7 +1,5 @@
 typealias Point[T] = @struct.Point[T]
 
-typealias DrawArgument = @graphics.DrawArgument
-
 enum UILoginButtons {
   BT_LOGIN
   BT_REGISTER
@@ -76,35 +74,35 @@ pub fn UILogin::new() -> UILogin {
   let sprites = [
     @graphics.Sprite::from_resource(
       back["11"],
-      state_args=DrawArgument::from_point(Point::new(400, 300)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(400, 300)),
     ),
     @graphics.Sprite::from_resource(
       ani["17"],
-      state_args=DrawArgument::from_point(Point::new(129, 283)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(129, 283)),
     ),
     @graphics.Sprite::from_resource(
       ani["18"],
-      state_args=DrawArgument::from_point(Point::new(306, 252)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(306, 252)),
     ),
     @graphics.Sprite::from_resource(
       ani["19"],
-      state_args=DrawArgument::from_point(Point::new(379, 207)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(379, 207)),
     ),
     @graphics.Sprite::from_resource(
       back["35"],
-      state_args=DrawArgument::from_point(Point::new(399, 260)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(399, 260)),
     ),
     @graphics.Sprite::from_resource(
       prettyLogo,
-      state_args=DrawArgument::from_point(Point::new(394, 173)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(394, 173)),
     ),
     @graphics.Sprite::from_resource(
       title["signboard"],
-      state_args=DrawArgument::from_point(Point::new(391, 330)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(391, 330)),
     ),
     @graphics.Sprite::from_resource(
       common["frame"],
-      state_args=DrawArgument::from_point(Point::new(400, 300)),
+      state_args=@graphics.DrawArgument::from_point(Point::new(400, 300)),
     ),
   ]
   let obj = {

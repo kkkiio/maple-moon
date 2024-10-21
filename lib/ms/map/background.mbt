@@ -140,7 +140,7 @@ pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
   }
 }
 
-pub fn Background::draw(
+pub fn draw(
   self : Background,
   viewx : Double,
   viewy : Double,
@@ -198,64 +198,52 @@ pub fn Background::draw(
   }
 }
 
-pub fn Background::update(self : Background) -> Unit {
+pub fn update(self : Background) -> Unit {
   self.move_obj.move()
   self.animation.update() |> ignore
 }
 
-pub struct MapBackgrounds {
-  backgrounds : Array[Background]
-  foregrounds : Array[Background]
-  black : Bool
-}
-
-pub fn MapBackgrounds::new(src : NxNode) -> MapBackgrounds {
+pub fn load_backgrounds(src : NxNode) -> (Array[Background], Array[Background]) {
   let backgrounds = Array::new()
   let foregrounds = Array::new()
   let mut no = 0
   while true {
-    let back = src[no.to_string()]
-    if back.is_null() {
-      break
-    }
-    let front = back["front"].get_bool?().unwrap()
-    if front {
-      foregrounds.push(Background::from_resource?(back).unwrap())
-    } else {
-      backgrounds.push(Background::from_resource?(back).unwrap())
+    let backi = src[no.to_string()]
+    match backi.value() {
+      Json::Null => break
+      { "front": Json::Number(0) } =>
+        backgrounds.push(Background::from_resource?(backi).unwrap())
+      { "front": Json::Number(_) } =>
+        foregrounds.push(Background::from_resource?(backi).unwrap())
+      _ => panic()
     }
     no += 1
   }
-  let black = src["0"]["bS"].get_string().length() <= 0
-  { backgrounds, foregrounds, black }
+  (backgrounds, foregrounds)
 }
 
-pub fn MapBackgrounds::default() -> MapBackgrounds {
-  { backgrounds: Array::new(), foregrounds: Array::new(), black: false }
-}
-
-pub fn MapBackgrounds::drawbackgrounds(
-  self : MapBackgrounds,
+pub fn drawbackgrounds(
+  backgrounds : Array[Background],
   viewx : Double,
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  if self.black {
-    @graphics.GraphicsGL::get().draw_screen_fill(0.0, 0.0, 0.0, 1.0)
-  }
-  self.backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
+  backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
 }
 
-pub fn MapBackgrounds::drawforegrounds(
-  self : MapBackgrounds,
+pub fn drawforegrounds(
+  foregrounds : Array[Background],
   viewx : Double,
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  self.foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
+  foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
 }
 
-pub fn MapBackgrounds::update(self : MapBackgrounds) -> Unit {
-  self.backgrounds.each(fn(background) { background.update() })
-  self.foregrounds.each(fn(foreground) { foreground.update() })
+pub fn update_backgrounds(
+  backgrounds : Array[Background],
+  foregrounds : Array[Background]
+) -> Unit {
+  backgrounds.each(fn(background) { background.update() })
+  foregrounds.each(fn(foreground) { foreground.update() })
 }

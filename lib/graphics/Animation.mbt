@@ -14,7 +14,7 @@ fn Frame::from_resource(src : NxNode) -> Frame {
   let bounds = src.as_rectangle?().unwrap()
   let head = src["head"].as_point?().unwrap()
   let delay = match src["delay"].get_int?().unwrap() {
-    0 => 100
+    0 => 1000 // TODO: figure out the default value in maple resource
     it => it
   }
   let opacities = match (src["a0"].value(), src["a1"].value()) {
@@ -49,6 +49,10 @@ pub fn start_opacity(self : Frame) -> Int {
   self.opacities.0
 }
 
+pub fn end_opacity(self : Frame) -> Int {
+  self.opacities.1
+}
+
 pub fn start_scale(self : Frame) -> Int {
   self.scales.0
 }
@@ -74,8 +78,7 @@ pub fn get_bounds(self : Frame) -> Rectangle[Int] {
 }
 
 pub fn opcstep(self : Frame, timestep : Int) -> Double {
-  timestep.to_double() *
-  (self.opacities.1 - self.opacities.0).to_double() /
+  ((self.opacities.1 - self.opacities.0) * timestep).to_double() /
   self.delay.to_double()
 }
 
@@ -91,7 +94,7 @@ pub fn draw(self : Frame, args : DrawArgument) -> Unit {
 
 // Class which consists of multiple textures to make an Animation.
 struct Animation {
-  frames : FixedArray[Frame]
+  frames : Array[Frame]
   zigzag : Bool
   frame : @utils.Nominal[Int]
   opacity : @utils.Linear
@@ -103,7 +106,7 @@ struct Animation {
 pub type! LoadError {
   NotFound
   InvalidFormat(String)
-}
+} derive(Show)
 
 pub fn Animation::from_resource(src : NxNode) -> Animation {
   try {
@@ -111,11 +114,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
   } catch {
     NotFound => Animation::default()
     e => {
-      @log.error(
-        //  "err": e 
-        {},
-        "Failed to load animation",
-      )
+      @log.error({ "err": Show::to_string(e) }, "Failed to load animation")
       panic()
     }
   }
@@ -124,13 +123,13 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   guard let Some(obj) = src.value().as_object() else { _ => raise NotFound }
   let frames = if obj.contains("__b") {
-    ([Frame::from_resource(src)] : FixedArray[Frame])
+    [Frame::from_resource(src)]
   } else {
     let fs = obj
       .iter()
       .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
       .map(fn(it) { Frame::from_resource(src[it.0]) })
-      |> FixedArray::from_iter
+      .collect()
     if fs.length() <= 0 {
       raise InvalidFormat("Animation must have at least one frame.")
     }
@@ -140,6 +139,16 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
     src["zigzag"].get_bool!()
   } catch {
     _ => raise InvalidFormat("zigzag must be a bool")
+  }
+  let blend = try {
+    src["blend"].get_bool!()
+  } catch {
+    _ => raise InvalidFormat("blend must be a bool")
+  }
+  if blend && frames.length() == 1 {
+    // add a dual frame with reversed opacity to achieve zigzag effect
+    let f = frames[0]
+    frames.push({ ..f, opacities: (f.opacities.1, f.opacities.0) })
   }
   let a = {
     frames,

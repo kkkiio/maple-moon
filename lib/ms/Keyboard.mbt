@@ -86,10 +86,6 @@ pub fn Keyboard::default() -> Keyboard {
   }
 }
 
-pub fn capslock_code(self : Keyboard) -> String {
-  @kb.capsLock
-}
-
 pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {
   self.maple_keys
 }

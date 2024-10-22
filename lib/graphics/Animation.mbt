@@ -9,12 +9,12 @@ struct Frame {
 
 pub typealias NxNode = @resource.NxNode
 
-fn Frame::from_resource(src : NxNode) -> Frame {
+fn Frame::from_resource(src : NxNode, ~default_delay? : Int) -> Frame {
   let texture = Texture::from_resource(src)
   let bounds = src.as_rectangle?().unwrap()
   let head = src["head"].as_point?().unwrap()
   let delay = match src["delay"].get_int?().unwrap() {
-    0 => 1000 // TODO: figure out the default value in maple resource
+    0 => default_delay.or(100)
     it => it
   }
   let opacities = match (src["a0"].value(), src["a1"].value()) {
@@ -122,8 +122,15 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 
 pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   guard let Some(obj) = src.value().as_object() else { _ => raise NotFound }
+  let blend = try {
+    src["blend"].get_bool!()
+  } catch {
+    _ => raise InvalidFormat("blend must be a bool")
+  }
   let frames = if obj.contains("__b") {
-    [Frame::from_resource(src)]
+    // 100ms delay for blend is too fast, see Map/Map1/101000000.img
+    let default_delay = if blend { Some(2500) } else { None }
+    [Frame::from_resource(src, ~default_delay?)]
   } else {
     let fs = obj
       .iter()
@@ -139,11 +146,6 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
     src["zigzag"].get_bool!()
   } catch {
     _ => raise InvalidFormat("zigzag must be a bool")
-  }
-  let blend = try {
-    src["blend"].get_bool!()
-  } catch {
-    _ => raise InvalidFormat("blend must be a bool")
   }
   if blend && frames.length() == 1 {
     // add a dual frame with reversed opacity to achieve zigzag effect

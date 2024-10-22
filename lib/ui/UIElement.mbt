@@ -1,5 +1,3 @@
-typealias Sprite = @graphics.Sprite
-
 pub enum UIElementType {
   UI_ELEMENT_NONE
   START
@@ -43,7 +41,7 @@ pub enum UIElementType {
   GAUGE_BOSS
   NOTIFICATION
   TRADE
-} derive(Eq, Compare)
+} derive(Eq, Compare, Hash)
 
 pub let all_types : FixedArray[UIElementType] = [
   UI_ELEMENT_NONE,
@@ -90,61 +88,6 @@ pub let all_types : FixedArray[UIElementType] = [
   TRADE,
 ]
 
-pub fn int_value(self : UIElementType) -> Int {
-  match self {
-    UI_ELEMENT_NONE => 0
-    START => 1
-    LOGIN => 2
-    TOS => 3
-    GENDER => 4
-    WORLD_SELECT => 5
-    REGION => 6
-    UI_ELEMENT_CHAR_SELECT => 7
-    LOGIN_WAIT => 8
-    UI_ELEMENT_RACE_SELECT => 9
-    CLASS_CREATION => 10
-    SOFT_KEYBOARD => 11
-    LOGIN_NOTICE => 12
-    LOGIN_NOTICE_CONFIRM => 13
-    STATUS_MESSENGER => 14
-    STATUS_BAR => 15
-    CHAT_BAR => 16
-    BUFF_LIST => 17
-    NOTICE => 18
-    NPC_TALK => 19
-    SHOP => 20
-    STATS_INFO => 21
-    ITEM_INVENTORY => 22
-    EQUIP_INVENTORY => 23
-    SKILL_BOOK => 24
-    QUEST_LOG => 25
-    WORLD_MAP => 26
-    USER_LIST => 27
-    MINI_MAP => 28
-    CHANNEL => 29
-    CHAT => 30
-    CHAT_RANK => 31
-    JOYPAD => 32
-    EVENT => 33
-    KEY_CONFIG => 34
-    OPTION_MENU => 35
-    QUIT => 36
-    CHAR_INFO => 37
-    CASHSHOP => 38
-    GAUGE_BOSS => 39
-    NOTIFICATION => 40
-    TRADE => 41
-  }
-}
-
-pub fn hash(self : UIElementType) -> Int {
-  self.int_value()
-}
-
-pub fn hash_combine(self : UIElementType, hasher : Hasher) -> Unit {
-  hasher.combine(self.int_value())
-}
-
 pub trait UIElement {
   get_ui_model(Self) -> UIModel
   send_cursor(Self, Bool, Point[Int]) -> CursorState
@@ -178,14 +121,14 @@ pub fn UIModel::new(
 }
 
 pub fn draw_sprites(
-  sprites : Iter[Sprite],
+  sprites : Iter[@graphics.Sprite],
   position : Point[Int],
   alpha : Double
 ) -> Unit {
   sprites.each(fn(sprite) { sprite.draw(position, alpha) })
 }
 
-pub fn update_sprites(sprites : Iter[Sprite]) -> Unit {
+pub fn update_sprites(sprites : Iter[@graphics.Sprite]) -> Unit {
   sprites.each(fn(sprite) { sprite.update() |> ignore })
 }
 

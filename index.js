@@ -137,7 +137,7 @@ function main() {
     { nodepath: "Tile", filename: "tile.nx.json" },
     { nodepath: "Obj", filename: "obj.nx.json" },
     { nodepath: "Back", filename: "back.nx.json" },
-    { nodepath: "Map/Map1", folder: "map1" },
+    { nodepath: "Map/Map1", folder: "Map/Map1" },
   ]);
   prepareResourcePromises.push(
     mapLoader.start()

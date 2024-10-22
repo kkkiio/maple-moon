@@ -141,7 +141,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   }
   self.combat.unwrap().draw(viewx, viewy, alpha)
   portals.draw(viewpos, alpha)
-  @map.drawforegrounds(backgrounds, viewx, viewy, alpha)
+  @map.drawforegrounds(foregrounds, viewx, viewy, alpha)
   //     effect_.draw();
 }
 

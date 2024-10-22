@@ -252,7 +252,7 @@ pub fn send_key(
                 self.check_portals(map_info, portals, physics)
               // @KeyAction.Id::SIT => self.check_seats()
               @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(player, 0)
-              @KeyAction.Id::PICKUP => self.check_drops()
+              @KeyAction.Id::PICKUP => self.check_drops(player)
               _ => ()
             }
           }
@@ -452,12 +452,10 @@ fn new_take_damage_packet_from_mob(
   )
 }
 
-fn check_drops(self : Stage) -> Unit {
-  let playerpos = self.player.unwrap().get_position()
-  match self.drops.find_loot_at(playerpos) {
-    Some((drop_oid, drop_pos)) =>
-      new_pickup_item_packet(drop_oid, drop_pos).dispatch()
-    None => ()
+fn check_drops(self : Stage, player : @player.Player) -> Unit {
+  for it in self.drops.list_loot_at(player.get_position()) {
+    let (drop_oid, drop_pos) = it
+    new_pickup_item_packet(drop_oid, drop_pos).dispatch()
   }
 }
 

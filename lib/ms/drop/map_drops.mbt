@@ -2,7 +2,6 @@ struct MapDrops {
   drops : @map_object.MapObjects[Drop]
   spawns : @queue.T[DropSpawn]
   meso_icons : Map[MesoIcon, @graphics.Animation]
-  mut loot_enabled : Bool
 }
 
 pub fn MapDrops::new() -> MapDrops {
@@ -16,19 +15,14 @@ pub fn MapDrops::new() -> MapDrops {
     |> @graphics.Animation::from_resource
   meso_icons[MesoIcon::BAG] = src["09000003"]["iconRaw"]
     |> @graphics.Animation::from_resource
-  {
-    drops: @map_object.MapObjects::new(),
-    spawns: @queue.T::new(),
-    meso_icons,
-    loot_enabled: false,
-  }
+  { drops: @map_object.MapObjects::new(), spawns: @queue.T::new(), meso_icons }
 }
 
-pub fn MapDrops::spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
+pub fn spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
-pub fn MapDrops::draw(
+pub fn draw(
   self : MapDrops,
   layer : @layer.Id,
   viewx : Double,
@@ -38,7 +32,7 @@ pub fn MapDrops::draw(
   self.drops.draw(layer, viewx, viewy, alpha)
 }
 
-pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
+pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.oid
@@ -73,26 +67,21 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
     mesoicon.update() |> ignore
   }
   self.drops.update(physics)
-  self.loot_enabled = true
 }
 
-pub fn MapDrops::clear(self : MapDrops) -> Unit {
+pub fn clear(self : MapDrops) -> Unit {
   self.drops.clear()
 }
 
-pub fn MapDrops::find_loot_at(
+pub fn list_loot_at(
   self : MapDrops,
   playerpos : @struct.Point[Int]
-) -> (Int, @struct.Point[Int])? {
-  guard self.loot_enabled else { return None }
-  for oid, drop in self.drops {
-    if drop.bounds().contains(playerpos) {
-      self.loot_enabled = false
-      let position = drop.get_position()
-      return Some((oid, position))
-    }
-  }
-  None
+) -> Iter[(Int, @struct.Point[Int])] {
+  self.drops
+  .iter2()
+  .iter()
+  .filter(fn(it) { it.1.bounds().contains(playerpos) })
+  .map(fn(it) { (it.0, it.1.get_position()) })
 }
 
 pub fn MapDrops::remove(

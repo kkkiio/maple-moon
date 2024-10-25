@@ -32,10 +32,10 @@ struct SkillBookUI {
   sprites : Array[@graphics.Sprite]
   stats : @character.CharStats
   skillbook : @character.SkillBook
-  buttons : Map[SkillBookUIButton, @ui.Button]
+  buttons : Map[SkillBookUIButton, @ui.UIButton]
   mut book_icon : @graphics.Texture
-  mut book_text : @graphics.Text
-  mut sp_label : @graphics.Text
+  book_text : @graphics.Text
+  sp_label : @graphics.Text
   mut job : @job.Job
   mut sp : Int
   mut beginner_sp : Int
@@ -60,10 +60,9 @@ struct SkillBookUI {
   sp_after : @graphics.Charset
   mut sp_before_text : String
   mut sp_after_text : String
-  mut sp_used : @graphics.Text
-  mut sp_remaining : @graphics.Text
-  mut sp_name : @graphics.Text
-  mut sp_skill : @graphics.Texture
+  sp_used : @graphics.Text
+  sp_remaining : @graphics.Text
+  sp_name : @graphics.Text
   mut sp_id : Int
   mut sp_master_level : Int
 }
@@ -73,7 +72,6 @@ pub fn SkillBookUI::new(
   stats : @character.CharStats
 ) -> SkillBookUI {
   let skillbook = skillbook
-  let grabbing = false
   let skill = @resource.ui_loader().load_res(["UIWindow2.img", "Skill"])
   let main = skill["main"]
   let ui_backgrnd = main["backgrnd"]
@@ -84,7 +82,7 @@ pub fn SkillBookUI::new(
   let skille = main["skill1"] |> @graphics.Texture::from_resource
   let skillb = main["skillBlank"] |> @graphics.Texture::from_resource
   let line = main["line"] |> @graphics.Texture::from_resource
-  let buttons : Map[SkillBookUIButton, @ui.Button] = Map::new()
+  let buttons : Map[SkillBookUIButton, @ui.UIButton] = Map::new()
   buttons[SkillBookUIButton::BT_HYPER] = @ui.MapleButton::from_resource(
     main["BtHyper"],
   )
@@ -115,25 +113,25 @@ pub fn SkillBookUI::new(
   let sp_backgrnd = skillPoint["backgrnd"] |> @graphics.Texture::from_resource
   let sp_backgrnd2 = skillPoint["backgrnd2"] |> @graphics.Texture::from_resource
   let sp_backgrnd3 = skillPoint["backgrnd3"] |> @graphics.Texture::from_resource
-  buttons[SkillBookUIButton::BT_CANCEL] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_CANCEL] = @ui.MapleButton::from_resource(
     skillPoint["BtCancle"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
-  buttons[SkillBookUIButton::BT_OKAY] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_OKAY] = @ui.MapleButton::from_resource(
     skillPoint["BtOkay"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
-  buttons[SkillBookUIButton::BT_SP_DOWN] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_SP_DOWN] = @ui.MapleButton::from_resource(
     skillPoint["BtSpDown"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
-  buttons[SkillBookUIButton::BT_SP_MAX] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_SP_MAX] = @ui.MapleButton::from_resource(
     skillPoint["BtSpMax"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
-  buttons[SkillBookUIButton::BT_SP_UP] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_SP_UP] = @ui.MapleButton::from_resource(
     skillPoint["BtSpUp"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
   buttons[SkillBookUIButton::BT_SP_DOWN]
   .unwrap()
@@ -148,19 +146,16 @@ pub fn SkillBookUI::new(
     @graphics.CharsetAlignment::RIGHT,
   )
   let sp_used = @graphics.Text::new(
-    "",
     @graphics.FontId::A12B,
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::WHITE,
   )
   let sp_remaining = @graphics.Text::new(
-    "",
     @graphics.FontId::A12B,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::SUPERNOVA,
   )
   let sp_name = @graphics.Text::new(
-    "",
     @graphics.FontId::A12B,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
@@ -178,18 +173,18 @@ pub fn SkillBookUI::new(
   let macro_backgrnd = macro["backgrnd"] |> @graphics.Texture::from_resource
   let macro_backgrnd2 = macro["backgrnd2"] |> @graphics.Texture::from_resource
   let macro_backgrnd3 = macro["backgrnd3"] |> @graphics.Texture::from_resource
-  buttons[SkillBookUIButton::BT_MACRO_OK] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_MACRO_OK] = @ui.MapleButton::from_resource(
     macro["BtOK"],
-    @struct.Point::new(bg_dimensions.x, 0),
+    pos=@struct.Point::new(bg_dimensions.x, 0),
   )
   buttons[SkillBookUIButton::BT_MACRO_OK]
   .unwrap()
   .get_button_base()
   .set_state(@ui.ButtonState::DISABLED)
   let close = @resource.ui_loader().load_res(["UIBasic.img", "BtClose3"])
-  buttons[SkillBookUIButton::BT_CLOSE] = @ui.MapleButton::from_resource_with_pos(
+  buttons[SkillBookUIButton::BT_CLOSE] = @ui.MapleButton::from_resource(
     close,
-    @struct.Point::new(bg_dimensions.x - 23, 6),
+    pos=@struct.Point::new(bg_dimensions.x - 23, 6),
   )
   let tab = main["Tab"]
   let enabled = tab["enabled"]
@@ -229,23 +224,21 @@ pub fn SkillBookUI::new(
     }
     let spup_position = skill_offset +
       @struct.Point::new(124 + x_adj, 20 + y_adj)
-    buttons[k] = @ui.MapleButton::from_resource_with_pos(
+    buttons[k] = @ui.MapleButton::from_resource(
       main["BtSpUp"],
-      spup_position,
+      pos=spup_position,
     )
     if i % 2 != 0 {
       y_adj += row_height
     }
   }
   let book_text = @graphics.Text::new(
-    "",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
     max_width=150,
   )
   let sp_label = @graphics.Text::new(
-    "",
     @graphics.FontId::A12M,
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
@@ -292,7 +285,6 @@ pub fn SkillBookUI::new(
     sp_used,
     sp_remaining,
     sp_name,
-    sp_skill: @graphics.Texture::default(),
     sp_id: 0,
     sp_master_level: 0,
   }
@@ -493,10 +485,8 @@ pub fn button_pressed(
       used -= 1
       sp_after -= 1
       self.sp_after_text = sp_after.to_string()
-      self.sp_used = self.sp_used.change_text(used.to_string())
-      self.sp_remaining = self.sp_remaining.change_text(
-        (cur_sp - used).to_string(),
-      )
+      self.sp_used.change_text(used.to_string())
+      self.sp_remaining.change_text((cur_sp - used).to_string())
       self.buttons[SkillBookUIButton::BT_SP_UP]
       .unwrap()
       .get_button_base()
@@ -516,10 +506,8 @@ pub fn button_pressed(
       let sp_touse = self.sp_master_level - sp_before - used
       used += sp_touse
       self.sp_after_text = self.sp_master_level.to_string()
-      self.sp_used = self.sp_used.change_text(used.to_string())
-      self.sp_remaining = self.sp_remaining.change_text(
-        (cur_sp - used).to_string(),
-      )
+      self.sp_used.change_text(used.to_string())
+      self.sp_remaining.change_text((cur_sp - used).to_string())
       self.buttons[SkillBookUIButton::BT_SP_UP]
       .unwrap()
       .get_button_base()
@@ -536,10 +524,8 @@ pub fn button_pressed(
       used += 1
       sp_after += 1
       self.sp_after_text = sp_after.to_string()
-      self.sp_used = self.sp_used.change_text(used.to_string())
-      self.sp_remaining = self.sp_remaining.change_text(
-        (cur_sp - used).to_string(),
-      )
+      self.sp_used.change_text(used.to_string())
+      self.sp_remaining.change_text((cur_sp - used).to_string())
       self.buttons[SkillBookUIButton::BT_SP_DOWN]
       .unwrap()
       .get_button_base()
@@ -590,15 +576,6 @@ pub fn send_key(
   escape : Bool
 ) -> Unit {
   // TODO: implement
-}
-
-pub fn toggle_active(self : SkillBookUI) -> Unit {
-  if is_skillpoint_enabled(self) {
-    return
-  }
-  self.base.toggle_active()
-  // TODO: tooltip
-
 }
 
 fn is_skillpoint_enabled(self : SkillBookUI) -> Bool {
@@ -689,7 +666,7 @@ fn change_tab(self : SkillBookUI, new_tab : Int) -> Unit! {
   let subid = self.job.get_subjob(joblevel)
   let data = @job.JobData::get(subid)
   self.book_icon = data.icon
-  self.book_text = self.book_text.change_text(data.name)
+  self.book_text.change_text(data.name)
   for skill_id in data.skills {
     let level = self.skillbook.get_level(skill_id)
     let masterlevel = self.skillbook.get_masterlevel(skill_id)
@@ -726,14 +703,14 @@ fn SkillDisplayMeta::new(id : Int, level : Int) -> SkillDisplayMeta! {
   )
   let mut namestr = data.name
   let levelstr = level.to_string()
-  let mut name_text = @graphics.Text::new(
-    namestr,
+  let name_text = @graphics.Text::new(
+    text=namestr,
     @graphics.FontId::A11M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::EMPEROR,
   )
   let level_text = @graphics.Text::new(
-    levelstr,
+    text=levelstr,
     @graphics.FontId::A11M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::EMPEROR,
@@ -743,7 +720,7 @@ fn SkillDisplayMeta::new(id : Int, level : Int) -> SkillDisplayMeta! {
   while name_text.width() > max_name_width {
     namestr = namestr.substring(end=namestr.length() - overhang) + ".."
     overhang += 1
-    name_text = name_text.change_text(namestr)
+    name_text.change_text(namestr)
   }
   { name_text, level_text, icon, id, level }
 }
@@ -773,11 +750,11 @@ fn change_sp(self : SkillBookUI) -> Unit! {
         }
       }
       self.beginner_sp = remaining_beginner_sp
-      self.sp_label = self.sp_label.change_text(self.beginner_sp.to_string())
+      self.sp_label.change_text(self.beginner_sp.to_string())
     }
     _ => {
       self.sp = self.stats.get_stat(@MapleStat.Id::SP)
-      self.sp_label = self.sp_label.change_text(self.sp.to_string())
+      self.sp_label.change_text(self.sp.to_string())
     }
   }
   self.change_offset!(self.offset)
@@ -862,10 +839,9 @@ fn send_spup(self : SkillBookUI, row : Int) -> Unit! {
   let cur_sp = @strconv.parse_int!(self.sp_label.get_text())
   self.sp_before_text = level.to_string()
   self.sp_after_text = (level + used).to_string()
-  self.sp_used = self.sp_used.change_text(used.to_string())
-  self.sp_remaining = self.sp_remaining.change_text((cur_sp - used).to_string())
-  self.sp_name = self.sp_name.change_text(name)
-  self.sp_skill = self.skills[row].icon.get_texture()
+  self.sp_used.change_text(used.to_string())
+  self.sp_remaining.change_text((cur_sp - used).to_string())
+  self.sp_name.change_text(name)
   self.sp_id = id
   self.sp_master_level = skillData.master_level
   if self.sp_master_level == 1 {
@@ -928,8 +904,4 @@ fn btn_id_to_joblevel(btn : SkillBookUIButton) -> @job.Level {
     SkillBookUIButton::BT_TAB4 => @job.Level::FOURTH
     _ => panic()
   }
-}
-
-pub fn doubleclick(self : SkillBookUI, pos : @struct.Point[Int]) -> Unit {
-  // TODO: implement
 }

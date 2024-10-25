@@ -2,7 +2,7 @@ struct UIStatusBar {
   stats : @character.CharStats
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Int, @ui.Button]
+  buttons : Map[Int, @ui.UIButton]
   exp_bar : @ui.Gauge
   hp_bar : @ui.Gauge
   mp_bar : @ui.Gauge
@@ -311,14 +311,6 @@ pub fn get_type(self : UIStatusBar) -> @ui.UIElementType {
   @ui.UIElementType::STATUS_BAR
 }
 
-pub fn toggle_active(self : UIStatusBar) -> Unit {
-  self.base.toggle_active()
-}
-
 pub fn remove_cursor(self : UIStatusBar) -> Unit {
-  // TODO: implement
-}
-
-pub fn doubleclick(self : UIStatusBar, pos : @struct.Point[Int]) -> Unit {
   // TODO: implement
 }

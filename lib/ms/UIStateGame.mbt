@@ -8,10 +8,10 @@ let min_delay_next_grab : Duration = 10 |> Duration::from_micro
 
 struct UIStateGame {
   timer : Timer
-  elements : Map[UIElementType, UIElement]
+  elements : Map[UIElementType, @ui.Element]
   element_order : Array[UIElementType]
   mut focused : UIElementType
-  mut dragged : UIElement?
+  mut dragged : @ui.Element?
   // eq_tooltip : EquipTooltip
   // it_tooltip : ItemTooltip
   // sk_tooltip : SkillTooltip
@@ -61,8 +61,8 @@ pub fn draw(
     fn(t) {
       match self.elements.get(t) {
         Some(element) =>
-          if element.get_ui_model().is_active() {
-            element.draw(inter)
+          if element.object.get_ui_model().is_active() {
+            element.object.draw(inter)
           }
         None => ()
       }
@@ -90,8 +90,8 @@ pub fn update(self : UIStateGame) -> Unit {
     fn(t) {
       match self.elements.get(t) {
         Some(element) =>
-          if element.get_ui_model().is_active() {
-            element.update()
+          if element.object.get_ui_model().is_active() {
+            element.object.update()
             if update_screen {
               //TODO: update screen
               // element.update_screen(new_width, new_height)
@@ -132,15 +132,28 @@ pub fn send_key(
               UIElementType::ITEM_INVENTORY,
               @inventory.UIItemInventory::is_focused(),
               fn() {
-                @inventory.UIItemInventory::new(
+                let ui = @inventory.UIItemInventory::new(
                   Stage::get().get_inventory(),
                   fn() { Stage::get().get_player() },
                 )
+                @ui.Element::new(
+                  ui,
+                  doubleclick=fn(pos) { ui.doubleclick(pos) },
+                  toggle_active=fn() { ui.toggle_active() },
+                )
               },
             )
-          //         @KeyAction.Id::STATS => {
-          //             self.emplace(UIStatsInfo::new(Stage::get().get_player().get_stats()))
-          //         }
+          @KeyAction.Id::STATS =>
+            self.toggle_element(
+              UIElementType::STATS_INFO,
+              @char_stats.UIStatsInfo::is_focused(),
+              fn() {
+                let ui = @char_stats.UIStatsInfo::load(
+                  Stage::get().get_player().unwrap().get_stats(),
+                )
+                @ui.Element::new(ui)
+              },
+            )
           @KeyAction.Id::SKILLS =>
             self.toggle_element(
               UIElementType::SKILL_BOOK,
@@ -151,6 +164,7 @@ pub fn send_key(
                   player.get_skills(),
                   player.get_stats(),
                 )
+                |> @ui.Element::new
               },
             )
           //         // @KeyAction.Id::FRIENDS => {
@@ -293,7 +307,7 @@ pub fn send_cursor(
     self.dragged = None
     match self.get_front(cursorpos) {
       Some(front) => {
-        let front_type = front.get_type()
+        let front_type = front.object.get_type()
 
         // if self.tooltip_parent != UIElementType::UI_ELEMENT_NONE {
         //   if front_type != self.tooltip_parent {
@@ -302,7 +316,7 @@ pub fn send_cursor(
         // }
 
         self.remove_cursor(front_type)
-        return front.send_cursor(clicked, cursorpos)
+        return front.object.send_cursor(clicked, cursorpos)
       }
       None => ()
     }
@@ -317,8 +331,8 @@ pub fn send_cursor(
       let t = self.element_order[i]
       match self.elements[t] {
         Some(element) =>
-          if element.get_ui_model().is_active() &&
-            element.get_ui_model().is_in_range(cursorpos) {
+          if element.object.get_ui_model().is_active() &&
+            element.object.get_ui_model().is_in_range(cursorpos) {
             self.dragged = Some(element)
             drag_element_type = t
             break
@@ -338,7 +352,7 @@ pub fn send_cursor(
     return CursorState::IDLE
   }
   match self.dragged {
-    Some(dragged) => return dragged.send_cursor(clicked, cursorpos)
+    Some(dragged) => return dragged.object.send_cursor(clicked, cursorpos)
     None => ()
   }
   return Stage::get().send_cursor(clicked, cursorpos)
@@ -347,9 +361,9 @@ pub fn send_cursor(
 pub fn set_element(
   self : UIStateGame,
   is_focused : Bool,
-  elem : UIElement
+  elem : @ui.Element
 ) -> Unit {
-  let t = elem.get_type()
+  let t = elem.object.get_type()
   self.remove(t)
   self.element_order.push(t)
   if is_focused {
@@ -362,7 +376,7 @@ pub fn toggle_element(
   self : UIStateGame,
   t : UIElementType,
   is_focused : Bool,
-  f : () -> UIElement
+  f : () -> @ui.Element
 ) -> Unit {
   match self.elements[t] {
     Some(element) => {
@@ -371,10 +385,10 @@ pub fn toggle_element(
         None => ()
       }
       self.element_order.push(t)
-      let active = element.get_ui_model().is_active()
-      element.toggle_active()
-      if active != element.get_ui_model().is_active() {
-        if element.get_ui_model().is_active() {
+      let active = element.object.get_ui_model().is_active()
+      (element.toggle_active)()
+      if active != element.object.get_ui_model().is_active() {
+        if element.object.get_ui_model().is_active() {
           if t == UIElementType::WORLD_MAP {
             // Sound::new(SoundName::WORLD_MAP_OPEN).play()
           } else {
@@ -387,7 +401,7 @@ pub fn toggle_element(
           } else {
             // Sound::new(SoundName::MENU_DOWN).play()
           }
-          element.remove_cursor()
+          element.object.remove_cursor()
           UI::get().send_cursor_pressed(false)
         }
       }
@@ -408,56 +422,54 @@ pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
     None => ()
   }
   match self.elements.get(t) {
-    Some(element) => element.get_ui_model().deactivate()
+    Some(element) => element.object.get_ui_model().deactivate()
     None => ()
   }
   self.elements.remove(t)
 }
 
 fn get(self : UIStateGame, t : UIElementType) -> UIElement? {
-  self.elements[t]
+  self.elements[t].map(fn(e) { e.object })
 }
 
 pub fn get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
-) -> UIElement? {
-  let mut i = self.element_order.length() - 1
-  while i >= 0 {
-    let t = self.element_order[i]
-    if types.contains(t) {
-      let res = self.elements[t].filter(
-        fn(it) { it.get_ui_model().is_active() },
-      )
-      match res {
-        Some(_) as r => return r
-        None => ()
+) -> @ui.UIElement? {
+  // let mut i = self.element_order.length() - 1
+  (self.element_order.length() - 1)
+  .until(step=-1, 0, inclusive=true)
+  .map_while(
+    fn(i) {
+      let t = self.element_order[i]
+      if types.contains(t) {
+        self.elements[t].map(fn(e) { e.object })
+      } else {
+        None
       }
-    }
-    i -= 1
-  }
-  return None
+    },
+  )
+  .find_first(fn(it) { it.get_ui_model().is_active() })
 }
 
 pub fn get_front_by_pos(
   self : UIStateGame,
   pos : @struct.Point[Int]
-) -> UIElement? {
-  let mut i = self.element_order.length() - 1
-  while i >= 0 {
-    let t = self.element_order[i]
-    let res = self.elements[t].filter(
-      fn(it) {
-        it.get_ui_model().is_active() && it.get_ui_model().is_in_range(pos)
-      },
-    )
-    match res {
-      Some(_) as r => return r
-      None => ()
-    }
-    i -= 1
-  }
-  return None
+) -> @ui.Element? {
+  (self.element_order.length() - 1)
+  .until(step=-1, 0, inclusive=true)
+  .map_while(
+    fn(i) {
+      let t = self.element_order[i]
+      self.elements[t]
+    },
+  )
+  .find_first(
+    fn(e) {
+      e.object.get_ui_model().is_active() &&
+      e.object.get_ui_model().is_in_range(pos)
+    },
+  )
 }
 
 pub fn remove_cursors(self : UIStateGame) -> Unit {
@@ -468,28 +480,25 @@ pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
   // Implementation goes here
 }
 
-fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> UIElement? {
+fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
   self.element_order
   .iter()
-  .flat_map(
-    fn(t) {
-      let res = self.elements[t].filter(
-        fn(it) {
-          it.get_ui_model().is_active() && it.get_ui_model().is_in_range(pos)
-        },
-      )
-      match res {
-        Some(e) => Iter::singleton(e)
-        None => Iter::empty()
-      }
+  .map_while(fn(t) { self.elements[t] })
+  .find_first(
+    fn(e) {
+      e.object.get_ui_model().is_active() &&
+      e.object.get_ui_model().is_in_range(pos)
     },
   )
-  .find_first(fn(_it) { true })
 }
 
 fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
   match self.get_front_by_pos(pos) {
-    Some(front) => front.doubleclick(pos)
+    Some({ doubleclick, .. }) =>
+      match doubleclick {
+        Some(doubleclick) => doubleclick(pos)
+        None => ()
+      }
     None => Stage::get().doubleclick(pos)
   }
 }

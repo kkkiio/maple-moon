@@ -6,18 +6,27 @@ pub enum ButtonState {
   IDENTITY
 } derive(Eq, Hash)
 
-pub trait Button {
+pub trait UIButton {
   draw(Self, Point[Int]) -> Unit
   update(Self) -> Unit
   bounds(Self, Point[Int]) -> @struct.Rectangle[Int]
   width(Self) -> Int
   origin(Self) -> Point[Int]
-  send_cursor(Self, Bool, Point[Int]) -> CursorState
+  // send_cursor(Self, Bool, Point[Int]) -> CursorState
   get_button_base(Self) -> ButtonModel
   // get_selected(Self) -> Int
   // set_position(Self, Point[Int]) -> Unit
   // toggle_pressed(Self) -> Unit
   // is_pressed(Self) -> Bool
+}
+
+pub struct Button {
+  object : UIButton
+  on_click : (() -> ButtonState)?
+}
+
+pub fn Button::new(object : UIButton, ~on_click? : () -> ButtonState) -> Button {
+  { object, on_click }
 }
 
 pub struct ButtonModel {

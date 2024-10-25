@@ -17,9 +17,9 @@ pub fn send_cursor(
   CursorState::IDLE
 }
 
-pub fn MapleButton::from_resource_with_pos(
+pub fn MapleButton::from_resource(
   src : @resource.NxNode,
-  pos : Point[Int]
+  ~pos : Point[Int] = Point::default()
 ) -> MapleButton {
   let base = ButtonModel::default()
   let normal = src["normal"]
@@ -56,11 +56,7 @@ pub fn MapleButton::from_resource_with_x_y(
   x : Int,
   y : Int
 ) -> MapleButton {
-  MapleButton::from_resource_with_pos(src, Point::new(x, y))
-}
-
-pub fn MapleButton::from_resource(src : @resource.NxNode) -> MapleButton {
-  MapleButton::from_resource_with_pos(src, Point::default())
+  MapleButton::from_resource(src, pos=Point::new(x, y))
 }
 
 pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {

@@ -91,10 +91,8 @@ pub let all_types : FixedArray[UIElementType] = [
 pub trait UIElement {
   get_ui_model(Self) -> UIModel
   send_cursor(Self, Bool, Point[Int]) -> CursorState
-  doubleclick(Self, Point[Int]) -> Unit
   send_key(Self, Int, Bool, Bool) -> Unit
   get_type(Self) -> UIElementType
-  toggle_active(Self) -> Unit
   remove_cursor(Self) -> Unit
   draw(Self, Double) -> Unit
   update(Self) -> Unit
@@ -104,6 +102,26 @@ pub trait UIElementDescriptor {
   const_type() -> UIElementType
   const_toggled() -> Bool
   const_focused() -> Bool
+}
+
+pub struct Element {
+  object : UIElement
+  doubleclick : ((Point[Int]) -> Unit)?
+  toggle_active : () -> Unit
+}
+
+pub fn Element::new(
+  object : UIElement,
+  ~doubleclick? : (Point[Int]) -> Unit,
+  ~toggle_active? : () -> Unit
+) -> Element {
+  {
+    object,
+    doubleclick,
+    toggle_active: toggle_active.or(
+      fn() { object.get_ui_model().toggle_active() },
+    ),
+  }
 }
 
 pub struct UIModel {

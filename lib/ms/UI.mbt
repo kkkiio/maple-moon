@@ -183,44 +183,14 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
   }
 }
 
-/// @alert deprecated "Use set_element/toggle_element instead"
-fn emplace[T : @ui.UIElement + @ui.UIElementDescriptor](
-  self : UI,
-  f : () -> T
-) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
-  if T::const_toggled() {
-    state.toggle_element(T::const_type(), T::const_focused(), fn() { f() })
-  } else {
-    state.set_element(T::const_focused(), f())
-  }
-}
-
-pub fn set_element[T : @ui.UIElement](
-  self : UI,
-  focused : Bool,
-  elem : T
-) -> Unit {
+pub fn set_element(self : UI, focused : Bool, elem : @ui.Element) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.set_element(focused, elem)
 }
 
-impl @ui.Container for UI with add_ui(
-  self : UI,
-  _elem_type : @ui.UIElementType, // TODO: remove get_type method from UIElement
-  elem : @ui.UIElement,
-  focused : Bool
-) -> Unit {
+pub fn add_ui(self : UI, elem : @ui.Element, focused : Bool) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.set_element(focused, elem)
-}
-
-pub fn toggle_element[T : @ui.UIElement + @ui.UIElementDescriptor](
-  self : UI,
-  f : () -> T
-) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
-  state.toggle_element(T::const_type(), T::const_focused(), fn() { f() })
 }
 
 pub fn doubleclick(self : UI) -> Unit {

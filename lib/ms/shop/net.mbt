@@ -54,7 +54,7 @@ impl @net.PacketHandler for OpenNpcShopHandler with handle(
     npcid,
     items,
   )
-  self.module.container.add_ui(@ui.UIElementType::SHOP, shop, true)
+  self.module.container.add_ui(@ui.Element::new(shop), true)
 }
 
 struct ShopItem {

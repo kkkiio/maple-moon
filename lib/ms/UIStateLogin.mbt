@@ -14,7 +14,7 @@ fn UIStateLogin::new() -> UIStateLogin {
   // if start_shown {
   //   state.emplace(UILogo::new())
   // } else {
-  state.set_element(UILogin::const_focused(), UILogin::new())
+  state.set_element(UILogin::const_focused(), @ui.Element::new(UILogin::new()))
   // }
   state
 }
@@ -184,23 +184,14 @@ pub fn remove_cursor(self : UIStateLogin, type_ : UIElementType) -> Unit {
 pub fn set_element(
   self : UIStateLogin,
   focused : Bool,
-  elem : UIElement
+  elem : @ui.Element
 ) -> Unit {
-  let t = elem.get_type()
+  let t = elem.object.get_type()
   self.remove(t)
   if focused {
     self.focused = t
   }
-  self.elements[t] = elem
-}
-
-pub fn toggle_element(
-  self : UIStateLogin,
-  t : UIElementType,
-  focused : Bool,
-  f : () -> UIElement
-) -> Unit {
-  self.set_element(focused, f())
+  self.elements[t] = elem.object
 }
 
 pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {

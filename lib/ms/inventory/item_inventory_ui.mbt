@@ -4,9 +4,9 @@
 struct UIItemInventory {
   player_getter : () -> @player.Player?
   base : @ui.UIModel
-  buttons : Map[ItemInventoryUIButton, @ui.Button]
+  buttons : Map[ItemInventoryUIButton, @ui.UIButton]
   inventory : Inventory
-  mut meso_label : @graphics.Text
+  meso_label : @graphics.Text
   maple_points_label : @graphics.Text
   icons : Map[Int, (IconModel, @graphics.Texture)]
   mut tab : TypeId
@@ -38,7 +38,7 @@ pub fn UIItemInventory::new(
   let taben = srctab["enabled"]
   let tabdis = srctab["disabled"]
   let close = ui_loader.load_res(["Basic.img", "BtClose3"])
-  let buttons : Map[ItemInventoryUIButton, @ui.Button] = {}
+  let buttons : Map[ItemInventoryUIButton, @ui.UIButton] = {}
   buttons[ItemInventoryUIButton::BT_CLOSE] = @ui.MapleButton::from_resource(
     close,
   )
@@ -103,14 +103,13 @@ pub fn UIItemInventory::new(
   .get_button_base()
   .set_state(@ui.ButtonState::PRESSED)
   let meso_label = @graphics.Text::new(
-    "",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
   )
   // TODO: support maple points
   let maple_points_label = @graphics.Text::new(
-    "0",
+    text="0",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
@@ -174,7 +173,7 @@ pub fn update(self : UIItemInventory) -> Unit {
   let meso_str = @string_format.format_decimal_separator(
     self.inventory.get_meso(),
   )
-  self.meso_label = self.meso_label.change_text(meso_str)
+  self.meso_label.change_text(meso_str)
 }
 
 pub fn get_full_slotpos(slot : Int) -> @struct.Point[Int] {
@@ -205,8 +204,8 @@ pub fn is_visible(self : UIItemInventory, slot : Int) -> Bool {
 }
 
 pub fn is_not_visible(self : UIItemInventory, slot : Int) -> Bool {
-  // TODO: support scroll
-  return slot < 1 || slot > 24
+  let numslots = self.inventory.get_slotmax(self.tab)
+  slot < 1 || slot > numslots
 }
 
 pub fn load_icons(self : UIItemInventory) -> Unit! {

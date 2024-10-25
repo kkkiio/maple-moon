@@ -1,18 +1,18 @@
 struct Text {
   font : FontId
   alignment : TextAlignment
-  color : @struct.ColorName
-  text : String
   max_width : Int?
   nametag : Bool
+  mut text : String
+  mut color : @struct.ColorName
   mut image : @resource.Image?
 }
 
 pub fn Text::new(
-  text : String,
   font : FontId,
   alignment : TextAlignment,
   color : @struct.ColorName,
+  ~text : String = "",
   ~nametag : Bool = false,
   ~max_width? : Int
 ) -> Text {
@@ -85,16 +85,18 @@ fn get_or_init_image(self : Text) -> @resource.Image {
   }
 }
 
-pub fn change_text(self : Text, text : String) -> Text {
+pub fn change_text(self : Text, text : String) -> Unit {
   if self.text == text {
-    return self
+    return
   }
-  { ..self, text, image: None }
+  self.text = text
+  self.image = None
 }
 
-pub fn change_color(self : Text, color : @struct.ColorName) -> Text {
+pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
   if self.color == color {
-    return self
+    return
   }
-  { ..self, color, image: None }
+  self.color = color
+  self.image = None
 }

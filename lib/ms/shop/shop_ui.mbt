@@ -4,12 +4,12 @@
 struct UIShop {
   model : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Buttons, @ui.Button]
+  buttons : Map[Buttons, @ui.UIButton]
   npc : @graphics.Texture
   charlook : @character.CharLook
   inventory : @inventory.Inventory
   meso : @graphics.Texture
-  mut meso_label : @graphics.Text
+  meso_label : @graphics.Text
   buy_state : BuyState
   sell_state : SellState
   buy_selection : @graphics.Texture
@@ -41,7 +41,6 @@ pub fn UIShop::new(
     @graphics.Sprite::from_resource(src["backgrnd4"]),
   ]
   let meso_label = @graphics.Text::new(
-    "",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::MINESHAFT,
@@ -52,7 +51,7 @@ pub fn UIShop::new(
   let buy_state = BuyState::new(meso, items)
   let sell_state = SellState::new(items, countset)
   let model = @ui.UIModel::new(@struct.Point::new(146, 48), bg_dimensions)
-  let buttons : Map[Buttons, @ui.Button] = Map::new()
+  let buttons : Map[Buttons, @ui.UIButton] = Map::new()
   buttons[Buttons::BUY_ITEM] = @ui.MapleButton::from_resource(src["BtBuy"])
   buttons[Buttons::SELL_ITEM] = @ui.MapleButton::from_resource(src["BtSell"])
   buttons[Buttons::EXIT] = @ui.MapleButton::from_resource(src["BtExit"])
@@ -150,14 +149,14 @@ fn BuyState::new(
       }
     }
     let name_label = @graphics.Text::new(
-      name,
+      text=name,
       @graphics.FontId::A11M,
       @graphics.TextAlignment::LEFT,
       @struct.ColorName::MINESHAFT,
     )
     let mesostr = @string_format.format_decimal_separator(shop_item.price)
     let price_label = @graphics.Text::new(
-      mesostr + "meso",
+      text=mesostr + "meso",
       @graphics.FontId::A11M,
       @graphics.TextAlignment::LEFT,
       @struct.ColorName::MINESHAFT,
@@ -347,7 +346,7 @@ pub fn update(self : UIShop) -> Unit {
   }
   let num_mesos = self.inventory.get_meso()
   let mesostr = @string_format.format_decimal_separator(num_mesos)
-  self.meso_label = self.meso_label.change_text(mesostr)
+  self.meso_label.change_text(mesostr)
 }
 
 struct SellItem {
@@ -380,7 +379,7 @@ pub fn SellItem::new(
     name = name.substring(end=28) + ".."
   }
   let name_label = @graphics.Text::new(
-    name,
+    text=name,
     @graphics.FontId::A11M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::MINESHAFT,
@@ -388,7 +387,7 @@ pub fn SellItem::new(
   let price = idata.price
   let mesostr = @string_format.format_decimal_separator(price)
   let price_label = @graphics.Text::new(
-    mesostr + "meso",
+    text=mesostr + "meso",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::LEFT,
     @struct.ColorName::MINESHAFT,
@@ -420,7 +419,6 @@ impl @ui.UIElement for UIShop with send_cursor(
 ) -> @ui.CursorState {
   let position = self.model.position
   let cursoroffset = cursorpos - position
-  let last_cursor_pos = cursoroffset
   let xoff = cursoroffset.x
   let yoff = cursoroffset.y
   let slot = slot_by_position(yoff)
@@ -601,10 +599,6 @@ fn exit_shop(self : UIShop) -> Unit {
   new_npc_shop_leave_action_packet().dispatch()
 }
 
-impl @ui.UIElement for UIShop with doubleclick(self, pos : @struct.Point[Int]) -> Unit {
-  // Implement the logic for handling double-click here
-}
-
 impl @ui.UIElement for UIShop with send_key(
   self,
   _key : Int,
@@ -618,10 +612,6 @@ impl @ui.UIElement for UIShop with send_key(
 
 impl @ui.UIElement for UIShop with get_type(self) -> @ui.UIElementType {
   @ui.UIElementType::SHOP
-}
-
-impl @ui.UIElement for UIShop with toggle_active(self) -> Unit {
-  // Implement toggle active logic here
 }
 
 impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }

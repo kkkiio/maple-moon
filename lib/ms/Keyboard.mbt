@@ -65,6 +65,10 @@ pub fn Keyboard::default() -> Keyboard {
     Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::SKILLS.int_value()),
   )
   keymap.set(
+    @kb.keyE,
+    Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::STATS.int_value()),
+  )
+  keymap.set(
     @kb.keyA,
     Mapping::new(@KeyType.Id::SKILL, @skill.SkillId::MAGIC_CLAW.int_value()),
   )
@@ -192,20 +196,4 @@ let keytable : FixedArray[String] = [
   @kb.f9, @kb.f10, @kb.f11, @kb.f12, @kb.home, "", @kb.pageUp, "", "", "", "", "",
   @kb.end, @kb.capsLock, @kb.pageDown, @kb.insert, @kb.delete, @kb.escape, @kb.controlRight,
   @kb.shiftRight, @kb.altRight, @kb.scrollLock,
-]
-
-let shifttable : FixedArray[Int] = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 49, 39, 51, 52, 53, 55, 0, 57, 48, 56, 61, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 44, 0, 46, 47, 50, 97, 98, 99, 100, 101, 102, 103,
-  104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
-  120, 121, 122, 0, 0, 0, 54, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 92, 93, 96,
-]
-
-let specialtable : FixedArray[Int] = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 60, 95, 62, 63, 41, 33, 64, 35,
-  36, 37, 94, 38, 42, 40, 0, 58, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 124, 125, 0, 0, 126,
 ]

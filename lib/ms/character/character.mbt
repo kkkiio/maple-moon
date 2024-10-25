@@ -126,7 +126,7 @@ pub fn CharBase::new(
     facing_right: false,
     name,
     name_label: @graphics.Text::new(
-      name,
+      text=name,
       @graphics.FontId::A13M,
       @graphics.TextAlignment::CENTER,
       @struct.ColorName::WHITE,

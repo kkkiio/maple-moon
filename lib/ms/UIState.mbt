@@ -5,10 +5,10 @@ trait UIState {
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
   doubleclick(Self, Point[Int]) -> Unit
   // drag_icon(Self, Icon) -> Unit
-  set_element(Self, Bool, UIElement) -> Unit
-  toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit
+  set_element(Self, Bool, @ui.Element) -> Unit
+  // toggle_element(Self, UIElementType, Bool, () -> UIElement) -> Unit
   remove(Self, UIElementType) -> Unit
   get(Self, UIElementType) -> UIElement?
   get_front_by_types(Self, Array[UIElementType]) -> UIElement?
-  get_front_by_pos(Self, Point[Int]) -> UIElement?
+  // get_front_by_pos(Self, Point[Int]) -> UIElement?
 }

@@ -6,18 +6,16 @@ typealias UIModel = @ui.UIModel
 
 typealias UIElementType = @ui.UIElementType
 
-typealias UIElement = @ui.UIElement
-
 struct UINpcTalk {
   base : UIModel
-  buttons : Map[Int, @ui.Button]
+  buttons : Map[Int, @ui.UIButton]
   top : @graphics.Texture
   fill : @graphics.Texture
   bottom : @graphics.Texture
   nametag : @graphics.Texture
   mut speaker : @graphics.Texture
   mut content : NPCTalkContent?
-  mut name : @graphics.Text
+  name : @graphics.Text
   mut height : Int
   offset : Int
   mut unit_rows : Int
@@ -79,8 +77,6 @@ let bid_yes = 14
 
 let bid_text_button = 15
 
-typealias MapleButton = @ui.MapleButton
-
 pub fn UINpcTalk::new() -> UINpcTalk {
   let base = @ui.UIModel::new(
     @struct.Point::default(),
@@ -90,7 +86,6 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let unit_rows = 0
   let row_max = 0
   let show_slider = false
-  let formatted_text = ""
   let formatted_text_pos = 0
   let timestep = 0
   let ui_window2 = @resource.ui_loader().load_res(["UIWindow2.img"])
@@ -100,25 +95,30 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let bottom = @graphics.Texture::from_resource(util_dlg_ex["s"])
   let nametag = @graphics.Texture::from_resource(util_dlg_ex["bar"])
   let min_height = 8 * fill.height() + 14
-  let buttons : Map[Int, @ui.Button] = Map::new()
-  buttons[bid_all_level] = MapleButton::from_resource(util_dlg_ex["BtAllLevel"])
-  buttons[bid_close] = MapleButton::from_resource(util_dlg_ex["BtClose"])
-  buttons[bid_my_level] = MapleButton::from_resource(util_dlg_ex["BtMyLevel"])
-  buttons[bid_next] = MapleButton::from_resource(util_dlg_ex["BtNext"])
+  let buttons : Map[Int, @ui.UIButton] = Map::new()
+  buttons[bid_all_level] = @ui.MapleButton::from_resource(
+    util_dlg_ex["BtAllLevel"],
+  )
+  buttons[bid_close] = @ui.MapleButton::from_resource(util_dlg_ex["BtClose"])
+  buttons[bid_my_level] = @ui.MapleButton::from_resource(
+    util_dlg_ex["BtMyLevel"],
+  )
+  buttons[bid_next] = @ui.MapleButton::from_resource(util_dlg_ex["BtNext"])
   let quest = ui_window2["Quest"]
-  buttons[bid_no] = MapleButton::from_resource(quest["BtNo"])
-  buttons[bid_ok] = MapleButton::from_resource(util_dlg_ex["BtOK"])
-  buttons[bid_prev] = MapleButton::from_resource(util_dlg_ex["BtPrev"])
-  buttons[bid_qafter] = MapleButton::from_resource(util_dlg_ex["BtQAfter"])
-  buttons[bid_qcno] = MapleButton::from_resource(util_dlg_ex["BtQCNo"])
-  buttons[bid_qcyes] = MapleButton::from_resource(util_dlg_ex["BtQCYes"])
-  buttons[bid_qgiveup] = MapleButton::from_resource(util_dlg_ex["BtQGiveup"])
-  buttons[bid_qno] = MapleButton::from_resource(util_dlg_ex["BtQNo"])
-  buttons[bid_qstart] = MapleButton::from_resource(util_dlg_ex["BtQStart"])
-  buttons[bid_qyes] = MapleButton::from_resource(util_dlg_ex["BtQYes"])
-  buttons[bid_yes] = MapleButton::from_resource(util_dlg_ex["BtYes"])
+  buttons[bid_no] = @ui.MapleButton::from_resource(quest["BtNo"])
+  buttons[bid_ok] = @ui.MapleButton::from_resource(util_dlg_ex["BtOK"])
+  buttons[bid_prev] = @ui.MapleButton::from_resource(util_dlg_ex["BtPrev"])
+  buttons[bid_qafter] = @ui.MapleButton::from_resource(util_dlg_ex["BtQAfter"])
+  buttons[bid_qcno] = @ui.MapleButton::from_resource(util_dlg_ex["BtQCNo"])
+  buttons[bid_qcyes] = @ui.MapleButton::from_resource(util_dlg_ex["BtQCYes"])
+  buttons[bid_qgiveup] = @ui.MapleButton::from_resource(
+    util_dlg_ex["BtQGiveup"],
+  )
+  buttons[bid_qno] = @ui.MapleButton::from_resource(util_dlg_ex["BtQNo"])
+  buttons[bid_qstart] = @ui.MapleButton::from_resource(util_dlg_ex["BtQStart"])
+  buttons[bid_qyes] = @ui.MapleButton::from_resource(util_dlg_ex["BtQYes"])
+  buttons[bid_yes] = @ui.MapleButton::from_resource(util_dlg_ex["BtYes"])
   let name = @graphics.Text::new(
-    "",
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
@@ -315,7 +315,7 @@ pub fn send_cursor(
 }
 
 pub fn remove_cursor(self : UINpcTalk) -> Unit {
-  @ui.remove_cursor(self.buttons.iter2())
+  @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
 }
 
 pub fn send_key(
@@ -356,7 +356,7 @@ pub fn change_text(
   for element in content.text_button_content {
     self.buttons[bid_text_button + element.get_option_number()] = element
   }
-  self.name = if speakerbyte == 0 {
+  if speakerbyte == 0 {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
@@ -482,10 +482,6 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
   }
 }
 
-pub fn toggle_active(self : UINpcTalk) -> Unit {
-  self.base.toggle_active()
-}
-
 fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::NPC_TALK_MORE)
   ..write_byte(lastmsg.to_byte())
@@ -580,7 +576,7 @@ fn convert_npc_text(
       for selection in selections.selections {
         let button = @ui.TextButton::new(
           @graphics.Text::new(
-            selection.1,
+            text=selection.1,
             @graphics.FontId::A18M,
             @graphics.TextAlignment::LEFT,
             selections.color,
@@ -595,7 +591,7 @@ fn convert_npc_text(
   {
     text_content: [
       @graphics.Text::new(
-        content.text_html,
+        text=content.text_html,
         @graphics.FontId::A18M,
         @graphics.TextAlignment::LEFT,
         @struct.ColorName::DARKGREY,
@@ -631,8 +627,4 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
       },
     },
   }
-}
-
-pub fn doubleclick(self : UINpcTalk, pos : @struct.Point[Int]) -> Unit {
-
 }

@@ -1,11 +1,13 @@
 pub struct CharStats {
+  name : String
   job : @job.Job
   mut exp : Int64
   mut map_id : Int
   portal : Int
   base_stats : Map[@MapleStat.Id, Int]
-  total_stats : @utils.Counter[@stat.Id]
-  percentages : Map[@stat.Id, Double]
+  total_stats : @utils.Counter[@equip_stat.Id]
+  buff_deltas : @utils.Counter[@equip_stat.Id]
+  percentages : Map[@equip_stat.Id, Double]
   mut attack_speed : Int
   mut projectile_range : Int
   mut weapon_type : @weapon.Type
@@ -22,13 +24,15 @@ pub struct CharStats {
 
 pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
   let job = @job.Job::new(id=s.stats[@MapleStat.Id::JOB].or(0))
-  let cs = {
+  let cs : CharStats = {
+    name: s.name,
     job,
     exp: s.exp,
     map_id: s.mapid,
     portal: s.portal,
     base_stats: s.stats,
     total_stats: @utils.Counter::new(),
+    buff_deltas: @utils.Counter::new(),
     percentages: Map::new(),
     attack_speed: 0,
     projectile_range: 400,
@@ -49,16 +53,22 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
 
 pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats._.clear()
-  // buff_deltas_.clear();
+  self.buff_deltas._.clear()
   self.percentages.clear()
-  self.total_stats._.set(@stat.Id::HP, self.get_stat(@MapleStat.Id::MAXHP))
-  self.total_stats._.set(@stat.Id::MP, self.get_stat(@MapleStat.Id::MAXMP))
-  self.total_stats._.set(@stat.Id::STR, self.get_stat(@MapleStat.Id::STR))
-  self.total_stats._.set(@stat.Id::DEX, self.get_stat(@MapleStat.Id::DEX))
-  self.total_stats._.set(@stat.Id::INT, self.get_stat(@MapleStat.Id::INT))
-  self.total_stats._.set(@stat.Id::LUK, self.get_stat(@MapleStat.Id::LUK))
-  self.total_stats._.set(@stat.Id::SPEED, 100)
-  self.total_stats._.set(@stat.Id::JUMP, 100)
+  self.total_stats._.set(
+    @equip_stat.Id::HP,
+    self.get_stat(@MapleStat.Id::MAXHP),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::MP,
+    self.get_stat(@MapleStat.Id::MAXMP),
+  )
+  self.total_stats._.set(@equip_stat.Id::STR, self.get_stat(@MapleStat.Id::STR))
+  self.total_stats._.set(@equip_stat.Id::DEX, self.get_stat(@MapleStat.Id::DEX))
+  self.total_stats._.set(@equip_stat.Id::INT, self.get_stat(@MapleStat.Id::INT))
+  self.total_stats._.set(@equip_stat.Id::LUK, self.get_stat(@MapleStat.Id::LUK))
+  self.total_stats._.set(@equip_stat.Id::SPEED, 100)
+  self.total_stats._.set(@equip_stat.Id::JUMP, 100)
   self.max_damage = 0
   self.min_damage = 0
   // honor_ = 0;
@@ -76,7 +86,7 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.reduce_damage = 0.0
 }
 
-pub fn get_total(self : CharStats, stat : @stat.Id) -> Int {
+pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
   self.total_stats[stat]
 }
 
@@ -100,12 +110,12 @@ pub fn set_weapontype(self : CharStats, w : @weapon.Type) -> Unit {
   self.weapon_type = w
 }
 
-pub fn add_value(self : CharStats, stat : @stat.Id, value : Int) -> Unit {
+pub fn add_value(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   let current = self.get_total(stat)
   self.set_total(stat, current + value)
 }
 
-pub fn set_total(self : CharStats, stat : @stat.Id, value : Int) -> Unit {
+pub fn set_total(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   self.total_stats[stat] = match eqstat_caps.get(stat) {
     Some(cap_value) => if value > cap_value { cap_value } else { value }
     None => value
@@ -113,7 +123,7 @@ pub fn set_total(self : CharStats, stat : @stat.Id, value : Int) -> Unit {
 }
 
 pub fn close_totalstats(self : CharStats) -> Unit {
-  self.total_stats[@stat.Id::ACC] += self.calculate_accuracy()
+  self.total_stats[@equip_stat.Id::ACC] += self.calculate_accuracy()
   for stat, p in self.percentages {
     let total = self.get_total(stat)
     let total = total + (total.to_double() * p).to_int()
@@ -121,7 +131,7 @@ pub fn close_totalstats(self : CharStats) -> Unit {
   }
   let primary = self.get_primary_stat()
   let secondary = self.get_secondary_stat()
-  let attack = self.get_total(@stat.Id::WATK)
+  let attack = self.get_total(@equip_stat.Id::WATK)
   let multiplier = self.damage_percent + attack.to_double() / 100
   self.max_damage = ((primary + secondary).to_double() * multiplier).to_int()
   self.min_damage = ((
@@ -141,8 +151,8 @@ fn get_secondary_stat(self : CharStats) -> Int {
 }
 
 fn calculate_accuracy(self : CharStats) -> Int {
-  let totaldex = self.get_total(@stat.Id::DEX)
-  let totalluk = self.get_total(@stat.Id::LUK)
+  let totaldex = self.get_total(@equip_stat.Id::DEX)
+  let totalluk = self.get_total(@equip_stat.Id::LUK)
   return (totaldex.to_double() * 0.8 + totalluk.to_double() * 0.5).to_int()
 }
 
@@ -169,29 +179,29 @@ fn get_multiplier(self : CharStats) -> Double {
 }
 
 /// Externalising this for easier configurability.
-let eqstat_caps : Map[@stat.Id, Int] = Map::from_array(
+let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array(
   [
-    (@stat.Id::STR, 999),
-    (@stat.Id::DEX, 999),
-    (@stat.Id::INT, 999),
-    (@stat.Id::LUK, 999),
-    (@stat.Id::HP, 30000),
-    (@stat.Id::MP, 30000),
-    (@stat.Id::WATK, 999),
-    (@stat.Id::MAGIC, 2000),
-    (@stat.Id::WDEF, 999),
-    (@stat.Id::MDEF, 999),
-    (@stat.Id::ACC, 999),
-    (@stat.Id::AVOID, 999),
-    (@stat.Id::HANDS, 999),
-    (@stat.Id::SPEED, 140),
-    (@stat.Id::JUMP, 123),
+    (@equip_stat.Id::STR, 999),
+    (@equip_stat.Id::DEX, 999),
+    (@equip_stat.Id::INT, 999),
+    (@equip_stat.Id::LUK, 999),
+    (@equip_stat.Id::HP, 30000),
+    (@equip_stat.Id::MP, 30000),
+    (@equip_stat.Id::WATK, 999),
+    (@equip_stat.Id::MAGIC, 2000),
+    (@equip_stat.Id::WDEF, 999),
+    (@equip_stat.Id::MDEF, 999),
+    (@equip_stat.Id::ACC, 999),
+    (@equip_stat.Id::AVOID, 999),
+    (@equip_stat.Id::HANDS, 999),
+    (@equip_stat.Id::SPEED, 140),
+    (@equip_stat.Id::JUMP, 123),
   ],
 )
 
 pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
   // TODO: Random stuff, need to find the actual formula somewhere.
-  let weapon_def = self.get_total(@stat.Id::WDEF)
+  let weapon_def = self.get_total(@equip_stat.Id::WDEF)
   if weapon_def == 0 {
     return mobatk
   }
@@ -241,4 +251,29 @@ pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
 
 pub fn get_female(self : CharStats) -> Bool {
   self.female
+}
+
+pub fn get_buffdelta(self : CharStats, stat : @equip_stat.Id) -> Int {
+  self.buff_deltas[stat]
+}
+
+pub fn get_name(self : CharStats) -> String {
+  self.name
+}
+
+pub fn is_damage_buffed(self : CharStats) -> Bool {
+  self.get_buffdelta(@equip_stat.Id::WATK) > 0 ||
+  self.get_buffdelta(@equip_stat.Id::MAGIC) > 0
+}
+
+pub fn get_resistance(self : CharStats) -> Double {
+  0 // TODO: implement
+}
+
+pub fn get_honor(self : CharStats) -> Int {
+  0 // TODO: implement
+}
+
+pub fn get_bossdmg(self : CharStats) -> Double {
+  0.0 // TODO: implement
 }

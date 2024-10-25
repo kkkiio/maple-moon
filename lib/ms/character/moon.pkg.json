@@ -15,7 +15,10 @@
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/clothing",
     "KKKIIO/maple-moon-client/lib/ms/job",
-    "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+      "alias": "equip_stat"
+    },
     {
       "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
       "alias": "combat_ui"

@@ -830,7 +830,7 @@ pub fn get_stance(self : CharLook) -> @char_look.StanceId {
 
 pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
   match self.action {
-    Some(action) => return draw_info.get_attack_delay(self.actionstr, no)
+    Some(_) => return draw_info.get_attack_delay(self.actionstr, no)
     None => ()
   }
   let mut delay : Int = 0

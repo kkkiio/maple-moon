@@ -44,7 +44,7 @@ enum LoginStage {
 struct UILogin {
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Int, @ui.Button]
+  buttons : Map[Int, @ui.UIButton]
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield
@@ -325,12 +325,8 @@ pub fn is_active(self : UILogin) -> Bool {
   self.base.is_active()
 }
 
-pub fn toggle_active(self : UILogin) -> Unit {
-  self.base.toggle_active()
-}
-
 pub fn remove_cursor(self : UILogin) -> Unit {
-  @ui.remove_cursor(self.buttons.iter2())
+  @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
 }
 
 pub fn deactivate(self : UILogin) -> Unit {
@@ -343,8 +339,4 @@ fn fn_login_start() -> Unit {
 
 fn fn_login(account : String, password : String) -> Unit {
   @login.new_login_packet(account, password).dispatch()
-}
-
-pub fn doubleclick(self : UILogin, pos : Point[Int]) -> Unit {
-
 }

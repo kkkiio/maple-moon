@@ -553,7 +553,7 @@ fn new_spend_ap_packet(stat : @MapleStat.Id) -> @net.OutPacket {
 }
 
 fn update_ap(stats : @character.CharStats, buttons : Array[@ui.Button]) -> Bool {
-  let nowap = stats.get_stat(@MapleStat.Id::AP) > 0
+  let nowap = stats.ap > 0
   let newstate = if nowap {
     @ui.ButtonState::NORMAL
   } else {
@@ -565,21 +565,12 @@ fn update_ap(stats : @character.CharStats, buttons : Array[@ui.Button]) -> Bool 
   nowap
 }
 
-fn update_simple(
-  stats : @character.CharStats,
-  label : StatLabel,
-  stat : @MapleStat.Id
-) -> Unit {
-  label._.0.change_text(stats.get_stat(stat).to_string())
-}
-
 fn update_basevstotal(
   stats : @character.CharStats,
   label : StatLabel,
-  bstat : @MapleStat.Id,
+  base : Int,
   tstat : @equip_stat.Id
 ) -> Unit {
-  let base = stats.get_stat(bstat)
   let total = stats.get_total(tstat)
   let delta = total - base
   let mut stattext = total.to_string()
@@ -618,8 +609,8 @@ fn update_buffed(
 }
 
 fn update_all_stats(self : UIStatsInfo) -> Unit {
-  update_simple(self.stats, self.ap_label, @MapleStat.Id::AP)
-  if self.has_ap != (self.stats.get_stat(@MapleStat.Id::AP) > 0) {
+  self.ap_label._.0.change_text(self.stats.ap.to_string())
+  if self.has_ap != (self.stats.ap > 0) {
     self.has_ap = update_ap(
       self.stats,
       [
@@ -636,37 +627,37 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
   self.name_label._.0.change_text(self.stats.get_name())
   self.guild_label._.0.change_text("-")
   self.hp_label._.0.change_text(
-    self.stats.get_stat(@MapleStat.Id::HP).to_string() +
+    self.stats.hp.to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::HP).to_string(),
   )
   self.mp_label._.0.change_text(
-    self.stats.get_stat(@MapleStat.Id::MP).to_string() +
+    self.stats.mp.to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::MP).to_string(),
   )
   update_basevstotal(
     self.stats,
     self.str_label,
-    @MapleStat.Id::STR,
+    self.stats.str,
     @equip_stat.Id::STR,
   )
   update_basevstotal(
     self.stats,
     self.dex_label,
-    @MapleStat.Id::DEX,
+    self.stats.dex,
     @equip_stat.Id::DEX,
   )
   update_basevstotal(
     self.stats,
     self.int_label,
-    @MapleStat.Id::INT,
+    self.stats.int,
     @equip_stat.Id::INT,
   )
   update_basevstotal(
     self.stats,
     self.luk_label,
-    @MapleStat.Id::LUK,
+    self.stats.luk,
     @equip_stat.Id::LUK,
   )
   self.damage_label._.0.change_text(

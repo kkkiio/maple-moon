@@ -29,10 +29,6 @@ pub fn ShowMobHpHandler::handle(
 ) -> Unit! {
   let oid = recv.read_int!()
   let hppercent = recv.read_byte!()
-  let playerlevel = Stage::get()
-    .get_player()
-    .unwrap()
-    .get_stats()
-    .get_stat(@MapleStat.Id::LEVEL)
+  let playerlevel = Stage::get().get_player().unwrap().get_stats().level
   self.mobs.send_mobhp(oid, hppercent, playerlevel)
 }

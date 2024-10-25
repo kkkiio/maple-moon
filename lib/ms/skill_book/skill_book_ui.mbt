@@ -248,7 +248,6 @@ pub fn SkillBookUI::new(
   // TODO: job
   let dimension = bg_dimensions
   let base = @ui.UIModel::new(@struct.Point::default(), dimension)
-  let drag_area = @struct.Point::new(dimension.x, 20)
   let ui : SkillBookUI = {
     base,
     sprites,
@@ -289,7 +288,7 @@ pub fn SkillBookUI::new(
     sp_master_level: 0,
   }
   ui.set_skillpoint(false)
-  ui.change_job?(stats.get_stat(@MapleStat.Id::JOB)).unwrap() // TODO: handle error
+  ui.change_job?(stats.job.get_id()).unwrap() // TODO: handle error
   ui
 }
 
@@ -737,7 +736,7 @@ fn joblevel_by_tab(t : Int) -> @job.Level {
 
 fn change_sp(self : SkillBookUI) -> Unit! {
   let joblevel = joblevel_by_tab(self.tab)
-  let level = self.stats.get_stat(@MapleStat.Id::LEVEL)
+  let level = self.stats.level
   match joblevel {
     @job.Level::BEGINNER => {
       let mut remaining_beginner_sp = if level >= 7 { 6 } else { level - 1 }
@@ -753,7 +752,7 @@ fn change_sp(self : SkillBookUI) -> Unit! {
       self.sp_label.change_text(self.beginner_sp.to_string())
     }
     _ => {
-      self.sp = self.stats.get_stat(@MapleStat.Id::SP)
+      self.sp = self.stats.sp
       self.sp_label.change_text(self.sp.to_string())
     }
   }

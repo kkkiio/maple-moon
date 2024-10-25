@@ -499,6 +499,6 @@ fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
         Some(doubleclick) => doubleclick(pos)
         None => ()
       }
-    None => Stage::get().doubleclick(pos)
+    None => ()
   }
 }

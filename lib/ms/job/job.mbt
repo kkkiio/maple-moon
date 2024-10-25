@@ -51,6 +51,10 @@ pub fn Job::new(~id : Int = 0) -> Job {
   { name, id, level }
 }
 
+pub fn get_id(self : Job) -> Int {
+  self.id
+}
+
 pub fn get_name(self : Job) -> String {
   self.name
 }

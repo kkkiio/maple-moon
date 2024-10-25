@@ -427,8 +427,6 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let (degenerate, attacktype) = if player.char_base.state ==
     @character.CharState::PRONE {
     (true, @combat.AttackType::CLOSE)
-  } else if skill {
-    (false, @combat.AttackType::MAGIC) // FIXME: test only
   } else {
     match player.get_weapontype() {
       @weapon.Type::BOW
@@ -467,7 +465,7 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let critical = player.stats.get_critical()
   let ignoredef = player.stats.get_ignoredef()
   let accuracy = player.stats.get_total(@stat.Id::ACC)
-  let playerlevel = player.stats.get_stat(@MapleStat.Id::LEVEL)
+  let playerlevel = player.stats.level
   let range = player.stats.get_range()
   let bullet = player.inventory.get_bulletid()
   let origin = player.get_position()
@@ -476,9 +474,8 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let d = @combat.Attack::default()
   {
     ..d,
+    damagetype: @combat.AttackDamageType::DMG_WEAPON(mindamage, maxdamage),
     t,
-    mindamage,
-    maxdamage,
     critical,
     ignoredef,
     accuracy,
@@ -512,8 +509,8 @@ pub fn can_use(
   let level = player.skill_book.get_level(move.get_id())
   let weapontype = player.char_base.get_weapontype()
   let job = player.stats.get_job()
-  let hp = player.stats.get_stat(@MapleStat.Id::HP)
-  let mp = player.stats.get_stat(@MapleStat.Id::MP)
+  let hp = player.stats.hp
+  let mp = player.stats.mp
   let bullets = player.inventory.get_bulletcount()
   move.can_use(level, weapontype, job, hp, mp, bullets)
 }

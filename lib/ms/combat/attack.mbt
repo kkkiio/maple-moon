@@ -5,21 +5,17 @@ pub enum AttackType {
 } derive(Eq)
 
 pub enum AttackDamageType {
-  DMG_WEAPON
-  DMG_MAGIC
-  DMG_FIXED
+  DMG_WEAPON(Double, Double) // min, max
+  DMG_MAGIC(Int) // matk
+  DMG_FIXED(Int) // fix
 } derive(Eq)
 
 pub struct Attack {
   t : AttackType
   mut damagetype : AttackDamageType
-  mut mindamage : Double
-  mut maxdamage : Double
   mut critical : Double
   mut ignoredef : Double
-  mut matk : Int
   accuracy : Int
-  mut fixdamage : Int
   playerlevel : Int
   mut hitcount : Int
   mut mobcount : Int
@@ -36,14 +32,10 @@ pub struct Attack {
 pub fn Attack::default() -> Attack {
   {
     t: AttackType::CLOSE,
-    damagetype: AttackDamageType::DMG_WEAPON,
-    mindamage: 1.0,
-    maxdamage: 1.0,
+    damagetype: AttackDamageType::DMG_WEAPON(1, 1),
     critical: 0.0,
     ignoredef: 0.0,
-    matk: 0,
     accuracy: 0,
-    fixdamage: 0,
     playerlevel: 1,
     hitcount: 0,
     mobcount: 0,

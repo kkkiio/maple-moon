@@ -355,10 +355,10 @@ fn handle_stat(
     @MapleStat.Id::FACE | @MapleStat.Id::HAIR =>
       player.change_look(stat, recv.read_int!())
     @MapleStat.Id::LEVEL => player.change_level(recv.read_ubyte!())
-    // @MapleStat.Id::JOB => player.change_job(recv.read_ushort())
+    @MapleStat.Id::JOB => player.change_job(recv.read_ushort!())
     @MapleStat.Id::HP => {
       let current_hp = recv.read_short!()
-      player.get_stats().set_stat(stat, current_hp)
+      player.get_stats().set_hp(current_hp)
       recalculate = true
       if current_hp <= 0 {
         player.set_state(@character.CharState::DIED)
@@ -370,10 +370,48 @@ fn handle_stat(
     @MapleStat.Id::EXP =>
       player.get_stats().set_exp(recv.read_int!().to_int64())
     @MapleStat.Id::MESO => self.stage.inventory.set_meso(recv.read_int!())
-    _ => {
-      player.get_stats().set_stat(stat, recv.read_short!())
+    @MapleStat.Id::STR => {
+      player.get_stats().str = recv.read_short!()
       recalculate = true
     }
+    @MapleStat.Id::DEX => {
+      player.get_stats().dex = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::INT => {
+      player.get_stats().int = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::LUK => {
+      player.get_stats().luk = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::SP => {
+      player.get_stats().sp = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::MP => {
+      player.get_stats().mp = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::MAXHP => {
+      player.get_stats().max_hp = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::MAXMP => {
+      player.get_stats().max_mp = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::AP => {
+      player.get_stats().ap = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::FAME => {
+      player.get_stats().fame = recv.read_short!()
+      recalculate = true
+    }
+    @MapleStat.Id::PET => () // TODO: Handle pet stats
+    @MapleStat.Id::GACHAEXP => () // TODO: Handle gacha exp
   }
   // let update_statsinfo = need_statsinfo_update(stat)
 
@@ -468,8 +506,4 @@ fn new_pickup_item_packet(
   ..write_byte((0).to_byte())
   ..write_point(position)
   ..write_int(oid)
-}
-
-pub fn doubleclick(self : Stage, pos : Point[Int]) -> Unit {
-  // TODO: Implement
 }

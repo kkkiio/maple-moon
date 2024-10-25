@@ -23,7 +23,7 @@ pub fn apply_stats(
   user : @character.Character,
   attack : @combat.Attack
 ) -> Unit {
-  attack.damagetype = @combat.AttackDamageType::DMG_WEAPON
+  attack.damagetype = @combat.AttackDamageType::DMG_WEAPON(1.0, 1.0) // TODO: fix
   attack.skill = 0
   attack.mobcount = 1
   attack.hitcount = 1

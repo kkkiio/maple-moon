@@ -366,7 +366,7 @@ pub fn get_oid(self : Player) -> Int {
 }
 
 pub fn get_level(self : Player) -> Int {
-  self.stats.get_stat(@MapleStat.Id::LEVEL)
+  self.stats.level
 }
 
 pub fn get_skilllevel(self : Player, skill_id : Int) -> Int {
@@ -410,7 +410,7 @@ pub fn change_level(self : Player, level : Int) -> Unit {
   if level > oldlevel {
     self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
   }
-  self.stats.set_stat(@MapleStat.Id::LEVEL, level)
+  self.stats.level = level
 }
 
 pub fn check_ladders(self : Player, map_info : @map.MapInfo, up : Bool) -> Unit {
@@ -453,4 +453,9 @@ pub fn attack_by_action(self : Player, action : String) -> Unit {
 
 pub fn attack_by_stance(self : Player, stance : @char_look.StanceId) -> Unit {
   self.char_base.attack_by_stance(stance)
+}
+
+pub fn change_job(self : Player, jobid : Int) -> Unit {
+  self.char_base.show_effect_id(@character.CharEffectId::JOB_CHANGE)
+  self.stats.change_job(jobid)
 }

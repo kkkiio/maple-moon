@@ -319,7 +319,19 @@ struct Account {
 pub struct StatsEntry {
   name : String
   female : Bool
-  stats : Map[@MapleStat.Id, Int]
+  level : Int
+  job : Int
+  str : Int
+  dex : Int
+  int : Int
+  luk : Int
+  hp : Int
+  max_hp : Int
+  mp : Int
+  max_mp : Int
+  ap : Int
+  sp : Int
+  fame : Int
   exp : Int64
   mapid : Int
   portal : Int
@@ -398,7 +410,6 @@ fn parse_charentry(recv : @net.InPacket) -> CharEntry! {
 }
 
 pub fn parse_stats(recv : @net.InPacket) -> StatsEntry! {
-  // TODO: This is similar to CashShopParser.cpp, try and merge these.
   let name = recv.read_padded_string!(13)
   let female = recv.read_bool!()
   recv.read_byte!() |> ignore // skin
@@ -408,31 +419,41 @@ pub fn parse_stats(recv : @net.InPacket) -> StatsEntry! {
   for i = 0; i < 3; i = i + 1 {
     petids.push(recv.read_long!())
   }
-  let stats = {}
-  stats.set(@MapleStat.Id::LEVEL, recv.read_ubyte!())
-  stats.set(@MapleStat.Id::JOB, recv.read_ushort!())
-  stats.set(@MapleStat.Id::STR, recv.read_ushort!())
-  stats.set(@MapleStat.Id::DEX, recv.read_ushort!())
-  stats.set(@MapleStat.Id::INT, recv.read_ushort!())
-  stats.set(@MapleStat.Id::LUK, recv.read_ushort!())
-  stats.set(@MapleStat.Id::HP, recv.read_ushort!())
-  stats.set(@MapleStat.Id::MAXHP, recv.read_ushort!())
-  stats.set(@MapleStat.Id::MP, recv.read_ushort!())
-  stats.set(@MapleStat.Id::MAXMP, recv.read_ushort!())
-  stats.set(@MapleStat.Id::AP, recv.read_ushort!())
-  stats.set(@MapleStat.Id::SP, recv.read_ushort!())
+  let level = recv.read_ubyte!()
+  let job = recv.read_ushort!()
+  let str = recv.read_ushort!()
+  let dex = recv.read_ushort!()
+  let int = recv.read_ushort!()
+  let luk = recv.read_ushort!()
+  let hp = recv.read_ushort!()
+  let max_hp = recv.read_ushort!()
+  let mp = recv.read_ushort!()
+  let max_mp = recv.read_ushort!()
+  let ap = recv.read_ushort!()
+  let sp = recv.read_ushort!()
   let exp = recv.read_uint!()
-  stats.set(@MapleStat.Id::FAME, recv.read_short!())
+  let fame = recv.read_short!()
   recv.skip!(4) // gachaexp
   let mapid = recv.read_int!()
   let portal = recv.read_ubyte!()
   recv.skip!(4) // timestamp
   {
     name,
+    level,
+    job,
+    str,
+    dex,
+    int,
+    luk,
+    hp,
+    max_hp,
+    mp,
+    max_mp,
+    ap,
+    sp,
+    fame,
     exp: exp.to_int64(),
     female,
-    //petids, 
-    stats,
     mapid,
     portal,
   }

@@ -152,21 +152,21 @@ pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
     self.base.position + self.statset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let hp = self.stats.get_stat(@MapleStat.Id::HP)
+  let hp = self.stats.hp
   let maxhp = self.stats.get_total(@stat.Id::HP)
   self.hpmp_set.draw_text(
     "[\{hp}/\{maxhp}]",
     self.base.position + self.hpset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let mp = self.stats.get_stat(@MapleStat.Id::MP)
+  let mp = self.stats.mp
   let maxmp = self.stats.get_total(@stat.Id::MP)
   self.hpmp_set.draw_text(
     "[\{mp}/\{maxmp}]",
     self.base.position + self.mpset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let level = self.stats.get_stat(@MapleStat.Id::LEVEL)
+  let level = self.stats.level
   self.level_set.draw_text(
     level.to_string(),
     self.base.position + self.levelset_pos |> @graphics.DrawArgument::new,
@@ -255,7 +255,7 @@ pub fn update(self : UIStatusBar) -> Unit {
 // let bt_event_daily = 34
 
 fn getexppercent(stats : @character.CharStats) -> Double {
-  let level = stats.get_stat(@MapleStat.Id::LEVEL)
+  let level = stats.level
   if level >= @character.level_cap {
     return 0.0
   }
@@ -264,13 +264,13 @@ fn getexppercent(stats : @character.CharStats) -> Double {
 }
 
 fn gethppercent(stats : @character.CharStats) -> Double {
-  let hp = stats.get_stat(@MapleStat.Id::HP)
+  let hp = stats.hp
   let maxhp = stats.get_total(@stat.Id::HP)
   hp.to_double() / maxhp.to_double()
 }
 
 fn getmppercent(stats : @character.CharStats) -> Double {
-  let mp = stats.get_stat(@MapleStat.Id::MP)
+  let mp = stats.mp
   let maxmp = stats.get_total(@stat.Id::MP)
   mp.to_double() / maxmp.to_double()
 }

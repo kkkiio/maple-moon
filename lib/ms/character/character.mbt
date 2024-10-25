@@ -111,6 +111,7 @@ pub trait Character {
   // update_with_speed(Self, Physics, Double) -> Bool
   // get_stancespeed(Self) -> Double
   get_position(Self) -> Point[Int]
+  get_stats(Self) -> CharStats // TODO: Remove
 }
 
 pub fn CharBase::new(

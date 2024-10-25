@@ -169,15 +169,16 @@ pub fn apply_stats(
     .get_stats(level)
     .unwrap() // TODO: Handle error
   if stats.fixdamage != 0 {
-    attack.fixdamage = stats.fixdamage
-    attack.damagetype = @combat.AttackDamageType::DMG_FIXED
+    attack.damagetype = @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
   } else if stats.matk != 0 {
-    attack.matk += stats.matk
-    attack.damagetype = @combat.AttackDamageType::DMG_MAGIC
+    attack.damagetype = @combat.AttackDamageType::DMG_MAGIC(
+      user.get_stats().get_matk() + stats.matk,
+    )
   } else {
-    attack.mindamage *= stats.damage
-    attack.maxdamage *= stats.damage
-    attack.damagetype = @combat.DMG_WEAPON
+    attack.damagetype = @combat.AttackDamageType::DMG_WEAPON(
+      stats.damage,
+      stats.damage,
+    )
   }
   attack.critical += stats.critical
   attack.ignoredef += stats.ignoredef

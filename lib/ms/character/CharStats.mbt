@@ -1,10 +1,21 @@
 pub struct CharStats {
   name : String
-  job : @job.Job
+  mut job : @job.Job
+  mut level : Int
+  mut str : Int
+  mut dex : Int
+  mut int : Int
+  mut luk : Int
+  mut hp : Int
+  mut max_hp : Int
+  mut mp : Int
+  mut max_mp : Int
+  mut ap : Int
+  mut sp : Int
+  mut fame : Int
   mut exp : Int64
   mut map_id : Int
   portal : Int
-  base_stats : Map[@MapleStat.Id, Int]
   total_stats : @utils.Counter[@equip_stat.Id]
   buff_deltas : @utils.Counter[@equip_stat.Id]
   percentages : Map[@equip_stat.Id, Double]
@@ -23,14 +34,13 @@ pub struct CharStats {
 }
 
 pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
-  let job = @job.Job::new(id=s.stats[@MapleStat.Id::JOB].or(0))
+  let job = @job.Job::new(id=s.job)
   let cs : CharStats = {
     name: s.name,
     job,
     exp: s.exp,
     map_id: s.mapid,
     portal: s.portal,
-    base_stats: s.stats,
     total_stats: @utils.Counter::new(),
     buff_deltas: @utils.Counter::new(),
     percentages: Map::new(),
@@ -46,6 +56,18 @@ pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
     stance: 0.0,
     reduce_damage: 0.0,
     female: s.female,
+    level: s.level,
+    str: s.str,
+    dex: s.dex,
+    int: s.int,
+    luk: s.luk,
+    hp: s.hp,
+    max_hp: s.max_hp,
+    mp: s.mp,
+    max_mp: s.max_mp,
+    ap: s.ap,
+    sp: s.sp,
+    fame: s.fame,
   }
   cs.init_totalstats()
   cs
@@ -55,18 +77,12 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats._.clear()
   self.buff_deltas._.clear()
   self.percentages.clear()
-  self.total_stats._.set(
-    @equip_stat.Id::HP,
-    self.get_stat(@MapleStat.Id::MAXHP),
-  )
-  self.total_stats._.set(
-    @equip_stat.Id::MP,
-    self.get_stat(@MapleStat.Id::MAXMP),
-  )
-  self.total_stats._.set(@equip_stat.Id::STR, self.get_stat(@MapleStat.Id::STR))
-  self.total_stats._.set(@equip_stat.Id::DEX, self.get_stat(@MapleStat.Id::DEX))
-  self.total_stats._.set(@equip_stat.Id::INT, self.get_stat(@MapleStat.Id::INT))
-  self.total_stats._.set(@equip_stat.Id::LUK, self.get_stat(@MapleStat.Id::LUK))
+  self.total_stats._.set(@equip_stat.Id::HP, self.max_hp)
+  self.total_stats._.set(@equip_stat.Id::MP, self.max_mp)
+  self.total_stats._.set(@equip_stat.Id::STR, self.str)
+  self.total_stats._.set(@equip_stat.Id::DEX, self.dex)
+  self.total_stats._.set(@equip_stat.Id::INT, self.int)
+  self.total_stats._.set(@equip_stat.Id::LUK, self.luk)
   self.total_stats._.set(@equip_stat.Id::SPEED, 100)
   self.total_stats._.set(@equip_stat.Id::JUMP, 100)
   self.max_damage = 0
@@ -90,12 +106,8 @@ pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
   self.total_stats[stat]
 }
 
-pub fn get_stat(self : CharStats, stat : @MapleStat.Id) -> Int {
-  self.base_stats[stat].or(0)
-}
-
-pub fn set_stat(self : CharStats, stat : @MapleStat.Id, value : Int) -> Unit {
-  self.base_stats.set(stat, value)
+pub fn set_hp(self : CharStats, value : Int) -> Unit {
+  self.hp = value
 }
 
 pub fn get_stance(self : CharStats) -> Double {
@@ -276,4 +288,12 @@ pub fn get_honor(self : CharStats) -> Int {
 
 pub fn get_bossdmg(self : CharStats) -> Double {
   0.0 // TODO: implement
+}
+
+pub fn change_job(self : CharStats, id : Int) -> Unit {
+  self.job = @job.Job::new(~id)
+}
+
+pub fn get_matk(self : CharStats) -> Int {
+  self.total_stats[@equip_stat.MAGIC]
 }

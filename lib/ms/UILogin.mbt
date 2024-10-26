@@ -53,13 +53,14 @@ struct UILogin {
   // mut checkbox : BoolPair[Texture]
   mut saveid : Bool
   mut login_stage : LoginStage
+  login_module : @login.Module
 }
 
 let map001_loader = @resource.map001_loader
 
 let map_pretty_loader = @resource.map_pretty_loader
 
-pub fn UILogin::new() -> UILogin {
+pub fn UILogin::new(login_module : @login.Module) -> UILogin {
   let map001_loader = map001_loader()
   let map = map001_loader.load_res(["Back", "login.img"])
   let back = map["back"]
@@ -111,6 +112,7 @@ pub fn UILogin::new() -> UILogin {
     buttons: Map::new(),
     saveid: false,
     login_stage: INIT,
+    login_module,
   }
   // version: Text::new(),
   // account: Textfield::new(),
@@ -218,7 +220,7 @@ pub fn update(self : UILogin) -> Unit {
         START_SEND => { // UI::get().emplace(UILoginWait::new(|| {}))
           // let loginwait = UI::get().get_element[UILoginWait]()
           // if loginwait && loginwait.get().is_active() {
-          fn_login("kkkiio", "kkkiio")
+          fn_login(self, "kkkiio", "kkkiio")
           self.login_stage = LOGIN_SEND
         }
         LOGIN_SEND => ()
@@ -337,6 +339,6 @@ fn fn_login_start() -> Unit {
   @login.new_login_start_packet().dispatch()
 }
 
-fn fn_login(account : String, password : String) -> Unit {
-  @login.new_login_packet(account, password).dispatch()
+fn fn_login(self : UILogin, account : String, password : String) -> Unit {
+  @login.login(self.login_module, account, password)
 }

@@ -4,7 +4,7 @@ struct UIStateLogin {
   uis_to_remove : Array[UIElementType]
 }
 
-fn UIStateLogin::new() -> UIStateLogin {
+fn UIStateLogin::new(login_module : @login.Module) -> UIStateLogin {
   let state = {
     elements: @sorted_map.new(),
     focused: UIElementType::UI_ELEMENT_NONE,
@@ -14,7 +14,10 @@ fn UIStateLogin::new() -> UIStateLogin {
   // if start_shown {
   //   state.emplace(UILogo::new())
   // } else {
-  state.set_element(UILogin::const_focused(), @ui.Element::new(UILogin::new()))
+  state.set_element(
+    UILogin::const_focused(),
+    @ui.Element::new(UILogin::new(login_module)),
+  )
   // }
   state
 }

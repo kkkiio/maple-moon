@@ -4,6 +4,7 @@ pub struct Game {
   mut accumulator : Int
   stage : Stage
   ui : UI
+  login_module : @login.Module
 }
 
 pub fn Game::start() -> Game {
@@ -24,7 +25,7 @@ pub fn Game::start() -> Game {
   )
   g_stage.set(stage)
   let timer = Timer::new()
-  let ui = UI::new(timer)
+  let ui = UI::new(timer, login_module)
   g_ui.set(ui)
   let window = Window::new()
   g_window.set(window)
@@ -139,10 +140,12 @@ pub fn Game::start() -> Game {
     ),
   )
   timer.start()
-  { timer, accumulator: 0, task_scheduler, stage, ui }
+  { timer, accumulator: 0, task_scheduler, stage, ui, login_module }
 }
 
 pub fn on_draw(self : Game, current_time : TimePoint) -> Unit {
+  @net.PacketProcessor::get().update()
+  self.login_module.connect_if_needed()
   let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
   // TODO: reset game state if elapsed is too high
@@ -166,7 +169,6 @@ pub fn update(self : Game) -> Unit {
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }
   self.ui.update()
-  @net.PacketProcessor::get().process_in()
   // Music::update_context();
   self.task_scheduler.update_tasks()
 }

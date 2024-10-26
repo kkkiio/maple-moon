@@ -139,7 +139,6 @@ pub fn send_key(
                 @ui.Element::new(
                   ui,
                   doubleclick=fn(pos) { ui.doubleclick(pos) },
-                  toggle_active=fn() { ui.toggle_active() },
                 )
               },
             )

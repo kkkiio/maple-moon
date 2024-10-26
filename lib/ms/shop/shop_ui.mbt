@@ -53,7 +53,9 @@ pub fn UIShop::new(
   let model = @ui.UIModel::new(@struct.Point::new(146, 48), bg_dimensions)
   let buttons : Map[Buttons, @ui.UIButton] = Map::new()
   buttons[Buttons::BUY_ITEM] = @ui.MapleButton::from_resource(src["BtBuy"])
-  buttons[Buttons::SELL_ITEM] = @ui.MapleButton::from_resource(src["BtSell"])
+  buttons[Buttons::SELL_ITEM_ALL] = @ui.MapleButton::from_resource(
+    src["BtSell"],
+  ) // FIXME: use new texture for sell all
   buttons[Buttons::EXIT] = @ui.MapleButton::from_resource(src["BtExit"])
   let sellen = src["TabSell"]["enabled"]
   let selldis = src["TabSell"]["disabled"]
@@ -292,7 +294,7 @@ pub fn select(self : SellState, selected : Int) -> Unit {
   }
 }
 
-pub fn sell(self : SellState) -> Unit {
+pub fn sell(self : SellState, ~all : Bool = false) -> Unit {
   if self.selection < 0 || self.selection >= self.last_slot {
     return
   }
@@ -301,8 +303,7 @@ pub fn sell(self : SellState) -> Unit {
   let sellable = item.sellable
   let slot = item.slot
   if sellable > 0 {
-    // TODO: support selling multiple items
-    new_npc_shop_item_action_packet(slot, itemid, 1, false).dispatch()
+    new_npc_shop_item_action_packet(slot, itemid, if all { sellable } else { 1 }, false).dispatch()
   }
 }
 
@@ -439,7 +440,7 @@ impl @ui.UIElement for UIShop with send_cursor(
       button.bounds(position).contains(cursorpos) {
       if button.get_button_base().get_state() == @ui.ButtonState::NORMAL {
         if i == Buttons::BUY_ITEM ||
-          i == Buttons::SELL_ITEM ||
+          i == Buttons::SELL_ITEM_ALL ||
           i == Buttons::EXIT {
           button.get_button_base().set_state(@ui.ButtonState::MOUSEOVER)
           ret = @ui.CursorState::CAN_CLICK
@@ -527,8 +528,8 @@ fn button_pressed(self : UIShop, button : Buttons) -> @ui.ButtonState {
       self.buy_state.buy()
       return @ui.ButtonState::NORMAL
     }
-    Buttons::SELL_ITEM => {
-      self.sell_state.sell()
+    Buttons::SELL_ITEM_ALL => {
+      self.sell_state.sell(all=true)
       return @ui.ButtonState::NORMAL
     }
     Buttons::EXIT => {
@@ -618,7 +619,7 @@ impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
 
 enum Buttons {
   BUY_ITEM
-  SELL_ITEM
+  SELL_ITEM_ALL
   EXIT
   CHECKBOX
   OVERALL
@@ -650,7 +651,7 @@ enum Buttons {
 pub fn int_value(self : Buttons) -> Int {
   match self {
     Buttons::BUY_ITEM => 0
-    Buttons::SELL_ITEM => 1
+    Buttons::SELL_ITEM_ALL => 1
     Buttons::EXIT => 2
     Buttons::CHECKBOX => 3
     Buttons::OVERALL => 4

@@ -54,7 +54,14 @@ pub fn write(self : Session, bytes : Bytes) -> Unit {
 pub fn read(self : Session) -> Unit {
   match self.conn {
     CLOSED => ()
-    OPENED(socket) => if socket.is_connected() { self.conn = READY(~socket) }
+    OPENED(socket) =>
+      match socket.get_ready_state() {
+        // open
+        1 => self.conn = READY(~socket)
+        // closing or closed
+        2 | 3 => self.conn = CLOSED
+        _ => ()
+      }
     READY(_) as conn => {
       let res = conn.socket.read()
       if res.bytes.length() > 0 {
@@ -90,7 +97,7 @@ fn Socket::open(path : Js_string) -> Socket = "socket" "open"
 
 fn close(self : Socket) -> Unit = "socket" "close"
 
-fn is_connected(self : Socket) -> Bool = "socket" "is_connected"
+fn get_ready_state(self : Socket) -> Int = "socket" "get_ready_state"
 
 struct ReadResult {
   bytes : Bytes

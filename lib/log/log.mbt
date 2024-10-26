@@ -25,7 +25,9 @@ pub fn error(context : Map[String, Show], msg : String) -> Unit {
 }
 
 fn to_logstr(context : Map[String, Show], msg : String) -> Js_string {
-  let buf = Buffer::new(size_hint=(msg.length() + context.size() * 12) * 2)
+  let buf = StringBuilder::new(
+    size_hint=(msg.length() + context.size() * 12) * 2,
+  )
   context.each(fn(k, v) { buf.write_string("[\{k}=\{v}] ") })
   buf.write_string(msg)
   buf.to_string().to_js_string()

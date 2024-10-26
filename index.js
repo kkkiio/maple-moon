@@ -52,8 +52,8 @@ class Socket {
   close() {
     this.ws.close()
   }
-  isConnected() {
-    return this.ws.readyState === WebSocket.OPEN
+  getReadyState() {
+    return this.ws.readyState
   }
   read() {
     if (this.pendingData.length > 0) {
@@ -120,6 +120,10 @@ function main() {
   const canvas = document.getElementById("canvas");
   canvas.width = VWIDTH;
   canvas.height = VHEIGHT;
+  
+  // Add this line to disable context menu on canvas
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  
   const gl = canvas.getContext("webgl2", {});
   if (!gl) {
     throw new Error("WebGL not supported");
@@ -301,7 +305,7 @@ function main() {
     socket: {
       open: (path) => new Socket(path),
       close: (socket) => { socket.close() },
-      is_connected: (socket) => socket.isConnected(),
+      get_ready_state: (socket) => socket.getReadyState(),
     },
     log: {
       debug: (msg) => console.debug(msg),

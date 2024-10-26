@@ -25,7 +25,7 @@ pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
   self.session.write(data)
 }
 
-pub fn process_in(self : PacketProcessor) -> Unit {
+pub fn update(self : PacketProcessor) -> Unit {
   self.session.read()
 }
 

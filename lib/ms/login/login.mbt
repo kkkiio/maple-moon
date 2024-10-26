@@ -2,10 +2,19 @@ struct Module {
   mut characters : Array[CharEntry]
   mut selected_index : Int?
   task_scheduler : (BgTask) -> Unit
+  // to reconnect
+  mut input_acc_pass : (String, String)?
+  mut select_cid : Int?
 }
 
 pub fn Module::new(task_scheduler : (BgTask) -> Unit) -> Module {
-  { characters: [], selected_index: None, task_scheduler }
+  {
+    characters: [],
+    selected_index: None,
+    task_scheduler,
+    input_acc_pass: None,
+    select_cid: None,
+  }
 }
 
 pub fn make_handlers(self : Module) -> Array[(@net.Opcode, @net.PacketHandler)] {
@@ -30,7 +39,8 @@ pub fn new_login_start_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
 }
 
-pub fn new_login_packet(acc : String, pass : String) -> @net.OutPacket {
+pub fn login(self : Module, acc : String, pass : String) -> Unit {
+  self.input_acc_pass = Some((acc, pass))
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::LOGIN)
   let volume_serial_number = @config.global().get_volume_serial_number()
   let part1 = volume_serial_number.substring(start=0, end=2)
@@ -49,6 +59,7 @@ pub fn new_login_packet(acc : String, pass : String) -> @net.OutPacket {
   ..write_byte(w)
   ..write_byte(i)
   ..write_byte(d)
+  .dispatch()
 }
 
 /// Handler for a packet that contains the response to an attempt at logging in
@@ -206,12 +217,18 @@ pub fn handle(self : CharlistHandler, recv : @net.InPacket) -> Unit!Error {
   let pic = recv.read_byte!()
   let slots = recv.read_int!()
 
-  // Add the character selection screen
+  // TODO: allow player to select character
   if characters.length() > 0 {
-    // UI::get().emplace<UICharSelect>(characters, charcount, slots, pic);
     match pic {
       // 0 => check_pic("")
-      2 => new_select_char_packet(characters[0].id).dispatch()
+      2 => {
+        let cid = match self.module.select_cid {
+          Some(cid) => cid
+          None => characters[0].id
+        }
+        self.module.select_cid = Some(cid)
+        new_select_char_packet(cid).dispatch()
+      }
       _ => fail!("pic=\{pic} not ok")
     }
   } else {
@@ -232,11 +249,10 @@ pub fn handle(self : ServerIPHandler, recv : @net.InPacket) -> Unit! {
   recv.skip_byte!()
   let (_, port) = parse_login!(recv)
   let cid = recv.read_int!()
-  match self.module.characters.find_index(fn(c) { c.id == cid }) {
+  match self.module.characters.search_by(fn(c) { c.id == cid }) {
     Some(i) => self.module.selected_index = Some(i)
     None => fail!("no character with id=\{cid}")
   }
-  // Attempt to reconnect to the server
   @net.PacketProcessor::get().connect_channel(port)
   (self.module.task_scheduler)({ cid, })
 }
@@ -465,21 +481,25 @@ fn parse_look(recv : @net.InPacket) -> LookEntry! {
   let faceid = recv.read_int!()
   recv.read_bool!() |> ignore // megaphone
   let hairid = recv.read_int!()
-  let mut eqslot = recv.read_ubyte!()
   let equips = {}
-  while eqslot != 0xFF {
-    equips.set(eqslot, recv.read_int!())
-    eqslot = recv.read_ubyte!()
+  loop recv.read_ubyte!() {
+    0xFF => ()
+    eqslot => {
+      equips.set(eqslot, recv.read_int!())
+      continue recv.read_ubyte!()
+    }
   }
-  let mut mskeqslot = recv.read_ubyte!()
   let maskedequips = {}
-  while mskeqslot != 0xFF {
-    maskedequips.set(mskeqslot, recv.read_int!())
-    mskeqslot = recv.read_ubyte!()
+  loop recv.read_ubyte!() {
+    0xFF => ()
+    mskeqslot => {
+      maskedequips.set(mskeqslot, recv.read_int!())
+      continue recv.read_ubyte!()
+    }
   }
   maskedequips.set(-111, recv.read_int!())
   let petids = []
-  for i = 0; i < 3; i = i + 1 {
+  for i in 0..<3 {
     petids.push(recv.read_int!())
   }
   { female, skin, faceid, hairid, equips, maskedequips, petids }
@@ -500,32 +520,6 @@ pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_LOGIN)..write_int(cid)
 }
 
-// fn check_pic(entered_pic : String, cid : Int) -> Unit {
-//   let mut count = 0
-//   let mut m = ' '
-//   match
-//     entered_pic
-//     .iter()
-//     .run(
-//       fn(c) {
-//         if c == m {
-//           count += 1
-//         } else {
-//           count = 0
-//           m = c
-//         }
-//         if count > 2 {
-//           IterResult::IterEnd
-//         } else {
-//           IterResult::IterContinue
-//         }
-//       },
-//     ) {
-//     IterEnd => @log.warn({ "entered_pic": entered_pic }, "Repeated pic")
-//     _ => fn_register_pic(cid, entered_pic)
-//   }
-// }
-
 fn etc_loader() -> @resource.SyncLoader {
   @resource.SyncLoader::new("etc")
 }
@@ -545,4 +539,12 @@ pub fn update(self : ConnectChannelTask) -> Bool {
   } else {
     false
   }
+}
+
+pub fn connect_if_needed(self : Module) -> Unit {
+  guard let CLOSED = @net.PacketProcessor::get().get_status() else {
+    _ => return
+  }
+  guard let Some((acc, pass)) = self.input_acc_pass else { None => return  }
+  login(self, acc, pass)
 }

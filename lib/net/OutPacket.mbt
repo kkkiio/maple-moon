@@ -180,19 +180,17 @@ pub let send_op_name_map : Map[Int, String] = {
 /// A packet to be sent to the server
 /// Used as a base class to create specific packets
 struct OutPacket {
-  buf : Buffer
+  buf : @buffer.Buffer
   opcode : OutPacketOpcode
 }
 
 pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
-  let pkt = { buf: Buffer::new(), opcode }
+  let pkt = { buf: @buffer.new(), opcode }
   pkt.write_short(opcode.int_value())
   pkt
 }
 
-pub fn OutPacket::dispatch(self : OutPacket) -> Unit {
-  // if @Configuration::get().get_show_packets() {
-  // }
+pub fn dispatch(self : OutPacket) -> Unit {
   @log.log(
     self.opcode.log_level(),
     { "opcode": self.opcode },
@@ -222,7 +220,7 @@ pub fn OutPacket::write_short(self : OutPacket, sh : Int) -> Unit {
   let mut sh = sh
   while i < 2 {
     self.write_byte(sh.land(0xFF).to_byte())
-    sh = sh.lsr(8)
+    sh = sh >> 8
     i += 1
   }
 }
@@ -232,7 +230,7 @@ pub fn OutPacket::write_int(self : OutPacket, in_val : Int) -> Unit {
   let mut in_val = in_val
   while i < 4 {
     self.write_byte(in_val.land(0xFF).to_byte())
-    in_val = in_val.lsr(8)
+    in_val = in_val >> 8
     i += 1
   }
 }
@@ -242,7 +240,7 @@ pub fn OutPacket::write_long(self : OutPacket, lg : Int64) -> Unit {
   let mut lg = lg
   while i < 8 {
     self.write_byte(lg.land(0xFFL).to_byte())
-    lg = lg.lsr(8)
+    lg = lg >> 8
     i += 1
   }
 }
@@ -265,7 +263,7 @@ pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
   buf_write_utf8(self.buf, str)
 }
 
-pub fn buf_write_utf8(buf : Buffer, str : String) -> Unit {
+pub fn buf_write_utf8(buf : @buffer.Buffer, str : String) -> Unit {
   let bytes = Bytes::make(4, b'\x00')
   str
   .iter()

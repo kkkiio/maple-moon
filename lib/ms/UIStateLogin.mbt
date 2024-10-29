@@ -60,11 +60,11 @@ pub fn send_key(
 
 pub fn send_cursor(
   self : UIStateLogin,
-  cursorstate : CursorState,
+  cursorstate : @ui.CursorState,
   cursorpos : Point[Int]
-) -> CursorState {
-  let clicked = cursorstate == CursorState::CLICKING ||
-    cursorstate == CursorState::VSCROLL_IDLE
+) -> @ui.CursorState {
+  let clicked = cursorstate == @ui.CursorState::CLICKING ||
+    cursorstate == @ui.CursorState::VSCROLL_IDLE
   match self.get(self.focused) {
     Some(focusedelement) =>
       if focusedelement.get_ui_model().is_active() {
@@ -81,7 +81,7 @@ pub fn send_cursor(
       self.remove_cursor(front.get_type())
       front.send_cursor(clicked, cursorpos)
     }
-    None => CursorState::IDLE
+    None => @ui.CursorState::IDLE
   }
 }
 

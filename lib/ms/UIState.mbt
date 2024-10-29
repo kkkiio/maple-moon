@@ -2,7 +2,7 @@ trait UIState {
   draw(Self, Double, Point[Int]) -> Unit
   update(Self) -> Unit
   send_key(Self, @KeyType.Id, Int, Bool, Bool) -> Unit
-  send_cursor(Self, CursorState, Point[Int]) -> CursorState
+  send_cursor(Self, @ui.CursorState, Point[Int]) -> @ui.CursorState
   doubleclick(Self, Point[Int]) -> Unit
   set_element(Self, Bool, @ui.Element) -> Unit
   get(Self, UIElementType) -> UIElement?

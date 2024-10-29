@@ -1,67 +1,60 @@
-// Handler for a packet which contains all character information on first login
-// or warps the player to a different map
-struct SetFieldHandler {
-  login_module : @login.Module
-  timer : Timer
-}
-
-pub fn SetFieldHandler::new(
-  login_module : @login.Module,
-  timer : Timer
-) -> SetFieldHandler {
-  { login_module, timer }
-}
-
-pub fn transition(self : SetFieldHandler, mapid : Int, portalid : Int) -> Unit {
-  // GraphicsGL::get().lock()
-  Stage::get().clear()
-  self.timer.start()
-  @graphics.GraphicsGL::get().clear()
-  Stage::get().load(mapid, portalid)
-  UI::get().enable()
-  self.timer.start()
-  // GraphicsGL::get().unlock()
-  transfer_player()
-}
-
-pub fn handle(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
+/// handle_set_field handles packets which contains all character information on first login
+/// or warps the player to a different map
+pub fn handle_set_field(
+  transition : (Int, Int) -> Unit,
+  login_module : Module,
+  load_player : (@character.CharEntry) -> @player.Player!,
+  inventory : @inventory.Inventory,
+  setup_game_ui : (@player.Player) -> Unit,
+  recv : @net.InPacket
+) -> Unit! {
   // @constants.constants.set_viewwidth(Setting::get(configWidth).load())
   // @constants.constants.set_viewheight(Setting::get(configHeight).load())
   recv.read_int!() |> ignore // channel
   let mode1 = recv.read_byte!()
   let mode2 = recv.read_byte!()
   if mode1 == 0 && mode2 == 0 {
-    self.change_map!(recv)
+    change_map!(transition, recv)
   } else {
-    self.set_field!(recv, self.login_module.get_selected_char().unwrap())
+    set_field!(
+      transition,
+      recv,
+      login_module.get_selected_char().unwrap(),
+      load_player,
+      inventory,
+      setup_game_ui,
+    )
   }
 }
 
-fn change_map(self : SetFieldHandler, recv : @net.InPacket) -> Unit! {
+fn change_map(transition : (Int, Int) -> Unit, recv : @net.InPacket) -> Unit! {
   recv.skip!(3)
   let mapid = recv.read_int!()
   let portalid = recv.read_byte!()
-  self.transition(mapid, portalid)
+  transition(mapid, portalid)
 }
 
 fn set_field(
-  self : SetFieldHandler,
+  transition : (Int, Int) -> Unit,
   recv : @net.InPacket,
-  playerentry : @login.CharEntry
+  playerentry : @character.CharEntry,
+  load_player : (@character.CharEntry) -> @player.Player!,
+  inventory : @inventory.Inventory,
+  setup_game_ui : (@player.Player) -> Unit
 ) -> Unit! {
   recv.skip!(23)
   recv.read_int!() |> ignore // cid
 
   // update with stats that was loaded on server side after character
   // selection. hp, mp, maxhp, maxmp, mapid...
-  let stats = @login.parse_stats!(recv)
+  let stats = parse_stats!(recv)
   let playerentry = { ..playerentry, stats, }
-  let player = Stage::get().load_player!(playerentry)
+  let player = load_player!(playerentry)
   recv.read_byte!() |> ignore // 'buddycap'
   if recv.read_bool!() {
     recv.read_string!() |> ignore // 'linkedname'
   }
-  parse_inventory!(recv, Stage::get().get_inventory())
+  parse_inventory!(recv, inventory)
   parse_skillbook!(recv, player.get_skills())
   // parse_cooldowns(recv, player);
   // parse_questlog(recv, player.get_quests());
@@ -78,14 +71,11 @@ fn set_field(
   new_player_update_packet().dispatch()
   let portalid = player.get_stats().portal
   let mapid = player.get_stats().map_id
-  self.transition(mapid, portalid)
+  transition(mapid, portalid)
 
   // Sound(Sound::Name::GAME_START).play();
 
-  UI::get().change_state(UiState::GAME)
-  let stats = player.get_stats()
-  let stats_bar = @player.UIStatusBar::new(stats)
-  UI::get().set_element(false, @ui.Element::new(stats_bar))
+  setup_game_ui(player)
 }
 
 /// Finished updating player stats

@@ -1,14 +1,14 @@
 struct MobCombat {
   // player : Player
   // chars : MapChars
-  mobs : @monster.MapMobs
+  mobs : MapMobs
   // regular_attack : @combat.RegularAttack
   // attack_results : @utils.TimedQueue[@combat.AttackResult]
   // damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[DamageNumber]
 }
 
-pub fn MobCombat::new(mobs : @monster.MapMobs) -> MobCombat {
+pub fn MobCombat::new(mobs : MapMobs) -> MobCombat {
   { mobs, }
 }
 
@@ -34,7 +34,7 @@ pub fn use_move(
   }
 }
 
-pub fn apply_move_skill(move : @monster.MobSkill, mob : @monster.Mob) -> Unit {
+pub fn apply_move_skill(move : MobSkill, mob : Mob) -> Unit {
   mob.update_movement_ex(1, 1, 47, move.get_id(), move.get_level(), 0)
   if move.is_buff() {
     mob.give_buff(move.get_buff())
@@ -45,8 +45,8 @@ pub fn apply_move_skill(move : @monster.MobSkill, mob : @monster.Mob) -> Unit {
 }
 
 pub fn apply_move_attack(
-  move : @monster.MobSpecialAttack,
-  mob : @monster.Mob
+  move : MobSpecialAttack,
+  mob : Mob
 ) -> Unit {
   mob.update_movement_ex(1, 1, 2 * (move.get_id() + 24), 0, 0, 0)
   mob.use_attack(move)

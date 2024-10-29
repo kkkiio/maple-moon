@@ -9,7 +9,7 @@ pub fn game_start() -> Unit {
 }
 
 pub fn game_update(time : Double) -> Unit {
-  entrypoint.game.unwrap().on_draw(time |> @ms.TimePoint::from_micro)
+  entrypoint.game.unwrap().on_draw(time |> @utils.TimePoint::from_micro)
 }
 
 pub fn onmousemove(x : Int, y : Int) -> Unit {

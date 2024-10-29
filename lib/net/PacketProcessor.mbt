@@ -3,7 +3,7 @@ struct PacketProcessor {
 }
 
 fn PacketProcessor::new(
-  handlers : @immut/hashmap.T[Opcode, PacketHandler]
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
 ) -> PacketProcessor {
   let switch = PacketSwitch::new(handlers)
   { session: Session::new(fn(it) { switch.forward(it) }) }
@@ -15,17 +15,11 @@ pub fn PacketProcessor::get() -> PacketProcessor {
   g_packet_processor.must_get()
 }
 
-pub fn PacketProcessor::initialize(
-  handlers : @immut/hashmap.T[Opcode, PacketHandler]
-) -> Unit {
-  g_packet_processor.set(PacketProcessor::new(handlers))
-}
-
 pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
   self.session.write(data)
 }
 
-pub fn update(self : PacketProcessor) -> Unit {
+fn process_in(self : PacketProcessor) -> Unit {
   self.session.read()
 }
 
@@ -40,4 +34,55 @@ pub fn connect_channel(self : PacketProcessor, channel : Int) -> Unit {
 
 pub fn get_status(self : PacketProcessor) -> ConnectionStatus {
   self.session.get_status()
+}
+
+struct PacketSwitch {
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+}
+
+pub fn PacketSwitch::new(
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+) -> PacketSwitch {
+  { handlers, }
+}
+
+pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
+  // Wrap the bytes with a parser
+  let recv = InPacket::new(bytes)
+
+  // Read the opcode to determine handler responsible
+  let opcode = try {
+    Opcode::from_int!(recv.read_ushort!())
+  } catch {
+    UnknownOpCodeError(opcode) => {
+      @log.warn({ "opcode": opcode }, "unknown opcode")
+      return
+    }
+    err => {
+      @log.warn({ "blen": bytes.length(), "err": err }, "read opcode failed")
+      return
+    }
+  }
+  match self.handlers[opcode] {
+    Some(handler) => handler(recv)
+    None => @log.warn({ "opcode": opcode }, "Unhandled packet detected")
+  }
+}
+
+pub fn with_log(
+  opcode : Opcode,
+  handler : (InPacket) -> Unit!,
+  ~log_recv : Bool = false
+) -> (InPacket) -> Unit {
+  fn(recv : InPacket) {
+    if log_recv {
+      @log.debug({ "opcode": opcode, "len": recv.available() }, "received")
+    }
+    try {
+      handler!(recv)
+    } catch {
+      err =>
+        @log.error({ "opcode": opcode, "err": err }, "handle packet failed")
+    }
+  }
 }

@@ -16,13 +16,11 @@ pub let flyfriction : Double = 0.05
 
 pub let swimfriction : Double = 0.08
 
-pub fn Physics::from_resource(src : @resource.NxNode) -> Physics {
-  let fh_tree = FootholdTree::from_resource(src)
+pub fn Physics::from_resource(
+  src : @resource.NxNode
+) -> Physics!@resource.LoadError {
+  let fh_tree = FootholdTree::load_from_resource!(src)
   { fh_tree, }
-}
-
-pub fn Physics::new() -> Physics {
-  { fh_tree: FootholdTree::default() }
 }
 
 pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {

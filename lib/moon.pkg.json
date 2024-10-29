@@ -1,6 +1,7 @@
 {
     "import": [
-        "KKKIIO/maple-moon-client/lib/ms"
+      "KKKIIO/maple-moon-client/lib/ms",
+      "KKKIIO/maple-moon-client/lib/utils"
     ],
     "link": {
         "js": {

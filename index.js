@@ -95,7 +95,7 @@ class TextBitmapGenerator {
       this.textCtx.clearRect(0, 0, this.textCtx.canvas.width, this.textCtx.canvas.height);
       this.textCtx.drawImage(tmpImg, 0, 0);
       const dataUrl = this.textCtx.canvas.toDataURL();
-      console.info(dataUrl)
+      console.debug(dataUrl)
       const targetImg = document.createElement('img');
       bmp.data = targetImg;
       targetImg.onload = () => {
@@ -120,10 +120,10 @@ function main() {
   const canvas = document.getElementById("canvas");
   canvas.width = VWIDTH;
   canvas.height = VHEIGHT;
-  
+
   // Add this line to disable context menu on canvas
   canvas.addEventListener('contextmenu', e => e.preventDefault());
-  
+
   const gl = canvas.getContext("webgl2", {});
   if (!gl) {
     throw new Error("WebGL not supported");
@@ -136,12 +136,13 @@ function main() {
   );
 
   const mapLoader = new LazyResourceLoader("Map.nx", [
-    { nodepath: "Map/Map0", filename: "map0.nx.json" },
     { nodepath: "MapHelper.img", filename: "helper.nx.json" },
     { nodepath: "Tile", filename: "tile.nx.json" },
     { nodepath: "Obj", filename: "obj.nx.json" },
     { nodepath: "Back", filename: "back.nx.json" },
+    { nodepath: "Map/Map0", folder: "Map/Map0" },
     { nodepath: "Map/Map1", folder: "Map/Map1" },
+    { nodepath: "Map/Map6", folder: "Map/Map6" },
   ]);
   prepareResourcePromises.push(
     mapLoader.start()

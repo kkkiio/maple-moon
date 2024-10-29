@@ -140,16 +140,12 @@ pub fn get_int(self : NxNode) -> Int!LoadError {
   self.get_float!().to_int()
 }
 
-pub type! LoadError {
-  TypeMismatch(String)
-  ParseNumber(@strconv.StrConvError)
-  MissingKey(String)
-}
+pub type! LoadError String
 
 pub fn as_int(self : NxNode) -> Int!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it.to_int()
-    _ as a => raise TypeMismatch("expect number, got \{a}, path=\{self.path}")
+    _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
   }
 }
 
@@ -163,9 +159,9 @@ pub fn get_int_field(
     None =>
       match default {
         Some(it) => it
-        None => raise LoadError::MissingKey(key)
+        None => raise LoadError("missing key \{key}")
       }
-    _ as a => raise TypeMismatch("expect number, got \{a}, key=\{key}")
+    _ as a => raise LoadError("expect number, got \{a}, key=\{key}")
   }
 }
 
@@ -179,9 +175,9 @@ pub fn get_float_field(
     None =>
       match default {
         Some(it) => it
-        None => raise LoadError::MissingKey(key)
+        None => raise LoadError("missing key \{key}")
       }
-    _ as a => raise TypeMismatch("expect number, got \{a}, key=\{key}")
+    _ as a => raise LoadError("expect number, got \{a}, key=\{key}")
   }
 }
 
@@ -193,12 +189,13 @@ pub fn get_float(self : NxNode) -> Double!LoadError {
       try {
         @strconv.parse_double!(it)
       } catch {
-        e => raise ParseNumber(e)
+        _ => raise LoadError("expect number, got \{it}, path=\{self.path}")
       }
-    _ as a => raise TypeMismatch("expect number, got \{a}, path=\{self.path}")
+    _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
   }
 }
 
+/// @alert deprecated "Use `for` instead"
 pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   match self.desc {
     @json.JsonValue::Object(it) =>
@@ -235,7 +232,7 @@ pub fn is_null(self : NxNode) -> Bool {
 pub fn as_string(self : NxNode) -> String!LoadError {
   match self.desc {
     @json.JsonValue::String(it) => it
-    _ as a => raise TypeMismatch("expect string, got \{a}")
+    _ as a => raise LoadError("expect string, got \{a}, path=\{self.path}")
   }
 }
 
@@ -286,7 +283,7 @@ pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
         y: arr[1].as_number().unwrap().to_int(),
       }
     @json.JsonValue::Null => @struct.Point::default()
-    _ as a => raise TypeMismatch("expect array, got \{a}")
+    _ as a => raise LoadError("expect array, got \{a}, path=\{self.path}")
   }
 }
 

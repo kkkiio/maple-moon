@@ -1,16 +1,20 @@
-typealias CursorState = @ui.CursorState
-
-typealias Physics = @physics.Physics
-
-typealias Animation = @graphics.Animation
-
 struct MapNpcs {
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
+  container : @ui.Container
+  get_player_name : () -> String
 }
 
-pub fn MapNpcs::new() -> MapNpcs {
-  { npcs: @map_object.MapObjects::new(), spawns: @queue.new() }
+pub fn MapNpcs::new(
+  container : @ui.Container,
+  get_player_name : () -> String
+) -> MapNpcs {
+  {
+    npcs: @map_object.MapObjects::new(),
+    spawns: @queue.new(),
+    container,
+    get_player_name,
+  }
 }
 
 /// Packet which requests a dialog with a server-sided NPC
@@ -18,7 +22,7 @@ fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::TALK_TO_NPC)..write_int(oid)
 }
 
-fn draw(
+pub fn draw(
   self : MapNpcs,
   layer : @layer.Id,
   viewx : Double,
@@ -28,7 +32,7 @@ fn draw(
   self.npcs.draw(layer, viewx, viewy, alpha)
 }
 
-pub fn update(self : MapNpcs, physics : Physics) -> Unit {
+pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.get_oid()
@@ -61,19 +65,19 @@ pub fn clear(self : MapNpcs) -> Unit {
 pub fn send_cursor(
   self : MapNpcs,
   pressed : Bool,
-  position : Point[Int],
-  viewpos : Point[Int]
-) -> CursorState {
+  position : @struct.Point[Int],
+  viewpos : @struct.Point[Int]
+) -> @ui.CursorState {
   for _, map_object in self.npcs {
     let npc = map_object
     if npc.is_active() && npc.inrange(position, viewpos) {
       if pressed {
         match npc.talk() {
           Some({ id, msgtype, b0, b1, speaker, str }) => {
-            let ui = @npc.UINpcTalk::new()
-            UI::get().set_element(
-              @npc.UINpcTalk::const_focused(),
+            let ui = UINpcTalk::new()
+            self.container.add_ui(
               @ui.Element::new(ui),
+              UINpcTalk::const_focused(),
             )
             ui
             .change_text?(
@@ -83,29 +87,29 @@ pub fn send_cursor(
               b1,
               speaker,
               str,
-              Stage::get().get_player().unwrap().get_name(),
+              (self.get_player_name)(),
             )
             .unwrap()
           }
           None => ()
         }
         new_talk_to_npc_packet(npc.get_oid()).dispatch()
-        return CursorState::IDLE
+        return @ui.CursorState::IDLE
       }
-      return CursorState::CAN_CLICK
+      return @ui.CursorState::CAN_CLICK
     }
   }
   if pressed {
-    CursorState::CLICKING
+    @ui.CursorState::CLICKING
   } else {
-    CursorState::IDLE
+    @ui.CursorState::IDLE
   }
 }
 
 struct NpcSpawn {
   oid : Int
   id : Int
-  position : Point[Int]
+  position : @struct.Point[Int]
   flip : Bool
   fh : Int
 }
@@ -114,7 +118,7 @@ pub fn get_oid(self : NpcSpawn) -> Int {
   self.oid
 }
 
-pub fn instantiate(self : NpcSpawn, physics : Physics) -> Npc {
+pub fn instantiate(self : NpcSpawn, physics : @physics.Physics) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
   Npc::new(self.id, self.oid, self.flip, self.fh, false, spawnposition)
 }
@@ -122,7 +126,7 @@ pub fn instantiate(self : NpcSpawn, physics : Physics) -> Npc {
 /// Represents a NPC on the current map
 struct Npc {
   base : @map_object.MapObjectBase
-  animations : Map[String, Animation]
+  animations : Map[String, @graphics.Animation]
   lines : Map[String, Array[String]]
   dialogue : Map[String, Array[String]]
   talk_state : String
@@ -137,8 +141,8 @@ struct Npc {
   mut stance : String
   control : Bool
   random : @utils.Randomizer
-  // name_label:Text
-  // func_label:Text
+  name_label : @graphics.Text
+  func_label : @graphics.Text
 }
 
 pub struct TalkArgs {
@@ -170,15 +174,15 @@ pub fn Npc::new(
   fl : Bool,
   f : Int,
   cnt : Bool,
-  position : Point[Int]
+  position : @struct.Point[Int]
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
   let strid = @string_format.extend_id(id, 7) + ".img"
-  let mut src = @npc.npc_loader().load_res([strid])
+  let mut src = npc_loader().load_res([strid])
   let strsrc = @resource.string_loader().load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
   if link.is_empty().not() {
-    src = @npc.npc_loader().load_res([link + ".img"])
+    src = npc_loader().load_res([link + ".img"])
   }
   let info = src["info"]
   let hide_name = info["hideName"].get_bool?().unwrap()
@@ -199,22 +203,18 @@ pub fn Npc::new(
   let animations = {}
   let states = []
   let lines = {}
-  src.each(
-    fn(npcnode) {
-      let state = npcnode.name()
-      if state != "info" {
-        animations[state] = npcnode |> Animation::from_resource
-        states.push(state)
-      }
-      npcnode["speak"].each(
-        fn(speaknode) {
-          lines
-          .get_or_init(state, fn() { Array::new() })
-          .push(strsrc[speaknode.get_string()].get_string())
-        },
-      )
-    },
-  )
+  for npcnode in src {
+    let state = npcnode.name()
+    if state != "info" {
+      animations[state] = npcnode |> @graphics.Animation::from_resource
+      states.push(state)
+    }
+    for speaknode in npcnode["speak"] {
+      lines
+      .get_or_init(state, fn() { Array::new() })
+      .push(strsrc[speaknode.get_string()].get_string())
+    }
+  }
   let name = strsrc["name"].get_string()
   let func = strsrc["func"].get_string()
   let npc_id = id
@@ -223,6 +223,20 @@ pub fn Npc::new(
   let stance = "stand"
   base.phobj.fhid = f
   base.set_position(position)
+  let name_label = @graphics.Text::new(
+    @graphics.FontId::A13B,
+    @graphics.TextAlignment::CENTER,
+    @struct.ColorName::YELLOW,
+    text=name,
+    nametag=true,
+  )
+  let func_label = @graphics.Text::new(
+    @graphics.FontId::A13B,
+    @graphics.TextAlignment::CENTER,
+    @struct.ColorName::YELLOW,
+    text=func,
+    nametag=true,
+  )
   {
     base,
     animations,
@@ -240,6 +254,8 @@ pub fn Npc::new(
     stance,
     control,
     random: @utils.Randomizer::default(),
+    name_label,
+    func_label,
   }
 }
 
@@ -250,12 +266,12 @@ pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit 
     None => ()
   }
   if self.hide_name.not() {
-    // self.name_label.draw(absp + Point(0, -4))
-    // self.func_label.draw(absp + Point(0, 18))
+    self.name_label.draw(absp + @struct.Point::new(0, -4))
+    self.func_label.draw(absp + @struct.Point::new(0, 18))
   }
 }
 
-pub fn update(self : Npc, physics : Physics) -> Int {
+pub fn update(self : Npc, physics : @physics.Physics) -> Int {
   if self.base.active.not() {
     return self.base.phobj.fhlayer
   }
@@ -290,8 +306,8 @@ pub fn is_scripted(self : Npc) -> Bool {
 
 pub fn inrange(
   self : Npc,
-  cursorpos : Point[Int],
-  viewpos : Point[Int]
+  cursorpos : @struct.Point[Int],
+  viewpos : @struct.Point[Int]
 ) -> Bool {
   if self.base.active.not() {
     return false
@@ -336,87 +352,6 @@ pub fn get_layer(self : Npc) -> Int {
   self.base.get_layer()
 }
 
-pub fn get_position(self : Npc) -> Point[Int] {
+pub fn get_position(self : Npc) -> @struct.Point[Int] {
   self.base.get_position()
-}
-
-struct SpawnNpcHandler {} derive(Default)
-
-pub fn SpawnNpcHandler::new() -> SpawnNpcHandler {
-  SpawnNpcHandler::default()
-}
-
-pub fn handle(self : SpawnNpcHandler, recv : @net.InPacket) -> Unit! {
-  let oid = recv.read_int!()
-  let id = recv.read_int!()
-  let position = recv.read_point!()
-  let flip = recv.read_bool!()
-  let fh = recv.read_ushort!()
-  recv.read_short!() |> ignore // 'rx'
-  recv.read_short!() |> ignore // 'ry'
-  Stage::get().get_npcs().spawn({ oid, id, position, flip, fh })
-}
-
-struct SpawnNpcControllerHandler {} derive(Default)
-
-pub fn SpawnNpcControllerHandler::new() -> SpawnNpcControllerHandler {
-  SpawnNpcControllerHandler::default()
-}
-
-pub fn handle(self : SpawnNpcControllerHandler, recv : @net.InPacket) -> Unit! {
-  let mode = recv.read_byte!()
-  let oid = recv.read_int!()
-  if mode == 0 {
-    Stage::get().get_npcs().remove(oid)
-  } else {
-    let id = recv.read_int!()
-    let position = recv.read_point!()
-    let flip = recv.read_bool!()
-    let fh = recv.read_ushort!()
-    recv.read_short!() |> ignore // 'rx'
-    recv.read_short!() |> ignore // 'ry'
-    recv.read_bool!() |> ignore // 'minimap'
-    Stage::get().get_npcs().spawn({ oid, id, position, flip, fh })
-  }
-}
-
-struct NpcDialogueHandler {
-  ui : UI
-}
-
-pub fn NpcDialogueHandler::new(ui : UI) -> NpcDialogueHandler {
-  { ui, }
-}
-
-pub fn handle(self : NpcDialogueHandler, recv : @net.InPacket) -> Unit! {
-  recv.skip!(1)
-  let npcid = recv.read_int!()
-  let msgtype = recv.read_byte!() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
-  let speaker = recv.read_byte!()
-  let text = recv.read_string!()
-  let (style_b0, style_b1) = if recv.available() && msgtype == 0 {
-    // {b0, b1}
-    // {0, 1} = next
-    // {1, 0} = prev
-    // {1, 1} = nextPrev
-    // {0, 0} = ok
-    (recv.read_ubyte!(), recv.read_ubyte!())
-  } else {
-    (0, 0)
-  }
-  let npcTalk = @npc.UINpcTalk::new()
-  self.ui.set_element(
-    @npc.UINpcTalk::const_focused(),
-    @ui.Element::new(npcTalk),
-  )
-  self.ui.enable()
-  npcTalk.change_text!(
-    npcid,
-    msgtype,
-    style_b0,
-    style_b1,
-    speaker,
-    text,
-    Stage::get().get_player().unwrap().get_name(),
-  )
 }

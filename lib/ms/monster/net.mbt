@@ -1,12 +1,4 @@
-struct SpawnMobHandler {
-  map_mobs : MapMobs
-}
-
-pub fn SpawnMobHandler::new(map_mobs : MapMobs) -> SpawnMobHandler {
-  { map_mobs, }
-}
-
-pub fn handle(self : SpawnMobHandler, recv : @net.InPacket) -> Unit! {
+pub fn handle_spawn_mob(map_mobs : MapMobs, recv : @net.InPacket) -> Unit! {
   let oid = recv.read_int!()
   recv.read_byte!() |> ignore // 5 if controller == null
   let id = recv.read_int!()
@@ -25,26 +17,19 @@ pub fn handle(self : SpawnMobHandler, recv : @net.InPacket) -> Unit! {
   }
   let team = recv.read_byte!()
   recv.skip!(4) // item effect
-  self.map_mobs.spawn(
+  map_mobs.spawn(
     { oid, id, mode: 0, stance, fh, new_spawn: effect == -2, team, position },
   )
 }
 
-struct SpawnMobControllerHandler {
-  map_mobs : MapMobs
-}
-
-pub fn SpawnMobControllerHandler::new(
-  map_mobs : MapMobs
-) -> SpawnMobControllerHandler {
-  { map_mobs, }
-}
-
-pub fn handle(self : SpawnMobControllerHandler, recv : @net.InPacket) -> Unit! {
+pub fn handle_spawn_mob_controller(
+  map_mobs : MapMobs,
+  recv : @net.InPacket
+) -> Unit! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
   if mode == 0 {
-    self.map_mobs.set_control(oid, false)
+    map_mobs.set_control(oid, false)
   } else if recv.available() {
     recv.skip!(1)
     let id = recv.read_int!()
@@ -63,7 +48,7 @@ pub fn handle(self : SpawnMobControllerHandler, recv : @net.InPacket) -> Unit! {
     }
     let team = recv.read_byte!()
     recv.skip!(4)
-    self.map_mobs.spawn(
+    map_mobs.spawn(
       { oid, id, mode, stance, fh, new_spawn: effect == -2, team, position },
     )
   } else {

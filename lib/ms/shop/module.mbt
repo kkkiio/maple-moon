@@ -15,11 +15,16 @@ pub fn make_handlers(
   self : Module,
   charlook_getter : () -> @character.CharLook?,
   inventory_getter : () -> @inventory.Inventory?
-) -> Array[(@net.Opcode, @net.PacketHandler)] {
+) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
   [
     (
       OPEN_NPC_SHOP,
-      OpenNpcShopHandler::new(self, charlook_getter, inventory_getter),
+      @net.with_log(
+        OPEN_NPC_SHOP,
+        fn(recv : @net.InPacket) {
+          handle_open_npc_shop!(self, charlook_getter, inventory_getter, recv)
+        }
+      ),
     ),
   ]
 }

@@ -1,15 +1,3 @@
-struct ModifyInventoryHandler {
-  inventory : Inventory
-  player_getter : () -> @player.Player?
-}
-
-pub fn ModifyInventoryHandler::new(
-  inventory : Inventory,
-  player_getter : () -> @player.Player?
-) -> ModifyInventoryHandler {
-  { inventory, player_getter }
-}
-
 struct Mod {
   mode : Modification
   t : TypeId
@@ -17,9 +5,12 @@ struct Mod {
   arg : Int
 }
 
-pub fn handle(self : ModifyInventoryHandler, recv : @net.InPacket) -> Unit! {
-  let inventory = self.inventory
-  guard let Some(player) = (self.player_getter)() else { None => return  }
+fn handle_modify_inventory(
+  inventory : Inventory,
+  player_getter : () -> @player.Player?,
+  recv : @net.InPacket
+) -> Unit! {
+  guard let Some(player) = player_getter() else { None => return  }
   recv.read_bool!() |> ignore // 'updatetick'
   let mods = Array::new()
   let size = recv.read_byte!()

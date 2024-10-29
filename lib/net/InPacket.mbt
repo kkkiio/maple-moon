@@ -41,7 +41,7 @@ pub fn read_ushort(self : InPacket) -> Int!ReadPacketError {
   self.check_size!(2)
   let res = read_le_uint16(self.bytes, self.pos)
   self.pos += 2
-  res.to_int()
+  res.reinterpret_as_int()
 }
 
 pub fn read_short(self : InPacket) -> Int!ReadPacketError {
@@ -61,14 +61,14 @@ pub fn read_uint(self : InPacket) -> UInt!ReadPacketError {
 }
 
 pub fn read_int(self : InPacket) -> Int!ReadPacketError {
-  self.read_uint!().to_int()
+  self.read_uint!().reinterpret_as_int()
 }
 
 pub fn read_long(self : InPacket) -> Int64!ReadPacketError {
   self.check_size!(8)
   let res = read_le_uint64(self.bytes, self.pos)
   self.pos += 8
-  res.to_int64()
+  res.reinterpret_as_int64()
 }
 
 pub fn read_string(self : InPacket) -> String!ReadPacketError {
@@ -99,7 +99,7 @@ pub fn read_padded_string(
 }
 
 fn byte_iter_to_string(byte_iter : Iter[Byte], max_size : Int) -> String {
-  let buf = Buffer::new(size_hint=max_size)
+  let buf = StringBuilder::new(size_hint=max_size)
   // TODO: support more charset
   byte_iter.each(fn(b) { buf.write_char(Char::from_int(b.to_int())) })
   buf.to_string()
@@ -127,25 +127,25 @@ pub fn skip_long(self : InPacket) -> Unit!ReadPacketError {
 }
 
 fn read_le_uint16(bytes : Bytes, offset : Int) -> UInt {
-  bytes[offset].to_uint() + bytes[offset + 1].to_uint().lsl(8)
+  bytes[offset].to_uint() + ( bytes[offset + 1].to_uint()<<(8) )
 }
 
 fn read_le_uint32(bytes : Bytes, offset : Int) -> UInt {
   bytes[offset].to_uint() +
-  bytes[offset + 1].to_uint().lsl(8) +
-  bytes[offset + 2].to_uint().lsl(16) +
-  bytes[offset + 3].to_uint().lsl(24)
+  (bytes[offset + 1].to_uint() << 8) +
+  (bytes[offset + 2].to_uint() << 16) +
+  (bytes[offset + 3].to_uint() << 24)
 }
 
 fn read_le_uint64(bytes : Bytes, offset : Int) -> UInt64 {
   bytes[offset].to_uint().to_uint64() +
-  bytes[offset + 1].to_uint().to_uint64().lsl(8) +
-  bytes[offset + 2].to_uint().to_uint64().lsl(16) +
-  bytes[offset + 3].to_uint().to_uint64().lsl(24) +
-  bytes[offset + 4].to_uint().to_uint64().lsl(32) +
-  bytes[offset + 5].to_uint().to_uint64().lsl(40) +
-  bytes[offset + 6].to_uint().to_uint64().lsl(48) +
-  bytes[offset + 7].to_uint().to_uint64().lsl(56)
+  (bytes[offset + 1].to_uint().to_uint64() << 8) +
+  (bytes[offset + 2].to_uint().to_uint64() << 16) +
+  (bytes[offset + 3].to_uint().to_uint64() << 24) +
+  (bytes[offset + 4].to_uint().to_uint64() << 32) +
+  (bytes[offset + 5].to_uint().to_uint64() << 40) +
+  (bytes[offset + 6].to_uint().to_uint64() << 48) +
+  (bytes[offset + 7].to_uint().to_uint64() << 56)
 }
 
 pub fn read_point(self : InPacket) -> @struct.Point[Int]!ReadPacketError {

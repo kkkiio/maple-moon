@@ -33,7 +33,28 @@ pub struct CharStats {
   female : Bool
 }
 
-pub fn CharStats::from_entry(s : @login.StatsEntry) -> CharStats {
+pub struct StatsEntry {
+  name : String
+  female : Bool
+  level : Int
+  job : Int
+  str : Int
+  dex : Int
+  int : Int
+  luk : Int
+  hp : Int
+  max_hp : Int
+  mp : Int
+  max_mp : Int
+  ap : Int
+  sp : Int
+  fame : Int
+  exp : Int64
+  mapid : Int
+  portal : Int
+}
+
+pub fn CharStats::from_entry(s : StatsEntry) -> CharStats {
   let job = @job.Job::new(id=s.job)
   let cs : CharStats = {
     name: s.name,

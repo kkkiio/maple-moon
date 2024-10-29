@@ -77,6 +77,10 @@ pub fn css_name(self : ColorName) -> String {
   }
 }
 
+pub fn to_json(self : ColorName) -> Json {
+  Json::String(self.css_name())
+}
+
 pub fn output(self : ColorName, logger : Logger) -> Unit {
   logger.write_string(self.css_name())
 }
@@ -252,13 +256,9 @@ pub fn new_array(comps : FixedArray[Double]) -> Color {
 
 pub fn Color::from_value(code : Int) -> Color {
   (
-    // code >> 24 & 0xFF as Double / 255.0,
-    code.lsr(24).land(0xFF).to_double() / 255.0,
-    // (code >> 16 & 0xFF) as Double / 255.0,
-    code.lsr(16).land(0xFF).to_double() / 255.0,
-    // (code >> 8 & 0xFF) as Double / 255.0,
-    code.lsr(8).land(0xFF).to_double() / 255.0,
-    // (code & 0xFF) as Double / 255.0
+    (code >> 24).land(0xFF).to_double() / 255.0,
+    (code >> 16).land(0xFF).to_double() / 255.0,
+    (code >> 8).land(0xFF).to_double() / 255.0,
     code.land(0xFF).to_double() / 255.0,
   )
 }
@@ -318,15 +318,15 @@ pub fn IntColor::from_color(color : Color) -> IntColor {
 }
 
 pub fn r(self : IntColor) -> Int {
-  self._.lsr(24) & 0xFF
+  (self._ >> 24) & 0xFF
 }
 
 pub fn g(self : IntColor) -> Int {
-  self._.lsr(16) & 0xFF
+  (self._ >> 16) & 0xFF
 }
 
 pub fn b(self : IntColor) -> Int {
-  self._.lsr(8) & 0xFF
+  (self._ >> 8) & 0xFF
 }
 
 pub fn a(self : IntColor) -> Int {

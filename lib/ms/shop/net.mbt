@@ -1,23 +1,12 @@
-struct OpenNpcShopHandler {
-  module : Module
-  charlook_getter : () -> @character.CharLook?
-  inventory_getter : () -> @inventory.Inventory?
-}
-
-fn OpenNpcShopHandler::new(
+pub fn handle_open_npc_shop(
   module : Module,
   charlook_getter : () -> @character.CharLook?,
-  inventory_getter : () -> @inventory.Inventory?
-) -> OpenNpcShopHandler {
-  { module, charlook_getter, inventory_getter }
-}
-
-impl @net.PacketHandler for OpenNpcShopHandler with handle(
-  self : OpenNpcShopHandler,
+  inventory_getter : () -> @inventory.Inventory?,
   recv : @net.InPacket
 ) -> Unit! {
-  guard let Some(charlook) = (self.charlook_getter)() else { None => return  }
-  guard let Some(inventory) = (self.inventory_getter)() else { None => return  }
+  guard let Some(charlook) = charlook_getter() else { None => return }
+  guard let Some(inventory) = inventory_getter() else { None => return }
+  
   let npcid = recv.read_int!()
   let size = recv.read_short!()
   let items = []
@@ -48,14 +37,15 @@ impl @net.PacketHandler for OpenNpcShopHandler with handle(
     }
   }
   let shop = UIShop::new(
-    self.module.countset,
+    module.countset,
     charlook,
     inventory,
     npcid,
     items,
   )
-  self.module.container.add_ui(@ui.Element::new(shop), true)
+  module.container.add_ui(@ui.Element::new(shop), true)
 }
+
 
 struct ShopItem {
   id : Int
@@ -65,3 +55,4 @@ struct ShopItem {
   charge_price : Int
   buyable : Int
 } derive(Show)
+

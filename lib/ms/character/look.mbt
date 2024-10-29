@@ -32,7 +32,23 @@ let face_types : Map[Int, Face] = Map::new()
 
 let body_types : Map[Int, @char_look.Body] = Map::new()
 
-pub fn CharLook::new(entry : @login.LookEntry) -> CharLook! {
+pub struct LookEntry {
+  female : Bool
+  skin : Int
+  faceid : Int
+  hairid : Int
+  equips : Map[Int, Int]
+  maskedequips : Map[Int, Int]
+  petids : Array[Int]
+}
+
+pub struct CharEntry {
+  stats : StatsEntry
+  look : LookEntry
+  id : Int
+}
+
+pub fn CharLook::new(entry : LookEntry) -> CharLook! {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),

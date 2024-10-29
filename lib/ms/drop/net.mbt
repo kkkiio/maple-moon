@@ -1,12 +1,4 @@
-struct DropLootHandler {
-  map_drops : MapDrops
-}
-
-pub fn DropLootHandler::new(map_drops : MapDrops) -> DropLootHandler {
-  { map_drops, }
-}
-
-fn handle(self : DropLootHandler, recv : @net.InPacket) -> Unit! {
+pub fn handle_drop_loot(map_drops : MapDrops, recv : @net.InPacket) -> Unit! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
   let meso = recv.read_bool!()
@@ -29,7 +21,7 @@ fn handle(self : DropLootHandler, recv : @net.InPacket) -> Unit! {
 
   // TODO: sound
 
-  self.map_drops.spawn(
+  map_drops.spawn(
     {
       oid,
       item_id,
@@ -44,19 +36,11 @@ fn handle(self : DropLootHandler, recv : @net.InPacket) -> Unit! {
   )
 }
 
-struct RemoveLootHandler {
-  map_drops : MapDrops
-  get_character_by_id_fn : (Int) -> @character.Character?
-}
-
-pub fn RemoveLootHandler::new(
+pub fn handle_remove_loot(
   map_drops : MapDrops,
-  get_character_by_id_fn : (Int) -> @character.Character?
-) -> RemoveLootHandler {
-  { map_drops, get_character_by_id_fn }
-}
-
-fn handle(self : RemoveLootHandler, recv : @net.InPacket) -> Unit! {
+  get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
+  recv : @net.InPacket
+) -> Unit! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
   let looter = if mode > 1 {
@@ -65,14 +49,11 @@ fn handle(self : RemoveLootHandler, recv : @net.InPacket) -> Unit! {
       recv.read_byte!() |> ignore // pet
       None
     } else {
-      match (self.get_character_by_id_fn)(cid) {
-        Some(character) => Some(character.get_phobj())
-        None => None
-      }
+      get_character_phys_by_id_fn(cid)
     }
     // TODO: sound
   } else {
     None
   }
-  self.map_drops.remove(oid, mode, looter)
+  map_drops.remove(oid, mode, looter)
 }

@@ -127,8 +127,8 @@ fn new_create_char_packet(
 }
 
 /// Tell the server which character was picked.
-fn new_select_char_packet(cid : Int) -> @net.OutPacket {
+fn new_select_char_packet(character_id : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SELECT_CHAR)
-  ..write_int(cid)
+  ..write_int(character_id)
   ..write_hardware_info()
 }

@@ -4,8 +4,6 @@ typealias PhysicsObject = @physics.PhysicsObject
 
 typealias DrawArgument = @graphics.DrawArgument
 
-typealias Physics = @physics.Physics
-
 /// Player states which determine animation and state
 pub enum CharState {
   WALK

@@ -1,15 +1,5 @@
-struct UpdateSkillHandler {
-  player_getter : () -> @player.Player?
-}
-
-pub fn UpdateSkillHandler::new(
-  player_getter : () -> @player.Player?
-) -> UpdateSkillHandler {
-  { player_getter, }
-}
-
-impl @net.PacketHandler for UpdateSkillHandler with handle(
-  self : UpdateSkillHandler,
+pub fn handle_update_skill(
+  player_getter : () -> @player.Player?,
   recv : @net.InPacket
 ) -> Unit! {
   recv.skip!(3)
@@ -17,8 +7,8 @@ impl @net.PacketHandler for UpdateSkillHandler with handle(
   let level = recv.read_int!()
   let masterlevel = recv.read_int!()
   let expire = recv.read_long!()
-  match (self.player_getter)() {
-    Some(player) =>
+  match player_getter() {
+    Some(player) => 
       player.change_skill(skillid, level, masterlevel, expire.to_int())
     None => ()
   }

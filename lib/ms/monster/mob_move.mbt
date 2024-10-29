@@ -1,17 +1,6 @@
-struct MobMovedHandler {
-  map_mobs : @monster.MapMobs
-  mob_combat : @monster_combat.MobCombat
-}
-
-pub fn MobMovedHandler::new(
-  map_mobs : @monster.MapMobs,
-  mob_combat : @monster_combat.MobCombat
-) -> MobMovedHandler {
-  { map_mobs, mob_combat }
-}
-
-pub fn MobMovedHandler::handle(
-  self : MobMovedHandler,
+pub fn handle_mob_moved(
+  map_mobs : MapMobs,
+  mob_combat : MobCombat,
   recv : @net.InPacket
 ) -> Unit! {
   let oid = recv.read_int!()
@@ -23,22 +12,12 @@ pub fn MobMovedHandler::handle(
   recv.read_short!() |> ignore // option
   let position = recv.read_point!()
   let movements = @physics.parse_movements!(recv)
-  self.map_mobs.send_movement(oid, position, movements)
-  self.mob_combat.use_move!(oid, action, skillid, skill_level)
+  map_mobs.send_movement(oid, position, movements)
+  mob_combat.use_move!(oid, action, skillid, skill_level)
 }
 
-struct MobMoveResponseHandler {
-  mob_combat : @monster_combat.MobCombat
-}
-
-pub fn MobMoveResponseHandler::new(
-  mob_combat : @monster_combat.MobCombat
-) -> MobMoveResponseHandler {
-  { mob_combat, }
-}
-
-pub fn MobMoveResponseHandler::handle(
-  self : MobMoveResponseHandler,
+pub fn handle_mob_move_response(
+  mob_combat : MobCombat,
   recv : @net.InPacket
 ) -> Unit! {
   let oid = recv.read_int!()
@@ -51,6 +30,6 @@ pub fn MobMoveResponseHandler::handle(
     // Stage::get().get_mob_combat().use_some_attack(oid);
 
   } else {
-    self.mob_combat.use_move!(oid, moveid, skillid, skill_level)
+    mob_combat.use_move!(oid, moveid, skillid, skill_level)
   }
 }

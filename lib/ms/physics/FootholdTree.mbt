@@ -4,100 +4,72 @@ struct FootholdTree {
   footholds : Map[Int, Foothold]
   footholds_by_x : Map[Int, Array[Int]]
   null_fh : Foothold
-  mut walls : @struct.Range[Int]
-  mut borders : @struct.Range[Int]
+  walls : @struct.Range[Int]
+  borders : @struct.Range[Int]
 }
 
-pub fn FootholdTree::default() -> FootholdTree {
-  {
-    footholds: Map::new(),
-    footholds_by_x: Map::new(),
-    null_fh: Foothold::default(),
-    walls: @struct.Range::default(),
-    borders: @struct.Range::default(),
-  }
-}
-
-pub fn FootholdTree::from_resource(src : @resource.NxNode) -> FootholdTree {
-  let tree = FootholdTree::default()
-  let mut leftw : Int = 30000
-  let mut rightw : Int = -30000
-  let mut botb : Int = -30000
-  let mut topb : Int = 30000
-  src.each(
-    fn(basef) {
-      let basefname = basef.name()
-      let layer = match @strconv.parse_int?(basefname) {
-        Ok(v) => v
-        Err(err) => {
-          @log.error({ "err": err, "basefname": basefname }, "Invalid layer")
-          return
+pub fn FootholdTree::load_from_resource(
+  src : @resource.NxNode
+) -> FootholdTree!@resource.LoadError {
+  let footholds = Map::new()
+  let footholds_by_x = Map::new()
+  let null_fh = Foothold::default()
+  for basef in src {
+    let basefname = basef.name()
+    let layer = try {
+      @strconv.parse_int!(basefname)
+    } catch {
+      @strconv.StrConvError(e) =>
+        raise @resource.LoadError("invalid foothold layer \{e}")
+    }
+    for midf in basef {
+      for lastf in midf {
+        let lastfname = lastf.name()
+        let id = try {
+          @strconv.parse_int!(lastfname)
+        } catch {
+          @strconv.StrConvError(e) =>
+            raise @resource.LoadError("invalid foothold id \{e}")
+        }
+        let foothold = Foothold::load_from_resource!(lastf, id, layer)
+        footholds.set(id, foothold)
+        if foothold.is_wall() {
+          continue
+        }
+        let start = foothold.l()
+        let end = foothold.r()
+        for i in start..=end {
+          footholds_by_x.get_or_init(i, fn() { Array::new() }).push(id)
         }
       }
-      basef.each(
-        fn(midf) {
-          midf.each(
-            fn(lastf) {
-              let lastfname = lastf.name()
-              let id = match @strconv.parse_int?(lastfname) {
-                Ok(v) => v
-                Err(err) => {
-                  @log.error(
-                    { "err": err, "lastfname": lastfname },
-                    "Invalid foothold id",
-                  )
-                  return
-                }
-              }
-              let foothold = Foothold::from_resource(lastf, id, layer)
-              tree.footholds.set(id, foothold)
-              if foothold.l() < leftw {
-                leftw = foothold.l()
-              }
-              if foothold.r() > rightw {
-                rightw = foothold.r()
-              }
-              if foothold.b() > botb {
-                botb = foothold.b()
-              }
-              if foothold.t() < topb {
-                topb = foothold.t()
-              }
-              if foothold.is_wall() {
-                return
-              }
-              let start = foothold.l()
-              let end = foothold.r()
-              let mut i = start
-              while i <= end {
-                let ids = match tree.footholds_by_x[i] {
-                  Some(v) => v
-                  None => {
-                    let v = Array::new()
-                    tree.footholds_by_x[i] = v
-                    v
-                  }
-                }
-                ids.push(id)
-                i += 1
-              }
-            },
-          )
-        },
-      )
-    },
-  )
+    }
+  }
+  if footholds.size() == 0 {
+    raise @resource.LoadError("no footholds")
+  }
+  let leftw = footholds
+    .values()
+    .iter()
+    .map(fn(f) { f.l() })
+    .fold(init=30000, @math.minimum)
+  let rightw = footholds
+    .values()
+    .iter()
+    .map(fn(f) { f.r() })
+    .fold(init=-30000, @math.maximum)
   let walls = @struct.Range::new(leftw + 25, rightw - 25)
-  if walls.a > walls.b {
-    abort("invalid walls=\{walls}")
-  }
-  tree.walls = walls
+  let topb = footholds
+    .values()
+    .iter()
+    .map(fn(f) { f.t() })
+    .fold(init=30000, @math.minimum)
+  let botb = footholds
+    .values()
+    .iter()
+    .map(fn(f) { f.b() })
+    .fold(init=-30000, @math.maximum)
   let borders = @struct.Range::new(topb - 300, botb + 100)
-  if borders.a > borders.b {
-    abort("invalid borders=\{borders}")
-  }
-  tree.borders = borders
-  tree
+  { footholds, footholds_by_x, null_fh, walls, borders }
 }
 
 pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
@@ -209,7 +181,7 @@ pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   }
 }
 
-pub fn get_fh(self : FootholdTree, fhid : Int) -> Foothold {
+fn get_fh(self : FootholdTree, fhid : Int) -> Foothold {
   self.footholds.get(fhid).or(self.null_fh)
 }
 
@@ -269,21 +241,22 @@ pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
 }
 
 pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
-  let mut ret = 0
-  let mut comp = self.borders.second().to_double()
-  let x = fx.to_int()
-  let range = self.footholds_by_x.get(x).or(Array::new())
-  range.each(
-    fn(id) {
+  guard let Some(range) = self.footholds_by_x.get(fx.to_int()) else {
+    None => return 0
+  }
+  range.fold(
+    init=(0, self.borders.second().to_double()),
+    fn(acc, id) {
       let fh = self.footholds.get(id).unwrap()
       let ycomp = fh.ground_below(fx)
+      let (_, comp) = acc
       if comp >= ycomp && ycomp >= fy {
-        comp = ycomp
-        ret = fh.id()
+        (fh.id(), ycomp)
+      } else {
+        acc
       }
     },
-  )
-  ret
+  ).0
 }
 
 pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {

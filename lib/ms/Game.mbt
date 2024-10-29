@@ -1,33 +1,37 @@
 pub struct Game {
-  timer : Timer
-  task_scheduler : TaskScheduler
+  timer : @utils.Timer
   mut accumulator : Int
   stage : Stage
   ui : UI
   login_module : @login.Module
+  net_module : @net.Module
 }
 
 pub fn Game::start() -> Game {
   @config.global().set_hardware_info()
-  let task_scheduler = { tasks: [] }
-  let login_module = @login.Module::new(
-    fn(x) { task_scheduler.add_new_task(x) },
-  )
+  let login_module = @login.Module::new()
   let monster_module = @monster.Module::new()
-  let mob_combat = @monster_combat.MobCombat::new(monster_module.get_map_mobs())
+  let mob_combat = @monster.MobCombat::new(monster_module.get_map_mobs())
   let drop_module = @drop.Module::new()
   let inventory_module = @inventory.Module::new()
+  let timer = @utils.Timer::new(
+    fn() { now_micro() |> @utils.TimePoint::from_micro },
+  )
+  let ui = UI::new(timer, login_module)
+  g_ui.set(ui)
+  let npc_module = @npc.Module::new(
+    ui,
+    fn() { Stage::get().get_player().unwrap().get_name() },
+  )
   let stage = Stage::new(
     @map.MapPortalAnimations::load(),
     monster_module.get_map_mobs(),
     drop_module.get_map_drops(),
     inventory_module.get_inventory(),
+    npc_module.get_npcs(),
   )
   g_stage.set(stage)
-  let timer = Timer::new()
-  let ui = UI::new(timer, login_module)
-  g_ui.set(ui)
-  let window = Window::new()
+  let window = Window::new(fn() { now_micro() |> @utils.TimePoint::from_micro })
   g_window.set(window)
   let skill_book_module = @skill_book.Module::new()
   let shop_module = @shop.Module::new(ui)
@@ -64,18 +68,31 @@ pub fn Game::start() -> Game {
 
   //  )
 
-  @net.PacketProcessor::initialize(
+  let net_module = @net.Module::new(
     // Common handlers
     @immut/hashmap.from_array(
-      (@net.PING, @net.PingHandler::default())
-      |> Iter::singleton
-      |> Iter::concat(login_module.make_handlers().iter())
-      |> Iter::append((SET_FIELD, SetFieldHandler::new(login_module, timer)))
+      login_module
+      .make_handlers(
+        fn(map_id, portal_id) { stage.transition(map_id, portal_id) },
+        fn(char_entry) { stage.load_player!(char_entry) },
+        inventory_module.get_inventory(),
+        fn(player) { setup_game_ui(player) },
+      )
+      .iter()
       // Player handlers
       // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
       // packet_switch.push((KEYMAP, KeymapHandler::new()))
       // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-      |> Iter::append((@net.CHANGE_STATS, ChangeStatsHandler::new(stage)))
+      |> Iter::append(
+        (
+          @net.CHANGE_STATS,
+          @net.with_log(
+            @net.CHANGE_STATS,
+            fn(recv : @net.InPacket) { handle_change_stats!(stage, recv) },
+          ),
+        ),
+      )
+      |> Iter::concat(npc_module.make_handlers().iter())
 
       // MapObject handlers
       // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
@@ -86,31 +103,22 @@ pub fn Game::start() -> Game {
       // // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
       // // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
       // // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
-      |> Iter::append((SPAWN_NPC, SpawnNpcHandler::new()))
-      |> Iter::append((SPAWN_NPC_C, SpawnNpcControllerHandler::new()))
       // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
-      |> Iter::concat(monster_module.make_handlers().iter())
-      |> Iter::append(
-        (
-          MOB_MOVED,
-          MobMovedHandler::new(monster_module.get_map_mobs(), mob_combat),
-        ),
-      )
-      |> Iter::append(
-        (@net.MOB_MOVE_RESPONSE, MobMoveResponseHandler::new(mob_combat)),
+      |> Iter::concat(
+        monster_module
+        .make_handlers(fn() { stage.get_player().map(fn(p) { p.get_stats() }) })
+        .iter(),
       )
       // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
       // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
       // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
       // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
-      |> Iter::append(
-        (SHOW_MOB_HP, ShowMobHpHandler::new(monster_module.get_map_mobs())),
-      )
-      |> Iter::append(
-        (KILL_MOB, KillMobHandler::new(monster_module.get_map_mobs())),
-      )
       |> Iter::concat(
-        drop_module.make_handlers(fn(id) { stage.get_character(id) }).iter(),
+        drop_module
+        .make_handlers(
+          fn(id) { stage.get_character(id).map(fn(c) { c.get_phobj() }) },
+        )
+        .iter(),
       )
       |> Iter::concat(
         inventory_module.make_handlers(fn() { stage.get_player() }).iter(),
@@ -120,14 +128,21 @@ pub fn Game::start() -> Game {
       // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
       // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
       // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-      |> Iter::append((RECALCULATE_STATS, RecalculateStatsHandler::new(stage)))
+      |> Iter::append(
+        (
+          @net.RECALCULATE_STATS,
+          fn(_recv : @net.InPacket) -> Unit {
+            guard let Some(player) = stage.get_player() else { None => return  }
+            player.recalc_stats(false)
+          },
+        ),
+      )
       |> Iter::concat(
         skill_book_module.make_handlers(fn() { stage.get_player() }).iter(),
       )
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers
-      |> Iter::append((NPC_DIALOGUE, NpcDialogueHandler::new(ui)))
       |> Iter::concat(
         shop_module
         .make_handlers(
@@ -140,12 +155,16 @@ pub fn Game::start() -> Game {
     ),
   )
   timer.start()
-  { timer, accumulator: 0, task_scheduler, stage, ui, login_module }
+  { timer, accumulator: 0, stage, ui, login_module, net_module }
 }
 
-pub fn on_draw(self : Game, current_time : TimePoint) -> Unit {
-  @net.PacketProcessor::get().update()
-  self.login_module.connect_if_needed()
+pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
+  self.net_module.process_in()
+  match @net.PacketProcessor::get().get_status() {
+    @net.CLOSED => self.login_module.reconnect_if_needed()
+    _ => ()
+  }
+  self.login_module.update()
   let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
   // TODO: reset game state if elapsed is too high
@@ -170,7 +189,6 @@ pub fn update(self : Game) -> Unit {
   }
   self.ui.update()
   // Music::update_context();
-  self.task_scheduler.update_tasks()
 }
 
 pub fn draw(self : Game, alpha : Double) -> Unit {
@@ -180,37 +198,11 @@ pub fn draw(self : Game, alpha : Double) -> Unit {
   Window::get().end()
 }
 
-// fn reset(self : Game, g : Gl_g) -> Result[Unit, String] {
-// if (Error error = PacketProcessor::get().init(pApp)) {
-//     return error;
-// }
-// std::cout << "Session init success." << std::endl;
-
-// if (Error error = Window::get().init(pApp)) {
-//     return error;
-// }
-// std::cout << "Window init success." << std::endl;
-// if (Error error = Music::init()) {
-//     return error;
-// }
-// std::cout << "Music init success." << std::endl;
-// if (Error error = Sound::init()) {
-//     return error;
-// }
-// std::cout << "Sound init success." << std::endl;
-
-// return Error::NONE;
-// Ok(())
-// }
-
-struct TaskScheduler {
-  tasks : Array[@login.BgTask]
+fn setup_game_ui(player : @player.Player) -> Unit {
+  UI::get().change_state(UiState::GAME)
+  let stats = player.get_stats()
+  let stats_bar = @player.UIStatusBar::new(stats)
+  UI::get().set_element(false, @ui.Element::new(stats_bar))
 }
 
-fn add_new_task(self : TaskScheduler, task : @login.BgTask) -> Unit {
-  self.tasks.push(task)
-}
-
-fn update_tasks(self : TaskScheduler) -> Unit {
-  self.tasks.retain(fn(task) { task.update().not() })
-}
+fn now_micro() -> Double = "time" "now_micro"

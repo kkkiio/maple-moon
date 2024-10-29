@@ -5,18 +5,17 @@ enum UiState {
 }
 
 struct UI {
-  timer : Timer
+  timer : @utils.Timer
   login_module : @login.Module
   mut state : UIState?
   keyboard : Keyboard
   cursor : @ui.Cursor
   is_key_down : Map[String, Bool]
-  mut enabled : Bool
 }
 
 let g_ui : @utils.Singleton[UI] = @utils.Singleton::new()
 
-fn UI::new(timer : Timer, login_module : @login.Module) -> UI {
+fn UI::new(timer : @utils.Timer, login_module : @login.Module) -> UI {
   let ui = {
     timer,
     login_module,
@@ -24,7 +23,6 @@ fn UI::new(timer : Timer, login_module : @login.Module) -> UI {
     cursor: @ui.Cursor::new(),
     keyboard: Keyboard::default(),
     is_key_down: Map::new(),
-    enabled: true,
   }
   ui.change_state(UiState::LOGIN) // for test
   ui
@@ -55,10 +53,10 @@ pub fn send_cursor_pos(self : UI, pos : Point[Int]) -> Unit {
 }
 
 pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
-  let cursorstate = if pressed && self.enabled {
-    CursorState::CLICKING
+  let cursorstate = if pressed {
+    @ui.CursorState::CLICKING
   } else {
-    CursorState::IDLE
+    @ui.CursorState::IDLE
   }
   let cursorpos = self.cursor.get_position()
   self.send_cursor(cursorpos, cursorstate)
@@ -67,11 +65,11 @@ pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
 pub fn send_cursor(
   self : UI,
   cursorpos : Point[Int],
-  cursorstate : CursorState
+  cursorstate : @ui.CursorState
 ) -> Unit {
   let nextstate = match self.state {
     Some(state) => state.send_cursor(cursorstate, cursorpos)
-    None => CursorState::IDLE
+    None => @ui.CursorState::IDLE
   }
   self.cursor.set_state(nextstate)
   self.cursor.set_position(cursorpos)
@@ -83,14 +81,6 @@ fn change_state(self : UI, id : UiState) -> Unit {
     UiState::GAME => self.state = Some(UIStateGame::new(self.timer))
     // UiState::CASHSHOP => UIStateCashShop::default(),
   }
-}
-
-fn enable(self : UI) -> Unit {
-  self.enabled = true
-}
-
-fn disable(self : UI) -> Unit {
-  self.enabled = false
 }
 
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {

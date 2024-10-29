@@ -6,7 +6,7 @@ pub struct TalkContent {
 pub struct TalkSelections {
   color : @struct.ColorName
   selections : Array[(Int, String)]
-} derive(Eq, Show)
+} derive(Eq, Show, ToJson)
 
 test "test text" {
   let markup_text = "Take this ship and you'll head off to a bigger continent. For #e150 mesos#n, I'll take you to #bVictoria Island#k. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?"
@@ -32,25 +32,35 @@ test "test selections" {
     template,
     { fn_map: { 'm': fn(v) { "test_map_\{v}_name" } } },
   )
-  assert_eq!(
+  @json.inspect!(
     result.selections,
-    Some(
+    content=[
       {
-        color: @struct.ColorName::BLUE,
-        selections: [
-          (0, "test_map_104000000_name (100 mesos)"),
-          (1, "test_map_102000000_name (100 mesos)"),
-          (2, "test_map_100000000_name (100 mesos)"),
-          (3, "test_map_103000000_name (100 mesos)"),
-          (4, "test_map_120000000_name (80 mesos)"),
+        "color": "blue",
+        "selections": [
+          [0, "test_map_104000000_name (100 mesos)"],
+          [1, "test_map_102000000_name (100 mesos)"],
+          [2, "test_map_100000000_name (100 mesos)"],
+          [3, "test_map_103000000_name (100 mesos)"],
+          [4, "test_map_120000000_name (80 mesos)"],
         ],
       },
-    ),
+    ],
   )
   inspect!(
     result.text_html,
+    content="We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.",
+  )
+}
+
+test "test no options" {
+  let template = "Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the \r\n#bAnt Tunnel#k."
+  let result = parse_talk_content!(template, { fn_map: {} })
+  assert_eq!(result.selections, None)
+  inspect!(
+    result.text_html,
     content=
-      #|We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.
+      #|Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the <br/><span style="color: blue">Ant Tunnel</span>.
     ,
   )
 }
@@ -81,24 +91,35 @@ test "test selections" {
 /// #F[imagelocation]# - Shows an image inside the .wz files.
 /// #L[number]# Selection open.
 /// \r\n - Moves down a line.
-fn parse_talk_content(text : String, ctx : VariableContext) -> TalkContent! {
-  let text = text
-    .replace_all(old="\r\n", new="\n")
-    .replace_all(old="\r", new="\n") // normalize newlines
+fn parse_talk_content(
+  text : String,
+  ctx : VariableContext
+) -> TalkContent!ParseTalkError {
+  let text = text.replace_all(old="\r\n", new="\n") // normalize newlines
   // Split text into normal text and selections
-  let lines = text.split("\n").to_array()
-  let mut normal_text = lines[0]
-  let mut color = @struct.ColorName::BLACK
-  if normal_text.ends_with("#b") { // TODO: more color support
-    normal_text = normal_text.trim_end("#b")
-    color = @struct.ColorName::BLUE
+  let selection_start = text.index_of("#L")
+  let (normal_text, selection_text) = if selection_start < 0 {
+    (text, "")
+  } else {
+    (
+      text.substring(start=0, end=selection_start).trim_end("\n"),
+      text.substring(start=selection_start),
+    )
   }
-  let text_html = parse_text!(ctx, normal_text)
-  if lines.length() == 1 {
+  let (normal_text, color) = if normal_text.ends_with("#b") { // TODO: more color support
+    (normal_text.trim_end("#b"), @struct.ColorName::BLUE)
+  } else {
+    (normal_text, @struct.ColorName::BLACK)
+  }
+  let text_html = parse_text!(
+    ctx,
+    normal_text.replace_all(old="\n", new="<br/>"),
+  )
+  if selection_text.is_empty() {
     return { text_html, selections: None }
   }
   let selections = []
-  for line in lines[1:] {
+  for line in selection_text.split("\n") {
     let selection = parse_selection!(ctx, line)
     selections.push(selection)
   }
@@ -106,7 +127,7 @@ fn parse_talk_content(text : String, ctx : VariableContext) -> TalkContent! {
 }
 
 /// Parse text without selections.
-fn parse_text(ctx : VariableContext, text : String) -> String! {
+fn parse_text(ctx : VariableContext, text : String) -> String!ParseTalkError {
   let chunk = []
   let mut color = @struct.ColorName::BLACK
   let mut bold = false
@@ -129,7 +150,7 @@ fn parse_text(ctx : VariableContext, text : String) -> String! {
         let html = if style.is_empty() {
           text
         } else {
-          let style_str = style.join(";")
+          let style_str = style |> String::concat(separator=";")
           "<span style=\"\{style_str}\">\{text}</span>"
         }
         chunk.push(html)
@@ -162,7 +183,7 @@ fn parse_text(ctx : VariableContext, text : String) -> String! {
     // Handle variable
     let markup_end = text.index_of("#", from=markup_start + 1)
     if markup_end < 0 {
-      fail!("Missing markup close") // TODO: allow # in text
+      raise ParseTalkError("Missing markup close") // TODO: allow # in text
     }
     push_last_chunk()
     let variable = text.substring(start=markup_start + 1, end=markup_end)
@@ -171,27 +192,35 @@ fn parse_text(ctx : VariableContext, text : String) -> String! {
         let var_value = f!(variable.substring(start=1))
         chunk.push(var_value)
       }
-      None => fail!("Unknown variable: \{variable}")
+      None => raise ParseTalkError("Unknown variable: \{variable}")
     }
     continue markup_end + 1
   }
-  chunk.join("")
+  chunk |> String::concat(separator="")
 }
 
-fn parse_selection(ctx : VariableContext, line : String) -> (Int, String)! {
+fn parse_selection(
+  ctx : VariableContext,
+  line : String
+) -> (Int, String)!ParseTalkError {
   if line.starts_with("#L").not() {
-    fail!("Missing selection open markup")
+    raise ParseTalkError("Missing selection open markup")
   }
   if line.ends_with("#l").not() {
-    fail!("Missing selection close markup")
+    raise ParseTalkError("Missing selection close markup")
   }
   let digit_start = 2
   let digit_end = line.index_of("#", from=digit_start)
   if digit_end < 0 {
-    fail!("Missing selection index")
+    raise ParseTalkError("Missing selection index")
   }
   let digits = line.substring(start=digit_start, end=digit_end)
-  let index = @strconv.parse_int!(digits, base=10)
+  let index = try {
+    @strconv.parse_int!(digits, base=10)
+  } catch {
+    @strconv.StrConvError(_) =>
+      raise ParseTalkError("invalid selection index: \{digits}")
+  }
   let text = parse_text!(
     ctx,
     line.substring(start=digit_end + 1, end=line.length() - 2),
@@ -202,7 +231,7 @@ fn parse_selection(ctx : VariableContext, line : String) -> (Int, String)! {
 /// Replace placeholders in the text with the values from the context.
 /// Placeholders are the text in the format of `#\{kind}\{payload}#`.
 struct VariableContext {
-  fn_map : Map[Char, (String) -> String!] // kind -> payload -> value
+  fn_map : Map[Char, (String) -> String!ParseTalkError] // kind -> payload -> value
 }
 
 let color_map : Map[Char, @struct.ColorName] = {
@@ -212,3 +241,5 @@ let color_map : Map[Char, @struct.ColorName] = {
   'k': @struct.ColorName::BLACK,
   'r': @struct.ColorName::RED,
 }
+
+pub type! ParseTalkError String derive(Show)

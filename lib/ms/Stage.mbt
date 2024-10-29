@@ -17,20 +17,20 @@ pub struct Stage {
   mut player : @player.Player?
   mut state : StageState
   mut map_id : Int
-  npcs : MapNpcs
+  npcs : @npc.MapNpcs
   mobs : @monster.MapMobs
   drops : @drop.MapDrops
   inventory : @inventory.Inventory
   damage_number_set : @combat_ui.DamageNumberSet
   mut combat : Combat?
-  mut start : TimePoint
 }
 
 pub fn Stage::new(
   map_portals_animations : @map.MapPortalAnimations,
   mobs : @monster.MapMobs,
   drops : @drop.MapDrops,
-  inventory : @inventory.Inventory
+  inventory : @inventory.Inventory,
+  npcs : @npc.MapNpcs
 ) -> Stage {
   {
     map_portals_animations,
@@ -38,16 +38,16 @@ pub fn Stage::new(
     player: None,
     state: StageState::INACTIVE,
     map_id: 10000,
-    npcs: MapNpcs::new(),
+    npcs,
     damage_number_set: @combat_ui.DamageNumberSet::new(),
     combat: None,
     mobs,
     drops,
     inventory,
-    start: TimePoint::default(),
   }
 }
 
+/// @alert deprecated "Init dependencies in Game.mbt"
 pub fn Stage::get() -> Stage {
   g_stage.must_get()
 }
@@ -77,7 +77,10 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   }
 }
 
-pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
+pub fn load_player(
+  self : Stage,
+  entry : @character.CharEntry
+) -> @player.Player! {
   let player = @player.Player::from_entry!(
     entry,
     self.inventory,
@@ -85,7 +88,6 @@ pub fn load_player(self : Stage, entry : @login.CharEntry) -> @player.Player! {
   )
   self.player = Some(player)
   self.combat = Some(Combat::new(self.damage_number_set, self.mobs))
-  self.start = now_micro() |> TimePoint::from_micro
   player
 }
 
@@ -93,7 +95,7 @@ pub fn get_player(self : Stage) -> @player.Player? {
   self.player
 }
 
-pub fn get_npcs(self : Stage) -> MapNpcs {
+pub fn get_npcs(self : Stage) -> @npc.MapNpcs {
   self.npcs
 }
 
@@ -215,8 +217,8 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
 fn send_cursor(
   self : Stage,
   pressed : Bool,
-  position : Point[Int]
-) -> CursorState {
+  position : @struct.Point[Int]
+) -> @ui.CursorState {
   // auto statusbar = UI::get().get_element<UIStatusBar>();
 
   // if (statusbar && statusbar->get().is_menu_active()) {
@@ -318,19 +320,11 @@ fn new_change_map_packet(
   ..write_short(if usewheel { 1 } else { 0 })
 }
 
-struct ChangeStatsHandler {
-  stage : Stage
-}
-
-fn ChangeStatsHandler::new(stage : Stage) -> ChangeStatsHandler {
-  { stage, }
-}
-
-fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
+fn handle_change_stats(self : Stage, recv : @net.InPacket) -> Unit! {
   recv.read_bool!() |> ignore // 'itemreaction'
   let updatemask = recv.read_int!()
   let mut recalculate = false
-  let player = self.stage.get_player().unwrap()
+  let player = self.get_player().unwrap()
   for it in @MapleStat.codes {
     let (stat_id, stat_mask) = it
     if (updatemask & stat_mask) != 0 {
@@ -340,11 +334,10 @@ fn handle(self : ChangeStatsHandler, recv : @net.InPacket) -> Unit! {
   if recalculate {
     player.recalc_stats(false)
   }
-  UI::get().enable()
 }
 
 fn handle_stat(
-  self : ChangeStatsHandler,
+  self : Stage,
   player : @player.Player,
   stat : @MapleStat.Id,
   recv : @net.InPacket
@@ -369,7 +362,7 @@ fn handle_stat(
     }
     @MapleStat.Id::EXP =>
       player.get_stats().set_exp(recv.read_int!().to_int64())
-    @MapleStat.Id::MESO => self.stage.inventory.set_meso(recv.read_int!())
+    @MapleStat.Id::MESO => self.inventory.set_meso(recv.read_int!())
     @MapleStat.Id::STR => {
       player.get_stats().str = recv.read_short!()
       recalculate = true
@@ -506,4 +499,11 @@ fn new_pickup_item_packet(
   ..write_byte((0).to_byte())
   ..write_point(position)
   ..write_int(oid)
+}
+
+pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
+  self.clear()
+  @graphics.GraphicsGL::get().clear()
+  self.load(mapid, portalid)
+  transfer_player()
 }

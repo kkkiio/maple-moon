@@ -1,12 +1,13 @@
 struct Window {
   opacity : Double
-  mut last_click : TimePoint
+  get_now : () -> @utils.TimePoint
+  mut last_click : @utils.TimePoint
 }
 
 let g_window : @utils.Singleton[Window] = @utils.Singleton::new()
 
-fn Window::new() -> Window {
-  { opacity: 1.0, last_click: TimePoint::default() }
+fn Window::new(get_now : () -> @utils.TimePoint) -> Window {
+  { opacity: 1.0, last_click: @utils.TimePoint::default(), get_now }
 }
 
 pub fn Window::get() -> Window {
@@ -30,7 +31,7 @@ pub fn onmouseup(self : Window) -> Unit {
 }
 
 pub fn onmousedown(self : Window) -> Unit {
-  let now = TimePoint::from_micro(now_micro())
+  let now = (self.get_now)()
   let diff_ms = now.since(self.last_click).to_milliseconds()
   self.last_click = now
   if diff_ms > 10 && diff_ms < 200 {

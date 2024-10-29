@@ -4,10 +4,10 @@ typealias UIElementType = @ui.UIElementType
 
 typealias UIElement = @ui.UIElement
 
-let min_delay_next_grab : Duration = 10 |> Duration::from_micro
+let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
 struct UIStateGame {
-  timer : Timer
+  timer : @utils.Timer
   elements : Map[UIElementType, @ui.Element]
   element_order : Array[UIElementType]
   mut focused : UIElementType
@@ -19,12 +19,12 @@ struct UIStateGame {
   // ma_tooltip : MapTooltip
   // mut tooltip : Option[Tooltip]
   // tooltip_parent : TooltipParent
-  time_rel_grabbed : TimePoint
+  time_rel_grabbed : @utils.TimePoint
   mut vwidth : Int
   mut vheight : Int
 }
 
-pub fn UIStateGame::new(timer : Timer) -> UIStateGame {
+pub fn UIStateGame::new(timer : @utils.Timer) -> UIStateGame {
   {
     timer,
     elements: Map::new(),
@@ -286,11 +286,11 @@ pub fn handle_user_list(self : UIStateGame, tab : UIUserListTab) -> Unit {
 
 pub fn send_cursor(
   self : UIStateGame,
-  cursorstate : CursorState,
+  cursorstate : @ui.CursorState,
   cursorpos : @struct.Point[Int]
-) -> CursorState {
-  let clicked = cursorstate == CursorState::CLICKING ||
-    cursorstate == CursorState::VSCROLL_IDLE
+) -> @ui.CursorState {
+  let clicked = cursorstate == @ui.CursorState::CLICKING ||
+    cursorstate == @ui.CursorState::VSCROLL_IDLE
   match self.get(self.focused) {
     Some(focusedelement) => {
       if focusedelement.get_ui_model().is_active() {
@@ -348,7 +348,7 @@ pub fn send_cursor(
     }
   }
   if self.timer.now().since(self.time_rel_grabbed) < min_delay_next_grab {
-    return CursorState::IDLE
+    return @ui.CursorState::IDLE
   }
   match self.dragged {
     Some(dragged) => return dragged.object.send_cursor(clicked, cursorpos)

@@ -35,12 +35,6 @@ pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
   }
 }
 
-enum LoginStage {
-  INIT
-  START_SEND
-  LOGIN_SEND
-}
-
 struct UILogin {
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
@@ -52,7 +46,6 @@ struct UILogin {
   // mut passwordbg : Texture
   // mut checkbox : BoolPair[Texture]
   mut saveid : Bool
-  mut login_stage : LoginStage
   login_module : @login.Module
 }
 
@@ -111,7 +104,6 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
     sprites,
     buttons: Map::new(),
     saveid: false,
-    login_stage: INIT,
     login_module,
   }
   // version: Text::new(),
@@ -181,7 +173,7 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
   // } else {
   //   obj.account.set_state(Textfield::State::FOCUSED)
   // }
-
+  login_module.login("kkkiio", "kkkiio") // TODO: allow select account
   obj
 }
 
@@ -209,28 +201,6 @@ pub fn draw(self : UILogin, alpha : Double) -> Unit {
 
 pub fn update(self : UILogin) -> Unit {
   @ui.update_sprites(self.sprites.iter())
-  let p = @net.PacketProcessor::get()
-  match p.get_status() {
-    READY =>
-      match self.login_stage {
-        INIT => {
-          fn_login_start()
-          self.login_stage = START_SEND
-        }
-        START_SEND => { // UI::get().emplace(UILoginWait::new(|| {}))
-          // let loginwait = UI::get().get_element[UILoginWait]()
-          // if loginwait && loginwait.get().is_active() {
-          fn_login(self, "kkkiio", "kkkiio")
-          self.login_stage = LOGIN_SEND
-        }
-        LOGIN_SEND => ()
-      }
-    OPENED => ()
-    CLOSED => {
-      p.connect_login()
-      self.login_stage = INIT
-    }
-  }
 }
 
 // pub fn login(self : UILogin) -> Unit {
@@ -279,7 +249,7 @@ pub fn send_cursor(
   self : UILogin,
   clicked : Bool,
   cursor_pos : Point[Int]
-) -> CursorState {
+) -> @ui.CursorState {
   // match self.account.send_cursor(cursor_pos, clicked) {
   //   Some(new_state) => return new_state
   //   None => ()
@@ -333,12 +303,4 @@ pub fn remove_cursor(self : UILogin) -> Unit {
 
 pub fn deactivate(self : UILogin) -> Unit {
   self.base.deactivate()
-}
-
-fn fn_login_start() -> Unit {
-  @login.new_login_start_packet().dispatch()
-}
-
-fn fn_login(self : UILogin, account : String, password : String) -> Unit {
-  @login.login(self.login_module, account, password)
 }

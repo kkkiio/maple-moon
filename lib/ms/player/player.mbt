@@ -1,10 +1,6 @@
 typealias Movement = @physics.Movement
 
-typealias CharBase = @character.CharBase
-
 typealias CharStats = @character.CharStats
-
-typealias CharLook = @character.CharLook
 
 pub struct Player {
   char_base : @character.CharBase
@@ -28,18 +24,16 @@ pub trait Inventory {
   get_bulletcount(Self) -> Int
 }
 
-pub typealias CharEntry = @login.CharEntry
-
 /// Construct a player object from the given character entry.
 pub fn Player::from_entry(
-  entry : CharEntry,
+  entry : @character.CharEntry,
   inventory : Inventory,
   damage_number_set : @combat_ui.DamageNumberSet
 ) -> Player! {
   let p = {
-    char_base: CharBase::new(
+    char_base: @character.CharBase::new(
       entry.id,
-      CharLook::new!(entry.look),
+      @character.CharLook::new!(entry.look),
       entry.stats.name,
       damage_number_set,
     ),

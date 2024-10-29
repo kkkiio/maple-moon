@@ -1,9 +1,0 @@
-{
-  "import": [
-    "KKKIIO/maple-moon-client/lib/ms/monster",
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/ms/map_object",
-    "KKKIIO/maple-moon-client/lib/ms/combat"
-  ]
-}

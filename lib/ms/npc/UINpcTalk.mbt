@@ -561,15 +561,16 @@ struct NxMapInfo {
 }
 
 fn convert_npc_text(
-  tx : String,
+  raw_text : String,
   npcid : Int,
   player_name : String
 ) -> NPCTalkContent! {
+  @log.debug({ "raw_text": raw_text }, "npc talk")
   let content = parse_talk_content!(
-    tx,
+    raw_text,
     new_variable_context(npcid, player_name),
   )
-  @log.info({ "tx": tx, "content": content }, "npc talk")
+  // @log.debug({ "raw_text": raw_text, "content": content }, "npc talk")
   let text_button_content = []
   match content.selections {
     Some(selections) =>
@@ -614,14 +615,24 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
       },
       'h': fn(_v) { player_name },
       't': fn(v) {
-        let itemid = @strconv.parse_int!(v)
+        let itemid = try {
+          @strconv.parse_int!(v)
+        } catch {
+          @strconv.StrConvError(_) =>
+            raise ParseTalkError("invalid item id: \{v}")
+        }
         let itemname = @resource.string_loader()
           .load_res(["Consume.img", itemid.to_string(), "name"])
           .get_string()
         itemname
       },
       'm': fn(v) {
-        let mapid = @strconv.parse_int!(v)
+        let mapid = try {
+          @strconv.parse_int!(v)
+        } catch {
+          @strconv.StrConvError(_) =>
+            raise ParseTalkError("invalid map id: \{v}")
+        }
         let map_info = get_map_info_by_id(mapid)
         map_info.name
       },

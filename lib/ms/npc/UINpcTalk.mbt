@@ -2,12 +2,10 @@ typealias ButtonState = @ui.ButtonState
 
 typealias CursorState = @ui.CursorState
 
-typealias UIModel = @ui.UIModel
-
 typealias UIElementType = @ui.UIElementType
 
 struct UINpcTalk {
-  base : UIModel
+  base : @ui.UIModel
   buttons : Map[Int, @ui.UIButton]
   top : @graphics.Texture
   fill : @graphics.Texture
@@ -146,7 +144,7 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   }
 }
 
-pub fn get_ui_model(self : UINpcTalk) -> UIModel {
+pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
   self.base
 }
 

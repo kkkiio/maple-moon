@@ -68,7 +68,7 @@ pub fn UIShop::new(
       Buttons::CASH,
     ] {
     let tabnum = i.to_string()
-    buttons[button] = @ui.TwoSpriteButton::new(selldis[tabnum], sellen[tabnum])
+    buttons[button] = @ui.TwoSpriteButton::load(selldis[tabnum], sellen[tabnum])
   }
   let buy_x = 8
   let buy_width = 257
@@ -303,7 +303,16 @@ pub fn sell(self : SellState, ~all : Bool = false) -> Unit {
   let sellable = item.sellable
   let slot = item.slot
   if sellable > 0 {
-    new_npc_shop_item_action_packet(slot, itemid, if all { sellable } else { 1 }, false).dispatch()
+    new_npc_shop_item_action_packet(
+      slot,
+      itemid,
+      if all {
+        sellable
+      } else {
+        1
+      },
+      false,
+    ).dispatch()
   }
 }
 

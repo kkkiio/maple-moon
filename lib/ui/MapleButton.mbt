@@ -1,5 +1,5 @@
 /// A standard maplestory-button with 4 states and a texture for each state.
-struct MapleButton {
+pub struct MapleButton {
   base : ButtonModel
   textures : @immut/hashmap.T[ButtonState, @graphics.Texture]
   animations : @immut/hashmap.T[ButtonState, @graphics.Animation]

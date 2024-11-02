@@ -5,17 +5,34 @@ struct TwoSpriteButton {
   spos : Point[Int]
 }
 
-pub fn TwoSpriteButton::new(
+/// @alert deprecated "Use TwoSpriteButton::new instead"
+pub fn TwoSpriteButton::load(
   nsrc : @resource.NxNode,
   ssrc : @resource.NxNode,
   ~np : Point[Int] = Point::default(),
-  ~sp : Point[Int] = np
+  ~sp : Point[Int] = np,
+  ~state : ButtonState = ButtonState::NORMAL
 ) -> TwoSpriteButton {
-  let textures = @utils.BoolPair::new(
-    nsrc |> @graphics.Texture::from_resource,
-    ssrc |> @graphics.Texture::from_resource,
-  )
-  { base: ButtonModel::default(), textures, npos: np, spos: sp }
+  let disabled = nsrc |> @graphics.Texture::from_resource
+  let enabled = ssrc |> @graphics.Texture::from_resource
+  TwoSpriteButton::new(disabled, enabled, ~np, ~sp, ~state)
+}
+
+pub fn TwoSpriteButton::new(
+  disabled : @graphics.Texture,
+  enabled : @graphics.Texture,
+  ~np : Point[Int] = Point::default(),
+  ~sp : Point[Int] = np,
+  ~active : Bool = true,
+  ~state : ButtonState = ButtonState::NORMAL
+) -> TwoSpriteButton {
+  let textures = @utils.BoolPair::new(disabled, enabled)
+  {
+    base: { active, pressed: false, position: Point::default(), state },
+    textures,
+    npos: np,
+    spos: sp,
+  }
 }
 
 pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {

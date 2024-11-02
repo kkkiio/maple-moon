@@ -65,27 +65,27 @@ pub fn UIItemInventory::new(
       @ui.ButtonState::IDENTITY
     }
   }
-  buttons[ItemInventoryUIButton::BT_TAB_EQUIP] = @ui.TwoSpriteButton::new(
+  buttons[ItemInventoryUIButton::BT_TAB_EQUIP] = @ui.TwoSpriteButton::load(
       tabdis["0"],
       taben["0"],
     )
     |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::EQUIP))
-  buttons[ItemInventoryUIButton::BT_TAB_USE] = @ui.TwoSpriteButton::new(
+  buttons[ItemInventoryUIButton::BT_TAB_USE] = @ui.TwoSpriteButton::load(
       tabdis["1"],
       taben["1"],
     )
     |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::USE))
-  buttons[ItemInventoryUIButton::BT_TAB_ETC] = @ui.TwoSpriteButton::new(
+  buttons[ItemInventoryUIButton::BT_TAB_ETC] = @ui.TwoSpriteButton::load(
       tabdis["2"],
       taben["2"],
     )
     |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::ETC))
-  buttons[ItemInventoryUIButton::BT_TAB_SETUP] = @ui.TwoSpriteButton::new(
+  buttons[ItemInventoryUIButton::BT_TAB_SETUP] = @ui.TwoSpriteButton::load(
       tabdis["3"],
       taben["3"],
     )
     |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::SETUP))
-  buttons[ItemInventoryUIButton::BT_TAB_CASH] = @ui.TwoSpriteButton::new(
+  buttons[ItemInventoryUIButton::BT_TAB_CASH] = @ui.TwoSpriteButton::load(
       tabdis["4"],
       taben["4"],
     )

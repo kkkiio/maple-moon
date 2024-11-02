@@ -11,7 +11,6 @@ pub fn Game::start() -> Game {
   @config.global().set_hardware_info()
   let login_module = @login.Module::new()
   let monster_module = @monster.Module::new()
-  let mob_combat = @monster.MobCombat::new(monster_module.get_map_mobs())
   let drop_module = @drop.Module::new()
   let inventory_module = @inventory.Module::new()
   let timer = @utils.Timer::new(
@@ -170,10 +169,13 @@ pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
   // TODO: reset game state if elapsed is too high
 
   // Update game with constant timestep as many times as possible.
-  self.accumulator += elapsed.to_micro_seconds()
-  let times = self.accumulator / timestep
-  self.accumulator -= timestep * times
-  (0).until(times).each(fn(_i) { self.update() })
+  let acc = self.accumulator + elapsed.to_micro_seconds()
+  let times = acc / timestep
+  let remaining = acc - timestep * times
+  self.accumulator = remaining
+  for _ in 0..<times {
+    self.update()
+  }
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)

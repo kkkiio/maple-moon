@@ -20,6 +20,12 @@ pub fn compare(self : Level, other : Level) -> Int {
   self.int_value().compare(other.int_value())
 }
 
+let all_levels : Array[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
+
+pub fn get_levels(~upto : Level = FOURTH) -> Iter[Level] {
+  all_levels.iter().take_while(fn(level) { level <= upto })
+}
+
 pub fn get_next_level(level : Level) -> Level {
   match level {
     BEGINNER => FIRST
@@ -155,7 +161,12 @@ pub fn get_subjob(self : Job, level : Level) -> Int {
       Level::BEGINNER => 0
       Level::FIRST => self.id / 100 * 100
       Level::SECOND => self.id / 10 * 10
-      Level::THIRD => if level == Level::FOURTH { self.id - 1 } else { self.id }
+      Level::THIRD =>
+        if self.level == Level::FOURTH {
+          self.id - 1
+        } else {
+          self.id
+        }
       Level::FOURTH => self.id
     }
   } else {

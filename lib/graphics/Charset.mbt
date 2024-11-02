@@ -107,17 +107,10 @@ pub fn draw_text_with_hspace(
   match self.alignment {
     CharsetAlignment::CENTER => shift -= hspace * length / 2
     CharsetAlignment::LEFT =>
-      text
-      .to_array()
-      .each(
-        fn(c) {
-          self.draw_char(
-            c,
-            args + DrawArgument::from_point(Point::new(shift, 0)),
-          )
-          shift += hspace
-        },
-      )
+      for c in text.iter() {
+        self.draw_char(c, args + DrawArgument::from_point(Point::new(shift, 0)))
+        shift += hspace
+      }
     CharsetAlignment::RIGHT =>
       text
       .to_array()
@@ -132,4 +125,22 @@ pub fn draw_text_with_hspace(
       )
   }
   shift
+}
+
+struct GameText {
+  charset : Charset
+  text : String
+  hspace : Int
+}
+
+pub fn GameText::new(
+  charset : Charset,
+  text : String,
+  hspace : Int
+) -> GameText {
+  { charset, text, hspace }
+}
+
+pub fn draw(self : GameText, args : DrawArgument) -> Int {
+  self.charset.draw_text_with_hspace(self.text, self.hspace, args)
 }

@@ -100,3 +100,10 @@ pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
   self.color = color
   self.image = None
 }
+
+pub fn with_text(self : Text, text : String) -> Text {
+  if self.text == text {
+    return self
+  }
+  { ..self, text, image: None }
+}

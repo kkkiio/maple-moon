@@ -72,11 +72,14 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit!,
-  ~log_recv : Bool = false
+  ~log_recv : Bool = true
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {
-      @log.debug({ "opcode": opcode, "len": recv.available() }, "received")
+      @log.debug(
+        { "opcode": opcode, "len": recv.bytes.length() - recv.pos },
+        "received",
+      )
     }
     try {
       handler!(recv)

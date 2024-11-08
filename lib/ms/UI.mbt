@@ -5,6 +5,7 @@ enum UiState {
 }
 
 struct UI {
+  registry : @action.Registry
   timer : @utils.Timer
   login_module : @login.Module
   mut state : UIState?
@@ -15,10 +16,15 @@ struct UI {
 
 let g_ui : @utils.Singleton[UI] = @utils.Singleton::new()
 
-fn UI::new(timer : @utils.Timer, login_module : @login.Module) -> UI {
+fn UI::new(
+  timer : @utils.Timer,
+  login_module : @login.Module,
+  registry : @action.Registry
+) -> UI {
   let ui = {
     timer,
     login_module,
+    registry,
     state: None,
     cursor: @ui.Cursor::new(),
     keyboard: Keyboard::default(),
@@ -78,7 +84,8 @@ pub fn send_cursor(
 fn change_state(self : UI, id : UiState) -> Unit {
   match id {
     UiState::LOGIN => self.state = Some(UIStateLogin::new(self.login_module))
-    UiState::GAME => self.state = Some(UIStateGame::new(self.timer))
+    UiState::GAME =>
+      self.state = Some(UIStateGame::new(self.registry, self.timer))
     // UiState::CASHSHOP => UIStateCashShop::default(),
   }
 }

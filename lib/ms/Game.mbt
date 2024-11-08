@@ -16,7 +16,8 @@ pub fn Game::start() -> Game {
   let timer = @utils.Timer::new(
     fn() { now_micro() |> @utils.TimePoint::from_micro },
   )
-  let ui = UI::new(timer, login_module)
+  let action_registry = @action.Registry::new()
+  let ui = UI::new(timer, login_module, action_registry)
   g_ui.set(ui)
   let npc_module = @npc.Module::new(
     ui,
@@ -32,7 +33,22 @@ pub fn Game::start() -> Game {
   g_stage.set(stage)
   let window = Window::new(fn() { now_micro() |> @utils.TimePoint::from_micro })
   g_window.set(window)
-  let skill_book_module = @skill_book.Module::new()
+  let char_stats_module = @char_stats.Module::new(
+    fn() { stage.get_player().map(fn(p) { p.get_stats() }) },
+  )
+  for elem in char_stats_module.make_actions() {
+    let (id, descriptor) = elem
+    action_registry.register(id, descriptor)
+  }
+  let sp_stat_id = @char_stats.StatId(1)
+  let skill_book_module = @skill_book.Module::new(
+    fn() { stage.get_player() },
+    sp_stat_id,
+  )
+  for elem in skill_book_module.make_actions() {
+    let (id, descriptor) = elem
+    action_registry.register(id, descriptor)
+  }
   let shop_module = @shop.Module::new(ui)
   // ( 
 
@@ -73,7 +89,7 @@ pub fn Game::start() -> Game {
       login_module
       .make_handlers(
         fn(map_id, portal_id) { stage.transition(map_id, portal_id) },
-        fn(char_entry) { stage.load_player!(char_entry) },
+        fn(char_entry) { stage.load_player!(char_entry, sp_stat_id) },
         inventory_module.get_inventory(),
         fn(player) { setup_game_ui(player) },
       )
@@ -136,9 +152,7 @@ pub fn Game::start() -> Game {
           },
         ),
       )
-      |> Iter::concat(
-        skill_book_module.make_handlers(fn() { stage.get_player() }).iter(),
-      )
+      |> Iter::concat(skill_book_module.make_handlers().iter())
       // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
       // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
       // NPC Interaction Handlers

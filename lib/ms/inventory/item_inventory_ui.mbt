@@ -416,14 +416,14 @@ pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
     2 => () // Unisex
     _ => ()
   }
-  let reqLevel = equipdata.get_reqstat(@MapleStat.Id::LEVEL)
-  let reqDEX = equipdata.get_reqstat(@MapleStat.Id::DEX)
-  let reqSTR = equipdata.get_reqstat(@MapleStat.Id::STR)
-  let reqLUK = equipdata.get_reqstat(@MapleStat.Id::LUK)
-  let reqINT = equipdata.get_reqstat(@MapleStat.Id::INT)
-  let reqFAME = equipdata.get_reqstat(@MapleStat.Id::FAME)
+  let reqLevel = equipdata.get_reqstat(@maple_stat.Id::LEVEL)
+  let reqDEX = equipdata.get_reqstat(@maple_stat.Id::DEX)
+  let reqSTR = equipdata.get_reqstat(@maple_stat.Id::STR)
+  let reqLUK = equipdata.get_reqstat(@maple_stat.Id::LUK)
+  let reqINT = equipdata.get_reqstat(@maple_stat.Id::INT)
+  let reqFAME = equipdata.get_reqstat(@maple_stat.Id::FAME)
   let mut i = 0
-  if reqLevel > stats.level {
+  if reqLevel > stats.get_level() {
     i += 1
   } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
     i += 1

@@ -2,7 +2,7 @@ type StatLabel (@graphics.Text, @struct.Point[Int])
 
 struct UIStatsInfo {
   model : @ui.UIModel
-  stats : @character.CharStats
+  stats : CharStats
   btn_close : @ui.Button
   btn_hp : @ui.Button
   btn_mp : @ui.Button
@@ -18,10 +18,6 @@ struct UIStatsInfo {
   btn_ability : @ui.Button
   btn_detail_detail_close : @ui.Button
   sprites : Array[@graphics.Sprite]
-  rare_ability : @graphics.Texture
-  epic_ability : @graphics.Texture
-  unique_ability : @graphics.Texture
-  legendary_ability : @graphics.Texture
   none_ability : @graphics.Texture
   inner_ability : @utils.BoolPair[@graphics.Texture]
   textures_detail : Array[@graphics.Texture]
@@ -43,20 +39,17 @@ struct UIStatsInfo {
   // Detailed stats
   damage_detailed_label : StatLabel
   damage_bonus_label : StatLabel
-  boss_damage_label : StatLabel
   final_damage_label : StatLabel
   ignore_defense_label : StatLabel
   critical_rate_label : StatLabel
   critical_damage_label : StatLabel
-  status_resistance_label : StatLabel
   knockback_resistance_label : StatLabel
   defense_label : StatLabel
   speed_label : StatLabel
   jump_label : StatLabel
-  honor_label : StatLabel
 }
 
-pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
+pub fn UIStatsInfo::load(stats : CharStats) -> UIStatsInfo {
   let model = @ui.UIModel::new(
     @struct.Point::new(212, 20),
     @struct.Point::new(212, 318),
@@ -79,14 +72,6 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     detail["backgrnd3"] |> @graphics.Texture::from_resource,
     detail["backgrnd4"] |> @graphics.Texture::from_resource,
   ]
-  let rare_ability = ability_title["rare"]["0"]
-    |> @graphics.Texture::from_resource
-  let epic_ability = ability_title["epic"]["0"]
-    |> @graphics.Texture::from_resource
-  let unique_ability = ability_title["unique"]["0"]
-    |> @graphics.Texture::from_resource
-  let legendary_ability = ability_title["legendary"]["0"]
-    |> @graphics.Texture::from_resource
   let none_ability = ability_title["normal"]["0"]
     |> @graphics.Texture::from_resource
   let inner_ability = @utils.BoolPair::new(
@@ -106,7 +91,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
   let btn_hp = @ui.MapleButton::from_resource(main["BtHpUp"])
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::HP).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -116,7 +101,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     )
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::MP).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -126,7 +111,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     )
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::STR).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -136,7 +121,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     )
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::DEX).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -146,7 +131,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     )
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::INT).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -156,7 +141,7 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     )
     |> @ui.Button::new(
       on_click=fn() {
-        new_spend_ap_packet(@MapleStat.Id::LUK).dispatch()
+        new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
         @ui.ButtonState::NORMAL
       },
     )
@@ -308,14 +293,6 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     ),
     @struct.Point::new(100, 56),
   )
-  let boss_damage_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(196, 56),
-  )
   let final_damage_label = (
     @graphics.Text::new(
       @graphics.FontId::A11M,
@@ -347,14 +324,6 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
       @struct.ColorName::EMPEROR,
     ),
     @struct.Point::new(73, 110),
-  )
-  let status_resistance_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(100, 128),
   )
   let knockback_resistance_label = (
     @graphics.Text::new(
@@ -388,14 +357,6 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     ),
     @struct.Point::new(196, 164),
   )
-  let honor_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 283),
-  )
   let ui = {
     model,
     stats,
@@ -414,10 +375,6 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     btn_ability,
     btn_detail_detail_close,
     sprites,
-    rare_ability,
-    epic_ability,
-    unique_ability,
-    legendary_ability,
     none_ability,
     inner_ability,
     textures_detail,
@@ -437,17 +394,14 @@ pub fn UIStatsInfo::load(stats : @character.CharStats) -> UIStatsInfo {
     luk_label,
     damage_detailed_label,
     damage_bonus_label,
-    boss_damage_label,
     final_damage_label,
     ignore_defense_label,
     critical_rate_label,
     critical_damage_label,
-    status_resistance_label,
     knockback_resistance_label,
     defense_label,
     speed_label,
     jump_label,
-    honor_label,
   }
   update_all_stats(ui)
   ui
@@ -496,17 +450,14 @@ pub fn draw(self : UIStatsInfo, alpha : Double) -> Unit {
     let detailed_labels = [
       self.damage_detailed_label,
       self.damage_bonus_label,
-      self.boss_damage_label,
       self.final_damage_label,
       self.ignore_defense_label,
       self.critical_rate_label,
       self.critical_damage_label,
-      self.status_resistance_label,
       self.knockback_resistance_label,
       self.defense_label,
       self.speed_label,
       self.jump_label,
-      self.honor_label,
     ]
     for label in detailed_labels {
       let labelpos = (self.model.position + label._.1).shift_x(213)
@@ -546,14 +497,17 @@ fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
   ]
 }
 
-fn new_spend_ap_packet(stat : @MapleStat.Id) -> @net.OutPacket {
+fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
   ..write_time()
-  ..write_int(@MapleStat.codes[stat].unwrap())
+  ..write_int(@maple_stat.codes[stat].unwrap())
 }
 
-fn update_ap(stats : @character.CharStats, buttons : Array[@ui.Button]) -> Bool {
-  let nowap = stats.ap > 0
+fn update_ap(
+  stats : CharStats,
+  buttons : Array[@ui.Button]
+) -> Bool {
+  let nowap = stats.get_ap() > 0
   let newstate = if nowap {
     @ui.ButtonState::NORMAL
   } else {
@@ -566,7 +520,7 @@ fn update_ap(stats : @character.CharStats, buttons : Array[@ui.Button]) -> Bool 
 }
 
 fn update_basevstotal(
-  stats : @character.CharStats,
+  stats : CharStats,
   label : StatLabel,
   base : Int,
   tstat : @equip_stat.Id
@@ -587,7 +541,7 @@ fn update_basevstotal(
 }
 
 fn update_buffed(
-  stats : @character.CharStats,
+  stats : CharStats,
   label : StatLabel,
   stat : @equip_stat.Id
 ) -> Unit {
@@ -609,8 +563,8 @@ fn update_buffed(
 }
 
 fn update_all_stats(self : UIStatsInfo) -> Unit {
-  self.ap_label._.0.change_text(self.stats.ap.to_string())
-  if self.has_ap != (self.stats.ap > 0) {
+  self.ap_label._.0.change_text(self.stats.get_ap().to_string())
+  if self.has_ap != (self.stats.get_ap() > 0) {
     self.has_ap = update_ap(
       self.stats,
       [
@@ -627,37 +581,37 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
   self.name_label._.0.change_text(self.stats.get_name())
   self.guild_label._.0.change_text("-")
   self.hp_label._.0.change_text(
-    self.stats.hp.to_string() +
+    self.stats.get_base_hp().to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::HP).to_string(),
   )
   self.mp_label._.0.change_text(
-    self.stats.mp.to_string() +
+    self.stats.get_base_mp().to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::MP).to_string(),
   )
   update_basevstotal(
     self.stats,
     self.str_label,
-    self.stats.str,
+    self.stats.get_str(),
     @equip_stat.Id::STR,
   )
   update_basevstotal(
     self.stats,
     self.dex_label,
-    self.stats.dex,
+    self.stats.get_dex(),
     @equip_stat.Id::DEX,
   )
   update_basevstotal(
     self.stats,
     self.int_label,
-    self.stats.int,
+    self.stats.get_int(),
     @equip_stat.Id::INT,
   )
   update_basevstotal(
     self.stats,
     self.luk_label,
-    self.stats.luk,
+    self.stats.get_luk(),
     @equip_stat.Id::LUK,
   )
   self.damage_label._.0.change_text(
@@ -676,9 +630,6 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
     self.stats.get_maxdamage().to_string(),
   )
   self.damage_bonus_label._.0.change_text("0%")
-  self.boss_damage_label._.0.change_text(
-    (self.stats.get_bossdmg() * 100).to_int().to_string() + "%",
-  )
   self.final_damage_label._.0.change_text("0%")
   self.ignore_defense_label._.0.change_text(
     self.stats.get_ignoredef().to_int().to_string() + "%",
@@ -687,9 +638,6 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
     (self.stats.get_critical() * 100).to_int().to_string() + "%",
   )
   self.critical_damage_label._.0.change_text("0.00%")
-  self.status_resistance_label._.0.change_text(
-    self.stats.get_resistance().to_int().to_string(),
-  )
   self.knockback_resistance_label._.0.change_text("0%")
   update_buffed(self.stats, self.defense_label, @equip_stat.Id::WDEF)
   self.speed_label._.0.change_text(
@@ -698,11 +646,6 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
   self.jump_label._.0.change_text(
     self.stats.get_total(@equip_stat.Id::JUMP).to_string() + "%",
   )
-  self.honor_label._.0.change_text(self.stats.get_honor().to_string())
-}
-
-pub fn UIStatsInfo::is_focused() -> Bool {
-  false
 }
 
 pub fn get_ui_model(self : UIStatsInfo) -> @ui.UIModel {

@@ -14,19 +14,17 @@ pub fn Charset::from_resource(
   alignment : CharsetAlignment
 ) -> Charset {
   let chars = Map::new()
-  src.each(
-    fn(sub) {
-      let name = sub.name()
-      if sub["__b"].is_null() || name == "" {
-        return
-      }
-      let mut c = name[0]
-      if c == '\\' {
-        c = '/'
-      }
-      chars.set(c, Texture::from_resource(sub))
-    },
-  )
+  for sub in src {
+    let name = sub.name()
+    if sub["__b"].is_null() || name == "" {
+      continue
+    }
+    let mut c = name[0]
+    if c == '\\' {
+      c = '/'
+    }
+    chars.set(c, Texture::from_resource(sub))
+  }
   { chars, alignment }
 }
 

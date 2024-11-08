@@ -456,7 +456,7 @@ fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
   { stats, look, id }
 }
 
-fn parse_stats(recv : @net.InPacket) -> @character.StatsEntry! {
+fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
   let name = recv.read_padded_string!(13)
   let female = recv.read_bool!()
   recv.read_byte!() |> ignore // skin

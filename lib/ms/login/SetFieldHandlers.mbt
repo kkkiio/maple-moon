@@ -69,8 +69,8 @@ fn set_field(
 
   player.recalc_stats(true)
   new_player_update_packet().dispatch()
-  let portalid = player.get_stats().portal
-  let mapid = player.get_stats().map_id
+  let portalid = player.get_stats().get_portal()
+  let mapid = player.get_stats().get_map_id()
   transition(mapid, portalid)
 
   // Sound(Sound::Name::GAME_START).play();

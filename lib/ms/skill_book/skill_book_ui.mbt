@@ -17,34 +17,28 @@ struct SkillDisplayMeta {
   level_text : @graphics.Text
 }
 
-struct RenderState {
+struct LogicState {
+  mut attrs : Attributes
   model : @ui.UIModel
-  sprites : Array[@graphics.Sprite]
-  stats : @character.CharStats
-  skillbook : @character.SkillBook
-  job : @job.Job
-  tab_resources : Array[TabResource]
   btn_close : @ui.MapleButton
   btn_hyper : @ui.MapleButton
   btn_guild_skill : @ui.MapleButton
   btn_ride : @ui.MapleButton
-  sp_before : @graphics.Charset
-  sp_after : @graphics.Charset
-  bg_dimensions : @struct.Point[Int]
   sp_up_btns : Array[@ui.MapleButton]
   mut tab : Int
-  mut sp_enabled : Bool
 }
 
-struct TabResource {
-  tab_btn_disabled_tex : @graphics.Texture
-  tab_btn_enabled_tex : @graphics.Texture
-  skills : Array[SkillDisplayMeta]
-  book_icon : @graphics.Texture
-  book_name : String
+struct Resources {
+  sprites : Array[@graphics.Sprite]
+  tab_btn_disabled_res : @resource.NxNode
+  tab_btn_enabled_res : @resource.NxNode
+  line : @graphics.Texture
+  skille : @graphics.Texture
+  skilld : @graphics.Texture
+  skillb : @graphics.Texture
 }
 
-struct DrawState {
+struct RenderState {
   model : @ui.UIModel
   sprites : Array[@graphics.Sprite]
   buttons : Array[@ui.Button]
@@ -52,9 +46,6 @@ struct DrawState {
   book_text : @graphics.Text
   sp_label : @graphics.Text
   skills : Array[SkillDrawState]
-  sp_before : @graphics.GameText
-  sp_after : @graphics.GameText
-  sp_enabled : Bool
 }
 
 struct SkillDrawState {
@@ -64,16 +55,6 @@ struct SkillDrawState {
   level_text : @graphics.Text
 }
 
-struct Resources {
-  line : @graphics.Texture
-  sp_backgrnd : @graphics.Texture
-  sp_backgrnd2 : @graphics.Texture
-  sp_backgrnd3 : @graphics.Texture
-  skille : @graphics.Texture
-  skilld : @graphics.Texture
-  skillb : @graphics.Texture
-}
-
 fn draw(self : SkillDrawState, args : @graphics.DrawArgument) -> Unit {
   self.icon.draw(args.get_pos())
   self.name_text.draw(args.get_pos() + @struct.Point::new(38, -5))
@@ -81,16 +62,19 @@ fn draw(self : SkillDrawState, args : @graphics.DrawArgument) -> Unit {
 }
 
 struct SkillBookUI {
-  render_state : RenderState
+  logic_state : LogicState
   resources : Resources
-  mut draw_state : DrawState?
+  mut render_state : RenderState?
 }
 
-pub fn SkillBookUI::new(
-  skillbook : @character.SkillBook,
-  stats : @character.CharStats
-) -> SkillBookUI {
-  let skillbook = skillbook
+pub struct Attributes {
+  skillbook : @character.SkillBook
+  job : @job.Job
+  level : Int
+  sp : Int
+}
+
+pub fn SkillBookUI::new(attrs : Attributes) -> SkillBookUI {
   let skill = @resource.ui_loader().load_res(["UIWindow2.img", "Skill"])
   let main = skill["main"]
   let ui_backgrnd = main["backgrnd"]
@@ -101,22 +85,6 @@ pub fn SkillBookUI::new(
   let skille = main["skill1"] |> @graphics.Texture::from_resource
   let skillb = main["skillBlank"] |> @graphics.Texture::from_resource
   let line = main["line"] |> @graphics.Texture::from_resource
-  let job = stats.job
-  let curr_job_level = job.get_level()
-  let skillPoint = @resource.ui_loader().load_res(
-    ["UIWindow4.img", "Skill", "skillPoint"],
-  )
-  let sp_backgrnd = skillPoint["backgrnd"] |> @graphics.Texture::from_resource
-  let sp_backgrnd2 = skillPoint["backgrnd2"] |> @graphics.Texture::from_resource
-  let sp_backgrnd3 = skillPoint["backgrnd3"] |> @graphics.Texture::from_resource
-  let sp_before = @graphics.Charset::new(
-    skillPoint["num"],
-    @graphics.CharsetAlignment::RIGHT,
-  )
-  let sp_after = @graphics.Charset::new(
-    skillPoint["num"],
-    @graphics.CharsetAlignment::RIGHT,
-  )
   let sprites = []
   sprites.push(
     @graphics.Sprite::from_resource(
@@ -131,37 +99,9 @@ pub fn SkillBookUI::new(
     close,
     pos=@struct.Point::new(bg_dimensions.x - 23, 6),
   )
-  let tab_resources = []
   let tab_res = main["Tab"]
-  let enabled = tab_res["enabled"]
-  let disabled = tab_res["disabled"]
-  for i, level in @job.get_levels(upto=curr_job_level) |> enumerate {
-    let skills = []
-    let subid = job.get_subjob(level)
-    let job_data = @job.JobData::get(subid)
-    for skill_id in job_data.skills {
-      let level = skillbook.get_level(skill_id)
-      let masterlevel = skillbook.get_masterlevel(skill_id)
-      let invisible = @skill.SkillData::get?(skill_id).unwrap().invisible // TODO: handle error
-      if invisible && masterlevel == 0 {
-        continue
-      }
-      skills.push(SkillDisplayMeta::new?(skill_id, level).unwrap())
-    }
-    let subid = job.get_subjob(level)
-    let data = @job.JobData::get(subid)
-    tab_resources.push(
-      {
-        tab_btn_disabled_tex: disabled[i.to_string()]
-        |> @graphics.Texture::from_resource,
-        tab_btn_enabled_tex: enabled[i.to_string()]
-        |> @graphics.Texture::from_resource,
-        skills,
-        book_icon: data.icon,
-        book_name: data.name,
-      },
-    )
-  }
+  let tab_btn_enabled_res = tab_res["enabled"]
+  let tab_btn_disabled_res = tab_res["disabled"]
   let sp_up_btns = []
   let mut y_adj = 0
   for i in 0..<12 {
@@ -185,48 +125,52 @@ pub fn SkillBookUI::new(
   let btn_hyper = @ui.MapleButton::from_resource(main["BtHyper"])
   let btn_guild_skill = @ui.MapleButton::from_resource(main["BtGuildSkill"])
   let btn_ride = @ui.MapleButton::from_resource(main["BtRide"])
+  let render_state = {
+    attrs,
+    model,
+    btn_close,
+    btn_hyper,
+    btn_guild_skill,
+    btn_ride,
+    sp_up_btns,
+    tab: 0,
+  }
   {
-    render_state: {
-      model,
-      sprites,
-      stats,
-      skillbook,
-      job,
-      tab_resources,
-      btn_close,
-      btn_hyper,
-      btn_guild_skill,
-      btn_ride,
-      sp_before,
-      sp_after,
-      bg_dimensions,
-      sp_up_btns,
-      tab: 0,
-      sp_enabled: false,
-    },
+    logic_state: render_state,
     resources: {
+      sprites,
       line,
-      sp_backgrnd,
-      sp_backgrnd2,
-      sp_backgrnd3,
       skille,
       skilld,
       skillb,
+      tab_btn_disabled_res,
+      tab_btn_enabled_res,
     },
-    draw_state: None,
+    render_state: None,
   }
 }
 
-fn render(self : RenderState, on_state_changed : () -> Unit) -> DrawState {
+fn render(
+  self : LogicState,
+  resources : Resources,
+  on_state_changed : () -> Unit
+) -> RenderState {
   let buttons = []
   buttons.push(self.btn_hyper |> @ui.Button::new)
   buttons.push(self.btn_guild_skill |> @ui.Button::new)
   buttons.push(self.btn_ride |> @ui.Button::new)
-  for i, tab_resource in self.tab_resources {
+  let job = self.attrs.job
+  let skillbook = self.attrs.skillbook
+  let curr_job_level = job.get_level()
+  for i, _ in @job.get_levels(upto=curr_job_level) |> enumerate {
+    let tab_btn_disabled_tex = resources.tab_btn_disabled_res[i.to_string()]
+      |> @graphics.Texture::from_resource
+    let tab_btn_enabled_tex = resources.tab_btn_enabled_res[i.to_string()]
+      |> @graphics.Texture::from_resource
     buttons.push(
       @ui.TwoSpriteButton::new(
-        tab_resource.tab_btn_disabled_tex,
-        tab_resource.tab_btn_enabled_tex,
+        tab_btn_disabled_tex,
+        tab_btn_enabled_tex,
         state=if i == self.tab {
           @ui.ButtonState::PRESSED
         } else {
@@ -242,24 +186,72 @@ fn render(self : RenderState, on_state_changed : () -> Unit) -> DrawState {
       ),
     )
   }
+  let selected_level = joblevel_by_tab(self.tab)
+  let skills = []
+  let subid = job.get_subjob(selected_level)
+  let job_data = @job.JobData::get(subid)
+  for skill_id in job_data.skills {
+    let level = skillbook.get_level(skill_id)
+    let masterlevel = skillbook.get_masterlevel(skill_id)
+    let data = @skill.SkillData::get?(skill_id).unwrap() // TODO: handle error
+    let invisible = data.invisible
+    if invisible && masterlevel == 0 {
+      continue
+    }
+    let ntx = data.icons[0]
+    let dtx = data.icons[1]
+    let motx = data.icons[2]
+    let icon = StatefulIcon::new(
+      // SkillIcon::new(id), // TODO: implement
+      ntx, dtx, motx,
+    )
+    let mut namestr = data.name
+    let name_text = @graphics.Text::new(
+      text=namestr,
+      @graphics.FontId::A11M,
+      @graphics.TextAlignment::LEFT,
+      @struct.ColorName::EMPEROR,
+    )
+    let level_text = @graphics.Text::new(
+      text=level.to_string(),
+      @graphics.FontId::A11M,
+      @graphics.TextAlignment::LEFT,
+      @struct.ColorName::EMPEROR,
+    )
+    let max_name_width = 97
+    let mut overhang = 3
+    while name_text.width() > max_name_width {
+      namestr = namestr.substring(end=namestr.length() - overhang) + ".."
+      overhang += 1
+      name_text.change_text(namestr)
+    }
+    skills.push(
+      {
+        name_text,
+        level_text,
+        icon,
+        id: @skill.SkillId::from_int?(skill_id).unwrap(), // TODO: handle error
+      },
+    )
+  }
+  let subid = job.get_subjob(selected_level)
+  let data = @job.JobData::get(subid)
+  let book_icon = data.icon
   let book_text = @graphics.Text::new(
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
     max_width=150,
-    text=self.tab_resources[self.tab].book_name,
+    text=data.name,
   )
-  let joblevel = self.job.get_level()
-  let level = self.stats.level
-  let skills = self.tab_resources[self.tab].skills
-  let beginner_sp = @math.minimum(level - 1, 6) -
+  let beginner_sp = @math.minimum(self.attrs.level - 1, 6) -
     skills
     .iter()
     .filter(fn(skill) { beginner_skills.contains(skill.id) })
     .count()
-  let sp = match joblevel {
+  let sp = match self.attrs.job.get_level() {
     @job.Level::BEGINNER => beginner_sp
-    _ => self.stats.sp
+    _ => self.attrs.sp
   }
   let sp_label = @graphics.Text::new(
     text=sp.to_string(),
@@ -267,21 +259,17 @@ fn render(self : RenderState, on_state_changed : () -> Unit) -> DrawState {
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
   )
-  let sp_before_text = level.to_string()
-  let sp_after_text = (level + sp).to_string()
-  let sp_before = @graphics.GameText::new(self.sp_before, sp_before_text, 12)
-  let sp_after = @graphics.GameText::new(self.sp_after, sp_after_text, 11)
   let model = self.model
   for i, btn in self.sp_up_btns {
     btn.get_button_base().set_active(i < skills.length())
     if i < skills.length() {
       let skill_id = skills[i].id
       let canraise = is_upgradable?(
-        self.skillbook,
+        self.attrs.skillbook,
         skill_id.int_value(),
         self.tab,
         beginner_sp,
-        self.stats.sp,
+        self.attrs.sp,
       ).unwrap() // TODO: handle error
       btn
       .get_button_base()
@@ -303,8 +291,6 @@ fn render(self : RenderState, on_state_changed : () -> Unit) -> DrawState {
       ),
     )
   }
-  let book_icon = self.tab_resources[self.tab].book_icon
-  let sprites = self.sprites
   buttons.push(
     self.btn_close
     |> @ui.Button::new(
@@ -320,30 +306,30 @@ fn render(self : RenderState, on_state_changed : () -> Unit) -> DrawState {
         name_text: meta.name_text,
         level_text: meta.level_text,
         icon: meta.icon,
-        enabled: check_required?(self.skillbook, meta.id.int_value()).unwrap(), // TODO: handle error
+        enabled: check_required?(self.attrs.skillbook, meta.id.int_value()).unwrap(), // TODO: handle error
       }
     },
   )
   {
     model,
-    sprites,
+    sprites: resources.sprites,
     book_icon,
     book_text,
     sp_label,
     skills,
-    sp_before,
-    sp_after,
-    sp_enabled: self.sp_enabled,
     buttons,
   }
 }
 
-fn use_draw_state(self : SkillBookUI) -> DrawState {
-  match self.draw_state {
+fn use_draw_state(self : SkillBookUI) -> RenderState {
+  match self.render_state {
     Some(ds) => ds
     None => {
-      let state = self.render_state.render(fn() { self.draw_state = None })
-      self.draw_state = Some(state)
+      let state = self.logic_state.render(
+        self.resources,
+        fn() { self.render_state = None },
+      )
+      self.render_state = Some(state)
       state
     }
   }
@@ -393,23 +379,6 @@ pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
       skill_position_r = skill_position_r.shift_y(row_height)
     }
   }
-  if draw_state.sp_enabled {
-    let sp_pos = model.position + @struct.Point::new(model.dimension.x, 0)
-    resources.sp_backgrnd.draw(sp_pos |> @graphics.DrawArgument::from_point)
-    resources.sp_backgrnd2.draw(sp_pos |> @graphics.DrawArgument::from_point)
-    resources.sp_backgrnd3.draw(sp_pos |> @graphics.DrawArgument::from_point)
-    let sp_level_pos = sp_pos + @struct.Point::new(78, 149)
-    draw_state.sp_before.draw(
-      sp_level_pos |> @graphics.DrawArgument::from_point,
-    )
-    |> ignore
-    draw_state.sp_after.draw(
-      sp_level_pos + @struct.Point::new(78, 0)
-      |> @graphics.DrawArgument::from_point,
-    )
-    |> ignore
-    // draw_state.sp_used.draw(sp_pos + @struct.Point::new(82, 87))
-  }
   for button in draw_state.buttons {
     button.object.draw(draw_state.model.position)
   }
@@ -430,17 +399,18 @@ fn check_required(skillbook : @character.SkillBook, id : Int) -> Bool! {
   return true
 }
 
-pub fn SkillBookUI::is_focused() -> Bool {
-  return false
+pub fn set_attributes(self : SkillBookUI, attrs : Attributes) -> Unit {
+  self.logic_state.attrs = attrs
+  self.render_state = None
 }
 
 pub fn get_ui_model(self : SkillBookUI) -> @ui.UIModel {
-  self.render_state.model
+  self.logic_state.model
 }
 
 pub fn update(self : SkillBookUI) -> Unit {
-  @ui.update_sprites(self.render_state.sprites.iter())
   let draw_state = use_draw_state(self)
+  @ui.update_sprites(draw_state.sprites.iter())
   for button in draw_state.buttons {
     button.object.update()
   }
@@ -477,60 +447,11 @@ pub fn send_key(
   // TODO: implement
 }
 
-fn set_skillpoint(
-  self : RenderState,
-  sp_enabled : Bool,
-  sp_backgrnd : @graphics.Sprite
-) -> Unit {
-  self.sp_enabled = sp_enabled
-  // TODO: remove redudant status
-  let model = self.model
-  if sp_enabled {
-    model.dimension = self.bg_dimensions +
-      @struct.Point::new(sp_backgrnd.get_dimensions().x, 0)
-  } else {
-    model.dimension = self.bg_dimensions
-  }
-}
-
 /// Requests a skill level increase by spending SP
 fn new_spend_sp_packet(skill_id : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_SP)
   ..write_time()
   ..write_int(skill_id)
-}
-
-fn SkillDisplayMeta::new(id : Int, level : Int) -> SkillDisplayMeta! {
-  let data = @skill.SkillData::get!(id)
-  let ntx = data.icons[0]
-  let dtx = data.icons[1]
-  let motx = data.icons[2]
-  let icon = StatefulIcon::new(
-    // SkillIcon::new(id), // TODO: implement
-    ntx, dtx, motx,
-  )
-  let mut namestr = data.name
-  let levelstr = level.to_string()
-  let name_text = @graphics.Text::new(
-    text=namestr,
-    @graphics.FontId::A11M,
-    @graphics.TextAlignment::LEFT,
-    @struct.ColorName::EMPEROR,
-  )
-  let level_text = @graphics.Text::new(
-    text=levelstr,
-    @graphics.FontId::A11M,
-    @graphics.TextAlignment::LEFT,
-    @struct.ColorName::EMPEROR,
-  )
-  let max_name_width = 97
-  let mut overhang = 3
-  while name_text.width() > max_name_width {
-    namestr = namestr.substring(end=namestr.length() - overhang) + ".."
-    overhang += 1
-    name_text.change_text(namestr)
-  }
-  { name_text, level_text, icon, id: @skill.SkillId::from_int?(id).unwrap() } // TODO: handle error
 }
 
 fn joblevel_by_tab(t : Int) -> @job.Level {

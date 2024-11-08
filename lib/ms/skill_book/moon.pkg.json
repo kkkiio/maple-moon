@@ -2,7 +2,7 @@
   "import": [
     "KKKIIO/maple-moon-client/lib/ms/character",
     "KKKIIO/maple-moon-client/lib/ms/physics",
-    "KKKIIO/maple-moon-client/lib/ms/KeyAction",
+    "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/buff",
     "KKKIIO/maple-moon-client/lib/ms/equip/stat",
@@ -11,7 +11,7 @@
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/ms/combat",
     "KKKIIO/maple-moon-client/lib/net",
-    "KKKIIO/maple-moon-client/lib/ms/MapleStat",
+    "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     {
@@ -25,6 +25,7 @@
     "KKKIIO/maple-moon-client/lib/ms/skill",
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/inventory",
-    "KKKIIO/maple-moon-client/lib/ms/player"
+    "KKKIIO/maple-moon-client/lib/ms/player",
+    "KKKIIO/maple-moon-client/lib/ms/char_stats"
   ]
 }

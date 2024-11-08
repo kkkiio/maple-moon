@@ -43,7 +43,7 @@ pub struct LookEntry {
 }
 
 pub struct CharEntry {
-  stats : StatsEntry
+  stats : @char_stats.StatsEntry
   look : LookEntry
   id : Int
 }

@@ -1,16 +1,16 @@
 // SkillBook stores all information about the skills of an individual character
 struct SkillBook {
   skill_entries : Map[Int, SkillEntry]
+  skill_level_listeners : Array[(Int, Int) -> Bool]
 }
 
 pub fn SkillBook::new() -> SkillBook {
-  { skill_entries: Map::new() }
+  { skill_entries: Map::new(), skill_level_listeners: Array::new() }
 }
 
 struct SkillEntry {
   level : Int
   master_level : Int
-  expiration : Int
 }
 
 pub fn get_level(self : SkillBook, id : Int) -> Int {
@@ -41,7 +41,15 @@ pub fn set_skill(
   id : Int,
   level : Int,
   master_level : Int,
-  expiration : Int
+  _expiration : Int
 ) -> Unit {
-  self.skill_entries.set(id, { level, master_level, expiration })
+  self.skill_entries.set(id, { level, master_level })
+  self.skill_level_listeners.retain(fn(listener) { listener(id, level) })
+}
+
+pub fn listen_skill_level_changes(
+  self : SkillBook,
+  listener : (Int, Int) -> Bool
+) -> Unit {
+  self.skill_level_listeners.push(listener)
 }

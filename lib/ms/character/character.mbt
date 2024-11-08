@@ -74,7 +74,6 @@ pub trait Character {
   // update(Self, Physics) -> Int
   // get_layer(Self) -> Int
   // is_invincible(Self) -> Bool
-  get_level(Self) -> Int
   get_skilllevel(Self, Int) -> Int
   // get_real_attackspeed(Self) -> Double
   get_attackdelay(Self, Int) -> Int
@@ -92,7 +91,7 @@ pub trait Character {
   show_iron_body(Self) -> Unit
   // show_damage(Self, Int) -> Unit
   // speak(Self, String) -> Unit
-  change_look(Self, @MapleStat.Id, Int) -> Unit
+  change_look(Self, @maple_stat.Id, Int) -> Unit
   // set_state_by_byte(Self, Int) -> Unit
   // set_expression(Self, Int) -> Unit
   // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
@@ -109,7 +108,7 @@ pub trait Character {
   // update_with_speed(Self, Physics, Double) -> Bool
   // get_stancespeed(Self) -> Double
   get_position(Self) -> Point[Int]
-  get_stats(Self) -> CharStats // TODO: Remove
+  get_stats(Self) -> @char_stats.CharStats // TODO: Remove
 }
 
 pub fn CharBase::new(
@@ -280,28 +279,28 @@ pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
   return 1.7 - base_attack_speed.to_double() / 10.0
 }
 
-pub fn change_look(self : CharBase, stat : @MapleStat.Id, id : Int) -> Unit {
+pub fn change_look(self : CharBase, stat : @maple_stat.Id, id : Int) -> Unit {
   match stat {
-    @MapleStat.Id::SKIN => self.look.set_body(id)
-    @MapleStat.Id::FACE => self.look.set_face(id)
-    @MapleStat.Id::HAIR => self.look.set_hair(id)
-    @MapleStat.Id::LEVEL => ()
-    @MapleStat.Id::JOB => ()
-    @MapleStat.Id::STR => ()
-    @MapleStat.Id::DEX => ()
-    @MapleStat.Id::INT => ()
-    @MapleStat.Id::LUK => ()
-    @MapleStat.Id::HP => ()
-    @MapleStat.Id::MAXHP => ()
-    @MapleStat.Id::MP => ()
-    @MapleStat.Id::MAXMP => ()
-    @MapleStat.Id::AP => ()
-    @MapleStat.Id::SP => ()
-    @MapleStat.Id::EXP => ()
-    @MapleStat.Id::FAME => ()
-    @MapleStat.Id::MESO => ()
-    @MapleStat.Id::PET => ()
-    @MapleStat.Id::GACHAEXP => ()
+    @maple_stat.Id::SKIN => self.look.set_body(id)
+    @maple_stat.Id::FACE => self.look.set_face(id)
+    @maple_stat.Id::HAIR => self.look.set_hair(id)
+    @maple_stat.Id::LEVEL => ()
+    @maple_stat.Id::JOB => ()
+    @maple_stat.Id::STR => ()
+    @maple_stat.Id::DEX => ()
+    @maple_stat.Id::INT => ()
+    @maple_stat.Id::LUK => ()
+    @maple_stat.Id::HP => ()
+    @maple_stat.Id::MAXHP => ()
+    @maple_stat.Id::MP => ()
+    @maple_stat.Id::MAXMP => ()
+    @maple_stat.Id::AP => ()
+    @maple_stat.Id::SP => ()
+    @maple_stat.Id::EXP => ()
+    @maple_stat.Id::FAME => ()
+    @maple_stat.Id::MESO => ()
+    @maple_stat.Id::PET => ()
+    @maple_stat.Id::GACHAEXP => ()
   }
 }
 
@@ -328,7 +327,7 @@ pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
   }
   let weapon = @weapon.WeaponData::get?(weapon_id).unwrap()
   let stance_name = self.look.get_stance().name()
-  let weapon_level = weapon.get_equipdata().get_reqstat(@MapleStat.Id::LEVEL)
+  let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
   self.after_image = @char_look.Afterimage::new(
     skill_id, ai_name, stance_name, weapon_level,

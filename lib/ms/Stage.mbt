@@ -79,12 +79,14 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
 
 pub fn load_player(
   self : Stage,
-  entry : @character.CharEntry
+  entry : @character.CharEntry,
+  sp_stat_id : @char_stats.StatId
 ) -> @player.Player! {
   let player = @player.Player::from_entry!(
     entry,
     self.inventory,
     self.damage_number_set,
+    sp_stat_id,
   )
   self.player = Some(player)
   self.combat = Some(Combat::new(self.damage_number_set, self.mobs))
@@ -249,19 +251,15 @@ pub fn send_key(
       match t {
         @KeyType.Id::ACTION => {
           if down {
-            match @KeyAction.get_action_by_id?(action).unwrap() {
-              @KeyAction.Id::UP =>
-                self.check_portals(map_info, portals, physics)
-              // @KeyAction.Id::SIT => self.check_seats()
-              @KeyAction.Id::ATTACK => self.combat.unwrap().use_move!(player, 0)
-              @KeyAction.Id::PICKUP => self.check_drops(player)
+            match @action.get_action_by_id?(action).unwrap() {
+              @action.Id::UP => self.check_portals(map_info, portals, physics)
+              // @action.Id::SIT => self.check_seats()
+              @action.Id::ATTACK => self.combat.unwrap().use_move!(player, 0)
+              @action.Id::PICKUP => self.check_drops(player)
               _ => ()
             }
           }
-          player.send_action(
-            @KeyAction.get_action_by_id?(action).unwrap(),
-            down,
-          )
+          player.send_action(@action.get_action_by_id?(action).unwrap(), down)
         }
         @KeyType.Id::SKILL => self.combat.unwrap().use_move!(player, action)
         // @KeyType.Id::ITEM => self.player.use_item(action)
@@ -291,7 +289,7 @@ fn check_portals(
   } else if warpinfo.valid {
     new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
     let stats = player.get_stats()
-    stats.set_mapid(warpinfo.mapid)
+    stats.set_map_id(warpinfo.mapid)
   }
 
   // Sound(Sound::Name::PORTAL).play();
@@ -325,7 +323,7 @@ fn handle_change_stats(self : Stage, recv : @net.InPacket) -> Unit! {
   let updatemask = recv.read_int!()
   let mut recalculate = false
   let player = self.get_player().unwrap()
-  for it in @MapleStat.codes {
+  for it in @maple_stat.codes {
     let (stat_id, stat_mask) = it
     if (updatemask & stat_mask) != 0 {
       recalculate = recalculate || self.handle_stat!(player, stat_id, recv)
@@ -339,19 +337,19 @@ fn handle_change_stats(self : Stage, recv : @net.InPacket) -> Unit! {
 fn handle_stat(
   self : Stage,
   player : @player.Player,
-  stat : @MapleStat.Id,
+  stat : @maple_stat.Id,
   recv : @net.InPacket
 ) -> Bool! {
   let mut recalculate = false
   match stat {
-    @MapleStat.Id::SKIN => player.change_look(stat, recv.read_short!())
-    @MapleStat.Id::FACE | @MapleStat.Id::HAIR =>
+    @maple_stat.Id::SKIN => player.change_look(stat, recv.read_short!())
+    @maple_stat.Id::FACE | @maple_stat.Id::HAIR =>
       player.change_look(stat, recv.read_int!())
-    @MapleStat.Id::LEVEL => player.change_level(recv.read_ubyte!())
-    @MapleStat.Id::JOB => player.change_job(recv.read_ushort!())
-    @MapleStat.Id::HP => {
+    @maple_stat.Id::LEVEL => player.change_level(recv.read_ubyte!())
+    @maple_stat.Id::JOB => player.change_job(recv.read_ushort!())
+    @maple_stat.Id::HP => {
       let current_hp = recv.read_short!()
-      player.get_stats().set_hp(current_hp)
+      player.get_stats().set_base_hp(current_hp)
       recalculate = true
       if current_hp <= 0 {
         player.set_state(@character.CharState::DIED)
@@ -360,51 +358,51 @@ fn handle_stat(
         new_change_map_packet(died, targetid, "sp", false).dispatch()
       }
     }
-    @MapleStat.Id::EXP =>
+    @maple_stat.Id::EXP =>
       player.get_stats().set_exp(recv.read_int!().to_int64())
-    @MapleStat.Id::MESO => self.inventory.set_meso(recv.read_int!())
-    @MapleStat.Id::STR => {
-      player.get_stats().str = recv.read_short!()
+    @maple_stat.Id::MESO => self.inventory.set_meso(recv.read_int!())
+    @maple_stat.Id::STR => {
+      player.get_stats().set_str(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::DEX => {
-      player.get_stats().dex = recv.read_short!()
+    @maple_stat.Id::DEX => {
+      player.get_stats().set_dex(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::INT => {
-      player.get_stats().int = recv.read_short!()
+    @maple_stat.Id::INT => {
+      player.get_stats().set_int(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::LUK => {
-      player.get_stats().luk = recv.read_short!()
+    @maple_stat.Id::LUK => {
+      player.get_stats().set_luk(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::SP => {
-      player.get_stats().sp = recv.read_short!()
+    @maple_stat.Id::SP => {
+      player.get_stats().set_sp(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::MP => {
-      player.get_stats().mp = recv.read_short!()
+    @maple_stat.Id::MP => {
+      player.get_stats().set_base_mp(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::MAXHP => {
-      player.get_stats().max_hp = recv.read_short!()
+    @maple_stat.Id::MAXHP => {
+      player.get_stats().set_max_hp(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::MAXMP => {
-      player.get_stats().max_mp = recv.read_short!()
+    @maple_stat.Id::MAXMP => {
+      player.get_stats().set_max_mp(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::AP => {
-      player.get_stats().ap = recv.read_short!()
+    @maple_stat.Id::AP => {
+      player.get_stats().set_ap(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::FAME => {
-      player.get_stats().fame = recv.read_short!()
+    @maple_stat.Id::FAME => {
+      player.get_stats().set_fame(recv.read_short!())
       recalculate = true
     }
-    @MapleStat.Id::PET => () // TODO: Handle pet stats
-    @MapleStat.Id::GACHAEXP => () // TODO: Handle gacha exp
+    @maple_stat.Id::PET => () // TODO: Handle pet stats
+    @maple_stat.Id::GACHAEXP => () // TODO: Handle gacha exp
   }
   // let update_statsinfo = need_statsinfo_update(stat)
 

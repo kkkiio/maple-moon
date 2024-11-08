@@ -10,7 +10,7 @@ pub fn Mapping::new(in_type : @KeyType.Id, in_action : Int) -> Mapping {
 pub struct Keyboard {
   keymap : Map[String, Mapping]
   maple_keys : Map[Int, Mapping]
-  // text_actions : Map[String, @KeyAction.Id]
+  // text_actions : Map[String, @action.Id]
   key_state : Map[Int, Bool]
 }
 
@@ -18,70 +18,70 @@ pub fn Keyboard::default() -> Keyboard {
   let keymap = Map::new()
   keymap.set(
     @kb.arrowLeft,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::LEFT.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::LEFT.int_value()),
   )
   keymap.set(
     @kb.arrowRight,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::RIGHT.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::RIGHT.int_value()),
   )
   keymap.set(
     @kb.arrowUp,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::UP.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::UP.int_value()),
   )
   keymap.set(
     @kb.arrowDown,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::DOWN.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::DOWN.int_value()),
   )
   keymap.set(
     @kb.enter,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::RETURN.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::RETURN.int_value()),
   )
   keymap.set(
     @kb.numpadEnter,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::RETURN.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::RETURN.int_value()),
   )
   keymap.set(
     @kb.tab,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::TAB.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::TAB.int_value()),
   )
   keymap.set(
     @kb.space,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::JUMP.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::JUMP.int_value()),
   )
   keymap.set(
     @kb.keyX,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::ATTACK.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::ATTACK.int_value()),
   )
   keymap.set(
     @kb.keyC,
-    Mapping::new(@KeyType.Id::ACTION, @KeyAction.Id::PICKUP.int_value()),
+    Mapping::new(@KeyType.Id::ACTION, @action.Id::PICKUP.int_value()),
   )
   keymap.set(
     @kb.keyI,
-    Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::ITEMS.int_value()),
+    Mapping::new(@KeyType.Id::MENU, @action.Id::ITEMS.int_value()),
   )
   keymap.set(
     @kb.keyO,
-    Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::SKILLS.int_value()),
+    Mapping::new(@KeyType.Id::MENU, @action.Id::SKILLS.int_value()),
   )
   keymap.set(
     @kb.keyE,
-    Mapping::new(@KeyType.Id::MENU, @KeyAction.Id::STATS.int_value()),
+    Mapping::new(@KeyType.Id::MENU, @action.Id::STATS.int_value()),
   )
   keymap.set(
     @kb.keyA,
     Mapping::new(@KeyType.Id::SKILL, @skill.SkillId::MAGIC_CLAW.int_value()),
   )
   let text_actions = Map::new()
-  text_actions.set(@kb.backspace, @KeyAction.Id::BACK)
-  text_actions.set(@kb.enter, @KeyAction.Id::RETURN)
-  text_actions.set(@kb.numpadEnter, @KeyAction.Id::RETURN)
-  text_actions.set(@kb.space, @KeyAction.Id::SPACE)
-  text_actions.set(@kb.tab, @KeyAction.Id::TAB)
-  text_actions.set(@kb.escape, @KeyAction.Id::ESCAPE)
-  text_actions.set(@kb.home, @KeyAction.Id::HOME)
-  text_actions.set(@kb.end, @KeyAction.Id::END)
-  text_actions.set(@kb.delete, @KeyAction.Id::DELETE)
+  text_actions.set(@kb.backspace, @action.Id::BACK)
+  text_actions.set(@kb.enter, @action.Id::RETURN)
+  text_actions.set(@kb.numpadEnter, @action.Id::RETURN)
+  text_actions.set(@kb.space, @action.Id::SPACE)
+  text_actions.set(@kb.tab, @action.Id::TAB)
+  text_actions.set(@kb.escape, @action.Id::ESCAPE)
+  text_actions.set(@kb.home, @action.Id::HOME)
+  text_actions.set(@kb.end, @action.Id::END)
+  text_actions.set(@kb.delete, @action.Id::DELETE)
   {
     keymap,
     maple_keys: Map::new(),
@@ -94,16 +94,16 @@ pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {
   self.maple_keys
 }
 
-pub fn get_ctrl_action(self : Keyboard, keycode : String) -> @KeyAction.Id? {
+pub fn get_ctrl_action(self : Keyboard, keycode : String) -> @action.Id? {
   // match keycode {
-  //   @kb.keyC => @KeyAction.Id::COPY
-  //   @kb.keyV => @KeyAction.Id::PASTE
-  //   _ => @KeyAction.Id::LENGTH
+  //   @kb.keyC => @action.Id::COPY
+  //   @kb.keyV => @action.Id::PASTE
+  //   _ => @action.Id::LENGTH
   // }
   if keycode == @kb.keyC {
-    Some(@KeyAction.Id::COPY)
+    Some(@action.Id::COPY)
   } else if keycode == @kb.keyV {
-    Some(@KeyAction.Id::PASTE)
+    Some(@action.Id::PASTE)
   } else {
     None
   }

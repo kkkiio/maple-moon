@@ -14,7 +14,7 @@ pub fn get_map_mobs(self : Module) -> MapMobs {
 
 pub fn make_handlers(
   self : Module,
-  player_stats_getter : () -> @character.CharStats?
+  player_stats_getter : () -> @char_stats.CharStats?
 ) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
   [
     (

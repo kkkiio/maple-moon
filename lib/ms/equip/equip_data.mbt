@@ -1,7 +1,7 @@
 /// Contains information about an equip
 struct EquipData {
   item_data : @item.ItemData
-  req_stats : Map[@MapleStat.Id, Int]
+  req_stats : Map[@maple_stat.Id, Int]
   def_stats : Map[@stat.Id, Int]
   type_ : String
   eq_slot : @slot.Id
@@ -21,13 +21,13 @@ fn EquipData::load(id : Int) -> EquipData! {
   let cash = src["cash"].get_bool!()
   let trade_block = src["tradeBlock"].get_bool!()
   let slots = src["tuc"].get_int!()
-  let req_stats : Map[@MapleStat.Id, Int] = Map::new()
-  req_stats[@MapleStat.Id::LEVEL] = src["reqLevel"].get_int!()
-  req_stats[@MapleStat.Id::JOB] = src["reqJob"].get_int!()
-  req_stats[@MapleStat.Id::STR] = src["reqSTR"].get_int!()
-  req_stats[@MapleStat.Id::DEX] = src["reqDEX"].get_int!()
-  req_stats[@MapleStat.Id::INT] = src["reqINT"].get_int!()
-  req_stats[@MapleStat.Id::LUK] = src["reqLUK"].get_int!()
+  let req_stats : Map[@maple_stat.Id, Int] = Map::new()
+  req_stats[@maple_stat.Id::LEVEL] = src["reqLevel"].get_int!()
+  req_stats[@maple_stat.Id::JOB] = src["reqJob"].get_int!()
+  req_stats[@maple_stat.Id::STR] = src["reqSTR"].get_int!()
+  req_stats[@maple_stat.Id::DEX] = src["reqDEX"].get_int!()
+  req_stats[@maple_stat.Id::INT] = src["reqINT"].get_int!()
+  req_stats[@maple_stat.Id::LUK] = src["reqLUK"].get_int!()
   let def_stats : Map[@stat.Id, Int] = Map::new()
   def_stats[@stat.Id::STR] = src["incSTR"].get_int!()
   def_stats[@stat.Id::DEX] = src["incDEX"].get_int!()
@@ -111,6 +111,6 @@ pub fn get_itemdata(self : EquipData) -> @item.ItemData {
   self.item_data
 }
 
-pub fn get_reqstat(self : EquipData, stat : @MapleStat.Id) -> Int {
+pub fn get_reqstat(self : EquipData, stat : @maple_stat.Id) -> Int {
   self.req_stats.get(stat).or(0)
 }

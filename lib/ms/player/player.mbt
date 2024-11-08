@@ -1,11 +1,11 @@
 typealias Movement = @physics.Movement
 
-typealias CharStats = @character.CharStats
+typealias CharStats = @char_stats.CharStats
 
 pub struct Player {
   char_base : @character.CharBase
   stats : CharStats
-  keys_down : Map[@KeyAction.Id, Bool]
+  keys_down : Map[@action.Id, Bool]
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
@@ -28,7 +28,8 @@ pub trait Inventory {
 pub fn Player::from_entry(
   entry : @character.CharEntry,
   inventory : Inventory,
-  damage_number_set : @combat_ui.DamageNumberSet
+  damage_number_set : @combat_ui.DamageNumberSet,
+  sp_stat_id : @char_stats.StatId
 ) -> Player! {
   let p = {
     char_base: @character.CharBase::new(
@@ -37,7 +38,7 @@ pub fn Player::from_entry(
       entry.stats.name,
       damage_number_set,
     ),
-    stats: CharStats::from_entry(entry.stats),
+    stats: CharStats::from_entry(entry.stats, sp_stat_id),
     keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
@@ -85,9 +86,9 @@ pub fn update(
       physics.move_object(self.get_phobj())
 
       // Check for ladder interaction
-      if self.keys_down[@KeyAction.Id::UP].or(false) {
+      if self.keys_down[@action.Id::UP].or(false) {
         self.check_ladders(map_info, true)
-      } else if self.keys_down[@KeyAction.Id::DOWN].or(false) {
+      } else if self.keys_down[@action.Id::DOWN].or(false) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.char_base.update(
@@ -141,7 +142,7 @@ pub fn draw(
 
 // Sends a Keyaction to the player's state, to apply forces, change the
 // state and other behaviour.
-pub fn send_action(self : Player, action : @KeyAction.Id, down : Bool) -> Unit {
+pub fn send_action(self : Player, action : @action.Id, down : Bool) -> Unit {
   match get_player_state(self.char_base.state) {
     Some(pst) => pst.send_action(self, action, down)
     None => ()
@@ -178,7 +179,7 @@ pub fn get_phobj(self : Player) -> @physics.PhysicsObject {
   self.char_base.get_phobj()
 }
 
-pub fn is_key_down(self : Player, key : @KeyAction.Id) -> Bool {
+pub fn is_key_down(self : Player, key : @action.Id) -> Bool {
   self.keys_down[key].or(false)
 }
 
@@ -278,7 +279,7 @@ fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
   out.write_short(movement.duration)
 }
 
-pub fn change_look(self : Player, stat : @MapleStat.Id, id : Int) -> Unit {
+pub fn change_look(self : Player, stat : @maple_stat.Id, id : Int) -> Unit {
   self.char_base.change_look(stat, id)
 }
 
@@ -359,10 +360,6 @@ pub fn get_oid(self : Player) -> Int {
   self.char_base.get_oid()
 }
 
-pub fn get_level(self : Player) -> Int {
-  self.stats.level
-}
-
 pub fn get_skilllevel(self : Player, skill_id : Int) -> Int {
   self.skill_book.get_level(skill_id)
 }
@@ -400,11 +397,11 @@ pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
 }
 
 pub fn change_level(self : Player, level : Int) -> Unit {
-  let oldlevel = self.get_level()
+  let oldlevel = self.stats.get_level()
   if level > oldlevel {
     self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
   }
-  self.stats.level = level
+  self.stats.set_level(level)
 }
 
 pub fn check_ladders(self : Player, map_info : @map.MapInfo, up : Bool) -> Unit {

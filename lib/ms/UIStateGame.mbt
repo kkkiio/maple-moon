@@ -7,6 +7,7 @@ typealias UIElement = @ui.UIElement
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
 struct UIStateGame {
+  registry : @action.Registry
   timer : @utils.Timer
   elements : Map[UIElementType, @ui.Element]
   element_order : Array[UIElementType]
@@ -24,8 +25,12 @@ struct UIStateGame {
   mut vheight : Int
 }
 
-pub fn UIStateGame::new(timer : @utils.Timer) -> UIStateGame {
+pub fn UIStateGame::new(
+  registry : @action.Registry,
+  timer : @utils.Timer
+) -> UIStateGame {
   {
+    registry,
     timer,
     elements: Map::new(),
     element_order: [],
@@ -106,14 +111,14 @@ pub fn update(self : UIStateGame) -> Unit {
 pub fn send_key(
   self : UIStateGame,
   t : @KeyType.Id,
-  action : Int,
+  raw_action : Int,
   pressed : Bool,
   escape : Bool
 ) -> Unit {
   match self.get(self.focused) {
     Some(focusedelement) => {
       if focusedelement.get_ui_model().is_active() {
-        return focusedelement.send_key(action, pressed, escape)
+        return focusedelement.send_key(raw_action, pressed, escape)
       }
       self.focused = UIElementType::UI_ELEMENT_NONE
       return
@@ -123,165 +128,39 @@ pub fn send_key(
   match t {
     @KeyType.Id::MENU =>
       if pressed {
-        match @KeyAction.get_action_by_id?(action).unwrap() {
-          //         @KeyAction.Id::EQUIPMENT => {
-          //             self.emplace(UIEquipInventory::new(Stage::get().get_player().get_inventory()))
-          //         }
-          @KeyAction.Id::ITEMS =>
-            self.toggle_element(
-              UIElementType::ITEM_INVENTORY,
-              @inventory.UIItemInventory::is_focused(),
-              fn() {
-                let ui = @inventory.UIItemInventory::new(
-                  Stage::get().get_inventory(),
-                  fn() { Stage::get().get_player() },
+        let action = @action.get_action_by_id?(raw_action).unwrap()
+        match self.registry.get_action(action) {
+          Some(descriptor) =>
+            match descriptor {
+              @action.Descriptor::UI(~key, ~make_element, ~focused) =>
+                self.toggle_element(key, focused, make_element)
+            }
+          None =>
+            match action {
+              @action.Id::ITEMS =>
+                self.toggle_element(
+                  UIElementType::ITEM_INVENTORY,
+                  @inventory.UIItemInventory::is_focused(),
+                  fn() {
+                    let ui = @inventory.UIItemInventory::new(
+                      Stage::get().get_inventory(),
+                      fn() { Stage::get().get_player() },
+                    )
+                    @ui.Element::new(
+                      ui,
+                      doubleclick=fn(pos) { ui.doubleclick(pos) },
+                    )
+                  },
                 )
-                @ui.Element::new(
-                  ui,
-                  doubleclick=fn(pos) { ui.doubleclick(pos) },
-                )
-              },
-            )
-          @KeyAction.Id::STATS =>
-            self.toggle_element(
-              UIElementType::STATS_INFO,
-              @char_stats.UIStatsInfo::is_focused(),
-              fn() {
-                let ui = @char_stats.UIStatsInfo::load(
-                  Stage::get().get_player().unwrap().get_stats(),
-                )
-                @ui.Element::new(ui)
-              },
-            )
-          @KeyAction.Id::SKILLS =>
-            self.toggle_element(
-              UIElementType::SKILL_BOOK,
-              @skill_book.SkillBookUI::is_focused(),
-              fn() {
-                let player = Stage::get().get_player().unwrap()
-                @skill_book.SkillBookUI::new(
-                  player.get_skills(),
-                  player.get_stats(),
-                )
-                |> @ui.Element::new
-              },
-            )
-          //         // @KeyAction.Id::FRIENDS => {
-          //         //     self.handle_user_list(@KeyAction.Id::FRIENDS)
-          //         // }
-          //         // @KeyAction.Id::PARTY => {
-          //         //     self.handle_user_list(@KeyAction.Id::PARTY)
-          //         // }
-          //         // @KeyAction.Id::BOSS_PARTY => {
-          //         //     self.handle_user_list(@KeyAction.Id::BOSS_PARTY)
-          //         // }
-          //         @KeyAction.Id::WORLD_MAP => {
-          //             self.emplace(UIWorldMap::new())
-          //         }
-          //         @KeyAction.Id::MAPLE_CHAT => {
-          //           match  UI::get().get_element(UIElementType::CHAT) {
-          //             Some(chat) =>
-          //                 if chat.is_active().not() {
-          //                     self.emplace(UIChat::new)
-          //                 }
-          //             None=> {
-          //                 self.emplace(UIChat::new)
-          //             }
-          //           }
-          //         }
-          //         @KeyAction.Id::MINI_MAP => {
-          //             match UI::get().get_element(UIElementType::MINI_MAP) {
-          //                 Some(minimap) => minimap.send_key(action, pressed, escape)
-          //                 None => ()
-          //             }
-          //         }
-          //         @KeyAction.Id::QUEST_LOG => {
-          //             self.emplace(UIQuestLog::new(Stage::get().get_player().get_quests()))
-          //         }
-          //         @KeyAction.Id::MENU => {
-          //             match UI::get().get_element(UIElementType::STATUS_BAR) {
-          //                 Some(statusbar) => statusbar.toggle_menu()
-          //                 None => ()
-          //             }
-          //         }
-          //         @KeyAction.Id::QUICK_SLOTS => {
-          //             match UI::get().get_element(UIElementType::STATUS_BAR) {
-          //                 Some(statusbar) => statusbar.toggle_qs()
-          //                 None => (),
-          //             }
-          //         }
-          //         @KeyAction.Id::CASHSHOP => {
-          //             fn_enter_cashshop()
-          //         }
-          //         @KeyAction.Id::TOGGLE_CHAT => {
-          //             match UI::get().get_element(UIElementType::CHAT_BAR) {
-          //                 Some(chatbar) => {
-          //                     if !chatbar.is_chatfield_open() {
-          //                         chatbar.toggle_chat()
-          //                     }
-          //                 }
-          //                 None => ()
-          //             }
-          //         }
-          //         @KeyAction.Id::KEY_BINDINGS => {
-          //         match UI::get().get_element(UIElementType::KEY_CONFIG) {
-          //             Some(keyconfig) =>
-          //                 if keyconfig.is_active() {
-          //                     keyconfig.close()
-          //                 } else {
-          //                     self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
-          //                 }
-          //             None=> {
-          //                 self.emplace(UIKeyConfig::new(Stage::get().get_player().get_inventory(), Stage::get().get_player().get_skills()))
-          //             }
-          //           }
-          //         }
-          //         // @KeyAction.Id::MAIN_MENU => {
-          //         //     match UI::get().get_element(UIElementType::StatusBar) {
-          //         //         Some(statusbar) => statusbar.send_key(action, pressed, escape),
-          //         //         None => (),
-          //         //     }
-          //         // }
-          //         // @KeyAction.Id::EVENT => {
-          //         //     self.emplace(UIEvent::new)
-          //         // }
-          //         // @KeyAction.Id::CHANGE_CHANNEL => {
-          //         //     self.emplace(fn(){UIChannel::new(Stage::get().get_player().get_world_id(), Stage::get().get_player().get_channel_id(), self.channel_count)})
-          //         // }
-          //         _ => {
-          //             println("Action \(action) not handled!")
-          //         }
-          _ => ()
+              _ => ()
+            }
         }
       }
     @KeyType.Id::ACTION
     | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
-      Stage::get().send_key?(t, action, pressed).unwrap()
+      Stage::get().send_key?(t, raw_action, pressed).unwrap()
     _ => ()
   }
-}
-
-type UIUserListTab
-
-pub fn handle_user_list(self : UIStateGame, tab : UIUserListTab) -> Unit {
-  // let tab = match action {
-  //     @KeyAction.Id::FRIENDS => UIUserListTab::FRIEND,
-  //     @KeyAction.Id::PARTY => UIUserListTab::PARTY,
-  //     @KeyAction.Id::BOSS_PARTY => UIUserListTab::BOSS,
-  //     _ => return,
-  // }
-  // if let Some(userlist) = UI::get().get_element(UIElementType::UserList) {
-  //     if userlist.get_tab() != tab && userlist.is_active() {
-  //         userlist.change_tab(tab)
-  //     } else {
-  //         self.emplace(UIUserList::new(tab))
-  //         if userlist.get_tab() != tab && userlist.is_active() {
-  //             userlist.change_tab(tab)
-  //         }
-  //     }
-  // } else {
-  //     self.emplace(UIUserList::new(tab))
-  // }
 }
 
 pub fn send_cursor(

@@ -1,4 +1,4 @@
-pub struct CharStats {
+struct CharStats {
   name : String
   mut job : @job.Job
   mut level : Int
@@ -6,10 +6,10 @@ pub struct CharStats {
   mut dex : Int
   mut int : Int
   mut luk : Int
-  mut hp : Int
-  mut max_hp : Int
-  mut mp : Int
-  mut max_mp : Int
+  mut inherent_hp : Int
+  mut inherent_max_hp : Int
+  mut inherent_mp : Int
+  mut inherent_max_mp : Int
   mut ap : Int
   mut sp : Int
   mut fame : Int
@@ -31,6 +31,8 @@ pub struct CharStats {
   mut stance : Double
   mut reduce_damage : Double
   female : Bool
+  stat_listeners : Map[StatId, Array[(Int) -> Bool]]
+  sp_stat_id : StatId
 }
 
 pub struct StatsEntry {
@@ -54,7 +56,7 @@ pub struct StatsEntry {
   portal : Int
 }
 
-pub fn CharStats::from_entry(s : StatsEntry) -> CharStats {
+pub fn CharStats::from_entry(s : StatsEntry, sp_stat_id : StatId) -> CharStats {
   let job = @job.Job::new(id=s.job)
   let cs : CharStats = {
     name: s.name,
@@ -82,13 +84,15 @@ pub fn CharStats::from_entry(s : StatsEntry) -> CharStats {
     dex: s.dex,
     int: s.int,
     luk: s.luk,
-    hp: s.hp,
-    max_hp: s.max_hp,
-    mp: s.mp,
-    max_mp: s.max_mp,
+    inherent_hp: s.hp,
+    inherent_max_hp: s.max_hp,
+    inherent_mp: s.mp,
+    inherent_max_mp: s.max_mp,
     ap: s.ap,
     sp: s.sp,
     fame: s.fame,
+    stat_listeners: Map::new(),
+    sp_stat_id,
   }
   cs.init_totalstats()
   cs
@@ -98,8 +102,8 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats._.clear()
   self.buff_deltas._.clear()
   self.percentages.clear()
-  self.total_stats._.set(@equip_stat.Id::HP, self.max_hp)
-  self.total_stats._.set(@equip_stat.Id::MP, self.max_mp)
+  self.total_stats._.set(@equip_stat.Id::HP, self.inherent_max_hp)
+  self.total_stats._.set(@equip_stat.Id::MP, self.inherent_max_mp)
   self.total_stats._.set(@equip_stat.Id::STR, self.str)
   self.total_stats._.set(@equip_stat.Id::DEX, self.dex)
   self.total_stats._.set(@equip_stat.Id::INT, self.int)
@@ -127,15 +131,119 @@ pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
   self.total_stats[stat]
 }
 
-pub fn set_hp(self : CharStats, value : Int) -> Unit {
-  self.hp = value
+pub fn get_base_hp(self : CharStats) -> Int {
+  self.inherent_hp
+}
+
+pub fn set_base_hp(self : CharStats, value : Int) -> Unit {
+  self.inherent_hp = value
+}
+
+pub fn get_base_mp(self : CharStats) -> Int {
+  self.inherent_mp
+}
+
+pub fn set_base_mp(self : CharStats, value : Int) -> Unit {
+  self.inherent_mp = value
+}
+
+pub fn get_max_hp(self : CharStats) -> Int {
+  self.inherent_max_hp
+}
+
+pub fn set_max_hp(self : CharStats, value : Int) -> Unit {
+  self.inherent_max_hp = value
+}
+
+pub fn get_max_mp(self : CharStats) -> Int {
+  self.inherent_max_mp
+}
+
+pub fn set_max_mp(self : CharStats, value : Int) -> Unit {
+  self.inherent_max_mp = value
+}
+
+pub fn get_level(self : CharStats) -> Int {
+  self.level
+}
+
+pub fn set_level(self : CharStats, value : Int) -> Unit {
+  self.level = value
+}
+
+pub fn get_str(self : CharStats) -> Int {
+  self.str
+}
+
+pub fn set_str(self : CharStats, value : Int) -> Unit {
+  self.str = value
+}
+
+pub fn get_dex(self : CharStats) -> Int {
+  self.dex
+}
+
+pub fn set_dex(self : CharStats, value : Int) -> Unit {
+  self.dex = value
+}
+
+pub fn get_int(self : CharStats) -> Int {
+  self.int
+}
+
+pub fn set_int(self : CharStats, value : Int) -> Unit {
+  self.int = value
+}
+
+pub fn get_luk(self : CharStats) -> Int {
+  self.luk
+}
+
+pub fn set_luk(self : CharStats, value : Int) -> Unit {
+  self.luk = value
+}
+
+pub fn get_ap(self : CharStats) -> Int {
+  self.ap
+}
+
+pub fn set_ap(self : CharStats, value : Int) -> Unit {
+  self.ap = value
+}
+
+pub fn get_sp(self : CharStats) -> Int {
+  self.sp
+}
+
+pub fn set_sp(self : CharStats, value : Int) -> Unit {
+  self.sp = value
+  guard let Some(listeners) = self.stat_listeners.get(self.sp_stat_id) else {
+    None => return
+  }
+  listeners.retain(fn(listener) { listener(value) })
+}
+
+pub fn get_fame(self : CharStats) -> Int {
+  self.fame
+}
+
+pub fn set_fame(self : CharStats, value : Int) -> Unit {
+  self.fame = value
 }
 
 pub fn get_stance(self : CharStats) -> Double {
   self.stance
 }
 
-pub fn set_mapid(self : CharStats, id : Int) -> Unit {
+pub fn get_portal(self : CharStats) -> Int {
+  self.portal
+}
+
+pub fn get_map_id(self : CharStats) -> Int {
+  self.map_id
+}
+
+pub fn set_map_id(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
@@ -299,22 +407,18 @@ pub fn is_damage_buffed(self : CharStats) -> Bool {
   self.get_buffdelta(@equip_stat.Id::MAGIC) > 0
 }
 
-pub fn get_resistance(self : CharStats) -> Double {
-  0 // TODO: implement
-}
-
-pub fn get_honor(self : CharStats) -> Int {
-  0 // TODO: implement
-}
-
-pub fn get_bossdmg(self : CharStats) -> Double {
-  0.0 // TODO: implement
-}
-
 pub fn change_job(self : CharStats, id : Int) -> Unit {
   self.job = @job.Job::new(~id)
 }
 
 pub fn get_matk(self : CharStats) -> Int {
   self.total_stats[@equip_stat.MAGIC]
+}
+
+pub fn listen_stat_changes(
+  self : CharStats,
+  stat_id : StatId,
+  listener : (Int) -> Bool
+) -> Unit {
+  self.stat_listeners.get_or_init(stat_id, fn() { Array::new() }).push(listener)
 }

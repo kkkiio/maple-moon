@@ -304,7 +304,7 @@ fn extract_effects(
 ) -> Unit {
   let attack_user : @combat.AttackUser = {
     skill_level: user.get_skilllevel(move.get_id()),
-    level: user.get_level(),
+    level: user.get_stats().get_level(),
     second_weapon: user.is_twohanded(),
     flip: result.toleft.not(),
   }
@@ -465,7 +465,7 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let critical = player.stats.get_critical()
   let ignoredef = player.stats.get_ignoredef()
   let accuracy = player.stats.get_total(@stat.Id::ACC)
-  let playerlevel = player.stats.level
+  let playerlevel = player.stats.get_level()
   let range = player.stats.get_range()
   let bullet = player.inventory.get_bulletid()
   let origin = player.get_position()
@@ -509,8 +509,8 @@ pub fn can_use(
   let level = player.skill_book.get_level(move.get_id())
   let weapontype = player.char_base.get_weapontype()
   let job = player.stats.get_job()
-  let hp = player.stats.hp
-  let mp = player.stats.mp
+  let hp = player.stats.get_base_hp()
+  let mp = player.stats.get_base_mp()
   let bullets = player.inventory.get_bulletcount()
   move.can_use(level, weapontype, job, hp, mp, bullets)
 }

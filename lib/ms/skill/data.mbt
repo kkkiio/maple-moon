@@ -1,4 +1,5 @@
 pub struct SkillData {
+  id : Int
   stats : Map[Int, Stats]
   element : String
   req_weapon : @weapon.Type
@@ -178,6 +179,7 @@ pub fn SkillData::load(id : Int) -> SkillData! {
     req_skills.set(skillid, reqlv)
   }
   {
+    id,
     stats,
     element,
     req_weapon,

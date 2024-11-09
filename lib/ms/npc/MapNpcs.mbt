@@ -76,7 +76,7 @@ pub fn send_cursor(
           Some({ id, msgtype, b0, b1, speaker, str }) => {
             let ui = UINpcTalk::new()
             self.container.add_ui(
-              @ui.Element::new(ui),
+              @ui.Element::new(ui, @ui.UIElementType::NPC_TALK),
               UINpcTalk::const_focused(),
             )
             ui

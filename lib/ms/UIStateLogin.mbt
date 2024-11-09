@@ -16,7 +16,7 @@ fn UIStateLogin::new(login_module : @login.Module) -> UIStateLogin {
   // } else {
   state.set_element(
     UILogin::const_focused(),
-    @ui.Element::new(UILogin::new(login_module)),
+    @ui.Element::new(UILogin::new(login_module), @ui.UIElementType::LOGIN),
   )
   // }
   state
@@ -68,7 +68,7 @@ pub fn send_cursor(
   match self.get(self.focused) {
     Some(focusedelement) =>
       if focusedelement.get_ui_model().is_active() {
-        self.remove_cursor(focusedelement.get_type())
+        self.remove_cursor(self.focused)
         return focusedelement.send_cursor(clicked, cursorpos)
       } else {
         self.focused = UIElementType::UI_ELEMENT_NONE
@@ -78,8 +78,8 @@ pub fn send_cursor(
   }
   match self.get_front() {
     Some(front) => {
-      self.remove_cursor(front.get_type())
-      front.send_cursor(clicked, cursorpos)
+      self.remove_cursor(front.0)
+      front.1.send_cursor(clicked, cursorpos)
     }
     None => @ui.CursorState::IDLE
   }
@@ -98,23 +98,16 @@ pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
   }
 }
 
-pub fn get(self : UIStateLogin, type_ : UIElementType) -> UIElement? {
-  // self.elements.get(type_)
-  None
+pub fn get(self : UIStateLogin, t : UIElementType) -> UIElement? {
+  self.elements.get(t)
 }
 
-pub fn get_front(self : UIStateLogin) -> UIElement? {
+pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.UIElement)? {
   // TODO: use rev_iter
   self.elements
   .iter()
   .fold(
-    fn(acc, it) {
-      if it.1.get_ui_model().is_active() {
-        Some(it.1)
-      } else {
-        acc
-      }
-    },
+    fn(acc, it) { if it.1.get_ui_model().is_active() { Some(it) } else { acc } },
     init=None,
   )
 }
@@ -174,14 +167,12 @@ pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
   )
 }
 
-pub fn remove_cursor(self : UIStateLogin, type_ : UIElementType) -> Unit {
-  self.elements.each(
-    fn(_type, element) {
-      if element.get_ui_model().is_active() && element.get_type() != type_ {
-        element.remove_cursor()
-      }
-    },
-  )
+pub fn remove_cursor(self : UIStateLogin, keep : UIElementType) -> Unit {
+  for key, element in self.elements {
+    if element.get_ui_model().is_active() && key != keep {
+      element.remove_cursor()
+    }
+  }
 }
 
 pub fn set_element(
@@ -189,7 +180,7 @@ pub fn set_element(
   focused : Bool,
   elem : @ui.Element
 ) -> Unit {
-  let t = elem.object.get_type()
+  let t = elem.key
   self.remove(t)
   if focused {
     self.focused = t

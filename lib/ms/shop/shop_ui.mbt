@@ -620,10 +620,6 @@ impl @ui.UIElement for UIShop with send_key(
   }
 }
 
-impl @ui.UIElement for UIShop with get_type(self) -> @ui.UIElementType {
-  @ui.UIElementType::SHOP
-}
-
 impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
 
 enum Buttons {

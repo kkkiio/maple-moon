@@ -46,6 +46,7 @@ pub fn make_handlers(
       @net.MOB_MOVE_RESPONSE,
       @net.with_log(
         @net.MOB_MOVE_RESPONSE,
+        log_recv=false,
         fn(recv : @net.InPacket) {
           handle_mob_move_response!(self.mob_combat, recv)
         },

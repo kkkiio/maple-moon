@@ -15,7 +15,7 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
         focused=false,
         make_element=fn() {
           UIStatsInfo::load((self.char_stats_getter)().unwrap())
-          |> @ui.Element::new
+          |> @ui.Element::new(@ui.UIElementType::STATS_INFO)
         },
       ),
     ),

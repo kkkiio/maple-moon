@@ -31,14 +31,19 @@ pub fn Player::from_entry(
   damage_number_set : @combat_ui.DamageNumberSet,
   sp_stat_id : @char_stats.StatId
 ) -> Player! {
+  let char_base = @character.CharBase::new(
+    entry.id,
+    @character.CharLook::new!(entry.look),
+    entry.stats.name,
+    damage_number_set,
+  )
   let p = {
-    char_base: @character.CharBase::new(
-      entry.id,
-      @character.CharLook::new!(entry.look),
-      entry.stats.name,
-      damage_number_set,
+    char_base,
+    stats: CharStats::from_entry(
+      entry.stats,
+      fn() { char_base.get_weapontype() },
+      sp_stat_id,
     ),
-    stats: CharStats::from_entry(entry.stats, sp_stat_id),
     keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
@@ -243,7 +248,6 @@ pub fn get_stats(self : Player) -> CharStats {
 /// Recalculates the total stats from base stats, inventories and skills.
 pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   let weapontype = self.char_base.get_weapontype()
-  self.stats.set_weapontype(weapontype)
   self.stats.init_totalstats()
   if equip_changed {
     self.inventory.recalc_stats(weapontype)
@@ -257,7 +261,6 @@ pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
     self.active_buffs.apply_buff(self.stats, buff.stat, buff.value)
   }
   self.stats.close_totalstats()
-  // TODO: Update stats info ui
 }
 
 fn new_move_player_packet(movement : Movement) -> @net.OutPacket {

@@ -12,7 +12,9 @@ pub fn Game::start() -> Game {
   let login_module = @login.Module::new()
   let monster_module = @monster.Module::new()
   let drop_module = @drop.Module::new()
-  let inventory_module = @inventory.Module::new()
+  let inventory_module = @inventory.Module::new(
+    fn() { Stage::get().get_player() },
+  )
   let timer = @utils.Timer::new(
     fn() { now_micro() |> @utils.TimePoint::from_micro },
   )
@@ -36,16 +38,15 @@ pub fn Game::start() -> Game {
   let char_stats_module = @char_stats.Module::new(
     fn() { stage.get_player().map(fn(p) { p.get_stats() }) },
   )
-  for elem in char_stats_module.make_actions() {
-    let (id, descriptor) = elem
-    action_registry.register(id, descriptor)
-  }
   let sp_stat_id = @char_stats.StatId(1)
   let skill_book_module = @skill_book.Module::new(
     fn() { stage.get_player() },
     sp_stat_id,
   )
-  for elem in skill_book_module.make_actions() {
+  let actions = char_stats_module.make_actions().iter()
+    |> Iter::concat(inventory_module.make_actions().iter())
+    |> Iter::concat(skill_book_module.make_actions().iter())
+  for elem in actions {
     let (id, descriptor) = elem
     action_registry.register(id, descriptor)
   }
@@ -103,7 +104,13 @@ pub fn Game::start() -> Game {
           @net.CHANGE_STATS,
           @net.with_log(
             @net.CHANGE_STATS,
-            fn(recv : @net.InPacket) { handle_change_stats!(stage, recv) },
+            fn(recv : @net.InPacket) {
+              handle_change_stats!(
+                stage.get_player().unwrap(),
+                stage.get_inventory(),
+                recv,
+              )
+            },
           ),
         ),
       )
@@ -135,9 +142,7 @@ pub fn Game::start() -> Game {
         )
         .iter(),
       )
-      |> Iter::concat(
-        inventory_module.make_handlers(fn() { stage.get_player() }).iter(),
-      )
+      |> Iter::concat(inventory_module.make_handlers().iter())
       // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
       // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
       // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
@@ -218,7 +223,10 @@ fn setup_game_ui(player : @player.Player) -> Unit {
   UI::get().change_state(UiState::GAME)
   let stats = player.get_stats()
   let stats_bar = @player.UIStatusBar::new(stats)
-  UI::get().set_element(false, @ui.Element::new(stats_bar))
+  UI::get().set_element(
+    false,
+    @ui.Element::new(stats_bar, @ui.UIElementType::STATUS_BAR),
+  )
 }
 
 fn now_micro() -> Double = "time" "now_micro"

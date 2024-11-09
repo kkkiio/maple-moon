@@ -4,9 +4,8 @@ pub fn handle_open_npc_shop(
   inventory_getter : () -> @inventory.Inventory?,
   recv : @net.InPacket
 ) -> Unit! {
-  guard let Some(charlook) = charlook_getter() else { None => return }
-  guard let Some(inventory) = inventory_getter() else { None => return }
-  
+  guard let Some(charlook) = charlook_getter() else { None => return  }
+  guard let Some(inventory) = inventory_getter() else { None => return  }
   let npcid = recv.read_int!()
   let size = recv.read_short!()
   let items = []
@@ -36,16 +35,9 @@ pub fn handle_open_npc_shop(
       )
     }
   }
-  let shop = UIShop::new(
-    module.countset,
-    charlook,
-    inventory,
-    npcid,
-    items,
-  )
-  module.container.add_ui(@ui.Element::new(shop), true)
+  let shop = UIShop::new(module.countset, charlook, inventory, npcid, items)
+  module.container.add_ui(@ui.Element::new(shop, @ui.UIElementType::SHOP), true)
 }
-
 
 struct ShopItem {
   id : Int
@@ -55,4 +47,3 @@ struct ShopItem {
   charge_price : Int
   buyable : Int
 } derive(Show)
-

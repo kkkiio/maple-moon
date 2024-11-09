@@ -8,7 +8,7 @@ pub fn handle_update_skill(
   let masterlevel = recv.read_int!()
   let expire = recv.read_long!()
   match player_getter() {
-    Some(player) => 
+    Some(player) =>
       player.change_skill(skillid, level, masterlevel, expire.to_int())
     None => ()
   }

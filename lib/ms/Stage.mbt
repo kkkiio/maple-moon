@@ -318,15 +318,19 @@ fn new_change_map_packet(
   ..write_short(if usewheel { 1 } else { 0 })
 }
 
-fn handle_change_stats(self : Stage, recv : @net.InPacket) -> Unit! {
+fn handle_change_stats(
+  player : @player.Player,
+  inventory : @inventory.Inventory,
+  recv : @net.InPacket
+) -> Unit! {
   recv.read_bool!() |> ignore // 'itemreaction'
   let updatemask = recv.read_int!()
   let mut recalculate = false
-  let player = self.get_player().unwrap()
   for it in @maple_stat.codes {
     let (stat_id, stat_mask) = it
     if (updatemask & stat_mask) != 0 {
-      recalculate = recalculate || self.handle_stat!(player, stat_id, recv)
+      recalculate = handle_stat!(player, inventory, stat_id, recv) ||
+        recalculate
     }
   }
   if recalculate {
@@ -335,8 +339,8 @@ fn handle_change_stats(self : Stage, recv : @net.InPacket) -> Unit! {
 }
 
 fn handle_stat(
-  self : Stage,
   player : @player.Player,
+  inventory : @inventory.Inventory,
   stat : @maple_stat.Id,
   recv : @net.InPacket
 ) -> Bool! {
@@ -360,7 +364,7 @@ fn handle_stat(
     }
     @maple_stat.Id::EXP =>
       player.get_stats().set_exp(recv.read_int!().to_int64())
-    @maple_stat.Id::MESO => self.inventory.set_meso(recv.read_int!())
+    @maple_stat.Id::MESO => inventory.set_meso(recv.read_int!())
     @maple_stat.Id::STR => {
       player.get_stats().set_str(recv.read_short!())
       recalculate = true
@@ -404,24 +408,6 @@ fn handle_stat(
     @maple_stat.Id::PET => () // TODO: Handle pet stats
     @maple_stat.Id::GACHAEXP => () // TODO: Handle gacha exp
   }
-  // let update_statsinfo = need_statsinfo_update(stat)
-
-  // if (update_statsinfo && !recalculate) {
-  //     if (auto statsinfo = UI::get().get_element<UIStatsInfo>()) {
-  //         statsinfo->get().update_stat(stat);
-  //     }
-  // }
-
-  // bool update_skillbook = need_skillbook_update(stat);
-
-  // if (update_skillbook) {
-  //     int16_t value = player.get_stats().get_stat(stat);
-
-  //     if (auto skillbook = UI::get().get_element<UISkillBook>()) {
-  //         skillbook->get().update_stat(stat, value);
-  //     }
-  // }
-
   recalculate
 }
 

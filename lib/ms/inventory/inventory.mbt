@@ -65,6 +65,7 @@ struct Inventory {
   slot_maxima : Map[TypeId, Int]
   mut meso : Int
   mut bullet_slot : Int
+  item_listeners : Array[() -> Bool] // TODO: fine-grained listeners
 }
 
 struct Slot {
@@ -85,6 +86,7 @@ pub fn Inventory::new() -> Inventory {
     bullet_slot: 0,
     total_stats: @utils.DefaultMap::new(fn() { 0 }),
     slot_maxima: Map::from_array([(TypeId::EQUIPPED, @slot.Id::length())]),
+    item_listeners: Array::new(),
   }
 }
 
@@ -179,7 +181,7 @@ pub fn Inventory::add_pet(
   self.pets.set(self.add_slot(invtype, slot, item_id, 1, cash), { pet_name, })
 }
 
-pub fn Inventory::add_equip(
+pub fn add_equip(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
@@ -192,7 +194,7 @@ pub fn Inventory::add_equip(
   owner : String,
   flags : Int,
   item_level : Int,
-  iexp : Int,
+  _iexp : Int,
   vicious : Int
 ) -> Unit! {
   self.equips.set(
@@ -265,6 +267,7 @@ pub fn modify(
     Modification::REMOVE => self.remove(t, slot)
     _ => panic()
   }
+  self.item_listeners.retain(fn(listener) { listener() })
 }
 
 pub fn swap(
@@ -344,4 +347,8 @@ pub fn find_equipslot(self : Inventory, item_id : Int) -> @slot.Id {
 
 pub fn has_equipped(self : Inventory, slot : @slot.Id) -> Bool {
   self.inventories[TypeId::EQUIPPED].contains(slot.int_value())
+}
+
+pub fn listen_item_changes(self : Inventory, listener : () -> Bool) -> Unit {
+  self.item_listeners.push(listener)
 }

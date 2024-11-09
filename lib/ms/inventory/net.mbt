@@ -21,30 +21,17 @@ fn handle_modify_inventory(
     let mut arg = 0
     match mode {
       Modification::ADD => parse_item!(recv, t, pos, inventory)
-
-      // if (auto keyconfig = UI::get().get_element<UIKeyConfig>()) {
-      //     let count_now =
-      //         inventory.get_item_count(mod.type, mod.pos);
-      //     keyconfig.update_item_count(mod.type,
-      //                                        mod.pos,
-      //                                        count_now);
-      // }
-
       Modification::CHANGE_COUNT => {
         arg = recv.read_short!()
         let count_before = inventory.get_item_count(t, pos)
         let count_now = arg
         inventory.modify(t, pos, mode, arg, Movement::MOVE_NONE)
-
-        // TODO: ui
-
         if count_before < count_now {
           mode = Modification::ADD_COUNT
         }
       }
       Modification::SWAP => arg = recv.read_short!()
       Modification::REMOVE =>
-        // TODO: ui
         inventory.modify(t, pos, mode, arg, Movement::MOVE_INTERNAL)
       _ => ()
     }
@@ -71,23 +58,18 @@ fn handle_modify_inventory(
             change_equip!(inventory, player, -mod.arg)
           }
           TypeId::EQUIP
-          | TypeId::USE | TypeId::SETUP | TypeId::ETC | TypeId::CASH =>
-            // TODO: ui
-            ()
+          | TypeId::USE | TypeId::SETUP | TypeId::ETC | TypeId::CASH => ()
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
-          // TODO: ui
           change_equip!(inventory, player, -mod.pos)
         } else if mod.arg < 0 {
-          // TODO: ui
           change_equip!(inventory, player, -mod.arg)
         }
       _ => ()
     }
   }
   player.recalc_stats(true)
-  // UI::get().enable();
 }
 
 fn change_equip(

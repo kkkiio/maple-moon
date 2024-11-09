@@ -100,7 +100,10 @@ pub fn handle_npc_dialogue(
     (0, 0)
   }
   let npcTalk = UINpcTalk::new()
-  container.add_ui(@ui.Element::new(npcTalk), UINpcTalk::const_focused())
+  container.add_ui(
+    @ui.Element::new(npcTalk, @ui.UIElementType::NPC_TALK),
+    UINpcTalk::const_focused(),
+  )
   npcTalk.change_text!(
     npcid,
     msgtype,

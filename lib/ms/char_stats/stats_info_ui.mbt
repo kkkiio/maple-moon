@@ -503,10 +503,7 @@ fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
   ..write_int(@maple_stat.codes[stat].unwrap())
 }
 
-fn update_ap(
-  stats : CharStats,
-  buttons : Array[@ui.Button]
-) -> Bool {
+fn update_ap(stats : CharStats, buttons : Array[@ui.Button]) -> Bool {
   let nowap = stats.get_ap() > 0
   let newstate = if nowap {
     @ui.ButtonState::NORMAL

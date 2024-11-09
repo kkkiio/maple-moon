@@ -434,10 +434,6 @@ pub fn remove_cursor(self : SkillBookUI) -> Unit {
   // TODO: implement
 }
 
-pub fn get_type(self : SkillBookUI) -> @ui.UIElementType {
-  @ui.SKILL_BOOK
-}
-
 pub fn send_key(
   self : SkillBookUI,
   keycode : Int,
@@ -447,7 +443,7 @@ pub fn send_key(
   // TODO: implement
 }
 
-/// Requests a skill level increase by spending SP
+///| Requests a skill level increase by spending SP
 fn new_spend_sp_packet(skill_id : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_SP)
   ..write_time()

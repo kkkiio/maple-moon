@@ -61,7 +61,7 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
             },
           )
           skillbook.listen_skill_level_changes(
-            fn(skill_id, level) {
+            fn(_skill_id, _level) { // TODO: fine-granular update
               guard ui.get_ui_model().active else { return false }
               ui.set_attributes(
                 {
@@ -74,7 +74,7 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
               true
             },
           )
-          ui |> @ui.Element::new
+          ui |> @ui.Element::new(@ui.UIElementType::SKILL_BOOK)
         },
       ),
     ),

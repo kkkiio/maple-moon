@@ -23,7 +23,7 @@ pub fn make_handlers(
         OPEN_NPC_SHOP,
         fn(recv : @net.InPacket) {
           handle_open_npc_shop!(self, charlook_getter, inventory_getter, recv)
-        }
+        },
       ),
     ),
   ]

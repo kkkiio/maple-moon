@@ -1,5 +1,6 @@
 struct CharStats {
   name : String
+  weapon_type_getter : () -> @weapon.Type
   mut job : @job.Job
   mut level : Int
   mut str : Int
@@ -21,7 +22,6 @@ struct CharStats {
   percentages : Map[@equip_stat.Id, Double]
   mut attack_speed : Int
   mut projectile_range : Int
-  mut weapon_type : @weapon.Type
   mut critical : Double
   mut max_damage : Int
   mut min_damage : Int
@@ -56,10 +56,15 @@ pub struct StatsEntry {
   portal : Int
 }
 
-pub fn CharStats::from_entry(s : StatsEntry, sp_stat_id : StatId) -> CharStats {
+pub fn CharStats::from_entry(
+  s : StatsEntry,
+  weapon_type_getter : () -> @weapon.Type,
+  sp_stat_id : StatId
+) -> CharStats {
   let job = @job.Job::new(id=s.job)
   let cs : CharStats = {
     name: s.name,
+    weapon_type_getter,
     job,
     exp: s.exp,
     map_id: s.mapid,
@@ -69,7 +74,6 @@ pub fn CharStats::from_entry(s : StatsEntry, sp_stat_id : StatId) -> CharStats {
     percentages: Map::new(),
     attack_speed: 0,
     projectile_range: 400,
-    weapon_type: @weapon.Type::NONE,
     critical: 0.05,
     max_damage: 0,
     min_damage: 0,
@@ -247,10 +251,6 @@ pub fn set_map_id(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
-pub fn set_weapontype(self : CharStats, w : @weapon.Type) -> Unit {
-  self.weapon_type = w
-}
-
 pub fn add_value(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   let current = self.get_total(stat)
   self.set_total(stat, current + value)
@@ -282,12 +282,12 @@ pub fn close_totalstats(self : CharStats) -> Unit {
 }
 
 fn get_primary_stat(self : CharStats) -> Int {
-  let primary = self.job.get_primary(self.weapon_type)
+  let primary = self.job.get_primary(self.get_weapon_type())
   return (self.get_multiplier() * self.get_total(primary).to_double()).to_int()
 }
 
 fn get_secondary_stat(self : CharStats) -> Int {
-  let secondary = self.job.get_secondary(self.weapon_type)
+  let secondary = self.job.get_secondary(self.get_weapon_type())
   return self.get_total(secondary)
 }
 
@@ -298,7 +298,7 @@ fn calculate_accuracy(self : CharStats) -> Int {
 }
 
 fn get_multiplier(self : CharStats) -> Double {
-  match self.weapon_type {
+  match self.get_weapon_type() {
     @weapon.Type::SWORD_1H => 4.0
     @weapon.Type::AXE_1H => 4.0
     @weapon.Type::MACE_1H => 4.0
@@ -378,8 +378,8 @@ pub fn get_job(self : CharStats) -> @job.Job {
   self.job
 }
 
-pub fn get_weapontype(self : CharStats) -> @weapon.Type {
-  self.weapon_type
+pub fn get_weapon_type(self : CharStats) -> @weapon.Type {
+  (self.weapon_type_getter)()
 }
 
 pub fn get_exp(self : CharStats) -> Int64 {

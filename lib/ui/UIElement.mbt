@@ -92,7 +92,6 @@ pub trait UIElement {
   get_ui_model(Self) -> UIModel
   send_cursor(Self, Bool, Point[Int]) -> CursorState
   send_key(Self, Int, Bool, Bool) -> Unit
-  get_type(Self) -> UIElementType
   remove_cursor(Self) -> Unit
   draw(Self, Double) -> Unit
   update(Self) -> Unit
@@ -106,17 +105,20 @@ pub trait UIElementDescriptor {
 
 pub struct Element {
   object : UIElement
+  key : UIElementType
   doubleclick : ((Point[Int]) -> Unit)?
   toggle_active : () -> Unit
 }
 
 pub fn Element::new(
   object : UIElement,
+  key : UIElementType,
   ~doubleclick? : (Point[Int]) -> Unit,
   ~toggle_active? : () -> Unit
 ) -> Element {
   {
     object,
+    key,
     doubleclick,
     toggle_active: toggle_active.or(
       fn() { object.get_ui_model().toggle_active() },

@@ -307,10 +307,6 @@ pub fn send_key(
   // TODO: implement
 }
 
-pub fn get_type(self : UIStatusBar) -> @ui.UIElementType {
-  @ui.UIElementType::STATUS_BAR
-}
-
 pub fn remove_cursor(self : UIStatusBar) -> Unit {
   // TODO: implement
 }

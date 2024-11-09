@@ -1,26 +1,46 @@
-/// ItemInventory Dialog
+///| ItemInventory Dialog
 /// 
 /// support full display mode only for now
+/// TODO: support projectile 
 struct UIItemInventory {
-  player_getter : () -> @player.Player?
-  base : @ui.UIModel
-  buttons : Map[ItemInventoryUIButton, @ui.Button]
+  logic_state : LogicState
+  resources : Resources
+  mut render_state : RenderState?
+}
+
+struct Attributes {
+  player : @player.Player
   inventory : Inventory
-  meso_label : @graphics.Text
-  maple_points_label : @graphics.Text
-  icons : Map[Int, (IconModel, @graphics.Texture)]
-  tab : Ref[TypeId]
-  disabled : @graphics.Texture
+}
+
+struct LogicState {
+  base : @ui.UIModel
+  mut attributes : Attributes
+  tab_btns : Array[@ui.TwoSpriteButton]
+  tab_types : Array[TypeId]
+  mut tab : Int
+}
+
+struct Resources {
   full_backgrnd : @graphics.Texture
   full_backgrnd2 : @graphics.Texture
   full_backgrnd3 : @graphics.Texture
-  // TODO: support projectile 
+  disabled : @graphics.Texture
+  close_btn : @ui.MapleButton
+  meso_label : @graphics.Text
+  maple_points_label : @graphics.Text
 }
 
-pub fn UIItemInventory::new(
-  inventory : Inventory,
-  player_getter : () -> @player.Player?
-) -> UIItemInventory {
+struct RenderState {
+  buttons : Array[@ui.Button]
+  position : @struct.Point[Int]
+  meso_label : @graphics.Text
+  maple_points_label : @graphics.Text
+  icons : Map[Int, (IconModel, @graphics.Texture)]
+  numslots : Int
+}
+
+pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
   let tab = @ref.new(TypeId::EQUIP)
   let ui_loader = @resource.ui_loader()
   let item = ui_loader.load_res(["UIWindow2.img", "Item"])
@@ -39,108 +59,6 @@ pub fn UIItemInventory::new(
   let tabdis = srctab["disabled"]
   let close = ui_loader.load_res(["Basic.img", "BtClose3"])
   let model = @ui.UIModel::new(@struct.Point::new(300, 160), bg_full_dimensions)
-  let buttons = {}
-  let icons = {}
-  buttons[ItemInventoryUIButton::BT_CLOSE] = @ui.MapleButton::from_resource(
-      close,
-    )
-    |> @ui.Button::new(
-      on_click=fn() {
-        model.toggle_active()
-        @ui.ButtonState::NORMAL
-      },
-    )
-  let make_change_tab_cb = fn(new_tab : TypeId) {
-    fn() {
-      let old_tab = tab.val
-      guard old_tab != new_tab else { return @ui.ButtonState::IDENTITY }
-      tab.val = new_tab
-      buttons[button_by_tab(old_tab)].unwrap().object
-      .get_button_base()
-      .set_state(@ui.ButtonState::NORMAL)
-      buttons[button_by_tab(new_tab)].unwrap().object
-      .get_button_base()
-      .set_state(@ui.ButtonState::PRESSED)
-      load_icons?(icons, inventory, new_tab).unwrap() // TODO: handle error
-      @ui.ButtonState::IDENTITY
-    }
-  }
-  buttons[ItemInventoryUIButton::BT_TAB_EQUIP] = @ui.TwoSpriteButton::load(
-      tabdis["0"],
-      taben["0"],
-    )
-    |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::EQUIP))
-  buttons[ItemInventoryUIButton::BT_TAB_USE] = @ui.TwoSpriteButton::load(
-      tabdis["1"],
-      taben["1"],
-    )
-    |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::USE))
-  buttons[ItemInventoryUIButton::BT_TAB_ETC] = @ui.TwoSpriteButton::load(
-      tabdis["2"],
-      taben["2"],
-    )
-    |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::ETC))
-  buttons[ItemInventoryUIButton::BT_TAB_SETUP] = @ui.TwoSpriteButton::load(
-      tabdis["3"],
-      taben["3"],
-    )
-    |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::SETUP))
-  buttons[ItemInventoryUIButton::BT_TAB_CASH] = @ui.TwoSpriteButton::load(
-      tabdis["4"],
-      taben["4"],
-    )
-    |> @ui.Button::new(on_click=make_change_tab_cb(TypeId::CASH))
-  buttons[ItemInventoryUIButton::BT_GATHER] = @ui.MapleButton::from_resource(
-      item["BtGather3"],
-    )
-    |> @ui.Button::new // TODO: implement
-  buttons[ItemInventoryUIButton::BT_SORT] = @ui.MapleButton::from_resource(
-      item["BtSort3"],
-    )
-    |> @ui.Button::new // TODO: implement
-  buttons[ItemInventoryUIButton::BT_COIN_SM] = @ui.MapleButton::from_resource(
-      item["BtCoin4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_POINT_SM] = @ui.MapleButton::from_resource(
-      item["BtPoint1"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_GATHER_SM] = @ui.MapleButton::from_resource(
-      item["BtGather4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_SORT_SM] = @ui.MapleButton::from_resource(
-      item["BtSort4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_POT_SM] = @ui.MapleButton::from_resource(
-      item["BtPot4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_UPGRADE_SM] = @ui.MapleButton::from_resource(
-      item["BtUpgrade4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_APPRAISE_SM] = @ui.MapleButton::from_resource(
-      item["BtAppraise4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_EXTRACT_SM] = @ui.MapleButton::from_resource(
-      item["BtExtract4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_DISASSEMBLE_SM] = @ui.MapleButton::from_resource(
-      item["BtDisassemble4"],
-    )
-    |> @ui.Button::new
-  buttons[ItemInventoryUIButton::BT_TOAD_SM] = @ui.MapleButton::from_resource(
-      item["BtToad4"],
-    )
-    |> @ui.Button::new
-  buttons[button_by_tab(tab.val)].unwrap().object
-  .get_button_base()
-  .set_state(@ui.ButtonState::PRESSED)
   let meso_label = @graphics.Text::new(
     @graphics.FontId::A11M,
     @graphics.TextAlignment::RIGHT,
@@ -153,40 +71,69 @@ pub fn UIItemInventory::new(
     @graphics.TextAlignment::RIGHT,
     @struct.ColorName::BLACK,
   )
-  load_icons?(icons, inventory, tab.val).unwrap()
-  {
-    player_getter,
-    base: model,
-    buttons,
-    inventory,
-    meso_label,
-    maple_points_label,
-    icons,
-    tab,
+  let tab_btns : Array[@ui.TwoSpriteButton] = [
+    @ui.TwoSpriteButton::new(
+      @graphics.Texture::from_resource(tabdis["0"]),
+      @graphics.Texture::from_resource(taben["0"]),
+    ),
+    @ui.TwoSpriteButton::new(
+      @graphics.Texture::from_resource(tabdis["1"]),
+      @graphics.Texture::from_resource(taben["1"]),
+    ),
+    @ui.TwoSpriteButton::new(
+      @graphics.Texture::from_resource(tabdis["2"]),
+      @graphics.Texture::from_resource(taben["2"]),
+    ),
+    @ui.TwoSpriteButton::new(
+      @graphics.Texture::from_resource(tabdis["3"]),
+      @graphics.Texture::from_resource(taben["3"]),
+    ),
+    @ui.TwoSpriteButton::new(
+      @graphics.Texture::from_resource(tabdis["4"]),
+      @graphics.Texture::from_resource(taben["4"]),
+    ),
+  ]
+  let tab_types = [
+    TypeId::EQUIP,
+    TypeId::USE,
+    TypeId::SETUP,
+    TypeId::ETC,
+    TypeId::CASH,
+  ]
+  let close_btn = @ui.MapleButton::from_resource(close)
+  let logic_state = { base: model, attributes, tab_btns, tab_types, tab: 0 }
+  let resources = {
     disabled,
     full_backgrnd,
     full_backgrnd2,
     full_backgrnd3,
+    close_btn,
+    meso_label,
+    maple_points_label,
   }
+  { logic_state, resources, render_state: None }
 }
 
 pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
-  let position = self.base.position
+  self.use_render_state().draw(self.resources, alpha)
+}
+
+fn draw(self : RenderState, resources : Resources, alpha : Double) -> Unit {
+  let position = self.position
   let mesolabel_pos = position + @struct.Point::new(127, 262)
   let maplepointslabel_pos = position + @struct.Point::new(159, 279)
 
   // TODO: support scroll
-  self.full_backgrnd.draw(self.base.position |> @graphics.DrawArgument::new)
-  self.full_backgrnd2.draw(self.base.position |> @graphics.DrawArgument::new)
-  self.full_backgrnd3.draw(self.base.position |> @graphics.DrawArgument::new)
+  resources.full_backgrnd.draw(position |> @graphics.DrawArgument::new)
+  resources.full_backgrnd2.draw(position |> @graphics.DrawArgument::new)
+  resources.full_backgrnd3.draw(position |> @graphics.DrawArgument::new)
   self.meso_label.draw(mesolabel_pos + @struct.Point::new(3, 70))
   self.maple_points_label.draw(
     maplepointslabel_pos + @struct.Point::new(181, 53),
   )
-  let tab = self.tab.val
-  let numslots = self.inventory.get_slotmax(tab)
   let firstslot = 1
   let lastslot = max_full_slots
+  let numslots = self.numslots
   for i in 0..=max_full_slots {
     let slotpos = get_full_slotpos(i)
     match self.icons.get(i) {
@@ -196,22 +143,101 @@ pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
         }
       None =>
         if i > numslots && i <= lastslot {
-          self.disabled.draw(position + slotpos |> @graphics.DrawArgument::new)
+          resources.disabled.draw(
+            position + slotpos |> @graphics.DrawArgument::new,
+          )
         }
     }
   }
   // TODO: bulletslot
   // TODO: new_tab
-  for _, button in self.buttons {
+  for button in self.buttons {
     button.object.draw(position)
   }
 }
 
-pub fn update(self : UIItemInventory) -> Unit {
-  let meso_str = @string_format.format_decimal_separator(
-    self.inventory.get_meso(),
+fn use_render_state(self : UIItemInventory) -> RenderState {
+  match self.render_state {
+    Some(rs) => rs
+    None => {
+      let render_state = render(
+        self.logic_state,
+        self.resources,
+        fn() { self.render_state = None },
+      )
+      self.render_state = Some(render_state)
+      render_state
+    }
+  }
+}
+
+fn render(
+  self : LogicState,
+  resources : Resources,
+  on_state_changed : () -> Unit
+) -> RenderState {
+  let tab = self.tab
+  let numslots = self.attributes.inventory.get_slotmax(self.tab_types[tab])
+  let buttons = []
+  buttons.push(
+    resources.close_btn
+    |> @ui.Button::new(
+      on_click=fn() {
+        self.base.toggle_active()
+        @ui.ButtonState::NORMAL
+      },
+    ),
   )
-  self.meso_label.change_text(meso_str)
+  let make_change_tab_cb = fn(new_tab : Int) {
+    fn() {
+      guard self.tab != new_tab else { return @ui.ButtonState::IDENTITY }
+      self.tab = new_tab
+      on_state_changed()
+      @ui.ButtonState::IDENTITY
+    }
+  }
+  buttons.push_iter(
+    self.tab_btns
+    .iter2()
+    .iter()
+    .map(
+      fn(it) {
+        let (i, btn) = it
+        btn
+        .get_button_base()
+        .set_state(
+          if i == tab {
+            @ui.ButtonState::PRESSED
+          } else {
+            @ui.ButtonState::NORMAL
+          },
+        )
+        @ui.Button::new(btn, on_click=make_change_tab_cb(i))
+      },
+    ),
+  )
+  let icons = {}
+  let inventory = self.attributes.inventory
+  load_icons?(icons, inventory, self.tab_types[tab]).unwrap()
+  {
+    buttons,
+    position: self.base.position,
+    meso_label: resources.meso_label.with_text(
+      @string_format.format_decimal_separator(inventory.get_meso()),
+    ),
+    maple_points_label: resources.maple_points_label,
+    icons,
+    numslots,
+  }
+}
+
+pub fn update(self : UIItemInventory) -> Unit {
+
+}
+
+pub fn set_attributes(self : UIItemInventory, attributes : Attributes) -> Unit {
+  self.logic_state.attributes = attributes
+  self.render_state = None
 }
 
 pub fn get_full_slotpos(slot : Int) -> @struct.Point[Int] {
@@ -242,8 +268,10 @@ pub fn is_visible(self : UIItemInventory, slot : Int) -> Bool {
 }
 
 pub fn is_not_visible(self : UIItemInventory, slot : Int) -> Bool {
-  let tab = self.tab.val
-  let numslots = self.inventory.get_slotmax(tab)
+  let tab = self.logic_state.tab
+  let numslots = self.logic_state.attributes.inventory.get_slotmax(
+    self.logic_state.tab_types[tab],
+  )
   slot < 1 || slot > numslots
 }
 
@@ -281,43 +309,12 @@ fn update_slot(
   icons[slot] = (IconModel::new(count), texture) // TODO: support drop
 }
 
-enum ItemInventoryUIButton {
-  BT_CLOSE
-  BT_TAB_EQUIP
-  BT_TAB_USE
-  BT_TAB_ETC
-  BT_TAB_SETUP
-  BT_TAB_CASH
-  BT_GATHER
-  BT_SORT
-  BT_COIN_SM
-  BT_POINT_SM
-  BT_GATHER_SM
-  BT_SORT_SM
-  BT_POT_SM
-  BT_UPGRADE_SM
-  BT_APPRAISE_SM
-  BT_EXTRACT_SM
-  BT_DISASSEMBLE_SM
-  BT_TOAD_SM
-} derive(Eq, Hash)
-
-pub fn button_by_tab(tb : TypeId) -> ItemInventoryUIButton {
-  match tb {
-    TypeId::EQUIP => ItemInventoryUIButton::BT_TAB_EQUIP
-    TypeId::USE => ItemInventoryUIButton::BT_TAB_USE
-    TypeId::SETUP => ItemInventoryUIButton::BT_TAB_SETUP
-    TypeId::ETC => ItemInventoryUIButton::BT_TAB_ETC
-    _ => ItemInventoryUIButton::BT_TAB_CASH
-  }
-}
-
 pub fn UIItemInventory::is_focused() -> Bool {
   false
 }
 
 pub fn get_ui_model(self : UIItemInventory) -> @ui.UIModel {
-  self.base
+  self.logic_state.base
 }
 
 pub fn send_cursor(
@@ -326,9 +323,10 @@ pub fn send_cursor(
   cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
   // TODO: implement
+  let render_state = self.use_render_state()
   @ui.send_cursor_to_btns(
-    self.buttons.values().iter(),
-    self.base.position,
+    render_state.buttons.iter(),
+    render_state.position,
     pressed,
     cursorpos,
   )
@@ -356,15 +354,17 @@ pub fn doubleclick(
   self : UIItemInventory,
   cursorpos : @struct.Point[Int]
 ) -> Unit {
-  let slot = self.slot_by_position(cursorpos - self.base.position)
-  if self.icons.contains(slot) && self.is_visible(slot) {
-    let tab = self.tab.val
-    let item_id = self.inventory.get_item_id(tab, slot)
+  let render_state = self.use_render_state()
+  let slot = self.slot_by_position(cursorpos - render_state.position)
+  if render_state.icons.contains(slot) && self.is_visible(slot) {
+    let inventory = self.logic_state.attributes.inventory
+    let tab = self.logic_state.tab_types[self.logic_state.tab]
+    let item_id = inventory.get_item_id(tab, slot)
     if item_id != 0 {
       match tab {
         TypeId::EQUIP =>
           if self.can_wear_equip(slot) {
-            new_equip_item_packet(slot, self.inventory.find_equipslot(item_id)).dispatch()
+            new_equip_item_packet(slot, inventory.find_equipslot(item_id)).dispatch()
           }
         TypeId::USE => new_use_item_packet(slot, item_id).dispatch()
         _ => ()
@@ -391,7 +391,7 @@ fn slot_by_position(
 }
 
 pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
-  guard let Some(player) = (self.player_getter)() else { None => false }
+  let player = self.logic_state.attributes.player
   let stats = player.get_stats()
   let look = player.get_look()
   let alerted = look.get_alerted()
@@ -399,7 +399,8 @@ pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
     // TODO: alert
     return false
   }
-  let item_id = self.inventory.get_item_id(TypeId::EQUIP, slot)
+  let inventory = self.logic_state.attributes.inventory
+  let item_id = inventory.get_item_id(TypeId::EQUIP, slot)
   let equipdata = @equip.EquipData::get?(item_id).unwrap() // TODO: handle error
   let itemdata = equipdata.get_itemdata()
   let reqGender = itemdata.gender

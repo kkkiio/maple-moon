@@ -135,25 +135,7 @@ pub fn send_key(
               @action.Descriptor::UI(~key, ~make_element, ~focused) =>
                 self.toggle_element(key, focused, make_element)
             }
-          None =>
-            match action {
-              @action.Id::ITEMS =>
-                self.toggle_element(
-                  UIElementType::ITEM_INVENTORY,
-                  @inventory.UIItemInventory::is_focused(),
-                  fn() {
-                    let ui = @inventory.UIItemInventory::new(
-                      Stage::get().get_inventory(),
-                      fn() { Stage::get().get_player() },
-                    )
-                    @ui.Element::new(
-                      ui,
-                      doubleclick=fn(pos) { ui.doubleclick(pos) },
-                    )
-                  },
-                )
-              _ => ()
-            }
+          None => ()
         }
       }
     @KeyType.Id::ACTION
@@ -185,7 +167,7 @@ pub fn send_cursor(
     self.dragged = None
     match self.get_front(cursorpos) {
       Some(front) => {
-        let front_type = front.object.get_type()
+        let front_type = front.key
 
         // if self.tooltip_parent != UIElementType::UI_ELEMENT_NONE {
         //   if front_type != self.tooltip_parent {
@@ -198,7 +180,7 @@ pub fn send_cursor(
       }
       None => ()
     }
-    self.remove_cursors()
+    // self.remove_cursors()
     return Stage::get().send_cursor(clicked, cursorpos)
   }
   if self.dragged.is_empty() {
@@ -241,7 +223,7 @@ pub fn set_element(
   is_focused : Bool,
   elem : @ui.Element
 ) -> Unit {
-  let t = elem.object.get_type()
+  let t = elem.key
   self.remove(t)
   self.element_order.push(t)
   if is_focused {
@@ -348,10 +330,6 @@ pub fn get_front_by_pos(
       e.object.get_ui_model().is_in_range(pos)
     },
   )
-}
-
-pub fn remove_cursors(self : UIStateGame) -> Unit {
-  // Implementation goes here
 }
 
 pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {

@@ -186,7 +186,7 @@ function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
 /**
  * @param {WebGLRenderingContext} gl The WebGLRenderingContext to use.
  */
-function setupGl(gl) {
+export function setupGl(gl) {
     const ATLASW = 8192;
     const ATLASH = 8192;
     const program = createProgramFromSources(gl, [

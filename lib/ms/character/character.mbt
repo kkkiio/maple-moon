@@ -81,7 +81,7 @@ pub trait Character {
   set_state(Self, CharState) -> Unit
   attack_by_action(Self, String) -> Unit
   attack_by_stance(Self, @char_look.StanceId) -> Unit
-  regular_attack(Self, Bool) -> Unit!
+  regular_attack(Self, Bool) -> Unit
   // set_afterimage(Self, Int) -> Unit
   get_afterimage(Self) -> @char_look.Afterimage
   show_attack_effect(Self, @graphics.Animation, Int) -> Unit
@@ -309,11 +309,10 @@ pub fn get_name(self : CharBase) -> String {
 }
 
 pub fn get_weapontype(self : CharBase) -> @weapon.Type {
-  let weapon_id = self.look.get_equips().get_weapon()
-  if weapon_id <= 0 {
-    return @weapon.Type::NONE
-  }
-  @weapon.WeaponData::get?(weapon_id).unwrap().get_type() // TODO: Handle error
+  self.look
+  .get_equips()
+  .get_weapon()
+  .map_or(@weapon.Type::NONE, fn(data) { data.get_type() })
 }
 
 pub fn is_invincible(self : CharBase) -> Bool {
@@ -321,11 +320,9 @@ pub fn is_invincible(self : CharBase) -> Bool {
 }
 
 pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
-  let weapon_id = self.look.get_equips().get_weapon()
-  if weapon_id <= 0 {
-    return
+  guard let Some(weapon) = self.look.get_equips().get_weapon() else {
+    None => return
   }
-  let weapon = @weapon.WeaponData::get?(weapon_id).unwrap()
   let stance_name = self.look.get_stance().name()
   let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
@@ -357,8 +354,8 @@ pub fn is_twohanded(self : CharBase) -> Bool {
   self.look.get_equips().is_twohanded()
 }
 
-pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit! {
-  self.look.attack!(degenerate)
+pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit {
+  self.look.attack(degenerate)
   self.attacking = true
   self.look.set_alerted(5000)
 }

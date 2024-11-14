@@ -67,7 +67,7 @@ fn parse_add_equip(
     invtype = TypeId::EQUIPPED
     slot = -slot
   }
-  inventory.add_equip!(
+  inventory.add_equip(
     invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel,
     itemexp, vicious,
   )

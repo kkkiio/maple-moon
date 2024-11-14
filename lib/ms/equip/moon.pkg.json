@@ -8,6 +8,7 @@
     "KKKIIO/maple-moon-client/lib/config",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/ms/item"
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/utils"
   ]
 }

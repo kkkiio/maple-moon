@@ -29,15 +29,14 @@ pub struct Equip {
   item_level : Int
   vicious : Int
   potential_rank : Potential
-  quality : @quality.Id
+  // quality : @quality.Id
 }
 
 pub fn check_quality(
-  item_id : Int,
+  data : EquipData,
   scrolled : Bool,
   stats : Map[@stat.Id, Int]
-) -> @quality.Id! {
-  let data = EquipData::get!(item_id)
+) -> @quality.Id {
   let mut delta = 0
   for es, stat in stats {
     let defstat = data.get_defstat(es)

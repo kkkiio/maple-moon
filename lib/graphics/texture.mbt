@@ -12,9 +12,6 @@ pub fn to_string(self : Texture) -> String {
 }
 
 pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
-  // let loader_name = src.loader.name()
-  // let src_path = src.path
-  // println("loading texture from resource \(loader_name) \(src_path)")
   // TODO: source,_outlink,_inlink
   match src.get_bitmap() {
     Some(bmp) =>

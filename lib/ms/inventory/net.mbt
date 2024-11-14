@@ -54,17 +54,17 @@ fn handle_modify_inventory(
         match mod.t {
           TypeId::EQUIPPED => {
             // TODO: ui
-            change_equip!(inventory, player, -mod.pos)
-            change_equip!(inventory, player, -mod.arg)
+            change_equip(inventory, player, -mod.pos)
+            change_equip(inventory, player, -mod.arg)
           }
           TypeId::EQUIP
           | TypeId::USE | TypeId::SETUP | TypeId::ETC | TypeId::CASH => ()
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
-          change_equip!(inventory, player, -mod.pos)
+          change_equip(inventory, player, -mod.pos)
         } else if mod.arg < 0 {
-          change_equip!(inventory, player, -mod.arg)
+          change_equip(inventory, player, -mod.arg)
         }
       _ => ()
     }
@@ -75,10 +75,11 @@ fn handle_modify_inventory(
 fn change_equip(
   inventory : Inventory,
   player : @player.Player,
-  slot : Int
-) -> Unit! {
-  match inventory.get_item_id(TypeId::EQUIPPED, slot) {
-    0 => player.get_look().remove_equip(@slot.Id::from_int(slot))
-    itemid => player.get_look().add_equip!(itemid)
+  raw_slot_id : Int
+) -> Unit {
+  let slot = @slot.Id::from_int(raw_slot_id)
+  match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
+    0 => player.get_look().remove_equip(slot)
+    itemid => player.get_look().add_equip(itemid, slot)
   }
 }

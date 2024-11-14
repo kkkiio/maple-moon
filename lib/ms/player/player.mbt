@@ -30,10 +30,10 @@ pub fn Player::from_entry(
   inventory : Inventory,
   damage_number_set : @combat_ui.DamageNumberSet,
   sp_stat_id : @char_stats.StatId
-) -> Player! {
+) -> Player {
   let char_base = @character.CharBase::new(
     entry.id,
-    @character.CharLook::new!(entry.look),
+    @character.CharLook::new(entry.look),
     entry.stats.name,
     damage_number_set,
   )
@@ -338,11 +338,9 @@ pub fn get_skills(self : Player) -> @character.SkillBook {
 }
 
 pub fn get_integer_attackspeed(self : Player) -> Int {
-  let weapon_id = self.char_base.look.get_equips().get_weapon()
-  if weapon_id <= 0 {
-    return 0
+  guard let Some(weapon) = self.char_base.look.get_equips().get_weapon() else {
+    None => return 0
   }
-  let weapon = @weapon.WeaponData::get?(weapon_id).unwrap() // TODO: Handle error
   let base_speed = self.stats.get_attackspeed()
   let weapon_speed = weapon.get_speed()
   base_speed + weapon_speed
@@ -395,8 +393,8 @@ pub fn get_weapontype(self : Player) -> @weapon.Type {
   self.char_base.get_weapontype()
 }
 
-pub fn regular_attack(self : Player, degenerate : Bool) -> Unit! {
-  self.char_base.regular_attack!(degenerate)
+pub fn regular_attack(self : Player, degenerate : Bool) -> Unit {
+  self.char_base.regular_attack(degenerate)
 }
 
 pub fn change_level(self : Player, level : Int) -> Unit {

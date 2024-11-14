@@ -1,9 +1,9 @@
-// Define the ActiveBuff interface
+///| Define the ActiveBuff interface
 trait ActiveBuff {
   apply_to(Self, CharStats, Int) -> Unit
 }
 
-// Template for SimpleStatBuff
+///| Template for SimpleStatBuff
 struct SimpleStatBuff {
   stat : @stat.Id
 }

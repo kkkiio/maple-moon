@@ -321,7 +321,7 @@ fn render(
   }
 }
 
-fn use_draw_state(self : SkillBookUI) -> RenderState {
+fn use_render_state(self : SkillBookUI) -> RenderState {
   match self.render_state {
     Some(ds) => ds
     None => {
@@ -336,7 +336,7 @@ fn use_draw_state(self : SkillBookUI) -> RenderState {
 }
 
 pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
-  let draw_state = use_draw_state(self)
+  let draw_state = use_render_state(self)
   let resources = self.resources
   let model = draw_state.model
   @ui.draw_sprites(draw_state.sprites.iter(), model.position, alpha)
@@ -409,9 +409,9 @@ pub fn get_ui_model(self : SkillBookUI) -> @ui.UIModel {
 }
 
 pub fn update(self : SkillBookUI) -> Unit {
-  let draw_state = use_draw_state(self)
-  @ui.update_sprites(draw_state.sprites.iter())
-  for button in draw_state.buttons {
+  let render_state = use_render_state(self)
+  @ui.update_sprites(render_state.sprites.iter())
+  for button in render_state.buttons {
     button.object.update()
   }
 }
@@ -421,7 +421,7 @@ pub fn send_cursor(
   pressed : Bool,
   cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
-  let draw_state = use_draw_state(self)
+  let draw_state = use_render_state(self)
   @ui.send_cursor_to_btns(
     draw_state.buttons.iter(),
     draw_state.model.position,

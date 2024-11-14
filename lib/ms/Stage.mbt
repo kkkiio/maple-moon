@@ -81,8 +81,8 @@ pub fn load_player(
   self : Stage,
   entry : @character.CharEntry,
   sp_stat_id : @char_stats.StatId
-) -> @player.Player! {
-  let player = @player.Player::from_entry!(
+) -> @player.Player {
+  let player = @player.Player::from_entry(
     entry,
     self.inventory,
     self.damage_number_set,

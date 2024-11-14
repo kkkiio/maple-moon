@@ -1,3 +1,10 @@
+import { setupGl } from './gl.js';
+import {
+  LazyBmpLoader,
+  LazyResourceLoader,
+  ResourceLoader,
+} from './resource.js';
+
 class MergeResourceLoader {
   constructor(name, mappings) {
     this.name = name;
@@ -57,13 +64,9 @@ class Socket {
   }
   read() {
     if (this.pendingData.length > 0) {
-      const data = this.pendingData.shift();
-      return {
-        bytes: data,
-        eof: false,
-      }
+      return this.pendingData.shift();
     }
-    return { bytes: new Uint8Array(), eof: this.ws.readyState === WebSocket.CLOSED }
+    return new Uint8Array();
   }
   write(bytes) {
     this.ws.send(bytes.buffer);
@@ -130,7 +133,7 @@ function main() {
   }
 
   const prepareResourcePromises = [];
-  const uiLoader = new ResourceLoader("UI.nx");
+  const uiLoader = ResourceLoader.fromName("UI.nx");
   prepareResourcePromises.push(
     uiLoader.load()
   );
@@ -148,31 +151,20 @@ function main() {
     mapLoader.start()
   );
 
-  const soundLoader = new ResourceLoader("Sound.nx");
+  const soundLoader = ResourceLoader.fromName("Sound.nx");
   prepareResourcePromises.push(
     soundLoader.load()
   );
 
-  const characterLoader = new MergeResourceLoader("Character.nx", [
+  const characterLoader = new LazyResourceLoader("Character.nx", [
     { nodepath: "00002000.img", filename: "00002000.nx.json" },
     { nodepath: "00012000.img", filename: "00012000.nx.json" },
     { nodepath: "Hair/00030030.img", filename: "hair00030030.nx.json" },
     { nodepath: "Face/00020000.img", filename: "face00020000.nx.json" },
-    { nodepath: "Coat/01040002.img", filename: "Coat/01040002.img.json" },
-    { nodepath: "Pants/01060002.img", filename: "Pants/01060002.img.json" },
+    { nodepath: "Pants", folder: "Pants" },
+    { nodepath: "Weapon", folder: "Weapon" },
+    { nodepath: "Coat", folder: "Coat" },
     { nodepath: "Shoes/01072001.img", filename: "Shoes/01072001.img.json" },
-    { nodepath: "Weapon/01302000.img", filename: "Weapon/01302000.img.json" },
-    { nodepath: "Weapon/01372005.img", filename: "Weapon/01372005.img.json" },
-    { nodepath: "Weapon/01372006.img", filename: "Weapon/01372006.img.json" },
-    { nodepath: "Weapon/01372002.img", filename: "Weapon/01372002.img.json" },
-    { nodepath: "Weapon/01372004.img", filename: "Weapon/01372004.img.json" },
-    { nodepath: "Weapon/01372003.img", filename: "Weapon/01372003.img.json" },
-    { nodepath: "Weapon/01382000.img", filename: "Weapon/01382000.img.json" },
-    { nodepath: "Weapon/01382003.img", filename: "Weapon/01382003.img.json" },
-    { nodepath: "Weapon/01382005.img", filename: "Weapon/01382005.img.json" },
-    { nodepath: "Weapon/01382004.img", filename: "Weapon/01382004.img.json" },
-    { nodepath: "Weapon/01382002.img", filename: "Weapon/01382002.img.json" },
-    { nodepath: "Weapon/01322002.img", filename: "Weapon/01322002.img.json" },
     { nodepath: "Afterimage", filename: "afterimage.nx.json" },
     { nodepath: "Cap/01002017.img", filename: "Cap/01002017.img.json" },
     { nodepath: "Cap/01002102.img", filename: "Cap/01002102.img.json" },
@@ -185,50 +177,55 @@ function main() {
     { nodepath: "Longcoat/01052095.img", filename: "Longcoat/01052095.img.json" },
   ]);
   prepareResourcePromises.push(
-    characterLoader.load()
+    characterLoader.start()
   );
 
-  const stringLoader = new ResourceLoader("String.nx");
+  const stringLoader = ResourceLoader.fromName("String.nx");
   prepareResourcePromises.push(
     stringLoader.load()
   );
 
-  const reactorLoader = new ResourceLoader("Reactor.nx");
+  const reactorLoader = ResourceLoader.fromName("Reactor.nx");
   prepareResourcePromises.push(
     reactorLoader.load()
   );
 
-  const map001Loader = new ResourceLoader("Map001.nx");
+  const map001Loader = ResourceLoader.fromName("Map001.nx");
   prepareResourcePromises.push(
     map001Loader.load()
   );
 
-  const mapPrettyLoader = new ResourceLoader("MapPretty.nx");
+  const mapPrettyLoader = ResourceLoader.fromName("MapPretty.nx");
   prepareResourcePromises.push(
     mapPrettyLoader.load()
   );
 
-  const etcLoader = new ResourceLoader("Etc.nx");
+  const etcLoader = ResourceLoader.fromName("Etc.nx");
   prepareResourcePromises.push(
     etcLoader.load()
   );
-  const npcLoader = new ResourceLoader("Npc.nx");
+
+  const npcLoader = ResourceLoader.fromName("Npc.nx");
   prepareResourcePromises.push(
     npcLoader.load()
   );
-  const itemLoader = new ResourceLoader("Item.nx");
+
+  const itemLoader = ResourceLoader.fromName("Item.nx");
   prepareResourcePromises.push(
     itemLoader.load()
   );
-  const mobLoader = new ResourceLoader("Mob.nx");
+
+  const mobLoader = ResourceLoader.fromName("Mob.nx");
   prepareResourcePromises.push(
     mobLoader.load()
   );
-  const effectLoader = new ResourceLoader("Effect.nx");
+
+  const effectLoader = ResourceLoader.fromName("Effect.nx");
   prepareResourcePromises.push(
     effectLoader.load()
   );
-  const skillLoader = new ResourceLoader("Skill.nx");
+
+  const skillLoader = ResourceLoader.fromName("Skill.nx");
   prepareResourcePromises.push(
     skillLoader.load()
   );
@@ -283,10 +280,15 @@ function main() {
         switch (name) {
           case "map":
             return mapLoader;
+          case "character":
+            return characterLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }
       },
+      load_desc_async: (loader, path) => loader.load_desc_async(path),
+      load_desc: (loader, path) => loader.load_desc(path),
+      as_jsonstring: (data) => JSON.stringify(data),
       load_image: (loader, bid) => loader.loadImage(bid),
       get_image_loader: (loader) => loader.bmpLoader,
       is_ready: (pollable) => pollable.ready,
@@ -350,10 +352,10 @@ function main() {
         const y = evt.clientY - rect.top;
         onmousemove(x, y);
       });
-      window.addEventListener("mousedown", (evt) => {
+      window.addEventListener("mousedown", (_) => {
         onmousedown();
       });
-      window.addEventListener("mouseup", (evt) => {
+      window.addEventListener("mouseup", (_) => {
         onmouseup();
       });
 

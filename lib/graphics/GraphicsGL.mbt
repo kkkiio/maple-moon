@@ -16,7 +16,6 @@ struct Atlas {
   minlosize : Int
   leftovers : @quadtree.Tree[Int, Leftover]
   offsets : Map[String, TexOffset]
-  mut wasted : Int
   mut next_id : Int
   mut border_x : Int
   mut border_y : Int
@@ -44,7 +43,6 @@ fn Atlas::new(width : Int, height : Int) -> Atlas {
     minlosize: 32,
     leftovers: @quadtree.Tree::new(),
     offsets: Map::new(),
-    wasted: 0,
     next_id: 1,
     border_x: 0,
     border_y: 1, // reserve (0,0) for color_fill
@@ -179,6 +177,7 @@ pub fn draw_text(
   }
   let offset = self.atlas.get_offset(textId, image)
   // TODO: add text_y_clip
+  text_y_clip |> ignore
   self.quads.push(
     Quad::new(
       point.x,
@@ -208,11 +207,11 @@ pub fn create_text_image(self : GraphicsGL, key : TextKey) -> @resource.Image {
   let g = key.color.g()
   let b = key.color.b()
   let img = text_create_image(
-    key.text.to_js_string(),
+    key.text,
     key.font_id.height(),
-    fontName.to_js_string(),
-    "rgb(\{r} \{g} \{b} / \{key.color.a()/255})".to_js_string(), // rgb($r $g $b / $a)
-    text_align.to_js_string(),
+    fontName,
+    "rgb(\{r} \{g} \{b} / \{key.color.a()/255})", // rgb($r $g $b / $a)
+    text_align,
     key.max_width.or(0),
   )
   self.text_cache.set(key, img)
@@ -306,7 +305,7 @@ fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
       let y = leftover.top
       let width_delta = leftover.width() - width
       let height_delta = leftover.height() - height
-      self.wasted -= width * height
+      // self.wasted -= width * height
       if width_delta >= self.minlosize && height_delta >= self.minlosize {
         let ok = self.leftovers.add(
           self.next_id,
@@ -381,7 +380,7 @@ fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
           }
           self.next_id += 1
         }
-        self.wasted += x * (height - self.y_range.b)
+        // self.wasted += x * (height - self.y_range.b)
         self.y_range = Range::new(y + height, height)
       } else if height < self.y_range.a - y {
         if width >= self.minlosize &&
@@ -400,8 +399,8 @@ fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
           }
           self.next_id += 1
         }
-        self.wasted += width * (self.y_range.a - y - height)
       }
+      // self.wasted += width * (self.y_range.a - y - height)
       (x, y)
     }
   }
@@ -418,7 +417,6 @@ fn clear_internal(self : Atlas) -> Unit {
   self.offsets.clear()
   self.leftovers.clear()
   self.next_id = 1
-  self.wasted = 0
 }
 
 struct Quad {
@@ -593,12 +591,3 @@ pub fn height(self : FontId) -> Int {
     A18M => 18
   }
 }
-
-fn text_create_image(
-  text : Js_string,
-  font_size : Int,
-  font_name : Js_string,
-  color : Js_string,
-  text_align : Js_string,
-  max_width : Int
-) -> @resource.Image = "text" "create_image"

@@ -53,21 +53,16 @@ struct Mob {
   skill_stands : Map[Int, @graphics.Animation]
   attack_stands : Map[Int, @graphics.Animation]
   buffs : Array[MobBuff]
-  name : String
   level : Int
   speed : Double
   fly_speed : Double
   watk : Int
-  matk : Int
   wdef : Int
   mdef : Int
-  accuracy : Int
   avoid : Int
   knockback : Int
-  undead : Bool
   touch_damage : Bool
   no_flip : Bool
-  not_attack : Bool
   can_move : Bool
   can_jump : Bool
   can_fly : Bool
@@ -80,15 +75,12 @@ struct Mob {
   mut movements : Array[@physics.Movement]
   mut counter : Int
   id : Int
-  effect : Int
-  team : Int
   mut dying : Bool
   mut dead : Bool
   mut control : Bool
   mut aggro : Bool
   mut stance : Stance
   mut fly_direction : FlyDirection
-  walk_force : Double
   mut hp_percent : Int
   mut fading : Bool
   mut fade_in : Bool
@@ -108,7 +100,7 @@ pub fn Mob::new(
   st : Int,
   fh : Int,
   newspawn : Bool,
-  tm : Int,
+  _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer
 ) -> Mob! {
@@ -118,19 +110,19 @@ pub fn Mob::new(
   let info = src["info"]
   let level = info["level"].get_int!()
   let watk = info["PADamage"].get_int!()
-  let matk = info["MADamage"].get_int!()
+  // let matk = info["MADamage"].get_int!()
   let wdef = info["PDDamage"].get_int!()
   let mdef = info["MDDamage"].get_int!()
-  let accuracy = info["acc"].get_int!()
+  // let accuracy = info["acc"].get_int!()
   let avoid = info["eva"].get_int!()
   let knockback = info["pushed"].get_int!()
   let mut speed = info["speed"].get_float!()
   let mut fly_speed = info["flySpeed"].get_float!()
   let touch_damage = info["bodyAttack"].get_bool!()
-  let undead = info["undead"].get_bool!()
+  // let undead = info["undead"].get_bool!()
   let is_boss = info["boss"].get_bool!()
   let no_flip = info["noFlip"].get_bool!()
-  let not_attack = info["notAttack"].get_bool!()
+  // let not_attack = info["notAttack"].get_bool!()
   let can_jump = src["jump"].get_children_count() > 0
   let can_fly = src["fly"].get_children_count() > 0
   let can_move = src["move"].get_children_count() > 0 || can_fly
@@ -195,7 +187,6 @@ pub fn Mob::new(
     base.phobj.t = @physics.PhysicsObjectType::FLYING
   }
   let id = mid
-  let team = tm
   base.set_position(position)
   let control = mode > 0
   let aggro = mode == 2
@@ -216,7 +207,7 @@ pub fn Mob::new(
     @graphics.FontId::A13M,
     @graphics.TextAlignment::CENTER,
     @struct.ColorName::WHITE,
-    // @graphics.TextBackground::NAMETAG,
+    nametag=true,
   )
   {
     base,
@@ -226,21 +217,16 @@ pub fn Mob::new(
     skill_stands,
     attack_stands,
     buffs: [],
-    name,
     level,
     speed,
     fly_speed,
     watk,
-    matk,
     wdef,
     mdef,
-    accuracy,
     avoid,
     knockback,
-    undead,
     touch_damage,
     no_flip,
-    not_attack,
     can_move,
     can_jump,
     can_fly,
@@ -253,15 +239,12 @@ pub fn Mob::new(
     movements: [],
     counter,
     id,
-    effect: 0,
-    team,
     dying,
     dead,
     control,
     aggro,
     stance,
     fly_direction,
-    walk_force: 0,
     hp_percent,
     fading: false,
     fade_in: newspawn,
@@ -818,7 +801,7 @@ fn calculate_hitchance(
   player_accuracy : Int
 ) -> Double {
   let hitchance = player_accuracy.to_double() /
-    ((1.84 + 0.07 * leveldelta.to_double()) * self.avoid.to_double() + 1.0)
+    (self.avoid.to_double() * (1.84 + 0.07 * leveldelta.to_double()) + 1.0)
   @math.maximum(hitchance, 0.01)
 }
 
@@ -839,11 +822,13 @@ pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
 
 pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   if self.hp_percent == 0 {
-    let delta = playerlevel - self.level
-    if delta > 9 {
-      self.name_label.change_color(@struct.ColorName::YELLOW)
-    } else if delta < -9 {
+    let delta = self.level - playerlevel
+    if delta >= 10 {
       self.name_label.change_color(@struct.ColorName::RED)
+    } else if delta >= 5 {
+      self.name_label.change_color(@struct.ColorName::YELLOW)
+    } else if delta <= -5 {
+      self.name_label.change_color(@struct.ColorName::GREEN)
     }
   }
   let percent = percent |> @math.minimum(100) |> @math.maximum(0)

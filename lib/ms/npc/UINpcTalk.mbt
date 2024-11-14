@@ -332,10 +332,6 @@ pub fn send_key(
   }
 }
 
-pub fn get_type(self : UINpcTalk) -> UIElementType {
-  UIElementType::NPC_TALK
-}
-
 pub fn change_text(
   self : UINpcTalk,
   npcid : Int,

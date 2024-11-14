@@ -673,10 +673,6 @@ pub fn send_key(
   }
 }
 
-pub fn get_type(self : UIStatsInfo) -> @ui.UIElementType {
-  @ui.UIElementType::STATS_INFO
-}
-
 pub fn remove_cursor(self : UIStatsInfo) -> Unit {
   @ui.remove_cursor(
     self.get_all_buttons().iter().map(fn(b) { b.object.get_button_base() }),

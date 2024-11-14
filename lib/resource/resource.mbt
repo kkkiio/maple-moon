@@ -1,24 +1,12 @@
-type JsJson
+type RawData
 
-extern "js" fn as_jsonstring(v : JsJson) -> String =
-  #|(v)=> {
-  #|  return JSON.stringify(v);
-  #|}
-
-fn as_moonjson(self : JsJson) -> @json.JsonValue {
+fn as_moonjson(self : RawData) -> @json.JsonValue {
   @json.parse?(as_jsonstring(self)).unwrap()
 }
 
 type ImageLoader
 
 type ResourceLoader
-
-fn get_resource_loader(name : Js_string) -> ResourceLoader = "resource" "get_loader"
-
-extern "js" fn load_desc(self : ResourceLoader, path : String) -> JsJson =
-  #| (l,p) => {
-  #|   return l.loadDesc(p)
-  #| }
 
 fn get_image_loader(self : ResourceLoader) -> ImageLoader = "resource" "get_image_loader"
 
@@ -30,38 +18,35 @@ struct SyncLoader {
 }
 
 pub fn SyncLoader::new(name : String) -> SyncLoader {
-  { name, loader: get_resource_loader(name.to_js_string()) }
+  { name, loader: get_resource_loader(name) }
 }
 
 pub fn ui_loader() -> SyncLoader {
-  { name: "ui", loader: get_resource_loader("ui".to_js_string()) }
+  { name: "ui", loader: get_resource_loader("ui") }
 }
 
 pub fn sound_loader() -> SyncLoader {
-  { name: "sound", loader: get_resource_loader("sound".to_js_string()) }
+  { name: "sound", loader: get_resource_loader("sound") }
 }
 
 pub fn character_loader() -> SyncLoader {
-  { name: "character", loader: get_resource_loader("character".to_js_string()) }
+  { name: "character", loader: get_resource_loader("character") }
 }
 
 pub fn string_loader() -> SyncLoader {
-  { name: "string", loader: get_resource_loader("string".to_js_string()) }
+  { name: "string", loader: get_resource_loader("string") }
 }
 
 pub fn reactor_loader() -> SyncLoader {
-  { name: "reactor", loader: get_resource_loader("reactor".to_js_string()) }
+  { name: "reactor", loader: get_resource_loader("reactor") }
 }
 
 pub fn map001_loader() -> SyncLoader {
-  { name: "map001", loader: get_resource_loader("map001".to_js_string()) }
+  { name: "map001", loader: get_resource_loader("map001") }
 }
 
 pub fn map_pretty_loader() -> SyncLoader {
-  {
-    name: "map_pretty",
-    loader: get_resource_loader("map_pretty".to_js_string()),
-  }
+  { name: "map_pretty", loader: get_resource_loader("map_pretty") }
 }
 
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
@@ -140,7 +125,7 @@ pub fn get_int(self : NxNode) -> Int!LoadError {
   self.get_float!().to_int()
 }
 
-pub type! LoadError String
+pub type! LoadError String derive(Show)
 
 pub fn as_int(self : NxNode) -> Int!LoadError {
   match self.desc {
@@ -220,6 +205,24 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
       )
     _ => Iter::empty()
   }
+}
+
+pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
+  Iter2::new(
+    fn(yield) {
+      match self.desc {
+        @json.JsonValue::Object(it) =>
+          it
+          .iter2()
+          .run(
+            fn(k, v) {
+              yield(k, { ..self, name: k, desc: v, path: self.path.push(k) })
+            },
+          )
+        _ => IterContinue
+      }
+    },
+  )
 }
 
 pub fn is_null(self : NxNode) -> Bool {

@@ -196,7 +196,7 @@ pub fn add_equip(
   item_level : Int,
   _iexp : Int,
   vicious : Int
-) -> Unit! {
+) -> Unit {
   self.equips.set(
     self.add_slot(invtype, slot, item_id, 1, cash),
     {
@@ -210,7 +210,7 @@ pub fn add_equip(
       item_level,
       vicious,
       potential_rank: @equip.Potential::POT_NONE,
-      quality: @equip.check_quality!(item_id, level > 0, stats),
+      // quality: @equip.check_quality(item_id, level > 0, stats),
     },
   )
 }
@@ -229,6 +229,30 @@ pub fn get_bulletid(self : Inventory) -> Int {
 
 pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
   self.inventories[t].get(slot).map(fn(it) { it.item_id }).or(0)
+}
+
+pub fn get_item_at_slot(
+  self : Inventory,
+  t : TypeId,
+  slot : Int
+) -> @item.ItemData? {
+  self.inventories[t]
+  .get(slot)
+  .bind(
+    fn(it) {
+      match @item.ItemData::get_async(it.item_id).poll() {
+        Some(Ok(item_data)) => item_data |> Some
+        Some(Err(e)) => {
+          @log.error(
+            { "err": e.to_string(), "item_id": it.item_id, "slot": slot },
+            "Failed to load item data",
+          )
+          None
+        }
+        None => None
+      }
+    },
+  )
 }
 
 pub fn get_bulletcount(self : Inventory) -> Int {
@@ -325,10 +349,7 @@ pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
   self.slot_maxima.get(t).or(0)
 }
 
-pub fn find_equipslot(self : Inventory, item_id : Int) -> @slot.Id {
-  guard let Ok(cloth) = @equip.EquipData::get?(item_id) else {
-    Err(_) => return @slot.Id::NONE // TODO: handle error
-  }
+pub fn find_equipslot(self : Inventory, cloth : @equip.EquipData) -> @slot.Id {
   let eqslot = cloth.get_eqslot()
   if eqslot == @slot.Id::RING1 {
     if self.has_equipped(@slot.Id::RING2).not() {

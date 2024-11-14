@@ -36,12 +36,11 @@ struct RenderState {
   position : @struct.Point[Int]
   meso_label : @graphics.Text
   maple_points_label : @graphics.Text
-  icons : Map[Int, (IconModel, @graphics.Texture)]
+  icons : Map[Int, (IconModel, @utils.Future[@graphics.Texture])]
   numslots : Int
 }
 
 pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
-  let tab = @ref.new(TypeId::EQUIP)
   let ui_loader = @resource.ui_loader()
   let item = ui_loader.load_res(["UIWindow2.img", "Item"])
 
@@ -114,11 +113,11 @@ pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
   { logic_state, resources, render_state: None }
 }
 
-pub fn draw(self : UIItemInventory, alpha : Double) -> Unit {
-  self.use_render_state().draw(self.resources, alpha)
+pub fn draw(self : UIItemInventory, _alpha : Double) -> Unit {
+  self.use_render_state().draw(self.resources)
 }
 
-fn draw(self : RenderState, resources : Resources, alpha : Double) -> Unit {
+fn draw(self : RenderState, resources : Resources) -> Unit {
   let position = self.position
   let mesolabel_pos = position + @struct.Point::new(127, 262)
   let maplepointslabel_pos = position + @struct.Point::new(159, 279)
@@ -139,7 +138,10 @@ fn draw(self : RenderState, resources : Resources, alpha : Double) -> Unit {
     match self.icons.get(i) {
       Some(icon) =>
         if i >= firstslot && i <= lastslot {
-          icon.0.draw(position + slotpos, icon.1)
+          match icon.1.poll() {
+            Some(texture) => icon.0.draw(position + slotpos, texture)
+            None => ()
+          }
         }
       None =>
         if i > numslots && i <= lastslot {
@@ -218,7 +220,16 @@ fn render(
   )
   let icons = {}
   let inventory = self.attributes.inventory
-  load_icons?(icons, inventory, self.tab_types[tab]).unwrap()
+  let tab_type = self.tab_types[tab]
+  let numslots = inventory.get_slotmax(tab_type)
+  for i in 0..=max_full_slots {
+    if i <= numslots {
+      match make_slot(inventory, tab_type, i) {
+        Some(icon) => icons[i] = icon
+        None => ()
+      }
+    }
+  }
   {
     buttons,
     position: self.base.position,
@@ -232,7 +243,10 @@ fn render(
 }
 
 pub fn update(self : UIItemInventory) -> Unit {
-
+  let render_state = self.use_render_state()
+  for button in render_state.buttons {
+    button.object.update()
+  }
 }
 
 pub fn set_attributes(self : UIItemInventory, attributes : Attributes) -> Unit {
@@ -275,38 +289,33 @@ pub fn is_not_visible(self : UIItemInventory, slot : Int) -> Bool {
   slot < 1 || slot > numslots
 }
 
-pub fn load_icons(
-  icons : Map[Int, (IconModel, @graphics.Texture)],
-  inventory : Inventory,
-  tab : TypeId
-) -> Unit! {
-  icons.clear()
-  let numslots = inventory.get_slotmax(tab)
-  for i in 0..=max_full_slots {
-    if i <= numslots {
-      update_slot!(icons, inventory, tab, i)
-    }
-  }
-}
-
-fn update_slot(
-  icons : Map[Int, (IconModel, @graphics.Texture)],
+fn make_slot(
   inventory : Inventory,
   tab : TypeId,
   slot : Int
-) -> Unit! {
+) -> (IconModel, @utils.Future[@graphics.Texture])? {
   let item_id = inventory.get_item_id(tab, slot)
-  if item_id == 0 {
-    icons.remove(slot)
-    return
-  }
+  guard item_id != 0 else { return None }
   let count = if tab == TypeId::EQUIP {
     -1
   } else {
     inventory.get_item_count(tab, slot)
   }
-  let texture = @item.ItemData::get!(item_id).get_icon(false)
-  icons[slot] = (IconModel::new(count), texture) // TODO: support drop
+  let texture = @item.ItemData::get_async(item_id).map(
+    fn(r) {
+      match r {
+        Ok(item_data) => item_data.get_icon(false)
+        Err(e) => {
+          @log.error(
+            { "item_id": item_id, "error": e },
+            "failed to load item data",
+          )
+          @graphics.Texture::default() // TODO: show error icon
+        }
+      }
+    },
+  )
+  Some((IconModel::new(count), texture)) // TODO: support drop
 }
 
 pub fn UIItemInventory::is_focused() -> Bool {
@@ -341,10 +350,6 @@ pub fn send_key(
   // TODO: implement
 }
 
-pub fn get_type(self : UIItemInventory) -> @ui.UIElementType {
-  @ui.UIElementType::ITEM_INVENTORY
-}
-
 pub fn remove_cursor(self : UIItemInventory) -> Unit {
   // TODO: implement
   // self.slider_.remove_cursor()
@@ -359,16 +364,18 @@ pub fn doubleclick(
   if render_state.icons.contains(slot) && self.is_visible(slot) {
     let inventory = self.logic_state.attributes.inventory
     let tab = self.logic_state.tab_types[self.logic_state.tab]
-    let item_id = inventory.get_item_id(tab, slot)
-    if item_id != 0 {
-      match tab {
-        TypeId::EQUIP =>
-          if self.can_wear_equip(slot) {
-            new_equip_item_packet(slot, inventory.find_equipslot(item_id)).dispatch()
-          }
-        TypeId::USE => new_use_item_packet(slot, item_id).dispatch()
-        _ => ()
+    guard let Some(item_data) = inventory.get_item_at_slot(tab, slot) else {
+      None => ()
+    }
+    match tab {
+      TypeId::EQUIP => {
+        let equip_data = @equip.EquipData::from_item_data?(item_data).unwrap() // TODO: handle error
+        if self.can_wear_equip(equip_data) {
+          new_equip_item_packet(slot, inventory.find_equipslot(equip_data)).dispatch()
+        }
       }
+      TypeId::USE => new_use_item_packet(slot, item_data.item_id).dispatch()
+      _ => ()
     }
   }
 }
@@ -390,7 +397,10 @@ fn slot_by_position(
   }
 }
 
-pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
+pub fn can_wear_equip(
+  self : UIItemInventory,
+  equip_data : @equip.EquipData
+) -> Bool {
   let player = self.logic_state.attributes.player
   let stats = player.get_stats()
   let look = player.get_look()
@@ -399,11 +409,7 @@ pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
     // TODO: alert
     return false
   }
-  let inventory = self.logic_state.attributes.inventory
-  let item_id = inventory.get_item_id(TypeId::EQUIP, slot)
-  let equipdata = @equip.EquipData::get?(item_id).unwrap() // TODO: handle error
-  let itemdata = equipdata.get_itemdata()
-  let reqGender = itemdata.gender
+  let reqGender = equip_data.get_gender()
   let female = stats.get_female()
   match reqGender {
     0 => // Male
@@ -417,12 +423,12 @@ pub fn can_wear_equip(self : UIItemInventory, slot : Int) -> Bool {
     2 => () // Unisex
     _ => ()
   }
-  let reqLevel = equipdata.get_reqstat(@maple_stat.Id::LEVEL)
-  let reqDEX = equipdata.get_reqstat(@maple_stat.Id::DEX)
-  let reqSTR = equipdata.get_reqstat(@maple_stat.Id::STR)
-  let reqLUK = equipdata.get_reqstat(@maple_stat.Id::LUK)
-  let reqINT = equipdata.get_reqstat(@maple_stat.Id::INT)
-  let reqFAME = equipdata.get_reqstat(@maple_stat.Id::FAME)
+  let reqLevel = equip_data.get_reqstat(@maple_stat.Id::LEVEL)
+  let reqDEX = equip_data.get_reqstat(@maple_stat.Id::DEX)
+  let reqSTR = equip_data.get_reqstat(@maple_stat.Id::STR)
+  let reqLUK = equip_data.get_reqstat(@maple_stat.Id::LUK)
+  let reqINT = equip_data.get_reqstat(@maple_stat.Id::INT)
+  let reqFAME = equip_data.get_reqstat(@maple_stat.Id::FAME)
   let mut i = 0
   if reqLevel > stats.get_level() {
     i += 1

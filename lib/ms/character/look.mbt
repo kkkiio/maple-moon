@@ -48,7 +48,7 @@ pub struct CharEntry {
   id : Int
 }
 
-pub fn CharLook::new(entry : LookEntry) -> CharLook! {
+pub fn CharLook::new(entry : LookEntry) -> CharLook {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
@@ -69,8 +69,8 @@ pub fn CharLook::new(entry : LookEntry) -> CharLook! {
   }
   l.set_body(entry.skin)
   l.set_face(entry.faceid)
-  for _, itemid in entry.equips {
-    l.add_equip!(itemid)
+  for slot_id, itemid in entry.equips {
+    l.add_equip(itemid, @slot.Id::from_int(slot_id))
   }
   l
 }
@@ -828,8 +828,8 @@ pub fn get_equips(self : CharLook) -> CharEquips {
   self.equips
 }
 
-pub fn add_equip(self : CharLook, itemid : Int) -> Unit! {
-  self.equips.add_equip!(itemid, draw_info)
+pub fn add_equip(self : CharLook, itemid : Int, slot : @slot.Id) -> Unit {
+  self.equips.add_equip(itemid, slot, draw_info)
   self.updatetwohanded()
 }
 
@@ -856,12 +856,8 @@ pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
   return delay
 }
 
-pub fn attack(self : CharLook, degenerate : Bool) -> Unit! {
-  let weapon_id = self.equips.get_weapon()
-  if weapon_id <= 0 {
-    return
-  }
-  let weapon = @weapon.WeaponData::get!(weapon_id)
+pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
+  guard let Some(weapon) = self.equips.get_weapon() else { None => return  }
   let attacktype = weapon.get_attack()
   if attacktype == 9 && degenerate.not() {
     self.set_stance(@char_look.StanceId::SHOT)

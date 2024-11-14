@@ -30,7 +30,7 @@ pub fn close(self : Session) -> Unit {
 pub fn connect(self : Session, path : String) -> Unit {
   // Connect to the server
   match self.conn {
-    CLOSED => self.conn = OPENED(Socket::open(path.to_js_string()))
+    CLOSED => self.conn = OPENED(Socket::open(path))
     _ => {
       @log.warn({ "path": path }, "previous connection still open")
       panic()
@@ -63,14 +63,9 @@ pub fn read(self : Session) -> Unit {
         _ => ()
       }
     READY(_) as conn => {
-      let res = conn.socket.read()
-      if res.bytes.length() > 0 {
-        (self.forwarder)(res.bytes)
-      }
-      if res.eof {
-        conn.socket.close()
-        self.conn = CLOSED
-        return
+      let bytes = conn.socket.read()
+      if bytes.length() > 0 {
+        (self.forwarder)(bytes)
       }
     }
   }
@@ -93,19 +88,6 @@ pub fn get_status(self : Session) -> ConnectionStatus {
 
 type Socket
 
-fn Socket::open(path : Js_string) -> Socket = "socket" "open"
-
 fn close(self : Socket) -> Unit = "socket" "close"
 
 fn get_ready_state(self : Socket) -> Int = "socket" "get_ready_state"
-
-struct ReadResult {
-  bytes : Bytes
-  eof : Bool
-}
-
-extern "js" fn read(self : Socket) -> ReadResult =
-  #| (s) => s.read()
-
-extern "js" fn write(self : Socket, packet : Bytes) -> Unit =
-  #| (s,p) => s.write(p)

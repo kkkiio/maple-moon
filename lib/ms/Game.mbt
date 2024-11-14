@@ -90,7 +90,7 @@ pub fn Game::start() -> Game {
       login_module
       .make_handlers(
         fn(map_id, portal_id) { stage.transition(map_id, portal_id) },
-        fn(char_entry) { stage.load_player!(char_entry, sp_stat_id) },
+        fn(char_entry) { stage.load_player(char_entry, sp_stat_id) },
         inventory_module.get_inventory(),
         fn(player) { setup_game_ui(player) },
       )
@@ -185,7 +185,13 @@ pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.login_module.update()
   let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
-  // TODO: reset game state if elapsed is too high
+  if elapsed.to_seconds() >= 1 {
+    @log.info(
+      { "elapsed": elapsed.to_seconds() },
+      "game idled, just wait for reconnect",
+    )
+    return
+  }
 
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()

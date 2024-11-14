@@ -46,7 +46,6 @@ struct UILogin {
   // mut passwordbg : Texture
   // mut checkbox : BoolPair[Texture]
   mut saveid : Bool
-  login_module : @login.Module
 }
 
 let map001_loader = @resource.map001_loader
@@ -104,7 +103,6 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
     sprites,
     buttons: Map::new(),
     saveid: false,
-    login_module,
   }
   // version: Text::new(),
   // account: Textfield::new(),
@@ -265,11 +263,6 @@ pub fn send_cursor(
     clicked,
     cursor_pos,
   )
-}
-
-pub fn get_type(self : UILogin) -> UIElementType {
-  self |> ignore
-  UIElementType::LOGIN
 }
 
 pub fn UILogin::const_type() -> UIElementType {

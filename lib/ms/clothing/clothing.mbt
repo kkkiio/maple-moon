@@ -47,40 +47,24 @@ struct Clothing {
   stand : @char_look.StanceId
   vslot : String
   two_handed : Bool
-  transparent : Bool
+  // transparent : Bool
 }
 
-pub fn Clothing::new(
-  item_id : Int,
+pub fn Clothing::from_resource(
+  item_data : @item.ItemData,
   drawinfo : @char_look.BodyDrawInfo
 ) -> Clothing! {
-  let equipdata = @equip.EquipData::get!(item_id)
+  let equipdata = @equip.EquipData::from_item_data!(item_data)
   let eq_slot = equipdata.get_eqslot()
   let two_handed = if eq_slot == @slot.Id::WEAPON {
-    @weapon.WeaponData::get!(item_id).is_twohanded()
+    @weapon.WeaponData::from_item_data!(item_data).is_twohanded()
   } else {
     false
   }
   let non_weapon_types = 15
   let weapon_offset = non_weapon_types + 15
   let weapon_types = 20
-  let layers = [
-    Layer::CAP,
-    Layer::FACE_ACC,
-    Layer::EYE_ACC,
-    Layer::EARRINGS,
-    Layer::TOP,
-    Layer::MAIL,
-    Layer::PANTS,
-    Layer::SHOES,
-    Layer::GLOVE,
-    Layer::SHIELD,
-    Layer::CAPE,
-    Layer::RING,
-    Layer::PENDANT,
-    Layer::BELT,
-    Layer::MEDAL,
-  ]
+  let item_id = item_data.item_id
   let index = item_id / 10000 - 100
   let chlayer = if index < non_weapon_types {
     layers[index]
@@ -89,15 +73,11 @@ pub fn Clothing::new(
   } else {
     Layer::CAPE
   }
-  let strid = "0" + item_id.to_string()
-  let category = equipdata.get_itemdata().get_category()
-  let src = @resource.character_loader().load_res([category, strid + ".img"])
-  let info = src["info"]
-  let vslot = info["vslot"].get_string()
-  let standno = info["stand"].get_int!()
-  let stand = match standno {
-    1 => @char_look.StanceId::STAND1
-    2 => @char_look.StanceId::STAND2
+  let info = item_data.get_info()
+  let vslot = info["vslot"].bind(fn(it) { it.as_string() }).or("")
+  let stand = match info {
+    { "stand": Json::Number(1) } => @char_look.StanceId::STAND1
+    { "stand": Json::Number(2) } => @char_look.StanceId::STAND2
     _ =>
       if two_handed {
         @char_look.StanceId::STAND2
@@ -105,10 +85,9 @@ pub fn Clothing::new(
         @char_look.StanceId::STAND1
       }
   }
-  let walkno = info["walk"].get_int!()
-  let walk = match walkno {
-    1 => @char_look.StanceId::WALK1
-    2 => @char_look.StanceId::WALK2
+  let walk = match info {
+    { "walk": Json::Number(1) } => @char_look.StanceId::WALK1
+    { "walk": Json::Number(2) } => @char_look.StanceId::WALK2
     _ =>
       if two_handed {
         @char_look.StanceId::WALK2
@@ -116,15 +95,20 @@ pub fn Clothing::new(
         @char_look.StanceId::WALK1
       }
   }
+  let src = item_data.get_src()
   let stances = @char_look.stance_id_names
     .iter()
-    .map(
+    .map_option(
       fn(it) {
         let (stancename, stance) = it
-        (stance, src[stancename])
+        let node = src[stancename]
+        if node.is_null() {
+          None
+        } else {
+          Some((stance, node))
+        }
       },
     )
-    .filter(fn(it) { it.1.is_null().not() })
     .map(
       fn(it) {
         let (stance, stancenode) = it
@@ -134,8 +118,7 @@ pub fn Clothing::new(
           if framenode.is_null() {
             break
           }
-          for partnode in framenode {
-            let part = partnode.name()
+          for part, partnode in framenode {
             if partnode.is_null() || partnode.get_bitmap().is_empty() {
               continue
             }
@@ -157,7 +140,6 @@ pub fn Clothing::new(
             } else {
               ("", @struct.Point::default())
             }
-            let mapnode = partnode["map"]
             let shift = match eq_slot {
               @slot.Id::FACE => -parentpos
               @slot.Id::SHOES
@@ -192,8 +174,8 @@ pub fn Clothing::new(
       },
     )
     |> Map::from_iter
-  let transparent = item_id == 1002186
-  { stances, item_id, eq_slot, vslot, two_handed, transparent, walk, stand }
+  // let transparent = item_id == 1002186
+  { stances, item_id, eq_slot, vslot, two_handed, walk, stand }
 }
 
 pub fn Clothing::draw(
@@ -258,3 +240,21 @@ pub fn get_stand(self : Clothing) -> @char_look.StanceId {
 pub fn get_walk(self : Clothing) -> @char_look.StanceId {
   self.walk
 }
+
+let layers : Array[Layer] = [
+  Layer::CAP,
+  Layer::FACE_ACC,
+  Layer::EYE_ACC,
+  Layer::EARRINGS,
+  Layer::TOP,
+  Layer::MAIL,
+  Layer::PANTS,
+  Layer::SHOES,
+  Layer::GLOVE,
+  Layer::SHIELD,
+  Layer::CAPE,
+  Layer::RING,
+  Layer::PENDANT,
+  Layer::BELT,
+  Layer::MEDAL,
+]

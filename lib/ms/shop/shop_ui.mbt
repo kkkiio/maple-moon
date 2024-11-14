@@ -68,7 +68,10 @@ pub fn UIShop::new(
       Buttons::CASH,
     ] {
     let tabnum = i.to_string()
-    buttons[button] = @ui.TwoSpriteButton::load(selldis[tabnum], sellen[tabnum])
+    buttons[button] = @ui.TwoSpriteButton::new(
+      selldis[tabnum] |> @graphics.Texture::from_resource,
+      sellen[tabnum] |> @graphics.Texture::from_resource,
+    )
   }
   let buy_x = 8
   let buy_width = 257

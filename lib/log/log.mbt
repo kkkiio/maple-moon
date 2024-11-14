@@ -24,7 +24,7 @@ pub fn error(context : Map[String, Show], msg : String) -> Unit {
   log_error(to_logstr(context, msg))
 }
 
-fn to_logstr(context : Map[String, Show], msg : String) -> Js_string {
+fn to_logstr(context : Map[String, Show], msg : String) -> String {
   let buf = StringBuilder::new(
     size_hint=(msg.length() + context.size() * 12) * 2,
   )
@@ -37,16 +37,9 @@ fn to_logstr(context : Map[String, Show], msg : String) -> Js_string {
   }
   buf.write_string("msg=")
   buf.write_string(msg)
-  buf.to_string().to_js_string()
+  buf.to_string()
 }
 
-fn log_debug(msg : Js_string) -> Unit = "log" "debug"
-
-fn log_info(msg : Js_string) -> Unit = "log" "info"
-
-fn log_warn(msg : Js_string) -> Unit = "log" "warn"
-
-fn log_error(msg : Js_string) -> Unit = "log" "error"
 
 pub enum Level {
   TRACE

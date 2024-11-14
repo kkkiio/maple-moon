@@ -1,6 +1,10 @@
-class LazyBmpLoader {
-    constructor(bmpDir) {
-        this.bmpDir = bmpDir;
+export class LazyBmpLoader {
+    /**
+     * 
+     * @param {string} imagesPath 
+     */
+    constructor(imagesPath) {
+        this.imagesPath = imagesPath;
         this.bitmaps = {};
     }
     loadImage(bid) {
@@ -9,7 +13,7 @@ class LazyBmpLoader {
             return bmp;
         }
         const img = new Image();
-        const bmpPath = `${this.bmpDir}/${bid}.png`;
+        const bmpPath = `${this.imagesPath}/${bid}.png`;
         bmp = {
             data: img,
             loading: true,
@@ -25,14 +29,18 @@ class LazyBmpLoader {
     }
 }
 
-class ResourceLoader {
-    constructor(name) {
-        this.name = name;
+export class ResourceLoader {
+    constructor(dataPath, imagesPath) {
+        this.dataPath = dataPath;
+        this.imagesPath = imagesPath;
         this.nxJson = null;
-        this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
+        this.bmpLoader = new LazyBmpLoader(imagesPath)
+    }
+    static fromName(name) {
+        return new ResourceLoader(`resource/${name}/nx.json`, `resource/${name}/bitmaps`)
     }
     async load() {
-        const path = `resource/${this.name}/nx.json`
+        const path = this.dataPath
         const response = await fetch(path);
         this.nxJson = await response.json();
     }
@@ -41,11 +49,14 @@ class ResourceLoader {
     }
 }
 
-class LazyResourceLoader {
+export class LazyResourceLoader {
     constructor(name, mappings) {
         this.name = name;
         this.mappings = mappings;
         this.instant = null;
+        /**
+         * @type {Array<{prefix: string, loader: FolderResourceLoader}>}
+         */
         this.folderLoaders = [];
         this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
     }
@@ -76,7 +87,12 @@ class LazyResourceLoader {
             }
         }
     }
-    loadDesc(nodepath) {
+    /**
+     * 
+     * @param {string} nodepath 
+     * @returns {{ready: boolean, value: any}}
+     */
+    loadDescAsync(nodepath) {
         if (this.folderLoaders.length > 0) {
             for (let pair of this.folderLoaders) {
                 if (nodepath.startsWith(pair.prefix)) {
@@ -89,6 +105,14 @@ class LazyResourceLoader {
             value: getByPath(this.instant, nodepath),
         }
     }
+    /**
+     * 
+     * @param {string} nodepath 
+     * @returns {any}
+     */
+    loadDesc(nodepath) {
+        return getByPath(this.instant, nodepath)
+    }
 }
 
 class FolderResourceLoader {
@@ -99,10 +123,15 @@ class FolderResourceLoader {
     /**
      * 
      * @param {string} nodepath 
-     * @returns 
+     * @returns {{ready: boolean, value: any}}
      */
     loadDesc(nodepath) {
-        const [child, rest] = nodepath.split("/", 1)
+        let i = nodepath.indexOf('/');
+        if (i == -1) {
+            i = nodepath.length;
+        }
+        const child = nodepath.substring(0, i);
+        const rest = nodepath.substring(i + 1);
         if (child in this.cache) {
             const json = this.cache[child]
             return {

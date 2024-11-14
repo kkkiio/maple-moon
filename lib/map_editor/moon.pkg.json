@@ -6,7 +6,6 @@
         "KKKIIO/maple-moon-client/lib/log",
         "KKKIIO/maple-moon-client/lib/graphics",
         "KKKIIO/maple-moon-client/lib/io/keyboard",
-        "KKKIIO/maple-moon-client/lib/constants",
         "KKKIIO/maple-moon-client/lib/utils"
     ],
     "link": {

@@ -7,11 +7,9 @@ struct WeaponData {
   after_image : String
 }
 
-let cache : Map[Int, WeaponData] = Map::new()
-
-fn WeaponData::fetch(equipid : Int) -> WeaponData! {
-  let equip_data = @equip.EquipData::get!(equipid)
-  let prefix = equipid / 10000
+pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
+  let equip_data = @equip.EquipData::from_item_data!(item_data)
+  let prefix = item_data.item_id / 10000
   let t = by_value!(prefix)
   let two_handed = prefix == Type::STAFF.int_value() ||
     (
@@ -19,26 +17,23 @@ fn WeaponData::fetch(equipid : Int) -> WeaponData! {
       prefix <= Type::POLEARM.int_value()
     ) ||
     prefix == Type::CROSSBOW.int_value()
-  let src = @resource.character_loader().load_res(
-    ["Weapon", "0" + equipid.to_string() + ".img", "info"],
-  )
-  let attack_speed = src["attackSpeed"].get_int!()
-  let attack = src["attack"].get_int!()
-
-  // TODO: sound
-
-  let after_image = src["afterImage"].get_string()
-  { equip_data, t, two_handed, attack_speed, attack, after_image }
-}
-
-pub fn WeaponData::get(equipid : Int) -> WeaponData! {
-  match cache.get(equipid) {
-    Some(data) => data
-    None => {
-      let data = WeaponData::fetch!(equipid)
-      cache.set(equipid, data)
-      data
+  if equip_data.get_category() != "Weapon" {
+    fail!("unsupported weapon type=\{equip_data.get_category()}")
+  }
+  let info = item_data.get_info()
+  match info {
+    {
+      "attackSpeed": Json::Number(attack_speed),
+      "attack": Json::Number(attack),
+      "afterImage": Json::String(after_image),
+    } => {
+      let attack_speed = attack_speed.to_int()
+      let attack = attack.to_int()
+      let after_image = after_image
+      // TODO: sound
+      { equip_data, t, two_handed, attack_speed, attack, after_image }
     }
+    _ => fail!("Invalid weapon data")
   }
 }
 

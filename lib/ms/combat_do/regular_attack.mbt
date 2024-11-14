@@ -66,7 +66,7 @@ pub fn apply(
       atype != @combat.AttackType::RANGED
     _ => false
   }
-  target.regular_attack?(degenerate).unwrap() // TODO: Handle error
+  target.regular_attack(degenerate)
 }
 
 pub fn can_use(

@@ -18,6 +18,10 @@ pub fn to_milliseconds(self : Duration) -> Int {
   self._ / 1000
 }
 
+pub fn to_seconds(self : Duration) -> Int {
+  self._ / 1000000
+}
+
 pub fn since(self : TimePoint, other : TimePoint) -> Duration {
   (self._ - other._).to_int()
 }

@@ -29,15 +29,60 @@ export class LazyBmpLoader {
     }
 }
 
+/**
+ * @typedef {Object} LazyImage
+ * @property {Image} data
+ * @property {boolean} loading
+ */
+
+export class ImageLoader {
+    /**
+     * 
+     * @param {string} imagesUrl 
+     */
+    constructor(imagesUrl) {
+        this.imagesUrl = imagesUrl;
+        /**
+         * @type {Record<string, LazyImage>}
+         */
+        this.images = {};
+    }
+    /**
+     * 
+     * @param {string} bid 
+     * @returns {LazyImage}
+     */
+    loadImage(bid) {
+        let res = this.images[bid];
+        if (res) {
+            return res;
+        }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        const bmpPath = `${this.imagesUrl}/${bid}.png`;
+        res = {
+            data: img,
+            loading: true,
+        };
+        this.images[bid] = res;
+        img.onload = () => {
+            res.w = img.width;
+            res.h = img.height;
+            res.loading = false;
+        };
+        img.src = bmpPath;
+        return res;
+    }
+}
+
 export class ResourceLoader {
-    constructor(dataPath, imagesPath) {
+    constructor(dataPath, bmpLoader) {
         this.dataPath = dataPath;
-        this.imagesPath = imagesPath;
         this.nxJson = null;
-        this.bmpLoader = new LazyBmpLoader(imagesPath)
+        this.bmpLoader = bmpLoader
     }
     static fromName(name) {
-        return new ResourceLoader(`resource/${name}/nx.json`, `resource/${name}/bitmaps`)
+        return new ResourceLoader(`resource/${name}/nx.json`, new LazyBmpLoader(`resource/${name}/bitmaps`))
     }
     async load() {
         const path = this.dataPath

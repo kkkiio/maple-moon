@@ -179,7 +179,6 @@ fn render(
   on_state_changed : () -> Unit
 ) -> RenderState {
   let tab = self.tab
-  let numslots = self.attributes.inventory.get_slotmax(self.tab_types[tab])
   let buttons = []
   buttons.push(
     resources.close_btn

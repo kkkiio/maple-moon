@@ -219,6 +219,7 @@ fn ItemData::load_async(
   )
 }
 
+/// @alert deprecated "use get_async instead"
 pub fn ItemData::get(id : Int) -> ItemData! {
   match cache[id] {
     Some(item_data) => item_data

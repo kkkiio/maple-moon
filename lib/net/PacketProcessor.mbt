@@ -89,3 +89,28 @@ pub fn with_log(
     }
   }
 }
+
+pub fn make_handler[T : Show](
+  opcode : Opcode,
+  parser : (InPacket) -> T!,
+  handler : (T) -> Unit,
+  ~log_recv : Bool = false
+) -> (Opcode, (InPacket) -> Unit) {
+  (
+    opcode,
+    fn(recv) {
+      let message = try {
+        parser!(recv)
+      } catch {
+        err => {
+          @log.error({ "opcode": opcode, "err": err }, "parse packet failed")
+          return
+        }
+      }
+      if log_recv {
+        @log.debug({ "opcode": opcode, "svr_msg": message }, "received")
+      }
+      handler(message)
+    },
+  )
+}

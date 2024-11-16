@@ -185,20 +185,14 @@ pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.login_module.update()
   let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
-  if elapsed.to_seconds() >= 1 {
-    @log.info(
-      { "elapsed": elapsed.to_seconds() },
-      "game idled, just wait for reconnect",
-    )
-    return
-  }
 
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()
   let times = acc / timestep
   let remaining = acc - timestep * times
   self.accumulator = remaining
-  for _ in 0..<times {
+  let update_times = @math.minimum(times, 10) // avoid halt
+  for _ in 0..<update_times {
     self.update()
   }
 

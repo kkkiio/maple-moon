@@ -88,7 +88,7 @@ pub let all_types : FixedArray[UIElementType] = [
   TRADE,
 ]
 
-pub trait UIElement {
+pub(open) trait UIElement {
   get_ui_model(Self) -> UIModel
   send_cursor(Self, Bool, Point[Int]) -> CursorState
   send_key(Self, Int, Bool, Bool) -> Unit
@@ -97,7 +97,7 @@ pub trait UIElement {
   update(Self) -> Unit
 }
 
-pub trait UIElementDescriptor {
+pub(open) trait UIElementDescriptor {
   const_type() -> UIElementType
   const_toggled() -> Bool
   const_focused() -> Bool
@@ -108,13 +108,15 @@ pub struct Element {
   key : UIElementType
   doubleclick : ((Point[Int]) -> Unit)?
   toggle_active : () -> Unit
+  on_close : () -> Unit
 }
 
 pub fn Element::new(
   object : UIElement,
   key : UIElementType,
   ~doubleclick? : (Point[Int]) -> Unit,
-  ~toggle_active? : () -> Unit
+  ~toggle_active? : () -> Unit,
+  ~on_close? : () -> Unit
 ) -> Element {
   {
     object,
@@ -123,6 +125,7 @@ pub fn Element::new(
     toggle_active: toggle_active.or(
       fn() { object.get_ui_model().toggle_active() },
     ),
+    on_close: on_close.or(fn() {  }),
   }
 }
 

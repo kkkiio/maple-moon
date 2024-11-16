@@ -1,5 +1,6 @@
 import { setupGl } from './gl.js';
 import {
+  ImageLoader,
   LazyBmpLoader,
   LazyResourceLoader,
   ResourceLoader,
@@ -164,17 +165,12 @@ function main() {
     { nodepath: "Pants", folder: "Pants" },
     { nodepath: "Weapon", folder: "Weapon" },
     { nodepath: "Coat", folder: "Coat" },
-    { nodepath: "Shoes/01072001.img", filename: "Shoes/01072001.img.json" },
+    { nodepath: "Cap", folder: "Cap" },
+    { nodepath: "Longcoat", folder: "Longcoat" },
+    { nodepath: "Shield", folder: "Shield" },
+    { nodepath: "Shoes", folder: "Shoes" },
+    { nodepath: "Glove", folder: "Glove" },
     { nodepath: "Afterimage", filename: "afterimage.nx.json" },
-    { nodepath: "Cap/01002017.img", filename: "Cap/01002017.img.json" },
-    { nodepath: "Cap/01002102.img", filename: "Cap/01002102.img.json" },
-    { nodepath: "Cap/01002103.img", filename: "Cap/01002103.img.json" },
-    { nodepath: "Cap/01002104.img", filename: "Cap/01002104.img.json" },
-    { nodepath: "Cap/01002105.img", filename: "Cap/01002105.img.json" },
-    { nodepath: "Cap/01002106.img", filename: "Cap/01002106.img.json" },
-    { nodepath: "Cap/01002016.img", filename: "Cap/01002016.img.json" },
-    { nodepath: "Cap/01002067.img", filename: "Cap/01002067.img.json" },
-    { nodepath: "Longcoat/01052095.img", filename: "Longcoat/01052095.img.json" },
   ]);
   prepareResourcePromises.push(
     characterLoader.start()
@@ -205,7 +201,8 @@ function main() {
     etcLoader.load()
   );
 
-  const npcLoader = ResourceLoader.fromName("Npc.nx");
+  const npcLoader = new ResourceLoader("resource/Npc.nx/nx.json",
+    new ImageLoader("https://maple.kkkiiox.work/Npc/images"));
   prepareResourcePromises.push(
     npcLoader.load()
   );

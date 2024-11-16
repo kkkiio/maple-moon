@@ -120,26 +120,25 @@ pub fn get_oid(self : NpcSpawn) -> Int {
 
 pub fn instantiate(self : NpcSpawn, physics : @physics.Physics) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
-  Npc::new(self.id, self.oid, self.flip, self.fh, false, spawnposition)
+  Npc::new(self.id, self.oid, self.flip, self.fh, spawnposition)
 }
 
 /// Represents a NPC on the current map
 struct Npc {
   base : @map_object.MapObjectBase
   animations : Map[String, @graphics.Animation]
-  lines : Map[String, Array[String]]
   dialogue : Map[String, Array[String]]
-  talk_state : String
+  // talk_state : String
   states : Array[String]
   name : String
   func : String
   hide_name : Bool
   scripted : Bool
-  mouse_only : Bool
+  // mouse_only : Bool
   npc_id : Int
   flip : Bool
   mut stance : String
-  control : Bool
+  // control : Bool
   random : @utils.Randomizer
   name_label : @graphics.Text
   func_label : @graphics.Text
@@ -173,7 +172,6 @@ pub fn Npc::new(
   o : Int,
   fl : Bool,
   f : Int,
-  cnt : Bool,
   position : @struct.Point[Int]
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
@@ -186,7 +184,7 @@ pub fn Npc::new(
   }
   let info = src["info"]
   let hide_name = info["hideName"].get_bool?().unwrap()
-  let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
+  // let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
   let scripted = info["script"].is_null().not() ||
     info["shop"].get_bool?().unwrap()
   let dialogue = {}
@@ -219,7 +217,7 @@ pub fn Npc::new(
   let func = strsrc["func"].get_string()
   let npc_id = id
   let flip = fl.not()
-  let control = cnt
+  // let control = cnt
   let stance = "stand"
   base.phobj.fhid = f
   base.set_position(position)
@@ -240,19 +238,19 @@ pub fn Npc::new(
   {
     base,
     animations,
-    lines,
+    // lines,
     dialogue,
-    talk_state: "d0",
+    // talk_state: "d0",
     states,
     name,
     func,
     hide_name,
     scripted,
-    mouse_only,
+    // mouse_only,
     npc_id,
     flip,
     stance,
-    control,
+    // control,
     random: @utils.Randomizer::default(),
     name_label,
     func_label,

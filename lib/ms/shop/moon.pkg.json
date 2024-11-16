@@ -11,6 +11,7 @@
     "KKKIIO/maple-moon-client/lib/ms/inventory",
     "KKKIIO/maple-moon-client/lib/ms/npc",
     "KKKIIO/maple-moon-client/lib/ms/item",
-    "KKKIIO/maple-moon-client/lib/ms/string_format"
+    "KKKIIO/maple-moon-client/lib/ms/string_format",
+    "KKKIIO/maple-moon-client/lib/utils"
   ]
 }

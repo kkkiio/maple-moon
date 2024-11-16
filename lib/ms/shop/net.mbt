@@ -8,7 +8,7 @@ pub fn handle_open_npc_shop(
   guard let Some(inventory) = inventory_getter() else { None => return  }
   let npcid = recv.read_int!()
   let size = recv.read_short!()
-  let items = []
+  let shop_items = []
   for i in 0..<size {
     let itemid = recv.read_int!()
     let price = recv.read_int!()
@@ -18,12 +18,14 @@ pub fn handle_open_npc_shop(
     let norecharge = recv.read_short!() == 1
     if norecharge {
       let buyable = recv.read_short!()
-      items.push({ id: itemid, price, pitch, time, charge_price: 0, buyable })
+      shop_items.push(
+        { id: itemid, price, pitch, time, charge_price: 0, buyable },
+      )
     } else {
       recv.skip!(4)
       let rechargeprice = recv.read_short!()
       let slotmax = recv.read_short!()
-      items.push(
+      shop_items.push(
         {
           id: itemid,
           price,
@@ -35,8 +37,25 @@ pub fn handle_open_npc_shop(
       )
     }
   }
-  let shop = UIShop::new(module.countset, charlook, inventory, npcid, items)
-  module.container.add_ui(@ui.Element::new(shop, @ui.UIElementType::SHOP), true)
+  let shop = UIShop::new(
+    { countset: module.countset, charlook, inventory, npcid, shop_items },
+  )
+  inventory.listen_item_changes(
+    fn() {
+      guard shop.get_ui_model().is_active() else { return false }
+      shop.set_attributes()
+      true
+    },
+  )
+  module.shop_ui = Some(shop)
+  module.container.add_ui(
+    @ui.Element::new(
+      shop,
+      @ui.UIElementType::SHOP,
+      on_close=fn() { module.shop_ui = None },
+    ),
+    true,
+  )
 }
 
 struct ShopItem {
@@ -47,3 +66,11 @@ struct ShopItem {
   charge_price : Int
   buyable : Int
 } derive(Show)
+
+pub fn handle_confirm_shop_transaction(module : Module, code : Int) -> Unit {
+  guard let Some(shop) = module.shop_ui else { None => return  }
+  match code {
+    0 | 8 => shop.set_attributes()
+    _ => ()
+  }
+}

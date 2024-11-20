@@ -1,10 +1,4 @@
-typealias NxNode = @resource.NxNode
-
-typealias Texture = @graphics.Texture
-
-typealias Point[T] = @struct.Point[T]
-
-pub enum ExpressionId {
+pub(all) enum ExpressionId {
   DEFAULT
   BLINK
   HIT
@@ -83,12 +77,12 @@ struct Face {
 }
 
 struct FaceFrame {
-  texture : Texture
+  texture : @graphics.Texture
   delay : Int
 }
 
-pub fn FaceFrame::from_resource(src : NxNode) -> FaceFrame {
-  let texture = Texture::from_resource(src["face"])
+pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
+  let texture = @graphics.Texture::from_resource(src["face"])
   let shift : Point[Int] = src["face"]["map"]["brow"].as_point?().unwrap()
   texture.shift(-shift)
   let mut delay : Int = src["delay"].get_int?().unwrap()
@@ -100,10 +94,14 @@ pub fn FaceFrame::from_resource(src : NxNode) -> FaceFrame {
 
 let string_loader = @resource.string_loader
 
-pub fn Face::new(faceid : Int) -> Face {
+pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
   let strid = "000" + faceid.to_string()
-  let loader = @resource.character_loader()
-  let facenode = loader.load_res(["Face", "\{strid}.img"])
+  face_loader
+  .load_res(["Face", "\{strid}.img"])
+  .map(fn(facenode) { Face::new(faceid, facenode) })
+}
+
+fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
   let expressions = expression_names.map_with_key(
     fn(exp, _v) {
       let frames = Map::new()
@@ -137,7 +135,7 @@ pub fn draw(
   self : Face,
   expression : ExpressionId,
   frame : Int,
-  args : DrawArgument
+  args : @graphics.DrawArgument
 ) -> Unit {
   match self.expressions[expression].unwrap().get(frame) {
     Some(frameit) => frameit.texture.draw(args)
@@ -163,3 +161,7 @@ pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
 pub fn get_name(self : Face) -> String {
   self.name
 }
+
+let face_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "character",
+)

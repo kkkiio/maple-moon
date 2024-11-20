@@ -180,7 +180,7 @@ pub let send_op_name_map : Map[Int, String] = {
 /// A packet to be sent to the server
 /// Used as a base class to create specific packets
 struct OutPacket {
-  buf : @buffer.Buffer
+  buf : @buffer.T
   opcode : OutPacketOpcode
 }
 
@@ -263,7 +263,7 @@ pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
   buf_write_utf8(self.buf, str)
 }
 
-pub fn buf_write_utf8(buf : @buffer.Buffer, str : String) -> Unit {
+pub fn buf_write_utf8(buf : @buffer.T, str : String) -> Unit {
   let bytes = Bytes::make(4, b'\x00')
   str
   .iter()
@@ -295,7 +295,7 @@ pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
 }
 
 // Opcodes for OutPackets associated with version 83 of the game
-pub enum OutPacketOpcode {
+pub(all) enum OutPacketOpcode {
   LOGIN
   CHAR_LIST_REQUEST
   SERVER_STATUS_REQUEST

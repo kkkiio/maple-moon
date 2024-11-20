@@ -1,18 +1,18 @@
 struct Bullet {
-  animation : @graphics.Animation
+  animation : @utils.Future[@graphics.Animation]
   move_obj : @physics.MovingObject
   mut flip : Bool
 }
 
 pub fn Bullet::new(
-  a : @graphics.Animation,
+  animation : @utils.Future[@graphics.Animation],
   origin : @struct.Point[Int],
   toleft : Bool
 ) -> Bullet {
   let move_obj = @physics.MovingObject::default()
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
   move_obj.set_y(origin.y.to_double() - 26.0)
-  { animation: a, move_obj, flip: toleft }
+  { animation, move_obj, flip: toleft }
 }
 
 pub fn draw(
@@ -21,13 +21,17 @@ pub fn draw(
   viewy : Double,
   alpha : Double
 ) -> Unit {
+  guard let Some(animation) = self.animation.poll() else { None => return  }
   let bulletpos = self.move_obj.get_absolute(viewx, viewy, alpha)
   let args = @graphics.DrawArgument::new14(bulletpos, self.flip)
-  self.animation.draw(args, alpha)
+  animation.draw(args, alpha)
 }
 
 pub fn update(self : Bullet, target : @struct.Point[Int]) -> Bool {
-  self.animation.update() |> ignore
+  match self.animation.poll() {
+    None => ()
+    Some(animation) => animation.update() |> ignore
+  }
   self.move_obj.move()
   let xdelta = target.x - self.move_obj.get_x()
   if self.move_obj.hspeed > 0.0 {

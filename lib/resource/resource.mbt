@@ -29,10 +29,6 @@ pub fn sound_loader() -> SyncLoader {
   { name: "sound", loader: get_resource_loader("sound") }
 }
 
-pub fn character_loader() -> SyncLoader {
-  { name: "character", loader: get_resource_loader("character") }
-}
-
 pub fn string_loader() -> SyncLoader {
   { name: "string", loader: get_resource_loader("string") }
 }

@@ -1,6 +1,6 @@
 struct Skill {
   action : SkillAction
-  bullet : SkillBullet
+  bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
   use_effect : SkillUseEffect
   hit_effect : SkillHitEffect
   affected_effects : SkillAffectedEffect
@@ -108,15 +108,21 @@ pub fn Skill::new(skill_id : Int) -> Skill! {
   let has_ball = src["ball"].get_children_count() > 0
   let by_level_ball = src["level"]["1"]["ball"].get_children_count() > 0
   let bullet = if by_level_ball {
-    let bullet : SkillBullet = BySkillLevelBullet::new!(src, skill_id)
-    bullet
+    let bullet = BySkillLevelBullet::new!(src, skill_id)
+    fn(user : @character.Character, bulletid : Int) {
+      bullet.get(user, bulletid) |> @utils.Future::from_value
+    }
   } else if has_ball {
-    let bullet : SkillBullet = SingleBullet::new!(src)
-    bullet
+    let bullet = SingleBullet::new!(src)
+    fn(user : @character.Character, bulletid : Int) {
+      bullet.get(user, bulletid) |> @utils.Future::from_value
+    }
   } else {
     projectile = false
-    let bullet : SkillBullet = SkillRegularBullet::default()
-    bullet
+    let bullet = SkillRegularBullet::default()
+    fn(user : @character.Character, bulletid : Int) {
+      bullet.get(user, bulletid)
+    }
   }
   {
     skill_id,
@@ -250,12 +256,12 @@ pub fn can_use(
   }
 }
 
-pub fn Skill::get_bullet(
+pub fn get_bullet(
   self : Skill,
   user : @character.Character,
   bulletid : Int
-) -> @graphics.Animation {
-  self.bullet.get(user, bulletid)
+) -> @utils.Future[@graphics.Animation] {
+  (self.bullet)(user, bulletid)
 }
 
 pub fn apply_hit_effects(

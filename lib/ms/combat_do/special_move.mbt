@@ -1,4 +1,4 @@
-pub enum ForbidReason {
+pub(all) enum ForbidReason {
   FBR_NONE
   FBR_WEAPONTYPE
   FBR_HPCOST
@@ -8,14 +8,15 @@ pub enum ForbidReason {
   FBR_OTHER
 } derive(Eq)
 
-pub trait SpecialMove {
+pub(open) trait SpecialMove {
   get_id(Self) -> Int
   is_attack(Self) -> Bool
   is_skill(Self) -> Bool
   apply_useeffects(Self, @character.Character) -> Unit
   apply_actions(Self, @character.Character, @combat.AttackType) -> Unit
   apply_stats(Self, @character.Character, @combat.Attack) -> Unit
-  get_bullet(Self, @character.Character, Int) -> @graphics.Animation
+  get_bullet(Self, @character.Character, Int) ->
+       @utils.Future[@graphics.Animation]
   can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects(Self, @combat.AttackUser, @monster.Mob) -> Unit
 }

@@ -34,7 +34,7 @@ pub fn Afterimage::new(
   let src = match src_opt {
     Some(src) => src
     None =>
-      @resource.character_loader().load_res(
+      afterimage_loader.load_res(
         ["Afterimage", name + ".img", (level / 10).to_string(), stance_name],
       )
   }
@@ -71,6 +71,6 @@ pub fn get_range(self : Afterimage) -> @struct.Rectangle[Int] {
 
 pub fn update(self : Afterimage, stframe : Int, timestep : Int) -> Unit {
   if self.displayed.not() && stframe >= self.first_frame {
-    self.displayed = self.animation.update(~timestep)
+    self.displayed = self.animation.update(timestep~)
   }
 }

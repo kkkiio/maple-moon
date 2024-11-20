@@ -1,11 +1,16 @@
-pub struct BulletData {
+pub(all) struct BulletData {
   item_data : @item.ItemData
   bullet : @graphics.Animation
   watk : Int
 }
 
-pub fn BulletData::load(id : Int) -> BulletData! {
-  let item_data = @item.ItemData::get!(id)
+fn BulletData::load(id : Int) -> @utils.Future[Result[BulletData, Error]] {
+  @item.ItemData::get_async(id).map_exn(
+    fn(item_data) { BulletData::new!(id, item_data.unwrap_or_error!()) },
+  )
+}
+
+fn BulletData::new(id : Int, item_data : @item.ItemData) -> BulletData! {
   let prefix = "0" + (id / 10000).to_string()
   let strid = "0" + id.to_string()
   let src = @item.get_item_loader().load_res(
@@ -16,15 +21,10 @@ pub fn BulletData::load(id : Int) -> BulletData! {
   { item_data, bullet, watk }
 }
 
-let cache : Map[Int, BulletData] = Map::new()
+let cache : Map[Int, @utils.Future[Result[BulletData, Error]]] = Map::new()
 
-pub fn BulletData::get(id : Int) -> BulletData! {
-  match cache.get(id) {
-    Some(data) => data
-    None => {
-      let data = BulletData::load!(id)
-      cache.set(id, data)
-      data
-    }
-  }
+pub fn BulletData::get_async(
+  id : Int
+) -> @utils.Future[Result[BulletData, Error]] {
+  cache.get_or_init(id, fn() { BulletData::load(id) })
 }

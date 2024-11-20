@@ -1,10 +1,11 @@
 struct MapDrops {
   drops : @map_object.MapObjects[Drop]
+  loading_drops : Array[@utils.Future[Result[Drop, Error]]]
   spawns : @queue.T[DropSpawn]
   meso_icons : Map[MesoIcon, @graphics.Animation]
 }
 
-pub fn MapDrops::new() -> MapDrops {
+fn MapDrops::new() -> MapDrops {
   let src = @item.get_item_loader().load_res(["Special", "0900.img"])
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
@@ -15,7 +16,12 @@ pub fn MapDrops::new() -> MapDrops {
     |> @graphics.Animation::from_resource
   meso_icons[MesoIcon::BAG] = src["09000003"]["iconRaw"]
     |> @graphics.Animation::from_resource
-  { drops: @map_object.MapObjects::new(), spawns: @queue.T::new(), meso_icons }
+  {
+    drops: @map_object.MapObjects::new(),
+    loading_drops: Array::new(),
+    spawns: @queue.T::new(),
+    meso_icons,
+  }
 }
 
 pub fn spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
@@ -54,8 +60,14 @@ pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
             let icon = self.meso_icons[mesotype].unwrap()
             self.drops.add(spawn.instantiate_meso(icon))
           } else {
-            let itemdata = @item.ItemData::get?(itemid).unwrap()
-            self.drops.add(spawn.instantiate_item(itemdata.get_icon(true)))
+            self.loading_drops.push(
+              @item.ItemData::get_async(itemid).map_exn(
+                fn(r) {
+                  let item_data = r.unwrap_or_error!()
+                  spawn.instantiate_item(item_data.get_icon(true))
+                },
+              ),
+            )
           }
         }
       }
@@ -63,6 +75,19 @@ pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
     }
     None => break
   }
+  self.loading_drops.retain(
+    fn(it) {
+      guard let Some(res) = it.poll() else { None => return true }
+      guard let Ok(drop) = res else {
+        Err(e) => {
+          @log.error({ "err": Show::to_string(e) }, "failed to load drop")
+          true
+        }
+      }
+      self.drops.add(drop)
+      false
+    },
+  )
   for _, mesoicon in self.meso_icons {
     mesoicon.update() |> ignore
   }

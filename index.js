@@ -160,8 +160,9 @@ function main() {
   const characterLoader = new LazyResourceLoader("Character.nx", [
     { nodepath: "00002000.img", filename: "00002000.nx.json" },
     { nodepath: "00012000.img", filename: "00012000.nx.json" },
-    { nodepath: "Hair/00030030.img", filename: "hair00030030.nx.json" },
-    { nodepath: "Face/00020000.img", filename: "face00020000.nx.json" },
+    { nodepath: "Afterimage", filename: "afterimage.nx.json" },
+    { nodepath: "Hair", folder: "Hair" },
+    { nodepath: "Face", folder: "Face" },
     { nodepath: "Pants", folder: "Pants" },
     { nodepath: "Weapon", folder: "Weapon" },
     { nodepath: "Coat", folder: "Coat" },
@@ -170,7 +171,6 @@ function main() {
     { nodepath: "Shield", folder: "Shield" },
     { nodepath: "Shoes", folder: "Shoes" },
     { nodepath: "Glove", folder: "Glove" },
-    { nodepath: "Afterimage", filename: "afterimage.nx.json" },
   ]);
   prepareResourcePromises.push(
     characterLoader.start()
@@ -279,6 +279,8 @@ function main() {
             return mapLoader;
           case "character":
             return characterLoader;
+          case "body":
+            return characterLoader; // TODO: split from characterLoader
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

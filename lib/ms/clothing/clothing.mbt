@@ -1,4 +1,4 @@
-pub enum Layer {
+pub(all) enum Layer {
   CAPE
   SHOES
   PANTS

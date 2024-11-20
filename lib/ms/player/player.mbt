@@ -16,7 +16,7 @@ pub struct Player {
   skill_book : @character.SkillBook
 }
 
-pub trait Inventory {
+pub(open) trait Inventory {
   recalc_stats(Self, @weapon.Type) -> Unit
   get_stat(Self, @stat.Id) -> Int
   has_projectile(Self) -> Bool
@@ -28,15 +28,9 @@ pub trait Inventory {
 pub fn Player::from_entry(
   entry : @character.CharEntry,
   inventory : Inventory,
-  damage_number_set : @combat_ui.DamageNumberSet,
-  sp_stat_id : @char_stats.StatId
+  sp_stat_id : @char_stats.StatId,
+  char_base : @character.CharBase
 ) -> Player {
-  let char_base = @character.CharBase::new(
-    entry.id,
-    @character.CharLook::new(entry.look),
-    entry.stats.name,
-    damage_number_set,
-  )
   let p = {
     char_base,
     stats: CharStats::from_entry(

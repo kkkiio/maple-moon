@@ -1,6 +1,5 @@
-pub struct RegularAttack {
+pub(all) struct RegularAttack {
   action : RegularAction
-  bullet : RegularBullet
 } derive(Default)
 
 pub fn apply_useeffects(
@@ -45,12 +44,17 @@ pub fn RegularAttack::get_id(self : RegularAttack) -> Int {
   0
 }
 
-pub fn RegularAttack::get_bullet(
+pub fn get_bullet(
   self : RegularAttack,
   _user : @character.Character,
   bulletid : Int
-) -> @graphics.Animation {
-  self.bullet.get(bulletid)
+) -> @utils.Future[@graphics.Animation] {
+  @bullet.BulletData::get_async(bulletid).map(
+    fn(data) {
+      data.unwrap() // TODO: Handle error
+      .bullet
+    },
+  )
 }
 
 struct RegularAction {} derive(Default)
@@ -87,12 +91,6 @@ pub fn can_use(
       }
     _ => FBR_NONE
   }
-}
-
-struct RegularBullet {} derive(Default)
-
-pub fn get(self : RegularBullet, bulletid : Int) -> @graphics.Animation {
-  @bullet.BulletData::get?(bulletid).unwrap().bullet // TODO: Handle error
 }
 
 pub fn apply_hit_effects(

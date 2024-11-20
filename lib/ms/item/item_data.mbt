@@ -1,6 +1,6 @@
-/// Class that represents an item loaded from the game's files
+///| Class that represents an item loaded from the game's files
 /// Contains all shared data between concrete items
-pub struct ItemData {
+pub(all) struct ItemData {
   src : @resource.NxNode
   icons : @utils.BoolPair[@graphics.Texture]
   item_id : Int
@@ -16,91 +16,6 @@ pub struct ItemData {
   cash_item : Bool
 }
 
-let cache : Map[Int, ItemData] = Map::new()
-
-fn ItemData::load(item_id : Int) -> ItemData! {
-  let strprefix = "0" + get_item_prefix(item_id).to_string()
-  let zid = "0" + item_id.to_string()
-  let prefix = get_prefix(item_id)
-  let (category, src, strsrc) = match prefix {
-    1 => {
-      let category = get_eqcategory!(item_id)
-      let src = @resource.character_loader().load_res([category, zid + ".img"])
-      let strsrc = @resource.string_loader().load_res(
-        ["Eqp.img", "Eqp", category, item_id.to_string()],
-      )
-      (category, src, strsrc)
-    }
-    2 => {
-      let category = "Consume"
-      let src = get_item_loader().load_res(["Consume", strprefix + ".img", zid])
-      let strsrc = @resource.string_loader().load_res(
-        ["Consume.img", item_id.to_string()],
-      )
-      (category, src, strsrc)
-    }
-    3 => {
-      let category = "Install"
-      let src = get_item_loader().load_res(["Install", strprefix + ".img", zid])
-      let strsrc = @resource.string_loader().load_res(
-        ["Ins.img", item_id.to_string()],
-      )
-      (category, src, strsrc)
-    }
-    4 => {
-      let category = "Etc"
-      let src = get_item_loader().load_res(["Etc", strprefix + ".img", zid])
-      let strsrc = @resource.string_loader().load_res(
-        ["Etc.img", item_id.to_string()],
-      )
-      (category, src, strsrc)
-    }
-    5 => {
-      let category = "Cash"
-      let src = get_item_loader().load_res(["Cash", strprefix + ".img", zid])
-      let strsrc = @resource.string_loader().load_res(
-        ["Cash.img", item_id.to_string()],
-      )
-      (category, src, strsrc)
-    }
-    _ => raise LoadDataError::DATA_NOT_FOUND(item_id)
-  }
-  let info = src["info"]
-  if info.is_null() {
-    @log.warn(
-      { "item_id": item_id, "category": category },
-      "item data not found",
-    ) // TODO: raise error
-  }
-  let icons = @utils.BoolPair::new(
-    info["icon"] |> @graphics.Texture::from_resource,
-    info["iconRaw"] |> @graphics.Texture::from_resource,
-  )
-  let price = info["price"].get_int!()
-  let untradable = info["tradeBlock"].get_bool!()
-  let unique = info["only"].get_bool!()
-  let unsellable = info["notSale"].get_bool!()
-  let cash_item = info["cash"].get_bool!()
-  let gender = get_item_gender(item_id)
-  let name = strsrc["name"].get_string()
-  let desc = strsrc["desc"].get_string()
-  {
-    src,
-    icons,
-    item_id,
-    price,
-    gender,
-    name,
-    desc,
-    category,
-    valid: true,
-    untradable,
-    unique,
-    unsellable,
-    cash_item,
-  }
-}
-
 let character_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "character",
 )
@@ -109,7 +24,7 @@ pub fn get_character_loader() -> @resource.AsyncLoader {
   character_loader
 }
 
-pub struct EquipId {
+pub(all) struct EquipId {
   category : String
   zid : String
 }
@@ -219,35 +134,12 @@ fn ItemData::load_async(
   )
 }
 
-/// @alert deprecated "use get_async instead"
-pub fn ItemData::get(id : Int) -> ItemData! {
-  match cache[id] {
-    Some(item_data) => item_data
-    None => {
-      let item_data = ItemData::load!(id)
-      cache.set(id, item_data)
-      item_data
-    }
-  }
-}
-
-let async_cache : Map[Int, ItemData] = Map::new() // TODO: use one cache
+let cache : Map[Int, @utils.Future[Result[ItemData, LoadDataError]]] = Map::new()
 
 pub fn ItemData::get_async(
   id : Int
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
-  match async_cache[id] {
-    Some(item_data) => @utils.Future::from_value(Ok(item_data))
-    None =>
-      ItemData::load_async(id).tap(
-        fn(item_data) {
-          match item_data {
-            Ok(item_data) => async_cache.set(id, item_data)
-            _ => ()
-          }
-        },
-      )
-  }
+  cache.get_or_init(id, fn() { ItemData::load_async(id) })
 }
 
 fn ItemData::get_prefix(id : Int) -> Int {
@@ -282,7 +174,7 @@ let categorynames = [
   "Glove", "Shield", "Cape", "Ring", "Accessory", "Accessory", "Accessory",
 ]
 
-pub type! LoadDataError {
+pub(all) type! LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
   INVALID_DATA(String)

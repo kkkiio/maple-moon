@@ -2,8 +2,6 @@ typealias MapObjectBase = @map_object.MapObjectBase
 
 typealias PhysicsObject = @physics.PhysicsObject
 
-typealias DrawArgument = @graphics.DrawArgument
-
 /// Player states which determine animation and state
 pub enum CharState {
   WALK
@@ -59,15 +57,15 @@ pub struct CharBase {
   damage_numbers : Array[@combat_ui.DamageNumber]
 }
 
-pub fn get_position(self : CharBase) -> Point[Int] {
+pub fn get_position(self : CharBase) -> @struct.Point[Int] {
   self.base.get_position()
 }
 
-pub fn set_position(self : CharBase, pos : Point[Int]) -> Unit {
+pub fn set_position(self : CharBase, pos : @struct.Point[Int]) -> Unit {
   self.base.set_position(pos)
 }
 
-pub trait Character {
+pub(open) trait Character {
   get_phobj(Self) -> PhysicsObject
   // draw(Self, Double, Double, Double) -> Unit
   // draw_preview(Self, Point[Int], Double) -> Unit
@@ -107,7 +105,7 @@ pub trait Character {
   // new_char(Int, CharLook, String) -> Char
   // update_with_speed(Self, Physics, Double) -> Bool
   // get_stancespeed(Self) -> Double
-  get_position(Self) -> Point[Int]
+  get_position(Self) -> @struct.Point[Int]
   get_stats(Self) -> @char_stats.CharStats // TODO: Remove
 }
 
@@ -172,7 +170,10 @@ pub fn draw(
   } else {
     @struct.Code::CWHITE.color()
   }
-  self.look.draw(DrawArgument::from_point_and_color(absp, color), alpha)
+  self.look.draw(
+    @graphics.DrawArgument::from_point_and_color(absp, color),
+    alpha,
+  )
 
   //     after_image_.draw(self.look.get_frame(),
   //                       DrawArgument(absp, facing_right_),
@@ -193,7 +194,7 @@ pub fn draw(
   //     }
 
   // If ever changing code for namelabel confirm placements with map 10000
-  self.name_label.draw(absp + Point::new(0, -4))
+  self.name_label.draw(absp + @struct.Point::new(0, -4))
   // chat_balloon_.draw(absp - Point<int16_t>(0, 85));
 
   self.effects.drawabove(absp, alpha)
@@ -388,7 +389,7 @@ pub fn show_attack_effect(
   let attackspeed = get_real_attackspeed(base_attack_speed)
   self.effects.add(
     toshow,
-    args=DrawArgument::new11(self.facing_right),
+    args=@graphics.DrawArgument::new11(self.facing_right),
     ~z,
     speed=attackspeed,
   )
@@ -408,4 +409,10 @@ pub fn attack_by_stance(self : CharBase, stance : @char_look.StanceId) -> Unit {
   self.look.attack_by_stance(stance)
   self.attacking = true
   self.look.set_alerted(5000)
+}
+
+pub struct CharEntry {
+  stats : @char_stats.StatsEntry
+  look : LookEntry
+  id : Int
 }

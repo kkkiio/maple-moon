@@ -25,12 +25,14 @@ pub fn Game::start() -> Game {
     ui,
     fn() { Stage::get().get_player().unwrap().get_name() },
   )
+  let char_look_module = @char_look.Module::new()
   let stage = Stage::new(
     @map.MapPortalAnimations::load(),
     monster_module.get_map_mobs(),
     drop_module.get_map_drops(),
     inventory_module.get_inventory(),
     npc_module.get_npcs(),
+    char_look_module,
   )
   g_stage.set(stage)
   let window = Window::new(fn() { now_micro() |> @utils.TimePoint::from_micro })

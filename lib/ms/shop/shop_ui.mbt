@@ -361,7 +361,7 @@ fn draw(self : RuntimeState, alpha : Double) -> Unit {
     position + @struct.Point::new(338, 85),
     false,
     @char_look.StanceId::STAND1,
-    @character.ExpressionId::DEFAULT,
+    @char_look.ExpressionId::DEFAULT,
   )
   self.meso_label.draw(position + @struct.Point::new(493, 51))
   self.draws.each(fn(draw) { draw(position) })

@@ -1,4 +1,4 @@
-pub enum HairLayer {
+pub(all) enum HairLayer {
   HAIR_LAYER_NONE
   HAIR_LAYER_DEFAULT
   BELOW_BODY
@@ -29,7 +29,7 @@ pub fn hash_combine(self : HairLayer, hasher : Hasher) -> Unit {
 }
 
 struct Hair {
-  stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]]
+  stances : Map[StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]]
   name : String
   color : String
 }
@@ -45,13 +45,18 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
   ],
 )
 
-pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
-  let character_loader = @resource.character_loader()
-  let stances : Map[StanceId, Map[HairLayer, Map[Int, Texture]]] = Map::new()
-  let hairnode = character_loader.load_res(["Hair", "000\{hairid}.img"])
-  if hairnode.is_null() {
-    @log.warn({ "hair_id": hairid }, "Hair node is null")
-  }
+pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> @utils.Future[Hair] {
+  hair_loader
+  .load_res(["Hair", "000\{hairid}.img"])
+  .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo) })
+}
+
+fn Hair::new(
+  hairid : Int,
+  hairnode : @resource.NxNode,
+  drawinfo : BodyDrawInfo
+) -> Hair {
+  let stances : Map[StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]] = Map::new()
   for stancename, stance in stance_id_names {
     let stancenode = hairnode[stancename]
     if stancenode.is_null() {
@@ -74,7 +79,7 @@ pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> Hair {
         }
         let brow = layernode["map"]["brow"].as_point?().unwrap()
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
-        let tex = Texture::from_resource(layernode)
+        let tex = @graphics.Texture::from_resource(layernode)
         stances
         .get_or_init(stance, fn() { Map::new() })
         .get_or_init(layer, fn() { Map::new() })
@@ -119,3 +124,7 @@ pub fn get_name(self : Hair) -> String {
 pub fn getcolor(self : Hair) -> String {
   self.color
 }
+
+let hair_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "character",
+)

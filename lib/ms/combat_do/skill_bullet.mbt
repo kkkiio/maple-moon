@@ -1,7 +1,3 @@
-trait SkillBullet {
-  get(Self, @character.Character, Int) -> @graphics.Animation
-}
-
 struct Ball {
   animation : @graphics.Animation
 }
@@ -20,8 +16,13 @@ fn get(
   self : SkillRegularBullet,
   user : @character.Character,
   bulletid : Int
-) -> @graphics.Animation {
-  @bullet.BulletData::get?(bulletid).unwrap().bullet // TODO: handle error
+) -> @utils.Future[@graphics.Animation] {
+  @bullet.BulletData::get_async(bulletid).map(
+    fn(data) {
+      data.unwrap() // TODO: handle error
+      .bullet
+    },
+  )
 }
 
 struct SingleBullet {

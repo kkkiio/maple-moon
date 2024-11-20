@@ -13,17 +13,17 @@ pub fn push[T](self : TimedQueue[T], delay : Int64, t : T) -> Unit {
 
 pub fn process[T](
   self : TimedQueue[T],
-  ~timestep : Int64 = @constants.step_time_ms.to_int64()
+  timestep~ : Int64 = @constants.step_time_ms.to_int64()
 ) -> Iter[T] {
   self.time += timestep
   Iter::new(
-    fn(yield) {
+    fn(yield_) {
       loop self.queue.peek() {
         Some(top) => {
           if top._.0 > self.time {
             break
           }
-          if yield(top._.1) == IterEnd {
+          if yield_(top._.1) == IterEnd {
             return IterEnd
           }
           self.queue.pop() |> ignore

@@ -23,6 +23,7 @@ pub struct Stage {
   inventory : @inventory.Inventory
   damage_number_set : @combat_ui.DamageNumberSet
   mut combat : Combat?
+  char_look_module : @char_look.Module
 }
 
 pub fn Stage::new(
@@ -30,7 +31,8 @@ pub fn Stage::new(
   mobs : @monster.MapMobs,
   drops : @drop.MapDrops,
   inventory : @inventory.Inventory,
-  npcs : @npc.MapNpcs
+  npcs : @npc.MapNpcs,
+  char_look_module : @char_look.Module
 ) -> Stage {
   {
     map_portals_animations,
@@ -44,6 +46,7 @@ pub fn Stage::new(
     mobs,
     drops,
     inventory,
+    char_look_module,
   }
 }
 
@@ -82,11 +85,17 @@ pub fn load_player(
   entry : @character.CharEntry,
   sp_stat_id : @char_stats.StatId
 ) -> @player.Player {
+  let char_base = @character.CharBase::new(
+    entry.id,
+    @character.CharLook::new(entry.look, self.char_look_module),
+    entry.stats.name,
+    self.damage_number_set,
+  )
   let player = @player.Player::from_entry(
     entry,
     self.inventory,
-    self.damage_number_set,
     sp_stat_id,
+    char_base,
   )
   self.player = Some(player)
   self.combat = Some(Combat::new(self.damage_number_set, self.mobs))

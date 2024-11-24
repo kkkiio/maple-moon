@@ -57,7 +57,7 @@ fn Hair::new(
   drawinfo : BodyDrawInfo
 ) -> Hair {
   let stances : Map[StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]] = Map::new()
-  for stancename, stance in stance_id_names {
+  for stancename, stance in stance_name_id_map {
     let stancenode = hairnode[stancename]
     if stancenode.is_null() {
       continue

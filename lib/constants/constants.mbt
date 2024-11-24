@@ -1,7 +1,7 @@
-// Timestep, e.g. the granularity in which the game advances.
+// Logic frame time in milliseconds.
 pub let step_time_ms = 8
 
-pub struct Constants {
+pub(all) struct Constants {
   mut viewWidth : Int
   mut viewHeight : Int
 }

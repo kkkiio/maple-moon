@@ -1,7 +1,18 @@
-pub type Image
+pub(readonly) type Image
 
-pub fn width(self : Image) -> Int = "bitmap" "width"
+fn loading(self : Image) -> Bool = "bitmap" "loading"
 
-pub fn height(self : Image) -> Int = "bitmap" "height"
+fn load(self : Image) -> LoadedImage = "bitmap" "load"
 
-pub fn loading(self : Image) -> Bool = "bitmap" "loading"
+pub fn poll(self : Image) -> LoadedImage? {
+  if self.loading() {
+    return None
+  }
+  Some(self.load())
+}
+
+pub(readonly) type LoadedImage
+
+pub fn width(self : LoadedImage) -> Int = "bitmap" "width"
+
+pub fn height(self : LoadedImage) -> Int = "bitmap" "height"

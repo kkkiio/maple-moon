@@ -4,14 +4,14 @@ struct BodyAction {
   stance : StanceId
   frame : Int
   delay : Int
-  move : Point[Int]
+  move_ : Point[Int]
   attack_frame : Bool
 }
 
 pub fn BodyAction::new(src : @resource.NxNode) -> BodyAction {
   let stance = StanceId::by_string(src["action"].get_string())
   let frame = src["frame"].get_int?().unwrap()
-  let move = src["move"].as_point?().unwrap()
+  let move_ = src["move"].as_point?().unwrap()
   let mut sgndelay = src["delay"].get_int?().unwrap()
   if sgndelay == 0 {
     sgndelay = 100
@@ -21,7 +21,7 @@ pub fn BodyAction::new(src : @resource.NxNode) -> BodyAction {
   } else {
     (-sgndelay, false)
   }
-  { stance, frame, delay, move, attack_frame }
+  { stance, frame, delay, move_, attack_frame }
 }
 
 pub fn BodyAction::default() -> BodyAction {
@@ -29,7 +29,7 @@ pub fn BodyAction::default() -> BodyAction {
     stance: StanceId::default(),
     frame: 0,
     delay: 0,
-    move: Point::default(),
+    move_: Point::default(),
     attack_frame: false,
   }
 }
@@ -47,7 +47,7 @@ pub fn get_delay(self : BodyAction) -> Int {
 }
 
 pub fn get_move(self : BodyAction) -> Point[Int] {
-  self.move
+  self.move_
 }
 
 pub fn get_stance(self : BodyAction) -> StanceId {

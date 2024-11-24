@@ -75,7 +75,7 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit! 
   if reason == @combat_do.ForbidReason::FBR_NONE {
     self.apply_move(player, act)
   } else {
-    // TODO: Implement this
+    // TODO: show forbid reason
     // let weapontype = self.player.get_stats().get_weapontype()
     // ForbidSkillMessage::new(reason, weapontype).drop()
   }

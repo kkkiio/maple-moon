@@ -6,7 +6,7 @@ struct GraphicsGL {
   vheight : Int
   screen : Rectangle[Int]
   atlas : Atlas
-  text_cache : @lru_cache.Cache[TextKey, @resource.Image]
+  text_cache : @lru_cache.Cache[TextKey, Image]
   mut locked : Bool
 }
 
@@ -107,41 +107,35 @@ pub fn draw_bitmap(
   if color.invisible() {
     return
   }
-  if bmp.image.loading() {
-    return
-  }
-
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
   // }
-
+  guard let Some(image) = bmp.image.poll() else { None => return  }
   self.quads.push(
     Quad::new(
       rect.left(),
       rect.right(),
       rect.top(),
       rect.bottom(),
-      self.atlas.get_offset(bmp.id, bmp.image),
+      self.atlas.get_offset(bmp.id, image),
       color,
       angle,
     ),
   )
 }
 
-pub fn draw_text(
+fn draw_text(
   self : GraphicsGL,
-  image : @resource.Image,
+  image : Image,
   textId : String,
   point : Point[Int],
   nametag : Bool,
-  ~text_y_clip : Range[Int]? = None
+  text_y_clip~ : Range[Int]? = None
 ) -> Unit {
   if self.locked {
     return
   }
-  if image.loading() {
-    return
-  }
+  guard let Some(image) = image.poll() else { None => return  }
 
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
@@ -191,7 +185,7 @@ pub fn draw_text(
   )
 }
 
-pub fn create_text_image(self : GraphicsGL, key : TextKey) -> @resource.Image {
+pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
   guard let None = self.text_cache.get(key) else { Some(image) => return image }
   let fontName = if key.font_id.is_bold() {
     @config.configFontPathBold.load()
@@ -226,7 +220,7 @@ struct TextKey {
   max_width : Int?
 } derive(Eq, Hash)
 
-pub enum TextAlignment {
+pub(all) enum TextAlignment {
   LEFT
   CENTER
   RIGHT
@@ -287,7 +281,11 @@ pub fn clear_scene(self : GraphicsGL) -> Unit {
   }
 }
 
-fn get_offset(self : Atlas, id : String, bmp : @resource.Image) -> TexOffset {
+fn get_offset(
+  self : Atlas,
+  id : String,
+  bmp : @resource.LoadedImage
+) -> TexOffset {
   match self.offsets.get(id) {
     Some(c) => return c
     None => ()
@@ -543,28 +541,7 @@ fn setv(vs : Vertices, i : Int, v : Vertex) -> Unit {
   )
 }
 
-fn glFlush(v : Vertices) = "gl" "flush"
-
-type Vertices
-
-fn Vertices::new(length : Int) -> Vertices = "gl" "newVertices"
-
-fn set(
-  self : Vertices,
-  i : Int,
-  localcoord_x : Int,
-  localcoord_y : Int,
-  texcoord_x : Int,
-  texcoord_y : Int,
-  color_r : Double,
-  color_g : Double,
-  color_b : Double,
-  color_a : Double
-) = "gl" "setVertices"
-
-fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.Image) = "gl" "texSubImage2D"
-
-pub enum FontId {
+pub(all) enum FontId {
   A11M
   A11B
   A12M

@@ -1,4 +1,4 @@
-pub enum StanceId {
+pub(all) enum StanceId {
   NONE
   ALERT
   DEAD
@@ -175,49 +175,47 @@ pub fn secondof(value : StanceId) -> StanceId {
   }
 }
 
-pub let stance_id_names : @immut/sorted_map.T[String, StanceId] = @immut/sorted_map.from_array(
-  [
-    ("", StanceId::NONE),
-    ("alert", StanceId::ALERT),
-    ("dead", StanceId::DEAD),
-    ("fly", StanceId::FLY),
-    ("heal", StanceId::HEAL),
-    ("jump", StanceId::JUMP),
-    ("ladder", StanceId::LADDER),
-    ("prone", StanceId::PRONE),
-    ("proneStab", StanceId::PRONESTAB),
-    ("rope", StanceId::ROPE),
-    ("shot", StanceId::SHOT),
-    ("shoot1", StanceId::SHOOT1),
-    ("shoot2", StanceId::SHOOT2),
-    ("shootF", StanceId::SHOOTF),
-    ("sit", StanceId::SIT),
-    ("stabO1", StanceId::STABO1),
-    ("stabO2", StanceId::STABO2),
-    ("stabOF", StanceId::STABOF),
-    ("stabT1", StanceId::STABT1),
-    ("stabT2", StanceId::STABT2),
-    ("stabTF", StanceId::STABTF),
-    ("stand1", StanceId::STAND1),
-    ("stand2", StanceId::STAND2),
-    ("swingO1", StanceId::SWINGO1),
-    ("swingO2", StanceId::SWINGO2),
-    ("swingO3", StanceId::SWINGO3),
-    ("swingOF", StanceId::SWINGOF),
-    ("swingP1", StanceId::SWINGP1),
-    ("swingP2", StanceId::SWINGP2),
-    ("swingPF", StanceId::SWINGPF),
-    ("swingT1", StanceId::SWINGT1),
-    ("swingT2", StanceId::SWINGT2),
-    ("swingT3", StanceId::SWINGT3),
-    ("swingTF", StanceId::SWINGTF),
-    ("walk1", StanceId::WALK1),
-    ("walk2", StanceId::WALK2),
-  ],
-)
+pub let stance_name_id_map : Map[String, StanceId] = {
+  "": StanceId::NONE,
+  "alert": StanceId::ALERT,
+  "dead": StanceId::DEAD,
+  "fly": StanceId::FLY,
+  "heal": StanceId::HEAL,
+  "jump": StanceId::JUMP,
+  "ladder": StanceId::LADDER,
+  "prone": StanceId::PRONE,
+  "proneStab": StanceId::PRONESTAB,
+  "rope": StanceId::ROPE,
+  "shot": StanceId::SHOT,
+  "shoot1": StanceId::SHOOT1,
+  "shoot2": StanceId::SHOOT2,
+  "shootF": StanceId::SHOOTF,
+  "sit": StanceId::SIT,
+  "stabO1": StanceId::STABO1,
+  "stabO2": StanceId::STABO2,
+  "stabOF": StanceId::STABOF,
+  "stabT1": StanceId::STABT1,
+  "stabT2": StanceId::STABT2,
+  "stabTF": StanceId::STABTF,
+  "stand1": StanceId::STAND1,
+  "stand2": StanceId::STAND2,
+  "swingO1": StanceId::SWINGO1,
+  "swingO2": StanceId::SWINGO2,
+  "swingO3": StanceId::SWINGO3,
+  "swingOF": StanceId::SWINGOF,
+  "swingP1": StanceId::SWINGP1,
+  "swingP2": StanceId::SWINGP2,
+  "swingPF": StanceId::SWINGPF,
+  "swingT1": StanceId::SWINGT1,
+  "swingT2": StanceId::SWINGT2,
+  "swingT3": StanceId::SWINGT3,
+  "swingTF": StanceId::SWINGTF,
+  "walk1": StanceId::WALK1,
+  "walk2": StanceId::WALK2,
+}
 
 pub fn StanceId::by_string(name : String) -> StanceId {
-  stance_id_names[name].unwrap()
+  stance_name_id_map[name].unwrap()
 }
 
 pub fn name(self : StanceId) -> String {

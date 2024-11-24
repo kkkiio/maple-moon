@@ -2,7 +2,7 @@ pub fn log(
   level : Level,
   context : Map[String, Show],
   msg : String,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit {
   match level {
     Level::TRACE => () // do nothing
@@ -16,7 +16,7 @@ pub fn log(
 pub fn debug(
   context : Map[String, Show],
   msg : String,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit {
   log_debug(to_logstr(context, msg, loc))
 }
@@ -24,7 +24,7 @@ pub fn debug(
 pub fn info(
   context : Map[String, Show],
   msg : String,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit {
   log_info(to_logstr(context, msg, loc))
 }
@@ -32,7 +32,7 @@ pub fn info(
 pub fn warn(
   context : Map[String, Show],
   msg : String,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit {
   log_warn(to_logstr(context, msg, loc))
 }
@@ -40,7 +40,7 @@ pub fn warn(
 pub fn error(
   context : Map[String, Show],
   msg : String,
-  ~loc : SourceLoc = _
+  loc~ : SourceLoc = _
 ) -> Unit {
   log_error(to_logstr(context, msg, loc))
 }
@@ -68,7 +68,7 @@ fn to_logstr(
   buf.to_string()
 }
 
-pub enum Level {
+pub(all) enum Level {
   TRACE
   DEBUG
   INFO

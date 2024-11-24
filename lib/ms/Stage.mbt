@@ -1,17 +1,17 @@
 enum StageState {
   INACTIVE
-  TRANSITION(~portal_id : Int, ~poll_fn : () -> @map.MapStruct?!)
+  TRANSITION(portal_id~ : Int, poll_fn~ : () -> @map.MapStruct?!)
   ACTIVE(
-    ~tiles_objs : @map.MapTilesObjs,
-    ~backgrounds : Array[@map.Background],
-    ~foregrounds : Array[@map.Background],
-    ~physics : @physics.Physics,
-    ~map_info : @map.MapInfo,
-    ~portals : @map.MapPortals
+    tiles_objs~ : @map.MapTilesObjs,
+    backgrounds~ : Array[@map.Background],
+    foregrounds~ : Array[@map.Background],
+    physics~ : @physics.Physics,
+    map_info~ : @map.MapInfo,
+    portals~ : @map.MapPortals
   )
 }
 
-pub struct Stage {
+pub(all) struct Stage {
   camera : Camera
   map_portals_animations : @map.MapPortalAnimations
   mut player : @player.Player?
@@ -71,7 +71,7 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
     StageState::INACTIVE => {
       self.map_id = map_id
       let poll_fn = @map.load_map(map_id, self.map_portals_animations)
-      self.state = StageState::TRANSITION(~portal_id, ~poll_fn)
+      self.state = StageState::TRANSITION(portal_id~, poll_fn~)
     }
     StageState::TRANSITION(_) =>
       // TODO: respawn?
@@ -128,16 +128,16 @@ pub fn respawn(
 
 pub fn draw(self : Stage, alpha : Double) -> Unit {
   guard let StageState::ACTIVE(
-    ~tiles_objs,
-    ~backgrounds,
-    ~foregrounds,
-    ~portals,
+    tiles_objs~,
+    backgrounds~,
+    foregrounds~,
+    portals~,
     ..
   ) = self.state else {
     StageState::INACTIVE => return
     StageState::TRANSITION(_) => return
   }
-  let viewpos = self.camera.get_position(~alpha)
+  let viewpos = self.camera.get_position(alpha~)
   let viewrpos = self.camera.real_position(alpha)
   let viewx = viewrpos.x
   let viewy = viewrpos.y
@@ -164,16 +164,16 @@ pub fn transfer_player() -> Unit {
 
 fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   guard let StageState::ACTIVE(
-    ~tiles_objs,
-    ~backgrounds,
-    ~foregrounds,
-    ~physics,
-    ~portals,
-    ~map_info,
+    tiles_objs~,
+    backgrounds~,
+    foregrounds~,
+    physics~,
+    portals~,
+    map_info~,
     ..
   ) = self.state else {
     StageState::INACTIVE => return
-    StageState::TRANSITION(~portal_id, ~poll_fn) =>
+    StageState::TRANSITION(portal_id~, poll_fn~) =>
       match poll_fn!() {
         Some(map_struct) => {
           self.state = StageState::ACTIVE(
@@ -230,18 +230,7 @@ fn send_cursor(
   pressed : Bool,
   position : @struct.Point[Int]
 ) -> @ui.CursorState {
-  // auto statusbar = UI::get().get_element<UIStatusBar>();
-
-  // if (statusbar && statusbar->get().is_menu_active()) {
-  //     if (pressed) {
-  //         statusbar->get().remove_menus();
-  //     }
-
-  //     if (statusbar->get().is_in_range(position)) {
-  //         return statusbar->get().send_cursor(pressed, position);
-  //     }
-  // }
-
+  // TODO: statusbar
   self.npcs.send_cursor(pressed, position, self.camera.get_position())
 }
 
@@ -251,7 +240,7 @@ pub fn send_key(
   action : Int,
   down : Bool
 ) -> Unit! {
-  guard let StageState::ACTIVE(~physics, ~map_info, ~portals, ..) = self.state else {
+  guard let StageState::ACTIVE(physics~, map_info~, portals~, ..) = self.state else {
     StageState::INACTIVE => return
     StageState::TRANSITION(_) => return
   }

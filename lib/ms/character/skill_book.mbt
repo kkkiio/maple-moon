@@ -1,4 +1,3 @@
-// SkillBook stores all information about the skills of an individual character
 struct SkillBook {
   skill_entries : Map[Int, SkillEntry]
   skill_level_listeners : Array[(Int, Int) -> Bool]

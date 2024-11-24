@@ -121,7 +121,7 @@ pub fn get_int(self : NxNode) -> Int!LoadError {
   self.get_float!().to_int()
 }
 
-pub type! LoadError String derive(Show)
+pub(all) type! LoadError String derive(Show)
 
 pub fn as_int(self : NxNode) -> Int!LoadError {
   match self.desc {
@@ -133,7 +133,7 @@ pub fn as_int(self : NxNode) -> Int!LoadError {
 pub fn get_int_field(
   self : NxNode,
   key : String,
-  ~default? : Int
+  default? : Int
 ) -> Int!LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(@json.JsonValue::Number(it)) => it.to_int()
@@ -149,7 +149,7 @@ pub fn get_int_field(
 pub fn get_float_field(
   self : NxNode,
   key : String,
-  ~default? : Double
+  default? : Double
 ) -> Double!LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(@json.JsonValue::Number(it)) => it
@@ -242,22 +242,30 @@ pub fn to_string(self : NxNode) -> String {
 }
 
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
-  self["__b"]
-  .as_int?()
-  .to_option()
-  .map(
-    fn(bid) {
-      {
-        image: self.image_loader.load_image(bid),
-        id: self.loader_name + "/" + bid.to_string(),
-        width: self["__w"].as_int?().unwrap(),
-        height: self["__h"].as_int?().unwrap(),
-      }
-    },
-  )
+  match self.desc {
+    { "__i": Json::String(path) } =>
+      Some(
+        {
+          image: self.image_loader.load_image_by_path(path),
+          id: self.loader_name + "/" + path,
+          width: self["__w"].as_int?().unwrap(),
+          height: self["__h"].as_int?().unwrap(),
+        },
+      )
+    { "__b": Json::Number(bid) } =>
+      Some(
+        {
+          image: self.image_loader.load_image(bid.to_int()),
+          id: self.loader_name + "/" + bid.to_string(),
+          width: self["__w"].as_int?().unwrap(),
+          height: self["__h"].as_int?().unwrap(),
+        },
+      )
+    _ => None
+  }
 }
 
-pub struct Bitmap {
+pub(all) struct Bitmap {
   image : Image
   id : String
   width : Int
@@ -272,7 +280,7 @@ fn join_path(parts : Array[String]) -> String {
   String::concat(parts, separator="/")
 }
 
-pub type ResPath Array[String] derive(Eq)
+pub(all) type ResPath Array[String] derive(Eq)
 
 pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
   match self.value() {

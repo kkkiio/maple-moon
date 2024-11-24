@@ -29,10 +29,26 @@ export class LazyBmpLoader {
     }
 }
 
+async function fetchImageByUrl(url) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    return new Promise((resolve, reject) => {
+        img.onload = () => {
+            resolve(img);
+        };
+        img.onerror = (e) => {
+            reject(e);
+        };
+        img.src = url;
+    });
+}
+
 /**
  * @typedef {Object} LazyImage
  * @property {Image} data
  * @property {boolean} loading
+ * @property {number} w
+ * @property {number} h
  */
 
 export class ImageLoader {
@@ -57,21 +73,78 @@ export class ImageLoader {
         if (res) {
             return res;
         }
-        const img = new Image();
-        img.crossOrigin = "anonymous";
         const bmpPath = `${this.imagesUrl}/${bid}.png`;
         res = {
-            data: img,
             loading: true,
         };
-        this.images[bid] = res;
-        img.onload = () => {
+        fetchImageByUrl(bmpPath).then(img => {
             res.w = img.width;
             res.h = img.height;
+            res.data = img;
             res.loading = false;
-        };
-        img.src = bmpPath;
+        });
+        this.images[bid] = res;
         return res;
+    }
+}
+
+export class SpritesheetLoader {
+    /**
+     * 
+     * @param {string} rootPath 
+     * @param {CanvasRenderingContext2D} canvasContext 
+     */
+    constructor(rootPath, canvasContext) {
+        this.rootPath = rootPath;
+        this.canvasContext = document.createElement("canvas").getContext("2d", {
+            willReadFrequently: true,
+        });
+        /**
+         * @type {Record<string, LazyImage>}
+         */
+        this.cache = {};
+    }
+    /**
+     * 
+     * @param {string} path ${spritesheetPath}.png#${bid}.png
+     * @returns {LazyImage}
+     */
+    loadImageByPath(path) {
+        let res = this.cache[path];
+        if (res) {
+            return res;
+        }
+        const [spritesheetPath, imageName] = path.split("#");
+        res = {
+            loading: true,
+        };
+        this.cache[path] = res;
+        this.loadSpritesheet(spritesheetPath).then(images => {
+            const imageData = images[imageName + ".png"];
+            res.data = imageData;
+            res.w = imageData.width;
+            res.h = imageData.height;
+            res.loading = false;
+        });
+        return res;
+    }
+    async loadSpritesheet(path) {
+        const jsonPath = joinPath(this.rootPath, path + ".json");
+        const imagePath = joinPath(this.rootPath, path + ".png");
+        const [json, spritesheetImage] = await Promise.all([fetch(jsonPath).then(res => res.json()), fetchImageByUrl(imagePath)]);
+        // split spritesheet to portions
+        this.canvasContext.canvas.width = spritesheetImage.width;
+        this.canvasContext.canvas.height = spritesheetImage.height;
+        this.canvasContext.drawImage(spritesheetImage, 0, 0, spritesheetImage.width, spritesheetImage.height);
+        /**
+         * @type {Record<string, ImageData>}
+         */
+        const images = {};
+        for (const [imagePath, imageInfo] of Object.entries(json.frames)) {
+            const { x, y, w, h } = imageInfo.frame;
+            images[imagePath] = this.canvasContext.getImageData(x, y, w, h)
+        }
+        return images;
     }
 }
 
@@ -94,13 +167,19 @@ export class ResourceLoader {
     }
 }
 
-export class LazyResourceLoader {
+/**
+ * @typedef {Object} Pollable
+ * @property {boolean} ready
+ * @property {any} value
+ */
+
+export class MixResourceLoader {
     constructor(name, mappings) {
         this.name = name;
         this.mappings = mappings;
         this.instant = null;
         /**
-         * @type {Array<{prefix: string, loader: FolderResourceLoader}>}
+         * @type {Array<{prefix: string, loader: OneLevelResourceLoader}>}
          */
         this.folderLoaders = [];
         this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
@@ -111,7 +190,7 @@ export class LazyResourceLoader {
             if (mapping.folder) {
                 this.folderLoaders.push({
                     prefix: mapping.nodepath + "/",
-                    loader: new FolderResourceLoader(`resource/${this.name}/${mapping.folder}`)
+                    loader: new OneLevelResourceLoader(`resource/${this.name}/${mapping.folder}`)
                 })
                 continue
             }
@@ -135,7 +214,7 @@ export class LazyResourceLoader {
     /**
      * 
      * @param {string} nodepath 
-     * @returns {{ready: boolean, value: any}}
+     * @returns {Pollable}
      */
     loadDescAsync(nodepath) {
         if (this.folderLoaders.length > 0) {
@@ -160,15 +239,36 @@ export class LazyResourceLoader {
     }
 }
 
-class FolderResourceLoader {
-    constructor(folderPath) {
-        this.folderPath = folderPath;
+export class AsyncResourceLoader {
+    /**
+     * 
+     * @param {OneLevelResourceLoader} descLoader 
+     * @param {LazyBmpLoader} bmpLoader 
+     */
+    constructor(descLoader, bmpLoader) {
+        this.descLoader = descLoader;
+        this.bmpLoader = bmpLoader;
+    }
+    /**
+     * 
+     * @param {string} nodepath 
+     * @returns {Pollable}
+     */
+    loadDescAsync(nodepath) {
+        return this.descLoader.loadDesc(nodepath)
+    }
+}
+
+
+export class OneLevelResourceLoader {
+    constructor(rootPath) {
+        this.rootPath = rootPath;
         this.cache = {};
     }
     /**
      * 
      * @param {string} nodepath 
-     * @returns {{ready: boolean, value: any}}
+     * @returns {Pollable}
      */
     loadDesc(nodepath) {
         let i = nodepath.indexOf('/');
@@ -184,7 +284,7 @@ class FolderResourceLoader {
                 value: getByPath(json, rest),
             }
         }
-        const path = `${this.folderPath}/${child}.json`
+        const path = joinPath(this.rootPath, child + ".json")
         const pollable = {
             ready: false,
         }
@@ -207,4 +307,15 @@ function getByPath(obj, path) {
         if (part in acc) return acc[part];
         return null;
     }, obj);
+}
+
+function joinPath(root, path) {
+    // remove '/' from the end of root and the beginning of path
+    if (root.endsWith("/")) {
+        root = root.substring(0, root.length - 1);
+    }
+    if (path.startsWith("/")) {
+        path = path.substring(1);
+    }
+    return `${root}/${path}`;
 }

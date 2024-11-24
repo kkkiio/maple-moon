@@ -177,8 +177,7 @@ pub let send_op_name_map : Map[Int, String] = {
   260: "USE_HAMMER",
 }
 
-/// A packet to be sent to the server
-/// Used as a base class to create specific packets
+///| A packet to be sent to the server
 struct OutPacket {
   buf : @buffer.T
   opcode : OutPacketOpcode

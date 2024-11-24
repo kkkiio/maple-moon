@@ -5,16 +5,16 @@ struct Text {
   nametag : Bool
   mut text : String
   mut color : @struct.ColorName
-  mut image : @resource.Image?
+  mut image : Image?
 }
 
 pub fn Text::new(
   font : FontId,
   alignment : TextAlignment,
   color : @struct.ColorName,
-  ~text : String = "",
-  ~nametag : Bool = false,
-  ~max_width? : Int
+  text~ : String = "",
+  nametag~ : Bool = false,
+  max_width? : Int
 ) -> Text {
   { font, alignment, color, image: None, text, max_width, nametag }
 }
@@ -22,7 +22,7 @@ pub fn Text::new(
 pub fn draw(
   self : Text,
   point : Point[Int],
-  ~text_y_clip : Range[Int]? = None
+  text_y_clip~ : Range[Int]? = None
 ) -> Unit {
   let image = self.get_or_init_image()
   let point = match self.alignment {
@@ -43,7 +43,7 @@ pub fn draw(
     self.text,
     point,
     self.nametag,
-    ~text_y_clip,
+    text_y_clip~,
   )
 }
 
@@ -66,7 +66,7 @@ pub fn get_text(self : Text) -> String {
   self.text
 }
 
-fn get_or_init_image(self : Text) -> @resource.Image {
+fn get_or_init_image(self : Text) -> Image {
   match self.image {
     Some(image) => image
     None => {

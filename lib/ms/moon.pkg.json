@@ -45,6 +45,6 @@
     "KKKIIO/maple-moon-client/lib/ms/skill_book",
     "KKKIIO/maple-moon-client/lib/ms/combat_do",
     "KKKIIO/maple-moon-client/lib/ms/shop",
-    "KKKIIO/maple-moon-client/lib/ms/char_stats"
+    "KKKIIO/maple-moon-client/lib/ms/char_stats",
   ]
 }

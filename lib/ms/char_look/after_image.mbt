@@ -74,3 +74,7 @@ pub fn update(self : Afterimage, stframe : Int, timestep : Int) -> Unit {
     self.displayed = self.animation.update(timestep~)
   }
 }
+
+let afterimage_loader : @resource.SyncLoader = @resource.SyncLoader::new(
+  "character",
+)

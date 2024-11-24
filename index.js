@@ -1,42 +1,12 @@
 import { setupGl } from './gl.js';
 import {
+  AsyncResourceLoader,
   ImageLoader,
-  LazyBmpLoader,
-  LazyResourceLoader,
+  MixResourceLoader,
+  OneLevelResourceLoader,
   ResourceLoader,
+  SpritesheetLoader
 } from './resource.js';
-
-class MergeResourceLoader {
-  constructor(name, mappings) {
-    this.name = name;
-    this.mappings = mappings;
-    this.nxJson = null;
-    this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
-  }
-  async load() {
-    this.nxJson = {}
-    for (let mapping of this.mappings) {
-      const path = `resource/${this.name}/${mapping.filename}`
-      const response = await fetch(path);
-      const subJson = await response.json();
-      let root = this.nxJson
-      let parts = mapping.nodepath.split("/");
-      for (let i = 0; i < parts.length; i++) {
-        if (i == parts.length - 1) {
-          root[parts[i]] = subJson
-        } else {
-          if (!(parts[i] in root)) {
-            root[parts[i]] = {}
-          }
-          root = root[parts[i]]
-        }
-      }
-    }
-  }
-  loadDesc(nodepath) {
-    return getByPath(this.nxJson, nodepath)
-  }
-}
 
 class Socket {
   constructor(path) {
@@ -139,7 +109,7 @@ function main() {
     uiLoader.load()
   );
 
-  const mapLoader = new LazyResourceLoader("Map.nx", [
+  const mapLoader = new MixResourceLoader("Map.nx", [
     { nodepath: "MapHelper.img", filename: "helper.nx.json" },
     { nodepath: "Tile", filename: "tile.nx.json" },
     { nodepath: "Obj", filename: "obj.nx.json" },
@@ -157,9 +127,7 @@ function main() {
     soundLoader.load()
   );
 
-  const characterLoader = new LazyResourceLoader("Character.nx", [
-    { nodepath: "00002000.img", filename: "00002000.nx.json" },
-    { nodepath: "00012000.img", filename: "00012000.nx.json" },
+  const characterLoader = new MixResourceLoader("Character.nx", [
     { nodepath: "Afterimage", filename: "afterimage.nx.json" },
     { nodepath: "Hair", folder: "Hair" },
     { nodepath: "Face", folder: "Face" },
@@ -175,6 +143,11 @@ function main() {
   prepareResourcePromises.push(
     characterLoader.start()
   );
+
+  const bodyLoader = new AsyncResourceLoader(
+    new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Body"),
+    new SpritesheetLoader("https://maple.kkkiiox.work")
+  )
 
   const stringLoader = ResourceLoader.fromName("String.nx");
   prepareResourcePromises.push(
@@ -280,7 +253,7 @@ function main() {
           case "character":
             return characterLoader;
           case "body":
-            return characterLoader; // TODO: split from characterLoader
+            return bodyLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }
@@ -294,10 +267,10 @@ function main() {
       get_result: (pollable) => pollable.value,
     },
     bitmap: {
-      id: (bmp) => bmp.id,
       width: (bmp) => bmp.w,
       height: (bmp) => bmp.h,
       loading: (bmp) => bmp.loading === true,
+      load: (bmp) => bmp,
     },
     time: {
       now_micro: () => {

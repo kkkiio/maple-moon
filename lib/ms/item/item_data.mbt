@@ -20,10 +20,6 @@ let character_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "character",
 )
 
-pub fn get_character_loader() -> @resource.AsyncLoader {
-  character_loader
-}
-
 pub(all) struct EquipId {
   category : String
   zid : String

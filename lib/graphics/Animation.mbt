@@ -9,7 +9,7 @@ struct Frame {
 
 pub typealias NxNode = @resource.NxNode
 
-fn Frame::from_resource(src : NxNode, ~default_delay? : Int) -> Frame {
+fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
   let texture = Texture::from_resource(src)
   let bounds = src.as_rectangle?().unwrap()
   let head = src["head"].as_point?().unwrap()
@@ -92,7 +92,6 @@ pub fn draw(self : Frame, args : DrawArgument) -> Unit {
   self.texture.draw(args)
 }
 
-// Class which consists of multiple textures to make an Animation.
 struct Animation {
   frames : Array[Frame]
   zigzag : Bool
@@ -103,7 +102,7 @@ struct Animation {
   mut delay : Int
 }
 
-pub type! LoadError {
+pub(all) type! LoadError {
   NotFound
   InvalidFormat(String)
 } derive(Show)
@@ -130,7 +129,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   let frames = if obj.contains("__b") {
     // 100ms delay for blend is too fast, see Map/Map1/101000000.img
     let default_delay = if blend { Some(2500) } else { None }
-    [Frame::from_resource(src, ~default_delay?)]
+    [Frame::from_resource(src, default_delay?)]
   } else {
     let fs = obj
       .iter()
@@ -180,9 +179,9 @@ pub fn Animation::default() -> Animation {
 }
 
 pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
-  let interframe = self.frame.get(~alpha)
-  let interopc = self.opacity.get(~alpha) / 255.0
-  let interscale = self.xyscale.get(~alpha) / 100.0
+  let interframe = self.frame.get(alpha~)
+  let interopc = self.opacity.get(alpha~) / 255.0
+  let interscale = self.xyscale.get(alpha~) / 100.0
   let modifyopc = interopc != 1.0
   let modifyscale = interscale != 1.0
   if modifyopc || modifyscale {
@@ -196,7 +195,7 @@ pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
 
 pub fn update(
   self : Animation,
-  ~timestep : Int = @constants.step_time_ms
+  timestep~ : Int = @constants.step_time_ms
 ) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))

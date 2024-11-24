@@ -96,7 +96,7 @@ pub fn Clothing::from_resource(
       }
   }
   let src = item_data.get_src()
-  let stances = @char_look.stance_id_names
+  let stances = @char_look.stance_name_id_map
     .iter()
     .map_option(
       fn(it) {

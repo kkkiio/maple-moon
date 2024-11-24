@@ -14,6 +14,10 @@ pub fn Future::from_value[T](v : T) -> Future[T] {
   { poll_fn: fn() { Some(v) }, resolved: Some(v) }
 }
 
+pub fn Future::never[T]() -> Future[T] {
+  Future::new(fn() { None })
+}
+
 pub fn poll[T](self : Future[T]) -> T? {
   match self.resolved {
     Some(_) => self.resolved

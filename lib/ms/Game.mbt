@@ -1,4 +1,5 @@
-pub struct Game {
+pub(all) struct Game {
+  window : Window
   timer : @utils.Timer
   mut accumulator : Int
   stage : Stage
@@ -7,7 +8,12 @@ pub struct Game {
   net_module : @net.Module
 }
 
-pub fn Game::start() -> Game {
+pub fn Game::load() -> @utils.Future[Game] {
+  let char_look_module = @char_look.Module::load()
+  char_look_module.map(fn(it) { Game::new(it) })
+}
+
+fn Game::new(char_look_module : @char_look.Module) -> Game {
   @config.global().set_hardware_info()
   let login_module = @login.Module::new()
   let monster_module = @monster.Module::new()
@@ -25,7 +31,6 @@ pub fn Game::start() -> Game {
     ui,
     fn() { Stage::get().get_player().unwrap().get_name() },
   )
-  let char_look_module = @char_look.Module::new()
   let stage = Stage::new(
     @map.MapPortalAnimations::load(),
     monster_module.get_map_mobs(),
@@ -36,7 +41,6 @@ pub fn Game::start() -> Game {
   )
   g_stage.set(stage)
   let window = Window::new(fn() { now_micro() |> @utils.TimePoint::from_micro })
-  g_window.set(window)
   let char_stats_module = @char_stats.Module::new(
     fn() { stage.get_player().map(fn(p) { p.get_stats() }) },
   )
@@ -175,7 +179,7 @@ pub fn Game::start() -> Game {
     ),
   )
   timer.start()
-  { timer, accumulator: 0, stage, ui, login_module, net_module }
+  { window, timer, accumulator: 0, stage, ui, login_module, net_module }
 }
 
 pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
@@ -215,10 +219,10 @@ pub fn update(self : Game) -> Unit {
 }
 
 pub fn draw(self : Game, alpha : Double) -> Unit {
-  Window::get().begin()
+  self.window.begin()
   self.stage.draw(alpha)
   self.ui.draw(alpha)
-  Window::get().end()
+  self.window.end()
 }
 
 fn setup_game_ui(player : @player.Player) -> Unit {
@@ -232,3 +236,7 @@ fn setup_game_ui(player : @player.Player) -> Unit {
 }
 
 fn now_micro() -> Double = "time" "now_micro"
+
+pub fn get_window(self : Game) -> Window {
+  self.window
+}

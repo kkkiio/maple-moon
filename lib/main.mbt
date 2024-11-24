@@ -1,33 +1,39 @@
 struct EntryPoint {
-  mut game : @ms.Game?
+  mut game : @utils.Future[@ms.Game]
 }
 
-let entrypoint : EntryPoint = { game: None }
+let entrypoint : EntryPoint = { game: @utils.Future::never() }
 
 pub fn game_start() -> Unit {
-  entrypoint.game = Some(@ms.Game::start())
+  entrypoint.game = @ms.Game::load()
 }
 
 pub fn game_update(time : Double) -> Unit {
-  entrypoint.game.unwrap().on_draw(time |> @utils.TimePoint::from_micro)
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.on_draw(time |> @utils.TimePoint::from_micro)
 }
 
 pub fn onmousemove(x : Int, y : Int) -> Unit {
-  @ms.Window::get().onmousemove(x, y)
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.get_window().onmousemove(x, y)
 }
 
 pub fn onmousedown() -> Unit {
-  @ms.Window::get().onmousedown()
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.get_window().onmousedown()
 }
 
 pub fn onmouseup() -> Unit {
-  @ms.Window::get().onmouseup()
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.get_window().onmouseup()
 }
 
 pub fn onkeydown(key : String) -> Unit {
-  @ms.Window::get().key_callback(key, true)
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.get_window().key_callback(key, true)
 }
 
 pub fn onkeyup(key : String) -> Unit {
-  @ms.Window::get().key_callback(key, false)
+  guard let Some(game) = entrypoint.game.poll() else { None => return  }
+  game.get_window().key_callback(key, false)
 }

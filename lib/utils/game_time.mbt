@@ -1,10 +1,10 @@
-pub type TimePoint Int64 derive(Eq, Compare, Default)
+pub(all) type TimePoint Int64 derive(Eq, Compare, Default)
 
 pub fn TimePoint::from_micro(i : Double) -> TimePoint {
   i.to_int64()
 }
 
-pub type Duration Int derive(Eq, Compare, Show)
+pub(all) type Duration Int derive(Eq, Compare, Show)
 
 pub fn Duration::from_micro(i : Int) -> Duration {
   i
@@ -26,8 +26,6 @@ pub fn since(self : TimePoint, other : TimePoint) -> Duration {
   (self._ - other._).to_int()
 }
 
-// Small class for measuring elapsed time between game loops.
-// Time measures are in microseconds.
 struct Timer {
   get_now : () -> TimePoint
   mut current_time : TimePoint

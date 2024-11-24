@@ -4,14 +4,8 @@ struct Window {
   mut last_click : @utils.TimePoint
 }
 
-let g_window : @utils.Singleton[Window] = @utils.Singleton::new()
-
 fn Window::new(get_now : () -> @utils.TimePoint) -> Window {
   { opacity: 1.0, last_click: @utils.TimePoint::default(), get_now }
-}
-
-pub fn Window::get() -> Window {
-  g_window.must_get()
 }
 
 fn begin(self : Window) -> Unit {

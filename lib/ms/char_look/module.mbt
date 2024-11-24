@@ -5,9 +5,23 @@ struct Module {
   body_cache : Map[Int, @utils.Future[Body]]
 }
 
-pub fn Module::new() -> Module {
-  let bodynode = afterimage_loader.load_res(["00002000.img"])
-  let headnode = afterimage_loader.load_res(["00012000.img"])
+pub fn Module::load() -> @utils.Future[Module] {
+  let bodynode = body_loader.load_res(["00002000.img"])
+  let headnode = body_loader.load_res(["00012000.img"])
+  bodynode
+  .combine(headnode)
+  .map(
+    fn(it) {
+      let (bodynode, headnode) = it
+      Module::new(bodynode, headnode)
+    },
+  )
+}
+
+pub fn Module::new(
+  bodynode : @resource.NxNode,
+  headnode : @resource.NxNode
+) -> Module {
   {
     hair_cache: Map::new(),
     draw_info: BodyDrawInfo::new(bodynode, headnode),
@@ -40,7 +54,3 @@ pub fn load_hair_by_id(self : Module, hair_id : Int) -> @utils.Future[Hair] {
 pub fn load_face_by_id(self : Module, face_id : Int) -> @utils.Future[Face] {
   self.face_types.get_or_init(face_id, fn() { Face::load(face_id) })
 }
-
-let afterimage_loader : @resource.SyncLoader = @resource.SyncLoader::new(
-  "character",
-)

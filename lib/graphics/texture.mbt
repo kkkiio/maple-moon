@@ -1,4 +1,4 @@
-pub struct Texture {
+pub(all) struct Texture {
   bitmap : @resource.Bitmap?
   mut origin : @struct.Point[Int]
   dimensions : @struct.Point[Int]

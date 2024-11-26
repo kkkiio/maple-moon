@@ -97,7 +97,7 @@ let string_loader = @resource.string_loader
 pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
   let strid = "000" + faceid.to_string()
   face_loader
-  .load_res(["Face", "\{strid}.img"])
+  .load_res(["\{strid}.img"])
   .map(fn(facenode) { Face::new(faceid, facenode) })
 }
 
@@ -162,6 +162,4 @@ pub fn get_name(self : Face) -> String {
   self.name
 }
 
-let face_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "character",
-)
+let face_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("face")

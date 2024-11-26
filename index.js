@@ -1,6 +1,7 @@
 import { setupGl } from './gl.js';
 import {
   AsyncResourceLoader,
+  CompositeResourceLoader,
   ImageLoader,
   MixResourceLoader,
   OneLevelResourceLoader,
@@ -46,10 +47,8 @@ class Socket {
 const VWIDTH = 1366;
 const VHEIGHT = 768;
 class TextBitmapGenerator {
-  constructor() {
-    this.textCtx = document.createElement("canvas").getContext("2d", {
-      willReadFrequently: true,
-    });
+  constructor(textCtx) {
+    this.textCtx = textCtx;
     this.testDom = document.getElementById("test");
   }
   // TODO: allow individual font style
@@ -127,26 +126,36 @@ function main() {
     soundLoader.load()
   );
 
-  const characterLoader = new MixResourceLoader("Character.nx", [
-    { nodepath: "Afterimage", filename: "afterimage.nx.json" },
-    { nodepath: "Hair", folder: "Hair" },
-    { nodepath: "Face", folder: "Face" },
-    { nodepath: "Pants", folder: "Pants" },
-    { nodepath: "Weapon", folder: "Weapon" },
-    { nodepath: "Coat", folder: "Coat" },
-    { nodepath: "Cap", folder: "Cap" },
-    { nodepath: "Longcoat", folder: "Longcoat" },
-    { nodepath: "Shield", folder: "Shield" },
-    { nodepath: "Shoes", folder: "Shoes" },
-    { nodepath: "Glove", folder: "Glove" },
-  ]);
-  prepareResourcePromises.push(
-    characterLoader.start()
-  );
+  const imageGenerateContext = document.createElement("canvas").getContext("2d", {
+    willReadFrequently: true,
+  });
+  const spritesheetLoader = new SpritesheetLoader("https://maple.kkkiiox.work", imageGenerateContext)
+  const characterLoader = new CompositeResourceLoader("Character.nx", {
+    "Pants/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Pants"),
+    "Weapon/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Weapon"),
+    "Coat/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Coat"),
+    "Cap/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Cap"),
+    "Longcoat/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Longcoat"),
+    "Shield/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Shield"),
+    "Shoes/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Shoes"),
+    "Glove/": new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Glove"),
+  }, spritesheetLoader);
 
   const bodyLoader = new AsyncResourceLoader(
     new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Body"),
-    new SpritesheetLoader("https://maple.kkkiiox.work")
+    spritesheetLoader
+  )
+  const hairLoader = new AsyncResourceLoader(
+    new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Hair"),
+    spritesheetLoader
+  )
+  const faceLoader = new AsyncResourceLoader(
+    new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Face"),
+    spritesheetLoader
+  )
+  const afterimageLoader = new AsyncResourceLoader(
+    new OneLevelResourceLoader("https://maple.kkkiiox.work/Character/Afterimage"),
+    spritesheetLoader
   )
 
   const stringLoader = ResourceLoader.fromName("String.nx");
@@ -200,7 +209,7 @@ function main() {
     skillLoader.load()
   );
 
-  const textBitmapGenerator = new TextBitmapGenerator();
+  const textBitmapGenerator = new TextBitmapGenerator(imageGenerateContext);
 
   let requestAnimationFrameId = null;
 
@@ -254,6 +263,12 @@ function main() {
             return characterLoader;
           case "body":
             return bodyLoader;
+          case "hair":
+            return hairLoader;
+          case "face":
+            return faceLoader;
+          case "afterimage":
+            return afterimageLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

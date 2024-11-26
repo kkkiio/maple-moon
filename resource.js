@@ -96,9 +96,7 @@ export class SpritesheetLoader {
      */
     constructor(rootPath, canvasContext) {
         this.rootPath = rootPath;
-        this.canvasContext = document.createElement("canvas").getContext("2d", {
-            willReadFrequently: true,
-        });
+        this.canvasContext = canvasContext;
         /**
          * @type {Record<string, LazyImage>}
          */
@@ -236,6 +234,33 @@ export class MixResourceLoader {
      */
     loadDesc(nodepath) {
         return getByPath(this.instant, nodepath)
+    }
+}
+
+export class CompositeResourceLoader {
+    /**
+     * 
+     * @param {string} name 
+     * @param {Record<string, OneLevelResourceLoader>} prefixLoaderMap 
+     * @param {SpritesheetLoader} bmpLoader 
+     */
+    constructor(name, prefixLoaderMap, bmpLoader) {
+        this.name = name;
+        this.prefixLoaderMap = prefixLoaderMap;
+        this.bmpLoader = bmpLoader
+    }
+    /**
+     * 
+     * @param {string} nodepath 
+     * @returns {Pollable}
+     */
+    loadDescAsync(nodepath) {
+        for (let [prefix, loader] of Object.entries(this.prefixLoaderMap)) {
+            if (nodepath.startsWith(prefix)) {
+                return loader.loadDesc(nodepath.substring(prefix.length))
+            }
+        }
+        throw new Error(`nodepath not found: ${nodepath}`)
     }
 }
 

@@ -3,7 +3,7 @@ typealias MapObjectBase = @map_object.MapObjectBase
 typealias PhysicsObject = @physics.PhysicsObject
 
 /// Player states which determine animation and state
-pub enum CharState {
+pub(all) enum CharState {
   WALK
   STAND
   FALL
@@ -37,7 +37,7 @@ pub fn hash(self : CharState) -> Hash {
 }
 
 // Base for characters, e.g. the player and other clients on the same map.
-pub struct CharBase {
+pub(all) struct CharBase {
   base : MapObjectBase
   look : CharLook
   // look_preview: CharLook
@@ -50,7 +50,7 @@ pub struct CharBase {
   // chat_balloon: ChatBalloon
   effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
-  mut after_image : @char_look.Afterimage
+  mut after_image : @utils.Future[@char_look.Afterimage] // TODO: load more early?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
   damage_number_set : @combat_ui.DamageNumberSet
@@ -130,7 +130,7 @@ pub fn CharBase::new(
     ),
     effects: @graphics.EffectLayer::default(),
     state: CharState::STAND,
-    after_image: @char_look.Afterimage::default(),
+    after_image: @utils.Future::never(),
     invincible: @utils.TimedBool::default(),
     damage_number_set,
     damage_numbers: Array::new(),
@@ -240,7 +240,10 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   } else {
     0
   }
-  self.after_image.update(self.look.get_frame(), stancespeed)
+  match self.after_image.poll() {
+    None => ()
+    Some(image) => image.update(self.look.get_frame(), stancespeed)
+  }
   self.look.update(stancespeed)
 }
 
@@ -327,7 +330,7 @@ pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
   let stance_name = self.look.get_stance().name()
   let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
-  self.after_image = @char_look.Afterimage::new(
+  self.after_image = @char_look.Afterimage::load(
     skill_id, ai_name, stance_name, weapon_level,
   )
 }
@@ -345,7 +348,9 @@ pub fn get_attackdelay(
   no : Int,
   base_attack_speed : Int
 ) -> Int {
-  let first_frame = self.after_image.get_first_frame()
+  let first_frame = self.after_image
+    .poll()
+    .map_or(0, fn(image) { image.get_first_frame() }) // WARN: may produce incorrect delay
   let delay = self.look.get_attackdelay(no, first_frame)
   let fspeed = get_real_attackspeed(base_attack_speed)
   (delay.to_double() / fspeed).to_int()
@@ -373,7 +378,7 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
       @combat_ui.DamageNumberType::TOPLAYER,
       damage,
       start_y,
-      ~x,
+      x~,
     ),
   )
   self.look.set_alerted(5000)
@@ -390,7 +395,7 @@ pub fn show_attack_effect(
   self.effects.add(
     toshow,
     args=@graphics.DrawArgument::new11(self.facing_right),
-    ~z,
+    z~,
     speed=attackspeed,
   )
 }
@@ -411,7 +416,7 @@ pub fn attack_by_stance(self : CharBase, stance : @char_look.StanceId) -> Unit {
   self.look.set_alerted(5000)
 }
 
-pub struct CharEntry {
+pub(all) struct CharEntry {
   stats : @char_stats.StatsEntry
   look : LookEntry
   id : Int

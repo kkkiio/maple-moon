@@ -5,39 +5,41 @@ struct Afterimage {
   mut displayed : Bool
 }
 
-pub fn Afterimage::new(
+pub fn Afterimage::load(
   skill_id : Int,
   name : String,
   stance_name : String,
   level : Int
-) -> Afterimage {
-  let src_opt = if skill_id > 0 {
-    let strid = @string_format.extend_id(skill_id, 7)
-    let src = @skill.skill_loader().load_res(
-      [
-        strid.substring(end=3) + ".img",
-        "skill",
-        strid,
-        "afterimage",
-        name,
-        stance_name,
-      ],
-    )
-    if src.is_null() {
-      None
-    } else {
-      Some(src)
-    }
-  } else {
-    None
-  }
-  let src = match src_opt {
-    Some(src) => src
-    None =>
-      afterimage_loader.load_res(
-        ["Afterimage", name + ".img", (level / 10).to_string(), stance_name],
+) -> @utils.Future[Afterimage] {
+  @option.when(
+    skill_id > 0,
+    fn() {
+      let strid = @string_format.extend_id(skill_id, 7)
+      @skill.skill_loader().load_res(
+        [
+          strid.substring(end=3) + ".img",
+          "skill",
+          strid,
+          "afterimage",
+          name,
+          stance_name,
+        ],
       )
-  }
+    },
+  )
+  .filter(fn(src) { src.is_null().not() })
+  .map_or_else(
+    fn() {
+      afterimage_loader.load_res(
+        [name + ".img", (level / 10).to_string(), stance_name],
+      )
+    },
+    fn(src) { @utils.Future::from_value(src) },
+  )
+  .map(fn(src) { Afterimage::new(src) })
+}
+
+pub fn Afterimage::new(src : @resource.NxNode) -> Afterimage {
   let range = src.as_rectangle?().unwrap()
   let mut animation = @graphics.Animation::default()
   let mut first_frame = 0
@@ -52,6 +54,7 @@ pub fn Afterimage::new(
   { animation, range, first_frame, displayed }
 }
 
+// @alert deprecated "explicitly handle loading"
 pub fn Afterimage::default() -> Afterimage {
   {
     animation: @graphics.Animation::default(),
@@ -75,6 +78,6 @@ pub fn update(self : Afterimage, stframe : Int, timestep : Int) -> Unit {
   }
 }
 
-let afterimage_loader : @resource.SyncLoader = @resource.SyncLoader::new(
-  "character",
+let afterimage_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "afterimage",
 )

@@ -205,14 +205,14 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
 
 pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       match self.desc {
         @json.JsonValue::Object(it) =>
           it
           .iter2()
           .run(
             fn(k, v) {
-              yield(k, { ..self, name: k, desc: v, path: self.path.push(k) })
+              yield_(k, { ..self, name: k, desc: v, path: self.path.push(k) })
             },
           )
         _ => IterContinue

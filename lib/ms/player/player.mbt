@@ -2,7 +2,7 @@ typealias Movement = @physics.Movement
 
 typealias CharStats = @char_stats.CharStats
 
-pub struct Player {
+pub(all) struct Player {
   char_base : @character.CharBase
   stats : CharStats
   keys_down : Map[@action.Id, Bool]
@@ -380,7 +380,7 @@ pub fn get_look(self : Player) -> @character.CharLook {
 }
 
 pub fn get_afterimage(self : Player) -> @char_look.Afterimage {
-  self.char_base.after_image
+  self.char_base.after_image.poll().or_default()
 }
 
 pub fn get_weapontype(self : Player) -> @weapon.Type {

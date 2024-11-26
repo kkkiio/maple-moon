@@ -47,7 +47,7 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
 
 pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> @utils.Future[Hair] {
   hair_loader
-  .load_res(["Hair", "000\{hairid}.img"])
+  .load_res(["000\{hairid}.img"])
   .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo) })
 }
 
@@ -125,6 +125,4 @@ pub fn getcolor(self : Hair) -> String {
   self.color
 }
 
-let hair_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "character",
-)
+let hair_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("hair")

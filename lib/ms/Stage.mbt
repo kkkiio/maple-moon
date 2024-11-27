@@ -1,6 +1,9 @@
 enum StageState {
   INACTIVE
-  TRANSITION(portal_id~ : Int, poll_fn~ : () -> @map.MapStruct?!)
+  TRANSITION(
+    portal_id~ : Int,
+    loading_map~ : @utils.Future[Result[@map.MapStruct, Error]]
+  )
   ACTIVE(
     tiles_objs~ : @map.MapTilesObjs,
     backgrounds~ : Array[@map.Background],
@@ -70,8 +73,8 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
       self.map_id = map_id
-      let poll_fn = @map.load_map(map_id, self.map_portals_animations)
-      self.state = StageState::TRANSITION(portal_id~, poll_fn~)
+      let loading_map = @map.load_map(map_id, self.map_portals_animations)
+      self.state = StageState::TRANSITION(portal_id~, loading_map~)
     }
     StageState::TRANSITION(_) =>
       // TODO: respawn?
@@ -173,9 +176,10 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
     ..
   ) = self.state else {
     StageState::INACTIVE => return
-    StageState::TRANSITION(portal_id~, poll_fn~) =>
-      match poll_fn!() {
+    StageState::TRANSITION(portal_id~, loading_map~) =>
+      match loading_map.poll() {
         Some(map_struct) => {
+          let map_struct = map_struct.unwrap_or_error!()
           self.state = StageState::ACTIVE(
             tiles_objs=map_struct.tiles_objs,
             backgrounds=map_struct.backgrounds,

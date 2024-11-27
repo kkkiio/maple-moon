@@ -1,4 +1,4 @@
-pub enum BackgroundType {
+pub(all) enum BackgroundType {
   BG_NORMAL
   HTILED
   VTILED

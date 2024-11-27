@@ -82,3 +82,20 @@ pub fn tap[T](self : Future[T], f : (T) -> Unit) -> Future[T] {
 pub fn combine[T, U](self : Future[T], other : Future[U]) -> Future[(T, U)] {
   self.map(fn(t) { other.map(fn(u) { (t, u) }) }).flatten()
 }
+
+pub fn Future::all_of[T](futures : Array[Future[T]]) -> Future[Array[T]] {
+  let resolved = Array::new()
+  let mut i = 0
+  Future::new(
+    fn() {
+      while i < futures.length() {
+        match futures[i].poll() {
+          Some(t) => resolved.push(t)
+          None => return None // maybe poll other futures to do more work?
+        }
+        i += 1
+      }
+      Some(resolved)
+    },
+  )
+}

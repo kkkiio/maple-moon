@@ -51,7 +51,7 @@ async function fetchImageByUrl(url) {
  * @property {number} h
  */
 
-export class ImageLoader {
+export class BidImageLoader {
     /**
      * 
      * @param {string} imagesUrl 
@@ -88,7 +88,7 @@ export class ImageLoader {
     }
 }
 
-export class SpritesheetLoader {
+export class PathImageLoader {
     /**
      * 
      * @param {string} rootPath 
@@ -104,7 +104,7 @@ export class SpritesheetLoader {
     }
     /**
      * 
-     * @param {string} path ${spritesheetPath}.png#${bid}.png
+     * @param {string} path ${image}[#${bid}]
      * @returns {LazyImage}
      */
     loadImageByPath(path) {
@@ -112,18 +112,27 @@ export class SpritesheetLoader {
         if (res) {
             return res;
         }
-        const [spritesheetPath, imageName] = path.split("#");
+        const [imagePath, spriteSheetRef] = path.split("#");
         res = {
             loading: true,
         };
         this.cache[path] = res;
-        this.loadSpritesheet(spritesheetPath).then(images => {
-            const imageData = images[imageName + ".png"];
-            res.data = imageData;
-            res.w = imageData.width;
-            res.h = imageData.height;
-            res.loading = false;
-        });
+        if (spriteSheetRef) {
+            this.loadSpritesheet(imagePath).then(images => {
+                const imageData = images[spriteSheetRef + ".png"];
+                res.data = imageData;
+                res.w = imageData.width;
+                res.h = imageData.height;
+                res.loading = false;
+            });
+        } else {
+            fetchImageByUrl(imagePath).then(img => {
+                res.data = img;
+                res.w = img.width;
+                res.h = img.height;
+                res.loading = false;
+            });
+        }
         return res;
     }
     async loadSpritesheet(path) {
@@ -177,7 +186,7 @@ export class MixResourceLoader {
         this.mappings = mappings;
         this.instant = null;
         /**
-         * @type {Array<{prefix: string, loader: OneLevelResourceLoader}>}
+         * @type {Array<{prefix: string, loader: DirResourceLoader}>}
          */
         this.folderLoaders = [];
         this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
@@ -188,7 +197,7 @@ export class MixResourceLoader {
             if (mapping.folder) {
                 this.folderLoaders.push({
                     prefix: mapping.nodepath + "/",
-                    loader: new OneLevelResourceLoader(`resource/${this.name}/${mapping.folder}`)
+                    loader: new DirResourceLoader(`resource/${this.name}/${mapping.folder}`)
                 })
                 continue
             }
@@ -240,12 +249,10 @@ export class MixResourceLoader {
 export class CompositeResourceLoader {
     /**
      * 
-     * @param {string} name 
-     * @param {Record<string, OneLevelResourceLoader>} prefixLoaderMap 
-     * @param {SpritesheetLoader} bmpLoader 
+     * @param {Record<string, DirResourceLoader>} prefixLoaderMap 
+     * @param {PathImageLoader} bmpLoader 
      */
-    constructor(name, prefixLoaderMap, bmpLoader) {
-        this.name = name;
+    constructor(prefixLoaderMap, bmpLoader) {
         this.prefixLoaderMap = prefixLoaderMap;
         this.bmpLoader = bmpLoader
     }
@@ -267,7 +274,7 @@ export class CompositeResourceLoader {
 export class AsyncResourceLoader {
     /**
      * 
-     * @param {OneLevelResourceLoader} descLoader 
+     * @param {DirResourceLoader} descLoader 
      * @param {LazyBmpLoader} bmpLoader 
      */
     constructor(descLoader, bmpLoader) {
@@ -285,7 +292,7 @@ export class AsyncResourceLoader {
 }
 
 
-export class OneLevelResourceLoader {
+export class DirResourceLoader {
     constructor(rootPath) {
         this.rootPath = rootPath;
         this.cache = {};

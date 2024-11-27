@@ -8,12 +8,12 @@ struct EntryPoint {
 
 enum State {
   NONE
-  LOADING(~poll_fn : () -> @map.MapStruct?!)
+  LOADING(loading_map~ : @utils.Future[Result[@map.MapStruct, Error]])
   ACTIVE(
-    ~map : @map.MapStruct,
-    mut ~viewpos : @struct.Point[Double],
-    ~hide_backgrounds : Map[Int, Bool],
-    ~hide_foregrounds : Map[Int, Bool]
+    map~ : @map.MapStruct,
+    mut viewpos~ : @struct.Point[Double],
+    hide_backgrounds~ : Map[Int, Bool],
+    hide_foregrounds~ : Map[Int, Bool]
   )
 }
 
@@ -26,30 +26,30 @@ let g_state : EntryPoint = {
 }
 
 pub fn load_map(map_id : Int) -> Unit {
-  let poll_fn = @map.load_map(map_id, g_state.map_portals_animations)
-  g_state.state = State::LOADING(~poll_fn)
+  let loading_map = @map.load_map(map_id, g_state.map_portals_animations)
+  g_state.state = State::LOADING(loading_map~)
 }
 
 pub fn update(_time : Double) -> Unit {
   match g_state.state {
     State::NONE => ()
-    State::LOADING(~poll_fn) => {
-      guard let Ok(Some(map)) = poll_fn?() else {
-        Ok(None) => return
-        Err(err) => {
+    State::LOADING(loading_map~) => {
+      guard let Some(Ok(map)) = loading_map.poll() else {
+        None => return
+        Some(Err(err)) => {
           @log.error({ "err": err }, "Failed to load map")
           g_state.state = State::NONE
           return
         }
       }
       g_state.state = State::ACTIVE(
-        ~map,
+        map~,
         viewpos=@struct.Point::default(),
         hide_backgrounds=Map::new(),
         hide_foregrounds=Map::new(),
       )
     }
-    State::ACTIVE(~map, ~viewpos, ~hide_backgrounds, ~hide_foregrounds) as state => {
+    State::ACTIVE(map~, viewpos~, hide_backgrounds~, hide_foregrounds~) as state => {
       let viewpos = update_viewpos(g_state.down_keys, viewpos, g_state.speed)
       state.viewpos = viewpos
       let alpha = 0.0
@@ -86,27 +86,27 @@ pub fn is_loaded() -> Bool {
 
 pub fn get_background_count() -> Int {
   match g_state.state {
-    State::ACTIVE(~map, ..) => map.backgrounds.length()
+    State::ACTIVE(map~, ..) => map.backgrounds.length()
     _ => 0
   }
 }
 
 pub fn get_foreground_count() -> Int {
   match g_state.state {
-    State::ACTIVE(~map, ..) => map.foregrounds.length()
+    State::ACTIVE(map~, ..) => map.foregrounds.length()
     _ => 0
   }
 }
 
 pub fn set_show_background(index : Int, show_background : Bool) -> Unit {
-  guard let State::ACTIVE(~hide_backgrounds, ..) = g_state.state else {
+  guard let State::ACTIVE(hide_backgrounds~, ..) = g_state.state else {
     _ => return
   }
   hide_backgrounds.set(index, show_background.not())
 }
 
 pub fn set_show_foreground(index : Int, show_foreground : Bool) -> Unit {
-  guard let State::ACTIVE(~hide_foregrounds, ..) = g_state.state else {
+  guard let State::ACTIVE(hide_foregrounds~, ..) = g_state.state else {
     _ => return
   }
   hide_foregrounds.set(index, show_foreground.not())

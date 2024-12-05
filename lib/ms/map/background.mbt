@@ -41,29 +41,37 @@ struct Background {
   hoffset : Int
 }
 
-pub fn Background::from_resource(src : @resource.NxNode) -> Background! {
-  let loader = map_loader()
-  let animated = src["ani"].get_bool?().unwrap()
-  let animation = match src["bS"].get_string() {
-    "" => @graphics.Animation::default()
-    bs =>
-      @graphics.Animation::from_resource(
-        loader
-        .load_res(
-          [
-            "Back",
-            bs + ".img",
-            if animated {
-              "ani"
-            } else {
-              "back"
-            },
-            src["no"].get_int?().unwrap().to_string(),
-          ],
-        )
-        .poll()
-        .unwrap(), // TODO: handle loading error
+pub fn Background::load(
+  src : @resource.NxNode
+) -> @utils.Future[Result[Background, Error]] {
+  match src["bS"].get_string() {
+    "" => @utils.Future::from_value(Background::from_resource?(src, None))
+    bs => {
+      let animated = src["ani"].get_bool?().unwrap()
+      background_loader
+      .load_res(
+        [
+          bs + ".img",
+          if animated {
+            "ani"
+          } else {
+            "back"
+          },
+          src["no"].get_int?().unwrap().to_string(),
+        ],
       )
+      .map_exn(fn(res) { Background::from_resource!(src, Some(res)) })
+    }
+  }
+}
+
+fn Background::from_resource(
+  src : @resource.NxNode,
+  bg_res : @resource.NxNode?
+) -> Background! {
+  let animation = match bg_res {
+    None => @graphics.Animation::default()
+    Some(bg_res) => @graphics.Animation::from_resource(bg_res)
   }
   let t = Background::typebyid!(src["type"].as_int!())
   @log.debug({ "type": t, "path": src.path() }, "load background")
@@ -203,23 +211,41 @@ pub fn update(self : Background) -> Unit {
   self.animation.update() |> ignore
 }
 
-pub fn load_backgrounds(src : NxNode) -> (Array[Background], Array[Background]) {
-  let backgrounds = Array::new()
-  let foregrounds = Array::new()
+pub(readonly) struct Backgrounds {
+  backs : Array[Background]
+  fores : Array[Background]
+}
+
+pub fn load_backgrounds(
+  src : @resource.NxNode
+) -> @utils.Future[Result[Backgrounds, Error]] {
+  let backs = Array::new()
+  let fores = Array::new()
   let mut no = 0
   while true {
     let backi = src[no.to_string()]
     match backi.value() {
       Json::Null => break
-      { "front": Json::Number(0) } =>
-        backgrounds.push(Background::from_resource?(backi).unwrap())
-      { "front": Json::Number(_) } =>
-        foregrounds.push(Background::from_resource?(backi).unwrap())
+      { "front": Json::Number(0) } => backs.push(Background::load(backi))
+      { "front": Json::Number(_) } => fores.push(Background::load(backi))
       _ => panic()
     }
     no += 1
   }
-  (backgrounds, foregrounds)
+  @utils.Future::all_of(backs)
+  .map(fn(res) { @utils.flatten_ok(res) })
+  .combine(@utils.Future::all_of(fores).map(fn(res) { @utils.flatten_ok(res) }))
+  .map(
+    fn(res) {
+      res.0.bind(
+        fn(backgrounds) {
+          res.1.map(
+            fn(foregrounds) { { backs: backgrounds, fores: foregrounds } },
+          )
+        },
+      )
+    },
+  )
 }
 
 pub fn drawbackgrounds(
@@ -240,10 +266,11 @@ pub fn drawforegrounds(
   foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
 }
 
-pub fn update_backgrounds(
-  backgrounds : Array[Background],
-  foregrounds : Array[Background]
-) -> Unit {
-  backgrounds.each(fn(background) { background.update() })
-  foregrounds.each(fn(foreground) { foreground.update() })
+pub fn update_backgrounds(backgrounds : Backgrounds) -> Unit {
+  backgrounds.backs.each(fn(background) { background.update() })
+  backgrounds.fores.each(fn(foreground) { foreground.update() })
 }
+
+let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "background",
+)

@@ -4,7 +4,6 @@ import {
   BidImageLoader,
   CompositeResourceLoader,
   DirResourceLoader,
-  MixResourceLoader,
   PathImageLoader,
   ResourceLoader
 } from './resource.js';
@@ -108,14 +107,6 @@ function main() {
     uiLoader.load()
   );
 
-  const mapLoader = new MixResourceLoader("Map.nx", [
-    { nodepath: "MapHelper.img", filename: "helper.nx.json" },
-    { nodepath: "Obj", filename: "obj.nx.json" },
-    { nodepath: "Back", filename: "back.nx.json" },
-  ]);
-  prepareResourcePromises.push(
-    mapLoader.start()
-  );
   const imageGenerateContext = document.createElement("canvas").getContext("2d", {
     willReadFrequently: true,
   });
@@ -123,17 +114,31 @@ function main() {
   const mapxLoader = new CompositeResourceLoader({
     "Map0/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map0"),
     "Map1/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map1"),
+    "Map2/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map2"),
+    "Map3/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map3"),
+    "Map4/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map4"),
+    "Map5/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map5"),
     "Map6/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map6"),
+    "Map7/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map7"),
+    "Map8/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map8"),
+    "Map9/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map9"),
   }, spritesheetLoader)
   const tileLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Map/Tile"),
     spritesheetLoader
   )
-
-  const soundLoader = ResourceLoader.fromName("Sound.nx");
-  prepareResourcePromises.push(
-    soundLoader.load()
-  );
+  const backgroundLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Map/Back"),
+    spritesheetLoader
+  )
+  const objLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Map/Obj"),
+    spritesheetLoader
+  )
+  const mapHelperLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Map/MapHelper.img"),
+    spritesheetLoader
+  )
 
   const characterLoader = new CompositeResourceLoader({
     "Pants/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Pants"),
@@ -232,10 +237,6 @@ function main() {
         switch (name) {
           case "ui":
             return uiLoader;
-          case "sound":
-            return soundLoader;
-          case "character":
-            return characterLoader;
           case "string":
             return stringLoader;
           case "reactor":
@@ -262,10 +263,10 @@ function main() {
       },
       get_async_loader: (name) => {
         switch (name) {
-          case "map":
-            return mapLoader;
           case "mapx":
             return mapxLoader;
+          case "maphelper":
+            return mapHelperLoader;
           case "tile":
             return tileLoader;
           case "character":
@@ -278,6 +279,10 @@ function main() {
             return faceLoader;
           case "afterimage":
             return afterimageLoader;
+          case "background":
+            return backgroundLoader;
+          case "obj":
+            return objLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

@@ -81,7 +81,7 @@ fn new_body_stance(
   guard stancenode.is_null().not() else { return {} }
   let body_texture_map = Map::new()
   for
-    it in ints().map_while(
+    it in @utils.ints().map_while(
       fn(frame) {
         let framenode = stancenode[frame.to_string()]
         if framenode.is_null() {
@@ -185,7 +185,3 @@ pub let layers_by_name_ : @immut/sorted_map.T[String, BodyLayer] = @immut/sorted
 )
 
 let body_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("body")
-
-fn ints(start~ : Int = 0) -> Iter[Int] {
-  start.until(@int.max_value)
-}

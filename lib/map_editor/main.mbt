@@ -1,5 +1,4 @@
 struct EntryPoint {
-  map_portals_animations : @map.MapPortalAnimations
   mut state : State
   down_keys : Map[String, Bool]
   mut speed : Int
@@ -18,7 +17,6 @@ enum State {
 }
 
 let g_state : EntryPoint = {
-  map_portals_animations: @map.MapPortalAnimations::load(),
   state: State::NONE,
   down_keys: Map::new(),
   speed: 5,
@@ -26,7 +24,9 @@ let g_state : EntryPoint = {
 }
 
 pub fn load_map(map_id : Int) -> Unit {
-  let loading_map = @map.load_map(map_id, g_state.map_portals_animations)
+  let loading_map = @map.MapPortalAnimations::load().bind(
+    fn(map_portals_animations) { @map.load_map(map_id, map_portals_animations) },
+  )
   g_state.state = State::LOADING(loading_map~)
 }
 
@@ -54,7 +54,7 @@ pub fn update(_time : Double) -> Unit {
       state.viewpos = viewpos
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
-      update_map(map.backgrounds, map.foregrounds, map.tiles_objs, map.portals)
+      update_map(map.backgrounds, map.tiles_objs, map.portals)
       draw_map(map, viewpos, hide_backgrounds, hide_foregrounds, alpha)
       @graphics.GraphicsGL::get().flush(1.0)
     }
@@ -86,14 +86,14 @@ pub fn is_loaded() -> Bool {
 
 pub fn get_background_count() -> Int {
   match g_state.state {
-    State::ACTIVE(map~, ..) => map.backgrounds.length()
+    State::ACTIVE(map~, ..) => map.backgrounds.backs.length()
     _ => 0
   }
 }
 
 pub fn get_foreground_count() -> Int {
   match g_state.state {
-    State::ACTIVE(map~, ..) => map.foregrounds.length()
+    State::ACTIVE(map~, ..) => map.backgrounds.fores.length()
     _ => 0
   }
 }
@@ -120,10 +120,9 @@ fn draw_map(
   alpha : Double
 ) -> Unit {
   let backgrounds = map.backgrounds
-  let foregrounds = map.foregrounds
   let tiles_objs = map.tiles_objs
   let portals = map.portals
-  for i, background in backgrounds {
+  for i, background in backgrounds.backs {
     if hide_backgrounds.get_or_default(i, false) {
       continue
     }
@@ -139,7 +138,7 @@ fn draw_map(
     }
   }
   portals.draw(int_viewpos, alpha)
-  for i, background in foregrounds {
+  for i, background in backgrounds.fores {
     if hide_foregrounds.get_or_default(i, false) {
       continue
     }
@@ -148,12 +147,11 @@ fn draw_map(
 }
 
 fn update_map(
-  backgrounds : Array[@map.Background],
-  foregrounds : Array[@map.Background],
+  backgrounds : @map.Backgrounds,
   tiles_objs : @map.MapTilesObjs,
   portals : @map.MapPortals
 ) -> Unit {
-  @map.update_backgrounds(backgrounds, foregrounds)
+  @map.update_backgrounds(backgrounds)
   tiles_objs.update()
   portals.update(@struct.Point::default()) // TODO: add player
 }

@@ -1,4 +1,4 @@
-pub enum CharsetAlignment {
+pub(all) enum CharsetAlignment {
   LEFT
   CENTER
   RIGHT
@@ -16,7 +16,7 @@ pub fn Charset::from_resource(
   let chars = Map::new()
   for sub in src {
     let name = sub.name()
-    if sub["__b"].is_null() || name == "" {
+    if name == "" || sub.get_bitmap().is_empty() {
       continue
     }
     let mut c = name[0]

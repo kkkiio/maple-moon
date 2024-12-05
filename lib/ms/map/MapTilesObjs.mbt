@@ -1,7 +1,7 @@
 /// A tile and obj layer.
 struct TilesObjs {
   tiles : Array[Tile]
-  objs : FixedArray[Obj]
+  objs : Array[Obj]
 }
 
 pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] {
@@ -9,23 +9,41 @@ pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] 
     { "info": { "tS": String(tileset) } } => tileset + ".img"
     _ => ""
   }
-  src["tile"]
-  .iter()
-  .map(fn(tilenode) { Tile::load(tilenode, tileset) })
-  .collect()
-  |> @utils.Future::all_of()
-  |> @utils.Future::map_exn(fn(tiles) { TilesObjs::new!(src, tiles) })
+
+  // Load tiles
+  let tiles_future = src["tile"]
+    .iter()
+    .map(fn(tilenode) { Tile::load(tilenode, tileset) })
+    .collect()
+    |> @utils.Future::all_of()
+
+  // Load objects
+  let objs_future = src["obj"]
+    .iter()
+    .map(fn(objnode) { Obj::load(objnode) })
+    .collect()
+    |> @utils.Future::all_of()
+
+  // Combine both futures
+  tiles_future
+  .combine(objs_future)
+  .map_exn(
+    fn(it) {
+      let (tiles, objs) = it
+      let objs = @utils.flatten_ok(objs).unwrap_or_error!()
+      TilesObjs::new(tiles, objs)
+    },
+  )
 }
 
-fn TilesObjs::new(src : NxNode, tiles : Array[Tile]) -> TilesObjs! {
+fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
   let tileZMap = Map::new()
   for tile in tiles {
     let z = tile.get_z()
     tileZMap.get_or_init(z, fn() { [] }).push(tile)
   }
   let objZMap = Map::new()
-  for objnode in src["obj"] {
-    let obj = Obj::from_resource!(objnode)
+  for obj in objs {
     let z = obj.get_z()
     objZMap.get_or_init(z, fn() { [] }).push(obj)
   }
@@ -33,8 +51,6 @@ fn TilesObjs::new(src : NxNode, tiles : Array[Tile]) -> TilesObjs! {
   zTiles.sort_by_key(fn(it) { it.0 })
   let zObjs = objZMap.to_array()
   zObjs.sort_by_key(fn(it) { it.0 })
-  let objs = zObjs.iter().flat_map(fn(it) { it.1.iter() }).collect()
-    |> FixedArray::from_array
   { tiles, objs }
 }
 
@@ -68,13 +84,15 @@ pub fn MapTilesObjs::load(
   @layer.ids.map(fn(layer_id) { TilesObjs::load(src[layer_id.to_string()]) })
   |> Array::from_fixed_array
   |> @utils.Future::all_of()
-  |> @utils.Future::map_exn(fn(res) {
-    let layers = Array::new(capacity=@layer.ids.length())
-    for r in res {
-      layers.push(r.unwrap_or_error!())
-    }
-    { layers, }
-  })
+  |> @utils.Future::map_exn(
+    fn(res) {
+      let layers = Array::new(capacity=@layer.ids.length())
+      for r in res {
+        layers.push(r.unwrap_or_error!())
+      }
+      { layers, }
+    },
+  )
 }
 
 pub fn MapTilesObjs::default() -> MapTilesObjs {

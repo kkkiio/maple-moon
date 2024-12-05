@@ -10,10 +10,14 @@ pub(all) struct Game {
 
 pub fn Game::load() -> @utils.Future[Game] {
   let char_look_module = @char_look.Module::load()
-  char_look_module.map(fn(it) { Game::new(it) })
+  let map_module = @map.Module::load()
+  char_look_module.combine(map_module).map(fn(it) { Game::new(it.0, it.1) })
 }
 
-fn Game::new(char_look_module : @char_look.Module) -> Game {
+fn Game::new(
+  char_look_module : @char_look.Module,
+  map_module : @map.Module
+) -> Game {
   @config.global().set_hardware_info()
   let login_module = @login.Module::new()
   let monster_module = @monster.Module::new()
@@ -32,7 +36,7 @@ fn Game::new(char_look_module : @char_look.Module) -> Game {
     fn() { Stage::get().get_player().unwrap().get_name() },
   )
   let stage = Stage::new(
-    @map.MapPortalAnimations::load(),
+    @map.get_portals_animations(map_module),
     monster_module.get_map_mobs(),
     drop_module.get_map_drops(),
     inventory_module.get_inventory(),

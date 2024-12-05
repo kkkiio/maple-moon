@@ -120,26 +120,39 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 }
 
 pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
-  guard let Some(obj) = src.value().as_object() else { _ => raise NotFound }
+  if src.is_null() {
+    raise NotFound
+  }
   let blend = try {
     src["blend"].get_bool!()
   } catch {
     _ => raise InvalidFormat("blend must be a bool")
   }
-  let frames = if obj.contains("__b") {
-    // 100ms delay for blend is too fast, see Map/Map1/101000000.img
-    let default_delay = if blend { Some(2500) } else { None }
-    [Frame::from_resource(src, default_delay?)]
-  } else {
-    let fs = obj
-      .iter()
-      .filter(fn(it) { @strconv.parse_int?(it.0).is_ok() })
-      .map(fn(it) { Frame::from_resource(src[it.0]) })
-      .collect()
-    if fs.length() <= 0 {
-      raise InvalidFormat("Animation must have at least one frame.")
+  let frames = match src.get_bitmap() {
+    Some(_) => {
+      // 100ms delay for blend is too fast, see Map/Map1/101000000.img
+      let default_delay = if blend { Some(2500) } else { None }
+      [Frame::from_resource(src, default_delay?)]
     }
-    fs
+    None => {
+      let fs = @utils.ints()
+        .map_while(
+          fn(i) {
+            let node = src[i.to_string()]
+            if node.is_null() {
+              None
+            } else {
+              Some(node)
+            }
+          },
+        )
+        .map(fn(it) { Frame::from_resource(it) })
+        .collect()
+      if fs.length() <= 0 {
+        raise InvalidFormat("Animation must have at least one frame.")
+      }
+      fs
+    }
   }
   let zigzag = try {
     src["zigzag"].get_bool!()

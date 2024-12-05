@@ -6,8 +6,7 @@ enum StageState {
   )
   ACTIVE(
     tiles_objs~ : @map.MapTilesObjs,
-    backgrounds~ : Array[@map.Background],
-    foregrounds~ : Array[@map.Background],
+    backgrounds~ : @map.Backgrounds,
     physics~ : @physics.Physics,
     map_info~ : @map.MapInfo,
     portals~ : @map.MapPortals
@@ -130,13 +129,7 @@ pub fn respawn(
 }
 
 pub fn draw(self : Stage, alpha : Double) -> Unit {
-  guard let StageState::ACTIVE(
-    tiles_objs~,
-    backgrounds~,
-    foregrounds~,
-    portals~,
-    ..
-  ) = self.state else {
+  guard let StageState::ACTIVE(tiles_objs~, backgrounds~, portals~, ..) = self.state else {
     StageState::INACTIVE => return
     StageState::TRANSITION(_) => return
   }
@@ -144,7 +137,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   let viewrpos = self.camera.real_position(alpha)
   let viewx = viewrpos.x
   let viewy = viewrpos.y
-  @map.drawbackgrounds(backgrounds, viewx, viewy, alpha)
+  @map.drawbackgrounds(backgrounds.backs, viewx, viewy, alpha)
   let player = self.player.unwrap()
   for id in @layer.ids {
     tiles_objs.draw(id, viewpos, alpha)
@@ -157,7 +150,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   }
   self.combat.unwrap().draw(viewx, viewy, alpha)
   portals.draw(viewpos, alpha)
-  @map.drawforegrounds(foregrounds, viewx, viewy, alpha)
+  @map.drawforegrounds(backgrounds.fores, viewx, viewy, alpha)
   //     effect_.draw();
 }
 
@@ -169,7 +162,6 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   guard let StageState::ACTIVE(
     tiles_objs~,
     backgrounds~,
-    foregrounds~,
     physics~,
     portals~,
     map_info~,
@@ -183,7 +175,6 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
           self.state = StageState::ACTIVE(
             tiles_objs=map_struct.tiles_objs,
             backgrounds=map_struct.backgrounds,
-            foregrounds=map_struct.foregrounds,
             physics=map_struct.physics,
             map_info=map_struct.map_info,
             portals=map_struct.portals,
@@ -200,7 +191,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
       }
   }
   self.combat.unwrap().update!()
-  @map.update_backgrounds(backgrounds, foregrounds)
+  @map.update_backgrounds(backgrounds)
   // effect_.update();
   tiles_objs.update()
 

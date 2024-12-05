@@ -1,7 +1,6 @@
 pub(all) struct MapStruct {
   tiles_objs : MapTilesObjs
-  backgrounds : Array[Background]
-  foregrounds : Array[Background]
+  backgrounds : Backgrounds
   physics : @physics.Physics
   map_info : MapInfo
   portals : MapPortals
@@ -19,23 +18,13 @@ pub fn load_map(
   @log.info({ "path": path }, "loading map")
   mapx_loader
   .load_res(path)
-  .bind(
-    fn(src) -> @utils.Future[Result[(NxNode, MapTilesObjs), Error]] {
-      guard src.is_null().not() else {
-        return @utils.Future::from_value(
-          Err(@resource.LoadError("map not found, id=\{map_id}")),
-        )
-      }
-      MapTilesObjs::load(src).map(
-        fn(res) { res.map(fn(tiles_objs) { (src, tiles_objs) }) },
-      )
-    },
-  )
   .map_exn(
-    fn(res : Result[(NxNode, MapTilesObjs), Error]) {
-      let (src, tiles_objs) = res.unwrap_or_error!()
-      @log.info({ "map_id": map_id }, "map loaded")
-      let (backgrounds, foregrounds) = load_backgrounds(src["back"])
+    fn(src) {
+      guard src.is_null().not() else {
+        raise @resource.LoadError("map not found, id=\{map_id}")
+      }
+      let tiles_objs_f = MapTilesObjs::load(src)
+      let backgrounds_f = load_backgrounds(src["back"])
       let physics = @physics.Physics::from_resource!(src["foothold"])
       let map_info = MapInfo::from_resource(
         src,
@@ -47,13 +36,32 @@ pub fn load_map(
         map_id,
         map_portals_animations,
       )
-      { tiles_objs, backgrounds, foregrounds, physics, map_info, portals }
+      (tiles_objs_f, backgrounds_f, physics, map_info, portals)
     },
   )
-}
-
-fn map_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("map")
+  .bind(
+    fn(res) {
+      match res {
+        Ok((tiles_objs_f, backgrounds_f, physics, map_info, portals)) =>
+          tiles_objs_f
+          .combine(backgrounds_f)
+          .map(
+            fn(it) {
+              @utils.flatten_ok_2(it.0, it.1).map(
+                fn(it) { (it.0, it.1, physics, map_info, portals) },
+              )
+            },
+          )
+        Err(err) => @utils.Future::from_value(Err(err))
+      }
+    },
+  )
+  .map_exn(
+    fn(res) {
+      let (tiles_objs, backgrounds, physics, map_info, portals) = res.unwrap_or_error!()
+      { tiles_objs, backgrounds, physics, map_info, portals }
+    },
+  )
 }
 
 let mapx_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mapx")

@@ -7,6 +7,7 @@ typealias UIElement = @ui.UIElement
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
 struct UIStateGame {
+  ui : UI
   registry : @action.Registry
   timer : @utils.Timer
   elements : Map[UIElementType, @ui.Element]
@@ -26,10 +27,12 @@ struct UIStateGame {
 }
 
 pub fn UIStateGame::new(
+  ui : UI,
   registry : @action.Registry,
   timer : @utils.Timer
 ) -> UIStateGame {
   {
+    ui,
     registry,
     timer,
     elements: Map::new(),
@@ -110,7 +113,7 @@ pub fn update(self : UIStateGame) -> Unit {
 
 pub fn send_key(
   self : UIStateGame,
-  t : @KeyType.Id,
+  t : @keyboard.KeyType,
   raw_action : Int,
   pressed : Bool,
   escape : Bool
@@ -126,20 +129,21 @@ pub fn send_key(
     None => ()
   }
   match t {
-    @KeyType.Id::MENU =>
+    @keyboard.KeyType::MENU =>
       if pressed {
-        let action = @action.get_action_by_id?(raw_action).unwrap()
+        let action = @keyboard.get_action_by_id?(raw_action).unwrap()
         match self.registry.get_action(action) {
           Some(descriptor) =>
             match descriptor {
-              @action.Descriptor::UI(~key, ~make_element, ~focused) =>
+              @action.Descriptor::UI(key~, make_element~, focused~) =>
                 self.toggle_element(key, focused, make_element)
             }
           None => ()
         }
       }
-    @KeyType.Id::ACTION
-    | @KeyType.Id::FACE | @KeyType.Id::ITEM | @KeyType.Id::SKILL =>
+    @keyboard.KeyType::ACTION
+    | @keyboard.KeyType::FACE
+    | @keyboard.KeyType::ITEM | @keyboard.KeyType::SKILL =>
       Stage::get().send_key?(t, raw_action, pressed).unwrap()
     _ => ()
   }
@@ -254,7 +258,7 @@ pub fn toggle_element(
           } else {
             // Sound::new(SoundName::MENU_UP).play()
           }
-          UI::get().send_cursor_pressed(false)
+          self.ui.send_cursor_pressed(false)
         } else {
           if t == UIElementType::WORLD_MAP {
             // Sound::new(SoundName::WORLD_MAP_CLOSE).play()
@@ -262,7 +266,7 @@ pub fn toggle_element(
             // Sound::new(SoundName::MENU_DOWN).play()
           }
           element.object.remove_cursor()
-          UI::get().send_cursor_pressed(false)
+          self.ui.send_cursor_pressed(false)
         }
       }
     }

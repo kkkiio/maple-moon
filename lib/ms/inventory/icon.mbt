@@ -1,12 +1,15 @@
+///|
 struct LazyVar[T] {
   mut value : T?
   newf : () -> T
 }
 
+///|
 pub fn LazyVar::make[T](newf : () -> T) -> LazyVar[T] {
   { value: None, newf }
 }
 
+///|
 pub fn get[T](self : LazyVar[T]) -> T {
   match self.value {
     Some(v) => v
@@ -18,9 +21,10 @@ pub fn get[T](self : LazyVar[T]) -> T {
   }
 }
 
+///|
 let countset : LazyVar[@graphics.Charset] = LazyVar::make(
   fn() {
-    let ui_loader = @resource.ui_loader()
+    let ui_loader = @ui.common_ui_loader()
     @graphics.Charset::from_resource(
       ui_loader.load_res(["Basic.img", "ItemNo"]),
       @graphics.CharsetAlignment::LEFT,
@@ -28,13 +32,15 @@ let countset : LazyVar[@graphics.Charset] = LazyVar::make(
   },
 )
 
-pub struct IconModel {
+///|
+pub(all) struct IconModel {
   show_count : Bool
   mut count : Int
   mut dragged : Bool
   mut cursor_offset : @struct.Point[Int]
 }
 
+///|
 pub fn IconModel::new(count : Int) -> IconModel {
   {
     show_count: count > -1,
@@ -44,6 +50,7 @@ pub fn IconModel::new(count : Int) -> IconModel {
   }
 }
 
+///|
 pub fn draw(
   self : IconModel,
   position : @struct.Point[Int],

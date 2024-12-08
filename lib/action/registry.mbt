@@ -1,23 +1,31 @@
+///|
 struct Registry {
-  entries : Map[Id, Descriptor]
+  mut entries : @immut/hashmap.T[@keyboard.ActionId, Descriptor]
 }
 
-pub enum Descriptor {
+///|
+pub(all) enum Descriptor {
   UI(
-    ~key : @ui.UIElementType,
-    ~make_element : () -> @ui.Element,
-    ~focused : Bool
+    key~ : @ui.UIElementType,
+    make_element~ : () -> @ui.Element,
+    focused~ : Bool
   )
 }
 
+///|
 pub fn Registry::new() -> Registry {
-  { entries: Map::new() }
+  { entries: @immut/hashmap.new() }
 }
 
-pub fn register(self : Registry, id : Id, descriptor : Descriptor) -> Unit {
-  self.entries.set(id, descriptor)
+///|
+pub fn get_action(self : Registry, id : @keyboard.ActionId) -> Descriptor? {
+  self.entries.find(id)
 }
 
-pub fn get_action(self : Registry, id : Id) -> Descriptor? {
-  self.entries.get(id)
+///|
+pub fn reset_actions(
+  self : Registry,
+  entries : @immut/hashmap.T[@keyboard.ActionId, Descriptor]
+) -> Unit {
+  self.entries = entries
 }

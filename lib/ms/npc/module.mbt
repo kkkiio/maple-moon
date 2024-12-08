@@ -1,20 +1,42 @@
+///|
 struct Module {
   npcs : MapNpcs
   container : @ui.Container
   get_player_name : () -> String
+  util_dlg_ex : @resource.NxNode
+  quest : @resource.NxNode
 }
 
-pub fn Module::new(
+///|
+pub fn Module::load(
   container : @ui.Container,
   get_player_name : () -> String
-) -> Module {
-  let npcs = MapNpcs::new(container, get_player_name)
-  { npcs, container, get_player_name }
+) -> @utils.Future[Module] {
+  @ui.ui_window_2_loader()
+  .load_res(["UtilDlgEx"])
+  .combine(@ui.ui_window_2_loader().load_res(["Quest"]))
+  |> @utils.map(fn(it) { Module::new(container, get_player_name, it.0, it.1) })
 }
 
+///|
+fn Module::new(
+  container : @ui.Container,
+  get_player_name : () -> String,
+  util_dlg_ex : @resource.NxNode,
+  quest : @resource.NxNode
+) -> Module {
+  let npcs = MapNpcs::new(
+    fn() { UINpcTalk::new(util_dlg_ex, quest) },
+    container,
+    get_player_name,
+  )
+  { npcs, container, get_player_name, util_dlg_ex, quest }
+}
+
+///|
 pub fn make_handlers(
   self : Module
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       @net.SPAWN_NPC,
@@ -37,17 +59,26 @@ pub fn make_handlers(
       @net.with_log(
         @net.NPC_DIALOGUE,
         fn(recv : @net.InPacket) {
-          handle_npc_dialogue!(self.container, self.get_player_name, recv)
+          handle_npc_dialogue!(
+            self.container,
+            self.get_player_name,
+            self.util_dlg_ex,
+            self.quest,
+            recv,
+          )
         },
       ),
     ),
   ]
+  |> Map::from_array
 }
 
+///|
 pub fn get_npcs(self : Module) -> MapNpcs {
   self.npcs
 }
 
+///|
 pub fn handle_spawn_npc(npcs : MapNpcs, recv : @net.InPacket) -> Unit! {
   let oid = recv.read_int!()
   let id = recv.read_int!()
@@ -59,6 +90,7 @@ pub fn handle_spawn_npc(npcs : MapNpcs, recv : @net.InPacket) -> Unit! {
   npcs.spawn({ oid, id, position, flip, fh })
 }
 
+///|
 pub fn handle_spawn_npc_controller(
   npcs : MapNpcs,
   recv : @net.InPacket
@@ -79,9 +111,12 @@ pub fn handle_spawn_npc_controller(
   }
 }
 
+///|
 pub fn handle_npc_dialogue(
   container : @ui.Container,
   get_player_name : () -> String,
+  util_dlg_ex : @resource.NxNode,
+  quest : @resource.NxNode,
   recv : @net.InPacket
 ) -> Unit! {
   recv.skip!(1)
@@ -99,7 +134,7 @@ pub fn handle_npc_dialogue(
   } else {
     (0, 0)
   }
-  let npcTalk = UINpcTalk::new()
+  let npcTalk = UINpcTalk::new(util_dlg_ex, quest)
   container.add_ui(
     @ui.Element::new(npcTalk, @ui.UIElementType::NPC_TALK),
     UINpcTalk::const_focused(),

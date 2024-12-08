@@ -1,21 +1,25 @@
+///|
 struct Module {
   map_mobs : MapMobs
   mob_combat : MobCombat
 }
 
+///|
 pub fn Module::new() -> Module {
   let mobs = MapMobs::new()
   { map_mobs: mobs, mob_combat: MobCombat::new(mobs) }
 }
 
+///|
 pub fn get_map_mobs(self : Module) -> MapMobs {
   self.map_mobs
 }
 
+///|
 pub fn make_handlers(
   self : Module,
   player_stats_getter : () -> @char_stats.CharStats?
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       @net.SPAWN_MOB,
@@ -69,4 +73,5 @@ pub fn make_handlers(
       ),
     ),
   ]
+  |> Map::from_array
 }

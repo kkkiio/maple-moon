@@ -1,15 +1,20 @@
+///|
 struct MapNpcs {
+  make_npc_talk_ui : () -> UINpcTalk
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
   container : @ui.Container
   get_player_name : () -> String
 }
 
+///|
 pub fn MapNpcs::new(
+  make_npc_talk_ui : () -> UINpcTalk,
   container : @ui.Container,
   get_player_name : () -> String
 ) -> MapNpcs {
   {
+    make_npc_talk_ui,
     npcs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     container,
@@ -17,11 +22,12 @@ pub fn MapNpcs::new(
   }
 }
 
-/// Packet which requests a dialog with a server-sided NPC
+///| Packet which requests a dialog with a server-sided NPC
 fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::TALK_TO_NPC)..write_int(oid)
 }
 
+///|
 pub fn draw(
   self : MapNpcs,
   layer : @layer.Id,
@@ -32,6 +38,7 @@ pub fn draw(
   self.npcs.draw(layer, viewx, viewy, alpha)
 }
 
+///|
 pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
@@ -47,10 +54,12 @@ pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   self.npcs.update(physics)
 }
 
+///|
 pub fn spawn(self : MapNpcs, spawn : NpcSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
+///|
 pub fn remove(self : MapNpcs, oid : Int) -> Unit {
   match self.npcs.get(oid) {
     Some(npc) => npc.deactivate()
@@ -58,10 +67,12 @@ pub fn remove(self : MapNpcs, oid : Int) -> Unit {
   }
 }
 
+///|
 pub fn clear(self : MapNpcs) -> Unit {
   self.npcs.clear()
 }
 
+///|
 pub fn send_cursor(
   self : MapNpcs,
   pressed : Bool,
@@ -74,7 +85,7 @@ pub fn send_cursor(
       if pressed {
         match npc.talk() {
           Some({ id, msgtype, b0, b1, speaker, str }) => {
-            let ui = UINpcTalk::new()
+            let ui = (self.make_npc_talk_ui)()
             self.container.add_ui(
               @ui.Element::new(ui, @ui.UIElementType::NPC_TALK),
               UINpcTalk::const_focused(),
@@ -106,6 +117,7 @@ pub fn send_cursor(
   }
 }
 
+///|
 struct NpcSpawn {
   oid : Int
   id : Int
@@ -114,16 +126,18 @@ struct NpcSpawn {
   fh : Int
 }
 
+///|
 pub fn get_oid(self : NpcSpawn) -> Int {
   self.oid
 }
 
+///|
 pub fn instantiate(self : NpcSpawn, physics : @physics.Physics) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
   Npc::new(self.id, self.oid, self.flip, self.fh, spawnposition)
 }
 
-/// Represents a NPC on the current map
+///| Represents a NPC on the current map
 struct Npc {
   base : @map_object.MapObjectBase
   animations : Map[String, @graphics.Animation]
@@ -144,7 +158,8 @@ struct Npc {
   func_label : @graphics.Text
 }
 
-pub struct TalkArgs {
+///|
+pub(all) struct TalkArgs {
   id : Int
   msgtype : Int
   b0 : Int
@@ -153,6 +168,7 @@ pub struct TalkArgs {
   str : String
 }
 
+///|
 pub fn talk(self : Npc) -> TalkArgs? {
   if self.scripted {
     return None
@@ -167,6 +183,7 @@ pub fn talk(self : Npc) -> TalkArgs? {
   }
 }
 
+///|
 pub fn Npc::new(
   id : Int,
   o : Int,
@@ -257,6 +274,7 @@ pub fn Npc::new(
   }
 }
 
+///|
 pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   match self.animations.get(self.stance) {
@@ -269,6 +287,7 @@ pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit 
   }
 }
 
+///|
 pub fn update(self : Npc, physics : @physics.Physics) -> Int {
   if self.base.active.not() {
     return self.base.phobj.fhlayer
@@ -288,6 +307,7 @@ pub fn update(self : Npc, physics : @physics.Physics) -> Int {
   self.base.phobj.fhlayer
 }
 
+///|
 pub fn set_stance(self : Npc, st : String) -> Unit {
   if self.stance != st {
     self.stance = st
@@ -298,10 +318,12 @@ pub fn set_stance(self : Npc, st : String) -> Unit {
   }
 }
 
+///|
 pub fn is_scripted(self : Npc) -> Bool {
   self.scripted
 }
 
+///|
 pub fn inrange(
   self : Npc,
   cursorpos : @struct.Point[Int],
@@ -322,34 +344,42 @@ pub fn inrange(
   ).contains(cursorpos)
 }
 
+///|
 pub fn get_name(self : Npc) -> String {
   self.name
 }
 
+///|
 pub fn get_func(self : Npc) -> String {
   self.func
 }
 
+///|
 pub fn get_oid(self : Npc) -> Int {
   self.base.get_oid()
 }
 
+///|
 pub fn makeactive(self : Npc) -> Unit {
   self.base.makeactive()
 }
 
+///|
 pub fn deactivate(self : Npc) -> Unit {
   self.base.deactivate()
 }
 
+///|
 pub fn is_active(self : Npc) -> Bool {
   self.base.is_active()
 }
 
+///|
 pub fn get_layer(self : Npc) -> Int {
   self.base.get_layer()
 }
 
+///|
 pub fn get_position(self : Npc) -> @struct.Point[Int] {
   self.base.get_position()
 }

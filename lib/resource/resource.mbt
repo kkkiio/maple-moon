@@ -1,46 +1,55 @@
+///|
 type RawData
 
+///|
 fn as_moonjson(self : RawData) -> @json.JsonValue {
   @json.parse?(as_jsonstring(self)).unwrap()
 }
 
+///|
 type ImageLoader
 
+///|
 type ResourceLoader
 
+///|
 fn get_image_loader(self : ResourceLoader) -> ImageLoader = "resource" "get_image_loader"
 
+///|
 fn load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
 
+///|
 struct SyncLoader {
   name : String
   loader : ResourceLoader
 }
 
+///|
 pub fn SyncLoader::new(name : String) -> SyncLoader {
   { name, loader: get_resource_loader(name) }
 }
 
-pub fn ui_loader() -> SyncLoader {
-  { name: "ui", loader: get_resource_loader("ui") }
-}
-
+///|
 pub fn string_loader() -> SyncLoader {
   { name: "string", loader: get_resource_loader("string") }
 }
 
+///|
 pub fn reactor_loader() -> SyncLoader {
   { name: "reactor", loader: get_resource_loader("reactor") }
 }
 
+///|
 pub fn map001_loader() -> SyncLoader {
   { name: "map001", loader: get_resource_loader("map001") }
 }
 
+///|
 pub fn map_pretty_loader() -> SyncLoader {
   { name: "map_pretty", loader: get_resource_loader("map_pretty") }
 }
 
+///|
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   {
     loader_name: self.name,
@@ -51,6 +60,7 @@ pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   }
 }
 
+///|
 struct NxNode {
   loader_name : String
   image_loader : ImageLoader
@@ -59,18 +69,22 @@ struct NxNode {
   path : @immut/array.T[String]
 }
 
+///|
 pub fn name(self : NxNode) -> String {
   self.name
 }
 
+///|
 pub fn value(self : NxNode) -> @json.JsonValue {
   self.desc
 }
 
+///|
 pub fn path(self : NxNode) -> @immut/array.T[String] {
   self.path
 }
 
+///|
 pub fn op_get(self : NxNode, name : String) -> NxNode {
   {
     ..self,
@@ -83,6 +97,7 @@ pub fn op_get(self : NxNode, name : String) -> NxNode {
   }
 }
 
+///|
 pub fn contains(self : NxNode, name : String) -> Bool {
   match self.desc {
     @json.JsonValue::Object(it) => it.contains(name)
@@ -90,6 +105,7 @@ pub fn contains(self : NxNode, name : String) -> Bool {
   }
 }
 
+///|
 pub fn get_children_count(self : NxNode) -> Int {
   match self.desc {
     @json.JsonValue::Object(it) => it.size()
@@ -97,14 +113,17 @@ pub fn get_children_count(self : NxNode) -> Int {
   }
 }
 
+///|
 pub fn get_bool(self : NxNode) -> Bool!LoadError {
   self.get_int!() != 0
 }
 
+///|
 pub fn as_strict_bool(self : NxNode) -> Bool!LoadError {
   self.as_int!() != 0
 }
 
+///|
 pub fn get_string(self : NxNode) -> String {
   match self.desc {
     @json.JsonValue::Number(it) => it.to_string()
@@ -113,12 +132,15 @@ pub fn get_string(self : NxNode) -> String {
   }
 }
 
+///|
 pub fn get_int(self : NxNode) -> Int!LoadError {
   self.get_float!().to_int()
 }
 
+///|
 pub(all) type! LoadError String derive(Show)
 
+///|
 pub fn as_int(self : NxNode) -> Int!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it.to_int()
@@ -126,6 +148,7 @@ pub fn as_int(self : NxNode) -> Int!LoadError {
   }
 }
 
+///|
 pub fn get_int_field(
   self : NxNode,
   key : String,
@@ -142,6 +165,7 @@ pub fn get_int_field(
   }
 }
 
+///|
 pub fn get_float_field(
   self : NxNode,
   key : String,
@@ -158,6 +182,7 @@ pub fn get_float_field(
   }
 }
 
+///|
 pub fn get_float(self : NxNode) -> Double!LoadError {
   match self.desc {
     @json.JsonValue::Number(it) => it
@@ -172,7 +197,7 @@ pub fn get_float(self : NxNode) -> Double!LoadError {
   }
 }
 
-/// @alert deprecated "Use `for` instead"
+///| @alert deprecated "Use `for` instead"
 pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   match self.desc {
     @json.JsonValue::Object(it) =>
@@ -184,6 +209,7 @@ pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   }
 }
 
+///|
 pub fn iter(self : NxNode) -> Iter[NxNode] {
   match self.desc {
     @json.JsonValue::Object(it) =>
@@ -199,6 +225,7 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
   }
 }
 
+///|
 pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
   Iter2::new(
     fn(yield_) {
@@ -217,6 +244,7 @@ pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
   )
 }
 
+///|
 pub fn is_null(self : NxNode) -> Bool {
   match self.desc {
     @json.JsonValue::Null => true
@@ -224,6 +252,7 @@ pub fn is_null(self : NxNode) -> Bool {
   }
 }
 
+///|
 pub fn as_string(self : NxNode) -> String!LoadError {
   match self.desc {
     @json.JsonValue::String(it) => it
@@ -231,12 +260,14 @@ pub fn as_string(self : NxNode) -> String!LoadError {
   }
 }
 
+///|
 pub fn to_string(self : NxNode) -> String {
   let name = self.name
   let desc = self.desc
   "(\{name}=\{desc})"
 }
 
+///|
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
   match self.desc {
     { "__i": Json::String(path) } =>
@@ -261,6 +292,7 @@ pub fn get_bitmap(self : NxNode) -> Bitmap? {
   }
 }
 
+///|
 pub(all) struct Bitmap {
   image : Image
   id : String
@@ -268,16 +300,20 @@ pub(all) struct Bitmap {
   height : Int
 }
 
+///|
 pub fn to_string(self : Bitmap) -> String {
   "{id=\{self.id}, width=\{self.width}, height=\{self.height}}"
 }
 
+///|
 fn join_path(parts : Array[String]) -> String {
   String::concat(parts, separator="/")
 }
 
+///|
 pub(all) type ResPath Array[String] derive(Eq)
 
+///|
 pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
   match self.value() {
     @json.JsonValue::Array(arr) =>
@@ -290,6 +326,7 @@ pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
   }
 }
 
+///|
 pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int]! {
   let left_top = self["lt"].as_point!()
   let right_bottom = self["rb"].as_point!()

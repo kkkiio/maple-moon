@@ -42,7 +42,7 @@ fn update(self : UIStateLogin) -> Unit {
 
 pub fn send_key(
   self : UIStateLogin,
-  t : @KeyType.Id,
+  t : @keyboard.KeyType,
   action : Int,
   pressed : Bool,
   escape : Bool

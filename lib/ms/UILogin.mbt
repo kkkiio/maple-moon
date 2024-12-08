@@ -57,9 +57,8 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
   let map = map001_loader.load_res(["Back", "login.img"])
   let back = map["back"]
   let ani = map["ani"]
-  let ui_loader = @resource.ui_loader()
-  let title = ui_loader.load_res(["Login.img", "Title"])
-  let common = ui_loader.load_res(["Login.img", "Common"])
+  let title = @ui.common_ui_loader().load_res(["Login.img", "Title"])
+  let common = @ui.common_ui_loader().load_res(["Login.img", "Common"])
   let map_pretty_loader = map_pretty_loader()
   let prettyLogo = map_pretty_loader.load_res(
     ["Back", "login.img", "ani", "16"],

@@ -35,7 +35,7 @@ pub fn Timer::new(get_now : () -> TimePoint) -> Timer {
   { get_now, current_time: 0L }
 }
 
-pub fn start(self : Timer) -> Unit {
+pub fn reset(self : Timer) -> Unit {
   self.current_time = (self.get_now)()
 }
 

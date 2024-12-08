@@ -1,4 +1,5 @@
-pub enum SkillId {
+///|
+pub(all) enum SkillId {
   // Beginner
   FOLLOW_THE_LEAD
   ANGEL_BLESSING
@@ -138,6 +139,7 @@ pub enum SkillId {
   MESO_EXPLOSION
 } derive(Eq)
 
+///|
 pub fn int_value(self : SkillId) -> Int {
   match self {
     // Beginner
@@ -280,8 +282,10 @@ pub fn int_value(self : SkillId) -> Int {
   }
 }
 
-pub type! UnknownSkillId Int derive(Show)
+///|
+pub(all) type! UnknownSkillId Int derive(Show)
 
+///|
 pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
   match value {
     // Beginner
@@ -425,10 +429,12 @@ pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
   }
 }
 
+///|
 pub fn hash(self : SkillId) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : SkillId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }

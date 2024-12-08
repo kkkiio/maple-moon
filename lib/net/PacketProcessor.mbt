@@ -1,51 +1,84 @@
+///|
 struct PacketProcessor {
   session : Session
+  switch : PacketSwitch
 }
 
-fn PacketProcessor::new(
-  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
-) -> PacketProcessor {
-  let switch = PacketSwitch::new(handlers)
-  { session: Session::new(fn(it) { switch.forward(it) }) }
+///|
+pub fn PacketProcessor::init() -> PacketProcessor {
+  let processor = PacketProcessor::new()
+  g_packet_processor.set(processor)
+  processor
 }
 
+///|
+fn PacketProcessor::new() -> PacketProcessor {
+  let switch = PacketSwitch::new()
+  { session: Session::new(fn(it) { switch.forward(it) }), switch }
+}
+
+///|
 let g_packet_processor : @utils.Singleton[PacketProcessor] = @utils.Singleton::new()
 
+///|
+/// @alert deprecated "accept PacketProcessor as argument instead"
 pub fn PacketProcessor::get() -> PacketProcessor {
   g_packet_processor.must_get()
 }
 
+///|
+pub fn reset_handlers(
+  self : PacketProcessor,
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+) -> Unit {
+  self.switch.reset_handlers(handlers.add(PING, handle_ping))
+}
+
+///|
 pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
   self.session.write(data)
 }
 
-fn process_in(self : PacketProcessor) -> Unit {
+///|
+pub fn process_in(self : PacketProcessor) -> Unit {
   self.session.read()
 }
 
+///|
 pub fn connect_login(self : PacketProcessor) -> Unit {
   self.session.connect("/login")
 }
 
+///|
 pub fn connect_channel(self : PacketProcessor, channel : Int) -> Unit {
   self.session.close()
   self.session.connect("/channel/\{channel}")
 }
 
+///|
 pub fn get_status(self : PacketProcessor) -> ConnectionStatus {
   self.session.get_status()
 }
 
+///|
 struct PacketSwitch {
-  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+  mut handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
 }
 
-pub fn PacketSwitch::new(
-  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
-) -> PacketSwitch {
-  { handlers, }
+///|
+pub fn PacketSwitch::new() -> PacketSwitch {
+  { handlers: @immut/hashmap.new() }
 }
 
+///|
+pub fn reset_handlers(
+  self : PacketSwitch,
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+) -> Unit {
+  self.handlers = handlers
+}
+
+///|
 pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   // Wrap the bytes with a parser
   let recv = InPacket::new(bytes)
@@ -69,10 +102,11 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   }
 }
 
+///|
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit!,
-  ~log_recv : Bool = true
+  log_recv~ : Bool = true
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {
@@ -90,11 +124,12 @@ pub fn with_log(
   }
 }
 
+///|
 pub fn make_handler[T : Show](
   opcode : Opcode,
   parser : (InPacket) -> T!,
   handler : (T) -> Unit,
-  ~log_recv : Bool = false
+  log_recv~ : Bool = false
 ) -> (Opcode, (InPacket) -> Unit) {
   (
     opcode,
@@ -113,4 +148,9 @@ pub fn make_handler[T : Show](
       handler(message)
     },
   )
+}
+
+///|
+pub fn handle_ping(_packet : InPacket) -> Unit {
+  OutPacket::new(OutPacketOpcode::PONG).dispatch()
 }

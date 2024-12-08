@@ -2,8 +2,10 @@ import { setupGl } from './gl.js';
 import {
   AsyncResourceLoader,
   BidImageLoader,
+  CompositeAsyncResourceLoader,
   CompositeResourceLoader,
   DirResourceLoader,
+  FileResourceLoader,
   PathImageLoader,
   ResourceLoader
 } from './resource.js';
@@ -101,17 +103,29 @@ function main() {
     throw new Error("WebGL not supported");
   }
 
-  const prepareResourcePromises = [];
-  const uiLoader = ResourceLoader.fromName("UI.nx");
-  prepareResourcePromises.push(
-    uiLoader.load()
-  );
-
   const imageGenerateContext = document.createElement("canvas").getContext("2d", {
     willReadFrequently: true,
   });
-  const spritesheetLoader = new PathImageLoader("https://maple.kkkiiox.work", imageGenerateContext)
-  const mapxLoader = new CompositeResourceLoader({
+  const imageLoader = new PathImageLoader("https://maple.kkkiiox.work", imageGenerateContext)
+  const prepareResourcePromises = [];
+  const uiLoader = new CompositeResourceLoader({
+    "Basic.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/Basic.img.json"),
+    "Login.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/Login.img.json"),
+    "StatusBar3.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/StatusBar3.img.json"),
+  }, imageLoader)
+  prepareResourcePromises.push(
+    uiLoader.load()
+  )
+  const uiWindow2Loader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/UI/UIWindow2.img"),
+    imageLoader
+  )
+  const uiWindow4Loader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/UI/UIWindow4.img"),
+    imageLoader
+  )
+
+  const mapxLoader = new CompositeAsyncResourceLoader({
     "Map0/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map0"),
     "Map1/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map1"),
     "Map2/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map2"),
@@ -122,25 +136,25 @@ function main() {
     "Map7/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map7"),
     "Map8/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map8"),
     "Map9/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map9"),
-  }, spritesheetLoader)
+  }, imageLoader)
   const tileLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Map/Tile"),
-    spritesheetLoader
+    imageLoader
   )
   const backgroundLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Map/Back"),
-    spritesheetLoader
+    imageLoader
   )
   const objLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Map/Obj"),
-    spritesheetLoader
+    imageLoader
   )
   const mapHelperLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Map/MapHelper.img"),
-    spritesheetLoader
+    imageLoader
   )
 
-  const characterLoader = new CompositeResourceLoader({
+  const characterLoader = new CompositeAsyncResourceLoader({
     "Pants/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Pants"),
     "Weapon/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Weapon"),
     "Coat/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Coat"),
@@ -149,72 +163,72 @@ function main() {
     "Shield/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Shield"),
     "Shoes/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Shoes"),
     "Glove/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Glove"),
-  }, spritesheetLoader);
+  }, imageLoader);
 
   const bodyLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Character/Body"),
-    spritesheetLoader
+    imageLoader
   )
   const hairLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Character/Hair"),
-    spritesheetLoader
+    imageLoader
   )
   const faceLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Character/Face"),
-    spritesheetLoader
+    imageLoader
   )
   const afterimageLoader = new AsyncResourceLoader(
     new DirResourceLoader("https://maple.kkkiiox.work/Character/Afterimage"),
-    spritesheetLoader
+    imageLoader
   )
 
-  const stringLoader = ResourceLoader.fromName("String.nx");
+  const stringLoader = new ResourceLoader("https://maple.kkkiiox.work/String/nx.json", new BidImageLoader("https://maple.kkkiiox.work/String/images"));
   prepareResourcePromises.push(
     stringLoader.load()
   );
 
-  const reactorLoader = ResourceLoader.fromName("Reactor.nx");
+  const reactorLoader = new ResourceLoader("https://maple.kkkiiox.work/Reactor/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Reactor/images"));
   prepareResourcePromises.push(
     reactorLoader.load()
   );
 
-  const map001Loader = ResourceLoader.fromName("Map001.nx");
+  const map001Loader = new ResourceLoader("https://maple.kkkiiox.work/Map001/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Map001/images"));
   prepareResourcePromises.push(
     map001Loader.load()
   );
 
-  const mapPrettyLoader = ResourceLoader.fromName("MapPretty.nx");
+  const mapPrettyLoader = new ResourceLoader("https://maple.kkkiiox.work/MapPretty/nx.json", new BidImageLoader("https://maple.kkkiiox.work/MapPretty/images"));
   prepareResourcePromises.push(
     mapPrettyLoader.load()
   );
 
-  const etcLoader = ResourceLoader.fromName("Etc.nx");
+  const etcLoader = new ResourceLoader("https://maple.kkkiiox.work/Etc/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Etc/images"));
   prepareResourcePromises.push(
     etcLoader.load()
   );
 
-  const npcLoader = new ResourceLoader("resource/Npc.nx/nx.json",
+  const npcLoader = new ResourceLoader("https://maple.kkkiiox.work/Npc/nx.json",
     new BidImageLoader("https://maple.kkkiiox.work/Npc/images"));
   prepareResourcePromises.push(
     npcLoader.load()
   );
 
-  const itemLoader = ResourceLoader.fromName("Item.nx");
+  const itemLoader = new ResourceLoader("https://maple.kkkiiox.work/Item/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Item/images"));
   prepareResourcePromises.push(
     itemLoader.load()
   );
 
-  const mobLoader = ResourceLoader.fromName("Mob.nx");
+  const mobLoader = new ResourceLoader("https://maple.kkkiiox.work/Mob/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Mob/images"));
   prepareResourcePromises.push(
     mobLoader.load()
   );
 
-  const effectLoader = ResourceLoader.fromName("Effect.nx");
+  const effectLoader = new ResourceLoader("https://maple.kkkiiox.work/Effect/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Effect/images"));
   prepareResourcePromises.push(
     effectLoader.load()
   );
 
-  const skillLoader = ResourceLoader.fromName("Skill.nx");
+  const skillLoader = new ResourceLoader("https://maple.kkkiiox.work/Skill/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Skill/images"));
   prepareResourcePromises.push(
     skillLoader.load()
   );
@@ -235,7 +249,7 @@ function main() {
     resource: {
       get_loader: (name) => {
         switch (name) {
-          case "ui":
+          case "common_ui":
             return uiLoader;
           case "string":
             return stringLoader;
@@ -283,6 +297,10 @@ function main() {
             return backgroundLoader;
           case "obj":
             return objLoader;
+          case "ui_window_2":
+            return uiWindow2Loader;
+          case "ui_window_4":
+            return uiWindow4Loader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

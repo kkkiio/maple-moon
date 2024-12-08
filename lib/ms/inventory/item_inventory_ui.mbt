@@ -8,11 +8,13 @@ struct UIItemInventory {
   mut render_state : RenderState?
 }
 
+///|
 struct Attributes {
   player : @player.Player
   inventory : Inventory
 }
 
+///|
 struct LogicState {
   base : @ui.UIModel
   mut attributes : Attributes
@@ -21,6 +23,7 @@ struct LogicState {
   mut tab : Int
 }
 
+///|
 struct Resources {
   full_backgrnd : @graphics.Texture
   full_backgrnd2 : @graphics.Texture
@@ -31,6 +34,7 @@ struct Resources {
   maple_points_label : @graphics.Text
 }
 
+///|
 struct RenderState {
   buttons : Array[@ui.Button]
   position : @struct.Point[Int]
@@ -40,10 +44,11 @@ struct RenderState {
   numslots : Int
 }
 
-pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
-  let ui_loader = @resource.ui_loader()
-  let item = ui_loader.load_res(["UIWindow2.img", "Item"])
-
+///|
+fn UIItemInventory::new(
+  attributes : Attributes,
+  item : @resource.NxNode
+) -> UIItemInventory {
   // TODO: Change these to production
   let full_backgrnd = item["FullBackgrnd"] |> @graphics.Texture::from_resource
   let full_backgrnd2 = item["FullBackgrnd2"] |> @graphics.Texture::from_resource
@@ -56,7 +61,7 @@ pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
   let srctab = item["Tab"]
   let taben = srctab["enabled"]
   let tabdis = srctab["disabled"]
-  let close = ui_loader.load_res(["Basic.img", "BtClose3"])
+  let close = @ui.common_ui_loader().load_res(["Basic.img", "BtClose3"])
   let model = @ui.UIModel::new(@struct.Point::new(300, 160), bg_full_dimensions)
   let meso_label = @graphics.Text::new(
     @graphics.FontId::A11M,
@@ -113,10 +118,12 @@ pub fn UIItemInventory::new(attributes : Attributes) -> UIItemInventory {
   { logic_state, resources, render_state: None }
 }
 
+///|
 pub fn draw(self : UIItemInventory, _alpha : Double) -> Unit {
   self.use_render_state().draw(self.resources)
 }
 
+///|
 fn draw(self : RenderState, resources : Resources) -> Unit {
   let position = self.position
   let mesolabel_pos = position + @struct.Point::new(127, 262)
@@ -158,6 +165,7 @@ fn draw(self : RenderState, resources : Resources) -> Unit {
   }
 }
 
+///|
 fn use_render_state(self : UIItemInventory) -> RenderState {
   match self.render_state {
     Some(rs) => rs
@@ -173,6 +181,7 @@ fn use_render_state(self : UIItemInventory) -> RenderState {
   }
 }
 
+///|
 fn render(
   self : LogicState,
   resources : Resources,
@@ -241,6 +250,7 @@ fn render(
   }
 }
 
+///|
 pub fn update(self : UIItemInventory) -> Unit {
   let render_state = self.use_render_state()
   for button in render_state.buttons {
@@ -248,11 +258,13 @@ pub fn update(self : UIItemInventory) -> Unit {
   }
 }
 
+///|
 pub fn set_attributes(self : UIItemInventory, attributes : Attributes) -> Unit {
   self.logic_state.attributes = attributes
   self.render_state = None
 }
 
+///|
 pub fn get_full_slotpos(slot : Int) -> @struct.Point[Int] {
   let absslot = slot - 1
   let div = absslot / max_slots
@@ -264,22 +276,30 @@ pub fn get_full_slotpos(slot : Int) -> @struct.Point[Int] {
   )
 }
 
+///|
 let rows = 8
 
+///|
 let columns = 4
 
+///|
 let max_slots : Int = rows * columns
 
+///|
 let max_full_slots : Int = columns * max_slots
 
+///|
 let icon_width = 36
 
+///|
 let icon_height = 35
 
+///|
 pub fn is_visible(self : UIItemInventory, slot : Int) -> Bool {
   self.is_not_visible(slot).not()
 }
 
+///|
 pub fn is_not_visible(self : UIItemInventory, slot : Int) -> Bool {
   let tab = self.logic_state.tab
   let numslots = self.logic_state.attributes.inventory.get_slotmax(
@@ -288,6 +308,7 @@ pub fn is_not_visible(self : UIItemInventory, slot : Int) -> Bool {
   slot < 1 || slot > numslots
 }
 
+///|
 fn make_slot(
   inventory : Inventory,
   tab : TypeId,
@@ -317,14 +338,17 @@ fn make_slot(
   Some((IconModel::new(count), texture)) // TODO: support drop
 }
 
+///|
 pub fn UIItemInventory::is_focused() -> Bool {
   false
 }
 
+///|
 pub fn get_ui_model(self : UIItemInventory) -> @ui.UIModel {
   self.logic_state.base
 }
 
+///|
 pub fn send_cursor(
   self : UIItemInventory,
   pressed : Bool,
@@ -340,6 +364,7 @@ pub fn send_cursor(
   )
 }
 
+///|
 pub fn send_key(
   self : UIItemInventory,
   keycode : Int,
@@ -349,11 +374,13 @@ pub fn send_key(
   // TODO: implement
 }
 
+///|
 pub fn remove_cursor(self : UIItemInventory) -> Unit {
   // TODO: implement
   // self.slider_.remove_cursor()
 }
 
+///|
 pub fn doubleclick(
   self : UIItemInventory,
   cursorpos : @struct.Point[Int]
@@ -379,6 +406,7 @@ pub fn doubleclick(
   }
 }
 
+///|
 fn slot_by_position(
   self : UIItemInventory,
   cursorpos : @struct.Point[Int]
@@ -396,6 +424,7 @@ fn slot_by_position(
   }
 }
 
+///|
 pub fn can_wear_equip(
   self : UIItemInventory,
   equip_data : @equip.EquipData
@@ -449,6 +478,7 @@ pub fn can_wear_equip(
   return true
 }
 
+///|
 pub fn new_use_item_packet(slot : Int, itemid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
   ..write_time()
@@ -456,7 +486,7 @@ pub fn new_use_item_packet(slot : Int, itemid : Int) -> @net.OutPacket {
   ..write_int(itemid)
 }
 
-/// Packet which requests that an item is moved
+///| Packet which requests that an item is moved
 pub fn new_move_item_packet(
   type_id : TypeId,
   slot : Int,
@@ -471,7 +501,7 @@ pub fn new_move_item_packet(
   ..write_short(qty)
 }
 
-/// Packet which requests that an item is equipped
+///| Packet which requests that an item is equipped
 pub fn new_equip_item_packet(src : Int, dest : @slot.Id) -> @net.OutPacket {
   new_move_item_packet(TypeId::EQUIP, src, -dest.int_value(), 1)
 }

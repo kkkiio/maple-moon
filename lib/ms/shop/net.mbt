@@ -1,11 +1,12 @@
+///|
 pub fn handle_open_npc_shop(
-  module : Module,
+  mod : Module,
   charlook_getter : () -> @character.CharLook?,
   inventory_getter : () -> @inventory.Inventory?,
   recv : @net.InPacket
 ) -> Unit! {
-  guard let Some(charlook) = charlook_getter() else { None => return  }
-  guard let Some(inventory) = inventory_getter() else { None => return  }
+  guard let Some(charlook) = charlook_getter() else { None => return }
+  guard let Some(inventory) = inventory_getter() else { None => return }
   let npcid = recv.read_int!()
   let size = recv.read_short!()
   let shop_items = []
@@ -38,7 +39,8 @@ pub fn handle_open_npc_shop(
     }
   }
   let shop = UIShop::new(
-    { countset: module.countset, charlook, inventory, npcid, shop_items },
+    { countset: mod.countset, charlook, inventory, npcid, shop_items },
+    mod.shop2_res,
   )
   inventory.listen_item_changes(
     fn() {
@@ -47,17 +49,18 @@ pub fn handle_open_npc_shop(
       true
     },
   )
-  module.shop_ui = Some(shop)
-  module.container.add_ui(
+  mod.shop_ui = Some(shop)
+  mod.container.add_ui(
     @ui.Element::new(
       shop,
       @ui.UIElementType::SHOP,
-      on_close=fn() { module.shop_ui = None },
+      on_close=fn() { mod.shop_ui = None },
     ),
     true,
   )
 }
 
+///|
 struct ShopItem {
   id : Int
   price : Int
@@ -67,8 +70,9 @@ struct ShopItem {
   buyable : Int
 } derive(Show)
 
+///|
 pub fn handle_confirm_shop_transaction(module : Module, code : Int) -> Unit {
-  guard let Some(shop) = module.shop_ui else { None => return  }
+  guard let Some(shop) = module.shop_ui else { None => return }
   match code {
     0 | 8 => shop.set_attributes()
     _ => ()

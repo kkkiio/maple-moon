@@ -1,5 +1,5 @@
 // Maple-specific keycodes sent via the Keymap Packet.
-pub enum Id {
+pub(all) enum ActionId {
   NONE
   EQUIPMENT
   ITEMS
@@ -79,7 +79,7 @@ pub enum Id {
   PASTE
 } derive(Show, Eq, Compare)
 
-pub fn int_value(self : Id) -> Int {
+pub fn int_value(self : ActionId) -> Int {
   match self {
     NONE => 0
     EQUIPMENT => 1
@@ -160,92 +160,92 @@ pub fn int_value(self : Id) -> Int {
   }
 }
 
-pub fn hash(self : Id) -> Int {
+pub fn hash(self : ActionId) -> Int {
   self.int_value()
 }
 
-pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
+pub fn hash_combine(self : ActionId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
-pub fn get_action_by_id(id : Int) -> Id!@utils.UnknownEnum {
+pub fn get_action_by_id(id : Int) -> ActionId!@utils.UnknownEnum {
   match id {
-    0 => Id::NONE
-    1 => Id::EQUIPMENT
-    2 => Id::ITEMS
-    3 => Id::STATS
-    4 => Id::SKILLS
-    5 => Id::FRIENDS
-    6 => Id::WORLD_MAP
-    7 => Id::MAPLE_CHAT
-    8 => Id::MINI_MAP
-    9 => Id::QUEST_LOG
-    10 => Id::KEY_BINDINGS
-    11 => Id::TOGGLE_CHAT
-    12 => Id::WHISPER
-    13 => Id::SAY
-    14 => Id::PARTY_CHAT
-    15 => Id::MENU
-    16 => Id::QUICK_SLOTS
-    18 => Id::GUILD
-    19 => Id::FRIENDS_CHAT
-    20 => Id::PARTY
-    21 => Id::NOTIFIER
-    24 => Id::CASHSHOP
-    25 => Id::GUILD_CHAT
-    28 => Id::MEDALS
-    29 => Id::BITS
-    30 => Id::ALLIANCE_CHAT
-    31 => Id::MAPLE_NEWS
-    32 => Id::MANAGE_LEGION
-    33 => Id::PROFESSION
-    34 => Id::BOSS_PARTY
-    35 => Id::ITEM_POT
-    36 => Id::EVENT
-    37 => Id::SILENT_CRUSADE
-    38 => Id::BATTLE_ANALYSIS
-    39 => Id::GUIDE
-    40 => Id::VIEWERS_CHAT
-    41 => Id::ENHANCE_EQUIP
-    42 => Id::MONSTER_COLLECTION
-    43 => Id::SOUL_WEAPON
-    44 => Id::CHAR_INFO
-    45 => Id::CHANGE_CHANNEL
-    46 => Id::MAIN_MENU
-    47 => Id::SCREENSHOT
-    48 => Id::PICTURE_MODE
-    49 => Id::MAPLE_ACHIEVEMENT
-    51 => Id::PICKUP
-    52 => Id::SIT
-    53 => Id::ATTACK
-    54 => Id::JUMP
-    55 => Id::INTERACT_HARVEST
-    56 => Id::MAPLE_STORAGE
-    57 => Id::SAFE_MODE
-    58 => Id::MUTE
-    59 => Id::MONSTER_BOOK
-    60 => Id::TO_SPOUSE
-    100 => Id::FACE1
-    101 => Id::FACE2
-    102 => Id::FACE3
-    103 => Id::FACE4
-    104 => Id::FACE5
-    105 => Id::FACE6
-    106 => Id::FACE7
-    107 => Id::LEFT
-    108 => Id::RIGHT
-    109 => Id::UP
-    110 => Id::DOWN
-    111 => Id::BACK
-    112 => Id::TAB
-    113 => Id::RETURN
-    114 => Id::ESCAPE
-    115 => Id::SPACE
-    116 => Id::DELETE
-    117 => Id::HOME
-    118 => Id::END
-    119 => Id::COPY
-    120 => Id::PASTE
+    0 => ActionId::NONE
+    1 => ActionId::EQUIPMENT
+    2 => ActionId::ITEMS
+    3 => ActionId::STATS
+    4 => ActionId::SKILLS
+    5 => ActionId::FRIENDS
+    6 => ActionId::WORLD_MAP
+    7 => ActionId::MAPLE_CHAT
+    8 => ActionId::MINI_MAP
+    9 => ActionId::QUEST_LOG
+    10 => ActionId::KEY_BINDINGS
+    11 => ActionId::TOGGLE_CHAT
+    12 => ActionId::WHISPER
+    13 => ActionId::SAY
+    14 => ActionId::PARTY_CHAT
+    15 => ActionId::MENU
+    16 => ActionId::QUICK_SLOTS
+    18 => ActionId::GUILD
+    19 => ActionId::FRIENDS_CHAT
+    20 => ActionId::PARTY
+    21 => ActionId::NOTIFIER
+    24 => ActionId::CASHSHOP
+    25 => ActionId::GUILD_CHAT
+    28 => ActionId::MEDALS
+    29 => ActionId::BITS
+    30 => ActionId::ALLIANCE_CHAT
+    31 => ActionId::MAPLE_NEWS
+    32 => ActionId::MANAGE_LEGION
+    33 => ActionId::PROFESSION
+    34 => ActionId::BOSS_PARTY
+    35 => ActionId::ITEM_POT
+    36 => ActionId::EVENT
+    37 => ActionId::SILENT_CRUSADE
+    38 => ActionId::BATTLE_ANALYSIS
+    39 => ActionId::GUIDE
+    40 => ActionId::VIEWERS_CHAT
+    41 => ActionId::ENHANCE_EQUIP
+    42 => ActionId::MONSTER_COLLECTION
+    43 => ActionId::SOUL_WEAPON
+    44 => ActionId::CHAR_INFO
+    45 => ActionId::CHANGE_CHANNEL
+    46 => ActionId::MAIN_MENU
+    47 => ActionId::SCREENSHOT
+    48 => ActionId::PICTURE_MODE
+    49 => ActionId::MAPLE_ACHIEVEMENT
+    51 => ActionId::PICKUP
+    52 => ActionId::SIT
+    53 => ActionId::ATTACK
+    54 => ActionId::JUMP
+    55 => ActionId::INTERACT_HARVEST
+    56 => ActionId::MAPLE_STORAGE
+    57 => ActionId::SAFE_MODE
+    58 => ActionId::MUTE
+    59 => ActionId::MONSTER_BOOK
+    60 => ActionId::TO_SPOUSE
+    100 => ActionId::FACE1
+    101 => ActionId::FACE2
+    102 => ActionId::FACE3
+    103 => ActionId::FACE4
+    104 => ActionId::FACE5
+    105 => ActionId::FACE6
+    106 => ActionId::FACE7
+    107 => ActionId::LEFT
+    108 => ActionId::RIGHT
+    109 => ActionId::UP
+    110 => ActionId::DOWN
+    111 => ActionId::BACK
+    112 => ActionId::TAB
+    113 => ActionId::RETURN
+    114 => ActionId::ESCAPE
+    115 => ActionId::SPACE
+    116 => ActionId::DELETE
+    117 => ActionId::HOME
+    118 => ActionId::END
+    119 => ActionId::COPY
+    120 => ActionId::PASTE
     _ => raise @utils.UnknownEnum(id)
   }
 }

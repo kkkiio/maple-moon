@@ -1,5 +1,7 @@
+///|
 type StatLabel (@graphics.Text, @struct.Point[Int])
 
+///|
 struct UIStatsInfo {
   model : @ui.UIModel
   stats : CharStats
@@ -49,14 +51,13 @@ struct UIStatsInfo {
   jump_label : StatLabel
 }
 
-pub fn UIStatsInfo::load(stats : CharStats) -> UIStatsInfo {
+///|
+fn UIStatsInfo::new(stats : CharStats, stat : @resource.NxNode) -> UIStatsInfo {
   let model = @ui.UIModel::new(
     @struct.Point::new(212, 20),
     @struct.Point::new(212, 318),
   )
-  let ui_loader = @resource.ui_loader()
-  let close = ui_loader.load_res(["Basic.img", "BtClose3"])
-  let stat = ui_loader.load_res(["UIWindow4.img", "Stat"])
+  let close = @ui.common_ui_loader().load_res(["Basic.img", "BtClose3"])
   let main = stat["main"]
   let detail = stat["detail"]
   let ability_title = detail["abilityTitle"]
@@ -407,6 +408,7 @@ pub fn UIStatsInfo::load(stats : CharStats) -> UIStatsInfo {
   ui
 }
 
+///|
 pub fn draw(self : UIStatsInfo, alpha : Double) -> Unit {
   for sprite in self.sprites {
     sprite.draw(self.model.position, alpha)
@@ -469,6 +471,7 @@ pub fn draw(self : UIStatsInfo, alpha : Double) -> Unit {
   }
 }
 
+///|
 pub fn update(self : UIStatsInfo) -> Unit {
   for sprite in self.sprites {
     sprite.update() |> ignore
@@ -478,6 +481,7 @@ pub fn update(self : UIStatsInfo) -> Unit {
   }
 }
 
+///|
 fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
   [
     self.btn_close,
@@ -497,12 +501,14 @@ fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
   ]
 }
 
+///|
 fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
   ..write_time()
   ..write_int(@maple_stat.codes[stat].unwrap())
 }
 
+///|
 fn update_ap(stats : CharStats, buttons : Array[@ui.Button]) -> Bool {
   let nowap = stats.get_ap() > 0
   let newstate = if nowap {
@@ -516,6 +522,7 @@ fn update_ap(stats : CharStats, buttons : Array[@ui.Button]) -> Bool {
   nowap
 }
 
+///|
 fn update_basevstotal(
   stats : CharStats,
   label : StatLabel,
@@ -537,6 +544,7 @@ fn update_basevstotal(
   label._.0.change_text(stattext)
 }
 
+///|
 fn update_buffed(
   stats : CharStats,
   label : StatLabel,
@@ -559,6 +567,7 @@ fn update_buffed(
   label._.0.change_text(stattext)
 }
 
+///|
 fn update_all_stats(self : UIStatsInfo) -> Unit {
   self.ap_label._.0.change_text(self.stats.get_ap().to_string())
   if self.has_ap != (self.stats.get_ap() > 0) {
@@ -645,10 +654,12 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
   )
 }
 
+///|
 pub fn get_ui_model(self : UIStatsInfo) -> @ui.UIModel {
   self.model
 }
 
+///|
 pub fn send_cursor(
   self : UIStatsInfo,
   pressed : Bool,
@@ -662,6 +673,7 @@ pub fn send_cursor(
   )
 }
 
+///|
 pub fn send_key(
   self : UIStatsInfo,
   _keycode : Int,
@@ -673,6 +685,7 @@ pub fn send_key(
   }
 }
 
+///|
 pub fn remove_cursor(self : UIStatsInfo) -> Unit {
   @ui.remove_cursor(
     self.get_all_buttons().iter().map(fn(b) { b.object.get_button_base() }),

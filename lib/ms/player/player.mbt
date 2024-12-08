@@ -5,7 +5,7 @@ typealias CharStats = @char_stats.CharStats
 pub(all) struct Player {
   char_base : @character.CharBase
   stats : CharStats
-  keys_down : Map[@action.Id, Bool]
+  keys_down : Map[@keyboard.ActionId, Bool]
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
@@ -85,9 +85,9 @@ pub fn update(
       physics.move_object(self.get_phobj())
 
       // Check for ladder interaction
-      if self.keys_down[@action.Id::UP].or(false) {
+      if self.keys_down[@keyboard.ActionId::UP].or(false) {
         self.check_ladders(map_info, true)
-      } else if self.keys_down[@action.Id::DOWN].or(false) {
+      } else if self.keys_down[@keyboard.ActionId::DOWN].or(false) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.char_base.update(
@@ -141,7 +141,11 @@ pub fn draw(
 
 // Sends a Keyaction to the player's state, to apply forces, change the
 // state and other behaviour.
-pub fn send_action(self : Player, action : @action.Id, down : Bool) -> Unit {
+pub fn send_action(
+  self : Player,
+  action : @keyboard.ActionId,
+  down : Bool
+) -> Unit {
   match get_player_state(self.char_base.state) {
     Some(pst) => pst.send_action(self, action, down)
     None => ()
@@ -178,7 +182,7 @@ pub fn get_phobj(self : Player) -> @physics.PhysicsObject {
   self.char_base.get_phobj()
 }
 
-pub fn is_key_down(self : Player, key : @action.Id) -> Bool {
+pub fn is_key_down(self : Player, key : @keyboard.ActionId) -> Bool {
   self.keys_down[key].or(false)
 }
 

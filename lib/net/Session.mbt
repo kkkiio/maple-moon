@@ -1,25 +1,29 @@
+///|
 struct Session {
   forwarder : (Bytes) -> Unit
   mut conn : Connection
 }
 
+///|
 enum Connection {
   CLOSED
   OPENED(Socket)
-  READY(~socket : Socket)
+  READY(socket~ : Socket)
 }
 
+///|
 pub fn Session::new(forwarder : (Bytes) -> Unit) -> Session {
   { forwarder, conn: CLOSED }
 }
 
+///|
 pub fn close(self : Session) -> Unit {
   match self.conn {
     OPENED(socket) => {
       socket.close()
       self.conn = CLOSED
     }
-    READY(~socket, ..) => {
+    READY(socket~, ..) => {
       socket.close()
       self.conn = CLOSED
     }
@@ -27,6 +31,7 @@ pub fn close(self : Session) -> Unit {
   }
 }
 
+///|
 pub fn connect(self : Session, path : String) -> Unit {
   // Connect to the server
   match self.conn {
@@ -38,10 +43,10 @@ pub fn connect(self : Session, path : String) -> Unit {
   }
 }
 
-/// Send a packet to the server
+///| Send a packet to the server
 pub fn write(self : Session, bytes : Bytes) -> Unit {
   match self.conn {
-    READY(~socket, ..) => socket.write(bytes)
+    READY(socket~, ..) => socket.write(bytes)
     _ =>
       @log.warn(
         { "blen": bytes.length() },
@@ -50,14 +55,14 @@ pub fn write(self : Session, bytes : Bytes) -> Unit {
   }
 }
 
-/// Check for incoming packets and handle them
+///| Check for incoming packets and handle them
 pub fn read(self : Session) -> Unit {
   match self.conn {
     CLOSED => ()
     OPENED(socket) =>
       match socket.get_ready_state() {
         // open
-        1 => self.conn = READY(~socket)
+        1 => self.conn = READY(socket~)
         // closing or closed
         2 | 3 => self.conn = CLOSED
         _ => ()
@@ -71,13 +76,14 @@ pub fn read(self : Session) -> Unit {
   }
 }
 
-pub enum ConnectionStatus {
+///|
+pub(readonly) enum ConnectionStatus {
   CLOSED
   OPENED
   READY
 } derive(Show, Eq)
 
-/// Check if the connection is alive
+///| Check if the connection is alive
 pub fn get_status(self : Session) -> ConnectionStatus {
   match self.conn {
     CLOSED => CLOSED
@@ -86,8 +92,11 @@ pub fn get_status(self : Session) -> ConnectionStatus {
   }
 }
 
+///|
 type Socket
 
+///|
 fn close(self : Socket) -> Unit = "socket" "close"
 
+///|
 fn get_ready_state(self : Socket) -> Int = "socket" "get_ready_state"

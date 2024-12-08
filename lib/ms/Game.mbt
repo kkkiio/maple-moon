@@ -1,68 +1,128 @@
+///|
+typealias UI = @ui.UI
+
+///|
 pub(all) struct Game {
   window : Window
   timer : @utils.Timer
   mut accumulator : Int
-  stage : Stage
   ui : UI
+  processor : @net.PacketProcessor
+  loaded_state : @utils.Future[LoadedState]
+}
+
+///|
+struct LoadedState {
   login_module : @login.Module
-  net_module : @net.Module
 }
 
-pub fn Game::load() -> @utils.Future[Game] {
-  let char_look_module = @char_look.Module::load()
-  let map_module = @map.Module::load()
-  char_look_module.combine(map_module).map(fn(it) { Game::new(it.0, it.1) })
-}
-
-fn Game::new(
-  char_look_module : @char_look.Module,
-  map_module : @map.Module
-) -> Game {
+///|
+pub fn Game::new() -> Game {
   @config.global().set_hardware_info()
-  let login_module = @login.Module::new()
-  let monster_module = @monster.Module::new()
-  let drop_module = @drop.Module::new()
-  let inventory_module = @inventory.Module::new(
-    fn() { Stage::get().get_player() },
-  )
   let timer = @utils.Timer::new(
     fn() { now_micro() |> @utils.TimePoint::from_micro },
   )
-  let action_registry = @action.Registry::new()
-  let ui = UI::new(timer, login_module, action_registry)
-  g_ui.set(ui)
-  let npc_module = @npc.Module::new(
+  let keyboard = Keyboard::default()
+  let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
+  let window = Window::new(
     ui,
-    fn() { Stage::get().get_player().unwrap().get_name() },
+    fn() { now_micro() |> @utils.TimePoint::from_micro },
   )
-  let stage = Stage::new(
-    @map.get_portals_animations(map_module),
-    monster_module.get_map_mobs(),
-    drop_module.get_map_drops(),
-    inventory_module.get_inventory(),
-    npc_module.get_npcs(),
-    char_look_module,
-  )
-  g_stage.set(stage)
-  let window = Window::new(fn() { now_micro() |> @utils.TimePoint::from_micro })
-  let char_stats_module = @char_stats.Module::new(
-    fn() { stage.get_player().map(fn(p) { p.get_stats() }) },
+  let processor = @net.PacketProcessor::init()
+  {
+    window,
+    timer,
+    accumulator: 0,
+    ui,
+    processor,
+    loaded_state: load_modules(ui, timer, processor),
+  }
+}
+
+///|
+fn load_modules(
+  ui : UI,
+  timer : @utils.Timer,
+  processor : @net.PacketProcessor
+) -> @utils.Future[LoadedState] {
+  let action_registry = @action.Registry::new()
+  let action_map = {}
+  fn merge_actions(map : Map[@keyboard.ActionId, @action.Descriptor]) -> Unit {
+    for id, descriptor in map {
+      action_map.set(id, descriptor)
+    }
+  }
+
+  let net_handler_map = {}
+  fn merge_handlers(
+    handlers : Map[@net.Opcode, (@net.InPacket) -> Unit]
+  ) -> Unit {
+    for opcode, handler in handlers {
+      net_handler_map.set(opcode, handler)
+    }
+  }
+
+  let char_look_module = @char_look.Module::load()
+  let map_module = @map.Module::load()
+  let inventory_module = @inventory.Module::load(
+    fn() { Stage::get().get_player() },
+  ).tap(
+    fn(mod) {
+      merge_handlers(mod.make_handlers())
+      merge_actions(mod.make_actions())
+    },
   )
   let sp_stat_id = @char_stats.StatId(1)
-  let skill_book_module = @skill_book.Module::new(
-    fn() { stage.get_player() },
-    sp_stat_id,
+  let login_mod_f = inventory_module.map(
+    fn(inventory_module) {
+      let mod = @login.Module::new(processor)
+      merge_handlers(
+        mod.make_handlers(
+          fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
+          fn(char_entry) { Stage::get().load_player(char_entry, sp_stat_id) },
+          inventory_module.get_inventory(),
+          fn(player) { setup_game_ui(ui, player, action_registry, timer) },
+        ),
+      )
+      mod
+    },
   )
-  let actions = char_stats_module.make_actions().iter()
-    |> Iter::concat(inventory_module.make_actions().iter())
-    |> Iter::concat(skill_book_module.make_actions().iter())
-  for elem in actions {
-    let (id, descriptor) = elem
-    action_registry.register(id, descriptor)
-  }
-  let shop_module = @shop.Module::new(ui)
-  // ( 
-
+  let monster_module = @monster.Module::new()
+  merge_handlers(
+    monster_module.make_handlers(
+      fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
+    ),
+  )
+  let drop_module = @drop.Module::new()
+  merge_handlers(
+    drop_module.make_handlers(
+      fn(id) { Stage::get().get_character(id).map(fn(c) { c.get_phobj() }) },
+    ),
+  )
+  let npc_module = @npc.Module::load(
+    ui,
+    fn() { Stage::get().get_player().unwrap().get_name() },
+  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let char_stats_mod_f = @char_stats.Module::load(
+    fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
+  ).tap(fn(mod) { merge_actions(mod.make_actions()) })
+  let skill_book_mod_f = @skill_book.Module::load(
+    fn() { Stage::get().get_player() },
+    sp_stat_id,
+  ).tap(fn(mod) {
+    merge_handlers(mod.make_handlers())
+    merge_actions(mod.make_actions())
+  })
+  let shop_mod_f = @shop.Module::load(ui).tap(
+    fn(mod) {
+      merge_handlers(
+        mod.make_handlers(
+          fn() { Stage::get().get_player().map(fn(p) { p.get_look() }) },
+          fn() { Some(Stage::get().get_inventory()) },
+        ),
+      )
+    },
+  )
   // // Attack handlers
   // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
   // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
@@ -93,106 +153,104 @@ fn Game::new(
   // // packet_switch.push((FIELD_EFFECT, FieldEffectHandler::new()))
 
   //  )
-
-  let net_module = @net.Module::new(
-    // Common handlers
-    @immut/hashmap.from_array(
-      login_module
-      .make_handlers(
-        fn(map_id, portal_id) { stage.transition(map_id, portal_id) },
-        fn(char_entry) { stage.load_player(char_entry, sp_stat_id) },
-        inventory_module.get_inventory(),
-        fn(player) { setup_game_ui(player) },
-      )
-      .iter()
-      // Player handlers
-      // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
-      // packet_switch.push((KEYMAP, KeymapHandler::new()))
-      // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-      |> Iter::append(
-        (
-          @net.CHANGE_STATS,
-          @net.with_log(
-            @net.CHANGE_STATS,
-            fn(recv : @net.InPacket) {
-              handle_change_stats!(
-                stage.get_player().unwrap(),
-                stage.get_inventory(),
-                recv,
-              )
-            },
-          ),
-        ),
-      )
-      |> Iter::concat(npc_module.make_handlers().iter())
-
-      // MapObject handlers
-      // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
-      // // packet_switch.push((CHAR_MOVED, CharMovedHandler::new()))
-      // // packet_switch.push((UPDATE_CHARLOOK, UpdateCharLookHandler::new()))
-      // // packet_switch.push((SHOW_FOREIGN_EFFECT, ShowForeignEffectHandler::new()))
-      // // packet_switch.push((GIVE_FOREIGN_BUFF, GiveForeignBuffHandler::new()))
-      // // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
-      // // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
-      // // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
-      // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
-      |> Iter::concat(
-        monster_module
-        .make_handlers(fn() { stage.get_player().map(fn(p) { p.get_stats() }) })
-        .iter(),
-      )
-      // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
-      // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
-      // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
-      // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
-      |> Iter::concat(
-        drop_module
-        .make_handlers(
-          fn(id) { stage.get_character(id).map(fn(c) { c.get_phobj() }) },
+  // Player handlers
+  // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
+  // packet_switch.push((KEYMAP, KeymapHandler::new()))
+  // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
+  net_handler_map.set(
+    @net.CHANGE_STATS,
+    @net.with_log(
+      @net.CHANGE_STATS,
+      fn(recv : @net.InPacket) {
+        handle_change_stats!(
+          Stage::get().get_player().unwrap(),
+          Stage::get().get_inventory(),
+          recv,
         )
-        .iter(),
-      )
-      |> Iter::concat(inventory_module.make_handlers().iter())
-      // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
-      // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
-      // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
-      // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
-      // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-      |> Iter::append(
-        (
-          @net.RECALCULATE_STATS,
-          fn(_recv : @net.InPacket) -> Unit {
-            guard let Some(player) = stage.get_player() else { None => return  }
-            player.recalc_stats(false)
-          },
-        ),
-      )
-      |> Iter::concat(skill_book_module.make_handlers().iter())
-      // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
-      // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
-      // NPC Interaction Handlers
-      |> Iter::concat(
-        shop_module
-        .make_handlers(
-          fn() { stage.get_player().map(fn(p) { p.get_look() }) },
-          fn() { Some(stage.get_inventory()) },
-        )
-        .iter(),
-      )
-      |> Iter::collect,
+      },
     ),
   )
-  timer.start()
-  { window, timer, accumulator: 0, stage, ui, login_module, net_module }
+
+  // MapObject handlers
+  // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
+  // // packet_switch.push((CHAR_MOVED, CharMovedHandler::new()))
+  // // packet_switch.push((UPDATE_CHARLOOK, UpdateCharLookHandler::new()))
+  // // packet_switch.push((SHOW_FOREIGN_EFFECT, ShowForeignEffectHandler::new()))
+  // // packet_switch.push((GIVE_FOREIGN_BUFF, GiveForeignBuffHandler::new()))
+  // // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
+  // // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
+  // // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
+  // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
+  // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
+  // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
+  // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
+  // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
+  // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
+  // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
+  // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
+  // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
+  // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
+  net_handler_map.set(
+    @net.RECALCULATE_STATS,
+    fn(_recv : @net.InPacket) -> Unit {
+      guard let Some(player) = Stage::get().get_player() else { None => return }
+      player.recalc_stats(false)
+    },
+  )
+  // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
+  // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
+  // NPC Interaction Handlers
+  let stage_f = map_module
+    .combine(inventory_module)
+    .combine(npc_module)
+    .combine(char_look_module)
+    .map(
+      fn(it) {
+        let (((map_module, inventory_module), npc_module), char_look_module) = it
+        let stage = Stage::new(
+          @map.get_portals_animations(map_module),
+          monster_module.get_map_mobs(),
+          drop_module.get_map_drops(),
+          inventory_module.get_inventory(),
+          npc_module.get_npcs(),
+          char_look_module,
+        )
+        g_stage.set(stage)
+      },
+    )
+  char_stats_mod_f
+  .combine(shop_mod_f)
+  .combine(skill_book_mod_f)
+  .combine(stage_f)
+  |> to_wait
+  |> @utils.Future::combine(login_mod_f)
+  |> @utils.Future::map(
+    fn(it) {
+      let (_, login_module) = it
+      action_registry.reset_actions(
+        action_map.iter() |> @immut/hashmap.from_iter,
+      )
+      processor.reset_handlers(
+        net_handler_map.iter() |> @immut/hashmap.from_iter,
+      )
+      timer.reset()
+      ui.change_state(UIStateLogin::new(login_module))
+      { login_module, }
+    },
+  )
 }
 
-pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
-  self.net_module.process_in()
-  match @net.PacketProcessor::get().get_status() {
-    @net.CLOSED => self.login_module.reconnect_if_needed()
+///|
+pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
+  guard let Some(loaded_state) = self.loaded_state.poll() else {
+    None => return
+  }
+  self.processor.process_in()
+  match self.processor.get_status() {
+    @net.CLOSED => loaded_state.login_module.reconnect_if_needed()
     _ => ()
   }
-  self.login_module.update()
+  loaded_state.login_module.update()
   let timestep = @constants.step_time_ms * 1000
   let elapsed = self.timer.stop(current_time)
 
@@ -203,7 +261,7 @@ pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.accumulator = remaining
   let update_times = @math.minimum(times, 10) // avoid halt
   for _ in 0..<update_times {
-    self.update()
+    self.update_status()
   }
 
   // Draw the game. Interpolate to account for remaining time.
@@ -211,10 +269,11 @@ pub fn on_draw(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.draw(alpha)
 }
 
-pub fn update(self : Game) -> Unit {
+///|
+pub fn update_status(self : Game) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
-  match self.stage.update?() {
+  match Stage::get().update?() {
     Ok(_) => ()
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }
@@ -222,25 +281,39 @@ pub fn update(self : Game) -> Unit {
   // Music::update_context();
 }
 
+///|
 pub fn draw(self : Game, alpha : Double) -> Unit {
   self.window.begin()
-  self.stage.draw(alpha)
+  Stage::get().draw(alpha)
   self.ui.draw(alpha)
   self.window.end()
 }
 
-fn setup_game_ui(player : @player.Player) -> Unit {
-  UI::get().change_state(UiState::GAME)
+///|
+fn setup_game_ui(
+  ui : UI,
+  player : @player.Player,
+  registry : @action.Registry,
+  timer : @utils.Timer
+) -> Unit {
+  ui.change_state(UIStateGame::new(ui, registry, timer))
   let stats = player.get_stats()
   let stats_bar = @player.UIStatusBar::new(stats)
-  UI::get().set_element(
+  ui.set_element(
     false,
     @ui.Element::new(stats_bar, @ui.UIElementType::STATUS_BAR),
   )
 }
 
+///|
 fn now_micro() -> Double = "time" "now_micro"
 
+///|
 pub fn get_window(self : Game) -> Window {
   self.window
+}
+
+///|
+fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
+  future.map(fn(_v : T) { () })
 }

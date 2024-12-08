@@ -1,3 +1,4 @@
+///|
 struct UIStatusBar {
   stats : @char_stats.CharStats
   base : @ui.UIModel
@@ -18,9 +19,10 @@ struct UIStatusBar {
   levelset_pos : @struct.Point[Int]
 }
 
+///|
 pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   let vwidth = @constants.constants.get_viewwidth()
-  let mainBar = @resource.ui_loader().load_res(["StatusBar3.img", "mainBar"])
+  let mainBar = @ui.common_ui_loader().load_res(["StatusBar3.img", "mainBar"])
   let stat = "status"
   let status = mainBar[stat]
   let expBar = mainBar["EXPBar"]
@@ -128,6 +130,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   }
 }
 
+///|
 pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
   @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
   // for i in 0..=bt_event {
@@ -174,6 +177,7 @@ pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
   |> ignore
 }
 
+///|
 pub fn update(self : UIStatusBar) -> Unit {
   @ui.update_sprites(self.sprites.iter())
   for sprite in self.hpmp_sprites {
@@ -254,6 +258,7 @@ pub fn update(self : UIStatusBar) -> Unit {
 
 // let bt_event_daily = 34
 
+///|
 fn getexppercent(stats : @char_stats.CharStats) -> Double {
   let level = stats.get_level()
   if level >= @character.level_cap {
@@ -263,22 +268,26 @@ fn getexppercent(stats : @char_stats.CharStats) -> Double {
   exp.to_double() / @character.exp_table[level].to_double()
 }
 
+///|
 fn gethppercent(stats : @char_stats.CharStats) -> Double {
   let hp = stats.get_base_hp()
   let maxhp = stats.get_total(@stat.Id::HP)
   hp.to_double() / maxhp.to_double()
 }
 
+///|
 fn getmppercent(stats : @char_stats.CharStats) -> Double {
   let mp = stats.get_base_mp()
   let maxmp = stats.get_total(@stat.Id::MP)
   mp.to_double() / maxmp.to_double()
 }
 
+///|
 pub fn get_ui_model(self : UIStatusBar) -> @ui.UIModel {
   self.base
 }
 
+///|
 pub fn send_cursor(
   self : UIStatusBar,
   pressed : Bool,
@@ -293,11 +302,13 @@ pub fn send_cursor(
   )
 }
 
+///|
 pub fn button_pressed(self : UIStatusBar, buttonid : Int) -> @ui.ButtonState {
   // TODO: add buttons
   @ui.ButtonState::IDENTITY
 }
 
+///|
 pub fn send_key(
   self : UIStatusBar,
   keycode : Int,
@@ -307,6 +318,7 @@ pub fn send_key(
   // TODO: implement
 }
 
+///|
 pub fn remove_cursor(self : UIStatusBar) -> Unit {
   // TODO: implement
 }

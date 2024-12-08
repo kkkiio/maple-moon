@@ -1,15 +1,22 @@
+///|
 let skill_offset : @struct.Point[Int] = @struct.Point::new(11, 93)
 
+///|
 let skill_meta_offset : @struct.Point[Int] = @struct.Point::new(2, 2)
 
+///|
 let line_offset : @struct.Point[Int] = @struct.Point::new(0, 37)
 
+///|
 let rows : Int = 12
 
+///|
 let row_height : Int = 40
 
+///|
 let row_width : Int = 143
 
+///|
 struct SkillDisplayMeta {
   id : @skill.SkillId
   icon : StatefulIcon
@@ -17,6 +24,7 @@ struct SkillDisplayMeta {
   level_text : @graphics.Text
 }
 
+///|
 struct LogicState {
   mut attrs : Attributes
   model : @ui.UIModel
@@ -28,6 +36,7 @@ struct LogicState {
   mut tab : Int
 }
 
+///|
 struct Resources {
   sprites : Array[@graphics.Sprite]
   tab_btn_disabled_res : @resource.NxNode
@@ -38,6 +47,7 @@ struct Resources {
   skillb : @graphics.Texture
 }
 
+///|
 struct RenderState {
   model : @ui.UIModel
   sprites : Array[@graphics.Sprite]
@@ -48,6 +58,7 @@ struct RenderState {
   skills : Array[SkillDrawState]
 }
 
+///|
 struct SkillDrawState {
   enabled : Bool
   icon : StatefulIcon
@@ -55,27 +66,33 @@ struct SkillDrawState {
   level_text : @graphics.Text
 }
 
+///|
 fn draw(self : SkillDrawState, args : @graphics.DrawArgument) -> Unit {
   self.icon.draw(args.get_pos())
   self.name_text.draw(args.get_pos() + @struct.Point::new(38, -5))
   self.level_text.draw(args.get_pos() + @struct.Point::new(38, 13))
 }
 
+///|
 struct SkillBookUI {
   logic_state : LogicState
   resources : Resources
   mut render_state : RenderState?
 }
 
-pub struct Attributes {
+///|
+pub(all) struct Attributes {
   skillbook : @character.SkillBook
   job : @job.Job
   level : Int
   sp : Int
 }
 
-pub fn SkillBookUI::new(attrs : Attributes) -> SkillBookUI {
-  let skill = @resource.ui_loader().load_res(["UIWindow2.img", "Skill"])
+///|
+fn SkillBookUI::new(
+  attrs : Attributes,
+  skill : @resource.NxNode
+) -> SkillBookUI {
   let main = skill["main"]
   let ui_backgrnd = main["backgrnd"]
   let bg_dimensions = @graphics.Texture::get_dimensions(
@@ -94,7 +111,7 @@ pub fn SkillBookUI::new(attrs : Attributes) -> SkillBookUI {
   )
   sprites.push(@graphics.Sprite::from_resource(main["backgrnd2"]))
   sprites.push(@graphics.Sprite::from_resource(main["backgrnd3"]))
-  let close = @resource.ui_loader().load_res(["Basic.img", "BtClose3"])
+  let close = @ui.common_ui_loader().load_res(["Basic.img", "BtClose3"])
   let btn_close = @ui.MapleButton::from_resource(
     close,
     pos=@struct.Point::new(bg_dimensions.x - 23, 6),
@@ -150,6 +167,7 @@ pub fn SkillBookUI::new(attrs : Attributes) -> SkillBookUI {
   }
 }
 
+///|
 fn render(
   self : LogicState,
   resources : Resources,
@@ -321,6 +339,7 @@ fn render(
   }
 }
 
+///|
 fn use_render_state(self : SkillBookUI) -> RenderState {
   match self.render_state {
     Some(ds) => ds
@@ -335,6 +354,7 @@ fn use_render_state(self : SkillBookUI) -> RenderState {
   }
 }
 
+///|
 pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
   let draw_state = use_render_state(self)
   let resources = self.resources
@@ -384,6 +404,7 @@ pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
   }
 }
 
+///|
 fn check_required(skillbook : @character.SkillBook, id : Int) -> Bool! {
   let mut required = skillbook.collect_required!(id)
   if required.size() == 0 {
@@ -399,15 +420,18 @@ fn check_required(skillbook : @character.SkillBook, id : Int) -> Bool! {
   return true
 }
 
+///|
 pub fn set_attributes(self : SkillBookUI, attrs : Attributes) -> Unit {
   self.logic_state.attrs = attrs
   self.render_state = None
 }
 
+///|
 pub fn get_ui_model(self : SkillBookUI) -> @ui.UIModel {
   self.logic_state.model
 }
 
+///|
 pub fn update(self : SkillBookUI) -> Unit {
   let render_state = use_render_state(self)
   @ui.update_sprites(render_state.sprites.iter())
@@ -416,6 +440,7 @@ pub fn update(self : SkillBookUI) -> Unit {
   }
 }
 
+///|
 pub fn send_cursor(
   self : SkillBookUI,
   pressed : Bool,
@@ -430,10 +455,12 @@ pub fn send_cursor(
   )
 }
 
+///|
 pub fn remove_cursor(self : SkillBookUI) -> Unit {
   // TODO: implement
 }
 
+///|
 pub fn send_key(
   self : SkillBookUI,
   keycode : Int,
@@ -450,6 +477,7 @@ fn new_spend_sp_packet(skill_id : Int) -> @net.OutPacket {
   ..write_int(skill_id)
 }
 
+///|
 fn joblevel_by_tab(t : Int) -> @job.Level {
   match t {
     1 => @job.Level::FIRST
@@ -460,6 +488,7 @@ fn joblevel_by_tab(t : Int) -> @job.Level {
   }
 }
 
+///|
 fn is_upgradable(
   skillbook : @character.SkillBook,
   skill_id : Int,
@@ -489,12 +518,14 @@ fn is_upgradable(
   }
 }
 
+///|
 let beginner_skills : FixedArray[@skill.SkillId] = [
   @skill.SkillId::THREE_SNAILS,
   @skill.SkillId::HEAL,
   @skill.SkillId::FEATHER,
 ]
 
+///|
 fn enumerate[T](iter : Iter[T]) -> Iter2[Int, T] {
   Iter2::new(
     fn(yield) {

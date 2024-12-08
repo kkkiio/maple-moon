@@ -1,4 +1,6 @@
+///|
 struct Module {
+  processor : @net.PacketProcessor
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World]
@@ -9,8 +11,10 @@ struct Module {
   mut select_cid : Int?
 }
 
-pub fn Module::new() -> Module {
+///|
+pub fn Module::new(processor : @net.PacketProcessor) -> Module {
   {
+    processor,
     characters: [],
     selected_index: None,
     receiving_server_list: [],
@@ -21,13 +25,14 @@ pub fn Module::new() -> Module {
   }
 }
 
+///|
 pub fn make_handlers(
   self : Module,
   transition : (Int, Int) -> Unit,
   load_player : (@character.CharEntry) -> @player.Player!,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       @net.LOGIN_RESULT,
@@ -90,34 +95,41 @@ pub fn make_handlers(
       ),
     ),
   ]
+  |> Map::from_array()
 }
 
+///|
 pub fn get_selected_char(self : Module) -> @character.CharEntry? {
   self.selected_index.map(fn(index) { self.characters[index] })
 }
 
+///|
 pub fn new_login_start_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
 }
 
+///|
 pub fn login(self : Module, account : String, password : String) -> Unit {
   self.input_acc_pass = Some((account, password))
   self.login_task = Some({ state: ACQ_CONN, account, password })
   self.connect_task = None
 }
 
+///|
 struct LoginTask {
   mut state : LoginState
   account : String
   password : String
 }
 
+///|
 enum LoginState {
   ACQ_CONN
   START_SEND
   LOGIN_SEND
 }
 
+///|
 fn update(self : LoginTask) -> Unit {
   let p = @net.PacketProcessor::get()
   match p.get_status() {
@@ -141,10 +153,12 @@ fn update(self : LoginTask) -> Unit {
   }
 }
 
+///|
 fn fn_login_start() -> Unit {
   new_login_start_packet().dispatch()
 }
 
+///|
 fn fn_login(account : String, password : String) -> Unit {
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::LOGIN)
   let volume_serial_number = @config.global().get_volume_serial_number()
@@ -167,7 +181,7 @@ fn fn_login(account : String, password : String) -> Unit {
   .dispatch()
 }
 
-/// handle_login_result handles a packet that contains the response to an
+///| handle_login_result handles a packet that contains the response to an
 /// attempt at logging in
 pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
   self.login_task = None
@@ -243,6 +257,7 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
   // }
 }
 
+///|
 pub fn handle_server_status(recv : @net.InPacket) -> Unit!Error {
   // Possible values for status:
   // 0 - Normal
@@ -251,6 +266,7 @@ pub fn handle_server_status(recv : @net.InPacket) -> Unit!Error {
   recv.read_short!() |> ignore // status
 }
 
+///|
 pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
   while recv.available() {
     let world = parse_world!(recv)
@@ -266,16 +282,19 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
   }
 }
 
+///|
 fn enter_world(worldId : Int, channelId : Int) -> Unit {
   @config.global().set_worldid(worldId)
   @config.global().set_channelid(channelId)
   fn_char_list_req(worldId, channelId)
 }
 
+///|
 fn fn_char_list_req(worldId : Int, channelId : Int) -> Unit {
   new_char_list_request_packet(worldId, channelId).dispatch()
 }
 
+///|
 fn new_char_list_request_packet(
   worldId : Int,
   channelId : Int
@@ -286,6 +305,7 @@ fn new_char_list_request_packet(
   ..write_byte(channelId.to_byte())
 }
 
+///|
 pub fn handle_char_list(module : Module, recv : @net.InPacket) -> Unit!Error {
   recv.read_ubyte!() |> ignore // channel_id
   let characters = []
@@ -315,6 +335,7 @@ pub fn handle_char_list(module : Module, recv : @net.InPacket) -> Unit!Error {
   }
 }
 
+///|
 pub fn handle_server_ip(module : Module, recv : @net.InPacket) -> Unit! {
   recv.skip_byte!()
   let (_, port) = parse_login!(recv)
@@ -327,6 +348,7 @@ pub fn handle_server_ip(module : Module, recv : @net.InPacket) -> Unit! {
   module.connect_task = Some({ cid, })
 }
 
+///|
 pub fn handle_charname_response(recv : @net.InPacket) -> Unit! {
   let name = recv.read_string!()
   let used = recv.read_bool!()
@@ -336,6 +358,7 @@ pub fn handle_charname_response(recv : @net.InPacket) -> Unit! {
   c.send_naming_result(name, used)
 }
 
+///|
 pub fn handle_add_new_char_entry(
   module : Module,
   recv : @net.InPacket
@@ -345,24 +368,29 @@ pub fn handle_add_new_char_entry(
   module.characters.push(character)
 }
 
+///|
 fn fn_server_req() -> Unit {
   new_server_request_packet().dispatch()
 }
 
+///|
 fn new_server_request_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SERVERLIST_REQUEST)
 }
 
+///|
 fn fn_tos() -> Unit {
   new_tos_packet().dispatch()
 }
 
+///|
 fn new_tos_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::ACCEPT_TOS)..write_byte(
     (1).to_byte(),
   )
 }
 
+///|
 fn parse_account(recv : @net.InPacket) -> Account!Error {
   recv.skip_short!()
   let accid = recv.read_int!()
@@ -381,6 +409,7 @@ fn parse_account(recv : @net.InPacket) -> Account!Error {
   { accid, female, admin, name, muted, pin, pic }
 }
 
+///|
 struct Account {
   accid : Int
   female : Int
@@ -391,6 +420,7 @@ struct Account {
   pic : Int
 } derive(Show)
 
+///|
 struct World {
   name : String
   message : String
@@ -400,6 +430,7 @@ struct World {
   wid : Int
 } derive(Show)
 
+///|
 fn parse_world(recv : @net.InPacket) -> World! {
   let wid = recv.read_byte!()
   if wid == -1 {
@@ -423,6 +454,7 @@ fn parse_world(recv : @net.InPacket) -> World! {
   { name, message, chloads, channelcount, flag, wid }
 }
 
+///|
 fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
   let id = recv.read_int!()
   let stats = parse_stats!(recv)
@@ -456,6 +488,7 @@ fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
   { stats, look, id }
 }
 
+///|
 fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
   let name = recv.read_padded_string!(13)
   let female = recv.read_bool!()
@@ -506,6 +539,7 @@ fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
   }
 }
 
+///|
 fn parse_look(recv : @net.InPacket) -> @character.LookEntry! {
   let female = recv.read_bool!()
   let skin = recv.read_ubyte!()
@@ -536,6 +570,7 @@ fn parse_look(recv : @net.InPacket) -> @character.LookEntry! {
   { female, skin, faceid, hairid, equips, maskedequips, petids }
 }
 
+///|
 fn parse_login(recv : @net.InPacket) -> (String, Int)! {
   recv.skip_byte!()
   let addrstr = []
@@ -546,23 +581,27 @@ fn parse_login(recv : @net.InPacket) -> (String, Int)! {
   (String::concat(addrstr.map(fn(b) { b.to_string() }), separator="."), portstr)
 }
 
-/// Requests being logged-in to a channel server with the specified character
+///| Requests being logged-in to a channel server with the specified character
 pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_LOGIN)..write_int(cid)
 }
 
+///|
 fn etc_loader() -> @resource.SyncLoader {
   @resource.SyncLoader::new("etc")
 }
 
-pub trait BgTask {
+///|
+pub(open) trait BgTask {
   update(Self) -> Bool
 }
 
+///|
 struct ConnectChannelTask {
   cid : Int
 }
 
+///|
 pub fn update(self : ConnectChannelTask) -> Bool {
   if @net.PacketProcessor::get().get_status() == @net.READY {
     new_player_login_packet(self.cid).dispatch()
@@ -572,11 +611,13 @@ pub fn update(self : ConnectChannelTask) -> Bool {
   }
 }
 
+///|
 pub fn reconnect_if_needed(self : Module) -> Unit {
-  guard let Some((acc, pass)) = self.input_acc_pass else { None => return  }
+  guard let Some((acc, pass)) = self.input_acc_pass else { None => return }
   login(self, acc, pass)
 }
 
+///|
 pub fn update(self : Module) -> Unit {
   match self.login_task {
     Some(task) => task.update()

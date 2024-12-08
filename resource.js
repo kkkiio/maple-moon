@@ -174,48 +174,39 @@ export class ResourceLoader {
     }
 }
 
+export class FileResourceLoader {
+    constructor(filePath) {
+        this.filePath = filePath;
+        this.nxJson = null;
+    }
+    async load() {
+        const response = await fetch(this.filePath);
+        this.nxJson = await response.json();
+    }
+    loadDesc(nodepath) {
+        return getByPath(this.nxJson, nodepath)
+    }
+}
+
 /**
  * @typedef {Object} Pollable
  * @property {boolean} ready
  * @property {any} value
  */
 
-export class MixResourceLoader {
-    constructor(name, mappings) {
-        this.name = name;
-        this.mappings = mappings;
-        this.instant = null;
-        /**
-         * @type {Array<{prefix: string, loader: DirResourceLoader}>}
-         */
-        this.folderLoaders = [];
-        this.bmpLoader = new LazyBmpLoader(`resource/${name}/bitmaps`)
+export class CompositeResourceLoader {
+    /**
+     * 
+     * @param {Record<string, FileResourceLoader>} prefixLoaderMap 
+     * @param {PathImageLoader} bmpLoader 
+     */
+    constructor(prefixLoaderMap, bmpLoader) {
+        this.prefixLoaderMap = prefixLoaderMap;
+        this.bmpLoader = bmpLoader
     }
-    async start() {
-        this.instant = {}
-        for (let mapping of this.mappings) {
-            if (mapping.folder) {
-                this.folderLoaders.push({
-                    prefix: mapping.nodepath + "/",
-                    loader: new DirResourceLoader(`resource/${this.name}/${mapping.folder}`)
-                })
-                continue
-            }
-            const path = `resource/${this.name}/${mapping.filename}`
-            const response = await fetch(path);
-            const subJson = await response.json();
-            let root = this.instant
-            let parts = mapping.nodepath.split("/");
-            for (let i = 0; i < parts.length; i++) {
-                if (i == parts.length - 1) {
-                    root[parts[i]] = subJson
-                } else {
-                    if (!(parts[i] in root)) {
-                        root[parts[i]] = {}
-                    }
-                    root = root[parts[i]]
-                }
-            }
+    async load() {
+        for (let loader of Object.values(this.prefixLoaderMap)) {
+            await loader.load();
         }
     }
     /**
@@ -223,30 +214,17 @@ export class MixResourceLoader {
      * @param {string} nodepath 
      * @returns {Pollable}
      */
-    loadDescAsync(nodepath) {
-        if (this.folderLoaders.length > 0) {
-            for (let pair of this.folderLoaders) {
-                if (nodepath.startsWith(pair.prefix)) {
-                    return pair.loader.loadDesc(nodepath.substring(pair.prefix.length))
-                }
+    loadDesc(nodepath) {
+        for (let [prefix, loader] of Object.entries(this.prefixLoaderMap)) {
+            if (nodepath.startsWith(prefix)) {
+                return loader.loadDesc(nodepath.substring(prefix.length))
             }
         }
-        return {
-            ready: true,
-            value: getByPath(this.instant, nodepath),
-        }
-    }
-    /**
-     * 
-     * @param {string} nodepath 
-     * @returns {any}
-     */
-    loadDesc(nodepath) {
-        return getByPath(this.instant, nodepath)
+        throw new Error(`nodepath not found: ${nodepath}`)
     }
 }
 
-export class CompositeResourceLoader {
+export class CompositeAsyncResourceLoader {
     /**
      * 
      * @param {Record<string, DirResourceLoader>} prefixLoaderMap 

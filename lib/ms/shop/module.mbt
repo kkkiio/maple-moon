@@ -1,22 +1,34 @@
+///|
 struct Module {
   countset : @graphics.Charset
   container : @ui.Container
+  shop2_res : @resource.NxNode
   mut shop_ui : UIShop?
 }
 
-pub fn Module::new(container : @ui.Container) -> Module {
-  let countset = @graphics.Charset::new(
-    @resource.ui_loader().load_res(["Basic.img", "ItemNo"]),
-    @graphics.CharsetAlignment::LEFT,
-  )
-  { countset, container, shop_ui: None }
+///|
+pub fn Module::load(container : @ui.Container) -> @utils.Future[Module] {
+  @ui.ui_window_2_loader().load_res(["Shop2"])
+  |> @utils.map(fn(src) { Module::new(container, src) })
 }
 
+fn Module::new(
+  container : @ui.Container,
+  shop2_res : @resource.NxNode
+) -> Module {
+  let countset = @graphics.Charset::new(
+    @ui.common_ui_loader().load_res(["Basic.img", "ItemNo"]),
+    @graphics.CharsetAlignment::LEFT,
+  )
+  { countset, container, shop2_res, shop_ui: None }
+}
+
+///|
 pub fn make_handlers(
   self : Module,
   charlook_getter : () -> @character.CharLook?,
   inventory_getter : () -> @inventory.Inventory?
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       OPEN_NPC_SHOP,
@@ -34,4 +46,5 @@ pub fn make_handlers(
       log_recv=true,
     ),
   ]
+  |> Map::from_array
 }

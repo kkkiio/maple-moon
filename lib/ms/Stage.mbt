@@ -231,7 +231,7 @@ fn send_cursor(
 
 pub fn send_key(
   self : Stage,
-  t : @KeyType.Id,
+  t : @keyboard.KeyType,
   action : Int,
   down : Bool
 ) -> Unit! {
@@ -242,21 +242,25 @@ pub fn send_key(
   match self.player {
     Some(player) =>
       match t {
-        @KeyType.Id::ACTION => {
+        @keyboard.KeyType::ACTION => {
+          let action = @keyboard.get_action_by_id?(action).unwrap()
           if down {
-            match @action.get_action_by_id?(action).unwrap() {
-              @action.Id::UP => self.check_portals(map_info, portals, physics)
-              // @action.Id::SIT => self.check_seats()
-              @action.Id::ATTACK => self.combat.unwrap().use_move!(player, 0)
-              @action.Id::PICKUP => self.check_drops(player)
+            match action {
+              @keyboard.ActionId::UP =>
+                self.check_portals(map_info, portals, physics)
+              // @keyboard.ActionId::SIT => self.check_seats()
+              @keyboard.ActionId::ATTACK =>
+                self.combat.unwrap().use_move!(player, 0)
+              @keyboard.ActionId::PICKUP => self.check_drops(player)
               _ => ()
             }
           }
-          player.send_action(@action.get_action_by_id?(action).unwrap(), down)
+          player.send_action(action, down)
         }
-        @KeyType.Id::SKILL => self.combat.unwrap().use_move!(player, action)
-        // @KeyType.Id::ITEM => self.player.use_item(action)
-        // @KeyType.Id::FACE => self.player.set_expression(action)
+        @keyboard.KeyType::SKILL =>
+          self.combat.unwrap().use_move!(player, action)
+        // @keyboard.Id::ITEM => self.player.use_item(action)
+        // @keyboard.Id::FACE => self.player.set_expression(action)
         _ => ()
       }
     None => ()

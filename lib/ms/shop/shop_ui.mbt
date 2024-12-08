@@ -1,4 +1,4 @@
-/// UI for the shop
+///| UI for the shop
 /// 
 /// right_click will sell items
 struct UIShop {
@@ -7,6 +7,7 @@ struct UIShop {
   mut runtime_state : RuntimeState?
 }
 
+///|
 struct LogicState {
   attributes : Attributes
   model : @ui.UIModel
@@ -15,6 +16,7 @@ struct LogicState {
   mut selection : (Bool, Int)?
 }
 
+///|
 struct Attributes {
   countset : @graphics.Charset
   charlook : @character.CharLook
@@ -23,6 +25,7 @@ struct Attributes {
   shop_items : Array[ShopItem]
 }
 
+///|
 struct RuntimeState {
   position : @struct.Point[Int]
   sprites : Array[@graphics.Sprite]
@@ -33,6 +36,7 @@ struct RuntimeState {
   draws : Array[(@struct.Point[Int]) -> Unit]
 }
 
+///|
 struct Resources {
   buy_selection : @graphics.Texture
   sell_selection : @graphics.Texture
@@ -43,8 +47,8 @@ struct Resources {
   sprites : Array[@graphics.Sprite]
 }
 
-pub fn UIShop::new(attributes : Attributes) -> UIShop {
-  let src = @resource.ui_loader().load_res(["UIWindow2.img", "Shop2"])
+///|
+fn UIShop::new(attributes : Attributes, src : @resource.NxNode) -> UIShop {
   let background = src["backgrnd"]
   let bg = @graphics.Texture::from_resource(background)
   let bg_dimensions = bg.get_dimensions()
@@ -103,14 +107,17 @@ pub fn UIShop::new(attributes : Attributes) -> UIShop {
   { logic_state, resources, runtime_state: None }
 }
 
+///|
 pub fn draw(self : UIShop, alpha : Double) -> Unit {
   use_runtime_state(self).draw(alpha)
 }
 
+///|
 pub fn set_attributes(self : UIShop) -> Unit { // TODO: store the info in attributes directly
   self.runtime_state = None
 }
 
+///|
 fn render(
   self : LogicState,
   resources : Resources,
@@ -330,6 +337,7 @@ fn render(
   }
 }
 
+///|
 fn use_runtime_state(self : UIShop) -> RuntimeState {
   match self.runtime_state {
     Some(rs) => rs
@@ -345,6 +353,7 @@ fn use_runtime_state(self : UIShop) -> RuntimeState {
   }
 }
 
+///|
 fn draw(self : RuntimeState, alpha : Double) -> Unit {
   let position = self.position
   self.sprites.each(fn(sprite) { sprite.draw(position, alpha) })
@@ -367,12 +376,14 @@ fn draw(self : RuntimeState, alpha : Double) -> Unit {
   self.draws.each(fn(draw) { draw(position) })
 }
 
+///|
 struct BuyState {
   items : Array[BuyItem]
   offset : Int
   last_slot : Int
 }
 
+///|
 fn BuyState::new(
   currency : @graphics.Texture,
   shop_items : Array[ShopItem]
@@ -426,6 +437,7 @@ fn BuyState::new(
   { items, offset: 0, last_slot: items.length() }
 }
 
+///|
 pub fn buy(self : BuyState, i : Int) -> Unit {
   if i < 0 || i >= self.last_slot {
     return
@@ -440,6 +452,7 @@ pub fn buy(self : BuyState, i : Int) -> Unit {
   }
 }
 
+///|
 struct BuyItem {
   display : @utils.Future[(@graphics.Texture, @graphics.Text)?]
   currency : @graphics.Texture
@@ -448,17 +461,20 @@ struct BuyItem {
   price_label : @graphics.Text
 }
 
+///|
 struct SellState {
   mut offset : Int
   mut tab : @inventory.TypeId
 }
 
+///|
 fn SellState::new() -> SellState {
   { offset: 0, tab: @inventory.TypeId::EQUIP }
 }
 
-fn sell(items : Array[SellItem], i : Int, ~all : Bool = false) -> Unit {
-  guard let Some(item) = items.get(i) else { None => return  }
+///|
+fn sell(items : Array[SellItem], i : Int, all~ : Bool = false) -> Unit {
+  guard let Some(item) = items.get(i) else { None => return }
   let itemid = item.id
   let sellable = item.sellable
   let slot = item.slot
@@ -476,6 +492,7 @@ fn sell(items : Array[SellItem], i : Int, ~all : Bool = false) -> Unit {
   }
 }
 
+///|
 pub fn update(self : UIShop) -> Unit {
   let render_state = self.use_runtime_state()
   for _, sprite in render_state.sprites {
@@ -486,6 +503,7 @@ pub fn update(self : UIShop) -> Unit {
   }
 }
 
+///|
 struct SellItem {
   id : Int
   slot : Int
@@ -494,6 +512,7 @@ struct SellItem {
   display : @utils.Future[(@graphics.Texture, @graphics.Text, @graphics.Text)?]
 }
 
+///|
 pub fn SellItem::new(
   item_id : Int,
   count : Int,
@@ -545,10 +564,12 @@ pub fn SellItem::new(
   { id, slot, sellable, show_count, display }
 }
 
+///|
 pub fn get_ui_model(self : UIShop) -> @ui.UIModel {
   self.logic_state.model
 }
 
+///|
 pub fn send_cursor(
   self : UIShop,
   pressed : Bool,
@@ -563,28 +584,36 @@ pub fn send_cursor(
   )
 }
 
+///|
 fn exit_shop(self : LogicState) -> Unit {
   self.model.deactivate()
   new_npc_shop_leave_action_packet().dispatch()
 }
 
+///|
 pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
   if pressed && esc {
     self.logic_state.exit_shop()
   }
 }
 
+///|
 impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
 
+///|
 let mode_BUY : Byte = b'\x00'
 
+///|
 let mode_SELL : Byte = b'\x01'
 
+///|
 let mode_RECHARGE : Byte = b'\x02'
 
+///|
 let mode_LEAVE : Byte = b'\x03'
 
 // Requests that an item should be bought from or sold to a NPC shop
+///|
 fn new_npc_shop_item_action_packet(
   slot : Int,
   itemid : Int,
@@ -607,6 +636,7 @@ fn new_npc_shop_leave_action_packet() -> @net.OutPacket {
   new_npc_shop_action_packet(mode_LEAVE)
 }
 
+///|
 fn new_npc_shop_action_packet(mode : Byte) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::NPC_SHOP_ACTION)..write_byte(mode)
 }

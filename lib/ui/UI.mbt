@@ -1,43 +1,22 @@
-enum UiState {
-  LOGIN
-  GAME
-  // CASHSHOP
-}
-
-struct UI {
-  registry : @action.Registry
-  timer : @utils.Timer
-  login_module : @login.Module
+///|
+pub(all) struct UI {
   mut state : UIState?
-  keyboard : Keyboard
-  cursor : @ui.Cursor
+  get_keyboard_mapping : (String) -> @keyboard.Mapping
+  cursor : Cursor
   is_key_down : Map[String, Bool]
 }
 
-let g_ui : @utils.Singleton[UI] = @utils.Singleton::new()
-
-fn UI::new(
-  timer : @utils.Timer,
-  login_module : @login.Module,
-  registry : @action.Registry
-) -> UI {
-  let ui = {
-    timer,
-    login_module,
-    registry,
+///|
+pub fn UI::new(get_keyboard_mapping : (String) -> @keyboard.Mapping) -> UI {
+  {
     state: None,
-    cursor: @ui.Cursor::new(),
-    keyboard: Keyboard::default(),
+    get_keyboard_mapping,
+    cursor: Cursor::new(),
     is_key_down: Map::new(),
   }
-  ui.change_state(UiState::LOGIN) // for test
-  ui
 }
 
-pub fn UI::get() -> UI {
-  g_ui.must_get()
-}
-
+///|
 pub fn draw(self : UI, alpha : Double) -> Unit {
   match self.state {
     Some(state) => state.draw(alpha, self.cursor.get_position())
@@ -46,7 +25,8 @@ pub fn draw(self : UI, alpha : Double) -> Unit {
   self.cursor.draw(alpha)
 }
 
-fn update(self : UI) -> Unit {
+///|
+pub fn update(self : UI) -> Unit {
   match self.state {
     Some(state) => state.update()
     None => ()
@@ -54,52 +34,53 @@ fn update(self : UI) -> Unit {
   self.cursor.update()
 }
 
+///|
 pub fn send_cursor_pos(self : UI, pos : Point[Int]) -> Unit {
   self.send_cursor(pos, self.cursor.get_state())
 }
 
+///|
 pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
   let cursorstate = if pressed {
-    @ui.CursorState::CLICKING
+    CursorState::CLICKING
   } else {
-    @ui.CursorState::IDLE
+    CursorState::IDLE
   }
   let cursorpos = self.cursor.get_position()
   self.send_cursor(cursorpos, cursorstate)
 }
 
+///|
 pub fn send_cursor(
   self : UI,
   cursorpos : Point[Int],
-  cursorstate : @ui.CursorState
+  cursorstate : CursorState
 ) -> Unit {
   let nextstate = match self.state {
     Some(state) => state.send_cursor(cursorstate, cursorpos)
-    None => @ui.CursorState::IDLE
+    None => CursorState::IDLE
   }
   self.cursor.set_state(nextstate)
   self.cursor.set_position(cursorpos)
 }
 
-fn change_state(self : UI, id : UiState) -> Unit {
-  match id {
-    UiState::LOGIN => self.state = Some(UIStateLogin::new(self.login_module))
-    UiState::GAME =>
-      self.state = Some(UIStateGame::new(self.registry, self.timer))
-    // UiState::CASHSHOP => UIStateCashShop::default(),
-  }
+///|
+pub fn change_state(self : UI, state : UIState) -> Unit {
+  self.state = Some(state)
 }
 
+///|
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   guard let Some(state) = self.state else { None => return  }
-  let mapping = self.keyboard.get_mapping(keycode)
+  let mapping = (self.get_keyboard_mapping)(keycode)
   let mut sent = false
   let types = Array::new()
-  let escape = keycode == @kb.escape
-  let tab = keycode == @kb.tab
-  let enter = keycode == @kb.enter || keycode == @kb.numpadEnter
-  let up_down = keycode == @kb.arrowUp || keycode == @kb.arrowDown
-  let left_right = keycode == @kb.arrowLeft || keycode == @kb.arrowRight
+  let escape = keycode == @keyboard.escape
+  let tab = keycode == @keyboard.tab
+  let enter = keycode == @keyboard.enter || keycode == @keyboard.numpadEnter
+  let up_down = keycode == @keyboard.arrowUp || keycode == @keyboard.arrowDown
+  let left_right = keycode == @keyboard.arrowLeft ||
+    keycode == @keyboard.arrowRight
   let arrows = up_down || left_right
   fn get_active_ui_by_type(t : UIElementType) -> UIElement? {
     self.get_element(t).filter(fn(it) { it.get_ui_model().is_active() })
@@ -175,6 +156,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   self.is_key_down[keycode] = pressed
 }
 
+///|
 fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
   match self.state {
     Some(state) => state.get(element_type)
@@ -182,18 +164,32 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
   }
 }
 
-pub fn set_element(self : UI, focused : Bool, elem : @ui.Element) -> Unit {
+///|
+pub fn set_element(self : UI, focused : Bool, elem : Element) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.set_element(focused, elem)
 }
 
-pub fn add_ui(self : UI, elem : @ui.Element, focused : Bool) -> Unit {
+///|
+pub fn add_ui(self : UI, elem : Element, focused : Bool) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   state.set_element(focused, elem)
 }
 
+///|
 pub fn doubleclick(self : UI) -> Unit {
   guard let Some(state) = self.state else { None => return  }
   let pos = self.cursor.get_position()
   state.doubleclick(pos)
+}
+
+pub(open) trait UIState {
+  draw(Self, Double, Point[Int]) -> Unit
+  update(Self) -> Unit
+  send_key(Self, @keyboard.KeyType, Int, Bool, Bool) -> Unit
+  send_cursor(Self, CursorState, Point[Int]) -> CursorState
+  doubleclick(Self, Point[Int]) -> Unit
+  set_element(Self, Bool, Element) -> Unit
+  get(Self, UIElementType) -> UIElement?
+  get_front_by_types(Self, Array[UIElementType]) -> UIElement?
 }

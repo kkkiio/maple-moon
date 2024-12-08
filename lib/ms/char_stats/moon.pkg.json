@@ -13,6 +13,7 @@
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
-    "KKKIIO/maple-moon-client/lib/action"
+    "KKKIIO/maple-moon-client/lib/action",
+    "KKKIIO/maple-moon-client/lib/io/keyboard"
   ]
 }

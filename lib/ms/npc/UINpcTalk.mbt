@@ -1,9 +1,13 @@
+///|
 typealias ButtonState = @ui.ButtonState
 
+///|
 typealias CursorState = @ui.CursorState
 
+///|
 typealias UIElementType = @ui.UIElementType
 
+///|
 struct UINpcTalk {
   base : @ui.UIModel
   buttons : Map[Int, @ui.UIButton]
@@ -26,56 +30,80 @@ struct UINpcTalk {
   mut timestep : Int
 }
 
+///|
 pub fn UINpcTalk::const_type() -> UIElementType {
   UIElementType::NPC_TALK
 }
 
+///|
 pub fn UINpcTalk::const_focused() -> Bool {
   true
 }
 
+///|
 pub fn UINpcTalk::const_toggled() -> Bool {
   false
 }
 
+///|
 struct NPCTalkContent {
   text_content : Array[@graphics.Text]
   text_button_content : Array[@ui.TextButton]
 }
 
+///|
 let bid_all_level = 0
 
+///|
 let bid_close = 1
 
+///|
 let bid_my_level = 2
 
+///|
 let bid_next = 3
 
+///|
 let bid_no = 4
 
+///|
 let bid_ok = 5
 
+///|
 let bid_prev = 6
 
+///|
 let bid_qafter = 7
 
+///|
 let bid_qcno = 8
 
+///|
 let bid_qcyes = 9
 
+///|
 let bid_qgiveup = 10
 
+///|
 let bid_qno = 11
 
+///|
 let bid_qstart = 12
 
+///|
 let bid_qyes = 13
 
+///|
 let bid_yes = 14
 
+///|
 let bid_text_button = 15
 
-pub fn UINpcTalk::new() -> UINpcTalk {
+///|
+fn UINpcTalk::new(
+  util_dlg_ex : @resource.NxNode,
+  quest : @resource.NxNode
+) -> UINpcTalk {
   let base = @ui.UIModel::new(
     @struct.Point::default(),
     @struct.Point::default(),
@@ -86,8 +114,6 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   let show_slider = false
   let formatted_text_pos = 0
   let timestep = 0
-  let ui_window2 = @resource.ui_loader().load_res(["UIWindow2.img"])
-  let util_dlg_ex = ui_window2["UtilDlgEx"]
   let top = @graphics.Texture::from_resource(util_dlg_ex["t"])
   let fill = @graphics.Texture::from_resource(util_dlg_ex["c"])
   let bottom = @graphics.Texture::from_resource(util_dlg_ex["s"])
@@ -102,7 +128,6 @@ pub fn UINpcTalk::new() -> UINpcTalk {
     util_dlg_ex["BtMyLevel"],
   )
   buttons[bid_next] = @ui.MapleButton::from_resource(util_dlg_ex["BtNext"])
-  let quest = ui_window2["Quest"]
   buttons[bid_no] = @ui.MapleButton::from_resource(quest["BtNo"])
   buttons[bid_ok] = @ui.MapleButton::from_resource(util_dlg_ex["BtOK"])
   buttons[bid_prev] = @ui.MapleButton::from_resource(util_dlg_ex["BtPrev"])
@@ -144,10 +169,12 @@ pub fn UINpcTalk::new() -> UINpcTalk {
   }
 }
 
+///|
 pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
   self.base
 }
 
+///|
 pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
   let mut drawpos = self.base.position
   self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
@@ -212,6 +239,7 @@ pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
   }
 }
 
+///|
 pub fn update(self : UINpcTalk) -> Unit {
   for _, button in self.buttons {
     button.update()
@@ -219,6 +247,7 @@ pub fn update(self : UINpcTalk) -> Unit {
   // TODO: show text gradually when open NPC dialog
 }
 
+///|
 fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   self.base.deactivate()
   match self.t {
@@ -283,6 +312,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
   ButtonState::NORMAL
 }
 
+///|
 pub fn send_cursor(
   self : UINpcTalk,
   clicked : Bool,
@@ -312,10 +342,12 @@ pub fn send_cursor(
   estate
 }
 
+///|
 pub fn remove_cursor(self : UINpcTalk) -> Unit {
   @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
 }
 
+///|
 pub fn send_key(
   self : UINpcTalk,
   keycode : Int,
@@ -332,6 +364,7 @@ pub fn send_key(
   }
 }
 
+///|
 pub fn change_text(
   self : UINpcTalk,
   npcid : Int,
@@ -446,6 +479,7 @@ pub fn change_text(
   self.base.dimension = @struct.Point::new(self.top.width(), self.height + 120)
 }
 
+///|
 fn reset_content_pos(self : UINpcTalk) -> Unit {
   let content = match self.content {
     Some(content) => content
@@ -476,20 +510,24 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
   }
 }
 
+///|
 fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::NPC_TALK_MORE)
   ..write_byte(lastmsg.to_byte())
   ..write_byte(response.to_byte())
 }
 
+///|
 fn new_npc_talk_more_packet_with_response(response : String) -> @net.OutPacket {
   new_npc_talk_more_packet(2, 1)..write_string(response)
 }
 
+///|
 fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
   new_npc_talk_more_packet(4, 1)..write_int(selection)
 }
 
+///|
 fn get_map_info_by_id(mapid : Int) -> NxMapInfo {
   let map_category = get_map_category(mapid)
   let map_info = @resource.string_loader().load_res(
@@ -505,6 +543,7 @@ fn get_map_info_by_id(mapid : Int) -> NxMapInfo {
   }
 }
 
+///|
 fn get_map_category(mapid : Int) -> String {
   if mapid < 100000000 {
     return "maple"
@@ -547,6 +586,7 @@ fn get_map_category(mapid : Int) -> String {
   return "etc"
 }
 
+///|
 struct NxMapInfo {
   description : String
   name : String
@@ -554,6 +594,7 @@ struct NxMapInfo {
   full_name : String
 }
 
+///|
 fn convert_npc_text(
   raw_text : String,
   npcid : Int,
@@ -597,8 +638,10 @@ fn convert_npc_text(
   }
 }
 
+///|
 let max_height = 248
 
+///|
 fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
   {
     fn_map: {

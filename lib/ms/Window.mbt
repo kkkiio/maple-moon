@@ -1,11 +1,12 @@
 struct Window {
+  ui : UI
   opacity : Double
   get_now : () -> @utils.TimePoint
   mut last_click : @utils.TimePoint
 }
 
-fn Window::new(get_now : () -> @utils.TimePoint) -> Window {
-  { opacity: 1.0, last_click: @utils.TimePoint::default(), get_now }
+fn Window::new(ui : UI, get_now : () -> @utils.TimePoint) -> Window {
+  { ui, opacity: 1.0, last_click: @utils.TimePoint::default(), get_now }
 }
 
 fn begin(self : Window) -> Unit {
@@ -17,11 +18,11 @@ fn end(self : Window) -> Unit {
 }
 
 pub fn onmousemove(self : Window, x : Int, y : Int) -> Unit {
-  UI::get().send_cursor_pos({ x, y })
+  self.ui.send_cursor_pos({ x, y })
 }
 
 pub fn onmouseup(self : Window) -> Unit {
-  UI::get().send_cursor_pressed(false)
+  self.ui.send_cursor_pressed(false)
 }
 
 pub fn onmousedown(self : Window) -> Unit {
@@ -29,14 +30,14 @@ pub fn onmousedown(self : Window) -> Unit {
   let diff_ms = now.since(self.last_click).to_milliseconds()
   self.last_click = now
   if diff_ms > 10 && diff_ms < 200 {
-    UI::get().doubleclick()
+    self.ui.doubleclick()
   }
-  UI::get().send_cursor_pressed(true)
+  self.ui.send_cursor_pressed(true)
 }
 
 // fn fadeout(self : Window, step : Double, fadeproc : () -> Unit) -> Unit {
 //   fadeproc()
 // }
 pub fn key_callback(self : Window, keyCode : String, pressed : Bool) -> Unit {
-  UI::get().send_key(keyCode, pressed)
+  self.ui.send_key(keyCode, pressed)
 }

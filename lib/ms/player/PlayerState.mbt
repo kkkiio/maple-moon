@@ -6,7 +6,7 @@ typealias CharState = @character.CharState
 
 trait PlayerState {
   initialize(Self, Player) -> Unit
-  send_action(Self, Player, @action.Id, Bool) -> Unit
+  send_action(Self, Player, @keyboard.ActionId, Bool) -> Unit
   update(Self, Player) -> Unit
   update_state(Self, Player) -> Unit
 }
@@ -24,7 +24,7 @@ pub fn initialize(self : PlayerNullState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerNullState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   pressed : Bool
 ) -> Unit {
 
@@ -36,13 +36,13 @@ pub fn update(self : PlayerNullState, player : Player) -> Unit {
 
 pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
   let state : CharState = if player.get_phobj().onground {
-    if player.is_key_down(@action.Id::LEFT) {
+    if player.is_key_down(@keyboard.ActionId::LEFT) {
       player.set_direction(false)
       CharState::WALK
-    } else if player.is_key_down(@action.Id::RIGHT) {
+    } else if player.is_key_down(@keyboard.ActionId::RIGHT) {
       player.set_direction(true)
       CharState::WALK
-    } else if player.is_key_down(@action.Id::DOWN) {
+    } else if player.is_key_down(@keyboard.ActionId::DOWN) {
       CharState::PRONE
     } else {
       CharState::STAND
@@ -67,7 +67,7 @@ pub fn initialize(self : PlayerStandState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerStandState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if player.is_attacking() {
@@ -75,19 +75,19 @@ pub fn send_action(
   }
   if down {
     match ka {
-      @action.Id::LEFT => {
+      @keyboard.ActionId::LEFT => {
         player.set_direction(false)
         player.set_state(CharState::WALK)
       }
-      @action.Id::RIGHT => {
+      @keyboard.ActionId::RIGHT => {
         player.set_direction(true)
         player.set_state(CharState::WALK)
       }
-      @action.Id::JUMP => {
+      @keyboard.ActionId::JUMP => {
         play_jumpsound()
         player.get_phobj().vforce = -player.get_jumpforce()
       }
-      @action.Id::DOWN => player.set_state(CharState::PRONE)
+      @keyboard.ActionId::DOWN => player.set_state(CharState::PRONE)
       _ => ()
     }
   }
@@ -114,7 +114,7 @@ pub fn initialize(self : PlayerWalkState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerWalkState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if player.is_attacking() {
@@ -122,20 +122,21 @@ pub fn send_action(
   }
   if down {
     match ka {
-      @action.Id::LEFT => player.set_direction(false)
-      @action.Id::RIGHT => player.set_direction(true)
-      @action.Id::JUMP => {
+      @keyboard.ActionId::LEFT => player.set_direction(false)
+      @keyboard.ActionId::RIGHT => player.set_direction(true)
+      @keyboard.ActionId::JUMP => {
         play_jumpsound()
         player.get_phobj().vforce = -player.get_jumpforce()
       }
-      @action.Id::DOWN => player.set_state(CharState::PRONE)
+      @keyboard.ActionId::DOWN => player.set_state(CharState::PRONE)
       _ => ()
     }
   }
 }
 
 pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
-  player.is_key_down(@action.Id::LEFT) || player.is_key_down(@action.Id::RIGHT)
+  player.is_key_down(@keyboard.ActionId::LEFT) ||
+  player.is_key_down(@keyboard.ActionId::RIGHT)
 }
 
 pub fn update(self : PlayerWalkState, player : Player) -> Unit {
@@ -172,13 +173,13 @@ pub fn initialize(self : PlayerFallState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerFallState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if down {
     match ka {
-      @action.Id::LEFT => player.set_direction(false)
-      @action.Id::RIGHT => player.set_direction(true)
+      @keyboard.ActionId::LEFT => player.set_direction(false)
+      @keyboard.ActionId::RIGHT => player.set_direction(true)
       _ => ()
     }
   }
@@ -186,12 +187,12 @@ pub fn send_action(
 
 pub fn update(self : PlayerFallState, player : Player) -> Unit {
   let hspeed = player.get_phobj().moving_object.hspeed
-  if player.is_key_down(@action.Id::LEFT) && hspeed > 0.0 {
+  if player.is_key_down(@keyboard.ActionId::LEFT) && hspeed > 0.0 {
     player.get_phobj().moving_object.hspeed -= 0.025
     if player.get_phobj().moving_object.hspeed < 0.0 {
       player.get_phobj().moving_object.hspeed = 0.0
     }
-  } else if player.is_key_down(@action.Id::RIGHT) && hspeed < 0.0 {
+  } else if player.is_key_down(@keyboard.ActionId::RIGHT) && hspeed < 0.0 {
     player.get_phobj().moving_object.hspeed += 0.025
     if player.get_phobj().moving_object.hspeed > 0.0 {
       player.get_phobj().moving_object.hspeed = 0.0
@@ -201,13 +202,13 @@ pub fn update(self : PlayerFallState, player : Player) -> Unit {
 
 pub fn update_state(self : PlayerFallState, player : Player) -> Unit {
   if player.get_phobj().onground {
-    if player.is_key_down(@action.Id::LEFT) {
+    if player.is_key_down(@keyboard.ActionId::LEFT) {
       player.set_direction(false)
       player.set_state(CharState::WALK)
-    } else if player.is_key_down(@action.Id::RIGHT) {
+    } else if player.is_key_down(@keyboard.ActionId::RIGHT) {
       player.set_direction(true)
       player.set_state(CharState::WALK)
-    } else if player.is_key_down(@action.Id::DOWN) {
+    } else if player.is_key_down(@keyboard.ActionId::DOWN) {
       player.set_state(CharState::PRONE)
     } else {
       player.set_state(CharState::STAND)
@@ -231,13 +232,14 @@ pub fn update_state(self : PlayerProneState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerProneState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if down {
     match ka {
-      @action.Id::JUMP =>
-        if player.get_phobj().enablejd && player.is_key_down(@action.Id::DOWN) {
+      @keyboard.ActionId::JUMP =>
+        if player.get_phobj().enablejd &&
+          player.is_key_down(@keyboard.ActionId::DOWN) {
           play_jumpsound()
           player.get_phobj().moving_object.set_y(player.get_phobj().groundbelow)
           player.set_state(CharState::FALL)
@@ -246,7 +248,7 @@ pub fn send_action(
     }
   } else {
     match ka {
-      @action.Id::DOWN => player.set_state(CharState::STAND)
+      @keyboard.ActionId::DOWN => player.set_state(CharState::STAND)
       _ => ()
     }
   }
@@ -275,24 +277,24 @@ pub fn update_state(self : PlayerSitState, _player : Player) -> Unit {
 pub fn send_action(
   self : PlayerSitState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if down {
     match ka {
-      @action.Id::LEFT => {
+      @keyboard.ActionId::LEFT => {
         player.set_direction(false)
         player.set_state(CharState::WALK)
       }
-      @action.Id::RIGHT => {
+      @keyboard.ActionId::RIGHT => {
         player.set_direction(true)
         player.set_state(CharState::WALK)
       }
-      @action.Id::JUMP => {
+      @keyboard.ActionId::JUMP => {
         play_jumpsound()
         player.set_state(CharState::STAND)
       }
-      @action.Id::UP => player.set_state(CharState::STAND)
+      @keyboard.ActionId::UP => player.set_state(CharState::STAND)
       _ => ()
     }
   }
@@ -311,13 +313,13 @@ pub fn initialize(self : PlayerFlyState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerFlyState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if down {
     match ka {
-      @action.Id::LEFT => player.set_direction(false)
-      @action.Id::RIGHT => player.set_direction(true)
+      @keyboard.ActionId::LEFT => player.set_direction(false)
+      @keyboard.ActionId::RIGHT => player.set_direction(true)
       _ => ()
     }
   }
@@ -327,27 +329,27 @@ pub fn update(self : PlayerFlyState, player : Player) -> Unit {
   if player.is_attacking() {
     return
   }
-  if player.is_key_down(@action.Id::LEFT) {
+  if player.is_key_down(@keyboard.ActionId::LEFT) {
     player.get_phobj().hforce = -player.get_flyforce()
-  } else if player.is_key_down(@action.Id::RIGHT) {
+  } else if player.is_key_down(@keyboard.ActionId::RIGHT) {
     player.get_phobj().hforce = player.get_flyforce()
   }
-  if player.is_key_down(@action.Id::UP) {
+  if player.is_key_down(@keyboard.ActionId::UP) {
     player.get_phobj().vforce = -player.get_flyforce()
-  } else if player.is_key_down(@action.Id::DOWN) {
+  } else if player.is_key_down(@keyboard.ActionId::DOWN) {
     player.get_phobj().vforce = player.get_flyforce()
   }
 }
 
 pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
   if player.get_phobj().onground && player.is_underwater() {
-    let state = if player.is_key_down(@action.Id::LEFT) {
+    let state = if player.is_key_down(@keyboard.ActionId::LEFT) {
       player.set_direction(false)
       CharState::WALK
-    } else if player.is_key_down(@action.Id::RIGHT) {
+    } else if player.is_key_down(@keyboard.ActionId::RIGHT) {
       player.set_direction(true)
       CharState::WALK
-    } else if player.is_key_down(@action.Id::DOWN) {
+    } else if player.is_key_down(@keyboard.ActionId::DOWN) {
       CharState::PRONE
     } else {
       CharState::STAND
@@ -365,13 +367,13 @@ pub fn initialize(self : PlayerClimbState, player : Player) -> Unit {
 pub fn send_action(
   self : PlayerClimbState,
   player : Player,
-  ka : @action.Id,
+  ka : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
   if down {
     match ka {
-      @action.Id::JUMP =>
-        if player.is_key_down(@action.Id::LEFT) {
+      @keyboard.ActionId::JUMP =>
+        if player.is_key_down(@keyboard.ActionId::LEFT) {
           play_jumpsound()
           player.set_direction(false)
           player.get_phobj().moving_object.hspeed = -player.get_walkforce() *
@@ -379,7 +381,7 @@ pub fn send_action(
           player.get_phobj().moving_object.vspeed = -player.get_jumpforce() /
             1.5
           self.cancel_ladder(player)
-        } else if player.is_key_down(@action.Id::RIGHT) {
+        } else if player.is_key_down(@keyboard.ActionId::RIGHT) {
           play_jumpsound()
           player.set_direction(true)
           player.get_phobj().moving_object.hspeed = player.get_walkforce() * 8.0
@@ -393,9 +395,9 @@ pub fn send_action(
 }
 
 pub fn update(self : PlayerClimbState, player : Player) -> Unit {
-  if player.is_key_down(@action.Id::UP) {
+  if player.is_key_down(@keyboard.ActionId::UP) {
     player.get_phobj().set_vspeed(-player.get_climbforce())
-  } else if player.is_key_down(@action.Id::DOWN) {
+  } else if player.is_key_down(@keyboard.ActionId::DOWN) {
     player.get_phobj().set_vspeed(player.get_climbforce())
   } else {
     player.get_phobj().set_vspeed(0.0)
@@ -404,7 +406,7 @@ pub fn update(self : PlayerClimbState, player : Player) -> Unit {
 
 pub fn update_state(self : PlayerClimbState, player : Player) -> Unit {
   let y = player.get_phobj().get_y()
-  let downwards = player.is_key_down(@action.Id::DOWN)
+  let downwards = player.is_key_down(@keyboard.ActionId::DOWN)
   match player.get_ladder() {
     Some(ladder) =>
       if ladder.felloff(y, downwards) {

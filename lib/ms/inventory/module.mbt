@@ -1,19 +1,35 @@
+///|
 struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
+  item_res : @resource.NxNode
 }
 
-pub fn Module::new(player_getter : () -> @player.Player?) -> Module {
-  { inventory: Inventory::new(), player_getter }
+///|
+pub fn Module::load(
+  player_getter : () -> @player.Player?
+) -> @utils.Future[Module] {
+  @ui.ui_window_2_loader().load_res(["Item"])
+  |> @utils.map(fn(item_res) { Module::new(player_getter, item_res) })
 }
 
+///|
+fn Module::new(
+  player_getter : () -> @player.Player?,
+  item_res : @resource.NxNode
+) -> Module {
+  { inventory: Inventory::new(), player_getter, item_res }
+}
+
+///|
 pub fn get_inventory(self : Module) -> Inventory {
   self.inventory
 }
 
+///|
 pub fn make_handlers(
   self : Module
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       @net.MODIFY_INVENTORY,
@@ -25,12 +41,16 @@ pub fn make_handlers(
       ),
     ),
   ]
+  |> Map::from_array
 }
 
-pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
+///|
+pub fn make_actions(
+  self : Module
+) -> Map[@keyboard.ActionId, @action.Descriptor] {
   [
     (
-      @action.Id::ITEMS,
+      @keyboard.ActionId::ITEMS,
       @action.Descriptor::UI(
         key=@ui.UIElementType::ITEM_INVENTORY,
         make_element=fn() {
@@ -39,6 +59,7 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
               inventory: self.inventory,
               player: (self.player_getter)().unwrap(),
             },
+            self.item_res,
           )
           self.inventory.listen_item_changes(
             fn() {
@@ -62,4 +83,5 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
       ),
     ),
   ]
+  |> Map::from_array
 }

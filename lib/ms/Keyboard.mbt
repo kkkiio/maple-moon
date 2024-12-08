@@ -1,87 +1,110 @@
-pub struct Mapping {
-  t : @KeyType.Id
-  action : Int
-} derive(Eq, Compare)
+typealias Mapping = @keyboard.Mapping
 
-pub fn Mapping::new(in_type : @KeyType.Id, in_action : Int) -> Mapping {
-  { t: in_type, action: in_action }
-}
-
-pub struct Keyboard {
+pub(all) struct Keyboard {
   keymap : Map[String, Mapping]
   maple_keys : Map[Int, Mapping]
-  // text_actions : Map[String, @action.Id]
+  // text_actions : Map[String, @keyboard.ActionId]
   key_state : Map[Int, Bool]
 }
 
 pub fn Keyboard::default() -> Keyboard {
   let keymap = Map::new()
   keymap.set(
-    @kb.arrowLeft,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::LEFT.int_value()),
+    @keyboard.arrowLeft,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::LEFT.int_value(),
+    ),
   )
   keymap.set(
-    @kb.arrowRight,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::RIGHT.int_value()),
+    @keyboard.arrowRight,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::RIGHT.int_value(),
+    ),
   )
   keymap.set(
-    @kb.arrowUp,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::UP.int_value()),
+    @keyboard.arrowUp,
+    Mapping::new(@keyboard.KeyType::ACTION, @keyboard.ActionId::UP.int_value()),
   )
   keymap.set(
-    @kb.arrowDown,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::DOWN.int_value()),
+    @keyboard.arrowDown,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::DOWN.int_value(),
+    ),
   )
   keymap.set(
-    @kb.enter,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::RETURN.int_value()),
+    @keyboard.enter,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::RETURN.int_value(),
+    ),
   )
   keymap.set(
-    @kb.numpadEnter,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::RETURN.int_value()),
+    @keyboard.numpadEnter,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::RETURN.int_value(),
+    ),
   )
   keymap.set(
-    @kb.tab,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::TAB.int_value()),
+    @keyboard.tab,
+    Mapping::new(@keyboard.KeyType::ACTION, @keyboard.ActionId::TAB.int_value()),
   )
   keymap.set(
-    @kb.space,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::JUMP.int_value()),
+    @keyboard.space,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::JUMP.int_value(),
+    ),
   )
   keymap.set(
-    @kb.keyX,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::ATTACK.int_value()),
+    @keyboard.keyX,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::ATTACK.int_value(),
+    ),
   )
   keymap.set(
-    @kb.keyC,
-    Mapping::new(@KeyType.Id::ACTION, @action.Id::PICKUP.int_value()),
+    @keyboard.keyC,
+    Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.ActionId::PICKUP.int_value(),
+    ),
   )
   keymap.set(
-    @kb.keyI,
-    Mapping::new(@KeyType.Id::MENU, @action.Id::ITEMS.int_value()),
+    @keyboard.keyI,
+    Mapping::new(@keyboard.KeyType::MENU, @keyboard.ActionId::ITEMS.int_value()),
   )
   keymap.set(
-    @kb.keyO,
-    Mapping::new(@KeyType.Id::MENU, @action.Id::SKILLS.int_value()),
+    @keyboard.keyO,
+    Mapping::new(
+      @keyboard.KeyType::MENU,
+      @keyboard.ActionId::SKILLS.int_value(),
+    ),
   )
   keymap.set(
-    @kb.keyE,
-    Mapping::new(@KeyType.Id::MENU, @action.Id::STATS.int_value()),
+    @keyboard.keyE,
+    Mapping::new(@keyboard.KeyType::MENU, @keyboard.ActionId::STATS.int_value()),
   )
   keymap.set(
-    @kb.keyA,
-    Mapping::new(@KeyType.Id::SKILL, @skill.SkillId::MAGIC_CLAW.int_value()),
+    @keyboard.keyA,
+    Mapping::new(
+      @keyboard.KeyType::SKILL,
+      @skill.SkillId::MAGIC_CLAW.int_value(),
+    ),
   )
   let text_actions = Map::new()
-  text_actions.set(@kb.backspace, @action.Id::BACK)
-  text_actions.set(@kb.enter, @action.Id::RETURN)
-  text_actions.set(@kb.numpadEnter, @action.Id::RETURN)
-  text_actions.set(@kb.space, @action.Id::SPACE)
-  text_actions.set(@kb.tab, @action.Id::TAB)
-  text_actions.set(@kb.escape, @action.Id::ESCAPE)
-  text_actions.set(@kb.home, @action.Id::HOME)
-  text_actions.set(@kb.end, @action.Id::END)
-  text_actions.set(@kb.delete, @action.Id::DELETE)
+  text_actions.set(@keyboard.backspace, @keyboard.ActionId::BACK)
+  text_actions.set(@keyboard.enter, @keyboard.ActionId::RETURN)
+  text_actions.set(@keyboard.numpadEnter, @keyboard.ActionId::RETURN)
+  text_actions.set(@keyboard.space, @keyboard.ActionId::SPACE)
+  text_actions.set(@keyboard.tab, @keyboard.ActionId::TAB)
+  text_actions.set(@keyboard.escape, @keyboard.ActionId::ESCAPE)
+  text_actions.set(@keyboard.home, @keyboard.ActionId::HOME)
+  text_actions.set(@keyboard.end, @keyboard.ActionId::END)
+  text_actions.set(@keyboard.delete, @keyboard.ActionId::DELETE)
   {
     keymap,
     maple_keys: Map::new(),
@@ -94,24 +117,27 @@ pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {
   self.maple_keys
 }
 
-pub fn get_ctrl_action(self : Keyboard, keycode : String) -> @action.Id? {
+pub fn get_ctrl_action(
+  self : Keyboard,
+  keycode : String
+) -> @keyboard.ActionId? {
   // match keycode {
-  //   @kb.keyC => @action.Id::COPY
-  //   @kb.keyV => @action.Id::PASTE
-  //   _ => @action.Id::LENGTH
+  //   @keyboard.keyC => @keyboard.ActionId::COPY
+  //   @keyboard.keyV => @keyboard.ActionId::PASTE
+  //   _ => @keyboard.ActionId::LENGTH
   // }
-  if keycode == @kb.keyC {
-    Some(@action.Id::COPY)
-  } else if keycode == @kb.keyV {
-    Some(@action.Id::PASTE)
+  if keycode == @keyboard.keyC {
+    Some(@keyboard.ActionId::COPY)
+  } else if keycode == @keyboard.keyV {
+    Some(@keyboard.ActionId::PASTE)
   } else {
     None
   }
 }
 
 pub fn assign(self : Keyboard, key : Int, tid : Int, action : Int) -> Unit {
-  match @KeyType.get_type_by_id(tid) {
-    @KeyType.Id::NONE => ()
+  match @keyboard.get_type_by_id(tid) {
+    @keyboard.KeyType::NONE => ()
     _ as type_ => {
       let mapping = Mapping::new(type_, action)
       self.keymap.set(keytable[key], mapping)
@@ -121,7 +147,7 @@ pub fn assign(self : Keyboard, key : Int, tid : Int, action : Int) -> Unit {
 }
 
 pub fn remove(self : Keyboard, key : Int) -> Unit {
-  let mapping = Mapping::new(@KeyType.Id::NONE, 0)
+  let mapping = Mapping::new(@keyboard.KeyType::NONE, 0)
   self.keymap.set(keytable[key], mapping)
   self.maple_keys.set(key, mapping)
 }
@@ -133,7 +159,7 @@ pub fn remove(self : Keyboard, key : Int) -> Unit {
 // ) -> Mapping {
 //   if self.text_actions.contains(keycode) {
 //     return Mapping::new(
-//       @KeyType.Id::ACTION,
+//       @keyboard.Id::ACTION,
 //       self.text_actions[keycode].unwrap().int_value(),
 //     )
 //   }
@@ -151,49 +177,54 @@ pub fn remove(self : Keyboard, key : Int) -> Unit {
 //     // GLFMKeyCode7                 = 0x37,
 //     // GLFMKeyCode8                 = 0x38,
 //     // GLFMKeyCode9                 = 0x39,
-//   if keycode == @kb.quote || keycode >= 44 && keycode <= 57 || keycode == 59 || keycode ==
+//   if keycode == @keyboard.quote || keycode >= 44 && keycode <= 57 || keycode == 59 || keycode ==
 //   61 || keycode >= 91 && keycode <= 93 || keycode == 96 {
 //     if shift.not() {
-//       return Mapping::new(@KeyType.Id::TEXT, keycode)
+//       return Mapping::new(@keyboard.Id::TEXT, keycode)
 //     }
-//     return Mapping::new(@KeyType.Id::TEXT, specialtable[keycode - 1])
+//     return Mapping::new(@keyboard.Id::TEXT, specialtable[keycode - 1])
 //   }
 //   if keycode >= 33 && keycode <= 126 {
 //     if shift {
-//       return Mapping::new(@KeyType.Id::TEXT, keycode)
+//       return Mapping::new(@keyboard.Id::TEXT, keycode)
 //     }
-//     return Mapping::new(@KeyType.Id::TEXT, shifttable[keycode - 1])
+//     return Mapping::new(@keyboard.Id::TEXT, shifttable[keycode - 1])
 //   }
 
 //   // match keycode {
-//   //   @kb.arrowLeft| @kb.arrowRight| @kb.arrowUp| @kb.arrowDown => self.keymap[keycode].unwrap()
-//   //   _ => Mapping::new(@KeyType.Id::NONE, 0)
+//   //   @keyboard.arrowLeft| @keyboard.arrowRight| @keyboard.arrowUp| @keyboard.arrowDown => self.keymap[keycode].unwrap()
+//   //   _ => Mapping::new(@keyboard.Id::NONE, 0)
 //   // }
-//   if keycode == @kb.arrowLeft || keycode == @kb.arrowRight || keycode == @kb.arrowUp ||
-//   keycode == @kb.arrowDown {
+//   if keycode == @keyboard.arrowLeft || keycode == @keyboard.arrowRight || keycode == @keyboard.arrowUp ||
+//   keycode == @keyboard.arrowDown {
 //     return self.keymap[keycode].unwrap()
 //   }
-//   Mapping::new(@KeyType.Id::NONE, 0)
+//   Mapping::new(@keyboard.Id::NONE, 0)
 // }
 
 pub fn get_mapping(self : Keyboard, keycode : String) -> Mapping {
-  self.keymap.get(keycode).or(Mapping::new(@KeyType.Id::NONE, 0))
+  self.keymap.get(keycode).or(Mapping::new(@keyboard.KeyType::NONE, 0))
 }
 
 pub fn get_maple_mapping(self : Keyboard, key : Int) -> Mapping {
-  self.maple_keys.get(key).or(Mapping::new(@KeyType.Id::NONE, 0))
+  self.maple_keys.get(key).or(Mapping::new(@keyboard.KeyType::NONE, 0))
 }
 
 let keytable : FixedArray[String] = [
-  "", "", @kb.digit0, @kb.digit1, @kb.digit2, @kb.digit3, @kb.digit4, @kb.digit5,
-  @kb.digit6, @kb.digit7, @kb.digit8, @kb.digit9, @kb.minus, @kb.equal, "", "", @kb.keyQ,
-  @kb.keyW, @kb.keyE, @kb.keyR, @kb.keyT, @kb.keyY, @kb.keyU, @kb.keyI, @kb.keyO,
-  @kb.keyP, @kb.bracketLeft, @kb.bracketRight, "", @kb.controlLeft, @kb.keyA, @kb.keyS,
-  @kb.keyD, @kb.keyF, @kb.keyG, @kb.keyH, @kb.keyJ, @kb.keyK, @kb.keyL, @kb.semicolon,
-  @kb.quote, @kb.backquote, @kb.shiftLeft, @kb.backslash, @kb.keyZ, @kb.keyX, @kb.keyC,
-  @kb.keyV, @kb.keyB, @kb.keyN, @kb.keyM, @kb.comma, @kb.period, "", "", "", @kb.altLeft,
-  @kb.space, "", @kb.f1, @kb.f2, @kb.f3, @kb.f4, @kb.f5, @kb.f6, @kb.f7, @kb.f8,
-  @kb.f9, @kb.f10, @kb.f11, @kb.f12, @kb.home, "", @kb.pageUp, "", "", "", "", "",
-  @kb.end, @kb.capsLock, @kb.pageDown, @kb.insert, @kb.delete, @kb.escape, @kb.controlRight,
-  @kb.shiftRight, @kb.altRight, @kb.scrollLock,
+  "", "", @keyboard.digit0, @keyboard.digit1, @keyboard.digit2, @keyboard.digit3,
+  @keyboard.digit4, @keyboard.digit5, @keyboard.digit6, @keyboard.digit7, @keyboard.digit8,
+  @keyboard.digit9, @keyboard.minus, @keyboard.equal, "", "", @keyboard.keyQ, @keyboard.keyW,
+  @keyboard.keyE, @keyboard.keyR, @keyboard.keyT, @keyboard.keyY, @keyboard.keyU,
+  @keyboard.keyI, @keyboard.keyO, @keyboard.keyP, @keyboard.bracketLeft, @keyboard.bracketRight,
+  "", @keyboard.controlLeft, @keyboard.keyA, @keyboard.keyS, @keyboard.keyD, @keyboard.keyF,
+  @keyboard.keyG, @keyboard.keyH, @keyboard.keyJ, @keyboard.keyK, @keyboard.keyL,
+  @keyboard.semicolon, @keyboard.quote, @keyboard.backquote, @keyboard.shiftLeft,
+  @keyboard.backslash, @keyboard.keyZ, @keyboard.keyX, @keyboard.keyC, @keyboard.keyV,
+  @keyboard.keyB, @keyboard.keyN, @keyboard.keyM, @keyboard.comma, @keyboard.period,
+  "", "", "", @keyboard.altLeft, @keyboard.space, "", @keyboard.f1, @keyboard.f2,
+  @keyboard.f3, @keyboard.f4, @keyboard.f5, @keyboard.f6, @keyboard.f7, @keyboard.f8,
+  @keyboard.f9, @keyboard.f10, @keyboard.f11, @keyboard.f12, @keyboard.home, "",
+  @keyboard.pageUp, "", "", "", "", "", @keyboard.end, @keyboard.capsLock, @keyboard.pageDown,
+  @keyboard.insert, @keyboard.delete, @keyboard.escape, @keyboard.controlRight, @keyboard.shiftRight,
+  @keyboard.altRight, @keyboard.scrollLock,
 ]

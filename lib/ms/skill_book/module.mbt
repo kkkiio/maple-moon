@@ -1,18 +1,32 @@
+///|
 struct Module {
   player_getter : () -> @player.Player?
   sp_stat_id : @char_stats.StatId
+  skill : @resource.NxNode
 }
 
-pub fn Module::new(
+///|
+pub fn Module::load(
   player_getter : () -> @player.Player?,
   sp_stat_id : @char_stats.StatId
-) -> Module {
-  { player_getter, sp_stat_id }
+) -> @utils.Future[Module] {
+  @ui.ui_window_2_loader().load_res(["Skill"])
+  |> @utils.map(fn(skill) { Module::new(player_getter, sp_stat_id, skill) })
 }
 
+///|
+fn Module::new(
+  player_getter : () -> @player.Player?,
+  sp_stat_id : @char_stats.StatId,
+  skill : @resource.NxNode
+) -> Module {
+  { player_getter, sp_stat_id, skill }
+}
+
+///|
 pub fn make_handlers(
   self : Module
-) -> Array[(@net.Opcode, (@net.InPacket) -> Unit)] {
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
       @net.UPDATE_SKILL,
@@ -24,12 +38,16 @@ pub fn make_handlers(
       ),
     ),
   ]
+  |> Map::from_array
 }
 
-pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
+///|
+pub fn make_actions(
+  self : Module
+) -> Map[@keyboard.ActionId, @action.Descriptor] {
   [
     (
-      @action.Id::SKILLS,
+      @keyboard.ActionId::SKILLS,
       @action.Descriptor::UI(
         key=@ui.UIElementType::SKILL_BOOK,
         focused=false,
@@ -44,6 +62,7 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
               level: stats.get_level(),
               sp: stats.get_sp(),
             },
+            self.skill,
           )
           stats.listen_stat_changes(
             self.sp_stat_id,
@@ -79,4 +98,5 @@ pub fn make_actions(self : Module) -> Array[(@action.Id, @action.Descriptor)] {
       ),
     ),
   ]
+  |> Map::from_array
 }

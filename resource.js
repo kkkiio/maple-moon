@@ -273,7 +273,7 @@ export class AsyncResourceLoader {
 export class DirResourceLoader {
     constructor(rootPath) {
         this.rootPath = rootPath;
-        this.cache = {};
+        this.cache = {}; // TODO: remove and implement cache in game code
     }
     /**
      * 

@@ -1,19 +1,24 @@
-/// A tile and obj layer.
+///| A tile and obj layer.
 struct TilesObjs {
   tiles : Array[Tile]
   objs : Array[Obj]
 }
 
+///|
 pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] {
-  let tileset = match src.value() {
-    { "info": { "tS": String(tileset) } } => tileset + ".img"
-    _ => ""
+  let tileset_future = match src.value() {
+    { "info": { "tS": String(ts) } } =>
+      tile_loader.load_res([ts + ".img"]).map(@option.some)
+    _ => @utils.Future::from_value(None)
   }
-
   // Load tiles
   let tiles_future = src["tile"]
     .iter()
-    .map(fn(tilenode) { Tile::load(tilenode, tileset) })
+    .map(
+      fn(tilenode) {
+        tileset_future.map(fn(tileset) { Tile::new(tilenode, tileset) })
+      },
+    )
     .collect()
     |> @utils.Future::all_of()
 
@@ -36,6 +41,7 @@ pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] 
   )
 }
 
+///|
 fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
   let tileZMap = Map::new()
   for tile in tiles {
@@ -54,16 +60,19 @@ fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
   { tiles, objs }
 }
 
+///|
 pub fn TilesObjs::default() -> TilesObjs {
   { tiles: [], objs: [] }
 }
 
+///|
 pub fn update(self : TilesObjs) -> Unit {
   for obj in self.objs {
     obj.update()
   }
 }
 
+///|
 pub fn draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
   for obj in self.objs {
     obj.draw(viewpos, alpha)
@@ -73,11 +82,12 @@ pub fn draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
   }
 }
 
-/// The collection of tile and obj layers on a map.
+///| The collection of tile and obj layers on a map.
 struct MapTilesObjs {
   layers : Array[TilesObjs]
 }
 
+///|
 pub fn MapTilesObjs::load(
   src : NxNode
 ) -> @utils.Future[Result[MapTilesObjs, Error]] {
@@ -95,16 +105,19 @@ pub fn MapTilesObjs::load(
   )
 }
 
+///|
 pub fn MapTilesObjs::default() -> MapTilesObjs {
   { layers: Array::makei(@layer.ids.length(), fn(_i) { TilesObjs::default() }) }
 }
 
+///|
 pub fn update(self : MapTilesObjs) -> Unit {
   for layer in self.layers {
     layer.update()
   }
 }
 
+///|
 pub fn draw(
   self : MapTilesObjs,
   layer : Int,

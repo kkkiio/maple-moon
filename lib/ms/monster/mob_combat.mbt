@@ -1,3 +1,4 @@
+///|
 struct MobCombat {
   // player : Player
   // chars : MapChars
@@ -8,10 +9,12 @@ struct MobCombat {
   // damage_numbers : Array[DamageNumber]
 }
 
+///|
 pub fn MobCombat::new(mobs : MapMobs) -> MobCombat {
   { mobs, }
 }
 
+///|
 pub fn use_move(
   self : MobCombat,
   oid : Int,
@@ -24,32 +27,31 @@ pub fn use_move(
   match self.mobs.get_mobs().get(oid) {
     Some(mob) =>
       if 0 < action_id && action_id < 7 {
-        let move = mob.get_move_attack!(action_id)
-        apply_move_attack(move, mob)
+        let mov = mob.get_move_attack!(action_id)
+        apply_move_attack(mov, mob)
       } else if skill_id != 0 {
-        let move = mob.get_move_skill!(skill_id, level)
-        apply_move_skill(move, mob)
+        let mov = mob.get_move_skill!(skill_id, level)
+        apply_move_skill(mov, mob)
       }
     None => ()
   }
 }
 
-pub fn apply_move_skill(move : MobSkill, mob : Mob) -> Unit {
-  mob.update_movement_ex(1, 1, 47, move.get_id(), move.get_level(), 0)
-  if move.is_buff() {
-    mob.give_buff(move.get_buff())
+///|
+pub fn apply_move_skill(mov : MobSkill, mob : Mob) -> Unit {
+  mob.update_movement_ex(1, 1, 47, mov.get_id(), mov.get_level(), 0)
+  if mov.is_buff() {
+    mob.give_buff(mov.get_buff())
   }
-  mob.use_skill(move)
-  move.apply_useeffects(mob)
+  mob.use_skill(mov)
+  mov.apply_useeffects(mob)
   // move.apply_hit_effects(mob);
 }
 
-pub fn apply_move_attack(
-  move : MobSpecialAttack,
-  mob : Mob
-) -> Unit {
-  mob.update_movement_ex(1, 1, 2 * (move.get_id() + 24), 0, 0, 0)
-  mob.use_attack(move)
-  move.apply_useeffects(mob)
+///|
+pub fn apply_move_attack(mov : MobSpecialAttack, mob : Mob) -> Unit {
+  mob.update_movement_ex(1, 1, 2 * (mov.get_id() + 24), 0, 0, 0)
+  mob.use_attack(mov)
+  mov.apply_useeffects(mob)
   // move.apply_hit_effects(mob);
 }

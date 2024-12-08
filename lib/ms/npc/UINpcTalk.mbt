@@ -518,9 +518,9 @@ fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
 }
 
 ///|
-fn new_npc_talk_more_packet_with_response(response : String) -> @net.OutPacket {
-  new_npc_talk_more_packet(2, 1)..write_string(response)
-}
+// fn new_npc_talk_more_packet_with_response(response : String) -> @net.OutPacket {
+//   new_npc_talk_more_packet(2, 1)..write_string(response)
+// }
 
 ///|
 fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {

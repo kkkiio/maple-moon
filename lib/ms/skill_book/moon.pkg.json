@@ -1,7 +1,6 @@
 {
   "import": [
     "KKKIIO/maple-moon-client/lib/ms/character",
-    "KKKIIO/maple-moon-client/lib/ms/physics",
     "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/buff",

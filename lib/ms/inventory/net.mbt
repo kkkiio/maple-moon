@@ -1,3 +1,4 @@
+///|
 struct Mod {
   mode : Modification
   t : TypeId
@@ -5,12 +6,13 @@ struct Mod {
   arg : Int
 }
 
+///|
 fn handle_modify_inventory(
   inventory : Inventory,
   player_getter : () -> @player.Player?,
   recv : @net.InPacket
 ) -> Unit! {
-  guard let Some(player) = player_getter() else { None => return  }
+  guard let Some(player) = player_getter() else { None => return }
   recv.read_bool!() |> ignore // 'updatetick'
   let mods = Array::new()
   let size = recv.read_byte!()
@@ -37,19 +39,19 @@ fn handle_modify_inventory(
     }
     mods.push({ mode, t, pos, arg })
   }
-  let move = if recv.available() {
+  let mov = if recv.available() {
     Movement::from_int(recv.read_byte!()).unwrap()
   } else {
     Movement::MOVE_INTERNAL
   }
   for mod in mods {
     if mod.mode == Modification::SWAP {
-      inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, move)
+      inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, mov)
     }
 
     // TODO: shop
 
-    match move {
+    match mov {
       Movement::MOVE_INTERNAL =>
         match mod.t {
           TypeId::EQUIPPED => {
@@ -58,7 +60,10 @@ fn handle_modify_inventory(
             change_equip(inventory, player, -mod.arg)
           }
           TypeId::EQUIP
-          | TypeId::USE | TypeId::SETUP | TypeId::ETC | TypeId::CASH => ()
+          | TypeId::USE
+          | TypeId::SETUP
+          | TypeId::ETC
+          | TypeId::CASH => ()
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
@@ -72,6 +77,7 @@ fn handle_modify_inventory(
   player.recalc_stats(true)
 }
 
+///|
 fn change_equip(
   inventory : Inventory,
   player : @player.Player,

@@ -1,3 +1,4 @@
+///|
 pub let send_op_name_map : Map[Int, String] = {
   1: "LOGIN_PASSWORD",
   2: "GUEST_LOGIN",
@@ -183,25 +184,25 @@ struct OutPacket {
   opcode : OutPacketOpcode
 }
 
+///|
 pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
   let pkt = { buf: @buffer.new(), opcode }
   pkt.write_short(opcode.int_value())
   pkt
 }
 
+///|
+/// @alert deprecated "use PacketProcessor::send_packet instead"
 pub fn dispatch(self : OutPacket) -> Unit {
-  @log.log(
-    self.opcode.log_level(),
-    { "opcode": self.opcode },
-    "dispatching packet",
-  )
-  PacketProcessor::get().process_out(self.buf.to_bytes())
+  PacketProcessor::get().send_packet(self)
 }
 
-pub fn OutPacket::build(self : OutPacket) -> Bytes {
+///|
+pub fn encode(self : OutPacket) -> Bytes {
   self.buf.to_bytes()
 }
 
+///|
 pub fn OutPacket::skip(self : OutPacket, count : Int) -> Unit {
   let mut i = 0
   while i < count {
@@ -210,10 +211,12 @@ pub fn OutPacket::skip(self : OutPacket, count : Int) -> Unit {
   }
 }
 
+///|
 pub fn OutPacket::write_byte(self : OutPacket, ch : Byte) -> Unit {
   self.buf.write_byte(ch)
 }
 
+///|
 pub fn OutPacket::write_short(self : OutPacket, sh : Int) -> Unit {
   let mut i = 0
   let mut sh = sh
@@ -224,6 +227,7 @@ pub fn OutPacket::write_short(self : OutPacket, sh : Int) -> Unit {
   }
 }
 
+///|
 pub fn OutPacket::write_int(self : OutPacket, in_val : Int) -> Unit {
   let mut i = 0
   let mut in_val = in_val
@@ -234,6 +238,7 @@ pub fn OutPacket::write_int(self : OutPacket, in_val : Int) -> Unit {
   }
 }
 
+///|
 pub fn OutPacket::write_long(self : OutPacket, lg : Int64) -> Unit {
   let mut i = 0
   let mut lg = lg
@@ -244,11 +249,13 @@ pub fn OutPacket::write_long(self : OutPacket, lg : Int64) -> Unit {
   }
 }
 
+///|
 pub fn OutPacket::write_time(self : OutPacket) -> Unit {
   // NOTE: server doesn't seem to care about the value
   self.write_int(0)
 }
 
+///|
 pub fn OutPacket::write_point(
   self : OutPacket,
   position : @struct.Point[Int]
@@ -257,13 +264,15 @@ pub fn OutPacket::write_point(
   self.write_short(position.y)
 }
 
+///|
 pub fn OutPacket::write_string(self : OutPacket, str : String) -> Unit {
   self.write_short(str.length())
   buf_write_utf8(self.buf, str)
 }
 
+///|
 pub fn buf_write_utf8(buf : @buffer.T, str : String) -> Unit {
-  let bytes = Bytes::make(4, b'\x00')
+  let bytes = FixedArray::make(4, b'\x00')
   str
   .iter()
   .each(
@@ -282,6 +291,7 @@ pub fn buf_write_utf8(buf : @buffer.T, str : String) -> Unit {
 // self.write_int(rand)
 // }
 
+///|
 pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
   let macs = @config.global().get_macs()
   let hwid = @config.global().get_hwid()
@@ -289,11 +299,13 @@ pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
   self.write_string(hwid)
 }
 
+///|
 pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
   @strconv.parse_int!(hex_val, base=16).to_byte()
 }
 
 // Opcodes for OutPackets associated with version 83 of the game
+///|
 pub(all) enum OutPacketOpcode {
   LOGIN
   CHAR_LIST_REQUEST
@@ -344,6 +356,7 @@ pub(all) enum OutPacketOpcode {
   PLAYER_UPDATE
 } derive(Eq, Compare, Show)
 
+///|
 pub fn int_value(self : OutPacketOpcode) -> Int {
   match self {
     LOGIN => 1
@@ -396,10 +409,12 @@ pub fn int_value(self : OutPacketOpcode) -> Int {
   }
 }
 
+///|
 pub fn hash(self : OutPacketOpcode) -> Hash {
   self.int_value()
 }
 
+///|
 pub fn log_level(self : OutPacketOpcode) -> @log.Level {
   match self {
     MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE

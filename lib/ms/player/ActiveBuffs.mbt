@@ -8,30 +8,37 @@ struct SimpleStatBuff {
   stat : @stat.Id
 }
 
+///|
 fn SimpleStatBuff::new(stat : @stat.Id) -> SimpleStatBuff {
   { stat, }
 }
 
+///|
 fn apply_to(self : SimpleStatBuff, stats : CharStats, value : Int) -> Unit {
   // stats.add_buff(self.stat, value)
 }
 
 // Template for PercentageStatBuff
+///|
 struct PercentageStatBuff {
   stat : @stat.Id
 }
 
+///|
 fn PercentageStatBuff::new(stat : @stat.Id) -> PercentageStatBuff {
   { stat, }
 }
 
+///|
 fn apply_to(self : PercentageStatBuff, stats : CharStats, value : Int) -> Unit {
   // stats.add_percent(self.stat, Double::from_int(value) / 100.0)
 }
 
 // MapleWarriorBuff
+///|
 type MapleWarriorBuff Unit derive(Default)
 
+///|
 fn apply_to(self : MapleWarriorBuff, stats : CharStats, value : Int) -> Unit {
   // stats.add_percent(@stat.Id::STR, Double::from_int(value) / 100.0)
   // stats.add_percent(@stat.Id::DEX, Double::from_int(value) / 100.0)
@@ -40,24 +47,30 @@ fn apply_to(self : MapleWarriorBuff, stats : CharStats, value : Int) -> Unit {
 }
 
 // StanceBuff
+///|
 type StanceBuff Unit derive(Default)
 
+///|
 fn apply_to(self : StanceBuff, stats : CharStats, value : Int) -> Unit {
   // stats.set_stance(Double::from_int(value) / 100.0)
 }
 
 // BoosterBuff
+///|
 type BoosterBuff Unit derive(Default)
 
+///|
 fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
   // stats.set_attackspeed(value)
 }
 
 // ActiveBuffs
+///|
 struct ActiveBuffs {
   buffs : @immut/sorted_map.T[@buff.StatId, ActiveBuff]
 }
 
+///|
 fn ActiveBuffs::new() -> ActiveBuffs {
   {
     buffs: @immut/sorted_map.from_array(
@@ -78,6 +91,7 @@ fn ActiveBuffs::new() -> ActiveBuffs {
   }
 }
 
+///|
 fn apply_buff(
   self : ActiveBuffs,
   stats : CharStats,

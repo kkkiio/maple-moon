@@ -31,12 +31,22 @@ pub fn reset_handlers(
   self : PacketProcessor,
   handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
 ) -> Unit {
-  self.switch.reset_handlers(handlers.add(PING, handle_ping))
+  self.switch.reset_handlers(handlers.add(PING, fn(_v) { handle_ping(self) }))
 }
 
 ///|
 pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
   self.session.write(data)
+}
+
+///| send packet to the server
+pub fn send_packet(self : PacketProcessor, packet : OutPacket) -> Unit {
+  @log.log(
+    packet.opcode.log_level(),
+    { "opcode": packet.opcode },
+    "dispatching packet",
+  )
+  self.process_out(packet.encode())
 }
 
 ///|
@@ -151,6 +161,6 @@ pub fn make_handler[T : Show](
 }
 
 ///|
-pub fn handle_ping(_packet : InPacket) -> Unit {
-  OutPacket::new(OutPacketOpcode::PONG).dispatch()
+pub fn handle_ping(processor : PacketProcessor) -> Unit {
+  processor.send_packet(OutPacket::new(OutPacketOpcode::PONG))
 }

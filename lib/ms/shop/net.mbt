@@ -71,8 +71,8 @@ struct ShopItem {
 } derive(Show)
 
 ///|
-pub fn handle_confirm_shop_transaction(module : Module, code : Int) -> Unit {
-  guard let Some(shop) = module.shop_ui else { None => return }
+pub fn handle_confirm_shop_transaction(mod : Module, code : Int) -> Unit {
+  guard let Some(shop) = mod.shop_ui else { None => return }
   match code {
     0 | 8 => shop.set_attributes()
     _ => ()

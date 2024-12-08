@@ -1,3 +1,4 @@
+///|
 struct CharStats {
   name : String
   weapon_type_getter : () -> @weapon.Type
@@ -35,7 +36,8 @@ struct CharStats {
   sp_stat_id : StatId
 }
 
-pub struct StatsEntry {
+///|
+pub(all) struct StatsEntry {
   name : String
   female : Bool
   level : Int
@@ -56,6 +58,7 @@ pub struct StatsEntry {
   portal : Int
 }
 
+///|
 pub fn CharStats::from_entry(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
@@ -102,6 +105,7 @@ pub fn CharStats::from_entry(
   cs
 }
 
+///|
 pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats._.clear()
   self.buff_deltas._.clear()
@@ -131,94 +135,117 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.reduce_damage = 0.0
 }
 
+///|
 pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
   self.total_stats[stat]
 }
 
+///|
 pub fn get_base_hp(self : CharStats) -> Int {
   self.inherent_hp
 }
 
+///|
 pub fn set_base_hp(self : CharStats, value : Int) -> Unit {
   self.inherent_hp = value
 }
 
+///|
 pub fn get_base_mp(self : CharStats) -> Int {
   self.inherent_mp
 }
 
+///|
 pub fn set_base_mp(self : CharStats, value : Int) -> Unit {
   self.inherent_mp = value
 }
 
+///|
 pub fn get_max_hp(self : CharStats) -> Int {
   self.inherent_max_hp
 }
 
+///|
 pub fn set_max_hp(self : CharStats, value : Int) -> Unit {
   self.inherent_max_hp = value
 }
 
+///|
 pub fn get_max_mp(self : CharStats) -> Int {
   self.inherent_max_mp
 }
 
+///|
 pub fn set_max_mp(self : CharStats, value : Int) -> Unit {
   self.inherent_max_mp = value
 }
 
+///|
 pub fn get_level(self : CharStats) -> Int {
   self.level
 }
 
+///|
 pub fn set_level(self : CharStats, value : Int) -> Unit {
   self.level = value
 }
 
+///|
 pub fn get_str(self : CharStats) -> Int {
   self.str
 }
 
+///|
 pub fn set_str(self : CharStats, value : Int) -> Unit {
   self.str = value
 }
 
+///|
 pub fn get_dex(self : CharStats) -> Int {
   self.dex
 }
 
+///|
 pub fn set_dex(self : CharStats, value : Int) -> Unit {
   self.dex = value
 }
 
+///|
 pub fn get_int(self : CharStats) -> Int {
   self.int
 }
 
+///|
 pub fn set_int(self : CharStats, value : Int) -> Unit {
   self.int = value
 }
 
+///|
 pub fn get_luk(self : CharStats) -> Int {
   self.luk
 }
 
+///|
 pub fn set_luk(self : CharStats, value : Int) -> Unit {
   self.luk = value
 }
 
+///|
 pub fn get_ap(self : CharStats) -> Int {
   self.ap
 }
 
+///|
 pub fn set_ap(self : CharStats, value : Int) -> Unit {
   self.ap = value
 }
 
+///|
 pub fn get_sp(self : CharStats) -> Int {
   self.sp
 }
 
+///|
 pub fn set_sp(self : CharStats, value : Int) -> Unit {
   self.sp = value
   guard let Some(listeners) = self.stat_listeners.get(self.sp_stat_id) else {
@@ -227,35 +254,43 @@ pub fn set_sp(self : CharStats, value : Int) -> Unit {
   listeners.retain(fn(listener) { listener(value) })
 }
 
+///|
 pub fn get_fame(self : CharStats) -> Int {
   self.fame
 }
 
+///|
 pub fn set_fame(self : CharStats, value : Int) -> Unit {
   self.fame = value
 }
 
+///|
 pub fn get_stance(self : CharStats) -> Double {
   self.stance
 }
 
+///|
 pub fn get_portal(self : CharStats) -> Int {
   self.portal
 }
 
+///|
 pub fn get_map_id(self : CharStats) -> Int {
   self.map_id
 }
 
+///|
 pub fn set_map_id(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
+///|
 pub fn add_value(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   let current = self.get_total(stat)
   self.set_total(stat, current + value)
 }
 
+///|
 pub fn set_total(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   self.total_stats[stat] = match eqstat_caps.get(stat) {
     Some(cap_value) => if value > cap_value { cap_value } else { value }
@@ -263,6 +298,7 @@ pub fn set_total(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
   }
 }
 
+///|
 pub fn close_totalstats(self : CharStats) -> Unit {
   self.total_stats[@equip_stat.Id::ACC] += self.calculate_accuracy()
   for stat, p in self.percentages {
@@ -281,22 +317,26 @@ pub fn close_totalstats(self : CharStats) -> Unit {
   multiplier).to_int()
 }
 
+///|
 fn get_primary_stat(self : CharStats) -> Int {
   let primary = self.job.get_primary(self.get_weapon_type())
   return (self.get_multiplier() * self.get_total(primary).to_double()).to_int()
 }
 
+///|
 fn get_secondary_stat(self : CharStats) -> Int {
   let secondary = self.job.get_secondary(self.get_weapon_type())
   return self.get_total(secondary)
 }
 
+///|
 fn calculate_accuracy(self : CharStats) -> Int {
   let totaldex = self.get_total(@equip_stat.Id::DEX)
   let totalluk = self.get_total(@equip_stat.Id::LUK)
   return (totaldex.to_double() * 0.8 + totalluk.to_double() * 0.5).to_int()
 }
 
+///|
 fn get_multiplier(self : CharStats) -> Double {
   match self.get_weapon_type() {
     @weapon.Type::SWORD_1H => 4.0
@@ -319,7 +359,7 @@ fn get_multiplier(self : CharStats) -> Double {
   }
 }
 
-/// Externalising this for easier configurability.
+///| Externalising this for easier configurability.
 let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array(
   [
     (@equip_stat.Id::STR, 999),
@@ -340,6 +380,7 @@ let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array(
   ],
 )
 
+///|
 pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
   // TODO: Random stuff, need to find the actual formula somewhere.
   let weapon_def = self.get_total(@equip_stat.Id::WDEF)
@@ -350,71 +391,88 @@ pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
   reduceatk - (reduceatk.to_double() * self.reduce_damage).to_int()
 }
 
+///|
 pub fn get_maxdamage(self : CharStats) -> Int {
   self.max_damage
 }
 
+///|
 pub fn get_mindamage(self : CharStats) -> Int {
   self.min_damage
 }
 
+///|
 pub fn get_critical(self : CharStats) -> Double {
   self.critical
 }
 
+///|
 pub fn get_ignoredef(self : CharStats) -> Double {
   self.ignore_def
 }
 
+///|
 pub fn get_range(self : CharStats) -> @struct.Rectangle[Int] {
   @struct.Rectangle::from4(-self.projectile_range, -5, -50, 50)
 }
 
+///|
 pub fn get_attackspeed(self : CharStats) -> Int {
   self.attack_speed
 }
 
+///|
 pub fn get_job(self : CharStats) -> @job.Job {
   self.job
 }
 
+///|
 pub fn get_weapon_type(self : CharStats) -> @weapon.Type {
   (self.weapon_type_getter)()
 }
 
+///|
 pub fn get_exp(self : CharStats) -> Int64 {
   self.exp
 }
 
+///|
 pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
   self.exp = exp
 }
 
+///|
 pub fn get_female(self : CharStats) -> Bool {
   self.female
 }
 
+///|
 pub fn get_buffdelta(self : CharStats, stat : @equip_stat.Id) -> Int {
   self.buff_deltas[stat]
 }
 
+///|
 pub fn get_name(self : CharStats) -> String {
   self.name
 }
 
+///|
 pub fn is_damage_buffed(self : CharStats) -> Bool {
   self.get_buffdelta(@equip_stat.Id::WATK) > 0 ||
   self.get_buffdelta(@equip_stat.Id::MAGIC) > 0
 }
 
+///|
 pub fn change_job(self : CharStats, id : Int) -> Unit {
-  self.job = @job.Job::new(~id)
+  self.job = @job.Job::new(id~)
 }
 
+///|
 pub fn get_matk(self : CharStats) -> Int {
   self.total_stats[@equip_stat.MAGIC]
 }
 
+///|
 pub fn listen_stat_changes(
   self : CharStats,
   stat_id : StatId,

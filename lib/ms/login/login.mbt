@@ -111,12 +111,15 @@ pub fn new_login_start_packet() -> @net.OutPacket {
 ///|
 pub fn login(self : Module, account : String, password : String) -> Unit {
   self.input_acc_pass = Some((account, password))
-  self.login_task = Some({ state: ACQ_CONN, account, password })
+  self.login_task = Some(
+    { processor: self.processor, state: ACQ_CONN, account, password },
+  )
   self.connect_task = None
 }
 
 ///|
 struct LoginTask {
+  processor : @net.PacketProcessor
   mut state : LoginState
   account : String
   password : String
@@ -131,7 +134,7 @@ enum LoginState {
 
 ///|
 fn update(self : LoginTask) -> Unit {
-  let p = @net.PacketProcessor::get()
+  let p = self.processor
   match p.get_status() {
     READY =>
       match self.state {
@@ -306,25 +309,25 @@ fn new_char_list_request_packet(
 }
 
 ///|
-pub fn handle_char_list(module : Module, recv : @net.InPacket) -> Unit!Error {
+pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
   recv.read_ubyte!() |> ignore // channel_id
   let characters = []
   let charcount = recv.read_byte!()
   for i = 0; i < charcount; i = i + 1 {
     characters.push(parse_charentry!(recv))
   }
-  module.characters = characters
-  module.selected_index = None
+  mod.characters = characters
+  mod.selected_index = None
   let pic = recv.read_byte!()
   recv.read_int!() |> ignore // slots
   if characters.length() > 0 {
     match pic {
       2 => {
-        let cid = match module.select_cid {
+        let cid = match mod.select_cid {
           Some(cid) => cid
           None => characters[0].id
         }
-        module.select_cid = Some(cid)
+        mod.select_cid = Some(cid)
         new_select_char_packet(cid).dispatch()
       }
       _ => fail!("pic=\{pic} not ok")
@@ -336,16 +339,16 @@ pub fn handle_char_list(module : Module, recv : @net.InPacket) -> Unit!Error {
 }
 
 ///|
-pub fn handle_server_ip(module : Module, recv : @net.InPacket) -> Unit! {
+pub fn handle_server_ip(mod : Module, recv : @net.InPacket) -> Unit! {
   recv.skip_byte!()
   let (_, port) = parse_login!(recv)
   let cid = recv.read_int!()
-  match module.characters.search_by(fn(c) { c.id == cid }) {
-    Some(i) => module.selected_index = Some(i)
+  match mod.characters.search_by(fn(c) { c.id == cid }) {
+    Some(i) => mod.selected_index = Some(i)
     None => fail!("no character with id=\{cid}")
   }
-  @net.PacketProcessor::get().connect_channel(port)
-  module.connect_task = Some({ cid, })
+  mod.processor.connect_channel(port)
+  mod.connect_task = Some({ processor: mod.processor, cid })
 }
 
 ///|
@@ -359,13 +362,10 @@ pub fn handle_charname_response(recv : @net.InPacket) -> Unit! {
 }
 
 ///|
-pub fn handle_add_new_char_entry(
-  module : Module,
-  recv : @net.InPacket
-) -> Unit! {
+pub fn handle_add_new_char_entry(mod : Module, recv : @net.InPacket) -> Unit! {
   recv.skip!(1)
   let character = parse_charentry!(recv)
-  module.characters.push(character)
+  mod.characters.push(character)
 }
 
 ///|
@@ -598,12 +598,13 @@ pub(open) trait BgTask {
 
 ///|
 struct ConnectChannelTask {
+  processor : @net.PacketProcessor
   cid : Int
 }
 
 ///|
 pub fn update(self : ConnectChannelTask) -> Bool {
-  if @net.PacketProcessor::get().get_status() == @net.READY {
+  if self.processor.get_status() == @net.READY {
     new_player_login_packet(self.cid).dispatch()
     true
   } else {

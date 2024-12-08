@@ -528,11 +528,11 @@ let beginner_skills : FixedArray[@skill.SkillId] = [
 ///|
 fn enumerate[T](iter : Iter[T]) -> Iter2[Int, T] {
   Iter2::new(
-    fn(yield) {
+    fn(yield_) {
       let mut i = 0
       iter.run(
         fn(item) {
-          let res = yield(i, item)
+          let res = yield_(i, item)
           i += 1
           res
         },

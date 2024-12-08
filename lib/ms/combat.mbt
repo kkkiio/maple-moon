@@ -1,3 +1,4 @@
+///|
 struct Combat {
   damage_number_set : @combat_ui.DamageNumberSet
   mobs : @monster.MapMobs
@@ -11,6 +12,7 @@ struct Combat {
   cooldowns : Map[Int, Int]
 }
 
+///|
 pub fn Combat::new(
   damage_number_set : @combat_ui.DamageNumberSet,
   mobs : @monster.MapMobs
@@ -28,6 +30,7 @@ pub fn Combat::new(
   }
 }
 
+///|
 pub fn draw(
   self : Combat,
   viewx : Double,
@@ -42,6 +45,7 @@ pub fn draw(
   }
 }
 
+///|
 pub fn update(self : Combat) -> Unit! {
   for bullet_effect in self.bullet_effects.process() {
     self.apply_bullet_effect!(bullet_effect)
@@ -66,6 +70,7 @@ pub fn update(self : Combat) -> Unit! {
   self.damage_numbers.retain(fn(dn) { dn.update().not() })
 }
 
+///|
 pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit! {
   if player.can_attack().not() {
     return
@@ -81,6 +86,7 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit! 
   }
 }
 
+///|
 fn apply_move(
   self : Combat,
   player : @player.Player,
@@ -140,6 +146,7 @@ fn apply_move(
   }
 }
 
+///|
 fn apply_result_movement(
   self : Combat,
   player : @player.Player,
@@ -153,6 +160,7 @@ fn apply_result_movement(
   }
 }
 
+///|
 fn apply_rush(
   self : Combat,
   player : @player.Player,
@@ -166,6 +174,7 @@ fn apply_rush(
   player.rush(targetx.to_double())
 }
 
+///|
 fn find_closest_mob(
   objs : @map_object.MapObjects[@monster.Mob],
   range : @struct.Rectangle[Int],
@@ -187,6 +196,7 @@ fn find_closest_mob(
   arr.iter().take(objcount).map(fn(pair) { pair.1 }).collect()
 }
 
+///|
 struct DamageEffect {
   user : @combat.AttackUser
   number : @combat_ui.DamageNumber
@@ -196,12 +206,14 @@ struct DamageEffect {
   move_id : Int
 }
 
+///|
 struct BulletEffect {
   damageeffect : DamageEffect
   bullet : @combat.Bullet
   mut target : @struct.Point[Int]
 }
 
+///|
 fn new_use_skill_packet(moveid : Int, level : Int) -> @net.OutPacket {
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::USE_SKILL)
   packet.write_time()
@@ -217,22 +229,22 @@ fn new_use_skill_packet(moveid : Int, level : Int) -> @net.OutPacket {
   packet
 }
 
-fn new_damage_reactor_packet(
-  oid : Int,
-  position : @struct.Point[Int],
-  stance : Int,
-  skillid : Int
-) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::DAMAGE_REACTOR)
-  packet.write_int(oid)
-  packet.write_point(position)
-  packet.write_short(stance)
-  packet.skip(4)
-  packet.write_int(skillid)
-  packet
-}
+// fn new_damage_reactor_packet(
+//   oid : Int,
+//   position : @struct.Point[Int],
+//   stance : Int,
+//   skillid : Int
+// ) -> @net.OutPacket {
+//   let packet = @net.OutPacket::new(@net.OutPacketOpcode::DAMAGE_REACTOR)
+//   packet.write_int(oid)
+//   packet.write_point(position)
+//   packet.write_short(stance)
+//   packet.skip(4)
+//   packet.write_int(skillid)
+//   packet
+// }
 
-/// Notifies the server of an attack. 
+///| Notifies the server of an attack. 
 /// 
 /// The opcode is determined by the attack type. 
 /// Attack::CLOSE = CLOSE_ATTACK(44) 
@@ -274,6 +286,7 @@ fn new_attack_packet(attack : @combat.AttackResult) -> @net.OutPacket {
   packet
 }
 
+///|
 fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
   match t {
     @combat.AttackType::CLOSE => @net.OutPacketOpcode::CLOSE_ATTACK
@@ -282,6 +295,7 @@ fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
   }
 }
 
+///|
 pub fn get_move(self : Combat, move_id : Int) -> @combat_do.SpecialMove! {
   if move_id == 0 {
     return self.regular_attack
@@ -296,6 +310,7 @@ pub fn get_move(self : Combat, move_id : Int) -> @combat_do.SpecialMove! {
   }
 }
 
+///|
 fn extract_effects(
   self : Combat,
   user : @character.Character,
@@ -382,6 +397,7 @@ fn extract_effects(
   }
 }
 
+///|
 fn place_numbers(
   self : Combat,
   oid : Int,
@@ -402,6 +418,7 @@ fn place_numbers(
   return numbers
 }
 
+///|
 fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let number = effect.number
@@ -415,6 +432,7 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
   act.apply_hit_effects(effect.user, mob)
 }
 
+///|
 fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit! {
   if effect.bullet.set_target(effect.target) {
     self.apply_damage_effect!(effect.damageeffect)
@@ -423,6 +441,7 @@ fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit! {
   }
 }
 
+///|
 pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let (degenerate, attacktype) = if player.char_base.state ==
     @character.CharState::PRONE {
@@ -430,7 +449,9 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   } else {
     match player.get_weapontype() {
       @weapon.Type::BOW
-      | @weapon.Type::CROSSBOW | @weapon.Type::CLAW | @weapon.Type::GUN => {
+      | @weapon.Type::CROSSBOW
+      | @weapon.Type::CLAW
+      | @weapon.Type::GUN => {
         let degenerate = player.inventory.has_projectile().not()
         (
           degenerate,
@@ -488,6 +509,7 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   }
 }
 
+///|
 pub fn can_use(
   self : Combat,
   player : @player.Player,
@@ -515,6 +537,7 @@ pub fn can_use(
   act.can_use(level, weapontype, job, hp, mp, bullets)
 }
 
+///|
 fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
   self.cooldowns[skill_id].or(0) > 0
 }

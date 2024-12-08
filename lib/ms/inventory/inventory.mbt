@@ -1,10 +1,12 @@
-pub enum Movement {
+///|
+pub(all) enum Movement {
   MOVE_NONE
   MOVE_INTERNAL
   MOVE_UNEQUIP
   MOVE_EQUIP
 }
 
+///|
 pub fn int_value(self : Movement) -> Int {
   match self {
     Movement::MOVE_NONE => -1
@@ -14,7 +16,8 @@ pub fn int_value(self : Movement) -> Int {
   }
 }
 
-pub enum Modification {
+///|
+pub(all) enum Modification {
   ADD
   CHANGE_COUNT
   SWAP
@@ -22,6 +25,7 @@ pub enum Modification {
   ADD_COUNT
 } derive(Eq, Hash)
 
+///|
 pub fn int_value(self : Modification) -> Int {
   match self {
     Modification::ADD => 0
@@ -32,6 +36,7 @@ pub fn int_value(self : Modification) -> Int {
   }
 }
 
+///|
 pub fn Modification::from_int(value : Int) -> Modification? {
   match value {
     0 => Modification::ADD |> Some
@@ -43,7 +48,7 @@ pub fn Modification::from_int(value : Int) -> Modification? {
   }
 }
 
-/// Return the move type by value
+///| Return the move type by value
 pub fn Movement::from_int(value : Int) -> Movement? {
   match value {
     -1 => Movement::MOVE_NONE |> Some
@@ -55,6 +60,7 @@ pub fn Movement::from_int(value : Int) -> Movement? {
 }
 
 // The player's inventory
+///|
 struct Inventory {
   inventories : @utils.DefaultMap[TypeId, Map[Int, Slot]]
   items : Map[Int, Item]
@@ -68,13 +74,15 @@ struct Inventory {
   item_listeners : Array[() -> Bool] // TODO: fine-grained listeners
 }
 
+///|
 struct Slot {
   unique_id : Int
   item_id : Int
   mut count : Int
-  cash : Bool
+  // cash : Bool
 }
 
+///|
 pub fn Inventory::new() -> Inventory {
   {
     inventories: @utils.DefaultMap::new(fn() { Map::new() }),
@@ -90,7 +98,7 @@ pub fn Inventory::new() -> Inventory {
   }
 }
 
-/// Recalculate sums of equip stats
+///| Recalculate sums of equip stats
 pub fn recalc_stats(self : Inventory, weapontype : @weapon.Type) -> Unit {
   self.total_stats.map.clear()
   for _, slot in self.inventories[TypeId::EQUIPPED] {
@@ -126,19 +134,22 @@ pub fn recalc_stats(self : Inventory, weapontype : @weapon.Type) -> Unit {
   // }
 }
 
+///|
 pub fn get_meso(self : Inventory) -> Int {
   self.meso
 }
 
-/// Set the meso amount.
+///| Set the meso amount.
 pub fn set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
 }
 
+///|
 pub fn set_slotmax(self : Inventory, type_id : TypeId, slotmax : Int) -> Unit {
   self.slot_maxima.set(type_id, slotmax)
 }
 
+///|
 pub fn add_item(
   self : Inventory,
   invtype : TypeId,
@@ -156,20 +167,22 @@ pub fn add_item(
   )
 }
 
+///|
 pub fn add_slot(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
   item_id : Int,
   count : Int,
-  cash : Bool
+  _cash : Bool
 ) -> Int {
   self.running_uid += 1
   let unique_id = self.running_uid
-  self.inventories[invtype][slot] = { unique_id, item_id, count, cash }
+  self.inventories[invtype][slot] = { unique_id, item_id, count }
   unique_id
 }
 
+///|
 pub fn Inventory::add_pet(
   self : Inventory,
   invtype : TypeId,
@@ -181,6 +194,7 @@ pub fn Inventory::add_pet(
   self.pets.set(self.add_slot(invtype, slot, item_id, 1, cash), { pet_name, })
 }
 
+///|
 pub fn add_equip(
   self : Inventory,
   invtype : TypeId,
@@ -215,22 +229,27 @@ pub fn add_equip(
   )
 }
 
+///|
 pub fn get_stat(self : Inventory, stat : @equip_stat.Id) -> Int {
   self.total_stats[stat]
 }
 
+///|
 pub fn has_projectile(self : Inventory) -> Bool {
   self.bullet_slot > 0
 }
 
+///|
 pub fn get_bulletid(self : Inventory) -> Int {
   self.get_item_id(TypeId::USE, self.bullet_slot)
 }
 
+///|
 pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
   self.inventories[t].get(slot).map(fn(it) { it.item_id }).or(0)
 }
 
+///|
 pub fn get_item_at_slot(
   self : Inventory,
   t : TypeId,
@@ -255,10 +274,12 @@ pub fn get_item_at_slot(
   )
 }
 
+///|
 pub fn get_bulletcount(self : Inventory) -> Int {
   self.get_item_count(TypeId::USE, self.bullet_slot)
 }
 
+///|
 pub fn Inventory::get_item_count(
   self : Inventory,
   t : TypeId,
@@ -267,20 +288,21 @@ pub fn Inventory::get_item_count(
   self.inventories[t].get(slot).map(fn(it) { it.count }).or(0)
 }
 
+///|
 pub fn modify(
   self : Inventory,
   t : TypeId,
   slot : Int,
   mode : Modification,
   arg : Int,
-  move : Movement
+  mov : Movement
 ) -> Unit {
   let (slot, t) = if slot < 0 { (-slot, TypeId::EQUIPPED) } else { (slot, t) }
   let arg = arg.abs()
   match mode {
     Modification::CHANGE_COUNT => self.change_count(t, slot, arg)
     Modification::SWAP =>
-      match move {
+      match mov {
         Movement::MOVE_INTERNAL => self.swap(t, slot, t, arg)
         Movement::MOVE_UNEQUIP =>
           self.swap(TypeId::EQUIPPED, slot, TypeId::EQUIP, arg)
@@ -294,6 +316,7 @@ pub fn modify(
   self.item_listeners.retain(fn(listener) { listener() })
 }
 
+///|
 pub fn swap(
   self : Inventory,
   firsttype : TypeId,
@@ -313,6 +336,7 @@ pub fn swap(
   }
 }
 
+///|
 pub fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
   guard let Some(slot) = self.inventories[t].get(slot_id) else {
     None => return
@@ -329,6 +353,7 @@ pub fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
   }
 }
 
+///|
 pub fn change_count(
   self : Inventory,
   t : TypeId,
@@ -341,14 +366,17 @@ pub fn change_count(
   }
 }
 
+///|
 pub fn get_bulletslot(self : Inventory) -> Int {
   self.bullet_slot
 }
 
+///|
 pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
   self.slot_maxima.get(t).or(0)
 }
 
+///|
 pub fn find_equipslot(self : Inventory, cloth : @equip.EquipData) -> @slot.Id {
   let eqslot = cloth.get_eqslot()
   if eqslot == @slot.Id::RING1 {
@@ -366,10 +394,12 @@ pub fn find_equipslot(self : Inventory, cloth : @equip.EquipData) -> @slot.Id {
   eqslot
 }
 
+///|
 pub fn has_equipped(self : Inventory, slot : @slot.Id) -> Bool {
   self.inventories[TypeId::EQUIPPED].contains(slot.int_value())
 }
 
+///|
 pub fn listen_item_changes(self : Inventory, listener : () -> Bool) -> Unit {
   self.item_listeners.push(listener)
 }

@@ -1,4 +1,5 @@
-pub enum StanceType {
+///|
+pub(all) enum StanceType {
   MOVE
   STAND
   JUMP
@@ -7,11 +8,13 @@ pub enum StanceType {
   SKILL
 } derive(Eq, Hash)
 
-pub struct Stance {
+///|
+pub(all) struct Stance {
   t : StanceType
   face_right : Bool
 } derive(Eq)
 
+///|
 pub fn Stance::from_byte(b : Int) -> Stance {
   let face_right = b % 2 == 0
   let t = match b / 2 {
@@ -24,6 +27,7 @@ pub fn Stance::from_byte(b : Int) -> Stance {
   { t, face_right }
 }
 
+///|
 pub fn int_value(self : Stance) -> Int {
   (match self.t {
     StanceType::MOVE => 1
@@ -37,14 +41,17 @@ pub fn int_value(self : Stance) -> Int {
   (if self.face_right { 0 } else { 1 })
 }
 
+///|
 pub fn Stance::from_type(t : StanceType) -> Stance {
   { t, face_right: true }
 }
 
+///|
 pub fn flip(self : Stance) -> Stance {
   { t: self.t, face_right: self.face_right.not() }
 }
 
+///|
 struct Mob {
   base : @map_object.MapObjectBase
   animations : Map[StanceType, @graphics.Animation]
@@ -87,12 +94,14 @@ struct Mob {
   opacity : @utils.Linear
 }
 
+///|
 enum FlyDirection {
   STRAIGHT
   UPWARDS
   DOWNWARDS
 }
 
+///|
 pub fn Mob::new(
   oi : Int,
   mid : Int,
@@ -252,10 +261,12 @@ pub fn Mob::new(
   }
 }
 
+///|
 pub fn get_oid(self : Mob) -> Int {
   self.base.get_oid()
 }
 
+///|
 pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   let headpos = self.get_head_position(position=absp)
@@ -267,7 +278,7 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
           @graphics.DrawArgument::new14(
             absp,
             self.stance.face_right && self.no_flip.not(),
-            opacity=self.opacity.get(~alpha),
+            opacity=self.opacity.get(alpha~),
           ),
           alpha,
         )
@@ -283,6 +294,7 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
   self.effects.drawabove(absp, alpha)
 }
 
+///|
 pub fn update(self : Mob, physics : @physics.Physics) -> Int {
   if self.base.is_active().not() {
     return self.base.phobj.fhlayer
@@ -384,6 +396,7 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
   return self.base.phobj.fhlayer
 }
 
+///|
 fn next_move(self : Mob) -> Unit {
   if self.can_move {
     match self.stance.t {
@@ -415,6 +428,7 @@ fn next_move(self : Mob) -> Unit {
   }
 }
 
+///|
 pub fn set_stance(self : Mob, newstance : Stance) -> Unit {
   if self.stance != newstance {
     self.stance = newstance
@@ -425,29 +439,34 @@ pub fn set_stance(self : Mob, newstance : Stance) -> Unit {
   }
 }
 
+///|
 pub fn makeactive(self : Mob) -> Unit {
   self.base.makeactive()
 }
 
+///|
 pub fn is_active(self : Mob) -> Bool {
   self.base.is_active()
 }
 
+///|
 pub fn get_layer(self : Mob) -> Int {
   self.base.get_layer()
 }
 
-/// Change this mob's control mode:
+///| Change this mob's control mode:
 /// 0 - no control, 1 - control, 2 - aggro
 pub fn set_control(self : Mob, mode : Int) -> Unit {
   self.control = mode > 0
   self.aggro = mode == 2
 }
 
+///|
 pub fn is_alive(self : Mob) -> Bool {
   self.base.is_active() && self.dying.not()
 }
 
+///|
 pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   if range.get_horizontal().delta().is_neg() ||
     range.get_vertical().delta().is_neg() {
@@ -466,6 +485,7 @@ pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   }
 }
 
+///|
 pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
   if self.touch_damage.not() {
     return @combat.MobAttack::default()
@@ -481,6 +501,7 @@ pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
   )
 }
 
+///|
 pub fn update_movement(self : Mob) -> Unit {
   new_move_mob_packet(
     self.base.get_oid(),
@@ -498,6 +519,7 @@ pub fn update_movement(self : Mob) -> Unit {
   ).dispatch()
 }
 
+///|
 pub fn update_movement_ex(
   self : Mob,
   t : Int,
@@ -523,10 +545,12 @@ pub fn update_movement_ex(
   ).dispatch()
 }
 
+///|
 pub fn give_buff(self : Mob, buff : MobBuff) -> Unit {
   self.buffs.push(buff)
 }
 
+///|
 pub fn use_skill(self : Mob, skill : MobSkill) -> Unit {
   match self.skill_stands.get(skill.get_id()) {
     Some(anim) => self.animations[StanceType::SKILL] = anim
@@ -538,6 +562,7 @@ pub fn use_skill(self : Mob, skill : MobSkill) -> Unit {
   }
 }
 
+///|
 pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
   match self.attack_stands.get(attack.get_id()) {
     Some(anim) => self.animations[StanceType::SKILL] = anim
@@ -546,9 +571,10 @@ pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
   self.set_stance(Stance::from_type(StanceType::SKILL))
 }
 
+///|
 pub fn get_head_position(
   self : Mob,
-  ~position : @struct.Point[Int] = self.get_position()
+  position~ : @struct.Point[Int] = self.get_position()
 ) -> @struct.Point[Int] {
   let head = match self.animations[self.stance.t] {
     Some(anim) => anim.get_head()
@@ -565,6 +591,7 @@ pub fn get_head_position(
   .shift_y(head.y)
 }
 
+///|
 pub fn send_movement(
   self : Mob,
   start : @struct.Point[Int],
@@ -584,6 +611,7 @@ pub fn send_movement(
   self.base.phobj.fhid = lastmove.fh
 }
 
+///|
 pub fn get_move_skill(self : Mob, move_id : Int, level : Int) -> MobSkill! {
   match self.skills.get(move_id) {
     Some(skill) => skill
@@ -595,6 +623,7 @@ pub fn get_move_skill(self : Mob, move_id : Int, level : Int) -> MobSkill! {
   }
 }
 
+///|
 pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
   match self.attacks.get(move_id) {
     Some(attack) => attack
@@ -606,20 +635,24 @@ pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
   }
 }
 
+///|
 pub fn get_position(self : Mob) -> @struct.Point[Int] {
   self.base.get_position()
 }
 
+///|
 struct MobSpecialAttack {
   use_effect : MobSkillUseEffect
   // hit_effect : MobSkillHitEffect
   move_id : Int
 }
 
+///|
 pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
   self.move_id
 }
 
+///|
 pub fn MobSpecialAttack::new(mob_id : Int, move_id : Int) -> MobSpecialAttack! {
   let mut strid = ""
   if mob_id < 10000000 {
@@ -655,6 +688,7 @@ pub fn MobSpecialAttack::new(mob_id : Int, move_id : Int) -> MobSpecialAttack! {
   // action_ = std::make_unique<NoAction>();
 }
 
+///|
 pub fn show_effect(
   self : Mob,
   animation : @graphics.Animation,
@@ -670,9 +704,10 @@ pub fn show_effect(
     _ => @struct.Point::default()
   }
   let args = @graphics.DrawArgument::new14(shift, f)
-  self.effects.add(animation, ~args, ~z)
+  self.effects.add(animation, args~, z~)
 }
 
+///|
 pub fn kill(self : Mob, animation : Int) -> Unit {
   match animation {
     0 => self.base.deactivate()
@@ -688,17 +723,20 @@ pub fn kill(self : Mob, animation : Int) -> Unit {
   }
 }
 
+///|
 fn apply_death(self : Mob) -> Unit {
   self.set_stance(Stance::from_type(StanceType::DIE))
   // die_sound_.play();
   self.dying = true
 }
 
+///|
 pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
   self.use_effect.apply(mob)
   // sound_->play_use();
 }
 
+///|
 pub fn calculate_damage(
   self : Mob,
   attack : @combat.Attack
@@ -744,6 +782,7 @@ pub fn calculate_damage(
   result
 }
 
+///|
 fn next_damage(
   self : Mob,
   mindamage : Double,
@@ -767,6 +806,7 @@ fn next_damage(
   return (intdamage, iscritical)
 }
 
+///|
 fn calculate_mindamage(
   self : Mob,
   leveldelta : Int,
@@ -781,6 +821,7 @@ fn calculate_mindamage(
   return @math.maximum(mindamage, 1.0)
 }
 
+///|
 fn calculate_maxdamage(
   self : Mob,
   leveldelta : Int,
@@ -795,6 +836,7 @@ fn calculate_maxdamage(
   return @math.maximum(maxdamage, 1.0)
 }
 
+///|
 fn calculate_hitchance(
   self : Mob,
   leveldelta : Int,
@@ -805,6 +847,7 @@ fn calculate_hitchance(
   @math.maximum(hitchance, 0.01)
 }
 
+///|
 pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
   // self.hit_sound.play()
 
@@ -820,6 +863,7 @@ pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
   }
 }
 
+///|
 pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   if self.hp_percent == 0 {
     let delta = self.level - playerlevel

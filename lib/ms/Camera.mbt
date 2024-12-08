@@ -1,6 +1,7 @@
+///|
 typealias Linear = @utils.Linear
 
-/// View on stage which follows the player object.
+///| View on stage which follows the player object.
 struct Camera {
   /// Movement variables.
   x : Linear
@@ -12,9 +13,10 @@ struct Camera {
   vheight : Int
 }
 
-/// offset y to see more above the player
+///| offset y to see more above the player
 let y_offset : Int = 80
 
+///|
 fn Camera::new() -> Camera {
   let constants = @constants.constants
   {
@@ -27,6 +29,7 @@ fn Camera::new() -> Camera {
   }
 }
 
+///|
 pub fn update(self : Camera, position : Point[Int]) -> Unit {
   let mut next_x = self.x.get()
   let hdelta = (self.vwidth / 2 - position.x).to_double() - next_x
@@ -55,12 +58,13 @@ pub fn update(self : Camera, position : Point[Int]) -> Unit {
   self.y.set(next_y)
 }
 
+///|
 pub fn Camera::set_position(self : Camera, position : Point[Int]) -> Unit {
   self.x.set((self.vwidth / 2 - position.x).to_double())
   self.y.set((self.vheight / 2 - position.y + y_offset).to_double())
 }
 
-/// Updates the view's boundaries. Determined by mapinfo or footholds.
+///| Updates the view's boundaries. Determined by mapinfo or footholds.
 pub fn set_view(
   self : Camera,
   hborders : @struct.Range[Int],
@@ -70,12 +74,14 @@ pub fn set_view(
   self.vbounds = -vborders
 }
 
-pub fn Camera::get_position(self : Camera, ~alpha? : Double) -> Point[Int] {
-  let interx = self.x.get(~alpha?).round().to_int()
-  let intery = self.y.get(~alpha?).round().to_int()
+///|
+pub fn Camera::get_position(self : Camera, alpha? : Double) -> Point[Int] {
+  let interx = self.x.get(alpha?).round().to_int()
+  let intery = self.y.get(alpha?).round().to_int()
   Point::new(interx, intery)
 }
 
+///|
 pub fn Camera::real_position(self : Camera, alpha : Double) -> Point[Double] {
-  Point::new(self.x.get(~alpha), self.y.get(~alpha))
+  Point::new(self.x.get(alpha~), self.y.get(alpha~))
 }

@@ -1,8 +1,10 @@
+///|
 trait Drop: @map_object.MapObject {
   bounds(Self) -> @struct.Rectangle[Int]
   expire(Self, Int, @physics.PhysicsObject?) -> Unit
 }
 
+///|
 struct DropBase {
   base : @map_object.MapObjectBase
   opacity : @utils.Linear
@@ -17,12 +19,14 @@ struct DropBase {
   mut moved : Double
 }
 
+///|
 enum DropState {
   DROPPED
   FLOATING
   PICKED_UP
 } derive(Eq)
 
+///|
 fn DropBase::new(
   id : Int,
   owner : Int,
@@ -62,6 +66,7 @@ fn DropBase::new(
   }
 }
 
+///|
 fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
   physics.move_object(self.base.phobj)
   if self.state == DropState::DROPPED {
@@ -104,12 +109,14 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
   self.base.phobj.fhlayer
 }
 
+///|
 fn bounds(self : DropBase) -> @struct.Rectangle[Int] {
   let lt = self.base.get_position()
   let rb = lt + @struct.Point::new(32, 32)
   @struct.Rectangle::new(lt, rb)
 }
 
+///|
 fn DropBase::expire(
   self : DropBase,
   t : Int,
@@ -129,11 +136,13 @@ fn DropBase::expire(
   }
 }
 
+///|
 struct MesoDrop {
   base : DropBase
   icon : @graphics.Animation
 }
 
+///|
 pub fn MesoDrop::new(
   oid : Int,
   owner : Int,
@@ -148,6 +157,7 @@ pub fn MesoDrop::new(
   { base, icon }
 }
 
+///|
 pub fn MesoDrop::draw(
   self : MesoDrop,
   viewx : Double,
@@ -161,50 +171,60 @@ pub fn MesoDrop::draw(
   self.icon.draw(
     @graphics.DrawArgument::new(
       absp,
-      angle=self.base.angle.get(~alpha),
-      opacity=self.base.opacity.get(~alpha),
+      angle=self.base.angle.get(alpha~),
+      opacity=self.base.opacity.get(alpha~),
     ),
     alpha,
   )
 }
 
+///|
 pub fn get_oid(self : MesoDrop) -> Int {
   self.base.base.oid
 }
 
+///|
 pub fn update(self : MesoDrop, physics : @physics.Physics) -> Int {
   self.base.update(physics)
 }
 
+///|
 pub fn is_active(self : MesoDrop) -> Bool {
   self.base.base.active
 }
 
+///|
 pub fn makeactive(self : MesoDrop) -> Unit {
   self.base.base.makeactive()
 }
 
+///|
 pub fn get_layer(self : MesoDrop) -> Int {
   self.base.base.get_layer()
 }
 
+///|
 pub fn get_position(self : MesoDrop) -> @struct.Point[Int] {
   self.base.base.get_position()
 }
 
+///|
 pub fn bounds(self : MesoDrop) -> @struct.Rectangle[Int] {
   self.base.bounds()
 }
 
+///|
 pub fn expire(self : MesoDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
   self.base.expire(t, lt)
 }
 
+///|
 struct ItemDrop {
   base : DropBase
   icon : @graphics.Texture
 }
 
+///|
 pub fn ItemDrop::new(
   oid : Int,
   owner : Int,
@@ -220,6 +240,7 @@ pub fn ItemDrop::new(
   { base, icon }
 }
 
+///|
 pub fn ItemDrop::draw(
   self : ItemDrop,
   viewx : Double,
@@ -233,40 +254,48 @@ pub fn ItemDrop::draw(
   self.icon.draw(
     @graphics.DrawArgument::new(
       absp,
-      angle=self.base.angle.get(~alpha),
-      opacity=self.base.opacity.get(~alpha),
+      angle=self.base.angle.get(alpha~),
+      opacity=self.base.opacity.get(alpha~),
     ),
   )
 }
 
+///|
 pub fn get_oid(self : ItemDrop) -> Int {
   self.base.base.oid
 }
 
+///|
 pub fn update(self : ItemDrop, physics : @physics.Physics) -> Int {
   self.base.update(physics)
 }
 
+///|
 pub fn is_active(self : ItemDrop) -> Bool {
   self.base.base.active
 }
 
+///|
 pub fn makeactive(self : ItemDrop) -> Unit {
   self.base.base.makeactive()
 }
 
+///|
 pub fn get_layer(self : ItemDrop) -> Int {
   self.base.base.get_layer()
 }
 
+///|
 pub fn get_position(self : ItemDrop) -> @struct.Point[Int] {
   self.base.base.get_position()
 }
 
+///|
 pub fn bounds(self : ItemDrop) -> @struct.Rectangle[Int] {
   self.base.bounds()
 }
 
+///|
 pub fn expire(self : ItemDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
   self.base.expire(t, lt)
 }

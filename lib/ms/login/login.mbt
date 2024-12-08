@@ -139,11 +139,11 @@ fn update(self : LoginTask) -> Unit {
     READY =>
       match self.state {
         ACQ_CONN => {
-          fn_login_start()
+          self.processor.send_packet(new_login_start_packet())
           self.state = START_SEND
         }
         START_SEND => {
-          fn_login(self.account, self.password) // TODO: allow select account
+          fn_login(self.processor, self.account, self.password) // TODO: allow select account
           self.state = LOGIN_SEND
         }
         LOGIN_SEND => ()
@@ -157,12 +157,11 @@ fn update(self : LoginTask) -> Unit {
 }
 
 ///|
-fn fn_login_start() -> Unit {
-  new_login_start_packet().dispatch()
-}
-
-///|
-fn fn_login(account : String, password : String) -> Unit {
+fn fn_login(
+  processor : @net.PacketProcessor,
+  account : String,
+  password : String
+) -> Unit {
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::LOGIN)
   let volume_serial_number = @config.global().get_volume_serial_number()
   let part1 = volume_serial_number.substring(start=0, end=2)
@@ -173,15 +172,15 @@ fn fn_login(account : String, password : String) -> Unit {
   let w = @net.hex_to_dec?(part3).unwrap()
   let i = @net.hex_to_dec?(part2).unwrap()
   let d = @net.hex_to_dec?(part1).unwrap()
-  packet
-  ..write_string(account)
-  ..write_string(password)
-  ..skip(6)
-  ..write_byte(h)
-  ..write_byte(w)
-  ..write_byte(i)
-  ..write_byte(d)
-  .dispatch()
+  let packet = packet
+    ..write_string(account)
+    ..write_string(password)
+    ..skip(6)
+    ..write_byte(h)
+    ..write_byte(w)
+    ..write_byte(i)
+    ..write_byte(d)
+  processor.send_packet(packet)
 }
 
 ///| handle_login_result handles a packet that contains the response to an
@@ -217,7 +216,9 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
       // AfterLoginPacket("1111").dispatch();
 
       // Request the list of worlds and channels online.
-      fn_server_req()
+
+      let packet = new_server_request_packet()
+      self.processor.send_packet(packet)
     }
     //         // Login unsuccessful
     //         // The LoginNotice displayed will contain the specific information
@@ -244,7 +245,7 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
     //                 break;
     23 =>
       // UI::get().emplace<UITermsOfService>(okhandler); break;
-      fn_tos()
+      fn_tos(self.processor)
     //             default:
     //                 // Other reasons
     //                 if (reason > 0) {
@@ -279,22 +280,31 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
       let worlds = self.receiving_server_list
       self.receiving_server_list = []
       @log.debug({ "worlds": worlds }, "server list")
-      enter_world(0, 0)
+      enter_world(0, 0, self.processor)
       break
     }
   }
 }
 
 ///|
-fn enter_world(worldId : Int, channelId : Int) -> Unit {
+fn enter_world(
+  worldId : Int,
+  channelId : Int,
+  processor : @net.PacketProcessor
+) -> Unit {
   @config.global().set_worldid(worldId)
   @config.global().set_channelid(channelId)
-  fn_char_list_req(worldId, channelId)
+  fn_char_list_req(worldId, channelId, processor)
 }
 
 ///|
-fn fn_char_list_req(worldId : Int, channelId : Int) -> Unit {
-  new_char_list_request_packet(worldId, channelId).dispatch()
+fn fn_char_list_req(
+  worldId : Int,
+  channelId : Int,
+  processor : @net.PacketProcessor
+) -> Unit {
+  let packet = new_char_list_request_packet(worldId, channelId)
+  processor.send_packet(packet)
 }
 
 ///|
@@ -328,13 +338,15 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
           None => characters[0].id
         }
         mod.select_cid = Some(cid)
-        new_select_char_packet(cid).dispatch()
+        let packet = new_select_char_packet(cid)
+        mod.processor.send_packet(packet)
       }
       _ => fail!("pic=\{pic} not ok")
     }
   } else {
     @log.info({}, "no characters, creating new one")
-    new_name_char_packet(test_name).dispatch()
+    let packet = new_name_char_packet(test_name)
+    mod.processor.send_packet(packet)
   }
 }
 
@@ -369,18 +381,14 @@ pub fn handle_add_new_char_entry(mod : Module, recv : @net.InPacket) -> Unit! {
 }
 
 ///|
-fn fn_server_req() -> Unit {
-  new_server_request_packet().dispatch()
-}
-
-///|
 fn new_server_request_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SERVERLIST_REQUEST)
 }
 
 ///|
-fn fn_tos() -> Unit {
-  new_tos_packet().dispatch()
+fn fn_tos(processor : @net.PacketProcessor) -> Unit {
+  let packet = new_tos_packet()
+  processor.send_packet(packet)
 }
 
 ///|
@@ -605,7 +613,8 @@ struct ConnectChannelTask {
 ///|
 pub fn update(self : ConnectChannelTask) -> Bool {
   if self.processor.get_status() == @net.READY {
-    new_player_login_packet(self.cid).dispatch()
+    let packet = new_player_login_packet(self.cid)
+    self.processor.send_packet(packet)
     true
   } else {
     false

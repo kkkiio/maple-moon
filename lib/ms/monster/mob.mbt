@@ -92,6 +92,7 @@ struct Mob {
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
+  src : @resource.NxNode
 }
 
 ///|
@@ -102,7 +103,7 @@ enum FlyDirection {
 }
 
 ///|
-pub fn Mob::new(
+pub fn Mob::load(
   oi : Int,
   mid : Int,
   mode : Int,
@@ -112,10 +113,33 @@ pub fn Mob::new(
   _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer
+) -> @utils.Future[Result[Mob, Error]] {
+  let strid = @string_format.extend_id(mid, 7)
+  mob_loader
+  .load_res([strid + ".img"])
+  .map_exn(
+    fn(src) {
+      Mob::new!(
+        oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src,
+      )
+    },
+  )
+}
+
+///|
+fn Mob::new(
+  oi : Int,
+  mid : Int,
+  mode : Int,
+  st : Int,
+  fh : Int,
+  newspawn : Bool,
+  _team : Int,
+  position : @struct.Point[Int],
+  randomizer : @utils.Randomizer,
+  src : @resource.NxNode
 ) -> Mob! {
   let base = @map_object.MapObjectBase::new(oi)
-  let strid = @string_format.extend_id(mid, 7)
-  let src = mob_loader().load_res([strid + ".img"])
   let info = src["info"]
   let level = info["level"].get_int!()
   let watk = info["PADamage"].get_int!()
@@ -258,6 +282,7 @@ pub fn Mob::new(
     fading: false,
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
+    src,
   }
 }
 
@@ -628,7 +653,7 @@ pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
   match self.attacks.get(move_id) {
     Some(attack) => attack
     None => {
-      let new_attack = MobSpecialAttack::new!(self.id, move_id)
+      let new_attack = MobSpecialAttack::new!(self.src, self.id, move_id)
       self.attacks.set(move_id, new_attack)
       new_attack
     }
@@ -653,16 +678,18 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 }
 
 ///|
-pub fn MobSpecialAttack::new(mob_id : Int, move_id : Int) -> MobSpecialAttack! {
+pub fn MobSpecialAttack::new(
+  mob_src : @resource.NxNode,
+  mob_id : Int,
+  move_id : Int
+) -> MobSpecialAttack! {
   let mut strid = ""
   if mob_id < 10000000 {
     strid = @string_format.extend_id(mob_id, 7)
   } else {
     strid = mob_id.to_string()
   }
-  let src = mob_loader().load_res(
-    [strid + ".img", "attack" + move_id.to_string(), "info"],
-  )
+  let src = mob_src["attack" + move_id.to_string()]["info"]
 
   // sound_ = SingleSkillSound::new(strid)
 

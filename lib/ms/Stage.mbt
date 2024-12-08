@@ -1,3 +1,4 @@
+///|
 enum StageState {
   INACTIVE
   TRANSITION(
@@ -13,6 +14,7 @@ enum StageState {
   )
 }
 
+///|
 pub(all) struct Stage {
   camera : Camera
   map_portals_animations : @map.MapPortalAnimations
@@ -28,6 +30,7 @@ pub(all) struct Stage {
   char_look_module : @char_look.Module
 }
 
+///|
 pub fn Stage::new(
   map_portals_animations : @map.MapPortalAnimations,
   mobs : @monster.MapMobs,
@@ -52,11 +55,12 @@ pub fn Stage::new(
   }
 }
 
-/// @alert deprecated "Init dependencies in Game.mbt"
+///| @alert deprecated "Init dependencies in Game.mbt"
 pub fn Stage::get() -> Stage {
   g_stage.must_get()
 }
 
+///|
 pub fn clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
   // self.chars.clear()
@@ -66,8 +70,10 @@ pub fn clear(self : Stage) -> Unit {
   // self.reactors.clear()
 }
 
+///|
 let g_stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
+///|
 pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
@@ -82,6 +88,7 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   }
 }
 
+///|
 pub fn load_player(
   self : Stage,
   entry : @character.CharEntry,
@@ -104,14 +111,17 @@ pub fn load_player(
   player
 }
 
+///|
 pub fn get_player(self : Stage) -> @player.Player? {
   self.player
 }
 
+///|
 pub fn get_npcs(self : Stage) -> @npc.MapNpcs {
   self.npcs
 }
 
+///|
 pub fn respawn(
   self : Stage,
   portal_id : Int,
@@ -128,6 +138,7 @@ pub fn respawn(
   self.camera.set_view(map_info.get_walls(), map_info.get_borders())
 }
 
+///|
 pub fn draw(self : Stage, alpha : Double) -> Unit {
   guard let StageState::ACTIVE(tiles_objs~, backgrounds~, portals~, ..) = self.state else {
     StageState::INACTIVE => return
@@ -154,10 +165,12 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   //     effect_.draw();
 }
 
+///|
 pub fn transfer_player() -> Unit {
   new_player_map_transfer_packet().dispatch()
 }
 
+///|
 fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   guard let StageState::ACTIVE(
     tiles_objs~,
@@ -185,7 +198,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
             map_struct.portals,
             map_struct.physics,
           )
-          return  // for simplicity, just wait for the next update
+          return // for simplicity, just wait for the next update
         }
         None => return ()
       }
@@ -197,7 +210,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
 
   // reactors_.update(self.physics);
   self.npcs.update(physics)
-  self.mobs.update?(physics).unwrap()
+  self.mobs.update(physics)
   // chars_.update(self.physics);
   self.drops.update(physics)
   let player = self.player.unwrap()
@@ -220,6 +233,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   }
 }
 
+///|
 fn send_cursor(
   self : Stage,
   pressed : Bool,
@@ -229,6 +243,7 @@ fn send_cursor(
   self.npcs.send_cursor(pressed, position, self.camera.get_position())
 }
 
+///|
 pub fn send_key(
   self : Stage,
   t : @keyboard.KeyType,
@@ -267,6 +282,7 @@ pub fn send_key(
   }
 }
 
+///|
 fn check_portals(
   self : Stage,
   map_info : @map.MapInfo,
@@ -292,6 +308,7 @@ fn check_portals(
   // Sound(Sound::Name::PORTAL).play();
 }
 
+///|
 fn get_character(self : Stage, cid : Int) -> @character.Character? {
   match self.player {
     Some(player) => if player.get_oid() == cid { return Some(player) }
@@ -301,6 +318,7 @@ fn get_character(self : Stage, cid : Int) -> @character.Character? {
   None
 }
 
+///|
 fn new_change_map_packet(
   died : Bool,
   targetid : Int,
@@ -315,6 +333,7 @@ fn new_change_map_packet(
   ..write_short(if usewheel { 1 } else { 0 })
 }
 
+///|
 fn handle_change_stats(
   player : @player.Player,
   inventory : @inventory.Inventory,
@@ -335,6 +354,7 @@ fn handle_change_stats(
   }
 }
 
+///|
 fn handle_stat(
   player : @player.Player,
   inventory : @inventory.Inventory,
@@ -408,29 +428,34 @@ fn handle_stat(
   recalculate
 }
 
+///|
 pub fn new_player_map_transfer_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
 }
 
+///|
 pub fn get_mobs(self : Stage) -> @monster.MapMobs {
   self.mobs
 }
 
+///|
 pub fn get_inventory(self : Stage) -> @inventory.Inventory {
   self.inventory
 }
 
-/// Tells the server that the player took damage.
+///| Tells the server that the player took damage.
 enum TakeDamageFrom {
   TOUCH
 }
 
+///|
 fn int_value(self : TakeDamageFrom) -> Int {
   match self {
     TakeDamageFrom::TOUCH => -1
   }
 }
 
+///|
 fn new_take_damage_packet(
   from : TakeDamageFrom,
   element : Int,
@@ -449,7 +474,7 @@ fn new_take_damage_packet(
   ..write_byte(direction.to_byte())
 }
 
-/// From mob attack result.
+///| From mob attack result.
 fn new_take_damage_packet_from_mob(
   result : @combat.MobAttackResult,
   from : TakeDamageFrom
@@ -464,6 +489,7 @@ fn new_take_damage_packet_from_mob(
   )
 }
 
+///|
 fn check_drops(self : Stage, player : @player.Player) -> Unit {
   for it in self.drops.list_loot_at(player.get_position()) {
     let (drop_oid, drop_pos) = it
@@ -471,6 +497,7 @@ fn check_drops(self : Stage, player : @player.Player) -> Unit {
   }
 }
 
+///|
 fn new_pickup_item_packet(
   oid : Int,
   position : @struct.Point[Int]
@@ -482,6 +509,7 @@ fn new_pickup_item_packet(
   ..write_int(oid)
 }
 
+///|
 pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
   self.clear()
   @graphics.GraphicsGL::get().clear()

@@ -1,22 +1,30 @@
+///|
 type PollableData
 
+///|
 fn is_ready(self : PollableData) -> Bool = "resource" "is_ready"
 
+///|
 fn get_result(self : PollableData) -> RawData = "resource" "get_result"
 
+///|
 type AsyncResourceLoader
 
+///|
 fn get_image_loader(self : AsyncResourceLoader) -> ImageLoader = "resource" "get_image_loader"
 
+///|
 struct AsyncLoader {
   name : String
   loader : AsyncResourceLoader
 }
 
+///|
 pub fn AsyncLoader::new(name : String) -> AsyncLoader {
   { name, loader: get_async_resource_loader(name) }
 }
 
+///|
 pub fn load_res(
   self : AsyncLoader,
   path : Array[String]

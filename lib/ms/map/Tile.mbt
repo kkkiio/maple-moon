@@ -1,10 +1,11 @@
-/// Represents a tile on a map.
+///| Represents a tile on a map.
 struct Tile {
   texture : @graphics.Texture
   pos : Point[Int]
   z : Int
 }
 
+///|
 pub fn Tile::load(src : NxNode, tileset : String) -> @utils.Future[Tile] {
   let src_u = src["u"].as_string?().unwrap()
   let src_no = src["no"].get_string()
@@ -30,12 +31,15 @@ pub fn Tile::load(src : NxNode, tileset : String) -> @utils.Future[Tile] {
   )
 }
 
+///|
 pub fn draw(self : Tile, viewpos : Point[Int]) -> Unit {
   self.texture.draw(@graphics.DrawArgument::new(self.pos + viewpos))
 }
 
+///|
 pub fn get_z(self : Tile) -> Int {
   self.z
 }
 
+///|
 let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("tile")

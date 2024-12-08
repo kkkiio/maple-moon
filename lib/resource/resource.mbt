@@ -19,6 +19,7 @@ fn get_image_loader(self : ResourceLoader) -> ImageLoader = "resource" "get_imag
 fn load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
 
 ///|
+/// @alert deprecated "Use `AsyncLoader` instead"
 struct SyncLoader {
   name : String
   loader : ResourceLoader

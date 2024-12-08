@@ -1,22 +1,28 @@
+///|
 struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
+  mob_loadings : Array[@utils.Future[Unit]]
   spawns : @queue.T[MobSpawn]
   randomizer : @utils.Randomizer
 }
 
+///|
 pub fn MapMobs::new() -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
     spawns: @queue.T::new(),
+    mob_loadings: Array::new(),
     randomizer: @utils.Randomizer::default(),
   }
 }
 
+///|
 pub fn spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
-pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit! {
+///|
+pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       match self.mobs.get(spawn.oid) {
@@ -27,15 +33,33 @@ pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit! {
           }
           mob.makeactive()
         }
-        None => self.mobs.add(spawn.instantiate!(self.randomizer))
+        None =>
+          self.mob_loadings.push(
+            spawn
+            .instantiate(self.randomizer)
+            .map(
+              fn(res) {
+                match res {
+                  Ok(mob) => self.mobs.add(mob)
+                  Err(e) =>
+                    @log.error(
+                      { "err": e, "oid": spawn.oid },
+                      "Failed to load mob",
+                    )
+                }
+              },
+            ),
+          )
       }
       continue self.spawns.pop()
     }
     None => break
   }
+  @utils.advance_futures(self.mob_loadings)
   self.mobs.update(physics)
 }
 
+///|
 pub fn set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
   let mode = if control { 1 } else { 0 }
   match self.mobs.get(oid) {
@@ -44,10 +68,12 @@ pub fn set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
   }
 }
 
+///|
 pub fn clear(self : MapMobs) -> Unit {
   self.mobs.clear()
 }
 
+///|
 pub fn draw(
   self : MapMobs,
   layer : @layer.Id,
@@ -58,6 +84,7 @@ pub fn draw(
   self.mobs.draw(layer, viewx, viewy, alpha)
 }
 
+///|
 pub fn find_colliding(self : MapMobs, moveobj : @physics.MovingObject) -> Int? {
   let horizontal = @struct.Range::new(moveobj.get_last_x(), moveobj.get_x())
   let vertical = @struct.Range::new(moveobj.get_last_y(), moveobj.get_y())
@@ -75,6 +102,7 @@ pub fn find_colliding(self : MapMobs, moveobj : @physics.MovingObject) -> Int? {
   None
 }
 
+///|
 pub fn create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
   match self.mobs.get(oid) {
     Some(mob) => Some(mob.create_touch_attack())
@@ -82,6 +110,7 @@ pub fn create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
   }
 }
 
+///|
 pub fn send_movement(
   self : MapMobs,
   oid : Int,
@@ -94,10 +123,12 @@ pub fn send_movement(
   }
 }
 
+///|
 pub fn get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
   self.mobs
 }
 
+///|
 pub fn remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
   match self.mobs.get(oid) {
     Some(mob) => mob.kill(animation)
@@ -108,6 +139,7 @@ pub fn remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
   }
 }
 
+///|
 pub fn send_attack(
   self : MapMobs,
   result : @combat.AttackResult,
@@ -128,22 +160,26 @@ pub fn send_attack(
   }
 }
 
+///|
 pub fn contains(self : MapMobs, oid : Int) -> Bool {
   self.mobs.contains(oid)
 }
 
+///|
 pub fn get_mob_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
   self.mobs
   .get(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_position() })
 }
 
+///|
 pub fn get_mob_head_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
   self.mobs
   .get(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
 }
 
+///|
 pub fn send_mobhp(
   self : MapMobs,
   oid : Int,
@@ -156,6 +192,7 @@ pub fn send_mobhp(
   }
 }
 
+///|
 struct MobSpawn {
   oid : Int
   id : Int
@@ -167,8 +204,12 @@ struct MobSpawn {
   position : @struct.Point[Int]
 }
 
-pub fn instantiate(self : MobSpawn, randomizer : @utils.Randomizer) -> Mob! {
-  Mob::new!(
+///|
+pub fn instantiate(
+  self : MobSpawn,
+  randomizer : @utils.Randomizer
+) -> @utils.Future[Result[Mob, Error]] {
+  Mob::load(
     self.oid,
     self.id,
     self.mode,
@@ -181,6 +222,5 @@ pub fn instantiate(self : MobSpawn, randomizer : @utils.Randomizer) -> Mob! {
   )
 }
 
-fn mob_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("mob")
-}
+///|
+let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mob")

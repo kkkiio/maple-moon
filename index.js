@@ -218,9 +218,9 @@ function main() {
     itemLoader.load()
   );
 
-  const mobLoader = new ResourceLoader("https://maple.kkkiiox.work/Mob/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Mob/images"));
-  prepareResourcePromises.push(
-    mobLoader.load()
+  const mobLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Mob"),
+    imageLoader
   );
 
   const effectLoader = new ResourceLoader("https://maple.kkkiiox.work/Effect/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Effect/images"));
@@ -265,8 +265,6 @@ function main() {
             return npcLoader;
           case "item":
             return itemLoader;
-          case "mob":
-            return mobLoader;
           case "effect":
             return effectLoader;
           case "skill":
@@ -301,6 +299,8 @@ function main() {
             return uiWindow2Loader;
           case "ui_window_4":
             return uiWindow4Loader;
+          case "mob":
+            return mobLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

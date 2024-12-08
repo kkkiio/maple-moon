@@ -6,18 +6,22 @@ struct Future[T] {
   mut resolved : T?
 }
 
+///|
 pub fn Future::new[T](poll_fn : () -> T?) -> Future[T] {
   { poll_fn, resolved: None }
 }
 
+///|
 pub fn Future::from_value[T](v : T) -> Future[T] {
   { poll_fn: fn() { Some(v) }, resolved: Some(v) }
 }
 
+///|
 pub fn Future::never[T]() -> Future[T] {
   Future::new(fn() { None })
 }
 
+///|
 pub fn poll[T](self : Future[T]) -> T? {
   match self.resolved {
     Some(_) => self.resolved
@@ -29,6 +33,7 @@ pub fn poll[T](self : Future[T]) -> T? {
   }
 }
 
+///|
 pub fn map[T, U](self : Future[T], f : (T) -> U) -> Future[U] {
   Future::new(
     fn() {
@@ -40,10 +45,12 @@ pub fn map[T, U](self : Future[T], f : (T) -> U) -> Future[U] {
   )
 }
 
+///|
 pub fn bind[T, U](self : Future[T], f : (T) -> Future[U]) -> Future[U] {
   self.map(f).flatten()
 }
 
+///|
 pub fn flatten[T](self : Future[Future[T]]) -> Future[T] {
   Future::new(
     fn() {
@@ -55,6 +62,7 @@ pub fn flatten[T](self : Future[Future[T]]) -> Future[T] {
   )
 }
 
+///|
 pub fn map_exn[T, U, E : Error](
   self : Future[T],
   f : (T) -> U!E
@@ -70,6 +78,7 @@ pub fn map_exn[T, U, E : Error](
   )
 }
 
+///|
 pub fn tap[T](self : Future[T], f : (T) -> Unit) -> Future[T] {
   self.map(
     fn(t) {
@@ -79,10 +88,12 @@ pub fn tap[T](self : Future[T], f : (T) -> Unit) -> Future[T] {
   )
 }
 
+///|
 pub fn combine[T, U](self : Future[T], other : Future[U]) -> Future[(T, U)] {
   self.map(fn(t) { other.map(fn(u) { (t, u) }) }).flatten()
 }
 
+///|
 pub fn Future::all_of[T](futures : Array[Future[T]]) -> Future[Array[T]] {
   let resolved = Array::new()
   let mut i = 0
@@ -96,6 +107,18 @@ pub fn Future::all_of[T](futures : Array[Future[T]]) -> Future[Array[T]] {
         i += 1
       }
       Some(resolved)
+    },
+  )
+}
+
+///| Advance and remove completed futures.
+pub fn advance_futures(futures : Array[Future[Unit]]) -> Unit {
+  futures.retain(
+    fn(f) {
+      match f.poll() {
+        Some(_) => false
+        None => true
+      }
     },
   )
 }

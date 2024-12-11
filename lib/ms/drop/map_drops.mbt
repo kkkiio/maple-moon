@@ -1,3 +1,4 @@
+///|
 struct MapDrops {
   drops : @map_object.MapObjects[Drop]
   loading_drops : Array[@utils.Future[Result[Drop, Error]]]
@@ -5,8 +6,8 @@ struct MapDrops {
   meso_icons : Map[MesoIcon, @graphics.Animation]
 }
 
-fn MapDrops::new() -> MapDrops {
-  let src = @item.get_item_loader().load_res(["Special", "0900.img"])
+///|
+fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
     |> @graphics.Animation::from_resource
@@ -24,10 +25,12 @@ fn MapDrops::new() -> MapDrops {
   }
 }
 
+///|
 pub fn spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
+///|
 pub fn draw(
   self : MapDrops,
   layer : @layer.Id,
@@ -38,6 +41,7 @@ pub fn draw(
   self.drops.draw(layer, viewx, viewy, alpha)
 }
 
+///|
 pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
@@ -94,10 +98,12 @@ pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
   self.drops.update(physics)
 }
 
+///|
 pub fn clear(self : MapDrops) -> Unit {
   self.drops.clear()
 }
 
+///|
 pub fn list_loot_at(
   self : MapDrops,
   playerpos : @struct.Point[Int]
@@ -109,6 +115,7 @@ pub fn list_loot_at(
   .map(fn(it) { (it.0, it.1.get_position()) })
 }
 
+///|
 pub fn MapDrops::remove(
   self : MapDrops,
   oid : Int,
@@ -121,6 +128,7 @@ pub fn MapDrops::remove(
   }
 }
 
+///|
 struct DropSpawn {
   oid : Int
   item_id : Int
@@ -133,6 +141,7 @@ struct DropSpawn {
   player_drop : Bool
 }
 
+///|
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
   icon : @graphics.Animation
@@ -149,6 +158,7 @@ fn DropSpawn::instantiate_meso(
   )
 }
 
+///|
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
   icon : @graphics.Texture
@@ -166,9 +176,15 @@ fn DropSpawn::instantiate_item(
   )
 }
 
+///|
 enum MesoIcon {
   BRONZE
   GOLD
   BUNDLE
   BAG
 } derive(Eq, Hash)
+
+///|
+let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "special_item",
+)

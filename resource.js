@@ -88,6 +88,35 @@ export class BidImageLoader {
     }
 }
 
+class Singleflight {
+    constructor() {
+        /**
+         * @type {Map<string, Promise<any>>}
+         */
+        this.flights = new Map();
+    }
+
+    /**
+     * @template T
+     * @param {string} key 
+     * @param {() => Promise<T>} fn 
+     * @returns {Promise<T>}
+     */
+    async run(key, fn) {
+        const existing = this.flights.get(key);
+        if (existing) {
+            return existing;
+        }
+
+        const promise = fn().finally(() => {
+            this.flights.delete(key);
+        });
+
+        this.flights.set(key, promise);
+        return promise;
+    }
+}
+
 export class PathImageLoader {
     /**
      * 
@@ -101,6 +130,7 @@ export class PathImageLoader {
          * @type {Record<string, LazyImage>}
          */
         this.cache = {};
+        this.singleflight = new Singleflight();
     }
     /**
      * 
@@ -119,14 +149,14 @@ export class PathImageLoader {
         this.cache[path] = res;
         if (spriteSheetRef) {
             this.loadSpritesheet(imagePath).then(images => {
-                const imageData = images[spriteSheetRef + ".png"];
-                res.data = imageData;
-                res.w = imageData.width;
-                res.h = imageData.height;
+                const data = images[spriteSheetRef];
+                res.data = data;
+                res.w = data.width;
+                res.h = data.height;
                 res.loading = false;
             });
         } else {
-            fetchImageByUrl(imagePath).then(img => {
+            fetchImageByUrl(joinPath(this.rootPath, imagePath)).then(img => {
                 res.data = img;
                 res.w = img.width;
                 res.h = img.height;
@@ -136,22 +166,37 @@ export class PathImageLoader {
         return res;
     }
     async loadSpritesheet(path) {
-        const jsonPath = joinPath(this.rootPath, path + ".json");
-        const imagePath = joinPath(this.rootPath, path + ".png");
-        const [json, spritesheetImage] = await Promise.all([fetch(jsonPath).then(res => res.json()), fetchImageByUrl(imagePath)]);
-        // split spritesheet to portions
-        this.canvasContext.canvas.width = spritesheetImage.width;
-        this.canvasContext.canvas.height = spritesheetImage.height;
-        this.canvasContext.drawImage(spritesheetImage, 0, 0, spritesheetImage.width, spritesheetImage.height);
-        /**
-         * @type {Record<string, ImageData>}
-         */
-        const images = {};
-        for (const [imagePath, imageInfo] of Object.entries(json.frames)) {
-            const { x, y, w, h } = imageInfo.frame;
-            images[imagePath] = this.canvasContext.getImageData(x, y, w, h)
-        }
-        return images;
+        return this.singleflight.run(path, async () => {
+            const jsonUrl = joinPath(this.rootPath, path + ".json");
+            const imageUrl = joinPath(this.rootPath, path + ".png");
+            const [json, spritesheetImage] = await Promise.all([
+                fetch(jsonUrl).then(res => res.json()),
+                fetchImageByUrl(imageUrl)
+            ]);
+
+            // split spritesheet to portions
+            this.canvasContext.canvas.width = spritesheetImage.width;
+            this.canvasContext.canvas.height = spritesheetImage.height;
+            this.canvasContext.drawImage(spritesheetImage, 0, 0, spritesheetImage.width, spritesheetImage.height);
+
+            /**
+             * @type {Record<string, ImageData>}
+             */
+            const images = {};
+            for (const [imagePath, imageInfo] of Object.entries(json.frames)) {
+                const { x, y, w, h } = imageInfo.frame;
+                const imageRef = imagePath.replace(/\.png$/, "");
+                const data = this.canvasContext.getImageData(x, y, w, h);
+                images[imageRef] = data;
+                this.cache[path + "#" + imageRef] = {
+                    data: data,
+                    w: w,
+                    h: h,
+                    loading: false,
+                }
+            }
+            return images;
+        });
     }
 }
 

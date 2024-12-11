@@ -16,21 +16,25 @@ pub(all) struct ItemData {
   cash_item : Bool
 }
 
+///|
 let character_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "character",
 )
 
+///|
 pub(all) struct EquipId {
   category : String
   zid : String
 }
 
+///|
 fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
   let category = get_eqcategory!(item_id)
   let zid = "0" + item_id.to_string()
   { category, zid }
 }
 
+///|
 fn ItemData::load_async(
   item_id : Int
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
@@ -48,42 +52,38 @@ fn ItemData::load_async(
       CONSUME => {
         let category = "Consume"
         let strprefix = "0" + get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(
-          ["Consume", strprefix + ".img", zid],
-        )
+        let src = item_loader.load_res(["Consume", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res(
           ["Consume.img", item_id.to_string()],
         )
-        (category, src |> @utils.Future::from_value, strsrc)
+        (category, src, strsrc)
       }
       INSTALL => {
         let category = "Install"
         let strprefix = "0" + get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(
-          ["Install", strprefix + ".img", zid],
-        )
+        let src = item_loader.load_res(["Install", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res(
           ["Ins.img", item_id.to_string()],
         )
-        (category, src |> @utils.Future::from_value, strsrc)
+        (category, src, strsrc)
       }
       ETC => {
         let category = "Etc"
         let strprefix = "0" + get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(["Etc", strprefix + ".img", zid])
+        let src = item_loader.load_res(["Etc", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res(
           ["Etc.img", item_id.to_string()],
         )
-        (category, src |> @utils.Future::from_value, strsrc)
+        (category, src, strsrc)
       }
       CASH => {
         let category = "Cash"
         let strprefix = "0" + get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(["Cash", strprefix + ".img", zid])
+        let src = item_loader.load_res(["Cash", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res(
           ["Cash.img", item_id.to_string()],
         )
-        (category, src |> @utils.Future::from_value, strsrc)
+        (category, src, strsrc)
       }
     }
   } catch {
@@ -130,18 +130,22 @@ fn ItemData::load_async(
   )
 }
 
+///|
 let cache : Map[Int, @utils.Future[Result[ItemData, LoadDataError]]] = Map::new()
 
+///|
 pub fn ItemData::get_async(
   id : Int
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
   cache.get_or_init(id, fn() { ItemData::load_async(id) })
 }
 
+///|
 fn ItemData::get_prefix(id : Int) -> Int {
   id / 1000000
 }
 
+///|
 fn parse_category1(id : Int) -> Category1!LoadDataError {
   match id / 1000000 {
     1 => Category1::EQUIP
@@ -153,6 +157,7 @@ fn parse_category1(id : Int) -> Category1!LoadDataError {
   }
 }
 
+///|
 enum Category1 {
   EQUIP
   CONSUME
@@ -161,15 +166,18 @@ enum Category1 {
   CASH
 }
 
+///|
 fn ItemData::get_item_prefix(id : Int) -> Int {
   id / 10000
 }
 
+///|
 let categorynames = [
   "Cap", "Accessory", "Accessory", "Accessory", "Coat", "Longcoat", "Pants", "Shoes",
   "Glove", "Shield", "Cape", "Ring", "Accessory", "Accessory", "Accessory",
 ]
 
+///|
 pub(all) type! LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
@@ -177,6 +185,7 @@ pub(all) type! LoadDataError {
 } derive(Show)
 
 // TODO: make private
+///|
 pub fn get_eqcategory(id : Int) -> String!LoadDataError {
   let index = get_item_prefix(id) - 100
   if index < 0 {
@@ -191,6 +200,7 @@ pub fn get_eqcategory(id : Int) -> String!LoadDataError {
   raise LoadDataError::INVALID_ITEM_ID(id) // TODO: what category it is
 }
 
+///|
 pub fn get_item_gender(id : Int) -> Int {
   let item_prefix = get_item_prefix(id)
   if (get_prefix(id) != 1 && item_prefix != 254) ||
@@ -205,18 +215,17 @@ pub fn get_item_gender(id : Int) -> Int {
   gender_digit
 }
 
-pub fn get_item_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("item")
-}
-
+///|
 pub fn get_category(self : ItemData) -> String {
   self.category
 }
 
+///|
 pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
   self.icons[raw]
 }
 
+///|
 pub fn get_info(self : ItemData) -> Map[String, Json] {
   self.src
   .value()
@@ -225,6 +234,15 @@ pub fn get_info(self : ItemData) -> Map[String, Json] {
   .or(Map::new())
 }
 
+///|
 pub fn get_src(self : ItemData) -> @resource.NxNode {
   self.src
+}
+
+///|
+let item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("item")
+
+///|
+pub fn get_item_loader() -> @resource.AsyncLoader {
+  item_loader
 }

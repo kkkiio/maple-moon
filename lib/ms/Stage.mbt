@@ -37,7 +37,8 @@ pub fn Stage::new(
   drops : @drop.MapDrops,
   inventory : @inventory.Inventory,
   npcs : @npc.MapNpcs,
-  char_look_module : @char_look.Module
+  char_look_module : @char_look.Module,
+  damage_number_set : @combat_ui.DamageNumberSet
 ) -> Stage {
   {
     map_portals_animations,
@@ -46,7 +47,7 @@ pub fn Stage::new(
     state: StageState::INACTIVE,
     map_id: 10000,
     npcs,
-    damage_number_set: @combat_ui.DamageNumberSet::new(),
+    damage_number_set,
     combat: None,
     mobs,
     drops,

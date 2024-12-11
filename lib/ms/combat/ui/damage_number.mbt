@@ -1,3 +1,4 @@
+///|
 struct DamageNumber {
   charsets : FixedArray[@utils.BoolPair[@graphics.Charset]]
   t : DamageNumberType
@@ -10,12 +11,14 @@ struct DamageNumber {
   opacity : @utils.Linear
 }
 
-pub enum DamageNumberType {
+///|
+pub(all) enum DamageNumberType {
   NORMAL
   CRITICAL
   TOPLAYER
 }
 
+///|
 pub fn int_value(self : DamageNumberType) -> Int {
   match self {
     NORMAL => 0
@@ -24,6 +27,7 @@ pub fn int_value(self : DamageNumberType) -> Int {
   }
 }
 
+///|
 pub fn DamageNumber::draw(
   self : DamageNumber,
   viewx : Double,
@@ -32,7 +36,7 @@ pub fn DamageNumber::draw(
 ) -> Unit {
   let absolute = self.move_obj.get_absolute(viewx, viewy, alpha)
   let mut position = absolute - @struct.Point::new(0, self.shift)
-  let interopc = self.opacity.get(~alpha)
+  let interopc = self.opacity.get(alpha~)
   if self.miss {
     self.charsets[self.t.int_value()][true].draw_char(
       'M',
@@ -67,18 +71,22 @@ pub fn DamageNumber::draw(
   }
 }
 
+///|
 let fade_step : Double = @constants.step_time_ms.to_double() / 500
 
+///|
 pub fn update(self : DamageNumber) -> Bool {
   self.move_obj.move()
   self.opacity.add(-fade_step)
   self.opacity.last() <= 0.0
 }
 
+///|
 pub fn DamageNumber::set_x(self : DamageNumber, headx : Int) -> Unit {
   self.move_obj.set_x(headx.to_double())
 }
 
+///|
 fn get_advance(t : DamageNumberType, c : Char, first : Bool) -> Int {
   let advances = [24, 20, 22, 22, 24, 23, 24, 22, 24, 24]
   let index = c.to_int() - 48
@@ -93,6 +101,7 @@ fn get_advance(t : DamageNumberType, c : Char, first : Bool) -> Int {
   return 0
 }
 
+///|
 pub fn DamageNumber::row_height(critical : Bool) -> Int {
   if critical {
     36
@@ -101,54 +110,55 @@ pub fn DamageNumber::row_height(critical : Bool) -> Int {
   }
 }
 
+///|
 struct DamageNumberSet {
   charsets : FixedArray[@utils.BoolPair[@graphics.Charset]]
 }
 
-pub fn DamageNumberSet::new() -> DamageNumberSet {
-  let loader = effect_loader()
-  let charsets = [
-      @utils.BoolPair::new(
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoRed1"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoRed0"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-      ),
-      @utils.BoolPair::new(
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoCri1"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoCri0"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-      ),
-      @utils.BoolPair::new(
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoViolet1"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-        @graphics.Charset::new(
-          loader.load_res(["BasicEff.img", "NoViolet0"]),
-          @graphics.CharsetAlignment::LEFT,
-        ),
-      ),
-    ]
-    |> FixedArray::from_array
-  { charsets, }
+///|
+pub fn DamageNumberSet::load() -> @utils.Future[DamageNumberSet] {
+  let loader = effect_loader
+  @utils.Future::all_of(
+    [
+      loader
+      .load_res(["BasicEff.img", "NoRed1"])
+      .combine(loader.load_res(["BasicEff.img", "NoRed0"])),
+      loader
+      .load_res(["BasicEff.img", "NoCri1"])
+      .combine(loader.load_res(["BasicEff.img", "NoCri0"])),
+      loader
+      .load_res(["BasicEff.img", "NoViolet1"])
+      .combine(loader.load_res(["BasicEff.img", "NoViolet0"])),
+    ],
+  ).map(
+    fn(res_pairs) {
+      let charsets = res_pairs.map(
+          fn(res_pair) {
+            @utils.BoolPair::new(
+              @graphics.Charset::new(
+                res_pair.0,
+                @graphics.CharsetAlignment::LEFT,
+              ),
+              @graphics.Charset::new(
+                res_pair.1,
+                @graphics.CharsetAlignment::LEFT,
+              ),
+            )
+          },
+        )
+        |> FixedArray::from_array
+      { charsets, }
+    },
+  )
 }
 
+///|
 pub fn new_damage_number(
   self : DamageNumberSet,
   t : DamageNumberType,
   damage : Int,
   starty : Int,
-  ~x : Int = 0
+  x~ : Int = 0
 ) -> DamageNumber {
   let (miss, shift, multiple, first_num, rest_num) = if damage > 0 {
     let number = damage.to_string()
@@ -193,6 +203,5 @@ pub fn new_damage_number(
   }
 }
 
-pub fn effect_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("effect")
-}
+///|
+let effect_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("effect")

@@ -1,3 +1,4 @@
+///|
 pub(all) enum BackgroundType {
   BG_NORMAL
   HTILED
@@ -9,6 +10,7 @@ pub(all) enum BackgroundType {
   VMOVEB
 } derive(Eq, Compare, Show)
 
+///|
 pub fn int_value(self : BackgroundType) -> Int {
   match self {
     BackgroundType::BG_NORMAL => 0
@@ -22,10 +24,12 @@ pub fn int_value(self : BackgroundType) -> Int {
   }
 }
 
+///|
 pub fn hash(self : BackgroundType) -> Int {
   self.int_value()
 }
 
+///|
 struct Background {
   animation : @graphics.Animation
   cx : Int
@@ -41,6 +45,7 @@ struct Background {
   hoffset : Int
 }
 
+///|
 pub fn Background::load(
   src : @resource.NxNode
 ) -> @utils.Future[Result[Background, Error]] {
@@ -65,6 +70,7 @@ pub fn Background::load(
   }
 }
 
+///|
 fn Background::from_resource(
   src : @resource.NxNode,
   bg_res : @resource.NxNode?
@@ -77,6 +83,9 @@ fn Background::from_resource(
   @log.debug({ "type": t, "path": src.path() }, "load background")
   let dim_x = animation.get_dimensions().x
   let dim_y = animation.get_dimensions().y
+  if dim_y <= 0 {
+    fail!("dim_y <= 0")
+  }
   let opacity = src["a"].get_float?().unwrap()
   let flipped = src["f"].get_bool?().unwrap()
   let cx = match src["cx"].get_int?().unwrap() {
@@ -84,7 +93,7 @@ fn Background::from_resource(
     cx => cx
   }
   let cy = match src["cy"].get_int?().unwrap() {
-    0 => if dim_y > 0 { dim_y } else { 1 }
+    0 => dim_y
     cy => cy
   }
   let vwidth = @constants.constants.get_viewwidth()
@@ -94,15 +103,17 @@ fn Background::from_resource(
   let htile = match t {
     BackgroundType::HTILED
     | BackgroundType::HMOVEA
-    | BackgroundType::TILED | BackgroundType::HMOVEB | BackgroundType::VMOVEB =>
-      vwidth / cx + 3
+    | BackgroundType::TILED
+    | BackgroundType::HMOVEB
+    | BackgroundType::VMOVEB => vwidth / cx + 3
     _ => 1
   }
   let vtile = match t {
     BackgroundType::VTILED
     | BackgroundType::VMOVEA
-    | BackgroundType::TILED | BackgroundType::HMOVEB | BackgroundType::VMOVEB =>
-      vheight / cy + 3
+    | BackgroundType::TILED
+    | BackgroundType::HMOVEB
+    | BackgroundType::VMOVEB => vheight / cy + 3
     _ => 1
   }
   let rx = src["rx"].get_float?().unwrap()
@@ -134,6 +145,7 @@ fn Background::from_resource(
   background
 }
 
+///|
 pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
   match id {
     0 => BackgroundType::BG_NORMAL
@@ -148,6 +160,7 @@ pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
   }
 }
 
+///|
 pub fn draw(
   self : Background,
   viewx : Double,
@@ -206,16 +219,19 @@ pub fn draw(
   }
 }
 
+///|
 pub fn update(self : Background) -> Unit {
   self.move_obj.move()
   self.animation.update() |> ignore
 }
 
+///|
 pub(readonly) struct Backgrounds {
   backs : Array[Background]
   fores : Array[Background]
 }
 
+///|
 pub fn load_backgrounds(
   src : @resource.NxNode
 ) -> @utils.Future[Result[Backgrounds, Error]] {
@@ -248,6 +264,7 @@ pub fn load_backgrounds(
   )
 }
 
+///|
 pub fn drawbackgrounds(
   backgrounds : Array[Background],
   viewx : Double,
@@ -257,6 +274,7 @@ pub fn drawbackgrounds(
   backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
 }
 
+///|
 pub fn drawforegrounds(
   foregrounds : Array[Background],
   viewx : Double,
@@ -266,11 +284,13 @@ pub fn drawforegrounds(
   foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
 }
 
+///|
 pub fn update_backgrounds(backgrounds : Backgrounds) -> Unit {
   backgrounds.backs.each(fn(background) { background.update() })
   backgrounds.fores.each(fn(foreground) { foreground.update() })
 }
 
+///|
 let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "background",
 )

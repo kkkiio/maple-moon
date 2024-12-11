@@ -36,11 +36,6 @@ pub fn string_loader() -> SyncLoader {
 }
 
 ///|
-pub fn reactor_loader() -> SyncLoader {
-  { name: "reactor", loader: get_resource_loader("reactor") }
-}
-
-///|
 pub fn map001_loader() -> SyncLoader {
   { name: "map001", loader: get_resource_loader("map001") }
 }

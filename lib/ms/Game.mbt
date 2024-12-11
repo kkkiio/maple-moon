@@ -93,11 +93,14 @@ fn load_modules(
       fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
     ),
   )
-  let drop_module = @drop.Module::new()
-  merge_handlers(
-    drop_module.make_handlers(
-      fn(id) { Stage::get().get_character(id).map(fn(c) { c.get_phobj() }) },
-    ),
+  let drop_module = @drop.Module::load().tap(
+    fn(mod) {
+      merge_handlers(
+        mod.make_handlers(
+          fn(id) { Stage::get().get_character(id).map(fn(c) { c.get_phobj() }) },
+        ),
+      )
+    },
   )
   let npc_module = @npc.Module::load(
     ui,
@@ -109,10 +112,12 @@ fn load_modules(
   let skill_book_mod_f = @skill_book.Module::load(
     fn() { Stage::get().get_player() },
     sp_stat_id,
-  ).tap(fn(mod) {
-    merge_handlers(mod.make_handlers())
-    merge_actions(mod.make_actions())
-  })
+  ).tap(
+    fn(mod) {
+      merge_handlers(mod.make_handlers())
+      merge_actions(mod.make_actions())
+    },
+  )
   let shop_mod_f = @shop.Module::load(ui).tap(
     fn(mod) {
       merge_handlers(
@@ -200,13 +205,22 @@ fn load_modules(
   // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
   // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
   // NPC Interaction Handlers
+  let damage_number_set = @combat_ui.DamageNumberSet::load()
   let stage_f = map_module
     .combine(inventory_module)
     .combine(npc_module)
     .combine(char_look_module)
+    .combine(drop_module)
+    .combine(damage_number_set)
     .map(
       fn(it) {
-        let (((map_module, inventory_module), npc_module), char_look_module) = it
+        let (
+          (
+            (((map_module, inventory_module), npc_module), char_look_module),
+            drop_module,
+          ),
+          damage_number_set,
+        ) = it
         let stage = Stage::new(
           @map.get_portals_animations(map_module),
           monster_module.get_map_mobs(),
@@ -214,6 +228,7 @@ fn load_modules(
           inventory_module.get_inventory(),
           npc_module.get_npcs(),
           char_look_module,
+          damage_number_set,
         )
         g_stage.set(stage)
       },

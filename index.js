@@ -187,11 +187,6 @@ function main() {
     stringLoader.load()
   );
 
-  const reactorLoader = new ResourceLoader("https://maple.kkkiiox.work/Reactor/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Reactor/images"));
-  prepareResourcePromises.push(
-    reactorLoader.load()
-  );
-
   const map001Loader = new ResourceLoader("https://maple.kkkiiox.work/Map001/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Map001/images"));
   prepareResourcePromises.push(
     map001Loader.load()
@@ -213,9 +208,19 @@ function main() {
     npcLoader.load()
   );
 
-  const itemLoader = new ResourceLoader("https://maple.kkkiiox.work/Item/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Item/images"));
-  prepareResourcePromises.push(
-    itemLoader.load()
+  const itemLoader = new CompositeAsyncResourceLoader(
+    {
+      "Consume/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Consume"),
+      "Cash/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Cash"),
+      "Etc/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Etc"),
+      "Install/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Install"),
+      "Pet/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Pet"),
+    },
+    imageLoader
+  );
+  const specialItemLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Item/Special"),
+    imageLoader
   );
 
   const mobLoader = new AsyncResourceLoader(
@@ -223,10 +228,10 @@ function main() {
     imageLoader
   );
 
-  const effectLoader = new ResourceLoader("https://maple.kkkiiox.work/Effect/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Effect/images"));
-  prepareResourcePromises.push(
-    effectLoader.load()
-  );
+  const effectLoader = new CompositeAsyncResourceLoader({
+    "BasicEff.img/": new DirResourceLoader("https://maple.kkkiiox.work/Effect/BasicEff.img"),
+    "CharacterEff.img/": new DirResourceLoader("https://maple.kkkiiox.work/Effect/CharacterEff.img"),
+  }, imageLoader);
 
   const skillLoader = new ResourceLoader("https://maple.kkkiiox.work/Skill/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Skill/images"));
   prepareResourcePromises.push(
@@ -253,8 +258,6 @@ function main() {
             return uiLoader;
           case "string":
             return stringLoader;
-          case "reactor":
-            return reactorLoader;
           case "map001":
             return map001Loader;
           case "map_pretty":
@@ -263,10 +266,6 @@ function main() {
             return etcLoader;
           case "npc":
             return npcLoader;
-          case "item":
-            return itemLoader;
-          case "effect":
-            return effectLoader;
           case "skill":
             return skillLoader;
           default:
@@ -301,6 +300,12 @@ function main() {
             return uiWindow4Loader;
           case "mob":
             return mobLoader;
+          case "item":
+            return itemLoader;
+          case "special_item":
+            return specialItemLoader;
+          case "effect":
+            return effectLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

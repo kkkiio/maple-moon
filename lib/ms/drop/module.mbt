@@ -4,8 +4,10 @@ struct Module {
 }
 
 ///|
-pub fn Module::new() -> Module {
-  { map_drops: MapDrops::new() }
+pub fn Module::load() -> @utils.Future[Module] {
+  special_item_loader
+  .load_res(["0900.img"])
+  .map(fn(src) { { map_drops: MapDrops::new(src) } })
 }
 
 ///|

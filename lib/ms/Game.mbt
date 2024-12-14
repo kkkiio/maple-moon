@@ -73,20 +73,22 @@ fn load_modules(
     },
   )
   let sp_stat_id = @char_stats.StatId(1)
-  let login_mod_f = inventory_module.map(
-    fn(inventory_module) {
-      let mod = @login.Module::new(processor)
-      merge_handlers(
-        mod.make_handlers(
-          fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
-          fn(char_entry) { Stage::get().load_player(char_entry, sp_stat_id) },
-          inventory_module.get_inventory(),
-          fn(player) { setup_game_ui(ui, player, action_registry, timer) },
-        ),
-      )
-      mod
-    },
-  )
+  let login_mod_f = @login.Module::load(processor)
+    .combine(inventory_module)
+    .map(
+      fn(it) {
+        let (login_module, inventory_module) = it
+        merge_handlers(
+          login_module.make_handlers(
+            fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
+            fn(char_entry) { Stage::get().load_player(char_entry, sp_stat_id) },
+            inventory_module.get_inventory(),
+            fn(player) { setup_game_ui(ui, player, action_registry, timer) },
+          ),
+        )
+        login_module
+      },
+    )
   let monster_module = @monster.Module::new()
   merge_handlers(
     monster_module.make_handlers(

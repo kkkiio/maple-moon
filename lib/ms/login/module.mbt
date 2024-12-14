@@ -1,6 +1,8 @@
 ///|
 struct Module {
   processor : @net.PacketProcessor
+  login_img : @resource.NxNode
+  pretty_logo : @resource.NxNode
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World]
@@ -12,17 +14,27 @@ struct Module {
 }
 
 ///|
-pub fn Module::new(processor : @net.PacketProcessor) -> Module {
-  {
-    processor,
-    characters: [],
-    selected_index: None,
-    receiving_server_list: [],
-    login_task: None,
-    connect_task: None,
-    input_acc_pass: None,
-    select_cid: None,
-  }
+pub fn Module::load(processor : @net.PacketProcessor) -> @utils.Future[Module] {
+  map001_loader
+  .load_res(["Back", "login.img"])
+  .combine(map_pretty_loader.load_res(["Back", "login.img", "ani", "16"]))
+  .map(
+    fn(it) {
+      let (login_img, pretty_logo) = it
+      {
+        processor,
+        login_img,
+        pretty_logo,
+        characters: [],
+        selected_index: None,
+        receiving_server_list: [],
+        login_task: None,
+        connect_task: None,
+        input_acc_pass: None,
+        select_cid: None,
+      }
+    },
+  )
 }
 
 ///|
@@ -638,3 +650,21 @@ pub fn update(self : Module) -> Unit {
     None => ()
   }
 }
+
+///|
+pub fn get_login_img(self : Module) -> @resource.NxNode {
+  self.login_img
+}
+
+///|
+pub fn get_pretty_logo(self : Module) -> @resource.NxNode {
+  self.pretty_logo
+}
+
+///|
+let map001_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("map001")
+
+///|
+let map_pretty_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+  "map_pretty",
+)

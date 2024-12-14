@@ -182,20 +182,18 @@ function main() {
     imageLoader
   )
 
-  const stringLoader = new ResourceLoader("https://maple.kkkiiox.work/String/nx.json", new BidImageLoader("https://maple.kkkiiox.work/String/images"));
+  const stringLoader = new ResourceLoader("https://maple.kkkiiox.work/String/nx.json", undefined);
   prepareResourcePromises.push(
     stringLoader.load()
   );
 
-  const map001Loader = new ResourceLoader("https://maple.kkkiiox.work/Map001/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Map001/images"));
-  prepareResourcePromises.push(
-    map001Loader.load()
-  );
+  const map001Loader = new CompositeAsyncResourceLoader({
+    "Back/": new DirResourceLoader("https://maple.kkkiiox.work/Map001/Back"),
+  }, imageLoader);
 
-  const mapPrettyLoader = new ResourceLoader("https://maple.kkkiiox.work/MapPretty/nx.json", new BidImageLoader("https://maple.kkkiiox.work/MapPretty/images"));
-  prepareResourcePromises.push(
-    mapPrettyLoader.load()
-  );
+  const mapPrettyLoader = new CompositeAsyncResourceLoader({
+    "Back/": new DirResourceLoader("https://maple.kkkiiox.work/MapPretty/Back"),
+  }, imageLoader);
 
   const etcLoader = new ResourceLoader("https://maple.kkkiiox.work/Etc/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Etc/images"));
   prepareResourcePromises.push(
@@ -258,10 +256,6 @@ function main() {
             return uiLoader;
           case "string":
             return stringLoader;
-          case "map001":
-            return map001Loader;
-          case "map_pretty":
-            return mapPrettyLoader;
           case "etc":
             return etcLoader;
           case "npc":
@@ -306,6 +300,10 @@ function main() {
             return specialItemLoader;
           case "effect":
             return effectLoader;
+          case "map001":
+            return map001Loader;
+          case "map_pretty":
+            return mapPrettyLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

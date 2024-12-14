@@ -36,16 +36,6 @@ pub fn string_loader() -> SyncLoader {
 }
 
 ///|
-pub fn map001_loader() -> SyncLoader {
-  { name: "map001", loader: get_resource_loader("map001") }
-}
-
-///|
-pub fn map_pretty_loader() -> SyncLoader {
-  { name: "map_pretty", loader: get_resource_loader("map_pretty") }
-}
-
-///|
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   {
     loader_name: self.name,

@@ -1,5 +1,7 @@
+///|
 typealias Point[T] = @struct.Point[T]
 
+///|
 enum UILoginButtons {
   BT_LOGIN
   BT_REGISTER
@@ -10,6 +12,7 @@ enum UILoginButtons {
   BT_QUIT
 } derive(Eq, Compare)
 
+///|
 pub fn int_value(self : UILoginButtons) -> Int {
   match self {
     BT_LOGIN => 0
@@ -22,6 +25,7 @@ pub fn int_value(self : UILoginButtons) -> Int {
   }
 }
 
+///|
 pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
   match i {
     0 => BT_LOGIN |> Some
@@ -35,6 +39,7 @@ pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
   }
 }
 
+///|
 struct UILogin {
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
@@ -48,21 +53,14 @@ struct UILogin {
   mut saveid : Bool
 }
 
-let map001_loader = @resource.map001_loader
-
-let map_pretty_loader = @resource.map_pretty_loader
-
+///|
 pub fn UILogin::new(login_module : @login.Module) -> UILogin {
-  let map001_loader = map001_loader()
-  let map = map001_loader.load_res(["Back", "login.img"])
+  let map = login_module.get_login_img()
+  let pretty_logo = login_module.get_pretty_logo()
   let back = map["back"]
   let ani = map["ani"]
   let title = @ui.common_ui_loader().load_res(["Login.img", "Title"])
   let common = @ui.common_ui_loader().load_res(["Login.img", "Common"])
-  let map_pretty_loader = map_pretty_loader()
-  let prettyLogo = map_pretty_loader.load_res(
-    ["Back", "login.img", "ani", "16"],
-  )
   let sprites = [
     @graphics.Sprite::from_resource(
       back["11"],
@@ -85,7 +83,7 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
       state_args=@graphics.DrawArgument::from_point(Point::new(399, 260)),
     ),
     @graphics.Sprite::from_resource(
-      prettyLogo,
+      pretty_logo,
       state_args=@graphics.DrawArgument::from_point(Point::new(394, 173)),
     ),
     @graphics.Sprite::from_resource(
@@ -174,10 +172,12 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
   obj
 }
 
+///|
 pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
   self.base
 }
 
+///|
 pub fn draw(self : UILogin, alpha : Double) -> Unit {
   @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
 
@@ -196,6 +196,7 @@ pub fn draw(self : UILogin, alpha : Double) -> Unit {
   // self.checkbox[self.saveid].draw(DrawArgument(self.position + Point[Int](291, 335)))
 }
 
+///|
 pub fn update(self : UILogin) -> Unit {
   @ui.update_sprites(self.sprites.iter())
 }
@@ -221,6 +222,7 @@ pub fn update(self : UILogin) -> Unit {
 //   // }
 // }
 
+///|
 pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
   match UILoginButtons::from_int(id) {
     Some(UILoginButtons::BT_LOGIN) =>
@@ -242,6 +244,7 @@ pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
   }
 }
 
+///|
 pub fn send_cursor(
   self : UILogin,
   clicked : Bool,
@@ -264,18 +267,22 @@ pub fn send_cursor(
   )
 }
 
+///|
 pub fn UILogin::const_type() -> UIElementType {
   UIElementType::LOGIN
 }
 
+///|
 pub fn UILogin::const_focused() -> Bool {
   false
 }
 
+///|
 pub fn UILogin::const_toggled() -> Bool {
   false
 }
 
+///|
 pub fn send_key(
   self : UILogin,
   key : Int,
@@ -285,14 +292,17 @@ pub fn send_key(
 
 }
 
+///|
 pub fn is_active(self : UILogin) -> Bool {
   self.base.is_active()
 }
 
+///|
 pub fn remove_cursor(self : UILogin) -> Unit {
   @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
 }
 
+///|
 pub fn deactivate(self : UILogin) -> Unit {
   self.base.deactivate()
 }

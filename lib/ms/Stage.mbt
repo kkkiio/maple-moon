@@ -28,6 +28,7 @@ pub(all) struct Stage {
   damage_number_set : @combat_ui.DamageNumberSet
   mut combat : Combat?
   char_look_module : @char_look.Module
+  add_task_fn : (@utils.Future[Unit]) -> Unit
 }
 
 ///|
@@ -38,7 +39,8 @@ pub fn Stage::new(
   inventory : @inventory.Inventory,
   npcs : @npc.MapNpcs,
   char_look_module : @char_look.Module,
-  damage_number_set : @combat_ui.DamageNumberSet
+  damage_number_set : @combat_ui.DamageNumberSet,
+  add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Stage {
   {
     map_portals_animations,
@@ -53,6 +55,7 @@ pub fn Stage::new(
     drops,
     inventory,
     char_look_module,
+    add_task_fn,
   }
 }
 
@@ -90,26 +93,37 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
 }
 
 ///|
-pub fn load_player(
+pub fn set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
-  sp_stat_id : @char_stats.StatId
-) -> @player.Player {
+  sp_stat_id : @char_stats.StatId,
+  callback : (@player.Player) -> Unit!
+) -> Unit {
   let char_base = @character.CharBase::new(
     entry.id,
     @character.CharLook::new(entry.look, self.char_look_module),
     entry.stats.name,
     self.damage_number_set,
   )
-  let player = @player.Player::from_entry(
-    entry,
-    self.inventory,
-    sp_stat_id,
-    char_base,
+  (self.add_task_fn)(
+    @player.Player::load(entry, self.inventory, sp_stat_id, char_base)
+    .tap(
+      fn(player) {
+        self.player = Some(player)
+        self.combat = Some(
+          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+        )
+      },
+    )
+    .map(
+      fn(player) {
+        match callback?(player) {
+          Ok(_) => ()
+          Err(e) => @log.error({ "error": e }, "set_player_stage")
+        }
+      },
+    ),
   )
-  self.player = Some(player)
-  self.combat = Some(Combat::new(self.damage_number_set, self.mobs))
-  player
 }
 
 ///|
@@ -204,7 +218,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
         None => return ()
       }
   }
-  self.combat.unwrap().update!()
+  self.combat.unwrap().update()
   @map.update_backgrounds(backgrounds)
   // effect_.update();
   tiles_objs.update()
@@ -250,7 +264,7 @@ pub fn send_key(
   t : @keyboard.KeyType,
   action : Int,
   down : Bool
-) -> Unit! {
+) -> Unit {
   guard let StageState::ACTIVE(physics~, map_info~, portals~, ..) = self.state else {
     StageState::INACTIVE => return
     StageState::TRANSITION(_) => return
@@ -266,7 +280,7 @@ pub fn send_key(
                 self.check_portals(map_info, portals, physics)
               // @keyboard.ActionId::SIT => self.check_seats()
               @keyboard.ActionId::ATTACK =>
-                self.combat.unwrap().use_move!(player, 0)
+                self.combat.unwrap().use_move(player, 0)
               @keyboard.ActionId::PICKUP => self.check_drops(player)
               _ => ()
             }
@@ -274,7 +288,7 @@ pub fn send_key(
           player.send_action(action, down)
         }
         @keyboard.KeyType::SKILL =>
-          self.combat.unwrap().use_move!(player, action)
+          self.combat.unwrap().use_move(player, action)
         // @keyboard.Id::ITEM => self.player.use_item(action)
         // @keyboard.Id::FACE => self.player.set_expression(action)
         _ => ()

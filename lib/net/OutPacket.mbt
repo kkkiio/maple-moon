@@ -228,7 +228,7 @@ pub fn OutPacket::write_short(self : OutPacket, sh : Int) -> Unit {
 }
 
 ///|
-pub fn OutPacket::write_int(self : OutPacket, in_val : Int) -> Unit {
+pub fn write_int(self : OutPacket, in_val : Int) -> Unit {
   let mut i = 0
   let mut in_val = in_val
   while i < 4 {

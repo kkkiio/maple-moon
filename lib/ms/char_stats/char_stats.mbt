@@ -59,12 +59,12 @@ pub(all) struct StatsEntry {
 }
 
 ///|
-pub fn CharStats::from_entry(
+pub fn CharStats::new(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
-  sp_stat_id : StatId
+  sp_stat_id : StatId,
+  job : @job.Job
 ) -> CharStats {
-  let job = @job.Job::new(id=s.job)
   let cs : CharStats = {
     name: s.name,
     weapon_type_getter,
@@ -463,8 +463,8 @@ pub fn is_damage_buffed(self : CharStats) -> Bool {
 }
 
 ///|
-pub fn change_job(self : CharStats, id : Int) -> Unit {
-  self.job = @job.Job::new(id~)
+pub fn change_job(self : CharStats, job : @job.Job) -> Unit {
+  self.job = job
 }
 
 ///|

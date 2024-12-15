@@ -2,7 +2,7 @@
 struct Combat {
   damage_number_set : @combat_ui.DamageNumberSet
   mobs : @monster.MapMobs
-  skills : Map[Int, @combat_do.Skill]
+  skill_cache : Map[Int, @utils.Future[Result[@combat_do.SpecialMove, Error]]]
   regular_attack : @combat_do.RegularAttack
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
@@ -10,23 +10,26 @@ struct Combat {
   bullets : Array[BulletEffect]
   damage_numbers : Array[@combat_ui.DamageNumber]
   cooldowns : Map[Int, Int]
+  add_task_fn : (@utils.Future[Unit]) -> Unit
 }
 
 ///|
 pub fn Combat::new(
   damage_number_set : @combat_ui.DamageNumberSet,
-  mobs : @monster.MapMobs
+  mobs : @monster.MapMobs,
+  add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Combat {
   {
     damage_number_set,
     mobs,
-    skills: Map::new(),
+    skill_cache: Map::new(),
     regular_attack: @combat_do.RegularAttack::default(),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
     cooldowns: Map::new(),
+    add_task_fn,
   }
 }
 
@@ -46,12 +49,12 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : Combat) -> Unit! {
+pub fn update(self : Combat) -> Unit {
   for bullet_effect in self.bullet_effects.process() {
-    self.apply_bullet_effect!(bullet_effect)
+    self.apply_bullet_effect(bullet_effect)
   }
   for dmg_eff in self.damage_effects.process() {
-    self.apply_damage_effect!(dmg_eff)
+    self.apply_damage_effect(dmg_eff)
   }
   self.bullets.retain(
     fn(mb) {
@@ -60,7 +63,7 @@ pub fn update(self : Combat) -> Unit! {
         mb.target = self.mobs.get_mob_head_position(target_oid)
         let apply = mb.bullet.update(mb.target)
         if apply {
-          self.apply_damage_effect?(mb.damageeffect).unwrap() // TODO: Handle error
+          self.apply_damage_effect(mb.damageeffect)
         }
         return apply.not()
       }
@@ -71,19 +74,26 @@ pub fn update(self : Combat) -> Unit! {
 }
 
 ///|
-pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit! {
+pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
   if player.can_attack().not() {
     return
   }
-  let act = self.get_move!(move_id)
-  let reason = self.can_use(player, act)
-  if reason == @combat_do.ForbidReason::FBR_NONE {
-    self.apply_move(player, act)
-  } else {
-    // TODO: show forbid reason
-    // let weapontype = self.player.get_stats().get_weapontype()
-    // ForbidSkillMessage::new(reason, weapontype).drop()
-  }
+  let act_f = self.get_move(move_id)
+  let task = act_f.map_exn(
+      fn(act) {
+        let act = act.unwrap_or_error!()
+        let reason = self.can_use(player, act)
+        if reason == @combat_do.ForbidReason::FBR_NONE {
+          self.apply_move(player, act)
+        } else {
+          // TODO: show forbid reason
+          // let weapontype = self.player.get_stats().get_weapontype()
+          // ForbidSkillMessage::new(reason, weapontype).drop()
+        }
+      },
+    )
+    |> log_background_err
+  (self.add_task_fn)(task)
 }
 
 ///|
@@ -296,18 +306,17 @@ fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
 }
 
 ///|
-pub fn get_move(self : Combat, move_id : Int) -> @combat_do.SpecialMove! {
+pub fn get_move(
+  self : Combat,
+  move_id : Int
+) -> @utils.Future[Result[@combat_do.SpecialMove, Error]] {
   if move_id == 0 {
-    return self.regular_attack
+    return self.regular_attack |> Ok |> @utils.Future::from_value
   }
-  match self.skills.get(move_id) {
-    Some(skill) => skill
-    None => {
-      let skill = @combat_do.Skill::new!(move_id)
-      self.skills.set(move_id, skill)
-      skill
-    }
-  }
+  self.skill_cache.get_or_init(
+    move_id,
+    fn() { @combat_do.Skill::load(move_id).map(fn(f) { f.map(fn(it) { it }) }) },
+  )
 }
 
 ///|
@@ -419,23 +428,32 @@ fn place_numbers(
 }
 
 ///|
-fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit! {
+fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let number = effect.number
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
-  let act = self.get_move!(effect.move_id)
+  let act_f = self.get_move(effect.move_id)
   guard let Some(mob) = self.mobs.get_mobs().get(effect.target_oid) else {
     None => return
   }
   mob.apply_damage(effect.damage, effect.toleft)
-  act.apply_hit_effects(effect.user, mob)
+  (self.add_task_fn)(
+    act_f.map(
+      fn(res) {
+        match res {
+          Ok(act) => act.apply_hit_effects(effect.user, mob)
+          Err(e) => @log.error({ "error": e }, "apply_damage_effect failed")
+        }
+      },
+    ),
+  )
 }
 
 ///|
-fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit! {
+fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
   if effect.bullet.set_target(effect.target) {
-    self.apply_damage_effect!(effect.damageeffect)
+    self.apply_damage_effect(effect.damageeffect)
   } else {
     self.bullets.push(effect)
   }
@@ -540,4 +558,19 @@ pub fn can_use(
 ///|
 fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
   self.cooldowns[skill_id].or(0) > 0
+}
+
+///|
+pub fn log_background_err[E : Show](
+  f : @utils.Future[Result[Unit, E]],
+  loc~ : SourceLoc = _
+) -> @utils.Future[Unit] {
+  f.map(
+    fn(res) {
+      match res {
+        Ok(_) => ()
+        Err(e) => @log.error({ "err": Show::to_string(e) }, "task failed", loc~)
+      }
+    },
+  )
 }

@@ -1,6 +1,0 @@
-Don't use "type" as an identifier.
-Use `not` method instead of `!` to negate a boolean.
-The `guard` statement is used to check a specified invariant:
-```moonbit expr
-guard let Some(value) = map[key] else { None => return }
-```

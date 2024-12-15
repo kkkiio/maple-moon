@@ -11,30 +11,36 @@ pub fn Afterimage::load(
   stance_name : String,
   level : Int
 ) -> @utils.Future[Afterimage] {
-  @option.when(
-    skill_id > 0,
-    fn() {
-      let strid = @string_format.extend_id(skill_id, 7)
-      @skill.skill_loader().load_res(
-        [
-          strid.substring(end=3) + ".img",
-          "skill",
-          strid,
-          "afterimage",
-          name,
-          stance_name,
-        ],
+  ( if skill_id > 0 {
+  let strid = @string_format.extend_id(skill_id, 7)
+    @skill.skill_loader().load_res(
+      [
+        strid.substring(end=3) + ".img",
+        "skill",
+        strid,
+        "afterimage",
+        name,
+        stance_name,
+      ],
+    ).map(fn(src) {
+      if src.is_null(){
+        None
+      }else {
+        Some(src)
+      } })
+  }else {
+    @utils.Future::from_value(None)
+  } ) .bind(
+    fn(opt) {
+      opt.map_or_else(
+        fn() {
+          afterimage_loader.load_res(
+            [name + ".img", (level / 10).to_string(), stance_name],
+          )
+        },
+        fn(src) { @utils.Future::from_value(src) },
       )
     },
-  )
-  .filter(fn(src) { src.is_null().not() })
-  .map_or_else(
-    fn() {
-      afterimage_loader.load_res(
-        [name + ".img", (level / 10).to_string(), stance_name],
-      )
-    },
-    fn(src) { @utils.Future::from_value(src) },
   )
   .map(fn(src) { Afterimage::new(src) })
 }

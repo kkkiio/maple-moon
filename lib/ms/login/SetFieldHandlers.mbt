@@ -1,9 +1,9 @@
-/// handle_set_field handles packets which contains all character information on first login
+///| handle_set_field handles packets which contains all character information on first login
 /// or warps the player to a different map
 pub fn handle_set_field(
   transition : (Int, Int) -> Unit,
   login_module : Module,
-  load_player : (@character.CharEntry) -> @player.Player!,
+  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
   recv : @net.InPacket
@@ -20,13 +20,14 @@ pub fn handle_set_field(
       transition,
       recv,
       login_module.get_selected_char().unwrap(),
-      load_player,
+      set_player_stage,
       inventory,
       setup_game_ui,
     )
   }
 }
 
+///|
 fn change_map(transition : (Int, Int) -> Unit, recv : @net.InPacket) -> Unit! {
   recv.skip!(3)
   let mapid = recv.read_int!()
@@ -34,11 +35,12 @@ fn change_map(transition : (Int, Int) -> Unit, recv : @net.InPacket) -> Unit! {
   transition(mapid, portalid)
 }
 
+///|
 fn set_field(
   transition : (Int, Int) -> Unit,
   recv : @net.InPacket,
   playerentry : @character.CharEntry,
-  load_player : (@character.CharEntry) -> @player.Player!,
+  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit
 ) -> Unit! {
@@ -49,40 +51,45 @@ fn set_field(
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = parse_stats!(recv)
   let playerentry = { ..playerentry, stats, }
-  let player = load_player!(playerentry)
-  recv.read_byte!() |> ignore // 'buddycap'
-  if recv.read_bool!() {
-    recv.read_string!() |> ignore // 'linkedname'
-  }
-  parse_inventory!(recv, inventory)
-  parse_skillbook!(recv, player.get_skills())
-  // parse_cooldowns(recv, player);
-  // parse_questlog(recv, player.get_quests());
-  // parse_minigame(recv);
-  // parse_ring1(recv);
-  // parse_ring2(recv);
-  // parse_ring3(recv);
-  // parse_teleportrock(recv, player.get_teleport_rock());
-  // parse_monsterbook(recv, player.get_monsterbook());
-  // parse_nyinfo(recv);
-  // parse_areainfo(recv);
+  set_player_stage(
+    playerentry,
+    fn(player) {
+      recv.read_byte!() |> ignore // 'buddycap'
+      if recv.read_bool!() {
+        recv.read_string!() |> ignore // 'linkedname'
+      }
+      parse_inventory!(recv, inventory)
+      parse_skillbook!(recv, player.get_skills())
+      // parse_cooldowns(recv, player);
+      // parse_questlog(recv, player.get_quests());
+      // parse_minigame(recv);
+      // parse_ring1(recv);
+      // parse_ring2(recv);
+      // parse_ring3(recv);
+      // parse_teleportrock(recv, player.get_teleport_rock());
+      // parse_monsterbook(recv, player.get_monsterbook());
+      // parse_nyinfo(recv);
+      // parse_areainfo(recv);
 
-  player.recalc_stats(true)
-  new_player_update_packet().dispatch()
-  let portalid = player.get_stats().get_portal()
-  let mapid = player.get_stats().get_map_id()
-  transition(mapid, portalid)
+      player.recalc_stats(true)
+      new_player_update_packet().dispatch()
+      let portalid = player.get_stats().get_portal()
+      let mapid = player.get_stats().get_map_id()
+      transition(mapid, portalid)
 
-  // Sound(Sound::Name::GAME_START).play();
+      // Sound(Sound::Name::GAME_START).play();
 
-  setup_game_ui(player)
+      setup_game_ui(player)
+    },
+  )
 }
 
-/// Finished updating player stats
+///| Finished updating player stats
 fn new_player_update_packet() -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_UPDATE)
 }
 
+///|
 fn parse_inventory(
   recv : @net.InPacket,
   invent : @inventory.Inventory
@@ -123,6 +130,7 @@ fn parse_inventory(
   }
 }
 
+///|
 fn parse_skillbook(
   recv : @net.InPacket,
   skills : @character.SkillBook

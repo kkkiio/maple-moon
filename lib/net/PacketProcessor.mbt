@@ -98,7 +98,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
     Opcode::from_int!(recv.read_ushort!())
   } catch {
     UnknownOpCodeError(opcode) => {
-      @log.warn({ "opcode": opcode }, "unknown opcode")
+      @log.warn({ "opcode": to_hex_string(opcode) }, "unknown opcode")
       return
     }
     err => {
@@ -163,4 +163,21 @@ pub fn make_handler[T : Show](
 ///|
 pub fn handle_ping(processor : PacketProcessor) -> Unit {
   processor.send_packet(OutPacket::new(OutPacketOpcode::PONG))
+}
+
+///|
+let hex_digits = [
+  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+]
+
+///|
+fn to_hex_string(i : Int) -> String {
+  let mut i = i
+  let sb = StringBuilder::new()
+  sb.write_string("0x")
+  while i > 0 {
+    sb.write_string(hex_digits[i & 0xF])
+    i = i >> 4
+  }
+  sb.to_string()
 }

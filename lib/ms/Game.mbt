@@ -9,6 +9,7 @@ pub(all) struct Game {
   ui : UI
   processor : @net.PacketProcessor
   loaded_state : @utils.Future[LoadedState]
+  loading_tasks : Array[@utils.Future[Unit]]
 }
 
 ///|
@@ -29,13 +30,15 @@ pub fn Game::new() -> Game {
     fn() { now_micro() |> @utils.TimePoint::from_micro },
   )
   let processor = @net.PacketProcessor::init()
+  let loading_tasks = []
   {
     window,
     timer,
     accumulator: 0,
     ui,
     processor,
-    loaded_state: load_modules(ui, timer, processor),
+    loaded_state: load_modules(ui, timer, processor, loading_tasks),
+    loading_tasks,
   }
 }
 
@@ -43,8 +46,10 @@ pub fn Game::new() -> Game {
 fn load_modules(
   ui : UI,
   timer : @utils.Timer,
-  processor : @net.PacketProcessor
+  processor : @net.PacketProcessor,
+  loading_tasks : Array[@utils.Future[Unit]]
 ) -> @utils.Future[LoadedState] {
+  let add_loading_task = fn(task) { loading_tasks.push(task) }
   let action_registry = @action.Registry::new()
   let action_map = {}
   fn merge_actions(map : Map[@keyboard.ActionId, @action.Descriptor]) -> Unit {
@@ -81,7 +86,9 @@ fn load_modules(
         merge_handlers(
           login_module.make_handlers(
             fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
-            fn(char_entry) { Stage::get().load_player(char_entry, sp_stat_id) },
+            fn(char_entry, callback) {
+              Stage::get().set_player_stage(char_entry, sp_stat_id, callback)
+            },
             inventory_module.get_inventory(),
             fn(player) { setup_game_ui(ui, player, action_registry, timer) },
           ),
@@ -89,7 +96,7 @@ fn load_modules(
         login_module
       },
     )
-  let monster_module = @monster.Module::new()
+  let monster_module = @monster.Module::new(add_loading_task)
   merge_handlers(
     monster_module.make_handlers(
       fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
@@ -231,6 +238,7 @@ fn load_modules(
           npc_module.get_npcs(),
           char_look_module,
           damage_number_set,
+          add_loading_task,
         )
         g_stage.set(stage)
       },
@@ -259,6 +267,7 @@ fn load_modules(
 
 ///|
 pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
+  let elapsed = self.timer.stop(current_time)
   guard let Some(loaded_state) = self.loaded_state.poll() else {
     None => return
   }
@@ -269,8 +278,6 @@ pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
   }
   loaded_state.login_module.update()
   let timestep = @constants.step_time_ms * 1000
-  let elapsed = self.timer.stop(current_time)
-
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()
   let times = acc / timestep
@@ -280,6 +287,7 @@ pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
   for _ in 0..<update_times {
     self.update_status()
   }
+  self.run_loading_tasks() // run once per frame, after update network
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
@@ -333,4 +341,9 @@ pub fn get_window(self : Game) -> Window {
 ///|
 fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
   future.map(fn(_v : T) { () })
+}
+
+///|
+pub fn run_loading_tasks(self : Game) -> Unit {
+  self.loading_tasks.retain(fn(f) { f.poll().is_empty() })
 }

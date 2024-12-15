@@ -1,4 +1,5 @@
-pub struct SkillData {
+///|
+pub(all) struct SkillData {
   id : Int
   stats : Map[Int, Stats]
   element : String
@@ -12,10 +13,11 @@ pub struct SkillData {
   levels : Map[Int, String]
   req_skills : @immut/hashmap.T[Int, Int]
   icons : FixedArray[@graphics.Texture] // NORMAL, DISABLED, MOUSEOVER
+  src : @resource.NxNode
 }
 
-/// The stats of one level
-pub struct Stats {
+///| The stats of one level
+pub(all) struct Stats {
   damage : Double
   matk : Int
   fixdamage : Int
@@ -33,24 +35,19 @@ pub struct Stats {
   range : @struct.Rectangle[Int]
 }
 
-let cache : Map[Int, SkillData] = {}
-
-pub fn SkillData::get(id : Int) -> SkillData! {
-  match cache.get(id) {
-    Some(skill) => skill
-    None => {
-      let skill = SkillData::load!(id)
-      cache.set(id, skill)
-      skill
-    }
-  }
-}
-
-pub fn SkillData::load(id : Int) -> SkillData! {
-  /// Locate sources
+///|
+pub fn SkillData::load(id : Int) -> @utils.Future[Result[SkillData, Error]] {
   let strid = @string_format.extend_id(id, 7)
   let jobid = strid.substring(end=3)
-  let src = skill_loader().load_res([jobid + ".img", "skill", strid])
+  skill_loader()
+  .load_res([jobid + ".img", "skill", strid])
+  .map_exn(fn(src) { SkillData::new!(id, src) })
+}
+
+///|
+fn SkillData::new(id : Int, src : @resource.NxNode) -> SkillData! {
+  let strid = @string_format.extend_id(id, 7)
+  let jobid = strid.substring(end=3)
   let strsrc = @resource.string_loader().load_res(["Skill.img", strid])
 
   // Load icons
@@ -192,21 +189,27 @@ pub fn SkillData::load(id : Int) -> SkillData! {
     levels,
     req_skills: @immut/hashmap.from_iter(req_skills.iter()),
     icons,
+    src,
   }
 }
 
 // Skill flags, unfortunately these just have to be hard-coded
+///|
 let flag_none : Int = 0x0000
 
+///|
 let flag_attack : Int = 0x0001
 
+///|
 let flag_ranged : Int = 0x0002
 
+///|
 fn flags_of(id : Int) -> Int {
   guard let Ok(id) = SkillId::from_int?(id) else { _ => flag_none }
   skill_flags[id].or(flag_none)
 }
 
+///|
 let skill_flags : @immut/hashmap.T[SkillId, Int] = @immut/hashmap.from_array(
   [
     // Beginner
@@ -260,10 +263,20 @@ let skill_flags : @immut/hashmap.T[SkillId, Int] = @immut/hashmap.from_array(
   ],
 )
 
+///|
 pub fn is_attack(self : SkillData) -> Bool {
   self.passive.not() && (self.flags & flag_attack) != 0
 }
 
+///|
 pub fn get_stats(self : SkillData, level : Int) -> Stats? {
   self.stats.get(level)
+}
+
+///|
+let skill_loader_ : @resource.AsyncLoader = @resource.AsyncLoader::new("skill")
+
+///|
+pub fn skill_loader() -> @resource.AsyncLoader {
+  skill_loader_
 }

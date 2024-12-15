@@ -1,10 +1,11 @@
-pub struct MobBuff {
+///|
+pub(all) struct MobBuff {
   time : Int
   anim : @graphics.Animation
 }
 
-/// The skill implementation of special move
-pub struct MobSkill {
+///| The skill implementation of special move
+pub(all) struct MobSkill {
   // TODO: implement Effect
   // use_effect : MobSkillUseEffect
   // hit_effect : MobSkillHitEffect
@@ -13,8 +14,22 @@ pub struct MobSkill {
   buff : MobBuff
 }
 
-pub fn MobSkill::new(id : Int, level : Int) -> MobSkill! {
-  let src = @skill.skill_loader().load_res(["MobSkill.img", id.to_string()])
+///|
+pub fn MobSkill::load(
+  id : Int,
+  level : Int
+) -> @utils.Future[Result[MobSkill, Error]] {
+  @skill.skill_loader()
+  .load_res(["MobSkill.img", id.to_string()])
+  .map_exn(fn(src) { MobSkill::new!(id, level, src) })
+}
+
+///|
+pub fn MobSkill::new(
+  id : Int,
+  level : Int,
+  src : @resource.NxNode
+) -> MobSkill! {
   // let use_effect = MobSingleUseEffect::new(src["level"][level.to_string()])
   let is_buff = src["level"][level.to_string()]["mob"].get_children_count() > 0
   let buff = if is_buff {
@@ -36,47 +51,58 @@ pub fn MobSkill::new(id : Int, level : Int) -> MobSkill! {
   }
 }
 
+///|
 pub fn MobSkill::apply_useeffects(self : MobSkill, mob : Mob) -> Unit {
   // self.use_effect.apply(mob)
 }
 
+///|
 pub fn MobSkill::apply_hit_effects(self : MobSkill, mob : Mob) -> Unit {
   // self.hit_effect.apply(mob)
 }
 
+///|
 pub fn MobSkill::is_attack(self : MobSkill) -> Bool {
   false
 }
 
+///|
 pub fn MobSkill::is_skill(self : MobSkill) -> Bool {
   true
 }
 
+///|
 pub fn MobSkill::is_buff(self : MobSkill) -> Bool {
   self.buff.time > 5
 }
 
+///|
 pub fn MobSkill::get_id(self : MobSkill) -> Int {
   self.skill_id
 }
 
+///|
 pub fn MobSkill::get_level(self : MobSkill) -> Int {
   self.level
 }
 
+///|
 pub fn MobSkill::get_buff(self : MobSkill) -> MobBuff {
   self.buff
 }
 
+///|
 struct Effect {
   animation : @graphics.Animation
   z : Int
 }
 
+///|
 pub fn Effect::new(src : @resource.NxNode) -> Effect! {
   { animation: @graphics.Animation::from_resource(src), z: src["z"].get_int!() }
 }
 
+///|
 pub fn Effect::apply(
   self : Effect,
   func_show_effect : (@graphics.Animation, Int, Int, Bool) -> Unit
@@ -85,19 +111,23 @@ pub fn Effect::apply(
   // mob.show_effect(animation_, 0, z_, true);
 }
 
+///|
 trait MobSkillUseEffect {
   apply(Self, Mob) -> Unit
 }
 
 // An effect which displays an animation over the mob's position
-pub struct MobSingleUseEffect {
+///|
+pub(all) struct MobSingleUseEffect {
   effect : Effect
 }
 
+///|
 pub fn MobSingleUseEffect::new(src : @resource.NxNode) -> MobSingleUseEffect! {
   { effect: Effect::new!(src) }
 }
 
+///|
 pub fn MobSingleUseEffect::apply(self : MobSingleUseEffect, mob : Mob) -> Unit {
   self.effect.apply(
     fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
@@ -106,10 +136,12 @@ pub fn MobSingleUseEffect::apply(self : MobSingleUseEffect, mob : Mob) -> Unit {
   )
 }
 
-pub struct MobMultiUseEffect {
+///|
+pub(all) struct MobMultiUseEffect {
   effects : Array[Effect]
 }
 
+///|
 pub fn MobMultiUseEffect::new(
   src : @resource.NxNode,
   area_warning : Bool
@@ -129,6 +161,7 @@ pub fn MobMultiUseEffect::new(
   { effects, }
 }
 
+///|
 pub fn MobMultiUseEffect::apply(self : MobMultiUseEffect, mob : Mob) -> Unit {
   fn func(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
     mob.show_effect(a, b, c, d)

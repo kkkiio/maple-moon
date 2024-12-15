@@ -1,12 +1,21 @@
-pub struct JobData {
+///|
+pub(all) struct JobData {
   icon : @graphics.Texture
-  skills : Array[Int]
+  skill_ids : Array[Int]
   name : String
 }
 
-pub fn JobData::load(id : Int) -> JobData {
+///|
+pub fn JobData::load(id : Int) -> @utils.Future[JobData] {
   let strid = @string_format.extend_id(id, 3)
-  let src = @skill.skill_loader().load_res([strid + ".img"])
+  @skill.skill_loader()
+  .load_res([strid + ".img"])
+  .map(fn(src) { JobData::new(id, src) })
+}
+
+///|
+pub fn JobData::new(id : Int, src : @resource.NxNode) -> JobData {
+  let strid = @string_format.extend_id(id, 3)
   let strsrc = @resource.string_loader().load_res(["Skill.img", strid])
   let icon = src["info"]["icon"] |> @graphics.Texture::from_resource
   let name = strsrc["bookName"].get_string()
@@ -18,11 +27,5 @@ pub fn JobData::load(id : Int) -> JobData {
     }
     skills.push(skill_id)
   }
-  { icon, skills, name }
-}
-
-let cache : Map[Int, JobData] = Map::new()
-
-pub fn JobData::get(id : Int) -> JobData {
-  cache.get_or_init(id, fn() { JobData::load(id) })
+  { icon, skill_ids: skills, name }
 }

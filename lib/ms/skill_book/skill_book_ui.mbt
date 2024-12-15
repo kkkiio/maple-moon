@@ -207,11 +207,11 @@ fn render(
   let selected_level = joblevel_by_tab(self.tab)
   let skills = []
   let subid = job.get_subjob(selected_level)
-  let job_data = @job.JobData::get(subid)
-  for skill_id in job_data.skills {
+  let job_data = job.get_data_by_id(subid)
+  for skill_id in job_data.skill_ids {
     let level = skillbook.get_level(skill_id)
     let masterlevel = skillbook.get_masterlevel(skill_id)
-    let data = @skill.SkillData::get?(skill_id).unwrap() // TODO: handle error
+    let data = self.attrs.skillbook.get_skill_data(skill_id).unwrap() // TODO: handle error
     let invisible = data.invisible
     if invisible && masterlevel == 0 {
       continue
@@ -253,7 +253,7 @@ fn render(
     )
   }
   let subid = job.get_subjob(selected_level)
-  let data = @job.JobData::get(subid)
+  let data = job.get_data_by_id(subid)
   let book_icon = data.icon
   let book_text = @graphics.Text::new(
     @graphics.FontId::A11M,
@@ -282,13 +282,13 @@ fn render(
     btn.get_button_base().set_active(i < skills.length())
     if i < skills.length() {
       let skill_id = skills[i].id
-      let canraise = is_upgradable?(
+      let canraise = is_upgradable(
         self.attrs.skillbook,
         skill_id.int_value(),
         self.tab,
         beginner_sp,
         self.attrs.sp,
-      ).unwrap() // TODO: handle error
+      )
       btn
       .get_button_base()
       .set_state(
@@ -324,7 +324,7 @@ fn render(
         name_text: meta.name_text,
         level_text: meta.level_text,
         icon: meta.icon,
-        enabled: check_required?(self.attrs.skillbook, meta.id.int_value()).unwrap(), // TODO: handle error
+        enabled: check_required(self.attrs.skillbook, meta.id.int_value()),
       }
     },
   )
@@ -405,11 +405,8 @@ pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
 }
 
 ///|
-fn check_required(skillbook : @character.SkillBook, id : Int) -> Bool! {
-  let mut required = skillbook.collect_required!(id)
-  if required.size() == 0 {
-    required = @skill.SkillData::get!(id).req_skills
-  }
+fn check_required(skillbook : @character.SkillBook, id : Int) -> Bool {
+  let required = skillbook.collect_required(id)
   for req in required {
     let (req_skill_id, req_level) = req
     let req_skill_level = skillbook.get_level(req_skill_id)
@@ -495,7 +492,7 @@ fn is_upgradable(
   tab : Int,
   beginner_sp : Int,
   sp : Int
-) -> Bool! {
+) -> Bool {
   let joblevel = joblevel_by_tab(tab)
   if joblevel == @job.Level::BEGINNER && beginner_sp <= 0 {
     return false
@@ -506,7 +503,7 @@ fn is_upgradable(
   let level = skillbook.get_level(skill_id)
   let mut masterlevel = skillbook.get_masterlevel(skill_id)
   if masterlevel == 0 {
-    masterlevel = @skill.SkillData::get!(skill_id).master_level
+    masterlevel = skillbook.get_skill_data(skill_id).unwrap().master_level // TODO: handle error
   }
   if level >= masterlevel {
     return false
@@ -514,7 +511,7 @@ fn is_upgradable(
   if skill_id == @skill.SkillId::ANGEL_BLESSING.int_value() {
     false
   } else {
-    check_required!(skillbook, skill_id)
+    check_required(skillbook, skill_id)
   }
 }
 

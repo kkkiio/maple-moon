@@ -1,1 +1,2 @@
-pub type StatId Int derive(Eq, Hash)
+///|
+pub(all) type StatId Int derive(Eq, Hash)

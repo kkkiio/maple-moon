@@ -5,9 +5,9 @@ struct Module {
 }
 
 ///|
-pub fn Module::new() -> Module {
+pub fn Module::new(add_task_fn : (@utils.Future[Unit]) -> Unit) -> Module {
   let mobs = MapMobs::new()
-  { map_mobs: mobs, mob_combat: MobCombat::new(mobs) }
+  { map_mobs: mobs, mob_combat: MobCombat::new(mobs, add_task_fn) }
 }
 
 ///|

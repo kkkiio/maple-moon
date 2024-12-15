@@ -231,9 +231,9 @@ function main() {
     "CharacterEff.img/": new DirResourceLoader("https://maple.kkkiiox.work/Effect/CharacterEff.img"),
   }, imageLoader);
 
-  const skillLoader = new ResourceLoader("https://maple.kkkiiox.work/Skill/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Skill/images"));
-  prepareResourcePromises.push(
-    skillLoader.load()
+  const skillLoader = new AsyncResourceLoader(
+    new DirResourceLoader("https://maple.kkkiiox.work/Skill"),
+    imageLoader
   );
 
   const textBitmapGenerator = new TextBitmapGenerator(imageGenerateContext);
@@ -260,8 +260,6 @@ function main() {
             return etcLoader;
           case "npc":
             return npcLoader;
-          case "skill":
-            return skillLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }
@@ -304,6 +302,8 @@ function main() {
             return map001Loader;
           case "map_pretty":
             return mapPrettyLoader;
+          case "skill":
+            return skillLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

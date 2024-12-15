@@ -1,3 +1,4 @@
+///|
 struct Skill {
   action : SkillAction
   bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
@@ -7,18 +8,23 @@ struct Skill {
   skill_id : Int
   over_regular : Bool
   projectile : Bool
+  data : @skill.SkillData
 }
 
-pub fn Skill::new(skill_id : Int) -> Skill! {
-  let data = @skill.SkillData::get!(skill_id)
+///|
+pub fn Skill::load(skill_id : Int) -> @utils.Future[Result[Skill, Error]] {
+  let data = @skill.SkillData::load(skill_id)
+  data.map_exn(fn(data) { Skill::new!(skill_id, data.unwrap_or_error!()) })
+}
+
+///|
+pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
   let strid = if skill_id < 10000000 {
     @string_format.extend_id(skill_id, 7)
   } else {
     skill_id.to_string()
   }
-  let src = @skill.skill_loader().load_res(
-    [strid.substring(end=3) + ".img", "skill", strid],
-  )
+  let src = data.src
   let mut projectile = true
   let mut over_regular = false
   let has_affected_effect = src["affected"].get_children_count() > 0
@@ -133,21 +139,26 @@ pub fn Skill::new(skill_id : Int) -> Skill! {
     use_effect,
     hit_effect,
     affected_effects,
+    data,
   }
 }
 
+///|
 pub fn Skill::get_id(self : Skill) -> Int {
   self.skill_id
 }
 
+///|
 pub fn Skill::is_attack(self : Skill) -> Bool {
-  @skill.SkillData::get?(self.skill_id).unwrap().is_attack()
+  self.data.is_attack()
 }
 
+///|
 pub fn Skill::is_skill(self : Skill) -> Bool {
   true
 }
 
+///|
 pub fn Skill::apply_useeffects(
   self : Skill,
   user : @character.Character
@@ -155,6 +166,7 @@ pub fn Skill::apply_useeffects(
   self.use_effect.apply(user)
 }
 
+///|
 pub fn apply_actions(
   self : Skill,
   user : @character.Character,
@@ -163,6 +175,7 @@ pub fn apply_actions(
   self.action.apply(user, attack_type)
 }
 
+///|
 pub fn apply_stats(
   self : Skill,
   user : @character.Character,
@@ -170,10 +183,7 @@ pub fn apply_stats(
 ) -> Unit {
   attack.skill = self.skill_id
   let level = user.get_skilllevel(self.skill_id)
-  let stats = @skill.SkillData::get?(self.skill_id)
-    .unwrap()
-    .get_stats(level)
-    .unwrap() // TODO: Handle error
+  let stats = self.data.get_stats(level).unwrap() // TODO: Handle error
   if stats.fixdamage != 0 {
     attack.damagetype = @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
   } else if stats.matk != 0 {
@@ -217,6 +227,7 @@ pub fn apply_stats(
   }
 }
 
+///|
 pub fn can_use(
   self : Skill,
   level : Int,
@@ -226,7 +237,7 @@ pub fn can_use(
   _mp : Int,
   bullets : Int
 ) -> ForbidReason {
-  let data = @skill.SkillData::get?(self.skill_id).unwrap() // TODO: Handle error
+  let data = self.data
   if level <= 0 || level > data.master_level {
     return FBR_OTHER
   }
@@ -256,6 +267,7 @@ pub fn can_use(
   }
 }
 
+///|
 pub fn get_bullet(
   self : Skill,
   user : @character.Character,
@@ -264,6 +276,7 @@ pub fn get_bullet(
   (self.bullet)(user, bulletid)
 }
 
+///|
 pub fn apply_hit_effects(
   self : Skill,
   user : @combat.AttackUser,

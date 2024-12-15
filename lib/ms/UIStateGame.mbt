@@ -1,11 +1,16 @@
+///|
 typealias ButtonState = @ui.ButtonState
 
+///|
 typealias UIElementType = @ui.UIElementType
 
+///|
 typealias UIElement = @ui.UIElement
 
+///|
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
+///|
 struct UIStateGame {
   ui : UI
   registry : @action.Registry
@@ -26,6 +31,7 @@ struct UIStateGame {
   mut vheight : Int
 }
 
+///|
 pub fn UIStateGame::new(
   ui : UI,
   registry : @action.Registry,
@@ -60,6 +66,7 @@ pub fn UIStateGame::new(
   // ]),
 }
 
+///|
 pub fn draw(
   self : UIStateGame,
   inter : Double,
@@ -84,6 +91,7 @@ pub fn draw(
 
 }
 
+///|
 pub fn update(self : UIStateGame) -> Unit {
   let mut update_screen = false
   let new_width = @constants.constants.get_viewwidth()
@@ -111,6 +119,7 @@ pub fn update(self : UIStateGame) -> Unit {
   )
 }
 
+///|
 pub fn send_key(
   self : UIStateGame,
   t : @keyboard.KeyType,
@@ -143,12 +152,13 @@ pub fn send_key(
       }
     @keyboard.KeyType::ACTION
     | @keyboard.KeyType::FACE
-    | @keyboard.KeyType::ITEM | @keyboard.KeyType::SKILL =>
-      Stage::get().send_key?(t, raw_action, pressed).unwrap()
+    | @keyboard.KeyType::ITEM
+    | @keyboard.KeyType::SKILL => Stage::get().send_key(t, raw_action, pressed)
     _ => ()
   }
 }
 
+///|
 pub fn send_cursor(
   self : UIStateGame,
   cursorstate : @ui.CursorState,
@@ -222,6 +232,7 @@ pub fn send_cursor(
   return Stage::get().send_cursor(clicked, cursorpos)
 }
 
+///|
 pub fn set_element(
   self : UIStateGame,
   is_focused : Bool,
@@ -236,6 +247,7 @@ pub fn set_element(
   self.elements[t] = elem
 }
 
+///|
 pub fn toggle_element(
   self : UIStateGame,
   t : UIElementType,
@@ -274,6 +286,7 @@ pub fn toggle_element(
   }
 }
 
+///|
 pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
   if t == self.focused {
     self.focused = UIElementType::UI_ELEMENT_NONE
@@ -292,10 +305,12 @@ pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
   self.elements.remove(t)
 }
 
+///|
 fn get(self : UIStateGame, t : UIElementType) -> UIElement? {
   self.elements[t].map(fn(e) { e.object })
 }
 
+///|
 pub fn get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
@@ -316,6 +331,7 @@ pub fn get_front_by_types(
   .find_first(fn(it) { it.get_ui_model().is_active() })
 }
 
+///|
 pub fn get_front_by_pos(
   self : UIStateGame,
   pos : @struct.Point[Int]
@@ -336,10 +352,12 @@ pub fn get_front_by_pos(
   )
 }
 
+///|
 pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
   // Implementation goes here
 }
 
+///|
 fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
   self.element_order
   .iter()
@@ -352,6 +370,7 @@ fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
   )
 }
 
+///|
 fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
   match self.get_front_by_pos(pos) {
     Some({ doubleclick, .. }) =>

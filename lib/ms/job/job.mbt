@@ -1,4 +1,5 @@
-pub enum Level {
+///|
+pub(all) enum Level {
   BEGINNER
   FIRST
   SECOND
@@ -6,6 +7,7 @@ pub enum Level {
   FOURTH
 } derive(Eq)
 
+///|
 pub fn int_value(self : Level) -> Int {
   match self {
     BEGINNER => 0
@@ -16,16 +18,20 @@ pub fn int_value(self : Level) -> Int {
   }
 }
 
+///|
 pub fn compare(self : Level, other : Level) -> Int {
   self.int_value().compare(other.int_value())
 }
 
+///|
 let all_levels : Array[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
 
-pub fn get_levels(~upto : Level = FOURTH) -> Iter[Level] {
+///|
+pub fn get_levels(upto~ : Level = FOURTH) -> Iter[Level] {
   all_levels.iter().take_while(fn(level) { level <= upto })
 }
 
+///|
 pub fn get_next_level(level : Level) -> Level {
   match level {
     BEGINNER => FIRST
@@ -35,14 +41,16 @@ pub fn get_next_level(level : Level) -> Level {
   }
 }
 
+///|
 struct Job {
   name : String
   id : Int
   level : Level
+  sub_job_data_map : Map[Int, JobData]
 }
 
-pub fn Job::new(~id : Int = 0) -> Job {
-  let name = get_name_by_id(id)
+///|
+pub fn Job::load(id~ : Int = 0) -> @utils.Future[Job] {
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -54,17 +62,48 @@ pub fn Job::new(~id : Int = 0) -> Job {
   } else {
     Level::FOURTH
   }
-  { name, id, level }
+  let subids = get_levels(upto=level).map(
+    fn(sub_level) { get_subjob_id(id, level, sub_level) },
+  )
+  // Load all subjob data in parallel
+  @utils.Future::all_of(
+    subids
+    .iter()
+    .map(fn(subid) { JobData::load(subid).map(fn(data) { (subid, data) }) })
+    |> Array::from_iter,
+  ).map(
+    fn(data_list) {
+      let sub_job_data_map = Map::new()
+      for _, it in data_list {
+        let (subid, data) = it
+        sub_job_data_map[subid] = data
+      }
+      Job::new(id, level, sub_job_data_map)
+    },
+  )
 }
 
+///|
+pub fn Job::new(
+  id : Int,
+  level : Level,
+  sub_job_data_map : Map[Int, JobData]
+) -> Job {
+  let name = get_name_by_id(id)
+  { name, id, level, sub_job_data_map }
+}
+
+///|
 pub fn get_id(self : Job) -> Int {
   self.id
 }
 
+///|
 pub fn get_name(self : Job) -> String {
   self.name
 }
 
+///|
 fn get_name_by_id(jid : Int) -> String {
   match jid {
     0 => "Beginner"
@@ -121,10 +160,12 @@ fn get_name_by_id(jid : Int) -> String {
   }
 }
 
+///|
 pub fn get_level(self : Job) -> Level {
   self.level
 }
 
+///|
 pub fn get_primary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   match self.id / 100 {
     2 => return @stat.Id::INT
@@ -140,6 +181,7 @@ pub fn get_primary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   }
 }
 
+///|
 pub fn get_secondary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   match self.id / 100 {
     2 => return @stat.Id::LUK
@@ -155,30 +197,47 @@ pub fn get_secondary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
   }
 }
 
+///|
 pub fn get_subjob(self : Job, level : Level) -> Int {
-  if level <= self.level {
-    match level {
+  get_subjob_id(self.id, self.level, level)
+}
+
+///|
+pub fn get_subjob_id(
+  job_id : Int,
+  now_level : Level,
+  target_level : Level
+) -> Int {
+  if target_level <= now_level {
+    match target_level {
       Level::BEGINNER => 0
-      Level::FIRST => self.id / 100 * 100
-      Level::SECOND => self.id / 10 * 10
+      Level::FIRST => job_id / 100 * 100
+      Level::SECOND => job_id / 10 * 10
       Level::THIRD =>
-        if self.level == Level::FOURTH {
-          self.id - 1
+        if now_level == Level::FOURTH {
+          job_id - 1
         } else {
-          self.id
+          job_id
         }
-      Level::FOURTH => self.id
+      Level::FOURTH => job_id
     }
   } else {
     0
   }
 }
 
+///|
+pub fn get_all_subjobs(self : Job) -> Iter[JobData] {
+  self.sub_job_data_map.values()
+}
+
+///|
 pub fn can_use(self : Job, skill_id : Int) -> Bool {
   let required = skill_id / 10000
   self.is_sub_job(required)
 }
 
+///|
 pub fn is_sub_job(self : Job, subid : Int) -> Bool {
   for
     lv in [
@@ -193,4 +252,9 @@ pub fn is_sub_job(self : Job, subid : Int) -> Bool {
     }
   }
   false
+}
+
+///|
+pub fn get_data_by_id(self : Job, subid : Int) -> JobData {
+  self.sub_job_data_map.get(subid).unwrap() // TODO: handle error
 }

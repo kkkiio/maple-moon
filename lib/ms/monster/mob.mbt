@@ -55,7 +55,7 @@ pub fn flip(self : Stance) -> Stance {
 struct Mob {
   base : @map_object.MapObjectBase
   animations : Map[StanceType, @graphics.Animation]
-  skills : Map[Int, MobSkill]
+  skill_cache : Map[Int, @utils.Future[Result[MobSkill, Error]]]
   attacks : Map[Int, MobSpecialAttack]
   skill_stands : Map[Int, @graphics.Animation]
   attack_stands : Map[Int, @graphics.Animation]
@@ -245,7 +245,7 @@ fn Mob::new(
   {
     base,
     animations,
-    skills: Map::new(),
+    skill_cache: Map::new(),
     attacks: Map::new(),
     skill_stands,
     attack_stands,
@@ -637,15 +637,12 @@ pub fn send_movement(
 }
 
 ///|
-pub fn get_move_skill(self : Mob, move_id : Int, level : Int) -> MobSkill! {
-  match self.skills.get(move_id) {
-    Some(skill) => skill
-    None => {
-      let skill = MobSkill::new!(move_id, level)
-      self.skills.set(move_id, skill)
-      skill
-    }
-  }
+pub fn get_move_skill(
+  self : Mob,
+  move_id : Int,
+  level : Int
+) -> @utils.Future[Result[MobSkill, Error]] {
+  self.skill_cache.get_or_init(move_id, fn() { MobSkill::load(move_id, level) })
 }
 
 ///|

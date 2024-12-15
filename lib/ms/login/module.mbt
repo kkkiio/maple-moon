@@ -41,7 +41,7 @@ pub fn Module::load(processor : @net.PacketProcessor) -> @utils.Future[Module] {
 pub fn make_handlers(
   self : Module,
   transition : (Int, Int) -> Unit,
-  load_player : (@character.CharEntry) -> @player.Player!,
+  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
@@ -101,7 +101,7 @@ pub fn make_handlers(
         @net.SET_FIELD,
         fn(recv : @net.InPacket) {
           handle_set_field!(
-            transition, self, load_player, inventory, setup_game_ui, recv,
+            transition, self, set_player_stage, inventory, setup_game_ui, recv,
           )
         },
       ),

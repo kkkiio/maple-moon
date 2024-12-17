@@ -1,5 +1,7 @@
+///|
 typealias Point[T] = @struct.Point[T]
 
+///|
 struct BodyAction {
   stance : StanceId
   frame : Int
@@ -8,6 +10,7 @@ struct BodyAction {
   attack_frame : Bool
 }
 
+///|
 pub fn BodyAction::new(src : @resource.NxNode) -> BodyAction {
   let stance = StanceId::by_string(src["action"].get_string())
   let frame = src["frame"].get_int?().unwrap()
@@ -24,6 +27,7 @@ pub fn BodyAction::new(src : @resource.NxNode) -> BodyAction {
   { stance, frame, delay, move_, attack_frame }
 }
 
+///|
 pub fn BodyAction::default() -> BodyAction {
   {
     stance: StanceId::default(),
@@ -34,26 +38,32 @@ pub fn BodyAction::default() -> BodyAction {
   }
 }
 
+///|
 pub fn is_attack_frame(self : BodyAction) -> Bool {
   self.attack_frame
 }
 
+///|
 pub fn get_frame(self : BodyAction) -> Int {
   self.frame
 }
 
+///|
 pub fn get_delay(self : BodyAction) -> Int {
   self.delay
 }
 
+///|
 pub fn get_move(self : BodyAction) -> Point[Int] {
   self.move_
 }
 
+///|
 pub fn get_stance(self : BodyAction) -> StanceId {
   self.stance
 }
 
+///|
 struct BodyDrawInfo {
   body_positions : FixedArray[Map[Int, Point[Int]]]
   arm_positions : FixedArray[Map[Int, Point[Int]]]
@@ -66,7 +76,8 @@ struct BodyDrawInfo {
   attack_delays : Map[String, Array[Int]]
 }
 
-fn BodyDrawInfo::new(
+///|
+pub fn BodyDrawInfo::new(
   bodynode : @resource.NxNode,
   headnode : @resource.NxNode
 ) -> BodyDrawInfo {
@@ -138,7 +149,7 @@ fn BodyDrawInfo::new(
         for part, partnode in framenode {
           if part != "delay" && part != "face" {
             let zstr = partnode["z"].get_string()
-            let z = Body::layer_by_name(zstr)
+            let z = BodyLayer::layer_by_name(zstr)
             for mapnodename, mapnode in partnode["map"] {
               set_defaultm(bodyshiftmap, z).set(
                 mapnodename,
@@ -240,6 +251,7 @@ fn BodyDrawInfo::new(
   }
 }
 
+///|
 fn set_defaultm[K : Hash + Eq, K1, V](
   m : Map[K, Map[K1, V]],
   k : K
@@ -254,6 +266,7 @@ fn set_defaultm[K : Hash + Eq, K1, V](
   }
 }
 
+///|
 pub fn get_body_position(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -262,6 +275,7 @@ pub fn get_body_position(
   self.body_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn get_arm_position(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -270,6 +284,7 @@ pub fn get_arm_position(
   self.arm_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn get_hand_position(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -278,6 +293,7 @@ pub fn get_hand_position(
   self.hand_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn get_head_position(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -286,6 +302,7 @@ pub fn get_head_position(
   self.head_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn get_hair_pos(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -294,6 +311,7 @@ pub fn get_hair_pos(
   self.hair_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn get_face_pos(
   self : BodyDrawInfo,
   stance : StanceId,
@@ -302,6 +320,7 @@ pub fn get_face_pos(
   self.face_positions[stance.int_value()].get(frame).or(Point::default())
 }
 
+///|
 pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
   if self.stance_delays[stance.int_value()].contains(frame + 1) {
     frame + 1
@@ -310,14 +329,17 @@ pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
   }
 }
 
+///|
 pub fn get_delay(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
   self.stance_delays[stance.int_value()].get(frame).or(100)
 }
 
+///|
 pub fn get_attack_delay(self : BodyDrawInfo, action : String, no : Int) -> Int {
   self.attack_delays[action].bind(fn(it) { it.get(no) }).or(0)
 }
 
+///|
 pub fn next_action_frame(
   self : BodyDrawInfo,
   action : String,
@@ -329,6 +351,7 @@ pub fn next_action_frame(
   }
 }
 
+///|
 pub fn get_action(
   self : BodyDrawInfo,
   action : String,

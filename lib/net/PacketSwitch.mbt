@@ -108,7 +108,7 @@ pub fn int_value(self : Opcode) -> Int {
     LOGIN_RESULT => 0
     SERVER_STATUS => 3
     SERVER_LIST => 10
-    CHAR_LIST => 11
+    CHAR_LIST => 0x0B
     SERVER_IP => 12
     CHARNAME_RESPONSE => 13
     ADD_NEWCHAR_ENTRY => 14

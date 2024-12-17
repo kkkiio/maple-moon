@@ -1,4 +1,5 @@
-pub enum Type {
+///|
+pub(all) enum Type {
   NONE
   SWORD_1H
   AXE_1H
@@ -19,6 +20,7 @@ pub enum Type {
   CASH
 } derive(Eq)
 
+///|
 pub fn int_value(self : Type) -> Int {
   match self {
     NONE => 0
@@ -42,8 +44,10 @@ pub fn int_value(self : Type) -> Int {
   }
 }
 
-pub type! UnknownWeaponType Int derive(Show)
+///|
+pub(all) type! UnknownWeaponType Int derive(Show)
 
+///|
 pub fn Type::by_value(value : Int) -> Type!UnknownWeaponType {
   match value {
     0 => NONE

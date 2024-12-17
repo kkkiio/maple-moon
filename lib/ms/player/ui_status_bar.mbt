@@ -3,7 +3,6 @@ struct UIStatusBar {
   stats : @char_stats.CharStats
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Int, @ui.UIButton]
   exp_bar : @ui.Gauge
   hp_bar : @ui.Gauge
   mp_bar : @ui.Gauge
@@ -113,7 +112,6 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
     stats,
     base: @ui.UIModel::new(position, dimension),
     sprites,
-    buttons: Map::new(),
     exp_bar,
     hp_bar: hp_bar_,
     mp_bar: mp_bar_,
@@ -133,9 +131,6 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
 ///|
 pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
   @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
-  // for i in 0..=bt_event {
-  //   self.ui_buttons.buttons[i].unwrap().draw(self.base.position)
-  // }
   self.hpmp_sprites[0].draw(self.base.position, alpha)
   self.exp_bar.draw(
     self.base.position + self.exp_pos |> @graphics.DrawArgument::new,
@@ -155,21 +150,21 @@ pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
     self.base.position + self.statset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let hp = self.stats.get_base_hp()
+  let hp = self.stats.get_stat(@maple_stat.Id::HP)
   let maxhp = self.stats.get_total(@stat.Id::HP)
   self.hpmp_set.draw_text(
     "[\{hp}/\{maxhp}]",
     self.base.position + self.hpset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let mp = self.stats.get_base_mp()
+  let mp = self.stats.get_stat(@maple_stat.Id::MP)
   let maxmp = self.stats.get_total(@stat.Id::MP)
   self.hpmp_set.draw_text(
     "[\{mp}/\{maxmp}]",
     self.base.position + self.mpset_pos |> @graphics.DrawArgument::new,
   )
   |> ignore
-  let level = self.stats.get_level()
+  let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
   self.level_set.draw_text(
     level.to_string(),
     self.base.position + self.levelset_pos |> @graphics.DrawArgument::new,
@@ -188,79 +183,9 @@ pub fn update(self : UIStatusBar) -> Unit {
   self.mp_bar.update(getmppercent(self.stats))
 }
 
-// let bt_cashshop = 0
-
-// let bt_menu = 1
-
-// let bt_options = 2
-
-// let bt_character = 3
-
-// let bt_community = 4
-
-// let bt_event = 5
-
-// let bt_fold_qs = 6
-
-// let bt_extend_qs = 7
-
-// let bt_menu_quest = 8
-
-// let bt_menu_medal = 9
-
-// let bt_menu_union = 10
-
-// let bt_menu_monster_collection = 11
-
-// let bt_menu_auction = 12
-
-// let bt_menu_monster_life = 13
-
-// let bt_menu_battle = 14
-
-// let bt_menu_achievement = 15
-
-// let bt_menu_fishing = 16
-
-// let bt_menu_help = 17
-
-// let bt_menu_claim = 18
-
-// let bt_setting_channel = 19
-
-// let bt_setting_option = 20
-
-// let bt_setting_keys = 21
-
-// let bt_setting_joypad = 22
-
-// let bt_setting_quit = 23
-
-// let bt_community_friends = 24
-
-// let bt_community_party = 25
-
-// let bt_community_guild = 26
-
-// let bt_community_maplechat = 27
-
-// let bt_character_info = 28
-
-// let bt_character_stat = 29
-
-// let bt_character_skill = 30
-
-// let bt_character_equip = 31
-
-// let bt_character_item = 32
-
-// let bt_event_schedule = 33
-
-// let bt_event_daily = 34
-
 ///|
 fn getexppercent(stats : @char_stats.CharStats) -> Double {
-  let level = stats.get_level()
+  let level = stats.get_stat(@maple_stat.Id::LEVEL)
   if level >= @character.level_cap {
     return 0.0
   }
@@ -270,14 +195,14 @@ fn getexppercent(stats : @char_stats.CharStats) -> Double {
 
 ///|
 fn gethppercent(stats : @char_stats.CharStats) -> Double {
-  let hp = stats.get_base_hp()
+  let hp = stats.get_stat(@maple_stat.Id::HP)
   let maxhp = stats.get_total(@stat.Id::HP)
   hp.to_double() / maxhp.to_double()
 }
 
 ///|
 fn getmppercent(stats : @char_stats.CharStats) -> Double {
-  let mp = stats.get_base_mp()
+  let mp = stats.get_stat(@maple_stat.Id::MP)
   let maxmp = stats.get_total(@stat.Id::MP)
   mp.to_double() / maxmp.to_double()
 }
@@ -291,21 +216,13 @@ pub fn get_ui_model(self : UIStatusBar) -> @ui.UIModel {
 pub fn send_cursor(
   self : UIStatusBar,
   pressed : Bool,
-  cursorpos : @struct.Point[Int]
+  _cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
-  @ui.send_cursor_to_buttons(
-    self.buttons.iter2(),
-    self.base.position,
-    fn(buttonid) { self.button_pressed(buttonid) },
-    pressed,
-    cursorpos,
-  )
-}
-
-///|
-pub fn button_pressed(self : UIStatusBar, buttonid : Int) -> @ui.ButtonState {
-  // TODO: add buttons
-  @ui.ButtonState::IDENTITY
+  if pressed {
+    @ui.CursorState::CLICKING
+  } else {
+    @ui.CursorState::IDLE
+  }
 }
 
 ///|

@@ -5,6 +5,10 @@
       "path": "KKKIIO/maple-moon-client/lib/ms/equip/stat",
       "alias": "equip_stat"
     },
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/data",
+      "alias": "equip_data"
+    },
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/equip/quality",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
@@ -13,6 +17,7 @@
     "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/ms/player",
     "KKKIIO/maple-moon-client/lib/ms/character",
+    "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/item",
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/struct",

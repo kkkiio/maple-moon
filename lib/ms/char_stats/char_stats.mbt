@@ -3,21 +3,10 @@ struct CharStats {
   name : String
   weapon_type_getter : () -> @weapon.Type
   mut job : @job.Job
-  mut level : Int
-  mut str : Int
-  mut dex : Int
-  mut int : Int
-  mut luk : Int
-  mut inherent_hp : Int
-  mut inherent_max_hp : Int
-  mut inherent_mp : Int
-  mut inherent_max_mp : Int
-  mut ap : Int
-  mut sp : Int
-  mut fame : Int
   mut exp : Int64
   mut map_id : Int
   portal : Int
+  base_stats : Map[@maple_stat.Id, Int]
   total_stats : @utils.Counter[@equip_stat.Id]
   buff_deltas : @utils.Counter[@equip_stat.Id]
   percentages : Map[@equip_stat.Id, Double]
@@ -40,23 +29,11 @@ struct CharStats {
 pub(all) struct StatsEntry {
   name : String
   female : Bool
-  level : Int
-  job : Int
-  str : Int
-  dex : Int
-  int : Int
-  luk : Int
-  hp : Int
-  max_hp : Int
-  mp : Int
-  max_mp : Int
-  ap : Int
-  sp : Int
-  fame : Int
+  stats : Map[@maple_stat.Id, Int]
   exp : Int64
   mapid : Int
   portal : Int
-}
+} derive(Show)
 
 ///|
 pub fn CharStats::new(
@@ -72,6 +49,7 @@ pub fn CharStats::new(
     exp: s.exp,
     map_id: s.mapid,
     portal: s.portal,
+    base_stats: s.stats,
     total_stats: @utils.Counter::new(),
     buff_deltas: @utils.Counter::new(),
     percentages: Map::new(),
@@ -86,18 +64,6 @@ pub fn CharStats::new(
     stance: 0.0,
     reduce_damage: 0.0,
     female: s.female,
-    level: s.level,
-    str: s.str,
-    dex: s.dex,
-    int: s.int,
-    luk: s.luk,
-    inherent_hp: s.hp,
-    inherent_max_hp: s.max_hp,
-    inherent_mp: s.mp,
-    inherent_max_mp: s.max_mp,
-    ap: s.ap,
-    sp: s.sp,
-    fame: s.fame,
     stat_listeners: Map::new(),
     sp_stat_id,
   }
@@ -110,12 +76,30 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats._.clear()
   self.buff_deltas._.clear()
   self.percentages.clear()
-  self.total_stats._.set(@equip_stat.Id::HP, self.inherent_max_hp)
-  self.total_stats._.set(@equip_stat.Id::MP, self.inherent_max_mp)
-  self.total_stats._.set(@equip_stat.Id::STR, self.str)
-  self.total_stats._.set(@equip_stat.Id::DEX, self.dex)
-  self.total_stats._.set(@equip_stat.Id::INT, self.int)
-  self.total_stats._.set(@equip_stat.Id::LUK, self.luk)
+  self.total_stats._.set(
+    @equip_stat.Id::HP,
+    self.get_stat(@maple_stat.Id::MAXHP),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::MP,
+    self.get_stat(@maple_stat.Id::MAXMP),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::STR,
+    self.get_stat(@maple_stat.Id::STR),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::DEX,
+    self.get_stat(@maple_stat.Id::DEX),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::INT,
+    self.get_stat(@maple_stat.Id::INT),
+  )
+  self.total_stats._.set(
+    @equip_stat.Id::LUK,
+    self.get_stat(@maple_stat.Id::LUK),
+  )
   self.total_stats._.set(@equip_stat.Id::SPEED, 100)
   self.total_stats._.set(@equip_stat.Id::JUMP, 100)
   self.max_damage = 0
@@ -141,127 +125,19 @@ pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
 }
 
 ///|
-pub fn get_base_hp(self : CharStats) -> Int {
-  self.inherent_hp
+pub fn get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
+  self.base_stats[stat].or(0)
 }
 
 ///|
-pub fn set_base_hp(self : CharStats, value : Int) -> Unit {
-  self.inherent_hp = value
-}
-
-///|
-pub fn get_base_mp(self : CharStats) -> Int {
-  self.inherent_mp
-}
-
-///|
-pub fn set_base_mp(self : CharStats, value : Int) -> Unit {
-  self.inherent_mp = value
-}
-
-///|
-pub fn get_max_hp(self : CharStats) -> Int {
-  self.inherent_max_hp
-}
-
-///|
-pub fn set_max_hp(self : CharStats, value : Int) -> Unit {
-  self.inherent_max_hp = value
-}
-
-///|
-pub fn get_max_mp(self : CharStats) -> Int {
-  self.inherent_max_mp
-}
-
-///|
-pub fn set_max_mp(self : CharStats, value : Int) -> Unit {
-  self.inherent_max_mp = value
-}
-
-///|
-pub fn get_level(self : CharStats) -> Int {
-  self.level
-}
-
-///|
-pub fn set_level(self : CharStats, value : Int) -> Unit {
-  self.level = value
-}
-
-///|
-pub fn get_str(self : CharStats) -> Int {
-  self.str
-}
-
-///|
-pub fn set_str(self : CharStats, value : Int) -> Unit {
-  self.str = value
-}
-
-///|
-pub fn get_dex(self : CharStats) -> Int {
-  self.dex
-}
-
-///|
-pub fn set_dex(self : CharStats, value : Int) -> Unit {
-  self.dex = value
-}
-
-///|
-pub fn get_int(self : CharStats) -> Int {
-  self.int
-}
-
-///|
-pub fn set_int(self : CharStats, value : Int) -> Unit {
-  self.int = value
-}
-
-///|
-pub fn get_luk(self : CharStats) -> Int {
-  self.luk
-}
-
-///|
-pub fn set_luk(self : CharStats, value : Int) -> Unit {
-  self.luk = value
-}
-
-///|
-pub fn get_ap(self : CharStats) -> Int {
-  self.ap
-}
-
-///|
-pub fn set_ap(self : CharStats, value : Int) -> Unit {
-  self.ap = value
-}
-
-///|
-pub fn get_sp(self : CharStats) -> Int {
-  self.sp
-}
-
-///|
-pub fn set_sp(self : CharStats, value : Int) -> Unit {
-  self.sp = value
-  guard let Some(listeners) = self.stat_listeners.get(self.sp_stat_id) else {
-    None => return
+pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
+  self.base_stats.set(stat, value)
+  if stat == @maple_stat.Id::SP {
+    guard let Some(listeners) = self.stat_listeners.get(self.sp_stat_id) else {
+      None => return
+    }
+    listeners.retain(fn(listener) { listener(value) })
   }
-  listeners.retain(fn(listener) { listener(value) })
-}
-
-///|
-pub fn get_fame(self : CharStats) -> Int {
-  self.fame
-}
-
-///|
-pub fn set_fame(self : CharStats, value : Int) -> Unit {
-  self.fame = value
 }
 
 ///|
@@ -360,25 +236,23 @@ fn get_multiplier(self : CharStats) -> Double {
 }
 
 ///| Externalising this for easier configurability.
-let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array(
-  [
-    (@equip_stat.Id::STR, 999),
-    (@equip_stat.Id::DEX, 999),
-    (@equip_stat.Id::INT, 999),
-    (@equip_stat.Id::LUK, 999),
-    (@equip_stat.Id::HP, 30000),
-    (@equip_stat.Id::MP, 30000),
-    (@equip_stat.Id::WATK, 999),
-    (@equip_stat.Id::MAGIC, 2000),
-    (@equip_stat.Id::WDEF, 999),
-    (@equip_stat.Id::MDEF, 999),
-    (@equip_stat.Id::ACC, 999),
-    (@equip_stat.Id::AVOID, 999),
-    (@equip_stat.Id::HANDS, 999),
-    (@equip_stat.Id::SPEED, 140),
-    (@equip_stat.Id::JUMP, 123),
-  ],
-)
+let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array([
+  (@equip_stat.Id::STR, 999),
+  (@equip_stat.Id::DEX, 999),
+  (@equip_stat.Id::INT, 999),
+  (@equip_stat.Id::LUK, 999),
+  (@equip_stat.Id::HP, 30000),
+  (@equip_stat.Id::MP, 30000),
+  (@equip_stat.Id::WATK, 999),
+  (@equip_stat.Id::MAGIC, 2000),
+  (@equip_stat.Id::WDEF, 999),
+  (@equip_stat.Id::MDEF, 999),
+  (@equip_stat.Id::ACC, 999),
+  (@equip_stat.Id::AVOID, 999),
+  (@equip_stat.Id::HANDS, 999),
+  (@equip_stat.Id::SPEED, 140),
+  (@equip_stat.Id::JUMP, 123),
+])
 
 ///|
 pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {

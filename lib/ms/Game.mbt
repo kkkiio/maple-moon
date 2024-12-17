@@ -67,7 +67,23 @@ fn load_modules(
     }
   }
 
-  let char_look_module = @char_look.Module::load()
+  let stat_handler_map = {}
+  fn merge_stat_handlers(
+    handlers : Map[@maple_stat.Id, (@maple_stat.Id, @net.InPacket) -> Bool!]
+  ) -> Unit {
+    for stat_id, handler in handlers {
+      if stat_handler_map.contains(stat_id) {
+        @log.error({ "stat": stat_id }, "duplicate stat handler")
+        panic()
+      } else {
+        stat_handler_map.set(stat_id, handler)
+      }
+    }
+  }
+
+  let char_look_module = @char_look.Module::load().tap(
+    fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) },
+  )
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(
     fn() { Stage::get().get_player() },
@@ -75,6 +91,7 @@ fn load_modules(
     fn(mod) {
       merge_handlers(mod.make_handlers())
       merge_actions(mod.make_actions())
+      merge_stat_handlers(mod.make_stat_handlers())
     },
   )
   let sp_stat_id = @char_stats.StatId(1)
@@ -117,7 +134,12 @@ fn load_modules(
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
   let char_stats_mod_f = @char_stats.Module::load(
     fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
-  ).tap(fn(mod) { merge_actions(mod.make_actions()) })
+  ).tap(
+    fn(mod) {
+      merge_actions(mod.make_actions())
+      merge_stat_handlers(mod.make_stat_handlers())
+    },
+  )
   let skill_book_mod_f = @skill_book.Module::load(
     fn() { Stage::get().get_player() },
     sp_stat_id,
@@ -127,16 +149,20 @@ fn load_modules(
       merge_actions(mod.make_actions())
     },
   )
-  let shop_mod_f = @shop.Module::load(ui).tap(
-    fn(mod) {
-      merge_handlers(
-        mod.make_handlers(
-          fn() { Stage::get().get_player().map(fn(p) { p.get_look() }) },
-          fn() { Some(Stage::get().get_inventory()) },
-        ),
-      )
-    },
-  )
+  let shop_mod_f = @shop.Module::load(ui)
+    .combine(char_look_module)
+    .map(
+      fn(it) {
+        let (mod, char_look_module) = it
+        merge_handlers(
+          mod.make_handlers(
+            fn() { char_look_module.get_player_char_look() },
+            fn() { Some(Stage::get().get_inventory()) },
+          ),
+        )
+        mod
+      },
+    )
   // // Attack handlers
   // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
   // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
@@ -171,19 +197,29 @@ fn load_modules(
   // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
   // packet_switch.push((KEYMAP, KeymapHandler::new()))
   // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
+  let change_stat_handler : ChangeStatsHandler = {
+    stat_handler_map,
+    recalc_stats_fn: fn() {
+      guard let Some(player) = Stage::get().get_player() else { None => return }
+      player.recalc_stats(false)
+    },
+  }
   net_handler_map.set(
     @net.CHANGE_STATS,
     @net.with_log(
       @net.CHANGE_STATS,
       fn(recv : @net.InPacket) {
-        handle_change_stats!(
-          Stage::get().get_player().unwrap(),
-          Stage::get().get_inventory(),
-          recv,
-        )
+        change_stat_handler.handle_change_stats!(recv)
       },
     ),
   )
+  let job_module = @job.Module::new(
+    fn(job_id) {
+      guard let Some(player) = Stage::get().get_player() else { None => return }
+      player.change_job(job_id)
+    },
+  )
+  merge_stat_handlers(job_module.make_stat_handlers())
 
   // MapObject handlers
   // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))

@@ -510,7 +510,7 @@ fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
 
 ///|
 fn update_ap(stats : CharStats, buttons : Array[@ui.Button]) -> Bool {
-  let nowap = stats.get_ap() > 0
+  let nowap = stats.get_stat(@maple_stat.Id::AP) > 0
   let newstate = if nowap {
     @ui.ButtonState::NORMAL
   } else {
@@ -569,8 +569,10 @@ fn update_buffed(
 
 ///|
 fn update_all_stats(self : UIStatsInfo) -> Unit {
-  self.ap_label._.0.change_text(self.stats.get_ap().to_string())
-  if self.has_ap != (self.stats.get_ap() > 0) {
+  self.ap_label._.0.change_text(
+    self.stats.get_stat(@maple_stat.Id::AP).to_string(),
+  )
+  if self.has_ap != (self.stats.get_stat(@maple_stat.Id::AP) > 0) {
     self.has_ap = update_ap(
       self.stats,
       [
@@ -584,40 +586,40 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
       ],
     )
   }
-  self.name_label._.0.change_text(self.stats.get_name())
+  self.name_label._.0.change_text(self.stats.name)
   self.guild_label._.0.change_text("-")
   self.hp_label._.0.change_text(
-    self.stats.get_base_hp().to_string() +
+    self.stats.get_stat(@maple_stat.Id::HP).to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::HP).to_string(),
   )
   self.mp_label._.0.change_text(
-    self.stats.get_base_mp().to_string() +
+    self.stats.get_stat(@maple_stat.Id::MP).to_string() +
     " / " +
     self.stats.get_total(@equip_stat.Id::MP).to_string(),
   )
   update_basevstotal(
     self.stats,
     self.str_label,
-    self.stats.get_str(),
+    self.stats.get_stat(@maple_stat.Id::STR),
     @equip_stat.Id::STR,
   )
   update_basevstotal(
     self.stats,
     self.dex_label,
-    self.stats.get_dex(),
+    self.stats.get_stat(@maple_stat.Id::DEX),
     @equip_stat.Id::DEX,
   )
   update_basevstotal(
     self.stats,
     self.int_label,
-    self.stats.get_int(),
+    self.stats.get_stat(@maple_stat.Id::INT),
     @equip_stat.Id::INT,
   )
   update_basevstotal(
     self.stats,
     self.luk_label,
-    self.stats.get_luk(),
+    self.stats.get_stat(@maple_stat.Id::LUK),
     @equip_stat.Id::LUK,
   )
   self.damage_label._.0.change_text(

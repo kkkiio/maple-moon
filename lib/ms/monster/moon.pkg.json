@@ -15,6 +15,7 @@
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/ms/player",
     "KKKIIO/maple-moon-client/lib/ms/character",
-    "KKKIIO/maple-moon-client/lib/ms/char_stats"
+    "KKKIIO/maple-moon-client/lib/ms/char_stats",
+    "KKKIIO/maple-moon-client/lib/ms/maple_stat"
   ]
 }

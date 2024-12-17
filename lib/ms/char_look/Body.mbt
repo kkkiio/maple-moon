@@ -1,47 +1,17 @@
-pub(all) enum BodyLayer {
-  BODY_NONE
-  BODY
-  ARM
-  ARM_BELOW_HEAD
-  ARM_BELOW_HEAD_OVER_MAIL
-  ARM_OVER_HAIR
-  ARM_OVER_HAIR_BELOW_WEAPON
-  HAND_BELOW_WEAPON
-  HAND_OVER_HAIR
-  HAND_OVER_WEAPON
-  HEAD
-} derive(Eq, Compare)
-
-pub fn int_value(self : BodyLayer) -> Int {
-  match self {
-    BodyLayer::BODY_NONE => 0
-    BodyLayer::BODY => 1
-    BodyLayer::ARM => 2
-    BodyLayer::ARM_BELOW_HEAD => 3
-    BodyLayer::ARM_BELOW_HEAD_OVER_MAIL => 4
-    BodyLayer::ARM_OVER_HAIR => 5
-    BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON => 6
-    BodyLayer::HAND_BELOW_WEAPON => 7
-    BodyLayer::HAND_OVER_HAIR => 8
-    BodyLayer::HAND_OVER_WEAPON => 9
-    BodyLayer::HEAD => 10
-  }
-}
-
-pub fn hash(self : BodyLayer) -> Int {
-  self.int_value()
-}
-
-pub fn hash_combine(self : BodyLayer, hasher : Hasher) -> Unit {
-  hasher.combine(self.int_value())
-}
-
+///|
 pub(all) struct Body {
-  stances : Map[StanceId, Map[BodyLayer, Map[Int, @graphics.Texture]]]
+  stances : Map[
+    @types.StanceId,
+    Map[@types.BodyLayer, Map[Int, @graphics.Texture]],
+  ]
   name : String
 }
 
-fn Body::load(skin : Int, drawinfo : BodyDrawInfo) -> @utils.Future[Body] {
+///|
+fn Body::load(
+  skin : Int,
+  drawinfo : @types.BodyDrawInfo
+) -> @utils.Future[Body] {
   let strid : String = @string_format.extend_id(skin, 2)
   let bodynode = body_loader.load_res(["000020" + strid + ".img"])
   let headnode = body_loader.load_res(["000120" + strid + ".img"])
@@ -50,13 +20,14 @@ fn Body::load(skin : Int, drawinfo : BodyDrawInfo) -> @utils.Future[Body] {
   .map(fn(it) { Body::new(skin, drawinfo, it.0, it.1) })
 }
 
+///|
 fn Body::new(
   skin : Int,
-  drawinfo : BodyDrawInfo,
+  drawinfo : @types.BodyDrawInfo,
   bodys : @resource.NxNode,
   heads : @resource.NxNode
 ) -> Body {
-  let stances = stance_name_id_map
+  let stances = @types.stance_name_id_map
     .iter()
     .map(
       fn(it) {
@@ -72,12 +43,13 @@ fn Body::new(
   { stances, name }
 }
 
+///|
 fn new_body_stance(
-  stance : StanceId,
+  stance : @types.StanceId,
   stancenode : @resource.NxNode,
   headnode : @resource.NxNode,
-  drawinfo : BodyDrawInfo
-) -> Map[BodyLayer, Map[Int, @graphics.Texture]] {
+  drawinfo : @types.BodyDrawInfo
+) -> Map[@types.BodyLayer, Map[Int, @graphics.Texture]] {
   guard stancenode.is_null().not() else { return {} }
   let body_texture_map = Map::new()
   for
@@ -95,16 +67,16 @@ fn new_body_stance(
     for part, partnode in framenode {
       if part != "delay" && part != "face" {
         let z : String = partnode["z"].get_string()
-        let layer : BodyLayer = Body::layer_by_name(z)
-        if layer != BodyLayer::BODY_NONE {
+        let layer : @types.BodyLayer = @types.BodyLayer::layer_by_name(z)
+        if layer != @types.BodyLayer::BODY_NONE {
           let shift = match layer {
-            BodyLayer::HAND_BELOW_WEAPON =>
+            @types.BodyLayer::HAND_BELOW_WEAPON =>
               drawinfo.get_hand_position(stance, frame) -
               partnode["map"]["handMove"].as_point?().unwrap()
             _ => {
               let mut shift = drawinfo.get_body_position(stance, frame)
-              if stance == StanceId::DEAD {
-                shift -= Point::new(5, 4)
+              if stance == @types.StanceId::DEAD {
+                shift -= @struct.Point::new(5, 4)
               }
               shift -= partnode["map"]["navel"].as_point?().unwrap()
               shift
@@ -120,25 +92,27 @@ fn new_body_stance(
     }
     let headsfnode = headnode[frame.to_string()]["head"]
     if headsfnode.is_null().not() {
-      let shift : Point[Int] = drawinfo.get_head_position(stance, frame)
+      let shift = drawinfo.get_head_position(stance, frame)
       let texture = @graphics.Texture::from_resource(headsfnode)
       texture.shift(shift)
       body_texture_map
-      .get_or_init(BodyLayer::HEAD, fn() { Map::new() })
+      .get_or_init(@types.BodyLayer::HEAD, fn() { Map::new() })
       .set(frame, texture)
     }
   }
   body_texture_map
 }
 
+///|
 let skintypes = [
   "Light", "Tan", "Dark", "Pale", "Blue", "Green", "", "", "", "Grey", "Pink", "Red",
 ]
 
+///|
 pub fn Body::draw(
   self : Body,
-  stance : StanceId,
-  layer : BodyLayer,
+  stance : @types.StanceId,
+  layer : @types.BodyLayer,
   frame : Int,
   args : @graphics.DrawArgument
 ) -> Unit {
@@ -151,37 +125,10 @@ pub fn Body::draw(
   }
 }
 
+///|
 pub fn Body::get_name(self : Body) -> String {
   self.name
 }
 
-pub fn Body::layer_by_name(name : String) -> BodyLayer {
-  let layer_iter = layers_by_name_[name]
-  match layer_iter {
-    None => {
-      if name != "" {
-        println("Unknown BodyLayer name: [" + name + "]")
-      }
-      BodyLayer::BODY_NONE
-    }
-    Some(v) => v
-  }
-}
-
-pub let layers_by_name_ : @immut/sorted_map.T[String, BodyLayer] = @immut/sorted_map.from_array(
-  [
-    ("body", BodyLayer::BODY),
-    ("backBody", BodyLayer::BODY),
-    ("arm", BodyLayer::ARM),
-    ("armBelowHead", BodyLayer::ARM_BELOW_HEAD),
-    ("armBelowHeadOverMailChest", BodyLayer::ARM_BELOW_HEAD_OVER_MAIL),
-    ("armOverHair", BodyLayer::ARM_OVER_HAIR),
-    ("armOverHairBelowWeapon", BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON),
-    ("handBelowWeapon", BodyLayer::HAND_BELOW_WEAPON),
-    ("handOverHair", BodyLayer::HAND_OVER_HAIR),
-    ("handOverWeapon", BodyLayer::HAND_OVER_WEAPON),
-    ("head", BodyLayer::HEAD),
-  ],
-)
-
+///|
 let body_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("body")

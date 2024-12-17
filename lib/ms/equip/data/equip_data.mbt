@@ -1,4 +1,4 @@
-/// Contains information about an equip
+///| Contains information about an equip
 struct EquipData {
   category : String
   gender : Int
@@ -7,7 +7,7 @@ struct EquipData {
   eq_slot : @slot.Id
 }
 
-/// Load an equip from the game files.
+///| Load an equip from the game files.
 pub fn EquipData::from_item_data(item_data : @item.ItemData) -> EquipData! {
   let id = item_data.item_id
   let gender = @item.get_item_gender(id)
@@ -69,6 +69,7 @@ pub fn EquipData::from_item_data(item_data : @item.ItemData) -> EquipData! {
   { category, gender, req_stats, def_stats, eq_slot }
 }
 
+///|
 let equipslots : FixedArray[@slot.Id] = [
   @slot.Id::HAT,
   @slot.Id::FACE,
@@ -87,26 +88,32 @@ let equipslots : FixedArray[@slot.Id] = [
   @slot.Id::MEDAL,
 ]
 
+///|
 pub fn get_defstat(self : EquipData, stat : @stat.Id) -> Int {
   self.def_stats.get(stat).or(0)
 }
 
+///|
 pub fn get_eqslot(self : EquipData) -> @slot.Id {
   self.eq_slot
 }
 
+///|
 pub fn get_category(self : EquipData) -> String {
   self.category
 }
 
+///|
 pub fn get_reqstat(self : EquipData, stat : @maple_stat.Id) -> Int {
   self.req_stats.get(stat).or(0)
 }
 
+///|
 pub fn get_gender(self : EquipData) -> Int {
   self.gender
 }
 
+///|
 let req_stats_keys : Array[(String, @maple_stat.Id)] = [
   ("reqLevel", @maple_stat.Id::LEVEL),
   ("reqJob", @maple_stat.Id::JOB),
@@ -116,6 +123,7 @@ let req_stats_keys : Array[(String, @maple_stat.Id)] = [
   ("reqLUK", @maple_stat.Id::LUK),
 ]
 
+///|
 let def_stats_keys : Array[(String, @stat.Id)] = [
   ("incSTR", @stat.Id::STR),
   ("incDEX", @stat.Id::DEX),

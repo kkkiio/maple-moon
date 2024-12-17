@@ -1,24 +1,26 @@
+///|
 struct CharLook {
-  stance : @utils.Nominal[@char_look.StanceId]
+  stance : @utils.Nominal[@types.StanceId]
   st_frame : @utils.Nominal[Int]
   mut st_elapsed : Int
-  expression : @utils.Nominal[@char_look.ExpressionId]
+  expression : @utils.Nominal[ExpressionId]
   exp_frame : @utils.Nominal[Int]
   mut exp_elapsed : Int
   mut flip : Bool
   mut actionstr : String
   mut actframe : Int
-  mut body : @utils.Future[@char_look.Body]
-  mut hair : @utils.Future[@char_look.Hair]
-  mut face : @utils.Future[@char_look.Face]
-  mut action : @char_look.BodyAction?
-  equips : CharEquips
+  mut body : @utils.Future[Body]
+  mut hair : @utils.Future[Hair]
+  mut face : @utils.Future[Face]
+  mut action : @types.BodyAction?
+  equips : @equip.CharEquips
   randomizer : @utils.Randomizer
   alerted : @utils.TimedBool
-  draw_info : @char_look.BodyDrawInfo
-  char_look_module : @char_look.Module
+  draw_info : @types.BodyDrawInfo
+  char_look_module : Module
 }
 
+///|
 pub(all) struct LookEntry {
   female : Bool
   skin : Int
@@ -29,10 +31,8 @@ pub(all) struct LookEntry {
   petids : Array[Int]
 }
 
-pub fn CharLook::new(
-  entry : LookEntry,
-  char_look_module : @char_look.Module
-) -> CharLook {
+///|
+pub fn CharLook::new(entry : LookEntry, char_look_module : Module) -> CharLook {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
@@ -47,7 +47,7 @@ pub fn CharLook::new(
     body: char_look_module.load_body_by_skin_id(entry.skin),
     hair: char_look_module.load_hair_by_id(entry.hairid),
     face: char_look_module.load_face_by_id(entry.faceid),
-    equips: CharEquips::new(),
+    equips: @equip.CharEquips::new(),
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
     draw_info: char_look_module.get_body_draw_info(),
@@ -59,20 +59,22 @@ pub fn CharLook::new(
   l
 }
 
+///|
 fn updatetwohanded(self : CharLook) -> Unit {
-  let basestance = @char_look.StanceId::baseof(self.stance.get())
+  let basestance = @types.StanceId::baseof(self.stance.get())
   self.set_stance(basestance)
 }
 
+///|
 fn draw_impl(
   self : CharLook,
   args : @graphics.DrawArgument,
-  interstance : @char_look.StanceId,
-  interexpression : @char_look.ExpressionId,
+  interstance : @types.StanceId,
+  interexpression : ExpressionId,
   interframe : Int,
   interexpframe : Int
 ) -> Unit {
-  guard let Some(body) = self.body.poll() else { None => return  }
+  guard let Some(body) = self.body.poll() else { None => return }
   let hair = self.hair
   let face = self.face
   let faceshift : @struct.Point[Int] = self.draw_info.get_face_pos(
@@ -81,22 +83,22 @@ fn draw_impl(
   let faceargs : @graphics.DrawArgument = args +
     @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
   let draw_interframe_hair = fn(layer) {
-    guard let Some(hair) = hair.poll() else { None => return  }
+    guard let Some(hair) = hair.poll() else { None => return }
     hair.draw(interstance, layer, interframe, args)
   }
   let draw_hair = fn(stance, layer, frame) {
-    guard let Some(hair) = hair.poll() else { None => return  }
+    guard let Some(hair) = hair.poll() else { None => return }
     hair.draw(stance, layer, frame, args)
   }
-  if interstance == @char_look.StanceId::DEAD {
-    let faceshift = self.draw_info.get_face_pos(@char_look.StanceId::STAND1, 1)
+  if interstance == @types.StanceId::DEAD {
+    let faceshift = self.draw_info.get_face_pos(@types.StanceId::STAND1, 1)
     let faceargs = args +
       @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
     let draw_face = fn(expression, frame) {
-      guard let Some(face) = face.poll() else { None => return  }
+      guard let Some(face) = face.poll() else { None => return }
       face.draw(expression, frame, faceargs)
     }
-    draw_interframe_hair(@char_look.HairLayer::BELOW_BODY)
+    draw_interframe_hair(HairLayer::BELOW_BODY)
     self.equips.draw(
       @slot.Id::HAT,
       interstance,
@@ -104,60 +106,48 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(interstance, @char_look.BodyLayer::BODY, interframe, args)
-    draw_interframe_hair(@char_look.HairLayer::HAIR_LAYER_DEFAULT)
-    body.draw(@char_look.StanceId::STAND1, @char_look.BodyLayer::HEAD, 1, args)
-    draw_interframe_hair(@char_look.HairLayer::SHADE)
-    draw_interframe_hair(@char_look.HairLayer::HAIR_LAYER_DEFAULT)
-    body.draw(interstance, @char_look.BodyLayer::HEAD, interframe, args)
-    draw_interframe_hair(@char_look.HairLayer::SHADE)
+    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
+    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
+    body.draw(@types.StanceId::STAND1, @types.BodyLayer::HEAD, 1, args)
+    draw_interframe_hair(HairLayer::SHADE)
+    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
+    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
+    draw_interframe_hair(HairLayer::SHADE)
     draw_face(interexpression, interexpframe)
     match self.equips.getcaptype() {
-      CapType::NONE => draw_interframe_hair(@char_look.HairLayer::OVER_HEAD)
-      CapType::HEADBAND => {
+      @equip.CapType::NONE => draw_interframe_hair(HairLayer::OVER_HEAD)
+      @equip.CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
-          @char_look.StanceId::STAND1,
+          @types.StanceId::STAND1,
           @clothing.Layer::CAP,
           1,
           args,
         )
-        draw_hair(
-          @char_look.StanceId::STAND1,
-          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
-          1,
-        )
-        draw_hair(
-          @char_look.StanceId::STAND1,
-          @char_look.HairLayer::OVER_HEAD,
-          1,
-        )
+        draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
+        draw_hair(@types.StanceId::STAND1, HairLayer::OVER_HEAD, 1)
         self.equips.draw(
           @slot.Id::HAT,
-          @char_look.StanceId::STAND1,
+          @types.StanceId::STAND1,
           @clothing.Layer::CAP_OVER_HAIR,
           1,
           args,
         )
       }
-      CapType::HALF_COVER => {
-        draw_hair(
-          @char_look.StanceId::STAND1,
-          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
-          1,
-        )
+      @equip.CapType::HALF_COVER => {
+        draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
         self.equips.draw(
           @slot.Id::HAT,
-          @char_look.StanceId::STAND1,
+          @types.StanceId::STAND1,
           @clothing.Layer::CAP,
           1,
           args,
         )
       }
-      CapType::FULL_COVER =>
+      @equip.CapType::FULL_COVER =>
         self.equips.draw(
           @slot.Id::HAT,
-          @char_look.StanceId::STAND1,
+          @types.StanceId::STAND1,
           @clothing.Layer::CAP,
           1,
           args,
@@ -167,11 +157,11 @@ fn draw_impl(
     return
   }
   let draw_face = fn(expression, frame) {
-    guard let Some(face) = face.poll() else { None => return  }
+    guard let Some(face) = face.poll() else { None => return }
     face.draw(expression, frame, faceargs)
   }
-  if @char_look.StanceId::is_climbing(interstance) {
-    body.draw(interstance, @char_look.BodyLayer::BODY, interframe, args)
+  if @types.StanceId::is_climbing(interstance) {
+    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
     self.equips.draw(
       @slot.Id::GLOVES,
       interstance,
@@ -228,7 +218,7 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(interstance, @char_look.BodyLayer::HEAD, interframe, args)
+    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
     self.equips.draw(
       @slot.Id::EARACC,
       interstance,
@@ -237,8 +227,8 @@ fn draw_impl(
       args,
     )
     match self.equips.getcaptype() {
-      CapType::NONE => draw_interframe_hair(@char_look.HairLayer::BACK)
-      CapType::HEADBAND => {
+      @equip.CapType::NONE => draw_interframe_hair(HairLayer::BACK)
+      @equip.CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -246,10 +236,10 @@ fn draw_impl(
           interframe,
           args,
         )
-        draw_interframe_hair(@char_look.HairLayer::BACK)
+        draw_interframe_hair(HairLayer::BACK)
       }
-      CapType::HALF_COVER => {
-        draw_interframe_hair(@char_look.HairLayer::BELOW_CAP)
+      @equip.CapType::HALF_COVER => {
+        draw_interframe_hair(HairLayer::BELOW_CAP)
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -258,7 +248,7 @@ fn draw_impl(
           args,
         )
       }
-      CapType::FULL_COVER =>
+      @equip.CapType::FULL_COVER =>
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -283,7 +273,7 @@ fn draw_impl(
       args,
     )
   } else {
-    draw_interframe_hair(@char_look.HairLayer::BELOW_BODY)
+    draw_interframe_hair(HairLayer::BELOW_BODY)
     self.equips.draw(
       @slot.Id::CAPE,
       interstance,
@@ -312,7 +302,7 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(interstance, @char_look.BodyLayer::BODY, interframe, args)
+    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
     self.equips.draw(
       @slot.Id::GLOVES,
       interstance,
@@ -334,12 +324,7 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(
-      interstance,
-      @char_look.BodyLayer::ARM_BELOW_HEAD,
-      interframe,
-      args,
-    )
+    body.draw(interstance, @types.BodyLayer::ARM_BELOW_HEAD, interframe, args)
     if self.equips.has_overall() {
       self.equips.draw(
         @slot.Id::TOP,
@@ -380,11 +365,11 @@ fn draw_impl(
     }
     body.draw(
       interstance,
-      @char_look.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL,
+      @types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL,
       interframe,
       args,
     )
-    draw_interframe_hair(@char_look.HairLayer::HAIR_LAYER_DEFAULT)
+    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
     self.equips.draw(
       @slot.Id::SHIELD,
       interstance,
@@ -399,8 +384,8 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(interstance, @char_look.BodyLayer::HEAD, interframe, args)
-    draw_interframe_hair(@char_look.HairLayer::SHADE)
+    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
+    draw_interframe_hair(HairLayer::SHADE)
     draw_face(interexpression, interexpframe)
     self.equips.draw(
       @slot.Id::FACE,
@@ -424,9 +409,9 @@ fn draw_impl(
       args,
     )
     match self.equips.getcaptype() {
-      CapType::NONE =>
-        draw_hair(interstance, @char_look.HairLayer::OVER_HEAD, interframe)
-      CapType::HEADBAND => {
+      @equip.CapType::NONE =>
+        draw_hair(interstance, HairLayer::OVER_HEAD, interframe)
+      @equip.CapType::HEADBAND => {
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -434,12 +419,8 @@ fn draw_impl(
           interframe,
           args,
         )
-        draw_hair(
-          interstance,
-          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
-          interframe,
-        )
-        draw_hair(interstance, @char_look.HairLayer::OVER_HEAD, interframe)
+        draw_hair(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe)
+        draw_hair(interstance, HairLayer::OVER_HEAD, interframe)
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -448,12 +429,8 @@ fn draw_impl(
           args,
         )
       }
-      CapType::HALF_COVER => {
-        draw_hair(
-          interstance,
-          @char_look.HairLayer::HAIR_LAYER_DEFAULT,
-          interframe,
-        )
+      @equip.CapType::HALF_COVER => {
+        draw_hair(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe)
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -462,7 +439,7 @@ fn draw_impl(
           args,
         )
       }
-      CapType::FULL_COVER =>
+      @equip.CapType::FULL_COVER =>
         self.equips.draw(
           @slot.Id::HAT,
           interstance,
@@ -488,7 +465,7 @@ fn draw_impl(
         interframe,
         args,
       )
-      body.draw(interstance, @char_look.BodyLayer::ARM, interframe, args)
+      body.draw(interstance, @types.BodyLayer::ARM, interframe, args)
       self.equips.draw(
         @slot.Id::WEAPON,
         interstance,
@@ -504,7 +481,7 @@ fn draw_impl(
         interframe,
         args,
       )
-      body.draw(interstance, @char_look.BodyLayer::ARM, interframe, args)
+      body.draw(interstance, @types.BodyLayer::ARM, interframe, args)
       self.equips.draw(
         @slot.Id::TOP,
         interstance,
@@ -536,19 +513,14 @@ fn draw_impl(
     )
     body.draw(
       interstance,
-      @char_look.BodyLayer::HAND_BELOW_WEAPON,
+      @types.BodyLayer::HAND_BELOW_WEAPON,
       interframe,
       args,
     )
+    body.draw(interstance, @types.BodyLayer::ARM_OVER_HAIR, interframe, args)
     body.draw(
       interstance,
-      @char_look.BodyLayer::ARM_OVER_HAIR,
-      interframe,
-      args,
-    )
-    body.draw(
-      interstance,
-      @char_look.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON,
+      @types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON,
       interframe,
       args,
     )
@@ -566,18 +538,8 @@ fn draw_impl(
       interframe,
       args,
     )
-    body.draw(
-      interstance,
-      @char_look.BodyLayer::HAND_OVER_HAIR,
-      interframe,
-      args,
-    )
-    body.draw(
-      interstance,
-      @char_look.BodyLayer::HAND_OVER_WEAPON,
-      interframe,
-      args,
-    )
+    body.draw(interstance, @types.BodyLayer::HAND_OVER_HAIR, interframe, args)
+    body.draw(interstance, @types.BodyLayer::HAND_OVER_WEAPON, interframe, args)
     self.equips.draw(
       @slot.Id::GLOVES,
       interstance,
@@ -595,6 +557,7 @@ fn draw_impl(
   }
 }
 
+///|
 pub fn draw(
   self : CharLook,
   args : @graphics.DrawArgument,
@@ -616,12 +579,13 @@ pub fn draw(
   )
 }
 
+///|
 pub fn draw_with_stance(
   self : CharLook,
   position : @struct.Point[Int],
   flip : Bool,
-  interstance : @char_look.StanceId,
-  interexpression : @char_look.ExpressionId
+  interstance : @types.StanceId,
+  interexpression : ExpressionId
 ) -> Unit {
   let interstance = self.equips.adjust_stance(interstance)
   self.draw_impl(
@@ -633,20 +597,23 @@ pub fn draw_with_stance(
   )
 }
 
-pub fn is_twohanded(self : CharLook, st : @char_look.StanceId) -> Bool {
+///|
+pub fn is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
   match st {
-    @char_look.StanceId::STAND1 | @char_look.StanceId::WALK1 => false
-    @char_look.StanceId::STAND2 | @char_look.StanceId::WALK2 => true
+    @types.StanceId::STAND1 | @types.StanceId::WALK1 => false
+    @types.StanceId::STAND2 | @types.StanceId::WALK2 => true
     _ => self.equips.is_twohanded()
   }
 }
 
+///|
 pub fn set_direction(self : CharLook, f : Bool) -> Unit {
   self.flip = f
 }
 
-pub fn set_stance(self : CharLook, st : @char_look.StanceId) -> Unit {
-  if self.action.is_empty().not() || st == @char_look.StanceId::NONE {
+///|
+pub fn set_stance(self : CharLook, st : @types.StanceId) -> Unit {
+  if self.action.is_empty().not() || st == @types.StanceId::NONE {
     return
   }
   // let adjstance = self.equips.adjust_stance(st)
@@ -658,18 +625,22 @@ pub fn set_stance(self : CharLook, st : @char_look.StanceId) -> Unit {
   }
 }
 
+///|
 fn set_body(self : CharLook, skin_id : Int) -> Unit {
   self.body = self.char_look_module.load_body_by_skin_id(skin_id)
 }
 
+///|
 fn set_hair(self : CharLook, hair_id : Int) -> Unit {
   self.hair = self.char_look_module.load_hair_by_id(hair_id)
 }
 
+///|
 fn set_face(self : CharLook, face_id : Int) -> Unit {
   self.face = self.char_look_module.load_face_by_id(face_id)
 }
 
+///|
 pub fn update(self : CharLook, timestep : Int) -> Bool {
   if timestep == 0 {
     self.stance.normalize()
@@ -719,7 +690,7 @@ pub fn update(self : CharLook, timestep : Int) -> Bool {
           aniend = true
           self.action = None
           self.actionstr = ""
-          self.set_stance(@char_look.StanceId::STAND1)
+          self.set_stance(@types.StanceId::STAND1)
         }
       } else {
         self.stance.normalize()
@@ -732,8 +703,9 @@ pub fn update(self : CharLook, timestep : Int) -> Bool {
   aniend
 }
 
+///|
 fn update_face(self : CharLook, timestep : Int) -> Unit {
-  guard let Some(face) = self.face.poll() else { None => return  }
+  guard let Some(face) = self.face.poll() else { None => return }
   let expdelay : Int = face.get_delay(
     self.expression.get(),
     self.exp_frame.get(),
@@ -748,10 +720,10 @@ fn update_face(self : CharLook, timestep : Int) -> Unit {
     let fcthreshold : Double = expdelta.to_double() / timestep.to_double()
     self.exp_frame.next(nextexpframe, fcthreshold)
     if self.exp_frame.get() == 0 {
-      if self.expression.get() == @char_look.ExpressionId::DEFAULT {
-        self.expression.next(@char_look.ExpressionId::BLINK, fcthreshold)
+      if self.expression.get() == ExpressionId::DEFAULT {
+        self.expression.next(ExpressionId::BLINK, fcthreshold)
       } else {
-        self.expression.next(@char_look.ExpressionId::DEFAULT, fcthreshold)
+        self.expression.next(ExpressionId::DEFAULT, fcthreshold)
       }
     }
   } else {
@@ -761,23 +733,28 @@ fn update_face(self : CharLook, timestep : Int) -> Unit {
   }
 }
 
-pub fn get_delay(self : CharLook, st : @char_look.StanceId, fr : Int) -> Int {
+///|
+pub fn get_delay(self : CharLook, st : @types.StanceId, fr : Int) -> Int {
   self.draw_info.get_delay(st, fr)
 }
 
-pub fn getnextframe(self : CharLook, st : @char_look.StanceId, fr : Int) -> Int {
+///|
+pub fn getnextframe(self : CharLook, st : @types.StanceId, fr : Int) -> Int {
   self.draw_info.next_frame(st, fr)
 }
 
-pub fn get_equips(self : CharLook) -> CharEquips {
+///|
+pub fn get_equips(self : CharLook) -> @equip.CharEquips {
   self.equips
 }
 
+///|
 pub fn add_equip(self : CharLook, itemid : Int, slot : @slot.Id) -> Unit {
   self.equips.add_equip(itemid, slot, self.draw_info)
   self.updatetwohanded()
 }
 
+///|
 pub fn remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
   self.equips.remove_equip(slot)
   if slot == @slot.Id::WEAPON {
@@ -785,10 +762,12 @@ pub fn remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
   }
 }
 
-pub fn get_stance(self : CharLook) -> @char_look.StanceId {
+///|
+pub fn get_stance(self : CharLook) -> @types.StanceId {
   self.stance.get()
 }
 
+///|
 pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
   match self.action {
     Some(_) => return self.draw_info.get_attack_delay(self.actionstr, no)
@@ -801,11 +780,12 @@ pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
   return delay
 }
 
+///|
 pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
-  guard let Some(weapon) = self.equips.get_weapon() else { None => return  }
+  guard let Some(weapon) = self.equips.get_weapon() else { None => return }
   let attacktype = weapon.get_attack()
   if attacktype == 9 && degenerate.not() {
-    self.set_stance(@char_look.StanceId::SHOT)
+    self.set_stance(@types.StanceId::SHOT)
     self.set_action("handgun")
   } else {
     self.set_stance(self.getattackstance(attacktype, degenerate))
@@ -816,24 +796,23 @@ pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
   // weapon.get_usesound(degenerate).play()
 }
 
-pub fn attack_by_stance(
-  self : CharLook,
-  newstance : @char_look.StanceId
-) -> Unit {
-  if self.action.is_empty().not() || newstance == @char_look.StanceId::NONE {
+///|
+pub fn attack_by_stance(self : CharLook, newstance : @types.StanceId) -> Unit {
+  if self.action.is_empty().not() || newstance == @types.StanceId::NONE {
     return
   }
   match newstance {
-    @char_look.StanceId::SHOT => self.set_action("handgun")
+    @types.StanceId::SHOT => self.set_action("handgun")
     _ => self.set_stance(newstance)
   }
 }
 
+///|
 pub fn set_action(self : CharLook, acstr : String) -> Unit {
   if acstr == self.actionstr || acstr.is_empty() {
     return
   }
-  let ac_stance = @char_look.StanceId::by_string(acstr)
+  let ac_stance = @types.StanceId::by_string(acstr)
   if ac_stance != NONE {
     self.set_stance(ac_stance)
   } else {
@@ -851,16 +830,17 @@ pub fn set_action(self : CharLook, acstr : String) -> Unit {
   }
 }
 
+///|
 fn getattackstance(
   self : CharLook,
   attack : Int,
   degenerate : Bool
-) -> @char_look.StanceId {
-  if self.stance.get() == @char_look.StanceId::PRONE {
-    return @char_look.StanceId::PRONESTAB
+) -> @types.StanceId {
+  if self.stance.get() == @types.StanceId::PRONE {
+    return @types.StanceId::PRONESTAB
   }
   if attack <= 0 || attack >= degen_stances.length() {
-    return @char_look.StanceId::STAND1
+    return @types.StanceId::STAND1
   }
   let stances = if degenerate {
     degen_stances[attack]
@@ -868,7 +848,7 @@ fn getattackstance(
     attack_stances[attack]
   }
   if stances.length() == 0 {
-    return @char_look.StanceId::STAND1
+    return @types.StanceId::STAND1
   }
   let index = self.randomizer.next_int(stances.length())
   return stances[index]
@@ -883,52 +863,57 @@ fn getattackstance(
 // let attack_CLAW = 7
 // let attack_GUN = 9
 
-let degen_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::SWINGT1, @char_look.StanceId::SWINGT3],
-  [@char_look.StanceId::SWINGT1, @char_look.StanceId::STABT1],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::SWINGT1, @char_look.StanceId::STABT1],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::SWINGP1, @char_look.StanceId::STABT2],
+///|
+let degen_stances : FixedArray[FixedArray[@types.StanceId]] = [
+  [@types.StanceId::NONE],
+  [@types.StanceId::NONE],
+  [@types.StanceId::NONE],
+  [@types.StanceId::SWINGT1, @types.StanceId::SWINGT3],
+  [@types.StanceId::SWINGT1, @types.StanceId::STABT1],
+  [@types.StanceId::NONE],
+  [@types.StanceId::NONE],
+  [@types.StanceId::SWINGT1, @types.StanceId::STABT1],
+  [@types.StanceId::NONE],
+  [@types.StanceId::SWINGP1, @types.StanceId::STABT2],
 ]
 
-let attack_stances : FixedArray[FixedArray[@char_look.StanceId]] = [
-  [@char_look.StanceId::NONE],
+///|
+let attack_stances : FixedArray[FixedArray[@types.StanceId]] = [
+  [@types.StanceId::NONE],
   [
-    @char_look.StanceId::STABO1,
-    @char_look.StanceId::STABO2,
-    @char_look.StanceId::SWINGO1,
-    @char_look.StanceId::SWINGO2,
-    @char_look.StanceId::SWINGO3,
+    @types.StanceId::STABO1,
+    @types.StanceId::STABO2,
+    @types.StanceId::SWINGO1,
+    @types.StanceId::SWINGO2,
+    @types.StanceId::SWINGO3,
   ],
-  [@char_look.StanceId::STABT1, @char_look.StanceId::SWINGP1],
-  [@char_look.StanceId::SHOOT1],
-  [@char_look.StanceId::SHOOT2],
+  [@types.StanceId::STABT1, @types.StanceId::SWINGP1],
+  [@types.StanceId::SHOOT1],
+  [@types.StanceId::SHOOT2],
   [
-    @char_look.StanceId::STABO1,
-    @char_look.StanceId::STABO2,
-    @char_look.StanceId::SWINGT1,
-    @char_look.StanceId::SWINGT2,
-    @char_look.StanceId::SWINGT3,
+    @types.StanceId::STABO1,
+    @types.StanceId::STABO2,
+    @types.StanceId::SWINGT1,
+    @types.StanceId::SWINGT2,
+    @types.StanceId::SWINGT3,
   ],
-  [@char_look.StanceId::SWINGO1, @char_look.StanceId::SWINGO2],
-  [@char_look.StanceId::SWINGO1, @char_look.StanceId::SWINGO2],
-  [@char_look.StanceId::NONE],
-  [@char_look.StanceId::SHOT],
+  [@types.StanceId::SWINGO1, @types.StanceId::SWINGO2],
+  [@types.StanceId::SWINGO1, @types.StanceId::SWINGO2],
+  [@types.StanceId::NONE],
+  [@types.StanceId::SHOT],
 ]
 
+///|
 pub fn set_alerted(self : CharLook, millis : Int) -> Unit {
   self.alerted.set_for(millis)
 }
 
+///|
 pub fn get_frame(self : CharLook) -> Int {
   self.st_frame.get()
 }
 
+///|
 pub fn get_alerted(self : CharLook) -> Bool {
   self.alerted.get()
 }

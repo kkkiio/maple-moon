@@ -1,5 +1,6 @@
+///|
 struct WeaponData {
-  equip_data : @equip.EquipData
+  equip_data : @data.EquipData
   t : Type
   two_handed : Bool
   attack_speed : Int
@@ -7,8 +8,9 @@ struct WeaponData {
   after_image : String
 }
 
+///|
 pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
-  let equip_data = @equip.EquipData::from_item_data!(item_data)
+  let equip_data = @data.EquipData::from_item_data!(item_data)
   let prefix = item_data.item_id / 10000
   let t = by_value!(prefix)
   let two_handed = prefix == Type::STAFF.int_value() ||
@@ -37,26 +39,32 @@ pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
   }
 }
 
+///|
 pub fn get_type(self : WeaponData) -> Type {
   self.t
 }
 
+///|
 pub fn is_twohanded(self : WeaponData) -> Bool {
   self.two_handed
 }
 
+///|
 pub fn get_speed(self : WeaponData) -> Int {
   self.attack_speed
 }
 
+///|
 pub fn get_afterimage(self : WeaponData) -> String {
   self.after_image
 }
 
-pub fn get_equipdata(self : WeaponData) -> @equip.EquipData {
+///|
+pub fn get_equipdata(self : WeaponData) -> @data.EquipData {
   self.equip_data
 }
 
+///|
 pub fn get_attack(self : WeaponData) -> Int {
   self.attack
 }

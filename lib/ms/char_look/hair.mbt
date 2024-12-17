@@ -1,3 +1,4 @@
+///|
 pub(all) enum HairLayer {
   HAIR_LAYER_NONE
   HAIR_LAYER_DEFAULT
@@ -8,6 +9,7 @@ pub(all) enum HairLayer {
   BELOW_CAP
 } derive(Eq, Compare)
 
+///|
 pub fn int_value(self : HairLayer) -> Int {
   match self {
     HairLayer::HAIR_LAYER_NONE => 0
@@ -20,20 +22,24 @@ pub fn int_value(self : HairLayer) -> Int {
   }
 }
 
+///|
 pub fn hash(self : HairLayer) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : HairLayer, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+///|
 struct Hair {
-  stances : Map[StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]]
+  stances : Map[@types.StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]]
   name : String
   color : String
 }
 
+///|
 pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_map.from_array(
   [
     ("hair", HairLayer::HAIR_LAYER_DEFAULT),
@@ -45,19 +51,27 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
   ],
 )
 
-pub fn Hair::load(hairid : Int, drawinfo : BodyDrawInfo) -> @utils.Future[Hair] {
+///|
+pub fn Hair::load(
+  hairid : Int,
+  drawinfo : @types.BodyDrawInfo
+) -> @utils.Future[Hair] {
   hair_loader
   .load_res(["000\{hairid}.img"])
   .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo) })
 }
 
+///|
 fn Hair::new(
   hairid : Int,
   hairnode : @resource.NxNode,
-  drawinfo : BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo
 ) -> Hair {
-  let stances : Map[StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]] = Map::new()
-  for stancename, stance in stance_name_id_map {
+  let stances : Map[
+    @types.StanceId,
+    Map[HairLayer, Map[Int, @graphics.Texture]],
+  ] = Map::new()
+  for stancename, stance in @types.stance_name_id_map {
     let stancenode = hairnode[stancename]
     if stancenode.is_null() {
       continue
@@ -101,9 +115,10 @@ fn Hair::new(
   { stances, name, color }
 }
 
+///|
 pub fn draw(
   self : Hair,
-  stance : StanceId,
+  stance : @types.StanceId,
   layer : HairLayer,
   frame : Int,
   args : @graphics.DrawArgument
@@ -117,12 +132,15 @@ pub fn draw(
   }
 }
 
+///|
 pub fn get_name(self : Hair) -> String {
   self.name
 }
 
+///|
 pub fn getcolor(self : Hair) -> String {
   self.color
 }
 
+///|
 let hair_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("hair")

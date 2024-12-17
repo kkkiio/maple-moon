@@ -59,8 +59,8 @@ pub fn make_actions(
             {
               skillbook,
               job: stats.get_job(),
-              level: stats.get_level(),
-              sp: stats.get_sp(),
+              level: stats.get_stat(@maple_stat.Id::LEVEL),
+              sp: stats.get_stat(@maple_stat.Id::SP),
             },
             self.skill,
           )
@@ -72,7 +72,7 @@ pub fn make_actions(
                 {
                   skillbook: player.get_skills(),
                   job: stats.get_job(),
-                  level: stats.get_level(),
+                  level: stats.get_stat(@maple_stat.Id::LEVEL),
                   sp,
                 },
               )
@@ -86,8 +86,8 @@ pub fn make_actions(
                 {
                   skillbook,
                   job: stats.get_job(),
-                  level: stats.get_level(),
-                  sp: stats.get_sp(),
+                  level: stats.get_stat(@maple_stat.Id::LEVEL),
+                  sp: stats.get_stat(@maple_stat.Id::SP),
                 },
               )
               true

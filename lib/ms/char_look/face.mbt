@@ -1,3 +1,4 @@
+///|
 pub(all) enum ExpressionId {
   DEFAULT
   BLINK
@@ -25,10 +26,12 @@ pub(all) enum ExpressionId {
   WINK
 } derive(Eq, Compare)
 
+///|
 pub fn ExpressionId::default() -> ExpressionId {
   ExpressionId::DEFAULT
 }
 
+///|
 pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/sorted_map.from_array(
   [
     (ExpressionId::DEFAULT, "default"),
@@ -58,9 +61,11 @@ pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/so
   ],
 )
 
+///|
 let all_expressions : FixedArray[ExpressionId] = expression_names.keys()
   |> FixedArray::from_array
 
+///|
 pub fn byaction(action : Int) -> ExpressionId {
   let adjusted_action = action - 98
   if adjusted_action < all_expressions.length() {
@@ -71,16 +76,19 @@ pub fn byaction(action : Int) -> ExpressionId {
   }
 }
 
+///|
 struct Face {
   expressions : @immut/sorted_map.T[ExpressionId, Map[Int, FaceFrame]]
   name : String
 }
 
+///|
 struct FaceFrame {
   texture : @graphics.Texture
   delay : Int
 }
 
+///|
 pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
   let texture = @graphics.Texture::from_resource(src["face"])
   let shift : Point[Int] = src["face"]["map"]["brow"].as_point?().unwrap()
@@ -92,8 +100,10 @@ pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
   { texture, delay }
 }
 
+///|
 let string_loader = @resource.string_loader
 
+///|
 pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
   let strid = "000" + faceid.to_string()
   face_loader
@@ -101,6 +111,7 @@ pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
   .map(fn(facenode) { Face::new(faceid, facenode) })
 }
 
+///|
 fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
   let expressions = expression_names.map_with_key(
     fn(exp, _v) {
@@ -131,6 +142,7 @@ fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
   { expressions, name }
 }
 
+///|
 pub fn draw(
   self : Face,
   expression : ExpressionId,
@@ -143,6 +155,7 @@ pub fn draw(
   }
 }
 
+///|
 pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
   if self.expressions[expression].unwrap().contains(frame + 1) {
     frame + 1
@@ -151,6 +164,7 @@ pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
   }
 }
 
+///|
 pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
   match self.expressions[expression].unwrap().get(frame) {
     Some(delayit) => delayit.delay
@@ -158,8 +172,13 @@ pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
   }
 }
 
+///|
 pub fn get_name(self : Face) -> String {
   self.name
 }
 
+///|
 let face_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("face")
+
+///|
+typealias Point[T] = @struct.Point[T]

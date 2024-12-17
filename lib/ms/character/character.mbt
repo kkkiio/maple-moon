@@ -1,8 +1,10 @@
+///|
 typealias MapObjectBase = @map_object.MapObjectBase
 
+///|
 typealias PhysicsObject = @physics.PhysicsObject
 
-/// Player states which determine animation and state
+///| Player states which determine animation and state
 pub(all) enum CharState {
   WALK
   STAND
@@ -16,7 +18,7 @@ pub(all) enum CharState {
   SIT
 } derive(Eq, Compare)
 
-/// Values are used in movement packets (Add one if facing left)
+///| Values are used in movement packets (Add one if facing left)
 pub fn int_value(self : CharState) -> Int {
   match self {
     WALK => 2
@@ -32,14 +34,16 @@ pub fn int_value(self : CharState) -> Int {
   }
 }
 
+///|
 pub fn hash(self : CharState) -> Hash {
   self.int_value()
 }
 
 // Base for characters, e.g. the player and other clients on the same map.
+///|
 pub(all) struct CharBase {
   base : MapObjectBase
-  look : CharLook
+  look : @char_look.CharLook
   // look_preview: CharLook
   // pets: Array[PetLook, 3]
   mut state : CharState
@@ -57,14 +61,17 @@ pub(all) struct CharBase {
   damage_numbers : Array[@combat_ui.DamageNumber]
 }
 
+///|
 pub fn get_position(self : CharBase) -> @struct.Point[Int] {
   self.base.get_position()
 }
 
+///|
 pub fn set_position(self : CharBase, pos : @struct.Point[Int]) -> Unit {
   self.base.set_position(pos)
 }
 
+///|
 pub(open) trait Character {
   get_phobj(Self) -> PhysicsObject
   // draw(Self, Double, Double, Double) -> Unit
@@ -78,7 +85,7 @@ pub(open) trait Character {
   // set_direction(Self, Bool) -> Unit
   set_state(Self, CharState) -> Unit
   attack_by_action(Self, String) -> Unit
-  attack_by_stance(Self, @char_look.StanceId) -> Unit
+  attack_by_stance(Self, @types.StanceId) -> Unit
   regular_attack(Self, Bool) -> Unit
   // set_afterimage(Self, Int) -> Unit
   get_afterimage(Self) -> @char_look.Afterimage
@@ -89,7 +96,6 @@ pub(open) trait Character {
   show_iron_body(Self) -> Unit
   // show_damage(Self, Int) -> Unit
   // speak(Self, String) -> Unit
-  change_look(Self, @maple_stat.Id, Int) -> Unit
   // set_state_by_byte(Self, Int) -> Unit
   // set_expression(Self, Int) -> Unit
   // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
@@ -99,7 +105,7 @@ pub(open) trait Character {
   // is_climbing(Self) -> Bool
   is_twohanded(Self) -> Bool
   get_weapontype(Self) -> @weapon.Type
-  get_look(Self) -> CharLook
+  get_look(Self) -> @char_look.CharLook
   // get_look_const(Self) -> CharLook
   // init() -> Unit
   // new_char(Int, CharLook, String) -> Char
@@ -109,9 +115,10 @@ pub(open) trait Character {
   get_stats(Self) -> @char_stats.CharStats // TODO: Remove
 }
 
+///|
 pub fn CharBase::new(
   oid : Int,
-  look : CharLook,
+  look : @char_look.CharLook,
   name : String,
   damage_number_set : @combat_ui.DamageNumberSet
 ) -> CharBase {
@@ -137,6 +144,7 @@ pub fn CharBase::new(
   }
 }
 
+///|
 pub fn is_climbing(self : CharBase) -> Bool {
   match self.state {
     CharState::LADDER | CharState::ROPE => true
@@ -144,6 +152,7 @@ pub fn is_climbing(self : CharBase) -> Bool {
   }
 }
 
+///|
 pub fn get_layer(self : CharBase) -> Int {
   if self.is_climbing() {
     7
@@ -152,6 +161,7 @@ pub fn get_layer(self : CharBase) -> Int {
   }
 }
 
+///|
 pub fn draw(
   self : CharBase,
   viewx : Double,
@@ -205,6 +215,7 @@ pub fn draw(
   }
 }
 
+///|
 pub fn update(self : CharBase, speed : Double) -> Bool {
   @utils.remove_if(
     self.damage_numbers,
@@ -247,25 +258,30 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   self.look.update(stancespeed)
 }
 
+///|
 pub fn get_phobj(self : CharBase) -> PhysicsObject {
   self.base.phobj
 }
 
+///|
 pub fn set_direction(self : CharBase, f : Bool) -> Unit {
   self.facing_right = f
   self.look.set_direction(f)
 }
 
+///|
 pub fn set_state(self : CharBase, st : CharState) -> Unit {
   self.state = st
-  self.look.set_stance(@char_look.StanceId::by_state(st.int_value()))
+  self.look.set_stance(@types.StanceId::by_state(st.int_value()))
 }
 
+///|
 pub fn is_facing_right(self : CharBase) -> Bool {
   self.facing_right
 }
 
 // Get a speed modifier for the current stance.
+///|
 pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   if self.attacking {
     return get_real_attackspeed(base_attack_speed)
@@ -279,39 +295,17 @@ pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
 }
 
 // Return the attack speed as a multiplier
+///|
 pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
   return 1.7 - base_attack_speed.to_double() / 10.0
 }
 
-pub fn change_look(self : CharBase, stat : @maple_stat.Id, id : Int) -> Unit {
-  match stat {
-    @maple_stat.Id::SKIN => self.look.set_body(id)
-    @maple_stat.Id::FACE => self.look.set_face(id)
-    @maple_stat.Id::HAIR => self.look.set_hair(id)
-    @maple_stat.Id::LEVEL => ()
-    @maple_stat.Id::JOB => ()
-    @maple_stat.Id::STR => ()
-    @maple_stat.Id::DEX => ()
-    @maple_stat.Id::INT => ()
-    @maple_stat.Id::LUK => ()
-    @maple_stat.Id::HP => ()
-    @maple_stat.Id::MAXHP => ()
-    @maple_stat.Id::MP => ()
-    @maple_stat.Id::MAXMP => ()
-    @maple_stat.Id::AP => ()
-    @maple_stat.Id::SP => ()
-    @maple_stat.Id::EXP => ()
-    @maple_stat.Id::FAME => ()
-    @maple_stat.Id::MESO => ()
-    @maple_stat.Id::PET => ()
-    @maple_stat.Id::GACHAEXP => ()
-  }
-}
-
+///|
 pub fn get_name(self : CharBase) -> String {
   self.name
 }
 
+///|
 pub fn get_weapontype(self : CharBase) -> @weapon.Type {
   self.look
   .get_equips()
@@ -319,10 +313,12 @@ pub fn get_weapontype(self : CharBase) -> @weapon.Type {
   .map_or(@weapon.Type::NONE, fn(data) { data.get_type() })
 }
 
+///|
 pub fn is_invincible(self : CharBase) -> Bool {
   self.invincible.get()
 }
 
+///|
 pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
   guard let Some(weapon) = self.look.get_equips().get_weapon() else {
     None => return
@@ -335,14 +331,17 @@ pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
   )
 }
 
+///|
 pub fn is_sitting(self : CharBase) -> Bool {
   self.state == CharState::SIT
 }
 
+///|
 pub fn get_oid(self : CharBase) -> Int {
   self.base.get_oid()
 }
 
+///|
 pub fn get_attackdelay(
   self : CharBase,
   no : Int,
@@ -356,20 +355,24 @@ pub fn get_attackdelay(
   (delay.to_double() / fspeed).to_int()
 }
 
+///|
 pub fn is_twohanded(self : CharBase) -> Bool {
   self.look.get_equips().is_twohanded()
 }
 
+///|
 pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit {
   self.look.attack(degenerate)
   self.attacking = true
   self.look.set_alerted(5000)
 }
 
+///|
 pub fn show_effect_id(self : CharBase, toshow : CharEffectId) -> Unit {
   // TODO: Implement
 }
 
+///|
 pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
@@ -385,6 +388,7 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   self.invincible.set_for(2000)
 }
 
+///|
 pub fn show_attack_effect(
   self : CharBase,
   toshow : @graphics.Animation,
@@ -400,24 +404,28 @@ pub fn show_attack_effect(
   )
 }
 
+///|
 pub fn show_iron_body(self : CharBase) -> Unit {
   // self.iron_body.set_for(500) // TODO: Implement
 }
 
+///|
 pub fn attack_by_action(self : CharBase, action : String) -> Unit {
   self.look.set_action(action)
   self.attacking = true
   self.look.set_alerted(5000)
 }
 
-pub fn attack_by_stance(self : CharBase, stance : @char_look.StanceId) -> Unit {
+///|
+pub fn attack_by_stance(self : CharBase, stance : @types.StanceId) -> Unit {
   self.look.attack_by_stance(stance)
   self.attacking = true
   self.look.set_alerted(5000)
 }
 
+///|
 pub(all) struct CharEntry {
   stats : @char_stats.StatsEntry
-  look : LookEntry
+  look : @char_look.LookEntry
   id : Int
 }

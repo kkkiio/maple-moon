@@ -36,7 +36,7 @@ pub fn Player::load(
   sp_stat_id : @char_stats.StatId,
   char_base : @character.CharBase
 ) -> @utils.Future[Player] {
-  @job.Job::load(id=entry.stats.job)
+  @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
   .bind(
     fn(job) {
       @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
@@ -345,11 +345,6 @@ fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
 }
 
 ///|
-pub fn change_look(self : Player, stat : @maple_stat.Id, id : Int) -> Unit {
-  self.char_base.change_look(stat, id)
-}
-
-///|
 pub fn get_name(self : Player) -> String {
   self.char_base.get_name()
 }
@@ -458,7 +453,7 @@ pub fn rush(self : Player, targetx : Double) -> Unit {
 }
 
 ///|
-pub fn get_look(self : Player) -> @character.CharLook {
+pub fn get_look(self : Player) -> @char_look.CharLook {
   self.char_base.look
 }
 
@@ -475,15 +470,6 @@ pub fn get_weapontype(self : Player) -> @weapon.Type {
 ///|
 pub fn regular_attack(self : Player, degenerate : Bool) -> Unit {
   self.char_base.regular_attack(degenerate)
-}
-
-///|
-pub fn change_level(self : Player, level : Int) -> Unit {
-  let oldlevel = self.stats.get_level()
-  if level > oldlevel {
-    self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
-  }
-  self.stats.set_level(level)
 }
 
 ///|
@@ -530,7 +516,7 @@ pub fn attack_by_action(self : Player, action : String) -> Unit {
 }
 
 ///|
-pub fn attack_by_stance(self : Player, stance : @char_look.StanceId) -> Unit {
+pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
   self.char_base.attack_by_stance(stance)
 }
 

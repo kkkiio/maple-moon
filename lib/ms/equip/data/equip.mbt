@@ -1,4 +1,5 @@
-pub enum Potential {
+///|
+pub(all) enum Potential {
   POT_NONE
   POT_HIDDEN
   POT_RARE
@@ -7,6 +8,7 @@ pub enum Potential {
   POT_LEGENDARY
 }
 
+///|
 pub fn int_value(pot : Potential) -> Int {
   match pot {
     POT_NONE => 0
@@ -18,7 +20,8 @@ pub fn int_value(pot : Potential) -> Int {
   }
 }
 
-pub struct Equip {
+///|
+pub(all) struct Equip {
   stats : Map[@stat.Id, Int]
   item_id : Int
   expiration : Int64
@@ -32,6 +35,7 @@ pub struct Equip {
   // quality : @quality.Id
 }
 
+///|
 pub fn check_quality(
   data : EquipData,
   scrolled : Bool,
@@ -39,7 +43,6 @@ pub fn check_quality(
 ) -> @quality.Id {
   let mut delta = 0
   for es, stat in stats {
-    let defstat = data.get_defstat(es)
     let defstat = data.get_defstat(es)
     delta += stat - defstat
   }

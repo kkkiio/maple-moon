@@ -1,12 +1,15 @@
+///|
 trait SkillUseEffect {
   apply(Self, @character.Character) -> Unit
 }
 
+///|
 struct SkillUseEffectEffect {
   animation : @graphics.Animation
   z : Int
 }
 
+///|
 fn SkillUseEffectEffect::new(src : @resource.NxNode) -> SkillUseEffectEffect! {
   {
     animation: src |> @graphics.Animation::from_resource_ex!(),
@@ -14,40 +17,47 @@ fn SkillUseEffectEffect::new(src : @resource.NxNode) -> SkillUseEffectEffect! {
   }
 }
 
+///|
 fn apply(self : SkillUseEffectEffect, c : @character.Character) -> Unit {
   c.show_attack_effect(self.animation, self.z)
 }
 
 // No animation
+///|
 struct NoUseEffect {} derive(Default)
 
+///|
 fn NoUseEffect::new() -> NoUseEffect {
   NoUseEffect::default()
 }
 
+///|
 fn apply(self : NoUseEffect, c : @character.Character) -> Unit {
 
 }
 
-/// An effect which displays an animation over the character's position
+///| An effect which displays an animation over the character's position
 struct SingleUseEffect {
   effect : SkillUseEffectEffect
 }
 
+///|
 fn SingleUseEffect::new(src : @resource.NxNode) -> SingleUseEffect! {
   { effect: SkillUseEffectEffect::new!(src["effect"]) }
 }
 
+///|
 fn apply(self : SingleUseEffect, c : @character.Character) -> Unit {
   self.effect.apply(c)
 }
 
-/// An effect which displays an animation over the character's position
+///| An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
 struct TwoHandedUseEffect {
   effects : @utils.BoolPair[SkillUseEffectEffect]
 }
 
+///|
 fn TwoHandedUseEffect::new(src : @resource.NxNode) -> TwoHandedUseEffect! {
   {
     effects: @utils.BoolPair::new(
@@ -57,16 +67,18 @@ fn TwoHandedUseEffect::new(src : @resource.NxNode) -> TwoHandedUseEffect! {
   }
 }
 
+///|
 fn apply(self : TwoHandedUseEffect, c : @character.Character) -> Unit {
   let twohanded = c.is_twohanded()
   self.effects[twohanded].apply(c)
 }
 
-/// An effect which displays multiple animations over the character's position
+///| An effect which displays multiple animations over the character's position
 struct MultiUseEffect {
   effects : Array[SkillUseEffectEffect]
 }
 
+///|
 fn MultiUseEffect::new(src : @resource.NxNode) -> MultiUseEffect! {
   let effects = []
   let mut no = -1
@@ -79,17 +91,19 @@ fn MultiUseEffect::new(src : @resource.NxNode) -> MultiUseEffect! {
   { effects, }
 }
 
+///|
 fn apply(self : MultiUseEffect, c : @character.Character) -> Unit {
   for effect in self.effects {
     effect.apply(c)
   }
 }
 
-/// The animation changes with the character level
+///| The animation changes with the character level
 struct ByLevelUseEffect {
   effects : Array[(Int, SkillUseEffectEffect)]
 }
 
+///|
 fn ByLevelUseEffect::new(src : @resource.NxNode) -> ByLevelUseEffect! {
   let effects = []
   for sub in src["CharLevel"] {
@@ -101,11 +115,12 @@ fn ByLevelUseEffect::new(src : @resource.NxNode) -> ByLevelUseEffect! {
   { effects, }
 }
 
+///|
 fn apply(self : ByLevelUseEffect, c : @character.Character) -> Unit {
   if self.effects.is_empty() {
     return
   }
-  let level = c.get_stats().get_level()
+  let level = c.get_stats().get_stat(@maple_stat.Id::LEVEL)
   let mut iter = 0
   while iter < self.effects.length() && level > self.effects[iter].0 {
     iter += 1
@@ -116,13 +131,15 @@ fn apply(self : ByLevelUseEffect, c : @character.Character) -> Unit {
   self.effects[iter].1.apply(c)
 }
 
-/// Use effect for Iron Body
+///| Use effect for Iron Body
 struct IronBodyUseEffect {} derive(Default)
 
+///|
 fn IronBodyUseEffect::new() -> IronBodyUseEffect {
   IronBodyUseEffect::default()
 }
 
+///|
 fn apply(self : IronBodyUseEffect, c : @character.Character) -> Unit {
   c.show_iron_body()
 }

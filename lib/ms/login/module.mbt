@@ -18,23 +18,21 @@ pub fn Module::load(processor : @net.PacketProcessor) -> @utils.Future[Module] {
   map001_loader
   .load_res(["Back", "login.img"])
   .combine(map_pretty_loader.load_res(["Back", "login.img", "ani", "16"]))
-  .map(
-    fn(it) {
-      let (login_img, pretty_logo) = it
-      {
-        processor,
-        login_img,
-        pretty_logo,
-        characters: [],
-        selected_index: None,
-        receiving_server_list: [],
-        login_task: None,
-        connect_task: None,
-        input_acc_pass: None,
-        select_cid: None,
-      }
-    },
-  )
+  .map(fn(it) {
+    let (login_img, pretty_logo) = it
+    {
+      processor,
+      login_img,
+      pretty_logo,
+      characters: [],
+      selected_index: None,
+      receiving_server_list: [],
+      login_task: None,
+      connect_task: None,
+      input_acc_pass: None,
+      select_cid: None,
+    }
+  })
 }
 
 ///|
@@ -48,63 +46,53 @@ pub fn make_handlers(
   [
     (
       @net.LOGIN_RESULT,
-      @net.with_log(
-        @net.LOGIN_RESULT,
-        fn(recv : @net.InPacket) { self.handle_login_result!(recv) },
-      ),
+      @net.with_log(@net.LOGIN_RESULT, fn(recv : @net.InPacket) {
+        self.handle_login_result!(recv)
+      }),
     ),
     (
       @net.SERVER_STATUS,
-      @net.with_log(
-        @net.SERVER_STATUS,
-        fn(recv : @net.InPacket) { handle_server_status!(recv) },
-      ),
+      @net.with_log(@net.SERVER_STATUS, fn(recv : @net.InPacket) {
+        handle_server_status!(recv)
+      }),
     ),
     (
       @net.SERVER_LIST,
-      @net.with_log(
-        @net.SERVER_LIST,
-        fn(recv : @net.InPacket) { handle_server_list!(self, recv) },
-      ),
+      @net.with_log(@net.SERVER_LIST, fn(recv : @net.InPacket) {
+        handle_server_list!(self, recv)
+      }),
     ),
     (
       @net.CHAR_LIST,
-      @net.with_log(
-        @net.CHAR_LIST,
-        fn(recv : @net.InPacket) { handle_char_list!(self, recv) },
-      ),
+      @net.with_log(@net.CHAR_LIST, fn(recv : @net.InPacket) {
+        handle_char_list!(self, recv)
+      }),
     ),
     (
       @net.CHARNAME_RESPONSE,
-      @net.with_log(
-        @net.CHARNAME_RESPONSE,
-        fn(recv : @net.InPacket) { handle_charname_response!(recv) },
-      ),
+      @net.with_log(@net.CHARNAME_RESPONSE, fn(recv : @net.InPacket) {
+        handle_charname_response!(recv)
+      }),
     ),
     (
       @net.SERVER_IP,
-      @net.with_log(
-        @net.SERVER_IP,
-        fn(recv : @net.InPacket) { handle_server_ip!(self, recv) },
-      ),
+      @net.with_log(@net.SERVER_IP, fn(recv : @net.InPacket) {
+        handle_server_ip!(self, recv)
+      }),
     ),
     (
       @net.ADD_NEWCHAR_ENTRY,
-      @net.with_log(
-        @net.ADD_NEWCHAR_ENTRY,
-        fn(recv : @net.InPacket) { handle_add_new_char_entry!(self, recv) },
-      ),
+      @net.with_log(@net.ADD_NEWCHAR_ENTRY, fn(recv : @net.InPacket) {
+        handle_add_new_char_entry!(self, recv)
+      }),
     ),
     (
       @net.SET_FIELD,
-      @net.with_log(
-        @net.SET_FIELD,
-        fn(recv : @net.InPacket) {
-          handle_set_field!(
-            transition, self, set_player_stage, inventory, setup_game_ui, recv,
-          )
-        },
-      ),
+      @net.with_log(@net.SET_FIELD, fn(recv : @net.InPacket) {
+        handle_set_field!(
+          transition, self, set_player_stage, inventory, setup_game_ui, recv,
+        )
+      }),
     ),
   ]
   |> Map::from_array()
@@ -123,9 +111,12 @@ pub fn new_login_start_packet() -> @net.OutPacket {
 ///|
 pub fn login(self : Module, account : String, password : String) -> Unit {
   self.input_acc_pass = Some((account, password))
-  self.login_task = Some(
-    { processor: self.processor, state: ACQ_CONN, account, password },
-  )
+  self.login_task = Some({
+    processor: self.processor,
+    state: ACQ_CONN,
+    account,
+    password,
+  })
   self.connect_task = None
 }
 
@@ -478,6 +469,7 @@ fn parse_world(recv : @net.InPacket) -> World! {
 fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
   let id = recv.read_int!()
   let stats = parse_stats!(recv)
+  @log.debug({ "stats": stats }, "received stats")
   let look = parse_look!(recv)
   recv.read_bool!() |> ignore // 'rankinfo' bool
   if recv.read_bool!() {
@@ -519,48 +511,30 @@ fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
   for i = 0; i < 3; i = i + 1 {
     petids.push(recv.read_long!())
   }
-  let level = recv.read_ubyte!()
-  let job = recv.read_ushort!()
-  let str = recv.read_ushort!()
-  let dex = recv.read_ushort!()
-  let int = recv.read_ushort!()
-  let luk = recv.read_ushort!()
-  let hp = recv.read_ushort!()
-  let max_hp = recv.read_ushort!()
-  let mp = recv.read_ushort!()
-  let max_mp = recv.read_ushort!()
-  let ap = recv.read_ushort!()
-  let sp = recv.read_ushort!()
+  let stats = {}
+  stats.set(@maple_stat.Id::LEVEL, recv.read_ubyte!())
+  stats.set(@maple_stat.Id::JOB, recv.read_ushort!())
+  stats.set(@maple_stat.Id::STR, recv.read_ushort!())
+  stats.set(@maple_stat.Id::DEX, recv.read_ushort!())
+  stats.set(@maple_stat.Id::INT, recv.read_ushort!())
+  stats.set(@maple_stat.Id::LUK, recv.read_ushort!())
+  stats.set(@maple_stat.Id::HP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::MAXHP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::MP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::MAXMP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::AP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::SP, recv.read_ushort!())
   let exp = recv.read_uint!()
-  let fame = recv.read_short!()
+  stats.set(@maple_stat.Id::FAME, recv.read_short!())
   recv.skip!(4) // gachaexp
   let mapid = recv.read_int!()
   let portal = recv.read_ubyte!()
   recv.skip!(4) // timestamp
-  {
-    name,
-    level,
-    job,
-    str,
-    dex,
-    int,
-    luk,
-    hp,
-    max_hp,
-    mp,
-    max_mp,
-    ap,
-    sp,
-    fame,
-    exp: exp.to_int64(),
-    female,
-    mapid,
-    portal,
-  }
+  { name, exp: exp.to_int64(), female, stats, mapid, portal }
 }
 
 ///|
-fn parse_look(recv : @net.InPacket) -> @character.LookEntry! {
+fn parse_look(recv : @net.InPacket) -> @char_look.LookEntry! {
   let female = recv.read_bool!()
   let skin = recv.read_ubyte!()
   let faceid = recv.read_int!()

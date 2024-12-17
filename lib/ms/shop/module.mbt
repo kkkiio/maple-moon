@@ -12,6 +12,7 @@ pub fn Module::load(container : @ui.Container) -> @utils.Future[Module] {
   |> @utils.map(fn(src) { Module::new(container, src) })
 }
 
+///|
 fn Module::new(
   container : @ui.Container,
   shop2_res : @resource.NxNode
@@ -26,7 +27,7 @@ fn Module::new(
 ///|
 pub fn make_handlers(
   self : Module,
-  charlook_getter : () -> @character.CharLook?,
+  charlook_getter : () -> @char_look.CharLook?,
   inventory_getter : () -> @inventory.Inventory?
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [

@@ -64,7 +64,7 @@ pub fn Movement::from_int(value : Int) -> Movement? {
 struct Inventory {
   inventories : @utils.DefaultMap[TypeId, Map[Int, Slot]]
   items : Map[Int, Item]
-  equips : Map[Int, @equip.Equip]
+  equips : Map[Int, @equip_data.Equip]
   pets : Map[Int, @pet.Pet]
   mut running_uid : Int
   total_stats : @utils.DefaultMap[@equip_stat.Id, Int]
@@ -223,7 +223,7 @@ pub fn add_equip(
       level,
       item_level,
       vicious,
-      potential_rank: @equip.Potential::POT_NONE,
+      potential_rank: @equip_data.Potential::POT_NONE,
       // quality: @equip.check_quality(item_id, level > 0, stats),
     },
   )
@@ -377,7 +377,10 @@ pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
 }
 
 ///|
-pub fn find_equipslot(self : Inventory, cloth : @equip.EquipData) -> @slot.Id {
+pub fn find_equipslot(
+  self : Inventory,
+  cloth : @equip_data.EquipData
+) -> @slot.Id {
   let eqslot = cloth.get_eqslot()
   if eqslot == @slot.Id::RING1 {
     if self.has_equipped(@slot.Id::RING2).not() {

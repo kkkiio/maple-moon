@@ -1,3 +1,4 @@
+///|
 pub(all) enum StanceId {
   NONE
   ALERT
@@ -37,6 +38,7 @@ pub(all) enum StanceId {
   WALK2
 } derive(Eq, Compare)
 
+///|
 pub fn int_value(self : StanceId) -> Int {
   match self {
     StanceId::NONE => 0
@@ -78,18 +80,22 @@ pub fn int_value(self : StanceId) -> Int {
   }
 }
 
+///|
 pub fn hash(self : StanceId) -> Int {
   self.int_value()
 }
 
+///|
 pub fn StanceId::default() -> StanceId {
   NONE
 }
 
+///|
 pub fn StanceId::count() -> Int {
   36
 }
 
+///|
 pub fn StanceId::by_state(state : Int) -> StanceId {
   let index = state / 2 - 1
   if index < 0 || index > 10 {
@@ -110,6 +116,7 @@ pub fn StanceId::by_state(state : Int) -> StanceId {
   return state_values[index]
 }
 
+///|
 let int_id_map : @immut/sorted_map.T[Int, StanceId] = @immut/sorted_map.from_array(
   [
     (0, StanceId::NONE),
@@ -151,14 +158,17 @@ let int_id_map : @immut/sorted_map.T[Int, StanceId] = @immut/sorted_map.from_arr
   ],
 )
 
+///|
 pub fn StanceId::by_id(id : Int) -> StanceId {
   int_id_map[id].unwrap()
 }
 
+///|
 pub fn is_climbing(self : StanceId) -> Bool {
   return self == StanceId::LADDER || self == StanceId::ROPE
 }
 
+///|
 pub fn StanceId::baseof(value : StanceId) -> StanceId {
   match value {
     StanceId::STAND2 => StanceId::STAND1
@@ -167,6 +177,7 @@ pub fn StanceId::baseof(value : StanceId) -> StanceId {
   }
 }
 
+///|
 pub fn secondof(value : StanceId) -> StanceId {
   match value {
     StanceId::STAND1 => StanceId::STAND2
@@ -175,6 +186,7 @@ pub fn secondof(value : StanceId) -> StanceId {
   }
 }
 
+///|
 pub let stance_name_id_map : Map[String, StanceId] = {
   "": StanceId::NONE,
   "alert": StanceId::ALERT,
@@ -214,10 +226,12 @@ pub let stance_name_id_map : Map[String, StanceId] = {
   "walk2": StanceId::WALK2,
 }
 
+///|
 pub fn StanceId::by_string(name : String) -> StanceId {
   stance_name_id_map[name].unwrap()
 }
 
+///|
 pub fn name(self : StanceId) -> String {
   match self {
     StanceId::NONE => ""
@@ -259,6 +273,7 @@ pub fn name(self : StanceId) -> String {
   }
 }
 
+///|
 pub fn hash_combine(self : StanceId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }

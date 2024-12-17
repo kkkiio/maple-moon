@@ -19,7 +19,7 @@ struct LogicState {
 ///|
 struct Attributes {
   countset : @graphics.Charset
-  charlook : @character.CharLook
+  charlook : @char_look.CharLook
   inventory : @inventory.Inventory
   npcid : Int
   shop_items : Array[ShopItem]
@@ -31,7 +31,7 @@ struct RuntimeState {
   sprites : Array[@graphics.Sprite]
   buttons : Array[@ui.Button]
   npc : @graphics.Texture
-  charlook : @character.CharLook
+  charlook : @char_look.CharLook
   meso_label : @graphics.Text
   draws : Array[(@struct.Point[Int]) -> Unit]
 }
@@ -369,7 +369,7 @@ fn draw(self : RuntimeState, alpha : Double) -> Unit {
   self.charlook.draw_with_stance(
     position + @struct.Point::new(338, 85),
     false,
-    @char_look.StanceId::STAND1,
+    @types.StanceId::STAND1,
     @char_look.ExpressionId::DEFAULT,
   )
   self.meso_label.draw(position + @struct.Point::new(493, 51))

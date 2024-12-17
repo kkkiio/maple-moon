@@ -1,3 +1,4 @@
+///|
 pub fn log(
   level : Level,
   context : Map[String, Show],
@@ -13,6 +14,7 @@ pub fn log(
   }
 }
 
+///|
 pub fn debug(
   context : Map[String, Show],
   msg : String,
@@ -21,6 +23,7 @@ pub fn debug(
   log_debug(to_logstr(context, msg, loc))
 }
 
+///|
 pub fn info(
   context : Map[String, Show],
   msg : String,
@@ -29,6 +32,7 @@ pub fn info(
   log_info(to_logstr(context, msg, loc))
 }
 
+///|
 pub fn warn(
   context : Map[String, Show],
   msg : String,
@@ -37,6 +41,7 @@ pub fn warn(
   log_warn(to_logstr(context, msg, loc))
 }
 
+///|
 pub fn error(
   context : Map[String, Show],
   msg : String,
@@ -45,6 +50,7 @@ pub fn error(
   log_error(to_logstr(context, msg, loc))
 }
 
+///|
 fn to_logstr(
   context : Map[String, Show],
   msg : String,
@@ -68,6 +74,7 @@ fn to_logstr(
   buf.to_string()
 }
 
+///|
 pub(all) enum Level {
   TRACE
   DEBUG

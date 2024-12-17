@@ -1,5 +1,6 @@
 // Cap types (vslot)
-pub enum CapType {
+///|
+pub(all) enum CapType {
   NONE
   HEADBAND
   HAIRPIN
@@ -7,20 +8,23 @@ pub enum CapType {
   FULL_COVER
 }
 
-/// A characters equipment (The visual part)
+///| A characters equipment (The visual part)
 struct CharEquips {
   clothes : Map[@slot.Id, (Int, @utils.Future[@clothing.Clothing?])]
   mut weapon_data_cache : @utils.Future[@weapon.WeaponData?]?
 }
 
+///|
 pub fn CharEquips::new() -> CharEquips {
   { clothes: Map::new(), weapon_data_cache: None }
 }
 
+///|
 pub fn get_weapon(self : CharEquips) -> @weapon.WeaponData? {
   self.weapon_data_cache.map(fn(it) { it.poll() }).flatten().flatten()
 }
 
+///|
 pub fn get_equip(self : CharEquips, slot : @slot.Id) -> Int {
   match self.clothes[slot] {
     Some((itemid, _)) => itemid
@@ -28,10 +32,11 @@ pub fn get_equip(self : CharEquips, slot : @slot.Id) -> Int {
   }
 }
 
+///|
 pub fn CharEquips::draw(
   self : CharEquips,
   slot : @slot.Id,
-  stance : @char_look.StanceId,
+  stance : @types.StanceId,
   layer : @clothing.Layer,
   frame : Int,
   args : @graphics.DrawArgument
@@ -46,7 +51,7 @@ pub fn CharEquips::draw(
   }
 }
 
-/// WARN: not accurate
+///| WARN: not accurate
 pub fn getcaptype(self : CharEquips) -> CapType {
   match
     self.clothes[@slot.Id::HAT].map(fn(it) { it.1.poll() }).flatten().flatten() {
@@ -61,11 +66,12 @@ pub fn getcaptype(self : CharEquips) -> CapType {
   }
 }
 
+///|
 pub fn has_overall(self : CharEquips) -> Bool {
   self.get_equip(@slot.Id::TOP) / 10000 == 105
 }
 
-/// WARN: not accurate
+///| WARN: not accurate
 pub fn is_twohanded(self : CharEquips) -> Bool {
   match self.clothes[@slot.Id::WEAPON] {
     Some((_, weapon)) =>
@@ -74,11 +80,12 @@ pub fn is_twohanded(self : CharEquips) -> Bool {
   }
 }
 
+///|
 pub fn add_equip(
   self : CharEquips,
   item_id : Int,
   slot : @slot.Id,
-  drawinfo : @char_look.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo
 ) -> Unit {
   if item_id <= 0 {
     return
@@ -131,6 +138,7 @@ pub fn add_equip(
   }
 }
 
+///|
 pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
   self.clothes.remove(slot)
   if slot == @slot.Id::WEAPON {
@@ -138,14 +146,16 @@ pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
   }
 }
 
+///|
 pub fn has_weapon(self : CharEquips) -> Bool {
   self.clothes[@slot.Id::WEAPON].is_empty().not()
 }
 
+///|
 pub fn adjust_stance(
   self : CharEquips,
-  stance : @char_look.StanceId
-) -> @char_look.StanceId {
+  stance : @types.StanceId
+) -> @types.StanceId {
   guard let Some((_, weapon)) = self.clothes[@slot.Id::WEAPON] else {
     None => return stance
   }
@@ -153,9 +163,8 @@ pub fn adjust_stance(
     None => return stance
   }
   match stance {
-    @char_look.StanceId::STAND1 | @char_look.StanceId::STAND2 =>
-      weapon.get_stand()
-    @char_look.StanceId::WALK1 | @char_look.StanceId::WALK2 => weapon.get_walk()
+    @types.StanceId::STAND1 | @types.StanceId::STAND2 => weapon.get_stand()
+    @types.StanceId::WALK1 | @types.StanceId::WALK2 => weapon.get_walk()
     _ => stance
   }
 }

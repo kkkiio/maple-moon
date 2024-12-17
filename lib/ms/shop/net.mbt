@@ -1,7 +1,7 @@
 ///|
 pub fn handle_open_npc_shop(
   mod : Module,
-  charlook_getter : () -> @character.CharLook?,
+  charlook_getter : () -> @char_look.CharLook?,
   inventory_getter : () -> @inventory.Inventory?,
   recv : @net.InPacket
 ) -> Unit! {

@@ -101,7 +101,7 @@ pub fn set_player_stage(
 ) -> Unit {
   let char_base = @character.CharBase::new(
     entry.id,
-    @character.CharLook::new(entry.look, self.char_look_module),
+    self.char_look_module.init_char_look(entry.look),
     entry.stats.name,
     self.damage_number_set,
   )
@@ -346,101 +346,6 @@ fn new_change_map_packet(
   ..write_string(targetp)
   ..skip(1)
   ..write_short(if usewheel { 1 } else { 0 })
-}
-
-///|
-fn handle_change_stats(
-  player : @player.Player,
-  inventory : @inventory.Inventory,
-  recv : @net.InPacket
-) -> Unit! {
-  recv.read_bool!() |> ignore // 'itemreaction'
-  let updatemask = recv.read_int!()
-  let mut recalculate = false
-  for it in @maple_stat.codes {
-    let (stat_id, stat_mask) = it
-    if (updatemask & stat_mask) != 0 {
-      recalculate = handle_stat!(player, inventory, stat_id, recv) ||
-        recalculate
-    }
-  }
-  if recalculate {
-    player.recalc_stats(false)
-  }
-}
-
-///|
-fn handle_stat(
-  player : @player.Player,
-  inventory : @inventory.Inventory,
-  stat : @maple_stat.Id,
-  recv : @net.InPacket
-) -> Bool! {
-  let mut recalculate = false
-  match stat {
-    @maple_stat.Id::SKIN => player.change_look(stat, recv.read_short!())
-    @maple_stat.Id::FACE | @maple_stat.Id::HAIR =>
-      player.change_look(stat, recv.read_int!())
-    @maple_stat.Id::LEVEL => player.change_level(recv.read_ubyte!())
-    @maple_stat.Id::JOB => player.change_job(recv.read_ushort!())
-    @maple_stat.Id::HP => {
-      let current_hp = recv.read_short!()
-      player.get_stats().set_base_hp(current_hp)
-      recalculate = true
-      if current_hp <= 0 {
-        player.set_state(@character.CharState::DIED)
-        let died = true
-        let targetid = 0
-        new_change_map_packet(died, targetid, "sp", false).dispatch()
-      }
-    }
-    @maple_stat.Id::EXP =>
-      player.get_stats().set_exp(recv.read_int!().to_int64())
-    @maple_stat.Id::MESO => inventory.set_meso(recv.read_int!())
-    @maple_stat.Id::STR => {
-      player.get_stats().set_str(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::DEX => {
-      player.get_stats().set_dex(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::INT => {
-      player.get_stats().set_int(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::LUK => {
-      player.get_stats().set_luk(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::SP => {
-      player.get_stats().set_sp(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::MP => {
-      player.get_stats().set_base_mp(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::MAXHP => {
-      player.get_stats().set_max_hp(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::MAXMP => {
-      player.get_stats().set_max_mp(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::AP => {
-      player.get_stats().set_ap(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::FAME => {
-      player.get_stats().set_fame(recv.read_short!())
-      recalculate = true
-    }
-    @maple_stat.Id::PET => () // TODO: Handle pet stats
-    @maple_stat.Id::GACHAEXP => () // TODO: Handle gacha exp
-  }
-  recalculate
 }
 
 ///|

@@ -395,7 +395,7 @@ pub fn doubleclick(
     }
     match tab {
       TypeId::EQUIP => {
-        let equip_data = @equip.EquipData::from_item_data?(item_data).unwrap() // TODO: handle error
+        let equip_data = @equip_data.EquipData::from_item_data?(item_data).unwrap() // TODO: handle error
         if self.can_wear_equip(equip_data) {
           new_equip_item_packet(slot, inventory.find_equipslot(equip_data)).dispatch()
         }
@@ -427,7 +427,7 @@ fn slot_by_position(
 ///|
 pub fn can_wear_equip(
   self : UIItemInventory,
-  equip_data : @equip.EquipData
+  equip_data : @equip_data.EquipData
 ) -> Bool {
   let player = self.logic_state.attributes.player
   let stats = player.get_stats()
@@ -458,7 +458,7 @@ pub fn can_wear_equip(
   let reqINT = equip_data.get_reqstat(@maple_stat.Id::INT)
   let reqFAME = equip_data.get_reqstat(@maple_stat.Id::FAME)
   let mut i = 0
-  if reqLevel > stats.get_level() {
+  if reqLevel > stats.get_stat(@maple_stat.Id::LEVEL) {
     i += 1
   } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
     i += 1

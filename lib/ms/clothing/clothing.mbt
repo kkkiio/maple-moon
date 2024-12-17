@@ -1,3 +1,4 @@
+///|
 pub(all) enum Layer {
   CAPE
   SHOES
@@ -36,25 +37,24 @@ pub(all) enum Layer {
   TOP_DEFAULT
 } derive(Eq, Hash)
 
+///|
 struct Clothing {
-  stances : Map[
-    @char_look.StanceId,
-    Map[Layer, Map[Int, Array[@graphics.Texture]]],
-  ]
+  stances : Map[@types.StanceId, Map[Layer, Map[Int, Array[@graphics.Texture]]]]
   item_id : Int
   eq_slot : @slot.Id
-  walk : @char_look.StanceId
-  stand : @char_look.StanceId
+  walk : @types.StanceId
+  stand : @types.StanceId
   vslot : String
   two_handed : Bool
   // transparent : Bool
 }
 
+///|
 pub fn Clothing::from_resource(
   item_data : @item.ItemData,
-  drawinfo : @char_look.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo
 ) -> Clothing! {
-  let equipdata = @equip.EquipData::from_item_data!(item_data)
+  let equipdata = @data.EquipData::from_item_data!(item_data)
   let eq_slot = equipdata.get_eqslot()
   let two_handed = if eq_slot == @slot.Id::WEAPON {
     @weapon.WeaponData::from_item_data!(item_data).is_twohanded()
@@ -76,27 +76,27 @@ pub fn Clothing::from_resource(
   let info = item_data.get_info()
   let vslot = info["vslot"].bind(fn(it) { it.as_string() }).or("")
   let stand = match info {
-    { "stand": Json::Number(1) } => @char_look.StanceId::STAND1
-    { "stand": Json::Number(2) } => @char_look.StanceId::STAND2
+    { "stand": Json::Number(1) } => @types.StanceId::STAND1
+    { "stand": Json::Number(2) } => @types.StanceId::STAND2
     _ =>
       if two_handed {
-        @char_look.StanceId::STAND2
+        @types.StanceId::STAND2
       } else {
-        @char_look.StanceId::STAND1
+        @types.StanceId::STAND1
       }
   }
   let walk = match info {
-    { "walk": Json::Number(1) } => @char_look.StanceId::WALK1
-    { "walk": Json::Number(2) } => @char_look.StanceId::WALK2
+    { "walk": Json::Number(1) } => @types.StanceId::WALK1
+    { "walk": Json::Number(2) } => @types.StanceId::WALK2
     _ =>
       if two_handed {
-        @char_look.StanceId::WALK2
+        @types.StanceId::WALK2
       } else {
-        @char_look.StanceId::WALK1
+        @types.StanceId::WALK1
       }
   }
   let src = item_data.get_src()
-  let stances = @char_look.stance_name_id_map
+  let stances = @types.stance_name_id_map
     .iter()
     .map_option(
       fn(it) {
@@ -146,7 +146,9 @@ pub fn Clothing::from_resource(
               | @slot.Id::GLOVES
               | @slot.Id::TOP
               | @slot.Id::TOP_DEFAULT
-              | @slot.Id::BOTTOM | @slot.Id::BOTTOM_DEFAULT | @slot.Id::CAPE =>
+              | @slot.Id::BOTTOM
+              | @slot.Id::BOTTOM_DEFAULT
+              | @slot.Id::CAPE =>
                 drawinfo.get_body_position(stance, frame) - parentpos
               @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
                 drawinfo.get_face_pos(stance, frame) - parentpos
@@ -178,9 +180,10 @@ pub fn Clothing::from_resource(
   { stances, item_id, eq_slot, vslot, two_handed, walk, stand }
 }
 
+///|
 pub fn Clothing::draw(
   self : Clothing,
-  stance : @char_look.StanceId,
+  stance : @types.StanceId,
   layer : Layer,
   frame : Int,
   args : @graphics.DrawArgument
@@ -198,22 +201,27 @@ pub fn Clothing::draw(
   }
 }
 
+///|
 pub fn get_id(self : Clothing) -> Int {
   self.item_id
 }
 
+///|
 pub fn get_vslot(self : Clothing) -> String {
   self.vslot
 }
 
+///|
 pub fn is_twohanded(self : Clothing) -> Bool {
   self.two_handed
 }
 
+///|
 pub fn get_eqslot(self : Clothing) -> @slot.Id {
   self.eq_slot
 }
 
+///|
 let sub_layer_names : Map[String, Layer] = {
   "weaponOverHand": Layer::WEAPON_OVER_HAND,
   "weaponOverGlove": Layer::WEAPON_OVER_GLOVE,
@@ -233,14 +241,17 @@ let sub_layer_names : Map[String, Layer] = {
   "capBelowBody": Layer::CAP_BELOW_BODY,
 }
 
-pub fn get_stand(self : Clothing) -> @char_look.StanceId {
+///|
+pub fn get_stand(self : Clothing) -> @types.StanceId {
   self.stand
 }
 
-pub fn get_walk(self : Clothing) -> @char_look.StanceId {
+///|
+pub fn get_walk(self : Clothing) -> @types.StanceId {
   self.walk
 }
 
+///|
 let layers : Array[Layer] = [
   Layer::CAP,
   Layer::FACE_ACC,

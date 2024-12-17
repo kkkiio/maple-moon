@@ -1,4 +1,5 @@
-pub enum Id {
+///|
+pub(all) enum Id {
   SKIN
   FACE
   HAIR
@@ -19,8 +20,9 @@ pub enum Id {
   MESO
   PET
   GACHAEXP
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show)
 
+///|
 pub let codes : @immut/hashmap.T[Id, Int] = @immut/hashmap.from_array(
   [
     (Id::SKIN, 0x1),

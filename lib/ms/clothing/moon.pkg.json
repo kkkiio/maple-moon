@@ -1,13 +1,13 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/item",
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/ms/equip",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
-    "KKKIIO/maple-moon-client/lib/struct"
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/ms/char_look/types",
+    "KKKIIO/maple-moon-client/lib/ms/equip/data"
   ]
 }

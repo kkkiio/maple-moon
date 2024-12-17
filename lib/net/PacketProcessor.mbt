@@ -173,11 +173,10 @@ let hex_digits = [
 ///|
 fn to_hex_string(i : Int) -> String {
   let mut i = i
-  let sb = StringBuilder::new()
-  sb.write_string("0x")
+  let digits = []
   while i > 0 {
-    sb.write_string(hex_digits[i & 0xF])
+    digits.push(hex_digits[i & 0xF])
     i = i >> 4
   }
-  sb.to_string()
+  "0x" + String::concat(digits..rev_inplace())
 }

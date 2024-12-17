@@ -9,7 +9,8 @@ pub(all) struct Game {
   ui : UI
   processor : @net.PacketProcessor
   loaded_state : @utils.Future[LoadedState]
-  loading_tasks : Array[@utils.Future[Unit]]
+  io_tasks : Array[@utils.Future[Unit]]
+  scheduls : @schedule.Schedules
 }
 
 ///|
@@ -20,25 +21,26 @@ struct LoadedState {
 ///|
 pub fn Game::new() -> Game {
   @config.global().set_hardware_info()
-  let timer = @utils.Timer::new(
-    fn() { now_micro() |> @utils.TimePoint::from_micro },
-  )
+  let timer = @utils.Timer::new(fn() {
+    now_micro() |> @utils.TimePoint::from_micro
+  })
   let keyboard = Keyboard::default()
   let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
-  let window = Window::new(
-    ui,
-    fn() { now_micro() |> @utils.TimePoint::from_micro },
-  )
+  let window = Window::new(ui, fn() {
+    now_micro() |> @utils.TimePoint::from_micro
+  })
   let processor = @net.PacketProcessor::init()
   let loading_tasks = []
+  let scheduls = @schedule.Schedules::new()
   {
     window,
     timer,
     accumulator: 0,
     ui,
     processor,
-    loaded_state: load_modules(ui, timer, processor, loading_tasks),
-    loading_tasks,
+    loaded_state: load_modules(ui, timer, processor, loading_tasks, scheduls),
+    io_tasks: loading_tasks,
+    scheduls,
   }
 }
 
@@ -47,7 +49,8 @@ fn load_modules(
   ui : UI,
   timer : @utils.Timer,
   processor : @net.PacketProcessor,
-  loading_tasks : Array[@utils.Future[Unit]]
+  loading_tasks : Array[@utils.Future[Unit]],
+  scheduls : @schedule.Schedules
 ) -> @utils.Future[LoadedState] {
   let add_loading_task = fn(task) { loading_tasks.push(task) }
   let action_registry = @action.Registry::new()
@@ -81,88 +84,76 @@ fn load_modules(
     }
   }
 
-  let char_look_module = @char_look.Module::load().tap(
-    fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) },
-  )
+  let char_look_module = @char_look.Module::load().tap(fn(mod) {
+    merge_stat_handlers(mod.make_stat_handlers())
+  })
   let map_module = @map.Module::load()
-  let inventory_module = @inventory.Module::load(
-    fn() { Stage::get().get_player() },
-  ).tap(
-    fn(mod) {
-      merge_handlers(mod.make_handlers())
-      merge_actions(mod.make_actions())
-      merge_stat_handlers(mod.make_stat_handlers())
-    },
-  )
+  let inventory_module = @inventory.Module::load(fn() {
+    Stage::get().get_player()
+  }).tap(fn(mod) {
+    merge_handlers(mod.make_handlers())
+    merge_actions(mod.make_actions())
+    merge_stat_handlers(mod.make_stat_handlers())
+  })
   let sp_stat_id = @char_stats.StatId(1)
   let login_mod_f = @login.Module::load(processor)
     .combine(inventory_module)
-    .map(
-      fn(it) {
-        let (login_module, inventory_module) = it
-        merge_handlers(
-          login_module.make_handlers(
-            fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
-            fn(char_entry, callback) {
-              Stage::get().set_player_stage(char_entry, sp_stat_id, callback)
-            },
-            inventory_module.get_inventory(),
-            fn(player) { setup_game_ui(ui, player, action_registry, timer) },
-          ),
-        )
-        login_module
-      },
-    )
-  let monster_module = @monster.Module::new(add_loading_task)
-  merge_handlers(
-    monster_module.make_handlers(
-      fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
-    ),
-  )
-  let drop_module = @drop.Module::load().tap(
-    fn(mod) {
+    .map(fn(it) {
+      let (login_module, inventory_module) = it
       merge_handlers(
-        mod.make_handlers(
-          fn(id) { Stage::get().get_character(id).map(fn(c) { c.get_phobj() }) },
+        login_module.make_handlers(
+          fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
+          fn(char_entry, callback) {
+            Stage::get().set_player_stage(char_entry, sp_stat_id, callback)
+          },
+          inventory_module.get_inventory(),
+          fn(player) { setup_game_ui(ui, player, action_registry, timer) },
         ),
       )
-    },
+      login_module
+    })
+  let monster_module = @monster.Module::new(add_loading_task)
+  merge_handlers(
+    monster_module.make_handlers(fn() {
+      Stage::get().get_player().map(fn(p) { p.get_stats() })
+    }),
   )
-  let npc_module = @npc.Module::load(
-    ui,
-    fn() { Stage::get().get_player().unwrap().get_name() },
-  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
-  let char_stats_mod_f = @char_stats.Module::load(
-    fn() { Stage::get().get_player().map(fn(p) { p.get_stats() }) },
-  ).tap(
-    fn(mod) {
-      merge_actions(mod.make_actions())
-      merge_stat_handlers(mod.make_stat_handlers())
-    },
-  )
+  let drop_module = @drop.Module::load().tap(fn(mod) {
+    merge_handlers(
+      mod.make_handlers(fn(id) {
+        Stage::get().get_character(id).map(fn(c) { c.get_phobj() })
+      }),
+    )
+  })
+  let npc_module = @npc.Module::load(ui, fn() {
+    Stage::get().get_player().unwrap().get_name()
+  }).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let char_stats_mod_f = @char_stats.Module::load(fn() {
+    Stage::get().get_player().map(fn(p) { p.get_stats() })
+  }).tap(fn(mod) {
+    merge_actions(mod.make_actions())
+    merge_stat_handlers(mod.make_stat_handlers())
+  })
   let skill_book_mod_f = @skill_book.Module::load(
     fn() { Stage::get().get_player() },
     sp_stat_id,
-  ).tap(
-    fn(mod) {
-      merge_handlers(mod.make_handlers())
-      merge_actions(mod.make_actions())
-    },
-  )
+  ).tap(fn(mod) {
+    merge_handlers(mod.make_handlers())
+    merge_actions(mod.make_actions())
+  })
   let shop_mod_f = @shop.Module::load(ui)
     .combine(char_look_module)
-    .map(
-      fn(it) {
-        let (mod, char_look_module) = it
-        merge_handlers(
-          mod.make_handlers(
-            fn() { char_look_module.get_player_char_look() },
-            fn() { Some(Stage::get().get_inventory()) },
-          ),
-        )
-        mod
-      },
-    )
+    .map(fn(it) {
+      let (mod, char_look_module) = it
+      merge_handlers(
+        mod.make_handlers(fn() { char_look_module.get_player_char_look() }, fn(
+
+        ) {
+          Some(Stage::get().get_inventory())
+        }),
+      )
+      mod
+    })
   // // Attack handlers
   // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
   // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
@@ -206,19 +197,14 @@ fn load_modules(
   }
   net_handler_map.set(
     @net.CHANGE_STATS,
-    @net.with_log(
-      @net.CHANGE_STATS,
-      fn(recv : @net.InPacket) {
-        change_stat_handler.handle_change_stats!(recv)
-      },
-    ),
+    @net.with_log(@net.CHANGE_STATS, fn(recv : @net.InPacket) {
+      change_stat_handler.handle_change_stats!(recv)
+    }),
   )
-  let job_module = @job.Module::new(
-    fn(job_id) {
-      guard let Some(player) = Stage::get().get_player() else { None => return }
-      player.change_job(job_id)
-    },
-  )
+  let job_module = @job.Module::new(fn(job_id) {
+    guard let Some(player) = Stage::get().get_player() else { None => return }
+    player.change_job(job_id)
+  })
   merge_stat_handlers(job_module.make_stat_handlers())
 
   // MapObject handlers
@@ -240,13 +226,19 @@ fn load_modules(
   // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
   // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
   // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
-  net_handler_map.set(
-    @net.RECALCULATE_STATS,
-    fn(_recv : @net.InPacket) -> Unit {
-      guard let Some(player) = Stage::get().get_player() else { None => return }
-      player.recalc_stats(false)
-    },
-  )
+  net_handler_map.set(@net.RECALCULATE_STATS, fn(
+    _recv : @net.InPacket
+  ) -> Unit {
+    guard let Some(player) = Stage::get().get_player() else { None => return }
+    player.recalc_stats(false)
+  })
+  let loading_mods = [
+    @utils.Future::from_value(
+      @heal_over_time.new_module(scheduls, processor, fn() {
+        Stage::get().get_player().map(fn(p) { p.get_stats() })
+      }),
+    ),
+  ]
   // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
   // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
   // NPC Interaction Handlers
@@ -257,48 +249,44 @@ fn load_modules(
     .combine(char_look_module)
     .combine(drop_module)
     .combine(damage_number_set)
-    .map(
-      fn(it) {
-        let (
+    .combine(@utils.Future::all_of(loading_mods))
+    .map(fn(it) {
+      let (
+        (
           (
             (((map_module, inventory_module), npc_module), char_look_module),
             drop_module,
           ),
           damage_number_set,
-        ) = it
-        let stage = Stage::new(
-          @map.get_portals_animations(map_module),
-          monster_module.get_map_mobs(),
-          drop_module.get_map_drops(),
-          inventory_module.get_inventory(),
-          npc_module.get_npcs(),
-          char_look_module,
-          damage_number_set,
-          add_loading_task,
-        )
-        g_stage.set(stage)
-      },
-    )
+        ),
+        _,
+      ) = it
+      let stage = Stage::new(
+        @map.get_portals_animations(map_module),
+        monster_module.get_map_mobs(),
+        drop_module.get_map_drops(),
+        inventory_module.get_inventory(),
+        npc_module.get_npcs(),
+        char_look_module,
+        damage_number_set,
+        add_loading_task,
+      )
+      g_stage.set(stage)
+    })
   char_stats_mod_f
   .combine(shop_mod_f)
   .combine(skill_book_mod_f)
   .combine(stage_f)
   |> to_wait
   |> @utils.Future::combine(login_mod_f)
-  |> @utils.Future::map(
-    fn(it) {
-      let (_, login_module) = it
-      action_registry.reset_actions(
-        action_map.iter() |> @immut/hashmap.from_iter,
-      )
-      processor.reset_handlers(
-        net_handler_map.iter() |> @immut/hashmap.from_iter,
-      )
-      timer.reset()
-      ui.change_state(UIStateLogin::new(login_module))
-      { login_module, }
-    },
-  )
+  |> @utils.Future::map(fn(it) {
+    let (_, login_module) = it
+    action_registry.reset_actions(action_map.iter() |> @immut/hashmap.from_iter)
+    processor.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
+    timer.reset()
+    ui.change_state(UIStateLogin::new(login_module))
+    { login_module, }
+  })
 }
 
 ///|
@@ -323,7 +311,8 @@ pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
   for _ in 0..<update_times {
     self.update_status()
   }
-  self.run_loading_tasks() // run once per frame, after update network
+  self.run_io_tasks() // run once per frame, after update network
+  self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
@@ -380,6 +369,6 @@ fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
 }
 
 ///|
-pub fn run_loading_tasks(self : Game) -> Unit {
-  self.loading_tasks.retain(fn(f) { f.poll().is_empty() })
+pub fn run_io_tasks(self : Game) -> Unit {
+  self.io_tasks.retain(fn(f) { f.poll().is_empty() })
 }

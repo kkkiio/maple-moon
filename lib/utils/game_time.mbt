@@ -7,11 +7,21 @@ pub fn TimePoint::from_micro(i : Double) -> TimePoint {
 }
 
 ///|
+pub fn add_duration(self : TimePoint, duration : Duration) -> TimePoint {
+  self._ + duration._.to_int64()
+}
+
+///|
 pub(all) type Duration Int derive(Eq, Compare, Show)
 
 ///|
 pub fn Duration::from_micro(i : Int) -> Duration {
   i
+}
+
+///|
+pub fn Duration::from_milliseconds(i : Int) -> Duration {
+  i * 1000
 }
 
 ///|

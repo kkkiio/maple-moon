@@ -275,14 +275,12 @@ pub fn buf_write_utf8(buf : @buffer.T, str : String) -> Unit {
   let bytes = FixedArray::make(4, b'\x00')
   str
   .iter()
-  .each(
-    fn(c) {
-      let len = bytes.set_utf8_char(0, c)
-      for i = 0; i < len; i = i + 1 {
-        buf.write_byte(bytes[i])
-      }
-    },
-  )
+  .each(fn(c) {
+    let len = bytes.set_utf8_char(0, c)
+    for i = 0; i < len; i = i + 1 {
+      buf.write_byte(bytes[i])
+    }
+  })
 }
 
 // pub fn OutPacket::write_random(self : OutPacket) -> Unit {
@@ -343,6 +341,7 @@ pub(all) enum OutPacketOpcode {
   SCROLL_EQUIP
   DROP_MESOS
   SPEND_AP
+  HEAL_OVER_TIME
   SPEND_SP
   CHANGE_KEYMAP
   USE_SKILL
@@ -395,6 +394,7 @@ pub fn int_value(self : OutPacketOpcode) -> Int {
     SCROLL_EQUIP => 86
     DROP_MESOS => 94
     SPEND_AP => 87
+    HEAL_OVER_TIME => 89
     SPEND_SP => 90
     CHANGE_KEYMAP => 135
     USE_SKILL => 91

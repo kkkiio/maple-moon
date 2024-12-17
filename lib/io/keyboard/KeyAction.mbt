@@ -1,4 +1,5 @@
 // Maple-specific keycodes sent via the Keymap Packet.
+///|
 pub(all) enum ActionId {
   NONE
   EQUIPMENT
@@ -79,6 +80,7 @@ pub(all) enum ActionId {
   PASTE
 } derive(Show, Eq, Compare)
 
+///|
 pub fn int_value(self : ActionId) -> Int {
   match self {
     NONE => 0
@@ -160,14 +162,17 @@ pub fn int_value(self : ActionId) -> Int {
   }
 }
 
+///|
 pub fn hash(self : ActionId) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : ActionId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+///|
 pub fn get_action_by_id(id : Int) -> ActionId!@utils.UnknownEnum {
   match id {
     0 => ActionId::NONE

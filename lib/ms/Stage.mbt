@@ -96,7 +96,6 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
 pub fn set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
-  sp_stat_id : @char_stats.StatId,
   callback : (@player.Player) -> Unit!
 ) -> Unit {
   let char_base = @character.CharBase::new(
@@ -106,23 +105,19 @@ pub fn set_player_stage(
     self.damage_number_set,
   )
   (self.add_task_fn)(
-    @player.Player::load(entry, self.inventory, sp_stat_id, char_base)
-    .tap(
-      fn(player) {
-        self.player = Some(player)
-        self.combat = Some(
-          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
-        )
-      },
-    )
-    .map(
-      fn(player) {
-        match callback?(player) {
-          Ok(_) => ()
-          Err(e) => @log.error({ "error": e }, "set_player_stage")
-        }
-      },
-    ),
+    @player.Player::load(entry, self.inventory, char_base)
+    .tap(fn(player) {
+      self.player = Some(player)
+      self.combat = Some(
+        Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+      )
+    })
+    .map(fn(player) {
+      match callback?(player) {
+        Ok(_) => ()
+        Err(e) => @log.error({ "error": e }, "set_player_stage")
+      }
+    }),
   )
 }
 
@@ -315,7 +310,7 @@ fn check_portals(
     let startpos = physics.get_y_below(spawnpoint)
     player.respawn(startpos, map_info.is_underwater())
   } else if warpinfo.valid {
-    new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
+    @player.new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
     let stats = player.get_stats()
     stats.set_map_id(warpinfo.mapid)
   }
@@ -331,21 +326,6 @@ fn get_character(self : Stage, cid : Int) -> @character.Character? {
   }
   // TODO: chars
   None
-}
-
-///|
-fn new_change_map_packet(
-  died : Bool,
-  targetid : Int,
-  targetp : String,
-  usewheel : Bool
-) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::CHANGE_MAP)
-  ..write_byte(died.to_int().to_byte())
-  ..write_int(targetid)
-  ..write_string(targetp)
-  ..skip(1)
-  ..write_short(if usewheel { 1 } else { 0 })
 }
 
 ///|

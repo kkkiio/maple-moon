@@ -1,2 +1,2 @@
 ///|
-pub(all) type StatId Int derive(Eq, Hash)
+pub typealias StatId = @maple_stat.Id

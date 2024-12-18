@@ -95,7 +95,6 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let sp_stat_id = @char_stats.StatId(1)
   let login_mod_f = @login.Module::load(processor)
     .combine(inventory_module)
     .map(fn(it) {
@@ -104,7 +103,7 @@ fn load_modules(
         login_module.make_handlers(
           fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
           fn(char_entry, callback) {
-            Stage::get().set_player_stage(char_entry, sp_stat_id, callback)
+            Stage::get().set_player_stage(char_entry, callback)
           },
           inventory_module.get_inventory(),
           fn(player) { setup_game_ui(ui, player, action_registry, timer) },
@@ -134,10 +133,9 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let skill_book_mod_f = @skill_book.Module::load(
-    fn() { Stage::get().get_player() },
-    sp_stat_id,
-  ).tap(fn(mod) {
+  let skill_book_mod_f = @skill_book.Module::load(fn() {
+    Stage::get().get_player()
+  }).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
   })

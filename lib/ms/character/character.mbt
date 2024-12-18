@@ -217,10 +217,9 @@ pub fn draw(
 
 ///|
 pub fn update(self : CharBase, speed : Double) -> Bool {
-  @utils.remove_if(
-    self.damage_numbers,
-    fn(number : @combat_ui.DamageNumber) { number.update() },
-  )
+  @utils.remove_if(self.damage_numbers, fn(number : @combat_ui.DamageNumber) {
+    number.update()
+  })
   self.effects.update()
   //     recurring_effects_.update();
   //     chat_balloon_.update();
@@ -378,7 +377,7 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   let x = self.base.phobj.get_x() - 10
   self.damage_numbers.push(
     self.damage_number_set.new_damage_number(
-      @combat_ui.DamageNumberType::TOPLAYER,
+      @combat_ui.DamageNumberType::TO_PLAYER,
       damage,
       start_y,
       x~,
@@ -386,6 +385,20 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   )
   self.look.set_alerted(5000)
   self.invincible.set_for(2000)
+}
+
+///|
+pub fn show_heal_number(self : CharBase, n : Int) -> Unit {
+  let start_y = self.base.phobj.get_y() - 60
+  let x = self.base.phobj.get_x() - 10
+  self.damage_numbers.push(
+    self.damage_number_set.new_damage_number(
+      @combat_ui.DamageNumberType::HEAL_PLAYER,
+      n,
+      start_y,
+      x~,
+    ),
+  )
 }
 
 ///|

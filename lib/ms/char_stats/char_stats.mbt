@@ -21,8 +21,7 @@ struct CharStats {
   mut stance : Double
   mut reduce_damage : Double
   female : Bool
-  stat_listeners : Map[StatId, Array[(Int) -> Bool]]
-  sp_stat_id : StatId
+  stat_listeners : Map[StatId, Array[(Int, Int) -> Bool]]
 }
 
 ///|
@@ -39,7 +38,6 @@ pub(all) struct StatsEntry {
 pub fn CharStats::new(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
-  sp_stat_id : StatId,
   job : @job.Job
 ) -> CharStats {
   let cs : CharStats = {
@@ -64,8 +62,7 @@ pub fn CharStats::new(
     stance: 0.0,
     reduce_damage: 0.0,
     female: s.female,
-    stat_listeners: Map::new(),
-    sp_stat_id,
+    stat_listeners: {},
   }
   cs.init_totalstats()
   cs
@@ -131,12 +128,12 @@ pub fn get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
 
 ///|
 pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
+  let old_value = self.get_stat(stat)
   self.base_stats.set(stat, value)
-  if stat == @maple_stat.Id::SP {
-    guard let Some(listeners) = self.stat_listeners.get(self.sp_stat_id) else {
-      None => return
-    }
-    listeners.retain(fn(listener) { listener(value) })
+  match self.stat_listeners.get(stat) {
+    Some(listeners) =>
+      listeners.retain(fn(listener) { listener(old_value, value) })
+    None => ()
   }
 }
 
@@ -350,7 +347,7 @@ pub fn get_matk(self : CharStats) -> Int {
 pub fn listen_stat_changes(
   self : CharStats,
   stat_id : StatId,
-  listener : (Int) -> Bool
+  listener : (Int, Int) -> Bool
 ) -> Unit {
   self.stat_listeners.get_or_init(stat_id, fn() { Array::new() }).push(listener)
 }

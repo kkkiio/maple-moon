@@ -33,40 +33,42 @@ pub(open) trait Inventory {
 pub fn Player::load(
   entry : @character.CharEntry,
   inventory : Inventory,
-  sp_stat_id : @char_stats.StatId,
   char_base : @character.CharBase
 ) -> @utils.Future[Player] {
   @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
-  .bind(
-    fn(job) {
-      @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
-    },
-  )
-  .map(
-    fn(it) {
-      let (job, skill_book) = it
-      Player::new(entry, inventory, sp_stat_id, char_base, job, skill_book)
-    },
-  )
+  .bind(fn(job) {
+    @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
+  })
+  .map(fn(it) {
+    let (job, skill_book) = it
+    Player::new(
+      entry,
+      inventory,
+      char_base,
+      job,
+      skill_book,
+      @net.PacketProcessor::get(),
+    )
+  })
 }
 
 ///| Construct a player object from the given character entry.
 pub fn Player::new(
   entry : @character.CharEntry,
   inventory : Inventory,
-  sp_stat_id : @char_stats.StatId,
   char_base : @character.CharBase,
   job : @job.Job,
-  skill_book : @character.SkillBook
+  skill_book : @character.SkillBook,
+  packet_processor : @net.PacketProcessor
 ) -> Player {
+  let stats = CharStats::new(
+    entry.stats,
+    fn() { char_base.get_weapontype() },
+    job,
+  )
   let p = {
     char_base,
-    stats: CharStats::new(
-      entry.stats,
-      fn() { char_base.get_weapontype() },
-      sp_stat_id,
-      job,
-    ),
+    stats,
     keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
@@ -80,6 +82,23 @@ pub fn Player::new(
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
+  stats.listen_stat_changes(@maple_stat.Id::HP, fn(_old, hp) {
+    if hp <= 0 {
+      p.set_state(@character.CharState::DIED)
+      let died = true
+      let targetid = 0
+      packet_processor.send_packet(
+        new_change_map_packet(died, targetid, "sp", false),
+      )
+    }
+    true // listen forever
+  })
+  stats.listen_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp : Int) {
+    if new_hp > old_hp {
+      p.char_base.show_heal_number(new_hp - old_hp)
+    }
+    true
+  })
   p
 }
 
@@ -523,12 +542,23 @@ pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
 ///|
 pub fn change_job(self : Player, job_id : Int) -> Unit {
   self.char_base.show_effect_id(@character.CharEffectId::JOB_CHANGE)
-  self.changing_job = @job.Job::load(id=job_id).bind(
-      fn(job) {
-        @character.SkillBook::load(job).map(
-          fn(skill_book) { (job, skill_book) },
-        )
-      },
-    )
+  self.changing_job = @job.Job::load(id=job_id).bind(fn(job) {
+      @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
+    })
     |> Some
+}
+
+///|
+pub fn new_change_map_packet(
+  died : Bool,
+  targetid : Int,
+  targetp : String,
+  usewheel : Bool
+) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::CHANGE_MAP)
+  ..write_byte(died.to_int().to_byte())
+  ..write_int(targetid)
+  ..write_string(targetp)
+  ..skip(1)
+  ..write_short(if usewheel { 1 } else { 0 })
 }

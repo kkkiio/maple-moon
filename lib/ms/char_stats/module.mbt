@@ -28,14 +28,12 @@ pub fn make_actions(
   [
     (
       @keyboard.ActionId::STATS,
-      @action.Descriptor::UI(
-        key=@ui.UIElementType::STATS_INFO,
-        focused=false,
-        make_element=fn() {
-          UIStatsInfo::new((self.char_stats_getter)().unwrap(), self.stat)
-          |> @ui.Element::new(@ui.UIElementType::STATS_INFO)
-        },
-      ),
+      @action.Descriptor::UI(key=@ui.UIElementType::STATS_INFO, focused=false, make_element=fn(
+
+      ) {
+        UIStatsInfo::new((self.char_stats_getter)().unwrap(), self.stat)
+        |> @ui.Element::new(@ui.UIElementType::STATS_INFO)
+      }),
     ),
   ]
   |> Map::from_array
@@ -58,17 +56,6 @@ pub fn make_stat_handlers(
         //   self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
         // }
         char_stats.set_stat(@maple_stat.LEVEL, recv.read_ubyte!())
-      @maple_stat.Id::HP => {
-        let current_hp = recv.read_short!()
-        char_stats.set_stat(@maple_stat.Id::HP, current_hp)
-        recalculate = true
-        // if current_hp <= 0 {
-        //   player.set_state(@character.CharState::DIED)
-        //   let died = true
-        //   let targetid = 0
-        //   new_change_map_packet(died, targetid, "sp", false).dispatch()
-        // }
-      }
       @maple_stat.Id::EXP => char_stats.set_exp(recv.read_int!().to_int64())
       _ => {
         char_stats.set_stat(stat, recv.read_short!())

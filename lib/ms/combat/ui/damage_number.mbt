@@ -1,6 +1,6 @@
 ///|
 struct DamageNumber {
-  charsets : FixedArray[@utils.BoolPair[@graphics.Charset]]
+  charsets : @utils.BoolPair[@graphics.Charset]
   t : DamageNumberType
   miss : Bool
   multiple : Bool
@@ -15,16 +15,8 @@ struct DamageNumber {
 pub(all) enum DamageNumberType {
   NORMAL
   CRITICAL
-  TOPLAYER
-}
-
-///|
-pub fn int_value(self : DamageNumberType) -> Int {
-  match self {
-    NORMAL => 0
-    CRITICAL => 1
-    TOPLAYER => 2
-  }
+  TO_PLAYER
+  HEAL_PLAYER
 }
 
 ///|
@@ -38,12 +30,12 @@ pub fn DamageNumber::draw(
   let mut position = absolute - @struct.Point::new(0, self.shift)
   let interopc = self.opacity.get(alpha~)
   if self.miss {
-    self.charsets[self.t.int_value()][true].draw_char(
+    self.charsets[true].draw_char(
       'M',
       @graphics.DrawArgument::new(position, opacity=interopc),
     )
   } else {
-    self.charsets[self.t.int_value()][false].draw_char(
+    self.charsets[false].draw_char(
       self.first_num,
       @graphics.DrawArgument::new(position, opacity=interopc),
     )
@@ -53,7 +45,7 @@ pub fn DamageNumber::draw(
       for i in 0..<self.rest_num.length() {
         let c = self.rest_num[i]
         let yshift = @struct.Point::new(0, if i % 2 == 0 { -2 } else { 2 })
-        self.charsets[self.t.int_value()][true].draw_char(
+        self.charsets[true].draw_char(
           c,
           @graphics.DrawArgument::new(position + yshift, opacity=interopc),
         )
@@ -112,44 +104,51 @@ pub fn DamageNumber::row_height(critical : Bool) -> Int {
 
 ///|
 struct DamageNumberSet {
-  charsets : FixedArray[@utils.BoolPair[@graphics.Charset]]
+  red_charset_pair : @utils.BoolPair[@graphics.Charset]
+  cri_charset_pair : @utils.BoolPair[@graphics.Charset]
+  violet_charset_pair : @utils.BoolPair[@graphics.Charset]
+  blue_charset_pair : @utils.BoolPair[@graphics.Charset]
 }
 
 ///|
 pub fn DamageNumberSet::load() -> @utils.Future[DamageNumberSet] {
   let loader = effect_loader
-  @utils.Future::all_of(
-    [
-      loader
-      .load_res(["BasicEff.img", "NoRed1"])
-      .combine(loader.load_res(["BasicEff.img", "NoRed0"])),
-      loader
-      .load_res(["BasicEff.img", "NoCri1"])
-      .combine(loader.load_res(["BasicEff.img", "NoCri0"])),
-      loader
-      .load_res(["BasicEff.img", "NoViolet1"])
-      .combine(loader.load_res(["BasicEff.img", "NoViolet0"])),
-    ],
-  ).map(
-    fn(res_pairs) {
-      let charsets = res_pairs.map(
-          fn(res_pair) {
-            @utils.BoolPair::new(
-              @graphics.Charset::new(
-                res_pair.0,
-                @graphics.CharsetAlignment::LEFT,
-              ),
-              @graphics.Charset::new(
-                res_pair.1,
-                @graphics.CharsetAlignment::LEFT,
-              ),
-            )
-          },
-        )
-        |> FixedArray::from_array
-      { charsets, }
-    },
+  fn load_charset_pair(path0, path1) {
+    loader
+    .load_res(path0)
+    .combine(loader.load_res(path1))
+    .map(fn(res_pair) {
+      @utils.BoolPair::new(
+        @graphics.Charset::new(res_pair.0, @graphics.CharsetAlignment::LEFT),
+        @graphics.Charset::new(res_pair.1, @graphics.CharsetAlignment::LEFT),
+      )
+    })
+  }
+  // 'No' for Number
+  load_charset_pair(["BasicEff.img", "NoRed1"], ["BasicEff.img", "NoRed0"])
+  .combine(
+    load_charset_pair(["BasicEff.img", "NoCri1"], ["BasicEff.img", "NoCri0"]),
   )
+  .combine(
+    load_charset_pair(["BasicEff.img", "NoViolet1"], [
+      "BasicEff.img", "NoViolet0",
+    ]),
+  )
+  .combine(
+    load_charset_pair(["BasicEff.img", "NoBlue1"], ["BasicEff.img", "NoBlue0"]),
+  )
+  .map(fn(it) {
+    let (
+      ((red_charset_pair, cri_charset_pair), violet_charset_pair),
+      blue_charset_pair,
+    ) = it
+    {
+      red_charset_pair,
+      cri_charset_pair,
+      violet_charset_pair,
+      blue_charset_pair,
+    }
+  })
 }
 
 ///|
@@ -160,6 +159,12 @@ pub fn new_damage_number(
   starty : Int,
   x~ : Int = 0
 ) -> DamageNumber {
+  let charsets = match t {
+    NORMAL => self.red_charset_pair
+    CRITICAL => self.cri_charset_pair
+    TO_PLAYER => self.violet_charset_pair
+    HEAL_PLAYER => self.blue_charset_pair
+  }
   let (miss, shift, multiple, first_num, rest_num) = if damage > 0 {
     let number = damage.to_string()
     let first_num = number[0]
@@ -182,7 +187,7 @@ pub fn new_damage_number(
     let shift = total / 2
     (false, shift, multiple, first_num, rest_num)
   } else {
-    let shift = self.charsets[t.int_value()][true].getw('M') / 2
+    let shift = charsets[true].getw('M') / 2
     (true, shift, false, Char::default(), "")
   }
   let move_obj = @physics.MovingObject::default()
@@ -190,17 +195,7 @@ pub fn new_damage_number(
   move_obj.set_y(starty.to_double())
   move_obj.vspeed = -0.25
   let opacity = @utils.Linear::new(1.5)
-  {
-    charsets: self.charsets,
-    t,
-    miss,
-    multiple,
-    first_num,
-    rest_num,
-    shift,
-    move_obj,
-    opacity,
-  }
+  { charsets, t, miss, multiple, first_num, rest_num, shift, move_obj, opacity }
 }
 
 ///|

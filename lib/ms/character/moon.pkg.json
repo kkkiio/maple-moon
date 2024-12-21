@@ -20,13 +20,10 @@
       "path": "KKKIIO/maple-moon-client/lib/ms/equip/stat",
       "alias": "equip_stat"
     },
-    {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
-      "alias": "combat_ui"
-    },
     "KKKIIO/maple-moon-client/lib/ms/skill",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/ms/item"
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/ui"
   ]
 }

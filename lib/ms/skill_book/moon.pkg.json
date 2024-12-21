@@ -13,10 +13,6 @@
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
-    {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
-      "alias": "combat_ui"
-    },
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/constants",

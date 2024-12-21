@@ -1,7 +1,7 @@
 ///|
-struct DamageNumber {
+struct Number {
   charsets : @utils.BoolPair[@graphics.Charset]
-  t : DamageNumberType
+  t : NumberType
   miss : Bool
   multiple : Bool
   first_num : Char
@@ -12,16 +12,17 @@ struct DamageNumber {
 }
 
 ///|
-pub(all) enum DamageNumberType {
-  NORMAL
-  CRITICAL
-  TO_PLAYER
-  HEAL_PLAYER
+pub(all) enum NumberType {
+  HIT_NORMAL
+  HIT_CRITICAL
+  HURT
+  HEAL_HP
+  HEAL_MP
 }
 
 ///|
-pub fn DamageNumber::draw(
-  self : DamageNumber,
+pub fn Number::draw(
+  self : Number,
   viewx : Double,
   viewy : Double,
   alpha : Double
@@ -67,25 +68,25 @@ pub fn DamageNumber::draw(
 let fade_step : Double = @constants.step_time_ms.to_double() / 500
 
 ///|
-pub fn update(self : DamageNumber) -> Bool {
+pub fn update(self : Number) -> Bool {
   self.move_obj.move()
   self.opacity.add(-fade_step)
   self.opacity.last() <= 0.0
 }
 
 ///|
-pub fn DamageNumber::set_x(self : DamageNumber, headx : Int) -> Unit {
+pub fn Number::set_x(self : Number, headx : Int) -> Unit {
   self.move_obj.set_x(headx.to_double())
 }
 
 ///|
-fn get_advance(t : DamageNumberType, c : Char, first : Bool) -> Int {
+fn get_advance(t : NumberType, c : Char, first : Bool) -> Int {
   let advances = [24, 20, 22, 22, 24, 23, 24, 22, 24, 24]
   let index = c.to_int() - 48
   if index < advances.length() {
     let mut advance = advances[index]
     match t {
-      CRITICAL => if first { advance += 8 } else { advance += 4 }
+      HIT_CRITICAL => if first { advance += 8 } else { advance += 4 }
       _ => if first { advance += 2 }
     }
     return advance
@@ -94,7 +95,7 @@ fn get_advance(t : DamageNumberType, c : Char, first : Bool) -> Int {
 }
 
 ///|
-pub fn DamageNumber::row_height(critical : Bool) -> Int {
+pub fn Number::row_height(critical : Bool) -> Int {
   if critical {
     36
   } else {
@@ -103,7 +104,7 @@ pub fn DamageNumber::row_height(critical : Bool) -> Int {
 }
 
 ///|
-struct DamageNumberSet {
+struct NumberSet {
   red_charset_pair : @utils.BoolPair[@graphics.Charset]
   cri_charset_pair : @utils.BoolPair[@graphics.Charset]
   violet_charset_pair : @utils.BoolPair[@graphics.Charset]
@@ -111,7 +112,7 @@ struct DamageNumberSet {
 }
 
 ///|
-pub fn DamageNumberSet::load() -> @utils.Future[DamageNumberSet] {
+pub fn NumberSet::load() -> @utils.Future[NumberSet] {
   let loader = effect_loader
   fn load_charset_pair(path0, path1) {
     loader
@@ -152,18 +153,19 @@ pub fn DamageNumberSet::load() -> @utils.Future[DamageNumberSet] {
 }
 
 ///|
-pub fn new_damage_number(
-  self : DamageNumberSet,
-  t : DamageNumberType,
+pub fn new_number(
+  self : NumberSet,
+  t : NumberType,
   damage : Int,
   starty : Int,
   x~ : Int = 0
-) -> DamageNumber {
+) -> Number {
   let charsets = match t {
-    NORMAL => self.red_charset_pair
-    CRITICAL => self.cri_charset_pair
-    TO_PLAYER => self.violet_charset_pair
-    HEAL_PLAYER => self.blue_charset_pair
+    HIT_NORMAL => self.red_charset_pair
+    HIT_CRITICAL => self.cri_charset_pair
+    HURT => self.violet_charset_pair
+    HEAL_HP => self.red_charset_pair
+    HEAL_MP => self.blue_charset_pair
   }
   let (miss, shift, multiple, first_num, rest_num) = if damage > 0 {
     let number = damage.to_string()

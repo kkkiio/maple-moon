@@ -25,7 +25,7 @@ pub(all) struct Stage {
   mobs : @monster.MapMobs
   drops : @drop.MapDrops
   inventory : @inventory.Inventory
-  damage_number_set : @combat_ui.DamageNumberSet
+  damage_number_set : @ui.NumberSet
   mut combat : Combat?
   char_look_module : @char_look.Module
   add_task_fn : (@utils.Future[Unit]) -> Unit
@@ -39,7 +39,7 @@ pub fn Stage::new(
   inventory : @inventory.Inventory,
   npcs : @npc.MapNpcs,
   char_look_module : @char_look.Module,
-  damage_number_set : @combat_ui.DamageNumberSet,
+  damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Stage {
   {

@@ -7,5 +7,6 @@
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/ms/equip/stat",
     "KKKIIO/maple-moon-client/lib/io/keyboard",
+    "KKKIIO/maple-moon-client/lib/ms/physics"
   ]
 }

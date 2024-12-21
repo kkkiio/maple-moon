@@ -57,8 +57,8 @@ pub(all) struct CharBase {
   mut after_image : @utils.Future[@char_look.Afterimage] // TODO: load more early?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
-  damage_number_set : @combat_ui.DamageNumberSet
-  damage_numbers : Array[@combat_ui.DamageNumber]
+  damage_number_set : @ui.NumberSet
+  damage_numbers : Array[@ui.Number]
 }
 
 ///|
@@ -120,7 +120,7 @@ pub fn CharBase::new(
   oid : Int,
   look : @char_look.CharLook,
   name : String,
-  damage_number_set : @combat_ui.DamageNumberSet
+  damage_number_set : @ui.NumberSet
 ) -> CharBase {
   {
     base: MapObjectBase::new(oid),
@@ -217,7 +217,7 @@ pub fn draw(
 
 ///|
 pub fn update(self : CharBase, speed : Double) -> Bool {
-  @utils.remove_if(self.damage_numbers, fn(number : @combat_ui.DamageNumber) {
+  @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
     number.update()
   })
   self.effects.update()
@@ -376,12 +376,7 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
   self.damage_numbers.push(
-    self.damage_number_set.new_damage_number(
-      @combat_ui.DamageNumberType::TO_PLAYER,
-      damage,
-      start_y,
-      x~,
-    ),
+    self.damage_number_set.new_number(@ui.NumberType::HURT, damage, start_y, x~),
   )
   self.look.set_alerted(5000)
   self.invincible.set_for(2000)
@@ -392,12 +387,7 @@ pub fn show_heal_number(self : CharBase, n : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
   self.damage_numbers.push(
-    self.damage_number_set.new_damage_number(
-      @combat_ui.DamageNumberType::HEAL_PLAYER,
-      n,
-      start_y,
-      x~,
-    ),
+    self.damage_number_set.new_number(@ui.NumberType::HEAL_HP, n, start_y, x~),
   )
 }
 

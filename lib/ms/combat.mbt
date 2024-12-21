@@ -1,6 +1,6 @@
 ///|
 struct Combat {
-  damage_number_set : @combat_ui.DamageNumberSet
+  damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
   skill_cache : Map[Int, @utils.Future[Result[@combat_do.SpecialMove, Error]]]
   regular_attack : @combat_do.RegularAttack
@@ -8,14 +8,14 @@ struct Combat {
   bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
   bullets : Array[BulletEffect]
-  damage_numbers : Array[@combat_ui.DamageNumber]
+  damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   add_task_fn : (@utils.Future[Unit]) -> Unit
 }
 
 ///|
 pub fn Combat::new(
-  damage_number_set : @combat_ui.DamageNumberSet,
+  damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
   add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Combat {
@@ -56,20 +56,18 @@ pub fn update(self : Combat) -> Unit {
   for dmg_eff in self.damage_effects.process() {
     self.apply_damage_effect(dmg_eff)
   }
-  self.bullets.retain(
-    fn(mb) {
-      let target_oid = mb.damageeffect.target_oid
-      if self.mobs.contains(target_oid) {
-        mb.target = self.mobs.get_mob_head_position(target_oid)
-        let apply = mb.bullet.update(mb.target)
-        if apply {
-          self.apply_damage_effect(mb.damageeffect)
-        }
-        return apply.not()
+  self.bullets.retain(fn(mb) {
+    let target_oid = mb.damageeffect.target_oid
+    if self.mobs.contains(target_oid) {
+      mb.target = self.mobs.get_mob_head_position(target_oid)
+      let apply = mb.bullet.update(mb.target)
+      if apply {
+        self.apply_damage_effect(mb.damageeffect)
       }
-      mb.bullet.update(mb.target).not()
-    },
-  )
+      return apply.not()
+    }
+    mb.bullet.update(mb.target).not()
+  })
   self.damage_numbers.retain(fn(dn) { dn.update().not() })
 }
 
@@ -79,19 +77,17 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
     return
   }
   let act_f = self.get_move(move_id)
-  let task = act_f.map_exn(
-      fn(act) {
-        let act = act.unwrap_or_error!()
-        let reason = self.can_use(player, act)
-        if reason == @combat_do.ForbidReason::FBR_NONE {
-          self.apply_move(player, act)
-        } else {
-          // TODO: show forbid reason
-          // let weapontype = self.player.get_stats().get_weapontype()
-          // ForbidSkillMessage::new(reason, weapontype).drop()
-        }
-      },
-    )
+  let task = act_f.map_exn(fn(act) {
+      let act = act.unwrap_or_error!()
+      let reason = self.can_use(player, act)
+      if reason == @combat_do.ForbidReason::FBR_NONE {
+        self.apply_move(player, act)
+      } else {
+        // TODO: show forbid reason
+        // let weapontype = self.player.get_stats().get_weapontype()
+        // ForbidSkillMessage::new(reason, weapontype).drop()
+      }
+    })
     |> log_background_err
   (self.add_task_fn)(task)
 }
@@ -209,7 +205,7 @@ fn find_closest_mob(
 ///|
 struct DamageEffect {
   user : @combat.AttackUser
-  number : @combat_ui.DamageNumber
+  number : @ui.Number
   damage : Int
   toleft : Bool
   target_oid : Int
@@ -313,10 +309,9 @@ pub fn get_move(
   if move_id == 0 {
     return self.regular_attack |> Ok |> @utils.Future::from_value
   }
-  self.skill_cache.get_or_init(
-    move_id,
-    fn() { @combat_do.Skill::load(move_id).map(fn(f) { f.map(fn(it) { it }) }) },
-  )
+  self.skill_cache.get_or_init(move_id, fn() {
+    @combat_do.Skill::load(move_id).map(fn(f) { f.map(fn(it) { it }) })
+  })
 }
 
 ///|
@@ -352,10 +347,11 @@ fn extract_effects(
             target_oid: oid,
             move_id: act.get_id(),
           }
-          self.bullet_effects.push(
-            user.get_attackdelay(i).to_int64(),
-            { damageeffect: effect, bullet, target: head },
-          )
+          self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
+            damageeffect: effect,
+            bullet,
+            target: head,
+          })
           i += 1
         }
       }
@@ -366,8 +362,8 @@ fn extract_effects(
       for i in 0..<result.hitcount {
         let effect : DamageEffect = {
           user: attack_user,
-          number: self.damage_number_set.new_damage_number(
-            @combat_ui.DamageNumberType::NORMAL,
+          number: self.damage_number_set.new_number(
+            @ui.NumberType::HIT_NORMAL,
             0,
             user.get_position().y,
           ),
@@ -376,10 +372,11 @@ fn extract_effects(
           target_oid: 0,
           move_id: 0,
         }
-        self.bullet_effects.push(
-          user.get_attackdelay(i).to_int64(),
-          { damageeffect: effect, bullet, target },
-        )
+        self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
+          damageeffect: effect,
+          bullet,
+          target,
+        })
       }
     }
   } else {
@@ -388,17 +385,14 @@ fn extract_effects(
         let numbers = self.place_numbers(oid, vec)
         let mut i = 0
         for number in numbers {
-          self.damage_effects.push(
-            user.get_attackdelay(i).to_int64(),
-            {
-              user: attack_user,
-              number,
-              damage: vec[i].0,
-              toleft: result.toleft,
-              target_oid: oid,
-              move_id: act.get_id(),
-            },
-          )
+          self.damage_effects.push(user.get_attackdelay(i).to_int64(), {
+            user: attack_user,
+            number,
+            damage: vec[i].0,
+            toleft: result.toleft,
+            target_oid: oid,
+            move_id: act.get_id(),
+          })
           i += 1
         }
       }
@@ -411,18 +405,18 @@ fn place_numbers(
   self : Combat,
   oid : Int,
   damage_lines : Array[(Int, Bool)]
-) -> Array[@combat_ui.DamageNumber] {
+) -> Array[@ui.Number] {
   let numbers = Array::new()
   let mut head = self.mobs.get_mob_head_position(oid).y
   for it in damage_lines {
     let (amount, is_critical) = it
     let t = if is_critical {
-      @combat_ui.DamageNumberType::CRITICAL
+      @ui.NumberType::HIT_CRITICAL
     } else {
-      @combat_ui.DamageNumberType::NORMAL
+      @ui.NumberType::HIT_NORMAL
     }
-    numbers.push(self.damage_number_set.new_damage_number(t, amount, head))
-    head -= @combat_ui.DamageNumber::row_height(is_critical)
+    numbers.push(self.damage_number_set.new_number(t, amount, head))
+    head -= @ui.Number::row_height(is_critical)
   }
   return numbers
 }
@@ -439,14 +433,12 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   }
   mob.apply_damage(effect.damage, effect.toleft)
   (self.add_task_fn)(
-    act_f.map(
-      fn(res) {
-        match res {
-          Ok(act) => act.apply_hit_effects(effect.user, mob)
-          Err(e) => @log.error({ "error": e }, "apply_damage_effect failed")
-        }
-      },
-    ),
+    act_f.map(fn(res) {
+      match res {
+        Ok(act) => act.apply_hit_effects(effect.user, mob)
+        Err(e) => @log.error({ "error": e }, "apply_damage_effect failed")
+      }
+    }),
   )
 }
 
@@ -565,12 +557,10 @@ pub fn log_background_err[E : Show](
   f : @utils.Future[Result[Unit, E]],
   loc~ : SourceLoc = _
 ) -> @utils.Future[Unit] {
-  f.map(
-    fn(res) {
-      match res {
-        Ok(_) => ()
-        Err(e) => @log.error({ "err": Show::to_string(e) }, "task failed", loc~)
-      }
-    },
-  )
+  f.map(fn(res) {
+    match res {
+      Ok(_) => ()
+      Err(e) => @log.error({ "err": Show::to_string(e) }, "task failed", loc~)
+    }
+  })
 }

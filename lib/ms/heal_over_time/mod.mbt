@@ -9,12 +9,15 @@ pub fn new_module(
     fn() {
       guard let Some(char_stats) = char_stats_getter() else { None => return }
       let hp = char_stats.get_stat(@maple_stat.Id::HP)
-      guard hp > 0 else { return }
+      guard hp > 0 else { return } // dead
+      // TODO: check if player is available to act
       let max_hp = char_stats.get_stat(@maple_stat.Id::MAXHP)
-      guard hp < max_hp else { return }
-      packet_processor.send_packet(
-        new_heal_over_time_packet(@math.minimum(max_hp - hp, 77), 10),
-      ) // for test and fun!
+      // for test and fun!
+      let heal_hp = @math.minimum(max_hp - hp, 77)
+      let mp = char_stats.get_stat(@maple_stat.Id::MP)
+      let max_mp = char_stats.get_stat(@maple_stat.Id::MAXMP)
+      let heal_mp = @math.minimum(max_mp - mp, 50)
+      packet_processor.send_packet(new_heal_over_time_packet(heal_hp, heal_mp))
     },
     delay,
     delay,

@@ -240,7 +240,7 @@ fn load_modules(
   // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
   // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
   // NPC Interaction Handlers
-  let damage_number_set = @combat_ui.DamageNumberSet::load()
+  let damage_number_set = @ui.NumberSet::load()
   let stage_f = map_module
     .combine(inventory_module)
     .combine(npc_module)

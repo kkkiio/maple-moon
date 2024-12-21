@@ -15,10 +15,6 @@
     "KKKIIO/maple-moon-client/lib/ms/equip",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",
-    {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/ui",
-      "alias": "combat_ui"
-    },
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/constants",

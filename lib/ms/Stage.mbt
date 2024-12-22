@@ -100,7 +100,7 @@ pub fn set_player_stage(
 ) -> Unit {
   let char_base = @character.CharBase::new(
     entry.id,
-    self.char_look_module.init_char_look(entry.look),
+    self.char_look_module.new_char_look(entry.look),
     entry.stats.name,
     self.damage_number_set,
   )

@@ -1,3 +1,4 @@
+///|
 struct Frame {
   texture : Texture
   delay : Int
@@ -7,8 +8,10 @@ struct Frame {
   scales : (Int, Int)
 }
 
+///|
 pub typealias NxNode = @resource.NxNode
 
+///|
 fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
   let texture = Texture::from_resource(src)
   let bounds = src.as_rectangle?().unwrap()
@@ -34,10 +37,11 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
   { texture, delay, head, bounds, opacities, scales }
 }
 
+///|
 fn Frame::default() -> Frame {
   {
     texture: Texture::default(),
-    head: Point::default(),
+    head: @struct.Point::default(),
     bounds: Rectangle::default(),
     delay: 0,
     opacities: (0, 0),
@@ -45,53 +49,65 @@ fn Frame::default() -> Frame {
   }
 }
 
+///|
 pub fn start_opacity(self : Frame) -> Int {
   self.opacities.0
 }
 
+///|
 pub fn end_opacity(self : Frame) -> Int {
   self.opacities.1
 }
 
+///|
 pub fn start_scale(self : Frame) -> Int {
   self.scales.0
 }
 
+///|
 pub fn get_delay(self : Frame) -> Int {
   self.delay
 }
 
+///|
 pub fn get_origin(self : Frame) -> Point[Int] {
   self.texture.get_origin()
 }
 
+///|
 pub fn get_dimensions(self : Frame) -> Point[Int] {
   self.texture.get_dimensions()
 }
 
+///|
 pub fn get_head(self : Frame) -> Point[Int] {
   self.head
 }
 
+///|
 pub fn get_bounds(self : Frame) -> Rectangle[Int] {
   self.bounds
 }
 
+///|
 pub fn opcstep(self : Frame, timestep : Int) -> Double {
   ((self.opacities.1 - self.opacities.0) * timestep).to_double() /
   self.delay.to_double()
 }
 
+///|
 pub fn scalestep(self : Frame, timestep : Int) -> Double {
   timestep.to_double() *
   (self.scales.1 - self.scales.0).to_double() /
   self.delay.to_double()
 }
 
+///|
 pub fn draw(self : Frame, args : DrawArgument) -> Unit {
   self.texture.draw(args)
 }
 
+///|
 struct Animation {
   frames : Array[Frame]
   zigzag : Bool
@@ -102,11 +118,13 @@ struct Animation {
   mut delay : Int
 }
 
+///|
 pub(all) type! LoadError {
   NotFound
   InvalidFormat(String)
 } derive(Show)
 
+///|
 pub fn Animation::from_resource(src : NxNode) -> Animation {
   try {
     Animation::from_resource_ex!(src)
@@ -119,6 +137,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
   }
 }
 
+///|
 pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   if src.is_null() {
     raise NotFound
@@ -136,16 +155,14 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
     }
     None => {
       let fs = @utils.ints()
-        .map_while(
-          fn(i) {
-            let node = src[i.to_string()]
-            if node.is_null() {
-              None
-            } else {
-              Some(node)
-            }
-          },
-        )
+        .map_while(fn(i) {
+          let node = src[i.to_string()]
+          if node.is_null() {
+            None
+          } else {
+            Some(node)
+          }
+        })
         .map(fn(it) { Frame::from_resource(it) })
         .collect()
       if fs.length() <= 0 {
@@ -177,6 +194,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   a
 }
 
+///|
 pub fn Animation::default() -> Animation {
   let a = {
     frames: [Frame::default()],
@@ -191,6 +209,7 @@ pub fn Animation::default() -> Animation {
   a
 }
 
+///|
 pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
   let interframe = self.frame.get(alpha~)
   let interopc = self.opacity.get(alpha~) / 255.0
@@ -206,6 +225,7 @@ pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
   }
 }
 
+///|
 pub fn update(
   self : Animation,
   timestep~ : Int = @constants.step_time_ms
@@ -257,6 +277,7 @@ pub fn update(
   false
 }
 
+///|
 pub fn reset(self : Animation) -> Unit {
   self.frame.set(0)
   self.opacity.set(self.frames[0].start_opacity().to_double())
@@ -265,10 +286,12 @@ pub fn reset(self : Animation) -> Unit {
   self.frame_step = 1
 }
 
+///|
 fn get_frame(self : Animation) -> Frame {
   self.frames[self.frame.get()]
 }
 
+///|
 fn get_delay(self : Animation, frame_id : Int) -> Int {
   if frame_id < self.frames.length() {
     self.frames[frame_id].get_delay()
@@ -277,6 +300,7 @@ fn get_delay(self : Animation, frame_id : Int) -> Int {
   }
 }
 
+///|
 pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
   let mut total : Int = 0
   let mut i = 0
@@ -290,18 +314,22 @@ pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
   total
 }
 
+///|
 pub fn get_origin(self : Animation) -> Point[Int] {
   self.get_frame().get_origin()
 }
 
+///|
 pub fn get_dimensions(self : Animation) -> Point[Int] {
   self.get_frame().get_dimensions()
 }
 
+///|
 pub fn get_head(self : Animation) -> Point[Int] {
   self.get_frame().get_head()
 }
 
+///|
 pub fn get_bounds(self : Animation) -> Rectangle[Int] {
   self.get_frame().get_bounds()
 }

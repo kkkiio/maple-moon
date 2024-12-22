@@ -1,9 +1,11 @@
-pub struct TalkContent {
+///|
+pub(all) struct TalkContent {
   text_html : String // Assume no text after selections
   selections : TalkSelections?
 } derive(Show)
 
-pub struct TalkSelections {
+///|
+pub(all) struct TalkSelections {
   color : @struct.ColorName
   selections : Array[(Int, String)]
 } derive(Eq, Show, ToJson)
@@ -28,25 +30,21 @@ test "test selections" {
     #|#L2##m100000000# (100 mesos)#l
     #|#L3##m103000000# (100 mesos)#l
     #|#L4##m120000000# (80 mesos)#l
-  let result = parse_talk_content!(
-    template,
-    { fn_map: { 'm': fn(v) { "test_map_\{v}_name" } } },
-  )
-  @json.inspect!(
-    result.selections,
-    content=[
-      {
-        "color": "blue",
-        "selections": [
-          [0, "test_map_104000000_name (100 mesos)"],
-          [1, "test_map_102000000_name (100 mesos)"],
-          [2, "test_map_100000000_name (100 mesos)"],
-          [3, "test_map_103000000_name (100 mesos)"],
-          [4, "test_map_120000000_name (80 mesos)"],
-        ],
-      },
-    ],
-  )
+  let result = parse_talk_content!(template, {
+    fn_map: { 'm': fn(v) { "test_map_\{v}_name" } },
+  })
+  @json.inspect!(result.selections, content=[
+    {
+      "color": "blue",
+      "selections": [
+        [0, "test_map_104000000_name (100 mesos)"],
+        [1, "test_map_102000000_name (100 mesos)"],
+        [2, "test_map_100000000_name (100 mesos)"],
+        [3, "test_map_103000000_name (100 mesos)"],
+        [4, "test_map_120000000_name (80 mesos)"],
+      ],
+    },
+  ])
   inspect!(
     result.text_html,
     content="We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.",
@@ -65,7 +63,7 @@ test "test no options" {
   )
 }
 
-/// NPC Markups:
+///| NPC Markups:
 /// #b = Blue text.
 /// #c[itemid]# Shows how many [itemid] the player has in their inventory.
 /// #d = Purple text.
@@ -126,7 +124,7 @@ fn parse_talk_content(
   { text_html, selections: Some({ color, selections }) }
 }
 
-/// Parse text without selections.
+///| Parse text without selections.
 fn parse_text(ctx : VariableContext, text : String) -> String!ParseTalkError {
   let chunk = []
   let mut color = @struct.ColorName::BLACK
@@ -199,6 +197,7 @@ fn parse_text(ctx : VariableContext, text : String) -> String!ParseTalkError {
   chunk |> String::concat(separator="")
 }
 
+///|
 fn parse_selection(
   ctx : VariableContext,
   line : String
@@ -228,12 +227,13 @@ fn parse_selection(
   (index, text)
 }
 
-/// Replace placeholders in the text with the values from the context.
+///| Replace placeholders in the text with the values from the context.
 /// Placeholders are the text in the format of `#\{kind}\{payload}#`.
 struct VariableContext {
   fn_map : Map[Char, (String) -> String!ParseTalkError] // kind -> payload -> value
 }
 
+///|
 let color_map : Map[Char, @struct.ColorName] = {
   'b': @struct.ColorName::BLUE,
   'd': @struct.ColorName::VIOLET,
@@ -242,4 +242,5 @@ let color_map : Map[Char, @struct.ColorName] = {
   'r': @struct.ColorName::RED,
 }
 
-pub type! ParseTalkError String derive(Show)
+///|
+pub(all) type! ParseTalkError String derive(Show)

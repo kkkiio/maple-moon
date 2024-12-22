@@ -93,7 +93,7 @@ pub fn Player::new(
     }
     true // listen forever
   })
-  stats.listen_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp : Int) {
+  stats.listen_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp) {
     if new_hp > old_hp {
       p.char_base.show_heal_number(new_hp - old_hp)
     }

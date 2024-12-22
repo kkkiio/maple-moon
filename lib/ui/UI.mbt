@@ -1,6 +1,6 @@
 ///|
 pub(all) struct UI {
-  mut state : UIState?
+  mut state : &UIState?
   get_keyboard_mapping : (String) -> @keyboard.Mapping
   cursor : Cursor
   is_key_down : Map[String, Bool]
@@ -65,13 +65,13 @@ pub fn send_cursor(
 }
 
 ///|
-pub fn change_state(self : UI, state : UIState) -> Unit {
+pub fn change_state(self : UI, state : &UIState) -> Unit {
   self.state = Some(state)
 }
 
 ///|
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
+  guard let Some(state) = self.state else { None => return }
   let mapping = (self.get_keyboard_mapping)(keycode)
   let mut sent = false
   let types = Array::new()
@@ -82,7 +82,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   let left_right = keycode == @keyboard.arrowLeft ||
     keycode == @keyboard.arrowRight
   let arrows = up_down || left_right
-  fn get_active_ui_by_type(t : UIElementType) -> UIElement? {
+  fn get_active_ui_by_type(t) {
     self.get_element(t).filter(fn(it) { it.get_ui_model().is_active() })
   }
 
@@ -102,7 +102,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
     .find_first(fn(it) { it.get_ui_model().is_active() })
   match active_ui {
     Some(it) => {
-      it.send_key(mapping.action, pressed, escape) |> ignore
+      it.object.send_key(mapping.action, pressed, escape) |> ignore
       sent = true
     }
     None => {
@@ -142,7 +142,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
       if types.length() > 0 {
         match state.get_front_by_types(types) {
           Some(element) => {
-            element.send_key(mapping.action, pressed, escape)
+            element.object.send_key(mapping.action, pressed, escape)
             sent = true
           }
           None => ()
@@ -157,7 +157,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
 }
 
 ///|
-fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
+fn get_element(self : UI, element_type : UIElementType) -> Element? {
   match self.state {
     Some(state) => state.get(element_type)
     None => None
@@ -166,23 +166,30 @@ fn get_element(self : UI, element_type : UIElementType) -> UIElement? {
 
 ///|
 pub fn set_element(self : UI, focused : Bool, elem : Element) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
+  guard let Some(state) = self.state else { None => return }
   state.set_element(focused, elem)
 }
 
 ///|
 pub fn add_ui(self : UI, elem : Element, focused : Bool) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
+  guard let Some(state) = self.state else { None => return }
   state.set_element(focused, elem)
 }
 
 ///|
+pub fn remove_ui(self : UI, element_type : UIElementType) -> Unit {
+  guard let Some(state) = self.state else { None => return }
+  state.remove(element_type)
+}
+
+///|
 pub fn doubleclick(self : UI) -> Unit {
-  guard let Some(state) = self.state else { None => return  }
+  guard let Some(state) = self.state else { None => return }
   let pos = self.cursor.get_position()
   state.doubleclick(pos)
 }
 
+///|
 pub(open) trait UIState {
   draw(Self, Double, Point[Int]) -> Unit
   update(Self) -> Unit
@@ -190,6 +197,7 @@ pub(open) trait UIState {
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
   doubleclick(Self, Point[Int]) -> Unit
   set_element(Self, Bool, Element) -> Unit
-  get(Self, UIElementType) -> UIElement?
-  get_front_by_types(Self, Array[UIElementType]) -> UIElement?
+  remove(Self, UIElementType) -> Unit
+  get(Self, UIElementType) -> Element?
+  get_front_by_types(Self, Array[UIElementType]) -> Element?
 }

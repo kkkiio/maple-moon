@@ -7,7 +7,7 @@ struct Tile {
 
 ///|
 pub fn Tile::new(src : NxNode, tileset : @resource.NxNode?) -> Tile {
-  let pos = Point::new(
+  let pos = @struct.Point::new(
     src["x"].get_int?().unwrap(),
     src["y"].get_int?().unwrap(),
   )

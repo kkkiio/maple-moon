@@ -52,7 +52,11 @@ struct UIStatsInfo {
 }
 
 ///|
-fn UIStatsInfo::new(stats : CharStats, stat : @resource.NxNode) -> UIStatsInfo {
+fn UIStatsInfo::new(
+  stats : CharStats,
+  stat : @resource.NxNode,
+  hooks : @ui.Hooks
+) -> UIStatsInfo {
   let model = @ui.UIModel::new(
     @struct.Point::new(212, 20),
     @struct.Point::new(212, 318),
@@ -83,69 +87,55 @@ fn UIStatsInfo::new(stats : CharStats, stat : @resource.NxNode) -> UIStatsInfo {
       close,
       pos=@struct.Point::new(190, 6),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        model.deactivate()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      model.deactivate()
+      @ui.ButtonState::NORMAL
+    })
   let btn_hp = @ui.MapleButton::from_resource(main["BtHpUp"])
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_mp = @ui.MapleButton::from_resource(
       main["BtHpUp"],
       pos=@struct.Point::new(0, 18),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_str = @ui.MapleButton::from_resource(
       main["BtHpUp"],
       pos=@struct.Point::new(0, 87),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_dex = @ui.MapleButton::from_resource(
       main["BtHpUp"],
       pos=@struct.Point::new(0, 105),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_int = @ui.MapleButton::from_resource(
       main["BtHpUp"],
       pos=@struct.Point::new(0, 123),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_luk = @ui.MapleButton::from_resource(
       main["BtHpUp"],
       pos=@struct.Point::new(0, 141),
     )
-    |> @ui.Button::new(
-      on_click=fn() {
-        new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
-        @ui.ButtonState::NORMAL
-      },
-    )
+    |> @ui.Button::new(on_click=fn() {
+      new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
+      @ui.ButtonState::NORMAL
+    })
   let btn_auto = @ui.MapleButton::from_resource(main["BtAuto"])
     |> @ui.Button::new() // TODO
   let btn_hyper_stat_open = @ui.MapleButton::from_resource(
@@ -175,10 +165,9 @@ fn UIStatsInfo::new(stats : CharStats, stat : @resource.NxNode) -> UIStatsInfo {
   btn_ability.object.get_button_base().set_active(false)
   btn_ability.object.get_button_base().set_state(@ui.ButtonState::DISABLED)
   btn_detail_detail_close.object.get_button_base().set_active(false)
-  let has_ap = update_ap(
-    stats,
-    [btn_hp, btn_mp, btn_str, btn_dex, btn_int, btn_luk, btn_auto],
-  )
+  let has_ap = update_ap(stats, [
+    btn_hp, btn_mp, btn_str, btn_dex, btn_int, btn_luk, btn_auto,
+  ])
   // Normal stat labels
   let name_label = (
     @graphics.Text::new(
@@ -409,26 +398,22 @@ fn UIStatsInfo::new(stats : CharStats, stat : @resource.NxNode) -> UIStatsInfo {
 }
 
 ///|
-pub fn draw(self : UIStatsInfo, alpha : Double) -> Unit {
-  for sprite in self.sprites {
-    sprite.draw(self.model.position, alpha)
-  }
-  if self.show_detail {
-    let detail_pos = self.model.position + @struct.Point::new(212, 0)
-    self.textures_detail[0].draw(
-      detail_pos + @struct.Point::new(0, -1) |> @graphics.DrawArgument::new,
-    )
-    self.textures_detail[1].draw(detail_pos |> @graphics.DrawArgument::new)
-    self.textures_detail[2].draw(detail_pos |> @graphics.DrawArgument::new)
-    self.textures_detail[3].draw(detail_pos |> @graphics.DrawArgument::new)
-    self.none_ability.draw(@graphics.DrawArgument::new(detail_pos))
-    self.inner_ability[false].draw(detail_pos |> @graphics.DrawArgument::new)
-    self.inner_ability[false].draw(
-      detail_pos + @struct.Point::new(0, 19) |> @graphics.DrawArgument::new,
-    )
-    self.inner_ability[false].draw(
-      detail_pos + @struct.Point::new(0, 38) |> @graphics.DrawArgument::new,
-    )
+impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RuntimeState {
+  let detailed_labels = if self.show_detail {
+    [
+      self.damage_detailed_label,
+      self.damage_bonus_label,
+      self.final_damage_label,
+      self.ignore_defense_label,
+      self.critical_rate_label,
+      self.critical_damage_label,
+      self.knockback_resistance_label,
+      self.defense_label,
+      self.speed_label,
+      self.jump_label,
+    ]
+  } else {
+    []
   }
   let normal_labels = [
     self.name_label,
@@ -444,42 +429,61 @@ pub fn draw(self : UIStatsInfo, alpha : Double) -> Unit {
     self.int_label,
     self.luk_label,
   ]
-  for label in normal_labels {
-    let labelpos = self.model.position + label._.1
-    label._.0.draw(labelpos)
-  }
-  if self.show_detail {
-    let detailed_labels = [
-      self.damage_detailed_label,
-      self.damage_bonus_label,
-      self.final_damage_label,
-      self.ignore_defense_label,
-      self.critical_rate_label,
-      self.critical_damage_label,
-      self.knockback_resistance_label,
-      self.defense_label,
-      self.speed_label,
-      self.jump_label,
-    ]
-    for label in detailed_labels {
-      let labelpos = (self.model.position + label._.1).shift_x(213)
+  let buttons = get_all_buttons(self)
+  fn draw(alpha : Double) -> Unit {
+    for sprite in self.sprites {
+      sprite.draw(self.model.position, alpha)
+    }
+    if self.show_detail {
+      let detail_pos = self.model.position + @struct.Point::new(212, 0)
+      self.textures_detail[0].draw(
+        detail_pos + @struct.Point::new(0, -1) |> @graphics.DrawArgument::new,
+      )
+      self.textures_detail[1].draw(detail_pos |> @graphics.DrawArgument::new)
+      self.textures_detail[2].draw(detail_pos |> @graphics.DrawArgument::new)
+      self.textures_detail[3].draw(detail_pos |> @graphics.DrawArgument::new)
+      self.none_ability.draw(@graphics.DrawArgument::new(detail_pos))
+      self.inner_ability[false].draw(detail_pos |> @graphics.DrawArgument::new)
+      self.inner_ability[false].draw(
+        detail_pos + @struct.Point::new(0, 19) |> @graphics.DrawArgument::new,
+      )
+      self.inner_ability[false].draw(
+        detail_pos + @struct.Point::new(0, 38) |> @graphics.DrawArgument::new,
+      )
+    }
+    for label in normal_labels {
+      let labelpos = self.model.position + label._.1
       label._.0.draw(labelpos)
     }
+    if self.show_detail {
+      for label in detailed_labels {
+        let labelpos = (self.model.position + label._.1).shift_x(213)
+        label._.0.draw(labelpos)
+      }
+    }
+    for button in buttons {
+      button.object.draw(self.model.position)
+    }
   }
-  for button in get_all_buttons(self) {
-    button.object.draw(self.model.position)
-  }
+
+  { buttons, draw_fn: draw, sprites: self.sprites }
 }
 
 ///|
-pub fn update(self : UIStatsInfo) -> Unit {
-  for sprite in self.sprites {
-    sprite.update() |> ignore
-  }
-  for button in get_all_buttons(self) {
-    button.object.update()
-  }
+struct RuntimeState {
+  model : @ui.UIModel
+  sprites : Array[@graphics.Sprite]
+  buttons : Array[@ui.Button]
+  none_ability : @graphics.Texture
+  inner_ability : @utils.BoolPair[@graphics.Texture]
+  textures_detail : Array[@graphics.Texture]
+  show_detail : Bool
+  // mut has_ap : Bool
+  normal_labels : Array[StatLabel]
+  detailed_labels : Array[StatLabel]
 }
+
+///|
 
 ///|
 fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
@@ -573,18 +577,15 @@ fn update_all_stats(self : UIStatsInfo) -> Unit {
     self.stats.get_stat(@maple_stat.Id::AP).to_string(),
   )
   if self.has_ap != (self.stats.get_stat(@maple_stat.Id::AP) > 0) {
-    self.has_ap = update_ap(
-      self.stats,
-      [
-        self.btn_hp,
-        self.btn_mp,
-        self.btn_str,
-        self.btn_dex,
-        self.btn_int,
-        self.btn_luk,
-        self.btn_auto,
-      ],
-    )
+    self.has_ap = update_ap(self.stats, [
+      self.btn_hp,
+      self.btn_mp,
+      self.btn_str,
+      self.btn_dex,
+      self.btn_int,
+      self.btn_luk,
+      self.btn_auto,
+    ])
   }
   self.name_label._.0.change_text(self.stats.name)
   self.guild_label._.0.change_text("-")

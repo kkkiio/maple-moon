@@ -19,40 +19,44 @@ pub fn handle_open_npc_shop(
     let norecharge = recv.read_short!() == 1
     if norecharge {
       let buyable = recv.read_short!()
-      shop_items.push(
-        { id: itemid, price, pitch, time, charge_price: 0, buyable },
-      )
+      shop_items.push({
+        id: itemid,
+        price,
+        pitch,
+        time,
+        charge_price: 0,
+        buyable,
+      })
     } else {
       recv.skip!(4)
       let rechargeprice = recv.read_short!()
       let slotmax = recv.read_short!()
-      shop_items.push(
-        {
-          id: itemid,
-          price,
-          pitch,
-          time,
-          charge_price: rechargeprice,
-          buyable: slotmax,
-        },
-      )
+      shop_items.push({
+        id: itemid,
+        price,
+        pitch,
+        time,
+        charge_price: rechargeprice,
+        buyable: slotmax,
+      })
     }
   }
-  let shop = UIShop::new(
-    { countset: mod.countset, charlook, inventory, npcid, shop_items },
-    mod.shop2_res,
-  )
-  inventory.listen_item_changes(
-    fn() {
-      guard shop.get_ui_model().is_active() else { return false }
-      shop.set_attributes()
-      true
-    },
-  )
-  mod.shop_ui = Some(shop)
   mod.container.add_ui(
     @ui.Element::new(
-      shop,
+      fn(hooks) {
+        let shop = UIShop::new(
+          { countset: mod.countset, charlook, inventory, npcid, shop_items },
+          mod.shop2_res,
+          hooks,
+        )
+        inventory.listen_item_changes(fn() {
+          guard shop.get_ui_model().is_active() else { return false }
+          shop.set_attributes()
+          true
+        })
+        mod.shop_ui = Some(shop)
+        shop
+      },
       @ui.UIElementType::SHOP,
       on_close=fn() { mod.shop_ui = None },
     ),

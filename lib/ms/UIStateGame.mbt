@@ -72,17 +72,15 @@ pub fn draw(
   inter : Double,
   cursor : @struct.Point[Int]
 ) -> Unit {
-  self.element_order.each(
-    fn(t) {
-      match self.elements.get(t) {
-        Some(element) =>
-          if element.object.get_ui_model().is_active() {
-            element.object.draw(inter)
-          }
-        None => ()
-      }
-    },
-  )
+  self.element_order.each(fn(t) {
+    match self.elements.get(t) {
+      Some(element) =>
+        if element.get_ui_model().is_active() {
+          element.draw(inter)
+        }
+      None => ()
+    }
+  })
 
   // if (tooltip_) {
   //     tooltip_->get().draw(cursor + Point<int16_t>(0, 22));
@@ -102,21 +100,19 @@ pub fn update(self : UIStateGame) -> Unit {
     self.vheight = new_height
     //TODO: adjust status bar
   }
-  self.element_order.each(
-    fn(t) {
-      match self.elements.get(t) {
-        Some(element) =>
-          if element.object.get_ui_model().is_active() {
-            element.object.update()
-            if update_screen {
-              //TODO: update screen
-              // element.update_screen(new_width, new_height)
-            }
+  self.element_order.each(fn(t) {
+    match self.elements.get(t) {
+      Some(element) =>
+        if element.get_ui_model().is_active() {
+          element.update()
+          if update_screen {
+            //TODO: update screen
+            // element.update_screen(new_width, new_height)
           }
-        None => ()
-      }
-    },
-  )
+        }
+      None => ()
+    }
+  })
 }
 
 ///|
@@ -130,7 +126,7 @@ pub fn send_key(
   match self.get(self.focused) {
     Some(focusedelement) => {
       if focusedelement.get_ui_model().is_active() {
-        return focusedelement.send_key(raw_action, pressed, escape)
+        return focusedelement.object.send_key(raw_action, pressed, escape)
       }
       self.focused = UIElementType::UI_ELEMENT_NONE
       return
@@ -190,7 +186,7 @@ pub fn send_cursor(
         // }
 
         self.remove_cursor(front_type)
-        return front.object.send_cursor(clicked, cursorpos)
+        return front.send_cursor(clicked, cursorpos)
       }
       None => ()
     }
@@ -205,8 +201,8 @@ pub fn send_cursor(
       let t = self.element_order[i]
       match self.elements[t] {
         Some(element) =>
-          if element.object.get_ui_model().is_active() &&
-            element.object.get_ui_model().is_in_range(cursorpos) {
+          if element.get_ui_model().is_active() &&
+            element.get_ui_model().is_in_range(cursorpos) {
             self.dragged = Some(element)
             drag_element_type = t
             break
@@ -226,7 +222,7 @@ pub fn send_cursor(
     return @ui.CursorState::IDLE
   }
   match self.dragged {
-    Some(dragged) => return dragged.object.send_cursor(clicked, cursorpos)
+    Some(dragged) => return dragged.send_cursor(clicked, cursorpos)
     None => ()
   }
   return Stage::get().send_cursor(clicked, cursorpos)
@@ -261,10 +257,10 @@ pub fn toggle_element(
         None => ()
       }
       self.element_order.push(t)
-      let active = element.object.get_ui_model().is_active()
+      let active = element.get_ui_model().is_active()
       (element.toggle_active)()
-      if active != element.object.get_ui_model().is_active() {
-        if element.object.get_ui_model().is_active() {
+      if active != element.get_ui_model().is_active() {
+        if element.get_ui_model().is_active() {
           if t == UIElementType::WORLD_MAP {
             // Sound::new(SoundName::WORLD_MAP_OPEN).play()
           } else {
@@ -299,35 +295,33 @@ pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
     None => ()
   }
   match self.elements.get(t) {
-    Some(element) => element.object.get_ui_model().deactivate()
+    Some(element) => element.get_ui_model().deactivate()
     None => ()
   }
   self.elements.remove(t)
 }
 
 ///|
-fn get(self : UIStateGame, t : UIElementType) -> UIElement? {
-  self.elements[t].map(fn(e) { e.object })
+fn get(self : UIStateGame, t : UIElementType) -> @ui.Element? {
+  self.elements[t].map(fn(e) { e })
 }
 
 ///|
 pub fn get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
-) -> @ui.UIElement? {
+) -> @ui.Element? {
   // let mut i = self.element_order.length() - 1
   (self.element_order.length() - 1)
   .until(step=-1, 0, inclusive=true)
-  .map_while(
-    fn(i) {
-      let t = self.element_order[i]
-      if types.contains(t) {
-        self.elements[t].map(fn(e) { e.object })
-      } else {
-        None
-      }
-    },
-  )
+  .map_while(fn(i) {
+    let t = self.element_order[i]
+    if types.contains(t) {
+      self.elements[t].map(fn(e) { e })
+    } else {
+      None
+    }
+  })
   .find_first(fn(it) { it.get_ui_model().is_active() })
 }
 
@@ -338,18 +332,13 @@ pub fn get_front_by_pos(
 ) -> @ui.Element? {
   (self.element_order.length() - 1)
   .until(step=-1, 0, inclusive=true)
-  .map_while(
-    fn(i) {
-      let t = self.element_order[i]
-      self.elements[t]
-    },
-  )
-  .find_first(
-    fn(e) {
-      e.object.get_ui_model().is_active() &&
-      e.object.get_ui_model().is_in_range(pos)
-    },
-  )
+  .map_while(fn(i) {
+    let t = self.element_order[i]
+    self.elements[t]
+  })
+  .find_first(fn(e) {
+    e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
+  })
 }
 
 ///|
@@ -362,22 +351,15 @@ fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
   self.element_order
   .iter()
   .map_while(fn(t) { self.elements[t] })
-  .find_first(
-    fn(e) {
-      e.object.get_ui_model().is_active() &&
-      e.object.get_ui_model().is_in_range(pos)
-    },
-  )
+  .find_first(fn(e) {
+    e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
+  })
 }
 
 ///|
-fn doubleclick(self : UIStateGame, pos : Point[Int]) -> Unit {
+fn doubleclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
   match self.get_front_by_pos(pos) {
-    Some({ doubleclick, .. }) =>
-      match doubleclick {
-        Some(doubleclick) => doubleclick(pos)
-        None => ()
-      }
+    Some({ doubleclick, .. }) => doubleclick(pos)
     None => ()
   }
 }

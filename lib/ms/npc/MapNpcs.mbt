@@ -1,6 +1,6 @@
 ///|
 struct MapNpcs {
-  make_npc_talk_ui : () -> UINpcTalk
+  make_npc_talk_ui : (Attributes) -> @ui.Element
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
   container : @ui.Container
@@ -9,7 +9,7 @@ struct MapNpcs {
 
 ///|
 pub fn MapNpcs::new(
-  make_npc_talk_ui : () -> UINpcTalk,
+  make_npc_talk_ui : (Attributes) -> @ui.Element,
   container : @ui.Container,
   get_player_name : () -> String
 ) -> MapNpcs {
@@ -85,22 +85,16 @@ pub fn send_cursor(
       if pressed {
         match npc.talk() {
           Some({ id, msgtype, b0, b1, speaker, str }) => {
-            let ui = (self.make_npc_talk_ui)()
-            self.container.add_ui(
-              @ui.Element::new(ui, @ui.UIElementType::NPC_TALK),
-              UINpcTalk::const_focused(),
-            )
-            ui
-            .change_text?(
-              id,
+            let ui = (self.make_npc_talk_ui)({
+              npcid: id,
               msgtype,
-              b0,
-              b1,
-              speaker,
-              str,
-              (self.get_player_name)(),
-            )
-            .unwrap()
+              style_b0: b0,
+              style_b1: b1,
+              speakerbyte: speaker,
+              tx: str,
+              player_name: (self.get_player_name)(),
+            })
+            self.container.add_ui(ui, UINpcTalk::const_focused())
           }
           None => ()
         }

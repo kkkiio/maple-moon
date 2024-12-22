@@ -1,3 +1,4 @@
+///|
 struct MapPortals {
   map_portals_animations : MapPortalAnimations
   portals_by_id : @immut/sorted_map.T[Int, Portal]
@@ -5,12 +6,15 @@ struct MapPortals {
   mut cooldown : Int
 }
 
+///|
 let warpcd : Int = 48
 
+///|
 struct MapPortalAnimations {
   animations : @immut/sorted_map.T[PortalType, @graphics.Animation]
 }
 
+///|
 pub fn MapPortals::load(
   src : NxNode,
   mapid : Int,
@@ -25,7 +29,7 @@ pub fn MapPortals::load(
       let name = sub["pn"].get_string()
       let target_name = sub["tn"].get_string()
       let target_id = sub["tm"].get_int?().unwrap()
-      let position = Point::new(
+      let position = @struct.Point::new(
         sub["x"].get_int?().unwrap(),
         sub["y"].get_int?().unwrap(),
       )
@@ -48,6 +52,7 @@ pub fn MapPortals::load(
   }
 }
 
+///|
 pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
   self.map_portals_animations.animations[PortalType::REGULAR]
   .unwrap()
@@ -68,27 +73,31 @@ pub fn update(self : MapPortals, playerpos : Point[Int]) -> Unit {
   }
 }
 
+///|
 pub fn draw(self : MapPortals, viewpos : Point[Int], inter : Double) -> Unit {
   self.portals_by_id.each(fn(_k, portal) { portal.draw(viewpos, inter) })
 }
 
+///|
 pub fn get_portal_by_id(self : MapPortals, portal_id : Int) -> Point[Int] {
   match self.portals_by_id[portal_id] {
-    Some(portal) => portal.get_position() - Point::new(0, 30)
-    None => Point::default()
+    Some(portal) => portal.get_position() - @struct.Point::new(0, 30)
+    None => @struct.Point::default()
   }
 }
 
+///|
 pub fn get_portal_by_name(
   self : MapPortals,
   portal_name : String
 ) -> Point[Int] {
   match self.portal_ids_by_name[portal_name] {
     Some(portal_id) => self.get_portal_by_id(portal_id)
-    None => Point::default()
+    None => @struct.Point::default()
   }
 }
 
+///|
 pub fn find_warp_at(
   self : MapPortals,
   playerpos : Point[Int]
@@ -107,25 +116,23 @@ pub fn find_warp_at(
   PortalWarpInfo::default()
 }
 
+///|
 pub fn MapPortalAnimations::load() -> @utils.Future[MapPortalAnimations] {
   map_helper_loader
   .load_res(["portal", "game", "ph", "default", "portalContinue"])
   .combine(map_helper_loader.load_res(["portal", "game", "pv"]))
-  .map(
-    fn(it) {
-      let (src1, src2) = it
-      {
-        animations: @immut/sorted_map.from_array(
-          [
-            (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
-            (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
-          ],
-        ),
-      }
-    },
-  )
+  .map(fn(it) {
+    let (src1, src2) = it
+    {
+      animations: @immut/sorted_map.from_array([
+        (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
+        (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
+      ]),
+    }
+  })
 }
 
+///|
 let map_helper_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "maphelper",
 )

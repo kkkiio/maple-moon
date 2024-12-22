@@ -1,7 +1,4 @@
 ///|
-typealias Point[T] = @struct.Point[T]
-
-///|
 enum UILoginButtons {
   BT_LOGIN
   BT_REGISTER
@@ -54,9 +51,14 @@ struct UILogin {
 }
 
 ///|
-pub fn UILogin::new(login_module : @login.Module) -> UILogin {
-  let map = login_module.get_login_img()
-  let pretty_logo = login_module.get_pretty_logo()
+typealias Point[T] = @struct.Point[T]
+
+///|
+pub fn UILogin::new(
+  mod : Module,
+  map : @resource.NxNode,
+  pretty_logo : @resource.NxNode
+) -> UILogin {
   let back = map["back"]
   let ani = map["ani"]
   let title = @ui.common_ui_loader().load_res(["Login.img", "Title"])
@@ -96,7 +98,7 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
     ),
   ]
   let obj = {
-    base: @ui.UIModel::new(Point::new(0, 0), Point::new(800, 600)),
+    base: @ui.UIModel::new(Point::new(0, 0), @struct.Point::new(800, 600)),
     sprites,
     buttons: Map::new(),
     saveid: false,
@@ -114,31 +116,31 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
 
   // obj.base.buttons[UILoginButtons::BT_LOGIN.int_value()] = MapleButton::new(
   //   title["BtLogin"],
-  //   Point::new(454, 279),
+  //   @struct.Point::new(454, 279),
   // )
   // obj.base.buttons[UILoginButtons::BT_SAVEID.int_value()] = MapleButton::new(
   //   title["BtLoginIDSave"],
-  //   Point::new(303, 332),
+  //   @struct.Point::new(303, 332),
   // )
   // obj.base.buttons[UILoginButtons::BT_IDLOST.int_value()] = MapleButton::new(
   //   title["BtLoginIDLost"],
-  //   Point::new(375, 332),
+  //   @struct.Point::new(375, 332),
   // )
   // obj.base.buttons[UILoginButtons::BT_PASSLOST.int_value()] = MapleButton::new(
   //   title["BtPasswdLost"],
-  //   Point::new(447, 332),
+  //   @struct.Point::new(447, 332),
   // )
   // obj.base.buttons[UILoginButtons::BT_REGISTER.int_value()] = MapleButton::new(
   //   title["BtNew"],
-  //   Point::new(291, 352),
+  //   @struct.Point::new(291, 352),
   // )
   // obj.base.buttons[UILoginButtons::BT_HOMEPAGE.int_value()] = MapleButton::new(
   //   title["BtHomePage"],
-  //   Point::new(363, 352),
+  //   @struct.Point::new(363, 352),
   // )
   // obj.base.buttons[UILoginButtons::BT_QUIT.int_value()] = MapleButton::new(
   //   title["BtQuit"],
-  //   Point::new(435, 352),
+  //   @struct.Point::new(435, 352),
   // )
 
   // obj.checkbox[false] = title["check"]["0"]
@@ -168,7 +170,7 @@ pub fn UILogin::new(login_module : @login.Module) -> UILogin {
   // } else {
   //   obj.account.set_state(Textfield::State::FOCUSED)
   // }
-  login_module.login("kkkiio", "kkkiio") // TODO: allow select account
+  mod.login("kkkiio", "kkkiio") // TODO: allow select account
   obj
 }
 
@@ -178,22 +180,14 @@ pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
 }
 
 ///|
-pub fn draw(self : UILogin, alpha : Double) -> Unit {
-  @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
+impl @ui.UIElement for UILogin with render(self) -> @ui.RuntimeState {
+  let sprites = self.sprites
+  let buttons = []
+  fn draw(alpha : Double) -> Unit {
+    @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
+  }
 
-  // self.version.draw(self.position + Point[Int](707, 1))
-  // self.account.draw(self.position)
-  // self.password.draw(self.position)
-
-  // if self.account.get_state() == Textfield::State::NORMAL && self.account.empty() {
-  //   self.accountbg.draw(DrawArgument(self.position + Point[Int](291, 279)))
-  // }
-
-  // if self.password.get_state() == Textfield::State::NORMAL && self.password.empty() {
-  //   self.passwordbg.draw(DrawArgument(self.position + Point[Int](291, 305)))
-  // }
-
-  // self.checkbox[self.saveid].draw(DrawArgument(self.position + Point[Int](291, 335)))
+  { buttons, draw_fn: fn(alpha) { draw(alpha) }, sprites }
 }
 
 ///|
@@ -223,11 +217,11 @@ pub fn update(self : UILogin) -> Unit {
 // }
 
 ///|
-pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
+pub fn button_pressed(self : UILogin, id : Int) -> @ui.ButtonState {
   match UILoginButtons::from_int(id) {
     Some(UILoginButtons::BT_LOGIN) =>
       // self.login()
-      ButtonState::NORMAL
+      @ui.ButtonState::NORMAL
     // UILoginButtons::BT_REGISTER | UILoginButtons::BT_HOMEPAGE | UILoginButtons::BT_PASSLOST | UILoginButtons::BT_IDLOST => {
     //   self.open_url(id)
     //   ButtonState::NORMAL
@@ -235,12 +229,12 @@ pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
     Some(UILoginButtons::BT_SAVEID) => {
       self.saveid = self.saveid.not()
       // Setting::get(configSaveLogin).save(self.saveid)
-      ButtonState::MOUSEOVER
+      @ui.ButtonState::MOUSEOVER
     }
     Some(UILoginButtons::BT_QUIT) =>
       // UI::get().quit()
-      ButtonState::PRESSED
-    _ => ButtonState::NORMAL
+      @ui.ButtonState::PRESSED
+    _ => @ui.ButtonState::NORMAL
   }
 }
 
@@ -248,7 +242,7 @@ pub fn button_pressed(self : UILogin, id : Int) -> ButtonState {
 pub fn send_cursor(
   self : UILogin,
   clicked : Bool,
-  cursor_pos : Point[Int]
+  cursor_pos : @struct.Point[Int]
 ) -> @ui.CursorState {
   // match self.account.send_cursor(cursor_pos, clicked) {
   //   Some(new_state) => return new_state
@@ -268,8 +262,8 @@ pub fn send_cursor(
 }
 
 ///|
-pub fn UILogin::const_type() -> UIElementType {
-  UIElementType::LOGIN
+pub fn UILogin::const_type() -> @ui.UIElementType {
+  @ui.UIElementType::LOGIN
 }
 
 ///|

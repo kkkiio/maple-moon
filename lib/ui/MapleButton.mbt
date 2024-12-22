@@ -1,14 +1,16 @@
-/// A standard maplestory-button with 4 states and a texture for each state.
-pub struct MapleButton {
+///| A standard maplestory-button with 4 states and a texture for each state.
+pub(all) struct MapleButton {
   base : ButtonModel
   textures : @immut/hashmap.T[ButtonState, @graphics.Texture]
   animations : @immut/hashmap.T[ButtonState, @graphics.Animation]
 }
 
+///|
 pub fn get_button_base(self : MapleButton) -> ButtonModel {
   self.base
 }
 
+///|
 pub fn send_cursor(
   self : MapleButton,
   _b : Bool,
@@ -17,9 +19,10 @@ pub fn send_cursor(
   CursorState::IDLE
 }
 
+///|
 pub fn MapleButton::from_resource(
   src : @resource.NxNode,
-  ~pos : Point[Int] = Point::default()
+  pos~ : Point[Int] = @struct.Point::default()
 ) -> MapleButton {
   let base = ButtonModel::default()
   let normal = src["normal"]
@@ -51,6 +54,7 @@ pub fn MapleButton::from_resource(
   }
 }
 
+///|
 pub fn MapleButton::from_resource_with_x_y(
   src : @resource.NxNode,
   x : Int,
@@ -59,6 +63,7 @@ pub fn MapleButton::from_resource_with_x_y(
   MapleButton::from_resource(src, pos=Point::new(x, y))
 }
 
+///|
 pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
     match self.textures[self.base.state] {
@@ -79,6 +84,7 @@ pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
   }
 }
 
+///|
 pub fn update(self : MapleButton) -> Unit {
   if self.base.active {
     match self.animations[self.base.state] {
@@ -88,6 +94,7 @@ pub fn update(self : MapleButton) -> Unit {
   }
 }
 
+///|
 pub fn bounds(
   self : MapleButton,
   parentpos : Point[Int]
@@ -104,6 +111,7 @@ pub fn bounds(
   @struct.Rectangle::new(lt, rb)
 }
 
+///|
 pub fn width(self : MapleButton) -> Int {
   match self.textures[self.base.state] {
     Some(texture) => texture.width()
@@ -111,9 +119,10 @@ pub fn width(self : MapleButton) -> Int {
   }
 }
 
+///|
 pub fn origin(self : MapleButton) -> Point[Int] {
   match self.textures[self.base.state] {
     Some(texture) => texture.get_origin()
-    None => Point::default()
+    None => @struct.Point::default()
   }
 }

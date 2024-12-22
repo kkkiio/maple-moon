@@ -358,7 +358,7 @@ fn extract_effects(
     }
     if result.damage_lines.is_empty() { // TODO: what does this mean?
       let xshift = if result.toleft { -400 } else { 400 }
-      let target = user.get_position() + Point::new(xshift, -26)
+      let target = user.get_position() + @struct.Point::new(xshift, -26)
       for i in 0..<result.hitcount {
         let effect : DamageEffect = {
           user: attack_user,

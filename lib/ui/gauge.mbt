@@ -1,8 +1,10 @@
-pub enum GaugeType {
+///|
+pub(all) enum GaugeType {
   GAME
   CASHSHOP
 }
 
+///|
 struct Gauge {
   t : GaugeType
   bar_front : @graphics.Texture
@@ -14,6 +16,7 @@ struct Gauge {
   mut step : Double
 }
 
+///|
 pub fn Gauge::new(
   t : GaugeType,
   front : @graphics.Texture,
@@ -32,6 +35,7 @@ pub fn Gauge::new(
   }
 }
 
+///|
 pub fn Gauge::new_with_mid(
   t : GaugeType,
   front : @graphics.Texture,
@@ -51,6 +55,7 @@ pub fn Gauge::new_with_mid(
   }
 }
 
+///|
 pub fn Gauge::new_with_mid_end(
   t : GaugeType,
   front : @graphics.Texture,
@@ -71,6 +76,7 @@ pub fn Gauge::new_with_mid_end(
   }
 }
 
+///|
 pub fn draw(self : Gauge, args : @graphics.DrawArgument) -> Unit {
   let length = (self.percentage * self.maximum.to_double()).to_int()
   if length > 0 {
@@ -87,15 +93,18 @@ pub fn draw(self : Gauge, args : @graphics.DrawArgument) -> Unit {
         self.bar_end.draw(args.add_pos(Point::new(length + 8, 20)))
       }
       GaugeType::CASHSHOP => {
-        let pos_adj = Point::new(45, 1)
+        let pos_adj = @struct.Point::new(45, 1)
         self.bar_front.draw(args.add_pos(-pos_adj))
         self.bar_mid.draw(
           args +
-          @graphics.DrawArgument::new4(Point::new(0, 0), Point::new(length, 0)),
+          @graphics.DrawArgument::new4(
+            Point::new(0, 0),
+            @struct.Point::new(length, 0),
+          ),
         )
         self.bar_end.draw(
           args.add_pos(
-            -pos_adj + Point::new(length + self.bar_front.width(), 0),
+            -pos_adj + @struct.Point::new(length + self.bar_front.width(), 0),
           ),
         )
       }
@@ -103,6 +112,7 @@ pub fn draw(self : Gauge, args : @graphics.DrawArgument) -> Unit {
   }
 }
 
+///|
 pub fn update(self : Gauge, t : Double) -> Unit {
   if self.target != t {
     self.target = t

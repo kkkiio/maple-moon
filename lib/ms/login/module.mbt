@@ -3,6 +3,8 @@ struct Module {
   processor : @net.PacketProcessor
   login_img : @resource.NxNode
   pretty_logo : @resource.NxNode
+  ui_container : &@ui.Container
+  char_look_module : @char_look.Module
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World]
@@ -14,7 +16,11 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(processor : @net.PacketProcessor) -> @utils.Future[Module] {
+pub fn Module::load(
+  processor : @net.PacketProcessor,
+  ui_container : &@ui.Container,
+  char_look_module : @char_look.Module
+) -> @utils.Future[Module] {
   map001_loader
   .load_res(["Back", "login.img"])
   .combine(map_pretty_loader.load_res(["Back", "login.img", "ani", "16"]))
@@ -24,6 +30,8 @@ pub fn Module::load(processor : @net.PacketProcessor) -> @utils.Future[Module] {
       processor,
       login_img,
       pretty_logo,
+      ui_container,
+      char_look_module,
       characters: [],
       selected_index: None,
       receiving_server_list: [],
@@ -335,15 +343,29 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
   recv.read_int!() |> ignore // slots
   if characters.length() > 0 {
     match pic {
-      2 => {
-        let cid = match mod.select_cid {
-          Some(cid) => cid
-          None => characters[0].id
+      2 =>
+        match mod.select_cid {
+          Some(cid) => {
+            let packet = new_select_char_packet(cid)
+            mod.processor.send_packet(packet)
+          }
+          None => {
+            mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
+            mod.ui_container.add_ui(
+              @ui.Element::new(
+                fn(hooks) {
+                  SelectCharUI::new({
+                    char_look_module: mod.char_look_module,
+                    characters: mod.characters,
+                    set_selected_cid: fn(cid) { mod.select_cid = Some(cid) },
+                  })
+                },
+                @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
+              ),
+              false,
+            )
+          }
         }
-        mod.select_cid = Some(cid)
-        let packet = new_select_char_packet(cid)
-        mod.processor.send_packet(packet)
-      }
       _ => fail!("pic=\{pic} not ok")
     }
   } else {
@@ -524,13 +546,14 @@ fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
   stats.set(@maple_stat.Id::MAXMP, recv.read_ushort!())
   stats.set(@maple_stat.Id::AP, recv.read_ushort!())
   stats.set(@maple_stat.Id::SP, recv.read_ushort!())
-  let exp = recv.read_uint!()
+  let i64stats = {}
+  i64stats.set(@maple_stat.Id::EXP, recv.read_uint!().to_int64())
   stats.set(@maple_stat.Id::FAME, recv.read_short!())
   recv.skip!(4) // gachaexp
   let mapid = recv.read_int!()
   let portal = recv.read_ubyte!()
   recv.skip!(4) // timestamp
-  { name, exp: exp.to_int64(), female, stats, mapid, portal }
+  { name, female, stats, i64stats, mapid, portal }
 }
 
 ///|
@@ -626,13 +649,11 @@ pub fn update(self : Module) -> Unit {
 }
 
 ///|
-pub fn get_login_img(self : Module) -> @resource.NxNode {
-  self.login_img
-}
-
-///|
-pub fn get_pretty_logo(self : Module) -> @resource.NxNode {
-  self.pretty_logo
+pub fn new_login_ui(self : Module) -> @ui.Element {
+  @ui.Element::new(
+    fn(hooks) { UILogin::new(self, self.login_img, self.pretty_logo) },
+    @ui.UIElementType::LOGIN,
+  )
 }
 
 ///|

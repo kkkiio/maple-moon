@@ -56,6 +56,7 @@ struct RenderState {
   book_text : @graphics.Text
   sp_label : @graphics.Text
   skills : Array[SkillDrawState]
+  resources : Resources
 }
 
 ///|
@@ -75,6 +76,7 @@ fn draw(self : SkillDrawState, args : @graphics.DrawArgument) -> Unit {
 
 ///|
 struct SkillBookUI {
+  hooks : @ui.Hooks
   logic_state : LogicState
   resources : Resources
   mut render_state : RenderState?
@@ -91,7 +93,8 @@ pub(all) struct Attributes {
 ///|
 fn SkillBookUI::new(
   attrs : Attributes,
-  skill : @resource.NxNode
+  skill : @resource.NxNode,
+  hooks : @ui.Hooks
 ) -> SkillBookUI {
   let main = skill["main"]
   let ui_backgrnd = main["backgrnd"]
@@ -153,6 +156,7 @@ fn SkillBookUI::new(
     tab: 0,
   }
   {
+    hooks,
     logic_state: render_state,
     resources: {
       sprites,
@@ -195,13 +199,11 @@ fn render(
           @ui.ButtonState::NORMAL
         },
       )
-      |> @ui.Button::new(
-        on_click=fn() {
-          self.tab = i
-          on_state_changed()
-          @ui.ButtonState::PRESSED
-        },
-      ),
+      |> @ui.Button::new(on_click=fn() {
+        self.tab = i
+        on_state_changed()
+        @ui.ButtonState::PRESSED
+      }),
     )
   }
   let selected_level = joblevel_by_tab(self.tab)
@@ -243,14 +245,12 @@ fn render(
       overhang += 1
       name_text.change_text(namestr)
     }
-    skills.push(
-      {
-        name_text,
-        level_text,
-        icon,
-        id: @skill.SkillId::from_int?(skill_id).unwrap(), // TODO: handle error
-      },
-    )
+    skills.push({
+      name_text,
+      level_text,
+      icon,
+      id: @skill.SkillId::from_int?(skill_id).unwrap(), // TODO: handle error
+    })
   }
   let subid = job.get_subjob(selected_level)
   let data = job.get_data_by_id(subid)
@@ -301,33 +301,27 @@ fn render(
     }
     buttons.push(
       btn
-      |> @ui.Button::new(
-        on_click=fn() {
-          new_spend_sp_packet(skills[i].id.int_value()).dispatch() // TODO: send after confirm
-          @ui.ButtonState::NORMAL
-        },
-      ),
+      |> @ui.Button::new(on_click=fn() {
+        new_spend_sp_packet(skills[i].id.int_value()).dispatch() // TODO: send after confirm
+        @ui.ButtonState::NORMAL
+      }),
     )
   }
   buttons.push(
     self.btn_close
-    |> @ui.Button::new(
-      on_click=fn() {
-        model.active = false
-        @ui.ButtonState::NORMAL
-      },
-    ),
+    |> @ui.Button::new(on_click=fn() {
+      model.active = false
+      @ui.ButtonState::NORMAL
+    }),
   )
-  let skills = skills.map(
-    fn(meta) {
-      {
-        name_text: meta.name_text,
-        level_text: meta.level_text,
-        icon: meta.icon,
-        enabled: check_required(self.attrs.skillbook, meta.id.int_value()),
-      }
-    },
-  )
+  let skills = skills.map(fn(meta) {
+    {
+      name_text: meta.name_text,
+      level_text: meta.level_text,
+      icon: meta.icon,
+      enabled: check_required(self.attrs.skillbook, meta.id.int_value()),
+    }
+  })
   {
     model,
     sprites: resources.sprites,
@@ -336,7 +330,14 @@ fn render(
     sp_label,
     skills,
     buttons,
+    resources,
   }
+}
+
+///|
+impl @ui.UIElement for SkillBookUI with render(self) -> @ui.RuntimeState {
+  let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
+  { buttons: rs.buttons, draw_fn: fn(alpha) { rs.draw(alpha) }, sprites: [] }
 }
 
 ///|
@@ -344,10 +345,9 @@ fn use_render_state(self : SkillBookUI) -> RenderState {
   match self.render_state {
     Some(ds) => ds
     None => {
-      let state = self.logic_state.render(
-        self.resources,
-        fn() { self.render_state = None },
-      )
+      let state = self.logic_state.render(self.resources, fn() {
+        self.render_state = None
+      })
       self.render_state = Some(state)
       state
     }
@@ -355,9 +355,9 @@ fn use_render_state(self : SkillBookUI) -> RenderState {
 }
 
 ///|
-pub fn draw(self : SkillBookUI, alpha : Double) -> Unit {
-  let draw_state = use_render_state(self)
-  let resources = self.resources
+pub fn draw(self : RenderState, alpha : Double) -> Unit {
+  let draw_state = self
+  let resources = draw_state.resources
   let model = draw_state.model
   @ui.draw_sprites(draw_state.sprites.iter(), model.position, alpha)
   draw_state.book_icon.draw(
@@ -524,16 +524,12 @@ let beginner_skills : FixedArray[@skill.SkillId] = [
 
 ///|
 fn enumerate[T](iter : Iter[T]) -> Iter2[Int, T] {
-  Iter2::new(
-    fn(yield_) {
-      let mut i = 0
-      iter.run(
-        fn(item) {
-          let res = yield_(i, item)
-          i += 1
-          res
-        },
-      )
-    },
-  )
+  Iter2::new(fn(yield_) {
+    let mut i = 0
+    iter.run(fn(item) {
+      let res = yield_(i, item)
+      i += 1
+      res
+    })
+  })
 }

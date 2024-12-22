@@ -1,4 +1,4 @@
-/// Represents an obj (map decoration) on a map.
+///| Represents an obj (map decoration) on a map.
 struct Obj {
   animation : @graphics.Animation
   pos : Point[Int]
@@ -6,6 +6,7 @@ struct Obj {
   flip : Bool
 }
 
+///|
 pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
   match src.value() {
     {
@@ -21,19 +22,22 @@ pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
   }
 }
 
+///|
 fn Obj::from_resource(src : NxNode, obj_src : NxNode) -> Obj! {
   {
     animation: @graphics.Animation::from_resource_ex!(obj_src),
-    pos: Point::new(src["x"].get_int!(), src["y"].get_int!()),
+    pos: @struct.Point::new(src["x"].get_int!(), src["y"].get_int!()),
     flip: src["f"].get_bool!(),
     z: src["z"].get_int!(),
   }
 }
 
+///|
 pub fn update(self : Obj) -> Unit {
   self.animation.update() |> ignore
 }
 
+///|
 pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
   self.animation.draw(
     @graphics.DrawArgument::new(self.pos + viewpos, flip=self.flip),
@@ -41,8 +45,10 @@ pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
   )
 }
 
+///|
 pub fn get_z(self : Obj) -> Int {
   self.z
 }
 
+///|
 let object_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("obj")

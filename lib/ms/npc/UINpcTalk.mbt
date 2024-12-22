@@ -2,15 +2,13 @@
 typealias ButtonState = @ui.ButtonState
 
 ///|
-typealias CursorState = @ui.CursorState
-
-///|
 typealias UIElementType = @ui.UIElementType
 
 ///|
 struct UINpcTalk {
+  hooks : @ui.Hooks
   base : @ui.UIModel
-  buttons : Map[Int, @ui.UIButton]
+  buttons : Array[@ui.UIButton]
   top : @graphics.Texture
   fill : @graphics.Texture
   bottom : @graphics.Texture
@@ -102,7 +100,8 @@ let bid_text_button = 15
 ///|
 fn UINpcTalk::new(
   util_dlg_ex : @resource.NxNode,
-  quest : @resource.NxNode
+  quest : @resource.NxNode,
+  hooks : @ui.Hooks
 ) -> UINpcTalk {
   let base = @ui.UIModel::new(
     @struct.Point::default(),
@@ -119,7 +118,7 @@ fn UINpcTalk::new(
   let bottom = @graphics.Texture::from_resource(util_dlg_ex["s"])
   let nametag = @graphics.Texture::from_resource(util_dlg_ex["bar"])
   let min_height = 8 * fill.height() + 14
-  let buttons : Map[Int, @ui.UIButton] = Map::new()
+  let buttons : Array[@ui.UIButton] = Array::new()
   buttons[bid_all_level] = @ui.MapleButton::from_resource(
     util_dlg_ex["BtAllLevel"],
   )
@@ -148,6 +147,7 @@ fn UINpcTalk::new(
     max_width=nametag.width(),
   )
   {
+    hooks,
     base,
     buttons,
     offset,
@@ -175,76 +175,81 @@ pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
 }
 
 ///|
-pub fn draw(self : UINpcTalk, _inter : Double) -> Unit {
-  let mut drawpos = self.base.position
-  self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
-  drawpos = drawpos.shift_y(self.top.height())
-  self.fill.draw(
-    @graphics.DrawArgument::new4(drawpos, @struct.Point::new(0, self.height)),
-  )
-  drawpos = drawpos.shift_y(self.height)
-  self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
-  drawpos = drawpos.shift_y(self.bottom.height())
-  for _, button in self.buttons {
-    button.draw(self.base.position)
+impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RuntimeState {
+  let buttons = self.buttons
+  fn draw() -> Unit {
+    let mut drawpos = self.base.position
+    self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
+    drawpos = drawpos.shift_y(self.top.height())
+    self.fill.draw(
+      @graphics.DrawArgument::new4(drawpos, @struct.Point::new(0, self.height)),
+    )
+    drawpos = drawpos.shift_y(self.height)
+    self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
+    drawpos = drawpos.shift_y(self.bottom.height())
+    for _, button in buttons {
+      button.draw(self.base.position)
+    }
+    let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
+    let speaker_pos = self.base.position +
+      @struct.Point::new(22, 11 + speaker_y)
+    let center_pos = speaker_pos +
+      @struct.Point::new(self.nametag.width() / 2, 0)
+    self.speaker.draw(@graphics.DrawArgument::new14(center_pos, true))
+    self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
+    self.name.draw(center_pos + @struct.Point::new(0, -4))
+    match self.content {
+      Some(content) =>
+        if self.show_slider {
+          let text_min_height = self.base.position.y + self.top.height() - 1
+          let mut init_height = 19
+          for element in content.text_content {
+            element.draw(
+              self.base.position +
+              @struct.Point::new(162, init_height - self.offset * 248),
+              text_y_clip=@struct.Range::new(
+                  text_min_height,
+                  text_min_height + self.height,
+                )
+                |> @option.some,
+            )
+            init_height += element.height()
+          }
+          for element in content.text_button_content {
+            element.draw_in_range(
+              self.base.position +
+              @struct.Point::new(162, init_height - self.offset * 248),
+              @struct.Range::new(text_min_height, text_min_height + self.height),
+            )
+            init_height += element.height()
+          }
+          // TODO: draw slider
+        } else {
+          let mut init_height = 19
+          for element in content.text_content {
+            element.draw(
+              self.base.position + @struct.Point::new(166, init_height),
+            )
+            init_height += element.height()
+          }
+          for element in content.text_button_content {
+            element.draw(
+              self.base.position + @struct.Point::new(166, init_height),
+            )
+            init_height += element.height()
+          }
+        }
+      None => ()
+    }
   }
-  let speaker_y = (self.top.height() + self.height + self.bottom.height()) / 2
-  let speaker_pos = self.base.position + @struct.Point::new(22, 11 + speaker_y)
-  let center_pos = speaker_pos + @struct.Point::new(self.nametag.width() / 2, 0)
-  self.speaker.draw(@graphics.DrawArgument::new14(center_pos, true))
-  self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
-  self.name.draw(center_pos + @struct.Point::new(0, -4))
-  match self.content {
-    Some(content) =>
-      if self.show_slider {
-        let text_min_height = self.base.position.y + self.top.height() - 1
-        let mut init_height = 19
-        for element in content.text_content {
-          element.draw(
-            self.base.position +
-            @struct.Point::new(162, init_height - self.offset * 248),
-            text_y_clip=@struct.Range::new(
-                text_min_height,
-                text_min_height + self.height,
-              )
-              |> @option.some,
-          )
-          init_height += element.height()
-        }
-        for element in content.text_button_content {
-          element.draw_in_range(
-            self.base.position +
-            @struct.Point::new(162, init_height - self.offset * 248),
-            @struct.Range::new(text_min_height, text_min_height + self.height),
-          )
-          init_height += element.height()
-        }
-        // TODO: draw slider
-      } else {
-        let mut init_height = 19
-        for element in content.text_content {
-          element.draw(
-            self.base.position + @struct.Point::new(166, init_height),
-          )
-          init_height += element.height()
-        }
-        for element in content.text_button_content {
-          element.draw(
-            self.base.position + @struct.Point::new(166, init_height),
-          )
-          init_height += element.height()
-        }
-      }
-    None => ()
-  }
-}
 
-///|
-pub fn update(self : UINpcTalk) -> Unit {
-  for _, button in self.buttons {
-    button.update()
+  {
+    draw_fn: fn(_alpha) { draw() },
+    buttons: buttons.mapi(fn(i, btn) {
+      @ui.Button::new(btn, on_click=fn() { self.button_pressed(i) })
+    }),
+    sprites: [],
   }
-  // TODO: show text gradually when open NPC dialog
 }
 
 ///|
@@ -306,6 +311,7 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
     Some(content) =>
       for _, element in content.text_button_content {
         self.buttons.remove(bid_text_button + element.get_option_number())
+        |> ignore
       }
     None => ()
   }
@@ -313,38 +319,38 @@ fn button_pressed(self : UINpcTalk, bid : Int) -> ButtonState {
 }
 
 ///|
-pub fn send_cursor(
-  self : UINpcTalk,
-  clicked : Bool,
-  cursorpos : @struct.Point[Int]
-) -> CursorState {
-  // TODO: check slider
-  let estate = @ui.send_cursor_to_buttons(
-    self.buttons.iter2(),
-    self.base.position,
-    fn(bid) { self.button_pressed(bid) },
-    clicked,
-    cursorpos,
-  )
-  if estate == CursorState::CLICKING && clicked {
-    match self.content {
-      Some(content) =>
-        for element in content.text_button_content.iter() {
-          if element.bounds(self.base.position).contains(cursorpos) {
-            self.button_pressed(bid_text_button + element.get_option_number())
-            |> ignore
-            break
-          }
-        }
-      None => ()
-    }
-  }
-  estate
-}
+// pub fn send_cursor(
+//   self : UINpcTalk,
+//   clicked : Bool,
+//   cursorpos : @struct.Point[Int]
+// ) -> CursorState {
+//   // TODO: check slider
+//   let estate = @ui.send_cursor_to_buttons(
+//     self.buttons.iter2(),
+//     self.base.position,
+//     fn(bid) { self.button_pressed(bid) },
+//     clicked,
+//     cursorpos,
+//   )
+//   if estate == CursorState::CLICKING && clicked {
+//     match self.content {
+//       Some(content) =>
+//         for element in content.text_button_content.iter() {
+//           if element.bounds(self.base.position).contains(cursorpos) {
+//             self.button_pressed(bid_text_button + element.get_option_number())
+//             |> ignore
+//             break
+//           }
+//         }
+//       None => ()
+//     }
+//   }
+//   estate
+// }
 
 ///|
 pub fn remove_cursor(self : UINpcTalk) -> Unit {
-  @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
+  @ui.remove_cursor(self.buttons.iter().map(fn(b) { b.get_button_base() }))
 }
 
 ///|
@@ -362,6 +368,17 @@ pub fn send_key(
       }
     None => ()
   }
+}
+
+///|
+struct Attributes {
+  npcid : Int
+  msgtype : Int
+  style_b0 : Int
+  style_b1 : Int
+  speakerbyte : Int
+  tx : String
+  player_name : String
 }
 
 ///|
@@ -406,7 +423,6 @@ pub fn change_text(
   }
   let y_cord = self.height + 48
   self.buttons[bid_close]
-  .unwrap()
   .get_button_base()
   ..set_position(@struct.Point::new(9, y_cord))
   .set_active(true)
@@ -415,55 +431,46 @@ pub fn change_text(
       match t {
         TalkType::SEND_OK =>
           self.buttons[bid_ok]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(469, y_cord))
           .set_active(true)
         TalkType::SEND_YESNO => {
           let yes_position = @struct.Point::new(389, y_cord)
           self.buttons[bid_yes]
-          .unwrap()
           .get_button_base()
           ..set_position(yes_position)
           .set_active(true)
           self.buttons[bid_no]
-          .unwrap()
           .get_button_base()
           ..set_position(yes_position + @struct.Point::new(65, 0))
           .set_active(true)
         }
         TalkType::SEND_NEXT =>
           self.buttons[bid_next]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
         TalkType::SEND_PREV =>
           self.buttons[bid_prev]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         TalkType::SEND_NEXT_PREV => {
           self.buttons[bid_next]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(461, y_cord - 30))
           .set_active(true)
           self.buttons[bid_prev]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(367, y_cord))
           .set_active(true)
         }
         TalkType::SEND_ACCEPT_DECLINE => {
           self.buttons[bid_qyes]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(386, y_cord))
           .set_active(true)
           self.buttons[bid_qno]
-          .unwrap()
           .get_button_base()
           ..set_position(@struct.Point::new(451, y_cord))
           .set_active(true)
@@ -477,6 +484,7 @@ pub fn change_text(
     240 - self.height / 2,
   )
   self.base.dimension = @struct.Point::new(self.top.width(), self.height + 120)
+  (self.hooks.on_state_changed)()
 }
 
 ///|
@@ -530,16 +538,18 @@ fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
 ///|
 fn get_map_info_by_id(mapid : Int) -> NxMapInfo {
   let map_category = get_map_category(mapid)
-  let map_info = @resource.string_loader().load_res(
-    ["Map.img", map_category, mapid.to_string()],
-  )
+  let map_info = @resource.string_loader().load_res([
+    "Map.img",
+    map_category,
+    mapid.to_string(),
+  ])
   {
-    description: map_info["mapDesc"].get_string(),
+    // description: map_info["mapDesc"].get_string(),
+    // street_name: map_info["streetName"].get_string(),
+    // full_name: map_info["streetName"].get_string() +
+    // " : " +
+    // map_info["mapName"].get_string(),
     name: map_info["mapName"].get_string(),
-    street_name: map_info["streetName"].get_string(),
-    full_name: map_info["streetName"].get_string() +
-    " : " +
-    map_info["mapName"].get_string(),
   }
 }
 
@@ -588,10 +598,10 @@ fn get_map_category(mapid : Int) -> String {
 
 ///|
 struct NxMapInfo {
-  description : String
+  // description : String
   name : String
-  street_name : String
-  full_name : String
+  // street_name : String
+  // full_name : String
 }
 
 ///|

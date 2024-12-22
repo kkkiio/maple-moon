@@ -3,12 +3,12 @@ struct CharStats {
   name : String
   weapon_type_getter : () -> @weapon.Type
   mut job : @job.Job
-  mut exp : Int64
   mut map_id : Int
   portal : Int
   base_stats : Map[@maple_stat.Id, Int]
-  total_stats : @utils.Counter[@equip_stat.Id]
-  buff_deltas : @utils.Counter[@equip_stat.Id]
+  base_i64stats : Map[@maple_stat.Id, Int64]
+  total_stats : @utils.Counter[@equip_stat.Id, Int]
+  buff_deltas : @utils.Counter[@equip_stat.Id, Int]
   percentages : Map[@equip_stat.Id, Double]
   mut attack_speed : Int
   mut projectile_range : Int
@@ -22,6 +22,7 @@ struct CharStats {
   mut reduce_damage : Double
   female : Bool
   stat_listeners : Map[StatId, Array[(Int, Int) -> Bool]]
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]]
 }
 
 ///|
@@ -29,7 +30,7 @@ pub(all) struct StatsEntry {
   name : String
   female : Bool
   stats : Map[@maple_stat.Id, Int]
-  exp : Int64
+  i64stats : Map[@maple_stat.Id, Int64]
   mapid : Int
   portal : Int
 } derive(Show)
@@ -44,10 +45,10 @@ pub fn CharStats::new(
     name: s.name,
     weapon_type_getter,
     job,
-    exp: s.exp,
     map_id: s.mapid,
     portal: s.portal,
     base_stats: s.stats,
+    base_i64stats: s.i64stats,
     total_stats: @utils.Counter::new(),
     buff_deltas: @utils.Counter::new(),
     percentages: Map::new(),
@@ -63,6 +64,7 @@ pub fn CharStats::new(
     reduce_damage: 0.0,
     female: s.female,
     stat_listeners: {},
+    i64stat_listeners: {},
   }
   cs.init_totalstats()
   cs
@@ -127,6 +129,11 @@ pub fn get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
 }
 
 ///|
+pub fn get_i64stat(self : CharStats, stat : @maple_stat.Id) -> Int64 {
+  self.base_i64stats[stat].or(0)
+}
+
+///|
 pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
   let old_value = self.get_stat(stat)
   self.base_stats.set(stat, value)
@@ -135,6 +142,16 @@ pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
       listeners.retain(fn(listener) { listener(old_value, value) })
     None => ()
   }
+}
+
+///|
+pub fn set_i64stat(
+  self : CharStats,
+  stat : @maple_stat.Id,
+  value : Int64
+) -> Unit {
+  let old_value = self.get_i64stat(stat)
+  self.base_i64stats.set(stat, value)
 }
 
 ///|
@@ -304,12 +321,12 @@ pub fn get_weapon_type(self : CharStats) -> @weapon.Type {
 
 ///|
 pub fn get_exp(self : CharStats) -> Int64 {
-  self.exp
+  self.get_i64stat(@maple_stat.Id::EXP)
 }
 
 ///|
 pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
-  self.exp = exp
+  self.set_i64stat(@maple_stat.Id::EXP, exp)
 }
 
 ///|
@@ -350,4 +367,15 @@ pub fn listen_stat_changes(
   listener : (Int, Int) -> Bool
 ) -> Unit {
   self.stat_listeners.get_or_init(stat_id, fn() { Array::new() }).push(listener)
+}
+
+///|
+pub fn listen_i64stat_changes(
+  self : CharStats,
+  stat_id : @maple_stat.Id,
+  listener : (Int64, Int64) -> Bool
+) -> Unit {
+  self.i64stat_listeners
+  .get_or_init(stat_id, fn() { Array::new() })
+  .push(listener)
 }

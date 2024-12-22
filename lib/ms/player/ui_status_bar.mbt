@@ -108,6 +108,18 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   let position = @struct.Point::new(0, 648)
   let position_x = 585
   let dimension = @struct.Point::new(vwidth - position_x, 75)
+  stats.listen_stat_changes(@maple_stat.Id::EXP, fn(_old, _new) {
+    exp_bar.update(getexppercent(stats))
+    true
+  })
+  stats.listen_stat_changes(@maple_stat.Id::HP, fn(_old, _new) {
+    hp_bar_.update(gethppercent(stats))
+    true
+  })
+  stats.listen_stat_changes(@maple_stat.Id::MP, fn(_old, _new) {
+    mp_bar_.update(getmppercent(stats))
+    true
+  })
   {
     stats,
     base: @ui.UIModel::new(position, dimension),
@@ -129,47 +141,52 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
 }
 
 ///|
-pub fn draw(self : UIStatusBar, alpha : Double) -> Unit {
-  @ui.draw_sprites(self.sprites.iter(), self.base.position, alpha)
-  self.hpmp_sprites[0].draw(self.base.position, alpha)
-  self.exp_bar.draw(
-    self.base.position + self.exp_pos |> @graphics.DrawArgument::new,
-  )
-  self.hp_bar.draw(
-    self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
-  )
-  self.mp_bar.draw(
-    self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
-  )
-  self.hpmp_sprites[1].draw(self.base.position, alpha)
-  self.hpmp_sprites[2].draw(self.base.position, alpha)
-  let exp = self.stats.get_exp()
-  let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
-  self.stat_set.draw_text(
-    "\{exp}[\{exp_precent/100}.\{exp_precent%100}%]",
-    self.base.position + self.statset_pos |> @graphics.DrawArgument::new,
-  )
-  |> ignore
-  let hp = self.stats.get_stat(@maple_stat.Id::HP)
-  let maxhp = self.stats.get_total(@stat.Id::HP)
-  self.hpmp_set.draw_text(
-    "[\{hp}/\{maxhp}]",
-    self.base.position + self.hpset_pos |> @graphics.DrawArgument::new,
-  )
-  |> ignore
-  let mp = self.stats.get_stat(@maple_stat.Id::MP)
-  let maxmp = self.stats.get_total(@stat.Id::MP)
-  self.hpmp_set.draw_text(
-    "[\{mp}/\{maxmp}]",
-    self.base.position + self.mpset_pos |> @graphics.DrawArgument::new,
-  )
-  |> ignore
-  let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
-  self.level_set.draw_text(
-    level.to_string(),
-    self.base.position + self.levelset_pos |> @graphics.DrawArgument::new,
-  )
-  |> ignore
+pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RuntimeState {
+  let sprites = self.sprites
+  fn draw(alpha : Double) -> Unit {
+    @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
+    self.hpmp_sprites[0].draw(self.base.position, alpha)
+    self.exp_bar.draw(
+      self.base.position + self.exp_pos |> @graphics.DrawArgument::new,
+    )
+    self.hp_bar.draw(
+      self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
+    )
+    self.mp_bar.draw(
+      self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
+    )
+    self.hpmp_sprites[1].draw(self.base.position, alpha)
+    self.hpmp_sprites[2].draw(self.base.position, alpha)
+    let exp = self.stats.get_exp()
+    let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
+    self.stat_set.draw_text(
+      "\{exp}[\{exp_precent/100}.\{exp_precent%100}%]",
+      self.base.position + self.statset_pos |> @graphics.DrawArgument::new,
+    )
+    |> ignore
+    let hp = self.stats.get_stat(@maple_stat.Id::HP)
+    let maxhp = self.stats.get_total(@stat.Id::HP)
+    self.hpmp_set.draw_text(
+      "[\{hp}/\{maxhp}]",
+      self.base.position + self.hpset_pos |> @graphics.DrawArgument::new,
+    )
+    |> ignore
+    let mp = self.stats.get_stat(@maple_stat.Id::MP)
+    let maxmp = self.stats.get_total(@stat.Id::MP)
+    self.hpmp_set.draw_text(
+      "[\{mp}/\{maxmp}]",
+      self.base.position + self.mpset_pos |> @graphics.DrawArgument::new,
+    )
+    |> ignore
+    let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
+    self.level_set.draw_text(
+      level.to_string(),
+      self.base.position + self.levelset_pos |> @graphics.DrawArgument::new,
+    )
+    |> ignore
+  }
+
+  { draw_fn: draw, sprites, buttons: [] }
 }
 
 ///|
@@ -178,9 +195,6 @@ pub fn update(self : UIStatusBar) -> Unit {
   for sprite in self.hpmp_sprites {
     sprite.update() |> ignore
   }
-  self.exp_bar.update(getexppercent(self.stats))
-  self.hp_bar.update(gethppercent(self.stats))
-  self.mp_bar.update(getmppercent(self.stats))
 }
 
 ///|

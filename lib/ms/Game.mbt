@@ -84,9 +84,9 @@ fn load_modules(
     }
   }
 
-  let char_look_module = @char_look.Module::load().tap(fn(mod) {
-    merge_stat_handlers(mod.make_stat_handlers())
-  })
+  let char_look_module_f = @char_look.Module::load(fn() {
+    Stage::get().get_player().map(fn(p) { p.char_base.look })
+  }).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(fn() {
     Stage::get().get_player()
@@ -95,7 +95,8 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let login_mod_f = @login.Module::load(processor)
+  let login_mod_f = char_look_module_f
+    .bind(fn(mod) { @login.Module::load(processor, ui, mod) })
     .combine(inventory_module)
     .map(fn(it) {
       let (login_module, inventory_module) = it
@@ -140,15 +141,14 @@ fn load_modules(
     merge_actions(mod.make_actions())
   })
   let shop_mod_f = @shop.Module::load(ui)
-    .combine(char_look_module)
+    .combine(char_look_module_f)
     .map(fn(it) {
       let (mod, char_look_module) = it
       merge_handlers(
-        mod.make_handlers(fn() { char_look_module.get_player_char_look() }, fn(
-
-        ) {
-          Some(Stage::get().get_inventory())
-        }),
+        mod.make_handlers(
+          fn() { Stage::get().get_player().map(fn(p) { p.char_base.look }) },
+          fn() { Some(Stage::get().get_inventory()) },
+        ),
       )
       mod
     })
@@ -244,7 +244,7 @@ fn load_modules(
   let stage_f = map_module
     .combine(inventory_module)
     .combine(npc_module)
-    .combine(char_look_module)
+    .combine(char_look_module_f)
     .combine(drop_module)
     .combine(damage_number_set)
     .combine(@utils.Future::all_of(loading_mods))
@@ -346,10 +346,12 @@ fn setup_game_ui(
 ) -> Unit {
   ui.change_state(UIStateGame::new(ui, registry, timer))
   let stats = player.get_stats()
-  let stats_bar = @player.UIStatusBar::new(stats)
   ui.set_element(
     false,
-    @ui.Element::new(stats_bar, @ui.UIElementType::STATUS_BAR),
+    @ui.Element::new(
+      fn(hooks) { @player.UIStatusBar::new(stats) },
+      @ui.UIElementType::STATUS_BAR,
+    ),
   )
 }
 

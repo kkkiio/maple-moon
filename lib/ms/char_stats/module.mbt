@@ -31,8 +31,16 @@ pub fn make_actions(
       @action.Descriptor::UI(key=@ui.UIElementType::STATS_INFO, focused=false, make_element=fn(
 
       ) {
-        UIStatsInfo::new((self.char_stats_getter)().unwrap(), self.stat)
-        |> @ui.Element::new(@ui.UIElementType::STATS_INFO)
+        @ui.Element::new(
+          fn(hooks) {
+            UIStatsInfo::new(
+              (self.char_stats_getter)().unwrap(),
+              self.stat,
+              hooks,
+            )
+          },
+          @ui.UIElementType::STATS_INFO,
+        )
       }),
     ),
   ]

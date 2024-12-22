@@ -30,7 +30,7 @@ fn Camera::new() -> Camera {
 }
 
 ///|
-pub fn update(self : Camera, position : Point[Int]) -> Unit {
+pub fn update(self : Camera, position : @struct.Point[Int]) -> Unit {
   let mut next_x = self.x.get()
   let hdelta = (self.vwidth / 2 - position.x).to_double() - next_x
   if hdelta.abs() >= 5.0 {
@@ -59,7 +59,10 @@ pub fn update(self : Camera, position : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn Camera::set_position(self : Camera, position : Point[Int]) -> Unit {
+pub fn Camera::set_position(
+  self : Camera,
+  position : @struct.Point[Int]
+) -> Unit {
   self.x.set((self.vwidth / 2 - position.x).to_double())
   self.y.set((self.vheight / 2 - position.y + y_offset).to_double())
 }
@@ -75,13 +78,19 @@ pub fn set_view(
 }
 
 ///|
-pub fn Camera::get_position(self : Camera, alpha? : Double) -> Point[Int] {
+pub fn Camera::get_position(
+  self : Camera,
+  alpha? : Double
+) -> @struct.Point[Int] {
   let interx = self.x.get(alpha?).round().to_int()
   let intery = self.y.get(alpha?).round().to_int()
-  Point::new(interx, intery)
+  @struct.Point::new(interx, intery)
 }
 
 ///|
-pub fn Camera::real_position(self : Camera, alpha : Double) -> Point[Double] {
-  Point::new(self.x.get(alpha~), self.y.get(alpha~))
+pub fn Camera::real_position(
+  self : Camera,
+  alpha : Double
+) -> @struct.Point[Double] {
+  @struct.Point::new(self.x.get(alpha~), self.y.get(alpha~))
 }

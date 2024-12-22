@@ -2,6 +2,7 @@
 /// 
 /// right_click will sell items
 struct UIShop {
+  hooks : @ui.Hooks
   logic_state : LogicState
   resources : Resources
   mut runtime_state : RuntimeState?
@@ -48,7 +49,11 @@ struct Resources {
 }
 
 ///|
-fn UIShop::new(attributes : Attributes, src : @resource.NxNode) -> UIShop {
+fn UIShop::new(
+  attributes : Attributes,
+  src : @resource.NxNode,
+  hooks : @ui.Hooks
+) -> UIShop {
   let background = src["backgrnd"]
   let bg = @graphics.Texture::from_resource(background)
   let bg_dimensions = bg.get_dimensions()
@@ -76,18 +81,16 @@ fn UIShop::new(attributes : Attributes, src : @resource.NxNode) -> UIShop {
     @inventory.TypeId::ETC,
     @inventory.TypeId::SETUP,
     @inventory.TypeId::CASH,
-  ].mapi(
-    fn(i, inventory_type) {
-      let tabnum = i.to_string()
-      (
-        inventory_type,
-        @ui.TwoSpriteButton::new(
-          selldis[tabnum] |> @graphics.Texture::from_resource,
-          sellen[tabnum] |> @graphics.Texture::from_resource,
-        ),
-      )
-    },
-  )
+  ].mapi(fn(i, inventory_type) {
+    let tabnum = i.to_string()
+    (
+      inventory_type,
+      @ui.TwoSpriteButton::new(
+        selldis[tabnum] |> @graphics.Texture::from_resource,
+        sellen[tabnum] |> @graphics.Texture::from_resource,
+      ),
+    )
+  })
   let logic_state = {
     attributes,
     model,
@@ -104,7 +107,7 @@ fn UIShop::new(attributes : Attributes, src : @resource.NxNode) -> UIShop {
     exit_button,
     sprites,
   }
-  { logic_state, resources, runtime_state: None }
+  { hooks, logic_state, resources, runtime_state: None }
 }
 
 ///|
@@ -150,59 +153,49 @@ fn render(
   }
   let buttons = [
     resources.buy_button
-    |> @ui.Button::new(
-      on_click=fn() {
-        match self.selection {
-          Some((true, i)) => self.buy_state.buy(i)
-          _ => ()
-        }
-        return @ui.ButtonState::NORMAL
-      },
-    ),
+    |> @ui.Button::new(on_click=fn() {
+      match self.selection {
+        Some((true, i)) => self.buy_state.buy(i)
+        _ => ()
+      }
+      return @ui.ButtonState::NORMAL
+    }),
     resources.sell_all_button
-    |> @ui.Button::new(
-      on_click=fn() {
-        match self.selection {
-          Some((false, i)) => sell(sell_items, i, all=true)
-          _ => ()
-        }
-        return @ui.ButtonState::NORMAL
-      },
-    ),
+    |> @ui.Button::new(on_click=fn() {
+      match self.selection {
+        Some((false, i)) => sell(sell_items, i, all=true)
+        _ => ()
+      }
+      return @ui.ButtonState::NORMAL
+    }),
     resources.exit_button
-    |> @ui.Button::new(
-      on_click=fn() {
-        self.exit_shop()
-        return @ui.ButtonState::PRESSED
-      },
-    ),
+    |> @ui.Button::new(on_click=fn() {
+      self.exit_shop()
+      return @ui.ButtonState::PRESSED
+    }),
   ]
   buttons.push_iter(
     resources.tab_buttons
     .iter()
-    .map(
-      fn(it) {
-        let (inventory_type, button) = it
-        button
-        .get_button_base()
-        .set_state(
-          if self.sell_state.tab == inventory_type {
-            @ui.ButtonState::PRESSED
-          } else {
-            @ui.ButtonState::NORMAL
-          },
-        )
-        button
-        |> @ui.Button::new(
-          on_click=fn() {
-            self.sell_state.tab = inventory_type
-            self.sell_state.offset = 0
-            on_state_changed()
-            return @ui.ButtonState::NORMAL
-          },
-        )
-      },
-    ),
+    .map(fn(it) {
+      let (inventory_type, button) = it
+      button
+      .get_button_base()
+      .set_state(
+        if self.sell_state.tab == inventory_type {
+          @ui.ButtonState::PRESSED
+        } else {
+          @ui.ButtonState::NORMAL
+        },
+      )
+      button
+      |> @ui.Button::new(on_click=fn() {
+        self.sell_state.tab = inventory_type
+        self.sell_state.offset = 0
+        on_state_changed()
+        return @ui.ButtonState::NORMAL
+      })
+    }),
   )
   let buy_x = 8
   let buy_width = 257
@@ -211,13 +204,11 @@ fn render(
     let dim = @struct.Point::new(buy_width, 42)
     buttons.push(
       @ui.AreaButton::new(pos, dim)
-      |> @ui.Button::new(
-        on_click=fn() {
-          self.selection = Some((true, i))
-          on_state_changed()
-          return @ui.ButtonState::NORMAL
-        },
-      ),
+      |> @ui.Button::new(on_click=fn() {
+        self.selection = Some((true, i))
+        on_state_changed()
+        return @ui.ButtonState::NORMAL
+      }),
     )
   }
   for i in 0..<9 {
@@ -227,31 +218,27 @@ fn render(
     }
     let itempos = @struct.Point::new(12, 116 + 42 * i)
     if Some((true, slot)) == self.selection {
-      draws.push(
-        fn(parentpos) {
-          resources.buy_selection.draw(
-            @graphics.DrawArgument::new(
-              parentpos + itempos + @struct.Point::new(35, 8),
-            ),
-          )
-        },
-      )
+      draws.push(fn(parentpos) {
+        resources.buy_selection.draw(
+          @graphics.DrawArgument::new(
+            parentpos + itempos + @struct.Point::new(35, 8),
+          ),
+        )
+      })
     }
     let item = self.buy_state.items[slot]
-    draws.push(
-      fn(parentpos) {
-        guard let Some((icon, name_label)) = item.display.poll().flatten() else {
-          None => return
-        }
-        let pos = parentpos + itempos
-        icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(0, 42)))
-        name_label.draw(pos + @struct.Point::new(40, 6))
-        item.currency.draw(
-          @graphics.DrawArgument::new(pos + @struct.Point::new(38, 29)),
-        )
-        item.price_label.draw(pos + @struct.Point::new(55, 24))
-      },
-    )
+    draws.push(fn(parentpos) {
+      guard let Some((icon, name_label)) = item.display.poll().flatten() else {
+        None => return
+      }
+      let pos = parentpos + itempos
+      icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(0, 42)))
+      name_label.draw(pos + @struct.Point::new(40, 6))
+      item.currency.draw(
+        @graphics.DrawArgument::new(pos + @struct.Point::new(38, 29)),
+      )
+      item.price_label.draw(pos + @struct.Point::new(55, 24))
+    })
   }
   let sell_x = 284
   let sell_width = 200
@@ -270,13 +257,11 @@ fn render(
     )
     buttons.push(
       button
-      |> @ui.Button::new(
-        on_click=fn() {
-          self.selection = Some((false, i))
-          on_state_changed()
-          return @ui.ButtonState::NORMAL
-        },
-      ),
+      |> @ui.Button::new(on_click=fn() {
+        self.selection = Some((false, i))
+        on_state_changed()
+        return @ui.ButtonState::NORMAL
+      }),
     )
   }
   for i in 0..<9 {
@@ -286,37 +271,33 @@ fn render(
     }
     let itempos = @struct.Point::new(243, 116 + 42 * i)
     if Some((false, slot)) == self.selection {
-      draws.push(
-        fn(parentpos) {
-          resources.sell_selection.draw(
-            @graphics.DrawArgument::new(
-              parentpos + itempos + @struct.Point::new(78, 8),
-            ),
-          )
-        },
-      )
+      draws.push(fn(parentpos) {
+        resources.sell_selection.draw(
+          @graphics.DrawArgument::new(
+            parentpos + itempos + @struct.Point::new(78, 8),
+          ),
+        )
+      })
     }
     let item = sell_items[slot]
-    draws.push(
-      fn(parentpos) {
-        guard let Some((icon, name_label, price_label)) = item.display
-          .poll()
-          .flatten() else {
-          None => return
-        }
-        let pos = parentpos + itempos
-        icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(43, 42)))
-        if item.show_count {
-          self.attributes.countset.draw_text(
-            item.sellable.to_string(),
-            @graphics.DrawArgument::new(pos + @struct.Point::new(41, 28)),
-          )
-          |> ignore
-        }
-        name_label.draw(pos + @struct.Point::new(84, 6))
-        price_label.draw(pos + @struct.Point::new(84, 24))
-      },
-    )
+    draws.push(fn(parentpos) {
+      guard let Some((icon, name_label, price_label)) = item.display
+        .poll()
+        .flatten() else {
+        None => return
+      }
+      let pos = parentpos + itempos
+      icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(43, 42)))
+      if item.show_count {
+        self.attributes.countset.draw_text(
+          item.sellable.to_string(),
+          @graphics.DrawArgument::new(pos + @struct.Point::new(41, 28)),
+        )
+        |> ignore
+      }
+      name_label.draw(pos + @struct.Point::new(84, 6))
+      price_label.draw(pos + @struct.Point::new(84, 24))
+    })
   }
   let num_mesos = inventory.get_meso()
   let mesostr = @string_format.format_decimal_separator(num_mesos)
@@ -342,11 +323,9 @@ fn use_runtime_state(self : UIShop) -> RuntimeState {
   match self.runtime_state {
     Some(rs) => rs
     None => {
-      let render_state = render(
-        self.logic_state,
-        self.resources,
-        fn() { self.runtime_state = None },
-      )
+      let render_state = render(self.logic_state, self.resources, fn() {
+        self.runtime_state = None
+      })
       self.runtime_state = Some(render_state)
       render_state
     }
@@ -391,33 +370,29 @@ fn BuyState::new(
   let items = []
   for shop_item in shop_items {
     let display = @item.ItemData::get_async(shop_item.id)
-      .map_exn(
-        fn(item) {
-          let item = item.unwrap_or_error!()
-          let (icon, name) = (item.get_icon(false), item.name)
-          let name_label = @graphics.Text::new(
-            text=name,
-            @graphics.FontId::A11M,
-            @graphics.TextAlignment::LEFT,
-            @struct.ColorName::MINESHAFT,
-          )
-          (icon, name_label)
-        },
-      )
-      .map(
-        fn(r) {
-          match r {
-            Ok(r) => Some(r)
-            Err(err) => {
-              @log.error(
-                { "err": Show::to_string(err), "item_id": shop_item.id },
-                "Failed to get item data",
-              )
-              None
-            }
+      .map_exn(fn(item) {
+        let item = item.unwrap_or_error!()
+        let (icon, name) = (item.get_icon(false), item.name)
+        let name_label = @graphics.Text::new(
+          text=name,
+          @graphics.FontId::A11M,
+          @graphics.TextAlignment::LEFT,
+          @struct.ColorName::MINESHAFT,
+        )
+        (icon, name_label)
+      })
+      .map(fn(r) {
+        match r {
+          Ok(r) => Some(r)
+          Err(err) => {
+            @log.error(
+              { "err": Show::to_string(err), "item_id": shop_item.id },
+              "Failed to get item data",
+            )
+            None
           }
-        },
-      )
+        }
+      })
     let mesostr = @string_format.format_decimal_separator(shop_item.price)
     let price_label = @graphics.Text::new(
       text=mesostr + "meso",
@@ -525,42 +500,38 @@ pub fn SellItem::new(
   let show_count = sc
   let idata = @item.ItemData::get_async(item_id) // TODO: handle error
   let display = idata
-    .map_exn(
-      fn(idata) {
-        let idata = idata.unwrap_or_error!()
-        let icon = idata.get_icon(false)
-        let name = @utils.ellipsis(idata.name, 30)
-        let name_label = @graphics.Text::new(
-          text=name,
-          @graphics.FontId::A11M,
-          @graphics.TextAlignment::LEFT,
-          @struct.ColorName::MINESHAFT,
-        )
-        let price = idata.price
-        let mesostr = @string_format.format_decimal_separator(price)
-        let price_label = @graphics.Text::new(
-          text=mesostr + "meso",
-          @graphics.FontId::A11M,
-          @graphics.TextAlignment::LEFT,
-          @struct.ColorName::MINESHAFT,
-        )
-        (icon, name_label, price_label)
-      },
-    )
-    .map(
-      fn(r) {
-        match r {
-          Ok(r) => Some(r)
-          Err(err) => {
-            @log.error(
-              { "err": Show::to_string(err), "item_id": item_id },
-              "Failed to get item data",
-            )
-            None
-          }
+    .map_exn(fn(idata) {
+      let idata = idata.unwrap_or_error!()
+      let icon = idata.get_icon(false)
+      let name = @utils.ellipsis(idata.name, 30)
+      let name_label = @graphics.Text::new(
+        text=name,
+        @graphics.FontId::A11M,
+        @graphics.TextAlignment::LEFT,
+        @struct.ColorName::MINESHAFT,
+      )
+      let price = idata.price
+      let mesostr = @string_format.format_decimal_separator(price)
+      let price_label = @graphics.Text::new(
+        text=mesostr + "meso",
+        @graphics.FontId::A11M,
+        @graphics.TextAlignment::LEFT,
+        @struct.ColorName::MINESHAFT,
+      )
+      (icon, name_label, price_label)
+    })
+    .map(fn(r) {
+      match r {
+        Ok(r) => Some(r)
+        Err(err) => {
+          @log.error(
+            { "err": Show::to_string(err), "item_id": item_id },
+            "Failed to get item data",
+          )
+          None
         }
-      },
-    )
+      }
+    })
   { id, slot, sellable, show_count, display }
 }
 
@@ -599,6 +570,12 @@ pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
 
 ///|
 impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
+
+///|
+impl @ui.UIElement for UIShop with render(self) -> @ui.RuntimeState {
+  let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
+  { buttons: rs.buttons, draw_fn: fn(alpha) { rs.draw(alpha) }, sprites: [] }
+}
 
 ///|
 let mode_BUY : Byte = b'\x00'

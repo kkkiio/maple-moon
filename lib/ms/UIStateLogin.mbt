@@ -1,45 +1,45 @@
+///|
 struct UIStateLogin {
-  elements : @sorted_map.T[UIElementType, UIElement]
+  elements : @sorted_map.T[UIElementType, @ui.Element]
   mut focused : UIElementType
   uis_to_remove : Array[UIElementType]
 }
 
+///|
 fn UIStateLogin::new(login_module : @login.Module) -> UIStateLogin {
   let state = {
     elements: @sorted_map.new(),
     focused: UIElementType::UI_ELEMENT_NONE,
     uis_to_remove: [],
   }
-  // let start_shown = Configuration::get().get_start_shown()
-  // if start_shown {
-  //   state.emplace(UILogo::new())
-  // } else {
-  state.set_element(
-    UILogin::const_focused(),
-    @ui.Element::new(UILogin::new(login_module), @ui.UIElementType::LOGIN),
-  )
-  // }
+  state.set_element(false, login_module.new_login_ui())
   state
 }
 
-fn draw(self : UIStateLogin, inter : Double, cursor : Point[Int]) -> Unit {
-  self.elements.each(
-    fn(_t, elem) { if elem.get_ui_model().is_active() { elem.draw(inter) } },
-  )
-
-  // if (tooltip_) {
-  //     tooltip_->get().draw(cursor + Point<int16_t>(0, 22));
-  // }
-
+///|
+fn draw(
+  self : UIStateLogin,
+  inter : Double,
+  cursor : @struct.Point[Int]
+) -> Unit {
+  self.elements.each(fn(_t, elem) {
+    if elem.get_ui_model().is_active() {
+      elem.draw(inter)
+    }
+  })
 }
 
+///|
 fn update(self : UIStateLogin) -> Unit {
   self.uis_to_remove.each(fn(t) { self.elements.remove(t) })
-  self.elements.each(
-    fn(_t, elem) { if elem.get_ui_model().is_active() { elem.update() } },
-  )
+  self.elements.each(fn(_t, elem) {
+    if elem.get_ui_model().is_active() {
+      elem.update()
+    }
+  })
 }
 
+///|
 pub fn send_key(
   self : UIStateLogin,
   t : @keyboard.KeyType,
@@ -50,7 +50,7 @@ pub fn send_key(
   match self.get(self.focused) {
     Some(focusedelement) =>
       if focusedelement.get_ui_model().is_active() {
-        focusedelement.send_key(action, pressed, escape)
+        focusedelement.object.send_key(action, pressed, escape)
       } else {
         self.focused = UIElementType::UI_ELEMENT_NONE
       }
@@ -58,10 +58,11 @@ pub fn send_key(
   }
 }
 
+///|
 pub fn send_cursor(
   self : UIStateLogin,
   cursorstate : @ui.CursorState,
-  cursorpos : Point[Int]
+  cursorpos : @struct.Point[Int]
 ) -> @ui.CursorState {
   let clicked = cursorstate == @ui.CursorState::CLICKING ||
     cursorstate == @ui.CursorState::VSCROLL_IDLE
@@ -85,24 +86,27 @@ pub fn send_cursor(
   }
 }
 
-pub fn remove(self : UIStateLogin, type_ : UIElementType) -> Unit {
-  if self.focused == type_ {
+///|
+pub fn remove(self : UIStateLogin, key : UIElementType) -> Unit {
+  if self.focused == key {
     self.focused = UIElementType::UI_ELEMENT_NONE
   }
-  match self.elements.get(type_) {
+  match self.elements.get(key) {
     Some(element) => {
       element.get_ui_model().deactivate()
-      self.uis_to_remove.push(type_)
+      self.uis_to_remove.push(key)
     }
     None => ()
   }
 }
 
-pub fn get(self : UIStateLogin, t : UIElementType) -> UIElement? {
+///|
+pub fn get(self : UIStateLogin, t : UIElementType) -> @ui.Element? {
   self.elements.get(t)
 }
 
-pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.UIElement)? {
+///|
+pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.Element)? {
   // TODO: use rev_iter
   self.elements
   .iter()
@@ -112,44 +116,29 @@ pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.UIElement)? {
   )
 }
 
+///|
 pub fn get_front_by_types(
   self : UIStateLogin,
   types : Array[UIElementType]
-) -> UIElement? {
-  let mut front : UIElement? = None
-  types.rev_each(
-    fn(t) {
-      if front.is_empty().not() {
-        return
-      }
-      match self.elements.get(t) {
-        Some(elem) => if elem.get_ui_model().is_active() { front = Some(elem) }
-        None => ()
-      }
-      // let elem = 
-      // if elem.map(UIElement::is_active).or(false) {
-      //   front = elem
-      // }
-    },
-  )
+) -> @ui.Element? {
+  let mut front : @ui.Element? = None
+  types.rev_each(fn(t) {
+    if not(front.is_empty()) {
+      return
+    }
+    match self.elements.get(t) {
+      Some(elem) => if elem.get_ui_model().is_active() { front = Some(elem) }
+      None => ()
+    }
+  })
   front
 }
 
-pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
-  // let mut front : UIElement? = None
-  // all_types.rev_each(
-  //   fn(t) {
-  //     if front.is_empty().not() {
-  //       return
-  //     }
-  //     let element = self.elements[t]
-  //     if element.filter(UIElement::is_active).map(fn(e) { e.is_in_range(pos) }).or(
-  //       false,
-  //     ) {
-  //       front = element
-  //     }
-  //   },
-  // )
+///|
+pub fn get_front_by_pos(
+  self : UIStateLogin,
+  pos : @struct.Point[Int]
+) -> @ui.Element? {
   // TODO: use rev_iter
   self.elements
   .iter()
@@ -167,14 +156,16 @@ pub fn get_front_by_pos(self : UIStateLogin, pos : Point[Int]) -> UIElement? {
   )
 }
 
+///|
 pub fn remove_cursor(self : UIStateLogin, keep : UIElementType) -> Unit {
   for key, element in self.elements {
     if element.get_ui_model().is_active() && key != keep {
-      element.remove_cursor()
+      element.object.remove_cursor()
     }
   }
 }
 
+///|
 pub fn set_element(
   self : UIStateLogin,
   focused : Bool,
@@ -185,9 +176,10 @@ pub fn set_element(
   if focused {
     self.focused = t
   }
-  self.elements[t] = elem.object
+  self.elements[t] = elem
 }
 
-pub fn doubleclick(self : UIStateLogin, pos : Point[Int]) -> Unit {
+///|
+pub fn doubleclick(self : UIStateLogin, pos : @struct.Point[Int]) -> Unit {
 
 }

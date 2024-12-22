@@ -5,6 +5,7 @@
 struct UIItemInventory {
   logic_state : LogicState
   resources : Resources
+  hooks : @ui.Hooks
   mut render_state : RenderState?
 }
 
@@ -47,7 +48,8 @@ struct RenderState {
 ///|
 fn UIItemInventory::new(
   attributes : Attributes,
-  item : @resource.NxNode
+  item : @resource.NxNode,
+  hooks : @ui.Hooks
 ) -> UIItemInventory {
   // TODO: Change these to production
   let full_backgrnd = item["FullBackgrnd"] |> @graphics.Texture::from_resource
@@ -115,7 +117,9 @@ fn UIItemInventory::new(
     meso_label,
     maple_points_label,
   }
-  { logic_state, resources, render_state: None }
+  let ui = { logic_state, resources, hooks, render_state: None }
+  hooks.on_double_click = fn(pos) { ui.doubleclick(pos) }
+  ui
 }
 
 ///|
@@ -170,14 +174,22 @@ fn use_render_state(self : UIItemInventory) -> RenderState {
   match self.render_state {
     Some(rs) => rs
     None => {
-      let render_state = render(
-        self.logic_state,
-        self.resources,
-        fn() { self.render_state = None },
-      )
+      let render_state = render(self.logic_state, self.resources, fn() {
+        self.render_state = None
+      })
       self.render_state = Some(render_state)
       render_state
     }
+  }
+}
+
+///|
+impl @ui.UIElement for UIItemInventory with render(self) -> @ui.RuntimeState {
+  let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
+  {
+    buttons: rs.buttons,
+    draw_fn: fn(_alpha) { rs.draw(self.resources) },
+    sprites: [],
   }
 }
 
@@ -191,12 +203,10 @@ fn render(
   let buttons = []
   buttons.push(
     resources.close_btn
-    |> @ui.Button::new(
-      on_click=fn() {
-        self.base.toggle_active()
-        @ui.ButtonState::NORMAL
-      },
-    ),
+    |> @ui.Button::new(on_click=fn() {
+      self.base.toggle_active()
+      @ui.ButtonState::NORMAL
+    }),
   )
   let make_change_tab_cb = fn(new_tab : Int) {
     fn() {
@@ -210,21 +220,19 @@ fn render(
     self.tab_btns
     .iter2()
     .iter()
-    .map(
-      fn(it) {
-        let (i, btn) = it
-        btn
-        .get_button_base()
-        .set_state(
-          if i == tab {
-            @ui.ButtonState::PRESSED
-          } else {
-            @ui.ButtonState::NORMAL
-          },
-        )
-        @ui.Button::new(btn, on_click=make_change_tab_cb(i))
-      },
-    ),
+    .map(fn(it) {
+      let (i, btn) = it
+      btn
+      .get_button_base()
+      .set_state(
+        if i == tab {
+          @ui.ButtonState::PRESSED
+        } else {
+          @ui.ButtonState::NORMAL
+        },
+      )
+      @ui.Button::new(btn, on_click=make_change_tab_cb(i))
+    }),
   )
   let icons = {}
   let inventory = self.attributes.inventory
@@ -321,20 +329,18 @@ fn make_slot(
   } else {
     inventory.get_item_count(tab, slot)
   }
-  let texture = @item.ItemData::get_async(item_id).map(
-    fn(r) {
-      match r {
-        Ok(item_data) => item_data.get_icon(false)
-        Err(e) => {
-          @log.error(
-            { "item_id": item_id, "error": e },
-            "failed to load item data",
-          )
-          @graphics.Texture::default() // TODO: show error icon
-        }
+  let texture = @item.ItemData::get_async(item_id).map(fn(r) {
+    match r {
+      Ok(item_data) => item_data.get_icon(false)
+      Err(e) => {
+        @log.error(
+          { "item_id": item_id, "error": e },
+          "failed to load item data",
+        )
+        @graphics.Texture::default() // TODO: show error icon
       }
-    },
-  )
+    }
+  })
   Some((IconModel::new(count), texture)) // TODO: support drop
 }
 

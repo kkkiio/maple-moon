@@ -33,12 +33,9 @@ pub fn make_handlers(
   [
     (
       @net.MODIFY_INVENTORY,
-      @net.with_log(
-        @net.MODIFY_INVENTORY,
-        fn(recv : @net.InPacket) {
-          handle_modify_inventory!(self.inventory, self.player_getter, recv)
-        },
-      ),
+      @net.with_log(@net.MODIFY_INVENTORY, fn(recv : @net.InPacket) {
+        handle_modify_inventory!(self.inventory, self.player_getter, recv)
+      }),
     ),
   ]
   |> Map::from_array
@@ -54,29 +51,27 @@ pub fn make_actions(
       @action.Descriptor::UI(
         key=@ui.UIElementType::ITEM_INVENTORY,
         make_element=fn() {
-          let ui = UIItemInventory::new(
-            {
-              inventory: self.inventory,
-              player: (self.player_getter)().unwrap(),
-            },
-            self.item_res,
-          )
-          self.inventory.listen_item_changes(
-            fn() {
-              guard ui.get_ui_model().active else { return false }
-              ui.set_attributes(
+          @ui.Element::new(
+            fn(hooks) {
+              let ui = UIItemInventory::new(
                 {
                   inventory: self.inventory,
                   player: (self.player_getter)().unwrap(),
                 },
+                self.item_res,
+                hooks,
               )
-              true
+              self.inventory.listen_item_changes(fn() {
+                guard ui.get_ui_model().active else { return false }
+                ui.set_attributes({
+                  inventory: self.inventory,
+                  player: (self.player_getter)().unwrap(),
+                })
+                true
+              })
+              ui
             },
-          )
-          @ui.Element::new(
-            ui,
             @ui.UIElementType::ITEM_INVENTORY,
-            doubleclick=fn(pos) { ui.doubleclick(pos) },
           )
         },
         focused=UIItemInventory::is_focused(),

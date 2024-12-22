@@ -1,4 +1,5 @@
-pub enum ButtonState {
+///|
+pub(all) enum ButtonState {
   NORMAL
   DISABLED
   MOUSEOVER
@@ -6,6 +7,7 @@ pub enum ButtonState {
   IDENTITY
 } derive(Eq, Hash)
 
+///|
 pub(open) trait UIButton {
   draw(Self, Point[Int]) -> Unit
   update(Self) -> Unit
@@ -19,35 +21,41 @@ pub(open) trait UIButton {
   // is_pressed(Self) -> Bool
 }
 
-pub struct Button {
+///|
+pub(all) struct Button {
   object : UIButton
   on_click : (() -> ButtonState)?
 }
 
-pub fn Button::new(object : UIButton, ~on_click? : () -> ButtonState) -> Button {
+///|
+pub fn Button::new(object : UIButton, on_click? : () -> ButtonState) -> Button {
   { object, on_click }
 }
 
-pub struct ButtonModel {
+///|
+pub(all) struct ButtonModel {
   mut state : ButtonState
   mut position : Point[Int]
   mut active : Bool
   mut pressed : Bool
 }
 
+///|
 pub fn ButtonModel::default() -> ButtonModel {
   {
     state: ButtonState::NORMAL,
-    position: Point::default(),
+    position: @struct.Point::default(),
     active: true,
     pressed: false,
   }
 }
 
+///|
 pub fn set_position(self : ButtonModel, pos : Point[Int]) -> Unit {
   self.position = pos
 }
 
+///|
 pub fn set_state(self : ButtonModel, s : ButtonState) -> Unit {
   if s == ButtonState::IDENTITY {
     return
@@ -55,22 +63,27 @@ pub fn set_state(self : ButtonModel, s : ButtonState) -> Unit {
   self.state = s
 }
 
+///|
 pub fn set_active(self : ButtonModel, a : Bool) -> Unit {
   self.active = a
 }
 
+///|
 pub fn toggle_pressed(self : ButtonModel) -> Unit {
   self.pressed = self.pressed.not()
 }
 
+///|
 pub fn is_active(self : ButtonModel) -> Bool {
   self.active && self.state != ButtonState::DISABLED
 }
 
+///|
 pub fn get_state(self : ButtonModel) -> ButtonState {
   self.state
 }
 
+///|
 pub fn is_pressed(self : ButtonModel) -> Bool {
   self.pressed
 }

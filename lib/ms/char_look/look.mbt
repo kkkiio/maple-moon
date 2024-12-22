@@ -32,7 +32,7 @@ pub(all) struct LookEntry {
 }
 
 ///|
-pub fn CharLook::new(entry : LookEntry, char_look_module : Module) -> CharLook {
+fn CharLook::new(entry : LookEntry, char_look_module : Module) -> CharLook {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),

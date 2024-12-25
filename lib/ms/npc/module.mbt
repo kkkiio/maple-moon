@@ -5,17 +5,21 @@ struct Module {
   get_player_name : () -> String
   util_dlg_ex : @resource.NxNode
   quest : @resource.NxNode
+  packet_processor : @net.PacketProcessor
 }
 
 ///|
 pub fn Module::load(
   container : &@ui.Container,
-  get_player_name : () -> String
+  get_player_name : () -> String,
+  packet_processor : @net.PacketProcessor
 ) -> @utils.Future[Module] {
   @ui.ui_window_2_loader()
   .load_res(["UtilDlgEx"])
   .combine(@ui.ui_window_2_loader().load_res(["Quest"]))
-  |> @utils.map(fn(it) { Module::new(container, get_player_name, it.0, it.1) })
+  |> @utils.map(fn(it) {
+    Module::new(container, get_player_name, it.0, it.1, packet_processor)
+  })
 }
 
 ///|
@@ -23,7 +27,8 @@ fn Module::new(
   container : &@ui.Container,
   get_player_name : () -> String,
   util_dlg_ex : @resource.NxNode,
-  quest : @resource.NxNode
+  quest : @resource.NxNode,
+  packet_processor : @net.PacketProcessor
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(attrs) {
@@ -48,8 +53,9 @@ fn Module::new(
     },
     container,
     get_player_name,
+    packet_processor,
   )
-  { npcs, container, get_player_name, util_dlg_ex, quest }
+  { npcs, container, get_player_name, util_dlg_ex, quest, packet_processor }
 }
 
 ///|

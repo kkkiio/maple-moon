@@ -95,20 +95,35 @@ pub(open) trait UIElement {
   get_ui_model(Self) -> UIModel
   send_key(Self, Int, Bool, Bool) -> Unit
   remove_cursor(Self) -> Unit
-  render(Self) -> RuntimeState
+  render(Self) -> RenderSpec
 }
 
 ///|
-pub(all) struct RuntimeState {
+pub(all) struct RenderSpec {
   sprites : Array[@graphics.Sprite]
   buttons : Array[Button]
-  draw_fn : (Double) -> Unit
+  drawables : Array[&DrawableUI]
+}
+
+///|
+pub impl ToJson for RenderSpec with to_json(self) -> Json {
+  { "drawables": self.drawables.to_json() }
+}
+
+///|
+pub(open) trait DrawableUI: ToJson {
+  draw(Self, @struct.Point[Int], Double) -> Unit
 }
 
 ///|
 pub(all) struct Hooks {
   on_state_changed : () -> Unit
   mut on_double_click : (Point[Int]) -> Unit
+}
+
+///|
+pub fn Hooks::default() -> Hooks {
+  { on_state_changed: fn() {  }, on_double_click: fn(_p) {  } }
 }
 
 ///|
@@ -125,7 +140,7 @@ pub(all) struct Element {
   doubleclick : (Point[Int]) -> Unit
   toggle_active : () -> Unit
   on_close : () -> Unit
-  runtime_state : Ref[RuntimeState?]
+  runtime_state : Ref[RenderSpec?]
 }
 
 ///|
@@ -160,7 +175,10 @@ pub fn get_ui_model(self : Element) -> UIModel {
 
 ///|
 pub fn draw(self : Element, alpha : Double) -> Unit {
-  (self.use_runtime_state().draw_fn)(alpha)
+  let pos = self.get_ui_model().position
+  for drawable in self.use_runtime_state().drawables {
+    drawable.draw(pos, alpha)
+  }
 }
 
 ///|
@@ -186,7 +204,7 @@ pub fn send_cursor(
 }
 
 ///|
-fn use_runtime_state(self : Element) -> RuntimeState {
+fn use_runtime_state(self : Element) -> RenderSpec {
   match self.runtime_state.val {
     Some(rs) => rs
     None => {
@@ -258,4 +276,52 @@ pub fn is_in_range(self : UIModel, cursorpos : Point[Int]) -> Bool {
     self.position + self.dimension,
   )
   bounds.contains(cursorpos)
+}
+
+///|
+struct TextureUI {
+  texture : @graphics.Texture
+  pos : Point[Int]
+}
+
+///|
+pub fn TextureUI::new(
+  texture : @graphics.Texture,
+  pos~ : @struct.Point[Int] = @struct.Point::default()
+) -> TextureUI {
+  { texture, pos }
+}
+
+///|
+pub impl DrawableUI for TextureUI with draw(self, pos, _alpha) -> Unit {
+  self.texture.draw(@graphics.DrawArgument::new(pos + self.pos))
+}
+
+///|
+pub impl ToJson for TextureUI with to_json(self) -> Json {
+  {
+    "texture": Json::Object({}), // TODO
+    "pos": self.pos.to_json(),
+  }
+}
+
+///|
+struct TextUI {
+  text : Text
+  pos : Point[Int]
+}
+
+///|
+pub fn TextUI::new(text : Text, pos~ : Point[Int] = Point::default()) -> TextUI {
+  { text, pos }
+}
+
+///|
+pub impl DrawableUI for TextUI with draw(self, pos, _alpha) -> Unit {
+  self.text.draw(pos + self.pos)
+}
+
+///|
+pub impl ToJson for TextUI with to_json(self) -> Json {
+  { "text": self.text.to_json(), "pos": self.pos.to_json() }
 }

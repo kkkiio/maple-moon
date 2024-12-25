@@ -1,6 +1,6 @@
 ///|
 struct Module {
-  processor : @net.PacketProcessor
+  packet_processor : @net.PacketProcessor
   login_img : @resource.NxNode
   pretty_logo : @resource.NxNode
   ui_container : &@ui.Container
@@ -27,7 +27,7 @@ pub fn Module::load(
   .map(fn(it) {
     let (login_img, pretty_logo) = it
     {
-      processor,
+      packet_processor: processor,
       login_img,
       pretty_logo,
       ui_container,
@@ -120,7 +120,7 @@ pub fn new_login_start_packet() -> @net.OutPacket {
 pub fn login(self : Module, account : String, password : String) -> Unit {
   self.input_acc_pass = Some((account, password))
   self.login_task = Some({
-    processor: self.processor,
+    processor: self.packet_processor,
     state: ACQ_CONN,
     account,
     password,
@@ -229,7 +229,7 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
       // Request the list of worlds and channels online.
 
       let packet = new_server_request_packet()
-      self.processor.send_packet(packet)
+      self.packet_processor.send_packet(packet)
     }
     //         // Login unsuccessful
     //         // The LoginNotice displayed will contain the specific information
@@ -256,7 +256,7 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
     //                 break;
     23 =>
       // UI::get().emplace<UITermsOfService>(okhandler); break;
-      fn_tos(self.processor)
+      fn_tos(self.packet_processor)
     //             default:
     //                 // Other reasons
     //                 if (reason > 0) {
@@ -291,7 +291,7 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
       let worlds = self.receiving_server_list
       self.receiving_server_list = []
       @log.debug({ "worlds": worlds }, "server list")
-      enter_world(0, 0, self.processor)
+      enter_world(0, 0, self.packet_processor)
       break
     }
   }
@@ -347,18 +347,32 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
         match mod.select_cid {
           Some(cid) => {
             let packet = new_select_char_packet(cid)
-            mod.processor.send_packet(packet)
+            mod.packet_processor.send_packet(packet)
           }
           None => {
             mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
             mod.ui_container.add_ui(
               @ui.Element::new(
-                fn(hooks) {
-                  SelectCharUI::new({
-                    char_look_module: mod.char_look_module,
-                    characters: mod.characters,
-                    set_selected_cid: fn(cid) { mod.select_cid = Some(cid) },
-                  })
+                fn(_hooks) {
+                  let char_select = @ui.common_ui_loader().load_res([
+                    "Login.img", "CharSelect",
+                  ])
+                  SelectCharUI::new(
+                    SelectCharUIResource::from_resource(char_select),
+                    mod.characters.map(fn(ce) {
+                      (
+                        ce.id,
+                        mod.char_look_module.new_char_look(ce.look),
+                        ce.stats.name,
+                      )
+                    }),
+                    on_character_selected=fn(cid) {
+                      mod.select_cid = Some(cid)
+                      mod.packet_processor.send_packet(
+                        new_select_char_packet(cid),
+                      )
+                    },
+                  )
                 },
                 @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
               ),
@@ -371,7 +385,7 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
   } else {
     @log.info({}, "no characters, creating new one")
     let packet = new_name_char_packet(test_name)
-    mod.processor.send_packet(packet)
+    mod.packet_processor.send_packet(packet)
   }
 }
 
@@ -384,8 +398,8 @@ pub fn handle_server_ip(mod : Module, recv : @net.InPacket) -> Unit! {
     Some(i) => mod.selected_index = Some(i)
     None => fail!("no character with id=\{cid}")
   }
-  mod.processor.connect_channel(port)
-  mod.connect_task = Some({ processor: mod.processor, cid })
+  mod.packet_processor.connect_channel(port)
+  mod.connect_task = Some({ processor: mod.packet_processor, cid })
 }
 
 ///|

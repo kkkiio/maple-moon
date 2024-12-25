@@ -1,15 +1,41 @@
 ///|
 struct NameTag {
   name : @graphics.OutlinedText
-  textures : @utils.BoolPair[Array[@graphics.Texture]]
+  textures : @utils.BoolPair[
+    (@graphics.Texture, @graphics.Texture, @graphics.Texture),
+  ]
   mut selected : Bool
 }
 
 ///|
+pub(all) type NameTagResource (
+  (@graphics.Texture, @graphics.Texture, @graphics.Texture),
+  (@graphics.Texture, @graphics.Texture, @graphics.Texture),
+)
+
+///|
+pub fn NameTagResource::from_resource(
+  src : @resource.NxNode
+) -> NameTagResource {
+  (
+    (
+      src["0"]["0"] |> @graphics.Texture::from_resource,
+      src["0"]["1"] |> @graphics.Texture::from_resource,
+      src["0"]["2"] |> @graphics.Texture::from_resource,
+    ),
+    (
+      src["1"]["0"] |> @graphics.Texture::from_resource,
+      src["1"]["1"] |> @graphics.Texture::from_resource,
+      src["1"]["2"] |> @graphics.Texture::from_resource,
+    ),
+  )
+}
+
+///|
 pub fn NameTag::new(
-  src : @resource.NxNode,
   f : @graphics.FontId,
-  n : String
+  n : String,
+  textures : NameTagResource
 ) -> NameTag {
   let name = @graphics.OutlinedText::new(
     f,
@@ -18,27 +44,21 @@ pub fn NameTag::new(
     @struct.ColorName::JAMBALAYA,
   )
   name.change_text(n)
-  let textures = @utils.BoolPair::new(Array::new(), Array::new())
-  textures[false].push(src["0"]["0"] |> @graphics.Texture::from_resource)
-  textures[false].push(src["0"]["1"] |> @graphics.Texture::from_resource)
-  textures[false].push(src["0"]["2"] |> @graphics.Texture::from_resource)
-  textures[true].push(src["1"]["0"] |> @graphics.Texture::from_resource)
-  textures[true].push(src["1"]["1"] |> @graphics.Texture::from_resource)
-  textures[true].push(src["1"]["2"] |> @graphics.Texture::from_resource)
+  let textures = @utils.BoolPair::new(textures._.0, textures._.1)
   { name, textures, selected: false }
 }
 
 ///|
 pub fn draw(self : NameTag, position : Point[Int]) -> Unit {
   let position = position + { x: 1, y: 2 }
-  let tag = self.textures[self.selected]
+  let (t1, t2, t3) = self.textures[self.selected]
   let width = self.name.width()
   let startpos = position - { x: 6 + width / 2, y: -1 }
-  tag[0].draw(startpos |> @graphics.DrawArgument::new)
-  tag[1].draw(
+  t1.draw(startpos |> @graphics.DrawArgument::new)
+  t2.draw(
     @graphics.DrawArgument::new4(startpos + { x: 6, y: 0 }, { x: width, y: 0 }),
   )
-  tag[2].draw(@graphics.DrawArgument::new(startpos + { x: width + 6, y: 0 }))
+  t3.draw(@graphics.DrawArgument::new(startpos + { x: width + 6, y: 0 }))
   self.name.draw(position)
 }
 
@@ -50,4 +70,9 @@ pub fn set_selected(self : NameTag, s : Bool) -> Unit {
   } else {
     self.name.change_color(@struct.ColorName::EAGLE)
   }
+}
+
+///|
+pub impl ToJson for NameTag with to_json(self) -> Json {
+  { "name": self.name.to_json(), "selected": self.selected.to_json() }
 }

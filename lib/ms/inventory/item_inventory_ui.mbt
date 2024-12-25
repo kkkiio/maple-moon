@@ -184,14 +184,10 @@ fn use_render_state(self : UIItemInventory) -> RenderState {
 }
 
 ///|
-impl @ui.UIElement for UIItemInventory with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for UIItemInventory with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  {
-    buttons: rs.buttons,
-    draw_fn: fn(_alpha) { rs.draw(self.resources) },
-    sprites: [],
-  }
-}
+  { buttons: rs.buttons, sprites: [], drawables: [] }
+} // TODO
 
 ///|
 fn render(

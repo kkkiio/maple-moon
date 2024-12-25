@@ -1,3 +1,4 @@
+///|
 struct Text {
   font : FontId
   alignment : TextAlignment
@@ -8,6 +9,7 @@ struct Text {
   mut image : Image?
 }
 
+///|
 pub fn Text::new(
   font : FontId,
   alignment : TextAlignment,
@@ -19,6 +21,7 @@ pub fn Text::new(
   { font, alignment, color, image: None, text, max_width, nametag }
 }
 
+///|
 pub fn draw(
   self : Text,
   point : Point[Int],
@@ -47,44 +50,48 @@ pub fn draw(
   )
 }
 
+///|
 pub fn dimensions(self : Text) -> Point[Int] {
   let image = self.get_or_init_image()
   { x: image.width(), y: image.height() }
 }
 
+///|
 pub fn width(self : Text) -> Int {
   let image = self.get_or_init_image()
   image.width()
 }
 
+///|
 pub fn height(self : Text) -> Int {
   let image = self.get_or_init_image()
   image.height()
 }
 
+///|
 pub fn get_text(self : Text) -> String {
   self.text
 }
 
+///|
 fn get_or_init_image(self : Text) -> Image {
   match self.image {
     Some(image) => image
     None => {
-      let image = GraphicsGL::get().create_text_image(
-        {
-          text: self.text,
-          font_id: self.font,
-          max_width: self.max_width,
-          text_alignment: self.alignment,
-          color: self.color |> Color::from_name |> @struct.IntColor::from_color,
-        },
-      )
+      let image = GraphicsGL::get().create_text_image({
+        text: self.text,
+        font_id: self.font,
+        max_width: self.max_width,
+        text_alignment: self.alignment,
+        color: self.color |> Color::from_name |> @struct.IntColor::from_color,
+      })
       self.image = Some(image)
       image
     }
   }
 }
 
+///|
 pub fn change_text(self : Text, text : String) -> Unit {
   if self.text == text {
     return
@@ -93,6 +100,7 @@ pub fn change_text(self : Text, text : String) -> Unit {
   self.image = None
 }
 
+///|
 pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
   if self.color == color {
     return
@@ -101,9 +109,19 @@ pub fn change_color(self : Text, color : @struct.ColorName) -> Unit {
   self.image = None
 }
 
+///|
 pub fn with_text(self : Text, text : String) -> Text {
   if self.text == text {
     return self
   }
   { ..self, text, image: None }
+}
+
+///|
+pub impl ToJson for Text with to_json(self) -> Json {
+  {
+    "nametag": self.nametag.to_json(),
+    "text": self.text.to_json(),
+    "color": self.color.to_json(),
+  }
 }

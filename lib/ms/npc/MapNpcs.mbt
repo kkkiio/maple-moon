@@ -5,13 +5,15 @@ struct MapNpcs {
   spawns : @queue.T[NpcSpawn]
   container : @ui.Container
   get_player_name : () -> String
+  packet_processor : @net.PacketProcessor
 }
 
 ///|
 pub fn MapNpcs::new(
   make_npc_talk_ui : (Attributes) -> @ui.Element,
   container : @ui.Container,
-  get_player_name : () -> String
+  get_player_name : () -> String,
+  packet_processor : @net.PacketProcessor
 ) -> MapNpcs {
   {
     make_npc_talk_ui,
@@ -19,6 +21,7 @@ pub fn MapNpcs::new(
     spawns: @queue.new(),
     container,
     get_player_name,
+    packet_processor,
   }
 }
 
@@ -98,7 +101,7 @@ pub fn send_cursor(
           }
           None => ()
         }
-        new_talk_to_npc_packet(npc.get_oid()).dispatch()
+        self.packet_processor.send_packet(new_talk_to_npc_packet(npc.get_oid()))
         return @ui.CursorState::IDLE
       }
       return @ui.CursorState::CAN_CLICK
@@ -169,7 +172,7 @@ pub fn talk(self : Npc) -> TalkArgs? {
   }
   match
     self.dialogue["d0"]
-    .filter(fn(strs) { strs.is_empty().not() })
+    .filter(fn(strs) { not(strs.is_empty()) })
     .map(fn(strs) { strs[0] }) {
     Some(str) =>
       Some({ id: self.npc_id, msgtype: 0, b0: 0, b1: 1, speaker: 0, str })
@@ -190,7 +193,7 @@ pub fn Npc::new(
   let mut src = npc_loader().load_res([strid])
   let strsrc = @resource.string_loader().load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
-  if link.is_empty().not() {
+  if not(link.is_empty()) {
     src = npc_loader().load_res([link + ".img"])
   }
   let info = src["info"]

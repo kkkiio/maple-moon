@@ -2,7 +2,7 @@
 pub(all) struct Point[T] {
   x : T
   y : T
-} derive(Eq, Show)
+} derive(Eq, Show, ToJson)
 
 ///|
 pub fn Point::new[T](x : T, y : T) -> Point[T] {

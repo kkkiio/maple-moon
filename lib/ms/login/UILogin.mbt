@@ -40,7 +40,7 @@ pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
 struct UILogin {
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Int, @ui.UIButton]
+  buttons : Map[Int, &@ui.UIButton]
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield
@@ -180,14 +180,10 @@ pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
 }
 
 ///|
-impl @ui.UIElement for UILogin with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for UILogin with render(self) -> @ui.RenderSpec {
   let sprites = self.sprites
   let buttons = []
-  fn draw(alpha : Double) -> Unit {
-    @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
-  }
-
-  { buttons, draw_fn: fn(alpha) { draw(alpha) }, sprites }
+  { buttons, sprites, drawables: sprites.map(fn(sprite) { sprite }) }
 }
 
 ///|

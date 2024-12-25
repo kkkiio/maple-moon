@@ -141,7 +141,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
 }
 
 ///|
-pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RuntimeState {
+pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RenderSpec {
   let sprites = self.sprites
   fn draw(alpha : Double) -> Unit {
     @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
@@ -186,8 +186,8 @@ pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RuntimeState {
     |> ignore
   }
 
-  { draw_fn: draw, sprites, buttons: [] }
-}
+  { sprites, buttons: [], drawables: [] }
+} // TODO
 
 ///|
 pub fn update(self : UIStatusBar) -> Unit {

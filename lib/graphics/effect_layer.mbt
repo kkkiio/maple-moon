@@ -1,12 +1,14 @@
-/// A list of animations. Animations will be removed after all frames were displayed.
+///| A list of animations. Animations will be removed after all frames were displayed.
 struct EffectLayer {
   effects : @sorted_map.T[Int, Array[Effect]]
 }
 
+///|
 pub fn EffectLayer::default() -> EffectLayer {
   { effects: @sorted_map.new() }
 }
 
+///|
 pub fn EffectLayer::drawbelow(
   self : EffectLayer,
   position : Point[Int],
@@ -23,6 +25,7 @@ pub fn EffectLayer::drawbelow(
   }
 }
 
+///|
 pub fn EffectLayer::drawabove(
   self : EffectLayer,
   position : Point[Int],
@@ -39,18 +42,20 @@ pub fn EffectLayer::drawabove(
   }
 }
 
+///|
 pub fn EffectLayer::update(self : EffectLayer) -> Unit {
   for _, effectlist in self.effects {
     effectlist.retain(fn(effect : Effect) -> Bool { effect.update().not() })
   }
 }
 
+///|
 pub fn EffectLayer::add(
   self : EffectLayer,
   animation : Animation,
-  ~args : DrawArgument = DrawArgument::default(),
-  ~z : Int = 0,
-  ~speed : Double = 1.0
+  args~ : DrawArgument = DrawArgument::default(),
+  z~ : Int = 0,
+  speed~ : Double = 1.0
 ) -> Unit {
   match self.effects[z] {
     Some(effects) =>
@@ -59,17 +64,20 @@ pub fn EffectLayer::add(
   }
 }
 
+///|
 struct Effect {
   sprite : Sprite
   speed : Double
 }
 
+///|
 pub fn Effect::update(self : Effect) -> Bool {
-  self.sprite.update_with_timestep(
-    (@constants.step_time_ms.to_double() * self.speed).to_int(),
+  self.sprite.update(
+    timestep=(@constants.step_time_ms.to_double() * self.speed).to_int(),
   )
 }
 
+///|
 pub fn Effect::draw(
   self : Effect,
   position : Point[Int],

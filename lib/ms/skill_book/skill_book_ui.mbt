@@ -335,10 +335,10 @@ fn render(
 }
 
 ///|
-impl @ui.UIElement for SkillBookUI with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for SkillBookUI with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { buttons: rs.buttons, draw_fn: fn(alpha) { rs.draw(alpha) }, sprites: [] }
-}
+  { buttons: rs.buttons, sprites: [], drawables: [] }
+} // TODO
 
 ///|
 fn use_render_state(self : SkillBookUI) -> RenderState {

@@ -917,3 +917,8 @@ pub fn get_frame(self : CharLook) -> Int {
 pub fn get_alerted(self : CharLook) -> Bool {
   self.alerted.get()
 }
+
+///|
+pub impl ToJson for CharLook with to_json(self) -> Json {
+  {} // TODO
+}

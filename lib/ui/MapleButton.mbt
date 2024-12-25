@@ -1,8 +1,8 @@
 ///| A standard maplestory-button with 4 states and a texture for each state.
 pub(all) struct MapleButton {
   base : ButtonModel
-  textures : @immut/hashmap.T[ButtonState, @graphics.Texture]
-  animations : @immut/hashmap.T[ButtonState, @graphics.Animation]
+  textures : Map[ButtonState, @graphics.Texture]
+  animations : Map[ButtonState, @graphics.Animation]
 }
 
 ///|
@@ -20,11 +20,15 @@ pub fn send_cursor(
 }
 
 ///|
-pub fn MapleButton::from_resource(
-  src : @resource.NxNode,
-  pos~ : Point[Int] = @struct.Point::default()
-) -> MapleButton {
-  let base = ButtonModel::default()
+pub(all) struct MapleButtonResource {
+  textures : Map[ButtonState, @graphics.Texture]
+  animations : Map[ButtonState, @graphics.Animation]
+}
+
+///|
+pub fn MapleButtonResource::from_resource(
+  src : @resource.NxNode
+) -> MapleButtonResource {
   let normal = src["normal"]
   let textures = {}
   let animations = {}
@@ -44,14 +48,28 @@ pub fn MapleButton::from_resource(
   textures[ButtonState::DISABLED] = @graphics.Texture::from_resource(
     src["disabled"]["0"],
   )
+  { textures, animations }
+}
+
+///|
+pub fn MapleButton::from_resource(
+  src : @resource.NxNode,
+  pos~ : Point[Int] = @struct.Point::default()
+) -> MapleButton {
+  let res = MapleButtonResource::from_resource(src)
+  MapleButton::new(res, pos~)
+}
+
+///|
+pub fn MapleButton::new(
+  res : MapleButtonResource,
+  pos~ : Point[Int] = @struct.Point::default()
+) -> MapleButton {
+  let base = ButtonModel::default()
   base.active = true
   base.position = pos
   base.state = ButtonState::NORMAL
-  {
-    base,
-    textures: @immut/hashmap.from_iter(textures.iter()),
-    animations: @immut/hashmap.from_iter(animations.iter()),
-  }
+  { base, textures: res.textures, animations: res.animations }
 }
 
 ///|

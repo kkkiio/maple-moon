@@ -1,5 +1,5 @@
-// Character effects from Effect.wz
-pub enum CharEffectId {
+///| Character effects from Effect.wz
+pub(all) enum CharEffectId {
   LEVEL_UP
   JOB_CHANGE
   SCROLL_SUCCESS

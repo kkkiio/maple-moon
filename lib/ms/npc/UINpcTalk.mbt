@@ -21,7 +21,6 @@ struct UINpcTalk {
   mut unit_rows : Int
   mut row_max : Int
   min_height : Int
-  mut show_slider : Bool
   // slider:Slider
   mut t : TalkType?
   mut formatted_text_pos : Int
@@ -110,7 +109,6 @@ fn UINpcTalk::new(
   let offset = 0
   let unit_rows = 0
   let row_max = 0
-  let show_slider = false
   let formatted_text_pos = 0
   let timestep = 0
   let top = @graphics.Texture::from_resource(util_dlg_ex["t"])
@@ -153,7 +151,6 @@ fn UINpcTalk::new(
     offset,
     unit_rows,
     row_max,
-    show_slider,
     formatted_text_pos,
     timestep,
     top,
@@ -175,7 +172,7 @@ pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
 }
 
 ///|
-impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
   let buttons = self.buttons
   fn draw() -> Unit {
     let mut drawpos = self.base.position
@@ -199,56 +196,31 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RuntimeState {
     self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
     self.name.draw(center_pos + @struct.Point::new(0, -4))
     match self.content {
-      Some(content) =>
-        if self.show_slider {
-          let text_min_height = self.base.position.y + self.top.height() - 1
-          let mut init_height = 19
-          for element in content.text_content {
-            element.draw(
-              self.base.position +
-              @struct.Point::new(162, init_height - self.offset * 248),
-              text_y_clip=@struct.Range::new(
-                  text_min_height,
-                  text_min_height + self.height,
-                )
-                |> @option.some,
-            )
-            init_height += element.height()
-          }
-          for element in content.text_button_content {
-            element.draw_in_range(
-              self.base.position +
-              @struct.Point::new(162, init_height - self.offset * 248),
-              @struct.Range::new(text_min_height, text_min_height + self.height),
-            )
-            init_height += element.height()
-          }
-          // TODO: draw slider
-        } else {
-          let mut init_height = 19
-          for element in content.text_content {
-            element.draw(
-              self.base.position + @struct.Point::new(166, init_height),
-            )
-            init_height += element.height()
-          }
-          for element in content.text_button_content {
-            element.draw(
-              self.base.position + @struct.Point::new(166, init_height),
-            )
-            init_height += element.height()
-          }
+      Some(content) => {
+        let mut init_height = 19
+        for element in content.text_content {
+          element.draw(
+            self.base.position + @struct.Point::new(166, init_height),
+          )
+          init_height += element.height()
         }
+        for element in content.text_button_content {
+          element.draw(
+            self.base.position + @struct.Point::new(166, init_height),
+          )
+          init_height += element.height()
+        }
+      }
       None => ()
     }
   }
 
   {
-    draw_fn: fn(_alpha) { draw() },
     buttons: buttons.mapi(fn(i, btn) {
       @ui.Button::new(btn, on_click=fn() { self.button_pressed(i) })
     }),
     sprites: [],
+    drawables: [], // TODO
   }
 }
 
@@ -413,7 +385,6 @@ pub fn change_text(
     self.name.change_text("")
   }
   self.height = self.min_height + 20
-  self.show_slider = false
   self.reset_content_pos()
   for i, button in self.buttons {
     if i < bid_text_button { // enable selection buttons
@@ -493,28 +464,13 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
     Some(content) => content
     None => return
   }
-  if self.show_slider {
-    let mut init_height = 19
-    for element in content.text_content {
-      init_height += element.height()
-    }
-    for element in content.text_button_content {
-      element
-      .get_button_base()
-      .set_position(@struct.Point::new(162, init_height - self.offset * 248))
-      init_height += element.height()
-    }
-  } else {
-    let mut init_height = 19
-    for element in content.text_content {
-      init_height += element.height()
-    }
-    for element in content.text_button_content {
-      element
-      .get_button_base()
-      .set_position(@struct.Point::new(166, init_height))
-      init_height += element.height()
-    }
+  let mut init_height = 19
+  for element in content.text_content {
+    init_height += element.height()
+  }
+  for element in content.text_button_content {
+    element.get_button_base().set_position(@struct.Point::new(166, init_height))
+    init_height += element.height()
   }
 }
 

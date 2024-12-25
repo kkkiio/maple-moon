@@ -48,7 +48,7 @@ pub fn Game::new() -> Game {
 fn load_modules(
   ui : UI,
   timer : @utils.Timer,
-  processor : @net.PacketProcessor,
+  packet_processor : @net.PacketProcessor,
   loading_tasks : Array[@utils.Future[Unit]],
   scheduls : @schedule.Schedules
 ) -> @utils.Future[LoadedState] {
@@ -96,7 +96,7 @@ fn load_modules(
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let login_mod_f = char_look_module_f
-    .bind(fn(mod) { @login.Module::load(processor, ui, mod) })
+    .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod) })
     .combine(inventory_module)
     .map(fn(it) {
       let (login_module, inventory_module) = it
@@ -125,9 +125,11 @@ fn load_modules(
       }),
     )
   })
-  let npc_module = @npc.Module::load(ui, fn() {
-    Stage::get().get_player().unwrap().get_name()
-  }).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let npc_module = @npc.Module::load(
+    ui,
+    fn() { Stage::get().get_player().unwrap().get_name() },
+    packet_processor,
+  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
   let char_stats_mod_f = @char_stats.Module::load(fn() {
     Stage::get().get_player().map(fn(p) { p.get_stats() })
   }).tap(fn(mod) {
@@ -232,7 +234,7 @@ fn load_modules(
   })
   let loading_mods = [
     @utils.Future::from_value(
-      @heal_over_time.new_module(scheduls, processor, fn() {
+      @heal_over_time.new_module(scheduls, packet_processor, fn() {
         Stage::get().get_player().map(fn(p) { p.get_stats() })
       }),
     ),
@@ -280,7 +282,9 @@ fn load_modules(
   |> @utils.Future::map(fn(it) {
     let (_, login_module) = it
     action_registry.reset_actions(action_map.iter() |> @immut/hashmap.from_iter)
-    processor.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
+    packet_processor.reset_handlers(
+      net_handler_map.iter() |> @immut/hashmap.from_iter,
+    )
     timer.reset()
     ui.change_state(UIStateLogin::new(login_module))
     { login_module, }

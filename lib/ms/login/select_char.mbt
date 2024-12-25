@@ -136,76 +136,65 @@ fn new_select_char_packet(character_id : Int) -> @net.OutPacket {
 
 ///|
 struct SelectCharUI {
-  logic_state : LogicState
-  resources : Resources
-  mut runtime_state : RuntimeState?
-}
-
-///|
-struct LogicState {
   model : @ui.UIModel
-  mut attributes : Attributes
+  characters : Array[(Int, @char_look.CharLook, @ui.NameTag)]
+  on_character_selected : (Int) -> Unit
   mut select_slot : Int?
+  resource : SelectCharUIResource
 }
 
 ///|
-struct Attributes {
-  char_look_module : @char_look.Module
-  characters : Array[@character.CharEntry]
-  set_selected_cid : (Int) -> Unit
+pub(all) struct SelectCharUIResource {
+  name_tag : @ui.NameTagResource
+  bt_select : @ui.MapleButtonResource
 }
 
 ///|
-struct RuntimeState {
-  model : @ui.UIModel
-  buttons : Array[@ui.Button]
-  char_looks : Array[@char_look.CharLook]
-  name_tags : Array[@ui.NameTag]
+pub fn SelectCharUIResource::from_resource(
+  src : @resource.NxNode
+) -> SelectCharUIResource {
+  {
+    name_tag: @ui.NameTagResource::from_resource(src["nameTag"]),
+    bt_select: @ui.MapleButtonResource::from_resource(src["BtSelect"]),
+  }
 }
 
 ///|
-struct Resources {
-  name_tag : @resource.NxNode
-  bt_select : @resource.NxNode
-}
-
-///|
-fn SelectCharUI::new(attributes : Attributes) -> SelectCharUI {
-  let logic_state = {
-    attributes,
+pub fn SelectCharUI::new(
+  resource : SelectCharUIResource,
+  characters : Array[(Int, @char_look.CharLook, String)],
+  on_character_selected~ : (Int) -> Unit = fn(_i) {  }
+) -> SelectCharUI {
+  {
     select_slot: None,
+    on_character_selected,
+    characters: characters.map(fn(it) {
+      let (cid, char_look, name) = it
+      (
+        cid,
+        char_look,
+        @ui.NameTag::new(@graphics.FontId::A13M, name, resource.name_tag),
+      )
+    }),
     model: @ui.UIModel::new(
       @struct.Point::new(0, 0),
       @struct.Point::new(800, 600),
     ),
+    resource,
   }
-  let char_select = @ui.common_ui_loader().load_res(["Login.img", "CharSelect"])
-  let name_tag = char_select["nameTag"]
-  let bt_select = char_select["BtSelect"]
-  let resources = { name_tag, bt_select }
-  { logic_state, resources, runtime_state: None }
 }
 
 ///|
-pub fn set_attributes(self : SelectCharUI, attributes : Attributes) -> Unit {
-  self.logic_state.attributes = attributes
-  self.runtime_state = None
-}
-
-///|
-fn render(self : LogicState, resources : Resources) -> RuntimeState {
+pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
+  let resources = self.resource
   let buttons = [
-    @ui.MapleButton::from_resource(
-      resources.bt_select,
-      pos=@struct.Point::new(601, 393),
-    )
+    @ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
     |> @ui.Button::new(on_click=fn() {
       guard let Some(slot) = self.select_slot else {
         None => return @ui.ButtonState::IDENTITY
       }
-      let cid = self.attributes.characters[slot].id
-      (self.attributes.set_selected_cid)(cid)
-      new_select_char_packet(cid).dispatch()
+      let cid = self.characters[slot].0
+      (self.on_character_selected)(cid)
       @ui.ButtonState::IDENTITY
     }),
   ]
@@ -222,44 +211,41 @@ fn render(self : LogicState, resources : Resources) -> RuntimeState {
     )
   }
   // Create runtime state for current frame
-  let char_looks = self.attributes.characters.map(fn(c) {
-    self.attributes.char_look_module.new_char_look(c.look)
-  })
-  let name_tags = self.attributes.characters.map(fn(c) {
-    @ui.NameTag::new(resources.name_tag, @graphics.FontId::A13M, c.stats.name)
-  })
-  { char_looks, name_tags, buttons, model: self.model }
-}
-
-///|
-fn draw(self : RuntimeState, alpha : Double) -> Unit {
-  // Draw characters
-  for i in 0..<self.char_looks.length() {
-    let char_pos = get_character_slot_pos(i, 135, 234)
-    self.char_looks[i].draw(char_pos |> @graphics.DrawArgument::new, alpha)
-    self.name_tags[i].draw(char_pos)
-  }
-  for button in self.buttons {
-    button.object.draw(self.model.position)
+  let char_looks = self.characters.map(fn(c) { c.1 })
+  let name_tags = self.characters.map(fn(c) { c.2 })
+  {
+    buttons,
+    sprites: [],
+    drawables: char_looks.mapi(fn(i, c) {
+      {
+        char_look: c,
+        name_tag: name_tags[i],
+        pos: get_character_slot_pos(i, 135, 234),
+      }
+    }),
   }
 }
 
 ///|
-fn use_runtime_state(self : SelectCharUI) -> RuntimeState {
-  match self.runtime_state {
-    Some(rs) => rs
-    None => {
-      let render_state = render(self.logic_state, self.resources)
-      self.runtime_state = Some(render_state)
-      render_state
-    }
-  }
+struct CharDrawable {
+  char_look : @char_look.CharLook
+  name_tag : @ui.NameTag
+  pos : @struct.Point[Int]
 }
 
 ///|
-impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RuntimeState {
-  let s = self.logic_state.render(self.resources)
-  { buttons: s.buttons, draw_fn: fn(alpha) { s.draw(alpha) }, sprites: [] }
+impl @ui.DrawableUI for CharDrawable with draw(self, _pos, alpha) -> Unit {
+  self.char_look.draw(@graphics.DrawArgument::new(self.pos), alpha)
+  self.name_tag.draw(self.pos)
+}
+
+///|
+pub impl ToJson for CharDrawable with to_json(self) -> Json {
+  {
+    "char_look": self.char_look.to_json(),
+    "name_tag": self.name_tag.to_json(),
+    "pos": self.pos.to_json(),
+  }
 }
 
 ///|
@@ -293,5 +279,5 @@ pub fn send_key(
 
 ///|
 pub fn get_ui_model(self : SelectCharUI) -> @ui.UIModel {
-  self.logic_state.model
+  self.model
 }

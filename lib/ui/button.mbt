@@ -33,6 +33,16 @@ pub fn Button::new(object : UIButton, on_click? : () -> ButtonState) -> Button {
 }
 
 ///|
+pub impl DrawableUI for Button with draw(self, pos, _alpha) -> Unit {
+  self.object.draw(pos)
+}
+
+///|
+pub impl ToJson for Button with to_json(self) -> Json {
+  {} // TODO
+}
+
+///|
 pub(all) struct ButtonModel {
   mut state : ButtonState
   mut position : Point[Int]

@@ -52,6 +52,11 @@ pub fn width(self : OutlinedText) -> Int {
 }
 
 ///|
+pub impl ToJson for OutlinedText with to_json(self) -> Json {
+  { "text": self.inner.get_text().to_json() }
+}
+
+///|
 pub(all) struct ShadowText {
   mut top : Text
   mut shadow : Text

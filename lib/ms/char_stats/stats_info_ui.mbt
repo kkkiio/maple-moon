@@ -1,7 +1,4 @@
 ///|
-type StatLabel (@graphics.Text, @struct.Point[Int])
-
-///|
 struct UIStatsInfo {
   model : @ui.UIModel
   stats : CharStats
@@ -398,7 +395,7 @@ fn UIStatsInfo::new(
 }
 
 ///|
-impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
   let detailed_labels = if self.show_detail {
     [
       self.damage_detailed_label,
@@ -430,60 +427,51 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RuntimeState {
     self.luk_label,
   ]
   let buttons = get_all_buttons(self)
-  fn draw(alpha : Double) -> Unit {
-    for sprite in self.sprites {
-      sprite.draw(self.model.position, alpha)
-    }
-    if self.show_detail {
-      let detail_pos = self.model.position + @struct.Point::new(212, 0)
-      self.textures_detail[0].draw(
-        detail_pos + @struct.Point::new(0, -1) |> @graphics.DrawArgument::new,
-      )
-      self.textures_detail[1].draw(detail_pos |> @graphics.DrawArgument::new)
-      self.textures_detail[2].draw(detail_pos |> @graphics.DrawArgument::new)
-      self.textures_detail[3].draw(detail_pos |> @graphics.DrawArgument::new)
-      self.none_ability.draw(@graphics.DrawArgument::new(detail_pos))
-      self.inner_ability[false].draw(detail_pos |> @graphics.DrawArgument::new)
-      self.inner_ability[false].draw(
-        detail_pos + @struct.Point::new(0, 19) |> @graphics.DrawArgument::new,
-      )
-      self.inner_ability[false].draw(
-        detail_pos + @struct.Point::new(0, 38) |> @graphics.DrawArgument::new,
-      )
-    }
-    for label in normal_labels {
-      let labelpos = self.model.position + label._.1
-      label._.0.draw(labelpos)
-    }
-    if self.show_detail {
-      for label in detailed_labels {
-        let labelpos = (self.model.position + label._.1).shift_x(213)
-        label._.0.draw(labelpos)
-      }
-    }
-    for button in buttons {
-      button.object.draw(self.model.position)
-    }
+  let details = if self.show_detail {
+    let detail_pos = @struct.Point::new(212, 0)
+    [
+      @ui.TextureUI::new(
+        self.textures_detail[0],
+        pos=detail_pos + @struct.Point::new(0, -1),
+      ),
+      @ui.TextureUI::new(self.textures_detail[1], pos=detail_pos),
+      @ui.TextureUI::new(self.textures_detail[2], pos=detail_pos),
+      @ui.TextureUI::new(self.textures_detail[3], pos=detail_pos),
+      @ui.TextureUI::new(self.none_ability, pos=detail_pos),
+      @ui.TextureUI::new(self.inner_ability[false], pos=detail_pos),
+      @ui.TextureUI::new(
+        self.inner_ability[false],
+        pos=detail_pos + @struct.Point::new(0, 19),
+      ),
+      @ui.TextureUI::new(
+        self.inner_ability[false],
+        pos=detail_pos + @struct.Point::new(0, 38),
+      ),
+    ]
+  } else {
+    []
   }
-
-  { buttons, draw_fn: draw, sprites: self.sprites }
+  {
+    buttons,
+    sprites: self.sprites,
+    drawables: self.sprites
+    .iter()
+    .map(fn(sprite) { sprite as &@ui.DrawableUI })
+    .concat(details.iter().map(fn(sprite) { sprite as &@ui.DrawableUI }))
+    .concat(
+      normal_labels
+      .iter()
+      .map(fn(label) { @ui.TextUI::new(label._.0, pos=label._.1) }),
+    )
+    .concat(
+      detailed_labels
+      .iter()
+      .map(fn(label) { @ui.TextUI::new(label._.0, pos=label._.1.shift_x(213)) }),
+    )
+    .concat(buttons.iter().map(fn(button) { button as &@ui.DrawableUI }))
+    .to_array(),
+  }
 }
-
-///|
-struct RuntimeState {
-  model : @ui.UIModel
-  sprites : Array[@graphics.Sprite]
-  buttons : Array[@ui.Button]
-  none_ability : @graphics.Texture
-  inner_ability : @utils.BoolPair[@graphics.Texture]
-  textures_detail : Array[@graphics.Texture]
-  show_detail : Bool
-  // mut has_ap : Bool
-  normal_labels : Array[StatLabel]
-  detailed_labels : Array[StatLabel]
-}
-
-///|
 
 ///|
 fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
@@ -694,3 +682,6 @@ pub fn remove_cursor(self : UIStatsInfo) -> Unit {
     self.get_all_buttons().iter().map(fn(b) { b.object.get_button_base() }),
   )
 }
+
+///|
+type StatLabel (@graphics.Text, @struct.Point[Int])

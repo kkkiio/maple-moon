@@ -572,9 +572,13 @@ pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
 impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
 
 ///|
-impl @ui.UIElement for UIShop with render(self) -> @ui.RuntimeState {
+impl @ui.UIElement for UIShop with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { buttons: rs.buttons, draw_fn: fn(alpha) { rs.draw(alpha) }, sprites: [] }
+  {
+    buttons: rs.buttons,
+    drawables: [], // TODO
+    sprites: [],
+  }
 }
 
 ///|

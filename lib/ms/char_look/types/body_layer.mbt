@@ -11,7 +11,10 @@ pub(all) enum BodyLayer {
   HAND_OVER_HAIR
   HAND_OVER_WEAPON
   HEAD
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
+
+///|
+pub impl ToJson for BodyLayer with to_json(self) { self.to_string().to_json() }
 
 ///|
 pub fn int_value(self : BodyLayer) -> Int {
@@ -55,8 +58,7 @@ pub fn BodyLayer::layer_by_name(name : String) -> BodyLayer {
 }
 
 ///|
-pub let layers_by_name_ : @immut/sorted_map.T[String, BodyLayer] = @immut/sorted_map.from_array(
-  [
+pub let layers_by_name_ : @immut/sorted_map.T[String, BodyLayer] = @immut/sorted_map.from_array([
     ("body", BodyLayer::BODY),
     ("backBody", BodyLayer::BODY),
     ("arm", BodyLayer::ARM),

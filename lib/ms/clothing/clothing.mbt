@@ -35,7 +35,10 @@ pub(all) enum Layer {
   WEAPON_OVER_GLOVE
   PANTS_DEFAULT
   TOP_DEFAULT
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show)
+
+///|
+pub impl ToJson for Layer with to_json(self) { self.to_string().to_json() }
 
 ///|
 struct Clothing {
@@ -98,83 +101,79 @@ pub fn Clothing::from_resource(
   let src = item_data.get_src()
   let stances = @types.stance_name_id_map
     .iter()
-    .map_option(
-      fn(it) {
-        let (stancename, stance) = it
-        let node = src[stancename]
-        if node.is_null() {
-          None
-        } else {
-          Some((stance, node))
+    .map_option(fn(it) {
+      let (stancename, stance) = it
+      let node = src[stancename]
+      if node.is_null() {
+        None
+      } else {
+        Some((stance, node))
+      }
+    })
+    .map(fn(it) {
+      let (stance, stancenode) = it
+      let layeredFrames = Map::new()
+      for frame = 0; ; frame = frame + 1 {
+        let framenode = stancenode[frame.to_string()]
+        if framenode.is_null() {
+          break
         }
-      },
-    )
-    .map(
-      fn(it) {
-        let (stance, stancenode) = it
-        let layeredFrames = Map::new()
-        for frame = 0; ; frame = frame + 1 {
-          let framenode = stancenode[frame.to_string()]
-          if framenode.is_null() {
-            break
+        for part, partnode in framenode {
+          if partnode.is_null() || partnode.get_bitmap().is_empty() {
+            continue
           }
-          for part, partnode in framenode {
-            if partnode.is_null() || partnode.get_bitmap().is_empty() {
-              continue
+          let mut z = chlayer
+          let zs = partnode["z"].get_string()
+          if part == "mailArm" {
+            z = Layer::MAILARM
+          } else {
+            match sub_layer_names.get(zs) {
+              Some(sublayer) => z = sublayer
+              None => ()
             }
-            let mut z = chlayer
-            let zs = partnode["z"].get_string()
-            if part == "mailArm" {
-              z = Layer::MAILARM
-            } else {
-              match sub_layer_names.get(zs) {
-                Some(sublayer) => z = sublayer
-                None => ()
-              }
-            }
-            let (parent, parentpos) = for mapnode in partnode["map"] {
-              match mapnode.as_point?().to_option() {
-                Some(point) => break (mapnode.name(), point)
-                None => ()
-              }
-            } else {
-              ("", @struct.Point::default())
-            }
-            let shift = match eq_slot {
-              @slot.Id::FACE => -parentpos
-              @slot.Id::SHOES
-              | @slot.Id::GLOVES
-              | @slot.Id::TOP
-              | @slot.Id::TOP_DEFAULT
-              | @slot.Id::BOTTOM
-              | @slot.Id::BOTTOM_DEFAULT
-              | @slot.Id::CAPE =>
-                drawinfo.get_body_position(stance, frame) - parentpos
-              @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
-                drawinfo.get_face_pos(stance, frame) - parentpos
-              @slot.Id::SHIELD | @slot.Id::WEAPON =>
-                (if parent == "handMove" {
-                  drawinfo.get_hand_position(stance, frame)
-                } else if parent == "hand" {
-                  drawinfo.get_arm_position(stance, frame)
-                } else if parent == "navel" {
-                  drawinfo.get_body_position(stance, frame)
-                } else {
-                  @struct.Point::default()
-                }) -
-                parentpos
-              _ => @struct.Point::default()
-            }
-            let tex = @graphics.Texture::from_resource(partnode)..shift(shift)
-            layeredFrames
-            .get_or_init(z, fn() { Map::new() })
-            .get_or_init(frame, fn() { Array::new() })
-            .push(tex)
           }
+          let (parent, parentpos) = for mapnode in partnode["map"] {
+            match mapnode.as_point?().to_option() {
+              Some(point) => break (mapnode.name(), point)
+              None => ()
+            }
+          } else {
+            ("", @struct.Point::default())
+          }
+          let shift = match eq_slot {
+            @slot.Id::FACE => -parentpos
+            @slot.Id::SHOES
+            | @slot.Id::GLOVES
+            | @slot.Id::TOP
+            | @slot.Id::TOP_DEFAULT
+            | @slot.Id::BOTTOM
+            | @slot.Id::BOTTOM_DEFAULT
+            | @slot.Id::CAPE =>
+              drawinfo.get_body_position(stance, frame) - parentpos
+            @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
+              drawinfo.get_face_pos(stance, frame) - parentpos
+            @slot.Id::SHIELD | @slot.Id::WEAPON =>
+              (if parent == "handMove" {
+                drawinfo.get_hand_position(stance, frame)
+              } else if parent == "hand" {
+                drawinfo.get_arm_position(stance, frame)
+              } else if parent == "navel" {
+                drawinfo.get_body_position(stance, frame)
+              } else {
+                @struct.Point::default()
+              }) -
+              parentpos
+            _ => @struct.Point::default()
+          }
+          let tex = @graphics.Texture::from_resource(partnode)..shift(shift)
+          layeredFrames
+          .get_or_init(z, fn() { Map::new() })
+          .get_or_init(frame, fn() { Array::new() })
+          .push(tex)
         }
-        (stance, layeredFrames)
-      },
-    )
+      }
+      (stance, layeredFrames)
+    })
     |> Map::from_iter
   // let transparent = item_id == 1002186
   { stances, item_id, eq_slot, vslot, two_handed, walk, stand }

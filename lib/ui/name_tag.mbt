@@ -54,11 +54,13 @@ pub fn draw(self : NameTag, position : Point[Int]) -> Unit {
   let (t1, t2, t3) = self.textures[self.selected]
   let width = self.name.width()
   let startpos = position - { x: 6 + width / 2, y: -1 }
-  t1.draw(startpos |> @graphics.DrawArgument::new)
+  t1.draw(@graphics.DrawArgument::new(position=startpos))
   t2.draw(
     @graphics.DrawArgument::new4(startpos + { x: 6, y: 0 }, { x: width, y: 0 }),
   )
-  t3.draw(@graphics.DrawArgument::new(startpos + { x: width + 6, y: 0 }))
+  t3.draw(
+    @graphics.DrawArgument::new(position=startpos + { x: width + 6, y: 0 }),
+  )
   self.name.draw(position)
 }
 

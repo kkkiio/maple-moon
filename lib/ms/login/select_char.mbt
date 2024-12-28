@@ -212,6 +212,10 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
   }
   // Create runtime state for current frame
   let char_looks = self.characters.map(fn(c) { c.1 })
+  for look in char_looks {
+    look.set_stance(@types.StanceId::STAND1)
+    look.set_direction(true)
+  }
   let name_tags = self.characters.map(fn(c) { c.2 })
   {
     buttons,
@@ -234,8 +238,8 @@ struct CharDrawable {
 }
 
 ///|
-impl @ui.DrawableUI for CharDrawable with draw(self, _pos, alpha) -> Unit {
-  self.char_look.draw(@graphics.DrawArgument::new(self.pos), alpha)
+impl @ui.Drawable for CharDrawable with draw(self, _pos, alpha) -> Unit {
+  self.char_look.draw(@graphics.DrawArgument::new(position=self.pos), alpha)
   self.name_tag.draw(self.pos)
 }
 

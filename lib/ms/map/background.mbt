@@ -54,17 +54,15 @@ pub fn Background::load(
     bs => {
       let animated = src["ani"].get_bool?().unwrap()
       background_loader
-      .load_res(
-        [
-          bs + ".img",
-          if animated {
-            "ani"
-          } else {
-            "back"
-          },
-          src["no"].get_int?().unwrap().to_string(),
-        ],
-      )
+      .load_res([
+        bs + ".img",
+        if animated {
+          "ani"
+        } else {
+          "back"
+        },
+        src["no"].get_int?().unwrap().to_string(),
+      ])
       .map_exn(fn(res) { Background::from_resource!(src, Some(res)) })
     }
   }
@@ -207,7 +205,7 @@ pub fn draw(
     while ty < th {
       self.animation.draw(
         @graphics.DrawArgument::new(
-          { x: ix + tx, y: iy + ty },
+          position={ x: ix + tx, y: iy + ty },
           flip=self.flipped,
           opacity=self.opacity / 255.0,
         ),
@@ -251,17 +249,11 @@ pub fn load_backgrounds(
   @utils.Future::all_of(backs)
   .map(fn(res) { @utils.flatten_ok(res) })
   .combine(@utils.Future::all_of(fores).map(fn(res) { @utils.flatten_ok(res) }))
-  .map(
-    fn(res) {
-      res.0.bind(
-        fn(backgrounds) {
-          res.1.map(
-            fn(foregrounds) { { backs: backgrounds, fores: foregrounds } },
-          )
-        },
-      )
-    },
-  )
+  .map(fn(res) {
+    res.0.bind(fn(backgrounds) {
+      res.1.map(fn(foregrounds) { { backs: backgrounds, fores: foregrounds } })
+    })
+  })
 }
 
 ///|

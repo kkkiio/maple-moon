@@ -7,6 +7,11 @@ struct Obj {
 }
 
 ///|
+fn get_object_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("obj")
+}
+
+///|
 pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
   match src.value() {
     {
@@ -15,7 +20,7 @@ pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
       "l1": String(src_l1),
       "l2": String(src_l2),
     } =>
-      object_loader
+      get_object_loader()
       .load_res(["\{src_oS}.img", src_l0, src_l1, src_l2])
       .map(fn(res) { Obj::from_resource?(src, res) })
     _ => panic()
@@ -40,7 +45,7 @@ pub fn update(self : Obj) -> Unit {
 ///|
 pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
   self.animation.draw(
-    @graphics.DrawArgument::new(self.pos + viewpos, flip=self.flip),
+    @graphics.DrawArgument::new(position=self.pos + viewpos, flip=self.flip),
     inter,
   )
 }
@@ -49,6 +54,3 @@ pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
 pub fn get_z(self : Obj) -> Int {
   self.z
 }
-
-///|
-let object_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("obj")

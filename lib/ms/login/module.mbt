@@ -5,6 +5,7 @@ struct Module {
   pretty_logo : @resource.NxNode
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
+  io_service : @io_task.Service
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World]
@@ -19,7 +20,8 @@ struct Module {
 pub fn Module::load(
   processor : @net.PacketProcessor,
   ui_container : &@ui.Container,
-  char_look_module : @char_look.Module
+  char_look_module : @char_look.Module,
+  io_service : @io_task.Service
 ) -> @utils.Future[Module] {
   map001_loader
   .load_res(["Back", "login.img"])
@@ -39,6 +41,7 @@ pub fn Module::load(
       connect_task: None,
       input_acc_pass: None,
       select_cid: None,
+      io_service,
     }
   })
 }
@@ -351,33 +354,35 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
           }
           None => {
             mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
-            mod.ui_container.add_ui(
-              @ui.Element::new(
-                fn(_hooks) {
-                  let char_select = @ui.common_ui_loader().load_res([
-                    "Login.img", "CharSelect",
-                  ])
-                  SelectCharUI::new(
-                    SelectCharUIResource::from_resource(char_select),
-                    mod.characters.map(fn(ce) {
-                      (
-                        ce.id,
-                        mod.char_look_module.new_char_look(ce.look),
-                        ce.stats.name,
-                      )
-                    }),
-                    on_character_selected=fn(cid) {
-                      mod.select_cid = Some(cid)
-                      mod.packet_processor.send_packet(
-                        new_select_char_packet(cid),
-                      )
-                    },
-                  )
-                },
-                @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
-              ),
-              false,
-            )
+            let char_select = @ui.common_ui_loader().load_res([
+              "Login.img", "CharSelect",
+            ])
+            let char_looks_f = mod.characters.map(fn(ce) {
+                mod.char_look_module
+                .load_char_look(ce.look)
+                .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
+              })
+              |> @utils.Future::all_of()
+            mod.io_service.on_complete(char_looks_f, fn(char_looks) {
+              mod.ui_container.add_ui(
+                @ui.Element::new(
+                  fn(_hooks) {
+                    SelectCharUI::new(
+                      SelectCharUIResource::from_resource(char_select),
+                      char_looks,
+                      on_character_selected=fn(cid) {
+                        mod.select_cid = Some(cid)
+                        mod.packet_processor.send_packet(
+                          new_select_char_packet(cid),
+                        )
+                      },
+                    )
+                  },
+                  @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
+                ),
+                false,
+              )
+            })
           }
         }
       _ => fail!("pic=\{pic} not ok")
@@ -665,7 +670,7 @@ pub fn update(self : Module) -> Unit {
 ///|
 pub fn new_login_ui(self : Module) -> @ui.Element {
   @ui.Element::new(
-    fn(hooks) { UILogin::new(self, self.login_img, self.pretty_logo) },
+    fn(_hooks) { UILogin::new(self, self.login_img, self.pretty_logo) },
     @ui.UIElementType::LOGIN,
   )
 }

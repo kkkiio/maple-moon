@@ -1,4 +1,5 @@
-pub enum Id {
+///|
+pub(all) enum Id {
   NONE
   HAT
   FACE
@@ -31,8 +32,12 @@ pub enum Id {
   HEART // TODO: What is the proper value for this?
   TOP_DEFAULT
   BOTTOM_DEFAULT
-} derive(Eq)
+} derive(Eq, Show)
 
+///|
+pub impl ToJson for Id with to_json(self) -> Json { self.to_string().to_json() }
+
+///|
 pub fn int_value(self : Id) -> Int {
   match self {
     NONE => 0
@@ -70,18 +75,22 @@ pub fn int_value(self : Id) -> Int {
   }
 }
 
+///|
 pub fn hash(self : Id) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+///|
 pub fn Id::length() -> Int {
   62
 }
 
+///|
 pub fn Id::from_int(slot : Int) -> Id {
   match slot {
     0 => NONE

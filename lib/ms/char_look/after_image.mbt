@@ -34,7 +34,7 @@ pub fn Afterimage::load(
     fn(opt) {
       opt.map_or_else(
         fn() {
-          afterimage_loader.load_res(
+          get_afterimage_loader().load_res(
             [name + ".img", (level / 10).to_string(), stance_name],
           )
         },
@@ -60,6 +60,11 @@ pub fn Afterimage::new(src : @resource.NxNode) -> Afterimage {
   { animation, range, first_frame, displayed }
 }
 
+///|
+fn get_afterimage_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("afterimage")
+}
+
 // @alert deprecated "explicitly handle loading"
 pub fn Afterimage::default() -> Afterimage {
   {
@@ -83,7 +88,3 @@ pub fn update(self : Afterimage, stframe : Int, timestep : Int) -> Unit {
     self.displayed = self.animation.update(timestep~)
   }
 }
-
-let afterimage_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "afterimage",
-)

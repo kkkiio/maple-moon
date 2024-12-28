@@ -92,48 +92,39 @@ pub fn add_equip(
   }
   let item_future = @item.ItemData::get_async(item_id)
   let cloth_future = item_future
-    .map_exn(
-      fn(item_data) {
-        @clothing.Clothing::from_resource!(
-          item_data.unwrap_or_error!(),
-          drawinfo,
-        )
-      },
-    )
-    .map(
-      fn(r) {
-        match r {
-          Ok(cloth) => Some(cloth)
+    .map_exn(fn(item_data) {
+      @clothing.Clothing::from_resource!(item_data.unwrap_or_error!(), drawinfo)
+    })
+    .map(fn(r) {
+      match r {
+        Ok(cloth) => Some(cloth)
+        Err(e) => {
+          @log.error(
+            { "item_id": item_id, "err": Show::to_string(e) },
+            "Failed to load clothing",
+          )
+          None
+        }
+      }
+    })
+  self.clothes[slot] = (item_id, cloth_future)
+  if slot == @slot.Id::WEAPON {
+    self.weapon_data_cache = item_future
+      .map_exn(fn(res) {
+        @weapon.WeaponData::from_item_data!(res.unwrap_or_error!())
+      })
+      .map(fn(res) {
+        match res {
+          Ok(weapon_data) => Some(weapon_data)
           Err(e) => {
             @log.error(
               { "item_id": item_id, "err": Show::to_string(e) },
-              "Failed to load clothing",
+              "Failed to load weapon data",
             )
             None
           }
         }
-      },
-    )
-  self.clothes[slot] = (item_id, cloth_future)
-  if slot == @slot.Id::WEAPON {
-    self.weapon_data_cache = item_future
-      .map_exn(
-        fn(res) { @weapon.WeaponData::from_item_data!(res.unwrap_or_error!()) },
-      )
-      .map(
-        fn(res) {
-          match res {
-            Ok(weapon_data) => Some(weapon_data)
-            Err(e) => {
-              @log.error(
-                { "item_id": item_id, "err": Show::to_string(e) },
-                "Failed to load weapon data",
-              )
-              None
-            }
-          }
-        },
-      )
+      })
       |> @option.some
   }
 }
@@ -166,5 +157,14 @@ pub fn adjust_stance(
     @types.StanceId::STAND1 | @types.StanceId::STAND2 => weapon.get_stand()
     @types.StanceId::WALK1 | @types.StanceId::WALK2 => weapon.get_walk()
     _ => stance
+  }
+}
+
+///|
+pub impl ToJson for CharEquips with to_json(self) -> Json {
+  {
+    "clothes": self.clothes.iter().map(fn(it) { (it.0, it.1.0) })
+    |> Map::from_iter()
+    |> ToJson::to_json(),
   }
 }

@@ -32,8 +32,7 @@ pub fn ExpressionId::default() -> ExpressionId {
 }
 
 ///|
-pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/sorted_map.from_array(
-  [
+pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/sorted_map.from_array([
     (ExpressionId::DEFAULT, "default"),
     (ExpressionId::BLINK, "blink"),
     (ExpressionId::HIT, "hit"),
@@ -62,6 +61,11 @@ pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/so
 )
 
 ///|
+pub impl ToJson for ExpressionId with to_json(self) {
+  expression_names[self].unwrap().to_json()
+}
+
+///|
 let all_expressions : FixedArray[ExpressionId] = expression_names.keys()
   |> FixedArray::from_array
 
@@ -80,6 +84,11 @@ pub fn byaction(action : Int) -> ExpressionId {
 struct Face {
   expressions : @immut/sorted_map.T[ExpressionId, Map[Int, FaceFrame]]
   name : String
+} derive(Default)
+
+///|
+pub impl ToJson for Face with to_json(self) -> Json {
+  { "name": self.name.to_json() }
 }
 
 ///|
@@ -104,37 +113,40 @@ pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
 let string_loader = @resource.string_loader
 
 ///|
+fn get_face_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("face")
+}
+
+///|
 pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
   let strid = "000" + faceid.to_string()
-  face_loader
+  get_face_loader()
   .load_res(["\{strid}.img"])
   .map(fn(facenode) { Face::new(faceid, facenode) })
 }
 
 ///|
 fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
-  let expressions = expression_names.map_with_key(
-    fn(exp, _v) {
-      let frames = Map::new()
-      if exp == ExpressionId::DEFAULT {
-        frames.set(0, FaceFrame::from_resource(facenode["default"]))
-      } else {
-        let expname = expression_names[exp].unwrap()
-        let expnode = facenode[expname]
-        let mut frame = 0
-        while true {
-          let framenode = expnode[frame.to_string()]
-          if framenode.is_null() {
-            break
-          } else {
-            frames.set(frame, FaceFrame::from_resource(framenode))
-            frame += 1
-          }
+  let expressions = expression_names.map_with_key(fn(exp, _v) {
+    let frames = Map::new()
+    if exp == ExpressionId::DEFAULT {
+      frames.set(0, FaceFrame::from_resource(facenode["default"]))
+    } else {
+      let expname = expression_names[exp].unwrap()
+      let expnode = facenode[expname]
+      let mut frame = 0
+      while true {
+        let framenode = expnode[frame.to_string()]
+        if framenode.is_null() {
+          break
+        } else {
+          frames.set(frame, FaceFrame::from_resource(framenode))
+          frame += 1
         }
       }
-      frames
-    },
-  )
+    }
+    frames
+  })
   let string_loader = string_loader()
   let name = string_loader
     .load_res(["Eqp.img", "Eqp", "Face", "\{faceid}", "name"])
@@ -176,9 +188,6 @@ pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
 pub fn get_name(self : Face) -> String {
   self.name
 }
-
-///|
-let face_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("face")
 
 ///|
 typealias Point[T] = @struct.Point[T]

@@ -40,7 +40,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   sprites.push(
     @graphics.Sprite::from_resource(
       expBarRes["layer:back"],
-      state_args=exp_pos |> @graphics.DrawArgument::new,
+      state_args=@graphics.DrawArgument::new(position=exp_pos),
     ),
   )
   let exp_max = vwidth - 16
@@ -62,22 +62,25 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   hpmp_sprites.push(
     @graphics.Sprite::from_resource(
       status["backgrnd"],
-      state_args=hpmp_pos - @struct.Point::new(1, 0)
-        |> @graphics.DrawArgument::new,
+      state_args=@graphics.DrawArgument::new(
+        position=hpmp_pos - @struct.Point::new(1, 0),
+      ),
     ),
   )
   hpmp_sprites.push(
     @graphics.Sprite::from_resource(
       status["layer:cover"],
-      state_args=hpmp_pos - @struct.Point::new(1, 0)
-        |> @graphics.DrawArgument::new,
+      state_args=@graphics.DrawArgument::new(
+        position=hpmp_pos - @struct.Point::new(1, 0),
+      ),
     ),
   )
   hpmp_sprites.push(
     @graphics.Sprite::from_resource(
       status["layer:Lv"],
-      state_args=hpmp_pos - @struct.Point::new(1, 0)
-        |> @graphics.DrawArgument::new,
+      state_args=@graphics.DrawArgument::new(
+        position=hpmp_pos - @struct.Point::new(1, 0),
+      ),
     ),
   )
   let hpmp_max = 139 + 30
@@ -147,13 +150,13 @@ pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RenderSpec {
     @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
     self.hpmp_sprites[0].draw(self.base.position, alpha)
     self.exp_bar.draw(
-      self.base.position + self.exp_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(position=self.base.position + self.exp_pos),
     )
     self.hp_bar.draw(
-      self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(position=self.base.position + self.hpmp_pos),
     )
     self.mp_bar.draw(
-      self.base.position + self.hpmp_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(position=self.base.position + self.hpmp_pos),
     )
     self.hpmp_sprites[1].draw(self.base.position, alpha)
     self.hpmp_sprites[2].draw(self.base.position, alpha)
@@ -161,27 +164,31 @@ pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RenderSpec {
     let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
     self.stat_set.draw_text(
       "\{exp}[\{exp_precent/100}.\{exp_precent%100}%]",
-      self.base.position + self.statset_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(
+        position=self.base.position + self.statset_pos,
+      ),
     )
     |> ignore
     let hp = self.stats.get_stat(@maple_stat.Id::HP)
     let maxhp = self.stats.get_total(@stat.Id::HP)
     self.hpmp_set.draw_text(
       "[\{hp}/\{maxhp}]",
-      self.base.position + self.hpset_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(position=self.base.position + self.hpset_pos),
     )
     |> ignore
     let mp = self.stats.get_stat(@maple_stat.Id::MP)
     let maxmp = self.stats.get_total(@stat.Id::MP)
     self.hpmp_set.draw_text(
       "[\{mp}/\{maxmp}]",
-      self.base.position + self.mpset_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(position=self.base.position + self.mpset_pos),
     )
     |> ignore
     let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
     self.level_set.draw_text(
       level.to_string(),
-      self.base.position + self.levelset_pos |> @graphics.DrawArgument::new,
+      @graphics.DrawArgument::new(
+        position=self.base.position + self.levelset_pos,
+      ),
     )
     |> ignore
   }

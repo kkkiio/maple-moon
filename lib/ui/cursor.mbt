@@ -112,7 +112,7 @@ pub fn draw(self : Cursor, alpha : Double) -> Unit {
   if self.hide_counter < hide_after {
     self
     .get_or_init_animation()
-    .draw(@graphics.DrawArgument::from_point(self.position), alpha)
+    .draw(@graphics.DrawArgument::new(position=self.position), alpha)
   }
 }
 
@@ -161,9 +161,11 @@ fn get_or_init_animation(self : Cursor) -> @graphics.Animation {
     Some(animation) => animation
     None => {
       let animation = @graphics.Animation::from_resource(
-        common_ui_loader().load_res(
-          ["Basic.img", "Cursor", "\{state.int_value()}"],
-        ),
+        common_ui_loader().load_res([
+          "Basic.img",
+          "Cursor",
+          "\{state.int_value()}",
+        ]),
       )
       self.animations.set(state, animation)
       animation

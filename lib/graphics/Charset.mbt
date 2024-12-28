@@ -1,14 +1,17 @@
+///|
 pub(all) enum CharsetAlignment {
   LEFT
   CENTER
   RIGHT
 } derive(Eq, Compare)
 
+///|
 struct Charset {
   chars : Map[Char, Texture]
   alignment : CharsetAlignment
 }
 
+///|
 pub fn Charset::from_resource(
   src : NxNode,
   alignment : CharsetAlignment
@@ -28,10 +31,12 @@ pub fn Charset::from_resource(
   { chars, alignment }
 }
 
+///|
 pub fn Charset::default() -> Charset {
   { chars: Map::new(), alignment: CharsetAlignment::LEFT }
 }
 
+///|
 pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
   let iter = self.chars.get(c)
   match iter {
@@ -40,11 +45,13 @@ pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
   }
 }
 
+///|
 pub fn getw(self : Charset, c : Char) -> Int {
   let iter = self.chars.get(c)
   iter.map(fn(it) { it.width() }).or(0)
 }
 
+///|
 pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
   let mut shift : Int = 0
   let mut total : Int = 0
@@ -52,48 +59,43 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
     CharsetAlignment::CENTER => {
       text
       .to_array()
-      .each(
-        fn(c) {
-          let width = self.getw(c)
-          self.draw_char(
-            c,
-            args + DrawArgument::from_point(Point::new(shift, 0)),
-          )
-          shift += width + 2
-          total += width
-        },
-      )
+      .each(fn(c) {
+        let width = self.getw(c)
+        self.draw_char(
+          c,
+          args + DrawArgument::new(position=Point::new(shift, 0)),
+        )
+        shift += width + 2
+        total += width
+      })
       shift -= total / 2
     }
     CharsetAlignment::LEFT =>
       // for c in text.chars() {
       text
       .to_array()
-      .each(
-        fn(c) {
-          self.draw_char(
-            c,
-            args + DrawArgument::from_point(Point::new(shift, 0)),
-          )
-          shift += self.getw(c) + 1
-        },
-      )
+      .each(fn(c) {
+        self.draw_char(
+          c,
+          args + DrawArgument::new(position=Point::new(shift, 0)),
+        )
+        shift += self.getw(c) + 1
+      })
     CharsetAlignment::RIGHT =>
       text
       .to_array()
-      .rev_each(
-        fn(c) {
-          shift += self.getw(c)
-          self.draw_char(
-            c,
-            args - DrawArgument::from_point(Point::new(shift, 0)),
-          )
-        },
-      )
+      .rev_each(fn(c) {
+        shift += self.getw(c)
+        self.draw_char(
+          c,
+          args - DrawArgument::new(position=Point::new(shift, 0)),
+        )
+      })
   }
   shift
 }
 
+///|
 pub fn draw_text_with_hspace(
   self : Charset,
   text : String,
@@ -106,31 +108,34 @@ pub fn draw_text_with_hspace(
     CharsetAlignment::CENTER => shift -= hspace * length / 2
     CharsetAlignment::LEFT =>
       for c in text.iter() {
-        self.draw_char(c, args + DrawArgument::from_point(Point::new(shift, 0)))
+        self.draw_char(
+          c,
+          args + DrawArgument::new(position=Point::new(shift, 0)),
+        )
         shift += hspace
       }
     CharsetAlignment::RIGHT =>
       text
       .to_array()
-      .rev_each(
-        fn(c) {
-          shift += hspace
-          self.draw_char(
-            c,
-            args - DrawArgument::from_point(Point::new(shift, 0)),
-          )
-        },
-      )
+      .rev_each(fn(c) {
+        shift += hspace
+        self.draw_char(
+          c,
+          args - DrawArgument::new(position=Point::new(shift, 0)),
+        )
+      })
   }
   shift
 }
 
+///|
 struct GameText {
   charset : Charset
   text : String
   hspace : Int
 }
 
+///|
 pub fn GameText::new(
   charset : Charset,
   text : String,
@@ -139,6 +144,7 @@ pub fn GameText::new(
   { charset, text, hspace }
 }
 
+///|
 pub fn draw(self : GameText, args : DrawArgument) -> Int {
   self.charset.draw_text_with_hspace(self.text, self.hspace, args)
 }

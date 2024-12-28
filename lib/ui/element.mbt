@@ -102,7 +102,8 @@ pub(open) trait UIElement {
 pub(all) struct RenderSpec {
   sprites : Array[@graphics.Sprite]
   buttons : Array[Button]
-  drawables : Array[&DrawableUI]
+  drawables : Array[&Drawable]
+  // statefuls : Array[&Stateful]
 }
 
 ///|
@@ -111,8 +112,13 @@ pub impl ToJson for RenderSpec with to_json(self) -> Json {
 }
 
 ///|
-pub(open) trait DrawableUI: ToJson {
+pub(open) trait Drawable: ToJson {
   draw(Self, @struct.Point[Int], Double) -> Unit
+}
+
+///|
+pub(open) trait Stateful: ToJson {
+  update(Self, Int) -> Unit
 }
 
 ///|
@@ -293,8 +299,8 @@ pub fn TextureUI::new(
 }
 
 ///|
-pub impl DrawableUI for TextureUI with draw(self, pos, _alpha) -> Unit {
-  self.texture.draw(@graphics.DrawArgument::new(pos + self.pos))
+pub impl Drawable for TextureUI with draw(self, pos, _alpha) -> Unit {
+  self.texture.draw(@graphics.DrawArgument::new(position=pos + self.pos))
 }
 
 ///|
@@ -317,7 +323,7 @@ pub fn TextUI::new(text : Text, pos~ : Point[Int] = Point::default()) -> TextUI 
 }
 
 ///|
-pub impl DrawableUI for TextUI with draw(self, pos, _alpha) -> Unit {
+pub impl Drawable for TextUI with draw(self, pos, _alpha) -> Unit {
   self.text.draw(pos + self.pos)
 }
 

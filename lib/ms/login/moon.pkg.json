@@ -13,6 +13,8 @@
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/struct"
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "KKKIIO/maple-moon-client/lib/ms/char_look/types"
   ]
 }

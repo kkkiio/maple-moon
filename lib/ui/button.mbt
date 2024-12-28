@@ -33,7 +33,7 @@ pub fn Button::new(object : UIButton, on_click? : () -> ButtonState) -> Button {
 }
 
 ///|
-pub impl DrawableUI for Button with draw(self, pos, _alpha) -> Unit {
+pub impl Drawable for Button with draw(self, pos, _alpha) -> Unit {
   self.object.draw(pos)
 }
 

@@ -134,9 +134,9 @@ fn draw(self : RenderState, resources : Resources) -> Unit {
   let maplepointslabel_pos = position + @struct.Point::new(159, 279)
 
   // TODO: support scroll
-  resources.full_backgrnd.draw(position |> @graphics.DrawArgument::new)
-  resources.full_backgrnd2.draw(position |> @graphics.DrawArgument::new)
-  resources.full_backgrnd3.draw(position |> @graphics.DrawArgument::new)
+  resources.full_backgrnd.draw(@graphics.DrawArgument::new(position~))
+  resources.full_backgrnd2.draw(@graphics.DrawArgument::new(position~))
+  resources.full_backgrnd3.draw(@graphics.DrawArgument::new(position~))
   self.meso_label.draw(mesolabel_pos + @struct.Point::new(3, 70))
   self.maple_points_label.draw(
     maplepointslabel_pos + @struct.Point::new(181, 53),
@@ -157,7 +157,7 @@ fn draw(self : RenderState, resources : Resources) -> Unit {
       None =>
         if i > numslots && i <= lastslot {
           resources.disabled.draw(
-            position + slotpos |> @graphics.DrawArgument::new,
+            @graphics.DrawArgument::new(position=position + slotpos),
           )
         }
     }

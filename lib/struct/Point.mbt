@@ -2,7 +2,7 @@
 pub(all) struct Point[T] {
   x : T
   y : T
-} derive(Eq, Show, ToJson)
+} derive(Eq, Show)
 
 ///|
 pub fn Point::new[T](x : T, y : T) -> Point[T] {
@@ -54,4 +54,20 @@ pub(open) trait Scalar {
   op_add(Self, Self) -> Self
   op_sub(Self, Self) -> Self
   op_neg(Self) -> Self
+}
+
+///|
+pub impl @json.FromJson for Point[Int] with from_json(value, path) {
+  match value {
+    [Json::Number(x), Json::Number(y)] => Point::new(x.to_int(), y.to_int())
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "Point::from_json: expected array of 2 numbers"),
+      )
+  }
+}
+
+///|
+pub impl ToJson for Point[Int] with to_json(self) -> Json {
+  [self.x.to_json(), self.y.to_json()]
 }

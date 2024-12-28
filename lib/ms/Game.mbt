@@ -9,7 +9,7 @@ pub(all) struct Game {
   ui : UI
   processor : @net.PacketProcessor
   loaded_state : @utils.Future[LoadedState]
-  io_tasks : Array[@utils.Future[Unit]]
+  io_service : @io_task.Service
   scheduls : @schedule.Schedules
 }
 
@@ -30,7 +30,7 @@ pub fn Game::new() -> Game {
     now_micro() |> @utils.TimePoint::from_micro
   })
   let processor = @net.PacketProcessor::init()
-  let loading_tasks = []
+  let io_service = @io_task.Service::new()
   let scheduls = @schedule.Schedules::new()
   {
     window,
@@ -38,8 +38,8 @@ pub fn Game::new() -> Game {
     accumulator: 0,
     ui,
     processor,
-    loaded_state: load_modules(ui, timer, processor, loading_tasks, scheduls),
-    io_tasks: loading_tasks,
+    loaded_state: load_modules(ui, timer, processor, io_service, scheduls),
+    io_service,
     scheduls,
   }
 }
@@ -49,10 +49,10 @@ fn load_modules(
   ui : UI,
   timer : @utils.Timer,
   packet_processor : @net.PacketProcessor,
-  loading_tasks : Array[@utils.Future[Unit]],
+  io_service : @io_task.Service,
   scheduls : @schedule.Schedules
 ) -> @utils.Future[LoadedState] {
-  let add_loading_task = fn(task) { loading_tasks.push(task) }
+  let add_io_task = fn(task) { io_service.add(task) }
   let action_registry = @action.Registry::new()
   let action_map = {}
   fn merge_actions(map : Map[@keyboard.ActionId, @action.Descriptor]) -> Unit {
@@ -84,9 +84,13 @@ fn load_modules(
     }
   }
 
-  let char_look_module_f = @char_look.Module::load(fn() {
-    Stage::get().get_player().map(fn(p) { p.char_base.look })
-  }).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
+  let char_look_module_f = @char_look.Module::load(
+    fn(f) {
+      guard let Some(player) = Stage::get().get_player() else { None => return }
+      player.char_base.look = f(player.char_base.look)
+    },
+    io_service,
+  ).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(fn() {
     Stage::get().get_player()
@@ -96,7 +100,7 @@ fn load_modules(
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let login_mod_f = char_look_module_f
-    .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod) })
+    .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod, io_service) })
     .combine(inventory_module)
     .map(fn(it) {
       let (login_module, inventory_module) = it
@@ -112,7 +116,7 @@ fn load_modules(
       )
       login_module
     })
-  let monster_module = @monster.Module::new(add_loading_task)
+  let monster_module = @monster.Module::new(add_io_task)
   merge_handlers(
     monster_module.make_handlers(fn() {
       Stage::get().get_player().map(fn(p) { p.get_stats() })
@@ -269,7 +273,7 @@ fn load_modules(
         npc_module.get_npcs(),
         char_look_module,
         damage_number_set,
-        add_loading_task,
+        add_io_task,
       )
       g_stage.set(stage)
     })
@@ -313,7 +317,7 @@ pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
   for _ in 0..<update_times {
     self.update_status()
   }
-  self.run_io_tasks() // run once per frame, after update network
+  self.io_service.run() // run once per frame, after update network
   self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.
@@ -370,9 +374,4 @@ pub fn get_window(self : Game) -> Window {
 ///|
 fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
   future.map(fn(_v : T) { () })
-}
-
-///|
-pub fn run_io_tasks(self : Game) -> Unit {
-  self.io_tasks.retain(fn(f) { f.poll().is_empty() })
 }

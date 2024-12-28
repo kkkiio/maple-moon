@@ -9,15 +9,14 @@ struct CharLook {
   mut flip : Bool
   mut actionstr : String
   mut actframe : Int
-  mut body : @utils.Future[Body]
-  mut hair : @utils.Future[Hair]
-  mut face : @utils.Future[Face]
+  body : Body
+  hair : Hair
+  face : Face
   mut action : @types.BodyAction?
   equips : @equip.CharEquips
   randomizer : @utils.Randomizer
   alerted : @utils.TimedBool
   draw_info : @types.BodyDrawInfo
-  char_look_module : Module
 }
 
 ///|
@@ -32,7 +31,13 @@ pub(all) struct LookEntry {
 }
 
 ///|
-fn CharLook::new(entry : LookEntry, char_look_module : Module) -> CharLook {
+pub fn CharLook::new(
+  entry : LookEntry,
+  body : Body,
+  hair : Hair,
+  face : Face,
+  draw_info : @types.BodyDrawInfo
+) -> CharLook {
   let l = {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
@@ -44,14 +49,13 @@ fn CharLook::new(entry : LookEntry, char_look_module : Module) -> CharLook {
     action: None,
     actionstr: "",
     actframe: 0,
-    body: char_look_module.load_body_by_skin_id(entry.skin),
-    hair: char_look_module.load_hair_by_id(entry.hairid),
-    face: char_look_module.load_face_by_id(entry.faceid),
+    body,
+    hair,
+    face,
     equips: @equip.CharEquips::new(),
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
-    draw_info: char_look_module.get_body_draw_info(),
-    char_look_module,
+    draw_info,
   }
   for slot_id, itemid in entry.equips {
     l.add_equip(itemid, @slot.Id::from_int(slot_id))
@@ -66,6 +70,218 @@ fn updatetwohanded(self : CharLook) -> Unit {
 }
 
 ///|
+fn draw_dead(
+  self : CharLook,
+  args : @graphics.DrawArgument,
+  interstance : @types.StanceId,
+  interexpression : ExpressionId,
+  interframe : Int,
+  interexpframe : Int
+) -> Unit {
+  let body = self.body
+  let hair = self.hair
+  let face = self.face
+  let faceshift = self.draw_info.get_face_pos(@types.StanceId::STAND1, 1)
+  let faceargs = args +
+    @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
+  fn draw_face(expression, frame) {
+    face.draw(expression, frame, faceargs)
+  }
+
+  fn draw_interframe_hair(layer) {
+    hair.draw(interstance, layer, interframe, args)
+  }
+
+  fn draw_hair(stance, layer, frame) {
+    hair.draw(stance, layer, frame, args)
+  }
+
+  draw_interframe_hair(HairLayer::BELOW_BODY)
+  self.equips.draw(
+    @slot.Id::HAT,
+    interstance,
+    @clothing.Layer::CAP_BELOW_BODY,
+    interframe,
+    args,
+  )
+  body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
+  draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
+  body.draw(@types.StanceId::STAND1, @types.BodyLayer::HEAD, 1, args)
+  draw_interframe_hair(HairLayer::SHADE)
+  draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
+  body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
+  draw_interframe_hair(HairLayer::SHADE)
+  draw_face(interexpression, interexpframe)
+  match self.equips.getcaptype() {
+    @equip.CapType::NONE => draw_interframe_hair(HairLayer::OVER_HEAD)
+    @equip.CapType::HEADBAND => {
+      self.equips.draw(
+        @slot.Id::HAT,
+        @types.StanceId::STAND1,
+        @clothing.Layer::CAP,
+        1,
+        args,
+      )
+      draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
+      draw_hair(@types.StanceId::STAND1, HairLayer::OVER_HEAD, 1)
+      self.equips.draw(
+        @slot.Id::HAT,
+        @types.StanceId::STAND1,
+        @clothing.Layer::CAP_OVER_HAIR,
+        1,
+        args,
+      )
+    }
+    @equip.CapType::HALF_COVER => {
+      draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
+      self.equips.draw(
+        @slot.Id::HAT,
+        @types.StanceId::STAND1,
+        @clothing.Layer::CAP,
+        1,
+        args,
+      )
+    }
+    @equip.CapType::FULL_COVER =>
+      self.equips.draw(
+        @slot.Id::HAT,
+        @types.StanceId::STAND1,
+        @clothing.Layer::CAP,
+        1,
+        args,
+      )
+    _ => ()
+  }
+  return
+}
+
+///|
+fn draw_climbing(
+  self : CharLook,
+  args : @graphics.DrawArgument,
+  interstance : @types.StanceId,
+  interframe : Int
+) -> Unit {
+  let body = self.body
+  let hair = self.hair
+  fn draw_interframe_hair(layer) {
+    hair.draw(interstance, layer, interframe, args)
+  }
+
+  body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
+  self.equips.draw(
+    @slot.Id::GLOVES,
+    interstance,
+    @clothing.Layer::GLOVE,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::SHOES,
+    interstance,
+    @clothing.Layer::SHOES,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::BOTTOM_DEFAULT,
+    interstance,
+    @clothing.Layer::PANTS_DEFAULT,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::BOTTOM,
+    interstance,
+    @clothing.Layer::PANTS,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::TOP_DEFAULT,
+    interstance,
+    @clothing.Layer::TOP_DEFAULT,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::TOP,
+    interstance,
+    @clothing.Layer::TOP,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::TOP,
+    interstance,
+    @clothing.Layer::MAIL,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::CAPE,
+    interstance,
+    @clothing.Layer::CAPE,
+    interframe,
+    args,
+  )
+  body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
+  self.equips.draw(
+    @slot.Id::EARACC,
+    interstance,
+    @clothing.Layer::EARRINGS,
+    interframe,
+    args,
+  )
+  match self.equips.getcaptype() {
+    @equip.CapType::NONE => draw_interframe_hair(HairLayer::BACK)
+    @equip.CapType::HEADBAND => {
+      self.equips.draw(
+        @slot.Id::HAT,
+        interstance,
+        @clothing.Layer::CAP,
+        interframe,
+        args,
+      )
+      draw_interframe_hair(HairLayer::BACK)
+    }
+    @equip.CapType::HALF_COVER => {
+      draw_interframe_hair(HairLayer::BELOW_CAP)
+      self.equips.draw(
+        @slot.Id::HAT,
+        interstance,
+        @clothing.Layer::CAP,
+        interframe,
+        args,
+      )
+    }
+    @equip.CapType::FULL_COVER =>
+      self.equips.draw(
+        @slot.Id::HAT,
+        interstance,
+        @clothing.Layer::CAP,
+        interframe,
+        args,
+      )
+    _ => ()
+  }
+  self.equips.draw(
+    @slot.Id::SHIELD,
+    interstance,
+    @clothing.Layer::BACK_SHIELD,
+    interframe,
+    args,
+  )
+  self.equips.draw(
+    @slot.Id::WEAPON,
+    interstance,
+    @clothing.Layer::BACK_WEAPON,
+    interframe,
+    args,
+  )
+}
+
+///|
 fn draw_impl(
   self : CharLook,
   args : @graphics.DrawArgument,
@@ -74,487 +290,271 @@ fn draw_impl(
   interframe : Int,
   interexpframe : Int
 ) -> Unit {
-  guard let Some(body) = self.body.poll() else { None => return }
-  let hair = self.hair
-  let face = self.face
-  let faceshift : @struct.Point[Int] = self.draw_info.get_face_pos(
-    interstance, interframe,
-  )
-  let faceargs : @graphics.DrawArgument = args +
-    @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
-  let draw_interframe_hair = fn(layer) {
-    guard let Some(hair) = hair.poll() else { None => return }
-    hair.draw(interstance, layer, interframe, args)
-  }
-  let draw_hair = fn(stance, layer, frame) {
-    guard let Some(hair) = hair.poll() else { None => return }
-    hair.draw(stance, layer, frame, args)
-  }
   if interstance == @types.StanceId::DEAD {
-    let faceshift = self.draw_info.get_face_pos(@types.StanceId::STAND1, 1)
-    let faceargs = args +
-      @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
-    let draw_face = fn(expression, frame) {
-      guard let Some(face) = face.poll() else { None => return }
-      face.draw(expression, frame, faceargs)
-    }
-    draw_interframe_hair(HairLayer::BELOW_BODY)
-    self.equips.draw(
-      @slot.Id::HAT,
-      interstance,
-      @clothing.Layer::CAP_BELOW_BODY,
-      interframe,
-      args,
+    return draw_dead(
+      self, args, interstance, interexpression, interframe, interexpframe,
     )
-    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
-    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
-    body.draw(@types.StanceId::STAND1, @types.BodyLayer::HEAD, 1, args)
-    draw_interframe_hair(HairLayer::SHADE)
-    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
-    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
-    draw_interframe_hair(HairLayer::SHADE)
-    draw_face(interexpression, interexpframe)
-    match self.equips.getcaptype() {
-      @equip.CapType::NONE => draw_interframe_hair(HairLayer::OVER_HEAD)
-      @equip.CapType::HEADBAND => {
-        self.equips.draw(
-          @slot.Id::HAT,
-          @types.StanceId::STAND1,
-          @clothing.Layer::CAP,
-          1,
-          args,
-        )
-        draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
-        draw_hair(@types.StanceId::STAND1, HairLayer::OVER_HEAD, 1)
-        self.equips.draw(
-          @slot.Id::HAT,
-          @types.StanceId::STAND1,
-          @clothing.Layer::CAP_OVER_HAIR,
-          1,
-          args,
-        )
-      }
-      @equip.CapType::HALF_COVER => {
-        draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
-        self.equips.draw(
-          @slot.Id::HAT,
-          @types.StanceId::STAND1,
-          @clothing.Layer::CAP,
-          1,
-          args,
-        )
-      }
-      @equip.CapType::FULL_COVER =>
-        self.equips.draw(
-          @slot.Id::HAT,
-          @types.StanceId::STAND1,
-          @clothing.Layer::CAP,
-          1,
-          args,
-        )
-      _ => ()
-    }
-    return
-  }
-  let draw_face = fn(expression, frame) {
-    guard let Some(face) = face.poll() else { None => return }
-    face.draw(expression, frame, faceargs)
   }
   if @types.StanceId::is_climbing(interstance) {
-    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::GLOVE,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::SHOES,
-      interstance,
-      @clothing.Layer::SHOES,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::BOTTOM_DEFAULT,
-      interstance,
-      @clothing.Layer::PANTS_DEFAULT,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::BOTTOM,
-      interstance,
-      @clothing.Layer::PANTS,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::TOP_DEFAULT,
-      interstance,
-      @clothing.Layer::TOP_DEFAULT,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::TOP,
-      interstance,
-      @clothing.Layer::TOP,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::TOP,
-      interstance,
-      @clothing.Layer::MAIL,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::CAPE,
-      interstance,
-      @clothing.Layer::CAPE,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
-    self.equips.draw(
-      @slot.Id::EARACC,
-      interstance,
-      @clothing.Layer::EARRINGS,
-      interframe,
-      args,
-    )
-    match self.equips.getcaptype() {
-      @equip.CapType::NONE => draw_interframe_hair(HairLayer::BACK)
-      @equip.CapType::HEADBAND => {
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-        draw_interframe_hair(HairLayer::BACK)
-      }
-      @equip.CapType::HALF_COVER => {
-        draw_interframe_hair(HairLayer::BELOW_CAP)
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-      }
-      @equip.CapType::FULL_COVER =>
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-      _ => ()
-    }
-    self.equips.draw(
-      @slot.Id::SHIELD,
-      interstance,
-      @clothing.Layer::BACK_SHIELD,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::BACK_WEAPON,
-      interframe,
-      args,
-    )
-  } else {
-    draw_interframe_hair(HairLayer::BELOW_BODY)
-    self.equips.draw(
-      @slot.Id::CAPE,
-      interstance,
-      @clothing.Layer::CAPE,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::SHIELD,
-      interstance,
-      @clothing.Layer::SHIELD_BELOW_BODY,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::WEAPON_BELOW_BODY,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::HAT,
-      interstance,
-      @clothing.Layer::CAP_BELOW_BODY,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::WRIST_OVER_BODY,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::GLOVE_OVER_BODY,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::SHOES,
-      interstance,
-      @clothing.Layer::SHOES,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::ARM_BELOW_HEAD, interframe, args)
-    if self.equips.has_overall() {
-      self.equips.draw(
-        @slot.Id::TOP,
-        interstance,
-        @clothing.Layer::MAIL,
-        interframe,
-        args,
-      )
-    } else {
-      self.equips.draw(
-        @slot.Id::BOTTOM_DEFAULT,
-        interstance,
-        @clothing.Layer::PANTS_DEFAULT,
-        interframe,
-        args,
-      )
-      self.equips.draw(
-        @slot.Id::BOTTOM,
-        interstance,
-        @clothing.Layer::PANTS,
-        interframe,
-        args,
-      )
-      self.equips.draw(
-        @slot.Id::TOP_DEFAULT,
-        interstance,
-        @clothing.Layer::TOP_DEFAULT,
-        interframe,
-        args,
-      )
-      self.equips.draw(
-        @slot.Id::TOP,
-        interstance,
-        @clothing.Layer::TOP,
-        interframe,
-        args,
-      )
-    }
-    body.draw(
-      interstance,
-      @types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL,
-      interframe,
-      args,
-    )
-    draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
-    self.equips.draw(
-      @slot.Id::SHIELD,
-      interstance,
-      @clothing.Layer::SHIELD_OVER_HAIR,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::EARACC,
-      interstance,
-      @clothing.Layer::EARRINGS,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
-    draw_interframe_hair(HairLayer::SHADE)
-    draw_face(interexpression, interexpframe)
-    self.equips.draw(
-      @slot.Id::FACE,
-      interstance,
-      @clothing.Layer::FACE_ACC,
-      0,
-      faceargs,
-    )
-    self.equips.draw(
-      @slot.Id::EYE_ACC,
-      interstance,
-      @clothing.Layer::EYE_ACC,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::SHIELD,
-      interstance,
-      @clothing.Layer::SHIELD,
-      interframe,
-      args,
-    )
-    match self.equips.getcaptype() {
-      @equip.CapType::NONE =>
-        draw_hair(interstance, HairLayer::OVER_HEAD, interframe)
-      @equip.CapType::HEADBAND => {
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-        draw_hair(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe)
-        draw_hair(interstance, HairLayer::OVER_HEAD, interframe)
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP_OVER_HAIR,
-          interframe,
-          args,
-        )
-      }
-      @equip.CapType::HALF_COVER => {
-        draw_hair(interstance, HairLayer::HAIR_LAYER_DEFAULT, interframe)
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-      }
-      @equip.CapType::FULL_COVER =>
-        self.equips.draw(
-          @slot.Id::HAT,
-          interstance,
-          @clothing.Layer::CAP,
-          interframe,
-          args,
-        )
-      _ => ()
-    }
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::WEAPON_BELOW_ARM,
-      interframe,
-      args,
-    )
-    let twohanded : Bool = self.is_twohanded(interstance)
-    if twohanded {
-      self.equips.draw(
-        @slot.Id::TOP,
-        interstance,
-        @clothing.Layer::MAILARM,
-        interframe,
-        args,
-      )
-      body.draw(interstance, @types.BodyLayer::ARM, interframe, args)
-      self.equips.draw(
-        @slot.Id::WEAPON,
-        interstance,
-        @clothing.Layer::WEAPON,
-        interframe,
-        args,
-      )
-    } else {
-      self.equips.draw(
-        @slot.Id::WEAPON,
-        interstance,
-        @clothing.Layer::WEAPON,
-        interframe,
-        args,
-      )
-      body.draw(interstance, @types.BodyLayer::ARM, interframe, args)
-      self.equips.draw(
-        @slot.Id::TOP,
-        interstance,
-        @clothing.Layer::MAILARM,
-        interframe,
-        args,
-      )
-    }
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::WRIST,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::GLOVE,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::WEAPON_OVER_GLOVE,
-      interframe,
-      args,
-    )
-    body.draw(
-      interstance,
-      @types.BodyLayer::HAND_BELOW_WEAPON,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::ARM_OVER_HAIR, interframe, args)
-    body.draw(
-      interstance,
-      @types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::WEAPON_OVER_HAND,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::WEAPON,
-      interstance,
-      @clothing.Layer::WEAPON_OVER_BODY,
-      interframe,
-      args,
-    )
-    body.draw(interstance, @types.BodyLayer::HAND_OVER_HAIR, interframe, args)
-    body.draw(interstance, @types.BodyLayer::HAND_OVER_WEAPON, interframe, args)
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::WRIST_OVER_HAIR,
-      interframe,
-      args,
-    )
-    self.equips.draw(
-      @slot.Id::GLOVES,
-      interstance,
-      @clothing.Layer::GLOVE_OVER_HAIR,
-      interframe,
-      args,
-    )
+    return draw_climbing(self, args, interstance, interframe)
   }
+  let drawables = make_draw_front(
+    self, interstance, interexpression, interframe, interexpframe,
+  )
+  for drawable in drawables {
+    drawable.draw(args)
+  }
+}
+
+///|
+pub fn make_draw_front(
+  self : CharLook,
+  stance : @types.StanceId,
+  expression : ExpressionId,
+  stance_frame : Int,
+  expr_frame : Int
+) -> Array[&@graphics.Drawable] {
+  let drawables : Array[&@graphics.Drawable] = []
+  fn make_hair_draw(layer) {
+    { hair: self.hair, layer, frame: stance_frame, stance }
+  }
+
+  fn make_face_draw() {
+    {
+      face: self.face,
+      expression,
+      exp_frame: expr_frame,
+      draw_info: self.draw_info,
+      stance,
+      stance_frame,
+    }
+  }
+
+  fn make_body_draw(layer) {
+    { body: self.body, layer, frame: stance_frame, stance }
+  }
+
+  fn make_equip_draw(slot, layer) {
+    {
+      equips: self.equips,
+      stance,
+      slot,
+      layer,
+      frame: stance_frame,
+      draw_info: self.draw_info,
+    }
+  }
+
+  drawables.push(make_hair_draw(HairLayer::BELOW_BODY))
+  drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.Layer::CAPE))
+  drawables.push(
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_BELOW_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_BELOW_BODY),
+  )
+  drawables.push(make_body_draw(@types.BodyLayer::BODY))
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_BODY),
+  )
+  drawables.push(make_equip_draw(@slot.Id::SHOES, @clothing.Layer::SHOES))
+  drawables.push(make_body_draw(@types.BodyLayer::ARM_BELOW_HEAD))
+  if self.equips.has_overall() {
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAIL))
+  } else {
+    drawables.push(
+      make_equip_draw(@slot.Id::BOTTOM_DEFAULT, @clothing.Layer::PANTS_DEFAULT),
+    )
+    drawables.push(make_equip_draw(@slot.Id::BOTTOM, @clothing.Layer::PANTS))
+    drawables.push(
+      make_equip_draw(@slot.Id::TOP_DEFAULT, @clothing.Layer::TOP_DEFAULT),
+    )
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::TOP))
+  }
+  drawables.push(make_body_draw(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL))
+  drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
+  drawables.push(
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_OVER_HAIR),
+  )
+  drawables.push(make_equip_draw(@slot.Id::EARACC, @clothing.Layer::EARRINGS))
+  drawables.push(make_body_draw(@types.BodyLayer::HEAD))
+  drawables.push(make_hair_draw(HairLayer::SHADE))
+  drawables.push(make_face_draw())
+  drawables.push(make_equip_draw(@slot.Id::FACE, @clothing.Layer::FACE_ACC))
+  drawables.push(make_equip_draw(@slot.Id::EYE_ACC, @clothing.Layer::EYE_ACC))
+  drawables.push(make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD))
+  match self.equips.getcaptype() {
+    @equip.CapType::NONE => drawables.push(make_hair_draw(HairLayer::OVER_HEAD))
+    @equip.CapType::HEADBAND => {
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+      drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
+      drawables.push(make_hair_draw(HairLayer::OVER_HEAD))
+      drawables.push(
+        make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_OVER_HAIR),
+      )
+    }
+    @equip.CapType::HALF_COVER => {
+      drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+    }
+    @equip.CapType::FULL_COVER =>
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+    _ => ()
+  }
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_ARM),
+  )
+  let twohanded : Bool = self.is_twohanded(stance)
+  if twohanded {
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
+    drawables.push(make_body_draw(@types.BodyLayer::ARM))
+    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
+  } else {
+    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
+    drawables.push(make_body_draw(@types.BodyLayer::ARM))
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
+  }
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST))
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE))
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_GLOVE),
+  )
+  drawables.push(make_body_draw(@types.BodyLayer::HAND_BELOW_WEAPON))
+  drawables.push(make_body_draw(@types.BodyLayer::ARM_OVER_HAIR))
+  drawables.push(make_body_draw(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON))
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_HAND),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_BODY),
+  )
+  drawables.push(make_body_draw(@types.BodyLayer::HAND_OVER_HAIR))
+  drawables.push(make_body_draw(@types.BodyLayer::HAND_OVER_WEAPON))
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_HAIR),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_HAIR),
+  )
+  drawables
+}
+
+///|
+struct BodyLayerDrawable {
+  body : Body
+  stance : @types.StanceId
+  layer : @types.BodyLayer
+  frame : Int
+}
+
+///|
+pub impl ToJson for BodyLayerDrawable with to_json(self) -> Json {
+  {
+    "body": self.body.to_json(),
+    "stance": self.stance.to_json(),
+    "layer": self.layer.to_json(),
+    "frame": self.frame.to_json(),
+  }
+}
+
+///|
+pub fn draw(self : BodyLayerDrawable, args : @graphics.DrawArgument) -> Unit {
+  self.body.draw(self.stance, self.layer, self.frame, args)
+}
+
+///|
+struct EquipLayerDrawable {
+  equips : @equip.CharEquips
+  stance : @types.StanceId
+  slot : @slot.Id
+  layer : @clothing.Layer
+  frame : Int
+  draw_info : @types.BodyDrawInfo
+}
+
+///|
+pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
+  {
+    "equips": self.equips.to_json(),
+    "stance": self.stance.to_json(),
+    "slot": self.slot.to_json(),
+    "layer": self.layer.to_json(),
+    "frame": self.frame.to_json(),
+  }
+}
+
+///|
+pub fn draw(self : EquipLayerDrawable, args : @graphics.DrawArgument) -> Unit {
+  let args = match self.layer {
+    @clothing.FACE_ACC => {
+      let faceshift = self.draw_info.get_face_pos(self.stance, self.frame)
+      args +
+      @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
+    }
+    _ => args
+  }
+  self.equips.draw(self.slot, self.stance, self.layer, self.frame, args)
+}
+
+///|
+struct FaceDrawable {
+  face : Face
+  expression : ExpressionId
+  exp_frame : Int
+  draw_info : @types.BodyDrawInfo
+  stance : @types.StanceId
+  stance_frame : Int
+}
+
+///|
+fn draw(self : FaceDrawable, args : @graphics.DrawArgument) -> Unit {
+  let faceshift = self.draw_info.get_face_pos(self.stance, self.stance_frame)
+  self.face.draw(
+    self.expression,
+    self.exp_frame,
+    args +
+    @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default()),
+  )
+}
+
+///|
+pub impl ToJson for FaceDrawable with to_json(self) -> Json {
+  {
+    "face": self.face.to_json(),
+    "expression": self.expression.to_json(),
+    "exp_frame": self.exp_frame.to_json(),
+    "stance": self.stance.to_json(),
+    "stance_frame": self.stance_frame.to_json(),
+  }
+}
+
+///|
+struct HairDrawable {
+  hair : Hair
+  stance : @types.StanceId
+  layer : HairLayer
+  frame : Int
+}
+
+///|
+pub impl ToJson for HairDrawable with to_json(self) -> Json {
+  {
+    "hair": self.hair.to_json(),
+    "stance": self.stance.to_json(),
+    "layer": self.layer.to_json(),
+    "frame": self.frame.to_json(),
+  }
+}
+
+///|
+fn draw(self : HairDrawable, args : @graphics.DrawArgument) -> Unit {
+  self.hair.draw(self.stance, self.layer, self.frame, args)
 }
 
 ///|
@@ -589,7 +589,7 @@ pub fn draw_with_stance(
 ) -> Unit {
   let interstance = self.equips.adjust_stance(interstance)
   self.draw_impl(
-    @graphics.DrawArgument::new(position, flip~),
+    @graphics.DrawArgument::new(position~, flip~),
     interstance,
     interexpression,
     0,
@@ -606,14 +606,14 @@ pub fn is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
   }
 }
 
-///|
-pub fn set_direction(self : CharLook, f : Bool) -> Unit {
-  self.flip = f
+///| Sets the direction of the character
+pub fn set_direction(self : CharLook, facing_right : Bool) -> Unit {
+  self.flip = facing_right
 }
 
 ///|
 pub fn set_stance(self : CharLook, st : @types.StanceId) -> Unit {
-  if self.action.is_empty().not() || st == @types.StanceId::NONE {
+  if not(self.action.is_empty()) || st == @types.StanceId::NONE {
     return
   }
   // let adjstance = self.equips.adjust_stance(st)
@@ -626,18 +626,18 @@ pub fn set_stance(self : CharLook, st : @types.StanceId) -> Unit {
 }
 
 ///|
-fn set_body(self : CharLook, skin_id : Int) -> Unit {
-  self.body = self.char_look_module.load_body_by_skin_id(skin_id)
+fn change_body(self : CharLook, body : Body) -> CharLook {
+  { ..self, body, }
 }
 
 ///|
-fn set_hair(self : CharLook, hair_id : Int) -> Unit {
-  self.hair = self.char_look_module.load_hair_by_id(hair_id)
+fn change_hair(self : CharLook, hair : Hair) -> CharLook {
+  { ..self, hair, }
 }
 
 ///|
-fn set_face(self : CharLook, face_id : Int) -> Unit {
-  self.face = self.char_look_module.load_face_by_id(face_id)
+fn change_face(self : CharLook, face : Face) -> CharLook {
+  { ..self, face, }
 }
 
 ///|
@@ -705,7 +705,7 @@ pub fn update(self : CharLook, timestep : Int) -> Bool {
 
 ///|
 fn update_face(self : CharLook, timestep : Int) -> Unit {
-  guard let Some(face) = self.face.poll() else { None => return }
+  let face = self.face
   let expdelay : Int = face.get_delay(
     self.expression.get(),
     self.exp_frame.get(),
@@ -784,7 +784,7 @@ pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
 pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
   guard let Some(weapon) = self.equips.get_weapon() else { None => return }
   let attacktype = weapon.get_attack()
-  if attacktype == 9 && degenerate.not() {
+  if attacktype == 9 && not(degenerate) {
     self.set_stance(@types.StanceId::SHOT)
     self.set_action("handgun")
   } else {
@@ -798,7 +798,7 @@ pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
 
 ///|
 pub fn attack_by_stance(self : CharLook, newstance : @types.StanceId) -> Unit {
-  if self.action.is_empty().not() || newstance == @types.StanceId::NONE {
+  if not(self.action.is_empty()) || newstance == @types.StanceId::NONE {
     return
   }
   match newstance {

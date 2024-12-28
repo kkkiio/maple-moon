@@ -221,7 +221,7 @@ fn render(
       draws.push(fn(parentpos) {
         resources.buy_selection.draw(
           @graphics.DrawArgument::new(
-            parentpos + itempos + @struct.Point::new(35, 8),
+            position=parentpos + itempos + @struct.Point::new(35, 8),
           ),
         )
       })
@@ -232,10 +232,12 @@ fn render(
         None => return
       }
       let pos = parentpos + itempos
-      icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(0, 42)))
+      icon.draw(
+        @graphics.DrawArgument::new(position=pos + @struct.Point::new(0, 42)),
+      )
       name_label.draw(pos + @struct.Point::new(40, 6))
       item.currency.draw(
-        @graphics.DrawArgument::new(pos + @struct.Point::new(38, 29)),
+        @graphics.DrawArgument::new(position=pos + @struct.Point::new(38, 29)),
       )
       item.price_label.draw(pos + @struct.Point::new(55, 24))
     })
@@ -274,7 +276,7 @@ fn render(
       draws.push(fn(parentpos) {
         resources.sell_selection.draw(
           @graphics.DrawArgument::new(
-            parentpos + itempos + @struct.Point::new(78, 8),
+            position=parentpos + itempos + @struct.Point::new(78, 8),
           ),
         )
       })
@@ -287,11 +289,13 @@ fn render(
         None => return
       }
       let pos = parentpos + itempos
-      icon.draw(@graphics.DrawArgument::new(pos + @struct.Point::new(43, 42)))
+      icon.draw(
+        @graphics.DrawArgument::new(position=pos + @struct.Point::new(43, 42)),
+      )
       if item.show_count {
         self.attributes.countset.draw_text(
           item.sellable.to_string(),
-          @graphics.DrawArgument::new(pos + @struct.Point::new(41, 28)),
+          @graphics.DrawArgument::new(position=pos + @struct.Point::new(41, 28)),
         )
         |> ignore
       }
@@ -341,7 +345,7 @@ fn draw(self : RuntimeState, alpha : Double) -> Unit {
   }
   self.npc.draw(
     @graphics.DrawArgument::new(
-      position + @struct.Point::new(58, 85),
+      position=position + @struct.Point::new(58, 85),
       flip=true,
     ),
   )

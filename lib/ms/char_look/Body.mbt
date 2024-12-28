@@ -7,14 +7,25 @@ pub(all) struct Body {
   name : String
 }
 
+///| For testing
+pub fn Body::default() -> Body {
+  { stances: Map::new(), name: "" }
+}
+
+///|
+fn get_body_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("body")
+}
+
 ///|
 fn Body::load(
   skin : Int,
   drawinfo : @types.BodyDrawInfo
 ) -> @utils.Future[Body] {
   let strid : String = @string_format.extend_id(skin, 2)
-  let bodynode = body_loader.load_res(["000020" + strid + ".img"])
-  let headnode = body_loader.load_res(["000120" + strid + ".img"])
+  let loader = get_body_loader()
+  let bodynode = loader.load_res(["000020" + strid + ".img"])
+  let headnode = loader.load_res(["000120" + strid + ".img"])
   bodynode
   .combine(headnode)
   .map(fn(it) { Body::new(skin, drawinfo, it.0, it.1) })
@@ -29,14 +40,12 @@ fn Body::new(
 ) -> Body {
   let stances = @types.stance_name_id_map
     .iter()
-    .map(
-      fn(it) {
-        let (stance_name, stance) = it
-        let stance_body = bodys[stance_name]
-        let stance_head = heads[stance_name]
-        (stance, new_body_stance(stance, stance_body, stance_head, drawinfo))
-      },
-    )
+    .map(fn(it) {
+      let (stance_name, stance) = it
+      let stance_body = bodys[stance_name]
+      let stance_head = heads[stance_name]
+      (stance, new_body_stance(stance, stance_body, stance_head, drawinfo))
+    })
     |> Map::from_iter
   let index = skin
   let name = if index < skintypes.length() { skintypes[index] } else { "" }
@@ -53,16 +62,14 @@ fn new_body_stance(
   guard stancenode.is_null().not() else { return {} }
   let body_texture_map = Map::new()
   for
-    it in @utils.ints().map_while(
-      fn(frame) {
-        let framenode = stancenode[frame.to_string()]
-        if framenode.is_null() {
-          None
-        } else {
-          Some((frame, framenode))
-        }
-      },
-    ) {
+    it in @utils.ints().map_while(fn(frame) {
+      let framenode = stancenode[frame.to_string()]
+      if framenode.is_null() {
+        None
+      } else {
+        Some((frame, framenode))
+      }
+    }) {
     let (frame, framenode) = it
     for part, partnode in framenode {
       if part != "delay" && part != "face" {
@@ -131,4 +138,6 @@ pub fn Body::get_name(self : Body) -> String {
 }
 
 ///|
-let body_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("body")
+pub impl ToJson for Body with to_json(self) -> Json {
+  { "name": self.name.to_json() }
+}

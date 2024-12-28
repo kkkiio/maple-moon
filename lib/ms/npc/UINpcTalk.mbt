@@ -176,13 +176,13 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
   let buttons = self.buttons
   fn draw() -> Unit {
     let mut drawpos = self.base.position
-    self.top.draw(drawpos |> @graphics.DrawArgument::from_point)
+    self.top.draw(@graphics.DrawArgument::new(position=drawpos))
     drawpos = drawpos.shift_y(self.top.height())
     self.fill.draw(
       @graphics.DrawArgument::new4(drawpos, @struct.Point::new(0, self.height)),
     )
     drawpos = drawpos.shift_y(self.height)
-    self.bottom.draw(drawpos |> @graphics.DrawArgument::from_point)
+    self.bottom.draw(@graphics.DrawArgument::new(position=drawpos))
     drawpos = drawpos.shift_y(self.bottom.height())
     for _, button in buttons {
       button.draw(self.base.position)
@@ -193,7 +193,7 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
     let center_pos = speaker_pos +
       @struct.Point::new(self.nametag.width() / 2, 0)
     self.speaker.draw(@graphics.DrawArgument::new14(center_pos, true))
-    self.nametag.draw(speaker_pos |> @graphics.DrawArgument::from_point)
+    self.nametag.draw(@graphics.DrawArgument::new(position=speaker_pos))
     self.name.draw(center_pos + @struct.Point::new(0, -4))
     match self.content {
       Some(content) => {

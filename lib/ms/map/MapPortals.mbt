@@ -20,8 +20,8 @@ pub fn MapPortals::load(
   mapid : Int,
   map_portals_animations : MapPortalAnimations
 ) -> MapPortals {
-  let mut portals_by_id = @immut/sorted_map.empty()
-  let mut portal_ids_by_name = @immut/sorted_map.empty()
+  let mut portals_by_id = @immut/sorted_map.new()
+  let mut portal_ids_by_name = @immut/sorted_map.new()
   for sub_name, sub in src {
     let portal_id = @strconv.parse_int?(sub_name).or(-1)
     if portal_id >= 0 {

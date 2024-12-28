@@ -35,6 +35,7 @@
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/heal_over_time",
     "KKKIIO/maple-moon-client/lib/schedule",
-    "KKKIIO/maple-moon-client/lib/game_mod"
+    "KKKIIO/maple-moon-client/lib/game_mod",
+    "KKKIIO/maple-moon-client/lib/io_task"
   ]
 }

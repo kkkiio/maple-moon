@@ -66,35 +66,35 @@ pub fn UILogin::new(
   let sprites = [
     @graphics.Sprite::from_resource(
       back["11"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(400, 300)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(400, 300)),
     ),
     @graphics.Sprite::from_resource(
       ani["17"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(129, 283)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(129, 283)),
     ),
     @graphics.Sprite::from_resource(
       ani["18"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(306, 252)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(306, 252)),
     ),
     @graphics.Sprite::from_resource(
       ani["19"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(379, 207)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(379, 207)),
     ),
     @graphics.Sprite::from_resource(
       back["35"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(399, 260)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(399, 260)),
     ),
     @graphics.Sprite::from_resource(
       pretty_logo,
-      state_args=@graphics.DrawArgument::from_point(Point::new(394, 173)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(394, 173)),
     ),
     @graphics.Sprite::from_resource(
       title["signboard"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(391, 330)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(391, 330)),
     ),
     @graphics.Sprite::from_resource(
       common["frame"],
-      state_args=@graphics.DrawArgument::from_point(Point::new(400, 300)),
+      state_args=@graphics.DrawArgument::new(position=Point::new(400, 300)),
     ),
   ]
   let obj = {

@@ -6,6 +6,11 @@ pub(all) struct MapStruct {
   portals : MapPortals
 }
 
+///|
+fn get_mapx_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("mapx")
+}
+
 pub fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations
@@ -16,7 +21,7 @@ pub fn load_map(
   let strid = @string_format.extend_id(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
   @log.info({ "path": path }, "loading map")
-  mapx_loader
+  get_mapx_loader()
   .load_res(path)
   .map_exn(
     fn(src) {
@@ -63,5 +68,3 @@ pub fn load_map(
     },
   )
 }
-
-let mapx_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mapx")

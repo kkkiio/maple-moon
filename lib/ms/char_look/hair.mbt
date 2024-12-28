@@ -7,7 +7,10 @@ pub(all) enum HairLayer {
   SHADE
   BACK
   BELOW_CAP
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
+
+///|
+pub impl ToJson for HairLayer with to_json(self) { self.to_string().to_json() }
 
 ///|
 pub fn int_value(self : HairLayer) -> Int {
@@ -39,9 +42,18 @@ struct Hair {
   color : String
 }
 
+///| For testing
+pub fn Hair::default() -> Hair {
+  { stances: Map::new(), name: "", color: "" }
+}
+
 ///|
-pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_map.from_array(
-  [
+pub impl ToJson for Hair with to_json(self) -> Json {
+  { "name": self.name.to_json(), "color": self.color.to_json() }
+}
+
+///|
+pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_map.from_array([
     ("hair", HairLayer::HAIR_LAYER_DEFAULT),
     ("hairBelowBody", HairLayer::BELOW_BODY),
     ("hairOverHead", HairLayer::OVER_HEAD),
@@ -52,11 +64,16 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
 )
 
 ///|
+fn get_hair_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("hair")
+}
+
+///|
 pub fn Hair::load(
   hairid : Int,
   drawinfo : @types.BodyDrawInfo
 ) -> @utils.Future[Hair] {
-  hair_loader
+  get_hair_loader()
   .load_res(["000\{hairid}.img"])
   .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo) })
 }
@@ -141,6 +158,3 @@ pub fn get_name(self : Hair) -> String {
 pub fn getcolor(self : Hair) -> String {
   self.color
 }
-
-///|
-let hair_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("hair")

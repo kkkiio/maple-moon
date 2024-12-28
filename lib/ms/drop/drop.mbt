@@ -170,7 +170,7 @@ pub fn MesoDrop::draw(
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
   self.icon.draw(
     @graphics.DrawArgument::new(
-      absp,
+      position=absp,
       angle=self.base.angle.get(alpha~),
       opacity=self.base.opacity.get(alpha~),
     ),
@@ -253,7 +253,7 @@ pub fn ItemDrop::draw(
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
   self.icon.draw(
     @graphics.DrawArgument::new(
-      absp,
+      position=absp,
       angle=self.base.angle.get(alpha~),
       opacity=self.base.opacity.get(alpha~),
     ),

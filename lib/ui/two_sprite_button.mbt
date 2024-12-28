@@ -29,15 +29,9 @@ pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
     let selected = self.base.state == ButtonState::MOUSEOVER ||
       self.base.state == ButtonState::PRESSED
-    if selected {
-      self.textures
-      .op_get(true)
-      .draw(self.spos + parentpos |> @graphics.DrawArgument::new)
-    } else {
-      self.textures
-      .op_get(false)
-      .draw(self.npos + parentpos |> @graphics.DrawArgument::new)
-    }
+    self.textures
+    .op_get(selected)
+    .draw(@graphics.DrawArgument::new(position=self.npos + parentpos))
   }
 }
 

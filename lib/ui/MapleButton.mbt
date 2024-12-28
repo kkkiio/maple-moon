@@ -87,14 +87,14 @@ pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
     match self.textures[self.base.state] {
       Some(texture) =>
         texture.draw(
-          @graphics.DrawArgument::from_point(self.base.position + parentpos),
+          @graphics.DrawArgument::new(position=self.base.position + parentpos),
         )
       None => ()
     }
     match self.animations[self.base.state] {
       Some(animation) =>
         animation.draw(
-          @graphics.DrawArgument::from_point(self.base.position + parentpos),
+          @graphics.DrawArgument::new(position=self.base.position + parentpos),
           1.0,
         )
       None => ()

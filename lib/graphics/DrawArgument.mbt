@@ -1,9 +1,13 @@
+///|
 typealias Point[T] = @struct.Point[T]
 
+///|
 typealias Color = @struct.Color
 
+///|
 typealias Rectangle[T] = @struct.Rectangle[T]
 
+///|
 struct DrawArgument {
   pos : Point[Int]
   center : Point[Int]
@@ -11,27 +15,25 @@ struct DrawArgument {
   xscale : Double
   yscale : Double
   angle : Double
-  radius : Int
   color : Color
 } derive(Show)
 
+///|
 pub fn DrawArgument::default() -> DrawArgument {
-  from_xy(0, 0)
+  DrawArgument::new()
 }
 
+///|
 pub fn DrawArgument::from_xy(x : Int, y : Int) -> DrawArgument {
-  from_point({ x, y })
+  DrawArgument::new(position={ x, y })
 }
 
-pub fn DrawArgument::from_point(position : Point[Int]) -> DrawArgument {
-  DrawArgument::new7(position, 1.0)
-}
-
+///|
 pub fn DrawArgument::new(
-  position : Point[Int],
-  ~flip : Bool = false,
-  ~opacity : Double = 1.0,
-  ~angle : Double = 0.0
+  position~ : Point[Int] = @struct.Point::default(),
+  flip~ : Bool = false,
+  opacity~ : Double = 1.0,
+  angle~ : Double = 0.0
 ) -> DrawArgument {
   DrawArgument::new16(
     position,
@@ -48,6 +50,7 @@ pub fn DrawArgument::new(
   )
 }
 
+///|
 pub fn DrawArgument::new3(
   position : Point[Int],
   xscale : Double,
@@ -56,6 +59,7 @@ pub fn DrawArgument::new3(
   DrawArgument::new10(position, position, xscale, yscale, 1.0)
 }
 
+///|
 pub fn DrawArgument::new4(
   position : Point[Int],
   stretch : Point[Int]
@@ -63,6 +67,7 @@ pub fn DrawArgument::new4(
   DrawArgument::new16(position, position, stretch, 1.0, 1.0, 1.0, 0.0)
 }
 
+///|
 pub fn DrawArgument::new6(
   angle : Double,
   position : Point[Int],
@@ -71,13 +76,15 @@ pub fn DrawArgument::new6(
   DrawArgument::new15(angle, position, false, opacity)
 }
 
+///|
 pub fn DrawArgument::new7(
   position : Point[Int],
   opacity : Double
 ) -> DrawArgument {
-  DrawArgument::new14(position, false, ~opacity)
+  DrawArgument::new14(position, false, opacity~)
 }
 
+///|
 pub fn DrawArgument::from_point_and_color(
   position : Point[Int],
   color : Color
@@ -85,6 +92,7 @@ pub fn DrawArgument::from_point_and_color(
   DrawArgument::new17(position, position, { x: 0, y: 0 }, 1.0, 1.0, color, 0.0)
 }
 
+///|
 pub fn DrawArgument::new9(
   position : Point[Int],
   flip : Bool,
@@ -93,6 +101,7 @@ pub fn DrawArgument::new9(
   DrawArgument::new10(position, center, if flip { -1.0 } else { 1.0 }, 1.0, 1.0)
 }
 
+///|
 pub fn DrawArgument::new10(
   position : Point[Int],
   center : Point[Int],
@@ -111,10 +120,7 @@ pub fn DrawArgument::new10(
   )
 }
 
-pub fn DrawArgument::new11(flip : Bool) -> DrawArgument {
-  DrawArgument::new12(if flip { -1.0 } else { 1.0 }, 1.0, 1.0)
-}
-
+///|
 pub fn DrawArgument::new12(
   xscale : Double,
   yscale : Double,
@@ -123,6 +129,7 @@ pub fn DrawArgument::new12(
   DrawArgument::new13({ x: 0, y: 0 }, xscale, yscale, opacity)
 }
 
+///|
 pub fn DrawArgument::new13(
   position : Point[Int],
   xscale : Double,
@@ -132,10 +139,11 @@ pub fn DrawArgument::new13(
   DrawArgument::new10(position, position, xscale, yscale, opacity)
 }
 
+///|
 pub fn DrawArgument::new14(
   position : Point[Int],
   flip : Bool,
-  ~opacity : Double = 1.0
+  opacity~ : Double = 1.0
 ) -> DrawArgument {
   DrawArgument::new10(
     position,
@@ -150,6 +158,7 @@ pub fn DrawArgument::new14(
   )
 }
 
+///|
 pub fn DrawArgument::new15(
   angle : Double,
   position : Point[Int],
@@ -171,6 +180,7 @@ pub fn DrawArgument::new15(
   )
 }
 
+///|
 pub fn DrawArgument::new16(
   position : Point[Int],
   center : Point[Int],
@@ -191,6 +201,7 @@ pub fn DrawArgument::new16(
   )
 }
 
+///|
 pub fn DrawArgument::new17(
   position : Point[Int],
   center : Point[Int],
@@ -200,9 +211,10 @@ pub fn DrawArgument::new17(
   color : Color,
   angle : Double
 ) -> DrawArgument {
-  { pos: position, center, stretch, xscale, yscale, angle, color, radius: 0 } // Assuming default value
+  { pos: position, center, stretch, xscale, yscale, angle, color } // Assuming default value
 }
 
+///|
 pub fn add_pos(self : DrawArgument, argpos : Point[Int]) -> DrawArgument {
   DrawArgument::new17(
     self.pos + argpos,
@@ -215,6 +227,7 @@ pub fn add_pos(self : DrawArgument, argpos : Point[Int]) -> DrawArgument {
   )
 }
 
+///|
 pub fn add_opacity(self : DrawArgument, argopc : Double) -> DrawArgument {
   DrawArgument::new16(
     self.pos,
@@ -227,6 +240,7 @@ pub fn add_opacity(self : DrawArgument, argopc : Double) -> DrawArgument {
   )
 }
 
+///|
 pub fn op_add(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   DrawArgument::new17(
     self.pos + o.pos,
@@ -239,6 +253,7 @@ pub fn op_add(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   )
 }
 
+///|
 pub fn op_sub(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   DrawArgument::new17(
     self.pos - o.pos,
@@ -251,6 +266,7 @@ pub fn op_sub(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   )
 }
 
+///|
 pub fn get_rectangle(
   self : DrawArgument,
   origin : Point[Int],
@@ -273,6 +289,7 @@ pub fn get_rectangle(
   )
 }
 
+///|
 pub fn get_pos(self : DrawArgument) -> Point[Int] {
   self.pos
 }

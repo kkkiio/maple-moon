@@ -22,15 +22,13 @@ pub fn get[T](self : LazyVar[T]) -> T {
 }
 
 ///|
-let countset : LazyVar[@graphics.Charset] = LazyVar::make(
-  fn() {
-    let ui_loader = @ui.common_ui_loader()
-    @graphics.Charset::from_resource(
-      ui_loader.load_res(["Basic.img", "ItemNo"]),
-      @graphics.CharsetAlignment::LEFT,
-    )
-  },
-)
+let countset : LazyVar[@graphics.Charset] = LazyVar::make(fn() {
+  let ui_loader = @ui.common_ui_loader()
+  @graphics.Charset::from_resource(
+    ui_loader.load_res(["Basic.img", "ItemNo"]),
+    @graphics.CharsetAlignment::LEFT,
+  )
+})
 
 ///|
 pub(all) struct IconModel {
@@ -63,7 +61,7 @@ pub fn draw(
     .get()
     .draw_text(
       self.count.to_string(),
-      @graphics.DrawArgument::new(position + @struct.Point::new(0, 20)),
+      @graphics.DrawArgument::new(position=position + @struct.Point::new(0, 20)),
     )
     |> ignore
   }

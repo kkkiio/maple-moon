@@ -456,8 +456,8 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
     sprites: self.sprites,
     drawables: self.sprites
     .iter()
-    .map(fn(sprite) { sprite as &@ui.DrawableUI })
-    .concat(details.iter().map(fn(sprite) { sprite as &@ui.DrawableUI }))
+    .map(fn(sprite) { sprite as &@ui.Drawable })
+    .concat(details.iter().map(fn(sprite) { sprite as &@ui.Drawable }))
     .concat(
       normal_labels
       .iter()
@@ -468,7 +468,7 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
       .iter()
       .map(fn(label) { @ui.TextUI::new(label._.0, pos=label._.1.shift_x(213)) }),
     )
-    .concat(buttons.iter().map(fn(button) { button as &@ui.DrawableUI }))
+    .concat(buttons.iter().map(fn(button) { button as &@ui.Drawable }))
     .to_array(),
   }
 }

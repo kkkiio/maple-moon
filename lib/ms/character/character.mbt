@@ -43,7 +43,7 @@ pub fn hash(self : CharState) -> Hash {
 ///|
 pub(all) struct CharBase {
   base : MapObjectBase
-  look : @char_look.CharLook
+  mut look : @char_look.CharLook
   // look_preview: CharLook
   // pets: Array[PetLook, 3]
   mut state : CharState
@@ -401,7 +401,7 @@ pub fn show_attack_effect(
   let attackspeed = get_real_attackspeed(base_attack_speed)
   self.effects.add(
     toshow,
-    args=@graphics.DrawArgument::new11(self.facing_right),
+    args=@graphics.DrawArgument::new(flip=self.facing_right),
     z~,
     speed=attackspeed,
   )

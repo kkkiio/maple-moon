@@ -26,7 +26,7 @@ pub fn Tile::new(src : NxNode, tileset : @resource.NxNode?) -> Tile {
 
 ///|
 pub fn draw(self : Tile, viewpos : Point[Int]) -> Unit {
-  self.texture.draw(@graphics.DrawArgument::new(self.pos + viewpos))
+  self.texture.draw(@graphics.DrawArgument::new(position=self.pos + viewpos))
 }
 
 ///|

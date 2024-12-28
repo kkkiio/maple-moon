@@ -98,21 +98,26 @@ pub fn set_player_stage(
   entry : @character.CharEntry,
   callback : (@player.Player) -> Unit!
 ) -> Unit {
-  let char_base = @character.CharBase::new(
-    entry.id,
-    self.char_look_module.new_char_look(entry.look),
-    entry.stats.name,
-    self.damage_number_set,
-  )
-  (self.add_task_fn)(
-    @player.Player::load(entry, self.inventory, char_base)
-    .tap(fn(player) {
-      self.player = Some(player)
-      self.combat = Some(
-        Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+  let player_f = self.char_look_module
+    .load_char_look(entry.look)
+    .map(fn(look) {
+      @character.CharBase::new(
+        entry.id,
+        look,
+        entry.stats.name,
+        self.damage_number_set,
       )
     })
-    .map(fn(player) {
+    .bind(fn(char_base) {
+      @player.Player::load(entry, self.inventory, char_base).tap(fn(player) {
+        self.player = Some(player)
+        self.combat = Some(
+          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+        )
+      })
+    })
+  (self.add_task_fn)(
+    player_f.map(fn(player) {
       match callback?(player) {
         Ok(_) => ()
         Err(e) => @log.error({ "error": e }, "set_player_stage")

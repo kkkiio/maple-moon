@@ -109,7 +109,7 @@ fn SkillBookUI::new(
   sprites.push(
     @graphics.Sprite::from_resource(
       ui_backgrnd,
-      state_args=@struct.Point::new(1, 0) |> @graphics.DrawArgument::from_point,
+      state_args=@graphics.DrawArgument::new(position=@struct.Point::new(1, 0)),
     ),
   )
   sprites.push(@graphics.Sprite::from_resource(main["backgrnd2"]))
@@ -361,8 +361,9 @@ pub fn draw(self : RenderState, alpha : Double) -> Unit {
   let model = draw_state.model
   @ui.draw_sprites(draw_state.sprites.iter(), model.position, alpha)
   draw_state.book_icon.draw(
-    model.position + @struct.Point::new(11, 85)
-    |> @graphics.DrawArgument::from_point,
+    @graphics.DrawArgument::new(
+      position=model.position + @struct.Point::new(11, 85),
+    ),
   )
   draw_state.book_text.draw(model.position + @struct.Point::new(173, 59))
   draw_state.sp_label.draw(model.position + @struct.Point::new(304, 23))
@@ -380,18 +381,18 @@ pub fn draw(self : RenderState, alpha : Double) -> Unit {
     if i < draw_state.skills.length() {
       let skill = draw_state.skills[i]
       if skill.enabled { // TODO: handle error
-        resources.skille.draw(pos |> @graphics.DrawArgument::from_point)
+        resources.skille.draw(@graphics.DrawArgument::new(position=pos))
       } else {
-        resources.skilld.draw(pos |> @graphics.DrawArgument::from_point)
+        resources.skilld.draw(@graphics.DrawArgument::new(position=pos))
         // self.skills[i].icon.set_state(StatefulIconState::DISABLED) // TODO: implement
       }
-      skill.draw(pos + skill_meta_offset |> @graphics.DrawArgument::from_point)
+      skill.draw(@graphics.DrawArgument::new(position=pos + skill_meta_offset))
     } else {
-      resources.skillb.draw(pos |> @graphics.DrawArgument::from_point)
+      resources.skillb.draw(@graphics.DrawArgument::new(position=pos))
     }
     if i < rows - 2 {
       resources.line.draw(
-        pos + line_offset |> @graphics.DrawArgument::from_point,
+        @graphics.DrawArgument::new(position=pos + line_offset),
       )
     }
     if i % 2 != 0 {

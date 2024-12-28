@@ -1,5 +1,7 @@
+///|
 typealias Range[T] = @struct.Range[T]
 
+///|
 struct GraphicsGL {
   quads : Array[Quad]
   vwidth : Int
@@ -10,6 +12,7 @@ struct GraphicsGL {
   mut locked : Bool
 }
 
+///|
 struct Atlas {
   width : Int
   height : Int
@@ -22,6 +25,7 @@ struct Atlas {
   mut y_range : Range[Int]
 }
 
+///|
 fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
   let atlasw = 8192
   let atlash = 8192
@@ -36,6 +40,7 @@ fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
   }
 }
 
+///|
 fn Atlas::new(width : Int, height : Int) -> Atlas {
   {
     width,
@@ -50,20 +55,25 @@ fn Atlas::new(width : Int, height : Int) -> Atlas {
   }
 }
 
+///|
 let gl : GraphicsGL = GraphicsGL::new(1366, 768)
 
+///|
 pub fn GraphicsGL::get() -> GraphicsGL {
   gl
 }
 
+///|
 pub fn lock(self : GraphicsGL) -> Unit {
   self.locked = true
 }
 
+///|
 pub fn unlock(self : GraphicsGL) -> Unit {
   self.locked = false
 }
 
+///|
 pub fn draw_screen_fill(
   self : GraphicsGL,
   red : Double,
@@ -74,6 +84,7 @@ pub fn draw_screen_fill(
   self.draw_rectangle(0, 0, self.vwidth, self.vheight, red, green, blue, alpha)
 }
 
+///|
 pub fn draw_rectangle(
   self : GraphicsGL,
   x : Int,
@@ -94,6 +105,7 @@ pub fn draw_rectangle(
   )
 }
 
+///|
 pub fn draw_bitmap(
   self : GraphicsGL,
   bmp : @resource.Bitmap,
@@ -110,7 +122,7 @@ pub fn draw_bitmap(
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
   // }
-  guard let Some(image) = bmp.image.poll() else { None => return  }
+  guard let Some(image) = bmp.image.poll() else { None => return }
   self.quads.push(
     Quad::new(
       rect.left(),
@@ -124,6 +136,7 @@ pub fn draw_bitmap(
   )
 }
 
+///|
 fn draw_text(
   self : GraphicsGL,
   image : Image,
@@ -135,7 +148,7 @@ fn draw_text(
   if self.locked {
     return
   }
-  guard let Some(image) = image.poll() else { None => return  }
+  guard let Some(image) = image.poll() else { None => return }
 
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
@@ -185,6 +198,7 @@ fn draw_text(
   )
 }
 
+///|
 pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
   guard let None = self.text_cache.get(key) else { Some(image) => return image }
   let fontName = if key.font_id.is_bold() {
@@ -212,6 +226,7 @@ pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
   img
 }
 
+///|
 struct TextKey {
   text : String
   font_id : FontId
@@ -220,12 +235,14 @@ struct TextKey {
   max_width : Int?
 } derive(Eq, Hash)
 
+///|
 pub(all) enum TextAlignment {
   LEFT
   CENTER
   RIGHT
 } derive(Eq, Hash)
 
+///|
 pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
   let coverscene = opacity != 1.0
   if coverscene {
@@ -244,28 +261,28 @@ pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
     )
   }
   let triangles = Vertices::new(self.quads.length() * 6)
-  self.quads.eachi(
-    fn(i, quad) {
-      setv(triangles, i * 6 + 0, quad.vertices[0])
-      setv(triangles, i * 6 + 1, quad.vertices[1])
-      setv(triangles, i * 6 + 2, quad.vertices[2])
-      // 
-      setv(triangles, i * 6 + 3, quad.vertices[0])
-      setv(triangles, i * 6 + 4, quad.vertices[2])
-      setv(triangles, i * 6 + 5, quad.vertices[3])
-    },
-  )
+  self.quads.eachi(fn(i, quad) {
+    setv(triangles, i * 6 + 0, quad.vertices[0])
+    setv(triangles, i * 6 + 1, quad.vertices[1])
+    setv(triangles, i * 6 + 2, quad.vertices[2])
+    // 
+    setv(triangles, i * 6 + 3, quad.vertices[0])
+    setv(triangles, i * 6 + 4, quad.vertices[2])
+    setv(triangles, i * 6 + 5, quad.vertices[3])
+  })
   glFlush(triangles)
   if coverscene {
     self.quads.pop() |> ignore
   }
 }
 
+///|
 pub fn clear(self : GraphicsGL) -> Unit {
   self.atlas.clear()
   self.text_cache.clear()
 }
 
+///|
 fn clear(self : Atlas) -> Unit {
   let used = self.width * self.border_y + self.border_x * self.y_range.b
   let usedpercent = used.to_double() / (self.width * self.height).to_double()
@@ -274,6 +291,7 @@ fn clear(self : Atlas) -> Unit {
   }
 }
 
+///|
 pub fn clear_scene(self : GraphicsGL) -> Unit {
   if self.locked.not() {
     self.quads.clear()
@@ -281,6 +299,7 @@ pub fn clear_scene(self : GraphicsGL) -> Unit {
   }
 }
 
+///|
 fn get_offset(
   self : Atlas,
   id : String,
@@ -408,6 +427,7 @@ fn get_offset(
   offset
 }
 
+///|
 fn clear_internal(self : Atlas) -> Unit {
   self.border_x = 0
   self.border_y = 1
@@ -417,10 +437,12 @@ fn clear_internal(self : Atlas) -> Unit {
   self.next_id = 1
 }
 
+///|
 struct Quad {
   vertices : FixedArray[Vertex]
 } derive(Show)
 
+///|
 fn Quad::new(
   left : Int,
   right : Int,
@@ -444,22 +466,19 @@ fn Quad::new(
     let sin = @math.sin(rotation)
     let center_x = (left + right) / 2
     let center_y = (top + bottom) / 2
-    vertices.each(
-      fn(v) -> Unit {
-        let vertice_x = v.localcoord_x - center_x
-        let vertice_y = v.localcoord_y - center_y
-        let rounded_x = (vertice_x.to_double() * cos -
-        vertice_y.to_double() * sin).round()
-        let rounded_y = (vertice_x.to_double() * sin +
-        vertice_y.to_double() * cos).round()
-        v.localcoord_x = rounded_x.to_int() + center_x
-        v.localcoord_y = rounded_y.to_int() + center_y
-      },
-    )
+    vertices.each(fn(v) -> Unit {
+      let vertice_x = v.localcoord_x - center_x
+      let vertice_y = v.localcoord_y - center_y
+      let rounded_x = (vertice_x.to_double() * cos - vertice_y.to_double() * sin).round()
+      let rounded_y = (vertice_x.to_double() * sin + vertice_y.to_double() * cos).round()
+      v.localcoord_x = rounded_x.to_int() + center_x
+      v.localcoord_y = rounded_y.to_int() + center_y
+    })
   }
   { vertices, }
 }
 
+///|
 struct Vertex {
   mut localcoord_x : Int
   mut localcoord_y : Int
@@ -468,6 +487,7 @@ struct Vertex {
   color : Color
 } derive(Show)
 
+///|
 fn Vertex::new(
   localcoord_x : Int,
   localcoord_y : Int,
@@ -478,6 +498,7 @@ fn Vertex::new(
   { localcoord_x, localcoord_y, texcoord_x, texcoord_y, color }
 }
 
+///|
 struct Leftover {
   left : Int
   right : Int
@@ -485,6 +506,7 @@ struct Leftover {
   bottom : Int
 }
 
+///|
 fn Leftover::fromxywh(x : Int, y : Int, width : Int, height : Int) -> Leftover {
   let left = x
   let right = x + width
@@ -493,14 +515,17 @@ fn Leftover::fromxywh(x : Int, y : Int, width : Int, height : Int) -> Leftover {
   { left, right, top, bottom }
 }
 
+///|
 fn width(self : Leftover) -> Int {
   self.right - self.left
 }
 
+///|
 fn height(self : Leftover) -> Int {
   self.bottom - self.top
 }
 
+///|
 fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
   let wg = self.width() >= other.width()
   let hg = self.height() >= other.height()
@@ -512,6 +537,7 @@ fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
   }
 }
 
+///|
 struct TexOffset {
   left : Int
   right : Int
@@ -519,14 +545,17 @@ struct TexOffset {
   bottom : Int
 }
 
+///|
 fn TexOffset::new(x : Int, y : Int, width : Int, height : Int) -> TexOffset {
   { left: x, right: x + width, top: y, bottom: y + height }
 }
 
+///|
 fn TexOffset::default() -> TexOffset {
   { left: 0, right: 0, top: 0, bottom: 0 }
 }
 
+///|
 fn setv(vs : Vertices, i : Int, v : Vertex) -> Unit {
   vs.set(
     i,
@@ -541,6 +570,7 @@ fn setv(vs : Vertices, i : Int, v : Vertex) -> Unit {
   )
 }
 
+///|
 pub(all) enum FontId {
   A11M
   A11B
@@ -552,6 +582,7 @@ pub(all) enum FontId {
   A18M
 } derive(Eq, Show, Hash)
 
+///|
 pub fn is_bold(self : FontId) -> Bool {
   match self {
     A11B | A12B | A13B | A15B => true
@@ -559,6 +590,7 @@ pub fn is_bold(self : FontId) -> Bool {
   }
 }
 
+///|
 pub fn height(self : FontId) -> Int {
   match self {
     A11M | A11B => 11

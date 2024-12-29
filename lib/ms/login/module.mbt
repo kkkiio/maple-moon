@@ -23,9 +23,9 @@ pub fn Module::load(
   char_look_module : @char_look.Module,
   io_service : @io_task.Service
 ) -> @utils.Future[Module] {
-  map001_loader
+  get_map001_loader()
   .load_res(["Back", "login.img"])
-  .combine(map_pretty_loader.load_res(["Back", "login.img", "ani", "16"]))
+  .combine(get_map_pretty_loader().load_res(["Back", "login.img", "ani", "16"]))
   .map(fn(it) {
     let (login_img, pretty_logo) = it
     {
@@ -354,21 +354,22 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
           }
           None => {
             mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
-            let char_select = @ui.common_ui_loader().load_res([
-              "Login.img", "CharSelect",
-            ])
+            let resource_f = SelectCharUIResource::load()
             let char_looks_f = mod.characters.map(fn(ce) {
                 mod.char_look_module
                 .load_char_look(ce.look)
                 .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
               })
               |> @utils.Future::all_of()
-            mod.io_service.on_complete(char_looks_f, fn(char_looks) {
+            mod.io_service.on_complete(resource_f.combine(char_looks_f), fn(
+              it
+            ) {
+              let (resource, char_looks) = it
               mod.ui_container.add_ui(
                 @ui.Element::new(
-                  fn(_hooks) {
+                  fn(hooks) {
                     SelectCharUI::new(
-                      SelectCharUIResource::from_resource(char_select),
+                      resource,
                       char_looks,
                       on_character_selected=fn(cid) {
                         mod.select_cid = Some(cid)
@@ -376,6 +377,7 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
                           new_select_char_packet(cid),
                         )
                       },
+                      hooks,
                     )
                   },
                   @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
@@ -676,12 +678,14 @@ pub fn new_login_ui(self : Module) -> @ui.Element {
 }
 
 ///|
-let map001_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("map001")
+pub fn get_map001_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("map001")
+}
 
 ///|
-let map_pretty_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "map_pretty",
-)
+pub fn get_map_pretty_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("map_pretty")
+}
 
 ///| Tell the server which character was picked.
 fn new_select_char_packet(character_id : Int) -> @net.OutPacket {

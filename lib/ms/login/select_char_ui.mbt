@@ -67,9 +67,9 @@ fn send_naming_result(
     let cbot = self.bots[female][0]
     let cshoe = self.shoes[female][0]
     let cwep = self.weapons[female][0]
-    fn_create_char(
+    new_create_char_packet(
       cname, 1, cface, chair, chairc, cskin, ctop, cbot, cshoe, cwep, female,
-    )
+    ).dispatch()
   } else {
     @log.warn({ "name": cname }, "Name already in use")
   }
@@ -78,25 +78,6 @@ fn send_naming_result(
 ///| Reserve a name for the character to be created.
 fn new_name_char_packet(name : String) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::NAME_CHAR)..write_string(name)
-}
-
-///|
-fn fn_create_char(
-  name : String,
-  job : Int,
-  face : Int,
-  hair : Int,
-  hairc : Int,
-  skin : Int,
-  top : Int,
-  bot : Int,
-  shoes : Int,
-  weapon : Int,
-  female : Bool
-) -> Unit {
-  new_create_char_packet(
-    name, job, face, hair, hairc, skin, top, bot, shoes, weapon, female,
-  ).dispatch()
 }
 
 ///| Requests creation of a character with the specified stats.
@@ -134,29 +115,63 @@ struct SelectCharUI {
   on_character_selected : (Int) -> Unit
   mut select_slot : Int?
   resource : SelectCharUIResource
+  hooks : @ui.Hooks
 }
 
 ///|
 pub(all) struct SelectCharUIResource {
   name_tag : @ui.NameTagResource
   bt_select : @ui.MapleButtonResource
+  back13 : @graphics.Animation
+  ani17 : @graphics.Animation
+  ani18 : @graphics.Animation
+  ani19 : @graphics.Animation
+  frame : @graphics.Animation
+  step2 : @graphics.Animation
 }
 
 ///|
-pub fn SelectCharUIResource::from_resource(
-  src : @resource.NxNode
-) -> SelectCharUIResource {
-  {
-    name_tag: @ui.NameTagResource::from_resource(src["nameTag"]),
-    bt_select: @ui.MapleButtonResource::from_resource(src["BtSelect"]),
-  }
+pub fn SelectCharUIResource::load() -> @utils.Future[SelectCharUIResource] {
+  let char_select_src = @ui.common_ui_loader().load_res([
+    "Login.img", "CharSelect",
+  ])
+  let back13_f = get_map001_loader().load_res([
+    "Back", "login.img", "back", "13",
+  ])
+  let ani17_f = get_map001_loader().load_res(["Back", "login.img", "ani", "17"])
+  let ani18_f = get_map001_loader().load_res(["Back", "login.img", "ani", "18"])
+  let ani19_f = get_map001_loader().load_res(["Back", "login.img", "ani", "19"])
+  let frame = @ui.common_ui_loader().load_res(["Login.img", "Common", "frame"])
+  let step2 = @ui.common_ui_loader().load_res([
+    "Login.img", "Common", "step", "2",
+  ])
+  back13_f
+  .combine(ani17_f)
+  .combine(ani18_f)
+  .combine(ani19_f)
+  .map(fn(it) {
+    let (((back13, ani17), ani18), ani19) = it
+    {
+      name_tag: @ui.NameTagResource::from_resource(char_select_src["nameTag"]),
+      bt_select: @ui.MapleButtonResource::from_resource(
+        char_select_src["BtSelect"],
+      ),
+      back13: @graphics.Animation::from_resource_ex?(back13).unwrap(),
+      ani17: @graphics.Animation::from_resource_ex?(ani17).unwrap(),
+      ani18: @graphics.Animation::from_resource_ex?(ani18).unwrap(),
+      ani19: @graphics.Animation::from_resource_ex?(ani19).unwrap(),
+      frame: @graphics.Animation::from_resource_ex?(frame).unwrap(),
+      step2: @graphics.Animation::from_resource_ex?(step2).unwrap(),
+    }
+  })
 }
 
 ///|
 pub fn SelectCharUI::new(
   resource : SelectCharUIResource,
   characters : Array[(Int, @char_look.CharLook, String)],
-  on_character_selected~ : (Int) -> Unit = fn(_i) {  }
+  on_character_selected~ : (Int) -> Unit = fn(_i) {  },
+  hooks : @ui.Hooks
 ) -> SelectCharUI {
   {
     select_slot: None,
@@ -174,13 +189,45 @@ pub fn SelectCharUI::new(
       @struct.Point::new(800, 600),
     ),
     resource,
+    hooks,
   }
 }
 
 ///|
 pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
   let resources = self.resource
-  let buttons : Array[&@ui.RenderUnit] = [
+  let render_units : Array[&@ui.RenderUnit] = []
+  render_units.push_iter(
+    [
+      @graphics.Sprite::new(
+        resources.back13,
+        @graphics.DrawArgument::new(position=@struct.Point::new(392, 297)),
+      ),
+      @graphics.Sprite::new(
+        resources.ani17,
+        @graphics.DrawArgument::new(position=@struct.Point::new(151, 283)),
+      ),
+      @graphics.Sprite::new(
+        resources.ani18,
+        @graphics.DrawArgument::new(position=@struct.Point::new(365, 252)),
+      ),
+      @graphics.Sprite::new(
+        resources.ani19,
+        @graphics.DrawArgument::new(position=@struct.Point::new(191, 208)),
+      ),
+      @graphics.Sprite::new(
+        resources.frame,
+        @graphics.DrawArgument::new(position=@struct.Point::new(400, 300)),
+      ),
+      @graphics.Sprite::new(
+        resources.step2,
+        @graphics.DrawArgument::new(position=@struct.Point::new(40, 0)),
+      ),
+    ]
+    .iter()
+    .map(fn(it) { @ui.SpriteUI(it) }),
+  )
+  render_units.push(
     @ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
     |> @ui.Button::new(on_click=fn() {
       guard let Some(slot) = self.select_slot else { None => return None }
@@ -188,43 +235,36 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
       (self.on_character_selected)(cid)
       None
     }),
-  ]
-  for i in 0..<PAGE_SIZE {
-    buttons.push(
+  )
+  for i in 0..<@math.minimum(self.characters.length(), PAGE_SIZE) {
+    render_units.push(
       @ui.AreaButton::new(
         get_character_slot_pos(i, 105, 144),
         @struct.Point::new(50, 90),
       )
       |> @ui.Button::new(on_click=fn() {
         self.select_slot = Some(i)
+        (self.hooks.on_state_changed)()
         None
       }),
     )
-  }
-  // Create runtime state for current frame
-  let char_looks = self.characters.map(fn(c) { c.1 })
-  for look in char_looks {
-    look.set_stance(@types.StanceId::STAND1)
-    look.set_direction(true)
-  }
-  let name_tags = self.characters.map(fn(c) { c.2 })
-  {
-    render_units: buttons
-    .iter()
-    .concat(
-      char_looks
-      .mapi(fn(i, c) {
-        {
-          char_look: c,
-          name_tag: name_tags[i],
-          pos: get_character_slot_pos(i, 135, 234),
-        }
-        as &@ui.RenderUnit
-      })
-      .iter(),
+    let (_, char_look, name_tag) = self.characters[i]
+    char_look.set_stance(
+      if Some(i) == self.select_slot {
+        @types.StanceId::WALK1
+      } else {
+        @types.StanceId::STAND1
+      },
     )
-    .collect(),
+    char_look.set_direction(true)
+    name_tag.set_selected(Some(i) == self.select_slot)
+    render_units.push({
+      name_tag,
+      char_look,
+      pos: get_character_slot_pos(i, 135, 234),
+    })
   }
+  { render_units, }
 }
 
 ///|

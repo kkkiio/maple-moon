@@ -187,9 +187,9 @@ pub fn get_float(self : NxNode) -> Double!LoadError {
 pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
   match self.desc {
     @json.JsonValue::Object(it) =>
-      it.each(
-        fn(k, v) { f({ ..self, name: k, desc: v, path: self.path.push(k) }) },
-      )
+      it.each(fn(k, v) {
+        f({ ..self, name: k, desc: v, path: self.path.push(k) })
+      })
     @json.JsonValue::Null => ()
     _ as a => abort("expect object, got\{a}")
   }
@@ -201,33 +201,27 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
     @json.JsonValue::Object(it) =>
       it
       .iter()
-      .map(
-        fn(kv) {
-          let (k, v) = kv
-          { ..self, name: k, desc: v, path: self.path.push(k) }
-        },
-      )
+      .map(fn(kv) {
+        let (k, v) = kv
+        { ..self, name: k, desc: v, path: self.path.push(k) }
+      })
     _ => Iter::empty()
   }
 }
 
 ///|
 pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
-  Iter2::new(
-    fn(yield_) {
-      match self.desc {
-        @json.JsonValue::Object(it) =>
-          it
-          .iter2()
-          .run(
-            fn(k, v) {
-              yield_(k, { ..self, name: k, desc: v, path: self.path.push(k) })
-            },
-          )
-        _ => IterContinue
-      }
-    },
-  )
+  Iter2::new(fn(yield_) {
+    match self.desc {
+      @json.JsonValue::Object(it) =>
+        it
+        .iter2()
+        .run(fn(k, v) {
+          yield_(k, { ..self, name: k, desc: v, path: self.path.push(k) })
+        })
+      _ => IterContinue
+    }
+  })
 }
 
 ///|
@@ -257,23 +251,19 @@ pub fn to_string(self : NxNode) -> String {
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
   match self.desc {
     { "__i": Json::String(path) } =>
-      Some(
-        {
-          image: self.image_loader.load_image_by_path(path),
-          id: self.loader_name + "/" + path,
-          width: self["__w"].as_int?().unwrap(),
-          height: self["__h"].as_int?().unwrap(),
-        },
-      )
+      Some({
+        image: self.image_loader.load_image_by_path(path),
+        id: self.loader_name + "/" + path,
+        width: self["__w"].as_int?().unwrap(),
+        height: self["__h"].as_int?().unwrap(),
+      })
     { "__b": Json::Number(bid) } =>
-      Some(
-        {
-          image: self.image_loader.load_image(bid.to_int()),
-          id: self.loader_name + "/" + bid.to_string(),
-          width: self["__w"].as_int?().unwrap(),
-          height: self["__h"].as_int?().unwrap(),
-        },
-      )
+      Some({
+        image: self.image_loader.load_image(bid.to_int()),
+        id: self.loader_name + "/" + bid.to_string(),
+        width: self["__w"].as_int?().unwrap(),
+        height: self["__h"].as_int?().unwrap(),
+      })
     _ => None
   }
 }
@@ -289,6 +279,11 @@ pub(all) struct Bitmap {
 ///|
 pub fn to_string(self : Bitmap) -> String {
   "{id=\{self.id}, width=\{self.width}, height=\{self.height}}"
+}
+
+///|
+pub impl ToJson for Bitmap with to_json(self) -> Json {
+  { "id": self.id.to_json() }
 }
 
 ///|

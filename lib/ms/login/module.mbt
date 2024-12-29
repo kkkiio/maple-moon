@@ -682,3 +682,10 @@ let map001_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("map001")
 let map_pretty_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "map_pretty",
 )
+
+///| Tell the server which character was picked.
+fn new_select_char_packet(character_id : Int) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::SELECT_CHAR)
+  ..write_int(character_id)
+  ..write_hardware_info()
+}

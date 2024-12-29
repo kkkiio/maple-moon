@@ -10,16 +10,7 @@ struct TextButton {
 
 ///|
 pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
-  {
-    base: {
-      state: ButtonState::NORMAL,
-      active: true,
-      position: @struct.Point::default(),
-      pressed: false,
-    },
-    text,
-    option_number: selection,
-  }
+  { base: ButtonModel::default(), text, option_number: selection }
 }
 
 ///|
@@ -51,11 +42,8 @@ pub fn update(self : TextButton) -> Unit {
 }
 
 ///|
-pub fn bounds(
-  self : TextButton,
-  parentpos : Point[Int]
-) -> @struct.Rectangle[Int] {
-  let lt = parentpos + self.base.position
+pub fn bounds(self : TextButton) -> @struct.Rectangle[Int] {
+  let lt = self.base.position
   let rb = lt + self.text.dimensions()
   @struct.Rectangle::new(lt, rb)
 }
@@ -78,13 +66,4 @@ pub fn origin(self : TextButton) -> Point[Int] {
 ///|
 pub fn get_option_number(self : TextButton) -> Int {
   self.option_number
-}
-
-///|
-pub fn send_cursor(
-  self : TextButton,
-  _b : Bool,
-  _p : Point[Int]
-) -> CursorState {
-  CursorState::IDLE
 }

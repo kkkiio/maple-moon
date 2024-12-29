@@ -202,7 +202,7 @@ fn render(
       |> @ui.Button::new(on_click=fn() {
         self.tab = i
         on_state_changed()
-        @ui.ButtonState::PRESSED
+        Some(@ui.ButtonState::PRESSED)
       }),
     )
   }
@@ -303,7 +303,7 @@ fn render(
       btn
       |> @ui.Button::new(on_click=fn() {
         new_spend_sp_packet(skills[i].id.int_value()).dispatch() // TODO: send after confirm
-        @ui.ButtonState::NORMAL
+        Some(@ui.ButtonState::NORMAL)
       }),
     )
   }
@@ -311,7 +311,7 @@ fn render(
     self.btn_close
     |> @ui.Button::new(on_click=fn() {
       model.active = false
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     }),
   )
   let skills = skills.map(fn(meta) {
@@ -337,8 +337,8 @@ fn render(
 ///|
 impl @ui.UIElement for SkillBookUI with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { buttons: rs.buttons, sprites: [], drawables: [] }
-} // TODO
+  { render_units: rs.buttons.map(fn(btn) { btn as &@ui.RenderUnit }) } // TODO
+}
 
 ///|
 fn use_render_state(self : SkillBookUI) -> RenderState {

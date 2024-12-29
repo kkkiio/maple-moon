@@ -14,6 +14,15 @@ pub fn to_string(self : Texture) -> String {
 }
 
 ///|
+pub impl ToJson for Texture with to_json(self) -> Json {
+  {
+    "bitmap": self.bitmap.to_json(),
+    "origin": self.origin.to_json(),
+    "dimensions": self.dimensions.to_json(),
+  }
+}
+
+///|
 pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
   // TODO: source,_outlink,_inlink
   match src.get_bitmap() {

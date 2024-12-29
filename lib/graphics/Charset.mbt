@@ -129,6 +129,27 @@ pub fn draw_text_with_hspace(
 }
 
 ///|
+struct TextureText {
+  charset : Charset
+  text : String
+}
+
+///|
+pub fn draw(self : TextureText, args : DrawArgument) -> Int {
+  self.charset.draw_text(self.text, args)
+}
+
+///|
+pub impl ToJson for TextureText with to_json(self) -> Json {
+  { "text": self.text.to_json() }
+}
+
+///|
+pub fn create_text(self : Charset, text : String) -> TextureText {
+  { charset: self, text }
+}
+
+///|
 struct GameText {
   charset : Charset
   text : String

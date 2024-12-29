@@ -17,7 +17,7 @@ pub fn TwoSpriteButton::new(
 ) -> TwoSpriteButton {
   let textures = @utils.BoolPair::new(disabled, enabled)
   {
-    base: { active, pressed: false, position: @struct.Point::default(), state },
+    base: ButtonModel::default()..set_active(active)..set_state(state),
     textures,
     npos: np,
     spos: sp,
@@ -26,9 +26,9 @@ pub fn TwoSpriteButton::new(
 
 ///|
 pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
-  if self.base.active {
-    let selected = self.base.state == ButtonState::MOUSEOVER ||
-      self.base.state == ButtonState::PRESSED
+  if self.base.is_active() {
+    let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
+      self.base.get_state() == ButtonState::PRESSED
     self.textures
     .op_get(selected)
     .draw(@graphics.DrawArgument::new(position=self.npos + parentpos))
@@ -36,37 +36,30 @@ pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn bounds(
-  self : TwoSpriteButton,
-  parentpos : Point[Int]
-) -> @struct.Rectangle[Int] {
-  let selected = self.base.state == ButtonState::MOUSEOVER ||
-    self.base.state == ButtonState::PRESSED
-  let (absp, dim) = if selected {
-    (
-      self.spos + parentpos - self.textures.op_get(true).get_origin(),
-      self.textures.op_get(true).get_dimensions(),
-    )
-  } else {
-    (
-      self.npos + parentpos - self.textures.op_get(false).get_origin(),
-      self.textures.op_get(false).get_dimensions(),
-    )
-  }
-  return @struct.Rectangle::new(absp, absp + dim)
+pub impl UIButton for TwoSpriteButton with bounds(self : TwoSpriteButton) -> @struct.Rectangle[
+  Int,
+] {
+  let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
+    self.base.get_state() == ButtonState::PRESSED
+  let pos = (if selected { self.spos } else { self.npos }) -
+    self.textures.op_get(selected).get_origin()
+  return @struct.Rectangle::new(
+    pos,
+    pos + self.textures.op_get(selected).get_dimensions(),
+  )
 }
 
 ///|
 pub fn width(self : TwoSpriteButton) -> Int {
-  let selected = self.base.state == ButtonState::MOUSEOVER ||
-    self.base.state == ButtonState::PRESSED
+  let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
+    self.base.get_state() == ButtonState::PRESSED
   return self.textures.op_get(selected).width()
 }
 
 ///|
 pub fn origin(self : TwoSpriteButton) -> Point[Int] {
-  let selected = self.base.state == ButtonState::MOUSEOVER ||
-    self.base.state == ButtonState::PRESSED
+  let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
+    self.base.get_state() == ButtonState::PRESSED
   return self.textures.op_get(selected).get_origin()
 }
 
@@ -78,13 +71,4 @@ pub fn get_button_base(self : TwoSpriteButton) -> ButtonModel {
 ///|
 pub fn update(self : TwoSpriteButton) -> Unit {
 
-}
-
-///|
-pub fn send_cursor(
-  self : TwoSpriteButton,
-  _a : Bool,
-  _b : Point[Int]
-) -> CursorState {
-  return CursorState::IDLE
 }

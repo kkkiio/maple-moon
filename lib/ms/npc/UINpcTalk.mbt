@@ -216,11 +216,9 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
   }
 
   {
-    buttons: buttons.mapi(fn(i, btn) {
-      @ui.Button::new(btn, on_click=fn() { self.button_pressed(i) })
-    }),
-    sprites: [],
-    drawables: [], // TODO
+    render_units: buttons.mapi(fn(i, btn) {
+      @ui.Button::new(btn, on_click=fn() { Some(self.button_pressed(i)) })
+    }), // TODO
   }
 }
 

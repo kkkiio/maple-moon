@@ -2,7 +2,10 @@
 pub(all) enum GaugeType {
   GAME
   CASHSHOP
-}
+} derive(Show)
+
+///|
+pub impl ToJson for GaugeType with to_json(self) { self.to_string().to_json() }
 
 ///|
 struct Gauge {
@@ -77,7 +80,8 @@ pub fn Gauge::new_with_mid_end(
 }
 
 ///|
-pub fn draw(self : Gauge, args : @graphics.DrawArgument) -> Unit {
+pub impl Drawable for Gauge with draw(self : Gauge, position : Point[Int]) -> Unit {
+  let args = @graphics.DrawArgument::new(position~)
   let length = (self.percentage * self.maximum.to_double()).to_int()
   if length > 0 {
     match self.t {
@@ -110,6 +114,29 @@ pub fn draw(self : Gauge, args : @graphics.DrawArgument) -> Unit {
       }
     }
   }
+}
+
+///|
+pub impl ToJson for Gauge with to_json(self) -> Json {
+  {
+    "t": self.t.to_json(),
+    "maximum": self.maximum.to_json(),
+    "percentage": self.percentage.to_json(),
+    "target": self.target.to_json(),
+    "step": self.step.to_json(),
+  }
+}
+
+///|
+pub impl RenderUnit for Gauge with update(self) -> Unit {
+  ignore(self)
+  ()
+}
+
+///|
+pub impl RenderUnit for Gauge with get_interactive_area(self) {
+  ignore(self)
+  None
 }
 
 ///|

@@ -11,15 +11,6 @@ pub fn get_button_base(self : MapleButton) -> ButtonModel {
 }
 
 ///|
-pub fn send_cursor(
-  self : MapleButton,
-  _b : Bool,
-  _p : Point[Int]
-) -> CursorState {
-  CursorState::IDLE
-}
-
-///|
 pub(all) struct MapleButtonResource {
   textures : Map[ButtonState, @graphics.Texture]
   animations : Map[ButtonState, @graphics.Animation]
@@ -66,9 +57,8 @@ pub fn MapleButton::new(
   pos~ : Point[Int] = @struct.Point::default()
 ) -> MapleButton {
   let base = ButtonModel::default()
-  base.active = true
-  base.position = pos
-  base.state = ButtonState::NORMAL
+  base.set_position(pos)
+  base.set_state(ButtonState::NORMAL)
   { base, textures: res.textures, animations: res.animations }
 }
 
@@ -84,14 +74,14 @@ pub fn MapleButton::from_resource_with_x_y(
 ///|
 pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
-    match self.textures[self.base.state] {
+    match self.textures[self.base.get_state()] {
       Some(texture) =>
         texture.draw(
           @graphics.DrawArgument::new(position=self.base.position + parentpos),
         )
       None => ()
     }
-    match self.animations[self.base.state] {
+    match self.animations[self.base.get_state()] {
       Some(animation) =>
         animation.draw(
           @graphics.DrawArgument::new(position=self.base.position + parentpos),
@@ -105,7 +95,7 @@ pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
 ///|
 pub fn update(self : MapleButton) -> Unit {
   if self.base.active {
-    match self.animations[self.base.state] {
+    match self.animations[self.base.get_state()] {
       Some(animation) => animation.update(timestep=6) |> ignore
       None => ()
     }
@@ -113,25 +103,22 @@ pub fn update(self : MapleButton) -> Unit {
 }
 
 ///|
-pub fn bounds(
-  self : MapleButton,
-  parentpos : Point[Int]
-) -> @struct.Rectangle[Int] {
-  let (origin, dimensions) = match self.textures[self.base.state] {
+pub fn bounds(self : MapleButton) -> @struct.Rectangle[Int] {
+  let (origin, dimensions) = match self.textures[self.base.get_state()] {
     Some(texture) => (texture.get_origin(), texture.get_dimensions())
     None => {
-      let animation = self.animations[self.base.state].unwrap()
+      let animation = self.animations[self.base.get_state()].unwrap()
       (animation.get_origin(), animation.get_dimensions())
     }
   }
-  let lt = parentpos + self.base.position - origin
+  let lt = self.base.position - origin
   let rb = lt + dimensions
   @struct.Rectangle::new(lt, rb)
 }
 
 ///|
 pub fn width(self : MapleButton) -> Int {
-  match self.textures[self.base.state] {
+  match self.textures[self.base.get_state()] {
     Some(texture) => texture.width()
     None => 0
   }
@@ -139,7 +126,7 @@ pub fn width(self : MapleButton) -> Int {
 
 ///|
 pub fn origin(self : MapleButton) -> Point[Int] {
-  match self.textures[self.base.state] {
+  match self.textures[self.base.get_state()] {
     Some(texture) => texture.get_origin()
     None => @struct.Point::default()
   }

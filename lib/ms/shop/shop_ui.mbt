@@ -158,7 +158,7 @@ fn render(
         Some((true, i)) => self.buy_state.buy(i)
         _ => ()
       }
-      return @ui.ButtonState::NORMAL
+      return Some(@ui.ButtonState::NORMAL)
     }),
     resources.sell_all_button
     |> @ui.Button::new(on_click=fn() {
@@ -166,12 +166,12 @@ fn render(
         Some((false, i)) => sell(sell_items, i, all=true)
         _ => ()
       }
-      return @ui.ButtonState::NORMAL
+      return Some(@ui.ButtonState::NORMAL)
     }),
     resources.exit_button
     |> @ui.Button::new(on_click=fn() {
       self.exit_shop()
-      return @ui.ButtonState::PRESSED
+      return Some(@ui.ButtonState::PRESSED)
     }),
   ]
   buttons.push_iter(
@@ -193,7 +193,7 @@ fn render(
         self.sell_state.tab = inventory_type
         self.sell_state.offset = 0
         on_state_changed()
-        return @ui.ButtonState::NORMAL
+        return Some(@ui.ButtonState::NORMAL)
       })
     }),
   )
@@ -207,7 +207,7 @@ fn render(
       |> @ui.Button::new(on_click=fn() {
         self.selection = Some((true, i))
         on_state_changed()
-        return @ui.ButtonState::NORMAL
+        return Some(@ui.ButtonState::NORMAL)
       }),
     )
   }
@@ -262,7 +262,7 @@ fn render(
       |> @ui.Button::new(on_click=fn() {
         self.selection = Some((false, i))
         on_state_changed()
-        return @ui.ButtonState::NORMAL
+        return Some(@ui.ButtonState::NORMAL)
       }),
     )
   }
@@ -578,11 +578,7 @@ impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
 ///|
 impl @ui.UIElement for UIShop with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  {
-    buttons: rs.buttons,
-    drawables: [], // TODO
-    sprites: [],
-  }
+  { render_units: rs.buttons.map(fn(btn) { btn as &@ui.RenderUnit }) }
 }
 
 ///|

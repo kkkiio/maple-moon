@@ -1,4 +1,7 @@
 ///|
+typealias Point[T] = @struct.Point[T]
+
+///|
 pub(all) enum UIElementType {
   UI_ELEMENT_NONE
   START
@@ -100,25 +103,30 @@ pub(open) trait UIElement {
 
 ///|
 pub(all) struct RenderSpec {
-  sprites : Array[@graphics.Sprite]
-  buttons : Array[Button]
-  drawables : Array[&Drawable]
-  // statefuls : Array[&Stateful]
+  render_units : Array[&RenderUnit]
+}
+
+///|
+pub(open) trait Drawable {
+  draw(Self, @struct.Point[Int]) -> Unit
+}
+
+///|
+pub(open) trait RenderUnit: ToJson + Drawable {
+  update(Self) -> Unit
+  get_interactive_area(Self) -> InteractiveArea?
+}
+
+///|
+pub(all) struct InteractiveArea {
+  bounds : @struct.Rectangle[Int]
+  on_click : () -> Unit
+  state : Ref[ButtonState]
 }
 
 ///|
 pub impl ToJson for RenderSpec with to_json(self) -> Json {
-  { "drawables": self.drawables.to_json() }
-}
-
-///|
-pub(open) trait Drawable: ToJson {
-  draw(Self, @struct.Point[Int], Double) -> Unit
-}
-
-///|
-pub(open) trait Stateful: ToJson {
-  update(Self, Int) -> Unit
+  { "render_units": self.render_units.to_json() }
 }
 
 ///|
@@ -180,18 +188,19 @@ pub fn get_ui_model(self : Element) -> UIModel {
 }
 
 ///|
-pub fn draw(self : Element, alpha : Double) -> Unit {
+pub fn draw(self : Element) -> Unit {
   let pos = self.get_ui_model().position
-  for drawable in self.use_runtime_state().drawables {
-    drawable.draw(pos, alpha)
+  for ru in self.use_runtime_state().render_units {
+    ru.draw(pos)
   }
 }
 
 ///|
 pub fn update(self : Element) -> Unit {
   let rs = self.use_runtime_state()
-  update_sprites(rs.sprites.iter())
-  rs.buttons.each(fn(button) { button.object.update() })
+  for ru in rs.render_units {
+    ru.update()
+  }
 }
 
 ///|
@@ -201,8 +210,8 @@ pub fn send_cursor(
   cursorpos : @struct.Point[Int]
 ) -> CursorState {
   let rs = self.use_runtime_state()
-  send_cursor_to_btns(
-    rs.buttons.iter(),
+  send_cursor_to_areas(
+    rs.render_units.iter().map_option(fn(ru) { ru.get_interactive_area() }),
     self.get_ui_model().position,
     pressed,
     cursorpos,
@@ -285,49 +294,84 @@ pub fn is_in_range(self : UIModel, cursorpos : Point[Int]) -> Bool {
 }
 
 ///|
-struct TextureUI {
-  texture : @graphics.Texture
+struct StaticUI[T] {
+  drawable : T
   pos : Point[Int]
 }
 
 ///|
-pub fn TextureUI::new(
-  texture : @graphics.Texture,
-  pos~ : @struct.Point[Int] = @struct.Point::default()
-) -> TextureUI {
-  { texture, pos }
+pub fn StaticUI::new[T](
+  text : T,
+  pos~ : Point[Int] = Point::default()
+) -> StaticUI[T] {
+  { drawable: text, pos }
 }
 
 ///|
-pub impl Drawable for TextureUI with draw(self, pos, _alpha) -> Unit {
-  self.texture.draw(@graphics.DrawArgument::new(position=pos + self.pos))
+pub impl[T : Drawable] Drawable for StaticUI[T] with draw(self, pos) -> Unit {
+  self.drawable.draw(pos + self.pos)
 }
 
 ///|
-pub impl ToJson for TextureUI with to_json(self) -> Json {
-  {
-    "texture": Json::Object({}), // TODO
-    "pos": self.pos.to_json(),
-  }
+pub impl[T : Drawable + ToJson] RenderUnit for StaticUI[T] with update(self) -> Unit {
+  ignore(self)
 }
 
 ///|
-struct TextUI {
-  text : Text
-  pos : Point[Int]
+pub impl[T : Drawable + ToJson] RenderUnit for StaticUI[T] with get_interactive_area(
+  self
+) -> InteractiveArea? {
+  ignore(self)
+  None
 }
 
 ///|
-pub fn TextUI::new(text : Text, pos~ : Point[Int] = Point::default()) -> TextUI {
-  { text, pos }
+pub impl[T : ToJson] ToJson for StaticUI[T] with to_json(self) -> Json {
+  { "drawable": self.drawable.to_json(), "pos": self.pos.to_json() }
 }
 
 ///|
-pub impl Drawable for TextUI with draw(self, pos, _alpha) -> Unit {
-  self.text.draw(pos + self.pos)
+pub(all) type SpriteUI @graphics.Sprite
+
+///|
+pub impl Drawable for SpriteUI with draw(self, pos) -> Unit {
+  self._.draw(pos, 0)
 }
 
 ///|
-pub impl ToJson for TextUI with to_json(self) -> Json {
-  { "text": self.text.to_json(), "pos": self.pos.to_json() }
+pub impl RenderUnit for SpriteUI with update(self) -> Unit {
+  self._.update() |> ignore
+}
+
+///|
+pub impl RenderUnit for SpriteUI with get_interactive_area(self) -> InteractiveArea? {
+  self |> ignore
+  None
+}
+
+///|
+pub impl ToJson for SpriteUI with to_json(self) -> Json { self._.to_json() }
+
+///|
+pub(all) type TextureTextUI @graphics.TextureText derive(ToJson)
+
+///|
+pub impl Drawable for TextureTextUI with draw(self, position) -> Unit {
+  self._.draw(@graphics.DrawArgument::new(position~)) |> ignore
+}
+
+///|
+pub(all) type TextureUI @graphics.Texture derive(ToJson)
+
+///|
+pub impl Drawable for TextureUI with draw(self, position) -> Unit {
+  self._.draw(@graphics.DrawArgument::new(position~))
+}
+
+///|
+pub(all) type TextUI @graphics.Text derive(ToJson)
+
+///|
+pub impl Drawable for TextUI with draw(self, position) -> Unit {
+  self._.draw(position)
 }

@@ -40,7 +40,6 @@ pub fn UILoginButtons::from_int(i : Int) -> UILoginButtons? {
 struct UILogin {
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
-  buttons : Map[Int, &@ui.UIButton]
   // mut version : Text
   // mut account : Textfield
   // mut password : Textfield
@@ -100,7 +99,6 @@ pub fn UILogin::new(
   let obj = {
     base: @ui.UIModel::new(Point::new(0, 0), @struct.Point::new(800, 600)),
     sprites,
-    buttons: Map::new(),
     saveid: false,
   }
   // version: Text::new(),
@@ -182,13 +180,7 @@ pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
 ///|
 impl @ui.UIElement for UILogin with render(self) -> @ui.RenderSpec {
   let sprites = self.sprites
-  let buttons = []
-  { buttons, sprites, drawables: sprites.map(fn(sprite) { sprite }) }
-}
-
-///|
-pub fn update(self : UILogin) -> Unit {
-  @ui.update_sprites(self.sprites.iter())
+  { render_units: sprites.map(fn(sprite) { @ui.SpriteUI(sprite) }) }
 }
 
 // pub fn login(self : UILogin) -> Unit {
@@ -235,29 +227,6 @@ pub fn button_pressed(self : UILogin, id : Int) -> @ui.ButtonState {
 }
 
 ///|
-pub fn send_cursor(
-  self : UILogin,
-  clicked : Bool,
-  cursor_pos : @struct.Point[Int]
-) -> @ui.CursorState {
-  // match self.account.send_cursor(cursor_pos, clicked) {
-  //   Some(new_state) => return new_state
-  //   None => ()
-  // }
-  // match self.password.send_cursor(cursor_pos, clicked) {
-  //   Some(new_state) => return new_state
-  //   None => ()
-  // }
-  @ui.send_cursor_to_buttons(
-    self.buttons.iter2(),
-    self.base.position,
-    fn(bid) { self.button_pressed(bid) },
-    clicked,
-    cursor_pos,
-  )
-}
-
-///|
 pub fn UILogin::const_type() -> @ui.UIElementType {
   @ui.UIElementType::LOGIN
 }
@@ -289,7 +258,7 @@ pub fn is_active(self : UILogin) -> Bool {
 
 ///|
 pub fn remove_cursor(self : UILogin) -> Unit {
-  @ui.remove_cursor(self.buttons.values().map(fn(b) { b.get_button_base() }))
+
 }
 
 ///|

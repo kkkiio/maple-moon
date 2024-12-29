@@ -86,12 +86,12 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       model.deactivate()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_hp = @ui.MapleButton::from_resource(main["BtHpUp"])
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_mp = @ui.MapleButton::from_resource(
       main["BtHpUp"],
@@ -99,7 +99,7 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_str = @ui.MapleButton::from_resource(
       main["BtHpUp"],
@@ -107,7 +107,7 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_dex = @ui.MapleButton::from_resource(
       main["BtHpUp"],
@@ -115,7 +115,7 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_int = @ui.MapleButton::from_resource(
       main["BtHpUp"],
@@ -123,7 +123,7 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_luk = @ui.MapleButton::from_resource(
       main["BtHpUp"],
@@ -131,7 +131,7 @@ fn UIStatsInfo::new(
     )
     |> @ui.Button::new(on_click=fn() {
       new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     })
   let btn_auto = @ui.MapleButton::from_resource(main["BtAuto"])
     |> @ui.Button::new() // TODO
@@ -430,21 +430,24 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
   let details = if self.show_detail {
     let detail_pos = @struct.Point::new(212, 0)
     [
-      @ui.TextureUI::new(
-        self.textures_detail[0],
+      @ui.StaticUI::new(
+        @ui.TextureUI(self.textures_detail[0]),
         pos=detail_pos + @struct.Point::new(0, -1),
       ),
-      @ui.TextureUI::new(self.textures_detail[1], pos=detail_pos),
-      @ui.TextureUI::new(self.textures_detail[2], pos=detail_pos),
-      @ui.TextureUI::new(self.textures_detail[3], pos=detail_pos),
-      @ui.TextureUI::new(self.none_ability, pos=detail_pos),
-      @ui.TextureUI::new(self.inner_ability[false], pos=detail_pos),
-      @ui.TextureUI::new(
-        self.inner_ability[false],
+      @ui.StaticUI::new(@ui.TextureUI(self.textures_detail[1]), pos=detail_pos),
+      @ui.StaticUI::new(@ui.TextureUI(self.textures_detail[2]), pos=detail_pos),
+      @ui.StaticUI::new(@ui.TextureUI(self.textures_detail[3]), pos=detail_pos),
+      @ui.StaticUI::new(@ui.TextureUI(self.none_ability), pos=detail_pos),
+      @ui.StaticUI::new(
+        @ui.TextureUI(self.inner_ability[false]),
+        pos=detail_pos,
+      ),
+      @ui.StaticUI::new(
+        @ui.TextureUI(self.inner_ability[false]),
         pos=detail_pos + @struct.Point::new(0, 19),
       ),
-      @ui.TextureUI::new(
-        self.inner_ability[false],
+      @ui.StaticUI::new(
+        @ui.TextureUI(self.inner_ability[false]),
         pos=detail_pos + @struct.Point::new(0, 38),
       ),
     ]
@@ -452,23 +455,23 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
     []
   }
   {
-    buttons,
-    sprites: self.sprites,
-    drawables: self.sprites
+    render_units: self.sprites
     .iter()
-    .map(fn(sprite) { sprite as &@ui.Drawable })
-    .concat(details.iter().map(fn(sprite) { sprite as &@ui.Drawable }))
+    .map(fn(sprite) { @ui.SpriteUI(sprite) as &@ui.RenderUnit })
+    .concat(details.iter().map(fn(sprite) { sprite as &@ui.RenderUnit }))
     .concat(
       normal_labels
       .iter()
-      .map(fn(label) { @ui.TextUI::new(label._.0, pos=label._.1) }),
+      .map(fn(label) { @ui.StaticUI::new(@ui.TextUI(label._.0), pos=label._.1) }),
     )
     .concat(
       detailed_labels
       .iter()
-      .map(fn(label) { @ui.TextUI::new(label._.0, pos=label._.1.shift_x(213)) }),
+      .map(fn(label) {
+        @ui.StaticUI::new(@ui.TextUI(label._.0), pos=label._.1.shift_x(213))
+      }),
     )
-    .concat(buttons.iter().map(fn(button) { button as &@ui.Drawable }))
+    .concat(buttons.iter().map(fn(button) { button as &@ui.RenderUnit }))
     .to_array(),
   }
 }

@@ -18,5 +18,5 @@ test "select char ui" {
     [],
   )
   let rs = ui.render()
-  @json.inspect!(rs, content={ "drawables": [] })
+  @json.inspect!(rs, content={"render_units":[{},{},{},{},{},{},{},{},{}]})
 }

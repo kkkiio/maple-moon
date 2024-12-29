@@ -293,7 +293,7 @@ fn clear(self : Atlas) -> Unit {
 
 ///|
 pub fn clear_scene(self : GraphicsGL) -> Unit {
-  if self.locked.not() {
+  if not(self.locked) {
     self.quads.clear()
     // self.circles.clear();
   }

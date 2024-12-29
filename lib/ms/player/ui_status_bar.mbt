@@ -144,57 +144,68 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
 }
 
 ///|
-pub impl @ui.UIElement for UIStatusBar with render(self) -> @ui.RenderSpec {
-  let sprites = self.sprites
-  fn draw(alpha : Double) -> Unit {
-    @ui.draw_sprites(sprites.iter(), self.base.position, alpha)
-    self.hpmp_sprites[0].draw(self.base.position, alpha)
-    self.exp_bar.draw(
-      @graphics.DrawArgument::new(position=self.base.position + self.exp_pos),
-    )
-    self.hp_bar.draw(
-      @graphics.DrawArgument::new(position=self.base.position + self.hpmp_pos),
-    )
-    self.mp_bar.draw(
-      @graphics.DrawArgument::new(position=self.base.position + self.hpmp_pos),
-    )
-    self.hpmp_sprites[1].draw(self.base.position, alpha)
-    self.hpmp_sprites[2].draw(self.base.position, alpha)
-    let exp = self.stats.get_exp()
-    let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
-    self.stat_set.draw_text(
-      "\{exp}[\{exp_precent/100}.\{exp_precent%100}%]",
-      @graphics.DrawArgument::new(
-        position=self.base.position + self.statset_pos,
-      ),
-    )
-    |> ignore
-    let hp = self.stats.get_stat(@maple_stat.Id::HP)
-    let maxhp = self.stats.get_total(@stat.Id::HP)
-    self.hpmp_set.draw_text(
-      "[\{hp}/\{maxhp}]",
-      @graphics.DrawArgument::new(position=self.base.position + self.hpset_pos),
-    )
-    |> ignore
-    let mp = self.stats.get_stat(@maple_stat.Id::MP)
-    let maxmp = self.stats.get_total(@stat.Id::MP)
-    self.hpmp_set.draw_text(
-      "[\{mp}/\{maxmp}]",
-      @graphics.DrawArgument::new(position=self.base.position + self.mpset_pos),
-    )
-    |> ignore
-    let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
-    self.level_set.draw_text(
-      level.to_string(),
-      @graphics.DrawArgument::new(
-        position=self.base.position + self.levelset_pos,
-      ),
-    )
-    |> ignore
-  }
+pub impl @ui.UIElement for UIStatusBar with render(self) {
+  let render_units : Array[&@ui.RenderUnit] = Array::new()
+  // Add background sprites
+  self.sprites
+  .iter()
+  .each(fn(sprite) { render_units.push(@ui.SpriteUI(sprite)) })
+  // Add HP/MP background sprite
+  render_units.push(@ui.SpriteUI(self.hpmp_sprites[0]))
+  // Add exp bar
+  render_units.push(@ui.StaticUI::new(self.exp_bar, pos=self.exp_pos))
+  // Add HP bar
+  render_units.push(@ui.StaticUI::new(self.hp_bar, pos=self.hpmp_pos))
+  // Add MP bar
+  render_units.push(@ui.StaticUI::new(self.mp_bar, pos=self.hpmp_pos))
+  // Add HP/MP cover sprites
+  render_units.push(self.hpmp_sprites[1] |> @ui.SpriteUI)
+  render_units.push(self.hpmp_sprites[2] |> @ui.SpriteUI)
 
-  { sprites, buttons: [], drawables: [] }
-} // TODO
+  // Add exp text
+  let exp = self.stats.get_exp()
+  let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
+  render_units.push(
+    @ui.StaticUI::new(
+      @ui.TextureTextUI(
+        self.stat_set.create_text(
+          "\{exp}[\{exp_precent/100}.\{exp_precent%100}%]",
+        ),
+      ),
+      pos=self.statset_pos,
+    ),
+  )
+
+  // Add HP text
+  let hp = self.stats.get_stat(@maple_stat.Id::HP)
+  let maxhp = self.stats.get_total(@stat.Id::HP)
+  render_units.push(
+    @ui.StaticUI::new(
+      @ui.TextureTextUI(self.hpmp_set.create_text("[\{hp}/\{maxhp}]")),
+      pos=self.hpset_pos,
+    ),
+  )
+
+  // Add MP text
+  let mp = self.stats.get_stat(@maple_stat.Id::MP)
+  let maxmp = self.stats.get_total(@stat.Id::MP)
+  render_units.push(
+    @ui.StaticUI::new(
+      @ui.TextureTextUI(self.hpmp_set.create_text("[\{mp}/\{maxmp}]")),
+      pos=self.mpset_pos,
+    ),
+  )
+
+  // Add level text
+  let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
+  render_units.push(
+    @ui.StaticUI::new(
+      @ui.TextureTextUI(self.level_set.create_text(level.to_string())),
+      pos=self.levelset_pos,
+    ),
+  )
+  { render_units, }
+}
 
 ///|
 pub fn update(self : UIStatusBar) -> Unit {

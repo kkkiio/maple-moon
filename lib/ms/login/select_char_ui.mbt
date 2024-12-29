@@ -127,13 +127,6 @@ fn new_create_char_packet(
   ..write_byte(female.to_int().to_byte())
 }
 
-///| Tell the server which character was picked.
-fn new_select_char_packet(character_id : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::SELECT_CHAR)
-  ..write_int(character_id)
-  ..write_hardware_info()
-}
-
 ///|
 struct SelectCharUI {
   model : @ui.UIModel
@@ -187,15 +180,13 @@ pub fn SelectCharUI::new(
 ///|
 pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
   let resources = self.resource
-  let buttons = [
+  let buttons : Array[&@ui.RenderUnit] = [
     @ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
     |> @ui.Button::new(on_click=fn() {
-      guard let Some(slot) = self.select_slot else {
-        None => return @ui.ButtonState::IDENTITY
-      }
+      guard let Some(slot) = self.select_slot else { None => return None }
       let cid = self.characters[slot].0
       (self.on_character_selected)(cid)
-      @ui.ButtonState::IDENTITY
+      None
     }),
   ]
   for i in 0..<PAGE_SIZE {
@@ -206,7 +197,7 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
       )
       |> @ui.Button::new(on_click=fn() {
         self.select_slot = Some(i)
-        @ui.ButtonState::IDENTITY
+        None
       }),
     )
   }
@@ -218,15 +209,21 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
   }
   let name_tags = self.characters.map(fn(c) { c.2 })
   {
-    buttons,
-    sprites: [],
-    drawables: char_looks.mapi(fn(i, c) {
-      {
-        char_look: c,
-        name_tag: name_tags[i],
-        pos: get_character_slot_pos(i, 135, 234),
-      }
-    }),
+    render_units: buttons
+    .iter()
+    .concat(
+      char_looks
+      .mapi(fn(i, c) {
+        {
+          char_look: c,
+          name_tag: name_tags[i],
+          pos: get_character_slot_pos(i, 135, 234),
+        }
+        as &@ui.RenderUnit
+      })
+      .iter(),
+    )
+    .collect(),
   }
 }
 
@@ -238,10 +235,18 @@ struct CharDrawable {
 }
 
 ///|
-impl @ui.Drawable for CharDrawable with draw(self, _pos, alpha) -> Unit {
-  self.char_look.draw(@graphics.DrawArgument::new(position=self.pos), alpha)
+impl @ui.Drawable for CharDrawable with draw(self, _pos) -> Unit {
+  self.char_look.draw(@graphics.DrawArgument::new(position=self.pos), 0)
   self.name_tag.draw(self.pos)
 }
+
+///|
+impl @ui.RenderUnit for CharDrawable with update(self) -> Unit {
+  self.char_look.update(@constants.step_time_ms) |> ignore
+}
+
+///|
+impl @ui.RenderUnit for CharDrawable with get_interactive_area(self) { None }
 
 ///|
 pub impl ToJson for CharDrawable with to_json(self) -> Json {

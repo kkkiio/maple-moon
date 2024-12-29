@@ -4,14 +4,13 @@ pub(all) enum ButtonState {
   DISABLED
   MOUSEOVER
   PRESSED
-  IDENTITY
 } derive(Eq, Hash)
 
 ///|
 pub(open) trait UIButton {
   draw(Self, Point[Int]) -> Unit
   update(Self) -> Unit
-  bounds(Self, Point[Int]) -> @struct.Rectangle[Int]
+  bounds(Self) -> @struct.Rectangle[Int]
   width(Self) -> Int
   origin(Self) -> Point[Int]
   // send_cursor(Self, Bool, Point[Int]) -> CursorState
@@ -24,17 +23,38 @@ pub(open) trait UIButton {
 ///|
 pub(all) struct Button {
   object : UIButton
-  on_click : (() -> ButtonState)?
+  on_click : (() -> ButtonState?)?
 }
 
 ///|
-pub fn Button::new(object : UIButton, on_click? : () -> ButtonState) -> Button {
+pub fn Button::new(object : UIButton, on_click? : () -> ButtonState?) -> Button {
   { object, on_click }
 }
 
 ///|
-pub impl Drawable for Button with draw(self, pos, _alpha) -> Unit {
+pub impl Drawable for Button with draw(self, pos) -> Unit {
   self.object.draw(pos)
+}
+
+///|
+pub impl RenderUnit for Button with update(self) -> Unit {
+  self.object.update()
+}
+
+///|
+pub impl RenderUnit for Button with get_interactive_area(self) -> InteractiveArea? {
+  self.on_click.map(fn(on_click) {
+    {
+      bounds: self.object.bounds(),
+      state: self.object.get_button_base().state,
+      on_click: fn() {
+        match on_click() {
+          Some(s) => self.object.get_button_base().set_state(s)
+          None => ()
+        }
+      },
+    }
+  })
 }
 
 ///|
@@ -43,8 +63,8 @@ pub impl ToJson for Button with to_json(self) -> Json {
 }
 
 ///|
-pub(all) struct ButtonModel {
-  mut state : ButtonState
+struct ButtonModel {
+  state : Ref[ButtonState]
   mut position : Point[Int]
   mut active : Bool
   mut pressed : Bool
@@ -53,7 +73,7 @@ pub(all) struct ButtonModel {
 ///|
 pub fn ButtonModel::default() -> ButtonModel {
   {
-    state: ButtonState::NORMAL,
+    state: Ref::new(ButtonState::NORMAL),
     position: @struct.Point::default(),
     active: true,
     pressed: false,
@@ -67,10 +87,7 @@ pub fn set_position(self : ButtonModel, pos : Point[Int]) -> Unit {
 
 ///|
 pub fn set_state(self : ButtonModel, s : ButtonState) -> Unit {
-  if s == ButtonState::IDENTITY {
-    return
-  }
-  self.state = s
+  self.state.val = s
 }
 
 ///|
@@ -85,12 +102,12 @@ pub fn toggle_pressed(self : ButtonModel) -> Unit {
 
 ///|
 pub fn is_active(self : ButtonModel) -> Bool {
-  self.active && self.state != ButtonState::DISABLED
+  self.active && self.get_state() != ButtonState::DISABLED
 }
 
 ///|
 pub fn get_state(self : ButtonModel) -> ButtonState {
-  self.state
+  self.state.val
 }
 
 ///|

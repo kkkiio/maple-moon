@@ -186,8 +186,8 @@ fn use_render_state(self : UIItemInventory) -> RenderState {
 ///|
 impl @ui.UIElement for UIItemInventory with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { buttons: rs.buttons, sprites: [], drawables: [] }
-} // TODO
+  { render_units: [] } // TODO
+}
 
 ///|
 fn render(
@@ -201,15 +201,15 @@ fn render(
     resources.close_btn
     |> @ui.Button::new(on_click=fn() {
       self.base.toggle_active()
-      @ui.ButtonState::NORMAL
+      Some(@ui.ButtonState::NORMAL)
     }),
   )
   let make_change_tab_cb = fn(new_tab : Int) {
     fn() {
-      guard self.tab != new_tab else { return @ui.ButtonState::IDENTITY }
+      guard self.tab != new_tab else { return None }
       self.tab = new_tab
       on_state_changed()
-      @ui.ButtonState::IDENTITY
+      None
     }
   }
   buttons.push_iter(

@@ -24,7 +24,7 @@ fn draw(
 ) -> Unit {
   self.elements.each(fn(_t, elem) {
     if elem.get_ui_model().is_active() {
-      elem.draw(inter)
+      elem.draw()
     }
   })
 }

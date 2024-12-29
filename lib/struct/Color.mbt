@@ -88,7 +88,7 @@ pub fn to_json(self : ColorName) -> Json {
 }
 
 ///|
-pub fn output(self : ColorName, logger : Logger) -> Unit {
+pub impl Show for ColorName with output(self, logger) {
   logger.write_string(self.css_name())
 }
 

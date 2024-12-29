@@ -74,10 +74,7 @@ pub fn draw(
 ) -> Unit {
   self.element_order.each(fn(t) {
     match self.elements.get(t) {
-      Some(element) =>
-        if element.get_ui_model().is_active() {
-          element.draw(inter)
-        }
+      Some(element) => if element.get_ui_model().is_active() { element.draw() }
       None => ()
     }
   })

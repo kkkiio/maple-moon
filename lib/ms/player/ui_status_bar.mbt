@@ -40,7 +40,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
   sprites.push(
     @graphics.Sprite::from_resource(
       expBarRes["layer:back"],
-      state_args=@graphics.DrawArgument::new(position=exp_pos),
+      state_args=@graphics.DrawArgument::new(pos=exp_pos),
     ),
   )
   let exp_max = vwidth - 16
@@ -63,7 +63,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
     @graphics.Sprite::from_resource(
       status["backgrnd"],
       state_args=@graphics.DrawArgument::new(
-        position=hpmp_pos - @struct.Point::new(1, 0),
+        pos=hpmp_pos - @struct.Point::new(1, 0),
       ),
     ),
   )
@@ -71,7 +71,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
     @graphics.Sprite::from_resource(
       status["layer:cover"],
       state_args=@graphics.DrawArgument::new(
-        position=hpmp_pos - @struct.Point::new(1, 0),
+        pos=hpmp_pos - @struct.Point::new(1, 0),
       ),
     ),
   )
@@ -79,7 +79,7 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
     @graphics.Sprite::from_resource(
       status["layer:Lv"],
       state_args=@graphics.DrawArgument::new(
-        position=hpmp_pos - @struct.Point::new(1, 0),
+        pos=hpmp_pos - @struct.Point::new(1, 0),
       ),
     ),
   )

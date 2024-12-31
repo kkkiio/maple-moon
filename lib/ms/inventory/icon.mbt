@@ -61,7 +61,7 @@ pub fn draw(
     .get()
     .draw_text(
       self.count.to_string(),
-      @graphics.DrawArgument::new(position=position + @struct.Point::new(0, 20)),
+      @graphics.DrawArgument::new(pos=position + @struct.Point::new(0, 20)),
     )
     |> ignore
   }

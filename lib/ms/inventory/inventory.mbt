@@ -383,13 +383,13 @@ pub fn find_equipslot(
 ) -> @slot.Id {
   let eqslot = cloth.get_eqslot()
   if eqslot == @slot.Id::RING1 {
-    if self.has_equipped(@slot.Id::RING2).not() {
+    if not(self.has_equipped(@slot.Id::RING2)) {
       return @slot.Id::RING2
     }
-    if self.has_equipped(@slot.Id::RING3).not() {
+    if not(self.has_equipped(@slot.Id::RING3)) {
       return @slot.Id::RING3
     }
-    if self.has_equipped(@slot.Id::RING4).not() {
+    if not(self.has_equipped(@slot.Id::RING4)) {
       return @slot.Id::RING4
     }
     return @slot.Id::RING1

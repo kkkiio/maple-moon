@@ -146,18 +146,16 @@ fn load_modules(
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
   })
-  let shop_mod_f = @shop.Module::load(ui)
-    .combine(char_look_module_f)
-    .map(fn(it) {
-      let (mod, char_look_module) = it
-      merge_handlers(
-        mod.make_handlers(
-          fn() { Stage::get().get_player().map(fn(p) { p.char_base.look }) },
-          fn() { Some(Stage::get().get_inventory()) },
-        ),
-      )
-      mod
-    })
+  let shop_mod_f = @shop.Module::load(ui).map(fn(it) {
+    let mod = it
+    merge_handlers(
+      mod.make_handlers(
+        fn() { Stage::get().get_player().map(fn(p) { p.char_base.look }) },
+        fn() { Some(Stage::get().get_inventory()) },
+      ),
+    )
+    mod
+  })
   // // Attack handlers
   // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
   // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
@@ -357,7 +355,7 @@ fn setup_game_ui(
   ui.set_element(
     false,
     @ui.Element::new(
-      fn(hooks) { @player.UIStatusBar::new(stats) },
+      fn(_) { @player.UIStatusBar::new(stats) },
       @ui.UIElementType::STATUS_BAR,
     ),
   )

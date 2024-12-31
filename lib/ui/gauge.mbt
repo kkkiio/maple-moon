@@ -80,8 +80,11 @@ pub fn Gauge::new_with_mid_end(
 }
 
 ///|
-pub impl Drawable for Gauge with draw(self : Gauge, position : Point[Int]) -> Unit {
-  let args = @graphics.DrawArgument::new(position~)
+pub impl @graphics.Drawable for Gauge with draw(
+  self : Gauge,
+  args : @graphics.DrawArgument
+) -> Unit {
+  let position = args.pos
   let length = (self.percentage * self.maximum.to_double()).to_int()
   if length > 0 {
     match self.t {

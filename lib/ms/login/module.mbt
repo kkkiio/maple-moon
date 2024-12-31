@@ -82,7 +82,13 @@ pub fn make_handlers(
     (
       @net.CHARNAME_RESPONSE,
       @net.with_log(@net.CHARNAME_RESPONSE, fn(recv : @net.InPacket) {
-        handle_charname_response!(recv)
+        let name = recv.read_string!()
+        let used = recv.read_bool!()
+        if used {
+          @log.warn({ "name": name }, "Name already in use")
+        } else {
+          ...
+        }
       }),
     ),
     (
@@ -344,55 +350,88 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
   mod.selected_index = None
   let pic = recv.read_byte!()
   recv.read_int!() |> ignore // slots
-  if characters.length() > 0 {
-    match pic {
-      2 =>
-        match mod.select_cid {
-          Some(cid) => {
-            let packet = new_select_char_packet(cid)
-            mod.packet_processor.send_packet(packet)
-          }
-          None => {
-            mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
-            let resource_f = SelectCharUIResource::load()
-            let char_looks_f = mod.characters.map(fn(ce) {
-                mod.char_look_module
-                .load_char_look(ce.look)
-                .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
-              })
-              |> @utils.Future::all_of()
-            mod.io_service.on_complete(resource_f.combine(char_looks_f), fn(
-              it
-            ) {
-              let (resource, char_looks) = it
-              mod.ui_container.add_ui(
-                @ui.Element::new(
-                  fn(hooks) {
-                    SelectCharUI::new(
-                      resource,
-                      char_looks,
-                      on_character_selected=fn(cid) {
-                        mod.select_cid = Some(cid)
-                        mod.packet_processor.send_packet(
-                          new_select_char_packet(cid),
-                        )
-                      },
-                      hooks,
+  match pic {
+    2 =>
+      match mod.select_cid {
+        Some(cid) => {
+          let packet = new_select_char_packet(cid)
+          mod.packet_processor.send_packet(packet)
+        }
+        None => {
+          mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
+          let resource_f = SelectCharUIResource::load()
+          let char_looks_f = mod.characters.map(fn(ce) {
+              mod.char_look_module
+              .load_char_look(ce.look)
+              .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
+            })
+            |> @utils.Future::all_of()
+          mod.io_service.on_complete(resource_f.combine(char_looks_f), fn(it) {
+            let (resource, char_looks) = it
+            let key = @ui.UIElementType::UI_ELEMENT_CHAR_SELECT
+            let elem = @ui.Element::new(
+              fn(hooks) {
+                SelectCharUI::new(
+                  resource,
+                  char_looks,
+                  on_select_character=fn(cid) {
+                    mod.select_cid = Some(cid)
+                    mod.packet_processor.send_packet(
+                      new_select_char_packet(cid),
                     )
                   },
-                  @ui.UIElementType::UI_ELEMENT_CHAR_SELECT,
-                ),
-                false,
-              )
-            })
-          }
+                  on_new_character=fn() {
+                    mod.ui_container.remove_ui(key)
+                    mod.io_service.on_complete(
+                      ExplorerCreatorUIResource::load(),
+                      fn(res) {
+                        mod.ui_container.add_ui(
+                          @ui.Element::new(
+                            fn(hooks) {
+                              ExplorerCreatorUI::new(
+                                res,
+                                hooks,
+                                fn(entry, cb) {
+                                  mod.io_service.on_complete(
+                                    mod.char_look_module.load_char_look(entry),
+                                    cb,
+                                  )
+                                },
+                                on_create_char=fn(s) {
+                                  let packet = new_create_char_packet(
+                                    s.name,
+                                    s.job,
+                                    s.face_id,
+                                    s.hair_id,
+                                    s.hair_color_id,
+                                    s.skin_id,
+                                    s.top_id,
+                                    s.bot_id,
+                                    s.shoe_id,
+                                    s.weapon_id,
+                                    s.female,
+                                  )
+                                  mod.packet_processor.send_packet(packet)
+                                },
+                              )
+                            },
+                            @ui.UIElementType::CLASS_CREATION,
+                          ),
+                          false,
+                        )
+                      },
+                    )
+                  },
+                  hooks,
+                )
+              },
+              key,
+            )
+            mod.ui_container.add_ui(elem, false)
+          })
         }
-      _ => fail!("pic=\{pic} not ok")
-    }
-  } else {
-    @log.info({}, "no characters, creating new one")
-    let packet = new_name_char_packet(test_name)
-    mod.packet_processor.send_packet(packet)
+      }
+    _ => fail!("pic=\{pic} not ok")
   }
 }
 
@@ -410,20 +449,12 @@ pub fn handle_server_ip(mod : Module, recv : @net.InPacket) -> Unit! {
 }
 
 ///|
-pub fn handle_charname_response(recv : @net.InPacket) -> Unit! {
-  let name = recv.read_string!()
-  let used = recv.read_bool!()
-  let c = ExplorerCreator::new(
-    etc_loader().load_res(["MakeCharInfo.img", "Info"]),
-  )
-  c.send_naming_result(name, used)
-}
-
-///|
 pub fn handle_add_new_char_entry(mod : Module, recv : @net.InPacket) -> Unit! {
   recv.skip!(1)
   let character = parse_charentry!(recv)
   mod.characters.push(character)
+  mod.ui_container.remove_ui(@ui.UIElementType::CLASS_CREATION)
+  mod.ui_container.add_ui(new_login_ui(mod), false)
 }
 
 ///|
@@ -625,8 +656,8 @@ pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
 }
 
 ///|
-fn etc_loader() -> @resource.SyncLoader {
-  @resource.SyncLoader::new("etc")
+fn get_etc_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("Etc")
 }
 
 ///|

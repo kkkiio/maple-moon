@@ -108,14 +108,14 @@ pub fn send_action(
 
 ///|
 pub fn update(self : PlayerStandState, player : Player) -> Unit {
-  if player.get_phobj().enablejd.not() {
+  if not(player.get_phobj().enablejd) {
     player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
   }
 }
 
 ///|
 pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
-  if player.get_phobj().onground.not() {
+  if not(player.get_phobj().onground) {
     player.set_state(CharState::FALL)
   }
 }
@@ -168,7 +168,7 @@ pub fn update(self : PlayerWalkState, player : Player) -> Unit {
     }
     player.get_phobj().hforce += hforce
   }
-  if player.get_phobj().enablejd.not() {
+  if not(player.get_phobj().enablejd) {
     player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
   }
 }
@@ -176,7 +176,7 @@ pub fn update(self : PlayerWalkState, player : Player) -> Unit {
 ///|
 pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
   if player.get_phobj().onground {
-    if self.haswalkinput(player).not() ||
+    if not(self.haswalkinput(player)) ||
       player.get_phobj().moving_object.hspeed == 0.0 {
       player.set_state(CharState::STAND)
     }
@@ -286,7 +286,7 @@ pub fn send_action(
 
 ///|
 pub fn update(self : PlayerProneState, player : Player) -> Unit {
-  if player.get_phobj().enablejd.not() {
+  if not(player.get_phobj().enablejd) {
     player.get_phobj().set_flag(PhysicsObjectFlag::CHECK_BELOW)
   }
 }

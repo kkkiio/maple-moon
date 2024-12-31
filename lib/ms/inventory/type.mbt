@@ -1,4 +1,5 @@
-pub enum TypeId {
+///|
+pub(all) enum TypeId {
   EQUIP
   USE
   SETUP
@@ -7,6 +8,7 @@ pub enum TypeId {
   EQUIPPED
 } derive(Eq, Hash)
 
+///|
 pub fn int_value(self : TypeId) -> Int {
   match self {
     TypeId::EQUIP => 1
@@ -18,6 +20,7 @@ pub fn int_value(self : TypeId) -> Int {
   }
 }
 
+///|
 pub fn TypeId::by_item_id(item_id : Int) -> TypeId? {
   let prefix = item_id / 1000000
   match prefix {
@@ -30,6 +33,7 @@ pub fn TypeId::by_item_id(item_id : Int) -> TypeId? {
   }
 }
 
+///|
 pub fn TypeId::by_value(value : Int) -> TypeId? {
   match value {
     -1 => TypeId::EQUIPPED |> Some

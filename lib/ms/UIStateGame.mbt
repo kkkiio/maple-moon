@@ -170,7 +170,7 @@ pub fn send_cursor(
     }
     None => ()
   }
-  if clicked.not() {
+  if not(clicked) {
     self.dragged = None
     match self.get_front(cursorpos) {
       Some(front) => {

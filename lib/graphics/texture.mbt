@@ -42,11 +42,6 @@ pub fn shift(self : Texture, amount : @struct.Point[Int]) -> Unit {
 }
 
 ///|
-pub fn is_valid(self : Texture) -> Bool {
-  self.bitmap.is_empty().not()
-}
-
-///|
 pub fn width(self : Texture) -> Int {
   self.dimensions.x
 }
@@ -67,7 +62,7 @@ pub fn get_dimensions(self : Texture) -> @struct.Point[Int] {
 }
 
 ///|
-pub fn draw(self : Texture, args : DrawArgument) -> Unit {
+pub impl Drawable for Texture with draw(self : Texture, args : DrawArgument) -> Unit {
   match self.bitmap {
     None => ()
     Some(bitmap) =>

@@ -21,7 +21,6 @@ fn PacketProcessor::new() -> PacketProcessor {
 let g_packet_processor : @utils.Singleton[PacketProcessor] = @utils.Singleton::new()
 
 ///|
-/// @alert deprecated "accept PacketProcessor as argument instead"
 pub fn PacketProcessor::get() -> PacketProcessor {
   g_packet_processor.must_get()
 }

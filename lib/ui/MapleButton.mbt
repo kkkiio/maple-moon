@@ -14,7 +14,7 @@ pub fn get_button_base(self : MapleButton) -> ButtonModel {
 pub(all) struct MapleButtonResource {
   textures : Map[ButtonState, @graphics.Texture]
   animations : Map[ButtonState, @graphics.Animation]
-}
+} derive(Default)
 
 ///|
 pub fn MapleButtonResource::from_resource(
@@ -77,14 +77,14 @@ pub fn draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
     match self.textures[self.base.get_state()] {
       Some(texture) =>
         texture.draw(
-          @graphics.DrawArgument::new(position=self.base.position + parentpos),
+          @graphics.DrawArgument::new(pos=self.base.position + parentpos),
         )
       None => ()
     }
     match self.animations[self.base.get_state()] {
       Some(animation) =>
         animation.draw(
-          @graphics.DrawArgument::new(position=self.base.position + parentpos),
+          @graphics.DrawArgument::new(pos=self.base.position + parentpos),
           1.0,
         )
       None => ()

@@ -11,7 +11,7 @@ struct NameTag {
 pub(all) type NameTagResource (
   (@graphics.Texture, @graphics.Texture, @graphics.Texture),
   (@graphics.Texture, @graphics.Texture, @graphics.Texture),
-)
+) derive(Default)
 
 ///|
 pub fn NameTagResource::from_resource(
@@ -49,18 +49,21 @@ pub fn NameTag::new(
 }
 
 ///|
-pub fn draw(self : NameTag, position : Point[Int]) -> Unit {
-  let position = position + { x: 1, y: 2 }
+pub impl @graphics.Drawable for NameTag with draw(
+  self : NameTag,
+  args : @graphics.DrawArgument
+) -> Unit {
+  let position = args.pos + { x: 1, y: 2 }
   let (t1, t2, t3) = self.textures[self.selected]
   let width = self.name.width()
   let startpos = position - { x: 6 + width / 2, y: -1 }
-  t1.draw(@graphics.DrawArgument::new(position=startpos))
-  t2.draw(
-    @graphics.DrawArgument::new4(startpos + { x: 6, y: 0 }, { x: width, y: 0 }),
-  )
-  t3.draw(
-    @graphics.DrawArgument::new(position=startpos + { x: width + 6, y: 0 }),
-  )
+  t1.draw({ ..args, pos: startpos })
+  t2.draw({
+    ..args,
+    pos: startpos + { x: 6, y: 0 },
+    stretch: { x: width, y: 0 },
+  })
+  t3.draw({ ..args, pos: startpos + { x: width + 6, y: 0 } })
   self.name.draw(position)
 }
 

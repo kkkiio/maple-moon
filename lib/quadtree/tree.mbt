@@ -1,14 +1,17 @@
-pub enum Direction {
+///|
+pub(all) enum Direction {
   BL
   TR
   TL
   BR
 } derive(Eq, Show)
 
-pub trait QuadCompare {
+///|
+pub(open) trait QuadCompare {
   compare_to(Self, Self) -> Direction
 }
 
+///|
 pub struct Node[K, V] {
   key : K
   value : V
@@ -19,15 +22,18 @@ pub struct Node[K, V] {
   priv mut br : Node[K, V]?
 }
 
+///|
 struct Tree[K, V] {
   nodes : Map[K, Node[K, V]]
   mut root : Node[K, V]?
 }
 
+///|
 pub fn Tree::new[K, V]() -> Tree[K, V] {
   { nodes: Map::new(), root: None }
 }
 
+///|
 pub fn add[K : Hash + Eq, V : QuadCompare](
   self : Tree[K, V],
   key : K,
@@ -50,6 +56,7 @@ pub fn add[K : Hash + Eq, V : QuadCompare](
   true
 }
 
+///|
 pub fn ceiling_key[K : Hash + Eq, V : QuadCompare](
   self : Tree[K, V],
   value : V
@@ -57,6 +64,7 @@ pub fn ceiling_key[K : Hash + Eq, V : QuadCompare](
   self.ceiling_entry(value).map(fn(n) { n.key })
 }
 
+///|
 pub fn ceiling_entry[K : Hash + Eq, V : QuadCompare](
   self : Tree[K, V],
   value : V
@@ -64,6 +72,7 @@ pub fn ceiling_entry[K : Hash + Eq, V : QuadCompare](
   self.find_ceiling_from(self.root, value)
 }
 
+///|
 fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
   self : Tree[K, V],
   start : Node[K, V]?,
@@ -116,6 +125,7 @@ fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
   }
 }
 
+///|
 pub fn remove[K : Hash + Eq, V : QuadCompare](self : Tree[K, V], key : K) -> V? {
   let node = match self.nodes.get(key) {
     Some(n) => n
@@ -127,28 +137,28 @@ pub fn remove[K : Hash + Eq, V : QuadCompare](self : Tree[K, V], key : K) -> V? 
     Some(p) => p.remove_child(key)
     None => self.root = None
   }
-  [node.bl, node.tr, node.tl, node.br].each(
-    fn(it) {
-      match it {
-        Some(child) => {
-          let start = match parent {
-            Some(_) => parent
-            None => self.root
-          }
-          self.set_link(start, child)
+  [node.bl, node.tr, node.tl, node.br].each(fn(it) {
+    match it {
+      Some(child) => {
+        let start = match parent {
+          Some(_) => parent
+          None => self.root
         }
-        _ => ()
+        self.set_link(start, child)
       }
-    },
-  )
+      _ => ()
+    }
+  })
   Some(node.value)
 }
 
+///|
 pub fn clear[K, V](self : Tree[K, V]) -> Unit {
   self.nodes.clear()
   self.root = None
 }
 
+///|
 fn set_link[K : Hash + Eq, V : QuadCompare](
   self : Tree[K, V],
   start : Node[K, V]?,
@@ -165,6 +175,7 @@ fn set_link[K : Hash + Eq, V : QuadCompare](
   }
 }
 
+///|
 fn add_or_next[K : Hash + Eq, V : QuadCompare](
   self : Node[K, V],
   child : Node[K, V]
@@ -206,6 +217,7 @@ fn add_or_next[K : Hash + Eq, V : QuadCompare](
   }
 }
 
+///|
 fn remove_child[K : Hash + Eq, V : QuadCompare](
   self : Node[K, V],
   key : K
@@ -244,6 +256,7 @@ fn remove_child[K : Hash + Eq, V : QuadCompare](
   }
 }
 
+///|
 fn is_enough[T : QuadCompare](my : T, other : T) -> Bool {
   return my.compare_to(other) == Direction::TR
 }

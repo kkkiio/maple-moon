@@ -126,7 +126,7 @@ fn Background::from_resource(
       move_obj.vspeed = ry / 16.0
     _ => ()
   }
-  let background = {
+  {
     animation,
     cx,
     cy,
@@ -140,7 +140,6 @@ fn Background::from_resource(
     woffset,
     hoffset,
   }
-  background
 }
 
 ///|
@@ -205,7 +204,7 @@ pub fn draw(
     while ty < th {
       self.animation.draw(
         @graphics.DrawArgument::new(
-          position={ x: ix + tx, y: iy + ty },
+          pos={ x: ix + tx, y: iy + ty },
           flip=self.flipped,
           opacity=self.opacity / 255.0,
         ),
@@ -224,7 +223,7 @@ pub fn update(self : Background) -> Unit {
 }
 
 ///|
-pub(readonly) struct Backgrounds {
+pub struct Backgrounds {
   backs : Array[Background]
   fores : Array[Background]
 }

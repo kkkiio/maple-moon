@@ -65,12 +65,10 @@ pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
             self.drops.add(spawn.instantiate_meso(icon))
           } else {
             self.loading_drops.push(
-              @item.ItemData::get_async(itemid).map_exn(
-                fn(r) {
-                  let item_data = r.unwrap_or_error!()
-                  spawn.instantiate_item(item_data.get_icon(true))
-                },
-              ),
+              @item.ItemData::get_async(itemid).map_exn(fn(r) {
+                let item_data = r.unwrap_or_error!()
+                spawn.instantiate_item(item_data.get_icon(true))
+              }),
             )
           }
         }
@@ -79,19 +77,17 @@ pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
     }
     None => break
   }
-  self.loading_drops.retain(
-    fn(it) {
-      guard let Some(res) = it.poll() else { None => return true }
-      guard let Ok(drop) = res else {
-        Err(e) => {
-          @log.error({ "err": Show::to_string(e) }, "failed to load drop")
-          true
-        }
+  self.loading_drops.retain(fn(it) {
+    guard let Some(res) = it.poll() else { None => return true }
+    guard let Ok(drop) = res else {
+      Err(e) => {
+        @log.error({ "err": Show::to_string(e) }, "failed to load drop")
+        true
       }
-      self.drops.add(drop)
-      false
-    },
-  )
+    }
+    self.drops.add(drop)
+    false
+  })
   for _, mesoicon in self.meso_icons {
     mesoicon.update() |> ignore
   }
@@ -145,7 +141,7 @@ struct DropSpawn {
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
   icon : @graphics.Animation
-) -> Drop {
+) -> &Drop {
   MesoDrop::new(
     self.oid,
     self.owner,

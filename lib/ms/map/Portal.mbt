@@ -118,7 +118,7 @@ pub fn draw(self : Portal, viewpos : Point[Int], inter : Double) -> Unit {
     Some(animation) =>
       if self.type_ != PortalType::HIDDEN || self.touched {
         animation.draw(
-          @graphics.DrawArgument::new(position=self.position + viewpos),
+          @graphics.DrawArgument::new(pos=self.position + viewpos),
           inter,
         )
       }

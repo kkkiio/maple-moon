@@ -32,7 +32,7 @@ pub(open) trait Inventory {
 ///|
 pub fn Player::load(
   entry : @character.CharEntry,
-  inventory : Inventory,
+  inventory : &Inventory,
   char_base : @character.CharBase
 ) -> @utils.Future[Player] {
   @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
@@ -55,7 +55,7 @@ pub fn Player::load(
 ///| Construct a player object from the given character entry.
 pub fn Player::new(
   entry : @character.CharEntry,
-  inventory : Inventory,
+  inventory : &Inventory,
   char_base : @character.CharBase,
   job : @job.Job,
   skill_book : @character.SkillBook,
@@ -259,7 +259,7 @@ pub fn is_key_down(self : Player, key : @keyboard.ActionId) -> Bool {
 
 ///|
 pub fn set_direction(self : Player, flipped : Bool) -> Unit {
-  if self.char_base.attacking.not() {
+  if not(self.char_base.attacking) {
     self.char_base.set_direction(flipped)
   }
 }
@@ -272,7 +272,7 @@ pub fn is_attacking(self : Player) -> Bool {
 // Set state ignore if attacking.
 ///|
 pub fn set_state(self : Player, st : CharState) -> Unit {
-  if self.char_base.attacking.not() {
+  if not(self.char_base.attacking) {
     self.char_base.set_state(st)
     match get_player_state(st) {
       Some(pst) => pst.initialize(self)
@@ -403,9 +403,9 @@ pub fn damage(
   self.char_base.show_damage(damage)
   let fromleft = attack.origin.x > self.get_phobj().get_x()
   let missed = damage <= 0
-  let immovable = self.get_ladder().is_empty().not() ||
+  let immovable = not(self.get_ladder().is_empty()) ||
     self.char_base.state == CharState::DIED
-  let knockback = missed.not() && immovable.not()
+  let knockback = not(missed) && not(immovable)
   if knockback && self.randomizer.above(self.stats.get_stance()) {
     self.get_phobj().moving_object.hspeed = if fromleft { -1.5 } else { 1.5 }
     self.get_phobj().vforce -= 3.5
@@ -431,9 +431,9 @@ pub fn get_integer_attackspeed(self : Player) -> Int {
 
 ///|
 pub fn can_attack(self : Player) -> Bool {
-  self.char_base.attacking.not() &&
-  self.char_base.is_climbing().not() &&
-  self.char_base.is_sitting().not() &&
+  not(self.char_base.attacking) &&
+  not(self.char_base.is_climbing()) &&
+  not(self.char_base.is_sitting()) &&
   self.char_base.look.get_equips().has_weapon()
 }
 

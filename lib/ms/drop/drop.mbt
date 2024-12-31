@@ -170,7 +170,7 @@ pub fn MesoDrop::draw(
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
   self.icon.draw(
     @graphics.DrawArgument::new(
-      position=absp,
+      pos=absp,
       angle=self.base.angle.get(alpha~),
       opacity=self.base.opacity.get(alpha~),
     ),
@@ -214,7 +214,11 @@ pub fn bounds(self : MesoDrop) -> @struct.Rectangle[Int] {
 }
 
 ///|
-pub fn expire(self : MesoDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
+pub impl Drop for MesoDrop with expire(
+  self : MesoDrop,
+  t : Int,
+  lt : @physics.PhysicsObject?
+) -> Unit {
   self.base.expire(t, lt)
 }
 
@@ -253,7 +257,7 @@ pub fn ItemDrop::draw(
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
   self.icon.draw(
     @graphics.DrawArgument::new(
-      position=absp,
+      pos=absp,
       angle=self.base.angle.get(alpha~),
       opacity=self.base.opacity.get(alpha~),
     ),

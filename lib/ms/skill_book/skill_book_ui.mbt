@@ -109,7 +109,7 @@ fn SkillBookUI::new(
   sprites.push(
     @graphics.Sprite::from_resource(
       ui_backgrnd,
-      state_args=@graphics.DrawArgument::new(position=@struct.Point::new(1, 0)),
+      state_args=@graphics.DrawArgument::new(pos=@struct.Point::new(1, 0)),
     ),
   )
   sprites.push(@graphics.Sprite::from_resource(main["backgrnd2"]))
@@ -361,9 +361,7 @@ pub fn draw(self : RenderState, alpha : Double) -> Unit {
   let model = draw_state.model
   @ui.draw_sprites(draw_state.sprites.iter(), model.position, alpha)
   draw_state.book_icon.draw(
-    @graphics.DrawArgument::new(
-      position=model.position + @struct.Point::new(11, 85),
-    ),
+    @graphics.DrawArgument::new(pos=model.position + @struct.Point::new(11, 85)),
   )
   draw_state.book_text.draw(model.position + @struct.Point::new(173, 59))
   draw_state.sp_label.draw(model.position + @struct.Point::new(304, 23))
@@ -381,19 +379,17 @@ pub fn draw(self : RenderState, alpha : Double) -> Unit {
     if i < draw_state.skills.length() {
       let skill = draw_state.skills[i]
       if skill.enabled { // TODO: handle error
-        resources.skille.draw(@graphics.DrawArgument::new(position=pos))
+        resources.skille.draw(@graphics.DrawArgument::new(pos~))
       } else {
-        resources.skilld.draw(@graphics.DrawArgument::new(position=pos))
+        resources.skilld.draw(@graphics.DrawArgument::new(pos~))
         // self.skills[i].icon.set_state(StatefulIconState::DISABLED) // TODO: implement
       }
-      skill.draw(@graphics.DrawArgument::new(position=pos + skill_meta_offset))
+      skill.draw(@graphics.DrawArgument::new(pos=pos + skill_meta_offset))
     } else {
-      resources.skillb.draw(@graphics.DrawArgument::new(position=pos))
+      resources.skillb.draw(@graphics.DrawArgument::new(pos~))
     }
     if i < rows - 2 {
-      resources.line.draw(
-        @graphics.DrawArgument::new(position=pos + line_offset),
-      )
+      resources.line.draw(@graphics.DrawArgument::new(pos=pos + line_offset))
     }
     if i % 2 != 0 {
       skill_position_l = skill_position_l.shift_y(row_height)

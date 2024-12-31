@@ -8,7 +8,7 @@ typealias Color = @struct.Color
 typealias Rectangle[T] = @struct.Rectangle[T]
 
 ///|
-struct DrawArgument {
+pub(all) struct DrawArgument {
   pos : Point[Int]
   center : Point[Int]
   stretch : Point[Int]
@@ -25,19 +25,19 @@ pub fn DrawArgument::default() -> DrawArgument {
 
 ///|
 pub fn DrawArgument::from_xy(x : Int, y : Int) -> DrawArgument {
-  DrawArgument::new(position={ x, y })
+  DrawArgument::new(pos={ x, y })
 }
 
 ///|
 pub fn DrawArgument::new(
-  position~ : Point[Int] = @struct.Point::default(),
+  pos~ : Point[Int] = @struct.Point::default(),
   flip~ : Bool = false,
   opacity~ : Double = 1.0,
   angle~ : Double = 0.0
 ) -> DrawArgument {
   DrawArgument::new16(
-    position,
-    position,
+    pos,
+    pos,
     { x: 0, y: 0 },
     if flip {
       -1.0
@@ -51,12 +51,11 @@ pub fn DrawArgument::new(
 }
 
 ///|
-pub fn DrawArgument::new3(
-  position : Point[Int],
-  xscale : Double,
-  yscale : Double
+pub fn DrawArgument::new_scale(
+  position~ : Point[Int] = @struct.Point::default(),
+  scale~ : Double = 1.0
 ) -> DrawArgument {
-  DrawArgument::new10(position, position, xscale, yscale, 1.0)
+  DrawArgument::new10(position, position, scale, scale, 1.0)
 }
 
 ///|

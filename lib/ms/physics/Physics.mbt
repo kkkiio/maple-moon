@@ -1,21 +1,30 @@
-pub struct Physics {
+///|
+pub(all) struct Physics {
   mut fh_tree : FootholdTree
 }
 
+///|
 pub let gravforce : Double = 0.14
 
+///|
 pub let swimgravforce : Double = 0.03
 
+///|
 pub let friction : Double = 0.3
 
+///|
 pub let slopefactor : Double = 0.1
 
+///|
 pub let groundslip : Double = 3.0
 
+///|
 pub let flyfriction : Double = 0.05
 
+///|
 pub let swimfriction : Double = 0.08
 
+///|
 pub fn Physics::from_resource(
   src : @resource.NxNode
 ) -> Physics!@resource.LoadError {
@@ -23,6 +32,7 @@ pub fn Physics::from_resource(
   { fh_tree, }
 }
 
+///|
 pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   // Determine which platform the object is currently on
   self.fh_tree.update_fh(tomove)
@@ -48,6 +58,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   tomove.moving_object.move()
 }
 
+///|
 fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.vacc = 0.0
   phobj.hacc = 0.0
@@ -78,6 +89,7 @@ fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.moving_object.vspeed += phobj.vacc
 }
 
+///|
 fn move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
@@ -99,6 +111,7 @@ fn move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
   }
 }
 
+///|
 fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
@@ -123,11 +136,13 @@ fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
   }
 }
 
+///|
 pub fn get_y_below(self : Physics, position : Point[Int]) -> Point[Int] {
   let ground = self.fh_tree.get_y_below(position)
   { x: position.x, y: ground - 1 }
 }
 
+///|
 pub fn get_fht(self : Physics) -> FootholdTree {
   self.fh_tree
 }

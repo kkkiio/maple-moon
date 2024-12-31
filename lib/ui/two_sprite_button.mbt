@@ -31,7 +31,7 @@ pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
       self.base.get_state() == ButtonState::PRESSED
     self.textures
     .op_get(selected)
-    .draw(@graphics.DrawArgument::new(position=self.npos + parentpos))
+    .draw(@graphics.DrawArgument::new(pos=self.npos + parentpos))
   }
 }
 

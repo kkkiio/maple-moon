@@ -77,7 +77,7 @@ pub fn read(self : Session) -> Unit {
 }
 
 ///|
-pub(readonly) enum ConnectionStatus {
+pub enum ConnectionStatus {
   CLOSED
   OPENED
   READY

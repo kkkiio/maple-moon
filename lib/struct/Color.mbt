@@ -78,7 +78,7 @@ pub fn css_name(self : ColorName) -> String {
     YELLOW => "yellow"
     BLUE => "blue"
     RED => "red"
-    _ => abort("TODO")
+    _ => ...
   }
 }
 

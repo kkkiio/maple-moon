@@ -1,4 +1,5 @@
-pub enum Id {
+///|
+pub(all) enum Id {
   GREY
   WHITE
   ORANGE

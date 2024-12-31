@@ -192,7 +192,6 @@ pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
 }
 
 ///|
-/// @alert deprecated "use PacketProcessor::send_packet instead"
 pub fn dispatch(self : OutPacket) -> Unit {
   PacketProcessor::get().send_packet(self)
 }

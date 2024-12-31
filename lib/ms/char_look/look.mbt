@@ -589,7 +589,7 @@ pub fn draw_with_stance(
 ) -> Unit {
   let interstance = self.equips.adjust_stance(interstance)
   self.draw_impl(
-    @graphics.DrawArgument::new(position~, flip~),
+    @graphics.DrawArgument::new(pos=position, flip~),
     interstance,
     interexpression,
     0,
@@ -921,4 +921,19 @@ pub fn get_alerted(self : CharLook) -> Bool {
 ///|
 pub impl ToJson for CharLook with to_json(self) -> Json {
   {} // TODO
+}
+
+///|
+pub fn get_face(self : CharLook) -> Face {
+  self.face
+}
+
+///|
+pub fn get_hair(self : CharLook) -> Hair {
+  self.hair
+}
+
+///|
+pub fn get_body(self : CharLook) -> Body {
+  self.body
 }

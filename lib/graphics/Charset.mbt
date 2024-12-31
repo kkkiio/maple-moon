@@ -61,10 +61,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
       .to_array()
       .each(fn(c) {
         let width = self.getw(c)
-        self.draw_char(
-          c,
-          args + DrawArgument::new(position=Point::new(shift, 0)),
-        )
+        self.draw_char(c, args + DrawArgument::new(pos=Point::new(shift, 0)))
         shift += width + 2
         total += width
       })
@@ -75,10 +72,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
       text
       .to_array()
       .each(fn(c) {
-        self.draw_char(
-          c,
-          args + DrawArgument::new(position=Point::new(shift, 0)),
-        )
+        self.draw_char(c, args + DrawArgument::new(pos=Point::new(shift, 0)))
         shift += self.getw(c) + 1
       })
     CharsetAlignment::RIGHT =>
@@ -86,10 +80,7 @@ pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
       .to_array()
       .rev_each(fn(c) {
         shift += self.getw(c)
-        self.draw_char(
-          c,
-          args - DrawArgument::new(position=Point::new(shift, 0)),
-        )
+        self.draw_char(c, args - DrawArgument::new(pos=Point::new(shift, 0)))
       })
   }
   shift
@@ -108,10 +99,7 @@ pub fn draw_text_with_hspace(
     CharsetAlignment::CENTER => shift -= hspace * length / 2
     CharsetAlignment::LEFT =>
       for c in text.iter() {
-        self.draw_char(
-          c,
-          args + DrawArgument::new(position=Point::new(shift, 0)),
-        )
+        self.draw_char(c, args + DrawArgument::new(pos=Point::new(shift, 0)))
         shift += hspace
       }
     CharsetAlignment::RIGHT =>
@@ -119,10 +107,7 @@ pub fn draw_text_with_hspace(
       .to_array()
       .rev_each(fn(c) {
         shift += hspace
-        self.draw_char(
-          c,
-          args - DrawArgument::new(position=Point::new(shift, 0)),
-        )
+        self.draw_char(c, args - DrawArgument::new(pos=Point::new(shift, 0)))
       })
   }
   shift

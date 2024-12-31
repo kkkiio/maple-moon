@@ -1,4 +1,5 @@
-pub enum StatId {
+///|
+pub(all) enum StatId {
   NONE
   MORPH
   RECOVERY
@@ -73,6 +74,7 @@ pub enum StatId {
   SLOW
 } derive(Eq, Compare)
 
+///|
 pub fn int_value(self : StatId) -> Int {
   match self {
     NONE => 0
@@ -150,20 +152,23 @@ pub fn int_value(self : StatId) -> Int {
   }
 }
 
+///|
 pub fn hash(self : StatId) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : StatId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+///|
 pub fn is_disease(buff_id : StatId) -> Bool {
-  diseases.find(buff_id).is_empty().not()
+  not(diseases.find(buff_id).is_empty())
 }
 
-pub let first_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array(
-  [
+///|
+pub let first_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array([
     (StatId::DASH2, 0x8000000000000L),
     (StatId::DASH, 0x10000000000000L),
     (StatId::ELEMENTAL_RESET, 0x200000000L),
@@ -180,8 +185,8 @@ pub let first_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_arra
   ],
 )
 
-pub let second_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array(
-  [
+///|
+pub let second_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array([
     (StatId::NONE, 0x0L),
     (StatId::SLOW, 0x1L),
     (StatId::MORPH, 0x2L),
@@ -244,22 +249,22 @@ pub let second_codes : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_arr
   ],
 )
 
-pub let diseases : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array(
-  [
-    (StatId::SLOW, 0x1L),
-    (StatId::SEDUCE, 0x80L),
-    // (Id::FISHABLE, 0x100), 
-    (StatId::CURSE, 0x8000000000000000L),
-    (StatId::ZOMBIFY, 0x4000L),
-    (StatId::CONFUSE, 0x80000L),
-    (StatId::STUN, 0x2000000000000L),
-    (StatId::POISON, 0x4000000000000L),
-    (StatId::SEAL, 0x8000000000000L),
-    (StatId::DARKNESS, 0x10000000000000L),
-    (StatId::WEAKEN, 0x4000000000000000L),
-  ],
-)
+///|
+pub let diseases : @immut/hashmap.T[StatId, Int64] = @immut/hashmap.from_array([
+  (StatId::SLOW, 0x1L),
+  (StatId::SEDUCE, 0x80L),
+  // (Id::FISHABLE, 0x100), 
+  (StatId::CURSE, 0x8000000000000000L),
+  (StatId::ZOMBIFY, 0x4000L),
+  (StatId::CONFUSE, 0x80000L),
+  (StatId::STUN, 0x2000000000000L),
+  (StatId::POISON, 0x4000000000000L),
+  (StatId::SEAL, 0x8000000000000L),
+  (StatId::DARKNESS, 0x10000000000000L),
+  (StatId::WEAKEN, 0x4000000000000000L),
+])
 
+///|
 pub struct Buff {
   stat : StatId
   value : Int
@@ -267,6 +272,7 @@ pub struct Buff {
   duration : Int
 }
 
+///|
 pub fn Buff::make(
   stat : StatId,
   value : Int,
@@ -276,6 +282,7 @@ pub fn Buff::make(
   { stat, value, skillid, duration }
 }
 
+///|
 pub fn Buff::default() -> Buff {
   { stat: StatId::NONE, value: 0, skillid: 0, duration: 0 }
 }

@@ -45,7 +45,7 @@ pub fn update(self : Obj) -> Unit {
 ///|
 pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
   self.animation.draw(
-    @graphics.DrawArgument::new(position=self.pos + viewpos, flip=self.flip),
+    @graphics.DrawArgument::new(pos=self.pos + viewpos, flip=self.flip),
     inter,
   )
 }

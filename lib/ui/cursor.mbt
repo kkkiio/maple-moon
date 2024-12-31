@@ -112,7 +112,7 @@ pub fn draw(self : Cursor, alpha : Double) -> Unit {
   if self.hide_counter < hide_after {
     self
     .get_or_init_animation()
-    .draw(@graphics.DrawArgument::new(position=self.position), alpha)
+    .draw(@graphics.DrawArgument::new(pos=self.position), alpha)
   }
 }
 

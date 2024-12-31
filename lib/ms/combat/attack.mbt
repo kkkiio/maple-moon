@@ -1,16 +1,19 @@
-pub enum AttackType {
+///|
+pub(all) enum AttackType {
   CLOSE
   RANGED
   MAGIC
 } derive(Eq)
 
-pub enum AttackDamageType {
+///|
+pub(all) enum AttackDamageType {
   DMG_WEAPON(Double, Double) // min, max
   DMG_MAGIC(Int) // matk
   DMG_FIXED(Int) // fix
 } derive(Eq)
 
-pub struct Attack {
+///|
+pub(all) struct Attack {
   t : AttackType
   mut damagetype : AttackDamageType
   mut critical : Double
@@ -29,6 +32,7 @@ pub struct Attack {
   toleft : Bool
 }
 
+///|
 pub fn Attack::default() -> Attack {
   {
     t: AttackType::CLOSE,
@@ -50,7 +54,7 @@ pub fn Attack::default() -> Attack {
   }
 }
 
-/// an attack coming from a mob
+///| an attack coming from a mob
 pub struct MobAttack {
   t : AttackType
   watk : Int
@@ -61,7 +65,7 @@ pub struct MobAttack {
   valid : Bool
 }
 
-/// Create a mob attack for touch damage.
+///| Create a mob attack for touch damage.
 pub fn MobAttack::new(
   watk : Int,
   origin : @struct.Point[Int],
@@ -71,6 +75,7 @@ pub fn MobAttack::new(
   { t: AttackType::CLOSE, watk, matk: 0, mobid, oid, origin, valid: true }
 }
 
+///|
 pub fn MobAttack::default() -> MobAttack {
   {
     t: AttackType::CLOSE,
@@ -83,7 +88,7 @@ pub fn MobAttack::default() -> MobAttack {
   }
 }
 
-/// result of a mob's attack
+///| result of a mob's attack
 pub struct MobAttackResult {
   damage : Int
   mobid : Int
@@ -91,6 +96,7 @@ pub struct MobAttackResult {
   direction : Int
 }
 
+///|
 pub fn MobAttackResult::new(
   attack : MobAttack,
   damage : Int,
@@ -99,8 +105,8 @@ pub fn MobAttackResult::new(
   { damage, mobid: attack.mobid, oid: attack.oid, direction }
 }
 
-/// result of a player's attack
-pub struct AttackResult {
+///| result of a player's attack
+pub(all) struct AttackResult {
   t : AttackType
   attacker : Int
   mut mobcount : Int
@@ -118,6 +124,7 @@ pub struct AttackResult {
   mut last_oid : Int
 }
 
+///|
 pub fn AttackResult::default() -> AttackResult {
   {
     t: AttackType::CLOSE,
@@ -138,6 +145,7 @@ pub fn AttackResult::default() -> AttackResult {
   }
 }
 
+///|
 pub fn AttackResult::new(attack : Attack) -> AttackResult {
   {
     t: attack.t,
@@ -158,8 +166,8 @@ pub fn AttackResult::new(attack : Attack) -> AttackResult {
   }
 }
 
-/// an attack coming from a user
-pub struct AttackUser {
+///| an attack coming from a user
+pub(all) struct AttackUser {
   skill_level : Int
   level : Int
   second_weapon : Bool

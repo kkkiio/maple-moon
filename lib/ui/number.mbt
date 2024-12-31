@@ -33,12 +33,12 @@ pub fn Number::draw(
   if self.miss {
     self.charsets[true].draw_char(
       'M',
-      @graphics.DrawArgument::new(position~, opacity=interopc),
+      @graphics.DrawArgument::new(pos=position, opacity=interopc),
     )
   } else {
     self.charsets[false].draw_char(
       self.first_num,
-      @graphics.DrawArgument::new(position~, opacity=interopc),
+      @graphics.DrawArgument::new(pos=position, opacity=interopc),
     )
     if self.multiple {
       let first_advance = get_advance(self.t, self.first_num, true)
@@ -48,10 +48,7 @@ pub fn Number::draw(
         let yshift = @struct.Point::new(0, if i % 2 == 0 { -2 } else { 2 })
         self.charsets[true].draw_char(
           c,
-          @graphics.DrawArgument::new(
-            position=position + yshift,
-            opacity=interopc,
-          ),
+          @graphics.DrawArgument::new(pos=position + yshift, opacity=interopc),
         )
         let advance = if i < self.rest_num.length() - 1 {
           let n = self.rest_num[i + 1]

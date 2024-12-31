@@ -22,18 +22,21 @@ pub(open) trait UIButton {
 
 ///|
 pub(all) struct Button {
-  object : UIButton
+  object : &UIButton
   on_click : (() -> ButtonState?)?
 }
 
 ///|
-pub fn Button::new(object : UIButton, on_click? : () -> ButtonState?) -> Button {
+pub fn Button::new(
+  object : &UIButton,
+  on_click? : () -> ButtonState?
+) -> Button {
   { object, on_click }
 }
 
 ///|
-pub impl Drawable for Button with draw(self, pos) -> Unit {
-  self.object.draw(pos)
+pub impl @graphics.Drawable for Button with draw(self, args) -> Unit {
+  self.object.draw(args.pos)
 }
 
 ///|
@@ -97,7 +100,7 @@ pub fn set_active(self : ButtonModel, a : Bool) -> Unit {
 
 ///|
 pub fn toggle_pressed(self : ButtonModel) -> Unit {
-  self.pressed = self.pressed.not()
+  self.pressed = self.pressed |> not()
 }
 
 ///|

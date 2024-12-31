@@ -59,7 +59,7 @@ pub fn Stage::new(
   }
 }
 
-///| @alert deprecated "Init dependencies in Game.mbt"
+///|
 pub fn Stage::get() -> Stage {
   g_stage.must_get()
 }
@@ -324,7 +324,7 @@ fn check_portals(
 }
 
 ///|
-fn get_character(self : Stage, cid : Int) -> @character.Character? {
+fn get_character(self : Stage, cid : Int) -> &@character.Character? {
   match self.player {
     Some(player) => if player.get_oid() == cid { return Some(player) }
     None => ()

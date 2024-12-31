@@ -1,4 +1,5 @@
-pub enum Id {
+///|
+pub(all) enum Id {
   STR
   DEX
   INT
@@ -17,6 +18,7 @@ pub enum Id {
   JUMP
 } derive(Eq)
 
+///|
 pub fn int_value(self : Id) -> Int {
   match self {
     STR => 0
@@ -37,14 +39,17 @@ pub fn int_value(self : Id) -> Int {
   }
 }
 
+///|
 pub fn hash(self : Id) -> Int {
   self.int_value()
 }
 
+///|
 pub fn hash_combine(self : Id, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
+///|
 fn to_string(self : Id) -> String {
   match self {
     STR => "STR"
@@ -65,6 +70,7 @@ fn to_string(self : Id) -> String {
   }
 }
 
+///|
 pub let all_stats : FixedArray[Id] = [
   STR,
   DEX,

@@ -195,10 +195,7 @@ function main() {
     "Back/": new DirResourceLoader("https://maple.kkkiiox.work/MapPretty/Back"),
   }, imageLoader);
 
-  const etcLoader = new ResourceLoader("https://maple.kkkiiox.work/Etc/nx.json", new BidImageLoader("https://maple.kkkiiox.work/Etc/images"));
-  prepareResourcePromises.push(
-    etcLoader.load()
-  );
+  const etcLoader = new AsyncResourceLoader(new DirResourceLoader("https://maple.kkkiiox.work/Etc"), imageLoader);
 
   const npcLoader = new ResourceLoader("https://maple.kkkiiox.work/Npc/nx.json",
     new BidImageLoader("https://maple.kkkiiox.work/Npc/images"));
@@ -235,6 +232,9 @@ function main() {
     new DirResourceLoader("https://maple.kkkiiox.work/Skill"),
     imageLoader
   );
+  const mapLatestLoader = new CompositeAsyncResourceLoader({
+    "Obj/login.img/": new DirResourceLoader("https://maple.kkkiiox.work/MapLatest/Obj/login.img"),
+  }, imageLoader);
 
   const textBitmapGenerator = new TextBitmapGenerator(imageGenerateContext);
 
@@ -252,12 +252,10 @@ function main() {
     resource: {
       get_loader: (name) => {
         switch (name) {
-          case "common_ui":
+          case "UI":
             return uiLoader;
           case "string":
             return stringLoader;
-          case "etc":
-            return etcLoader;
           case "npc":
             return npcLoader;
           default:
@@ -286,9 +284,9 @@ function main() {
             return backgroundLoader;
           case "obj":
             return objLoader;
-          case "ui_window_2":
+          case "UI/UIWindow2.img":
             return uiWindow2Loader;
-          case "ui_window_4":
+          case "UI/UIWindow4.img":
             return uiWindow4Loader;
           case "mob":
             return mobLoader;
@@ -304,6 +302,10 @@ function main() {
             return mapPrettyLoader;
           case "skill":
             return skillLoader;
+          case "MapLatest":
+            return mapLatestLoader;
+          case "Etc":
+            return etcLoader;
           default:
             throw new Error(`Unknown resource loader: ${name}`);
         }

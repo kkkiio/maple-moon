@@ -31,14 +31,15 @@ pub fn make_handlers(
   inventory_getter : () -> @inventory.Inventory?
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
+    @net.make_handler(
       OPEN_NPC_SHOP,
-      @net.with_log(
-        OPEN_NPC_SHOP,
-        fn(recv) {
-          handle_open_npc_shop!(self, charlook_getter, inventory_getter, recv)
-        },
-      ),
+      parse_open_npc_shop,
+      fn(shop : OpenNpcShop) {
+        handle_open_npc_shop_parsed(
+          self, charlook_getter, inventory_getter, shop,
+        )
+      },
+      log_recv=true,
     ),
     @net.make_handler(
       CONFIRM_SHOP_TRANSACTION,

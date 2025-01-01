@@ -25,11 +25,10 @@ pub fn make_handlers(
   self : Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
+    @net.make_handler(
       @net.UPDATE_SKILL,
-      @net.with_log(@net.UPDATE_SKILL, fn(recv : @net.InPacket) {
-        handle_update_skill!(self.player_getter, recv)
-      }),
+      parse_skill_update,
+      fn(update : SkillUpdate) { handle_skill_update(self.player_getter, update) }
     ),
   ]
   |> Map::from_array

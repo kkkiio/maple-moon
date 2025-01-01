@@ -1,15 +1,24 @@
 ///|
-pub fn handle_open_npc_shop(
-  mod : Module,
-  charlook_getter : () -> @char_look.CharLook?,
-  inventory_getter : () -> @inventory.Inventory?,
-  recv : @net.InPacket
-) -> Unit! {
-  guard let Some(charlook) = charlook_getter() else { None => return }
-  guard let Some(inventory) = inventory_getter() else { None => return }
+pub struct ShopItem {
+  id : Int
+  price : Int
+  pitch : Int
+  time : Int
+  charge_price : Int
+  buyable : Int
+} derive(Show)
+
+///|
+pub struct OpenNpcShop {
+  npcid : Int
+  items : Array[ShopItem]
+} derive(Show)
+
+///|
+pub fn parse_open_npc_shop(recv : @net.InPacket) -> OpenNpcShop! {
   let npcid = recv.read_int!()
   let size = recv.read_short!()
-  let shop_items = []
+  let items = []
   for i in 0..<size {
     let itemid = recv.read_int!()
     let price = recv.read_int!()
@@ -19,19 +28,12 @@ pub fn handle_open_npc_shop(
     let norecharge = recv.read_short!() == 1
     if norecharge {
       let buyable = recv.read_short!()
-      shop_items.push({
-        id: itemid,
-        price,
-        pitch,
-        time,
-        charge_price: 0,
-        buyable,
-      })
+      items.push({ id: itemid, price, pitch, time, charge_price: 0, buyable })
     } else {
       recv.skip!(4)
       let rechargeprice = recv.read_short!()
       let slotmax = recv.read_short!()
-      shop_items.push({
+      items.push({
         id: itemid,
         price,
         pitch,
@@ -41,11 +43,29 @@ pub fn handle_open_npc_shop(
       })
     }
   }
+  { npcid, items }
+}
+
+///|
+pub fn handle_open_npc_shop_parsed(
+  mod : Module,
+  charlook_getter : () -> @char_look.CharLook?,
+  inventory_getter : () -> @inventory.Inventory?,
+  shop : OpenNpcShop
+) -> Unit {
+  guard let Some(charlook) = charlook_getter() else { None => return }
+  guard let Some(inventory) = inventory_getter() else { None => return }
   mod.container.add_ui(
     @ui.Element::new(
       fn(hooks) {
         let shop = UIShop::new(
-          { countset: mod.countset, charlook, inventory, npcid, shop_items },
+          {
+            countset: mod.countset,
+            charlook,
+            inventory,
+            npcid: shop.npcid,
+            shop_items: shop.items,
+          },
           mod.shop2_res,
           hooks,
         )
@@ -63,16 +83,6 @@ pub fn handle_open_npc_shop(
     true,
   )
 }
-
-///|
-struct ShopItem {
-  id : Int
-  price : Int
-  pitch : Int
-  time : Int
-  charge_price : Int
-  buyable : Int
-} derive(Show)
 
 ///|
 pub fn handle_confirm_shop_transaction(mod : Module, code : Int) -> Unit {

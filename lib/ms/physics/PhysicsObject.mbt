@@ -211,7 +211,7 @@ pub(all) struct PhysicsObject {
   mut vforce : Double
   mut hacc : Double
   mut vacc : Double
-}
+} derive(Show)
 
 ///|
 pub fn PhysicsObject::default() -> PhysicsObject {

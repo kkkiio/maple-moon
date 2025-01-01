@@ -61,30 +61,25 @@ pub fn make_handlers(
   self : Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
-      @net.SPAWN_NPC,
-      @net.with_log(@net.SPAWN_NPC, fn(recv : @net.InPacket) {
-        handle_spawn_npc!(self.npcs, recv)
-      }),
-    ),
-    (
-      @net.SPAWN_NPC_C,
-      @net.with_log(@net.SPAWN_NPC_C, fn(recv : @net.InPacket) {
-        handle_spawn_npc_controller!(self.npcs, recv)
-      }),
-    ),
-    (
-      @net.NPC_DIALOGUE,
-      @net.with_log(@net.NPC_DIALOGUE, fn(recv : @net.InPacket) {
-        handle_npc_dialogue!(
-          self.container,
-          self.get_player_name,
-          self.util_dlg_ex,
-          self.packet_processor,
-          recv,
-        )
-      }),
-    ),
+    @net.make_handler(@net.SPAWN_NPC, parse_spawn_npc, fn(npc) {
+      handle_spawn_npc_parsed(self.npcs, npc)
+    }),
+    @net.make_handler(@net.SPAWN_NPC_C, parse_spawn_npc_controller, fn(
+      ctrl : SpawnNpcController
+    ) {
+      handle_spawn_npc_controller_parsed(self.npcs, ctrl)
+    }),
+    @net.make_handler(@net.NPC_DIALOGUE, parse_npc_dialogue, fn(
+      dialogue : NpcDialogue
+    ) {
+      handle_npc_dialogue_parsed(
+        self.container,
+        self.get_player_name,
+        self.util_dlg_ex,
+        self.packet_processor,
+        dialogue,
+      )
+    }),
   ]
   |> Map::from_array
 }
@@ -95,7 +90,7 @@ pub fn get_npcs(self : Module) -> MapNpcs {
 }
 
 ///|
-pub fn handle_spawn_npc(npcs : MapNpcs, recv : @net.InPacket) -> Unit! {
+pub fn parse_spawn_npc(recv : @net.InPacket) -> NpcSpawn! {
   let oid = recv.read_int!()
   let id = recv.read_int!()
   let position = recv.read_point!()
@@ -103,18 +98,27 @@ pub fn handle_spawn_npc(npcs : MapNpcs, recv : @net.InPacket) -> Unit! {
   let fh = recv.read_ushort!()
   recv.read_short!() |> ignore // 'rx'
   recv.read_short!() |> ignore // 'ry'
-  npcs.spawn({ oid, id, position, flip, fh })
+  { oid, id, position, flip, fh }
 }
 
 ///|
-pub fn handle_spawn_npc_controller(
-  npcs : MapNpcs,
-  recv : @net.InPacket
-) -> Unit! {
+pub fn handle_spawn_npc_parsed(npcs : MapNpcs, npc : NpcSpawn) -> Unit {
+  npcs.spawn(npc)
+}
+
+///|
+pub struct SpawnNpcController {
+  mode : Int
+  oid : Int
+  npc : NpcSpawn?
+} derive(Show)
+
+///|
+pub fn parse_spawn_npc_controller(recv : @net.InPacket) -> SpawnNpcController! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
-  if mode == 0 {
-    npcs.remove(oid)
+  let npc = if mode == 0 {
+    None
   } else {
     let id = recv.read_int!()
     let position = recv.read_point!()
@@ -123,18 +127,35 @@ pub fn handle_spawn_npc_controller(
     recv.read_short!() |> ignore // 'rx'
     recv.read_short!() |> ignore // 'ry'
     recv.read_bool!() |> ignore // 'minimap'
-    npcs.spawn({ oid, id, position, flip, fh })
+    Some({ oid, id, position, flip, fh })
+  }
+  { mode, oid, npc }
+}
+
+///|
+pub fn handle_spawn_npc_controller_parsed(
+  npcs : MapNpcs,
+  ctrl : SpawnNpcController
+) -> Unit {
+  if ctrl.mode == 0 {
+    npcs.remove(ctrl.oid)
+  } else {
+    npcs.spawn(ctrl.npc.unwrap())
   }
 }
 
 ///|
-pub fn handle_npc_dialogue(
-  container : &@ui.Container,
-  get_player_name : () -> String,
-  util_dlg_ex : @resource.NxNode,
-  packet_processor : @net.PacketProcessor,
-  recv : @net.InPacket
-) -> Unit! {
+pub struct NpcDialogue {
+  npcid : Int
+  msgtype : Int
+  speaker : Int
+  text : String
+  style_b0 : Int
+  style_b1 : Int
+} derive(Show)
+
+///|
+pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
   recv.skip!(1)
   let npcid = recv.read_int!()
   let msgtype = recv.read_byte!() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
@@ -150,6 +171,17 @@ pub fn handle_npc_dialogue(
   } else {
     (0, 0)
   }
+  { npcid, msgtype, speaker, text, style_b0, style_b1 }
+}
+
+///|
+pub fn handle_npc_dialogue_parsed(
+  container : &@ui.Container,
+  get_player_name : () -> String,
+  util_dlg_ex : @resource.NxNode,
+  packet_processor : @net.PacketProcessor,
+  dialogue : NpcDialogue
+) -> Unit {
   container.add_ui(
     @ui.Element::new(
       fn(hooks) {
@@ -158,12 +190,12 @@ pub fn handle_npc_dialogue(
         )
         ui
         .change_text?(
-          npcid,
-          msgtype,
-          style_b0,
-          style_b1,
-          speaker,
-          text,
+          dialogue.npcid,
+          dialogue.msgtype,
+          dialogue.style_b0,
+          dialogue.style_b1,
+          dialogue.speaker,
+          dialogue.text,
           get_player_name(),
         )
         .unwrap() // TODO: handle error

@@ -21,21 +21,15 @@ pub fn make_handlers(
   get_character_by_id_fn : (Int) -> @physics.PhysicsObject?
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
-      @net.DROP_LOOT,
-      @net.with_log(
-        @net.DROP_LOOT,
-        fn(recv : @net.InPacket) { handle_drop_loot!(self.map_drops, recv) },
-      ),
-    ),
-    (
+    @net.make_handler(@net.DROP_LOOT, parse_drop_loot, fn(drop : DropLoot) {
+      handle_drop_loot_parsed(self.map_drops, drop)
+    }),
+    @net.make_handler(
       @net.REMOVE_LOOT,
-      @net.with_log(
-        @net.REMOVE_LOOT,
-        fn(recv : @net.InPacket) {
-          handle_remove_loot!(self.map_drops, get_character_by_id_fn, recv)
-        },
-      ),
+      fn(recv) { parse_remove_loot!(get_character_by_id_fn, recv) },
+      fn(remove : RemoveLoot) {
+        handle_remove_loot_parsed(self.map_drops, remove)
+      },
     ),
   ]
   |> Map::from_array

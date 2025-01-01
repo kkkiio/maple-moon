@@ -1,4 +1,18 @@
-pub fn handle_drop_loot(map_drops : MapDrops, recv : @net.InPacket) -> Unit! {
+///|
+pub struct DropLoot {
+  mode : Int
+  oid : Int
+  meso : Bool
+  item_id : Int
+  owner : Int
+  pickuptype : Int
+  dropto : @struct.Point[Int]
+  dropfrom : @struct.Point[Int]
+  player_drop : Bool
+} derive(Show)
+
+///|
+pub fn parse_drop_loot(recv : @net.InPacket) -> DropLoot! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
   let meso = recv.read_bool!()
@@ -18,29 +32,37 @@ pub fn handle_drop_loot(map_drops : MapDrops, recv : @net.InPacket) -> Unit! {
     recv.skip!(8)
   }
   let player_drop = recv.read_bool!().not()
-
-  // TODO: sound
-
-  map_drops.spawn(
-    {
-      oid,
-      item_id,
-      meso,
-      owner,
-      start: dropfrom,
-      dest: dropto,
-      drop_type: pickuptype,
-      mode,
-      player_drop,
-    },
-  )
+  { mode, oid, meso, item_id, owner, pickuptype, dropto, dropfrom, player_drop }
 }
 
-pub fn handle_remove_loot(
-  map_drops : MapDrops,
+///|
+pub fn handle_drop_loot_parsed(map_drops : MapDrops, drop : DropLoot) -> Unit {
+  // TODO: sound
+  map_drops.spawn({
+    oid: drop.oid,
+    item_id: drop.item_id,
+    meso: drop.meso,
+    owner: drop.owner,
+    start: drop.dropfrom,
+    dest: drop.dropto,
+    drop_type: drop.pickuptype,
+    mode: drop.mode,
+    player_drop: drop.player_drop,
+  })
+}
+
+///|
+pub struct RemoveLoot {
+  mode : Int
+  oid : Int
+  looter : @physics.PhysicsObject?
+} derive(Show)
+
+///|
+pub fn parse_remove_loot(
   get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
   recv : @net.InPacket
-) -> Unit! {
+) -> RemoveLoot! {
   let mode = recv.read_byte!()
   let oid = recv.read_int!()
   let looter = if mode > 1 {
@@ -55,5 +77,13 @@ pub fn handle_remove_loot(
   } else {
     None
   }
-  map_drops.remove(oid, mode, looter)
+  { mode, oid, looter }
+}
+
+///|
+pub fn handle_remove_loot_parsed(
+  map_drops : MapDrops,
+  remove : RemoveLoot
+) -> Unit {
+  map_drops.remove(remove.oid, remove.mode, remove.looter)
 }

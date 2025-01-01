@@ -84,17 +84,18 @@ pub fn make_actions(
 ///|
 pub fn make_stat_handlers(
   self : Module
-) -> Map[@maple_stat.Id, (@maple_stat.Id, @net.InPacket) -> Bool!] {
-  fn handler!(stat : @maple_stat.Id, recv : @net.InPacket) {
-    match stat {
-      @maple_stat.Id::MESO => {
-        self.inventory.set_meso(recv.read_int!())
-        false
-      }
-      _ => false
-    }
-  }
-
-  [@maple_stat.Id::MESO].iter().map(fn(stat_id) { (stat_id, handler) })
-  |> Map::from_iter
+) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
+  [
+    (
+      @maple_stat.Id::MESO,
+      {
+        parse_fn: fn(recv) { recv.read_int!() },
+        update_fn: fn(meso) {
+          self.inventory.set_meso(meso)
+          false
+        },
+      },
+    ),
+  ]
+  |> Map::from_array
 }

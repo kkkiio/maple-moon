@@ -11,13 +11,16 @@ pub fn Module::new(change_job : (Int) -> Unit) -> Module {
 ///|
 pub fn make_stat_handlers(
   self : Module
-) -> Map[@maple_stat.Id, (@maple_stat.Id, @net.InPacket) -> Bool!] {
+) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [
     (
       @maple_stat.Id::JOB,
-      fn(_id, recv) {
-        (self.change_job)(recv.read_ushort!())
-        false
+      {
+        parse_fn: fn(recv) { recv.read_ushort!() },
+        update_fn: fn(job_id) {
+          (self.change_job)(job_id)
+          false
+        },
       },
     ),
   ]

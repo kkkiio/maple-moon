@@ -82,8 +82,8 @@ fn load_modules(
 
   let stat_handler_map = {}
   fn merge_stat_handlers(
-    handlers : Map[@maple_stat.Id, (@maple_stat.Id, @net.InPacket) -> Bool!]
-  ) -> Unit {
+    handlers : Map[@maple_stat.Id, @game_mod.StatHandler]
+  ) {
     for stat_id, handler in handlers {
       if stat_handler_map.contains(stat_id) {
         @log.error({ "stat": stat_id }, "duplicate stat handler")
@@ -202,19 +202,11 @@ fn load_modules(
   // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
   // packet_switch.push((KEYMAP, KeymapHandler::new()))
   // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
-  let change_stat_handler : ChangeStatsHandler = {
-    stat_handler_map,
-    recalc_stats_fn: fn() {
-      guard let Some(player) = get_stage().get_player() else { None => return }
-      player.recalc_stats(false)
-    },
-  }
-  net_handler_map.set(
-    @net.CHANGE_STATS,
-    @net.with_log(@net.CHANGE_STATS, fn(recv : @net.InPacket) {
-      change_stat_handler.handle_change_stats!(recv)
-    }),
-  )
+  let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
+    guard let Some(player) = get_stage().get_player() else { None => return }
+    player.recalc_stats(false)
+  })
+  net_handler_map.set(change_stat_handler.0, change_stat_handler.1)
   let job_module = @job.Module::new(fn(job_id) {
     guard let Some(player) = get_stage().get_player() else { None => return }
     player.change_job(job_id)

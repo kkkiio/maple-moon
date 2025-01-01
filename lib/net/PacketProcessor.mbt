@@ -115,7 +115,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit!,
-  log_recv~ : Bool = true
+  log_recv~ : Bool = false
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {

@@ -11,6 +11,7 @@ pub(all) struct Game {
   loaded_state : @utils.Future[LoadedState]
   io_service : @io_task.Service
   scheduls : @schedule.Schedules
+  stage : Ref[Stage?]
 }
 
 ///|
@@ -32,15 +33,19 @@ pub fn Game::new() -> Game {
   let processor = @net.PacketProcessor::init()
   let io_service = @io_task.Service::new()
   let scheduls = @schedule.Schedules::new()
+  let stage = Ref::new(None)
   {
     window,
     timer,
     accumulator: 0,
     ui,
     processor,
-    loaded_state: load_modules(ui, timer, processor, io_service, scheduls),
+    loaded_state: load_modules(
+      ui, timer, processor, io_service, scheduls, stage,
+    ),
     io_service,
     scheduls,
+    stage,
   }
 }
 
@@ -50,8 +55,13 @@ fn load_modules(
   timer : @utils.Timer,
   packet_processor : @net.PacketProcessor,
   io_service : @io_task.Service,
-  scheduls : @schedule.Schedules
+  scheduls : @schedule.Schedules,
+  stage_ref : Ref[Stage?]
 ) -> @utils.Future[LoadedState] {
+  fn get_stage() -> Stage {
+    stage_ref.val.unwrap() // TODO: handle error
+  }
+
   let add_io_task = fn(task) { io_service.add(task) }
   let action_registry = @action.Registry::new()
   let action_map = {}
@@ -86,14 +96,14 @@ fn load_modules(
 
   let char_look_module_f = @char_look.Module::load(
     fn(f) {
-      guard let Some(player) = Stage::get().get_player() else { None => return }
-      player.char_base.look = f(player.char_base.look)
+      guard let Some(player) = get_stage().get_player() else { None => return }
+      player.character.look = f(player.character.look)
     },
     io_service,
   ).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(fn() {
-    Stage::get().get_player()
+    get_stage().get_player()
   }).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
@@ -106,12 +116,14 @@ fn load_modules(
       let (login_module, inventory_module) = it
       merge_handlers(
         login_module.make_handlers(
-          fn(map_id, portal_id) { Stage::get().transition(map_id, portal_id) },
+          fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
           fn(char_entry, callback) {
-            Stage::get().set_player_stage(char_entry, callback)
+            get_stage().set_player_stage(char_entry, callback)
           },
           inventory_module.get_inventory(),
-          fn(player) { setup_game_ui(ui, player, action_registry, timer) },
+          fn(player) {
+            setup_game_ui(ui, get_stage(), player, action_registry, timer)
+          },
         ),
       )
       login_module
@@ -119,29 +131,29 @@ fn load_modules(
   let monster_module = @monster.Module::new(add_io_task)
   merge_handlers(
     monster_module.make_handlers(fn() {
-      Stage::get().get_player().map(fn(p) { p.get_stats() })
+      get_stage().get_player().map(fn(p) { p.get_stats() })
     }),
   )
   let drop_module = @drop.Module::load().tap(fn(mod) {
     merge_handlers(
       mod.make_handlers(fn(id) {
-        Stage::get().get_character(id).map(fn(c) { c.get_phobj() })
+        get_stage().get_character(id).map(fn(c) { c.get_phobj() })
       }),
     )
   })
   let npc_module = @npc.Module::load(
     ui,
-    fn() { Stage::get().get_player().unwrap().get_name() },
+    fn() { get_stage().get_player().unwrap().character.get_name() },
     packet_processor,
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
   let char_stats_mod_f = @char_stats.Module::load(fn() {
-    Stage::get().get_player().map(fn(p) { p.get_stats() })
+    get_stage().get_player().map(fn(p) { p.get_stats() })
   }).tap(fn(mod) {
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let skill_book_mod_f = @skill_book.Module::load(fn() {
-    Stage::get().get_player()
+    get_stage().get_player()
   }).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
@@ -150,8 +162,8 @@ fn load_modules(
     let mod = it
     merge_handlers(
       mod.make_handlers(
-        fn() { Stage::get().get_player().map(fn(p) { p.char_base.look }) },
-        fn() { Some(Stage::get().get_inventory()) },
+        fn() { get_stage().get_player().map(fn(p) { p.character.look }) },
+        fn() { Some(get_stage().get_inventory()) },
       ),
     )
     mod
@@ -193,7 +205,7 @@ fn load_modules(
   let change_stat_handler : ChangeStatsHandler = {
     stat_handler_map,
     recalc_stats_fn: fn() {
-      guard let Some(player) = Stage::get().get_player() else { None => return }
+      guard let Some(player) = get_stage().get_player() else { None => return }
       player.recalc_stats(false)
     },
   }
@@ -204,7 +216,7 @@ fn load_modules(
     }),
   )
   let job_module = @job.Module::new(fn(job_id) {
-    guard let Some(player) = Stage::get().get_player() else { None => return }
+    guard let Some(player) = get_stage().get_player() else { None => return }
     player.change_job(job_id)
   })
   merge_stat_handlers(job_module.make_stat_handlers())
@@ -231,13 +243,13 @@ fn load_modules(
   net_handler_map.set(@net.RECALCULATE_STATS, fn(
     _recv : @net.InPacket
   ) -> Unit {
-    guard let Some(player) = Stage::get().get_player() else { None => return }
+    guard let Some(player) = get_stage().get_player() else { None => return }
     player.recalc_stats(false)
   })
   let loading_mods = [
     @utils.Future::from_value(
       @heal_over_time.new_module(scheduls, packet_processor, fn() {
-        Stage::get().get_player().map(fn(p) { p.get_stats() })
+        get_stage().get_player().map(fn(p) { p.get_stats() })
       }),
     ),
   ]
@@ -273,7 +285,7 @@ fn load_modules(
         damage_number_set,
         add_io_task,
       )
-      g_stage.set(stage)
+      stage_ref.val = Some(stage)
     })
   char_stats_mod_f
   .combine(shop_mod_f)
@@ -327,7 +339,8 @@ pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
 pub fn update_status(self : Game) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
-  match Stage::get().update?() {
+  let stage = self.stage.val.unwrap() // TODO: handle error
+  match stage.update?() {
     Ok(_) => ()
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }
@@ -338,7 +351,8 @@ pub fn update_status(self : Game) -> Unit {
 ///|
 pub fn draw(self : Game, alpha : Double) -> Unit {
   self.window.begin()
-  Stage::get().draw(alpha)
+  let stage = self.stage.val.unwrap() // TODO: handle error
+  stage.draw(alpha)
   self.ui.draw(alpha)
   self.window.end()
 }
@@ -346,16 +360,17 @@ pub fn draw(self : Game, alpha : Double) -> Unit {
 ///|
 fn setup_game_ui(
   ui : UI,
+  stage : Stage,
   player : @player.Player,
   registry : @action.Registry,
   timer : @utils.Timer
 ) -> Unit {
-  ui.change_state(UIStateGame::new(ui, registry, timer))
+  ui.change_state(UIStateGame::new(ui, stage, registry, timer))
   let stats = player.get_stats()
   ui.set_element(
     false,
     @ui.Element::new(
-      fn(_) { @player.UIStatusBar::new(stats) },
+      fn(_) { @char_stats.UIStatusBar::new(stats) },
       @ui.UIElementType::STATUS_BAR,
     ),
   )

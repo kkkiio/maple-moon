@@ -1,5 +1,7 @@
-pub let level_cap = 201
+///|
+pub const LEVEL_CAP = 201
 
+///|
 pub let exp_table : FixedArray[Int64] = [
   1, 15, 34, 57, 92, 135, 372, 560, 840, 1242, // Levels   1 -  10
    1144, 1573, 2144, 2800, 3640, 4700, 5893, 7360, 9144, 11120, // Levels  11 -  20

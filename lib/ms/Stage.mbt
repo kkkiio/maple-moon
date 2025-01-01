@@ -60,11 +60,6 @@ pub fn Stage::new(
 }
 
 ///|
-pub fn Stage::get() -> Stage {
-  g_stage.must_get()
-}
-
-///|
 pub fn clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
   // self.chars.clear()
@@ -73,9 +68,6 @@ pub fn clear(self : Stage) -> Unit {
   self.drops.clear()
   // self.reactors.clear()
 }
-
-///|
-let g_stage : @utils.Singleton[Stage] = @utils.Singleton::new()
 
 ///|
 pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
@@ -100,21 +92,16 @@ pub fn set_player_stage(
 ) -> Unit {
   let player_f = self.char_look_module
     .load_char_look(entry.look)
-    .map(fn(look) {
-      @character.CharBase::new(
-        entry.id,
-        look,
-        entry.stats.name,
-        self.damage_number_set,
+    .bind(fn(look) {
+      @player.Player::load(entry, self.inventory, look, self.damage_number_set).tap(fn(
+          player
+        ) {
+          self.player = Some(player)
+          self.combat = Some(
+            Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+          )
+        },
       )
-    })
-    .bind(fn(char_base) {
-      @player.Player::load(entry, self.inventory, char_base).tap(fn(player) {
-        self.player = Some(player)
-        self.combat = Some(
-          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
-        )
-      })
     })
   (self.add_task_fn)(
     player_f.map(fn(player) {
@@ -230,12 +217,12 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
   self.drops.update(physics)
   let player = self.player.unwrap()
   player.update(physics, map_info) |> ignore // Pass map_info here
-  portals.update(player.get_position())
-  self.camera.update(player.get_position())
+  portals.update(player.character.get_position())
+  self.camera.update(player.character.get_position())
   if player.is_invincible() {
     return
   }
-  match self.mobs.find_colliding(player.get_phobj().moving_object) {
+  match self.mobs.find_colliding(player.character.get_phobj().moving_object) {
     Some(oid_id) =>
       match self.mobs.create_attack(oid_id) {
         Some(attack) => {
@@ -308,7 +295,7 @@ fn check_portals(
   if player.is_attacking() {
     return
   }
-  let playerpos = player.get_position()
+  let playerpos = player.character.get_position()
   let warpinfo = portals.find_warp_at(playerpos)
   if warpinfo.intramap {
     let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
@@ -324,9 +311,12 @@ fn check_portals(
 }
 
 ///|
-fn get_character(self : Stage, cid : Int) -> &@character.Character? {
+fn get_character(self : Stage, cid : Int) -> @character.Character? {
   match self.player {
-    Some(player) => if player.get_oid() == cid { return Some(player) }
+    Some(player) =>
+      if player.character.get_oid() == cid {
+        return Some(player.character)
+      }
     None => ()
   }
   // TODO: chars
@@ -396,7 +386,7 @@ fn new_take_damage_packet_from_mob(
 
 ///|
 fn check_drops(self : Stage, player : @player.Player) -> Unit {
-  for it in self.drops.list_loot_at(player.get_position()) {
+  for it in self.drops.list_loot_at(player.character.get_position()) {
     let (drop_oid, drop_pos) = it
     new_pickup_item_packet(drop_oid, drop_pos).dispatch()
   }

@@ -100,10 +100,10 @@ fn apply_move(
 ) -> Unit {
   if act.is_attack() {
     let attack = prepare_attack(player, act.is_skill())
-    act.apply_useeffects(player)
-    act.apply_actions(player, attack.t)
-    player.set_afterimage(act.get_id())
-    act.apply_stats(player, attack)
+    act.apply_useeffects(player.character)
+    act.apply_actions(player.character, attack.t)
+    player.character.set_afterimage(act.get_id())
+    act.apply_stats(player.character, attack)
     let origin = attack.origin
     let hrange = (attack.range.left().to_double() * attack.hrange).to_int()
     let rel_range = @struct.Rectangle::from4(
@@ -119,7 +119,7 @@ fn apply_move(
     let mobcount = attack.mobcount
     let result = {
       ..@combat.AttackResult::new(attack),
-      attacker: player.get_oid(),
+      attacker: player.character.get_oid(),
     }
     let mob_objs = self.mobs.get_mobs()
     // let reactor_objs = self.reactors.get_reactors()
@@ -128,7 +128,7 @@ fn apply_move(
     //   reactor_objs, range, origin, mobcount, false,
     // )
     self.mobs.send_attack(result, attack, mob_targets, mobcount)
-    self.extract_effects(player, act, result)
+    self.extract_effects(player.character, act, result)
     self.apply_result_movement(player, act, result)
     new_attack_packet(result).dispatch()
     // if reactor_targets.is_empty().not() {
@@ -144,8 +144,8 @@ fn apply_move(
     //   }
     // }
   } else {
-    act.apply_useeffects(player)
-    act.apply_actions(player, @combat.AttackType::MAGIC)
+    act.apply_useeffects(player.character)
+    act.apply_actions(player.character, @combat.AttackType::MAGIC)
     let moveid = act.get_id()
     let level = player.get_skills().get_level(moveid)
     new_use_skill_packet(moveid, level).dispatch()
@@ -317,13 +317,13 @@ pub fn get_move(
 ///|
 fn extract_effects(
   self : Combat,
-  user : &@character.Character,
+  user : @character.Character,
   act : &@combat_do.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
   let attack_user : @combat.AttackUser = {
-    skill_level: user.get_skilllevel(act.get_id()),
-    level: user.get_stats().get_stat(@maple_stat.Id::LEVEL),
+    skill_level: (user.get_skilllevel)(act.get_id()),
+    level: (user.get_stats)().get_stat(@maple_stat.Id::LEVEL),
     second_weapon: user.is_twohanded(),
     flip: not(result.toleft),
   }
@@ -453,11 +453,11 @@ fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
 
 ///|
 pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
-  let (degenerate, attacktype) = if player.char_base.state ==
+  let (degenerate, attacktype) = if player.character.state ==
     @character.CharState::PRONE {
     (true, @combat.AttackType::CLOSE)
   } else {
-    match player.get_weapontype() {
+    match player.character.get_weapontype() {
       @weapon.Type::BOW
       | @weapon.Type::CROSSBOW
       | @weapon.Type::CLAW
@@ -499,9 +499,9 @@ pub fn prepare_attack(player : @player.Player, skill : Bool) -> @combat.Attack {
   let playerlevel = player.stats.get_stat(@maple_stat.Id::LEVEL)
   let range = player.stats.get_range()
   let bullet = player.inventory.get_bulletid()
-  let origin = player.get_position()
-  let toleft = player.char_base.facing_right |> not()
-  let speed = player.get_integer_attackspeed()
+  let origin = player.character.get_position()
+  let toleft = player.character.facing_right |> not()
+  let speed = (player.character.get_integer_attackspeed)()
   let d = @combat.Attack::default()
   {
     ..d,
@@ -525,13 +525,13 @@ pub fn can_use(
   player : @player.Player,
   act : &@combat_do.SpecialMove
 ) -> @combat_do.ForbidReason {
-  if act.is_skill() && player.char_base.state == @character.CharState::PRONE {
+  if act.is_skill() && player.character.state == @character.CharState::PRONE {
     return @combat_do.ForbidReason::FBR_OTHER
   }
   if act.is_attack() &&
     (
-      player.char_base.state == @character.CharState::LADDER ||
-      player.char_base.state == @character.CharState::ROPE
+      player.character.state == @character.CharState::LADDER ||
+      player.character.state == @character.CharState::ROPE
     ) {
     return @combat_do.ForbidReason::FBR_OTHER
   }
@@ -539,7 +539,7 @@ pub fn can_use(
     return @combat_do.ForbidReason::FBR_COOLDOWN
   }
   let level = player.skill_book.get_level(act.get_id())
-  let weapontype = player.char_base.get_weapontype()
+  let weapontype = player.character.get_weapontype()
   let job = player.stats.get_job()
   let hp = player.stats.get_stat(@maple_stat.Id::HP)
   let mp = player.stats.get_stat(@maple_stat.Id::MP)

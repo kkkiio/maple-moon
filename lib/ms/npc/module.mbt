@@ -4,7 +4,6 @@ struct Module {
   container : &@ui.Container
   get_player_name : () -> String
   util_dlg_ex : @resource.NxNode
-  quest : @resource.NxNode
   packet_processor : @net.PacketProcessor
 }
 
@@ -14,11 +13,9 @@ pub fn Module::load(
   get_player_name : () -> String,
   packet_processor : @net.PacketProcessor
 ) -> @utils.Future[Module] {
-  @ui.ui_window_2_loader()
-  .load_res(["UtilDlgEx"])
-  .combine(@ui.ui_window_2_loader().load_res(["Quest"]))
+  @ui.ui_window_2_loader().load_res(["UtilDlgEx"])
   |> @utils.map(fn(it) {
-    Module::new(container, get_player_name, it.0, it.1, packet_processor)
+    Module::new(container, get_player_name, it, packet_processor)
   })
 }
 
@@ -27,14 +24,15 @@ fn Module::new(
   container : &@ui.Container,
   get_player_name : () -> String,
   util_dlg_ex : @resource.NxNode,
-  quest : @resource.NxNode,
   packet_processor : @net.PacketProcessor
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(attrs) {
       @ui.Element::new(
         fn(hooks) {
-          let ui = UINpcTalk::new(util_dlg_ex, quest, hooks)
+          let ui = new_npc_talk_ui(
+            hooks, util_dlg_ex, container, packet_processor,
+          )
           ui
           .change_text?(
             attrs.npcid,
@@ -55,7 +53,7 @@ fn Module::new(
     get_player_name,
     packet_processor,
   )
-  { npcs, container, get_player_name, util_dlg_ex, quest, packet_processor }
+  { npcs, container, get_player_name, util_dlg_ex, packet_processor }
 }
 
 ///|
@@ -82,7 +80,7 @@ pub fn make_handlers(
           self.container,
           self.get_player_name,
           self.util_dlg_ex,
-          self.quest,
+          self.packet_processor,
           recv,
         )
       }),
@@ -134,7 +132,7 @@ pub fn handle_npc_dialogue(
   container : &@ui.Container,
   get_player_name : () -> String,
   util_dlg_ex : @resource.NxNode,
-  quest : @resource.NxNode,
+  packet_processor : @net.PacketProcessor,
   recv : @net.InPacket
 ) -> Unit! {
   recv.skip!(1)
@@ -155,7 +153,9 @@ pub fn handle_npc_dialogue(
   container.add_ui(
     @ui.Element::new(
       fn(hooks) {
-        let ui = UINpcTalk::new(util_dlg_ex, quest, hooks)
+        let ui = new_npc_talk_ui(
+          hooks, util_dlg_ex, container, packet_processor,
+        )
         ui
         .change_text?(
           npcid,
@@ -173,4 +173,19 @@ pub fn handle_npc_dialogue(
     ),
     UINpcTalk::const_focused(),
   )
+}
+
+///|
+fn new_npc_talk_ui(
+  hooks : @ui.Hooks,
+  util_dlg_ex : @resource.NxNode,
+  container : &@ui.Container,
+  packet_processor : @net.PacketProcessor
+) -> UINpcTalk {
+  UINpcTalk::new(NpcTalkResource::from_resource(util_dlg_ex), hooks, on_choice=fn(
+    c
+  ) {
+    container.remove_ui(@ui.UIElementType::NPC_TALK)
+    packet_processor.send_packet(make_choice_packet(c))
+  })
 }

@@ -6,7 +6,7 @@ typealias CharStats = @char_stats.CharStats
 
 ///|
 pub(all) struct Player {
-  char_base : @character.CharBase
+  character : @character.CharBase
   stats : CharStats
   keys_down : Map[@keyboard.ActionId, Bool]
   mut underwater : Bool
@@ -33,7 +33,8 @@ pub(open) trait Inventory {
 pub fn Player::load(
   entry : @character.CharEntry,
   inventory : &Inventory,
-  char_base : @character.CharBase
+  look : @char_look.CharLook,
+  damage_number_set : @ui.NumberSet
 ) -> @utils.Future[Player] {
   @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
   .bind(fn(job) {
@@ -44,9 +45,10 @@ pub fn Player::load(
     Player::new(
       entry,
       inventory,
-      char_base,
       job,
       skill_book,
+      look,
+      damage_number_set,
       @net.PacketProcessor::get(),
     )
   })
@@ -56,18 +58,28 @@ pub fn Player::load(
 pub fn Player::new(
   entry : @character.CharEntry,
   inventory : &Inventory,
-  char_base : @character.CharBase,
   job : @job.Job,
   skill_book : @character.SkillBook,
+  look : @char_look.CharLook,
+  damage_number_set : @ui.NumberSet,
   packet_processor : @net.PacketProcessor
 ) -> Player {
   let stats = CharStats::new(
     entry.stats,
-    fn() { char_base.get_weapontype() },
+    fn() { @character.get_weapon_type_in_look(look) },
     job,
   )
+  let character = @character.Character::new(
+    entry.id,
+    look,
+    entry.stats.name,
+    damage_number_set,
+    get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
+    get_stats=fn() { stats },
+    get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
+  )
   let p = {
-    char_base,
+    character,
     stats,
     keys_down: Map::new(),
     underwater: false,
@@ -82,7 +94,7 @@ pub fn Player::new(
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
-  stats.listen_stat_changes(@maple_stat.Id::HP, fn(_old, hp) {
+  stats.watch_stat_changes(@maple_stat.Id::HP, fn(_old, hp) {
     if hp <= 0 {
       p.set_state(@character.CharState::DIED)
       let died = true
@@ -91,31 +103,26 @@ pub fn Player::new(
         new_change_map_packet(died, targetid, "sp", false),
       )
     }
-    true // listen forever
+    IterContinue
   })
-  stats.listen_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp) {
+  stats.watch_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp) {
     if new_hp > old_hp {
-      p.char_base.show_heal_number(new_hp - old_hp)
+      p.character.show_heal_number(new_hp - old_hp)
     }
-    true
+    IterContinue
   })
   p
 }
 
 ///|
-pub fn get_position(self : Player) -> @struct.Point[Int] {
-  self.char_base.get_position()
-}
-
-///|
 pub fn is_invincible(self : Player) -> Bool {
-  if self.char_base.state == CharState::DIED {
+  if self.character.state == CharState::DIED {
     return true
   }
   if self.has_buff(@buff.StatId::DARKSIGHT) {
     return true
   }
-  self.char_base.is_invincible()
+  self.character.is_invincible()
 }
 
 ///|
@@ -141,10 +148,10 @@ pub fn update(
     }
     None => ()
   }
-  match get_player_state(self.char_base.state) {
+  match get_player_state(self.character.state) {
     Some(pst) => {
       pst.update(self)
-      physics.move_object(self.get_phobj())
+      physics.move_object(self.character.get_phobj())
 
       // Check for ladder interaction
       if self.keys_down[@keyboard.ActionId::UP].or(false) {
@@ -152,11 +159,13 @@ pub fn update(
       } else if self.keys_down[@keyboard.ActionId::DOWN].or(false) {
         self.check_ladders(map_info, false)
       }
-      let aniend = self.char_base.update(
-        self.char_base.get_stancespeed(self.get_integer_attackspeed()),
+      let aniend = self.character.update(
+        self.character.get_stancespeed(
+          (self.character.get_integer_attackspeed)(),
+        ),
       )
-      if aniend && self.char_base.attacking {
-        self.char_base.attacking = false
+      if aniend && self.character.attacking {
+        self.character.attacking = false
         nullstate.update_state(self)
       } else {
         pst.update_state(self)
@@ -164,15 +173,19 @@ pub fn update(
     }
     None => ()
   }
-  let stancebyte = self.char_base.state.int_value() +
-    (if self.char_base.facing_right { 0 } else { 1 })
-  let newmove = Movement::from_physics_object(self.get_phobj(), stancebyte)
+  let stancebyte = self.character.state.stance_value(
+    facing_right=self.character.facing_right,
+  )
+  let newmove = Movement::from_physics_object(
+    self.character.get_phobj(),
+    stancebyte,
+  )
   let needupdate = self.last_move.hasmoved(newmove)
   if needupdate {
     new_move_player_packet(newmove).dispatch()
     self.last_move = newmove
   }
-  self.char_base.get_layer()
+  self.character.get_layer()
 }
 
 // Respawn the player at the given position
@@ -188,7 +201,7 @@ pub fn respawn(
 
 ///|
 pub fn set_position(self : Player, x : Int, y : Int) -> Unit {
-  self.char_base.set_position(@struct.Point::new(x, y))
+  self.character.set_position(@struct.Point::new(x, y))
 }
 
 ///|
@@ -199,8 +212,8 @@ pub fn draw(
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  if layer == self.char_base.get_layer() {
-    self.char_base.draw(viewx, viewy, alpha)
+  if layer == self.character.get_layer() {
+    self.character.draw(viewx, viewy, alpha)
   }
 }
 
@@ -212,7 +225,7 @@ pub fn send_action(
   action : @keyboard.ActionId,
   down : Bool
 ) -> Unit {
-  match get_player_state(self.char_base.state) {
+  match get_player_state(self.character.state) {
     Some(pst) => pst.send_action(self, action, down)
     None => ()
   }
@@ -234,7 +247,7 @@ struct PlayerStates {
 let g_player_states : PlayerStates = PlayerStates::default()
 
 ///|
-fn get_player_state(state : CharState) -> PlayerState? {
+fn get_player_state(state : CharState) -> &PlayerState? {
   match state {
     CharState::STAND => Some(g_player_states.standing)
     CharState::WALK => Some(g_player_states.walking)
@@ -248,32 +261,27 @@ fn get_player_state(state : CharState) -> PlayerState? {
 }
 
 ///|
-pub fn get_phobj(self : Player) -> @physics.PhysicsObject {
-  self.char_base.get_phobj()
-}
-
-///|
 pub fn is_key_down(self : Player, key : @keyboard.ActionId) -> Bool {
   self.keys_down[key].or(false)
 }
 
 ///|
 pub fn set_direction(self : Player, flipped : Bool) -> Unit {
-  if not(self.char_base.attacking) {
-    self.char_base.set_direction(flipped)
+  if not(self.character.attacking) {
+    self.character.set_direction(flipped)
   }
 }
 
 ///|
 pub fn is_attacking(self : Player) -> Bool {
-  self.char_base.attacking
+  self.character.attacking
 }
 
 // Set state ignore if attacking.
 ///|
 pub fn set_state(self : Player, st : CharState) -> Unit {
-  if not(self.char_base.attacking) {
-    self.char_base.set_state(st)
+  if not(self.character.attacking) {
+    self.character.set_state(st)
     match get_player_state(st) {
       Some(pst) => pst.initialize(self)
       None => ()
@@ -297,18 +305,8 @@ pub fn get_jumpforce(self : Player) -> Double {
 }
 
 ///|
-pub fn is_climbing(self : Player) -> Bool {
-  self.char_base.is_climbing()
-}
-
-///|
 pub fn get_climbforce(self : Player) -> Double {
   self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
-}
-
-///|
-pub fn is_facing_right(self : Player) -> Bool {
-  self.char_base.is_facing_right()
 }
 
 ///| Returns the current walking force, calculated from the total ES_SPEED stat.
@@ -326,7 +324,7 @@ pub fn get_stats(self : Player) -> CharStats {
 
 ///| Recalculates the total stats from base stats, inventories and skills.
 pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
-  let weapontype = self.char_base.get_weapontype()
+  let weapontype = self.character.get_weapontype()
   self.stats.init_totalstats()
   if equip_changed {
     self.inventory.recalc_stats(weapontype)
@@ -364,11 +362,6 @@ fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
 }
 
 ///|
-pub fn get_name(self : Player) -> String {
-  self.char_base.get_name()
-}
-
-///|
 pub fn get_ladder(self : Player) -> @map.Ladder? {
   self.ladder
 }
@@ -378,10 +371,10 @@ pub fn set_ladder(self : Player, ladder : @map.Ladder?) -> Unit {
   self.ladder = ladder
   match ladder {
     Some(ladder) => {
-      self.get_phobj().set_x(ladder.get_x().to_double())
-      self.get_phobj().moving_object.hspeed = 0.0
-      self.get_phobj().moving_object.vspeed = 0.0
-      self.get_phobj().fhlayer = 7
+      self.character.get_phobj().set_x(ladder.get_x().to_double())
+      self.character.get_phobj().moving_object.hspeed = 0.0
+      self.character.get_phobj().moving_object.vspeed = 0.0
+      self.character.get_phobj().fhlayer = 7
       self.set_state(
         if ladder.is_ladder() {
           CharState::LADDER
@@ -400,15 +393,19 @@ pub fn damage(
   attack : @combat.MobAttack
 ) -> @combat.MobAttackResult {
   let damage = self.stats.calculate_damage(attack.watk)
-  self.char_base.show_damage(damage)
-  let fromleft = attack.origin.x > self.get_phobj().get_x()
+  self.character.show_damage(damage)
+  let fromleft = attack.origin.x > self.character.get_phobj().get_x()
   let missed = damage <= 0
   let immovable = not(self.get_ladder().is_empty()) ||
-    self.char_base.state == CharState::DIED
+    self.character.state == CharState::DIED
   let knockback = not(missed) && not(immovable)
   if knockback && self.randomizer.above(self.stats.get_stance()) {
-    self.get_phobj().moving_object.hspeed = if fromleft { -1.5 } else { 1.5 }
-    self.get_phobj().vforce -= 3.5
+    self.character.get_phobj().moving_object.hspeed = if fromleft {
+      -1.5
+    } else {
+      1.5
+    }
+    self.character.get_phobj().vforce -= 3.5
   }
   let direction = if fromleft { 0 } else { 1 }
   @combat.MobAttackResult::new(attack, damage, direction)
@@ -420,83 +417,48 @@ pub fn get_skills(self : Player) -> @character.SkillBook {
 }
 
 ///|
-pub fn get_integer_attackspeed(self : Player) -> Int {
-  guard let Some(weapon) = self.char_base.look.get_equips().get_weapon() else {
+pub fn get_integer_attackspeed(
+  look : @char_look.CharLook,
+  stats : CharStats
+) -> Int {
+  guard let Some(weapon) = look.get_equips().get_weapon() else {
     None => return 0
   }
-  let base_speed = self.stats.get_attackspeed()
+  let base_speed = stats.get_attackspeed()
   let weapon_speed = weapon.get_speed()
   base_speed + weapon_speed
 }
 
 ///|
 pub fn can_attack(self : Player) -> Bool {
-  not(self.char_base.attacking) &&
-  not(self.char_base.is_climbing()) &&
-  not(self.char_base.is_sitting()) &&
-  self.char_base.look.get_equips().has_weapon()
-}
-
-///|
-pub fn set_afterimage(self : Player, skill_id : Int) -> Unit {
-  self.char_base.set_afterimage(skill_id)
-}
-
-///|
-pub fn get_oid(self : Player) -> Int {
-  self.char_base.get_oid()
-}
-
-///|
-pub fn get_skilllevel(self : Player, skill_id : Int) -> Int {
-  self.skill_book.get_level(skill_id)
-}
-
-///|
-pub fn is_twohanded(self : Player) -> Bool {
-  self.char_base.is_twohanded()
-}
-
-///|
-pub fn get_attackdelay(self : Player, no : Int) -> Int {
-  self.char_base.get_attackdelay(no, self.get_integer_attackspeed())
+  not(self.character.attacking) &&
+  not(self.character.is_climbing()) &&
+  not(self.character.is_sitting()) &&
+  self.character.look.get_equips().has_weapon()
 }
 
 ///|
 pub fn rush(self : Player, targetx : Double) -> Unit {
-  if self.get_phobj().onground {
-    let delay = self.get_attackdelay(1)
-    self.get_phobj().moving_object.movexuntil(targetx, delay)
-    self.get_phobj().set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
+  if self.character.get_phobj().onground {
+    let delay = self.character.get_attackdelay(1)
+    self.character.get_phobj().moving_object.movexuntil(targetx, delay)
+    self.character
+    .get_phobj()
+    .set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
   }
-}
-
-///|
-pub fn get_look(self : Player) -> @char_look.CharLook {
-  self.char_base.look
 }
 
 ///|
 pub fn get_afterimage(self : Player) -> @char_look.Afterimage {
-  self.char_base.after_image.poll().or_default()
-}
-
-///|
-pub fn get_weapontype(self : Player) -> @weapon.Type {
-  self.char_base.get_weapontype()
-}
-
-///|
-pub fn regular_attack(self : Player, degenerate : Bool) -> Unit {
-  self.char_base.regular_attack(degenerate)
+  self.character.after_image.poll().or_default()
 }
 
 ///|
 pub fn check_ladders(self : Player, map_info : @map.MapInfo, up : Bool) -> Unit {
-  if self.is_climbing() || self.is_attacking() {
+  if self.character.is_climbing() || self.character.attacking {
     return
   }
-  let ladder = map_info.find_ladder(self.get_position(), up)
+  let ladder = map_info.find_ladder(self.character.get_position(), up)
   self.set_ladder(ladder)
 }
 
@@ -516,32 +478,23 @@ pub fn change_skill(
 }
 
 ///|
-pub fn show_attack_effect(
-  self : Player,
-  toshow : @graphics.Animation,
-  z : Int
-) -> Unit {
-  self.char_base.show_attack_effect(toshow, z, self.get_integer_attackspeed())
-}
-
-///|
 pub fn show_iron_body(self : Player) -> Unit {
-  self.char_base.show_iron_body()
+  self.character.show_iron_body()
 }
 
 ///|
 pub fn attack_by_action(self : Player, action : String) -> Unit {
-  self.char_base.attack_by_action(action)
+  self.character.attack_by_action(action)
 }
 
 ///|
 pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
-  self.char_base.attack_by_stance(stance)
+  self.character.attack_by_stance(stance)
 }
 
 ///|
 pub fn change_job(self : Player, job_id : Int) -> Unit {
-  self.char_base.show_effect_id(@character.CharEffectId::JOB_CHANGE)
+  self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
   self.changing_job = @job.Job::load(id=job_id).bind(fn(job) {
       @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
     })

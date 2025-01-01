@@ -433,7 +433,7 @@ pub fn can_wear_equip(
 ) -> Bool {
   let player = self.logic_state.attributes.player
   let stats = player.get_stats()
-  let look = player.get_look()
+  let look = player.character.get_look()
   let alerted = look.get_alerted()
   if alerted {
     // TODO: alert

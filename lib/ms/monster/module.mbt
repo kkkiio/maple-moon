@@ -23,54 +23,41 @@ pub fn make_handlers(
   [
     (
       @net.SPAWN_MOB,
-      @net.with_log(
-        @net.SPAWN_MOB,
-        fn(recv : @net.InPacket) { handle_spawn_mob!(self.map_mobs, recv) },
-      ),
+      @net.with_log(@net.SPAWN_MOB, log_recv=false, fn(recv : @net.InPacket) {
+        handle_spawn_mob!(self.map_mobs, recv)
+      }),
     ),
     (
       @net.SPAWN_MOB_C,
-      @net.with_log(
-        @net.SPAWN_MOB_C,
-        fn(recv : @net.InPacket) {
-          handle_spawn_mob_controller!(self.map_mobs, recv)
-        },
-      ),
+      @net.with_log(@net.SPAWN_MOB_C, fn(recv : @net.InPacket) {
+        handle_spawn_mob_controller!(self.map_mobs, recv)
+      }),
     ),
     (
       @net.MOB_MOVED,
-      @net.with_log(
-        @net.MOB_MOVED,
-        fn(recv : @net.InPacket) {
-          handle_mob_moved!(self.map_mobs, self.mob_combat, recv)
-        },
-      ),
+      @net.with_log(@net.MOB_MOVED, fn(recv : @net.InPacket) {
+        handle_mob_moved!(self.map_mobs, self.mob_combat, recv)
+      }),
     ),
     (
       @net.MOB_MOVE_RESPONSE,
-      @net.with_log(
-        @net.MOB_MOVE_RESPONSE,
-        log_recv=false,
-        fn(recv : @net.InPacket) {
-          handle_mob_move_response!(self.mob_combat, recv)
-        },
-      ),
+      @net.with_log(@net.MOB_MOVE_RESPONSE, log_recv=false, fn(
+        recv : @net.InPacket
+      ) {
+        handle_mob_move_response!(self.mob_combat, recv)
+      }),
     ),
     (
       @net.SHOW_MOB_HP,
-      @net.with_log(
-        @net.SHOW_MOB_HP,
-        fn(recv : @net.InPacket) {
-          handle_show_mob_hp!(self.map_mobs, player_stats_getter, recv)
-        },
-      ),
+      @net.with_log(@net.SHOW_MOB_HP, fn(recv : @net.InPacket) {
+        handle_show_mob_hp!(self.map_mobs, player_stats_getter, recv)
+      }),
     ),
     (
       @net.KILL_MOB,
-      @net.with_log(
-        @net.KILL_MOB,
-        fn(recv : @net.InPacket) { handle_kill_mob!(self.map_mobs, recv) },
-      ),
+      @net.with_log(@net.KILL_MOB, fn(recv : @net.InPacket) {
+        handle_kill_mob!(self.map_mobs, recv)
+      }),
     ),
   ]
   |> Map::from_array

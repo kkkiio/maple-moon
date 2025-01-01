@@ -60,25 +60,25 @@ pub fn make_actions(
               self.skill,
               hooks,
             )
-            stats.listen_stat_changes(@maple_stat.Id::SP, fn(_old, sp) {
-              guard ui.get_ui_model().active else { return false }
+            stats.watch_stat_changes(@maple_stat.Id::SP, fn(_old, sp) {
+              guard ui.get_ui_model().active else { return IterEnd }
               ui.set_attributes({
                 skillbook: player.get_skills(),
                 job: stats.get_job(),
                 level: stats.get_stat(@maple_stat.Id::LEVEL),
                 sp,
               })
-              true
+              IterContinue
             })
             skillbook.listen_skill_level_changes(fn(_skill_id, _level) { // TODO: fine-granular update
-              guard ui.get_ui_model().active else { return false }
+              guard ui.get_ui_model().active else { return IterEnd }
               ui.set_attributes({
                 skillbook,
                 job: stats.get_job(),
                 level: stats.get_stat(@maple_stat.Id::LEVEL),
                 sp: stats.get_stat(@maple_stat.Id::SP),
               })
-              true
+              IterContinue
             })
             ui
           },

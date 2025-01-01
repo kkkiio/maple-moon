@@ -13,6 +13,7 @@ let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 ///|
 struct UIStateGame {
   ui : UI
+  stage : Stage
   registry : @action.Registry
   timer : @utils.Timer
   elements : Map[UIElementType, @ui.Element]
@@ -34,11 +35,13 @@ struct UIStateGame {
 ///|
 pub fn UIStateGame::new(
   ui : UI,
+  stage : Stage,
   registry : @action.Registry,
   timer : @utils.Timer
 ) -> UIStateGame {
   {
     ui,
+    stage,
     registry,
     timer,
     elements: Map::new(),
@@ -146,7 +149,7 @@ pub fn send_key(
     @keyboard.KeyType::ACTION
     | @keyboard.KeyType::FACE
     | @keyboard.KeyType::ITEM
-    | @keyboard.KeyType::SKILL => Stage::get().send_key(t, raw_action, pressed)
+    | @keyboard.KeyType::SKILL => self.stage.send_key(t, raw_action, pressed)
     _ => ()
   }
 }
@@ -188,7 +191,7 @@ pub fn send_cursor(
       None => ()
     }
     // self.remove_cursors()
-    return Stage::get().send_cursor(clicked, cursorpos)
+    return self.stage.send_cursor(clicked, cursorpos)
   }
   if self.dragged.is_empty() {
     let mut drag_element_type = UIElementType::UI_ELEMENT_NONE
@@ -222,7 +225,7 @@ pub fn send_cursor(
     Some(dragged) => return dragged.send_cursor(clicked, cursorpos)
     None => ()
   }
-  return Stage::get().send_cursor(clicked, cursorpos)
+  return self.stage.send_cursor(clicked, cursorpos)
 }
 
 ///|

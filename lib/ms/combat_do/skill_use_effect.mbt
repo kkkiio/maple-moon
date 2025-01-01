@@ -120,7 +120,7 @@ fn apply(self : ByLevelUseEffect, c : @character.Character) -> Unit {
   if self.effects.is_empty() {
     return
   }
-  let level = c.get_stats().get_stat(@maple_stat.Id::LEVEL)
+  let level = (c.get_stats)().get_stat(@maple_stat.Id::LEVEL)
   let mut iter = 0
   while iter < self.effects.length() && level > self.effects[iter].0 {
     iter += 1

@@ -1,7 +1,9 @@
+///|
 pub(all) struct RegularAttack {
   action : RegularAction
 } derive(Default)
 
+///|
 pub fn apply_useeffects(
   self : RegularAttack,
   _user : @character.Character
@@ -9,6 +11,7 @@ pub fn apply_useeffects(
 
 }
 
+///|
 pub fn apply_actions(
   self : RegularAttack,
   user : @character.Character,
@@ -17,6 +20,7 @@ pub fn apply_actions(
   self.action.apply(user, t)
 }
 
+///|
 pub fn apply_stats(
   self : RegularAttack,
   user : @character.Character,
@@ -32,33 +36,37 @@ pub fn apply_stats(
   }
 }
 
+///|
 pub fn RegularAttack::is_attack(self : RegularAttack) -> Bool {
   true
 }
 
+///|
 pub fn RegularAttack::is_skill(self : RegularAttack) -> Bool {
   return false
 }
 
+///|
 pub fn RegularAttack::get_id(self : RegularAttack) -> Int {
   0
 }
 
+///|
 pub fn get_bullet(
   self : RegularAttack,
   _user : @character.Character,
   bulletid : Int
 ) -> @utils.Future[@graphics.Animation] {
-  @bullet.BulletData::get_async(bulletid).map(
-    fn(data) {
-      data.unwrap() // TODO: Handle error
-      .bullet
-    },
-  )
+  @bullet.BulletData::get_async(bulletid).map(fn(data) {
+    data.unwrap() // TODO: Handle error
+    .bullet
+  })
 }
 
+///|
 struct RegularAction {} derive(Default)
 
+///|
 pub fn apply(
   self : RegularAction,
   target : @character.Character,
@@ -73,6 +81,7 @@ pub fn apply(
   target.regular_attack(degenerate)
 }
 
+///|
 pub fn can_use(
   self : RegularAttack,
   _level : Int,
@@ -93,6 +102,7 @@ pub fn can_use(
   }
 }
 
+///|
 pub fn apply_hit_effects(
   self : RegularAttack,
   _user : @combat.AttackUser,

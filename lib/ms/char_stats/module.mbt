@@ -1,24 +1,24 @@
 ///|
 struct Module {
-  char_stats_getter : () -> CharStats? // TODO: manage CharStats in this module
+  player_char_stats_getter : () -> CharStats? // TODO: manage CharStats in this module
   stat : @resource.NxNode
 }
 
 ///|
 pub fn Module::load(
-  char_stats_getter : () -> CharStats?
+  player_char_stats_getter : () -> CharStats?
 ) -> @utils.Future[Module] {
   @ui.ui_window_4_loader()
   .load_res(["Stat"])
-  .map(fn(stat) { Module::new(char_stats_getter, stat) })
+  .map(fn(stat) { Module::new(player_char_stats_getter, stat) })
 }
 
 ///|
 fn Module::new(
-  char_stats_getter : () -> CharStats?,
+  player_char_stats_getter : () -> CharStats?,
   stat : @resource.NxNode
 ) -> Module {
-  { char_stats_getter, stat }
+  { player_char_stats_getter, stat }
 }
 
 ///|
@@ -34,7 +34,7 @@ pub fn make_actions(
         @ui.Element::new(
           fn(hooks) {
             UIStatsInfo::new(
-              (self.char_stats_getter)().unwrap(),
+              (self.player_char_stats_getter)().unwrap(),
               self.stat,
               hooks,
             )
@@ -52,7 +52,7 @@ pub fn make_stat_handlers(
   self : Module
 ) -> Map[@maple_stat.Id, (@maple_stat.Id, @net.InPacket) -> Bool!] {
   fn handler!(stat : @maple_stat.Id, recv : @net.InPacket) {
-    guard let Some(char_stats) = (self.char_stats_getter)() else {
+    guard let Some(char_stats) = (self.player_char_stats_getter)() else {
       None => return false
     }
     let mut recalculate = false

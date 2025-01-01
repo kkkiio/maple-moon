@@ -314,6 +314,12 @@ fn get_offset(
   if width <= 0 || height <= 0 {
     return TexOffset::default()
   }
+  fn add_leftover(leftover) {
+    let ok = self.leftovers.add(self.next_id, leftover)
+    guard ok else { abort("duplicate key") }
+    self.next_id += 1
+  }
+
   let (x, y) = match
     self.leftovers.ceiling_key(Leftover::fromxywh(0, 0, width, height)) {
     Some(k) => {
@@ -324,52 +330,17 @@ fn get_offset(
       let height_delta = leftover.height() - height
       // self.wasted -= width * height
       if width_delta >= self.minlosize && height_delta >= self.minlosize {
-        let ok = self.leftovers.add(
-          self.next_id,
-          Leftover::fromxywh(x + width, y + height, width_delta, height_delta),
-        )
-        if ok.not() {
-          abort("Atlas.get_offset: failed to add leftover")
-        }
-        self.next_id += 1
+        add_leftover(Leftover::fromxywh(x + width, y + height, width_delta, height_delta))
         if width >= self.minlosize {
-          let ok = self.leftovers.add(
-            self.next_id,
-            Leftover::fromxywh(x, y + height, width, height_delta),
-          )
-          if ok.not() {
-            abort("Atlas.get_offset: failed to add leftover")
-          }
-          self.next_id += 1
+          add_leftover(Leftover::fromxywh(x, y + height, width, height_delta))
         }
         if height >= self.minlosize {
-          let ok = self.leftovers.add(
-            self.next_id,
-            Leftover::fromxywh(x + width, y, width_delta, height),
-          )
-          if ok.not() {
-            abort("Atlas.get_offset: failed to add leftover")
-          }
-          self.next_id += 1
+          add_leftover(Leftover::fromxywh(x + width, y, width_delta, height))
         }
       } else if width_delta >= self.minlosize {
-        let ok = self.leftovers.add(
-          self.next_id,
-          Leftover::fromxywh(x + width, y, width_delta, height + height_delta),
-        )
-        if ok.not() {
-          abort("Atlas.get_offset: failed to add leftover")
-        }
-        self.next_id += 1
+        add_leftover(Leftover::fromxywh(x + width, y, width_delta, height + height_delta))
       } else if height_delta >= self.minlosize {
-        let ok = self.leftovers.add(
-          self.next_id,
-          Leftover::fromxywh(x, y + height, width + width_delta, height_delta),
-        )
-        if ok.not() {
-          abort("Atlas.get_offset: failed to add leftover")
-        }
-        self.next_id += 1
+        add_leftover(Leftover::fromxywh(x, y + height, width + width_delta, height_delta))
       }
       (x, y)
     }
@@ -388,33 +359,19 @@ fn get_offset(
       self.border_x = self.border_x + width
       if height > self.y_range.b {
         if x >= self.minlosize && height - self.y_range.b >= self.minlosize {
-          let ok = self.leftovers.add(
-            self.next_id,
-            Leftover::fromxywh(0, self.y_range.a, x, height - self.y_range.b),
-          )
-          if ok.not() {
-            abort("Atlas.get_offset: failed to add leftover")
-          }
-          self.next_id += 1
+          add_leftover(Leftover::fromxywh(0, self.y_range.a, x, height - self.y_range.b))
         }
         // self.wasted += x * (height - self.y_range.b)
         self.y_range = Range::new(y + height, height)
       } else if height < self.y_range.a - y {
         if width >= self.minlosize &&
           self.y_range.a - y - height >= self.minlosize {
-          let ok = self.leftovers.add(
-            self.next_id,
-            Leftover::fromxywh(
-              x,
-              y + height,
-              width,
-              self.y_range.a - y - height,
-            ),
-          )
-          if ok.not() {
-            abort("Atlas.get_offset: failed to add leftover")
-          }
-          self.next_id += 1
+          add_leftover(Leftover::fromxywh(
+            x,
+            y + height,
+            width,
+            self.y_range.a - y - height,
+          ))
         }
       }
       // self.wasted += width * (self.y_range.a - y - height)

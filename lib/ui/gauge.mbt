@@ -84,7 +84,6 @@ pub impl @graphics.Drawable for Gauge with draw(
   self : Gauge,
   args : @graphics.DrawArgument
 ) -> Unit {
-  let position = args.pos
   let length = (self.percentage * self.maximum.to_double()).to_int()
   if length > 0 {
     match self.t {
@@ -132,22 +131,6 @@ pub impl ToJson for Gauge with to_json(self) -> Json {
 
 ///|
 pub impl RenderUnit for Gauge with update(self) -> Unit {
-  ignore(self)
-  ()
-}
-
-///|
-pub impl RenderUnit for Gauge with get_interactive_area(self) {
-  ignore(self)
-  None
-}
-
-///|
-pub fn update(self : Gauge, t : Double) -> Unit {
-  if self.target != t {
-    self.target = t
-    self.step = (self.target - self.percentage) / 24.0
-  }
   if self.percentage != self.target {
     self.percentage += self.step
     if self.step < 0.0 {
@@ -159,5 +142,19 @@ pub fn update(self : Gauge, t : Double) -> Unit {
         self.percentage = self.target
       }
     }
+  }
+}
+
+///|
+pub impl RenderUnit for Gauge with get_interactive_area(self) {
+  ignore(self)
+  None
+}
+
+///|
+pub fn set_target(self : Gauge, t : Double) -> Unit {
+  if self.target != t {
+    self.target = t
+    self.step = (self.target - self.percentage) / 24.0
   }
 }

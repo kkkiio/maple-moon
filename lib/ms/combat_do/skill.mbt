@@ -41,7 +41,7 @@ pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
     let effect : SkillUseEffect = ByLevelUseEffect::new!(src)
     effect
   } else if multi_effect {
-    let effect : SkillUseEffect = MultiUseEffect::new!(src)
+    let effect = MultiUseEffect::new!(src) as &SkillUseEffect
     effect
   } else {
     let is_animation = src["effect"]["0"].get_bitmap().is_empty().not()
@@ -182,13 +182,13 @@ pub fn apply_stats(
   attack : @combat.Attack
 ) -> Unit {
   attack.skill = self.skill_id
-  let level = user.get_skilllevel(self.skill_id)
+  let level = (user.get_skilllevel)(self.skill_id)
   let stats = self.data.get_stats(level).unwrap() // TODO: Handle error
   if stats.fixdamage != 0 {
     attack.damagetype = @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
   } else if stats.matk != 0 {
     attack.damagetype = @combat.AttackDamageType::DMG_MAGIC(
-      user.get_stats().get_matk() + stats.matk,
+      (user.get_stats)().get_matk() + stats.matk,
     )
   } else {
     attack.damagetype = @combat.AttackDamageType::DMG_WEAPON(

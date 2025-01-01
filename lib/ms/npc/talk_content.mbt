@@ -202,10 +202,10 @@ fn parse_selection(
   ctx : VariableContext,
   line : String
 ) -> (Int, String)!ParseTalkError {
-  if line.starts_with("#L").not() {
+  if not(line.starts_with("#L")) {
     raise ParseTalkError("Missing selection open markup")
   }
-  if line.ends_with("#l").not() {
+  if not(line.ends_with("#l")) {
     raise ParseTalkError("Missing selection close markup")
   }
   let digit_start = 2

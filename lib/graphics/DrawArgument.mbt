@@ -16,7 +16,7 @@ pub(all) struct DrawArgument {
   yscale : Double
   angle : Double
   color : Color
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn DrawArgument::default() -> DrawArgument {
@@ -48,6 +48,16 @@ pub fn DrawArgument::new(
     opacity,
     angle,
   )
+}
+
+///|
+pub fn DrawArgument::new_ex(
+  pos~ : Point[Int] = @struct.Point::default(),
+  stretch~ : Point[Int] = @struct.Point::default(),
+  opacity~ : Double = 1.0,
+  angle~ : Double = 0.0
+) -> DrawArgument {
+  DrawArgument::new16(pos, pos, stretch, 1.0, 1.0, opacity, angle)
 }
 
 ///|
@@ -241,6 +251,19 @@ pub fn add_opacity(self : DrawArgument, argopc : Double) -> DrawArgument {
 
 ///|
 pub fn op_add(self : DrawArgument, o : DrawArgument) -> DrawArgument {
+  DrawArgument::new17(
+    self.pos + o.pos,
+    self.center + o.center,
+    self.stretch + o.stretch,
+    self.xscale * o.xscale,
+    self.yscale * o.yscale,
+    self.color * o.color,
+    self.angle + o.angle,
+  )
+}
+
+///|
+pub fn merge(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   DrawArgument::new17(
     self.pos + o.pos,
     self.center + o.center,

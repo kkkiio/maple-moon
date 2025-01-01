@@ -17,6 +17,7 @@ pub fn new_module(
       let mp = char_stats.get_stat(@maple_stat.Id::MP)
       let max_mp = char_stats.get_stat(@maple_stat.Id::MAXMP)
       let heal_mp = @math.minimum(max_mp - mp, 50)
+      guard heal_hp > 0 || heal_mp > 0 else { return }
       packet_processor.send_packet(new_heal_over_time_packet(heal_hp, heal_mp))
     },
     delay,

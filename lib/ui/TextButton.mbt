@@ -10,7 +10,7 @@ struct TextButton {
 
 ///|
 pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
-  { base: ButtonModel::default(), text, option_number: selection }
+  { base: ButtonModel::new(), text, option_number: selection }
 }
 
 ///|
@@ -21,7 +21,7 @@ pub fn get_button_base(self : TextButton) -> ButtonModel {
 ///|
 pub fn draw(self : TextButton, parentpos : Point[Int]) -> Unit {
   if self.base.active {
-    self.text.draw(parentpos)
+    self.text.draw(parentpos + self.base.position)
   }
 }
 

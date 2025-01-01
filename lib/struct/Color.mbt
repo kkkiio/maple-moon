@@ -286,7 +286,7 @@ pub fn int_value(self : ColorName) -> Int {
 }
 
 ///|
-pub(all) type Color (Double, Double, Double, Double) derive(Show, Eq)
+pub(all) type Color (Double, Double, Double, Double) derive(Show, Eq, ToJson)
 
 ///|
 pub fn Color::new_rgba(

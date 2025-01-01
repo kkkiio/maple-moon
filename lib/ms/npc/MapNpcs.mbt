@@ -3,7 +3,7 @@ struct MapNpcs {
   make_npc_talk_ui : (Attributes) -> @ui.Element
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
-  container : @ui.Container
+  container : &@ui.Container
   get_player_name : () -> String
   packet_processor : @net.PacketProcessor
 }
@@ -11,7 +11,7 @@ struct MapNpcs {
 ///|
 pub fn MapNpcs::new(
   make_npc_talk_ui : (Attributes) -> @ui.Element,
-  container : @ui.Container,
+  container : &@ui.Container,
   get_player_name : () -> String,
   packet_processor : @net.PacketProcessor
 ) -> MapNpcs {
@@ -199,7 +199,7 @@ pub fn Npc::new(
   let info = src["info"]
   let hide_name = info["hideName"].get_bool?().unwrap()
   // let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
-  let scripted = info["script"].is_null().not() ||
+  let scripted = not(info["script"].is_null()) ||
     info["shop"].get_bool?().unwrap()
   let dialogue = {}
   let mut i = 0
@@ -230,7 +230,7 @@ pub fn Npc::new(
   let name = strsrc["name"].get_string()
   let func = strsrc["func"].get_string()
   let npc_id = id
-  let flip = fl.not()
+  let flip = not(fl)
   // let control = cnt
   let stance = "stand"
   base.phobj.fhid = f

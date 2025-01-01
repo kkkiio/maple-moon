@@ -1,5 +1,7 @@
+///|
 typealias Mapping = @keyboard.Mapping
 
+///|
 pub(all) struct Keyboard {
   keymap : Map[String, Mapping]
   maple_keys : Map[Int, Mapping]
@@ -7,6 +9,7 @@ pub(all) struct Keyboard {
   key_state : Map[Int, Bool]
 }
 
+///|
 pub fn Keyboard::default() -> Keyboard {
   let keymap = Map::new()
   keymap.set(
@@ -113,10 +116,12 @@ pub fn Keyboard::default() -> Keyboard {
   }
 }
 
+///|
 pub fn get_maplekeys(self : Keyboard) -> Map[Int, Mapping] {
   self.maple_keys
 }
 
+///|
 pub fn get_ctrl_action(
   self : Keyboard,
   keycode : String
@@ -135,6 +140,7 @@ pub fn get_ctrl_action(
   }
 }
 
+///|
 pub fn assign(self : Keyboard, key : Int, tid : Int, action : Int) -> Unit {
   match @keyboard.get_type_by_id(tid) {
     @keyboard.KeyType::NONE => ()
@@ -146,6 +152,7 @@ pub fn assign(self : Keyboard, key : Int, tid : Int, action : Int) -> Unit {
   }
 }
 
+///|
 pub fn remove(self : Keyboard, key : Int) -> Unit {
   let mapping = Mapping::new(@keyboard.KeyType::NONE, 0)
   self.keymap.set(keytable[key], mapping)
@@ -202,14 +209,17 @@ pub fn remove(self : Keyboard, key : Int) -> Unit {
 //   Mapping::new(@keyboard.Id::NONE, 0)
 // }
 
+///|
 pub fn get_mapping(self : Keyboard, keycode : String) -> Mapping {
   self.keymap.get(keycode).or(Mapping::new(@keyboard.KeyType::NONE, 0))
 }
 
+///|
 pub fn get_maple_mapping(self : Keyboard, key : Int) -> Mapping {
   self.maple_keys.get(key).or(Mapping::new(@keyboard.KeyType::NONE, 0))
 }
 
+///|
 let keytable : FixedArray[String] = [
   "", "", @keyboard.digit0, @keyboard.digit1, @keyboard.digit2, @keyboard.digit3,
   @keyboard.digit4, @keyboard.digit5, @keyboard.digit6, @keyboard.digit7, @keyboard.digit8,

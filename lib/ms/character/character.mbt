@@ -19,8 +19,8 @@ pub(all) enum CharState {
 } derive(Eq, Compare)
 
 ///| Values are used in movement packets (Add one if facing left)
-pub fn int_value(self : CharState) -> Int {
-  match self {
+pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
+  (match self {
     WALK => 2
     STAND => 4
     FALL => 6
@@ -31,12 +31,8 @@ pub fn int_value(self : CharState) -> Int {
     ROPE => 16
     DIED => 18
     SIT => 20
-  }
-}
-
-///|
-pub fn hash(self : CharState) -> Hash {
-  self.int_value()
+  }) +
+  (if facing_right { 0 } else { 1 })
 }
 
 // Base for characters, e.g. the player and other clients on the same map.
@@ -59,7 +55,14 @@ pub(all) struct CharBase {
   // iron_body: TimedBool
   damage_number_set : @ui.NumberSet
   damage_numbers : Array[@ui.Number]
+  // Character trait methods converted to function fields
+  get_skilllevel : (Int) -> Int
+  get_stats : () -> @char_stats.CharStats
+  get_integer_attackspeed : () -> Int // Return the character's base attacking speed.
 }
+
+///| Type alias for backward compatibility
+pub(all) typealias Character = CharBase
 
 ///|
 pub fn get_position(self : CharBase) -> @struct.Point[Int] {
@@ -72,55 +75,14 @@ pub fn set_position(self : CharBase, pos : @struct.Point[Int]) -> Unit {
 }
 
 ///|
-pub(open) trait Character {
-  get_phobj(Self) -> PhysicsObject
-  // draw(Self, Double, Double, Double) -> Unit
-  // draw_preview(Self, Point[Int], Double) -> Unit
-  // update(Self, Physics) -> Int
-  // get_layer(Self) -> Int
-  // is_invincible(Self) -> Bool
-  get_skilllevel(Self, Int) -> Int
-  // get_real_attackspeed(Self) -> Double
-  get_attackdelay(Self, Int) -> Int
-  // set_direction(Self, Bool) -> Unit
-  set_state(Self, CharState) -> Unit
-  attack_by_action(Self, String) -> Unit
-  attack_by_stance(Self, @types.StanceId) -> Unit
-  regular_attack(Self, Bool) -> Unit
-  // set_afterimage(Self, Int) -> Unit
-  get_afterimage(Self) -> @char_look.Afterimage
-  show_attack_effect(Self, @graphics.Animation, Int) -> Unit
-  // show_effect_id(Self, CharEffectId) -> Unit
-  // add_recurring_effect(Self, Int, Animation, Int) -> Unit
-  // remove_recurring_effect(Self) -> Unit
-  show_iron_body(Self) -> Unit
-  // show_damage(Self, Int) -> Unit
-  // speak(Self, String) -> Unit
-  // set_state_by_byte(Self, Int) -> Unit
-  // set_expression(Self, Int) -> Unit
-  // add_pet(Self, Int, Int, String, Int, Point[Int], Int, Int) -> Unit
-  // remove_pet(Self, Int, Bool) -> Unit
-  // get_name(Self) -> String
-  // is_sitting(Self) -> Bool
-  // is_climbing(Self) -> Bool
-  is_twohanded(Self) -> Bool
-  get_weapontype(Self) -> @weapon.Type
-  get_look(Self) -> @char_look.CharLook
-  // get_look_const(Self) -> CharLook
-  // init() -> Unit
-  // new_char(Int, CharLook, String) -> Char
-  // update_with_speed(Self, Physics, Double) -> Bool
-  // get_stancespeed(Self) -> Double
-  get_position(Self) -> @struct.Point[Int]
-  get_stats(Self) -> @char_stats.CharStats // TODO: Remove
-}
-
-///|
 pub fn CharBase::new(
   oid : Int,
   look : @char_look.CharLook,
   name : String,
-  damage_number_set : @ui.NumberSet
+  damage_number_set : @ui.NumberSet,
+  get_skilllevel~ : (Int) -> Int,
+  get_stats~ : () -> @char_stats.CharStats,
+  get_integer_attackspeed~ : () -> Int
 ) -> CharBase {
   {
     base: MapObjectBase::new(oid),
@@ -141,6 +103,9 @@ pub fn CharBase::new(
     invincible: @utils.TimedBool::default(),
     damage_number_set,
     damage_numbers: Array::new(),
+    get_skilllevel,
+    get_stats,
+    get_integer_attackspeed,
   }
 }
 
@@ -271,7 +236,9 @@ pub fn set_direction(self : CharBase, f : Bool) -> Unit {
 ///|
 pub fn set_state(self : CharBase, st : CharState) -> Unit {
   self.state = st
-  self.look.set_stance(@types.StanceId::by_state(st.int_value()))
+  self.look.set_stance(
+    @types.StanceId::by_state(st.stance_value(facing_right=self.facing_right)),
+  )
 }
 
 ///|
@@ -313,6 +280,14 @@ pub fn get_weapontype(self : CharBase) -> @weapon.Type {
 }
 
 ///|
+pub fn get_weapon_type_in_look(look : @char_look.CharLook) -> @weapon.Type {
+  look
+  .get_equips()
+  .get_weapon()
+  .map_or(@weapon.Type::NONE, fn(data) { data.get_type() })
+}
+
+///|
 pub fn is_invincible(self : CharBase) -> Bool {
   self.invincible.get()
 }
@@ -341,16 +316,12 @@ pub fn get_oid(self : CharBase) -> Int {
 }
 
 ///|
-pub fn get_attackdelay(
-  self : CharBase,
-  no : Int,
-  base_attack_speed : Int
-) -> Int {
+pub fn get_attackdelay(self : CharBase, no : Int) -> Int {
   let first_frame = self.after_image
     .poll()
     .map_or(0, fn(image) { image.get_first_frame() }) // WARN: may produce incorrect delay
   let delay = self.look.get_attackdelay(no, first_frame)
-  let fspeed = get_real_attackspeed(base_attack_speed)
+  let fspeed = get_real_attackspeed((self.get_integer_attackspeed)())
   (delay.to_double() / fspeed).to_int()
 }
 
@@ -395,10 +366,9 @@ pub fn show_heal_number(self : CharBase, n : Int) -> Unit {
 pub fn show_attack_effect(
   self : CharBase,
   toshow : @graphics.Animation,
-  z : Int,
-  base_attack_speed : Int
+  z : Int
 ) -> Unit {
-  let attackspeed = get_real_attackspeed(base_attack_speed)
+  let attackspeed = get_real_attackspeed((self.get_integer_attackspeed)())
   self.effects.add(
     toshow,
     args=@graphics.DrawArgument::new(flip=self.facing_right),
@@ -424,6 +394,16 @@ pub fn attack_by_stance(self : CharBase, stance : @types.StanceId) -> Unit {
   self.look.attack_by_stance(stance)
   self.attacking = true
   self.look.set_alerted(5000)
+}
+
+///|
+pub fn get_look(self : CharBase) -> @char_look.CharLook {
+  self.look
+}
+
+///|
+pub fn get_afterimage(self : CharBase) -> @char_look.Afterimage {
+  self.after_image.poll().or_default()
 }
 
 ///|

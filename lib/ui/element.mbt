@@ -207,7 +207,7 @@ pub fn send_cursor(
 ) -> CursorState {
   let rs = self.use_runtime_state()
   send_cursor_to_areas(
-    rs.render_units.iter().map_option(fn(ru) { ru.get_interactive_area() }),
+    rs.render_units.iter().filter_map(fn(ru) { ru.get_interactive_area() }),
     self.get_ui_model().position,
     pressed,
     cursorpos,
@@ -292,15 +292,24 @@ pub fn is_in_range(self : UIModel, cursorpos : Point[Int]) -> Bool {
 ///|
 struct StaticUI[T] {
   drawable : T
-  pos : Point[Int]
+  args : @graphics.DrawArgument
 }
 
 ///|
 pub fn StaticUI::new[T](
   text : T,
-  pos~ : Point[Int] = Point::default()
+  pos~ : Point[Int] = Point::default(), // relative to the parent
+  stretch~ : Point[Int] = Point::default()
 ) -> StaticUI[T] {
-  { drawable: text, pos }
+  { drawable: text, args: @graphics.DrawArgument::new_ex(pos~, stretch~) }
+}
+
+///|
+pub fn StaticUI::new_ex[T](
+  text : T,
+  args~ : @graphics.DrawArgument = @graphics.DrawArgument::default()
+) -> StaticUI[T] {
+  { drawable: text, args }
 }
 
 ///|
@@ -308,7 +317,7 @@ pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUI[T] with draw(
   self,
   args
 ) -> Unit {
-  self.drawable.draw({ ..args, pos: args.pos + self.pos })
+  self.drawable.draw(args.merge(self.args))
 }
 
 ///|
@@ -328,7 +337,7 @@ pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T] with get_in
 
 ///|
 pub impl[T : ToJson] ToJson for StaticUI[T] with to_json(self) -> Json {
-  { "drawable": self.drawable.to_json(), "pos": self.pos.to_json() }
+  { "drawable": self.drawable.to_json(), "args": self.args.to_json() }
 }
 
 ///|
@@ -375,4 +384,27 @@ pub(all) type TextUI @graphics.Text derive(ToJson)
 ///|
 pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
   self._.draw(args.pos)
+}
+
+///|
+pub type OffsetedUnit[T] (T, Point[Int]) derive(ToJson)
+
+///|
+pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T] with draw(
+  self,
+  args
+) -> Unit {
+  self.0.draw(args.add_pos(self.1))
+}
+
+///|
+pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with update(self) -> Unit {
+  self.0.update()
+}
+
+///|
+pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with get_interactive_area(
+  self
+) -> InteractiveArea? {
+  self.0.get_interactive_area()
 }

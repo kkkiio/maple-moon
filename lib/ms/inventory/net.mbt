@@ -85,7 +85,7 @@ fn change_equip(
 ) -> Unit {
   let slot = @slot.Id::from_int(raw_slot_id)
   match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
-    0 => player.get_look().remove_equip(slot)
-    itemid => player.get_look().add_equip(itemid, slot)
+    0 => player.character.get_look().remove_equip(slot)
+    itemid => player.character.get_look().add_equip(itemid, slot)
   }
 }

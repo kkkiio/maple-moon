@@ -21,8 +21,8 @@ struct CharStats {
   mut stance : Double
   mut reduce_damage : Double
   female : Bool
-  stat_listeners : Map[StatId, Array[(Int, Int) -> Bool]]
-  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]]
+  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]]
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
 }
 
 ///|
@@ -139,7 +139,12 @@ pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
   self.base_stats.set(stat, value)
   match self.stat_listeners.get(stat) {
     Some(listeners) =>
-      listeners.retain(fn(listener) { listener(old_value, value) })
+      listeners.retain(fn(listener) {
+        match listener(old_value, value) {
+          IterResult::IterEnd => false
+          IterResult::IterContinue => true
+        }
+      })
     None => ()
   }
 }
@@ -360,12 +365,22 @@ pub fn get_matk(self : CharStats) -> Int {
   self.total_stats[@equip_stat.MAGIC]
 }
 
-///|
-pub fn listen_stat_changes(
+///| Watch for stat changes
+/// 
+/// The `listener` will be called when the stat changes.
+pub fn watch_stat_changes(
   self : CharStats,
   stat_id : StatId,
-  listener : (Int, Int) -> Bool
+  trigger_now~ : Bool = false,
+  listener : (Int, Int) -> IterResult
 ) -> Unit {
+  if trigger_now {
+    let v = self.get_stat(stat_id)
+    match listener(v, v) {
+      IterResult::IterEnd => return
+      IterResult::IterContinue => ()
+    }
+  }
   self.stat_listeners.get_or_init(stat_id, fn() { Array::new() }).push(listener)
 }
 
@@ -373,7 +388,7 @@ pub fn listen_stat_changes(
 pub fn listen_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
-  listener : (Int64, Int64) -> Bool
+  listener : (Int64, Int64) -> IterResult
 ) -> Unit {
   self.i64stat_listeners
   .get_or_init(stat_id, fn() { Array::new() })

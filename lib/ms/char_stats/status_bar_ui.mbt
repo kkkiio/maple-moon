@@ -1,6 +1,6 @@
 ///|
 struct UIStatusBar {
-  stats : @char_stats.CharStats
+  stats : CharStats
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
   exp_bar : @ui.Gauge
@@ -19,7 +19,7 @@ struct UIStatusBar {
 }
 
 ///|
-pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
+pub fn UIStatusBar::new(stats : CharStats) -> UIStatusBar {
   let vwidth = @constants.constants.get_viewwidth()
   let mainBar = @ui.common_ui_loader().load_res(["StatusBar3.img", "mainBar"])
   let stat = "status"
@@ -84,55 +84,55 @@ pub fn UIStatusBar::new(stats : @char_stats.CharStats) -> UIStatusBar {
     ),
   )
   let hpmp_max = 139 + 30
-  let hp_bar_ = @ui.Gauge::new(
+  let hp_bar = @ui.Gauge::new(
     @ui.GaugeType::GAME,
     status["gauge"]["hp"]["layer:0"] |> @graphics.Texture::from_resource,
     hpmp_max,
     0.0,
   )
-  let mp_bar_ = @ui.Gauge::new(
+  let mp_bar = @ui.Gauge::new(
     @ui.GaugeType::GAME,
     status["gauge"]["mp"]["layer:0"] |> @graphics.Texture::from_resource,
     hpmp_max,
     0.0,
   )
-  let stat_set_ = @graphics.Charset::new(
+  let stat_set = @graphics.Charset::new(
     expBar["number"],
     @graphics.CharsetAlignment::RIGHT,
   )
-  let hpmp_set_ = @graphics.Charset::new(
+  let hpmp_set = @graphics.Charset::new(
     status["gauge"]["number"],
     @graphics.CharsetAlignment::RIGHT,
   )
-  let level_set_ = @graphics.Charset::new(
+  let level_set = @graphics.Charset::new(
     status["lvNumber"],
     @graphics.CharsetAlignment::LEFT,
   )
   let position = @struct.Point::new(0, 648)
   let position_x = 585
   let dimension = @struct.Point::new(vwidth - position_x, 75)
-  stats.listen_stat_changes(@maple_stat.Id::EXP, fn(_old, _new) {
-    exp_bar.update(getexppercent(stats))
-    true
+  stats.watch_stat_changes(@maple_stat.Id::EXP, trigger_now=true, fn(_, _) {
+    exp_bar.set_target(getexppercent(stats))
+    IterContinue
   })
-  stats.listen_stat_changes(@maple_stat.Id::HP, fn(_old, _new) {
-    hp_bar_.update(gethppercent(stats))
-    true
+  stats.watch_stat_changes(@maple_stat.Id::HP, trigger_now=true, fn(_, _) {
+    hp_bar.set_target(gethppercent(stats))
+    IterContinue
   })
-  stats.listen_stat_changes(@maple_stat.Id::MP, fn(_old, _new) {
-    mp_bar_.update(getmppercent(stats))
-    true
+  stats.watch_stat_changes(@maple_stat.Id::MP, trigger_now=true, fn(_, _) {
+    mp_bar.set_target(getmppercent(stats))
+    IterContinue
   })
   {
     stats,
     base: @ui.UIModel::new(position, dimension),
     sprites,
     exp_bar,
-    hp_bar: hp_bar_,
-    mp_bar: mp_bar_,
-    stat_set: stat_set_,
-    hpmp_set: hpmp_set_,
-    level_set: level_set_,
+    hp_bar,
+    mp_bar,
+    stat_set,
+    hpmp_set,
+    level_set,
     hpmp_sprites,
     exp_pos,
     hpmp_pos,
@@ -153,11 +153,11 @@ pub impl @ui.UIElement for UIStatusBar with render(self) {
   // Add HP/MP background sprite
   render_units.push(@ui.SpriteUI(self.hpmp_sprites[0]))
   // Add exp bar
-  render_units.push(@ui.StaticUI::new(self.exp_bar, pos=self.exp_pos))
+  render_units.push(@ui.OffsetedUnit((self.exp_bar, self.exp_pos)))
   // Add HP bar
-  render_units.push(@ui.StaticUI::new(self.hp_bar, pos=self.hpmp_pos))
+  render_units.push(@ui.OffsetedUnit((self.hp_bar, self.hpmp_pos)))
   // Add MP bar
-  render_units.push(@ui.StaticUI::new(self.mp_bar, pos=self.hpmp_pos))
+  render_units.push(@ui.OffsetedUnit((self.mp_bar, self.hpmp_pos)))
   // Add HP/MP cover sprites
   render_units.push(self.hpmp_sprites[1] |> @ui.SpriteUI)
   render_units.push(self.hpmp_sprites[2] |> @ui.SpriteUI)
@@ -178,7 +178,7 @@ pub impl @ui.UIElement for UIStatusBar with render(self) {
 
   // Add HP text
   let hp = self.stats.get_stat(@maple_stat.Id::HP)
-  let maxhp = self.stats.get_total(@stat.Id::HP)
+  let maxhp = self.stats.get_total(@equip_stat.Id::HP)
   render_units.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{hp}/\{maxhp}]")),
@@ -188,7 +188,7 @@ pub impl @ui.UIElement for UIStatusBar with render(self) {
 
   // Add MP text
   let mp = self.stats.get_stat(@maple_stat.Id::MP)
-  let maxmp = self.stats.get_total(@stat.Id::MP)
+  let maxmp = self.stats.get_total(@equip_stat.Id::MP)
   render_units.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{mp}/\{maxmp}]")),
@@ -216,45 +216,32 @@ pub fn update(self : UIStatusBar) -> Unit {
 }
 
 ///|
-fn getexppercent(stats : @char_stats.CharStats) -> Double {
+fn getexppercent(stats : CharStats) -> Double {
   let level = stats.get_stat(@maple_stat.Id::LEVEL)
-  if level >= @character.level_cap {
+  if level >= LEVEL_CAP {
     return 0.0
   }
   let exp = stats.get_exp()
-  exp.to_double() / @character.exp_table[level].to_double()
+  exp.to_double() / exp_table[level].to_double()
 }
 
 ///|
-fn gethppercent(stats : @char_stats.CharStats) -> Double {
+fn gethppercent(stats : CharStats) -> Double {
   let hp = stats.get_stat(@maple_stat.Id::HP)
-  let maxhp = stats.get_total(@stat.Id::HP)
+  let maxhp = stats.get_total(@equip_stat.Id::HP)
   hp.to_double() / maxhp.to_double()
 }
 
 ///|
-fn getmppercent(stats : @char_stats.CharStats) -> Double {
+fn getmppercent(stats : CharStats) -> Double {
   let mp = stats.get_stat(@maple_stat.Id::MP)
-  let maxmp = stats.get_total(@stat.Id::MP)
+  let maxmp = stats.get_total(@equip_stat.Id::MP)
   mp.to_double() / maxmp.to_double()
 }
 
 ///|
 pub fn get_ui_model(self : UIStatusBar) -> @ui.UIModel {
   self.base
-}
-
-///|
-pub fn send_cursor(
-  self : UIStatusBar,
-  pressed : Bool,
-  _cursorpos : @struct.Point[Int]
-) -> @ui.CursorState {
-  if pressed {
-    @ui.CursorState::CLICKING
-  } else {
-    @ui.CursorState::IDLE
-  }
 }
 
 ///|

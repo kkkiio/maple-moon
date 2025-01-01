@@ -1,7 +1,7 @@
 ///|
 struct SkillBook {
   skill_entries : Map[Int, SkillEntry]
-  skill_level_listeners : Array[(Int, Int) -> Bool]
+  skill_level_listeners : Array[(Int, Int) -> IterResult]
   available_skills : Map[Int, @skill.SkillData]
 }
 
@@ -13,16 +13,14 @@ pub fn SkillBook::load(job : @job.Job) -> @utils.Future[SkillBook] {
   .map(fn(skill_id) { @skill.SkillData::load(skill_id) })
   .collect()
   |> @utils.Future::all_of()
-  |> @utils.map(
-    fn(it) {
-      let available_skills = Map::new()
-      for skill_data in it {
-        let skill_data = skill_data.unwrap() // TODO: handle error
-        available_skills.set(skill_data.id, skill_data)
-      }
-      SkillBook::new(available_skills)
-    },
-  )
+  |> @utils.map(fn(it) {
+    let available_skills = Map::new()
+    for skill_data in it {
+      let skill_data = skill_data.unwrap() // TODO: handle error
+      available_skills.set(skill_data.id, skill_data)
+    }
+    SkillBook::new(available_skills)
+  })
 }
 
 ///|
@@ -52,10 +50,11 @@ pub fn collect_required(
   self : SkillBook,
   id : Int
 ) -> @immut/hashmap.T[Int, Int] {
-  self.available_skills[id].map_or(
-    @immut/hashmap.new(),
-    fn(skill_data) -> @immut/hashmap.T[Int, Int] { skill_data.req_skills },
-  )
+  self.available_skills[id].map_or(@immut/hashmap.new(), fn(
+    skill_data
+  ) -> @immut/hashmap.T[Int, Int] {
+    skill_data.req_skills
+  })
 }
 
 ///|
@@ -76,13 +75,18 @@ pub fn set_skill(
   _expiration : Int
 ) -> Unit {
   self.skill_entries.set(id, { level, master_level })
-  self.skill_level_listeners.retain(fn(listener) { listener(id, level) })
+  self.skill_level_listeners.retain(fn(listener) {
+    match listener(id, level) {
+      IterContinue => true
+      IterEnd => false
+    }
+  })
 }
 
 ///|
 pub fn listen_skill_level_changes(
   self : SkillBook,
-  listener : (Int, Int) -> Bool
+  listener : (Int, Int) -> IterResult
 ) -> Unit {
   self.skill_level_listeners.push(listener)
 }

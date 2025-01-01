@@ -1,13 +1,17 @@
+///|
 trait SkillAction {
   apply(Self, @character.Character, @combat.AttackType) -> Unit
 }
 
+///|
 struct NoAction {} derive(Default)
 
+///|
 fn NoAction::new() -> NoAction {
   NoAction::default()
 }
 
+///|
 fn apply(
   self : NoAction,
   target : @character.Character,
@@ -16,14 +20,17 @@ fn apply(
   // Do nothing
 }
 
+///|
 struct SingleAction {
   action : String
 }
 
+///|
 fn SingleAction::new(src : @resource.NxNode) -> SingleAction {
   { action: src["action"]["0"].get_string() }
 }
 
+///|
 fn apply(
   self : SingleAction,
   target : @character.Character,
@@ -32,10 +39,12 @@ fn apply(
   target.attack_by_action(self.action)
 }
 
+///|
 struct TwoHandedAction {
   actions : @utils.BoolPair[String]
 }
 
+///|
 fn TwoHandedAction::new(src : @resource.NxNode) -> TwoHandedAction {
   {
     actions: @utils.BoolPair::new(
@@ -45,6 +54,7 @@ fn TwoHandedAction::new(src : @resource.NxNode) -> TwoHandedAction {
   }
 }
 
+///|
 fn apply(
   self : TwoHandedAction,
   target : @character.Character,
@@ -55,11 +65,13 @@ fn apply(
   target.attack_by_action(action)
 }
 
+///|
 struct ByLevelAction {
   actions : Map[Int, String]
   skill_id : Int
 }
 
+///|
 fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction! {
   let actions = Map::new()
   for sub in src["level"] {
@@ -70,12 +82,13 @@ fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction! {
   { actions, skill_id: id }
 }
 
+///|
 fn apply(
   self : ByLevelAction,
   target : @character.Character,
   atype : @combat.AttackType
 ) -> Unit {
-  let level = target.get_skilllevel(self.skill_id)
+  let level = (target.get_skilllevel)(self.skill_id)
   match self.actions.get(level) {
     Some(action) => target.attack_by_action(action)
     None => ()

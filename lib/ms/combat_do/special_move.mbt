@@ -1,3 +1,4 @@
+///|
 pub(all) enum ForbidReason {
   FBR_NONE
   FBR_WEAPONTYPE
@@ -8,15 +9,88 @@ pub(all) enum ForbidReason {
   FBR_OTHER
 } derive(Eq)
 
-pub(open) trait SpecialMove {
-  get_id(Self) -> Int
-  is_attack(Self) -> Bool
-  is_skill(Self) -> Bool
-  apply_useeffects(Self, @character.Character) -> Unit
-  apply_actions(Self, @character.Character, @combat.AttackType) -> Unit
-  apply_stats(Self, @character.Character, @combat.Attack) -> Unit
-  get_bullet(Self, @character.Character, Int) ->
-       @utils.Future[@graphics.Animation]
-  can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
-  apply_hit_effects(Self, @combat.AttackUser, @monster.Mob) -> Unit
+///|
+pub(all) struct SpecialMove {
+  id : Int
+  attack : Bool
+  skill : Bool
+  apply_useeffects : (@character.Character) -> Unit
+  apply_actions : (@character.Character, @combat.AttackType) -> Unit
+  make_attack : (@player.Player, @combat.AttackType, Bool) -> @combat.Attack
+  get_bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
+  can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+  apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
+}
+
+///|
+pub fn get_id(self : SpecialMove) -> Int {
+  self.id
+}
+
+///|
+pub fn is_attack(self : SpecialMove) -> Bool {
+  self.attack
+}
+
+///|
+pub fn is_skill(self : SpecialMove) -> Bool {
+  self.skill
+}
+
+///|
+pub fn apply_useeffects(
+  self : SpecialMove,
+  char : @character.Character
+) -> Unit {
+  (self.apply_useeffects)(char)
+}
+
+///|
+pub fn apply_actions(
+  self : SpecialMove,
+  char : @character.Character,
+  attack_type : @combat.AttackType
+) -> Unit {
+  (self.apply_actions)(char, attack_type)
+}
+
+///|
+pub fn make_attack(
+  self : SpecialMove,
+  player : @player.Player,
+  attack_type : @combat.AttackType,
+  degenerate : Bool
+) -> @combat.Attack {
+  (self.make_attack)(player, attack_type, degenerate)
+}
+
+///|
+pub fn get_bullet(
+  self : SpecialMove,
+  char : @character.Character,
+  value : Int
+) -> @utils.Future[@graphics.Animation] {
+  (self.get_bullet)(char, value)
+}
+
+///|
+pub fn can_use(
+  self : SpecialMove,
+  value : Int,
+  weapon_type : @weapon.Type,
+  job : @job.Job,
+  hp : Int,
+  mp : Int,
+  bullet : Int
+) -> ForbidReason {
+  (self.can_use)(value, weapon_type, job, hp, mp, bullet)
+}
+
+///|
+pub fn apply_hit_effects(
+  self : SpecialMove,
+  attack_user : @combat.AttackUser,
+  mob : @monster.Mob
+) -> Unit {
+  (self.apply_hit_effects)(attack_user, mob)
 }

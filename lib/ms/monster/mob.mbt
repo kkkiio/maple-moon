@@ -48,7 +48,7 @@ pub fn Stance::from_type(t : StanceType) -> Stance {
 
 ///|
 pub fn flip(self : Stance) -> Stance {
-  { t: self.t, face_right: self.face_right.not() }
+  { t: self.t, face_right: not(self.face_right) }
 }
 
 ///|
@@ -117,13 +117,9 @@ pub fn Mob::load(
   let strid = @string_format.extend_id(mid, 7)
   mob_loader
   .load_res([strid + ".img"])
-  .map_exn(
-    fn(src) {
-      Mob::new!(
-        oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src,
-      )
-    },
-  )
+  .map_exn(fn(src) {
+    Mob::new!(oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src)
+  })
 }
 
 ///|
@@ -195,16 +191,14 @@ fn Mob::new(
   }
   let attack_stands = (1)
     .until(@int.max_value)
-    .map_while(
-      fn(i) {
-        let attack_node = src["attack" + i.to_string()]
-        if attack_node.get_children_count() > 0 {
-          Some((i, attack_node |> @graphics.Animation::from_resource))
-        } else {
-          None
-        }
-      },
-    )
+    .map_while(fn(i) {
+      let attack_node = src["attack" + i.to_string()]
+      if attack_node.get_children_count() > 0 {
+        Some((i, attack_node |> @graphics.Animation::from_resource))
+      } else {
+        None
+      }
+    })
     |> Map::from_iter
 
   // init or risk crash
@@ -426,9 +420,10 @@ fn next_move(self : Mob) -> Unit {
   if self.can_move {
     match self.stance.t {
       StanceType::HIT | StanceType::STAND =>
-        self.set_stance(
-          { t: StanceType::MOVE, face_right: self.randomizer.next_bool() },
-        )
+        self.set_stance({
+          t: StanceType::MOVE,
+          face_right: self.randomizer.next_bool(),
+        })
       StanceType::MOVE | StanceType::JUMP =>
         if self.can_jump &&
           self.base.phobj.onground &&
@@ -444,9 +439,11 @@ fn next_move(self : Mob) -> Unit {
       _ => ()
     }
     if self.stance.t == StanceType::MOVE && self.can_fly {
-      self.fly_direction = self.randomizer.choose(
-        [FlyDirection::STRAIGHT, FlyDirection::UPWARDS, FlyDirection::DOWNWARDS],
-      )
+      self.fly_direction = self.randomizer.choose([
+        FlyDirection::STRAIGHT,
+        FlyDirection::UPWARDS,
+        FlyDirection::DOWNWARDS,
+      ])
     }
   } else {
     self.set_stance(Stance::from_type(StanceType::STAND))
@@ -798,10 +795,9 @@ pub fn calculate_damage(
       (mindamage, maxdamage, hitchance, critical)
     }
   }
-  let result = Array::makei(
-    attack.hitcount,
-    fn(_i) { self.next_damage(mindamage, maxdamage, hitchance, critical) },
-  )
+  let result = Array::makei(attack.hitcount, fn(_i) {
+    self.next_damage(mindamage, maxdamage, hitchance, critical)
+  })
   self.update_movement()
   result
 }

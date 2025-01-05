@@ -32,28 +32,6 @@ pub(all) struct Attack {
   toleft : Bool
 }
 
-///|
-pub fn Attack::default() -> Attack {
-  {
-    t: AttackType::CLOSE,
-    damagetype: AttackDamageType::DMG_WEAPON(1, 1),
-    critical: 0.0,
-    ignoredef: 0.0,
-    accuracy: 0,
-    playerlevel: 1,
-    hitcount: 0,
-    mobcount: 0,
-    speed: 0,
-    stance: 0,
-    skill: 0,
-    bullet: 0,
-    origin: @struct.Point::default(),
-    range: @struct.Rectangle::default(),
-    hrange: 1.0,
-    toleft: false,
-  }
-}
-
 ///| an attack coming from a mob
 pub struct MobAttack {
   t : AttackType

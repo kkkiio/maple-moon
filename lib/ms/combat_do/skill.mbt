@@ -154,11 +154,6 @@ pub fn Skill::is_attack(self : Skill) -> Bool {
 }
 
 ///|
-pub fn Skill::is_skill(self : Skill) -> Bool {
-  true
-}
-
-///|
 pub fn Skill::apply_useeffects(
   self : Skill,
   user : @character.Character
@@ -176,35 +171,62 @@ pub fn apply_actions(
 }
 
 ///|
-pub fn apply_stats(
+pub fn make_attack(
   self : Skill,
-  user : @character.Character,
-  attack : @combat.Attack
-) -> Unit {
-  attack.skill = self.skill_id
-  let level = (user.get_skilllevel)(self.skill_id)
-  let stats = self.data.get_stats(level).unwrap() // TODO: Handle error
-  if stats.fixdamage != 0 {
-    attack.damagetype = @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
-  } else if stats.matk != 0 {
-    attack.damagetype = @combat.AttackDamageType::DMG_MAGIC(
-      user.get_stats().get_matk() + stats.matk,
-    )
-  } else {
-    attack.damagetype = @combat.AttackDamageType::DMG_WEAPON(
-      stats.damage,
-      stats.damage,
-    )
+  player : @player.Player,
+  attacktype : @combat.AttackType,
+  degenerate : Bool
+) -> @combat.Attack {
+  let t = attacktype
+  let mut mindamage = player.stats.get_mindamage().to_double()
+  let mut maxdamage = player.stats.get_maxdamage().to_double()
+  if degenerate {
+    mindamage /= 10
+    maxdamage /= 10
   }
-  attack.critical += stats.critical
-  attack.ignoredef += stats.ignoredef
-  attack.mobcount = stats.mobcount
-  attack.hrange = stats.hrange
+  let critical = player.stats.get_critical()
+  let ignoredef = player.stats.get_ignoredef()
+  let accuracy = player.stats.get_total(@stat.Id::ACC)
+  let playerlevel = player.stats.get_stat(@maple_stat.Id::LEVEL)
+  let range = player.stats.get_range()
+  let bullet = player.inventory.get_bulletid()
+  let origin = player.character.get_position()
+  let toleft = player.character.facing_right |> not()
+  let speed = (player.character.get_integer_attackspeed)()
+  let chr = player.character
+  let level = (chr.get_skilllevel)(self.skill_id)
+  let stats = self.data.get_stats(level).unwrap() // TODO: Handle error
+  let attack : @combat.Attack = {
+    hitcount: 0,
+    stance: 0,
+    damagetype: if stats.fixdamage != 0 {
+      @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
+    } else if stats.matk != 0 {
+      @combat.AttackDamageType::DMG_MAGIC(
+        chr.get_stats().get_matk() + stats.matk,
+      )
+    } else {
+      @combat.AttackDamageType::DMG_WEAPON(stats.damage, stats.damage)
+    },
+    t,
+    critical: critical + stats.critical,
+    ignoredef: ignoredef + stats.ignoredef,
+    accuracy,
+    playerlevel,
+    range,
+    bullet,
+    origin,
+    toleft,
+    speed,
+    skill: self.skill_id,
+    mobcount: stats.mobcount,
+    hrange: stats.hrange,
+  }
   match attack.t {
     @combat.AttackType::RANGED => attack.hitcount = stats.bulletcount
     _ => attack.hitcount = stats.attackcount
   }
-  if stats.range.is_empty().not() {
+  if not(stats.range.is_empty()) {
     attack.range = stats.range
   }
   if self.projectile && attack.bullet == 0 {
@@ -220,11 +242,12 @@ pub fn apply_stats(
     }
   }
   if self.over_regular {
-    attack.stance = user.get_look().get_stance().int_value()
-    if attack.t == @combat.AttackType::CLOSE && self.projectile.not() {
-      attack.range = user.get_afterimage().get_range()
+    attack.stance = chr.get_look().get_stance().int_value()
+    if attack.t == @combat.AttackType::CLOSE && not(self.projectile) {
+      attack.range = chr.get_afterimage().get_range()
     }
   }
+  attack
 }
 
 ///|

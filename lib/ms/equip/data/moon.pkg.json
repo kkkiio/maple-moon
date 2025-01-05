@@ -1,0 +1,9 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/ms/maple_stat",
+    "KKKIIO/maple-moon-client/lib/ms/equip/stat",
+    "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/ms/equip/quality"
+  ]
+}

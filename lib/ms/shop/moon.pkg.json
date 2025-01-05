@@ -1,0 +1,18 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/net",
+    "KKKIIO/maple-moon-client/lib/log",
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/ui",
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/ms/char_look",
+    "KKKIIO/maple-moon-client/lib/ms/char_look/types",
+    "KKKIIO/maple-moon-client/lib/ms/character",
+    "KKKIIO/maple-moon-client/lib/ms/inventory",
+    "KKKIIO/maple-moon-client/lib/ms/npc",
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/ms/string_format",
+    "KKKIIO/maple-moon-client/lib/utils"
+  ]
+}

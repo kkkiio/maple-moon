@@ -1,2 +1,11 @@
 target/
 .mooncakes/
+nx/files
+.xmake
+build
+.cache
+
+.vscode
+
+# windsurf rules
+.windsurfrules

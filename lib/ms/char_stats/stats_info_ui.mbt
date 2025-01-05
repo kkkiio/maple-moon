@@ -500,7 +500,7 @@ fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
 fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
   ..write_time()
-  ..write_int(@maple_stat.codes[stat].unwrap())
+  ..write_int(stat.int_value())
 }
 
 ///|

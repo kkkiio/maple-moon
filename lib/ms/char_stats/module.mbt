@@ -70,45 +70,24 @@ pub fn make_stat_handlers(
   .map(fn(stat_id) {
     (
       stat_id,
-      match stat_id {
-        @maple_stat.Id::LEVEL =>
-          {
-            parse_fn: fn(recv) { recv.read_ubyte!() },
-            update_fn: fn(level) {
-              guard let Some(char_stats) = (self.player_char_stats_getter)() else {
-                None => return false
-              }
-              char_stats.set_stat(@maple_stat.LEVEL, level)
-              // TODO: notify char_base
-              // let oldlevel = self.stats.get_level()
-              // if level > oldlevel {
-              //   self.char_base.show_effect_id(@character.CharEffectId::LEVEL_UP)
-              // }
-              false
-            },
+      fn(value) {
+        guard let Some(char_stats) = (self.player_char_stats_getter)() else {
+          None => return false
+        }
+        match stat_id {
+          @maple_stat.Id::LEVEL => {
+            char_stats.set_stat(@maple_stat.Id::LEVEL, value)
+            false
           }
-        @maple_stat.Id::EXP =>
-          {
-            parse_fn: fn(recv) { recv.read_int!() },
-            update_fn: fn(exp) {
-              guard let Some(char_stats) = (self.player_char_stats_getter)() else {
-                None => return false
-              }
-              char_stats.set_exp(exp.to_int64())
-              false
-            },
+          @maple_stat.Id::EXP => {
+            char_stats.set_exp(value.to_int64())
+            false
           }
-        _ =>
-          {
-            parse_fn: fn(recv) { recv.read_short!() },
-            update_fn: fn(value) {
-              guard let Some(char_stats) = (self.player_char_stats_getter)() else {
-                None => return false
-              }
-              char_stats.set_stat(stat_id, value)
-              true
-            },
+          _ => {
+            char_stats.set_stat(stat_id, value)
+            true
           }
+        }
       },
     )
   })

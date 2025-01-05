@@ -121,7 +121,7 @@ struct NpcSpawn {
   position : @struct.Point[Int]
   flip : Bool
   fh : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn get_oid(self : NpcSpawn) -> Int {

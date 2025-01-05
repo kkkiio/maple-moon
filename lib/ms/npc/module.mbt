@@ -111,7 +111,7 @@ pub struct SpawnNpcController {
   mode : Int
   oid : Int
   npc : NpcSpawn?
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_spawn_npc_controller(recv : @net.InPacket) -> SpawnNpcController! {
@@ -152,7 +152,7 @@ pub struct NpcDialogue {
   text : String
   style_b0 : Int
   style_b1 : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {

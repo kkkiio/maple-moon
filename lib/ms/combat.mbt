@@ -323,7 +323,7 @@ fn extract_effects(
 ) -> Unit {
   let attack_user : @combat.AttackUser = {
     skill_level: (user.get_skilllevel)(act.get_id()),
-    level: (user.get_stats)().get_stat(@maple_stat.Id::LEVEL),
+    level: user.get_stats().get_stat(@maple_stat.Id::LEVEL),
     second_weapon: user.is_twohanded(),
     flip: not(result.toleft),
   }

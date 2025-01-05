@@ -9,7 +9,7 @@ pub struct DropLoot {
   dropto : @struct.Point[Int]
   dropfrom : @struct.Point[Int]
   player_drop : Bool
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_drop_loot(recv : @net.InPacket) -> DropLoot! {
@@ -56,7 +56,7 @@ pub struct RemoveLoot {
   mode : Int
   oid : Int
   looter : @physics.PhysicsObject?
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_remove_loot(

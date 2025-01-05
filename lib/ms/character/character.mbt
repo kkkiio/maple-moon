@@ -40,6 +40,7 @@ pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
 pub(all) struct CharBase {
   base : MapObjectBase
   mut look : @char_look.CharLook
+  stats : @char_stats.CharStats
   // look_preview: CharLook
   // pets: Array[PetLook, 3]
   mut state : CharState
@@ -57,7 +58,6 @@ pub(all) struct CharBase {
   damage_numbers : Array[@ui.Number]
   // Character trait methods converted to function fields
   get_skilllevel : (Int) -> Int
-  get_stats : () -> @char_stats.CharStats
   get_integer_attackspeed : () -> Int // Return the character's base attacking speed.
 }
 
@@ -81,12 +81,13 @@ pub fn CharBase::new(
   name : String,
   damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
-  get_stats~ : () -> @char_stats.CharStats,
+  stats : @char_stats.CharStats,
   get_integer_attackspeed~ : () -> Int
 ) -> CharBase {
-  {
+  let char_base = {
     base: MapObjectBase::new(oid),
     look,
+    stats,
     attacking: false,
     facing_right: false,
     name,
@@ -104,9 +105,15 @@ pub fn CharBase::new(
     damage_number_set,
     damage_numbers: Array::new(),
     get_skilllevel,
-    get_stats,
     get_integer_attackspeed,
   }
+  stats.watch_stat_changes(@maple_stat.Id::LEVEL, fn(old, new) {
+    if new > old {
+      char_base.show_effect_id(CharEffectId::LEVEL_UP)
+    }
+    IterContinue
+  })
+  char_base
 }
 
 ///|
@@ -191,25 +198,6 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   self.invincible.update()
   //     iron_body_.update();
 
-  //     for (auto &pet : pets_) {
-  //         if (pet.get_itemid()) {
-  //             switch (state_) {
-  //                 case State::LADDER:
-  //                 case State::ROPE: pet.set_stance(PetLook::Stance::HANG); break;
-  //                 case State::SWIM: pet.set_stance(PetLook::Stance::FLY); break;
-  //                 default:
-  //                     if (pet.get_stance() == PetLook::Stance::HANG
-  //                         || pet.get_stance() == PetLook::Stance::FLY) {
-  //                         pet.set_stance(PetLook::Stance::STAND);
-  //                     }
-
-  //                     break;
-  //             }
-
-  //             pet.update(physics, get_position());
-  //         }
-  //     }
-
   let stancespeed = if speed >= 1.0 / @constants.step_time_ms.to_double() {
     (@constants.step_time_ms.to_double() * speed).to_int()
   } else {
@@ -246,8 +234,7 @@ pub fn is_facing_right(self : CharBase) -> Bool {
   self.facing_right
 }
 
-// Get a speed modifier for the current stance.
-///|
+///| Get a speed modifier for the current stance.
 pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   if self.attacking {
     return get_real_attackspeed(base_attack_speed)
@@ -260,8 +247,7 @@ pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   }
 }
 
-// Return the attack speed as a multiplier
-///|
+///| Return the attack speed as a multiplier
 pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
   return 1.7 - base_attack_speed.to_double() / 10.0
 }
@@ -407,8 +393,13 @@ pub fn get_afterimage(self : CharBase) -> @char_look.Afterimage {
 }
 
 ///|
+pub fn get_stats(self : CharBase) -> @char_stats.CharStats {
+  self.stats
+}
+
+///|
 pub(all) struct CharEntry {
   stats : @char_stats.StatsEntry
   look : @char_look.LookEntry
   id : Int
-}
+} derive(Show, ToJson)

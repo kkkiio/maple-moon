@@ -276,6 +276,7 @@ fn load_modules(
         char_look_module,
         damage_number_set,
         add_io_task,
+        packet_processor,
       )
       stage_ref.val = Some(stage)
     })
@@ -362,7 +363,7 @@ fn setup_game_ui(
   ui.set_element(
     false,
     @ui.Element::new(
-      fn(_) { @char_stats.UIStatusBar::new(stats) },
+      fn(hooks) { @char_stats.UIStatusBar::new(stats, hooks) },
       @ui.UIElementType::STATUS_BAR,
     ),
   )

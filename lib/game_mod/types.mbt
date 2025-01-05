@@ -6,10 +6,7 @@ pub(all) struct Mod {
 }
 
 ///|
-pub(all) struct StatHandler {
-  parse_fn : (@net.InPacket) -> Int!
-  update_fn : (Int) -> Bool
-}
+pub typealias StatHandler = (Int) -> Bool
 
 ///|
 pub(open) trait Scheduler {

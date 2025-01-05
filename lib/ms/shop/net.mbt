@@ -6,13 +6,13 @@ pub struct ShopItem {
   time : Int
   charge_price : Int
   buyable : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub struct OpenNpcShop {
   npcid : Int
   items : Array[ShopItem]
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_open_npc_shop(recv : @net.InPacket) -> OpenNpcShop! {

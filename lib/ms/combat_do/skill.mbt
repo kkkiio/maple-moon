@@ -188,7 +188,7 @@ pub fn apply_stats(
     attack.damagetype = @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
   } else if stats.matk != 0 {
     attack.damagetype = @combat.AttackDamageType::DMG_MAGIC(
-      (user.get_stats)().get_matk() + stats.matk,
+      user.get_stats().get_matk() + stats.matk,
     )
   } else {
     attack.damagetype = @combat.AttackDamageType::DMG_WEAPON(

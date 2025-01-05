@@ -73,12 +73,9 @@ pub fn make_handlers(
         handle_server_list!(self, recv)
       }),
     ),
-    (
-      @net.CHAR_LIST,
-      @net.with_log(@net.CHAR_LIST, fn(recv : @net.InPacket) {
-        handle_char_list!(self, recv)
-      }),
-    ),
+    @net.make_handler(@net.CHAR_LIST, log_recv=true, parse_char_list, fn(msg) {
+      handle_char_list(self, msg)
+    }),
     (
       @net.CHARNAME_RESPONSE,
       @net.with_log(@net.CHARNAME_RESPONSE, fn(recv : @net.InPacket) {
@@ -339,17 +336,29 @@ fn new_char_list_request_packet(
 }
 
 ///|
-pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
+pub fn parse_char_list(recv : @net.InPacket) -> CharListMessage!Error {
   recv.read_ubyte!() |> ignore // channel_id
   let characters = []
   let charcount = recv.read_byte!()
   for i = 0; i < charcount; i = i + 1 {
     characters.push(parse_charentry!(recv))
   }
-  mod.characters = characters
-  mod.selected_index = None
   let pic = recv.read_byte!()
   recv.read_int!() |> ignore // slots
+  { characters, pic }
+}
+
+///|
+struct CharListMessage {
+  characters : Array[@character.CharEntry]
+  pic : Int
+} derive(Show, ToJson)
+
+///|
+fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
+  let { characters, pic } = message
+  mod.characters = characters
+  mod.selected_index = None
   match pic {
     2 =>
       match mod.select_cid {
@@ -431,7 +440,10 @@ pub fn handle_char_list(mod : Module, recv : @net.InPacket) -> Unit!Error {
           })
         }
       }
-    _ => fail!("pic=\{pic} not ok")
+    _ => {
+      @log.error({ "pic": pic }, "pic not ok") // TODO: show error
+      panic()
+    }
   }
 }
 
@@ -543,31 +555,21 @@ fn parse_world(recv : @net.InPacket) -> World! {
 fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
   let id = recv.read_int!()
   let stats = parse_stats!(recv)
-  @log.debug({ "stats": stats }, "received stats")
   let look = parse_look!(recv)
   recv.read_bool!() |> ignore // 'rankinfo' bool
   if recv.read_bool!() {
-    let currank = recv.read_int!()
+    let _currank = recv.read_int!()
     let rankmv = recv.read_int!()
-    let curjobrank = recv.read_int!()
+    let _curjobrank = recv.read_int!()
     let jobrankmv = recv.read_int!()
-    let rankmc = if rankmv > 0 { '+' } else if rankmv < 0 { '-' } else { '=' }
-    let jobrankmc = if jobrankmv > 0 {
+    let _rankmc = if rankmv > 0 { '+' } else if rankmv < 0 { '-' } else { '=' }
+    let _jobrankmc = if jobrankmv > 0 {
       '+'
     } else if jobrankmv < 0 {
       '-'
     } else {
       '='
     }
-    @log.debug(
-      {
-        "currank": currank,
-        "rankmc": rankmc,
-        "curjobrank": curjobrank,
-        "jobrankmc": jobrankmc,
-      },
-      "rank",
-    )
     // stats.rank = (currank, rankmc)
     // stats.jobrank = (curjobrank, jobrankmc)
   }

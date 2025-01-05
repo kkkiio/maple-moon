@@ -7,7 +7,7 @@ pub(all) struct MovingObject {
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn MovingObject::default() -> MovingObject {
@@ -178,14 +178,14 @@ pub(all) enum PhysicsObjectType {
   SWIMMING
   FLYING
   FIXATED
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Show, ToJson)
 
 ///|
 pub(all) enum PhysicsObjectFlag {
   NO_GRAVITY
   TURN_AT_EDGES
   CHECK_BELOW
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show, ToJson)
 
 ///|
 pub fn int_value(self : PhysicsObjectFlag) -> Int {
@@ -211,7 +211,7 @@ pub(all) struct PhysicsObject {
   mut vforce : Double
   mut hacc : Double
   mut vacc : Double
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn PhysicsObject::default() -> PhysicsObject {
@@ -239,7 +239,7 @@ pub fn is_flag_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
 
 ///|
 pub fn is_flag_not_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
-  self.is_flag_set(f).not()
+  not(self.is_flag_set(f))
 }
 
 ///|

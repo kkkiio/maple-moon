@@ -29,6 +29,7 @@ pub(all) struct Stage {
   mut combat : Combat?
   char_look_module : @char_look.Module
   add_task_fn : (@utils.Future[Unit]) -> Unit
+  packet_processor : @net.PacketProcessor
 }
 
 ///|
@@ -40,7 +41,8 @@ pub fn Stage::new(
   npcs : @npc.MapNpcs,
   char_look_module : @char_look.Module,
   damage_number_set : @ui.NumberSet,
-  add_task_fn : (@utils.Future[Unit]) -> Unit
+  add_task_fn : (@utils.Future[Unit]) -> Unit,
+  packet_processor : @net.PacketProcessor
 ) -> Stage {
   {
     map_portals_animations,
@@ -56,6 +58,7 @@ pub fn Stage::new(
     inventory,
     char_look_module,
     add_task_fn,
+    packet_processor,
   }
 }
 
@@ -302,7 +305,13 @@ fn check_portals(
     let startpos = physics.get_y_below(spawnpoint)
     player.respawn(startpos, map_info.is_underwater())
   } else if warpinfo.valid {
-    @player.new_change_map_packet(false, -1, warpinfo.name, false).dispatch()
+    let message : @player.ChangeMapMessage = {
+      died: false,
+      target_id: -1,
+      target_p: warpinfo.name,
+      use_wheel: false,
+    }
+    self.packet_processor.send_message(message)
     let stats = player.get_stats()
     stats.set_map_id(warpinfo.mapid)
   }

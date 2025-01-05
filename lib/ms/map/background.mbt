@@ -46,51 +46,74 @@ struct Background {
 }
 
 ///|
-pub fn Background::load(
-  src : @resource.NxNode
-) -> @utils.Future[Result[Background, Error]] {
-  match src["bS"].get_string() {
-    "" => @utils.Future::from_value(Background::from_resource?(src, None))
-    bs => {
-      let animated = src["ani"].get_bool?().unwrap()
-      background_loader
-      .load_res([
-        bs + ".img",
-        if animated {
-          "ani"
-        } else {
-          "back"
-        },
-        src["no"].get_int?().unwrap().to_string(),
-      ])
-      .map_exn(fn(res) { Background::from_resource!(src, Some(res)) })
-    }
-  }
+/// {"a":255,"ani":0,"bS":"","cx":0,"cy":0,"f":0,"front":0,"no":0,"rx":0,"ry":0,"type":0,"x":0,"y":0}
+struct BackgroundResource {
+  animation : @graphics.Animation
+  t : BackgroundType
+  x : Double
+  y : Double
+  cx : Int
+  cy : Int
+  rx : Double
+  ry : Double
+  opacity : Double
+  flipped : Bool
 }
 
 ///|
-fn Background::from_resource(
-  src : @resource.NxNode,
-  bg_res : @resource.NxNode?
-) -> Background! {
-  let animation = match bg_res {
-    None => @graphics.Animation::default()
-    Some(bg_res) => @graphics.Animation::from_resource(bg_res)
+pub fn BackgroundResource::load(
+  src : @resource.NxNode
+) -> @utils.Future[Result[BackgroundResource?, Error]] {
+  // TODO: what does empty bS mean?
+  let bs = match src.value() {
+    { "bS": Json::String(bs) } => bs
+    _ => return @utils.Future::from_value(Ok(None))
   }
-  let t = Background::typebyid!(src["type"].as_int!())
-  @log.debug({ "type": t, "path": src.path() }, "load background")
+  if bs == "" {
+    return @utils.Future::from_value(Ok(None))
+  }
+  let animated = src["ani"].get_bool?().unwrap()
+  background_loader
+  .load_res([
+    bs + ".img",
+    if animated {
+      "ani"
+    } else {
+      "back"
+    },
+    src["no"].get_int?().unwrap().to_string(),
+  ])
+  .map_exn(fn(bg_res) -> BackgroundResource?! {
+    let animation = @graphics.Animation::from_resource(bg_res)
+    let t = Background::typebyid!(src["type"].as_int!())
+    let opacity = src["a"].get_float?().unwrap()
+    let flipped = src["f"].get_bool?().unwrap()
+    let cx = src["cx"].get_int?().unwrap()
+    let cy = src["cy"].get_int?().unwrap()
+    let rx = src["rx"].get_float?().unwrap()
+    let ry = src["ry"].get_float?().unwrap()
+    let x = src["x"].get_float?().unwrap()
+    let y = src["y"].get_float?().unwrap()
+    { animation, t, x, y, cx, cy, rx, ry, opacity, flipped } |> Some
+  })
+}
+
+///|
+fn Background::from_resource(res : BackgroundResource) -> Background {
+  let animation = res.animation
+  let t = res.t
   let dim_x = animation.get_dimensions().x
   let dim_y = animation.get_dimensions().y
   if dim_y <= 0 {
-    fail!("dim_y <= 0")
+    panic()
   }
-  let opacity = src["a"].get_float?().unwrap()
-  let flipped = src["f"].get_bool?().unwrap()
-  let cx = match src["cx"].get_int?().unwrap() {
+  let opacity = res.opacity
+  let flipped = res.flipped
+  let cx = match res.cx {
     0 => if dim_x > 0 { dim_x } else { 1 }
     cx => cx
   }
-  let cy = match src["cy"].get_int?().unwrap() {
+  let cy = match res.cy {
     0 => dim_y
     cy => cy
   }
@@ -114,11 +137,11 @@ fn Background::from_resource(
     | BackgroundType::VMOVEB => vheight / cy + 3
     _ => 1
   }
-  let rx = src["rx"].get_float?().unwrap()
-  let ry = src["ry"].get_float?().unwrap()
+  let rx = res.rx
+  let ry = res.ry
   let move_obj = @physics.MovingObject::default()
-  move_obj.set_x(src["x"].get_float?().unwrap())
-  move_obj.set_y(src["y"].get_float?().unwrap())
+  move_obj.set_x(res.x)
+  move_obj.set_y(res.y)
   match t {
     BackgroundType::HMOVEA | BackgroundType::HMOVEB =>
       move_obj.hspeed = rx / 16.0
@@ -237,10 +260,13 @@ pub fn load_backgrounds(
   let mut no = 0
   while true {
     let backi = src[no.to_string()]
+    let backi_fut = BackgroundResource::load(backi).map(fn(res) {
+      res.map(fn(res) { res.map(fn(res) { Background::from_resource(res) }) })
+    })
     match backi.value() {
       Json::Null => break
-      { "front": Json::Number(0) } => backs.push(Background::load(backi))
-      { "front": Json::Number(_) } => fores.push(Background::load(backi))
+      { "front": Json::Number(0) } => backs.push(backi_fut)
+      { "front": Json::Number(_) } => fores.push(backi_fut)
       _ => panic()
     }
     no += 1
@@ -250,7 +276,12 @@ pub fn load_backgrounds(
   .combine(@utils.Future::all_of(fores).map(fn(res) { @utils.flatten_ok(res) }))
   .map(fn(res) {
     res.0.bind(fn(backgrounds) {
-      res.1.map(fn(foregrounds) { { backs: backgrounds, fores: foregrounds } })
+      res.1.map(fn(foregrounds) {
+        {
+          backs: backgrounds.filter_map(fn(it) { it }),
+          fores: foregrounds.filter_map(fn(it) { it }),
+        }
+      })
     })
   })
 }

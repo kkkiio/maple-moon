@@ -39,13 +39,30 @@ pub fn process_out(self : PacketProcessor, data : Bytes) -> Unit {
 }
 
 ///| send packet to the server
+/// @alert deprecated "use send_message instead"
 pub fn send_packet(self : PacketProcessor, packet : OutPacket) -> Unit {
   @log.log(
     packet.opcode.log_level(),
     { "opcode": packet.opcode },
-    "dispatching packet",
+    "sending packet",
   )
   self.process_out(packet.encode())
+}
+
+///| send message to the server
+pub fn send_message[T : OutMessage](
+  self : PacketProcessor,
+  message : T,
+  log_level~ : @log.Level = @log.Level::INFO,
+  loc~ : SourceLoc = _
+) -> Unit {
+  @log.log(
+    log_level,
+    { "message": message.to_string() },
+    "sending packet",
+    loc~,
+  )
+  self.process_out(message.pack().encode())
 }
 
 ///|
@@ -97,7 +114,10 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
     Opcode::from_int!(recv.read_ushort!())
   } catch {
     UnknownOpCodeError(opcode) => {
-      @log.warn({ "opcode": to_hex_string(opcode) }, "unknown opcode")
+      @log.warn(
+        { "opcode": @utils.to_hex_string(opcode.reinterpret_as_uint()) },
+        "unknown opcode",
+      )
       return
     }
     err => {
@@ -138,7 +158,8 @@ pub fn make_handler[T : Show](
   opcode : Opcode,
   parser : (InPacket) -> T!,
   handler : (T) -> Unit,
-  log_recv~ : Bool = false
+  log_recv~ : Bool = false,
+  loc~ : SourceLoc = _
 ) -> (Opcode, (InPacket) -> Unit) {
   (
     opcode,
@@ -147,12 +168,16 @@ pub fn make_handler[T : Show](
         parser!(recv)
       } catch {
         err => {
-          @log.error({ "opcode": opcode, "err": err }, "parse packet failed")
+          @log.error(
+            { "op": opcode, "err": err, "raw_body": recv.bytes },
+            "parse packet failed",
+            loc~,
+          )
           return
         }
       }
       if log_recv {
-        @log.debug({ "opcode": opcode, "svr_msg": message }, "received")
+        @log.debug({ "op": opcode, "body": message }, "received", loc~)
       }
       handler(message)
     },
@@ -161,21 +186,14 @@ pub fn make_handler[T : Show](
 
 ///|
 pub fn handle_ping(processor : PacketProcessor) -> Unit {
-  processor.send_packet(OutPacket::new(OutPacketOpcode::PONG))
+  processor.send_message(PongMessage::default(), log_level=@log.Level::DEBUG)
 }
 
 ///|
-let hex_digits = [
-  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
-]
+struct PongMessage {} derive(Default, Show)
 
 ///|
-fn to_hex_string(i : Int) -> String {
-  let mut i = i
-  let digits = []
-  while i > 0 {
-    digits.push(hex_digits[i & 0xF])
-    i = i >> 4
-  }
-  "0x" + String::concat(digits..rev_inplace())
+impl OutMessage for PongMessage with pack(self) {
+  ignore(self)
+  OutPacket::new(OutPacketOpcode::PONG)
 }

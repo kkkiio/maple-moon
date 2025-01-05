@@ -88,12 +88,9 @@ pub fn make_stat_handlers(
   [
     (
       @maple_stat.Id::MESO,
-      {
-        parse_fn: fn(recv) { recv.read_int!() },
-        update_fn: fn(meso) {
-          self.inventory.set_meso(meso)
-          false
-        },
+      fn(meso) {
+        self.inventory.set_meso(meso)
+        false
       },
     ),
   ]

@@ -19,7 +19,7 @@ struct UIStatusBar {
 }
 
 ///|
-pub fn UIStatusBar::new(stats : CharStats) -> UIStatusBar {
+pub fn UIStatusBar::new(stats : CharStats, hooks : @ui.Hooks) -> UIStatusBar {
   let vwidth = @constants.constants.get_viewwidth()
   let mainBar = @ui.common_ui_loader().load_res(["StatusBar3.img", "mainBar"])
   let stat = "status"
@@ -111,16 +111,19 @@ pub fn UIStatusBar::new(stats : CharStats) -> UIStatusBar {
   let position = @struct.Point::new(0, 648)
   let position_x = 585
   let dimension = @struct.Point::new(vwidth - position_x, 75)
-  stats.watch_stat_changes(@maple_stat.Id::EXP, trigger_now=true, fn(_, _) {
+  stats.watch_i64stat_changes(@maple_stat.Id::EXP, trigger_now=true, fn(_, _) {
     exp_bar.set_target(getexppercent(stats))
+    (hooks.on_state_changed)()
     IterContinue
   })
   stats.watch_stat_changes(@maple_stat.Id::HP, trigger_now=true, fn(_, _) {
     hp_bar.set_target(gethppercent(stats))
+    (hooks.on_state_changed)()
     IterContinue
   })
   stats.watch_stat_changes(@maple_stat.Id::MP, trigger_now=true, fn(_, _) {
     mp_bar.set_target(getmppercent(stats))
+    (hooks.on_state_changed)()
     IterContinue
   })
   {

@@ -92,56 +92,47 @@ pub fn make_stat_handlers(
   [
     (
       @maple_stat.Id::SKIN,
-      {
-        parse_fn: fn(recv) { recv.read_short!() },
-        update_fn: fn(skin_id) {
-          let f = self.load_body_by_skin_id(skin_id)
-          state.changing_skin_id = Some(skin_id)
-          self.io_service.on_complete(f, fn(body) {
-            guard state.changing_skin_id == Some(skin_id) else { return }
-            state.changing_skin_id = None
-            (self.on_player_look_changed)(fn(char_look) {
-              char_look.change_body(body)
-            })
+      fn(skin_id) {
+        let f = self.load_body_by_skin_id(skin_id)
+        state.changing_skin_id = Some(skin_id)
+        self.io_service.on_complete(f, fn(body) {
+          guard state.changing_skin_id == Some(skin_id) else { return }
+          state.changing_skin_id = None
+          (self.on_player_look_changed)(fn(char_look) {
+            char_look.change_body(body)
           })
-          false
-        }
+        })
+        false
       },
     ),
     (
       @maple_stat.Id::FACE,
-      {
-        parse_fn: fn(recv) { recv.read_int!() },
-        update_fn: fn(face_id) {
-          let f = self.load_face_by_id(face_id)
-          state.changing_face_id = Some(face_id)
-          self.io_service.on_complete(f, fn(face) {
-            guard state.changing_face_id == Some(face_id) else { return }
-            state.changing_face_id = None
-            (self.on_player_look_changed)(fn(char_look) {
-              char_look.change_face(face)
-            })
+      fn(face_id) {
+        let f = self.load_face_by_id(face_id)
+        state.changing_face_id = Some(face_id)
+        self.io_service.on_complete(f, fn(face) {
+          guard state.changing_face_id == Some(face_id) else { return }
+          state.changing_face_id = None
+          (self.on_player_look_changed)(fn(char_look) {
+            char_look.change_face(face)
           })
-          false
-        }
+        })
+        false
       },
     ),
     (
       @maple_stat.Id::HAIR,
-      {
-        parse_fn: fn(recv) { recv.read_int!() },
-        update_fn: fn(hair_id) {
-          let f = self.load_hair_by_id(hair_id)
-          state.changing_hair_id = Some(hair_id)
-          self.io_service.on_complete(f, fn(hair) {
-            guard state.changing_hair_id == Some(hair_id) else { return }
-            state.changing_hair_id = None
-            (self.on_player_look_changed)(fn(char_look) {
-              char_look.change_hair(hair)
-            })
+      fn(hair_id) {
+        let f = self.load_hair_by_id(hair_id)
+        state.changing_hair_id = Some(hair_id)
+        self.io_service.on_complete(f, fn(hair) {
+          guard state.changing_hair_id == Some(hair_id) else { return }
+          state.changing_hair_id = None
+          (self.on_player_look_changed)(fn(char_look) {
+            char_look.change_hair(hair)
           })
-          false
-        }
+        })
+        false
       },
     ),
   ]

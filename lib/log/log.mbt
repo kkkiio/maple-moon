@@ -1,7 +1,7 @@
 ///|
 pub fn log(
   level : Level,
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc~ : SourceLoc = _
 ) -> Unit {
@@ -16,7 +16,7 @@ pub fn log(
 
 ///|
 pub fn debug(
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc~ : SourceLoc = _
 ) -> Unit {
@@ -25,7 +25,7 @@ pub fn debug(
 
 ///|
 pub fn info(
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc~ : SourceLoc = _
 ) -> Unit {
@@ -34,7 +34,7 @@ pub fn info(
 
 ///|
 pub fn warn(
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc~ : SourceLoc = _
 ) -> Unit {
@@ -43,7 +43,7 @@ pub fn warn(
 
 ///|
 pub fn error(
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc~ : SourceLoc = _
 ) -> Unit {
@@ -52,7 +52,7 @@ pub fn error(
 
 ///|
 fn to_logstr(
-  context : Map[String, Show],
+  context : Map[String, &Show],
   msg : String,
   loc : SourceLoc
 ) -> String {
@@ -61,16 +61,14 @@ fn to_logstr(
   )
   buf.write_string("loc=")
   buf.write_string(loc.to_string())
-  buf.write_string(" ")
-  // TODO: escape if needed
+  buf.write_string(" msg=")
+  buf.write_string(msg)
   for k, v in context {
+    buf.write_string(" ")
     buf.write_string(k)
     buf.write_string("=")
     Show::output(v, buf)
-    buf.write_string(" ")
   }
-  buf.write_string("msg=")
-  buf.write_string(msg)
   buf.to_string()
 }
 

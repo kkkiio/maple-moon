@@ -75,7 +75,7 @@ pub fn Player::new(
     entry.stats.name,
     damage_number_set,
     get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
-    get_stats=fn() { stats },
+    stats,
     get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
   )
   let p = {
@@ -98,10 +98,13 @@ pub fn Player::new(
     if hp <= 0 {
       p.set_state(@character.CharState::DIED)
       let died = true
-      let targetid = 0
-      packet_processor.send_packet(
-        new_change_map_packet(died, targetid, "sp", false),
-      )
+      let target_id = 0
+      packet_processor.send_message({
+        died,
+        target_id,
+        target_p: "sp",
+        use_wheel: false,
+      })
     }
     IterContinue
   })
@@ -502,16 +505,19 @@ pub fn change_job(self : Player, job_id : Int) -> Unit {
 }
 
 ///|
-pub fn new_change_map_packet(
-  died : Bool,
-  targetid : Int,
-  targetp : String,
-  usewheel : Bool
-) -> @net.OutPacket {
+pub(all) struct ChangeMapMessage {
+  died : Bool
+  target_id : Int
+  target_p : String
+  use_wheel : Bool
+} derive(ToJson, Show)
+
+///|
+pub impl @net.OutMessage for ChangeMapMessage with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::CHANGE_MAP)
-  ..write_byte(died.to_int().to_byte())
-  ..write_int(targetid)
-  ..write_string(targetp)
+  ..write_byte(self.died.to_int().to_byte())
+  ..write_int(self.target_id)
+  ..write_string(self.target_p)
   ..skip(1)
-  ..write_short(if usewheel { 1 } else { 0 })
+  ..write_short(if self.use_wheel { 1 } else { 0 })
 }

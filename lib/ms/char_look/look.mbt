@@ -28,7 +28,7 @@ pub(all) struct LookEntry {
   equips : Map[Int, Int]
   maskedequips : Map[Int, Int]
   petids : Array[Int]
-}
+} derive(Show, ToJson)
 
 ///|
 pub fn CharLook::new(

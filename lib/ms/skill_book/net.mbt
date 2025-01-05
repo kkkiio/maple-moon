@@ -4,7 +4,7 @@ pub struct SkillUpdate {
   level : Int
   masterlevel : Int
   expire : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_skill_update(recv : @net.InPacket) -> SkillUpdate! {

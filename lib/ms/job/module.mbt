@@ -15,12 +15,9 @@ pub fn make_stat_handlers(
   [
     (
       @maple_stat.Id::JOB,
-      {
-        parse_fn: fn(recv) { recv.read_ushort!() },
-        update_fn: fn(job_id) {
-          (self.change_job)(job_id)
-          false
-        },
+      fn(job_id) {
+        (self.change_job)(job_id)
+        false
       },
     ),
   ]

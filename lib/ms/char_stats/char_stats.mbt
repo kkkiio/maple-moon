@@ -33,7 +33,7 @@ pub(all) struct StatsEntry {
   i64stats : Map[@maple_stat.Id, Int64]
   mapid : Int
   portal : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn CharStats::new(
@@ -157,6 +157,15 @@ pub fn set_i64stat(
 ) -> Unit {
   let old_value = self.get_i64stat(stat)
   self.base_i64stats.set(stat, value)
+  guard let Some(listeners) = self.i64stat_listeners.get(stat) else {
+    None => return
+  }
+  listeners.retain(fn(listener) {
+    match listener(old_value, value) {
+      IterResult::IterEnd => false
+      IterResult::IterContinue => true
+    }
+  })
 }
 
 ///|
@@ -385,11 +394,19 @@ pub fn watch_stat_changes(
 }
 
 ///|
-pub fn listen_i64stat_changes(
+pub fn watch_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
+  trigger_now~ : Bool = false,
   listener : (Int64, Int64) -> IterResult
 ) -> Unit {
+  if trigger_now {
+    let v = self.get_i64stat(stat_id)
+    match listener(v, v) {
+      IterResult::IterEnd => return
+      IterResult::IterContinue => ()
+    }
+  }
   self.i64stat_listeners
   .get_or_init(stat_id, fn() { Array::new() })
   .push(listener)

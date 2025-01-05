@@ -12,13 +12,13 @@ pub fn new_module(
       guard hp > 0 else { return } // dead
       // TODO: check if player is available to act
       let max_hp = char_stats.get_stat(@maple_stat.Id::MAXHP)
-      // for test and fun!
-      let heal_hp = @math.minimum(max_hp - hp, 77)
+      // skip sit check for test and fun!
+      let heal_hp = max_hp - hp |> @math.minimum(77) |> @math.maximum(0)
       let mp = char_stats.get_stat(@maple_stat.Id::MP)
       let max_mp = char_stats.get_stat(@maple_stat.Id::MAXMP)
-      let heal_mp = @math.minimum(max_mp - mp, 50)
+      let heal_mp = max_mp - mp |> @math.minimum(50) |> @math.maximum(0)
       guard heal_hp > 0 || heal_mp > 0 else { return }
-      packet_processor.send_packet(new_heal_over_time_packet(heal_hp, heal_mp))
+      packet_processor.send_message({ hp: heal_hp, mp: heal_mp })
     },
     delay,
     delay,
@@ -28,9 +28,15 @@ pub fn new_module(
 }
 
 ///|
-fn new_heal_over_time_packet(hp : Int, mp : Int) -> @net.OutPacket {
+struct HealOverTimeMessage {
+  hp : Int
+  mp : Int
+} derive(ToJson, Show)
+
+///|
+impl @net.OutMessage for HealOverTimeMessage with pack(self) {
   @net.OutPacket::new(@net.OutPacketOpcode::HEAL_OVER_TIME)
   ..write_long(0) // server don't care
-  ..write_short(hp)
-  ..write_short(mp)
+  ..write_short(self.hp)
+  ..write_short(self.mp)
 }

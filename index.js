@@ -106,134 +106,134 @@ function main() {
   const imageGenerateContext = document.createElement("canvas").getContext("2d", {
     willReadFrequently: true,
   });
-  const imageLoader = new PathImageLoader("https://maple.kkkiiox.work", imageGenerateContext)
+  const imageLoader = new PathImageLoader("https://maple-res.kkkiiox.work", imageGenerateContext)
   const prepareResourcePromises = [];
   const uiLoader = new CompositeResourceLoader({
-    "Basic.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/Basic.img.json"),
-    "Login.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/Login.img.json"),
-    "StatusBar3.img/": new FileResourceLoader("https://maple.kkkiiox.work/UI/StatusBar3.img.json"),
+    "Basic.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/Basic.img.json"),
+    "Login.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/Login.img.json"),
+    "StatusBar3.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/StatusBar3.img.json"),
   }, imageLoader)
   prepareResourcePromises.push(
     uiLoader.load()
   )
   const uiWindow2Loader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/UI/UIWindow2.img"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/UI/UIWindow2.img"),
     imageLoader
   )
   const uiWindow4Loader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/UI/UIWindow4.img"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/UI/UIWindow4.img"),
     imageLoader
   )
 
   const mapxLoader = new CompositeAsyncResourceLoader({
-    "Map0/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map0"),
-    "Map1/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map1"),
-    "Map2/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map2"),
-    "Map3/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map3"),
-    "Map4/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map4"),
-    "Map5/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map5"),
-    "Map6/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map6"),
-    "Map7/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map7"),
-    "Map8/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map8"),
-    "Map9/": new DirResourceLoader("https://maple.kkkiiox.work/Map/Map9"),
+    "Map0/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map0"),
+    "Map1/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map1"),
+    "Map2/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map2"),
+    "Map3/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map3"),
+    "Map4/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map4"),
+    "Map5/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map5"),
+    "Map6/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map6"),
+    "Map7/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map7"),
+    "Map8/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map8"),
+    "Map9/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Map9"),
   }, imageLoader)
   const tileLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Map/Tile"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Tile"),
     imageLoader
   )
   const backgroundLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Map/Back"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Back"),
     imageLoader
   )
   const objLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Map/Obj"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Map/Obj"),
     imageLoader
   )
   const mapHelperLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Map/MapHelper.img"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Map/MapHelper.img"),
     imageLoader
   )
 
   const characterLoader = new CompositeAsyncResourceLoader({
-    "Pants/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Pants"),
-    "Weapon/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Weapon"),
-    "Coat/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Coat"),
-    "Cap/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Cap"),
-    "Longcoat/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Longcoat"),
-    "Shield/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Shield"),
-    "Shoes/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Shoes"),
-    "Glove/": new DirResourceLoader("https://maple.kkkiiox.work/Character/Glove"),
+    "Pants/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Pants"),
+    "Weapon/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Weapon"),
+    "Coat/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Coat"),
+    "Cap/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Cap"),
+    "Longcoat/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Longcoat"),
+    "Shield/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Shield"),
+    "Shoes/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Shoes"),
+    "Glove/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Glove"),
   }, imageLoader);
 
   const bodyLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Character/Body"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Body"),
     imageLoader
   )
   const hairLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Character/Hair"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Hair"),
     imageLoader
   )
   const faceLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Character/Face"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Face"),
     imageLoader
   )
   const afterimageLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Character/Afterimage"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Afterimage"),
     imageLoader
   )
 
-  const stringLoader = new ResourceLoader("https://maple.kkkiiox.work/String/nx.json", undefined);
+  const stringLoader = new ResourceLoader("https://maple-res.kkkiiox.work/String/nx.json", undefined);
   prepareResourcePromises.push(
     stringLoader.load()
   );
 
   const map001Loader = new CompositeAsyncResourceLoader({
-    "Back/": new DirResourceLoader("https://maple.kkkiiox.work/Map001/Back"),
+    "Back/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map001/Back"),
   }, imageLoader);
 
   const mapPrettyLoader = new CompositeAsyncResourceLoader({
-    "Back/": new DirResourceLoader("https://maple.kkkiiox.work/MapPretty/Back"),
+    "Back/": new DirResourceLoader("https://maple-res.kkkiiox.work/MapPretty/Back"),
   }, imageLoader);
 
-  const etcLoader = new AsyncResourceLoader(new DirResourceLoader("https://maple.kkkiiox.work/Etc"), imageLoader);
+  const etcLoader = new AsyncResourceLoader(new DirResourceLoader("https://maple-res.kkkiiox.work/Etc"), imageLoader);
 
-  const npcLoader = new ResourceLoader("https://maple.kkkiiox.work/Npc/nx.json",
-    new BidImageLoader("https://maple.kkkiiox.work/Npc/images"));
+  const npcLoader = new ResourceLoader("https://maple-res.kkkiiox.work/Npc/nx.json",
+    new BidImageLoader("https://maple-res.kkkiiox.work/Npc/images"));
   prepareResourcePromises.push(
     npcLoader.load()
   );
 
   const itemLoader = new CompositeAsyncResourceLoader(
     {
-      "Consume/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Consume"),
-      "Cash/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Cash"),
-      "Etc/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Etc"),
-      "Install/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Install"),
-      "Pet/": new DirResourceLoader("https://maple.kkkiiox.work/Item/Pet"),
+      "Consume/": new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Consume"),
+      "Cash/": new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Cash"),
+      "Etc/": new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Etc"),
+      "Install/": new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Install"),
+      "Pet/": new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Pet"),
     },
     imageLoader
   );
   const specialItemLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Item/Special"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Item/Special"),
     imageLoader
   );
 
   const mobLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Mob"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Mob"),
     imageLoader
   );
 
   const effectLoader = new CompositeAsyncResourceLoader({
-    "BasicEff.img/": new DirResourceLoader("https://maple.kkkiiox.work/Effect/BasicEff.img"),
-    "CharacterEff.img/": new DirResourceLoader("https://maple.kkkiiox.work/Effect/CharacterEff.img"),
+    "BasicEff.img/": new DirResourceLoader("https://maple-res.kkkiiox.work/Effect/BasicEff.img"),
+    "CharacterEff.img/": new DirResourceLoader("https://maple-res.kkkiiox.work/Effect/CharacterEff.img"),
   }, imageLoader);
 
   const skillLoader = new AsyncResourceLoader(
-    new DirResourceLoader("https://maple.kkkiiox.work/Skill"),
+    new DirResourceLoader("https://maple-res.kkkiiox.work/Skill"),
     imageLoader
   );
   const mapLatestLoader = new CompositeAsyncResourceLoader({
-    "Obj/login.img/": new DirResourceLoader("https://maple.kkkiiox.work/MapLatest/Obj/login.img"),
+    "Obj/login.img/": new DirResourceLoader("https://maple-res.kkkiiox.work/MapLatest/Obj/login.img"),
   }, imageLoader);
 
   const textBitmapGenerator = new TextBitmapGenerator(imageGenerateContext);

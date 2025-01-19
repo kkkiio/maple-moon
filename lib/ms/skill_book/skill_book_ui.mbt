@@ -335,9 +335,9 @@ fn render(
 }
 
 ///|
-impl @ui.UIElement for SkillBookUI with render(self) -> @ui.RenderSpec {
+impl @ui.Widget for SkillBookUI with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { render_units: rs.buttons.map(fn(btn) { btn as &@ui.RenderUnit }) } // TODO
+  { render_elements: rs.buttons.map(fn(btn) { btn.as_interactable() }) } // TODO
 }
 
 ///|

@@ -395,7 +395,7 @@ fn UIStatsInfo::new(
 }
 
 ///|
-impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
+impl @ui.Widget for UIStatsInfo with render(self) -> @ui.RenderSpec {
   let detailed_labels = if self.show_detail {
     [
       self.damage_detailed_label,
@@ -455,23 +455,29 @@ impl @ui.UIElement for UIStatsInfo with render(self) -> @ui.RenderSpec {
     []
   }
   {
-    render_units: self.sprites
+    render_elements: self.sprites
     .iter()
-    .map(fn(sprite) { @ui.SpriteUI(sprite) as &@ui.RenderUnit })
-    .concat(details.iter().map(fn(sprite) { sprite as &@ui.RenderUnit }))
+    .map(fn(sprite) { @ui.SpriteUI(sprite) |> @ui.RenderElement::Static })
+    .concat(
+      details.iter().map(fn(sprite) { sprite |> @ui.RenderElement::Static }),
+    )
     .concat(
       normal_labels
       .iter()
-      .map(fn(label) { @ui.StaticUI::new(@ui.TextUI(label._.0), pos=label._.1) }),
+      .map(fn(label) {
+        @ui.StaticUI::new(@ui.TextUI(label._.0), pos=label._.1)
+        |> @ui.RenderElement::Static
+      }),
     )
     .concat(
       detailed_labels
       .iter()
       .map(fn(label) {
         @ui.StaticUI::new(@ui.TextUI(label._.0), pos=label._.1.shift_x(213))
+        |> @ui.RenderElement::Static
       }),
     )
-    .concat(buttons.iter().map(fn(button) { button as &@ui.RenderUnit }))
+    .concat(buttons.iter().map(fn(button) { button.as_interactable() }))
     .to_array(),
   }
 }

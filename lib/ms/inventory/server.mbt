@@ -4,20 +4,24 @@ struct Mod {
   t : TypeId
   pos : Int
   arg : Int
-}
+} derive(ToJson, Show)
 
 ///|
-fn handle_modify_inventory(
-  inventory : Inventory,
-  player_getter : () -> @player.Player?,
-  recv : @net.InPacket
-) -> Unit! {
-  guard let Some(player) = player_getter() else { None => return }
+struct ModifyInventoryMessage {
+  mods : Array[Mod]
+  mov : Movement?
+} derive(ToJson, Show)
+
+///| Parse MODIFY_INVENTORY message
+fn parse_modify_inventory(
+  recv : @net.InPacket,
+  inventory : Inventory
+) -> ModifyInventoryMessage! {
   recv.read_bool!() |> ignore // 'updatetick'
   let mods = Array::new()
   let size = recv.read_byte!()
   for i in 0..<size {
-    let mut mode = recv.read_byte!() |> Modification::from_int |> Option::unwrap
+    let mut mode = recv.read_byte!() |> Modification::from_int!()
     let t = TypeId::by_value(recv.read_byte!()) |> Option::unwrap
     let pos = recv.read_short!()
     let mut arg = 0
@@ -40,22 +44,31 @@ fn handle_modify_inventory(
     mods.push({ mode, t, pos, arg })
   }
   let mov = if recv.available() {
-    Movement::from_int(recv.read_byte!()).unwrap()
+    Movement::from_int!(recv.read_byte!()) |> Some
   } else {
-    Movement::MOVE_INTERNAL
+    None
   }
-  for mod in mods {
-    if mod.mode == Modification::SWAP {
-      inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, mov)
+  { mods, mov }
+}
+
+///|
+fn handle_modify_inventory(
+  inventory : Inventory,
+  player_getter : () -> @player.Player?,
+  message : ModifyInventoryMessage
+) -> Unit {
+  guard let Some(player) = player_getter() else { None => return }
+  let mov = message.mov.or(Movement::MOVE_INTERNAL)
+  for mod in message.mods {
+    match mod.mode {
+      Modification::SWAP =>
+        inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, mov)
+      _ => ()
     }
-
-    // TODO: shop
-
     match mov {
       Movement::MOVE_INTERNAL =>
         match mod.t {
           TypeId::EQUIPPED => {
-            // TODO: ui
             change_equip(inventory, player, -mod.pos)
             change_equip(inventory, player, -mod.arg)
           }

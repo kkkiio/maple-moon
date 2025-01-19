@@ -1,7 +1,7 @@
 ///|
 struct MapDrops {
-  drops : @map_object.MapObjects[Drop]
-  loading_drops : Array[@utils.Future[Result[Drop, Error]]]
+  drops : @map_object.MapObjects[&Drop]
+  loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.T[DropSpawn]
   meso_icons : Map[MesoIcon, @graphics.Animation]
 }
@@ -20,7 +20,7 @@ fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
   {
     drops: @map_object.MapObjects::new(),
     loading_drops: Array::new(),
-    spawns: @queue.T::new(),
+    spawns: @queue.new(),
     meso_icons,
   }
 }
@@ -107,7 +107,7 @@ pub fn list_loot_at(
   self.drops
   .iter2()
   .iter()
-  .filter(fn(it) { it.1.bounds().contains(playerpos) })
+  .filter(fn(it) { it.1.get_bounds().contains(playerpos) })
   .map(fn(it) { (it.0, it.1.get_position()) })
 }
 
@@ -158,7 +158,7 @@ fn DropSpawn::instantiate_meso(
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
   icon : @graphics.Texture
-) -> Drop {
+) -> ItemDrop {
   ItemDrop::new(
     self.oid,
     self.owner,

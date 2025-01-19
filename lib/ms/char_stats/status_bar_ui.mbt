@@ -147,28 +147,45 @@ pub fn UIStatusBar::new(stats : CharStats, hooks : @ui.Hooks) -> UIStatusBar {
 }
 
 ///|
-pub impl @ui.UIElement for UIStatusBar with render(self) {
-  let render_units : Array[&@ui.RenderUnit] = Array::new()
+pub impl @ui.Widget for UIStatusBar with render(self) {
+  let render_elements = Array::new()
   // Add background sprites
   self.sprites
   .iter()
-  .each(fn(sprite) { render_units.push(@ui.SpriteUI(sprite)) })
+  .each(fn(sprite) {
+    render_elements.push(@ui.SpriteUI(sprite) |> @ui.RenderElement::Static)
+  })
   // Add HP/MP background sprite
-  render_units.push(@ui.SpriteUI(self.hpmp_sprites[0]))
+  render_elements.push(
+    @ui.SpriteUI(self.hpmp_sprites[0]) |> @ui.RenderElement::Static,
+  )
   // Add exp bar
-  render_units.push(@ui.OffsetedUnit((self.exp_bar, self.exp_pos)))
+  render_elements.push(
+    @ui.OffsetedUnit::new(self.exp_bar, self.exp_pos)
+    |> @ui.RenderElement::Static,
+  )
   // Add HP bar
-  render_units.push(@ui.OffsetedUnit((self.hp_bar, self.hpmp_pos)))
+  render_elements.push(
+    @ui.OffsetedUnit::new(self.hp_bar, self.hpmp_pos)
+    |> @ui.RenderElement::Static,
+  )
   // Add MP bar
-  render_units.push(@ui.OffsetedUnit((self.mp_bar, self.hpmp_pos)))
+  render_elements.push(
+    @ui.OffsetedUnit::new(self.mp_bar, self.hpmp_pos)
+    |> @ui.RenderElement::Static,
+  )
   // Add HP/MP cover sprites
-  render_units.push(self.hpmp_sprites[1] |> @ui.SpriteUI)
-  render_units.push(self.hpmp_sprites[2] |> @ui.SpriteUI)
+  render_elements.push(
+    self.hpmp_sprites[1] |> @ui.SpriteUI |> @ui.RenderElement::Static,
+  )
+  render_elements.push(
+    self.hpmp_sprites[2] |> @ui.SpriteUI |> @ui.RenderElement::Static,
+  )
 
   // Add exp text
   let exp = self.stats.get_exp()
   let exp_precent = (getexppercent(self.stats) * 10000.0).to_int()
-  render_units.push(
+  render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(
         self.stat_set.create_text(
@@ -176,38 +193,42 @@ pub impl @ui.UIElement for UIStatusBar with render(self) {
         ),
       ),
       pos=self.statset_pos,
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
 
   // Add HP text
   let hp = self.stats.get_stat(@maple_stat.Id::HP)
   let maxhp = self.stats.get_total(@equip_stat.Id::HP)
-  render_units.push(
+  render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{hp}/\{maxhp}]")),
       pos=self.hpset_pos,
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
 
   // Add MP text
   let mp = self.stats.get_stat(@maple_stat.Id::MP)
   let maxmp = self.stats.get_total(@equip_stat.Id::MP)
-  render_units.push(
+  render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{mp}/\{maxmp}]")),
       pos=self.mpset_pos,
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
 
   // Add level text
   let level = self.stats.get_stat(@maple_stat.Id::LEVEL)
-  render_units.push(
+  render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.level_set.create_text(level.to_string())),
       pos=self.levelset_pos,
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
-  { render_units, }
+  { render_elements, }
 }
 
 ///|
@@ -243,7 +264,7 @@ fn getmppercent(stats : CharStats) -> Double {
 }
 
 ///|
-pub fn get_ui_model(self : UIStatusBar) -> @ui.UIModel {
+pub fn UIStatusBar::get_ui_model(self : UIStatusBar) -> @ui.UIModel {
   self.base
 }
 

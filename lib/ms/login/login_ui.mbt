@@ -178,9 +178,13 @@ pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
 }
 
 ///|
-impl @ui.UIElement for UILogin with render(self) -> @ui.RenderSpec {
+impl @ui.Widget for UILogin with render(self) -> @ui.RenderSpec {
   let sprites = self.sprites
-  { render_units: sprites.map(fn(sprite) { @ui.SpriteUI(sprite) }) }
+  {
+    render_elements: sprites.map(fn(sprite) {
+      @ui.SpriteUI(sprite) |> @ui.RenderElement::Static
+    }),
+  }
 }
 
 // pub fn login(self : UILogin) -> Unit {

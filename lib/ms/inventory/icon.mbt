@@ -32,20 +32,14 @@ let countset : LazyVar[@graphics.Charset] = LazyVar::make(fn() {
 
 ///|
 pub(all) struct IconModel {
-  show_count : Bool
-  mut count : Int
+  mut count : Int?
   mut dragged : Bool
   mut cursor_offset : @struct.Point[Int]
-}
+} derive(ToJson)
 
 ///|
-pub fn IconModel::new(count : Int) -> IconModel {
-  {
-    show_count: count > -1,
-    count,
-    dragged: false,
-    cursor_offset: @struct.Point::default(),
-  }
+pub fn IconModel::new(count : Int?) -> IconModel {
+  { count, dragged: false, cursor_offset: @struct.Point::default() }
 }
 
 ///|
@@ -56,13 +50,24 @@ pub fn draw(
 ) -> Unit {
   let opacity = if self.dragged { 0.5 } else { 1.0 }
   texture.draw(@graphics.DrawArgument::new7(position.shift_y(32), opacity))
-  if self.show_count {
-    countset
-    .get()
-    .draw_text(
-      self.count.to_string(),
-      @graphics.DrawArgument::new(pos=position + @struct.Point::new(0, 20)),
-    )
-    |> ignore
+  match self.count {
+    Some(count) =>
+      countset
+      .get()
+      .draw_text(
+        count.to_string(),
+        @graphics.DrawArgument::new(pos=position + @struct.Point::new(0, 20)),
+      )
+      |> ignore
+    None => ()
   }
+}
+
+///|
+pub fn IconModel::get_bounds(
+  texture : @graphics.Texture
+) -> @struct.Rectangle[Int] {
+  let lt = @struct.Point::new(0, 32) - texture.origin
+  let rb = lt + texture.dimensions
+  @struct.Rectangle::new(lt, rb)
 }

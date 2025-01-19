@@ -94,7 +94,7 @@ pub let all_types : FixedArray[UIElementType] = [
 ]
 
 ///|
-pub(open) trait UIElement {
+pub(open) trait Widget {
   get_ui_model(Self) -> UIModel
   send_key(Self, Int, Bool, Bool) -> Unit
   remove_cursor(Self) -> Unit
@@ -104,36 +104,73 @@ pub(open) trait UIElement {
 
 ///|
 pub(all) struct RenderSpec {
-  render_units : Array[&RenderUnit]
+  render_elements : Array[RenderElement]
 }
 
 ///|
 pub(open) trait RenderUnit: ToJson + @graphics.Drawable {
   update(Self) -> Unit
-  get_interactive_area(Self) -> InteractiveArea?
 }
+
+///|
+pub(all) enum RenderElement {
+  Static(&RenderUnit)
+  Interactable(&RenderUnit, InteractiveArea)
+} derive(ToJson)
 
 ///|
 pub(all) struct InteractiveArea {
   bounds : @struct.Rectangle[Int]
   on_click : () -> Unit
+  on_double_click : () -> Unit // send after on_click
   state : Ref[ButtonState]
 }
 
 ///|
+pub impl ToJson for InteractiveArea with to_json(self) -> Json {
+  { "bounds": self.bounds.to_json() }
+}
+
+///|
 pub impl ToJson for RenderSpec with to_json(self) -> Json {
-  { "render_units": self.render_units.to_json() }
+  { "render_units": self.render_elements.to_json() }
 }
 
 ///|
 pub(all) struct Hooks {
   on_state_changed : () -> Unit
-  mut on_double_click : (Point[Int]) -> Unit
 }
 
 ///|
 pub fn Hooks::default() -> Hooks {
-  { on_state_changed: fn() {  }, on_double_click: fn(_p) {  } }
+  { on_state_changed: fn() {  } }
+}
+
+///|
+pub fn on_state_changed(self : Hooks) -> Unit {
+  (self.on_state_changed)()
+}
+
+///|
+type EffectHook[T] Ref[T?]
+
+///|
+pub fn EffectHook::new[T]() -> EffectHook[T] {
+  Ref::new(None)
+}
+
+///|
+pub fn use_effect[T : Eq](
+  self : EffectHook[T],
+  key : T,
+  f : () -> Unit
+) -> Unit {
+  match self.val {
+    Some(k) => if k == key { return }
+    None => ()
+  }
+  self.val = Some(key)
+  f()
 }
 
 ///|
@@ -145,31 +182,26 @@ pub(open) trait UIElementDescriptor {
 
 ///|
 pub(all) struct Element {
-  object : &UIElement
+  object : &Widget
   key : UIElementType
-  doubleclick : (Point[Int]) -> Unit
   toggle_active : () -> Unit
   on_close : () -> Unit
   runtime_state : Ref[RenderSpec?]
 }
 
 ///|
-pub fn Element::new[T : UIElement](
+pub fn Element::new[T : Widget](
   make_element : (Hooks) -> T,
   key : UIElementType,
   toggle_active? : () -> Unit,
   on_close? : () -> Unit
 ) -> Element {
   let runtime_state = Ref::new(None)
-  let hooks = {
-    on_state_changed: fn() { runtime_state.val = None },
-    on_double_click: fn(_p) {  },
-  }
+  let hooks = { on_state_changed: fn() { runtime_state.val = None } }
   let object = make_element(hooks)
   {
     object,
     key,
-    doubleclick: hooks.on_double_click,
     toggle_active: toggle_active.or(fn() {
       object.get_ui_model().toggle_active()
     }),
@@ -184,34 +216,44 @@ pub fn get_ui_model(self : Element) -> UIModel {
 }
 
 ///|
-pub fn draw(self : Element) -> Unit {
+pub fn Element::draw(self : Element) -> Unit {
   let pos = self.get_ui_model().position
-  for ru in self.use_runtime_state().render_units {
+  for ru in self.use_drawables() {
     ru.draw(@graphics.DrawArgument::new(pos~))
   }
 }
 
 ///|
-pub fn update(self : Element) -> Unit {
-  let rs = self.use_runtime_state()
-  for ru in rs.render_units {
+pub fn Element::update(self : Element) -> Unit {
+  for ru in self.use_updateables() {
     ru.update()
   }
 }
 
 ///|
-pub fn send_cursor(
+pub fn Element::send_cursor(
   self : Element,
   pressed : Bool,
   cursorpos : @struct.Point[Int]
 ) -> CursorState {
-  let rs = self.use_runtime_state()
   send_cursor_to_areas(
-    rs.render_units.iter().filter_map(fn(ru) { ru.get_interactive_area() }),
+    self.use_interactables(),
     self.get_ui_model().position,
     pressed,
     cursorpos,
   )
+}
+
+///|
+pub fn Element::doubleclick(self : Element, pos : @struct.Point[Int]) -> Unit {
+  let areas = self.use_interactables()
+  let container_pos = self.get_ui_model().position
+  let matches = areas.filter(fn(area) {
+    area.bounds.shift(container_pos).contains(pos)
+  }) // WARN: performance
+  for area in matches {
+    (area.on_double_click)()
+  }
 }
 
 ///|
@@ -224,6 +266,42 @@ fn use_runtime_state(self : Element) -> RenderSpec {
       render_state
     }
   }
+}
+
+///|
+fn use_drawables(self : Element) -> Iter[&@graphics.Drawable] {
+  self.use_runtime_state().render_elements
+  .iter()
+  .map(fn(re) {
+    match re {
+      RenderElement::Static(ru) => ru
+      RenderElement::Interactable(ru, _) => ru
+    }
+  })
+}
+
+///|
+fn use_interactables(self : Element) -> Iter[InteractiveArea] {
+  self.use_runtime_state().render_elements
+  .iter()
+  .filter_map(fn(re) {
+    match re {
+      RenderElement::Interactable(_, ia) => Some(ia)
+      RenderElement::Static(_) => None
+    }
+  })
+}
+
+///|
+fn use_updateables(self : Element) -> Iter[&RenderUnit] {
+  self.use_runtime_state().render_elements
+  .iter()
+  .map(fn(re) {
+    match re {
+      RenderElement::Static(ru) => ru
+      RenderElement::Interactable(ru, _) => ru
+    }
+  })
 }
 
 ///|
@@ -328,14 +406,6 @@ pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T] with update
 }
 
 ///|
-pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T] with get_interactive_area(
-  self
-) -> InteractiveArea? {
-  ignore(self)
-  None
-}
-
-///|
 pub impl[T : ToJson] ToJson for StaticUI[T] with to_json(self) -> Json {
   { "drawable": self.drawable.to_json(), "args": self.args.to_json() }
 }
@@ -351,12 +421,6 @@ pub impl @graphics.Drawable for SpriteUI with draw(self, args) -> Unit {
 ///|
 pub impl RenderUnit for SpriteUI with update(self) -> Unit {
   self._.update() |> ignore
-}
-
-///|
-pub impl RenderUnit for SpriteUI with get_interactive_area(self) -> InteractiveArea? {
-  self |> ignore
-  None
 }
 
 ///|
@@ -387,7 +451,25 @@ pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
 }
 
 ///|
-pub type OffsetedUnit[T] (T, Point[Int]) derive(ToJson)
+type OffsetedUnit[T] (T, Point[Int]) derive(ToJson)
+
+///|
+pub fn OffsetedUnit::new[T](unit : T, pos : Point[Int]) -> OffsetedUnit[T] {
+  (unit, pos)
+}
+
+///|
+pub fn OffsetedUnit::offset_element(
+  element : RenderElement,
+  pos : Point[Int]
+) -> RenderElement {
+  match element {
+    RenderElement::Static(ru) =>
+      RenderElement::Static(OffsetedUnit::new(ru, pos))
+    RenderElement::Interactable(ru, ia) =>
+      RenderElement::Interactable(OffsetedUnit::new(ru, pos), ia)
+  }
+}
 
 ///|
 pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T] with draw(
@@ -403,8 +485,22 @@ pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with update(self) -> Uni
 }
 
 ///|
-pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with get_interactive_area(
-  self
-) -> InteractiveArea? {
-  self.0.get_interactive_area()
+type StaticUnit[T] T derive(ToJson)
+
+///|
+pub fn StaticUnit::new[T](unit : T) -> StaticUnit[T] {
+  unit
+}
+
+///|
+pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUnit[T] with draw(
+  self,
+  args
+) -> Unit {
+  self._.draw(args)
+}
+
+///|
+pub impl[T] RenderUnit for StaticUnit[T] with update(self) -> Unit {
+  ignore(self)
 }

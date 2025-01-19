@@ -227,25 +227,30 @@ pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
 }
 
 ///|
-impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
-  let render_units : Array[&@ui.RenderUnit] = []
+impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
+  let render_elements = []
   let offset = @struct.Point::default()
   // Add top texture
-  render_units.push(
-    @ui.TextureUI(self.resource.top) |> @ui.StaticUI::new(pos=offset),
+  render_elements.push(
+    @ui.TextureUI(self.resource.top)
+    |> @ui.StaticUI::new(pos=offset)
+    |> @ui.RenderElement::Static,
   )
   let offset = offset.shift_y(self.resource.top.height())
 
   // Add fill texture
-  render_units.push(
+  render_elements.push(
     @ui.TextureUI(self.resource.fill)
-    |> @ui.StaticUI::new(pos=offset, stretch=@struct.Point::new(0, self.height)),
+    |> @ui.StaticUI::new(pos=offset, stretch=@struct.Point::new(0, self.height))
+    |> @ui.RenderElement::Static,
   )
   let offset = offset.shift_y(self.height)
 
   // Add bottom texture
-  render_units.push(
-    @ui.TextureUI(self.resource.bottom) |> @ui.StaticUI::new(pos=offset),
+  render_elements.push(
+    @ui.TextureUI(self.resource.bottom)
+    |> @ui.StaticUI::new(pos=offset)
+    |> @ui.RenderElement::Static,
   )
 
   // Add speaker image and nametag
@@ -256,18 +261,22 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
   let speaker_pos = @struct.Point::new(22, 11 + speaker_y)
   let center_pos = speaker_pos +
     @struct.Point::new(self.resource.nametag.width() / 2, 0)
-  render_units.push(
+  render_elements.push(
     @ui.TextureUI(self.speaker)
     |> @ui.StaticUI::new_ex(
       args=@graphics.DrawArgument::new(pos=center_pos, flip=true),
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
-  render_units.push(
-    @ui.TextureUI(self.resource.nametag) |> @ui.StaticUI::new(pos=speaker_pos),
+  render_elements.push(
+    @ui.TextureUI(self.resource.nametag)
+    |> @ui.StaticUI::new(pos=speaker_pos)
+    |> @ui.RenderElement::Static,
   )
-  render_units.push(
+  render_elements.push(
     @ui.TextUI(self.name)
-    |> @ui.StaticUI::new(pos=center_pos + @struct.Point::new(0, -4)),
+    |> @ui.StaticUI::new(pos=center_pos + @struct.Point::new(0, -4))
+    |> @ui.RenderElement::Static,
   )
 
   // Add content if exists
@@ -275,21 +284,23 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
     Some(content) => {
       let mut init_height = 19
       for element in content.text_content {
-        render_units.push(
+        render_elements.push(
           @ui.TextUI(element)
-          |> @ui.StaticUI::new(pos=@struct.Point::new(166, init_height)),
+          |> @ui.StaticUI::new(pos=@struct.Point::new(166, init_height))
+          |> @ui.RenderElement::Static,
         )
         init_height += element.height()
       }
       for element in content.text_button_content {
-        render_units.push(
+        render_elements.push(
           element
           |> @ui.Button::new(on_click=fn() {
             (self.on_choice)(
               TalkChoice::SEND_SIMPLE(option=Some(element.get_option_number())),
             )
             None
-          }),
+          })
+          |> @ui.Button::as_interactable,
         )
       }
     }
@@ -305,7 +316,7 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
     Some(t) =>
       match t {
         TalkType::SEND_YESNO => {
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_yes,
               pos=@struct.Point::new(389, y_cord),
@@ -313,9 +324,10 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_YESNO(answer=Some(true)))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_no,
               pos=@struct.Point::new(461, y_cord),
@@ -323,18 +335,20 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_YESNO(answer=Some(false)))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_YESNO(answer=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
         }
         TalkType::SEND_NEXT => {
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_next,
               pos=@struct.Point::new(461, y_cord - 30),
@@ -342,18 +356,20 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_NEXT(next=Some(())))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_NEXT(next=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
         }
         TalkType::SEND_PREV => {
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_prev,
               pos=@struct.Point::new(367, y_cord),
@@ -361,18 +377,20 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_PREV(prev=Some(())))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_PREV(prev=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
         }
         TalkType::SEND_NEXT_PREV => {
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_next,
               pos=@struct.Point::new(461, y_cord - 30),
@@ -380,9 +398,10 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(true)))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_prev,
               pos=@struct.Point::new(367, y_cord),
@@ -390,18 +409,20 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(false)))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
         }
         TalkType::SEND_OK => {
-          render_units.push(
+          render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_ok,
               pos=@struct.Point::new(469, y_cord),
@@ -409,29 +430,32 @@ impl @ui.UIElement for UINpcTalk with render(self) -> @ui.RenderSpec {
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_OK(ok=Some(())))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_OK(ok=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
         }
         TalkType::SEND_SIMPLE =>
           // options handled in content, add close
-          render_units.push(
+          render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
               (self.on_choice)(TalkChoice::SEND_SIMPLE(option=None))
               None
-            }),
+            })
+            |> @ui.Button::as_interactable,
           )
       }
     None => ()
   }
-  { render_units, }
+  { render_elements, }
 }
 
 ///|

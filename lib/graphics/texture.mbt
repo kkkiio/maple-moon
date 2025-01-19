@@ -6,7 +6,7 @@ pub(all) struct Texture {
 } derive(Default)
 
 ///|
-pub fn to_string(self : Texture) -> String {
+pub fn Texture::to_string(self : Texture) -> String {
   let bid = self.bitmap.map_or("", fn(bitmap) { bitmap.id })
   let origin = self.origin
   let dimensions = self.dimensions
@@ -15,10 +15,14 @@ pub fn to_string(self : Texture) -> String {
 
 ///|
 pub impl ToJson for Texture with to_json(self) -> Json {
-  {
-    "bitmap": self.bitmap.to_json(),
-    "origin": self.origin.to_json(),
-    "dimensions": self.dimensions.to_json(),
+  match self.bitmap {
+    Some(bitmap) =>
+      {
+        "bitmap": bitmap.to_json(),
+        "origin": self.origin.to_json(),
+        "dimensions": self.dimensions.to_json(),
+      }
+    None => {}
   }
 }
 
@@ -37,27 +41,27 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
 }
 
 ///|
-pub fn shift(self : Texture, amount : @struct.Point[Int]) -> Unit {
+pub fn Texture::shift(self : Texture, amount : @struct.Point[Int]) -> Unit {
   self.origin -= amount
 }
 
 ///|
-pub fn width(self : Texture) -> Int {
+pub fn Texture::width(self : Texture) -> Int {
   self.dimensions.x
 }
 
 ///|
-pub fn height(self : Texture) -> Int {
+pub fn Texture::height(self : Texture) -> Int {
   self.dimensions.y
 }
 
 ///|
-pub fn get_origin(self : Texture) -> @struct.Point[Int] {
+pub fn Texture::get_origin(self : Texture) -> @struct.Point[Int] {
   self.origin
 }
 
 ///|
-pub fn get_dimensions(self : Texture) -> @struct.Point[Int] {
+pub fn Texture::get_dimensions(self : Texture) -> @struct.Point[Int] {
   self.dimensions
 }
 

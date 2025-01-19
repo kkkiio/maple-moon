@@ -89,10 +89,10 @@ pub fn SelectCharUI::new(
 }
 
 ///|
-pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
+pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
   let resources = self.resource
-  let render_units : Array[&@ui.RenderUnit] = []
-  render_units.push_iter(
+  let render_elements = []
+  render_elements.push_iter(
     [
       @graphics.Sprite::new(
         resources.back13,
@@ -120,29 +120,30 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
       ),
     ]
     .iter()
-    .map(fn(it) { @ui.SpriteUI(it) }),
+    .map(fn(it) { @ui.SpriteUI(it) |> @ui.RenderElement::Static }),
   )
-  render_units.push(
-    @ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
+  render_elements.push(
+    (@ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
     |> @ui.Button::new(on_click=fn() {
       guard let Some(slot) = self.select_slot else { None => return None }
       let cid = self.characters[slot].0
       (self.on_select_character)(cid)
       None
-    }),
+    })).as_interactable(),
   )
   // Point<int16_t> character_new_pos = Point<int16_t>(200, 495);
   // buttons_[Buttons::CHARACTER_NEW] =
   //     std::make_unique<MapleButton>(CharSelect["BtNew"], character_new_pos);
-  render_units.push(
+  render_elements.push(
     @ui.MapleButton::new(resources.bt_new, pos=@struct.Point::new(200, 495))
     |> @ui.Button::new(on_click=fn() {
       (self.on_new_character)()
       None
-    }),
+    })
+    |> @ui.Button::as_interactable,
   )
   for i in 0..<@math.minimum(self.characters.length(), PAGE_SIZE) {
-    render_units.push(
+    render_elements.push(
       @ui.AreaButton::new(
         get_character_slot_pos(i, 105, 144),
         @struct.Point::new(50, 90),
@@ -151,7 +152,8 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
         self.select_slot = Some(i)
         (self.hooks.on_state_changed)()
         None
-      }),
+      })
+      |> @ui.Button::as_interactable,
     )
     let (_, char_look, name_tag) = self.characters[i]
     char_look.set_stance(
@@ -162,13 +164,17 @@ pub impl @ui.UIElement for SelectCharUI with render(self) -> @ui.RenderSpec {
       },
     )
     char_look.set_direction(true)
-    render_units.push({ char_look, pos: get_character_slot_pos(i, 135, 234) })
+    render_elements.push(
+      { char_look, pos: get_character_slot_pos(i, 135, 234) }
+      |> @ui.RenderElement::Static,
+    )
     name_tag.set_selected(Some(i) == self.select_slot)
-    render_units.push(
-      @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234)),
+    render_elements.push(
+      @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
+      |> @ui.RenderElement::Static,
     )
   }
-  { render_units, }
+  { render_elements, }
 }
 
 ///|
@@ -186,9 +192,6 @@ impl @graphics.Drawable for CharLookUI with draw(self, _) -> Unit {
 impl @ui.RenderUnit for CharLookUI with update(self) -> Unit {
   self.char_look.update(@constants.step_time_ms) |> ignore
 }
-
-///|
-impl @ui.RenderUnit for CharLookUI with get_interactive_area(self) { None }
 
 ///|
 pub impl ToJson for CharLookUI with to_json(self) -> Json {

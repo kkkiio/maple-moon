@@ -6,7 +6,7 @@ pub(all) enum TypeId {
   ETC
   CASH
   EQUIPPED
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show, ToJson)
 
 ///|
 pub fn int_value(self : TypeId) -> Int {

@@ -2,23 +2,19 @@
 struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
-  item_res : @resource.NxNode
+  resources : Resources
+  io_service : @io_task.Service
 }
 
 ///|
 pub fn Module::load(
-  player_getter : () -> @player.Player?
-) -> @utils.Future[Module] {
-  @ui.ui_window_2_loader().load_res(["Item"])
-  |> @utils.map(fn(item_res) { Module::new(player_getter, item_res) })
-}
-
-///|
-fn Module::new(
   player_getter : () -> @player.Player?,
-  item_res : @resource.NxNode
-) -> Module {
-  { inventory: Inventory::new(), player_getter, item_res }
+  io_service : @io_task.Service
+) -> @utils.Future[Module] {
+  Resources::load()
+  |> @utils.map(fn(resources) {
+    { inventory: Inventory::new(), player_getter, resources, io_service }
+  })
 }
 
 ///|
@@ -31,11 +27,12 @@ pub fn make_handlers(
   self : Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
+    @net.make_handler(
       @net.MODIFY_INVENTORY,
-      @net.with_log(@net.MODIFY_INVENTORY, fn(recv : @net.InPacket) {
-        handle_modify_inventory!(self.inventory, self.player_getter, recv)
-      }),
+      fn(recv) { parse_modify_inventory!(recv, self.inventory) },
+      fn(message) {
+        handle_modify_inventory(self.inventory, self.player_getter, message)
+      },
     ),
   ]
   |> Map::from_array
@@ -53,28 +50,32 @@ pub fn make_actions(
         make_element=fn() {
           @ui.Element::new(
             fn(hooks) {
-              let ui = UIItemInventory::new(
-                {
-                  inventory: self.inventory,
-                  player: (self.player_getter)().unwrap(),
-                },
-                self.item_res,
+              let ui = ItemInventoryUI::new(
+                self.inventory,
+                self.io_service,
+                self.resources,
                 hooks,
+                on_changing_equip=fn(slot, equip_data) {
+                  guard let Some(player) = (self.player_getter)() else {
+                    None => return
+                  }
+                  if can_wear_equip(player, equip_data) {
+                    new_equip_item_packet(
+                      slot,
+                      self.inventory.find_equipslot(equip_data),
+                    ).dispatch()
+                  }
+                },
+                on_using_item=fn(slot, itemid) {
+                  new_use_item_packet(slot, itemid).dispatch()
+                },
               )
-              self.inventory.listen_item_changes(fn() {
-                guard ui.get_ui_model().active else { return false }
-                ui.set_attributes({
-                  inventory: self.inventory,
-                  player: (self.player_getter)().unwrap(),
-                })
-                true
-              })
               ui
             },
             @ui.UIElementType::ITEM_INVENTORY,
           )
         },
-        focused=UIItemInventory::is_focused(),
+        focused=ItemInventoryUI::is_focused(),
       ),
     ),
   ]
@@ -95,4 +96,9 @@ pub fn make_stat_handlers(
     ),
   ]
   |> Map::from_array
+}
+
+///| Packet which requests that an item is equipped
+pub fn new_equip_item_packet(src : Int, dest : @slot.Id) -> @net.OutPacket {
+  new_move_item_packet(TypeId::EQUIP, src, -dest.int_value(), 1)
 }

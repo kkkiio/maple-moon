@@ -68,6 +68,6 @@ pub impl @json.FromJson for Point[Int] with from_json(value, path) {
 }
 
 ///|
-pub impl ToJson for Point[Int] with to_json(self) -> Json {
+pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
   [self.x.to_json(), self.y.to_json()]
 }

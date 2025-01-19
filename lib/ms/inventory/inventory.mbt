@@ -1,10 +1,10 @@
 ///|
-pub(all) enum Movement {
+enum Movement {
   MOVE_NONE
   MOVE_INTERNAL
   MOVE_UNEQUIP
   MOVE_EQUIP
-}
+} derive(Eq, Hash, Show, ToJson)
 
 ///|
 pub fn int_value(self : Movement) -> Int {
@@ -17,13 +17,13 @@ pub fn int_value(self : Movement) -> Int {
 }
 
 ///|
-pub(all) enum Modification {
+enum Modification {
   ADD
   CHANGE_COUNT
   SWAP
   REMOVE
   ADD_COUNT
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show, ToJson)
 
 ///|
 pub fn int_value(self : Modification) -> Int {
@@ -37,30 +37,29 @@ pub fn int_value(self : Modification) -> Int {
 }
 
 ///|
-pub fn Modification::from_int(value : Int) -> Modification? {
+pub fn Modification::from_int(value : Int) -> Modification!@utils.UnknownEnum {
   match value {
-    0 => Modification::ADD |> Some
-    1 => Modification::CHANGE_COUNT |> Some
-    2 => Modification::SWAP |> Some
-    3 => Modification::REMOVE |> Some
-    4 => Modification::ADD_COUNT |> Some
-    _ => None
+    0 => Modification::ADD
+    1 => Modification::CHANGE_COUNT
+    2 => Modification::SWAP
+    3 => Modification::REMOVE
+    4 => Modification::ADD_COUNT
+    _ => raise @utils.UnknownEnum(value)
   }
 }
 
 ///| Return the move type by value
-pub fn Movement::from_int(value : Int) -> Movement? {
+pub fn Movement::from_int(value : Int) -> Movement!@utils.UnknownEnum {
   match value {
-    -1 => Movement::MOVE_NONE |> Some
-    0 => Movement::MOVE_INTERNAL |> Some
-    1 => Movement::MOVE_UNEQUIP |> Some
-    2 => Movement::MOVE_EQUIP |> Some
-    _ => None
+    -1 => Movement::MOVE_NONE
+    0 => Movement::MOVE_INTERNAL
+    1 => Movement::MOVE_UNEQUIP
+    2 => Movement::MOVE_EQUIP
+    _ => raise @utils.UnknownEnum(value)
   }
 }
 
-// The player's inventory
-///|
+///| The player's inventory
 struct Inventory {
   inventories : @utils.DefaultMap[TypeId, Map[Int, Slot]]
   items : Map[Int, Item]
@@ -161,10 +160,12 @@ pub fn add_item(
   owner : String,
   flags : Int
 ) -> Unit {
-  self.items.set(
-    self.add_slot(invtype, slot, item_id, count, cash),
-    { item_id, expiration, owner, flags },
-  )
+  self.items.set(self.add_slot(invtype, slot, item_id, count, cash), {
+    item_id,
+    expiration,
+    owner,
+    flags,
+  })
 }
 
 ///|
@@ -211,22 +212,19 @@ pub fn add_equip(
   _iexp : Int,
   vicious : Int
 ) -> Unit {
-  self.equips.set(
-    self.add_slot(invtype, slot, item_id, 1, cash),
-    {
-      stats,
-      item_id,
-      expiration,
-      owner,
-      flags,
-      slots,
-      level,
-      item_level,
-      vicious,
-      potential_rank: @equip_data.Potential::POT_NONE,
-      // quality: @equip.check_quality(item_id, level > 0, stats),
-    },
-  )
+  self.equips.set(self.add_slot(invtype, slot, item_id, 1, cash), {
+    stats,
+    item_id,
+    expiration,
+    owner,
+    flags,
+    slots,
+    level,
+    item_level,
+    vicious,
+    potential_rank: @equip_data.Potential::POT_NONE,
+    // quality: @equip.check_quality(item_id, level > 0, stats),
+  })
 }
 
 ///|
@@ -257,21 +255,19 @@ pub fn get_item_at_slot(
 ) -> @item.ItemData? {
   self.inventories[t]
   .get(slot)
-  .bind(
-    fn(it) {
-      match @item.ItemData::get_async(it.item_id).poll() {
-        Some(Ok(item_data)) => item_data |> Some
-        Some(Err(e)) => {
-          @log.error(
-            { "err": e.to_string(), "item_id": it.item_id, "slot": slot },
-            "Failed to load item data",
-          )
-          None
-        }
-        None => None
+  .bind(fn(it) {
+    match @item.ItemData::get_async(it.item_id).poll() {
+      Some(Ok(item_data)) => item_data |> Some
+      Some(Err(e)) => {
+        @log.error(
+          { "err": e.to_string(), "item_id": it.item_id, "slot": slot },
+          "Failed to load item data",
+        )
+        None
       }
-    },
-  )
+      None => None
+    }
+  })
 }
 
 ///|
@@ -311,7 +307,7 @@ pub fn modify(
         _ => ()
       }
     Modification::REMOVE => self.remove(t, slot)
-    _ => panic()
+    _ => ...
   }
   self.item_listeners.retain(fn(listener) { listener() })
 }

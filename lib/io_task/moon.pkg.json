@@ -1,6 +1,5 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/actor"
+    "KKKIIO/maple-moon-client/lib/utils"
   ]
 }

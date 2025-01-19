@@ -243,18 +243,19 @@ pub fn ExplorerCreatorUI::new(
 }
 
 ///|
-pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
+pub impl @ui.Widget for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
   self.load_char_look()
-  let render_units : Array[&@ui.RenderUnit] = []
-  render_units.push(
+  let render_elements = []
+  render_elements.push(
     @ui.SpriteUI(
       @graphics.Sprite::new(
         self.resource.back14,
         @graphics.DrawArgument::new(pos=@struct.Point::new(250, 302)),
       ),
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
-  render_units.push(
+  render_elements.push(
     @ui.SpriteUI(
       @graphics.Sprite::new(
         self.resource.signboard2,
@@ -263,9 +264,10 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
           scale=2.0,
         ),
       ),
-    ),
+    )
+    |> @ui.RenderElement::Static,
   )
-  render_units.push(
+  render_elements.push(
     @graphics.TileUnit::new(
       self.resource.sky,
       rows=2,
@@ -273,7 +275,8 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
       row_height=400,
       col_width=self.resource.sky.width(),
     )
-    |> @ui.StaticUI::new(pos=@struct.Point::new(0, -100)),
+    |> @ui.StaticUI::new(pos=@struct.Point::new(0, -100))
+    |> @ui.RenderElement::Static,
   )
   let choices = if self.settings.female {
     self.resource.female_choices
@@ -282,34 +285,37 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
   }
 
   // Draw clouds
-  render_units.push(self.cloud_ui)
+  render_elements.push(self.cloud_ui |> @ui.RenderElement::Static)
   if not(self.gender_selected) {
     // Draw gender selection board
-    render_units.push(
+    render_elements.push(
       @graphics.Sprite::new(
         self.resource.board_gender_top,
         @graphics.DrawArgument::new(pos=@struct.Point::new(486, 95)),
       )
-      |> @ui.SpriteUI,
+      |> @ui.SpriteUI
+      |> @ui.RenderElement::Static,
     )
-    render_units.push(
+    render_elements.push(
       @graphics.Sprite::new(
         self.resource.board_gender_mid,
         @graphics.DrawArgument::new(pos=@struct.Point::new(486, 209)),
       )
-      |> @ui.SpriteUI,
+      |> @ui.SpriteUI
+      |> @ui.RenderElement::Static,
     )
-    render_units.push(
+    render_elements.push(
       @graphics.Sprite::new(
         self.resource.board_gender_bottom,
         @graphics.DrawArgument::new(pos=@struct.Point::new(486, 329)),
       )
-      |> @ui.SpriteUI,
+      |> @ui.SpriteUI
+      |> @ui.RenderElement::Static,
     )
 
     // Add gender selection buttons
-    render_units.push(
-      @ui.MapleButton::new(
+    render_elements.push(
+      (@ui.MapleButton::new(
         self.resource.bt_gender_male,
         pos=@struct.Point::new(487, 109),
       )
@@ -318,9 +324,9 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
         self.gender_selected = true
         (self.hooks.on_state_changed)()
         None
-      }),
+      })).as_interactable(),
     )
-    render_units.push(
+    render_elements.push(
       @ui.MapleButton::new(
         self.resource.bt_gender_female,
         pos=@struct.Point::new(485, 109),
@@ -330,7 +336,8 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
         self.gender_selected = true
         (self.hooks.on_state_changed)()
         None
-      }),
+      })
+      |> @ui.Button::as_interactable,
     )
 
     // Draw character preview
@@ -340,34 +347,36 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
           char_look,
           pos: @struct.Point::new(394, 339),
         }
-        render_units.push(char_look_ui)
+        render_elements.push(char_look_ui |> @ui.RenderElement::Static)
       }
       None => ()
     }
   } else if not(self.charset_selected) {
     // Draw character customization board
-    render_units.push(
+    render_elements.push(
       @graphics.Sprite::new(
         self.resource.board_char_set,
         @graphics.DrawArgument::new(pos=@struct.Point::new(486, 95)),
       )
-      |> @ui.SpriteUI,
+      |> @ui.SpriteUI
+      |> @ui.RenderElement::Static,
     )
 
     // Draw avatar selection sprites
     for i, _ in self.resource.avatar_sel {
       let f = if i >= 2 { i + 1 } else { i }
-      render_units.push(
+      render_elements.push(
         @graphics.Sprite::new(
           self.resource.avatar_sel[i],
           @graphics.DrawArgument::new(pos=@struct.Point::new(497, 197 + f * 18)),
         )
-        |> @ui.SpriteUI,
+        |> @ui.SpriteUI
+        |> @ui.RenderElement::Static,
       )
     }
 
     // Add character customization buttons
-    render_units.push_iter(
+    render_elements.push_iter(
       [
         {
           compute: fn(f) { self.settings.face_idx = f(self.settings.face_idx) },
@@ -432,13 +441,13 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
       })
       .iter()
       .flat_map(fn(it) {
-        [it.0 as &@ui.RenderUnit, it.1 as &@ui.RenderUnit].iter()
+        [it.0 |> @ui.RenderElement::Static, it.1 |> @ui.RenderElement::Static].iter()
       }),
     )
     match self.char_look_hook {
       Some((_, char_look)) => {
         // Draw equipment names
-        render_units.push_iter(
+        render_elements.push_iter(
           [
             (
               char_look.get_face().get_name(),
@@ -477,6 +486,7 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
             )
             |> @ui.TextUI
             |> @ui.StaticUI::new(pos~)
+            |> @ui.RenderElement::Static
           }),
         )
 
@@ -485,11 +495,11 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
           char_look,
           pos: @struct.Point::new(394, 339),
         }
-        render_units.push(char_look_ui)
+        render_elements.push(char_look_ui |> @ui.RenderElement::Static)
       }
       None => ()
     }
-    render_units.push(
+    render_elements.push(
       @ui.MapleButton::new(
         self.resource.bt_yes,
         pos=@struct.Point::new(514, 394),
@@ -498,16 +508,18 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
         self.charset_selected = true
         (self.hooks.on_state_changed)()
         None
-      }),
+      })
+      |> @ui.Button::as_interactable,
     )
   } else {
-    render_units.push(
+    render_elements.push(
       @ui.StaticUI::new(
         @ui.TextureUI(self.resource.nameboard),
         pos=@struct.Point::new(486, 95),
-      ),
+      )
+      |> @ui.RenderElement::Static,
     )
-    render_units.push(
+    render_elements.push(
       @ui.MapleButton::new(
         self.resource.bt_yes,
         pos=@struct.Point::new(514, 394),
@@ -527,10 +539,11 @@ pub impl @ui.UIElement for ExplorerCreatorUI with render(self) -> @ui.RenderSpec
           weapon_id: choices.weapons[self.settings.weapon_idx],
         })
         None
-      }),
+      })
+      |> @ui.Button::as_interactable,
     )
   }
-  { render_units, }
+  { render_elements, }
 }
 
 ///|
@@ -605,7 +618,7 @@ fn load_char_look(self : ExplorerCreatorUI) -> Unit {
     look.set_stance(@types.StanceId::STAND1)
     look.set_direction(true)
     self.char_look_hook = Some((expect, look))
-    (self.hooks.on_state_changed)()
+    self.hooks.on_state_changed()
   })
 }
 
@@ -696,12 +709,6 @@ pub impl @graphics.Drawable for CloudUI with draw(self, _) -> Unit {
 
 ///|
 pub impl @ui.RenderUnit for CloudUI with update(self) -> Unit { self.x += 0.5 }
-
-///|
-pub impl @ui.RenderUnit for CloudUI with get_interactive_area(self) {
-  ignore(self)
-  None
-}
 
 ///|
 struct IndexSelector {

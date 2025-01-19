@@ -41,8 +41,8 @@ class Socket {
     }
     return new Uint8Array();
   }
-  write(bytes) {
-    this.ws.send(bytes.buffer);
+  write(data) {
+    this.ws.send(data);
   }
 }
 const VWIDTH = 1366;
@@ -163,6 +163,7 @@ function main() {
     "Shield/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Shield"),
     "Shoes/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Shoes"),
     "Glove/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Glove"),
+    "Accessory/": new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Accessory"),
   }, imageLoader);
 
   const bodyLoader = new AsyncResourceLoader(

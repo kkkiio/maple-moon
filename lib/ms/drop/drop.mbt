@@ -1,6 +1,6 @@
 ///|
 trait Drop: @map_object.MapObject {
-  bounds(Self) -> @struct.Rectangle[Int]
+  get_bounds(Self) -> @struct.Rectangle[Int]
   expire(Self, Int, @physics.PhysicsObject?) -> Unit
 }
 
@@ -209,7 +209,9 @@ pub fn get_position(self : MesoDrop) -> @struct.Point[Int] {
 }
 
 ///|
-pub fn bounds(self : MesoDrop) -> @struct.Rectangle[Int] {
+pub impl Drop for MesoDrop with get_bounds(self : MesoDrop) -> @struct.Rectangle[
+  Int,
+] {
   self.base.bounds()
 }
 
@@ -251,7 +253,7 @@ pub fn ItemDrop::draw(
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  if self.base.base.active.not() {
+  if not(self.base.base.active) {
     return
   }
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
@@ -295,7 +297,7 @@ pub fn get_position(self : ItemDrop) -> @struct.Point[Int] {
 }
 
 ///|
-pub fn bounds(self : ItemDrop) -> @struct.Rectangle[Int] {
+pub fn get_bounds(self : ItemDrop) -> @struct.Rectangle[Int] {
   self.base.bounds()
 }
 

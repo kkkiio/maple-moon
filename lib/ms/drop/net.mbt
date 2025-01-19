@@ -28,10 +28,10 @@ pub fn parse_drop_loot(recv : @net.InPacket) -> DropLoot! {
   } else {
     dropto
   }
-  if meso.not() {
+  if not(meso) {
     recv.skip!(8)
   }
-  let player_drop = recv.read_bool!().not()
+  let player_drop = not(recv.read_bool!())
   { mode, oid, meso, item_id, owner, pickuptype, dropto, dropfrom, player_drop }
 }
 

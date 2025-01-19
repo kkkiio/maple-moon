@@ -5,7 +5,7 @@ typealias ButtonState = @ui.ButtonState
 typealias UIElementType = @ui.UIElementType
 
 ///|
-typealias UIElement = @ui.UIElement
+typealias Widget = @ui.Widget
 
 ///|
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
@@ -60,12 +60,12 @@ pub fn UIStateGame::new(
     vheight: @constants.constants.get_viewheight(),
   }
   // icon_map: Map::from_array([
-  //   (Icon.IconType::NONE, UIElement.Type::NONE),
-  //   (Icon.IconType::SKILL, UIElement.Type::SKILL_BOOK),
-  //   (Icon.IconType::EQUIP, UIElement.Type::EQUIP_INVENTORY),
-  //   (Icon.IconType::ITEM, UIElement.Type::ITEM_INVENTORY),
-  //   (Icon.IconType::KEY, UIElement.Type::KEY_CONFIG),
-  //   (Icon.IconType::NUM_TYPES, UIElement.Type::NUM_TYPES),
+  //   (Icon.IconType::NONE, Widget.Type::NONE),
+  //   (Icon.IconType::SKILL, Widget.Type::SKILL_BOOK),
+  //   (Icon.IconType::EQUIP, Widget.Type::EQUIP_INVENTORY),
+  //   (Icon.IconType::ITEM, Widget.Type::ITEM_INVENTORY),
+  //   (Icon.IconType::KEY, Widget.Type::KEY_CONFIG),
+  //   (Icon.IconType::NUM_TYPES, Widget.Type::NUM_TYPES),
   // ]),
 }
 
@@ -359,7 +359,7 @@ fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
 ///|
 fn doubleclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
   match self.get_front_by_pos(pos) {
-    Some({ doubleclick, .. }) => doubleclick(pos)
+    Some(e) => e.doubleclick(pos)
     None => ()
   }
 }

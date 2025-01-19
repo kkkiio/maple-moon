@@ -45,7 +45,7 @@ pub impl RenderUnit for Button with update(self) -> Unit {
 }
 
 ///|
-pub impl RenderUnit for Button with get_interactive_area(self) -> InteractiveArea? {
+pub fn Button::get_interactive_area(self : Button) -> InteractiveArea? {
   self.on_click.map(fn(on_click) {
     {
       bounds: self.object.bounds(),
@@ -56,13 +56,24 @@ pub impl RenderUnit for Button with get_interactive_area(self) -> InteractiveAre
           None => ()
         }
       },
+      on_double_click: fn() {  },
     }
   })
 }
 
 ///|
+pub fn Button::as_interactable(self : Button) -> RenderElement {
+  match self.get_interactive_area() {
+    Some(area) => RenderElement::Interactable(self, area)
+    None => RenderElement::Static(self)
+  }
+}
+
+///|
 pub impl ToJson for Button with to_json(self) -> Json {
-  {} // TODO
+  // TODO
+  ignore(self)
+  {}
 }
 
 ///|

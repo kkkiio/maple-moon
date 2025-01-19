@@ -15,7 +15,7 @@ pub fn send_cursor_to_btns(
   pos : @struct.Point[Int]
 ) -> CursorState {
   send_cursor_to_areas(
-    buttons.map_option(fn(b) { b.get_interactive_area() }),
+    buttons.filter_map(fn(b) { b.get_interactive_area() }),
     container_pos,
     down,
     pos,
@@ -34,13 +34,11 @@ pub fn send_cursor_to_areas(
     if area.bounds.shift(container_pos).contains(pos) {
       match area.state.val {
         ButtonState::NORMAL => {
-          // Sound::new(SoundName::BUTTON_OVER).play()
           area.state.val = ButtonState::MOUSEOVER
           ret = CursorState::CAN_CLICK
         }
         ButtonState::MOUSEOVER =>
           if down {
-            // Sound::new(SoundName::BUTTON_CLICK).play()
             (area.on_click)()
             ret = CursorState::IDLE
           } else {

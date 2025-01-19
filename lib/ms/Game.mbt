@@ -102,9 +102,10 @@ fn load_modules(
     io_service,
   ).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
-  let inventory_module = @inventory.Module::load(fn() {
-    get_stage().get_player()
-  }).tap(fn(mod) {
+  let inventory_module = @inventory.Module::load(
+    fn() { get_stage().get_player() },
+    io_service,
+  ).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
@@ -343,11 +344,11 @@ pub fn update_status(self : Game) -> Unit {
 
 ///|
 pub fn draw(self : Game, alpha : Double) -> Unit {
-  self.window.begin()
+  @graphics.GraphicsGL::get().clear_scene()
   let stage = self.stage.val.unwrap() // TODO: handle error
   stage.draw(alpha)
   self.ui.draw(alpha)
-  self.window.end()
+  @graphics.GraphicsGL::get().flush(1.0)
 }
 
 ///|

@@ -146,12 +146,6 @@ pub impl RenderUnit for Gauge with update(self) -> Unit {
 }
 
 ///|
-pub impl RenderUnit for Gauge with get_interactive_area(self) {
-  ignore(self)
-  None
-}
-
-///|
 pub fn set_target(self : Gauge, t : Double) -> Unit {
   if self.target != t {
     self.target = t

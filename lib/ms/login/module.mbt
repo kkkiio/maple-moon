@@ -210,10 +210,10 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
   //     std::function<void()> okhandler = loginwait->get().get_handler();
 
   //     // Remove previous UIs
-  //     UI::get().remove(UIElement::Type::LOGIN_NOTICE);
-  //     UI::get().remove(UIElement::Type::LOGIN_WAIT);
-  //     UI::get().remove(UIElement::Type::TOS);
-  //     UI::get().remove(UIElement::Type::GENDER);
+  //     UI::get().remove(Widget::Type::LOGIN_NOTICE);
+  //     UI::get().remove(Widget::Type::LOGIN_WAIT);
+  //     UI::get().remove(Widget::Type::TOS);
+  //     UI::get().remove(Widget::Type::GENDER);
 
   // The packet should contain a 'reason' integer which can signify
   // various things
@@ -674,7 +674,7 @@ struct ConnectChannelTask {
 }
 
 ///|
-pub fn update(self : ConnectChannelTask) -> Bool {
+pub fn ConnectChannelTask::update(self : ConnectChannelTask) -> Bool {
   if self.processor.get_status() == @net.READY {
     let packet = new_player_login_packet(self.cid)
     self.processor.send_packet(packet)

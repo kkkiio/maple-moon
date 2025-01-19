@@ -573,12 +573,12 @@ pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
 }
 
 ///|
-impl @ui.UIElement for UIShop with remove_cursor(self) -> Unit {  }
+impl @ui.Widget for UIShop with remove_cursor(self) -> Unit {  }
 
 ///|
-impl @ui.UIElement for UIShop with render(self) -> @ui.RenderSpec {
+impl @ui.Widget for UIShop with render(self) -> @ui.RenderSpec {
   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
-  { render_units: rs.buttons.map(fn(btn) { btn as &@ui.RenderUnit }) }
+  { render_elements: rs.buttons.map(fn(btn) { btn.as_interactable() }) }
 }
 
 ///|

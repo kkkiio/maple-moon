@@ -17,7 +17,6 @@
     "KKKIIO/maple-moon-client/lib/io_task",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",
     "KKKIIO/maple-moon-client/lib/constants",
-    "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/equip/slot"
   ]
 }

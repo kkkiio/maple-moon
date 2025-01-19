@@ -116,7 +116,7 @@ pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
   self.write_string(hwid)
 }
 
-///|
+///| Message to be sent to the server
 pub(open) trait OutMessage: Show {
   pack(Self) -> OutPacket
 }

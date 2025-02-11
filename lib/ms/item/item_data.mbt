@@ -2,7 +2,7 @@
 /// Contains all shared data between concrete items
 pub(all) struct ItemData {
   src : @resource.NxNode
-  icons : @utils.BoolPair[@graphics.Texture]
+  icons : (@graphics.Texture, @graphics.Texture)
   item_id : Int
   price : Int
   gender : Int
@@ -109,7 +109,7 @@ fn ItemData::load_async(
     if info.is_null() {
       raise LoadDataError::DATA_NOT_FOUND(item_id)
     }
-    let icons = @utils.BoolPair::new(
+    let icons = (
       info["icon"] |> @graphics.Texture::from_resource,
       info["iconRaw"] |> @graphics.Texture::from_resource,
     )
@@ -235,7 +235,11 @@ pub fn get_category(self : ItemData) -> String {
 
 ///|
 pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
-  self.icons[raw]
+  if raw {
+    self.icons.1
+  } else {
+    self.icons.0
+  }
 }
 
 ///|

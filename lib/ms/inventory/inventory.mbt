@@ -26,7 +26,7 @@ enum Modification {
 } derive(Eq, Hash, Show, ToJson)
 
 ///|
-pub fn int_value(self : Modification) -> Int {
+pub fn Modification::int_value(self : Modification) -> Int {
   match self {
     Modification::ADD => 0
     Modification::CHANGE_COUNT => 1
@@ -92,7 +92,7 @@ pub fn Inventory::new() -> Inventory {
     meso: 0,
     bullet_slot: 0,
     total_stats: @utils.DefaultMap::new(fn() { 0 }),
-    slot_maxima: Map::from_array([(TypeId::EQUIPPED, @slot.Id::length())]),
+    slot_maxima: Map::from_array([(TypeId::EQUIPPED, @equip_slot.Id::length())]),
     item_listeners: Array::new(),
   }
 }
@@ -271,6 +271,41 @@ pub fn get_item_at_slot(
 }
 
 ///|
+pub struct ItemUIData {
+  id : Int
+  name : String
+  icon : @resource.Image
+}
+
+///|
+pub fn get_all_items_by_type(self : Inventory, t : TypeId) -> Array[ItemUIData] {
+  self.inventories[t]
+  .values()
+  .filter_map(fn(it) {
+    match @item.ItemData::get_async(it.item_id).poll() {
+      Some(Ok(item_data)) =>
+        Some({
+          id: it.item_id,
+          name: item_data.name,
+          icon: item_data.get_icon(false).bitmap.map_or(
+            @resource.Image::new_pending(),
+            fn(bitmap) { bitmap.image },
+          ),
+        })
+      Some(Err(e)) => {
+        @log.error(
+          { "err": e.to_string(), "item_id": it.item_id },
+          "Failed to load item data",
+        )
+        None
+      }
+      None => None // TODO: return async result
+    }
+  })
+  .to_array()
+}
+
+///|
 pub fn get_bulletcount(self : Inventory) -> Int {
   self.get_item_count(TypeId::USE, self.bullet_slot)
 }
@@ -376,25 +411,25 @@ pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
 pub fn find_equipslot(
   self : Inventory,
   cloth : @equip_data.EquipData
-) -> @slot.Id {
+) -> @equip_slot.Id {
   let eqslot = cloth.get_eqslot()
-  if eqslot == @slot.Id::RING1 {
-    if not(self.has_equipped(@slot.Id::RING2)) {
-      return @slot.Id::RING2
+  if eqslot == @equip_slot.Id::RING1 {
+    if not(self.has_equipped(@equip_slot.Id::RING2)) {
+      return @equip_slot.Id::RING2
     }
-    if not(self.has_equipped(@slot.Id::RING3)) {
-      return @slot.Id::RING3
+    if not(self.has_equipped(@equip_slot.Id::RING3)) {
+      return @equip_slot.Id::RING3
     }
-    if not(self.has_equipped(@slot.Id::RING4)) {
-      return @slot.Id::RING4
+    if not(self.has_equipped(@equip_slot.Id::RING4)) {
+      return @equip_slot.Id::RING4
     }
-    return @slot.Id::RING1
+    return @equip_slot.Id::RING1
   }
   eqslot
 }
 
 ///|
-pub fn has_equipped(self : Inventory, slot : @slot.Id) -> Bool {
+pub fn has_equipped(self : Inventory, slot : @equip_slot.Id) -> Bool {
   self.inventories[TypeId::EQUIPPED].contains(slot.int_value())
 }
 

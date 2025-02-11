@@ -276,10 +276,10 @@ pub(all) struct Bitmap {
   height : Int
 }
 
-///|
-pub fn to_string(self : Bitmap) -> String {
-  "{id=\{self.id}, width=\{self.width}, height=\{self.height}}"
-}
+// ///|
+// pub fn to_string(self : Bitmap) -> String {
+//   "{id=\{self.id}, width=\{self.width}, height=\{self.height}}"
+// }
 
 ///|
 pub impl ToJson for Bitmap with to_json(self) -> Json {

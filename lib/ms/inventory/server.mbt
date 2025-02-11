@@ -96,9 +96,22 @@ fn change_equip(
   player : @player.Player,
   raw_slot_id : Int
 ) -> Unit {
-  let slot = @slot.Id::from_int(raw_slot_id)
+  let slot = @equip_slot.Id::from_int(raw_slot_id)
   match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
     0 => player.character.get_look().remove_equip(slot)
     itemid => player.character.get_look().add_equip(itemid, slot)
   }
+}
+
+///| Packet which requests that an item is unequipped
+struct UnequipItemPacket {
+  src : Int
+  dest : Int
+} derive(ToJson, Show)
+
+///|
+pub impl @net.OutMessage for UnequipItemPacket with pack(self) -> @net.OutPacket {
+  @net.OutPacket::new(@net.MOVE_ITEM)
+  ..write_short(self.src)
+  ..write_short(self.dest)
 }

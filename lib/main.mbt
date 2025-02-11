@@ -40,3 +40,14 @@ pub fn onkeydown(key : String) -> Unit {
 pub fn onkeyup(key : String) -> Unit {
   entrypoint.game.unwrap().get_window().key_callback(key, false)
 }
+
+///|
+pub fn get_all_inventory_items_by_type(t : Int) -> Array[@inventory.ItemUIData] {
+  entrypoint.game
+  .unwrap()
+  .get_inventory()
+  .map(fn(it) {
+    it.get_all_items_by_type(@inventory.TypeId::by_value(t).unwrap())
+  })
+  .or(Array::new())
+}

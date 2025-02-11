@@ -7,6 +7,7 @@
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",
     "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/ms/clothing"
+    "KKKIIO/maple-moon-client/lib/ms/clothing",
+    "KKKIIO/maple-moon-client/lib/ui"
   ]
 }

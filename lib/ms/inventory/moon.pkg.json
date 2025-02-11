@@ -8,7 +8,10 @@
       "path": "KKKIIO/maple-moon-client/lib/ms/equip/data",
       "alias": "equip_data"
     },
-    "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+      "alias": "equip_slot"
+    },
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/ms/pet",
@@ -28,6 +31,7 @@
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/io/keyboard",
     "KKKIIO/maple-moon-client/lib/game_mod",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "KKKIIO/maple-moon-client/lib/ms/equip"
   ]
 }

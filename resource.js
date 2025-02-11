@@ -8,27 +8,31 @@ export class LazyBmpLoader {
         this.bitmaps = {};
     }
     loadImage(bid) {
-        let bmp = this.bitmaps[bid];
-        if (bmp) {
-            return bmp;
+        let lazyImage = this.bitmaps[bid];
+        if (lazyImage) {
+            return lazyImage;
         }
         const img = new Image();
         const bmpPath = `${this.imagesPath}/${bid}.png`;
-        bmp = {
+        lazyImage = {
             data: img,
             loading: true,
         };
-        this.bitmaps[bid] = bmp;
+        this.bitmaps[bid] = lazyImage;
         img.onload = () => {
-            bmp.w = img.width;
-            bmp.h = img.height;
-            bmp.loading = false;
+            lazyImage.w = img.width;
+            lazyImage.h = img.height;
+            lazyImage.loading = false;
         };
         img.src = bmpPath;
-        return bmp;
+        return lazyImage;
     }
 }
 
+/**
+ * @param {string} url
+ * @returns {Promise<HTMLImageElement>}
+ */
 async function fetchImageByUrl(url) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -45,7 +49,7 @@ async function fetchImageByUrl(url) {
 
 /**
  * @typedef {Object} LazyImage
- * @property {Image} data
+ * @property {HTMLImageElement} data
  * @property {boolean} loading
  * @property {number} w
  * @property {number} h
@@ -88,49 +92,25 @@ export class BidImageLoader {
     }
 }
 
-class Singleflight {
-    constructor() {
-        /**
-         * @type {Map<string, Promise<any>>}
-         */
-        this.flights = new Map();
-    }
-
-    /**
-     * @template T
-     * @param {string} key 
-     * @param {() => Promise<T>} fn 
-     * @returns {Promise<T>}
-     */
-    async run(key, fn) {
-        const existing = this.flights.get(key);
-        if (existing) {
-            return existing;
-        }
-
-        const promise = fn().finally(() => {
-            this.flights.delete(key);
-        });
-
-        this.flights.set(key, promise);
-        return promise;
-    }
-}
-
 export class PathImageLoader {
     /**
      * 
      * @param {string} rootPath 
-     * @param {CanvasRenderingContext2D} canvasContext 
+     * @param {CanvasRenderingContext2D} cc1 
+     * @param {CanvasRenderingContext2D} cc2 
      */
-    constructor(rootPath, canvasContext) {
+    constructor(rootPath, cc1, cc2) {
         this.rootPath = rootPath;
-        this.canvasContext = canvasContext;
+        this.cc1 = cc1;
+        this.cc2 = cc2;
         /**
          * @type {Record<string, LazyImage>}
          */
         this.cache = {};
-        this.singleflight = new Singleflight();
+        /**
+         * @type {Record<string, Promise<Record<string, HTMLImageElement>>>}
+         */
+        this.spriteSheetCache = {};
     }
     /**
      * 
@@ -149,10 +129,10 @@ export class PathImageLoader {
         this.cache[path] = res;
         if (spriteSheetRef) {
             this.loadSpritesheet(imagePath).then(images => {
-                const data = images[spriteSheetRef];
-                res.data = data;
-                res.w = data.width;
-                res.h = data.height;
+                const img = images[spriteSheetRef];
+                res.data = img;
+                res.w = img.width;
+                res.h = img.height;
                 res.loading = false;
             });
         } else {
@@ -166,7 +146,11 @@ export class PathImageLoader {
         return res;
     }
     async loadSpritesheet(path) {
-        return this.singleflight.run(path, async () => {
+        let cached = this.spriteSheetCache[path];
+        if (cached) {
+            return cached;
+        }
+        cached = (async () => {
             const jsonUrl = joinPath(this.rootPath, path + ".json");
             const imageUrl = joinPath(this.rootPath, path + ".png");
             const [json, spritesheetImage] = await Promise.all([
@@ -175,28 +159,29 @@ export class PathImageLoader {
             ]);
 
             // split spritesheet to portions
-            this.canvasContext.canvas.width = spritesheetImage.width;
-            this.canvasContext.canvas.height = spritesheetImage.height;
-            this.canvasContext.drawImage(spritesheetImage, 0, 0, spritesheetImage.width, spritesheetImage.height);
+            this.cc1.canvas.width = spritesheetImage.width;
+            this.cc1.canvas.height = spritesheetImage.height;
+            this.cc1.drawImage(spritesheetImage, 0, 0, spritesheetImage.width, spritesheetImage.height);
 
             /**
-             * @type {Record<string, ImageData>}
+             * @type {Promise<[string, HTMLImageElement]>[]}
              */
-            const images = {};
+            const promises = [];
             for (const [imagePath, imageInfo] of Object.entries(json.frames)) {
                 const { x, y, w, h } = imageInfo.frame;
                 const imageRef = imagePath.replace(/\.png$/, "");
-                const data = this.canvasContext.getImageData(x, y, w, h);
-                images[imageRef] = data;
-                this.cache[path + "#" + imageRef] = {
-                    data: data,
-                    w: w,
-                    h: h,
-                    loading: false,
-                }
+                const data = this.cc1.getImageData(x, y, w, h);
+                this.cc2.canvas.width = w;
+                this.cc2.canvas.height = h;
+                this.cc2.putImageData(data, 0, 0);
+                promises.push(loadImage(this.cc2.canvas.toDataURL()).then(img => {
+                    return [imageRef, img]
+                }));
             }
-            return images;
-        });
+            return Object.fromEntries(await Promise.all(promises));
+        })();
+        this.spriteSheetCache[path] = cached;
+        return cached;
     }
 }
 
@@ -374,3 +359,23 @@ function joinPath(root, path) {
     }
     return `${root}/${path}`;
 }
+
+/**
+ * 
+ * @param {string} url 
+ * @returns {Promise<HTMLImageElement>}
+ */
+function loadImage(url) {
+    const img = new Image();
+    const promise = new Promise((resolve, reject) => {
+        img.onload = () => {
+            resolve(img);
+        };
+        img.onerror = (e) => {
+            reject(e);
+        };
+    });
+    img.src = url;
+    return promise;
+}
+

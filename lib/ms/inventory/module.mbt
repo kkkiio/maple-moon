@@ -2,7 +2,7 @@
 struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
-  resources : Resources
+  resources : ItemInventoryUIResources
   io_service : @io_task.Service
 }
 
@@ -11,7 +11,7 @@ pub fn Module::load(
   player_getter : () -> @player.Player?,
   io_service : @io_task.Service
 ) -> @utils.Future[Module] {
-  Resources::load()
+  ItemInventoryUIResources::load()
   |> @utils.map(fn(resources) {
     { inventory: Inventory::new(), player_getter, resources, io_service }
   })
@@ -99,6 +99,9 @@ pub fn make_stat_handlers(
 }
 
 ///| Packet which requests that an item is equipped
-pub fn new_equip_item_packet(src : Int, dest : @slot.Id) -> @net.OutPacket {
+pub fn new_equip_item_packet(
+  src : Int,
+  dest : @equip_slot.Id
+) -> @net.OutPacket {
   new_move_item_packet(TypeId::EQUIP, src, -dest.int_value(), 1)
 }

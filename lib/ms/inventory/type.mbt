@@ -9,7 +9,7 @@ pub(all) enum TypeId {
 } derive(Eq, Hash, Show, ToJson)
 
 ///|
-pub fn int_value(self : TypeId) -> Int {
+pub fn TypeId::int_value(self : TypeId) -> Int {
   match self {
     TypeId::EQUIP => 1
     TypeId::USE => 2

@@ -88,8 +88,15 @@ pub fn Keyboard::default() -> Keyboard {
     ),
   )
   keymap.set(
-    @keyboard.keyE,
+    @keyboard.keyS,
     Mapping::new(@keyboard.KeyType::MENU, @keyboard.ActionId::STATS.int_value()),
+  )
+  keymap.set(
+    @keyboard.keyE,
+    Mapping::new(
+      @keyboard.KeyType::MENU,
+      @keyboard.ActionId::EQUIPMENT.int_value(),
+    ),
   )
   keymap.set(
     @keyboard.keyA,

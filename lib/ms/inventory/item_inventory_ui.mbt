@@ -7,10 +7,10 @@ struct ItemInventoryUI {
   inventory : Inventory
   tab_types : Array[TypeId]
   mut tab : Int
-  mut slot_item_map : Map[Int, IconItemUI]
+  mut slot_item_map : Map[Int, ItemIcon]
   mut inventory_version : Int
   slot_item_effect_hook : @ui.EffectHook[(Int, Int)]
-  resources : Resources
+  resources : ItemInventoryUIResources
   hooks : @ui.Hooks
   io_service : @io_task.Service
   on_changing_equip : (Int, @equip_data.EquipData) -> Unit
@@ -18,7 +18,7 @@ struct ItemInventoryUI {
 }
 
 ///|
-struct Resources {
+struct ItemInventoryUIResources {
   full_backgrnd : @graphics.Texture
   full_backgrnd2 : @graphics.Texture
   full_backgrnd3 : @graphics.Texture
@@ -28,7 +28,8 @@ struct Resources {
 } derive(Default)
 
 ///|
-pub fn Resources::load() -> @utils.Future[Resources] {
+pub fn ItemInventoryUIResources::load() ->
+     @utils.Future[ItemInventoryUIResources] {
   @ui.ui_window_2_loader()
   .load_res(["Item"])
   .map(fn(item) {
@@ -85,7 +86,7 @@ pub fn Resources::load() -> @utils.Future[Resources] {
 pub fn ItemInventoryUI::new(
   inventory : Inventory,
   io_service : @io_task.Service,
-  resources : Resources,
+  resources : ItemInventoryUIResources,
   hooks : @ui.Hooks,
   on_changing_equip~ : (Int, @equip_data.EquipData) -> Unit = fn(_, _) {  },
   on_using_item~ : (Int, Int) -> Unit = fn(_, _) {  }
@@ -282,7 +283,7 @@ pub impl @ui.Widget for ItemInventoryUI with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-struct IconItemUI {
+struct ItemIcon {
   icon : IconModel
   texture : @graphics.Texture
   on_double_click : () -> Unit
@@ -290,17 +291,15 @@ struct IconItemUI {
 }
 
 ///|
-pub impl @graphics.Drawable for IconItemUI with draw(self, args) -> Unit {
+pub impl @graphics.Drawable for ItemIcon with draw(self, args) -> Unit {
   self.icon.draw(args.pos + self.pos, self.texture)
 }
 
 ///|
-pub impl @ui.RenderUnit for IconItemUI with update(self) -> Unit {
-  ignore(self)
-}
+pub impl @ui.RenderUnit for ItemIcon with update(self) -> Unit { ignore(self) }
 
 ///|
-pub fn IconItemUI::as_interactable(self : IconItemUI) -> @ui.RenderElement {
+pub fn ItemIcon::as_interactable(self : ItemIcon) -> @ui.RenderElement {
   @ui.RenderElement::Interactable(self, {
     bounds: IconModel::get_bounds(self.texture).shift(self.pos),
     on_click: fn() {  },
@@ -310,7 +309,7 @@ pub fn IconItemUI::as_interactable(self : IconItemUI) -> @ui.RenderElement {
 }
 
 ///|
-pub impl ToJson for IconItemUI with to_json(self) -> Json {
+pub impl ToJson for ItemIcon with to_json(self) -> Json {
   { "icon": self.icon.to_json(), "texture": self.texture.to_json() }
 }
 

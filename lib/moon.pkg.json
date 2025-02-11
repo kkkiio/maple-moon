@@ -1,7 +1,9 @@
 {
     "import": [
-      "KKKIIO/maple-moon-client/lib/ms",
-      "KKKIIO/maple-moon-client/lib/utils"
+        "KKKIIO/maple-moon-client/lib/ms",
+        "KKKIIO/maple-moon-client/lib/utils",
+        "KKKIIO/maple-moon-client/lib/ms/item",
+        "KKKIIO/maple-moon-client/lib/ms/inventory"
     ],
     "link": {
         "js": {
@@ -12,7 +14,8 @@
                 "onmousedown",
                 "onmouseup",
                 "onkeydown",
-                "onkeyup"
+                "onkeyup",
+                "get_all_inventory_items_by_type"
             ],
             "format": "esm"
         }

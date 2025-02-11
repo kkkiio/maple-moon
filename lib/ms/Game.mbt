@@ -17,6 +17,7 @@ pub(all) struct Game {
 ///|
 struct LoadedState {
   login_module : @login.Module
+  inventory_module : @inventory.Module
 }
 
 ///|
@@ -102,7 +103,7 @@ fn load_modules(
     io_service,
   ).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
-  let inventory_module = @inventory.Module::load(
+  let inventory_module_fut = @inventory.Module::load(
     fn() { get_stage().get_player() },
     io_service,
   ).tap(fn(mod) {
@@ -112,7 +113,7 @@ fn load_modules(
   })
   let login_mod_f = char_look_module_f
     .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod, io_service) })
-    .combine(inventory_module)
+    .combine(inventory_module_fut)
     .map(fn(it) {
       let (login_module, inventory_module) = it
       merge_handlers(
@@ -251,7 +252,7 @@ fn load_modules(
   // NPC Interaction Handlers
   let damage_number_set = @ui.NumberSet::load()
   let stage_f = map_module
-    .combine(inventory_module)
+    .combine(inventory_module_fut)
     .combine(npc_module)
     .combine(char_look_module_f)
     .combine(drop_module)
@@ -287,20 +288,21 @@ fn load_modules(
   .combine(stage_f)
   |> to_wait
   |> @utils.Future::combine(login_mod_f)
+  |> @utils.Future::combine(inventory_module_fut)
   |> @utils.Future::map(fn(it) {
-    let (_, login_module) = it
+    let ((_, login_module), inventory_module) = it
     action_registry.reset_actions(action_map.iter() |> @immut/hashmap.from_iter)
     packet_processor.reset_handlers(
       net_handler_map.iter() |> @immut/hashmap.from_iter,
     )
     timer.reset()
     ui.change_state(UIStateLogin::new(login_module))
-    { login_module, }
+    { login_module, inventory_module }
   })
 }
 
 ///|
-pub fn update(self : Game, current_time : @utils.TimePoint) -> Unit {
+pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   let elapsed = self.timer.stop(current_time)
   guard let Some(loaded_state) = self.loaded_state.poll() else {
     None => return
@@ -376,6 +378,11 @@ fn now_micro() -> Double = "time" "now_micro"
 ///|
 pub fn get_window(self : Game) -> Window {
   self.window
+}
+
+///|
+pub fn get_inventory(self : Game) -> @inventory.Inventory? {
+  self.loaded_state.poll().map(fn(it) { it.inventory_module.get_inventory() })
 }
 
 ///|

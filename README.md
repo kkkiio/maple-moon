@@ -12,3 +12,32 @@ Focused on AI pairing development and easy to extend with game mods.
 ## Non-goal
 
 * Implement all features of the original game.
+
+## Roadmap
+
+### UI
+
+- [ ] Support Input UI
+- [ ] Support Scroll List UI
+
+### Login
+
+- [x] Support character creation UI
+
+### Character Stats
+
+- [ ] Support character stats UI
+
+### Inventory
+
+- [ ] Support character inventory UI
+
+### Equipment
+
+- [ ] Support character equipment UI
+
+### NPC
+
+- [x] Support talk to NPC
+- [ ] Support NPC shop
+- [ ] Support NPC quest

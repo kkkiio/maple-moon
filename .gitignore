@@ -4,6 +4,8 @@ nx/files
 .xmake
 build
 .cache
+node_modules
+dist
 
 .vscode
 

@@ -1,16 +1,18 @@
-export const EquipInventoryUI = {
-  name: 'EquipInventoryUI',
-  template: `
+<template>
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <button @click="refreshItems">Refresh</button>
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <button @click="refreshItems">Refresh</button>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div v-for="item in items" :key="item.id">
-          <div v-element:replace="item.icon.data" v-if="!item.icon.loading"></div>
-          <span>{{ item.name }}</span>
-        </div>
+      <div v-for="item in items" :key="item.id">
+        <div v-element:replace="item.icon.data" v-if="!item.icon.loading"></div>
+        <span>{{ item.name }}</span>
       </div>
     </div>
-  `,
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'EquipInventoryUI',
   props: {
     game: {
       type: Object,
@@ -34,11 +36,11 @@ export const EquipInventoryUI = {
     }
   },
   mounted() {
-    this.refreshItems()
+    this.refreshItems();
   },
   methods: {
     refreshItems() {
-      this.items = this.game.get_all_inventory_items_by_type(-1)
+      this.items = this.game.get_all_inventory_items_by_type(-1);
     }
   }
 }
@@ -49,3 +51,8 @@ export const EquipInventoryUI = {
  * @property {string} name
  * @property {import('resource.js').LazyImage} icon
  */
+</script>
+
+<style scoped>
+/* Add component-specific styles here */
+</style> 

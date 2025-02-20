@@ -5,7 +5,7 @@ pub(all) enum Level {
   SECOND
   THIRD
   FOURTH
-} derive(Eq)
+}
 
 ///|
 pub fn int_value(self : Level) -> Int {
@@ -19,8 +19,18 @@ pub fn int_value(self : Level) -> Int {
 }
 
 ///|
-pub fn compare(self : Level, other : Level) -> Int {
+pub impl Eq for Level with op_equal(self : Level, other : Level) -> Bool {
+  self.int_value() == other.int_value()
+}
+
+///|
+pub impl Compare for Level with compare(self : Level, other : Level) -> Int {
   self.int_value().compare(other.int_value())
+}
+
+///|
+pub impl Hash for Level with hash_combine(self : Level, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
 }
 
 ///|
@@ -62,25 +72,23 @@ pub fn Job::load(id~ : Int = 0) -> @utils.Future[Job] {
   } else {
     Level::FOURTH
   }
-  let subids = get_levels(upto=level).map(
-    fn(sub_level) { get_subjob_id(id, level, sub_level) },
-  )
+  let subids = get_levels(upto=level).map(fn(sub_level) {
+    get_subjob_id(id, level, sub_level)
+  })
   // Load all subjob data in parallel
   @utils.Future::all_of(
     subids
     .iter()
     .map(fn(subid) { JobData::load(subid).map(fn(data) { (subid, data) }) })
     |> Array::from_iter,
-  ).map(
-    fn(data_list) {
-      let sub_job_data_map = Map::new()
-      for _, it in data_list {
-        let (subid, data) = it
-        sub_job_data_map[subid] = data
-      }
-      Job::new(id, level, sub_job_data_map)
-    },
-  )
+  ).map(fn(data_list) {
+    let sub_job_data_map = Map::new()
+    for _, it in data_list {
+      let (subid, data) = it
+      sub_job_data_map[subid] = data
+    }
+    Job::new(id, level, sub_job_data_map)
+  })
 }
 
 ///|

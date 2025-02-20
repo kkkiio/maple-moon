@@ -1,24 +1,44 @@
 ///|
 struct Module {
-  player_char_stats_getter : () -> CharStats? // TODO: manage CharStats in this module
   stat : @resource.NxNode
+  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]]
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
+  mut player_char_stats : CharStats?
 }
 
 ///|
-pub fn Module::load(
-  player_char_stats_getter : () -> CharStats?
-) -> @utils.Future[Module] {
+pub fn Module::load() -> @utils.Future[Module] {
   @ui.ui_window_4_loader()
   .load_res(["Stat"])
-  .map(fn(stat) { Module::new(player_char_stats_getter, stat) })
+  .map(fn(stat) { Module::new(stat) })
 }
 
 ///|
-fn Module::new(
-  player_char_stats_getter : () -> CharStats?,
-  stat : @resource.NxNode
-) -> Module {
-  { player_char_stats_getter, stat }
+fn Module::new(stat : @resource.NxNode) -> Module {
+  {
+    stat,
+    stat_listeners: Map::new(),
+    i64stat_listeners: Map::new(),
+    player_char_stats: None,
+  }
+}
+
+///|
+pub fn Module::new_char_stats(
+  self : Module,
+  s : StatsEntry,
+  weapon_type_getter : () -> @weapon.Type,
+  job : @job.Job
+) -> CharStats {
+  let stats = CharStats::new(
+    s,
+    weapon_type_getter,
+    job,
+    self.stat_listeners,
+    self.i64stat_listeners,
+  )
+  self.player_char_stats = Some(stats)
+  stats
 }
 
 ///|
@@ -33,11 +53,7 @@ pub fn make_actions(
       ) {
         @ui.Element::new(
           fn(hooks) {
-            UIStatsInfo::new(
-              (self.player_char_stats_getter)().unwrap(),
-              self.stat,
-              hooks,
-            )
+            UIStatsInfo::new(self.player_char_stats.unwrap(), self.stat, hooks)
           },
           @ui.UIElementType::STATS_INFO,
         )
@@ -71,7 +87,7 @@ pub fn make_stat_handlers(
     (
       stat_id,
       fn(value) {
-        guard let Some(char_stats) = (self.player_char_stats_getter)() else {
+        guard let Some(char_stats) = self.player_char_stats else {
           None => return false
         }
         match stat_id {

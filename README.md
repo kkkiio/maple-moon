@@ -13,6 +13,12 @@ Focused on AI pairing development and easy to extend with game mods.
 
 * Implement all features of the original game.
 
+## 
+
+Considering web as the main platform for now.
+
+Use Vue 3 to build the UI.
+
 ## Roadmap
 
 ### UI

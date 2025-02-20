@@ -284,7 +284,7 @@ pub impl @ui.Widget for ItemInventoryUI with render(self) -> @ui.RenderSpec {
 
 ///|
 struct ItemIcon {
-  icon : IconModel
+  icon : @ui.IconModel
   texture : @graphics.Texture
   on_double_click : () -> Unit
   pos : @struct.Point[Int]
@@ -296,12 +296,14 @@ pub impl @graphics.Drawable for ItemIcon with draw(self, args) -> Unit {
 }
 
 ///|
-pub impl @ui.RenderUnit for ItemIcon with update(self) -> Unit { ignore(self) }
+pub impl @ui.RenderUnit for ItemIcon with update(self) -> Unit {
+  ignore(self)
+}
 
 ///|
 pub fn ItemIcon::as_interactable(self : ItemIcon) -> @ui.RenderElement {
   @ui.RenderElement::Interactable(self, {
-    bounds: IconModel::get_bounds(self.texture).shift(self.pos),
+    bounds: @ui.IconModel::get_bounds(self.texture).shift(self.pos),
     on_click: fn() {  },
     on_double_click: self.on_double_click,
     state: Ref::new(@ui.ButtonState::NORMAL),
@@ -360,7 +362,7 @@ fn make_slot(
   inventory : Inventory,
   tab : TypeId,
   slot : Int
-) -> (IconModel, @utils.Future[@graphics.Texture])? {
+) -> (@ui.IconModel, @utils.Future[@graphics.Texture])? {
   let item_id = inventory.get_item_id(tab, slot)
   guard item_id != 0 else { return None }
   let count = if tab == TypeId::EQUIP {
@@ -380,7 +382,7 @@ fn make_slot(
       }
     }
   })
-  Some((IconModel::new(count), texture)) // TODO: support drop
+  Some((@ui.IconModel::new(count), texture)) // TODO: support drop
 }
 
 ///|

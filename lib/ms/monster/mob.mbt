@@ -661,7 +661,7 @@ pub fn get_position(self : Mob) -> @struct.Point[Int] {
 
 ///|
 struct MobSpecialAttack {
-  use_effect : MobSkillUseEffect
+  use_effect : &MobSkillUseEffect
   // hit_effect : MobSkillHitEffect
   move_id : Int
 }
@@ -674,15 +674,15 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 ///|
 pub fn MobSpecialAttack::new(
   mob_src : @resource.NxNode,
-  mob_id : Int,
+  _mob_id : Int,
   move_id : Int
 ) -> MobSpecialAttack! {
-  let mut strid = ""
-  if mob_id < 10000000 {
-    strid = @string_format.extend_id(mob_id, 7)
-  } else {
-    strid = mob_id.to_string()
-  }
+  // let mut strid = ""
+  // if mob_id < 10000000 {
+  //   strid = @string_format.extend_id(mob_id, 7)
+  // } else {
+  //   strid = mob_id.to_string()
+  // }
   let src = mob_src["attack" + move_id.to_string()]["info"]
 
   // sound_ = SingleSkillSound::new(strid)
@@ -690,13 +690,9 @@ pub fn MobSpecialAttack::new(
   let has_multi_effect = src["effect0"].get_children_count() > 0
   let has_area_warning_effect = src["areaWarning"].get_children_count() > 0
   let use_effect = if has_multi_effect || has_area_warning_effect {
-    let effect : MobSkillUseEffect = MobMultiUseEffect::new!(
-      src, has_area_warning_effect,
-    )
-    effect
+    MobMultiUseEffect::new!(src, has_area_warning_effect) as &MobSkillUseEffect
   } else {
-    let effect : MobSkillUseEffect = MobSingleUseEffect::new!(src)
-    effect
+    MobSingleUseEffect::new!(src) as &MobSkillUseEffect
   }
   { move_id, use_effect }
 

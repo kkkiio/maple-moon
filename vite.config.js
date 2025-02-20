@@ -6,7 +6,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': '/src',
-            'lib': '/target/js/debug/build/lib'
+            'lib': '/target/js/release/build/lib'
         }
     },
     server: {

@@ -3,7 +3,7 @@
         <div style="display: flex; justify-content: center; align-items: flex-start; gap: 20px; padding: 20px;">
             <canvas ref="canvas"
                 style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px; flex-shrink: 0;"></canvas>
-            <game_ui :game="game" style="flex: 1;"></game_ui>
+            <game_ui v-if="game" :game="game" style="flex: 1;"></game_ui>
         </div>
         <div ref="tmpd" style="position: absolute; visibility: hidden; height: auto; width: auto;"></div>
     </div>
@@ -21,7 +21,7 @@ import {
     PathImageLoader,
     ResourceLoader
 } from "./resource.js";
-import GameUI from "./ui.vue";
+import GameUI from "./UI.vue";
 
 const VWIDTH = 1366;
 const VHEIGHT = 768;

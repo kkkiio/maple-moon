@@ -18,6 +18,8 @@ pub(all) struct Game {
 struct LoadedState {
   login_module : @login.Module
   inventory_module : @inventory.Module
+  skill_book_module : @skill_book.Module
+  char_stats_module : @char_stats.Module
 }
 
 ///|
@@ -148,15 +150,14 @@ fn load_modules(
     fn() { get_stage().get_player().unwrap().character.get_name() },
     packet_processor,
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
-  let char_stats_mod_f = @char_stats.Module::load(fn() {
-    get_stage().get_player().map(fn(p) { p.get_stats() })
-  }).tap(fn(mod) {
+  let char_stats_mod_f = @char_stats.Module::load().tap(fn(mod) {
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let skill_book_mod_f = @skill_book.Module::load(fn() {
-    get_stage().get_player()
-  }).tap(fn(mod) {
+  let skill_book_mod_f = @skill_book.Module::load(
+    fn() { get_stage().get_player() },
+    packet_processor,
+  ).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
   })
@@ -255,6 +256,8 @@ fn load_modules(
     .combine(inventory_module_fut)
     .combine(npc_module)
     .combine(char_look_module_f)
+    .combine(char_stats_mod_f)
+    .combine(skill_book_mod_f)
     .combine(drop_module)
     .combine(damage_number_set)
     .combine(@utils.Future::all_of(loading_mods))
@@ -262,7 +265,13 @@ fn load_modules(
       let (
         (
           (
-            (((map_module, inventory_module), npc_module), char_look_module),
+            (
+              (
+                (((map_module, inventory_module), npc_module), char_look_module),
+                char_stats_mod,
+              ),
+              skill_book_module,
+            ),
             drop_module,
           ),
           damage_number_set,
@@ -276,6 +285,8 @@ fn load_modules(
         inventory_module.get_inventory(),
         npc_module.get_npcs(),
         char_look_module,
+        skill_book_module,
+        char_stats_mod,
         damage_number_set,
         add_io_task,
         packet_processor,
@@ -284,20 +295,24 @@ fn load_modules(
     })
   char_stats_mod_f
   .combine(shop_mod_f)
-  .combine(skill_book_mod_f)
   .combine(stage_f)
-  |> to_wait
-  |> @utils.Future::combine(login_mod_f)
-  |> @utils.Future::combine(inventory_module_fut)
-  |> @utils.Future::map(fn(it) {
-    let ((_, login_module), inventory_module) = it
-    action_registry.reset_actions(action_map.iter() |> @immut/hashmap.from_iter)
+  .combine(login_mod_f)
+  .combine(inventory_module_fut)
+  .combine(skill_book_mod_f)
+  .map(fn(it) {
+    let (
+      (
+        (((char_stats_module, _shop_mod), _stage), login_module),
+        inventory_module,
+      ),
+      skill_book_module,
+    ) = it
     packet_processor.reset_handlers(
       net_handler_map.iter() |> @immut/hashmap.from_iter,
     )
     timer.reset()
     ui.change_state(UIStateLogin::new(login_module))
-    { login_module, inventory_module }
+    { login_module, inventory_module, skill_book_module, char_stats_module }
   })
 }
 
@@ -345,7 +360,7 @@ pub fn update_status(self : Game) -> Unit {
 }
 
 ///|
-pub fn draw(self : Game, alpha : Double) -> Unit {
+pub fn Game::draw(self : Game, alpha : Double) -> Unit {
   @graphics.GraphicsGL::get().clear_scene()
   let stage = self.stage.val.unwrap() // TODO: handle error
   stage.draw(alpha)
@@ -381,11 +396,21 @@ pub fn get_window(self : Game) -> Window {
 }
 
 ///|
-pub fn get_inventory(self : Game) -> @inventory.Inventory? {
-  self.loaded_state.poll().map(fn(it) { it.inventory_module.get_inventory() })
+fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
+  future.map(fn(_v : T) { () })
 }
 
 ///|
-fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
-  future.map(fn(_v : T) { () })
+pub fn Game::get_inventory_mod(self : Game) -> @inventory.Module? {
+  self.loaded_state.poll().map(fn(it) { it.inventory_module })
+}
+
+///|
+pub fn Game::get_skill_book_mod(self : Game) -> @skill_book.Module? {
+  self.loaded_state.poll().map(fn(it) { it.skill_book_module })
+}
+
+///|
+pub fn Game::get_char_stats_mod(self : Game) -> @char_stats.Module? {
+  self.loaded_state.poll().map(fn(it) { it.char_stats_module })
 }

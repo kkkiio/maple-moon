@@ -278,8 +278,8 @@ pub struct ItemUIData {
 }
 
 ///|
-pub fn get_all_items_by_type(self : Inventory, t : TypeId) -> Array[ItemUIData] {
-  self.inventories[t]
+pub fn get_all_items_by_type(mod : Module, t : TypeId) -> Array[ItemUIData] {
+  mod.inventory.inventories[t]
   .values()
   .filter_map(fn(it) {
     match @item.ItemData::get_async(it.item_id).poll() {

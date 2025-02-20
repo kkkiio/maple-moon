@@ -11,7 +11,7 @@ struct StatefulIcon {
   ntx : @graphics.Texture
   dtx : @graphics.Texture
   motx : @graphics.Texture
-  icon_model : @inventory.IconModel
+  icon_model : IconModel
 }
 
 ///|
@@ -20,7 +20,7 @@ pub fn StatefulIcon::new(
   dtx : @graphics.Texture,
   motx : @graphics.Texture
 ) -> StatefulIcon {
-  { state: NORMAL, ntx, dtx, motx, icon_model: @inventory.IconModel::new(None) }
+  { state: NORMAL, ntx, dtx, motx, icon_model: IconModel::new(None) }
 }
 
 ///|

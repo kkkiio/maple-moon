@@ -16,6 +16,15 @@
     "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/io/keyboard",
     "KKKIIO/maple-moon-client/lib/constants",
-    "KKKIIO/maple-moon-client/lib/game_mod"
-  ]
+    "KKKIIO/maple-moon-client/lib/game_mod",
+    "KKKIIO/maple-moon-client/lib/log"
+  ],
+  "link": {
+    "js": {
+      "exports": [
+        "watch_player_char_stat"
+      ],
+      "format": "esm"
+    }
+  }
 }

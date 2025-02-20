@@ -51,37 +51,34 @@ fn set_field(
   // selection. hp, mp, maxhp, maxmp, mapid...
   let stats = parse_stats!(recv)
   let playerentry = { ..playerentry, stats, }
-  set_player_stage(
-    playerentry,
-    fn(player) {
-      recv.read_byte!() |> ignore // 'buddycap'
-      if recv.read_bool!() {
-        recv.read_string!() |> ignore // 'linkedname'
-      }
-      parse_inventory!(recv, inventory)
-      parse_skillbook!(recv, player.get_skills())
-      // parse_cooldowns(recv, player);
-      // parse_questlog(recv, player.get_quests());
-      // parse_minigame(recv);
-      // parse_ring1(recv);
-      // parse_ring2(recv);
-      // parse_ring3(recv);
-      // parse_teleportrock(recv, player.get_teleport_rock());
-      // parse_monsterbook(recv, player.get_monsterbook());
-      // parse_nyinfo(recv);
-      // parse_areainfo(recv);
+  set_player_stage(playerentry, fn(player) {
+    recv.read_byte!() |> ignore // 'buddycap'
+    if recv.read_bool!() {
+      recv.read_string!() |> ignore // 'linkedname'
+    }
+    parse_inventory!(recv, inventory)
+    parse_skillbook!(recv, player.get_skills())
+    // parse_cooldowns(recv, player);
+    // parse_questlog(recv, player.get_quests());
+    // parse_minigame(recv);
+    // parse_ring1(recv);
+    // parse_ring2(recv);
+    // parse_ring3(recv);
+    // parse_teleportrock(recv, player.get_teleport_rock());
+    // parse_monsterbook(recv, player.get_monsterbook());
+    // parse_nyinfo(recv);
+    // parse_areainfo(recv);
 
-      player.recalc_stats(true)
-      new_player_update_packet().dispatch()
-      let portalid = player.get_stats().get_portal()
-      let mapid = player.get_stats().get_map_id()
-      transition(mapid, portalid)
+    player.recalc_stats(true)
+    new_player_update_packet().dispatch()
+    let portalid = player.get_stats().get_portal()
+    let mapid = player.get_stats().get_map_id()
+    transition(mapid, portalid)
 
-      // Sound(Sound::Name::GAME_START).play();
+    // Sound(Sound::Name::GAME_START).play();
 
-      setup_game_ui(player)
-    },
-  )
+    setup_game_ui(player)
+  })
 }
 
 ///| Finished updating player stats
@@ -131,10 +128,7 @@ fn parse_inventory(
 }
 
 ///|
-fn parse_skillbook(
-  recv : @net.InPacket,
-  skills : @character.SkillBook
-) -> Unit! {
+fn parse_skillbook(recv : @net.InPacket, skills : &@player.SkillBook) -> Unit! {
   let size = recv.read_short!()
   for i in 0..<size {
     let skill_id = recv.read_int!()

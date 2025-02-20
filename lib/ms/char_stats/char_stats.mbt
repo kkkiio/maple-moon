@@ -39,7 +39,9 @@ pub(all) struct StatsEntry {
 pub fn CharStats::new(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
-  job : @job.Job
+  job : @job.Job,
+  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]],
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
 ) -> CharStats {
   let cs : CharStats = {
     name: s.name,
@@ -63,8 +65,8 @@ pub fn CharStats::new(
     stance: 0.0,
     reduce_damage: 0.0,
     female: s.female,
-    stat_listeners: {},
-    i64stat_listeners: {},
+    stat_listeners,
+    i64stat_listeners,
   }
   cs.init_totalstats()
   cs

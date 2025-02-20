@@ -14,7 +14,9 @@ pub(all) enum BodyLayer {
 } derive(Eq, Compare, Show)
 
 ///|
-pub impl ToJson for BodyLayer with to_json(self) { self.to_string().to_json() }
+pub impl ToJson for BodyLayer with to_json(self) {
+  self.to_string().to_json()
+}
 
 ///|
 pub fn int_value(self : BodyLayer) -> Int {
@@ -39,7 +41,7 @@ pub fn hash(self : BodyLayer) -> Int {
 }
 
 ///|
-pub fn hash_combine(self : BodyLayer, hasher : Hasher) -> Unit {
+pub impl Hash for BodyLayer with hash_combine(self, hasher) {
   hasher.combine(self.int_value())
 }
 

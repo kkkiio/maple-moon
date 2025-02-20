@@ -1,20 +1,20 @@
 ///|
 struct Module {
   countset : @graphics.Charset
-  container : @ui.Container
+  container : &@ui.Container
   shop2_res : @resource.NxNode
   mut shop_ui : UIShop?
 }
 
 ///|
-pub fn Module::load(container : @ui.Container) -> @utils.Future[Module] {
+pub fn Module::load(container : &@ui.Container) -> @utils.Future[Module] {
   @ui.ui_window_2_loader().load_res(["Shop2"])
   |> @utils.map(fn(src) { Module::new(container, src) })
 }
 
 ///|
 fn Module::new(
-  container : @ui.Container,
+  container : &@ui.Container,
   shop2_res : @resource.NxNode
 ) -> Module {
   let countset = @graphics.Charset::new(

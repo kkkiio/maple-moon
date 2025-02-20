@@ -28,6 +28,8 @@ pub(all) struct Stage {
   damage_number_set : @ui.NumberSet
   mut combat : Combat?
   char_look_module : @char_look.Module
+  skill_book_module : @skill_book.Module
+  char_stats_module : @char_stats.Module
   add_task_fn : (@utils.Future[Unit]) -> Unit
   packet_processor : @net.PacketProcessor
 }
@@ -40,6 +42,8 @@ pub fn Stage::new(
   inventory : @inventory.Inventory,
   npcs : @npc.MapNpcs,
   char_look_module : @char_look.Module,
+  skill_book_module : @skill_book.Module,
+  char_stats_module : @char_stats.Module,
   damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
   packet_processor : @net.PacketProcessor
@@ -57,6 +61,8 @@ pub fn Stage::new(
     drops,
     inventory,
     char_look_module,
+    skill_book_module,
+    char_stats_module,
     add_task_fn,
     packet_processor,
   }
@@ -96,15 +102,25 @@ pub fn set_player_stage(
   let player_f = self.char_look_module
     .load_char_look(entry.look)
     .bind(fn(look) {
-      @player.Player::load(entry, self.inventory, look, self.damage_number_set).tap(fn(
-          player
-        ) {
-          self.player = Some(player)
-          self.combat = Some(
-            Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+      @player.Player::load(
+        entry,
+        self.inventory,
+        look,
+        self.damage_number_set,
+        fn(job) { self.skill_book_module.load_skill_book(job) },
+        fn(job) {
+          self.char_stats_module.new_char_stats(
+            entry.stats,
+            fn() { @character.get_weapon_type_in_look(look) },
+            job,
           )
         },
-      )
+      ).tap(fn(player) {
+        self.player = Some(player)
+        self.combat = Some(
+          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+        )
+      })
     })
   (self.add_task_fn)(
     player_f.map(fn(player) {

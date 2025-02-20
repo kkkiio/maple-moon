@@ -1,9 +1,12 @@
-pub(all) type! UnknownEnum Int
+///|
+pub(all) type! UnknownEnum Int derive(Show)
 
+///|
 pub fn to_string(self : UnknownEnum) -> String {
   "UnknownEnum(\{self})"
 }
 
+///|
 pub fn flatten_ok[T, E](resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
   let results = Array::new(capacity=resutls.length())
   for result in resutls {
@@ -15,6 +18,7 @@ pub fn flatten_ok[T, E](resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
   Ok(results)
 }
 
+///|
 pub fn flatten_ok_2[A, B, E](
   res1 : Result[A, E],
   res2 : Result[B, E]

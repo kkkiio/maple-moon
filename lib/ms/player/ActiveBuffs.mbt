@@ -67,27 +67,25 @@ fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
 // ActiveBuffs
 ///|
 struct ActiveBuffs {
-  buffs : @immut/sorted_map.T[@buff.StatId, ActiveBuff]
+  buffs : @immut/sorted_map.T[@buff.StatId, &ActiveBuff]
 }
 
 ///|
 fn ActiveBuffs::new() -> ActiveBuffs {
   {
-    buffs: @immut/sorted_map.from_array(
-      [
-        (@buff.StatId::MAPLE_WARRIOR, MapleWarriorBuff::default()),
-        (@buff.StatId::STANCE, StanceBuff::default()),
-        (@buff.StatId::BOOSTER, BoosterBuff::default()),
-        (@buff.StatId::WATK, SimpleStatBuff::new(@stat.Id::WATK)),
-        (@buff.StatId::WDEF, SimpleStatBuff::new(@stat.Id::WDEF)),
-        (@buff.StatId::MATK, SimpleStatBuff::new(@stat.Id::MAGIC)),
-        (@buff.StatId::MDEF, SimpleStatBuff::new(@stat.Id::MDEF)),
-        (@buff.StatId::SPEED, SimpleStatBuff::new(@stat.Id::SPEED)),
-        (@buff.StatId::JUMP, SimpleStatBuff::new(@stat.Id::JUMP)),
-        (@buff.StatId::HYPERBODYHP, PercentageStatBuff::new(@stat.Id::HP)),
-        (@buff.StatId::HYPERBODYMP, PercentageStatBuff::new(@stat.Id::MP)),
-      ],
-    ),
+    buffs: @immut/sorted_map.from_array([
+      (@buff.StatId::MAPLE_WARRIOR, MapleWarriorBuff::default()),
+      (@buff.StatId::STANCE, StanceBuff::default()),
+      (@buff.StatId::BOOSTER, BoosterBuff::default()),
+      (@buff.StatId::WATK, SimpleStatBuff::new(@stat.Id::WATK)),
+      (@buff.StatId::WDEF, SimpleStatBuff::new(@stat.Id::WDEF)),
+      (@buff.StatId::MATK, SimpleStatBuff::new(@stat.Id::MAGIC)),
+      (@buff.StatId::MDEF, SimpleStatBuff::new(@stat.Id::MDEF)),
+      (@buff.StatId::SPEED, SimpleStatBuff::new(@stat.Id::SPEED)),
+      (@buff.StatId::JUMP, SimpleStatBuff::new(@stat.Id::JUMP)),
+      (@buff.StatId::HYPERBODYHP, PercentageStatBuff::new(@stat.Id::HP)),
+      (@buff.StatId::HYPERBODYMP, PercentageStatBuff::new(@stat.Id::MP)),
+    ]),
   }
 }
 

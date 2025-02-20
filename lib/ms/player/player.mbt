@@ -5,6 +5,12 @@ typealias Movement = @physics.Movement
 typealias CharStats = @char_stats.CharStats
 
 ///|
+pub(open) trait SkillBook {
+  get_level(Self, Int) -> Int
+  set_skill(Self, Int, Int, Int, Int) -> Unit
+}
+
+///|
 pub(all) struct Player {
   character : @character.CharBase
   stats : CharStats
@@ -12,12 +18,13 @@ pub(all) struct Player {
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
-  inventory : Inventory
+  inventory : &Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
-  mut skill_book : @character.SkillBook
-  mut changing_job : @utils.Future[(@job.Job, @character.SkillBook)]?
+  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook]
+  mut skill_book : &SkillBook
+  mut changing_job : @utils.Future[(@job.Job, &SkillBook)]?
 }
 
 ///|
@@ -34,22 +41,25 @@ pub fn Player::load(
   entry : @character.CharEntry,
   inventory : &Inventory,
   look : @char_look.CharLook,
-  damage_number_set : @ui.NumberSet
+  damage_number_set : @ui.NumberSet,
+  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
+  new_char_stats : (@job.Job) -> CharStats
 ) -> @utils.Future[Player] {
   @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
   .bind(fn(job) {
-    @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
+    load_skill_book(job).map(fn(skill_book) { (job, skill_book) })
   })
   .map(fn(it) {
     let (job, skill_book) = it
     Player::new(
       entry,
       inventory,
-      job,
       skill_book,
       look,
       damage_number_set,
       @net.PacketProcessor::get(),
+      load_skill_book,
+      new_char_stats(job),
     )
   })
 }
@@ -58,17 +68,13 @@ pub fn Player::load(
 pub fn Player::new(
   entry : @character.CharEntry,
   inventory : &Inventory,
-  job : @job.Job,
-  skill_book : @character.SkillBook,
+  skill_book : &SkillBook,
   look : @char_look.CharLook,
   damage_number_set : @ui.NumberSet,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.PacketProcessor,
+  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
+  stats : CharStats
 ) -> Player {
-  let stats = CharStats::new(
-    entry.stats,
-    fn() { @character.get_weapon_type_in_look(look) },
-    job,
-  )
   let character = @character.Character::new(
     entry.id,
     look,
@@ -91,6 +97,7 @@ pub fn Player::new(
     randomizer: @utils.Randomizer::default(),
     skill_book,
     changing_job: None,
+    load_skill_book,
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
@@ -415,7 +422,7 @@ pub fn damage(
 }
 
 ///|
-pub fn get_skills(self : Player) -> @character.SkillBook {
+pub fn get_skills(self : Player) -> &SkillBook {
   self.skill_book
 }
 
@@ -499,7 +506,7 @@ pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
 pub fn change_job(self : Player, job_id : Int) -> Unit {
   self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
   self.changing_job = @job.Job::load(id=job_id).bind(fn(job) {
-      @character.SkillBook::load(job).map(fn(skill_book) { (job, skill_book) })
+      (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
     })
     |> Some
 }

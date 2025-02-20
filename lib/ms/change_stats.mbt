@@ -20,7 +20,6 @@ type StatChanges Map[@maple_stat.Id, Int] derive(Show, ToJson)
 fn parse_stat_changes(recv : @net.InPacket) -> StatChanges! {
   recv.read_bool!() |> ignore // 'itemreaction'
   let updatemask = recv.read_uint!()
-  println(@utils.to_hex_string(updatemask))
   let changes = {}
   for stat_id in @maple_stat.all_stats {
     let stat_mask = stat_id.int_value().reinterpret_as_uint()
@@ -86,6 +85,7 @@ fn parse_value(recv : @net.InPacket, id : @maple_stat.Id) -> Int! {
   }
 }
 
+///|
 test "parse stat changes" {
   let recv = b"\x1f\x00\x01\xd0\xfc\x01\x00\x07\x29\x00\x06\x00\x84\x00\x84\x00\x47\x00\x47\x00\x00\x00\x00\x00\x19\x00\x00\x00"
     |> @net.InPacket::new()

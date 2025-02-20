@@ -1,10 +1,10 @@
 ///|
 struct Skill {
-  action : SkillAction
+  action : &SkillAction
   bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
-  use_effect : SkillUseEffect
-  hit_effect : SkillHitEffect
-  affected_effects : SkillAffectedEffect
+  use_effect : &SkillUseEffect
+  hit_effect : &SkillHitEffect
+  // affected_effects : &SkillAffectedEffect
   skill_id : Int
   over_regular : Bool
   projectile : Bool
@@ -19,48 +19,41 @@ pub fn Skill::load(skill_id : Int) -> @utils.Future[Result[Skill, Error]] {
 
 ///|
 pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
-  let strid = if skill_id < 10000000 {
-    @string_format.extend_id(skill_id, 7)
-  } else {
-    skill_id.to_string()
-  }
+  // let strid = if skill_id < 10000000 {
+  //   @string_format.extend_id(skill_id, 7)
+  // } else {
+  //   skill_id.to_string()
+  // }
   let src = data.src
   let mut projectile = true
   let mut over_regular = false
-  let has_affected_effect = src["affected"].get_children_count() > 0
+  // let has_affected_effect = src["affected"].get_children_count() > 0
   let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
     0
   let multi_effect = src["effect0"].get_children_count() > 0
-  let affected_effects = if has_affected_effect {
-    let effect : SkillAffectedEffect = SingleAffectedEffect::new!(src)
-    effect
-  } else {
-    NoAffectedEffect::new()
-  }
+  // let affected_effects = if has_affected_effect {
+  //   SingleAffectedEffect::new!(src) as &SkillAffectedEffect
+  // } else {
+  //   NoAffectedEffect::new() as &SkillAffectedEffect
+  // }
   let use_effect = if by_level_effect {
-    let effect : SkillUseEffect = ByLevelUseEffect::new!(src)
-    effect
+    ByLevelUseEffect::new!(src) as &SkillUseEffect
   } else if multi_effect {
-    let effect = MultiUseEffect::new!(src) as &SkillUseEffect
-    effect
+    MultiUseEffect::new!(src) as &SkillUseEffect
   } else {
-    let is_animation = src["effect"]["0"].get_bitmap().is_empty().not()
-    let has_effect1 = src["effect"]["1"].get_bitmap().is_empty().not()
+    let is_animation = not(src["effect"]["0"].get_bitmap().is_empty())
+    let has_effect1 = not(src["effect"]["1"].get_bitmap().is_empty())
     if is_animation {
-      let effect : SkillUseEffect = SingleUseEffect::new!(src)
-      effect
+      SingleUseEffect::new!(src) as &SkillUseEffect
     } else if has_effect1 {
-      let effect : SkillUseEffect = TwoHandedUseEffect::new!(src)
-      effect
+      TwoHandedUseEffect::new!(src) as &SkillUseEffect
     } else {
       match @skill.SkillId::from_int?(skill_id) {
         Ok(@skill.SkillId::IRON_BODY) | Ok(@skill.SkillId::MAGIC_ARMOR) => {
-          let effect : SkillUseEffect = IronBodyUseEffect::new()
-          effect
+          IronBodyUseEffect::new() as &SkillUseEffect
         }
         _ => {
-          let effect : SkillUseEffect = NoUseEffect::new()
-          effect
+          NoUseEffect::new() as &SkillUseEffect
         }
       }
     }
@@ -71,45 +64,35 @@ pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
   let has_hit1 = src["hit"]["1"].get_children_count() > 0
   let hit_effect = if by_level_hit {
     if has_hit0 && has_hit1 {
-      let effect : SkillHitEffect = ByLevelTwoHandedHitEffect::new!(src)
-      effect
+      ByLevelTwoHandedHitEffect::new!(src) as &SkillHitEffect
     } else {
-      let effect : SkillHitEffect = ByLevelHitEffect::new!(src)
-      effect
+      ByLevelHitEffect::new!(src) as &SkillHitEffect
     }
   } else if by_skill_level_hit {
-    let effect : SkillHitEffect = BySkillLevelHitEffect::new!(src)
-    effect
+    BySkillLevelHitEffect::new!(src) as &SkillHitEffect
   } else if has_hit0 && has_hit1 {
-    let effect : SkillHitEffect = TwoHandedHitEffect::new!(src)
-    effect
+    TwoHandedHitEffect::new!(src) as &SkillHitEffect
   } else if has_hit0 {
-    let effect : SkillHitEffect = SingleHitEffect::new!(src)
-    effect
+    SingleHitEffect::new!(src) as &SkillHitEffect
   } else {
-    NoHitEffect::new()
+    NoHitEffect::new() as &SkillHitEffect
   }
   let has_action0 = src["action"]["0"].as_string?().is_ok()
   let has_action1 = src["action"]["1"].as_string?().is_ok()
   let action = if has_action0 && has_action1 {
-    let action : SkillAction = TwoHandedAction::new(src)
-    action
+    TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {
-    let action : SkillAction = SingleAction::new(src)
-    action
+    SingleAction::new(src) as &SkillAction
   } else if data.is_attack() {
     let by_level = src["level"]["1"]["action"].as_string?().is_ok()
     if by_level {
-      let action : SkillAction = ByLevelAction::new!(src, skill_id)
-      action
+      ByLevelAction::new!(src, skill_id) as &SkillAction
     } else {
       over_regular = true
-      let action : SkillAction = RegularAction::default()
-      action
+      RegularAction::default() as &SkillAction
     }
   } else {
-    let action : SkillAction = NoAction::new()
-    action
+    NoAction::new() as &SkillAction
   }
   let has_ball = src["ball"].get_children_count() > 0
   let by_level_ball = src["level"]["1"]["ball"].get_children_count() > 0
@@ -138,7 +121,7 @@ pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
     bullet,
     use_effect,
     hit_effect,
-    affected_effects,
+    // affected_effects,
     data,
   }
 }
@@ -162,7 +145,7 @@ pub fn Skill::apply_useeffects(
 }
 
 ///|
-pub fn apply_actions(
+pub fn Skill::apply_actions(
   self : Skill,
   user : @character.Character,
   attack_type : @combat.AttackType
@@ -175,15 +158,15 @@ pub fn make_attack(
   self : Skill,
   player : @player.Player,
   attacktype : @combat.AttackType,
-  degenerate : Bool
+  _degenerate : Bool
 ) -> @combat.Attack {
   let t = attacktype
-  let mut mindamage = player.stats.get_mindamage().to_double()
-  let mut maxdamage = player.stats.get_maxdamage().to_double()
-  if degenerate {
-    mindamage /= 10
-    maxdamage /= 10
-  }
+  // let mut mindamage = player.stats.get_mindamage().to_double()
+  // let mut maxdamage = player.stats.get_maxdamage().to_double()
+  // if degenerate {
+  //   mindamage /= 10
+  //   maxdamage /= 10
+  // }
   let critical = player.stats.get_critical()
   let ignoredef = player.stats.get_ignoredef()
   let accuracy = player.stats.get_total(@stat.Id::ACC)
@@ -291,7 +274,7 @@ pub fn can_use(
 }
 
 ///|
-pub fn get_bullet(
+pub fn Skill::get_bullet(
   self : Skill,
   user : @character.Character,
   bulletid : Int

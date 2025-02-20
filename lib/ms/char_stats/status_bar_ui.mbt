@@ -269,7 +269,7 @@ pub fn UIStatusBar::get_ui_model(self : UIStatusBar) -> @ui.UIModel {
 }
 
 ///|
-pub fn send_key(
+pub fn UIStatusBar::send_key(
   self : UIStatusBar,
   keycode : Int,
   pressed : Bool,

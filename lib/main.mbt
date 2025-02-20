@@ -45,9 +45,22 @@ pub fn onkeyup(key : String) -> Unit {
 pub fn get_all_inventory_items_by_type(t : Int) -> Array[@inventory.ItemUIData] {
   entrypoint.game
   .unwrap()
-  .get_inventory()
+  .get_inventory_mod()
   .map(fn(it) {
-    it.get_all_items_by_type(@inventory.TypeId::by_value(t).unwrap())
+    @inventory.get_all_items_by_type(
+      it,
+      @inventory.TypeId::by_value(t).unwrap(),
+    )
   })
   .or(Array::new())
+}
+
+///|
+pub fn get_skill_book_mod() -> @skill_book.Module? {
+  entrypoint.game.unwrap().get_skill_book_mod()
+}
+
+///|
+pub fn get_char_stats_mod() -> @char_stats.Module? {
+  entrypoint.game.unwrap().get_char_stats_mod()
 }

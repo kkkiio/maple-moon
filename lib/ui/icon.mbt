@@ -23,7 +23,7 @@ pub fn get[T](self : LazyVar[T]) -> T {
 
 ///|
 let countset : LazyVar[@graphics.Charset] = LazyVar::make(fn() {
-  let ui_loader = @ui.common_ui_loader()
+  let ui_loader = common_ui_loader()
   @graphics.Charset::from_resource(
     ui_loader.load_res(["Basic.img", "ItemNo"]),
     @graphics.CharsetAlignment::LEFT,
@@ -43,7 +43,7 @@ pub fn IconModel::new(count : Int?) -> IconModel {
 }
 
 ///|
-pub fn draw(
+pub fn IconModel::draw(
   self : IconModel,
   position : @struct.Point[Int],
   texture : @graphics.Texture

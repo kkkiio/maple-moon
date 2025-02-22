@@ -70,7 +70,7 @@ struct Inventory {
   slot_maxima : Map[TypeId, Int]
   mut meso : Int
   mut bullet_slot : Int
-  item_listeners : Array[() -> Bool] // TODO: fine-grained listeners
+  item_listeners_map : Map[TypeId, Array[() -> Bool]] // TODO: fine-grained listeners
 }
 
 ///|
@@ -93,7 +93,7 @@ pub fn Inventory::new() -> Inventory {
     bullet_slot: 0,
     total_stats: @utils.DefaultMap::new(fn() { 0 }),
     slot_maxima: Map::from_array([(TypeId::EQUIPPED, @equip_slot.Id::length())]),
-    item_listeners: Array::new(),
+    item_listeners_map: Map::new(),
   }
 }
 
@@ -271,41 +271,6 @@ pub fn get_item_at_slot(
 }
 
 ///|
-pub struct ItemUIData {
-  id : Int
-  name : String
-  icon : @resource.Image
-}
-
-///|
-pub fn get_all_items_by_type(mod : Module, t : TypeId) -> Array[ItemUIData] {
-  mod.inventory.inventories[t]
-  .values()
-  .filter_map(fn(it) {
-    match @item.ItemData::get_async(it.item_id).poll() {
-      Some(Ok(item_data)) =>
-        Some({
-          id: it.item_id,
-          name: item_data.name,
-          icon: item_data.get_icon(false).bitmap.map_or(
-            @resource.Image::new_pending(),
-            fn(bitmap) { bitmap.image },
-          ),
-        })
-      Some(Err(e)) => {
-        @log.error(
-          { "err": e.to_string(), "item_id": it.item_id },
-          "Failed to load item data",
-        )
-        None
-      }
-      None => None // TODO: return async result
-    }
-  })
-  .to_array()
-}
-
-///|
 pub fn get_bulletcount(self : Inventory) -> Int {
   self.get_item_count(TypeId::USE, self.bullet_slot)
 }
@@ -344,7 +309,10 @@ pub fn modify(
     Modification::REMOVE => self.remove(t, slot)
     _ => ...
   }
-  self.item_listeners.retain(fn(listener) { listener() })
+  match self.item_listeners_map.get(t) {
+    Some(listeners) => listeners.retain(fn(listener) { listener() })
+    None => ()
+  }
 }
 
 ///|
@@ -434,6 +402,10 @@ pub fn has_equipped(self : Inventory, slot : @equip_slot.Id) -> Bool {
 }
 
 ///|
-pub fn listen_item_changes(self : Inventory, listener : () -> Bool) -> Unit {
-  self.item_listeners.push(listener)
+pub fn listen_item_changes(
+  self : Inventory,
+  t : TypeId,
+  listener : () -> Bool
+) -> Unit {
+  self.item_listeners_map.get_or_init(t, fn() { Array::new() }).push(listener)
 }

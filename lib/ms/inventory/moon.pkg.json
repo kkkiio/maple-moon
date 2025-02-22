@@ -31,7 +31,14 @@
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/io/keyboard",
     "KKKIIO/maple-moon-client/lib/game_mod",
-    "KKKIIO/maple-moon-client/lib/io_task",
-    "KKKIIO/maple-moon-client/lib/ms/equip"
-  ]
+    "KKKIIO/maple-moon-client/lib/io_task"
+  ],
+  "link": {
+    "js": {
+      "exports": [
+        "watch_inventory_by_kind"
+      ],
+      "format": "esm"
+    }
+  }
 }

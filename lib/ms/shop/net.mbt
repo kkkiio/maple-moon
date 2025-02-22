@@ -69,11 +69,20 @@ pub fn handle_open_npc_shop_parsed(
           mod.shop2_res,
           hooks,
         )
-        inventory.listen_item_changes(fn() {
-          guard shop.get_ui_model().is_active() else { return false }
-          shop.set_attributes()
-          true
-        })
+        for
+          t in [
+            @inventory.TypeId::EQUIP,
+            @inventory.TypeId::USE,
+            @inventory.TypeId::ETC,
+            @inventory.TypeId::SETUP,
+            @inventory.TypeId::CASH,
+          ] {
+          inventory.listen_item_changes(t, fn() {
+            guard shop.get_ui_model().is_active() else { return false }
+            shop.set_attributes()
+            true
+          })
+        }
         mod.shop_ui = Some(shop)
         shop
       },

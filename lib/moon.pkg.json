@@ -16,7 +16,7 @@
                 "onmouseup",
                 "onkeydown",
                 "onkeyup",
-                "get_all_inventory_items_by_type",
+                "get_inventory_mod",
                 "get_skill_book_mod",
                 "get_char_stats_mod"
             ],

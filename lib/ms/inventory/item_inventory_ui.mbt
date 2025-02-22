@@ -109,12 +109,14 @@ pub fn ItemInventoryUI::new(
     on_using_item,
   }
   // hooks.on_double_click = fn(pos) { ui.doubleclick(pos) }
-  inventory.listen_item_changes(fn() {
-    guard ui.get_ui_model().active else { return false }
-    ui.inventory_version += 1
-    (hooks.on_state_changed)()
-    true
-  })
+  for t in ui.tab_types {
+    inventory.listen_item_changes(t, fn() {
+      guard ui.get_ui_model().active else { return false }
+      ui.inventory_version += 1
+      (hooks.on_state_changed)()
+      true
+    })
+  }
   ui
 }
 

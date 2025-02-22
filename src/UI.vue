@@ -1,10 +1,11 @@
 <script setup>
 import { NTabPane, NTabs } from 'naive-ui';
 import { ref } from 'vue';
-import EquipInventoryUI from './ui/equip_inventory.vue';
-import SkillBookUI from './ui/skill_book_ui.vue';
+import EquippedEquipment from './ui/EquippedEquipment.vue';
+import SkillBookUI from './ui/SkillBook.vue';
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
+const inventory_mod = ref(null);
 const { game } = defineProps({
   game: Object
 });
@@ -22,13 +23,14 @@ var poll_mod = function (mod, fKey) {
 
 poll_mod(skill_book_mod, 'get_skill_book_mod');
 poll_mod(char_stats_mod, 'get_char_stats_mod');
+poll_mod(inventory_mod, 'get_inventory_mod');
 </script>
 <template>
   <div
     style="min-width: 300px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 16px; height: fit-content;">
     <n-tabs>
       <n-tab-pane name="Equipment" tab="Equipment">
-        <EquipInventoryUI v-if="game" :game="game" />
+        <EquippedEquipment v-if="inventory_mod" :mod="inventory_mod" />
       </n-tab-pane>
       <n-tab-pane name="Skill" tab="Skill">
         <SkillBookUI v-if="skill_book_mod && char_stats_mod" :skill_book_mod="skill_book_mod"

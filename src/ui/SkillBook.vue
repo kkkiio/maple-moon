@@ -1,13 +1,15 @@
 <template>
   <div class="skill-book-ui">
-    <p>Level: {{ level }}</p>
-    <p>SP: {{ available_sp }}</p>
+    <n-descriptions>
+      <n-descriptions-item label="Level">{{ level }}</n-descriptions-item>
+      <n-descriptions-item label="SP">{{ available_sp }}</n-descriptions-item>
+    </n-descriptions>
     <n-tabs type="line" animated>
       <n-tab-pane v-for="(levelSkills, i) in skillGroups" :key="i" :name="i" :tab="'Job Level ' + (i + 1)">
         <n-list>
           <n-list-item v-for="skill in levelSkills" :key="skill.id">
             <n-space align="center">
-              <div v-element:replace="skill.icon.data" v-if="!skill.icon.loading"></div>
+              <lazy-image :image="skill.icon" />
               <n-tooltip trigger="hover">
                 <template #trigger>
                   <span>Level: {{ skill.level }}</span>
@@ -29,10 +31,11 @@
 </template>
 
 <script setup>
-import { watch_player_char_stat } from 'lib/ms/char_stats/char_stats.js'
-import { increase_sp, watch_skill_book } from 'lib/ms/skill_book/skill_book.js'
-import { NButton, NList, NListItem, NSpace, NTabPane, NTabs, NTooltip } from 'naive-ui'
-import { computed, onUnmounted, ref } from 'vue'
+import { watch_player_char_stat } from 'lib/ms/char_stats/char_stats.js';
+import { increase_sp, watch_skill_book } from 'lib/ms/skill_book/skill_book.js';
+import { NButton, NDescriptions, NDescriptionsItem, NList, NListItem, NSpace, NTabPane, NTabs, NTooltip } from 'naive-ui';
+import { computed, onUnmounted, ref } from 'vue';
+import LazyImage from './components/LazyImage.vue';
 
 // Props
 const props = defineProps({
@@ -61,17 +64,6 @@ const skillGroups = computed(() => {
 
   return Object.keys(grouped).sort().map(key => grouped[key])
 })
-
-// Custom directive
-const vElement = {
-  mounted(el, { arg: type, value: element }) {
-    if (type === 'replace') {
-      el.replaceWith(element)
-    } else if (type === 'append') {
-      el.append(element)
-    }
-  }
-}
 
 // Methods
 function increaseSP(skill) {

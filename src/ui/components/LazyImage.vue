@@ -1,25 +1,11 @@
-<template>
-    <div class="lazy-image" :style="imageStyle">
-        <n-spin v-if="image.loading" size="small" />
-        <div v-else v-element:replace="image.data" />
-    </div>
-</template>
-
 <script setup>
 import { NSpin } from 'naive-ui';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
-/**
- * @typedef {Object} LazyImage
- * @property {HTMLImageElement} data
- * @property {boolean} loading
- * @property {number} w
- * @property {number} h
- */
 
 const props = defineProps({
     /**
-     * @type {LazyImage}
+     * @type {import('../../resource').LazyImage}
      */
     image: {
         type: Object,
@@ -39,6 +25,19 @@ const props = defineProps({
         validator: (value) => ['contain', 'cover', 'fill', 'none'].includes(value)
     }
 });
+
+// poll image loading status
+const imageLoading = ref(true);
+if (props.image.loading) {
+    const interval = setInterval(() => {
+        if (!props.image.loading) {
+            imageLoading.value = false;
+            clearInterval(interval);
+        }
+    }, 500);
+} else {
+    imageLoading.value = false;
+}
 
 const imageStyle = computed(() => {
     const width = typeof props.width === 'number' ? `${props.width}px` : props.width;
@@ -61,6 +60,13 @@ const vElement = {
     }
 };
 </script>
+
+<template>
+    <div class="lazy-image" :style="imageStyle">
+        <n-spin v-if="imageLoading" size="small" />
+        <div v-else v-element:replace="image.data" />
+    </div>
+</template>
 
 <style scoped>
 .lazy-image {

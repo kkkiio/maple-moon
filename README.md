@@ -13,18 +13,13 @@ Focused on AI pairing development and easy to extend with game mods.
 
 * Implement all features of the original game.
 
-## 
+## Design
 
 Considering web as the main platform for now.
 
 Use Vue 3 to build the UI.
 
 ## Roadmap
-
-### UI
-
-- [ ] Support Input UI
-- [ ] Support Scroll List UI
 
 ### Login
 
@@ -40,7 +35,7 @@ Use Vue 3 to build the UI.
 
 ### Equipment
 
-- [ ] Support character equipment UI
+- [x] Support character equipment UI
 
 ### NPC
 

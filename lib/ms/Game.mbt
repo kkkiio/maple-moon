@@ -107,7 +107,7 @@ fn load_modules(
   let map_module = @map.Module::load()
   let inventory_module_fut = @inventory.Module::load(
     fn() { get_stage().get_player() },
-    io_service,
+    packet_processor,
   ).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())

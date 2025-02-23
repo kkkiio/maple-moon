@@ -69,8 +69,8 @@ fn handle_modify_inventory(
       Movement::MOVE_INTERNAL =>
         match mod.t {
           TypeId::EQUIPPED => {
-            change_equip(inventory, player, -mod.pos)
-            change_equip(inventory, player, -mod.arg)
+            change_equipment(inventory, player, -mod.pos)
+            change_equipment(inventory, player, -mod.arg)
           }
           TypeId::EQUIP
           | TypeId::USE
@@ -80,9 +80,9 @@ fn handle_modify_inventory(
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
-          change_equip(inventory, player, -mod.pos)
+          change_equipment(inventory, player, -mod.pos)
         } else if mod.arg < 0 {
-          change_equip(inventory, player, -mod.arg)
+          change_equipment(inventory, player, -mod.arg)
         }
       _ => ()
     }
@@ -91,7 +91,7 @@ fn handle_modify_inventory(
 }
 
 ///|
-fn change_equip(
+fn change_equipment(
   inventory : Inventory,
   player : @player.Player,
   raw_slot_id : Int
@@ -114,4 +114,33 @@ pub impl @net.OutMessage for UnequipItemPacket with pack(self) -> @net.OutPacket
   @net.OutPacket::new(@net.MOVE_ITEM)
   ..write_short(self.src)
   ..write_short(self.dest)
+}
+
+///|
+struct UseItemPacket {
+  slot : Int
+  itemid : Int
+} derive(Show)
+
+///|
+impl @net.OutMessage for UseItemPacket with pack(self) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
+  ..write_time()
+  ..write_short(self.slot)
+  ..write_int(self.itemid)
+}
+
+///| Packet which requests that an item is moved
+pub fn new_move_item_packet(
+  type_id : TypeId,
+  slot : Int,
+  action : Int,
+  qty : Int
+) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::MOVE_ITEM)
+  ..write_time()
+  ..write_byte(type_id.int_value().to_byte())
+  ..write_short(slot)
+  ..write_short(action)
+  ..write_short(qty)
 }

@@ -2,6 +2,7 @@
 import { NTabPane, NTabs } from 'naive-ui';
 import { ref } from 'vue';
 import EquippedEquipment from './ui/EquippedEquipment.vue';
+import ItemInventory from './ui/ItemInventory.vue';
 import SkillBookUI from './ui/SkillBook.vue';
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
@@ -29,12 +30,15 @@ poll_mod(inventory_mod, 'get_inventory_mod');
   <div
     style="min-width: 300px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 16px; height: fit-content;">
     <n-tabs>
-      <n-tab-pane name="Equipment" tab="Equipment">
+      <n-tab-pane name="Equipped" tab="Equipped">
         <EquippedEquipment v-if="inventory_mod" :mod="inventory_mod" />
       </n-tab-pane>
       <n-tab-pane name="Skill" tab="Skill">
         <SkillBookUI v-if="skill_book_mod && char_stats_mod" :skill_book_mod="skill_book_mod"
           :char_stats_mod="char_stats_mod" />
+      </n-tab-pane>
+      <n-tab-pane name="Inventory" tab="Inventory">
+        <ItemInventory v-if="inventory_mod" :mod="inventory_mod" />
       </n-tab-pane>
     </n-tabs>
   </div>

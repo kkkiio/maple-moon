@@ -36,7 +36,8 @@
   "link": {
     "js": {
       "exports": [
-        "watch_inventory_by_kind"
+        "watch_inventory_by_kind",
+        "use_item"
       ],
       "format": "esm"
     }

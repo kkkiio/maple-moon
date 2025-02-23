@@ -2,19 +2,16 @@
 struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
-  resources : ItemInventoryUIResources
-  io_service : @io_task.Service
+  packet_processor : @net.PacketProcessor
 }
 
 ///|
 pub fn Module::load(
   player_getter : () -> @player.Player?,
-  io_service : @io_task.Service
+  packet_processor : @net.PacketProcessor
 ) -> @utils.Future[Module] {
-  ItemInventoryUIResources::load()
-  |> @utils.map(fn(resources) {
-    { inventory: Inventory::new(), player_getter, resources, io_service }
-  })
+  { inventory: Inventory::new(), player_getter, packet_processor }
+  |> @utils.Future::from_value
 }
 
 ///|
@@ -42,44 +39,7 @@ pub fn make_handlers(
 pub fn make_actions(
   self : Module
 ) -> Map[@keyboard.ActionId, @action.Descriptor] {
-  [
-    (
-      @keyboard.ActionId::ITEMS,
-      @action.Descriptor::UI(
-        key=@ui.UIElementType::ITEM_INVENTORY,
-        make_element=fn() {
-          @ui.Element::new(
-            fn(hooks) {
-              let ui = ItemInventoryUI::new(
-                self.inventory,
-                self.io_service,
-                self.resources,
-                hooks,
-                on_changing_equip=fn(slot, equip_data) {
-                  guard let Some(player) = (self.player_getter)() else {
-                    None => return
-                  }
-                  if can_wear_equip(player, equip_data) {
-                    new_equip_item_packet(
-                      slot,
-                      self.inventory.find_equipslot(equip_data),
-                    ).dispatch()
-                  }
-                },
-                on_using_item=fn(slot, itemid) {
-                  new_use_item_packet(slot, itemid).dispatch()
-                },
-              )
-              ui
-            },
-            @ui.UIElementType::ITEM_INVENTORY,
-          )
-        },
-        focused=ItemInventoryUI::is_focused(),
-      ),
-    ),
-  ]
-  |> Map::from_array
+  Map::new()
 }
 
 ///|

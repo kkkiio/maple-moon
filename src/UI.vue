@@ -3,8 +3,8 @@ import { NTabPane, NTabs } from 'naive-ui';
 import { ref } from 'vue';
 import EquippedEquipment from './ui/EquippedEquipment.vue';
 import ItemInventory from './ui/ItemInventory.vue';
-import SkillBookUI from './ui/SkillBook.vue';
 import KeyboardConfig from './ui/KeyboardConfig.vue';
+import SkillBookUI from './ui/SkillBook.vue';
 
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
@@ -34,7 +34,7 @@ poll_mod(keyboard_mod, 'get_keyboard_mod');
 </script>
 <template>
   <div
-    style="min-width: 300px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 16px; height: fit-content;">
+    style="min-width: 300px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 16px; max-height: 100vh; overflow-y: auto; height: fit-content;">
     <n-tabs>
       <n-tab-pane name="Equipped" tab="Equipped">
         <EquippedEquipment v-if="inventory_mod" :mod="inventory_mod" />

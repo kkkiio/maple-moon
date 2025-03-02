@@ -4,12 +4,17 @@ import { ref } from 'vue';
 import EquippedEquipment from './ui/EquippedEquipment.vue';
 import ItemInventory from './ui/ItemInventory.vue';
 import SkillBookUI from './ui/SkillBook.vue';
+import KeyboardConfig from './ui/KeyboardConfig.vue';
+
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
 const inventory_mod = ref(null);
+const keyboard_mod = ref(null);
+
 const { game } = defineProps({
   game: Object
 });
+
 var poll_mod = function (mod, fKey) {
   setTimeout(() => {
     const f = game[fKey];
@@ -25,6 +30,7 @@ var poll_mod = function (mod, fKey) {
 poll_mod(skill_book_mod, 'get_skill_book_mod');
 poll_mod(char_stats_mod, 'get_char_stats_mod');
 poll_mod(inventory_mod, 'get_inventory_mod');
+poll_mod(keyboard_mod, 'get_keyboard_mod');
 </script>
 <template>
   <div
@@ -39,6 +45,9 @@ poll_mod(inventory_mod, 'get_inventory_mod');
       </n-tab-pane>
       <n-tab-pane name="Inventory" tab="Inventory">
         <ItemInventory v-if="inventory_mod" :mod="inventory_mod" />
+      </n-tab-pane>
+      <n-tab-pane name="Keyboard" tab="Keyboard">
+        <KeyboardConfig v-if="keyboard_mod" :mod="keyboard_mod" />
       </n-tab-pane>
     </n-tabs>
   </div>

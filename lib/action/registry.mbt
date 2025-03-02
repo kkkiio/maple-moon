@@ -1,6 +1,6 @@
 ///|
 struct Registry {
-  mut entries : @immut/hashmap.T[@keyboard.ActionId, Descriptor]
+  mut entries : @immut/hashmap.T[@keyboard.BasicActionId, Descriptor]
 }
 
 ///|
@@ -18,14 +18,14 @@ pub fn Registry::new() -> Registry {
 }
 
 ///|
-pub fn get_action(self : Registry, id : @keyboard.ActionId) -> Descriptor? {
+pub fn get_action(self : Registry, id : @keyboard.BasicActionId) -> Descriptor? {
   self.entries.find(id)
 }
 
 ///|
 pub fn reset_actions(
   self : Registry,
-  entries : @immut/hashmap.T[@keyboard.ActionId, Descriptor]
+  entries : @immut/hashmap.T[@keyboard.BasicActionId, Descriptor]
 ) -> Unit {
   self.entries = entries
 }

@@ -4,7 +4,8 @@
         "KKKIIO/maple-moon-client/lib/utils",
         "KKKIIO/maple-moon-client/lib/ms/inventory",
         "KKKIIO/maple-moon-client/lib/ms/skill_book",
-        "KKKIIO/maple-moon-client/lib/ms/char_stats"
+        "KKKIIO/maple-moon-client/lib/ms/char_stats",
+        "KKKIIO/maple-moon-client/lib/ms/keyboard"
     ],
     "link": {
         "js": {
@@ -18,7 +19,8 @@
                 "onkeyup",
                 "get_inventory_mod",
                 "get_skill_book_mod",
-                "get_char_stats_mod"
+                "get_char_stats_mod",
+                "get_keyboard_mod"
             ],
             "format": "esm"
         }

@@ -38,7 +38,7 @@ pub fn make_handlers(
 ///|
 pub fn make_actions(
   self : Module
-) -> Map[@keyboard.ActionId, @action.Descriptor] {
+) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
   Map::new()
 }
 

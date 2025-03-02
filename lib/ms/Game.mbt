@@ -12,6 +12,7 @@ pub(all) struct Game {
   io_service : @io_task.Service
   scheduls : @schedule.Schedules
   stage : Ref[Stage?]
+  keyboard_module : @keyboard.Module
 }
 
 ///|
@@ -28,12 +29,13 @@ pub fn Game::new() -> Game {
   let timer = @utils.Timer::new(fn() {
     now_micro() |> @utils.TimePoint::from_micro
   })
-  let keyboard = Keyboard::default()
+  let processor = @net.PacketProcessor::init()
+  let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
+  let keyboard = keyboard_module.get_keyboard()
   let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
   let window = Window::new(ui, fn() {
     now_micro() |> @utils.TimePoint::from_micro
   })
-  let processor = @net.PacketProcessor::init()
   let io_service = @io_task.Service::new()
   let scheduls = @schedule.Schedules::new()
   let stage = Ref::new(None)
@@ -44,11 +46,12 @@ pub fn Game::new() -> Game {
     ui,
     processor,
     loaded_state: load_modules(
-      ui, timer, processor, io_service, scheduls, stage,
+      ui, timer, processor, io_service, scheduls, stage, keyboard_module,
     ),
     io_service,
     scheduls,
     stage,
+    keyboard_module,
   }
 }
 
@@ -59,7 +62,8 @@ fn load_modules(
   packet_processor : @net.PacketProcessor,
   io_service : @io_task.Service,
   scheduls : @schedule.Schedules,
-  stage_ref : Ref[Stage?]
+  stage_ref : Ref[Stage?],
+  keyboard_module : @keyboard.Module
 ) -> @utils.Future[LoadedState] {
   fn get_stage() -> Stage {
     stage_ref.val.unwrap() // TODO: handle error
@@ -68,7 +72,9 @@ fn load_modules(
   let add_io_task = fn(task) { io_service.add(task) }
   let action_registry = @action.Registry::new()
   let action_map = {}
-  fn merge_actions(map : Map[@keyboard.ActionId, @action.Descriptor]) -> Unit {
+  fn merge_actions(
+    map : Map[@keyboard.BasicActionId, @action.Descriptor]
+  ) -> Unit {
     for id, descriptor in map {
       action_map.set(id, descriptor)
     }
@@ -83,6 +89,7 @@ fn load_modules(
     }
   }
 
+  merge_handlers(keyboard_module.make_handlers())
   let stat_handler_map = {}
   fn merge_stat_handlers(
     handlers : Map[@maple_stat.Id, @game_mod.StatHandler]
@@ -413,4 +420,85 @@ pub fn Game::get_skill_book_mod(self : Game) -> @skill_book.Module? {
 ///|
 pub fn Game::get_char_stats_mod(self : Game) -> @char_stats.Module? {
   self.loaded_state.poll().map(fn(it) { it.char_stats_module })
+}
+
+///|
+pub fn Game::get_keyboard_mod(self : Game) -> @keyboard.Module {
+  self.keyboard_module
+}
+
+///|
+fn default_keymap() -> Map[String, @keyboard.Mapping] {
+  let keymap = Map::new()
+  keymap.set(
+    @keyboard.arrowLeft,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::LEFT.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.arrowRight,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::RIGHT.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.arrowUp,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::UP.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.arrowDown,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::DOWN.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.enter,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::RETURN.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.numpadEnter,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::RETURN.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.tab,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::TAB.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.space,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::JUMP.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.keyX,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::ATTACK.int_value(),
+    ),
+  )
+  keymap.set(
+    @keyboard.keyC,
+    @keyboard.Mapping::new(
+      @keyboard.KeyType::ACTION,
+      @keyboard.BasicActionId::PICKUP.int_value(),
+    ),
+  )
+  keymap
 }

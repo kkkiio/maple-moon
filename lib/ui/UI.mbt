@@ -1,13 +1,13 @@
 ///|
 pub(all) struct UI {
   mut state : &UIState?
-  get_keyboard_mapping : (String) -> @keyboard.Mapping
+  get_keyboard_mapping : (String) -> @keyboard.Mapping?
   cursor : Cursor
   is_key_down : Map[String, Bool]
 }
 
 ///|
-pub fn UI::new(get_keyboard_mapping : (String) -> @keyboard.Mapping) -> UI {
+pub fn UI::new(get_keyboard_mapping : (String) -> @keyboard.Mapping?) -> UI {
   {
     state: None,
     get_keyboard_mapping,
@@ -102,7 +102,12 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
     .find_first(fn(it) { it.get_ui_model().is_active() })
   match active_ui {
     Some(it) => {
-      it.object.send_key(mapping.action, pressed, escape) |> ignore
+      it.object.send_key(
+        mapping.map_or(0, fn(it) { it.action }),
+        pressed,
+        escape,
+      )
+      |> ignore
       sent = true
     }
     None => {
@@ -142,7 +147,11 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
       if types.length() > 0 {
         match state.get_front_by_types(types) {
           Some(element) => {
-            element.object.send_key(mapping.action, pressed, escape)
+            element.object.send_key(
+              mapping.map_or(0, fn(it) { it.action }),
+              pressed,
+              escape,
+            )
             sent = true
           }
           None => ()
@@ -150,8 +159,8 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
       }
     }
   }
-  if sent.not() {
-    state.send_key(mapping.t, mapping.action, pressed, escape)
+  if not(sent) {
+    state.send_key(mapping, pressed, escape)
   }
   self.is_key_down[keycode] = pressed
 }
@@ -193,7 +202,7 @@ pub fn doubleclick(self : UI) -> Unit {
 pub(open) trait UIState {
   draw(Self, Double, Point[Int]) -> Unit
   update(Self) -> Unit
-  send_key(Self, @keyboard.KeyType, Int, Bool, Bool) -> Unit
+  send_key(Self, @keyboard.Mapping?, Bool, Bool) -> Unit
   send_cursor(Self, CursorState, Point[Int]) -> CursorState
   doubleclick(Self, Point[Int]) -> Unit
   set_element(Self, Bool, Element) -> Unit

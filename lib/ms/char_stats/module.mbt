@@ -44,10 +44,10 @@ pub fn Module::new_char_stats(
 ///|
 pub fn make_actions(
   self : Module
-) -> Map[@keyboard.ActionId, @action.Descriptor] {
+) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
   [
     (
-      @keyboard.ActionId::STATS,
+      @keyboard.BasicActionId::STATS,
       @action.Descriptor::UI(key=@ui.UIElementType::STATS_INFO, focused=false, make_element=fn(
 
       ) {

@@ -131,7 +131,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   }
 }
 
-///|
+///| @alert deprecated "use make_handler instead"
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit!,

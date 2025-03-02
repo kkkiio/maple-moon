@@ -4,7 +4,7 @@
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
-    "KKKIIO/maple-moon-client/lib/io/keyboard",
+    "KKKIIO/maple-moon-client/lib/ms/keyboard",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat"
   ]
 }

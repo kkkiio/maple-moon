@@ -42,15 +42,18 @@ fn update(self : UIStateLogin) -> Unit {
 ///|
 pub fn send_key(
   self : UIStateLogin,
-  t : @keyboard.KeyType,
-  action : Int,
+  mapping : @keyboard.Mapping?,
   pressed : Bool,
   escape : Bool
 ) -> Unit {
   match self.get(self.focused) {
     Some(focusedelement) =>
       if focusedelement.get_ui_model().is_active() {
-        focusedelement.object.send_key(action, pressed, escape)
+        focusedelement.object.send_key(
+          mapping.map_or(0, fn(it) { it.action }),
+          pressed,
+          escape,
+        )
       } else {
         self.focused = UIElementType::UI_ELEMENT_NONE
       }

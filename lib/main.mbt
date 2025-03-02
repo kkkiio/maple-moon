@@ -55,3 +55,8 @@ pub fn get_skill_book_mod() -> @skill_book.Module? {
 pub fn get_char_stats_mod() -> @char_stats.Module? {
   entrypoint.game.unwrap().get_char_stats_mod()
 }
+
+///|
+pub fn get_keyboard_mod() -> @keyboard.Module {
+  entrypoint.game.unwrap().get_keyboard_mod()
+}

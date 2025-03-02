@@ -279,15 +279,15 @@ pub fn send_key(
     Some(player) =>
       match t {
         @keyboard.KeyType::ACTION => {
-          let action = @keyboard.get_action_by_id?(action).unwrap()
+          let action = @keyboard.BasicActionId::from_int(action).unwrap() // TODO: handle error
           if down {
             match action {
-              @keyboard.ActionId::UP =>
+              @keyboard.BasicActionId::UP =>
                 self.check_portals(map_info, portals, physics)
               // @keyboard.ActionId::SIT => self.check_seats()
-              @keyboard.ActionId::ATTACK =>
+              @keyboard.BasicActionId::ATTACK =>
                 self.combat.unwrap().use_move(player, 0)
-              @keyboard.ActionId::PICKUP => self.check_drops(player)
+              @keyboard.BasicActionId::PICKUP => self.check_drops(player)
               _ => ()
             }
           }

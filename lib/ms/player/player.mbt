@@ -14,7 +14,7 @@ pub(open) trait SkillBook {
 pub(all) struct Player {
   character : @character.CharBase
   stats : CharStats
-  keys_down : Map[@keyboard.ActionId, Bool]
+  keys_down : Map[@keyboard.BasicActionId, Bool]
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
@@ -164,9 +164,9 @@ pub fn update(
       physics.move_object(self.character.get_phobj())
 
       // Check for ladder interaction
-      if self.keys_down[@keyboard.ActionId::UP].or(false) {
+      if self.keys_down[@keyboard.BasicActionId::UP].or(false) {
         self.check_ladders(map_info, true)
-      } else if self.keys_down[@keyboard.ActionId::DOWN].or(false) {
+      } else if self.keys_down[@keyboard.BasicActionId::DOWN].or(false) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.character.update(
@@ -232,7 +232,7 @@ pub fn draw(
 ///|
 pub fn send_action(
   self : Player,
-  action : @keyboard.ActionId,
+  action : @keyboard.BasicActionId,
   down : Bool
 ) -> Unit {
   match get_player_state(self.character.state) {
@@ -271,7 +271,7 @@ fn get_player_state(state : CharState) -> &PlayerState? {
 }
 
 ///|
-pub fn is_key_down(self : Player, key : @keyboard.ActionId) -> Bool {
+pub fn is_key_down(self : Player, key : @keyboard.BasicActionId) -> Bool {
   self.keys_down[key].or(false)
 }
 

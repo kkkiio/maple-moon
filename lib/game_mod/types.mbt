@@ -1,7 +1,7 @@
 ///|
 pub(all) struct Mod {
   message_handlers : Map[@net.Opcode, (@net.InPacket) -> Unit]
-  actions : Map[@keyboard.ActionId, @action.Descriptor]
+  actions : Map[@keyboard.BasicActionId, @action.Descriptor]
   stat_handlers : Map[@maple_stat.Id, StatHandler]
 }
 

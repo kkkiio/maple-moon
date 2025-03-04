@@ -37,18 +37,16 @@ pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit {
           self.mob_loadings.push(
             spawn
             .instantiate(self.randomizer)
-            .map(
-              fn(res) {
-                match res {
-                  Ok(mob) => self.mobs.add(mob)
-                  Err(e) =>
-                    @log.error(
-                      { "err": e, "oid": spawn.oid },
-                      "Failed to load mob",
-                    )
-                }
-              },
-            ),
+            .map(fn(res) {
+              match res {
+                Ok(mob) => self.mobs.add(mob)
+                Err(e) =>
+                  @log.error(
+                    { "err": e, "oid": spawn.oid },
+                    "Failed to load mob",
+                  )
+              }
+            }),
           )
       }
       continue self.spawns.pop()
@@ -94,9 +92,13 @@ pub fn find_colliding(self : MapMobs, moveobj : @physics.MovingObject) -> Int? {
     vertical.smaller() - 50,
     vertical.greater(),
   )
-  for _, mob in self.mobs.iter2() {
-    if mob.is_alive() && mob.is_in_range(player_rect) {
-      return Some(mob.get_oid())
+  for _, mob in self.mobs {
+    match mob.get_live_range() {
+      Some(range) =>
+        if range.overlaps(player_rect) {
+          return Some(mob.get_oid())
+        }
+      None => ()
     }
   }
   None

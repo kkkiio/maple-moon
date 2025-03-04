@@ -53,7 +53,7 @@ pub fn send_packet(self : PacketProcessor, packet : OutPacket) -> Unit {
 pub fn send_message[T : OutMessage](
   self : PacketProcessor,
   message : T,
-  log_level~ : @log.Level = @log.Level::INFO,
+  log_level~ : @log.Level = @log.Level::DEBUG,
   loc~ : SourceLoc = _
 ) -> Unit {
   @log.log(

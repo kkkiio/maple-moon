@@ -1,6 +1,6 @@
 <script setup>
 import { update_key_mappings, watch_keyboard } from 'lib/ms/keyboard/keyboard.js';
-import { NButton, NDynamicInput, NInput } from 'naive-ui';
+import { NButton, NDynamicInput, NInput, NInputNumber } from 'naive-ui';
 import { onMounted, ref } from 'vue';
 
 const { mod } = defineProps({
@@ -62,7 +62,7 @@ onMounted(() => {
                 <div style="display: flex; align-items: center; width: 100%;">
                     <n-input v-model:value="value.keycode" placeholder="Enter keycode" />
                     <n-input v-model:value="value.kind" placeholder="Enter kind" />
-                    <n-input v-model:value="value.action" placeholder="Enter action" />
+                    <n-input-number v-model:value="value.action" clearable :show-button="false" />
                 </div>
             </template>
         </n-dynamic-input>

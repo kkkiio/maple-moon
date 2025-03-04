@@ -11,12 +11,14 @@ struct Combat {
   damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   add_task_fn : (@utils.Future[Unit]) -> Unit
+  packet_processor : @net.PacketProcessor
 }
 
 ///|
 pub fn Combat::new(
   damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
+  packet_processor : @net.PacketProcessor,
   add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Combat {
   {
@@ -30,6 +32,7 @@ pub fn Combat::new(
     damage_numbers: Array::new(),
     cooldowns: Map::new(),
     add_task_fn,
+    packet_processor,
   }
 }
 
@@ -130,7 +133,7 @@ fn apply_move(
     self.mobs.send_attack(result, attack, mob_targets, mobcount)
     self.extract_effects(player.character, act, result)
     self.apply_result_movement(player, act, result)
-    new_attack_packet(result).dispatch()
+    self.packet_processor.send_message(AttackMessage(result))
     // if reactor_targets.is_empty().not() {
     //   match reactor_objs.get(reactor_targets[0]) {
     //     Some(reactor) =>
@@ -192,10 +195,14 @@ fn find_closest_mob(
   }
   let arr = Array::new()
   for _, mob in objs {
-    if mob.is_alive() && mob.is_in_range(range) {
-      let oid = mob.get_oid()
-      let distance = mob.get_position().distance(origin)
-      arr.push((distance, oid))
+    match mob.get_live_range() {
+      Some(mob_range) =>
+        if mob_range.overlaps(range) {
+          let oid = mob.get_oid()
+          let distance = mob.get_position().distance(origin)
+          arr.push((distance, oid))
+        }
+      None => ()
     }
   }
   arr.sort_by_key(fn(pair) { pair.0 })
@@ -251,13 +258,17 @@ fn new_use_skill_packet(moveid : Int, level : Int) -> @net.OutPacket {
 // }
 
 ///| Notifies the server of an attack. 
-/// 
-/// The opcode is determined by the attack type. 
-/// Attack::CLOSE = CLOSE_ATTACK(44) 
-/// Attack::RANGED = RANGED_ATTACK(45)
-/// Attack::MAGIC = MAGIC_ATTACK(46)
-fn new_attack_packet(attack : @combat.AttackResult) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(opcodefor(attack.t))
+type AttackMessage @combat.AttackResult derive(Show)
+
+///|
+pub impl @net.OutMessage for AttackMessage with pack(self) {
+  let attack = self._
+  let opcode = match attack.t {
+    @combat.AttackType::CLOSE => @net.OutPacketOpcode::CLOSE_ATTACK
+    @combat.AttackType::RANGED => @net.OutPacketOpcode::RANGED_ATTACK
+    _ => @net.OutPacketOpcode::MAGIC_ATTACK
+  }
+  let packet = @net.OutPacket::new(opcode)
   packet.skip(1)
   packet.write_byte(((attack.mobcount << 4) | attack.hitcount).to_byte())
   packet.write_int(attack.skill)
@@ -290,15 +301,6 @@ fn new_attack_packet(attack : @combat.AttackResult) -> @net.OutPacket {
     }
   }
   packet
-}
-
-///|
-fn opcodefor(t : @combat.AttackType) -> @net.OutPacketOpcode {
-  match t {
-    @combat.AttackType::CLOSE => @net.OutPacketOpcode::CLOSE_ATTACK
-    @combat.AttackType::RANGED => @net.OutPacketOpcode::RANGED_ATTACK
-    _ => @net.OutPacketOpcode::MAGIC_ATTACK
-  }
 }
 
 ///|

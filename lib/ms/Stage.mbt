@@ -118,7 +118,12 @@ pub fn set_player_stage(
       ).tap(fn(player) {
         self.player = Some(player)
         self.combat = Some(
-          Combat::new(self.damage_number_set, self.mobs, self.add_task_fn),
+          Combat::new(
+            self.damage_number_set,
+            self.mobs,
+            self.packet_processor,
+            self.add_task_fn,
+          ),
         )
       })
     })
@@ -327,7 +332,7 @@ fn check_portals(
       target_p: warpinfo.name,
       use_wheel: false,
     }
-    self.packet_processor.send_message(message)
+    self.packet_processor.send_message(message, log_level=@log.Level::INFO)
     let stats = player.get_stats()
     stats.set_map_id(warpinfo.mapid)
   }

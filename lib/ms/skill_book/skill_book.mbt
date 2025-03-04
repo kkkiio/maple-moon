@@ -232,7 +232,7 @@ pub fn watch_skill_book(mod : Module, callback : SkillBookWatcher) -> Unit {
 
 ///|
 pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {
-  mod.packet_processor.send_message({ skill_id, })
+  mod.packet_processor.send_message({ skill_id, }, log_level=@log.Level::INFO)
 }
 
 ///| Requests a skill level increase by spending SP

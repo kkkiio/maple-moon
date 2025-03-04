@@ -20,7 +20,7 @@ pub(all) struct SpecialMove {
   get_bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
-}
+} derive(Show)
 
 ///|
 pub fn get_id(self : SpecialMove) -> Int {

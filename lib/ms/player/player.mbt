@@ -106,12 +106,10 @@ pub fn Player::new(
       p.set_state(@character.CharState::DIED)
       let died = true
       let target_id = 0
-      packet_processor.send_message({
-        died,
-        target_id,
-        target_p: "sp",
-        use_wheel: false,
-      })
+      packet_processor.send_message(
+        { died, target_id, target_p: "sp", use_wheel: false },
+        log_level=@log.Level::INFO,
+      )
     }
     IterContinue
   })

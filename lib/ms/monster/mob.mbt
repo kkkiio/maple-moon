@@ -485,7 +485,7 @@ pub fn set_control(self : Mob, mode : Int) -> Unit {
 
 ///|
 pub fn is_alive(self : Mob) -> Bool {
-  self.base.is_active() && self.dying.not()
+  self.base.is_active() && not(self.dying)
 }
 
 ///|
@@ -495,7 +495,7 @@ pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
     @log.error({ "range": range }, "invalid range")
     panic()
   }
-  if self.base.is_active().not() {
+  if not(self.base.is_active()) {
     return false
   }
   match self.animations[self.stance.t] {
@@ -504,6 +504,20 @@ pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
       range.overlaps(bounds.shift(self.base.get_position()))
     }
     None => false
+  }
+}
+
+///|
+pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
+  if not(self.base.is_active()) {
+    return None
+  }
+  match self.animations[self.stance.t] {
+    Some(anim) => {
+      let bounds = anim.get_bounds()
+      Some(bounds.shift(self.base.get_position()))
+    }
+    None => None
   }
 }
 

@@ -11,7 +11,8 @@
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/player",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard"
+    "KKKIIO/maple-moon-client/lib/ms/keyboard",
+    "KKKIIO/maple-moon-client/lib/log"
   ],
   "link": {
     "js": {

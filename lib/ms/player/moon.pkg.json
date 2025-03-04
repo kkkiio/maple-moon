@@ -17,6 +17,7 @@
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard"
+    "KKKIIO/maple-moon-client/lib/ms/keyboard",
+    "KKKIIO/maple-moon-client/lib/log"
   ]
 }

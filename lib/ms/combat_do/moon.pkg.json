@@ -11,7 +11,10 @@
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/job",
-    "KKKIIO/maple-moon-client/lib/ms/combat",
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/combat/types",
+      "alias": "combat"
+    },
     "KKKIIO/maple-moon-client/lib/constants",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",

@@ -37,7 +37,7 @@ pub fn Combat::new(
 }
 
 ///|
-pub fn draw(
+pub fn Combat::draw(
   self : Combat,
   viewx : Double,
   viewy : Double,
@@ -52,7 +52,7 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : Combat) -> Unit {
+pub fn Combat::update(self : Combat) -> Unit {
   for bullet_effect in self.bullet_effects.process() {
     self.apply_bullet_effect(bullet_effect)
   }

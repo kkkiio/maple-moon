@@ -1,5 +1,5 @@
 ///|
-struct EntryPoint {
+priv struct EntryPoint {
   mut game : @ms.Game?
 }
 

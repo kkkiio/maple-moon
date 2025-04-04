@@ -6,12 +6,12 @@ struct Nominal[T] {
 }
 
 ///|
-pub fn Nominal::default[T : Default]() -> Nominal[T] {
+pub impl[T : Default] Default for Nominal[T] with default() -> Nominal[T] {
   { now: T::default(), before: T::default(), threshold: 0.0 }
 }
 
 ///|
-pub fn get[T](self : Nominal[T], alpha? : Double) -> T {
+pub fn Nominal::get[T](self : Nominal[T], alpha? : Double) -> T {
   match alpha {
     None => self.now
     Some(alpha) => if alpha >= self.threshold { self.now } else { self.before }
@@ -24,7 +24,7 @@ pub fn last[T](self : Nominal[T]) -> T {
 }
 
 ///|
-pub fn set[T](self : Nominal[T], value : T) -> Unit {
+pub fn Nominal::set[T](self : Nominal[T], value : T) -> Unit {
   self.before = self.now
   self.now = value
 }
@@ -58,7 +58,7 @@ pub fn Linear::new(init : Double) -> Linear {
 }
 
 ///|
-pub fn get(self : Linear, alpha? : Double) -> Double {
+pub fn Linear::get(self : Linear, alpha? : Double) -> Double {
   match alpha {
     None => self.now
     Some(alpha) => lerp(self.before, self.now, alpha)
@@ -66,13 +66,13 @@ pub fn get(self : Linear, alpha? : Double) -> Double {
 }
 
 ///|
-pub fn set(self : Linear, value : Double) -> Unit {
+pub fn Linear::set(self : Linear, value : Double) -> Unit {
   self.before = value
   self.now = value
 }
 
 ///|
-pub fn last(self : Linear) -> Double {
+pub fn Linear::last(self : Linear) -> Double {
   self.before
 }
 
@@ -83,12 +83,12 @@ pub fn add(self : Linear, value : Double) -> Unit {
 }
 
 ///|
-pub fn normalize(self : Linear) -> Unit {
+pub fn Linear::normalize(self : Linear) -> Unit {
   self.before = self.now
 }
 
 ///|
-pub fn normalized(self : Linear) -> Bool {
+pub fn Linear::normalized(self : Linear) -> Bool {
   self.before == self.now
 }
 

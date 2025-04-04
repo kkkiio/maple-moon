@@ -30,7 +30,7 @@ fn Camera::new() -> Camera {
 }
 
 ///|
-pub fn update(self : Camera, position : @struct.Point[Int]) -> Unit {
+pub fn Camera::update(self : Camera, position : @struct.Point[Int]) -> Unit {
   let mut next_x = self.x.get()
   let hdelta = (self.vwidth / 2 - position.x).to_double() - next_x
   if hdelta.abs() >= 5.0 {

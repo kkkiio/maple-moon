@@ -129,11 +129,9 @@ pub fn MobSingleUseEffect::new(src : @resource.NxNode) -> MobSingleUseEffect! {
 
 ///|
 pub fn MobSingleUseEffect::apply(self : MobSingleUseEffect, mob : Mob) -> Unit {
-  self.effect.apply(
-    fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
-      mob.show_effect(a, b, c, d)
-    },
-  )
+  self.effect.apply(fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
+    mob.show_effect(a, b, c, d)
+  })
 }
 
 ///|
@@ -153,7 +151,7 @@ pub fn MobMultiUseEffect::new(
   let mut no = -1
   let mut sub = src["effect"]
   effects.push(Effect::new!(sub))
-  while sub.is_null().not() {
+  while not(sub.is_null()) {
     no += 1
     sub = src["effect" + no.to_string()]
     effects.push(Effect::new!(sub))

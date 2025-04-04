@@ -18,6 +18,20 @@ pub(all) enum CharState {
   SIT
 } derive(Eq, Compare)
 
+///|
+pub(all) enum Facing {
+  LEFT
+  RIGHT
+}
+
+///|
+pub fn Facing::is_facing_right(self : Facing) -> Bool {
+  match self {
+    Facing::RIGHT => true
+    _ => false
+  }
+}
+
 ///| Values are used in movement packets (Add one if facing left)
 pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
   (match self {
@@ -51,7 +65,7 @@ pub(all) struct CharBase {
   // chat_balloon: ChatBalloon
   effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
-  mut after_image : @utils.Future[@char_look.Afterimage] // TODO: load more early?
+  mut after_image : @utils.Future[@char_look.AfterImage] // TODO: load more early?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
   damage_number_set : @ui.NumberSet
@@ -280,13 +294,11 @@ pub fn is_invincible(self : CharBase) -> Bool {
 
 ///|
 pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
-  guard let Some(weapon) = self.look.get_equips().get_weapon() else {
-    None => return
-  }
+  guard self.look.get_equips().get_weapon() is Some(weapon) else { return }
   let stance_name = self.look.get_stance().name()
   let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
-  self.after_image = @char_look.Afterimage::load(
+  self.after_image = @char_look.AfterImage::load(
     skill_id, ai_name, stance_name, weapon_level,
   )
 }
@@ -388,7 +400,7 @@ pub fn get_look(self : CharBase) -> @char_look.CharLook {
 }
 
 ///|
-pub fn get_afterimage(self : CharBase) -> @char_look.Afterimage {
+pub fn get_afterimage(self : CharBase) -> @char_look.AfterImage {
   self.after_image.poll().or_default()
 }
 

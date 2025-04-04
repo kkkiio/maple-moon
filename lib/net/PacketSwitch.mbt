@@ -102,7 +102,7 @@ pub(all) enum Opcode {
 } derive(Eq, Compare, Show)
 
 ///|
-pub fn int_value(self : Opcode) -> Int {
+pub fn Opcode::int_value(self : Opcode) -> Int {
   match self {
     /// Login 1
     LOGIN_RESULT => 0
@@ -316,11 +316,6 @@ pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
 type! UnknownOpCodeError Int
 
 ///|
-pub fn hash(self : Opcode) -> Int {
-  self.int_value()
-}
-
-///|
-pub fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
+pub impl Hash for Opcode with hash_combine(self : Opcode, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }

@@ -1,5 +1,5 @@
 ///|
-type PollableData
+extern type PollableData
 
 ///|
 fn is_ready(self : PollableData) -> Bool = "resource" "is_ready"
@@ -8,7 +8,7 @@ fn is_ready(self : PollableData) -> Bool = "resource" "is_ready"
 fn get_result(self : PollableData) -> RawData = "resource" "get_result"
 
 ///|
-type AsyncResourceLoader
+extern type AsyncResourceLoader
 
 ///|
 fn get_image_loader(self : AsyncResourceLoader) -> ImageLoader = "resource" "get_image_loader"
@@ -25,26 +25,22 @@ pub fn AsyncLoader::new(name : String) -> AsyncLoader {
 }
 
 ///|
-pub fn load_res(
+pub fn AsyncLoader::load_res(
   self : AsyncLoader,
   path : Array[String]
 ) -> @utils.Future[NxNode] {
   let pollable = self.loader.load_desc_async(join_path(path))
-  @utils.Future::new(
-    fn() {
-      if pollable.is_ready() {
-        Some(
-          {
-            loader_name: self.name,
-            image_loader: self.loader.get_image_loader(),
-            name: path.last().unwrap(),
-            desc: get_result(pollable).as_moonjson(),
-            path: path |> @immut/array.from_array,
-          },
-        )
-      } else {
-        None
-      }
-    },
-  )
+  @utils.Future::new(fn() {
+    if pollable.is_ready() {
+      Some({
+        loader_name: self.name,
+        image_loader: Some(self.loader.get_image_loader()),
+        name: path.last().unwrap(),
+        desc: get_result(pollable).as_moonjson(),
+        path: path |> @immut/array.from_array,
+      })
+    } else {
+      None
+    }
+  })
 }

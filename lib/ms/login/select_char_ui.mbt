@@ -213,12 +213,12 @@ fn get_character_slot_pos(
 const PAGE_SIZE = 8
 
 ///|
-pub fn remove_cursor(self : SelectCharUI) -> Unit {
+pub fn SelectCharUI::remove_cursor(self : SelectCharUI) -> Unit {
   // TODO: implement
 }
 
 ///|
-pub fn send_key(
+pub fn SelectCharUI::send_key(
   self : SelectCharUI,
   keycode : Int,
   pressed : Bool,
@@ -228,6 +228,6 @@ pub fn send_key(
 }
 
 ///|
-pub fn get_ui_model(self : SelectCharUI) -> @ui.UIModel {
+pub fn SelectCharUI::get_ui_model(self : SelectCharUI) -> @ui.UIModel {
   self.model
 }

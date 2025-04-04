@@ -59,7 +59,7 @@ fn new_body_stance(
   headnode : @resource.NxNode,
   drawinfo : @types.BodyDrawInfo
 ) -> Map[@types.BodyLayer, Map[Int, @graphics.Texture]] {
-  guard stancenode.is_null().not() else { return {} }
+  guard not(stancenode.is_null()) else { return {} }
   let body_texture_map = Map::new()
   for
     it in @utils.ints().map_while(fn(frame) {
@@ -98,7 +98,7 @@ fn new_body_stance(
       }
     }
     let headsfnode = headnode[frame.to_string()]["head"]
-    if headsfnode.is_null().not() {
+    if not(headsfnode.is_null()) {
       let shift = drawinfo.get_head_position(stance, frame)
       let texture = @graphics.Texture::from_resource(headsfnode)
       texture.shift(shift)

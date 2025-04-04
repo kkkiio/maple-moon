@@ -20,7 +20,10 @@ fn SkillAffectedEffectEffect::new(
 }
 
 ///|
-fn apply(self : SkillAffectedEffectEffect, c : @character.Character) -> Unit {
+fn SkillAffectedEffectEffect::apply(
+  self : SkillAffectedEffectEffect,
+  c : @character.Character
+) -> Unit {
   c.show_attack_effect(self.animation, self.z)
 }
 
@@ -33,7 +36,10 @@ fn NoAffectedEffect::new() -> NoAffectedEffect {
 }
 
 ///|
-fn apply(self : NoAffectedEffect, c : @character.Character) -> Unit {
+fn NoAffectedEffect::apply(
+  self : NoAffectedEffect,
+  c : @character.Character
+) -> Unit {
 
 }
 
@@ -48,6 +54,9 @@ fn SingleAffectedEffect::new(src : @resource.NxNode) -> SingleAffectedEffect! {
 }
 
 ///|
-fn apply(self : SingleAffectedEffect, c : @character.Character) -> Unit {
+fn SingleAffectedEffect::apply(
+  self : SingleAffectedEffect,
+  c : @character.Character
+) -> Unit {
   self.effect.apply(c)
 }

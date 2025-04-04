@@ -18,12 +18,15 @@ fn play_jumpsound() -> Unit {
 struct PlayerNullState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerNullState, player : Player) -> Unit {
+pub fn PlayerNullState::initialize(
+  self : PlayerNullState,
+  player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerNullState::send_action(
   self : PlayerNullState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -33,12 +36,15 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerNullState, player : Player) -> Unit {
+pub fn PlayerNullState::update(self : PlayerNullState, player : Player) -> Unit {
 
 }
 
 ///|
-pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
+pub fn PlayerNullState::update_state(
+  self : PlayerNullState,
+  player : Player
+) -> Unit {
   let state : CharState = if player.character.get_phobj().onground {
     if player.is_key_down(@keyboard.BasicActionId::LEFT) {
       player.set_direction(false)
@@ -66,12 +72,15 @@ pub fn update_state(self : PlayerNullState, player : Player) -> Unit {
 struct PlayerStandState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerStandState, player : Player) -> Unit {
+pub fn PlayerStandState::initialize(
+  self : PlayerStandState,
+  player : Player
+) -> Unit {
   player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerStandState::send_action(
   self : PlayerStandState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -101,7 +110,10 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerStandState, player : Player) -> Unit {
+pub fn PlayerStandState::update(
+  self : PlayerStandState,
+  player : Player
+) -> Unit {
   if not(player.character.get_phobj().enablejd) {
     player.character
     .get_phobj()
@@ -110,7 +122,10 @@ pub fn update(self : PlayerStandState, player : Player) -> Unit {
 }
 
 ///|
-pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
+pub fn PlayerStandState::update_state(
+  self : PlayerStandState,
+  player : Player
+) -> Unit {
   if not(player.character.get_phobj().onground) {
     player.set_state(CharState::FALL)
   }
@@ -120,12 +135,15 @@ pub fn update_state(self : PlayerStandState, player : Player) -> Unit {
 struct PlayerWalkState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerWalkState, player : Player) -> Unit {
+pub fn PlayerWalkState::initialize(
+  self : PlayerWalkState,
+  player : Player
+) -> Unit {
   player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerWalkState::send_action(
   self : PlayerWalkState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -155,8 +173,8 @@ pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
 }
 
 ///|
-pub fn update(self : PlayerWalkState, player : Player) -> Unit {
-  if player.is_attacking().not() && self.haswalkinput(player) {
+pub fn PlayerWalkState::update(self : PlayerWalkState, player : Player) -> Unit {
+  if not(player.is_attacking()) && self.haswalkinput(player) {
     let hforce = if player.character.is_facing_right() {
       player.get_walkforce()
     } else {
@@ -172,7 +190,10 @@ pub fn update(self : PlayerWalkState, player : Player) -> Unit {
 }
 
 ///|
-pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
+pub fn PlayerWalkState::update_state(
+  self : PlayerWalkState,
+  player : Player
+) -> Unit {
   if player.character.get_phobj().onground {
     if not(self.haswalkinput(player)) ||
       player.character.get_phobj().moving_object.hspeed == 0.0 {
@@ -187,12 +208,15 @@ pub fn update_state(self : PlayerWalkState, player : Player) -> Unit {
 struct PlayerFallState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerFallState, player : Player) -> Unit {
+pub fn PlayerFallState::initialize(
+  self : PlayerFallState,
+  player : Player
+) -> Unit {
   player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerFallState::send_action(
   self : PlayerFallState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -208,7 +232,7 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerFallState, player : Player) -> Unit {
+pub fn PlayerFallState::update(self : PlayerFallState, player : Player) -> Unit {
   let hspeed = player.character.get_phobj().moving_object.hspeed
   if player.is_key_down(@keyboard.BasicActionId::LEFT) && hspeed > 0.0 {
     player.character.get_phobj().moving_object.hspeed -= 0.025
@@ -224,7 +248,10 @@ pub fn update(self : PlayerFallState, player : Player) -> Unit {
 }
 
 ///|
-pub fn update_state(self : PlayerFallState, player : Player) -> Unit {
+pub fn PlayerFallState::update_state(
+  self : PlayerFallState,
+  player : Player
+) -> Unit {
   if player.character.get_phobj().onground {
     if player.is_key_down(@keyboard.BasicActionId::LEFT) {
       player.set_direction(false)
@@ -247,17 +274,23 @@ pub fn update_state(self : PlayerFallState, player : Player) -> Unit {
 struct PlayerProneState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerProneState, player : Player) -> Unit {
+pub fn PlayerProneState::initialize(
+  self : PlayerProneState,
+  player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn update_state(self : PlayerProneState, player : Player) -> Unit {
+pub fn PlayerProneState::update_state(
+  self : PlayerProneState,
+  player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerProneState::send_action(
   self : PlayerProneState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -285,7 +318,10 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerProneState, player : Player) -> Unit {
+pub fn PlayerProneState::update(
+  self : PlayerProneState,
+  player : Player
+) -> Unit {
   if not(player.character.get_phobj().enablejd) {
     player.character
     .get_phobj()
@@ -297,22 +333,28 @@ pub fn update(self : PlayerProneState, player : Player) -> Unit {
 struct PlayerSitState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerSitState, _player : Player) -> Unit {
+pub fn PlayerSitState::initialize(
+  self : PlayerSitState,
+  _player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn update(self : PlayerSitState, _player : Player) -> Unit {
+pub fn PlayerSitState::update(self : PlayerSitState, _player : Player) -> Unit {
 
 }
 
 ///|
-pub fn update_state(self : PlayerSitState, _player : Player) -> Unit {
+pub fn PlayerSitState::update_state(
+  self : PlayerSitState,
+  _player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerSitState::send_action(
   self : PlayerSitState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -342,7 +384,10 @@ pub fn send_action(
 struct PlayerFlyState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerFlyState, player : Player) -> Unit {
+pub fn PlayerFlyState::initialize(
+  self : PlayerFlyState,
+  player : Player
+) -> Unit {
   player.character.get_phobj().t = if player.is_underwater() {
     @physics.PhysicsObjectType::SWIMMING
   } else {
@@ -351,7 +396,7 @@ pub fn initialize(self : PlayerFlyState, player : Player) -> Unit {
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerFlyState::send_action(
   self : PlayerFlyState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -367,7 +412,7 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerFlyState, player : Player) -> Unit {
+pub fn PlayerFlyState::update(self : PlayerFlyState, player : Player) -> Unit {
   if player.is_attacking() {
     return
   }
@@ -384,7 +429,10 @@ pub fn update(self : PlayerFlyState, player : Player) -> Unit {
 }
 
 ///|
-pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
+pub fn PlayerFlyState::update_state(
+  self : PlayerFlyState,
+  player : Player
+) -> Unit {
   if player.character.get_phobj().onground && player.is_underwater() {
     let state = if player.is_key_down(@keyboard.BasicActionId::LEFT) {
       player.set_direction(false)
@@ -405,12 +453,15 @@ pub fn update_state(self : PlayerFlyState, player : Player) -> Unit {
 struct PlayerClimbState {} derive(Default)
 
 ///|
-pub fn initialize(self : PlayerClimbState, player : Player) -> Unit {
+pub fn PlayerClimbState::initialize(
+  self : PlayerClimbState,
+  player : Player
+) -> Unit {
   player.character.get_phobj().t = @physics.PhysicsObjectType::FIXATED
 }
 
 ///|
-pub fn send_action(
+pub fn PlayerClimbState::send_action(
   self : PlayerClimbState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -442,7 +493,10 @@ pub fn send_action(
 }
 
 ///|
-pub fn update(self : PlayerClimbState, player : Player) -> Unit {
+pub fn PlayerClimbState::update(
+  self : PlayerClimbState,
+  player : Player
+) -> Unit {
   if player.is_key_down(@keyboard.BasicActionId::UP) {
     player.character.get_phobj().set_vspeed(-player.get_climbforce())
   } else if player.is_key_down(@keyboard.BasicActionId::DOWN) {
@@ -453,7 +507,10 @@ pub fn update(self : PlayerClimbState, player : Player) -> Unit {
 }
 
 ///|
-pub fn update_state(self : PlayerClimbState, player : Player) -> Unit {
+pub fn PlayerClimbState::update_state(
+  self : PlayerClimbState,
+  player : Player
+) -> Unit {
   let y = player.character.get_phobj().get_y()
   let downwards = player.is_key_down(@keyboard.BasicActionId::DOWN)
   match player.get_ladder() {
@@ -466,7 +523,10 @@ pub fn update_state(self : PlayerClimbState, player : Player) -> Unit {
 }
 
 ///|
-pub fn cancel_ladder(self : PlayerClimbState, player : Player) -> Unit {
+pub fn PlayerClimbState::cancel_ladder(
+  self : PlayerClimbState,
+  player : Player
+) -> Unit {
   player.set_state(CharState::FALL)
   player.set_ladder(None)
 }

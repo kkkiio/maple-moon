@@ -429,9 +429,7 @@ pub fn get_integer_attackspeed(
   look : @char_look.CharLook,
   stats : CharStats
 ) -> Int {
-  guard let Some(weapon) = look.get_equips().get_weapon() else {
-    None => return 0
-  }
+  guard look.get_equips().get_weapon() is Some(weapon) else { return 0 }
   let base_speed = stats.get_attackspeed()
   let weapon_speed = weapon.get_speed()
   base_speed + weapon_speed
@@ -454,11 +452,6 @@ pub fn rush(self : Player, targetx : Double) -> Unit {
     .get_phobj()
     .set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
   }
-}
-
-///|
-pub fn get_afterimage(self : Player) -> @char_look.Afterimage {
-  self.character.after_image.poll().or_default()
 }
 
 ///|

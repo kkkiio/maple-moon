@@ -2,8 +2,8 @@
 struct Combat {
   damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
-  skill_cache : Map[Int, @utils.Future[Result[@combat_do.SpecialMove, Error]]]
-  regular_attack : @combat_do.SpecialMove
+  skill_cache : Map[Int, @utils.Future[Result[@combat_impl.SpecialMove, Error]]]
+  regular_attack : @combat_impl.SpecialMove
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
@@ -25,7 +25,7 @@ pub fn Combat::new(
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_do.new_regular_attack(),
+    regular_attack: @combat_impl.new_regular_attack(),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
@@ -82,8 +82,14 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
   let act_f = self.get_move(move_id)
   let task = act_f.map_exn(fn(act) {
       let act = act.unwrap_or_error!()
-      let reason = self.can_use(player, act)
-      if reason == @combat_do.ForbidReason::FBR_NONE {
+      let reason = self.can_use(
+        player.character,
+        player.skill_book,
+        player.stats,
+        player.inventory,
+        act,
+      )
+      if reason == @combat_impl.ForbidReason::FBR_NONE {
         self.apply_move(player, act)
       } else {
         // TODO: show forbid reason
@@ -99,25 +105,24 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
 fn apply_move(
   self : Combat,
   player : @player.Player,
-  act : @combat_do.SpecialMove
+  act : @combat_impl.SpecialMove
 ) -> Unit {
   if act.is_attack() {
-    let (degenerate, attacktype) = check_attack_type(player, act.is_skill())
+    let (degenerate, attacktype) = check_attack_type(
+      player.character,
+      player.inventory,
+      act.is_skill(),
+    )
     act.apply_useeffects(player.character)
     act.apply_actions(player.character, attacktype)
     player.character.set_afterimage(act.get_id())
-    let attack = act.make_attack(player, attacktype, degenerate)
-    let origin = attack.origin
-    let hrange = (attack.range.left().to_double() * attack.hrange).to_int()
-    let rel_range = @struct.Rectangle::from4(
-      hrange,
-      attack.range.right(),
-      attack.range.top(),
-      attack.range.bottom(),
+    let attack = act.make_attack(
+      player.character,
+      player.inventory,
+      attacktype,
+      degenerate,
     )
-    let range = (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(
-      origin,
-    )
+    let range = make_attack_range(attack)
     // This approach should also make it easier to implement PvP
     let mobcount = attack.mobcount
     let result = {
@@ -126,6 +131,7 @@ fn apply_move(
     }
     let mob_objs = self.mobs.get_mobs()
     // let reactor_objs = self.reactors.get_reactors()
+    let origin = attack.origin
     let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
     // let reactor_targets = self.find_closest_reactor(
     //   reactor_objs, range, origin, mobcount, false,
@@ -159,7 +165,7 @@ fn apply_move(
 fn apply_result_movement(
   self : Combat,
   player : @player.Player,
-  act : @combat_do.SpecialMove,
+  act : @combat_impl.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
   if act.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
@@ -210,7 +216,7 @@ fn find_closest_mob(
 }
 
 ///|
-struct DamageEffect {
+priv struct DamageEffect {
   user : @combat.AttackUser
   number : @ui.Number
   damage : Int
@@ -220,7 +226,7 @@ struct DamageEffect {
 }
 
 ///|
-struct BulletEffect {
+priv struct BulletEffect {
   damageeffect : DamageEffect
   bullet : @combat.Bullet
   mut target : @struct.Point[Int]
@@ -307,12 +313,12 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 pub fn get_move(
   self : Combat,
   move_id : Int
-) -> @utils.Future[Result[@combat_do.SpecialMove, Error]] {
+) -> @utils.Future[Result[@combat_impl.SpecialMove, Error]] {
   if move_id == 0 {
     return self.regular_attack |> Ok |> @utils.Future::from_value
   }
   self.skill_cache.get_or_init(move_id, fn() {
-    @combat_do.Skill::load(move_id).map(fn(f) {
+    @combat_impl.Skill::load(move_id).map(fn(f) {
       f.map(fn(it) {
         {
           id: it.get_id(),
@@ -320,7 +326,7 @@ pub fn get_move(
           skill: true,
           apply_useeffects: fn(c) { it.apply_useeffects(c) },
           apply_actions: fn(attack_type, c) { it.apply_actions(attack_type, c) },
-          make_attack: fn(c, t, d) { it.make_attack(c, t, d) },
+          make_attack: fn(c, i, t, _) { it.make_attack(c, i.get_bulletid(), t) },
           get_bullet: fn(c, bulletid) { it.get_bullet(c, bulletid) },
           can_use: fn(level, weapontype, job, hp, mp, bullet) {
             it.can_use(level, weapontype, job, hp, mp, bullet)
@@ -338,7 +344,7 @@ pub fn get_move(
 fn extract_effects(
   self : Combat,
   user : @character.Character,
-  act : @combat_do.SpecialMove,
+  act : @combat_impl.SpecialMove,
   result : @combat.AttackResult
 ) -> Unit {
   let attack_user : @combat.AttackUser = {
@@ -471,20 +477,23 @@ fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
   }
 }
 
-///|
+///| Find out the type of attack and whether it should be degenerate
+/// 
+/// Returns (degenerate, attack_type) where degenerate is true if the skill or ammunition is missing
 pub fn check_attack_type(
-  player : @player.Player,
+  character : @character.CharBase,
+  inventory : &@player.Inventory,
   skill : Bool
 ) -> (Bool, @combat.AttackType) {
-  if player.character.state == @character.CharState::PRONE {
+  if character.state == @character.CharState::PRONE {
     (true, @combat.AttackType::CLOSE)
   } else {
-    match player.character.get_weapontype() {
+    match character.get_weapontype() {
       @weapon.Type::BOW
       | @weapon.Type::CROSSBOW
       | @weapon.Type::CLAW
       | @weapon.Type::GUN => {
-        let degenerate = not(player.inventory.has_projectile())
+        let degenerate = not(inventory.has_projectile())
         (
           degenerate,
           if degenerate {
@@ -513,28 +522,31 @@ pub fn check_attack_type(
 ///|
 pub fn can_use(
   self : Combat,
-  player : @player.Player,
-  act : @combat_do.SpecialMove
-) -> @combat_do.ForbidReason {
-  if act.is_skill() && player.character.state == @character.CharState::PRONE {
-    return @combat_do.ForbidReason::FBR_OTHER
+  character : @character.CharBase,
+  skill_book : &@player.SkillBook,
+  stats : @char_stats.CharStats,
+  inventory : &@player.Inventory,
+  act : @combat_impl.SpecialMove
+) -> @combat_impl.ForbidReason {
+  if act.is_skill() && character.state == @character.CharState::PRONE {
+    return @combat_impl.ForbidReason::FBR_OTHER
   }
   if act.is_attack() &&
     (
-      player.character.state == @character.CharState::LADDER ||
-      player.character.state == @character.CharState::ROPE
+      character.state == @character.CharState::LADDER ||
+      character.state == @character.CharState::ROPE
     ) {
-    return @combat_do.ForbidReason::FBR_OTHER
+    return @combat_impl.ForbidReason::FBR_OTHER
   }
   if self.has_cooldown(act.get_id()) {
-    return @combat_do.ForbidReason::FBR_COOLDOWN
+    return @combat_impl.ForbidReason::FBR_COOLDOWN
   }
-  let level = player.skill_book.get_level(act.get_id())
-  let weapontype = player.character.get_weapontype()
-  let job = player.stats.get_job()
-  let hp = player.stats.get_stat(@maple_stat.Id::HP)
-  let mp = player.stats.get_stat(@maple_stat.Id::MP)
-  let bullets = player.inventory.get_bulletcount()
+  let level = skill_book.get_level(act.get_id())
+  let weapontype = character.get_weapontype()
+  let job = stats.get_job()
+  let hp = stats.get_stat(@maple_stat.Id::HP)
+  let mp = stats.get_stat(@maple_stat.Id::MP)
+  let bullets = inventory.get_bulletcount()
   act.can_use(level, weapontype, job, hp, mp, bullets)
 }
 
@@ -554,4 +566,23 @@ pub fn log_background_err[E : Show](
       Err(e) => @log.error({ "err": Show::to_string(e) }, "task failed", loc~)
     }
   })
+}
+
+///|
+typealias Rectangle[T] = @struct.Rectangle[T]
+
+///|
+typealias Point[T] = @struct.Point[T]
+
+///|
+pub fn make_attack_range(attack : @combat.Attack) -> Rectangle[Int] {
+  let origin = attack.origin
+  let left = (attack.range.left().to_double() * attack.hrange).to_int()
+  let rel_range = Rectangle::from4(
+    left,
+    attack.range.right(),
+    attack.range.top(),
+    attack.range.bottom(),
+  )
+  (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(origin)
 }

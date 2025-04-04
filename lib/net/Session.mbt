@@ -84,7 +84,7 @@ pub enum ConnectionStatus {
 } derive(Show, Eq)
 
 ///| Check if the connection is alive
-pub fn get_status(self : Session) -> ConnectionStatus {
+pub fn Session::get_status(self : Session) -> ConnectionStatus {
   match self.conn {
     CLOSED => CLOSED
     OPENED(_) => OPENED
@@ -93,10 +93,10 @@ pub fn get_status(self : Session) -> ConnectionStatus {
 }
 
 ///|
-type Socket
+extern type Socket
 
 ///|
-fn close(self : Socket) -> Unit = "socket" "close"
+fn Socket::close(self : Socket) -> Unit = "socket" "close"
 
 ///|
-fn get_ready_state(self : Socket) -> Int = "socket" "get_ready_state"
+fn Socket::get_ready_state(self : Socket) -> Int = "socket" "get_ready_state"

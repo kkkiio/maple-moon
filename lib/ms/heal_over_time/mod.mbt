@@ -7,7 +7,7 @@ pub fn new_module(
   let delay = @utils.Duration::from_milliseconds(5000)
   scheduler.schedule_with_fixed_delay(
     fn() {
-      guard let Some(char_stats) = char_stats_getter() else { None => return }
+      guard char_stats_getter() is Some(char_stats) else { return }
       let hp = char_stats.get_stat(@maple_stat.Id::HP)
       guard hp > 0 else { return } // dead
       // TODO: check if player is available to act
@@ -28,7 +28,7 @@ pub fn new_module(
 }
 
 ///|
-struct HealOverTimeMessage {
+priv struct HealOverTimeMessage {
   hp : Int
   mp : Int
 } derive(ToJson, Show)
@@ -36,7 +36,7 @@ struct HealOverTimeMessage {
 ///|
 impl @net.OutMessage for HealOverTimeMessage with pack(self) {
   @net.OutPacket::new(@net.OutPacketOpcode::HEAL_OVER_TIME)
-  ..write_long(0) // server don't care
+  ..write_long(0) // server doesn't care
   ..write_short(self.hp)
   ..write_short(self.mp)
 }

@@ -28,7 +28,7 @@ pub(all) struct LookEntry {
   equips : Map[Int, Int]
   maskedequips : Map[Int, Int]
   petids : Array[Int]
-} derive(Show, ToJson)
+} derive(Show, ToJson, Default)
 
 ///|
 pub fn CharLook::new(
@@ -464,7 +464,10 @@ pub impl ToJson for BodyLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub fn draw(self : BodyLayerDrawable, args : @graphics.DrawArgument) -> Unit {
+pub fn BodyLayerDrawable::draw(
+  self : BodyLayerDrawable,
+  args : @graphics.DrawArgument
+) -> Unit {
   self.body.draw(self.stance, self.layer, self.frame, args)
 }
 
@@ -490,7 +493,10 @@ pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub fn draw(self : EquipLayerDrawable, args : @graphics.DrawArgument) -> Unit {
+pub fn EquipLayerDrawable::draw(
+  self : EquipLayerDrawable,
+  args : @graphics.DrawArgument
+) -> Unit {
   let args = match self.layer {
     @clothing.FACE_ACC => {
       let faceshift = self.draw_info.get_face_pos(self.stance, self.frame)
@@ -513,7 +519,10 @@ struct FaceDrawable {
 }
 
 ///|
-fn draw(self : FaceDrawable, args : @graphics.DrawArgument) -> Unit {
+pub fn FaceDrawable::draw(
+  self : FaceDrawable,
+  args : @graphics.DrawArgument
+) -> Unit {
   let faceshift = self.draw_info.get_face_pos(self.stance, self.stance_frame)
   self.face.draw(
     self.expression,
@@ -553,12 +562,15 @@ pub impl ToJson for HairDrawable with to_json(self) -> Json {
 }
 
 ///|
-fn draw(self : HairDrawable, args : @graphics.DrawArgument) -> Unit {
+pub fn HairDrawable::draw(
+  self : HairDrawable,
+  args : @graphics.DrawArgument
+) -> Unit {
   self.hair.draw(self.stance, self.layer, self.frame, args)
 }
 
 ///|
-pub fn draw(
+pub fn CharLook::draw(
   self : CharLook,
   args : @graphics.DrawArgument,
   alpha : Double
@@ -641,7 +653,7 @@ fn change_face(self : CharLook, face : Face) -> CharLook {
 }
 
 ///|
-pub fn update(self : CharLook, timestep : Int) -> Bool {
+pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
   if timestep == 0 {
     self.stance.normalize()
     self.st_frame.normalize()
@@ -734,7 +746,11 @@ fn update_face(self : CharLook, timestep : Int) -> Unit {
 }
 
 ///|
-pub fn get_delay(self : CharLook, st : @types.StanceId, fr : Int) -> Int {
+pub fn CharLook::get_delay(
+  self : CharLook,
+  st : @types.StanceId,
+  fr : Int
+) -> Int {
   self.draw_info.get_delay(st, fr)
 }
 

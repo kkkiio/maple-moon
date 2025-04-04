@@ -14,17 +14,17 @@ pub fn AreaButton::new(
 }
 
 ///|
-pub fn get_button_base(self : AreaButton) -> ButtonModel {
+pub fn AreaButton::get_button_base(self : AreaButton) -> ButtonModel {
   self.model
 }
 
 ///|
-pub fn draw(self : AreaButton, _p : @struct.Point[Int]) -> Unit {
+pub fn AreaButton::draw(self : AreaButton, _p : @struct.Point[Int]) -> Unit {
 
 }
 
 ///|
-pub fn update(self : AreaButton) -> Unit {
+pub fn AreaButton::update(self : AreaButton) -> Unit {
 
 }
 

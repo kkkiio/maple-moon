@@ -70,17 +70,17 @@ pub fn get_delay(self : Frame) -> Int {
 }
 
 ///|
-pub fn get_origin(self : Frame) -> Point[Int] {
+pub fn Frame::get_origin(self : Frame) -> Point[Int] {
   self.texture.get_origin()
 }
 
 ///|
-pub fn get_dimensions(self : Frame) -> Point[Int] {
+pub fn Frame::get_dimensions(self : Frame) -> Point[Int] {
   self.texture.get_dimensions()
 }
 
 ///|
-pub fn get_head(self : Frame) -> Point[Int] {
+pub fn Frame::get_head(self : Frame) -> Point[Int] {
   self.head
 }
 
@@ -103,7 +103,7 @@ pub fn scalestep(self : Frame, timestep : Int) -> Double {
 }
 
 ///|
-pub fn draw(self : Frame, args : DrawArgument) -> Unit {
+pub fn Frame::draw(self : Frame, args : DrawArgument) -> Unit {
   self.texture.draw(args)
 }
 
@@ -195,7 +195,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
 }
 
 ///|
-pub fn Animation::default() -> Animation {
+pub impl Default for Animation with default() -> Animation {
   let a = {
     frames: [Frame::default()],
     zigzag: false,
@@ -210,7 +210,11 @@ pub fn Animation::default() -> Animation {
 }
 
 ///|
-pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
+pub fn Animation::draw(
+  self : Animation,
+  args : DrawArgument,
+  alpha : Double
+) -> Unit {
   let interframe = self.frame.get(alpha~)
   let interopc = self.opacity.get(alpha~) / 255.0
   let interscale = self.xyscale.get(alpha~) / 100.0
@@ -226,7 +230,7 @@ pub fn draw(self : Animation, args : DrawArgument, alpha : Double) -> Unit {
 }
 
 ///|
-pub fn update(
+pub fn Animation::update(
   self : Animation,
   timestep~ : Int = @constants.step_time_ms
 ) -> Bool {
@@ -278,7 +282,7 @@ pub fn update(
 }
 
 ///|
-pub fn reset(self : Animation) -> Unit {
+pub fn Animation::reset(self : Animation) -> Unit {
   self.frame.set(0)
   self.opacity.set(self.frames[0].start_opacity().to_double())
   self.xyscale.set(self.frames[0].start_scale().to_double())
@@ -287,12 +291,12 @@ pub fn reset(self : Animation) -> Unit {
 }
 
 ///|
-fn get_frame(self : Animation) -> Frame {
+fn Animation::get_frame(self : Animation) -> Frame {
   self.frames[self.frame.get()]
 }
 
 ///|
-fn get_delay(self : Animation, frame_id : Int) -> Int {
+fn Animation::get_delay(self : Animation, frame_id : Int) -> Int {
   if frame_id < self.frames.length() {
     self.frames[frame_id].get_delay()
   } else {
@@ -315,21 +319,21 @@ pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
 }
 
 ///|
-pub fn get_origin(self : Animation) -> Point[Int] {
+pub fn Animation::get_origin(self : Animation) -> Point[Int] {
   self.get_frame().get_origin()
 }
 
 ///|
-pub fn get_dimensions(self : Animation) -> Point[Int] {
+pub fn Animation::get_dimensions(self : Animation) -> Point[Int] {
   self.get_frame().get_dimensions()
 }
 
 ///|
-pub fn get_head(self : Animation) -> Point[Int] {
+pub fn Animation::get_head(self : Animation) -> Point[Int] {
   self.get_frame().get_head()
 }
 
 ///|
-pub fn get_bounds(self : Animation) -> Rectangle[Int] {
+pub fn Animation::get_bounds(self : Animation) -> Rectangle[Int] {
   self.get_frame().get_bounds()
 }

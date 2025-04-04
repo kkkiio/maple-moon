@@ -173,7 +173,7 @@ pub fn UILogin::new(
 }
 
 ///|
-pub fn get_ui_model(self : UILogin) -> @ui.UIModel {
+pub fn UILogin::get_ui_model(self : UILogin) -> @ui.UIModel {
   self.base
 }
 
@@ -246,7 +246,7 @@ pub fn UILogin::const_toggled() -> Bool {
 }
 
 ///|
-pub fn send_key(
+pub fn UILogin::send_key(
   self : UILogin,
   key : Int,
   pressed : Bool,
@@ -261,7 +261,7 @@ pub fn is_active(self : UILogin) -> Bool {
 }
 
 ///|
-pub fn remove_cursor(self : UILogin) -> Unit {
+pub fn UILogin::remove_cursor(self : UILogin) -> Unit {
 
 }
 

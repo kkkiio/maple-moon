@@ -106,7 +106,7 @@ fn load_modules(
 
   let char_look_module_f = @char_look.Module::load(
     fn(f) {
-      guard let Some(player) = get_stage().get_player() else { None => return }
+      guard get_stage().get_player() is Some(player) else { return }
       player.character.look = f(player.character.look)
     },
     io_service,
@@ -326,9 +326,7 @@ fn load_modules(
 ///|
 pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   let elapsed = self.timer.stop(current_time)
-  guard let Some(loaded_state) = self.loaded_state.poll() else {
-    None => return
-  }
+  guard self.loaded_state.poll() is Some(loaded_state) else { return }
   self.processor.process_in()
   match self.processor.get_status() {
     @net.CLOSED => loaded_state.login_module.reconnect_if_needed()
@@ -393,9 +391,6 @@ fn setup_game_ui(
     ),
   )
 }
-
-///|
-fn now_micro() -> Double = "time" "now_micro"
 
 ///|
 pub fn get_window(self : Game) -> Window {

@@ -155,7 +155,7 @@ fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
 }
 
 ///|
-pub fn draw(
+pub fn Face::draw(
   self : Face,
   expression : ExpressionId,
   frame : Int,
@@ -185,7 +185,7 @@ pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
 }
 
 ///|
-pub fn get_name(self : Face) -> String {
+pub fn Face::get_name(self : Face) -> String {
   self.name
 }
 

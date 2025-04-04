@@ -38,7 +38,9 @@ pub(all) enum Layer {
 } derive(Eq, Hash, Show)
 
 ///|
-pub impl ToJson for Layer with to_json(self) { self.to_string().to_json() }
+pub impl ToJson for Layer with to_json(self) {
+  self.to_string().to_json()
+}
 
 ///|
 struct Clothing {
@@ -79,8 +81,8 @@ pub fn Clothing::from_resource(
   let info = item_data.get_info()
   let vslot = info["vslot"].bind(fn(it) { it.as_string() }).or("")
   let stand = match info {
-    { "stand": Json::Number(1) } => @types.StanceId::STAND1
-    { "stand": Json::Number(2) } => @types.StanceId::STAND2
+    { "stand": Json::Number(1), .. } => @types.StanceId::STAND1
+    { "stand": Json::Number(2), .. } => @types.StanceId::STAND2
     _ =>
       if two_handed {
         @types.StanceId::STAND2
@@ -89,8 +91,8 @@ pub fn Clothing::from_resource(
       }
   }
   let walk = match info {
-    { "walk": Json::Number(1) } => @types.StanceId::WALK1
-    { "walk": Json::Number(2) } => @types.StanceId::WALK2
+    { "walk": Json::Number(1), .. } => @types.StanceId::WALK1
+    { "walk": Json::Number(2), .. } => @types.StanceId::WALK2
     _ =>
       if two_handed {
         @types.StanceId::WALK2
@@ -101,7 +103,7 @@ pub fn Clothing::from_resource(
   let src = item_data.get_src()
   let stances = @types.stance_name_id_map
     .iter()
-    .map_option(fn(it) {
+    .filter_map(fn(it) {
       let (stancename, stance) = it
       let node = src[stancename]
       if node.is_null() {

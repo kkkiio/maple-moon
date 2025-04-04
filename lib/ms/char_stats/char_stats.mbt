@@ -33,7 +33,7 @@ pub(all) struct StatsEntry {
   i64stats : Map[@maple_stat.Id, Int64]
   mapid : Int
   portal : Int
-} derive(Show, ToJson)
+} derive(Show, ToJson, Default)
 
 ///|
 pub fn CharStats::new(

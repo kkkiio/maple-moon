@@ -286,17 +286,22 @@ pub fn get_oid(self : Mob) -> Int {
 }
 
 ///|
-pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit {
+pub fn Mob::draw(
+  self : Mob,
+  viewx : Double,
+  viewy : Double,
+  alpha : Double
+) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   let headpos = self.get_head_position(position=absp)
   self.effects.drawbelow(absp, alpha)
-  if self.dead.not() {
+  if not(self.dead) {
     match self.animations[self.stance.t] {
       Some(anim) =>
         anim.draw(
           @graphics.DrawArgument::new14(
             absp,
-            self.stance.face_right && self.no_flip.not(),
+            self.stance.face_right && not(self.no_flip),
             opacity=self.opacity.get(alpha~),
           ),
           alpha,
@@ -305,7 +310,7 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
     }
     if self.show_hp.get() {
       self.name_label.draw(absp)
-      if self.dying.not() && self.hp_percent > 0 {
+      if not(self.dying) && self.hp_percent > 0 {
         self.hp_bar.draw(headpos, self.hp_percent)
       }
     }
@@ -314,8 +319,8 @@ pub fn draw(self : Mob, viewx : Double, viewy : Double, alpha : Double) -> Unit 
 }
 
 ///|
-pub fn update(self : Mob, physics : @physics.Physics) -> Int {
-  if self.base.is_active().not() {
+pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
+  if not(self.base.is_active()) {
     return self.base.phobj.fhlayer
   }
   let aniend = match self.animations[self.stance.t] {
@@ -350,8 +355,8 @@ pub fn update(self : Mob, physics : @physics.Physics) -> Int {
   self.show_hp.update()
 
   // TODO: add buffs animation?
-  if self.dying.not() {
-    if self.can_fly.not() {
+  if not(self.dying) {
+    if not(self.can_fly) {
       if self.base.phobj.is_flag_not_set(
           @physics.PhysicsObjectFlag::TURN_AT_EDGES,
         ) {
@@ -478,7 +483,7 @@ pub fn get_layer(self : Mob) -> Int {
 
 ///| Change this mob's control mode:
 /// 0 - no control, 1 - control, 2 - aggro
-pub fn set_control(self : Mob, mode : Int) -> Unit {
+pub fn Mob::set_control(self : Mob, mode : Int) -> Unit {
   self.control = mode > 0
   self.aggro = mode == 2
 }
@@ -523,7 +528,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
 
 ///|
 pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
-  if self.touch_damage.not() {
+  if not(self.touch_damage) {
     return @combat.MobAttack::default()
   }
   let minattack = (self.watk.to_double() * 0.8).to_int()
@@ -618,7 +623,7 @@ pub fn get_head_position(
   }
   position
   .shift_x(
-    if self.stance.face_right && self.no_flip.not() {
+    if self.stance.face_right && not(self.no_flip) {
       -head.x
     } else {
       head.x
@@ -628,7 +633,7 @@ pub fn get_head_position(
 }
 
 ///|
-pub fn send_movement(
+pub fn Mob::send_movement(
   self : Mob,
   start : @struct.Point[Int],
   movements : Array[@physics.Movement]
@@ -643,7 +648,7 @@ pub fn send_movement(
   }
   let lastmove = self.movements[0]
   let laststance = lastmove.newstate
-  self.set_stance(laststance |> from_byte)
+  self.set_stance(laststance |> Stance::from_byte)
   self.base.phobj.fhid = lastmove.fh
 }
 
@@ -727,7 +732,7 @@ pub fn show_effect(
   z : Int,
   f : Bool
 ) -> Unit {
-  if self.base.is_active().not() {
+  if not(self.base.is_active()) {
     return
   }
   let shift = match pos {
@@ -821,7 +826,7 @@ fn next_damage(
   critical : Double
 ) -> (Int, Bool) {
   let hit = self.randomizer.below(hitchance)
-  if hit.not() {
+  if not(hit) {
     return (0, false)
   }
   let damagecap = 999999
@@ -886,7 +891,7 @@ pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
   } else if self.control &&
     self.is_alive() &&
     damage >= self.knockback &&
-    self.is_boss.not() {
+    not(self.is_boss) {
     self.counter = 170
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
     self.update_movement()

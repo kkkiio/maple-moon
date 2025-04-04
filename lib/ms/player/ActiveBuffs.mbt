@@ -30,7 +30,11 @@ fn PercentageStatBuff::new(stat : @stat.Id) -> PercentageStatBuff {
 }
 
 ///|
-fn apply_to(self : PercentageStatBuff, stats : CharStats, value : Int) -> Unit {
+fn PercentageStatBuff::apply_to(
+  self : PercentageStatBuff,
+  stats : CharStats,
+  value : Int
+) -> Unit {
   // stats.add_percent(self.stat, Double::from_int(value) / 100.0)
 }
 
@@ -39,7 +43,11 @@ fn apply_to(self : PercentageStatBuff, stats : CharStats, value : Int) -> Unit {
 type MapleWarriorBuff Unit derive(Default)
 
 ///|
-fn apply_to(self : MapleWarriorBuff, stats : CharStats, value : Int) -> Unit {
+fn MapleWarriorBuff::apply_to(
+  self : MapleWarriorBuff,
+  stats : CharStats,
+  value : Int
+) -> Unit {
   // stats.add_percent(@stat.Id::STR, Double::from_int(value) / 100.0)
   // stats.add_percent(@stat.Id::DEX, Double::from_int(value) / 100.0)
   // stats.add_percent(@stat.Id::INT, Double::from_int(value) / 100.0)
@@ -51,7 +59,11 @@ fn apply_to(self : MapleWarriorBuff, stats : CharStats, value : Int) -> Unit {
 type StanceBuff Unit derive(Default)
 
 ///|
-fn apply_to(self : StanceBuff, stats : CharStats, value : Int) -> Unit {
+fn StanceBuff::apply_to(
+  self : StanceBuff,
+  stats : CharStats,
+  value : Int
+) -> Unit {
   // stats.set_stance(Double::from_int(value) / 100.0)
 }
 
@@ -60,7 +72,11 @@ fn apply_to(self : StanceBuff, stats : CharStats, value : Int) -> Unit {
 type BoosterBuff Unit derive(Default)
 
 ///|
-fn apply_to(self : BoosterBuff, stats : CharStats, value : Int) -> Unit {
+fn BoosterBuff::apply_to(
+  self : BoosterBuff,
+  stats : CharStats,
+  value : Int
+) -> Unit {
   // stats.set_attackspeed(value)
 }
 

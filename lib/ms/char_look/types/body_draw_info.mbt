@@ -121,7 +121,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
   let attack_delays = Map::new()
   for ststr, stancenode in bodynode.as_object().or({}) {
     let mut attackdelay : Int = 0
-    guard let Json::Object(stancenode) = stancenode else { _ => continue }
+    guard stancenode is Json::Object(stancenode) else { continue }
     for
       it in @utils.ints().map_while(fn(i) {
         stancenode[i.to_string()].map(fn(it) { (i, it) })
@@ -153,14 +153,14 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
         Json::Object(frame_json) => {
           let stance = StanceId::by_string(ststr)
           let delay = match frame_json {
-            { "delay": Json::Number(delay_value) } => delay_value.to_int()
+            { "delay": Json::Number(delay_value), .. } => delay_value.to_int()
             _ => 100
           }
           stance_delays[stance.int_value()].set(frame, delay)
           let parts = []
           for _, partnode in frame_json {
             match partnode {
-              { "z": Json::String(zstr), "map": map_json } => {
+              { "z": Json::String(zstr), "map": map_json, .. } => {
                 let z = BodyLayer::layer_by_name(zstr)
                 let map = @json.from_json!(map_json)
                 parts.push({ z, map })
@@ -330,7 +330,11 @@ pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
 }
 
 ///|
-pub fn get_delay(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
+pub fn BodyDrawInfo::get_delay(
+  self : BodyDrawInfo,
+  stance : StanceId,
+  frame : Int
+) -> Int {
   self.stance_delays[stance.int_value()].get(frame).or(100)
 }
 

@@ -44,10 +44,12 @@ pub impl Show for StanceId with output(self, logger) {
 }
 
 ///|
-pub impl ToJson for StanceId with to_json(self) { self.to_string().to_json() }
+pub impl ToJson for StanceId with to_json(self) {
+  self.to_string().to_json()
+}
 
 ///|
-pub fn int_value(self : StanceId) -> Int {
+pub fn StanceId::int_value(self : StanceId) -> Int {
   match self {
     StanceId::NONE => 0
     StanceId::ALERT => 1
@@ -89,8 +91,8 @@ pub fn int_value(self : StanceId) -> Int {
 }
 
 ///|
-pub fn hash(self : StanceId) -> Int {
-  self.int_value()
+pub impl Hash for StanceId with hash_combine(self, hasher) {
+  hasher.combine(self.int_value())
 }
 
 ///|

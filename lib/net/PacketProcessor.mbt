@@ -12,7 +12,7 @@ pub fn PacketProcessor::init() -> PacketProcessor {
 }
 
 ///|
-fn PacketProcessor::new() -> PacketProcessor {
+pub fn PacketProcessor::new() -> PacketProcessor {
   let switch = PacketSwitch::new()
   { session: Session::new(fn(it) { switch.forward(it) }), switch }
 }
@@ -97,7 +97,7 @@ pub fn PacketSwitch::new() -> PacketSwitch {
 }
 
 ///|
-pub fn reset_handlers(
+pub fn PacketSwitch::reset_handlers(
   self : PacketSwitch,
   handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
 ) -> Unit {

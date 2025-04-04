@@ -4,5 +4,9 @@
       "KKKIIO/maple-moon-client/lib/config",
       "KKKIIO/maple-moon-client/lib/struct",
       "KKKIIO/maple-moon-client/lib/utils"
-    ]
+    ],
+    "targets":{
+      "socket.js.mbt": ["js"],
+      "socket.wasm.mbt": ["wasm-gc","wasm"]
+    }
 }

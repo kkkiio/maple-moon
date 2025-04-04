@@ -42,7 +42,7 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : MapDrops, physics : @physics.Physics) -> Unit {
+pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.oid

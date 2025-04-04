@@ -25,12 +25,12 @@ pub fn Tile::new(src : NxNode, tileset : @resource.NxNode?) -> Tile {
 }
 
 ///|
-pub fn draw(self : Tile, viewpos : Point[Int]) -> Unit {
+pub fn Tile::draw(self : Tile, viewpos : Point[Int]) -> Unit {
   self.texture.draw(@graphics.DrawArgument::new(pos=self.pos + viewpos))
 }
 
 ///|
-pub fn get_z(self : Tile) -> Int {
+pub fn Tile::get_z(self : Tile) -> Int {
   self.z
 }
 

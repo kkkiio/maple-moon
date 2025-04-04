@@ -28,7 +28,10 @@ pub fn MapObjectBase::new(
 }
 
 ///|
-pub fn update(self : MapObjectBase, physics : @physics.Physics) -> Int {
+pub fn MapObjectBase::update(
+  self : MapObjectBase,
+  physics : @physics.Physics
+) -> Int {
   physics.move_object(self.phobj)
   self.phobj.fhlayer
 }

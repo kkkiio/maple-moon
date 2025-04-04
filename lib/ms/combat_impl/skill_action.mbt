@@ -12,7 +12,7 @@ fn NoAction::new() -> NoAction {
 }
 
 ///|
-fn apply(
+fn NoAction::apply(
   self : NoAction,
   target : @character.Character,
   atype : @combat.AttackType
@@ -31,7 +31,7 @@ fn SingleAction::new(src : @resource.NxNode) -> SingleAction {
 }
 
 ///|
-fn apply(
+fn SingleAction::apply(
   self : SingleAction,
   target : @character.Character,
   atype : @combat.AttackType
@@ -55,11 +55,7 @@ fn TwoHandedAction::new(src : @resource.NxNode) -> TwoHandedAction {
 }
 
 ///|
-fn apply(
-  self : TwoHandedAction,
-  target : @character.Character,
-  atype : @combat.AttackType
-) -> Unit {
+pub impl SkillAction for TwoHandedAction with apply(self, target, _) {
   let twohanded = target.is_twohanded()
   let action = self.actions[twohanded]
   target.attack_by_action(action)
@@ -83,7 +79,7 @@ fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction! {
 }
 
 ///|
-fn apply(
+fn ByLevelAction::apply(
   self : ByLevelAction,
   target : @character.Character,
   atype : @combat.AttackType

@@ -18,7 +18,11 @@ pub fn Sprite::from_resource(
 }
 
 ///|
-pub fn draw(self : Sprite, parentpos : Point[Int], alpha : Double) -> Unit {
+pub fn Sprite::draw(
+  self : Sprite,
+  parentpos : Point[Int],
+  alpha : Double
+) -> Unit {
   let absargs = self.state_args.add_pos(parentpos)
   self.animation.draw(absargs, alpha)
 }
@@ -55,5 +59,6 @@ pub fn get_dimensions(self : Sprite) -> Point[Int] {
 
 ///|
 pub impl ToJson for Sprite with to_json(self) -> Json {
+  ignore(self)
   {} // TODO
 }

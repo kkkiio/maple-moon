@@ -108,12 +108,16 @@ pub fn Portal::default() -> Portal {
 }
 
 ///|
-pub fn update(self : Portal, playerpos : Point[Int]) -> Unit {
+pub fn Portal::update(self : Portal, playerpos : Point[Int]) -> Unit {
   self.touched = self.bounds().contains(playerpos)
 }
 
 ///|
-pub fn draw(self : Portal, viewpos : Point[Int], inter : Double) -> Unit {
+pub fn Portal::draw(
+  self : Portal,
+  viewpos : Point[Int],
+  inter : Double
+) -> Unit {
   match self.animation {
     Some(animation) =>
       if self.type_ != PortalType::HIDDEN || self.touched {

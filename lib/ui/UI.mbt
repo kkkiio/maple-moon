@@ -17,7 +17,7 @@ pub fn UI::new(get_keyboard_mapping : (String) -> @keyboard.Mapping?) -> UI {
 }
 
 ///|
-pub fn draw(self : UI, alpha : Double) -> Unit {
+pub fn UI::draw(self : UI, alpha : Double) -> Unit {
   match self.state {
     Some(state) => state.draw(alpha, self.cursor.get_position())
     None => ()
@@ -26,7 +26,7 @@ pub fn draw(self : UI, alpha : Double) -> Unit {
 }
 
 ///|
-pub fn update(self : UI) -> Unit {
+pub fn UI::update(self : UI) -> Unit {
   match self.state {
     Some(state) => state.update()
     None => ()
@@ -51,7 +51,7 @@ pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
 }
 
 ///|
-pub fn send_cursor(
+pub fn UI::send_cursor(
   self : UI,
   cursorpos : Point[Int],
   cursorstate : CursorState

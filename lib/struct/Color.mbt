@@ -93,7 +93,7 @@ pub impl Show for ColorName with output(self, logger) {
 }
 
 ///|
-pub fn color(self : ColorName) -> Color {
+pub fn ColorName::color(self : ColorName) -> Color {
   match self {
     BLACK => clr_black
     WHITE => clr_white
@@ -281,7 +281,7 @@ let clr_malibu : Color = Color::new_rgba(0.47, 0.80, 1.00, 1.0)
 pub let clr_opaque : Color = clr_white
 
 ///|
-pub fn int_value(self : ColorName) -> Int {
+pub fn ColorName::int_value(self : ColorName) -> Int {
   color_names.search(self).unwrap()
 }
 
@@ -380,21 +380,21 @@ pub fn IntColor::from_color(color : Color) -> IntColor {
 }
 
 ///|
-pub fn r(self : IntColor) -> Int {
+pub fn IntColor::r(self : IntColor) -> Int {
   (self._ >> 24) & 0xFF
 }
 
 ///|
-pub fn g(self : IntColor) -> Int {
+pub fn IntColor::g(self : IntColor) -> Int {
   (self._ >> 16) & 0xFF
 }
 
 ///|
-pub fn b(self : IntColor) -> Int {
+pub fn IntColor::b(self : IntColor) -> Int {
   (self._ >> 8) & 0xFF
 }
 
 ///|
-pub fn a(self : IntColor) -> Int {
+pub fn IntColor::a(self : IntColor) -> Int {
   self._ & 0xFF
 }

@@ -45,7 +45,7 @@ pub fn EffectLayer::drawabove(
 ///|
 pub fn EffectLayer::update(self : EffectLayer) -> Unit {
   for _, effectlist in self.effects {
-    effectlist.retain(fn(effect : Effect) -> Bool { effect.update().not() })
+    effectlist.retain(fn(effect : Effect) -> Bool { not(effect.update()) })
   }
 }
 

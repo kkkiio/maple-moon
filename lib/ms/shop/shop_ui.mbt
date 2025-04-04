@@ -337,7 +337,7 @@ fn use_runtime_state(self : UIShop) -> RuntimeState {
 }
 
 ///|
-fn draw(self : RuntimeState, alpha : Double) -> Unit {
+pub fn RuntimeState::draw(self : RuntimeState, alpha : Double) -> Unit {
   let position = self.position
   self.sprites.each(fn(sprite) { sprite.draw(position, alpha) })
   for _, button in self.buttons {
@@ -573,7 +573,9 @@ pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
 }
 
 ///|
-impl @ui.Widget for UIShop with remove_cursor(self) -> Unit {  }
+impl @ui.Widget for UIShop with remove_cursor(self) -> Unit {
+
+}
 
 ///|
 impl @ui.Widget for UIShop with render(self) -> @ui.RenderSpec {

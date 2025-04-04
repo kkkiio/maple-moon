@@ -40,12 +40,15 @@ pub fn bottom[T](self : Rectangle[T]) -> T {
 }
 
 ///|
-pub fn straight[T : Eq](self : Rectangle[T]) -> Bool {
+pub fn Rectangle::straight[T : Eq](self : Rectangle[T]) -> Bool {
   self.lt == self.rb
 }
 
 ///|
-pub fn contains[T : Eq + Compare](self : Rectangle[T], v : Point[T]) -> Bool {
+pub fn Rectangle::contains[T : Eq + Compare](
+  self : Rectangle[T],
+  v : Point[T]
+) -> Bool {
   not(self.straight()) &&
   v.x >= self.left() &&
   v.x <= self.right() &&
@@ -54,12 +57,15 @@ pub fn contains[T : Eq + Compare](self : Rectangle[T], v : Point[T]) -> Bool {
 }
 
 ///|
-pub fn shift(self : Rectangle[Int], v : Point[Int]) -> Rectangle[Int] {
+pub fn Rectangle::shift[T : Add](
+  self : Rectangle[T],
+  v : Point[T]
+) -> Rectangle[T] {
   { lt: self.lt + v, rb: self.rb + v }
 }
 
 ///|
-pub fn overlaps(self : Rectangle[Int], ar : Rectangle[Int]) -> Bool {
+pub fn Rectangle::overlaps(self : Rectangle[Int], ar : Rectangle[Int]) -> Bool {
   self.get_horizontal().overlaps(Range::new(ar.left(), ar.right())) &&
   self.get_vertical().overlaps(Range::new(ar.top(), ar.bottom()))
 }
@@ -84,5 +90,26 @@ pub fn flip_x(self : Rectangle[Int]) -> Rectangle[Int] {
   {
     lt: { x: -self.right(), y: self.top() },
     rb: { x: -self.left(), y: self.bottom() },
+  }
+}
+
+///|
+pub impl @json.FromJson for Rectangle[Int] with from_json(value, path) {
+  match value {
+    { "lt"? : lt_value, "rb"? : rb_value, .. } => {
+      let lt = match lt_value {
+        None => { x: 0, y: 0 }
+        Some(v) => Point::from_json!(v, path.add_key("lt"))
+      }
+      let rb = match rb_value {
+        None => { x: 0, y: 0 }
+        Some(v) => Point::from_json!(v, path.add_key("rb"))
+      }
+      { lt, rb }
+    }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "Rectangle::from_json: expected object with 'lt' and 'rb' keys"),
+      )
   }
 }

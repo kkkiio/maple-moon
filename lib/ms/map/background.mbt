@@ -66,7 +66,7 @@ pub fn BackgroundResource::load(
 ) -> @utils.Future[Result[BackgroundResource?, Error]] {
   // TODO: what does empty bS mean?
   let bs = match src.value() {
-    { "bS": Json::String(bs) } => bs
+    { "bS": Json::String(bs), .. } => bs
     _ => return @utils.Future::from_value(Ok(None))
   }
   if bs == "" {
@@ -181,7 +181,7 @@ pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
 }
 
 ///|
-pub fn draw(
+pub fn Background::draw(
   self : Background,
   viewx : Double,
   viewy : Double,
@@ -240,8 +240,8 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : Background) -> Unit {
-  self.move_obj.move()
+pub fn Background::update(self : Background) -> Unit {
+  self.move_obj.do_move()
   self.animation.update() |> ignore
 }
 
@@ -265,8 +265,8 @@ pub fn load_backgrounds(
     })
     match backi.value() {
       Json::Null => break
-      { "front": Json::Number(0) } => backs.push(backi_fut)
-      { "front": Json::Number(_) } => fores.push(backi_fut)
+      { "front": Json::Number(0), .. } => backs.push(backi_fut)
+      { "front": Json::Number(_), .. } => fores.push(backi_fut)
       _ => panic()
     }
     no += 1

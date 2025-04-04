@@ -55,7 +55,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   }
 
   // Move the object forward
-  tomove.moving_object.move()
+  tomove.moving_object.do_move()
 }
 
 ///|
@@ -137,7 +137,10 @@ fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-pub fn get_y_below(self : Physics, position : Point[Int]) -> Point[Int] {
+pub fn Physics::get_y_below(
+  self : Physics,
+  position : Point[Int]
+) -> Point[Int] {
   let ground = self.fh_tree.get_y_below(position)
   { x: position.x, y: ground - 1 }
 }

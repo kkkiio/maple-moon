@@ -8,7 +8,7 @@
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/struct",
     {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/types",
+      "path": "KKKIIO/maple-moon-client/lib/ms/combat_proto",
       "alias": "combat"
     },
     "KKKIIO/maple-moon-client/lib/net",

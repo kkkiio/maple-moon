@@ -135,7 +135,7 @@ pub fn login(self : Module, account : String, password : String) -> Unit {
 }
 
 ///|
-struct LoginTask {
+priv struct LoginTask {
   processor : @net.PacketProcessor
   mut state : LoginState
   account : String
@@ -143,7 +143,7 @@ struct LoginTask {
 }
 
 ///|
-enum LoginState {
+priv enum LoginState {
   ACQ_CONN
   START_SEND
   LOGIN_SEND
@@ -691,7 +691,7 @@ pub fn reconnect_if_needed(self : Module) -> Unit {
 }
 
 ///|
-pub fn update(self : Module) -> Unit {
+pub fn Module::update(self : Module) -> Unit {
   match self.login_task {
     Some(task) => task.update()
     None => ()

@@ -66,14 +66,14 @@ pub fn TilesObjs::default() -> TilesObjs {
 }
 
 ///|
-pub fn update(self : TilesObjs) -> Unit {
+pub fn TilesObjs::update(self : TilesObjs) -> Unit {
   for obj in self.objs {
     obj.update()
   }
 }
 
 ///|
-pub fn draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
+pub fn TilesObjs::draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
   for obj in self.objs {
     obj.draw(viewpos, alpha)
   }
@@ -111,14 +111,14 @@ pub fn MapTilesObjs::default() -> MapTilesObjs {
 }
 
 ///|
-pub fn update(self : MapTilesObjs) -> Unit {
+pub fn MapTilesObjs::update(self : MapTilesObjs) -> Unit {
   for layer in self.layers {
     layer.update()
   }
 }
 
 ///|
-pub fn draw(
+pub fn MapTilesObjs::draw(
   self : MapTilesObjs,
   layer : Int,
   viewpos : Point[Int],

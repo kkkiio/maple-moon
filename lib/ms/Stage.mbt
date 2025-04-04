@@ -369,7 +369,7 @@ pub fn get_inventory(self : Stage) -> @inventory.Inventory {
 }
 
 ///| Tells the server that the player took damage.
-enum TakeDamageFrom {
+priv enum TakeDamageFrom {
   TOUCH
 }
 

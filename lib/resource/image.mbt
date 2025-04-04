@@ -1,5 +1,5 @@
 ///|
-pub type Image
+pub extern type Image
 
 ///|
 fn loading(self : Image) -> Bool = "bitmap" "loading"
@@ -19,7 +19,7 @@ pub fn poll(self : Image) -> LoadedImage? {
 pub fn Image::new_pending() -> Image = "bitmap" "new_pending"
 
 ///|
-pub type LoadedImage
+pub extern type LoadedImage
 
 ///|
 pub fn width(self : LoadedImage) -> Int = "bitmap" "width"

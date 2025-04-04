@@ -272,21 +272,26 @@ pub fn Npc::new(
 }
 
 ///|
-pub fn draw(self : Npc, viewx : Double, viewy : Double, alpha : Double) -> Unit {
+pub fn Npc::draw(
+  self : Npc,
+  viewx : Double,
+  viewy : Double,
+  alpha : Double
+) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   match self.animations.get(self.stance) {
     Some(ani) => ani.draw(@graphics.DrawArgument::new14(absp, self.flip), alpha)
     None => ()
   }
-  if self.hide_name.not() {
+  if not(self.hide_name) {
     self.name_label.draw(absp + @struct.Point::new(0, -4))
     self.func_label.draw(absp + @struct.Point::new(0, 18))
   }
 }
 
 ///|
-pub fn update(self : Npc, physics : @physics.Physics) -> Int {
-  if self.base.active.not() {
+pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Int {
+  if not(self.base.active) {
     return self.base.phobj.fhlayer
   }
   physics.move_object(self.base.phobj)
@@ -326,7 +331,7 @@ pub fn inrange(
   cursorpos : @struct.Point[Int],
   viewpos : @struct.Point[Int]
 ) -> Bool {
-  if self.base.active.not() {
+  if not(self.base.active) {
     return false
   }
   let absp = self.base.get_position() + viewpos
@@ -352,7 +357,7 @@ pub fn get_func(self : Npc) -> String {
 }
 
 ///|
-pub fn get_oid(self : Npc) -> Int {
+pub fn Npc::get_oid(self : Npc) -> Int {
   self.base.get_oid()
 }
 

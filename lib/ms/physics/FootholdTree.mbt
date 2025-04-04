@@ -1,5 +1,6 @@
 // The collection of platforms in a maple map
 // Used for collision-detection
+///|
 struct FootholdTree {
   footholds : Map[Int, Foothold]
   footholds_by_x : Map[Int, Array[Int]]
@@ -8,6 +9,7 @@ struct FootholdTree {
   borders : @struct.Range[Int]
 }
 
+///|
 pub fn FootholdTree::load_from_resource(
   src : @resource.NxNode
 ) -> FootholdTree!@resource.LoadError {
@@ -72,6 +74,7 @@ pub fn FootholdTree::load_from_resource(
   { footholds, footholds_by_x, null_fh, walls, borders }
 }
 
+///|
 pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   if phobj.moving_object.hmobile() {
     let crnt_x = phobj.moving_object.crnt_x()
@@ -83,7 +86,7 @@ pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
     } else {
       crnt_x <= wall && next_x >= wall
     }
-    if collision.not() && phobj.is_flag_set(PhysicsObjectFlag::TURN_AT_EDGES) {
+    if not(collision) && phobj.is_flag_set(PhysicsObjectFlag::TURN_AT_EDGES) {
       wall = self.get_edge(phobj.fhid, left)
       collision = if left {
         crnt_x >= wall && next_x <= wall
@@ -115,6 +118,7 @@ pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   }
 }
 
+///|
 pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   if phobj.t == PhysicsObjectType::FIXATED && phobj.fhid > 0 {
     return
@@ -181,10 +185,12 @@ pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
   }
 }
 
+///|
 fn get_fh(self : FootholdTree, fhid : Int) -> Foothold {
   self.footholds.get(fhid).or(self.null_fh)
 }
 
+///|
 pub fn get_wall(
   self : FootholdTree,
   curid : Int,
@@ -216,6 +222,7 @@ pub fn get_wall(
   return self.walls.second().to_double()
 }
 
+///|
 pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
   let fh = self.get_fh(curid)
   if left {
@@ -240,25 +247,24 @@ pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
   return self.walls.second().to_double()
 }
 
+///|
 pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
   guard let Some(range) = self.footholds_by_x.get(fx.to_int()) else {
     None => return 0
   }
-  range.fold(
-    init=(0, self.borders.second().to_double()),
-    fn(acc, id) {
-      let fh = self.footholds.get(id).unwrap()
-      let ycomp = fh.ground_below(fx)
-      let (_, comp) = acc
-      if comp >= ycomp && ycomp >= fy {
-        (fh.id(), ycomp)
-      } else {
-        acc
-      }
-    },
-  ).0
+  range.fold(init=(0, self.borders.second().to_double()), fn(acc, id) {
+    let fh = self.footholds.get(id).unwrap()
+    let ycomp = fh.ground_below(fx)
+    let (_, comp) = acc
+    if comp >= ycomp && ycomp >= fy {
+      (fh.id(), ycomp)
+    } else {
+      acc
+    }
+  }).0
 }
 
+///|
 pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {
   let fhid = self.get_fhid_below(position.x.to_double(), position.y.to_double())
   if fhid > 0 {
@@ -268,10 +274,12 @@ pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {
   self.borders.second()
 }
 
+///|
 pub fn get_walls(self : FootholdTree) -> @struct.Range[Int] {
   self.walls
 }
 
+///|
 pub fn get_borders(self : FootholdTree) -> @struct.Range[Int] {
   self.borders
 }

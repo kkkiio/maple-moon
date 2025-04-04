@@ -126,7 +126,10 @@ fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-pub fn remove[K : Hash + Eq, V : QuadCompare](self : Tree[K, V], key : K) -> V? {
+pub fn Tree::remove[K : Hash + Eq, V : QuadCompare](
+  self : Tree[K, V],
+  key : K
+) -> V? {
   let node = match self.nodes.get(key) {
     Some(n) => n
     None => return None

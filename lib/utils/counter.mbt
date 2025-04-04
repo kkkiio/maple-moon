@@ -7,7 +7,10 @@ pub fn Counter::new[K, V]() -> Counter[K, V] {
 }
 
 ///|
-pub fn op_get[K : Hash + Eq, V : Default](self : Counter[K, V], key : K) -> V {
+pub fn Counter::op_get[K : Hash + Eq, V : Default](
+  self : Counter[K, V],
+  key : K
+) -> V {
   self._.get_or_init(key, fn() { V::default() })
 }
 

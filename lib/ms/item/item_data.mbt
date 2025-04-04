@@ -54,7 +54,7 @@ fn ItemData::load_async(
       }
       CONSUME => {
         let category = "Consume"
-        let strprefix = "0" + get_item_prefix(item_id).to_string()
+        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
         let src = get_item_loader().load_res([
           "Consume",
           strprefix + ".img",
@@ -68,7 +68,7 @@ fn ItemData::load_async(
       }
       INSTALL => {
         let category = "Install"
-        let strprefix = "0" + get_item_prefix(item_id).to_string()
+        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
         let src = get_item_loader().load_res([
           "Install",
           strprefix + ".img",
@@ -82,7 +82,7 @@ fn ItemData::load_async(
       }
       ETC => {
         let category = "Etc"
-        let strprefix = "0" + get_item_prefix(item_id).to_string()
+        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
         let src = get_item_loader().load_res(["Etc", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res([
           "Etc.img",
@@ -92,7 +92,7 @@ fn ItemData::load_async(
       }
       CASH => {
         let category = "Cash"
-        let strprefix = "0" + get_item_prefix(item_id).to_string()
+        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
         let src = get_item_loader().load_res(["Cash", strprefix + ".img", zid])
         let strsrc = @resource.string_loader().load_res([
           "Cash.img",
@@ -171,7 +171,7 @@ fn parse_category1(id : Int) -> Category1!LoadDataError {
 }
 
 ///|
-enum Category1 {
+priv enum Category1 {
   EQUIP
   CONSUME
   INSTALL
@@ -200,7 +200,7 @@ pub(all) type! LoadDataError {
 // TODO: make private
 ///|
 pub fn get_eqcategory(id : Int) -> String!LoadDataError {
-  let index = get_item_prefix(id) - 100
+  let index = ItemData::get_item_prefix(id) - 100
   if index < 0 {
     raise LoadDataError::INVALID_ITEM_ID(id)
   }
@@ -215,8 +215,8 @@ pub fn get_eqcategory(id : Int) -> String!LoadDataError {
 
 ///|
 pub fn get_item_gender(id : Int) -> Int {
-  let item_prefix = get_item_prefix(id)
-  if (get_prefix(id) != 1 && item_prefix != 254) ||
+  let item_prefix = ItemData::get_item_prefix(id)
+  if (ItemData::get_prefix(id) != 1 && item_prefix != 254) ||
     item_prefix == 119 ||
     item_prefix == 168 {
     return 2

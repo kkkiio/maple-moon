@@ -24,7 +24,7 @@ pub fn OutlinedText::new(
 }
 
 ///|
-pub fn draw(self : OutlinedText, parent_pos : Point[Int]) -> Unit {
+pub fn OutlinedText::draw(self : OutlinedText, parent_pos : Point[Int]) -> Unit {
   self.l.draw({ ..parent_pos, x: parent_pos.x - 1 })
   self.r.draw({ ..parent_pos, x: parent_pos.x + 1 })
   self.t.draw({ ..parent_pos, y: parent_pos.y - 1 })
@@ -33,7 +33,7 @@ pub fn draw(self : OutlinedText, parent_pos : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn change_text(self : OutlinedText, text : String) -> Unit {
+pub fn OutlinedText::change_text(self : OutlinedText, text : String) -> Unit {
   self.inner.change_text(text)
   self.l.change_text(text)
   self.r.change_text(text)
@@ -42,12 +42,15 @@ pub fn change_text(self : OutlinedText, text : String) -> Unit {
 }
 
 ///|
-pub fn change_color(self : OutlinedText, color : @struct.ColorName) -> Unit {
+pub fn OutlinedText::change_color(
+  self : OutlinedText,
+  color : @struct.ColorName
+) -> Unit {
   self.inner.change_color(color)
 }
 
 ///|
-pub fn width(self : OutlinedText) -> Int {
+pub fn OutlinedText::width(self : OutlinedText) -> Int {
   self.inner.width()
 }
 
@@ -76,23 +79,26 @@ pub fn ShadowText::new(
 }
 
 ///|
-pub fn draw(self : ShadowText, parent_pos : Point[Int]) -> Unit {
+pub fn ShadowText::draw(self : ShadowText, parent_pos : Point[Int]) -> Unit {
   self.shadow.draw({ x: parent_pos.x + 1, y: parent_pos.y + 1 })
   self.top.draw(parent_pos)
 }
 
 ///|
-pub fn change_text(self : ShadowText, text : String) -> Unit {
+pub fn ShadowText::change_text(self : ShadowText, text : String) -> Unit {
   self.top.change_text(text)
   self.shadow.change_text(text)
 }
 
 ///|
-pub fn change_color(self : ShadowText, color : @struct.ColorName) -> Unit {
+pub fn ShadowText::change_color(
+  self : ShadowText,
+  color : @struct.ColorName
+) -> Unit {
   self.top.change_color(color)
 }
 
 ///|
-pub fn width(self : ShadowText) -> Int {
+pub fn ShadowText::width(self : ShadowText) -> Int {
   self.top.width()
 }

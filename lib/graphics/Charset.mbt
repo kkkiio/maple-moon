@@ -32,7 +32,7 @@ pub fn Charset::from_resource(
 }
 
 ///|
-pub fn Charset::default() -> Charset {
+pub impl Default for Charset with default() {
   { chars: Map::new(), alignment: CharsetAlignment::LEFT }
 }
 
@@ -52,7 +52,11 @@ pub fn getw(self : Charset, c : Char) -> Int {
 }
 
 ///|
-pub fn draw_text(self : Charset, text : String, args : DrawArgument) -> Int {
+pub fn Charset::draw_text(
+  self : Charset,
+  text : String,
+  args : DrawArgument
+) -> Int {
   let mut shift : Int = 0
   let mut total : Int = 0
   match self.alignment {
@@ -120,7 +124,7 @@ struct TextureText {
 }
 
 ///|
-pub fn draw(self : TextureText, args : DrawArgument) -> Int {
+pub fn TextureText::draw(self : TextureText, args : DrawArgument) -> Int {
   self.charset.draw_text(self.text, args)
 }
 
@@ -151,6 +155,6 @@ pub fn GameText::new(
 }
 
 ///|
-pub fn draw(self : GameText, args : DrawArgument) -> Int {
+pub fn GameText::draw(self : GameText, args : DrawArgument) -> Int {
   self.charset.draw_text_with_hspace(self.text, self.hspace, args)
 }

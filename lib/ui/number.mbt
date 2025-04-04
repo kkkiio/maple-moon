@@ -68,8 +68,8 @@ pub fn Number::draw(
 let fade_step : Double = @constants.step_time_ms.to_double() / 500
 
 ///|
-pub fn update(self : Number) -> Bool {
-  self.move_obj.move()
+pub fn Number::update(self : Number) -> Bool {
+  self.move_obj.do_move()
   self.opacity.add(-fade_step)
   self.opacity.last() <= 0.0
 }
@@ -104,12 +104,12 @@ pub fn Number::row_height(critical : Bool) -> Int {
 }
 
 ///|
-struct NumberSet {
+pub struct NumberSet {
   red_charset_pair : @utils.BoolPair[@graphics.Charset]
   cri_charset_pair : @utils.BoolPair[@graphics.Charset]
   violet_charset_pair : @utils.BoolPair[@graphics.Charset]
   blue_charset_pair : @utils.BoolPair[@graphics.Charset]
-}
+} derive(Default)
 
 ///|
 pub fn NumberSet::load() -> @utils.Future[NumberSet] {

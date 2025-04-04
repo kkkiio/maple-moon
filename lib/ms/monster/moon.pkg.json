@@ -10,7 +10,7 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/layer",
     {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/types",
+      "path": "KKKIIO/maple-moon-client/lib/ms/combat_proto",
       "alias": "combat"
     },
     "KKKIIO/maple-moon-client/lib/ui",

@@ -2,7 +2,7 @@
 pub(all) struct Point[T] {
   x : T
   y : T
-} derive(Eq, Show)
+} derive(Eq, Show, Default)
 
 ///|
 pub fn Point::new[T](x : T, y : T) -> Point[T] {
@@ -10,32 +10,31 @@ pub fn Point::new[T](x : T, y : T) -> Point[T] {
 }
 
 ///|
-pub fn Point::default[T : Default]() -> Point[T] {
-  { x: T::default(), y: T::default() }
-}
-
-///|
-pub fn op_add[T : Scalar](self : Point[T], p2 : Point[T]) -> Point[T] {
+pub impl[T : Add] Add for Point[T] with op_add(self : Point[T], p2 : Point[T]) -> Point[
+  T,
+] {
   { x: self.x + p2.x, y: self.y + p2.y }
 }
 
 ///|
-pub fn op_sub[T : Scalar](self : Point[T], p2 : Point[T]) -> Point[T] {
+pub impl[T : Sub] Sub for Point[T] with op_sub(self : Point[T], p2 : Point[T]) -> Point[
+  T,
+] {
   { x: self.x - p2.x, y: self.y - p2.y }
 }
 
 ///|
-pub fn op_neg[T : Scalar](self : Point[T]) -> Point[T] {
+pub impl[T : Neg] Neg for Point[T] with op_neg(self : Point[T]) -> Point[T] {
   { x: -self.x, y: -self.y }
 }
 
 ///| Shift the x-coordinate by the specified amount
-pub fn shift_x[T : Scalar](self : Point[T], v : T) -> Point[T] {
+pub fn shift_x[T : Add](self : Point[T], v : T) -> Point[T] {
   { x: self.x + v, y: self.y }
 }
 
 ///| Shift the y-coordinate by the specified amount
-pub fn shift_y[T : Scalar](self : Point[T], v : T) -> Point[T] {
+pub fn shift_y[T : Add](self : Point[T], v : T) -> Point[T] {
   { x: self.x, y: self.y + v }
 }
 
@@ -45,15 +44,8 @@ pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
 }
 
 ///| Check whether the coordinates are equal
-pub fn straight[T : Eq](self : Point[T]) -> Bool {
+pub fn Point::straight[T : Eq](self : Point[T]) -> Bool {
   self.x == self.y
-}
-
-///|
-pub(open) trait Scalar {
-  op_add(Self, Self) -> Self
-  op_sub(Self, Self) -> Self
-  op_neg(Self) -> Self
 }
 
 ///|

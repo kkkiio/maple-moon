@@ -430,11 +430,6 @@ pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
 }
 
 ///|
-pub fn hash(self : SkillId) -> Int {
-  self.int_value()
-}
-
-///|
-pub fn hash_combine(self : SkillId, hasher : Hasher) -> Unit {
+pub impl Hash for SkillId with hash_combine(self, hasher) -> Unit {
   hasher.combine(self.int_value())
 }

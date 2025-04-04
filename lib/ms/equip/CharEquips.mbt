@@ -139,7 +139,7 @@ pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
 
 ///|
 pub fn has_weapon(self : CharEquips) -> Bool {
-  self.clothes[@slot.Id::WEAPON].is_empty().not()
+  self.clothes[@slot.Id::WEAPON].is_empty() |> not()
 }
 
 ///|
@@ -147,12 +147,10 @@ pub fn adjust_stance(
   self : CharEquips,
   stance : @types.StanceId
 ) -> @types.StanceId {
-  guard let Some((_, weapon)) = self.clothes[@slot.Id::WEAPON] else {
-    None => return stance
+  guard self.clothes[@slot.Id::WEAPON] is Some((_, weapon)) else {
+    return stance
   }
-  guard let Some(weapon) = weapon.poll().flatten() else {
-    None => return stance
-  }
+  guard weapon.poll().flatten() is Some(weapon) else { return stance }
   match stance {
     @types.StanceId::STAND1 | @types.StanceId::STAND2 => weapon.get_stand()
     @types.StanceId::WALK1 | @types.StanceId::WALK2 => weapon.get_walk()

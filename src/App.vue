@@ -219,7 +219,7 @@ export default {
             new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Face"),
             imageLoader
         );
-        const afterimageLoader = new AsyncResourceLoader(
+        const afterImageLoader = new AsyncResourceLoader(
             new DirResourceLoader("https://maple-res.kkkiiox.work/Character/Afterimage"),
             imageLoader
         );
@@ -330,7 +330,7 @@ export default {
                         case "face":
                             return faceLoader;
                         case "afterimage":
-                            return afterimageLoader;
+                            return afterImageLoader;
                         case "background":
                             return backgroundLoader;
                         case "obj":

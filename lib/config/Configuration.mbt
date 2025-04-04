@@ -1,8 +1,10 @@
+///|
 pub fn set_hardware_info(self : Configuration) -> Unit {
   self.set_hwid("9A9A9A9A9A9A", "9A9A9A9A")
   self.set_macs("11-22-33-44-55-66")
 }
 
+///|
 struct Configuration {
   mut macs : String
   mut hwid : String
@@ -13,6 +15,7 @@ struct Configuration {
   settings : Map[String, String]
 }
 
+///|
 fn Configuration::default() -> Configuration {
   {
     macs: "",
@@ -25,20 +28,25 @@ fn Configuration::default() -> Configuration {
   }
 }
 
+///|
 let configuration : Configuration = Configuration::default()
 
+///|
 pub fn global() -> Configuration {
   configuration
 }
 
+///|
 pub fn get_volume_serial_number(self : Configuration) -> String {
   self.volume_serial_number
 }
 
+///|
 pub fn get_hwid(self : Configuration) -> String {
   self.hwid
 }
 
+///|
 fn set_hwid(
   self : Configuration,
   hwid : String,
@@ -52,110 +60,136 @@ fn set_hwid(
   self.hwid = "\{hwid}_\{part4}\{part3}\{part2}\{part1}"
 }
 
+///|
 pub fn get_macs(self : Configuration) -> String {
   self.macs
 }
 
+///|
 fn set_macs(self : Configuration, macs : String) -> Unit {
   self.macs = macs
 }
 
+///|
 pub fn get_admin(self : Configuration) -> Bool {
   self.admin
 }
 
+///|
 pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
   self.admin = admin
 }
 
+///|
 pub fn get_worldid(self : Configuration) -> Int {
   self.worldid
 }
 
+///|
 pub fn set_worldid(self : Configuration, worldid : Int) -> Unit {
   self.worldid = worldid
 }
 
+///|
 pub fn get_channelid(self : Configuration) -> Int {
   self.channelid
 }
 
+///|
 pub fn set_channelid(self : Configuration, channelid : Int) -> Unit {
   self.channelid = channelid
 }
 
+///|
 pub(open) trait ConfigEntry {
   name(Self) -> String
   new(String, String) -> Self
 }
 
+///|
 struct StringEntry {
   name : String
   default : String
 }
 
+///|
 pub fn name(self : StringEntry) -> String {
   self.name
 }
 
+///|
 pub fn StringEntry::new(name : String, default : String) -> StringEntry {
   { name, default }
 }
 
+///|
 pub fn load(self : StringEntry) -> String {
   configuration.settings.get(self.name).or(self.default)
 }
 
+///|
 pub fn save(self : StringEntry, value : String) -> Unit {
   configuration.settings[self.name] = value
 }
 
+///|
 struct BoolEntry {
   name : String
   mut value : String
 }
 
-pub fn name(self : BoolEntry) -> String {
+///|
+pub fn BoolEntry::name(self : BoolEntry) -> String {
   self.name
 }
 
+///|
 pub fn BoolEntry::new(name : String, value : String) -> BoolEntry {
   { name, value }
 }
 
-pub fn load(self : BoolEntry) -> Bool {
+///|
+pub fn BoolEntry::load(self : BoolEntry) -> Bool {
   self.value == "true"
 }
 
-pub fn save(self : BoolEntry, value : Bool) -> Unit {
+///|
+pub fn BoolEntry::save(self : BoolEntry, value : Bool) -> Unit {
   self.value = value.to_string()
 }
 
+///|
 struct IntEntry {
   name : String
   mut value : String
 }
 
-pub fn name(self : IntEntry) -> String {
+///|
+pub fn IntEntry::name(self : IntEntry) -> String {
   self.name
 }
 
+///|
 pub fn IntEntry::new(name : String, value : String) -> IntEntry {
   { name, value }
 }
 
-pub fn load(self : IntEntry) -> Int {
+///|
+pub fn IntEntry::load(self : IntEntry) -> Int {
   @strconv.parse_int?(self.value).or(0)
 }
 
-pub fn save(self : IntEntry, value : String) -> Unit {
+///|
+pub fn IntEntry::save(self : IntEntry, value : String) -> Unit {
   self.value = value
 }
 
+///|
 pub let configFontPathNormal : StringEntry = StringEntry::new(
   "FontPathNormal", "Roboto-Regular",
 )
 
+///|
 pub let configFontPathBold : StringEntry = StringEntry::new(
   "FontPathBold", "Roboto-Bold",
 )

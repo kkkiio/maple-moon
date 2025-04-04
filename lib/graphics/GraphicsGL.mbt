@@ -13,7 +13,7 @@ struct GraphicsGL {
 }
 
 ///|
-struct Atlas {
+priv struct Atlas {
   width : Int
   height : Int
   minlosize : Int
@@ -122,7 +122,7 @@ pub fn draw_bitmap(
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
   // }
-  guard let Some(image) = bmp.image.poll() else { None => return }
+  guard bmp.image.poll() is Some(image) else { return }
   self.quads.push(
     Quad::new(
       rect.left(),
@@ -148,7 +148,7 @@ fn draw_text(
   if self.locked {
     return
   }
-  guard let Some(image) = image.poll() else { None => return }
+  guard image.poll() is Some(image) else { return }
 
   // if (rect.overlaps(SCREEN).not()) {
   //     return;
@@ -200,7 +200,9 @@ fn draw_text(
 
 ///|
 pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
-  guard let None = self.text_cache.get(key) else { Some(image) => return image }
+  if self.text_cache.get(key) is Some(image) {
+    return image
+  }
   let fontName = if key.font_id.is_bold() {
     @config.configFontPathBold.load()
   } else {
@@ -283,7 +285,7 @@ pub fn clear(self : GraphicsGL) -> Unit {
 }
 
 ///|
-fn clear(self : Atlas) -> Unit {
+fn Atlas::clear(self : Atlas) -> Unit {
   let used = self.width * self.border_y + self.border_x * self.y_range.b
   let usedpercent = used.to_double() / (self.width * self.height).to_double()
   if usedpercent > 80.0 {
@@ -330,7 +332,9 @@ fn get_offset(
       let height_delta = leftover.height() - height
       // self.wasted -= width * height
       if width_delta >= self.minlosize && height_delta >= self.minlosize {
-        add_leftover(Leftover::fromxywh(x + width, y + height, width_delta, height_delta))
+        add_leftover(
+          Leftover::fromxywh(x + width, y + height, width_delta, height_delta),
+        )
         if width >= self.minlosize {
           add_leftover(Leftover::fromxywh(x, y + height, width, height_delta))
         }
@@ -338,9 +342,13 @@ fn get_offset(
           add_leftover(Leftover::fromxywh(x + width, y, width_delta, height))
         }
       } else if width_delta >= self.minlosize {
-        add_leftover(Leftover::fromxywh(x + width, y, width_delta, height + height_delta))
+        add_leftover(
+          Leftover::fromxywh(x + width, y, width_delta, height + height_delta),
+        )
       } else if height_delta >= self.minlosize {
-        add_leftover(Leftover::fromxywh(x, y + height, width + width_delta, height_delta))
+        add_leftover(
+          Leftover::fromxywh(x, y + height, width + width_delta, height_delta),
+        )
       }
       (x, y)
     }
@@ -359,19 +367,23 @@ fn get_offset(
       self.border_x = self.border_x + width
       if height > self.y_range.b {
         if x >= self.minlosize && height - self.y_range.b >= self.minlosize {
-          add_leftover(Leftover::fromxywh(0, self.y_range.a, x, height - self.y_range.b))
+          add_leftover(
+            Leftover::fromxywh(0, self.y_range.a, x, height - self.y_range.b),
+          )
         }
         // self.wasted += x * (height - self.y_range.b)
         self.y_range = Range::new(y + height, height)
       } else if height < self.y_range.a - y {
         if width >= self.minlosize &&
           self.y_range.a - y - height >= self.minlosize {
-          add_leftover(Leftover::fromxywh(
-            x,
-            y + height,
-            width,
-            self.y_range.a - y - height,
-          ))
+          add_leftover(
+            Leftover::fromxywh(
+              x,
+              y + height,
+              width,
+              self.y_range.a - y - height,
+            ),
+          )
         }
       }
       // self.wasted += width * (self.y_range.a - y - height)
@@ -436,7 +448,7 @@ fn Quad::new(
 }
 
 ///|
-struct Vertex {
+priv struct Vertex {
   mut localcoord_x : Int
   mut localcoord_y : Int
   texcoord_x : Int
@@ -473,12 +485,12 @@ fn Leftover::fromxywh(x : Int, y : Int, width : Int, height : Int) -> Leftover {
 }
 
 ///|
-fn width(self : Leftover) -> Int {
+fn Leftover::width(self : Leftover) -> Int {
   self.right - self.left
 }
 
 ///|
-fn height(self : Leftover) -> Int {
+fn Leftover::height(self : Leftover) -> Int {
   self.bottom - self.top
 }
 
@@ -548,7 +560,7 @@ pub fn is_bold(self : FontId) -> Bool {
 }
 
 ///|
-pub fn height(self : FontId) -> Int {
+pub fn FontId::height(self : FontId) -> Int {
   match self {
     A11M | A11B => 11
     A12M | A12B => 12

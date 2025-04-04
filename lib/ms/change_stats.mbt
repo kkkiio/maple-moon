@@ -14,7 +14,7 @@ pub fn make_change_stats_handler(
 }
 
 ///|
-type StatChanges Map[@maple_stat.Id, Int] derive(Show, ToJson)
+priv type StatChanges Map[@maple_stat.Id, Int] derive(Show, ToJson)
 
 ///|
 fn parse_stat_changes(recv : @net.InPacket) -> StatChanges! {

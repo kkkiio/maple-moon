@@ -21,7 +21,7 @@
     "KKKIIO/maple-moon-client/lib/ms/monster",
     "KKKIIO/maple-moon-client/lib/ms/physics",
     {
-      "path": "KKKIIO/maple-moon-client/lib/ms/combat/types",
+      "path": "KKKIIO/maple-moon-client/lib/ms/combat_proto",
       "alias": "combat"
     },
     "KKKIIO/maple-moon-client/lib/ms/player",
@@ -31,12 +31,15 @@
     "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/ms/skill",
     "KKKIIO/maple-moon-client/lib/ms/skill_book",
-    "KKKIIO/maple-moon-client/lib/ms/combat_do",
+    "KKKIIO/maple-moon-client/lib/ms/combat_impl",
     "KKKIIO/maple-moon-client/lib/ms/shop",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/heal_over_time",
     "KKKIIO/maple-moon-client/lib/schedule",
     "KKKIIO/maple-moon-client/lib/game_mod",
-    "KKKIIO/maple-moon-client/lib/io_task",
-  ]
+    "KKKIIO/maple-moon-client/lib/io_task"
+  ],
+  "targets": {
+    "time-ffi.mbt": ["js", "wasm-gc", "wasm"]
+  }
 }

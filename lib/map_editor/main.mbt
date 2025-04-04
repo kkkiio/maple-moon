@@ -1,3 +1,4 @@
+///|
 struct EntryPoint {
   mut state : State
   down_keys : Map[String, Bool]
@@ -5,6 +6,7 @@ struct EntryPoint {
   mut draw_tiles : Bool
 }
 
+///|
 enum State {
   NONE
   LOADING(loading_map~ : @utils.Future[Result[@map.MapStruct, Error]])
@@ -16,6 +18,7 @@ enum State {
   )
 }
 
+///|
 let g_state : EntryPoint = {
   state: State::NONE,
   down_keys: Map::new(),
@@ -23,13 +26,17 @@ let g_state : EntryPoint = {
   draw_tiles: true,
 }
 
+///|
 pub fn load_map(map_id : Int) -> Unit {
-  let loading_map = @map.MapPortalAnimations::load().bind(
-    fn(map_portals_animations) { @map.load_map(map_id, map_portals_animations) },
-  )
+  let loading_map = @map.MapPortalAnimations::load().bind(fn(
+    map_portals_animations
+  ) {
+    @map.load_map(map_id, map_portals_animations)
+  })
   g_state.state = State::LOADING(loading_map~)
 }
 
+///|
 pub fn update(_time : Double) -> Unit {
   match g_state.state {
     State::NONE => ()
@@ -61,22 +68,27 @@ pub fn update(_time : Double) -> Unit {
   }
 }
 
+///|
 pub fn onkeydown(key : String) -> Unit {
   g_state.down_keys.set(key, true)
 }
 
+///|
 pub fn onkeyup(key : String) -> Unit {
   g_state.down_keys.set(key, false)
 }
 
+///|
 pub fn set_speed(new_speed : Int) -> Unit {
   g_state.speed = clamp(new_speed, 1, 10)
 }
 
+///|
 pub fn set_draw_tiles(draw_tiles : Bool) -> Unit {
   g_state.draw_tiles = draw_tiles
 }
 
+///|
 pub fn is_loaded() -> Bool {
   match g_state.state {
     State::ACTIVE(..) => true
@@ -84,6 +96,7 @@ pub fn is_loaded() -> Bool {
   }
 }
 
+///|
 pub fn get_background_count() -> Int {
   match g_state.state {
     State::ACTIVE(map~, ..) => map.backgrounds.backs.length()
@@ -91,6 +104,7 @@ pub fn get_background_count() -> Int {
   }
 }
 
+///|
 pub fn get_foreground_count() -> Int {
   match g_state.state {
     State::ACTIVE(map~, ..) => map.backgrounds.fores.length()
@@ -98,20 +112,19 @@ pub fn get_foreground_count() -> Int {
   }
 }
 
+///|
 pub fn set_show_background(index : Int, show_background : Bool) -> Unit {
-  guard let State::ACTIVE(hide_backgrounds~, ..) = g_state.state else {
-    _ => return
-  }
-  hide_backgrounds.set(index, show_background.not())
+  guard g_state.state is State::ACTIVE(hide_backgrounds~, ..) else { return }
+  hide_backgrounds.set(index, not(show_background))
 }
 
+///|
 pub fn set_show_foreground(index : Int, show_foreground : Bool) -> Unit {
-  guard let State::ACTIVE(hide_foregrounds~, ..) = g_state.state else {
-    _ => return
-  }
-  hide_foregrounds.set(index, show_foreground.not())
+  guard g_state.state is State::ACTIVE(hide_foregrounds~, ..) else { return }
+  hide_foregrounds.set(index, not(show_foreground))
 }
 
+///|
 fn draw_map(
   map : @map.MapStruct,
   viewpos : @struct.Point[Double],
@@ -146,6 +159,7 @@ fn draw_map(
   }
 }
 
+///|
 fn update_map(
   backgrounds : @map.Backgrounds,
   tiles_objs : @map.MapTilesObjs,
@@ -156,6 +170,7 @@ fn update_map(
   portals.update(@struct.Point::default()) // TODO: add player
 }
 
+///|
 fn update_viewpos(
   down_keys : Map[String, Bool],
   viewpos : @struct.Point[Double],
@@ -178,6 +193,7 @@ fn update_viewpos(
   viewpos
 }
 
+///|
 fn clamp[T : Compare](x : T, min : T, max : T) -> T {
   if x < min {
     min

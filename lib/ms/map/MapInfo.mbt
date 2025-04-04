@@ -44,7 +44,7 @@ pub fn is_ladder(self : Ladder) -> Bool {
   self.ladder
 }
 
-pub fn inrange(self : Ladder, position : Point[Int], upwards : Bool) -> Bool {
+pub fn Ladder::inrange(self : Ladder, position : Point[Int], upwards : Bool) -> Bool {
   let hor = Range::symmetric(position.x, 10)
   let ver = Range::new(self.y1, self.y2)
   let y = if upwards { position.y - 5 } else { position.y + 5 }

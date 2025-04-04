@@ -4,7 +4,7 @@ pub(all) struct RegularAttack {
 } derive(Default)
 
 ///|
-pub fn apply_actions(
+pub fn RegularAttack::apply_actions(
   self : RegularAttack,
   user : @character.Character,
   t : @combat.AttackType
@@ -14,25 +14,25 @@ pub fn apply_actions(
 
 ///|
 pub fn make_regular_attack(
-  player : @player.Player,
+  character : @character.CharBase,
+  bullet_id : Int,
   attacktype : @combat.AttackType,
   degenerate : Bool
 ) -> @combat.Attack {
   let t = attacktype
-  let mut mindamage = player.stats.get_mindamage().to_double()
-  let mut maxdamage = player.stats.get_maxdamage().to_double()
+  let mut mindamage = character.stats.get_mindamage().to_double()
+  let mut maxdamage = character.stats.get_maxdamage().to_double()
   if degenerate {
     mindamage /= 10
     maxdamage /= 10
   }
-  let critical = player.stats.get_critical()
-  let ignoredef = player.stats.get_ignoredef()
-  let accuracy = player.stats.get_total(@stat.Id::ACC)
-  let playerlevel = player.stats.get_stat(@maple_stat.Id::LEVEL)
-  let bullet = player.inventory.get_bulletid()
-  let origin = player.character.get_position()
-  let toleft = player.character.facing_right |> not()
-  let speed = (player.character.get_integer_attackspeed)()
+  let critical = character.stats.get_critical()
+  let ignoredef = character.stats.get_ignoredef()
+  let accuracy = character.stats.get_total(@stat.Id::ACC)
+  let playerlevel = character.stats.get_stat(@maple_stat.Id::LEVEL)
+  let origin = character.get_position()
+  let toleft = character.facing_right |> not()
+  let speed = (character.get_integer_attackspeed)()
   {
     damagetype: @combat.AttackDamageType::DMG_WEAPON(mindamage, maxdamage),
     t,
@@ -41,23 +41,23 @@ pub fn make_regular_attack(
     accuracy,
     playerlevel,
     range: match t {
-      @combat.AttackType::CLOSE => player.get_afterimage().get_range()
-      _ => player.stats.get_range()
+      @combat.AttackType::CLOSE => character.get_afterimage().get_range()
+      _ => character.stats.get_range()
     },
-    bullet,
+    bullet: bullet_id,
     origin,
     toleft,
     speed,
     skill: 0,
     mobcount: 1,
     hitcount: 1,
-    stance: player.character.get_look().get_stance().int_value(),
+    stance: character.get_look().get_stance().int_value(),
     hrange: 1.0,
   }
 }
 
 ///|
-pub fn get_bullet(
+pub fn RegularAttack::get_bullet(
   self : RegularAttack,
   _user : @character.Character,
   bulletid : Int
@@ -72,7 +72,7 @@ pub fn get_bullet(
 struct RegularAction {} derive(Default)
 
 ///|
-pub fn apply(
+pub fn RegularAction::apply(
   self : RegularAction,
   target : @character.Character,
   atype : @combat.AttackType
@@ -111,7 +111,9 @@ pub fn new_regular_attack() -> SpecialMove {
     skill: false,
     apply_useeffects: fn(_) {  },
     apply_actions: fn(char, attack_type) { ra.apply_actions(char, attack_type) },
-    make_attack: make_regular_attack,
+    make_attack: fn(char, i, attack_type, degenerate) {
+      make_regular_attack(char, i.get_bulletid(), attack_type, degenerate)
+    },
     get_bullet: fn(char, value) { ra.get_bullet(char, value) },
     can_use: fn(_, weapon_type, _, _, _, bullet) {
       can_use_regular_attack(weapon_type, bullet)

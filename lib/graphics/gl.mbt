@@ -1,13 +1,19 @@
-type Image
+///|
+extern type Image
 
-fn width(self : Image) -> Int = "bitmap" "width"
+///|
+fn Image::width(self : Image) -> Int = "bitmap" "width"
 
-fn height(self : Image) -> Int = "bitmap" "height"
+///|
+fn Image::height(self : Image) -> Int = "bitmap" "height"
 
-fn loading(self : Image) -> Bool = "bitmap" "loading"
+///|
+fn Image::loading(self : Image) -> Bool = "bitmap" "loading"
 
-fn load(self : Image) -> @resource.LoadedImage = "bitmap" "load"
+///|
+fn Image::load(self : Image) -> @resource.LoadedImage = "bitmap" "load"
 
+///|
 fn poll(self : Image) -> @resource.LoadedImage? {
   if self.loading() {
     return None
@@ -15,14 +21,19 @@ fn poll(self : Image) -> @resource.LoadedImage? {
   Some(self.load())
 }
 
+///|
 fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.LoadedImage) = "gl" "texSubImage2D"
 
+///|
 fn glFlush(v : Vertices) = "gl" "flush"
 
-type Vertices
+///|
+extern type Vertices
 
+///|
 fn Vertices::new(length : Int) -> Vertices = "gl" "newVertices"
 
+///|
 fn set(
   self : Vertices,
   i : Int,

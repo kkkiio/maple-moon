@@ -10,6 +10,9 @@ pub fn DefaultMap::new[K, V](default_fn : () -> V) -> DefaultMap[K, V] {
 }
 
 ///|
-pub fn op_get[K : Eq + Hash, V](self : DefaultMap[K, V], key : K) -> V {
+pub fn DefaultMap::op_get[K : Eq + Hash, V](
+  self : DefaultMap[K, V],
+  key : K
+) -> V {
   self.map.get_or_init(key, self.default_fn)
 }

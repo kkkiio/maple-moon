@@ -3,14 +3,14 @@ pub(all) enum AttackType {
   CLOSE
   RANGED
   MAGIC
-} derive(Eq, Show)
+} derive(Eq, Show, ToJson)
 
 ///|
 pub(all) enum AttackDamageType {
   DMG_WEAPON(Double, Double) // min, max
   DMG_MAGIC(Int) // matk
   DMG_FIXED(Int) // fix
-} derive(Eq, Show)
+} derive(Eq, Show, ToJson)
 
 ///|
 pub(all) struct Attack {
@@ -30,7 +30,7 @@ pub(all) struct Attack {
   mut range : @struct.Rectangle[Int]
   mut hrange : Double
   toleft : Bool
-} derive(Show)
+} derive(Show, ToJson)
 
 ///| an attack coming from a mob
 pub struct MobAttack {

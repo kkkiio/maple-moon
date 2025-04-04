@@ -164,7 +164,7 @@ pub fn MesoDrop::draw(
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  if self.base.base.active.not() {
+  if not(self.base.base.active) {
     return
   }
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
@@ -267,32 +267,32 @@ pub fn ItemDrop::draw(
 }
 
 ///|
-pub fn get_oid(self : ItemDrop) -> Int {
+pub fn ItemDrop::get_oid(self : ItemDrop) -> Int {
   self.base.base.oid
 }
 
 ///|
-pub fn update(self : ItemDrop, physics : @physics.Physics) -> Int {
+pub fn ItemDrop::update(self : ItemDrop, physics : @physics.Physics) -> Int {
   self.base.update(physics)
 }
 
 ///|
-pub fn is_active(self : ItemDrop) -> Bool {
+pub fn ItemDrop::is_active(self : ItemDrop) -> Bool {
   self.base.base.active
 }
 
 ///|
-pub fn makeactive(self : ItemDrop) -> Unit {
+pub fn ItemDrop::makeactive(self : ItemDrop) -> Unit {
   self.base.base.makeactive()
 }
 
 ///|
-pub fn get_layer(self : ItemDrop) -> Int {
+pub fn ItemDrop::get_layer(self : ItemDrop) -> Int {
   self.base.base.get_layer()
 }
 
 ///|
-pub fn get_position(self : ItemDrop) -> @struct.Point[Int] {
+pub fn ItemDrop::get_position(self : ItemDrop) -> @struct.Point[Int] {
   self.base.base.get_position()
 }
 

@@ -16,7 +16,13 @@ pub(all) struct SpecialMove {
   skill : Bool
   apply_useeffects : (@character.Character) -> Unit
   apply_actions : (@character.Character, @combat.AttackType) -> Unit
-  make_attack : (@player.Player, @combat.AttackType, Bool) -> @combat.Attack
+  // TODO: find a better place for inventory arguments
+  make_attack : (
+    @character.CharBase,
+    &@player.Inventory,
+    @combat.AttackType,
+    Bool,
+  ) -> @combat.Attack
   get_bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
@@ -57,11 +63,12 @@ pub fn apply_actions(
 ///|
 pub fn make_attack(
   self : SpecialMove,
-  player : @player.Player,
+  char : @character.CharBase,
+  inventory : &@player.Inventory,
   attack_type : @combat.AttackType,
   degenerate : Bool
 ) -> @combat.Attack {
-  (self.make_attack)(player, attack_type, degenerate)
+  (self.make_attack)(char, inventory, attack_type, degenerate)
 }
 
 ///|

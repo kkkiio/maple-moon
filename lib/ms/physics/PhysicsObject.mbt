@@ -26,7 +26,7 @@ pub fn normalize(self : MovingObject) -> Unit {
 }
 
 ///|
-pub fn move(self : MovingObject) -> Unit {
+pub fn MovingObject::do_move(self : MovingObject) -> Unit {
   self.x.set(self.x.get() + self.hspeed)
   self.y.set(self.y.get() + self.vspeed)
 }
@@ -258,47 +258,47 @@ pub fn clear_flags(self : PhysicsObject) -> Unit {
 }
 
 ///|
-pub fn move(self : PhysicsObject) -> Unit {
-  self.moving_object.move()
+pub fn PhysicsObject::move(self : PhysicsObject) -> Unit {
+  self.moving_object.do_move()
 }
 
 ///|
-pub fn set_x(self : PhysicsObject, x : Double) -> Unit {
+pub fn PhysicsObject::set_x(self : PhysicsObject, x : Double) -> Unit {
   self.moving_object.set_x(x)
 }
 
 ///|
-pub fn set_y(self : PhysicsObject, y : Double) -> Unit {
+pub fn PhysicsObject::set_y(self : PhysicsObject, y : Double) -> Unit {
   self.moving_object.set_y(y)
 }
 
 ///|
-pub fn limitx(self : PhysicsObject, x : Double) -> Unit {
+pub fn PhysicsObject::limitx(self : PhysicsObject, x : Double) -> Unit {
   self.moving_object.limitx(x)
 }
 
 ///|
-pub fn limity(self : PhysicsObject, y : Double) -> Unit {
+pub fn PhysicsObject::limity(self : PhysicsObject, y : Double) -> Unit {
   self.moving_object.limity(y)
 }
 
 ///|
-pub fn get_x(self : PhysicsObject) -> Int {
+pub fn PhysicsObject::get_x(self : PhysicsObject) -> Int {
   self.moving_object.get_x()
 }
 
 ///|
-pub fn get_y(self : PhysicsObject) -> Int {
+pub fn PhysicsObject::get_y(self : PhysicsObject) -> Int {
   self.moving_object.get_y()
 }
 
 ///|
-pub fn get_position(self : PhysicsObject) -> Point[Int] {
+pub fn PhysicsObject::get_position(self : PhysicsObject) -> Point[Int] {
   self.moving_object.get_position()
 }
 
 ///|
-pub fn get_absolute_x(
+pub fn PhysicsObject::get_absolute_x(
   self : PhysicsObject,
   viewx : Double,
   alpha : Double
@@ -307,7 +307,7 @@ pub fn get_absolute_x(
 }
 
 ///|
-pub fn get_absolute_y(
+pub fn PhysicsObject::get_absolute_y(
   self : PhysicsObject,
   viewy : Double,
   alpha : Double
@@ -316,7 +316,7 @@ pub fn get_absolute_y(
 }
 
 ///|
-pub fn get_absolute(
+pub fn PhysicsObject::get_absolute(
   self : PhysicsObject,
   viewx : Double,
   viewy : Double,
@@ -326,12 +326,12 @@ pub fn get_absolute(
 }
 
 ///|
-pub fn get_last_x(self : PhysicsObject) -> Int {
+pub fn PhysicsObject::get_last_x(self : PhysicsObject) -> Int {
   self.moving_object.get_last_x()
 }
 
 ///|
-pub fn get_last_y(self : PhysicsObject) -> Int {
+pub fn PhysicsObject::get_last_y(self : PhysicsObject) -> Int {
   self.moving_object.get_last_y()
 }
 

@@ -5,7 +5,7 @@ struct Schedules {
 }
 
 ///|
-struct ScheduledTask {
+priv struct ScheduledTask {
   mut next_time : @utils.TimePoint
   run : () -> Unit
   delay : @utils.Duration

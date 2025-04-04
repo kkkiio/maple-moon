@@ -5,9 +5,6 @@ typealias ButtonState = @ui.ButtonState
 typealias UIElementType = @ui.UIElementType
 
 ///|
-typealias Widget = @ui.Widget
-
-///|
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
 ///|
@@ -70,7 +67,7 @@ pub fn UIStateGame::new(
 }
 
 ///|
-pub fn draw(
+pub fn UIStateGame::draw(
   self : UIStateGame,
   inter : Double,
   cursor : @struct.Point[Int]
@@ -90,7 +87,7 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : UIStateGame) -> Unit {
+pub fn UIStateGame::update(self : UIStateGame) -> Unit {
   let mut update_screen = false
   let new_width = @constants.constants.get_viewwidth()
   let new_height = @constants.constants.get_viewheight()
@@ -116,7 +113,7 @@ pub fn update(self : UIStateGame) -> Unit {
 }
 
 ///|
-pub fn send_key(
+pub fn UIStateGame::send_key(
   self : UIStateGame,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
@@ -160,7 +157,7 @@ pub fn send_key(
 }
 
 ///|
-pub fn send_cursor(
+pub fn UIStateGame::send_cursor(
   self : UIStateGame,
   cursorstate : @ui.CursorState,
   cursorpos : @struct.Point[Int]
@@ -288,7 +285,7 @@ pub fn toggle_element(
 }
 
 ///|
-pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
+pub fn UIStateGame::remove(self : UIStateGame, t : UIElementType) -> Unit {
   if t == self.focused {
     self.focused = UIElementType::UI_ELEMENT_NONE
   }
@@ -307,12 +304,12 @@ pub fn remove(self : UIStateGame, t : UIElementType) -> Unit {
 }
 
 ///|
-fn get(self : UIStateGame, t : UIElementType) -> @ui.Element? {
+pub fn UIStateGame::get(self : UIStateGame, t : UIElementType) -> @ui.Element? {
   self.elements[t].map(fn(e) { e })
 }
 
 ///|
-pub fn get_front_by_types(
+pub fn UIStateGame::get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
 ) -> @ui.Element? {
@@ -331,7 +328,7 @@ pub fn get_front_by_types(
 }
 
 ///|
-pub fn get_front_by_pos(
+pub fn UIStateGame::get_front_by_pos(
   self : UIStateGame,
   pos : @struct.Point[Int]
 ) -> @ui.Element? {
@@ -347,12 +344,18 @@ pub fn get_front_by_pos(
 }
 
 ///|
-pub fn remove_cursor(self : UIStateGame, _t : UIElementType) -> Unit {
+pub fn UIStateGame::remove_cursor(
+  self : UIStateGame,
+  _t : UIElementType
+) -> Unit {
   // Implementation goes here
 }
 
 ///|
-fn get_front(self : UIStateGame, pos : @struct.Point[Int]) -> @ui.Element? {
+pub fn UIStateGame::get_front(
+  self : UIStateGame,
+  pos : @struct.Point[Int]
+) -> @ui.Element? {
   self.element_order
   .iter()
   .map_while(fn(t) { self.elements[t] })

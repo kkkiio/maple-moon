@@ -68,7 +68,7 @@ pub fn stop(self : Timer, now : TimePoint) -> Duration {
 }
 
 ///|
-pub fn since(self : Timer, now : TimePoint) -> Duration {
+pub fn Timer::since(self : Timer, now : TimePoint) -> Duration {
   if now <= self.current_time {
     return 0
   }

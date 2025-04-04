@@ -17,7 +17,7 @@ fn UIStateLogin::new(login_module : @login.Module) -> UIStateLogin {
 }
 
 ///|
-fn draw(
+pub fn UIStateLogin::draw(
   self : UIStateLogin,
   inter : Double,
   cursor : @struct.Point[Int]
@@ -30,7 +30,7 @@ fn draw(
 }
 
 ///|
-fn update(self : UIStateLogin) -> Unit {
+pub fn UIStateLogin::update(self : UIStateLogin) -> Unit {
   self.uis_to_remove.each(fn(t) { self.elements.remove(t) })
   self.elements.each(fn(_t, elem) {
     if elem.get_ui_model().is_active() {
@@ -40,7 +40,7 @@ fn update(self : UIStateLogin) -> Unit {
 }
 
 ///|
-pub fn send_key(
+pub fn UIStateLogin::send_key(
   self : UIStateLogin,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
@@ -62,7 +62,7 @@ pub fn send_key(
 }
 
 ///|
-pub fn send_cursor(
+pub fn UIStateLogin::send_cursor(
   self : UIStateLogin,
   cursorstate : @ui.CursorState,
   cursorpos : @struct.Point[Int]
@@ -160,7 +160,10 @@ pub fn get_front_by_pos(
 }
 
 ///|
-pub fn remove_cursor(self : UIStateLogin, keep : UIElementType) -> Unit {
+pub fn UIStateLogin::remove_cursor(
+  self : UIStateLogin,
+  keep : UIElementType
+) -> Unit {
   for key, element in self.elements {
     if element.get_ui_model().is_active() && key != keep {
       element.object.remove_cursor()
@@ -169,7 +172,7 @@ pub fn remove_cursor(self : UIStateLogin, keep : UIElementType) -> Unit {
 }
 
 ///|
-pub fn set_element(
+pub fn UIStateLogin::set_element(
   self : UIStateLogin,
   focused : Bool,
   elem : @ui.Element
@@ -183,6 +186,9 @@ pub fn set_element(
 }
 
 ///|
-pub fn doubleclick(self : UIStateLogin, pos : @struct.Point[Int]) -> Unit {
+pub fn UIStateLogin::doubleclick(
+  self : UIStateLogin,
+  pos : @struct.Point[Int]
+) -> Unit {
 
 }

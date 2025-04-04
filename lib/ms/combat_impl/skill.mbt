@@ -2,88 +2,67 @@
 struct Skill {
   action : &SkillAction
   bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
-  use_effect : &SkillUseEffect
-  hit_effect : &SkillHitEffect
+  use_effect : (@character.Character) -> Unit
+  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
   skill_id : Int
   over_regular : Bool
   projectile : Bool
-  data : @skill.SkillData
+  is_attack : Bool
+  master_level : Int
+  stats : Map[Int, @skill.Stats]
+  req_weapon : @weapon.Type
 }
 
 ///|
 pub fn Skill::load(skill_id : Int) -> @utils.Future[Result[Skill, Error]] {
   let data = @skill.SkillData::load(skill_id)
-  data.map_exn(fn(data) { Skill::new!(skill_id, data.unwrap_or_error!()) })
+  data.map_exn(fn(data) {
+    let data = data.unwrap_or_error!()
+    Skill::new!(
+      skill_id,
+      data.src,
+      data.is_attack,
+      data.master_level,
+      data.stats,
+      data.req_weapon,
+      make_use_effect!(data.src, skill_id),
+      make_hit_effect!(data.src),
+    )
+  })
 }
 
 ///|
-pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
+pub fn Skill::new(
+  skill_id : Int,
+  src : @resource.NxNode,
+  is_attack : Bool,
+  master_level : Int,
+  stats : Map[Int, @skill.Stats],
+  req_weapon : @weapon.Type,
+  use_effect : (@character.Character) -> Unit,
+  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
+) -> Skill! {
   // let strid = if skill_id < 10000000 {
   //   @string_format.extend_id(skill_id, 7)
   // } else {
   //   skill_id.to_string()
   // }
-  let src = data.src
   let mut projectile = true
   let mut over_regular = false
   // let has_affected_effect = src["affected"].get_children_count() > 0
-  let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
-    0
-  let multi_effect = src["effect0"].get_children_count() > 0
   // let affected_effects = if has_affected_effect {
   //   SingleAffectedEffect::new!(src) as &SkillAffectedEffect
   // } else {
   //   NoAffectedEffect::new() as &SkillAffectedEffect
   // }
-  let use_effect = if by_level_effect {
-    ByLevelUseEffect::new!(src) as &SkillUseEffect
-  } else if multi_effect {
-    MultiUseEffect::new!(src) as &SkillUseEffect
-  } else {
-    let is_animation = not(src["effect"]["0"].get_bitmap().is_empty())
-    let has_effect1 = not(src["effect"]["1"].get_bitmap().is_empty())
-    if is_animation {
-      SingleUseEffect::new!(src) as &SkillUseEffect
-    } else if has_effect1 {
-      TwoHandedUseEffect::new!(src) as &SkillUseEffect
-    } else {
-      match @skill.SkillId::from_int?(skill_id) {
-        Ok(@skill.SkillId::IRON_BODY) | Ok(@skill.SkillId::MAGIC_ARMOR) => {
-          IronBodyUseEffect::new() as &SkillUseEffect
-        }
-        _ => {
-          NoUseEffect::new() as &SkillUseEffect
-        }
-      }
-    }
-  }
-  let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
-  let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
-  let has_hit0 = src["hit"]["0"].get_children_count() > 0
-  let has_hit1 = src["hit"]["1"].get_children_count() > 0
-  let hit_effect = if by_level_hit {
-    if has_hit0 && has_hit1 {
-      ByLevelTwoHandedHitEffect::new!(src) as &SkillHitEffect
-    } else {
-      ByLevelHitEffect::new!(src) as &SkillHitEffect
-    }
-  } else if by_skill_level_hit {
-    BySkillLevelHitEffect::new!(src) as &SkillHitEffect
-  } else if has_hit0 && has_hit1 {
-    TwoHandedHitEffect::new!(src) as &SkillHitEffect
-  } else if has_hit0 {
-    SingleHitEffect::new!(src) as &SkillHitEffect
-  } else {
-    NoHitEffect::new() as &SkillHitEffect
-  }
   let has_action0 = src["action"]["0"].as_string?().is_ok()
   let has_action1 = src["action"]["1"].as_string?().is_ok()
   let action = if has_action0 && has_action1 {
     TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {
     SingleAction::new(src) as &SkillAction
-  } else if data.is_attack() {
+  } else if is_attack {
     let by_level = src["level"]["1"]["action"].as_string?().is_ok()
     if by_level {
       ByLevelAction::new!(src, skill_id) as &SkillAction
@@ -121,8 +100,10 @@ pub fn Skill::new(skill_id : Int, data : @skill.SkillData) -> Skill! {
     bullet,
     use_effect,
     hit_effect,
-    // affected_effects,
-    data,
+    is_attack,
+    master_level,
+    stats,
+    req_weapon,
   }
 }
 
@@ -133,7 +114,7 @@ pub fn Skill::get_id(self : Skill) -> Int {
 
 ///|
 pub fn Skill::is_attack(self : Skill) -> Bool {
-  self.data.is_attack()
+  self.is_attack
 }
 
 ///|
@@ -141,7 +122,7 @@ pub fn Skill::apply_useeffects(
   self : Skill,
   user : @character.Character
 ) -> Unit {
-  self.use_effect.apply(user)
+  (self.use_effect)(user)
 }
 
 ///|
@@ -154,50 +135,45 @@ pub fn Skill::apply_actions(
 }
 
 ///|
-pub fn make_attack(
+pub fn Skill::make_attack(
   self : Skill,
-  player : @player.Player,
-  attacktype : @combat.AttackType,
-  _degenerate : Bool
+  chr : @character.CharBase,
+  bullet_id : Int,
+  attack_type : @combat.AttackType
 ) -> @combat.Attack {
-  let t = attacktype
-  // let mut mindamage = player.stats.get_mindamage().to_double()
-  // let mut maxdamage = player.stats.get_maxdamage().to_double()
+  // let mut mindamage = char_stats.get_mindamage().to_double()
+  // let mut maxdamage = char_stats.get_maxdamage().to_double()
   // if degenerate {
   //   mindamage /= 10
   //   maxdamage /= 10
   // }
-  let critical = player.stats.get_critical()
-  let ignoredef = player.stats.get_ignoredef()
-  let accuracy = player.stats.get_total(@stat.Id::ACC)
-  let playerlevel = player.stats.get_stat(@maple_stat.Id::LEVEL)
-  let range = player.stats.get_range()
-  let bullet = player.inventory.get_bulletid()
-  let origin = player.character.get_position()
-  let toleft = player.character.facing_right |> not()
-  let speed = (player.character.get_integer_attackspeed)()
-  let chr = player.character
+  let critical = chr.stats.get_critical()
+  let ignoredef = chr.stats.get_ignoredef()
+  let accuracy = chr.stats.get_total(@stat.Id::ACC)
+  let playerlevel = chr.stats.get_stat(@maple_stat.Id::LEVEL)
+  let range = chr.stats.get_range()
+  let origin = chr.get_position()
+  let toleft = chr.facing_right |> not()
+  let speed = (chr.get_integer_attackspeed)()
   let level = (chr.get_skilllevel)(self.skill_id)
-  let stats = self.data.get_stats(level).unwrap() // TODO: Handle error
+  let stats = self.stats.get(level).unwrap() // TODO: Handle error
   let attack : @combat.Attack = {
     hitcount: 0,
     stance: 0,
     damagetype: if stats.fixdamage != 0 {
       @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
     } else if stats.matk != 0 {
-      @combat.AttackDamageType::DMG_MAGIC(
-        chr.get_stats().get_matk() + stats.matk,
-      )
+      @combat.AttackDamageType::DMG_MAGIC(chr.stats.get_matk() + stats.matk)
     } else {
       @combat.AttackDamageType::DMG_WEAPON(stats.damage, stats.damage)
     },
-    t,
+    t: attack_type,
     critical: critical + stats.critical,
     ignoredef: ignoredef + stats.ignoredef,
     accuracy,
     playerlevel,
     range,
-    bullet,
+    bullet: bullet_id,
     origin,
     toleft,
     speed,
@@ -234,32 +210,29 @@ pub fn make_attack(
 }
 
 ///|
-pub fn can_use(
+pub fn Skill::can_use(
   self : Skill,
   level : Int,
   weapon : @weapon.Type,
   job : @job.Job,
   hp : Int,
-  _mp : Int,
+  mp : Int,
   bullets : Int
 ) -> ForbidReason {
-  let data = self.data
-  if level <= 0 || level > data.master_level {
+  if level <= 0 || level > self.master_level {
     return FBR_OTHER
   }
   if job.can_use(self.skill_id) == false {
     return FBR_OTHER
   }
-  let stats = data.get_stats(level).unwrap()
+  let stats = self.stats.get(level).unwrap()
   if hp <= stats.hpcost {
     return FBR_HPCOST
   }
-  // TODO: support cost plugins
-  // if mp < stats.mpcost {
-  //   return FBR_MPCOST
-  // }
-  let reqweapon = data.req_weapon
-  if weapon != reqweapon && reqweapon != @weapon.Type::NONE {
+  if mp < stats.mpcost {
+    return FBR_MPCOST
+  }
+  if weapon != self.req_weapon && self.req_weapon != @weapon.Type::NONE {
     return FBR_WEAPONTYPE
   }
   match weapon {
@@ -283,10 +256,64 @@ pub fn Skill::get_bullet(
 }
 
 ///|
-pub fn apply_hit_effects(
+pub fn Skill::apply_hit_effects(
   self : Skill,
   user : @combat.AttackUser,
   target : @monster.Mob
 ) -> Unit {
-  self.hit_effect.apply(user, target)
+  (self.hit_effect)(user, target)
+}
+
+///|
+pub fn make_use_effect(
+  src : @resource.NxNode,
+  skill_id : Int
+) -> ((@character.Character) -> Unit)!Error {
+  let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
+    0
+  let multi_effect = src["effect0"].get_children_count() > 0
+  if by_level_effect {
+    new_by_level_use_effect!(src)
+  } else if multi_effect {
+    new_multi_use_effect!(src)
+  } else {
+    let is_animation = not(src["effect"]["0"].get_bitmap().is_empty())
+    let has_effect1 = not(src["effect"]["1"].get_bitmap().is_empty())
+    if is_animation {
+      new_single_use_effect!(src)
+    } else if has_effect1 {
+      new_twohanded_use_effect!(src)
+    } else {
+      match @skill.SkillId::from_int?(skill_id) {
+        Ok(@skill.SkillId::IRON_BODY) | Ok(@skill.SkillId::MAGIC_ARMOR) =>
+          new_iron_body_use_effect()
+        _ => fn(_) {  }
+      }
+    }
+  }
+}
+
+///|
+pub fn make_hit_effect(
+  src : @resource.NxNode
+) -> ((@combat.AttackUser, @monster.Mob) -> Unit)!Error {
+  let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
+  let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
+  let has_hit0 = src["hit"]["0"].get_children_count() > 0
+  let has_hit1 = src["hit"]["1"].get_children_count() > 0
+  if by_level_hit {
+    if has_hit0 && has_hit1 {
+      new_by_level_twohanded_hit_effect!(src)
+    } else {
+      new_by_level_hit_effect!(src)
+    }
+  } else if by_skill_level_hit {
+    new_by_skill_level_hit_effect!(src)
+  } else if has_hit0 && has_hit1 {
+    new_twohanded_hit_effect!(src)
+  } else if has_hit0 {
+    new_single_hit_effect!(src)
+  } else {
+    fn(_ : @combat.AttackUser, _ : @monster.Mob) -> Unit {  }
+  }
 }

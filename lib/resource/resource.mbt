@@ -1,5 +1,5 @@
 ///|
-type RawData
+priv extern type RawData
 
 ///|
 fn as_moonjson(self : RawData) -> @json.JsonValue {
@@ -7,16 +7,10 @@ fn as_moonjson(self : RawData) -> @json.JsonValue {
 }
 
 ///|
-type ImageLoader
+priv extern type ImageLoader
 
 ///|
-type ResourceLoader
-
-///|
-fn get_image_loader(self : ResourceLoader) -> ImageLoader = "resource" "get_image_loader"
-
-///|
-fn load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
+priv extern type ResourceLoader
 
 ///|
 /// @alert deprecated "Use `AsyncLoader` instead"
@@ -39,7 +33,7 @@ pub fn string_loader() -> SyncLoader {
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   {
     loader_name: self.name,
-    image_loader: self.loader.get_image_loader(),
+    image_loader: Some(self.loader.get_image_loader()),
     name: path.last().unwrap(),
     desc: self.loader.load_desc(join_path(path)).as_moonjson(),
     path: path |> @immut/array.from_array,
@@ -49,10 +43,21 @@ pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
 ///|
 struct NxNode {
   loader_name : String
-  image_loader : ImageLoader
+  image_loader : ImageLoader? // TODO: remove optional
   name : String
   desc : @json.JsonValue
   path : @immut/array.T[String]
+}
+
+///|
+pub fn NxNode::from_test_value(value : @json.JsonValue) -> NxNode {
+  {
+    loader_name: "",
+    image_loader: None,
+    name: "",
+    desc: value,
+    path: @immut/array.from_array([]),
+  }
 }
 
 ///|
@@ -183,18 +188,6 @@ pub fn get_float(self : NxNode) -> Double!LoadError {
   }
 }
 
-///| @alert deprecated "Use `for` instead"
-pub fn each(self : NxNode, f : (NxNode) -> Unit) -> Unit {
-  match self.desc {
-    @json.JsonValue::Object(it) =>
-      it.each(fn(k, v) {
-        f({ ..self, name: k, desc: v, path: self.path.push(k) })
-      })
-    @json.JsonValue::Null => ()
-    _ as a => abort("expect object, got\{a}")
-  }
-}
-
 ///|
 pub fn iter(self : NxNode) -> Iter[NxNode] {
   match self.desc {
@@ -241,25 +234,18 @@ pub fn as_string(self : NxNode) -> String!LoadError {
 }
 
 ///|
-pub fn to_string(self : NxNode) -> String {
-  let name = self.name
-  let desc = self.desc
-  "(\{name}=\{desc})"
-}
-
-///|
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
   match self.desc {
-    { "__i": Json::String(path) } =>
+    { "__i": Json::String(path), .. } =>
       Some({
-        image: self.image_loader.load_image_by_path(path),
+        image: self.image_loader.unwrap().load_image_by_path(path),
         id: self.loader_name + "/" + path,
         width: self["__w"].as_int?().unwrap(),
         height: self["__h"].as_int?().unwrap(),
       })
-    { "__b": Json::Number(bid) } =>
+    { "__b": Json::Number(bid), .. } =>
       Some({
-        image: self.image_loader.load_image(bid.to_int()),
+        image: self.image_loader.unwrap().load_image(bid.to_int()),
         id: self.loader_name + "/" + bid.to_string(),
         width: self["__w"].as_int?().unwrap(),
         height: self["__h"].as_int?().unwrap(),
@@ -288,7 +274,7 @@ pub impl ToJson for Bitmap with to_json(self) -> Json {
 
 ///|
 fn join_path(parts : Array[String]) -> String {
-  String::concat(parts, separator="/")
+  @string.concat(parts, separator="/")
 }
 
 ///|
@@ -297,11 +283,7 @@ pub(all) type ResPath Array[String] derive(Eq)
 ///|
 pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
   match self.value() {
-    @json.JsonValue::Array(arr) =>
-      {
-        x: arr[0].as_number().unwrap().to_int(),
-        y: arr[1].as_number().unwrap().to_int(),
-      }
+    [Json::Number(x), Json::Number(y)] => { x: x.to_int(), y: y.to_int() }
     @json.JsonValue::Null => @struct.Point::default()
     _ as a => raise LoadError("expect array, got \{a}, path=\{self.path}")
   }

@@ -686,7 +686,7 @@ pub fn send_key(
 }
 
 ///|
-pub fn remove_cursor(self : UIStatsInfo) -> Unit {
+pub fn UIStatsInfo::remove_cursor(self : UIStatsInfo) -> Unit {
   @ui.remove_cursor(
     self.get_all_buttons().iter().map(fn(b) { b.object.get_button_base() }),
   )

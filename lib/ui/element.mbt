@@ -345,12 +345,12 @@ pub fn deactivate(self : UIModel) -> Unit {
 }
 
 ///|
-pub fn is_active(self : UIModel) -> Bool {
+pub fn UIModel::is_active(self : UIModel) -> Bool {
   self.active
 }
 
 ///|
-pub fn toggle_active(self : UIModel) -> Unit {
+pub fn UIModel::toggle_active(self : UIModel) -> Unit {
   if self.active {
     self.deactivate()
   } else {
@@ -424,7 +424,9 @@ pub impl RenderUnit for SpriteUI with update(self) -> Unit {
 }
 
 ///|
-pub impl ToJson for SpriteUI with to_json(self) -> Json { self._.to_json() }
+pub impl ToJson for SpriteUI with to_json(self) -> Json {
+  self._.to_json()
+}
 
 ///|
 pub(all) type TextureTextUI @graphics.TextureText derive(ToJson)
@@ -501,6 +503,6 @@ pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUnit[T] with draw(
 }
 
 ///|
-pub impl[T] RenderUnit for StaticUnit[T] with update(self) -> Unit {
+pub impl[T : @graphics.Drawable] RenderUnit for StaticUnit[T] with update(self) -> Unit {
   ignore(self)
 }

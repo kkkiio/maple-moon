@@ -39,7 +39,7 @@ fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet! {
 }
 
 ///|
-fn get(
+fn SingleBullet::get(
   self : SingleBullet,
   user : @character.Character,
   bulletid : Int
@@ -67,7 +67,7 @@ fn BySkillLevelBullet::new(
 }
 
 ///|
-fn get(
+fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
   bulletid : Int

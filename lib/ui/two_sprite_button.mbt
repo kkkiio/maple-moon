@@ -25,7 +25,10 @@ pub fn TwoSpriteButton::new(
 }
 
 ///|
-pub fn draw(self : TwoSpriteButton, parentpos : Point[Int]) -> Unit {
+pub fn TwoSpriteButton::draw(
+  self : TwoSpriteButton,
+  parentpos : Point[Int]
+) -> Unit {
   if self.base.is_active() {
     let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
       self.base.get_state() == ButtonState::PRESSED
@@ -50,25 +53,25 @@ pub impl UIButton for TwoSpriteButton with bounds(self : TwoSpriteButton) -> @st
 }
 
 ///|
-pub fn width(self : TwoSpriteButton) -> Int {
+pub fn TwoSpriteButton::width(self : TwoSpriteButton) -> Int {
   let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
     self.base.get_state() == ButtonState::PRESSED
   return self.textures.op_get(selected).width()
 }
 
 ///|
-pub fn origin(self : TwoSpriteButton) -> Point[Int] {
+pub fn TwoSpriteButton::origin(self : TwoSpriteButton) -> Point[Int] {
   let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
     self.base.get_state() == ButtonState::PRESSED
   return self.textures.op_get(selected).get_origin()
 }
 
 ///|
-pub fn get_button_base(self : TwoSpriteButton) -> ButtonModel {
+pub fn TwoSpriteButton::get_button_base(self : TwoSpriteButton) -> ButtonModel {
   self.base
 }
 
 ///|
-pub fn update(self : TwoSpriteButton) -> Unit {
+pub fn TwoSpriteButton::update(self : TwoSpriteButton) -> Unit {
 
 }

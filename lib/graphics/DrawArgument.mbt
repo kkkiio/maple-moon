@@ -19,7 +19,7 @@ pub(all) struct DrawArgument {
 } derive(Show, ToJson)
 
 ///|
-pub fn DrawArgument::default() -> DrawArgument {
+pub impl Default for DrawArgument with default() -> DrawArgument {
   DrawArgument::new()
 }
 

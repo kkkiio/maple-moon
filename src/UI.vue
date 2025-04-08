@@ -34,8 +34,8 @@ poll_mod(keyboard_mod, 'get_keyboard_mod');
 </script>
 <template>
   <div
-    style="min-width: 300px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 16px; max-height: 100vh; overflow-y: auto; height: fit-content;">
-    <n-tabs>
+    style="background-color: rgba(245, 245, 245, 0.9); border: 1px solid #ddd; border-radius: 4px; padding: 10px; max-height: 80vh; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-direction: row-reverse;">
+    <n-tabs type="line" placement="right" style="height: 100%;">
       <n-tab-pane name="Equipped" tab="Equipped">
         <EquippedEquipment v-if="inventory_mod" :mod="inventory_mod" />
       </n-tab-pane>

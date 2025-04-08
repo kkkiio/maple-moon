@@ -1,9 +1,9 @@
 <template>
     <div id="app">
-        <div style="display: flex; justify-content: center; align-items: flex-start; gap: 20px; padding: 20px;">
+        <div style="position: relative; display: flex; justify-content: flex-start; align-items: flex-start; padding: 0px;">
             <canvas ref="canvas"
-                style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px; flex-shrink: 0;"></canvas>
-            <game_ui v-if="game" :game="game" style="flex: 1;"></game_ui>
+                style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px;"></canvas>
+            <game_ui v-if="game" :game="game" style="position: absolute; top: 10px; right: 10px;"></game_ui>
         </div>
         <div ref="tmpd" style="position: absolute; visibility: hidden; height: auto; width: auto;"></div>
     </div>

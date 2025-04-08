@@ -1,39 +1,44 @@
 <template>
   <div class="skill-book-ui">
-    <n-descriptions>
-      <n-descriptions-item label="Level">{{ level }}</n-descriptions-item>
-      <n-descriptions-item label="SP">{{ available_sp }}</n-descriptions-item>
-    </n-descriptions>
     <n-tabs type="line" animated>
-      <n-tab-pane v-for="(levelSkills, i) in skillGroups" :key="i" :name="i" :tab="'Job Level ' + (i + 1)">
+      <n-tab-pane v-for="(levelSkills, i) in skillGroups" :key="i" :name="i" :tab="'Level ' + (i + 1)">
         <n-list>
           <n-list-item v-for="skill in levelSkills" :key="skill.id">
-            <n-space align="center">
-              <lazy-image :image="skill.icon" />
-              <n-tooltip trigger="hover">
-                <template #trigger>
-                  <span>Level: {{ skill.level }}</span>
+            <n-space align="center" justify="space-between" style="width: 100%">
+              <n-space align="center">
+                <lazy-image :image="skill.icon" style="width: 32px; height: 32px" />
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <span style="min-width: 60px; display: inline-block">Level: {{ skill.level }}</span>
+                  </template>
+                  <div>
+                    <div style="font-weight: bold; margin-bottom: 4px">{{ skill.name }}</div>
+                    <div>{{ skill.desc }}</div>
+                  </div>
+                </n-tooltip>
+              </n-space>
+              <n-button size="small" type="primary" circle :disabled="!skill.can_raise" @click="increaseSP(skill)">
+                <template #icon>
+                  <n-icon><PlusIcon /></n-icon>
                 </template>
-                <div>
-                  <div style="font-weight: bold; margin-bottom: 4px">{{ skill.name }}</div>
-                  <div>{{ skill.desc }}</div>
-                </div>
-              </n-tooltip>
-              <n-button size="small" type="primary" :disabled="!skill.can_raise" @click="increaseSP(skill)">
-                Increase SP
               </n-button>
             </n-space>
           </n-list-item>
         </n-list>
       </n-tab-pane>
     </n-tabs>
+    <div style="margin-top: 16px; display: flex; gap: 16px;">
+      <div><strong>Level:</strong> {{ level }}</div>
+      <div><strong>SP:</strong> {{ available_sp }}</div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { watch_player_char_stat } from 'lib/ms/char_stats/char_stats.js';
 import { increase_sp, watch_skill_book } from 'lib/ms/skill_book/skill_book.js';
-import { NButton, NDescriptions, NDescriptionsItem, NList, NListItem, NSpace, NTabPane, NTabs, NTooltip } from 'naive-ui';
+import { NButton, NDescriptions, NDescriptionsItem, NIcon, NList, NListItem, NSpace, NTabPane, NTabs, NTooltip } from 'naive-ui';
+import { Add as PlusIcon } from '@vicons/ionicons5';
 import { computed, onUnmounted, ref } from 'vue';
 import LazyImage from './components/LazyImage.vue';
 

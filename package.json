@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/KKKIIO/maple-moon#readme",
   "dependencies": {
+    "@vicons/ionicons5": "^0.13.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {

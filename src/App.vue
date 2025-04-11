@@ -29,7 +29,9 @@ const VHEIGHT = 768;
 class Socket {
     constructor(path) {
         console.log("connect server", path);
-        this.ws = new WebSocket("ws://" + location.host + path, "binary");
+        // keep the same protocol as the current page
+        const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+        this.ws = new WebSocket(protocol + location.host + path, "binary");
         this.ws.binaryType = "arraybuffer";
         this.pendingData = [];
         this.ws.addEventListener("open", (event) => {

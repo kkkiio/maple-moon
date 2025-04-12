@@ -1,6 +1,7 @@
 <template>
     <div id="app">
-        <div style="position: relative; display: flex; justify-content: flex-start; align-items: flex-start; padding: 0px;">
+        <div
+            style="position: relative; display: flex; justify-content: flex-start; align-items: flex-start; padding: 0px;">
             <canvas ref="canvas"
                 style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px;"></canvas>
             <game_ui v-if="game" :game="game" style="position: absolute; top: 10px; right: 10px;"></game_ui>
@@ -20,7 +21,7 @@ import {
     FileResourceLoader,
     PathImageLoader,
     ResourceLoader
-} from "./resource.js";
+} from "./resource_loader.js";
 import GameUI from "./UI.vue";
 
 const VWIDTH = 1366;

@@ -5,7 +5,7 @@ import { computed, ref } from 'vue';
 
 const props = defineProps({
     /**
-     * @type {import('../../resource').LazyImage}
+     * @type {import('../../resource_loader').LazyImage}
      */
     image: {
         type: Object,

@@ -1,7 +1,4 @@
 ///|
-typealias ButtonState = @ui.ButtonState
-
-///|
 typealias UIElementType = @ui.UIElementType
 
 ///|

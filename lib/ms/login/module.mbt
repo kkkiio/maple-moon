@@ -675,7 +675,7 @@ struct ConnectChannelTask {
 
 ///|
 pub fn ConnectChannelTask::update(self : ConnectChannelTask) -> Bool {
-  if self.processor.get_status() == @net.READY {
+  if self.processor.get_status() is @net.ConnectionStatus::READY {
     let packet = new_player_login_packet(self.cid)
     self.processor.send_packet(packet)
     true

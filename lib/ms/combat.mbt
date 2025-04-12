@@ -572,9 +572,6 @@ pub fn log_background_err[E : Show](
 typealias Rectangle[T] = @struct.Rectangle[T]
 
 ///|
-typealias Point[T] = @struct.Point[T]
-
-///|
 pub fn make_attack_range(attack : @combat.Attack) -> Rectangle[Int] {
   let origin = attack.origin
   let left = (attack.range.left().to_double() * attack.hrange).to_int()

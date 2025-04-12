@@ -30,7 +30,8 @@ pub fn load_map(
       raise @resource.LoadError("map not found, id=\{map_id}")
     }
     let tiles_objs_f = MapTilesObjs::load(src)
-    let backgrounds_f = load_backgrounds(src["back"])
+    let spec : BackgroundsSpec = @json.from_json!(src["back"].value())
+    let backgrounds_f = load_backgrounds(background_loader, spec)
     let physics = @physics.Physics::from_resource!(src["foothold"])
     let map_info = MapInfo::from_resource(
       src,
@@ -50,8 +51,9 @@ pub fn load_map(
         tiles_objs_f
         .combine(backgrounds_f)
         .map(fn(it) {
-          @utils.flatten_ok_2(it.0, it.1).map(fn(it) {
-            (it.0, it.1, physics, map_info, portals)
+          let (tiles_objs_res, backgrounds) = it
+          tiles_objs_res.map(fn(it) {
+            (it, backgrounds, physics, map_info, portals)
           })
         })
       Err(err) => @utils.Future::from_value(Err(err))

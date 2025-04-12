@@ -398,11 +398,6 @@ pub fn get_window(self : Game) -> Window {
 }
 
 ///|
-fn to_wait[T](future : @utils.Future[T]) -> @utils.Future[Unit] {
-  future.map(fn(_v : T) { () })
-}
-
-///|
 pub fn Game::get_inventory_mod(self : Game) -> @inventory.Module? {
   self.loaded_state.poll().map(fn(it) { it.inventory_module })
 }

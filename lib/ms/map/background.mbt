@@ -8,7 +8,7 @@ pub(all) enum BackgroundType {
   VMOVEA
   HMOVEB
   VMOVEB
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Show, ToJson)
 
 ///|
 pub fn int_value(self : BackgroundType) -> Int {
@@ -25,8 +25,18 @@ pub fn int_value(self : BackgroundType) -> Int {
 }
 
 ///|
-pub fn hash(self : BackgroundType) -> Int {
-  self.int_value()
+pub fn BackgroundType::from_int(id : Int) -> BackgroundType!@utils.UnknownEnum {
+  match id {
+    0 => BackgroundType::BG_NORMAL
+    1 => BackgroundType::HTILED
+    2 => BackgroundType::VTILED
+    3 => BackgroundType::TILED
+    4 => BackgroundType::HMOVEA
+    5 => BackgroundType::VMOVEA
+    6 => BackgroundType::HMOVEB
+    7 => BackgroundType::VMOVEB
+    _ => raise @utils.UnknownEnum(id)
+  }
 }
 
 ///|
@@ -45,8 +55,68 @@ struct Background {
   hoffset : Int
 }
 
+///| 
+/// example: {"a":255,"ani":0,"bS":"","cx":0,"cy":0,"f":0,"front":0,"no":0,"rx":0,"ry":0,"type":0,"x":0,"y":0}
+struct BackgroundSpec {
+  a : Int
+  ani : Bool
+  bS : String
+  cx : Int
+  cy : Int
+  f : Bool
+  front : Bool
+  no : Int
+  rx : Int
+  ry : Int
+  type_ : BackgroundType
+  x : Int
+  y : Int
+} derive(ToJson)
+
 ///|
-/// {"a":255,"ani":0,"bS":"","cx":0,"cy":0,"f":0,"front":0,"no":0,"rx":0,"ry":0,"type":0,"x":0,"y":0}
+pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
+  match json {
+    {
+      "a": Json::Number(a),
+      "ani": Json::Number(ani),
+      "bS": Json::String(bS),
+      "cx": Json::Number(cx),
+      "cy": Json::Number(cy),
+      "f": Json::Number(f),
+      "front": Json::Number(front),
+      "no": Json::Number(no),
+      "rx": Json::Number(rx),
+      "ry": Json::Number(ry),
+      "type": Json::Number(type_),
+      "x": Json::Number(x),
+      "y": Json::Number(y),
+      ..
+    } =>
+      {
+        a: a.to_int(),
+        ani: ani.to_int() != 0,
+        bS,
+        cx: cx.to_int(),
+        cy: cy.to_int(),
+        f: f.to_int() != 0,
+        front: front.to_int() != 0,
+        no: no.to_int(),
+        rx: rx.to_int(),
+        ry: ry.to_int(),
+        type_: try {
+          BackgroundType::from_int!(type_.to_int())
+        } catch {
+          e =>
+            raise @json.JsonDecodeError((path.add_key("type"), e.to_string()))
+        },
+        x: x.to_int(),
+        y: y.to_int(),
+      }
+    _ => raise @json.JsonDecodeError((path, "expected object"))
+  }
+}
+
+///|
 struct BackgroundResource {
   animation : @graphics.Animation
   t : BackgroundType
@@ -62,39 +132,32 @@ struct BackgroundResource {
 
 ///|
 pub fn BackgroundResource::load(
-  src : @resource.NxNode
-) -> @utils.Future[Result[BackgroundResource?, Error]] {
-  // TODO: what does empty bS mean?
-  let bs = match src.value() {
-    { "bS": Json::String(bs), .. } => bs
-    _ => return @utils.Future::from_value(Ok(None))
-  }
-  if bs == "" {
-    return @utils.Future::from_value(Ok(None))
-  }
-  let animated = src["ani"].get_bool?().unwrap()
+  background_loader : @resource.AsyncLoader,
+  spec : BackgroundSpec
+) -> @utils.Future[BackgroundResource] {
+  let animated = spec.ani
   background_loader
   .load_res([
-    bs + ".img",
+    spec.bS + ".img",
     if animated {
       "ani"
     } else {
       "back"
     },
-    src["no"].get_int?().unwrap().to_string(),
+    spec.no.to_string(),
   ])
-  .map_exn(fn(bg_res) -> BackgroundResource?! {
+  .map(fn(bg_res) -> BackgroundResource {
     let animation = @graphics.Animation::from_resource(bg_res)
-    let t = Background::typebyid!(src["type"].as_int!())
-    let opacity = src["a"].get_float?().unwrap()
-    let flipped = src["f"].get_bool?().unwrap()
-    let cx = src["cx"].get_int?().unwrap()
-    let cy = src["cy"].get_int?().unwrap()
-    let rx = src["rx"].get_float?().unwrap()
-    let ry = src["ry"].get_float?().unwrap()
-    let x = src["x"].get_float?().unwrap()
-    let y = src["y"].get_float?().unwrap()
-    { animation, t, x, y, cx, cy, rx, ry, opacity, flipped } |> Some
+    let t = spec.type_
+    let opacity = spec.a.to_double() / 255.0
+    let flipped = spec.f
+    let cx = spec.cx
+    let cy = spec.cy
+    let rx = spec.rx.to_double()
+    let ry = spec.ry.to_double()
+    let x = spec.x.to_double()
+    let y = spec.y.to_double()
+    { animation, t, x, y, cx, cy, rx, ry, opacity, flipped }
   })
 }
 
@@ -166,21 +229,6 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
 }
 
 ///|
-pub fn Background::typebyid(id : Int) -> BackgroundType!@utils.UnknownEnum {
-  match id {
-    0 => BackgroundType::BG_NORMAL
-    1 => BackgroundType::HTILED
-    2 => BackgroundType::VTILED
-    3 => BackgroundType::TILED
-    4 => BackgroundType::HMOVEA
-    5 => BackgroundType::VMOVEA
-    6 => BackgroundType::HMOVEB
-    7 => BackgroundType::VMOVEB
-    _ => raise @utils.UnknownEnum(id)
-  }
-}
-
-///|
 pub fn Background::draw(
   self : Background,
   viewx : Double,
@@ -229,7 +277,7 @@ pub fn Background::draw(
         @graphics.DrawArgument::new(
           pos={ x: ix + tx, y: iy + ty },
           flip=self.flipped,
-          opacity=self.opacity / 255.0,
+          opacity=self.opacity,
         ),
         alpha,
       )
@@ -252,37 +300,57 @@ pub struct Backgrounds {
 }
 
 ///|
-pub fn load_backgrounds(
-  src : @resource.NxNode
-) -> @utils.Future[Result[Backgrounds, Error]] {
-  let backs = Array::new()
-  let fores = Array::new()
-  let mut no = 0
-  while true {
-    let backi = src[no.to_string()]
-    let backi_fut = BackgroundResource::load(backi).map(fn(res) {
-      res.map(fn(res) { res.map(fn(res) { Background::from_resource(res) }) })
-    })
-    match backi.value() {
-      Json::Null => break
-      { "front": Json::Number(0), .. } => backs.push(backi_fut)
-      { "front": Json::Number(_), .. } => fores.push(backi_fut)
-      _ => panic()
-    }
-    no += 1
+type BackgroundsSpec Array[BackgroundSpec] derive(ToJson)
+
+///|
+pub impl @json.FromJson for BackgroundsSpec with from_json(json, path) {
+  guard json.as_object() is Some(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
   }
-  @utils.Future::all_of(backs)
-  .map(fn(res) { @utils.flatten_ok(res) })
-  .combine(@utils.Future::all_of(fores).map(fn(res) { @utils.flatten_ok(res) }))
-  .map(fn(res) {
-    res.0.bind(fn(backgrounds) {
-      res.1.map(fn(foregrounds) {
-        {
-          backs: backgrounds.filter_map(fn(it) { it }),
-          fores: foregrounds.filter_map(fn(it) { it }),
-        }
-      })
+  let specs = Array::new()
+  let mut i = 0
+  while true {
+    guard obj.get(i.to_string()) is Some(backi) else { break }
+    let spec : BackgroundSpec = @json.from_json!(backi, path=path.add_index(i))
+    specs.push(spec)
+    i += 1
+  }
+  specs
+}
+
+///|
+pub fn load_backgrounds(
+  background_loader : @resource.AsyncLoader,
+  spec : BackgroundsSpec
+) -> @utils.Future[Backgrounds] {
+  let fronts = Array::new()
+  let back_futs = Array::new()
+  for back_spec in spec._ {
+    // TODO: what does empty bS mean?
+    if back_spec.bS == "" {
+      continue
+    }
+    let backi_fut = BackgroundResource::load(background_loader, back_spec).map(fn(
+      res
+    ) {
+      Background::from_resource(res)
     })
+    fronts.push(back_spec.front)
+    back_futs.push(backi_fut)
+  }
+  @utils.Future::all_of(back_futs).map(fn(
+    backgrounds : Array[Background]
+  ) -> Backgrounds {
+    let backs = Array::new()
+    let fores = Array::new()
+    for i, front in fronts.iter2() {
+      if front {
+        fores.push(backgrounds[i])
+      } else {
+        backs.push(backgrounds[i])
+      }
+    }
+    { backs, fores }
   })
 }
 

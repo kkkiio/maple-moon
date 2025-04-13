@@ -1,5 +1,5 @@
 ///|
-struct EntryPoint {
+priv struct EntryPoint {
   mut state : State
   down_keys : Map[String, Bool]
   mut speed : Int
@@ -7,7 +7,7 @@ struct EntryPoint {
 }
 
 ///|
-enum State {
+priv enum State {
   NONE
   LOADING(loading_map~ : @utils.Future[Result[@map.MapStruct, Error]])
   ACTIVE(
@@ -40,8 +40,15 @@ pub fn load_map(map_id : Int) -> Unit {
 pub fn update(_time : Double) -> Unit {
   match g_state.state {
     State::NONE => ()
-    State::LOADING(loading_map~) => {
-      guard let Some(Ok(map)) = loading_map.poll() else {
+    State::LOADING(loading_map~) =>
+      match loading_map.poll() {
+        Some(Ok(map)) =>
+          g_state.state = State::ACTIVE(
+            map~,
+            viewpos=@struct.Point::default(),
+            hide_backgrounds=Map::new(),
+            hide_foregrounds=Map::new(),
+          )
         None => return
         Some(Err(err)) => {
           @log.error({ "err": err }, "Failed to load map")
@@ -49,16 +56,10 @@ pub fn update(_time : Double) -> Unit {
           return
         }
       }
-      g_state.state = State::ACTIVE(
-        map~,
-        viewpos=@struct.Point::default(),
-        hide_backgrounds=Map::new(),
-        hide_foregrounds=Map::new(),
-      )
-    }
     State::ACTIVE(map~, viewpos~, hide_backgrounds~, hide_foregrounds~) as state => {
       let viewpos = update_viewpos(g_state.down_keys, viewpos, g_state.speed)
       state.viewpos = viewpos
+      on_view_position_change(viewpos.x, viewpos.y)
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
       update_map(map.backgrounds, map.tiles_objs, map.portals)
@@ -146,7 +147,7 @@ fn draw_map(
     y: viewpos.y.round().to_int(),
   }
   if g_state.draw_tiles {
-    for id in @layer.ids {
+    for id in @map_layer.ids {
       tiles_objs.draw(id, int_viewpos, alpha)
     }
   }
@@ -203,3 +204,6 @@ fn clamp[T : Compare](x : T, min : T, max : T) -> T {
     x
   }
 }
+
+///|
+fn on_view_position_change(x : Double, y : Double) = "map_editor" "on_view_position_change"

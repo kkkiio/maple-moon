@@ -74,7 +74,7 @@ pub fn clear(self : MapMobs) -> Unit {
 ///|
 pub fn draw(
   self : MapMobs,
-  layer : @layer.Id,
+  layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
   alpha : Double

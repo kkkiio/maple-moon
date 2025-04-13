@@ -1,25 +1,31 @@
-// Logic frame time in milliseconds.
+///| Logic frame time in milliseconds.
 pub let step_time_ms = 8
 
+///|
 pub(all) struct Constants {
-  mut viewWidth : Int
-  mut viewHeight : Int
+  mut view_width : Int
+  mut view_height : Int
 }
 
-pub let constants : Constants = { viewWidth: 1366, viewHeight: 768 }
+///|
+pub let constants : Constants = { view_width: 1366, view_height: 768 } // Fixed to 1366x768 for now
 
+///|
 pub fn get_viewwidth(self : Constants) -> Int {
-  self.viewWidth
+  self.view_width
 }
 
+///|
 pub fn get_viewheight(self : Constants) -> Int {
-  self.viewHeight
+  self.view_height
 }
 
+///|
 pub fn set_viewwidth(self : Constants, value : Int) -> Unit {
-  self.viewWidth = value
+  self.view_width = value
 }
 
+///|
 pub fn set_viewheight(self : Constants, value : Int) -> Unit {
-  self.viewHeight = value
+  self.view_height = value
 }

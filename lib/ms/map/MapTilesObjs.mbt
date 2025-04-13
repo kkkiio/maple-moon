@@ -1,24 +1,22 @@
 ///| A tile and obj layer.
 struct TilesObjs {
-  tiles : Array[Tile]
-  objs : Array[Obj]
+  tiles : Array[Tile] // sorted by z
+  objs : Array[Obj] // sorted by z
 }
 
 ///|
 pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] {
   let tileset_future = match src.value() {
-    { "info": { "tS": String(ts) } } =>
+    { "info": { "tS": String(ts), .. }, .. } =>
       tile_loader.load_res([ts + ".img"]).map(@option.some)
     _ => @utils.Future::from_value(None)
   }
   // Load tiles
   let tiles_future = src["tile"]
     .iter()
-    .map(
-      fn(tilenode) {
-        tileset_future.map(fn(tileset) { Tile::new(tilenode, tileset) })
-      },
-    )
+    .map(fn(tilenode) {
+      tileset_future.map(fn(tileset) { Tile::new(tilenode, tileset) })
+    })
     .collect()
     |> @utils.Future::all_of()
 
@@ -32,17 +30,16 @@ pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] 
   // Combine both futures
   tiles_future
   .combine(objs_future)
-  .map_exn(
-    fn(it) {
-      let (tiles, objs) = it
-      let objs = @utils.flatten_ok(objs).unwrap_or_error!()
-      TilesObjs::new(tiles, objs)
-    },
-  )
+  .map_exn(fn(it) {
+    let (tiles, objs) = it
+    let objs = @utils.flatten_ok(objs).unwrap_or_error!()
+    TilesObjs::new(tiles, objs)
+  })
 }
 
 ///|
 fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
+  // Sort tiles and objs by z
   let tileZMap = Map::new()
   for tile in tiles {
     let z = tile.get_z()
@@ -57,7 +54,10 @@ fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
   zTiles.sort_by_key(fn(it) { it.0 })
   let zObjs = objZMap.to_array()
   zObjs.sort_by_key(fn(it) { it.0 })
-  { tiles, objs }
+  {
+    tiles: zTiles.iter().flat_map(fn(it) { it.1.iter() }).collect(),
+    objs: zObjs.iter().flat_map(fn(it) { it.1.iter() }).collect(),
+  }
 }
 
 ///|
@@ -73,7 +73,11 @@ pub fn TilesObjs::update(self : TilesObjs) -> Unit {
 }
 
 ///|
-pub fn TilesObjs::draw(self : TilesObjs, viewpos : Point[Int], alpha : Double) -> Unit {
+pub fn TilesObjs::draw(
+  self : TilesObjs,
+  viewpos : Point[Int],
+  alpha : Double
+) -> Unit {
   for obj in self.objs {
     obj.draw(viewpos, alpha)
   }
@@ -91,23 +95,25 @@ struct MapTilesObjs {
 pub fn MapTilesObjs::load(
   src : NxNode
 ) -> @utils.Future[Result[MapTilesObjs, Error]] {
-  @layer.ids.map(fn(layer_id) { TilesObjs::load(src[layer_id.to_string()]) })
+  @map_layer.ids.map(fn(layer_id) { TilesObjs::load(src[layer_id.to_string()]) })
   |> Array::from_fixed_array
   |> @utils.Future::all_of()
-  |> @utils.Future::map_exn(
-    fn(res) {
-      let layers = Array::new(capacity=@layer.ids.length())
-      for r in res {
-        layers.push(r.unwrap_or_error!())
-      }
-      { layers, }
-    },
-  )
+  |> @utils.Future::map_exn(fn(res) {
+    let layers = Array::new(capacity=@map_layer.ids.length())
+    for r in res {
+      layers.push(r.unwrap_or_error!())
+    }
+    { layers, }
+  })
 }
 
 ///|
 pub fn MapTilesObjs::default() -> MapTilesObjs {
-  { layers: Array::makei(@layer.ids.length(), fn(_i) { TilesObjs::default() }) }
+  {
+    layers: Array::makei(@map_layer.ids.length(), fn(_i) {
+      TilesObjs::default()
+    }),
+  }
 }
 
 ///|

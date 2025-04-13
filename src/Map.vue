@@ -16,6 +16,10 @@
         <button @click="loadSelectedMap">Load Map</button>
         <label for="speed-input">Speed:</label>
         <input type="number" id="speed-input" v-model.number="speed" placeholder="Speed" min="1" max="10" step="1" />
+        <div>
+            <span>View Position: </span>
+            <span>X: {{ viewPosition.x.toFixed(2) }}, Y: {{ viewPosition.y.toFixed(2) }}</span>
+        </div>
         <label for="toggle-tiles-checkbox">
             <input type="checkbox" id="toggle-tiles-checkbox" v-model="showTiles" />
             Show Tiles
@@ -90,6 +94,8 @@ export default {
             showForeground: true,
             backgroundLayers: [],
             foregroundLayers: [],
+            viewPosition: { x: 0, y: 0 },
+            program_update: undefined,
         };
     },
     methods: {
@@ -106,22 +112,22 @@ export default {
             }
         },
         updateSpeed() {
-            if (program_update) {
+            if (this.program_update) {
                 set_speed(this.speed);
             }
         },
         updateDrawTiles() {
-            if (program_update) {
+            if (this.program_update) {
                 set_draw_tiles(this.showTiles);
             }
         },
         updateDrawBackground() {
-            if (program_update) {
+            if (this.program_update) {
                 set_draw_background(this.showBackground);
             }
         },
         updateDrawForeground() {
-            if (program_update) {
+            if (this.program_update) {
                 set_draw_foreground(this.showForeground);
             }
         },
@@ -185,20 +191,24 @@ export default {
                 warn: (msg) => console.warn(msg),
                 error: (msg) => console.error(msg),
             },
+            map_editor: {
+                on_view_position_change: (x, y) => {
+                    this.viewPosition = { x, y };
+                },
+            }
         };
 
         Object.assign(globalThis, importObject);
 
         let requestAnimationFrameId = 0;
-        let program_update = undefined;
-        function update(time) {
-            program_update(time * 1000);
+        const update = (time) => {
+            this.program_update(time * 1000);
             requestAnimationFrameId = requestAnimationFrame(update);
         }
         Promise.all(syncLoaders.map((loader) => loader.loader.load())) // load sync resources
             .then(() => import("lib/map_editor/map_editor.js")) // load moonbit generated js
             .then((m) => {
-                program_update = m.update;
+                this.program_update = m.update;
                 load_map = m.load_map;
                 set_speed = m.set_speed;
                 set_draw_tiles = m.set_draw_tiles;

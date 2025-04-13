@@ -33,7 +33,7 @@ fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
 ///|
 pub fn draw(
   self : MapNpcs,
-  layer : @layer.Id,
+  layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
   alpha : Double

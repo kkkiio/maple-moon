@@ -176,7 +176,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   let viewy = viewrpos.y
   @map.drawbackgrounds(backgrounds.backs, viewx, viewy, alpha)
   let player = self.player.unwrap()
-  for id in @layer.ids {
+  for id in @map_layer.ids {
     tiles_objs.draw(id, viewpos, alpha)
     // reactors_.draw(id, viewx, viewy, alpha);
     self.npcs.draw(id, viewx, viewy, alpha)

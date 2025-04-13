@@ -33,7 +33,7 @@ pub fn spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
 ///|
 pub fn draw(
   self : MapDrops,
-  layer : @layer.Id,
+  layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
   alpha : Double

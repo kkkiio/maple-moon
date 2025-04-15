@@ -7,7 +7,7 @@ pub(all) struct Game {
   timer : @utils.Timer
   mut accumulator : Int
   ui : UI
-  processor : @net.PacketProcessor
+  processor : @net.Network
   loaded_state : @utils.Future[LoadedState]
   io_service : @io_task.Service
   scheduls : @schedule.Schedules
@@ -29,7 +29,7 @@ pub fn Game::new() -> Game {
   let timer = @utils.Timer::new(fn() {
     now_micro() |> @utils.TimePoint::from_micro
   })
-  let processor = @net.PacketProcessor::init()
+  let processor = @net.Network::init()
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
   let keyboard = keyboard_module.get_keyboard()
   let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
@@ -59,7 +59,7 @@ pub fn Game::new() -> Game {
 fn load_modules(
   ui : UI,
   timer : @utils.Timer,
-  packet_processor : @net.PacketProcessor,
+  packet_processor : @net.Network,
   io_service : @io_task.Service,
   scheduls : @schedule.Schedules,
   stage_ref : Ref[Stage?],
@@ -213,12 +213,12 @@ fn load_modules(
   // packet_switch.push((KEYMAP, KeymapHandler::new()))
   // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
-    guard let Some(player) = get_stage().get_player() else { None => return }
+    guard get_stage().get_player() is Some(player) else { return }
     player.recalc_stats(false)
   })
   net_handler_map.set(change_stat_handler.0, change_stat_handler.1)
   let job_module = @job.Module::new(fn(job_id) {
-    guard let Some(player) = get_stage().get_player() else { None => return }
+    guard get_stage().get_player() is Some(player) else { return }
     player.change_job(job_id)
   })
   merge_stat_handlers(job_module.make_stat_handlers())
@@ -245,7 +245,7 @@ fn load_modules(
   net_handler_map.set(@net.RECALCULATE_STATS, fn(
     _recv : @net.InPacket
   ) -> Unit {
-    guard let Some(player) = get_stage().get_player() else { None => return }
+    guard get_stage().get_player() is Some(player) else { return }
     player.recalc_stats(false)
   })
   let loading_mods = [
@@ -318,7 +318,7 @@ fn load_modules(
       net_handler_map.iter() |> @immut/hashmap.from_iter,
     )
     timer.reset()
-    ui.change_state(UIStateLogin::new(login_module))
+    ui.change_state(UIStateLogin::new())
     { login_module, inventory_module, skill_book_module, char_stats_module }
   })
 }
@@ -328,10 +328,11 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   let elapsed = self.timer.stop(current_time)
   guard self.loaded_state.poll() is Some(loaded_state) else { return }
   self.processor.process_in()
-  match self.processor.get_status() {
-    @net.CLOSED => loaded_state.login_module.reconnect_if_needed()
-    _ => ()
-  }
+  // TODO: reconnect
+  // match self.processor.get_status() {
+  //   @net.CLOSED => loaded_state.login_module.reconnect_if_needed()
+  //   _ => ()
+  // }
   loaded_state.login_module.update()
   let timestep = @constants.step_time_ms * 1000
   // Update game with constant timestep as many times as possible.
@@ -415,6 +416,11 @@ pub fn Game::get_char_stats_mod(self : Game) -> @char_stats.Module? {
 ///|
 pub fn Game::get_keyboard_mod(self : Game) -> @keyboard.Module {
   self.keyboard_module
+}
+
+///|
+pub fn Game::get_login_mod(self : Game) -> @login.Module? {
+  self.loaded_state.poll().map(fn(it) { it.login_module })
 }
 
 ///|

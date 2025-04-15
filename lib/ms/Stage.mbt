@@ -31,7 +31,7 @@ pub(all) struct Stage {
   skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
   add_task_fn : (@utils.Future[Unit]) -> Unit
-  packet_processor : @net.PacketProcessor
+  network : @net.Network
 }
 
 ///|
@@ -46,7 +46,7 @@ pub fn Stage::new(
   char_stats_module : @char_stats.Module,
   damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> Stage {
   {
     map_portals_animations,
@@ -64,7 +64,7 @@ pub fn Stage::new(
     skill_book_module,
     char_stats_module,
     add_task_fn,
-    packet_processor,
+    network: packet_processor,
   }
 }
 
@@ -115,13 +115,14 @@ pub fn set_player_stage(
             job,
           )
         },
+        self.network,
       ).tap(fn(player) {
         self.player = Some(player)
         self.combat = Some(
           Combat::new(
             self.damage_number_set,
             self.mobs,
-            self.packet_processor,
+            self.network,
             self.add_task_fn,
           ),
         )
@@ -166,9 +167,9 @@ pub fn respawn(
 
 ///|
 pub fn draw(self : Stage, alpha : Double) -> Unit {
-  guard let StageState::ACTIVE(tiles_objs~, backgrounds~, portals~, ..) = self.state else {
-    StageState::INACTIVE => return
-    StageState::TRANSITION(_) => return
+  guard self.state
+    is StageState::ACTIVE(tiles_objs~, backgrounds~, portals~, ..) else {
+    return
   }
   let viewpos = self.camera.get_position(alpha~)
   let viewrpos = self.camera.real_position(alpha)
@@ -276,9 +277,8 @@ pub fn send_key(
   action : Int,
   down : Bool
 ) -> Unit {
-  guard let StageState::ACTIVE(physics~, map_info~, portals~, ..) = self.state else {
-    StageState::INACTIVE => return
-    StageState::TRANSITION(_) => return
+  guard self.state is StageState::ACTIVE(physics~, map_info~, portals~, ..) else {
+    return
   }
   match self.player {
     Some(player) =>
@@ -332,7 +332,7 @@ fn check_portals(
       target_p: warpinfo.name,
       use_wheel: false,
     }
-    self.packet_processor.send_message(message, log_level=@log.Level::INFO)
+    self.network.send_message(message, log_level=@log.Level::INFO)
     let stats = player.get_stats()
     stats.set_map_id(warpinfo.mapid)
   }

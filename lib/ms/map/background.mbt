@@ -82,7 +82,6 @@ pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
       "bS": Json::String(bS),
       "cx": Json::Number(cx),
       "cy": Json::Number(cy),
-      "f": Json::Number(f),
       "front": Json::Number(front),
       "no": Json::Number(no),
       "rx": Json::Number(rx),
@@ -98,7 +97,7 @@ pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
         bS,
         cx: cx.to_int(),
         cy: cy.to_int(),
-        f: f.to_int() != 0,
+        f: json is { "f": Json::Number(f), .. } && f != 0,
         front: front.to_int() != 0,
         no: no.to_int(),
         rx: rx.to_int(),
@@ -310,8 +309,9 @@ pub impl @json.FromJson for BackgroundsSpec with from_json(json, path) {
   let specs = Array::new()
   let mut i = 0
   while true {
-    guard obj.get(i.to_string()) is Some(backi) else { break }
-    let spec : BackgroundSpec = @json.from_json!(backi, path=path.add_index(i))
+    let key = i.to_string()
+    guard obj.get(key) is Some(backi) else { break }
+    let spec : BackgroundSpec = @json.from_json!(backi, path=path.add_key(key))
     specs.push(spec)
     i += 1
   }

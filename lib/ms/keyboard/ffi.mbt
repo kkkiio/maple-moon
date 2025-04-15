@@ -61,7 +61,7 @@ pub fn update_key_mappings(
     update_actions.push((ms_key, Some(Mapping::new(kt, mapping.action))))
   }
   // Send changes to server
-  mod.packet_processor.send_message(
+  mod.network.send_message(
     ChangeKeymapMessage::new(update_actions),
     log_level=@log.Level::INFO,
   )

@@ -1,10 +1,17 @@
 <template>
     <div id="app">
-        <div
-            style="position: relative; display: flex; justify-content: flex-start; align-items: flex-start; padding: 0px;">
+        <Login v-if="phase === 'login' && game" :game="game" @logined="phase = 'game'" />
+        <div :style="{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            padding: '0px',
+            visibility: phase === 'login' ? 'hidden' : 'visible'
+        }">
             <canvas ref="canvas"
                 style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px;"></canvas>
-            <game_ui v-if="game" :game="game" style="position: absolute; top: 10px; right: 10px;"></game_ui>
+            <GameUI v-if="game" :game="game" style="position: absolute; top: 10px; right: 10px;"></GameUI>
         </div>
         <div ref="tmpd" style="position: absolute; visibility: hidden; height: auto; width: auto;"></div>
     </div>
@@ -23,6 +30,7 @@ import {
     ResourceLoader
 } from "./resource_loader.js";
 import GameUI from "./UI.vue";
+import Login from "./Login.vue";
 
 const VWIDTH = 1366;
 const VHEIGHT = 768;
@@ -115,10 +123,12 @@ class TextBitmapGenerator {
 export default {
     name: "App",
     components: {
-        game_ui: GameUI,
+        GameUI,
+        Login,
     },
     data() {
         return {
+            phase: 'login', // default phase
             game: null,
         };
     },

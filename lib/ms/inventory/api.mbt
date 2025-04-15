@@ -97,7 +97,7 @@ pub fn use_item(mod : Module, kind : String, slot : Int) -> String {
       if item_id <= 0 {
         return "not found item id at slot \{slot} of \{kind}"
       }
-      mod.packet_processor.send_message({ slot, itemid: item_id })
+      mod.network.send_message({ slot, itemid: item_id })
     }
     _ => ()
   }

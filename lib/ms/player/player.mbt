@@ -43,7 +43,8 @@ pub fn Player::load(
   look : @char_look.CharLook,
   damage_number_set : @ui.NumberSet,
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
-  new_char_stats : (@job.Job) -> CharStats
+  new_char_stats : (@job.Job) -> CharStats,
+  network : @net.Network
 ) -> @utils.Future[Player] {
   @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
   .bind(fn(job) {
@@ -57,7 +58,7 @@ pub fn Player::load(
       skill_book,
       look,
       damage_number_set,
-      @net.PacketProcessor::get(),
+      network,
       load_skill_book,
       new_char_stats(job),
     )
@@ -71,7 +72,7 @@ pub fn Player::new(
   skill_book : &SkillBook,
   look : @char_look.CharLook,
   damage_number_set : @ui.NumberSet,
-  packet_processor : @net.PacketProcessor,
+  network : @net.Network,
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
   stats : CharStats
 ) -> Player {
@@ -106,7 +107,7 @@ pub fn Player::new(
       p.set_state(@character.CharState::DIED)
       let died = true
       let target_id = 0
-      packet_processor.send_message(
+      network.send_message(
         { died, target_id, target_p: "sp", use_wheel: false },
         log_level=@log.Level::INFO,
       )

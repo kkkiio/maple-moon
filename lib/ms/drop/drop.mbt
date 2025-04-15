@@ -5,7 +5,7 @@ trait Drop: @map_object.MapObject {
 }
 
 ///|
-struct DropBase {
+priv struct DropBase {
   base : @map_object.MapObjectBase
   opacity : @utils.Linear
   angle : @utils.Linear
@@ -20,7 +20,7 @@ struct DropBase {
 }
 
 ///|
-enum DropState {
+priv enum DropState {
   DROPPED
   FLOATING
   PICKED_UP
@@ -158,7 +158,7 @@ pub fn MesoDrop::new(
 }
 
 ///|
-pub fn MesoDrop::draw(
+pub impl @map_object.MapObject for MesoDrop with draw(
   self : MesoDrop,
   viewx : Double,
   viewy : Double,
@@ -179,32 +179,37 @@ pub fn MesoDrop::draw(
 }
 
 ///|
-pub fn get_oid(self : MesoDrop) -> Int {
+pub impl @map_object.MapObject for MesoDrop with get_oid(self : MesoDrop) -> Int {
   self.base.base.oid
 }
 
 ///|
-pub fn update(self : MesoDrop, physics : @physics.Physics) -> Int {
+pub impl @map_object.MapObject for MesoDrop with update(
+  self : MesoDrop,
+  physics : @physics.Physics
+) -> Int {
   self.base.update(physics)
 }
 
 ///|
-pub fn is_active(self : MesoDrop) -> Bool {
+pub impl @map_object.MapObject for MesoDrop with is_active(self : MesoDrop) -> Bool {
   self.base.base.active
 }
 
 ///|
-pub fn makeactive(self : MesoDrop) -> Unit {
+pub impl @map_object.MapObject for MesoDrop with makeactive(self : MesoDrop) -> Unit {
   self.base.base.makeactive()
 }
 
 ///|
-pub fn get_layer(self : MesoDrop) -> Int {
+pub impl @map_object.MapObject for MesoDrop with get_layer(self : MesoDrop) -> Int {
   self.base.base.get_layer()
 }
 
 ///|
-pub fn get_position(self : MesoDrop) -> @struct.Point[Int] {
+pub impl @map_object.MapObject for MesoDrop with get_position(self : MesoDrop) -> @struct.Point[
+  Int,
+] {
   self.base.base.get_position()
 }
 
@@ -238,7 +243,7 @@ pub fn ItemDrop::new(
   dest : @struct.Point[Int],
   t : Int,
   mode : Int,
-  iid : Int,
+  _iid : Int,
   player_drop : Bool,
   icon : @graphics.Texture
 ) -> ItemDrop {
@@ -247,7 +252,7 @@ pub fn ItemDrop::new(
 }
 
 ///|
-pub fn ItemDrop::draw(
+pub impl @map_object.MapObject for ItemDrop with draw(
   self : ItemDrop,
   viewx : Double,
   viewy : Double,
@@ -267,41 +272,52 @@ pub fn ItemDrop::draw(
 }
 
 ///|
-pub fn ItemDrop::get_oid(self : ItemDrop) -> Int {
+pub impl @map_object.MapObject for ItemDrop with get_oid(self : ItemDrop) -> Int {
   self.base.base.oid
 }
 
 ///|
-pub fn ItemDrop::update(self : ItemDrop, physics : @physics.Physics) -> Int {
+pub impl @map_object.MapObject for ItemDrop with update(
+  self : ItemDrop,
+  physics : @physics.Physics
+) -> Int {
   self.base.update(physics)
 }
 
 ///|
-pub fn ItemDrop::is_active(self : ItemDrop) -> Bool {
+pub impl @map_object.MapObject for ItemDrop with is_active(self : ItemDrop) -> Bool {
   self.base.base.active
 }
 
 ///|
-pub fn ItemDrop::makeactive(self : ItemDrop) -> Unit {
+pub impl @map_object.MapObject for ItemDrop with makeactive(self : ItemDrop) -> Unit {
   self.base.base.makeactive()
 }
 
 ///|
-pub fn ItemDrop::get_layer(self : ItemDrop) -> Int {
+pub impl @map_object.MapObject for ItemDrop with get_layer(self : ItemDrop) -> Int {
   self.base.base.get_layer()
 }
 
 ///|
-pub fn ItemDrop::get_position(self : ItemDrop) -> @struct.Point[Int] {
+pub impl @map_object.MapObject for ItemDrop with get_position(self : ItemDrop) -> @struct.Point[
+  Int,
+] {
   self.base.base.get_position()
 }
 
 ///|
-pub fn get_bounds(self : ItemDrop) -> @struct.Rectangle[Int] {
+pub impl Drop for ItemDrop with get_bounds(self : ItemDrop) -> @struct.Rectangle[
+  Int,
+] {
   self.base.bounds()
 }
 
 ///|
-pub fn expire(self : ItemDrop, t : Int, lt : @physics.PhysicsObject?) -> Unit {
+pub impl Drop for ItemDrop with expire(
+  self : ItemDrop,
+  t : Int,
+  lt : @physics.PhysicsObject?
+) -> Unit {
   self.base.expire(t, lt)
 }

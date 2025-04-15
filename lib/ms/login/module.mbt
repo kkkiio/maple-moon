@@ -1,8 +1,6 @@
 ///|
 struct Module {
-  packet_processor : @net.PacketProcessor
-  login_img : @resource.NxNode
-  pretty_logo : @resource.NxNode
+  network : @net.Network
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
   io_service : @io_task.Service
@@ -18,31 +16,23 @@ struct Module {
 
 ///|
 pub fn Module::load(
-  processor : @net.PacketProcessor,
+  network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
   io_service : @io_task.Service
 ) -> @utils.Future[Module] {
-  get_map001_loader()
-  .load_res(["Back", "login.img"])
-  .combine(get_map_pretty_loader().load_res(["Back", "login.img", "ani", "16"]))
-  .map(fn(it) {
-    let (login_img, pretty_logo) = it
-    {
-      packet_processor: processor,
-      login_img,
-      pretty_logo,
-      ui_container,
-      char_look_module,
-      characters: [],
-      selected_index: None,
-      receiving_server_list: [],
-      login_task: None,
-      connect_task: None,
-      input_acc_pass: None,
-      select_cid: None,
-      io_service,
-    }
+  @utils.Future::from_value({
+    network,
+    ui_container,
+    char_look_module,
+    characters: [],
+    selected_index: None,
+    receiving_server_list: [],
+    login_task: None,
+    connect_task: None,
+    input_acc_pass: None,
+    select_cid: None,
+    io_service,
   })
 }
 
@@ -55,12 +45,9 @@ pub fn make_handlers(
   setup_game_ui : (@player.Player) -> Unit
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    (
-      @net.LOGIN_RESULT,
-      @net.with_log(@net.LOGIN_RESULT, fn(recv : @net.InPacket) {
-        self.handle_login_result!(recv)
-      }),
-    ),
+    @net.make_handler(@net.LOGIN_RESULT, parse_login_result, fn(res) {
+      self.handle_login_result(res)
+    }),
     (
       @net.SERVER_STATUS,
       @net.with_log(@net.SERVER_STATUS, fn(recv : @net.InPacket) {
@@ -118,28 +105,30 @@ pub fn get_selected_char(self : Module) -> @character.CharEntry? {
 }
 
 ///|
-pub fn new_login_start_packet() -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
-}
-
-///|
-pub fn login(self : Module, account : String, password : String) -> Unit {
+pub fn Module::login(
+  self : Module,
+  account : String,
+  password : String,
+  callback : (String) -> Unit
+) -> Unit {
   self.input_acc_pass = Some((account, password))
   self.login_task = Some({
-    processor: self.packet_processor,
+    processor: self.network,
     state: ACQ_CONN,
     account,
     password,
+    callback,
   })
   self.connect_task = None
 }
 
 ///|
 priv struct LoginTask {
-  processor : @net.PacketProcessor
+  processor : @net.Network
   mut state : LoginState
   account : String
   password : String
+  callback : (String) -> Unit
 }
 
 ///|
@@ -156,11 +145,14 @@ fn update(self : LoginTask) -> Unit {
     READY =>
       match self.state {
         ACQ_CONN => {
-          self.processor.send_packet(new_login_start_packet())
+          self.processor.send_message(LoginStartMessage(()))
           self.state = START_SEND
         }
         START_SEND => {
-          fn_login(self.processor, self.account, self.password) // TODO: allow select account
+          self.processor.send_message({
+            account: self.account,
+            password: self.password,
+          })
           self.state = LOGIN_SEND
         }
         LOGIN_SEND => ()
@@ -174,11 +166,22 @@ fn update(self : LoginTask) -> Unit {
 }
 
 ///|
-fn fn_login(
-  processor : @net.PacketProcessor,
-  account : String,
+priv type LoginStartMessage Unit derive(Show)
+
+///|
+impl @net.OutMessage for LoginStartMessage with pack(self) -> @net.OutPacket {
+  ignore(self)
+  @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
+}
+
+///|
+priv struct LoginMessage {
+  account : String
   password : String
-) -> Unit {
+} derive(Show)
+
+///|
+impl @net.OutMessage for LoginMessage with pack(self) -> @net.OutPacket {
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::LOGIN)
   let volume_serial_number = @config.global().get_volume_serial_number()
   let part1 = volume_serial_number.substring(start=0, end=2)
@@ -189,53 +192,32 @@ fn fn_login(
   let w = @net.hex_to_dec?(part3).unwrap()
   let i = @net.hex_to_dec?(part2).unwrap()
   let d = @net.hex_to_dec?(part1).unwrap()
-  let packet = packet
-    ..write_string(account)
-    ..write_string(password)
-    ..skip(6)
-    ..write_byte(h)
-    ..write_byte(w)
-    ..write_byte(i)
-    ..write_byte(d)
-  processor.send_packet(packet)
+  packet
+  ..write_string(self.account)
+  ..write_string(self.password)
+  ..skip(6)
+  ..write_byte(h)
+  ..write_byte(w)
+  ..write_byte(i)
+  ..write_byte(d)
 }
 
-///| handle_login_result handles a packet that contains the response to an
-/// attempt at logging in
-pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
-  self.login_task = None
-  // auto loginwait = UI::get().get_element<UILoginWait>();
+///|
+enum LoginResult {
+  Ok(Account)
+  RequireTermsOfService
+  Err(String)
+} derive(Show)
 
-  // if (loginwait && loginwait->get().is_active()) {
-  //     std::function<void()> okhandler = loginwait->get().get_handler();
-
-  //     // Remove previous UIs
-  //     UI::get().remove(Widget::Type::LOGIN_NOTICE);
-  //     UI::get().remove(Widget::Type::LOGIN_WAIT);
-  //     UI::get().remove(Widget::Type::TOS);
-  //     UI::get().remove(Widget::Type::GENDER);
-
-  // The packet should contain a 'reason' integer which can signify
-  // various things
+///|
+fn parse_login_result(recv : @net.InPacket) -> LoginResult!Error {
   match recv.read_int!() {
     // Login successful
     // The packet contains information on the account, so we initialize
     // the account with it.
     0 => {
       let account = parse_account!(recv)
-      @config.global().set_admin(account.admin)
-      // Save the "Login ID" if the box for it on the login screen is
-      // checked
-      //             if (Setting<SaveLogin>::get().load()) {
-      //                 Setting<DefaultAccount>::get().save(account.name);
-      //             }
-
-      // AfterLoginPacket("1111").dispatch();
-
-      // Request the list of worlds and channels online.
-
-      let packet = new_server_request_packet()
-      self.packet_processor.send_packet(packet)
+      Ok(account)
     }
     //         // Login unsuccessful
     //         // The LoginNotice displayed will contain the specific information
@@ -260,9 +242,7 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
     //                     UILoginNotice::Message::UNABLE_TO_LOGIN_WITH_IP,
     //                     okhandler);
     //                 break;
-    23 =>
-      // UI::get().emplace<UITermsOfService>(okhandler); break;
-      fn_tos(self.packet_processor)
+    23 => RequireTermsOfService
     //             default:
     //                 // Other reasons
     //                 if (reason > 0) {
@@ -273,7 +253,78 @@ pub fn handle_login_result(self : Module, recv : @net.InPacket) -> Unit!Error {
 
     //                 break;
     //         }
-    _ as reason => @log.warn({ "reason": reason }, "login failed")
+    _ as reason => Err("Login failed with reason: \{reason}")
+  }
+}
+
+///| handle_login_result handles a packet that contains the response to an
+/// attempt at logging in
+pub fn handle_login_result(self : Module, result : LoginResult) -> Unit {
+
+  // The packet should contain a 'reason' integer which can signify
+  // various things
+  match result {
+    // Login successful
+    // The packet contains information on the account, so we initialize
+    // the account with it.
+    Ok(account) => {
+      @config.global().set_admin(account.admin)
+      if self.login_task is Some({ callback, .. }) {
+        callback("")
+      }
+      self.login_task = None
+      // Save the "Login ID" if the box for it on the login screen is
+      // checked
+      //             if (Setting<SaveLogin>::get().load()) {
+      //                 Setting<DefaultAccount>::get().save(account.name);
+      //             }
+
+      // AfterLoginPacket("1111").dispatch();
+
+      self.network.send_message(ServerRequest(()))
+    }
+    //         // Login unsuccessful
+    //         // The LoginNotice displayed will contain the specific information
+    //         switch (reason) {
+    //             case 2:
+    //                 UI::get().emplace<UILoginNotice>(
+    //                     UILoginNotice::Message::BLOCKED_ID,
+    //                     okhandler);
+    //                 break;
+    //             case 5:
+    //                 UI::get().emplace<UILoginNotice>(
+    //                     UILoginNotice::Message::NOT_REGISTERED,
+    //                     okhandler);
+    //                 break;
+    //             case 7:
+    //                 UI::get().emplace<UILoginNotice>(
+    //                     UILoginNotice::Message::ALREADY_LOGGED_IN,
+    //                     okhandler);
+    //                 break;
+    //             case 13:
+    //                 UI::get().emplace<UILoginNotice>(
+    //                     UILoginNotice::Message::UNABLE_TO_LOGIN_WITH_IP,
+    //                     okhandler);
+    //                 break;
+    RequireTermsOfService =>
+      // UI::get().emplace<UITermsOfService>(okhandler); break;
+      fn_tos(self.network)
+    //             default:
+    //                 // Other reasons
+    //                 if (reason > 0) {
+    //                     auto reasonbyte = static_cast<int8_t>(reason - 1);
+
+    //                     UI::get().emplace<UILoginNotice>(reasonbyte, okhandler);
+    //                 }
+
+    //                 break;
+    //         }
+    Err(e) => {
+      if self.login_task is Some({ callback, .. }) {
+        callback(e)
+      }
+      self.login_task = None
+    }
   }
   // }
 }
@@ -297,7 +348,7 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
       let worlds = self.receiving_server_list
       self.receiving_server_list = []
       @log.debug({ "worlds": worlds }, "server list")
-      enter_world(0, 0, self.packet_processor)
+      enter_world(0, 0, self.network)
       break
     }
   }
@@ -307,7 +358,7 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
 fn enter_world(
   worldId : Int,
   channelId : Int,
-  processor : @net.PacketProcessor
+  processor : @net.Network
 ) -> Unit {
   @config.global().set_worldid(worldId)
   @config.global().set_channelid(channelId)
@@ -318,7 +369,7 @@ fn enter_world(
 fn fn_char_list_req(
   worldId : Int,
   channelId : Int,
-  processor : @net.PacketProcessor
+  processor : @net.Network
 ) -> Unit {
   let packet = new_char_list_request_packet(worldId, channelId)
   processor.send_packet(packet)
@@ -364,10 +415,9 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
       match mod.select_cid {
         Some(cid) => {
           let packet = new_select_char_packet(cid)
-          mod.packet_processor.send_packet(packet)
+          mod.network.send_packet(packet)
         }
         None => {
-          mod.ui_container.remove_ui(@ui.UIElementType::LOGIN)
           let resource_f = SelectCharUIResource::load()
           let char_looks_f = mod.characters.map(fn(ce) {
               mod.char_look_module
@@ -385,9 +435,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                   char_looks,
                   on_select_character=fn(cid) {
                     mod.select_cid = Some(cid)
-                    mod.packet_processor.send_packet(
-                      new_select_char_packet(cid),
-                    )
+                    mod.network.send_packet(new_select_char_packet(cid))
                   },
                   on_new_character=fn() {
                     mod.ui_container.remove_ui(key)
@@ -420,7 +468,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                                     s.weapon_id,
                                     s.female,
                                   )
-                                  mod.packet_processor.send_packet(packet)
+                                  mod.network.send_packet(packet)
                                 },
                               )
                             },
@@ -456,8 +504,8 @@ pub fn handle_server_ip(mod : Module, recv : @net.InPacket) -> Unit! {
     Some(i) => mod.selected_index = Some(i)
     None => fail!("no character with id=\{cid}")
   }
-  mod.packet_processor.connect_channel(port)
-  mod.connect_task = Some({ processor: mod.packet_processor, cid })
+  mod.network.connect_channel(port)
+  mod.connect_task = Some({ network: mod.network, cid })
 }
 
 ///|
@@ -466,22 +514,29 @@ pub fn handle_add_new_char_entry(mod : Module, recv : @net.InPacket) -> Unit! {
   let character = parse_charentry!(recv)
   mod.characters.push(character)
   mod.ui_container.remove_ui(@ui.UIElementType::CLASS_CREATION)
-  mod.ui_container.add_ui(new_login_ui(mod), false)
+  // TODO: show character selection UI
 }
 
+///| Request the list of worlds and channels online.
+priv type ServerRequest Unit derive(Show)
+
 ///|
-fn new_server_request_packet() -> @net.OutPacket {
+impl @net.OutMessage for ServerRequest with pack(self) -> @net.OutPacket {
+  ignore(self)
   @net.OutPacket::new(@net.OutPacketOpcode::SERVERLIST_REQUEST)
 }
 
 ///|
-fn fn_tos(processor : @net.PacketProcessor) -> Unit {
-  let packet = new_tos_packet()
-  processor.send_packet(packet)
+fn fn_tos(processor : @net.Network) -> Unit {
+  processor.send_message(AcceptTosPacket::default())
 }
 
 ///|
-fn new_tos_packet() -> @net.OutPacket {
+priv struct AcceptTosPacket {} derive(Show, Default)
+
+///|
+impl @net.OutMessage for AcceptTosPacket with pack(self) -> @net.OutPacket {
+  ignore(self)
   @net.OutPacket::new(@net.OutPacketOpcode::ACCEPT_TOS)..write_byte(
     (1).to_byte(),
   )
@@ -507,7 +562,7 @@ fn parse_account(recv : @net.InPacket) -> Account!Error {
 }
 
 ///|
-struct Account {
+priv struct Account {
   accid : Int
   female : Int
   admin : Bool
@@ -518,7 +573,7 @@ struct Account {
 } derive(Show)
 
 ///|
-struct World {
+priv struct World {
   name : String
   message : String
   chloads : Array[Int]
@@ -649,12 +704,17 @@ fn parse_login(recv : @net.InPacket) -> (String, Int)! {
     addrstr.push(recv.read_byte!())
   }
   let portstr = recv.read_short!()
-  (String::concat(addrstr.map(fn(b) { b.to_string() }), separator="."), portstr)
+  (@string.concat(addrstr.map(fn(b) { b.to_string() }), separator="."), portstr)
 }
 
-///| Requests being logged-in to a channel server with the specified character
-pub fn new_player_login_packet(cid : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_LOGIN)..write_int(cid)
+///| Represents a request to log in to a channel server with a specific character
+priv struct PlayerLoginPacket {
+  cid : Int
+} derive(Show)
+
+///| Implements the OutMessage trait for PlayerLoginPacket
+impl @net.OutMessage for PlayerLoginPacket with pack(self) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_LOGIN)..write_int(self.cid)
 }
 
 ///|
@@ -669,25 +729,18 @@ pub(open) trait BgTask {
 
 ///|
 struct ConnectChannelTask {
-  processor : @net.PacketProcessor
+  network : @net.Network
   cid : Int
 }
 
 ///|
 pub fn ConnectChannelTask::update(self : ConnectChannelTask) -> Bool {
-  if self.processor.get_status() is @net.ConnectionStatus::READY {
-    let packet = new_player_login_packet(self.cid)
-    self.processor.send_packet(packet)
+  if self.network.get_status() is @net.ConnectionStatus::READY {
+    self.network.send_message({ cid: self.cid })
     true
   } else {
     false
   }
-}
-
-///|
-pub fn reconnect_if_needed(self : Module) -> Unit {
-  guard let Some((acc, pass)) = self.input_acc_pass else { None => return }
-  login(self, acc, pass)
 }
 
 ///|
@@ -700,14 +753,6 @@ pub fn Module::update(self : Module) -> Unit {
     Some(task) => if task.update() { self.connect_task = None }
     None => ()
   }
-}
-
-///|
-pub fn new_login_ui(self : Module) -> @ui.Element {
-  @ui.Element::new(
-    fn(_hooks) { UILogin::new(self, self.login_img, self.pretty_logo) },
-    @ui.UIElementType::LOGIN,
-  )
 }
 
 ///|

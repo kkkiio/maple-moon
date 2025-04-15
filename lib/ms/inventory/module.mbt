@@ -2,15 +2,15 @@
 struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
-  packet_processor : @net.PacketProcessor
+  network : @net.Network
 }
 
 ///|
 pub fn Module::load(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.PacketProcessor
+  network : @net.Network
 ) -> @utils.Future[Module] {
-  { inventory: Inventory::new(), player_getter, packet_processor }
+  { inventory: Inventory::new(), player_getter, network }
   |> @utils.Future::from_value
 }
 

@@ -2,7 +2,7 @@
 struct Module {
   keyboard : Keyboard
   keymap_callbacks : Array[KeymapWatcher]
-  packet_processor : @net.PacketProcessor
+  network : @net.Network
 }
 
 ///|
@@ -11,10 +11,10 @@ typealias KeymapWatcher = (Map[String, Mapping]) -> Unit
 ///|
 pub fn Module::new(
   default_keymap : Map[String, Mapping],
-  packet_processor : @net.PacketProcessor
+  network : @net.Network
 ) -> Module {
   let keyboard = Keyboard::new(default_keymap)
-  { keyboard, keymap_callbacks: Array::new(), packet_processor }
+  { keyboard, keymap_callbacks: Array::new(), network }
 }
 
 ///|
@@ -51,8 +51,8 @@ pub fn Module::make_handlers(
     ) {
       // Update keyboard with new mappings
       for i, mapping in mappings {
-        guard let Some(ms_key) = MsKey::from_int(i) else {
-          None => continue // TODO: handle unknown key
+        guard MsKey::from_int(i) is Some(ms_key) else { // TODO: handle unknown key
+          continue
         }
         if mapping.0 != 0 {
           let kt = KeyType::from_int(mapping.0).unwrap() // TODO: handle error

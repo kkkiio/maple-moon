@@ -4,14 +4,14 @@ struct Module {
   container : &@ui.Container
   get_player_name : () -> String
   util_dlg_ex : @resource.NxNode
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 }
 
 ///|
 pub fn Module::load(
   container : &@ui.Container,
   get_player_name : () -> String,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> @utils.Future[Module] {
   @ui.ui_window_2_loader().load_res(["UtilDlgEx"])
   |> @utils.map(fn(it) {
@@ -24,7 +24,7 @@ fn Module::new(
   container : &@ui.Container,
   get_player_name : () -> String,
   util_dlg_ex : @resource.NxNode,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(attrs) {
@@ -179,7 +179,7 @@ pub fn handle_npc_dialogue_parsed(
   container : &@ui.Container,
   get_player_name : () -> String,
   util_dlg_ex : @resource.NxNode,
-  packet_processor : @net.PacketProcessor,
+  packet_processor : @net.Network,
   dialogue : NpcDialogue
 ) -> Unit {
   container.add_ui(
@@ -212,7 +212,7 @@ fn new_npc_talk_ui(
   hooks : @ui.Hooks,
   util_dlg_ex : @resource.NxNode,
   container : &@ui.Container,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> UINpcTalk {
   UINpcTalk::new(NpcTalkResource::from_resource(util_dlg_ex), hooks, on_choice=fn(
     c

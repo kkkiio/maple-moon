@@ -1,7 +1,7 @@
 ///|
 struct Module {
   player_getter : () -> @player.Player?
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
   mut skill_book : SkillBook?
   watchers : Array[SkillBookWatcher]
 }
@@ -9,7 +9,7 @@ struct Module {
 ///|
 pub fn Module::load(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> @utils.Future[Module] {
   @ui.ui_window_2_loader().load_res(["Skill"])
   |> @utils.map(fn(_skill) { Module::new(player_getter, packet_processor) })
@@ -18,7 +18,7 @@ pub fn Module::load(
 ///|
 fn Module::new(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> Module {
   { player_getter, packet_processor, skill_book: None, watchers: [] }
 }

@@ -15,7 +15,7 @@
 import { watch_inventory_by_kind } from 'lib/ms/inventory/inventory.js';
 import { NCard, NSpace, NText } from 'naive-ui';
 import { onUnmounted, ref } from 'vue';
-import LazyImage from './components/LazyImage.vue';
+import LazyImage from '@/components/LazyImage.vue';
 
 const props = defineProps({
   mod: {

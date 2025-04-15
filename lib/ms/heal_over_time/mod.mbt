@@ -1,7 +1,7 @@
 ///| Recovery HP & MP over time
 pub fn new_module(
   scheduler : &@game_mod.Scheduler,
-  packet_processor : @net.PacketProcessor,
+  packet_processor : @net.Network,
   char_stats_getter : () -> @char_stats.CharStats?
 ) -> @game_mod.Mod {
   let delay = @utils.Duration::from_milliseconds(5000)

@@ -28,6 +28,7 @@ pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
       "attackSpeed": Json::Number(attack_speed),
       "attack": Json::Number(attack),
       "afterImage": Json::String(after_image),
+      ..
     } => {
       let attack_speed = attack_speed.to_int()
       let attack = attack.to_int()

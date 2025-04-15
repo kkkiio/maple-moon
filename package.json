@@ -1,34 +1,34 @@
 {
-  "name": "maple-moon",
-  "version": "1.0.0",
-  "description": "Maple Moon Game",
-  "main": "index.html",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "moon test",
-    "moon:build": "moon build --target js",
-    "start": "vite",
-    "build": "vite build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KKKIIO/maple-moon.git"
-  },
-  "author": "",
-  "license": "GPLV3",
-  "bugs": {
-    "url": "https://github.com/KKKIIO/maple-moon/issues"
-  },
-  "homepage": "https://github.com/KKKIIO/maple-moon#readme",
-  "dependencies": {
-    "@vicons/ionicons5": "^0.13.0",
-    "vue": "^3.5.13"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "naive-ui": "^2.41.0",
-    "vite": "^6.1.0"
-  }
+	"name": "maple-moon",
+	"version": "1.0.0",
+	"description": "Maple Moon Game",
+	"main": "index.html",
+	"directories": {
+		"lib": "lib"
+	},
+	"scripts": {
+		"test": "moon test",
+		"moon:build": "moon build --target js",
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/KKKIIO/maple-moon.git"
+	},
+	"author": "",
+	"license": "GPLV3",
+	"bugs": {
+		"url": "https://github.com/KKKIIO/maple-moon/issues"
+	},
+	"homepage": "https://github.com/KKKIIO/maple-moon#readme",
+	"dependencies": {
+		"@vicons/ionicons5": "^0.13.0",
+		"vue": "^3.5.13"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^5.2.1",
+		"naive-ui": "^2.41.0",
+		"vite": "^6.1.0"
+	}
 }

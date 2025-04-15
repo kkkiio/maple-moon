@@ -6,18 +6,16 @@ struct UIStateLogin {
 }
 
 ///|
-fn UIStateLogin::new(login_module : @login.Module) -> UIStateLogin {
-  let state = {
+fn UIStateLogin::new() -> UIStateLogin {
+  {
     elements: @sorted_map.new(),
     focused: UIElementType::UI_ELEMENT_NONE,
     uis_to_remove: [],
   }
-  state.set_element(false, login_module.new_login_ui())
-  state
 }
 
 ///|
-pub fn UIStateLogin::draw(
+pub impl @ui.UIState for UIStateLogin with draw(
   self : UIStateLogin,
   inter : Double,
   cursor : @struct.Point[Int]
@@ -30,7 +28,7 @@ pub fn UIStateLogin::draw(
 }
 
 ///|
-pub fn UIStateLogin::update(self : UIStateLogin) -> Unit {
+pub impl @ui.UIState for UIStateLogin with update(self : UIStateLogin) -> Unit {
   self.uis_to_remove.each(fn(t) { self.elements.remove(t) })
   self.elements.each(fn(_t, elem) {
     if elem.get_ui_model().is_active() {
@@ -40,7 +38,7 @@ pub fn UIStateLogin::update(self : UIStateLogin) -> Unit {
 }
 
 ///|
-pub fn UIStateLogin::send_key(
+pub impl @ui.UIState for UIStateLogin with send_key(
   self : UIStateLogin,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
@@ -62,7 +60,7 @@ pub fn UIStateLogin::send_key(
 }
 
 ///|
-pub fn UIStateLogin::send_cursor(
+pub impl @ui.UIState for UIStateLogin with send_cursor(
   self : UIStateLogin,
   cursorstate : @ui.CursorState,
   cursorpos : @struct.Point[Int]
@@ -90,7 +88,10 @@ pub fn UIStateLogin::send_cursor(
 }
 
 ///|
-pub fn remove(self : UIStateLogin, key : UIElementType) -> Unit {
+pub impl @ui.UIState for UIStateLogin with remove(
+  self : UIStateLogin,
+  key : UIElementType
+) -> Unit {
   if self.focused == key {
     self.focused = UIElementType::UI_ELEMENT_NONE
   }
@@ -104,7 +105,10 @@ pub fn remove(self : UIStateLogin, key : UIElementType) -> Unit {
 }
 
 ///|
-pub fn get(self : UIStateLogin, t : UIElementType) -> @ui.Element? {
+pub impl @ui.UIState for UIStateLogin with get(
+  self : UIStateLogin,
+  t : UIElementType
+) -> @ui.Element? {
   self.elements.get(t)
 }
 
@@ -120,7 +124,7 @@ pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.Element)? {
 }
 
 ///|
-pub fn get_front_by_types(
+pub impl @ui.UIState for UIStateLogin with get_front_by_types(
   self : UIStateLogin,
   types : Array[UIElementType]
 ) -> @ui.Element? {
@@ -172,7 +176,7 @@ pub fn UIStateLogin::remove_cursor(
 }
 
 ///|
-pub fn UIStateLogin::set_element(
+pub impl @ui.UIState for UIStateLogin with set_element(
   self : UIStateLogin,
   focused : Bool,
   elem : @ui.Element
@@ -186,7 +190,7 @@ pub fn UIStateLogin::set_element(
 }
 
 ///|
-pub fn UIStateLogin::doubleclick(
+pub impl @ui.UIState for UIStateLogin with doubleclick(
   self : UIStateLogin,
   pos : @struct.Point[Int]
 ) -> Unit {

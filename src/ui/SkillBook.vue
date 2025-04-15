@@ -19,7 +19,9 @@
               </n-space>
               <n-button size="small" type="primary" circle :disabled="!skill.can_raise" @click="increaseSP(skill)">
                 <template #icon>
-                  <n-icon><PlusIcon /></n-icon>
+                  <n-icon>
+                    <PlusIcon />
+                  </n-icon>
                 </template>
               </n-button>
             </n-space>
@@ -40,9 +42,8 @@ import { increase_sp, watch_skill_book } from 'lib/ms/skill_book/skill_book.js';
 import { NButton, NDescriptions, NDescriptionsItem, NIcon, NList, NListItem, NSpace, NTabPane, NTabs, NTooltip } from 'naive-ui';
 import { Add as PlusIcon } from '@vicons/ionicons5';
 import { computed, onUnmounted, ref } from 'vue';
-import LazyImage from './components/LazyImage.vue';
+import LazyImage from '@/components/LazyImage.vue';
 
-// Props
 const props = defineProps({
   skill_book_mod: {
     type: Object,

@@ -5,7 +5,7 @@ struct MapNpcs {
   spawns : @queue.T[NpcSpawn]
   container : &@ui.Container
   get_player_name : () -> String
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 }
 
 ///|
@@ -13,7 +13,7 @@ pub fn MapNpcs::new(
   make_npc_talk_ui : (Attributes) -> @ui.Element,
   container : &@ui.Container,
   get_player_name : () -> String,
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 ) -> MapNpcs {
   {
     make_npc_talk_ui,

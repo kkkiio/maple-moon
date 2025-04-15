@@ -78,14 +78,14 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
     None => break
   }
   self.loading_drops.retain(fn(it) {
-    guard let Some(res) = it.poll() else { None => return true }
-    guard let Ok(drop) = res else {
+    guard it.poll() is Some(res) else { return true }
+    match res {
+      Ok(drop) => self.drops.add(drop)
       Err(e) => {
         @log.error({ "err": Show::to_string(e) }, "failed to load drop")
-        true
+        return true
       }
     }
-    self.drops.add(drop)
     false
   })
   for _, mesoicon in self.meso_icons {
@@ -173,7 +173,7 @@ fn DropSpawn::instantiate_item(
 }
 
 ///|
-enum MesoIcon {
+priv enum MesoIcon {
   BRONZE
   GOLD
   BUNDLE

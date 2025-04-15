@@ -175,25 +175,25 @@ fn get_element(self : UI, element_type : UIElementType) -> Element? {
 
 ///|
 pub fn set_element(self : UI, focused : Bool, elem : Element) -> Unit {
-  guard let Some(state) = self.state else { None => return }
+  guard self.state is Some(state) else { return }
   state.set_element(focused, elem)
 }
 
 ///|
 pub fn add_ui(self : UI, elem : Element, focused : Bool) -> Unit {
-  guard let Some(state) = self.state else { None => return }
+  guard self.state is Some(state) else { return }
   state.set_element(focused, elem)
 }
 
 ///|
 pub fn remove_ui(self : UI, element_type : UIElementType) -> Unit {
-  guard let Some(state) = self.state else { None => return }
+  guard self.state is Some(state) else { return }
   state.remove(element_type)
 }
 
 ///|
 pub fn doubleclick(self : UI) -> Unit {
-  guard let Some(state) = self.state else { None => return }
+  guard self.state is Some(state) else { return }
   let pos = self.cursor.get_position()
   state.doubleclick(pos)
 }

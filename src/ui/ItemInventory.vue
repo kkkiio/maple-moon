@@ -2,7 +2,7 @@
 import { use_item, watch_inventory_by_kind } from 'lib/ms/inventory/inventory.js';
 import { NAlert, NTabPane, NTabs } from 'naive-ui';
 import { computed, onUnmounted, ref } from 'vue';
-import LazyImage from './components/LazyImage.vue';
+import LazyImage from '@/components/LazyImage.vue';
 
 const { mod } = defineProps({
     mod: {

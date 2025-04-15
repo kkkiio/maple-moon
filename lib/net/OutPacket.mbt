@@ -13,7 +13,7 @@ pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
 
 ///|
 pub fn dispatch(self : OutPacket) -> Unit {
-  PacketProcessor::get().send_packet(self)
+  Network::get().send_packet(self)
 }
 
 ///|

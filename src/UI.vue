@@ -5,6 +5,7 @@ import EquippedEquipment from './ui/EquippedEquipment.vue';
 import ItemInventory from './ui/ItemInventory.vue';
 import KeyboardConfig from './ui/KeyboardConfig.vue';
 import SkillBookUI from './ui/SkillBook.vue';
+import { pollMod } from './utils';
 
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
@@ -15,22 +16,11 @@ const { game } = defineProps({
   game: Object
 });
 
-var poll_mod = function (mod, fKey) {
-  setTimeout(() => {
-    const f = game[fKey];
-    const m = f();
-    if (m) {
-      mod.value = m;
-    } else {
-      poll_mod(mod, fKey);
-    }
-  }, 1000);
-};
 
-poll_mod(skill_book_mod, 'get_skill_book_mod');
-poll_mod(char_stats_mod, 'get_char_stats_mod');
-poll_mod(inventory_mod, 'get_inventory_mod');
-poll_mod(keyboard_mod, 'get_keyboard_mod');
+pollMod(skill_book_mod, 'get_skill_book_mod', game);
+pollMod(char_stats_mod, 'get_char_stats_mod', game);
+pollMod(inventory_mod, 'get_inventory_mod', game);
+pollMod(keyboard_mod, 'get_keyboard_mod', game);
 </script>
 <template>
   <div

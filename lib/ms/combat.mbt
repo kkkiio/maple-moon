@@ -11,14 +11,14 @@ struct Combat {
   damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   add_task_fn : (@utils.Future[Unit]) -> Unit
-  packet_processor : @net.PacketProcessor
+  packet_processor : @net.Network
 }
 
 ///|
 pub fn Combat::new(
   damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
-  packet_processor : @net.PacketProcessor,
+  packet_processor : @net.Network,
   add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Combat {
   {
@@ -454,9 +454,7 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
   let act_f = self.get_move(effect.move_id)
-  guard let Some(mob) = self.mobs.get_mobs().get(effect.target_oid) else {
-    None => return
-  }
+  guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft)
   (self.add_task_fn)(
     act_f.map(fn(res) {

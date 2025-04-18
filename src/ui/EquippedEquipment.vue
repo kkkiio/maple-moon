@@ -1,10 +1,10 @@
 <template>
   <n-space vertical>
     <n-space vertical>
-      <n-card v-for="item in items" :key="item.id" size="small" class="item-card">
+      <n-card v-for="equip in equips" :key="equip.id" size="small" class="item-card">
         <n-space align="center">
-          <lazy-image :image="item.icon" />
-          <n-text>{{ item.name }}</n-text>
+          <lazy-image :image="equip.icon" />
+          <n-text>{{ equip.name }}</n-text>
         </n-space>
       </n-card>
     </n-space>
@@ -23,13 +23,13 @@ const props = defineProps({
   }
 });
 
-const items = ref([]);
+const equips = ref([]);
 const enableWatch = ref(true);
 
 // Watch inventory changes and update items
-watch_inventory_by_kind(props.mod, 'equipped', (newItems) => {
+watch_inventory_by_kind(props.mod, 'equipped', (slots) => {
   if (!enableWatch.value) return false;
-  items.value = newItems;
+  equips.value = slots.filter(slot => slot)
   return true; // Continue watching
 });
 onUnmounted(() => {

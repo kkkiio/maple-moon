@@ -67,14 +67,14 @@ struct Inventory {
   pets : Map[Int, @pet.Pet]
   mut running_uid : Int
   total_stats : @utils.DefaultMap[@equip_stat.Id, Int]
-  slot_maxima : Map[TypeId, Int]
+  type_slot_count_map : Map[TypeId, Int]
   mut meso : Int
   mut bullet_slot : Int
   item_listeners_map : Map[TypeId, Array[() -> Bool]] // TODO: fine-grained listeners
 }
 
 ///|
-struct Slot {
+priv struct Slot {
   unique_id : Int
   item_id : Int
   mut count : Int
@@ -92,7 +92,9 @@ pub fn Inventory::new() -> Inventory {
     meso: 0,
     bullet_slot: 0,
     total_stats: @utils.DefaultMap::new(fn() { 0 }),
-    slot_maxima: Map::from_array([(TypeId::EQUIPPED, @equip_slot.Id::length())]),
+    type_slot_count_map: Map::from_array([
+      (TypeId::EQUIPPED, @equip_slot.Id::length()),
+    ]),
     item_listeners_map: Map::new(),
   }
 }
@@ -145,7 +147,7 @@ pub fn set_meso(self : Inventory, meso : Int) -> Unit {
 
 ///|
 pub fn set_slotmax(self : Inventory, type_id : TypeId, slotmax : Int) -> Unit {
-  self.slot_maxima.set(type_id, slotmax)
+  self.type_slot_count_map.set(type_id, slotmax)
 }
 
 ///|
@@ -372,28 +374,24 @@ pub fn get_bulletslot(self : Inventory) -> Int {
 
 ///|
 pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
-  self.slot_maxima.get(t).or(0)
+  self.type_slot_count_map.get(t).or(0)
 }
 
-///|
-pub fn find_equipslot(
-  self : Inventory,
+///| Determines the appropriate equipment slot for a given piece of clothing.
+/// 
+/// If the clothing is a ring, it checks for available ring slots and returns the first unoccupied slot. 
+/// If all ring slots are occupied, it defaults to RING1.
+/// For non-ring equipment, it returns the equipment's default slot.
+pub fn find_equip_slot(
+  inv : Inventory,
   cloth : @equip_data.EquipData
 ) -> @equip_slot.Id {
   let eqslot = cloth.get_eqslot()
-  if eqslot == @equip_slot.Id::RING1 {
-    if not(self.has_equipped(@equip_slot.Id::RING2)) {
-      return @equip_slot.Id::RING2
-    }
-    if not(self.has_equipped(@equip_slot.Id::RING3)) {
-      return @equip_slot.Id::RING3
-    }
-    if not(self.has_equipped(@equip_slot.Id::RING4)) {
-      return @equip_slot.Id::RING4
-    }
-    return @equip_slot.Id::RING1
-  }
-  eqslot
+  guard eqslot is @equip_slot.Id::RING1 else { return eqslot }
+  [@equip_slot.Id::RING2, @equip_slot.Id::RING3, @equip_slot.Id::RING4]
+  .iter()
+  .find_first(fn(slot) { not(inv.has_equipped(slot)) })
+  .or(@equip_slot.Id::RING1)
 }
 
 ///|

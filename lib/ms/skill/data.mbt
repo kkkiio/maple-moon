@@ -19,7 +19,7 @@ pub(all) struct SkillData {
 
 ///| The stats of one level
 pub(all) struct Stats {
-  damage : Double
+  damage_mul : Double
   matk : Int
   fixdamage : Int
   mastery : Int
@@ -34,7 +34,7 @@ pub(all) struct Stats {
   ignoredef : Double
   hrange : Double
   range : @struct.Rectangle[Int]
-}
+} derive(ToJson)
 
 ///|
 pub fn SkillData::load(id : Int) -> @utils.Future[Result[SkillData, Error]] {
@@ -207,7 +207,7 @@ pub fn parse_stats(src : @json.JsonValue) -> Map[Int, Stats]! {
       Null =>
         // TODO: don't add invalid stats
         {
-          damage: 0,
+          damage_mul: 0,
           matk: 0,
           fixdamage: 0,
           mastery: 0,
@@ -288,7 +288,7 @@ pub fn parse_stats(src : @json.JsonValue) -> Map[Int, Stats]! {
         }
         let range = @json.from_json!(value)
         {
-          damage,
+          damage_mul: damage,
           matk,
           fixdamage,
           mastery,

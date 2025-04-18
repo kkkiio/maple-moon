@@ -59,9 +59,12 @@ pub fn make_stat_handlers(
 }
 
 ///| Packet which requests that an item is equipped
-pub fn new_equip_item_packet(
-  src : Int,
+priv struct EquipItemMessage {
+  src : Int
   dest : @equip_slot.Id
-) -> @net.OutPacket {
-  new_move_item_packet(TypeId::EQUIP, src, -dest.int_value(), 1)
+} derive(Show)
+
+///|
+impl @net.OutMessage for EquipItemMessage with pack(self) -> @net.OutPacket {
+  new_move_item_packet(TypeId::EQUIP, self.src, -self.dest.int_value(), 1)
 }

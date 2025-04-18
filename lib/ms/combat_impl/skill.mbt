@@ -165,7 +165,10 @@ pub fn Skill::make_attack(
     } else if stats.matk != 0 {
       @combat.AttackDamageType::DMG_MAGIC(chr.stats.get_matk() + stats.matk)
     } else {
-      @combat.AttackDamageType::DMG_WEAPON(stats.damage, stats.damage)
+      @combat.AttackDamageType::DMG_WEAPON(
+        min=chr.stats.get_mindamage().to_double() * stats.damage_mul,
+        max=chr.stats.get_maxdamage().to_double() * stats.damage_mul,
+      )
     },
     t: attack_type,
     critical: critical + stats.critical,

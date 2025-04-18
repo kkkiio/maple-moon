@@ -7,9 +7,9 @@ pub(all) enum AttackType {
 
 ///|
 pub(all) enum AttackDamageType {
-  DMG_WEAPON(Double, Double) // min, max
-  DMG_MAGIC(Int) // matk
-  DMG_FIXED(Int) // fix
+  DMG_WEAPON(min~ : Double, max~ : Double)
+  DMG_MAGIC(Int)
+  DMG_FIXED(Int)
 } derive(Eq, Show, ToJson)
 
 ///|

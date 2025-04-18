@@ -1,43 +1,42 @@
 ///|
-fn get_all_items_by_type(mod : Module, t : TypeId) -> Array[ItemUIData] {
-  mod.inventory.inventories[t]
-  .values()
-  .filter_map(fn(it) {
-    match @item.ItemData::get_async(it.item_id).poll() {
-      Some(Ok(item_data)) =>
+fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
+  let slotmax = mod.inventory.get_slotmax(kind)
+  (1)
+  .until(slotmax, inclusive=true)
+  .map(fn(slot) {
+    match mod.inventory.get_item_at_slot(kind, slot) {
+      Some(item_data) =>
         Some({
-          id: it.item_id,
+          id: item_data.item_id,
           name: item_data.name,
-          count: if t == TypeId::EQUIP {
+          desc: item_data.desc,
+          count: if kind == TypeId::EQUIP {
             1
           } else {
-            it.count
+            mod.inventory.get_item_count(kind, slot)
           },
           icon: item_data.get_icon(false).bitmap.map_or(
             @resource.Image::new_pending(),
             fn(bitmap) { bitmap.image },
           ),
         })
-      Some(Err(e)) => {
-        @log.error(
-          { "err": e.to_string(), "item_id": it.item_id },
-          "Failed to load item data",
-        )
-        None
-      }
       None => None // TODO: return async result
     }
   })
   .to_array()
 }
 
+///|
+typealias UISlot = ItemUIData? // Slot in UI may be empty
+
 ///| Type for inventory change watcher callback
-typealias InventoryWatcher = (Array[ItemUIData]) -> Bool
+typealias InventoryWatcher = (Array[UISlot]) -> Bool
 
 ///|
 pub struct ItemUIData {
   id : Int
   name : String
+  desc : String
   count : Int
   icon : @resource.Image
 }
@@ -77,27 +76,32 @@ pub fn watch_inventory_by_kind(
 }
 
 ///|
-pub fn use_item(mod : Module, kind : String, slot : Int) -> String {
+pub fn use_item(mod : Module, kind : String, index : Int) -> String {
+  let slot_no = index + 1
   let type_id = get_type_id_by_kind?(kind).unwrap()
   match type_id {
     TypeId::EQUIP => {
-      guard let Some(player) = (mod.player_getter)() else { None => return "" }
-      guard let Some(item_data) = mod.inventory.get_item_at_slot(type_id, slot) else {
-        None => return ""
+      guard (mod.player_getter)() is Some(player) else { return "" }
+      guard mod.inventory.get_item_at_slot(type_id, slot_no) is Some(item_data) else {
+        return ""
       }
       let equip_data = @equip_data.EquipData::from_item_data?(item_data).unwrap() // TODO: handle error
       match can_wear_equip(player, equip_data) {
         Some(hint) => return hint
         None => ()
       }
-      new_equip_item_packet(slot, mod.inventory.find_equipslot(equip_data)).dispatch()
+      let equip_message : EquipItemMessage = {
+        src: slot_no,
+        dest: find_equip_slot(mod.inventory, equip_data),
+      }
+      mod.network.send_message(equip_message)
     }
     TypeId::USE => {
-      let item_id = mod.inventory.get_item_id(type_id, slot)
+      let item_id = mod.inventory.get_item_id(type_id, slot_no)
       if item_id <= 0 {
-        return "not found item id at slot \{slot} of \{kind}"
+        return "not found item id at slot \{slot_no} of \{kind}"
       }
-      mod.network.send_message({ slot, itemid: item_id })
+      mod.network.send_message({ slot_no, itemid: item_id })
     }
     _ => ()
   }
@@ -112,7 +116,6 @@ fn can_wear_equip(
   let look = player.character.get_look()
   let alerted = look.get_alerted()
   if alerted {
-    // TODO: alert
     return Some("character is alerted")
   }
   let stats = player.get_stats()
@@ -136,23 +139,34 @@ fn can_wear_equip(
   let reqLUK = equip_data.get_reqstat(@maple_stat.Id::LUK)
   let reqINT = equip_data.get_reqstat(@maple_stat.Id::INT)
   let reqFAME = equip_data.get_reqstat(@maple_stat.Id::FAME)
-  let mut i = 0
-  if reqLevel > stats.get_stat(@maple_stat.Id::LEVEL) {
-    i += 1
-  } else if reqDEX > stats.get_total(@equip_stat.Id::DEX) {
-    i += 1
-  } else if reqSTR > stats.get_total(@equip_stat.Id::STR) {
-    i += 1
-  } else if reqLUK > stats.get_total(@equip_stat.Id::LUK) {
-    i += 1
-  } else if reqINT > stats.get_total(@equip_stat.Id::INT) {
-    i += 1
-  } else if reqFAME > 0 { // TODO: support honor
-    i += 1
+  let hints = []
+  let level = stats.get_stat(@maple_stat.Id::LEVEL)
+  if reqLevel > level {
+    hints.push("require level \{reqLevel} but got \{level}")
   }
-  if i > 0 {
-    // TODO: show hint message
-    return Some("not enough stats")
+  let dex = stats.get_total(@equip_stat.Id::DEX)
+  if reqDEX > dex {
+    hints.push("require dex \{reqDEX} but got \{dex}")
   }
-  None
+  let str = stats.get_total(@equip_stat.Id::STR)
+  if reqSTR > str {
+    hints.push("require str \{reqSTR} but got \{str}")
+  }
+  let luk = stats.get_total(@equip_stat.Id::LUK)
+  if reqLUK > luk {
+    hints.push("require luk \{reqLUK} but got \{luk}")
+  }
+  let int = stats.get_total(@equip_stat.Id::INT)
+  if reqINT > int {
+    hints.push("require int \{reqINT} but got \{int}")
+  }
+  let fame = 0 // TODO: support honor
+  if reqFAME > fame {
+    hints.push("require fame \{reqFAME} but got \{fame}")
+  }
+  if hints.is_empty() {
+    None
+  } else {
+    Some(hints.join(", "))
+  }
 }

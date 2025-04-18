@@ -780,9 +780,9 @@ pub fn calculate_damage(
   let leveldelta = @math.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
   let (mindamage, maxdamage, hitchance, critical) = match damagetype {
-    @combat.AttackDamageType::DMG_WEAPON(min_damage, max_damage) => {
-      let mindamage = self.calculate_mindamage(leveldelta, min_damage, false)
-      let maxdamage = self.calculate_maxdamage(leveldelta, max_damage, false)
+    @combat.AttackDamageType::DMG_WEAPON(min~, max~) => {
+      let mindamage = self.calculate_mindamage(leveldelta, min, false)
+      let maxdamage = self.calculate_maxdamage(leveldelta, max, false)
       let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
       let critical = attack.critical
       (mindamage, maxdamage, hitchance, critical)

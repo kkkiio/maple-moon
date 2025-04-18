@@ -82,27 +82,21 @@ pub fn overlaps[T : Compare](self : Range[T], v : Range[T]) -> Bool {
 }
 
 ///|
-pub fn eq[T : Eq](self : Range[T], v : Range[T]) -> Bool {
-  self.a == v.a && self.b == v.b
-}
-
-///|
-pub fn neq[T : Eq](self : Range[T], v : Range[T]) -> Bool {
-  not(self.eq(v))
-}
-
-///|
-pub fn op_add(self : Range[Int], v : Range[Int]) -> Range[Int] {
+pub impl[T : Add] Add for Range[T] with op_add(self : Range[T], v : Range[T]) -> Range[
+  T,
+] {
   { a: self.a + v.a, b: self.b + v.b }
 }
 
 ///|
-pub fn op_sub(self : Range[Int], v : Range[Int]) -> Range[Int] {
+pub impl[T : Sub] Sub for Range[T] with op_sub(self : Range[T], v : Range[T]) -> Range[
+  T,
+] {
   { a: self.a - v.a, b: self.b - v.b }
 }
 
 ///|
-pub fn op_neg(self : Range[Int]) -> Range[Int] {
+pub impl[T : Neg] Neg for Range[T] with op_neg(self : Range[T]) -> Range[T] {
   { a: -self.a, b: -self.b }
 }
 

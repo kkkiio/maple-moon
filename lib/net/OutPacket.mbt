@@ -12,6 +12,7 @@ pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
 }
 
 ///|
+#deprecated("use send_message instead")
 pub fn dispatch(self : OutPacket) -> Unit {
   Network::get().send_packet(self)
 }

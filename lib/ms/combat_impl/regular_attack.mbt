@@ -34,7 +34,10 @@ pub fn make_regular_attack(
   let toleft = character.facing_right |> not()
   let speed = (character.get_integer_attackspeed)()
   {
-    damagetype: @combat.AttackDamageType::DMG_WEAPON(mindamage, maxdamage),
+    damagetype: @combat.AttackDamageType::DMG_WEAPON(
+      min=mindamage,
+      max=maxdamage,
+    ),
     t,
     critical,
     ignoredef,

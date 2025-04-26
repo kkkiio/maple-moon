@@ -71,6 +71,7 @@ struct Inventory {
   mut meso : Int
   mut bullet_slot : Int
   item_listeners_map : Map[TypeId, Array[() -> Bool]] // TODO: fine-grained listeners
+  meso_listeners : Array[(Int) -> Bool]
 }
 
 ///|
@@ -96,6 +97,7 @@ pub fn Inventory::new() -> Inventory {
       (TypeId::EQUIPPED, @equip_slot.Id::length()),
     ]),
     item_listeners_map: Map::new(),
+    meso_listeners: Array::new(),
   }
 }
 
@@ -143,6 +145,7 @@ pub fn get_meso(self : Inventory) -> Int {
 ///| Set the meso amount.
 pub fn set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
+  self.meso_listeners.retain(fn(listener) { listener(meso) })
 }
 
 ///|
@@ -406,4 +409,9 @@ pub fn listen_item_changes(
   listener : () -> Bool
 ) -> Unit {
   self.item_listeners_map.get_or_init(t, fn() { Array::new() }).push(listener)
+}
+
+///|
+pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
+  self.meso_listeners.push(listener)
 }

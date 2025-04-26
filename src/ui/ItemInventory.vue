@@ -1,6 +1,6 @@
 <script setup>
-import { use_item, watch_inventory_by_kind } from 'lib/ms/inventory/inventory.js';
-import { NAlert, NTabPane, NTabs, NTooltip } from 'naive-ui';
+import { use_item, watch_inventory_by_kind, watch_meso } from 'lib/ms/inventory/inventory.js';
+import { NAlert, NTabPane, NTabs, NTooltip, NButton } from 'naive-ui';
 import { computed, onUnmounted, ref } from 'vue';
 import LazyImage from '@/components/LazyImage.vue';
 
@@ -33,15 +33,33 @@ for (const kind of TAB_KINDS) {
         return true // Continue watching
     })
 }
+watch_meso(mod, (meso) => {
+    if (!enableWatch.value) return false;
+    meso.value = meso
+    return true // Continue watching
+})
 onUnmounted(() => {
     enableWatch.value = false;
 });
 
 // Methods
-const handleItemDoubleClick = (kind, index) => {
-    const result = use_item(mod, kind, index)
-    if (result) {
-        hint.value = result
+// Selection state
+const selected = ref({ kind: null, index: null })
+
+const handleItemClick = (kind, index) => {
+    if (selected.value.kind === kind && selected.value.index === index) {
+        selected.value = { kind: null, index: null }
+    } else {
+        selected.value = { kind, index }
+    }
+}
+
+const handleUseItem = () => {
+    if (selected.value.kind !== null && selected.value.index !== null) {
+        const result = use_item(mod, selected.value.kind, selected.value.index)
+        if (result) {
+            hint.value = result
+        }
     }
 }
 
@@ -86,7 +104,8 @@ const shouldShowCount = computed(() => {
                                         <NTooltip trigger="hover" placement="top">
                                             <template #trigger>
                                                 <div class="inventory-slot"
-                                                    @dblclick="() => handleItemDoubleClick(kind, getItemIndex(row, col))">
+                                                    :class="{ 'selected-slot': selected.kind === kind && selected.index === getItemIndex(row, col) }"
+                                                    @click="() => handleItemClick(kind, getItemIndex(row, col))">
                                                     <LazyImage :image="getItemAt(row, col).icon" />
                                                     <div v-if="shouldShowCount && getItemAt(row, col).count"
                                                         class="item-count">
@@ -120,6 +139,11 @@ const shouldShowCount = computed(() => {
     <NAlert v-if="hint" type="warning" closable @close="hint = ''">
         {{ hint }}
     </NAlert>
+    <div class="action-bar">
+        <n-button type="primary" :disabled="selected.kind === null || selected.index === null" @click="handleUseItem">
+            Use Item
+        </n-button>
+    </div>
 </template>
 
 <style scoped>
@@ -158,6 +182,12 @@ const shouldShowCount = computed(() => {
     position: relative;
     margin: 0 auto;
     border: 1px solid transparent;
+    transition: border 0.2s;
+}
+
+.selected-slot {
+    border: 2px solid #18a058;
+    box-shadow: 0 0 2px #18a058;
 }
 
 .inventory-slot:hover {
@@ -203,12 +233,19 @@ const shouldShowCount = computed(() => {
 
 .inventory-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
     margin-top: 16px;
     background: #f5f5f5;
     padding: 8px;
     position: sticky;
     bottom: 0;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
 }
 
 .currency {

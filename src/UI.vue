@@ -25,9 +25,9 @@ pollMod(inventory_mod, 'get_inventory_mod', game);
 pollMod(keyboard_mod, 'get_keyboard_mod', game);
 </script>
 <template>
-  <n-dialog-provider>
-    <div
-      style="background-color: rgba(245, 245, 245, 0.9); border: 1px solid #ddd; border-radius: 4px; padding: 10px; max-height: 80vh; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-direction: row-reverse;">
+  <div
+    style="background-color: rgba(245, 245, 245, 0.9); border: 1px solid #ddd; border-radius: 4px; padding: 10px; max-height: 80vh; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-direction: row-reverse;">
+    <n-dialog-provider>
       <n-tabs type="line" placement="right" style="height: 100%;">
         <n-tab-pane name="Equipped" tab="Equipped">
           <EquippedEquipment v-if="inventory_mod" :mod="inventory_mod" />
@@ -46,6 +46,6 @@ pollMod(keyboard_mod, 'get_keyboard_mod', game);
           <CharacterStats v-if="char_stats_mod" :mod="char_stats_mod" />
         </n-tab-pane>
       </n-tabs>
-    </div>
-  </n-dialog-provider>
+    </n-dialog-provider>
+  </div>
 </template>

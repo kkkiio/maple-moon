@@ -75,6 +75,11 @@ pub fn watch_inventory_by_kind(
   })
 }
 
+///| Watch meso changes
+pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
+  mod.inventory.listen_meso_changes(watcher)
+}
+
 ///|
 pub fn use_item(mod : Module, kind : String, index : Int) -> String {
   let slot_no = index + 1

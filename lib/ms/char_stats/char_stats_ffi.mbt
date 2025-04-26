@@ -4,38 +4,16 @@ typealias StatChangeListener = (Int, Int) -> Bool
 ///|
 pub fn watch_player_char_stat(
   mod : Module,
-  stat_id : String,
+  stat_name : String,
   listener : StatChangeListener
 ) -> Unit {
-  let stat_id = match stat_id {
-    "skin" => @maple_stat.Id::SKIN
-    "face" => @maple_stat.Id::FACE
-    "hair" => @maple_stat.Id::HAIR
-    "level" => @maple_stat.Id::LEVEL
-    "job" => @maple_stat.Id::JOB
-    "str" => @maple_stat.Id::STR
-    "dex" => @maple_stat.Id::DEX
-    "int" => @maple_stat.Id::INT
-    "luk" => @maple_stat.Id::LUK
-    "hp" => @maple_stat.Id::HP
-    "maxhp" => @maple_stat.Id::MAXHP
-    "mp" => @maple_stat.Id::MP
-    "maxmp" => @maple_stat.Id::MAXMP
-    "ap" => @maple_stat.Id::AP
-    "sp" => @maple_stat.Id::SP
-    "exp" => @maple_stat.Id::EXP
-    "fame" => @maple_stat.Id::FAME
-    "meso" => @maple_stat.Id::MESO
-    "pet" => @maple_stat.Id::PET
-    "gacha_exp" => @maple_stat.Id::GACHAEXP
-    _ => {
-      @log.error({ "stat_id": stat_id }, "watch_stat") // TODO: raise error
-      return
-    }
+  guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
+    @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
+    return
   }
   match mod.player_char_stats {
     Some(stats) => {
-      let value = stats.get_stat(stat_id)
+      let value = stats.get_stat(stat)
       let cont = listener(value, value)
       if not(cont) {
         return
@@ -43,7 +21,7 @@ pub fn watch_player_char_stat(
     }
     None => ()
   }
-  let listeners = mod.stat_listeners.get_or_init(stat_id, fn() { Array::new() })
+  let listeners = mod.stat_listeners.get_or_init(stat, fn() { Array::new() })
   listeners.push(fn(old_value, new_value) {
     match listener(old_value, new_value) {
       true => IterResult::IterContinue
@@ -53,12 +31,16 @@ pub fn watch_player_char_stat(
 }
 
 ///|
-fn spend_ap(mod : Module, stat_id : @maple_stat.Id) -> Unit {
-  mod.network.send_message({ stat: stat_id })
+pub fn spend_ap(mod : Module, stat_name : String) -> Unit {
+  guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
+    @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
+    return
+  }
+  mod.network.send_message({ stat, })
 }
 
 ///|
-fn get_recommend_assign(mod : Module) -> Assign {
+pub fn get_recommend_assign(mod : Module) -> Assign {
   let nowap = mod.player_char_stats.map_or(0, fn(stats) {
     stats.get_stat(@maple_stat.Id::AP)
   })
@@ -87,7 +69,7 @@ fn get_recommend_assign(mod : Module) -> Assign {
 }
 
 ///|
-struct Assign {
+pub struct Assign {
   str : Int
   dex : Int
   int : Int

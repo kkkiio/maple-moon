@@ -159,9 +159,7 @@ pub fn set_i64stat(
 ) -> Unit {
   let old_value = self.get_i64stat(stat)
   self.base_i64stats.set(stat, value)
-  guard let Some(listeners) = self.i64stat_listeners.get(stat) else {
-    None => return
-  }
+  guard self.i64stat_listeners.get(stat) is Some(listeners) else { return }
   listeners.retain(fn(listener) {
     match listener(old_value, value) {
       IterResult::IterEnd => false

@@ -83,7 +83,9 @@ pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
 ///|
 pub fn use_item(mod : Module, kind : String, index : Int) -> String {
   let slot_no = index + 1
-  let type_id = get_type_id_by_kind?(kind).unwrap()
+  guard get_type_id_by_kind?(kind) is Ok(type_id) else {
+    return "unknown inventory kind \{kind}"
+  }
   match type_id {
     TypeId::EQUIP => {
       guard (mod.player_getter)() is Some(player) else { return "" }
@@ -174,4 +176,40 @@ fn can_wear_equip(
   } else {
     Some(hints.join(", "))
   }
+}
+
+///| Drop an item
+pub fn drop_item(
+  mod : Module,
+  kind : String,
+  index : Int,
+  count : Int
+) -> String {
+  guard get_type_id_by_kind?(kind) is Ok(type_id) else {
+    return "unknown inventory kind \{kind}"
+  }
+  if type_id is TypeId::CASH {
+    return "You can't drop this item."
+  }
+  let slot_no = index + 1
+  mod.network.send_message({ type_id, slot: slot_no, action: 0, qty: count })
+  ""
+}
+
+///| Packet which requests that an item is moved
+priv struct MoveItemPacket {
+  type_id : TypeId
+  slot : Int
+  action : Int
+  qty : Int
+} derive(Show)
+
+///|
+impl @net.OutMessage for MoveItemPacket with pack(self) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::MOVE_ITEM)
+  ..write_time()
+  ..write_byte(self.type_id.int_value().to_byte())
+  ..write_short(self.slot)
+  ..write_short(self.action)
+  ..write_short(self.qty)
 }

@@ -1,6 +1,6 @@
 <script setup>
-import { use_item, watch_inventory_by_kind, watch_meso } from 'lib/ms/inventory/inventory.js';
-import { NAlert, NTabPane, NTabs, NTooltip, NButton } from 'naive-ui';
+import { use_item, watch_inventory_by_kind, watch_meso, drop_item } from 'lib/ms/inventory/inventory.js';
+import { NAlert, NTabPane, NTabs, NTooltip, NButton, NModal, NInputNumber } from 'naive-ui';
 import { computed, onUnmounted, ref } from 'vue';
 import LazyImage from '@/components/LazyImage.vue';
 
@@ -33,9 +33,9 @@ for (const kind of TAB_KINDS) {
         return true // Continue watching
     })
 }
-watch_meso(mod, (meso) => {
+watch_meso(mod, (newMeso) => {
     if (!enableWatch.value) return false;
-    meso.value = meso
+    meso.value = newMeso
     return true // Continue watching
 })
 onUnmounted(() => {
@@ -45,6 +45,10 @@ onUnmounted(() => {
 // Methods
 // Selection state
 const selected = ref({ kind: null, index: null })
+
+// Drop item modal state
+const showDropModal = ref(false)
+const dropCount = ref(1)
 
 const handleItemClick = (kind, index) => {
     if (selected.value.kind === kind && selected.value.index === index) {
@@ -61,6 +65,42 @@ const handleUseItem = () => {
             hint.value = result
         }
     }
+}
+
+const handleDropClick = () => {
+    if (selected.value.kind !== null && selected.value.index !== null) {
+        const item = currentItems.value[selected.value.index]
+        if (item && (item.count === 1 || !item.count)) {
+            // Directly drop if count is 1 or undefined
+            const result = drop_item(mod, selected.value.kind, selected.value.index, 1)
+            if (result) {
+                hint.value = result
+            }
+            // Optionally, clear selection after drop
+            // selected.value = { kind: null, index: null }
+        } else {
+            dropCount.value = 1
+            showDropModal.value = true
+        }
+    }
+}
+
+const handleDropConfirm = () => {
+    if (selected.value.kind !== null && selected.value.index !== null) {
+        const item = currentItems.value[selected.value.index]
+        const count = Math.max(1, Math.min(dropCount.value, item.count || 1))
+        const result = drop_item(mod, selected.value.kind, selected.value.index, count)
+        if (result) {
+            hint.value = result
+        }
+        showDropModal.value = false
+        dropCount.value = 1
+    }
+}
+
+const handleDropCancel = () => {
+    showDropModal.value = false
+    dropCount.value = 1
 }
 
 const currentItems = computed(() => {
@@ -143,7 +183,22 @@ const shouldShowCount = computed(() => {
         <n-button type="primary" :disabled="selected.kind === null || selected.index === null" @click="handleUseItem">
             Use Item
         </n-button>
+        <n-button type="error" style="margin-left: 8px;" :disabled="selected.kind === null || selected.index === null" @click="handleDropClick">
+            Drop
+        </n-button>
     </div>
+    <n-modal v-model:show="showDropModal" preset="dialog" title="Drop Item" @after-leave="handleDropCancel">
+        <template #default>
+            <div style="margin-bottom: 12px;">
+                Enter the number of items to drop:
+            </div>
+            <n-input-number v-model:value="dropCount" :min="1" :max="selected.kind !== null && selected.index !== null ? currentItems[selected.index]?.count || 1 : 1" />
+        </template>
+        <template #action>
+            <n-button @click="handleDropCancel">Cancel</n-button>
+            <n-button type="error" @click="handleDropConfirm" style="margin-left: 8px;">Drop</n-button>
+        </template>
+    </n-modal>
 </template>
 
 <style scoped>

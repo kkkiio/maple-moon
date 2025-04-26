@@ -32,31 +32,31 @@ pub(all) struct Equip {
   item_level : Int
   vicious : Int
   potential_rank : Potential
-  // quality : @quality.Id
+  // quality : Quality
 }
 
 ///|
-pub fn check_quality(
+pub fn get_quality(
   data : EquipData,
   scrolled : Bool,
   stats : Map[@stat.Id, Int]
-) -> @quality.Id {
+) -> Quality {
   let mut delta = 0
   for es, stat in stats {
     let defstat = data.get_defstat(es)
     delta += stat - defstat
   }
   if delta < -5 {
-    return if scrolled { @quality.Id::ORANGE } else { @quality.Id::GREY }
+    return if scrolled { Quality::ORANGE } else { Quality::GREY }
   }
   if delta < 7 {
-    return if scrolled { @quality.Id::ORANGE } else { @quality.Id::WHITE }
+    return if scrolled { Quality::ORANGE } else { Quality::WHITE }
   }
   if delta < 14 {
-    return @quality.Id::BLUE
+    return Quality::BLUE
   }
   if delta < 21 {
-    return @quality.Id::VIOLET
+    return Quality::VIOLET
   }
-  return @quality.Id::GOLD
+  return Quality::GOLD
 }

@@ -228,7 +228,7 @@ pub fn add_equip(
     item_level,
     vicious,
     potential_rank: @equip_data.Potential::POT_NONE,
-    // quality: @equip.check_quality(item_id, level > 0, stats),
+    // quality: @equip_data.get_quality(item_id, level > 0, stats),
   })
 }
 

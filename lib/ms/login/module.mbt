@@ -87,14 +87,11 @@ pub fn make_handlers(
         handle_add_new_char_entry!(self, recv)
       }),
     ),
-    (
-      @net.SET_FIELD,
-      @net.with_log(@net.SET_FIELD, fn(recv : @net.InPacket) {
-        handle_set_field!(
-          transition, self, set_player_stage, inventory, setup_game_ui, recv,
-        )
-      }),
-    ),
+    @net.make_handler(@net.SET_FIELD, parse_set_field, fn(msg) {
+      handle_set_field(
+        transition, self, set_player_stage, inventory, setup_game_ui, msg,
+      )
+    }),
   ]
   |> Map::from_array()
 }

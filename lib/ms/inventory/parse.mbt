@@ -1,32 +1,96 @@
+///|
+enum InventoryItemEntry {
+  Equip(
+    invtype~ : TypeId,
+    slot~ : Int,
+    id~ : Int,
+    cash~ : Bool,
+    expire~ : Int64,
+    slots~ : Int,
+    level~ : Int,
+    stats~ : Map[@equip_stat.Id, Int],
+    owner~ : String,
+    flag~ : Int,
+    itemlevel~ : Int,
+    itemexp~ : Int,
+    vicious~ : Int
+  )
+  Pet(
+    invtype~ : TypeId,
+    slot~ : Int,
+    id~ : Int,
+    cash~ : Bool,
+    petname~ : String
+  )
+  Item(
+    invtype~ : TypeId,
+    slot~ : Int,
+    id~ : Int,
+    cash~ : Bool,
+    expire~ : Int64,
+    count~ : Int,
+    owner~ : String,
+    flag~ : Int
+  )
+} derive(Show)
+
+///|
 pub fn parse_item(
   recv : @net.InPacket,
   invtype : TypeId,
-  slot : Int,
-  inventory : Inventory
-) -> Unit! {
+  slot : Int
+) -> InventoryItemEntry! {
   // Read type and item id
   recv.read_byte!() |> ignore // 'type' byte
   let iid = recv.read_int!()
   if invtype == TypeId::EQUIP || invtype == TypeId::EQUIPPED {
     // Parse an equip
-    parse_add_equip!(recv, invtype, slot, iid, inventory)
+    parse_add_equip!(recv, invtype, slot, iid)
   } else if iid >= 5000000 && iid <= 5000102 {
     // Parse a pet
-    parse_add_pet!(recv, invtype, slot, iid, inventory)
+    parse_add_pet!(recv, invtype, slot, iid)
   } else {
     // Parse a normal item
-    parse_add_item!(recv, invtype, slot, iid, inventory)
+    parse_add_item!(recv, invtype, slot, iid)
   }
 }
 
-// Parse an equip from a packet
+///|
+pub fn handle_item(inventory : Inventory, item : InventoryItemEntry) -> Unit {
+  match item {
+    Equip(
+      invtype~,
+      slot~,
+      id~,
+      cash~,
+      expire~,
+      slots~,
+      level~,
+      stats~,
+      owner~,
+      flag~,
+      itemlevel~,
+      itemexp~,
+      vicious~
+    ) =>
+      inventory.add_equip(
+        invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel,
+        itemexp, vicious,
+      )
+    Pet(invtype~, slot~, id~, cash~, petname~) =>
+      inventory.add_pet(invtype, slot, id, cash, petname)
+    Item(invtype~, slot~, id~, cash~, expire~, count~, owner~, flag~) =>
+      inventory.add_item(invtype, slot, id, cash, expire, count, owner, flag)
+  }
+}
+
+///| Parse an equip from a packet
 fn parse_add_equip(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int,
-  inventory : Inventory
-) -> Unit! {
+  id : Int
+) -> InventoryItemEntry! {
   // Read equip information
   let cash = recv.read_bool!()
   if cash {
@@ -67,20 +131,30 @@ fn parse_add_equip(
     invtype = TypeId::EQUIPPED
     slot = -slot
   }
-  inventory.add_equip(
-    invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel,
-    itemexp, vicious,
+  Equip(
+    invtype~,
+    slot~,
+    id~,
+    cash~,
+    expire~,
+    slots~,
+    level~,
+    stats~,
+    owner~,
+    flag~,
+    itemlevel~,
+    itemexp~,
+    vicious~,
   )
 }
 
-// Parse a normal item from a packet
+///| Parse a normal item from a packet
 fn parse_add_item(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int,
-  inventory : Inventory
-) -> Unit! {
+  id : Int
+) -> InventoryItemEntry! {
   // Read all item stats
   let cash = recv.read_bool!()
   if cash {
@@ -95,17 +169,16 @@ fn parse_add_item(
   if id / 10000 == 233 || id / 10000 == 207 {
     recv.skip!(8)
   }
-  inventory.add_item(invtype, slot, id, cash, expire, count, owner, flag)
+  Item(invtype~, slot~, id~, cash~, expire~, count~, owner~, flag~)
 }
 
-// Parse a pet from a packet
+///| Parse a pet from a packet
 fn parse_add_pet(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int,
-  inventory : Inventory
-) -> Unit! {
+  id : Int
+) -> InventoryItemEntry! {
   // Read all pet stats
   let cash = recv.read_bool!()
   if cash {
@@ -119,5 +192,5 @@ fn parse_add_pet(
 
   // Some unused bytes
   recv.skip!(18)
-  inventory.add_pet(invtype, slot, id, cash, petname)
+  Pet(invtype~, slot~, id~, cash~, petname~)
 }

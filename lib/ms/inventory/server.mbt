@@ -26,7 +26,10 @@ fn parse_modify_inventory(
     let pos = recv.read_short!()
     let mut arg = 0
     match mode {
-      Modification::ADD => parse_item!(recv, t, pos, inventory)
+      Modification::ADD => {
+        let item = parse_item!(recv, t, pos)
+        handle_item(inventory, item)
+      }
       Modification::CHANGE_COUNT => {
         arg = recv.read_short!()
         let count_before = inventory.get_item_count(t, pos)

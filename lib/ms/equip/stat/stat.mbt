@@ -45,8 +45,8 @@ pub impl Hash for Id with hash_combine(self : Id, hasher : Hasher) -> Unit {
 }
 
 ///|
-fn to_string(self : Id) -> String {
-  match self {
+pub impl Show for Id with output(self : Id, logger : &Logger) -> Unit {
+  let str = match self {
     STR => "STR"
     DEX => "DEX"
     INT => "INT"
@@ -63,6 +63,7 @@ fn to_string(self : Id) -> String {
     SPEED => "Speed"
     JUMP => "Jump"
   }
+  logger.write_string(str)
 }
 
 ///|

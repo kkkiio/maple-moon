@@ -16,8 +16,7 @@ pub fn get_maplekeys(self : Keyboard) -> Map[MsKey, Mapping] {
 }
 
 ///|
-pub fn assign(self : Keyboard, key : MsKey, kt : KeyType, action : Int) -> Unit {
-  let mapping = Mapping::new(kt, action)
+pub fn assign(self : Keyboard, key : MsKey, mapping : Mapping) -> Unit {
   self.keymap.set(mskey_to_keycode(key), mapping)
   self.maple_keys.set(key, mapping)
 }

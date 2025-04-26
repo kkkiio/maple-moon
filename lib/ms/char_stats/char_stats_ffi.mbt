@@ -51,3 +51,45 @@ pub fn watch_player_char_stat(
     }
   })
 }
+
+///|
+fn spend_ap(mod : Module, stat_id : @maple_stat.Id) -> Unit {
+  mod.network.send_message({ stat: stat_id })
+}
+
+///|
+fn get_recommend_assign(mod : Module) -> Assign {
+  let nowap = mod.player_char_stats.map_or(0, fn(stats) {
+    stats.get_stat(@maple_stat.Id::AP)
+  })
+  let assign = Assign::default()
+  guard mod.player_char_stats is Some(char_stats) else { return assign }
+  let job = char_stats.job
+  let weapon_type = (char_stats.weapon_type_getter)()
+  // 4/5 primary + 1/5 secondary
+  let secondary = nowap / 5
+  let primary = nowap - secondary
+  let assign = match job.get_primary(weapon_type) {
+    @equip_stat.Id::STR => { ..assign, str: primary }
+    @equip_stat.Id::DEX => { ..assign, dex: primary }
+    @equip_stat.Id::INT => { ..assign, int: primary }
+    @equip_stat.Id::LUK => { ..assign, luk: primary }
+    _ => assign
+  }
+  let assign = match job.get_secondary(weapon_type) {
+    @equip_stat.Id::STR => { ..assign, str: secondary }
+    @equip_stat.Id::DEX => { ..assign, dex: secondary }
+    @equip_stat.Id::INT => { ..assign, int: secondary }
+    @equip_stat.Id::LUK => { ..assign, luk: secondary }
+    _ => assign
+  }
+  return assign
+}
+
+///|
+struct Assign {
+  str : Int
+  dex : Int
+  int : Int
+  luk : Int
+} derive(Default)

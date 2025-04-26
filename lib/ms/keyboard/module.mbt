@@ -50,13 +50,20 @@ pub fn Module::make_handlers(
       mappings : Array[(Int, Int)]
     ) {
       // Update keyboard with new mappings
-      for i, mapping in mappings {
-        guard MsKey::from_int(i) is Some(ms_key) else { // TODO: handle unknown key
+      for i, values in mappings {
+        // ignore unknown keys and mappings
+        // TODO: keep unknown keys
+        guard MsKey::from_int(i) is Some(ms_key) else {
+          @log.warn({ "key": i }, " unknown key")
           continue
         }
-        if mapping.0 != 0 {
-          let kt = KeyType::from_int(mapping.0).unwrap() // TODO: handle error
-          self.keyboard.assign(ms_key, kt, mapping.1)
+        let (type_id, action) = values
+        if type_id != 0 {
+          guard Mapping::from_int_enum(type_id, action) is Some(mapping) else {
+            @log.warn({ "type": type_id, "value": action }, " invalid keymap")
+            continue
+          }
+          self.keyboard.assign(ms_key, mapping)
         } else {
           self.keyboard.remove(ms_key)
         }

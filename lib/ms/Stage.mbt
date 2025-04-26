@@ -271,20 +271,14 @@ fn send_cursor(
 }
 
 ///|
-pub fn send_key(
-  self : Stage,
-  t : @keyboard.KeyType,
-  action : Int,
-  down : Bool
-) -> Unit {
+pub fn send_key(self : Stage, mapping : @keyboard.Mapping, down : Bool) -> Unit {
   guard self.state is StageState::ACTIVE(physics~, map_info~, portals~, ..) else {
     return
   }
   match self.player {
     Some(player) =>
-      match t {
-        @keyboard.KeyType::ACTION => {
-          let action = @keyboard.BasicActionId::from_int(action).unwrap() // TODO: handle error
+      match mapping {
+        ACTION(action) => {
           if down {
             match action {
               @keyboard.BasicActionId::UP =>
@@ -298,8 +292,7 @@ pub fn send_key(
           }
           player.send_action(action, down)
         }
-        @keyboard.KeyType::SKILL =>
-          self.combat.unwrap().use_move(player, action)
+        SKILL(skill_id) => self.combat.unwrap().use_move(player, skill_id)
         // @keyboard.Id::ITEM => self.player.use_item(action)
         // @keyboard.Id::FACE => self.player.set_expression(action)
         _ => ()

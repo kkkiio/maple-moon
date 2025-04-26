@@ -35,7 +35,7 @@ pub fn SkillBook::new(
 }
 
 ///|
-struct SkillEntry {
+priv struct SkillEntry {
   level : Int
   master_level : Int
 }
@@ -143,7 +143,7 @@ fn get_skills_by_job_level(
           Some({
             id: skill_id,
             name: data.name,
-            desc: data.desc,
+            desc: data.desc.replace_all(old="\\n", new="\n"),
             level,
             master_level: masterlevel,
             icon: data.icons[0].bitmap.map_or(@resource.Image::new_pending(), fn(
@@ -236,7 +236,7 @@ pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {
 }
 
 ///| Requests a skill level increase by spending SP
-struct SpendSPPacket {
+priv struct SpendSPPacket {
   skill_id : Int
 } derive(Show)
 
@@ -307,3 +307,49 @@ let beginner_skills : FixedArray[@skill.SkillId] = [
   @skill.SkillId::HEAL,
   @skill.SkillId::FEATHER,
 ]
+
+///|
+test "parse skill desc" {
+  let origin =
+    #|[Master Level : 20]\nUse MP to attack an enemy twice.\nRequired Skill : #cAt least Level 1 on Energy Bolt#
+  inspect!(
+    markup_to_html!(origin),
+    content="[Master Level : 20]<br/>Use MP to attack an enemy twice.<br/>Required Skill : <ul><li>At least Level 1 on Energy Bolt</li></ul>",
+  )
+}
+
+///|
+fn markup_to_html!(origin : String) -> String {
+  // 1. replace '\' 'n' with "<br/>"
+  // 2. replace #c{text}# with <li>{text}</li>
+  let text = origin.replace_all(old="\\n", new="<br/>")
+  if not(text.contains("#c")) {
+    return text
+  }
+  let builder = StringBuilder::new(size_hint=text.length())
+  let mut rest = text.view()
+  let mut ul_added = false
+  while rest.char_length_ge(1) {
+    guard rest.find("#c") is Some(markup_start) else {
+      builder.write_iter(rest.iter())
+      break
+    }
+    builder.write_iter(rest.view(end_offset=markup_start).iter())
+    rest = rest.view(start_offset=markup_start + 2)
+    if not(ul_added) {
+      builder.write_string("<ul>")
+      ul_added = true
+    }
+    builder.write_string("<li>")
+    guard rest.find("#") is Some(markup_end) else {
+      fail!("Missing markup close")
+    }
+    builder.write_iter(rest.view(end_offset=markup_end).iter())
+    builder.write_string("</li>")
+    rest = rest.view(start_offset=markup_end + 1)
+  }
+  if ul_added {
+    builder.write_string("</ul>")
+  }
+  builder.to_string()
+}

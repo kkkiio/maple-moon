@@ -120,7 +120,7 @@ pub fn UIStateGame::send_key(
     Some(focusedelement) => {
       if focusedelement.get_ui_model().is_active() {
         return focusedelement.object.send_key(
-          mapping.map_or(0, fn(it) { it.action }),
+          mapping.map_or(0, fn(it) { it.get_action_value() }),
           pressed,
           escape,
         )
@@ -130,11 +130,10 @@ pub fn UIStateGame::send_key(
     }
     None => ()
   }
-  guard let Some(mapping) = mapping else { None => return }
-  match mapping.t {
-    @keyboard.KeyType::MENU =>
+  guard mapping is Some(mapping) else { return }
+  match mapping {
+    @keyboard.Mapping::MENU(action) =>
       if pressed {
-        let action = @keyboard.BasicActionId::from_int(mapping.action).unwrap() // TODO: handle error
         match self.registry.get_action(action) {
           Some(descriptor) =>
             match descriptor {
@@ -144,11 +143,10 @@ pub fn UIStateGame::send_key(
           None => ()
         }
       }
-    @keyboard.KeyType::ACTION
-    | @keyboard.KeyType::FACE
-    | @keyboard.KeyType::ITEM
-    | @keyboard.KeyType::SKILL =>
-      self.stage.send_key(mapping.t, mapping.action, pressed)
+    @keyboard.Mapping::ACTION(_)
+    | @keyboard.Mapping::FACE(_)
+    | @keyboard.Mapping::ITEM(_)
+    | @keyboard.Mapping::SKILL(_) => self.stage.send_key(mapping, pressed)
     _ => ()
   }
 }

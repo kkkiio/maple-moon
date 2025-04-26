@@ -10,8 +10,9 @@ pub fn get_key_mappings(keymap : Map[KeyCode, Mapping]) -> Array[KeyMappingJs] {
   keymap
   .iter()
   .map(fn(e) {
-    let (k, v) = e
-    { keycode: k, kind: v.t.name(), action: v.action }
+    let (keycode, v) = e
+    let (kind, action) = v.to_name_value()
+    { keycode, kind, action }
   })
   .to_array()
 }
@@ -36,29 +37,25 @@ pub fn update_key_mappings(
   let update_actions = Array::new()
   for mapping in mappings {
     // Find the MsKey from the keycode
-    guard let Some(ms_key) = find_mskey_from_keycode(mapping.keycode) else {
-      None => {
-        @log.error(
-          { "keycode": mapping.keycode },
-          "update_key_mappings: key not found",
-        )
-        continue
-      }
+    guard find_mskey_from_keycode(mapping.keycode) is Some(ms_key) else {
+      @log.error(
+        { "keycode": mapping.keycode },
+        "update_key_mappings: key not found",
+      )
+      continue
     }
     if mapping.kind == "" { // remove mapping
       update_actions.push((ms_key, None))
       continue
     }
-    guard let Some(kt) = KeyType::from_name(mapping.kind) else {
-      None => {
-        @log.error(
-          { "kind": mapping.kind },
-          "update_key_mappings: key type not found",
-        )
-        continue
-      }
+    guard Mapping::from_name_value(mapping.kind, mapping.action) is Some(kt) else {
+      @log.error(
+        { "kind": mapping.kind },
+        "update_key_mappings: key type not found",
+      )
+      continue
     }
-    update_actions.push((ms_key, Some(Mapping::new(kt, mapping.action))))
+    update_actions.push((ms_key, Some(kt)))
   }
   // Send changes to server
   mod.network.send_message(

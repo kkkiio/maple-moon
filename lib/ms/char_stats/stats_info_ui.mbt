@@ -54,344 +54,345 @@ fn UIStatsInfo::new(
   stat : @resource.NxNode,
   hooks : @ui.Hooks
 ) -> UIStatsInfo {
-  let model = @ui.UIModel::new(
-    @struct.Point::new(212, 20),
-    @struct.Point::new(212, 318),
-  )
-  let close = @ui.common_ui_loader().load_res(["Basic.img", "BtClose3"])
-  let main = stat["main"]
-  let detail = stat["detail"]
-  let ability_title = detail["abilityTitle"]
-  let metier_line = detail["metierLine"]
-  let sprites = [
-    main["backgrnd"] |> @graphics.Sprite::from_resource,
-    main["backgrnd2"] |> @graphics.Sprite::from_resource,
-    main["backgrnd3"] |> @graphics.Sprite::from_resource,
-  ]
-  let textures_detail = [
-    detail["backgrnd"] |> @graphics.Texture::from_resource,
-    detail["backgrnd2"] |> @graphics.Texture::from_resource,
-    detail["backgrnd3"] |> @graphics.Texture::from_resource,
-    detail["backgrnd4"] |> @graphics.Texture::from_resource,
-  ]
-  let none_ability = ability_title["normal"]["0"]
-    |> @graphics.Texture::from_resource
-  let inner_ability = @utils.BoolPair::new(
-    metier_line["activated"]["0"] |> @graphics.Texture::from_resource,
-    metier_line["disabled"]["0"] |> @graphics.Texture::from_resource,
-  )
-  let btn_close = @ui.MapleButton::from_resource(
-      close,
-      pos=@struct.Point::new(190, 6),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      model.deactivate()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_hp = @ui.MapleButton::from_resource(main["BtHpUp"])
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_mp = @ui.MapleButton::from_resource(
-      main["BtHpUp"],
-      pos=@struct.Point::new(0, 18),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_str = @ui.MapleButton::from_resource(
-      main["BtHpUp"],
-      pos=@struct.Point::new(0, 87),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_dex = @ui.MapleButton::from_resource(
-      main["BtHpUp"],
-      pos=@struct.Point::new(0, 105),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_int = @ui.MapleButton::from_resource(
-      main["BtHpUp"],
-      pos=@struct.Point::new(0, 123),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_luk = @ui.MapleButton::from_resource(
-      main["BtHpUp"],
-      pos=@struct.Point::new(0, 141),
-    )
-    |> @ui.Button::new(on_click=fn() {
-      new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
-      Some(@ui.ButtonState::NORMAL)
-    })
-  let btn_auto = @ui.MapleButton::from_resource(main["BtAuto"])
-    |> @ui.Button::new() // TODO
-  let btn_hyper_stat_open = @ui.MapleButton::from_resource(
-      main["BtHyperStatOpen"],
-    )
-    |> @ui.Button::new
-  let btn_hyper_stat_close = @ui.MapleButton::from_resource(
-      main["BtHyperStatClose"],
-    )
-    |> @ui.Button::new() // TODO
-  let btn_detail_open = @ui.MapleButton::from_resource(main["BtDetailOpen"])
-    |> @ui.Button::new() // TODO
-  let btn_detail_close = @ui.MapleButton::from_resource(main["BtDetailClose"])
-    |> @ui.Button::new() // TODO
-  let btn_ability = @ui.MapleButton::from_resource(
-      detail["BtAbility"],
-      pos=@struct.Point::new(212, 0),
-    )
-    |> @ui.Button::new
-  let btn_detail_detail_close = @ui.MapleButton::from_resource(
-      detail["BtHpUp"],
-      pos=@struct.Point::new(212, 0),
-    )
-    |> @ui.Button::new() // TODO
-  btn_hyper_stat_open.object.get_button_base().set_active(false)
-  btn_detail_close.object.get_button_base().set_active(false)
-  btn_ability.object.get_button_base().set_active(false)
-  btn_ability.object.get_button_base().set_state(@ui.ButtonState::DISABLED)
-  btn_detail_detail_close.object.get_button_base().set_active(false)
-  let has_ap = update_ap(stats, [
-    btn_hp, btn_mp, btn_str, btn_dex, btn_int, btn_luk, btn_auto,
-  ])
-  // Normal stat labels
-  let name_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 26),
-  )
-  let job_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 44),
-  )
-  let guild_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 63),
-  )
-  let fame_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 80),
-  )
-  let damage_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 98),
-  )
-  let hp_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 116),
-  )
-  let mp_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(74, 134),
-  )
-  let ap_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(91, 175),
-  )
-  let str_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 204),
-  )
-  let dex_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 222),
-  )
-  let int_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 240),
-  )
-  let luk_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 258),
-  )
+  // let model = @ui.UIModel::new(
+  //   @struct.Point::new(212, 20),
+  //   @struct.Point::new(212, 318),
+  // )
+  // let close = @ui.common_ui_loader().load_res(["Basic.img", "BtClose3"])
+  // let main = stat["main"]
+  // let detail = stat["detail"]
+  // let ability_title = detail["abilityTitle"]
+  // let metier_line = detail["metierLine"]
+  // let sprites = [
+  //   main["backgrnd"] |> @graphics.Sprite::from_resource,
+  //   main["backgrnd2"] |> @graphics.Sprite::from_resource,
+  //   main["backgrnd3"] |> @graphics.Sprite::from_resource,
+  // ]
+  // let textures_detail = [
+  //   detail["backgrnd"] |> @graphics.Texture::from_resource,
+  //   detail["backgrnd2"] |> @graphics.Texture::from_resource,
+  //   detail["backgrnd3"] |> @graphics.Texture::from_resource,
+  //   detail["backgrnd4"] |> @graphics.Texture::from_resource,
+  // ]
+  // let none_ability = ability_title["normal"]["0"]
+  //   |> @graphics.Texture::from_resource
+  // let inner_ability = @utils.BoolPair::new(
+  //   metier_line["activated"]["0"] |> @graphics.Texture::from_resource,
+  //   metier_line["disabled"]["0"] |> @graphics.Texture::from_resource,
+  // )
+  // let btn_close = @ui.MapleButton::from_resource(
+  //     close,
+  //     pos=@struct.Point::new(190, 6),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     model.deactivate()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_hp = @ui.MapleButton::from_resource(main["BtHpUp"])
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::HP).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_mp = @ui.MapleButton::from_resource(
+  //     main["BtHpUp"],
+  //     pos=@struct.Point::new(0, 18),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::MP).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_str = @ui.MapleButton::from_resource(
+  //     main["BtHpUp"],
+  //     pos=@struct.Point::new(0, 87),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::STR).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_dex = @ui.MapleButton::from_resource(
+  //     main["BtHpUp"],
+  //     pos=@struct.Point::new(0, 105),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::DEX).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_int = @ui.MapleButton::from_resource(
+  //     main["BtHpUp"],
+  //     pos=@struct.Point::new(0, 123),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::INT).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_luk = @ui.MapleButton::from_resource(
+  //     main["BtHpUp"],
+  //     pos=@struct.Point::new(0, 141),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     new_spend_ap_packet(@maple_stat.Id::LUK).dispatch()
+  //     Some(@ui.ButtonState::NORMAL)
+  //   })
+  // let btn_auto = @ui.MapleButton::from_resource(main["BtAuto"])
+  //   |> @ui.Button::new() // TODO
+  // let btn_hyper_stat_open = @ui.MapleButton::from_resource(
+  //     main["BtHyperStatOpen"],
+  //   )
+  //   |> @ui.Button::new
+  // let btn_hyper_stat_close = @ui.MapleButton::from_resource(
+  //     main["BtHyperStatClose"],
+  //   )
+  //   |> @ui.Button::new() // TODO
+  // let btn_detail_open = @ui.MapleButton::from_resource(main["BtDetailOpen"])
+  //   |> @ui.Button::new() // TODO
+  // let btn_detail_close = @ui.MapleButton::from_resource(main["BtDetailClose"])
+  //   |> @ui.Button::new() // TODO
+  // let btn_ability = @ui.MapleButton::from_resource(
+  //     detail["BtAbility"],
+  //     pos=@struct.Point::new(212, 0),
+  //   )
+  //   |> @ui.Button::new
+  // let btn_detail_detail_close = @ui.MapleButton::from_resource(
+  //     detail["BtHpUp"],
+  //     pos=@struct.Point::new(212, 0),
+  //   )
+  //   |> @ui.Button::new() // TODO
+  // btn_hyper_stat_open.object.get_button_base().set_active(false)
+  // btn_detail_close.object.get_button_base().set_active(false)
+  // btn_ability.object.get_button_base().set_active(false)
+  // btn_ability.object.get_button_base().set_state(@ui.ButtonState::DISABLED)
+  // btn_detail_detail_close.object.get_button_base().set_active(false)
+  // let has_ap = update_ap(stats, [
+  //   btn_hp, btn_mp, btn_str, btn_dex, btn_int, btn_luk, btn_auto,
+  // ])
+  // // Normal stat labels
+  // let name_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 26),
+  // )
+  // let job_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 44),
+  // )
+  // let guild_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 63),
+  // )
+  // let fame_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 80),
+  // )
+  // let damage_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 98),
+  // )
+  // let hp_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 116),
+  // )
+  // let mp_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(74, 134),
+  // )
+  // let ap_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(91, 175),
+  // )
+  // let str_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 204),
+  // )
+  // let dex_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 222),
+  // )
+  // let int_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 240),
+  // )
+  // let luk_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 258),
+  // )
 
-  // Detailed stat labels
-  let damage_detailed_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 38),
-  )
-  let damage_bonus_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(100, 56),
-  )
-  let final_damage_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(100, 74),
-  )
-  let ignore_defense_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(196, 74),
-  )
-  let critical_rate_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(100, 92),
-  )
-  let critical_damage_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 110),
-  )
-  let knockback_resistance_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(196, 128),
-  )
-  let defense_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::LEFT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(73, 146),
-  )
-  let speed_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(100, 164),
-  )
-  let jump_label = (
-    @graphics.Text::new(
-      @graphics.FontId::A11M,
-      @graphics.TextAlignment::RIGHT,
-      @struct.ColorName::EMPEROR,
-    ),
-    @struct.Point::new(196, 164),
-  )
-  let ui = {
-    model,
-    stats,
-    btn_close,
-    btn_hp,
-    btn_mp,
-    btn_str,
-    btn_dex,
-    btn_int,
-    btn_luk,
-    btn_auto,
-    btn_hyper_stat_open,
-    btn_hyper_stat_close,
-    btn_detail_open,
-    btn_detail_close,
-    btn_ability,
-    btn_detail_detail_close,
-    sprites,
-    none_ability,
-    inner_ability,
-    textures_detail,
-    show_detail: false,
-    has_ap,
-    name_label,
-    job_label,
-    guild_label,
-    fame_label,
-    damage_label,
-    hp_label,
-    mp_label,
-    ap_label,
-    str_label,
-    dex_label,
-    int_label,
-    luk_label,
-    damage_detailed_label,
-    damage_bonus_label,
-    final_damage_label,
-    ignore_defense_label,
-    critical_rate_label,
-    critical_damage_label,
-    knockback_resistance_label,
-    defense_label,
-    speed_label,
-    jump_label,
-  }
-  update_all_stats(ui)
-  ui
+  // // Detailed stat labels
+  // let damage_detailed_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 38),
+  // )
+  // let damage_bonus_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(100, 56),
+  // )
+  // let final_damage_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(100, 74),
+  // )
+  // let ignore_defense_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(196, 74),
+  // )
+  // let critical_rate_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(100, 92),
+  // )
+  // let critical_damage_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 110),
+  // )
+  // let knockback_resistance_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(196, 128),
+  // )
+  // let defense_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::LEFT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(73, 146),
+  // )
+  // let speed_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(100, 164),
+  // )
+  // let jump_label = (
+  //   @graphics.Text::new(
+  //     @graphics.FontId::A11M,
+  //     @graphics.TextAlignment::RIGHT,
+  //     @struct.ColorName::EMPEROR,
+  //   ),
+  //   @struct.Point::new(196, 164),
+  // )
+  // let ui = {
+  //   model,
+  //   stats,
+  //   btn_close,
+  //   btn_hp,
+  //   btn_mp,
+  //   btn_str,
+  //   btn_dex,
+  //   btn_int,
+  //   btn_luk,
+  //   btn_auto,
+  //   btn_hyper_stat_open,
+  //   btn_hyper_stat_close,
+  //   btn_detail_open,
+  //   btn_detail_close,
+  //   btn_ability,
+  //   btn_detail_detail_close,
+  //   sprites,
+  //   none_ability,
+  //   inner_ability,
+  //   textures_detail,
+  //   show_detail: false,
+  //   has_ap,
+  //   name_label,
+  //   job_label,
+  //   guild_label,
+  //   fame_label,
+  //   damage_label,
+  //   hp_label,
+  //   mp_label,
+  //   ap_label,
+  //   str_label,
+  //   dex_label,
+  //   int_label,
+  //   luk_label,
+  //   damage_detailed_label,
+  //   damage_bonus_label,
+  //   final_damage_label,
+  //   ignore_defense_label,
+  //   critical_rate_label,
+  //   critical_damage_label,
+  //   knockback_resistance_label,
+  //   defense_label,
+  //   speed_label,
+  //   jump_label,
+  // }
+  // update_all_stats(ui)
+  // ui
+  ...
 }
 
 ///|
@@ -503,10 +504,15 @@ fn get_all_buttons(self : UIStatsInfo) -> Array[@ui.Button] {
 }
 
 ///|
-fn new_spend_ap_packet(stat : @maple_stat.Id) -> @net.OutPacket {
+priv struct SpendAPMessage {
+  stat : @maple_stat.Id
+} derive(Show)
+
+///|
+impl @net.OutMessage for SpendAPMessage with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
   ..write_time()
-  ..write_int(stat.int_value())
+  ..write_int(self.stat.int_value())
 }
 
 ///|

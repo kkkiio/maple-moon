@@ -157,7 +157,9 @@ fn load_modules(
     fn() { get_stage().get_player().unwrap().character.get_name() },
     packet_processor,
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
-  let char_stats_mod_f = @char_stats.Module::load().tap(fn(mod) {
+  let char_stats_mod_f = @char_stats.Module::load(packet_processor).tap(fn(
+    mod
+  ) {
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
@@ -428,73 +430,43 @@ fn default_keymap() -> Map[String, @keyboard.Mapping] {
   let keymap = Map::new()
   keymap.set(
     @keyboard.arrowLeft,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::LEFT.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::LEFT),
   )
   keymap.set(
     @keyboard.arrowRight,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::RIGHT.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::RIGHT),
   )
   keymap.set(
     @keyboard.arrowUp,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::UP.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::UP),
   )
   keymap.set(
     @keyboard.arrowDown,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::DOWN.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::DOWN),
   )
   keymap.set(
     @keyboard.enter,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::RETURN.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::RETURN),
   )
   keymap.set(
     @keyboard.numpadEnter,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::RETURN.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::RETURN),
   )
   keymap.set(
     @keyboard.tab,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::TAB.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::TAB),
   )
   keymap.set(
     @keyboard.space,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::JUMP.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::JUMP),
   )
   keymap.set(
     @keyboard.keyX,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::ATTACK.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::ATTACK),
   )
   keymap.set(
     @keyboard.keyC,
-    @keyboard.Mapping::new(
-      @keyboard.KeyType::ACTION,
-      @keyboard.BasicActionId::PICKUP.int_value(),
-    ),
+    @keyboard.Mapping::ACTION(@keyboard.BasicActionId::PICKUP),
   )
   keymap
 }

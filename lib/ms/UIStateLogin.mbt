@@ -48,7 +48,7 @@ pub impl @ui.UIState for UIStateLogin with send_key(
     Some(focusedelement) =>
       if focusedelement.get_ui_model().is_active() {
         focusedelement.object.send_key(
-          mapping.map_or(0, fn(it) { it.action }),
+          mapping.map_or(0, fn(it) { it.get_action_value() }),
           pressed,
           escape,
         )

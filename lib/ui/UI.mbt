@@ -71,7 +71,7 @@ pub fn change_state(self : UI, state : &UIState) -> Unit {
 
 ///|
 pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
-  guard let Some(state) = self.state else { None => return }
+  guard self.state is Some(state) else { return }
   let mapping = (self.get_keyboard_mapping)(keycode)
   let mut sent = false
   let types = Array::new()
@@ -103,7 +103,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   match active_ui {
     Some(it) => {
       it.object.send_key(
-        mapping.map_or(0, fn(it) { it.action }),
+        mapping.map_or(0, fn(it) { it.to_enum_value().1 }),
         pressed,
         escape,
       )
@@ -148,7 +148,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
         match state.get_front_by_types(types) {
           Some(element) => {
             element.object.send_key(
-              mapping.map_or(0, fn(it) { it.action }),
+              mapping.map_or(0, fn(it) { it.to_enum_value().1 }),
               pressed,
               escape,
             )

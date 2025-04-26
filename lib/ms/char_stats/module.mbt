@@ -1,5 +1,6 @@
 ///|
 struct Module {
+  network : @net.Network
   stat : @resource.NxNode
   stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]]
   i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
@@ -7,15 +8,16 @@ struct Module {
 }
 
 ///|
-pub fn Module::load() -> @utils.Future[Module] {
+pub fn Module::load(network : @net.Network) -> @utils.Future[Module] {
   @ui.ui_window_4_loader()
   .load_res(["Stat"])
-  .map(fn(stat) { Module::new(stat) })
+  .map(fn(stat) { Module::new(network, stat) })
 }
 
 ///|
-fn Module::new(stat : @resource.NxNode) -> Module {
+fn Module::new(network : @net.Network, stat : @resource.NxNode) -> Module {
   {
+    network,
     stat,
     stat_listeners: Map::new(),
     i64stat_listeners: Map::new(),

@@ -29,7 +29,9 @@ pub(all) struct EquipId {
 
 ///|
 fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
-  let category = get_eqcategory!(item_id)
+  guard parse_equip_category(item_id) is Some(category) else {
+    raise LoadDataError::INVALID_ITEM_ID(item_id)
+  }
   let zid = "0" + item_id.to_string()
   { category, zid }
 }
@@ -42,7 +44,9 @@ fn ItemData::load_async(
   let (category, src, strsrc) = try {
     match parse_category1!(item_id) {
       EQUIP => {
-        let category = get_eqcategory!(item_id)
+        guard parse_equip_category(item_id) is Some(category) else {
+          raise LoadDataError::INVALID_ITEM_ID(item_id)
+        }
         let src = get_character_loader().load_res([category, zid + ".img"])
         let strsrc = @resource.string_loader().load_res([
           "Eqp.img",
@@ -104,6 +108,15 @@ fn ItemData::load_async(
   } catch {
     e => return @utils.Future::from_value(Err(e))
   }
+  let str_src = strsrc.value()
+  let name = match str_src {
+    { "name": String(name), .. } => name
+    _ => ""
+  }
+  let desc = match str_src {
+    { "desc": String(desc), .. } => desc
+    _ => ""
+  }
   src.map_exn(fn(src) -> ItemData!LoadDataError {
     let info = src["info"]
     if info.is_null() {
@@ -120,8 +133,6 @@ fn ItemData::load_async(
       let unsellable = info["notSale"].get_bool!()
       let cash_item = info["cash"].get_bool!()
       let gender = get_item_gender(item_id)
-      let name = strsrc["name"].get_string()
-      let desc = strsrc["desc"].get_string()
       {
         src,
         icons,
@@ -197,20 +208,19 @@ pub(all) type! LoadDataError {
   INVALID_DATA(String)
 } derive(Show)
 
-// TODO: make private
-///|
-pub fn get_eqcategory(id : Int) -> String!LoadDataError {
+///| TODO: make private
+pub fn parse_equip_category(id : Int) -> String? {
   let index = ItemData::get_item_prefix(id) - 100
   if index < 0 {
-    raise LoadDataError::INVALID_ITEM_ID(id)
+    return None
   }
   if index < categorynames.length() {
-    return categorynames[index]
+    return Some(categorynames[index])
   }
   if index >= 30 && index <= 70 {
-    return "Weapon"
+    return Some("Weapon")
   }
-  raise LoadDataError::INVALID_ITEM_ID(id) // TODO: what category it is
+  return None
 }
 
 ///|

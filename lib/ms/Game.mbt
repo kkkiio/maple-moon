@@ -160,7 +160,6 @@ fn load_modules(
   let char_stats_mod_f = @char_stats.Module::load(packet_processor).tap(fn(
     mod
   ) {
-    merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let skill_book_mod_f = @skill_book.Module::load(

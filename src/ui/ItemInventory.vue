@@ -155,7 +155,7 @@ const shouldShowCount = computed(() => {
                                             </template>
                                             <div class="tooltip-content">
                                                 <div class="tooltip-name">{{ getItemAt(row, col).name }}</div>
-                                                <div class="tooltip-desc">{{ getItemAt(row, col).desc }}</div>
+                                                <div class="tooltip-desc" v-html="getItemAt(row, col).desc"></div>
                                             </div>
                                         </NTooltip>
                                     </template>
@@ -183,7 +183,8 @@ const shouldShowCount = computed(() => {
         <n-button type="primary" :disabled="selected.kind === null || selected.index === null" @click="handleUseItem">
             Use Item
         </n-button>
-        <n-button type="error" style="margin-left: 8px;" :disabled="selected.kind === null || selected.index === null" @click="handleDropClick">
+        <n-button type="error" style="margin-left: 8px;" :disabled="selected.kind === null || selected.index === null"
+            @click="handleDropClick">
             Drop
         </n-button>
     </div>
@@ -192,11 +193,13 @@ const shouldShowCount = computed(() => {
             <div style="margin-bottom: 12px;">
                 Enter the number of items to drop:
             </div>
-            <n-input-number v-model:value="dropCount" :min="1" :max="selected.kind !== null && selected.index !== null ? currentItems[selected.index]?.count || 1 : 1" />
+            <n-input-number v-model:value="dropCount" :min="1"
+                :max="selected.kind !== null && selected.index !== null ? currentItems[selected.index]?.count || 1 : 1" />
         </template>
         <template #action>
             <n-button @click="handleDropCancel">Cancel</n-button>
-            <n-button type="error" @click="handleDropConfirm" style="margin-left: 8px;">Drop</n-button>
+            <n-button type="error" @click="handleDropConfirm" :keyboard="false"
+                style="margin-left: 8px;">Drop</n-button>
         </template>
     </n-modal>
 </template>

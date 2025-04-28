@@ -75,3 +75,15 @@ pub struct Assign {
   int : Int
   luk : Int
 } derive(Default)
+
+///|
+priv struct SpendAPMessage {
+  stat : @maple_stat.Id
+} derive(Show)
+
+///|
+impl @net.OutMessage for SpendAPMessage with pack(self) -> @net.OutPacket {
+  @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
+  ..write_time()
+  ..write_int(self.stat.int_value())
+}

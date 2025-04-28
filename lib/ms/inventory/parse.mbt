@@ -101,7 +101,6 @@ fn parse_add_equip(
   let level = recv.read_ubyte!()
 
   // Read equip stats
-  // EnumMap<EquipStat::Id, uint16_t> stats;
   let stats = Map::new()
   for id in @equip_stat.all_stats {
     stats[id] = recv.read_short!()

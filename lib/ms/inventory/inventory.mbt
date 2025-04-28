@@ -61,7 +61,7 @@ pub fn Movement::from_int(value : Int) -> Movement!@utils.UnknownEnum {
 
 ///| The player's inventory
 struct Inventory {
-  inventories : @utils.DefaultMap[TypeId, Map[Int, Slot]]
+  inventories : @utils.DefaultMap[TypeId, Map[Int, SlotItem]]
   items : Map[Int, Item]
   equips : Map[Int, @equip_data.Equip]
   pets : Map[Int, @pet.Pet]
@@ -75,7 +75,7 @@ struct Inventory {
 }
 
 ///|
-priv struct Slot {
+pub struct SlotItem {
   unique_id : Int
   item_id : Int
   mut count : Int
@@ -253,26 +253,8 @@ pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
 }
 
 ///|
-pub fn get_item_at_slot(
-  self : Inventory,
-  t : TypeId,
-  slot : Int
-) -> @item.ItemData? {
-  self.inventories[t]
-  .get(slot)
-  .bind(fn(it) {
-    match @item.ItemData::get_async(it.item_id).poll() {
-      Some(Ok(item_data)) => item_data |> Some
-      Some(Err(e)) => {
-        @log.error(
-          { "err": e.to_string(), "item_id": it.item_id, "slot": slot },
-          "Failed to load item data",
-        )
-        None
-      }
-      None => None
-    }
-  })
+pub fn get_slot_item_at(self : Inventory, t : TypeId, slot : Int) -> SlotItem? {
+  self.inventories[t].get(slot)
 }
 
 ///|

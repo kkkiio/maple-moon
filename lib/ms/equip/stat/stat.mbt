@@ -16,7 +16,7 @@ pub(all) enum Id {
   HANDS
   SPEED
   JUMP
-} derive(Eq)
+} derive(Eq, Compare)
 
 ///|
 pub fn int_value(self : Id) -> Int {

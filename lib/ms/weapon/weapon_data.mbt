@@ -10,7 +10,7 @@ struct WeaponData {
 
 ///|
 pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
-  let equip_data = @data.EquipData::from_item_data!(item_data)
+  let equip_data = @data.EquipData::parse_item_data!(item_data)
   let prefix = item_data.item_id / 10000
   let t = Type::by_value!(prefix)
   let two_handed = prefix == Type::STAFF.int_value() ||

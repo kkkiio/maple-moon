@@ -4,23 +4,48 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
   (1)
   .until(slotmax, inclusive=true)
   .map(fn(slot) {
-    match mod.inventory.get_item_at_slot(kind, slot) {
-      Some(item_data) =>
-        Some({
-          id: item_data.item_id,
-          name: item_data.name,
-          desc: item_data.desc,
-          count: if kind == TypeId::EQUIP {
-            1
-          } else {
-            mod.inventory.get_item_count(kind, slot)
-          },
-          icon: item_data.get_icon(false).bitmap.map_or(
-            @resource.Image::new_pending(),
-            fn(bitmap) { bitmap.image },
-          ),
-        })
-      None => None // TODO: return async result
+    match mod.inventory.get_slot_item_at(kind, slot) {
+      Some(slot_item) =>
+        match @item.ItemData::get_async(slot_item.item_id).poll() {
+          Some(Ok(item_data)) =>
+            Some({
+              id: item_data.item_id,
+              name: item_data.name,
+              desc: if kind is TypeId::EQUIP {
+                make_equip_desc(item_data)
+              } else {
+                make_html_desc(item_data.desc)
+              },
+              count: if kind == TypeId::EQUIP {
+                1
+              } else {
+                mod.inventory.get_item_count(kind, slot)
+              },
+              icon: item_data.get_icon(false).bitmap.map_or(
+                @resource.Image::new_pending(),
+                fn(bitmap) { bitmap.image },
+              ),
+            })
+          Some(Err(e)) => {
+            @log.error(
+              {
+                "err": e.to_string(),
+                "item_id": slot_item.item_id,
+                "slot": slot,
+              },
+              "Failed to load item data",
+            )
+            Some({
+              id: slot_item.item_id,
+              name: "Unknown \{slot_item.item_id}",
+              desc: "",
+              count: slot_item.count,
+              icon: @resource.Image::new_pending(),
+            })
+          }
+          None => None // TODO: return async result
+        }
+      None => None
     }
   })
   .to_array()
@@ -89,10 +114,16 @@ pub fn use_item(mod : Module, kind : String, index : Int) -> String {
   match type_id {
     TypeId::EQUIP => {
       guard (mod.player_getter)() is Some(player) else { return "" }
-      guard mod.inventory.get_item_at_slot(type_id, slot_no) is Some(item_data) else {
+      guard mod.inventory.get_slot_item_at(type_id, slot_no) is Some(item) else {
         return ""
       }
-      let equip_data = @equip_data.EquipData::from_item_data?(item_data).unwrap() // TODO: handle error
+      guard @item.ItemData::get_async(item.item_id).poll()
+        is Some(Ok(item_data)) else {
+        return "failed to load item data \{item.item_id}"
+      }
+      guard @equip_data.EquipData::parse_item_data?(item_data) is Ok(equip_data) else {
+        return "failed to parse equip data \{item.item_id}"
+      }
       match can_wear_equip(player, equip_data) {
         Some(hint) => return hint
         None => ()
@@ -212,4 +243,39 @@ impl @net.OutMessage for MoveItemPacket with pack(self) -> @net.OutPacket {
   ..write_short(self.slot)
   ..write_short(self.action)
   ..write_short(self.qty)
+}
+
+///|
+fn make_html_desc(desc : String) -> String {
+  desc.replace_all(old="\\n", new="<br/>")
+}
+
+///| Make equip description
+/// show req stats and incr stats
+fn make_equip_desc(item_data : @item.ItemData) -> String {
+  guard @equip_data.EquipData::parse_item_data?(item_data) is Ok(equip_data) else {
+    return ""
+  }
+  let req_stats = equip_data.req_stats.iter2().to_array()
+  req_stats.sort_by_key(fn(it) { it.0 })
+  let incr_stats = equip_data.incr_stats.iter2().to_array()
+  incr_stats.sort_by_key(fn(it) { it.0 })
+  let buf = StringBuilder::new()
+  buf.write_string("Requirements:<br/>")
+  for
+    stat in req_stats
+    .iter()
+    .map(fn(it) { "\{it.0} \{it.1}" })
+    .intersperse("<br/>") {
+    buf.write_string(stat)
+  }
+  buf.write_string("<br/>Increases:<br/>")
+  for
+    stat in incr_stats
+    .iter()
+    .map(fn(it) { "\{it.0} \{it.1}" })
+    .intersperse("<br/>") {
+    buf.write_string(stat)
+  }
+  buf.to_string()
 }

@@ -44,28 +44,6 @@ pub fn Module::new_char_stats(
 }
 
 ///|
-pub fn make_actions(
-  self : Module
-) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
-  [
-    (
-      @keyboard.BasicActionId::STATS,
-      @action.Descriptor::UI(key=@ui.UIElementType::STATS_INFO, focused=false, make_element=fn(
-
-      ) {
-        @ui.Element::new(
-          fn(hooks) {
-            UIStatsInfo::new(self.player_char_stats.unwrap(), self.stat, hooks)
-          },
-          @ui.UIElementType::STATS_INFO,
-        )
-      }),
-    ),
-  ]
-  |> Map::from_array
-}
-
-///|
 pub fn make_stat_handlers(
   self : Module
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {

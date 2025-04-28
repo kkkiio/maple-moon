@@ -319,7 +319,7 @@ test "parse skill desc" {
 }
 
 ///|
-fn markup_to_html!(origin : String) -> String {
+pub fn markup_to_html!(origin : String) -> String {
   // 1. replace '\' 'n' with "<br/>"
   // 2. replace #c{text}# with <li>{text}</li>
   let text = origin.replace_all(old="\\n", new="<br/>")

@@ -1,14 +1,14 @@
 ///| Contains information about an equip
-struct EquipData {
+pub struct EquipData {
   category : String
   gender : Int
   req_stats : Map[@maple_stat.Id, Int]
-  def_stats : Map[@stat.Id, Int]
+  incr_stats : Map[@stat.Id, Int]
   eq_slot : @slot.Id
 }
 
 ///| Load an equip from the game files.
-pub fn EquipData::from_item_data(item_data : @item.ItemData) -> EquipData! {
+pub fn EquipData::parse_item_data(item_data : @item.ItemData) -> EquipData! {
   let id = item_data.item_id
   let gender = @item.get_item_gender(id)
   // let cash = info["cash"].get_bool!()
@@ -17,31 +17,24 @@ pub fn EquipData::from_item_data(item_data : @item.ItemData) -> EquipData! {
   let info = item_data.get_info()
   let req_stats = req_stats_keys
     .iter()
-    .map(
-      fn(it) {
-        let (key, stat) = it
-        (
-          stat,
-          info[key]
-          .bind(fn(it) { it.as_number() })
-          .map_or(0, fn(it) { it.to_int() }),
-        )
-      },
-    )
+    .map(fn(it) {
+      let (key, stat) = it
+      (
+        stat,
+        info[key]
+        .bind(fn(it) { it.as_number() })
+        .map_or(0, fn(it) { it.to_int() }),
+      )
+    })
     |> Map::from_iter()
   let def_stats = def_stats_keys
     .iter()
-    .map(
-      fn(it) {
-        let (key, stat) = it
-        (
-          stat,
-          info[key]
-          .bind(fn(it) { it.as_number() })
-          .map_or(0, fn(it) { it.to_int() }),
-        )
-      },
-    )
+    .filter_map(fn(it) {
+      let (key, stat) = it
+      info[key]
+      .bind(fn(it) { it.as_number() })
+      .map(fn(it) { (stat, it.to_int()) })
+    })
     |> Map::from_iter()
   let non_weapon_types = 15
   let weapon_offset = non_weapon_types + 15
@@ -65,8 +58,10 @@ pub fn EquipData::from_item_data(item_data : @item.ItemData) -> EquipData! {
     // "CASH"
     @slot.Id::NONE
   }
-  let category = @item.get_eqcategory!(id)
-  { category, gender, req_stats, def_stats, eq_slot }
+  guard @item.parse_equip_category(id) is Some(category) else {
+    fail!("failed to parse equip category for item id \{id}")
+  }
+  { category, gender, req_stats, incr_stats: def_stats, eq_slot }
 }
 
 ///|
@@ -90,7 +85,7 @@ let equipslots : FixedArray[@slot.Id] = [
 
 ///|
 pub fn get_defstat(self : EquipData, stat : @stat.Id) -> Int {
-  self.def_stats.get(stat).or(0)
+  self.incr_stats.get(stat).or(0)
 }
 
 ///|

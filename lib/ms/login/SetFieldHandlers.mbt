@@ -75,6 +75,10 @@ fn set_field(
   inventory_entry : InventoryEntry,
   skills : Array[SkillEntry]
 ) -> Unit {
+  inventory.set_meso(inventory_entry.meso)
+  for kind, slotmax in inventory_entry.slotmax {
+    inventory.set_slotmax(kind, slotmax)
+  }
   let playerentry = { ..playerentry, stats, }
   // parse_cooldowns(recv, player);
   // parse_questlog(recv, player.get_quests());

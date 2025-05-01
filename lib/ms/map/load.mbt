@@ -1,10 +1,12 @@
 ///|
 pub(all) struct MapStruct {
+  id : Int
   tiles_objs : MapTilesObjs
   backgrounds : Backgrounds
   physics : @physics.Physics
   map_info : MapInfo
   portals : MapPortals
+  mini_map_resources : MiniMapResource?
 }
 
 ///|
@@ -43,24 +45,45 @@ pub fn load_map(
       map_id,
       map_portals_animations,
     )
-    (tiles_objs_f, backgrounds_f, physics, map_info, portals)
+    let mini_map_resources = MiniMapResource::load!(src)
+    (
+      tiles_objs_f, backgrounds_f, physics, map_info, portals, mini_map_resources,
+    )
   })
   .bind(fn(res) {
     match res {
-      Ok((tiles_objs_f, backgrounds_f, physics, map_info, portals)) =>
+      Ok(
+        (
+          tiles_objs_f,
+          backgrounds_f,
+          physics,
+          map_info,
+          portals,
+          mini_map_resources,
+        )
+      ) =>
         tiles_objs_f
         .combine(backgrounds_f)
         .map(fn(it) {
           let (tiles_objs_res, backgrounds) = it
           tiles_objs_res.map(fn(it) {
-            (it, backgrounds, physics, map_info, portals)
+            (it, backgrounds, physics, map_info, portals, mini_map_resources)
           })
         })
       Err(err) => @utils.Future::from_value(Err(err))
     }
   })
   .map_exn(fn(res) {
-    let (tiles_objs, backgrounds, physics, map_info, portals) = res.unwrap_or_error!()
-    { tiles_objs, backgrounds, physics, map_info, portals }
+    let (tiles_objs, backgrounds, physics, map_info, portals, mini_map_resources
+    ) = res.unwrap_or_error!()
+    {
+      id: map_id,
+      tiles_objs,
+      backgrounds,
+      physics,
+      map_info,
+      portals,
+      mini_map_resources,
+    }
   })
 }

@@ -6,7 +6,7 @@ pub(all) struct MapleButton {
 }
 
 ///|
-pub fn get_button_base(self : MapleButton) -> ButtonModel {
+pub impl UIButton for MapleButton with get_button_base(self : MapleButton) -> ButtonModel {
   self.base
 }
 
@@ -72,7 +72,10 @@ pub fn MapleButton::from_resource_with_x_y(
 }
 
 ///|
-pub fn MapleButton::draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
+pub impl UIButton for MapleButton with draw(
+  self : MapleButton,
+  parentpos : Point[Int]
+) -> Unit {
   if self.base.active {
     match self.textures[self.base.get_state()] {
       Some(texture) =>
@@ -93,7 +96,7 @@ pub fn MapleButton::draw(self : MapleButton, parentpos : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn MapleButton::update(self : MapleButton) -> Unit {
+pub impl UIButton for MapleButton with update(self : MapleButton) -> Unit {
   if self.base.active {
     match self.animations[self.base.get_state()] {
       Some(animation) => animation.update(timestep=6) |> ignore
@@ -103,7 +106,9 @@ pub fn MapleButton::update(self : MapleButton) -> Unit {
 }
 
 ///|
-pub fn MapleButton::bounds(self : MapleButton) -> @struct.Rectangle[Int] {
+pub impl UIButton for MapleButton with bounds(self : MapleButton) -> @struct.Rectangle[
+  Int,
+] {
   let (origin, dimensions) = match self.textures[self.base.get_state()] {
     Some(texture) => (texture.get_origin(), texture.get_dimensions())
     None => {
@@ -117,7 +122,7 @@ pub fn MapleButton::bounds(self : MapleButton) -> @struct.Rectangle[Int] {
 }
 
 ///|
-pub fn MapleButton::width(self : MapleButton) -> Int {
+pub impl UIButton for MapleButton with width(self : MapleButton) -> Int {
   match self.textures[self.base.get_state()] {
     Some(texture) => texture.width()
     None => 0
@@ -125,7 +130,7 @@ pub fn MapleButton::width(self : MapleButton) -> Int {
 }
 
 ///|
-pub fn MapleButton::origin(self : MapleButton) -> Point[Int] {
+pub impl UIButton for MapleButton with origin(self : MapleButton) -> Point[Int] {
   match self.textures[self.base.get_state()] {
     Some(texture) => texture.get_origin()
     None => @struct.Point::default()

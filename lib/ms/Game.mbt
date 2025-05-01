@@ -123,8 +123,9 @@ fn load_modules(
   let login_mod_f = char_look_module_f
     .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod, io_service) })
     .combine(inventory_module_fut)
+    .combine(map_module)
     .map(fn(it) {
-      let (login_module, inventory_module) = it
+      let ((login_module, inventory_module), map_module) = it
       merge_handlers(
         login_module.make_handlers(
           fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
@@ -133,7 +134,14 @@ fn load_modules(
           },
           inventory_module.get_inventory(),
           fn(player) {
-            setup_game_ui(ui, get_stage(), player, action_registry, timer)
+            setup_game_ui(
+              ui,
+              get_stage(),
+              player,
+              action_registry,
+              timer,
+              map_module,
+            )
           },
         ),
       )
@@ -381,15 +389,35 @@ fn setup_game_ui(
   stage : Stage,
   player : @player.Player,
   registry : @action.Registry,
-  timer : @utils.Timer
+  timer : @utils.Timer,
+  map_module : @map.Module
 ) -> Unit {
   ui.change_state(UIStateGame::new(ui, stage, registry, timer))
   let stats = player.get_stats()
   ui.set_element(
     false,
     @ui.Element::new(
-      fn(hooks) { @char_stats.UIStatusBar::new(stats, hooks) },
+      fn(hooks) { @char_stats.StatusBarUI::new(stats, hooks) },
       @ui.UIElementType::STATUS_BAR,
+    ),
+  )
+  ui.set_element(
+    false,
+    @ui.Element::new(
+      fn(hooks) {
+        let mini_map_ui = map_module.new_mini_map_ui(hooks.on_state_changed)
+        stage.listen_map_change(fn(map_struct) {
+          guard mini_map_ui.get_ui_model().active else { return false }
+          mini_map_ui.set_map(
+            map_struct.id,
+            map_struct.map_info,
+            map_struct.mini_map_resources,
+          )
+          true
+        })
+        mini_map_ui
+      },
+      @ui.UIElementType::MINI_MAP,
     ),
   )
 }

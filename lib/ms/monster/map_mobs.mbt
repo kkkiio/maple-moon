@@ -10,7 +10,7 @@ struct MapMobs {
 pub fn MapMobs::new() -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
-    spawns: @queue.T::new(),
+    spawns: @queue.new(),
     mob_loadings: Array::new(),
     randomizer: @utils.Randomizer::default(),
   }

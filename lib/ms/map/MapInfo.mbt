@@ -1,29 +1,35 @@
+///|
 typealias Range[T] = @struct.Range[T]
 
+///|
 typealias Point[T] = @struct.Point[T]
 
+///|
 typealias NxNode = @resource.NxNode
 
-// Define the Seat struct and its methods
+///| Define the Seat struct and its methods
 struct Seat {
   pos : Point[Int]
 }
 
+///|
 pub fn Seat::from_resource(src : NxNode) -> Seat {
   { pos: src.as_point?().unwrap() }
 }
 
+///|
 pub fn inrange(self : Seat, position : Point[Int]) -> Bool {
   let hor = Range::symmetric(position.x, 10)
   let ver = Range::symmetric(position.y, 10)
   hor.contains(self.pos.x) && ver.contains(self.pos.y)
 }
 
+///|
 pub fn getpos(self : Seat) -> Point[Int] {
   self.pos
 }
 
-// Define the Ladder struct and its methods
+///| Define the Ladder struct and its methods
 struct Ladder {
   x : Int
   y1 : Int
@@ -31,6 +37,7 @@ struct Ladder {
   ladder : Bool
 }
 
+///|
 pub fn Ladder::from_resource(src : NxNode) -> Ladder {
   {
     x: src["x"].get_int?().unwrap(),
@@ -40,27 +47,35 @@ pub fn Ladder::from_resource(src : NxNode) -> Ladder {
   }
 }
 
+///|
 pub fn is_ladder(self : Ladder) -> Bool {
   self.ladder
 }
 
-pub fn Ladder::inrange(self : Ladder, position : Point[Int], upwards : Bool) -> Bool {
+///|
+pub fn Ladder::inrange(
+  self : Ladder,
+  position : Point[Int],
+  upwards : Bool
+) -> Bool {
   let hor = Range::symmetric(position.x, 10)
   let ver = Range::new(self.y1, self.y2)
   let y = if upwards { position.y - 5 } else { position.y + 5 }
   hor.contains(self.x) && ver.contains(y)
 }
 
+///|
 pub fn felloff(self : Ladder, y : Int, downwards : Bool) -> Bool {
   let dy = if downwards { y + 1 } else { y - 1 }
   dy > self.y2 || y + 1 < self.y1
 }
 
+///|
 pub fn get_x(self : Ladder) -> Int {
   self.x
 }
 
-// Define the MapInfo struct and its methods
+///| Define the MapInfo struct and its methods
 struct MapInfo {
   field_limit : Int
   cloud : Bool
@@ -78,6 +93,7 @@ struct MapInfo {
   ladders : Array[Ladder]
 }
 
+///|
 pub fn MapInfo::from_resource(
   src : NxNode,
   walls : Range[Int],
@@ -90,6 +106,7 @@ pub fn MapInfo::from_resource(
       "VRRight": Json::Number(vrRight),
       "VRTop": Json::Number(vrTop),
       "VRBottom": Json::Number(vrBottom),
+      ..
     } =>
       (
         Range::new(vrLeft.to_int(), vrRight.to_int()),
@@ -128,6 +145,7 @@ pub fn MapInfo::from_resource(
   }
 }
 
+///|
 pub fn MapInfo::new() -> MapInfo {
   {
     field_limit: 0,
@@ -147,26 +165,32 @@ pub fn MapInfo::new() -> MapInfo {
   }
 }
 
+///|
 pub fn is_underwater(self : MapInfo) -> Bool {
   self.swim
 }
 
+///|
 pub fn get_bgm(self : MapInfo) -> String {
   self.bgm
 }
 
+///|
 pub fn get_walls(self : MapInfo) -> Range[Int] {
   self.map_walls
 }
 
+///|
 pub fn get_borders(self : MapInfo) -> Range[Int] {
   self.map_borders
 }
 
+///|
 pub fn findseat(self : MapInfo, position : Point[Int]) -> Seat? {
   self.seats.iter().find_first(fn(seat) { seat.inrange(position) })
 }
 
+///|
 pub fn find_ladder(
   self : MapInfo,
   position : Point[Int],
@@ -175,4 +199,9 @@ pub fn find_ladder(
   self.ladders
   .iter()
   .find_first(fn(ladder) { ladder.inrange(position, upwards) })
+}
+
+///|
+pub fn MapInfo::get_full_name(self : MapInfo) -> String {
+  self.street_name + " : " + self.map_name
 }

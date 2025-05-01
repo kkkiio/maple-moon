@@ -32,6 +32,7 @@ pub(all) struct Stage {
   char_stats_module : @char_stats.Module
   add_task_fn : (@utils.Future[Unit]) -> Unit
   network : @net.Network
+  map_change_listeners : Array[(@map.MapStruct) -> Bool]
 }
 
 ///|
@@ -46,7 +47,7 @@ pub fn Stage::new(
   char_stats_module : @char_stats.Module,
   damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
-  packet_processor : @net.Network
+  network : @net.Network
 ) -> Stage {
   {
     map_portals_animations,
@@ -64,7 +65,8 @@ pub fn Stage::new(
     skill_book_module,
     char_stats_module,
     add_task_fn,
-    network: packet_processor,
+    network,
+    map_change_listeners: Array::new(),
   }
 }
 
@@ -225,6 +227,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
             map_struct.portals,
             map_struct.physics,
           )
+          self.map_change_listeners.retain(fn(listener) { listener(map_struct) })
           return // for simplicity, just wait for the next update
         }
         None => return ()
@@ -433,4 +436,12 @@ pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
   @graphics.GraphicsGL::get().clear()
   self.load(mapid, portalid)
   transfer_player()
+}
+
+///|
+pub fn listen_map_change(
+  self : Stage,
+  on_change : (@map.MapStruct) -> Bool
+) -> Unit {
+  self.map_change_listeners.push(on_change)
 }

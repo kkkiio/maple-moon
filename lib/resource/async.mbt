@@ -20,8 +20,11 @@ struct AsyncLoader {
 }
 
 ///|
-pub fn AsyncLoader::new(name : String) -> AsyncLoader {
-  { name, loader: get_async_resource_loader(name) }
+pub fn AsyncLoader::new(
+  name : String,
+  loader? : AsyncResourceLoader
+) -> AsyncLoader {
+  { name, loader: loader.or_else(fn() { get_async_resource_loader(name) }) }
 }
 
 ///|

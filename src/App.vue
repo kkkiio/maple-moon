@@ -381,6 +381,15 @@ export default {
                 get_image_loader: (loader) => loader.bmpLoader,
                 is_ready: (pollable) => pollable.ready,
                 get_result: (pollable) => pollable.value,
+                get_default_image_loader: () => imageLoader,
+                new_dir_resource_loader: (url) => new DirResourceLoader(url),
+                new_composite_async_resource_loader: (prefixedLoaders, imageLoader) => {
+                    const loaderMap = {}
+                    for (const elem of prefixedLoaders) {
+                        loaderMap[elem.prefix] = elem.loader;
+                    }
+                    return new CompositeAsyncResourceLoader(loaderMap, imageLoader);
+                }
             },
             bitmap: {
                 width: (bmp) => bmp.w,

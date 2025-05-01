@@ -7,7 +7,7 @@ fn as_moonjson(self : RawData) -> @json.JsonValue {
 }
 
 ///|
-priv extern type ImageLoader
+extern type ImageLoader
 
 ///|
 priv extern type ResourceLoader
@@ -294,4 +294,32 @@ pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int]! {
   let left_top = self["lt"].as_point!()
   let right_bottom = self["rb"].as_point!()
   @struct.Rectangle::new(left_top, right_bottom)
+}
+
+///| Array of T which json key is String
+pub type MapBasedArray[T] Array[T] derive(Show)
+
+///|
+pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
+  json,
+  path
+) -> MapBasedArray[T]! {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError(
+      (path, "MapBasedArray::from_json: expected object"),
+    )
+  }
+  let mut i = 0
+  let array = Array::new()
+  while true {
+    let key = i.to_string()
+    if obj[key] is Some(value) {
+      let item = @json.from_json!(value, path=path.add_key(key))
+      array.push(item)
+    } else {
+      break
+    }
+    i += 1
+  }
+  MapBasedArray(array)
 }

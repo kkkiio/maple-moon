@@ -10,6 +10,7 @@ pub(all) struct TalkSelections {
   selections : Array[(Int, String)]
 } derive(Eq, Show, ToJson)
 
+///|
 test "test text" {
   let markup_text = "Take this ship and you'll head off to a bigger continent. For #e150 mesos#n, I'll take you to #bVictoria Island#k. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?"
   let result = parse_talk_content!(markup_text, { fn_map: {} })
@@ -22,6 +23,7 @@ test "test text" {
   )
 }
 
+///|
 test "test selections" {
   let template =
     #|We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.#b
@@ -51,6 +53,7 @@ test "test selections" {
   )
 }
 
+///|
 test "test no options" {
   let template = "Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the \r\n#bAnt Tunnel#k."
   let result = parse_talk_content!(template, { fn_map: {} })
@@ -100,7 +103,7 @@ fn parse_talk_content(
     (text, "")
   } else {
     (
-      text.substring(start=0, end=selection_start).trim_end("\n"),
+      text.substring(start=0, end=selection_start).trim_end("\n").to_string(),
       text.substring(start=selection_start),
     )
   }
@@ -111,14 +114,14 @@ fn parse_talk_content(
   }
   let text_html = parse_text!(
     ctx,
-    normal_text.replace_all(old="\n", new="<br/>"),
+    normal_text.replace_all(old="\n", new="<br/>").to_string(),
   )
   if selection_text.is_empty() {
     return { text_html, selections: None }
   }
   let selections = []
   for line in selection_text.split("\n") {
-    let selection = parse_selection!(ctx, line)
+    let selection = parse_selection!(ctx, line.to_string())
     selections.push(selection)
   }
   { text_html, selections: Some({ color, selections }) }

@@ -14,7 +14,7 @@ struct ExplorerCreatorUI {
 }
 
 ///|
-struct LookSettingState {
+priv struct LookSettingState {
   mut female : Bool
   mut skin_idx : Int
   mut hair_color_idx : Int
@@ -119,7 +119,7 @@ pub fn ExplorerCreatorUIResource::load() ->
   let customize_char_src = login_loader.load_res([
     "Login.img", "CustomizeChar", "000",
   ])
-  let signboard2_src_fut = get_map_latest_loader().load_res([
+  let signboard2_src_fut = @map.get_map_latest_loader().load_res([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])
   let board_src = customize_char_src["board"]
@@ -547,18 +547,21 @@ pub impl @ui.Widget for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub fn remove_cursor(self : ExplorerCreatorUI) -> Unit {
-  // TODO: remove
+pub impl @ui.Widget for ExplorerCreatorUI with remove_cursor(self) -> Unit {
+  ignore(self)
 }
 
 ///|
-pub fn send_key(
-  self : ExplorerCreatorUI,
-  keycode : Int,
-  pressed : Bool,
-  escape : Bool
+pub impl @ui.Widget for ExplorerCreatorUI with send_key(
+  self,
+  keycode,
+  pressed,
+  escape
 ) -> Unit {
-  // TODO: remove
+  ignore(self)
+  ignore(keycode)
+  ignore(pressed)
+  ignore(escape)
 }
 
 ///|
@@ -570,9 +573,9 @@ pub fn get_ui_model(self : ExplorerCreatorUI) -> @ui.UIModel {
 const JOB_ID_EXPLORER = 1
 
 ///| Reserve a name for the character to be created.
-fn new_name_char_packet(name : String) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::NAME_CHAR)..write_string(name)
-}
+// fn new_name_char_packet(name : String) -> @net.OutPacket {
+//   @net.OutPacket::new(@net.OutPacketOpcode::NAME_CHAR)..write_string(name)
+// }
 
 ///| Requests creation of a character with the specified stats.
 fn new_create_char_packet(
@@ -600,11 +603,6 @@ fn new_create_char_packet(
   ..write_int(shoes)
   ..write_int(weapon)
   ..write_byte(female.to_int().to_byte())
-}
-
-///|
-pub fn get_map_latest_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("MapLatest")
 }
 
 ///|
@@ -708,10 +706,12 @@ pub impl @graphics.Drawable for CloudUI with draw(self, _) -> Unit {
 }
 
 ///|
-pub impl @ui.RenderUnit for CloudUI with update(self) -> Unit { self.x += 0.5 }
+pub impl @ui.RenderUnit for CloudUI with update(self) -> Unit {
+  self.x += 0.5
+}
 
 ///|
-struct IndexSelector {
+priv struct IndexSelector {
   compute : ((Int) -> Int) -> Unit
   part_choices : Array[Int]
 }

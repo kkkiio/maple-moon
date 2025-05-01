@@ -1,5 +1,5 @@
-///|
-struct UIStatusBar {
+///| Display character stats (hp/mp/exp)
+struct StatusBarUI {
   stats : CharStats
   base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
@@ -19,7 +19,7 @@ struct UIStatusBar {
 }
 
 ///|
-pub fn UIStatusBar::new(stats : CharStats, hooks : @ui.Hooks) -> UIStatusBar {
+pub fn StatusBarUI::new(stats : CharStats, hooks : @ui.Hooks) -> StatusBarUI {
   let vwidth = @constants.constants.get_viewwidth()
   let mainBar = @ui.common_ui_loader().load_res(["StatusBar3.img", "mainBar"])
   let stat = "status"
@@ -147,7 +147,7 @@ pub fn UIStatusBar::new(stats : CharStats, hooks : @ui.Hooks) -> UIStatusBar {
 }
 
 ///|
-pub impl @ui.Widget for UIStatusBar with render(self) {
+pub impl @ui.Widget for StatusBarUI with render(self) {
   let render_elements = Array::new()
   // Add background sprites
   self.sprites
@@ -232,7 +232,7 @@ pub impl @ui.Widget for UIStatusBar with render(self) {
 }
 
 ///|
-pub fn update(self : UIStatusBar) -> Unit {
+pub fn update(self : StatusBarUI) -> Unit {
   @ui.update_sprites(self.sprites.iter())
   for sprite in self.hpmp_sprites {
     sprite.update() |> ignore
@@ -264,21 +264,24 @@ fn getmppercent(stats : CharStats) -> Double {
 }
 
 ///|
-pub fn UIStatusBar::get_ui_model(self : UIStatusBar) -> @ui.UIModel {
+pub impl @ui.Widget for StatusBarUI with get_ui_model(self) -> @ui.UIModel {
   self.base
 }
 
 ///|
-pub fn UIStatusBar::send_key(
-  self : UIStatusBar,
-  keycode : Int,
-  pressed : Bool,
-  escape : Bool
+pub impl @ui.Widget for StatusBarUI with send_key(
+  self,
+  keycode,
+  pressed,
+  escape
 ) -> Unit {
-  // TODO: implement
+  ignore(self)
+  ignore(keycode)
+  ignore(pressed)
+  ignore(escape)
 }
 
 ///|
-pub fn remove_cursor(self : UIStatusBar) -> Unit {
-  // TODO: implement
+pub impl @ui.Widget for StatusBarUI with remove_cursor(self) -> Unit {
+  ignore(self)
 }

@@ -209,11 +209,11 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   self.effects.update()
   //     recurring_effects_.update();
   //     chat_balloon_.update();
-  self.invincible.update()
+  self.invincible.update(timestep=@config.step_time_ms)
   //     iron_body_.update();
 
-  let stancespeed = if speed >= 1.0 / @constants.step_time_ms.to_double() {
-    (@constants.step_time_ms.to_double() * speed).to_int()
+  let stancespeed = if speed >= 1.0 / @config.step_time_ms.to_double() {
+    (@config.step_time_ms.to_double() * speed).to_int()
   } else {
     0
   }

@@ -18,7 +18,7 @@ let y_offset : Int = 80
 
 ///|
 fn Camera::new() -> Camera {
-  let constants = @constants.constants
+  let constants = @config.constants
   {
     x: Linear::new(0.0),
     y: Linear::new(0.0 + y_offset.to_double()),

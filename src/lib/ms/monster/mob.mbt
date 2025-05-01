@@ -352,7 +352,7 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
     return -1
   }
   self.effects.update()
-  self.show_hp.update()
+  self.show_hp.update(timestep=@config.step_time_ms)
 
   // TODO: add buffs animation?
   if not(self.dying) {

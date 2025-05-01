@@ -190,7 +190,7 @@ impl @graphics.Drawable for CharLookUI with draw(self, _) -> Unit {
 
 ///|
 impl @ui.RenderUnit for CharLookUI with update(self) -> Unit {
-  self.char_look.update(@constants.step_time_ms) |> ignore
+  self.char_look.update(@config.step_time_ms) |> ignore
 }
 
 ///|

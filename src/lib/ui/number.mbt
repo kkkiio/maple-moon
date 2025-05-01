@@ -65,7 +65,7 @@ pub fn Number::draw(
 }
 
 ///|
-let fade_step : Double = @constants.step_time_ms.to_double() / 500
+let fade_step : Double = @config.step_time_ms.to_double() / 500
 
 ///|
 pub fn Number::update(self : Number) -> Bool {

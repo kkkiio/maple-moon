@@ -23,10 +23,7 @@ pub fn set_for(self : TimedBool, millis : Int) -> Unit {
 }
 
 ///|
-pub fn update(
-  self : TimedBool,
-  timestep~ : Int = @constants.step_time_ms
-) -> Unit {
+pub fn update(self : TimedBool, timestep~ : Int) -> Unit {
   if self.value {
     if timestep >= self.delay {
       self.value = false

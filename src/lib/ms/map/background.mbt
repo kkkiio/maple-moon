@@ -179,8 +179,8 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
     0 => dim_y
     cy => cy
   }
-  let vwidth = @constants.constants.get_viewwidth()
-  let vheight = @constants.constants.get_viewheight()
+  let vwidth = @config.constants.get_viewwidth()
+  let vheight = @config.constants.get_viewheight()
   let woffset = vwidth / 2
   let hoffset = vheight / 2
   let htile = match t {

@@ -15,10 +15,7 @@ pub fn push[T](self : TimedQueue[T], delay : Int64, t : T) -> Unit {
 }
 
 ///|
-pub fn process[T](
-  self : TimedQueue[T],
-  timestep~ : Int64 = @constants.step_time_ms.to_int64()
-) -> Iter[T] {
+pub fn process[T](self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
   self.time += timestep
   Iter::new(fn(yield_) {
     loop self.queue.peek() {

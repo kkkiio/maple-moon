@@ -44,8 +44,8 @@ fn handle_set_field(
   setup_game_ui : (@player.Player) -> Unit,
   message : SetFieldMessage
 ) -> Unit {
-  // @constants.constants.set_viewwidth(Setting::get(configWidth).load())
-  // @constants.constants.set_viewheight(Setting::get(configHeight).load())
+  // @config.constants.set_viewwidth(Setting::get(configWidth).load())
+  // @config.constants.set_viewheight(Setting::get(configHeight).load())
   match message {
     SetFieldMessage::ChangeMap(mapid~, portalid~) => transition(mapid, portalid)
     SetFieldMessage::SetField(stats~, inventory_entry~, skills~) =>

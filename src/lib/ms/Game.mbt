@@ -343,7 +343,7 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   //   _ => ()
   // }
   loaded_state.login_module.update()
-  let timestep = @constants.step_time_ms * 1000
+  let timestep = @config.step_time_ms * 1000
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()
   let times = acc / timestep

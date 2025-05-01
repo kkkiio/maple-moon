@@ -53,10 +53,16 @@ pub fn Combat::draw(
 
 ///|
 pub fn Combat::update(self : Combat) -> Unit {
-  for bullet_effect in self.bullet_effects.process() {
+  for
+    bullet_effect in self.bullet_effects.process(
+      timestep=@config.step_time_ms.to_int64(),
+    ) {
     self.apply_bullet_effect(bullet_effect)
   }
-  for dmg_eff in self.damage_effects.process() {
+  for
+    dmg_eff in self.damage_effects.process(
+      timestep=@config.step_time_ms.to_int64(),
+    ) {
     self.apply_damage_effect(dmg_eff)
   }
   self.bullets.retain(fn(mb) {

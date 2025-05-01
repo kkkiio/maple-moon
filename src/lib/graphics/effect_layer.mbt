@@ -73,7 +73,7 @@ struct Effect {
 ///|
 pub fn Effect::update(self : Effect) -> Bool {
   self.sprite.update(
-    timestep=(@constants.step_time_ms.to_double() * self.speed).to_int(),
+    timestep=(@config.step_time_ms.to_double() * self.speed).to_int(),
   )
 }
 

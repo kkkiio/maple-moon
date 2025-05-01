@@ -50,8 +50,8 @@ pub fn UIStateGame::new(
     // tooltip: None,
     // tooltip_parent: TooltipParent::NONE,
     time_rel_grabbed: timer.now(),
-    vwidth: @constants.constants.get_viewwidth(),
-    vheight: @constants.constants.get_viewheight(),
+    vwidth: @config.constants.get_viewwidth(),
+    vheight: @config.constants.get_viewheight(),
   }
   // icon_map: Map::from_array([
   //   (Icon.IconType::NONE, Widget.Type::NONE),
@@ -86,8 +86,8 @@ pub fn UIStateGame::draw(
 ///|
 pub fn UIStateGame::update(self : UIStateGame) -> Unit {
   let mut update_screen = false
-  let new_width = @constants.constants.get_viewwidth()
-  let new_height = @constants.constants.get_viewheight()
+  let new_width = @config.constants.get_viewwidth()
+  let new_height = @config.constants.get_viewheight()
   if self.vwidth != new_width || self.vheight != new_height {
     update_screen = true
     self.vwidth = new_width

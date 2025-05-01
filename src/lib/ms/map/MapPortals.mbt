@@ -56,11 +56,11 @@ pub fn MapPortals::load(
 pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
   self.map_portals_animations.animations[PortalType::REGULAR]
   .unwrap()
-  .update(timestep=@constants.step_time_ms)
+  .update(timestep=@config.step_time_ms)
   |> ignore
   self.map_portals_animations.animations[PortalType::HIDDEN]
   .unwrap()
-  .update(timestep=@constants.step_time_ms)
+  .update(timestep=@config.step_time_ms)
   |> ignore
   for _, portal in self.portals_by_id {
     match portal.get_type() {
@@ -74,7 +74,11 @@ pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn MapPortals::draw(self : MapPortals, viewpos : Point[Int], inter : Double) -> Unit {
+pub fn MapPortals::draw(
+  self : MapPortals,
+  viewpos : Point[Int],
+  inter : Double
+) -> Unit {
   self.portals_by_id.each(fn(_k, portal) { portal.draw(viewpos, inter) })
 }
 

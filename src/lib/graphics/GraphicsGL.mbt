@@ -407,7 +407,7 @@ fn clear_internal(self : Atlas) -> Unit {
 }
 
 ///|
-struct Quad {
+priv struct Quad {
   vertices : FixedArray[Vertex]
 } derive(Show)
 
@@ -468,7 +468,7 @@ fn Vertex::new(
 }
 
 ///|
-struct Leftover {
+priv struct Leftover {
   left : Int
   right : Int
   top : Int
@@ -495,7 +495,10 @@ fn Leftover::height(self : Leftover) -> Int {
 }
 
 ///|
-fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
+impl @quadtree.QuadCompare for Leftover with compare_to(
+  self : Leftover,
+  other : Leftover
+) -> @quadtree.Direction {
   let wg = self.width() >= other.width()
   let hg = self.height() >= other.height()
   match (wg, hg) {
@@ -507,7 +510,7 @@ fn compare_to(self : Leftover, other : Leftover) -> @quadtree.Direction {
 }
 
 ///|
-struct TexOffset {
+priv struct TexOffset {
   left : Int
   right : Int
   top : Int

@@ -69,7 +69,7 @@ pub fn DrawArgument::new_scale(
 }
 
 ///|
-pub fn DrawArgument::new4(
+pub fn DrawArgument::from_pos_and_stretch(
   position : Point[Int],
   stretch : Point[Int]
 ) -> DrawArgument {

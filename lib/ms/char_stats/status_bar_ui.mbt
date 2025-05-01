@@ -31,7 +31,7 @@ pub fn StatusBarUI::new(stats : CharStats, hooks : @ui.Hooks) -> StatusBarUI {
   sprites.push(
     @graphics.Sprite::from_resource(
       expBar["backgrnd"],
-      state_args=@graphics.DrawArgument::new4(
+      state_args=@graphics.DrawArgument::from_pos_and_stretch(
         @struct.Point::new(0, 87),
         @struct.Point::new(vwidth, 0),
       ),

@@ -3,6 +3,16 @@
 struct MiniMapUIResource {
   /// Marker for portals.
   portal_marker : @graphics.Animation
+  // Window frame elements for Normal mode
+  minmap_middle_center : @graphics.Animation
+  minmap_middle_left : @graphics.Animation
+  minmap_middle_right : @graphics.Animation
+  minmap_up_center : @graphics.Animation
+  minmap_up_left : @graphics.Animation
+  minmap_up_right : @graphics.Animation
+  minmap_down_center : @graphics.Animation
+  minmap_down_left : @graphics.Animation
+  minmap_down_right : @graphics.Animation
 }
 
 ///| Loads the necessary graphical resources for displaying the MiniMap UI.
@@ -11,9 +21,45 @@ pub fn MiniMapUIResource::load() -> @utils.Future[MiniMapUIResource] {
   let portal_fut = map_latest_loader.load_res([
     "MapHelper.img", "minimap", "portal",
   ])
-  portal_fut.map(fn(portal_node) {
+  // Load UI window elements from UIWindow2.img
+  let ui_loader = @ui.ui_window_2_loader()
+  let minmap_fut = ui_loader.load_res(["MiniMap", "MinMap"])
+  @utils.Future::combine(portal_fut, minmap_fut).map(fn(results) {
+    let (portal_node, minmap_node) = results
     let portal_marker = @graphics.Animation::from_resource(portal_node)
-    { portal_marker, }
+
+    // Load normal mode window frame elements
+    let minmap_middle_center = @graphics.Animation::from_resource(
+      minmap_node["c"],
+    )
+    let minmap_middle_left = @graphics.Animation::from_resource(
+      minmap_node["w"],
+    )
+    let minmap_middle_right = @graphics.Animation::from_resource(
+      minmap_node["e"],
+    )
+    let minmap_up_center = @graphics.Animation::from_resource(minmap_node["n"])
+    let minmap_up_left = @graphics.Animation::from_resource(minmap_node["nw"])
+    let minmap_up_right = @graphics.Animation::from_resource(minmap_node["ne"])
+    let minmap_down_center = @graphics.Animation::from_resource(
+      minmap_node["s"],
+    )
+    let minmap_down_left = @graphics.Animation::from_resource(minmap_node["sw"])
+    let minmap_down_right = @graphics.Animation::from_resource(
+      minmap_node["se"],
+    )
+    {
+      portal_marker,
+      minmap_middle_center,
+      minmap_middle_left,
+      minmap_middle_right,
+      minmap_up_center,
+      minmap_up_left,
+      minmap_up_right,
+      minmap_down_center,
+      minmap_down_left,
+      minmap_down_right,
+    }
   })
 }
 
@@ -169,39 +215,38 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
         178,
         @math.maximum(mark_text_width, map_dimensions.x + 20),
       )
+      let c_stretch = @math.maximum(0, window_width - 128)
       let map_draw_origin_x_ = @math.maximum(
         10,
         window_width / 2 - map_dimensions.x / 2,
       )
-      let map_draw_origin_y_ = if map_dimensions.y <= 20 {
+      let (map_draw_origin_y_, m_stretch, down_y_offset) = if map_dimensions.y <=
+        20 {
         let m_stretch = 5
-        // let down_y_offset = 17 + m_stretch
-        10 + m_stretch - map_dimensions.y
+        let down_y_offset = 17 + m_stretch
+        (10 + m_stretch - map_dimensions.y, m_stretch, down_y_offset)
       } else {
-        // let m_stretch = map_dimensions.y - 17
-        // let down_y_offset = 17 + m_stretch
-        20
+        let m_stretch = map_dimensions.y - 17
+        let down_y_offset = 17 + m_stretch
+        (20, m_stretch, down_y_offset)
       }
+      // Normal sprites queue
+      // (7, 10) is the top left corner of the inner window
+      // 114 = 128 (width of left and right borders) - 14 (width of middle borders
+      // * 2). 27 = height of inner frame drawn on up and down borders
       let render_elements = []
-
-      //     for (const auto &sprite : normal_sprites_) {
-      //         sprite.draw(position_, alpha);
-      //     }
-
-      //     if (has_map_) {
-      //         Animation portal_marker = Animation(marker_["portal"]);
-
-      //         for (const auto &sprite : static_marker_info_) {
-      //             portal_marker.draw(position_ + sprite.second, alpha);
-      //         }
-
-      //         draw_movable_markers(position_, alpha);
-
-      //         if (list_npc_enabled_) {
-      //             draw_npclist(normal_dimensions_, alpha);
-      //         }
-      //     }
-      // 
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_middle_center,
+            @graphics.DrawArgument::from_pos_and_stretch(
+              @struct.Point::new(7, 10),
+              @struct.Point::new(c_stretch + 114, m_stretch + 27),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
       if mini_map_resources is Some(res) {
         render_elements.push(
           @ui.RenderElement::Static(
@@ -215,34 +260,110 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
             ),
           ),
         )
+      }
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_middle_left,
+            @graphics.DrawArgument::from_pos_and_stretch(
+              @struct.Point::new(0, ML_MR_Y_),
+              @struct.Point::new(0, m_stretch),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      let ur_x_offset = CENTER_START_X_ + c_stretch
+      let middle_right_x_ = ur_x_offset + 55
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_middle_right,
+            @graphics.DrawArgument::from_pos_and_stretch(
+              @struct.Point::new(middle_right_x_, ML_MR_Y_),
+              @struct.Point::new(0, m_stretch),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_up_center,
+            @graphics.DrawArgument::from_pos_and_stretch(
+              @struct.Point::new(CENTER_START_X_, 0) + window_ul_pos_,
+              @struct.Point::new(c_stretch, 0),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_up_left,
+            @graphics.DrawArgument::new(pos=window_ul_pos_),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_up_right,
+            @graphics.DrawArgument::new(
+              pos=@struct.Point::new(ur_x_offset, 0) + window_ul_pos_,
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_down_center,
+            @graphics.DrawArgument::from_pos_and_stretch(
+              @struct.Point::new(CENTER_START_X_, down_y_offset + 18),
+              @struct.Point::new(c_stretch, 0),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_down_left,
+            @graphics.DrawArgument::new(
+              pos=@struct.Point::new(0, down_y_offset),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      render_elements.push(
+        @ui.RenderElement::Static(
+          @graphics.Sprite::new(
+            self.resource.minmap_down_right,
+            @graphics.DrawArgument::new(
+              pos=@struct.Point::new(ur_x_offset, down_y_offset),
+            ),
+          )
+          |> @ui.SpriteUI,
+        ),
+      )
+      let normal_dimensions_ = @struct.Point::new(
+        ur_x_offset + 64,
+        down_y_offset + 27,
+      )
+      if mini_map_resources is Some(res) {
         let portal_marker = self.resource.portal_marker
-
-        //     Animation marker_sprite;
-
-        //     /// Portals
-        //     nl::node portals = map_["portal"];
         let portals = res.portals
-        //     marker_sprite = Animation(marker_["portal"]);
         let marker_sprite = portal_marker
-        //     Point<int16_t> marker_offset =
-        //         marker_sprite.get_dimensions() / Point<int16_t>(2, 0);
         let marker_offset = marker_sprite.get_dimensions() /
           @struct.Point::new(2, 0)
         let marker_pos_offset = @struct.Point::new(0, 65)
-
-        //     for (nl::node portal = portals.begin(); portal != portals.end(); ++portal) {
-        //         int portal_type = portal["pt"];
-
-        //         if (portal_type == 2) {
-        //             Point<int16_t> marker_pos =
-        //                 (Point<int16_t>(portal["x"], portal["y"]) + marker_pos_offset
-        //                  + center_offset_)
-        //                     / scale_
-        //                 - marker_offset
-        //                 + Point<int16_t>(map_draw_origin_x_, map_draw_origin_y_);
-        //             static_marker_info_.emplace_back(portal.name(), marker_pos);
-        //         }
-        //     }
         for portal in portals {
           let portal_type = portal.pt
           if portal_type == 2 {
@@ -265,6 +386,11 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
             )
           }
         }
+        //         draw_movable_markers(position_, alpha);
+
+        //         if (list_npc_enabled_) {
+        //             draw_npclist(normal_dimensions_, alpha);
+        //         }
       }
       { render_elements, }
     }
@@ -388,3 +514,30 @@ test "parse portal marker" {
     ,
   )
 }
+
+///|
+const CENTER_START_X_ = 64
+
+///|
+const BTN_MIN_Y_ = 4
+
+///|
+const ML_MR_Y_ = 17
+
+///|
+const MAX_ADJ_ = 40
+
+///|
+const M_START_ = 36
+
+///|
+const LISTNPC_ITEM_HEIGHT_ = 17
+
+///|
+const LISTNPC_ITEM_WIDTH_ = 140
+
+///|
+const LISTNPC_TEXT_WIDTH_ = 114
+
+///|
+let window_ul_pos_ : @struct.Point[Int] = @struct.Point::new(0, 0)

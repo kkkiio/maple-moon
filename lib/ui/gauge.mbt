@@ -5,7 +5,9 @@ pub(all) enum GaugeType {
 } derive(Show)
 
 ///|
-pub impl ToJson for GaugeType with to_json(self) { self.to_string().to_json() }
+pub impl ToJson for GaugeType with to_json(self) {
+  self.to_string().to_json()
+}
 
 ///|
 struct Gauge {
@@ -90,7 +92,7 @@ pub impl @graphics.Drawable for Gauge with draw(
       GaugeType::GAME => {
         self.bar_front.draw(
           args +
-          @graphics.DrawArgument::new4(
+          @graphics.DrawArgument::from_pos_and_stretch(
             @struct.Point::new(0, 0),
             @struct.Point::new(length, 0),
           ),
@@ -103,7 +105,7 @@ pub impl @graphics.Drawable for Gauge with draw(
         self.bar_front.draw(args.add_pos(-pos_adj))
         self.bar_mid.draw(
           args +
-          @graphics.DrawArgument::new4(
+          @graphics.DrawArgument::from_pos_and_stretch(
             Point::new(0, 0),
             @struct.Point::new(length, 0),
           ),

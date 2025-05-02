@@ -250,7 +250,7 @@ pub fn add_opacity(self : DrawArgument, argopc : Double) -> DrawArgument {
 }
 
 ///|
-pub fn op_add(self : DrawArgument, o : DrawArgument) -> DrawArgument {
+pub impl Add for DrawArgument with op_add(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   DrawArgument::new17(
     self.pos + o.pos,
     self.center + o.center,
@@ -276,7 +276,7 @@ pub fn merge(self : DrawArgument, o : DrawArgument) -> DrawArgument {
 }
 
 ///|
-pub fn op_sub(self : DrawArgument, o : DrawArgument) -> DrawArgument {
+pub impl Sub for DrawArgument with op_sub(self : DrawArgument, o : DrawArgument) -> DrawArgument {
   DrawArgument::new17(
     self.pos - o.pos,
     self.center - o.center,

@@ -578,31 +578,34 @@ const JOB_ID_EXPLORER = 1
 // }
 
 ///| Requests creation of a character with the specified stats.
-fn new_create_char_packet(
-  name : String,
-  job : Int,
-  face : Int,
-  hair : Int,
-  hairc : Int,
-  skin : Int,
-  top : Int,
-  bot : Int,
-  shoes : Int,
-  weapon : Int,
+priv struct CreateCharPacket {
+  name : String
+  job : Int
+  face : Int
+  hair : Int
+  hairc : Int
+  skin : Int
+  top : Int
+  bot : Int
+  shoes : Int
+  weapon : Int
   female : Bool
-) -> @net.OutPacket {
+} derive(Show)
+
+///|
+impl @net.OutMessage for CreateCharPacket with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::CREATE_CHAR)
-  ..write_string(name)
-  ..write_int(job)
-  ..write_int(face)
-  ..write_int(hair)
-  ..write_int(hairc)
-  ..write_int(skin)
-  ..write_int(top)
-  ..write_int(bot)
-  ..write_int(shoes)
-  ..write_int(weapon)
-  ..write_byte(female.to_int().to_byte())
+  ..write_string(self.name)
+  ..write_int(self.job)
+  ..write_int(self.face)
+  ..write_int(self.hair)
+  ..write_int(self.hairc)
+  ..write_int(self.skin)
+  ..write_int(self.top)
+  ..write_int(self.bot)
+  ..write_int(self.shoes)
+  ..write_int(self.weapon)
+  ..write_byte(self.female.to_int().to_byte())
 }
 
 ///|

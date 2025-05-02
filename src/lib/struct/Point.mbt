@@ -65,13 +65,6 @@ pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
 }
 
 ///|
-pub impl[T : Div] Div for Point[T] with op_div(self : Point[T], p2 : Point[T]) -> Point[
-  T,
-] {
-  { x: self.x / p2.x, y: self.y / p2.y }
-}
-
-///|
 pub fn div_float(self : Point[Float], f : Float) -> Point[Float] {
   { x: self.x / f, y: self.y / f }
 }

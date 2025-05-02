@@ -106,7 +106,7 @@ pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
 }
 
 ///|
-pub fn use_item(mod : Module, kind : String, index : Int) -> String {
+pub fn use_item_at(mod : Module, kind : String, index : Int) -> String {
   let slot_no = index + 1
   guard get_type_id_by_kind?(kind) is Ok(type_id) else {
     return "unknown inventory kind \{kind}"

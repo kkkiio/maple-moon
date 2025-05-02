@@ -353,17 +353,14 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
           |> @ui.SpriteUI,
         ),
       )
-      let normal_dimensions_ = @struct.Point::new(
-        ur_x_offset + 64,
-        down_y_offset + 27,
-      )
+      let normal_dimensions_ = Point::new(ur_x_offset + 64, down_y_offset + 27)
       if mini_map_resources is Some(res) {
         let portal_marker = self.resource.portal_marker
         let portals = res.portals
         let marker_sprite = portal_marker
-        let marker_offset = marker_sprite.get_dimensions() /
-          @struct.Point::new(2, 0)
-        let marker_pos_offset = @struct.Point::new(0, 65)
+        let mark_sprite_dim = marker_sprite.get_dimensions()
+        let marker_offset = Point::new(mark_sprite_dim.x / 2, mark_sprite_dim.y)
+        let marker_pos_offset = Point::new(0, 65)
         for portal in portals {
           let portal_type = portal.pt
           if portal_type == 2 {
@@ -373,7 +370,7 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
             .to_float()
             .div_float(res.draw_data.scale) -
             marker_offset.to_float() +
-            @struct.Point::new(map_draw_origin_x_, map_draw_origin_y_).to_float()).to_int()
+            Point::new(map_draw_origin_x_, map_draw_origin_y_).to_float()).to_int()
             render_elements.push(
               @ui.RenderElement::Static(
                 @ui.SpriteUI(

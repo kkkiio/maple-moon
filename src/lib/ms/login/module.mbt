@@ -6,11 +6,11 @@ struct Module {
   io_service : @io_task.Service
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
-  mut receiving_server_list : Array[World]
+  mut receiving_server_list : Array[World] // temporary storage for unfinished server list
   mut login_task : LoginTask?
   mut connect_task : ConnectChannelTask?
   // to reconnect
-  mut input_acc_pass : (String, String)?
+  // mut input_acc_pass : (String, String)?
   mut select_cid : Int?
 }
 
@@ -30,7 +30,7 @@ pub fn Module::load(
     receiving_server_list: [],
     login_task: None,
     connect_task: None,
-    input_acc_pass: None,
+    // input_acc_pass: None,
     select_cid: None,
     io_service,
   })
@@ -45,47 +45,54 @@ pub fn make_handlers(
   setup_game_ui : (@player.Player) -> Unit
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    @net.make_handler(@net.LOGIN_RESULT, parse_login_result, fn(res) {
-      self.handle_login_result(res)
-    }),
-    (
-      @net.SERVER_STATUS,
-      @net.with_log(@net.SERVER_STATUS, fn(recv : @net.InPacket) {
-        handle_server_status!(recv)
-      }),
+    @net.make_handler(
+      @net.LOGIN_RESULT,
+      parse_login_result,
+      fn(res) { self.handle_login_result(res) },
+      log_recv=true,
     ),
-    (
+    @net.make_handler(@net.SERVER_STATUS, parse_server_status, fn(status) {
+      @log.info({ "status": status }, "server status")
+    }),
+    @net.make_handler(
       @net.SERVER_LIST,
-      @net.with_log(@net.SERVER_LIST, fn(recv : @net.InPacket) {
-        handle_server_list!(self, recv)
-      }),
+      fn(recv) { self.parse_server_list!(recv) },
+      fn(worlds) { self.handle_server_list(worlds) },
     ),
     @net.make_handler(@net.CHAR_LIST, log_recv=true, parse_char_list, fn(msg) {
       handle_char_list(self, msg)
     }),
-    (
+    @net.make_handler(
       @net.CHARNAME_RESPONSE,
-      @net.with_log(@net.CHARNAME_RESPONSE, fn(recv : @net.InPacket) {
+      fn(recv) {
         let name = recv.read_string!()
         let used = recv.read_bool!()
+        (name, used)
+      },
+      fn(info) {
+        let (name, used) = info
         if used {
           @log.warn({ "name": name }, "Name already in use")
         } else {
           ...
         }
-      }),
+      },
+      log_recv=true,
     ),
-    (
+    @net.make_handler(
       @net.SERVER_IP,
-      @net.with_log(@net.SERVER_IP, fn(recv : @net.InPacket) {
-        handle_server_ip!(self, recv)
-      }),
+      parse_server_ip,
+      fn(info) {
+        let (port, cid) = info
+        handle_server_ip(self, port, cid)
+      },
+      log_recv=true,
     ),
-    (
+    @net.make_handler(
       @net.ADD_NEWCHAR_ENTRY,
-      @net.with_log(@net.ADD_NEWCHAR_ENTRY, fn(recv : @net.InPacket) {
-        handle_add_new_char_entry!(self, recv)
-      }),
+      parse_add_new_char_entry,
+      fn(character) { handle_add_new_char_entry(self, character) },
+      log_recv=true,
     ),
     @net.make_handler(@net.SET_FIELD, parse_set_field, fn(msg) {
       handle_set_field(
@@ -108,7 +115,7 @@ pub fn Module::login(
   password : String,
   callback : (String) -> Unit
 ) -> Unit {
-  self.input_acc_pass = Some((account, password))
+  // self.input_acc_pass = Some((account, password))
   self.login_task = Some({
     processor: self.network,
     state: ACQ_CONN,
@@ -327,16 +334,27 @@ pub fn handle_login_result(self : Module, result : LoginResult) -> Unit {
 }
 
 ///|
-pub fn handle_server_status(recv : @net.InPacket) -> Unit!Error {
-  // Possible values for status:
-  // 0 - Normal
-  // 1 - Highly populated
-  // 2 - Full
-  recv.read_short!() |> ignore // status
+enum ServerStatus {
+  Normal
+  HighlyPopulated
+  Full
+} derive(Show)
+
+///|
+pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus!Error {
+  match recv.read_short!() {
+    0 => Normal
+    1 => HighlyPopulated
+    2 => Full
+    i => fail!("Unknown server status: \{i}")
+  }
 }
 
 ///|
-pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
+fn parse_server_list(
+  self : Module,
+  recv : @net.InPacket
+) -> Array[World]?!Error {
   while recv.available() {
     let world = parse_world!(recv)
     if world.wid != -1 {
@@ -344,43 +362,36 @@ pub fn handle_server_list(self : Module, recv : @net.InPacket) -> Unit!Error {
     } else { // end of list
       let worlds = self.receiving_server_list
       self.receiving_server_list = []
-      @log.debug({ "worlds": worlds }, "server list")
-      enter_world(0, 0, self.network)
-      break
+      return Some(worlds)
     }
   }
+  None
 }
 
 ///|
-fn enter_world(
-  worldId : Int,
-  channelId : Int,
-  processor : @net.Network
-) -> Unit {
-  @config.global().set_worldid(worldId)
-  @config.global().set_channelid(channelId)
-  fn_char_list_req(worldId, channelId, processor)
+fn handle_server_list(self : Module, worlds : Array[World]?) -> Unit {
+  guard worlds is Some(worlds) else { // unfinished server list
+    return
+  }
+  let world = worlds[0]
+  let channel = 0
+  @config.global().set_worldid(world.wid)
+  @config.global().set_channelid(channel)
+  self.network.send_message({ worldId: world.wid, channelId: channel })
 }
 
 ///|
-fn fn_char_list_req(
-  worldId : Int,
-  channelId : Int,
-  processor : @net.Network
-) -> Unit {
-  let packet = new_char_list_request_packet(worldId, channelId)
-  processor.send_packet(packet)
-}
-
-///|
-fn new_char_list_request_packet(
-  worldId : Int,
+priv struct CharListRequestPacket {
+  worldId : Int
   channelId : Int
-) -> @net.OutPacket {
+} derive(Show)
+
+///|
+impl @net.OutMessage for CharListRequestPacket with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::CHAR_LIST_REQUEST)
   ..write_byte((0).to_byte())
-  ..write_byte(worldId.to_byte())
-  ..write_byte(channelId.to_byte())
+  ..write_byte(self.worldId.to_byte())
+  ..write_byte(self.channelId.to_byte())
 }
 
 ///|
@@ -410,10 +421,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
   match pic {
     2 =>
       match mod.select_cid {
-        Some(cid) => {
-          let packet = new_select_char_packet(cid)
-          mod.network.send_packet(packet)
-        }
+        Some(cid) => mod.network.send_message({ character_id: cid })
         None => {
           let resource_f = SelectCharUIResource::load()
           let char_looks_f = mod.characters.map(fn(ce) {
@@ -432,7 +440,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                   char_looks,
                   on_select_character=fn(cid) {
                     mod.select_cid = Some(cid)
-                    mod.network.send_packet(new_select_char_packet(cid))
+                    mod.network.send_message(SelectCharPacket::new(cid))
                   },
                   on_new_character=fn() {
                     mod.ui_container.remove_ui(key)
@@ -452,20 +460,19 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                                   )
                                 },
                                 on_create_char=fn(s) {
-                                  let packet = new_create_char_packet(
-                                    s.name,
-                                    s.job,
-                                    s.face_id,
-                                    s.hair_id,
-                                    s.hair_color_id,
-                                    s.skin_id,
-                                    s.top_id,
-                                    s.bot_id,
-                                    s.shoe_id,
-                                    s.weapon_id,
-                                    s.female,
-                                  )
-                                  mod.network.send_packet(packet)
+                                  mod.network.send_message({
+                                    name: s.name,
+                                    job: s.job,
+                                    face: s.face_id,
+                                    hair: s.hair_id,
+                                    hairc: s.hair_color_id,
+                                    skin: s.skin_id,
+                                    top: s.top_id,
+                                    bot: s.bot_id,
+                                    shoes: s.shoe_id,
+                                    weapon: s.weapon_id,
+                                    female: s.female,
+                                  })
                                 },
                               )
                             },
@@ -492,23 +499,38 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
   }
 }
 
-///|
-pub fn handle_server_ip(mod : Module, recv : @net.InPacket) -> Unit! {
+///| Parse server IP response packet
+fn parse_server_ip(recv : @net.InPacket) -> (Int, Int)! {
   recv.skip_byte!()
   let (_, port) = parse_login!(recv)
   let cid = recv.read_int!()
+  (port, cid)
+}
+
+///| Handle server IP response
+pub fn handle_server_ip(mod : Module, port : Int, cid : Int) -> Unit {
   match mod.characters.search_by(fn(c) { c.id == cid }) {
     Some(i) => mod.selected_index = Some(i)
-    None => fail!("no character with id=\{cid}")
+    None => {
+      @log.error({ "cid": cid }, "no character with id=\{cid}")
+      panic()
+    }
   }
   mod.network.connect_channel(port)
   mod.connect_task = Some({ network: mod.network, cid })
 }
 
 ///|
-pub fn handle_add_new_char_entry(mod : Module, recv : @net.InPacket) -> Unit! {
+fn parse_add_new_char_entry(recv : @net.InPacket) -> @character.CharEntry! {
   recv.skip!(1)
-  let character = parse_charentry!(recv)
+  parse_charentry!(recv)
+}
+
+///|
+pub fn handle_add_new_char_entry(
+  mod : Module,
+  character : @character.CharEntry
+) -> Unit {
   mod.characters.push(character)
   mod.ui_container.remove_ui(@ui.UIElementType::CLASS_CREATION)
   // TODO: show character selection UI
@@ -763,8 +785,18 @@ pub fn get_map_pretty_loader() -> @resource.AsyncLoader {
 }
 
 ///| Tell the server which character was picked.
-fn new_select_char_packet(character_id : Int) -> @net.OutPacket {
+priv struct SelectCharPacket {
+  character_id : Int
+} derive(Show)
+
+///|
+fn SelectCharPacket::new(character_id : Int) -> SelectCharPacket {
+  { character_id, }
+}
+
+///|
+impl @net.OutMessage for SelectCharPacket with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::SELECT_CHAR)
-  ..write_int(character_id)
+  ..write_int(self.character_id)
   ..write_hardware_info()
 }

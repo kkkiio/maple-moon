@@ -253,18 +253,8 @@ export function setupGl(gl) {
         gl.UNSIGNED_BYTE,
         null
     );
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.enable(gl.BLEND); // enable alpha blending
-    // The Canvas 2D API produces only premultiplied alpha values.
-    // https://webgl2fundamentals.org/webgl/lessons/webgl-text-texture.html
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); 
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    //   gl.bindVertexArray(null);
     return {
+        get_gl: () => gl,
         flush: (triangles) => {
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);

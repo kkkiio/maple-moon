@@ -31,7 +31,7 @@
 	],
 	"link": {
 		"js": {
-			"exports": ["watch_inventory_by_kind", "watch_meso", "use_item", "drop_item"],
+			"exports": ["watch_inventory_by_kind", "watch_meso", "use_item_at", "drop_item"],
 			"format": "esm"
 		}
 	}

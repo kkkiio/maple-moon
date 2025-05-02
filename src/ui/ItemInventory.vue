@@ -1,5 +1,5 @@
 <script setup>
-import { use_item, watch_inventory_by_kind, watch_meso, drop_item } from 'lib/ms/inventory/inventory.js';
+import { use_item_at, watch_inventory_by_kind, watch_meso, drop_item } from 'lib/ms/inventory/inventory.js';
 import { NAlert, NTabPane, NTabs, NTooltip, NButton, NModal, NInputNumber } from 'naive-ui';
 import { computed, onUnmounted, ref } from 'vue';
 import LazyImage from '@/components/LazyImage.vue';
@@ -60,7 +60,7 @@ const handleItemClick = (kind, index) => {
 
 const handleUseItem = () => {
     if (selected.value.kind !== null && selected.value.index !== null) {
-        const result = use_item(mod, selected.value.kind, selected.value.index)
+        const result = use_item_at(mod, selected.value.kind, selected.value.index)
         if (result) {
             hint.value = result
         }

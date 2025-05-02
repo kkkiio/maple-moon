@@ -10,7 +10,7 @@ pub fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network
 ) -> @utils.Future[Module] {
-  { inventory: Inventory::new(), player_getter, network }
+  { inventory: Inventory::new(network), player_getter, network }
   |> @utils.Future::from_value
 }
 

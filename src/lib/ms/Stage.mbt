@@ -296,7 +296,7 @@ pub fn send_key(self : Stage, mapping : @keyboard.Mapping, down : Bool) -> Unit 
           player.send_action(action, down)
         }
         SKILL(skill_id) => self.combat.unwrap().use_move(player, skill_id)
-        // @keyboard.Id::ITEM => self.player.use_item(action)
+        ITEM(item_id) => self.inventory.use_item(item_id)
         // @keyboard.Id::FACE => self.player.set_expression(action)
         _ => ()
       }

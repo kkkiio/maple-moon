@@ -120,13 +120,18 @@ pub impl @net.OutMessage for UnequipItemPacket with pack(self) -> @net.OutPacket
 }
 
 ///|
-priv struct UseItemPacket {
+priv struct UseItemMessage {
   slot_no : Int
   itemid : Int
 } derive(Show)
 
 ///|
-impl @net.OutMessage for UseItemPacket with pack(self) -> @net.OutPacket {
+fn UseItemMessage::new(slot_no : Int, itemid : Int) -> UseItemMessage {
+  { slot_no, itemid }
+}
+
+///|
+impl @net.OutMessage for UseItemMessage with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
   ..write_time()
   ..write_short(self.slot_no)

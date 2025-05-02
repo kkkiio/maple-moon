@@ -10,6 +10,7 @@
   ],
   "targets": {
     "gl.mbt": ["js","wasm","wasm-gc"],
-    "gl.js.mbt": ["js"]
+    "gl.js.mbt": ["js"],
+    "text.js.mbt": ["js"]
   }
 }

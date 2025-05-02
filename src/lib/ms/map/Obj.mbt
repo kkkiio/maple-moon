@@ -19,6 +19,7 @@ pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
       "l0": String(src_l0),
       "l1": String(src_l1),
       "l2": String(src_l2),
+      ..
     } =>
       get_object_loader()
       .load_res(["\{src_oS}.img", src_l0, src_l1, src_l2])

@@ -1,4 +1,10 @@
 ///|
+priv extern type GL
+
+///|
+fn get_gl() -> GL = "gl" "get_gl"
+
+///|
 extern type Image
 
 ///|
@@ -28,7 +34,7 @@ fn glTexSubImage2D(xoffset : Int, yoffset : Int, bmp : @resource.LoadedImage) = 
 fn glFlush(v : Vertices) = "gl" "flush"
 
 ///|
-extern type Vertices
+priv extern type Vertices
 
 ///|
 fn Vertices::new(length : Int) -> Vertices = "gl" "newVertices"

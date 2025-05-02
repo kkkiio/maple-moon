@@ -72,6 +72,7 @@ struct Inventory {
   mut bullet_slot : Int
   item_listeners_map : Map[TypeId, Array[() -> Bool]] // TODO: fine-grained listeners
   meso_listeners : Array[(Int) -> Bool]
+  network : @net.Network
 }
 
 ///|
@@ -83,7 +84,7 @@ pub struct SlotItem {
 }
 
 ///|
-pub fn Inventory::new() -> Inventory {
+pub fn Inventory::new(network : @net.Network) -> Inventory {
   {
     inventories: @utils.DefaultMap::new(fn() { Map::new() }),
     items: Map::new(),
@@ -98,6 +99,7 @@ pub fn Inventory::new() -> Inventory {
     ]),
     item_listeners_map: Map::new(),
     meso_listeners: Array::new(),
+    network,
   }
 }
 
@@ -396,4 +398,23 @@ pub fn listen_item_changes(
 ///|
 pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
   self.meso_listeners.push(listener)
+}
+
+///|
+fn Inventory::find_item(self : Inventory, t : TypeId, itemid : Int) -> Int? {
+  for _, slot in self.inventories[t] {
+    if slot.item_id == itemid {
+      return Some(slot.unique_id)
+    }
+  }
+  None
+}
+
+///|
+pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
+  guard TypeId::by_item_id(itemid) is Some(type_) else { return }
+  guard self.find_item(type_, itemid) is Some(unique_id) else { return }
+  if type_ is TypeId::USE {
+    self.network.send_message(UseItemMessage::new(unique_id, itemid))
+  }
 }

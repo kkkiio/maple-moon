@@ -27,6 +27,23 @@ priv struct Atlas {
 
 ///|
 fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
+  let gl = get_gl()
+  let tex2d = gl.ge("TEXTURE_2D")
+  let minfilter = gl.ge("TEXTURE_MIN_FILTER")
+  let magfilter = gl.ge("TEXTURE_MAG_FILTER")
+  let wraps = gl.ge("TEXTURE_WRAP_S")
+  let wrapt = gl.ge("TEXTURE_WRAP_T")
+  gl.texParameteri(tex2d, minfilter, gl.gi("NEAREST"))
+  gl.texParameteri(tex2d, magfilter, gl.gi("NEAREST"))
+  gl.texParameteri(tex2d, wraps, gl.gi("CLAMP_TO_EDGE"))
+  gl.texParameteri(tex2d, wrapt, gl.gi("CLAMP_TO_EDGE"))
+  gl.enable(gl.ge("BLEND")) // enable alpha blending
+  // The Canvas 2D API produces only premultiplied alpha values.
+  // https://webgl2fundamentals.org/webgl/lessons/webgl-text-texture.html
+  gl.pixelStorei(gl.ge("UNPACK_PREMULTIPLY_ALPHA_WEBGL"), true)
+  // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); 
+  gl.blendFunc(gl.ge("ONE"), gl.ge("ONE_MINUS_SRC_ALPHA"))
+  //   gl.bindVertexArray(null);
   let atlasw = 8192
   let atlash = 8192
   {

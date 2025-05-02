@@ -8,12 +8,12 @@ import SkillBookUI from './ui/SkillBook.vue';
 import CharacterStats from './ui/CharacterStats.vue';
 import { pollMod } from './utils';
 import { NDialogProvider } from 'naive-ui';
-
+import Debug from './ui/Debug.vue';
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
 const inventory_mod = ref(null);
 const keyboard_mod = ref(null);
-
+const stage = ref(null);
 const { game } = defineProps({
   game: Object
 });
@@ -23,6 +23,7 @@ pollMod(skill_book_mod, 'get_skill_book_mod', game);
 pollMod(char_stats_mod, 'get_char_stats_mod', game);
 pollMod(inventory_mod, 'get_inventory_mod', game);
 pollMod(keyboard_mod, 'get_keyboard_mod', game);
+pollMod(stage, 'get_stage', game);
 </script>
 <template>
   <div
@@ -44,6 +45,9 @@ pollMod(keyboard_mod, 'get_keyboard_mod', game);
         </n-tab-pane>
         <n-tab-pane name="Character" tab="Character">
           <CharacterStats v-if="char_stats_mod" :mod="char_stats_mod" />
+        </n-tab-pane>
+        <n-tab-pane name="Debug" tab="Debug">
+          <Debug v-if="stage" :stage="stage" />
         </n-tab-pane>
       </n-tabs>
     </n-dialog-provider>

@@ -61,7 +61,7 @@ pub fn Movement::from_int(value : Int) -> Movement!@utils.UnknownEnum {
 
 ///| The player's inventory
 struct Inventory {
-  inventories : @utils.DefaultMap[TypeId, Map[Int, SlotItem]]
+  inventories : @utils.DefaultMap[TypeId, Map[SlotNo, SlotItem]]
   items : Map[Int, Item]
   equips : Map[Int, @equip_data.Equip]
   pets : Map[Int, @pet.Pet]
@@ -326,9 +326,7 @@ pub fn swap(
 
 ///|
 pub fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
-  guard let Some(slot) = self.inventories[t].get(slot_id) else {
-    None => return
-  }
+  guard self.inventories[t].get(slot_id) is Some(slot) else { return }
   let unique_id = slot.unique_id
   self.inventories[t].remove(slot_id)
   match t {
@@ -401,10 +399,10 @@ pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
 }
 
 ///|
-fn Inventory::find_item(self : Inventory, t : TypeId, itemid : Int) -> Int? {
-  for _, slot in self.inventories[t] {
+fn Inventory::find_item(self : Inventory, t : TypeId, itemid : Int) -> SlotNo? {
+  for slot_no, slot in self.inventories[t] {
     if slot.item_id == itemid {
-      return Some(slot.unique_id)
+      return Some(slot_no)
     }
   }
   None
@@ -413,8 +411,11 @@ fn Inventory::find_item(self : Inventory, t : TypeId, itemid : Int) -> Int? {
 ///|
 pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
   guard TypeId::by_item_id(itemid) is Some(type_) else { return }
-  guard self.find_item(type_, itemid) is Some(unique_id) else { return }
+  guard self.find_item(type_, itemid) is Some(slot_no) else { return }
   if type_ is TypeId::USE {
-    self.network.send_message(UseItemMessage::new(unique_id, itemid))
+    self.network.send_message(UseItemMessage::new(slot_no._, itemid))
   }
 }
+
+///| Slot number. starts from 1
+priv type SlotNo Int derive(Eq, Hash, Show, ToJson)

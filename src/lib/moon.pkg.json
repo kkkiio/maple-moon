@@ -22,7 +22,8 @@
 				"get_skill_book_mod",
 				"get_char_stats_mod",
 				"get_keyboard_mod",
-				"get_login_mod"
+				"get_login_mod",
+				"get_stage"
 			],
 			"format": "esm"
 		}

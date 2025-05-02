@@ -70,3 +70,8 @@ pub fn get_keyboard_mod() -> @keyboard.Module {
 pub fn get_login_mod() -> @login.Module? {
   entrypoint.get_game().get_login_mod()
 }
+
+///|
+pub fn get_stage() -> @ms.Stage? {
+  entrypoint.get_game().get_stage()
+}

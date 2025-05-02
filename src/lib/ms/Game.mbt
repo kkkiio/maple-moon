@@ -453,6 +453,11 @@ pub fn Game::get_login_mod(self : Game) -> @login.Module? {
 }
 
 ///|
+pub fn Game::get_stage(self : Game) -> Stage? {
+  self.stage.val
+}
+
+///|
 fn default_keymap() -> Map[String, @keyboard.Mapping] {
   let keymap = Map::new()
   keymap.set(

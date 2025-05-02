@@ -40,5 +40,12 @@
 	],
 	"targets": {
 		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]
+	},
+	"link": {
+		"js": {
+			"exports": [
+				"reset_player_position"
+			]
+		}
 	}
 }

@@ -10,7 +10,8 @@ enum StageState {
     backgrounds~ : @map.Backgrounds,
     physics~ : @physics.Physics,
     map_info~ : @map.MapInfo,
-    portals~ : @map.MapPortals
+    portals~ : @map.MapPortals,
+    enter_portal_id~ : Int
   )
 }
 
@@ -220,6 +221,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
             physics=map_struct.physics,
             map_info=map_struct.map_info,
             portals=map_struct.portals,
+            enter_portal_id=portal_id,
           )
           self.respawn(
             portal_id,
@@ -444,4 +446,13 @@ pub fn listen_map_change(
   on_change : (@map.MapStruct) -> Bool
 ) -> Unit {
   self.map_change_listeners.push(on_change)
+}
+
+///| reset player position. for debug
+pub fn reset_player_position(self : Stage) -> Unit {
+  guard self.state
+    is StageState::ACTIVE(portals~, map_info~, enter_portal_id~, physics~, ..) else {
+    return
+  }
+  self.respawn(enter_portal_id, map_info, portals, physics)
 }

@@ -83,6 +83,22 @@
             </n-grid-item>
           </n-grid>
 
+          <n-divider />
+
+          <!-- Detailed Stats -->
+          <n-grid :cols="2" :x-gap="12">
+            <n-grid-item>
+              <n-space vertical>
+                <stat-row label="Weapon Attack" :value="weaponAttack" />
+              </n-space>
+            </n-grid-item>
+            <n-grid-item>
+              <n-space vertical>
+                 <stat-row label="Magic Attack" :value="magicAttack" />
+              </n-space>
+            </n-grid-item>
+          </n-grid>
+
           <n-space justify="space-between" style="margin-top: 12px">
             <div>
               <n-tag type="success">AP: {{ ap }}</n-tag>
@@ -97,7 +113,7 @@
 </template>
 
 <script setup>
-import { watch_player_char_stat, spend_ap, get_recommend_assign } from 'lib/ms/char_stats/char_stats.js';
+import { watch_player_char_stat, watch_player_total_stat, spend_ap, get_recommend_assign } from 'lib/ms/char_stats/char_stats.js';
 import { NAvatar, NButton, NCard, NDivider, NGrid, NGridItem, NIcon, NSpace, NTag, useDialog } from 'naive-ui';
 import { Add as PlusIcon } from '@vicons/ionicons5';
 import { onUnmounted, ref } from 'vue';
@@ -128,6 +144,8 @@ const fame = ref(0);
 const hasAp = ref(false);
 
 // Detailed stats
+const weaponAttack = ref(0);
+const magicAttack = ref(0);
 
 // UI state
 const enableWatch = ref(true);
@@ -169,50 +187,63 @@ LUK: +${assign.luk}`;
 function applyRecommendedAssignment(assign) {
   // Apply STR points
   for (let i = 0; i < assign.str; i++) {
-    spend_ap(props.mod, 'str');
+    spend_ap(props.mod, 'STR');
   }
 
   // Apply DEX points
   for (let i = 0; i < assign.dex; i++) {
-    spend_ap(props.mod, 'dex');
+    spend_ap(props.mod, 'DEX');
   }
 
   // Apply INT points
   for (let i = 0; i < assign.int; i++) {
-    spend_ap(props.mod, 'int');
+    spend_ap(props.mod, 'INT');
   }
 
   // Apply LUK points
   for (let i = 0; i < assign.luk; i++) {
-    spend_ap(props.mod, 'luk');
+    spend_ap(props.mod, 'LUK');
   }
 }
 
 // Watch for stat changes
 const statMappings = {
-  'job': (val) => job.value = val,
-  'level': (val) => level.value = val,
-  'hp': (val) => hp.value = val,
-  'maxhp': (val) => maxHp.value = val,
-  'mp': (val) => mp.value = val,
-  'maxmp': (val) => maxMp.value = val,
-  'exp': (val) => exp.value = val,
-  'str': (val) => str.value = val,
-  'dex': (val) => dex.value = val,
-  'int': (val) => int.value = val,
-  'luk': (val) => luk.value = val,
-  'ap': (val) => {
+  'JOB': (val) => job.value = val,
+  'LEVEL': (val) => level.value = val,
+  'HP': (val) => hp.value = val,
+  'MAXHP': (val) => maxHp.value = val,
+  'MP': (val) => mp.value = val,
+  'MAXMP': (val) => maxMp.value = val,
+  'EXP': (val) => exp.value = val,
+  'STR': (val) => str.value = val,
+  'DEX': (val) => dex.value = val,
+  'INT': (val) => int.value = val,
+  'LUK': (val) => luk.value = val,
+  'AP': (val) => {
     ap.value = val;
     hasAp.value = val > 0;
   },
-  'fame': (val) => fame.value = val,
-
+  'FAME': (val) => fame.value = val,
 };
 
+// Stat mappings for total stats (including equipment bonuses)
+const totalStatMappings = {
+  'WATK': (val) => weaponAttack.value = val,
+  'MAGIC': (val) => magicAttack.value = val,
+};
 
-// Set up watchers for all stats
+// Set up watchers for all basic stats
 Object.entries(statMappings).forEach(([statName, updateFn]) => {
   watch_player_char_stat(props.mod, statName, (_, newValue) => {
+    if (!enableWatch.value) return false;
+    updateFn(newValue);
+    return true;
+  });
+});
+
+// Set up watchers for total stats
+Object.entries(totalStatMappings).forEach(([statName, updateFn]) => {
+  watch_player_total_stat(props.mod, statName, (_, newValue) => {
     if (!enableWatch.value) return false;
     updateFn(newValue);
     return true;

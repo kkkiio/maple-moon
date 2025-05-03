@@ -199,7 +199,7 @@ pub impl @ui.Widget for StatusBarUI with render(self) {
 
   // Add HP text
   let hp = self.stats.get_stat(@maple_stat.Id::HP)
-  let maxhp = self.stats.get_total(@equip_stat.Id::HP)
+  let maxhp = self.stats.get_total(@maple_stat.EquipStatId::HP)
   render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{hp}/\{maxhp}]")),
@@ -210,7 +210,7 @@ pub impl @ui.Widget for StatusBarUI with render(self) {
 
   // Add MP text
   let mp = self.stats.get_stat(@maple_stat.Id::MP)
-  let maxmp = self.stats.get_total(@equip_stat.Id::MP)
+  let maxmp = self.stats.get_total(@maple_stat.EquipStatId::MP)
   render_elements.push(
     @ui.StaticUI::new(
       @ui.TextureTextUI(self.hpmp_set.create_text("[\{mp}/\{maxmp}]")),
@@ -252,14 +252,14 @@ fn getexppercent(stats : CharStats) -> Double {
 ///|
 fn gethppercent(stats : CharStats) -> Double {
   let hp = stats.get_stat(@maple_stat.Id::HP)
-  let maxhp = stats.get_total(@equip_stat.Id::HP)
+  let maxhp = stats.get_total(@maple_stat.EquipStatId::HP)
   hp.to_double() / maxhp.to_double()
 }
 
 ///|
 fn getmppercent(stats : CharStats) -> Double {
   let mp = stats.get_stat(@maple_stat.Id::MP)
-  let maxmp = stats.get_total(@equip_stat.Id::MP)
+  let maxmp = stats.get_total(@maple_stat.EquipStatId::MP)
   mp.to_double() / maxmp.to_double()
 }
 

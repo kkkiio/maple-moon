@@ -1,8 +1,9 @@
 ///|
 struct Module {
   network : @net.Network
-  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]]
-  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]]
+  i64stat_listeners : Map[MapleStatId, Array[(Int64, Int64) -> IterResult]]
+  total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
   mut player_char_stats : CharStats?
 }
 
@@ -17,6 +18,7 @@ fn Module::new(network : @net.Network) -> Module {
     network,
     stat_listeners: Map::new(),
     i64stat_listeners: Map::new(),
+    total_listeners: Map::new(),
     player_char_stats: None,
   }
 }
@@ -34,6 +36,7 @@ pub fn Module::new_char_stats(
     job,
     self.stat_listeners,
     self.i64stat_listeners,
+    self.total_listeners,
   )
   self.player_char_stats = Some(stats)
   stats

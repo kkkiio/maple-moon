@@ -87,7 +87,7 @@ pub fn MobAttackResult::new(
 pub(all) struct AttackResult {
   t : AttackType
   attacker : Int
-  mut mobcount : Int
+  mut mob_count : Int
   hitcount : Int
   skill : Int
   charge : Int
@@ -107,7 +107,7 @@ pub fn AttackResult::default() -> AttackResult {
   {
     t: AttackType::CLOSE,
     attacker: 0,
-    mobcount: 0,
+    mob_count: 0,
     hitcount: 1,
     skill: 0,
     charge: 0,
@@ -128,7 +128,7 @@ pub fn AttackResult::new(attack : Attack) -> AttackResult {
   {
     t: attack.t,
     attacker: 0,
-    mobcount: 0,
+    mob_count: 0,
     hitcount: attack.hitcount,
     skill: attack.skill,
     charge: 0,

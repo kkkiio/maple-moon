@@ -187,7 +187,7 @@ fn apply_rush(
   player : @player.Player,
   result : @combat.AttackResult
 ) -> Unit {
-  if result.mobcount == 0 {
+  if result.mob_count == 0 {
     return
   }
   let mob_position = self.mobs.get_mob_position(result.last_oid)
@@ -288,7 +288,7 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
   }
   let packet = @net.OutPacket::new(opcode)
   packet.skip(1)
-  packet.write_byte(((attack.mobcount << 4) | attack.hitcount).to_byte())
+  packet.write_byte(((attack.mob_count << 4) | attack.hitcount).to_byte())
   packet.write_int(attack.skill)
   if attack.charge > 0 {
     packet.write_int(attack.charge)

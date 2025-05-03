@@ -92,12 +92,12 @@ watch_skill_book(props.skill_book_mod, (evt) => {
   }
   return true
 })
-watch_player_char_stat(props.char_stats_mod, 'level', (_, new_value) => {
+watch_player_char_stat(props.char_stats_mod, 'LEVEL', (_, new_value) => {
   if (!enableWatch.value) return false
   level.value = new_value
   return true
 })
-watch_player_char_stat(props.char_stats_mod, 'sp', (_, new_value) => {
+watch_player_char_stat(props.char_stats_mod, 'SP', (_, new_value) => {
   if (!enableWatch.value) return false
   available_sp.value = new_value
   return true

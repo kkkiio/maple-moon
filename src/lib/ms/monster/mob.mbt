@@ -64,8 +64,8 @@ struct Mob {
   speed : Double
   fly_speed : Double
   watk : Int
-  wdef : Int
-  mdef : Int
+  weapon_def : Int
+  magic_def : Int
   avoid : Int
   knockback : Int
   touch_damage : Bool
@@ -248,8 +248,8 @@ fn Mob::new(
     speed,
     fly_speed,
     watk,
-    wdef,
-    mdef,
+    weapon_def: wdef,
+    magic_def: mdef,
     avoid,
     knockback,
     touch_damage,
@@ -777,28 +777,28 @@ pub fn calculate_damage(
   self : Mob,
   attack : @combat.Attack
 ) -> Array[(Int, Bool)] {
-  let leveldelta = @math.maximum(self.level - attack.playerlevel, 0)
+  let greater_level = @math.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
   let (mindamage, maxdamage, hitchance, critical) = match damagetype {
     @combat.AttackDamageType::DMG_WEAPON(min~, max~) => {
-      let mindamage = self.calculate_mindamage(leveldelta, min, false)
-      let maxdamage = self.calculate_maxdamage(leveldelta, max, false)
-      let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
+      let (mindamage, maxdamage) = calculate_weapon_damage(
+        greater_level,
+        min,
+        max,
+        self.weapon_def.to_double(),
+      )
+      let hitchance = self.calculate_hitchance(greater_level, attack.accuracy)
       let critical = attack.critical
       (mindamage, maxdamage, hitchance, critical)
     }
     @combat.AttackDamageType::DMG_MAGIC(matk) => {
-      let mindamage = self.calculate_mindamage(
-        leveldelta,
+      let (mindamage, maxdamage) = calculate_magic_damage(
+        greater_level,
         matk.to_double(),
-        true,
-      )
-      let maxdamage = self.calculate_maxdamage(
-        leveldelta,
         matk.to_double(),
-        true,
+        self.magic_def.to_double(),
       )
-      let hitchance = self.calculate_hitchance(leveldelta, attack.accuracy)
+      let hitchance = self.calculate_hitchance(greater_level, attack.accuracy)
       let critical = attack.critical
       (mindamage, maxdamage, hitchance, critical)
     }
@@ -841,44 +841,42 @@ fn next_damage(
   return (intdamage, iscritical)
 }
 
-///|
-fn calculate_mindamage(
-  self : Mob,
-  leveldelta : Int,
-  damage : Double,
-  magic : Bool
-) -> Double {
-  let mindamage = if magic {
-    damage - (1.0 + 0.01 * leveldelta.to_double()) * self.mdef.to_double() * 0.6
-  } else {
-    damage * (1.0 - 0.01 * leveldelta.to_double()) - self.wdef.to_double() * 0.6
-  }
-  return @math.maximum(mindamage, 1.0)
+///| Calculate weapon damage
+fn calculate_weapon_damage(
+  greater_level : Int,
+  min : Double,
+  max : Double,
+  def : Double
+) -> (Double, Double) {
+  let final_min = min * (1.0 - 0.01 * greater_level.to_double()) - def * 0.6
+    |> @math.maximum(1.0)
+  let final_max = max * (1.0 - 0.01 * greater_level.to_double()) - def * 0.5
+    |> @math.maximum(1.0)
+  (final_min, final_max)
 }
 
-///|
-fn calculate_maxdamage(
-  self : Mob,
-  leveldelta : Int,
-  damage : Double,
-  magic : Bool
-) -> Double {
-  let maxdamage = if magic {
-    damage - (1.0 + 0.01 * leveldelta.to_double()) * self.mdef.to_double() * 0.5
-  } else {
-    damage * (1.0 - 0.01 * leveldelta.to_double()) - self.wdef.to_double() * 0.5
-  }
-  return @math.maximum(maxdamage, 1.0)
+///| Calculate magic damage
+fn calculate_magic_damage(
+  greater_level : Int,
+  min : Double,
+  max : Double,
+  def : Double
+) -> (Double, Double) {
+  let final_min = min - (1.0 + 0.01 * greater_level.to_double()) * def * 0.6
+    |> @math.maximum(1.0)
+  let final_max = max - (1.0 + 0.01 * greater_level.to_double()) * def * 0.5
+    |> @math.maximum(1.0)
+  (final_min, final_max)
 }
 
 ///|
 fn calculate_hitchance(
   self : Mob,
-  leveldelta : Int,
+  greater_level : Int,
   player_accuracy : Int
 ) -> Double {
   let hitchance = player_accuracy.to_double() /
-    (self.avoid.to_double() * (1.84 + 0.07 * leveldelta.to_double()) + 1.0)
+    (self.avoid.to_double() * (1.84 + 0.07 * greater_level.to_double()) + 1.0)
   @math.maximum(hitchance, 0.01)
 }
 

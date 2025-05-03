@@ -3,7 +3,7 @@ pub struct EquipData {
   category : String
   gender : Int
   req_stats : Map[@maple_stat.Id, Int]
-  incr_stats : Map[@stat.Id, Int]
+  incr_stats : Map[@maple_stat.EquipStatId, Int]
   eq_slot : @slot.Id
 }
 
@@ -84,7 +84,7 @@ let equipslots : FixedArray[@slot.Id] = [
 ]
 
 ///|
-pub fn get_defstat(self : EquipData, stat : @stat.Id) -> Int {
+pub fn get_defstat(self : EquipData, stat : @maple_stat.EquipStatId) -> Int {
   self.incr_stats.get(stat).or(0)
 }
 
@@ -119,20 +119,20 @@ let req_stats_keys : Array[(String, @maple_stat.Id)] = [
 ]
 
 ///|
-let def_stats_keys : Array[(String, @stat.Id)] = [
-  ("incSTR", @stat.Id::STR),
-  ("incDEX", @stat.Id::DEX),
-  ("incINT", @stat.Id::INT),
-  ("incLUK", @stat.Id::LUK),
-  ("incPAD", @stat.Id::WATK),
-  ("incPDD", @stat.Id::WDEF),
-  ("incMAD", @stat.Id::MAGIC),
-  ("incMDD", @stat.Id::MDEF),
-  ("incMHP", @stat.Id::HP),
-  ("incMMP", @stat.Id::MP),
-  ("incACC", @stat.Id::ACC),
-  ("incEVA", @stat.Id::AVOID),
-  ("incHANDS", @stat.Id::HANDS),
-  ("incSPEED", @stat.Id::SPEED),
-  ("incJUMP", @stat.Id::JUMP),
+let def_stats_keys : Array[(String, @maple_stat.EquipStatId)] = [
+  ("incSTR", @maple_stat.EquipStatId::STR),
+  ("incDEX", @maple_stat.EquipStatId::DEX),
+  ("incINT", @maple_stat.EquipStatId::INT),
+  ("incLUK", @maple_stat.EquipStatId::LUK),
+  ("incPAD", @maple_stat.EquipStatId::WATK),
+  ("incPDD", @maple_stat.EquipStatId::WDEF),
+  ("incMAD", @maple_stat.EquipStatId::MAGIC),
+  ("incMDD", @maple_stat.EquipStatId::MDEF),
+  ("incMHP", @maple_stat.EquipStatId::HP),
+  ("incMMP", @maple_stat.EquipStatId::MP),
+  ("incACC", @maple_stat.EquipStatId::ACC),
+  ("incEVA", @maple_stat.EquipStatId::AVOID),
+  ("incHANDS", @maple_stat.EquipStatId::HANDS),
+  ("incSPEED", @maple_stat.EquipStatId::SPEED),
+  ("incJUMP", @maple_stat.EquipStatId::JUMP),
 ]

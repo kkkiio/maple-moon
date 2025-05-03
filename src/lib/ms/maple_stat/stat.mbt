@@ -23,7 +23,7 @@ pub(all) enum Id {
 } derive(Eq, Hash)
 
 ///|
-pub fn int_value(self : Id) -> Int {
+pub fn Id::int_value(self : Id) -> Int {
   match self {
     Id::SKIN => 0x1
     Id::FACE => 0x2
@@ -56,52 +56,52 @@ pub impl Compare for Id with compare(self, other) -> Int {
 ///|
 pub fn Id::name(self : Id) -> String {
   match self {
-    Id::PET => "pet"
-    Id::MESO => "meso"
-    Id::FAME => "fame"
-    Id::EXP => "exp"
-    Id::SP => "sp"
-    Id::AP => "ap"
-    Id::MAXMP => "maxmp"
-    Id::MP => "mp"
-    Id::MAXHP => "maxhp"
-    Id::HP => "hp"
-    Id::LUK => "luk"
-    Id::INT => "int"
-    Id::DEX => "dex"
-    Id::STR => "str"
-    Id::JOB => "job"
-    Id::LEVEL => "level"
-    Id::HAIR => "hair"
-    Id::FACE => "face"
-    Id::SKIN => "skin"
-    Id::GACHAEXP => "gachaexp"
+    Id::PET => "PET"
+    Id::MESO => "MESO"
+    Id::FAME => "FAME"
+    Id::EXP => "EXP"
+    Id::SP => "SP"
+    Id::AP => "AP"
+    Id::MAXMP => "MAXMP"
+    Id::MP => "MP"
+    Id::MAXHP => "MAXHP"
+    Id::HP => "HP"
+    Id::LUK => "LUK"
+    Id::INT => "INT"
+    Id::DEX => "DEX"
+    Id::STR => "STR"
+    Id::JOB => "JOB"
+    Id::LEVEL => "LEVEL"
+    Id::HAIR => "HAIR"
+    Id::FACE => "FACE"
+    Id::SKIN => "SKIN"
+    Id::GACHAEXP => "GACHAEXP"
   }
 }
 
 ///|
 pub fn Id::from_name(name : String) -> Id? {
   let id = match name {
-    "pet" => Id::PET
-    "meso" => Id::MESO
-    "fame" => Id::FAME
-    "exp" => Id::EXP
-    "sp" => Id::SP
-    "ap" => Id::AP
-    "maxmp" => Id::MAXMP
-    "mp" => Id::MP
-    "maxhp" => Id::MAXHP
-    "hp" => Id::HP
-    "luk" => Id::LUK
-    "int" => Id::INT
-    "dex" => Id::DEX
-    "str" => Id::STR
-    "job" => Id::JOB
-    "level" => Id::LEVEL
-    "hair" => Id::HAIR
-    "face" => Id::FACE
-    "skin" => Id::SKIN
-    "gachaexp" => Id::GACHAEXP
+    "PET" => Id::PET
+    "MESO" => Id::MESO
+    "FAME" => Id::FAME
+    "EXP" => Id::EXP
+    "SP" => Id::SP
+    "AP" => Id::AP
+    "MAXMP" => Id::MAXMP
+    "MP" => Id::MP
+    "MAXHP" => Id::MAXHP
+    "HP" => Id::HP
+    "LUK" => Id::LUK
+    "INT" => Id::INT
+    "DEX" => Id::DEX
+    "STR" => Id::STR
+    "JOB" => Id::JOB
+    "LEVEL" => Id::LEVEL
+    "HAIR" => Id::HAIR
+    "FACE" => Id::FACE
+    "SKIN" => Id::SKIN
+    "GACHAEXP" => Id::GACHAEXP
     _ => return None
   }
   Some(id)

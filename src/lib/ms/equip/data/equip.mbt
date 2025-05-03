@@ -22,7 +22,7 @@ pub fn int_value(pot : Potential) -> Int {
 
 ///|
 pub(all) struct Equip {
-  stats : Map[@stat.Id, Int]
+  stats : Map[@maple_stat.EquipStatId, Int]
   item_id : Int
   expiration : Int64
   owner : String
@@ -39,7 +39,7 @@ pub(all) struct Equip {
 pub fn get_quality(
   data : EquipData,
   scrolled : Bool,
-  stats : Map[@stat.Id, Int]
+  stats : Map[@maple_stat.EquipStatId, Int]
 ) -> Quality {
   let mut delta = 0
   for es, stat in stats {

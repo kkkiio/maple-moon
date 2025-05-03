@@ -30,7 +30,7 @@ pub(all) struct Player {
 ///|
 pub(open) trait Inventory {
   recalc_stats(Self, @weapon.Type) -> Unit
-  get_stat(Self, @stat.Id) -> Int
+  get_stat(Self, @maple_stat.EquipStatId) -> Int
   has_projectile(Self) -> Bool
   get_bulletid(Self) -> Int
   get_bulletcount(Self) -> Int
@@ -310,17 +310,21 @@ pub fn get_flyforce(self : Player) -> Double {
 
 ///| Returns the current jumping force, calculated from the total ES_JUMP stat.
 pub fn get_jumpforce(self : Player) -> Double {
-  1.0 + 3.5 * self.stats.get_total(@stat.Id::JUMP).to_double() / 100.0
+  1.0 +
+  3.5 * self.stats.get_total(@maple_stat.EquipStatId::JUMP).to_double() / 100.0
 }
 
 ///|
 pub fn get_climbforce(self : Player) -> Double {
-  self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
+  self.stats.get_total(@maple_stat.EquipStatId::SPEED).to_double() / 100.0
 }
 
 ///| Returns the current walking force, calculated from the total ES_SPEED stat.
 pub fn get_walkforce(self : Player) -> Double {
-  0.05 + 0.11 * self.stats.get_total(@stat.Id::SPEED).to_double() / 100.0
+  0.05 +
+  0.11 *
+  self.stats.get_total(@maple_stat.EquipStatId::SPEED).to_double() /
+  100.0
 }
 
 ///|
@@ -338,7 +342,7 @@ pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   if equip_changed {
     self.inventory.recalc_stats(weapontype)
   }
-  for stat in @stat.all_stats {
+  for stat in @maple_stat.all_equip_stats {
     let inventory_total = self.inventory.get_stat(stat)
     self.stats.add_value(stat, inventory_total)
   }

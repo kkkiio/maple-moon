@@ -75,7 +75,7 @@ pub(all) enum StatId {
 } derive(Eq, Compare)
 
 ///|
-pub fn int_value(self : StatId) -> Int {
+pub fn StatId::int_value(self : StatId) -> Int {
   match self {
     NONE => 0
     MORPH => 1
@@ -158,13 +158,13 @@ pub fn hash(self : StatId) -> Int {
 }
 
 ///|
-pub fn hash_combine(self : StatId, hasher : Hasher) -> Unit {
+pub impl Hash for StatId with hash_combine(self : StatId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 
 ///|
 pub fn is_disease(buff_id : StatId) -> Bool {
-  not(diseases.find(buff_id).is_empty())
+  not(diseases.get(buff_id).is_empty())
 }
 
 ///|

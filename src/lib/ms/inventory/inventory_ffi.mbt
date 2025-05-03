@@ -182,19 +182,19 @@ fn can_wear_equip(
   if reqLevel > level {
     hints.push("require level \{reqLevel} but got \{level}")
   }
-  let dex = stats.get_total(@equip_stat.Id::DEX)
+  let dex = stats.get_total(@maple_stat.EquipStatId::DEX)
   if reqDEX > dex {
     hints.push("require dex \{reqDEX} but got \{dex}")
   }
-  let str = stats.get_total(@equip_stat.Id::STR)
+  let str = stats.get_total(@maple_stat.EquipStatId::STR)
   if reqSTR > str {
     hints.push("require str \{reqSTR} but got \{str}")
   }
-  let luk = stats.get_total(@equip_stat.Id::LUK)
+  let luk = stats.get_total(@maple_stat.EquipStatId::LUK)
   if reqLUK > luk {
     hints.push("require luk \{reqLUK} but got \{luk}")
   }
-  let int = stats.get_total(@equip_stat.Id::INT)
+  let int = stats.get_total(@maple_stat.EquipStatId::INT)
   if reqINT > int {
     hints.push("require int \{reqINT} but got \{int}")
   }

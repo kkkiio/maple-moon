@@ -1,10 +1,6 @@
 {
 	"import": [
 		{
-			"path": "KKKIIO/maple-moon-client/lib/ms/equip/stat",
-			"alias": "equip_stat"
-		},
-		{
 			"path": "KKKIIO/maple-moon-client/lib/ms/equip/data",
 			"alias": "equip_data"
 		},

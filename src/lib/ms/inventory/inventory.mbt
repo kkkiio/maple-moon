@@ -66,7 +66,7 @@ struct Inventory {
   equips : Map[Int, @equip_data.Equip]
   pets : Map[Int, @pet.Pet]
   mut running_uid : Int
-  total_stats : @utils.DefaultMap[@equip_stat.Id, Int]
+  total_stats : @utils.DefaultMap[@maple_stat.EquipStatId, Int]
   type_slot_count_map : Map[TypeId, Int]
   mut meso : Int
   mut bullet_slot : Int
@@ -212,7 +212,7 @@ pub fn add_equip(
   expiration : Int64,
   slots : Int,
   level : Int,
-  stats : Map[@equip_stat.Id, Int],
+  stats : Map[@maple_stat.EquipStatId, Int],
   owner : String,
   flags : Int,
   item_level : Int,
@@ -235,7 +235,7 @@ pub fn add_equip(
 }
 
 ///|
-pub fn get_stat(self : Inventory, stat : @equip_stat.Id) -> Int {
+pub fn get_stat(self : Inventory, stat : @maple_stat.EquipStatId) -> Int {
   self.total_stats[stat]
 }
 

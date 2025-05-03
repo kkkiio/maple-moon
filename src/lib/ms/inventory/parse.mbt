@@ -8,7 +8,7 @@ enum InventoryItemEntry {
     expire~ : Int64,
     slots~ : Int,
     level~ : Int,
-    stats~ : Map[@equip_stat.Id, Int],
+    stats~ : Map[@maple_stat.EquipStatId, Int],
     owner~ : String,
     flag~ : Int,
     itemlevel~ : Int,
@@ -102,7 +102,7 @@ fn parse_add_equip(
 
   // Read equip stats
   let stats = Map::new()
-  for id in @equip_stat.all_stats {
+  for id in @maple_stat.all_equip_stats {
     stats[id] = recv.read_short!()
   }
 

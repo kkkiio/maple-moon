@@ -174,34 +174,40 @@ pub fn get_level(self : Job) -> Level {
 }
 
 ///|
-pub fn get_primary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
+pub fn get_primary(
+  self : Job,
+  weapontype : @weapon.Type
+) -> @maple_stat.EquipStatId {
   match self.id / 100 {
-    2 => return @stat.Id::INT
-    3 => return @stat.Id::DEX
-    4 => return @stat.Id::LUK
+    2 => return @maple_stat.EquipStatId::INT
+    3 => return @maple_stat.EquipStatId::DEX
+    4 => return @maple_stat.EquipStatId::LUK
     5 =>
       return if weapontype == @weapon.Type::GUN {
-        @stat.Id::DEX
+        @maple_stat.EquipStatId::DEX
       } else {
-        @stat.Id::STR
+        @maple_stat.EquipStatId::STR
       }
-    _ => return @stat.Id::STR
+    _ => return @maple_stat.EquipStatId::STR
   }
 }
 
 ///|
-pub fn get_secondary(self : Job, weapontype : @weapon.Type) -> @stat.Id {
+pub fn get_secondary(
+  self : Job,
+  weapontype : @weapon.Type
+) -> @maple_stat.EquipStatId {
   match self.id / 100 {
-    2 => return @stat.Id::LUK
-    3 => return @stat.Id::STR
-    4 => return @stat.Id::DEX
+    2 => return @maple_stat.EquipStatId::LUK
+    3 => return @maple_stat.EquipStatId::STR
+    4 => return @maple_stat.EquipStatId::DEX
     5 =>
       return if weapontype == @weapon.Type::GUN {
-        @stat.Id::STR
+        @maple_stat.EquipStatId::STR
       } else {
-        @stat.Id::DEX
+        @maple_stat.EquipStatId::DEX
       }
-    _ => return @stat.Id::DEX
+    _ => return @maple_stat.EquipStatId::DEX
   }
 }
 

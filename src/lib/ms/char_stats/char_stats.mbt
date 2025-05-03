@@ -7,9 +7,9 @@ struct CharStats {
   portal : Int
   base_stats : Map[@maple_stat.Id, Int]
   base_i64stats : Map[@maple_stat.Id, Int64]
-  total_stats : @utils.Counter[@equip_stat.Id, Int]
-  buff_deltas : @utils.Counter[@equip_stat.Id, Int]
-  percentages : Map[@equip_stat.Id, Double]
+  total_stats : @utils.Counter[@maple_stat.EquipStatId, Int]
+  buff_deltas : @utils.Counter[@maple_stat.EquipStatId, Int]
+  percentages : Map[@maple_stat.EquipStatId, Double]
   mut attack_speed : Int
   mut projectile_range : Int
   mut critical : Double
@@ -21,8 +21,9 @@ struct CharStats {
   mut stance : Double
   mut reduce_damage : Double
   female : Bool
-  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]]
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]]
   i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
+  total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
 }
 
 ///|
@@ -40,8 +41,9 @@ pub fn CharStats::new(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
   job : @job.Job,
-  stat_listeners : Map[StatId, Array[(Int, Int) -> IterResult]],
-  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]],
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]],
+  total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
 ) -> CharStats {
   let cs : CharStats = {
     name: s.name,
@@ -67,6 +69,7 @@ pub fn CharStats::new(
     female: s.female,
     stat_listeners,
     i64stat_listeners,
+    total_listeners,
   }
   cs.init_totalstats()
   cs
@@ -78,31 +81,31 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.buff_deltas._.clear()
   self.percentages.clear()
   self.total_stats._.set(
-    @equip_stat.Id::HP,
+    @maple_stat.EquipStatId::HP,
     self.get_stat(@maple_stat.Id::MAXHP),
   )
   self.total_stats._.set(
-    @equip_stat.Id::MP,
+    @maple_stat.EquipStatId::MP,
     self.get_stat(@maple_stat.Id::MAXMP),
   )
   self.total_stats._.set(
-    @equip_stat.Id::STR,
+    @maple_stat.EquipStatId::STR,
     self.get_stat(@maple_stat.Id::STR),
   )
   self.total_stats._.set(
-    @equip_stat.Id::DEX,
+    @maple_stat.EquipStatId::DEX,
     self.get_stat(@maple_stat.Id::DEX),
   )
   self.total_stats._.set(
-    @equip_stat.Id::INT,
+    @maple_stat.EquipStatId::INT,
     self.get_stat(@maple_stat.Id::INT),
   )
   self.total_stats._.set(
-    @equip_stat.Id::LUK,
+    @maple_stat.EquipStatId::LUK,
     self.get_stat(@maple_stat.Id::LUK),
   )
-  self.total_stats._.set(@equip_stat.Id::SPEED, 100)
-  self.total_stats._.set(@equip_stat.Id::JUMP, 100)
+  self.total_stats._.set(@maple_stat.EquipStatId::SPEED, 100)
+  self.total_stats._.set(@maple_stat.EquipStatId::JUMP, 100)
   self.max_damage = 0
   self.min_damage = 0
   // honor_ = 0;
@@ -120,8 +123,8 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.reduce_damage = 0.0
 }
 
-///|
-pub fn get_total(self : CharStats, stat : @equip_stat.Id) -> Int {
+///| Returns the total stat after applying equipment, buffs, and percentages
+pub fn get_total(self : CharStats, stat : @maple_stat.EquipStatId) -> Int {
   self.total_stats[stat]
 }
 
@@ -189,22 +192,37 @@ pub fn set_map_id(self : CharStats, id : Int) -> Unit {
 }
 
 ///|
-pub fn add_value(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
+pub fn add_value(
+  self : CharStats,
+  stat : @maple_stat.EquipStatId,
+  value : Int
+) -> Unit {
   let current = self.get_total(stat)
   self.set_total(stat, current + value)
 }
 
 ///|
-pub fn set_total(self : CharStats, stat : @equip_stat.Id, value : Int) -> Unit {
-  self.total_stats[stat] = match eqstat_caps.get(stat) {
+pub fn set_total(
+  self : CharStats,
+  stat : @maple_stat.EquipStatId,
+  value : Int
+) -> Unit {
+  let old_value = self.get_total(stat)
+  let new_value = match eqstat_caps.get(stat) {
     Some(cap_value) => if value > cap_value { cap_value } else { value }
     None => value
+  }
+  self.total_stats[stat] = new_value
+  match self.total_listeners.get(stat) {
+    Some(listeners) =>
+      listeners.retain(fn(listener) { listener(old_value, new_value) })
+    None => ()
   }
 }
 
 ///|
 pub fn close_totalstats(self : CharStats) -> Unit {
-  self.total_stats[@equip_stat.Id::ACC] += self.calculate_accuracy()
+  self.total_stats[@maple_stat.EquipStatId::ACC] += self.calculate_accuracy()
   for stat, p in self.percentages {
     let total = self.get_total(stat)
     let total = total + (total.to_double() * p).to_int()
@@ -212,7 +230,7 @@ pub fn close_totalstats(self : CharStats) -> Unit {
   }
   let primary = self.get_primary_stat()
   let secondary = self.get_secondary_stat()
-  let attack = self.get_total(@equip_stat.Id::WATK)
+  let attack = self.get_total(@maple_stat.EquipStatId::WATK)
   let multiplier = self.damage_percent + attack.to_double() / 100
   self.max_damage = ((primary + secondary).to_double() * multiplier).to_int()
   self.min_damage = ((
@@ -235,8 +253,8 @@ fn get_secondary_stat(self : CharStats) -> Int {
 
 ///|
 fn calculate_accuracy(self : CharStats) -> Int {
-  let totaldex = self.get_total(@equip_stat.Id::DEX)
-  let totalluk = self.get_total(@equip_stat.Id::LUK)
+  let totaldex = self.get_total(@maple_stat.EquipStatId::DEX)
+  let totalluk = self.get_total(@maple_stat.EquipStatId::LUK)
   return (totaldex.to_double() * 0.8 + totalluk.to_double() * 0.5).to_int()
 }
 
@@ -264,28 +282,28 @@ fn get_multiplier(self : CharStats) -> Double {
 }
 
 ///| Externalising this for easier configurability.
-let eqstat_caps : Map[@equip_stat.Id, Int] = Map::from_array([
-  (@equip_stat.Id::STR, 999),
-  (@equip_stat.Id::DEX, 999),
-  (@equip_stat.Id::INT, 999),
-  (@equip_stat.Id::LUK, 999),
-  (@equip_stat.Id::HP, 30000),
-  (@equip_stat.Id::MP, 30000),
-  (@equip_stat.Id::WATK, 999),
-  (@equip_stat.Id::MAGIC, 2000),
-  (@equip_stat.Id::WDEF, 999),
-  (@equip_stat.Id::MDEF, 999),
-  (@equip_stat.Id::ACC, 999),
-  (@equip_stat.Id::AVOID, 999),
-  (@equip_stat.Id::HANDS, 999),
-  (@equip_stat.Id::SPEED, 140),
-  (@equip_stat.Id::JUMP, 123),
+let eqstat_caps : Map[@maple_stat.EquipStatId, Int] = Map::from_array([
+  (@maple_stat.EquipStatId::STR, 999),
+  (@maple_stat.EquipStatId::DEX, 999),
+  (@maple_stat.EquipStatId::INT, 999),
+  (@maple_stat.EquipStatId::LUK, 999),
+  (@maple_stat.EquipStatId::HP, 30000),
+  (@maple_stat.EquipStatId::MP, 30000),
+  (@maple_stat.EquipStatId::WATK, 999),
+  (@maple_stat.EquipStatId::MAGIC, 2000),
+  (@maple_stat.EquipStatId::WDEF, 999),
+  (@maple_stat.EquipStatId::MDEF, 999),
+  (@maple_stat.EquipStatId::ACC, 999),
+  (@maple_stat.EquipStatId::AVOID, 999),
+  (@maple_stat.EquipStatId::HANDS, 999),
+  (@maple_stat.EquipStatId::SPEED, 140),
+  (@maple_stat.EquipStatId::JUMP, 123),
 ])
 
 ///|
 pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
   // TODO: Random stuff, need to find the actual formula somewhere.
-  let weapon_def = self.get_total(@equip_stat.Id::WDEF)
+  let weapon_def = self.get_total(@maple_stat.EquipStatId::WDEF)
   if weapon_def == 0 {
     return mobatk
   }
@@ -349,7 +367,7 @@ pub fn get_female(self : CharStats) -> Bool {
 }
 
 ///|
-pub fn get_buffdelta(self : CharStats, stat : @equip_stat.Id) -> Int {
+pub fn get_buffdelta(self : CharStats, stat : @maple_stat.EquipStatId) -> Int {
   self.buff_deltas[stat]
 }
 
@@ -360,8 +378,8 @@ pub fn get_name(self : CharStats) -> String {
 
 ///|
 pub fn is_damage_buffed(self : CharStats) -> Bool {
-  self.get_buffdelta(@equip_stat.Id::WATK) > 0 ||
-  self.get_buffdelta(@equip_stat.Id::MAGIC) > 0
+  self.get_buffdelta(@maple_stat.EquipStatId::WATK) > 0 ||
+  self.get_buffdelta(@maple_stat.EquipStatId::MAGIC) > 0
 }
 
 ///|
@@ -371,7 +389,7 @@ pub fn change_job(self : CharStats, job : @job.Job) -> Unit {
 
 ///|
 pub fn get_matk(self : CharStats) -> Int {
-  self.total_stats[@equip_stat.MAGIC]
+  self.total_stats[@maple_stat.MAGIC]
 }
 
 ///| Watch for stat changes
@@ -379,7 +397,7 @@ pub fn get_matk(self : CharStats) -> Int {
 /// The `listener` will be called when the stat changes.
 pub fn watch_stat_changes(
   self : CharStats,
-  stat_id : StatId,
+  stat_id : MapleStatId,
   trigger_now~ : Bool = false,
   listener : (Int, Int) -> IterResult
 ) -> Unit {

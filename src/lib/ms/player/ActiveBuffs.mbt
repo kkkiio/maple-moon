@@ -5,11 +5,11 @@ trait ActiveBuff {
 
 ///| Template for SimpleStatBuff
 struct SimpleStatBuff {
-  stat : @stat.Id
+  stat : @maple_stat.EquipStatId
 }
 
 ///|
-fn SimpleStatBuff::new(stat : @stat.Id) -> SimpleStatBuff {
+fn SimpleStatBuff::new(stat : @maple_stat.EquipStatId) -> SimpleStatBuff {
   { stat, }
 }
 
@@ -21,11 +21,13 @@ fn apply_to(self : SimpleStatBuff, stats : CharStats, value : Int) -> Unit {
 // Template for PercentageStatBuff
 ///|
 struct PercentageStatBuff {
-  stat : @stat.Id
+  stat : @maple_stat.EquipStatId
 }
 
 ///|
-fn PercentageStatBuff::new(stat : @stat.Id) -> PercentageStatBuff {
+fn PercentageStatBuff::new(
+  stat : @maple_stat.EquipStatId
+) -> PercentageStatBuff {
   { stat, }
 }
 
@@ -93,14 +95,20 @@ fn ActiveBuffs::new() -> ActiveBuffs {
       (@buff.StatId::MAPLE_WARRIOR, MapleWarriorBuff::default()),
       (@buff.StatId::STANCE, StanceBuff::default()),
       (@buff.StatId::BOOSTER, BoosterBuff::default()),
-      (@buff.StatId::WATK, SimpleStatBuff::new(@stat.Id::WATK)),
-      (@buff.StatId::WDEF, SimpleStatBuff::new(@stat.Id::WDEF)),
-      (@buff.StatId::MATK, SimpleStatBuff::new(@stat.Id::MAGIC)),
-      (@buff.StatId::MDEF, SimpleStatBuff::new(@stat.Id::MDEF)),
-      (@buff.StatId::SPEED, SimpleStatBuff::new(@stat.Id::SPEED)),
-      (@buff.StatId::JUMP, SimpleStatBuff::new(@stat.Id::JUMP)),
-      (@buff.StatId::HYPERBODYHP, PercentageStatBuff::new(@stat.Id::HP)),
-      (@buff.StatId::HYPERBODYMP, PercentageStatBuff::new(@stat.Id::MP)),
+      (@buff.StatId::WATK, SimpleStatBuff::new(@maple_stat.EquipStatId::WATK)),
+      (@buff.StatId::WDEF, SimpleStatBuff::new(@maple_stat.EquipStatId::WDEF)),
+      (@buff.StatId::MATK, SimpleStatBuff::new(@maple_stat.EquipStatId::MAGIC)),
+      (@buff.StatId::MDEF, SimpleStatBuff::new(@maple_stat.EquipStatId::MDEF)),
+      (@buff.StatId::SPEED, SimpleStatBuff::new(@maple_stat.EquipStatId::SPEED)),
+      (@buff.StatId::JUMP, SimpleStatBuff::new(@maple_stat.EquipStatId::JUMP)),
+      (
+        @buff.StatId::HYPERBODYHP,
+        PercentageStatBuff::new(@maple_stat.EquipStatId::HP),
+      ),
+      (
+        @buff.StatId::HYPERBODYMP,
+        PercentageStatBuff::new(@maple_stat.EquipStatId::MP),
+      ),
     ]),
   }
 }

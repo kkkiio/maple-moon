@@ -149,7 +149,7 @@ pub fn Skill::make_attack(
   // }
   let critical = chr.stats.get_critical()
   let ignoredef = chr.stats.get_ignoredef()
-  let accuracy = chr.stats.get_total(@stat.Id::ACC)
+  let accuracy = chr.stats.get_total(@maple_stat.EquipStatId::ACC)
   let playerlevel = chr.stats.get_stat(@maple_stat.Id::LEVEL)
   let range = chr.stats.get_range()
   let origin = chr.get_position()

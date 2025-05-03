@@ -11,7 +11,7 @@ struct Combat {
   damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   add_task_fn : (@utils.Future[Unit]) -> Unit
-  packet_processor : @net.Network
+  network : @net.Network
 }
 
 ///|
@@ -32,7 +32,7 @@ pub fn Combat::new(
     damage_numbers: Array::new(),
     cooldowns: Map::new(),
     add_task_fn,
-    packet_processor,
+    network: packet_processor,
   }
 }
 
@@ -145,7 +145,7 @@ fn apply_move(
     self.mobs.send_attack(result, attack, mob_targets, mobcount)
     self.extract_effects(player.character, act, result)
     self.apply_result_movement(player, act, result)
-    self.packet_processor.send_message(AttackMessage(result))
+    self.network.send_message(AttackMessage(result))
     // if reactor_targets.is_empty().not() {
     //   match reactor_objs.get(reactor_targets[0]) {
     //     Some(reactor) =>
@@ -163,7 +163,7 @@ fn apply_move(
     act.apply_actions(player.character, @combat.AttackType::MAGIC)
     let moveid = act.get_id()
     let level = player.get_skills().get_level(moveid)
-    new_use_skill_packet(moveid, level).dispatch()
+    self.network.send_message({ move_id: moveid, level })
   }
 }
 
@@ -239,15 +239,21 @@ priv struct BulletEffect {
 }
 
 ///|
-fn new_use_skill_packet(moveid : Int, level : Int) -> @net.OutPacket {
+priv struct UseSkillMessage {
+  move_id : Int
+  level : Int
+} derive(Show)
+
+///|
+impl @net.OutMessage for UseSkillMessage with pack(self) {
   let packet = @net.OutPacket::new(@net.OutPacketOpcode::USE_SKILL)
   packet.write_time()
-  packet.write_int(moveid)
-  packet.write_byte(level.to_byte())
+  packet.write_int(self.move_id)
+  packet.write_byte(self.level.to_byte())
 
   // If monster magnet : some more bytes
 
-  if moveid % 10000000 == 1004 {
+  if self.move_id % 10000000 == 1004 {
     packet.skip(2) // TODO: No idea what this could be
   }
   // TODO: A point (4 bytes) could be added at the end

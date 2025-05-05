@@ -30,6 +30,7 @@ pub fn make_handlers(
       fn(message) {
         handle_modify_inventory(self.inventory, self.player_getter, message)
       },
+      log_recv=true,
     ),
   ]
   |> Map::from_array

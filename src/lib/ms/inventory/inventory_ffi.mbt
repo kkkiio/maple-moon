@@ -265,20 +265,26 @@ fn make_equip_desc(item_data : @item.ItemData) -> String {
   incr_stats.sort_by_key(fn(it) { it.0 })
   let buf = StringBuilder::new()
   buf.write_string("Requirements:<br/>")
-  for
-    stat in req_stats
-    .iter()
-    .map(fn(it) { "\{it.0} \{it.1}" })
-    .intersperse("<br/>") {
-    buf.write_string(stat)
+  for stat in req_stats {
+    let val = if stat.0 is @maple_stat.Id::JOB {
+      let req_job = match stat.1 {
+        0 => "Beginner"
+        1 => "Warrior"
+        2 => "Magician"
+        4 => "Bowman"
+        8 => "Thief"
+        16 => "Pirate"
+        _ => "Unknown"
+      }
+      req_job
+    } else {
+      stat.1.to_string()
+    }
+    buf.write_string("\{stat.0} \{val}<br/>")
   }
-  buf.write_string("<br/>Increases:<br/>")
-  for
-    stat in incr_stats
-    .iter()
-    .map(fn(it) { "\{it.0} \{it.1}" })
-    .intersperse("<br/>") {
-    buf.write_string(stat)
+  buf.write_string("Increases:<br/>")
+  for stat in incr_stats {
+    buf.write_string("\{stat.0} \{stat.1}<br/>")
   }
   buf.to_string()
 }

@@ -112,7 +112,7 @@ pub fn get_name(self : Job) -> String {
 }
 
 ///|
-fn get_name_by_id(jid : Int) -> String {
+pub fn get_name_by_id(jid : Int) -> String {
   match jid {
     0 => "Beginner"
     100 => "Swordsman"

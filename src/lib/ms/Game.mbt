@@ -21,6 +21,7 @@ struct LoadedState {
   inventory_module : @inventory.Module
   skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
+  shop_module : @shop.Module
 }
 
 ///|
@@ -59,7 +60,7 @@ pub fn Game::new() -> Game {
 fn load_modules(
   ui : UI,
   timer : @utils.Timer,
-  packet_processor : @net.Network,
+  network : @net.Network,
   io_service : @io_task.Service,
   scheduls : @schedule.Schedules,
   stage_ref : Ref[Stage?],
@@ -114,14 +115,14 @@ fn load_modules(
   let map_module = @map.Module::load()
   let inventory_module_fut = @inventory.Module::load(
     fn() { get_stage().get_player() },
-    packet_processor,
+    network,
   ).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let login_mod_f = char_look_module_f
-    .bind(fn(mod) { @login.Module::load(packet_processor, ui, mod, io_service) })
+    .bind(fn(mod) { @login.Module::load(network, ui, mod, io_service) })
     .combine(inventory_module_fut)
     .combine(map_module)
     .map(fn(it) {
@@ -163,28 +164,21 @@ fn load_modules(
   let npc_module = @npc.Module::load(
     ui,
     fn() { get_stage().get_player().unwrap().character.get_name() },
-    packet_processor,
+    network,
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
-  let char_stats_mod_f = @char_stats.Module::load(packet_processor).tap(fn(
-    mod
-  ) {
+  let char_stats_mod_f = @char_stats.Module::load(network).tap(fn(mod) {
     merge_stat_handlers(mod.make_stat_handlers())
   })
   let skill_book_mod_f = @skill_book.Module::load(
     fn() { get_stage().get_player() },
-    packet_processor,
+    network,
   ).tap(fn(mod) {
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
   })
-  let shop_mod_f = @shop.Module::load(ui).map(fn(it) {
+  let shop_mod_f = @shop.Module::load(network).map(fn(it) {
     let mod = it
-    merge_handlers(
-      mod.make_handlers(
-        fn() { get_stage().get_player().map(fn(p) { p.character.look }) },
-        fn() { Some(get_stage().get_inventory()) },
-      ),
-    )
+    merge_handlers(mod.make_handlers())
     mod
   })
   // // Attack handlers
@@ -259,7 +253,7 @@ fn load_modules(
   })
   let loading_mods = [
     @utils.Future::from_value(
-      @heal_over_time.new_module(scheduls, packet_processor, fn() {
+      @heal_over_time.new_module(scheduls, network, fn() {
         get_stage().get_player().map(fn(p) { p.get_stats() })
       }),
     ),
@@ -305,7 +299,7 @@ fn load_modules(
         char_stats_mod,
         damage_number_set,
         add_io_task,
-        packet_processor,
+        network,
       )
       stage_ref.val = Some(stage)
     })
@@ -318,17 +312,21 @@ fn load_modules(
   .map(fn(it) {
     let (
       (
-        (((char_stats_module, _shop_mod), _stage), login_module),
+        (((char_stats_module, shop_module), _stage), login_module),
         inventory_module,
       ),
       skill_book_module,
     ) = it
-    packet_processor.reset_handlers(
-      net_handler_map.iter() |> @immut/hashmap.from_iter,
-    )
+    network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
     timer.reset()
     ui.change_state(UIStateLogin::new())
-    { login_module, inventory_module, skill_book_module, char_stats_module }
+    {
+      login_module,
+      inventory_module,
+      skill_book_module,
+      char_stats_module,
+      shop_module,
+    }
   })
 }
 
@@ -455,6 +453,11 @@ pub fn Game::get_login_mod(self : Game) -> @login.Module? {
 ///|
 pub fn Game::get_stage(self : Game) -> Stage? {
   self.stage.val
+}
+
+///|
+pub fn Game::get_shop_mod(self : Game) -> @shop.Module? {
+  self.loaded_state.poll().map(fn(it) { it.shop_module })
 }
 
 ///|

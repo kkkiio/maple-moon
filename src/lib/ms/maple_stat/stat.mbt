@@ -17,7 +17,7 @@ pub(all) enum Id {
   SP
   EXP
   FAME
-  MESO
+  MESO // base currency
   PET
   GACHAEXP
 } derive(Eq, Hash)

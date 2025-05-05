@@ -8,11 +8,21 @@
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",
-    "KKKIIO/maple-moon-client/lib/ms/character",
     "KKKIIO/maple-moon-client/lib/ms/inventory",
     "KKKIIO/maple-moon-client/lib/ms/npc",
     "KKKIIO/maple-moon-client/lib/ms/item",
     "KKKIIO/maple-moon-client/lib/ms/string_format",
     "KKKIIO/maple-moon-client/lib/utils"
-  ]
+  ],
+  "link":{
+    "js":{
+      "exports": [
+        "watch_opening_shop_ffi",
+        "watch_confirm_shop_transaction_ffi",
+        "buy_shop_item_ffi",
+        "sell_inventory_item_ffi",
+        "leave_shop_ffi"
+      ]
+    }
+  }
 }

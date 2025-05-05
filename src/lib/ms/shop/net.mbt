@@ -10,7 +10,7 @@ pub struct ShopItem {
 
 ///|
 pub struct OpenNpcShop {
-  npcid : Int
+  npc_id : Int
   items : Array[ShopItem]
 } derive(Show, ToJson)
 
@@ -43,61 +43,45 @@ pub fn parse_open_npc_shop(recv : @net.InPacket) -> OpenNpcShop! {
       })
     }
   }
-  { npcid, items }
+  { npc_id: npcid, items }
 }
 
 ///|
-pub fn handle_open_npc_shop_parsed(
-  mod : Module,
-  charlook_getter : () -> @char_look.CharLook?,
-  inventory_getter : () -> @inventory.Inventory?,
-  shop : OpenNpcShop
-) -> Unit {
-  guard let Some(charlook) = charlook_getter() else { None => return }
-  guard let Some(inventory) = inventory_getter() else { None => return }
-  mod.container.add_ui(
-    @ui.Element::new(
-      fn(hooks) {
-        let shop = UIShop::new(
-          {
-            countset: mod.countset,
-            charlook,
-            inventory,
-            npcid: shop.npcid,
-            shop_items: shop.items,
-          },
-          mod.shop2_res,
-          hooks,
-        )
-        for
-          t in [
-            @inventory.TypeId::EQUIP,
-            @inventory.TypeId::USE,
-            @inventory.TypeId::ETC,
-            @inventory.TypeId::SETUP,
-            @inventory.TypeId::CASH,
-          ] {
-          inventory.listen_item_changes(t, fn() {
-            guard shop.get_ui_model().is_active() else { return false }
-            shop.set_attributes()
-            true
-          })
-        }
-        mod.shop_ui = Some(shop)
-        shop
-      },
-      @ui.UIElementType::SHOP,
-      on_close=fn() { mod.shop_ui = None },
-    ),
-    true,
-  )
-}
-
-///|
-pub fn handle_confirm_shop_transaction(mod : Module, code : Int) -> Unit {
-  guard let Some(shop) = mod.shop_ui else { None => return }
-  match code {
-    0 | 8 => shop.set_attributes()
-    _ => ()
-  }
-}
+// pub fn handle_open_npc_shop(mod : Module, shop : OpenNpcShop) -> Unit {
+// mod.container.add_ui(
+//   @ui.Element::new(
+//     fn(hooks) {
+//       let shop = UIShop::new(
+//         {
+//           countset: mod.countset,
+//           charlook,
+//           inventory,
+//           npcid: shop.npcid,
+//           shop_items: shop.items,
+//         },
+//         mod.shop2_res,
+//         hooks,
+//       )
+//       for
+//         t in [
+//           @inventory.TypeId::EQUIP,
+//           @inventory.TypeId::USE,
+//           @inventory.TypeId::ETC,
+//           @inventory.TypeId::SETUP,
+//           @inventory.TypeId::CASH,
+//         ] {
+//         inventory.listen_item_changes(t, fn() {
+//           guard shop.get_ui_model().is_active() else { return false }
+//           shop.set_attributes()
+//           true
+//         })
+//       }
+//       mod.shop_ui = Some(shop)
+//       shop
+//     },
+//     @ui.UIElementType::SHOP,
+//     on_close=fn() { mod.shop_ui = None },
+//   ),
+//   true,
+// )
+// }

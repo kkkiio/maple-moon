@@ -418,4 +418,4 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
 }
 
 ///| Slot number. starts from 1
-priv type SlotNo Int derive(Eq, Hash, Show, ToJson)
+pub type SlotNo Int derive(Eq, Hash, Show, ToJson)

@@ -75,3 +75,8 @@ pub fn get_login_mod() -> @login.Module? {
 pub fn get_stage() -> @ms.Stage? {
   entrypoint.get_game().get_stage()
 }
+
+///|
+pub fn get_shop_mod() -> @shop.Module? {
+  entrypoint.get_game().get_shop_mod()
+}

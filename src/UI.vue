@@ -9,9 +9,11 @@ import CharacterStats from './ui/CharacterStats.vue';
 import { pollMod } from './utils';
 import { NDialogProvider } from 'naive-ui';
 import Debug from './ui/Debug.vue';
+import Shop from './ui/Shop.vue';
 const skill_book_mod = ref(null);
 const char_stats_mod = ref(null);
 const inventory_mod = ref(null);
+const shop_mod = ref(null);
 const keyboard_mod = ref(null);
 const stage = ref(null);
 const { game } = defineProps({
@@ -24,6 +26,7 @@ pollMod(char_stats_mod, 'get_char_stats_mod', game);
 pollMod(inventory_mod, 'get_inventory_mod', game);
 pollMod(keyboard_mod, 'get_keyboard_mod', game);
 pollMod(stage, 'get_stage', game);
+pollMod(shop_mod, 'get_shop_mod', game);
 </script>
 <template>
   <div
@@ -48,6 +51,9 @@ pollMod(stage, 'get_stage', game);
         </n-tab-pane>
         <n-tab-pane name="Debug" tab="Debug">
           <Debug v-if="stage" :stage="stage" />
+        </n-tab-pane>
+        <n-tab-pane name="Shop" tab="Shop">
+          <Shop v-if="shop_mod && inventory_mod" :shop_mod="shop_mod" :inventory_mod="inventory_mod" />
         </n-tab-pane>
       </n-tabs>
     </n-dialog-provider>

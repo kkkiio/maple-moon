@@ -427,7 +427,7 @@ pub fn buy(self : BuyState, i : Int) -> Unit {
   let itemid = item.id
   if buyable > 0 {
     // TODO: support buying multiple items
-    new_npc_shop_item_action_packet(slot, itemid, 1, true).dispatch()
+    // new_npc_shop_item_action_packet(slot, itemid, 1, true).dispatch()
   }
 }
 
@@ -458,16 +458,16 @@ fn sell(items : Array[SellItem], i : Int, all~ : Bool = false) -> Unit {
   let sellable = item.sellable
   let slot = item.slot
   if sellable > 0 {
-    new_npc_shop_item_action_packet(
-      slot,
-      itemid,
-      if all {
-        sellable
-      } else {
-        1
-      },
-      false,
-    ).dispatch()
+    // new_npc_shop_item_action_packet(
+    //   slot,
+    //   itemid,
+    //   if all {
+    //     sellable
+    //   } else {
+    //     1
+    //   },
+    //   false,
+    // ).dispatch()
   }
 }
 
@@ -562,7 +562,7 @@ pub fn send_cursor(
 ///|
 fn exit_shop(self : LogicState) -> Unit {
   self.model.deactivate()
-  new_npc_shop_leave_action_packet().dispatch()
+  // new_npc_shop_leave_action_packet().dispatch()
 }
 
 ///|
@@ -595,31 +595,25 @@ let mode_RECHARGE : Byte = b'\x02'
 ///|
 let mode_LEAVE : Byte = b'\x03'
 
-// Requests that an item should be bought from or sold to a NPC shop
 ///|
-fn new_npc_shop_item_action_packet(
-  slot : Int,
-  itemid : Int,
-  qty : Int,
-  buy : Bool
-) -> @net.OutPacket {
-  new_npc_shop_action_packet(if buy { mode_BUY } else { mode_SELL })
-  ..write_short(slot)
-  ..write_int(itemid)
-  ..write_short(qty)
-}
-
-///| Requests that an item should be recharged at a NPC shop
-fn new_npc_shop_recharge_action_packet(slot : Int) -> @net.OutPacket {
-  new_npc_shop_action_packet(mode_RECHARGE)..write_short(slot)
-}
-
-///| Requests exiting from a NPC shop
-fn new_npc_shop_leave_action_packet() -> @net.OutPacket {
-  new_npc_shop_action_packet(mode_LEAVE)
-}
+priv enum ShopActionMessage {
+  Item(slot~ : Int, item_id~ : Int, qty~ : Int, buy~ : Bool) // Requests that an item should be bought from or sold to a NPC shop
+  Recharge(slot~ : Int) // Requests that an item should be recharged at a NPC shop
+  Leave // Requests exiting from a NPC shop
+} derive(Show)
 
 ///|
-fn new_npc_shop_action_packet(mode : Byte) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::NPC_SHOP_ACTION)..write_byte(mode)
+impl @net.OutMessage for ShopActionMessage with pack(self) -> @net.OutPacket {
+  let packet = @net.OutPacket::new(@net.OutPacketOpcode::NPC_SHOP_ACTION)
+  match self {
+    ShopActionMessage::Item(slot~, item_id~, qty~, buy~) =>
+      packet
+      ..write_byte(if buy { mode_BUY } else { mode_SELL })
+      ..write_short(slot)
+      ..write_int(item_id)
+      ..write_short(qty)
+    ShopActionMessage::Recharge(slot~) =>
+      packet..write_byte(mode_RECHARGE)..write_short(slot)
+    ShopActionMessage::Leave => packet..write_byte(mode_LEAVE)
+  }
 }

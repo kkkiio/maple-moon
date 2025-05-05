@@ -3,12 +3,13 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
   let slotmax = mod.inventory.get_slotmax(kind)
   (1)
   .until(slotmax, inclusive=true)
-  .map(fn(slot) {
-    match mod.inventory.get_slot_item_at(kind, slot) {
+  .map(fn(slot_no) {
+    match mod.inventory.get_slot_item_at(kind, slot_no) {
       Some(slot_item) =>
         match @item.ItemData::get_async(slot_item.item_id).poll() {
           Some(Ok(item_data)) =>
             Some({
+              slot_no,
               id: item_data.item_id,
               name: item_data.name,
               desc: if kind is TypeId::EQUIP {
@@ -19,7 +20,7 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
               count: if kind == TypeId::EQUIP {
                 1
               } else {
-                mod.inventory.get_item_count(kind, slot)
+                mod.inventory.get_item_count(kind, slot_no)
               },
               icon: item_data.get_icon(false).bitmap.map_or(
                 @resource.Image::new_pending(),
@@ -31,11 +32,12 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
               {
                 "err": e.to_string(),
                 "item_id": slot_item.item_id,
-                "slot": slot,
+                "slot": slot_no,
               },
               "Failed to load item data",
             )
             Some({
+              slot_no,
               id: slot_item.item_id,
               name: "Unknown \{slot_item.item_id}",
               desc: "",
@@ -52,13 +54,14 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
 }
 
 ///|
-typealias UISlot = ItemUIData? // Slot in UI may be empty
+typealias UISlot = WithItemSlot? // Slot in UI may be empty
 
 ///| Type for inventory change watcher callback
 typealias InventoryWatcher = (Array[UISlot]) -> Bool
 
 ///|
-pub struct ItemUIData {
+pub struct WithItemSlot {
+  slot_no : SlotNo
   id : Int
   name : String
   desc : String

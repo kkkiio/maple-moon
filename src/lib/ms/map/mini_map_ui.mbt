@@ -425,7 +425,7 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
 
 ///|
 pub impl @ui.Widget for MiniMapUI with remove_cursor(self) -> Unit {
-
+  ignore(self)
 }
 
 ///|
@@ -509,25 +509,25 @@ test "parse portal marker of Ellinia" {
 const CENTER_START_X_ = 64
 
 ///|
-const BTN_MIN_Y_ = 4
+// const BTN_MIN_Y_ = 4
 
 ///|
 const ML_MR_Y_ = 17
 
 ///|
-const MAX_ADJ_ = 40
+// const MAX_ADJ_ = 40
 
 ///|
-const M_START_ = 36
+// const M_START_ = 36
 
 ///|
-const LISTNPC_ITEM_HEIGHT_ = 17
+// const LISTNPC_ITEM_HEIGHT_ = 17
 
 ///|
-const LISTNPC_ITEM_WIDTH_ = 140
+// const LISTNPC_ITEM_WIDTH_ = 140
 
 ///|
-const LISTNPC_TEXT_WIDTH_ = 114
+// const LISTNPC_TEXT_WIDTH_ = 114
 
 ///|
 let window_ul_pos_ : @struct.Point[Int] = @struct.Point::new(0, 0)

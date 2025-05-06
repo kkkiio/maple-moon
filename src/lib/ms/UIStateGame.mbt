@@ -64,7 +64,7 @@ pub fn UIStateGame::new(
 }
 
 ///|
-pub fn UIStateGame::draw(
+pub impl @ui.UIState for UIStateGame with draw(
   self : UIStateGame,
   inter : Double,
   cursor : @struct.Point[Int]
@@ -84,7 +84,7 @@ pub fn UIStateGame::draw(
 }
 
 ///|
-pub fn UIStateGame::update(self : UIStateGame) -> Unit {
+pub impl @ui.UIState for UIStateGame with update(self : UIStateGame) -> Unit {
   let mut update_screen = false
   let new_width = @config.constants.get_viewwidth()
   let new_height = @config.constants.get_viewheight()
@@ -360,7 +360,10 @@ pub fn UIStateGame::get_front(
 }
 
 ///|
-fn doubleclick(self : UIStateGame, pos : @struct.Point[Int]) -> Unit {
+pub impl @ui.UIState for UIStateGame with doubleclick(
+  self : UIStateGame,
+  pos : @struct.Point[Int]
+) -> Unit {
   match self.get_front_by_pos(pos) {
     Some(e) => e.doubleclick(pos)
     None => ()

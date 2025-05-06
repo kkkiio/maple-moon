@@ -5,7 +5,7 @@ struct Session {
 }
 
 ///|
-enum Connection {
+priv enum Connection {
   CLOSED
   OPENED(Socket)
   READY(socket~ : Socket)
@@ -23,7 +23,7 @@ pub fn close(self : Session) -> Unit {
       socket.close()
       self.conn = CLOSED
     }
-    READY(socket~, ..) => {
+    READY(socket~) => {
       socket.close()
       self.conn = CLOSED
     }
@@ -46,7 +46,7 @@ pub fn connect(self : Session, path : String) -> Unit {
 ///| Send a packet to the server
 pub fn write(self : Session, bytes : Bytes) -> Unit {
   match self.conn {
-    READY(socket~, ..) => socket.write(bytes)
+    READY(socket~) => socket.write(bytes)
     _ =>
       @log.warn(
         { "blen": bytes.length() },
@@ -93,7 +93,7 @@ pub fn Session::get_status(self : Session) -> ConnectionStatus {
 }
 
 ///|
-extern type Socket
+priv extern type Socket
 
 ///|
 fn Socket::close(self : Socket) -> Unit = "socket" "close"

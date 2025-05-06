@@ -11,8 +11,8 @@ pub fn Tile::new(src : NxNode, tileset : @resource.NxNode?) -> Tile {
     src["x"].get_int?().unwrap(),
     src["y"].get_int?().unwrap(),
   )
-  guard let Some(tileset) = tileset else {
-    None => return { texture: @graphics.Texture::default(), pos, z: 0 }
+  guard tileset is Some(tileset) else {
+    return { texture: @graphics.Texture::default(), pos, z: 0 }
   }
   let src_u = src["u"].as_string?().unwrap()
   let src_no = src["no"].get_string()

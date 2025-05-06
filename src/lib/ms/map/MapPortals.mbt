@@ -77,7 +77,10 @@ pub fn MapPortals::draw(
 }
 
 ///|
-pub fn get_portal_by_id(self : MapPortals, portal_id : Int) -> Point[Int] {
+pub fn MapPortals::get_portal_pos_by_id(
+  self : MapPortals,
+  portal_id : Int
+) -> Point[Int] {
   match self.portals_by_id[portal_id] {
     Some(portal) => portal.get_position() - @struct.Point::new(0, 30)
     None => @struct.Point::default()
@@ -89,26 +92,24 @@ pub fn get_portal_by_name(
   self : MapPortals,
   portal_name : String
 ) -> Point[Int] {
-  match self.portal_ids_by_name[portal_name] {
-    Some(portal_id) => self.get_portal_by_id(portal_id)
-    None => @struct.Point::default()
-  }
+  self.portal_ids_by_name[portal_name]
+  .map(self.get_portal_pos_by_id(_))
+  .or_default()
 }
 
 ///|
-pub fn find_warp_at(
+pub fn MapPortals::find_warp_at(
   self : MapPortals,
   playerpos : Point[Int]
 ) -> PortalWarpInfo {
   if self.cooldown == 0 {
     self.cooldown = warpcd
-    match
-      self.portals_by_id
+    if self.portals_by_id
       .iter()
       .map(fn(it) { it.1 })
-      .find_first(fn(portal) { portal.bounds().contains(playerpos) }) {
-      Some(portal) => return portal.getwarpinfo()
-      None => ()
+      .find_first(fn(portal) { portal.bounds().contains(playerpos) })
+      is Some(portal) {
+      return portal.getwarpinfo()
     }
   }
   PortalWarpInfo::default()
@@ -121,10 +122,15 @@ pub fn MapPortalAnimations::load() -> @utils.Future[MapPortalAnimations] {
   .combine(map_helper_loader.load_res(["portal", "game", "pv"]))
   .map(fn(it) {
     let (src1, src2) = it
+    let (ani1, ani2) = (
+      @graphics.Animation::from_resource(src1),
+      @graphics.Animation::from_resource(src2),
+    )
     {
       animations: @immut/sorted_map.from_array([
-        (PortalType::HIDDEN, @graphics.Animation::from_resource(src1)),
-        (PortalType::REGULAR, @graphics.Animation::from_resource(src2)),
+        (PortalType::HIDDEN, ani1),
+        (PortalType::REGULAR, ani2),
+        (PortalType::SCRIPTED, ani2),
       ]),
     }
   })

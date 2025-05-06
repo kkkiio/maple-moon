@@ -513,7 +513,7 @@ pub(all) struct ChangeMapMessage {
   target_id : Int
   target_p : String
   use_wheel : Bool
-} derive(ToJson, Show)
+} derive(Show)
 
 ///|
 pub impl @net.OutMessage for ChangeMapMessage with pack(self) -> @net.OutPacket {

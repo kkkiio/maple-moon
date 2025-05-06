@@ -53,11 +53,10 @@ pub impl @json.FromJson for PortalType with from_json(json, path) -> PortalType 
 
 ///|
 pub(all) struct PortalWarpInfo {
-  mapid : Int
+  mapid : Int?
   toname : String
   name : String
   intramap : Bool
-  valid : Bool
 }
 
 ///|
@@ -67,12 +66,21 @@ fn PortalWarpInfo::new(
   tn : String,
   n : String
 ) -> PortalWarpInfo {
-  { mapid: m, toname: tn, name: n, intramap: i, valid: m < 999999999 }
+  {
+    mapid: if m < 999999999 {
+      Some(m)
+    } else {
+      None
+    },
+    toname: tn,
+    name: n,
+    intramap: i,
+  }
 }
 
 ///|
 fn PortalWarpInfo::default() -> PortalWarpInfo {
-  { mapid: 999999999, toname: "", name: "", intramap: false, valid: false }
+  { mapid: None, toname: "", name: "", intramap: false }
 }
 
 ///|
@@ -141,28 +149,28 @@ pub fn Portal::draw(
 }
 
 ///|
-pub fn get_name(self : Portal) -> String {
+pub fn Portal::get_name(self : Portal) -> String {
   self.name
 }
 
 ///|
-pub fn get_type(self : Portal) -> PortalType {
+pub fn Portal::get_type(self : Portal) -> PortalType {
   self.type_
 }
 
 ///|
-pub fn get_position(self : Portal) -> Point[Int] {
+pub fn Portal::get_position(self : Portal) -> Point[Int] {
   self.position
 }
 
 ///|
-pub fn bounds(self : Portal) -> @struct.Rectangle[Int] {
+pub fn Portal::bounds(self : Portal) -> @struct.Rectangle[Int] {
   let lt = self.position + @struct.Point::new(-25, -100)
   let rb = self.position + @struct.Point::new(25, 25)
   @struct.Rectangle::new(lt, rb)
 }
 
 ///|
-pub fn getwarpinfo(self : Portal) -> PortalWarpInfo {
+pub fn Portal::getwarpinfo(self : Portal) -> PortalWarpInfo {
   self.warp_info
 }

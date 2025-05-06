@@ -180,13 +180,16 @@ pub fn set_element(self : UI, focused : Bool, elem : Element) -> Unit {
 }
 
 ///|
-pub fn add_ui(self : UI, elem : Element, focused : Bool) -> Unit {
+pub impl Container for UI with add_ui(self : UI, elem : Element, focused : Bool) -> Unit {
   guard self.state is Some(state) else { return }
   state.set_element(focused, elem)
 }
 
 ///|
-pub fn remove_ui(self : UI, element_type : UIElementType) -> Unit {
+pub impl Container for UI with remove_ui(
+  self : UI,
+  element_type : UIElementType
+) -> Unit {
   guard self.state is Some(state) else { return }
   state.remove(element_type)
 }

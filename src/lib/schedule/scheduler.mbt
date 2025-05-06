@@ -17,7 +17,7 @@ pub fn Schedules::new() -> Schedules {
 }
 
 ///|
-pub fn schedule_with_fixed_delay(
+pub impl @game_mod.Scheduler for Schedules with schedule_with_fixed_delay(
   self : Schedules,
   task : () -> Unit,
   initial_delay : @utils.Duration,

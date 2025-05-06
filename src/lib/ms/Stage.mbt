@@ -160,7 +160,7 @@ pub fn respawn(
   physics : @physics.Physics
 ) -> Unit {
   // TODO: Music
-  let spawnpoint = portals.get_portal_by_id(portal_id)
+  let spawnpoint = portals.get_portal_pos_by_id(portal_id)
   let startpos = physics.get_y_below(spawnpoint)
   @log.info({ "spawnpoint": spawnpoint, "startpos": startpos }, "respawn")
   self.player.unwrap().respawn(startpos, map_info.is_underwater())
@@ -196,21 +196,17 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
 }
 
 ///|
-pub fn transfer_player() -> Unit {
-  new_player_map_transfer_packet().dispatch()
-}
-
-///|
 fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
-  guard let StageState::ACTIVE(
-    tiles_objs~,
-    backgrounds~,
-    physics~,
-    portals~,
-    map_info~,
-    ..
-  ) = self.state else {
-    StageState::INACTIVE => return
+  let (tiles_objs, backgrounds, physics, portals, map_info) = match self.state {
+    StageState::ACTIVE(
+      tiles_objs~,
+      backgrounds~,
+      physics~,
+      portals~,
+      map_info~,
+      ..
+    ) => (tiles_objs, backgrounds, physics, portals, map_info)
+    StageState::INACTIVE => return ()
     StageState::TRANSITION(portal_id~, loading_map~) =>
       match loading_map.poll() {
         Some(map_struct) => {
@@ -257,7 +253,9 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
       match self.mobs.create_attack(oid_id) {
         Some(attack) => {
           let result = player.damage(attack)
-          new_take_damage_packet_from_mob(result, TakeDamageFrom::TOUCH).dispatch()
+          self.network.send_message(
+            new_take_damage_packet_from_mob(result, TakeDamageFrom::TOUCH),
+          )
         }
         None => ()
       }
@@ -323,7 +321,8 @@ fn check_portals(
     let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
     let startpos = physics.get_y_below(spawnpoint)
     player.respawn(startpos, map_info.is_underwater())
-  } else if warpinfo.valid {
+    // } else if warpinfo.valid {
+  } else {
     let message : @player.ChangeMapMessage = {
       died: false,
       target_id: -1,
@@ -331,8 +330,8 @@ fn check_portals(
       use_wheel: false,
     }
     self.network.send_message(message, log_level=@log.Level::INFO)
-    let stats = player.get_stats()
-    stats.set_map_id(warpinfo.mapid)
+    // let stats = player.get_stats()
+    // stats.set_map_id(warpinfo.mapid)
   }
 
   // Sound(Sound::Name::PORTAL).play();
@@ -352,7 +351,11 @@ fn get_character(self : Stage, cid : Int) -> @character.Character? {
 }
 
 ///|
-pub fn new_player_map_transfer_packet() -> @net.OutPacket {
+priv type PlayerMapTransferMessage Unit derive(Show)
+
+///|
+impl @net.OutMessage for PlayerMapTransferMessage with pack(self) -> @net.OutPacket {
+  ignore(self)
   @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
 }
 
@@ -369,7 +372,7 @@ pub fn get_inventory(self : Stage) -> @inventory.Inventory {
 ///| Tells the server that the player took damage.
 priv enum TakeDamageFrom {
   TOUCH
-}
+} derive(Show)
 
 ///|
 fn int_value(self : TakeDamageFrom) -> Int {
@@ -378,58 +381,64 @@ fn int_value(self : TakeDamageFrom) -> Int {
   }
 }
 
-///|
-fn new_take_damage_packet(
-  from : TakeDamageFrom,
-  element : Int,
-  damage : Int,
-  mobid : Int,
-  oid : Int,
+///| Message sent when player takes damage
+priv struct TakeDamageMessage {
+  from : TakeDamageFrom
+  element : Int
+  damage : Int
+  mobid : Int
+  oid : Int
   direction : Int
-) -> @net.OutPacket {
+} derive(Show)
+
+///|
+impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::TAKE_DAMAGE)
   ..write_time()
-  ..write_byte(from.int_value().to_byte())
-  ..write_byte(element.to_byte())
-  ..write_int(damage)
-  ..write_int(mobid)
-  ..write_int(oid)
-  ..write_byte(direction.to_byte())
+  ..write_byte(self.from.int_value().to_byte())
+  ..write_byte(self.element.to_byte())
+  ..write_int(self.damage)
+  ..write_int(self.mobid)
+  ..write_int(self.oid)
+  ..write_byte(self.direction.to_byte())
 }
 
 ///| From mob attack result.
 fn new_take_damage_packet_from_mob(
   result : @combat.MobAttackResult,
   from : TakeDamageFrom
-) -> @net.OutPacket {
-  new_take_damage_packet(
+) -> TakeDamageMessage {
+  {
     from,
-    0,
-    result.damage,
-    result.mobid,
-    result.oid,
-    result.direction,
-  )
+    element: 0,
+    damage: result.damage,
+    mobid: result.mobid,
+    oid: result.oid,
+    direction: result.direction,
+  }
 }
 
 ///|
 fn check_drops(self : Stage, player : @player.Player) -> Unit {
   for it in self.drops.list_loot_at(player.character.get_position()) {
     let (drop_oid, drop_pos) = it
-    new_pickup_item_packet(drop_oid, drop_pos).dispatch()
+    self.network.send_message({ oid: drop_oid, position: drop_pos })
   }
 }
 
 ///|
-fn new_pickup_item_packet(
-  oid : Int,
+priv struct PickupItemMessage {
+  oid : Int
   position : @struct.Point[Int]
-) -> @net.OutPacket {
+} derive(Show)
+
+///|
+impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
   @net.OutPacket::new(@net.OutPacketOpcode::PICKUP_ITEM)
   ..write_int(0)
   ..write_byte((0).to_byte())
-  ..write_point(position)
-  ..write_int(oid)
+  ..write_point(self.position)
+  ..write_int(self.oid)
 }
 
 ///|
@@ -437,7 +446,7 @@ pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
   self.clear()
   @graphics.GraphicsGL::get().clear()
   self.load(mapid, portalid)
-  transfer_player()
+  self.network.send_message(PlayerMapTransferMessage(()))
 }
 
 ///|

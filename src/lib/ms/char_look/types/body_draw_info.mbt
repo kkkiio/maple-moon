@@ -13,10 +13,10 @@ struct BodyAction {
 ///|
 pub impl @json.FromJson for BodyAction with from_json(value, path) {
   match value {
-    { "action": Json::String(ststr), "frame": Json::Number(frame) } => {
+    { "action": Json::String(ststr), "frame": Json::Number(frame), .. } => {
       let sgndelay = match value {
-        { "delay": Json::Number(n) } => n.to_int()
-        { "delay": Json::String(s) } =>
+        { "delay": Json::Number(n), .. } => n.to_int()
+        { "delay": Json::String(s), .. } =>
           try {
             @strconv.parse_int!(s)
           } catch {
@@ -30,7 +30,7 @@ pub impl @json.FromJson for BodyAction with from_json(value, path) {
         (-sgndelay, false)
       }
       let mov = match value {
-        { "move": [Json::Number(x), Json::Number(y)] } =>
+        { "move": [Json::Number(x), Json::Number(y)], .. } =>
           Point::new(x.to_int(), y.to_int())
         _ => Point::default()
       }
@@ -128,7 +128,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
       }) {
       let (frame, frame_json) = it
       match frame_json {
-        { "action": Json::String(_) } => {
+        { "action": Json::String(_), .. } => {
           let action : BodyAction = @json.from_json!(frame_json)
           (match body_actions[ststr] {
             Some(v) => v
@@ -175,7 +175,8 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
             .bind(fn(it) { it[frame.to_string()] })
             .or(Json::Null)
           let head_shift_map = match head_json {
-            { "head": { "map": map_json } } => @json.from_json!(map_json)
+            { "head": { "map": map_json, .. }, .. } =>
+              @json.from_json!(map_json)
             _ => ShiftMap(Map::new())
           }
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()

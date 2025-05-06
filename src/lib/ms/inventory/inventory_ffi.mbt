@@ -109,16 +109,15 @@ pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
 }
 
 ///|
-pub fn use_item_at(mod : Module, kind : String, index : Int) -> String {
-  let slot_no = index + 1
+pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
   guard get_type_id_by_kind?(kind) is Ok(type_id) else {
     return "unknown inventory kind \{kind}"
   }
   match type_id {
     TypeId::EQUIP => {
       guard (mod.player_getter)() is Some(player) else { return "" }
-      guard mod.inventory.get_slot_item_at(type_id, slot_no) is Some(item) else {
-        return ""
+      guard mod.inventory.get_slot_item_at(type_id, slot_no._) is Some(item) else {
+        return "no item at slot \{slot_no} of \{kind}"
       }
       guard @item.ItemData::get_async(item.item_id).poll()
         is Some(Ok(item_data)) else {
@@ -132,17 +131,17 @@ pub fn use_item_at(mod : Module, kind : String, index : Int) -> String {
         None => ()
       }
       let equip_message : EquipItemMessage = {
-        src: slot_no,
+        src: slot_no._,
         dest: find_equip_slot(mod.inventory, equip_data),
       }
       mod.network.send_message(equip_message)
     }
     TypeId::USE => {
-      let item_id = mod.inventory.get_item_id(type_id, slot_no)
+      let item_id = mod.inventory.get_item_id(type_id, slot_no._)
       if item_id <= 0 {
         return "not found item id at slot \{slot_no} of \{kind}"
       }
-      mod.network.send_message({ slot_no, itemid: item_id })
+      mod.network.send_message({ slot_no: slot_no._, itemid: item_id })
     }
     _ => ()
   }

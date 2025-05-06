@@ -15,30 +15,40 @@ pub(all) enum PortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
 
 ///|
-pub let all_portal_types : FixedArray[PortalType] = [
-  SPAWN,
-  INVISIBLE,
-  REGULAR,
-  TOUCH,
-  TYPE4,
-  TYPE5,
-  WARP,
-  SCRIPTED,
-  SCRIPTED_INVISIBLE,
-  SCRIPTED_TOUCH,
-  HIDDEN,
-  SCRIPTED_HIDDEN,
-  SPRING1,
-  SPRING2,
-  TYPE14,
-]
+pub fn PortalType::typebyid(id : Int) -> PortalType? {
+  let t = match id {
+    0 => SPAWN
+    1 => INVISIBLE
+    2 => REGULAR
+    3 => TOUCH
+    4 => TYPE4
+    5 => TYPE5
+    6 => WARP
+    7 => SCRIPTED
+    8 => SCRIPTED_INVISIBLE
+    9 => SCRIPTED_TOUCH
+    10 => HIDDEN
+    11 => SCRIPTED_HIDDEN
+    12 => SPRING1
+    13 => SPRING2
+    14 => TYPE14
+    _ => return None
+  }
+  Some(t)
+}
 
 ///|
-pub fn PortalType::typebyid(id : Int) -> PortalType {
-  all_portal_types[id]
+pub impl @json.FromJson for PortalType with from_json(json, path) -> PortalType {
+  match json {
+    Number(n) =>
+      PortalType::typebyid(n.to_int()).or_error!(
+        @json.JsonDecodeError((path, "Unknown portal type \{n}")),
+      )
+    _ => raise @json.JsonDecodeError((path, "Expected a number"))
+  }
 }
 
 ///|

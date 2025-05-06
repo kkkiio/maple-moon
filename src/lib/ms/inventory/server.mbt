@@ -1,50 +1,42 @@
 ///|
 struct Mod {
-  mode : Modification
+  mode : ModificationMode
   t : TypeId
   pos : Int
   arg : Int
 } derive(ToJson, Show)
 
 ///|
-struct ModifyInventoryMessage {
+priv struct ModifyInventoryMessage {
   mods : Array[Mod]
   mov : Movement?
 } derive(ToJson, Show)
 
 ///| Parse MODIFY_INVENTORY message
-fn parse_modify_inventory(
-  recv : @net.InPacket,
-  inventory : Inventory
-) -> ModifyInventoryMessage! {
+fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage! {
   recv.read_bool!() |> ignore // 'updatetick'
   let mods = Array::new()
   let size = recv.read_byte!()
   for i in 0..<size {
-    let mut mode = recv.read_byte!() |> Modification::from_int!()
+    let mode = recv.read_byte!()
     let t = TypeId::by_value(recv.read_byte!()) |> Option::unwrap
     let pos = recv.read_short!()
     let mut arg = 0
-    match mode {
-      Modification::ADD => {
-        let item = parse_item!(recv, t, pos)
-        handle_item(inventory, item)
-      }
-      Modification::CHANGE_COUNT => {
+    let modification = match mode {
+      0 => ModificationMode::ADD(parse_item!(recv, t, pos))
+      1 => {
         arg = recv.read_short!()
-        let count_before = inventory.get_item_count(t, pos)
-        let count_now = arg
-        inventory.modify(t, pos, mode, arg, Movement::MOVE_NONE)
-        if count_before < count_now {
-          mode = Modification::ADD_COUNT
-        }
+        ModificationMode::CHANGE_COUNT
       }
-      Modification::SWAP => arg = recv.read_short!()
-      Modification::REMOVE =>
-        inventory.modify(t, pos, mode, arg, Movement::MOVE_INTERNAL)
-      _ => ()
+      2 => {
+        arg = recv.read_short!()
+        ModificationMode::SWAP
+      }
+      3 => ModificationMode::REMOVE
+      4 => ModificationMode::ADD_COUNT
+      _ => fail!("Unknown modification mode: \{mode}")
     }
-    mods.push({ mode, t, pos, arg })
+    mods.push({ mode: modification, t, pos, arg })
   }
   let mov = if recv.available() {
     Movement::from_int!(recv.read_byte!()) |> Some
@@ -60,11 +52,21 @@ fn handle_modify_inventory(
   player_getter : () -> @player.Player?,
   message : ModifyInventoryMessage
 ) -> Unit {
-  guard let Some(player) = player_getter() else { None => return }
+  guard player_getter() is Some(player) else { return }
+  for mod in message.mods {
+    match mod.mode {
+      ModificationMode::ADD(item) => handle_item(inventory, item)
+      ModificationMode::CHANGE_COUNT =>
+        inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, Movement::MOVE_NONE)
+      ModificationMode::REMOVE =>
+        inventory.modify(mod.t, mod.pos, mod.mode, 0, Movement::MOVE_INTERNAL)
+      _ => ()
+    }
+  }
   let mov = message.mov.or(Movement::MOVE_INTERNAL)
   for mod in message.mods {
     match mod.mode {
-      Modification::SWAP =>
+      ModificationMode::SWAP =>
         inventory.modify(mod.t, mod.pos, mod.mode, mod.arg, mov)
       _ => ()
     }

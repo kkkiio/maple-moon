@@ -32,7 +32,7 @@ enum InventoryItemEntry {
     owner~ : String,
     flag~ : Int
   )
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn parse_item(

@@ -26,7 +26,7 @@ pub fn make_handlers(
   [
     @net.make_handler(
       @net.MODIFY_INVENTORY,
-      fn(recv) { parse_modify_inventory!(recv, self.inventory) },
+      parse_modify_inventory,
       fn(message) {
         handle_modify_inventory(self.inventory, self.player_getter, message)
       },

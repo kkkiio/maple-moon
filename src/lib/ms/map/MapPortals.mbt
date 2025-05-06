@@ -15,34 +15,28 @@ struct MapPortalAnimations {
 }
 
 ///|
-pub fn MapPortals::load(
-  src : NxNode,
+pub fn MapPortals::new(
+  src : Array[PortalMarker],
   mapid : Int,
   map_portals_animations : MapPortalAnimations
 ) -> MapPortals {
   let mut portals_by_id = @immut/sorted_map.new()
   let mut portal_ids_by_name = @immut/sorted_map.new()
-  for sub_name, sub in src {
-    let portal_id = @strconv.parse_int?(sub_name).or(-1)
-    if portal_id >= 0 {
-      let portal_type = PortalType::typebyid(sub["pt"].get_int?().unwrap())
-      let name = sub["pn"].get_string()
-      let target_name = sub["tn"].get_string()
-      let target_id = sub["tm"].get_int?().unwrap()
-      let position = @struct.Point::new(
-        sub["x"].get_int?().unwrap(),
-        sub["y"].get_int?().unwrap(),
-      )
-      let animation = map_portals_animations.animations[portal_type]
-      let intramap = target_id == mapid
-      portals_by_id = portals_by_id.add(
-        portal_id,
-        Portal::new(
-          animation, portal_type, name, intramap, position, target_id, target_name,
-        ),
-      )
-      portal_ids_by_name = portal_ids_by_name.add(name, portal_id)
-    }
+  for portal_id, res in src {
+    let portal_type = res.pt
+    let name = res.pn
+    let target_name = res.tn
+    let target_id = res.tm
+    let position = Point::new(res.x, res.y)
+    let animation = map_portals_animations.animations[portal_type]
+    let intramap = target_id == mapid
+    portals_by_id = portals_by_id.add(
+      portal_id,
+      Portal::new(
+        animation, portal_type, name, intramap, position, target_id, target_name,
+      ),
+    )
+    portal_ids_by_name = portal_ids_by_name.add(name, portal_id)
   }
   {
     portals_by_id,

@@ -17,36 +17,13 @@ pub fn int_value(self : Movement) -> Int {
 }
 
 ///|
-enum Modification {
-  ADD
+enum ModificationMode {
+  ADD(InventoryItemEntry)
   CHANGE_COUNT
   SWAP
   REMOVE
   ADD_COUNT
-} derive(Eq, Hash, Show, ToJson)
-
-///|
-pub fn Modification::int_value(self : Modification) -> Int {
-  match self {
-    Modification::ADD => 0
-    Modification::CHANGE_COUNT => 1
-    Modification::SWAP => 2
-    Modification::REMOVE => 3
-    Modification::ADD_COUNT => 4
-  }
-}
-
-///|
-pub fn Modification::from_int(value : Int) -> Modification!@utils.UnknownEnum {
-  match value {
-    0 => Modification::ADD
-    1 => Modification::CHANGE_COUNT
-    2 => Modification::SWAP
-    3 => Modification::REMOVE
-    4 => Modification::ADD_COUNT
-    _ => raise @utils.UnknownEnum(value)
-  }
-}
+} derive(Show, ToJson)
 
 ///| Return the move type by value
 pub fn Movement::from_int(value : Int) -> Movement!@utils.UnknownEnum {
@@ -176,7 +153,7 @@ pub fn add_item(
 }
 
 ///|
-pub fn add_slot(
+fn add_slot(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
@@ -278,15 +255,15 @@ pub fn modify(
   self : Inventory,
   t : TypeId,
   slot : Int,
-  mode : Modification,
+  mode : ModificationMode,
   arg : Int,
   mov : Movement
 ) -> Unit {
   let (slot, t) = if slot < 0 { (-slot, TypeId::EQUIPPED) } else { (slot, t) }
   let arg = arg.abs()
   match mode {
-    Modification::CHANGE_COUNT => self.change_count(t, slot, arg)
-    Modification::SWAP =>
+    ModificationMode::CHANGE_COUNT => self.change_count(t, slot, arg)
+    ModificationMode::SWAP =>
       match mov {
         Movement::MOVE_INTERNAL => self.swap(t, slot, t, arg)
         Movement::MOVE_UNEQUIP =>
@@ -295,7 +272,7 @@ pub fn modify(
           self.swap(TypeId::EQUIP, slot, TypeId::EQUIPPED, arg)
         _ => ()
       }
-    Modification::REMOVE => self.remove(t, slot)
+    ModificationMode::REMOVE => self.remove(t, slot)
     _ => ...
   }
   match self.item_listeners_map.get(t) {
@@ -305,7 +282,7 @@ pub fn modify(
 }
 
 ///|
-pub fn swap(
+fn swap(
   self : Inventory,
   firsttype : TypeId,
   firstslot : Int,
@@ -325,7 +302,7 @@ pub fn swap(
 }
 
 ///|
-pub fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
+fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
   guard self.inventories[t].get(slot_id) is Some(slot) else { return }
   let unique_id = slot.unique_id
   self.inventories[t].remove(slot_id)
@@ -340,12 +317,7 @@ pub fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
 }
 
 ///|
-pub fn change_count(
-  self : Inventory,
-  t : TypeId,
-  slot : Int,
-  count : Int
-) -> Unit {
+fn change_count(self : Inventory, t : TypeId, slot : Int, count : Int) -> Unit {
   match self.inventories[t].get(slot) {
     Some(slot) => slot.count = count
     None => ()

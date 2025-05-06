@@ -40,12 +40,11 @@ pub fn load_map(
       physics.get_fht().get_walls(),
       physics.get_fht().get_borders(),
     )
-    let portals = MapPortals::load(
-      src["portal"],
-      map_id,
-      map_portals_animations,
+    let portal_res : @resource.MapBasedArray[PortalMarker] = @json.from_json!(
+      src["portal"].value(),
     )
-    let mini_map_resources = MiniMapResource::load!(src)
+    let portals = MapPortals::new(portal_res._, map_id, map_portals_animations)
+    let mini_map_resources = MiniMapResource::load!(src, portal_res._)
     (
       tiles_objs_f, backgrounds_f, physics, map_info, portals, mini_map_resources,
     )

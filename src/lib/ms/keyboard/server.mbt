@@ -27,7 +27,7 @@ pub fn ChangeKeymapMessage::new(
 
 ///|
 pub impl @net.OutMessage for ChangeKeymapMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::CHANGE_KEYMAP)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::CHANGE_KEYMAP)
   packet.write_int(0) // mode
   packet.write_int(self.updated_actions.length()) // Number of key changes
   for v in self.updated_actions {

@@ -27,7 +27,7 @@ pub(all) struct Stage {
   drops : @drop.MapDrops
   inventory : @inventory.Inventory
   damage_number_set : @ui.NumberSet
-  mut combat : Combat?
+  mut combat : @combat_impl2.Combat?
   char_look_module : @char_look.Module
   skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
@@ -100,6 +100,7 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
 pub fn set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
+  cooldowns : Map[Int, Int],
   callback : (@player.Player) -> Unit!
 ) -> Unit {
   let player_f = self.char_look_module
@@ -122,10 +123,11 @@ pub fn set_player_stage(
       ).tap(fn(player) {
         self.player = Some(player)
         self.combat = Some(
-          Combat::new(
+          @combat_impl2.Combat::new(
             self.damage_number_set,
             self.mobs,
             self.network,
+            cooldowns,
             self.add_task_fn,
           ),
         )
@@ -238,7 +240,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
 
   // reactors_.update(self.physics);
   self.npcs.update(physics)
-  self.mobs.update(physics)
+  self.mobs.update(physics, self.network)
   // chars_.update(self.physics);
   self.drops.update(physics)
   let player = self.player.unwrap()
@@ -356,7 +358,7 @@ priv type PlayerMapTransferMessage Unit derive(Show)
 ///|
 impl @net.OutMessage for PlayerMapTransferMessage with pack(self) -> @net.OutPacket {
   ignore(self)
-  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_MAP_TRANSFER)
+  @net.OutPacket::new(@net.ClientOpcode::PLAYER_MAP_TRANSFER)
 }
 
 ///|
@@ -393,7 +395,7 @@ priv struct TakeDamageMessage {
 
 ///|
 impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::TAKE_DAMAGE)
+  @net.OutPacket::new(@net.ClientOpcode::TAKE_DAMAGE)
   ..write_time()
   ..write_byte(self.from.int_value().to_byte())
   ..write_byte(self.element.to_byte())
@@ -434,7 +436,7 @@ priv struct PickupItemMessage {
 
 ///|
 impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::PICKUP_ITEM)
+  @net.OutPacket::new(@net.ClientOpcode::PICKUP_ITEM)
   ..write_int(0)
   ..write_byte((0).to_byte())
   ..write_point(self.position)

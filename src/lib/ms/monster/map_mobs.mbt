@@ -22,7 +22,11 @@ pub fn spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
 }
 
 ///|
-pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit {
+pub fn update(
+  self : MapMobs,
+  physics : @physics.Physics,
+  network : @net.Network
+) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       match self.mobs.get(spawn.oid) {
@@ -36,7 +40,7 @@ pub fn update(self : MapMobs, physics : @physics.Physics) -> Unit {
         None =>
           self.mob_loadings.push(
             spawn
-            .instantiate(self.randomizer)
+            .instantiate(self.randomizer, network)
             .map(fn(res) {
               match res {
                 Ok(mob) => self.mobs.add(mob)
@@ -147,11 +151,12 @@ pub fn send_attack(
   result : @combat.AttackResult,
   attack : @combat.Attack,
   targets : Array[Int],
-  mobcount : Int
+  mobcount : Int,
+  network : @net.Network
 ) -> Unit {
   for target in targets {
     guard self.mobs.get(target) is Some(mob) else { continue }
-    result.damage_lines[target] = mob.calculate_damage(attack)
+    result.damage_lines[target] = mob.calculate_damage(attack, network)
     result.mob_count += 1
     if result.mob_count == 1 {
       result.first_oid = target
@@ -209,7 +214,8 @@ struct MobSpawn {
 ///|
 pub fn instantiate(
   self : MobSpawn,
-  randomizer : @utils.Randomizer
+  randomizer : @utils.Randomizer,
+  network : @net.Network
 ) -> @utils.Future[Result[Mob, Error]] {
   Mob::load(
     self.oid,
@@ -221,6 +227,7 @@ pub fn instantiate(
     self.team,
     self.position,
     randomizer,
+    network,
   )
 }
 

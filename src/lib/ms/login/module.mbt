@@ -40,7 +40,11 @@ pub fn Module::load(
 pub fn make_handlers(
   self : Module,
   transition : (Int, Int) -> Unit,
-  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
+  set_player_stage : (
+    @character.CharEntry,
+    Map[Int, Int],
+    (@player.Player) -> Unit!,
+  ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
@@ -94,10 +98,20 @@ pub fn make_handlers(
       fn(character) { handle_add_new_char_entry(self, character) },
       log_recv=true,
     ),
-    @net.make_handler(@net.SET_FIELD, parse_set_field, fn(msg) {
-      handle_set_field(
-        transition, self, set_player_stage, inventory, setup_game_ui, msg,
-      )
+    @net.make_handler(
+      @net.SET_FIELD,
+      parse_set_field,
+      fn(msg) {
+        handle_set_field(
+          transition, self, set_player_stage, inventory, setup_game_ui, msg,
+        )
+      },
+      log_recv=true,
+    ),
+    @net.make_handler(@net.LAST_CONNECTED_WORLD, parse_last_connected_world, fn(
+      _
+    ) {
+
     }),
   ]
   |> Map::from_array()
@@ -175,7 +189,7 @@ priv type LoginStartMessage Unit derive(Show)
 ///|
 impl @net.OutMessage for LoginStartMessage with pack(self) -> @net.OutPacket {
   ignore(self)
-  @net.OutPacket::new(@net.OutPacketOpcode::LOGIN_START)
+  @net.OutPacket::new(@net.ClientOpcode::LOGIN_START)
 }
 
 ///|
@@ -186,7 +200,7 @@ priv struct LoginMessage {
 
 ///|
 impl @net.OutMessage for LoginMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::LOGIN)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::LOGIN)
   let volume_serial_number = @config.global().get_volume_serial_number()
   let part1 = volume_serial_number.substring(start=0, end=2)
   let part2 = volume_serial_number.substring(start=2, end=4)
@@ -388,7 +402,7 @@ priv struct CharListRequestPacket {
 
 ///|
 impl @net.OutMessage for CharListRequestPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::CHAR_LIST_REQUEST)
+  @net.OutPacket::new(@net.ClientOpcode::CHAR_LIST_REQUEST)
   ..write_byte((0).to_byte())
   ..write_byte(self.worldId.to_byte())
   ..write_byte(self.channelId.to_byte())
@@ -542,7 +556,7 @@ priv type ServerRequest Unit derive(Show)
 ///|
 impl @net.OutMessage for ServerRequest with pack(self) -> @net.OutPacket {
   ignore(self)
-  @net.OutPacket::new(@net.OutPacketOpcode::SERVERLIST_REQUEST)
+  @net.OutPacket::new(@net.ClientOpcode::SERVERLIST_REQUEST)
 }
 
 ///|
@@ -556,9 +570,7 @@ priv struct AcceptTosPacket {} derive(Show, Default)
 ///|
 impl @net.OutMessage for AcceptTosPacket with pack(self) -> @net.OutPacket {
   ignore(self)
-  @net.OutPacket::new(@net.OutPacketOpcode::ACCEPT_TOS)..write_byte(
-    (1).to_byte(),
-  )
+  @net.OutPacket::new(@net.ClientOpcode::ACCEPT_TOS)..write_byte((1).to_byte())
 }
 
 ///|
@@ -733,7 +745,7 @@ priv struct PlayerLoginPacket {
 
 ///| Implements the OutMessage trait for PlayerLoginPacket
 impl @net.OutMessage for PlayerLoginPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_LOGIN)..write_int(self.cid)
+  @net.OutPacket::new(@net.ClientOpcode::PLAYER_LOGIN)..write_int(self.cid)
 }
 
 ///|
@@ -796,7 +808,19 @@ fn SelectCharPacket::new(character_id : Int) -> SelectCharPacket {
 
 ///|
 impl @net.OutMessage for SelectCharPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::SELECT_CHAR)
+  @net.OutPacket::new(@net.ClientOpcode::SELECT_CHAR)
   ..write_int(self.character_id)
   ..write_hardware_info()
+}
+
+///|
+priv struct LastConnectedWorldMessage {
+  world : Int
+} derive(Show)
+
+///|
+fn parse_last_connected_world(
+  recv : @net.InPacket
+) -> LastConnectedWorldMessage! {
+  { world: recv.read_int!() }
 }

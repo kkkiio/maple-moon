@@ -12,6 +12,7 @@ pub(all) enum Opcode {
   PING
 
   /// Login 2
+  LAST_CONNECTED_WORLD
   RECOMMENDED_WORLDS
   CHECK_SPW_RESULT
 
@@ -116,8 +117,9 @@ pub fn Opcode::int_value(self : Opcode) -> Int {
     PING => 17
 
     /// Login 2
-    RECOMMENDED_WORLDS => 27
-    CHECK_SPW_RESULT => 28
+    LAST_CONNECTED_WORLD => 0x1A
+    RECOMMENDED_WORLDS => 0x1B
+    CHECK_SPW_RESULT => 0x1C
 
     /// Inventory 1
     MODIFY_INVENTORY => 29

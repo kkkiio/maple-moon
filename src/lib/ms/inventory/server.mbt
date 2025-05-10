@@ -134,7 +134,7 @@ fn UseItemMessage::new(slot_no : Int, itemid : Int) -> UseItemMessage {
 
 ///|
 impl @net.OutMessage for UseItemMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::USE_ITEM)
+  @net.OutPacket::new(@net.ClientOpcode::USE_ITEM)
   ..write_time()
   ..write_short(self.slot_no)
   ..write_int(self.itemid)
@@ -147,7 +147,7 @@ pub fn new_move_item_packet(
   action : Int,
   qty : Int
 ) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::MOVE_ITEM)
+  @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
   ..write_time()
   ..write_byte(type_id.int_value().to_byte())
   ..write_short(slot)

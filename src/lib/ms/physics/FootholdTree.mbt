@@ -249,9 +249,7 @@ pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
 
 ///|
 pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
-  guard let Some(range) = self.footholds_by_x.get(fx.to_int()) else {
-    None => return 0
-  }
+  guard self.footholds_by_x.get(fx.to_int()) is Some(range) else { return 0 }
   range.fold(init=(0, self.borders.second().to_double()), fn(acc, id) {
     let fh = self.footholds.get(id).unwrap()
     let ycomp = fh.ground_below(fx)

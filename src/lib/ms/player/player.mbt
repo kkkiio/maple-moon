@@ -355,7 +355,7 @@ pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
 
 ///|
 fn new_move_player_packet(movement : Movement) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::MOVE_PLAYER)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::MOVE_PLAYER)
   packet.skip(9)
   packet.write_byte((1).to_byte())
   write_movement(packet, movement)
@@ -517,7 +517,7 @@ pub(all) struct ChangeMapMessage {
 
 ///|
 pub impl @net.OutMessage for ChangeMapMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::CHANGE_MAP)
+  @net.OutPacket::new(@net.ClientOpcode::CHANGE_MAP)
   ..write_byte(self.died.to_int().to_byte())
   ..write_int(self.target_id)
   ..write_string(self.target_p)

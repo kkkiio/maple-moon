@@ -27,7 +27,7 @@ pub fn MapNpcs::new(
 
 ///| Packet which requests a dialog with a server-sided NPC
 fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::TALK_TO_NPC)..write_int(oid)
+  @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)..write_int(oid)
 }
 
 ///|

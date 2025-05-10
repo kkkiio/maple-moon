@@ -130,8 +130,8 @@ fn load_modules(
       merge_handlers(
         login_module.make_handlers(
           fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
-          fn(char_entry, callback) {
-            get_stage().set_player_stage(char_entry, callback)
+          fn(char_entry, cooldowns, callback) {
+            get_stage().set_player_stage(char_entry, cooldowns, callback)
           },
           inventory_module.get_inventory(),
           fn(player) {
@@ -148,7 +148,7 @@ fn load_modules(
       )
       login_module
     })
-  let monster_module = @monster.Module::new(add_io_task)
+  let monster_module = @monster.Module::new(add_io_task, network)
   merge_handlers(
     monster_module.make_handlers(fn() {
       get_stage().get_player().map(fn(p) { p.get_stats() })

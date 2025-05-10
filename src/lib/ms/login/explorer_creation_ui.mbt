@@ -594,7 +594,7 @@ priv struct CreateCharPacket {
 
 ///|
 impl @net.OutMessage for CreateCharPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::CREATE_CHAR)
+  @net.OutPacket::new(@net.ClientOpcode::CREATE_CHAR)
   ..write_string(self.name)
   ..write_int(self.job)
   ..write_int(self.face)

@@ -1,11 +1,11 @@
 ///| A packet to be sent to the server
 struct OutPacket {
   buf : @buffer.T
-  opcode : OutPacketOpcode
+  opcode : ClientOpcode
 }
 
 ///|
-pub fn OutPacket::new(opcode : OutPacketOpcode) -> OutPacket {
+pub fn OutPacket::new(opcode : ClientOpcode) -> OutPacket {
   let pkt = { buf: @buffer.new(), opcode }
   pkt.write_short(opcode.int_value())
   pkt
@@ -127,8 +127,8 @@ pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
   @strconv.parse_int!(hex_val, base=16).to_byte()
 }
 
-///| Opcodes for OutPackets associated with version 83 of the game
-pub(all) enum OutPacketOpcode {
+///| Opcodes for packets sent from the client to the server associated with version 83 of the game
+pub(all) enum ClientOpcode {
   LOGIN
   CHAR_LIST_REQUEST
   SERVER_STATUS_REQUEST
@@ -169,6 +169,7 @@ pub(all) enum OutPacketOpcode {
   SPEND_SP
   CHANGE_KEYMAP
   USE_SKILL
+  QUEST_ACTION
   PLAYER_INTERACTION
   PARTY_OPERATION
   ADMIN_COMMAND
@@ -180,7 +181,7 @@ pub(all) enum OutPacketOpcode {
 } derive(Eq, Compare, Show)
 
 ///|
-pub fn int_value(self : OutPacketOpcode) -> Int {
+pub fn int_value(self : ClientOpcode) -> Int {
   match self {
     LOGIN => 1
     CHAR_LIST_REQUEST => 5
@@ -222,6 +223,7 @@ pub fn int_value(self : OutPacketOpcode) -> Int {
     SPEND_SP => 90
     CHANGE_KEYMAP => 135
     USE_SKILL => 91
+    QUEST_ACTION => 107
     PLAYER_INTERACTION => 123
     PARTY_OPERATION => 124
     ADMIN_COMMAND => 128
@@ -234,7 +236,7 @@ pub fn int_value(self : OutPacketOpcode) -> Int {
 }
 
 ///|
-pub fn log_level(self : OutPacketOpcode) -> @log.Level {
+pub fn log_level(self : ClientOpcode) -> @log.Level {
   match self {
     MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE
     _ => @log.Level::INFO

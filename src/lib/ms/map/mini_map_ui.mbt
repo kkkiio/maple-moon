@@ -171,9 +171,6 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
   }
   match self.type_ {
     MIN =>
-      //       for sprite in self.min_sprites {
-      //     sprite.draw(position_, alpha);
-      // }
       return {
         render_elements: [
           @ui.RenderElement::Static(

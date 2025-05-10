@@ -549,7 +549,7 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
 
 ///|
 fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::NPC_TALK_MORE)
+  @net.OutPacket::new(@net.ClientOpcode::NPC_TALK_MORE)
   ..write_byte(lastmsg.to_byte())
   ..write_byte(response.to_byte())
 }

@@ -11,7 +11,7 @@ pub fn handle_show_mob_hp(
   player_stats_getter : () -> @char_stats.CharStats?,
   recv : @net.InPacket
 ) -> Unit! {
-  guard let Some(player_stats) = player_stats_getter() else { None => return }
+  guard player_stats_getter() is Some(player_stats) else { return }
   let oid = recv.read_int!()
   let hppercent = recv.read_byte!()
   mobs.send_mobhp(oid, hppercent, player_stats.get_stat(@maple_stat.Id::LEVEL))

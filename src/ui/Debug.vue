@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps } from 'vue';
 import { NButton } from 'naive-ui';
 import { reset_player_position } from 'lib/ms/ms.js';
 

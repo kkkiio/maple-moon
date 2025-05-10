@@ -239,7 +239,7 @@ priv struct MoveItemPacket {
 
 ///|
 impl @net.OutMessage for MoveItemPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::MOVE_ITEM)
+  @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
   ..write_time()
   ..write_byte(self.type_id.int_value().to_byte())
   ..write_short(self.slot)

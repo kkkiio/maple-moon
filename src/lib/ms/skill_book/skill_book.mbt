@@ -242,7 +242,7 @@ priv struct SpendSPPacket {
 
 ///|
 impl @net.OutMessage for SpendSPPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::SPEND_SP)
+  @net.OutPacket::new(@net.ClientOpcode::SPEND_SP)
   ..write_time()
   ..write_int(self.skill_id)
 }

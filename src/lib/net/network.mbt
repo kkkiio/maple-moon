@@ -195,5 +195,5 @@ priv struct PongMessage {} derive(Default, Show)
 ///|
 impl OutMessage for PongMessage with pack(self) {
   ignore(self)
-  OutPacket::new(OutPacketOpcode::PONG)
+  OutPacket::new(ClientOpcode::PONG)
 }

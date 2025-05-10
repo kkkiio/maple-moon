@@ -24,7 +24,7 @@ pub fn draw(
   viewy : Double,
   alpha : Double
 ) -> Unit {
-  guard let Some(animation) = self.animation.poll() else { None => return }
+  guard self.animation.poll() is Some(animation) else { return }
   let bulletpos = self.move_obj.get_absolute(viewx, viewy, alpha)
   let args = @graphics.DrawArgument::new14(bulletpos, self.flip)
   animation.draw(args, alpha)

@@ -107,7 +107,7 @@ priv struct SpendAPMessage {
 
 ///|
 impl @net.OutMessage for SpendAPMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.OutPacketOpcode::SPEND_AP)
+  @net.OutPacket::new(@net.ClientOpcode::SPEND_AP)
   ..write_time()
   ..write_int(self.stat.int_value())
 }

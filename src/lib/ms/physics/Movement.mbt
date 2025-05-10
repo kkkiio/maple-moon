@@ -1,11 +1,13 @@
+///|
 enum MovementType {
   NONE
   ABSOLUTE
   RELATIVE
   CHAIR
   JUMPDOWN
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
 
+///|
 pub struct Movement {
   t : MovementType
   command : Int
@@ -16,12 +18,14 @@ pub struct Movement {
   fh : Int
   newstate : Int
   duration : Int
-}
+} derive(Show)
 
+///|
 pub fn Movement::default() -> Movement {
   Movement::new(MovementType::NONE, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
+///|
 pub fn Movement::new(
   t : MovementType,
   c : Int,
@@ -46,6 +50,7 @@ pub fn Movement::new(
   }
 }
 
+///|
 pub fn Movement::from_coords(
   x : Int,
   y : Int,
@@ -57,6 +62,7 @@ pub fn Movement::from_coords(
   Movement::new(MovementType::ABSOLUTE, 0, x, y, lx, ly, 0, s, d)
 }
 
+///|
 pub fn Movement::from_physics_object(
   phobj : PhysicsObject,
   s : Int
@@ -74,6 +80,7 @@ pub fn Movement::from_physics_object(
   )
 }
 
+///|
 pub fn hasmoved(self : Movement, newmove : Movement) -> Bool {
   newmove.newstate != self.newstate ||
   newmove.xpos != self.xpos ||
@@ -82,6 +89,7 @@ pub fn hasmoved(self : Movement, newmove : Movement) -> Bool {
   newmove.lasty != self.lasty
 }
 
+///|
 pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
   out.write_byte(movement.command.to_byte())
   out.write_short(movement.xpos)
@@ -93,6 +101,7 @@ pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
   out.write_short(movement.duration)
 }
 
+///|
 pub fn parse_movements(recv : @net.InPacket) -> Array[Movement]! {
   let movements = []
   let length = recv.read_byte!()

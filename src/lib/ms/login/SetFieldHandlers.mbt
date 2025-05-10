@@ -20,7 +20,15 @@ fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage! {
     }
     let inventory = parse_inventory!(recv)
     let skills = parse_skillbook!(recv)
-    return SetFieldMessage::SetField(stats~, inventory_entry=inventory, skills~)
+    let cooldowns = @combat_impl2.parse_cooldowns!(recv)
+    let quests = @quest.parse_questlog!(recv)
+    return SetFieldMessage::SetField(
+      stats~,
+      inventory_entry=inventory,
+      skills~,
+      cooldowns~,
+      quests~,
+    )
   }
 }
 
@@ -30,7 +38,9 @@ priv enum SetFieldMessage {
   SetField(
     stats~ : @char_stats.StatsEntry,
     inventory_entry~ : InventoryEntry,
-    skills~ : Array[SkillEntry]
+    skills~ : Array[SkillEntry],
+    cooldowns~ : Map[Int, Int],
+    quests~ : @quest.QuestLog
   )
 } derive(Show)
 
@@ -39,7 +49,11 @@ priv enum SetFieldMessage {
 fn handle_set_field(
   transition : (Int, Int) -> Unit,
   login_module : Module,
-  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
+  set_player_stage : (
+    @character.CharEntry,
+    Map[Int, Int],
+    (@player.Player) -> Unit!,
+  ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
   message : SetFieldMessage
@@ -48,18 +62,21 @@ fn handle_set_field(
   // @config.constants.set_viewheight(Setting::get(configHeight).load())
   match message {
     SetFieldMessage::ChangeMap(mapid~, portalid~) => transition(mapid, portalid)
-    SetFieldMessage::SetField(stats~, inventory_entry~, skills~) =>
+    SetFieldMessage::SetField(stats~, inventory_entry~, skills~, cooldowns~, ..) => {
+      let playerentry = login_module.get_selected_char().unwrap() // TODO: handle None
+      let playerentry = { ..playerentry, stats, }
       set_field(
         login_module.network,
         transition,
-        login_module.get_selected_char().unwrap(), // TODO: handle None
+        playerentry,
         set_player_stage,
         inventory,
         setup_game_ui,
-        stats,
         inventory_entry,
         skills,
+        cooldowns,
       )
+    }
   }
 }
 
@@ -68,20 +85,21 @@ fn set_field(
   net : @net.Network,
   transition : (Int, Int) -> Unit,
   playerentry : @character.CharEntry,
-  set_player_stage : (@character.CharEntry, (@player.Player) -> Unit!) -> Unit,
+  set_player_stage : (
+    @character.CharEntry,
+    Map[Int, Int],
+    (@player.Player) -> Unit!,
+  ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
-  stats : @char_stats.StatsEntry,
   inventory_entry : InventoryEntry,
-  skills : Array[SkillEntry]
+  skills : Array[SkillEntry],
+  cooldowns : Map[Int, Int]
 ) -> Unit {
   inventory.set_meso(inventory_entry.meso)
   for kind, slotmax in inventory_entry.slotmax {
     inventory.set_slotmax(kind, slotmax)
   }
-  let playerentry = { ..playerentry, stats, }
-  // parse_cooldowns(recv, player);
-  // parse_questlog(recv, player.get_quests());
   // parse_minigame(recv);
   // parse_ring1(recv);
   // parse_ring2(recv);
@@ -90,7 +108,7 @@ fn set_field(
   // parse_monsterbook(recv, player.get_monsterbook());
   // parse_nyinfo(recv);
   // parse_areainfo(recv);
-  set_player_stage(playerentry, fn(player) {
+  set_player_stage(playerentry, cooldowns, fn(player) {
     for item in inventory_entry.items {
       @inventory.handle_item(inventory, item)
     }
@@ -113,7 +131,7 @@ priv type PlayerUpdatePacket Unit derive(Show)
 ///|
 impl @net.OutMessage for PlayerUpdatePacket with pack(self) -> @net.OutPacket {
   ignore(self)
-  @net.OutPacket::new(@net.OutPacketOpcode::PLAYER_UPDATE)
+  @net.OutPacket::new(@net.ClientOpcode::PLAYER_UPDATE)
 }
 
 ///|

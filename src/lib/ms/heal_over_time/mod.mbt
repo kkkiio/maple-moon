@@ -35,7 +35,7 @@ priv struct HealOverTimeMessage {
 
 ///|
 impl @net.OutMessage for HealOverTimeMessage with pack(self) {
-  @net.OutPacket::new(@net.OutPacketOpcode::HEAL_OVER_TIME)
+  @net.OutPacket::new(@net.ClientOpcode::HEAL_OVER_TIME)
   ..write_long(0) // server doesn't care
   ..write_short(self.hp)
   ..write_short(self.mp)

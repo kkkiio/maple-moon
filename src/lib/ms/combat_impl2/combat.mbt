@@ -19,6 +19,7 @@ pub fn Combat::new(
   damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
   packet_processor : @net.Network,
+  cooldowns : Map[Int, Int],
   add_task_fn : (@utils.Future[Unit]) -> Unit
 ) -> Combat {
   {
@@ -30,7 +31,7 @@ pub fn Combat::new(
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
-    cooldowns: Map::new(),
+    cooldowns,
     add_task_fn,
     network: packet_processor,
   }
@@ -132,7 +133,7 @@ fn apply_move(
     // This approach should also make it easier to implement PvP
     let mobcount = attack.mobcount
     let result = {
-      ..@combat.AttackResult::new(attack),
+      ..AttackResult::new(attack),
       attacker: player.character.get_oid(),
     }
     let mob_objs = self.mobs.get_mobs()
@@ -142,7 +143,7 @@ fn apply_move(
     // let reactor_targets = self.find_closest_reactor(
     //   reactor_objs, range, origin, mobcount, false,
     // )
-    self.mobs.send_attack(result, attack, mob_targets, mobcount)
+    self.mobs.send_attack(result, attack, mob_targets, mobcount, self.network)
     self.extract_effects(player.character, act, result)
     self.apply_result_movement(player, act, result)
     self.network.send_message(AttackMessage(result))
@@ -160,7 +161,7 @@ fn apply_move(
     // }
   } else {
     act.apply_useeffects(player.character)
-    act.apply_actions(player.character, @combat.AttackType::MAGIC)
+    act.apply_actions(player.character, @combat_proto.AttackType::MAGIC)
     let moveid = act.get_id()
     let level = player.get_skills().get_level(moveid)
     self.network.send_message({ move_id: moveid, level })
@@ -172,7 +173,7 @@ fn apply_result_movement(
   self : Combat,
   player : @player.Player,
   act : @combat_impl.SpecialMove,
-  result : @combat.AttackResult
+  result : AttackResult
 ) -> Unit {
   if act.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
     act.get_id() == @skill.SkillId::RUSH_PALADIN.int_value() ||
@@ -185,7 +186,7 @@ fn apply_result_movement(
 fn apply_rush(
   self : Combat,
   player : @player.Player,
-  result : @combat.AttackResult
+  result : AttackResult
 ) -> Unit {
   if result.mob_count == 0 {
     return
@@ -223,7 +224,7 @@ fn find_closest_mob(
 
 ///|
 priv struct DamageEffect {
-  user : @combat.AttackUser
+  user : @combat_proto.AttackUser
   number : @ui.Number
   damage : Int
   toleft : Bool
@@ -234,7 +235,7 @@ priv struct DamageEffect {
 ///|
 priv struct BulletEffect {
   damageeffect : DamageEffect
-  bullet : @combat.Bullet
+  bullet : @combat_proto.Bullet
   mut target : @struct.Point[Int]
 }
 
@@ -246,7 +247,7 @@ priv struct UseSkillMessage {
 
 ///|
 impl @net.OutMessage for UseSkillMessage with pack(self) {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::USE_SKILL)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::USE_SKILL)
   packet.write_time()
   packet.write_int(self.move_id)
   packet.write_byte(self.level.to_byte())
@@ -276,15 +277,15 @@ impl @net.OutMessage for UseSkillMessage with pack(self) {
 // }
 
 ///| Notifies the server of an attack. 
-type AttackMessage @combat.AttackResult derive(Show)
+type AttackMessage AttackResult derive(Show)
 
 ///|
 pub impl @net.OutMessage for AttackMessage with pack(self) {
   let attack = self._
   let opcode = match attack.t {
-    @combat.AttackType::CLOSE => @net.OutPacketOpcode::CLOSE_ATTACK
-    @combat.AttackType::RANGED => @net.OutPacketOpcode::RANGED_ATTACK
-    _ => @net.OutPacketOpcode::MAGIC_ATTACK
+    @combat_proto.AttackType::CLOSE => @net.ClientOpcode::CLOSE_ATTACK
+    @combat_proto.AttackType::RANGED => @net.ClientOpcode::RANGED_ATTACK
+    _ => @net.ClientOpcode::MAGIC_ATTACK
   }
   let packet = @net.OutPacket::new(opcode)
   packet.skip(1)
@@ -299,7 +300,7 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
   packet.write_byte(attack.stance.to_byte())
   packet.skip(1)
   packet.write_byte(attack.speed.to_byte())
-  if attack.t == @combat.AttackType::RANGED {
+  if attack.t == @combat_proto.AttackType::RANGED {
     packet.skip(1)
     packet.write_byte(attack.toleft.to_int().to_byte())
     packet.skip(7)
@@ -357,16 +358,16 @@ fn extract_effects(
   self : Combat,
   user : @character.Character,
   act : @combat_impl.SpecialMove,
-  result : @combat.AttackResult
+  result : AttackResult
 ) -> Unit {
-  let attack_user : @combat.AttackUser = {
+  let attack_user : @combat_proto.AttackUser = {
     skill_level: (user.get_skilllevel)(act.get_id()),
     level: user.get_stats().get_stat(@maple_stat.Id::LEVEL),
     second_weapon: user.is_twohanded(),
     flip: not(result.toleft),
   }
   if result.bullet != 0 {
-    let bullet = @combat.Bullet::new(
+    let bullet = @combat_proto.Bullet::new(
       act.get_bullet(user, result.bullet),
       user.get_position(),
       result.toleft,
@@ -467,7 +468,7 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   number.set_x(head_position.x)
   let act_f = self.get_move(effect.move_id)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
-  mob.apply_damage(effect.damage, effect.toleft)
+  mob.apply_damage(effect.damage, effect.toleft, self.network)
   (self.add_task_fn)(
     act_f.map(fn(res) {
       match res {
@@ -494,9 +495,9 @@ pub fn check_attack_type(
   character : @character.CharBase,
   inventory : &@player.Inventory,
   skill : Bool
-) -> (Bool, @combat.AttackType) {
+) -> (Bool, @combat_proto.AttackType) {
   if character.state == @character.CharState::PRONE {
-    (true, @combat.AttackType::CLOSE)
+    (true, @combat_proto.AttackType::CLOSE)
   } else {
     match character.get_weapontype() {
       @weapon.Type::BOW
@@ -507,9 +508,9 @@ pub fn check_attack_type(
         (
           degenerate,
           if degenerate {
-            @combat.AttackType::CLOSE
+            @combat_proto.AttackType::CLOSE
           } else {
-            @combat.AttackType::RANGED
+            @combat_proto.AttackType::RANGED
           },
         )
       }
@@ -518,13 +519,13 @@ pub fn check_attack_type(
         (
           degenerate,
           if degenerate {
-            @combat.AttackType::CLOSE
+            @combat_proto.AttackType::CLOSE
           } else {
-            @combat.AttackType::MAGIC
+            @combat_proto.AttackType::MAGIC
           },
         )
       }
-      _ => (false, @combat.AttackType::CLOSE)
+      _ => (false, @combat_proto.AttackType::CLOSE)
     }
   }
 }
@@ -582,7 +583,7 @@ pub fn log_background_err[E : Show](
 typealias Rectangle[T] = @struct.Rectangle[T]
 
 ///|
-pub fn make_attack_range(attack : @combat.Attack) -> Rectangle[Int] {
+pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
   let origin = attack.origin
   let left = (attack.range.left().to_double() * attack.hrange).to_int()
   let rel_range = Rectangle::from4(
@@ -592,4 +593,19 @@ pub fn make_attack_range(attack : @combat.Attack) -> Rectangle[Int] {
     attack.range.bottom(),
   )
   (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(origin)
+}
+
+///|
+typealias AttackResult = @combat_proto.AttackResult
+
+///|
+pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int]! {
+  let size = recv.read_short!()
+  let cooldowns = Map::new()
+  for i in 0..<size {
+    let skill_id = recv.read_int!()
+    let cooltime = recv.read_short!()
+    cooldowns[skill_id] = cooltime
+  }
+  cooldowns
 }

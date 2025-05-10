@@ -798,7 +798,7 @@ pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
 
 ///|
 pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
-  guard let Some(weapon) = self.equips.get_weapon() else { None => return }
+  guard self.equips.get_weapon() is Some(weapon) else { return }
   let attacktype = weapon.get_attack()
   if attacktype == 9 && not(degenerate) {
     self.set_stance(@types.StanceId::SHOT)

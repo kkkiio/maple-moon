@@ -228,8 +228,8 @@ fn render(
     }
     let item = self.buy_state.items[slot]
     draws.push(fn(parentpos) {
-      guard let Some((icon, name_label)) = item.display.poll().flatten() else {
-        None => return
+      guard item.display.poll().flatten() is Some((icon, name_label)) else {
+        return
       }
       let pos = parentpos + itempos
       icon.draw(
@@ -283,10 +283,9 @@ fn render(
     }
     let item = sell_items[slot]
     draws.push(fn(parentpos) {
-      guard let Some((icon, name_label, price_label)) = item.display
-        .poll()
-        .flatten() else {
-        None => return
+      guard item.display.poll().flatten()
+        is Some((icon, name_label, price_label)) else {
+        return
       }
       let pos = parentpos + itempos
       icon.draw(
@@ -453,7 +452,7 @@ fn SellState::new() -> SellState {
 
 ///|
 fn sell(items : Array[SellItem], i : Int, all~ : Bool = false) -> Unit {
-  guard let Some(item) = items.get(i) else { None => return }
+  guard items.get(i) is Some(item) else { return }
   let itemid = item.id
   let sellable = item.sellable
   let slot = item.slot
@@ -604,7 +603,7 @@ priv enum ShopActionMessage {
 
 ///|
 impl @net.OutMessage for ShopActionMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.OutPacketOpcode::NPC_SHOP_ACTION)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::NPC_SHOP_ACTION)
   match self {
     ShopActionMessage::Item(slot~, item_id~, qty~, buy~) =>
       packet

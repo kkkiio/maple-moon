@@ -93,6 +93,7 @@ struct Mob {
   mut fade_in : Bool
   opacity : @utils.Linear
   src : @resource.NxNode
+  network : @net.Network
 }
 
 ///|
@@ -112,13 +113,16 @@ pub fn Mob::load(
   newspawn : Bool,
   _team : Int,
   position : @struct.Point[Int],
-  randomizer : @utils.Randomizer
+  randomizer : @utils.Randomizer,
+  network : @net.Network
 ) -> @utils.Future[Result[Mob, Error]] {
   let strid = @string_format.extend_id(mid, 7)
   mob_loader
   .load_res([strid + ".img"])
   .map_exn(fn(src) {
-    Mob::new!(oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src)
+    Mob::new!(
+      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network,
+    )
   })
 }
 
@@ -133,7 +137,8 @@ fn Mob::new(
   _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
-  src : @resource.NxNode
+  src : @resource.NxNode,
+  network : @net.Network
 ) -> Mob! {
   let base = @map_object.MapObjectBase::new(oi)
   let info = src["info"]
@@ -277,6 +282,7 @@ fn Mob::new(
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
     src,
+    network,
   }
 }
 
@@ -409,7 +415,7 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
       }
       if next {
         self.next_move()
-        self.update_movement()
+        self.update_movement(self.network)
         self.counter = 0
       }
     }
@@ -543,21 +549,23 @@ pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
 }
 
 ///|
-pub fn update_movement(self : Mob) -> Unit {
-  new_move_mob_packet(
-    self.base.get_oid(),
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    self.base.get_position(),
-    @physics.Movement::from_physics_object(
-      self.base.phobj,
-      self.stance.int_value(),
+pub fn update_movement(self : Mob, network : @net.Network) -> Unit {
+  network.send_message(
+    new_move_mob_packet(
+      self.base.get_oid(),
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      self.base.get_position(),
+      @physics.Movement::from_physics_object(
+        self.base.phobj,
+        self.stance.int_value(),
+      ),
     ),
-  ).dispatch()
+  )
 }
 
 ///|
@@ -568,22 +576,25 @@ pub fn update_movement_ex(
   action : Int,
   skill : Int,
   skill_level : Int,
-  option : Int
+  option : Int,
+  network : @net.Network
 ) -> Unit {
-  new_move_mob_packet(
-    self.base.get_oid(),
-    t,
-    nibbles,
-    action,
-    skill,
-    skill_level,
-    option,
-    self.base.get_position(),
-    @physics.Movement::from_physics_object(
-      self.base.phobj,
-      self.stance.int_value(),
+  network.send_message(
+    new_move_mob_packet(
+      self.base.get_oid(),
+      t,
+      nibbles,
+      action,
+      skill,
+      skill_level,
+      option,
+      self.base.get_position(),
+      @physics.Movement::from_physics_object(
+        self.base.phobj,
+        self.stance.int_value(),
+      ),
     ),
-  ).dispatch()
+  )
 }
 
 ///|
@@ -775,7 +786,8 @@ pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
 ///|
 pub fn calculate_damage(
   self : Mob,
-  attack : @combat.Attack
+  attack : @combat.Attack,
+  network : @net.Network
 ) -> Array[(Int, Bool)] {
   let greater_level = @math.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
@@ -813,7 +825,7 @@ pub fn calculate_damage(
   let result = Array::makei(attack.hitcount, fn(_i) {
     self.next_damage(mindamage, maxdamage, hitchance, critical)
   })
-  self.update_movement()
+  self.update_movement(network)
   result
 }
 
@@ -881,7 +893,12 @@ fn calculate_hitchance(
 }
 
 ///|
-pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
+pub fn apply_damage(
+  self : Mob,
+  damage : Int,
+  toleft : Bool,
+  network : @net.Network
+) -> Unit {
   // self.hit_sound.play()
 
   if self.dying && self.stance.t != StanceType::DIE {
@@ -892,7 +909,7 @@ pub fn apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
     not(self.is_boss) {
     self.counter = 170
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
-    self.update_movement()
+    self.update_movement(network)
   }
 }
 

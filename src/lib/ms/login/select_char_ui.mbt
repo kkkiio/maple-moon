@@ -125,7 +125,7 @@ pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
   render_elements.push(
     (@ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
     |> @ui.Button::new(on_click=fn() {
-      guard let Some(slot) = self.select_slot else { None => return None }
+      guard self.select_slot is Some(slot) else { return None }
       let cid = self.characters[slot].0
       (self.on_select_character)(cid)
       None

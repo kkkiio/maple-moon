@@ -172,3 +172,9 @@ test "parse quest bold desc" {
     ,
   )
 }
+
+///|
+pub fn forfeit_quest_ffi(mod : Module, quest_id : Int) -> Unit {
+  let msg = QuestActionMessage::ForfeitQuest(quest_id~)
+  mod.network.send_message(msg)
+}

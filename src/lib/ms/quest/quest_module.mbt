@@ -1,31 +1,75 @@
 ///|
 struct Module {
   quests_resource : QuestsResource
-  player_quest_log : PlayerQuestLog
+  mut player_quest_log : PlayerQuestLog
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
+  network : @net.Network
 }
 
 ///|
-pub fn Module::load() -> @utils.Future[Result[Module, Error]] {
+pub fn Module::load(
+  network : @net.Network
+) -> @utils.Future[Result[Module, Error]] {
   let fut = quest_resource_loader.load_res(["nx"])
   fut.map_exn(fn(node) {
     let quests_resource : QuestsResource = @json.from_json!(node.value())
-    Module::new(quests_resource)
+    Module::new(quests_resource, network)
   })
 }
 
 ///|
-pub fn Module::new(quests_resource : QuestsResource) -> Module {
+pub fn Module::new(
+  quests_resource : QuestsResource,
+  network : @net.Network
+) -> Module {
   {
     quests_resource,
     player_quest_log: PlayerQuestLog::default(),
     quest_log_listeners: [],
+    network,
+  }
+}
+
+///|
+pub fn Module::make_show_status_info_handler_map(
+  self : Module
+) -> Map[Int, @game_mod.SubRouteHandler] {
+  {
+    1: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction! {
+      let quest_id = recv.read_short!()
+      let status = recv.read_byte!()
+      match status {
+        0 => {
+          let action : &@game_mod.SubRouteAction = ShowForfeitQuestAction::new(
+            quest_id, self,
+          )
+          action
+        }
+        2 => {
+          let action : &@game_mod.SubRouteAction = ShowCompleteQuestAction::new(
+            quest_id,
+            recv.read_long!(),
+            self,
+          )
+          action
+        }
+        _ => {
+          let action : &@game_mod.SubRouteAction = ShowUpdateQuestAction::new(
+            quest_id,
+            recv.read_string!(),
+            self,
+          )
+          action
+        }
+      }
+    },
   }
 }
 
 ///| PlayerQuestLog stores information on the quest log of an individual character
 priv struct PlayerQuestLog {
   started : Map[Int, StartedQuest]
+  info_number_quest_map : Map[Int, Int] // info_number => quest_id
   completed : Map[Int, CompletedQuest]
 } derive(Show, Default)
 
@@ -33,7 +77,7 @@ priv struct PlayerQuestLog {
 priv struct StartedQuest {
   quest_info : QuestInfo
   checks : Array[QuestCheck]
-  progress_data : String
+  mut progress_data : String
   mut phase : Int
   mut current_phase_info : (Int, String)? // info_number, progress
 } derive(Show)
@@ -142,13 +186,20 @@ pub fn Module::handle_player_quest_info(
     }
     completed.push((quest_id, { quest_info, completion_time }))
   }
-  self.player_quest_log.started.clear()
-  self.player_quest_log.completed.clear()
-  for it in started {
-    self.player_quest_log.started[it.0] = it.1
-  }
-  for it in completed {
-    self.player_quest_log.completed[it.0] = it.1
+  self.player_quest_log = {
+    started: Map::from_array(started),
+    info_number_quest_map: started
+    .iter()
+    .flat_map(fn(it) {
+      let (quest_id, quest) = it
+      quest.checks
+      .iter()
+      .filter_map(fn(check) {
+        check.info_number.map(fn(info_number) { (info_number, quest_id) })
+      })
+    })
+    |> Map::from_iter,
+    completed: Map::from_array(completed),
   }
   self.quest_log_listeners.retain(fn(listener) {
     listener(self.player_quest_log)
@@ -159,349 +210,172 @@ pub fn Module::handle_player_quest_info(
 // 29005: "", 27010: "9", 29014: "", 27019: "3", -31066: ""
 
 ///|
-struct QuestsResource {
-  quest_info_map : Map[String, QuestInfo]
-  quest_checks_map : Map[String, QuestChecks]
-} derive (
-  FromJson(
-    fields(
-      quest_info_map(rename="QuestInfo.img"),
-      quest_checks_map(rename="Check.img"),
-    ),
-  ),
-)
-
-///|
-priv struct QuestInfo {
-  name : String
-  parent : String?
-  area : Int
-  order : Int?
-  auto_complete : Bool
-  auto_start : Bool
-  one_shot : Bool
-  descriptions : Array[String]
+priv enum QuestActionMessage {
+  // Restore a lost item for a quest.
+  RestoreLostItem(quest_id~ : Int, item_id~ : Int)
+  // Start a quest when talking to an NPC.
+  StartQuest(quest_id~ : Int, npc_id~ : Int)
+  // Complete a quest when talking to an NPC, optionally with a selection.
+  CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
+  // Forfeit an active quest.
+  ForfeitQuest(quest_id~ : Int)
+  // Start a quest via a script (e.g., item-triggered or event-triggered).
+  ScriptedStartQuest(quest_id~ : Int, npc_id~ : Int)
+  // Complete a quest via a script.
+  ScriptedEndQuest(quest_id~ : Int, npc_id~ : Int)
 } derive(Show)
 
 ///|
-impl @json.FromJson for QuestInfo with from_json(json, path) {
-  match json {
-    Object(
-      {
-        "name": String(name),
-        "parent"? : parent,
-        "area": Number(area),
-        "autoComplete"? : auto_complete,
-        "autoStart"? : auto_start,
-        "oneShot"? : one_shot,
-        "order"? : order,
-        ..
-      } as obj
-    ) => {
-      let description_map : Map[Int, String] = {}
-      for key, value in obj {
-        let i = try {
-          @strconv.parse_int!(key)
-        } catch {
-          _ => continue
-        }
-        if i < 0 || i > 10 { // assume there are at most 10 phases
-          continue
-        }
-        description_map[i] = match value {
-          String(desc) => desc
-          Number(i) => i.to_string() // FIXME: what does number mean?
-          _ => raise @json.JsonDecodeError((path.add_key(key), "invalid desc"))
-        }
-      }
-      let max_phase : Int = description_map.keys().maximum().or(0)
-      let descriptions = Array::makei(max_phase + 1, fn(i) {
-        description_map.get_or_default(i, "")
-      })
-      {
-        name,
-        parent: match parent {
-          Some(String(parent)) => Some(parent)
-          Some(Number(1)) => Some("1") // TODO: what does the number 1 mean?
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("parent"), "invalid parent"),
-            )
-        },
-        area: area.to_int(),
-        auto_complete: auto_complete is Some(1),
-        auto_start: auto_start is Some(1),
-        one_shot: one_shot is Some(1),
-        order: match order {
-          Some(Number(order)) => Some(order.to_int())
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("order"), "invalid order"),
-            )
-        },
-        descriptions,
+impl @net.OutMessage for QuestActionMessage with pack(self) -> @net.OutPacket {
+  let packet = @net.OutPacket::new(@net.ClientOpcode::QUEST_ACTION)
+  match self {
+    QuestActionMessage::RestoreLostItem(quest_id~, item_id~) => {
+      packet.write_byte(0)
+      packet.write_short(quest_id)
+      packet.write_int(0) // unknonw int
+      packet.write_int(item_id)
+    }
+    QuestActionMessage::StartQuest(quest_id~, npc_id~) => {
+      packet.write_byte(1)
+      packet.write_short(quest_id)
+      packet.write_int(npc_id)
+    }
+    QuestActionMessage::CompleteQuest(quest_id~, npc_id~, selection~) => {
+      packet.write_byte(2)
+      packet.write_short(quest_id)
+      packet.write_int(npc_id)
+      if selection is Some(selection) {
+        packet.write_short(selection)
       }
     }
-    _ => raise @json.JsonDecodeError((path, "missing fields"))
+    QuestActionMessage::ForfeitQuest(quest_id~) => {
+      packet.write_byte(3)
+      packet.write_short(quest_id)
+    }
+    QuestActionMessage::ScriptedStartQuest(quest_id~, npc_id~) => {
+      packet.write_byte(4)
+      packet.write_short(quest_id)
+      packet.write_int(npc_id)
+    }
+    QuestActionMessage::ScriptedEndQuest(quest_id~, npc_id~) => {
+      packet.write_byte(5)
+      packet.write_short(quest_id)
+      packet.write_int(npc_id)
+    }
   }
+  packet
 }
 
 ///|
-test "parse quest 10015" {
-  let q10015 =
-    #| {
-    #|     "1": "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.",
-    #|     "2": "Today's mission has been completed.",
-    #|     "area": 50,
-    #|     "autoComplete": 1,
-    #|     "name": "Obtain the Special Agent Badge!",
-    #|     "order": 1,
-    #|     "parent": "Today's Mission! "
-    #|   }
-  let json = @json.parse!(q10015)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
-    quest_info,
-    content=
-      #|{name: "Obtain the Special Agent Badge!", parent: Some("Today's Mission! "), area: 50, order: Some(1), auto_complete: true, auto_start: false, one_shot: false, descriptions: ["", "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.", "Today's mission has been completed."]}
-    ,
+priv struct ShowForfeitQuestAction {
+  quest_id : Int
+  mod : Module
+}
+
+///|
+fn ShowForfeitQuestAction::new(
+  quest_id : Int,
+  mod : Module
+) -> ShowForfeitQuestAction {
+  { quest_id, mod }
+}
+
+///|
+impl Show for ShowForfeitQuestAction with output(self, logger) {
+  logger.write_string("{quest_id:\{self.quest_id}}")
+}
+
+///|
+impl @game_mod.SubRouteAction for ShowForfeitQuestAction with handle(self) -> Unit {
+  self.mod.player_quest_log.started.remove(self.quest_id)
+  self.mod.quest_log_listeners.retain(fn(listener) {
+    listener(self.mod.player_quest_log)
+  })
+}
+
+///|
+priv struct ShowCompleteQuestAction {
+  quest_id : Int
+  completion_time : Int64
+  mod : Module
+}
+
+///|
+fn ShowCompleteQuestAction::new(
+  quest_id : Int,
+  completion_time : Int64,
+  mod : Module
+) -> ShowCompleteQuestAction {
+  { quest_id, completion_time, mod }
+}
+
+///|
+impl Show for ShowCompleteQuestAction with output(self, logger) {
+  logger.write_string(
+    "{quest_id:\{self.quest_id}, completion_time:\{self.completion_time}}",
   )
 }
 
 ///|
-test "parse quest 10200" {
-  let q10200 =
-    #|{
-    #|  "0": "A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.",
-    #|  "1": "Let's try to make a deal with #b#p2084001##k.",
-    #|  "2": "I engaged in a transaction with #b#p2084001##k.",
-    #|  "area": 50,
-    #|  "autoComplete": 1,
-    #|  "autoStart": 1,
-    #|  "name": "Richie Gold is Here",
-    #|  "oneShot": 1
-    #|}
-  let json = @json.parse!(q10200)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
-    quest_info,
-    content=
-      #|{name: "Richie Gold is Here", parent: None, area: 50, order: None, auto_complete: true, auto_start: true, one_shot: true, descriptions: ["A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.", "Let's try to make a deal with #b#p2084001##k.", "I engaged in a transaction with #b#p2084001##k."]}
-    ,
+impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> Unit {
+  let quest_info = self.mod.quests_resource.quest_info_map.get(
+    self.quest_id.to_string(),
   )
-}
-
-///|
-test "parse number desc" {
-  let q2003 =
-    #|{
-    #|  "0": 2,
-    #|  "1": "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.",
-    #|  "2": "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k.",
-    #|  "area": 30,
-    #|  "name": "Finding Sophia",
-    #|  "order": 2,
-    #|  "parent": "Maya and the Weird Medicine"
-    #|}
-  let json = @json.parse!(q2003)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
-    quest_info,
-    content=
-      #|{name: "Finding Sophia", parent: Some("Maya and the Weird Medicine"), area: 30, order: Some(2), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["2", "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.", "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k."]}
-    ,
-  )
-}
-
-///|
-test "parse number index not desc" {
-  let q8833 =
-    #|{
-    #|  "0": "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!",
-    #|  "1": "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!",
-    #|  "2": "The Maple Administrator opened my present for me! Sweet!",
-    #|  "4963": {
-    #|    "0": "Mom and Dad need some help at home. I'd better go visit and see how I can help them.",
-    #|    "1": "I visited Mom and Dad and they looked pretty happy to see me. They need a #bMouse#k for their new computer, and heard that Mr. Spot would have one. He's in Kerning City, so I'd better get a move on. ",
-    #|    "2": "I returned to Mom and Dad with the #bMouse#k, and they gave me #bAllowance#k. Now I can return to Mr. Spot and get a #bNexon Prepaid!#k",
-    #|    "area": 30,
-    #|    "name": "Spot On : An Interesting Chore",
-    #|    "order": 1,
-    #|    "parent": "Spot On"
-    #|  },
-    #|  "area": 30,
-    #|  "name": "New Year's Wishes 1",
-    #|  "order": 1,
-    #|  "parent": "New Year : New Year's Wishes"
-    #|}
-  let json = @json.parse!(q8833)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(quest_info, content=
-    #|{name: "New Year's Wishes 1", parent: Some("New Year : New Year's Wishes"), area: 30, order: Some(1), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "The Maple Administrator opened my present for me! Sweet!"]}
-  )
-}
-
-///|
-let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "Quest",
-  loader=@resource.AsyncResourceLoader::new_async_resource_loader(
-    @resource.DirResourceLoader::new("https://maple-res.kkkiiox.work/Quest"),
-  ),
-)
-
-///|
-typealias QuestChecks = @resource.MapBasedArray[QuestCheck]
-
-///|
-priv struct QuestCheck {
-  npc : Int?
-  info_number : Int?
-  level_min : Int?
-  info_ex : Array[InfoEx]
-} derive(Show)
-
-///|
-priv struct InfoEx {
-  value : String
-} derive(Show, @json.FromJson)
-
-///|
-impl @json.FromJson for QuestCheck with from_json(json, path) {
-  match json {
-    Null => { npc: None, info_number: None, level_min: None, info_ex: [] }
+  let quest_info = if quest_info is Some(quest_info) {
+    quest_info
+  } else {
+    @log.warn({ "quest_id": self.quest_id }, "quest info not found")
     {
-      "npc"? : npc,
-      "infoNumber"? : info_number,
-      "lvmin"? : level_min,
-      "infoex"? : infoex,
-      ..
-    } => {
-      let info_ex = if infoex is Some(infoex) {
-        let arr : @resource.MapBasedArray[InfoEx] = @json.from_json!(
-          infoex,
-          path=path.add_key("infoex"),
-        )
-        arr._
-      } else {
-        []
-      }
-      {
-        npc: match npc {
-          Some(Number(npc)) => Some(npc.to_int())
-          None => None
-          _ => raise @json.JsonDecodeError((path.add_key("npc"), "invalid npc"))
-        },
-        info_number: match info_number {
-          Some(Number(info_number)) => Some(info_number.to_int())
-          Some(String(info_number)) =>
-            try {
-              Some(@strconv.parse_int!(info_number))
-            } catch {
-              _ =>
-                raise @json.JsonDecodeError(
-                  (path.add_key("infoNumber"), "invalid infoNumber"),
-                )
-            }
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("infoNumber"), "invalid infoNumber"),
-            )
-        },
-        info_ex,
-        level_min: match level_min {
-          Some(Number(level_min)) => Some(level_min.to_int())
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("lvmin"), "invalid lvmin"),
-            )
-        },
-      }
+      name: "Unknown Quest \{self.quest_id}",
+      parent: None,
+      area: 0,
+      order: None,
+      auto_complete: false,
+      auto_start: false,
+      one_shot: false,
+      descriptions: [],
     }
-    _ => raise @json.JsonDecodeError((path, "missing fields"))
   }
+  self.mod.player_quest_log.started.remove(self.quest_id)
+  self.mod.player_quest_log.completed[self.quest_id] = {
+    quest_info,
+    completion_time: self.completion_time,
+  }
+  self.mod.quest_log_listeners.retain(fn(listener) {
+    listener(self.mod.player_quest_log)
+  })
 }
 
 ///|
-test "parse quest check 10015" {
-  let check_10015 =
-    #|{
-    #|  "0": {
-    #|    "dayByDay": 1,
-    #|    "end": "2009082600",
-    #|    "infoNumber": 10024,
-    #|    "infoex": { "0": { "value": "ing" } },
-    #|    "lvmin": 10,
-    #|    "npc": 9000036,
-    #|    "start": "2009060100"
-    #|  },
-    #|  "1": {
-    #|    "infoNumber": 10024,
-    #|    "infoex": { "0": { "value": "clear" } },
-    #|    "npc": 9000036
-    #|  }
-    #|}
-  let json = @json.parse!(check_10015)
-  let quest_check : QuestChecks = @json.from_json!(json)
-  inspect!(
-    quest_check,
-    content=
-      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), level_min: Some(10), info_ex: [{value: "ing"}]}, {npc: Some(9000036), info_number: Some(10024), level_min: None, info_ex: [{value: "clear"}]}])
-    ,
+priv struct ShowUpdateQuestAction {
+  quest_id : Int
+  progress_data : String
+  mod : Module
+}
+
+///|
+fn ShowUpdateQuestAction::new(
+  quest_id : Int,
+  progress_data : String,
+  mod : Module
+) -> ShowUpdateQuestAction {
+  { quest_id, progress_data, mod }
+}
+
+///|
+impl Show for ShowUpdateQuestAction with output(self, logger) {
+  logger.write_string(
+    "{quest_id:\{self.quest_id}, progress_data:\{self.progress_data}}",
   )
 }
 
 ///|
-test "parse quest check 10054" {
-  let check_10054 =
-    #| {
-    #|    "0": {
-    #|      "end": "2008103000",
-    #|      "infoNumber": 10057,
-    #|      "infoex": {
-    #|        "0": { "value": "000" },
-    #|        "1": { "value": "100" },
-    #|        "2": { "value": "001" },
-    #|        "3": { "value": "101" }
-    #|      },
-    #|      "interval": 0,
-    #|      "item": { "0": { "id": 4001204 } },
-    #|      "lvmin": 50,
-    #|      "npc": 9010000,
-    #|      "quest": { "0": { "id": 10052, "state": 1 } },
-    #|      "start": "2008101300"
-    #|    },
-    #|    "1": { "item": { "0": { "count": 1, "id": 2012000 } }, "npc": 1061013 }
-    #|  }
-  let json = @json.parse!(check_10054)
-  let quest_check : QuestChecks = @json.from_json!(json)
-  inspect!(
-    quest_check,
-    content=
-      #|MapBasedArray([{npc: Some(9010000), info_number: Some(10057), level_min: Some(50), info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {npc: Some(1061013), info_number: None, level_min: None, info_ex: []}])
-    ,
-  )
-}
-
-///|
-test "parse quest check 1008" {
-  let check_1008 =
-    #| {
-    #|   "0": { "job": { "0": 0 }, "npc": 10000 },
-    #|   "1": {
-    #|     "item": {
-    #|       "0": { "count": 1, "id": 4031162 },
-    #|       "1": { "count": 1, "id": 4031161 }
-    #|     }
-    #|   }
-    #| }
-  let json = @json.parse!(check_1008)
-  let quest_check : QuestChecks = @json.from_json!(json)
-  inspect!(
-    quest_check,
-    content="MapBasedArray([{npc: Some(10000), info_number: None, level_min: None, info_ex: []}, {npc: None, info_number: None, level_min: None, info_ex: []}])",
-  )
+impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
+  guard self.mod.player_quest_log.started.get(self.quest_id) is Some(quest) else {
+    return
+  }
+  quest.progress_data = self.progress_data
+  self.mod.quest_log_listeners.retain(fn(listener) {
+    listener(self.mod.player_quest_log)
+  })
 }

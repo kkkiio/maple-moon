@@ -82,7 +82,7 @@ pub enum ConfirmShopTransactionCode {
 
 ///|
 fn Module::leave_shop(self : Module) -> Unit {
-  self.opening_shop = None
   self.network.send_message(ShopActionMessage::Leave)
+  self.opening_shop = None
   self.opening_shop_listeners.retain(fn(listener) { listener(None) })
 }

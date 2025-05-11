@@ -134,7 +134,7 @@ pub fn Opcode::int_value(self : Opcode) -> Int {
     FAME_RESPONSE => 38
 
     /// Messaging 1
-    SHOW_STATUS_INFO => 39
+    SHOW_STATUS_INFO => 0x27
 
     /// Inventory 2
     GATHER_RESULT => 52
@@ -240,7 +240,7 @@ pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
     38 => FAME_RESPONSE
 
     /// Messaging 1
-    39 => SHOW_STATUS_INFO
+    0x27 => SHOW_STATUS_INFO
 
     /// Inventory 2
     52 => GATHER_RESULT

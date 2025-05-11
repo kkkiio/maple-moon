@@ -92,6 +92,7 @@ fn load_modules(
   }
 
   merge_handlers(keyboard_module.make_handlers())
+  // character stat handlers
   let stat_handler_map = {}
   fn merge_stat_handlers(
     handlers : Map[@maple_stat.Id, @game_mod.StatHandler]
@@ -103,6 +104,15 @@ fn load_modules(
       } else {
         stat_handler_map.set(stat_id, handler)
       }
+    }
+  }
+  // show status info handlers
+  let show_status_info_handler_map = {}
+  fn merge_show_status_info_handler_map(
+    handlers : Map[Int, @game_mod.SubRouteHandler]
+  ) {
+    for sub_id, handler in handlers {
+      show_status_info_handler_map.set(sub_id, handler)
     }
   }
 
@@ -122,15 +132,21 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let quest_module_fut = @quest.Module::load().map(fn(it) {
-    match it {
-      Ok(quest_module) => quest_module
-      Err(err) => {
-        @log.error({ "err": err }, "failed to load quest module")
-        panic()
+  let quest_module_fut = @quest.Module::load(network)
+    .map(fn(it) {
+      match it {
+        Ok(quest_module) => quest_module
+        Err(err) => {
+          @log.error({ "err": err }, "failed to load quest module")
+          panic()
+        }
       }
-    }
-  })
+    })
+    .tap(fn(mod) {
+      merge_show_status_info_handler_map(
+        mod.make_show_status_info_handler_map(),
+      )
+    })
   let login_mod_f = char_look_module_f
     .bind(fn(mod) { @login.Module::load(network, ui, mod, io_service) })
     .combine(inventory_module_fut)

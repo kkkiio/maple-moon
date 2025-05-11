@@ -411,7 +411,7 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
       let next = match self.stance.t {
         StanceType::HIT => self.counter > 200
         StanceType::JUMP => self.base.phobj.onground
-        _ => aniend && self.counter > 200
+        _ => aniend && self.counter > self.randomizer.next_int(from=200, 500)
       }
       if next {
         self.next_move()
@@ -565,6 +565,7 @@ pub fn update_movement(self : Mob, network : @net.Network) -> Unit {
         self.stance.int_value(),
       ),
     ),
+    log_level=@log.Level::TRACE,
   )
 }
 

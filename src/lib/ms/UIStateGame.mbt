@@ -110,7 +110,7 @@ pub impl @ui.UIState for UIStateGame with update(self : UIStateGame) -> Unit {
 }
 
 ///|
-pub fn UIStateGame::send_key(
+pub impl @ui.UIState for UIStateGame with send_key(
   self : UIStateGame,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
@@ -152,7 +152,7 @@ pub fn UIStateGame::send_key(
 }
 
 ///|
-pub fn UIStateGame::send_cursor(
+pub impl @ui.UIState for UIStateGame with send_cursor(
   self : UIStateGame,
   cursorstate : @ui.CursorState,
   cursorpos : @struct.Point[Int]
@@ -226,7 +226,7 @@ pub fn UIStateGame::send_cursor(
 }
 
 ///|
-pub fn set_element(
+pub impl @ui.UIState for UIStateGame with set_element(
   self : UIStateGame,
   is_focused : Bool,
   elem : @ui.Element
@@ -280,7 +280,10 @@ pub fn toggle_element(
 }
 
 ///|
-pub fn UIStateGame::remove(self : UIStateGame, t : UIElementType) -> Unit {
+pub impl @ui.UIState for UIStateGame with remove(
+  self : UIStateGame,
+  t : UIElementType
+) -> Unit {
   if t == self.focused {
     self.focused = UIElementType::UI_ELEMENT_NONE
   }
@@ -299,12 +302,15 @@ pub fn UIStateGame::remove(self : UIStateGame, t : UIElementType) -> Unit {
 }
 
 ///|
-pub fn UIStateGame::get(self : UIStateGame, t : UIElementType) -> @ui.Element? {
+pub impl @ui.UIState for UIStateGame with get(
+  self : UIStateGame,
+  t : UIElementType
+) -> @ui.Element? {
   self.elements[t].map(fn(e) { e })
 }
 
 ///|
-pub fn UIStateGame::get_front_by_types(
+pub impl @ui.UIState for UIStateGame with get_front_by_types(
   self : UIStateGame,
   types : Array[UIElementType]
 ) -> @ui.Element? {

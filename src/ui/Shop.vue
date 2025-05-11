@@ -2,18 +2,13 @@
   <div v-if="shopData" class="shop-container">
     <!-- Main Content Area -->
     <div class="shop-content">
-      
+
       <!-- Buy Section (Left Column) -->
       <div class="buy-section">
         <h3>Buy Items</h3>
         <div class="item-list buy-list">
-          <div 
-            v-for="item in shopItems" 
-            :key="item.id" 
-            class="shop-item"
-            :class="{ selected: selectedBuyItem?.id === item.id }"
-            @click="selectBuyItem(item)"
-          >
+          <div v-for="item in shopItems" :key="item.id" class="shop-item"
+            :class="{ selected: selectedBuyItem?.id === item.id }" @click="selectBuyItem(item)">
             <n-tooltip trigger="hover" placement="top">
               <template #trigger>
                 <div class="item-display">
@@ -35,12 +30,7 @@
       <div class="sell-section">
         <h3>Sell Items</h3>
         <n-tabs type="segment" v-model:value="activeTab">
-          <n-tab-pane 
-            v-for="(kind, index) in TAB_KINDS" 
-            :key="index" 
-            :name="index" 
-            :tab="kind"
-          >
+          <n-tab-pane v-for="(kind, index) in TAB_KINDS" :key="index" :name="index" :tab="kind">
             <div class="inventory-panel">
               <table class="inventory-table">
                 <tbody>
@@ -53,8 +43,7 @@
                             <template #trigger>
                               <div class="inventory-slot"
                                 :class="{ 'selected-slot': selected.kind === kind && selected.index === getItemIndex(row, col) }"
-                                @click="() => handleItemClick(kind, getItemIndex(row, col))"
-                              >
+                                @click="() => handleItemClick(kind, getItemIndex(row, col))">
                                 <LazyImage :image="getItemAt(row, col).icon" :width="32" :height="32" />
                                 <div v-if="shouldShowCount && getItemAt(row, col).count" class="item-count">
                                   {{ getItemAt(row, col).count }}
@@ -87,25 +76,13 @@
       </div>
       <div class="action-buttons">
         <NSpace>
-          <n-button 
-            type="primary"
-            :disabled="!selectedBuyItem"
-            @click="handleBuyOne"
-          >
+          <n-button type="primary" :disabled="!selectedBuyItem" @click="handleBuyOne">
             Buy One
           </n-button>
-          <n-button 
-            type="info"
-            :disabled="!selectedBuyItem"
-            @click="handleBuyMultiple"
-          >
+          <n-button type="info" :disabled="!selectedBuyItem" @click="handleBuyMultiple">
             Buy Multiple
           </n-button>
-          <n-button 
-            type="warning"
-            :disabled="!selected.kind || selected.index === null"
-            @click="handleSellItem"
-          >
+          <n-button type="warning" :disabled="!selected.kind || selected.index === null" @click="handleSellItem">
             Sell
           </n-button>
           <n-button type="error" @click="closeShop">
@@ -126,11 +103,8 @@
         <div style="margin-bottom: 12px;">
           Enter the number of items to sell:
         </div>
-        <n-input-number 
-          v-model:value="sellCount" 
-          :min="1"
-          :max="selected.kind !== null && selected.index !== null ? currentItems[selected.index]?.count || 1 : 1" 
-        />
+        <n-input-number v-model:value="sellCount" :min="1"
+          :max="selected.kind !== null && selected.index !== null ? currentItems[selected.index]?.count || 1 : 1" />
       </template>
       <template #action>
         <n-button @click="handleSellCancel">Cancel</n-button>
@@ -146,11 +120,7 @@
         <div style="margin-bottom: 12px;">
           Enter the number of items to buy:
         </div>
-        <n-input-number 
-          v-model:value="buyCount" 
-          :min="1"
-          :max="selectedBuyItem?.buyable_qty || 1"
-        />
+        <n-input-number v-model:value="buyCount" :min="1" :max="selectedBuyItem?.buyable_qty || 1" />
       </template>
       <template #action>
         <n-button @click="handleBuyCancel">Cancel</n-button>
@@ -166,7 +136,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { watch_inventory_by_kind, watch_meso } from 'lib/ms/inventory/inventory.js';
 import {
   watch_opening_shop_ffi,
@@ -176,14 +146,14 @@ import {
   leave_shop_ffi
 } from 'lib/ms/shop/shop.js';
 
-import { 
-  NButton, 
-  NIcon, 
-  NTooltip, 
-  NTabs, 
-  NTabPane, 
-  NAlert, 
-  NModal, 
+import {
+  NButton,
+  NIcon,
+  NTooltip,
+  NTabs,
+  NTabPane,
+  NAlert,
+  NModal,
   NInputNumber,
   NSpace,
   NEmpty
@@ -361,10 +331,10 @@ function getItemIndex(row, col) {
 
 function hasItemAt(row, col) {
   const index = getItemIndex(row, col);
-  return index >= 0 && 
-         index < currentItems.value.length && 
-         currentItems.value[index] !== null && 
-         currentItems.value[index] !== undefined;
+  return index >= 0 &&
+    index < currentItems.value.length &&
+    currentItems.value[index] !== null &&
+    currentItems.value[index] !== undefined;
 }
 
 function getItemAt(row, col) {
@@ -400,7 +370,8 @@ function formatMeso(amount) {
   margin-bottom: 20px;
 }
 
-.buy-section, .sell-section {
+.buy-section,
+.sell-section {
   flex: 1;
   min-height: 400px;
 }

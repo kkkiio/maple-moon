@@ -5,12 +5,14 @@
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/markup_text",
-    "KKKIIO/maple-moon-client/lib/struct"
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/game_mod"
   ],
   "link":{
     "js": {
       "exports": [
-        "watch_quest_log_ffi"
+        "watch_quest_log_ffi",
+        "forfeit_quest_ffi"
       ]
     }
   }

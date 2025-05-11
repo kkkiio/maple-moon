@@ -9,6 +9,14 @@ pub(all) struct Mod {
 pub typealias StatHandler = (Int) -> Bool
 
 ///|
+pub typealias SubRouteHandler = (@net.InPacket) -> &SubRouteAction!
+
+///|
+pub(open) trait SubRouteAction: Show {
+  handle(Self) -> Unit
+}
+
+///|
 pub(open) trait Scheduler {
   schedule_with_fixed_delay(Self, () -> Unit, @utils.Duration, @utils.Duration) ->
        () -> Unit

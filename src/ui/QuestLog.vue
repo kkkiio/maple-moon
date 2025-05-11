@@ -8,8 +8,13 @@
                         <span class="quest-name">{{ quest.name }}</span>
                         <span class="quest-id">#{{ quest.id }}</span>
                     </div>
-                    <div>Progress: {{ quest.progress }}</div>
+                    <div>{{ quest.progress }}</div>
                     <div :key="quest.desc" class="quest-desc" v-html="quest.desc"></div>
+                    <div class="quest-actions">
+                        <n-button size="small" type="warning" @click="forfeitQuest(quest.id)">
+                            Forfeit
+                        </n-button>
+                    </div>
                 </div>
             </div>
 
@@ -31,8 +36,10 @@
 
 <script setup>
 import { ref, computed, onUnmounted } from 'vue';
-import { watch_quest_log_ffi } from 'lib/ms/quest/quest.js';
+import { watch_quest_log_ffi, forfeit_quest_ffi } from 'lib/ms/quest/quest.js';
+import { useDialog, NButton } from 'naive-ui';
 
+const dialog = useDialog();
 const { mod } = defineProps({
     mod: Object
 });
@@ -58,6 +65,18 @@ const formatCompletionTime = (timestamp) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
     return date.toLocaleString();
+};
+
+const forfeitQuest = (questId) => {
+    dialog.warning({
+        title: 'Forfeit Quest',
+        content: 'Are you sure you want to forfeit this quest? This action cannot be undone.',
+        positiveText: 'Forfeit',
+        negativeText: 'Cancel',
+        onPositiveClick: () => {
+            forfeit_quest_ffi(mod, questId);
+        }
+    });
 };
 
 onUnmounted(() => {
@@ -124,8 +143,7 @@ onUnmounted(() => {
 .quest-desc {
     font-size: 0.85em;
     color: #555;
-    margin-bottom: 3px;
-    border-bottom: 1px solid #e0e0e0;
+    margin: 8px 0;
 }
 
 .completion-time {
@@ -141,5 +159,13 @@ onUnmounted(() => {
     padding: 4px 0;
     text-align: center;
     font-size: 0.85em;
+}
+
+.quest-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e0e0e0;
 }
 </style>

@@ -12,7 +12,7 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
               slot_no,
               id: item_data.item_id,
               name: item_data.name,
-              desc: if kind is TypeId::EQUIP {
+              desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
                 make_equip_desc(item_data)
               } else {
                 make_html_desc(item_data.desc)
@@ -105,6 +105,10 @@ pub fn watch_inventory_by_kind(
 
 ///| Watch meso changes
 pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
+  let cont = watcher(mod.inventory.get_meso())
+  if not(cont) {
+    return
+  }
   mod.inventory.listen_meso_changes(watcher)
 }
 

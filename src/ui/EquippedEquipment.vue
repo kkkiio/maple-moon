@@ -2,10 +2,19 @@
   <n-space vertical>
     <n-space vertical>
       <n-card v-for="equip in equips" :key="equip.id" size="small" class="item-card">
-        <n-space align="center">
-          <lazy-image :image="equip.icon" />
-          <n-text>{{ equip.name }}</n-text>
-        </n-space>
+        <n-tooltip trigger="hover" placement="top">
+          <template #trigger>
+            <n-space align="center">
+              <lazy-image :image="equip.icon" />
+            </n-space>
+          </template>
+          <div class="tooltip-content">
+            <div class="tooltip-name">
+              {{ equip.name }}
+            </div>
+            <div class="tooltip-desc" v-html="equip.desc"></div>
+          </div>
+        </n-tooltip>
       </n-card>
     </n-space>
   </n-space>
@@ -13,7 +22,7 @@
 
 <script setup>
 import { watch_inventory_by_kind } from 'lib/ms/inventory/inventory.js';
-import { NCard, NSpace, NText } from 'naive-ui';
+import { NCard, NSpace, NTooltip } from 'naive-ui';
 import { onUnmounted, ref } from 'vue';
 import LazyImage from '@/components/LazyImage.vue';
 
@@ -49,5 +58,19 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.tooltip-content {
+  max-width: 200px;
+}
+
+.tooltip-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.tooltip-desc {
+  font-size: 12px;
+  white-space: pre-wrap;
 }
 </style>

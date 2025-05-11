@@ -223,7 +223,7 @@ pub fn int_value(self : ClientOpcode) -> Int {
     SPEND_SP => 90
     CHANGE_KEYMAP => 135
     USE_SKILL => 91
-    QUEST_ACTION => 107
+    QUEST_ACTION => 0x6B
     PLAYER_INTERACTION => 123
     PARTY_OPERATION => 124
     ADMIN_COMMAND => 128

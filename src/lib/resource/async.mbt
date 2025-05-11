@@ -47,3 +47,8 @@ pub fn AsyncLoader::load_res(
     }
   })
 }
+
+///|
+pub fn AsyncResourceLoader::new_async_resource_loader(
+  loader : DirResourceLoader
+) -> AsyncResourceLoader = "resource" "new_async_resource_loader"

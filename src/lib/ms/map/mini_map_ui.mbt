@@ -232,125 +232,96 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
       // (7, 10) is the top left corner of the inner window
       // 114 = 128 (width of left and right borders) - 14 (width of middle borders
       // * 2). 27 = height of inner frame drawn on up and down borders
-      let render_elements = []
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_middle_center,
-            @graphics.DrawArgument::from_pos_and_stretch(
-              @struct.Point::new(7, 10),
-              @struct.Point::new(c_stretch + 114, m_stretch + 27),
-            ),
-          )
-          |> @ui.SpriteUI,
-        ),
-      )
+      let frames = []
+      // frames.push(
+      //   @graphics.Sprite::new(
+      //     self.resource.minmap_middle_center,
+      //     @graphics.DrawArgument::from_pos_and_stretch(
+      //       Point::new(7, 10),
+      //       Point::new(c_stretch + 114, m_stretch + 27),
+      //     ),
+      //   ),
+      // )
       if mini_map_resources is Some(res) {
-        render_elements.push(
-          @ui.RenderElement::Static(
-            @ui.SpriteUI(
-              @graphics.Sprite::new(
-                res.canvas,
-                @graphics.DrawArgument::new(
-                  pos=@struct.Point::new(map_draw_origin_x_, map_draw_origin_y_),
-                ),
-              ),
+        frames.push(
+          @graphics.Sprite::new(
+            res.canvas,
+            @graphics.DrawArgument::new(
+              pos=@struct.Point::new(map_draw_origin_x_, map_draw_origin_y_),
             ),
           ),
         )
       }
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_middle_left,
-            @graphics.DrawArgument::from_pos_and_stretch(
-              @struct.Point::new(0, ML_MR_Y_),
-              @struct.Point::new(0, m_stretch),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_middle_left,
+          @graphics.DrawArgument::from_pos_and_stretch(
+            @struct.Point::new(0, ML_MR_Y_),
+            @struct.Point::new(0, m_stretch),
+          ),
         ),
       )
       let ur_x_offset = CENTER_START_X_ + c_stretch
       let middle_right_x_ = ur_x_offset + 55
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_middle_right,
-            @graphics.DrawArgument::from_pos_and_stretch(
-              @struct.Point::new(middle_right_x_, ML_MR_Y_),
-              @struct.Point::new(0, m_stretch),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_middle_right,
+          @graphics.DrawArgument::from_pos_and_stretch(
+            @struct.Point::new(middle_right_x_, ML_MR_Y_),
+            @struct.Point::new(0, m_stretch),
+          ),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_up_center,
-            @graphics.DrawArgument::from_pos_and_stretch(
-              @struct.Point::new(CENTER_START_X_, 0) + window_ul_pos_,
-              @struct.Point::new(c_stretch, 0),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_up_center,
+          @graphics.DrawArgument::from_pos_and_stretch(
+            @struct.Point::new(CENTER_START_X_, 0) + window_ul_pos_,
+            @struct.Point::new(c_stretch, 0),
+          ),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_up_left,
-            @graphics.DrawArgument::new(pos=window_ul_pos_),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_up_left,
+          @graphics.DrawArgument::new(pos=window_ul_pos_),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_up_right,
-            @graphics.DrawArgument::new(
-              pos=@struct.Point::new(ur_x_offset, 0) + window_ul_pos_,
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_up_right,
+          @graphics.DrawArgument::new(
+            pos=@struct.Point::new(ur_x_offset, 0) + window_ul_pos_,
+          ),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_down_center,
-            @graphics.DrawArgument::from_pos_and_stretch(
-              @struct.Point::new(CENTER_START_X_, down_y_offset + 18),
-              @struct.Point::new(c_stretch, 0),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_down_center,
+          @graphics.DrawArgument::from_pos_and_stretch(
+            @struct.Point::new(CENTER_START_X_, down_y_offset + 18),
+            @struct.Point::new(c_stretch, 0),
+          ),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_down_left,
-            @graphics.DrawArgument::new(
-              pos=@struct.Point::new(0, down_y_offset),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_down_left,
+          @graphics.DrawArgument::new(pos=@struct.Point::new(0, down_y_offset)),
         ),
       )
-      render_elements.push(
-        @ui.RenderElement::Static(
-          @graphics.Sprite::new(
-            self.resource.minmap_down_right,
-            @graphics.DrawArgument::new(
-              pos=@struct.Point::new(ur_x_offset, down_y_offset),
-            ),
-          )
-          |> @ui.SpriteUI,
+      frames.push(
+        @graphics.Sprite::new(
+          self.resource.minmap_down_right,
+          @graphics.DrawArgument::new(
+            pos=@struct.Point::new(ur_x_offset, down_y_offset),
+          ),
         ),
       )
+      let render_elements = []
+      for frame in frames {
+        render_elements.push(@ui.RenderElement::Static(@ui.SpriteUI(frame)))
+      }
       let normal_dimensions_ = Point::new(ur_x_offset + 64, down_y_offset + 27)
       if mini_map_resources is Some(res) {
         let portal_marker = self.resource.portal_marker
@@ -441,17 +412,14 @@ pub impl @ui.Widget for MiniMapUI with send_key(self, keycode, pressed, escape) 
 ///|
 let map_latest_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "MapLatest",
-  loader=@resource.AsyncResourceLoader::new_composite_async_resource_loader(
-    {
-      "Obj/login.img/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/MapLatest/Obj/login.img",
-      ),
-      "MapHelper.img/minimap/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/MapLatest/MapHelper.img/minimap",
-      ),
-    },
-    @resource.get_default_image_loader(),
-  ),
+  loader=@resource.AsyncResourceLoader::new_composite_async_resource_loader({
+    "Obj/login.img/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/MapLatest/Obj/login.img",
+    ),
+    "MapHelper.img/minimap/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/MapLatest/MapHelper.img/minimap",
+    ),
+  }),
 )
 
 ///|

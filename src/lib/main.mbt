@@ -12,8 +12,10 @@ fn EntryPoint::get_game(self : EntryPoint) -> @ms.Game {
 }
 
 ///|
-pub fn game_start() -> Unit {
-  entrypoint.game = @ms.Game::new() |> Some
+pub fn game_start() -> @js.Value {
+  let game = @ms.Game::new()
+  entrypoint.game = game |> Some
+  @js.Value::cast_from(game)
 }
 
 ///|
@@ -44,39 +46,4 @@ pub fn onkeydown(key : String) -> Unit {
 ///|
 pub fn onkeyup(key : String) -> Unit {
   entrypoint.get_game().get_window().key_callback(key, false)
-}
-
-///|
-pub fn get_inventory_mod() -> @inventory.Module? {
-  entrypoint.get_game().get_inventory_mod()
-}
-
-///|
-pub fn get_skill_book_mod() -> @skill_book.Module? {
-  entrypoint.get_game().get_skill_book_mod()
-}
-
-///|
-pub fn get_char_stats_mod() -> @char_stats.Module? {
-  entrypoint.get_game().get_char_stats_mod()
-}
-
-///|
-pub fn get_keyboard_mod() -> @keyboard.Module {
-  entrypoint.get_game().get_keyboard_mod()
-}
-
-///|
-pub fn get_login_mod() -> @login.Module? {
-  entrypoint.get_game().get_login_mod()
-}
-
-///|
-pub fn get_stage() -> @ms.Stage? {
-  entrypoint.get_game().get_stage()
-}
-
-///|
-pub fn get_shop_mod() -> @shop.Module? {
-  entrypoint.get_game().get_shop_mod()
 }

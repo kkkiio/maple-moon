@@ -1,11 +1,11 @@
-export const pollMod = (mod, fKey, game) => {
+import { get_module } from 'lib/ffi/ffi.js';
+export const pollMod = (mod, name, game) => {
     setTimeout(() => {
-        const f = game[fKey];
-        const m = f();
+        const m = get_module(game, name);
         if (m) {
             mod.value = m;
         } else {
-            pollMod(mod, fKey, game);
+            pollMod(mod, name, game);
         }
     }, 1000);
 };

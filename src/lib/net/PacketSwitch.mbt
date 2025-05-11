@@ -223,8 +223,9 @@ pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
     17 => PING
 
     /// Login 2
-    27 => RECOMMENDED_WORLDS
-    28 => CHECK_SPW_RESULT
+    0x1A => LAST_CONNECTED_WORLD
+    0x1B => RECOMMENDED_WORLDS
+    0x1C => CHECK_SPW_RESULT
 
     /// Inventory 1
     29 => MODIFY_INVENTORY

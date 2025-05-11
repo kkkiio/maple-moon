@@ -22,6 +22,7 @@ struct LoadedState {
   skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
   shop_module : @shop.Module
+  quest_module : @quest.Module
 }
 
 ///|
@@ -121,31 +122,41 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
+  let quest_module_fut = @quest.Module::load().map(fn(it) {
+    match it {
+      Ok(quest_module) => quest_module
+      Err(err) => {
+        @log.error({ "err": err }, "failed to load quest module")
+        panic()
+      }
+    }
+  })
   let login_mod_f = char_look_module_f
     .bind(fn(mod) { @login.Module::load(network, ui, mod, io_service) })
     .combine(inventory_module_fut)
     .combine(map_module)
+    .combine(quest_module_fut)
     .map(fn(it) {
-      let ((login_module, inventory_module), map_module) = it
-      merge_handlers(
-        login_module.make_handlers(
-          fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
-          fn(char_entry, cooldowns, callback) {
-            get_stage().set_player_stage(char_entry, cooldowns, callback)
-          },
-          inventory_module.get_inventory(),
-          fn(player) {
-            setup_game_ui(
-              ui,
-              get_stage(),
-              player,
-              action_registry,
-              timer,
-              map_module,
-            )
-          },
-        ),
+      let (((login_module, inventory_module), map_module), quest_module) = it
+      let handlers = login_module.make_handlers(
+        fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
+        fn(char_entry, cooldowns, callback) {
+          get_stage().set_player_stage(char_entry, cooldowns, callback)
+        },
+        inventory_module.get_inventory(),
+        fn(player) {
+          setup_game_ui(
+            ui,
+            get_stage(),
+            player,
+            action_registry,
+            timer,
+            map_module,
+          )
+        },
+        quest_module,
       )
+      merge_handlers(handlers)
       login_module
     })
   let monster_module = @monster.Module::new(add_io_task, network)
@@ -309,13 +320,17 @@ fn load_modules(
   .combine(login_mod_f)
   .combine(inventory_module_fut)
   .combine(skill_book_mod_f)
+  .combine(quest_module_fut)
   .map(fn(it) {
     let (
       (
-        (((char_stats_module, shop_module), _stage), login_module),
-        inventory_module,
+        (
+          (((char_stats_module, shop_module), _stage), login_module),
+          inventory_module,
+        ),
+        skill_book_module,
       ),
-      skill_book_module,
+      quest_module,
     ) = it
     network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
     timer.reset()
@@ -326,6 +341,7 @@ fn load_modules(
       skill_book_module,
       char_stats_module,
       shop_module,
+      quest_module,
     }
   })
 }
@@ -458,6 +474,11 @@ pub fn Game::get_stage(self : Game) -> Stage? {
 ///|
 pub fn Game::get_shop_mod(self : Game) -> @shop.Module? {
   self.loaded_state.poll().map(fn(it) { it.shop_module })
+}
+
+///|
+pub fn Game::get_quest_mod(self : Game) -> @quest.Module? {
+  self.loaded_state.poll().map(fn(it) { it.quest_module })
 }
 
 ///|

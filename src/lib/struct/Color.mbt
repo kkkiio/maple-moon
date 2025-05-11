@@ -83,8 +83,8 @@ pub fn css_name(self : ColorName) -> String {
 }
 
 ///|
-pub fn to_json(self : ColorName) -> Json {
-  Json::String(self.css_name())
+pub impl ToJson for ColorName with to_json(self) {
+  self.css_name().to_json()
 }
 
 ///|

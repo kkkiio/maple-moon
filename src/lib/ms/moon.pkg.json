@@ -37,7 +37,8 @@
     "KKKIIO/maple-moon-client/lib/schedule",
     "KKKIIO/maple-moon-client/lib/game_mod",
     "KKKIIO/maple-moon-client/lib/io_task",
-    "KKKIIO/maple-moon-client/lib/ms/combat_impl2"
+    "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon-client/lib/ms/quest"
   ],
 	"targets": {
 		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]

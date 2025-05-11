@@ -381,9 +381,9 @@ export default {
                 get_image_loader: (loader) => loader.bmpLoader,
                 is_ready: (pollable) => pollable.ready,
                 get_result: (pollable) => pollable.value,
-                get_default_image_loader: () => imageLoader,
                 new_dir_resource_loader: (url) => new DirResourceLoader(url),
-                new_composite_async_resource_loader: (prefixedLoaders, imageLoader) => {
+                new_async_resource_loader: (loader) => new AsyncResourceLoader(loader, imageLoader),
+                new_composite_async_resource_loader: (prefixedLoaders) => {
                     const loaderMap = {}
                     for (const elem of prefixedLoaders) {
                         loaderMap[elem.prefix] = elem.loader;
@@ -457,8 +457,8 @@ export default {
                     onmouseup();
                 });
 
-                this.game = m;
-                m.game_start();
+                const game = m.game_start();
+                this.game = game;
                 requestAnimationFrameId = requestAnimationFrame(update);
             });
     },

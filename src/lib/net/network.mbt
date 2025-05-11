@@ -82,6 +82,11 @@ pub fn connect_channel(self : Network, channel : Int) -> Unit {
 }
 
 ///|
+pub fn Network::close(self : Network) -> Unit {
+  self.session.close()
+}
+
+///|
 pub fn get_status(self : Network) -> ConnectionStatus {
   self.session.get_status()
 }
@@ -125,7 +130,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
       return
     }
   }
-  match self.handlers[opcode] {
+  match self.handlers.get(opcode) {
     Some(handler) => handler(recv)
     None => @log.warn({ "opcode": opcode }, "Unhandled packet detected")
   }

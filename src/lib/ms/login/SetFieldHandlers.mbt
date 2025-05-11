@@ -21,7 +21,7 @@ fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage! {
     let inventory = parse_inventory!(recv)
     let skills = parse_skillbook!(recv)
     let cooldowns = @combat_impl2.parse_cooldowns!(recv)
-    let quests = @quest.parse_questlog!(recv)
+    let quests = @quest.parse_player_quest_info!(recv)
     return SetFieldMessage::SetField(
       stats~,
       inventory_entry=inventory,
@@ -40,7 +40,7 @@ priv enum SetFieldMessage {
     inventory_entry~ : InventoryEntry,
     skills~ : Array[SkillEntry],
     cooldowns~ : Map[Int, Int],
-    quests~ : @quest.QuestLog
+    quests~ : @quest.PlayerQuestLogInfo
   )
 } derive(Show)
 
@@ -49,6 +49,7 @@ priv enum SetFieldMessage {
 fn handle_set_field(
   transition : (Int, Int) -> Unit,
   login_module : Module,
+  quest_module : @quest.Module,
   set_player_stage : (
     @character.CharEntry,
     Map[Int, Int],
@@ -62,9 +63,16 @@ fn handle_set_field(
   // @config.constants.set_viewheight(Setting::get(configHeight).load())
   match message {
     SetFieldMessage::ChangeMap(mapid~, portalid~) => transition(mapid, portalid)
-    SetFieldMessage::SetField(stats~, inventory_entry~, skills~, cooldowns~, ..) => {
+    SetFieldMessage::SetField(
+      stats~,
+      inventory_entry~,
+      skills~,
+      cooldowns~,
+      quests~
+    ) => {
       let playerentry = login_module.get_selected_char().unwrap() // TODO: handle None
       let playerentry = { ..playerentry, stats, }
+      quest_module.handle_player_quest_info(quests)
       set_field(
         login_module.network,
         transition,
@@ -100,6 +108,7 @@ fn set_field(
   for kind, slotmax in inventory_entry.slotmax {
     inventory.set_slotmax(kind, slotmax)
   }
+
   // parse_minigame(recv);
   // parse_ring1(recv);
   // parse_ring2(recv);

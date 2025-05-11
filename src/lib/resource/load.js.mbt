@@ -46,20 +46,17 @@ priv struct PrefixedLoader {
 
 ///|
 extern "js" fn new_composite_async_resource_loader(
-  prefixedLoaders : Array[PrefixedLoader],
-  image_loader : ImageLoader
+  prefixedLoaders : Array[PrefixedLoader]
 ) -> AsyncResourceLoader =
-  #| (p, l) => {
-  #|   return resource.new_composite_async_resource_loader(p, l);
+  #| (p) => {
+  #|   return resource.new_composite_async_resource_loader(p);
   #| }
 
 ///|
 pub fn AsyncResourceLoader::new_composite_async_resource_loader(
-  loaderMap : Map[String, DirResourceLoader],
-  image_loader : ImageLoader
+  loaderMap : Map[String, DirResourceLoader]
 ) -> AsyncResourceLoader {
   new_composite_async_resource_loader(
     loaderMap.iter().map(fn(kv) { { prefix: kv.0, loader: kv.1 } }).to_array(),
-    image_loader,
   )
 }

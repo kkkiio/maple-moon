@@ -46,7 +46,8 @@ pub fn make_handlers(
     (@player.Player) -> Unit!,
   ) -> Unit,
   inventory : @inventory.Inventory,
-  setup_game_ui : (@player.Player) -> Unit
+  setup_game_ui : (@player.Player) -> Unit,
+  quest_module : @quest.Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(
@@ -103,7 +104,8 @@ pub fn make_handlers(
       parse_set_field,
       fn(msg) {
         handle_set_field(
-          transition, self, set_player_stage, inventory, setup_game_ui, msg,
+          transition, self, quest_module, set_player_stage, inventory, setup_game_ui,
+          msg,
         )
       },
       log_recv=true,
@@ -223,6 +225,7 @@ impl @net.OutMessage for LoginMessage with pack(self) -> @net.OutPacket {
 ///|
 enum LoginResult {
   Ok(Account)
+  AlreadyLoggedIn
   RequireTermsOfService
   Err(String)
 } derive(Show)
@@ -250,11 +253,7 @@ fn parse_login_result(recv : @net.InPacket) -> LoginResult!Error {
     //                     UILoginNotice::Message::NOT_REGISTERED,
     //                     okhandler);
     //                 break;
-    //             case 7:
-    //                 UI::get().emplace<UILoginNotice>(
-    //                     UILoginNotice::Message::ALREADY_LOGGED_IN,
-    //                     okhandler);
-    //                 break;
+    7 => AlreadyLoggedIn
     //             case 13:
     //                 UI::get().emplace<UILoginNotice>(
     //                     UILoginNotice::Message::UNABLE_TO_LOGIN_WITH_IP,
@@ -314,16 +313,18 @@ pub fn handle_login_result(self : Module, result : LoginResult) -> Unit {
     //                     UILoginNotice::Message::NOT_REGISTERED,
     //                     okhandler);
     //                 break;
-    //             case 7:
-    //                 UI::get().emplace<UILoginNotice>(
-    //                     UILoginNotice::Message::ALREADY_LOGGED_IN,
-    //                     okhandler);
-    //                 break;
     //             case 13:
     //                 UI::get().emplace<UILoginNotice>(
     //                     UILoginNotice::Message::UNABLE_TO_LOGIN_WITH_IP,
     //                     okhandler);
     //                 break;
+    AlreadyLoggedIn => {
+      self.network.close() // server require new connection
+      if self.login_task is Some({ callback, .. }) {
+        callback("Already logged in")
+      }
+      self.login_task = None // let user try again
+    }
     RequireTermsOfService =>
       // UI::get().emplace<UITermsOfService>(okhandler); break;
       fn_tos(self.network)

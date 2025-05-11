@@ -15,7 +15,7 @@ const account = ref('');
 const password = ref('');
 const loading = ref(false);
 const errorMessage = ref(null);
-pollMod(loginMod, 'get_login_mod', game);
+pollMod(loginMod, 'login', game);
 
 const handleLogin = () => {
   if (!account.value || !password.value) {
@@ -58,7 +58,8 @@ const rules = {
             <n-input v-model:value="account" autocomplete="username" />
           </n-form-item>
           <n-form-item label="Password">
-            <n-input v-model:value="password" type="password" autocomplete="current-password" @keyup.enter="handleLogin" />
+            <n-input v-model:value="password" type="password" autocomplete="current-password"
+              @keyup.enter="handleLogin" />
           </n-form-item>
           <div style="display: flex; justify-content: flex-end;">
             <n-button type="primary" @click="handleLogin" :loading="loading">

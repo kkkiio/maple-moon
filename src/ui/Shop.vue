@@ -7,8 +7,8 @@
       <div class="buy-section">
         <h3>Buy Items</h3>
         <div class="item-list buy-list">
-          <div v-for="item in shopItems" :key="item.id" class="shop-item"
-            :class="{ selected: selectedBuyItem?.id === item.id }" @click="selectBuyItem(item)">
+          <div v-for="item in shopItems" :key="item.slot_no" class="shop-item"
+            :class="{ selected: selectedBuyItem?.slot_no === item.slot_no }" @click="selectBuyItem(item)">
             <n-tooltip trigger="hover" placement="top">
               <template #trigger>
                 <div class="item-display">

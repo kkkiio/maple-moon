@@ -1,6 +1,6 @@
 <script setup>
 import { update_key_mappings, watch_keyboard } from 'lib/ms/keyboard/keyboard.js';
-import { NButton, NDynamicInput, NInput, NInputNumber } from 'naive-ui';
+import { NButton, NInput, NInputNumber } from 'naive-ui';
 import { onMounted, ref } from 'vue';
 
 const { mod } = defineProps({
@@ -37,6 +37,7 @@ const saveKeyMappings = () => {
     }
     update_key_mappings(mod, mappings);
 };
+
 // Create empty mapping template
 const createMapping = () => {
     return {
@@ -44,6 +45,14 @@ const createMapping = () => {
         kind: '',
         action: 0,
     };
+};
+
+const addNewMapping = () => {
+    editingKeyMappings.value.push(createMapping());
+};
+
+const removeMapping = (index) => {
+    editingKeyMappings.value.splice(index, 1);
 };
 
 // Watch for changes in the module
@@ -56,16 +65,17 @@ onMounted(() => {
 </script>
 
 <template>
-    <div style="max-height: 80vh; overflow-y: auto;">
-        <n-dynamic-input v-model:value="editingKeyMappings" :on-create="createMapping">
-            <template #default="{ value }">
-                <div style="display: flex; align-items: center; width: 100%;">
-                    <n-input v-model:value="value.keycode" placeholder="Enter keycode" />
-                    <n-input v-model:value="value.kind" placeholder="Enter kind" />
-                    <n-input-number v-model:value="value.action" clearable :show-button="false" />
-                </div>
-            </template>
-        </n-dynamic-input>
-        <n-button type="primary" @click="saveKeyMappings">Save</n-button>
+    <div style="max-height: 80vh; overflow-y: auto; padding: 5px;">
+        <div v-for="(mapping, index) in editingKeyMappings" :key="index"
+            style="display: flex; align-items: center; margin-bottom: 5px;">
+            <n-input v-model:value="mapping.keycode" placeholder="Key" style="margin-right: 5px; width: 100px;" />
+            <n-input v-model:value="mapping.kind" placeholder="Kind" style="margin-right: 5px; width: 80px;" />
+            <n-input-number v-model:value="mapping.action" clearable :show-button="false"
+                style="margin-right: 5px; width: 120px;" />
+            <n-button @click="removeMapping(index)" type="error" size="small">-</n-button>
+        </div>
+        <n-button type="primary" @click="addNewMapping" style="margin-top: 10px; margin-right: 5px;">Add New
+            Mapping</n-button>
+        <n-button type="primary" @click="saveKeyMappings" style="margin-top: 10px;">Save</n-button>
     </div>
 </template>

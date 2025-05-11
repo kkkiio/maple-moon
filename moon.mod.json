@@ -1,6 +1,9 @@
 {
   "name": "KKKIIO/maple-moon-client",
   "version": "0.1.0",
+  "deps": {
+    "rami3l/js-ffi": "0.2.2"
+  },
   "readme": "README.md",
   "repository": "",
   "license": "AGPL-3.0",

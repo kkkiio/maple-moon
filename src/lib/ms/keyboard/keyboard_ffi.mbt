@@ -57,11 +57,14 @@ pub fn update_key_mappings(
     }
     update_actions.push((ms_key, Some(kt)))
   }
+  for action in update_actions {
+    match action {
+      (ms_key, Some(kt)) => mod.keyboard.assign(ms_key, kt)
+      (ms_key, None) => mod.keyboard.remove(ms_key)
+    }
+  }
   // Send changes to server
-  mod.network.send_message(
-    ChangeKeymapMessage::new(update_actions),
-    log_level=@log.Level::INFO,
-  )
+  mod.network.send_message(ChangeKeymapMessage::new(update_actions))
 }
 
 ///| Helper function to find MsKey from keycode

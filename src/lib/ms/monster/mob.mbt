@@ -287,12 +287,12 @@ fn Mob::new(
 }
 
 ///|
-pub fn get_oid(self : Mob) -> Int {
+pub impl @map_object.MapObject for Mob with get_oid(self : Mob) -> Int {
   self.base.get_oid()
 }
 
 ///|
-pub fn Mob::draw(
+pub impl @map_object.MapObject for Mob with draw(
   self : Mob,
   viewx : Double,
   viewy : Double,
@@ -325,7 +325,10 @@ pub fn Mob::draw(
 }
 
 ///|
-pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
+pub impl @map_object.MapObject for Mob with update(
+  self : Mob,
+  physics : @physics.Physics
+) -> Int {
   if not(self.base.is_active()) {
     return self.base.phobj.fhlayer
   }
@@ -473,17 +476,17 @@ pub fn set_stance(self : Mob, newstance : Stance) -> Unit {
 }
 
 ///|
-pub fn makeactive(self : Mob) -> Unit {
+pub impl @map_object.MapObject for Mob with makeactive(self : Mob) -> Unit {
   self.base.makeactive()
 }
 
 ///|
-pub fn is_active(self : Mob) -> Bool {
+pub impl @map_object.MapObject for Mob with is_active(self : Mob) -> Bool {
   self.base.is_active()
 }
 
 ///|
-pub fn get_layer(self : Mob) -> Int {
+pub impl @map_object.MapObject for Mob with get_layer(self : Mob) -> Int {
   self.base.get_layer()
 }
 
@@ -686,7 +689,9 @@ pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
 }
 
 ///|
-pub fn get_position(self : Mob) -> @struct.Point[Int] {
+pub impl @map_object.MapObject for Mob with get_position(self : Mob) -> @struct.Point[
+  Int,
+] {
   self.base.get_position()
 }
 

@@ -547,11 +547,6 @@ pub impl @ui.Widget for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub impl @ui.Widget for ExplorerCreatorUI with remove_cursor(self) -> Unit {
-  ignore(self)
-}
-
-///|
 pub impl @ui.Widget for ExplorerCreatorUI with send_key(
   self,
   keycode,
@@ -565,7 +560,7 @@ pub impl @ui.Widget for ExplorerCreatorUI with send_key(
 }
 
 ///|
-pub fn get_ui_model(self : ExplorerCreatorUI) -> @ui.UIModel {
+pub impl @ui.Widget for ExplorerCreatorUI with get_ui_model(self) -> @ui.UIModel {
   self.model
 }
 

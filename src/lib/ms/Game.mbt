@@ -292,6 +292,7 @@ fn load_modules(
   let stage_f = map_module
     .combine(inventory_module_fut)
     .combine(npc_module)
+    .combine(quest_module_fut)
     .combine(char_look_module_f)
     .combine(char_stats_mod_f)
     .combine(skill_book_mod_f)
@@ -304,7 +305,10 @@ fn load_modules(
           (
             (
               (
-                (((map_module, inventory_module), npc_module), char_look_module),
+                (
+                  (((map_module, inventory_module), npc_module), quest_module),
+                  char_look_module,
+                ),
                 char_stats_mod,
               ),
               skill_book_module,
@@ -315,12 +319,24 @@ fn load_modules(
         ),
         _,
       ) = it
+      let npcs = npc_module.get_npcs()
+      let quests = quest_module.get_map_quests()
+      npcs.listen_npc_changes(fn(event) {
+        match event {
+          @map_object.MapObjectEvent::Add(npc) =>
+            quests.add_npc(npc.get_npc_id(), npc.get_npc_object())
+          @map_object.MapObjectEvent::Remove(oid) => quests.remove_npc(oid)
+          @map_object.MapObjectEvent::Clear => quests.clear()
+        }
+        true
+      })
       let stage = Stage::new(
         @map.get_portals_animations(map_module),
         monster_module.get_map_mobs(),
         drop_module.get_map_drops(),
         inventory_module.get_inventory(),
-        npc_module.get_npcs(),
+        npcs,
+        quest_module.get_map_quests(),
         char_look_module,
         skill_book_module,
         char_stats_mod,

@@ -14,12 +14,12 @@ pub fn watch_quest_log_ffi(
 ) -> Unit {
   let cb2 = fn(quest_log : PlayerQuestLog) {
     let quests = []
-    for id, quest in quest_log.started {
+    for id, quest in quest_log.in_progress {
       let markup_desc = quest.quest_info.descriptions.get(quest.phase).or("")
       let desc = try {
-        parse_quest_desc!(markup_desc, progress_getter=fn(info_number) {
-          if quest.current_phase_info is Some((n, progress)) &&
-            n.to_string()[:] == info_number {
+        parse_quest_desc!(markup_desc, progress_getter=fn(v) {
+          let info_number = @strconv.parse_int!(v.to_string())
+          if quest.info_number_progress_map.get(info_number) is Some(progress) {
             progress
           } else {
             @log.error({ "info_number": info_number }, "no progress data")
@@ -168,7 +168,7 @@ test "parse quest bold desc" {
   inspect!(
     desc,
     content=
-      #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"><br>Explore the 20 main regions of Victoria Island.<br></span><span style="color: blue">● Status : </span><a href="#">27010</a><span style="color: blue"> / 20 Completed</span>
+      #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"><br>Explore the 20 main regions of Victoria Island.<br></span><span style="color: blue">● Status : </span><a href="#">10</a><span style="color: blue"> / 20 Completed</span>
     ,
   )
 }

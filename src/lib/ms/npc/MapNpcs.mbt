@@ -25,13 +25,23 @@ pub fn MapNpcs::new(
   }
 }
 
+///|
+priv struct TalkToNpcPacket {
+  oid : Int
+} derive(Show)
+
 ///| Packet which requests a dialog with a server-sided NPC
-fn new_talk_to_npc_packet(oid : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)..write_int(oid)
+fn TalkToNpcPacket::new(oid : Int) -> TalkToNpcPacket {
+  { oid, }
 }
 
 ///|
-pub fn draw(
+impl @net.OutMessage for TalkToNpcPacket with pack(self) {
+  @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)..write_int(self.oid)
+}
+
+///|
+pub fn MapNpcs::draw(
   self : MapNpcs,
   layer : @map_layer.Id,
   viewx : Double,
@@ -101,7 +111,7 @@ pub fn send_cursor(
           }
           None => ()
         }
-        self.packet_processor.send_packet(new_talk_to_npc_packet(npc.get_oid()))
+        self.packet_processor.send_message(TalkToNpcPacket::new(npc.get_oid()))
         return @ui.CursorState::IDLE
       }
       return @ui.CursorState::CAN_CLICK
@@ -112,6 +122,14 @@ pub fn send_cursor(
   } else {
     @ui.CursorState::IDLE
   }
+}
+
+///|
+pub fn MapNpcs::listen_npc_changes(
+  self : MapNpcs,
+  listener : (@map_object.MapObjectEvent[Npc]) -> Bool
+) -> Unit {
+  self.npcs.listen_object_changes(listener)
 }
 
 ///|
@@ -171,7 +189,8 @@ pub fn talk(self : Npc) -> TalkArgs? {
     return None
   }
   match
-    self.dialogue["d0"]
+    self.dialogue
+    .get("d0")
     .filter(fn(strs) { not(strs.is_empty()) })
     .map(fn(strs) { strs[0] }) {
     Some(str) =>
@@ -272,7 +291,7 @@ pub fn Npc::new(
 }
 
 ///|
-pub fn Npc::draw(
+pub impl @map_object.MapObject for Npc with draw(
   self : Npc,
   viewx : Double,
   viewy : Double,
@@ -290,7 +309,10 @@ pub fn Npc::draw(
 }
 
 ///|
-pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Int {
+pub impl @map_object.MapObject for Npc with update(
+  self : Npc,
+  physics : @physics.Physics
+) -> Int {
   if not(self.base.active) {
     return self.base.phobj.fhlayer
   }
@@ -335,7 +357,8 @@ pub fn inrange(
     return false
   }
   let absp = self.base.get_position() + viewpos
-  let dim = self.animations[self.stance]
+  let dim = self.animations
+    .get(self.stance)
     .map(fn(ani) { ani.get_dimensions() })
     .or_default()
   @struct.Rectangle::from4(
@@ -357,12 +380,12 @@ pub fn get_func(self : Npc) -> String {
 }
 
 ///|
-pub fn Npc::get_oid(self : Npc) -> Int {
+pub impl @map_object.MapObject for Npc with get_oid(self : Npc) -> Int {
   self.base.get_oid()
 }
 
 ///|
-pub fn makeactive(self : Npc) -> Unit {
+pub impl @map_object.MapObject for Npc with makeactive(self : Npc) -> Unit {
   self.base.makeactive()
 }
 
@@ -372,16 +395,28 @@ pub fn deactivate(self : Npc) -> Unit {
 }
 
 ///|
-pub fn is_active(self : Npc) -> Bool {
+pub impl @map_object.MapObject for Npc with is_active(self : Npc) -> Bool {
   self.base.is_active()
 }
 
 ///|
-pub fn get_layer(self : Npc) -> Int {
+pub impl @map_object.MapObject for Npc with get_layer(self : Npc) -> Int {
   self.base.get_layer()
 }
 
 ///|
-pub fn get_position(self : Npc) -> @struct.Point[Int] {
+pub impl @map_object.MapObject for Npc with get_position(self : Npc) -> @struct.Point[
+  Int,
+] {
   self.base.get_position()
+}
+
+///|
+pub fn get_npc_object(self : Npc) -> @physics.MovingObject {
+  self.base.phobj.moving_object
+}
+
+///|
+pub fn get_npc_id(self : Npc) -> Int {
+  self.npc_id
 }

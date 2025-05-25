@@ -4,7 +4,7 @@ struct MiniMapUIResource {
   /// Marker for portals.
   portal_marker : @graphics.Animation
   // Window frame elements for Normal mode
-  minmap_middle_center : @graphics.Animation
+  // minmap_middle_center : @graphics.Animation
   minmap_middle_left : @graphics.Animation
   minmap_middle_right : @graphics.Animation
   minmap_up_center : @graphics.Animation
@@ -29,9 +29,9 @@ pub fn MiniMapUIResource::load() -> @utils.Future[MiniMapUIResource] {
     let portal_marker = @graphics.Animation::from_resource(portal_node)
 
     // Load normal mode window frame elements
-    let minmap_middle_center = @graphics.Animation::from_resource(
-      minmap_node["c"],
-    )
+    // let minmap_middle_center = @graphics.Animation::from_resource(
+    //   minmap_node["c"],
+    // )
     let minmap_middle_left = @graphics.Animation::from_resource(
       minmap_node["w"],
     )
@@ -50,7 +50,7 @@ pub fn MiniMapUIResource::load() -> @utils.Future[MiniMapUIResource] {
     )
     {
       portal_marker,
-      minmap_middle_center,
+      // minmap_middle_center,
       minmap_middle_left,
       minmap_middle_right,
       minmap_up_center,
@@ -322,7 +322,7 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
       for frame in frames {
         render_elements.push(@ui.RenderElement::Static(@ui.SpriteUI(frame)))
       }
-      let normal_dimensions_ = Point::new(ur_x_offset + 64, down_y_offset + 27)
+      let _normal_dimensions = Point::new(ur_x_offset + 64, down_y_offset + 27)
       if mini_map_resources is Some(res) {
         let portal_marker = self.resource.portal_marker
         let portals = res.portals
@@ -389,11 +389,6 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
   //     }
   // }
 
-}
-
-///|
-pub impl @ui.Widget for MiniMapUI with remove_cursor(self) -> Unit {
-  ignore(self)
 }
 
 ///|

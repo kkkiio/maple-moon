@@ -39,7 +39,7 @@ pub fn process_out(self : Network, data : Bytes) -> Unit {
 }
 
 ///| send packet to the server
-/// @alert deprecated "use send_message instead"
+#deprecated("use send_message instead")
 pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
   @log.log(
     packet.opcode.log_level(),

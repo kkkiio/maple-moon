@@ -81,7 +81,10 @@ pub fn Inventory::new(network : @net.Network) -> Inventory {
 }
 
 ///| Recalculate sums of equip stats
-pub fn recalc_stats(self : Inventory, weapontype : @weapon.Type) -> Unit {
+pub impl @player.Inventory for Inventory with recalc_stats(
+  self : Inventory,
+  weapontype : @weapon.Type
+) -> Unit {
   self.total_stats.map.clear()
   for _, slot in self.inventories[TypeId::EQUIPPED] {
     match self.equips.get(slot.unique_id) {
@@ -212,17 +215,20 @@ pub fn add_equip(
 }
 
 ///|
-pub fn get_stat(self : Inventory, stat : @maple_stat.EquipStatId) -> Int {
+pub impl @player.Inventory for Inventory with get_stat(
+  self : Inventory,
+  stat : @maple_stat.EquipStatId
+) -> Int {
   self.total_stats[stat]
 }
 
 ///|
-pub fn has_projectile(self : Inventory) -> Bool {
+pub impl @player.Inventory for Inventory with has_projectile(self : Inventory) -> Bool {
   self.bullet_slot > 0
 }
 
 ///|
-pub fn get_bulletid(self : Inventory) -> Int {
+pub impl @player.Inventory for Inventory with get_bulletid(self : Inventory) -> Int {
   self.get_item_id(TypeId::USE, self.bullet_slot)
 }
 
@@ -237,7 +243,7 @@ pub fn get_slot_item_at(self : Inventory, t : TypeId, slot : Int) -> SlotItem? {
 }
 
 ///|
-pub fn get_bulletcount(self : Inventory) -> Int {
+pub impl @player.Inventory for Inventory with get_bulletcount(self : Inventory) -> Int {
   self.get_item_count(TypeId::USE, self.bullet_slot)
 }
 

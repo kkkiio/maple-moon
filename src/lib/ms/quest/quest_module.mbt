@@ -1,8 +1,9 @@
 ///|
 struct Module {
-  quests_resource : QuestsResource
+  quests_resource : QuestResource
   mut player_quest_log : PlayerQuestLog
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
+  map_quests : MapQuests
   network : @net.Network
 }
 
@@ -11,21 +12,46 @@ pub fn Module::load(
   network : @net.Network
 ) -> @utils.Future[Result[Module, Error]] {
   let fut = quest_resource_loader.load_res(["nx"])
-  fut.map_exn(fn(node) {
-    let quests_resource : QuestsResource = @json.from_json!(node.value())
-    Module::new(quests_resource, network)
+  let fut2 = MapQuestsResource::load()
+  @utils.Future::combine(fut, fut2).map_exn(fn(it) {
+    let (node, map_quests_resource) = it
+    let quests_resource : QuestResource = @json.from_json!(node.value())
+    Module::new(
+      quests_resource,
+      map_quests_resource.unwrap_or_error!(),
+      network,
+    )
   })
 }
 
 ///|
 pub fn Module::new(
-  quests_resource : QuestsResource,
+  quests_resource : QuestResource,
+  map_quests_resource : MapQuestsResource,
   network : @net.Network
 ) -> Module {
+  let npc_quests_map = quests_resource.quest_checks_map
+    .iter()
+    .filter_map(fn(it) {
+      let (quest_id, all_phase_checks) = it
+      guard all_phase_checks.get(0) is Some({ npc: Some(npc_id), .. }) else {
+        return None
+      }
+      Some((npc_id, quest_id))
+    })
+    .fold(init=Map::new(), fn(acc, it) {
+      let (npc_id, quest_id) = it
+      acc.get_or_init(npc_id, fn() { [] }).push(quest_id)
+      acc
+    })
+  let player_quest_log = PlayerQuestLog::default()
   {
     quests_resource,
-    player_quest_log: PlayerQuestLog::default(),
+    player_quest_log,
     quest_log_listeners: [],
+    map_quests: MapQuests::new(
+      map_quests_resource, quests_resource, player_quest_log, npc_quests_map,
+    ),
     network,
   }
 }
@@ -66,26 +92,65 @@ pub fn Module::make_show_status_info_handler_map(
   }
 }
 
+///|
+pub fn Module::get_map_quests(self : Module) -> MapQuests {
+  self.map_quests
+}
+
 ///| PlayerQuestLog stores information on the quest log of an individual character
 priv struct PlayerQuestLog {
-  started : Map[Int, StartedQuest]
+  in_progress : Map[Int, InProgressQuest]
   info_number_quest_map : Map[Int, Int] // info_number => quest_id
   completed : Map[Int, CompletedQuest]
 } derive(Show, Default)
 
 ///|
-priv struct StartedQuest {
+priv struct InProgressQuest {
+  quest_id : Int
   quest_info : QuestInfo
-  checks : Array[QuestCheck]
+  checks : Array[QuestPhaseChecks]
   mut progress_data : String
   mut phase : Int
-  mut current_phase_info : (Int, String)? // info_number, progress
+  info_number_progress_map : Map[Int, String]
 } derive(Show)
 
 ///|
+fn InProgressQuest::get_phase_progress(
+  self : InProgressQuest,
+  phase : Int
+) -> String {
+  self.checks
+  .get(phase)
+  .bind(fn(it) { it.info_number })
+  .bind(fn(it) { self.info_number_progress_map.get(it) })
+  .or(self.progress_data)
+}
+
+///|
 priv struct CompletedQuest {
+  quest_id : Int
   quest_info : QuestInfo
   completion_time : Int64
+} derive(Show)
+
+///|
+fn PlayerQuestLog::get_quest(
+  self : PlayerQuestLog,
+  quest_id : Int
+) -> StartedQuest? {
+  if self.in_progress.get(quest_id) is Some(in_progress_quest) {
+    Some(InProgress(in_progress_quest))
+  } else if self.completed.get(quest_id) is Some(completed_quest) {
+    Some(Completed(completed_quest))
+  } else {
+    None
+  }
+}
+
+///|
+priv enum StartedQuest {
+  InProgress(InProgressQuest)
+  Completed(CompletedQuest)
 } derive(Show)
 
 ///|
@@ -118,18 +183,18 @@ pub fn Module::handle_player_quest_info(
   self : Module,
   player_quests : PlayerQuestLogInfo
 ) -> Unit {
-  let started : Array[(Int, StartedQuest)] = []
+  let in_progress : Array[(Int, InProgressQuest)] = []
   let completed : Array[(Int, CompletedQuest)] = []
   quest_loop~: for it in player_quests.started {
     let (id, progress_data) = it
-    let quest_info = self.quests_resource.quest_info_map.get(id.to_string())
+    let quest_info = self.quests_resource.quest_info_map.get(id)
     if quest_info is None {
       // maybe a infoNumber
-      if started.last() is Some((_, last_started_quest)) {
-        for i, check in last_started_quest.checks {
+      if in_progress.last() is Some((_, last_in_progress_quest)) {
+        for i, check in last_in_progress_quest.checks {
           if check.info_number is Some(info_number) && info_number == id { // is a infoNumber
-            last_started_quest.phase = i
-            last_started_quest.current_phase_info = Some((id, progress_data))
+            last_in_progress_quest.phase = i
+            last_in_progress_quest.info_number_progress_map[id] = progress_data
             continue quest_loop~
           }
         }
@@ -150,25 +215,24 @@ pub fn Module::handle_player_quest_info(
         descriptions: [],
       }
     }
-    let checks = self.quests_resource.quest_checks_map.get(id.to_string())
-    started.push(
+    let checks = self.quests_resource.quest_checks_map.get(id)
+    in_progress.push(
       (
         id,
         {
+          quest_id: id,
           quest_info,
-          checks: checks.map_or([], fn(c) { c._ }),
+          checks: checks.or([]),
           progress_data,
           phase: 0,
-          current_phase_info: None,
+          info_number_progress_map: {},
         },
       ),
     )
   }
   for it in player_quests.completed {
     let (quest_id, completion_time) = it
-    let quest_info = self.quests_resource.quest_info_map.get(
-      quest_id.to_string(),
-    )
+    let quest_info = self.quests_resource.quest_info_map.get(quest_id)
     let quest_info = if quest_info is Some(quest_info) {
       quest_info
     } else {
@@ -184,11 +248,11 @@ pub fn Module::handle_player_quest_info(
         descriptions: [],
       }
     }
-    completed.push((quest_id, { quest_info, completion_time }))
+    completed.push((quest_id, { quest_id, quest_info, completion_time }))
   }
   self.player_quest_log = {
-    started: Map::from_array(started),
-    info_number_quest_map: started
+    in_progress: Map::from_array(in_progress),
+    info_number_quest_map: in_progress
     .iter()
     .flat_map(fn(it) {
       let (quest_id, quest) = it
@@ -208,63 +272,6 @@ pub fn Module::handle_player_quest_info(
 
 // what does negative quest id mean?
 // 29005: "", 27010: "9", 29014: "", 27019: "3", -31066: ""
-
-///|
-priv enum QuestActionMessage {
-  // Restore a lost item for a quest.
-  RestoreLostItem(quest_id~ : Int, item_id~ : Int)
-  // Start a quest when talking to an NPC.
-  StartQuest(quest_id~ : Int, npc_id~ : Int)
-  // Complete a quest when talking to an NPC, optionally with a selection.
-  CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
-  // Forfeit an active quest.
-  ForfeitQuest(quest_id~ : Int)
-  // Start a quest via a script (e.g., item-triggered or event-triggered).
-  ScriptedStartQuest(quest_id~ : Int, npc_id~ : Int)
-  // Complete a quest via a script.
-  ScriptedEndQuest(quest_id~ : Int, npc_id~ : Int)
-} derive(Show)
-
-///|
-impl @net.OutMessage for QuestActionMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::QUEST_ACTION)
-  match self {
-    QuestActionMessage::RestoreLostItem(quest_id~, item_id~) => {
-      packet.write_byte(0)
-      packet.write_short(quest_id)
-      packet.write_int(0) // unknonw int
-      packet.write_int(item_id)
-    }
-    QuestActionMessage::StartQuest(quest_id~, npc_id~) => {
-      packet.write_byte(1)
-      packet.write_short(quest_id)
-      packet.write_int(npc_id)
-    }
-    QuestActionMessage::CompleteQuest(quest_id~, npc_id~, selection~) => {
-      packet.write_byte(2)
-      packet.write_short(quest_id)
-      packet.write_int(npc_id)
-      if selection is Some(selection) {
-        packet.write_short(selection)
-      }
-    }
-    QuestActionMessage::ForfeitQuest(quest_id~) => {
-      packet.write_byte(3)
-      packet.write_short(quest_id)
-    }
-    QuestActionMessage::ScriptedStartQuest(quest_id~, npc_id~) => {
-      packet.write_byte(4)
-      packet.write_short(quest_id)
-      packet.write_int(npc_id)
-    }
-    QuestActionMessage::ScriptedEndQuest(quest_id~, npc_id~) => {
-      packet.write_byte(5)
-      packet.write_short(quest_id)
-      packet.write_int(npc_id)
-    }
-  }
-  packet
-}
 
 ///|
 priv struct ShowForfeitQuestAction {
@@ -287,7 +294,7 @@ impl Show for ShowForfeitQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowForfeitQuestAction with handle(self) -> Unit {
-  self.mod.player_quest_log.started.remove(self.quest_id)
+  self.mod.player_quest_log.in_progress.remove(self.quest_id)
   self.mod.quest_log_listeners.retain(fn(listener) {
     listener(self.mod.player_quest_log)
   })
@@ -318,9 +325,7 @@ impl Show for ShowCompleteQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> Unit {
-  let quest_info = self.mod.quests_resource.quest_info_map.get(
-    self.quest_id.to_string(),
-  )
+  let quest_info = self.mod.quests_resource.quest_info_map.get(self.quest_id)
   let quest_info = if quest_info is Some(quest_info) {
     quest_info
   } else {
@@ -336,8 +341,9 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
       descriptions: [],
     }
   }
-  self.mod.player_quest_log.started.remove(self.quest_id)
+  self.mod.player_quest_log.in_progress.remove(self.quest_id)
   self.mod.player_quest_log.completed[self.quest_id] = {
+    quest_id: self.quest_id,
     quest_info,
     completion_time: self.completion_time,
   }
@@ -371,11 +377,90 @@ impl Show for ShowUpdateQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
-  guard self.mod.player_quest_log.started.get(self.quest_id) is Some(quest) else {
+  guard self.mod.player_quest_log.in_progress.get(self.quest_id) is Some(quest) else {
     return
   }
   quest.progress_data = self.progress_data
   self.mod.quest_log_listeners.retain(fn(listener) {
     listener(self.mod.player_quest_log)
   })
+}
+
+///| list all quests that can be started by npc
+fn list_quests_by_npc(
+  npc_quests_map : Map[Int, Array[Int]],
+  npc_id : Int
+) -> Array[Int] {
+  npc_quests_map.get(npc_id).map_or([], fn(quest_ids) { quest_ids })
+}
+
+///| list all acceptable quests by npc
+/// 
+/// This function returns an iterator of all quests that can be started by the player
+fn filter_acceptable_quests(
+  quest_ids : Iter[Int],
+  quests_resource : QuestResource,
+  player : @player.Player,
+  quest_log : PlayerQuestLog
+) -> Iter[(Int, QuestInfo)] {
+  quest_ids.filter_map(fn(quest_id) {
+    guard quests_resource.quest_checks_map.get(quest_id)
+      is Some(all_phase_checks) else {
+      return None
+    }
+    let phase = 0
+    if all_phase_checks
+      .get(phase)
+      .map_or(true, fn(checks) {
+        let status = quest_log.get_quest(quest_id)
+        if not(is_quest_status_can_start(status, checks.repeatable)) {
+          return false
+        }
+        if check_start_quest_requirements(
+            checks, player, quest_log, quest_id, phase,
+          )
+          is Err(error) {
+          @log.debug(
+            { "quest_id": quest_id, "reason": error },
+            "cannot start quest",
+          )
+          return false
+        }
+        true
+      }) {
+      quests_resource.quest_info_map
+      .get(quest_id)
+      .map(fn(quest_info) { (quest_id, quest_info) })
+    } else {
+      None
+    }
+  })
+}
+
+///| check if a quest can be started
+fn check_start_quest_requirements(
+  check : QuestPhaseChecks,
+  player : @player.Player,
+  quest_log : PlayerQuestLog,
+  quest_id : Int,
+  phase : Int
+) -> Result[Unit, String] {
+  if check.unknown_checks.length() > 0 {
+    @log.warn(
+      { "quest_id": quest_id, "unknown_checks": check.unknown_checks },
+      "unknown checks",
+    )
+    return Err("Unknown checks: \{check.unknown_checks}")
+  }
+  for check in check.checks {
+    if check.check({ player, log: quest_log, quest_id, phase }) is Err(e) {
+      return Err(e)
+    }
+  }
+  Ok(())
+}
+
+///|
+fn is_quest_status_can_start(status : StartedQuest?, repeatable : Bool) -> Bool {
+  status is None || (status is Some(Completed(_)) && repeatable)
 }

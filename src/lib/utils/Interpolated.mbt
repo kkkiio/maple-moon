@@ -3,12 +3,7 @@ struct Nominal[T] {
   mut now : T
   mut before : T
   mut threshold : Double
-}
-
-///|
-pub impl[T : Default] Default for Nominal[T] with default() -> Nominal[T] {
-  { now: T::default(), before: T::default(), threshold: 0.0 }
-}
+} derive(Default)
 
 ///|
 pub fn Nominal::get[T](self : Nominal[T], alpha? : Double) -> T {

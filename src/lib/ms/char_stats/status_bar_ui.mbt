@@ -280,8 +280,3 @@ pub impl @ui.Widget for StatusBarUI with send_key(
   ignore(pressed)
   ignore(escape)
 }
-
-///|
-pub impl @ui.Widget for StatusBarUI with remove_cursor(self) -> Unit {
-  ignore(self)
-}

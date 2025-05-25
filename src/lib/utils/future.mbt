@@ -87,6 +87,15 @@ pub fn combine[T, U](self : Future[T], other : Future[U]) -> Future[(T, U)] {
 }
 
 ///|
+pub fn combine3[T, U, V](
+  self : Future[T],
+  other1 : Future[U],
+  other2 : Future[V]
+) -> Future[(T, U, V)] {
+  self.bind(fn(t) { other1.bind(fn(u) { other2.map(fn(v) { (t, u, v) }) }) })
+}
+
+///|
 pub fn Future::all_of[T](futures : Array[Future[T]]) -> Future[Array[T]] {
   let resolved = Array::new()
   let mut i = 0

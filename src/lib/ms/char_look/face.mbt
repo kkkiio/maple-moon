@@ -27,7 +27,7 @@ pub(all) enum ExpressionId {
 } derive(Eq, Compare)
 
 ///|
-pub fn ExpressionId::default() -> ExpressionId {
+pub impl Default for ExpressionId with default() -> ExpressionId {
   ExpressionId::DEFAULT
 }
 

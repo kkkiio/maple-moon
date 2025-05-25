@@ -277,7 +277,7 @@ fn make_equip_desc(item_data : @item.ItemData) -> String {
         4 => "Bowman"
         8 => "Thief"
         16 => "Pirate"
-        _ => "Unknown"
+        v => v.to_string()
       }
       req_job
     } else {

@@ -9,9 +9,9 @@ priv struct EntryPoint {
 ///|
 priv enum State {
   NONE
-  LOADING(loading_map~ : @utils.Future[Result[@map.MapStruct, Error]])
+  LOADING(loading_map~ : @utils.Future[Result[@map.SceneMap, Error]])
   ACTIVE(
-    map~ : @map.MapStruct,
+    map~ : @map.SceneMap,
     mut viewpos~ : @struct.Point[Double],
     hide_backgrounds~ : Map[Int, Bool],
     hide_foregrounds~ : Map[Int, Bool]
@@ -127,7 +127,7 @@ pub fn set_show_foreground(index : Int, show_foreground : Bool) -> Unit {
 
 ///|
 fn draw_map(
-  map : @map.MapStruct,
+  map : @map.SceneMap,
   viewpos : @struct.Point[Double],
   hide_backgrounds : Map[Int, Bool],
   hide_foregrounds : Map[Int, Bool],

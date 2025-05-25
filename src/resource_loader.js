@@ -10,7 +10,7 @@ async function fetchImageByUrl(url) {
       resolve(img);
     };
     img.onerror = (e) => {
-      reject(e);
+      reject(new Error(`fetch image by url failed: ${url}`, { cause: e }));
     };
     img.src = url;
   });

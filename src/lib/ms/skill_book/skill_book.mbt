@@ -41,7 +41,10 @@ priv struct SkillEntry {
 }
 
 ///|
-pub fn get_level(self : SkillBook, id : Int) -> Int {
+pub impl @player.SkillBook for SkillBook with get_level(
+  self : SkillBook,
+  id : Int
+) -> Int {
   self.skill_entries[id].map_or(0, fn(entry) -> Int { entry.level })
 }
 
@@ -67,7 +70,7 @@ pub fn get_masterlevel(self : SkillBook, id : Int) -> Int {
 }
 
 ///|
-pub fn set_skill(
+pub impl @player.SkillBook for SkillBook with set_skill(
   self : SkillBook,
   id : Int,
   level : Int,

@@ -21,7 +21,8 @@ pub fn EquipData::parse_item_data(item_data : @item.ItemData) -> EquipData! {
       let (key, stat) = it
       (
         stat,
-        info[key]
+        info
+        .get(key)
         .bind(fn(it) { it.as_number() })
         .map_or(0, fn(it) { it.to_int() }),
       )
@@ -31,7 +32,8 @@ pub fn EquipData::parse_item_data(item_data : @item.ItemData) -> EquipData! {
     .iter()
     .filter_map(fn(it) {
       let (key, stat) = it
-      info[key]
+      info
+      .get(key)
       .bind(fn(it) { it.as_number() })
       .map(fn(it) { (stat, it.to_int()) })
     })

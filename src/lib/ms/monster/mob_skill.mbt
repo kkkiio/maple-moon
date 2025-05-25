@@ -128,7 +128,10 @@ pub fn MobSingleUseEffect::new(src : @resource.NxNode) -> MobSingleUseEffect! {
 }
 
 ///|
-pub fn MobSingleUseEffect::apply(self : MobSingleUseEffect, mob : Mob) -> Unit {
+pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
+  self : MobSingleUseEffect,
+  mob : Mob
+) -> Unit {
   self.effect.apply(fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
     mob.show_effect(a, b, c, d)
   })
@@ -160,7 +163,10 @@ pub fn MobMultiUseEffect::new(
 }
 
 ///|
-pub fn MobMultiUseEffect::apply(self : MobMultiUseEffect, mob : Mob) -> Unit {
+pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
+  self : MobMultiUseEffect,
+  mob : Mob
+) -> Unit {
   fn func(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
     mob.show_effect(a, b, c, d)
   }

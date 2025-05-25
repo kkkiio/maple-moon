@@ -47,7 +47,7 @@ pub impl Hash for BodyLayer with hash_combine(self, hasher) {
 
 ///|
 pub fn BodyLayer::layer_by_name(name : String) -> BodyLayer {
-  let layer_iter = layers_by_name_[name]
+  let layer_iter = layers_by_name_.get(name)
   match layer_iter {
     None => {
       if name != "" {

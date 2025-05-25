@@ -49,7 +49,7 @@ pub fn int_value(self : CursorState) -> Int {
 }
 
 ///|
-pub fn hash_combine(self : CursorState, hasher : Hasher) -> Unit {
+pub impl Hash for CursorState with hash_combine(self, hasher : Hasher) {
   hasher.combine(self.int_value())
 }
 

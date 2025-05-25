@@ -539,7 +539,7 @@ pub fn SellItem::new(
 }
 
 ///|
-pub fn get_ui_model(self : UIShop) -> @ui.UIModel {
+impl @ui.Widget for UIShop with get_ui_model(self) -> @ui.UIModel {
   self.logic_state.model
 }
 
@@ -565,15 +565,15 @@ fn exit_shop(self : LogicState) -> Unit {
 }
 
 ///|
-pub fn send_key(self : UIShop, _key : Int, pressed : Bool, esc : Bool) -> Unit {
+impl @ui.Widget for UIShop with send_key(
+  self : UIShop,
+  _key : Int,
+  pressed : Bool,
+  esc : Bool
+) -> Unit {
   if pressed && esc {
     self.logic_state.exit_shop()
   }
-}
-
-///|
-impl @ui.Widget for UIShop with remove_cursor(self) -> Unit {
-
 }
 
 ///|

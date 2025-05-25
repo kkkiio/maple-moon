@@ -124,13 +124,13 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
     guard stancenode is Json::Object(stancenode) else { continue }
     for
       it in @utils.ints().map_while(fn(i) {
-        stancenode[i.to_string()].map(fn(it) { (i, it) })
+        stancenode.get(i.to_string()).map(fn(it) { (i, it) })
       }) {
       let (frame, frame_json) = it
       match frame_json {
         { "action": Json::String(_), .. } => {
           let action : BodyAction = @json.from_json!(frame_json)
-          (match body_actions[ststr] {
+          (match body_actions.get(ststr) {
             Some(v) => v
             None => {
               let v = Map::new()
@@ -139,7 +139,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
             }
           }).set(frame, action)
           if action.is_attack_frame() {
-            (match attack_delays[ststr] {
+            (match attack_delays.get(ststr) {
               Some(v) => v
               None => {
                 let v = Array::new()
@@ -170,10 +170,10 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
           }
           let head_json = headnode
             .as_object()
-            .bind(fn(it) { it[ststr] })
+            .bind(fn(it) { it.get(ststr) })
             .bind(fn(it) { it.as_object() })
-            .bind(fn(it) { it[frame.to_string()] })
-            .or(Json::Null)
+            .bind(fn(it) { it.get(frame.to_string()) })
+            .or(Json::null())
           let head_shift_map = match head_json {
             { "head": { "map": map_json, .. }, .. } =>
               @json.from_json!(map_json)
@@ -185,7 +185,10 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
           }
           bodyshiftmap[BodyLayer::HEAD] = head_shift_map._
           fn get_shift(layer, key) {
-            bodyshiftmap[layer].bind(fn(it) { it[key] }).or(Point::default())
+            bodyshiftmap
+            .get(layer)
+            .bind(fn(it) { it.get(key) })
+            .or(Point::default())
           }
 
           body_positions[stance.int_value()].set(
@@ -259,13 +262,13 @@ pub fn BodyDrawInfo::default() -> BodyDrawInfo {
 }
 
 ///|
-struct StanceFramePartConfig {
+priv struct StanceFramePartConfig {
   map : ShiftMap
   z : BodyLayer
 }
 
 ///|
-type ShiftMap Map[String, @struct.Point[Int]] derive(FromJson, ToJson)
+priv type ShiftMap Map[String, @struct.Point[Int]] derive(FromJson, ToJson)
 
 ///|
 pub fn get_body_position(
@@ -341,7 +344,7 @@ pub fn BodyDrawInfo::get_delay(
 
 ///|
 pub fn get_attack_delay(self : BodyDrawInfo, action : String, no : Int) -> Int {
-  self.attack_delays[action].bind(fn(it) { it.get(no) }).or(0)
+  self.attack_delays.get(action).bind(fn(it) { it.get(no) }).or(0)
 }
 
 ///|
@@ -350,7 +353,7 @@ pub fn next_action_frame(
   action : String,
   frame : Int
 ) -> Int {
-  match self.body_actions[action].bind(fn(it) { it[frame + 1] }) {
+  match self.body_actions.get(action).bind(fn(it) { it.get(frame + 1) }) {
     Some(_) => frame + 1
     None => 0
   }
@@ -362,5 +365,5 @@ pub fn get_action(
   action : String,
   frame : Int
 ) -> BodyAction? {
-  self.body_actions[action].bind(fn(it) { it.get(frame) })
+  self.body_actions.get(action).bind(fn(it) { it.get(frame) })
 }

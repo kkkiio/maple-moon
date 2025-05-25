@@ -28,7 +28,7 @@ pub fn format_decimal_separator(num : Int) -> String {
     if count % 3 == 0 && count != 0 {
       buf.write_char(',')
     }
-    buf.write_char(Char::from_int(digit + 48))
+    buf.write_char(Int::unsafe_to_char(digit + 48))
     count += 1
   }
   buf.to_string().rev()

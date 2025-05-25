@@ -12,7 +12,7 @@ fn NoAction::new() -> NoAction {
 }
 
 ///|
-fn NoAction::apply(
+pub impl SkillAction for NoAction with apply(
   self : NoAction,
   target : @character.Character,
   atype : @combat.AttackType
@@ -31,7 +31,7 @@ fn SingleAction::new(src : @resource.NxNode) -> SingleAction {
 }
 
 ///|
-fn SingleAction::apply(
+pub impl SkillAction for SingleAction with apply(
   self : SingleAction,
   target : @character.Character,
   atype : @combat.AttackType
@@ -79,7 +79,7 @@ fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction! {
 }
 
 ///|
-fn ByLevelAction::apply(
+pub impl SkillAction for ByLevelAction with apply(
   self : ByLevelAction,
   target : @character.Character,
   atype : @combat.AttackType

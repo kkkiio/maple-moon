@@ -136,9 +136,9 @@ pub fn draw_bitmap(
   if color.invisible() {
     return
   }
-  // if (rect.overlaps(SCREEN).not()) {
-  //     return;
-  // }
+  if not(rect.overlaps(self.screen)) {
+    return
+  }
   guard bmp.image.poll() is Some(image) else { return }
   self.quads.push(
     Quad::new(
@@ -166,19 +166,21 @@ fn draw_text(
     return
   }
   guard image.poll() is Some(image) else { return }
-
-  // if (rect.overlaps(SCREEN).not()) {
-  //     return;
-  // }
-
+  let rect = Rectangle::from4(
+    point.x,
+    point.x + image.width(),
+    point.y,
+    point.y + image.height(),
+  )
+  if not(rect.overlaps(self.screen)) {
+    return
+  }
   if nametag {
     // If ever changing code in here confirm placements with map 10000
-    let x = point.x
-    let y = point.y
-    let left = x - 1
-    let right = left + 1 + image.width() + 1
-    let top = y - 1
-    let bottom = top + image.height() + 1
+    let left = rect.left() - 1
+    let right = rect.right() + 1
+    let top = rect.top() - 1
+    let bottom = rect.bottom()
     let ntcolor = Color::new_rgba(0.0, 0.0, 0.0, 0.6)
     let null_offset = TexOffset::default()
     self.quads.push(
@@ -204,10 +206,10 @@ fn draw_text(
   text_y_clip |> ignore
   self.quads.push(
     Quad::new(
-      point.x,
-      point.x + image.width(),
-      point.y,
-      point.y + image.height(),
+      rect.left(),
+      rect.right(),
+      rect.top(),
+      rect.bottom(),
       offset,
       @struct.clr_opaque,
       0.0,

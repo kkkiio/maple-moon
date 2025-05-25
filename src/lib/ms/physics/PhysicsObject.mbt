@@ -7,17 +7,7 @@ pub(all) struct MovingObject {
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
-} derive(Show, ToJson)
-
-///|
-pub fn MovingObject::default() -> MovingObject {
-  {
-    x: @utils.Linear::default(),
-    y: @utils.Linear::default(),
-    hspeed: 0.0,
-    vspeed: 0.0,
-  }
-}
+} derive(Show, ToJson, Default)
 
 ///|
 pub fn normalize(self : MovingObject) -> Unit {
@@ -135,12 +125,7 @@ pub fn get_absolute_x(
   viewx : Double,
   alpha : Double
 ) -> Int {
-  let interx = if self.x.normalized() {
-    self.x.get().round()
-  } else {
-    self.x.get(alpha~)
-  }
-  (interx + viewx).round().to_int()
+  get_absolute_coord(self.x, viewx, alpha)
 }
 
 ///|
@@ -149,16 +134,25 @@ pub fn get_absolute_y(
   viewy : Double,
   alpha : Double
 ) -> Int {
-  let intery = if self.y.normalized() {
-    self.y.get().round()
-  } else {
-    self.y.get(alpha~)
-  }
-  (intery + viewy).round().to_int()
+  get_absolute_coord(self.y, viewy, alpha)
 }
 
 ///|
-pub fn get_absolute(
+pub fn get_absolute_coord(
+  coord : @utils.Linear,
+  view : Double,
+  alpha : Double
+) -> Int {
+  let inter = if coord.normalized() {
+    coord.get().round()
+  } else {
+    coord.get(alpha~)
+  }
+  (inter + view).round().to_int()
+}
+
+///|
+pub fn MovingObject::get_absolute(
   self : MovingObject,
   viewx : Double,
   viewy : Double,
@@ -210,7 +204,7 @@ pub(all) struct PhysicsObject {
 } derive(Show, ToJson)
 
 ///|
-pub fn PhysicsObject::default() -> PhysicsObject {
+pub impl Default for PhysicsObject with default() -> PhysicsObject {
   {
     moving_object: MovingObject::default(),
     t: PhysicsObjectType::NORMAL,

@@ -18,6 +18,8 @@ const errorMessage = ref(null);
 pollMod(loginMod, 'login', game);
 
 const handleLogin = () => {
+  // clear error message
+  errorMessage.value = null;
   if (!account.value || !password.value) {
     errorMessage.value = 'Please enter both account and password';
     return;

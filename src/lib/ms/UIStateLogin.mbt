@@ -15,11 +15,7 @@ fn UIStateLogin::new() -> UIStateLogin {
 }
 
 ///|
-pub impl @ui.UIState for UIStateLogin with draw(
-  self : UIStateLogin,
-  inter : Double,
-  cursor : @struct.Point[Int]
-) -> Unit {
+pub impl @ui.UIState for UIStateLogin with draw(self, _, _) -> Unit {
   self.elements.each(fn(_t, elem) {
     if elem.get_ui_model().is_active() {
       elem.draw()
@@ -170,7 +166,7 @@ pub fn UIStateLogin::remove_cursor(
 ) -> Unit {
   for key, element in self.elements {
     if element.get_ui_model().is_active() && key != keep {
-      element.object.remove_cursor()
+      // element.object.remove_cursor()
     }
   }
 }
@@ -190,9 +186,6 @@ pub impl @ui.UIState for UIStateLogin with set_element(
 }
 
 ///|
-pub impl @ui.UIState for UIStateLogin with doubleclick(
-  self : UIStateLogin,
-  pos : @struct.Point[Int]
-) -> Unit {
+pub impl @ui.UIState for UIStateLogin with doubleclick(_, _) -> Unit {
 
 }

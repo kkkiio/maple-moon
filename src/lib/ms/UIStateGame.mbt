@@ -247,7 +247,7 @@ pub fn toggle_element(
   is_focused : Bool,
   f : () -> @ui.Element
 ) -> Unit {
-  match self.elements[t] {
+  match self.elements.get(t) {
     Some(element) => {
       match self.element_order.search(t) {
         Some(i) => self.element_order.remove(i) |> ignore
@@ -270,7 +270,7 @@ pub fn toggle_element(
           } else {
             // Sound::new(SoundName::MENU_DOWN).play()
           }
-          element.object.remove_cursor()
+          // element.object.remove_cursor()
           self.ui.send_cursor_pressed(false)
         }
       }
@@ -306,7 +306,7 @@ pub impl @ui.UIState for UIStateGame with get(
   self : UIStateGame,
   t : UIElementType
 ) -> @ui.Element? {
-  self.elements[t].map(fn(e) { e })
+  self.elements.get(t).map(fn(e) { e })
 }
 
 ///|
@@ -320,7 +320,7 @@ pub impl @ui.UIState for UIStateGame with get_front_by_types(
   .map_while(fn(i) {
     let t = self.element_order[i]
     if types.contains(t) {
-      self.elements[t].map(fn(e) { e })
+      self.elements.get(t).map(fn(e) { e })
     } else {
       None
     }
@@ -337,7 +337,7 @@ pub fn UIStateGame::get_front_by_pos(
   .until(step=-1, 0, inclusive=true)
   .map_while(fn(i) {
     let t = self.element_order[i]
-    self.elements[t]
+    self.elements.get(t)
   })
   .find_first(fn(e) {
     e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
@@ -359,7 +359,7 @@ pub fn UIStateGame::get_front(
 ) -> @ui.Element? {
   self.element_order
   .iter()
-  .map_while(fn(t) { self.elements[t] })
+  .map_while(fn(t) { self.elements.get(t) })
   .find_first(fn(e) {
     e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
   })

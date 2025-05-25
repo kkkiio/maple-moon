@@ -2,16 +2,11 @@
 pub(all) struct Range[T] {
   a : T
   b : T
-} derive(Eq, Show)
+} derive(Eq, Show, Default)
 
 ///|
 pub fn Range::new[T](first : T, second : T) -> Range[T] {
   { a: first, b: second }
-}
-
-///|
-pub fn Range::default[T : Default]() -> Range[T] {
-  { a: T::default(), b: T::default() }
 }
 
 ///|

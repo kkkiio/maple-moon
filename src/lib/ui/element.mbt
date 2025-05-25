@@ -97,7 +97,6 @@ pub let all_types : FixedArray[UIElementType] = [
 pub(open) trait Widget {
   get_ui_model(Self) -> UIModel
   send_key(Self, Int, Bool, Bool) -> Unit
-  remove_cursor(Self) -> Unit
   /// declarative ui interface
   render(Self) -> RenderSpec
 }

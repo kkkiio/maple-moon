@@ -222,12 +222,12 @@ pub fn UINpcTalk::new(
 }
 
 ///|
-pub fn get_ui_model(self : UINpcTalk) -> @ui.UIModel {
+pub impl @ui.Widget for UINpcTalk with get_ui_model(self) -> @ui.UIModel {
   self.base
 }
 
 ///|
-impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
+pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
   let render_elements = []
   let offset = @struct.Point::default()
   // Add top texture
@@ -459,13 +459,7 @@ impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub fn remove_cursor(self : UINpcTalk) -> Unit {
-  // TODO: remove
-
-}
-
-///|
-pub fn send_key(
+pub impl @ui.Widget for UINpcTalk with send_key(
   self : UINpcTalk,
   keycode : Int,
   pressed : Bool,

@@ -14,12 +14,15 @@ pub fn TextButton::new(text : Text, selection : Int) -> TextButton {
 }
 
 ///|
-pub fn TextButton::get_button_base(self : TextButton) -> ButtonModel {
+pub impl UIButton for TextButton with get_button_base(self : TextButton) -> ButtonModel {
   self.base
 }
 
 ///|
-pub fn TextButton::draw(self : TextButton, parentpos : Point[Int]) -> Unit {
+pub impl UIButton for TextButton with draw(
+  self : TextButton,
+  parentpos : Point[Int]
+) -> Unit {
   if self.base.active {
     self.text.draw(parentpos + self.base.position)
   }
@@ -37,12 +40,14 @@ pub fn TextButton::draw_in_range(
 }
 
 ///|
-pub fn TextButton::update(self : TextButton) -> Unit {
+pub impl UIButton for TextButton with update(self : TextButton) -> Unit {
 
 }
 
 ///|
-pub fn TextButton::bounds(self : TextButton) -> @struct.Rectangle[Int] {
+pub impl UIButton for TextButton with bounds(self : TextButton) -> @struct.Rectangle[
+  Int,
+] {
   let lt = self.base.position
   let rb = lt + self.text.dimensions()
   @struct.Rectangle::new(lt, rb)
@@ -54,12 +59,12 @@ pub fn TextButton::height(self : TextButton) -> Int {
 }
 
 ///|
-pub fn TextButton::width(self : TextButton) -> Int {
+pub impl UIButton for TextButton with width(self : TextButton) -> Int {
   self.text.width()
 }
 
 ///|
-pub fn TextButton::origin(self : TextButton) -> Point[Int] {
+pub impl UIButton for TextButton with origin(self : TextButton) -> Point[Int] {
   self.base.position
 }
 

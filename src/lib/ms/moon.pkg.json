@@ -16,7 +16,6 @@
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
-    "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/ms/monster",
     "KKKIIO/maple-moon-client/lib/ms/physics",
     {
@@ -36,7 +35,8 @@
     "KKKIIO/maple-moon-client/lib/game_mod",
     "KKKIIO/maple-moon-client/lib/io_task",
     "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
-    "KKKIIO/maple-moon-client/lib/ms/quest"
+    "KKKIIO/maple-moon-client/lib/ms/quest",
+    "KKKIIO/maple-moon-client/lib/ms/map_object"
   ],
 	"targets": {
 		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]

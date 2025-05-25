@@ -18,7 +18,7 @@ fn play_jumpsound() -> Unit {
 struct PlayerNullState {} derive(Default)
 
 ///|
-pub fn PlayerNullState::initialize(
+pub impl PlayerState for PlayerNullState with initialize(
   self : PlayerNullState,
   player : Player
 ) -> Unit {
@@ -26,7 +26,7 @@ pub fn PlayerNullState::initialize(
 }
 
 ///|
-pub fn PlayerNullState::send_action(
+pub impl PlayerState for PlayerNullState with send_action(
   self : PlayerNullState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -36,12 +36,15 @@ pub fn PlayerNullState::send_action(
 }
 
 ///|
-pub fn PlayerNullState::update(self : PlayerNullState, player : Player) -> Unit {
+pub impl PlayerState for PlayerNullState with update(
+  self : PlayerNullState,
+  player : Player
+) -> Unit {
 
 }
 
 ///|
-pub fn PlayerNullState::update_state(
+pub impl PlayerState for PlayerNullState with update_state(
   self : PlayerNullState,
   player : Player
 ) -> Unit {
@@ -72,7 +75,7 @@ pub fn PlayerNullState::update_state(
 struct PlayerStandState {} derive(Default)
 
 ///|
-pub fn PlayerStandState::initialize(
+pub impl PlayerState for PlayerStandState with initialize(
   self : PlayerStandState,
   player : Player
 ) -> Unit {
@@ -80,7 +83,7 @@ pub fn PlayerStandState::initialize(
 }
 
 ///|
-pub fn PlayerStandState::send_action(
+pub impl PlayerState for PlayerStandState with send_action(
   self : PlayerStandState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -110,7 +113,7 @@ pub fn PlayerStandState::send_action(
 }
 
 ///|
-pub fn PlayerStandState::update(
+pub impl PlayerState for PlayerStandState with update(
   self : PlayerStandState,
   player : Player
 ) -> Unit {
@@ -122,7 +125,7 @@ pub fn PlayerStandState::update(
 }
 
 ///|
-pub fn PlayerStandState::update_state(
+pub impl PlayerState for PlayerStandState with update_state(
   self : PlayerStandState,
   player : Player
 ) -> Unit {
@@ -135,7 +138,7 @@ pub fn PlayerStandState::update_state(
 struct PlayerWalkState {} derive(Default)
 
 ///|
-pub fn PlayerWalkState::initialize(
+pub impl PlayerState for PlayerWalkState with initialize(
   self : PlayerWalkState,
   player : Player
 ) -> Unit {
@@ -143,7 +146,7 @@ pub fn PlayerWalkState::initialize(
 }
 
 ///|
-pub fn PlayerWalkState::send_action(
+pub impl PlayerState for PlayerWalkState with send_action(
   self : PlayerWalkState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -173,7 +176,10 @@ pub fn haswalkinput(self : PlayerWalkState, player : Player) -> Bool {
 }
 
 ///|
-pub fn PlayerWalkState::update(self : PlayerWalkState, player : Player) -> Unit {
+pub impl PlayerState for PlayerWalkState with update(
+  self : PlayerWalkState,
+  player : Player
+) -> Unit {
   if not(player.is_attacking()) && self.haswalkinput(player) {
     let hforce = if player.character.is_facing_right() {
       player.get_walkforce()
@@ -190,7 +196,7 @@ pub fn PlayerWalkState::update(self : PlayerWalkState, player : Player) -> Unit 
 }
 
 ///|
-pub fn PlayerWalkState::update_state(
+pub impl PlayerState for PlayerWalkState with update_state(
   self : PlayerWalkState,
   player : Player
 ) -> Unit {
@@ -208,7 +214,7 @@ pub fn PlayerWalkState::update_state(
 struct PlayerFallState {} derive(Default)
 
 ///|
-pub fn PlayerFallState::initialize(
+pub impl PlayerState for PlayerFallState with initialize(
   self : PlayerFallState,
   player : Player
 ) -> Unit {
@@ -216,7 +222,7 @@ pub fn PlayerFallState::initialize(
 }
 
 ///|
-pub fn PlayerFallState::send_action(
+pub impl PlayerState for PlayerFallState with send_action(
   self : PlayerFallState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -232,7 +238,10 @@ pub fn PlayerFallState::send_action(
 }
 
 ///|
-pub fn PlayerFallState::update(self : PlayerFallState, player : Player) -> Unit {
+pub impl PlayerState for PlayerFallState with update(
+  self : PlayerFallState,
+  player : Player
+) -> Unit {
   let hspeed = player.character.get_phobj().moving_object.hspeed
   if player.is_key_down(@keyboard.BasicActionId::LEFT) && hspeed > 0.0 {
     player.character.get_phobj().moving_object.hspeed -= 0.025
@@ -248,7 +257,7 @@ pub fn PlayerFallState::update(self : PlayerFallState, player : Player) -> Unit 
 }
 
 ///|
-pub fn PlayerFallState::update_state(
+pub impl PlayerState for PlayerFallState with update_state(
   self : PlayerFallState,
   player : Player
 ) -> Unit {
@@ -274,7 +283,7 @@ pub fn PlayerFallState::update_state(
 struct PlayerProneState {} derive(Default)
 
 ///|
-pub fn PlayerProneState::initialize(
+pub impl PlayerState for PlayerProneState with initialize(
   self : PlayerProneState,
   player : Player
 ) -> Unit {
@@ -282,7 +291,7 @@ pub fn PlayerProneState::initialize(
 }
 
 ///|
-pub fn PlayerProneState::update_state(
+pub impl PlayerState for PlayerProneState with update_state(
   self : PlayerProneState,
   player : Player
 ) -> Unit {
@@ -290,7 +299,7 @@ pub fn PlayerProneState::update_state(
 }
 
 ///|
-pub fn PlayerProneState::send_action(
+pub impl PlayerState for PlayerProneState with send_action(
   self : PlayerProneState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -318,7 +327,7 @@ pub fn PlayerProneState::send_action(
 }
 
 ///|
-pub fn PlayerProneState::update(
+pub impl PlayerState for PlayerProneState with update(
   self : PlayerProneState,
   player : Player
 ) -> Unit {
@@ -333,7 +342,7 @@ pub fn PlayerProneState::update(
 struct PlayerSitState {} derive(Default)
 
 ///|
-pub fn PlayerSitState::initialize(
+pub impl PlayerState for PlayerSitState with initialize(
   self : PlayerSitState,
   _player : Player
 ) -> Unit {
@@ -341,12 +350,7 @@ pub fn PlayerSitState::initialize(
 }
 
 ///|
-pub fn PlayerSitState::update(self : PlayerSitState, _player : Player) -> Unit {
-
-}
-
-///|
-pub fn PlayerSitState::update_state(
+pub impl PlayerState for PlayerSitState with update(
   self : PlayerSitState,
   _player : Player
 ) -> Unit {
@@ -354,7 +358,15 @@ pub fn PlayerSitState::update_state(
 }
 
 ///|
-pub fn PlayerSitState::send_action(
+pub impl PlayerState for PlayerSitState with update_state(
+  self : PlayerSitState,
+  _player : Player
+) -> Unit {
+
+}
+
+///|
+pub impl PlayerState for PlayerSitState with send_action(
   self : PlayerSitState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -384,7 +396,7 @@ pub fn PlayerSitState::send_action(
 struct PlayerFlyState {} derive(Default)
 
 ///|
-pub fn PlayerFlyState::initialize(
+pub impl PlayerState for PlayerFlyState with initialize(
   self : PlayerFlyState,
   player : Player
 ) -> Unit {
@@ -396,7 +408,7 @@ pub fn PlayerFlyState::initialize(
 }
 
 ///|
-pub fn PlayerFlyState::send_action(
+pub impl PlayerState for PlayerFlyState with send_action(
   self : PlayerFlyState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -412,7 +424,10 @@ pub fn PlayerFlyState::send_action(
 }
 
 ///|
-pub fn PlayerFlyState::update(self : PlayerFlyState, player : Player) -> Unit {
+pub impl PlayerState for PlayerFlyState with update(
+  self : PlayerFlyState,
+  player : Player
+) -> Unit {
   if player.is_attacking() {
     return
   }
@@ -429,7 +444,7 @@ pub fn PlayerFlyState::update(self : PlayerFlyState, player : Player) -> Unit {
 }
 
 ///|
-pub fn PlayerFlyState::update_state(
+pub impl PlayerState for PlayerFlyState with update_state(
   self : PlayerFlyState,
   player : Player
 ) -> Unit {
@@ -453,7 +468,7 @@ pub fn PlayerFlyState::update_state(
 struct PlayerClimbState {} derive(Default)
 
 ///|
-pub fn PlayerClimbState::initialize(
+pub impl PlayerState for PlayerClimbState with initialize(
   self : PlayerClimbState,
   player : Player
 ) -> Unit {
@@ -461,7 +476,7 @@ pub fn PlayerClimbState::initialize(
 }
 
 ///|
-pub fn PlayerClimbState::send_action(
+pub impl PlayerState for PlayerClimbState with send_action(
   self : PlayerClimbState,
   player : Player,
   ka : @keyboard.BasicActionId,
@@ -493,7 +508,7 @@ pub fn PlayerClimbState::send_action(
 }
 
 ///|
-pub fn PlayerClimbState::update(
+pub impl PlayerState for PlayerClimbState with update(
   self : PlayerClimbState,
   player : Player
 ) -> Unit {
@@ -507,7 +522,7 @@ pub fn PlayerClimbState::update(
 }
 
 ///|
-pub fn PlayerClimbState::update_state(
+pub impl PlayerState for PlayerClimbState with update_state(
   self : PlayerClimbState,
   player : Player
 ) -> Unit {

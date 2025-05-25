@@ -54,7 +54,7 @@ pub fn get_next_level(level : Level) -> Level {
 ///|
 struct Job {
   name : String
-  id : Int
+  id : JobId
   level : Level
   sub_job_data_map : Map[Int, JobData]
 }
@@ -97,12 +97,13 @@ pub fn Job::new(
   level : Level,
   sub_job_data_map : Map[Int, JobData]
 ) -> Job {
-  let name = get_name_by_id(id)
-  { name, id, level, sub_job_data_map }
+  let job_id = JobId::from_int(id).unwrap() // TODO: handle error
+  let name = get_name_by_id(job_id)
+  { name, id: job_id, level, sub_job_data_map }
 }
 
 ///|
-pub fn get_id(self : Job) -> Int {
+pub fn get_id(self : Job) -> JobId {
   self.id
 }
 
@@ -112,60 +113,294 @@ pub fn get_name(self : Job) -> String {
 }
 
 ///|
-pub fn get_name_by_id(jid : Int) -> String {
-  match jid {
-    0 => "Beginner"
-    100 => "Swordsman"
-    110 => "Fighter"
-    111 => "Crusader"
-    112 => "Hero"
-    120 => "Page"
-    121 => "White Knight"
-    122 => "Paladin"
-    130 => "Spearman"
-    131 => "Dragon Knight"
-    132 => "Dark Knight"
-    200 => "Magician"
-    210 => "Wizard (F/P)"
-    211 => "Mage (F/P)"
-    212 => "Archmage (F/P)"
-    220 => "Wizard (I/L)"
-    221 => "Mage (I/L)"
-    222 => "Archmage (I/L)"
-    230 => "Cleric"
-    231 => "Priest"
-    232 => "Bishop"
-    300 => "Archer"
-    310 => "Hunter"
-    311 => "Ranger"
-    312 => "Bowmaster"
-    320 => "Crossbowman"
-    321 => "Sniper"
-    322 => "Marksman"
-    400 => "Rogue"
-    410 => "Assassin"
-    411 => "Hermit"
-    412 => "Nightlord"
-    420 => "Bandit"
-    421 => "Chief Bandit"
-    422 => "Shadower"
-    500 => "Pirate"
-    510 => "Brawler"
-    511 => "Marauder"
-    512 => "Buccaneer"
-    520 => "Gunslinger"
-    521 => "Outlaw"
-    522 => "Corsair"
-    1000 => "Noblesse"
-    2000 => ""
-    2100 => ""
-    2110 => ""
-    2111 => ""
-    2112 => "Aran"
-    900 => "GM"
-    910 => "SuperGM"
-    _ => ""
+pub(all) enum JobId {
+  BEGINNER = 0
+  WARRIOR = 100
+  FIGHTER = 110
+  CRUSADER = 111
+  HERO = 112
+  PAGE = 120
+  WHITEKNIGHT = 121
+  PALADIN = 122
+  SPEARMAN = 130
+  DRAGONKNIGHT = 131
+  DARKKNIGHT = 132
+  MAGICIAN = 200
+  FP_WIZARD = 210
+  FP_MAGE = 211
+  FP_ARCHMAGE = 212
+  IL_WIZARD = 220
+  IL_MAGE = 221
+  IL_ARCHMAGE = 222
+  CLERIC = 230
+  PRIEST = 231
+  BISHOP = 232
+  BOWMAN = 300
+  HUNTER = 310
+  RANGER = 311
+  BOWMASTER = 312
+  CROSSBOWMAN = 320
+  SNIPER = 321
+  MARKSMAN = 322
+  THIEF = 400
+  ASSASSIN = 410
+  HERMIT = 411
+  NIGHTLORD = 412
+  BANDIT = 420
+  CHIEFBANDIT = 421
+  SHADOWER = 422
+  PIRATE = 500
+  BRAWLER = 510
+  MARAUDER = 511
+  BUCCANEER = 512
+  GUNSLINGER = 520
+  OUTLAW = 521
+  CORSAIR = 522
+  MAPLELEAF_BRIGADIER = 800
+  GM = 900
+  SUPERGM = 910
+  NOBLESSE = 1000
+  DAWNWARRIOR1 = 1100
+  DAWNWARRIOR2 = 1110
+  DAWNWARRIOR3 = 1111
+  DAWNWARRIOR4 = 1112
+  BLAZEWIZARD1 = 1200
+  BLAZEWIZARD2 = 1210
+  BLAZEWIZARD3 = 1211
+  BLAZEWIZARD4 = 1212
+  WINDARCHER1 = 1300
+  WINDARCHER2 = 1310
+  WINDARCHER3 = 1311
+  WINDARCHER4 = 1312
+  NIGHTWALKER1 = 1400
+  NIGHTWALKER2 = 1410
+  NIGHTWALKER3 = 1411
+  NIGHTWALKER4 = 1412
+  THUNDERBREAKER1 = 1500
+  THUNDERBREAKER2 = 1510
+  THUNDERBREAKER3 = 1511
+  THUNDERBREAKER4 = 1512
+  LEGEND = 2000
+  EVAN = 2001
+  ARAN1 = 2100
+  ARAN2 = 2110
+  ARAN3 = 2111
+  ARAN4 = 2112
+  EVAN1 = 2200
+  EVAN2 = 2210
+  EVAN3 = 2211
+  EVAN4 = 2212
+  EVAN5 = 2213
+  EVAN6 = 2214
+  EVAN7 = 2215
+  EVAN8 = 2216
+  EVAN9 = 2217
+  EVAN10 = 2218
+} derive(Eq)
+
+///|
+pub fn JobId::int_value(self : JobId) -> Int = "%identity"
+
+///|
+pub fn JobId::from_int(i : Int) -> JobId? {
+  let jobid = match i {
+    0 => JobId::BEGINNER
+    100 => WARRIOR
+    110 => FIGHTER
+    111 => CRUSADER
+    112 => HERO
+    120 => PAGE
+    121 => WHITEKNIGHT
+    122 => PALADIN
+    130 => SPEARMAN
+    131 => DRAGONKNIGHT
+    132 => DARKKNIGHT
+    200 => MAGICIAN
+    210 => FP_WIZARD
+    211 => FP_MAGE
+    212 => FP_ARCHMAGE
+    220 => IL_WIZARD
+    221 => IL_MAGE
+    222 => IL_ARCHMAGE
+    230 => CLERIC
+    231 => PRIEST
+    232 => BISHOP
+    300 => BOWMAN
+    310 => HUNTER
+    311 => RANGER
+    312 => BOWMASTER
+    320 => CROSSBOWMAN
+    321 => SNIPER
+    322 => MARKSMAN
+    400 => THIEF
+    410 => ASSASSIN
+    411 => HERMIT
+    412 => NIGHTLORD
+    420 => BANDIT
+    421 => CHIEFBANDIT
+    422 => SHADOWER
+    500 => PIRATE
+    510 => BRAWLER
+    511 => MARAUDER
+    512 => BUCCANEER
+    520 => GUNSLINGER
+    521 => OUTLAW
+    522 => CORSAIR
+    800 => MAPLELEAF_BRIGADIER
+    900 => GM
+    910 => SUPERGM
+    1000 => NOBLESSE
+    1100 => DAWNWARRIOR1
+    1110 => DAWNWARRIOR2
+    1111 => DAWNWARRIOR3
+    1112 => DAWNWARRIOR4
+    1200 => BLAZEWIZARD1
+    1210 => BLAZEWIZARD2
+    1211 => BLAZEWIZARD3
+    1212 => BLAZEWIZARD4
+    1300 => WINDARCHER1
+    1310 => WINDARCHER2
+    1311 => WINDARCHER3
+    1312 => WINDARCHER4
+    1400 => NIGHTWALKER1
+    1410 => NIGHTWALKER2
+    1411 => NIGHTWALKER3
+    1412 => NIGHTWALKER4
+    1500 => THUNDERBREAKER1
+    1510 => THUNDERBREAKER2
+    1511 => THUNDERBREAKER3
+    1512 => THUNDERBREAKER4
+    2000 => LEGEND
+    2001 => EVAN
+    2100 => ARAN1
+    2110 => ARAN2
+    2111 => ARAN3
+    2112 => ARAN4
+    2200 => EVAN1
+    2210 => EVAN2
+    2211 => EVAN3
+    2212 => EVAN4
+    2213 => EVAN5
+    2214 => EVAN6
+    2215 => EVAN7
+    2216 => EVAN8
+    2217 => EVAN9
+    2218 => EVAN10
+    _ => return None
   }
+  Some(jobid)
+}
+
+///|
+pub impl Show for JobId with output(self, logger) {
+  let name = match self {
+    BEGINNER => "Beginner"
+    WARRIOR => "Swordsman"
+    FIGHTER => "Fighter"
+    CRUSADER => "Crusader"
+    HERO => "Hero"
+    PAGE => "Page"
+    WHITEKNIGHT => "White Knight"
+    PALADIN => "Paladin"
+    SPEARMAN => "Spearman"
+    DRAGONKNIGHT => "Dragon Knight"
+    DARKKNIGHT => "Dark Knight"
+    MAGICIAN => "Magician"
+    FP_WIZARD => "Wizard (F/P)"
+    FP_MAGE => "Mage (F/P)"
+    FP_ARCHMAGE => "Archmage (F/P)"
+    IL_WIZARD => "Wizard (I/L)"
+    IL_MAGE => "Mage (I/L)"
+    IL_ARCHMAGE => "Archmage (I/L)"
+    CLERIC => "Cleric"
+    PRIEST => "Priest"
+    BISHOP => "Bishop"
+    BOWMAN => "Archer"
+    HUNTER => "Hunter"
+    RANGER => "Ranger"
+    BOWMASTER => "Bowmaster"
+    CROSSBOWMAN => "Crossbowman"
+    SNIPER => "Sniper"
+    MARKSMAN => "Marksman"
+    THIEF => "Rogue"
+    ASSASSIN => "Assassin"
+    HERMIT => "Hermit"
+    NIGHTLORD => "Nightlord"
+    BANDIT => "Bandit"
+    CHIEFBANDIT => "Chief Bandit"
+    SHADOWER => "Shadower"
+    PIRATE => "Pirate"
+    BRAWLER => "Brawler"
+    MARAUDER => "Marauder"
+    BUCCANEER => "Buccaneer"
+    GUNSLINGER => "Gunslinger"
+    OUTLAW => "Outlaw"
+    CORSAIR => "Corsair"
+    NOBLESSE => "Noblesse"
+    LEGEND => "Legend"
+    EVAN => "Evan"
+    ARAN1 => "Aran1"
+    ARAN2 => "Aran2"
+    ARAN3 => "Aran3"
+    ARAN4 => "Aran4"
+    EVAN1 => "Evan1"
+    EVAN2 => "Evan2"
+    EVAN3 => "Evan3"
+    EVAN4 => "Evan4"
+    EVAN5 => "Evan5"
+    EVAN6 => "Evan6"
+    EVAN7 => "Evan7"
+    EVAN8 => "Evan8"
+    EVAN9 => "Evan9"
+    EVAN10 => "Evan10"
+    GM => "GM"
+    SUPERGM => "SuperGM"
+    MAPLELEAF_BRIGADIER => "Maple Leaf Brigadier"
+    DAWNWARRIOR1 => "Dawn Warrior1"
+    DAWNWARRIOR2 => "Dawn Warrior2"
+    DAWNWARRIOR3 => "Dawn Warrior3"
+    DAWNWARRIOR4 => "Dawn Warrior4"
+    BLAZEWIZARD1 => "Blaze Wizard1"
+    BLAZEWIZARD2 => "Blaze Wizard2"
+    BLAZEWIZARD3 => "Blaze Wizard3"
+    BLAZEWIZARD4 => "Blaze Wizard4"
+    WINDARCHER1 => "Wind Archer1"
+    WINDARCHER2 => "Wind Archer2"
+    WINDARCHER3 => "Wind Archer3"
+    WINDARCHER4 => "Wind Archer4"
+    NIGHTWALKER1 => "Night Walker1"
+    NIGHTWALKER2 => "Night Walker2"
+    NIGHTWALKER3 => "Night Walker3"
+    NIGHTWALKER4 => "Night Walker4"
+    THUNDERBREAKER1 => "Thunder Breaker1"
+    THUNDERBREAKER2 => "Thunder Breaker2"
+    THUNDERBREAKER3 => "Thunder Breaker3"
+    THUNDERBREAKER4 => "Thunder Breaker4"
+  }
+  logger.write_string(name)
+}
+
+///|
+pub impl @json.FromJson for JobId with from_json(json, path) {
+  let id : Int = @json.from_json!(json, path~)
+  if JobId::from_int(id) is Some(jobid) {
+    jobid
+  } else {
+    raise @json.JsonDecodeError((path, "Invalid job id"))
+  }
+}
+
+///|
+pub fn get_name_by_id(jid : JobId) -> String {
+  jid.to_string()
+}
+
+///| Return true if the job is a branch of the required job
+pub fn Job::is_a(self : Job, base_job_id : Int) -> Bool {
+  let self_id = self.id.int_value()
+  let basebranch = base_job_id / 10
+  (self_id / 10 == basebranch && self_id >= base_job_id) ||
+  (basebranch % 10 == 0 && self_id / 100 == base_job_id / 100)
 }
 
 ///|
@@ -178,7 +413,7 @@ pub fn get_primary(
   self : Job,
   weapontype : @weapon.Type
 ) -> @maple_stat.EquipStatId {
-  match self.id / 100 {
+  match self.id.int_value() / 100 {
     2 => return @maple_stat.EquipStatId::INT
     3 => return @maple_stat.EquipStatId::DEX
     4 => return @maple_stat.EquipStatId::LUK
@@ -197,7 +432,7 @@ pub fn get_secondary(
   self : Job,
   weapontype : @weapon.Type
 ) -> @maple_stat.EquipStatId {
-  match self.id / 100 {
+  match self.id.int_value() / 100 {
     2 => return @maple_stat.EquipStatId::LUK
     3 => return @maple_stat.EquipStatId::STR
     4 => return @maple_stat.EquipStatId::DEX
@@ -213,7 +448,7 @@ pub fn get_secondary(
 
 ///|
 pub fn get_subjob(self : Job, level : Level) -> Int {
-  get_subjob_id(self.id, self.level, level)
+  get_subjob_id(self.id.int_value(), self.level, level)
 }
 
 ///|
@@ -248,24 +483,7 @@ pub fn get_all_subjobs(self : Job) -> Iter[JobData] {
 ///|
 pub fn can_use(self : Job, skill_id : Int) -> Bool {
   let required = skill_id / 10000
-  self.is_sub_job(required)
-}
-
-///|
-pub fn is_sub_job(self : Job, subid : Int) -> Bool {
-  for
-    lv in [
-      Level::BEGINNER,
-      Level::FIRST,
-      Level::SECOND,
-      Level::THIRD,
-      Level::FOURTH,
-    ] {
-    if subid == self.get_subjob(lv) {
-      return true
-    }
-  }
-  false
+  self.is_a(required)
 }
 
 ///|

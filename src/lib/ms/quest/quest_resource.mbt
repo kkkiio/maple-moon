@@ -1,7 +1,25 @@
 ///|
-struct QuestsResource {
-  quest_info_map : Map[String, QuestInfo]
-  quest_checks_map : Map[String, QuestChecks]
+pub struct QuestResource {
+  quest_info_map : Map[Int, QuestInfo]
+  quest_checks_map : Map[Int, Array[QuestPhaseChecks]]
+}
+
+///|
+pub impl @json.FromJson for QuestResource with from_json(json, path) {
+  let parsed : QuestResourceParsed = @json.from_json!(json, path~)
+  {
+    quest_info_map: parsed.quest_info_map._,
+    quest_checks_map: parsed.quest_checks_map._
+    .iter()
+    .map(fn(i) { (i.0, i.1._) })
+    |> Map::from_iter(),
+  }
+}
+
+///|
+priv struct QuestResourceParsed {
+  quest_info_map : IntMap[QuestInfo]
+  quest_checks_map : IntMap[@resource.MapBasedArray[QuestPhaseChecks]]
 } derive (
   FromJson(
     fields(
@@ -12,6 +30,28 @@ struct QuestsResource {
 )
 
 ///|
+pub type IntMap[T] Map[Int, T] derive(Show)
+
+///|
+pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
+  json,
+  path
+) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let map = {}
+  for key, value in obj {
+    guard @strconv.parse_int?(key) is Ok(key_int) else {
+      raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
+    }
+    let value : T = @json.from_json!(value, path=path.add_key(key))
+    map[key_int] = value
+  }
+  map
+}
+
+///|
 let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   "Quest",
   loader=@resource.AsyncResourceLoader::new_async_resource_loader(
@@ -20,7 +60,7 @@ let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
 )
 
 ///|
-priv struct QuestInfo {
+struct QuestInfo {
   name : String
   parent : String?
   area : Int
@@ -195,15 +235,13 @@ test "parse number index not desc" {
 }
 
 ///|
-typealias QuestChecks = @resource.MapBasedArray[QuestCheck]
-
-///|
-priv struct QuestCheck {
+struct QuestPhaseChecks {
   npc : Int?
   info_number : Int?
-  level_min : Int?
-  info_ex : Array[InfoEx]
-} derive(Show)
+  repeatable : Bool
+  checks : Array[&QuestCheck]
+  unknown_checks : Array[String]
+} derive(Show, Default)
 
 ///|
 priv struct InfoEx {
@@ -211,60 +249,157 @@ priv struct InfoEx {
 } derive(Show, @json.FromJson)
 
 ///|
-impl @json.FromJson for QuestCheck with from_json(json, path) {
+priv type Nullable[T] T? derive(Show)
+
+///|
+impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
+  json,
+  path
+) {
+  if json is Null {
+    None
+  } else {
+    Some(@json.from_json!(json, path~))
+  }
+}
+
+///|
+priv type NumbericInt Int derive(Show)
+
+///|
+impl @json.FromJson for NumbericInt with from_json(json, path) {
   match json {
-    Null => { npc: None, info_number: None, level_min: None, info_ex: [] }
-    {
-      "npc"? : npc,
-      "infoNumber"? : info_number,
-      "lvmin"? : level_min,
-      "infoex"? : infoex,
-      ..
-    } => {
-      let info_ex = if infoex is Some(infoex) {
-        let arr : @resource.MapBasedArray[InfoEx] = @json.from_json!(
-          infoex,
-          path=path.add_key("infoex"),
+    Number(n) => n.to_int()
+    String(s) =>
+      try {
+        @strconv.parse_int!(s)
+      } catch {
+        _ => raise @json.JsonDecodeError((path, "expect stringified int"))
+      }
+    _ => raise @json.JsonDecodeError((path, "expect number or string"))
+  }
+}
+
+///|
+fn NumbericInt::value(self : NumbericInt) -> Int {
+  self._
+}
+
+///|
+impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
+  let obj = match json {
+    Null => return QuestPhaseChecks::default()
+    Object(obj) => obj
+    _ => raise @json.JsonDecodeError((path, "expect object or null"))
+  }
+  let mut npc : Int? = None
+  let mut info_number : Int? = None
+  let checks : Array[&QuestCheck] = []
+  let unknown_checks : Array[String] = []
+  let mut repeatable : Bool = false
+  for key, value in obj {
+    let path = path.add_key(key)
+    match key {
+      "npc" => {
+        let npc_id : NumbericInt = @json.from_json!(value, path~)
+        checks.push({ npc: npc_id._ })
+        npc = Some(npc_id._)
+      }
+      "infoNumber" => {
+        let info_number_id : NumbericInt = @json.from_json!(value, path~)
+        info_number = Some(info_number_id._)
+      }
+      "lvmin" => {
+        let level_min_id : NumbericInt = @json.from_json!(value, path~)
+        checks.push({ min_level: level_min_id._ })
+      }
+      "interval" => {
+        let interval_minutes : NumbericInt = @json.from_json!(value, path~)
+        repeatable = true
+        checks.push({ interval_minutes: interval_minutes._ })
+      }
+      "infoex" => {
+        let info_ex_value : @resource.MapBasedArray[InfoEx] = @json.from_json!(
+          value,
+          path~,
         )
-        arr._
-      } else {
-        []
+        checks.push({ info_ex: info_ex_value._ })
       }
-      {
-        npc: match npc {
-          Some(Number(npc)) => Some(npc.to_int())
-          None => None
-          _ => raise @json.JsonDecodeError((path.add_key("npc"), "invalid npc"))
-        },
-        info_number: match info_number {
-          Some(Number(info_number)) => Some(info_number.to_int())
-          Some(String(info_number)) =>
-            try {
-              Some(@strconv.parse_int!(info_number))
-            } catch {
-              _ =>
-                raise @json.JsonDecodeError(
-                  (path.add_key("infoNumber"), "invalid infoNumber"),
-                )
-            }
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("infoNumber"), "invalid infoNumber"),
-            )
-        },
-        info_ex,
-        level_min: match level_min {
-          Some(Number(level_min)) => Some(level_min.to_int())
-          None => None
-          _ =>
-            raise @json.JsonDecodeError(
-              (path.add_key("lvmin"), "invalid lvmin"),
-            )
-        },
+      "quest" => {
+        let quest_status_map : @resource.MapBasedArray[QuestStatusCheck] = @json.from_json!(
+          value,
+          path~,
+        )
+        checks.push({
+          quest_status_map: quest_status_map._
+          .iter()
+          .map(fn(i) { (i.id, i.state) })
+          |> Map::from_iter(),
+        })
       }
+      "job" => {
+        let jobs : @resource.MapBasedArray[@job.JobId] = @json.from_json!(
+          value,
+          path~,
+        )
+        checks.push({ jobs: jobs._ })
+      }
+      _ => unknown_checks.push(key)
     }
-    _ => raise @json.JsonDecodeError((path, "missing fields"))
+  }
+  { npc, info_number, repeatable, checks, unknown_checks }
+}
+
+///|
+priv struct QuestStatusCheck {
+  id : Int
+  state : QuestStatus
+} derive(Show)
+
+///|
+impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let id : Int = @json.from_json!(obj.get("id").or_default(), path~)
+  let state = @json.from_json!(obj.get("state").or(Json::number(0)), path~)
+  { id, state }
+}
+
+///|
+priv enum QuestStatus {
+  NotStarted
+  Started
+  Completed
+} derive(Show, Eq, Hash)
+
+///|
+fn QuestStatus::int_value(self : QuestStatus) -> Int {
+  match self {
+    QuestStatus::NotStarted => 0
+    QuestStatus::Started => 1
+    QuestStatus::Completed => 2
+  }
+}
+
+///|
+fn QuestStatus::from_int(int_value : Int) -> QuestStatus? {
+  let status = match int_value {
+    0 => QuestStatus::NotStarted
+    1 => QuestStatus::Started
+    2 => QuestStatus::Completed
+    _ => return None
+  }
+  Some(status)
+}
+
+///|
+impl @json.FromJson for QuestStatus with from_json(json, path) {
+  let int_value = @json.from_json!(json, path~)
+  if QuestStatus::from_int(int_value) is Some(status) {
+    status
+  } else {
+    raise @json.JsonDecodeError((path, "Unknown quest status: \{int_value}"))
   }
 }
 
@@ -288,11 +423,13 @@ test "parse quest check 10015" {
     #|  }
     #|}
   let json = @json.parse!(check_10015)
-  let quest_check : QuestChecks = @json.from_json!(json)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+    json,
+  )
   inspect!(
     quest_check,
     content=
-      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), level_min: Some(10), info_ex: [{value: "ing"}]}, {npc: Some(9000036), info_number: Some(10024), level_min: None, info_ex: [{value: "clear"}]}])
+      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
     ,
   )
 }
@@ -320,17 +457,20 @@ test "parse quest check 10054" {
     #|    "1": { "item": { "0": { "count": 1, "id": 2012000 } }, "npc": 1061013 }
     #|  }
   let json = @json.parse!(check_10054)
-  let quest_check : QuestChecks = @json.from_json!(json)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+    json,
+  )
   inspect!(
     quest_check,
     content=
-      #|MapBasedArray([{npc: Some(9010000), info_number: Some(10057), level_min: Some(50), info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {npc: Some(1061013), info_number: None, level_min: None, info_ex: []}])
+      #|MapBasedArray([{npc: Some(9010000), info_number: Some(10057), repeatable: true, checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: Started}}], unknown_checks: ["end", "item", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, checks: [{npc: 1061013}], unknown_checks: ["item"]}])
+
     ,
   )
 }
 
 ///|
-test "parse quest check 1008" {
+test "parse item check" {
   let check_1008 =
     #| {
     #|   "0": { "job": { "0": 0 }, "npc": 10000 },
@@ -342,9 +482,36 @@ test "parse quest check 1008" {
     #|   }
     #| }
   let json = @json.parse!(check_1008)
-  let quest_check : QuestChecks = @json.from_json!(json)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+    json,
+  )
   inspect!(
     quest_check,
-    content="MapBasedArray([{npc: Some(10000), info_number: None, level_min: None, info_ex: []}, {npc: None, info_number: None, level_min: None, info_ex: []}])",
+    content=
+      #|MapBasedArray([{npc: Some(10000), info_number: None, repeatable: false, checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, checks: [], unknown_checks: ["item"]}])
+    ,
+  )
+}
+
+///|
+test "parse quests status check" {
+  let check_2005 =
+    #| {
+    #|   "0": {
+    #|     "lvmin": 15,
+    #|     "npc": 1022002,
+    #|     "quest": { "0": { "id": 2004, "state": 2 } }
+    #|   },
+    #|   "1": { "item": { "0": { "count": 40, "id": 4000008 } }, "npc": 1022002 }
+    #| }
+  let json = @json.parse!(check_2005)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+    json,
+  )
+  inspect!(
+    quest_check,
+    content=
+      #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, checks: [{npc: 1022002}], unknown_checks: ["item"]}])
+    ,
   )
 }

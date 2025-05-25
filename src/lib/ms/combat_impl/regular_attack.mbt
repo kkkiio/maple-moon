@@ -75,7 +75,7 @@ pub fn RegularAttack::get_bullet(
 struct RegularAction {} derive(Default)
 
 ///|
-pub fn RegularAction::apply(
+pub impl SkillAction for RegularAction with apply(
   self : RegularAction,
   target : @character.Character,
   atype : @combat.AttackType

@@ -2,11 +2,23 @@
 struct MapObjects[T] {
   objects : Map[Int, T]
   layers : FixedArray[Map[Int, Unit]]
+  event_listeners : Array[(MapObjectEvent[T]) -> Bool]
+}
+
+///|
+pub enum MapObjectEvent[T] {
+  Add(T)
+  Remove(Int)
+  Clear
 }
 
 ///|
 pub fn MapObjects::new[T]() -> MapObjects[T] {
-  { objects: {}, layers: @map_layer.ids.map(fn(_id) { {} }) }
+  {
+    objects: {},
+    layers: @map_layer.ids.map(fn(_id) { {} }),
+    event_listeners: Array::new(),
+  }
 }
 
 ///|
@@ -51,6 +63,7 @@ pub fn update[T : MapObject](
 pub fn clear[T](self : MapObjects[T]) -> Unit {
   self.objects.clear()
   self.layers.each(fn(layer) { layer.clear() })
+  self.event_listeners.retain(fn(listener) { listener(MapObjectEvent::Clear) })
 }
 
 ///|
@@ -64,6 +77,9 @@ pub fn add[T : MapObject](self : MapObjects[T], toadd : T) -> Unit {
   let layer = toadd.get_layer()
   self.objects.set(oid, toadd)
   self.layers[layer].set(oid, ())
+  self.event_listeners.retain(fn(listener) {
+    listener(MapObjectEvent::Add(toadd))
+  })
 }
 
 ///|
@@ -73,6 +89,9 @@ pub fn remove[T : MapObject](self : MapObjects[T], oid : Int) -> Unit {
       let layer = mmo.get_layer()
       self.objects.remove(oid)
       self.layers[layer].remove(oid)
+      self.event_listeners.retain(fn(listener) {
+        listener(MapObjectEvent::Remove(oid))
+      })
     }
     None => ()
   }
@@ -86,4 +105,12 @@ pub fn iter2[T](self : MapObjects[T]) -> Iter2[Int, T] {
 ///|
 pub fn size[T](self : MapObjects[T]) -> Int {
   self.objects.size()
+}
+
+///|
+pub fn MapObjects::listen_object_changes[T](
+  self : MapObjects[T],
+  listener : (MapObjectEvent[T]) -> Bool
+) -> Unit {
+  self.event_listeners.push(listener)
 }

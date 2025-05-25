@@ -14,17 +14,20 @@ pub fn AreaButton::new(
 }
 
 ///|
-pub fn AreaButton::get_button_base(self : AreaButton) -> ButtonModel {
+pub impl UIButton for AreaButton with get_button_base(self) -> ButtonModel {
   self.model
 }
 
 ///|
-pub fn AreaButton::draw(self : AreaButton, _p : @struct.Point[Int]) -> Unit {
+pub impl UIButton for AreaButton with draw(
+  self : AreaButton,
+  _p : @struct.Point[Int]
+) -> Unit {
 
 }
 
 ///|
-pub fn AreaButton::update(self : AreaButton) -> Unit {
+pub impl UIButton for AreaButton with update(self : AreaButton) -> Unit {
 
 }
 
@@ -38,17 +41,21 @@ pub fn send_cursor(
 }
 
 ///|
-pub fn bounds(self : AreaButton) -> @struct.Rectangle[Int] {
+pub impl UIButton for AreaButton with bounds(self : AreaButton) -> @struct.Rectangle[
+  Int,
+] {
   let pos = self.model.position
   @struct.Rectangle::new(pos, pos + self.dimension)
 }
 
 ///|
-pub fn width(self : AreaButton) -> Int {
+pub impl UIButton for AreaButton with width(self : AreaButton) -> Int {
   self.dimension.x
 }
 
 ///|
-pub fn origin(self : AreaButton) -> @struct.Point[Int] {
+pub impl UIButton for AreaButton with origin(self : AreaButton) -> @struct.Point[
+  Int,
+] {
   @struct.Point::new(0, 0)
 }

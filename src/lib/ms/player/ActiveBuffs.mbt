@@ -14,7 +14,11 @@ fn SimpleStatBuff::new(stat : @maple_stat.EquipStatId) -> SimpleStatBuff {
 }
 
 ///|
-fn apply_to(self : SimpleStatBuff, stats : CharStats, value : Int) -> Unit {
+pub impl ActiveBuff for SimpleStatBuff with apply_to(
+  self : SimpleStatBuff,
+  stats : CharStats,
+  value : Int
+) -> Unit {
   // stats.add_buff(self.stat, value)
 }
 
@@ -32,7 +36,7 @@ fn PercentageStatBuff::new(
 }
 
 ///|
-fn PercentageStatBuff::apply_to(
+pub impl ActiveBuff for PercentageStatBuff with apply_to(
   self : PercentageStatBuff,
   stats : CharStats,
   value : Int
@@ -45,7 +49,7 @@ fn PercentageStatBuff::apply_to(
 type MapleWarriorBuff Unit derive(Default)
 
 ///|
-fn MapleWarriorBuff::apply_to(
+pub impl ActiveBuff for MapleWarriorBuff with apply_to(
   self : MapleWarriorBuff,
   stats : CharStats,
   value : Int
@@ -61,7 +65,7 @@ fn MapleWarriorBuff::apply_to(
 type StanceBuff Unit derive(Default)
 
 ///|
-fn StanceBuff::apply_to(
+pub impl ActiveBuff for StanceBuff with apply_to(
   self : StanceBuff,
   stats : CharStats,
   value : Int
@@ -74,7 +78,7 @@ fn StanceBuff::apply_to(
 type BoosterBuff Unit derive(Default)
 
 ///|
-fn BoosterBuff::apply_to(
+pub impl ActiveBuff for BoosterBuff with apply_to(
   self : BoosterBuff,
   stats : CharStats,
   value : Int

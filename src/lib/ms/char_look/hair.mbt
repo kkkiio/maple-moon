@@ -10,7 +10,9 @@ pub(all) enum HairLayer {
 } derive(Eq, Compare, Show)
 
 ///|
-pub impl ToJson for HairLayer with to_json(self) { self.to_string().to_json() }
+pub impl ToJson for HairLayer with to_json(self) {
+  self.to_string().to_json()
+}
 
 ///|
 pub fn int_value(self : HairLayer) -> Int {
@@ -31,7 +33,7 @@ pub fn hash(self : HairLayer) -> Int {
 }
 
 ///|
-pub fn hash_combine(self : HairLayer, hasher : Hasher) -> Unit {
+pub impl Hash for HairLayer with hash_combine(self, hasher : Hasher) {
   hasher.combine(self.int_value())
 }
 

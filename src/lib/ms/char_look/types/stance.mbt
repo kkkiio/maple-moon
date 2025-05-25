@@ -96,8 +96,8 @@ pub impl Hash for StanceId with hash_combine(self, hasher) {
 }
 
 ///|
-pub fn StanceId::default() -> StanceId {
-  NONE
+pub impl Default for StanceId with default() -> StanceId {
+  StanceId::NONE
 }
 
 ///|
@@ -169,7 +169,7 @@ let int_id_map : @immut/sorted_map.T[Int, StanceId] = @immut/sorted_map.from_arr
 
 ///|
 pub fn StanceId::by_id(id : Int) -> StanceId {
-  int_id_map[id].unwrap()
+  int_id_map.get(id).unwrap()
 }
 
 ///|
@@ -237,7 +237,7 @@ pub let stance_name_id_map : Map[String, StanceId] = {
 
 ///|
 pub fn StanceId::by_string(name : String) -> StanceId {
-  stance_name_id_map[name].unwrap()
+  stance_name_id_map.get(name).unwrap()
 }
 
 ///|

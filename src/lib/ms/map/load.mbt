@@ -1,5 +1,5 @@
 ///|
-pub(all) struct MapStruct {
+pub(all) struct SceneMap {
   id : Int
   tiles_objs : MapTilesObjs
   backgrounds : Backgrounds
@@ -18,7 +18,7 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
 pub fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations
-) -> @utils.Future[Result[MapStruct, Error]] {
+) -> @utils.Future[Result[SceneMap, Error]] {
   // TODO: CashShopPreview
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()

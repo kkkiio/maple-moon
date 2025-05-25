@@ -464,7 +464,7 @@ pub impl ToJson for BodyLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub fn BodyLayerDrawable::draw(
+pub impl @graphics.Drawable for BodyLayerDrawable with draw(
   self : BodyLayerDrawable,
   args : @graphics.DrawArgument
 ) -> Unit {
@@ -493,7 +493,7 @@ pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub fn EquipLayerDrawable::draw(
+pub impl @graphics.Drawable for EquipLayerDrawable with draw(
   self : EquipLayerDrawable,
   args : @graphics.DrawArgument
 ) -> Unit {
@@ -519,7 +519,7 @@ struct FaceDrawable {
 }
 
 ///|
-pub fn FaceDrawable::draw(
+pub impl @graphics.Drawable for FaceDrawable with draw(
   self : FaceDrawable,
   args : @graphics.DrawArgument
 ) -> Unit {
@@ -562,7 +562,7 @@ pub impl ToJson for HairDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub fn HairDrawable::draw(
+pub impl @graphics.Drawable for HairDrawable with draw(
   self : HairDrawable,
   args : @graphics.DrawArgument
 ) -> Unit {

@@ -2,29 +2,34 @@
 pub struct QuestResource {
   quest_info_map : Map[Int, QuestInfo]
   quest_checks_map : Map[Int, Array[QuestPhaseChecks]]
+  quest_say_map : Map[Int, Array[QuestPhaseSays]]
 }
 
 ///|
 pub impl @json.FromJson for QuestResource with from_json(json, path) {
-  let parsed : QuestResourceParsed = @json.from_json!(json, path~)
+  let parsed : NxQuestResource = @json.from_json!(json, path~)
   {
     quest_info_map: parsed.quest_info_map._,
     quest_checks_map: parsed.quest_checks_map._
     .iter()
     .map(fn(i) { (i.0, i.1._) })
     |> Map::from_iter(),
+    quest_say_map: parsed.quest_say_map._.iter().map(fn(i) { (i.0, i.1._) })
+    |> Map::from_iter(),
   }
 }
 
 ///|
-priv struct QuestResourceParsed {
+priv struct NxQuestResource {
   quest_info_map : IntMap[QuestInfo]
   quest_checks_map : IntMap[@resource.MapBasedArray[QuestPhaseChecks]]
+  quest_say_map : IntMap[@resource.MapBasedArray[QuestPhaseSays]]
 } derive (
   FromJson(
     fields(
       quest_info_map(rename="QuestInfo.img"),
       quest_checks_map(rename="Check.img"),
+      quest_say_map(rename="Say.img"),
     ),
   ),
 )
@@ -88,9 +93,7 @@ impl @json.FromJson for QuestInfo with from_json(json, path) {
     ) => {
       let description_map : Map[Int, String] = {}
       for key, value in obj {
-        let i = try {
-          @strconv.parse_int!(key)
-        } catch {
+        let i = try @strconv.parse_int!(key) catch {
           _ => continue
         }
         if i < 0 || i > 10 { // assume there are at most 10 phases
@@ -137,7 +140,7 @@ impl @json.FromJson for QuestInfo with from_json(json, path) {
 }
 
 ///|
-test "parse quest 10015" {
+test "parse quest info" {
   let q10015 =
     #| {
     #|     "1": "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.",
@@ -182,7 +185,7 @@ test "parse quest 10200" {
 }
 
 ///|
-test "parse number desc" {
+test "parse quest info number desc" {
   let q2003 =
     #|{
     #|  "0": 2,
@@ -271,9 +274,7 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
   match json {
     Number(n) => n.to_int()
     String(s) =>
-      try {
-        @strconv.parse_int!(s)
-      } catch {
+      try @strconv.parse_int!(s) catch {
         _ => raise @json.JsonDecodeError((path, "expect stringified int"))
       }
     _ => raise @json.JsonDecodeError((path, "expect number or string"))
@@ -361,7 +362,7 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let id : Int = @json.from_json!(obj.get("id").or_default(), path~)
+  let id : Int = @json.from_json!(obj.get("id").or(Json::null()), path~)
   let state = @json.from_json!(obj.get("state").or(Json::number(0)), path~)
   { id, state }
 }
@@ -369,7 +370,7 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
 ///|
 priv enum QuestStatus {
   NotStarted
-  Started
+  InProgress
   Completed
 } derive(Show, Eq, Hash)
 
@@ -377,7 +378,7 @@ priv enum QuestStatus {
 fn QuestStatus::int_value(self : QuestStatus) -> Int {
   match self {
     QuestStatus::NotStarted => 0
-    QuestStatus::Started => 1
+    QuestStatus::InProgress => 1
     QuestStatus::Completed => 2
   }
 }
@@ -386,7 +387,7 @@ fn QuestStatus::int_value(self : QuestStatus) -> Int {
 fn QuestStatus::from_int(int_value : Int) -> QuestStatus? {
   let status = match int_value {
     0 => QuestStatus::NotStarted
-    1 => QuestStatus::Started
+    1 => QuestStatus::InProgress
     2 => QuestStatus::Completed
     _ => return None
   }
@@ -464,7 +465,6 @@ test "parse quest check 10054" {
     quest_check,
     content=
       #|MapBasedArray([{npc: Some(9010000), info_number: Some(10057), repeatable: true, checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: Started}}], unknown_checks: ["end", "item", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, checks: [{npc: 1061013}], unknown_checks: ["item"]}])
-
     ,
   )
 }
@@ -512,6 +512,215 @@ test "parse quests status check" {
     quest_check,
     content=
       #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, checks: [{npc: 1022002}], unknown_checks: ["item"]}])
+    ,
+  )
+}
+
+///|
+struct QuestPhaseSays {
+  says : Array[String]
+  ask : Bool
+  yes_reply : Array[String]
+  no_reply : Array[String]
+  stop_hint : Hints?
+  restore_lost : Lost?
+} derive(Show, Default)
+
+///|
+priv struct Hints {
+  base : Array[Hint]
+  item : Array[String]
+  npc : Array[String]
+} derive(Show)
+
+///|
+priv struct Hint { // TODO: figure out the meaning of this
+  says : Array[String]
+  answer : Int
+} derive(Show, Default)
+
+///|
+priv struct Lost {
+  says : Array[String]
+  yes_reply : Array[String]
+} derive(Show)
+
+///|
+impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
+  let obj = match json {
+    Null => return QuestPhaseSays::default() // TODO: figure out the meaning of this
+    Object(obj) => obj
+    _ => raise @json.JsonDecodeError((path, "expect object or null"))
+  }
+  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
+  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+    obj.get("yes").or(Json::null()),
+    path=path.add_key("yes"),
+  )
+  let no_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+    obj.get("no").or(Json::null()),
+    path=path.add_key("no"),
+  )
+  let stop_hint : Nullable[Hints] = @json.from_json!(
+    obj.get("stop").or(Json::null()),
+    path=path.add_key("stop"),
+  )
+  let restore_lost : Nullable[Lost] = @json.from_json!(
+    obj.get("lost").or(Json::null()),
+    path=path.add_key("lost"),
+  )
+  let ask = match obj.get("ask") {
+    None => false
+    Some(Null) => false
+    Some(ask) => @json.from_json!(ask, path=path.add_key("ask")) != 0
+  }
+  {
+    says: says._,
+    ask,
+    yes_reply: yes_reply._.map_or([], fn(reply) { reply._ }),
+    no_reply: no_reply._.map_or([], fn(reply) { reply._ }),
+    stop_hint: stop_hint._,
+    restore_lost: restore_lost._,
+  }
+}
+
+///|
+impl @json.FromJson for Hints with from_json(json, path) {
+  let base : @resource.MapBasedArray[Hint] = @json.from_json!(json, path~)
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let item : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+    obj.get("item").or(Json::null()),
+    path=path.add_key("item"),
+  )
+  let npc : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+    obj.get("npc").or(Json::null()),
+    path=path.add_key("npc"),
+  )
+  {
+    base: base._,
+    item: item._.map_or([], fn(reply) { reply._ }),
+    npc: npc._.map_or([], fn(reply) { reply._ }),
+  }
+}
+
+///|
+impl @json.FromJson for Hint with from_json(json, path) {
+  let obj = match json {
+    Null => return Hint::default() // TODO: figure out the meaning of this
+    Object(obj) => obj
+    _ => raise @json.JsonDecodeError((path, "expect object or null"))
+  }
+  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
+  let answer : Int = @json.from_json!(
+    obj.get("answer").or(Json::null()),
+    path=path.add_key("answer"),
+  )
+  { says: says._, answer }
+}
+
+///|
+impl @json.FromJson for Lost with from_json(json, path) {
+  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+    obj.get("yes").or(Json::null()),
+    path=path.add_key("yes"),
+  )
+  { says: says._, yes_reply: yes_reply._.map_or([], fn(reply) { reply._ }) }
+}
+
+///|
+test "parse quest say" {
+  let say_2082 =
+    #| {
+    #|  "0": {
+    #|    "0": "Excuse me~ I know it's rude to ask a stranger, but can you please help me out? I am terrified of the Stumps that are wandering around outside this town. I can't even think of leaving here. I don't even want to see them, because they scare me to death. Please, if you have some time on your hands, can you help me out?",
+    #|    "no": {
+    #|      "0": "You must be busy. If you find some spare time later on, please come by and talk to me."
+    #|    },
+    #|    "yes": {
+    #|      "0": "Thank you so much~ I knew you would say yes. As you can see, I am not from the tribes here. According to the elders here, years ago they found me lost in the streets, all bruised up and messy.",
+    #|      "1": "The elders saved me, and I have been living here ever since. Unfortunately, I don't remember anything from the past. Something may have happened back then.",
+    #|      "2": "Maybe that's because I went through something so horrible that my head chose to block it all out. I guess that's the reason why I am so scared of the Stumps. Can you do me a favor and take out #b50 Stumps#k please?"
+    #|    }
+    #|  },
+    #|  "1": {
+    #|    "0": "Wow, thank you so much! I see a lot less number of Stumps near Perion now! I feel like I can finally take a step outside. Thank you so much for your hard work!",
+    #|    "stop": {
+    #|      "mob": {
+    #|        "0": "I don't think you have gotten all the Stumps yet. Please help me, for I am terrified of the Stumps."
+    #|      }
+    #|    }
+    #|  }
+    #|}
+  let json = @json.parse!(say_2082)
+  let quest_say : @resource.MapBasedArray[QuestPhaseSays] = @json.from_json!(
+    json,
+  )
+  inspect!(
+    quest_say,
+    content=
+      #|MapBasedArray([{says: ["Excuse me~ I know it's rude to ask a stranger, but can you please help me out? I am terrified of the Stumps that are wandering around outside this town. I can't even think of leaving here. I don't even want to see them, because they scare me to death. Please, if you have some time on your hands, can you help me out?"], ask: false, yes_reply: ["Thank you so much~ I knew you would say yes. As you can see, I am not from the tribes here. According to the elders here, years ago they found me lost in the streets, all bruised up and messy.", "The elders saved me, and I have been living here ever since. Unfortunately, I don't remember anything from the past. Something may have happened back then.", "Maybe that's because I went through something so horrible that my head chose to block it all out. I guess that's the reason why I am so scared of the Stumps. Can you do me a favor and take out #b50 Stumps#k please?"], no_reply: ["You must be busy. If you find some spare time later on, please come by and talk to me."], stop_hint: None, restore_lost: None}, {says: ["Wow, thank you so much! I see a lot less number of Stumps near Perion now! I feel like I can finally take a step outside. Thank you so much for your hard work!"], ask: false, yes_reply: [], no_reply: [], stop_hint: Some({base: [], item: [], npc: []}), restore_lost: None}])
+    ,
+  )
+}
+
+///|
+test "parse null phase says" {
+  let q1021 = @json.parse!(
+    #| {
+    #|  "0": null,
+    #|  "1": {
+    #|    "stop": {
+    #|      "item": {
+    #|        "0": "I told you to have all #r7 #t2010007##k that I gave you. Open the item window and click#bconsumption tab#k. You can find #t2010007# and consume them by double click."
+    #|      }
+    #|    }
+    #|  }
+    #|}
+    ,
+  )
+  let quest_say : @resource.MapBasedArray[QuestPhaseSays] = @json.from_json!(
+    q1021,
+  )
+  inspect!(
+    quest_say,
+    content=
+      #|MapBasedArray([{says: [], ask: false, yes_reply: [], no_reply: [], stop_hint: None, restore_lost: None}, {says: [], ask: false, yes_reply: [], no_reply: [], stop_hint: Some({base: [], item: ["I told you to have all #r7 #t2010007##k that I gave you. Open the item window and click#bconsumption tab#k. You can find #t2010007# and consume them by double click."], npc: []}), restore_lost: None}])
+    ,
+  )
+}
+
+///|
+test "parse null hint" {
+  let q2300 = @json.parse!(
+    #| {
+    #|   "0": {
+    #|     "0": "Hey, I have a request for you.#b#L0#How can I help you?#l\\n#k",
+    #|     "ask": 1,
+    #|     "stop": { "0": null }
+    #|   },
+    #|   "1": {
+    #|     "stop": {
+    #|       "item": {
+    #|         "0": "Who are you? You look like someone who's exploring Maple World. Our kingdom is in serious danger, and we need someone dependable that can save us. If you can't help us, then I suggest you move on."
+    #|       }
+    #|     }
+    #|   }
+    #| }
+    ,
+  )
+  let quest_say : @resource.MapBasedArray[QuestPhaseSays] = @json.from_json!(
+    q2300,
+  )
+  inspect!(
+    quest_say,
+    content=
+      #|MapBasedArray([{says: ["Hey, I have a request for you.#b#L0#How can I help you?#l\\n#k"], ask: true, yes_reply: [], no_reply: [], stop_hint: Some({base: [{says: [], answer: 0}], item: [], npc: []}), restore_lost: None}, {says: [], ask: false, yes_reply: [], no_reply: [], stop_hint: Some({base: [], item: ["Who are you? You look like someone who's exploring Maple World. Our kingdom is in serious danger, and we need someone dependable that can save us. If you can't help us, then I suggest you move on."], npc: []}), restore_lost: None}])
     ,
   )
 }

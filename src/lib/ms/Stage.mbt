@@ -273,9 +273,19 @@ fn send_cursor(
   pressed : Bool,
   position : @struct.Point[Int]
 ) -> @ui.CursorState {
-  // TODO: statusbar
-  self.npcs.send_cursor(pressed, position, self.camera.get_position())
-  // self.quests.send_cursor(pressed, position, self.camera.get_position())
+  if self.npcs.send_cursor(pressed, position, self.camera.get_position())
+    is Some(state) {
+    return state
+  }
+  if self.quests.send_cursor(pressed, position, self.camera.get_position())
+    is Some(state) {
+    return state
+  }
+  if pressed {
+    @ui.CursorState::CLICKING
+  } else {
+    @ui.CursorState::IDLE
+  }
 }
 
 ///|

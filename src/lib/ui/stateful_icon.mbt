@@ -1,5 +1,5 @@
 ///|
-enum StatefulIconState {
+priv enum StatefulIconState {
   NORMAL
   DISABLED
   MOUSEOVER

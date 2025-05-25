@@ -16,7 +16,8 @@
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/ms/physics",
     "KKKIIO/maple-moon-client/lib/ms/job",
-    "KKKIIO/maple-moon-client/lib/ms/map_layer"
+    "KKKIIO/maple-moon-client/lib/ms/map_layer",
+    "KKKIIO/maple-moon-client/lib/ms/npc"
   ],
   "link":{
     "js": {

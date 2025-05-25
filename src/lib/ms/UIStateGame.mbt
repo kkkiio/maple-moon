@@ -66,8 +66,8 @@ pub fn UIStateGame::new(
 ///|
 pub impl @ui.UIState for UIStateGame with draw(
   self : UIStateGame,
-  inter : Double,
-  cursor : @struct.Point[Int]
+  _inter : Double,
+  _cursor : @struct.Point[Int]
 ) -> Unit {
   self.element_order.each(fn(t) {
     match self.elements.get(t) {
@@ -332,7 +332,7 @@ fn UIStateGame::get_front_by_pos(
 
 ///|
 pub fn UIStateGame::remove_cursor(
-  self : UIStateGame,
+  _self : UIStateGame,
   _t : UIElementType
 ) -> Unit {
   // Implementation goes here

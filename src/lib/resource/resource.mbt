@@ -179,9 +179,7 @@ pub fn get_float(self : NxNode) -> Double!LoadError {
     @json.JsonValue::Number(it) => it
     @json.JsonValue::Null => 0.0
     @json.JsonValue::String(it) =>
-      try {
-        @strconv.parse_double!(it)
-      } catch {
+      try @strconv.parse_double!(it) catch {
         _ => raise LoadError("expect number, got \{it}, path=\{self.path}")
       }
     _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
@@ -296,7 +294,7 @@ pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int]! {
   @struct.Rectangle::new(left_top, right_bottom)
 }
 
-///| Array of T which json key is String
+///| Array of T which json key is index
 pub type MapBasedArray[T] Array[T] derive(Show)
 
 ///|

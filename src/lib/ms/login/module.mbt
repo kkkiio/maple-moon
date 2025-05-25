@@ -744,9 +744,11 @@ priv struct PlayerLoginPacket {
   cid : Int
 } derive(Show)
 
-///| Implements the OutMessage trait for PlayerLoginPacket
+///|
 impl @net.OutMessage for PlayerLoginPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::PLAYER_LOGIN)..write_int(self.cid)
+  let p = @net.OutPacket::new(@net.ClientOpcode::PLAYER_LOGIN)
+  p..write_int(self.cid)
+  p
 }
 
 ///|
@@ -809,9 +811,9 @@ fn SelectCharPacket::new(character_id : Int) -> SelectCharPacket {
 
 ///|
 impl @net.OutMessage for SelectCharPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::SELECT_CHAR)
-  ..write_int(self.character_id)
-  ..write_hardware_info()
+  let p = @net.OutPacket::new(@net.ClientOpcode::SELECT_CHAR)
+  p..write_int(self.character_id)..write_hardware_info()
+  p
 }
 
 ///|

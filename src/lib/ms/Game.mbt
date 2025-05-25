@@ -132,7 +132,15 @@ fn load_modules(
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let quest_module_fut = @quest.Module::load(network)
+  let npc_module = @npc.Module::load(
+    ui,
+    fn() { get_stage().get_player().unwrap().character.get_name() },
+    network,
+  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let quest_module_fut = npc_module
+    .bind(fn(mod) {
+      @quest.Module::load(network, fn(args) { mod.open_npc_talk_ui(args) })
+    })
     .map(fn(it) {
       match it {
         Ok(quest_module) => quest_module
@@ -188,11 +196,6 @@ fn load_modules(
       }),
     )
   })
-  let npc_module = @npc.Module::load(
-    ui,
-    fn() { get_stage().get_player().unwrap().character.get_name() },
-    network,
-  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
   let char_stats_mod_f = @char_stats.Module::load(network).tap(fn(mod) {
     merge_stat_handlers(mod.make_stat_handlers())
   })

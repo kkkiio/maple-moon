@@ -25,18 +25,18 @@ priv struct NPCTalkContent {
 }
 
 ///|
-pub enum TalkType {
+pub(all) enum TalkType {
   // SEND_TEXT_ONLY
   SEND_YESNO
   SEND_SIMPLE
   // SEND_ACCEPT_DECLINE
-  SEND_OK
-  SEND_NEXT
-  SEND_NEXT_PREV
-  SEND_PREV
+  SEND_OK // 0 0 0
+  SEND_NEXT // 0 0 1
+  SEND_NEXT_PREV // 0 1 1
+  SEND_PREV // 0 1 0
   // SEND_GET_TEXT
   // SEND_GET_NUMBER
-} derive(Show, Eq)
+} derive(Show, Eq, ToJson)
 
 ///|
 pub fn TalkType::from_int(
@@ -90,12 +90,7 @@ pub fn int_value(self : TalkType) -> Int {
 }
 
 ///|
-pub fn hash(self : TalkType) -> Int {
-  self.int_value()
-}
-
-///|
-pub fn hash_combine(self : TalkType, hasher : Hasher) -> Unit {
+pub impl Hash for TalkType with hash_combine(self, hasher) {
   hasher.combine(self.int_value())
 }
 
@@ -450,31 +445,18 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-struct Attributes {
-  npcid : Int
-  msgtype : Int
-  style_b0 : Int
-  style_b1 : Int
-  speakerbyte : Int
-  tx : String
-  player_name : String
-}
-
-///|
 pub fn change_text(
   self : UINpcTalk,
   npcid : Int,
-  msgtype : Int,
-  style_b0 : Int,
-  style_b1 : Int,
-  speakerbyte : Int,
+  t : TalkType,
+  speakerbyte : Speaker,
   tx : String,
   player_name : String
 ) -> Unit! {
-  self.t = TalkType::from_int(msgtype, style_b0, style_b1)
+  self.t = Some(t)
   let content = convert_npc_text!(tx, npcid, player_name)
   self.content = content |> @option.some
-  if speakerbyte == 0 {
+  if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
     self.speaker = npc_loader().load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource

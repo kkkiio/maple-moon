@@ -1,6 +1,6 @@
 ///|
 struct MapNpcs {
-  make_npc_talk_ui : (Attributes) -> @ui.Element
+  open_npc_talk_ui : (TalkArgs) -> Unit
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
   container : &@ui.Container
@@ -10,13 +10,13 @@ struct MapNpcs {
 
 ///|
 pub fn MapNpcs::new(
-  make_npc_talk_ui : (Attributes) -> @ui.Element,
+  open_npc_talk_ui : (TalkArgs) -> Unit,
   container : &@ui.Container,
   get_player_name : () -> String,
   packet_processor : @net.Network
 ) -> MapNpcs {
   {
-    make_npc_talk_ui,
+    open_npc_talk_ui,
     npcs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     container,
@@ -91,37 +91,22 @@ pub fn send_cursor(
   pressed : Bool,
   position : @struct.Point[Int],
   viewpos : @struct.Point[Int]
-) -> @ui.CursorState {
+) -> @ui.CursorState? {
   for _, map_object in self.npcs {
     let npc = map_object
     if npc.is_active() && npc.inrange(position, viewpos) {
       if pressed {
         match npc.talk() {
-          Some({ id, msgtype, b0, b1, speaker, str }) => {
-            let ui = (self.make_npc_talk_ui)({
-              npcid: id,
-              msgtype,
-              style_b0: b0,
-              style_b1: b1,
-              speakerbyte: speaker,
-              tx: str,
-              player_name: (self.get_player_name)(),
-            })
-            self.container.add_ui(ui, UINpcTalk::const_focused())
-          }
+          Some(talk_args) => (self.open_npc_talk_ui)(talk_args)
           None => ()
         }
         self.packet_processor.send_message(TalkToNpcPacket::new(npc.get_oid()))
-        return @ui.CursorState::IDLE
+        return Some(@ui.CursorState::IDLE)
       }
-      return @ui.CursorState::CAN_CLICK
+      return Some(@ui.CursorState::CAN_CLICK)
     }
   }
-  if pressed {
-    @ui.CursorState::CLICKING
-  } else {
-    @ui.CursorState::IDLE
-  }
+  None
 }
 
 ///|
@@ -175,11 +160,9 @@ struct Npc {
 
 ///|
 pub(all) struct TalkArgs {
-  id : Int
-  msgtype : Int
-  b0 : Int
-  b1 : Int
-  speaker : Int
+  npc_id : Int
+  talk_type : TalkType
+  speaker : Speaker
   str : String
 }
 
@@ -194,7 +177,12 @@ pub fn talk(self : Npc) -> TalkArgs? {
     .filter(fn(strs) { not(strs.is_empty()) })
     .map(fn(strs) { strs[0] }) {
     Some(str) =>
-      Some({ id: self.npc_id, msgtype: 0, b0: 0, b1: 1, speaker: 0, str })
+      Some({
+        npc_id: self.npc_id,
+        talk_type: SEND_NEXT,
+        speaker: Speaker::NPC_LEFT,
+        str,
+      })
     None => None
   }
 }

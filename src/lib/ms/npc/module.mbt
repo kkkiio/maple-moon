@@ -27,33 +27,38 @@ fn Module::new(
   packet_processor : @net.Network
 ) -> Module {
   let npcs = MapNpcs::new(
-    fn(attrs) {
-      @ui.Element::new(
-        fn(hooks) {
-          let ui = new_npc_talk_ui(
-            hooks, util_dlg_ex, container, packet_processor,
-          )
-          ui
-          .change_text?(
-            attrs.npcid,
-            attrs.msgtype,
-            attrs.style_b0,
-            attrs.style_b1,
-            attrs.speakerbyte,
-            attrs.tx,
-            attrs.player_name,
-          )
-          .unwrap()
-          ui
-        },
-        @ui.UIElementType::NPC_TALK,
-      )
-    },
+    fn(attrs) {  },
     container,
     get_player_name,
     packet_processor,
   )
   { npcs, container, get_player_name, util_dlg_ex, packet_processor }
+}
+
+///|
+pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
+  let elem = @ui.Element::new(
+    fn(hooks) {
+      let ui = new_npc_talk_ui(
+        hooks,
+        self.util_dlg_ex,
+        self.container,
+        self.packet_processor,
+      )
+      ui
+      .change_text?(
+        args.npc_id,
+        args.talk_type,
+        args.speaker,
+        args.str,
+        (self.get_player_name)(),
+      )
+      .unwrap()
+      ui
+    },
+    @ui.UIElementType::NPC_TALK,
+  )
+  self.container.add_ui(elem, UINpcTalk::const_focused())
 }
 
 ///|
@@ -147,12 +152,33 @@ pub fn handle_spawn_npc_controller_parsed(
 ///|
 pub struct NpcDialogue {
   npcid : Int
-  msgtype : Int
-  speaker : Int
+  t : TalkType
+  speaker : Speaker
   text : String
-  style_b0 : Int
-  style_b1 : Int
 } derive(Show, ToJson)
+
+///|
+pub(all) enum Speaker {
+  NPC_LEFT = 0
+  NPC_RIGHT = 1
+  PLAYER_LEFT = 2
+  PLAYER_RIGHT = 3
+} derive(Show, ToJson)
+
+///|
+pub fn Speaker::from_int(i : Int) -> Speaker? {
+  let res = match i {
+    0 => NPC_LEFT
+    1 => NPC_RIGHT
+    2 => PLAYER_LEFT
+    3 => PLAYER_RIGHT
+    _ => return None
+  }
+  Some(res)
+}
+
+///|
+pub fn Speaker::int_value(self : Speaker) -> Int = "%identity"
 
 ///|
 pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
@@ -165,13 +191,19 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
     // {b0, b1}
     // {0, 1} = next
     // {1, 0} = prev
-    // {1, 1} = nextPrev
+    // {1, 1} = nextPrev ??
     // {0, 0} = ok
     (recv.read_ubyte!(), recv.read_ubyte!())
   } else {
     (0, 0)
   }
-  { npcid, msgtype, speaker, text, style_b0, style_b1 }
+  guard TalkType::from_int(msgtype, style_b0, style_b1) is Some(t) else {
+    fail!("unknown talk type: \{msgtype}, \{style_b0}, \{style_b1}")
+  }
+  guard Speaker::from_int(speaker) is Some(speaker) else {
+    fail!("unknown speaker: \{speaker}")
+  }
+  { npcid, t, speaker, text }
 }
 
 ///|
@@ -191,9 +223,7 @@ pub fn handle_npc_dialogue_parsed(
         ui
         .change_text?(
           dialogue.npcid,
-          dialogue.msgtype,
-          dialogue.style_b0,
-          dialogue.style_b1,
+          dialogue.t,
           dialogue.speaker,
           dialogue.text,
           get_player_name(),

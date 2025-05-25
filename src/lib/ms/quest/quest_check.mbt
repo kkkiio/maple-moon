@@ -84,7 +84,7 @@ impl QuestCheck for QuestsStatusCheck with check(self, context) {
   for quest_id, expected_status in self.quest_status_map {
     let stated_quest = context.log.get_quest(quest_id)
     let quest_status = match stated_quest {
-      Some(InProgress(_)) => QuestStatus::Started
+      Some(InProgress(_)) => QuestStatus::InProgress
       Some(Completed(_)) => QuestStatus::Completed
       None => QuestStatus::NotStarted
     }

@@ -8,6 +8,8 @@ struct MapQuests {
   player_quest_log : PlayerQuestLog
   npc_quests_map : Map[Int, Array[Int]]
   mut player : @player.Player? // TODO: init on new
+  network : @net.Network
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 }
 
 ///| Resources for MapQuests - holds icons for different quest states
@@ -50,7 +52,9 @@ fn MapQuests::new(
   resource : MapQuestsResource,
   quests_resource : QuestResource,
   player_quest_log : PlayerQuestLog,
-  npc_quests_map : Map[Int, Array[Int]]
+  npc_quests_map : Map[Int, Array[Int]],
+  network : @net.Network,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> MapQuests {
   {
     resource,
@@ -59,6 +63,8 @@ fn MapQuests::new(
     player_quest_log,
     npc_quests_map,
     player: None,
+    network,
+    open_npc_talk_ui,
   }
 }
 
@@ -109,15 +115,32 @@ pub fn MapQuests::add_npc(
   @log.info({ "quest_ids": quest_ids, "npc_id": npc_id }, "list_quests_by_npc")
   // Check for completable quests
   for quest_id in quest_ids {
-    let status = self.player_quest_log.get_quest(quest_id)
-    match status {
-      Some(Completed(_)) => {
-        let icon_animation = self.resource.completed_quest_icon
-        self.quests.add(
-          NpcQuest::new(quest_id, npc_id, npc_object, icon_animation),
-        )
-        return
-      }
+    let stated_quest = self.player_quest_log.get_quest(quest_id)
+    match stated_quest {
+      Some(InProgress(quest)) =>
+        if quest.checks
+          .get(quest.phase)
+          .map_or(false, fn(it) {
+            check_quest_requirements(
+              it,
+              player,
+              self.player_quest_log,
+              quest_id,
+              quest.phase,
+            ).is_ok()
+          }) {
+          let icon_animation = self.resource.completed_quest_icon
+          self.quests.add(
+            NpcQuest::new(
+              quest_id,
+              Some((quest, true)),
+              npc_id,
+              npc_object,
+              icon_animation,
+            ),
+          )
+          return
+        }
       _ => ()
     }
   }
@@ -131,19 +154,27 @@ pub fn MapQuests::add_npc(
     ).peek()
     is Some((quest_id, _)) {
     let icon_animation = self.resource.available_quest_icon
-    self.quests.add(NpcQuest::new(quest_id, npc_id, npc_object, icon_animation))
+    self.quests.add(
+      NpcQuest::new(quest_id, None, npc_id, npc_object, icon_animation),
+    )
     return
   }
 
   // Check for in-progress quests if no available/completable found
   for quest_id in quest_ids {
-    let status = self.player_quest_log.get_quest(quest_id)
-    match status {
+    let stated_quest = self.player_quest_log.get_quest(quest_id)
+    match stated_quest {
       Some(InProgress(quest)) =>
         if quest.checks.get(0).map_or(false, fn(it) { it.npc == Some(npc_id) }) {
           let icon_animation = self.resource.inprogress_quest_icon
           self.quests.add(
-            NpcQuest::new(quest_id, npc_id, npc_object, icon_animation),
+            NpcQuest::new(
+              quest_id,
+              Some((quest, false)),
+              npc_id,
+              npc_object,
+              icon_animation,
+            ),
           )
           return
         }
@@ -162,23 +193,80 @@ pub fn MapQuests::clear(self : MapQuests) -> Unit {
   self.quests.clear()
 }
 
+///|
+pub fn MapQuests::send_cursor(
+  self : MapQuests,
+  pressed : Bool,
+  position : @struct.Point[Int],
+  viewpos : @struct.Point[Int]
+) -> @ui.CursorState? {
+  for _, quest in self.quests {
+    if quest.is_active() && quest.inrange(position, viewpos) {
+      if pressed {
+        guard self.quests_resource.quest_say_map.get(quest.quest_id)
+          is Some(phase_says)  // must have a say
+        let phase = quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
+        let says = phase_says[phase]
+        // says.says
+        (self.open_npc_talk_ui)({
+          npc_id: quest.npc_id,
+          talk_type: @npc.TalkType::SEND_NEXT, // TODO: figure out the talk type
+          speaker: @npc.Speaker::NPC_LEFT,
+          str: says.says[0],
+        })
+        // match quest.in_progress_quest {
+        //   None =>
+        //     self.network.send_message(
+        //       QuestActionMessage::StartQuest(
+        //         quest_id=quest.quest_id,
+        //         npc_id=quest.npc_id,
+        //       ),
+        //     )
+        //   Some((_, true)) =>
+        //     self.network.send_message(
+        //       QuestActionMessage::CompleteQuest(
+        //         quest_id=quest.quest_id,
+        //         npc_id=quest.npc_id,
+        //         selection=None,
+        //       ),
+        //     )
+        //   _ => ()
+        // }
+        return Some(@ui.CursorState::IDLE)
+      }
+      return Some(@ui.CursorState::CAN_CLICK)
+    }
+  }
+  None
+}
+
 ///| Represents a quest on the current map
 priv struct NpcQuest {
   npc_id : Int
   npc_object : @physics.MovingObject
   icon : @graphics.Animation
   icon_offset : @struct.Point[Int]
+  quest_id : Int
+  in_progress_quest : (InProgressQuest, Bool)? // (quest, is_completed)
 }
 
 ///|
 fn NpcQuest::new(
   quest_id : Int,
+  in_progress_quest : (InProgressQuest, Bool)?,
   npc_id : Int,
   npc_object : @physics.MovingObject,
   icon : @graphics.Animation
 ) -> NpcQuest {
   @log.debug({ "npc_id": npc_id, "quest_id": quest_id }, "show quest icon")
-  { npc_id, npc_object, icon, icon_offset: @struct.Point::new(0, -96) }
+  {
+    quest_id,
+    in_progress_quest,
+    npc_id,
+    npc_object,
+    icon,
+    icon_offset: @struct.Point::new(0, -96),
+  }
 }
 
 ///|
@@ -219,6 +307,22 @@ impl @map_object.MapObject for NpcQuest with get_position(self) -> @struct.Point
   Int,
 ] {
   self.npc_object.get_position() + self.icon_offset
+}
+
+///|
+fn NpcQuest::inrange(
+  self : NpcQuest,
+  cursorpos : @struct.Point[Int],
+  viewpos : @struct.Point[Int]
+) -> Bool {
+  let absp = self.get_position() + viewpos
+  let dim = self.icon.get_dimensions()
+  @struct.Rectangle::from4(
+    absp.x - dim.x / 2,
+    absp.x + dim.x / 2,
+    absp.y - dim.y,
+    absp.y,
+  ).contains(cursorpos)
 }
 
 ///|

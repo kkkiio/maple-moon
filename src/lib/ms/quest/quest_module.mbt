@@ -9,7 +9,8 @@ struct Module {
 
 ///|
 pub fn Module::load(
-  network : @net.Network
+  network : @net.Network,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> @utils.Future[Result[Module, Error]] {
   let fut = quest_resource_loader.load_res(["nx"])
   let fut2 = MapQuestsResource::load()
@@ -20,6 +21,7 @@ pub fn Module::load(
       quests_resource,
       map_quests_resource.unwrap_or_error!(),
       network,
+      open_npc_talk_ui,
     )
   })
 }
@@ -28,7 +30,8 @@ pub fn Module::load(
 pub fn Module::new(
   quests_resource : QuestResource,
   map_quests_resource : MapQuestsResource,
-  network : @net.Network
+  network : @net.Network,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
     .iter()
@@ -50,7 +53,8 @@ pub fn Module::new(
     player_quest_log,
     quest_log_listeners: [],
     map_quests: MapQuests::new(
-      map_quests_resource, quests_resource, player_quest_log, npc_quests_map,
+      map_quests_resource, quests_resource, player_quest_log, npc_quests_map, network,
+      open_npc_talk_ui,
     ),
     network,
   }
@@ -416,9 +420,7 @@ fn filter_acceptable_quests(
         if not(is_quest_status_can_start(status, checks.repeatable)) {
           return false
         }
-        if check_start_quest_requirements(
-            checks, player, quest_log, quest_id, phase,
-          )
+        if check_quest_requirements(checks, player, quest_log, quest_id, phase)
           is Err(error) {
           @log.debug(
             { "quest_id": quest_id, "reason": error },
@@ -437,8 +439,8 @@ fn filter_acceptable_quests(
   })
 }
 
-///| check if a quest can be started
-fn check_start_quest_requirements(
+///| check if a quest can be started or completed
+fn check_quest_requirements(
   check : QuestPhaseChecks,
   player : @player.Player,
   quest_log : PlayerQuestLog,

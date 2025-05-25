@@ -77,14 +77,14 @@ pub impl UIButton for MapleButton with draw(
   parentpos : Point[Int]
 ) -> Unit {
   if self.base.active {
-    match self.textures[self.base.get_state()] {
+    match self.textures.get(self.base.get_state()) {
       Some(texture) =>
         texture.draw(
           @graphics.DrawArgument::new(pos=self.base.position + parentpos),
         )
       None => ()
     }
-    match self.animations[self.base.get_state()] {
+    match self.animations.get(self.base.get_state()) {
       Some(animation) =>
         animation.draw(
           @graphics.DrawArgument::new(pos=self.base.position + parentpos),
@@ -98,7 +98,7 @@ pub impl UIButton for MapleButton with draw(
 ///|
 pub impl UIButton for MapleButton with update(self : MapleButton) -> Unit {
   if self.base.active {
-    match self.animations[self.base.get_state()] {
+    match self.animations.get(self.base.get_state()) {
       Some(animation) => animation.update(timestep=6) |> ignore
       None => ()
     }
@@ -109,10 +109,10 @@ pub impl UIButton for MapleButton with update(self : MapleButton) -> Unit {
 pub impl UIButton for MapleButton with bounds(self : MapleButton) -> @struct.Rectangle[
   Int,
 ] {
-  let (origin, dimensions) = match self.textures[self.base.get_state()] {
+  let (origin, dimensions) = match self.textures.get(self.base.get_state()) {
     Some(texture) => (texture.get_origin(), texture.get_dimensions())
     None => {
-      let animation = self.animations[self.base.get_state()].unwrap()
+      let animation = self.animations.get(self.base.get_state()).unwrap()
       (animation.get_origin(), animation.get_dimensions())
     }
   }
@@ -123,7 +123,7 @@ pub impl UIButton for MapleButton with bounds(self : MapleButton) -> @struct.Rec
 
 ///|
 pub impl UIButton for MapleButton with width(self : MapleButton) -> Int {
-  match self.textures[self.base.get_state()] {
+  match self.textures.get(self.base.get_state()) {
     Some(texture) => texture.width()
     None => 0
   }
@@ -131,7 +131,7 @@ pub impl UIButton for MapleButton with width(self : MapleButton) -> Int {
 
 ///|
 pub impl UIButton for MapleButton with origin(self : MapleButton) -> Point[Int] {
-  match self.textures[self.base.get_state()] {
+  match self.textures.get(self.base.get_state()) {
     Some(texture) => texture.get_origin()
     None => @struct.Point::default()
   }

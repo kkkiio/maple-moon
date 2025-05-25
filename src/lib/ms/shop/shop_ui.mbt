@@ -9,7 +9,7 @@ struct UIShop {
 }
 
 ///|
-struct LogicState {
+priv struct LogicState {
   attributes : Attributes
   model : @ui.UIModel
   buy_state : BuyState
@@ -18,7 +18,7 @@ struct LogicState {
 }
 
 ///|
-struct Attributes {
+priv struct Attributes {
   countset : @graphics.Charset
   charlook : @char_look.CharLook
   inventory : @inventory.Inventory
@@ -38,7 +38,7 @@ struct RuntimeState {
 }
 
 ///|
-struct Resources {
+priv struct Resources {
   buy_selection : @graphics.Texture
   sell_selection : @graphics.Texture
   tab_buttons : Array[(@inventory.TypeId, @ui.TwoSpriteButton)]
@@ -431,7 +431,7 @@ pub fn buy(self : BuyState, i : Int) -> Unit {
 }
 
 ///|
-struct BuyItem {
+priv struct BuyItem {
   display : @utils.Future[(@graphics.Texture, @graphics.Text)?]
   currency : @graphics.Texture
   id : Int
@@ -440,7 +440,7 @@ struct BuyItem {
 }
 
 ///|
-struct SellState {
+priv struct SellState {
   mut offset : Int
   mut tab : @inventory.TypeId
 }
@@ -539,11 +539,6 @@ pub fn SellItem::new(
 }
 
 ///|
-impl @ui.Widget for UIShop with get_ui_model(self) -> @ui.UIModel {
-  self.logic_state.model
-}
-
-///|
 pub fn send_cursor(
   self : UIShop,
   pressed : Bool,
@@ -562,18 +557,6 @@ pub fn send_cursor(
 fn exit_shop(self : LogicState) -> Unit {
   self.model.deactivate()
   // new_npc_shop_leave_action_packet().dispatch()
-}
-
-///|
-impl @ui.Widget for UIShop with send_key(
-  self : UIShop,
-  _key : Int,
-  pressed : Bool,
-  esc : Bool
-) -> Unit {
-  if pressed && esc {
-    self.logic_state.exit_shop()
-  }
 }
 
 ///|
@@ -605,14 +588,21 @@ priv enum ShopActionMessage {
 impl @net.OutMessage for ShopActionMessage with pack(self) -> @net.OutPacket {
   let packet = @net.OutPacket::new(@net.ClientOpcode::NPC_SHOP_ACTION)
   match self {
-    ShopActionMessage::Item(slot~, item_id~, qty~, buy~) =>
+    ShopActionMessage::Item(slot~, item_id~, qty~, buy~) => {
       packet
       ..write_byte(if buy { mode_BUY } else { mode_SELL })
       ..write_short(slot)
       ..write_int(item_id)
       ..write_short(qty)
-    ShopActionMessage::Recharge(slot~) =>
+      packet
+    }
+    ShopActionMessage::Recharge(slot~) => {
       packet..write_byte(mode_RECHARGE)..write_short(slot)
-    ShopActionMessage::Leave => packet..write_byte(mode_LEAVE)
+      packet
+    }
+    ShopActionMessage::Leave => {
+      packet..write_byte(mode_LEAVE)
+      packet
+    }
   }
 }

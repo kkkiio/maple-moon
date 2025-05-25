@@ -398,7 +398,8 @@ priv struct TakeDamageMessage {
 
 ///|
 impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::TAKE_DAMAGE)
+  let p = @net.OutPacket::new(@net.ClientOpcode::TAKE_DAMAGE)
+  p
   ..write_time()
   ..write_byte(self.from.int_value().to_byte())
   ..write_byte(self.element.to_byte())
@@ -406,6 +407,7 @@ impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
   ..write_int(self.mobid)
   ..write_int(self.oid)
   ..write_byte(self.direction.to_byte())
+  p
 }
 
 ///| From mob attack result.
@@ -439,11 +441,13 @@ priv struct PickupItemMessage {
 
 ///|
 impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::PICKUP_ITEM)
+  let p = @net.OutPacket::new(@net.ClientOpcode::PICKUP_ITEM)
+  p
   ..write_int(0)
   ..write_byte((0).to_byte())
   ..write_point(self.position)
   ..write_int(self.oid)
+  p
 }
 
 ///|

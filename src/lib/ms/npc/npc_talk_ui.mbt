@@ -19,7 +19,7 @@ pub fn UINpcTalk::const_focused() -> Bool {
 }
 
 ///|
-struct NPCTalkContent {
+priv struct NPCTalkContent {
   text_content : Array[@graphics.Text]
   text_button_content : Array[@ui.TextButton]
 }
@@ -194,10 +194,6 @@ pub fn UINpcTalk::new(
   hooks : @ui.Hooks,
   on_choice~ : (TalkChoice) -> Unit = fn(_) {  }
 ) -> UINpcTalk {
-  let base = @ui.UIModel::new(
-    @struct.Point::default(),
-    @struct.Point::default(),
-  )
   let name = @graphics.Text::new(
     @graphics.FontId::A11M,
     @graphics.TextAlignment::CENTER,
@@ -210,7 +206,7 @@ pub fn UINpcTalk::new(
   {
     hooks,
     on_choice,
-    base,
+    base: hooks.ui_model,
     resource,
     speaker,
     content: None,
@@ -219,11 +215,6 @@ pub fn UINpcTalk::new(
     min_height,
     t: None,
   }
-}
-
-///|
-pub impl @ui.Widget for UINpcTalk with get_ui_model(self) -> @ui.UIModel {
-  self.base
 }
 
 ///|
@@ -459,23 +450,6 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub impl @ui.Widget for UINpcTalk with send_key(
-  self : UINpcTalk,
-  keycode : Int,
-  pressed : Bool,
-  escape : Bool
-) -> Unit {
-  match self.t {
-    Some(t) =>
-      if pressed && escape {
-        self.base.deactivate()
-        new_npc_talk_more_packet(t.int_value(), 0).dispatch()
-      }
-    None => ()
-  }
-}
-
-///|
 struct Attributes {
   npcid : Int
   msgtype : Int
@@ -543,9 +517,9 @@ fn reset_content_pos(self : UINpcTalk) -> Unit {
 
 ///|
 fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::NPC_TALK_MORE)
-  ..write_byte(lastmsg.to_byte())
-  ..write_byte(response.to_byte())
+  let p = @net.OutPacket::new(@net.ClientOpcode::NPC_TALK_MORE)
+  p..write_byte(lastmsg.to_byte())..write_byte(response.to_byte())
+  p
 }
 
 ///|
@@ -555,7 +529,9 @@ fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
 
 ///|
 fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
-  new_npc_talk_more_packet(4, 1)..write_int(selection)
+  let p = new_npc_talk_more_packet(4, 1)
+  p..write_int(selection)
+  p
 }
 
 ///|
@@ -620,7 +596,7 @@ fn get_map_category(mapid : Int) -> String {
 }
 
 ///|
-struct NxMapInfo {
+priv struct NxMapInfo {
   // description : String
   name : String
   // street_name : String
@@ -682,9 +658,7 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
       },
       'h': fn(_v) { player_name },
       't': fn(v) {
-        let itemid = try {
-          @strconv.parse_int!(v)
-        } catch {
+        let itemid = try @strconv.parse_int!(v) catch {
           @strconv.StrConvError(_) =>
             raise ParseTalkError("invalid item id: \{v}")
         }
@@ -694,9 +668,7 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
         itemname
       },
       'm': fn(v) {
-        let mapid = try {
-          @strconv.parse_int!(v)
-        } catch {
+        let mapid = try @strconv.parse_int!(v) catch {
           @strconv.StrConvError(_) =>
             raise ParseTalkError("invalid map id: \{v}")
         }

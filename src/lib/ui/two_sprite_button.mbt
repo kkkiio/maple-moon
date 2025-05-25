@@ -16,12 +16,9 @@ pub fn TwoSpriteButton::new(
   state~ : ButtonState = ButtonState::NORMAL
 ) -> TwoSpriteButton {
   let textures = @utils.BoolPair::new(disabled, enabled)
-  {
-    base: ButtonModel::default()..set_active(active)..set_state(state),
-    textures,
-    npos: np,
-    spos: sp,
-  }
+  let base = ButtonModel::default()
+  base..set_active(active)..set_state(state)
+  { base, textures, npos: np, spos: sp }
 }
 
 ///|

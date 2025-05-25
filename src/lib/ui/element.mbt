@@ -95,8 +95,6 @@ pub let all_types : FixedArray[UIElementType] = [
 
 ///|
 pub(open) trait Widget {
-  get_ui_model(Self) -> UIModel
-  send_key(Self, Int, Bool, Bool) -> Unit
   /// declarative ui interface
   render(Self) -> RenderSpec
 }
@@ -132,17 +130,21 @@ pub impl ToJson for InteractiveArea with to_json(self) -> Json {
 
 ///|
 pub impl ToJson for RenderSpec with to_json(self) -> Json {
-  { "render_units": self.render_elements.to_json() }
+  { "render_elements": self.render_elements.to_json() }
 }
 
 ///|
 pub(all) struct Hooks {
+  ui_model : UIModel
   on_state_changed : () -> Unit
 }
 
 ///|
 pub fn Hooks::default() -> Hooks {
-  { on_state_changed: fn() {  } }
+  {
+    ui_model: UIModel::new(Point::default(), Point::default()),
+    on_state_changed: fn() {  },
+  }
 }
 
 ///|
@@ -154,12 +156,12 @@ pub fn on_state_changed(self : Hooks) -> Unit {
 type EffectHook[T] Ref[T?]
 
 ///|
-pub fn EffectHook::new[T]() -> EffectHook[T] {
+pub fn[T] EffectHook::new() -> EffectHook[T] {
   Ref::new(None)
 }
 
 ///|
-pub fn use_effect[T : Eq](
+pub fn[T : Eq] use_effect(
   self : EffectHook[T],
   key : T,
   f : () -> Unit
@@ -181,37 +183,44 @@ pub(open) trait UIElementDescriptor {
 
 ///|
 pub(all) struct Element {
-  object : &Widget
   key : UIElementType
+  ui_model : UIModel
+  object : &Widget
   toggle_active : () -> Unit
   on_close : () -> Unit
-  runtime_state : Ref[RenderSpec?]
+  runtime_state : Ref[RuntimeState?]
 }
 
 ///|
-pub fn Element::new[T : Widget](
+struct RuntimeState {
+  render_units : Array[&RenderUnit]
+  interactables : Array[InteractiveArea]
+}
+
+///|
+pub fn[T : Widget] Element::new(
   make_element : (Hooks) -> T,
   key : UIElementType,
   toggle_active? : () -> Unit,
   on_close? : () -> Unit
 ) -> Element {
   let runtime_state = Ref::new(None)
-  let hooks = { on_state_changed: fn() { runtime_state.val = None } }
+  let ui_model = UIModel::new(Point::default(), Point::default())
+  let hooks = { ui_model, on_state_changed: fn() { runtime_state.val = None } }
   let object = make_element(hooks)
   {
-    object,
     key,
-    toggle_active: toggle_active.or(fn() {
-      object.get_ui_model().toggle_active()
-    }),
+    ui_model,
+    object,
+    toggle_active: toggle_active.or(fn() { ui_model.toggle_active() }),
     on_close: on_close.or(fn() {  }),
     runtime_state,
   }
 }
 
 ///|
-pub fn get_ui_model(self : Element) -> UIModel {
-  self.object.get_ui_model()
+pub fn Element::get_ui_model(self : Element) -> UIModel {
+  self.ui_model
 }
 
 ///|
@@ -244,63 +253,77 @@ pub fn Element::send_cursor(
 }
 
 ///|
-pub fn Element::doubleclick(self : Element, pos : @struct.Point[Int]) -> Unit {
+pub fn Element::is_in_interactive_area(
+  self : Element,
+  cursorpos : Point[Int]
+) -> Bool {
+  let areas = self.use_interactables()
+  let container_pos = self.get_ui_model().position
+  let matches = areas.filter(fn(area) { // WARN: performance
+    area.bounds.shift(container_pos).contains(cursorpos)
+  })
+  matches.head() is Some(_)
+}
+
+///|
+pub fn Element::doubleclick(self : Element, pos : @struct.Point[Int]) -> Bool {
   let areas = self.use_interactables()
   let container_pos = self.get_ui_model().position
   let matches = areas.filter(fn(area) {
     area.bounds.shift(container_pos).contains(pos)
   }) // WARN: performance
+  let mut clicked = false
   for area in matches {
     (area.on_double_click)()
+    clicked = true
   }
+  clicked
 }
 
 ///|
-fn use_runtime_state(self : Element) -> RenderSpec {
+fn use_runtime_state(self : Element) -> RuntimeState {
   match self.runtime_state.val {
     Some(rs) => rs
     None => {
-      let render_state = self.object.render()
-      self.runtime_state.val = Some(render_state)
-      render_state
+      let rs = self.object.render()
+      let render_units = rs.render_elements
+        .iter()
+        .map(fn(re) {
+          match re {
+            RenderElement::Static(ru) => ru
+            RenderElement::Interactable(ru, _) => ru
+          }
+        })
+        .to_array()
+      let interactables = rs.render_elements
+        .iter()
+        .filter_map(fn(re) {
+          match re {
+            RenderElement::Interactable(_, ia) => Some(ia)
+            RenderElement::Static(_) => None
+          }
+        })
+        .to_array()
+      let rs = { render_units, interactables }
+      self.runtime_state.val = Some(rs)
+      rs
     }
   }
 }
 
 ///|
 fn use_drawables(self : Element) -> Iter[&@graphics.Drawable] {
-  self.use_runtime_state().render_elements
-  .iter()
-  .map(fn(re) {
-    match re {
-      RenderElement::Static(ru) => ru
-      RenderElement::Interactable(ru, _) => ru
-    }
-  })
+  self.use_runtime_state().render_units.iter().map(fn(ru) { ru })
 }
 
 ///|
 fn use_interactables(self : Element) -> Iter[InteractiveArea] {
-  self.use_runtime_state().render_elements
-  .iter()
-  .filter_map(fn(re) {
-    match re {
-      RenderElement::Interactable(_, ia) => Some(ia)
-      RenderElement::Static(_) => None
-    }
-  })
+  self.use_runtime_state().interactables.iter()
 }
 
 ///|
 fn use_updateables(self : Element) -> Iter[&RenderUnit] {
-  self.use_runtime_state().render_elements
-  .iter()
-  .map(fn(re) {
-    match re {
-      RenderElement::Static(ru) => ru
-      RenderElement::Interactable(ru, _) => ru
-    }
-  })
+  self.use_runtime_state().render_units.iter()
 }
 
 ///|
@@ -358,22 +381,13 @@ pub fn UIModel::toggle_active(self : UIModel) -> Unit {
 }
 
 ///|
-pub fn is_in_range(self : UIModel, cursorpos : Point[Int]) -> Bool {
-  let bounds = @struct.Rectangle::new(
-    self.position,
-    self.position + self.dimension,
-  )
-  bounds.contains(cursorpos)
-}
-
-///|
 struct StaticUI[T] {
   drawable : T
   args : @graphics.DrawArgument
 }
 
 ///|
-pub fn StaticUI::new[T](
+pub fn[T] StaticUI::new(
   text : T,
   pos~ : Point[Int] = Point::default(), // relative to the parent
   stretch~ : Point[Int] = Point::default()
@@ -382,7 +396,7 @@ pub fn StaticUI::new[T](
 }
 
 ///|
-pub fn StaticUI::new_ex[T](
+pub fn[T] StaticUI::new_ex(
   text : T,
   args~ : @graphics.DrawArgument = @graphics.DrawArgument::default()
 ) -> StaticUI[T] {
@@ -455,7 +469,7 @@ pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
 type OffsetedUnit[T] (T, Point[Int]) derive(ToJson)
 
 ///|
-pub fn OffsetedUnit::new[T](unit : T, pos : Point[Int]) -> OffsetedUnit[T] {
+pub fn[T] OffsetedUnit::new(unit : T, pos : Point[Int]) -> OffsetedUnit[T] {
   (unit, pos)
 }
 
@@ -489,7 +503,7 @@ pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with update(self) -> Uni
 type StaticUnit[T] T derive(ToJson)
 
 ///|
-pub fn StaticUnit::new[T](unit : T) -> StaticUnit[T] {
+pub fn[T] StaticUnit::new(unit : T) -> StaticUnit[T] {
   unit
 }
 

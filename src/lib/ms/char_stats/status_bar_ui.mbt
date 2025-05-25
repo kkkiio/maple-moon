@@ -1,7 +1,6 @@
 ///| Display character stats (hp/mp/exp)
 struct StatusBarUI {
   stats : CharStats
-  base : @ui.UIModel
   sprites : Array[@graphics.Sprite]
   exp_bar : @ui.Gauge
   hp_bar : @ui.Gauge
@@ -126,9 +125,10 @@ pub fn StatusBarUI::new(stats : CharStats, hooks : @ui.Hooks) -> StatusBarUI {
     (hooks.on_state_changed)()
     IterContinue
   })
+  hooks.ui_model.position = position
+  hooks.ui_model.dimension = dimension
   {
     stats,
-    base: @ui.UIModel::new(position, dimension),
     sprites,
     exp_bar,
     hp_bar,
@@ -261,22 +261,4 @@ fn getmppercent(stats : CharStats) -> Double {
   let mp = stats.get_stat(@maple_stat.Id::MP)
   let maxmp = stats.get_total(@maple_stat.EquipStatId::MP)
   mp.to_double() / maxmp.to_double()
-}
-
-///|
-pub impl @ui.Widget for StatusBarUI with get_ui_model(self) -> @ui.UIModel {
-  self.base
-}
-
-///|
-pub impl @ui.Widget for StatusBarUI with send_key(
-  self,
-  keycode,
-  pressed,
-  escape
-) -> Unit {
-  ignore(self)
-  ignore(keycode)
-  ignore(pressed)
-  ignore(escape)
 }

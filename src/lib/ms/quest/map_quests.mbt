@@ -178,7 +178,7 @@ fn NpcQuest::new(
   icon : @graphics.Animation
 ) -> NpcQuest {
   @log.debug({ "npc_id": npc_id, "quest_id": quest_id }, "show quest icon")
-  { npc_id, npc_object, icon, icon_offset: @struct.Point::new(0, -80) }
+  { npc_id, npc_object, icon, icon_offset: @struct.Point::new(0, -96) }
 }
 
 ///|

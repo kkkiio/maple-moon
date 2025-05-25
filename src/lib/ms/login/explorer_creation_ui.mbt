@@ -1,6 +1,5 @@
 ///|
 struct ExplorerCreatorUI {
-  model : @ui.UIModel
   resource : ExplorerCreatorUIResource
   randomizer : @utils.Randomizer
   settings : LookSettingState
@@ -224,12 +223,11 @@ pub fn ExplorerCreatorUI::new(
   let gender = false
   let randomizer = @utils.Randomizer::default()
   let settings = rand_char_look(gender, randomizer, resource)
+  let ui_model = hooks.ui_model
+  ui_model.position = @struct.Point::new(0, 0)
+  ui_model.dimension = @struct.Point::new(800, 600)
   {
     resource,
-    model: @ui.UIModel::new(
-      @struct.Point::new(0, 0),
-      @struct.Point::new(800, 600),
-    ),
     settings,
     gender_selected: gender,
     charset_selected: false,
@@ -547,24 +545,6 @@ pub impl @ui.Widget for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub impl @ui.Widget for ExplorerCreatorUI with send_key(
-  self,
-  keycode,
-  pressed,
-  escape
-) -> Unit {
-  ignore(self)
-  ignore(keycode)
-  ignore(pressed)
-  ignore(escape)
-}
-
-///|
-pub impl @ui.Widget for ExplorerCreatorUI with get_ui_model(self) -> @ui.UIModel {
-  self.model
-}
-
-///|
 const JOB_ID_EXPLORER = 1
 
 ///| Reserve a name for the character to be created.
@@ -589,7 +569,8 @@ priv struct CreateCharPacket {
 
 ///|
 impl @net.OutMessage for CreateCharPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::CREATE_CHAR)
+  let p = @net.OutPacket::new(@net.ClientOpcode::CREATE_CHAR)
+  p
   ..write_string(self.name)
   ..write_int(self.job)
   ..write_int(self.face)
@@ -601,6 +582,7 @@ impl @net.OutMessage for CreateCharPacket with pack(self) -> @net.OutPacket {
   ..write_int(self.shoes)
   ..write_int(self.weapon)
   ..write_byte(self.female.to_int().to_byte())
+  p
 }
 
 ///|

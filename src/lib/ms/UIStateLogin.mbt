@@ -35,24 +35,12 @@ pub impl @ui.UIState for UIStateLogin with update(self : UIStateLogin) -> Unit {
 
 ///|
 pub impl @ui.UIState for UIStateLogin with send_key(
-  self : UIStateLogin,
-  mapping : @keyboard.Mapping?,
-  pressed : Bool,
-  escape : Bool
+  _self : UIStateLogin,
+  _mapping : @keyboard.Mapping?,
+  _pressed : Bool,
+  _escape : Bool
 ) -> Unit {
-  match self.get(self.focused) {
-    Some(focusedelement) =>
-      if focusedelement.get_ui_model().is_active() {
-        focusedelement.object.send_key(
-          mapping.map_or(0, fn(it) { it.get_action_value() }),
-          pressed,
-          escape,
-        )
-      } else {
-        self.focused = UIElementType::UI_ELEMENT_NONE
-      }
-    None => ()
-  }
+
 }
 
 ///|
@@ -135,28 +123,6 @@ pub impl @ui.UIState for UIStateLogin with get_front_by_types(
     }
   })
   front
-}
-
-///|
-pub fn get_front_by_pos(
-  self : UIStateLogin,
-  pos : @struct.Point[Int]
-) -> @ui.Element? {
-  // TODO: use rev_iter
-  self.elements
-  .iter()
-  .fold(
-    fn(acc, it) {
-      let element = it.1
-      if element.get_ui_model().is_active() &&
-        element.get_ui_model().is_in_range(pos) {
-        Some(element)
-      } else {
-        acc
-      }
-    },
-    init=None,
-  )
 }
 
 ///|

@@ -1,6 +1,5 @@
 ///|
 struct SelectCharUI {
-  model : @ui.UIModel
   characters : Array[(Int, @char_look.CharLook, @ui.NameTag)]
   on_select_character : (Int) -> Unit
   on_new_character : () -> Unit
@@ -67,6 +66,9 @@ pub fn SelectCharUI::new(
   on_select_character~ : (Int) -> Unit = fn(_i) {  },
   on_new_character~ : () -> Unit = fn() {  }
 ) -> SelectCharUI {
+  let ui_model = hooks.ui_model
+  ui_model.position = @struct.Point::new(0, 0)
+  ui_model.dimension = @struct.Point::new(800, 600)
   {
     select_slot: None,
     on_select_character,
@@ -79,10 +81,6 @@ pub fn SelectCharUI::new(
         @ui.NameTag::new(@graphics.FontId::A13M, name, resource.name_tag),
       )
     }),
-    model: @ui.UIModel::new(
-      @struct.Point::new(0, 0),
-      @struct.Point::new(800, 600),
-    ),
     resource,
     hooks,
   }
@@ -211,18 +209,3 @@ fn get_character_slot_pos(
 
 ///|
 const PAGE_SIZE = 8
-
-///|
-pub impl @ui.Widget for SelectCharUI with send_key(
-  self : SelectCharUI,
-  keycode : Int,
-  pressed : Bool,
-  escape : Bool
-) -> Unit {
-  // TODO: implement
-}
-
-///|
-pub impl @ui.Widget for SelectCharUI with get_ui_model(self) -> @ui.UIModel {
-  self.model
-}

@@ -114,22 +114,8 @@ pub impl @ui.UIState for UIStateGame with send_key(
   self : UIStateGame,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
-  escape : Bool
+  _escape : Bool
 ) -> Unit {
-  match self.get(self.focused) {
-    Some(focusedelement) => {
-      if focusedelement.get_ui_model().is_active() {
-        return focusedelement.object.send_key(
-          mapping.map_or(0, fn(it) { it.get_action_value() }),
-          pressed,
-          escape,
-        )
-      }
-      self.focused = UIElementType::UI_ELEMENT_NONE
-      return
-    }
-    None => ()
-  }
   guard mapping is Some(mapping) else { return }
   match mapping {
     @keyboard.Mapping::MENU(action) =>
@@ -196,10 +182,10 @@ pub impl @ui.UIState for UIStateGame with send_cursor(
     while i > 0 {
       i -= 1
       let t = self.element_order[i]
-      match self.elements[t] {
+      match self.elements.get(t) {
         Some(element) =>
           if element.get_ui_model().is_active() &&
-            element.get_ui_model().is_in_range(cursorpos) {
+            element.is_in_interactive_area(cursorpos) {
             self.dragged = Some(element)
             drag_element_type = t
             break
@@ -329,7 +315,7 @@ pub impl @ui.UIState for UIStateGame with get_front_by_types(
 }
 
 ///|
-pub fn UIStateGame::get_front_by_pos(
+fn UIStateGame::get_front_by_pos(
   self : UIStateGame,
   pos : @struct.Point[Int]
 ) -> @ui.Element? {
@@ -340,7 +326,7 @@ pub fn UIStateGame::get_front_by_pos(
     self.elements.get(t)
   })
   .find_first(fn(e) {
-    e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
+    e.get_ui_model().is_active() && e.is_in_interactive_area(pos)
   })
 }
 
@@ -361,7 +347,7 @@ pub fn UIStateGame::get_front(
   .iter()
   .map_while(fn(t) { self.elements.get(t) })
   .find_first(fn(e) {
-    e.get_ui_model().is_active() && e.get_ui_model().is_in_range(pos)
+    e.get_ui_model().is_active() && e.is_in_interactive_area(pos)
   })
 }
 
@@ -371,7 +357,7 @@ pub impl @ui.UIState for UIStateGame with doubleclick(
   pos : @struct.Point[Int]
 ) -> Unit {
   match self.get_front_by_pos(pos) {
-    Some(e) => e.doubleclick(pos)
+    Some(e) => e.doubleclick(pos) |> ignore()
     None => ()
   }
 }

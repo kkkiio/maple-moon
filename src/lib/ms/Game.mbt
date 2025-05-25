@@ -451,9 +451,13 @@ fn setup_game_ui(
     false,
     @ui.Element::new(
       fn(hooks) {
-        let mini_map_ui = map_module.new_mini_map_ui(hooks.on_state_changed)
+        let ui_model = hooks.ui_model
+        let mini_map_ui = map_module.new_mini_map_ui(
+          ui_model,
+          hooks.on_state_changed,
+        )
         stage.listen_map_change(fn(map_struct) {
-          guard mini_map_ui.get_ui_model().active else { return false }
+          guard ui_model.active else { return false }
           mini_map_ui.set_map(
             map_struct.id,
             map_struct.map_info,

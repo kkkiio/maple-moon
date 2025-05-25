@@ -72,7 +72,6 @@ priv enum MiniMapType {
 
 ///| Represents the state and logic for the MiniMap UI widget.
 struct MiniMapUI {
-  model : @ui.UIModel // Needed for positioning, etc.
   resource : MiniMapUIResource
   type_ : MiniMapType
   mut current_map : (Int, MapInfo, MiniMapResource?)?
@@ -82,13 +81,12 @@ struct MiniMapUI {
 ///|
 fn MiniMapUI::new(
   resource : MiniMapUIResource,
+  ui_model : @ui.UIModel,
   on_state_changed : () -> Unit
 ) -> MiniMapUI {
+  ui_model.position = @struct.Point::new(128, 20)
+  ui_model.dimension = @struct.Point::new(0, 0)
   {
-    model: @ui.UIModel::new(
-      @struct.Point::new(128, 20),
-      @struct.Point::new(0, 0), // reset after loading map
-    ),
     resource,
     type_: MiniMapType::NORMAL, // NORMAL by default
     current_map: None,
@@ -389,19 +387,6 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
   //     }
   // }
 
-}
-
-///|
-pub impl @ui.Widget for MiniMapUI with get_ui_model(self) -> @ui.UIModel {
-  self.model
-}
-
-///|
-pub impl @ui.Widget for MiniMapUI with send_key(self, keycode, pressed, escape) -> Unit {
-  ignore(self)
-  ignore(keycode)
-  ignore(pressed)
-  ignore(escape)
 }
 
 ///|

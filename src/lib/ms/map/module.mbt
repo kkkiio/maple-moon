@@ -21,7 +21,8 @@ pub fn get_portals_animations(self : Module) -> MapPortalAnimations {
 ///|
 pub fn Module::new_mini_map_ui(
   self : Module,
+  ui_model : @ui.UIModel,
   on_state_changed : () -> Unit
 ) -> MiniMapUI {
-  MiniMapUI::new(self.mini_map_ui_resource, on_state_changed)
+  MiniMapUI::new(self.mini_map_ui_resource, ui_model, on_state_changed)
 }

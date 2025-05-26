@@ -1,13 +1,14 @@
 target/
 .mooncakes/
-nx/files
 .xmake
 build
 .cache
 node_modules
 dist
+assets
 
 .vscode
 
 # windsurf rules
 .windsurfrules
+.DS_Store

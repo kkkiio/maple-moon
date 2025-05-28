@@ -453,9 +453,9 @@ fn SellState::new() -> SellState {
 ///|
 fn sell(items : Array[SellItem], i : Int, all~ : Bool = false) -> Unit {
   guard items.get(i) is Some(item) else { return }
-  let itemid = item.id
+  // let itemid = item.id
   let sellable = item.sellable
-  let slot = item.slot
+  // let slot = item.slot
   if sellable > 0 {
     // new_npc_shop_item_action_packet(
     //   slot,

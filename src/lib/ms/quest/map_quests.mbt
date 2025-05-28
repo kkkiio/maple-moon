@@ -112,7 +112,6 @@ pub fn MapQuests::add_npc(
 
   // For simplicity, let's assume we prioritize: Completable > Available > InProgress
   let quest_ids = list_quests_by_npc(self.npc_quests_map, npc_id)
-  @log.info({ "quest_ids": quest_ids, "npc_id": npc_id }, "list_quests_by_npc")
   // Check for completable quests
   for quest_id in quest_ids {
     let stated_quest = self.player_quest_log.get_quest(quest_id)
@@ -205,39 +204,117 @@ pub fn MapQuests::send_cursor(
       if pressed {
         guard self.quests_resource.quest_say_map.get(quest.quest_id)
           is Some(phase_says)  // must have a say
-        let phase = quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
-        let says = phase_says[phase]
-        // says.says
-        (self.open_npc_talk_ui)({
-          npc_id: quest.npc_id,
-          talk_type: @npc.TalkType::SEND_NEXT, // TODO: figure out the talk type
-          speaker: @npc.Speaker::NPC_LEFT,
-          str: says.says[0],
-        })
-        // match quest.in_progress_quest {
-        //   None =>
-        //     self.network.send_message(
-        //       QuestActionMessage::StartQuest(
-        //         quest_id=quest.quest_id,
-        //         npc_id=quest.npc_id,
-        //       ),
-        //     )
-        //   Some((_, true)) =>
-        //     self.network.send_message(
-        //       QuestActionMessage::CompleteQuest(
-        //         quest_id=quest.quest_id,
-        //         npc_id=quest.npc_id,
-        //         selection=None,
-        //       ),
-        //     )
-        //   _ => ()
-        // }
+        talk_about_quest(quest, phase_says, self.network, self.open_npc_talk_ui)
         return Some(@ui.CursorState::IDLE)
       }
       return Some(@ui.CursorState::CAN_CLICK)
     }
   }
   None
+}
+
+
+///|
+priv enum TalkState {
+  Next(Int)
+  YesReply(Int)
+  NoReply(Int)
+} derive(Show)
+
+///|
+fn talk_about_quest(
+  quest : NpcQuest,
+  quest_says : Array[QuestPhaseSays],
+  network : @net.Network,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+) -> Unit {
+  let phase = quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
+  let says = quest_says[phase]
+  fn next_talk(state : TalkState, choice : @npc.TalkChoice) {
+    @log.info({ "state": state, "choice": choice }, "next_talk")
+    match choice {
+      SEND_NEXT(next=Some(_)) =>
+        match state {
+          Next(i) =>
+            if says.says.get(i) is Some(str) {
+              let need_reply = says.says.get(i + 1) is None
+              open_npc_talk_ui({
+                npc_id: quest.npc_id,
+                talk_action: if need_reply {
+                  @npc.TalkAction::SEND_YESNO(fn(c) {
+                    next_talk(
+                      YesReply(0),
+                      @npc.TalkChoice::SEND_YESNO(answer=c),
+                    )
+                  })
+                } else {
+                  @npc.TalkAction::SEND_NEXT(fn(c) {
+                    next_talk(Next(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                  })
+                },
+                speaker: @npc.Speaker::NPC_LEFT,
+                str,
+              })
+            }
+          YesReply(i) =>
+            if says.yes_reply.get(i) is Some(str) {
+              open_npc_talk_ui({
+                npc_id: quest.npc_id,
+                talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+                  next_talk(YesReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                }),
+                speaker: @npc.Speaker::NPC_LEFT,
+                str,
+              })
+            }
+          NoReply(i) =>
+            if says.no_reply.get(i) is Some(str) {
+              open_npc_talk_ui({
+                npc_id: quest.npc_id,
+                talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+                  next_talk(NoReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                }),
+                speaker: @npc.Speaker::NPC_LEFT,
+                str,
+              })
+            }
+        }
+      SEND_YESNO(answer=Some(true)) => {
+        // accept quest
+        match quest.in_progress_quest {
+          None =>
+            network.send_message(
+              QuestActionMessage::StartQuest(
+                quest_id=quest.quest_id,
+                npc_id=quest.npc_id,
+              ),
+            )
+          Some((_, true)) =>
+            network.send_message(
+              QuestActionMessage::CompleteQuest(
+                quest_id=quest.quest_id,
+                npc_id=quest.npc_id,
+                selection=None,
+              ),
+            )
+          _ => ()
+        }
+        if says.yes_reply.get(0) is Some(str) {
+          open_npc_talk_ui({
+            npc_id: quest.npc_id,
+            talk_action: @npc.TalkAction::SEND_YESNO(fn(c) {
+              next_talk(YesReply(0), @npc.TalkChoice::SEND_YESNO(answer=c))
+            }),
+            speaker: @npc.Speaker::NPC_LEFT,
+            str,
+          })
+        }
+      }
+      _ => ...
+    }
+  }
+
+  next_talk(Next(0), @npc.TalkChoice::SEND_NEXT(next=Some(())))
 }
 
 ///| Represents a quest on the current map
@@ -324,6 +401,3 @@ fn NpcQuest::inrange(
     absp.y,
   ).contains(cursorpos)
 }
-
-///|
-typealias Point = @struct.Point[Int]

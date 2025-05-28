@@ -8,7 +8,6 @@
                         <span class="quest-name">{{ quest.name }}</span>
                         <span class="quest-id">#{{ quest.id }}</span>
                     </div>
-                    <div>{{ quest.progress }}</div>
                     <div :key="quest.desc" class="quest-desc" v-html="quest.desc"></div>
                     <div class="quest-actions">
                         <n-button size="small" type="warning" @click="forfeitQuest(quest.id)">

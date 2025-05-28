@@ -94,7 +94,7 @@ class TextBitmapGenerator {
             this.textCtx.clearRect(0, 0, this.textCtx.canvas.width, this.textCtx.canvas.height);
             this.textCtx.drawImage(tmpImg, 0, 0);
             const dataUrl = this.textCtx.canvas.toDataURL();
-            console.debug(dataUrl);
+            // console.debug(dataUrl);
             const targetImg = document.createElement("img");
             bmp.data = targetImg;
             targetImg.onload = () => {

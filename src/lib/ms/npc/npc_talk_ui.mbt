@@ -1,7 +1,6 @@
 ///|
 struct UINpcTalk {
   hooks : @ui.Hooks
-  on_choice : (TalkChoice) -> Unit
   base : @ui.UIModel
   resource : NpcTalkResource
   mut speaker : @graphics.Texture
@@ -10,7 +9,7 @@ struct UINpcTalk {
   mut height : Int
   min_height : Int
   // slider:Slider
-  mut t : TalkType?
+  mut talk_action : TalkAction?
 }
 
 ///|
@@ -25,14 +24,14 @@ priv struct NPCTalkContent {
 }
 
 ///|
-pub(all) enum TalkType {
+pub enum TalkType {
   // SEND_TEXT_ONLY
   SEND_YESNO
   SEND_SIMPLE
   // SEND_ACCEPT_DECLINE
   SEND_OK // 0 0 0
   SEND_NEXT // 0 0 1
-  SEND_NEXT_PREV // 0 1 1
+  // SEND_NEXT_PREV // 0 1 1 unused
   SEND_PREV // 0 1 0
   // SEND_GET_TEXT
   // SEND_GET_NUMBER
@@ -54,7 +53,8 @@ pub fn TalkType::from_int(
         return Some(SEND_OK)
       }
       if is_next_prev {
-        return Some(SEND_NEXT_PREV)
+        // return Some(SEND_NEXT_PREV)
+        return None
       }
       if is_next {
         return Some(SEND_NEXT)
@@ -82,7 +82,7 @@ pub fn int_value(self : TalkType) -> Int {
     // below are determined by 2 style bytes when msgtype = 0
     SEND_OK => 13
     SEND_NEXT => 14
-    SEND_NEXT_PREV => 15
+    // SEND_NEXT_PREV => 15
     SEND_PREV => 16
     // SEND_GET_TEXT => 17
     // SEND_GET_NUMBER => 18
@@ -95,14 +95,14 @@ pub impl Hash for TalkType with hash_combine(self, hasher) {
 }
 
 ///|
-pub enum TalkChoice {
+pub(all) enum TalkChoice {
   SEND_YESNO(answer~ : Bool?)
   SEND_SIMPLE(option~ : Int?)
   SEND_OK(ok~ : Unit?)
   SEND_NEXT(next~ : Unit?)
-  SEND_NEXT_PREV(next~ : Bool?)
+  // SEND_NEXT_PREV(next~ : Bool?)
   SEND_PREV(prev~ : Unit?)
-}
+} derive(Show)
 
 ///|
 pub(all) struct NpcTalkResource {
@@ -186,8 +186,7 @@ pub fn NpcTalkResource::from_resource(
 ///|
 pub fn UINpcTalk::new(
   resource : NpcTalkResource,
-  hooks : @ui.Hooks,
-  on_choice~ : (TalkChoice) -> Unit = fn(_) {  }
+  hooks : @ui.Hooks
 ) -> UINpcTalk {
   let name = @graphics.Text::new(
     @graphics.FontId::A11M,
@@ -200,7 +199,6 @@ pub fn UINpcTalk::new(
   let speaker = @graphics.Texture::default()
   {
     hooks,
-    on_choice,
     base: hooks.ui_model,
     resource,
     speaker,
@@ -208,7 +206,7 @@ pub fn UINpcTalk::new(
     name,
     height,
     min_height,
-    t: None,
+    talk_action: None,
   }
 }
 
@@ -281,9 +279,16 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
         render_elements.push(
           element
           |> @ui.Button::new(on_click=fn() {
-            (self.on_choice)(
-              TalkChoice::SEND_SIMPLE(option=Some(element.get_option_number())),
-            )
+            match self.talk_action {
+              Some(SEND_SIMPLE(option)) =>
+                option(Some(element.get_option_number()))
+              _ =>
+                // @log.error(
+                //   { "talk_action": self.talk_action },
+                //   "expect SEND_SIMPLE",
+                // )
+                panic()
+            }
             None
           })
           |> @ui.Button::as_interactable,
@@ -298,17 +303,17 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
     self.resource.bt_close,
     pos=@struct.Point::new(9, y_cord),
   )
-  match self.t {
-    Some(t) =>
-      match t {
-        TalkType::SEND_YESNO => {
+  match self.talk_action {
+    Some(talk_action) =>
+      match talk_action {
+        SEND_YESNO(callback) => {
           render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_yes,
               pos=@struct.Point::new(389, y_cord),
             )
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_YESNO(answer=Some(true)))
+              callback(Some(true))
               None
             })
             |> @ui.Button::as_interactable,
@@ -319,7 +324,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
               pos=@struct.Point::new(461, y_cord),
             )
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_YESNO(answer=Some(false)))
+              callback(Some(false))
               None
             })
             |> @ui.Button::as_interactable,
@@ -327,20 +332,20 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_YESNO(answer=None))
+              callback(None)
               None
             })
             |> @ui.Button::as_interactable,
           )
         }
-        TalkType::SEND_NEXT => {
+        SEND_NEXT(callback) => {
           render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_next,
               pos=@struct.Point::new(461, y_cord - 30),
             )
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_NEXT(next=Some(())))
+              callback(Some(()))
               None
             })
             |> @ui.Button::as_interactable,
@@ -348,20 +353,20 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_NEXT(next=None))
+              callback(None)
               None
             })
             |> @ui.Button::as_interactable,
           )
         }
-        TalkType::SEND_PREV => {
+        SEND_PREV(callback) => {
           render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_prev,
               pos=@struct.Point::new(367, y_cord),
             )
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_PREV(prev=Some(())))
+              callback(Some(()))
               None
             })
             |> @ui.Button::as_interactable,
@@ -369,52 +374,53 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_PREV(prev=None))
+              callback(None)
               None
             })
             |> @ui.Button::as_interactable,
           )
         }
-        TalkType::SEND_NEXT_PREV => {
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_next,
-              pos=@struct.Point::new(461, y_cord - 30),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(true)))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_prev,
-              pos=@struct.Point::new(367, y_cord),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(false)))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=None))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-        }
-        TalkType::SEND_OK => {
+        // what does SEND_NEXT_PREV do?
+        // TalkType::SEND_NEXT_PREV => {
+        //   render_elements.push(
+        //     @ui.MapleButton::new(
+        //       self.resource.bt_next,
+        //       pos=@struct.Point::new(461, y_cord - 30),
+        //     )
+        //     |> @ui.Button::new(on_click=fn() {
+        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(true)))
+        //       None
+        //     })
+        //     |> @ui.Button::as_interactable,
+        //   )
+        //   render_elements.push(
+        //     @ui.MapleButton::new(
+        //       self.resource.bt_prev,
+        //       pos=@struct.Point::new(367, y_cord),
+        //     )
+        //     |> @ui.Button::new(on_click=fn() {
+        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(false)))
+        //       None
+        //     })
+        //     |> @ui.Button::as_interactable,
+        //   )
+        //   render_elements.push(
+        //     btn_close
+        //     |> @ui.Button::new(on_click=fn() {
+        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=None))
+        //       None
+        //     })
+        //     |> @ui.Button::as_interactable,
+        //   )
+        // }
+        SEND_OK(callback) => {
           render_elements.push(
             @ui.MapleButton::new(
               self.resource.bt_ok,
               pos=@struct.Point::new(469, y_cord),
             )
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_OK(ok=Some(())))
+              callback(Some(()))
               None
             })
             |> @ui.Button::as_interactable,
@@ -422,18 +428,18 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_OK(ok=None))
+              callback(None)
               None
             })
             |> @ui.Button::as_interactable,
           )
         }
-        TalkType::SEND_SIMPLE =>
+        SEND_SIMPLE(callback) =>
           // options handled in content, add close
           render_elements.push(
             btn_close
             |> @ui.Button::new(on_click=fn() {
-              (self.on_choice)(TalkChoice::SEND_SIMPLE(option=None))
+              callback(None)
               None
             })
             |> @ui.Button::as_interactable,
@@ -448,12 +454,12 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
 pub fn change_text(
   self : UINpcTalk,
   npcid : Int,
-  t : TalkType,
+  talk_action : TalkAction,
   speakerbyte : Speaker,
   tx : String,
   player_name : String
 ) -> Unit! {
-  self.t = Some(t)
+  self.talk_action = Some(talk_action)
   let content = convert_npc_text!(tx, npcid, player_name)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {

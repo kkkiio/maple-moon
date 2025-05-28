@@ -1,6 +1,7 @@
 ///|
 struct Module {
   quests_resource : QuestResource
+  name_loader : @markup_text.NameLoader
   mut player_quest_log : PlayerQuestLog
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
@@ -17,11 +18,13 @@ pub fn Module::load(
   @utils.Future::combine(fut, fut2).map_exn(fn(it) {
     let (node, map_quests_resource) = it
     let quests_resource : QuestResource = @json.from_json!(node.value())
+    let name_loader = @markup_text.NameLoader::load()
     Module::new(
       quests_resource,
       map_quests_resource.unwrap_or_error!(),
       network,
       open_npc_talk_ui,
+      name_loader,
     )
   })
 }
@@ -31,7 +34,8 @@ pub fn Module::new(
   quests_resource : QuestResource,
   map_quests_resource : MapQuestsResource,
   network : @net.Network,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+  name_loader : @markup_text.NameLoader
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
     .iter()
@@ -50,6 +54,7 @@ pub fn Module::new(
   let player_quest_log = PlayerQuestLog::default()
   {
     quests_resource,
+    name_loader,
     player_quest_log,
     quest_log_listeners: [],
     map_quests: MapQuests::new(
@@ -228,7 +233,7 @@ pub fn Module::handle_player_quest_info(
           quest_info,
           checks: checks.or([]),
           progress_data,
-          phase: 0,
+          phase: 1, // phase 0 is start requirements
           info_number_progress_map: {},
         },
       ),

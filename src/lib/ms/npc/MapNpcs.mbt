@@ -3,24 +3,18 @@ struct MapNpcs {
   open_npc_talk_ui : (TalkArgs) -> Unit
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
-  container : &@ui.Container
-  get_player_name : () -> String
   packet_processor : @net.Network
 }
 
 ///|
 pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
-  container : &@ui.Container,
-  get_player_name : () -> String,
   packet_processor : @net.Network
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
     npcs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
-    container,
-    get_player_name,
     packet_processor,
   }
 }
@@ -37,7 +31,9 @@ fn TalkToNpcPacket::new(oid : Int) -> TalkToNpcPacket {
 
 ///|
 impl @net.OutMessage for TalkToNpcPacket with pack(self) {
-  @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)..write_int(self.oid)
+  let p = @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)
+  p.write_int(self.oid)
+  p
 }
 
 ///|
@@ -86,7 +82,7 @@ pub fn clear(self : MapNpcs) -> Unit {
 }
 
 ///|
-pub fn send_cursor(
+pub fn MapNpcs::send_cursor(
   self : MapNpcs,
   pressed : Bool,
   position : @struct.Point[Int],
@@ -97,7 +93,16 @@ pub fn send_cursor(
     if npc.is_active() && npc.inrange(position, viewpos) {
       if pressed {
         match npc.talk() {
-          Some(talk_args) => (self.open_npc_talk_ui)(talk_args)
+          Some(talk_args) =>
+            (self.open_npc_talk_ui)({
+              ..talk_args,
+              talk_action: SEND_NEXT(fn(next) {
+                on_npc_talk_choice(
+                  self.packet_processor,
+                  TalkChoice::SEND_NEXT(next~),
+                )
+              }),
+            })
           None => ()
         }
         self.packet_processor.send_message(TalkToNpcPacket::new(npc.get_oid()))
@@ -161,13 +166,35 @@ struct Npc {
 ///|
 pub(all) struct TalkArgs {
   npc_id : Int
-  talk_type : TalkType
   speaker : Speaker
   str : String
+  talk_action : TalkAction
+}
+
+///| Talk action and callback
+pub(all) enum TalkAction {
+  SEND_YESNO((Bool?) -> Unit)
+  SEND_OK((Unit?) -> Unit)
+  SEND_NEXT((Unit?) -> Unit)
+  SEND_PREV((Unit?) -> Unit)
+  SEND_SIMPLE((Int?) -> Unit) // select option
 }
 
 ///|
-pub fn talk(self : Npc) -> TalkArgs? {
+// impl Show for TalkAction with output(self, logger) {
+//   logger.write_string(
+//     match self {
+//       SEND_YESNO(_) => "SEND_YESNO"
+//       SEND_OK(_) => "SEND_OK"
+//       SEND_NEXT(_) => "SEND_NEXT"
+//       SEND_PREV(_) => "SEND_PREV"
+//       SEND_SIMPLE(_) => "SEND_SIMPLE"
+//     },
+//   )
+// }
+
+///|
+pub fn Npc::talk(self : Npc) -> TalkArgs? {
   if self.scripted {
     return None
   }
@@ -179,7 +206,7 @@ pub fn talk(self : Npc) -> TalkArgs? {
     Some(str) =>
       Some({
         npc_id: self.npc_id,
-        talk_type: SEND_NEXT,
+        talk_action: SEND_NEXT(fn(_c) {  }), // TODO: init outside
         speaker: Speaker::NPC_LEFT,
         str,
       })

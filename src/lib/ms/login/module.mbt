@@ -220,6 +220,7 @@ impl @net.OutMessage for LoginMessage with pack(self) -> @net.OutPacket {
   ..write_byte(w)
   ..write_byte(i)
   ..write_byte(d)
+  packet
 }
 
 ///|
@@ -403,10 +404,12 @@ priv struct CharListRequestPacket {
 
 ///|
 impl @net.OutMessage for CharListRequestPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::CHAR_LIST_REQUEST)
+  let p = @net.OutPacket::new(@net.ClientOpcode::CHAR_LIST_REQUEST)
+  p
   ..write_byte((0).to_byte())
   ..write_byte(self.worldId.to_byte())
   ..write_byte(self.channelId.to_byte())
+  p
 }
 
 ///|
@@ -569,9 +572,10 @@ fn fn_tos(processor : @net.Network) -> Unit {
 priv struct AcceptTosPacket {} derive(Show, Default)
 
 ///|
-impl @net.OutMessage for AcceptTosPacket with pack(self) -> @net.OutPacket {
-  ignore(self)
-  @net.OutPacket::new(@net.ClientOpcode::ACCEPT_TOS)..write_byte((1).to_byte())
+impl @net.OutMessage for AcceptTosPacket with pack(_self) -> @net.OutPacket {
+  let p = @net.OutPacket::new(@net.ClientOpcode::ACCEPT_TOS)
+  p..write_byte((1).to_byte())
+  p
 }
 
 ///|

@@ -1,5 +1,5 @@
 ///|
-fn make_choice_packet(c : TalkChoice) -> @net.OutPacket {
+fn make_talk_packet(c : TalkChoice) -> @net.OutPacket {
   match c {
     TalkChoice::SEND_SIMPLE(option~) =>
       match option {
@@ -39,14 +39,14 @@ fn make_choice_packet(c : TalkChoice) -> @net.OutPacket {
           None => -1
         },
       )
-    TalkChoice::SEND_NEXT_PREV(next~) =>
-      new_npc_talk_more_packet(
-        TalkType::SEND_NEXT_PREV.int_value(),
-        match next {
-          Some(true) => 1
-          Some(false) => 0
-          None => -1
-        },
-      )
+    // TalkChoice::SEND_NEXT_PREV(next~) =>
+    //   new_npc_talk_more_packet(
+    //     TalkType::SEND_NEXT_PREV.int_value(),
+    //     match next {
+    //       Some(true) => 1
+    //       Some(false) => 0
+    //       None => -1
+    //     },
+    //   )
   }
 }

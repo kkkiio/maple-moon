@@ -128,7 +128,7 @@ let flag_range_attack : (Bool, Bool) = (true, true)
 ///|
 fn flags_of(id : Int) -> (Bool, Bool) {
   guard SkillId::from_int?(id) is Ok(id) else { flag_none }
-  skill_flags[id].or(flag_none)
+  skill_flags.get(id).or(flag_none)
 }
 
 ///| Skill flags, unfortunately these just have to be hard-coded

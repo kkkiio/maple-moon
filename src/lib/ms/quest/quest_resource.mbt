@@ -242,6 +242,7 @@ struct QuestPhaseChecks {
   npc : Int?
   info_number : Int?
   repeatable : Bool
+  monster_hunts : Array[MonHuntCheck]
   checks : Array[&QuestCheck]
   unknown_checks : Array[String]
 } derive(Show, Default)
@@ -287,6 +288,12 @@ fn NumbericInt::value(self : NumbericInt) -> Int {
 }
 
 ///|
+priv struct MonHuntCheck {
+  id : Int
+  count : Int
+} derive(Show, @json.FromJson)
+
+///|
 impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
   let obj = match json {
     Null => return QuestPhaseChecks::default()
@@ -298,6 +305,7 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
   let checks : Array[&QuestCheck] = []
   let unknown_checks : Array[String] = []
   let mut repeatable : Bool = false
+  let mut monster_hunts : Array[MonHuntCheck] = []
   for key, value in obj {
     let path = path.add_key(key)
     match key {
@@ -345,10 +353,18 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         )
         checks.push({ jobs: jobs._ })
       }
+      "mob" => {
+        let mob : @resource.MapBasedArray[MonHuntCheck] = @json.from_json!(
+          value,
+          path~,
+        )
+        monster_hunts = mob._
+        checks.push({ monster_hunts, })
+      }
       _ => unknown_checks.push(key)
     }
   }
-  { npc, info_number, repeatable, checks, unknown_checks }
+  { npc, info_number, repeatable, checks, unknown_checks, monster_hunts }
 }
 
 ///|

@@ -3,7 +3,7 @@ struct Module {
   npcs : MapNpcs
   container : &@ui.Container
   get_player_name : () -> String
-  util_dlg_ex : @resource.NxNode
+  npc_talk_resource : NpcTalkResource
   packet_processor : @net.Network
 }
 
@@ -15,7 +15,8 @@ pub fn Module::load(
 ) -> @utils.Future[Module] {
   @ui.ui_window_2_loader().load_res(["UtilDlgEx"])
   |> @utils.map(fn(it) {
-    Module::new(container, get_player_name, it, packet_processor)
+    let npc_talk_resource = NpcTalkResource::from_resource(it)
+    Module::new(container, get_player_name, npc_talk_resource, packet_processor)
   })
 }
 
@@ -23,42 +24,49 @@ pub fn Module::load(
 fn Module::new(
   container : &@ui.Container,
   get_player_name : () -> String,
-  util_dlg_ex : @resource.NxNode,
+  npc_talk_resource : NpcTalkResource,
   packet_processor : @net.Network
 ) -> Module {
   let npcs = MapNpcs::new(
-    fn(attrs) {  },
-    container,
-    get_player_name,
+    fn(args) {
+      open_npc_talk_ui(npc_talk_resource, container, get_player_name, args)
+    },
     packet_processor,
   )
-  { npcs, container, get_player_name, util_dlg_ex, packet_processor }
+  { npcs, container, get_player_name, npc_talk_resource, packet_processor }
 }
 
 ///|
 pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
+  open_npc_talk_ui(
+    self.npc_talk_resource,
+    self.container,
+    self.get_player_name,
+    args,
+  )
+}
+
+///|
+fn open_npc_talk_ui(
+  npc_talk_resource : NpcTalkResource,
+  container : &@ui.Container,
+  get_player_name : () -> String,
+  args : TalkArgs
+) -> Unit {
   let elem = @ui.Element::new(
     fn(hooks) {
       let ui = new_npc_talk_ui(
         hooks,
-        self.util_dlg_ex,
-        self.container,
-        self.packet_processor,
+        npc_talk_resource,
+        container,
+        args,
+        get_player_name(),
       )
-      ui
-      .change_text?(
-        args.npc_id,
-        args.talk_type,
-        args.speaker,
-        args.str,
-        (self.get_player_name)(),
-      )
-      .unwrap()
       ui
     },
     @ui.UIElementType::NPC_TALK,
   )
-  self.container.add_ui(elem, UINpcTalk::const_focused())
+  container.add_ui(elem, UINpcTalk::const_focused())
 }
 
 ///|
@@ -77,10 +85,10 @@ pub fn make_handlers(
     @net.make_handler(@net.NPC_DIALOGUE, parse_npc_dialogue, fn(
       dialogue : NpcDialogue
     ) {
-      handle_npc_dialogue_parsed(
+      handle_npc_dialogue(
         self.container,
         self.get_player_name,
-        self.util_dlg_ex,
+        self.npc_talk_resource,
         self.packet_processor,
         dialogue,
       )
@@ -207,28 +215,49 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
 }
 
 ///|
-pub fn handle_npc_dialogue_parsed(
+pub fn handle_npc_dialogue(
   container : &@ui.Container,
   get_player_name : () -> String,
-  util_dlg_ex : @resource.NxNode,
-  packet_processor : @net.Network,
+  npc_talk_resource : NpcTalkResource,
+  network : @net.Network,
   dialogue : NpcDialogue
 ) -> Unit {
   container.add_ui(
     @ui.Element::new(
       fn(hooks) {
         let ui = new_npc_talk_ui(
-          hooks, util_dlg_ex, container, packet_processor,
-        )
-        ui
-        .change_text?(
-          dialogue.npcid,
-          dialogue.t,
-          dialogue.speaker,
-          dialogue.text,
+          hooks,
+          npc_talk_resource,
+          container,
+          {
+            npc_id: dialogue.npcid,
+            speaker: dialogue.speaker,
+            str: dialogue.text,
+            talk_action: match dialogue.t {
+              TalkType::SEND_YESNO =>
+                SEND_YESNO(fn(c) {
+                  on_npc_talk_choice(network, TalkChoice::SEND_YESNO(answer=c))
+                })
+              TalkType::SEND_NEXT =>
+                SEND_NEXT(fn(c) {
+                  on_npc_talk_choice(network, TalkChoice::SEND_NEXT(next=c))
+                })
+              TalkType::SEND_PREV =>
+                SEND_PREV(fn(c) {
+                  on_npc_talk_choice(network, TalkChoice::SEND_PREV(prev=c))
+                })
+              TalkType::SEND_OK =>
+                SEND_OK(fn(c) {
+                  on_npc_talk_choice(network, TalkChoice::SEND_OK(ok=c))
+                })
+              TalkType::SEND_SIMPLE =>
+                SEND_SIMPLE(fn(c) {
+                  on_npc_talk_choice(network, TalkChoice::SEND_SIMPLE(option=c))
+                })
+            },
+          },
           get_player_name(),
         )
-        .unwrap() // TODO: handle error
         ui
       },
       @ui.UIElementType::NPC_TALK,
@@ -240,14 +269,51 @@ pub fn handle_npc_dialogue_parsed(
 ///|
 fn new_npc_talk_ui(
   hooks : @ui.Hooks,
-  util_dlg_ex : @resource.NxNode,
+  npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
-  packet_processor : @net.Network
+  args : TalkArgs,
+  player_name : String
 ) -> UINpcTalk {
-  UINpcTalk::new(NpcTalkResource::from_resource(util_dlg_ex), hooks, on_choice=fn(
-    c
-  ) {
-    container.remove_ui(@ui.UIElementType::NPC_TALK)
-    packet_processor.send_packet(make_choice_packet(c))
-  })
+  let ui = UINpcTalk::new(npc_talk_resource, hooks)
+  ui
+  .change_text?(
+    args.npc_id,
+    match args.talk_action {
+      SEND_YESNO(callback) =>
+        SEND_YESNO(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_NEXT(callback) =>
+        SEND_NEXT(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_PREV(callback) =>
+        SEND_PREV(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_OK(callback) =>
+        SEND_OK(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_SIMPLE(callback) =>
+        SEND_SIMPLE(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+    },
+    args.speaker,
+    args.str,
+    player_name,
+  )
+  .unwrap() // TODO: handle error
+  ui
+}
+
+///|
+fn on_npc_talk_choice(network : @net.Network, c : TalkChoice) -> Unit {
+  network.send_packet(make_talk_packet(c))
 }

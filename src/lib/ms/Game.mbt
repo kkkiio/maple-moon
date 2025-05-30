@@ -217,7 +217,6 @@ fn load_modules(
   // // packet_switch.push((ATTACKED_MAGIC, MagicAttackHandler::new()))
 
   // // Messaging handlers
-  // // packet_switch.push((SHOW_STATUS_INFO, ShowStatusInfoHandler::new()))
   // // packet_switch.push((CHAT_RECEIVED, ChatReceivedHandler::new()))
   // // packet_switch.push((SCROLL_RESULT, ScrollResultHandler::new()))
   // // packet_switch.push((SERVER_MESSAGE, ServerMessageHandler::new()))
@@ -250,6 +249,10 @@ fn load_modules(
     player.recalc_stats(false)
   })
   net_handler_map.set(change_stat_handler.0, change_stat_handler.1)
+  let show_status_info_handler = make_show_status_info_handler(
+    show_status_info_handler_map,
+  )
+  net_handler_map.set(show_status_info_handler.0, show_status_info_handler.1)
   let job_module = @job.Module::new(fn(job_id) {
     guard get_stage().get_player() is Some(player) else { return }
     player.change_job(job_id)
@@ -334,12 +337,12 @@ fn load_modules(
         true
       })
       let stage = Stage::new(
-        @map.get_portals_animations(map_module),
+        map_module.get_portals_animations(),
         monster_module.get_map_mobs(),
         drop_module.get_map_drops(),
         inventory_module.get_inventory(),
         npcs,
-        quest_module.get_map_quests(),
+        quests,
         char_look_module,
         skill_book_module,
         char_stats_mod,

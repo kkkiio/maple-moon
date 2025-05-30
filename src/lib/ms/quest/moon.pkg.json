@@ -26,8 +26,5 @@
         "forfeit_quest_ffi"
       ]
     }
-  },
-  "test-import": [
-    "moonbitlang/x/fs"
-  ]
+  }
 }

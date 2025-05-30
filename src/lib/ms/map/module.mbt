@@ -14,7 +14,7 @@ pub fn Module::load() -> @utils.Future[Module] {
 }
 
 ///|
-pub fn get_portals_animations(self : Module) -> MapPortalAnimations {
+pub fn Module::get_portals_animations(self : Module) -> MapPortalAnimations {
   self.portals_animations
 }
 

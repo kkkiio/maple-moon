@@ -2,10 +2,10 @@
 struct Module {
   quests_resource : QuestResource
   name_loader : @markup_text.NameLoader
-  mut player_quest_log : PlayerQuestLog
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
   network : @net.Network
+  player_quest_log : Ref[PlayerQuestLog]
 }
 
 ///|
@@ -51,15 +51,19 @@ pub fn Module::new(
       acc.get_or_init(npc_id, fn() { [] }).push(quest_id)
       acc
     })
-  let player_quest_log = PlayerQuestLog::default()
+  let player_quest_log = Ref::new(PlayerQuestLog::default())
   {
     quests_resource,
     name_loader,
     player_quest_log,
     quest_log_listeners: [],
-    map_quests: MapQuests::new(
-      map_quests_resource, quests_resource, player_quest_log, npc_quests_map, network,
+    map_quests: MapQuests::new( // TODO: update npc quests map when quest is completed
+      map_quests_resource,
+      quests_resource,
+      npc_quests_map,
+      network,
       open_npc_talk_ui,
+      fn(_) { player_quest_log.val },
     ),
     network,
   }
@@ -82,8 +86,7 @@ pub fn Module::make_show_status_info_handler_map(
         }
         2 => {
           let action : &@game_mod.SubRouteAction = ShowCompleteQuestAction::new(
-            quest_id,
-            recv.read_long!(),
+            { quest_id, completion_time: recv.read_long!() },
             self,
           )
           action
@@ -97,6 +100,40 @@ pub fn Module::make_show_status_info_handler_map(
           action
         }
       }
+    },
+    3: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction! {
+      let white = recv.read_bool!()
+      let gain = recv.read_int!()
+      let in_chat = recv.read_bool!()
+      let bonus_event_exp = recv.read_int!()
+      let third_monster_kill_event = recv.read_byte!()
+      let _ = recv.read_byte!() // rip_byte
+      let wedding_bonus = recv.read_int!()
+      let quest_bonus_rate = if in_chat {
+        Some(recv.read_byte!())
+      } else {
+        None
+      }
+      let party_bonus_multiplier = recv.read_byte!()
+      let party_bonus = recv.read_int!()
+      let equip_bonus = recv.read_int!()
+      let internet_cafe_bonus = recv.read_int!()
+      let rainbow_week_bonus = recv.read_int!()
+      let action : &@game_mod.SubRouteAction = ShowExpGainAction::new({
+        white,
+        gain,
+        in_chat,
+        bonus_event_exp,
+        third_monster_kill_event,
+        wedding_bonus,
+        quest_bonus_rate,
+        party_bonus_multiplier,
+        party_bonus,
+        equip_bonus,
+        internet_cafe_bonus,
+        rainbow_week_bonus,
+      })
+      action
     },
   }
 }
@@ -118,6 +155,7 @@ priv struct InProgressQuest {
   quest_id : Int
   quest_info : QuestInfo
   checks : Array[QuestPhaseChecks]
+  acts : Array[QuestPhaseAct]
   mut progress_data : String
   mut phase : Int
   info_number_progress_map : Map[Int, String]
@@ -232,6 +270,7 @@ pub fn Module::handle_player_quest_info(
           quest_id: id,
           quest_info,
           checks: checks.or([]),
+          acts: self.quests_resource.quest_acts_map.get(id).or([]),
           progress_data,
           phase: 1, // phase 0 is start requirements
           info_number_progress_map: {},
@@ -259,7 +298,7 @@ pub fn Module::handle_player_quest_info(
     }
     completed.push((quest_id, { quest_id, quest_info, completion_time }))
   }
-  self.player_quest_log = {
+  self.player_quest_log.val = {
     in_progress: Map::from_array(in_progress),
     info_number_quest_map: in_progress
     .iter()
@@ -275,7 +314,7 @@ pub fn Module::handle_player_quest_info(
     completed: Map::from_array(completed),
   }
   self.quest_log_listeners.retain(fn(listener) {
-    listener(self.player_quest_log)
+    listener(self.player_quest_log.val)
   })
 }
 
@@ -303,44 +342,48 @@ impl Show for ShowForfeitQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowForfeitQuestAction with handle(self) -> Unit {
-  self.mod.player_quest_log.in_progress.remove(self.quest_id)
+  self.mod.player_quest_log.val.in_progress.remove(self.quest_id)
   self.mod.quest_log_listeners.retain(fn(listener) {
-    listener(self.mod.player_quest_log)
+    listener(self.mod.player_quest_log.val)
   })
 }
 
 ///|
-priv struct ShowCompleteQuestAction {
+priv struct ShowCompleteQuestMessage {
   quest_id : Int
   completion_time : Int64
+} derive(Show)
+
+///|
+priv struct ShowCompleteQuestAction {
+  message : ShowCompleteQuestMessage
   mod : Module
 }
 
 ///|
 fn ShowCompleteQuestAction::new(
-  quest_id : Int,
-  completion_time : Int64,
+  message : ShowCompleteQuestMessage,
   mod : Module
 ) -> ShowCompleteQuestAction {
-  { quest_id, completion_time, mod }
+  { message, mod }
 }
 
 ///|
 impl Show for ShowCompleteQuestAction with output(self, logger) {
-  logger.write_string(
-    "{quest_id:\{self.quest_id}, completion_time:\{self.completion_time}}",
-  )
+  self.message.output(logger)
 }
 
 ///|
 impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> Unit {
-  let quest_info = self.mod.quests_resource.quest_info_map.get(self.quest_id)
+  let quest_id = self.message.quest_id
+  let completion_time = self.message.completion_time
+  let quest_info = self.mod.quests_resource.quest_info_map.get(quest_id)
   let quest_info = if quest_info is Some(quest_info) {
     quest_info
   } else {
-    @log.warn({ "quest_id": self.quest_id }, "quest info not found")
+    @log.warn({ "quest_id": quest_id }, "quest info not found")
     {
-      name: "Unknown Quest \{self.quest_id}",
+      name: "Unknown Quest \{quest_id}",
       parent: None,
       area: 0,
       order: None,
@@ -350,14 +393,14 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
       descriptions: [],
     }
   }
-  self.mod.player_quest_log.in_progress.remove(self.quest_id)
-  self.mod.player_quest_log.completed[self.quest_id] = {
-    quest_id: self.quest_id,
+  self.mod.player_quest_log.val.in_progress.remove(quest_id)
+  self.mod.player_quest_log.val.completed[quest_id] = {
+    quest_id,
     quest_info,
-    completion_time: self.completion_time,
+    completion_time,
   }
   self.mod.quest_log_listeners.retain(fn(listener) {
-    listener(self.mod.player_quest_log)
+    listener(self.mod.player_quest_log.val)
   })
 }
 
@@ -386,12 +429,13 @@ impl Show for ShowUpdateQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
-  guard self.mod.player_quest_log.in_progress.get(self.quest_id) is Some(quest) else {
+  guard self.mod.player_quest_log.val.in_progress.get(self.quest_id)
+    is Some(quest) else {
     return
   }
   quest.progress_data = self.progress_data
   self.mod.quest_log_listeners.retain(fn(listener) {
-    listener(self.mod.player_quest_log)
+    listener(self.mod.player_quest_log.val)
   })
 }
 
@@ -470,4 +514,41 @@ fn check_quest_requirements(
 ///|
 fn is_quest_status_can_start(status : StartedQuest?, repeatable : Bool) -> Bool {
   status is None || (status is Some(Completed(_)) && repeatable)
+}
+
+///|
+priv struct ShowExpGainMessage {
+  white : Bool
+  gain : Int
+  in_chat : Bool
+  bonus_event_exp : Int
+  third_monster_kill_event : Int
+  wedding_bonus : Int
+  quest_bonus_rate : Int?
+  party_bonus_multiplier : Int
+  party_bonus : Int
+  equip_bonus : Int
+  internet_cafe_bonus : Int
+  rainbow_week_bonus : Int
+} derive(Show)
+
+///|
+priv struct ShowExpGainAction {
+  message : ShowExpGainMessage
+}
+
+///|
+fn ShowExpGainAction::new(message : ShowExpGainMessage) -> ShowExpGainAction {
+  { message, }
+}
+
+///|
+impl Show for ShowExpGainAction with output(self, logger) {
+  logger.write_string("{message:\{self.message}}")
+}
+
+///|
+impl @game_mod.SubRouteAction for ShowExpGainAction with handle(_) -> Unit {
+  // TODO: Add UI handling to display EXP gain popup/notification
+  // TODO: Add any quest-related EXP gain processing if needed
 }

@@ -740,7 +740,7 @@ fn parse_login(recv : @net.InPacket) -> (String, Int)! {
     addrstr.push(recv.read_byte!())
   }
   let portstr = recv.read_short!()
-  (@string.concat(addrstr.map(fn(b) { b.to_string() }), separator="."), portstr)
+  (Array::join(addrstr.map(fn(b) { b.to_string() }), "."), portstr)
 }
 
 ///| Represents a request to log in to a channel server with a specific character

@@ -82,7 +82,7 @@ pub fn watch_quest_log_ffi(
     }
     callback(quests)
   }
-  if not(cb2(mod.player_quest_log)) {
+  if not(cb2(mod.player_quest_log.val)) {
     return
   }
   mod.quest_log_listeners.push(cb2)
@@ -91,10 +91,10 @@ pub fn watch_quest_log_ffi(
 ///|
 fn parse_quest_desc(
   s : String,
-  progress_provider~ : (@string.StringView) -> @string.StringView! = fn(v) { v },
-  mod_provider~ : (@string.StringView) -> @string.StringView! = fn(v) { v },
-  npc_provider~ : (@string.StringView) -> @string.StringView! = fn(v) { v },
-  check_provider~ : (@string.StringView) -> @string.StringView! = fn(v) { v }
+  progress_provider~ : (@string.View) -> @string.View! = fn(v) { v },
+  mod_provider~ : (@string.View) -> @string.View! = fn(v) { v },
+  npc_provider~ : (@string.View) -> @string.View! = fn(v) { v },
+  check_provider~ : (@string.View) -> @string.View! = fn(v) { v }
 ) -> String! {
   let tag_replace_map = {
     'R': progress_provider,

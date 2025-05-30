@@ -5,11 +5,11 @@ struct MapQuests {
   resource : MapQuestsResource
   quests : @map_object.MapObjects[NpcQuest]
   quests_resource : QuestResource
-  player_quest_log : PlayerQuestLog
   npc_quests_map : Map[Int, Array[Int]]
-  mut player : @player.Player? // TODO: init on new
+  mut player_and_quest_log : (@player.Player, PlayerQuestLog)? // TODO: init on new
   network : @net.Network
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  get_player_quest_log : (@player.Player) -> PlayerQuestLog
 }
 
 ///| Resources for MapQuests - holds icons for different quest states
@@ -51,26 +51,28 @@ pub fn MapQuestsResource::load() ->
 fn MapQuests::new(
   resource : MapQuestsResource,
   quests_resource : QuestResource,
-  player_quest_log : PlayerQuestLog,
   npc_quests_map : Map[Int, Array[Int]],
   network : @net.Network,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+  get_player_quest_log : (@player.Player) -> PlayerQuestLog
 ) -> MapQuests {
   {
     resource,
     quests: @map_object.MapObjects::new(),
     quests_resource,
-    player_quest_log,
     npc_quests_map,
-    player: None,
+    player_and_quest_log: None,
     network,
     open_npc_talk_ui,
+    get_player_quest_log,
   }
 }
 
 ///|
 pub fn MapQuests::set_player(self : MapQuests, player : @player.Player) -> Unit {
-  self.player = Some(player)
+  self.player_and_quest_log = Some(
+    (player, (self.get_player_quest_log)(player)),
+  )
 }
 
 ///|
@@ -95,7 +97,7 @@ pub fn MapQuests::add_npc(
   npc_id : Int,
   npc_object : @physics.MovingObject
 ) -> Unit {
-  guard self.player is Some(player) else {
+  guard self.player_and_quest_log is Some((player, player_quest_log)) else {
     @log.error({ "npc_id": npc_id }, "player not set yet")
     return
   }
@@ -114,7 +116,7 @@ pub fn MapQuests::add_npc(
   let quest_ids = list_quests_by_npc(self.npc_quests_map, npc_id)
   // Check for completable quests
   for quest_id in quest_ids {
-    let stated_quest = self.player_quest_log.get_quest(quest_id)
+    let stated_quest = player_quest_log.get_quest(quest_id)
     match stated_quest {
       Some(InProgress(quest)) =>
         if quest.checks
@@ -123,7 +125,7 @@ pub fn MapQuests::add_npc(
             check_quest_requirements(
               it,
               player,
-              self.player_quest_log,
+              player_quest_log,
               quest_id,
               quest.phase,
             ).is_ok()
@@ -149,7 +151,7 @@ pub fn MapQuests::add_npc(
       quest_ids.iter(),
       self.quests_resource,
       player,
-      self.player_quest_log,
+      player_quest_log,
     ).peek()
     is Some((quest_id, _)) {
     let icon_animation = self.resource.available_quest_icon
@@ -161,7 +163,7 @@ pub fn MapQuests::add_npc(
 
   // Check for in-progress quests if no available/completable found
   for quest_id in quest_ids {
-    let stated_quest = self.player_quest_log.get_quest(quest_id)
+    let stated_quest = player_quest_log.get_quest(quest_id)
     match stated_quest {
       Some(InProgress(quest)) =>
         if quest.checks.get(0).map_or(false, fn(it) { it.npc == Some(npc_id) }) {
@@ -213,7 +215,6 @@ pub fn MapQuests::send_cursor(
   None
 }
 
-
 ///|
 priv enum TalkState {
   Next(Int)
@@ -223,12 +224,12 @@ priv enum TalkState {
 
 ///|
 fn talk_about_quest(
-  quest : NpcQuest,
+  npc_quest : NpcQuest,
   quest_says : Array[QuestPhaseSays],
   network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> Unit {
-  let phase = quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
+  let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
   let says = quest_says[phase]
   fn next_talk(state : TalkState, choice : @npc.TalkChoice) {
     @log.info({ "state": state, "choice": choice }, "next_talk")
@@ -237,20 +238,25 @@ fn talk_about_quest(
         match state {
           Next(i) =>
             if says.says.get(i) is Some(str) {
-              let need_reply = says.says.get(i + 1) is None
+              let pause = says.says.get(i + 1) is None
               open_npc_talk_ui({
-                npc_id: quest.npc_id,
-                talk_action: if need_reply {
-                  @npc.TalkAction::SEND_YESNO(fn(c) {
-                    next_talk(
-                      YesReply(0),
-                      @npc.TalkChoice::SEND_YESNO(answer=c),
-                    )
-                  })
-                } else {
-                  @npc.TalkAction::SEND_NEXT(fn(c) {
-                    next_talk(Next(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
-                  })
+                npc_id: npc_quest.npc_id,
+                talk_action: match (pause, says.yes_reply.is_empty()) {
+                  (true, true) =>
+                    @npc.TalkAction::SEND_OK(fn(c) {
+                      next_talk(Next(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
+                    })
+                  (true, false) =>
+                    @npc.TalkAction::SEND_YESNO(fn(c) {
+                      next_talk(
+                        YesReply(0),
+                        @npc.TalkChoice::SEND_YESNO(answer=c),
+                      )
+                    })
+                  (false, _) =>
+                    @npc.TalkAction::SEND_NEXT(fn(c) {
+                      next_talk(Next(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                    })
                 },
                 speaker: @npc.Speaker::NPC_LEFT,
                 str,
@@ -259,7 +265,7 @@ fn talk_about_quest(
           YesReply(i) =>
             if says.yes_reply.get(i) is Some(str) {
               open_npc_talk_ui({
-                npc_id: quest.npc_id,
+                npc_id: npc_quest.npc_id,
                 talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
                   next_talk(YesReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
                 }),
@@ -270,7 +276,7 @@ fn talk_about_quest(
           NoReply(i) =>
             if says.no_reply.get(i) is Some(str) {
               open_npc_talk_ui({
-                npc_id: quest.npc_id,
+                npc_id: npc_quest.npc_id,
                 talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
                   next_talk(NoReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
                 }),
@@ -281,19 +287,19 @@ fn talk_about_quest(
         }
       SEND_YESNO(answer=Some(true)) => {
         // accept quest
-        match quest.in_progress_quest {
+        match npc_quest.in_progress_quest {
           None =>
             network.send_message(
               QuestActionMessage::StartQuest(
-                quest_id=quest.quest_id,
-                npc_id=quest.npc_id,
+                quest_id=npc_quest.quest_id,
+                npc_id=npc_quest.npc_id,
               ),
             )
           Some((_, true)) =>
             network.send_message(
               QuestActionMessage::CompleteQuest(
-                quest_id=quest.quest_id,
-                npc_id=quest.npc_id,
+                quest_id=npc_quest.quest_id,
+                npc_id=npc_quest.npc_id,
                 selection=None,
               ),
             )
@@ -301,7 +307,7 @@ fn talk_about_quest(
         }
         if says.yes_reply.get(0) is Some(str) {
           open_npc_talk_ui({
-            npc_id: quest.npc_id,
+            npc_id: npc_quest.npc_id,
             talk_action: @npc.TalkAction::SEND_YESNO(fn(c) {
               next_talk(YesReply(0), @npc.TalkChoice::SEND_YESNO(answer=c))
             }),
@@ -310,6 +316,23 @@ fn talk_about_quest(
           })
         }
       }
+      SEND_OK(ok=Some(_)) => // stop talking
+        if npc_quest.in_progress_quest is Some((quest, true)) {
+          if quest.acts.get(quest.phase) is Some(act) &&
+            act.unknown_acts.length() > 0 {
+            @log.error({ "quest_id": quest.quest_id }, "exists unknown act")
+            panic()
+          }
+          network.send_message(
+            QuestActionMessage::CompleteQuest(
+              quest_id=npc_quest.quest_id,
+              npc_id=npc_quest.npc_id,
+              selection=None,
+            ),
+          )
+        }
+      // cancel
+      SEND_NEXT(next=None) | SEND_OK(ok=None) | SEND_YESNO(answer=None) => ()
       _ => ...
     }
   }

@@ -517,10 +517,12 @@ pub(all) struct ChangeMapMessage {
 
 ///|
 pub impl @net.OutMessage for ChangeMapMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::CHANGE_MAP)
+  let p = @net.OutPacket::new(@net.ClientOpcode::CHANGE_MAP)
+  p
   ..write_byte(self.died.to_int().to_byte())
   ..write_int(self.target_id)
   ..write_string(self.target_p)
   ..skip(1)
   ..write_short(if self.use_wheel { 1 } else { 0 })
+  p
 }

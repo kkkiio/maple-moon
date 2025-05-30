@@ -217,7 +217,7 @@ pub fn MapQuests::send_cursor(
 
 ///|
 priv enum TalkState {
-  Next(Int)
+  Talk(Int)
   YesReply(Int)
   NoReply(Int)
 } derive(Show)
@@ -236,66 +236,65 @@ fn talk_about_quest(
     match choice {
       SEND_NEXT(next=Some(_)) =>
         match state {
-          Next(i) =>
-            if says.says.get(i) is Some(str) {
-              let pause = says.says.get(i + 1) is None
-              open_npc_talk_ui({
-                npc_id: npc_quest.npc_id,
-                talk_action: match (pause, says.yes_reply.is_empty()) {
-                  (true, true) =>
-                    @npc.TalkAction::SEND_OK(fn(c) {
-                      next_talk(Next(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
-                    })
-                  (true, false) =>
-                    @npc.TalkAction::SEND_YESNO(fn(c) {
-                      next_talk(
-                        YesReply(0),
-                        @npc.TalkChoice::SEND_YESNO(answer=c),
-                      )
-                    })
-                  (false, _) =>
-                    @npc.TalkAction::SEND_NEXT(fn(c) {
-                      next_talk(Next(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
-                    })
-                },
-                speaker: @npc.Speaker::NPC_LEFT,
-                str,
-              })
-            }
-          YesReply(i) =>
-            if says.yes_reply.get(i) is Some(str) {
-              open_npc_talk_ui({
-                npc_id: npc_quest.npc_id,
-                talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
-                  next_talk(YesReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
-                }),
-                speaker: @npc.Speaker::NPC_LEFT,
-                str,
-              })
-            }
-          NoReply(i) =>
-            if says.no_reply.get(i) is Some(str) {
-              open_npc_talk_ui({
-                npc_id: npc_quest.npc_id,
-                talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
-                  next_talk(NoReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
-                }),
-                speaker: @npc.Speaker::NPC_LEFT,
-                str,
-              })
-            }
+          Talk(i) => {
+            guard says.says.get(i) is Some(str) else { return }
+            let pause = says.says.get(i + 1) is None
+            open_npc_talk_ui({
+              npc_id: npc_quest.npc_id,
+              talk_action: match (pause, says.yes_reply.is_empty()) {
+                (true, true) =>
+                  @npc.TalkAction::SEND_OK(fn(c) {
+                    next_talk(Talk(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
+                  })
+                (true, false) =>
+                  @npc.TalkAction::SEND_YESNO(fn(c) {
+                    next_talk(
+                      YesReply(0),
+                      @npc.TalkChoice::SEND_YESNO(answer=c),
+                    )
+                  })
+                (false, _) =>
+                  @npc.TalkAction::SEND_NEXT(fn(c) {
+                    next_talk(Talk(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                  })
+              },
+              speaker: @npc.Speaker::NPC_LEFT,
+              str,
+            })
+          }
+          YesReply(i) => {
+            guard says.yes_reply.get(i) is Some(str) else { return }
+            open_npc_talk_ui({
+              npc_id: npc_quest.npc_id,
+              talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+                next_talk(YesReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+              }),
+              speaker: @npc.Speaker::NPC_LEFT,
+              str,
+            })
+          }
+          NoReply(i) => {
+            guard says.no_reply.get(i) is Some(str) else { return }
+            open_npc_talk_ui({
+              npc_id: npc_quest.npc_id,
+              talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+                next_talk(NoReply(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+              }),
+              speaker: @npc.Speaker::NPC_LEFT,
+              str,
+            })
+          }
         }
       SEND_YESNO(answer=Some(true)) => {
-        // accept quest
         match npc_quest.in_progress_quest {
-          None =>
+          None => // accept quest
             network.send_message(
               QuestActionMessage::StartQuest(
                 quest_id=npc_quest.quest_id,
                 npc_id=npc_quest.npc_id,
               ),
             )
-          Some((_, true)) =>
+          Some((_, true)) => // complete quest
             network.send_message(
               QuestActionMessage::CompleteQuest(
                 quest_id=npc_quest.quest_id,
@@ -305,16 +304,26 @@ fn talk_about_quest(
             )
           _ => ()
         }
-        if says.yes_reply.get(0) is Some(str) {
-          open_npc_talk_ui({
-            npc_id: npc_quest.npc_id,
-            talk_action: @npc.TalkAction::SEND_YESNO(fn(c) {
-              next_talk(YesReply(0), @npc.TalkChoice::SEND_YESNO(answer=c))
-            }),
-            speaker: @npc.Speaker::NPC_LEFT,
-            str,
-          })
-        }
+        guard says.yes_reply.get(0) is Some(str) else { return }
+        open_npc_talk_ui({
+          npc_id: npc_quest.npc_id,
+          talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+            next_talk(YesReply(0), @npc.TalkChoice::SEND_NEXT(next=c))
+          }),
+          speaker: @npc.Speaker::NPC_LEFT,
+          str,
+        })
+      }
+      SEND_YESNO(answer=Some(false)) => {
+        guard says.no_reply.get(0) is Some(str) else { return }
+        open_npc_talk_ui({
+          npc_id: npc_quest.npc_id,
+          talk_action: @npc.TalkAction::SEND_NEXT(fn(c) {
+            next_talk(NoReply(0), @npc.TalkChoice::SEND_NEXT(next=c))
+          }),
+          speaker: @npc.Speaker::NPC_LEFT,
+          str,
+        })
       }
       SEND_OK(ok=Some(_)) => // stop talking
         if npc_quest.in_progress_quest is Some((quest, true)) {
@@ -337,7 +346,7 @@ fn talk_about_quest(
     }
   }
 
-  next_talk(Next(0), @npc.TalkChoice::SEND_NEXT(next=Some(())))
+  next_talk(Talk(0), @npc.TalkChoice::SEND_NEXT(next=Some(()))) // TODO: show hint if quest is in progress
 }
 
 ///| Represents a quest on the current map

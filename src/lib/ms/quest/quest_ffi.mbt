@@ -50,6 +50,7 @@ pub fn watch_quest_log_ffi(
             )
             "\{current_count} / \{check.count}"
           },
+          map_provider=fn(v) { mod.name_loader.get_map_name!(v).to_string() },
         ) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
@@ -94,13 +95,15 @@ fn parse_quest_desc(
   progress_provider~ : (@string.View) -> @string.View! = fn(v) { v },
   mod_provider~ : (@string.View) -> @string.View! = fn(v) { v },
   npc_provider~ : (@string.View) -> @string.View! = fn(v) { v },
-  check_provider~ : (@string.View) -> @string.View! = fn(v) { v }
+  check_provider~ : (@string.View) -> @string.View! = fn(v) { v },
+  map_provider~ : (@string.View) -> @string.View! = fn(v) { v }
 ) -> String! {
   let tag_replace_map = {
     'R': progress_provider,
     'o': mod_provider,
     'p': npc_provider,
     'a': check_provider,
+    'm': map_provider,
   }
   let node = @markup_text.parse_markup!(s, tag_map)
   let html = to_html!(
@@ -130,10 +133,15 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.color_map
     .keys()
     .map(fn(c : Char) { (c, @markup_text.MarkupType::SelfClosing) }),
   )
-  .append((info_number_tag, @markup_text.MarkupType::Pair))
-  .append((mob_tag, @markup_text.MarkupType::Pair))
-  .append((a_tag, @markup_text.MarkupType::Pair))
-  .append((@markup_text.npc_tag.0, @markup_text.npc_tag.1))
+  .concat(
+    [
+      (info_number_tag, @markup_text.MarkupType::Pair),
+      (mob_tag, @markup_text.MarkupType::Pair),
+      (a_tag, @markup_text.MarkupType::Pair),
+      (@markup_text.npc_tag.0, @markup_text.npc_tag.1),
+      (@markup_text.map_tag.0, @markup_text.map_tag.1),
+    ].iter(),
+  )
   |> Map::from_iter
 
 ///|
@@ -141,7 +149,7 @@ fn to_html(
   nodes : Array[@markup_text.Node],
   default_color : ColorName,
   color_map : Map[Char, ColorName],
-  tag_replace_map : Map[Char, (@string.StringView) -> @string.StringView!]
+  tag_replace_map : Map[Char, (@string.View) -> @string.View!]
 ) -> String! {
   let mut bold = false
   let mut current_color = default_color
@@ -219,22 +227,7 @@ test "parse quest bold desc" {
 }
 
 ///|
-test "parse mob name" {
-  let q2082_1_desc = parse_quest_desc!(
-    "I met Ayan of Perion. Apparently, she cannot remember anything about her childhood, and she lives everyday in fear of Stumps. So scared, in fact, that she can't even dare to look at it. Accompanied by this paralyzing fear of Stumps, she cannot take one step out of Perion, and asks me to take them out for her sake. Are they really THAT scary? \\n\\n#o0130100# #r#a20821##k",
-  )
-  inspect!(
-    q2082_1_desc,
-    content=
-      #|<span style="color: black">I met Ayan of Perion. Apparently, she cannot remember anything about her childhood, and she lives everyday in fear of Stumps. So scared, in fact, that she can't even dare to look at it. Accompanied by this paralyzing fear of Stumps, she cannot take one step out of Perion, and asks me to take them out for her sake. Are they really THAT scary? <br>
-      #|<br>
-      #|</span>0130100<span style="color: black"> </span>20821
-    ,
-  )
-}
-
-///|
-test "parse a tag" {
+test "parse monster hunt check count" {
   let q1016_1_desc = parse_quest_desc!(
     "I decided to get trained under the Famous Sword-Master, Mai, in Amherst. I guess hunting the weakest monsters is a good idea. Should I hunt Snail, Blue Snail, and Shroom in order?\\n\\n#o100100# #r#a10161# #k\\n#o100101#  #r#a10162# #k\\n#o120100# #r#a10163##k\\n\\n Ah, Mai told me to meet with #p20002# in Southperry and try training together...",
   )
@@ -249,6 +242,19 @@ test "parse a tag" {
       #|<br>
       #| Ah, Mai told me to meet with </span>20002<span style="color: black"> in Southperry and try training together...</span>
     ,
+  )
+}
+
+///|
+test "parse map name" {
+  let desc = parse_quest_desc!(
+    "She says there are way too many Snails and would like you to eliminate 10 #rRed Snails#k and 10 #rBlue Snails#k.\\n\\nLet's report back to #bAyan#k in #b#m102000000##k upon completion.",
+  )
+  inspect!(desc, content=
+    
+    #|<span style="color: black">She says there are way too many Snails and would like you to eliminate 10 </span><span style="color: red">Red Snails</span><span style="color: black"> and 10 </span><span style="color: red">Blue Snails</span><span style="color: black">.<br>
+    #|<br>
+    #|Let's report back to </span><span style="color: blue">Ayan</span><span style="color: black"> in </span>102000000<span style="color: black"> upon completion.</span>
   )
 }
 

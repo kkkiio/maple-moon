@@ -205,3 +205,46 @@ pub fn find_ladder(
 pub fn MapInfo::get_full_name(self : MapInfo) -> String {
   self.street_name + " : " + self.map_name
 }
+
+///|
+pub fn get_map_category(map_id : Int) -> String {
+  if map_id < 100000000 {
+    return "maple"
+  }
+  if map_id < 200000000 {
+    return "victoria"
+  }
+  if map_id < 300000000 {
+    return "ossyria"
+  }
+  if map_id < 540000000 {
+    return "elin"
+  }
+  if map_id < 600000000 {
+    return "singapore"
+  }
+  if map_id < 670000000 {
+    return "MasteriaGL"
+  }
+  if map_id < 682000000 {
+    let prefix3 = map_id / 1000000 * 1000000
+    let prefix4 = map_id / 100000 * 100000
+    if prefix3 == 674000000 || prefix4 == 680100000 || prefix4 == 889100000 {
+      return "etc"
+    }
+    if prefix3 == 677000000 {
+      return "Episode1GL"
+    }
+    return "weddingGL"
+  }
+  if map_id < 683000000 {
+    return "HalloweenGL"
+  }
+  if map_id < 800000000 {
+    return "event"
+  }
+  if map_id < 900000000 {
+    return "jp"
+  }
+  return "etc"
+}

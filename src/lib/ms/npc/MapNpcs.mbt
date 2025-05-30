@@ -178,7 +178,7 @@ pub(all) enum TalkAction {
   SEND_NEXT((Unit?) -> Unit)
   SEND_PREV((Unit?) -> Unit)
   SEND_SIMPLE((Int?) -> Unit) // select option
-}
+} derive(Show)
 
 ///|
 // impl Show for TalkAction with output(self, logger) {

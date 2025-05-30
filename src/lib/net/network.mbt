@@ -50,18 +50,13 @@ pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
 }
 
 ///| send message to the server
-pub fn send_message[T : OutMessage](
+pub fn[T : OutMessage] Network::send_message(
   self : Network,
   message : T,
   log_level~ : @log.Level = @log.Level::DEBUG,
   loc~ : SourceLoc = _
 ) -> Unit {
-  @log.log(
-    log_level,
-    { "message": message.to_string() },
-    "sending packet",
-    loc~,
-  )
+  @log.log(log_level, { "message": message.to_string() }, "send", loc~)
   self.process_out(message.pack().encode())
 }
 
@@ -115,9 +110,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   let recv = InPacket::new(bytes)
 
   // Read the opcode to determine handler responsible
-  let opcode = try {
-    Opcode::from_int!(recv.read_ushort!())
-  } catch {
+  let opcode = try Opcode::from_int!(recv.read_ushort!()) catch {
     UnknownOpCodeError(opcode) => {
       @log.warn(
         { "opcode": @utils.to_hex_string(opcode.reinterpret_as_uint()) },
@@ -149,9 +142,7 @@ pub fn with_log(
         "received",
       )
     }
-    try {
-      handler!(recv)
-    } catch {
+    try handler!(recv) catch {
       err =>
         @log.error({ "opcode": opcode, "err": err }, "handle packet failed")
     }
@@ -159,7 +150,7 @@ pub fn with_log(
 }
 
 ///|
-pub fn make_handler[T : Show](
+pub fn[T : Show] make_handler(
   opcode : Opcode,
   parser : (InPacket) -> T!,
   handler : (T) -> Unit,
@@ -169,9 +160,7 @@ pub fn make_handler[T : Show](
   (
     opcode,
     fn(recv) {
-      let message = try {
-        parser!(recv)
-      } catch {
+      let message = try parser!(recv) catch {
         err => {
           @log.error(
             { "op": opcode, "err": err, "raw_body": recv.bytes },

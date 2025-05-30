@@ -3,6 +3,7 @@ struct UINpcTalk {
   hooks : @ui.Hooks
   base : @ui.UIModel
   resource : NpcTalkResource
+  name_loader : @markup_text.NameLoader
   mut speaker : @graphics.Texture
   mut content : NPCTalkContent?
   name : @graphics.Text
@@ -197,10 +198,12 @@ pub fn UINpcTalk::new(
   let height = 0
   let min_height = 8 * resource.fill.height() + 14
   let speaker = @graphics.Texture::default()
+  let name_loader = @markup_text.NameLoader::new(@resource.string_loader())
   {
     hooks,
     base: hooks.ui_model,
     resource,
+    name_loader,
     speaker,
     content: None,
     name,
@@ -303,148 +306,113 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
     self.resource.bt_close,
     pos=@struct.Point::new(9, y_cord),
   )
+  @log.debug({ "talk_action": self.talk_action }, "render talk action")
   match self.talk_action {
-    Some(talk_action) =>
-      match talk_action {
-        SEND_YESNO(callback) => {
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_yes,
-              pos=@struct.Point::new(389, y_cord),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              callback(Some(true))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_no,
-              pos=@struct.Point::new(461, y_cord),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              callback(Some(false))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              callback(None)
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-        }
-        SEND_NEXT(callback) => {
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_next,
-              pos=@struct.Point::new(461, y_cord - 30),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              callback(Some(()))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              callback(None)
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-        }
-        SEND_PREV(callback) => {
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_prev,
-              pos=@struct.Point::new(367, y_cord),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              callback(Some(()))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              callback(None)
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-        }
-        // what does SEND_NEXT_PREV do?
-        // TalkType::SEND_NEXT_PREV => {
-        //   render_elements.push(
-        //     @ui.MapleButton::new(
-        //       self.resource.bt_next,
-        //       pos=@struct.Point::new(461, y_cord - 30),
-        //     )
-        //     |> @ui.Button::new(on_click=fn() {
-        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(true)))
-        //       None
-        //     })
-        //     |> @ui.Button::as_interactable,
-        //   )
-        //   render_elements.push(
-        //     @ui.MapleButton::new(
-        //       self.resource.bt_prev,
-        //       pos=@struct.Point::new(367, y_cord),
-        //     )
-        //     |> @ui.Button::new(on_click=fn() {
-        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=Some(false)))
-        //       None
-        //     })
-        //     |> @ui.Button::as_interactable,
-        //   )
-        //   render_elements.push(
-        //     btn_close
-        //     |> @ui.Button::new(on_click=fn() {
-        //       (self.on_choice)(TalkChoice::SEND_NEXT_PREV(next=None))
-        //       None
-        //     })
-        //     |> @ui.Button::as_interactable,
-        //   )
-        // }
-        SEND_OK(callback) => {
-          render_elements.push(
-            @ui.MapleButton::new(
-              self.resource.bt_ok,
-              pos=@struct.Point::new(469, y_cord),
-            )
-            |> @ui.Button::new(on_click=fn() {
-              callback(Some(()))
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              callback(None)
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-        }
-        SEND_SIMPLE(callback) =>
-          // options handled in content, add close
-          render_elements.push(
-            btn_close
-            |> @ui.Button::new(on_click=fn() {
-              callback(None)
-              None
-            })
-            |> @ui.Button::as_interactable,
-          )
-      }
+    Some(SEND_YESNO(callback)) => {
+      render_elements.push(
+        @ui.MapleButton::new(
+          self.resource.bt_yes,
+          pos=@struct.Point::new(389, y_cord),
+        )
+        |> @ui.Button::new(on_click=fn() {
+          callback(Some(true))
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+      render_elements.push(
+        @ui.MapleButton::new(
+          self.resource.bt_no,
+          pos=@struct.Point::new(461, y_cord),
+        )
+        |> @ui.Button::new(on_click=fn() {
+          callback(Some(false))
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+      render_elements.push(
+        btn_close
+        |> @ui.Button::new(on_click=fn() {
+          callback(None)
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+    }
+    Some(SEND_NEXT(callback)) => {
+      render_elements.push(
+        @ui.MapleButton::new(
+          self.resource.bt_next,
+          pos=@struct.Point::new(461, y_cord - 30),
+        )
+        |> @ui.Button::new(on_click=fn() {
+          callback(Some(()))
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+      render_elements.push(
+        btn_close
+        |> @ui.Button::new(on_click=fn() {
+          callback(None)
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+    }
+    Some(SEND_PREV(callback)) => {
+      render_elements.push(
+        @ui.MapleButton::new(
+          self.resource.bt_prev,
+          pos=@struct.Point::new(367, y_cord),
+        )
+        |> @ui.Button::new(on_click=fn() {
+          callback(Some(()))
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+      render_elements.push(
+        btn_close
+        |> @ui.Button::new(on_click=fn() {
+          callback(None)
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+    }
+    Some(SEND_OK(callback)) => {
+      render_elements.push(
+        @ui.MapleButton::new(
+          self.resource.bt_ok,
+          pos=@struct.Point::new(469, y_cord),
+        )
+        |> @ui.Button::new(on_click=fn() {
+          callback(Some(()))
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+      render_elements.push(
+        btn_close
+        |> @ui.Button::new(on_click=fn() {
+          callback(None)
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
+    }
+    Some(SEND_SIMPLE(callback)) =>
+      // options handled in content, add close
+      render_elements.push(
+        btn_close
+        |> @ui.Button::new(on_click=fn() {
+          callback(None)
+          None
+        })
+        |> @ui.Button::as_interactable,
+      )
     None => ()
   }
   { render_elements, }
@@ -460,7 +428,7 @@ pub fn change_text(
   player_name : String
 ) -> Unit! {
   self.talk_action = Some(talk_action)
-  let content = convert_npc_text!(tx, npcid, player_name)
+  let content = convert_npc_text!(tx, npcid, player_name, self.name_loader)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
@@ -523,84 +491,16 @@ fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
 }
 
 ///|
-fn get_map_info_by_id(mapid : Int) -> NxMapInfo {
-  let map_category = get_map_category(mapid)
-  let map_info = @resource.string_loader().load_res([
-    "Map.img",
-    map_category,
-    mapid.to_string(),
-  ])
-  {
-    // description: map_info["mapDesc"].get_string(),
-    // street_name: map_info["streetName"].get_string(),
-    // full_name: map_info["streetName"].get_string() +
-    // " : " +
-    // map_info["mapName"].get_string(),
-    name: map_info["mapName"].get_string(),
-  }
-}
-
-///|
-fn get_map_category(mapid : Int) -> String {
-  if mapid < 100000000 {
-    return "maple"
-  }
-  if mapid < 200000000 {
-    return "victoria"
-  }
-  if mapid < 300000000 {
-    return "ossyria"
-  }
-  if mapid < 540000000 {
-    return "elin"
-  }
-  if mapid < 600000000 {
-    return "singapore"
-  }
-  if mapid < 670000000 {
-    return "MasteriaGL"
-  }
-  if mapid < 682000000 {
-    let prefix3 = mapid / 1000000 * 1000000
-    let prefix4 = mapid / 100000 * 100000
-    if prefix3 == 674000000 || prefix4 == 680100000 || prefix4 == 889100000 {
-      return "etc"
-    }
-    if prefix3 == 677000000 {
-      return "Episode1GL"
-    }
-    return "weddingGL"
-  }
-  if mapid < 683000000 {
-    return "HalloweenGL"
-  }
-  if mapid < 800000000 {
-    return "event"
-  }
-  if mapid < 900000000 {
-    return "jp"
-  }
-  return "etc"
-}
-
-///|
-priv struct NxMapInfo {
-  // description : String
-  name : String
-  // street_name : String
-  // full_name : String
-}
-
-///|
 fn convert_npc_text(
   raw_text : String,
   npcid : Int,
-  player_name : String
+  player_name : String,
+  name_loader : @markup_text.NameLoader
 ) -> NPCTalkContent! {
   @log.debug({ "raw_text": raw_text }, "npc talk")
   let content = parse_talk_content!(
     raw_text,
-    new_variable_context(npcid, player_name),
+    new_variable_context(npcid, player_name, name_loader),
   )
   // @log.debug({ "raw_text": raw_text, "content": content }, "npc talk")
   let text_button_content = []
@@ -636,7 +536,11 @@ fn convert_npc_text(
 }
 
 ///|
-fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
+fn new_variable_context(
+  npcid : Int,
+  player_name : String,
+  name_loader : @markup_text.NameLoader
+) -> VariableContext {
   {
     fn_map: {
       'p': fn(_v) {
@@ -655,14 +559,7 @@ fn new_variable_context(npcid : Int, player_name : String) -> VariableContext {
           .get_string()
         itemname
       },
-      'm': fn(v) {
-        let mapid = try @strconv.parse_int!(v) catch {
-          @strconv.StrConvError(_) =>
-            raise ParseTalkError("invalid map id: \{v}")
-        }
-        let map_info = get_map_info_by_id(mapid)
-        map_info.name
-      },
+      'm': fn(v) { name_loader.get_map_name!(v[:]).to_string() },
     },
   }
 }

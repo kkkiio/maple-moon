@@ -92,10 +92,7 @@ test "test no options" {
 /// #F[imagelocation]# - Shows an image inside the .wz files.
 /// #L[number]# Selection open.
 /// \r\n - Moves down a line.
-fn parse_talk_content(
-  text : String,
-  ctx : VariableContext
-) -> TalkContent!ParseTalkError {
+fn parse_talk_content(text : String, ctx : VariableContext) -> TalkContent! {
   let text = text.replace_all(old="\r\n", new="\n") // normalize newlines
   // Split text into normal text and selections
   let selection_start = text.index_of("#L")
@@ -128,7 +125,7 @@ fn parse_talk_content(
 }
 
 ///| Parse text without selections.
-fn parse_text(ctx : VariableContext, text : String) -> String!ParseTalkError {
+fn parse_text(ctx : VariableContext, text : String) -> String! {
   let chunk = []
   let mut color = @struct.ColorName::BLACK
   let mut bold = false
@@ -201,10 +198,7 @@ fn parse_text(ctx : VariableContext, text : String) -> String!ParseTalkError {
 }
 
 ///|
-fn parse_selection(
-  ctx : VariableContext,
-  line : String
-) -> (Int, String)!ParseTalkError {
+fn parse_selection(ctx : VariableContext, line : String) -> (Int, String)! {
   if not(line.starts_with("#L")) {
     raise ParseTalkError("Missing selection open markup")
   }
@@ -217,9 +211,7 @@ fn parse_selection(
     raise ParseTalkError("Missing selection index")
   }
   let digits = line.substring(start=digit_start, end=digit_end)
-  let index = try {
-    @strconv.parse_int!(digits, base=10)
-  } catch {
+  let index = try @strconv.parse_int!(digits, base=10) catch {
     @strconv.StrConvError(_) =>
       raise ParseTalkError("invalid selection index: \{digits}")
   }
@@ -233,7 +225,7 @@ fn parse_selection(
 ///| Replace placeholders in the text with the values from the context.
 /// Placeholders are the text in the format of `#\{kind}\{payload}#`.
 struct VariableContext {
-  fn_map : Map[Char, (String) -> String!ParseTalkError] // kind -> payload -> value
+  fn_map : Map[Char, (String) -> String!] // kind -> payload -> value
 }
 
 ///|

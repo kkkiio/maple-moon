@@ -138,8 +138,12 @@ fn load_modules(
     network,
   ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
   let quest_module_fut = npc_module
-    .bind(fn(mod) {
-      @quest.Module::load(network, fn(args) { mod.open_npc_talk_ui(args) })
+    .combine(inventory_module_fut)
+    .bind(fn(it) {
+      let (mod, inventory_module) = it
+      @quest.Module::load(network, inventory_module.get_inventory(), fn(args) {
+        mod.open_npc_talk_ui(args)
+      })
     })
     .map(fn(it) {
       match it {

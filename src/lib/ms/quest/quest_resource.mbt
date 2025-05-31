@@ -366,6 +366,13 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         monster_hunts = mob._
         checks.push({ monster_hunts, })
       }
+      "item" => {
+        let items : @resource.MapBasedArray[ItemCount] = @json.from_json!(
+          value,
+          path~,
+        )
+        checks.push({ items: items._ })
+      }
       _ => unknown_checks.push(key)
     }
   }
@@ -451,7 +458,7 @@ test "parse quest check 10015" {
   inspect!(
     quest_check,
     content=
-      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
+      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
     ,
   )
 }
@@ -483,9 +490,10 @@ test "parse quest check 10054" {
     json,
   )
   inspect!(
-    quest_check,
+    quest_check._,
     content=
-      #|MapBasedArray([{npc: Some(9010000), info_number: Some(10057), repeatable: true, checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: Started}}], unknown_checks: ["end", "item", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, checks: [{npc: 1061013}], unknown_checks: ["item"]}])
+      #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
+
     ,
   )
 }
@@ -508,9 +516,7 @@ test "parse item check" {
   )
   inspect!(
     quest_check,
-    content=
-      #|MapBasedArray([{npc: Some(10000), info_number: None, repeatable: false, checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, checks: [], unknown_checks: ["item"]}])
-    ,
+    content="MapBasedArray([{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4031162, count: 1}, {id: 4031161, count: 1}]}], unknown_checks: []}])",
   )
 }
 
@@ -531,10 +537,24 @@ test "parse quests status check" {
   )
   inspect!(
     quest_check,
-    content=
-      #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, checks: [{npc: 1022002}], unknown_checks: ["item"]}])
-    ,
+    content="MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4000008, count: 40}]}, {npc: 1022002}], unknown_checks: []}])",
   )
+}
+
+///|
+struct ItemCount {
+  id : Int
+  count : Int // 0 means should not hold the item
+} derive(Show)
+
+///|
+impl @json.FromJson for ItemCount with from_json(json, path) {
+  match json {
+    { "id": Number(id), "count": Number(count), .. } =>
+      { id: id.to_int(), count: count.to_int() }
+    { "id": Number(id), .. } => { id: id.to_int(), count: 0 }
+    _ => raise @json.JsonDecodeError((path, "expect object"))
+  }
 }
 
 ///|

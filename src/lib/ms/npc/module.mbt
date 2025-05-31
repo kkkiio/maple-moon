@@ -275,41 +275,45 @@ fn new_npc_talk_ui(
   player_name : String
 ) -> UINpcTalk {
   let ui = UINpcTalk::new(npc_talk_resource, hooks)
-  ui
-  .change_text?(
-    args.npc_id,
-    match args.talk_action {
-      SEND_YESNO(callback) =>
-        SEND_YESNO(fn(c) {
-          container.remove_ui(@ui.UIElementType::NPC_TALK)
-          callback(c)
-        })
-      SEND_NEXT(callback) =>
-        SEND_NEXT(fn(c) {
-          container.remove_ui(@ui.UIElementType::NPC_TALK)
-          callback(c)
-        })
-      SEND_PREV(callback) =>
-        SEND_PREV(fn(c) {
-          container.remove_ui(@ui.UIElementType::NPC_TALK)
-          callback(c)
-        })
-      SEND_OK(callback) =>
-        SEND_OK(fn(c) {
-          container.remove_ui(@ui.UIElementType::NPC_TALK)
-          callback(c)
-        })
-      SEND_SIMPLE(callback) =>
-        SEND_SIMPLE(fn(c) {
-          container.remove_ui(@ui.UIElementType::NPC_TALK)
-          callback(c)
-        })
-    },
-    args.speaker,
-    args.str,
-    player_name,
-  )
-  .unwrap() // TODO: handle error
+  try
+    ui.change_text(
+      args.npc_id,
+      match args.talk_action {
+        SEND_YESNO(callback) =>
+          SEND_YESNO(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
+        SEND_NEXT(callback) =>
+          SEND_NEXT(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
+        SEND_PREV(callback) =>
+          SEND_PREV(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
+        SEND_OK(callback) =>
+          SEND_OK(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
+        SEND_SIMPLE(callback) =>
+          SEND_SIMPLE(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
+      },
+      args.speaker,
+      args.str,
+      player_name,
+    ) catch {
+    e => {
+      @log.error({ "error": e }, "error changing text")
+      panic()
+    }
+  }
   ui
 }
 

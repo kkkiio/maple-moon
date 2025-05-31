@@ -3,7 +3,7 @@ struct UINpcTalk {
   hooks : @ui.Hooks
   base : @ui.UIModel
   resource : NpcTalkResource
-  name_loader : @markup_text.NameLoader
+  name_loader : @markup_text.RefRender
   mut speaker : @graphics.Texture
   mut content : NPCTalkContent?
   name : @graphics.Text
@@ -198,7 +198,7 @@ pub fn UINpcTalk::new(
   let height = 0
   let min_height = 8 * resource.fill.height() + 14
   let speaker = @graphics.Texture::default()
-  let name_loader = @markup_text.NameLoader::new(@resource.string_loader())
+  let name_loader = @markup_text.RefRender::load()
   {
     hooks,
     base: hooks.ui_model,
@@ -428,7 +428,7 @@ pub fn change_text(
   player_name : String
 ) -> Unit! {
   self.talk_action = Some(talk_action)
-  let content = convert_npc_text!(tx, npcid, player_name, self.name_loader)
+  let content = convert_npc_text!(tx, player_name, self.name_loader)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
@@ -493,33 +493,31 @@ fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
 ///|
 fn convert_npc_text(
   raw_text : String,
-  npcid : Int,
   player_name : String,
-  name_loader : @markup_text.NameLoader
+  name_loader : @markup_text.RefRender
 ) -> NPCTalkContent! {
   @log.debug({ "raw_text": raw_text }, "npc talk")
   let content = parse_talk_content!(
     raw_text,
-    new_variable_context(npcid, player_name, name_loader),
+    mod_provider=fn(_, v) { name_loader.get_mob_name(v) },
+    npc_provider=fn(_, v) { name_loader.get_npc_name(v) },
+    map_provider=fn(_, v) { name_loader.get_map_name!(v).to_string() },
+    item_provider=fn(_, v) { name_loader.get_item_name(v).to_string() },
+    player_name_provider=fn(_, _) { player_name },
   )
-  // @log.debug({ "raw_text": raw_text, "content": content }, "npc talk")
   let text_button_content = []
-  match content.selections {
-    Some(selections) =>
-      for selection in selections.selections {
-        let button = @ui.TextButton::new(
-          @graphics.Text::new(
-            text=selection.1,
-            @graphics.FontId::A18M,
-            @graphics.TextAlignment::LEFT,
-            selections.color,
-            max_width=320,
-          ),
-          selection.0,
-        )
-        text_button_content.push(button)
-      }
-    None => ()
+  for selection in content.selections {
+    let button = @ui.TextButton::new(
+      @graphics.Text::new(
+        text=selection.2,
+        @graphics.FontId::A18M,
+        @graphics.TextAlignment::LEFT,
+        selection.0,
+        max_width=320,
+      ),
+      selection.1,
+    )
+    text_button_content.push(button)
   }
   {
     text_content: [
@@ -532,34 +530,5 @@ fn convert_npc_text(
       ),
     ],
     text_button_content,
-  }
-}
-
-///|
-fn new_variable_context(
-  npcid : Int,
-  player_name : String,
-  name_loader : @markup_text.NameLoader
-) -> VariableContext {
-  {
-    fn_map: {
-      'p': fn(_v) {
-        @resource.string_loader()
-        .load_res(["Npc.img", npcid.to_string(), "name"])
-        .get_string()
-      },
-      'h': fn(_v) { player_name },
-      't': fn(v) {
-        let itemid = try @strconv.parse_int!(v) catch {
-          @strconv.StrConvError(_) =>
-            raise ParseTalkError("invalid item id: \{v}")
-        }
-        let itemname = @resource.string_loader()
-          .load_res(["Consume.img", itemid.to_string(), "name"])
-          .get_string()
-        itemname
-      },
-      'm': fn(v) { name_loader.get_map_name!(v[:]).to_string() },
-    },
   }
 }

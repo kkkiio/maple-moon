@@ -6,10 +6,17 @@ struct MapQuests {
   quests : @map_object.MapObjects[NpcQuest]
   quests_resource : QuestResource
   npc_quests_map : Map[Int, Array[Int]]
-  mut player_and_quest_log : (@player.Player, PlayerQuestLog)? // TODO: init on new
+  mut player_deps : PlayerDeps? // TODO: init on new
   network : @net.Network
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
-  get_player_quest_log : (@player.Player) -> PlayerQuestLog
+  get_player_deps : (@player.Player) -> PlayerDeps
+}
+
+///|
+struct PlayerDeps {
+  item_count_provider : (Int) -> Int
+  char_stats_provider : () -> @char_stats.CharStats
+  player_quest_log : PlayerQuestLog
 }
 
 ///| Resources for MapQuests - holds icons for different quest states
@@ -54,25 +61,23 @@ fn MapQuests::new(
   npc_quests_map : Map[Int, Array[Int]],
   network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-  get_player_quest_log : (@player.Player) -> PlayerQuestLog
+  get_player_deps : (@player.Player) -> PlayerDeps
 ) -> MapQuests {
   {
     resource,
     quests: @map_object.MapObjects::new(),
     quests_resource,
     npc_quests_map,
-    player_and_quest_log: None,
+    player_deps: None,
     network,
     open_npc_talk_ui,
-    get_player_quest_log,
+    get_player_deps,
   }
 }
 
 ///|
 pub fn MapQuests::set_player(self : MapQuests, player : @player.Player) -> Unit {
-  self.player_and_quest_log = Some(
-    (player, (self.get_player_quest_log)(player)),
-  )
+  self.player_deps = Some((self.get_player_deps)(player))
 }
 
 ///|
@@ -97,7 +102,8 @@ pub fn MapQuests::add_npc(
   npc_id : Int,
   npc_object : @physics.MovingObject
 ) -> Unit {
-  guard self.player_and_quest_log is Some((player, player_quest_log)) else {
+  guard self.player_deps
+    is Some({ player_quest_log, item_count_provider, char_stats_provider }) else {
     @log.error({ "npc_id": npc_id }, "player not set yet")
     return
   }
@@ -112,45 +118,65 @@ pub fn MapQuests::add_npc(
   // 3. Quests that can be completed with this NPC
   //    - Check player's started quests and if completion conditions for this NPC are met.
 
-  // For simplicity, let's assume we prioritize: Completable > Available > InProgress
+  // For simplicity, let's assume we prioritize: Completable > InProgress > Available
   let quest_ids = list_quests_by_npc(self.npc_quests_map, npc_id)
-  // Check for completable quests
+  // Check for quests that can be completed or are in progress with this NPC
   for quest_id in quest_ids {
     let stated_quest = player_quest_log.get_quest(quest_id)
     match stated_quest {
-      Some(InProgress(quest)) =>
-        if quest.checks
-          .get(quest.phase)
-          .map_or(false, fn(it) {
+      Some(InProgress(quest)) => {
+        if quest.checks.get(quest.phase) is Some(check) {
+          match
             check_quest_requirements(
-              it,
-              player,
+              check,
+              item_count_provider,
+              char_stats_provider,
               player_quest_log,
               quest_id,
               quest.phase,
-            ).is_ok()
-          }) {
-          let icon_animation = self.resource.completed_quest_icon
-          self.quests.add(
-            NpcQuest::new(
-              quest_id,
-              Some((quest, true)),
-              npc_id,
-              npc_object,
-              icon_animation,
-            ),
-          )
-          return
+            ) {
+            Ok(_) => {
+              let icon_animation = self.resource.completed_quest_icon
+              self.quests.add(
+                NpcQuest::new(
+                  quest_id,
+                  Some((quest, true)),
+                  npc_id,
+                  npc_object,
+                  icon_animation,
+                ),
+              )
+              return
+            }
+            Err(err) =>
+              @log.debug(
+                { "quest_id": quest_id, "error": err },
+                "quest completion check failed",
+              )
+          }
         }
+        let icon_animation = self.resource.inprogress_quest_icon
+        self.quests.add(
+          NpcQuest::new(
+            quest_id,
+            Some((quest, false)),
+            npc_id,
+            npc_object,
+            icon_animation,
+          ),
+        )
+        return // one quest in a time
+      }
       _ => ()
     }
   }
 
-  // Check for available quests if no completable quest found
+  // Check for available quests if no completable or in-progress quest found
   if filter_acceptable_quests(
       quest_ids.iter(),
       self.quests_resource,
-      player,
+      item_count_provider,
+      char_stats_provider,
       player_quest_log,
     ).peek()
     is Some((quest_id, _)) {
@@ -159,28 +185,6 @@ pub fn MapQuests::add_npc(
       NpcQuest::new(quest_id, None, npc_id, npc_object, icon_animation),
     )
     return
-  }
-
-  // Check for in-progress quests if no available/completable found
-  for quest_id in quest_ids {
-    let stated_quest = player_quest_log.get_quest(quest_id)
-    match stated_quest {
-      Some(InProgress(quest)) =>
-        if quest.checks.get(0).map_or(false, fn(it) { it.npc == Some(npc_id) }) {
-          let icon_animation = self.resource.inprogress_quest_icon
-          self.quests.add(
-            NpcQuest::new(
-              quest_id,
-              Some((quest, false)),
-              npc_id,
-              npc_object,
-              icon_animation,
-            ),
-          )
-          return
-        }
-      _ => ()
-    }
   }
 }
 
@@ -217,7 +221,7 @@ pub fn MapQuests::send_cursor(
 
 ///|
 priv enum TalkState {
-  Talk(Int)
+  Tell(Int)
   YesReply(Int)
   NoReply(Int)
 } derive(Show)
@@ -236,26 +240,27 @@ fn talk_about_quest(
     match choice {
       SEND_NEXT(next=Some(_)) =>
         match state {
-          Talk(i) => {
+          Tell(i) => {
             guard says.says.get(i) is Some(str) else { return }
-            let pause = says.says.get(i + 1) is None
+            let last = says.says.get(i + 1) is None
+            let not_accepted = phase == 0
             open_npc_talk_ui({
               npc_id: npc_quest.npc_id,
-              talk_action: match (pause, says.yes_reply.is_empty()) {
-                (true, true) =>
-                  @npc.TalkAction::SEND_OK(fn(c) {
-                    next_talk(Talk(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
-                  })
-                (true, false) =>
+              talk_action: match (last, not_accepted) {
+                (true, true) => // ask for accept
                   @npc.TalkAction::SEND_YESNO(fn(c) {
                     next_talk(
                       YesReply(0),
                       @npc.TalkChoice::SEND_YESNO(answer=c),
                     )
                   })
-                (false, _) =>
+                (true, false) => // end
+                  @npc.TalkAction::SEND_OK(fn(c) {
+                    next_talk(Tell(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
+                  })
+                (false, _) => // continue
                   @npc.TalkAction::SEND_NEXT(fn(c) {
-                    next_talk(Talk(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                    next_talk(Tell(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
                   })
               },
               speaker: @npc.Speaker::NPC_LEFT,
@@ -346,7 +351,7 @@ fn talk_about_quest(
     }
   }
 
-  next_talk(Talk(0), @npc.TalkChoice::SEND_NEXT(next=Some(()))) // TODO: show hint if quest is in progress
+  next_talk(Tell(0), @npc.TalkChoice::SEND_NEXT(next=Some(()))) // TODO: show hint if quest is in progress
 }
 
 ///| Represents a quest on the current map

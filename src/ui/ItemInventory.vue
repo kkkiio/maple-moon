@@ -154,37 +154,24 @@ const handleDropCancel = () => {
 
 <template>
   <NTabs type="segment">
-    <NTabPane
-      v-for="(panel, tabIndex) in panels"
-      :key="tabIndex"
-      :name="panel.kind"
-      :tab="panel.kind"
-    >
+    <NTabPane v-for="(panel, tabIndex) in panels" :key="tabIndex" :name="panel.kind" :tab="panel.kind">
       <table class="inventory-table">
         <tbody>
           <tr v-for="(row, rowIndex) in panel.table" :key="'row-' + rowIndex">
-            <td
-              v-for="(item, colIndex) in row"
-              :key="'col-' + colIndex"
-              class="inventory-cell"
-            >
+            <td v-for="(item, colIndex) in row" :key="'col-' + colIndex" class="inventory-cell">
               <div class="inventory-slot-wrapper">
                 <!-- Item slot with content -->
                 <template v-if="item">
                   <NTooltip trigger="hover" placement="top">
                     <template #trigger>
-                      <div
-                        class="inventory-slot"
-                        :class="{
-                          'selected-slot':
-                            selected.tab === tabIndex &&
-                            selected.row === rowIndex &&
-                            selected.col === colIndex,
-                        }"
-                        @click="
+                      <div class="inventory-slot" :class="{
+                        'selected-slot':
+                          selected.tab === tabIndex &&
+                          selected.row === rowIndex &&
+                          selected.col === colIndex,
+                      }" @click="
                           () => handleItemClick(tabIndex, rowIndex, colIndex)
-                        "
-                      >
+                        ">
                         <LazyImage :image="item.icon" />
                         <div v-if="item.count" class="item-count">
                           {{ item.count }}
@@ -193,7 +180,7 @@ const handleDropCancel = () => {
                     </template>
                     <div class="tooltip-content">
                       <div class="tooltip-name">
-                        {{ item.name }}
+                        {{ item.name || item.id }}
                       </div>
                       <div class="tooltip-desc" v-html="item.desc"></div>
                     </div>
@@ -216,51 +203,24 @@ const handleDropCancel = () => {
     {{ hint }}
   </NAlert>
   <div class="action-bar">
-    <n-button
-      type="primary"
-      :disabled="
-        selected.tab === null || selected.row === null || selected.col === null
-      "
-      @click="handleUseItem"
-    >
+    <n-button type="primary" :disabled="selected.tab === null || selected.row === null || selected.col === null
+      " @click="handleUseItem">
       Use Item
     </n-button>
-    <n-button
-      type="error"
-      style="margin-left: 8px"
-      :disabled="
-        selected.tab === null || selected.row === null || selected.col === null
-      "
-      @click="handleDropClick"
-    >
+    <n-button type="error" style="margin-left: 8px" :disabled="selected.tab === null || selected.row === null || selected.col === null
+      " @click="handleDropClick">
       Drop
     </n-button>
   </div>
-  <n-modal
-    v-model:show="showDropModal"
-    preset="dialog"
-    title="Drop Item"
-    @after-leave="handleDropCancel"
-  >
+  <n-modal v-model:show="showDropModal" preset="dialog" title="Drop Item" @after-leave="handleDropCancel">
     <template #default>
       <div style="margin-bottom: 12px">Enter the number of items to drop:</div>
-      <n-input-number
-        v-model:value="dropCount"
-        :min="1"
-        :max="
-          selectedItemSlot.value ? selectedItemSlot.value.item.count || 1 : 1
-        "
-      />
+      <n-input-number v-model:value="dropCount" :min="1" :max="selectedItemSlot.value ? selectedItemSlot.value.item.count || 1 : 1
+        " />
     </template>
     <template #action>
       <n-button @click="handleDropCancel">Cancel</n-button>
-      <n-button
-        type="error"
-        @click="handleDropConfirm"
-        :keyboard="false"
-        style="margin-left: 8px"
-        >Drop</n-button
-      >
+      <n-button type="error" @click="handleDropConfirm" :keyboard="false" style="margin-left: 8px">Drop</n-button>
     </template>
   </n-modal>
 </template>

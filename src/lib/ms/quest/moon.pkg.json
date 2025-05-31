@@ -17,7 +17,7 @@
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/npc",
     "KKKIIO/maple-moon-client/lib/ms/markup_text",
-    "KKKIIO/maple-moon-client/lib/ms/item"
+    "KKKIIO/maple-moon-client/lib/ms/inventory"
   ],
   "link":{
     "js": {

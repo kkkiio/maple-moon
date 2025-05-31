@@ -5,8 +5,9 @@ priv trait QuestCheck: Show {
 
 ///|
 priv struct CheckContext {
-  player : @player.Player
   log : PlayerQuestLog
+  item_count_provider : (Int) -> Int
+  char_stats_provider : () -> @char_stats.CharStats
   quest_id : Int
   phase : Int
 }
@@ -18,7 +19,7 @@ priv struct MinLevelCheck {
 
 ///|
 impl QuestCheck for MinLevelCheck with check(self, context) {
-  let level = context.player.character.stats.get_stat(@maple_stat.Id::LEVEL)
+  let level = (context.char_stats_provider)().get_stat(@maple_stat.Id::LEVEL)
   if level < self.min_level {
     return Err("Expected level at least \{self.min_level}, got \{level}")
   }
@@ -104,7 +105,7 @@ priv struct JobsCheck {
 
 ///|
 impl QuestCheck for JobsCheck with check(self, context) {
-  let player_job = context.player.stats.get_job().get_id()
+  let player_job = (context.char_stats_provider)().get_job().get_id()
   for job_id in self.jobs {
     if player_job == job_id || player_job == @job.JobId::GM {
       return Ok(())
@@ -152,10 +153,27 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
 }
 
 ///| progress data is a 3-digit string that contains kill counts for each monster
-fn check_mob_progress_data(progress_data : @string.StringView) -> Unit! {
-  guard progress_data.iter().all(fn(it) { @char.is_ascii_digit(it) }) &&
+fn check_mob_progress_data(progress_data : @string.View) -> Unit! {
+  guard progress_data.iter().all(Char::is_ascii_digit(_)) &&
     progress_data.length() % 3 == 0 else {
     fail!("Invalid progress data: \{progress_data}")
   }
+}
 
+///|
+priv struct ItemCheck {
+  items : Array[ItemCount]
+} derive(Show)
+
+///|
+impl QuestCheck for ItemCheck with check(self, context) {
+  for it in self.items {
+    let item_id = it.id
+    let count = it.count
+    let item_count = (context.item_count_provider)(item_id)
+    if item_count < count || (count <= 0 && item_count > 0) {
+      return Err("Expected \{count} of item \{item_id}, got \{item_count}")
+    }
+  }
+  Ok(())
 }

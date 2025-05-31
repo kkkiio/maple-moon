@@ -139,7 +139,7 @@ fn render(
     match inventory.get_item_id(sell_item_tab, i) {
       0 => ()
       item_id => {
-        let count = inventory.get_item_count(sell_item_tab, i)
+        let count = inventory.get_item_count_at_slot(sell_item_tab, i)
         sell_items.push(
           SellItem::new(
             item_id,

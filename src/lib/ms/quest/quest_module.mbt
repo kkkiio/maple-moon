@@ -1,7 +1,7 @@
 ///|
 struct Module {
   quests_resource : QuestResource
-  name_loader : @markup_text.NameLoader
+  name_loader : @markup_text.RefRender
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
   network : @net.Network
@@ -11,6 +11,7 @@ struct Module {
 ///|
 pub fn Module::load(
   network : @net.Network,
+  inventory : @inventory.Inventory,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> @utils.Future[Result[Module, Error]] {
   let fut = quest_resource_loader.load_res(["nx"])
@@ -18,11 +19,12 @@ pub fn Module::load(
   @utils.Future::combine(fut, fut2).map_exn(fn(it) {
     let (node, map_quests_resource) = it
     let quests_resource : QuestResource = @json.from_json!(node.value())
-    let name_loader = @markup_text.NameLoader::load()
+    let name_loader = @markup_text.RefRender::load()
     Module::new(
       quests_resource,
       map_quests_resource.unwrap_or_error!(),
       network,
+      inventory,
       open_npc_talk_ui,
       name_loader,
     )
@@ -34,8 +36,9 @@ pub fn Module::new(
   quests_resource : QuestResource,
   map_quests_resource : MapQuestsResource,
   network : @net.Network,
+  inventory : @inventory.Inventory,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-  name_loader : @markup_text.NameLoader
+  name_loader : @markup_text.RefRender
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
     .iter()
@@ -63,7 +66,13 @@ pub fn Module::new(
       npc_quests_map,
       network,
       open_npc_talk_ui,
-      fn(_) { player_quest_log.val },
+      fn(player) {
+        {
+          player_quest_log: player_quest_log.val,
+          item_count_provider: fn(item_id) { inventory.get_item_count(item_id) },
+          char_stats_provider: fn() { player.stats },
+        }
+      },
     ),
     network,
   }
@@ -453,7 +462,8 @@ fn list_quests_by_npc(
 fn filter_acceptable_quests(
   quest_ids : Iter[Int],
   quests_resource : QuestResource,
-  player : @player.Player,
+  item_count_provider : (Int) -> Int,
+  char_stats_provider : () -> @char_stats.CharStats,
   quest_log : PlayerQuestLog
 ) -> Iter[(Int, QuestInfo)] {
   quest_ids.filter_map(fn(quest_id) {
@@ -469,12 +479,15 @@ fn filter_acceptable_quests(
         if not(is_quest_status_can_start(status, checks.repeatable)) {
           return false
         }
-        if check_quest_requirements(checks, player, quest_log, quest_id, phase)
-          is Err(error) {
-          @log.debug(
-            { "quest_id": quest_id, "reason": error },
-            "cannot start quest",
+        if check_quest_requirements(
+            checks, item_count_provider, char_stats_provider, quest_log, quest_id,
+            phase,
           )
+          is Err(_) {
+          // @log.debug(
+          //   { "quest_id": quest_id, "reason": error },
+          //   "cannot start quest",
+          // )
           return false
         }
         true
@@ -491,7 +504,8 @@ fn filter_acceptable_quests(
 ///| check if a quest can be started or completed
 fn check_quest_requirements(
   check : QuestPhaseChecks,
-  player : @player.Player,
+  item_count_provider : (Int) -> Int,
+  char_stats_provider : () -> @char_stats.CharStats,
   quest_log : PlayerQuestLog,
   quest_id : Int,
   phase : Int
@@ -504,7 +518,14 @@ fn check_quest_requirements(
     return Err("Unknown checks: \{check.unknown_checks}")
   }
   for check in check.checks {
-    if check.check({ player, log: quest_log, quest_id, phase }) is Err(e) {
+    if check.check({
+        log: quest_log,
+        item_count_provider,
+        char_stats_provider,
+        quest_id,
+        phase,
+      })
+      is Err(e) {
       return Err(e)
     }
   }

@@ -19,7 +19,7 @@ pub fn watch_quest_log_ffi(
       let desc = try
         parse_quest_desc!(
           markup_desc,
-          progress_provider=fn(v) {
+          progress_provider=fn(_, v) {
             let info_number = @strconv.parse_int!(v.to_string())
             if quest.info_number_progress_map.get(info_number) is Some(progress) {
               "<a href=\"#\">\{progress}</a>"
@@ -27,9 +27,9 @@ pub fn watch_quest_log_ffi(
               fail!("no progress data: \{info_number}")
             }
           },
-          mod_provider=mod.name_loader.get_mob_name(_),
-          npc_provider=mod.name_loader.get_npc_name(_),
-          check_provider=fn(v) {
+          mod_provider=fn(_, v) { mod.name_loader.get_mob_name(v) },
+          npc_provider=fn(_, v) { mod.name_loader.get_npc_name(v) },
+          check_provider=fn(_, v) {
             let quest_id = quest.quest_id.to_string()
             guard v.has_prefix(quest_id) else { fail!("unknown check: \{v}") }
             let check_no = @strconv.parse_int!(
@@ -50,7 +50,10 @@ pub fn watch_quest_log_ffi(
             )
             "\{current_count} / \{check.count}"
           },
-          map_provider=fn(v) { mod.name_loader.get_map_name!(v).to_string() },
+          map_provider=fn(_, v) { mod.name_loader.get_map_name!(v).to_string() },
+          item_provider=fn(_, v) {
+            mod.name_loader.get_item_name(v).to_string()
+          },
         ) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
@@ -92,11 +95,12 @@ pub fn watch_quest_log_ffi(
 ///|
 fn parse_quest_desc(
   s : String,
-  progress_provider~ : (@string.View) -> @string.View! = fn(v) { v },
-  mod_provider~ : (@string.View) -> @string.View! = fn(v) { v },
-  npc_provider~ : (@string.View) -> @string.View! = fn(v) { v },
-  check_provider~ : (@string.View) -> @string.View! = fn(v) { v },
-  map_provider~ : (@string.View) -> @string.View! = fn(v) { v }
+  progress_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  mod_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  npc_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  check_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  map_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  item_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v }
 ) -> String! {
   let tag_replace_map = {
     'R': progress_provider,
@@ -104,11 +108,12 @@ fn parse_quest_desc(
     'p': npc_provider,
     'a': check_provider,
     'm': map_provider,
+    't': item_provider,
   }
   let node = @markup_text.parse_markup!(s, tag_map)
-  let html = to_html!(
+  let html = @markup_text.to_html!(
     node,
-    ColorName::BLACK,
+    { color: ColorName::BLACK, bold: false },
     @markup_text.color_map,
     tag_replace_map,
   )
@@ -140,61 +145,16 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.color_map
       (a_tag, @markup_text.MarkupType::Pair),
       (@markup_text.npc_tag.0, @markup_text.npc_tag.1),
       (@markup_text.map_tag.0, @markup_text.map_tag.1),
+      (@markup_text.item_tag.0, @markup_text.item_tag.1),
     ].iter(),
   )
   |> Map::from_iter
 
 ///|
-fn to_html(
-  nodes : Array[@markup_text.Node],
-  default_color : ColorName,
-  color_map : Map[Char, ColorName],
-  tag_replace_map : Map[Char, (@string.View) -> @string.View!]
-) -> String! {
-  let mut bold = false
-  let mut current_color = default_color
-  let mut current_style = make_style(current_color, bold)
-  let builder = StringBuilder::new()
-  for node in nodes {
-    match node {
-      @markup_text.Node::Text(text) => {
-        let text = text
-          .replace_all(old="\r\n", new="\n")
-          .replace_all(old="\n", new="<br>\n")
-        builder.write_string("<span style=\"\{current_style}\">\{text}</span>")
-      }
-      @markup_text.Node::Tag(tag, payload) => {
-        if @markup_text.font_weight_tag_map.get(tag) is Some(b) {
-          bold = b
-        } else if color_map.get(tag) is Some(color) {
-          current_color = color
-        } else {
-          let replace_fn = tag_replace_map.get(tag)
-          if replace_fn is Some(replace_fn) {
-            let replaced = replace_fn(payload)
-            builder.write_string(replaced.to_string())
-          } else {
-            fail!("Unknown tag: \{tag}")
-          }
-        }
-        current_style = make_style(current_color, bold)
-      }
-    }
-  }
-  builder.to_string()
-}
-
-///|
-fn make_style(color : ColorName, bold : Bool) -> String {
-  if bold {
-    "color: \{color}, font-weight: bold;"
-  } else {
-    "color: \{color}"
-  }
-}
-
-///|
 typealias ColorName = @struct.ColorName
+
+///|
+typealias Style = @markup_text.Style
 
 ///|
 test "parse quest desc 1" {
@@ -213,15 +173,13 @@ test "parse quest desc 1" {
 test "parse quest bold desc" {
   let desc = parse_quest_desc!(
     "#b#eTitle - Beginner Explorer#k#n\\r\\nExplore the 20 main regions of Victoria Island.\\r\\n#b● Status : #R27010# / 20 Completed#k",
-    progress_provider=fn(info_number) {
-      inspect!(info_number, content="27010")
-      "10"
-    },
   )
   inspect!(
     desc,
     content=
-      #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"><br>Explore the 20 main regions of Victoria Island.<br></span><span style="color: blue">● Status : </span><a href="#">10</a><span style="color: blue"> / 20 Completed</span>
+      #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"><br>
+      #|Explore the 20 main regions of Victoria Island.<br>
+      #|</span><span style="color: blue">● Status : </span>27010<span style="color: blue"> / 20 Completed</span>
     ,
   )
 }
@@ -236,9 +194,9 @@ test "parse monster hunt check count" {
     content=
       #|<span style="color: black">I decided to get trained under the Famous Sword-Master, Mai, in Amherst. I guess hunting the weakest monsters is a good idea. Should I hunt Snail, Blue Snail, and Shroom in order?<br>
       #|<br>
-      #|</span>100100<span style="color: black"> </span>10161<span style="color: red"> </span><span style="color: black"><br>
-      #|</span>100101<span style="color: black">  </span>10162<span style="color: red"> </span><span style="color: black"><br>
-      #|</span>120100<span style="color: black"> </span>10163<span style="color: black"><br>
+      #|</span>100100 10161 <br>
+      #|100101  10162 <br>
+      #|120100 10163<span style="color: black"><br>
       #|<br>
       #| Ah, Mai told me to meet with </span>20002<span style="color: black"> in Southperry and try training together...</span>
     ,
@@ -250,11 +208,26 @@ test "parse map name" {
   let desc = parse_quest_desc!(
     "She says there are way too many Snails and would like you to eliminate 10 #rRed Snails#k and 10 #rBlue Snails#k.\\n\\nLet's report back to #bAyan#k in #b#m102000000##k upon completion.",
   )
-  inspect!(desc, content=
-    
-    #|<span style="color: black">She says there are way too many Snails and would like you to eliminate 10 </span><span style="color: red">Red Snails</span><span style="color: black"> and 10 </span><span style="color: red">Blue Snails</span><span style="color: black">.<br>
-    #|<br>
-    #|Let's report back to </span><span style="color: blue">Ayan</span><span style="color: black"> in </span>102000000<span style="color: black"> upon completion.</span>
+  inspect!(
+    desc,
+    content=
+      #|<span style="color: black">She says there are way too many Snails and would like you to eliminate 10 </span><span style="color: red">Red Snails</span><span style="color: black"> and 10 </span><span style="color: red">Blue Snails</span><span style="color: black">.<br>
+      #|<br>
+      #|Let's report back to </span><span style="color: blue">Ayan</span><span style="color: black"> in </span>102000000<span style="color: black"> upon completion.</span>
+    ,
+  )
+}
+
+///|
+test "parse item" {
+  let desc = parse_quest_desc!(
+    "Can you get me #b#e30#n #b#t4000003#es#k and #b#e50#n #t4000018#s#k? I'm trying to remodel my house and make it bigger ... If you can do it, I'll hook you up with a nice #bshield#k that I don't really need ... You'll get plenty if you take down the ones that look like trees.",
+  )
+  inspect!(
+    desc,
+    content=
+      #|<span style="color: black">Can you get me </span><span style="color: blue, font-weight: bold;">30</span> 4000003<span style="color: blue">es</span><span style="color: black"> and </span><span style="color: blue, font-weight: bold;">50</span> 4000018<span style="color: blue">s</span><span style="color: black">? I'm trying to remodel my house and make it bigger ... If you can do it, I'll hook you up with a nice </span><span style="color: blue">shield</span><span style="color: black"> that I don't really need ... You'll get plenty if you take down the ones that look like trees.</span>
+    ,
   )
 }
 

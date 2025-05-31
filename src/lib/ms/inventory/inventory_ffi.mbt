@@ -20,7 +20,7 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
               count: if kind == TypeId::EQUIP {
                 1
               } else {
-                mod.inventory.get_item_count(kind, slot_no)
+                mod.inventory.get_item_count_at_slot(kind, slot_no)
               },
               icon: item_data.get_icon(false).bitmap.map_or(
                 @resource.Image::new_pending(),

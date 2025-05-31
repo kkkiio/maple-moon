@@ -38,17 +38,20 @@ fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
 
 ///|
 fn ItemData::load_async(
-  item_id : Int
+  item_id : Int,
+  character_loader : @resource.AsyncLoader,
+  item_loader : @resource.AsyncLoader,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
   let zid = "0" + item_id.to_string()
   let (category, src, strsrc) = try {
-    match parse_category1!(item_id) {
+    match parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
       EQUIP => {
         guard parse_equip_category(item_id) is Some(category) else {
           raise LoadDataError::INVALID_ITEM_ID(item_id)
         }
-        let src = get_character_loader().load_res([category, zid + ".img"])
-        let strsrc = @resource.string_loader().load_res([
+        let src = character_loader.load_res([category, zid + ".img"])
+        let strsrc = string_loader.load_res([
           "Eqp.img",
           "Eqp",
           category,
@@ -59,49 +62,29 @@ fn ItemData::load_async(
       CONSUME => {
         let category = "Consume"
         let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res([
-          "Consume",
-          strprefix + ".img",
-          zid,
-        ])
-        let strsrc = @resource.string_loader().load_res([
-          "Consume.img",
-          item_id.to_string(),
-        ])
+        let src = item_loader.load_res(["Consume", strprefix + ".img", zid])
+        let strsrc = string_loader.load_res(["Consume.img", item_id.to_string()])
         (category, src, strsrc)
       }
       INSTALL => {
         let category = "Install"
         let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res([
-          "Install",
-          strprefix + ".img",
-          zid,
-        ])
-        let strsrc = @resource.string_loader().load_res([
-          "Ins.img",
-          item_id.to_string(),
-        ])
+        let src = item_loader.load_res(["Install", strprefix + ".img", zid])
+        let strsrc = string_loader.load_res(["Ins.img", item_id.to_string()])
         (category, src, strsrc)
       }
       ETC => {
         let category = "Etc"
         let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(["Etc", strprefix + ".img", zid])
-        let strsrc = @resource.string_loader().load_res([
-          "Etc.img",
-          item_id.to_string(),
-        ])
+        let src = item_loader.load_res(["Etc", strprefix + ".img", zid])
+        let strsrc = string_loader.load_res(["Etc.img", item_id.to_string()])
         (category, src, strsrc)
       }
       CASH => {
         let category = "Cash"
         let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = get_item_loader().load_res(["Cash", strprefix + ".img", zid])
-        let strsrc = @resource.string_loader().load_res([
-          "Cash.img",
-          item_id.to_string(),
-        ])
+        let src = item_loader.load_res(["Cash", strprefix + ".img", zid])
+        let strsrc = string_loader.load_res(["Cash.img", item_id.to_string()])
         (category, src, strsrc)
       }
     }
@@ -161,7 +144,14 @@ let cache : Map[Int, @utils.Future[Result[ItemData, LoadDataError]]] = Map::new(
 pub fn ItemData::get_async(
   id : Int
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
-  cache.get_or_init(id, fn() { ItemData::load_async(id) })
+  cache.get_or_init(id, fn() {
+    ItemData::load_async(
+      id,
+      get_character_loader(),
+      get_item_loader(),
+      @resource.string_loader(),
+    )
+  })
 }
 
 ///|
@@ -170,19 +160,20 @@ fn ItemData::get_prefix(id : Int) -> Int {
 }
 
 ///|
-fn parse_category1(id : Int) -> Category1!LoadDataError {
-  match id / 1000000 {
+pub fn parse_category1(id : Int) -> Category1? {
+  let res = match id / 1000000 {
     1 => Category1::EQUIP
     2 => Category1::CONSUME
     3 => Category1::INSTALL
     4 => Category1::ETC
     5 => Category1::CASH
-    _ => raise LoadDataError::INVALID_ITEM_ID(id)
+    _ => return None
   }
+  Some(res)
 }
 
 ///|
-priv enum Category1 {
+pub enum Category1 {
   EQUIP
   CONSUME
   INSTALL
@@ -208,7 +199,7 @@ pub(all) type! LoadDataError {
   INVALID_DATA(String)
 } derive(Show)
 
-///| TODO: make private
+///|
 pub fn parse_equip_category(id : Int) -> String? {
   let index = ItemData::get_item_prefix(id) - 100
   if index < 0 {

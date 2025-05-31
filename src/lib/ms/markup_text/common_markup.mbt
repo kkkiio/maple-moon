@@ -19,32 +19,35 @@ pub let npc_tag : (Char, MarkupType) = ('p', MarkupType::Pair)
 ///| #m[mapid]# - Shows the name of the map.
 pub let map_tag : (Char, MarkupType) = ('m', MarkupType::Pair)
 
+///| #t[itemid]# - Shows the name of the item.
+pub let item_tag : (Char, MarkupType) = ('t', MarkupType::Pair)
+
 ///|
-struct NameLoader {
+struct RefRender {
   string_loader : @resource.SyncLoader
 }
 
 ///|
-pub fn NameLoader::load() -> NameLoader {
-  NameLoader::new(@resource.string_loader())
+pub fn RefRender::load() -> RefRender {
+  RefRender::new(@resource.string_loader())
 }
 
 ///|
-pub fn NameLoader::new(string_loader : @resource.SyncLoader) -> NameLoader {
+pub fn RefRender::new(string_loader : @resource.SyncLoader) -> RefRender {
   { string_loader, }
 }
 
 ///|
-pub fn NameLoader::get_npc_name(
-  self : NameLoader,
+pub fn RefRender::get_npc_name(
+  self : RefRender,
   nid : @string.View
 ) -> @string.View {
   self.string_loader.load_res(["Npc.img", nid.to_string(), "name"]).get_string()
 }
 
 ///|
-pub fn NameLoader::get_mob_name(
-  self : NameLoader,
+pub fn RefRender::get_mob_name(
+  self : RefRender,
   mid : @string.View
 ) -> @string.View {
   self.string_loader
@@ -53,8 +56,8 @@ pub fn NameLoader::get_mob_name(
 }
 
 ///|
-pub fn NameLoader::get_map_name(
-  self : NameLoader,
+pub fn RefRender::get_map_name(
+  self : RefRender,
   v : @string.View
 ) -> @string.View! {
   let mapid = @strconv.parse_int!(v.to_string())
@@ -65,4 +68,27 @@ pub fn NameLoader::get_map_name(
     mapid.to_string(),
   ])
   map_info["mapName"].get_string()
+}
+
+///|
+pub fn RefRender::get_item_name(
+  self : RefRender,
+  v : @string.View
+) -> @string.View! {
+  let item_id_str = v.to_string()
+  let item_id = @strconv.parse_int!(item_id_str)
+  let path_parts = match @item.parse_category1(item_id) {
+    Some(@item.Category1::EQUIP) =>
+      match @item.parse_equip_category(item_id) {
+        Some(sub_category) =>
+          ["Eqp.img", "Eqp", sub_category, item_id_str, "name"]
+        None => fail!("equip sub-category not found, item_id: \{item_id}")
+      }
+    Some(@item.Category1::CONSUME) => ["Consume.img", item_id_str, "name"]
+    Some(@item.Category1::INSTALL) => ["Ins.img", item_id_str, "name"]
+    Some(@item.Category1::ETC) => ["Etc.img", item_id_str, "name"]
+    Some(@item.Category1::CASH) => ["Cash.img", item_id_str, "name"]
+    None => fail!("unknown category, item_id: \{item_id}")
+  }
+  self.string_loader.load_res(path_parts).get_string()
 }

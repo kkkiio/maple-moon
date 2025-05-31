@@ -1,24 +1,18 @@
 ///|
 pub(all) struct TalkContent {
   text_html : String // Assume no text after selections
-  selections : TalkSelections?
+  selections : Array[(ColorName, Int, String)]
 } derive(Show)
-
-///|
-pub(all) struct TalkSelections {
-  color : @struct.ColorName
-  selections : Array[(Int, String)]
-} derive(Eq, Show, ToJson)
 
 ///|
 test "test text" {
   let markup_text = "Take this ship and you'll head off to a bigger continent. For #e150 mesos#n, I'll take you to #bVictoria Island#k. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?"
-  let result = parse_talk_content!(markup_text, { fn_map: {} })
-  assert_true!(result.selections.is_empty())
+  let result = parse_talk_content!(markup_text)
+  inspect!(result.selections, content="[]")
   inspect!(
     result.text_html,
     content=
-      #|Take this ship and you'll head off to a bigger continent. For <span style="font-weight: bold">150 mesos</span>, I'll take you to <span style="color: blue">Victoria Island</span>. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?
+      #|<span style="color: black">Take this ship and you'll head off to a bigger continent. For </span><span style="color: black, font-weight: bold;">150 mesos</span><span style="color: black">, I'll take you to </span><span style="color: blue">Victoria Island</span><span style="color: black">. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?</span>
     ,
   )
 }
@@ -32,210 +26,150 @@ test "test selections" {
     #|#L2##m100000000# (100 mesos)#l
     #|#L3##m103000000# (100 mesos)#l
     #|#L4##m120000000# (80 mesos)#l
-  let result = parse_talk_content!(template, {
-    fn_map: { 'm': fn(v) { "test_map_\{v}_name" } },
-  })
+  let result = parse_talk_content!(template)
   @json.inspect!(result.selections, content=[
-    {
-      "color": "blue",
-      "selections": [
-        [0, "test_map_104000000_name (100 mesos)"],
-        [1, "test_map_102000000_name (100 mesos)"],
-        [2, "test_map_100000000_name (100 mesos)"],
-        [3, "test_map_103000000_name (100 mesos)"],
-        [4, "test_map_120000000_name (80 mesos)"],
-      ],
-    },
+    ["blue", 0, "104000000<span style=\"color: blue\"> (100 mesos)</span>"],
+    ["blue", 1, "102000000<span style=\"color: blue\"> (100 mesos)</span>"],
+    ["blue", 2, "100000000<span style=\"color: blue\"> (100 mesos)</span>"],
+    ["blue", 3, "103000000<span style=\"color: blue\"> (100 mesos)</span>"],
+    ["blue", 4, "120000000<span style=\"color: blue\"> (80 mesos)</span>"],
   ])
   inspect!(
     result.text_html,
-    content="We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.",
+    content=
+      #|<span style="color: black">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br>
+      #|
+
+    ,
   )
 }
 
 ///|
 test "test no options" {
   let template = "Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the \r\n#bAnt Tunnel#k."
-  let result = parse_talk_content!(template, { fn_map: {} })
-  assert_eq!(result.selections, None)
+  let result = parse_talk_content!(template)
+  inspect!(result.selections, content="[]")
   inspect!(
     result.text_html,
     content=
-      #|Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the <br/><span style="color: blue">Ant Tunnel</span>.
+      #|<span style="color: black">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the <br>
+      #|</span><span style="color: blue">Ant Tunnel</span><span style="color: black">.</span>
     ,
   )
 }
 
-///| NPC Markups:
-/// #b = Blue text.
-/// #c[itemid]# Shows how many [itemid] the player has in their inventory.
-/// #d = Purple text.
-/// #e = Bold text.
-/// #f[imagelocation]# - Shows an image inside the .wz files.
-/// #g = Green text.
-/// #h # - Shows the name of the player.
-/// #i[itemid]# - Shows a picture of the item.
-/// #k = Black text.
-/// #l - Selection close.
-/// #m[mapid]# - Shows the name of the map.
-/// #n = Normal text (removes bold).
-/// #o[mobid]# - Shows the name of the mob.
-/// #p[npcid]# - Shows the name of the NPC.
-/// #q[skillid]# - Shows the name of the skill.
-/// #r = Red text.
-/// #s[skillid]# - Shows the image of the skill.
-/// #t[itemid]# - Shows the name of the item.
-/// #v[itemid]# - Shows a picture of the item.
-/// #x - Returns "0%" (need more information on this).
-/// #z[itemid]# - Shows the name of the item.
-/// #B[%]# - Shows a 'progress' bar.
-/// #F[imagelocation]# - Shows an image inside the .wz files.
-/// #L[number]# Selection open.
-/// \r\n - Moves down a line.
-fn parse_talk_content(text : String, ctx : VariableContext) -> TalkContent! {
-  let text = text.replace_all(old="\r\n", new="\n") // normalize newlines
-  // Split text into normal text and selections
-  let selection_start = text.index_of("#L")
-  let (normal_text, selection_text) = if selection_start < 0 {
-    (text, "")
-  } else {
-    (
-      text.substring(start=0, end=selection_start).trim_end("\n").to_string(),
-      text.substring(start=selection_start),
-    )
+///|
+fn parse_talk_content(
+  text : String,
+  mod_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  npc_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  map_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  item_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
+  player_name_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) {
+    v
   }
-  let (normal_text, color) = if normal_text.ends_with("#b") { // TODO: more color support
-    (normal_text.trim_end("#b"), @struct.ColorName::BLUE)
-  } else {
-    (normal_text, @struct.ColorName::BLACK)
-  }
-  let text_html = parse_text!(
-    ctx,
-    normal_text.replace_all(old="\n", new="<br/>").to_string(),
-  )
-  if selection_text.is_empty() {
-    return { text_html, selections: None }
+) -> TalkContent! {
+  let tag_replace_map = {
+    'o': mod_provider,
+    'p': npc_provider,
+    'm': map_provider,
+    't': item_provider,
+    'h': player_name_provider,
   }
   let selections = []
-  for line in selection_text.split("\n") {
-    let selection = parse_selection!(ctx, line.to_string())
-    selections.push(selection)
-  }
-  { text_html, selections: Some({ color, selections }) }
-}
-
-///| Parse text without selections.
-fn parse_text(ctx : VariableContext, text : String) -> String! {
-  let chunk = []
-  let mut color = @struct.ColorName::BLACK
-  let mut bold = false
-  for offset = 0; offset < text.length(); {
-    let markup_start = text.index_of("#", from=offset)
-    if markup_start < 0 {
-      chunk.push(text.substring(start=offset))
-      break
-    }
-    fn push_last_chunk() {
-      if offset != markup_start {
-        let text = text.substring(start=offset, end=markup_start)
-        let style = []
-        if color != @struct.ColorName::BLACK {
-          style.push("color: \{color.css_name()}")
+  let mut opening_selection : (Int, Array[@markup_text.Node])? = None
+  let mut trim_newline = false
+  let mut current_style : Style = { color: ColorName::BLACK, bold: false }
+  let builder = StringBuilder::new()
+  let nodes = @markup_text.parse_markup!(text, tag_map)
+  for node in nodes {
+    match node {
+      Tag('L', payload) => {
+        if opening_selection is Some(_) {
+          fail!("Nested selection open")
         }
-        if bold {
-          style.push("font-weight: bold")
+        let index = try @strconv.parse_int!(payload.to_string(), base=10) catch {
+          @strconv.StrConvError(_) =>
+            raise ParseTalkError("invalid selection index: \{payload}")
         }
-        let html = if style.is_empty() {
-          text
+        opening_selection = Some((index, []))
+      }
+      Tag('l', _) => {
+        guard opening_selection is Some((index, nodes)) else {
+          fail!("Selection close without open")
+        }
+        opening_selection = None
+        selections.push(
+          (
+            current_style.color,
+            index,
+            @markup_text.to_html(
+              nodes, current_style, @markup_text.color_map, tag_replace_map,
+            ),
+          ),
+        )
+        trim_newline = true // trim newline after selection
+      }
+      Text(text) => {
+        if opening_selection is Some((_, nodes)) {
+          nodes.push(node)
+          continue
+        }
+        if trim_newline && (text == "\r\n" || text == "\n") {
+          continue
+        }
+        @markup_text.write_text(builder, text, current_style)
+      }
+      Tag(tag, payload) => {
+        if opening_selection is Some((_, nodes)) {
+          nodes.push(node)
+          continue
+        }
+        if @markup_text.font_weight_tag_map.get(tag) is Some(b) {
+          current_style = { ..current_style, bold: b }
+        } else if @markup_text.color_map.get(tag) is Some(color) {
+          current_style = { ..current_style, color, }
         } else {
-          let style_str = style |> String::concat(separator=";")
-          "<span style=\"\{style_str}\">\{text}</span>"
+          let replace_fn = tag_replace_map.get(tag)
+          if replace_fn is Some(replace_fn) {
+            let replaced = replace_fn(current_style, payload)
+            builder.write_string(replaced.to_string())
+          } else {
+            fail!("Unknown tag: \{tag}")
+          }
         }
-        chunk.push(html)
       }
     }
-
-    // Handle color
-    match color_map.get(text[markup_start + 1]) {
-      Some(color_name) => {
-        push_last_chunk()
-        color = color_name
-        continue markup_start + 2
-      }
-      None => ()
-    }
-    // Handle font
-    match text[markup_start + 1] {
-      'e' => {
-        push_last_chunk()
-        bold = true
-        continue markup_start + 2
-      }
-      'n' => {
-        push_last_chunk()
-        bold = false
-        continue markup_start + 2
-      }
-      _ => ()
-    }
-    // Handle variable
-    let markup_end = text.index_of("#", from=markup_start + 1)
-    if markup_end < 0 {
-      raise ParseTalkError("Missing markup close") // TODO: allow # in text
-    }
-    push_last_chunk()
-    let variable = text.substring(start=markup_start + 1, end=markup_end)
-    match ctx.fn_map.get(variable[0]) {
-      Some(f) => {
-        let var_value = f!(variable.substring(start=1))
-        chunk.push(var_value)
-      }
-      None => raise ParseTalkError("Unknown variable: \{variable}")
-    }
-    continue markup_end + 1
   }
-  chunk |> String::concat(separator="")
+  let text_html = builder.to_string()
+  { text_html, selections }
 }
 
 ///|
-fn parse_selection(ctx : VariableContext, line : String) -> (Int, String)! {
-  if not(line.starts_with("#L")) {
-    raise ParseTalkError("Missing selection open markup")
-  }
-  if not(line.ends_with("#l")) {
-    raise ParseTalkError("Missing selection close markup")
-  }
-  let digit_start = 2
-  let digit_end = line.index_of("#", from=digit_start)
-  if digit_end < 0 {
-    raise ParseTalkError("Missing selection index")
-  }
-  let digits = line.substring(start=digit_start, end=digit_end)
-  let index = try @strconv.parse_int!(digits, base=10) catch {
-    @strconv.StrConvError(_) =>
-      raise ParseTalkError("invalid selection index: \{digits}")
-  }
-  let text = parse_text!(
-    ctx,
-    line.substring(start=digit_end + 1, end=line.length() - 2),
+let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.color_map
+  .keys()
+  .map(fn(c : Char) { (c, @markup_text.MarkupType::SelfClosing) })
+  .concat(
+    @markup_text.font_weight_tag_map
+    .keys()
+    .map(fn(c : Char) { (c, @markup_text.MarkupType::SelfClosing) }),
   )
-  (index, text)
-}
-
-///| Replace placeholders in the text with the values from the context.
-/// Placeholders are the text in the format of `#\{kind}\{payload}#`.
-struct VariableContext {
-  fn_map : Map[Char, (String) -> String!] // kind -> payload -> value
-}
-
-///|
-let color_map : Map[Char, @struct.ColorName] = {
-  'b': @struct.ColorName::BLUE,
-  'd': @struct.ColorName::VIOLET,
-  'g': @struct.ColorName::GREEN,
-  'k': @struct.ColorName::BLACK,
-  'r': @struct.ColorName::RED,
-}
+  .concat(
+    [
+      (@markup_text.npc_tag.0, @markup_text.npc_tag.1),
+      (@markup_text.map_tag.0, @markup_text.map_tag.1),
+      (@markup_text.item_tag.0, @markup_text.item_tag.1),
+      ('L', @markup_text.MarkupType::Pair), // #L[number]# Selection open.
+      ('l', @markup_text.MarkupType::SelfClosing), // #l - Selection close.
+    ].iter(),
+  )
+  |> Map::from_iter
 
 ///|
 pub(all) type! ParseTalkError String derive(Show)
+
+///|
+typealias ColorName = @struct.ColorName
+
+///|
+typealias Style = @markup_text.Style

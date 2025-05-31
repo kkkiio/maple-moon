@@ -136,7 +136,7 @@ pub fn set_slotmax(self : Inventory, type_id : TypeId, slotmax : Int) -> Unit {
 }
 
 ///|
-pub fn add_item(
+pub fn Inventory::add_item(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
@@ -244,16 +244,31 @@ pub fn get_slot_item_at(self : Inventory, t : TypeId, slot : Int) -> SlotItem? {
 
 ///|
 pub impl @player.Inventory for Inventory with get_bulletcount(self : Inventory) -> Int {
-  self.get_item_count(TypeId::USE, self.bullet_slot)
+  self.get_item_count_at_slot(TypeId::USE, self.bullet_slot)
 }
 
 ///|
-pub fn Inventory::get_item_count(
+pub fn Inventory::get_item_count_at_slot(
   self : Inventory,
   t : TypeId,
   slot : Int
 ) -> Int {
   self.inventories[t].get(slot).map(fn(it) { it.count }).or(0)
+}
+
+///|
+pub fn Inventory::get_item_count(self : Inventory, item_id : Int) -> Int {
+  // TODO: make a index for items
+  // search in items
+  for _, map in self.inventories.map {
+    for _, slot in map {
+      if slot.item_id == item_id {
+        return slot.count
+      }
+    }
+  } else {
+    0
+  }
 }
 
 ///|

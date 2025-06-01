@@ -3,14 +3,11 @@ pub fn make_change_stats_handler(
   stat_handler_map : Map[@maple_stat.Id, @game_mod.StatHandler],
   recalc_stats_fn : () -> Unit
 ) -> (@net.Opcode, (@net.InPacket) -> Unit) {
-  @net.make_handler(
-    @net.CHANGE_STATS,
-    parse_stat_changes,
-    fn(changes : StatChanges) {
-      handle_change_stats(stat_handler_map, changes, recalc_stats_fn)
-    },
-    log_recv=true,
-  )
+  @net.make_handler(@net.CHANGE_STATS, parse_stat_changes, fn(
+    changes : StatChanges
+  ) {
+    handle_change_stats(stat_handler_map, changes, recalc_stats_fn)
+  })
 }
 
 ///|

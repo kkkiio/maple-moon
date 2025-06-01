@@ -109,7 +109,7 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
 }
 
 ///|
-fn apply_move(
+fn Combat::apply_move(
   self : Combat,
   player : @player.Player,
   act : @combat_impl.SpecialMove
@@ -563,11 +563,11 @@ pub fn can_use(
 
 ///|
 fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
-  self.cooldowns[skill_id].or(0) > 0
+  self.cooldowns.get(skill_id).or(0) > 0
 }
 
 ///|
-pub fn log_background_err[E : Show](
+pub fn[E : Show] log_background_err(
   f : @utils.Future[Result[Unit, E]],
   loc~ : SourceLoc = _
 ) -> @utils.Future[Unit] {

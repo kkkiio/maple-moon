@@ -187,7 +187,8 @@ pub fn NpcTalkResource::from_resource(
 ///|
 pub fn UINpcTalk::new(
   resource : NpcTalkResource,
-  hooks : @ui.Hooks
+  hooks : @ui.Hooks,
+  name_loader : @markup_text.RefRender
 ) -> UINpcTalk {
   let name = @graphics.Text::new(
     @graphics.FontId::A11M,
@@ -198,7 +199,6 @@ pub fn UINpcTalk::new(
   let height = 0
   let min_height = 8 * resource.fill.height() + 14
   let speaker = @graphics.Texture::default()
-  let name_loader = @markup_text.RefRender::load()
   {
     hooks,
     base: hooks.ui_model,
@@ -424,11 +424,10 @@ pub fn change_text(
   npcid : Int,
   talk_action : TalkAction,
   speakerbyte : Speaker,
-  tx : String,
-  player_name : String
+  tx : String
 ) -> Unit! {
   self.talk_action = Some(talk_action)
-  let content = convert_npc_text!(tx, player_name, self.name_loader)
+  let content = convert_npc_text!(tx, self.name_loader)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
@@ -493,7 +492,6 @@ fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
 ///|
 fn convert_npc_text(
   raw_text : String,
-  player_name : String,
   name_loader : @markup_text.RefRender
 ) -> NPCTalkContent! {
   @log.debug({ "raw_text": raw_text }, "npc talk")
@@ -503,7 +501,7 @@ fn convert_npc_text(
     npc_provider=fn(_, v) { name_loader.get_npc_name(v) },
     map_provider=fn(_, v) { name_loader.get_map_name!(v).to_string() },
     item_provider=fn(_, v) { name_loader.get_item_name(v).to_string() },
-    player_name_provider=fn(_, _) { player_name },
+    player_name_provider=fn(_, _) { name_loader.get_player_name() },
   )
   let text_button_content = []
   for selection in content.selections {

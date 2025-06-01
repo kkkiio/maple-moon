@@ -2,38 +2,39 @@
 struct Module {
   npcs : MapNpcs
   container : &@ui.Container
-  get_player_name : () -> String
+  ref_render : @markup_text.RefRender
   npc_talk_resource : NpcTalkResource
-  packet_processor : @net.Network
+  network : @net.Network
 }
 
 ///|
 pub fn Module::load(
   container : &@ui.Container,
-  get_player_name : () -> String,
-  packet_processor : @net.Network
+  ref_render : @markup_text.RefRender,
+  network : @net.Network
 ) -> @utils.Future[Module] {
-  @ui.ui_window_2_loader().load_res(["UtilDlgEx"])
-  |> @utils.map(fn(it) {
+  @ui.ui_window_2_loader()
+  .load_res(["UtilDlgEx"])
+  .map(fn(it) {
     let npc_talk_resource = NpcTalkResource::from_resource(it)
-    Module::new(container, get_player_name, npc_talk_resource, packet_processor)
+    Module::new(container, npc_talk_resource, ref_render, network)
   })
 }
 
 ///|
 fn Module::new(
   container : &@ui.Container,
-  get_player_name : () -> String,
   npc_talk_resource : NpcTalkResource,
-  packet_processor : @net.Network
+  ref_render : @markup_text.RefRender,
+  network : @net.Network
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(args) {
-      open_npc_talk_ui(npc_talk_resource, container, get_player_name, args)
+      open_npc_talk_ui(npc_talk_resource, container, ref_render, args)
     },
-    packet_processor,
+    network,
   )
-  { npcs, container, get_player_name, npc_talk_resource, packet_processor }
+  { npcs, container, ref_render, npc_talk_resource, network }
 }
 
 ///|
@@ -41,7 +42,7 @@ pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
   open_npc_talk_ui(
     self.npc_talk_resource,
     self.container,
-    self.get_player_name,
+    self.ref_render,
     args,
   )
 }
@@ -50,17 +51,13 @@ pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
 fn open_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
-  get_player_name : () -> String,
+  name_loader : @markup_text.RefRender,
   args : TalkArgs
 ) -> Unit {
   let elem = @ui.Element::new(
     fn(hooks) {
       let ui = new_npc_talk_ui(
-        hooks,
-        npc_talk_resource,
-        container,
-        args,
-        get_player_name(),
+        hooks, npc_talk_resource, container, args, name_loader,
       )
       ui
     },
@@ -87,9 +84,9 @@ pub fn make_handlers(
     ) {
       handle_npc_dialogue(
         self.container,
-        self.get_player_name,
+        self.ref_render,
         self.npc_talk_resource,
-        self.packet_processor,
+        self.network,
         dialogue,
       )
     }),
@@ -217,7 +214,7 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
 ///|
 pub fn handle_npc_dialogue(
   container : &@ui.Container,
-  get_player_name : () -> String,
+  name_loader : @markup_text.RefRender,
   npc_talk_resource : NpcTalkResource,
   network : @net.Network,
   dialogue : NpcDialogue
@@ -256,7 +253,7 @@ pub fn handle_npc_dialogue(
                 })
             },
           },
-          get_player_name(),
+          name_loader,
         )
         ui
       },
@@ -272,9 +269,9 @@ fn new_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
   args : TalkArgs,
-  player_name : String
+  name_loader : @markup_text.RefRender
 ) -> UINpcTalk {
-  let ui = UINpcTalk::new(npc_talk_resource, hooks)
+  let ui = UINpcTalk::new(npc_talk_resource, hooks, name_loader)
   try
     ui.change_text(
       args.npc_id,
@@ -307,7 +304,6 @@ fn new_npc_talk_ui(
       },
       args.speaker,
       args.str,
-      player_name,
     ) catch {
     e => {
       @log.error({ "error": e }, "error changing text")

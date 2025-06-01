@@ -1,10 +1,11 @@
 ///|
 struct Module {
   quests_resource : QuestResource
-  name_loader : @markup_text.RefRender
+  ref_render : @markup_text.RefRender
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
   network : @net.Network
+  inventory : @inventory.Inventory
   player_quest_log : Ref[PlayerQuestLog]
 }
 
@@ -12,6 +13,7 @@ struct Module {
 pub fn Module::load(
   network : @net.Network,
   inventory : @inventory.Inventory,
+  ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> @utils.Future[Result[Module, Error]] {
   let fut = quest_resource_loader.load_res(["nx"])
@@ -19,14 +21,13 @@ pub fn Module::load(
   @utils.Future::combine(fut, fut2).map_exn(fn(it) {
     let (node, map_quests_resource) = it
     let quests_resource : QuestResource = @json.from_json!(node.value())
-    let name_loader = @markup_text.RefRender::load()
     Module::new(
       quests_resource,
       map_quests_resource.unwrap_or_error!(),
       network,
       inventory,
+      ref_render,
       open_npc_talk_ui,
-      name_loader,
     )
   })
 }
@@ -37,8 +38,8 @@ pub fn Module::new(
   map_quests_resource : MapQuestsResource,
   network : @net.Network,
   inventory : @inventory.Inventory,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-  name_loader : @markup_text.RefRender
+  ref_render : @markup_text.RefRender,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
     .iter()
@@ -57,7 +58,7 @@ pub fn Module::new(
   let player_quest_log = Ref::new(PlayerQuestLog::default())
   {
     quests_resource,
-    name_loader,
+    ref_render,
     player_quest_log,
     quest_log_listeners: [],
     map_quests: MapQuests::new( // TODO: update npc quests map when quest is completed
@@ -75,11 +76,12 @@ pub fn Module::new(
       },
     ),
     network,
+    inventory,
   }
 }
 
 ///|
-pub fn Module::make_show_status_info_handler_map(
+pub fn Module::make_show_status_info_handlers(
   self : Module
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
@@ -411,6 +413,7 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
   self.mod.quest_log_listeners.retain(fn(listener) {
     listener(self.mod.player_quest_log.val)
   })
+  self.mod.map_quests.update_quest(quest_id)
 }
 
 ///|
@@ -511,10 +514,6 @@ fn check_quest_requirements(
   phase : Int
 ) -> Result[Unit, String] {
   if check.unknown_checks.length() > 0 {
-    @log.warn(
-      { "quest_id": quest_id, "unknown_checks": check.unknown_checks },
-      "unknown checks",
-    )
     return Err("Unknown checks: \{check.unknown_checks}")
   }
   for check in check.checks {

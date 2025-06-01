@@ -23,7 +23,7 @@
   ],
 	"link": {
 		"js": {
-			"exports": ["login_account"],
+			"exports": ["login_account_ffi", "login_last_used_ffi"],
 			"format": "esm"
 		}
 	}

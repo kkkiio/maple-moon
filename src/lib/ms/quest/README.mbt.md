@@ -61,6 +61,27 @@ test {
 }
 ```
 
+描述
+
+```mbt
+test {
+  let desc = parse_quest_desc!(
+    "He says he needs #rLeaves#k to use in a traditional ceremony for his ancestors.\\nEliminate #rDark Stumps#k and collect 20 #rLeaves#k.\\n#rDark Stumps#k can be found all throughout #b#m101030300##k and #b#m101030000##k.\\n\\nReport back to #b#@1020000:##k in #b#m102000000##k upon completion.",
+  )
+  inspect!(
+    desc,
+
+  content=
+    #|<span style="color: black">He says he needs </span><span style="color: red">Leaves</span><span style="color: black"> to use in a traditional ceremony for his ancestors.<br/>
+  #|Eliminate </span><span style="color: red">Dark Stumps</span><span style="color: black"> and collect 20 </span><span style="color: red">Leaves</span><span style="color: black">.<br/>
+  #|</span><span style="color: red">Dark Stumps</span><span style="color: black"> can be found all throughout </span><map>101030300</map><span style="color: black"> and </span><map>101030000</map><span style="color: black">.<br/>
+  #|<br/>
+  #|Report back to </span><npc>1020000</npc><span style="color: black"> in </span><map>102000000</map><span style="color: black"> upon completion.</span>
+  )
+}
+
+```
+
 ```mbt
 ///|
 test "parse null phase says" {

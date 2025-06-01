@@ -12,7 +12,7 @@ test "test text" {
   inspect!(
     result.text_html,
     content=
-      #|<span style="color: black">Take this ship and you'll head off to a bigger continent. For </span><span style="color: black, font-weight: bold;">150 mesos</span><span style="color: black">, I'll take you to </span><span style="color: blue">Victoria Island</span><span style="color: black">. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?</span>
+      #|<span style="color: black">Take this ship and you&#039;ll head off to a bigger continent. For </span><span style="color: black, font-weight: bold;">150 mesos</span><span style="color: black">, I&#039;ll take you to </span><span style="color: blue">Victoria Island</span><span style="color: black">. The thing is, once you leave this place, you can&#039;t ever come back. What do you think? Do you want to go to Victoria Island?</span>
     ,
   )
 }
@@ -37,9 +37,8 @@ test "test selections" {
   inspect!(
     result.text_html,
     content=
-      #|<span style="color: black">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br>
+      #|<span style="color: black">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br/>
       #|
-
     ,
   )
 }
@@ -52,21 +51,21 @@ test "test no options" {
   inspect!(
     result.text_html,
     content=
-      #|<span style="color: black">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the <br>
-      #|</span><span style="color: blue">Ant Tunnel</span><span style="color: black">.</span>
+      #|<span style="color: black">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It&#039;s a bit pricey, but... for only 10,000 mesos, we&#039;ll take you safely to the </span><br/>
+      #|<span style="color: black"></span><span style="color: blue">Ant Tunnel</span><span style="color: black">.</span>
     ,
   )
 }
 
 ///|
-fn parse_talk_content(
+pub fn parse_talk_content(
   text : String,
-  mod_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
-  npc_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
-  map_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
-  item_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) { v },
-  player_name_provider~ : (Style, @string.View) -> @string.View! = fn(_, v) {
-    v
+  mod_provider~ : (Style, @string.View) -> String! = fn(_, v) { v.to_string() },
+  npc_provider~ : (Style, @string.View) -> String! = fn(_, v) { v.to_string() },
+  map_provider~ : (Style, @string.View) -> String! = fn(_, v) { v.to_string() },
+  item_provider~ : (Style, @string.View) -> String! = fn(_, v) { v.to_string() },
+  player_name_provider~ : (Style, @string.View) -> String! = fn(_, v) {
+    v.to_string()
   }
 ) -> TalkContent! {
   let tag_replace_map = {
@@ -85,8 +84,21 @@ fn parse_talk_content(
   for node in nodes {
     match node {
       Tag('L', payload) => {
-        if opening_selection is Some(_) {
-          fail!("Nested selection open")
+        if opening_selection is Some((index, nodes)) { // WORKAROUND: somewhere use newline as closing tag
+          opening_selection = None
+          selections.push(
+            (
+              current_style.color,
+              index,
+              @markup_text.to_html(
+                nodes,
+                current_style,
+                @markup_text.color_map,
+                tag_replace_map,
+                trim_end_newline=true,
+              ),
+            ),
+          )
         }
         let index = try @strconv.parse_int!(payload.to_string(), base=10) catch {
           @strconv.StrConvError(_) =>
@@ -118,7 +130,7 @@ fn parse_talk_content(
         if trim_newline && (text == "\r\n" || text == "\n") {
           continue
         }
-        @markup_text.write_text(builder, text, current_style)
+        @markup_text.write_text_as_html(builder, text, current_style)
       }
       Tag(tag, payload) => {
         if opening_selection is Some((_, nodes)) {
@@ -146,19 +158,10 @@ fn parse_talk_content(
 }
 
 ///|
-let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.color_map
-  .keys()
-  .map(fn(c : Char) { (c, @markup_text.MarkupType::SelfClosing) })
-  .concat(
-    @markup_text.font_weight_tag_map
-    .keys()
-    .map(fn(c : Char) { (c, @markup_text.MarkupType::SelfClosing) }),
-  )
+let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
+  .iter()
   .concat(
     [
-      (@markup_text.npc_tag.0, @markup_text.npc_tag.1),
-      (@markup_text.map_tag.0, @markup_text.map_tag.1),
-      (@markup_text.item_tag.0, @markup_text.item_tag.1),
       ('L', @markup_text.MarkupType::Pair), // #L[number]# Selection open.
       ('l', @markup_text.MarkupType::SelfClosing), // #l - Selection close.
     ].iter(),
@@ -173,3 +176,23 @@ typealias ColorName = @struct.ColorName
 
 ///|
 typealias Style = @markup_text.Style
+
+///|
+test "parse quiz" {
+  let template = "Which of these NPC's will not NOT see at Kerning City?\\r\\n#L0##b1. Don Giovanni#k #l\\r\\n#L1##b2. Andre#k #l\\r\\n#L2##b3. Mong From the Kong#k #l\\r\\n#L3##b4. Valen#k \\r\\n#L4##b5. Don Hwang#k #l"
+  let result = parse_talk_content!(template)
+  @json.inspect!(result.selections, content=[
+    ["black", 0, "<span style=\"color: blue\">1. Don Giovanni</span> "],
+    ["black", 1, "<span style=\"color: blue\">2. Andre</span> "],
+    ["black", 2, "<span style=\"color: blue\">3. Mong From the Kong</span> "],
+    ["black", 3, "<span style=\"color: blue\">4. Valen</span> "],
+    ["black", 4, "<span style=\"color: blue\">5. Don Hwang</span> "],
+  ])
+  inspect!(
+    result.text_html,
+    content=
+      #|<span style="color: black">Which of these NPC&#039;s will not NOT see at Kerning City?</span><br/>
+      #|<span style="color: black"></span>
+    ,
+  )
+}

@@ -189,6 +189,13 @@ pub fn MapQuests::add_npc(
 }
 
 ///|
+pub fn MapQuests::update_quest(self : MapQuests, quest_id : Int) -> Unit {
+  guard self.quests.get(quest_id) is Some(npc_quest) else { return }
+  self.quests.remove(quest_id)
+  self.add_npc(npc_quest.npc_id, npc_quest.npc_object)
+}
+
+///|
 pub fn MapQuests::remove_npc(self : MapQuests, npc_id : Int) -> Unit {
   self.quests.remove(npc_id)
 }
@@ -221,7 +228,7 @@ pub fn MapQuests::send_cursor(
 
 ///|
 priv enum TalkState {
-  Tell(Int)
+  Narrative(Int)
   YesReply(Int)
   NoReply(Int)
 } derive(Show)
@@ -240,13 +247,13 @@ fn talk_about_quest(
     match choice {
       SEND_NEXT(next=Some(_)) =>
         match state {
-          Tell(i) => {
+          Narrative(i) => {
             guard says.says.get(i) is Some(str) else { return }
             let last = says.says.get(i + 1) is None
-            let not_accepted = phase == 0
+            let accepting_quest = phase == 0
             open_npc_talk_ui({
               npc_id: npc_quest.npc_id,
-              talk_action: match (last, not_accepted) {
+              talk_action: match (last, accepting_quest) {
                 (true, true) => // ask for accept
                   @npc.TalkAction::SEND_YESNO(fn(c) {
                     next_talk(
@@ -256,11 +263,14 @@ fn talk_about_quest(
                   })
                 (true, false) => // end
                   @npc.TalkAction::SEND_OK(fn(c) {
-                    next_talk(Tell(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
+                    next_talk(Narrative(i + 1), @npc.TalkChoice::SEND_OK(ok=c))
                   })
                 (false, _) => // continue
                   @npc.TalkAction::SEND_NEXT(fn(c) {
-                    next_talk(Tell(i + 1), @npc.TalkChoice::SEND_NEXT(next=c))
+                    next_talk(
+                      Narrative(i + 1),
+                      @npc.TalkChoice::SEND_NEXT(next=c),
+                    )
                   })
               },
               speaker: @npc.Speaker::NPC_LEFT,
@@ -351,7 +361,66 @@ fn talk_about_quest(
     }
   }
 
-  next_talk(Tell(0), @npc.TalkChoice::SEND_NEXT(next=Some(()))) // TODO: show hint if quest is in progress
+  if says.ask {
+    talking_quiz(npc_quest, says, 0, None, network, open_npc_talk_ui)
+  } else if npc_quest.in_progress_quest is Some((_, false)) {
+    // Hint(_) => ... // TODO: show hint according to the un met requirements
+    ...
+  } else {
+    next_talk(Narrative(0), @npc.TalkChoice::SEND_NEXT(next=Some(())))
+  }
+}
+
+///|
+fn talking_quiz(
+  npc_quest : NpcQuest,
+  says : QuestPhaseSays,
+  i : Int,
+  answer : Int?,
+  network : @net.Network,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+) -> Unit {
+  guard says.stop is Some(hints)
+  if hints.base.get(i - 1) is Some(last_quiz) { // check quiz answer
+    guard answer is Some(answer) else { return }
+    if answer != last_quiz.answer - 1 { // CONFUSING: option missmatch with the answer
+      // wrong, hint, end
+      open_npc_talk_ui({
+        npc_id: npc_quest.npc_id,
+        talk_action: @npc.TalkAction::SEND_OK(fn(_) {  }),
+        speaker: @npc.Speaker::NPC_LEFT,
+        str: last_quiz.says[answer],
+      })
+      return
+    }
+  }
+  // correct answer
+  guard says.says.get(i) is Some(str)
+  if says.says.get(i + 1) is None { // complete quest
+    open_npc_talk_ui({
+      npc_id: npc_quest.npc_id,
+      talk_action: @npc.TalkAction::SEND_OK(fn(_) {
+        network.send_message(
+          QuestActionMessage::CompleteQuest(
+            quest_id=npc_quest.quest_id,
+            npc_id=npc_quest.npc_id,
+            selection=None,
+          ),
+        )
+      }),
+      speaker: @npc.Speaker::NPC_LEFT,
+      str,
+    })
+    return
+  }
+  open_npc_talk_ui({
+    npc_id: npc_quest.npc_id,
+    talk_action: @npc.TalkAction::SEND_SIMPLE(fn(c) {
+      talking_quiz(npc_quest, says, i + 1, c, network, open_npc_talk_ui)
+    }),
+    speaker: @npc.Speaker::NPC_LEFT,
+    str,
+  })
 }
 
 ///| Represents a quest on the current map
@@ -385,7 +454,7 @@ fn NpcQuest::new(
 
 ///|
 impl @map_object.MapObject for NpcQuest with get_oid(self) {
-  self.npc_id
+  self.quest_id
 }
 
 ///|

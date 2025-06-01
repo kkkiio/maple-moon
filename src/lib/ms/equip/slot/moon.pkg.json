@@ -1,8 +1,5 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/net",
-    "KKKIIO/maple-moon-client/lib/config",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat"
   ]
 }

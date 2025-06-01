@@ -219,7 +219,7 @@ fn can_wear_equip(
 pub fn drop_item(
   mod : Module,
   kind : String,
-  index : Int,
+  slot_no : Int,
   count : Int
 ) -> String {
   guard get_type_id_by_kind?(kind) is Ok(type_id) else {
@@ -228,7 +228,6 @@ pub fn drop_item(
   if type_id is TypeId::CASH {
     return "You can't drop this item."
   }
-  let slot_no = index + 1
   mod.network.send_message({ type_id, slot: slot_no, action: 0, qty: count })
   ""
 }
@@ -243,12 +242,14 @@ priv struct MoveItemPacket {
 
 ///|
 impl @net.OutMessage for MoveItemPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
+  packet
   ..write_time()
   ..write_byte(self.type_id.int_value().to_byte())
   ..write_short(self.slot)
   ..write_short(self.action)
   ..write_short(self.qty)
+  packet
 }
 
 ///|

@@ -81,26 +81,6 @@ pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
 }
 
 ///|
-pub fn get_worldid(self : Configuration) -> Int {
-  self.worldid
-}
-
-///|
-pub fn set_worldid(self : Configuration, worldid : Int) -> Unit {
-  self.worldid = worldid
-}
-
-///|
-pub fn get_channelid(self : Configuration) -> Int {
-  self.channelid
-}
-
-///|
-pub fn set_channelid(self : Configuration, channelid : Int) -> Unit {
-  self.channelid = channelid
-}
-
-///|
 pub(open) trait ConfigEntry {
   name(Self) -> String
   new(String, String) -> Self

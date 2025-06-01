@@ -3,6 +3,7 @@
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/ms/map",
-    "KKKIIO/maple-moon-client/lib/ms/item"
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/ms/char_stats"
   ]
 }

@@ -150,6 +150,23 @@ const handleDropCancel = () => {
   showDropModal.value = false;
   dropCount.value = 1;
 };
+
+const handleDropAllClick = () => {
+  if (selectedItemSlot.value) {
+    const item = selectedItemSlot.value.item;
+    const result = drop_item(
+      mod,
+      selectedItemSlot.value.kind,
+      item.slot_no,
+      item.count || 1 // if item.count is undefined, drop 1
+    );
+    if (result) {
+      hint.value = result;
+    }
+    // Deselect item after dropping
+    selected.value = { tab: null, row: null, col: null };
+  }
+};
 </script>
 
 <template>
@@ -170,8 +187,8 @@ const handleDropCancel = () => {
                           selected.row === rowIndex &&
                           selected.col === colIndex,
                       }" @click="
-                          () => handleItemClick(tabIndex, rowIndex, colIndex)
-                        ">
+                        () => handleItemClick(tabIndex, rowIndex, colIndex)
+                      ">
                         <LazyImage :image="item.icon" />
                         <div v-if="item.count" class="item-count">
                           {{ item.count }}
@@ -210,6 +227,10 @@ const handleDropCancel = () => {
     <n-button type="error" style="margin-left: 8px" :disabled="selected.tab === null || selected.row === null || selected.col === null
       " @click="handleDropClick">
       Drop
+    </n-button>
+    <n-button type="error" style="margin-left: 8px"
+      :disabled="selected.tab === null || selected.row === null || selected.col === null" @click="handleDropAllClick">
+      Drop All
     </n-button>
   </div>
   <n-modal v-model:show="showDropModal" preset="dialog" title="Drop Item" @after-leave="handleDropCancel">

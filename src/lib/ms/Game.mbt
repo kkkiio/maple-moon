@@ -67,6 +67,7 @@ fn load_modules(
   stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module
 ) -> @utils.Future[LoadedState] {
+  let local_storage = @config.LocalStorage::new()
   fn get_stage() -> Stage {
     stage_ref.val.unwrap() // TODO: handle error
   }
@@ -131,19 +132,25 @@ fn load_modules(
     merge_handlers(mod.make_handlers())
     merge_actions(mod.make_actions())
     merge_stat_handlers(mod.make_stat_handlers())
+    merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
   })
-  let npc_module = @npc.Module::load(
-    ui,
-    fn() { get_stage().get_player().unwrap().character.get_name() },
-    network,
-  ).tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let ref_render = @markup_text.RefRender::new(@resource.string_loader(), fn() {
+    guard get_stage().get_player() is Some(player) else { return "" }
+    player.character.get_name()
+  })
+  let npc_module = @npc.Module::load(ui, ref_render, network).tap(fn(mod) {
+    merge_handlers(mod.make_handlers())
+  })
   let quest_module_fut = npc_module
     .combine(inventory_module_fut)
     .bind(fn(it) {
       let (mod, inventory_module) = it
-      @quest.Module::load(network, inventory_module.get_inventory(), fn(args) {
-        mod.open_npc_talk_ui(args)
-      })
+      @quest.Module::load(
+        network,
+        inventory_module.get_inventory(),
+        ref_render,
+        fn(args) { mod.open_npc_talk_ui(args) },
+      )
     })
     .map(fn(it) {
       match it {
@@ -155,12 +162,12 @@ fn load_modules(
       }
     })
     .tap(fn(mod) {
-      merge_show_status_info_handler_map(
-        mod.make_show_status_info_handler_map(),
-      )
+      merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
     })
   let login_mod_f = char_look_module_f
-    .bind(fn(mod) { @login.Module::load(network, ui, mod, io_service) })
+    .bind(fn(mod) {
+      @login.Module::load(network, ui, mod, io_service, local_storage)
+    })
     .combine(inventory_module_fut)
     .combine(map_module)
     .combine(quest_module_fut)

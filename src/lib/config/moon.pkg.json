@@ -1,5 +1,6 @@
 {
-  "import": [
-    "KKKIIO/maple-moon-client/lib/struct"
-  ]
+  "import": [],
+  "targets": {
+    "local_storage.js.mbt": ["js"]
+  }
 }

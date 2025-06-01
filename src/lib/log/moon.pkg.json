@@ -5,6 +5,6 @@
         }
     },
     "targets": {
-        "out.js.mbt": ["js"],
+        "out.js.mbt": ["js"]
     }
 }

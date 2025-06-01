@@ -207,7 +207,7 @@ fn Mob::new(
     |> Map::from_iter
 
   // init or risk crash
-  match animations[StanceType::STAND] {
+  match animations.get(StanceType::STAND) {
     Some(stand) => animations[StanceType::SKILL] = stand
     None => ()
   }
@@ -228,7 +228,7 @@ fn Mob::new(
   let dying = false
   let dead = false
   let stance = Stance::from_byte(st)
-  match animations[stance.t] {
+  match animations.get(stance.t) {
     Some(anim) => anim.reset()
     None => ()
   }
@@ -302,7 +302,7 @@ pub impl @map_object.MapObject for Mob with draw(
   let headpos = self.get_head_position(position=absp)
   self.effects.drawbelow(absp, alpha)
   if not(self.dead) {
-    match self.animations[self.stance.t] {
+    match self.animations.get(self.stance.t) {
       Some(anim) =>
         anim.draw(
           @graphics.DrawArgument::new14(
@@ -332,7 +332,7 @@ pub impl @map_object.MapObject for Mob with update(
   if not(self.base.is_active()) {
     return self.base.phobj.fhlayer
   }
-  let aniend = match self.animations[self.stance.t] {
+  let aniend = match self.animations.get(self.stance.t) {
     Some(anim) => anim.update()
     None => false
   }
@@ -468,7 +468,7 @@ fn next_move(self : Mob) -> Unit {
 pub fn set_stance(self : Mob, newstance : Stance) -> Unit {
   if self.stance != newstance {
     self.stance = newstance
-    match self.animations[self.stance.t] {
+    match self.animations.get(self.stance.t) {
       Some(anim) => anim.reset()
       None => ()
     }
@@ -512,7 +512,7 @@ pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   if not(self.base.is_active()) {
     return false
   }
-  match self.animations[self.stance.t] {
+  match self.animations.get(self.stance.t) {
     Some(anim) => {
       let bounds = anim.get_bounds()
       range.overlaps(bounds.shift(self.base.get_position()))
@@ -526,7 +526,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
   if not(self.base.is_active()) {
     return None
   }
-  match self.animations[self.stance.t] {
+  match self.animations.get(self.stance.t) {
     Some(anim) => {
       let bounds = anim.get_bounds()
       Some(bounds.shift(self.base.get_position()))
@@ -632,7 +632,7 @@ pub fn get_head_position(
   self : Mob,
   position~ : @struct.Point[Int] = self.get_position()
 ) -> @struct.Point[Int] {
-  let head = match self.animations[self.stance.t] {
+  let head = match self.animations.get(self.stance.t) {
     Some(anim) => anim.get_head()
     None => @struct.Point::default()
   }

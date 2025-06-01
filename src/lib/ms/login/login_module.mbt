@@ -4,6 +4,7 @@ struct Module {
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
   io_service : @io_task.Service
+  local_storage : @config.LocalStorage
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World] // temporary storage for unfinished server list
@@ -19,9 +20,25 @@ pub fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  io_service : @io_task.Service
+  io_service : @io_task.Service,
+  local_storage : @config.LocalStorage
 ) -> @utils.Future[Module] {
-  @utils.Future::from_value({
+  @utils.Future::from_value(
+    Module::new(
+      network, ui_container, char_look_module, io_service, local_storage,
+    ),
+  )
+}
+
+///|
+pub fn Module::new(
+  network : @net.Network,
+  ui_container : &@ui.Container,
+  char_look_module : @char_look.Module,
+  io_service : @io_task.Service,
+  local_storage : @config.LocalStorage
+) -> Module {
+  {
     network,
     ui_container,
     char_look_module,
@@ -33,7 +50,8 @@ pub fn Module::load(
     // input_acc_pass: None,
     select_cid: None,
     io_service,
-  })
+    local_storage,
+  }
 }
 
 ///|
@@ -120,7 +138,7 @@ pub fn make_handlers(
 }
 
 ///|
-pub fn get_selected_char(self : Module) -> @character.CharEntry? {
+pub fn Module::get_selected_char(self : Module) -> @character.CharEntry? {
   self.selected_index.map(fn(index) { self.characters[index] })
 }
 
@@ -131,7 +149,19 @@ pub fn Module::login(
   password : String,
   callback : (String) -> Unit
 ) -> Unit {
-  // self.input_acc_pass = Some((account, password))
+  // TODO: support token auth
+  self.local_storage.set_item("last_account", account)
+  self.local_storage.set_item("last_password", password)
+  self.login_account(account, password, callback)
+}
+
+///|
+fn Module::login_account(
+  self : Module,
+  account : String,
+  password : String,
+  callback : (String) -> Unit
+) -> Unit {
   self.login_task = Some({
     processor: self.network,
     state: ACQ_CONN,
@@ -140,6 +170,21 @@ pub fn Module::login(
     callback,
   })
   self.connect_task = None
+}
+
+///| login last used account and character
+pub fn Module::login_last_used(
+  self : Module,
+  callback : (String) -> Unit
+) -> Unit {
+  // TODO: support token auth
+  let account = self.local_storage.get_item("last_account")
+  let password = self.local_storage.get_item("last_password")
+  if account is Some(account) && password is Some(password) {
+    self.login_account(account, password, callback)
+  } else {
+    callback("No account or password found")
+  }
 }
 
 ///|
@@ -159,7 +204,7 @@ priv enum LoginState {
 }
 
 ///|
-fn update(self : LoginTask) -> Unit {
+fn LoginTask::update(self : LoginTask) -> Unit {
   let p = self.processor
   match p.get_status() {
     READY =>
@@ -391,8 +436,8 @@ fn handle_server_list(self : Module, worlds : Array[World]?) -> Unit {
   }
   let world = worlds[0]
   let channel = 0
-  @config.global().set_worldid(world.wid)
-  @config.global().set_channelid(channel)
+  self.local_storage.set_item("last_world_id", world.wid.to_string())
+  self.local_storage.set_item("last_channel_id", channel.to_string())
   self.network.send_message({ worldId: world.wid, channelId: channel })
 }
 
@@ -534,8 +579,19 @@ pub fn handle_server_ip(mod : Module, port : Int, cid : Int) -> Unit {
       panic()
     }
   }
-  mod.network.connect_channel(port)
-  mod.connect_task = Some({ network: mod.network, cid })
+  mod.local_storage.set_item("last_port", port.to_string())
+  mod.local_storage.set_item("last_character_id", cid.to_string())
+  mod.connect_channel_with_character(cid, port)
+}
+
+///|
+fn Module::connect_channel_with_character(
+  self : Module,
+  cid : Int,
+  port : Int
+) -> Unit {
+  self.network.connect_channel(port)
+  self.connect_task = Some({ network: self.network, cid })
 }
 
 ///|

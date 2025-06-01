@@ -116,9 +116,9 @@ struct UnequipItemPacket {
 
 ///|
 pub impl @net.OutMessage for UnequipItemPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.MOVE_ITEM)
-  ..write_short(self.src)
-  ..write_short(self.dest)
+  let packet = @net.OutPacket::new(@net.MOVE_ITEM)
+  packet..write_short(self.src)..write_short(self.dest)
+  packet
 }
 
 ///|
@@ -134,10 +134,9 @@ fn UseItemMessage::new(slot_no : Int, itemid : Int) -> UseItemMessage {
 
 ///|
 impl @net.OutMessage for UseItemMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::USE_ITEM)
-  ..write_time()
-  ..write_short(self.slot_no)
-  ..write_int(self.itemid)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::USE_ITEM)
+  packet..write_time()..write_short(self.slot_no)..write_int(self.itemid)
+  packet
 }
 
 ///| Packet which requests that an item is moved
@@ -147,10 +146,12 @@ pub fn new_move_item_packet(
   action : Int,
   qty : Int
 ) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
+  packet
   ..write_time()
   ..write_byte(type_id.int_value().to_byte())
   ..write_short(slot)
   ..write_short(action)
   ..write_short(qty)
+  packet
 }

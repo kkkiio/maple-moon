@@ -102,6 +102,9 @@ class TextBitmapGenerator {
             };
             targetImg.src = dataUrl;
         };
+        tmpImg.onerror = (evt) => {
+            console.error("createImage error", evt, tmpImg.src);
+        };
         tmpImg.src =
             "data:image/svg+xml," +
             encodeURIComponent(

@@ -1,5 +1,5 @@
 <script setup>
-import { login_account } from 'lib/ms/login/login.js';
+import { login_account_ffi, login_last_used_ffi } from 'lib/ms/login/login.js';
 import { NCard, NForm, NFormItem, NInput, NButton, NAlert } from 'naive-ui';
 import { ref } from 'vue';
 import { pollMod } from './utils';
@@ -26,7 +26,7 @@ const handleLogin = () => {
   }
 
   loading.value = true;
-  login_account(loginMod.value, account.value, password.value, (message) => {
+  login_account_ffi(loginMod.value, account.value, password.value, (message) => {
     if (message) {
       errorMessage.value = message;
     } else {
@@ -36,6 +36,21 @@ const handleLogin = () => {
     loading.value = false;
   });
 };
+
+const handleLoginLastUsed = () => {
+  errorMessage.value = null;
+  loading.value = true;
+  login_last_used_ffi(loginMod.value, (message) => {
+    if (message) {
+      errorMessage.value = message;
+    } else {
+      errorMessage.value = null;
+      emit('logined');
+    }
+    loading.value = false;
+  });
+};
+
 const rules = {
   account: {
     required: true,
@@ -64,8 +79,11 @@ const rules = {
               @keyup.enter="handleLogin" />
           </n-form-item>
           <div style="display: flex; justify-content: flex-end;">
-            <n-button type="primary" @click="handleLogin" :loading="loading">
+            <n-button type="primary" @click="handleLogin" :loading="loading" style="margin-right: 8px;">
               Login
+            </n-button>
+            <n-button type="default" @click="handleLoginLastUsed" :loading="loading">
+              Login Last Used
             </n-button>
           </div>
         </n-form>

@@ -493,7 +493,6 @@ test "parse quest check 10054" {
     quest_check._,
     content=
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
-
     ,
   )
 }
@@ -542,7 +541,7 @@ test "parse quests status check" {
 }
 
 ///|
-struct ItemCount {
+priv struct ItemCount {
   id : Int
   count : Int // 0 means should not hold the item
 } derive(Show)
@@ -563,7 +562,7 @@ struct QuestPhaseSays {
   ask : Bool
   yes_reply : Array[String]
   no_reply : Array[String]
-  stop_hint : Hints?
+  stop : Hints?
   restore_lost : Lost?
 } derive(Show, Default)
 
@@ -620,7 +619,7 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
     ask,
     yes_reply: yes_reply._.map_or([], fn(reply) { reply._ }),
     no_reply: no_reply._.map_or([], fn(reply) { reply._ }),
-    stop_hint: stop_hint._,
+    stop: stop_hint._,
     restore_lost: restore_lost._,
   }
 }

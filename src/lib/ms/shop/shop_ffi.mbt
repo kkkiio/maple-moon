@@ -19,7 +19,7 @@ pub fn watch_opening_shop_ffi(
   mod : Module,
   callback : (@js.Nullable[ShopUIData]) -> Bool
 ) -> Unit {
-  let callback = fn(npc_shop : OpenNpcShop?) {
+  let listener = fn(npc_shop : OpenNpcShop?) {
     guard npc_shop is Some(npc_shop) else {
       return callback(@js.Nullable::null())
     }
@@ -48,10 +48,10 @@ pub fn watch_opening_shop_ffi(
     }
     callback(@js.Nullable::from_option(Some(shop_data)))
   }
-  if not(callback(mod.opening_shop)) {
+  if not(listener(mod.opening_shop)) {
     return
   }
-  mod.opening_shop_listeners.push(callback)
+  mod.opening_shop_listeners.push(listener)
 }
 
 ///|

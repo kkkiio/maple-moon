@@ -75,14 +75,15 @@ struct BackgroundSpec {
 
 ///|
 pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
-  match json {
-    {
+  guard json.as_object() is Some(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
+  }
+  guard obj
+    is {
       "a": Json::Number(a),
-      "ani": Json::Number(ani),
       "bS": Json::String(bS),
       "cx": Json::Number(cx),
       "cy": Json::Number(cy),
-      "front": Json::Number(front),
       "no": Json::Number(no),
       "rx": Json::Number(rx),
       "ry": Json::Number(ry),
@@ -90,28 +91,29 @@ pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
       "x": Json::Number(x),
       "y": Json::Number(y),
       ..
-    } =>
-      {
-        a: a.to_int(),
-        ani: ani.to_int() != 0,
-        bS,
-        cx: cx.to_int(),
-        cy: cy.to_int(),
-        f: json is { "f": Json::Number(f), .. } && f != 0,
-        front: front.to_int() != 0,
-        no: no.to_int(),
-        rx: rx.to_int(),
-        ry: ry.to_int(),
-        type_: try {
-          BackgroundType::from_int!(type_.to_int())
-        } catch {
-          e =>
-            raise @json.JsonDecodeError((path.add_key("type"), e.to_string()))
-        },
-        x: x.to_int(),
-        y: y.to_int(),
-      }
-    _ => raise @json.JsonDecodeError((path, "expected object"))
+    } else {
+    raise @json.JsonDecodeError((path, "missing background fields"))
+  }
+  let front = obj
+    .get("front")
+    .map_or(false, fn(front) { front is Json::Number(1) })
+  let ani = obj.get("ani").map_or(false, fn(ani) { ani is Json::Number(1) })
+  {
+    a: a.to_int(),
+    ani,
+    bS,
+    cx: cx.to_int(),
+    cy: cy.to_int(),
+    f: json is { "f": Json::Number(f), .. } && f != 0,
+    front,
+    no: no.to_int(),
+    rx: rx.to_int(),
+    ry: ry.to_int(),
+    type_: try BackgroundType::from_int!(type_.to_int()) catch {
+      e => raise @json.JsonDecodeError((path.add_key("type"), e.to_string()))
+    },
+    x: x.to_int(),
+    y: y.to_int(),
   }
 }
 
@@ -299,10 +301,10 @@ pub struct Backgrounds {
 }
 
 ///|
-type BackgroundsSpec Array[BackgroundSpec] derive(ToJson)
+type BackgroundsResource Array[BackgroundSpec] derive(ToJson)
 
 ///|
-pub impl @json.FromJson for BackgroundsSpec with from_json(json, path) {
+pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
   guard json.as_object() is Some(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
@@ -321,7 +323,7 @@ pub impl @json.FromJson for BackgroundsSpec with from_json(json, path) {
 ///|
 pub fn load_backgrounds(
   background_loader : @resource.AsyncLoader,
-  spec : BackgroundsSpec
+  spec : BackgroundsResource
 ) -> @utils.Future[Backgrounds] {
   let fronts = Array::new()
   let back_futs = Array::new()

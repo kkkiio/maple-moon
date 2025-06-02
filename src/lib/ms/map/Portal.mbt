@@ -1,7 +1,9 @@
 ///|
 pub(all) enum PortalType {
   SPAWN
+  /// A normal portal that is not visible and not hidden.
   INVISIBLE
+  /// A shining portal.
   REGULAR
   TOUCH
   TYPE4
@@ -15,7 +17,7 @@ pub(all) enum PortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Show, ToJson)
 
 ///|
 pub fn PortalType::typebyid(id : Int) -> PortalType? {

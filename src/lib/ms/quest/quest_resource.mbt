@@ -258,19 +258,7 @@ priv struct InfoEx {
 } derive(Show, @json.FromJson)
 
 ///|
-priv type Nullable[T] T? derive(Show)
-
-///|
-impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
-  json,
-  path
-) {
-  if json is Null {
-    None
-  } else {
-    Some(@json.from_json!(json, path~))
-  }
-}
+typealias Nullable[T] = @resource.Nullable[T]
 
 ///|
 priv type NumbericInt Int derive(Show)

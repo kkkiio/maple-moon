@@ -1,5 +1,14 @@
 <template>
   <div v-if="shopData" class="shop-container">
+    <div class="shop-header">
+      <n-button type="error" @click="closeShop">
+        <template #icon>
+          <n-icon>
+            <CloseIcon />
+          </n-icon>
+        </template>
+      </n-button>
+    </div>
     <!-- Main Content Area -->
     <div class="shop-content">
 
@@ -9,7 +18,7 @@
         <div class="item-list buy-list">
           <div v-for="item in shopItems" :key="item.slot_no" class="shop-item"
             :class="{ selected: selectedBuyItem?.slot_no === item.slot_no }" @click="selectBuyItem(item)">
-            <n-tooltip trigger="hover" placement="top">
+            <n-tooltip trigger="hover" placement="right" :animated="false">
               <template #trigger>
                 <div class="item-display">
                   <LazyImage :image="item.icon" :width="32" :height="32" />
@@ -39,7 +48,7 @@
                       <div class="inventory-slot-wrapper">
                         <!-- Item slot with content -->
                         <template v-if="hasItemAt(row, col)">
-                          <n-tooltip trigger="hover" placement="top">
+                          <n-tooltip trigger="hover" placement="right-end" :animated="false">
                             <template #trigger>
                               <div class="inventory-slot"
                                 :class="{ 'selected-slot': selected.kind === kind && selected.index === getItemIndex(row, col) }"
@@ -72,22 +81,58 @@
     <!-- Footer / Actions -->
     <div class="shop-footer">
       <div class="meso-display">
-        Your Mesos: {{ formatMeso(meso) }}
+        {{ formatMeso(meso) }} $
       </div>
       <div class="action-buttons">
         <NSpace>
-          <n-button type="primary" :disabled="!selectedBuyItem" @click="handleBuyOne">
+          <n-tooltip trigger="hover" placement="top">
+            <template #trigger>
+              <n-button type="primary" :disabled="!selectedBuyItem" @click="handleBuyOne">
+                <template #icon>
+                  <n-icon>
+                    <Cart />
+                  </n-icon>
+                </template>
+              </n-button>
+            </template>
             Buy One
-          </n-button>
-          <n-button type="info" :disabled="!selectedBuyItem" @click="handleBuyMultiple">
+          </n-tooltip>
+          <n-tooltip trigger="hover" placement="top">
+            <template #trigger>
+              <n-button type="info" :disabled="!selectedBuyItem" @click="handleBuyMultiple">
+                <template #icon>
+                  <n-icon>
+                    <CartOutline />
+                  </n-icon>
+                </template>
+              </n-button>
+            </template>
             Buy Multiple
-          </n-button>
-          <n-button type="warning" :disabled="!selected.kind || selected.index === null" @click="handleSellItem">
+          </n-tooltip>
+          <n-tooltip trigger="hover" placement="top">
+            <template #trigger>
+              <n-button type="warning" :disabled="!selected.kind || selected.index === null" @click="handleSellItem">
+                <template #icon>
+                  <n-icon>
+                    <Remove />
+                  </n-icon>
+                </template>
+              </n-button>
+            </template>
             Sell
-          </n-button>
-          <n-button type="error" @click="closeShop">
-            Exit Shop
-          </n-button>
+          </n-tooltip>
+          <n-tooltip trigger="hover" placement="top">
+            <template #trigger>
+              <n-button type="error" :disabled="!selected.kind || selected.index === null" @click="handleSellAll">
+                <template #icon>
+                  <n-icon>
+                    <TrashBin />
+                  </n-icon>
+                </template>
+              </n-button>
+            </template>
+            Sell All
+          </n-tooltip>
         </NSpace>
       </div>
     </div>
@@ -158,7 +203,7 @@ import {
   NSpace,
   NEmpty
 } from 'naive-ui';
-import { Close as CloseIcon } from '@vicons/ionicons5';
+import { Close as CloseIcon, Cart, Remove, TrashBin, CartOutline } from '@vicons/ionicons5';
 import LazyImage from '@/components/LazyImage.vue';
 
 const props = defineProps({
@@ -320,6 +365,15 @@ function handleSellCancel() {
   sellCount.value = 1;
 }
 
+function handleSellAll() {
+  if (!selected.value.kind || selected.value.index === null) return;
+  const item = currentItems.value[selected.value.index];
+  if (!item) return;
+
+  const count = item.count || 1;
+  sell_inventory_item_ffi(props.shop_mod, item.slot_no, item.id, count);
+}
+
 function closeShop() {
   leave_shop_ffi(props.shop_mod);
 }
@@ -350,44 +404,42 @@ function formatMeso(amount) {
 
 <style scoped>
 .shop-container {
-  width: 800px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 6px;
 }
 
 .shop-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .shop-content {
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
 }
 
 .buy-section,
 .sell-section {
   flex: 1;
-  min-height: 400px;
+  min-height: 240px;
 }
 
 .item-list {
-  height: 360px;
+  height: 300px;
   overflow-y: auto;
   border: 1px solid #eee;
   border-radius: 4px;
-  padding: 8px;
+  padding: 2px;
 }
 
 .shop-item {
-  padding: 8px;
+  padding: 4px 6px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.shop-item:last-child {
+  border-bottom: none;
 }
 
 .shop-item:hover {
@@ -396,28 +448,29 @@ function formatMeso(amount) {
 
 .shop-item.selected {
   background-color: #e6f4ff;
-  border: 1px solid #91caff;
+  border-color: #91caff;
 }
 
 .item-display {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 
 .item-name {
   flex: 1;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .item-price {
   color: #666;
-  font-size: 12px;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
-/* Inventory grid styles from ItemInventory.vue */
 .inventory-panel {
-  padding: 8px;
+  padding: 2px;
 }
 
 .inventory-table {
@@ -427,8 +480,8 @@ function formatMeso(amount) {
 
 .inventory-cell {
   width: 25%;
-  height: 40px;
-  padding: 2px;
+  height: 32px;
+  padding: 0px;
   vertical-align: middle;
   text-align: center;
 }
@@ -442,20 +495,26 @@ function formatMeso(amount) {
 }
 
 .inventory-slot {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
   border: 1px solid transparent;
+  border-radius: 2px;
   transition: all 0.2s;
+}
+
+.inventory-slot:hover {
+  background-color: #f5f5f5;
 }
 
 .selected-slot {
   border-color: #18a058;
   box-shadow: 0 0 2px #18a058;
+  background-color: #f0f9ff;
 }
 
 .empty-slot {
@@ -465,15 +524,16 @@ function formatMeso(amount) {
 
 .item-count {
   position: absolute;
-  bottom: 1px;
-  right: 1px;
+  bottom: 0px;
+  right: 0px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 0 2px;
-  font-size: 10px;
+  padding: 1px 2px;
+  font-size: 9px;
   border-radius: 2px;
-  min-width: 12px;
+  min-width: 10px;
   text-align: center;
+  line-height: 1;
 }
 
 .tooltip-content {
@@ -494,17 +554,18 @@ function formatMeso(amount) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 16px;
+  padding-top: 8px;
   border-top: 1px solid #eee;
 }
 
 .meso-display {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
+  color: #333;
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 6px;
 }
 </style>

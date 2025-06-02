@@ -38,6 +38,65 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
 }
 
 ///|
+pub fn Frame::new(
+  resource : FrameResource,
+  loader_name : String,
+  image_loader : @resource.ImageLoader,
+  default_delay~ : Int = 100
+) -> Frame {
+  let texture = Texture::load(resource.texture, loader_name, image_loader)
+  let delay = match resource.delay {
+    0 => default_delay
+    it => it
+  }
+  let head = resource.head
+  let bounds = resource.bounds
+  let opacities = resource.opacities
+  let scales = resource.scales
+  { texture, delay, head, bounds, opacities, scales }
+}
+
+///|
+struct FrameResource {
+  texture : TextureResource
+  delay : Int
+  bounds : Rectangle[Int]
+  head : Point[Int]
+  opacities : (Int, Int)
+  scales : (Int, Int)
+}
+
+///|
+pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameResource!@json.JsonDecodeError {
+  let texture = @json.from_json(json)
+  let bounds = @json.from_json(json)
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let head = @json.from_json(
+    obj.get("head").or(Json::null()),
+    path=path.add_key("head"),
+  )
+  let delay = match obj {
+    { "delay": Number(delay), .. } if delay != 0 => delay.to_int()
+    _ => 100
+  }
+  let opacities = match json {
+    { "a0": Number(a0), "a1": Number(a1), .. } => (a0.to_int(), a1.to_int())
+    { "a0": Number(a0), .. } => (a0.to_int(), 255 - a0.to_int())
+    { "a1": Number(a1), .. } => (255 - a1.to_int(), a1.to_int())
+    _ => (255, 255)
+  }
+  let scales = match json {
+    { "z0": Number(z0), "z1": Number(z1), .. } => (z0.to_int(), z1.to_int())
+    { "z0": Number(z0), .. } => (z0.to_int(), 0)
+    { "z1": Number(z1), .. } => (100, z1.to_int())
+    _ => (100, 100)
+  }
+  { texture, delay, head, bounds, opacities, scales }
+}
+
+///|
 fn Frame::default() -> Frame {
   {
     texture: Texture::default(),
@@ -126,9 +185,7 @@ pub(all) type! LoadError {
 
 ///|
 pub fn Animation::from_resource(src : NxNode) -> Animation {
-  try {
-    Animation::from_resource_ex!(src)
-  } catch {
+  try Animation::from_resource_ex!(src) catch {
     NotFound => Animation::default()
     e => {
       @log.error({ "err": Show::to_string(e) }, "Failed to load animation")
@@ -142,9 +199,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   if src.is_null() {
     raise NotFound
   }
-  let blend = try {
-    src["blend"].get_bool!()
-  } catch {
+  let blend = try src["blend"].get_bool!() catch {
     _ => raise InvalidFormat("blend must be a bool")
   }
   let frames = match src.get_bitmap() {
@@ -171,9 +226,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
       fs
     }
   }
-  let zigzag = try {
-    src["zigzag"].get_bool!()
-  } catch {
+  let zigzag = try src["zigzag"].get_bool!() catch {
     _ => raise InvalidFormat("zigzag must be a bool")
   }
   if blend && frames.length() == 1 {
@@ -192,6 +245,72 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
   }
   a.reset()
   a
+}
+
+///|
+pub fn Animation::new(
+  resource : AnimationResource,
+  loader_name : String,
+  image_loader : @resource.ImageLoader
+) -> Animation {
+  let blend = resource.blend
+  // 100ms delay for blend is too fast, see Map/Map1/101000000.img
+  let default_delay = if blend { 2500 } else { 100 }
+  let frames = resource.frames.map(fn(frame) {
+    Frame::new(frame, loader_name, image_loader, default_delay~)
+  })
+  if blend && frames.length() == 1 {
+    // add a dual frame with reversed opacity to achieve zigzag effect
+    let f = frames[0]
+    frames.push({ ..f, opacities: (f.opacities.1, f.opacities.0) })
+  }
+  let a = {
+    frames,
+    zigzag: resource.zigzag,
+    frame: @utils.Nominal::default(),
+    opacity: @utils.Linear::default(),
+    xyscale: @utils.Linear::default(),
+    frame_step: 0,
+    delay: 0,
+  }
+  a.reset()
+  a
+}
+
+///|
+struct AnimationResource {
+  blend : Bool
+  frames : Array[FrameResource]
+  zigzag : Bool
+}
+
+///|
+pub impl @json.FromJson for AnimationResource with from_json(json, path) -> AnimationResource!@json.JsonDecodeError {
+  // let blend = try src["blend"].get_bool!() catch {
+  //   _ => raise InvalidFormat("blend must be a bool")
+  // }
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let blend = obj
+    .get("blend")
+    .map_or(false, fn(blend) { blend is Json::Number(1) })
+  let frames = match @json.from_json?(json) {
+    Ok(frame) => [frame]
+    Err(_) => {
+      let fs : @resource.MapBasedArray[FrameResource] = @json.from_json(json)
+      if fs._.length() <= 0 {
+        raise @json.JsonDecodeError(
+          (path, "Animation must have at least one frame."),
+        )
+      }
+      fs._
+    }
+  }
+  let zigzag = obj
+    .get("zigzag")
+    .map_or(false, fn(zigzag) { zigzag is Json::Number(1) })
+  { blend, frames, zigzag }
 }
 
 ///|

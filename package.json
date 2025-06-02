@@ -24,11 +24,13 @@
 	"homepage": "https://github.com/KKKIIO/maple-moon#readme",
 	"dependencies": {
 		"@vicons/ionicons5": "^0.13.0",
+		"@vueuse/core": "^13.3.0",
 		"vue": "^3.5.13"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^5.2.1",
 		"naive-ui": "^2.41.0",
-		"vite": "^6.1.0"
+		"vite": "^6.1.0",
+		"vite-plugin-vue-devtools": "^7.7.6"
 	}
 }

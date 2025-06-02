@@ -5,7 +5,7 @@ pub(all) struct Point[T] {
 } derive(Eq, Show, Default)
 
 ///|
-pub fn Point::new[T](x : T, y : T) -> Point[T] {
+pub fn[T] Point::new(x : T, y : T) -> Point[T] {
   { x, y }
 }
 
@@ -29,12 +29,12 @@ pub impl[T : Neg] Neg for Point[T] with op_neg(self : Point[T]) -> Point[T] {
 }
 
 ///| Shift the x-coordinate by the specified amount
-pub fn shift_x[T : Add](self : Point[T], v : T) -> Point[T] {
+pub fn[T : Add] shift_x(self : Point[T], v : T) -> Point[T] {
   { x: self.x + v, y: self.y }
 }
 
 ///| Shift the y-coordinate by the specified amount
-pub fn shift_y[T : Add](self : Point[T], v : T) -> Point[T] {
+pub fn[T : Add] shift_y(self : Point[T], v : T) -> Point[T] {
   { x: self.x, y: self.y + v }
 }
 
@@ -44,7 +44,7 @@ pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
 }
 
 ///| Check whether the coordinates are equal
-pub fn Point::straight[T : Eq](self : Point[T]) -> Bool {
+pub fn[T : Eq] Point::straight(self : Point[T]) -> Bool {
   self.x == self.y
 }
 
@@ -52,6 +52,7 @@ pub fn Point::straight[T : Eq](self : Point[T]) -> Bool {
 pub impl @json.FromJson for Point[Int] with from_json(value, path) {
   match value {
     [Json::Number(x), Json::Number(y)] => Point::new(x.to_int(), y.to_int())
+    Null => Point::default()
     _ =>
       raise @json.JsonDecodeError(
         (path, "Point::from_json: expected array of 2 numbers"),

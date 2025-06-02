@@ -253,6 +253,36 @@ pub fn get_bitmap(self : NxNode) -> Bitmap? {
 }
 
 ///|
+pub fn NxNode::get_image_loader(self : NxNode) -> ImageLoader {
+  self.image_loader.unwrap()
+}
+
+///|
+pub enum BitmapResource {
+  Bid(Int, Int, Int)
+  Path(String, Int, Int)
+}
+
+///|
+pub impl @json.FromJson for BitmapResource with from_json(json, path) -> BitmapResource!@json.JsonDecodeError {
+  match json {
+    {
+      "__i": Json::String(path),
+      "__w": Json::Number(w),
+      "__h": Json::Number(h),
+      ..
+    } => BitmapResource::Path(path, w.to_int(), h.to_int())
+    {
+      "__b": Json::Number(bid),
+      "__w": Json::Number(w),
+      "__h": Json::Number(h),
+      ..
+    } => BitmapResource::Bid(bid.to_int(), w.to_int(), h.to_int())
+    _ => raise @json.JsonDecodeError((path, "expect bitmap resource"))
+  }
+}
+
+///|
 pub(all) struct Bitmap {
   image : Image
   id : String
@@ -320,4 +350,31 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
     i += 1
   }
   MapBasedArray(array)
+}
+
+///|
+pub type Nullable[T] T? derive(Show)
+
+///|
+pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
+  json,
+  path
+) {
+  if json is Null {
+    None
+  } else {
+    Some(@json.from_json!(json, path~))
+  }
+}
+
+///|
+pub type IntBool Bool
+
+///|
+pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool!@json.JsonDecodeError {
+  if json is Number(it) {
+    it.to_int() != 0
+  } else {
+    raise @json.JsonDecodeError((path, "expect number"))
+  }
 }

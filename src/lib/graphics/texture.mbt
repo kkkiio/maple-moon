@@ -41,6 +41,63 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
 }
 
 ///|
+pub fn Texture::load(
+  resource : TextureResource,
+  loader_name : String,
+  image_loader : @resource.ImageLoader
+) -> Texture {
+  let origin = resource.origin
+  match resource.bitmap {
+    Bid(bid, w, h) => {
+      let bitmap = image_loader.load_image(bid)
+      {
+        bitmap: Some({
+          image: bitmap,
+          id: loader_name + "/" + bid.to_string(),
+          width: w,
+          height: h,
+        }),
+        origin,
+        dimensions: { x: w, y: h },
+      }
+    }
+    Path(path, w, h) => {
+      let bitmap = image_loader.load_image_by_path(path)
+      {
+        bitmap: Some({
+          image: bitmap,
+          id: loader_name + "/" + path,
+          width: w,
+          height: h,
+        }),
+        origin,
+        dimensions: { x: w, y: h },
+      }
+    }
+  }
+}
+
+///|
+struct TextureResource {
+  bitmap : @resource.BitmapResource
+  origin : @struct.Point[Int]
+}
+
+///|
+pub impl @json.FromJson for TextureResource with from_json(json, path) -> TextureResource!@json.JsonDecodeError {
+  // TODO: source,_outlink,_inlink
+  let bitmap : @resource.BitmapResource = @json.from_json!(json)
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let origin = @json.from_json!(
+    obj.get("origin").or(Json::null()),
+    path=path.add_key("origin"),
+  )
+  { bitmap, origin }
+}
+
+///|
 pub fn Texture::shift(self : Texture, amount : @struct.Point[Int]) -> Unit {
   self.origin -= amount
 }

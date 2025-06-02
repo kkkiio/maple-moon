@@ -14,7 +14,8 @@ priv enum State {
     map~ : @map.SceneMap,
     mut viewpos~ : @struct.Point[Double],
     hide_backgrounds~ : Map[Int, Bool],
-    hide_foregrounds~ : Map[Int, Bool]
+    hide_foregrounds~ : Map[Int, Bool],
+    hide_portals~ : Map[String, Bool]
   )
 }
 
@@ -48,6 +49,7 @@ pub fn update(_time : Double) -> Unit {
             viewpos=@struct.Point::default(),
             hide_backgrounds=Map::new(),
             hide_foregrounds=Map::new(),
+            hide_portals=Map::new(),
           )
         None => return
         Some(Err(err)) => {
@@ -56,14 +58,22 @@ pub fn update(_time : Double) -> Unit {
           return
         }
       }
-    State::ACTIVE(map~, viewpos~, hide_backgrounds~, hide_foregrounds~) as state => {
+    State::ACTIVE(
+      map~,
+      viewpos~,
+      hide_backgrounds~,
+      hide_foregrounds~,
+      hide_portals~
+    ) as state => {
       let viewpos = update_viewpos(g_state.down_keys, viewpos, g_state.speed)
       state.viewpos = viewpos
       on_view_position_change(viewpos.x, viewpos.y)
       let alpha = 0.0
       @graphics.GraphicsGL::get().clear_scene()
       update_map(map.backgrounds, map.tiles_objs, map.portals)
-      draw_map(map, viewpos, hide_backgrounds, hide_foregrounds, alpha)
+      draw_map(
+        map, viewpos, hide_backgrounds, hide_foregrounds, hide_portals, alpha,
+      )
       @graphics.GraphicsGL::get().flush(1.0)
     }
   }
@@ -114,6 +124,15 @@ pub fn get_foreground_count() -> Int {
 }
 
 ///|
+pub fn get_portal_names() -> @js.Value {
+  let names = match g_state.state {
+    State::ACTIVE(map~, ..) => map.portals.portal_ids_by_name.keys()
+    _ => []
+  }
+  @js.Value::cast_from(names)
+}
+
+///|
 pub fn set_show_background(index : Int, show_background : Bool) -> Unit {
   guard g_state.state is State::ACTIVE(hide_backgrounds~, ..) else { return }
   hide_backgrounds.set(index, not(show_background))
@@ -126,11 +145,18 @@ pub fn set_show_foreground(index : Int, show_foreground : Bool) -> Unit {
 }
 
 ///|
+pub fn set_show_portal(name : String, show_portal : Bool) -> Unit {
+  guard g_state.state is State::ACTIVE(hide_portals~, ..) else { return }
+  hide_portals.set(name, not(show_portal))
+}
+
+///|
 fn draw_map(
   map : @map.SceneMap,
   viewpos : @struct.Point[Double],
   hide_backgrounds : Map[Int, Bool],
   hide_foregrounds : Map[Int, Bool],
+  hide_portals : Map[String, Bool],
   alpha : Double
 ) -> Unit {
   let backgrounds = map.backgrounds
@@ -151,7 +177,22 @@ fn draw_map(
       tiles_objs.draw(id, int_viewpos, alpha)
     }
   }
-  portals.draw(int_viewpos, alpha)
+  let hide_portal_ids = portals.portal_ids_by_name
+    .iter()
+    .filter_map(fn(it) {
+      let (name, id) = it
+      if hide_portals.get_or_default(name, false) {
+        Some(id)
+      } else {
+        None
+      }
+    })
+  for id, portal in portals.portals_by_id {
+    if hide_portal_ids.contains(id) {
+      continue
+    }
+    portal.draw(int_viewpos, alpha)
+  }
   for i, background in backgrounds.fores {
     if hide_foregrounds.get_or_default(i, false) {
       continue
@@ -195,7 +236,7 @@ fn update_viewpos(
 }
 
 ///|
-fn clamp[T : Compare](x : T, min : T, max : T) -> T {
+fn[T : Compare] clamp(x : T, min : T, max : T) -> T {
   if x < min {
     min
   } else if x > max {

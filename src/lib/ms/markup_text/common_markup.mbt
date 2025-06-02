@@ -95,7 +95,7 @@ pub fn RefRender::get_item_name(self : RefRender, v : @string.View) -> String! {
       }
     Some(@item.Category1::CONSUME) => ["Consume.img", item_id_str, "name"]
     Some(@item.Category1::INSTALL) => ["Ins.img", item_id_str, "name"]
-    Some(@item.Category1::ETC) => ["Etc.img", item_id_str, "name"]
+    Some(@item.Category1::ETC) => ["Etc.img", "Etc", item_id_str, "name"]
     Some(@item.Category1::CASH) => ["Cash.img", item_id_str, "name"]
     None => fail!("unknown category, item_id: \{item_id}")
   }
@@ -104,5 +104,5 @@ pub fn RefRender::get_item_name(self : RefRender, v : @string.View) -> String! {
 
 ///|
 pub fn RefRender::get_player_name(self : RefRender) -> String {
-  self.get_player_name()
+  (self.get_player_name)()
 }

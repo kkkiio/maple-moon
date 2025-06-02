@@ -245,7 +245,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
       self.resource.top.height() + self.height + self.resource.bottom.height()
     ) /
     2
-  let speaker_pos = @struct.Point::new(22, 11 + speaker_y)
+  let speaker_pos = @struct.Point::new(52, 11 + speaker_y)
   let center_pos = speaker_pos +
     @struct.Point::new(self.resource.nametag.width() / 2, 0)
   render_elements.push(
@@ -508,7 +508,7 @@ fn convert_npc_text(
     let button = @ui.TextButton::new(
       @graphics.Text::new(
         text=selection.2,
-        @graphics.FontId::A18M,
+        @graphics.FontId::A13M,
         @graphics.TextAlignment::LEFT,
         selection.0,
         max_width=320,
@@ -520,8 +520,8 @@ fn convert_npc_text(
   {
     text_content: [
       @graphics.Text::new(
-        text=content.text_html,
-        @graphics.FontId::A18M,
+        text="<div style='line-height: normal;'>\{content.text_html}</div>",
+        @graphics.FontId::A13M,
         @graphics.TextAlignment::LEFT,
         @struct.ColorName::DARKGREY,
         max_width=320,

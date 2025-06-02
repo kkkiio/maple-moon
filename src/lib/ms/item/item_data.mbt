@@ -77,7 +77,11 @@ fn ItemData::load_async(
         let category = "Etc"
         let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
         let src = item_loader.load_res(["Etc", strprefix + ".img", zid])
-        let strsrc = string_loader.load_res(["Etc.img", item_id.to_string()])
+        let strsrc = string_loader.load_res([
+          "Etc.img",
+          "Etc",
+          item_id.to_string(),
+        ])
         (category, src, strsrc)
       }
       CASH => {

@@ -12,29 +12,23 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn Obj::load(src : NxNode) -> @utils.Future[Result[Obj, Error]] {
-  match src.value() {
-    {
-      "oS": String(src_oS),
-      "l0": String(src_l0),
-      "l1": String(src_l1),
-      "l2": String(src_l2),
-      ..
-    } =>
-      get_object_loader()
-      .load_res(["\{src_oS}.img", src_l0, src_l1, src_l2])
-      .map(fn(res) { Obj::from_resource?(src, res) })
-    _ => panic()
-  }
+pub fn Obj::load(obj : ObjResource) -> @utils.Future[Result[Obj, Error]] {
+  let oS = obj.oS
+  let l0 = obj.l0
+  let l1 = obj.l1
+  let l2 = obj.l2
+  get_object_loader()
+  .load_res(["\{oS}.img", l0, l1, l2])
+  .map(fn(res) { Obj::from_resource?(obj, res) })
 }
 
 ///|
-fn Obj::from_resource(src : NxNode, obj_src : NxNode) -> Obj! {
+fn Obj::from_resource(obj : ObjResource, obj_src : NxNode) -> Obj! {
   {
     animation: @graphics.Animation::from_resource_ex!(obj_src),
-    pos: @struct.Point::new(src["x"].get_int!(), src["y"].get_int!()),
-    flip: src["f"].get_bool!(),
-    z: src["z"].get_int!(),
+    pos: @struct.Point::new(obj.x, obj.y),
+    flip: obj.f,
+    z: obj.z,
   }
 }
 

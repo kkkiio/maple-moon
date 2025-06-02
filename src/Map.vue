@@ -10,6 +10,7 @@
         <select v-model="selectedMap">
             <option value="">Select Map</option>
             <option v-for="(mapInfo, mapId) in mapData[selectedLand]" :key="mapId" :value="mapId">
+                {{ mapId }}
                 {{ mapInfo.mapName }}
             </option>
         </select>
@@ -49,6 +50,13 @@
                     Foreground {{ index }}
                 </label>
             </div>
+            <h4>Portals:</h4>
+            <div v-for="(layer, index) in portals" :key="'portal-' + index">
+                <label>
+                    <input type="checkbox" v-model="layer.visible" @change="updateLayerVisibility('portal', index)" />
+                    {{ layer.name }}
+                </label>
+            </div>
         </div>
     </div>
 </template>
@@ -79,7 +87,9 @@ let set_speed,
     get_background_count,
     get_foreground_count,
     set_show_background,
-    set_show_foreground;
+    set_show_foreground,
+    get_portal_names,
+    set_show_portal;
 
 export default {
     name: "Map",
@@ -92,8 +102,10 @@ export default {
             showTiles: true,
             showBackground: true,
             showForeground: true,
+            showPortal: true,
             backgroundLayers: [],
             foregroundLayers: [],
+            portals: [],
             viewPosition: { x: 0, y: 0 },
             program_update: undefined,
         };
@@ -145,6 +157,12 @@ export default {
                     this.foregroundLayers = Array(fgCount)
                         .fill()
                         .map((_, i) => ({ visible: true }));
+                    const portalNames = get_portal_names();
+                    this.portals = portalNames.map((name, id) => ({
+                        visible: true,
+                        name,
+                        id,
+                    }));
                 }
             }, 100);
         },
@@ -153,6 +171,8 @@ export default {
                 set_show_background(index, this.backgroundLayers[index].visible);
             } else if (type === "foreground") {
                 set_show_foreground(index, this.foregroundLayers[index].visible);
+            } else if (type === "portal") {
+                set_show_portal(this.portals[index].name, this.portals[index].visible);
             }
         },
     },
@@ -217,8 +237,10 @@ export default {
                 is_loaded = m.is_loaded;
                 get_background_count = m.get_background_count;
                 get_foreground_count = m.get_foreground_count;
+                get_portal_names = m.get_portal_names;
                 set_show_background = m.set_show_background;
                 set_show_foreground = m.set_show_foreground;
+                set_show_portal = m.set_show_portal;
 
                 const onkeydown = m.onkeydown;
                 const onkeyup = m.onkeyup;

@@ -14,12 +14,26 @@ test "parse Background" {
     "x": 0,
     "y": 0,
   })
-  @json.inspect!(spec, content={"a":255,"ani":false,"bS":"","cx":0,"cy":0,"f":false,"front":false,"no":0,"rx":0,"ry":0,"type_":{"$tag":"BG_NORMAL"},"x":0,"y":0})
+  @json.inspect!(spec, content={
+    "a": 255,
+    "ani": false,
+    "bS": "",
+    "cx": 0,
+    "cy": 0,
+    "f": false,
+    "front": false,
+    "no": 0,
+    "rx": 0,
+    "ry": 0,
+    "type_": { "$tag": "BG_NORMAL" },
+    "x": 0,
+    "y": 0,
+  })
 }
 
 ///|
 test "parse background resource" {
-  let spec : BackgroundsSpec = @json.from_json!({
+  let spec : BackgroundsResource = @json.from_json!({
     "0": {
       "a": 255,
       "ani": 0,

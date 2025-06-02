@@ -6,7 +6,7 @@ pub(all) struct SceneMap {
   physics : @physics.Physics
   map_info : MapInfo
   portals : MapPortals
-  mini_map_resources : MiniMapResource?
+  mini_map_resources : MiniMapRuntimeResource?
 }
 
 ///|
@@ -31,20 +31,31 @@ pub fn load_map(
     guard not(src.is_null()) else {
       raise @resource.LoadError("map not found, id=\{map_id}")
     }
-    let tiles_objs_f = MapTilesObjs::load(src)
-    let spec : BackgroundsSpec = @json.from_json!(src["back"].value())
-    let backgrounds_f = load_backgrounds(background_loader, spec)
+    let res : MapTilesObjsNxResource = @json.from_json!(src.value())
+    let res = res.unwrap()
+    let tiles_objs_f = MapTilesObjs::load(res.layers)
+    let backgrounds_f = load_backgrounds(background_loader, res.back)
     let physics = @physics.Physics::from_resource!(src["foothold"])
     let map_info = MapInfo::from_resource(
       src,
       physics.get_fht().get_walls(),
       physics.get_fht().get_borders(),
     )
-    let portal_res : @resource.MapBasedArray[PortalMarker] = @json.from_json!(
-      src["portal"].value(),
-    )
-    let portals = MapPortals::new(portal_res._, map_id, map_portals_animations)
-    let mini_map_resources = MiniMapResource::load!(src, portal_res._)
+    let portals = MapPortals::new(res.portal, map_id, map_portals_animations)
+    // Check if miniMap exists
+    let mini_map_node = src["miniMap"]
+    let mini_map_resources = if mini_map_node.is_null() {
+      None
+    } else {
+      Some(
+        MiniMapRuntimeResource::load(
+          @json.from_json!(mini_map_node.value()),
+          res.portal,
+          src.name(),
+          src.get_image_loader(),
+        ),
+      )
+    }
     (
       tiles_objs_f, backgrounds_f, physics, map_info, portals, mini_map_resources,
     )

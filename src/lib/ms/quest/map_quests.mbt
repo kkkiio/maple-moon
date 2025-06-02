@@ -466,7 +466,7 @@ impl @map_object.MapObject for NpcQuest with draw(self, viewx, viewy, alpha) {
 
 ///|
 impl @map_object.MapObject for NpcQuest with update(self, _) {
-  self.icon.update(timestep=4) |> ignore
+  self.icon.update(timestep=2) |> ignore
   7
 }
 

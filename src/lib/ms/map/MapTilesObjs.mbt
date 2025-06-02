@@ -5,14 +5,18 @@ struct TilesObjs {
 }
 
 ///|
-pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] {
-  let tileset_future = match src.value() {
-    { "info": { "tS": String(ts), .. }, .. } =>
-      tile_loader.load_res([ts + ".img"]).map(@option.some)
-    _ => @utils.Future::from_value(None)
+pub fn TilesObjs::load(
+  ts : String?,
+  tiles : Array[TileResource],
+  objs : Array[ObjResource]
+) -> @utils.Future[Result[TilesObjs, Error]] {
+  let tileset_future = if ts is Some(ts) {
+    tile_loader.load_res([ts + ".img"]).map(@option.some)
+  } else {
+    @utils.Future::from_value(None)
   }
   // Load tiles
-  let tiles_future = src["tile"]
+  let tiles_future = tiles
     .iter()
     .map(fn(tilenode) {
       tileset_future.map(fn(tileset) { Tile::new(tilenode, tileset) })
@@ -21,7 +25,7 @@ pub fn TilesObjs::load(src : NxNode) -> @utils.Future[Result[TilesObjs, Error]] 
     |> @utils.Future::all_of()
 
   // Load objects
-  let objs_future = src["obj"]
+  let objs_future = objs
     .iter()
     .map(fn(objnode) { Obj::load(objnode) })
     .collect()
@@ -93,9 +97,12 @@ struct MapTilesObjs {
 
 ///|
 pub fn MapTilesObjs::load(
-  src : NxNode
+  layers : Array[LayerResource]
 ) -> @utils.Future[Result[MapTilesObjs, Error]] {
-  @map_layer.ids.map(fn(layer_id) { TilesObjs::load(src[layer_id.to_string()]) })
+  @map_layer.ids.map(fn(layer_id) {
+    let layer = layers[layer_id]
+    TilesObjs::load(layer.info.map(fn(it) { it.tS }), layer.tile, layer.obj)
+  })
   |> Array::from_fixed_array
   |> @utils.Future::all_of()
   |> @utils.Future::map_exn(fn(res) {

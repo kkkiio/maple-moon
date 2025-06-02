@@ -74,7 +74,7 @@ priv enum MiniMapType {
 struct MiniMapUI {
   resource : MiniMapUIResource
   type_ : MiniMapType
-  mut current_map : (Int, MapInfo, MiniMapResource?)?
+  mut current_map : (Int, MapInfo, MiniMapRuntimeResource?)?
   on_state_changed : () -> Unit
 }
 
@@ -105,39 +105,40 @@ priv struct MapDrawData {
 
 ///| 静态标记（传送门）
 struct PortalMarker {
-  pn : String // portal name
-  tn : String // target name
-  x : Int // x
-  y : Int // y
-  tm : Int // target map id
-  pt : PortalType // portal type
-} derive(Show, @json.FromJson)
+  /// portal name
+  pn : String
+  /// target name
+  tn : String
+  x : Int
+  y : Int
+  /// target map id
+  tm : Int
+  /// portal type
+  pt : PortalType
+} derive(Show, @json.FromJson, ToJson)
 
 ///| 完整的迷你地图资源
-struct MiniMapResource {
+struct MiniMapRuntimeResource {
   canvas : @graphics.Animation // 地图画布纹理
   draw_data : MapDrawData // 绘制数据
   portals : Array[PortalMarker] // 传送门标记列表
 }
 
 ///| Loads minimap resources from a map node
-fn MiniMapResource::load(
-  map_node : @resource.NxNode,
-  portals : Array[PortalMarker]
-) -> MiniMapResource?! {
-  // Check if miniMap exists
-  let mini_map_node = map_node["miniMap"]
-  if mini_map_node.is_null() {
-    return None
-  }
-
-  // Get scale and center offset
-  let mag = mini_map_node["mag"].get_int!()
-  let center_x = mini_map_node["centerX"].get_int!()
-  let center_y = mini_map_node["centerY"].get_int!()
-
-  // Try loading canvas
-  let canvas = @graphics.Animation::from_resource_ex!(mini_map_node["canvas"])
+fn MiniMapRuntimeResource::load(
+  resource : MiniMapResource,
+  portals : Array[PortalMarker],
+  loader_name : String,
+  image_loader : @resource.ImageLoader
+) -> MiniMapRuntimeResource {
+  let mag = resource.mag
+  let center_x = resource.center_x
+  let center_y = resource.center_y
+  let canvas = @graphics.Animation::new(
+    resource.canvas,
+    loader_name,
+    image_loader,
+  )
   let dimensions = canvas.get_dimensions()
 
   // Create draw data
@@ -148,15 +149,25 @@ fn MiniMapResource::load(
     width: dimensions.x,
     height: dimensions.y,
   }
-  Some({ canvas, draw_data, portals })
+  { canvas, draw_data, portals }
 }
+
+///|
+struct MiniMapResource {
+  mag : Int
+  center_x : Int
+  center_y : Int
+  canvas : @graphics.AnimationResource
+} derive (
+  @json.FromJson(fields(center_x(rename="centerX"), center_y(rename="centerY"))),
+)
 
 ///|
 pub fn MiniMapUI::set_map(
   self : MiniMapUI,
   map_id : Int,
   map_info : MapInfo,
-  mini_map_resources : MiniMapResource?
+  mini_map_resources : MiniMapRuntimeResource?
 ) -> Unit {
   self.current_map = Some((map_id, map_info, mini_map_resources))
   (self.on_state_changed)()
@@ -164,7 +175,7 @@ pub fn MiniMapUI::set_map(
 
 ///| Renders the MiniMap based on current state.
 pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
-  guard self.current_map is Some((_, map_info, mini_map_resources)) else {
+  guard self.current_map is Some((map_id, map_info, mini_map_resources)) else {
     return { render_elements: [] }
   }
   match self.type_ {
@@ -329,25 +340,29 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
         let marker_offset = Point::new(mark_sprite_dim.x / 2, mark_sprite_dim.y)
         let marker_pos_offset = Point::new(0, 65)
         for portal in portals {
-          let portal_type = portal.pt
-          if portal_type is PortalType::REGULAR {
-            let marker_pos = ((Point::new(portal.x, portal.y) +
-            marker_pos_offset +
-            Point::new(res.draw_data.center_x, res.draw_data.center_y))
-            .to_float()
-            .div_float(res.draw_data.scale) -
-            marker_offset.to_float() +
-            Point::new(map_draw_origin_x_, map_draw_origin_y_).to_float()).to_int()
-            render_elements.push(
-              @ui.RenderElement::Static(
-                @ui.SpriteUI(
-                  @graphics.Sprite::new(
-                    portal_marker,
-                    @graphics.DrawArgument::new(pos=marker_pos),
+          match (portal.pt, map_id != portal.tm) {
+            (PortalType::REGULAR, _)
+            // skip portals that are only used for gameplay mechanics
+            | (PortalType::INVISIBLE, true) => {
+              let marker_pos = ((Point::new(portal.x, portal.y) +
+              marker_pos_offset +
+              Point::new(res.draw_data.center_x, res.draw_data.center_y))
+              .to_float()
+              .div_float(res.draw_data.scale) -
+              marker_offset.to_float() +
+              Point::new(map_draw_origin_x_, map_draw_origin_y_).to_float()).to_int()
+              render_elements.push(
+                @ui.RenderElement::Static(
+                  @ui.SpriteUI(
+                    @graphics.Sprite::new(
+                      portal_marker,
+                      @graphics.DrawArgument::new(pos=marker_pos),
+                    ),
                   ),
                 ),
-              ),
-            )
+              )
+            }
+            _ => ()
           }
         }
         //         draw_movable_markers(position_, alpha);

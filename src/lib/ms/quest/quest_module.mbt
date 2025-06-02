@@ -81,6 +81,20 @@ pub fn Module::new(
 }
 
 ///|
+pub fn Module::make_handlers(
+  self : Module
+) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
+  [
+    @net.make_handler(@net.Opcode::UPDATE_QUEST_INFO, parse_update_quest_info, fn(
+      msg
+    ) {
+      handle_update_quest_info(self, msg)
+    }),
+  ]
+  |> Map::from_array
+}
+
+///|
 pub fn Module::make_show_status_info_handlers(
   self : Module
 ) -> Map[Int, @game_mod.SubRouteHandler] {
@@ -104,8 +118,7 @@ pub fn Module::make_show_status_info_handlers(
         }
         _ => {
           let action : &@game_mod.SubRouteAction = ShowUpdateQuestAction::new(
-            quest_id,
-            recv.read_string!(),
+            { quest_id, progress_data: recv.read_string!() },
             self,
           )
           action
@@ -234,6 +247,74 @@ pub fn parse_player_quest_info(recv : @net.InPacket) -> PlayerQuestLogInfo! {
     completed.push((quest_id, completion_time))
   }
   { started, completed }
+}
+
+///|
+enum UpdateQuestInfoMessage {
+  AddQuestTimeLimit(Int, Int, Int) // size, quest_id, time
+  RemoveQuestTimeLimit(Int, Int) // position, quest_id
+  QuestUpdate(Int, Int) // quest_id, npc
+  QuestFinish(Int, Int, Int) // quest_id, npc, next_quest
+  QuestError(Int) // quest_id
+  QuestExpire(Int) // quest_id
+  QuestFailure(QuestFailureOperation)
+} derive(Show)
+
+///|
+enum QuestFailureOperation {
+  NoMeso
+  WornByCharacter
+  NotHavingItem
+} derive(Show)
+
+///|
+fn parse_update_quest_info(recv : @net.InPacket) -> UpdateQuestInfoMessage! {
+  let operation = recv.read_byte!()
+  match operation {
+    6 => {
+      // Add quest time limit: short size, short quest_id, int time
+      let size = recv.read_short!()
+      let quest_id = recv.read_short!()
+      let time = recv.read_int!()
+      AddQuestTimeLimit(size, quest_id, time)
+    }
+    7 => {
+      // Remove quest time limit: short position, short quest_id
+      let position = recv.read_short!()
+      let quest_id = recv.read_short!()
+      RemoveQuestTimeLimit(position, quest_id)
+    }
+    8 => {
+      // Quest update/finish: short quest_id, int npc, (short next_quest or int 0)
+      let quest_id = recv.read_short!()
+      let npc = recv.read_int!()
+      if recv.available() == 2 {
+        let next_quest = recv.read_short!()
+        QuestFinish(quest_id, npc, next_quest)
+      } else {
+        recv.read_int!() |> ignore // 0
+        QuestUpdate(quest_id, npc)
+      }
+    }
+    0x0A => {
+      // Quest error: short quest_id
+      let quest_id = recv.read_short!()
+      QuestError(quest_id)
+    }
+    0x0F => {
+      // Quest expire: short quest_id  
+      let quest_id = recv.read_short!()
+      QuestExpire(quest_id)
+    }
+    _ =>
+      // For other operation types (0x0B, 0x0D, 0x0E), just store the operation
+      match operation {
+        0x0B => QuestFailure(NoMeso)
+        0x0D => QuestFailure(WornByCharacter)
+        0x0E => QuestFailure(NotHavingItem)
+        _ => fail!("Unknown quest failure operation: \{operation}")
+      }
+  }
 }
 
 ///|
@@ -417,38 +498,41 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
 }
 
 ///|
-priv struct ShowUpdateQuestAction {
+struct ShowUpdateQuestMessage {
   quest_id : Int
   progress_data : String
+} derive(Show)
+
+///|
+priv struct ShowUpdateQuestAction {
+  message : ShowUpdateQuestMessage
   mod : Module
 }
 
 ///|
 fn ShowUpdateQuestAction::new(
-  quest_id : Int,
-  progress_data : String,
+  message : ShowUpdateQuestMessage,
   mod : Module
 ) -> ShowUpdateQuestAction {
-  { quest_id, progress_data, mod }
+  { message, mod }
 }
 
 ///|
 impl Show for ShowUpdateQuestAction with output(self, logger) {
-  logger.write_string(
-    "{quest_id:\{self.quest_id}, progress_data:\{self.progress_data}}",
-  )
+  self.message.output(logger)
 }
 
 ///|
 impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
-  guard self.mod.player_quest_log.val.in_progress.get(self.quest_id)
+  guard self.mod.player_quest_log.val.in_progress.get(self.message.quest_id)
     is Some(quest) else {
     return
   }
-  quest.progress_data = self.progress_data
+  quest.progress_data = self.message.progress_data
   self.mod.quest_log_listeners.retain(fn(listener) {
     listener(self.mod.player_quest_log.val)
   })
+  self.mod.map_quests.update_quest(self.message.quest_id) // TODO: convert to listener
 }
 
 ///| list all quests that can be started by npc
@@ -571,4 +655,16 @@ impl Show for ShowExpGainAction with output(self, logger) {
 impl @game_mod.SubRouteAction for ShowExpGainAction with handle(_) -> Unit {
   // TODO: Add UI handling to display EXP gain popup/notification
   // TODO: Add any quest-related EXP gain processing if needed
+}
+
+///|
+fn handle_update_quest_info(
+  self : Module,
+  msg : UpdateQuestInfoMessage
+) -> Unit {
+  match msg {
+    QuestUpdate(quest_id, _) => self.map_quests.update_quest(quest_id)
+    QuestFinish(quest_id, _, 0) => self.map_quests.update_quest(quest_id)
+    _ => ...
+  }
 }

@@ -86,7 +86,9 @@ onUnmounted(() => {
 <style scoped>
 .quest-log {
     padding: 8px;
-    max-width: 600px;
+    max-width: 400px;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .quest-sections {

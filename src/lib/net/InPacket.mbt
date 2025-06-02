@@ -10,8 +10,8 @@ pub fn InPacket::new(bytes : Bytes) -> InPacket {
 }
 
 ///|
-pub fn available(self : InPacket) -> Bool {
-  self.pos < self.bytes.length()
+pub fn available(self : InPacket) -> Int {
+  self.bytes.length() - self.pos
 }
 
 ///|

@@ -416,7 +416,7 @@ fn parse_server_list(
   self : Module,
   recv : @net.InPacket
 ) -> Array[World]?!Error {
-  while recv.available() {
+  while recv.available() > 0 {
     let world = parse_world!(recv)
     if world.wid != -1 {
       self.receiving_server_list.push(world)

@@ -38,7 +38,7 @@ fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage! {
     }
     mods.push({ mode: modification, t, pos, arg })
   }
-  let mov = if recv.available() {
+  let mov = if recv.available() > 0 {
     Movement::from_int!(recv.read_byte!()) |> Some
   } else {
     None

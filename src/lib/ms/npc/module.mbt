@@ -192,7 +192,7 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
   let msgtype = recv.read_byte!() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
   let speaker = recv.read_byte!()
   let text = recv.read_string!()
-  let (style_b0, style_b1) = if recv.available() && msgtype == 0 {
+  let (style_b0, style_b1) = if recv.available() > 0 && msgtype == 0 {
     // {b0, b1}
     // {0, 1} = next
     // {1, 0} = prev

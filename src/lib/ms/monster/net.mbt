@@ -39,7 +39,7 @@ pub fn handle_spawn_mob_controller(
   let oid = recv.read_int!()
   if mode == 0 {
     map_mobs.set_control(oid, false)
-  } else if recv.available() {
+  } else if recv.available() > 0 {
     recv.skip!(1)
     let id = recv.read_int!()
     recv.skip!(16)

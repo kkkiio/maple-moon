@@ -162,6 +162,7 @@ fn load_modules(
       }
     })
     .tap(fn(mod) {
+      merge_handlers(mod.make_handlers())
       merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
     })
   let login_mod_f = char_look_module_f

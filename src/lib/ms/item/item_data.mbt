@@ -249,11 +249,10 @@ pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
 
 ///|
 pub fn get_info(self : ItemData) -> Map[String, Json] {
-  self.src
-  .value()
-  .as_object()
-  .bind(fn(it) { it["info"].bind(fn(it) { it.as_object() }) })
-  .or(Map::new())
+  match self.src.value() {
+    { "info": Object(info), .. } => info
+    _ => Map::new()
+  }
 }
 
 ///|

@@ -67,7 +67,7 @@ pub fn parse_remove_loot(
   let oid = recv.read_int!()
   let looter = if mode > 1 {
     let cid = recv.read_int!()
-    if recv.available() {
+    if recv.available() > 0 {
       recv.read_byte!() |> ignore // pet
       None
     } else {

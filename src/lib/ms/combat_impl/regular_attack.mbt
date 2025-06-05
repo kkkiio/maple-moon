@@ -1,7 +1,8 @@
 ///|
 pub(all) struct RegularAttack {
   action : RegularAction
-} derive(Default)
+  string_loader : @resource.SyncLoader
+}
 
 ///|
 pub fn RegularAttack::apply_actions(
@@ -62,10 +63,10 @@ pub fn make_regular_attack(
 ///|
 pub fn RegularAttack::get_bullet(
   self : RegularAttack,
-  _user : @character.Character,
+  _ : @character.Character,
   bulletid : Int
 ) -> @utils.Future[@graphics.Animation] {
-  @bullet.BulletData::get_async(bulletid).map(fn(data) {
+  @bullet.BulletData::get_async(bulletid, self.string_loader).map(fn(data) {
     data.unwrap() // TODO: Handle error
     .bullet
   })
@@ -106,8 +107,8 @@ pub fn can_use_regular_attack(
 }
 
 ///|
-pub fn new_regular_attack() -> SpecialMove {
-  let ra = RegularAttack::default()
+pub fn new_regular_attack(string_loader : @resource.SyncLoader) -> SpecialMove {
+  let ra = { action: RegularAction::default(), string_loader }
   {
     id: 0,
     attack: true,

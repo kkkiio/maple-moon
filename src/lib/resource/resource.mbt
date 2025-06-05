@@ -10,30 +10,50 @@ fn as_moonjson(self : RawData) -> @json.JsonValue {
 extern type ImageLoader
 
 ///|
-priv extern type ResourceLoader
+priv extern type SyncResourceLoader
 
 ///|
-/// @alert deprecated "Use `AsyncLoader` instead"
+impl @js.Cast for SyncResourceLoader with into(it) -> SyncResourceLoader? {
+  @js.Value::cast(it)
+}
+
+///|
+impl @js.Cast for SyncResourceLoader with from(it) -> @js.Value {
+  @js.Value::cast_from(it)
+}
+
+///|
 struct SyncLoader {
   name : String
-  loader : ResourceLoader
+  loader : SyncResourceLoader
+  image_loader : ImageLoader
 }
 
 ///|
-pub fn SyncLoader::new(name : String) -> SyncLoader {
-  { name, loader: get_resource_loader(name) }
+pub async fn SyncLoader::load(
+  name : String,
+  data_url : String,
+  image_loader : ImageLoader
+) -> SyncLoader!Error {
+  let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
+    |> @js.Value::cast
+  SyncLoader::new(name, loader, image_loader)
 }
 
 ///|
-pub fn string_loader() -> SyncLoader {
-  { name: "string", loader: get_resource_loader("string") }
+fn SyncLoader::new(
+  name : String,
+  loader : SyncResourceLoader,
+  image_loader : ImageLoader
+) -> SyncLoader {
+  { name, loader, image_loader }
 }
 
 ///|
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   {
     loader_name: self.name,
-    image_loader: Some(self.loader.get_image_loader()),
+    image_loader: Some(self.image_loader),
     name: path.last().unwrap(),
     desc: self.loader.load_desc(join_path(path)).as_moonjson(),
     path: path |> @immut/array.from_array,
@@ -80,10 +100,7 @@ pub fn op_get(self : NxNode, name : String) -> NxNode {
   {
     ..self,
     name,
-    desc: self.desc
-    .as_object()
-    .bind(fn(it) { it[name] })
-    .or(@json.JsonValue::Null),
+    desc: self.desc.as_object().bind(fn(it) { it.get(name) }).or(Json::null()),
     path: self.path.push(name),
   }
 }
@@ -302,7 +319,7 @@ pub impl ToJson for Bitmap with to_json(self) -> Json {
 
 ///|
 fn join_path(parts : Array[String]) -> String {
-  @string.concat(parts, separator="/")
+  parts.join("/")
 }
 
 ///|
@@ -341,7 +358,7 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
   let array = Array::new()
   while true {
     let key = i.to_string()
-    if obj[key] is Some(value) {
+    if obj.get(key) is Some(value) {
       let item = @json.from_json!(value, path=path.add_key(key))
       array.push(item)
     } else {

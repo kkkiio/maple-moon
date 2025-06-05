@@ -4,18 +4,24 @@ struct MapNpcs {
   npcs : @map_object.MapObjects[Npc]
   spawns : @queue.T[NpcSpawn]
   packet_processor : @net.Network
+  npc_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader
 }
 
 ///|
 pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
-  packet_processor : @net.Network
+  packet_processor : @net.Network,
+  npc_loader~ : @resource.SyncLoader,
+  string_loader~ : @resource.SyncLoader
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
     npcs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     packet_processor,
+    npc_loader,
+    string_loader,
   }
 }
 
@@ -54,7 +60,10 @@ pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
       let oid = spawn.get_oid()
       match self.npcs.get(oid) {
         Some(npc) => npc.makeactive()
-        None => self.npcs.add(spawn.instantiate(physics))
+        None =>
+          self.npcs.add(
+            spawn.instantiate(self.npc_loader, self.string_loader, physics),
+          )
       }
       continue self.spawns.pop()
     }
@@ -137,9 +146,22 @@ pub fn get_oid(self : NpcSpawn) -> Int {
 }
 
 ///|
-pub fn instantiate(self : NpcSpawn, physics : @physics.Physics) -> Npc {
+pub fn NpcSpawn::instantiate(
+  self : NpcSpawn,
+  npc_loader : @resource.SyncLoader,
+  string_loader : @resource.SyncLoader,
+  physics : @physics.Physics
+) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
-  Npc::new(self.id, self.oid, self.flip, self.fh, spawnposition)
+  Npc::load(
+    npc_loader,
+    string_loader,
+    self.id,
+    self.oid,
+    self.flip,
+    self.fh,
+    spawnposition,
+  )
 }
 
 ///| Represents a NPC on the current map
@@ -215,7 +237,9 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
 }
 
 ///|
-pub fn Npc::new(
+pub fn Npc::load(
+  npc_loader : @resource.SyncLoader,
+  string_loader : @resource.SyncLoader,
   id : Int,
   o : Int,
   fl : Bool,
@@ -224,11 +248,11 @@ pub fn Npc::new(
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
   let strid = @string_format.extend_id(id, 7) + ".img"
-  let mut src = npc_loader().load_res([strid])
-  let strsrc = @resource.string_loader().load_res(["Npc.img", id.to_string()])
+  let mut src = npc_loader.load_res([strid])
+  let strsrc = string_loader.load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
   if not(link.is_empty()) {
-    src = npc_loader().load_res([link + ".img"])
+    src = npc_loader.load_res([link + ".img"])
   }
   let info = src["info"]
   let hide_name = info["hideName"].get_bool?().unwrap()

@@ -96,29 +96,18 @@ export const createMapLoaders = (imageLoader) => {
 
 /**
  * 
- * @param {NamedResourceLoader<ResourceLoader>[]} loaders
  * @param {NamedResourceLoader<AsyncResourceLoader>[]} asyncLoaders
  * @returns {Object}
  */
-export function createResourceModule(loaders,asyncLoaders) {
+export function createResourceModule(asyncLoaders) {
   /** @type {Record<string, ResourceLoader>} */
   const loaderMap = {}
-  for (const loader of loaders) {
-    loaderMap[loader.name] = loader.loader;
-  }
   /** @type {Record<string, AsyncResourceLoader>} */
   const asyncLoaderMap = {}
   for (const loader of asyncLoaders) {
     asyncLoaderMap[loader.name] = loader.loader;
   }
   return {
-    get_loader: (name) => {
-      const loader = loaderMap[name];
-      if (!loader) {
-        throw new Error(`Unknown resource loader: ${name}`);
-      }
-      return loader;
-    },
     get_async_loader: (name) => {
       const loader = asyncLoaderMap[name];
       if (!loader) {

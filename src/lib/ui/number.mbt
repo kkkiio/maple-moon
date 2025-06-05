@@ -5,7 +5,7 @@ struct Number {
   miss : Bool
   multiple : Bool
   first_num : Char
-  rest_num : String
+  rest_num : Array[Char]
   shift : Int
   move_obj : @physics.MovingObject
   opacity : @utils.Linear
@@ -168,12 +168,12 @@ pub fn new_number(
     HEAL_MP => self.blue_charset_pair
   }
   let (miss, shift, multiple, first_num, rest_num) = if damage > 0 {
-    let number = damage.to_string()
+    let number = damage.to_string().to_array()
     let first_num = number[0]
     let (rest_num, multiple) = if number.length() > 1 {
-      (number.substring(start=1), true)
+      (number[1:].to_array(), true)
     } else {
-      ("", false)
+      ([], false)
     }
     let mut total = get_advance(t, first_num, true)
     for i in 0..<rest_num.length() {
@@ -190,7 +190,7 @@ pub fn new_number(
     (false, shift, multiple, first_num, rest_num)
   } else {
     let shift = charsets[true].getw('M') / 2
-    (true, shift, false, Char::default(), "")
+    (true, shift, false, Char::default(), [])
   }
   let move_obj = @physics.MovingObject::default()
   move_obj.set_x(x.to_double())

@@ -36,6 +36,7 @@ pub fn CharLook::new(
   body : Body,
   hair : Hair,
   face : Face,
+  string_loader : @resource.SyncLoader,
   draw_info : @types.BodyDrawInfo
 ) -> CharLook {
   let l = {
@@ -52,7 +53,7 @@ pub fn CharLook::new(
     body,
     hair,
     face,
-    equips: @equip.CharEquips::new(),
+    equips: @equip.CharEquips::new(string_loader),
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
     draw_info,
@@ -291,15 +292,15 @@ fn draw_impl(
   interexpframe : Int
 ) -> Unit {
   if interstance == @types.StanceId::DEAD {
-    return draw_dead(
-      self, args, interstance, interexpression, interframe, interexpframe,
+    return self.draw_dead(
+      args, interstance, interexpression, interframe, interexpframe,
     )
   }
   if @types.StanceId::is_climbing(interstance) {
-    return draw_climbing(self, args, interstance, interframe)
+    return self.draw_climbing(args, interstance, interframe)
   }
-  let drawables = make_draw_front(
-    self, interstance, interexpression, interframe, interexpframe,
+  let drawables = self.make_draw_front(
+    interstance, interexpression, interframe, interexpframe,
   )
   for drawable in drawables {
     drawable.draw(args)
@@ -581,8 +582,7 @@ pub fn CharLook::draw(
   let interexpression = self.expression.get(alpha~)
   let interframe = self.st_frame.get(alpha~)
   let interexpframe = self.exp_frame.get(alpha~)
-  draw_impl(
-    self,
+  self.draw_impl(
     relargs + args,
     interstance,
     interexpression,
@@ -711,7 +711,7 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
       }
     }
   }
-  update_face(self, timestep)
+  self.update_face(timestep)
   aniend
 }
 
@@ -935,7 +935,7 @@ pub fn get_alerted(self : CharLook) -> Bool {
 }
 
 ///|
-pub impl ToJson for CharLook with to_json(self) -> Json {
+pub impl ToJson for CharLook with to_json(_) -> Json {
   {} // TODO
 }
 

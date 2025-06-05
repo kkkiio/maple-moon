@@ -7,16 +7,17 @@ struct SkillBook {
 
 ///|
 pub fn SkillBook::load(
+  string_loader : @resource.SyncLoader,
   job : @job.Job,
   watchers : Array[SkillBookWatcher]
 ) -> @utils.Future[SkillBook] {
   job
   .get_all_subjobs()
   .flat_map(fn(it) { it.skill_ids.iter() })
-  .map(fn(skill_id) { @skill.SkillData::load(skill_id) })
+  .map(fn(skill_id) { @skill.SkillData::load(string_loader, skill_id) })
   .collect()
   |> @utils.Future::all_of()
-  |> @utils.map(fn(it) {
+  |> _.map(fn(it) {
     let available_skills = Map::new()
     for skill_data in it {
       let skill_data = skill_data.unwrap() // TODO: handle error
@@ -245,9 +246,9 @@ priv struct SpendSPPacket {
 
 ///|
 impl @net.OutMessage for SpendSPPacket with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::SPEND_SP)
-  ..write_time()
-  ..write_int(self.skill_id)
+  let packet = @net.OutPacket::new(@net.ClientOpcode::SPEND_SP)
+  packet..write_time()..write_int(self.skill_id)
+  packet
 }
 
 ///|

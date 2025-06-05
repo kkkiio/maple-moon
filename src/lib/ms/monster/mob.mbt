@@ -114,7 +114,8 @@ pub fn Mob::load(
   _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Result[Mob, Error]] {
   let strid = @string_format.extend_id(mid, 7)
   mob_loader
@@ -122,6 +123,7 @@ pub fn Mob::load(
   .map_exn(fn(src) {
     Mob::new!(
       oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network,
+      string_loader,
     )
   })
 }
@@ -138,7 +140,8 @@ fn Mob::new(
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
   src : @resource.NxNode,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> Mob! {
   let base = @map_object.MapObjectBase::new(oi)
   let info = src["info"]
@@ -178,7 +181,7 @@ fn Mob::new(
     |> @graphics.Animation::from_resource
   animations[StanceType::DIE] = src["die1"]
     |> @graphics.Animation::from_resource
-  let name = @resource.string_loader()
+  let name = string_loader
     .load_res(["Mob.img", mid.to_string(), "name"])
     .get_string()
 

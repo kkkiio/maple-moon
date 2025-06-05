@@ -9,20 +9,24 @@ fn Ball::new(src : @resource.NxNode) -> Ball! {
 }
 
 ///|
-struct SkillRegularBullet {} derive(Default)
-
-///|
-fn SkillRegularBullet::new() -> SkillRegularBullet {
-  SkillRegularBullet::default()
+struct SkillRegularBullet {
+  string_loader : @resource.SyncLoader
 }
 
 ///|
-fn get(
+fn SkillRegularBullet::new(
+  string_loader : @resource.SyncLoader
+) -> SkillRegularBullet {
+  { string_loader, }
+}
+
+///|
+fn SkillRegularBullet::get(
   self : SkillRegularBullet,
   user : @character.Character,
   bulletid : Int
 ) -> @utils.Future[@graphics.Animation] {
-  @bullet.BulletData::get_async(bulletid).map(fn(data) {
+  @bullet.BulletData::get_async(bulletid, self.string_loader).map(fn(data) {
     data.unwrap() // TODO: handle error
     .bullet
   })
@@ -41,8 +45,8 @@ fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet! {
 ///|
 fn SingleBullet::get(
   self : SingleBullet,
-  user : @character.Character,
-  bulletid : Int
+  _ : @character.Character,
+  _ : Int
 ) -> @graphics.Animation {
   self.ball.animation
 }

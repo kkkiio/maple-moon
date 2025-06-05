@@ -156,17 +156,6 @@ export default {
         });
 
         const imageLoader = new PathImageLoader("https://maple-res.kkkiiox.work", cc1, cc2);
-        const uiLoader = new CompositeResourceLoader(
-            {
-                "Basic.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/Basic.img.json"),
-                "Login.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/Login.img.json"),
-                "StatusBar3.img/": new FileResourceLoader("https://maple-res.kkkiiox.work/UI/StatusBar3.img.json"),
-            },
-            imageLoader
-        );
-        const prepareResourcePromises = [];
-        prepareResourcePromises.push(uiLoader.load());
-
         const uiWindow2Loader = new AsyncResourceLoader(
             new DirResourceLoader("https://maple-res.kkkiiox.work/UI/UIWindow2.img"),
             imageLoader
@@ -240,9 +229,6 @@ export default {
             imageLoader
         );
 
-        const stringLoader = new ResourceLoader("https://maple-res.kkkiiox.work/String/nx.json", undefined);
-        prepareResourcePromises.push(stringLoader.load());
-
         const map001Loader = new CompositeAsyncResourceLoader(
             {
                 "Back/": new DirResourceLoader("https://maple-res.kkkiiox.work/Map001/Back"),
@@ -258,12 +244,6 @@ export default {
         );
 
         const etcLoader = new AsyncResourceLoader(new DirResourceLoader("https://maple-res.kkkiiox.work/Etc"), imageLoader);
-
-        const npcLoader = new ResourceLoader(
-            "https://maple-res.kkkiiox.work/Npc/nx.json",
-            new BidImageLoader("https://maple-res.kkkiiox.work/Npc/images")
-        );
-        prepareResourcePromises.push(npcLoader.load());
 
         const itemLoader = new CompositeAsyncResourceLoader(
             {
@@ -317,18 +297,6 @@ export default {
                 create_image: textBitmapGenerator.createImage.bind(textBitmapGenerator),
             },
             resource: {
-                get_loader: (name) => {
-                    switch (name) {
-                        case "UI":
-                            return uiLoader;
-                        case "string":
-                            return stringLoader;
-                        case "npc":
-                            return npcLoader;
-                        default:
-                            throw new Error(`Unknown resource loader: ${name}`);
-                    }
-                },
                 get_async_loader: (name) => {
                     switch (name) {
                         case "mapx":
@@ -392,7 +360,14 @@ export default {
                         loaderMap[elem.prefix] = elem.loader;
                     }
                     return new CompositeAsyncResourceLoader(loaderMap, imageLoader);
-                }
+                },
+                make_file_resource_loader: async (url) => {
+                    const loader = new FileResourceLoader(url);
+                    await loader.load();
+                    return loader;
+                },
+                new_bid_image_loader: (url) => new BidImageLoader(url),
+                get_path_image_loader: () => imageLoader,
             },
             bitmap: {
                 width: (bmp) => bmp.w,
@@ -417,10 +392,18 @@ export default {
                 warn: (msg) => console.warn(msg),
                 error: (msg) => console.error(msg),
             },
+            "async": {
+                spawn_background: (f) => {
+                    setTimeout(f, 0);
+                },
+            },
             spectest: {
                 print_i32: (x) => console.log(String(x)),
                 print_f64: (x) => console.log(String(x)),
             },
+            "moonbit:ffi": {
+                "make_closure": (funcref, closure) => funcref.bind(null, closure)
+            }
         };
 
         function update(time = 0) {
@@ -431,8 +414,7 @@ export default {
         }
 
         Object.assign(globalThis, importObject);
-        Promise.all(prepareResourcePromises)
-            .then(() => import("lib/lib.js"))
+        import("lib/lib.js")
             .then((m) => {
                 game_update = m.game_update;
                 const onmousemove = m.onmousemove;

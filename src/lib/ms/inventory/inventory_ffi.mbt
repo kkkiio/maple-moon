@@ -6,7 +6,8 @@ fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
   .map(fn(slot_no) {
     match mod.inventory.get_slot_item_at(kind, slot_no) {
       Some(slot_item) =>
-        match @item.ItemData::get_async(slot_item.item_id).poll() {
+        match
+          @item.ItemData::get_async(slot_item.item_id, mod.string_loader).poll() {
           Some(Ok(item_data)) =>
             Some({
               slot_no,
@@ -123,7 +124,7 @@ pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
       guard mod.inventory.get_slot_item_at(type_id, slot_no._) is Some(item) else {
         return "no item at slot \{slot_no} of \{kind}"
       }
-      guard @item.ItemData::get_async(item.item_id).poll()
+      guard @item.ItemData::get_async(item.item_id, mod.string_loader).poll()
         is Some(Ok(item_data)) else {
         return "failed to load item data \{item.item_id}"
       }

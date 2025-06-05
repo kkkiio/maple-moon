@@ -37,13 +37,16 @@ pub(all) struct Stats {
 } derive(ToJson)
 
 ///|
-pub fn SkillData::load(id : Int) -> @utils.Future[Result[SkillData, Error]] {
+pub fn SkillData::load(
+  string_loader : @resource.SyncLoader,
+  id : Int
+) -> @utils.Future[Result[SkillData, Error]] {
   let strid = @string_format.extend_id(id, 7)
   let jobid = strid.substring(end=3)
   skill_loader()
   .load_res([jobid + ".img", "skill", strid])
   .map_exn(fn(src) {
-    let strsrc = @resource.string_loader().load_res(["Skill.img", strid])
+    let strsrc = string_loader.load_res(["Skill.img", strid])
     SkillData::new!(id, src, strsrc)
   })
 }
@@ -93,7 +96,7 @@ pub fn SkillData::new(
   let reqsrc = skill_src["req"]
   let req_skills = {}
   for sub in reqsrc {
-    let skillid = sub.name() |> @strconv.parse_int?() |> @result.or(-1)
+    let skillid = sub.name() |> @strconv.parse_int?() |> _.or(-1)
     let reqlv = sub.get_int!()
     req_skills.set(skillid, reqlv)
   }

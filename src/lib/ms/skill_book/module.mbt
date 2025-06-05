@@ -4,23 +4,34 @@ struct Module {
   packet_processor : @net.Network
   mut skill_book : SkillBook?
   watchers : Array[SkillBookWatcher]
+  string_loader : @resource.SyncLoader
 }
 
 ///|
 pub fn Module::load(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.Network
+  packet_processor : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Module] {
   @ui.ui_window_2_loader().load_res(["Skill"])
-  |> @utils.map(fn(_skill) { Module::new(player_getter, packet_processor) })
+  |> _.map(fn(_skill) {
+    Module::new(player_getter, packet_processor, string_loader)
+  })
 }
 
 ///|
 fn Module::new(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.Network
+  packet_processor : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> Module {
-  { player_getter, packet_processor, skill_book: None, watchers: [] }
+  {
+    player_getter,
+    packet_processor,
+    skill_book: None,
+    watchers: [],
+    string_loader,
+  }
 }
 
 ///|
@@ -98,7 +109,7 @@ pub fn Module::load_skill_book(
   self : Module,
   job : @job.Job
 ) -> @utils.Future[&@player.SkillBook] {
-  SkillBook::load(job, self.watchers)
+  SkillBook::load(self.string_loader, job, self.watchers)
   .tap(fn(skill_book) { self.skill_book = Some(skill_book) })
   .map(fn(skill_book) { skill_book })
 }

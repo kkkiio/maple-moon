@@ -7,11 +7,14 @@ pub(all) struct UI {
 }
 
 ///|
-pub fn UI::new(get_keyboard_mapping : (String) -> @keyboard.Mapping?) -> UI {
+pub fn UI::new(
+  basic_loader : @resource.SyncLoader,
+  get_keyboard_mapping : (String) -> @keyboard.Mapping?
+) -> UI {
   {
     state: None,
     get_keyboard_mapping,
-    cursor: Cursor::new(),
+    cursor: Cursor::new(basic_loader),
     is_key_down: Map::new(),
   }
 }

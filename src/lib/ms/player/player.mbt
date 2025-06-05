@@ -12,6 +12,7 @@ pub(open) trait SkillBook {
 
 ///|
 pub(all) struct Player {
+  string_loader : @resource.SyncLoader
   character : @character.CharBase
   stats : CharStats
   keys_down : Map[@keyboard.BasicActionId, Bool]
@@ -44,9 +45,13 @@ pub fn Player::load(
   damage_number_set : @ui.NumberSet,
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
   new_char_stats : (@job.Job) -> CharStats,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Player] {
-  @job.Job::load(id=entry.stats.stats[@maple_stat.Id::JOB].or(0))
+  @job.Job::load(
+    string_loader,
+    id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0),
+  )
   .bind(fn(job) {
     load_skill_book(job).map(fn(skill_book) { (job, skill_book) })
   })
@@ -61,6 +66,7 @@ pub fn Player::load(
       network,
       load_skill_book,
       new_char_stats(job),
+      string_loader,
     )
   })
 }
@@ -74,7 +80,8 @@ pub fn Player::new(
   damage_number_set : @ui.NumberSet,
   network : @net.Network,
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
-  stats : CharStats
+  stats : CharStats,
+  string_loader : @resource.SyncLoader
 ) -> Player {
   let character = @character.Character::new(
     entry.id,
@@ -86,6 +93,7 @@ pub fn Player::new(
     get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
   )
   let p = {
+    string_loader,
     character,
     stats,
     keys_down: Map::new(),
@@ -163,9 +171,9 @@ pub fn update(
       physics.move_object(self.character.get_phobj())
 
       // Check for ladder interaction
-      if self.keys_down[@keyboard.BasicActionId::UP].or(false) {
+      if self.keys_down.get(@keyboard.BasicActionId::UP).or(false) {
         self.check_ladders(map_info, true)
-      } else if self.keys_down[@keyboard.BasicActionId::DOWN].or(false) {
+      } else if self.keys_down.get(@keyboard.BasicActionId::DOWN).or(false) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.character.update(
@@ -271,7 +279,7 @@ fn get_player_state(state : CharState) -> &PlayerState? {
 
 ///|
 pub fn is_key_down(self : Player, key : @keyboard.BasicActionId) -> Bool {
-  self.keys_down[key].or(false)
+  self.keys_down.get(key).or(false)
 }
 
 ///|
@@ -501,7 +509,9 @@ pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
 ///|
 pub fn change_job(self : Player, job_id : Int) -> Unit {
   self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
-  self.changing_job = @job.Job::load(id=job_id).bind(fn(job) {
+  self.changing_job = @job.Job::load(self.string_loader, id=job_id).bind(fn(
+      job
+    ) {
       (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
     })
     |> Some

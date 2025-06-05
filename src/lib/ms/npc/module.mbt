@@ -2,22 +2,44 @@
 struct Module {
   npcs : MapNpcs
   container : &@ui.Container
-  ref_render : @markup_text.RefRender
-  npc_talk_resource : NpcTalkResource
   network : @net.Network
+  ref_render : @markup_text.RefRender
+  string_loader : @resource.SyncLoader
+  npc_talk_resource : NpcTalkResource
 }
 
 ///|
 pub fn Module::load(
   container : &@ui.Container,
+  network : @net.Network,
   ref_render : @markup_text.RefRender,
-  network : @net.Network
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> @utils.Future[Module] {
+  let npc_loader_fut = io_service.submit(fn() {
+    @resource.SyncLoader::load(
+      "npc",
+      "https://maple-res.kkkiiox.work/Npc/nx.json",
+      @resource.ImageLoader::new_bid_image_loader(
+        "https://maple-res.kkkiiox.work/Npc/images",
+      ),
+    )
+  })
   @ui.ui_window_2_loader()
   .load_res(["UtilDlgEx"])
+  .combine(npc_loader_fut)
   .map(fn(it) {
-    let npc_talk_resource = NpcTalkResource::from_resource(it)
-    Module::new(container, npc_talk_resource, ref_render, network)
+    let (res, npc_loader_rs) = it
+    let npc_loader = npc_loader_rs.unwrap() // TODO: handle error
+    let npc_talk_resource = NpcTalkResource::from_resource(res)
+    Module::new(
+      container,
+      npc_talk_resource,
+      ref_render,
+      network,
+      string_loader~,
+      npc_loader~,
+    )
   })
 }
 
@@ -26,15 +48,21 @@ fn Module::new(
   container : &@ui.Container,
   npc_talk_resource : NpcTalkResource,
   ref_render : @markup_text.RefRender,
-  network : @net.Network
+  network : @net.Network,
+  string_loader~ : @resource.SyncLoader,
+  npc_loader~ : @resource.SyncLoader
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(args) {
-      open_npc_talk_ui(npc_talk_resource, container, ref_render, args)
+      open_npc_talk_ui(
+        npc_talk_resource, container, ref_render, string_loader, args,
+      )
     },
     network,
+    npc_loader~,
+    string_loader~,
   )
-  { npcs, container, ref_render, npc_talk_resource, network }
+  { npcs, container, ref_render, npc_talk_resource, network, string_loader }
 }
 
 ///|
@@ -43,6 +71,7 @@ pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
     self.npc_talk_resource,
     self.container,
     self.ref_render,
+    self.string_loader,
     args,
   )
 }
@@ -51,13 +80,14 @@ pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
 fn open_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
-  name_loader : @markup_text.RefRender,
+  ref_render : @markup_text.RefRender,
+  string_loader : @resource.SyncLoader,
   args : TalkArgs
 ) -> Unit {
   let elem = @ui.Element::new(
     fn(hooks) {
       let ui = new_npc_talk_ui(
-        hooks, npc_talk_resource, container, args, name_loader,
+        hooks, npc_talk_resource, container, args, string_loader, ref_render,
       )
       ui
     },
@@ -84,9 +114,10 @@ pub fn make_handlers(
     ) {
       handle_npc_dialogue(
         self.container,
-        self.ref_render,
-        self.npc_talk_resource,
         self.network,
+        self.ref_render,
+        self.string_loader,
+        self.npc_talk_resource,
         dialogue,
       )
     }),
@@ -214,9 +245,10 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
 ///|
 pub fn handle_npc_dialogue(
   container : &@ui.Container,
-  name_loader : @markup_text.RefRender,
-  npc_talk_resource : NpcTalkResource,
   network : @net.Network,
+  name_loader : @markup_text.RefRender,
+  string_loader : @resource.SyncLoader,
+  npc_talk_resource : NpcTalkResource,
   dialogue : NpcDialogue
 ) -> Unit {
   container.add_ui(
@@ -253,6 +285,7 @@ pub fn handle_npc_dialogue(
                 })
             },
           },
+          string_loader,
           name_loader,
         )
         ui
@@ -269,9 +302,10 @@ fn new_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
   args : TalkArgs,
+  string_loader : @resource.SyncLoader,
   name_loader : @markup_text.RefRender
 ) -> UINpcTalk {
-  let ui = UINpcTalk::new(npc_talk_resource, hooks, name_loader)
+  let ui = UINpcTalk::new(npc_talk_resource, hooks, string_loader, name_loader)
   try
     ui.change_text(
       args.npc_id,

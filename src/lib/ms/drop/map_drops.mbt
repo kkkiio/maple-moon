@@ -1,5 +1,6 @@
 ///|
 struct MapDrops {
+  string_loader : @resource.SyncLoader
   drops : @map_object.MapObjects[&Drop]
   loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.T[DropSpawn]
@@ -7,7 +8,10 @@ struct MapDrops {
 }
 
 ///|
-fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
+fn MapDrops::new(
+  string_loader : @resource.SyncLoader,
+  src : @resource.NxNode
+) -> MapDrops {
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
     |> @graphics.Animation::from_resource
@@ -18,6 +22,7 @@ fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
   meso_icons[MesoIcon::BAG] = src["09000003"]["iconRaw"]
     |> @graphics.Animation::from_resource
   {
+    string_loader,
     drops: @map_object.MapObjects::new(),
     loading_drops: Array::new(),
     spawns: @queue.new(),
@@ -61,11 +66,13 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
             } else {
               BRONZE
             }
-            let icon = self.meso_icons[mesotype].unwrap()
+            let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
             self.drops.add(spawn.instantiate_meso(icon))
           } else {
             self.loading_drops.push(
-              @item.ItemData::get_async(itemid).map_exn(fn(r) {
+              @item.ItemData::get_async(itemid, self.string_loader).map_exn(fn(
+                r
+              ) {
                 let item_data = r.unwrap_or_error!()
                 spawn.instantiate_item(item_data.get_icon(true))
               }),

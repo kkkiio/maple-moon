@@ -75,8 +75,9 @@ pub(all) struct LookChoices {
 }
 
 ///|
-pub fn ExplorerCreatorUIResource::load() ->
-     @utils.Future[ExplorerCreatorUIResource] {
+pub fn ExplorerCreatorUIResource::load(
+  login_loader : @resource.SyncLoader
+) -> @utils.Future[ExplorerCreatorUIResource] {
   let look_res_fut = get_etc_loader()
     .load_res(["MakeCharInfo.img", "Info"])
     .map(fn(mkinfo) {
@@ -112,12 +113,9 @@ pub fn ExplorerCreatorUIResource::load() ->
 
       (parse_choices(mkinfo["CharMale"]), parse_choices(mkinfo["CharFemale"]))
     })
-  let login_loader = @ui.common_ui_loader()
   let map001_loader = get_map001_loader()
-  // let common_src = login_loader.load_res(["Login.img", "Common"])
-  let customize_char_src = login_loader.load_res([
-    "Login.img", "CustomizeChar", "000",
-  ])
+  // let common_src = login_loader.load_res(["Common"])
+  let customize_char_src = login_loader.load_res(["CustomizeChar", "000"])
   let signboard2_src_fut = @map.get_map_latest_loader().load_res([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])

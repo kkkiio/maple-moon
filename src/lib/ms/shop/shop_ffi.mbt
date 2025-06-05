@@ -26,7 +26,7 @@ pub fn watch_opening_shop_ffi(
     let shop_data = {
       npc_id: npc_shop.npc_id,
       shop_items: npc_shop.items.mapi(fn(i, item) {
-        let item_data = @item.ItemData::get_async(item.id)
+        let item_data = @item.ItemData::get_async(item.id, mod.string_loader)
         {
           slot_no: i,
           item_id: item.id,
@@ -95,3 +95,45 @@ pub fn leave_shop_ffi(mod : Module) -> Unit {
 
 ///| Shop Slot number. starts from 0
 type SlotNo Int derive(Eq, Hash, Show, ToJson)
+
+///|
+let mode_BUY : Byte = b'\x00'
+
+///|
+let mode_SELL : Byte = b'\x01'
+
+///|
+let mode_RECHARGE : Byte = b'\x02'
+
+///|
+let mode_LEAVE : Byte = b'\x03'
+
+///|
+priv enum ShopActionMessage {
+  Item(slot~ : Int, item_id~ : Int, qty~ : Int, buy~ : Bool) // Requests that an item should be bought from or sold to a NPC shop
+  Recharge(slot~ : Int) // Requests that an item should be recharged at a NPC shop
+  Leave // Requests exiting from a NPC shop
+} derive(Show)
+
+///|
+impl @net.OutMessage for ShopActionMessage with pack(self) -> @net.OutPacket {
+  let packet = @net.OutPacket::new(@net.ClientOpcode::NPC_SHOP_ACTION)
+  match self {
+    ShopActionMessage::Item(slot~, item_id~, qty~, buy~) => {
+      packet
+      ..write_byte(if buy { mode_BUY } else { mode_SELL })
+      ..write_short(slot)
+      ..write_int(item_id)
+      ..write_short(qty)
+      packet
+    }
+    ShopActionMessage::Recharge(slot~) => {
+      packet..write_byte(mode_RECHARGE)..write_short(slot)
+      packet
+    }
+    ShopActionMessage::Leave => {
+      packet..write_byte(mode_LEAVE)
+      packet
+    }
+  }
+}

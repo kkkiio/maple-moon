@@ -1,5 +1,6 @@
 ///|
 struct UINpcTalk {
+  string_loader : @resource.SyncLoader
   hooks : @ui.Hooks
   base : @ui.UIModel
   resource : NpcTalkResource
@@ -188,6 +189,7 @@ pub fn NpcTalkResource::from_resource(
 pub fn UINpcTalk::new(
   resource : NpcTalkResource,
   hooks : @ui.Hooks,
+  string_loader : @resource.SyncLoader,
   name_loader : @markup_text.RefRender
 ) -> UINpcTalk {
   let name = @graphics.Text::new(
@@ -200,6 +202,7 @@ pub fn UINpcTalk::new(
   let min_height = 8 * resource.fill.height() + 14
   let speaker = @graphics.Texture::default()
   {
+    string_loader,
     hooks,
     base: hooks.ui_model,
     resource,
@@ -431,9 +434,9 @@ pub fn change_text(
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
-    self.speaker = npc_loader().load_res([strid, "stand", "0"])
+    self.speaker = self.string_loader.load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
-    let namestr = @resource.string_loader()
+    let namestr = self.string_loader
       .load_res(["Npc.img", npcid.to_string(), "name"])
       .get_string()
     self.name.change_text(namestr)

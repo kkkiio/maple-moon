@@ -4,10 +4,12 @@ struct Module {
 }
 
 ///|
-pub fn Module::load() -> @utils.Future[Module] {
+pub fn Module::load(
+  string_loader : @resource.SyncLoader
+) -> @utils.Future[Module] {
   special_item_loader
   .load_res(["0900.img"])
-  .map(fn(src) { { map_drops: MapDrops::new(src) } })
+  .map(fn(src) { { map_drops: MapDrops::new(string_loader, src) } })
 }
 
 ///|

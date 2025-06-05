@@ -6,17 +6,24 @@ struct Module {
   confirm_shop_transaction_listeners : Array[
     (ConfirmShopTransactionCode) -> Bool,
   ]
+  string_loader : @resource.SyncLoader
 }
 
 ///|
-pub fn Module::load(network : @net.Network) -> @utils.Future[Module] {
+pub fn Module::load(
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
+) -> @utils.Future[Module] {
   // @ui.ui_window_2_loader().load_res(["Shop2"])
   // |> @utils.map(fn(src) { Module::new(container, src) })
-  @utils.Future::from_value(Module::new(network))
+  @utils.Future::from_value(Module::new(network, string_loader))
 }
 
 ///|
-fn Module::new(network : @net.Network) -> Module {
+fn Module::new(
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
+) -> Module {
   // let countset = @graphics.Charset::new(
   //   @ui.common_ui_loader().load_res(["Basic.img", "ItemNo"]),
   //   @graphics.CharsetAlignment::LEFT,
@@ -26,6 +33,7 @@ fn Module::new(network : @net.Network) -> Module {
     opening_shop_listeners: [],
     confirm_shop_transaction_listeners: [],
     opening_shop: None,
+    string_loader,
   }
 }
 

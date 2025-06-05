@@ -3,13 +3,12 @@ typealias UI = @ui.UI
 
 ///|
 pub(all) struct Game {
-  window : Window
   timer : @utils.Timer
   mut accumulator : Int
-  ui : UI
   processor : @net.Network
   loaded_state : @utils.Future[LoadedState]
-  io_service : @io_task.Service
+  poll_service : @io_task.PollService
+  io_service : @io_task.IOService
   scheduls : @schedule.Schedules
   stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
@@ -17,6 +16,8 @@ pub(all) struct Game {
 
 ///|
 struct LoadedState {
+  window : Window
+  ui : UI
   login_module : @login.Module
   inventory_module : @inventory.Module
   skill_book_module : @skill_book.Module
@@ -33,23 +34,18 @@ pub fn Game::new() -> Game {
   })
   let processor = @net.Network::init()
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
-  let keyboard = keyboard_module.get_keyboard()
-  let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
-  let window = Window::new(ui, fn() {
-    now_micro() |> @utils.TimePoint::from_micro
-  })
-  let io_service = @io_task.Service::new()
+  let poll_service = @io_task.PollService::new()
+  let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
   let stage = Ref::new(None)
   {
-    window,
     timer,
     accumulator: 0,
-    ui,
     processor,
     loaded_state: load_modules(
-      ui, timer, processor, io_service, scheduls, stage, keyboard_module,
+      timer, processor, poll_service, io_service, scheduls, stage, keyboard_module,
     ),
+    poll_service,
     io_service,
     scheduls,
     stage,
@@ -59,20 +55,49 @@ pub fn Game::new() -> Game {
 
 ///|
 fn load_modules(
-  ui : UI,
   timer : @utils.Timer,
   network : @net.Network,
-  io_service : @io_task.Service,
+  poll_service : @io_task.PollService,
+  io_service : @io_task.IOService,
   scheduls : @schedule.Schedules,
   stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module
 ) -> @utils.Future[LoadedState] {
+  let basic_loader_fut = io_service
+    .submit(fn() {
+      @resource.SyncLoader::load(
+        "Basic",
+        "https://maple-res.kkkiiox.work/UI/Basic.img.json",
+        @resource.ImageLoader::get_path_image_loader(),
+      )
+    })
+    .map(fn(rs) {
+      rs.unwrap() // TODO: handle error
+    })
+  let ui_fut = basic_loader_fut.map(fn(basic_loader) {
+    let keyboard = keyboard_module.get_keyboard()
+    UI::new(basic_loader, fn(keycode) { keyboard.get_mapping(keycode) })
+  })
+  let window_fut = ui_fut.map(fn(ui) {
+    Window::new(ui, fn() { now_micro() |> @utils.TimePoint::from_micro })
+  })
   let local_storage = @config.LocalStorage::new()
   fn get_stage() -> Stage {
     stage_ref.val.unwrap() // TODO: handle error
   }
 
-  let add_io_task = fn(task) { io_service.add(task) }
+  let string_loader_fut = io_service
+    .submit(fn() {
+      @resource.SyncLoader::load(
+        "String",
+        "https://maple-res.kkkiiox.work/String/nx.json",
+        @resource.ImageLoader::get_path_image_loader(),
+      )
+    })
+    .map(fn(rs) {
+      rs.unwrap() // TODO: handle error
+    })
+  let add_io_task = fn(task) { poll_service.add(task) }
   let action_registry = @action.Registry::new()
   let action_map = {}
   fn merge_actions(
@@ -117,34 +142,52 @@ fn load_modules(
     }
   }
 
-  let char_look_module_f = @char_look.Module::load(
-    fn(f) {
-      guard get_stage().get_player() is Some(player) else { return }
-      player.character.look = f(player.character.look)
-    },
-    io_service,
-  ).tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
+  let char_look_module_f = string_loader_fut
+    .bind(fn(string_loader) {
+      @char_look.Module::load(
+        fn(f) {
+          guard get_stage().get_player() is Some(player) else { return }
+          player.character.look = f(player.character.look)
+        },
+        poll_service,
+        string_loader,
+      )
+    })
+    .tap(fn(mod) { merge_stat_handlers(mod.make_stat_handlers()) })
   let map_module = @map.Module::load()
-  let inventory_module_fut = @inventory.Module::load(
-    fn() { get_stage().get_player() },
-    network,
-  ).tap(fn(mod) {
-    merge_handlers(mod.make_handlers())
-    merge_actions(mod.make_actions())
-    merge_stat_handlers(mod.make_stat_handlers())
-    merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
+  let inventory_module_fut = string_loader_fut
+    .bind(fn(string_loader) {
+      @inventory.Module::load(
+        fn() { get_stage().get_player() },
+        network,
+        string_loader,
+      )
+    })
+    .tap(fn(mod) {
+      merge_handlers(mod.make_handlers())
+      merge_actions(mod.make_actions())
+      merge_stat_handlers(mod.make_stat_handlers())
+      merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
+    })
+  let ref_render_fut = string_loader_fut.map(fn(string_loader) {
+    @markup_text.RefRender::new(string_loader, fn() {
+      guard get_stage().get_player() is Some(player) else { return "" }
+      player.character.get_name()
+    })
   })
-  let ref_render = @markup_text.RefRender::new(@resource.string_loader(), fn() {
-    guard get_stage().get_player() is Some(player) else { return "" }
-    player.character.get_name()
-  })
-  let npc_module = @npc.Module::load(ui, ref_render, network).tap(fn(mod) {
-    merge_handlers(mod.make_handlers())
-  })
-  let quest_module_fut = npc_module
-    .combine(inventory_module_fut)
+  let npc_module_fut = string_loader_fut
+    .combine(ref_render_fut)
+    .combine(ui_fut)
     .bind(fn(it) {
-      let (mod, inventory_module) = it
+      let ((string_loader, ref_render), ui) = it
+      @npc.Module::load(ui, network, ref_render, string_loader, io_service)
+    })
+    .tap(fn(mod) { merge_handlers(mod.make_handlers()) })
+  let quest_module_fut = npc_module_fut
+    .combine(inventory_module_fut)
+    .combine(ref_render_fut)
+    .bind(fn(it) {
+      let ((mod, inventory_module), ref_render) = it
       @quest.Module::load(
         network,
         inventory_module.get_inventory(),
@@ -165,15 +208,35 @@ fn load_modules(
       merge_handlers(mod.make_handlers())
       merge_show_status_info_handler_map(mod.make_show_status_info_handlers())
     })
-  let login_mod_f = char_look_module_f
-    .bind(fn(mod) {
-      @login.Module::load(network, ui, mod, io_service, local_storage)
+  let status_bar_loader_fut = io_service
+    .submit(fn() {
+      @resource.SyncLoader::load(
+        "StatusBar",
+        "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",
+        @resource.ImageLoader::get_path_image_loader(),
+      )
     })
+    .map(fn(rs) {
+      rs.unwrap() // TODO: handle error
+    })
+  let login_mod_f = char_look_module_f
+    .combine(ui_fut)
+    .bind(fn(it) {
+      let (mod, ui) = it
+      @login.Module::load(
+        network, ui, mod, poll_service, io_service, local_storage,
+      ).map(fn(login_module) { (login_module, ui) })
+    })
+    .combine(status_bar_loader_fut)
     .combine(inventory_module_fut)
     .combine(map_module)
     .combine(quest_module_fut)
     .map(fn(it) {
-      let (((login_module, inventory_module), map_module), quest_module) = it
+      let (
+        ((((login_module, ui), status_bar_loader), inventory_module), map_module
+        ),
+        quest_module,
+      ) = it
       let handlers = login_module.make_handlers(
         fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
         fn(char_entry, cooldowns, callback) {
@@ -188,6 +251,7 @@ fn load_modules(
             action_registry,
             timer,
             map_module,
+            status_bar_loader,
           )
         },
         quest_module,
@@ -195,67 +259,48 @@ fn load_modules(
       merge_handlers(handlers)
       login_module
     })
-  let monster_module = @monster.Module::new(add_io_task, network)
-  merge_handlers(
-    monster_module.make_handlers(fn() {
-      get_stage().get_player().map(fn(p) { p.get_stats() })
-    }),
-  )
-  let drop_module = @drop.Module::load().tap(fn(mod) {
-    merge_handlers(
-      mod.make_handlers(fn(id) {
-        get_stage().get_character(id).map(fn(c) { c.get_phobj() })
-      }),
-    )
-  })
+  let monster_module_fut = string_loader_fut
+    .map(fn(string_loader) {
+      @monster.Module::new(add_io_task, network, string_loader)
+    })
+    .tap(fn(mod) {
+      merge_handlers(
+        mod.make_handlers(fn() {
+          get_stage().get_player().map(fn(p) { p.get_stats() })
+        }),
+      )
+    })
+  let drop_module = string_loader_fut
+    .bind(fn(string_loader) { @drop.Module::load(string_loader) })
+    .tap(fn(mod) {
+      merge_handlers(
+        mod.make_handlers(fn(id) {
+          get_stage().get_character(id).map(fn(c) { c.get_phobj() })
+        }),
+      )
+    })
   let char_stats_mod_f = @char_stats.Module::load(network).tap(fn(mod) {
     merge_stat_handlers(mod.make_stat_handlers())
   })
-  let skill_book_mod_f = @skill_book.Module::load(
-    fn() { get_stage().get_player() },
-    network,
-  ).tap(fn(mod) {
-    merge_handlers(mod.make_handlers())
-    merge_actions(mod.make_actions())
-  })
-  let shop_mod_f = @shop.Module::load(network).map(fn(it) {
-    let mod = it
-    merge_handlers(mod.make_handlers())
-    mod
-  })
-  // // Attack handlers
-  // // packet_switch.push((ATTACKED_CLOSE, CloseAttackHandler::new()))
-  // // packet_switch.push((ATTACKED_RANGED, RangedAttackHandler::new()))
-  // // packet_switch.push((ATTACKED_MAGIC, MagicAttackHandler::new()))
-
-  // // Messaging handlers
-  // // packet_switch.push((CHAT_RECEIVED, ChatReceivedHandler::new()))
-  // // packet_switch.push((SCROLL_RESULT, ScrollResultHandler::new()))
-  // // packet_switch.push((SERVER_MESSAGE, ServerMessageHandler::new()))
-  // // packet_switch.push((WEEK_EVENT_MESSAGE, WeekEventMessageHandler::new()))
-  // // packet_switch.push((WHISPER, WhisperReceivedHandler::new()))
-  // // packet_switch.push((SHOW_ITEM_GAIN_INCHAT, ShowItemGainInChatHandler::new()))
-
-  // // Inventory Handlers
-  // // packet_switch.push((GATHER_RESULT, GatherResultHandler::new()))
-  // // packet_switch.push((SORT_RESULT, SortResultHandler::new()))
-
-  // // Player Interaction
-  // // packet_switch.push((CHAR_INFO, CharInfoHandler::new()))
-  // // packet_switch.push((PLAYER_INTERACTION, PlayerInteractionHandler::new()))
-
-  // // Cash Shop
-  // // packet_switch.push((SET_CASH_SHOP, SetCashShopHandler::new()))
-
-  // // TODO: New handlers, they need coded and moved to a proper file.
-  // // packet_switch.push((CHECK_SPW_RESULT, CheckSpwResultHandler::new()))
-  // // packet_switch.push((FIELD_EFFECT, FieldEffectHandler::new()))
-
-  //  )
-  // Player handlers
-  // packet_switch.push((CHANGE_CHANNEL, ChangeChannelHandler::new()))
-  // packet_switch.push((KEYMAP, KeymapHandler::new()))
-  // packet_switch.push((SKILL_MACROS, SkillMacrosHandler::new()))
+  let skill_book_mod_f = string_loader_fut
+    .bind(fn(string_loader) {
+      @skill_book.Module::load(
+        fn() { get_stage().get_player() },
+        network,
+        string_loader,
+      )
+    })
+    .tap(fn(mod) {
+      merge_handlers(mod.make_handlers())
+      merge_actions(mod.make_actions())
+    })
+  let shop_mod_f = string_loader_fut
+    .bind(fn(string_loader) { @shop.Module::load(network, string_loader) })
+    .map(fn(it) {
+      let mod = it
+      merge_handlers(mod.make_handlers())
+      mod
+    })
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
     guard get_stage().get_player() is Some(player) else { return }
     player.recalc_stats(false)
@@ -270,26 +315,6 @@ fn load_modules(
     player.change_job(job_id)
   })
   merge_stat_handlers(job_module.make_stat_handlers())
-
-  // MapObject handlers
-  // // packet_switch.push((SPAWN_CHAR, SpawnCharHandler::new()))
-  // // packet_switch.push((CHAR_MOVED, CharMovedHandler::new()))
-  // // packet_switch.push((UPDATE_CHARLOOK, UpdateCharLookHandler::new()))
-  // // packet_switch.push((SHOW_FOREIGN_EFFECT, ShowForeignEffectHandler::new()))
-  // // packet_switch.push((GIVE_FOREIGN_BUFF, GiveForeignBuffHandler::new()))
-  // // packet_switch.push((CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler::new()))
-  // // packet_switch.push((REMOVE_CHAR, RemoveCharHandler::new()))
-  // // packet_switch.push((SPAWN_PET, SpawnPetHandler::new()))
-  // |> Iter::append((SET_NPC_SCRIPTABLE, SetNpcScriptableHandler::new()))
-  // // packet_switch.push((MOB_MOVED, MobMovedHandler::new()))
-  // // packet_switch.push((MOB_MOVE_RESPONSE, MobMoveResponseHandler::new()))
-  // // packet_switch.push((APPLY_MONSTER_STATUS, ApplyMobStatusHandler::new()))
-  // // packet_switch.push((CANCEL_MONSTER_STATUS, CancelMobStatusHandler::new()))
-  // // packet_switch.push((HIT_REACTOR, HitReactorHandler::new()))
-  // // packet_switch.push((SPAWN_REACTOR, SpawnReactorHandler::new()))
-  // // packet_switch.push((REMOVE_REACTOR, RemoveReactorHandler::new()))
-  // packet_switch.push((GIVE_BUFF, ApplyBuffHandler::new()))
-  // packet_switch.push((CANCEL_BUFF, CancelBuffHandler::new()))
   net_handler_map.set(@net.RECALCULATE_STATS, fn(
     _recv : @net.InPacket
   ) -> Unit {
@@ -303,13 +328,12 @@ fn load_modules(
       }),
     ),
   ]
-  // packet_switch.push((FAME_RESPONSE, FameResponseHandler::new()))
-  // packet_switch.push((ADD_COOLDOWN, AddCooldownHandler::new()))
-  // NPC Interaction Handlers
   let damage_number_set = @ui.NumberSet::load()
   let stage_f = map_module
+    .combine(string_loader_fut)
+    .combine(monster_module_fut)
     .combine(inventory_module_fut)
-    .combine(npc_module)
+    .combine(npc_module_fut)
     .combine(quest_module_fut)
     .combine(char_look_module_f)
     .combine(char_stats_mod_f)
@@ -324,7 +348,16 @@ fn load_modules(
             (
               (
                 (
-                  (((map_module, inventory_module), npc_module), quest_module),
+                  (
+                    (
+                      (
+                        ((map_module, string_loader), monster_module),
+                        inventory_module,
+                      ),
+                      npc_module,
+                    ),
+                    quest_module,
+                  ),
                   char_look_module,
                 ),
                 char_stats_mod,
@@ -361,10 +394,13 @@ fn load_modules(
         damage_number_set,
         add_io_task,
         network,
+        string_loader,
       )
       stage_ref.val = Some(stage)
     })
   char_stats_mod_f
+  .combine(ui_fut)
+  .combine(window_fut)
   .combine(shop_mod_f)
   .combine(stage_f)
   .combine(login_mod_f)
@@ -375,7 +411,10 @@ fn load_modules(
     let (
       (
         (
-          (((char_stats_module, shop_module), _stage), login_module),
+          (
+            ((((char_stats_module, ui), window), shop_module), _stage),
+            login_module,
+          ),
           inventory_module,
         ),
         skill_book_module,
@@ -386,6 +425,8 @@ fn load_modules(
     timer.reset()
     ui.change_state(UIStateLogin::new())
     {
+      ui,
+      window,
       login_module,
       inventory_module,
       skill_book_module,
@@ -415,18 +456,18 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.accumulator = remaining
   let update_times = @math.minimum(times, 10) // avoid halt
   for _ in 0..<update_times {
-    self.update_status()
+    self.update_status(loaded_state)
   }
-  self.io_service.run() // run once per frame, after update network
+  self.poll_service.run() // run once per frame, after update network
   self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
-  self.draw(alpha)
+  self.draw(alpha, loaded_state)
 }
 
 ///|
-pub fn update_status(self : Game) -> Unit {
+pub fn update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
   let stage = self.stage.val.unwrap() // TODO: handle error
@@ -434,16 +475,20 @@ pub fn update_status(self : Game) -> Unit {
     Ok(_) => ()
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }
-  self.ui.update()
+  loaded_state.ui.update()
   // Music::update_context();
 }
 
 ///|
-pub fn Game::draw(self : Game, alpha : Double) -> Unit {
+pub fn Game::draw(
+  self : Game,
+  alpha : Double,
+  loaded_state : LoadedState
+) -> Unit {
   @graphics.GraphicsGL::get().clear_scene()
   let stage = self.stage.val.unwrap() // TODO: handle error
   stage.draw(alpha)
-  self.ui.draw(alpha)
+  loaded_state.ui.draw(alpha)
   @graphics.GraphicsGL::get().flush(1.0)
 }
 
@@ -454,14 +499,17 @@ fn setup_game_ui(
   player : @player.Player,
   registry : @action.Registry,
   timer : @utils.Timer,
-  map_module : @map.Module
+  map_module : @map.Module,
+  status_bar_loader : @resource.SyncLoader
 ) -> Unit {
   ui.change_state(UIStateGame::new(ui, stage, registry, timer))
   let stats = player.get_stats()
   ui.set_element(
     false,
     @ui.Element::new(
-      fn(hooks) { @char_stats.StatusBarUI::new(stats, hooks) },
+      fn(hooks) {
+        @char_stats.StatusBarUI::new(stats, hooks, status_bar_loader)
+      },
       @ui.UIElementType::STATUS_BAR,
     ),
   )
@@ -491,8 +539,8 @@ fn setup_game_ui(
 }
 
 ///|
-pub fn get_window(self : Game) -> Window {
-  self.window
+pub fn Game::get_window(self : Game) -> Window? {
+  self.loaded_state.poll().map(fn(it) { it.window })
 }
 
 ///|
@@ -580,3 +628,11 @@ fn default_keymap() -> Map[String, @keyboard.Mapping] {
   )
   keymap
 }
+
+///|
+// fn get_countset(basic_loader : @resource.SyncLoader) -> @graphics.Charset {
+//   @graphics.Charset::from_resource(
+//     basic_loader.load_res(["ItemNo"]),
+//     @graphics.CharsetAlignment::LEFT,
+//   )
+// }

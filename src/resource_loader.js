@@ -169,8 +169,7 @@ export class ResourceLoader {
     this.bmpLoader = bmpLoader;
   }
   async load() {
-    const path = this.dataPath;
-    const response = await fetch(path);
+    const response = await fetch(this.dataPath);
     this.nxJson = await response.json();
   }
   loadDesc(nodepath) {

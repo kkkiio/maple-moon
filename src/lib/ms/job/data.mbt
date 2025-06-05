@@ -6,17 +6,24 @@ pub(all) struct JobData {
 }
 
 ///|
-pub fn JobData::load(id : Int) -> @utils.Future[JobData] {
+pub fn JobData::load(
+  id : Int,
+  string_loader : @resource.SyncLoader
+) -> @utils.Future[JobData] {
   let strid = @string_format.extend_id(id, 3)
   @skill.skill_loader()
   .load_res([strid + ".img"])
-  .map(fn(src) { JobData::new(id, src) })
+  .map(fn(src) { JobData::new(id, src, string_loader) })
 }
 
 ///|
-pub fn JobData::new(id : Int, src : @resource.NxNode) -> JobData {
+pub fn JobData::new(
+  id : Int,
+  src : @resource.NxNode,
+  string_loader : @resource.SyncLoader
+) -> JobData {
   let strid = @string_format.extend_id(id, 3)
-  let strsrc = @resource.string_loader().load_res(["Skill.img", strid])
+  let strsrc = string_loader.load_res(["Skill.img", strid])
   let icon = src["info"]["icon"] |> @graphics.Texture::from_resource
   let name = strsrc["bookName"].get_string()
   let skills = Array::new()

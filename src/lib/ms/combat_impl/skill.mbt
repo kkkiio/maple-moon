@@ -15,11 +15,15 @@ struct Skill {
 }
 
 ///|
-pub fn Skill::load(skill_id : Int) -> @utils.Future[Result[Skill, Error]] {
-  let data = @skill.SkillData::load(skill_id)
+pub fn Skill::load(
+  string_loader : @resource.SyncLoader,
+  skill_id : Int
+) -> @utils.Future[Result[Skill, Error]] {
+  let data = @skill.SkillData::load(string_loader, skill_id)
   data.map_exn(fn(data) {
     let data = data.unwrap_or_error!()
     Skill::new!(
+      string_loader,
       skill_id,
       data.src,
       data.is_attack,
@@ -34,6 +38,7 @@ pub fn Skill::load(skill_id : Int) -> @utils.Future[Result[Skill, Error]] {
 
 ///|
 pub fn Skill::new(
+  string_loader : @resource.SyncLoader,
   skill_id : Int,
   src : @resource.NxNode,
   is_attack : Bool,
@@ -87,7 +92,7 @@ pub fn Skill::new(
     }
   } else {
     projectile = false
-    let bullet = SkillRegularBullet::default()
+    let bullet = SkillRegularBullet::new(string_loader)
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }

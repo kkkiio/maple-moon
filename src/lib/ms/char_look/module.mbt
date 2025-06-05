@@ -1,17 +1,19 @@
 ///|
 struct Module {
+  io_service : @io_task.PollService
+  string_loader : @resource.SyncLoader
   draw_info : @types.BodyDrawInfo
   hair_cache : Map[Int, @utils.Future[Hair]]
   face_types : Map[Int, @utils.Future[Face]]
   body_cache : Map[Int, @utils.Future[Body]]
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit
-  io_service : @io_task.Service
 }
 
 ///|
 pub fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.Service
+  io_service : @io_task.PollService,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Module] {
   let bodynode = get_body_loader().load_res(["00002000.img"])
   let headnode = get_body_loader().load_res(["00012000.img"])
@@ -19,7 +21,9 @@ pub fn Module::load(
   .combine(headnode)
   .map(fn(it) {
     let (bodynode, headnode) = it
-    Module::new(bodynode, headnode, on_player_look_changed, io_service)
+    Module::new(
+      bodynode, headnode, on_player_look_changed, io_service, string_loader,
+    )
   })
 }
 
@@ -28,10 +32,12 @@ pub fn Module::new(
   bodynode : @resource.NxNode,
   headnode : @resource.NxNode,
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.Service
+  io_service : @io_task.PollService,
+  string_loader : @resource.SyncLoader
 ) -> Module {
   {
     hair_cache: Map::new(),
+    string_loader,
     draw_info: @types.BodyDrawInfo::new?(bodynode.value(), headnode.value()).unwrap(), // TODO
     face_types: Map::new(),
     body_cache: Map::new(),
@@ -53,7 +59,7 @@ pub fn load_char_look(
   .combine(face)
   .map(fn(it) {
     let ((body, hair), face) = it
-    CharLook::new(entry, body, hair, face, self.draw_info)
+    CharLook::new(entry, body, hair, face, self.string_loader, self.draw_info)
   })
 }
 
@@ -70,13 +76,15 @@ pub fn load_body_by_skin_id(
 ///|
 pub fn load_hair_by_id(self : Module, hair_id : Int) -> @utils.Future[Hair] {
   self.hair_cache.get_or_init(hair_id, fn() {
-    Hair::load(hair_id, self.draw_info)
+    Hair::load(hair_id, self.draw_info, self.string_loader)
   })
 }
 
 ///|
 pub fn load_face_by_id(self : Module, face_id : Int) -> @utils.Future[Face] {
-  self.face_types.get_or_init(face_id, fn() { Face::load(face_id) })
+  self.face_types.get_or_init(face_id, fn() {
+    Face::load(face_id, self.string_loader)
+  })
 }
 
 ///|

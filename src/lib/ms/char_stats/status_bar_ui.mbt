@@ -18,9 +18,13 @@ struct StatusBarUI {
 }
 
 ///|
-pub fn StatusBarUI::new(stats : CharStats, hooks : @ui.Hooks) -> StatusBarUI {
+pub fn StatusBarUI::new(
+  stats : CharStats,
+  hooks : @ui.Hooks,
+  status_bar_loader : @resource.SyncLoader
+) -> StatusBarUI {
   let vwidth = @config.constants.get_viewwidth()
-  let mainBar = @ui.common_ui_loader().load_res(["StatusBar3.img", "mainBar"])
+  let mainBar = status_bar_loader.load_res(["mainBar"])
   let stat = "status"
   let status = mainBar[stat]
   let expBar = mainBar["EXPBar"]

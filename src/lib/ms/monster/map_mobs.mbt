@@ -4,15 +4,17 @@ struct MapMobs {
   mob_loadings : Array[@utils.Future[Unit]]
   spawns : @queue.T[MobSpawn]
   randomizer : @utils.Randomizer
+  string_loader : @resource.SyncLoader
 }
 
 ///|
-pub fn MapMobs::new() -> MapMobs {
+pub fn MapMobs::new(string_loader : @resource.SyncLoader) -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     mob_loadings: Array::new(),
     randomizer: @utils.Randomizer::default(),
+    string_loader,
   }
 }
 
@@ -40,7 +42,7 @@ pub fn update(
         None =>
           self.mob_loadings.push(
             spawn
-            .instantiate(self.randomizer, network)
+            .instantiate(self.randomizer, network, self.string_loader)
             .map(fn(res) {
               match res {
                 Ok(mob) => self.mobs.add(mob)
@@ -215,7 +217,8 @@ struct MobSpawn {
 pub fn instantiate(
   self : MobSpawn,
   randomizer : @utils.Randomizer,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Result[Mob, Error]] {
   Mob::load(
     self.oid,
@@ -228,6 +231,7 @@ pub fn instantiate(
     self.position,
     randomizer,
     network,
+    string_loader,
   )
 }
 

@@ -25,25 +25,30 @@ pub fn game_update(time : Double) -> Unit {
 
 ///|
 pub fn onmousemove(x : Int, y : Int) -> Unit {
-  entrypoint.get_game().get_window().onmousemove(x, y)
+  guard entrypoint.get_game().get_window() is Some(window) else { return }
+  window.onmousemove(x, y)
 }
 
 ///|
 pub fn onmousedown() -> Unit {
-  entrypoint.get_game().get_window().onmousedown()
+  guard entrypoint.get_game().get_window() is Some(window) else { return }
+  window.onmousedown()
 }
 
 ///|
 pub fn onmouseup() -> Unit {
-  entrypoint.get_game().get_window().onmouseup()
+  guard entrypoint.get_game().get_window() is Some(window) else { return }
+  window.onmouseup()
 }
 
 ///|
 pub fn onkeydown(key : String) -> Unit {
-  entrypoint.get_game().get_window().key_callback(key, true)
+  guard entrypoint.get_game().get_window() is Some(window) else { return }
+  window.key_callback(key, true)
 }
 
 ///|
 pub fn onkeyup(key : String) -> Unit {
-  entrypoint.get_game().get_window().key_callback(key, false)
+  guard entrypoint.get_game().get_window() is Some(window) else { return }
+  window.key_callback(key, false)
 }

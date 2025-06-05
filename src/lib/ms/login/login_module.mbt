@@ -3,7 +3,7 @@ struct Module {
   network : @net.Network
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
-  io_service : @io_task.Service
+  poll_service : @io_task.PollService
   local_storage : @config.LocalStorage
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
@@ -13,6 +13,7 @@ struct Module {
   // to reconnect
   // mut input_acc_pass : (String, String)?
   mut select_cid : Int?
+  login_loader : @resource.SyncLoader
 }
 
 ///|
@@ -20,14 +21,27 @@ pub fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  io_service : @io_task.Service,
+  poll_service : @io_task.PollService,
+  io_service : @io_task.IOService,
   local_storage : @config.LocalStorage
 ) -> @utils.Future[Module] {
-  @utils.Future::from_value(
+  let login_loader_fut = io_service.submit(fn() {
+    @resource.SyncLoader::load(
+      "Login",
+      "https://maple-res.kkkiiox.work/UI/Login.img.json",
+      @resource.ImageLoader::get_path_image_loader(),
+    )
+  })
+  login_loader_fut.map(fn(login_loader) {
     Module::new(
-      network, ui_container, char_look_module, io_service, local_storage,
-    ),
-  )
+      network,
+      ui_container,
+      char_look_module,
+      poll_service,
+      local_storage,
+      login_loader.unwrap(), // TODO: handle error
+    )
+  })
 }
 
 ///|
@@ -35,8 +49,9 @@ pub fn Module::new(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  io_service : @io_task.Service,
-  local_storage : @config.LocalStorage
+  poll_service : @io_task.PollService,
+  local_storage : @config.LocalStorage,
+  login_loader : @resource.SyncLoader
 ) -> Module {
   {
     network,
@@ -49,8 +64,9 @@ pub fn Module::new(
     connect_task: None,
     // input_acc_pass: None,
     select_cid: None,
-    io_service,
+    poll_service,
     local_storage,
+    login_loader,
   }
 }
 
@@ -486,14 +502,16 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
       match mod.select_cid {
         Some(cid) => mod.network.send_message({ character_id: cid })
         None => {
-          let resource_f = SelectCharUIResource::load()
+          let resource_f = SelectCharUIResource::load(mod.login_loader)
           let char_looks_f = mod.characters.map(fn(ce) {
               mod.char_look_module
               .load_char_look(ce.look)
               .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
             })
             |> @utils.Future::all_of()
-          mod.io_service.on_complete(resource_f.combine(char_looks_f), fn(it) {
+          mod.poll_service.on_complete(resource_f.combine(char_looks_f), fn(
+            it
+          ) {
             let (resource, char_looks) = it
             let key = @ui.UIElementType::UI_ELEMENT_CHAR_SELECT
             let elem = @ui.Element::new(
@@ -507,8 +525,8 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                   },
                   on_new_character=fn() {
                     mod.ui_container.remove_ui(key)
-                    mod.io_service.on_complete(
-                      ExplorerCreatorUIResource::load(),
+                    mod.poll_service.on_complete(
+                      ExplorerCreatorUIResource::load(mod.login_loader),
                       fn(res) {
                         mod.ui_container.add_ui(
                           @ui.Element::new(
@@ -517,7 +535,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                                 res,
                                 hooks,
                                 fn(entry, cb) {
-                                  mod.io_service.on_complete(
+                                  mod.poll_service.on_complete(
                                     mod.char_look_module.load_char_look(entry),
                                     cb,
                                   )

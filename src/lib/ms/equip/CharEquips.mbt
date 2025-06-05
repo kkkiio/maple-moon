@@ -10,13 +10,14 @@ pub(all) enum CapType {
 
 ///| A characters equipment (The visual part)
 struct CharEquips {
+  string_loader : @resource.SyncLoader
   clothes : Map[@slot.Id, (Int, @utils.Future[@clothing.Clothing?])]
   mut weapon_data_cache : @utils.Future[@weapon.WeaponData?]?
 }
 
 ///|
-pub fn CharEquips::new() -> CharEquips {
-  { clothes: Map::new(), weapon_data_cache: None }
+pub fn CharEquips::new(string_loader : @resource.SyncLoader) -> CharEquips {
+  { string_loader, clothes: Map::new(), weapon_data_cache: None }
 }
 
 ///|
@@ -90,7 +91,7 @@ pub fn add_equip(
   if item_id <= 0 {
     return
   }
-  let item_future = @item.ItemData::get_async(item_id)
+  let item_future = @item.ItemData::get_async(item_id, self.string_loader)
   let cloth_future = item_future
     .map_exn(fn(item_data) {
       @clothing.Clothing::from_resource!(item_data.unwrap_or_error!(), drawinfo)

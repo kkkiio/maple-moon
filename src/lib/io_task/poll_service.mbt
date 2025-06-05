@@ -1,21 +1,24 @@
 ///|
-struct Service {
+struct PollService {
   io_tasks : Array[@utils.Future[Unit]]
 }
 
 ///|
-pub fn Service::new() -> Service {
+pub fn PollService::new() -> PollService {
   { io_tasks: Array::new() }
 }
 
 ///|
-pub fn add(self : Service, future : @utils.Future[Unit]) -> Unit {
+pub fn PollService::add(
+  self : PollService,
+  future : @utils.Future[Unit]
+) -> Unit {
   self.io_tasks.push(future)
 }
 
 ///|
-pub fn on_complete[T](
-  self : Service,
+pub fn[T] on_complete(
+  self : PollService,
   future : @utils.Future[T],
   cb : (T) -> Unit
 ) -> Unit {
@@ -23,6 +26,6 @@ pub fn on_complete[T](
 }
 
 ///|
-pub fn run(self : Service) -> Unit {
+pub fn run(self : PollService) -> Unit {
   self.io_tasks.retain(fn(f) { f.poll().is_empty() })
 }

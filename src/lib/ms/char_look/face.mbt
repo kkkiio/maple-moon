@@ -110,23 +110,27 @@ pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
 }
 
 ///|
-let string_loader = @resource.string_loader
-
-///|
 fn get_face_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new("face")
 }
 
 ///|
-pub fn Face::load(faceid : Int) -> @utils.Future[Face] {
+pub fn Face::load(
+  faceid : Int,
+  string_loader : @resource.SyncLoader
+) -> @utils.Future[Face] {
   let strid = "000" + faceid.to_string()
   get_face_loader()
   .load_res(["\{strid}.img"])
-  .map(fn(facenode) { Face::new(faceid, facenode) })
+  .map(fn(facenode) { Face::new(faceid, facenode, string_loader) })
 }
 
 ///|
-fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
+fn Face::new(
+  faceid : Int,
+  facenode : @resource.NxNode,
+  string_loader : @resource.SyncLoader
+) -> Face {
   let expressions = expression_names.map_with_key(fn(exp, _v) {
     let frames = Map::new()
     if exp == ExpressionId::DEFAULT {
@@ -147,7 +151,6 @@ fn Face::new(faceid : Int, facenode : @resource.NxNode) -> Face {
     }
     frames
   })
-  let string_loader = string_loader()
   let name = string_loader
     .load_res(["Eqp.img", "Eqp", "Face", "\{faceid}", "name"])
     .get_string()

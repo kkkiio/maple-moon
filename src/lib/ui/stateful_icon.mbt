@@ -16,11 +16,12 @@ struct StatefulIcon {
 
 ///|
 pub fn StatefulIcon::new(
+  countset : @graphics.Charset,
   ntx : @graphics.Texture,
   dtx : @graphics.Texture,
   motx : @graphics.Texture
 ) -> StatefulIcon {
-  { state: NORMAL, ntx, dtx, motx, icon_model: IconModel::new(None) }
+  { state: NORMAL, ntx, dtx, motx, icon_model: IconModel::new(countset, None) }
 }
 
 ///|

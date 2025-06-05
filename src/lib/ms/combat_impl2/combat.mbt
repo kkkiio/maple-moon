@@ -12,6 +12,7 @@ struct Combat {
   cooldowns : Map[Int, Int]
   add_task_fn : (@utils.Future[Unit]) -> Unit
   network : @net.Network
+  string_loader : @resource.SyncLoader
 }
 
 ///|
@@ -20,13 +21,14 @@ pub fn Combat::new(
   mobs : @monster.MapMobs,
   packet_processor : @net.Network,
   cooldowns : Map[Int, Int],
-  add_task_fn : (@utils.Future[Unit]) -> Unit
+  add_task_fn : (@utils.Future[Unit]) -> Unit,
+  string_loader : @resource.SyncLoader
 ) -> Combat {
   {
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_impl.new_regular_attack(),
+    regular_attack: @combat_impl.new_regular_attack(string_loader),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
@@ -34,6 +36,7 @@ pub fn Combat::new(
     cooldowns,
     add_task_fn,
     network: packet_processor,
+    string_loader,
   }
 }
 
@@ -331,7 +334,7 @@ pub fn get_move(
     return self.regular_attack |> Ok |> @utils.Future::from_value
   }
   self.skill_cache.get_or_init(move_id, fn() {
-    @combat_impl.Skill::load(move_id).map(fn(f) {
+    @combat_impl.Skill::load(self.string_loader, move_id).map(fn(f) {
       f.map(fn(it) {
         {
           id: it.get_id(),

@@ -35,6 +35,7 @@ pub(all) struct Stage {
   add_task_fn : (@utils.Future[Unit]) -> Unit
   network : @net.Network
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
+  string_loader : @resource.SyncLoader
 }
 
 ///|
@@ -50,7 +51,8 @@ pub fn Stage::new(
   char_stats_module : @char_stats.Module,
   damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> Stage {
   {
     map_portals_animations,
@@ -71,6 +73,7 @@ pub fn Stage::new(
     add_task_fn,
     network,
     map_change_listeners: Array::new(),
+    string_loader,
   }
 }
 
@@ -124,6 +127,7 @@ pub fn set_player_stage(
           )
         },
         self.network,
+        self.string_loader,
       ).tap(fn(player) {
         self.player = Some(player)
         self.combat = Some(
@@ -133,6 +137,7 @@ pub fn set_player_stage(
             self.network,
             cooldowns,
             self.add_task_fn,
+            self.string_loader,
           ),
         )
       })

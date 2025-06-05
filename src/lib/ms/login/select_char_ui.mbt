@@ -22,20 +22,18 @@ pub(all) struct SelectCharUIResource {
 } derive(Default)
 
 ///|
-pub fn SelectCharUIResource::load() -> @utils.Future[SelectCharUIResource] {
-  let char_select_src = @ui.common_ui_loader().load_res([
-    "Login.img", "CharSelect",
-  ])
+pub fn SelectCharUIResource::load(
+  login_loader : @resource.SyncLoader
+) -> @utils.Future[SelectCharUIResource] {
+  let char_select_src = login_loader.load_res(["CharSelect"])
   let back13_f = get_map001_loader().load_res([
     "Back", "login.img", "back", "13",
   ])
   let ani17_f = get_map001_loader().load_res(["Back", "login.img", "ani", "17"])
   let ani18_f = get_map001_loader().load_res(["Back", "login.img", "ani", "18"])
   let ani19_f = get_map001_loader().load_res(["Back", "login.img", "ani", "19"])
-  let frame = @ui.common_ui_loader().load_res(["Login.img", "Common", "frame"])
-  let step2 = @ui.common_ui_loader().load_res([
-    "Login.img", "Common", "step", "2",
-  ])
+  let frame = login_loader.load_res(["Common", "frame"])
+  let step2 = login_loader.load_res(["Common", "step", "2"])
   back13_f
   .combine(ani17_f)
   .combine(ani18_f)

@@ -8,7 +8,7 @@ extern "js" fn load_desc_async(
   #| }
 
 ///|
-extern "js" fn load_desc(self : ResourceLoader, path : String) -> RawData =
+extern "js" fn load_desc(self : SyncResourceLoader, path : String) -> RawData =
   #| (l,p) => {
   #|   return l.loadDesc(p)
   #| }
@@ -20,8 +20,14 @@ extern "js" fn as_jsonstring(v : RawData) -> String =
   #|}
 
 ///|
-extern "js" fn get_resource_loader(name : String) -> ResourceLoader =
-  #| (n) => resource.get_loader(n)
+extern "js" fn SyncResourceLoader::make(url : String) -> @js.Promise =
+  #| (u) => resource.make_file_resource_loader(u)
+
+///|
+pub extern "js" fn ImageLoader::new_bid_image_loader(
+  url : String
+) -> ImageLoader =
+  #| (u) => resource.new_bid_image_loader(u)
 
 ///|
 extern "js" fn get_async_resource_loader(name : String) -> AsyncResourceLoader =

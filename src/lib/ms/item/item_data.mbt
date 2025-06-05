@@ -146,14 +146,15 @@ let cache : Map[Int, @utils.Future[Result[ItemData, LoadDataError]]] = Map::new(
 
 ///|
 pub fn ItemData::get_async(
-  id : Int
+  id : Int,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Result[ItemData, LoadDataError]] {
   cache.get_or_init(id, fn() {
     ItemData::load_async(
       id,
       get_character_loader(),
       get_item_loader(),
-      @resource.string_loader(),
+      string_loader,
     )
   })
 }

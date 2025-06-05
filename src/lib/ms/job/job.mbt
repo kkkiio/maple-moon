@@ -60,7 +60,10 @@ struct Job {
 }
 
 ///|
-pub fn Job::load(id~ : Int = 0) -> @utils.Future[Job] {
+pub fn Job::load(
+  string_loader : @resource.SyncLoader,
+  id~ : Int = 0
+) -> @utils.Future[Job] {
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -79,7 +82,9 @@ pub fn Job::load(id~ : Int = 0) -> @utils.Future[Job] {
   @utils.Future::all_of(
     subids
     .iter()
-    .map(fn(subid) { JobData::load(subid).map(fn(data) { (subid, data) }) })
+    .map(fn(subid) {
+      JobData::load(subid, string_loader).map(fn(data) { (subid, data) })
+    })
     |> Array::from_iter,
   ).map(fn(data_list) {
     let sub_job_data_map = Map::new()

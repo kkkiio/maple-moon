@@ -82,6 +82,7 @@ pub fn CursorState::by_id(id : Int) -> CursorState? {
 
 ///|
 pub(all) struct Cursor {
+  basic_loader : @resource.SyncLoader
   mut state : CursorState
   mut position : Point[Int]
   mut hide_counter : Int
@@ -92,8 +93,9 @@ pub(all) struct Cursor {
 pub let hide_time : Int = 15_000
 
 ///|
-pub fn Cursor::new() -> Cursor {
+pub fn Cursor::new(basic_loader : @resource.SyncLoader) -> Cursor {
   {
+    basic_loader,
     state: CursorState::IDLE,
     position: { x: 0, y: 0 },
     hide_counter: 0,
@@ -156,11 +158,7 @@ fn get_or_init_animation(self : Cursor) -> @graphics.Animation {
     Some(animation) => animation
     None => {
       let animation = @graphics.Animation::from_resource(
-        common_ui_loader().load_res([
-          "Basic.img",
-          "Cursor",
-          "\{state.int_value()}",
-        ]),
+        self.basic_loader.load_res(["Cursor", "\{state.int_value()}"]),
       )
       self.animations.set(state, animation)
       animation

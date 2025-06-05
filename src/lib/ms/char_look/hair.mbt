@@ -73,18 +73,20 @@ fn get_hair_loader() -> @resource.AsyncLoader {
 ///|
 pub fn Hair::load(
   hairid : Int,
-  drawinfo : @types.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo,
+  string_loader : @resource.SyncLoader
 ) -> @utils.Future[Hair] {
   get_hair_loader()
   .load_res(["000\{hairid}.img"])
-  .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo) })
+  .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo, string_loader) })
 }
 
 ///|
 fn Hair::new(
   hairid : Int,
   hairnode : @resource.NxNode,
-  drawinfo : @types.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo,
+  string_loader : @resource.SyncLoader
 ) -> Hair {
   let stances : Map[
     @types.StanceId,
@@ -103,7 +105,7 @@ fn Hair::new(
       }
       for layernode in framenode {
         let layername = layernode.name()
-        let layer = match layers_by_name[layername] {
+        let layer = match layers_by_name.get(layername) {
           Some(v) => v
           None => {
             @log.warn({ "layer_name": layername }, "Unknown Hair::Layer name")
@@ -122,7 +124,6 @@ fn Hair::new(
       frame += 1
     }
   }
-  let string_loader = @resource.string_loader()
   let name = string_loader
     .load_res(["Eqp.img", "Eqp", "Hair", "\{hairid}", "name"])
     .get_string()
@@ -142,8 +143,9 @@ pub fn draw(
   frame : Int,
   args : @graphics.DrawArgument
 ) -> Unit {
-  let frameit = self.stances[stance]
-    .bind(fn(it) { it[layer] })
+  let frameit = self.stances
+    .get(stance)
+    .bind(fn(it) { it.get(layer) })
     .bind(fn(it) { it.get(frame) })
   match frameit {
     None => ()

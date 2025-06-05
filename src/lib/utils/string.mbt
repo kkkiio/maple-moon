@@ -20,5 +20,6 @@ pub fn to_hex_string(i : UInt) -> String {
     digits.push(hex_digits[(i & 0xF).reinterpret_as_int()])
     i = i >> 4
   }
-  "0x" + @string.concat(digits..rev_inplace())
+  digits.rev_inplace()
+  "0x" + digits.join("")
 }

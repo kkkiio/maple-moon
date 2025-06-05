@@ -12,6 +12,11 @@ struct Charset {
 }
 
 ///|
+pub impl ToJson for Charset with to_json(_) -> Json {
+  { "charset": true } // tag
+}
+
+///|
 pub fn Charset::from_resource(
   src : NxNode,
   alignment : CharsetAlignment
@@ -19,13 +24,11 @@ pub fn Charset::from_resource(
   let chars = Map::new()
   for sub in src {
     let name = sub.name()
-    if name == "" || sub.get_bitmap().is_empty() {
+    if sub.get_bitmap().is_empty() {
       continue
     }
-    let mut c = name[0]
-    if c == '\\' {
-      c = '/'
-    }
+    guard name.iter().peek() is Some(c) else { continue }
+    let c = if c == '\\' { '/' } else { c }
     chars.set(c, Texture::from_resource(sub))
   }
   { chars, alignment }

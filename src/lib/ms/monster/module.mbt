@@ -7,9 +7,10 @@ struct Module {
 ///|
 pub fn Module::new(
   add_task_fn : (@utils.Future[Unit]) -> Unit,
-  network : @net.Network
+  network : @net.Network,
+  string_loader : @resource.SyncLoader
 ) -> Module {
-  let mobs = MapMobs::new()
+  let mobs = MapMobs::new(string_loader)
   { map_mobs: mobs, mob_combat: MobCombat::new(mobs, add_task_fn, network) }
 }
 

@@ -8,8 +8,8 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(network : @net.Network) -> @utils.Future[Module] {
-  @utils.Future::from_value(Module::new(network))
+pub fn Module::load(network : @net.Network) -> Module {
+  Module::new(network)
 }
 
 ///|

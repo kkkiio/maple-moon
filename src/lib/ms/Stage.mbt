@@ -96,7 +96,9 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
       self.map_id = map_id
-      let loading_map = @map.load_map(map_id, self.map_portals_animations)
+      let loading_map = self.io_service.submit(fn() {
+        @map.load_map(map_id, self.map_portals_animations)
+      })
       self.state = StageState::TRANSITION(portal_id~, loading_map~)
     }
     StageState::TRANSITION(_) =>

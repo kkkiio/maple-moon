@@ -11,9 +11,8 @@ pub fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Module] {
+) -> Module {
   { inventory: Inventory::new(network), player_getter, network, string_loader }
-  |> @utils.Future::from_value
 }
 
 ///|

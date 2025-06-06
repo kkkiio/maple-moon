@@ -17,30 +17,21 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
+pub async fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
   io_service : @io_task.IOService,
   local_storage : @config.LocalStorage
-) -> @utils.Future[Module] {
-  let login_loader_fut = io_service.submit(fn() {
-    @resource.SyncLoader::load(
-      "Login",
-      "https://maple-res.kkkiiox.work/UI/Login.img.json",
-      @resource.ImageLoader::get_path_image_loader(),
-    )
-  })
-  login_loader_fut.map(fn(login_loader) {
-    Module::new(
-      network,
-      ui_container,
-      char_look_module,
-      local_storage,
-      login_loader.unwrap(), // TODO: handle error
-      io_service,
-    )
-  })
+) -> Module! {
+  let login_loader = @resource.SyncLoader::load(
+    "Login",
+    "https://maple-res.kkkiiox.work/UI/Login.img.json",
+    @resource.ImageLoader::get_path_image_loader(),
+  )
+  Module::new(
+    network, ui_container, char_look_module, local_storage, login_loader, io_service,
+  )
 }
 
 ///|
@@ -518,7 +509,10 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                     mod.select_cid = Some(cid)
                     mod.network.send_message(SelectCharPacket::new(cid))
                   },
-                  on_new_character=fn() {  },
+                  on_new_character=fn() {
+                    mod.ui_container.remove_ui(key)
+                    mod.io_service.execute(async fn() { on_new_character(mod) })
+                  },
                   hooks,
                 )
               },
@@ -535,44 +529,41 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
 }
 
 ///|
-fn on_new_character(mod : Module, key : @ui.UIElementType) -> Unit {
-  mod.ui_container.remove_ui(key)
-  mod.io_service.execute(async fn() {
-    let res = ExplorerCreatorUIResource::load(mod.login_loader)
-    mod.ui_container.add_ui(
-      @ui.Element::new(
-        fn(hooks) {
-          ExplorerCreatorUI::new(
-            res,
-            hooks,
-            fn(entry, cb) {
-              mod.io_service.execute(async fn() {
-                let char_look = mod.char_look_module.load_char_look(entry)
-                cb(char_look)
-              })
-            },
-            on_create_char=fn(s) {
-              mod.network.send_message({
-                name: s.name,
-                job: s.job,
-                face: s.face_id,
-                hair: s.hair_id,
-                hairc: s.hair_color_id,
-                skin: s.skin_id,
-                top: s.top_id,
-                bot: s.bot_id,
-                shoes: s.shoe_id,
-                weapon: s.weapon_id,
-                female: s.female,
-              })
-            },
-          )
-        },
-        @ui.UIElementType::CLASS_CREATION,
-      ),
-      false,
-    )
-  })
+async fn on_new_character(mod : Module) -> Unit! {
+  let res = ExplorerCreatorUIResource::load(mod.login_loader)
+  mod.ui_container.add_ui(
+    @ui.Element::new(
+      fn(hooks) {
+        ExplorerCreatorUI::new(
+          res,
+          hooks,
+          fn(entry, cb) {
+            mod.io_service.execute(async fn() {
+              let char_look = mod.char_look_module.load_char_look(entry)
+              cb(char_look)
+            })
+          },
+          on_create_char=fn(s) {
+            mod.network.send_message({
+              name: s.name,
+              job: s.job,
+              face: s.face_id,
+              hair: s.hair_id,
+              hairc: s.hair_color_id,
+              skin: s.skin_id,
+              top: s.top_id,
+              bot: s.bot_id,
+              shoes: s.shoe_id,
+              weapon: s.weapon_id,
+              female: s.female,
+            })
+          },
+        )
+      },
+      @ui.UIElementType::CLASS_CREATION,
+    ),
+    false,
+  )
 }
 
 ///| Parse server IP response packet

@@ -30,28 +30,24 @@ struct MapQuestsResource {
 }
 
 ///| Loads the graphical resources for quest icons
-pub fn MapQuestsResource::load() ->
-     @utils.Future[Result[MapQuestsResource, Error]] {
+pub async fn MapQuestsResource::load() -> MapQuestsResource! {
   let ui_window_2_loader = @ui.ui_window_2_loader()
-  let available_quest_icon_fut = ui_window_2_loader.load_res(["QuestIcon", "0"])
-  let inprogress_quest_icon_fut = ui_window_2_loader.load_res(["QuestIcon", "1"])
-  let completed_quest_icon_fut = ui_window_2_loader.load_res(["QuestIcon", "2"])
-  @utils.Future::combine3(
-    available_quest_icon_fut, inprogress_quest_icon_fut, completed_quest_icon_fut,
-  ).map_exn(fn(res) {
-    let (available_node, inprogress_node, completed_node) = res
-    {
-      available_quest_icon: @graphics.Animation::from_resource_ex!(
-        available_node,
-      ),
-      inprogress_quest_icon: @graphics.Animation::from_resource_ex!(
-        inprogress_node,
-      ),
-      completed_quest_icon: @graphics.Animation::from_resource_ex!(
-        completed_node,
-      ),
-    }
-  })
+  let available_quest_icon = ui_window_2_loader.load_resource(["QuestIcon", "0"])
+  let inprogress_quest_icon = ui_window_2_loader.load_resource([
+    "QuestIcon", "1",
+  ])
+  let completed_quest_icon = ui_window_2_loader.load_resource(["QuestIcon", "2"])
+  {
+    available_quest_icon: @graphics.Animation::from_resource_ex!(
+      available_quest_icon,
+    ),
+    inprogress_quest_icon: @graphics.Animation::from_resource_ex!(
+      inprogress_quest_icon,
+    ),
+    completed_quest_icon: @graphics.Animation::from_resource_ex!(
+      completed_quest_icon,
+    ),
+  }
 }
 
 ///|

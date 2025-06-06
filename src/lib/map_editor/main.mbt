@@ -4,6 +4,7 @@ priv struct EntryPoint {
   down_keys : Map[String, Bool]
   mut speed : Int
   mut draw_tiles : Bool
+  io_service : @io_task.IOService
 }
 
 ///|
@@ -25,13 +26,13 @@ let g_state : EntryPoint = {
   down_keys: Map::new(),
   speed: 5,
   draw_tiles: true,
+  io_service: @io_task.IOService::new(),
 }
 
 ///|
 pub fn load_map(map_id : Int) -> Unit {
-  let loading_map = @map.MapPortalAnimations::load().bind(fn(
-    map_portals_animations
-  ) {
+  let loading_map = g_state.io_service.submit(fn() {
+    let map_portals_animations = @map.MapPortalAnimations::load()
     @map.load_map(map_id, map_portals_animations)
   })
   g_state.state = State::LOADING(loading_map~)

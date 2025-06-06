@@ -5,40 +5,28 @@ struct TilesObjs {
 }
 
 ///|
-pub fn TilesObjs::load(
+pub async fn TilesObjs::load(
   ts : String?,
-  tiles : Array[TileResource],
-  objs : Array[ObjResource]
-) -> @utils.Future[Result[TilesObjs, Error]] {
-  let tileset_future = if ts is Some(ts) {
-    tile_loader.load_res([ts + ".img"]).map(@option.some)
+  tile_resource : Array[TileResource],
+  obj_resource : Array[ObjResource]
+) -> TilesObjs! {
+  let tileset = if ts is Some(ts) {
+    Some(tile_loader.load_resource([ts + ".img"]))
   } else {
-    @utils.Future::from_value(None)
+    None
   }
   // Load tiles
-  let tiles_future = tiles
-    .iter()
-    .map(fn(tilenode) {
-      tileset_future.map(fn(tileset) { Tile::new(tilenode, tileset) })
-    })
-    .collect()
-    |> @utils.Future::all_of()
+  let tiles = []
+  for tilenode in tile_resource {
+    tiles.push(Tile::new(tilenode, tileset))
+  }
 
   // Load objects
-  let objs_future = objs
-    .iter()
-    .map(fn(objnode) { Obj::load(objnode) })
-    .collect()
-    |> @utils.Future::all_of()
-
-  // Combine both futures
-  tiles_future
-  .combine(objs_future)
-  .map_exn(fn(it) {
-    let (tiles, objs) = it
-    let objs = @utils.flatten_ok(objs).unwrap_or_error!()
-    TilesObjs::new(tiles, objs)
-  })
+  let objs = []
+  for objnode in obj_resource {
+    objs.push(Obj::load(objnode))
+  }
+  TilesObjs::new(tiles, objs)
 }
 
 ///|
@@ -96,22 +84,17 @@ struct MapTilesObjs {
 }
 
 ///|
-pub fn MapTilesObjs::load(
-  layers : Array[LayerResource]
-) -> @utils.Future[Result[MapTilesObjs, Error]] {
-  @map_layer.ids.map(fn(layer_id) {
-    let layer = layers[layer_id]
-    TilesObjs::load(layer.info.map(fn(it) { it.tS }), layer.tile, layer.obj)
-  })
-  |> Array::from_fixed_array
-  |> @utils.Future::all_of()
-  |> @utils.Future::map_exn(fn(res) {
-    let layers = Array::new(capacity=@map_layer.ids.length())
-    for r in res {
-      layers.push(r.unwrap_or_error!())
-    }
-    { layers, }
-  })
+pub async fn MapTilesObjs::load(
+  layer_resource : Array[LayerResource]
+) -> MapTilesObjs! {
+  let layers = []
+  for id in @map_layer.ids {
+    let layer = layer_resource[id]
+    layers.push(
+      TilesObjs::load(layer.info.map(fn(it) { it.tS }), layer.tile, layer.obj),
+    )
+  }
+  { layers, }
 }
 
 ///|

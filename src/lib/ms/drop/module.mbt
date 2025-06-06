@@ -4,12 +4,9 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
-  string_loader : @resource.SyncLoader
-) -> @utils.Future[Module] {
-  special_item_loader
-  .load_res(["0900.img"])
-  .map(fn(src) { { map_drops: MapDrops::new(string_loader, src) } })
+pub async fn Module::load(string_loader : @resource.SyncLoader) -> Module! {
+  let src = special_item_loader.load_resource(["0900.img"])
+  { map_drops: MapDrops::new(string_loader, src) }
 }
 
 ///|

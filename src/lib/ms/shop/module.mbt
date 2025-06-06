@@ -13,10 +13,10 @@ struct Module {
 pub fn Module::load(
   network : @net.Network,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Module] {
+) -> Module {
   // @ui.ui_window_2_loader().load_res(["Shop2"])
   // |> @utils.map(fn(src) { Module::new(container, src) })
-  @utils.Future::from_value(Module::new(network, string_loader))
+  Module::new(network, string_loader)
 }
 
 ///|

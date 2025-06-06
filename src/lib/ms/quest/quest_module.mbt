@@ -10,26 +10,20 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
+pub async fn Module::load(
   network : @net.Network,
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
-) -> @utils.Future[Result[Module, Error]] {
-  let fut = quest_resource_loader.load_res(["nx"])
-  let fut2 = MapQuestsResource::load()
-  @utils.Future::combine(fut, fut2).map_exn(fn(it) {
-    let (node, map_quests_resource) = it
-    let quests_resource : QuestResource = @json.from_json!(node.value())
-    Module::new(
-      quests_resource,
-      map_quests_resource.unwrap_or_error!(),
-      network,
-      inventory,
-      ref_render,
-      open_npc_talk_ui,
-    )
-  })
+) -> Module! {
+  let quests_resource = quest_resource_loader.load_resource(["nx"])
+  let map_quests_resource = MapQuestsResource::load()
+  let quests_resource : QuestResource = @json.from_json!(
+    quests_resource.value(),
+  )
+  Module::new(
+    quests_resource, map_quests_resource, network, inventory, ref_render, open_npc_talk_ui,
+  )
 }
 
 ///|
@@ -88,7 +82,7 @@ pub fn Module::make_handlers(
     @net.make_handler(@net.Opcode::UPDATE_QUEST_INFO, parse_update_quest_info, fn(
       msg
     ) {
-      handle_update_quest_info(self, msg)
+      self.handle_update_quest_info(msg)
     }),
   ]
   |> Map::from_array
@@ -250,7 +244,7 @@ pub fn parse_player_quest_info(recv : @net.InPacket) -> PlayerQuestLogInfo! {
 }
 
 ///|
-enum UpdateQuestInfoMessage {
+priv enum UpdateQuestInfoMessage {
   AddQuestTimeLimit(Int, Int, Int) // size, quest_id, time
   RemoveQuestTimeLimit(Int, Int) // position, quest_id
   QuestUpdate(Int, Int) // quest_id, npc

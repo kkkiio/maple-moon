@@ -118,9 +118,10 @@ pub fn Body::draw(
   frame : Int,
   args : @graphics.DrawArgument
 ) -> Unit {
-  let frameit = self.stances[stance]
-    .bind(fn(it) { it[layer] })
-    .bind(fn(it) { it[frame] })
+  let frameit = self.stances
+    .get(stance)
+    .bind(fn(it) { it.get(layer) })
+    .bind(fn(it) { it.get(frame) })
   match frameit {
     Some(v) => v.draw(args)
     None => ()

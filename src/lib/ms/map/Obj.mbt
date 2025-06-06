@@ -12,14 +12,13 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn Obj::load(obj : ObjResource) -> @utils.Future[Result[Obj, Error]] {
+pub async fn Obj::load(obj : ObjResource) -> Obj! {
   let oS = obj.oS
   let l0 = obj.l0
   let l1 = obj.l1
   let l2 = obj.l2
-  get_object_loader()
-  .load_res(["\{oS}.img", l0, l1, l2])
-  .map(fn(res) { Obj::from_resource?(obj, res) })
+  let res = get_object_loader().load_resource(["\{oS}.img", l0, l1, l2])
+  Obj::from_resource(obj, res)
 }
 
 ///|

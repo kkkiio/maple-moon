@@ -16,51 +16,40 @@ struct MiniMapUIResource {
 }
 
 ///| Loads the necessary graphical resources for displaying the MiniMap UI.
-pub fn MiniMapUIResource::load() -> @utils.Future[MiniMapUIResource] {
+pub async fn MiniMapUIResource::load() -> MiniMapUIResource! {
   let map_latest_loader = get_map_latest_loader()
-  let portal_fut = map_latest_loader.load_res([
+  let portal_node = map_latest_loader.load_resource([
     "MapHelper.img", "minimap", "portal",
   ])
   // Load UI window elements from UIWindow2.img
   let ui_loader = @ui.ui_window_2_loader()
-  let minmap_fut = ui_loader.load_res(["MiniMap", "MinMap"])
-  @utils.Future::combine(portal_fut, minmap_fut).map(fn(results) {
-    let (portal_node, minmap_node) = results
-    let portal_marker = @graphics.Animation::from_resource(portal_node)
+  let minmap_node = ui_loader.load_resource(["MiniMap", "MinMap"])
+  let portal_marker = @graphics.Animation::from_resource(portal_node)
 
-    // Load normal mode window frame elements
-    // let minmap_middle_center = @graphics.Animation::from_resource(
-    //   minmap_node["c"],
-    // )
-    let minmap_middle_left = @graphics.Animation::from_resource(
-      minmap_node["w"],
-    )
-    let minmap_middle_right = @graphics.Animation::from_resource(
-      minmap_node["e"],
-    )
-    let minmap_up_center = @graphics.Animation::from_resource(minmap_node["n"])
-    let minmap_up_left = @graphics.Animation::from_resource(minmap_node["nw"])
-    let minmap_up_right = @graphics.Animation::from_resource(minmap_node["ne"])
-    let minmap_down_center = @graphics.Animation::from_resource(
-      minmap_node["s"],
-    )
-    let minmap_down_left = @graphics.Animation::from_resource(minmap_node["sw"])
-    let minmap_down_right = @graphics.Animation::from_resource(
-      minmap_node["se"],
-    )
-    {
-      portal_marker,
-      // minmap_middle_center,
-      minmap_middle_left,
-      minmap_middle_right,
-      minmap_up_center,
-      minmap_up_left,
-      minmap_up_right,
-      minmap_down_center,
-      minmap_down_left,
-      minmap_down_right,
-    }
-  })
+  // Load normal mode window frame elements
+  // let minmap_middle_center = @graphics.Animation::from_resource(
+  //   minmap_node["c"],
+  // )
+  let minmap_middle_left = @graphics.Animation::from_resource(minmap_node["w"])
+  let minmap_middle_right = @graphics.Animation::from_resource(minmap_node["e"])
+  let minmap_up_center = @graphics.Animation::from_resource(minmap_node["n"])
+  let minmap_up_left = @graphics.Animation::from_resource(minmap_node["nw"])
+  let minmap_up_right = @graphics.Animation::from_resource(minmap_node["ne"])
+  let minmap_down_center = @graphics.Animation::from_resource(minmap_node["s"])
+  let minmap_down_left = @graphics.Animation::from_resource(minmap_node["sw"])
+  let minmap_down_right = @graphics.Animation::from_resource(minmap_node["se"])
+  {
+    portal_marker,
+    // minmap_middle_center,
+    minmap_middle_left,
+    minmap_middle_right,
+    minmap_up_center,
+    minmap_up_left,
+    minmap_up_right,
+    minmap_down_center,
+    minmap_down_left,
+    minmap_down_right,
+  }
 }
 
 ///|

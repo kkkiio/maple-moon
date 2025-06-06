@@ -9,38 +9,30 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
+pub async fn Module::load(
   container : &@ui.Container,
   network : @net.Network,
   ref_render : @markup_text.RefRender,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService
-) -> @utils.Future[Module] {
-  let npc_loader_fut = io_service.submit(fn() {
-    @resource.SyncLoader::load(
-      "npc",
-      "https://maple-res.kkkiiox.work/Npc/nx.json",
-      @resource.ImageLoader::new_bid_image_loader(
-        "https://maple-res.kkkiiox.work/Npc/images",
-      ),
-    )
-  })
-  @ui.ui_window_2_loader()
-  .load_res(["UtilDlgEx"])
-  .combine(npc_loader_fut)
-  .map(fn(it) {
-    let (res, npc_loader_rs) = it
-    let npc_loader = npc_loader_rs.unwrap() // TODO: handle error
-    let npc_talk_resource = NpcTalkResource::from_resource(res)
-    Module::new(
-      container,
-      npc_talk_resource,
-      ref_render,
-      network,
-      string_loader~,
-      npc_loader~,
-    )
-  })
+) -> Module! {
+  let npc_loader = @resource.SyncLoader::load(
+    "npc",
+    "https://maple-res.kkkiiox.work/Npc/nx.json",
+    @resource.ImageLoader::new_bid_image_loader(
+      "https://maple-res.kkkiiox.work/Npc/images",
+    ),
+  )
+  let res = @ui.ui_window_2_loader().load_resource(["UtilDlgEx"])
+  let npc_talk_resource = NpcTalkResource::from_resource(res)
+  Module::new(
+    container,
+    npc_talk_resource,
+    ref_render,
+    network,
+    string_loader~,
+    npc_loader~,
+  )
 }
 
 ///|

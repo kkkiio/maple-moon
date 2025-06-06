@@ -10,21 +10,16 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
+pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Module] {
-  let bodynode = get_body_loader().load_res(["00002000.img"])
-  let headnode = get_body_loader().load_res(["00012000.img"])
-  bodynode
-  .combine(headnode)
-  .map(fn(it) {
-    let (bodynode, headnode) = it
-    Module::new(
-      bodynode, headnode, on_player_look_changed, io_service, string_loader,
-    )
-  })
+) -> Module! {
+  let bodynode = get_body_loader().load_resource(["00002000.img"])
+  let headnode = get_body_loader().load_resource(["00012000.img"])
+  Module::new(
+    bodynode, headnode, on_player_look_changed, io_service, string_loader,
+  )
 }
 
 ///|

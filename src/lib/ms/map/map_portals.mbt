@@ -119,24 +119,22 @@ pub fn MapPortals::find_warp_at(
 }
 
 ///|
-pub fn MapPortalAnimations::load() -> @utils.Future[MapPortalAnimations] {
-  map_helper_loader
-  .load_res(["portal", "game", "ph", "default", "portalContinue"])
-  .combine(map_helper_loader.load_res(["portal", "game", "pv"]))
-  .map(fn(it) {
-    let (src1, src2) = it
-    let (ani1, ani2) = (
-      @graphics.Animation::from_resource(src1),
-      @graphics.Animation::from_resource(src2),
-    )
-    {
-      animations: @immut/sorted_map.from_array([
-        (PortalType::HIDDEN, ani1),
-        (PortalType::REGULAR, ani2),
-        (PortalType::SCRIPTED, ani2),
-      ]),
-    }
-  })
+pub async fn MapPortalAnimations::load() -> MapPortalAnimations! {
+  let src1 = map_helper_loader.load_resource([
+    "portal", "game", "ph", "default", "portalContinue",
+  ])
+  let src2 = map_helper_loader.load_resource(["portal", "game", "pv"])
+  let (ani1, ani2) = (
+    @graphics.Animation::from_resource(src1),
+    @graphics.Animation::from_resource(src2),
+  )
+  {
+    animations: @immut/sorted_map.from_array([
+      (PortalType::HIDDEN, ani1),
+      (PortalType::REGULAR, ani2),
+      (PortalType::SCRIPTED, ani2),
+    ]),
+  }
 }
 
 ///|

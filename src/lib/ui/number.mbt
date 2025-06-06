@@ -112,44 +112,31 @@ pub struct NumberSet {
 } derive(Default)
 
 ///|
-pub fn NumberSet::load() -> @utils.Future[NumberSet] {
+pub async fn NumberSet::load() -> NumberSet! {
   let loader = effect_loader
-  fn load_charset_pair(path0, path1) {
-    loader
-    .load_res(path0)
-    .combine(loader.load_res(path1))
-    .map(fn(res_pair) {
-      @utils.BoolPair::new(
-        @graphics.Charset::new(res_pair.0, @graphics.CharsetAlignment::LEFT),
-        @graphics.Charset::new(res_pair.1, @graphics.CharsetAlignment::LEFT),
-      )
-    })
+  async fn load_charset_pair!(path0, path1) {
+    let res0 = loader.load_resource(path0)
+    let res1 = loader.load_resource(path1)
+    let res_pair = (res0, res1)
+    @utils.BoolPair::new(
+      @graphics.Charset::new(res_pair.0, @graphics.CharsetAlignment::LEFT),
+      @graphics.Charset::new(res_pair.1, @graphics.CharsetAlignment::LEFT),
+    )
   }
   // 'No' for Number
-  load_charset_pair(["BasicEff.img", "NoRed1"], ["BasicEff.img", "NoRed0"])
-  .combine(
-    load_charset_pair(["BasicEff.img", "NoCri1"], ["BasicEff.img", "NoCri0"]),
-  )
-  .combine(
-    load_charset_pair(["BasicEff.img", "NoViolet1"], [
-      "BasicEff.img", "NoViolet0",
-    ]),
-  )
-  .combine(
-    load_charset_pair(["BasicEff.img", "NoBlue1"], ["BasicEff.img", "NoBlue0"]),
-  )
-  .map(fn(it) {
-    let (
-      ((red_charset_pair, cri_charset_pair), violet_charset_pair),
-      blue_charset_pair,
-    ) = it
-    {
-      red_charset_pair,
-      cri_charset_pair,
-      violet_charset_pair,
-      blue_charset_pair,
-    }
-  })
+  let red_charset_pair = load_charset_pair(["BasicEff.img", "NoRed1"], [
+    "BasicEff.img", "NoRed0",
+  ])
+  let cri_charset_pair = load_charset_pair(["BasicEff.img", "NoCri1"], [
+    "BasicEff.img", "NoCri0",
+  ])
+  let violet_charset_pair = load_charset_pair(["BasicEff.img", "NoViolet1"], [
+    "BasicEff.img", "NoViolet0",
+  ])
+  let blue_charset_pair = load_charset_pair(["BasicEff.img", "NoBlue1"], [
+    "BasicEff.img", "NoBlue0",
+  ])
+  { red_charset_pair, cri_charset_pair, violet_charset_pair, blue_charset_pair }
 }
 
 ///|

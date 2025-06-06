@@ -8,15 +8,13 @@ struct Module {
 }
 
 ///|
-pub fn Module::load(
+pub async fn Module::load(
   player_getter : () -> @player.Player?,
   packet_processor : @net.Network,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Module] {
-  @ui.ui_window_2_loader().load_res(["Skill"])
-  |> _.map(fn(_skill) {
-    Module::new(player_getter, packet_processor, string_loader)
-  })
+) -> Module {
+  // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
+  Module::new(player_getter, packet_processor, string_loader)
 }
 
 ///|

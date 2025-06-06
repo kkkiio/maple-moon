@@ -132,13 +132,12 @@ struct BackgroundResource {
 }
 
 ///|
-pub fn BackgroundResource::load(
+pub async fn BackgroundResource::load(
   background_loader : @resource.AsyncLoader,
   spec : BackgroundSpec
-) -> @utils.Future[BackgroundResource] {
+) -> BackgroundResource! {
   let animated = spec.ani
-  background_loader
-  .load_res([
+  let bg_res = background_loader.load_resource([
     spec.bS + ".img",
     if animated {
       "ani"
@@ -147,19 +146,17 @@ pub fn BackgroundResource::load(
     },
     spec.no.to_string(),
   ])
-  .map(fn(bg_res) -> BackgroundResource {
-    let animation = @graphics.Animation::from_resource(bg_res)
-    let t = spec.type_
-    let opacity = spec.a.to_double() / 255.0
-    let flipped = spec.f
-    let cx = spec.cx
-    let cy = spec.cy
-    let rx = spec.rx.to_double()
-    let ry = spec.ry.to_double()
-    let x = spec.x.to_double()
-    let y = spec.y.to_double()
-    { animation, t, x, y, cx, cy, rx, ry, opacity, flipped }
-  })
+  let animation = @graphics.Animation::from_resource(bg_res)
+  let t = spec.type_
+  let opacity = spec.a.to_double() / 255.0
+  let flipped = spec.f
+  let cx = spec.cx
+  let cy = spec.cy
+  let rx = spec.rx.to_double()
+  let ry = spec.ry.to_double()
+  let x = spec.x.to_double()
+  let y = spec.y.to_double()
+  { animation, t, x, y, cx, cy, rx, ry, opacity, flipped }
 }
 
 ///|
@@ -321,39 +318,31 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 }
 
 ///|
-pub fn load_backgrounds(
+pub async fn load_backgrounds(
   background_loader : @resource.AsyncLoader,
   spec : BackgroundsResource
-) -> @utils.Future[Backgrounds] {
+) -> Backgrounds! {
   let fronts = Array::new()
-  let back_futs = Array::new()
+  let backgrounds = Array::new()
   for back_spec in spec._ {
     // TODO: what does empty bS mean?
     if back_spec.bS == "" {
       continue
     }
-    let backi_fut = BackgroundResource::load(background_loader, back_spec).map(fn(
-      res
-    ) {
-      Background::from_resource(res)
-    })
+    let backi = BackgroundResource::load(background_loader, back_spec)
+    backgrounds.push(Background::from_resource(backi))
     fronts.push(back_spec.front)
-    back_futs.push(backi_fut)
   }
-  @utils.Future::all_of(back_futs).map(fn(
-    backgrounds : Array[Background]
-  ) -> Backgrounds {
-    let backs = Array::new()
-    let fores = Array::new()
-    for i, front in fronts.iter2() {
-      if front {
-        fores.push(backgrounds[i])
-      } else {
-        backs.push(backgrounds[i])
-      }
+  let backs = Array::new()
+  let fores = Array::new()
+  for i, front in fronts.iter2() {
+    if front {
+      fores.push(backgrounds[i])
+    } else {
+      backs.push(backgrounds[i])
     }
-    { backs, fores }
-  })
+  }
+  { backs, fores }
 }
 
 ///|

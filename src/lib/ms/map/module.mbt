@@ -5,12 +5,13 @@ struct Module {
 }
 
 ///|
-pub fn Module::load() -> @utils.Future[Module] {
+pub async fn Module::load() -> Module! {
   let portals_animations_fut = MapPortalAnimations::load()
   let mini_map_ui_resource_fut = MiniMapUIResource::load()
-  portals_animations_fut
-  .combine(mini_map_ui_resource_fut)
-  .map(fn(it) { { portals_animations: it.0, mini_map_ui_resource: it.1 } })
+  let (portals_animations, mini_map_ui_resource) = (
+    portals_animations_fut, mini_map_ui_resource_fut,
+  )
+  { portals_animations, mini_map_ui_resource }
 }
 
 ///|

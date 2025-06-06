@@ -1,66 +1,71 @@
 <template>
-    <canvas id="canvas" ref="canvas"></canvas>
-    <div id="map-input">
-        <select v-model="selectedLand" @change="updateMapSelect">
-            <option value="">Select Land</option>
-            <option v-for="(land, landName) in mapData" :key="landName" :value="landName">
-                {{ landName }}
-            </option>
-        </select>
-        <select v-model="selectedMap">
-            <option value="">Select Map</option>
-            <option v-for="(mapInfo, mapId) in mapData[selectedLand]" :key="mapId" :value="mapId">
-                {{ mapId }}
-                {{ mapInfo.mapName }}
-            </option>
-        </select>
-        <button @click="loadSelectedMap">Load Map</button>
-        <label for="speed-input">Speed:</label>
-        <input type="number" id="speed-input" v-model.number="speed" placeholder="Speed" min="1" max="10" step="1" />
-        <div>
-            <span>View Position: </span>
-            <span>X: {{ viewPosition.x.toFixed(2) }}, Y: {{ viewPosition.y.toFixed(2) }}</span>
+    <div id="map-editor">
+        <div id="main-content">
+            <canvas id="canvas" ref="canvas"></canvas>
+            <div id="right-panel">
+                <div id="visibility-controls">
+                    <h3>Display Controls</h3>
+                    <label for="toggle-tiles-checkbox">
+                        <input type="checkbox" id="toggle-tiles-checkbox" v-model="showTiles" />
+                        Show Tiles
+                    </label>
+                    <label for="toggle-background-checkbox">
+                        <input type="checkbox" id="toggle-background-checkbox" v-model="showBackground" />
+                        Show Background
+                    </label>
+                    <label for="toggle-foreground-checkbox">
+                        <input type="checkbox" id="toggle-foreground-checkbox" v-model="showForeground" />
+                        Show Foreground
+                    </label>
+                    <div id="layer-controls">
+                        <h4>Backgrounds:</h4>
+                        <div v-for="(layer, index) in backgroundLayers" :key="'bg-' + index">
+                            <label>
+                                <input type="checkbox" v-model="layer.visible"
+                                    @change="updateLayerVisibility('background', index)" />
+                                Background {{ index }}
+                            </label>
+                        </div>
+                        <h4>Foregrounds:</h4>
+                        <div v-for="(layer, index) in foregroundLayers" :key="'fg-' + index">
+                            <label>
+                                <input type="checkbox" v-model="layer.visible"
+                                    @change="updateLayerVisibility('foreground', index)" />
+                                Foreground {{ index }}
+                            </label>
+                        </div>
+                        <h4>Portals:</h4>
+                        <div id="portals-container">
+                            <div v-for="(layer, index) in portals" :key="'portal-' + index" class="portal-item">
+                                <label>
+                                    <input type="checkbox" v-model="layer.visible"
+                                        @change="updateLayerVisibility('portal', index)" />
+                                    {{ layer.name }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <label for="toggle-tiles-checkbox">
-            <input type="checkbox" id="toggle-tiles-checkbox" v-model="showTiles" />
-            Show Tiles
-        </label>
-        <label for="toggle-background-checkbox">
-            <input type="checkbox" id="toggle-background-checkbox" v-model="showBackground" />
-            Show Background
-        </label>
-        <label for="toggle-foreground-checkbox">
-            <input type="checkbox" id="toggle-foreground-checkbox" v-model="showForeground" />
-            Show Foreground
-        </label>
-        <div id="layer-controls">
-            <h4>Backgrounds:</h4>
-            <div v-for="(layer, index) in backgroundLayers" :key="'bg-' + index">
-                <label>
-                    <input type="checkbox" v-model="layer.visible"
-                        @change="updateLayerVisibility('background', index)" />
-                    Background {{ index }}
-                </label>
-            </div>
-            <h4>Foregrounds:</h4>
-            <div v-for="(layer, index) in foregroundLayers" :key="'fg-' + index">
-                <label>
-                    <input type="checkbox" v-model="layer.visible"
-                        @change="updateLayerVisibility('foreground', index)" />
-                    Foreground {{ index }}
-                </label>
-            </div>
-            <h4>Portals:</h4>
-            <div v-for="(layer, index) in portals" :key="'portal-' + index">
-                <label>
-                    <input type="checkbox" v-model="layer.visible" @change="updateLayerVisibility('portal', index)" />
-                    {{ layer.name }}
-                </label>
+        <div id="top-controls">
+            <n-select v-model:value="selectedLand" filterable placeholder="Select Land" :options="landOptions"
+                @update:value="updateMapSelect" style="width: 200px;" />
+            <n-select v-model:value="selectedMap" filterable placeholder="Select Map" :options="computedMapOptions"
+                style="width: 300px;" />
+            <button @click="loadSelectedMap">Load Map</button>
+            <label for="speed-input">Speed:</label>
+            <input type="number" id="speed-input" v-model.number="speed" placeholder="Speed" min="1" max="10"
+                step="1" />
+            <div>
+                <span>View Position: </span>
+                <span>X: {{ viewPosition.x.toFixed(2) }}, Y: {{ viewPosition.y.toFixed(2) }}</span>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { NSelect } from 'naive-ui';
 import {
     createCanvasContexts,
     createImageLoader,
@@ -73,8 +78,7 @@ const VHEIGHT = 768;
 // Initialize resources
 const { cc1, cc2 } = createCanvasContexts();
 const imageLoader = createImageLoader(cc1, cc2);
-const syncLoaders = [];
-const resourceModule = createResourceModule(syncLoaders, [
+const resourceModule = createResourceModule([
     ...createMapLoaders(imageLoader),
 ]);
 
@@ -93,11 +97,14 @@ let set_speed,
 
 export default {
     name: "Map",
+    components: {
+        NSelect,
+    },
     data() {
         return {
             mapData: {},
-            selectedLand: "",
-            selectedMap: "",
+            selectedLand: null,
+            selectedMap: null,
             speed: 5,
             showTiles: true,
             showBackground: true,
@@ -108,11 +115,28 @@ export default {
             portals: [],
             viewPosition: { x: 0, y: 0 },
             program_update: undefined,
+            landOptions: [],
         };
+    },
+    computed: {
+        computedMapOptions() {
+            if (!this.selectedLand || !this.mapData[this.selectedLand]) {
+                return [];
+            }
+            return Object.entries(this.mapData[this.selectedLand]).map(([mapId, mapInfo]) => ({
+                label: `${mapId} - ${mapInfo.mapName}`,
+                value: mapId,
+            }));
+        }
+    },
+    watch: {
+        selectedLand() {
+            this.selectedMap = null;
+        }
     },
     methods: {
         updateMapSelect() {
-            this.selectedMap = "";
+            this.selectedMap = null;
         },
         loadSelectedMap() {
             const mapId = parseInt(this.selectedMap);
@@ -215,6 +239,18 @@ export default {
                 on_view_position_change: (x, y) => {
                     this.viewPosition = { x, y };
                 },
+            },
+            "async": {
+                spawn_background: (f) => {
+                    setTimeout(f, 0);
+                },
+            },
+            spectest: {
+                print_i32: (x) => console.log(String(x)),
+                print_f64: (x) => console.log(String(x)),
+            },
+            "moonbit:ffi": {
+                "make_closure": (funcref, closure) => funcref.bind(null, closure)
             }
         };
 
@@ -225,8 +261,7 @@ export default {
             this.program_update(time * 1000);
             requestAnimationFrameId = requestAnimationFrame(update);
         }
-        Promise.all(syncLoaders.map((loader) => loader.loader.load())) // load sync resources
-            .then(() => import("lib/map_editor/map_editor.js")) // load moonbit generated js
+        import("lib/map_editor/map_editor.js") // load moonbit generated js
             .then((m) => {
                 this.program_update = m.update;
                 load_map = m.load_map;
@@ -271,6 +306,10 @@ export default {
                     },
                     {}
                 );
+                this.landOptions = Object.keys(this.mapData).map(landName => ({
+                    label: landName,
+                    value: landName,
+                }));
             });
     },
 };
@@ -293,47 +332,137 @@ p {
     padding: 0;
 }
 
+#map-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#main-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
 #canvas {
     padding: 0;
     margin: 0;
     display: block;
     border-style: solid;
     border-width: 1px;
+    flex-shrink: 0;
 }
 
-#map-input {
-    margin-top: 10px;
+#right-panel {
+    width: 400px;
+    padding: 20px;
+    border-left: 1px solid #ccc;
+    background-color: #f5f5f5;
+    overflow-y: auto;
+}
+
+#visibility-controls h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#visibility-controls label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+#visibility-controls input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+#layer-controls {
+    margin-top: 20px;
+}
+
+#layer-controls h4 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 14px;
+}
+
+#layer-controls label {
+    margin-left: 10px;
+    font-size: 13px;
+}
+
+#portals-container {
+    max-height: 200px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+}
+
+.portal-item {
+    margin-bottom: 4px;
+}
+
+.portal-item label {
+    margin-left: 0;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.portal-item input[type="checkbox"] {
+    margin-right: 4px;
+    transform: scale(0.8);
+}
+
+#top-controls {
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
 }
 
-#land-select,
-#map-select,
-#speed-input {
-    margin-right: 10px;
+#top-controls select,
+#top-controls input {
     padding: 5px;
+}
+
+#top-controls select {
     width: 200px;
 }
 
-#load-map-btn {
-    padding: 5px 10px;
+#top-controls button {
+    padding: 8px 16px;
+    font-size: 14px;
     cursor: pointer;
-    margin-right: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+#top-controls button:hover {
+    background-color: #0056b3;
+}
+
+#top-controls button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+#speed-input {
+    width: 80px;
 }
 
 label {
     margin-right: 5px;
-}
-
-#toggle-tiles-checkbox {
-    margin-right: 5px;
-}
-
-label[for="toggle-tiles-checkbox"] {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
 }
 </style>

@@ -22,38 +22,30 @@ pub(all) struct SelectCharUIResource {
 } derive(Default)
 
 ///|
-pub fn SelectCharUIResource::load(
+pub async fn SelectCharUIResource::load(
   login_loader : @resource.SyncLoader
-) -> @utils.Future[SelectCharUIResource] {
+) -> SelectCharUIResource! {
   let char_select_src = login_loader.load_res(["CharSelect"])
-  let back13_f = get_map001_loader().load_res([
-    "Back", "login.img", "back", "13",
-  ])
-  let ani17_f = get_map001_loader().load_res(["Back", "login.img", "ani", "17"])
-  let ani18_f = get_map001_loader().load_res(["Back", "login.img", "ani", "18"])
-  let ani19_f = get_map001_loader().load_res(["Back", "login.img", "ani", "19"])
+  let map001_loader = get_map001_loader()
+  let back13 = map001_loader.load_resource(["Back", "login.img", "back", "13"])
+  let ani17 = map001_loader.load_resource(["Back", "login.img", "ani", "17"])
+  let ani18 = map001_loader.load_resource(["Back", "login.img", "ani", "18"])
+  let ani19 = map001_loader.load_resource(["Back", "login.img", "ani", "19"])
   let frame = login_loader.load_res(["Common", "frame"])
   let step2 = login_loader.load_res(["Common", "step", "2"])
-  back13_f
-  .combine(ani17_f)
-  .combine(ani18_f)
-  .combine(ani19_f)
-  .map(fn(it) {
-    let (((back13, ani17), ani18), ani19) = it
-    {
-      name_tag: @ui.NameTagResource::from_resource(char_select_src["nameTag"]),
-      bt_select: @ui.MapleButtonResource::from_resource(
-        char_select_src["BtSelect"],
-      ),
-      bt_new: @ui.MapleButtonResource::from_resource(char_select_src["BtNew"]),
-      back13: @graphics.Animation::from_resource_ex?(back13).unwrap(),
-      ani17: @graphics.Animation::from_resource_ex?(ani17).unwrap(),
-      ani18: @graphics.Animation::from_resource_ex?(ani18).unwrap(),
-      ani19: @graphics.Animation::from_resource_ex?(ani19).unwrap(),
-      frame: @graphics.Animation::from_resource_ex?(frame).unwrap(),
-      step2: @graphics.Animation::from_resource_ex?(step2).unwrap(),
-    }
-  })
+  {
+    name_tag: @ui.NameTagResource::from_resource(char_select_src["nameTag"]),
+    bt_select: @ui.MapleButtonResource::from_resource(
+      char_select_src["BtSelect"],
+    ),
+    bt_new: @ui.MapleButtonResource::from_resource(char_select_src["BtNew"]),
+    back13: @graphics.Animation::from_resource_ex?(back13).unwrap(),
+    ani17: @graphics.Animation::from_resource_ex?(ani17).unwrap(),
+    ani18: @graphics.Animation::from_resource_ex?(ani18).unwrap(),
+    ani19: @graphics.Animation::from_resource_ex?(ani19).unwrap(),
+    frame: @graphics.Animation::from_resource_ex?(frame).unwrap(),
+    step2: @graphics.Animation::from_resource_ex?(step2).unwrap(),
+  }
 }
 
 ///|

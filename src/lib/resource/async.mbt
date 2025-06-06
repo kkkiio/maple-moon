@@ -49,6 +49,22 @@ pub fn AsyncLoader::load_res(
 }
 
 ///|
+pub async fn AsyncLoader::load_resource(
+  self : AsyncLoader,
+  path : Array[String]
+) -> NxNode! {
+  let promise = self.loader.load_data(join_path(path))
+  let data : RawData = promise.wait!() |> @js.Value::cast
+  {
+    loader_name: self.name,
+    image_loader: Some(self.loader.get_image_loader()),
+    name: path.last().unwrap(),
+    desc: data.as_moonjson(),
+    path: path |> @immut/array.from_array,
+  }
+}
+
+///|
 pub fn AsyncResourceLoader::new_async_resource_loader(
   loader : DirResourceLoader
 ) -> AsyncResourceLoader = "resource" "new_async_resource_loader"

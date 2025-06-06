@@ -36,6 +36,7 @@ pub(all) struct Stage {
   network : @net.Network
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
@@ -52,7 +53,8 @@ pub fn Stage::new(
   damage_number_set : @ui.NumberSet,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Stage {
   {
     map_portals_animations,
@@ -74,6 +76,7 @@ pub fn Stage::new(
     network,
     map_change_listeners: Array::new(),
     string_loader,
+    io_service,
   }
 }
 
@@ -110,9 +113,10 @@ pub fn set_player_stage(
   cooldowns : Map[Int, Int],
   callback : (@player.Player) -> Unit!
 ) -> Unit {
-  let player_f = self.char_look_module
-    .load_char_look(entry.look)
+  let player_f = self.io_service
+    .submit(async fn() { self.char_look_module.load_char_look(entry.look) })
     .bind(fn(look) {
+      let look = look.unwrap() // TODO: handle error
       @player.Player::load(
         entry,
         self.inventory,

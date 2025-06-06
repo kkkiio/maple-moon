@@ -250,6 +250,14 @@ export class CompositeAsyncResourceLoader {
     }
     throw new Error(`nodepath not found: ${nodepath}`);
   }
+  async loadData(nodepath) {
+    for (let [prefix, loader] of Object.entries(this.prefixLoaderMap)) {
+      if (nodepath.startsWith(prefix)) {
+        return await loader.loadData(nodepath.substring(prefix.length));
+      }
+    }
+    throw new Error(`nodepath not found: ${nodepath}`);
+  }
 }
 
 export class AsyncResourceLoader {
@@ -269,6 +277,9 @@ export class AsyncResourceLoader {
    */
   loadDescAsync(nodepath) {
     return this.descLoader.loadDesc(nodepath);
+  }
+  async loadData(nodepath) {
+    return await this.descLoader.loadData(nodepath);
   }
 }
 
@@ -308,6 +319,23 @@ export class DirResourceLoader {
         pollable.ready = true;
       });
     return pollable;
+  }
+  async loadData(nodepath) {
+    let i = nodepath.indexOf("/");
+    if (i == -1) {
+      i = nodepath.length;
+    }
+    const child = nodepath.substring(0, i);
+    const rest = nodepath.substring(i + 1);
+    if (child in this.cache) {
+      const json = this.cache[child];
+      return getByPath(json, rest);
+    }
+    const path = joinPath(this.rootPath, child + ".json");
+    const response = await fetch(path);
+    const json = await response.json();
+    this.cache[child] = json;
+    return getByPath(json, rest);
   }
 }
 

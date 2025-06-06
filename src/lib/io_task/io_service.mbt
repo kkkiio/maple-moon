@@ -22,3 +22,16 @@ pub fn[T] IOService::submit(
   })
   @utils.Future::new(fn() { res })
 }
+
+///|
+pub fn IOService::execute(
+  _ : IOService,
+  f : async () -> Unit!Error,
+  on_error~ : (Error) -> Unit = fn(err) { abort(err.to_string()) }
+) -> Unit {
+  spawn_background(async fn() {
+    try f!() catch {
+      e => on_error(e)
+    }
+  })
+}

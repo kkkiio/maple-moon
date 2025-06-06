@@ -18,6 +18,7 @@
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
-    "KKKIIO/maple-moon-client/lib/config"
+    "KKKIIO/maple-moon-client/lib/config",
+    "KKKIIO/maple-moon-client/lib/io_task"
   ]
 }

@@ -8,6 +8,15 @@ extern "js" fn load_desc_async(
   #| }
 
 ///|
+extern "js" fn load_data(
+  self : AsyncResourceLoader,
+  path : String
+) -> @js.Promise =
+  #| (l,p) => {
+  #|   return l.loadData(p)
+  #| }
+
+///|
 extern "js" fn load_desc(self : SyncResourceLoader, path : String) -> RawData =
   #| (l,p) => {
   #|   return l.loadDesc(p)

@@ -1,18 +1,18 @@
 ///|
 struct Module {
-  io_service : @io_task.PollService
+  io_service : @io_task.IOService
   string_loader : @resource.SyncLoader
   draw_info : @types.BodyDrawInfo
-  hair_cache : Map[Int, @utils.Future[Hair]]
-  face_types : Map[Int, @utils.Future[Face]]
-  body_cache : Map[Int, @utils.Future[Body]]
+  hair_cache : Map[Int, Hair]
+  face_types : Map[Int, Face]
+  body_cache : Map[Int, Body]
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit
 }
 
 ///|
 pub fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.PollService,
+  io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
 ) -> @utils.Future[Module] {
   let bodynode = get_body_loader().load_res(["00002000.img"])
@@ -32,7 +32,7 @@ pub fn Module::new(
   bodynode : @resource.NxNode,
   headnode : @resource.NxNode,
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.PollService,
+  io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
 ) -> Module {
   {
@@ -47,44 +47,32 @@ pub fn Module::new(
 }
 
 ///|
-pub fn load_char_look(
-  self : Module,
-  entry : LookEntry
-) -> @utils.Future[CharLook] {
+pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook! {
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
+  CharLook::new(entry, body, hair, face, self.string_loader, self.draw_info)
+}
+
+///|
+pub async fn load_body_by_skin_id(self : Module, skin_id : Int) -> Body! {
+  let body = Body::load(skin_id, self.draw_info)
+  self.body_cache.set(skin_id, body)
   body
-  .combine(hair)
-  .combine(face)
-  .map(fn(it) {
-    let ((body, hair), face) = it
-    CharLook::new(entry, body, hair, face, self.string_loader, self.draw_info)
-  })
 }
 
 ///|
-pub fn load_body_by_skin_id(
-  self : Module,
-  skin_id : Int
-) -> @utils.Future[Body] {
-  self.body_cache.get_or_init(skin_id, fn() {
-    Body::load(skin_id, self.draw_info)
-  })
+pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair! {
+  let hair = Hair::load(hair_id, self.draw_info, self.string_loader)
+  self.hair_cache.set(hair_id, hair)
+  hair
 }
 
 ///|
-pub fn load_hair_by_id(self : Module, hair_id : Int) -> @utils.Future[Hair] {
-  self.hair_cache.get_or_init(hair_id, fn() {
-    Hair::load(hair_id, self.draw_info, self.string_loader)
-  })
-}
-
-///|
-pub fn load_face_by_id(self : Module, face_id : Int) -> @utils.Future[Face] {
-  self.face_types.get_or_init(face_id, fn() {
-    Face::load(face_id, self.string_loader)
-  })
+pub async fn load_face_by_id(self : Module, face_id : Int) -> Face! {
+  let face = Face::load(face_id, self.string_loader)
+  self.face_types.set(face_id, face)
+  face
 }
 
 ///|
@@ -101,9 +89,9 @@ pub fn make_stat_handlers(
     (
       @maple_stat.Id::SKIN,
       fn(skin_id) {
-        let f = self.load_body_by_skin_id(skin_id)
         state.changing_skin_id = Some(skin_id)
-        self.io_service.on_complete(f, fn(body) {
+        self.io_service.execute(async fn() {
+          let body = self.load_body_by_skin_id(skin_id)
           guard state.changing_skin_id == Some(skin_id) else { return }
           state.changing_skin_id = None
           (self.on_player_look_changed)(fn(char_look) {
@@ -116,9 +104,9 @@ pub fn make_stat_handlers(
     (
       @maple_stat.Id::FACE,
       fn(face_id) {
-        let f = self.load_face_by_id(face_id)
         state.changing_face_id = Some(face_id)
-        self.io_service.on_complete(f, fn(face) {
+        self.io_service.execute(async fn() {
+          let face = self.load_face_by_id(face_id)
           guard state.changing_face_id == Some(face_id) else { return }
           state.changing_face_id = None
           (self.on_player_look_changed)(fn(char_look) {
@@ -131,9 +119,9 @@ pub fn make_stat_handlers(
     (
       @maple_stat.Id::HAIR,
       fn(hair_id) {
-        let f = self.load_hair_by_id(hair_id)
         state.changing_hair_id = Some(hair_id)
-        self.io_service.on_complete(f, fn(hair) {
+        self.io_service.execute(async fn() {
+          let hair = self.load_hair_by_id(hair_id)
           guard state.changing_hair_id == Some(hair_id) else { return }
           state.changing_hair_id = None
           (self.on_player_look_changed)(fn(char_look) {

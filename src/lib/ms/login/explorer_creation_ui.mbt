@@ -75,69 +75,62 @@ pub(all) struct LookChoices {
 }
 
 ///|
-pub fn ExplorerCreatorUIResource::load(
+pub async fn ExplorerCreatorUIResource::load(
   login_loader : @resource.SyncLoader
-) -> @utils.Future[ExplorerCreatorUIResource] {
-  let look_res_fut = get_etc_loader()
-    .load_res(["MakeCharInfo.img", "Info"])
-    .map(fn(mkinfo) {
-      // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
-      fn parse_choices(char : @resource.NxNode) -> LookChoices {
-        let faces = []
-        let hairs = []
-        let haircolors = []
-        let skins = []
-        let tops = []
-        let bots = []
-        let shoes = []
-        let weapons = []
-        for name, node in char {
-          let num = @strconv.parse_int?(name).unwrap()
-          for _, idnode in node {
-            let value = idnode.get_int?().unwrap()
-            match num {
-              0 => faces.push(value)
-              1 => hairs.push(value)
-              2 => haircolors.push(value)
-              3 => skins.push(value)
-              4 => tops.push(value)
-              5 => bots.push(value)
-              6 => shoes.push(value)
-              7 => weapons.push(value)
-              _ => ()
-            }
-          }
+) -> ExplorerCreatorUIResource! {
+  let mkinfo = get_etc_loader().load_resource(["MakeCharInfo.img", "Info"])
+  // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
+  fn parse_choices(char : @resource.NxNode) -> LookChoices {
+    let faces = []
+    let hairs = []
+    let haircolors = []
+    let skins = []
+    let tops = []
+    let bots = []
+    let shoes = []
+    let weapons = []
+    for name, node in char {
+      let num = @strconv.parse_int?(name).unwrap()
+      for _, idnode in node {
+        let value = idnode.get_int?().unwrap()
+        match num {
+          0 => faces.push(value)
+          1 => hairs.push(value)
+          2 => haircolors.push(value)
+          3 => skins.push(value)
+          4 => tops.push(value)
+          5 => bots.push(value)
+          6 => shoes.push(value)
+          7 => weapons.push(value)
+          _ => ()
         }
-        { faces, hairs, haircolors, skins, tops, bots, shoes, weapons }
       }
+    }
+    { faces, hairs, haircolors, skins, tops, bots, shoes, weapons }
+  }
 
-      (parse_choices(mkinfo["CharMale"]), parse_choices(mkinfo["CharFemale"]))
-    })
+  let (male_choices, female_choices) = (
+    parse_choices(mkinfo["CharMale"]),
+    parse_choices(mkinfo["CharFemale"]),
+  )
   let map001_loader = get_map001_loader()
-  // let common_src = login_loader.load_res(["Common"])
   let customize_char_src = login_loader.load_res(["CustomizeChar", "000"])
-  let signboard2_src_fut = @map.get_map_latest_loader().load_res([
+  let signboard2_src = @map.get_map_latest_loader().load_resource([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])
   let board_src = customize_char_src["board"]
   let gender_select_src = customize_char_src["genderSelect"]
-  let sky_src_fut = map001_loader.load_res(["Back", "login.img", "back", "2"])
-  let sky_fut = sky_src_fut.map(fn(src) {
-    @graphics.Texture::from_resource(src)
-  })
-  let cloud_src_fut = map001_loader.load_res(["Back", "login.img", "back", "27"])
-  let cloud_fut = cloud_src_fut.map(fn(src) {
-    @graphics.Texture::from_resource(src)
-  })
-  let back14_src_fut = map001_loader.load_res([
+  let sky_src = map001_loader.load_resource(["Back", "login.img", "back", "2"])
+  let sky = @graphics.Texture::from_resource(sky_src)
+  let cloud_src = map001_loader.load_resource([
+    "Back", "login.img", "back", "27",
+  ])
+  let cloud = @graphics.Texture::from_resource(cloud_src)
+  let back14_src = map001_loader.load_resource([
     "Back", "login.img", "back", "14",
   ])
-  let back14_fut = back14_src_fut.map_exn(fn(src) {
-    @graphics.Animation::from_resource_ex!(src)
-  })
-  let signboard2_fut = signboard2_src_fut.map_exn(fn(src) {
-    @graphics.Animation::from_resource_ex!(src)
-  })
+  let back14 = @graphics.Animation::from_resource_ex!(back14_src)
+  let signboard2 = @graphics.Animation::from_resource_ex!(signboard2_src)
   let board_gender_top = @graphics.Animation::from_resource_ex?(
     board_src["genderTop"],
   ).unwrap()
@@ -176,39 +169,26 @@ pub fn ExplorerCreatorUIResource::load(
       ).unwrap(),
     )
   }
-  look_res_fut
-  .combine(sky_fut)
-  .combine(cloud_fut)
-  .combine(back14_fut)
-  .combine(signboard2_fut)
-  .map_exn(fn(it) {
-    let (((((male_choices, female_choices), sky), cloud), back14), signboard2) = it
-    let back14 = back14.unwrap_or_error!()
-    let signboard2 = signboard2.unwrap_or_error!()
-    {
-      male_choices,
-      female_choices,
-      sky,
-      cloud,
-      board_gender_top,
-      board_gender_mid,
-      board_gender_bottom,
-      board_char_set,
-      back14,
-      signboard2,
-      bt_gender_male,
-      bt_gender_female,
-      bt_left,
-      bt_right,
-      bt_yes,
-      bt_no,
-      avatar_sel,
-      nameboard,
-    }
-  })
-  .map(fn(it) {
-    it.unwrap() // TODO
-  })
+  {
+    male_choices,
+    female_choices,
+    sky,
+    cloud,
+    board_gender_top,
+    board_gender_mid,
+    board_gender_bottom,
+    board_char_set,
+    back14,
+    signboard2,
+    bt_gender_male,
+    bt_gender_female,
+    bt_left,
+    bt_right,
+    bt_yes,
+    bt_no,
+    avatar_sel,
+    nameboard,
+  }
 }
 
 ///|

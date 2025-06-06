@@ -71,14 +71,13 @@ fn get_hair_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn Hair::load(
+pub async fn Hair::load(
   hairid : Int,
   drawinfo : @types.BodyDrawInfo,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Hair] {
-  get_hair_loader()
-  .load_res(["000\{hairid}.img"])
-  .map(fn(hairnode) { Hair::new(hairid, hairnode, drawinfo, string_loader) })
+) -> Hair! {
+  let hairnode = get_hair_loader().load_resource(["000\{hairid}.img"])
+  Hair::new(hairid, hairnode, drawinfo, string_loader)
 }
 
 ///|

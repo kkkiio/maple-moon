@@ -149,7 +149,7 @@ fn load_modules(
           guard get_stage().get_player() is Some(player) else { return }
           player.character.look = f(player.character.look)
         },
-        poll_service,
+        io_service,
         string_loader,
       )
     })
@@ -223,9 +223,11 @@ fn load_modules(
     .combine(ui_fut)
     .bind(fn(it) {
       let (mod, ui) = it
-      @login.Module::load(
-        network, ui, mod, poll_service, io_service, local_storage,
-      ).map(fn(login_module) { (login_module, ui) })
+      @login.Module::load(network, ui, mod, io_service, local_storage).map(fn(
+        login_module
+      ) {
+        (login_module, ui)
+      })
     })
     .combine(status_bar_loader_fut)
     .combine(inventory_module_fut)
@@ -395,6 +397,7 @@ fn load_modules(
         add_io_task,
         network,
         string_loader,
+        io_service,
       )
       stage_ref.val = Some(stage)
     })

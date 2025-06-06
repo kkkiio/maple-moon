@@ -18,17 +18,12 @@ fn get_body_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-fn Body::load(
-  skin : Int,
-  drawinfo : @types.BodyDrawInfo
-) -> @utils.Future[Body] {
+async fn Body::load(skin : Int, drawinfo : @types.BodyDrawInfo) -> Body! {
   let strid : String = @string_format.extend_id(skin, 2)
   let loader = get_body_loader()
-  let bodynode = loader.load_res(["000020" + strid + ".img"])
-  let headnode = loader.load_res(["000120" + strid + ".img"])
-  bodynode
-  .combine(headnode)
-  .map(fn(it) { Body::new(skin, drawinfo, it.0, it.1) })
+  let bodynode = loader.load_resource(["000020" + strid + ".img"])
+  let headnode = loader.load_resource(["000120" + strid + ".img"])
+  Body::new(skin, drawinfo, bodynode, headnode)
 }
 
 ///|

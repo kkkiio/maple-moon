@@ -115,14 +115,13 @@ fn get_face_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn Face::load(
+pub async fn Face::load(
   faceid : Int,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Face] {
+) -> Face! {
   let strid = "000" + faceid.to_string()
-  get_face_loader()
-  .load_res(["\{strid}.img"])
-  .map(fn(facenode) { Face::new(faceid, facenode, string_loader) })
+  let facenode = get_face_loader().load_resource(["\{strid}.img"])
+  Face::new(faceid, facenode, string_loader)
 }
 
 ///|

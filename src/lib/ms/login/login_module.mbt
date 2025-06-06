@@ -3,7 +3,6 @@ struct Module {
   network : @net.Network
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
-  poll_service : @io_task.PollService
   local_storage : @config.LocalStorage
   mut characters : Array[@character.CharEntry]
   mut selected_index : Int?
@@ -14,6 +13,7 @@ struct Module {
   // mut input_acc_pass : (String, String)?
   mut select_cid : Int?
   login_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
@@ -21,7 +21,6 @@ pub fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  poll_service : @io_task.PollService,
   io_service : @io_task.IOService,
   local_storage : @config.LocalStorage
 ) -> @utils.Future[Module] {
@@ -37,9 +36,9 @@ pub fn Module::load(
       network,
       ui_container,
       char_look_module,
-      poll_service,
       local_storage,
       login_loader.unwrap(), // TODO: handle error
+      io_service,
     )
   })
 }
@@ -49,9 +48,9 @@ pub fn Module::new(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  poll_service : @io_task.PollService,
   local_storage : @config.LocalStorage,
-  login_loader : @resource.SyncLoader
+  login_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
   {
     network,
@@ -64,7 +63,7 @@ pub fn Module::new(
     connect_task: None,
     // input_acc_pass: None,
     select_cid: None,
-    poll_service,
+    io_service,
     local_storage,
     login_loader,
   }
@@ -501,18 +500,14 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
     2 =>
       match mod.select_cid {
         Some(cid) => mod.network.send_message({ character_id: cid })
-        None => {
-          let resource_f = SelectCharUIResource::load(mod.login_loader)
-          let char_looks_f = mod.characters.map(fn(ce) {
-              mod.char_look_module
-              .load_char_look(ce.look)
-              .map(fn(char_look) { (ce.id, char_look, ce.stats.name) })
-            })
-            |> @utils.Future::all_of()
-          mod.poll_service.on_complete(resource_f.combine(char_looks_f), fn(
-            it
-          ) {
-            let (resource, char_looks) = it
+        None =>
+          mod.io_service.execute(async fn() {
+            let resource = SelectCharUIResource::load(mod.login_loader)
+            let char_looks = []
+            for ce in mod.characters {
+              let char_look = mod.char_look_module.load_char_look(ce.look)
+              char_looks.push((ce.id, char_look, ce.stats.name))
+            }
             let key = @ui.UIElementType::UI_ELEMENT_CHAR_SELECT
             let elem = @ui.Element::new(
               fn(hooks) {
@@ -523,47 +518,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                     mod.select_cid = Some(cid)
                     mod.network.send_message(SelectCharPacket::new(cid))
                   },
-                  on_new_character=fn() {
-                    mod.ui_container.remove_ui(key)
-                    mod.poll_service.on_complete(
-                      ExplorerCreatorUIResource::load(mod.login_loader),
-                      fn(res) {
-                        mod.ui_container.add_ui(
-                          @ui.Element::new(
-                            fn(hooks) {
-                              ExplorerCreatorUI::new(
-                                res,
-                                hooks,
-                                fn(entry, cb) {
-                                  mod.poll_service.on_complete(
-                                    mod.char_look_module.load_char_look(entry),
-                                    cb,
-                                  )
-                                },
-                                on_create_char=fn(s) {
-                                  mod.network.send_message({
-                                    name: s.name,
-                                    job: s.job,
-                                    face: s.face_id,
-                                    hair: s.hair_id,
-                                    hairc: s.hair_color_id,
-                                    skin: s.skin_id,
-                                    top: s.top_id,
-                                    bot: s.bot_id,
-                                    shoes: s.shoe_id,
-                                    weapon: s.weapon_id,
-                                    female: s.female,
-                                  })
-                                },
-                              )
-                            },
-                            @ui.UIElementType::CLASS_CREATION,
-                          ),
-                          false,
-                        )
-                      },
-                    )
-                  },
+                  on_new_character=fn() {  },
                   hooks,
                 )
               },
@@ -571,13 +526,53 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
             )
             mod.ui_container.add_ui(elem, false)
           })
-        }
       }
     _ => {
       @log.error({ "pic": pic }, "pic not ok") // TODO: show error
       panic()
     }
   }
+}
+
+///|
+fn on_new_character(mod : Module, key : @ui.UIElementType) -> Unit {
+  mod.ui_container.remove_ui(key)
+  mod.io_service.execute(async fn() {
+    let res = ExplorerCreatorUIResource::load(mod.login_loader)
+    mod.ui_container.add_ui(
+      @ui.Element::new(
+        fn(hooks) {
+          ExplorerCreatorUI::new(
+            res,
+            hooks,
+            fn(entry, cb) {
+              mod.io_service.execute(async fn() {
+                let char_look = mod.char_look_module.load_char_look(entry)
+                cb(char_look)
+              })
+            },
+            on_create_char=fn(s) {
+              mod.network.send_message({
+                name: s.name,
+                job: s.job,
+                face: s.face_id,
+                hair: s.hair_id,
+                hairc: s.hair_color_id,
+                skin: s.skin_id,
+                top: s.top_id,
+                bot: s.bot_id,
+                shoes: s.shoe_id,
+                weapon: s.weapon_id,
+                female: s.female,
+              })
+            },
+          )
+        },
+        @ui.UIElementType::CLASS_CREATION,
+      ),
+      false,
+    )
+  })
 }
 
 ///| Parse server IP response packet

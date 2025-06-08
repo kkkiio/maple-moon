@@ -384,20 +384,14 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
 }
 
 ///|
-priv enum QuestStatus {
-  NotStarted
-  InProgress
-  Completed
+pub(all) enum QuestStatus {
+  NotStarted = 0
+  InProgress = 1
+  Completed = 2
 } derive(Show, Eq, Hash)
 
 ///|
-fn QuestStatus::int_value(self : QuestStatus) -> Int {
-  match self {
-    QuestStatus::NotStarted => 0
-    QuestStatus::InProgress => 1
-    QuestStatus::Completed => 2
-  }
-}
+fn QuestStatus::int_value(self : QuestStatus) = "%identity"
 
 ///|
 fn QuestStatus::from_int(int_value : Int) -> QuestStatus? {

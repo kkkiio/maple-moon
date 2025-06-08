@@ -492,7 +492,7 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
 }
 
 ///|
-struct ShowUpdateQuestMessage {
+priv struct ShowUpdateQuestMessage {
   quest_id : Int
   progress_data : String
 } derive(Show)
@@ -520,6 +520,7 @@ impl Show for ShowUpdateQuestAction with output(self, logger) {
 impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
   guard self.mod.player_quest_log.val.in_progress.get(self.message.quest_id)
     is Some(quest) else {
+    @log.warn({ "quest_id": self.message.quest_id }, "quest not found")
     return
   }
   quest.progress_data = self.message.progress_data

@@ -104,7 +104,7 @@ enum FlyDirection {
 }
 
 ///|
-pub fn Mob::load(
+pub async fn Mob::load(
   oi : Int,
   mid : Int,
   mode : Int,
@@ -116,16 +116,111 @@ pub fn Mob::load(
   randomizer : @utils.Randomizer,
   network : @net.Network,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[Mob, Error]] {
+) -> Mob! {
   let strid = @string_format.extend_id(mid, 7)
-  mob_loader
-  .load_res([strid + ".img"])
-  .map_exn(fn(src) {
-    Mob::new!(
-      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network,
-      string_loader,
-    )
-  })
+  let src = mob_loader.load_res_async([strid + ".img"])
+  let info : MobInfo = src["info"].value() |> @json.from_json
+  let animations = if info.link is Some(link) {
+    let can_fly = src["fly"].get_children_count() > 0 // TODO: should we use link mob's can_fly?
+    let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
+    load_animations(link_mob, can_fly)
+  } else {
+    let can_fly = src["fly"].get_children_count() > 0
+    load_animations(src, can_fly)
+  }
+  Mob::new!(
+    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network, string_loader,
+    animations,
+  )
+}
+
+///|
+struct MobInfo {
+  magic_damage : Int
+  md_damage : Int
+  pa_damage : Int
+  pd_damage : Int
+  acc : Int
+  body_attack : Bool
+  eva : Int
+  exp : Int
+  fs : Double
+  fly_speed : Double
+  level : Int
+  link : Int?
+  max_hp : Int
+  max_mp : Int
+  mob_type : Int
+  pushed : Int
+  speed : Double
+  summon_type : Int
+  undead : Bool
+  boss : Bool
+  no_flip : Bool
+} derive(ToJson)
+
+///|
+pub impl @json.FromJson for MobInfo with from_json(json, path) {
+  let link = if json is { "link": String(link), .. } {
+    try Some(@strconv.parse_int(link)) catch {
+      _ => raise @json.JsonDecodeError((path, "invalid link"))
+    }
+  } else {
+    None
+  }
+  let fly_speed = if json is { "flySpeed": Number(fly_speed), .. } {
+    fly_speed
+  } else {
+    0.0
+  }
+  let boss = json is { "boss": Number(1), .. }
+  let no_flip = json is { "noFlip": Number(1), .. }
+  match json {
+    {
+      "MADamage": Number(ma_damage),
+      "MDDamage": Number(md_damage),
+      "PADamage": Number(pa_damage),
+      "PDDamage": Number(pd_damage),
+      "acc": Number(acc),
+      "bodyAttack": Number(body_attack),
+      "eva": Number(eva),
+      "exp": Number(exp),
+      "fs": Number(fs),
+      "level": Number(level),
+      "maxHP": Number(max_hp),
+      "maxMP": Number(max_mp),
+      "mobType": Number(mob_type),
+      "pushed": Number(pushed),
+      "speed": Number(speed),
+      "summonType": Number(summon_type),
+      "undead": Number(undead),
+      ..
+    } =>
+      {
+        magic_damage: ma_damage.to_int(),
+        md_damage: md_damage.to_int(),
+        pa_damage: pa_damage.to_int(),
+        pd_damage: pd_damage.to_int(),
+        acc: acc.to_int(),
+        body_attack: body_attack == 1,
+        eva: eva.to_int(),
+        exp: exp.to_int(),
+        fs,
+        fly_speed,
+        level: level.to_int(),
+        link,
+        max_hp: max_hp.to_int(),
+        max_mp: max_mp.to_int(),
+        mob_type: mob_type.to_int(),
+        pushed: pushed.to_int(),
+        speed,
+        summon_type: summon_type.to_int(),
+        undead: undead == 1,
+        boss,
+        no_flip,
+      }
+    _ => raise @json.JsonDecodeError((path, "missing info fields"))
+  }
 }
 
 ///|
@@ -141,53 +236,33 @@ fn Mob::new(
   randomizer : @utils.Randomizer,
   src : @resource.NxNode,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  animations : Map[StanceType, @graphics.Animation]
 ) -> Mob! {
   let base = @map_object.MapObjectBase::new(oi)
-  let info = src["info"]
-  let level = info["level"].get_int!()
-  let watk = info["PADamage"].get_int!()
-  // let matk = info["MADamage"].get_int!()
-  let wdef = info["PDDamage"].get_int!()
-  let mdef = info["MDDamage"].get_int!()
-  // let accuracy = info["acc"].get_int!()
-  let avoid = info["eva"].get_int!()
-  let knockback = info["pushed"].get_int!()
-  let mut speed = info["speed"].get_float!()
-  let mut fly_speed = info["flySpeed"].get_float!()
-  let touch_damage = info["bodyAttack"].get_bool!()
-  // let undead = info["undead"].get_bool!()
-  let is_boss = info["boss"].get_bool!()
-  let no_flip = info["noFlip"].get_bool!()
+  let info : MobInfo = src["info"].value() |> @json.from_json
+  let level = info.level
+  let watk = info.pa_damage
+  let wdef = info.pd_damage
+  let mdef = info.md_damage
+  let avoid = info.eva
+  let knockback = info.pushed
+  let mut speed = info.speed
+  let mut fly_speed = info.fly_speed
+  let touch_damage = info.body_attack
+  let is_boss = info.boss
+  let no_flip = info.no_flip
   // let not_attack = info["notAttack"].get_bool!()
   let can_jump = src["jump"].get_children_count() > 0
   let can_fly = src["fly"].get_children_count() > 0
   let can_move = src["move"].get_children_count() > 0 || can_fly
-  let animations : Map[StanceType, @graphics.Animation] = Map::new()
-  if can_fly {
-    animations[StanceType::STAND] = src["fly"]
-      |> @graphics.Animation::from_resource
-    animations[StanceType::MOVE] = src["fly"]
-      |> @graphics.Animation::from_resource
-  } else {
-    animations[StanceType::STAND] = src["stand"]
-      |> @graphics.Animation::from_resource
-    animations[StanceType::MOVE] = src["move"]
-      |> @graphics.Animation::from_resource
-  }
-  animations[StanceType::JUMP] = src["jump"]
-    |> @graphics.Animation::from_resource
-  animations[StanceType::HIT] = src["hit1"]
-    |> @graphics.Animation::from_resource
-  animations[StanceType::DIE] = src["die1"]
-    |> @graphics.Animation::from_resource
   let name = string_loader
     .load_res(["Mob.img", mid.to_string(), "name"])
     .get_string()
 
   //TODO: sound
 
-  let skillnode = info["skill"]
+  let skillnode = src["info"]["skill"]
   let skill_stands = {}
   for i in 0..<skillnode.get_children_count() {
     let skill_id = skillnode[i.to_string()]["skill"].get_int!()
@@ -674,9 +749,12 @@ pub fn Mob::send_movement(
 pub fn get_move_skill(
   self : Mob,
   move_id : Int,
-  level : Int
+  level : Int,
+  io_service : @io_task.IOService
 ) -> @utils.Future[Result[MobSkill, Error]] {
-  self.skill_cache.get_or_init(move_id, fn() { MobSkill::load(move_id, level) })
+  self.skill_cache.get_or_init(move_id, fn() {
+    io_service.submit(fn() { MobSkill::load(move_id, level) })
+  })
 }
 
 ///|
@@ -937,4 +1015,30 @@ pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   let percent = percent |> @math.minimum(100) |> @math.maximum(0)
   self.hp_percent = percent
   self.show_hp.set_for(2000)
+}
+
+///|
+fn load_animations(
+  src : @resource.NxNode,
+  can_fly : Bool
+) -> Map[StanceType, @graphics.Animation] {
+  let animations : Map[StanceType, @graphics.Animation] = Map::new()
+  if can_fly {
+    animations[StanceType::STAND] = src["fly"]
+      |> @graphics.Animation::from_resource
+    animations[StanceType::MOVE] = src["fly"]
+      |> @graphics.Animation::from_resource
+  } else {
+    animations[StanceType::STAND] = src["stand"]
+      |> @graphics.Animation::from_resource
+    animations[StanceType::MOVE] = src["move"]
+      |> @graphics.Animation::from_resource
+  }
+  animations[StanceType::JUMP] = src["jump"]
+    |> @graphics.Animation::from_resource
+  animations[StanceType::HIT] = src["hit1"]
+    |> @graphics.Animation::from_resource
+  animations[StanceType::DIE] = src["die1"]
+    |> @graphics.Animation::from_resource
+  animations
 }

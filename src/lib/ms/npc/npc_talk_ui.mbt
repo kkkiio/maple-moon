@@ -22,7 +22,7 @@ pub fn UINpcTalk::const_focused() -> Bool {
 ///|
 priv struct NPCTalkContent {
   text_content : Array[@graphics.Text]
-  text_button_content : Array[@ui.TextButton]
+  selections : Array[(ColorName, Int, String)]
 }
 
 ///|
@@ -33,7 +33,7 @@ pub enum TalkType {
   // SEND_ACCEPT_DECLINE
   SEND_OK // 0 0 0
   SEND_NEXT // 0 0 1
-  // SEND_NEXT_PREV // 0 1 1 unused
+  SEND_NEXT_PREV // 0 1 1
   SEND_PREV // 0 1 0
   // SEND_GET_TEXT
   // SEND_GET_NUMBER
@@ -46,27 +46,15 @@ pub fn TalkType::from_int(
   style_b1 : Int
 ) -> TalkType? {
   match msgtype {
-    0 => {
-      let is_send_ok = style_b0 == 0 && style_b1 == 0
-      let is_next_prev = style_b0 == 1 && style_b1 == 1
-      let is_next = style_b0 == 0 && style_b1 == 1
-      let is_prev = style_b0 == 1 && style_b1 == 0
-      if is_send_ok {
-        return Some(SEND_OK)
+    0 =>
+      match (style_b0, style_b1) {
+        (0, 0) => return Some(SEND_OK)
+        (0, 1) => return Some(SEND_NEXT)
+        (1, 0) => return Some(SEND_PREV)
+        (1, 1) => return Some(SEND_NEXT_PREV)
+        _ => return None
       }
-      if is_next_prev {
-        // return Some(SEND_NEXT_PREV)
-        return None
-      }
-      if is_next {
-        return Some(SEND_NEXT)
-      }
-      if is_prev {
-        return Some(SEND_PREV)
-      }
-      ...
-      // return Some(SEND_TEXT_ONLY)
-    }
+    // return Some(SEND_TEXT_ONLY)
     1 => return Some(SEND_YESNO)
     4 => return Some(SEND_SIMPLE)
     12 => ... // return Some(SEND_ACCEPT_DECLINE)
@@ -84,7 +72,7 @@ pub fn int_value(self : TalkType) -> Int {
     // below are determined by 2 style bytes when msgtype = 0
     SEND_OK => 13
     SEND_NEXT => 14
-    // SEND_NEXT_PREV => 15
+    SEND_NEXT_PREV => 15
     SEND_PREV => 16
     // SEND_GET_TEXT => 17
     // SEND_GET_NUMBER => 18
@@ -102,7 +90,7 @@ pub(all) enum TalkChoice {
   SEND_SIMPLE(option~ : Int?)
   SEND_OK(ok~ : Unit?)
   SEND_NEXT(next~ : Unit?)
-  // SEND_NEXT_PREV(next~ : Bool?)
+  SEND_NEXT_PREV(next~ : Bool?)
   SEND_PREV(prev~ : Unit?)
 } derive(Show)
 
@@ -219,6 +207,7 @@ pub fn UINpcTalk::new(
 ///|
 pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
   let render_elements = []
+  guard self.content is Some(content) else { return { render_elements, } }
   let offset = @struct.Point::default()
   // Add top texture
   render_elements.push(
@@ -248,7 +237,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
       self.resource.top.height() + self.height + self.resource.bottom.height()
     ) /
     2
-  let speaker_pos = @struct.Point::new(52, 11 + speaker_y)
+  let speaker_pos = @struct.Point::new(100, 11 + speaker_y)
   let center_pos = speaker_pos +
     @struct.Point::new(self.resource.nametag.width() / 2, 0)
   render_elements.push(
@@ -268,40 +257,14 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
     |> @ui.StaticUI::new(pos=center_pos + @struct.Point::new(0, -4))
     |> @ui.RenderElement::Static,
   )
-
-  // Add content if exists
-  match self.content {
-    Some(content) => {
-      let mut init_height = 19
-      for element in content.text_content {
-        render_elements.push(
-          @ui.TextUI(element)
-          |> @ui.StaticUI::new(pos=@struct.Point::new(166, init_height))
-          |> @ui.RenderElement::Static,
-        )
-        init_height += element.height()
-      }
-      for element in content.text_button_content {
-        render_elements.push(
-          element
-          |> @ui.Button::new(on_click=fn() {
-            match self.talk_action {
-              Some(SEND_SIMPLE(option)) =>
-                option(Some(element.get_option_number()))
-              _ =>
-                // @log.error(
-                //   { "talk_action": self.talk_action },
-                //   "expect SEND_SIMPLE",
-                // )
-                panic()
-            }
-            None
-          })
-          |> @ui.Button::as_interactable,
-        )
-      }
-    }
-    None => ()
+  let mut init_height = 19
+  for element in content.text_content {
+    render_elements.push(
+      @ui.TextUI(element)
+      |> @ui.StaticUI::new(pos=@struct.Point::new(166, init_height))
+      |> @ui.RenderElement::Static,
+    )
+    init_height += element.height()
   }
   // Add buttons
   let y_cord = self.height + 48
@@ -310,112 +273,110 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
     pos=@struct.Point::new(9, y_cord),
   )
   @log.debug({ "talk_action": self.talk_action }, "render talk action")
+  fn new_btn(btn, on_click) {
+    btn
+    |> @ui.Button::new(on_click=fn() {
+      on_click()
+      None
+    })
+    |> @ui.Button::as_interactable
+  }
+
   match self.talk_action {
-    Some(SEND_YESNO(callback)) => {
-      render_elements.push(
-        @ui.MapleButton::new(
-          self.resource.bt_yes,
-          pos=@struct.Point::new(389, y_cord),
+    Some(SEND_YESNO(callback)) =>
+      render_elements
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(
+            self.resource.bt_yes,
+            pos=Point::new(389, y_cord),
+          ),
+          fn() { callback(Some(true)) },
+        ),
+      )
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(self.resource.bt_no, pos=Point::new(461, y_cord)),
+          fn() { callback(Some(false)) },
+        ),
+      )
+      ..push(new_btn(btn_close, fn() { callback(None) }))
+    Some(SEND_NEXT(callback)) =>
+      render_elements
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(
+            self.resource.bt_next,
+            pos=Point::new(461, y_cord - 30),
+          ),
+          fn() { callback(Some(())) },
+        ),
+      )
+      ..push(new_btn(btn_close, fn() { callback(None) }))
+    Some(SEND_PREV(callback)) =>
+      render_elements
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(
+            self.resource.bt_prev,
+            pos=Point::new(367, y_cord - 30),
+          ),
+          fn() { callback(Some(())) },
+        ),
+      )
+      ..push(new_btn(btn_close, fn() { callback(None) }))
+    Some(SEND_NEXT_PREV(callback)) =>
+      render_elements
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(
+            self.resource.bt_prev,
+            pos=Point::new(367, y_cord - 30),
+          ),
+          fn() { callback(Some(false)) },
+        ),
+      )
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(
+            self.resource.bt_next,
+            pos=Point::new(461, y_cord - 30),
+          ),
+          fn() { callback(Some(true)) },
+        ),
+      )
+      ..push(new_btn(btn_close, fn() { callback(None) }))
+    Some(SEND_OK(callback)) =>
+      render_elements
+      ..push(
+        new_btn(
+          @ui.MapleButton::new(self.resource.bt_ok, pos=Point::new(469, y_cord)),
+          fn() { callback(Some(())) },
+        ),
+      )
+      ..push(new_btn(btn_close, fn() { callback(None) }))
+    Some(SEND_SIMPLE(callback)) => {
+      for selection in content.selections {
+        let element = @ui.TextButton::new(
+          @graphics.Text::new(
+            text=selection.2,
+            @graphics.FontId::A13M,
+            @graphics.TextAlignment::LEFT,
+            selection.0,
+            max_width=320,
+          ),
+          selection.1,
         )
-        |> @ui.Button::new(on_click=fn() {
-          callback(Some(true))
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-      render_elements.push(
-        @ui.MapleButton::new(
-          self.resource.bt_no,
-          pos=@struct.Point::new(461, y_cord),
+        element
+        .get_button_base()
+        .set_position(@struct.Point::new(166, init_height))
+        init_height += element.height()
+        render_elements.push(
+          new_btn(element, fn() { callback(Some(selection.1)) }),
         )
-        |> @ui.Button::new(on_click=fn() {
-          callback(Some(false))
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-      render_elements.push(
-        btn_close
-        |> @ui.Button::new(on_click=fn() {
-          callback(None)
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
+      }
+      render_elements..push(new_btn(btn_close, fn() { callback(None) }))
     }
-    Some(SEND_NEXT(callback)) => {
-      render_elements.push(
-        @ui.MapleButton::new(
-          self.resource.bt_next,
-          pos=@struct.Point::new(461, y_cord - 30),
-        )
-        |> @ui.Button::new(on_click=fn() {
-          callback(Some(()))
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-      render_elements.push(
-        btn_close
-        |> @ui.Button::new(on_click=fn() {
-          callback(None)
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-    }
-    Some(SEND_PREV(callback)) => {
-      render_elements.push(
-        @ui.MapleButton::new(
-          self.resource.bt_prev,
-          pos=@struct.Point::new(367, y_cord),
-        )
-        |> @ui.Button::new(on_click=fn() {
-          callback(Some(()))
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-      render_elements.push(
-        btn_close
-        |> @ui.Button::new(on_click=fn() {
-          callback(None)
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-    }
-    Some(SEND_OK(callback)) => {
-      render_elements.push(
-        @ui.MapleButton::new(
-          self.resource.bt_ok,
-          pos=@struct.Point::new(469, y_cord),
-        )
-        |> @ui.Button::new(on_click=fn() {
-          callback(Some(()))
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-      render_elements.push(
-        btn_close
-        |> @ui.Button::new(on_click=fn() {
-          callback(None)
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
-    }
-    Some(SEND_SIMPLE(callback)) =>
-      // options handled in content, add close
-      render_elements.push(
-        btn_close
-        |> @ui.Button::new(on_click=fn() {
-          callback(None)
-          None
-        })
-        |> @ui.Button::as_interactable,
-      )
     None => ()
   }
   { render_elements, }
@@ -445,7 +406,6 @@ pub fn change_text(
     self.name.change_text("")
   }
   self.height = self.min_height + 20
-  self.reset_content_pos()
   self.base.position = @struct.Point::new(
     400 - self.resource.top.width() / 2,
     240 - self.height / 2,
@@ -458,25 +418,22 @@ pub fn change_text(
 }
 
 ///|
-fn reset_content_pos(self : UINpcTalk) -> Unit {
-  let content = match self.content {
-    Some(content) => content
-    None => return
-  }
-  let mut init_height = 19
-  for element in content.text_content {
-    init_height += element.height()
-  }
-  for element in content.text_button_content {
-    element.get_button_base().set_position(@struct.Point::new(166, init_height))
-    init_height += element.height()
-  }
-}
+priv struct NpcTalkMorePacket {
+  lastmsg : TalkType
+  response : Int
+  selection : Int?
+} derive(Show)
 
 ///|
-fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
+impl @net.OutMessage for NpcTalkMorePacket with pack(self) -> @net.OutPacket {
   let p = @net.OutPacket::new(@net.ClientOpcode::NPC_TALK_MORE)
-  p..write_byte(lastmsg.to_byte())..write_byte(response.to_byte())
+  p
+  ..write_byte(self.lastmsg.int_value().to_byte())
+  ..write_byte(self.response.to_byte())
+  match self.selection {
+    Some(selection) => p.write_int(selection)
+    None => ()
+  }
   p
 }
 
@@ -486,10 +443,18 @@ fn new_npc_talk_more_packet(lastmsg : Int, response : Int) -> @net.OutPacket {
 // }
 
 ///|
-fn new_npc_talk_more_packet_with_selection(selection : Int) -> @net.OutPacket {
-  let p = new_npc_talk_more_packet(4, 1)
-  p..write_int(selection)
-  p
+fn new_npc_talk_more_packet_with_selection(
+  selection : Int
+) -> NpcTalkMorePacket {
+  { lastmsg: SEND_SIMPLE, response: 1, selection: Some(selection) }
+}
+
+///|
+fn new_npc_talk_more_packet(
+  lastmsg : TalkType,
+  response : Int
+) -> NpcTalkMorePacket {
+  { lastmsg, response, selection: None }
 }
 
 ///|
@@ -497,7 +462,6 @@ fn convert_npc_text(
   raw_text : String,
   name_loader : @markup_text.RefRender
 ) -> NPCTalkContent! {
-  @log.debug({ "raw_text": raw_text }, "npc talk")
   let content = parse_talk_content!(
     raw_text,
     mod_provider=fn(_, v) { name_loader.get_mob_name(v) },
@@ -506,20 +470,6 @@ fn convert_npc_text(
     item_provider=fn(_, v) { name_loader.get_item_name(v).to_string() },
     player_name_provider=fn(_, _) { name_loader.get_player_name() },
   )
-  let text_button_content = []
-  for selection in content.selections {
-    let button = @ui.TextButton::new(
-      @graphics.Text::new(
-        text=selection.2,
-        @graphics.FontId::A13M,
-        @graphics.TextAlignment::LEFT,
-        selection.0,
-        max_width=320,
-      ),
-      selection.1,
-    )
-    text_button_content.push(button)
-  }
   {
     text_content: [
       @graphics.Text::new(
@@ -530,6 +480,9 @@ fn convert_npc_text(
         max_width=320,
       ),
     ],
-    text_button_content,
+    selections: content.selections,
   }
 }
+
+///|
+typealias @struct.Point

@@ -137,7 +137,7 @@ pub async fn BackgroundResource::load(
   spec : BackgroundSpec
 ) -> BackgroundResource! {
   let animated = spec.ani
-  let bg_res = background_loader.load_resource([
+  let bg_res = background_loader.load_res_async([
     spec.bS + ".img",
     if animated {
       "ani"

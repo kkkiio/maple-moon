@@ -7,22 +7,25 @@ struct Module {
     (ConfirmShopTransactionCode) -> Bool,
   ]
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
 pub fn Module::load(
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
   // @ui.ui_window_2_loader().load_res(["Shop2"])
   // |> @utils.map(fn(src) { Module::new(container, src) })
-  Module::new(network, string_loader)
+  Module::new(network, string_loader, io_service)
 }
 
 ///|
 fn Module::new(
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
   // let countset = @graphics.Charset::new(
   //   @ui.common_ui_loader().load_res(["Basic.img", "ItemNo"]),
@@ -34,6 +37,7 @@ fn Module::new(
     confirm_shop_transaction_listeners: [],
     opening_shop: None,
     string_loader,
+    io_service,
   }
 }
 

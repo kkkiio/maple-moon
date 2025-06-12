@@ -7,16 +7,15 @@ struct AfterImage {
 }
 
 ///|
-pub fn AfterImage::load(
+pub async fn AfterImage::load(
   skill_id : Int,
   name : String,
   stance_name : String,
   level : Int
-) -> @utils.Future[AfterImage] {
-  (if skill_id > 0 {
+) -> AfterImage! {
+  let src = if skill_id > 0 {
     let strid = @string_format.extend_id(skill_id, 7)
-    @skill.skill_loader()
-    .load_res([
+    let skill_src = @skill.skill_loader().load_res_async([
       strid.substring(end=3) + ".img",
       "skill",
       strid,
@@ -24,20 +23,17 @@ pub fn AfterImage::load(
       name,
       stance_name,
     ])
-    .map(fn(src) { if src.is_null() { None } else { Some(src) } })
+    if skill_src.is_null() {
+      let path = [name + ".img", (level / 10).to_string(), stance_name]
+      get_afterimage_loader().load_res_async(path)
+    } else {
+      skill_src
+    }
   } else {
-    @utils.Future::from_value(None)
-  })
-  .bind(fn(opt) {
-    opt.map_or_else(
-      fn() {
-        let path = [name + ".img", (level / 10).to_string(), stance_name]
-        get_afterimage_loader().load_res(path)
-      },
-      fn(src) { @utils.Future::from_value(src) },
-    )
-  })
-  .map(fn(src) { AfterImage::new(src) })
+    let path = [name + ".img", (level / 10).to_string(), stance_name]
+    get_afterimage_loader().load_res_async(path)
+  }
+  AfterImage::new(src)
 }
 
 ///|

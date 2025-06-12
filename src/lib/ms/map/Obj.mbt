@@ -17,7 +17,7 @@ pub async fn Obj::load(obj : ObjResource) -> Obj! {
   let l0 = obj.l0
   let l1 = obj.l1
   let l2 = obj.l2
-  let res = get_object_loader().load_resource(["\{oS}.img", l0, l1, l2])
+  let res = get_object_loader().load_res_async(["\{oS}.img", l0, l1, l2])
   Obj::from_resource(obj, res)
 }
 

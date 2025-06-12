@@ -200,20 +200,8 @@ pub(all) enum TalkAction {
   SEND_NEXT((Unit?) -> Unit)
   SEND_PREV((Unit?) -> Unit)
   SEND_SIMPLE((Int?) -> Unit) // select option
+  SEND_NEXT_PREV((Bool?) -> Unit) // next or prev
 } derive(Show)
-
-///|
-// impl Show for TalkAction with output(self, logger) {
-//   logger.write_string(
-//     match self {
-//       SEND_YESNO(_) => "SEND_YESNO"
-//       SEND_OK(_) => "SEND_OK"
-//       SEND_NEXT(_) => "SEND_NEXT"
-//       SEND_PREV(_) => "SEND_PREV"
-//       SEND_SIMPLE(_) => "SEND_SIMPLE"
-//     },
-//   )
-// }
 
 ///|
 pub fn Npc::talk(self : Npc) -> TalkArgs? {

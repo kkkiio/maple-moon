@@ -1,57 +1,42 @@
 ///|
-fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
+async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot]! {
   let slotmax = mod.inventory.get_slotmax(kind)
-  (1)
-  .until(slotmax, inclusive=true)
-  .map(fn(slot_no) {
+  async fn load_slot(slot_no) -> WithItemSlot?!Error {
     match mod.inventory.get_slot_item_at(kind, slot_no) {
-      Some(slot_item) =>
-        match
-          @item.ItemData::get_async(slot_item.item_id, mod.string_loader).poll() {
-          Some(Ok(item_data)) =>
-            Some({
-              slot_no,
-              id: item_data.item_id,
-              name: item_data.name,
-              desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
-                make_equip_desc(item_data)
-              } else {
-                make_html_desc(item_data.desc)
-              },
-              count: if kind == TypeId::EQUIP {
-                1
-              } else {
-                mod.inventory.get_item_count_at_slot(kind, slot_no)
-              },
-              icon: item_data.get_icon(false).bitmap.map_or(
-                @resource.Image::new_pending(),
-                fn(bitmap) { bitmap.image },
-              ),
-            })
-          Some(Err(e)) => {
-            @log.error(
-              {
-                "err": e.to_string(),
-                "item_id": slot_item.item_id,
-                "slot": slot_no,
-              },
-              "Failed to load item data",
-            )
-            Some({
-              slot_no,
-              id: slot_item.item_id,
-              name: "Unknown \{slot_item.item_id}",
-              desc: "",
-              count: slot_item.count,
-              icon: @resource.Image::new_pending(),
-            })
-          }
-          None => None // TODO: return async result
-        }
+      Some(slot_item) => {
+        let item_data = @item.ItemData::get_async(
+          slot_item.item_id,
+          mod.string_loader,
+        )
+        Some({
+          slot_no,
+          id: item_data.item_id,
+          name: item_data.name,
+          desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
+            make_equip_desc(item_data)
+          } else {
+            make_html_desc(item_data.desc)
+          },
+          count: if kind == TypeId::EQUIP {
+            1
+          } else {
+            mod.inventory.get_item_count_at_slot(kind, slot_no)
+          },
+          icon: item_data.get_icon(false).bitmap.map_or(
+            @resource.Image::new_pending(),
+            fn(bitmap) { bitmap.image },
+          ),
+        })
+      }
       None => None
     }
-  })
-  .to_array()
+  }
+
+  (1)
+  .until(slotmax, inclusive=true)
+  .map(fn(slot_no) { fn!() { load_slot!(slot_no) } })
+  |> Array::from_iter()
+  |> @js.async_all()
 }
 
 ///|
@@ -90,18 +75,20 @@ pub fn watch_inventory_by_kind(
   watcher : InventoryWatcher
 ) -> Unit {
   let type_id = get_type_id_by_kind?(kind).unwrap()
-  // Call watcher with initial items
-  let items = get_all_items_by_type(mod, type_id)
-  let cont = watcher(items)
-  if not(cont) {
-    return
+  let mut cont = true
+  fn sync_callback() {
+    if cont {
+      mod.io_service.execute(fn() {
+        let items = get_all_items_by_type(mod, type_id)
+        cont = watcher(items)
+      })
+    }
+    cont
   }
-
+  // Call watcher with initial items
+  guard sync_callback()
   // Add to inventory listeners
-  mod.inventory.listen_item_changes(type_id, fn() {
-    let items = get_all_items_by_type(mod, type_id)
-    watcher(items)
-  })
+  mod.inventory.listen_item_changes(type_id, sync_callback)
 }
 
 ///| Watch meso changes
@@ -124,9 +111,8 @@ pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
       guard mod.inventory.get_slot_item_at(type_id, slot_no._) is Some(item) else {
         return "no item at slot \{slot_no} of \{kind}"
       }
-      guard @item.ItemData::get_async(item.item_id, mod.string_loader).poll()
-        is Some(Ok(item_data)) else {
-        return "failed to load item data \{item.item_id}"
+      guard @item.ItemData::get_loaded(item.item_id) is Some(item_data) else {
+        return "item data not loaded \{item.item_id}"
       }
       guard @equip_data.EquipData::parse_item_data?(item_data) is Ok(equip_data) else {
         return "failed to parse equip data \{item.item_id}"

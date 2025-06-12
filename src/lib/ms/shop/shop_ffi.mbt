@@ -19,34 +19,42 @@ pub fn watch_opening_shop_ffi(
   mod : Module,
   callback : (@js.Nullable[ShopUIData]) -> Bool
 ) -> Unit {
+  let mut cont = true
   let listener = fn(npc_shop : OpenNpcShop?) {
     guard npc_shop is Some(npc_shop) else {
       return callback(@js.Nullable::null())
     }
-    let shop_data = {
-      npc_id: npc_shop.npc_id,
-      shop_items: npc_shop.items.mapi(fn(i, item) {
-        let item_data = @item.ItemData::get_async(item.id, mod.string_loader)
-        {
-          slot_no: i,
-          item_id: item.id,
-          name: item_data
-          .poll()
-          .bind(fn(item_data) { item_data.to_option() })
-          .map(fn(item_data) { item_data.name })
-          .or_default(),
-          price: item.price,
-          icon: item_data
-          .poll()
-          .bind(fn(item_data) { item_data.to_option() })
-          .bind(fn(item_data) { item_data.get_icon(false).bitmap })
-          .map(fn(bitmap) { bitmap.image })
-          .or(@resource.Image::new_pending()),
-          buyable_qty: item.buyable,
-        }
-      }),
+    async fn async_callback!() {
+      let shop_data = {
+        npc_id: npc_shop.npc_id,
+        shop_items: npc_shop.items.mapi(fn(i, item) {
+          async fn() {
+            let item_data = @item.ItemData::get_async(
+              item.id,
+              mod.string_loader,
+            )
+            {
+              slot_no: i,
+              item_id: item.id,
+              name: item_data.name,
+              price: item.price,
+              icon: item_data.get_icon(false).bitmap.map_or(
+                @resource.Image::new_pending(),
+                fn(bitmap) { bitmap.image },
+              ),
+              buyable_qty: item.buyable,
+            }
+          }
+        })
+        |> @js.async_all(),
+      }
+      cont = callback(@js.Nullable::from_option(Some(shop_data)))
     }
-    callback(@js.Nullable::from_option(Some(shop_data)))
+
+    if cont {
+      mod.io_service.execute(async_callback)
+    }
+    cont
   }
   if not(listener(mod.opening_shop)) {
     return

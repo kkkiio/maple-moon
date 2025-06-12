@@ -1,5 +1,5 @@
 ///|
-struct Ball {
+priv struct Ball {
   animation : @graphics.Animation
 }
 
@@ -9,7 +9,7 @@ fn Ball::new(src : @resource.NxNode) -> Ball! {
 }
 
 ///|
-struct SkillRegularBullet {
+priv struct SkillRegularBullet {
   string_loader : @resource.SyncLoader
 }
 
@@ -21,19 +21,17 @@ fn SkillRegularBullet::new(
 }
 
 ///|
-fn SkillRegularBullet::get(
+async fn SkillRegularBullet::get(
   self : SkillRegularBullet,
-  user : @character.Character,
+  _ : @character.Character,
   bulletid : Int
-) -> @utils.Future[@graphics.Animation] {
-  @bullet.BulletData::get_async(bulletid, self.string_loader).map(fn(data) {
-    data.unwrap() // TODO: handle error
-    .bullet
-  })
+) -> @graphics.Animation! {
+  let data = @bullet.BulletData::get_async(bulletid, self.string_loader)
+  data.bullet
 }
 
 ///|
-struct SingleBullet {
+priv struct SingleBullet {
   ball : Ball
 }
 
@@ -52,7 +50,7 @@ fn SingleBullet::get(
 }
 
 ///|
-struct BySkillLevelBullet {
+priv struct BySkillLevelBullet {
   bullets : Map[Int, Ball]
   skill_id : Int
 }
@@ -74,7 +72,7 @@ fn BySkillLevelBullet::new(
 fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
-  bulletid : Int
+  _ : Int
 ) -> @graphics.Animation {
   let level = (user.get_skilllevel)(self.skill_id)
   match self.bullets.get(level) {

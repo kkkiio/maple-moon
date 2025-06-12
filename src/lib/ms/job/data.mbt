@@ -6,14 +6,13 @@ pub(all) struct JobData {
 }
 
 ///|
-pub fn JobData::load(
+pub async fn JobData::load(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[JobData] {
+) -> JobData! {
   let strid = @string_format.extend_id(id, 3)
-  @skill.skill_loader()
-  .load_res([strid + ".img"])
-  .map(fn(src) { JobData::new(id, src, string_loader) })
+  let src = @skill.skill_loader().load_res_async([strid + ".img"])
+  JobData::new(id, src, string_loader)
 }
 
 ///|

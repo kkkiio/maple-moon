@@ -13,8 +13,7 @@ pub async fn Module::load(
   container : &@ui.Container,
   network : @net.Network,
   ref_render : @markup_text.RefRender,
-  string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  string_loader : @resource.SyncLoader
 ) -> Module! {
   let npc_loader = @resource.SyncLoader::load(
     "npc",
@@ -23,7 +22,7 @@ pub async fn Module::load(
       "https://maple-res.kkkiiox.work/Npc/images",
     ),
   )
-  let res = @ui.ui_window_2_loader().load_resource(["UtilDlgEx"])
+  let res = @ui.ui_window_2_loader().load_res_async(["UtilDlgEx"])
   let npc_talk_resource = NpcTalkResource::from_resource(res)
   Module::new(
     container,
@@ -93,26 +92,29 @@ pub fn make_handlers(
   self : Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    @net.make_handler(@net.SPAWN_NPC, parse_spawn_npc, fn(npc) {
-      handle_spawn_npc_parsed(self.npcs, npc)
-    }),
-    @net.make_handler(@net.SPAWN_NPC_C, parse_spawn_npc_controller, fn(
-      ctrl : SpawnNpcController
-    ) {
-      handle_spawn_npc_controller_parsed(self.npcs, ctrl)
-    }),
-    @net.make_handler(@net.NPC_DIALOGUE, parse_npc_dialogue, fn(
-      dialogue : NpcDialogue
-    ) {
+    @net.make_handler(
+      @net.SPAWN_NPC,
+      parse_spawn_npc,
+      handle_spawn_npc_parsed(self.npcs, _),
+    ),
+    @net.make_handler(
+      @net.SPAWN_NPC_C,
+      parse_spawn_npc_controller,
+      handle_spawn_npc_controller_parsed(self.npcs, _),
+    ),
+    @net.make_handler(
+      @net.NPC_DIALOGUE,
+      parse_npc_dialogue,
       handle_npc_dialogue(
         self.container,
         self.network,
         self.ref_render,
         self.string_loader,
         self.npc_talk_resource,
-        dialogue,
-      )
-    }),
+        _,
+      ),
+      log_recv=true,
+    ),
   ]
   |> Map::from_array
 }
@@ -216,11 +218,6 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
   let speaker = recv.read_byte!()
   let text = recv.read_string!()
   let (style_b0, style_b1) = if recv.available() > 0 && msgtype == 0 {
-    // {b0, b1}
-    // {0, 1} = next
-    // {1, 0} = prev
-    // {1, 1} = nextPrev ??
-    // {0, 0} = ok
     (recv.read_ubyte!(), recv.read_ubyte!())
   } else {
     (0, 0)
@@ -275,6 +272,13 @@ pub fn handle_npc_dialogue(
                 SEND_SIMPLE(fn(c) {
                   on_npc_talk_choice(network, TalkChoice::SEND_SIMPLE(option=c))
                 })
+              TalkType::SEND_NEXT_PREV =>
+                SEND_NEXT_PREV(fn(c) {
+                  on_npc_talk_choice(
+                    network,
+                    TalkChoice::SEND_NEXT_PREV(next=c),
+                  )
+                })
             },
           },
           string_loader,
@@ -327,6 +331,11 @@ fn new_npc_talk_ui(
             container.remove_ui(@ui.UIElementType::NPC_TALK)
             callback(c)
           })
+        SEND_NEXT_PREV(callback) =>
+          SEND_NEXT_PREV(fn(c) {
+            container.remove_ui(@ui.UIElementType::NPC_TALK)
+            callback(c)
+          })
       },
       args.speaker,
       args.str,
@@ -341,5 +350,5 @@ fn new_npc_talk_ui(
 
 ///|
 fn on_npc_talk_choice(network : @net.Network, c : TalkChoice) -> Unit {
-  network.send_packet(make_talk_packet(c))
+  network.send_message(make_talk_packet(c))
 }

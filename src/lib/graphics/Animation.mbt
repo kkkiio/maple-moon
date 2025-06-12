@@ -9,7 +9,7 @@ struct Frame {
 }
 
 ///|
-pub typealias NxNode = @resource.NxNode
+pub typealias @resource.NxNode
 
 ///|
 fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
@@ -21,17 +21,15 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
     it => it
   }
   let opacities = match (src["a0"].value(), src["a1"].value()) {
-    (@json.JsonValue::Number(a0), @json.JsonValue::Number(a1)) =>
-      (a0.to_int(), a1.to_int())
-    (@json.JsonValue::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
-    (_, @json.JsonValue::Number(a1)) => (255 - a1.to_int(), a1.to_int())
+    (Json::Number(a0), Json::Number(a1)) => (a0.to_int(), a1.to_int())
+    (Json::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
+    (_, Json::Number(a1)) => (255 - a1.to_int(), a1.to_int())
     _ => (255, 255)
   }
   let scales = match (src["z0"].value(), src["z1"].value()) {
-    (@json.JsonValue::Number(z0), @json.JsonValue::Number(z1)) =>
-      (z0.to_int(), z1.to_int())
-    (@json.JsonValue::Number(z0), _) => (z0.to_int(), 0)
-    (_, @json.JsonValue::Number(z1)) => (100, z1.to_int())
+    (Json::Number(z0), Json::Number(z1)) => (z0.to_int(), z1.to_int())
+    (Json::Number(z0), _) => (z0.to_int(), 0)
+    (_, Json::Number(z1)) => (100, z1.to_int())
     _ => (100, 100)
   }
   { texture, delay, head, bounds, opacities, scales }

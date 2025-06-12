@@ -1,7 +1,6 @@
 {
   "import": [
     "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/utils",
     "rami3l/js-ffi/js"
   ],
   "link": {

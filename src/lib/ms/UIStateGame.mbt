@@ -1,5 +1,5 @@
 ///|
-typealias UIElementType = @ui.UIElementType
+typealias @ui.UIElementType
 
 ///|
 let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro

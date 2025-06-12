@@ -18,12 +18,12 @@ struct MiniMapUIResource {
 ///| Loads the necessary graphical resources for displaying the MiniMap UI.
 pub async fn MiniMapUIResource::load() -> MiniMapUIResource! {
   let map_latest_loader = get_map_latest_loader()
-  let portal_node = map_latest_loader.load_resource([
+  let portal_node = map_latest_loader.load_res_async([
     "MapHelper.img", "minimap", "portal",
   ])
   // Load UI window elements from UIWindow2.img
   let ui_loader = @ui.ui_window_2_loader()
-  let minmap_node = ui_loader.load_resource(["MiniMap", "MinMap"])
+  let minmap_node = ui_loader.load_res_async(["MiniMap", "MinMap"])
   let portal_marker = @graphics.Animation::from_resource(portal_node)
 
   // Load normal mode window frame elements
@@ -412,12 +412,12 @@ pub fn get_map_latest_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn load_map_node(map_id : Int) -> @utils.Future[@resource.NxNode] {
+pub async fn load_map_node(map_id : Int) -> @resource.NxNode! {
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
   let strid = @string_format.extend_id(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
-  get_mapx_loader().load_res(path)
+  get_mapx_loader().load_res_async(path)
 }
 
 ///|

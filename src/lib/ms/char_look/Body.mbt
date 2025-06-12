@@ -21,8 +21,8 @@ fn get_body_loader() -> @resource.AsyncLoader {
 async fn Body::load(skin : Int, drawinfo : @types.BodyDrawInfo) -> Body! {
   let strid : String = @string_format.extend_id(skin, 2)
   let loader = get_body_loader()
-  let bodynode = loader.load_resource(["000020" + strid + ".img"])
-  let headnode = loader.load_resource(["000120" + strid + ".img"])
+  let bodynode = loader.load_res_async(["000020" + strid + ".img"])
+  let headnode = loader.load_res_async(["000120" + strid + ".img"])
   Body::new(skin, drawinfo, bodynode, headnode)
 }
 

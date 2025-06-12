@@ -15,8 +15,8 @@ pub async fn Module::load(
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
 ) -> Module! {
-  let bodynode = get_body_loader().load_resource(["00002000.img"])
-  let headnode = get_body_loader().load_resource(["00012000.img"])
+  let bodynode = get_body_loader().load_res_async(["00002000.img"])
+  let headnode = get_body_loader().load_res_async(["00012000.img"])
   Module::new(
     bodynode, headnode, on_player_look_changed, io_service, string_loader,
   )
@@ -46,7 +46,15 @@ pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook! {
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
-  CharLook::new(entry, body, hair, face, self.string_loader, self.draw_info)
+  CharLook::new(
+    self.io_service,
+    entry,
+    body,
+    hair,
+    face,
+    self.string_loader,
+    self.draw_info,
+  )
 }
 
 ///|

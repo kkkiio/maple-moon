@@ -15,30 +15,30 @@ struct Skill {
 }
 
 ///|
-pub fn Skill::load(
+pub async fn Skill::load(
   string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService,
   skill_id : Int
-) -> @utils.Future[Result[Skill, Error]] {
+) -> Skill! {
   let data = @skill.SkillData::load(string_loader, skill_id)
-  data.map_exn(fn(data) {
-    let data = data.unwrap_or_error!()
-    Skill::new!(
-      string_loader,
-      skill_id,
-      data.src,
-      data.is_attack,
-      data.master_level,
-      data.stats,
-      data.req_weapon,
-      make_use_effect!(data.src, skill_id),
-      make_hit_effect!(data.src),
-    )
-  })
+  Skill::new!(
+    string_loader,
+    io_service,
+    skill_id,
+    data.src,
+    data.is_attack,
+    data.master_level,
+    data.stats,
+    data.req_weapon,
+    make_use_effect!(data.src, skill_id),
+    make_hit_effect!(data.src),
+  )
 }
 
 ///|
 pub fn Skill::new(
   string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService,
   skill_id : Int,
   src : @resource.NxNode,
   is_attack : Bool,
@@ -94,7 +94,7 @@ pub fn Skill::new(
     projectile = false
     let bullet = SkillRegularBullet::new(string_loader)
     fn(user : @character.Character, bulletid : Int) {
-      bullet.get(user, bulletid)
+      io_service.submit(fn() { bullet.get(user, bulletid) }).map(_.unwrap())
     }
   }
   {

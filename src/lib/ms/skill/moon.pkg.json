@@ -4,7 +4,6 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/ms/string_format",
-    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/ms/string_format"
   ]
 }

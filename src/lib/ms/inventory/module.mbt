@@ -4,15 +4,23 @@ struct Module {
   player_getter : () -> @player.Player?
   network : @net.Network
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
 pub fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
-  { inventory: Inventory::new(network), player_getter, network, string_loader }
+  {
+    inventory: Inventory::new(network),
+    player_getter,
+    network,
+    string_loader,
+    io_service,
+  }
 }
 
 ///|

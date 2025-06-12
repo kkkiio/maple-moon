@@ -98,7 +98,7 @@ fn new_move_mob_packet(
 }
 
 ///| Message for moving a monster
-struct MoveMonsterMessage {
+priv struct MoveMonsterMessage {
   oid : Int
   move_id : Int
   nibbles : Int

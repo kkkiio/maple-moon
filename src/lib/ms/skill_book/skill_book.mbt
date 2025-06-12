@@ -8,13 +8,16 @@ struct SkillBook {
 ///|
 pub fn SkillBook::load(
   string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService,
   job : @job.Job,
   watchers : Array[SkillBookWatcher]
 ) -> @utils.Future[SkillBook] {
   job
   .get_all_subjobs()
   .flat_map(fn(it) { it.skill_ids.iter() })
-  .map(fn(skill_id) { @skill.SkillData::load(string_loader, skill_id) })
+  .map(fn(skill_id) {
+    io_service.submit(fn() { @skill.SkillData::load(string_loader, skill_id) })
+  })
   .collect()
   |> @utils.Future::all_of()
   |> _.map(fn(it) {

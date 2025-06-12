@@ -115,8 +115,8 @@ pub struct NumberSet {
 pub async fn NumberSet::load() -> NumberSet! {
   let loader = effect_loader
   async fn load_charset_pair!(path0, path1) {
-    let res0 = loader.load_resource(path0)
-    let res1 = loader.load_resource(path1)
+    let res0 = loader.load_res_async(path0)
+    let res1 = loader.load_res_async(path1)
     let res_pair = (res0, res1)
     @utils.BoolPair::new(
       @graphics.Charset::new(res_pair.0, @graphics.CharsetAlignment::LEFT),

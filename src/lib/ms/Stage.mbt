@@ -134,6 +134,7 @@ pub fn set_player_stage(
         },
         self.network,
         self.string_loader,
+        self.io_service,
       ).tap(fn(player) {
         self.player = Some(player)
         self.combat = Some(
@@ -142,8 +143,8 @@ pub fn set_player_stage(
             self.mobs,
             self.network,
             cooldowns,
-            self.add_task_fn,
             self.string_loader,
+            self.io_service,
           ),
         )
       })

@@ -120,10 +120,10 @@ pub fn MapPortals::find_warp_at(
 
 ///|
 pub async fn MapPortalAnimations::load() -> MapPortalAnimations! {
-  let src1 = map_helper_loader.load_resource([
+  let src1 = map_helper_loader.load_res_async([
     "portal", "game", "ph", "default", "portalContinue",
   ])
-  let src2 = map_helper_loader.load_resource(["portal", "game", "pv"])
+  let src2 = map_helper_loader.load_res_async(["portal", "game", "pv"])
   let (ani1, ani2) = (
     @graphics.Animation::from_resource(src1),
     @graphics.Animation::from_resource(src2),

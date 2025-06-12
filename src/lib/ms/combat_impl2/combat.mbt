@@ -2,7 +2,7 @@
 struct Combat {
   damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
-  skill_cache : Map[Int, @utils.Future[Result[@combat_impl.SpecialMove, Error]]]
+  skill_cache : Map[Int, @combat_impl.SpecialMove]
   regular_attack : @combat_impl.SpecialMove
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
@@ -10,9 +10,9 @@ struct Combat {
   bullets : Array[BulletEffect]
   damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
-  add_task_fn : (@utils.Future[Unit]) -> Unit
   network : @net.Network
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
@@ -21,22 +21,22 @@ pub fn Combat::new(
   mobs : @monster.MapMobs,
   packet_processor : @net.Network,
   cooldowns : Map[Int, Int],
-  add_task_fn : (@utils.Future[Unit]) -> Unit,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Combat {
   {
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_impl.new_regular_attack(string_loader),
+    regular_attack: @combat_impl.new_regular_attack(string_loader, io_service),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
     cooldowns,
-    add_task_fn,
     network: packet_processor,
     string_loader,
+    io_service,
   }
 }
 
@@ -89,26 +89,23 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
   if not(player.can_attack()) {
     return
   }
-  let act_f = self.get_move(move_id)
-  let task = act_f.map_exn(fn(act) {
-      let act = act.unwrap_or_error!()
-      let reason = self.can_use(
-        player.character,
-        player.skill_book,
-        player.stats,
-        player.inventory,
-        act,
-      )
-      if reason == @combat_impl.ForbidReason::FBR_NONE {
-        self.apply_move(player, act)
-      } else {
-        // TODO: show forbid reason
-        // let weapontype = self.player.get_stats().get_weapontype()
-        // ForbidSkillMessage::new(reason, weapontype).drop()
-      }
-    })
-    |> log_background_err
-  (self.add_task_fn)(task)
+  self.io_service.execute(fn() {
+    let act = self.get_move(move_id)
+    let reason = self.can_use(
+      player.character,
+      player.skill_book,
+      player.stats,
+      player.inventory,
+      act,
+    )
+    if reason == @combat_impl.ForbidReason::FBR_NONE {
+      self.apply_move(player, act)
+    } else {
+      // TODO: show forbid reason
+      // let weapontype = self.player.get_stats().get_weapontype()
+      // ForbidSkillMessage::new(reason, weapontype).drop()
+    }
+  })
 }
 
 ///|
@@ -125,7 +122,7 @@ fn Combat::apply_move(
     )
     act.apply_useeffects(player.character)
     act.apply_actions(player.character, attacktype)
-    player.character.set_afterimage(act.get_id())
+    player.character.set_afterimage(act.get_id(), self.io_service)
     let attack = act.make_attack(
       player.character,
       player.inventory,
@@ -326,34 +323,38 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-pub fn get_move(
+pub async fn get_move(
   self : Combat,
   move_id : Int
-) -> @utils.Future[Result[@combat_impl.SpecialMove, Error]] {
+) -> @combat_impl.SpecialMove! {
   if move_id == 0 {
-    return self.regular_attack |> Ok |> @utils.Future::from_value
+    return self.regular_attack
   }
-  self.skill_cache.get_or_init(move_id, fn() {
-    @combat_impl.Skill::load(self.string_loader, move_id).map(fn(f) {
-      f.map(fn(it) {
-        {
-          id: it.get_id(),
-          attack: it.is_attack(),
-          skill: true,
-          apply_useeffects: fn(c) { it.apply_useeffects(c) },
-          apply_actions: fn(attack_type, c) { it.apply_actions(attack_type, c) },
-          make_attack: fn(c, i, t, _) { it.make_attack(c, i.get_bulletid(), t) },
-          get_bullet: fn(c, bulletid) { it.get_bullet(c, bulletid) },
-          can_use: fn(level, weapontype, job, hp, mp, bullet) {
-            it.can_use(level, weapontype, job, hp, mp, bullet)
-          },
-          apply_hit_effects: fn(attack_user, mob) {
-            it.apply_hit_effects(attack_user, mob)
-          },
-        }
-      })
-    })
-  })
+  if self.skill_cache.get(move_id) is Some(act) {
+    return act
+  }
+  let it = @combat_impl.Skill::load(
+    self.string_loader,
+    self.io_service,
+    move_id,
+  )
+  let act : @combat_impl.SpecialMove = {
+    id: it.get_id(),
+    attack: it.is_attack(),
+    skill: true,
+    apply_useeffects: fn(c) { it.apply_useeffects(c) },
+    apply_actions: fn(attack_type, c) { it.apply_actions(attack_type, c) },
+    make_attack: fn(c, i, t, _) { it.make_attack(c, i.get_bulletid(), t) },
+    get_bullet: fn(c, bulletid) { it.get_bullet(c, bulletid) },
+    can_use: fn(level, weapontype, job, hp, mp, bullet) {
+      it.can_use(level, weapontype, job, hp, mp, bullet)
+    },
+    apply_hit_effects: fn(attack_user, mob) {
+      it.apply_hit_effects(attack_user, mob)
+    },
+  }
+  self.skill_cache.set(move_id, act)
+  act
 }
 
 ///|
@@ -469,17 +470,12 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let number = effect.number
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
-  let act_f = self.get_move(effect.move_id)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft, self.network)
-  (self.add_task_fn)(
-    act_f.map(fn(res) {
-      match res {
-        Ok(act) => act.apply_hit_effects(effect.user, mob)
-        Err(e) => @log.error({ "error": e }, "apply_damage_effect failed")
-      }
-    }),
-  )
+  self.io_service.execute(fn() {
+    let act = self.get_move(effect.move_id)
+    act.apply_hit_effects(effect.user, mob)
+  })
 }
 
 ///|
@@ -583,7 +579,7 @@ pub fn[E : Show] log_background_err(
 }
 
 ///|
-typealias Rectangle[T] = @struct.Rectangle[T]
+typealias @struct.Rectangle
 
 ///|
 pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
@@ -599,7 +595,7 @@ pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
 }
 
 ///|
-typealias AttackResult = @combat_proto.AttackResult
+typealias @combat_proto.AttackResult
 
 ///|
 pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int]! {

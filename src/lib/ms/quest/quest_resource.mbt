@@ -8,7 +8,7 @@ pub struct QuestResource {
 
 ///|
 pub impl @json.FromJson for QuestResource with from_json(json, path) {
-  let parsed : NxQuestResource = @json.from_json!(json, path~)
+  let parsed : QuestNxResource = @json.from_json!(json, path~)
   {
     quest_info_map: parsed.quest_info_map._,
     quest_checks_map: parsed.quest_checks_map._
@@ -23,7 +23,7 @@ pub impl @json.FromJson for QuestResource with from_json(json, path) {
 }
 
 ///|
-priv struct NxQuestResource {
+priv struct QuestNxResource {
   quest_info_map : IntMap[QuestInfo]
   quest_checks_map : IntMap[@resource.MapBasedArray[QuestPhaseChecks]]
   quest_say_map : IntMap[@resource.MapBasedArray[QuestPhaseSays]]
@@ -38,28 +38,6 @@ priv struct NxQuestResource {
     ),
   ),
 )
-
-///|
-pub type IntMap[T] Map[Int, T] derive(Show)
-
-///|
-pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
-  json,
-  path
-) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expect object"))
-  }
-  let map = {}
-  for key, value in obj {
-    guard @strconv.parse_int?(key) is Ok(key_int) else {
-      raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
-    }
-    let value : T = @json.from_json!(value, path=path.add_key(key))
-    map[key_int] = value
-  }
-  map
-}
 
 ///|
 let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
@@ -258,7 +236,7 @@ priv struct InfoEx {
 } derive(Show, @json.FromJson)
 
 ///|
-typealias Nullable[T] = @resource.Nullable[T]
+typealias @resource.Nullable
 
 ///|
 priv type NumbericInt Int derive(Show)
@@ -725,3 +703,6 @@ impl @json.FromJson for ActItem with from_json(json, path) {
     period: period._.map(fn(p) { p._ }),
   }
 }
+
+///|
+typealias @resource.IntMap

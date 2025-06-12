@@ -18,7 +18,7 @@ pub(all) enum Type {
   KNUCKLE
   GUN
   CASH
-} derive(Eq)
+} derive(Eq, ToJson)
 
 ///|
 pub fn int_value(self : Type) -> Int {

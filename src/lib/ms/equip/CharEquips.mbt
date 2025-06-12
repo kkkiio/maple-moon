@@ -10,14 +10,18 @@ pub(all) enum CapType {
 
 ///| A characters equipment (The visual part)
 struct CharEquips {
+  io_service : @io_task.IOService
   string_loader : @resource.SyncLoader
   clothes : Map[@slot.Id, (Int, @utils.Future[@clothing.Clothing?])]
   mut weapon_data_cache : @utils.Future[@weapon.WeaponData?]?
 }
 
 ///|
-pub fn CharEquips::new(string_loader : @resource.SyncLoader) -> CharEquips {
-  { string_loader, clothes: Map::new(), weapon_data_cache: None }
+pub fn CharEquips::new(
+  io_service : @io_task.IOService,
+  string_loader : @resource.SyncLoader
+) -> CharEquips {
+  { io_service, string_loader, clothes: Map::new(), weapon_data_cache: None }
 }
 
 ///|
@@ -91,43 +95,31 @@ pub fn add_equip(
   if item_id <= 0 {
     return
   }
-  let item_future = @item.ItemData::get_async(item_id, self.string_loader)
-  let cloth_future = item_future
-    .map_exn(fn(item_data) {
-      @clothing.Clothing::from_resource!(item_data.unwrap_or_error!(), drawinfo)
-    })
-    .map(fn(r) {
-      match r {
-        Ok(cloth) => Some(cloth)
-        Err(e) => {
-          @log.error(
-            { "item_id": item_id, "err": Show::to_string(e) },
-            "Failed to load clothing",
-          )
-          None
-        }
+  let mut cloth_res_ref : @clothing.Clothing?? = None
+  self.clothes[slot] = (item_id, @utils.Future::new(fn() { cloth_res_ref }))
+  let mut weapon_data_res_ref : @weapon.WeaponData?? = None
+  self.weapon_data_cache = @utils.Future::new(fn() { weapon_data_res_ref })
+    |> Some
+  self.io_service.execute(
+    fn() {
+      let item_data = @item.ItemData::get_async(item_id, self.string_loader)
+      let cloth = @clothing.Clothing::from_resource!(item_data, drawinfo)
+      cloth_res_ref = Some(Some(cloth))
+      if slot == @slot.Id::WEAPON {
+        weapon_data_res_ref = Some(
+          Some(@weapon.WeaponData::from_item_data!(item_data)),
+        )
       }
-    })
-  self.clothes[slot] = (item_id, cloth_future)
-  if slot == @slot.Id::WEAPON {
-    self.weapon_data_cache = item_future
-      .map_exn(fn(res) {
-        @weapon.WeaponData::from_item_data!(res.unwrap_or_error!())
-      })
-      .map(fn(res) {
-        match res {
-          Ok(weapon_data) => Some(weapon_data)
-          Err(e) => {
-            @log.error(
-              { "item_id": item_id, "err": Show::to_string(e) },
-              "Failed to load weapon data",
-            )
-            None
-          }
-        }
-      })
-      |> @option.some
-  }
+    },
+    on_error=fn(e) {
+      @log.error(
+        { "item_id": item_id, "err": Show::to_string(e) },
+        "Failed to load clothing",
+      )
+      cloth_res_ref = Some(None)
+      weapon_data_res_ref = Some(None)
+    },
+  )
 }
 
 ///|

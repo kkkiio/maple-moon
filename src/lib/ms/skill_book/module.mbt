@@ -5,23 +5,26 @@ struct Module {
   mut skill_book : SkillBook?
   watchers : Array[SkillBookWatcher]
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
 pub async fn Module::load(
   player_getter : () -> @player.Player?,
   packet_processor : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
-  Module::new(player_getter, packet_processor, string_loader)
+  Module::new(player_getter, packet_processor, string_loader, io_service)
 }
 
 ///|
 fn Module::new(
   player_getter : () -> @player.Player?,
   packet_processor : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> Module {
   {
     player_getter,
@@ -29,6 +32,7 @@ fn Module::new(
     skill_book: None,
     watchers: [],
     string_loader,
+    io_service,
   }
 }
 
@@ -47,8 +51,8 @@ pub fn make_handlers(
 }
 
 ///|
-pub fn make_actions(
-  self : Module
+pub fn Module::make_actions(
+  _ : Module
 ) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
   // [
   //   (
@@ -107,7 +111,7 @@ pub fn Module::load_skill_book(
   self : Module,
   job : @job.Job
 ) -> @utils.Future[&@player.SkillBook] {
-  SkillBook::load(self.string_loader, job, self.watchers)
+  SkillBook::load(self.string_loader, self.io_service, job, self.watchers)
   .tap(fn(skill_book) { self.skill_book = Some(skill_book) })
   .map(fn(skill_book) { skill_book })
 }

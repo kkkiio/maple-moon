@@ -62,6 +62,7 @@ struct Job {
 ///|
 pub fn Job::load(
   string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService,
   id~ : Int = 0
 ) -> @utils.Future[Job] {
   let level = if id == 0 {
@@ -78,12 +79,13 @@ pub fn Job::load(
   let subids = get_levels(upto=level).map(fn(sub_level) {
     get_subjob_id(id, level, sub_level)
   })
-  // Load all subjob data in parallel
   @utils.Future::all_of(
     subids
     .iter()
     .map(fn(subid) {
-      JobData::load(subid, string_loader).map(fn(data) { (subid, data) })
+      io_service
+      .submit(fn() { JobData::load(subid, string_loader) })
+      .map(fn(data) { (subid, data.unwrap()) }) // TODO: handle error
     })
     |> Array::from_iter,
   ).map(fn(data_list) {

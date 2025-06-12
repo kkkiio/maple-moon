@@ -1,5 +1,5 @@
 ///|
-typealias Linear = @utils.Linear
+typealias @utils.Linear
 
 ///| View on stage which follows the player object.
 struct Camera {

@@ -1,20 +1,25 @@
 ///|
 struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
-  mob_loadings : Array[@utils.Future[Unit]]
+  loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.T[MobSpawn]
   randomizer : @utils.Randomizer
   string_loader : @resource.SyncLoader
+  io_service : @io_task.IOService
 }
 
 ///|
-pub fn MapMobs::new(string_loader : @resource.SyncLoader) -> MapMobs {
+pub fn MapMobs::new(
+  string_loader~ : @resource.SyncLoader,
+  io_service : @io_task.IOService
+) -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
-    mob_loadings: Array::new(),
+    loading_mobs: Array::new(),
     randomizer: @utils.Randomizer::default(),
     string_loader,
+    io_service,
   }
 }
 
@@ -40,18 +45,9 @@ pub fn update(
           mob.makeactive()
         }
         None =>
-          self.mob_loadings.push(
-            spawn
-            .instantiate(self.randomizer, network, self.string_loader)
-            .map(fn(res) {
-              match res {
-                Ok(mob) => self.mobs.add(mob)
-                Err(e) =>
-                  @log.error(
-                    { "err": e, "oid": spawn.oid },
-                    "Failed to load mob",
-                  )
-              }
+          self.loading_mobs.push(
+            self.io_service.submit(fn() {
+              spawn.instantiate(self.randomizer, network, self.string_loader)
             }),
           )
       }
@@ -59,7 +55,14 @@ pub fn update(
     }
     None => break
   }
-  @utils.advance_futures(self.mob_loadings)
+  self.loading_mobs.retain(fn(future) {
+    guard future.poll() is Some(rs) else { return true }
+    match rs {
+      Ok(mob) => self.mobs.add(mob)
+      Err(e) => @log.error({ "err": e }, "Failed to load mob")
+    }
+    false
+  })
   self.mobs.update(physics)
 }
 
@@ -214,12 +217,12 @@ struct MobSpawn {
 }
 
 ///|
-pub fn instantiate(
+pub async fn instantiate(
   self : MobSpawn,
   randomizer : @utils.Randomizer,
   network : @net.Network,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[Mob, Error]] {
+) -> Mob! {
   Mob::load(
     self.oid,
     self.id,

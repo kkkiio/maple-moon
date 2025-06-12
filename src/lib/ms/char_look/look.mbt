@@ -1,5 +1,6 @@
 ///|
 struct CharLook {
+  io_service : @io_task.IOService
   stance : @utils.Nominal[@types.StanceId]
   st_frame : @utils.Nominal[Int]
   mut st_elapsed : Int
@@ -32,6 +33,7 @@ pub(all) struct LookEntry {
 
 ///|
 pub fn CharLook::new(
+  io_service : @io_task.IOService,
   entry : LookEntry,
   body : Body,
   hair : Hair,
@@ -40,6 +42,7 @@ pub fn CharLook::new(
   draw_info : @types.BodyDrawInfo
 ) -> CharLook {
   let l = {
+    io_service,
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
     st_elapsed: 0,
@@ -53,7 +56,7 @@ pub fn CharLook::new(
     body,
     hair,
     face,
-    equips: @equip.CharEquips::new(string_loader),
+    equips: @equip.CharEquips::new(io_service, string_loader),
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
     draw_info,

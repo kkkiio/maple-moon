@@ -449,3 +449,19 @@ export default {
     },
 };
 </script>
+
+<style>
+/* 禁用页面滚动 */
+html,
+body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    height: 100vh;
+    overflow: hidden;
+}
+</style>

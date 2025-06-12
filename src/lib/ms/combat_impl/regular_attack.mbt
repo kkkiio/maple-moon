@@ -61,15 +61,13 @@ pub fn make_regular_attack(
 }
 
 ///|
-pub fn RegularAttack::get_bullet(
+pub async fn RegularAttack::get_bullet(
   self : RegularAttack,
   _ : @character.Character,
   bulletid : Int
-) -> @utils.Future[@graphics.Animation] {
-  @bullet.BulletData::get_async(bulletid, self.string_loader).map(fn(data) {
-    data.unwrap() // TODO: Handle error
-    .bullet
-  })
+) -> @graphics.Animation! {
+  let data = @bullet.BulletData::get_async(bulletid, self.string_loader)
+  data.bullet
 }
 
 ///|
@@ -107,7 +105,10 @@ pub fn can_use_regular_attack(
 }
 
 ///|
-pub fn new_regular_attack(string_loader : @resource.SyncLoader) -> SpecialMove {
+pub fn new_regular_attack(
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
+) -> SpecialMove {
   let ra = { action: RegularAction::default(), string_loader }
   {
     id: 0,
@@ -118,7 +119,9 @@ pub fn new_regular_attack(string_loader : @resource.SyncLoader) -> SpecialMove {
     make_attack: fn(char, i, attack_type, degenerate) {
       make_regular_attack(char, i.get_bulletid(), attack_type, degenerate)
     },
-    get_bullet: fn(char, value) { ra.get_bullet(char, value) },
+    get_bullet: fn(char, value) {
+      io_service.submit(fn() { ra.get_bullet(char, value) }).map(_.unwrap())
+    },
     can_use: fn(_, weapon_type, _, _, _, bullet) {
       can_use_regular_attack(weapon_type, bullet)
     },

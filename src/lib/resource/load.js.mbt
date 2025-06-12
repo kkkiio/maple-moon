@@ -1,13 +1,4 @@
 ///|
-extern "js" fn load_desc_async(
-  self : AsyncResourceLoader,
-  path : String
-) -> PollableData =
-  #| (l,p) => {
-  #|   return l.loadDescAsync(p)
-  #| }
-
-///|
 extern "js" fn load_data(
   self : AsyncResourceLoader,
   path : String

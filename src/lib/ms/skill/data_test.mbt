@@ -1,5 +1,6 @@
 ///|
 test "parse skill - sword fa" {
+  // https://maple-res.kkkiiox.work/Skill/110.img.json
   let json : Json = {
     "hit": {
       "0": {

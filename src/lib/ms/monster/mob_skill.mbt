@@ -15,13 +15,12 @@ pub(all) struct MobSkill {
 }
 
 ///|
-pub fn MobSkill::load(
-  id : Int,
-  level : Int
-) -> @utils.Future[Result[MobSkill, Error]] {
-  @skill.skill_loader()
-  .load_res(["MobSkill.img", id.to_string()])
-  .map_exn(fn(src) { MobSkill::new!(id, level, src) })
+pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill! {
+  let src = @skill.skill_loader().load_res_async([
+    "MobSkill.img",
+    id.to_string(),
+  ])
+  MobSkill::new!(id, level, src)
 }
 
 ///|

@@ -1,5 +1,5 @@
 ///|
-typealias CharState = @character.CharState
+typealias @character.CharState
 
 ///|
 trait PlayerState {

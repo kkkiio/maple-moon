@@ -78,7 +78,7 @@ pub(all) struct LookChoices {
 pub async fn ExplorerCreatorUIResource::load(
   login_loader : @resource.SyncLoader
 ) -> ExplorerCreatorUIResource! {
-  let mkinfo = get_etc_loader().load_resource(["MakeCharInfo.img", "Info"])
+  let mkinfo = get_etc_loader().load_res_async(["MakeCharInfo.img", "Info"])
   // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
   fn parse_choices(char : @resource.NxNode) -> LookChoices {
     let faces = []
@@ -115,18 +115,18 @@ pub async fn ExplorerCreatorUIResource::load(
   )
   let map001_loader = get_map001_loader()
   let customize_char_src = login_loader.load_res(["CustomizeChar", "000"])
-  let signboard2_src = @map.get_map_latest_loader().load_resource([
+  let signboard2_src = @map.get_map_latest_loader().load_res_async([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])
   let board_src = customize_char_src["board"]
   let gender_select_src = customize_char_src["genderSelect"]
-  let sky_src = map001_loader.load_resource(["Back", "login.img", "back", "2"])
+  let sky_src = map001_loader.load_res_async(["Back", "login.img", "back", "2"])
   let sky = @graphics.Texture::from_resource(sky_src)
-  let cloud_src = map001_loader.load_resource([
+  let cloud_src = map001_loader.load_res_async([
     "Back", "login.img", "back", "27",
   ])
   let cloud = @graphics.Texture::from_resource(cloud_src)
-  let back14_src = map001_loader.load_resource([
+  let back14_src = map001_loader.load_res_async([
     "Back", "login.img", "back", "14",
   ])
   let back14 = @graphics.Animation::from_resource_ex!(back14_src)

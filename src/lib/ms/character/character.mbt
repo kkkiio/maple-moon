@@ -1,8 +1,8 @@
 ///|
-typealias MapObjectBase = @map_object.MapObjectBase
+typealias @map_object.MapObjectBase
 
 ///|
-typealias PhysicsObject = @physics.PhysicsObject
+typealias @physics.PhysicsObject
 
 ///| Player states which determine animation and state
 pub(all) enum CharState {
@@ -76,7 +76,7 @@ pub(all) struct CharBase {
 }
 
 ///| Type alias for backward compatibility
-pub(all) typealias Character = CharBase
+pub(all) typealias CharBase as Character
 
 ///|
 pub fn get_position(self : CharBase) -> @struct.Point[Int] {
@@ -293,14 +293,22 @@ pub fn is_invincible(self : CharBase) -> Bool {
 }
 
 ///|
-pub fn set_afterimage(self : CharBase, skill_id : Int) -> Unit {
+pub fn set_afterimage(
+  self : CharBase,
+  skill_id : Int,
+  io_service : @io_task.IOService
+) -> Unit {
   guard self.look.get_equips().get_weapon() is Some(weapon) else { return }
   let stance_name = self.look.get_stance().name()
   let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
   let ai_name = weapon.get_afterimage()
-  self.after_image = @char_look.AfterImage::load(
-    skill_id, ai_name, stance_name, weapon_level,
-  )
+  self.after_image = io_service
+    .submit(fn() {
+      @char_look.AfterImage::load(skill_id, ai_name, stance_name, weapon_level)
+    })
+    .map(fn(rs) {
+      rs.unwrap() // TODO: handle error
+    })
 }
 
 ///|

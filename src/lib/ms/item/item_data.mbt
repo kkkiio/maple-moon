@@ -17,7 +17,7 @@ pub(all) struct ItemData {
 }
 
 ///|
-fn get_character_loader() -> @resource.AsyncLoader {
+pub fn get_character_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new("character")
 }
 
@@ -37,63 +37,60 @@ fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
 }
 
 ///|
-fn ItemData::load_async(
+async fn ItemData::load_async(
   item_id : Int,
   character_loader : @resource.AsyncLoader,
   item_loader : @resource.AsyncLoader,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[ItemData, LoadDataError]] {
+) -> ItemData! {
   let zid = "0" + item_id.to_string()
-  let (category, src, strsrc) = try {
-    match parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
-      EQUIP => {
-        guard parse_equip_category(item_id) is Some(category) else {
-          raise LoadDataError::INVALID_ITEM_ID(item_id)
-        }
-        let src = character_loader.load_res([category, zid + ".img"])
-        let strsrc = string_loader.load_res([
-          "Eqp.img",
-          "Eqp",
-          category,
-          item_id.to_string(),
-        ])
-        (category, src, strsrc)
+  let (category, src, strsrc) = match
+    parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
+    EQUIP => {
+      guard parse_equip_category(item_id) is Some(category) else {
+        raise LoadDataError::INVALID_ITEM_ID(item_id)
       }
-      CONSUME => {
-        let category = "Consume"
-        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = item_loader.load_res(["Consume", strprefix + ".img", zid])
-        let strsrc = string_loader.load_res(["Consume.img", item_id.to_string()])
-        (category, src, strsrc)
-      }
-      INSTALL => {
-        let category = "Install"
-        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = item_loader.load_res(["Install", strprefix + ".img", zid])
-        let strsrc = string_loader.load_res(["Ins.img", item_id.to_string()])
-        (category, src, strsrc)
-      }
-      ETC => {
-        let category = "Etc"
-        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = item_loader.load_res(["Etc", strprefix + ".img", zid])
-        let strsrc = string_loader.load_res([
-          "Etc.img",
-          "Etc",
-          item_id.to_string(),
-        ])
-        (category, src, strsrc)
-      }
-      CASH => {
-        let category = "Cash"
-        let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-        let src = item_loader.load_res(["Cash", strprefix + ".img", zid])
-        let strsrc = string_loader.load_res(["Cash.img", item_id.to_string()])
-        (category, src, strsrc)
-      }
+      let src = character_loader.load_res_async([category, zid + ".img"])
+      let strsrc = string_loader.load_res([
+        "Eqp.img",
+        "Eqp",
+        category,
+        item_id.to_string(),
+      ])
+      (category, src, strsrc)
     }
-  } catch {
-    e => return @utils.Future::from_value(Err(e))
+    CONSUME => {
+      let category = "Consume"
+      let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
+      let src = item_loader.load_res_async(["Consume", strprefix + ".img", zid])
+      let strsrc = string_loader.load_res(["Consume.img", item_id.to_string()])
+      (category, src, strsrc)
+    }
+    INSTALL => {
+      let category = "Install"
+      let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
+      let src = item_loader.load_res_async(["Install", strprefix + ".img", zid])
+      let strsrc = string_loader.load_res(["Ins.img", item_id.to_string()])
+      (category, src, strsrc)
+    }
+    ETC => {
+      let category = "Etc"
+      let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
+      let src = item_loader.load_res_async(["Etc", strprefix + ".img", zid])
+      let strsrc = string_loader.load_res([
+        "Etc.img",
+        "Etc",
+        item_id.to_string(),
+      ])
+      (category, src, strsrc)
+    }
+    CASH => {
+      let category = "Cash"
+      let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
+      let src = item_loader.load_res_async(["Cash", strprefix + ".img", zid])
+      let strsrc = string_loader.load_res(["Cash.img", item_id.to_string()])
+      (category, src, strsrc)
+    }
   }
   let str_src = strsrc.value()
   let name = match str_src {
@@ -104,59 +101,61 @@ fn ItemData::load_async(
     { "desc": String(desc), .. } => desc
     _ => ""
   }
-  src.map_exn(fn(src) -> ItemData!LoadDataError {
-    let info = src["info"]
-    if info.is_null() {
-      raise LoadDataError::DATA_NOT_FOUND(item_id)
-    }
-    let icons = (
-      info["icon"] |> @graphics.Texture::from_resource,
-      info["iconRaw"] |> @graphics.Texture::from_resource,
-    )
-    try {
-      let price = info["price"].get_int!()
-      let untradable = info["tradeBlock"].get_bool!()
-      let unique = info["only"].get_bool!()
-      let unsellable = info["notSale"].get_bool!()
-      let cash_item = info["cash"].get_bool!()
-      let gender = get_item_gender(item_id)
-      {
-        src,
-        icons,
-        item_id,
-        price,
-        gender,
-        name,
-        desc,
-        category,
-        valid: true,
-        untradable,
-        unique,
-        unsellable,
-        cash_item,
-      }
-    } catch {
-      e => raise LoadDataError::INVALID_DATA(Show::to_string(e))
-    }
-  })
+  let info = src["info"]
+  if info.is_null() {
+    raise LoadDataError::DATA_NOT_FOUND(item_id)
+  }
+  let icons = (
+    info["icon"] |> @graphics.Texture::from_resource,
+    info["iconRaw"] |> @graphics.Texture::from_resource,
+  )
+  let price = info["price"].get_int!()
+  let untradable = info["tradeBlock"].get_bool!()
+  let unique = info["only"].get_bool!()
+  let unsellable = info["notSale"].get_bool!()
+  let cash_item = info["cash"].get_bool!()
+  let gender = get_item_gender(item_id)
+  {
+    src,
+    icons,
+    item_id,
+    price,
+    gender,
+    name,
+    desc,
+    category,
+    valid: true,
+    untradable,
+    unique,
+    unsellable,
+    cash_item,
+  }
 }
 
 ///|
-let cache : Map[Int, @utils.Future[Result[ItemData, LoadDataError]]] = Map::new()
+let cache : Map[Int, ItemData] = Map::new()
 
 ///|
-pub fn ItemData::get_async(
+pub fn ItemData::get_loaded(id : Int) -> ItemData? {
+  cache.get(id)
+}
+
+///|
+pub async fn ItemData::get_async(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[ItemData, LoadDataError]] {
-  cache.get_or_init(id, fn() {
-    ItemData::load_async(
-      id,
-      get_character_loader(),
-      get_item_loader(),
-      string_loader,
-    )
-  })
+) -> ItemData! {
+  if cache.get(id) is Some(data) {
+    return data
+  }
+  let data = ItemData::load_async(
+    id,
+    get_character_loader(),
+    get_item_loader(),
+    string_loader,
+  )
+  cache.set(id, data)
+  data
 }
 
 ///|

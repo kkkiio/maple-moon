@@ -81,7 +81,7 @@ pub fn Texture::load(
 struct TextureResource {
   bitmap : @resource.BitmapResource
   origin : @struct.Point[Int]
-}
+} derive(ToJson)
 
 ///|
 pub impl @json.FromJson for TextureResource with from_json(json, path) -> TextureResource!@json.JsonDecodeError {

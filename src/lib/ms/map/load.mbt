@@ -25,7 +25,7 @@ pub async fn load_map(
   let strid = @string_format.extend_id(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
   @log.info({ "path": path }, "loading map")
-  let src = get_mapx_loader().load_resource(path)
+  let src = get_mapx_loader().load_res_async(path)
   guard not(src.is_null()) else {
     raise @resource.LoadError("map not found, id=\{map_id}")
   }

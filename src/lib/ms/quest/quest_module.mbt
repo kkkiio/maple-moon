@@ -16,7 +16,7 @@ pub async fn Module::load(
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
 ) -> Module! {
-  let quests_resource = quest_resource_loader.load_resource(["nx"])
+  let quests_resource = quest_resource_loader.load_res_async(["nx"])
   let map_quests_resource = MapQuestsResource::load()
   let quests_resource : QuestResource = @json.from_json!(
     quests_resource.value(),
@@ -164,7 +164,6 @@ pub fn Module::get_map_quests(self : Module) -> MapQuests {
 ///| PlayerQuestLog stores information on the quest log of an individual character
 priv struct PlayerQuestLog {
   in_progress : Map[Int, InProgressQuest]
-  info_number_quest_map : Map[Int, Int] // info_number => quest_id
   completed : Map[Int, CompletedQuest]
 } derive(Show, Default)
 
@@ -255,7 +254,7 @@ priv enum UpdateQuestInfoMessage {
 } derive(Show)
 
 ///|
-enum QuestFailureOperation {
+priv enum QuestFailureOperation {
   NoMeso
   WornByCharacter
   NotHavingItem
@@ -316,14 +315,14 @@ pub fn Module::handle_player_quest_info(
   self : Module,
   player_quests : PlayerQuestLogInfo
 ) -> Unit {
-  let in_progress : Array[(Int, InProgressQuest)] = []
-  let completed : Array[(Int, CompletedQuest)] = []
+  let new_log = { in_progress: {}, completed: {} }
+  let mut last_in_progress_quest : InProgressQuest? = None
   quest_loop~: for it in player_quests.started {
     let (id, progress_data) = it
     let quest_info = self.quests_resource.quest_info_map.get(id)
     if quest_info is None {
       // maybe a infoNumber
-      if in_progress.last() is Some((_, last_in_progress_quest)) {
+      if last_in_progress_quest is Some(last_in_progress_quest) {
         for i, check in last_in_progress_quest.checks {
           if check.info_number is Some(info_number) && info_number == id { // is a infoNumber
             last_in_progress_quest.phase = i
@@ -333,36 +332,12 @@ pub fn Module::handle_player_quest_info(
         }
       }
     }
-    let quest_info = if quest_info is Some(quest_info) {
-      quest_info
-    } else {
-      @log.warn({ "id": id }, "quest info not found")
-      {
-        name: "Unknown Quest \{id}",
-        parent: None,
-        area: 0,
-        order: None,
-        auto_complete: false,
-        auto_start: false,
-        one_shot: false,
-        descriptions: [],
-      }
-    }
-    let checks = self.quests_resource.quest_checks_map.get(id)
-    in_progress.push(
-      (
-        id,
-        {
-          quest_id: id,
-          quest_info,
-          checks: checks.or([]),
-          acts: self.quests_resource.quest_acts_map.get(id).or([]),
-          progress_data,
-          phase: 1, // phase 0 is start requirements
-          info_number_progress_map: {},
-        },
-      ),
+    let quest = self.player_quest_log.val.add_in_progress_quest(
+      self.quests_resource,
+      id,
+      progress_data,
     )
+    last_in_progress_quest = Some(quest)
   }
   for it in player_quests.completed {
     let (quest_id, completion_time) = it
@@ -382,26 +357,50 @@ pub fn Module::handle_player_quest_info(
         descriptions: [],
       }
     }
-    completed.push((quest_id, { quest_id, quest_info, completion_time }))
+    new_log.completed[quest_id] = { quest_id, quest_info, completion_time }
   }
-  self.player_quest_log.val = {
-    in_progress: Map::from_array(in_progress),
-    info_number_quest_map: in_progress
-    .iter()
-    .flat_map(fn(it) {
-      let (quest_id, quest) = it
-      quest.checks
-      .iter()
-      .filter_map(fn(check) {
-        check.info_number.map(fn(info_number) { (info_number, quest_id) })
-      })
-    })
-    |> Map::from_iter,
-    completed: Map::from_array(completed),
-  }
+  self.player_quest_log.val = new_log
   self.quest_log_listeners.retain(fn(listener) {
     listener(self.player_quest_log.val)
   })
+}
+
+///|
+fn PlayerQuestLog::add_in_progress_quest(
+  self : PlayerQuestLog,
+  quests_resource : QuestResource,
+  quest_id : Int,
+  progress_data : String
+) -> InProgressQuest {
+  let id = quest_id
+  let quest_info = quests_resource.quest_info_map.get(quest_id)
+  let quest_info = if quest_info is Some(quest_info) {
+    quest_info
+  } else {
+    @log.warn({ "id": id }, "quest info not found")
+    {
+      name: "Unknown Quest \{id}",
+      parent: None,
+      area: 0,
+      order: None,
+      auto_complete: false,
+      auto_start: false,
+      one_shot: false,
+      descriptions: [],
+    }
+  }
+  let checks = quests_resource.quest_checks_map.get(id)
+  let quest = {
+    quest_id: id,
+    quest_info,
+    checks: checks.or([]),
+    acts: quests_resource.quest_acts_map.get(id).or([]),
+    progress_data,
+    phase: 1, // phase 0 is start requirements
+    info_number_progress_map: {},
+  }
+  self.in_progress[id] = quest
+  quest
 }
 
 // what does negative quest id mean?
@@ -518,10 +517,28 @@ impl Show for ShowUpdateQuestAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Unit {
-  guard self.mod.player_quest_log.val.in_progress.get(self.message.quest_id)
-    is Some(quest) else {
-    @log.warn({ "quest_id": self.message.quest_id }, "quest not found")
-    return
+  let player_quest_log = self.mod.player_quest_log.val
+  let quest = if player_quest_log.in_progress.get(self.message.quest_id)
+    is Some(quest) {
+    quest
+  } else {
+    // accept quest
+    guard self.mod.quests_resource.quest_info_map.get(self.message.quest_id)
+      is Some(quest_info) else {
+      @log.warn({ "quest_id": self.message.quest_id }, "quest info not found")
+      return
+    }
+    let quest = {
+      quest_id: self.message.quest_id,
+      quest_info,
+      checks: [],
+      acts: [],
+      progress_data: "",
+      phase: 0,
+      info_number_progress_map: {},
+    }
+    player_quest_log.in_progress.set(self.message.quest_id, quest)
+    quest
   }
   quest.progress_data = self.message.progress_data
   self.mod.quest_log_listeners.retain(fn(listener) {

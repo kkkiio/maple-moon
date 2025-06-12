@@ -9,15 +9,17 @@ struct MobCombat {
   // damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[DamageNumber]
   add_task_fn : (@utils.Future[Unit]) -> Unit
+  io_service : @io_task.IOService
 }
 
 ///|
 pub fn MobCombat::new(
   mobs : MapMobs,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
-  network : @net.Network
+  network : @net.Network,
+  io_service : @io_task.IOService
 ) -> MobCombat {
-  { mobs, add_task_fn, network }
+  { mobs, add_task_fn, network, io_service }
 }
 
 ///|
@@ -37,17 +39,18 @@ pub fn use_move(
         apply_move_attack(mov, mob, self.network)
       } else if skill_id != 0 {
         let task = mob
-          .get_move_skill(skill_id, level)
+          .get_move_skill(skill_id, level, self.io_service)
           .map(fn(res) {
             match res {
               Ok(mov) => apply_move_skill(mov, mob, self.network)
-              Err(_) =>
+              Err(err) =>
                 @log.error(
                   {
                     "oid": oid,
                     "move_id": move_id,
                     "skill_id": skill_id,
                     "level": level,
+                    "err": err,
                   },
                   "Failed to get move skill",
                 )

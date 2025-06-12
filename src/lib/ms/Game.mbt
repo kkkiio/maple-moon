@@ -1,5 +1,5 @@
 ///|
-typealias UI = @ui.UI
+typealias @ui.UI
 
 ///|
 pub(all) struct Game {
@@ -148,6 +148,7 @@ async fn load_modules(
     fn() { get_stage().get_player() },
     network,
     string_loader,
+    io_service,
   )
   merge_handlers(inventory_module.make_handlers())
   merge_actions(inventory_module.make_actions())
@@ -159,9 +160,7 @@ async fn load_modules(
     guard get_stage().get_player() is Some(player) else { return "" }
     player.character.get_name()
   })
-  let npc_module = @npc.Module::load(
-    ui, network, ref_render, string_loader, io_service,
-  )
+  let npc_module = @npc.Module::load(ui, network, ref_render, string_loader)
   merge_handlers(npc_module.make_handlers())
   let quest_module = @quest.Module::load(
     network,
@@ -201,13 +200,18 @@ async fn load_modules(
     quest_module,
   )
   merge_handlers(handlers)
-  let monster_module = @monster.Module::new(add_io_task, network, string_loader)
+  let monster_module = @monster.Module::new(
+    add_io_task,
+    network,
+    string_loader~,
+    io_service,
+  )
   merge_handlers(
     monster_module.make_handlers(fn() {
       get_stage().get_player().map(fn(p) { p.get_stats() })
     }),
   )
-  let drop_module = @drop.Module::load(string_loader)
+  let drop_module = @drop.Module::load(string_loader, io_service)
   merge_handlers(
     drop_module.make_handlers(fn(id) {
       get_stage().get_character(id).map(fn(c) { c.get_phobj() })
@@ -219,10 +223,11 @@ async fn load_modules(
     fn() { get_stage().get_player() },
     network,
     string_loader,
+    io_service,
   )
   merge_handlers(skill_book_module.make_handlers())
   merge_actions(skill_book_module.make_actions())
-  let shop_module = @shop.Module::load(network, string_loader)
+  let shop_module = @shop.Module::load(network, string_loader, io_service)
   merge_handlers(shop_module.make_handlers())
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
     guard get_stage().get_player() is Some(player) else { return }
@@ -235,7 +240,7 @@ async fn load_modules(
   net_handler_map.set(show_status_info_handler.0, show_status_info_handler.1)
   let job_module = @job.Module::new(fn(job_id) {
     guard get_stage().get_player() is Some(player) else { return }
-    player.change_job(job_id)
+    player.change_job(job_id, io_service)
   })
   merge_stat_handlers(job_module.make_stat_handlers())
   net_handler_map.set(@net.RECALCULATE_STATS, fn(

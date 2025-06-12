@@ -9,12 +9,12 @@
                 <lazy-image :image="skill.icon" style="width: 32px; height: 32px" />
                 <n-tooltip trigger="hover">
                   <template #trigger>
-                    <span style="min-width: 60px; display: inline-block">Level: {{ skill.level }}</span>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+                      <span>Lv.{{ skill.level }}</span>
+                      <span style="font-weight: bold">{{ skill.name }}</span>
+                    </div>
                   </template>
-                  <div>
-                    <div style="font-weight: bold; margin-bottom: 4px">{{ skill.name }}</div>
-                    <div>{{ skill.desc }}</div>
-                  </div>
+                  <div>{{ skill.desc }}</div>
                 </n-tooltip>
               </n-space>
               <n-button size="small" type="primary" circle :disabled="!skill.can_raise" @click="increaseSP(skill)">

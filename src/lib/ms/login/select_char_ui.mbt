@@ -27,10 +27,10 @@ pub async fn SelectCharUIResource::load(
 ) -> SelectCharUIResource! {
   let char_select_src = login_loader.load_res(["CharSelect"])
   let map001_loader = get_map001_loader()
-  let back13 = map001_loader.load_resource(["Back", "login.img", "back", "13"])
-  let ani17 = map001_loader.load_resource(["Back", "login.img", "ani", "17"])
-  let ani18 = map001_loader.load_resource(["Back", "login.img", "ani", "18"])
-  let ani19 = map001_loader.load_resource(["Back", "login.img", "ani", "19"])
+  let back13 = map001_loader.load_res_async(["Back", "login.img", "back", "13"])
+  let ani17 = map001_loader.load_res_async(["Back", "login.img", "ani", "17"])
+  let ani18 = map001_loader.load_res_async(["Back", "login.img", "ani", "18"])
+  let ani19 = map001_loader.load_res_async(["Back", "login.img", "ani", "19"])
   let frame = login_loader.load_res(["Common", "frame"])
   let step2 = login_loader.load_res(["Common", "step", "2"])
   {

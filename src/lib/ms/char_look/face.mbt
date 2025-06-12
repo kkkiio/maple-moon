@@ -120,7 +120,7 @@ pub async fn Face::load(
   string_loader : @resource.SyncLoader
 ) -> Face! {
   let strid = "000" + faceid.to_string()
-  let facenode = get_face_loader().load_resource(["\{strid}.img"])
+  let facenode = get_face_loader().load_res_async(["\{strid}.img"])
   Face::new(faceid, facenode, string_loader)
 }
 
@@ -192,4 +192,4 @@ pub fn Face::get_name(self : Face) -> String {
 }
 
 ///|
-typealias Point[T] = @struct.Point[T]
+typealias @struct.Point

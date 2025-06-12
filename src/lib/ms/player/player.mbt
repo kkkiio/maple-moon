@@ -1,8 +1,8 @@
 ///|
-typealias Movement = @physics.Movement
+typealias @physics.Movement
 
 ///|
-typealias CharStats = @char_stats.CharStats
+typealias @char_stats.CharStats
 
 ///|
 pub(open) trait SkillBook {
@@ -46,10 +46,12 @@ pub fn Player::load(
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
   new_char_stats : (@job.Job) -> CharStats,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
+  io_service : @io_task.IOService
 ) -> @utils.Future[Player] {
   @job.Job::load(
     string_loader,
+    io_service,
     id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0),
   )
   .bind(fn(job) {
@@ -507,13 +509,18 @@ pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
 }
 
 ///|
-pub fn change_job(self : Player, job_id : Int) -> Unit {
+pub fn change_job(
+  self : Player,
+  job_id : Int,
+  io_service : @io_task.IOService
+) -> Unit {
   self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
-  self.changing_job = @job.Job::load(self.string_loader, id=job_id).bind(fn(
-      job
-    ) {
-      (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
-    })
+  self.changing_job = @job.Job::load(self.string_loader, io_service, id=job_id).bind(fn(
+        job
+      ) {
+        (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
+      },
+    )
     |> Some
 }
 

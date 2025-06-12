@@ -6,19 +6,19 @@ pub(all) struct BulletData {
 }
 
 ///|
-fn BulletData::load(
+async fn BulletData::load(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[BulletData, Error]] {
+) -> BulletData! {
   let prefix = "0" + (id / 10000).to_string()
   let strid = "0" + id.to_string()
-  @item.get_item_loader()
-  .load_res(["Consume", prefix + ".img", strid])
-  .combine(@item.ItemData::get_async(id, string_loader))
-  .map_exn(fn(it) {
-    let (src, item_data) = it
-    BulletData::new!(src, item_data.unwrap_or_error!())
-  })
+  let src = @item.get_item_loader().load_res_async([
+    "Consume",
+    prefix + ".img",
+    strid,
+  ])
+  let item_data = @item.ItemData::get_async(id, string_loader)
+  BulletData::new!(src, item_data)
 }
 
 ///|
@@ -32,12 +32,17 @@ fn BulletData::new(
 }
 
 ///|
-let cache : Map[Int, @utils.Future[Result[BulletData, Error]]] = Map::new()
+let cache : Map[Int, BulletData] = Map::new()
 
 ///|
-pub fn BulletData::get_async(
+pub async fn BulletData::get_async(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> @utils.Future[Result[BulletData, Error]] {
-  cache.get_or_init(id, fn() { BulletData::load(id, string_loader) })
+) -> BulletData! {
+  if cache.get(id) is Some(data) {
+    return data
+  }
+  let data = BulletData::load(id, string_loader)
+  cache.set(id, data)
+  data
 }

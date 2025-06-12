@@ -23,7 +23,9 @@
     "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/ms/keyboard",
-    "KKKIIO/maple-moon-client/lib/game_mod"
+    "KKKIIO/maple-moon-client/lib/game_mod",
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "rami3l/js-ffi/js"
   ],
 	"link": {
 		"js": {

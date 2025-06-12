@@ -50,7 +50,7 @@ onUnmounted(() => {
 const panels = computed(() => {
   const panels = [];
   for (const kind of TAB_KINDS) {
-    const items = inventoryItems.value[kind];
+    const items = inventoryItems.value[kind] || [];
     const table = [];
     for (let i = 0; i < items.length; i += 4) {
       table.push(items.slice(i, i + 4));

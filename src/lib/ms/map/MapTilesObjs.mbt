@@ -11,7 +11,7 @@ pub async fn TilesObjs::load(
   obj_resource : Array[ObjResource]
 ) -> TilesObjs! {
   let tileset = if ts is Some(ts) {
-    Some(tile_loader.load_resource([ts + ".img"]))
+    Some(tile_loader.load_res_async([ts + ".img"]))
   } else {
     None
   }

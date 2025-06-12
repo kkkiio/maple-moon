@@ -79,26 +79,34 @@ pub fn parse_talk_content(
   let mut opening_selection : (Int, Array[@markup_text.Node])? = None
   let mut trim_newline = false
   let mut current_style : Style = { color: ColorName::BLACK, bold: false }
+  fn close_selection!(
+    index : Int,
+    nodes : Array[@markup_text.Node],
+    trim_end_newline : Bool
+  ) {
+    selections.push(
+      (
+        current_style.color,
+        index,
+        @markup_text.to_html(
+          nodes,
+          current_style,
+          @markup_text.color_map,
+          tag_replace_map,
+          trim_end_newline~,
+        ),
+      ),
+    )
+  }
+
   let builder = StringBuilder::new()
   let nodes = @markup_text.parse_markup!(text, tag_map)
   for node in nodes {
     match node {
       Tag('L', payload) => {
-        if opening_selection is Some((index, nodes)) { // WORKAROUND: somewhere use newline as closing tag
+        if opening_selection is Some((index, nodes)) { // WORKAROUND: 有些选项没带 #l 结束标签
           opening_selection = None
-          selections.push(
-            (
-              current_style.color,
-              index,
-              @markup_text.to_html(
-                nodes,
-                current_style,
-                @markup_text.color_map,
-                tag_replace_map,
-                trim_end_newline=true,
-              ),
-            ),
-          )
+          close_selection!(index, nodes, true)
         }
         let index = try @strconv.parse_int!(payload.to_string(), base=10) catch {
           @strconv.StrConvError(_) =>
@@ -111,16 +119,8 @@ pub fn parse_talk_content(
           fail!("Selection close without open")
         }
         opening_selection = None
-        selections.push(
-          (
-            current_style.color,
-            index,
-            @markup_text.to_html(
-              nodes, current_style, @markup_text.color_map, tag_replace_map,
-            ),
-          ),
-        )
-        trim_newline = true // trim newline after selection
+        close_selection!(index, nodes, false)
+        trim_newline = true // 移除选项之间的换行，例如 #L0# ... #l\\r\\n#L1 ... #l
       }
       Text(text) => {
         if opening_selection is Some((_, nodes)) {
@@ -153,6 +153,9 @@ pub fn parse_talk_content(
       }
     }
   }
+  if opening_selection is Some((index, nodes)) { // WORKAROUND: 有些选项没带 #l 结束标签
+    close_selection!(index, nodes, true)
+  }
   let text_html = builder.to_string()
   { text_html, selections }
 }
@@ -172,10 +175,10 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
 pub(all) type! ParseTalkError String derive(Show)
 
 ///|
-typealias ColorName = @struct.ColorName
+typealias @struct.ColorName
 
 ///|
-typealias Style = @markup_text.Style
+typealias @markup_text.Style
 
 ///|
 test "parse quiz" {

@@ -76,7 +76,7 @@ pub async fn Hair::load(
   drawinfo : @types.BodyDrawInfo,
   string_loader : @resource.SyncLoader
 ) -> Hair! {
-  let hairnode = get_hair_loader().load_resource(["000\{hairid}.img"])
+  let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
   Hair::new(hairid, hairnode, drawinfo, string_loader)
 }
 

@@ -6,7 +6,7 @@ struct Nominal[T] {
 } derive(Default)
 
 ///|
-pub fn Nominal::get[T](self : Nominal[T], alpha? : Double) -> T {
+pub fn[T] Nominal::get(self : Nominal[T], alpha? : Double) -> T {
   match alpha {
     None => self.now
     Some(alpha) => if alpha >= self.threshold { self.now } else { self.before }
@@ -14,28 +14,28 @@ pub fn Nominal::get[T](self : Nominal[T], alpha? : Double) -> T {
 }
 
 ///|
-pub fn last[T](self : Nominal[T]) -> T {
+pub fn[T] last(self : Nominal[T]) -> T {
   self.before
 }
 
 ///|
-pub fn Nominal::set[T](self : Nominal[T], value : T) -> Unit {
+pub fn[T] Nominal::set(self : Nominal[T], value : T) -> Unit {
   self.before = self.now
   self.now = value
 }
 
 ///|
-pub fn normalize[T](self : Nominal[T]) -> Unit {
+pub fn[T] normalize(self : Nominal[T]) -> Unit {
   self.before = self.now
 }
 
 ///|
-pub fn normalized[T : Eq](self : Nominal[T]) -> Bool {
+pub fn[T : Eq] normalized(self : Nominal[T]) -> Bool {
   self.before == self.now
 }
 
 ///|
-pub fn next[T](self : Nominal[T], value : T, thrs : Double) -> Unit {
+pub fn[T] next(self : Nominal[T], value : T, thrs : Double) -> Unit {
   self.before = self.now
   self.now = value
   self.threshold = thrs

@@ -2,7 +2,6 @@
 struct Combat {
   damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
-  skill_cache : Map[Int, @combat_impl.SpecialMove]
   regular_attack : @combat_impl.SpecialMove
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
@@ -13,6 +12,12 @@ struct Combat {
   network : @net.Network
   string_loader : @resource.SyncLoader
   io_service : @io_task.IOService
+  bullet_module : @bullet.Module
+  skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
+  after_image_cache : Map[
+    CacheKey,
+    @utils.Future[Map[String, @char_look.AfterImage]],
+  ]
 }
 
 ///|
@@ -22,13 +27,16 @@ pub fn Combat::new(
   packet_processor : @net.Network,
   cooldowns : Map[Int, Int],
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
+  bullet_module : @bullet.Module
 ) -> Combat {
   {
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_impl.new_regular_attack(string_loader, io_service),
+    regular_attack: @combat_impl.new_regular_attack(
+      string_loader, bullet_module,
+    ),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
@@ -37,6 +45,8 @@ pub fn Combat::new(
     network: packet_processor,
     string_loader,
     io_service,
+    bullet_module,
+    after_image_cache: Map::new(),
   }
 }
 
@@ -89,30 +99,78 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
   if not(player.can_attack()) {
     return
   }
-  self.io_service.execute(fn() {
-    let act = self.get_move(move_id)
-    let reason = self.can_use(
-      player.character,
-      player.skill_book,
-      player.stats,
-      player.inventory,
-      act,
-    )
-    if reason == @combat_impl.ForbidReason::FBR_NONE {
-      self.apply_move(player, act)
-    } else {
-      // TODO: show forbid reason
-      // let weapontype = self.player.get_stats().get_weapontype()
-      // ForbidSkillMessage::new(reason, weapontype).drop()
+  let (act, attack_weapon) = if move_id == 0 {
+    guard player.character.get_look().get_equips().get_weapon() is Some(weapon) else {
+      return
     }
-  })
+    (self.regular_attack, Some(weapon))
+  } else if self.skill_cache.get(move_id) is Some(act_fut) {
+    guard act_fut.poll() is Some(act) else {
+      @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
+      return
+    }
+    if act.is_attack() {
+      guard player.character.get_look().get_equips().get_weapon()
+        is Some(weapon) else {
+        return
+      }
+      (act, Some(weapon))
+    } else {
+      (act, None)
+    }
+  } else {
+    @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
+    self.skill_cache[move_id] = self.io_service
+      .submit(fn() { self.load_sp_move(move_id) })
+      .map(_.unwrap())
+    return
+  }
+  let reason = self.can_use(
+    player.character,
+    player.skill_book,
+    player.stats,
+    player.inventory,
+    act,
+  )
+  if reason == @combat_impl.ForbidReason::FBR_NONE {
+    let after_images = match attack_weapon {
+      Some(weapon) => {
+        let key = (
+          move_id,
+          weapon.get_afterimage(),
+          weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL),
+        )
+        if self.after_image_cache.get(key) is Some(fut) {
+          if fut.poll() is Some(after_images) {
+            after_images
+          } else {
+            @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
+            return
+          }
+        } else {
+          @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
+          self.after_image_cache[key] = self.io_service
+            .submit(fn() { load_after_images_by_skill_weapon(key) })
+            .map(_.unwrap())
+          return
+        }
+      }
+      None => {}
+    }
+    self.apply_move(player, act, after_images)
+  } else {
+    // TODO: show forbid reason
+    // let weapontype = self.player.get_stats().get_weapontype()
+    // ForbidSkillMessage::new(reason, weapontype).drop()
+  }
 }
 
 ///|
 fn Combat::apply_move(
   self : Combat,
   player : @player.Player,
-  act : @combat_impl.SpecialMove
+  act : @combat_impl.SpecialMove,
+  after_images : Map[String, @char_look.AfterImage]
 ) -> Unit {
   if act.is_attack() {
     let (degenerate, attacktype) = check_attack_type(
@@ -121,8 +179,9 @@ fn Combat::apply_move(
       act.is_skill(),
     )
     act.apply_useeffects(player.character)
-    act.apply_actions(player.character, attacktype)
-    player.character.set_afterimage(act.get_id(), self.io_service)
+    act.apply_actions(player.character, attacktype) // WARN: this will change the stance
+    let stance_name = player.character.get_look().get_stance().name()
+    player.character.set_afterimage(after_images.get(stance_name).unwrap())
     let attack = act.make_attack(
       player.character,
       player.inventory,
@@ -229,7 +288,7 @@ priv struct DamageEffect {
   damage : Int
   toleft : Bool
   target_oid : Int
-  move_id : Int
+  sp_move : @combat_impl.SpecialMove
 }
 
 ///|
@@ -323,22 +382,16 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-pub async fn get_move(
+async fn load_sp_move(
   self : Combat,
   move_id : Int
-) -> @combat_impl.SpecialMove! {
-  if move_id == 0 {
-    return self.regular_attack
-  }
-  if self.skill_cache.get(move_id) is Some(act) {
-    return act
-  }
+) -> @combat_impl.SpecialMove raise {
   let it = @combat_impl.Skill::load(
-    self.string_loader,
-    self.io_service,
     move_id,
+    self.bullet_module,
+    string_loader=self.string_loader,
   )
-  let act : @combat_impl.SpecialMove = {
+  {
     id: it.get_id(),
     attack: it.is_attack(),
     skill: true,
@@ -353,8 +406,6 @@ pub async fn get_move(
       it.apply_hit_effects(attack_user, mob)
     },
   }
-  self.skill_cache.set(move_id, act)
-  act
 }
 
 ///|
@@ -388,7 +439,7 @@ fn extract_effects(
             damage: vec[i].0,
             toleft: result.toleft,
             target_oid: oid,
-            move_id: act.get_id(),
+            sp_move: act,
           }
           self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
             damageeffect: effect,
@@ -413,7 +464,7 @@ fn extract_effects(
           damage: 0,
           toleft: false,
           target_oid: 0,
-          move_id: 0,
+          sp_move: self.regular_attack, // TODO: what should this be?
         }
         self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
           damageeffect: effect,
@@ -434,7 +485,7 @@ fn extract_effects(
             damage: vec[i].0,
             toleft: result.toleft,
             target_oid: oid,
-            move_id: act.get_id(),
+            sp_move: act,
           })
           i += 1
         }
@@ -472,10 +523,8 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   number.set_x(head_position.x)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft, self.network)
-  self.io_service.execute(fn() {
-    let act = self.get_move(effect.move_id)
-    act.apply_hit_effects(effect.user, mob)
-  })
+  let act = effect.sp_move
+  act.apply_hit_effects(effect.user, mob)
 }
 
 ///|
@@ -598,13 +647,62 @@ pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
 typealias @combat_proto.AttackResult
 
 ///|
-pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int]! {
-  let size = recv.read_short!()
+pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {
+  let size = recv.read_short()
   let cooldowns = Map::new()
   for i in 0..<size {
-    let skill_id = recv.read_int!()
-    let cooltime = recv.read_short!()
+    let skill_id = recv.read_int()
+    let cooltime = recv.read_short()
     cooldowns[skill_id] = cooltime
   }
   cooldowns
+}
+
+///|
+priv type CacheKey (Int, String, Int) derive(Show, Eq, Hash)
+
+///|
+async fn load_after_images_by_skill_weapon(
+  key : CacheKey
+) -> Map[String, @char_look.AfterImage] raise {
+  let (skill_id, wepon_after_image_name, weapon_level) = key._
+  let after_images = Map::new()
+  if skill_id > 0 {
+    let strid = @string_format.extend_id(skill_id, 7)
+    let skill_srcs = @skill.skill_loader().load_res_async([
+      strid.substring(end=3) + ".img",
+      "skill",
+      strid,
+      "afterimage",
+      wepon_after_image_name,
+    ])
+    for src in skill_srcs {
+      let stance_name = src.name()
+      let resource : @char_look.AfterNxImageResource = @json.from_json(
+        src.value(),
+      )
+      let after_image = @char_look.AfterImage::new(
+        resource.unwrap(),
+        src.get_image_loader(),
+      )
+      after_images[stance_name] = after_image
+    }
+  }
+  let path = [wepon_after_image_name + ".img", (weapon_level / 10).to_string()]
+  let srcs = @char_look.get_afterimage_loader().load_res_async(path)
+  for src in srcs {
+    let stance_name = src.name()
+    if after_images.get(stance_name) is Some(_) { // prefer skill afterimage
+      continue
+    }
+    let resource : @char_look.AfterNxImageResource = @json.from_json(
+      src.value(),
+    )
+    let after_image = @char_look.AfterImage::new(
+      resource.unwrap(),
+      src.get_image_loader(),
+    )
+    after_images[stance_name] = after_image
+  }
+  after_images
 }

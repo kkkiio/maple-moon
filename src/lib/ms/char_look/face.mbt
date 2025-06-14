@@ -118,7 +118,7 @@ fn get_face_loader() -> @resource.AsyncLoader {
 pub async fn Face::load(
   faceid : Int,
   string_loader : @resource.SyncLoader
-) -> Face! {
+) -> Face raise {
   let strid = "000" + faceid.to_string()
   let facenode = get_face_loader().load_res_async(["\{strid}.img"])
   Face::new(faceid, facenode, string_loader)

@@ -2,7 +2,6 @@
   "import": [
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/ms/physics",
-    "KKKIIO/maple-moon-client/lib/utils"
+    "KKKIIO/maple-moon-client/lib/ms/physics"
   ]
 }

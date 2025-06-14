@@ -1,5 +1,5 @@
 ///|
-pub(all) type! UnknownEnum Int derive(Show)
+pub(all) suberror UnknownEnum Int derive(Show)
 
 ///|
 pub fn to_string(self : UnknownEnum) -> String {
@@ -7,7 +7,7 @@ pub fn to_string(self : UnknownEnum) -> String {
 }
 
 ///|
-pub fn flatten_ok[T, E](resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
+pub fn[T, E] flatten_ok(resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
   let results = Array::new(capacity=resutls.length())
   for result in resutls {
     match result {
@@ -19,7 +19,7 @@ pub fn flatten_ok[T, E](resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
 }
 
 ///|
-pub fn flatten_ok_2[A, B, E](
+pub fn[A, B, E] flatten_ok_2(
   res1 : Result[A, E],
   res2 : Result[B, E]
 ) -> Result[(A, B), E] {

@@ -1,5 +1,6 @@
 ///|
-priv extern type RawData
+#external
+priv type RawData
 
 ///|
 fn as_moonjson(self : RawData) -> Json {
@@ -7,10 +8,12 @@ fn as_moonjson(self : RawData) -> Json {
 }
 
 ///|
-extern type ImageLoader
+#external
+type ImageLoader
 
 ///|
-priv extern type SyncResourceLoader
+#external
+priv type SyncResourceLoader
 
 ///|
 impl @js.Cast for SyncResourceLoader with into(it) -> SyncResourceLoader? {
@@ -34,7 +37,7 @@ pub async fn SyncLoader::load(
   name : String,
   data_url : String,
   image_loader : ImageLoader
-) -> SyncLoader!Error {
+) -> SyncLoader raise Error {
   let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
     |> @js.Value::cast
   SyncLoader::new(name, loader, image_loader)
@@ -122,13 +125,13 @@ pub fn get_children_count(self : NxNode) -> Int {
 }
 
 ///|
-pub fn get_bool(self : NxNode) -> Bool!LoadError {
-  self.get_int!() != 0
+pub fn get_bool(self : NxNode) -> Bool raise LoadError {
+  self.get_int() != 0
 }
 
 ///|
-pub fn as_strict_bool(self : NxNode) -> Bool!LoadError {
-  self.as_int!() != 0
+pub fn as_strict_bool(self : NxNode) -> Bool raise LoadError {
+  self.as_int() != 0
 }
 
 ///|
@@ -141,15 +144,15 @@ pub fn get_string(self : NxNode) -> String {
 }
 
 ///|
-pub fn get_int(self : NxNode) -> Int!LoadError {
-  self.get_float!().to_int()
+pub fn get_int(self : NxNode) -> Int raise LoadError {
+  self.get_float().to_int()
 }
 
 ///|
-pub(all) type! LoadError String derive(Show)
+pub(all) suberror LoadError String derive(Show)
 
 ///|
-pub fn as_int(self : NxNode) -> Int!LoadError {
+pub fn as_int(self : NxNode) -> Int raise LoadError {
   match self.desc {
     Json::Number(it) => it.to_int()
     _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
@@ -161,7 +164,7 @@ pub fn get_int_field(
   self : NxNode,
   key : String,
   default? : Int
-) -> Int!LoadError {
+) -> Int raise LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(Json::Number(it)) => it.to_int()
     None =>
@@ -178,7 +181,7 @@ pub fn get_float_field(
   self : NxNode,
   key : String,
   default? : Double
-) -> Double!LoadError {
+) -> Double raise LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(Json::Number(it)) => it
     None =>
@@ -191,12 +194,12 @@ pub fn get_float_field(
 }
 
 ///|
-pub fn get_float(self : NxNode) -> Double!LoadError {
+pub fn get_float(self : NxNode) -> Double raise LoadError {
   match self.desc {
     Json::Number(it) => it
     Json::Null => 0.0
     Json::String(it) =>
-      try @strconv.parse_double!(it) catch {
+      @strconv.parse_double(it) catch {
         _ => raise LoadError("expect number, got \{it}, path=\{self.path}")
       }
     _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
@@ -241,7 +244,7 @@ pub fn is_null(self : NxNode) -> Bool {
 }
 
 ///|
-pub fn as_string(self : NxNode) -> String!LoadError {
+pub fn as_string(self : NxNode) -> String raise LoadError {
   match self.desc {
     Json::String(it) => it
     _ as a => raise LoadError("expect string, got \{a}, path=\{self.path}")
@@ -281,7 +284,7 @@ pub enum BitmapResource {
 } derive(ToJson)
 
 ///|
-pub impl @json.FromJson for BitmapResource with from_json(json, path) -> BitmapResource!@json.JsonDecodeError {
+pub impl @json.FromJson for BitmapResource with from_json(json, path) -> BitmapResource raise @json.JsonDecodeError {
   match json {
     {
       "__i": Json::String(path),
@@ -326,7 +329,7 @@ fn join_path(parts : Array[String]) -> String {
 pub(all) type ResPath Array[String] derive(Eq)
 
 ///|
-pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
+pub fn as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
   match self.value() {
     [Json::Number(x), Json::Number(y)] => { x: x.to_int(), y: y.to_int() }
     Json::Null => @struct.Point::default()
@@ -335,9 +338,9 @@ pub fn as_point(self : NxNode) -> @struct.Point[Int]!LoadError {
 }
 
 ///|
-pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int]! {
-  let left_top = self["lt"].as_point!()
-  let right_bottom = self["rb"].as_point!()
+pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
+  let left_top = self["lt"].as_point()
+  let right_bottom = self["rb"].as_point()
   @struct.Rectangle::new(left_top, right_bottom)
 }
 
@@ -348,7 +351,7 @@ pub type MapBasedArray[T] Array[T] derive(Show)
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
   json,
   path
-) -> MapBasedArray[T]! {
+) -> MapBasedArray[T] raise {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError(
       (path, "MapBasedArray::from_json: expected object"),
@@ -359,7 +362,7 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
   while true {
     let key = i.to_string()
     if obj.get(key) is Some(value) {
-      let item = @json.from_json!(value, path=path.add_key(key))
+      let item = @json.from_json(value, path=path.add_key(key))
       array.push(item)
     } else {
       break
@@ -380,7 +383,7 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
   if json is Null {
     None
   } else {
-    Some(@json.from_json!(json, path~))
+    Some(@json.from_json(json, path~))
   }
 }
 
@@ -388,7 +391,7 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
 pub type IntBool Bool
 
 ///|
-pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool!@json.JsonDecodeError {
+pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool raise @json.JsonDecodeError {
   if json is Number(it) {
     it.to_int() != 0
   } else {
@@ -412,7 +415,7 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
     guard @strconv.parse_int?(key) is Ok(key_int) else {
       raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
     }
-    let value : T = @json.from_json!(value, path=path.add_key(key))
+    let value : T = @json.from_json(value, path=path.add_key(key))
     map[key_int] = value
   }
   map

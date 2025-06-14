@@ -1,5 +1,6 @@
 ///|
-priv extern type GLenum
+#external
+priv type GLenum
 
 ///|
 extern "js" fn GL::ge(self : GL, name : String) -> GLenum =

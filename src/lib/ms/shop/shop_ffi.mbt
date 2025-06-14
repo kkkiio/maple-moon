@@ -24,7 +24,7 @@ pub fn watch_opening_shop_ffi(
     guard npc_shop is Some(npc_shop) else {
       return callback(@js.Nullable::null())
     }
-    async fn async_callback!() {
+    async fn async_callback() raise {
       let shop_data = {
         npc_id: npc_shop.npc_id,
         shop_items: npc_shop.items.mapi(fn(i, item) {

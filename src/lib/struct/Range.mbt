@@ -5,22 +5,22 @@ pub(all) struct Range[T] {
 } derive(Eq, Show, Default)
 
 ///|
-pub fn Range::new[T](first : T, second : T) -> Range[T] {
+pub fn[T] Range::new(first : T, second : T) -> Range[T] {
   { a: first, b: second }
 }
 
 ///|
-pub fn first[T](self : Range[T]) -> T {
+pub fn[T] first(self : Range[T]) -> T {
   self.a
 }
 
 ///|
-pub fn second[T](self : Range[T]) -> T {
+pub fn[T] second(self : Range[T]) -> T {
   self.b
 }
 
 ///|
-pub fn greater[T : Compare](self : Range[T]) -> T {
+pub fn[T : Compare] greater(self : Range[T]) -> T {
   if self.a > self.b {
     self.a
   } else {
@@ -29,7 +29,7 @@ pub fn greater[T : Compare](self : Range[T]) -> T {
 }
 
 ///|
-pub fn smaller[T : Compare](self : Range[T]) -> T {
+pub fn[T : Compare] smaller(self : Range[T]) -> T {
   if self.a < self.b {
     self.a
   } else {
@@ -55,22 +55,22 @@ pub fn center(self : Range[Int]) -> Int {
 }
 
 ///|
-pub fn empty[T : Eq](self : Range[T]) -> Bool {
+pub fn[T : Eq] empty(self : Range[T]) -> Bool {
   self.a == self.b
 }
 
 ///|
-pub fn contains[T : Compare](self : Range[T], v : T) -> Bool {
+pub fn[T : Compare] contains(self : Range[T], v : T) -> Bool {
   v >= self.a && v <= self.b
 }
 
 ///|
-pub fn contains_range[T : Compare](self : Range[T], v : Range[T]) -> Bool {
+pub fn[T : Compare] contains_range(self : Range[T], v : Range[T]) -> Bool {
   v.a >= self.a && v.b <= self.b
 }
 
 ///|
-pub fn overlaps[T : Compare](self : Range[T], v : Range[T]) -> Bool {
+pub fn[T : Compare] overlaps(self : Range[T], v : Range[T]) -> Bool {
   Range::contains(self, v.a) ||
   Range::contains(self, v.b) ||
   Range::contains_range(v, self)

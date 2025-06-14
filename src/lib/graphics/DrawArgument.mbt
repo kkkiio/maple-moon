@@ -1,11 +1,11 @@
 ///|
-typealias Point[T] = @struct.Point[T]
+typealias @struct.Point
 
 ///|
-typealias Color = @struct.Color
+typealias @struct.Color
 
 ///|
-typealias Rectangle[T] = @struct.Rectangle[T]
+typealias @struct.Rectangle
 
 ///|
 pub(all) struct DrawArgument {

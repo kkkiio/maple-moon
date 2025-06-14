@@ -1,7 +1,7 @@
 ///|
-pub fn handle_kill_mob(mobs : MapMobs, recv : @net.InPacket) -> Unit! {
-  let oid = recv.read_int!()
-  let animation = recv.read_byte!()
+pub fn handle_kill_mob(mobs : MapMobs, recv : @net.InPacket) -> Unit raise {
+  let oid = recv.read_int()
+  let animation = recv.read_byte()
   mobs.remove(oid, animation)
 }
 
@@ -10,9 +10,9 @@ pub fn handle_show_mob_hp(
   mobs : MapMobs,
   player_stats_getter : () -> @char_stats.CharStats?,
   recv : @net.InPacket
-) -> Unit! {
+) -> Unit raise {
   guard player_stats_getter() is Some(player_stats) else { return }
-  let oid = recv.read_int!()
-  let hppercent = recv.read_byte!()
+  let oid = recv.read_int()
+  let hppercent = recv.read_byte()
   mobs.send_mobhp(oid, hppercent, player_stats.get_stat(@maple_stat.Id::LEVEL))
 }

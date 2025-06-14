@@ -1,27 +1,27 @@
 ///|
-fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage! {
-  recv.read_int!() |> ignore // channel
-  let mode1 = recv.read_byte!()
-  let mode2 = recv.read_byte!()
+fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage raise {
+  recv.read_int() |> ignore // channel
+  let mode1 = recv.read_byte()
+  let mode2 = recv.read_byte()
   if mode1 == 0 && mode2 == 0 {
-    recv.skip!(3)
-    let mapid = recv.read_int!()
-    let portalid = recv.read_byte!()
+    recv.skip(3)
+    let mapid = recv.read_int()
+    let portalid = recv.read_byte()
     return SetFieldMessage::ChangeMap(mapid~, portalid~)
   } else {
-    recv.skip!(23)
-    recv.read_int!() |> ignore // cid
+    recv.skip(23)
+    recv.read_int() |> ignore // cid
     // update with stats that was loaded on server side after character
     // selection. hp, mp, maxhp, maxmp, mapid...
-    let stats = parse_stats!(recv)
-    recv.read_byte!() |> ignore // 'buddycap'
-    if recv.read_bool!() {
-      recv.read_string!() |> ignore // 'linkedname'
+    let stats = parse_stats(recv)
+    recv.read_byte() |> ignore // 'buddycap'
+    if recv.read_bool() {
+      recv.read_string() |> ignore // 'linkedname'
     }
-    let inventory = parse_inventory!(recv)
-    let skills = parse_skillbook!(recv)
-    let cooldowns = @combat_impl2.parse_cooldowns!(recv)
-    let quests = @quest.parse_player_quest_info!(recv)
+    let inventory = parse_inventory(recv)
+    let skills = parse_skillbook(recv)
+    let cooldowns = @combat_impl2.parse_cooldowns(recv)
+    let quests = @quest.parse_player_quest_info(recv)
     return SetFieldMessage::SetField(
       stats~,
       inventory_entry=inventory,
@@ -53,7 +53,7 @@ fn handle_set_field(
   set_player_stage : (
     @character.CharEntry,
     Map[Int, Int],
-    (@player.Player) -> Unit!,
+    (@player.Player) -> Unit raise,
   ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
@@ -96,7 +96,7 @@ fn set_field(
   set_player_stage : (
     @character.CharEntry,
     Map[Int, Int],
-    (@player.Player) -> Unit!,
+    (@player.Player) -> Unit raise,
   ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
@@ -151,30 +151,30 @@ priv struct InventoryEntry {
 } derive(Show)
 
 ///|
-fn parse_inventory(recv : @net.InPacket) -> InventoryEntry! {
-  let meso = recv.read_int!()
+fn parse_inventory(recv : @net.InPacket) -> InventoryEntry raise {
+  let meso = recv.read_int()
   let slotmax = Map::new()
   let items = Array::new()
-  slotmax.set(@inventory.TypeId::EQUIP, recv.read_ubyte!())
-  slotmax.set(@inventory.TypeId::USE, recv.read_ubyte!())
-  slotmax.set(@inventory.TypeId::SETUP, recv.read_ubyte!())
-  slotmax.set(@inventory.TypeId::ETC, recv.read_ubyte!())
-  slotmax.set(@inventory.TypeId::CASH, recv.read_ubyte!())
-  recv.skip!(8)
+  slotmax.set(@inventory.TypeId::EQUIP, recv.read_ubyte())
+  slotmax.set(@inventory.TypeId::USE, recv.read_ubyte())
+  slotmax.set(@inventory.TypeId::SETUP, recv.read_ubyte())
+  slotmax.set(@inventory.TypeId::ETC, recv.read_ubyte())
+  slotmax.set(@inventory.TypeId::CASH, recv.read_ubyte())
+  recv.skip(8)
   for i in 0..<3 {
     let inv = if i == 0 {
       @inventory.TypeId::EQUIPPED
     } else {
       @inventory.TypeId::EQUIP
     }
-    let mut pos = recv.read_short!()
+    let mut pos = recv.read_short()
     while pos != 0 {
       let slot = if i == 1 { -pos } else { pos }
-      items.push(@inventory.parse_item!(recv, inv, slot))
-      pos = recv.read_short!()
+      items.push(@inventory.parse_item(recv, inv, slot))
+      pos = recv.read_short()
     }
   }
-  recv.skip!(2)
+  recv.skip(2)
   let toparse = [
     @inventory.TypeId::USE,
     @inventory.TypeId::SETUP,
@@ -182,25 +182,25 @@ fn parse_inventory(recv : @net.InPacket) -> InventoryEntry! {
     @inventory.TypeId::CASH,
   ]
   for inv in toparse {
-    let mut pos = recv.read_byte!()
+    let mut pos = recv.read_byte()
     while pos != 0 {
-      items.push(@inventory.parse_item!(recv, inv, pos))
-      pos = recv.read_byte!()
+      items.push(@inventory.parse_item(recv, inv, pos))
+      pos = recv.read_byte()
     }
   }
   { meso, slotmax, items }
 }
 
 ///|
-fn parse_skillbook(recv : @net.InPacket) -> Array[SkillEntry]! {
-  let size = recv.read_short!()
+fn parse_skillbook(recv : @net.InPacket) -> Array[SkillEntry] raise {
+  let size = recv.read_short()
   let entries = Array::new()
   for i in 0..<size {
-    let skill_id = recv.read_int!()
-    let level = recv.read_int!()
-    let expiration = recv.read_long!()
+    let skill_id = recv.read_int()
+    let level = recv.read_int()
+    let expiration = recv.read_long()
     let fourthtjob = skill_id % 100000 / 10000 == 2
-    let masterlevel = if fourthtjob { recv.read_int!() } else { 0 }
+    let masterlevel = if fourthtjob { recv.read_int() } else { 0 }
     entries.push({ skill_id, level, masterlevel, expiration })
   }
   entries

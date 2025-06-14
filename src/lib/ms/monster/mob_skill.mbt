@@ -15,12 +15,12 @@ pub(all) struct MobSkill {
 }
 
 ///|
-pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill! {
+pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill raise {
   let src = @skill.skill_loader().load_res_async([
     "MobSkill.img",
     id.to_string(),
   ])
-  MobSkill::new!(id, level, src)
+  MobSkill::new(id, level, src)
 }
 
 ///|
@@ -28,12 +28,12 @@ pub fn MobSkill::new(
   id : Int,
   level : Int,
   src : @resource.NxNode
-) -> MobSkill! {
+) -> MobSkill raise {
   // let use_effect = MobSingleUseEffect::new(src["level"][level.to_string()])
   let is_buff = src["level"][level.to_string()]["mob"].get_children_count() > 0
   let buff = if is_buff {
     {
-      time: src["level"][level.to_string()]["time"].get_int!(),
+      time: src["level"][level.to_string()]["time"].get_int(),
       anim: @graphics.Animation::from_resource(
         src["level"][level.to_string()]["mob"],
       ),
@@ -97,8 +97,8 @@ struct Effect {
 }
 
 ///|
-pub fn Effect::new(src : @resource.NxNode) -> Effect! {
-  { animation: @graphics.Animation::from_resource(src), z: src["z"].get_int!() }
+pub fn Effect::new(src : @resource.NxNode) -> Effect raise {
+  { animation: @graphics.Animation::from_resource(src), z: src["z"].get_int() }
 }
 
 ///|
@@ -122,8 +122,10 @@ pub(all) struct MobSingleUseEffect {
 }
 
 ///|
-pub fn MobSingleUseEffect::new(src : @resource.NxNode) -> MobSingleUseEffect! {
-  { effect: Effect::new!(src) }
+pub fn MobSingleUseEffect::new(
+  src : @resource.NxNode
+) -> MobSingleUseEffect raise {
+  { effect: Effect::new(src) }
 }
 
 ///|
@@ -145,18 +147,18 @@ pub(all) struct MobMultiUseEffect {
 pub fn MobMultiUseEffect::new(
   src : @resource.NxNode,
   area_warning : Bool
-) -> MobMultiUseEffect! {
+) -> MobMultiUseEffect raise {
   let effects = Array::new()
   if area_warning {
-    effects.push(Effect::new!(src["areaWarning"]))
+    effects.push(Effect::new(src["areaWarning"]))
   }
   let mut no = -1
   let mut sub = src["effect"]
-  effects.push(Effect::new!(sub))
+  effects.push(Effect::new(sub))
   while not(sub.is_null()) {
     no += 1
     sub = src["effect" + no.to_string()]
-    effects.push(Effect::new!(sub))
+    effects.push(Effect::new(sub))
   }
   { effects, }
 }

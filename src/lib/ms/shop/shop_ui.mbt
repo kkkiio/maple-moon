@@ -564,4 +564,3 @@
 //   let rs = self.logic_state.render(self.resources, self.hooks.on_state_changed)
 //   { render_elements: rs.buttons.map(fn(btn) { btn.as_interactable() }) }
 // }
-

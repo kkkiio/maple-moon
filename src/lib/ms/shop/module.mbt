@@ -58,7 +58,7 @@ pub fn make_handlers(
     @net.make_handler(
       CONFIRM_SHOP_TRANSACTION,
       fn(recv : @net.InPacket) {
-        let code = recv.read_byte!()
+        let code = recv.read_byte()
         match code {
           0 => ConfirmShopTransactionCode::Ok
           1 => ConfirmShopTransactionCode::NotEnoughInStock
@@ -68,7 +68,7 @@ pub fn make_handlers(
           6 | 7 => ConfirmShopTransactionCode::DueToError
           8 => ConfirmShopTransactionCode::Ok
           13 => ConfirmShopTransactionCode::NotEnoughItems
-          _ => fail!("Unknown confirm shop transaction code: \{code}")
+          _ => fail("Unknown confirm shop transaction code: \{code}")
         }
       },
       fn(code) {

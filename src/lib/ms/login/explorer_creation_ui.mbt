@@ -77,10 +77,10 @@ pub(all) struct LookChoices {
 ///|
 pub async fn ExplorerCreatorUIResource::load(
   login_loader : @resource.SyncLoader
-) -> ExplorerCreatorUIResource! {
+) -> ExplorerCreatorUIResource raise {
   let mkinfo = get_etc_loader().load_res_async(["MakeCharInfo.img", "Info"])
   // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
-  fn parse_choices(char : @resource.NxNode) -> LookChoices {
+  fn parse_choices(char : @resource.NxNode) -> LookChoices raise {
     let faces = []
     let hairs = []
     let haircolors = []
@@ -90,9 +90,9 @@ pub async fn ExplorerCreatorUIResource::load(
     let shoes = []
     let weapons = []
     for name, node in char {
-      let num = @strconv.parse_int?(name).unwrap()
+      let num = @strconv.parse_int(name)
       for _, idnode in node {
-        let value = idnode.get_int?().unwrap()
+        let value = idnode.get_int()
         match num {
           0 => faces.push(value)
           1 => hairs.push(value)
@@ -129,20 +129,20 @@ pub async fn ExplorerCreatorUIResource::load(
   let back14_src = map001_loader.load_res_async([
     "Back", "login.img", "back", "14",
   ])
-  let back14 = @graphics.Animation::from_resource_ex!(back14_src)
-  let signboard2 = @graphics.Animation::from_resource_ex!(signboard2_src)
-  let board_gender_top = @graphics.Animation::from_resource_ex?(
+  let back14 = @graphics.Animation::from_resource_ex(back14_src)
+  let signboard2 = @graphics.Animation::from_resource_ex(signboard2_src)
+  let board_gender_top = @graphics.Animation::from_resource_ex(
     board_src["genderTop"],
-  ).unwrap()
-  let board_gender_mid = @graphics.Animation::from_resource_ex?(
+  )
+  let board_gender_mid = @graphics.Animation::from_resource_ex(
     board_src["boardMid"],
-  ).unwrap()
-  let board_gender_bottom = @graphics.Animation::from_resource_ex?(
+  )
+  let board_gender_bottom = @graphics.Animation::from_resource_ex(
     board_src["boardBottom"],
-  ).unwrap()
-  let board_char_set = @graphics.Animation::from_resource_ex?(
+  )
+  let board_char_set = @graphics.Animation::from_resource_ex(
     customize_char_src["charSet"],
-  ).unwrap()
+  )
   let nameboard = customize_char_src["charName"]
     |> @graphics.Texture::from_resource
   let bt_gender_male = @ui.MapleButtonResource::from_resource(
@@ -164,9 +164,9 @@ pub async fn ExplorerCreatorUIResource::load(
   let avatar_sel = []
   for i = 0; i <= 5; i = i + 1 {
     avatar_sel.push(
-      @graphics.Animation::from_resource_ex?(
+      @graphics.Animation::from_resource_ex(
         customize_char_src["avatarSel"][i.to_string()]["normal"],
-      ).unwrap(),
+      ),
     )
   }
   {

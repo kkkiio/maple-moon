@@ -8,7 +8,9 @@ pub struct EquipData {
 }
 
 ///| Load an equip from the game files.
-pub fn EquipData::parse_item_data(item_data : @item.ItemData) -> EquipData! {
+pub fn EquipData::parse_item_data(
+  item_data : @item.ItemData
+) -> EquipData raise {
   let id = item_data.item_id
   let gender = @item.get_item_gender(id)
   // let cash = info["cash"].get_bool!()
@@ -61,7 +63,7 @@ pub fn EquipData::parse_item_data(item_data : @item.ItemData) -> EquipData! {
     @slot.Id::NONE
   }
   guard @item.parse_equip_category(id) is Some(category) else {
-    fail!("failed to parse equip category for item id \{id}")
+    fail("failed to parse equip category for item id \{id}")
   }
   { category, gender, req_stats, incr_stats: def_stats, eq_slot }
 }

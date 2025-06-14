@@ -68,10 +68,10 @@ struct ByLevelAction {
 }
 
 ///|
-fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction! {
+fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction raise {
   let actions = Map::new()
   for sub in src["level"] {
-    let level = @strconv.parse_int!(sub.name())
+    let level = @strconv.parse_int(sub.name())
     let action = sub["action"].get_string()
     actions.set(level, action)
   }

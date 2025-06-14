@@ -130,17 +130,16 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
     Some(Completed(_)) => return Err("Quest completed") // TODO: support repeatable quest
     None => return Err("Quest not started")
   }
-  if check_mob_progress_data?(progress_data) is Err(e) {
+  if (try? check_mob_progress_data(progress_data)) is Err(e) {
     return Err(e.to_string())
   }
   for i, monster_hunt in self.monster_hunts {
     // Each monster hunt uses 3 digits in the progress string
     let start_pos = i * 3
-    let current_count = try
-      @strconv.parse_int!(
-        progress_data.substring(start=start_pos, end=start_pos + 3),
-        base=10,
-      ) catch {
+    let current_count = @strconv.parse_int(
+      progress_data.substring(start=start_pos, end=start_pos + 3),
+      base=10,
+    ) catch {
       e => return Err("Invalid progress data: \{e}")
     }
     if current_count < monster_hunt.count {
@@ -153,10 +152,10 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
 }
 
 ///| progress data is a 3-digit string that contains kill counts for each monster
-fn check_mob_progress_data(progress_data : @string.View) -> Unit! {
+fn check_mob_progress_data(progress_data : @string.View) -> Unit raise {
   guard progress_data.iter().all(Char::is_ascii_digit(_)) &&
     progress_data.length() % 3 == 0 else {
-    fail!("Invalid progress data: \{progress_data}")
+    fail("Invalid progress data: \{progress_data}")
   }
 }
 

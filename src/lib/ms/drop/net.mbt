@@ -12,26 +12,26 @@ pub struct DropLoot {
 } derive(Show, ToJson)
 
 ///|
-pub fn parse_drop_loot(recv : @net.InPacket) -> DropLoot! {
-  let mode = recv.read_byte!()
-  let oid = recv.read_int!()
-  let meso = recv.read_bool!()
-  let item_id = recv.read_int!()
-  let owner = recv.read_int!()
-  let pickuptype = recv.read_byte!()
-  let dropto = recv.read_point!()
-  recv.skip!(4)
+pub fn parse_drop_loot(recv : @net.InPacket) -> DropLoot raise {
+  let mode = recv.read_byte()
+  let oid = recv.read_int()
+  let meso = recv.read_bool()
+  let item_id = recv.read_int()
+  let owner = recv.read_int()
+  let pickuptype = recv.read_byte()
+  let dropto = recv.read_point()
+  recv.skip(4)
   let dropfrom = if mode != 2 {
-    let dropfrom = recv.read_point!()
-    recv.skip!(2)
+    let dropfrom = recv.read_point()
+    recv.skip(2)
     dropfrom
   } else {
     dropto
   }
   if not(meso) {
-    recv.skip!(8)
+    recv.skip(8)
   }
-  let player_drop = not(recv.read_bool!())
+  let player_drop = not(recv.read_bool())
   { mode, oid, meso, item_id, owner, pickuptype, dropto, dropfrom, player_drop }
 }
 
@@ -62,13 +62,13 @@ pub struct RemoveLoot {
 pub fn parse_remove_loot(
   get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
   recv : @net.InPacket
-) -> RemoveLoot! {
-  let mode = recv.read_byte!()
-  let oid = recv.read_int!()
+) -> RemoveLoot raise {
+  let mode = recv.read_byte()
+  let oid = recv.read_int()
   let looter = if mode > 1 {
-    let cid = recv.read_int!()
+    let cid = recv.read_int()
     if recv.available() > 0 {
-      recv.read_byte!() |> ignore // pet
+      recv.read_byte() |> ignore // pet
       None
     } else {
       get_character_phys_by_id_fn(cid)

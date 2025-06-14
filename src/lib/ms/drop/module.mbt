@@ -7,7 +7,7 @@ struct Module {
 pub async fn Module::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService
-) -> Module! {
+) -> Module raise {
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(io_service, string_loader, src) }
 }
@@ -28,7 +28,7 @@ pub fn make_handlers(
     }),
     @net.make_handler(
       @net.REMOVE_LOOT,
-      fn(recv) { parse_remove_loot!(get_character_by_id_fn, recv) },
+      fn(recv) { parse_remove_loot(get_character_by_id_fn, recv) },
       fn(remove : RemoveLoot) {
         handle_remove_loot_parsed(self.map_drops, remove)
       },

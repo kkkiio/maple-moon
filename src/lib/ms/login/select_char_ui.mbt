@@ -24,7 +24,7 @@ pub(all) struct SelectCharUIResource {
 ///|
 pub async fn SelectCharUIResource::load(
   login_loader : @resource.SyncLoader
-) -> SelectCharUIResource! {
+) -> SelectCharUIResource raise {
   let char_select_src = login_loader.load_res(["CharSelect"])
   let map001_loader = get_map001_loader()
   let back13 = map001_loader.load_res_async(["Back", "login.img", "back", "13"])
@@ -39,12 +39,12 @@ pub async fn SelectCharUIResource::load(
       char_select_src["BtSelect"],
     ),
     bt_new: @ui.MapleButtonResource::from_resource(char_select_src["BtNew"]),
-    back13: @graphics.Animation::from_resource_ex?(back13).unwrap(),
-    ani17: @graphics.Animation::from_resource_ex?(ani17).unwrap(),
-    ani18: @graphics.Animation::from_resource_ex?(ani18).unwrap(),
-    ani19: @graphics.Animation::from_resource_ex?(ani19).unwrap(),
-    frame: @graphics.Animation::from_resource_ex?(frame).unwrap(),
-    step2: @graphics.Animation::from_resource_ex?(step2).unwrap(),
+    back13: @graphics.Animation::from_resource_ex(back13),
+    ani17: @graphics.Animation::from_resource_ex(ani17),
+    ani18: @graphics.Animation::from_resource_ex(ani18),
+    ani19: @graphics.Animation::from_resource_ex(ani19),
+    frame: @graphics.Animation::from_resource_ex(frame),
+    step2: @graphics.Animation::from_resource_ex(step2),
   }
 }
 

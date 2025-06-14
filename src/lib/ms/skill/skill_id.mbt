@@ -143,10 +143,10 @@ pub(all) enum SkillId {
 pub fn SkillId::int_value(self : SkillId) -> Int = "%identity"
 
 ///|
-pub(all) type! UnknownSkillId Int derive(Show)
+pub(all) suberror UnknownSkillId Int derive(Show)
 
 ///|
-pub fn SkillId::from_int(value : Int) -> SkillId!UnknownSkillId {
+pub fn SkillId::from_int(value : Int) -> SkillId raise UnknownSkillId {
   match value {
     // Beginner
     8 => SkillId::FOLLOW_THE_LEAD

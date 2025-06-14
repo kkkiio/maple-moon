@@ -44,6 +44,6 @@ pub fn next_int(self : Randomizer, from~ : Int = 0, to : Int) -> Int {
 }
 
 ///|
-pub fn choose[T](self : Randomizer, items : FixedArray[T]) -> T {
+pub fn[T] choose(self : Randomizer, items : FixedArray[T]) -> T {
   items[self.next_int(items.length())]
 }

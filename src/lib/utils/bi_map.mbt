@@ -5,22 +5,22 @@ struct BiMap[K, V] {
 }
 
 ///|
-pub fn BiMap::new[K, V]() -> BiMap[K, V] {
+pub fn[K, V] BiMap::new() -> BiMap[K, V] {
   { forward: Map::new(), backward: Map::new() }
 }
 
 ///|
-pub fn BiMap::get_forward[K : Eq + Hash, V](self : BiMap[K, V], k : K) -> V? {
+pub fn[K : Eq + Hash, V] BiMap::get_forward(self : BiMap[K, V], k : K) -> V? {
   self.forward.get(k)
 }
 
 ///|
-pub fn BiMap::get_backward[K, V : Eq + Hash](self : BiMap[K, V], v : V) -> K? {
+pub fn[K, V : Eq + Hash] BiMap::get_backward(self : BiMap[K, V], v : V) -> K? {
   self.backward.get(v)
 }
 
 ///|
-pub fn BiMap::set[K : Eq + Hash, V : Eq + Hash](
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(
   self : BiMap[K, V],
   k : K,
   v : V
@@ -30,7 +30,7 @@ pub fn BiMap::set[K : Eq + Hash, V : Eq + Hash](
 }
 
 ///|
-pub fn BiMap::from_array[K : Eq + Hash, V : Eq + Hash](
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::from_array(
   array : Array[(K, V)]
 ) -> BiMap[K, V] {
   {

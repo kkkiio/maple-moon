@@ -17,6 +17,12 @@
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "KKKIIO/maple-moon-client/lib/ms/bullet",
+    "KKKIIO/maple-moon-client/lib/ms/char_look",
+    "KKKIIO/maple-moon-client/lib/ms/char_look/types",
+    "KKKIIO/maple-moon-client/lib/ms/equip",
+    "KKKIIO/maple-moon-client/lib/ms/equip/data",
+    "KKKIIO/maple-moon-client/lib/ms/string_format"
   ]
 }

@@ -13,33 +13,33 @@ priv struct ModifyInventoryMessage {
 } derive(ToJson, Show)
 
 ///| Parse MODIFY_INVENTORY message
-fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage! {
-  recv.read_bool!() |> ignore // 'updatetick'
+fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage raise {
+  recv.read_bool() |> ignore // 'updatetick'
   let mods = Array::new()
-  let size = recv.read_byte!()
+  let size = recv.read_byte()
   for i in 0..<size {
-    let mode = recv.read_byte!()
-    let t = TypeId::by_value(recv.read_byte!()) |> Option::unwrap
-    let pos = recv.read_short!()
+    let mode = recv.read_byte()
+    let t = TypeId::by_value(recv.read_byte()) |> Option::unwrap
+    let pos = recv.read_short()
     let mut arg = 0
     let modification = match mode {
-      0 => ModificationMode::ADD(parse_item!(recv, t, pos))
+      0 => ModificationMode::ADD(parse_item(recv, t, pos))
       1 => {
-        arg = recv.read_short!()
+        arg = recv.read_short()
         ModificationMode::CHANGE_COUNT
       }
       2 => {
-        arg = recv.read_short!()
+        arg = recv.read_short()
         ModificationMode::SWAP
       }
       3 => ModificationMode::REMOVE
       4 => ModificationMode::ADD_COUNT
-      _ => fail!("Unknown modification mode: \{mode}")
+      _ => fail("Unknown modification mode: \{mode}")
     }
     mods.push({ mode: modification, t, pos, arg })
   }
   let mov = if recv.available() > 0 {
-    Movement::from_int!(recv.read_byte!()) |> Some
+    Movement::from_int(recv.read_byte()) |> Some
   } else {
     None
   }
@@ -50,7 +50,8 @@ fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage! {
 fn handle_modify_inventory(
   inventory : Inventory,
   player_getter : () -> @player.Player?,
-  message : ModifyInventoryMessage
+  message : ModifyInventoryMessage,
+  io_service : @io_task.IOService
 ) -> Unit {
   guard player_getter() is Some(player) else { return }
   for mod in message.mods {
@@ -74,8 +75,8 @@ fn handle_modify_inventory(
       Movement::MOVE_INTERNAL =>
         match mod.t {
           TypeId::EQUIPPED => {
-            change_equipment(inventory, player, -mod.pos)
-            change_equipment(inventory, player, -mod.arg)
+            change_equipment(inventory, player, -mod.pos, io_service)
+            change_equipment(inventory, player, -mod.arg, io_service)
           }
           TypeId::EQUIP
           | TypeId::USE
@@ -85,9 +86,9 @@ fn handle_modify_inventory(
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
-          change_equipment(inventory, player, -mod.pos)
+          change_equipment(inventory, player, -mod.pos, io_service)
         } else if mod.arg < 0 {
-          change_equipment(inventory, player, -mod.arg)
+          change_equipment(inventory, player, -mod.arg, io_service)
         }
       _ => ()
     }
@@ -99,12 +100,17 @@ fn handle_modify_inventory(
 fn change_equipment(
   inventory : Inventory,
   player : @player.Player,
-  raw_slot_id : Int
+  raw_slot_id : Int,
+  io_service : @io_task.IOService
 ) -> Unit {
   let slot = @equip_slot.Id::from_int(raw_slot_id)
   match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
     0 => player.character.get_look().remove_equip(slot)
-    itemid => player.character.get_look().add_equip(itemid, slot)
+    itemid =>
+      io_service.execute(async fn() {
+        let itemdata = @item.ItemData::get_async(itemid, player.string_loader)
+        player.character.get_look().add_equip(itemdata, slot)
+      })
   }
 }
 

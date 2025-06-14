@@ -7,7 +7,7 @@ struct Future[T] {
 }
 
 ///| Poll the future.
-pub fn poll[T](self : Future[T]) -> T? {
+pub fn[T] poll(self : Future[T]) -> T? {
   match self.resolved {
     Some(_) => self.resolved
     None => {
@@ -19,23 +19,23 @@ pub fn poll[T](self : Future[T]) -> T? {
 }
 
 ///| Create a new future from a poll function.
-pub fn Future::new[T](poll_fn : () -> T?) -> Future[T] {
+pub fn[T] Future::new(poll_fn : () -> T?) -> Future[T] {
   { poll_fn, resolved: None }
 }
 
 ///| Create a future from a resolved value.
-pub fn Future::from_value[T](v : T) -> Future[T] {
+pub fn[T] Future::from_value(v : T) -> Future[T] {
   { poll_fn: fn() { Some(v) }, resolved: Some(v) }
 }
 
 ///| Create a future that never resolves.
 /// Useful for representing a uninitialized value.
-pub fn Future::never[T]() -> Future[T] {
+pub fn[T] Future::never() -> Future[T] {
   Future::new(fn() { None })
 }
 
 ///|
-pub fn map[T, U](self : Future[T], f : (T) -> U) -> Future[U] {
+pub fn[T, U] map(self : Future[T], f : (T) -> U) -> Future[U] {
   Future::new(fn() {
     match self.poll() {
       Some(t) => Some(f(t))
@@ -45,12 +45,12 @@ pub fn map[T, U](self : Future[T], f : (T) -> U) -> Future[U] {
 }
 
 ///|
-pub fn bind[T, U](self : Future[T], f : (T) -> Future[U]) -> Future[U] {
+pub fn[T, U] bind(self : Future[T], f : (T) -> Future[U]) -> Future[U] {
   self.map(f).flatten()
 }
 
 ///|
-pub fn flatten[T](self : Future[Future[T]]) -> Future[T] {
+pub fn[T] flatten(self : Future[Future[T]]) -> Future[T] {
   Future::new(fn() {
     match self.poll() {
       Some(f) => f.poll()
@@ -60,21 +60,15 @@ pub fn flatten[T](self : Future[Future[T]]) -> Future[T] {
 }
 
 ///|
-pub fn map_exn[T, U, E : Error](
+pub fn[T, U, E : Error] map_exn(
   self : Future[T],
-  f : (T) -> U!E
+  f : (T) -> U raise E
 ) -> Future[Result[U, E]] {
-  self.map(fn(t) {
-    try {
-      Ok(f!(t))
-    } catch {
-      e => Err(e)
-    }
-  })
+  self.map(fn(t) { Ok(f(t)) catch { e => Err(e) } })
 }
 
 ///|
-pub fn tap[T](self : Future[T], f : (T) -> Unit) -> Future[T] {
+pub fn[T] tap(self : Future[T], f : (T) -> Unit) -> Future[T] {
   self.map(fn(t) {
     f(t)
     t
@@ -82,12 +76,12 @@ pub fn tap[T](self : Future[T], f : (T) -> Unit) -> Future[T] {
 }
 
 ///|
-pub fn combine[T, U](self : Future[T], other : Future[U]) -> Future[(T, U)] {
+pub fn[T, U] combine(self : Future[T], other : Future[U]) -> Future[(T, U)] {
   self.map(fn(t) { other.map(fn(u) { (t, u) }) }).flatten()
 }
 
 ///|
-pub fn combine3[T, U, V](
+pub fn[T, U, V] combine3(
   self : Future[T],
   other1 : Future[U],
   other2 : Future[V]
@@ -96,7 +90,7 @@ pub fn combine3[T, U, V](
 }
 
 ///|
-pub fn Future::all_of[T](futures : Array[Future[T]]) -> Future[Array[T]] {
+pub fn[T] Future::all_of(futures : Array[Future[T]]) -> Future[Array[T]] {
   let resolved = Array::new()
   let mut i = 0
   Future::new(fn() {
@@ -122,6 +116,6 @@ pub fn advance_futures(futures : Array[Future[Unit]]) -> Unit {
 }
 
 ///| Return a future that will be resolved when the `poll` is called.
-pub fn Future::lazy[T](f : () -> T) -> Future[T] {
+pub fn[T] Future::lazy(f : () -> T) -> Future[T] {
   Future::new(fn() { f() |> Some })
 }

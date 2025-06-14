@@ -2,7 +2,7 @@
 pub fn parse_markup(
   text : String,
   tag_map : Map[Char, MarkupType]
-) -> Array[Node]!ParseError {
+) -> Array[Node] raise ParseError {
   let nodes = []
   let mut rest_text = text[:]
   while not(rest_text.is_empty()) {
@@ -55,7 +55,7 @@ pub enum Node {
 }
 
 ///|
-pub(all) type! ParseError {
+pub(all) suberror ParseError {
   UnknownTag(Char)
   MissingMarkupClose
 } derive(Show)

@@ -1,5 +1,5 @@
 ///|
-typealias Point[T] = @struct.Point[T]
+typealias @struct.Point
 
 ///|
 struct BodyAction {
@@ -17,9 +17,7 @@ pub impl @json.FromJson for BodyAction with from_json(value, path) {
       let sgndelay = match value {
         { "delay": Json::Number(n), .. } => n.to_int()
         { "delay": Json::String(s), .. } =>
-          try {
-            @strconv.parse_int!(s)
-          } catch {
+          @strconv.parse_int(s) catch {
             e => raise @json.JsonDecodeError((path, e.to_string()))
           }
         _ => 100
@@ -99,7 +97,10 @@ struct BodyDrawInfo {
 }
 
 ///|
-pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
+pub fn BodyDrawInfo::new(
+  bodynode : Json,
+  headnode : Json
+) -> BodyDrawInfo raise {
   let body_positions = FixedArray::makei(StanceId::count(), fn(_i) {
     Map::new()
   })
@@ -129,7 +130,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
       let (frame, frame_json) = it
       match frame_json {
         { "action": Json::String(_), .. } => {
-          let action : BodyAction = @json.from_json!(frame_json)
+          let action : BodyAction = @json.from_json(frame_json)
           (match body_actions.get(ststr) {
             Some(v) => v
             None => {
@@ -162,7 +163,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
             match partnode {
               { "z": Json::String(zstr), "map": map_json, .. } => {
                 let z = BodyLayer::layer_by_name(zstr)
-                let map = @json.from_json!(map_json)
+                let map = @json.from_json(map_json)
                 parts.push({ z, map })
               }
               _ => ()
@@ -175,8 +176,7 @@ pub fn BodyDrawInfo::new(bodynode : Json, headnode : Json) -> BodyDrawInfo! {
             .bind(fn(it) { it.get(frame.to_string()) })
             .or(Json::null())
           let head_shift_map = match head_json {
-            { "head": { "map": map_json, .. }, .. } =>
-              @json.from_json!(map_json)
+            { "head": { "map": map_json, .. }, .. } => @json.from_json(map_json)
             _ => ShiftMap(Map::new())
           }
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()

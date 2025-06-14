@@ -1,12 +1,15 @@
+///|
 struct MobHpBar {
   width : Int
   height : Int
 }
 
+///|
 pub fn MobHpBar::default() -> MobHpBar {
   { width: 50, height: 10 }
 }
 
+///|
 pub fn draw(
   self : MobHpBar,
   position : @struct.Point[Int],
@@ -40,6 +43,7 @@ pub fn draw(
   draw_rectangle(x + 3, y + 6, fillw, 1, @struct.ColorName::JAPANESELAUREL, 1.0)
 }
 
+///|
 pub fn draw_rectangle(
   x : Int,
   y : Int,

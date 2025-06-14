@@ -10,31 +10,23 @@ pub(all) enum CapType {
 
 ///| A characters equipment (The visual part)
 struct CharEquips {
-  io_service : @io_task.IOService
-  string_loader : @resource.SyncLoader
-  clothes : Map[@slot.Id, (Int, @utils.Future[@clothing.Clothing?])]
-  mut weapon_data_cache : @utils.Future[@weapon.WeaponData?]?
+  clothes : Map[@slot.Id, @clothing.Clothing]
+  mut weapon_data : @weapon.WeaponData?
 }
 
 ///|
-pub fn CharEquips::new(
-  io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader
-) -> CharEquips {
-  { io_service, string_loader, clothes: Map::new(), weapon_data_cache: None }
+pub fn CharEquips::new() -> CharEquips {
+  { clothes: Map::new(), weapon_data: None }
 }
 
 ///|
 pub fn get_weapon(self : CharEquips) -> @weapon.WeaponData? {
-  self.weapon_data_cache.map(fn(it) { it.poll() }).flatten().flatten()
+  self.weapon_data
 }
 
 ///|
 pub fn get_equip(self : CharEquips, slot : @slot.Id) -> Int {
-  match self.clothes[slot] {
-    Some((itemid, _)) => itemid
-    None => 0
-  }
+  self.clothes.get(slot).map(fn(it) { it.get_id() }).or(0)
 }
 
 ///|
@@ -46,27 +38,19 @@ pub fn CharEquips::draw(
   frame : Int,
   args : @graphics.DrawArgument
 ) -> Unit {
-  match self.clothes[slot] {
-    Some((_, cloth)) =>
-      match cloth.poll() {
-        Some(Some(cloth)) => cloth.draw(stance, layer, frame, args)
-        _ => ()
-      }
-    None => ()
-  }
+  guard self.clothes.get(slot) is Some(cloth) else { return }
+  cloth.draw(stance, layer, frame, args)
 }
 
 ///| WARN: not accurate
 pub fn getcaptype(self : CharEquips) -> CapType {
-  match
-    self.clothes[@slot.Id::HAT].map(fn(it) { it.1.poll() }).flatten().flatten() {
-    Some(cap) =>
-      match cap.get_vslot() {
-        "CpH1H5" => CapType::HALF_COVER
-        "CpH1H5AyAs" => CapType::FULL_COVER
-        "CpH5" => CapType::HEADBAND
-        _ => CapType::NONE
-      }
+  guard self.clothes.get(@slot.Id::HAT) is Some(cap) else {
+    return CapType::NONE
+  }
+  match cap.get_vslot() {
+    "CpH1H5" => CapType::HALF_COVER
+    "CpH1H5AyAs" => CapType::FULL_COVER
+    "CpH5" => CapType::HEADBAND
     _ => CapType::NONE
   }
 }
@@ -76,57 +60,31 @@ pub fn has_overall(self : CharEquips) -> Bool {
   self.get_equip(@slot.Id::TOP) / 10000 == 105
 }
 
-///| WARN: not accurate
+///|
 pub fn is_twohanded(self : CharEquips) -> Bool {
-  match self.clothes[@slot.Id::WEAPON] {
-    Some((_, weapon)) =>
-      weapon.poll().flatten().map(fn(w) { w.is_twohanded() }).or(false)
-    None => false
-  }
+  guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else { return false }
+  weapon.is_twohanded()
 }
 
 ///|
 pub fn add_equip(
   self : CharEquips,
-  item_id : Int,
+  item_data : @item.ItemData,
   slot : @slot.Id,
   drawinfo : @types.BodyDrawInfo
-) -> Unit {
-  if item_id <= 0 {
-    return
+) -> Unit raise {
+  let cloth = @clothing.Clothing::from_resource(item_data, drawinfo)
+  self.clothes[slot] = cloth
+  if slot == @slot.Id::WEAPON {
+    self.weapon_data = Some(@weapon.WeaponData::from_item_data(item_data))
   }
-  let mut cloth_res_ref : @clothing.Clothing?? = None
-  self.clothes[slot] = (item_id, @utils.Future::new(fn() { cloth_res_ref }))
-  let mut weapon_data_res_ref : @weapon.WeaponData?? = None
-  self.weapon_data_cache = @utils.Future::new(fn() { weapon_data_res_ref })
-    |> Some
-  self.io_service.execute(
-    fn() {
-      let item_data = @item.ItemData::get_async(item_id, self.string_loader)
-      let cloth = @clothing.Clothing::from_resource!(item_data, drawinfo)
-      cloth_res_ref = Some(Some(cloth))
-      if slot == @slot.Id::WEAPON {
-        weapon_data_res_ref = Some(
-          Some(@weapon.WeaponData::from_item_data!(item_data)),
-        )
-      }
-    },
-    on_error=fn(e) {
-      @log.error(
-        { "item_id": item_id, "err": Show::to_string(e) },
-        "Failed to load clothing",
-      )
-      cloth_res_ref = Some(None)
-      weapon_data_res_ref = Some(None)
-    },
-  )
 }
 
 ///|
 pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
   self.clothes.remove(slot)
   if slot == @slot.Id::WEAPON {
-    self.weapon_data_cache = None
+    self.weapon_data = None
   }
 }
 
@@ -140,10 +98,9 @@ pub fn adjust_stance(
   self : CharEquips,
   stance : @types.StanceId
 ) -> @types.StanceId {
-  guard self.clothes.get(@slot.Id::WEAPON) is Some((_, weapon)) else {
+  guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else {
     return stance
   }
-  guard weapon.poll().flatten() is Some(weapon) else { return stance }
   match stance {
     @types.StanceId::STAND1 | @types.StanceId::STAND2 => weapon.get_stand()
     @types.StanceId::WALK1 | @types.StanceId::WALK2 => weapon.get_walk()
@@ -153,9 +110,5 @@ pub fn adjust_stance(
 
 ///|
 pub impl ToJson for CharEquips with to_json(self) -> Json {
-  {
-    "clothes": self.clothes.iter().map(fn(it) { (it.0, it.1.0) })
-    |> Map::from_iter()
-    |> ToJson::to_json(),
-  }
+  { "clothes": self.clothes }
 }

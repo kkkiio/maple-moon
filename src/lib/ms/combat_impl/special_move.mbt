@@ -23,7 +23,7 @@ pub(all) struct SpecialMove {
     @combat.AttackType,
     Bool,
   ) -> @combat.Attack
-  get_bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
+  get_bullet : (@character.Character, Int) -> @graphics.Animation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
 } derive(Show)
@@ -76,7 +76,7 @@ pub fn get_bullet(
   self : SpecialMove,
   char : @character.Character,
   value : Int
-) -> @utils.Future[@graphics.Animation] {
+) -> @graphics.Animation {
   (self.get_bullet)(char, value)
 }
 

@@ -2,12 +2,12 @@
 pub(all) type Counter[K, V] Map[K, V]
 
 ///|
-pub fn Counter::new[K, V]() -> Counter[K, V] {
+pub fn[K, V] Counter::new() -> Counter[K, V] {
   Map::new()
 }
 
 ///|
-pub fn Counter::op_get[K : Hash + Eq, V : Default](
+pub fn[K : Hash + Eq, V : Default] Counter::op_get(
   self : Counter[K, V],
   key : K
 ) -> V {
@@ -15,7 +15,7 @@ pub fn Counter::op_get[K : Hash + Eq, V : Default](
 }
 
 ///|
-pub fn op_set[K : Hash + Eq, V](
+pub fn[K : Hash + Eq, V] op_set(
   self : Counter[K, V],
   key : K,
   value : V

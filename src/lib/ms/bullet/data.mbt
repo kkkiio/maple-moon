@@ -6,43 +6,33 @@ pub(all) struct BulletData {
 }
 
 ///|
-async fn BulletData::load(
-  id : Int,
+pub async fn BulletData::load(
+  strid : String,
   string_loader : @resource.SyncLoader
-) -> BulletData! {
-  let prefix = "0" + (id / 10000).to_string()
-  let strid = "0" + id.to_string()
+) -> BulletData raise {
+  guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
+  let prefix = strid.substring(end=4)
   let src = @item.get_item_loader().load_res_async([
     "Consume",
     prefix + ".img",
     strid,
   ])
-  let item_data = @item.ItemData::get_async(id, string_loader)
-  BulletData::new!(src, item_data)
+  let id = strid.trim_start("0").to_string() |> @strconv.parse_int
+  let item_data = @item.ItemData::load(
+    id,
+    @item.get_character_loader(),
+    @item.get_item_loader(),
+    string_loader,
+  )
+  BulletData::new(src, item_data)
 }
 
 ///|
 fn BulletData::new(
   src : @resource.NxNode,
   item_data : @item.ItemData
-) -> BulletData! {
-  let bullet = src["bullet"] |> @graphics.Animation::from_resource_ex!()
-  let watk = src["info"]["incPAD"].get_int!()
+) -> BulletData raise {
+  let bullet = src["bullet"] |> @graphics.Animation::from_resource_ex()
+  let watk = src["info"]["incPAD"].get_int()
   { item_data, bullet, watk }
-}
-
-///|
-let cache : Map[Int, BulletData] = Map::new()
-
-///|
-pub async fn BulletData::get_async(
-  id : Int,
-  string_loader : @resource.SyncLoader
-) -> BulletData! {
-  if cache.get(id) is Some(data) {
-    return data
-  }
-  let data = BulletData::load(id, string_loader)
-  cache.set(id, data)
-  data
 }

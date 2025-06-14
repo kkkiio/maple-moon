@@ -112,9 +112,9 @@ pub struct NumberSet {
 } derive(Default)
 
 ///|
-pub async fn NumberSet::load() -> NumberSet! {
+pub async fn NumberSet::load() -> NumberSet raise {
   let loader = effect_loader
-  async fn load_charset_pair!(path0, path1) {
+  async fn load_charset_pair(path0, path1) raise {
     let res0 = loader.load_res_async(path0)
     let res1 = loader.load_res_async(path1)
     let res_pair = (res0, res1)

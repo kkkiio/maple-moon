@@ -119,7 +119,7 @@ pub fn MapPortals::find_warp_at(
 }
 
 ///|
-pub async fn MapPortalAnimations::load() -> MapPortalAnimations! {
+pub async fn MapPortalAnimations::load() -> MapPortalAnimations raise {
   let src1 = map_helper_loader.load_res_async([
     "portal", "game", "ph", "default", "portalContinue",
   ])
@@ -166,7 +166,7 @@ test "" {
       "y": 194,
     },
   }
-  let res : @resource.MapBasedArray[PortalMarker] = @json.from_json!(json)
+  let res : @resource.MapBasedArray[PortalMarker] = @json.from_json(json)
   @json.inspect(res._, content=[
     {
       "pn": "sp",

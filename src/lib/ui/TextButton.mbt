@@ -1,5 +1,5 @@
 ///|
-typealias Text = @graphics.Text
+typealias @graphics.Text
 
 ///|
 struct TextButton {

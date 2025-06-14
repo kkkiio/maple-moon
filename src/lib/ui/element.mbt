@@ -1,5 +1,5 @@
 ///|
-typealias Point[T] = @struct.Point[T]
+typealias @struct.Point
 
 ///|
 pub(all) enum UIElementType {

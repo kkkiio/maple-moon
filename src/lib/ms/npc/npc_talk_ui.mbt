@@ -389,9 +389,9 @@ pub fn change_text(
   talk_action : TalkAction,
   speakerbyte : Speaker,
   tx : String
-) -> Unit! {
+) -> Unit raise {
   self.talk_action = Some(talk_action)
-  let content = convert_npc_text!(tx, self.name_loader)
+  let content = convert_npc_text(tx, self.name_loader)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.extend_id(npcid, 7) + ".img"
@@ -461,12 +461,12 @@ fn new_npc_talk_more_packet(
 fn convert_npc_text(
   raw_text : String,
   name_loader : @markup_text.RefRender
-) -> NPCTalkContent! {
-  let content = parse_talk_content!(
+) -> NPCTalkContent raise {
+  let content = parse_talk_content(
     raw_text,
     mod_provider=fn(_, v) { name_loader.get_mob_name(v) },
     npc_provider=fn(_, v) { name_loader.get_npc_name(v) },
-    map_provider=fn(_, v) { name_loader.get_map_name!(v).to_string() },
+    map_provider=fn(_, v) { name_loader.get_map_name(v).to_string() },
     item_provider=fn(_, v) { name_loader.get_item_name(v).to_string() },
     player_name_provider=fn(_, _) { name_loader.get_player_name() },
   )

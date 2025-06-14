@@ -1,7 +1,7 @@
 ///|
 struct Skill {
   action : &SkillAction
-  bullet : (@character.Character, Int) -> @utils.Future[@graphics.Animation]
+  bullet : (@character.Character, Int) -> @graphics.Animation
   use_effect : (@character.Character) -> Unit
   hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
@@ -16,30 +16,28 @@ struct Skill {
 
 ///|
 pub async fn Skill::load(
-  string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
-  skill_id : Int
-) -> Skill! {
+  skill_id : Int,
+  bullet_module : @bullet.Module,
+  string_loader~ : @resource.SyncLoader
+) -> Skill raise {
   let data = @skill.SkillData::load(string_loader, skill_id)
-  Skill::new!(
-    string_loader,
-    io_service,
+  Skill::new(
     skill_id,
+    bullet_module,
     data.src,
     data.is_attack,
     data.master_level,
     data.stats,
     data.req_weapon,
-    make_use_effect!(data.src, skill_id),
-    make_hit_effect!(data.src),
+    make_use_effect(data.src, skill_id),
+    make_hit_effect(data.src),
   )
 }
 
 ///|
 pub fn Skill::new(
-  string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
   skill_id : Int,
+  bullet_module : @bullet.Module,
   src : @resource.NxNode,
   is_attack : Bool,
   master_level : Int,
@@ -47,14 +45,14 @@ pub fn Skill::new(
   req_weapon : @weapon.Type,
   use_effect : (@character.Character) -> Unit,
   hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
-) -> Skill! {
+) -> Skill raise {
+  let mut projectile = true
+  let mut over_regular = false
   // let strid = if skill_id < 10000000 {
   //   @string_format.extend_id(skill_id, 7)
   // } else {
   //   skill_id.to_string()
   // }
-  let mut projectile = true
-  let mut over_regular = false
   // let has_affected_effect = src["affected"].get_children_count() > 0
   // let affected_effects = if has_affected_effect {
   //   SingleAffectedEffect::new!(src) as &SkillAffectedEffect
@@ -70,7 +68,7 @@ pub fn Skill::new(
   } else if is_attack {
     let by_level = src["level"]["1"]["action"].as_string?().is_ok()
     if by_level {
-      ByLevelAction::new!(src, skill_id) as &SkillAction
+      ByLevelAction::new(src, skill_id) as &SkillAction
     } else {
       over_regular = true
       RegularAction::default() as &SkillAction
@@ -81,20 +79,20 @@ pub fn Skill::new(
   let has_ball = src["ball"].get_children_count() > 0
   let by_level_ball = src["level"]["1"]["ball"].get_children_count() > 0
   let bullet = if by_level_ball {
-    let bullet = BySkillLevelBullet::new!(src, skill_id)
+    let bullet = BySkillLevelBullet::new(src, skill_id)
     fn(user : @character.Character, bulletid : Int) {
-      bullet.get(user, bulletid) |> @utils.Future::from_value
+      bullet.get(user, bulletid)
     }
   } else if has_ball {
-    let bullet = SingleBullet::new!(src)
+    let bullet = SingleBullet::new(src)
     fn(user : @character.Character, bulletid : Int) {
-      bullet.get(user, bulletid) |> @utils.Future::from_value
+      bullet.get(user, bulletid)
     }
   } else {
     projectile = false
-    let bullet = SkillRegularBullet::new(string_loader)
+    let bullet = SkillRegularBullet::new(bullet_module)
     fn(user : @character.Character, bulletid : Int) {
-      io_service.submit(fn() { bullet.get(user, bulletid) }).map(_.unwrap())
+      bullet.get(user, bulletid)
     }
   }
   {
@@ -211,7 +209,11 @@ pub fn Skill::make_attack(
   if self.over_regular {
     attack.stance = chr.get_look().get_stance().int_value()
     if attack.t == @combat.AttackType::CLOSE && not(self.projectile) {
-      attack.range = chr.get_afterimage().get_range()
+      guard chr.get_afterimage() is Some(after_image) else {
+        @log.error({}, "No afterimage")
+        panic()
+      }
+      attack.range = after_image.get_range()
     }
   }
   attack
@@ -259,7 +261,7 @@ pub fn Skill::get_bullet(
   self : Skill,
   user : @character.Character,
   bulletid : Int
-) -> @utils.Future[@graphics.Animation] {
+) -> @graphics.Animation {
   (self.bullet)(user, bulletid)
 }
 
@@ -276,21 +278,21 @@ pub fn Skill::apply_hit_effects(
 pub fn make_use_effect(
   src : @resource.NxNode,
   skill_id : Int
-) -> ((@character.Character) -> Unit)!Error {
+) -> ((@character.Character) -> Unit) raise Error {
   let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
     0
   let multi_effect = src["effect0"].get_children_count() > 0
   if by_level_effect {
-    new_by_level_use_effect!(src)
+    new_by_level_use_effect(src)
   } else if multi_effect {
-    new_multi_use_effect!(src)
+    new_multi_use_effect(src)
   } else {
     let is_animation = not(src["effect"]["0"].get_bitmap().is_empty())
     let has_effect1 = not(src["effect"]["1"].get_bitmap().is_empty())
     if is_animation {
-      new_single_use_effect!(src)
+      new_single_use_effect(src)
     } else if has_effect1 {
-      new_twohanded_use_effect!(src)
+      new_twohanded_use_effect(src)
     } else {
       match @skill.SkillId::from_int?(skill_id) {
         Ok(@skill.SkillId::IRON_BODY) | Ok(@skill.SkillId::MAGIC_ARMOR) =>
@@ -304,23 +306,23 @@ pub fn make_use_effect(
 ///|
 pub fn make_hit_effect(
   src : @resource.NxNode
-) -> ((@combat.AttackUser, @monster.Mob) -> Unit)!Error {
+) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
   let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
   let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
   let has_hit0 = src["hit"]["0"].get_children_count() > 0
   let has_hit1 = src["hit"]["1"].get_children_count() > 0
   if by_level_hit {
     if has_hit0 && has_hit1 {
-      new_by_level_twohanded_hit_effect!(src)
+      new_by_level_twohanded_hit_effect(src)
     } else {
-      new_by_level_hit_effect!(src)
+      new_by_level_hit_effect(src)
     }
   } else if by_skill_level_hit {
-    new_by_skill_level_hit_effect!(src)
+    new_by_skill_level_hit_effect(src)
   } else if has_hit0 && has_hit1 {
-    new_twohanded_hit_effect!(src)
+    new_twohanded_hit_effect(src)
   } else if has_hit0 {
-    new_single_hit_effect!(src)
+    new_single_hit_effect(src)
   } else {
     fn(_ : @combat.AttackUser, _ : @monster.Mob) -> Unit {  }
   }

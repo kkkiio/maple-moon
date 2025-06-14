@@ -5,12 +5,12 @@ struct Rectangle[T] {
 } derive(Eq, Default, Show, ToJson)
 
 ///|
-pub fn Rectangle::new[T](lt : Point[T], rb : Point[T]) -> Rectangle[T] {
+pub fn[T] Rectangle::new(lt : Point[T], rb : Point[T]) -> Rectangle[T] {
   { lt, rb }
 }
 
 ///|
-pub fn Rectangle::from4[T](
+pub fn[T] Rectangle::from4(
   left : T,
   right : T,
   top : T,
@@ -20,32 +20,32 @@ pub fn Rectangle::from4[T](
 }
 
 ///|
-pub fn left[T](self : Rectangle[T]) -> T {
+pub fn[T] left(self : Rectangle[T]) -> T {
   self.lt.x
 }
 
 ///|
-pub fn top[T](self : Rectangle[T]) -> T {
+pub fn[T] top(self : Rectangle[T]) -> T {
   self.lt.y
 }
 
 ///|
-pub fn right[T](self : Rectangle[T]) -> T {
+pub fn[T] right(self : Rectangle[T]) -> T {
   self.rb.x
 }
 
 ///|
-pub fn bottom[T](self : Rectangle[T]) -> T {
+pub fn[T] bottom(self : Rectangle[T]) -> T {
   self.rb.y
 }
 
 ///|
-pub fn Rectangle::straight[T : Eq](self : Rectangle[T]) -> Bool {
+pub fn[T : Eq] Rectangle::straight(self : Rectangle[T]) -> Bool {
   self.lt == self.rb
 }
 
 ///|
-pub fn Rectangle::contains[T : Eq + Compare](
+pub fn[T : Eq + Compare] Rectangle::contains(
   self : Rectangle[T],
   v : Point[T]
 ) -> Bool {
@@ -57,7 +57,7 @@ pub fn Rectangle::contains[T : Eq + Compare](
 }
 
 ///|
-pub fn Rectangle::shift[T : Add](
+pub fn[T : Add] Rectangle::shift(
   self : Rectangle[T],
   v : Point[T]
 ) -> Rectangle[T] {
@@ -81,7 +81,7 @@ pub fn get_vertical(self : Rectangle[Int]) -> Range[Int] {
 }
 
 ///|
-pub fn is_empty[T : Eq](self : Rectangle[T]) -> Bool {
+pub fn[T : Eq] is_empty(self : Rectangle[T]) -> Bool {
   self.lt.straight() && self.rb.straight() && self.straight()
 }
 
@@ -99,11 +99,11 @@ pub impl @json.FromJson for Rectangle[Int] with from_json(value, path) {
     { "lt"? : lt_value, "rb"? : rb_value, .. } => {
       let lt = match lt_value {
         None => { x: 0, y: 0 }
-        Some(v) => Point::from_json!(v, path.add_key("lt"))
+        Some(v) => Point::from_json(v, path.add_key("lt"))
       }
       let rb = match rb_value {
         None => { x: 0, y: 0 }
-        Some(v) => Point::from_json!(v, path.add_key("rb"))
+        Some(v) => Point::from_json(v, path.add_key("rb"))
       }
       { lt, rb }
     }

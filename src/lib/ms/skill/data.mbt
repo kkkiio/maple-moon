@@ -40,15 +40,15 @@ pub(all) struct Stats {
 pub async fn SkillData::load(
   string_loader : @resource.SyncLoader,
   id : Int
-) -> SkillData! {
+) -> SkillData raise {
   let strid = @string_format.extend_id(id, 7)
   let jobid = strid.substring(end=3)
   let src = skill_loader().load_res_async([jobid + ".img", "skill", strid])
-  let skill_res : SkillNxResource = @json.from_json!(src.value())
+  let skill_res : SkillNxResource = @json.from_json(src.value())
   let strsrc : SkillTextResource = string_loader
     .load_res(["Skill.img", strid])
     .value()
-    |> @json.from_json!()
+    |> @json.from_json()
   SkillData::new(id, src, skill_res.unwrap(), strsrc)
 }
 
@@ -58,7 +58,7 @@ struct SkillNxResource {
   icon_disabled : @graphics.TextureResource
   icon_mouseover : @graphics.TextureResource
   elem_attr : String
-  req_skills : IntMap[Int]
+  req_skills : Nullable[IntMap[Int]]
   invisible : Bool
   level_stats : LevelStats
   req_weapon : WeaponType
@@ -75,19 +75,19 @@ struct SkillNxResource {
 // ),
 
 ///|
-pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillNxResource!@json.JsonDecodeError {
+pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillNxResource raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let icon : @graphics.TextureResource = @json.from_json!(
+  let icon : @graphics.TextureResource = @json.from_json(
     obj.get("icon").or(Json::null()),
     path=path.add_key("icon"),
   )
-  let icon_disabled : @graphics.TextureResource = @json.from_json!(
+  let icon_disabled : @graphics.TextureResource = @json.from_json(
     obj.get("iconDisabled").or(Json::null()),
     path=path.add_key("iconDisabled"),
   )
-  let icon_mouseover : @graphics.TextureResource = @json.from_json!(
+  let icon_mouseover : @graphics.TextureResource = @json.from_json(
     obj.get("iconMouseOver").or(Json::null()),
     path=path.add_key("iconMouseOver"),
   )
@@ -98,7 +98,7 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
     _ =>
       raise @json.JsonDecodeError((path.add_key("elemAttr"), "expect string"))
   }
-  let req_skills : IntMap[Int] = @json.from_json!(
+  let req_skills : Nullable[IntMap[Int]] = @json.from_json(
     obj.get("req").or(Json::null()),
     path=path.add_key("req"),
   )
@@ -108,11 +108,11 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
     _ =>
       raise @json.JsonDecodeError((path.add_key("invisible"), "expect number"))
   }
-  let level_stats : LevelStats = @json.from_json!(
+  let level_stats : LevelStats = @json.from_json(
     obj.get("level").or(Json::null()),
     path=path.add_key("level"),
   )
-  let req_weapon : WeaponType = @json.from_json!(
+  let req_weapon : WeaponType = @json.from_json(
     obj.get("weapon").or(Json::null()),
     path=path.add_key("weapon"),
   )
@@ -135,7 +135,7 @@ pub fn SkillNxResource::unwrap(self : SkillNxResource) -> SkillResource {
     icon_disabled: self.icon_disabled,
     icon_mouseover: self.icon_mouseover,
     elem_attr: self.elem_attr,
-    req_skills: self.req_skills._,
+    req_skills: self.req_skills._.map_or({}, fn(it) { it._ }),
     invisible: self.invisible,
     level_stats: self.level_stats._,
     req_weapon: self.req_weapon._,
@@ -162,7 +162,7 @@ struct SkillTextResource {
 }
 
 ///|
-pub impl @json.FromJson for SkillTextResource with from_json(json, path) -> SkillTextResource!@json.JsonDecodeError {
+pub impl @json.FromJson for SkillTextResource with from_json(json, path) -> SkillTextResource raise @json.JsonDecodeError {
   let (name, desc) = match json {
     { "name": String(name), "desc": String(desc), .. } => (name, desc)
     _ => raise @json.JsonDecodeError((path, "expect object with name and desc"))
@@ -323,10 +323,10 @@ pub fn skill_loader() -> @resource.AsyncLoader {
 priv type LevelStats Map[Int, Stats]
 
 ///|
-impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats!@json.JsonDecodeError {
+impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats raise @json.JsonDecodeError {
   let stats = {}
   for key, value in json.as_object().or({}) {
-    let level = try key |> @strconv.parse_int!() catch {
+    let level = try key |> @strconv.parse_int() catch {
       _ => raise @json.JsonDecodeError((path, "invalid level"))
     }
     let stat = match value {
@@ -410,7 +410,7 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats!@jso
         if mobcount == 0 || hrange == 0 {
           raise @json.JsonDecodeError((path, "invalid range"))
         }
-        let range = @json.from_json!(value)
+        let range = @json.from_json(value)
         {
           damage_mul: damage,
           matk,
@@ -440,11 +440,11 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats!@jso
 type WeaponType @weapon.Type
 
 ///|
-pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType!@json.JsonDecodeError {
+pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType raise @json.JsonDecodeError {
   match json {
     Null => @weapon.Type::NONE
     Number(v) =>
-      try @weapon.Type::by_value!(100 + v.to_int()) catch {
+      @weapon.Type::by_value(100 + v.to_int()) catch {
         _ => raise @json.JsonDecodeError((path, "invalid weapon type"))
       }
     _ => raise @json.JsonDecodeError((path, "expect number"))
@@ -453,3 +453,6 @@ pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType!
 
 ///|
 typealias @resource.IntMap
+
+///|
+typealias @resource.Nullable

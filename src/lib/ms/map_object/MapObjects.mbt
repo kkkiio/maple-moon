@@ -13,7 +13,7 @@ pub enum MapObjectEvent[T] {
 }
 
 ///|
-pub fn MapObjects::new[T]() -> MapObjects[T] {
+pub fn[T] MapObjects::new() -> MapObjects[T] {
   {
     objects: {},
     layers: @map_layer.ids.map(fn(_id) { {} }),
@@ -22,12 +22,12 @@ pub fn MapObjects::new[T]() -> MapObjects[T] {
 }
 
 ///|
-pub fn get[T](self : MapObjects[T], oid : Int) -> T? {
+pub fn[T] get(self : MapObjects[T], oid : Int) -> T? {
   self.objects.get(oid)
 }
 
 ///|
-pub fn draw[T : MapObject](
+pub fn[T : MapObject] draw(
   self : MapObjects[T],
   layer : @map_layer.Id,
   viewx : Double,
@@ -43,7 +43,7 @@ pub fn draw[T : MapObject](
 }
 
 ///|
-pub fn update[T : MapObject](
+pub fn[T : MapObject] update(
   self : MapObjects[T],
   physics : @physics.Physics
 ) -> Unit {
@@ -60,19 +60,19 @@ pub fn update[T : MapObject](
 }
 
 ///|
-pub fn clear[T](self : MapObjects[T]) -> Unit {
+pub fn[T] clear(self : MapObjects[T]) -> Unit {
   self.objects.clear()
   self.layers.each(fn(layer) { layer.clear() })
   self.event_listeners.retain(fn(listener) { listener(MapObjectEvent::Clear) })
 }
 
 ///|
-pub fn contains[T](self : MapObjects[T], oid : Int) -> Bool {
+pub fn[T] contains(self : MapObjects[T], oid : Int) -> Bool {
   self.objects.contains(oid)
 }
 
 ///|
-pub fn add[T : MapObject](self : MapObjects[T], toadd : T) -> Unit {
+pub fn[T : MapObject] add(self : MapObjects[T], toadd : T) -> Unit {
   let oid = toadd.get_oid()
   let layer = toadd.get_layer()
   self.objects.set(oid, toadd)
@@ -83,7 +83,7 @@ pub fn add[T : MapObject](self : MapObjects[T], toadd : T) -> Unit {
 }
 
 ///|
-pub fn remove[T : MapObject](self : MapObjects[T], oid : Int) -> Unit {
+pub fn[T : MapObject] remove(self : MapObjects[T], oid : Int) -> Unit {
   match self.objects.get(oid) {
     Some(mmo) => {
       let layer = mmo.get_layer()
@@ -98,17 +98,17 @@ pub fn remove[T : MapObject](self : MapObjects[T], oid : Int) -> Unit {
 }
 
 ///|
-pub fn iter2[T](self : MapObjects[T]) -> Iter2[Int, T] {
+pub fn[T] iter2(self : MapObjects[T]) -> Iter2[Int, T] {
   self.objects.iter2()
 }
 
 ///|
-pub fn size[T](self : MapObjects[T]) -> Int {
+pub fn[T] size(self : MapObjects[T]) -> Int {
   self.objects.size()
 }
 
 ///|
-pub fn MapObjects::listen_object_changes[T](
+pub fn[T] MapObjects::listen_object_changes(
   self : MapObjects[T],
   listener : (MapObjectEvent[T]) -> Bool
 ) -> Unit {

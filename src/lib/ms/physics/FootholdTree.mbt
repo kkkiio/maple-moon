@@ -12,28 +12,24 @@ struct FootholdTree {
 ///|
 pub fn FootholdTree::load_from_resource(
   src : @resource.NxNode
-) -> FootholdTree!@resource.LoadError {
+) -> FootholdTree raise @resource.LoadError {
   let footholds = Map::new()
   let footholds_by_x = Map::new()
   let null_fh = Foothold::default()
   for basef in src {
     let basefname = basef.name()
-    let layer = try {
-      @strconv.parse_int!(basefname)
-    } catch {
+    let layer = @strconv.parse_int(basefname) catch {
       @strconv.StrConvError(e) =>
         raise @resource.LoadError("invalid foothold layer \{e}")
     }
     for midf in basef {
       for lastf in midf {
         let lastfname = lastf.name()
-        let id = try {
-          @strconv.parse_int!(lastfname)
-        } catch {
+        let id = @strconv.parse_int(lastfname) catch {
           @strconv.StrConvError(e) =>
             raise @resource.LoadError("invalid foothold id \{e}")
         }
-        let foothold = Foothold::load_from_resource!(lastf, id, layer)
+        let foothold = Foothold::load_from_resource(lastf, id, layer)
         footholds.set(id, foothold)
         if foothold.is_wall() {
           continue

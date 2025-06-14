@@ -11,12 +11,12 @@ pub fn IOService::new() -> IOService {
 /// The returned `Future` will eventually resolve to a `Result[T, Error]`.
 pub fn[T] IOService::submit(
   _ : IOService,
-  task : async () -> T!
+  task : async () -> T raise
 ) -> @utils.Future[Result[T, Error]] {
   let mut res : Result[T, Error]? = None
   spawn_background(async fn() {
     try {
-      let value = task!()
+      let value = task()
       res = Some(Ok(value))
     } catch {
       e => res = Some(Err(e))
@@ -29,14 +29,10 @@ pub fn[T] IOService::submit(
 /// This is useful for tasks that are executed for their side effects, where the return value is not needed.
 pub fn IOService::execute(
   _ : IOService,
-  f : async () -> Unit!,
+  f : async () -> Unit raise,
   /// An optional callback function to handle any `Error` thrown by the task.
   /// If not provided, the default behavior is to abort the program.
   on_error~ : (Error) -> Unit = fn(err) { abort(err.to_string()) }
 ) -> Unit {
-  spawn_background(async fn() {
-    try f!() catch {
-      e => on_error(e)
-    }
-  })
+  spawn_background(async fn() { f() catch { e => on_error(e) } })
 }

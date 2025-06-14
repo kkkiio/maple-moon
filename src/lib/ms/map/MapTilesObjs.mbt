@@ -9,7 +9,7 @@ pub async fn TilesObjs::load(
   ts : String?,
   tile_resource : Array[TileResource],
   obj_resource : Array[ObjResource]
-) -> TilesObjs! {
+) -> TilesObjs raise {
   let tileset = if ts is Some(ts) {
     Some(tile_loader.load_res_async([ts + ".img"]))
   } else {
@@ -86,7 +86,7 @@ struct MapTilesObjs {
 ///|
 pub async fn MapTilesObjs::load(
   layer_resource : Array[LayerResource]
-) -> MapTilesObjs! {
+) -> MapTilesObjs raise {
   let layers = []
   for id in @map_layer.ids {
     let layer = layer_resource[id]

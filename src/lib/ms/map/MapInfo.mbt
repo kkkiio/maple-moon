@@ -1,11 +1,11 @@
 ///|
-typealias Range[T] = @struct.Range[T]
+typealias @struct.Range
 
 ///|
-typealias Point[T] = @struct.Point[T]
+typealias @struct.Point
 
 ///|
-typealias NxNode = @resource.NxNode
+typealias @resource.NxNode
 
 ///| Define the Seat struct and its methods
 struct Seat {

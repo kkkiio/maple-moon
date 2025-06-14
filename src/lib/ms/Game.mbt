@@ -68,7 +68,7 @@ async fn load_modules(
   scheduls : @schedule.Schedules,
   stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module
-) -> LoadedState! {
+) -> LoadedState raise {
   let local_storage = @config.LocalStorage::new()
   fn get_stage() -> Stage {
     stage_ref.val.unwrap() // TODO: handle error
@@ -264,6 +264,7 @@ async fn load_modules(
     }
     true
   })
+  let bullet_module = @bullet.Module::load(string_loader)
   let stage = Stage::new(
     map_module.get_portals_animations(),
     monster_module.get_map_mobs(),
@@ -279,6 +280,7 @@ async fn load_modules(
     network,
     string_loader,
     io_service,
+    bullet_module,
   )
   stage_ref.val = Some(stage)
   network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
@@ -330,7 +332,7 @@ pub fn update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
   let stage = self.stage.val.unwrap() // TODO: handle error
-  match stage.update?() {
+  match (try? stage.update()) {
     Ok(_) => ()
     Err(e) => @log.error({ "err": e }, "failed to update stage")
   }

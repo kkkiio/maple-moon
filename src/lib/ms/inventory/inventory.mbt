@@ -26,7 +26,7 @@ enum ModificationMode {
 } derive(Show, ToJson)
 
 ///| Return the move type by value
-pub fn Movement::from_int(value : Int) -> Movement!@utils.UnknownEnum {
+pub fn Movement::from_int(value : Int) -> Movement raise @utils.UnknownEnum {
   match value {
     -1 => Movement::MOVE_NONE
     0 => Movement::MOVE_INTERNAL

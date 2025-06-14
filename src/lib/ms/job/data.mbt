@@ -9,7 +9,7 @@ pub(all) struct JobData {
 pub async fn JobData::load(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> JobData! {
+) -> JobData raise {
   let strid = @string_format.extend_id(id, 3)
   let src = @skill.skill_loader().load_res_async([strid + ".img"])
   JobData::new(id, src, string_loader)

@@ -28,7 +28,7 @@ pub(all) struct EquipId {
 }
 
 ///|
-fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
+fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
   guard parse_equip_category(item_id) is Some(category) else {
     raise LoadDataError::INVALID_ITEM_ID(item_id)
   }
@@ -37,12 +37,12 @@ fn EquipId::parse(item_id : Int) -> EquipId!LoadDataError {
 }
 
 ///|
-async fn ItemData::load_async(
+pub async fn ItemData::load(
   item_id : Int,
   character_loader : @resource.AsyncLoader,
   item_loader : @resource.AsyncLoader,
   string_loader : @resource.SyncLoader
-) -> ItemData! {
+) -> ItemData raise {
   let zid = "0" + item_id.to_string()
   let (category, src, strsrc) = match
     parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
@@ -109,11 +109,11 @@ async fn ItemData::load_async(
     info["icon"] |> @graphics.Texture::from_resource,
     info["iconRaw"] |> @graphics.Texture::from_resource,
   )
-  let price = info["price"].get_int!()
-  let untradable = info["tradeBlock"].get_bool!()
-  let unique = info["only"].get_bool!()
-  let unsellable = info["notSale"].get_bool!()
-  let cash_item = info["cash"].get_bool!()
+  let price = info["price"].get_int()
+  let untradable = info["tradeBlock"].get_bool()
+  let unique = info["only"].get_bool()
+  let unsellable = info["notSale"].get_bool()
+  let cash_item = info["cash"].get_bool()
   let gender = get_item_gender(item_id)
   {
     src,
@@ -144,11 +144,11 @@ pub fn ItemData::get_loaded(id : Int) -> ItemData? {
 pub async fn ItemData::get_async(
   id : Int,
   string_loader : @resource.SyncLoader
-) -> ItemData! {
+) -> ItemData raise {
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load_async(
+  let data = ItemData::load(
     id,
     get_character_loader(),
     get_item_loader(),
@@ -197,7 +197,7 @@ let categorynames = [
 ]
 
 ///|
-pub(all) type! LoadDataError {
+pub(all) suberror LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
   INVALID_DATA(String)

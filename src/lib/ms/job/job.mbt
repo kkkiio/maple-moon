@@ -389,7 +389,7 @@ pub impl Show for JobId with output(self, logger) {
 
 ///|
 pub impl @json.FromJson for JobId with from_json(json, path) {
-  let id : Int = @json.from_json!(json, path~)
+  let id : Int = @json.from_json(json, path~)
   if JobId::from_int(id) is Some(jobid) {
     jobid
   } else {

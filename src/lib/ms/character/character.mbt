@@ -65,7 +65,7 @@ pub(all) struct CharBase {
   // chat_balloon: ChatBalloon
   effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
-  mut after_image : @utils.Future[@char_look.AfterImage] // TODO: load more early?
+  mut after_image : @char_look.AfterImage?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
   damage_number_set : @ui.NumberSet
@@ -76,7 +76,7 @@ pub(all) struct CharBase {
 }
 
 ///| Type alias for backward compatibility
-pub(all) typealias CharBase as Character
+pub typealias CharBase as Character
 
 ///|
 pub fn get_position(self : CharBase) -> @struct.Point[Int] {
@@ -114,7 +114,7 @@ pub fn CharBase::new(
     ),
     effects: @graphics.EffectLayer::default(),
     state: CharState::STAND,
-    after_image: @utils.Future::never(),
+    after_image: None,
     invincible: @utils.TimedBool::default(),
     damage_number_set,
     damage_numbers: Array::new(),
@@ -217,7 +217,7 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   } else {
     0
   }
-  match self.after_image.poll() {
+  match self.after_image {
     None => ()
     Some(image) => image.update(self.look.get_frame(), stancespeed)
   }
@@ -293,22 +293,11 @@ pub fn is_invincible(self : CharBase) -> Bool {
 }
 
 ///|
-pub fn set_afterimage(
+pub fn CharBase::set_afterimage(
   self : CharBase,
-  skill_id : Int,
-  io_service : @io_task.IOService
+  after_image : @char_look.AfterImage
 ) -> Unit {
-  guard self.look.get_equips().get_weapon() is Some(weapon) else { return }
-  let stance_name = self.look.get_stance().name()
-  let weapon_level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
-  let ai_name = weapon.get_afterimage()
-  self.after_image = io_service
-    .submit(fn() {
-      @char_look.AfterImage::load(skill_id, ai_name, stance_name, weapon_level)
-    })
-    .map(fn(rs) {
-      rs.unwrap() // TODO: handle error
-    })
+  self.after_image = Some(after_image)
 }
 
 ///|
@@ -323,9 +312,9 @@ pub fn get_oid(self : CharBase) -> Int {
 
 ///|
 pub fn get_attackdelay(self : CharBase, no : Int) -> Int {
-  let first_frame = self.after_image
-    .poll()
-    .map_or(0, fn(image) { image.get_first_frame() }) // WARN: may produce incorrect delay
+  let first_frame = self.after_image.map_or(0, fn(image) {
+    image.get_first_frame()
+  }) // WARN: may produce incorrect delay
   let delay = self.look.get_attackdelay(no, first_frame)
   let fspeed = get_real_attackspeed((self.get_integer_attackspeed)())
   (delay.to_double() / fspeed).to_int()
@@ -408,8 +397,8 @@ pub fn get_look(self : CharBase) -> @char_look.CharLook {
 }
 
 ///|
-pub fn get_afterimage(self : CharBase) -> @char_look.AfterImage {
-  self.after_image.poll().or_default()
+pub fn CharBase::get_afterimage(self : CharBase) -> @char_look.AfterImage? {
+  self.after_image
 }
 
 ///|

@@ -84,13 +84,13 @@ struct TextureResource {
 } derive(ToJson)
 
 ///|
-pub impl @json.FromJson for TextureResource with from_json(json, path) -> TextureResource!@json.JsonDecodeError {
+pub impl @json.FromJson for TextureResource with from_json(json, path) -> TextureResource raise @json.JsonDecodeError {
   // TODO: source,_outlink,_inlink
-  let bitmap : @resource.BitmapResource = @json.from_json!(json)
+  let bitmap : @resource.BitmapResource = @json.from_json(json)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let origin = @json.from_json!(
+  let origin = @json.from_json(
     obj.get("origin").or(Json::null()),
     path=path.add_key("origin"),
   )

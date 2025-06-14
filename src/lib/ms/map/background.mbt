@@ -25,7 +25,9 @@ pub fn int_value(self : BackgroundType) -> Int {
 }
 
 ///|
-pub fn BackgroundType::from_int(id : Int) -> BackgroundType!@utils.UnknownEnum {
+pub fn BackgroundType::from_int(
+  id : Int
+) -> BackgroundType raise @utils.UnknownEnum {
   match id {
     0 => BackgroundType::BG_NORMAL
     1 => BackgroundType::HTILED
@@ -109,7 +111,7 @@ pub impl @json.FromJson for BackgroundSpec with from_json(json, path) {
     no: no.to_int(),
     rx: rx.to_int(),
     ry: ry.to_int(),
-    type_: try BackgroundType::from_int!(type_.to_int()) catch {
+    type_: BackgroundType::from_int(type_.to_int()) catch {
       e => raise @json.JsonDecodeError((path.add_key("type"), e.to_string()))
     },
     x: x.to_int(),
@@ -135,7 +137,7 @@ struct BackgroundResource {
 pub async fn BackgroundResource::load(
   background_loader : @resource.AsyncLoader,
   spec : BackgroundSpec
-) -> BackgroundResource! {
+) -> BackgroundResource raise {
   let animated = spec.ani
   let bg_res = background_loader.load_res_async([
     spec.bS + ".img",
@@ -310,7 +312,7 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
   while true {
     let key = i.to_string()
     guard obj.get(key) is Some(backi) else { break }
-    let spec : BackgroundSpec = @json.from_json!(backi, path=path.add_key(key))
+    let spec : BackgroundSpec = @json.from_json(backi, path=path.add_key(key))
     specs.push(spec)
     i += 1
   }
@@ -321,7 +323,7 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 pub async fn load_backgrounds(
   background_loader : @resource.AsyncLoader,
   spec : BackgroundsResource
-) -> Backgrounds! {
+) -> Backgrounds raise {
   let fronts = Array::new()
   let backgrounds = Array::new()
   for back_spec in spec._ {

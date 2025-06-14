@@ -1,13 +1,13 @@
 ///| Parses key mappings and sends them to the keyboard
-pub fn parse_keymap(recv : @net.InPacket) -> Array[(Int, Int)]! {
+pub fn parse_keymap(recv : @net.InPacket) -> Array[(Int, Int)] raise {
   // Skip first byte
-  recv.skip!(1)
+  recv.skip(1)
 
   // Read 90 key mappings
   let mappings = Array::new()
   for i in 0..<90 {
-    let kind = recv.read_ubyte!()
-    let action = recv.read_int!()
+    let kind = recv.read_ubyte()
+    let action = recv.read_int()
     mappings.push((kind, action))
   }
   mappings

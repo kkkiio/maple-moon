@@ -23,7 +23,7 @@ pub async fn Module::load(
   char_look_module : @char_look.Module,
   io_service : @io_task.IOService,
   local_storage : @config.LocalStorage
-) -> Module! {
+) -> Module raise {
   let login_loader = @resource.SyncLoader::load(
     "Login",
     "https://maple-res.kkkiiox.work/UI/Login.img.json",
@@ -67,7 +67,7 @@ pub fn make_handlers(
   set_player_stage : (
     @character.CharEntry,
     Map[Int, Int],
-    (@player.Player) -> Unit!,
+    (@player.Player) -> Unit raise,
   ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
@@ -85,7 +85,7 @@ pub fn make_handlers(
     }),
     @net.make_handler(
       @net.SERVER_LIST,
-      fn(recv) { self.parse_server_list!(recv) },
+      fn(recv) { self.parse_server_list(recv) },
       fn(worlds) { self.handle_server_list(worlds) },
     ),
     @net.make_handler(@net.CHAR_LIST, log_recv=true, parse_char_list, fn(msg) {
@@ -94,8 +94,8 @@ pub fn make_handlers(
     @net.make_handler(
       @net.CHARNAME_RESPONSE,
       fn(recv) {
-        let name = recv.read_string!()
-        let used = recv.read_bool!()
+        let name = recv.read_string()
+        let used = recv.read_bool()
         (name, used)
       },
       fn(info) {
@@ -259,19 +259,23 @@ impl @net.OutMessage for LoginMessage with pack(self) -> @net.OutPacket {
   let part2 = volume_serial_number.substring(start=2, end=4)
   let part3 = volume_serial_number.substring(start=4, end=6)
   let part4 = volume_serial_number.substring(start=6, end=8)
-  let h = @net.hex_to_dec?(part4).unwrap()
-  let w = @net.hex_to_dec?(part3).unwrap()
-  let i = @net.hex_to_dec?(part2).unwrap()
-  let d = @net.hex_to_dec?(part1).unwrap()
-  packet
-  ..write_string(self.account)
-  ..write_string(self.password)
-  ..skip(6)
-  ..write_byte(h)
-  ..write_byte(w)
-  ..write_byte(i)
-  ..write_byte(d)
-  packet
+  try {
+    let h = @net.hex_to_dec(part4)
+    let w = @net.hex_to_dec(part3)
+    let i = @net.hex_to_dec(part2)
+    let d = @net.hex_to_dec(part1)
+    packet
+    ..write_string(self.account)
+    ..write_string(self.password)
+    ..skip(6)
+    ..write_byte(h)
+    ..write_byte(w)
+    ..write_byte(i)
+    ..write_byte(d)
+    packet
+  } catch {
+    e => abort(e.to_string())
+  }
 }
 
 ///|
@@ -283,13 +287,13 @@ enum LoginResult {
 } derive(Show)
 
 ///|
-fn parse_login_result(recv : @net.InPacket) -> LoginResult!Error {
-  match recv.read_int!() {
+fn parse_login_result(recv : @net.InPacket) -> LoginResult raise Error {
+  match recv.read_int() {
     // Login successful
     // The packet contains information on the account, so we initialize
     // the account with it.
     0 => {
-      let account = parse_account!(recv)
+      let account = parse_account(recv)
       Ok(account)
     }
     //         // Login unsuccessful
@@ -408,12 +412,12 @@ enum ServerStatus {
 } derive(Show)
 
 ///|
-pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus!Error {
-  match recv.read_short!() {
+pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus raise Error {
+  match recv.read_short() {
     0 => Normal
     1 => HighlyPopulated
     2 => Full
-    i => fail!("Unknown server status: \{i}")
+    i => fail("Unknown server status: \{i}")
   }
 }
 
@@ -421,9 +425,9 @@ pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus!Error {
 fn parse_server_list(
   self : Module,
   recv : @net.InPacket
-) -> Array[World]?!Error {
+) -> Array[World]? raise Error {
   while recv.available() > 0 {
-    let world = parse_world!(recv)
+    let world = parse_world(recv)
     if world.wid != -1 {
       self.receiving_server_list.push(world)
     } else { // end of list
@@ -464,15 +468,15 @@ impl @net.OutMessage for CharListRequestPacket with pack(self) -> @net.OutPacket
 }
 
 ///|
-pub fn parse_char_list(recv : @net.InPacket) -> CharListMessage!Error {
-  recv.read_ubyte!() |> ignore // channel_id
+pub fn parse_char_list(recv : @net.InPacket) -> CharListMessage raise Error {
+  recv.read_ubyte() |> ignore // channel_id
   let characters = []
-  let charcount = recv.read_byte!()
+  let charcount = recv.read_byte()
   for i = 0; i < charcount; i = i + 1 {
-    characters.push(parse_charentry!(recv))
+    characters.push(parse_charentry(recv))
   }
-  let pic = recv.read_byte!()
-  recv.read_int!() |> ignore // slots
+  let pic = recv.read_byte()
+  recv.read_int() |> ignore // slots
   { characters, pic }
 }
 
@@ -529,7 +533,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
 }
 
 ///|
-async fn on_new_character(mod : Module) -> Unit! {
+async fn on_new_character(mod : Module) -> Unit raise {
   let res = ExplorerCreatorUIResource::load(mod.login_loader)
   mod.ui_container.add_ui(
     @ui.Element::new(
@@ -567,10 +571,10 @@ async fn on_new_character(mod : Module) -> Unit! {
 }
 
 ///| Parse server IP response packet
-fn parse_server_ip(recv : @net.InPacket) -> (Int, Int)! {
-  recv.skip_byte!()
-  let (_, port) = parse_login!(recv)
-  let cid = recv.read_int!()
+fn parse_server_ip(recv : @net.InPacket) -> (Int, Int) raise {
+  recv.skip_byte()
+  let (_, port) = parse_login(recv)
+  let cid = recv.read_int()
   (port, cid)
 }
 
@@ -599,9 +603,9 @@ fn Module::connect_channel_with_character(
 }
 
 ///|
-fn parse_add_new_char_entry(recv : @net.InPacket) -> @character.CharEntry! {
-  recv.skip!(1)
-  parse_charentry!(recv)
+fn parse_add_new_char_entry(recv : @net.InPacket) -> @character.CharEntry raise {
+  recv.skip(1)
+  parse_charentry(recv)
 }
 
 ///|
@@ -639,21 +643,21 @@ impl @net.OutMessage for AcceptTosPacket with pack(_self) -> @net.OutPacket {
 }
 
 ///|
-fn parse_account(recv : @net.InPacket) -> Account!Error {
-  recv.skip_short!()
-  let accid = recv.read_int!()
-  let female = recv.read_byte!()
-  let admin = recv.read_bool!()
-  recv.skip_byte!() // Admin
-  recv.skip_byte!() // Country Code
-  let name = recv.read_string!()
-  recv.skip_byte!()
-  let muted = recv.read_bool!()
-  recv.skip_long!() // muted until
-  recv.skip_long!() // creation date
-  recv.skip_int!() // Remove "Select the world you want to play in"
-  let pin = recv.read_bool!() // 0 - Enabled, 1 - Disabled
-  let pic = recv.read_byte!() // 0 - Register, 1 - Ask, 2 - Disabled
+fn parse_account(recv : @net.InPacket) -> Account raise Error {
+  recv.skip_short()
+  let accid = recv.read_int()
+  let female = recv.read_byte()
+  let admin = recv.read_bool()
+  recv.skip_byte() // Admin
+  recv.skip_byte() // Country Code
+  let name = recv.read_string()
+  recv.skip_byte()
+  let muted = recv.read_bool()
+  recv.skip_long() // muted until
+  recv.skip_long() // creation date
+  recv.skip_int() // Remove "Select the world you want to play in"
+  let pin = recv.read_bool() // 0 - Enabled, 1 - Disabled
+  let pic = recv.read_byte() // 0 - Register, 1 - Ask, 2 - Disabled
   { accid, female, admin, name, muted, pin, pic }
 }
 
@@ -679,40 +683,40 @@ priv struct World {
 } derive(Show)
 
 ///|
-fn parse_world(recv : @net.InPacket) -> World! {
-  let wid = recv.read_byte!()
+fn parse_world(recv : @net.InPacket) -> World raise {
+  let wid = recv.read_byte()
   if wid == -1 {
     return { name: "", message: "", chloads: [], channelcount: 0, flag: 0, wid }
   }
-  let name = recv.read_string!()
-  let flag = recv.read_ubyte!()
-  let message = recv.read_string!()
-  recv.skip!(5)
+  let name = recv.read_string()
+  let flag = recv.read_ubyte()
+  let message = recv.read_string()
+  recv.skip(5)
   let chloads = []
-  let channelcount = recv.read_ubyte!()
+  let channelcount = recv.read_ubyte()
   for i = 0; i < channelcount; i = i + 1 {
-    recv.read_string!() |> ignore // channel name
-    chloads.push(recv.read_int!())
-    recv.skip!(1)
-    recv.skip!(2)
+    recv.read_string() |> ignore // channel name
+    chloads.push(recv.read_int())
+    recv.skip(1)
+    recv.skip(2)
   }
-  recv.skip!(2) // balloon size
+  recv.skip(2) // balloon size
   // recv.skip(10);  // balloon size 1 and msg "test"
 
   { name, message, chloads, channelcount, flag, wid }
 }
 
 ///|
-fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
-  let id = recv.read_int!()
-  let stats = parse_stats!(recv)
-  let look = parse_look!(recv)
-  recv.read_bool!() |> ignore // 'rankinfo' bool
-  if recv.read_bool!() {
-    let _currank = recv.read_int!()
-    let rankmv = recv.read_int!()
-    let _curjobrank = recv.read_int!()
-    let jobrankmv = recv.read_int!()
+fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry raise {
+  let id = recv.read_int()
+  let stats = parse_stats(recv)
+  let look = parse_look(recv)
+  recv.read_bool() |> ignore // 'rankinfo' bool
+  if recv.read_bool() {
+    let _currank = recv.read_int()
+    let rankmv = recv.read_int()
+    let _curjobrank = recv.read_int()
+    let jobrankmv = recv.read_int()
     let _rankmc = if rankmv > 0 { '+' } else if rankmv < 0 { '-' } else { '=' }
     let _jobrankmc = if jobrankmv > 0 {
       '+'
@@ -728,78 +732,78 @@ fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry! {
 }
 
 ///|
-fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry! {
-  let name = recv.read_padded_string!(13)
-  let female = recv.read_bool!()
-  recv.read_byte!() |> ignore // skin
-  recv.read_int!() |> ignore // face
-  recv.read_int!() |> ignore // hair
+fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry raise {
+  let name = recv.read_padded_string(13)
+  let female = recv.read_bool()
+  recv.read_byte() |> ignore // skin
+  recv.read_int() |> ignore // face
+  recv.read_int() |> ignore // hair
   let petids = []
   for i = 0; i < 3; i = i + 1 {
-    petids.push(recv.read_long!())
+    petids.push(recv.read_long())
   }
   let stats = {}
-  stats.set(@maple_stat.Id::LEVEL, recv.read_ubyte!())
-  stats.set(@maple_stat.Id::JOB, recv.read_ushort!())
-  stats.set(@maple_stat.Id::STR, recv.read_ushort!())
-  stats.set(@maple_stat.Id::DEX, recv.read_ushort!())
-  stats.set(@maple_stat.Id::INT, recv.read_ushort!())
-  stats.set(@maple_stat.Id::LUK, recv.read_ushort!())
-  stats.set(@maple_stat.Id::HP, recv.read_ushort!())
-  stats.set(@maple_stat.Id::MAXHP, recv.read_ushort!())
-  stats.set(@maple_stat.Id::MP, recv.read_ushort!())
-  stats.set(@maple_stat.Id::MAXMP, recv.read_ushort!())
-  stats.set(@maple_stat.Id::AP, recv.read_ushort!())
-  stats.set(@maple_stat.Id::SP, recv.read_ushort!())
+  stats.set(@maple_stat.Id::LEVEL, recv.read_ubyte())
+  stats.set(@maple_stat.Id::JOB, recv.read_ushort())
+  stats.set(@maple_stat.Id::STR, recv.read_ushort())
+  stats.set(@maple_stat.Id::DEX, recv.read_ushort())
+  stats.set(@maple_stat.Id::INT, recv.read_ushort())
+  stats.set(@maple_stat.Id::LUK, recv.read_ushort())
+  stats.set(@maple_stat.Id::HP, recv.read_ushort())
+  stats.set(@maple_stat.Id::MAXHP, recv.read_ushort())
+  stats.set(@maple_stat.Id::MP, recv.read_ushort())
+  stats.set(@maple_stat.Id::MAXMP, recv.read_ushort())
+  stats.set(@maple_stat.Id::AP, recv.read_ushort())
+  stats.set(@maple_stat.Id::SP, recv.read_ushort())
   let i64stats = {}
-  i64stats.set(@maple_stat.Id::EXP, recv.read_uint!().to_int64())
-  stats.set(@maple_stat.Id::FAME, recv.read_short!())
-  recv.skip!(4) // gachaexp
-  let mapid = recv.read_int!()
-  let portal = recv.read_ubyte!()
-  recv.skip!(4) // timestamp
+  i64stats.set(@maple_stat.Id::EXP, recv.read_uint().to_int64())
+  stats.set(@maple_stat.Id::FAME, recv.read_short())
+  recv.skip(4) // gachaexp
+  let mapid = recv.read_int()
+  let portal = recv.read_ubyte()
+  recv.skip(4) // timestamp
   { name, female, stats, i64stats, mapid, portal }
 }
 
 ///|
-fn parse_look(recv : @net.InPacket) -> @char_look.LookEntry! {
-  let female = recv.read_bool!()
-  let skin = recv.read_ubyte!()
-  let faceid = recv.read_int!()
-  recv.read_bool!() |> ignore // megaphone
-  let hairid = recv.read_int!()
+fn parse_look(recv : @net.InPacket) -> @char_look.LookEntry raise {
+  let female = recv.read_bool()
+  let skin = recv.read_ubyte()
+  let faceid = recv.read_int()
+  recv.read_bool() |> ignore // megaphone
+  let hairid = recv.read_int()
   let equips = {}
-  loop recv.read_ubyte!() {
+  loop recv.read_ubyte() {
     0xFF => ()
     eqslot => {
-      equips.set(eqslot, recv.read_int!())
-      continue recv.read_ubyte!()
+      equips.set(eqslot, recv.read_int())
+      continue recv.read_ubyte()
     }
   }
   let maskedequips = {}
-  loop recv.read_ubyte!() {
+  loop recv.read_ubyte() {
     0xFF => ()
     mskeqslot => {
-      maskedequips.set(mskeqslot, recv.read_int!())
-      continue recv.read_ubyte!()
+      maskedequips.set(mskeqslot, recv.read_int())
+      continue recv.read_ubyte()
     }
   }
-  maskedequips.set(-111, recv.read_int!())
+  maskedequips.set(-111, recv.read_int())
   let petids = []
   for i in 0..<3 {
-    petids.push(recv.read_int!())
+    petids.push(recv.read_int())
   }
   { female, skin, faceid, hairid, equips, maskedequips, petids }
 }
 
 ///|
-fn parse_login(recv : @net.InPacket) -> (String, Int)! {
-  recv.skip_byte!()
+fn parse_login(recv : @net.InPacket) -> (String, Int) raise {
+  recv.skip_byte()
   let addrstr = []
   for i = 0; i < 4; i = i + 1 {
-    addrstr.push(recv.read_byte!())
+    addrstr.push(recv.read_byte())
   }
-  let portstr = recv.read_short!()
+  let portstr = recv.read_short()
   (Array::join(addrstr.map(fn(b) { b.to_string() }), "."), portstr)
 }
 
@@ -888,6 +892,6 @@ priv struct LastConnectedWorldMessage {
 ///|
 fn parse_last_connected_world(
   recv : @net.InPacket
-) -> LastConnectedWorldMessage! {
-  { world: recv.read_int!() }
+) -> LastConnectedWorldMessage raise {
+  { world: recv.read_int() }
 }

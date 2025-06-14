@@ -29,13 +29,13 @@ pub fn use_move(
   move_id : Int,
   skill_id : Int,
   level : Int
-) -> Unit! {
+) -> Unit raise {
   let at = move_id - 24
   let action_id = if at % 2 == 0 { at / 2 } else { (at + 1) / 2 }
   match self.mobs.get_mobs().get(oid) {
     Some(mob) =>
       if 0 < action_id && action_id < 7 {
-        let mov = mob.get_move_attack!(action_id)
+        let mov = mob.get_move_attack(action_id)
         apply_move_attack(mov, mob, self.network)
       } else if skill_id != 0 {
         let task = mob

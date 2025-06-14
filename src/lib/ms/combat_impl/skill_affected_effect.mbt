@@ -12,10 +12,10 @@ struct SkillAffectedEffectEffect {
 ///|
 fn SkillAffectedEffectEffect::new(
   src : @resource.NxNode
-) -> SkillAffectedEffectEffect! {
+) -> SkillAffectedEffectEffect raise {
   {
-    animation: src |> @graphics.Animation::from_resource_ex!(),
-    z: src["z"].get_int!(),
+    animation: src |> @graphics.Animation::from_resource_ex(),
+    z: src["z"].get_int(),
   }
 }
 
@@ -49,8 +49,10 @@ struct SingleAffectedEffect {
 }
 
 ///|
-fn SingleAffectedEffect::new(src : @resource.NxNode) -> SingleAffectedEffect! {
-  { effect: SkillAffectedEffectEffect::new!(src["affected"]) }
+fn SingleAffectedEffect::new(
+  src : @resource.NxNode
+) -> SingleAffectedEffect raise {
+  { effect: SkillAffectedEffectEffect::new(src["affected"]) }
 }
 
 ///|

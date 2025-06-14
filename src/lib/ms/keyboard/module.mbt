@@ -6,7 +6,7 @@ struct Module {
 }
 
 ///|
-typealias KeymapWatcher = (Map[String, Mapping]) -> Unit
+typealias (Map[String, Mapping]) -> Unit as KeymapWatcher
 
 ///|
 pub fn Module::new(
@@ -46,7 +46,7 @@ pub fn Module::make_handlers(
   self : Module
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    @net.make_handler(@net.KEYMAP, fn(recv) { parse_keymap!(recv) }, fn(
+    @net.make_handler(@net.KEYMAP, fn(recv) { parse_keymap(recv) }, fn(
       mappings : Array[(Int, Int)]
     ) {
       // Update keyboard with new mappings

@@ -45,10 +45,10 @@ pub fn int_value(self : Type) -> Int {
 }
 
 ///|
-pub(all) type! UnknownWeaponType Int derive(Show)
+pub(all) suberror UnknownWeaponType Int derive(Show)
 
 ///|
-pub fn Type::by_value(value : Int) -> Type!UnknownWeaponType {
+pub fn Type::by_value(value : Int) -> Type raise UnknownWeaponType {
   match value {
     0 => NONE
     130 => SWORD_1H

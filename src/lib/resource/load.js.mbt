@@ -41,7 +41,8 @@ pub extern "js" fn load_image_by_path(
   #| (l,p) => l.loadImageByPath(p)
 
 ///|
-extern type DirResourceLoader
+#external
+type DirResourceLoader
 
 ///|
 pub extern "js" fn DirResourceLoader::new(url : String) -> DirResourceLoader =

@@ -45,7 +45,13 @@ pub fn make_regular_attack(
     accuracy,
     playerlevel,
     range: match t {
-      @combat.AttackType::CLOSE => character.get_afterimage().get_range()
+      @combat.AttackType::CLOSE => {
+        guard character.get_afterimage() is Some(after_image) else {
+          @log.error({}, "No afterimage when making regular attack")
+          panic()
+        }
+        after_image.get_range()
+      }
       _ => character.stats.get_range()
     },
     bullet: bullet_id,
@@ -61,12 +67,11 @@ pub fn make_regular_attack(
 }
 
 ///|
-pub async fn RegularAttack::get_bullet(
-  self : RegularAttack,
-  _ : @character.Character,
-  bulletid : Int
-) -> @graphics.Animation! {
-  let data = @bullet.BulletData::get_async(bulletid, self.string_loader)
+pub fn get_regular_attack_bullet(
+  bulletid : Int,
+  bullet_module : @bullet.Module
+) -> @graphics.Animation {
+  let data = bullet_module.get_bullet_data(bulletid).unwrap()
   data.bullet
 }
 
@@ -107,7 +112,7 @@ pub fn can_use_regular_attack(
 ///|
 pub fn new_regular_attack(
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  bullet_module : @bullet.Module
 ) -> SpecialMove {
   let ra = { action: RegularAction::default(), string_loader }
   {
@@ -119,8 +124,8 @@ pub fn new_regular_attack(
     make_attack: fn(char, i, attack_type, degenerate) {
       make_regular_attack(char, i.get_bulletid(), attack_type, degenerate)
     },
-    get_bullet: fn(char, value) {
-      io_service.submit(fn() { ra.get_bullet(char, value) }).map(_.unwrap())
+    get_bullet: fn(_char, value) {
+      get_regular_attack_bullet(value, bullet_module)
     },
     can_use: fn(_, weapon_type, _, _, _, bullet) {
       can_use_regular_attack(weapon_type, bullet)

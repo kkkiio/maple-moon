@@ -5,17 +5,17 @@ struct TimedQueue[T] {
 }
 
 ///|
-pub fn TimedQueue::new[T]() -> TimedQueue[T] {
+pub fn[T] TimedQueue::new() -> TimedQueue[T] {
   { queue: @priority_queue.new(), time: 0 }
 }
 
 ///|
-pub fn push[T](self : TimedQueue[T], delay : Int64, t : T) -> Unit {
+pub fn[T] push(self : TimedQueue[T], delay : Int64, t : T) -> Unit {
   self.queue.push((delay, t))
 }
 
 ///|
-pub fn process[T](self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
+pub fn[T] process(self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
   self.time += timestep
   Iter::new(fn(yield_) {
     loop self.queue.peek() {

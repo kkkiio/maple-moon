@@ -52,17 +52,17 @@ struct Clothing {
   vslot : String
   two_handed : Bool
   // transparent : Bool
-}
+} derive(ToJson)
 
 ///|
 pub fn Clothing::from_resource(
   item_data : @item.ItemData,
   drawinfo : @types.BodyDrawInfo
-) -> Clothing! {
-  let equipdata = @data.EquipData::parse_item_data!(item_data)
+) -> Clothing raise {
+  let equipdata = @data.EquipData::parse_item_data(item_data)
   let eq_slot = equipdata.get_eqslot()
   let two_handed = if eq_slot == @slot.Id::WEAPON {
-    @weapon.WeaponData::from_item_data!(item_data).is_twohanded()
+    @weapon.WeaponData::from_item_data(item_data).is_twohanded()
   } else {
     false
   }

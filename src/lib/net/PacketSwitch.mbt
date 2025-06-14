@@ -92,7 +92,7 @@ pub(all) enum Opcode {
 pub fn Opcode::int_value(self : Opcode) -> Int = "%identity"
 
 ///|
-pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
+pub fn Opcode::from_int(v : Int) -> Opcode raise UnknownOpCodeError {
   match v {
     /// Login 1
     0 => LOGIN_RESULT
@@ -201,7 +201,7 @@ pub fn Opcode::from_int(v : Int) -> Opcode!UnknownOpCodeError {
 }
 
 ///|
-type! UnknownOpCodeError Int
+suberror UnknownOpCodeError Int
 
 ///|
 pub impl Hash for Opcode with hash_combine(self : Opcode, hasher : Hasher) -> Unit {

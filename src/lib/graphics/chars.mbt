@@ -1,3 +1,4 @@
+///|
 pub fn Charset::new(
   src : @resource.NxNode,
   alignment : CharsetAlignment

@@ -18,7 +18,7 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
 pub async fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations
-) -> SceneMap! {
+) -> SceneMap raise {
   // TODO: CashShopPreview
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
@@ -29,11 +29,11 @@ pub async fn load_map(
   guard not(src.is_null()) else {
     raise @resource.LoadError("map not found, id=\{map_id}")
   }
-  let res : MapTilesObjsNxResource = @json.from_json!(src.value())
+  let res : MapTilesObjsNxResource = @json.from_json(src.value())
   let res = res.unwrap()
   let tiles_objs = MapTilesObjs::load(res.layers)
   let backgrounds = load_backgrounds(background_loader, res.back)
-  let physics = @physics.Physics::from_resource!(src["foothold"])
+  let physics = @physics.Physics::from_resource(src["foothold"])
   let map_info = MapInfo::from_resource(
     src,
     physics.get_fht().get_walls(),
@@ -47,7 +47,7 @@ pub async fn load_map(
   } else {
     Some(
       MiniMapRuntimeResource::load(
-        @json.from_json!(mini_map_node.value()),
+        @json.from_json(mini_map_node.value()),
         res.portal,
         src.name(),
         src.get_image_loader(),

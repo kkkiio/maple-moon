@@ -97,7 +97,7 @@ pub fn get_skill_data(self : SkillBook, id : Int) -> @skill.SkillData? {
 }
 
 ///|
-pub typealias SkillBookWatcher = (SkillBookEvent) -> Bool
+pub typealias (SkillBookEvent) -> Bool as SkillBookWatcher
 
 ///|
 pub struct SkillBookEvent {
@@ -319,14 +319,14 @@ let beginner_skills : FixedArray[@skill.SkillId] = [
 test "parse skill desc" {
   let origin =
     #|[Master Level : 20]\nUse MP to attack an enemy twice.\nRequired Skill : #cAt least Level 1 on Energy Bolt#
-  inspect!(
-    markup_to_html!(origin),
+  inspect(
+    markup_to_html(origin),
     content="[Master Level : 20]<br/>Use MP to attack an enemy twice.<br/>Required Skill : <ul><li>At least Level 1 on Energy Bolt</li></ul>",
   )
 }
 
 ///|
-pub fn markup_to_html!(origin : String) -> String {
+pub fn markup_to_html(origin : String) -> String raise {
   // 1. replace '\' 'n' with "<br/>"
   // 2. replace #c{text}# with <li>{text}</li>
   let text = origin.replace_all(old="\\n", new="<br/>")
@@ -349,7 +349,7 @@ pub fn markup_to_html!(origin : String) -> String {
     }
     builder.write_string("<li>")
     guard rest.find("#") is Some(markup_end) else {
-      fail!("Missing markup close")
+      fail("Missing markup close")
     }
     builder.write_iter(rest.view(end_offset=markup_end).iter())
     builder.write_string("</li>")

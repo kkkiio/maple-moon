@@ -7,18 +7,18 @@ struct MapTilesObjsNxResource {
 
 ///|
 pub impl @json.FromJson for MapTilesObjsNxResource with from_json(json, path) {
-  let layers : @resource.MapBasedArray[LayerNxResource] = @json.from_json!(
+  let layers : @resource.MapBasedArray[LayerNxResource] = @json.from_json(
     json,
     path~,
   )
   guard json.as_object() is Some(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let back : BackgroundsResource = @json.from_json!(
+  let back : BackgroundsResource = @json.from_json(
     obj.get("back").or(Json::null()),
     path=path.add_key("back"),
   )
-  let portal : @resource.MapBasedArray[PortalMarker] = @json.from_json!(
+  let portal : @resource.MapBasedArray[PortalMarker] = @json.from_json(
     obj.get("portal").or(Json::null()),
     path=path.add_key("portal"),
   )
@@ -41,7 +41,7 @@ test "parse empty layer" {
     #|    "tile": null
     #|}
   let json = @json.parse(data)
-  let layer : LayerNxResource = @json.from_json!(json)
+  let layer : LayerNxResource = @json.from_json(json)
   @json.inspect(layer.unwrap(), content={ "tile": [], "obj": [] })
 }
 

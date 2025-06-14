@@ -110,7 +110,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   let recv = InPacket::new(bytes)
 
   // Read the opcode to determine handler responsible
-  let opcode = try Opcode::from_int!(recv.read_ushort!()) catch {
+  let opcode = Opcode::from_int(recv.read_ushort()) catch {
     UnknownOpCodeError(opcode) => {
       @log.warn(
         { "opcode": @utils.to_hex_string(opcode.reinterpret_as_uint()) },
@@ -132,7 +132,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
 ///| @alert deprecated "use make_handler instead"
 pub fn with_log(
   opcode : Opcode,
-  handler : (InPacket) -> Unit!,
+  handler : (InPacket) -> Unit raise,
   log_recv~ : Bool = false
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
@@ -142,7 +142,7 @@ pub fn with_log(
         "received",
       )
     }
-    try handler!(recv) catch {
+    handler(recv) catch {
       err =>
         @log.error({ "opcode": opcode, "err": err }, "handle packet failed")
     }
@@ -152,7 +152,7 @@ pub fn with_log(
 ///|
 pub fn[T : Show] make_handler(
   opcode : Opcode,
-  parser : (InPacket) -> T!,
+  parser : (InPacket) -> T raise,
   handler : (T) -> Unit,
   log_recv~ : Bool = false,
   loc~ : SourceLoc = _
@@ -160,7 +160,7 @@ pub fn[T : Show] make_handler(
   (
     opcode,
     fn(recv) {
-      let message = try parser!(recv) catch {
+      let message = parser(recv) catch {
         err => {
           @log.error(
             { "op": opcode, "err": err, "raw_body": recv.bytes },

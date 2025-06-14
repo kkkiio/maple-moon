@@ -8,7 +8,7 @@ pub struct QuestResource {
 
 ///|
 pub impl @json.FromJson for QuestResource with from_json(json, path) {
-  let parsed : QuestNxResource = @json.from_json!(json, path~)
+  let parsed : QuestNxResource = @json.from_json(json, path~)
   {
     quest_info_map: parsed.quest_info_map._,
     quest_checks_map: parsed.quest_checks_map._
@@ -76,9 +76,7 @@ impl @json.FromJson for QuestInfo with from_json(json, path) {
     ) => {
       let description_map : Map[Int, String] = {}
       for key, value in obj {
-        let i = try @strconv.parse_int!(key) catch {
-          _ => continue
-        }
+        let i = @strconv.parse_int(key) catch { _ => continue }
         if i < 0 || i > 10 { // assume there are at most 10 phases
           continue
         }
@@ -134,9 +132,9 @@ test "parse quest info" {
     #|     "order": 1,
     #|     "parent": "Today's Mission! "
     #|   }
-  let json = @json.parse!(q10015)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
+  let json = @json.parse(q10015)
+  let quest_info : QuestInfo = @json.from_json(json)
+  inspect(
     quest_info,
     content=
       #|{name: "Obtain the Special Agent Badge!", parent: Some("Today's Mission! "), area: 50, order: Some(1), auto_complete: true, auto_start: false, one_shot: false, descriptions: ["", "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.", "Today's mission has been completed."]}
@@ -157,9 +155,9 @@ test "parse quest 10200" {
     #|  "name": "Richie Gold is Here",
     #|  "oneShot": 1
     #|}
-  let json = @json.parse!(q10200)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
+  let json = @json.parse(q10200)
+  let quest_info : QuestInfo = @json.from_json(json)
+  inspect(
     quest_info,
     content=
       #|{name: "Richie Gold is Here", parent: None, area: 50, order: None, auto_complete: true, auto_start: true, one_shot: true, descriptions: ["A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.", "Let's try to make a deal with #b#p2084001##k.", "I engaged in a transaction with #b#p2084001##k."]}
@@ -179,9 +177,9 @@ test "parse quest info number desc" {
     #|  "order": 2,
     #|  "parent": "Maya and the Weird Medicine"
     #|}
-  let json = @json.parse!(q2003)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
+  let json = @json.parse(q2003)
+  let quest_info : QuestInfo = @json.from_json(json)
+  inspect(
     quest_info,
     content=
       #|{name: "Finding Sophia", parent: Some("Maya and the Weird Medicine"), area: 30, order: Some(2), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["2", "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.", "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k."]}
@@ -210,9 +208,9 @@ test "parse number index not desc" {
     #|  "order": 1,
     #|  "parent": "New Year : New Year's Wishes"
     #|}
-  let json = @json.parse!(q8833)
-  let quest_info : QuestInfo = @json.from_json!(json)
-  inspect!(
+  let json = @json.parse(q8833)
+  let quest_info : QuestInfo = @json.from_json(json)
+  inspect(
     quest_info,
     content=
       #|{name: "New Year's Wishes 1", parent: Some("New Year : New Year's Wishes"), area: 30, order: Some(1), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "The Maple Administrator opened my present for me! Sweet!"]}
@@ -246,7 +244,7 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
   match json {
     Number(n) => n.to_int()
     String(s) =>
-      try @strconv.parse_int!(s) catch {
+      @strconv.parse_int(s) catch {
         _ => raise @json.JsonDecodeError((path, "expect stringified int"))
       }
     _ => raise @json.JsonDecodeError((path, "expect number or string"))
@@ -281,32 +279,32 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
     let path = path.add_key(key)
     match key {
       "npc" => {
-        let npc_id : NumbericInt = @json.from_json!(value, path~)
+        let npc_id : NumbericInt = @json.from_json(value, path~)
         checks.push({ npc: npc_id._ })
         npc = Some(npc_id._)
       }
       "infoNumber" => {
-        let info_number_id : NumbericInt = @json.from_json!(value, path~)
+        let info_number_id : NumbericInt = @json.from_json(value, path~)
         info_number = Some(info_number_id._)
       }
       "lvmin" => {
-        let level_min_id : NumbericInt = @json.from_json!(value, path~)
+        let level_min_id : NumbericInt = @json.from_json(value, path~)
         checks.push({ min_level: level_min_id._ })
       }
       "interval" => {
-        let interval_minutes : NumbericInt = @json.from_json!(value, path~)
+        let interval_minutes : NumbericInt = @json.from_json(value, path~)
         repeatable = true
         checks.push({ interval_minutes: interval_minutes._ })
       }
       "infoex" => {
-        let info_ex_value : @resource.MapBasedArray[InfoEx] = @json.from_json!(
+        let info_ex_value : @resource.MapBasedArray[InfoEx] = @json.from_json(
           value,
           path~,
         )
         checks.push({ info_ex: info_ex_value._ })
       }
       "quest" => {
-        let quest_status_map : @resource.MapBasedArray[QuestStatusCheck] = @json.from_json!(
+        let quest_status_map : @resource.MapBasedArray[QuestStatusCheck] = @json.from_json(
           value,
           path~,
         )
@@ -318,14 +316,14 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         })
       }
       "job" => {
-        let jobs : @resource.MapBasedArray[@job.JobId] = @json.from_json!(
+        let jobs : @resource.MapBasedArray[@job.JobId] = @json.from_json(
           value,
           path~,
         )
         checks.push({ jobs: jobs._ })
       }
       "mob" => {
-        let mob : @resource.MapBasedArray[MonHuntCheck] = @json.from_json!(
+        let mob : @resource.MapBasedArray[MonHuntCheck] = @json.from_json(
           value,
           path~,
         )
@@ -333,7 +331,7 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         checks.push({ monster_hunts, })
       }
       "item" => {
-        let items : @resource.MapBasedArray[ItemCount] = @json.from_json!(
+        let items : @resource.MapBasedArray[ItemCount] = @json.from_json(
           value,
           path~,
         )
@@ -356,8 +354,8 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let id : Int = @json.from_json!(obj.get("id").or(Json::null()), path~)
-  let state = @json.from_json!(obj.get("state").or(Json::number(0)), path~)
+  let id : Int = @json.from_json(obj.get("id").or(Json::null()), path~)
+  let state = @json.from_json(obj.get("state").or(Json::number(0)), path~)
   { id, state }
 }
 
@@ -384,7 +382,7 @@ fn QuestStatus::from_int(int_value : Int) -> QuestStatus? {
 
 ///|
 impl @json.FromJson for QuestStatus with from_json(json, path) {
-  let int_value = @json.from_json!(json, path~)
+  let int_value = @json.from_json(json, path~)
   if QuestStatus::from_int(int_value) is Some(status) {
     status
   } else {
@@ -411,11 +409,11 @@ test "parse quest check 10015" {
     #|    "npc": 9000036
     #|  }
     #|}
-  let json = @json.parse!(check_10015)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+  let json = @json.parse(check_10015)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect!(
+  inspect(
     quest_check,
     content=
       #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
@@ -445,11 +443,11 @@ test "parse quest check 10054" {
     #|    },
     #|    "1": { "item": { "0": { "count": 1, "id": 2012000 } }, "npc": 1061013 }
     #|  }
-  let json = @json.parse!(check_10054)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+  let json = @json.parse(check_10054)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect!(
+  inspect(
     quest_check._,
     content=
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
@@ -469,11 +467,11 @@ test "parse item check" {
     #|     }
     #|   }
     #| }
-  let json = @json.parse!(check_1008)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+  let json = @json.parse(check_1008)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect!(
+  inspect(
     quest_check,
     content="MapBasedArray([{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4031162, count: 1}, {id: 4031161, count: 1}]}], unknown_checks: []}])",
   )
@@ -490,11 +488,11 @@ test "parse quests status check" {
     #|   },
     #|   "1": { "item": { "0": { "count": 40, "id": 4000008 } }, "npc": 1022002 }
     #| }
-  let json = @json.parse!(check_2005)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json!(
+  let json = @json.parse(check_2005)
+  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect!(
+  inspect(
     quest_check,
     content="MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4000008, count: 40}]}, {npc: 1022002}], unknown_checks: []}])",
   )
@@ -552,27 +550,27 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
-  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
-  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+  let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
+  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
     obj.get("yes").or(Json::null()),
     path=path.add_key("yes"),
   )
-  let no_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+  let no_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
     obj.get("no").or(Json::null()),
     path=path.add_key("no"),
   )
-  let stop_hint : Nullable[Hints] = @json.from_json!(
+  let stop_hint : Nullable[Hints] = @json.from_json(
     obj.get("stop").or(Json::null()),
     path=path.add_key("stop"),
   )
-  let restore_lost : Nullable[Lost] = @json.from_json!(
+  let restore_lost : Nullable[Lost] = @json.from_json(
     obj.get("lost").or(Json::null()),
     path=path.add_key("lost"),
   )
   let ask = match obj.get("ask") {
     None => false
     Some(Null) => false
-    Some(ask) => @json.from_json!(ask, path=path.add_key("ask")) != 0
+    Some(ask) => @json.from_json(ask, path=path.add_key("ask")) != 0
   }
   {
     says: says._,
@@ -586,15 +584,15 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
 
 ///|
 impl @json.FromJson for Hints with from_json(json, path) {
-  let base : @resource.MapBasedArray[Hint] = @json.from_json!(json, path~)
+  let base : @resource.MapBasedArray[Hint] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let item : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+  let item : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
     obj.get("item").or(Json::null()),
     path=path.add_key("item"),
   )
-  let npc : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+  let npc : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
     obj.get("npc").or(Json::null()),
     path=path.add_key("npc"),
   )
@@ -612,8 +610,8 @@ impl @json.FromJson for Hint with from_json(json, path) {
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
-  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
-  let answer : Int = @json.from_json!(
+  let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
+  let answer : Int = @json.from_json(
     obj.get("answer").or(Json::null()),
     path=path.add_key("answer"),
   )
@@ -622,11 +620,11 @@ impl @json.FromJson for Hint with from_json(json, path) {
 
 ///|
 impl @json.FromJson for Lost with from_json(json, path) {
-  let says : @resource.MapBasedArray[String] = @json.from_json!(json, path~)
+  let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json!(
+  let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
     obj.get("yes").or(Json::null()),
     path=path.add_key("yes"),
   )
@@ -663,15 +661,15 @@ pub impl @json.FromJson for QuestPhaseAct with from_json(json, path) {
     let path = path.add_key(key)
     match key {
       "exp" => {
-        let exp_value : NumbericInt = @json.from_json!(value, path~)
+        let exp_value : NumbericInt = @json.from_json(value, path~)
         exp = Some(exp_value._)
       }
       "money" => {
-        let mesos_value : NumbericInt = @json.from_json!(value, path~)
+        let mesos_value : NumbericInt = @json.from_json(value, path~)
         mesos = Some(mesos_value._)
       }
       "item" => {
-        let item_map : @resource.MapBasedArray[ActItem] = @json.from_json!(
+        let item_map : @resource.MapBasedArray[ActItem] = @json.from_json(
           value,
           path~,
         )
@@ -688,12 +686,12 @@ impl @json.FromJson for ActItem with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let id : NumbericInt = @json.from_json!(obj.get("id").or(Json::null()), path~)
-  let count : Nullable[NumbericInt] = @json.from_json!(
+  let id : NumbericInt = @json.from_json(obj.get("id").or(Json::null()), path~)
+  let count : Nullable[NumbericInt] = @json.from_json(
     obj.get("count").or(Json::null()),
     path=path.add_key("count"),
   )
-  let period : Nullable[NumbericInt] = @json.from_json!(
+  let period : Nullable[NumbericInt] = @json.from_json(
     obj.get("period").or(Json::null()),
     path=path.add_key("period"),
   )

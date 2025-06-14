@@ -123,8 +123,8 @@ pub(open) trait OutMessage: Show {
 }
 
 ///|
-pub fn hex_to_dec(hex_val : String) -> Byte!@strconv.StrConvError {
-  @strconv.parse_int!(hex_val, base=16).to_byte()
+pub fn hex_to_dec(hex_val : String) -> Byte raise @strconv.StrConvError {
+  @strconv.parse_int(hex_val, base=16).to_byte()
 }
 
 ///| Opcodes for packets sent from the client to the server associated with version 83 of the game

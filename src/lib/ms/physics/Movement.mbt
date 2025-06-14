@@ -102,11 +102,11 @@ pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
 }
 
 ///|
-pub fn parse_movements(recv : @net.InPacket) -> Array[Movement]! {
+pub fn parse_movements(recv : @net.InPacket) -> Array[Movement] raise {
   let movements = []
-  let length = recv.read_byte!()
+  let length = recv.read_byte()
   for i in 0..<length {
-    let command = recv.read_byte!()
+    let command = recv.read_byte()
     let mut t = MovementType::NONE
     let mut xpos = 0
     let mut ypos = 0
@@ -118,39 +118,39 @@ pub fn parse_movements(recv : @net.InPacket) -> Array[Movement]! {
     match command {
       0 | 5 | 17 => {
         t = MovementType::ABSOLUTE
-        xpos = recv.read_short!()
-        ypos = recv.read_short!()
-        lastx = recv.read_short!()
-        lasty = recv.read_short!()
-        fh = recv.read_short!()
-        newstate = recv.read_byte!()
-        duration = recv.read_short!()
+        xpos = recv.read_short()
+        ypos = recv.read_short()
+        lastx = recv.read_short()
+        lasty = recv.read_short()
+        fh = recv.read_short()
+        newstate = recv.read_byte()
+        duration = recv.read_short()
       }
       1 | 2 | 6 | 12 | 13 | 16 => {
         t = MovementType::RELATIVE
-        xpos = recv.read_short!()
-        ypos = recv.read_short!()
-        newstate = recv.read_byte!()
-        duration = recv.read_short!()
+        xpos = recv.read_short()
+        ypos = recv.read_short()
+        newstate = recv.read_byte()
+        duration = recv.read_short()
       }
       11 => {
         t = MovementType::CHAIR
-        xpos = recv.read_short!()
-        ypos = recv.read_short!()
-        recv.skip!(2)
-        newstate = recv.read_byte!()
-        duration = recv.read_short!()
+        xpos = recv.read_short()
+        ypos = recv.read_short()
+        recv.skip(2)
+        newstate = recv.read_byte()
+        duration = recv.read_short()
       }
       15 => {
         t = MovementType::JUMPDOWN
-        xpos = recv.read_short!()
-        ypos = recv.read_short!()
-        lastx = recv.read_short!()
-        lasty = recv.read_short!()
-        recv.skip!(2)
-        fh = recv.read_short!()
-        newstate = recv.read_byte!()
-        duration = recv.read_short!()
+        xpos = recv.read_short()
+        ypos = recv.read_short()
+        lastx = recv.read_short()
+        lasty = recv.read_short()
+        recv.skip(2)
+        fh = recv.read_short()
+        newstate = recv.read_byte()
+        duration = recv.read_short()
       }
       3 | 4 | 7 | 8 | 9 | 14 => t = MovementType::NONE
       10 => t = MovementType::NONE

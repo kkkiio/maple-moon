@@ -37,7 +37,12 @@ pub fn make_handlers(
       @net.MODIFY_INVENTORY,
       parse_modify_inventory,
       fn(message) {
-        handle_modify_inventory(self.inventory, self.player_getter, message)
+        handle_modify_inventory(
+          self.inventory,
+          self.player_getter,
+          message,
+          self.io_service,
+        )
       },
       log_recv=true,
     ),
@@ -73,28 +78,28 @@ pub fn make_show_status_info_handlers(
   self : Module
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
-    0: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction! {
-      let second_byte = recv.read_byte!()
+    0: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {
+      let second_byte = recv.read_byte()
       match second_byte {
         1 => { // meso gain
           // Structure: writeByte(0) + writeShort(1) + writeInt(gain) + writeShort(0)
           recv.skip(1) // skip the second byte of the short
-          let gain = recv.read_int!()
-          let _unused = recv.read_short!() // Always 0
+          let gain = recv.read_int()
+          let _unused = recv.read_short() // Always 0
           { message: ShowGainMessage::MesoGain(gain~) }
         }
         0 => { // item gain
           // Structure: writeShort(0) + writeInt(itemId) + writeInt(quantity) + writeInt(0) + writeInt(0)
-          let item_id = recv.read_int!()
-          let quantity = recv.read_int!()
-          let _unused1 = recv.read_int!() // Always 0
-          let _unused2 = recv.read_int!() // Always 0
+          let item_id = recv.read_int()
+          let quantity = recv.read_int()
+          let _unused1 = recv.read_int() // Always 0
+          let _unused2 = recv.read_int() // Always 0
           { message: ShowGainMessage::ItemGain(item_id~, quantity~) }
         }
         mode => { // inventory status
           // Structure: writeByte(0) + writeByte(mode) + writeInt(0) + writeInt(0)
-          let _unused1 = recv.read_int!() // Always 0
-          let _unused2 = recv.read_int!() // Always 0
+          let _unused1 = recv.read_int() // Always 0
+          let _unused2 = recv.read_int() // Always 0
           { message: ShowGainMessage::InventoryStatus(mode~) }
         }
       }

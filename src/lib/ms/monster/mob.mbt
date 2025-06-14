@@ -116,7 +116,7 @@ pub async fn Mob::load(
   randomizer : @utils.Randomizer,
   network : @net.Network,
   string_loader : @resource.SyncLoader
-) -> Mob! {
+) -> Mob raise {
   let strid = @string_format.extend_id(mid, 7)
   let src = mob_loader.load_res_async([strid + ".img"])
   let info : MobInfo = src["info"].value() |> @json.from_json
@@ -128,7 +128,7 @@ pub async fn Mob::load(
     let can_fly = src["fly"].get_children_count() > 0
     load_animations(src, can_fly)
   }
-  Mob::new!(
+  Mob::new(
     oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network, string_loader,
     animations,
   )
@@ -162,7 +162,7 @@ struct MobInfo {
 ///|
 pub impl @json.FromJson for MobInfo with from_json(json, path) {
   let link = if json is { "link": String(link), .. } {
-    try Some(@strconv.parse_int(link)) catch {
+    Some(@strconv.parse_int(link)) catch {
       _ => raise @json.JsonDecodeError((path, "invalid link"))
     }
   } else {
@@ -238,7 +238,7 @@ fn Mob::new(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
   animations : Map[StanceType, @graphics.Animation]
-) -> Mob! {
+) -> Mob raise {
   let base = @map_object.MapObjectBase::new(oi)
   let info : MobInfo = src["info"].value() |> @json.from_json
   let level = info.level
@@ -265,8 +265,8 @@ fn Mob::new(
   let skillnode = src["info"]["skill"]
   let skill_stands = {}
   for i in 0..<skillnode.get_children_count() {
-    let skill_id = skillnode[i.to_string()]["skill"].get_int!()
-    let action = skillnode[i.to_string()]["action"].get_int!()
+    let skill_id = skillnode[i.to_string()]["skill"].get_int()
+    let action = skillnode[i.to_string()]["action"].get_int()
     skill_stands.set(
       skill_id,
       src["skill" + action.to_string()] |> @graphics.Animation::from_resource,
@@ -758,11 +758,11 @@ pub fn get_move_skill(
 }
 
 ///|
-pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack! {
+pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack raise {
   match self.attacks.get(move_id) {
     Some(attack) => attack
     None => {
-      let new_attack = MobSpecialAttack::new!(self.src, self.id, move_id)
+      let new_attack = MobSpecialAttack::new(self.src, self.id, move_id)
       self.attacks.set(move_id, new_attack)
       new_attack
     }
@@ -793,7 +793,7 @@ pub fn MobSpecialAttack::new(
   mob_src : @resource.NxNode,
   _mob_id : Int,
   move_id : Int
-) -> MobSpecialAttack! {
+) -> MobSpecialAttack raise {
   // let mut strid = ""
   // if mob_id < 10000000 {
   //   strid = @string_format.extend_id(mob_id, 7)
@@ -807,9 +807,9 @@ pub fn MobSpecialAttack::new(
   let has_multi_effect = src["effect0"].get_children_count() > 0
   let has_area_warning_effect = src["areaWarning"].get_children_count() > 0
   let use_effect = if has_multi_effect || has_area_warning_effect {
-    MobMultiUseEffect::new!(src, has_area_warning_effect) as &MobSkillUseEffect
+    MobMultiUseEffect::new(src, has_area_warning_effect) as &MobSkillUseEffect
   } else {
-    MobSingleUseEffect::new!(src) as &MobSkillUseEffect
+    MobSingleUseEffect::new(src) as &MobSkillUseEffect
   }
   { move_id, use_effect }
 

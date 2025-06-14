@@ -7,12 +7,12 @@ pub struct SkillUpdate {
 } derive(Show, ToJson)
 
 ///|
-pub fn parse_skill_update(recv : @net.InPacket) -> SkillUpdate! {
-  recv.skip!(3)
-  let skillid = recv.read_int!()
-  let level = recv.read_int!()
-  let masterlevel = recv.read_int!()
-  let expire = recv.read_long!()
+pub fn parse_skill_update(recv : @net.InPacket) -> SkillUpdate raise {
+  recv.skip(3)
+  let skillid = recv.read_int()
+  let level = recv.read_int()
+  let masterlevel = recv.read_int()
+  let expire = recv.read_long()
   { skillid, level, masterlevel, expire: expire.to_int() }
 }
 

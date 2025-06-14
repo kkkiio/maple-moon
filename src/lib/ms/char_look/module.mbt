@@ -14,7 +14,7 @@ pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
-) -> Module! {
+) -> Module raise {
   let bodynode = get_body_loader().load_res_async(["00002000.img"])
   let headnode = get_body_loader().load_res_async(["00012000.img"])
   Module::new(
@@ -29,11 +29,11 @@ pub fn Module::new(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader
-) -> Module {
+) -> Module raise {
   {
     hair_cache: Map::new(),
     string_loader,
-    draw_info: @types.BodyDrawInfo::new?(bodynode.value(), headnode.value()).unwrap(), // TODO
+    draw_info: @types.BodyDrawInfo::new(bodynode.value(), headnode.value()),
     face_types: Map::new(),
     body_cache: Map::new(),
     on_player_look_changed,
@@ -42,37 +42,29 @@ pub fn Module::new(
 }
 
 ///|
-pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook! {
+pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook raise {
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
-  CharLook::new(
-    self.io_service,
-    entry,
-    body,
-    hair,
-    face,
-    self.string_loader,
-    self.draw_info,
-  )
+  CharLook::load(entry, body, hair, face, self.draw_info, self.string_loader)
 }
 
 ///|
-pub async fn load_body_by_skin_id(self : Module, skin_id : Int) -> Body! {
+pub async fn load_body_by_skin_id(self : Module, skin_id : Int) -> Body raise {
   let body = Body::load(skin_id, self.draw_info)
   self.body_cache.set(skin_id, body)
   body
 }
 
 ///|
-pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair! {
+pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair raise {
   let hair = Hair::load(hair_id, self.draw_info, self.string_loader)
   self.hair_cache.set(hair_id, hair)
   hair
 }
 
 ///|
-pub async fn load_face_by_id(self : Module, face_id : Int) -> Face! {
+pub async fn load_face_by_id(self : Module, face_id : Int) -> Face raise {
   let face = Face::load(face_id, self.string_loader)
   self.face_types.set(face_id, face)
   face

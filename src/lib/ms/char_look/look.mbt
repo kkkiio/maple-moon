@@ -1,6 +1,5 @@
 ///|
 struct CharLook {
-  io_service : @io_task.IOService
   stance : @utils.Nominal[@types.StanceId]
   st_frame : @utils.Nominal[Int]
   mut st_elapsed : Int
@@ -32,17 +31,42 @@ pub(all) struct LookEntry {
 } derive(Show, ToJson, Default)
 
 ///|
-pub fn CharLook::new(
-  io_service : @io_task.IOService,
+pub async fn CharLook::load(
   entry : LookEntry,
   body : Body,
   hair : Hair,
   face : Face,
-  string_loader : @resource.SyncLoader,
+  draw_info : @types.BodyDrawInfo,
+  string_loader : @resource.SyncLoader
+) -> CharLook raise {
+  let equips = entry.equips
+    .iter()
+    .map(fn(it) {
+      let (slot_id, itemid) = it
+      async fn() {
+        let itemdata = @item.ItemData::get_async(itemid, string_loader)
+        (slot_id, itemdata)
+      }
+    })
+    |> Array::from_iter()
+    |> @js.async_all()
+    |> Map::from_array()
+  CharLook::new(equips, body, hair, face, draw_info)
+}
+
+///|
+pub fn CharLook::new(
+  slot_equips : Map[Int, @item.ItemData],
+  body : Body,
+  hair : Hair,
+  face : Face,
   draw_info : @types.BodyDrawInfo
 ) -> CharLook {
-  let l = {
-    io_service,
+  let equips = @equip.CharEquips::new()
+  for slot_id, itemdata in slot_equips {
+    (try? equips.add_equip(itemdata, @slot.Id::from_int(slot_id), draw_info)).unwrap() // TODO: handle error
+  }
+  {
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
     st_elapsed: 0,
@@ -56,15 +80,11 @@ pub fn CharLook::new(
     body,
     hair,
     face,
-    equips: @equip.CharEquips::new(io_service, string_loader),
+    equips,
     randomizer: @utils.Randomizer::default(),
     alerted: @utils.TimedBool::default(),
     draw_info,
   }
-  for slot_id, itemid in entry.equips {
-    l.add_equip(itemid, @slot.Id::from_int(slot_id))
-  }
-  l
 }
 
 ///|
@@ -768,8 +788,12 @@ pub fn get_equips(self : CharLook) -> @equip.CharEquips {
 }
 
 ///|
-pub fn add_equip(self : CharLook, itemid : Int, slot : @slot.Id) -> Unit {
-  self.equips.add_equip(itemid, slot, self.draw_info)
+pub fn CharLook::add_equip(
+  self : CharLook,
+  itemdata : @item.ItemData,
+  slot : @slot.Id
+) -> Unit raise {
+  self.equips.add_equip(itemdata, slot, self.draw_info)
   self.updatetwohanded()
 }
 

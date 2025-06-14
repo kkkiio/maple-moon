@@ -15,24 +15,24 @@ pub struct OpenNpcShop {
 } derive(Show, ToJson)
 
 ///|
-pub fn parse_open_npc_shop(recv : @net.InPacket) -> OpenNpcShop! {
-  let npcid = recv.read_int!()
-  let size = recv.read_short!()
+pub fn parse_open_npc_shop(recv : @net.InPacket) -> OpenNpcShop raise {
+  let npcid = recv.read_int()
+  let size = recv.read_short()
   let items = []
   for i in 0..<size {
-    let itemid = recv.read_int!()
-    let price = recv.read_int!()
-    let pitch = recv.read_int!()
-    let time = recv.read_int!()
-    recv.skip!(4)
-    let norecharge = recv.read_short!() == 1
+    let itemid = recv.read_int()
+    let price = recv.read_int()
+    let pitch = recv.read_int()
+    let time = recv.read_int()
+    recv.skip(4)
+    let norecharge = recv.read_short() == 1
     if norecharge {
-      let buyable = recv.read_short!()
+      let buyable = recv.read_short()
       items.push({ id: itemid, price, pitch, time, charge_price: 0, buyable })
     } else {
-      recv.skip!(4)
-      let rechargeprice = recv.read_short!()
-      let slotmax = recv.read_short!()
+      recv.skip(4)
+      let rechargeprice = recv.read_short()
+      let slotmax = recv.read_short()
       items.push({
         id: itemid,
         price,

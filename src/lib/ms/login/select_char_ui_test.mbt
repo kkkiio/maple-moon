@@ -1,3 +1,4 @@
+///|
 test "select char ui" {
   let ui = SelectCharUI::new(
     SelectCharUIResource::default(),
@@ -5,5 +6,5 @@ test "select char ui" {
     @ui.Hooks::default(),
   )
   let rs = ui.render()
-  @json.inspect!(rs, content={"render_units":[{},{},{},{},{},{},{},{}]})
+  @json.inspect(rs, content={ "render_units": [{}, {}, {}, {}, {}, {}, {}, {}] })
 }

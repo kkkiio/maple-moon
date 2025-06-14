@@ -252,6 +252,6 @@ pub fn BasicActionId::name(self : BasicActionId) -> String {
 }
 
 ///|
-pub fn BasicActionId::from_name(name : String) -> BasicActionId! {
-  @json.from_json!({ "$tag": name.to_json() })
+pub fn BasicActionId::from_name(name : String) -> BasicActionId raise {
+  @json.from_json({ "$tag": name.to_json() })
 }

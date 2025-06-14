@@ -5,7 +5,7 @@ struct Module {
 }
 
 ///|
-pub async fn Module::load() -> Module! {
+pub async fn Module::load() -> Module raise {
   let portals_animations_fut = MapPortalAnimations::load()
   let mini_map_ui_resource_fut = MiniMapUIResource::load()
   let (portals_animations, mini_map_ui_resource) = (

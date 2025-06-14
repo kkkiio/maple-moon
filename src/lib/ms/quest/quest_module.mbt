@@ -15,12 +15,10 @@ pub async fn Module::load(
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
-) -> Module! {
+) -> Module raise {
   let quests_resource = quest_resource_loader.load_res_async(["nx"])
   let map_quests_resource = MapQuestsResource::load()
-  let quests_resource : QuestResource = @json.from_json!(
-    quests_resource.value(),
-  )
+  let quests_resource : QuestResource = @json.from_json(quests_resource.value())
   Module::new(
     quests_resource, map_quests_resource, network, inventory, ref_render, open_npc_talk_ui,
   )
@@ -93,9 +91,9 @@ pub fn Module::make_show_status_info_handlers(
   self : Module
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
-    1: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction! {
-      let quest_id = recv.read_short!()
-      let status = recv.read_byte!()
+    1: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {
+      let quest_id = recv.read_short()
+      let status = recv.read_byte()
       match status {
         0 => {
           let action : &@game_mod.SubRouteAction = ShowForfeitQuestAction::new(
@@ -105,38 +103,34 @@ pub fn Module::make_show_status_info_handlers(
         }
         2 => {
           let action : &@game_mod.SubRouteAction = ShowCompleteQuestAction::new(
-            { quest_id, completion_time: recv.read_long!() },
+            { quest_id, completion_time: recv.read_long() },
             self,
           )
           action
         }
         _ => {
           let action : &@game_mod.SubRouteAction = ShowUpdateQuestAction::new(
-            { quest_id, progress_data: recv.read_string!() },
+            { quest_id, progress_data: recv.read_string() },
             self,
           )
           action
         }
       }
     },
-    3: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction! {
-      let white = recv.read_bool!()
-      let gain = recv.read_int!()
-      let in_chat = recv.read_bool!()
-      let bonus_event_exp = recv.read_int!()
-      let third_monster_kill_event = recv.read_byte!()
-      let _ = recv.read_byte!() // rip_byte
-      let wedding_bonus = recv.read_int!()
-      let quest_bonus_rate = if in_chat {
-        Some(recv.read_byte!())
-      } else {
-        None
-      }
-      let party_bonus_multiplier = recv.read_byte!()
-      let party_bonus = recv.read_int!()
-      let equip_bonus = recv.read_int!()
-      let internet_cafe_bonus = recv.read_int!()
-      let rainbow_week_bonus = recv.read_int!()
+    3: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {
+      let white = recv.read_bool()
+      let gain = recv.read_int()
+      let in_chat = recv.read_bool()
+      let bonus_event_exp = recv.read_int()
+      let third_monster_kill_event = recv.read_byte()
+      let _ = recv.read_byte() // rip_byte
+      let wedding_bonus = recv.read_int()
+      let quest_bonus_rate = if in_chat { Some(recv.read_byte()) } else { None }
+      let party_bonus_multiplier = recv.read_byte()
+      let party_bonus = recv.read_int()
+      let equip_bonus = recv.read_int()
+      let internet_cafe_bonus = recv.read_int()
+      let rainbow_week_bonus = recv.read_int()
       let action : &@game_mod.SubRouteAction = ShowExpGainAction::new({
         white,
         gain,
@@ -224,19 +218,21 @@ struct PlayerQuestLogInfo {
 } derive(Show)
 
 ///|
-pub fn parse_player_quest_info(recv : @net.InPacket) -> PlayerQuestLogInfo! {
-  let started_size = recv.read_short!()
+pub fn parse_player_quest_info(
+  recv : @net.InPacket
+) -> PlayerQuestLogInfo raise {
+  let started_size = recv.read_short()
   let started = []
   let completed = []
   for i in 0..<started_size {
-    let quest_id = recv.read_short!()
-    let progress_data = recv.read_string!()
+    let quest_id = recv.read_short()
+    let progress_data = recv.read_string()
     started.push((quest_id, progress_data))
   }
-  let completed_size = recv.read_short!()
+  let completed_size = recv.read_short()
   for i in 0..<completed_size {
-    let quest_id = recv.read_short!()
-    let completion_time = recv.read_long!()
+    let quest_id = recv.read_short()
+    let completion_time = recv.read_long()
     completed.push((quest_id, completion_time))
   }
   { started, completed }
@@ -261,42 +257,44 @@ priv enum QuestFailureOperation {
 } derive(Show)
 
 ///|
-fn parse_update_quest_info(recv : @net.InPacket) -> UpdateQuestInfoMessage! {
-  let operation = recv.read_byte!()
+fn parse_update_quest_info(
+  recv : @net.InPacket
+) -> UpdateQuestInfoMessage raise {
+  let operation = recv.read_byte()
   match operation {
     6 => {
       // Add quest time limit: short size, short quest_id, int time
-      let size = recv.read_short!()
-      let quest_id = recv.read_short!()
-      let time = recv.read_int!()
+      let size = recv.read_short()
+      let quest_id = recv.read_short()
+      let time = recv.read_int()
       AddQuestTimeLimit(size, quest_id, time)
     }
     7 => {
       // Remove quest time limit: short position, short quest_id
-      let position = recv.read_short!()
-      let quest_id = recv.read_short!()
+      let position = recv.read_short()
+      let quest_id = recv.read_short()
       RemoveQuestTimeLimit(position, quest_id)
     }
     8 => {
       // Quest update/finish: short quest_id, int npc, (short next_quest or int 0)
-      let quest_id = recv.read_short!()
-      let npc = recv.read_int!()
+      let quest_id = recv.read_short()
+      let npc = recv.read_int()
       if recv.available() == 2 {
-        let next_quest = recv.read_short!()
+        let next_quest = recv.read_short()
         QuestFinish(quest_id, npc, next_quest)
       } else {
-        recv.read_int!() |> ignore // 0
+        recv.read_int() |> ignore // 0
         QuestUpdate(quest_id, npc)
       }
     }
     0x0A => {
       // Quest error: short quest_id
-      let quest_id = recv.read_short!()
+      let quest_id = recv.read_short()
       QuestError(quest_id)
     }
     0x0F => {
       // Quest expire: short quest_id  
-      let quest_id = recv.read_short!()
+      let quest_id = recv.read_short()
       QuestExpire(quest_id)
     }
     _ =>
@@ -305,7 +303,7 @@ fn parse_update_quest_info(recv : @net.InPacket) -> UpdateQuestInfoMessage! {
         0x0B => QuestFailure(NoMeso)
         0x0D => QuestFailure(WornByCharacter)
         0x0E => QuestFailure(NotHavingItem)
-        _ => fail!("Unknown quest failure operation: \{operation}")
+        _ => fail("Unknown quest failure operation: \{operation}")
       }
   }
 }

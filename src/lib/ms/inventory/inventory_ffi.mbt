@@ -1,7 +1,10 @@
 ///|
-async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot]! {
+async fn get_all_items_by_type(
+  mod : Module,
+  kind : TypeId
+) -> Array[UISlot] raise {
   let slotmax = mod.inventory.get_slotmax(kind)
-  async fn load_slot(slot_no) -> WithItemSlot?!Error {
+  async fn load_slot(slot_no) -> WithItemSlot? raise Error {
     match mod.inventory.get_slot_item_at(kind, slot_no) {
       Some(slot_item) => {
         let item_data = @item.ItemData::get_async(
@@ -34,16 +37,16 @@ async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot]! {
 
   (1)
   .until(slotmax, inclusive=true)
-  .map(fn(slot_no) { fn!() { load_slot!(slot_no) } })
+  .map(fn(slot_no) { fn() raise { load_slot(slot_no) } })
   |> Array::from_iter()
   |> @js.async_all()
 }
 
 ///|
-typealias UISlot = WithItemSlot? // Slot in UI may be empty
+typealias WithItemSlot? as UISlot // Slot in UI may be empty
 
 ///| Type for inventory change watcher callback
-typealias InventoryWatcher = (Array[UISlot]) -> Bool
+typealias (Array[UISlot]) -> Bool as InventoryWatcher
 
 ///|
 pub struct WithItemSlot {
@@ -56,7 +59,7 @@ pub struct WithItemSlot {
 }
 
 ///|
-fn get_type_id_by_kind(kind : String) -> TypeId! {
+fn get_type_id_by_kind(kind : String) -> TypeId raise {
   match kind {
     "equip" => TypeId::EQUIP
     "use" => TypeId::USE
@@ -64,7 +67,7 @@ fn get_type_id_by_kind(kind : String) -> TypeId! {
     "etc" => TypeId::ETC
     "cash" => TypeId::CASH
     "equipped" => TypeId::EQUIPPED
-    _ => fail!("Invalid inventory kind: \{kind}")
+    _ => fail("Invalid inventory kind: \{kind}")
   }
 }
 

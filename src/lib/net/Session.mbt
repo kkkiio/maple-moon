@@ -93,7 +93,8 @@ pub fn Session::get_status(self : Session) -> ConnectionStatus {
 }
 
 ///|
-priv extern type Socket
+#external
+priv type Socket
 
 ///|
 fn Socket::close(self : Socket) -> Unit = "socket" "close"

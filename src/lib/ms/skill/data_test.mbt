@@ -1,88 +1,14 @@
 ///|
-test "parse skill - sword fa" {
-  // https://maple-res.kkkiiox.work/Skill/110.img.json
-  let json : Json = {
-    "hit": {
-      "0": {
-        "0": {
-          "__h": 92,
-          "__w": 167,
-          "delay": 50,
-          "origin": [83, 46],
-          "__i": "spritesheets/Skill/110.img/skill/1100002/hit#614",
-        },
-        "1": {
-          "__h": 81,
-          "__w": 156,
-          "delay": 50,
-          "origin": [74, 51],
-          "__i": "spritesheets/Skill/110.img/skill/1100002/hit#615",
-        },
-        "2": {
-          "__h": 93,
-          "__w": 175,
-          "delay": 50,
-          "origin": [92, 41],
-          "__i": "spritesheets/Skill/110.img/skill/1100002/hit#616",
-        },
-      },
-    },
-    "icon": {
-      "__h": 32,
-      "__w": 32,
-      "origin": [0, 32],
-      "z": 0,
-      "__i": "images/Skill/611.png",
-    },
-    "iconDisabled": {
-      "__h": 32,
-      "__w": 32,
-      "origin": [0, 32],
-      "z": 0,
-      "__i": "images/Skill/613.png",
-    },
-    "iconMouseOver": {
-      "__h": 32,
-      "__w": 32,
-      "origin": [0, 32],
-      "z": 0,
-      "__i": "images/Skill/612.png",
-    },
-    "level": {
-      "1": { "damage": 105, "hs": "h1", "prop": 2 },
-      "2": { "damage": 110, "hs": "h2", "prop": 4 },
-      "3": { "damage": 115, "hs": "h3", "prop": 6 },
-      "4": { "damage": 120, "hs": "h4", "prop": 8 },
-      "5": { "damage": 125, "hs": "h5", "prop": 10 },
-      "6": { "damage": 130, "hs": "h6", "prop": 12 },
-      "7": { "damage": 135, "hs": "h7", "prop": 14 },
-      "8": { "damage": 140, "hs": "h8", "prop": 16 },
-      "9": { "damage": 145, "hs": "h9", "prop": 18 },
-      "10": { "damage": 150, "hs": "h10", "prop": 20 },
-      "11": { "damage": 155, "hs": "h11", "prop": 22 },
-      "12": { "damage": 160, "hs": "h12", "prop": 24 },
-      "13": { "damage": 165, "hs": "h13", "prop": 26 },
-      "14": { "damage": 170, "hs": "h14", "prop": 28 },
-      "15": { "damage": 175, "hs": "h15", "prop": 30 },
-      "16": { "damage": 180, "hs": "h16", "prop": 32 },
-      "17": { "damage": 185, "hs": "h17", "prop": 34 },
-      "18": { "damage": 190, "hs": "h18", "prop": 36 },
-      "19": { "damage": 195, "hs": "h19", "prop": 38 },
-      "20": { "damage": 200, "hs": "h20", "prop": 40 },
-      "21": { "damage": 205, "hs": "h21", "prop": 42 },
-      "22": { "damage": 210, "hs": "h22", "prop": 44 },
-      "23": { "damage": 215, "hs": "h23", "prop": 46 },
-      "24": { "damage": 220, "hs": "h24", "prop": 48 },
-      "25": { "damage": 225, "hs": "h25", "prop": 50 },
-      "26": { "damage": 230, "hs": "h26", "prop": 52 },
-      "27": { "damage": 235, "hs": "h27", "prop": 54 },
-      "28": { "damage": 240, "hs": "h28", "prop": 56 },
-      "29": { "damage": 245, "hs": "h29", "prop": 58 },
-      "30": { "damage": 250, "hs": "h30", "prop": 60 },
-    },
-    "req": { "1100000": 3 },
-    "skillType": 3,
-  }
-  let _ : SkillNxResource = @json.from_json!(json)
+test "parse all job' skills" {
+  struct JobSkills {
+    skill : Map[String, SkillNxResource]
+  } derive(@json.FromJson)
+  for job_id in ["000", "100", "110"] {
+    let json : Json = @json.parse(
+      @fs.read_file_to_string("assets/Skill/\{job_id}.img.json"),
+    )
+    let job_skills : JobSkills = @json.from_json(json)
+    let _ = job_skills.skill
 
+  }
 }

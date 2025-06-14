@@ -14,7 +14,7 @@ pub async fn Module::load(
   network : @net.Network,
   ref_render : @markup_text.RefRender,
   string_loader : @resource.SyncLoader
-) -> Module! {
+) -> Module raise {
   let npc_loader = @resource.SyncLoader::load(
     "npc",
     "https://maple-res.kkkiiox.work/Npc/nx.json",
@@ -125,14 +125,14 @@ pub fn get_npcs(self : Module) -> MapNpcs {
 }
 
 ///|
-pub fn parse_spawn_npc(recv : @net.InPacket) -> NpcSpawn! {
-  let oid = recv.read_int!()
-  let id = recv.read_int!()
-  let position = recv.read_point!()
-  let flip = recv.read_bool!()
-  let fh = recv.read_ushort!()
-  recv.read_short!() |> ignore // 'rx'
-  recv.read_short!() |> ignore // 'ry'
+pub fn parse_spawn_npc(recv : @net.InPacket) -> NpcSpawn raise {
+  let oid = recv.read_int()
+  let id = recv.read_int()
+  let position = recv.read_point()
+  let flip = recv.read_bool()
+  let fh = recv.read_ushort()
+  recv.read_short() |> ignore // 'rx'
+  recv.read_short() |> ignore // 'ry'
   { oid, id, position, flip, fh }
 }
 
@@ -149,19 +149,21 @@ pub struct SpawnNpcController {
 } derive(Show, ToJson)
 
 ///|
-pub fn parse_spawn_npc_controller(recv : @net.InPacket) -> SpawnNpcController! {
-  let mode = recv.read_byte!()
-  let oid = recv.read_int!()
+pub fn parse_spawn_npc_controller(
+  recv : @net.InPacket
+) -> SpawnNpcController raise {
+  let mode = recv.read_byte()
+  let oid = recv.read_int()
   let npc = if mode == 0 {
     None
   } else {
-    let id = recv.read_int!()
-    let position = recv.read_point!()
-    let flip = recv.read_bool!()
-    let fh = recv.read_ushort!()
-    recv.read_short!() |> ignore // 'rx'
-    recv.read_short!() |> ignore // 'ry'
-    recv.read_bool!() |> ignore // 'minimap'
+    let id = recv.read_int()
+    let position = recv.read_point()
+    let flip = recv.read_bool()
+    let fh = recv.read_ushort()
+    recv.read_short() |> ignore // 'rx'
+    recv.read_short() |> ignore // 'ry'
+    recv.read_bool() |> ignore // 'minimap'
     Some({ oid, id, position, flip, fh })
   }
   { mode, oid, npc }
@@ -211,22 +213,22 @@ pub fn Speaker::from_int(i : Int) -> Speaker? {
 pub fn Speaker::int_value(self : Speaker) -> Int = "%identity"
 
 ///|
-pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue! {
-  recv.skip!(1)
-  let npcid = recv.read_int!()
-  let msgtype = recv.read_byte!() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
-  let speaker = recv.read_byte!()
-  let text = recv.read_string!()
+pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue raise {
+  recv.skip(1)
+  let npcid = recv.read_int()
+  let msgtype = recv.read_byte() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
+  let speaker = recv.read_byte()
+  let text = recv.read_string()
   let (style_b0, style_b1) = if recv.available() > 0 && msgtype == 0 {
-    (recv.read_ubyte!(), recv.read_ubyte!())
+    (recv.read_ubyte(), recv.read_ubyte())
   } else {
     (0, 0)
   }
   guard TalkType::from_int(msgtype, style_b0, style_b1) is Some(t) else {
-    fail!("unknown talk type: \{msgtype}, \{style_b0}, \{style_b1}")
+    fail("unknown talk type: \{msgtype}, \{style_b0}, \{style_b1}")
   }
   guard Speaker::from_int(speaker) is Some(speaker) else {
-    fail!("unknown speaker: \{speaker}")
+    fail("unknown speaker: \{speaker}")
   }
   { npcid, t, speaker, text }
 }
@@ -302,44 +304,43 @@ fn new_npc_talk_ui(
   name_loader : @markup_text.RefRender
 ) -> UINpcTalk {
   let ui = UINpcTalk::new(npc_talk_resource, hooks, string_loader, name_loader)
-  try
-    ui.change_text(
-      args.npc_id,
-      match args.talk_action {
-        SEND_YESNO(callback) =>
-          SEND_YESNO(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-        SEND_NEXT(callback) =>
-          SEND_NEXT(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-        SEND_PREV(callback) =>
-          SEND_PREV(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-        SEND_OK(callback) =>
-          SEND_OK(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-        SEND_SIMPLE(callback) =>
-          SEND_SIMPLE(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-        SEND_NEXT_PREV(callback) =>
-          SEND_NEXT_PREV(fn(c) {
-            container.remove_ui(@ui.UIElementType::NPC_TALK)
-            callback(c)
-          })
-      },
-      args.speaker,
-      args.str,
-    ) catch {
+  ui.change_text(
+    args.npc_id,
+    match args.talk_action {
+      SEND_YESNO(callback) =>
+        SEND_YESNO(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_NEXT(callback) =>
+        SEND_NEXT(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_PREV(callback) =>
+        SEND_PREV(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_OK(callback) =>
+        SEND_OK(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_SIMPLE(callback) =>
+        SEND_SIMPLE(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+      SEND_NEXT_PREV(callback) =>
+        SEND_NEXT_PREV(fn(c) {
+          container.remove_ui(@ui.UIElementType::NPC_TALK)
+          callback(c)
+        })
+    },
+    args.speaker,
+    args.str,
+  ) catch {
     e => {
       @log.error({ "error": e }, "error changing text")
       panic()

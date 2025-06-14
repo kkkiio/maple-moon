@@ -21,7 +21,7 @@ pub fn watch_quest_log_ffi(
         inventory: mod.inventory,
       }
       let markup_desc = quest.quest_info.descriptions.get(quest.phase).or("")
-      let desc = try parse_quest_desc!(markup_desc, ref_name_provider~) catch {
+      let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
           markup_desc
@@ -42,7 +42,7 @@ pub fn watch_quest_log_ffi(
         inventory: mod.inventory,
       }
       let markup_desc = quest.quest_info.descriptions.last().or("")
-      let desc = try parse_quest_desc!(markup_desc, ref_name_provider~) catch {
+      let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
           markup_desc
@@ -68,19 +68,21 @@ pub fn watch_quest_log_ffi(
 pub fn parse_quest_desc(
   s : String,
   ref_name_provider~ : &QuestTextRefProvider = TestQuestRefNameProvider::default()
-) -> String! {
+) -> String raise {
   let tag_replace_map = {
-    'R': fn!(style, v) { ref_name_provider.get_progress!(style, v) },
-    'o': fn!(style, v) { ref_name_provider.get_mob(style, v) },
-    'p': fn!(style, v) { ref_name_provider.get_npc(style, v) },
-    'a': fn!(style, v) { ref_name_provider.get_check(style, v) },
-    'm': fn!(style, v) { ref_name_provider.get_map_name(style, v) },
-    't': fn!(style, v) { ref_name_provider.get_item_name(style, v) },
-    'c': fn!(style, v) { ref_name_provider.get_item_count(style, v) },
-    '@': fn!(style, v) { ref_name_provider.get_npc(style, v.trim_end(":")) },
+    'R': fn(style, v) raise { ref_name_provider.get_progress(style, v) },
+    'o': fn(style, v) raise { ref_name_provider.get_mob(style, v) },
+    'p': fn(style, v) raise { ref_name_provider.get_npc(style, v) },
+    'a': fn(style, v) raise { ref_name_provider.get_check(style, v) },
+    'm': fn(style, v) raise { ref_name_provider.get_map_name(style, v) },
+    't': fn(style, v) raise { ref_name_provider.get_item_name(style, v) },
+    'c': fn(style, v) raise { ref_name_provider.get_item_count(style, v) },
+    '@': fn(style, v) raise {
+      ref_name_provider.get_npc(style, v.trim_end(":"))
+    },
   }
-  let node = @markup_text.parse_markup!(s, tag_map)
-  let html = @markup_text.to_html!(
+  let node = @markup_text.parse_markup(s, tag_map)
+  let html = @markup_text.to_html(
     node,
     { color: ColorName::BLACK, bold: false },
     @markup_text.color_map,
@@ -91,13 +93,13 @@ pub fn parse_quest_desc(
 
 ///|
 trait QuestTextRefProvider {
-  get_progress(Self, Style, @string.View) -> String!
-  get_mob(Self, Style, @string.View) -> String!
-  get_npc(Self, Style, @string.View) -> String!
-  get_check(Self, Style, @string.View) -> String!
-  get_map_name(Self, Style, @string.View) -> String!
-  get_item_name(Self, Style, @string.View) -> String!
-  get_item_count(Self, Style, @string.View) -> String!
+  get_progress(Self, Style, @string.View) -> String raise
+  get_mob(Self, Style, @string.View) -> String raise
+  get_npc(Self, Style, @string.View) -> String raise
+  get_check(Self, Style, @string.View) -> String raise
+  get_map_name(Self, Style, @string.View) -> String raise
+  get_item_name(Self, Style, @string.View) -> String raise
+  get_item_count(Self, Style, @string.View) -> String raise
 }
 
 ///|
@@ -110,12 +112,12 @@ priv struct RefProviderImpl {
 ///|
 impl QuestTextRefProvider for RefProviderImpl with get_progress(self, _, v) {
   let quest = self.quest
-  let info_number = @strconv.parse_int!(v.to_string())
+  let info_number = @strconv.parse_int(v.to_string())
   guard quest is InProgress(quest)  // TODO: support completed quest?
   if quest.info_number_progress_map.get(info_number) is Some(progress) {
     "<a href=\"#\">\{progress}</a>"
   } else {
-    fail!("no progress data: \{info_number}")
+    fail("no progress data: \{info_number}")
   }
 }
 
@@ -134,20 +136,20 @@ impl QuestTextRefProvider for RefProviderImpl with get_check(self, _, v) {
   let quest = self.quest
   guard quest is InProgress(quest)  // TODO: support completed quest?
   let quest_id = quest.quest_id.to_string()
-  guard v.has_prefix(quest_id) else { fail!("unknown check: \{v}") }
-  let check_no = @strconv.parse_int!(
+  guard v.has_prefix(quest_id) else { fail("unknown check: \{v}") }
+  let check_no = @strconv.parse_int(
     v.charcodes(start=quest_id.length()).to_string(),
   ) // start from 1
   guard quest.checks.get(quest.phase) is Some(checks) else {
-    fail!("no checks: \{quest_id}")
+    fail("no checks: \{quest_id}")
   }
   let index = check_no - 1
   guard checks.monster_hunts.get(index) is Some(check) else {
-    fail!("no check: \{check_no}")
+    fail("no check: \{check_no}")
   }
   let progress_data = quest.get_phase_progress(quest.phase)
-  check_mob_progress_data!(progress_data)
-  let current_count = @strconv.parse_int!(
+  check_mob_progress_data(progress_data)
+  let current_count = @strconv.parse_int(
     progress_data.substring(start=index * 3, end=index * 3 + 3),
     base=10,
   )
@@ -166,7 +168,7 @@ impl QuestTextRefProvider for RefProviderImpl with get_item_name(self, _, v) {
 
 ///|
 impl QuestTextRefProvider for RefProviderImpl with get_item_count(self, _, v) {
-  let item_id = @strconv.parse_int!(v.to_string())
+  let item_id = @strconv.parse_int(v.to_string())
   let count = self.inventory.get_item_count(item_id)
   count.to_string()
 }
@@ -276,10 +278,10 @@ typealias @markup_text.Style
 
 ///|
 test "parse quest desc 1" {
-  let desc = parse_quest_desc!(
+  let desc = parse_quest_desc(
     "Let's begin the exploration! You can earn the #b<Beginner Explorer>#k title by exploring the villages in Victoria.",
   )
-  inspect!(
+  inspect(
     desc,
     content=
       #|<span style="color: black">Let&#039;s begin the exploration! You can earn the </span><span style="color: blue">&lt;Beginner Explorer&gt;</span><span style="color: black"> title by exploring the villages in Victoria.</span>
@@ -289,10 +291,10 @@ test "parse quest desc 1" {
 
 ///|
 test "parse quest bold desc" {
-  let desc = parse_quest_desc!(
+  let desc = parse_quest_desc(
     "#b#eTitle - Beginner Explorer#k#n\\r\\nExplore the 20 main regions of Victoria Island.\\r\\n#b● Status : #R27010# / 20 Completed#k",
   )
-  inspect!(
+  inspect(
     desc,
     content=
       #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"></span><br/>
@@ -304,10 +306,10 @@ test "parse quest bold desc" {
 
 ///|
 test "parse monster hunt check count" {
-  let q1016_1_desc = parse_quest_desc!(
+  let q1016_1_desc = parse_quest_desc(
     "I decided to get trained under the Famous Sword-Master, Mai, in Amherst. I guess hunting the weakest monsters is a good idea. Should I hunt Snail, Blue Snail, and Shroom in order?\\n\\n#o100100# #r#a10161# #k\\n#o100101#  #r#a10162# #k\\n#o120100# #r#a10163##k\\n\\n Ah, Mai told me to meet with #p20002# in Southperry and try training together...",
   )
-  inspect!(
+  inspect(
     q1016_1_desc,
     content=
       #|<span style="color: black">I decided to get trained under the Famous Sword-Master, Mai, in Amherst. I guess hunting the weakest monsters is a good idea. Should I hunt Snail, Blue Snail, and Shroom in order?</span><br/>
@@ -323,10 +325,10 @@ test "parse monster hunt check count" {
 
 ///|
 test "parse map name" {
-  let desc = parse_quest_desc!(
+  let desc = parse_quest_desc(
     "She says there are way too many Snails and would like you to eliminate 10 #rRed Snails#k and 10 #rBlue Snails#k.\\n\\nLet's report back to #bAyan#k in #b#m102000000##k upon completion.",
   )
-  inspect!(
+  inspect(
     desc,
     content=
       #|<span style="color: black">She says there are way too many Snails and would like you to eliminate 10 </span><span style="color: red">Red Snails</span><span style="color: black"> and 10 </span><span style="color: red">Blue Snails</span><span style="color: black">.</span><br/>
@@ -338,10 +340,10 @@ test "parse map name" {
 
 ///|
 test "parse item" {
-  let desc = parse_quest_desc!(
+  let desc = parse_quest_desc(
     "Can you get me #b#e30#n #b#t4000003#es#k and #b#e50#n #t4000018#s#k? I'm trying to remodel my house and make it bigger ... If you can do it, I'll hook you up with a nice #bshield#k that I don't really need ... You'll get plenty if you take down the ones that look like trees.",
   )
-  inspect!(
+  inspect(
     desc,
     content=
       #|<span style="color: black">Can you get me </span><span style="color: blue, font-weight: bold;">30</span> <item>4000003</item><span style="color: blue">es</span><span style="color: black"> and </span><span style="color: blue, font-weight: bold;">50</span> <item>4000018</item><span style="color: blue">s</span><span style="color: black">? I&#039;m trying to remodel my house and make it bigger ... If you can do it, I&#039;ll hook you up with a nice </span><span style="color: blue">shield</span><span style="color: black"> that I don&#039;t really need ... You&#039;ll get plenty if you take down the ones that look like trees.</span>

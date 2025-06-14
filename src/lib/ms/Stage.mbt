@@ -37,6 +37,7 @@ pub(all) struct Stage {
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
   string_loader : @resource.SyncLoader
   io_service : @io_task.IOService
+  bullet_module : @bullet.Module
 }
 
 ///|
@@ -54,7 +55,8 @@ pub fn Stage::new(
   add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
+  bullet_module : @bullet.Module
 ) -> Stage {
   {
     map_portals_animations,
@@ -77,6 +79,7 @@ pub fn Stage::new(
     map_change_listeners: Array::new(),
     string_loader,
     io_service,
+    bullet_module,
   }
 }
 
@@ -113,7 +116,7 @@ pub fn set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
   cooldowns : Map[Int, Int],
-  callback : (@player.Player) -> Unit!
+  callback : (@player.Player) -> Unit raise
 ) -> Unit {
   let player_f = self.io_service
     .submit(async fn() { self.char_look_module.load_char_look(entry.look) })
@@ -145,13 +148,14 @@ pub fn set_player_stage(
             cooldowns,
             self.string_loader,
             self.io_service,
+            self.bullet_module,
           ),
         )
       })
     })
   (self.add_task_fn)(
     player_f.map(fn(player) {
-      match callback?(player) {
+      match (try? callback(player)) {
         Ok(_) => ()
         Err(e) => @log.error({ "error": e }, "set_player_stage")
       }
@@ -210,8 +214,14 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
 }
 
 ///|
-fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
-  let (tiles_objs, backgrounds, physics, portals, map_info) = match self.state {
+fn update(self : Stage) -> Unit raise {
+  let (
+    tiles_objs,
+    backgrounds,
+    physics,
+    portals, // Make sure to destructure map_info here
+    map_info,
+  ) = match self.state {
     StageState::ACTIVE(
       tiles_objs~,
       backgrounds~,
@@ -224,7 +234,7 @@ fn update(self : Stage) -> Unit! { // Make sure to destructure map_info here
     StageState::TRANSITION(portal_id~, loading_map~) =>
       match loading_map.poll() {
         Some(res) => {
-          let sence_map = res.unwrap_or_error!()
+          let sence_map = res.unwrap_or_error()
           self.state = StageState::ACTIVE(
             tiles_objs=sence_map.tiles_objs,
             backgrounds=sence_map.backgrounds,

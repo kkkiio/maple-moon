@@ -30,7 +30,7 @@ struct MapQuestsResource {
 }
 
 ///| Loads the graphical resources for quest icons
-pub async fn MapQuestsResource::load() -> MapQuestsResource! {
+pub async fn MapQuestsResource::load() -> MapQuestsResource raise {
   let ui_window_2_loader = @ui.ui_window_2_loader()
   let available_quest_icon = ui_window_2_loader.load_res_async([
     "QuestIcon", "0",
@@ -42,13 +42,13 @@ pub async fn MapQuestsResource::load() -> MapQuestsResource! {
     "QuestIcon", "2",
   ])
   {
-    available_quest_icon: @graphics.Animation::from_resource_ex!(
+    available_quest_icon: @graphics.Animation::from_resource_ex(
       available_quest_icon,
     ),
-    inprogress_quest_icon: @graphics.Animation::from_resource_ex!(
+    inprogress_quest_icon: @graphics.Animation::from_resource_ex(
       inprogress_quest_icon,
     ),
-    completed_quest_icon: @graphics.Animation::from_resource_ex!(
+    completed_quest_icon: @graphics.Animation::from_resource_ex(
       completed_quest_icon,
     ),
   }

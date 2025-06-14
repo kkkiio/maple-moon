@@ -1,3 +1,4 @@
+///|
 pub struct Item {
   item_id : Int
   expiration : Int64
@@ -5,6 +6,7 @@ pub struct Item {
   flags : Int
 }
 
+///|
 pub fn Item::new(
   item_id : Int,
   expiration : Int64,

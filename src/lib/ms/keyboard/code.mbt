@@ -1,5 +1,5 @@
 ///|
-typealias KeyCode = String
+typealias String as KeyCode
 
 ///|
 pub let escape : KeyCode = "Escape"

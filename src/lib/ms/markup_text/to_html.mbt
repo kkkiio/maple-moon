@@ -3,9 +3,9 @@ pub fn to_html(
   nodes : Array[Node],
   style : Style,
   color_map : Map[Char, ColorName],
-  tag_replace_map : Map[Char, (Style, @string.View) -> String!],
+  tag_replace_map : Map[Char, (Style, @string.View) -> String raise],
   trim_end_newline~ : Bool = false
-) -> String! {
+) -> String raise {
   let mut current_style = style
   let builder = StringBuilder::new()
   for i, node in nodes {
@@ -28,7 +28,7 @@ pub fn to_html(
             let replaced = replace_fn(current_style, payload)
             builder.write_string(replaced.to_string())
           } else {
-            fail!("Unknown tag: \{tag}")
+            fail("Unknown tag: \{tag}")
           }
         }
     }

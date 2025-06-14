@@ -12,7 +12,7 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn Obj::load(obj : ObjResource) -> Obj! {
+pub async fn Obj::load(obj : ObjResource) -> Obj raise {
   let oS = obj.oS
   let l0 = obj.l0
   let l1 = obj.l1
@@ -22,9 +22,9 @@ pub async fn Obj::load(obj : ObjResource) -> Obj! {
 }
 
 ///|
-fn Obj::from_resource(obj : ObjResource, obj_src : NxNode) -> Obj! {
+fn Obj::from_resource(obj : ObjResource, obj_src : NxNode) -> Obj raise {
   {
-    animation: @graphics.Animation::from_resource_ex!(obj_src),
+    animation: @graphics.Animation::from_resource_ex(obj_src),
     pos: @struct.Point::new(obj.x, obj.y),
     flip: obj.f,
     z: obj.z,

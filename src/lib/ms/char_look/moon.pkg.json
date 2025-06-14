@@ -14,7 +14,9 @@
     "KKKIIO/maple-moon-client/lib/ms/clothing",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/io_task",
-    "KKKIIO/maple-moon-client/lib/game_mod"
+    "KKKIIO/maple-moon-client/lib/game_mod",
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "rami3l/js-ffi/js"
   ],
   "test-import":[
   ]

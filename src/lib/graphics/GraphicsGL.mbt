@@ -1,5 +1,5 @@
 ///|
-typealias Range[T] = @struct.Range[T]
+typealias @struct.Range
 
 ///|
 struct GraphicsGL {

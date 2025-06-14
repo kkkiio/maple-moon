@@ -29,12 +29,12 @@ struct Tree[K, V] {
 }
 
 ///|
-pub fn Tree::new[K, V]() -> Tree[K, V] {
+pub fn[K, V] Tree::new() -> Tree[K, V] {
   { nodes: Map::new(), root: None }
 }
 
 ///|
-pub fn add[K : Hash + Eq, V : QuadCompare](
+pub fn[K : Hash + Eq, V : QuadCompare] add(
   self : Tree[K, V],
   key : K,
   value : V
@@ -57,7 +57,7 @@ pub fn add[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-pub fn ceiling_key[K : Hash + Eq, V : QuadCompare](
+pub fn[K : Hash + Eq, V : QuadCompare] ceiling_key(
   self : Tree[K, V],
   value : V
 ) -> K? {
@@ -65,7 +65,7 @@ pub fn ceiling_key[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-pub fn ceiling_entry[K : Hash + Eq, V : QuadCompare](
+pub fn[K : Hash + Eq, V : QuadCompare] ceiling_entry(
   self : Tree[K, V],
   value : V
 ) -> Node[K, V]? {
@@ -73,7 +73,7 @@ pub fn ceiling_entry[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
+fn[K : Hash + Eq, V : QuadCompare] find_ceiling_from(
   self : Tree[K, V],
   start : Node[K, V]?,
   value : V
@@ -126,7 +126,7 @@ fn find_ceiling_from[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-pub fn Tree::remove[K : Hash + Eq, V : QuadCompare](
+pub fn[K : Hash + Eq, V : QuadCompare] Tree::remove(
   self : Tree[K, V],
   key : K
 ) -> V? {
@@ -156,13 +156,13 @@ pub fn Tree::remove[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-pub fn clear[K, V](self : Tree[K, V]) -> Unit {
+pub fn[K, V] clear(self : Tree[K, V]) -> Unit {
   self.nodes.clear()
   self.root = None
 }
 
 ///|
-fn set_link[K : Hash + Eq, V : QuadCompare](
+fn[K : Hash + Eq, V : QuadCompare] set_link(
   self : Tree[K, V],
   start : Node[K, V]?,
   node : Node[K, V]
@@ -179,7 +179,7 @@ fn set_link[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-fn add_or_next[K : Hash + Eq, V : QuadCompare](
+fn[K : Hash + Eq, V : QuadCompare] add_or_next(
   self : Node[K, V],
   child : Node[K, V]
 ) -> Node[K, V]? {
@@ -221,7 +221,7 @@ fn add_or_next[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-fn remove_child[K : Hash + Eq, V : QuadCompare](
+fn[K : Hash + Eq, V : QuadCompare] remove_child(
   self : Node[K, V],
   key : K
 ) -> Unit {
@@ -260,6 +260,6 @@ fn remove_child[K : Hash + Eq, V : QuadCompare](
 }
 
 ///|
-fn is_enough[T : QuadCompare](my : T, other : T) -> Bool {
+fn[T : QuadCompare] is_enough(my : T, other : T) -> Bool {
   return my.compare_to(other) == Direction::TR
 }

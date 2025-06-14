@@ -7,64 +7,163 @@ struct AfterImage {
 }
 
 ///|
-pub async fn AfterImage::load(
-  skill_id : Int,
-  name : String,
-  stance_name : String,
-  level : Int
-) -> AfterImage! {
-  let src = if skill_id > 0 {
-    let strid = @string_format.extend_id(skill_id, 7)
-    let skill_src = @skill.skill_loader().load_res_async([
-      strid.substring(end=3) + ".img",
-      "skill",
-      strid,
-      "afterimage",
-      name,
-      stance_name,
-    ])
-    if skill_src.is_null() {
-      let path = [name + ".img", (level / 10).to_string(), stance_name]
-      get_afterimage_loader().load_res_async(path)
-    } else {
-      skill_src
-    }
-  } else {
-    let path = [name + ".img", (level / 10).to_string(), stance_name]
-    get_afterimage_loader().load_res_async(path)
-  }
-  AfterImage::new(src)
+struct AfterNxImageResource {
+  animation : @graphics.AnimationResource
+  range : @struct.Rectangle[Int]
+  first_frame : Int
 }
 
 ///|
-pub fn AfterImage::new(src : @resource.NxNode) -> AfterImage {
-  let range = src.as_rectangle?().unwrap()
-  let mut animation = @graphics.Animation::default()
+pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> AfterNxImageResource raise @json.JsonDecodeError {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+
+  // Parse range from "lt" and "rb" fields
+  let range = {
+    let left_top = @json.from_json(
+      obj.get("lt").or(Json::null()),
+      path=path.add_key("lt"),
+    )
+    let right_bottom = @json.from_json(
+      obj.get("rb").or(Json::null()),
+      path=path.add_key("rb"),
+    )
+    @struct.Rectangle::new(left_top, right_bottom)
+  }
+
+  // Find the first numeric key and parse animation from it
   let mut first_frame = 0
-  let displayed = false
-  for sub in src {
-    let frame = @strconv.parse_int?(sub.name()).or(255)
-    if frame < 255 {
-      animation = sub |> @graphics.Animation::from_resource
-      first_frame = frame
+  let mut animation_json = Json::null()
+  for key, value in obj {
+    match @strconv.parse_int?(key) {
+      Ok(frame_num) => {
+        first_frame = frame_num
+        animation_json = value
+        break
+      }
+      Err(_) => continue
     }
   }
+  if animation_json is Json::Null {
+    raise @json.JsonDecodeError((path, "no frame data found"))
+  }
+  let animation = @json.from_json(
+    animation_json,
+    path=path.add_key(first_frame.to_string()),
+  )
+  { animation, range, first_frame }
+}
+
+///|
+pub fn AfterNxImageResource::unwrap(
+  self : AfterNxImageResource
+) -> AfterImageResource {
+  {
+    animation: self.animation,
+    range: self.range,
+    first_frame: self.first_frame,
+  }
+}
+
+///|
+struct AfterImageResource {
+  animation : @graphics.AnimationResource
+  range : @struct.Rectangle[Int]
+  first_frame : Int
+} derive(ToJson)
+
+///|
+pub fn AfterImage::new(
+  resource : AfterImageResource,
+  image_loader : @resource.ImageLoader
+) -> AfterImage {
+  let range = resource.range
+  if range.is_empty() {
+    @log.error({}, "afterimage range is empty")
+    panic()
+  }
+  let animation = @graphics.Animation::new(
+    resource.animation,
+    "afterimage",
+    image_loader,
+  )
+  let first_frame = resource.first_frame
+  let displayed = false
   { animation, range, first_frame, displayed }
 }
 
 ///|
-fn get_afterimage_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("afterimage")
+test "parse afterimage" {
+  let stab_t1_json : Json = {
+    "2": {
+      "0": {
+        "__h": 45,
+        "__w": 72,
+        "delay": 30,
+        "origin": [97, 41],
+        "__i": "/Character/Afterimage/spritesheets/poleArm.img#291283",
+      },
+      "1": {
+        "__h": 45,
+        "__w": 72,
+        "a1": 0,
+        "delay": 200,
+        "origin": [135, 41],
+        "__i": "/Character/Afterimage/spritesheets/poleArm.img#291284",
+      },
+    },
+    "lt": [-130, -33],
+    "rb": [-36, -4],
+  }
+  let resource : AfterNxImageResource = @json.from_json(stab_t1_json)
+  @json.inspect(resource.unwrap(), content={
+    "animation": {
+      "blend": false,
+      "frames": [
+        {
+          "texture": {
+            "bitmap": {
+              "$tag": "Path",
+              "0": "/Character/Afterimage/spritesheets/poleArm.img#291283",
+              "1": 72,
+              "2": 45,
+            },
+            "origin": [97, 41],
+          },
+          "delay": 30,
+          "bounds": { "lt": [0, 0], "rb": [0, 0] },
+          "head": [0, 0],
+          "opacities": [255, 255],
+          "scales": [100, 100],
+        },
+        {
+          "texture": {
+            "bitmap": {
+              "$tag": "Path",
+              "0": "/Character/Afterimage/spritesheets/poleArm.img#291284",
+              "1": 72,
+              "2": 45,
+            },
+            "origin": [135, 41],
+          },
+          "delay": 200,
+          "bounds": { "lt": [0, 0], "rb": [0, 0] },
+          "head": [0, 0],
+          "opacities": [255, 0],
+          "scales": [100, 100],
+        },
+      ],
+      "zigzag": false,
+    },
+    "range": { "lt": [-130, -33], "rb": [-36, -4] },
+    "first_frame": 2,
+  })
 }
 
-///| @alert deprecated "explicitly handle loading"
-pub impl Default for AfterImage with default() -> AfterImage {
-  {
-    animation: @graphics.Animation::default(),
-    range: @struct.Rectangle::default(),
-    first_frame: 0,
-    displayed: true,
-  }
+///|
+pub fn get_afterimage_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new("afterimage")
 }
 
 ///|

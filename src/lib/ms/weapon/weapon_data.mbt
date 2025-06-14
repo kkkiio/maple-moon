@@ -9,10 +9,12 @@ struct WeaponData {
 }
 
 ///|
-pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
-  let equip_data = @data.EquipData::parse_item_data!(item_data)
+pub fn WeaponData::from_item_data(
+  item_data : @item.ItemData
+) -> WeaponData raise {
+  let equip_data = @data.EquipData::parse_item_data(item_data)
   let prefix = item_data.item_id / 10000
-  let t = Type::by_value!(prefix)
+  let t = Type::by_value(prefix)
   let two_handed = prefix == Type::STAFF.int_value() ||
     (
       prefix >= Type::SWORD_2H.int_value() &&
@@ -20,7 +22,7 @@ pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
     ) ||
     prefix == Type::CROSSBOW.int_value()
   if equip_data.get_category() != "Weapon" {
-    fail!("unsupported weapon type=\{equip_data.get_category()}")
+    fail("unsupported weapon type=\{equip_data.get_category()}")
   }
   let info = item_data.get_info()
   match info {
@@ -36,7 +38,7 @@ pub fn WeaponData::from_item_data(item_data : @item.ItemData) -> WeaponData! {
       // TODO: sound
       { equip_data, t, two_handed, attack_speed, attack, after_image }
     }
-    _ => fail!("Invalid weapon data")
+    _ => fail("Invalid weapon data")
   }
 }
 

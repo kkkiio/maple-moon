@@ -1,5 +1,6 @@
 ///|
-extern type AsyncResourceLoader
+#external
+type AsyncResourceLoader
 
 ///|
 fn get_image_loader(self : AsyncResourceLoader) -> ImageLoader = "resource" "get_image_loader"
@@ -22,9 +23,9 @@ pub fn AsyncLoader::new(
 pub async fn AsyncLoader::load_res_async(
   self : AsyncLoader,
   path : Array[String]
-) -> NxNode! {
+) -> NxNode raise {
   let promise = self.loader.load_data(join_path(path))
-  let data : RawData = promise.wait!() |> @js.Value::cast
+  let data : RawData = promise.wait() |> @js.Value::cast
   {
     loader_name: self.name,
     image_loader: Some(self.loader.get_image_loader()),

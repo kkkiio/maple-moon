@@ -4,29 +4,29 @@ priv struct Ball {
 }
 
 ///|
-fn Ball::new(src : @resource.NxNode) -> Ball! {
-  { animation: src |> @graphics.Animation::from_resource_ex!() }
+fn Ball::new(src : @resource.NxNode) -> Ball raise {
+  { animation: src |> @graphics.Animation::from_resource_ex() }
 }
 
 ///|
 priv struct SkillRegularBullet {
-  string_loader : @resource.SyncLoader
+  bullet_module : @bullet.Module
 }
 
 ///|
 fn SkillRegularBullet::new(
-  string_loader : @resource.SyncLoader
+  bullet_module : @bullet.Module
 ) -> SkillRegularBullet {
-  { string_loader, }
+  { bullet_module, }
 }
 
 ///|
-async fn SkillRegularBullet::get(
+fn SkillRegularBullet::get(
   self : SkillRegularBullet,
   _ : @character.Character,
   bulletid : Int
-) -> @graphics.Animation! {
-  let data = @bullet.BulletData::get_async(bulletid, self.string_loader)
+) -> @graphics.Animation {
+  let data = self.bullet_module.get_bullet_data(bulletid).unwrap()
   data.bullet
 }
 
@@ -36,8 +36,8 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet! {
-  { ball: Ball::new!(src["ball"]) }
+fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet raise {
+  { ball: Ball::new(src["ball"]) }
 }
 
 ///|
@@ -59,11 +59,11 @@ priv struct BySkillLevelBullet {
 fn BySkillLevelBullet::new(
   src : @resource.NxNode,
   id : Int
-) -> BySkillLevelBullet! {
+) -> BySkillLevelBullet raise {
   let bullets = Map::new()
   for sub in src["level"] {
-    let level = @strconv.parse_int!(sub.name())
-    bullets.set(level, Ball::new!(sub["ball"]))
+    let level = @strconv.parse_int(sub.name())
+    bullets.set(level, Ball::new(sub["ball"]))
   }
   { bullets, skill_id: id }
 }

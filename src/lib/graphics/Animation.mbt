@@ -62,10 +62,10 @@ struct FrameResource {
   head : Point[Int]
   opacities : (Int, Int)
   scales : (Int, Int)
-}
+} derive(ToJson)
 
 ///|
-pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameResource!@json.JsonDecodeError {
+pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameResource raise @json.JsonDecodeError {
   let texture = @json.from_json(json)
   let bounds = @json.from_json(json)
   guard json is Object(obj) else {
@@ -176,14 +176,14 @@ struct Animation {
 }
 
 ///|
-pub(all) type! LoadError {
+pub(all) suberror LoadError {
   NotFound
   InvalidFormat(String)
 } derive(Show)
 
 ///|
 pub fn Animation::from_resource(src : NxNode) -> Animation {
-  try Animation::from_resource_ex!(src) catch {
+  Animation::from_resource_ex(src) catch {
     NotFound => Animation::default()
     e => {
       @log.error({ "err": Show::to_string(e) }, "Failed to load animation")
@@ -193,11 +193,11 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 }
 
 ///|
-pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
+pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise LoadError {
   if src.is_null() {
     raise NotFound
   }
-  let blend = try src["blend"].get_bool!() catch {
+  let blend = src["blend"].get_bool() catch {
     _ => raise InvalidFormat("blend must be a bool")
   }
   let frames = match src.get_bitmap() {
@@ -224,7 +224,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation!LoadError {
       fs
     }
   }
-  let zigzag = try src["zigzag"].get_bool!() catch {
+  let zigzag = src["zigzag"].get_bool() catch {
     _ => raise InvalidFormat("zigzag must be a bool")
   }
   if blend && frames.length() == 1 {
@@ -280,10 +280,10 @@ struct AnimationResource {
   blend : Bool
   frames : Array[FrameResource]
   zigzag : Bool
-}
+} derive(ToJson)
 
 ///|
-pub impl @json.FromJson for AnimationResource with from_json(json, path) -> AnimationResource!@json.JsonDecodeError {
+pub impl @json.FromJson for AnimationResource with from_json(json, path) -> AnimationResource raise @json.JsonDecodeError {
   // let blend = try src["blend"].get_bool!() catch {
   //   _ => raise InvalidFormat("blend must be a bool")
   // }

@@ -38,7 +38,8 @@
     "KKKIIO/maple-moon-client/lib/ms/quest",
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/ms/markup_text"
+    "KKKIIO/maple-moon-client/lib/ms/markup_text",
+    "KKKIIO/maple-moon-client/lib/ms/bullet"
   ],
 	"targets": {
 		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]

@@ -1,6 +1,6 @@
 ///|
 test "parse Background" {
-  let spec : BackgroundSpec = @json.from_json!({
+  let spec : BackgroundSpec = @json.from_json({
     "a": 255,
     "ani": 0,
     "bS": "",
@@ -14,7 +14,7 @@ test "parse Background" {
     "x": 0,
     "y": 0,
   })
-  @json.inspect!(spec, content={
+  @json.inspect(spec, content={
     "a": 255,
     "ani": false,
     "bS": "",
@@ -33,7 +33,7 @@ test "parse Background" {
 
 ///|
 test "parse background resource" {
-  let spec : BackgroundsResource = @json.from_json!({
+  let spec : BackgroundsResource = @json.from_json({
     "0": {
       "a": 255,
       "ani": 0,
@@ -155,7 +155,7 @@ test "parse background resource" {
       "y": 168,
     },
   })
-  @json.inspect!(spec, content=[
+  @json.inspect(spec, content=[
     {
       "a": 255,
       "ani": false,

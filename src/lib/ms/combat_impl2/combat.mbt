@@ -122,7 +122,7 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
     @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
     self.skill_cache[move_id] = self.io_service
       .submit(fn() { self.load_sp_move(move_id) })
-      .map(_.unwrap())
+      .map(@log.unwrap_err(_))
     return
   }
   let reason = self.can_use(
@@ -151,7 +151,7 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
           @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
           self.after_image_cache[key] = self.io_service
             .submit(fn() { load_after_images_by_skill_weapon(key) })
-            .map(_.unwrap())
+            .map(@log.unwrap_err(_))
           return
         }
       }
@@ -682,7 +682,7 @@ async fn load_after_images_by_skill_weapon(
         src.value(),
       )
       let after_image = @char_look.AfterImage::new(
-        resource.unwrap(),
+        resource.simplify(),
         src.get_image_loader(),
       )
       after_images[stance_name] = after_image
@@ -699,7 +699,7 @@ async fn load_after_images_by_skill_weapon(
       src.value(),
     )
     let after_image = @char_look.AfterImage::new(
-      resource.unwrap(),
+      resource.simplify(),
       src.get_image_loader(),
     )
     after_images[stance_name] = after_image

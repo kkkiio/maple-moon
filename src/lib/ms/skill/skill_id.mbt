@@ -146,8 +146,8 @@ pub fn SkillId::int_value(self : SkillId) -> Int = "%identity"
 pub(all) suberror UnknownSkillId Int derive(Show)
 
 ///|
-pub fn SkillId::from_int(value : Int) -> SkillId raise UnknownSkillId {
-  match value {
+pub fn SkillId::from_int(value : Int) -> SkillId? {
+  let it = match value {
     // Beginner
     8 => SkillId::FOLLOW_THE_LEAD
     12 => SkillId::ANGEL_BLESSING
@@ -285,8 +285,9 @@ pub fn SkillId::from_int(value : Int) -> SkillId raise UnknownSkillId {
 
     // Bandit
     4211006 => SkillId::MESO_EXPLOSION
-    _ => raise UnknownSkillId(value)
+    _ => return None
   }
+  Some(it)
 }
 
 ///|

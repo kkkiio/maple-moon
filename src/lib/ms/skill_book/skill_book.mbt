@@ -49,7 +49,7 @@ pub impl @player.SkillBook for SkillBook with get_level(
   self : SkillBook,
   id : Int
 ) -> Int {
-  self.skill_entries[id].map_or(0, fn(entry) -> Int { entry.level })
+  self.skill_entries.get(id).map_or(0, fn(entry) -> Int { entry.level })
 }
 
 ///|
@@ -57,9 +57,9 @@ pub fn collect_required(
   self : SkillBook,
   id : Int
 ) -> @immut/hashmap.T[Int, Int] {
-  self.available_skills[id].map_or(@immut/hashmap.new(), fn(
-    skill_data
-  ) -> @immut/hashmap.T[Int, Int] {
+  self.available_skills
+  .get(id)
+  .map_or(@immut/hashmap.new(), fn(skill_data) -> @immut/hashmap.T[Int, Int] {
     skill_data.req_skills
   })
 }
@@ -93,7 +93,7 @@ pub impl @player.SkillBook for SkillBook with set_skill(
 
 ///|
 pub fn get_skill_data(self : SkillBook, id : Int) -> @skill.SkillData? {
-  self.available_skills[id]
+  self.available_skills.get(id)
 }
 
 ///|

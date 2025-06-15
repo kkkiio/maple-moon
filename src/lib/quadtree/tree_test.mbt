@@ -5,7 +5,7 @@ struct LeftOver {
 } derive(Eq, Show)
 
 ///|
-fn compare_to(self : LeftOver, other : LeftOver) -> Direction {
+impl QuadCompare for LeftOver with compare_to(self, other) {
   let wg = self.w >= other.w
   let hg = self.h >= other.h
   match (wg, hg) {

@@ -62,7 +62,7 @@ pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/so
 
 ///|
 pub impl ToJson for ExpressionId with to_json(self) {
-  expression_names[self].unwrap().to_json()
+  expression_names.get(self).unwrap().to_json()
 }
 
 ///|

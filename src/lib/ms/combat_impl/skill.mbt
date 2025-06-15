@@ -195,8 +195,8 @@ pub fn Skill::make_attack(
     attack.range = stats.range
   }
   if self.projectile && attack.bullet == 0 {
-    match @skill.SkillId::from_int?(self.skill_id) {
-      Ok(@skill.SkillId::THREE_SNAILS) =>
+    match @skill.SkillId::from_int(self.skill_id) {
+      Some(@skill.SkillId::THREE_SNAILS) =>
         match level {
           1 => attack.bullet = 4000019
           2 => attack.bullet = 4000000
@@ -294,8 +294,8 @@ pub fn make_use_effect(
     } else if has_effect1 {
       new_twohanded_use_effect(src)
     } else {
-      match @skill.SkillId::from_int?(skill_id) {
-        Ok(@skill.SkillId::IRON_BODY) | Ok(@skill.SkillId::MAGIC_ARMOR) =>
+      match @skill.SkillId::from_int(skill_id) {
+        Some(@skill.SkillId::IRON_BODY) | Some(@skill.SkillId::MAGIC_ARMOR) =>
           new_iron_body_use_effect()
         _ => fn(_) {  }
       }

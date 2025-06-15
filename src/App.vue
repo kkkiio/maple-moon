@@ -451,6 +451,8 @@ export default {
 </script>
 
 <style>
+@import "tailwindcss";
+
 /* 禁用页面滚动 */
 html,
 body {

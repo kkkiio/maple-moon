@@ -3,7 +3,8 @@
       "KKKIIO/maple-moon-client/lib/log",
       "KKKIIO/maple-moon-client/lib/config",
       "KKKIIO/maple-moon-client/lib/struct",
-      "KKKIIO/maple-moon-client/lib/utils"
+      "KKKIIO/maple-moon-client/lib/utils",
+      "moonbitlang/x/encoding"
     ],
     "targets":{
       "socket.js.mbt": ["js"],

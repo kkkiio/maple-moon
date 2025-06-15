@@ -44,12 +44,14 @@ pub async fn SkillData::load(
   let strid = @string_format.extend_id(id, 7)
   let jobid = strid.substring(end=3)
   let src = skill_loader().load_res_async([jobid + ".img", "skill", strid])
-  let skill_res : SkillNxResource = @json.from_json(src.value())
+  let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
+    e => fail("failed to load skill: \{e}, id=\{id}")
+  }
   let strsrc : SkillTextResource = string_loader
     .load_res(["Skill.img", strid])
     .value()
     |> @json.from_json()
-  SkillData::new(id, src, skill_res.unwrap(), strsrc)
+  SkillData::new(id, src, skill_res.simplify(), strsrc)
 }
 
 ///|
@@ -129,7 +131,7 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
 }
 
 ///|
-pub fn SkillNxResource::unwrap(self : SkillNxResource) -> SkillResource {
+pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
   {
     icon: self.icon,
     icon_disabled: self.icon_disabled,
@@ -248,7 +250,7 @@ let flag_range_attack : (Bool, Bool) = (true, true)
 
 ///|
 fn flags_of(id : Int) -> (Bool, Bool) {
-  guard SkillId::from_int?(id) is Ok(id) else { flag_none }
+  guard SkillId::from_int(id) is Some(id) else { flag_none }
   skill_flags.get(id).or(flag_none)
 }
 

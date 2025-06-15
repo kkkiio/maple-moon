@@ -36,7 +36,7 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
   let mut first_frame = 0
   let mut animation_json = Json::null()
   for key, value in obj {
-    match @strconv.parse_int?(key) {
+    match (try? @strconv.parse_int(key)) {
       Ok(frame_num) => {
         first_frame = frame_num
         animation_json = value
@@ -56,7 +56,7 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
 }
 
 ///|
-pub fn AfterNxImageResource::unwrap(
+pub fn AfterNxImageResource::simplify(
   self : AfterNxImageResource
 ) -> AfterImageResource {
   {
@@ -117,7 +117,7 @@ test "parse afterimage" {
     "rb": [-36, -4],
   }
   let resource : AfterNxImageResource = @json.from_json(stab_t1_json)
-  @json.inspect(resource.unwrap(), content={
+  @json.inspect(resource.simplify(), content={
     "animation": {
       "blend": false,
       "frames": [

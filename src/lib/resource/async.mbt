@@ -25,7 +25,9 @@ pub async fn AsyncLoader::load_res_async(
   path : Array[String]
 ) -> NxNode raise {
   let promise = self.loader.load_data(join_path(path))
-  let data : RawData = promise.wait() |> @js.Value::cast
+  let data : RawData = try promise.wait() |> @js.Value::cast catch {
+    e => fail("failed to load resource: \{e}, path=\{path}")
+  }
   {
     loader_name: self.name,
     image_loader: Some(self.loader.get_image_loader()),

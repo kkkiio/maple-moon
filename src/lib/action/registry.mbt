@@ -19,7 +19,7 @@ pub fn Registry::new() -> Registry {
 
 ///|
 pub fn get_action(self : Registry, id : @keyboard.BasicActionId) -> Descriptor? {
-  self.entries.find(id)
+  self.entries.get(id)
 }
 
 ///|

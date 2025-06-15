@@ -4,7 +4,9 @@ priv type RawData
 
 ///|
 fn as_moonjson(self : RawData) -> Json {
-  @json.parse?(as_jsonstring(self)).unwrap()
+  @json.parse(as_jsonstring(self)) catch {
+    _ => abort("failed to parse moonjson")
+  }
 }
 
 ///|

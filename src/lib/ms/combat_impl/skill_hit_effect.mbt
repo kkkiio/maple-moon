@@ -2,7 +2,12 @@
 fn new_hit_effect(
   src : @resource.NxNode
 ) -> ((@monster.Mob, Bool) -> Unit) raise Error {
-  let animation = src |> @graphics.Animation::from_resource_ex()
+  let animation_res : @graphics.AnimationResource = @json.from_json(src.value())
+  let animation = @graphics.Animation::new(
+    animation_res,
+    "",
+    src.get_image_loader(),
+  )
   let pos = src["pos"].get_int()
   let z = src["z"].get_int()
   fn(target : @monster.Mob, flip : Bool) -> Unit {
@@ -14,7 +19,7 @@ fn new_hit_effect(
 fn new_single_hit_effect(
   src : @resource.NxNode
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
-  let f = new_hit_effect(src)
+  let f = new_hit_effect(src["hit"]["0"])
   fn(user : @combat.AttackUser, target : @monster.Mob) -> Unit {
     f(target, user.flip)
   }

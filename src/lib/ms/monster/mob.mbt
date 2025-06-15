@@ -708,13 +708,14 @@ pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
 ///|
 pub fn get_head_position(
   self : Mob,
-  position~ : @struct.Point[Int] = self.get_position()
+  position? : @struct.Point[Int]
 ) -> @struct.Point[Int] {
   let head = match self.animations.get(self.stance.t) {
     Some(anim) => anim.get_head()
     None => @struct.Point::default()
   }
   position
+  .or(self.get_position())
   .shift_x(
     if self.stance.face_right && not(self.no_flip) {
       -head.x

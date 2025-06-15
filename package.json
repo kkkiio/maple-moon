@@ -23,8 +23,9 @@
 	},
 	"homepage": "https://github.com/KKKIIO/maple-moon#readme",
 	"dependencies": {
+		"@tailwindcss/vite": "^4.1.10",
 		"@vicons/ionicons5": "^0.13.0",
-		"@vueuse/core": "^13.3.0",
+		"tailwindcss": "^4.1.10",
 		"vue": "^3.5.13"
 	},
 	"devDependencies": {

@@ -103,7 +103,6 @@ pub fn read_string(self : InPacket) -> String raise ReadPacketError {
   self.check_available(size)
   let res = byte_iter_to_string(
     self.pos.until(self.pos + size).map(fn(i) { self.bytes[i] }),
-    size,
   )
   self.pos += size
   res
@@ -120,18 +119,15 @@ pub fn read_padded_string(
     .until(self.pos + size)
     .map(fn(i) { self.bytes[i] })
     .take_while(fn(b) { b.to_int() != 0 }),
-    size,
   )
   self.pos += size
   res
 }
 
 ///|
-fn byte_iter_to_string(byte_iter : Iter[Byte], max_size : Int) -> String {
-  let buf = StringBuilder::new(size_hint=max_size)
-  // TODO: support more charset
-  byte_iter.each(fn(b) { buf.write_char(Char::from_int(b.to_int())) })
-  buf.to_string()
+fn byte_iter_to_string(byte_iter : Iter[Byte]) -> String {
+  let decoder = @encoding.decoder(@encoding.UTF8)
+  decoder.decode_lossy(Bytes::from_iter(byte_iter))
 }
 
 ///|

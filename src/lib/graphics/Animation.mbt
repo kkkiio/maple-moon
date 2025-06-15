@@ -293,9 +293,8 @@ pub impl @json.FromJson for AnimationResource with from_json(json, path) -> Anim
   let blend = obj
     .get("blend")
     .map_or(false, fn(blend) { blend is Json::Number(1) })
-  let frames = match @json.from_json?(json) {
-    Ok(frame) => [frame]
-    Err(_) => {
+  let frames = [@json.from_json(json)] catch {
+    _ => {
       let fs : @resource.MapBasedArray[FrameResource] = @json.from_json(json)
       if fs._.length() <= 0 {
         raise @json.JsonDecodeError(

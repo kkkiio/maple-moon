@@ -1,6 +1,75 @@
-<script setup>
+<template>
+  <div
+    style="background-color: rgba(245, 245, 245, 0.9); border: 1px solid #ddd; border-radius: 4px; padding: 10px; max-height: 80vh; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-direction: column;">
+    <n-dialog-provider>
+      <!-- Window Controls -->
+      <div
+        style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; padding: 8px; border-bottom: 1px solid #ddd;">
+        <n-checkbox v-model:checked="show_equipped_equipment">
+          Equipped
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_skill_book">
+          Skill
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_inventory">
+          Inventory
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_keyboard">
+          Keyboard
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_character">
+          Character
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_debug">
+          Debug
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_shop">
+          Shop
+        </n-checkbox>
+        <n-checkbox v-model:checked="show_quests">
+          Quests
+        </n-checkbox>
+      </div>
+
+      <!-- Windows -->
+      <FloatingWindow v-model="show_equipped_equipment">
+        <EquippedEquipment v-if="show_equipped_equipment && inventory_mod" :mod="inventory_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_skill_book">
+        <SkillBookUI v-if="show_skill_book && skill_book_mod && char_stats_mod" :skill_book_mod="skill_book_mod"
+          :char_stats_mod="char_stats_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_inventory">
+        <ItemInventory v-if="show_inventory && inventory_mod" :mod="inventory_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_keyboard">
+        <KeyboardConfig v-if="show_keyboard && keyboard_mod" :mod="keyboard_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_character">
+        <CharacterStats v-if="show_character && char_stats_mod" :mod="char_stats_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_debug">
+        <Debug v-if="show_debug && stage" :stage="stage" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_shop">
+        <Shop v-if="show_shop && shop_mod && inventory_mod" :shop_mod="shop_mod" :inventory_mod="inventory_mod" />
+      </FloatingWindow>
+
+      <FloatingWindow v-model="show_quests">
+        <QuestLog v-if="show_quests && quest_mod" :mod="quest_mod" />
+      </FloatingWindow>
+    </n-dialog-provider>
+  </div>
+</template>
+<script setup lang="ts">
 import { NCheckbox } from 'naive-ui';
-import Window from './components/Window.vue';
+import FloatingWindow from './components/FloatingWindow.vue';
 import { ref } from 'vue';
 import EquippedEquipment from './ui/EquippedEquipment.vue';
 import ItemInventory from './ui/ItemInventory.vue';
@@ -43,72 +112,3 @@ const show_debug = ref(false);
 const show_shop = ref(false);
 const show_quests = ref(false);
 </script>
-<template>
-  <div
-    style="background-color: rgba(245, 245, 245, 0.9); border: 1px solid #ddd; border-radius: 4px; padding: 10px; max-height: 80vh; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; flex-direction: column;">
-    <n-dialog-provider>
-      <!-- Window Controls -->
-      <div
-        style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; padding: 8px; border-bottom: 1px solid #ddd;">
-        <n-checkbox v-model:checked="show_equipped_equipment">
-          Equipped
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_skill_book">
-          Skill
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_inventory">
-          Inventory
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_keyboard">
-          Keyboard
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_character">
-          Character
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_debug">
-          Debug
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_shop">
-          Shop
-        </n-checkbox>
-        <n-checkbox v-model:checked="show_quests">
-          Quests
-        </n-checkbox>
-      </div>
-
-      <!-- Windows -->
-      <Window :active="show_equipped_equipment" :z-index="10">
-        <EquippedEquipment v-if="show_equipped_equipment && inventory_mod" :mod="inventory_mod" />
-      </Window>
-
-      <Window :active="show_skill_book" :z-index="10">
-        <SkillBookUI v-if="show_skill_book && skill_book_mod && char_stats_mod" :skill_book_mod="skill_book_mod"
-          :char_stats_mod="char_stats_mod" />
-      </Window>
-
-      <Window :active="show_inventory" :z-index="10">
-        <ItemInventory v-if="show_inventory && inventory_mod" :mod="inventory_mod" />
-      </Window>
-
-      <Window :active="show_keyboard" :z-index="10">
-        <KeyboardConfig v-if="show_keyboard && keyboard_mod" :mod="keyboard_mod" />
-      </Window>
-
-      <Window :active="show_character" :z-index="10">
-        <CharacterStats v-if="show_character && char_stats_mod" :mod="char_stats_mod" />
-      </Window>
-
-      <Window :active="show_debug" :z-index="10">
-        <Debug v-if="show_debug && stage" :stage="stage" />
-      </Window>
-
-      <Window :active="show_shop" :z-index="10">
-        <Shop v-if="show_shop && shop_mod && inventory_mod" :shop_mod="shop_mod" :inventory_mod="inventory_mod" />
-      </Window>
-
-      <Window :active="show_quests" :z-index="10">
-        <QuestLog v-if="show_quests && quest_mod" :mod="quest_mod" />
-      </Window>
-    </n-dialog-provider>
-  </div>
-</template>

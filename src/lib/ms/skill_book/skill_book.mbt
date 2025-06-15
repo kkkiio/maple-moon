@@ -3,6 +3,7 @@ struct SkillBook {
   skill_entries : Map[Int, SkillEntry]
   available_skills : Map[Int, @skill.SkillData]
   watchers : Array[SkillBookWatcher]
+  randomizer : @utils.Randomizer
 }
 
 ///|
@@ -26,16 +27,17 @@ pub fn SkillBook::load(
       let skill_data = skill_data.unwrap() // TODO: handle error
       available_skills.set(skill_data.id, skill_data)
     }
-    SkillBook::new(available_skills, watchers)
+    SkillBook::new(available_skills, watchers, @utils.Randomizer::new())
   })
 }
 
 ///|
 pub fn SkillBook::new(
   available_skills : Map[Int, @skill.SkillData],
-  watchers : Array[SkillBookWatcher]
+  watchers : Array[SkillBookWatcher],
+  randomizer : @utils.Randomizer
 ) -> SkillBook {
-  { skill_entries: Map::new(), available_skills, watchers }
+  { skill_entries: Map::new(), available_skills, watchers, randomizer }
 }
 
 ///|
@@ -89,6 +91,54 @@ pub impl @player.SkillBook for SkillBook with set_skill(
       level_event: Some({ skill_id: id, level, available_sp: 0 }), // TODO: handle available_sp
     })
   })
+}
+
+///|
+pub fn SkillBook::on_attack_event(
+  self : SkillBook,
+  event : @combat_impl2.AttackEvent,
+  combat : @combat_impl2.Combat,
+  player : @player.Player
+) -> Unit {
+  // 追加攻击
+  guard event.user_input && event.result.damage_lines.size() > 0 else { return }
+  // TODO: avoid hardcode
+  let skill_id = @skill.SkillId::SWORD_FA_FIGHTER.int_value()
+  // TODO: check weapon type
+  guard self.skill_entries.get(skill_id) is Some(entry) else { return }
+  guard entry.level > 0 else { return }
+  let skill_data = self.available_skills.get(skill_id)
+  guard skill_data is Some(skill_data) else { return }
+  let stats = skill_data.stats.get(entry.level)
+  guard stats is Some(stats) else { return }
+  let act_fut = combat.get_skill_move(skill_id)
+  guard act_fut.poll() is Some(act) else { return }
+  // try on each mob
+  let mob_targets = event.result.damage_lines
+    .keys()
+    .filter(fn(_) { self.randomizer.below(stats.prop.to_double() / 100.0) })
+    .to_array()
+  if mob_targets.length() == 0 {
+    return
+  }
+  let attack = act.make_attack(
+    player.character,
+    player.inventory,
+    @combat_proto.AttackType::MAGIC, // TODO: check attack type
+    false,
+  )
+  let result = {
+    ..@combat_proto.AttackResult::new(attack),
+    attacker: player.character.get_oid(),
+  }
+  combat.apply_attack_to_mobs(
+    player.character,
+    act,
+    attack,
+    mob_targets,
+    result,
+    false,
+  )
 }
 
 ///|
@@ -208,8 +258,8 @@ fn get_player_all_skills(
 
 ///|
 pub fn watch_skill_book(mod : Module, callback : SkillBookWatcher) -> Unit {
-  let cont = match ((mod.player_getter)(), mod.skill_book) {
-    (Some(player), Some(skillbook)) => {
+  let cont = match ((mod.player_getter)(), mod.player_skill_book) {
+    (Some(player), Some((skillbook, _))) => {
       let skills = get_player_all_skills(skillbook, player)
       callback({
         kind: "data",
@@ -239,7 +289,7 @@ pub fn watch_skill_book(mod : Module, callback : SkillBookWatcher) -> Unit {
 
 ///|
 pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {
-  mod.packet_processor.send_message({ skill_id, }, log_level=@log.Level::INFO)
+  mod.network.send_message({ skill_id, }, log_level=@log.Level::INFO)
 }
 
 ///| Requests a skill level increase by spending SP

@@ -17,7 +17,7 @@ pub fn MapMobs::new(
     mobs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     loading_mobs: Array::new(),
-    randomizer: @utils.Randomizer::default(),
+    randomizer: @utils.Randomizer::new(),
     string_loader,
     io_service,
   }
@@ -156,7 +156,6 @@ pub fn send_attack(
   result : @combat.AttackResult,
   attack : @combat.Attack,
   targets : Array[Int],
-  mobcount : Int,
   network : @net.Network
 ) -> Unit {
   for target in targets {
@@ -166,9 +165,7 @@ pub fn send_attack(
     if result.mob_count == 1 {
       result.first_oid = target
     }
-    if result.mob_count == mobcount {
-      result.last_oid = target
-    }
+    result.last_oid = target // last assign wins
   }
 }
 

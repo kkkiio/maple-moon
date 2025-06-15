@@ -4,8 +4,8 @@ struct Randomizer {
 }
 
 ///|
-pub fn Randomizer::default() -> Randomizer {
-  { state: @random.new() }
+pub fn Randomizer::new() -> Randomizer {
+  { state: @random.Rand::new() }
 }
 
 ///|
@@ -44,6 +44,6 @@ pub fn next_int(self : Randomizer, from~ : Int = 0, to : Int) -> Int {
 }
 
 ///|
-pub fn[T] choose(self : Randomizer, items : FixedArray[T]) -> T {
+pub fn[T] choose(self : Randomizer, items : Array[T]) -> T {
   items[self.next_int(items.length())]
 }

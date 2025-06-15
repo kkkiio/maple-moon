@@ -81,7 +81,7 @@ pub fn CharLook::new(
     hair,
     face,
     equips,
-    randomizer: @utils.Randomizer::default(),
+    randomizer: @utils.Randomizer::new(),
     alerted: @utils.TimedBool::default(),
     draw_info,
   }

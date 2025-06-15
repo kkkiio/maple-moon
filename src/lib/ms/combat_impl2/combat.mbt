@@ -18,18 +18,22 @@ struct Combat {
     CacheKey,
     @utils.Future[Map[String, @char_look.AfterImage]],
   ]
+  attack_events_listeners : Array[(AttackEvent) -> Bool]
 }
 
 ///|
 pub fn Combat::new(
   damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
-  packet_processor : @net.Network,
-  cooldowns : Map[Int, Int],
+  network : @net.Network,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
   bullet_module : @bullet.Module
 ) -> Combat {
+  let server_listener = fn(event : AttackEvent) -> Bool {
+    network.send_message(AttackMessage(event.result))
+    true // keep the listener
+  }
   {
     damage_number_set,
     mobs,
@@ -41,12 +45,21 @@ pub fn Combat::new(
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
-    cooldowns,
-    network: packet_processor,
+    cooldowns: {},
+    network,
     string_loader,
     io_service,
     bullet_module,
     after_image_cache: Map::new(),
+    attack_events_listeners: [server_listener],
+  }
+}
+
+///|
+pub fn Combat::set_cooldowns(self : Combat, cooldowns : Map[Int, Int]) -> Unit {
+  self.cooldowns.clear()
+  for skill_id, cooldown in cooldowns {
+    self.cooldowns.set(skill_id, cooldown)
   }
 }
 
@@ -94,8 +107,12 @@ pub fn Combat::update(self : Combat) -> Unit {
   self.damage_numbers.retain(fn(dn) { not(dn.update()) })
 }
 
-///|
-pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
+///| Use a skill or regular attack
+pub fn Combat::use_move(
+  self : Combat,
+  player : @player.Player,
+  move_id : Int
+) -> Unit {
   if not(player.can_attack()) {
     return
   }
@@ -166,6 +183,37 @@ pub fn use_move(self : Combat, player : @player.Player, move_id : Int) -> Unit {
 }
 
 ///|
+pub fn Combat::listen_attack_events(
+  self : Combat,
+  listener : (AttackEvent) -> Bool
+) -> Unit {
+  self.attack_events_listeners.push(listener)
+}
+
+///|
+pub struct AttackEvent {
+  result : @combat_proto.AttackResult
+  /// 是否是玩家输入的攻击, 而不是技能追加的攻击
+  user_input : Bool
+} derive(Show)
+
+///|
+pub fn Combat::get_skill_move(
+  self : Combat,
+  move_id : Int
+) -> @utils.Future[@combat_impl.SpecialMove] {
+  if self.skill_cache.get(move_id) is Some(fut) {
+    return fut
+  }
+  @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
+  let fut = self.io_service
+    .submit(fn() { self.load_sp_move(move_id) })
+    .map(@log.unwrap_err(_))
+  self.skill_cache[move_id] = fut
+  fut
+}
+
+///|
 fn Combat::apply_move(
   self : Combat,
   player : @player.Player,
@@ -189,35 +237,24 @@ fn Combat::apply_move(
       degenerate,
     )
     let range = make_attack_range(attack)
-    // This approach should also make it easier to implement PvP
     let mobcount = attack.mobcount
     let result = {
       ..AttackResult::new(attack),
       attacker: player.character.get_oid(),
     }
     let mob_objs = self.mobs.get_mobs()
-    // let reactor_objs = self.reactors.get_reactors()
+    // TODO: check reactor objects
     let origin = attack.origin
     let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
-    // let reactor_targets = self.find_closest_reactor(
-    //   reactor_objs, range, origin, mobcount, false,
-    // )
-    self.mobs.send_attack(result, attack, mob_targets, mobcount, self.network)
-    self.extract_effects(player.character, act, result)
     self.apply_result_movement(player, act, result)
-    self.network.send_message(AttackMessage(result))
-    // if reactor_targets.is_empty().not() {
-    //   match reactor_objs.get(reactor_targets[0]) {
-    //     Some(reactor) =>
-    //       new_damage_reactor_packet(
-    //         reactor.get_oid(),
-    //         player.get_position(),
-    //         0,
-    //         0,
-    //       ).dispatch()
-    //     None => ()
-    //   }
-    // }
+    self.apply_attack_to_mobs(
+      player.character,
+      act,
+      attack,
+      mob_targets,
+      result,
+      true,
+    )
   } else {
     act.apply_useeffects(player.character)
     act.apply_actions(player.character, @combat_proto.AttackType::MAGIC)
@@ -225,6 +262,23 @@ fn Combat::apply_move(
     let level = player.get_skills().get_level(moveid)
     self.network.send_message({ move_id: moveid, level })
   }
+}
+
+///| Apply attack to mobs
+pub fn Combat::apply_attack_to_mobs(
+  self : Combat,
+  character : @character.Character,
+  act : @combat_impl.SpecialMove,
+  attack : @combat_proto.Attack,
+  mob_targets : Array[Int],
+  result : AttackResult,
+  user_input : Bool
+) -> Unit {
+  self.mobs.send_attack(result, attack, mob_targets, self.network)
+  self.extract_effects(character, act, result)
+  self.attack_events_listeners.retain(fn(listener) {
+    listener({ result, user_input })
+  })
 }
 
 ///|

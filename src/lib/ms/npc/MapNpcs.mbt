@@ -311,7 +311,7 @@ pub fn Npc::load(
     flip,
     stance,
     // control,
-    random: @utils.Randomizer::default(),
+    random: @utils.Randomizer::new(),
     name_label,
     func_label,
   }

@@ -12,7 +12,11 @@
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/keyboard",
     "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "KKKIIO/maple-moon-client/lib/ms/combat_proto",
+    "KKKIIO/maple-moon-client/lib/ms/combat_impl",
+    "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon-client/lib/ms/character"
   ],
 	"link": {
 		"js": {

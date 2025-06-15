@@ -29,12 +29,13 @@ pub(all) struct Stats {
   bulletcost : Int
   hpcost : Int
   mpcost : Int
-  chance : Double
+  /// 概率, * 100
+  prop : Int
   critical : Double
   ignoredef : Double
   hrange : Double
   range : @struct.Rectangle[Int]
-} derive(ToJson)
+} derive(ToJson, Show)
 
 ///|
 pub async fn SkillData::load(
@@ -345,7 +346,7 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
           bulletcost: 0,
           hpcost: 0,
           mpcost: 0,
-          chance: 0,
+          prop: 0,
           critical: 0,
           ignoredef: 0,
           hrange: 0,
@@ -401,10 +402,10 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
         } else {
           0
         }
-        let chance = if sub is { "prop": Number(p), .. } {
-          p / 100.0
+        let prop = if sub is { "prop": Number(p), .. } {
+          p.to_int()
         } else {
-          1.0
+          100
         }
         let critical = 0.0
         let ignoredef = 0.0
@@ -424,7 +425,7 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
           bulletcost,
           hpcost,
           mpcost,
-          chance,
+          prop,
           critical,
           ignoredef,
           hrange,

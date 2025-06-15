@@ -1,38 +1,42 @@
 ///|
 struct Module {
   player_getter : () -> @player.Player?
-  packet_processor : @net.Network
-  mut skill_book : SkillBook?
+  network : @net.Network
+  mut player_skill_book : (SkillBook, Ref[Bool])?
   watchers : Array[SkillBookWatcher]
   string_loader : @resource.SyncLoader
   io_service : @io_task.IOService
+  combat : @combat_impl2.Combat
 }
 
 ///|
 pub async fn Module::load(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.Network,
+  network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
+  combat : @combat_impl2.Combat
 ) -> Module {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
-  Module::new(player_getter, packet_processor, string_loader, io_service)
+  Module::new(player_getter, network, string_loader, io_service, combat)
 }
 
 ///|
 fn Module::new(
   player_getter : () -> @player.Player?,
-  packet_processor : @net.Network,
+  network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
+  combat : @combat_impl2.Combat
 ) -> Module {
   {
     player_getter,
-    packet_processor,
-    skill_book: None,
+    network,
+    player_skill_book: None,
     watchers: [],
     string_loader,
     io_service,
+    combat,
   }
 }
 
@@ -107,11 +111,25 @@ pub fn Module::make_actions(
 }
 
 ///|
-pub fn Module::load_skill_book(
+pub fn Module::load_player_skill_book(
   self : Module,
   job : @job.Job
 ) -> @utils.Future[&@player.SkillBook] {
   SkillBook::load(self.string_loader, self.io_service, job, self.watchers)
-  .tap(fn(skill_book) { self.skill_book = Some(skill_book) })
+  .tap(fn(skill_book) {
+    if self.player_skill_book is Some((_, cont_listen)) {
+      cont_listen.val = false // dispose
+    }
+    let cont_listen = Ref::new(true)
+    self.player_skill_book = Some((skill_book, cont_listen))
+    self.combat.listen_attack_events(fn(event) {
+      skill_book.on_attack_event(
+        event,
+        self.combat,
+        (self.player_getter)().unwrap(),
+      )
+      cont_listen.val
+    })
+  })
   .map(fn(skill_book) { skill_book })
 }

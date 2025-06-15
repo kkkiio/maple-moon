@@ -19,7 +19,6 @@
     "KKKIIO/maple-moon-client/lib/ms/monster",
     "KKKIIO/maple-moon-client/lib/ms/bullet",
     "KKKIIO/maple-moon-client/lib/ms/player",
-    "KKKIIO/maple-moon-client/lib/io_task",
     "KKKIIO/maple-moon-client/lib/log"
   ]
 }

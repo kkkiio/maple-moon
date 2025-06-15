@@ -304,13 +304,28 @@ pub fn make_use_effect(
 }
 
 ///|
+struct SkillNxResource {
+  hit : Array[HitEffectNxResource]
+}
+
+///|
+pub impl @json.FromJson for SkillNxResource with from_json(json, path) {
+  let hit = match json {
+    { "hit": hit, .. } => @resource.MapBasedArray::from_json(hit, path)._
+    _ => []
+  }
+  { hit, }
+}
+
+///|
 pub fn make_hit_effect(
   src : @resource.NxNode
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
   let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
   let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
-  let has_hit0 = src["hit"]["0"].get_children_count() > 0
-  let has_hit1 = src["hit"]["1"].get_children_count() > 0
+  let res : SkillNxResource = @json.from_json(src.value())
+  let has_hit0 = res.hit.get(0) is Some(_)
+  let has_hit1 = res.hit.get(1) is Some(_)
   if by_level_hit {
     if has_hit0 && has_hit1 {
       new_by_level_twohanded_hit_effect(src)
@@ -320,9 +335,9 @@ pub fn make_hit_effect(
   } else if by_skill_level_hit {
     new_by_skill_level_hit_effect(src)
   } else if has_hit0 && has_hit1 {
-    new_twohanded_hit_effect(src)
+    new_twohanded_hit_effect(res.hit[0], res.hit[1])
   } else if has_hit0 {
-    new_single_hit_effect(src)
+    new_single_hit_effect(res.hit[0])
   } else {
     fn(_ : @combat.AttackUser, _ : @monster.Mob) -> Unit {  }
   }

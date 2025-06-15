@@ -97,6 +97,7 @@ pub(all) struct AttackResult {
   stance : Int
   speed : Int
   toleft : Bool
+  /// mob_id -> [(damage, is_critical)]
   damage_lines : Map[Int, Array[(Int, Bool)]]
   mut first_oid : Int
   mut last_oid : Int

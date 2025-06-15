@@ -28,7 +28,7 @@ pub(all) struct Stage {
   drops : @drop.MapDrops
   inventory : @inventory.Inventory
   damage_number_set : @ui.NumberSet
-  mut combat : @combat_impl2.Combat?
+  combat : @combat_impl2.Combat
   char_look_module : @char_look.Module
   skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
@@ -56,7 +56,8 @@ pub fn Stage::new(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  bullet_module : @bullet.Module
+  bullet_module : @bullet.Module,
+  combat : @combat_impl2.Combat
 ) -> Stage {
   {
     map_portals_animations,
@@ -67,7 +68,7 @@ pub fn Stage::new(
     npcs,
     quests,
     damage_number_set,
-    combat: None,
+    combat,
     mobs,
     drops,
     inventory,
@@ -118,6 +119,7 @@ pub fn set_player_stage(
   cooldowns : Map[Int, Int],
   callback : (@player.Player) -> Unit raise
 ) -> Unit {
+  self.combat.set_cooldowns(cooldowns)
   let player_f = self.io_service
     .submit(async fn() { self.char_look_module.load_char_look(entry.look) })
     .bind(fn(look) {
@@ -127,7 +129,7 @@ pub fn set_player_stage(
         self.inventory,
         look,
         self.damage_number_set,
-        fn(job) { self.skill_book_module.load_skill_book(job) },
+        fn(job) { self.skill_book_module.load_player_skill_book(job) },
         fn(job) {
           self.char_stats_module.new_char_stats(
             entry.stats,
@@ -138,20 +140,7 @@ pub fn set_player_stage(
         self.network,
         self.string_loader,
         self.io_service,
-      ).tap(fn(player) {
-        self.player = Some(player)
-        self.combat = Some(
-          @combat_impl2.Combat::new(
-            self.damage_number_set,
-            self.mobs,
-            self.network,
-            cooldowns,
-            self.string_loader,
-            self.io_service,
-            self.bullet_module,
-          ),
-        )
-      })
+      ).tap(fn(player) { self.player = Some(player) })
     })
   (self.add_task_fn)(
     player_f.map(fn(player) {
@@ -207,7 +196,7 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
     player.draw(id, viewx, viewy, alpha)
     self.drops.draw(id, viewx, viewy, alpha)
   }
-  self.combat.unwrap().draw(viewx, viewy, alpha)
+  self.combat.draw(viewx, viewy, alpha)
   portals.draw(viewpos, alpha)
   @map.drawforegrounds(backgrounds.fores, viewx, viewy, alpha)
   //     effect_.draw();
@@ -256,7 +245,7 @@ fn update(self : Stage) -> Unit raise {
         None => return ()
       }
   }
-  self.combat.unwrap().update()
+  self.combat.update()
   @map.update_backgrounds(backgrounds)
   // effect_.update();
   tiles_objs.update()
@@ -324,15 +313,14 @@ pub fn send_key(self : Stage, mapping : @keyboard.Mapping, down : Bool) -> Unit 
               @keyboard.BasicActionId::UP =>
                 self.check_portals(map_info, portals, physics)
               // @keyboard.ActionId::SIT => self.check_seats()
-              @keyboard.BasicActionId::ATTACK =>
-                self.combat.unwrap().use_move(player, 0)
+              @keyboard.BasicActionId::ATTACK => self.combat.use_move(player, 0)
               @keyboard.BasicActionId::PICKUP => self.check_drops(player)
               _ => ()
             }
           }
           player.send_action(action, down)
         }
-        SKILL(skill_id) => self.combat.unwrap().use_move(player, skill_id)
+        SKILL(skill_id) => self.combat.use_move(player, skill_id)
         ITEM(item_id) => self.inventory.use_item(item_id)
         // @keyboard.Id::FACE => self.player.set_expression(action)
         _ => ()

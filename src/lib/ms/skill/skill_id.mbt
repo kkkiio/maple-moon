@@ -21,6 +21,7 @@ pub(all) enum SkillId {
   // Fighter
   SWORD_MASTERY_FIGHTER = 1100000
   AXE_MASTERY = 1100001
+  /// 有一定概率在使用直接攻击的攻击技能后发动额外打击。但必须在持有剑的情况下才能发动。
   SWORD_FA_FIGHTER = 1100002
   AXE_FA = 1100003
   SWORD_BOOSTER_FIGHTER = 1101004

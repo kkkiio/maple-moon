@@ -199,7 +199,7 @@ pub fn ExplorerCreatorUI::new(
   on_create_char~ : (NewCharacterSettings) -> Unit = fn(_v) {  }
 ) -> ExplorerCreatorUI {
   let gender = false
-  let randomizer = @utils.Randomizer::default()
+  let randomizer = @utils.Randomizer::new()
   let settings = rand_char_look(gender, randomizer, resource)
   let ui_model = hooks.ui_model
   ui_model.position = @struct.Point::new(0, 0)

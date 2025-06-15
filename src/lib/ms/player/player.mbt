@@ -105,7 +105,7 @@ pub fn Player::new(
     inventory,
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
-    randomizer: @utils.Randomizer::default(),
+    randomizer: @utils.Randomizer::new(),
     skill_book,
     changing_job: None,
     load_skill_book,

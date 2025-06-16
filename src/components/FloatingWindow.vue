@@ -4,7 +4,9 @@
         :style="`top: ${windowPosition.top}px; left: ${windowPosition.left}px`">
         <!-- Register top bar as drag handle -->
         <div ref="windowHandle" @mousedown.prevent="startDragging" @touches.prevent="startDragging"
-            class="h-6 w-full gap-1 bg-gray-200 rounded-t-xl"></div>
+            class="w-full p-2 gap-1 bg-gray-200 rounded-t-xl">
+            <div class="text-sm text-gray-500 font-bold">{{ title }}</div>
+        </div>
         <div class="flex-1 overflow-auto">
             <!-- Pass content to slot -->
             <slot></slot>
@@ -15,6 +17,9 @@
 import { ref } from 'vue'
 // Define v-model for FloatingWindow component
 const modelValue = defineModel<boolean>();
+const { title } = defineProps<{
+    title: string;
+}>();
 
 // Reference to window handle
 const windowHandle = ref(null);

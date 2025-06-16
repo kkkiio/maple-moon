@@ -7,6 +7,7 @@ struct Module {
   string_loader : @resource.SyncLoader
   io_service : @io_task.IOService
   combat : @combat_impl2.Combat
+  inventory : @inventory.Inventory
 }
 
 ///|
@@ -15,10 +16,13 @@ pub async fn Module::load(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  combat : @combat_impl2.Combat
+  combat : @combat_impl2.Combat,
+  inventory : @inventory.Inventory
 ) -> Module {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
-  Module::new(player_getter, network, string_loader, io_service, combat)
+  Module::new(
+    player_getter, network, string_loader, io_service, combat, inventory,
+  )
 }
 
 ///|
@@ -27,7 +31,8 @@ fn Module::new(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  combat : @combat_impl2.Combat
+  combat : @combat_impl2.Combat,
+  inventory : @inventory.Inventory
 ) -> Module {
   {
     player_getter,
@@ -37,6 +42,7 @@ fn Module::new(
     string_loader,
     io_service,
     combat,
+    inventory,
   }
 }
 

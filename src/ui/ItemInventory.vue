@@ -24,7 +24,7 @@ const { mod } = defineProps({
   },
 });
 
-const TAB_KINDS = ["equip", "use", "setup", "etc"];
+const TAB_KINDS = ["equip", "use", "setup", "etc", "cash"];
 
 const meso = ref(0);
 const hint = ref("");
@@ -172,7 +172,7 @@ const handleDropAllClick = () => {
 <template>
   <NTabs type="segment">
     <NTabPane v-for="(panel, tabIndex) in panels" :key="tabIndex" :name="panel.kind" :tab="panel.kind">
-      <table class="inventory-table">
+      <table class="w-full max-h-96">
         <tbody>
           <tr v-for="(row, rowIndex) in panel.table" :key="'row-' + rowIndex">
             <td v-for="(item, colIndex) in row" :key="'col-' + colIndex" class="inventory-cell">
@@ -249,11 +249,6 @@ const handleDropAllClick = () => {
 <style scoped>
 .inventory-panel {
   padding: 8px;
-}
-
-.inventory-table {
-  border-collapse: collapse;
-  width: 100%;
 }
 
 .inventory-cell {

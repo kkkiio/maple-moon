@@ -392,7 +392,11 @@ pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
 }
 
 ///|
-fn Inventory::find_item(self : Inventory, t : TypeId, itemid : Int) -> SlotNo? {
+pub fn Inventory::find_item(
+  self : Inventory,
+  t : TypeId,
+  itemid : Int
+) -> SlotNo? {
   for slot_no, slot in self.inventories[t] {
     if slot.item_id == itemid {
       return Some(slot_no)

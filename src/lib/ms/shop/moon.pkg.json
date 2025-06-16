@@ -5,7 +5,6 @@
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/ms/inventory",
     "KKKIIO/maple-moon-client/lib/ms/item",
-    "KKKIIO/maple-moon-client/lib/utils",
     "rami3l/js-ffi/js",
     "KKKIIO/maple-moon-client/lib/io_task"
   ],

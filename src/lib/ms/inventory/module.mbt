@@ -51,13 +51,6 @@ pub fn make_handlers(
 }
 
 ///|
-pub fn make_actions(
-  self : Module
-) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
-  Map::new()
-}
-
-///|
 pub fn make_stat_handlers(
   self : Module
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {

@@ -151,7 +151,6 @@ async fn load_modules(
     io_service,
   )
   merge_handlers(inventory_module.make_handlers())
-  merge_actions(inventory_module.make_actions())
   merge_stat_handlers(inventory_module.make_stat_handlers())
   merge_show_status_info_handler_map(
     inventory_module.make_show_status_info_handlers(),
@@ -235,6 +234,7 @@ async fn load_modules(
     string_loader,
     io_service,
     combat,
+    inventory_module.get_inventory(),
   )
   merge_handlers(skill_book_module.make_handlers())
   merge_actions(skill_book_module.make_actions())

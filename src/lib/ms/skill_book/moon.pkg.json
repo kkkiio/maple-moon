@@ -3,7 +3,6 @@
     "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/net",
-    "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/ms/skill",
@@ -16,11 +15,14 @@
     "KKKIIO/maple-moon-client/lib/ms/combat_proto",
     "KKKIIO/maple-moon-client/lib/ms/combat_impl",
     "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
-    "KKKIIO/maple-moon-client/lib/ms/character"
+    "KKKIIO/maple-moon-client/lib/ms/character",
+    "KKKIIO/maple-moon-client/lib/ms/inventory",
+    "KKKIIO/maple-moon-client/lib/ms/markup_text",
+    "KKKIIO/maple-moon-client/lib/struct"
   ],
 	"link": {
 		"js": {
-			"exports": ["watch_skill_book", "increase_sp"]
+			"exports": ["watch_skill_book", "increase_sp", "transfer_one_sp"]
 		}
 	}
 }

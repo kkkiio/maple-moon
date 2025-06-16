@@ -59,16 +59,17 @@ pub struct WithItemSlot {
 }
 
 ///|
-fn get_type_id_by_kind(kind : String) -> TypeId raise {
-  match kind {
+fn get_type_id_by_kind(kind : String) -> TypeId? {
+  let type_id = match kind {
     "equip" => TypeId::EQUIP
     "use" => TypeId::USE
     "setup" => TypeId::SETUP
     "etc" => TypeId::ETC
     "cash" => TypeId::CASH
     "equipped" => TypeId::EQUIPPED
-    _ => fail("Invalid inventory kind: \{kind}")
+    _ => return None
   }
+  Some(type_id)
 }
 
 ///| Watch inventory changes for a specific kind of items
@@ -76,8 +77,10 @@ pub fn watch_inventory_by_kind(
   mod : Module,
   kind : String,
   watcher : InventoryWatcher
-) -> Unit {
-  let type_id = get_type_id_by_kind?(kind).unwrap()
+) -> String {
+  guard get_type_id_by_kind(kind) is Some(type_id) else {
+    return "unknown inventory kind \{kind}"
+  }
   let mut cont = true
   fn sync_callback() {
     if cont {
@@ -92,6 +95,7 @@ pub fn watch_inventory_by_kind(
   guard sync_callback()
   // Add to inventory listeners
   mod.inventory.listen_item_changes(type_id, sync_callback)
+  ""
 }
 
 ///| Watch meso changes
@@ -104,8 +108,13 @@ pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
 }
 
 ///|
-pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
-  guard get_type_id_by_kind?(kind) is Ok(type_id) else {
+pub fn use_item_at(
+  mod : Module,
+  kind : String,
+  slot_no : SlotNo,
+  args : Array[String]
+) -> String {
+  guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"
   }
   match type_id {
@@ -117,8 +126,8 @@ pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
       guard @item.ItemData::get_loaded(item.item_id) is Some(item_data) else {
         return "item data not loaded \{item.item_id}"
       }
-      guard @equip_data.EquipData::parse_item_data?(item_data) is Ok(equip_data) else {
-        return "failed to parse equip data \{item.item_id}"
+      let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {
+        e => return "failed to parse equip data: \{e}, id=\{item.item_id}"
       }
       match can_wear_equip(player, equip_data) {
         Some(hint) => return hint
@@ -129,17 +138,18 @@ pub fn use_item_at(mod : Module, kind : String, slot_no : SlotNo) -> String {
         dest: find_equip_slot(mod.inventory, equip_data),
       }
       mod.network.send_message(equip_message)
+      ""
     }
     TypeId::USE => {
       let item_id = mod.inventory.get_item_id(type_id, slot_no._)
       if item_id <= 0 {
         return "not found item id at slot \{slot_no} of \{kind}"
       }
-      mod.network.send_message({ slot_no: slot_no._, itemid: item_id })
+      mod.network.send_message(UseItemMessage::new(slot_no._, item_id))
+      ""
     }
-    _ => ()
+    _ => return "not supported kind \{kind}"
   }
-  return ""
 }
 
 ///|
@@ -212,7 +222,7 @@ pub fn drop_item(
   slot_no : Int,
   count : Int
 ) -> String {
-  guard get_type_id_by_kind?(kind) is Ok(type_id) else {
+  guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"
   }
   if type_id is TypeId::CASH {
@@ -250,8 +260,8 @@ fn make_html_desc(desc : String) -> String {
 ///| Make equip description
 /// show req stats and incr stats
 fn make_equip_desc(item_data : @item.ItemData) -> String {
-  guard @equip_data.EquipData::parse_item_data?(item_data) is Ok(equip_data) else {
-    return ""
+  let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {
+    e => return "failed to parse equip data: \{e}, id=\{item_data.item_id}"
   }
   let req_stats = equip_data.req_stats.iter2().to_array()
   req_stats.sort_by_key(fn(it) { it.0 })

@@ -32,36 +32,36 @@
       </div>
 
       <!-- Windows -->
-      <FloatingWindow v-model="show_equipped_equipment">
+      <FloatingWindow v-model="show_equipped_equipment" title="Equipped">
         <EquippedEquipment v-if="show_equipped_equipment && inventory_mod" :mod="inventory_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_skill_book">
+      <FloatingWindow v-model="show_skill_book" title="Skill">
         <SkillBookUI v-if="show_skill_book && skill_book_mod && char_stats_mod" :skill_book_mod="skill_book_mod"
           :char_stats_mod="char_stats_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_inventory">
+      <FloatingWindow v-model="show_inventory" title="Inventory">
         <ItemInventory v-if="show_inventory && inventory_mod" :mod="inventory_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_keyboard">
+      <FloatingWindow v-model="show_keyboard" title="Keyboard">
         <KeyboardConfig v-if="show_keyboard && keyboard_mod" :mod="keyboard_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_character">
+      <FloatingWindow v-model="show_character" title="Character">
         <CharacterStats v-if="show_character && char_stats_mod" :mod="char_stats_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_debug">
+      <FloatingWindow v-model="show_debug" title="Debug">
         <Debug v-if="show_debug && stage" :stage="stage" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_shop">
+      <FloatingWindow v-model="show_shop" title="Shop">
         <Shop v-if="show_shop && shop_mod && inventory_mod" :shop_mod="shop_mod" :inventory_mod="inventory_mod" />
       </FloatingWindow>
 
-      <FloatingWindow v-model="show_quests">
+      <FloatingWindow v-model="show_quests" title="Quests">
         <QuestLog v-if="show_quests && quest_mod" :mod="quest_mod" />
       </FloatingWindow>
     </n-dialog-provider>

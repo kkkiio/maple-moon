@@ -13,7 +13,8 @@
                 style="padding: 0; margin: 0; display: block; border-style: solid; border-width: 1px;"></canvas>
             <GameUI v-if="game" :game="game" style="position: absolute; top: 10px; right: 10px;"></GameUI>
         </div>
-        <div ref="tmpd" style="position: absolute; visibility: hidden; height: auto; width: auto;"></div>
+        <div ref="tmpd"
+            style="position: absolute; visibility: hidden; height: auto; width: auto; margin: 0; padding: 0;"></div>
     </div>
 </template>
 

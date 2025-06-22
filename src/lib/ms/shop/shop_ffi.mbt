@@ -80,7 +80,7 @@ pub fn buy_shop_item_ffi(
   qty : Int
 ) -> Unit {
   mod.network.send_message(
-    ShopActionMessage::Item(slot=slot._, item_id~, qty~, buy=true),
+    ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=true),
   )
 }
 
@@ -92,7 +92,7 @@ pub fn sell_inventory_item_ffi(
   qty : Int
 ) -> Unit {
   mod.network.send_message(
-    ShopActionMessage::Item(slot=slot._, item_id~, qty~, buy=false),
+    ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=false),
   )
 }
 

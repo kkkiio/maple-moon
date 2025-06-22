@@ -107,7 +107,7 @@ pub fn lerp(a : Double, b : Double, t : Double) -> Double {
   // bounded, determinate, and consistent:
   let x = a + t * (b - a)
   // monotonic near t=1
-  return if t > 1.0 == (b > a) {
+  return if (t > 1.0) == (b > a) {
     @math.maximum(b, x)
   } else {
     @math.minimum(b, x)

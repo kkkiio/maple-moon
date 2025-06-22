@@ -181,9 +181,9 @@ pub fn BodyDrawInfo::new(
           }
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
           for _, part in parts {
-            bodyshiftmap.set(part.z, part.map._)
+            bodyshiftmap.set(part.z, part.map.inner())
           }
-          bodyshiftmap[BodyLayer::HEAD] = head_shift_map._
+          bodyshiftmap[BodyLayer::HEAD] = head_shift_map.inner()
           fn get_shift(layer, key) {
             bodyshiftmap
             .get(layer)

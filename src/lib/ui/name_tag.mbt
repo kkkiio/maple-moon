@@ -44,7 +44,7 @@ pub fn NameTag::new(
     @struct.ColorName::JAMBALAYA,
   )
   name.change_text(n)
-  let textures = @utils.BoolPair::new(textures._.0, textures._.1)
+  let textures = @utils.BoolPair::new(textures.inner().0, textures.inner().1)
   { name, textures, selected: false }
 }
 

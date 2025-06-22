@@ -6,10 +6,10 @@
       <div class="flex items-center gap-3">
         <NSwitch v-model:value="isTransferMode" size="large">
           <template #checked>
-            <span class="text-sm font-medium">SP转移模式</span>
+            <span class="text-sm font-medium">转移</span>
           </template>
           <template #unchecked>
-            <span class="text-sm font-medium">普通模式</span>
+            <span class="text-sm font-medium">加点</span>
           </template>
         </NSwitch>
       </div>
@@ -18,10 +18,10 @@
       <div v-if="isTransferMode" class="flex-1 space-y-3">
         <div class="flex items-center gap-3">
           <n-text v-if="!selectedFromSkill" type="info" class="text-sm">
-            💡 请选择要减少SP的技能
+            💡 选择要减少等级的技能
           </n-text>
           <n-text v-else-if="!selectedToSkill" type="warning" class="text-sm">
-            ⚠️ 请选择要增加SP的技能
+            ⚠️ 选择要增加等级的技能
           </n-text>
           <n-button size="small" type="primary" :disabled="!selectedFromSkill || !selectedToSkill"
             @click="confirmTransfer" class="ml-auto">
@@ -31,7 +31,7 @@
 
         <div class="space-y-2">
           <n-alert type="info" class="text-xs">
-            💰 此操作需要消耗对应的 SP 重置道具
+            💰 此操作需要消耗对应的技能点重置道具
           </n-alert>
           <n-alert v-if="hint" type="warning" class="text-xs">
             {{ hint }}
@@ -59,7 +59,7 @@
                   <!-- 技能详情 -->
                   <div class="flex-1">
                     <n-tooltip trigger="hover" placement="top" :show-arrow="false"
-                      :style="{ backgroundColor: 'white' }">
+                      :style="{ backgroundColor: 'white', color: 'black' }">
                       <template #trigger>
                         <div class="flex flex-wrap items-center gap-2">
                           <span class="text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
@@ -71,11 +71,11 @@
                           <!-- 选中状态标识 -->
                           <n-tag v-if="selectedFromSkill?.id === skill.id" type="warning" size="small"
                             class="animate-pulse">
-                            🎯 源技能
+                            源技能
                           </n-tag>
                           <n-tag v-if="selectedToSkill?.id === skill.id" type="success" size="small"
                             class="animate-pulse">
-                            🎯 目标技能
+                            目标技能
                           </n-tag>
                         </div>
                       </template>
@@ -140,7 +140,7 @@
         </span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">可用SP:</span>
+        <span class="text-sm text-gray-600">可用技能点:</span>
         <span class="text-lg font-bold text-green-600 bg-green-50 rounded-full">
           {{ availableSp }}
         </span>

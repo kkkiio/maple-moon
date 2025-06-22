@@ -167,7 +167,7 @@ test "" {
     },
   }
   let res : @resource.MapBasedArray[PortalMarker] = @json.from_json(json)
-  @json.inspect(res._, content=[
+  @json.inspect(res.inner(), content=[
     {
       "pn": "sp",
       "tn": "",

@@ -1,4 +1,5 @@
 // Cap types (vslot)
+
 ///|
 pub(all) enum CapType {
   NONE

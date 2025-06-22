@@ -1,5 +1,6 @@
 // The collection of platforms in a maple map
 // Used for collision-detection
+
 ///|
 struct FootholdTree {
   footholds : Map[Int, Foothold]

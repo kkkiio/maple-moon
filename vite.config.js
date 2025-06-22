@@ -14,15 +14,18 @@ export default defineConfig({
 		watch: {
 			ignored: ["assets/**", "*.mbt", "moon.pkg.json"],
 		},
+		// watch: null,
 		port: 8080,
 		proxy: {
 			"/login": {
-				target: "http://localhost:8484",
+				target: "http://192.168.31.85:30000",
+				// target: "http://localhost:8484",
 				// changeOrigin: true,
 				ws: true,
 			},
 			"/channel/7575": {
-				target: "http://localhost:7575",
+				target: "http://192.168.31.85:30001",
+				// target: "http://localhost:7575",
 				// changeOrigin: true,
 				ws: true,
 			},

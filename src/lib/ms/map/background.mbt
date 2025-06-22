@@ -326,7 +326,7 @@ pub async fn load_backgrounds(
 ) -> Backgrounds raise {
   let fronts = Array::new()
   let backgrounds = Array::new()
-  for back_spec in spec._ {
+  for back_spec in spec.inner() {
     // TODO: what does empty bS mean?
     if back_spec.bS == "" {
       continue

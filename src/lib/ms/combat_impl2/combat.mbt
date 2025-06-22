@@ -394,7 +394,7 @@ type AttackMessage AttackResult derive(Show)
 
 ///|
 pub impl @net.OutMessage for AttackMessage with pack(self) {
-  let attack = self._
+  let attack = self.inner()
   let opcode = match attack.t {
     @combat_proto.AttackType::CLOSE => @net.ClientOpcode::CLOSE_ATTACK
     @combat_proto.AttackType::RANGED => @net.ClientOpcode::RANGED_ATTACK
@@ -719,7 +719,7 @@ priv type CacheKey (Int, String, Int) derive(Show, Eq, Hash)
 async fn load_after_images_by_skill_weapon(
   key : CacheKey
 ) -> Map[String, @char_look.AfterImage] raise {
-  let (skill_id, wepon_after_image_name, weapon_level) = key._
+  let (skill_id, wepon_after_image_name, weapon_level) = key.inner()
   let after_images = Map::new()
   if skill_id > 0 {
     let strid = @string_format.extend_id(skill_id, 7)

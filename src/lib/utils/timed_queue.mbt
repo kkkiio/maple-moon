@@ -20,10 +20,10 @@ pub fn[T] process(self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
   Iter::new(fn(yield_) {
     loop self.queue.peek() {
       Some(top) => {
-        if top._.0 > self.time {
+        if top.inner().0 > self.time {
           break
         }
-        if yield_(top._.1) == IterEnd {
+        if yield_(top.inner().1) == IterEnd {
           return IterEnd
         }
         self.queue.pop() |> ignore
@@ -40,10 +40,10 @@ type Timed[T] (Int64, T)
 
 ///|
 pub impl[T] Compare for Timed[T] with compare(self, other) -> Int {
-  self._.0.compare(other._.0).op_neg() // less first
+  self.inner().0.compare(other.inner().0).op_neg() // less first
 }
 
 ///|
 pub impl[T] Eq for Timed[T] with op_equal(self, other) -> Bool {
-  self._.0.op_equal(other._.0)
+  self.inner().0.op_equal(other.inner().0)
 }

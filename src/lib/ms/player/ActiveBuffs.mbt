@@ -23,6 +23,7 @@ pub impl ActiveBuff for SimpleStatBuff with apply_to(
 }
 
 // Template for PercentageStatBuff
+
 ///|
 struct PercentageStatBuff {
   stat : @maple_stat.EquipStatId
@@ -45,6 +46,7 @@ pub impl ActiveBuff for PercentageStatBuff with apply_to(
 }
 
 // MapleWarriorBuff
+
 ///|
 type MapleWarriorBuff Unit derive(Default)
 
@@ -61,6 +63,7 @@ pub impl ActiveBuff for MapleWarriorBuff with apply_to(
 }
 
 // StanceBuff
+
 ///|
 type StanceBuff Unit derive(Default)
 
@@ -74,6 +77,7 @@ pub impl ActiveBuff for StanceBuff with apply_to(
 }
 
 // BoosterBuff
+
 ///|
 type BoosterBuff Unit derive(Default)
 
@@ -87,6 +91,7 @@ pub impl ActiveBuff for BoosterBuff with apply_to(
 }
 
 // ActiveBuffs
+
 ///|
 struct ActiveBuffs {
   buffs : @immut/sorted_map.T[@buff.StatId, &ActiveBuff]

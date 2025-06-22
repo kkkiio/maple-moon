@@ -120,7 +120,8 @@ pub fn use_item_at(
   match type_id {
     TypeId::EQUIP => {
       guard (mod.player_getter)() is Some(player) else { return "" }
-      guard mod.inventory.get_slot_item_at(type_id, slot_no._) is Some(item) else {
+      guard mod.inventory.get_slot_item_at(type_id, slot_no.inner())
+        is Some(item) else {
         return "no item at slot \{slot_no} of \{kind}"
       }
       guard @item.ItemData::get_loaded(item.item_id) is Some(item_data) else {
@@ -134,18 +135,18 @@ pub fn use_item_at(
         None => ()
       }
       let equip_message : EquipItemMessage = {
-        src: slot_no._,
+        src: slot_no.inner(),
         dest: find_equip_slot(mod.inventory, equip_data),
       }
       mod.network.send_message(equip_message)
       ""
     }
     TypeId::USE => {
-      let item_id = mod.inventory.get_item_id(type_id, slot_no._)
+      let item_id = mod.inventory.get_item_id(type_id, slot_no.inner())
       if item_id <= 0 {
         return "not found item id at slot \{slot_no} of \{kind}"
       }
-      mod.network.send_message(UseItemMessage::new(slot_no._, item_id))
+      mod.network.send_message(UseItemMessage::new(slot_no.inner(), item_id))
       ""
     }
     _ => return "not supported kind \{kind}"

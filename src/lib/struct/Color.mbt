@@ -325,36 +325,36 @@ pub fn Color::from_name(name : ColorName) -> Color {
 
 ///|
 pub fn invisible(self : Color) -> Bool {
-  self._.3 <= 0.0
+  self.inner().3 <= 0.0
 }
 
 ///|
 pub fn r(self : Color) -> Double {
-  self._.0
+  self.inner().0
 }
 
 ///|
 pub fn g(self : Color) -> Double {
-  self._.1
+  self.inner().1
 }
 
 ///|
 pub fn b(self : Color) -> Double {
-  self._.2
+  self.inner().2
 }
 
 ///|
 pub fn a(self : Color) -> Double {
-  self._.3
+  self.inner().3
 }
 
 ///|
 pub fn blend(self : Color, other : Color, alpha : Double) -> Color {
   (
-    @utils.lerp(self._.0, other._.0, alpha),
-    @utils.lerp(self._.1, other._.1, alpha),
-    @utils.lerp(self._.2, other._.2, alpha),
-    @utils.lerp(self._.3, other._.3, alpha),
+    @utils.lerp(self.inner().0, other.inner().0, alpha),
+    @utils.lerp(self.inner().1, other.inner().1, alpha),
+    @utils.lerp(self.inner().2, other.inner().2, alpha),
+    @utils.lerp(self.inner().3, other.inner().3, alpha),
   )
 }
 
@@ -381,20 +381,20 @@ pub fn IntColor::from_color(color : Color) -> IntColor {
 
 ///|
 pub fn IntColor::r(self : IntColor) -> Int {
-  (self._ >> 24) & 0xFF
+  (self.inner() >> 24) & 0xFF
 }
 
 ///|
 pub fn IntColor::g(self : IntColor) -> Int {
-  (self._ >> 16) & 0xFF
+  (self.inner() >> 16) & 0xFF
 }
 
 ///|
 pub fn IntColor::b(self : IntColor) -> Int {
-  (self._ >> 8) & 0xFF
+  (self.inner() >> 8) & 0xFF
 }
 
 ///|
 pub fn IntColor::a(self : IntColor) -> Int {
-  self._ & 0xFF
+  self.inner() & 0xFF
 }

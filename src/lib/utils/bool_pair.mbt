@@ -9,9 +9,9 @@ pub fn[T] BoolPair::new(false_value : T, true_value : T) -> BoolPair[T] {
 ///|
 pub fn[T] op_get(self : BoolPair[T], b : Bool) -> T {
   if b {
-    self._.1
+    self.inner().1
   } else {
-    self._.0
+    self.inner().0
   }
 }
 

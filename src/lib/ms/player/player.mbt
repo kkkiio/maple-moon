@@ -208,6 +208,7 @@ pub fn update(
 }
 
 // Respawn the player at the given position
+
 ///|
 pub fn respawn(
   self : Player,
@@ -238,6 +239,7 @@ pub fn draw(
 
 // Sends a Keyaction to the player's state, to apply forces, change the
 // state and other behaviour.
+
 ///|
 pub fn send_action(
   self : Player,
@@ -297,6 +299,7 @@ pub fn is_attacking(self : Player) -> Bool {
 }
 
 // Set state ignore if attacking.
+
 ///|
 pub fn set_state(self : Player, st : CharState) -> Unit {
   if not(self.character.attacking) {

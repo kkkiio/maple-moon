@@ -313,11 +313,25 @@ pub fn Module::handle_player_quest_info(
   self : Module,
   player_quests : PlayerQuestLogInfo
 ) -> Unit {
-  let new_log = { in_progress: {}, completed: {} }
+  self.player_quest_log.val = PlayerQuestLog::from_packet(
+    self.quests_resource,
+    player_quests,
+  )
+  self.quest_log_listeners.retain(fn(listener) {
+    listener(self.player_quest_log.val)
+  })
+}
+
+///|
+fn PlayerQuestLog::from_packet(
+  quests_resource : QuestResource,
+  player_quests : PlayerQuestLogInfo
+) -> PlayerQuestLog {
+  let quest_log = { in_progress: {}, completed: {} }
   let mut last_in_progress_quest : InProgressQuest? = None
   quest_loop~: for it in player_quests.started {
     let (id, progress_data) = it
-    let quest_info = self.quests_resource.quest_info_map.get(id)
+    let quest_info = quests_resource.quest_info_map.get(id)
     if quest_info is None {
       // maybe a infoNumber
       if last_in_progress_quest is Some(last_in_progress_quest) {
@@ -330,16 +344,14 @@ pub fn Module::handle_player_quest_info(
         }
       }
     }
-    let quest = self.player_quest_log.val.add_in_progress_quest(
-      self.quests_resource,
-      id,
-      progress_data,
+    let quest = quest_log.add_in_progress_quest(
+      quests_resource, id, progress_data,
     )
     last_in_progress_quest = Some(quest)
   }
   for it in player_quests.completed {
     let (quest_id, completion_time) = it
-    let quest_info = self.quests_resource.quest_info_map.get(quest_id)
+    let quest_info = quests_resource.quest_info_map.get(quest_id)
     let quest_info = if quest_info is Some(quest_info) {
       quest_info
     } else {
@@ -355,12 +367,9 @@ pub fn Module::handle_player_quest_info(
         descriptions: [],
       }
     }
-    new_log.completed[quest_id] = { quest_id, quest_info, completion_time }
+    quest_log.completed[quest_id] = { quest_id, quest_info, completion_time }
   }
-  self.player_quest_log.val = new_log
-  self.quest_log_listeners.retain(fn(listener) {
-    listener(self.player_quest_log.val)
-  })
+  quest_log
 }
 
 ///|

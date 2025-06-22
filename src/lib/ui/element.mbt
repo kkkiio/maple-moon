@@ -428,17 +428,17 @@ pub(all) type SpriteUI @graphics.Sprite
 
 ///|
 pub impl @graphics.Drawable for SpriteUI with draw(self, args) -> Unit {
-  self._.draw(args.pos, 0)
+  self.inner().draw(args.pos, 0)
 }
 
 ///|
 pub impl RenderUnit for SpriteUI with update(self) -> Unit {
-  self._.update() |> ignore
+  self.inner().update() |> ignore
 }
 
 ///|
 pub impl ToJson for SpriteUI with to_json(self) -> Json {
-  self._.to_json()
+  self.inner().to_json()
 }
 
 ///|
@@ -446,7 +446,7 @@ pub(all) type TextureTextUI @graphics.TextureText derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextureTextUI with draw(self, args) -> Unit {
-  self._.draw(args) |> ignore
+  self.inner().draw(args) |> ignore
 }
 
 ///|
@@ -454,7 +454,7 @@ pub(all) type TextureUI @graphics.Texture derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextureUI with draw(self, args) -> Unit {
-  self._.draw(args)
+  self.inner().draw(args)
 }
 
 ///|
@@ -462,7 +462,7 @@ pub(all) type TextUI @graphics.Text derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
-  self._.draw(args.pos)
+  self.inner().draw(args.pos)
 }
 
 ///|
@@ -512,7 +512,7 @@ pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUnit[T] with draw(
   self,
   args
 ) -> Unit {
-  self._.draw(args)
+  self.inner().draw(args)
 }
 
 ///|

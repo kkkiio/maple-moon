@@ -116,6 +116,7 @@ trait MobSkillUseEffect {
 }
 
 // An effect which displays an animation over the mob's position
+
 ///|
 pub(all) struct MobSingleUseEffect {
   effect : Effect

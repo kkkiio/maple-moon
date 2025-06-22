@@ -138,10 +138,10 @@ pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
     icon_disabled: self.icon_disabled,
     icon_mouseover: self.icon_mouseover,
     elem_attr: self.elem_attr,
-    req_skills: self.req_skills._.map_or({}, fn(it) { it._ }),
+    req_skills: self.req_skills.inner().map_or({}, fn(it) { it.inner() }),
     invisible: self.invisible,
-    level_stats: self.level_stats._,
-    req_weapon: self.req_weapon._,
+    level_stats: self.level_stats.inner(),
+    req_weapon: self.req_weapon.inner(),
   }
 }
 

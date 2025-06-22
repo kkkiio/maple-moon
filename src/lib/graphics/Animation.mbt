@@ -296,12 +296,12 @@ pub impl @json.FromJson for AnimationResource with from_json(json, path) -> Anim
   let frames = [@json.from_json(json)] catch {
     _ => {
       let fs : @resource.MapBasedArray[FrameResource] = @json.from_json(json)
-      if fs._.length() <= 0 {
+      if fs.inner().length() <= 0 {
         raise @json.JsonDecodeError(
           (path, "Animation must have at least one frame."),
         )
       }
-      fs._
+      fs.inner()
     }
   }
   let zigzag = obj

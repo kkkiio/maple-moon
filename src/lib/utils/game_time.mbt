@@ -8,7 +8,7 @@ pub fn TimePoint::from_micro(i : Double) -> TimePoint {
 
 ///|
 pub fn add_duration(self : TimePoint, duration : Duration) -> TimePoint {
-  self._ + duration._.to_int64()
+  self.inner() + duration.inner().to_int64()
 }
 
 ///|
@@ -26,22 +26,22 @@ pub fn Duration::from_milliseconds(i : Int) -> Duration {
 
 ///|
 pub fn to_micro_seconds(self : Duration) -> Int {
-  self._
+  self.inner()
 }
 
 ///|
 pub fn to_milliseconds(self : Duration) -> Int {
-  self._ / 1000
+  self.inner() / 1000
 }
 
 ///|
 pub fn to_seconds(self : Duration) -> Int {
-  self._ / 1000000
+  self.inner() / 1000000
 }
 
 ///|
 pub fn since(self : TimePoint, other : TimePoint) -> Duration {
-  (self._ - other._).to_int()
+  (self.inner() - other.inner()).to_int()
 }
 
 ///|

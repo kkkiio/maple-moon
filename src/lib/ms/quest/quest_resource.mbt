@@ -10,14 +10,18 @@ pub struct QuestResource {
 pub impl @json.FromJson for QuestResource with from_json(json, path) {
   let parsed : QuestNxResource = @json.from_json(json, path~)
   {
-    quest_info_map: parsed.quest_info_map._,
-    quest_checks_map: parsed.quest_checks_map._
+    quest_info_map: parsed.quest_info_map.inner(),
+    quest_checks_map: parsed.quest_checks_map.inner()
     .iter()
-    .map(fn(i) { (i.0, i.1._) })
+    .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
-    quest_say_map: parsed.quest_say_map._.iter().map(fn(i) { (i.0, i.1._) })
+    quest_say_map: parsed.quest_say_map.inner()
+    .iter()
+    .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
-    quest_acts_map: parsed.quest_acts_map._.iter().map(fn(i) { (i.0, i.1._) })
+    quest_acts_map: parsed.quest_acts_map.inner()
+    .iter()
+    .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
   }
 }
@@ -253,7 +257,7 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
 
 ///|
 fn NumbericInt::value(self : NumbericInt) -> Int {
-  self._
+  self.inner()
 }
 
 ///|
@@ -280,28 +284,28 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
     match key {
       "npc" => {
         let npc_id : NumbericInt = @json.from_json(value, path~)
-        checks.push({ npc: npc_id._ })
-        npc = Some(npc_id._)
+        checks.push({ npc: npc_id.inner() })
+        npc = Some(npc_id.inner())
       }
       "infoNumber" => {
         let info_number_id : NumbericInt = @json.from_json(value, path~)
-        info_number = Some(info_number_id._)
+        info_number = Some(info_number_id.inner())
       }
       "lvmin" => {
         let level_min_id : NumbericInt = @json.from_json(value, path~)
-        checks.push({ min_level: level_min_id._ })
+        checks.push({ min_level: level_min_id.inner() })
       }
       "interval" => {
         let interval_minutes : NumbericInt = @json.from_json(value, path~)
         repeatable = true
-        checks.push({ interval_minutes: interval_minutes._ })
+        checks.push({ interval_minutes: interval_minutes.inner() })
       }
       "infoex" => {
         let info_ex_value : @resource.MapBasedArray[InfoEx] = @json.from_json(
           value,
           path~,
         )
-        checks.push({ info_ex: info_ex_value._ })
+        checks.push({ info_ex: info_ex_value.inner() })
       }
       "quest" => {
         let quest_status_map : @resource.MapBasedArray[QuestStatusCheck] = @json.from_json(
@@ -309,7 +313,7 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
           path~,
         )
         checks.push({
-          quest_status_map: quest_status_map._
+          quest_status_map: quest_status_map.inner()
           .iter()
           .map(fn(i) { (i.id, i.state) })
           |> Map::from_iter(),
@@ -320,14 +324,14 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
           value,
           path~,
         )
-        checks.push({ jobs: jobs._ })
+        checks.push({ jobs: jobs.inner() })
       }
       "mob" => {
         let mob : @resource.MapBasedArray[MonHuntCheck] = @json.from_json(
           value,
           path~,
         )
-        monster_hunts = mob._
+        monster_hunts = mob.inner()
         checks.push({ monster_hunts, })
       }
       "item" => {
@@ -335,7 +339,7 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
           value,
           path~,
         )
-        checks.push({ items: items._ })
+        checks.push({ items: items.inner() })
       }
       _ => unknown_checks.push(key)
     }
@@ -448,7 +452,7 @@ test "parse quest check 10054" {
     json,
   )
   inspect(
-    quest_check._,
+    quest_check.inner(),
     content=
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
     ,
@@ -573,12 +577,12 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
     Some(ask) => @json.from_json(ask, path=path.add_key("ask")) != 0
   }
   {
-    says: says._,
+    says: says.inner(),
     ask,
-    yes_reply: yes_reply._.map_or([], fn(reply) { reply._ }),
-    no_reply: no_reply._.map_or([], fn(reply) { reply._ }),
-    stop: stop_hint._,
-    restore_lost: restore_lost._,
+    yes_reply: yes_reply.inner().map_or([], fn(reply) { reply.inner() }),
+    no_reply: no_reply.inner().map_or([], fn(reply) { reply.inner() }),
+    stop: stop_hint.inner(),
+    restore_lost: restore_lost.inner(),
   }
 }
 
@@ -597,9 +601,9 @@ impl @json.FromJson for Hints with from_json(json, path) {
     path=path.add_key("npc"),
   )
   {
-    base: base._,
-    item: item._.map_or([], fn(reply) { reply._ }),
-    npc: npc._.map_or([], fn(reply) { reply._ }),
+    base: base.inner(),
+    item: item.inner().map_or([], fn(reply) { reply.inner() }),
+    npc: npc.inner().map_or([], fn(reply) { reply.inner() }),
   }
 }
 
@@ -615,7 +619,7 @@ impl @json.FromJson for Hint with from_json(json, path) {
     obj.get("answer").or(Json::null()),
     path=path.add_key("answer"),
   )
-  { says: says._, answer }
+  { says: says.inner(), answer }
 }
 
 ///|
@@ -628,7 +632,10 @@ impl @json.FromJson for Lost with from_json(json, path) {
     obj.get("yes").or(Json::null()),
     path=path.add_key("yes"),
   )
-  { says: says._, yes_reply: yes_reply._.map_or([], fn(reply) { reply._ }) }
+  {
+    says: says.inner(),
+    yes_reply: yes_reply.inner().map_or([], fn(reply) { reply.inner() }),
+  }
 }
 
 ///|
@@ -662,18 +669,18 @@ pub impl @json.FromJson for QuestPhaseAct with from_json(json, path) {
     match key {
       "exp" => {
         let exp_value : NumbericInt = @json.from_json(value, path~)
-        exp = Some(exp_value._)
+        exp = Some(exp_value.inner())
       }
       "money" => {
         let mesos_value : NumbericInt = @json.from_json(value, path~)
-        mesos = Some(mesos_value._)
+        mesos = Some(mesos_value.inner())
       }
       "item" => {
         let item_map : @resource.MapBasedArray[ActItem] = @json.from_json(
           value,
           path~,
         )
-        items.append(item_map._)
+        items.append(item_map.inner())
       }
       _ => unknown_acts.push(key)
     }
@@ -696,9 +703,9 @@ impl @json.FromJson for ActItem with from_json(json, path) {
     path=path.add_key("period"),
   )
   {
-    id: id._,
-    count: count._.map(fn(c) { c._ }),
-    period: period._.map(fn(p) { p._ }),
+    id: id.inner(),
+    count: count.inner().map(fn(c) { c.inner() }),
+    period: period.inner().map(fn(p) { p.inner() }),
   }
 }
 

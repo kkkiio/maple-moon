@@ -32,18 +32,19 @@ fn get_skills_by_job_level(
   let job_data = job.get_data_by_id(subid)
   job_data.skill_ids.filter_map(fn(skill_id) {
     let level = skillbook.get_level(skill_id)
-    let master_level = match skillbook.get_masterlevel(skill_id) {
-      0 =>
-        skillbook
-        .get_skill_data(skill_id)
-        .map_or(0, fn(data) { data.master_level })
-      v => v
-    }
+    let master_level = skillbook.get_masterlevel(skill_id)
     match skillbook.get_skill_data(skill_id) {
       Some(data) =>
         if data.invisible && master_level == 0 {
           None
         } else {
+          let master_level = match master_level {
+            0 =>
+              skillbook
+              .get_skill_data(skill_id)
+              .map_or(0, fn(data) { data.master_level })
+            v => v
+          }
           Some({
             id: skill_id,
             name: data.name,
@@ -142,7 +143,7 @@ pub fn transfer_one_sp(
     return "not found item id \{item_id.int_value()}"
   }
   mod.network.send_message({
-    slot_no: slot_no._,
+    slot_no: slot_no.inner(),
     item_id: item_id.int_value(),
     to: to_skill_id,
     from: from_skill_id,

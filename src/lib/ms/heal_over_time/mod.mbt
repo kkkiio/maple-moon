@@ -13,10 +13,10 @@ pub fn new_module(
       // TODO: check if player is available to act
       let max_hp = char_stats.get_stat(@maple_stat.Id::MAXHP)
       // skip sit check for test and fun!
-      let heal_hp = max_hp - hp |> @math.minimum(77) |> @math.maximum(0)
+      let heal_hp = (max_hp - hp) |> @math.minimum(77) |> @math.maximum(0)
       let mp = char_stats.get_stat(@maple_stat.Id::MP)
       let max_mp = char_stats.get_stat(@maple_stat.Id::MAXMP)
-      let heal_mp = max_mp - mp |> @math.minimum(50) |> @math.maximum(0)
+      let heal_mp = (max_mp - mp) |> @math.minimum(50) |> @math.maximum(0)
       guard heal_hp > 0 || heal_mp > 0 else { return }
       packet_processor.send_message({ hp: heal_hp, mp: heal_mp })
     },

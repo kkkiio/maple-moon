@@ -311,7 +311,7 @@ struct SkillNxResource {
 ///|
 pub impl @json.FromJson for SkillNxResource with from_json(json, path) {
   let hit = match json {
-    { "hit": hit, .. } => @resource.MapBasedArray::from_json(hit, path)._
+    { "hit": hit, .. } => @resource.MapBasedArray::from_json(hit, path).inner()
     _ => []
   }
   { hit, }

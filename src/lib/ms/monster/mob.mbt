@@ -948,9 +948,9 @@ fn calculate_weapon_damage(
   max : Double,
   def : Double
 ) -> (Double, Double) {
-  let final_min = min * (1.0 - 0.01 * greater_level.to_double()) - def * 0.6
+  let final_min = (min * (1.0 - 0.01 * greater_level.to_double()) - def * 0.6)
     |> @math.maximum(1.0)
-  let final_max = max * (1.0 - 0.01 * greater_level.to_double()) - def * 0.5
+  let final_max = (max * (1.0 - 0.01 * greater_level.to_double()) - def * 0.5)
     |> @math.maximum(1.0)
   (final_min, final_max)
 }
@@ -962,9 +962,9 @@ fn calculate_magic_damage(
   max : Double,
   def : Double
 ) -> (Double, Double) {
-  let final_min = min - (1.0 + 0.01 * greater_level.to_double()) * def * 0.6
+  let final_min = (min - (1.0 + 0.01 * greater_level.to_double()) * def * 0.6)
     |> @math.maximum(1.0)
-  let final_max = max - (1.0 + 0.01 * greater_level.to_double()) * def * 0.5
+  let final_max = (max - (1.0 + 0.01 * greater_level.to_double()) * def * 0.5)
     |> @math.maximum(1.0)
   (final_min, final_max)
 }

@@ -50,6 +50,7 @@ pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
 }
 
 // Base for characters, e.g. the player and other clients on the same map.
+
 ///|
 pub(all) struct CharBase {
   base : MapObjectBase

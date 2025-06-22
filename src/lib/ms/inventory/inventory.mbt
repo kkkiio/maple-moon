@@ -410,7 +410,7 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
   guard TypeId::by_item_id(itemid) is Some(type_) else { return }
   guard self.find_item(type_, itemid) is Some(slot_no) else { return }
   if type_ is TypeId::USE {
-    self.network.send_message(UseItemMessage::new(slot_no._, itemid))
+    self.network.send_message(UseItemMessage::new(slot_no.inner(), itemid))
   }
 }
 

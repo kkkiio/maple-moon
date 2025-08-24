@@ -1,0 +1,22 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/net",
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/ms/inventory",
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "rami3l/js-ffi/js",
+    "KKKIIO/maple-moon-client/lib/io_task"
+  ],
+  "link":{
+    "js":{
+      "exports": [
+        "watch_opening_shop_ffi",
+        "watch_confirm_shop_transaction_ffi",
+        "buy_shop_item_ffi",
+        "sell_inventory_item_ffi",
+        "leave_shop_ffi"
+      ]
+    }
+  }
+}

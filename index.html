@@ -1,23 +1,7 @@
 <html lang="en">
 
 <head>
-  <!-- <link rel="stylesheet" href="css/keys.css" type="text/css" /> -->
   <style>
-    /* @font-face {
-        font-family: "Press Start 2P";
-        src: url(fonts/PressStart2P-Regular.ttf);
-      } */
-
-    /* @font-face {
-        font-family: "Droid Sans";
-        src: url("fonts/DroidSans.eot");
-        src: url("fonts/DroidSans.eot?#iefix") format("embedded-opentype"),
-          url("fonts/DroidSans.woff2") format("woff2"),
-          url("fonts/DroidSans.woff") format("woff"),
-          url("fonts/DroidSans.ttf") format("truetype"),
-          url("fonts/DroidSans.svg#droid_sansregular") format("svg");
-      } */
-
     html {
       width: 100%;
     }
@@ -25,50 +9,17 @@
     body {
       /* background-color: #2c3e50; */
       background-color: white;
-      margin: 0 0;
+      margin: 0;
       padding: 0;
       font-family: "Droid Sans", "sans-serif";
       /* color: #bdc3c7; */
-    }
-
-    div,
-    p {
-      margin: 0;
-      padding: 0;
-    }
-
-    #container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #canvas {
-      padding: 0;
-      margin: 0;
-      display: block;
-      border-style: solid;
-      border-width: 1px;
-      /* font-family: "Press Start 2P"; */
-    }
-
-    #test {
-      position: absolute;
-      visibility: hidden;
-      height: auto;
-      width: auto;
     }
   </style>
 </head>
 
 <body>
-  <div id="container">
-    <canvas id="canvas"></canvas>
-  </div>
-  <div id="test"></div>
+  <div id="app"></div>
+  <script src="/src/index.js" type="module"></script>
 </body>
-<script src="gl.js" type="module"></script>
-<script src="resource.js" type="module"></script>
-<script src="index.js" type="module"></script>
 
 </html>

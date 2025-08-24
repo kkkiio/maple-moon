@@ -1,0 +1,36 @@
+{
+	"import": [
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/data",
+      "alias": "equip_data"
+    },
+    {
+      "path": "KKKIIO/maple-moon-client/lib/ms/equip/slot",
+      "alias": "equip_slot"
+    },
+    "KKKIIO/maple-moon-client/lib/ms/weapon",
+    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/ms/pet",
+    "KKKIIO/maple-moon-client/lib/net",
+    "KKKIIO/maple-moon-client/lib/ms/player",
+    "KKKIIO/maple-moon-client/lib/ms/character",
+    "KKKIIO/maple-moon-client/lib/ms/char_look",
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/ms/maple_stat",
+    "KKKIIO/maple-moon-client/lib/ms/char_stats",
+    "KKKIIO/maple-moon-client/lib/action",
+    "KKKIIO/maple-moon-client/lib/log",
+    "KKKIIO/maple-moon-client/lib/ms/keyboard",
+    "KKKIIO/maple-moon-client/lib/game_mod",
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "rami3l/js-ffi/js"
+  ],
+	"link": {
+		"js": {
+			"exports": ["watch_inventory_by_kind", "watch_meso", "use_item_at", "drop_item"],
+			"format": "esm"
+		}
+	}
+}

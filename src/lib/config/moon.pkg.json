@@ -1,0 +1,6 @@
+{
+  "import": [],
+  "targets": {
+    "local_storage.js.mbt": ["js"]
+  }
+}

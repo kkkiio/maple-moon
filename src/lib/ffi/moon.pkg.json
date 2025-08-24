@@ -1,0 +1,17 @@
+{
+  "import": [
+    "rami3l/js-ffi/js",
+    "KKKIIO/maple-moon-client/lib/ms",
+    "KKKIIO/maple-moon-client/lib/log"
+  ],
+  "targets": {
+    "ffi_load_module.js.mbt": ["js"]
+  },
+  "link": {
+    "js": {
+      "exports": [
+        "get_module"
+      ]
+    }
+  }
+}

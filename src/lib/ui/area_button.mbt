@@ -1,0 +1,62 @@
+///| An invisible button which is only defined by it's area.
+struct AreaButton {
+  model : ButtonModel
+  dimension : @struct.Point[Int]
+}
+
+///|
+pub fn AreaButton::new(
+  pos : @struct.Point[Int],
+  dim : @struct.Point[Int]
+) -> AreaButton {
+  let model = ButtonModel::default()
+  model.set_position(pos)
+  { model, dimension: dim }
+}
+
+///|
+pub impl UIButton for AreaButton with get_button_base(self) -> ButtonModel {
+  self.model
+}
+
+///|
+pub impl UIButton for AreaButton with draw(
+  _ : AreaButton,
+  _ : @struct.Point[Int]
+) -> Unit {
+
+}
+
+///|
+pub impl UIButton for AreaButton with update(_ : AreaButton) -> Unit {
+
+}
+
+///|
+pub fn send_cursor(
+  _ : AreaButton,
+  _b : Bool,
+  _p : @struct.Point[Int]
+) -> CursorState {
+  CursorState::IDLE
+}
+
+///|
+pub impl UIButton for AreaButton with bounds(self : AreaButton) -> @struct.Rectangle[
+  Int,
+] {
+  let pos = self.model.position
+  @struct.Rectangle::new(pos, pos + self.dimension)
+}
+
+///|
+pub impl UIButton for AreaButton with width(self : AreaButton) -> Int {
+  self.dimension.x
+}
+
+///|
+pub impl UIButton for AreaButton with origin(_ : AreaButton) -> @struct.Point[
+  Int,
+] {
+  @struct.Point::new(0, 0)
+}

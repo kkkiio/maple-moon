@@ -1,0 +1,6 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/graphics"
+  ]
+}

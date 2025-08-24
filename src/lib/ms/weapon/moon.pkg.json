@@ -1,0 +1,6 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/ms/item",
+    "KKKIIO/maple-moon-client/lib/ms/equip/data"
+  ]
+}

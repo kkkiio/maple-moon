@@ -1,0 +1,17 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/struct",
+    "rami3l/js-ffi/js"
+  ],
+  "link": {
+    "wasm-gc": {
+      "use-js-builtin-string": true
+    }
+  },
+  "targets": {
+    "load.mbt": ["js","wasm-gc","wasm"],
+    "load.wasm.mbt": ["wasm-gc"],
+    "load.js.mbt": ["js"],
+    "image.mbt": ["js","wasm-gc","wasm"]
+  }
+}

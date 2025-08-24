@@ -1,0 +1,16 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/quadtree",
+    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/config",
+    "KKKIIO/maple-moon-client/lib/lru_cache",
+    "KKKIIO/maple-moon-client/lib/log"
+  ],
+  "targets": {
+    "gl.mbt": ["js","wasm","wasm-gc"],
+    "gl.js.mbt": ["js"],
+    "text.js.mbt": ["js"]
+  }
+}

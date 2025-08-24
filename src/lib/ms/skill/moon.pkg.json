@@ -1,0 +1,10 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/resource",
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/ms/weapon",
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/ms/string_format"
+  ],
+  "test-import": ["moonbitlang/x/fs"]
+}

@@ -1,0 +1,7 @@
+{
+  "import": [
+    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon-client/lib/graphics",
+    "KKKIIO/maple-moon-client/lib/ms/physics"
+  ]
+}

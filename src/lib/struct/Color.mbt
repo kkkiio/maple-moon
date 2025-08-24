@@ -78,7 +78,7 @@ pub fn css_name(self : ColorName) -> String {
     YELLOW => "yellow"
     BLUE => "blue"
     RED => "red"
-    _ => ...
+    ...
   }
 }
 
@@ -293,7 +293,7 @@ pub fn Color::new_rgba(
   red : Double,
   green : Double,
   blue : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Color {
   (red, green, blue, alpha)
 }
@@ -369,7 +369,7 @@ pub impl Div for Color with op_div(self, o) {
 }
 
 ///|
-type IntColor Int derive(Show, Eq, Hash)
+struct IntColor(Int) derive(Show, Eq, Hash)
 
 ///|
 pub fn IntColor::from_color(color : Color) -> IntColor {

@@ -40,9 +40,9 @@ pub(all) struct Stats {
 ///|
 pub async fn SkillData::load(
   string_loader : @resource.SyncLoader,
-  id : Int
+  id : Int,
 ) -> SkillData raise {
-  let strid = @string_format.extend_id(id, 7)
+  let strid = @string_format.stoi_left_pad0(id, 7)
   let jobid = strid.substring(end=3)
   let src = skill_loader().load_res_async([jobid + ".img", "skill", strid])
   let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
@@ -189,9 +189,9 @@ pub fn SkillData::new(
   id : Int,
   skill_src : @resource.NxNode,
   skill_res : SkillResource,
-  text_src : SkillTextResource
+  text_src : SkillTextResource,
 ) -> SkillData {
-  let strid = @string_format.extend_id(id, 7)
+  let strid = @string_format.stoi_left_pad0(id, 7)
   let jobid = strid.substring(end=3)
 
   // Load icons
@@ -323,7 +323,7 @@ pub fn skill_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-priv type LevelStats Map[Int, Stats]
+priv struct LevelStats(Map[Int, Stats])
 
 ///|
 impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats raise @json.JsonDecodeError {
@@ -440,7 +440,7 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
 }
 
 ///|
-type WeaponType @weapon.Type
+struct WeaponType(@weapon.Type)
 
 ///|
 pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType raise @json.JsonDecodeError {

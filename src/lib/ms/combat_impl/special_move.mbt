@@ -46,7 +46,7 @@ pub fn is_skill(self : SpecialMove) -> Bool {
 ///|
 pub fn apply_useeffects(
   self : SpecialMove,
-  char : @character.Character
+  char : @character.Character,
 ) -> Unit {
   (self.apply_useeffects)(char)
 }
@@ -55,7 +55,7 @@ pub fn apply_useeffects(
 pub fn apply_actions(
   self : SpecialMove,
   char : @character.Character,
-  attack_type : @combat.AttackType
+  attack_type : @combat.AttackType,
 ) -> Unit {
   (self.apply_actions)(char, attack_type)
 }
@@ -66,7 +66,7 @@ pub fn make_attack(
   char : @character.CharBase,
   inventory : &@player.Inventory,
   attack_type : @combat.AttackType,
-  degenerate : Bool
+  degenerate : Bool,
 ) -> @combat.Attack {
   (self.make_attack)(char, inventory, attack_type, degenerate)
 }
@@ -75,7 +75,7 @@ pub fn make_attack(
 pub fn get_bullet(
   self : SpecialMove,
   char : @character.Character,
-  value : Int
+  value : Int,
 ) -> @graphics.Animation {
   (self.get_bullet)(char, value)
 }
@@ -88,7 +88,7 @@ pub fn can_use(
   job : @job.Job,
   hp : Int,
   mp : Int,
-  bullet : Int
+  bullet : Int,
 ) -> ForbidReason {
   (self.can_use)(value, weapon_type, job, hp, mp, bullet)
 }
@@ -97,7 +97,7 @@ pub fn can_use(
 pub fn apply_hit_effects(
   self : SpecialMove,
   attack_user : @combat.AttackUser,
-  mob : @monster.Mob
+  mob : @monster.Mob,
 ) -> Unit {
   (self.apply_hit_effects)(attack_user, mob)
 }

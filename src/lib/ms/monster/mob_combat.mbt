@@ -17,7 +17,7 @@ pub fn MobCombat::new(
   mobs : MapMobs,
   add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> MobCombat {
   { mobs, add_task_fn, network, io_service }
 }
@@ -28,7 +28,7 @@ pub fn use_move(
   oid : Int,
   move_id : Int,
   skill_id : Int,
-  level : Int
+  level : Int,
 ) -> Unit raise {
   let at = move_id - 24
   let action_id = if at % 2 == 0 { at / 2 } else { (at + 1) / 2 }
@@ -66,7 +66,7 @@ pub fn use_move(
 pub fn apply_move_skill(
   mov : MobSkill,
   mob : Mob,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   mob.update_movement_ex(1, 1, 47, mov.get_id(), mov.get_level(), 0, network)
   if mov.is_buff() {
@@ -81,7 +81,7 @@ pub fn apply_move_skill(
 pub fn apply_move_attack(
   mov : MobSpecialAttack,
   mob : Mob,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   mob.update_movement_ex(1, 1, 2 * (mov.get_id() + 24), 0, 0, 0, network)
   mob.use_attack(mov)

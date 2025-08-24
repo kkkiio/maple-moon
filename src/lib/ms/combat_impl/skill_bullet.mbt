@@ -15,7 +15,7 @@ priv struct SkillRegularBullet {
 
 ///|
 fn SkillRegularBullet::new(
-  bullet_module : @bullet.Module
+  bullet_module : @bullet.Module,
 ) -> SkillRegularBullet {
   { bullet_module, }
 }
@@ -24,7 +24,7 @@ fn SkillRegularBullet::new(
 fn SkillRegularBullet::get(
   self : SkillRegularBullet,
   _ : @character.Character,
-  bulletid : Int
+  bulletid : Int,
 ) -> @graphics.Animation {
   let data = self.bullet_module.get_bullet_data(bulletid).unwrap()
   data.bullet
@@ -44,7 +44,7 @@ fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet raise {
 fn SingleBullet::get(
   self : SingleBullet,
   _ : @character.Character,
-  _ : Int
+  _ : Int,
 ) -> @graphics.Animation {
   self.ball.animation
 }
@@ -58,7 +58,7 @@ priv struct BySkillLevelBullet {
 ///|
 fn BySkillLevelBullet::new(
   src : @resource.NxNode,
-  id : Int
+  id : Int,
 ) -> BySkillLevelBullet raise {
   let bullets = Map::new()
   for sub in src["level"] {
@@ -72,7 +72,7 @@ fn BySkillLevelBullet::new(
 fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
-  _ : Int
+  _ : Int,
 ) -> @graphics.Animation {
   let level = (user.get_skilllevel)(self.skill_id)
   match self.bullets.get(level) {

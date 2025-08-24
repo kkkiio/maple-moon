@@ -20,7 +20,7 @@ struct ChangeKeymapMessage {
 
 ///|
 pub fn ChangeKeymapMessage::new(
-  updated_actions : Array[(MsKey, Mapping?)]
+  updated_actions : Array[(MsKey, Mapping?)],
 ) -> ChangeKeymapMessage {
   { updated_actions, }
 }

@@ -61,7 +61,7 @@ pub struct RemoveLoot {
 ///|
 pub fn parse_remove_loot(
   get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> RemoveLoot raise {
   let mode = recv.read_byte()
   let oid = recv.read_int()
@@ -83,7 +83,7 @@ pub fn parse_remove_loot(
 ///|
 pub fn handle_remove_loot_parsed(
   map_drops : MapDrops,
-  remove : RemoveLoot
+  remove : RemoveLoot,
 ) -> Unit {
   map_drops.remove(remove.oid, remove.mode, remove.looter)
 }

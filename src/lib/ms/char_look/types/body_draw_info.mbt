@@ -99,7 +99,7 @@ struct BodyDrawInfo {
 ///|
 pub fn BodyDrawInfo::new(
   bodynode : Json,
-  headnode : Json
+  headnode : Json,
 ) -> BodyDrawInfo raise {
   let body_positions = FixedArray::makei(StanceId::count(), fn(_i) {
     Map::new()
@@ -268,13 +268,13 @@ priv struct StanceFramePartConfig {
 }
 
 ///|
-priv type ShiftMap Map[String, @struct.Point[Int]] derive(FromJson, ToJson)
+priv struct ShiftMap(Map[String, @struct.Point[Int]]) derive(FromJson)
 
 ///|
 pub fn get_body_position(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.body_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -283,7 +283,7 @@ pub fn get_body_position(
 pub fn get_arm_position(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.arm_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -292,7 +292,7 @@ pub fn get_arm_position(
 pub fn get_hand_position(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.hand_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -301,7 +301,7 @@ pub fn get_hand_position(
 pub fn get_head_position(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.head_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -310,7 +310,7 @@ pub fn get_head_position(
 pub fn get_hair_pos(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.hair_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -319,7 +319,7 @@ pub fn get_hair_pos(
 pub fn get_face_pos(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Point[Int] {
   self.face_positions[stance.int_value()].get(frame).or(Point::default())
 }
@@ -337,7 +337,7 @@ pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
 pub fn BodyDrawInfo::get_delay(
   self : BodyDrawInfo,
   stance : StanceId,
-  frame : Int
+  frame : Int,
 ) -> Int {
   self.stance_delays[stance.int_value()].get(frame).or(100)
 }
@@ -351,7 +351,7 @@ pub fn get_attack_delay(self : BodyDrawInfo, action : String, no : Int) -> Int {
 pub fn next_action_frame(
   self : BodyDrawInfo,
   action : String,
-  frame : Int
+  frame : Int,
 ) -> Int {
   match self.body_actions.get(action).bind(fn(it) { it.get(frame + 1) }) {
     Some(_) => frame + 1
@@ -363,7 +363,7 @@ pub fn next_action_frame(
 pub fn get_action(
   self : BodyDrawInfo,
   action : String,
-  frame : Int
+  frame : Int,
 ) -> BodyAction? {
   self.body_actions.get(action).bind(fn(it) { it.get(frame) })
 }

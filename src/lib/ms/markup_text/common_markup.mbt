@@ -53,7 +53,7 @@ struct RefRender {
 ///|
 pub fn RefRender::new(
   string_loader : @resource.SyncLoader,
-  get_player_name : () -> String
+  get_player_name : () -> String,
 ) -> RefRender {
   { string_loader, get_player_name }
 }
@@ -73,7 +73,7 @@ pub fn RefRender::get_mob_name(self : RefRender, mid : @string.View) -> String {
 ///|
 pub fn RefRender::get_map_name(
   self : RefRender,
-  v : @string.View
+  v : @string.View,
 ) -> String raise {
   let mapid = @strconv.parse_int(v.to_string())
   let map_category = @map.get_map_category(mapid)
@@ -88,7 +88,7 @@ pub fn RefRender::get_map_name(
 ///|
 pub fn RefRender::get_item_name(
   self : RefRender,
-  v : @string.View
+  v : @string.View,
 ) -> String raise {
   let item_id_str = v.to_string()
   let item_id = @strconv.parse_int(item_id_str)

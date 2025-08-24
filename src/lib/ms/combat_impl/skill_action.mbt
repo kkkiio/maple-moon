@@ -15,7 +15,7 @@ fn NoAction::new() -> NoAction {
 pub impl SkillAction for NoAction with apply(
   self : NoAction,
   target : @character.Character,
-  atype : @combat.AttackType
+  atype : @combat.AttackType,
 ) -> Unit {
   // Do nothing
 }
@@ -34,7 +34,7 @@ fn SingleAction::new(src : @resource.NxNode) -> SingleAction {
 pub impl SkillAction for SingleAction with apply(
   self : SingleAction,
   target : @character.Character,
-  atype : @combat.AttackType
+  atype : @combat.AttackType,
 ) -> Unit {
   target.attack_by_action(self.action)
 }
@@ -82,7 +82,7 @@ fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction raise {
 pub impl SkillAction for ByLevelAction with apply(
   self : ByLevelAction,
   target : @character.Character,
-  atype : @combat.AttackType
+  atype : @combat.AttackType,
 ) -> Unit {
   let level = (target.get_skilllevel)(self.skill_id)
   match self.actions.get(level) {

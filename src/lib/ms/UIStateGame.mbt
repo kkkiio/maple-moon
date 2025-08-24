@@ -31,7 +31,7 @@ pub fn UIStateGame::new(
   ui : UI,
   stage : Stage,
   registry : @action.Registry,
-  timer : @utils.Timer
+  timer : @utils.Timer,
 ) -> UIStateGame {
   {
     ui,
@@ -67,7 +67,7 @@ pub fn UIStateGame::new(
 pub impl @ui.UIState for UIStateGame with draw(
   self : UIStateGame,
   _inter : Double,
-  _cursor : @struct.Point[Int]
+  _cursor : @struct.Point[Int],
 ) -> Unit {
   self.element_order.each(fn(t) {
     match self.elements.get(t) {
@@ -114,7 +114,7 @@ pub impl @ui.UIState for UIStateGame with send_key(
   self : UIStateGame,
   mapping : @keyboard.Mapping?,
   pressed : Bool,
-  _escape : Bool
+  _escape : Bool,
 ) -> Unit {
   guard mapping is Some(mapping) else { return }
   match mapping {
@@ -141,7 +141,7 @@ pub impl @ui.UIState for UIStateGame with send_key(
 pub impl @ui.UIState for UIStateGame with send_cursor(
   self : UIStateGame,
   cursorstate : @ui.CursorState,
-  cursorpos : @struct.Point[Int]
+  cursorpos : @struct.Point[Int],
 ) -> @ui.CursorState {
   let clicked = cursorstate == @ui.CursorState::CLICKING ||
     cursorstate == @ui.CursorState::VSCROLL_IDLE
@@ -215,7 +215,7 @@ pub impl @ui.UIState for UIStateGame with send_cursor(
 pub impl @ui.UIState for UIStateGame with set_element(
   self : UIStateGame,
   is_focused : Bool,
-  elem : @ui.Element
+  elem : @ui.Element,
 ) -> Unit {
   let t = elem.key
   self.remove(t)
@@ -231,7 +231,7 @@ pub fn toggle_element(
   self : UIStateGame,
   t : UIElementType,
   is_focused : Bool,
-  f : () -> @ui.Element
+  f : () -> @ui.Element,
 ) -> Unit {
   match self.elements.get(t) {
     Some(element) => {
@@ -268,7 +268,7 @@ pub fn toggle_element(
 ///|
 pub impl @ui.UIState for UIStateGame with remove(
   self : UIStateGame,
-  t : UIElementType
+  t : UIElementType,
 ) -> Unit {
   if t == self.focused {
     self.focused = UIElementType::UI_ELEMENT_NONE
@@ -290,7 +290,7 @@ pub impl @ui.UIState for UIStateGame with remove(
 ///|
 pub impl @ui.UIState for UIStateGame with get(
   self : UIStateGame,
-  t : UIElementType
+  t : UIElementType,
 ) -> @ui.Element? {
   self.elements.get(t).map(fn(e) { e })
 }
@@ -298,7 +298,7 @@ pub impl @ui.UIState for UIStateGame with get(
 ///|
 pub impl @ui.UIState for UIStateGame with get_front_by_types(
   self : UIStateGame,
-  types : Array[UIElementType]
+  types : Array[UIElementType],
 ) -> @ui.Element? {
   // let mut i = self.element_order.length() - 1
   (self.element_order.length() - 1)
@@ -317,7 +317,7 @@ pub impl @ui.UIState for UIStateGame with get_front_by_types(
 ///|
 fn UIStateGame::get_front_by_pos(
   self : UIStateGame,
-  pos : @struct.Point[Int]
+  pos : @struct.Point[Int],
 ) -> @ui.Element? {
   (self.element_order.length() - 1)
   .until(step=-1, 0, inclusive=true)
@@ -333,7 +333,7 @@ fn UIStateGame::get_front_by_pos(
 ///|
 pub fn UIStateGame::remove_cursor(
   _self : UIStateGame,
-  _t : UIElementType
+  _t : UIElementType,
 ) -> Unit {
   // Implementation goes here
 }
@@ -341,7 +341,7 @@ pub fn UIStateGame::remove_cursor(
 ///|
 pub fn UIStateGame::get_front(
   self : UIStateGame,
-  pos : @struct.Point[Int]
+  pos : @struct.Point[Int],
 ) -> @ui.Element? {
   self.element_order
   .iter()
@@ -354,7 +354,7 @@ pub fn UIStateGame::get_front(
 ///|
 pub impl @ui.UIState for UIStateGame with doubleclick(
   self : UIStateGame,
-  pos : @struct.Point[Int]
+  pos : @struct.Point[Int],
 ) -> Unit {
   match self.get_front_by_pos(pos) {
     Some(e) => e.doubleclick(pos) |> ignore()

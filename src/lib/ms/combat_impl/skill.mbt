@@ -18,7 +18,7 @@ struct Skill {
 pub async fn Skill::load(
   skill_id : Int,
   bullet_module : @bullet.Module,
-  string_loader~ : @resource.SyncLoader
+  string_loader~ : @resource.SyncLoader,
 ) -> Skill raise {
   let data = @skill.SkillData::load(string_loader, skill_id)
   Skill::new(
@@ -44,7 +44,7 @@ pub fn Skill::new(
   stats : Map[Int, @skill.Stats],
   req_weapon : @weapon.Type,
   use_effect : (@character.Character) -> Unit,
-  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
+  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit,
 ) -> Skill raise {
   let mut projectile = true
   let mut over_regular = false
@@ -123,7 +123,7 @@ pub fn Skill::is_attack(self : Skill) -> Bool {
 ///|
 pub fn Skill::apply_useeffects(
   self : Skill,
-  user : @character.Character
+  user : @character.Character,
 ) -> Unit {
   (self.use_effect)(user)
 }
@@ -132,7 +132,7 @@ pub fn Skill::apply_useeffects(
 pub fn Skill::apply_actions(
   self : Skill,
   user : @character.Character,
-  attack_type : @combat.AttackType
+  attack_type : @combat.AttackType,
 ) -> Unit {
   self.action.apply(user, attack_type)
 }
@@ -142,7 +142,7 @@ pub fn Skill::make_attack(
   self : Skill,
   chr : @character.CharBase,
   bullet_id : Int,
-  attack_type : @combat.AttackType
+  attack_type : @combat.AttackType,
 ) -> @combat.Attack {
   // let mut mindamage = char_stats.get_mindamage().to_double()
   // let mut maxdamage = char_stats.get_maxdamage().to_double()
@@ -227,7 +227,7 @@ pub fn Skill::can_use(
   job : @job.Job,
   hp : Int,
   mp : Int,
-  bullets : Int
+  bullets : Int,
 ) -> ForbidReason {
   if level <= 0 || level > self.master_level {
     return FBR_OTHER
@@ -260,7 +260,7 @@ pub fn Skill::can_use(
 pub fn Skill::get_bullet(
   self : Skill,
   user : @character.Character,
-  bulletid : Int
+  bulletid : Int,
 ) -> @graphics.Animation {
   (self.bullet)(user, bulletid)
 }
@@ -269,7 +269,7 @@ pub fn Skill::get_bullet(
 pub fn Skill::apply_hit_effects(
   self : Skill,
   user : @combat.AttackUser,
-  target : @monster.Mob
+  target : @monster.Mob,
 ) -> Unit {
   (self.hit_effect)(user, target)
 }
@@ -277,7 +277,7 @@ pub fn Skill::apply_hit_effects(
 ///|
 pub fn make_use_effect(
   src : @resource.NxNode,
-  skill_id : Int
+  skill_id : Int,
 ) -> ((@character.Character) -> Unit) raise Error {
   let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
     0
@@ -319,7 +319,7 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) {
 
 ///|
 pub fn make_hit_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
   let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
   let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0

@@ -13,7 +13,7 @@ pub fn TwoSpriteButton::new(
   np~ : Point[Int] = @struct.Point::default(),
   sp~ : Point[Int] = np,
   active~ : Bool = true,
-  state~ : ButtonState = ButtonState::NORMAL
+  state~ : ButtonState = ButtonState::NORMAL,
 ) -> TwoSpriteButton {
   let textures = @utils.BoolPair::new(disabled, enabled)
   let base = ButtonModel::default()
@@ -24,7 +24,7 @@ pub fn TwoSpriteButton::new(
 ///|
 pub impl UIButton for TwoSpriteButton with draw(
   self : TwoSpriteButton,
-  parentpos : Point[Int]
+  parentpos : Point[Int],
 ) -> Unit {
   if self.base.is_active() {
     let selected = self.base.get_state() == ButtonState::MOUSEOVER ||
@@ -67,7 +67,7 @@ pub impl UIButton for TwoSpriteButton with origin(self : TwoSpriteButton) -> Poi
 
 ///|
 pub impl UIButton for TwoSpriteButton with get_button_base(
-  self : TwoSpriteButton
+  self : TwoSpriteButton,
 ) -> ButtonModel {
   self.base
 }

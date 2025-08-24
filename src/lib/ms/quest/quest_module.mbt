@@ -14,7 +14,7 @@ pub async fn Module::load(
   network : @net.Network,
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module raise {
   let quests_resource = quest_resource_loader.load_res_async(["nx"])
   let map_quests_resource = MapQuestsResource::load()
@@ -31,7 +31,7 @@ pub fn Module::new(
   network : @net.Network,
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
     .iter()
@@ -74,11 +74,11 @@ pub fn Module::new(
 
 ///|
 pub fn Module::make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(@net.Opcode::UPDATE_QUEST_INFO, parse_update_quest_info, fn(
-      msg
+      msg,
     ) {
       self.handle_update_quest_info(msg)
     }),
@@ -88,7 +88,7 @@ pub fn Module::make_handlers(
 
 ///|
 pub fn Module::make_show_status_info_handlers(
-  self : Module
+  self : Module,
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
     1: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {
@@ -175,7 +175,7 @@ priv struct InProgressQuest {
 ///|
 fn InProgressQuest::get_phase_progress(
   self : InProgressQuest,
-  phase : Int
+  phase : Int,
 ) -> String {
   self.checks
   .get(phase)
@@ -194,7 +194,7 @@ priv struct CompletedQuest {
 ///|
 fn PlayerQuestLog::get_quest(
   self : PlayerQuestLog,
-  quest_id : Int
+  quest_id : Int,
 ) -> StartedQuest? {
   if self.in_progress.get(quest_id) is Some(in_progress_quest) {
     Some(InProgress(in_progress_quest))
@@ -219,7 +219,7 @@ struct PlayerQuestLogInfo {
 
 ///|
 pub fn parse_player_quest_info(
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> PlayerQuestLogInfo raise {
   let started_size = recv.read_short()
   let started = []
@@ -258,7 +258,7 @@ priv enum QuestFailureOperation {
 
 ///|
 fn parse_update_quest_info(
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> UpdateQuestInfoMessage raise {
   let operation = recv.read_byte()
   match operation {
@@ -311,7 +311,7 @@ fn parse_update_quest_info(
 ///|
 pub fn Module::handle_player_quest_info(
   self : Module,
-  player_quests : PlayerQuestLogInfo
+  player_quests : PlayerQuestLogInfo,
 ) -> Unit {
   self.player_quest_log.val = PlayerQuestLog::from_packet(
     self.quests_resource,
@@ -325,7 +325,7 @@ pub fn Module::handle_player_quest_info(
 ///|
 fn PlayerQuestLog::from_packet(
   quests_resource : QuestResource,
-  player_quests : PlayerQuestLogInfo
+  player_quests : PlayerQuestLogInfo,
 ) -> PlayerQuestLog {
   let quest_log = { in_progress: {}, completed: {} }
   let mut last_in_progress_quest : InProgressQuest? = None
@@ -377,7 +377,7 @@ fn PlayerQuestLog::add_in_progress_quest(
   self : PlayerQuestLog,
   quests_resource : QuestResource,
   quest_id : Int,
-  progress_data : String
+  progress_data : String,
 ) -> InProgressQuest {
   let id = quest_id
   let quest_info = quests_resource.quest_info_map.get(quest_id)
@@ -422,7 +422,7 @@ priv struct ShowForfeitQuestAction {
 ///|
 fn ShowForfeitQuestAction::new(
   quest_id : Int,
-  mod : Module
+  mod : Module,
 ) -> ShowForfeitQuestAction {
   { quest_id, mod }
 }
@@ -455,7 +455,7 @@ priv struct ShowCompleteQuestAction {
 ///|
 fn ShowCompleteQuestAction::new(
   message : ShowCompleteQuestMessage,
-  mod : Module
+  mod : Module,
 ) -> ShowCompleteQuestAction {
   { message, mod }
 }
@@ -512,7 +512,7 @@ priv struct ShowUpdateQuestAction {
 ///|
 fn ShowUpdateQuestAction::new(
   message : ShowUpdateQuestMessage,
-  mod : Module
+  mod : Module,
 ) -> ShowUpdateQuestAction {
   { message, mod }
 }
@@ -557,7 +557,7 @@ impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Uni
 ///| list all quests that can be started by npc
 fn list_quests_by_npc(
   npc_quests_map : Map[Int, Array[Int]],
-  npc_id : Int
+  npc_id : Int,
 ) -> Array[Int] {
   npc_quests_map.get(npc_id).map_or([], fn(quest_ids) { quest_ids })
 }
@@ -570,7 +570,7 @@ fn filter_acceptable_quests(
   quests_resource : QuestResource,
   item_count_provider : (Int) -> Int,
   char_stats_provider : () -> @char_stats.CharStats,
-  quest_log : PlayerQuestLog
+  quest_log : PlayerQuestLog,
 ) -> Iter[(Int, QuestInfo)] {
   quest_ids.filter_map(fn(quest_id) {
     guard quests_resource.quest_checks_map.get(quest_id)
@@ -614,7 +614,7 @@ fn check_quest_requirements(
   char_stats_provider : () -> @char_stats.CharStats,
   quest_log : PlayerQuestLog,
   quest_id : Int,
-  phase : Int
+  phase : Int,
 ) -> Result[Unit, String] {
   if check.unknown_checks.length() > 0 {
     return Err("Unknown checks: \{check.unknown_checks}")
@@ -679,11 +679,11 @@ impl @game_mod.SubRouteAction for ShowExpGainAction with handle(_) -> Unit {
 ///|
 fn handle_update_quest_info(
   self : Module,
-  msg : UpdateQuestInfoMessage
+  msg : UpdateQuestInfoMessage,
 ) -> Unit {
   match msg {
     QuestUpdate(quest_id, _) => self.map_quests.update_quest(quest_id)
     QuestFinish(quest_id, _, 0) => self.map_quests.update_quest(quest_id)
-    _ => ...
+    ...
   }
 }

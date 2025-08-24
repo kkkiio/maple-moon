@@ -277,7 +277,7 @@ pub fn Buff::make(
   stat : StatId,
   value : Int,
   skillid : Int,
-  duration : Int
+  duration : Int,
 ) -> Buff {
   { stat, value, skillid, duration }
 }

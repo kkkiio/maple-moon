@@ -21,7 +21,7 @@ struct StatusBarUI {
 pub fn StatusBarUI::new(
   stats : CharStats,
   hooks : @ui.Hooks,
-  status_bar_loader : @resource.SyncLoader
+  status_bar_loader : @resource.SyncLoader,
 ) -> StatusBarUI {
   let vwidth = @config.constants.get_viewwidth()
   let mainBar = status_bar_loader.load_res(["mainBar"])

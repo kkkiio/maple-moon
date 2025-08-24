@@ -37,7 +37,7 @@ pub fn[K, V] Tree::new() -> Tree[K, V] {
 pub fn[K : Hash + Eq, V : QuadCompare] add(
   self : Tree[K, V],
   key : K,
-  value : V
+  value : V,
 ) -> Bool {
   if self.nodes.contains(key) {
     return false
@@ -59,7 +59,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] add(
 ///|
 pub fn[K : Hash + Eq, V : QuadCompare] ceiling_key(
   self : Tree[K, V],
-  value : V
+  value : V,
 ) -> K? {
   self.ceiling_entry(value).map(fn(n) { n.key })
 }
@@ -67,7 +67,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] ceiling_key(
 ///|
 pub fn[K : Hash + Eq, V : QuadCompare] ceiling_entry(
   self : Tree[K, V],
-  value : V
+  value : V,
 ) -> Node[K, V]? {
   self.find_ceiling_from(self.root, value)
 }
@@ -76,7 +76,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] ceiling_entry(
 fn[K : Hash + Eq, V : QuadCompare] find_ceiling_from(
   self : Tree[K, V],
   start : Node[K, V]?,
-  value : V
+  value : V,
 ) -> Node[K, V]? {
   let start_node = match start {
     Some(n) => n
@@ -128,7 +128,7 @@ fn[K : Hash + Eq, V : QuadCompare] find_ceiling_from(
 ///|
 pub fn[K : Hash + Eq, V : QuadCompare] Tree::remove(
   self : Tree[K, V],
-  key : K
+  key : K,
 ) -> V? {
   let node = match self.nodes.get(key) {
     Some(n) => n
@@ -165,7 +165,7 @@ pub fn[K, V] clear(self : Tree[K, V]) -> Unit {
 fn[K : Hash + Eq, V : QuadCompare] set_link(
   self : Tree[K, V],
   start : Node[K, V]?,
-  node : Node[K, V]
+  node : Node[K, V],
 ) -> Unit {
   if self.root.is_empty() {
     self.root = Some(node)
@@ -181,7 +181,7 @@ fn[K : Hash + Eq, V : QuadCompare] set_link(
 ///|
 fn[K : Hash + Eq, V : QuadCompare] add_or_next(
   self : Node[K, V],
-  child : Node[K, V]
+  child : Node[K, V],
 ) -> Node[K, V]? {
   let cmp = child.value.compare_to(self.value)
   match cmp {
@@ -223,7 +223,7 @@ fn[K : Hash + Eq, V : QuadCompare] add_or_next(
 ///|
 fn[K : Hash + Eq, V : QuadCompare] remove_child(
   self : Node[K, V],
-  key : K
+  key : K,
 ) -> Unit {
   match self.bl {
     Some(k) =>

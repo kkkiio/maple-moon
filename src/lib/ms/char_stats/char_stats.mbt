@@ -43,7 +43,7 @@ pub fn CharStats::new(
   job : @job.Job,
   stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]],
   i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]],
-  total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
+  total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]],
 ) -> CharStats {
   let cs : CharStats = {
     name: s.name,
@@ -80,30 +80,24 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.total_stats.inner().clear()
   self.buff_deltas.inner().clear()
   self.percentages.clear()
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::HP,
-    self.get_stat(@maple_stat.Id::MAXHP),
-  )
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::MP,
-    self.get_stat(@maple_stat.Id::MAXMP),
-  )
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::STR,
-    self.get_stat(@maple_stat.Id::STR),
-  )
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::DEX,
-    self.get_stat(@maple_stat.Id::DEX),
-  )
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::INT,
-    self.get_stat(@maple_stat.Id::INT),
-  )
-  self.total_stats.inner().set(
-    @maple_stat.EquipStatId::LUK,
-    self.get_stat(@maple_stat.Id::LUK),
-  )
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::HP, self.get_stat(@maple_stat.Id::MAXHP))
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::MP, self.get_stat(@maple_stat.Id::MAXMP))
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::STR, self.get_stat(@maple_stat.Id::STR))
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::DEX, self.get_stat(@maple_stat.Id::DEX))
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::INT, self.get_stat(@maple_stat.Id::INT))
+  self.total_stats
+  .inner()
+  .set(@maple_stat.EquipStatId::LUK, self.get_stat(@maple_stat.Id::LUK))
   self.total_stats.inner().set(@maple_stat.EquipStatId::SPEED, 100)
   self.total_stats.inner().set(@maple_stat.EquipStatId::JUMP, 100)
   self.max_damage = 0
@@ -158,7 +152,7 @@ pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
 pub fn set_i64stat(
   self : CharStats,
   stat : @maple_stat.Id,
-  value : Int64
+  value : Int64,
 ) -> Unit {
   let old_value = self.get_i64stat(stat)
   self.base_i64stats.set(stat, value)
@@ -195,7 +189,7 @@ pub fn set_map_id(self : CharStats, id : Int) -> Unit {
 pub fn add_value(
   self : CharStats,
   stat : @maple_stat.EquipStatId,
-  value : Int
+  value : Int,
 ) -> Unit {
   let current = self.get_total(stat)
   self.set_total(stat, current + value)
@@ -205,7 +199,7 @@ pub fn add_value(
 pub fn set_total(
   self : CharStats,
   stat : @maple_stat.EquipStatId,
-  value : Int
+  value : Int,
 ) -> Unit {
   let old_value = self.get_total(stat)
   let new_value = match eqstat_caps.get(stat) {
@@ -399,7 +393,7 @@ pub fn watch_stat_changes(
   self : CharStats,
   stat_id : MapleStatId,
   trigger_now~ : Bool = false,
-  listener : (Int, Int) -> IterResult
+  listener : (Int, Int) -> IterResult,
 ) -> Unit {
   if trigger_now {
     let v = self.get_stat(stat_id)
@@ -416,7 +410,7 @@ pub fn watch_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
   trigger_now~ : Bool = false,
-  listener : (Int64, Int64) -> IterResult
+  listener : (Int64, Int64) -> IterResult,
 ) -> Unit {
   if trigger_now {
     let v = self.get_i64stat(stat_id)

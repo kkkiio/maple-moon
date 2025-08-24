@@ -17,7 +17,7 @@ pub fn available(self : InPacket) -> Int {
 ///|
 pub fn check_available(
   self : InPacket,
-  size : Int
+  size : Int,
 ) -> Unit raise ReadPacketError {
   if self.pos + size > self.bytes.length() {
     raise ReadPacketError("Out of range")
@@ -111,7 +111,7 @@ pub fn read_string(self : InPacket) -> String raise ReadPacketError {
 ///|
 pub fn read_padded_string(
   self : InPacket,
-  size : Int
+  size : Int,
 ) -> String raise ReadPacketError {
   self.check_available(size)
   let res = byte_iter_to_string(

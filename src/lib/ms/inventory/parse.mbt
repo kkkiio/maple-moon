@@ -38,7 +38,7 @@ enum InventoryItemEntry {
 pub fn parse_item(
   recv : @net.InPacket,
   invtype : TypeId,
-  slot : Int
+  slot : Int,
 ) -> InventoryItemEntry raise {
   // Read type and item id
   recv.read_byte() |> ignore // 'type' byte
@@ -89,7 +89,7 @@ fn parse_add_equip(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int
+  id : Int,
 ) -> InventoryItemEntry raise {
   // Read equip information
   let cash = recv.read_bool()
@@ -152,7 +152,7 @@ fn parse_add_item(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int
+  id : Int,
 ) -> InventoryItemEntry raise {
   // Read all item stats
   let cash = recv.read_bool()
@@ -176,7 +176,7 @@ fn parse_add_pet(
   recv : @net.InPacket,
   invtype : TypeId,
   slot : Int,
-  id : Int
+  id : Int,
 ) -> InventoryItemEntry raise {
   // Read all pet stats
   let cash = recv.read_bool()

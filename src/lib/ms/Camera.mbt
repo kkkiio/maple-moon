@@ -61,7 +61,7 @@ pub fn Camera::update(self : Camera, position : @struct.Point[Int]) -> Unit {
 ///|
 pub fn Camera::set_position(
   self : Camera,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> Unit {
   self.x.set((self.vwidth / 2 - position.x).to_double())
   self.y.set((self.vheight / 2 - position.y + y_offset).to_double())
@@ -71,7 +71,7 @@ pub fn Camera::set_position(
 pub fn set_view(
   self : Camera,
   hborders : @struct.Range[Int],
-  vborders : @struct.Range[Int]
+  vborders : @struct.Range[Int],
 ) -> Unit {
   self.hbounds = -hborders
   self.vbounds = -vborders
@@ -80,7 +80,7 @@ pub fn set_view(
 ///|
 pub fn Camera::get_position(
   self : Camera,
-  alpha? : Double
+  alpha? : Double,
 ) -> @struct.Point[Int] {
   let interx = self.x.get(alpha?).round().to_int()
   let intery = self.y.get(alpha?).round().to_int()
@@ -90,7 +90,7 @@ pub fn Camera::get_position(
 ///|
 pub fn Camera::real_position(
   self : Camera,
-  alpha : Double
+  alpha : Double,
 ) -> @struct.Point[Double] {
   @struct.Point::new(self.x.get(alpha~), self.y.get(alpha~))
 }

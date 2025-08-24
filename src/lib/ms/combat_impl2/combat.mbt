@@ -28,7 +28,7 @@ pub fn Combat::new(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  bullet_module : @bullet.Module
+  bullet_module : @bullet.Module,
 ) -> Combat {
   let server_listener = fn(event : AttackEvent) -> Bool {
     network.send_message(AttackMessage(event.result))
@@ -68,7 +68,7 @@ pub fn Combat::draw(
   self : Combat,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   for bullet_eff in self.bullets {
     bullet_eff.bullet.draw(viewx, viewy, alpha)
@@ -111,7 +111,7 @@ pub fn Combat::update(self : Combat) -> Unit {
 pub fn Combat::use_move(
   self : Combat,
   player : @player.Player,
-  move_id : Int
+  move_id : Int,
 ) -> Unit {
   if not(player.can_attack()) {
     return
@@ -185,7 +185,7 @@ pub fn Combat::use_move(
 ///|
 pub fn Combat::listen_attack_events(
   self : Combat,
-  listener : (AttackEvent) -> Bool
+  listener : (AttackEvent) -> Bool,
 ) -> Unit {
   self.attack_events_listeners.push(listener)
 }
@@ -200,7 +200,7 @@ pub struct AttackEvent {
 ///|
 pub fn Combat::get_skill_move(
   self : Combat,
-  move_id : Int
+  move_id : Int,
 ) -> @utils.Future[@combat_impl.SpecialMove] {
   if self.skill_cache.get(move_id) is Some(fut) {
     return fut
@@ -218,7 +218,7 @@ fn Combat::apply_move(
   self : Combat,
   player : @player.Player,
   act : @combat_impl.SpecialMove,
-  after_images : Map[String, @char_look.AfterImage]
+  after_images : Map[String, @char_look.AfterImage],
 ) -> Unit {
   if act.is_attack() {
     let (degenerate, attacktype) = check_attack_type(
@@ -272,7 +272,7 @@ pub fn Combat::apply_attack_to_mobs(
   attack : @combat_proto.Attack,
   mob_targets : Array[Int],
   result : AttackResult,
-  user_input : Bool
+  user_input : Bool,
 ) -> Unit {
   self.mobs.send_attack(result, attack, mob_targets, self.network)
   self.extract_effects(character, act, result)
@@ -286,7 +286,7 @@ fn apply_result_movement(
   self : Combat,
   player : @player.Player,
   act : @combat_impl.SpecialMove,
-  result : AttackResult
+  result : AttackResult,
 ) -> Unit {
   if act.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
     act.get_id() == @skill.SkillId::RUSH_PALADIN.int_value() ||
@@ -299,7 +299,7 @@ fn apply_result_movement(
 fn apply_rush(
   self : Combat,
   player : @player.Player,
-  result : AttackResult
+  result : AttackResult,
 ) -> Unit {
   if result.mob_count == 0 {
     return
@@ -314,7 +314,7 @@ fn find_closest_mob(
   objs : @map_object.MapObjects[@monster.Mob],
   range : @struct.Rectangle[Int],
   origin : @struct.Point[Int],
-  objcount : Int
+  objcount : Int,
 ) -> Array[Int] {
   if objcount <= 0 {
     panic()
@@ -390,7 +390,7 @@ impl @net.OutMessage for UseSkillMessage with pack(self) {
 // }
 
 ///| Notifies the server of an attack. 
-type AttackMessage AttackResult derive(Show)
+struct AttackMessage(AttackResult) derive(Show)
 
 ///|
 pub impl @net.OutMessage for AttackMessage with pack(self) {
@@ -438,7 +438,7 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 ///|
 async fn load_sp_move(
   self : Combat,
-  move_id : Int
+  move_id : Int,
 ) -> @combat_impl.SpecialMove raise {
   let it = @combat_impl.Skill::load(
     move_id,
@@ -467,7 +467,7 @@ fn extract_effects(
   self : Combat,
   user : @character.Character,
   act : @combat_impl.SpecialMove,
-  result : AttackResult
+  result : AttackResult,
 ) -> Unit {
   let attack_user : @combat_proto.AttackUser = {
     skill_level: (user.get_skilllevel)(act.get_id()),
@@ -552,7 +552,7 @@ fn extract_effects(
 fn place_numbers(
   self : Combat,
   oid : Int,
-  damage_lines : Array[(Int, Bool)]
+  damage_lines : Array[(Int, Bool)],
 ) -> Array[@ui.Number] {
   let numbers = Array::new()
   let mut head = self.mobs.get_mob_head_position(oid).y
@@ -596,7 +596,7 @@ fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
 pub fn check_attack_type(
   character : @character.CharBase,
   inventory : &@player.Inventory,
-  skill : Bool
+  skill : Bool,
 ) -> (Bool, @combat_proto.AttackType) {
   if character.state == @character.CharState::PRONE {
     (true, @combat_proto.AttackType::CLOSE)
@@ -639,7 +639,7 @@ pub fn can_use(
   skill_book : &@player.SkillBook,
   stats : @char_stats.CharStats,
   inventory : &@player.Inventory,
-  act : @combat_impl.SpecialMove
+  act : @combat_impl.SpecialMove,
 ) -> @combat_impl.ForbidReason {
   if act.is_skill() && character.state == @character.CharState::PRONE {
     return @combat_impl.ForbidReason::FBR_OTHER
@@ -669,9 +669,10 @@ fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn[E : Show] log_background_err(
   f : @utils.Future[Result[Unit, E]],
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> @utils.Future[Unit] {
   f.map(fn(res) {
     match res {
@@ -717,12 +718,12 @@ priv type CacheKey (Int, String, Int) derive(Show, Eq, Hash)
 
 ///|
 async fn load_after_images_by_skill_weapon(
-  key : CacheKey
+  key : CacheKey,
 ) -> Map[String, @char_look.AfterImage] raise {
   let (skill_id, wepon_after_image_name, weapon_level) = key.inner()
   let after_images = Map::new()
   if skill_id > 0 {
-    let strid = @string_format.extend_id(skill_id, 7)
+    let strid = @string_format.stoi_left_pad0(skill_id, 7)
     let skill_srcs = @skill.skill_loader().load_res_async([
       strid.substring(end=3) + ".img",
       "skill",

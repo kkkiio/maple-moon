@@ -11,7 +11,7 @@ pub fn SkillBook::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
   job : @job.Job,
-  watchers : Array[SkillBookWatcher]
+  watchers : Array[SkillBookWatcher],
 ) -> @utils.Future[SkillBook] {
   job
   .get_all_subjobs()
@@ -35,7 +35,7 @@ pub fn SkillBook::load(
 pub fn SkillBook::new(
   available_skills : Map[Int, @skill.SkillData],
   watchers : Array[SkillBookWatcher],
-  randomizer : @utils.Randomizer
+  randomizer : @utils.Randomizer,
 ) -> SkillBook {
   { skill_entries: Map::new(), available_skills, watchers, randomizer }
 }
@@ -49,7 +49,7 @@ priv struct SkillEntry {
 ///|
 pub impl @player.SkillBook for SkillBook with get_level(
   self : SkillBook,
-  id : Int
+  id : Int,
 ) -> Int {
   self.skill_entries.get(id).map_or(0, fn(entry) -> Int { entry.level })
 }
@@ -57,7 +57,7 @@ pub impl @player.SkillBook for SkillBook with get_level(
 ///|
 pub fn collect_required(
   self : SkillBook,
-  id : Int
+  id : Int,
 ) -> @immut/hashmap.T[Int, Int] {
   self.available_skills
   .get(id)
@@ -81,7 +81,7 @@ pub impl @player.SkillBook for SkillBook with set_skill(
   id : Int,
   level : Int,
   master_level : Int,
-  _expiration : Int
+  _expiration : Int,
 ) -> Unit {
   self.skill_entries.set(id, { level, master_level })
   self.watchers.retain(fn(listener) {
@@ -98,7 +98,7 @@ pub fn SkillBook::on_attack_event(
   self : SkillBook,
   event : @combat_impl2.AttackEvent,
   combat : @combat_impl2.Combat,
-  player : @player.Player
+  player : @player.Player,
 ) -> Unit {
   // 追加攻击
   guard event.user_input && event.result.damage_lines.size() > 0 else { return }
@@ -221,11 +221,11 @@ test "parse skill desc" {
     #|[Master Level : 20]\nUse MP to attack an enemy twice.\nRequired Skill : #cAt least Level 1 on Energy Bolt#
   inspect(
     markup_to_html(origin),
-    content=
+    content=(
       #|<span style="color: black">[Master Level : 20]</span><br/>
       #|<span style="color: black">Use MP to attack an enemy twice.</span><br/>
       #|<span style="color: black">Required Skill : </span><div style="display: list-item;">At least Level 1 on Energy Bolt</div>
-    ,
+    ),
   )
 }
 

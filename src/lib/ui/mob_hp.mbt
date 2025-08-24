@@ -13,7 +13,7 @@ pub fn MobHpBar::default() -> MobHpBar {
 pub fn draw(
   self : MobHpBar,
   position : @struct.Point[Int],
-  hppercent : Int
+  hppercent : Int,
 ) -> Unit {
   let width = self.width
   let height = self.height
@@ -50,7 +50,7 @@ pub fn draw_rectangle(
   w : Int,
   h : Int,
   cid : @struct.ColorName,
-  opacity : Double
+  opacity : Double,
 ) -> Unit {
   if w == 0 || h == 0 || opacity <= 0.0 {
     return

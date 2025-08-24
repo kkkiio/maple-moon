@@ -2,7 +2,7 @@
 pub fn handle_mob_moved(
   map_mobs : MapMobs,
   mob_combat : MobCombat,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> Unit raise {
   let oid = recv.read_int()
   recv.read_byte() |> ignore // ?
@@ -20,7 +20,7 @@ pub fn handle_mob_moved(
 ///|
 pub fn handle_mob_move_response(
   mob_combat : MobCombat,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> Unit raise {
   let oid = recv.read_int()
   let moveid = recv.read_short()

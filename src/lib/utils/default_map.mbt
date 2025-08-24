@@ -12,7 +12,7 @@ pub fn[K, V] DefaultMap::new(default_fn : () -> V) -> DefaultMap[K, V] {
 ///|
 pub fn[K : Eq + Hash, V] DefaultMap::op_get(
   self : DefaultMap[K, V],
-  key : K
+  key : K,
 ) -> V {
   self.map.get_or_init(key, self.default_fn)
 }

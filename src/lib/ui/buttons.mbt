@@ -12,7 +12,7 @@ pub fn send_cursor_to_btns(
   buttons : Iter[Button],
   container_pos : @struct.Point[Int],
   down : Bool,
-  pos : @struct.Point[Int]
+  pos : @struct.Point[Int],
 ) -> CursorState {
   send_cursor_to_areas(
     buttons.filter_map(fn(b) { b.get_interactive_area() }),
@@ -27,7 +27,7 @@ pub fn send_cursor_to_areas(
   areas : Iter[InteractiveArea],
   container_pos : @struct.Point[Int],
   down : Bool,
-  pos : @struct.Point[Int]
+  pos : @struct.Point[Int],
 ) -> CursorState {
   let mut ret = if down { CursorState::CLICKING } else { CursorState::IDLE }
   for area in areas {

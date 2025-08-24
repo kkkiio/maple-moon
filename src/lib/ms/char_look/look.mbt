@@ -37,7 +37,7 @@ pub async fn CharLook::load(
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> CharLook raise {
   let equips = entry.equips
     .iter()
@@ -60,7 +60,7 @@ pub fn CharLook::new(
   body : Body,
   hair : Hair,
   face : Face,
-  draw_info : @types.BodyDrawInfo
+  draw_info : @types.BodyDrawInfo,
 ) -> CharLook {
   let equips = @equip.CharEquips::new()
   for slot_id, itemdata in slot_equips {
@@ -100,7 +100,7 @@ fn draw_dead(
   interstance : @types.StanceId,
   interexpression : ExpressionId,
   interframe : Int,
-  interexpframe : Int
+  interexpframe : Int,
 ) -> Unit {
   let body = self.body
   let hair = self.hair
@@ -184,7 +184,7 @@ fn draw_climbing(
   self : CharLook,
   args : @graphics.DrawArgument,
   interstance : @types.StanceId,
-  interframe : Int
+  interframe : Int,
 ) -> Unit {
   let body = self.body
   let hair = self.hair
@@ -312,7 +312,7 @@ fn draw_impl(
   interstance : @types.StanceId,
   interexpression : ExpressionId,
   interframe : Int,
-  interexpframe : Int
+  interexpframe : Int,
 ) -> Unit {
   if interstance == @types.StanceId::DEAD {
     return self.draw_dead(
@@ -336,7 +336,7 @@ pub fn make_draw_front(
   stance : @types.StanceId,
   expression : ExpressionId,
   stance_frame : Int,
-  expr_frame : Int
+  expr_frame : Int,
 ) -> Array[&@graphics.Drawable] {
   let drawables : Array[&@graphics.Drawable] = []
   fn make_hair_draw(layer) {
@@ -490,7 +490,7 @@ pub impl ToJson for BodyLayerDrawable with to_json(self) -> Json {
 ///|
 pub impl @graphics.Drawable for BodyLayerDrawable with draw(
   self : BodyLayerDrawable,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   self.body.draw(self.stance, self.layer, self.frame, args)
 }
@@ -519,7 +519,7 @@ pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
 ///|
 pub impl @graphics.Drawable for EquipLayerDrawable with draw(
   self : EquipLayerDrawable,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   let args = match self.layer {
     @clothing.FACE_ACC => {
@@ -545,7 +545,7 @@ struct FaceDrawable {
 ///|
 pub impl @graphics.Drawable for FaceDrawable with draw(
   self : FaceDrawable,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   let faceshift = self.draw_info.get_face_pos(self.stance, self.stance_frame)
   self.face.draw(
@@ -588,7 +588,7 @@ pub impl ToJson for HairDrawable with to_json(self) -> Json {
 ///|
 pub impl @graphics.Drawable for HairDrawable with draw(
   self : HairDrawable,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   self.hair.draw(self.stance, self.layer, self.frame, args)
 }
@@ -597,7 +597,7 @@ pub impl @graphics.Drawable for HairDrawable with draw(
 pub fn CharLook::draw(
   self : CharLook,
   args : @graphics.DrawArgument,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let acmove = @struct.Point::default()
   let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
@@ -620,7 +620,7 @@ pub fn draw_with_stance(
   position : @struct.Point[Int],
   flip : Bool,
   interstance : @types.StanceId,
-  interexpression : ExpressionId
+  interexpression : ExpressionId,
 ) -> Unit {
   let interstance = self.equips.adjust_stance(interstance)
   self.draw_impl(
@@ -772,7 +772,7 @@ fn update_face(self : CharLook, timestep : Int) -> Unit {
 pub fn CharLook::get_delay(
   self : CharLook,
   st : @types.StanceId,
-  fr : Int
+  fr : Int,
 ) -> Int {
   self.draw_info.get_delay(st, fr)
 }
@@ -791,7 +791,7 @@ pub fn get_equips(self : CharLook) -> @equip.CharEquips {
 pub fn CharLook::add_equip(
   self : CharLook,
   itemdata : @item.ItemData,
-  slot : @slot.Id
+  slot : @slot.Id,
 ) -> Unit raise {
   self.equips.add_equip(itemdata, slot, self.draw_info)
   self.updatetwohanded()
@@ -877,7 +877,7 @@ pub fn set_action(self : CharLook, acstr : String) -> Unit {
 fn getattackstance(
   self : CharLook,
   attack : Int,
-  degenerate : Bool
+  degenerate : Bool,
 ) -> @types.StanceId {
   if self.stance.get() == @types.StanceId::PRONE {
     return @types.StanceId::PRONESTAB

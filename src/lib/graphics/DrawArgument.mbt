@@ -33,7 +33,7 @@ pub fn DrawArgument::new(
   pos~ : Point[Int] = @struct.Point::default(),
   flip~ : Bool = false,
   opacity~ : Double = 1.0,
-  angle~ : Double = 0.0
+  angle~ : Double = 0.0,
 ) -> DrawArgument {
   DrawArgument::new16(
     pos,
@@ -55,7 +55,7 @@ pub fn DrawArgument::new_ex(
   pos~ : Point[Int] = @struct.Point::default(),
   stretch~ : Point[Int] = @struct.Point::default(),
   opacity~ : Double = 1.0,
-  angle~ : Double = 0.0
+  angle~ : Double = 0.0,
 ) -> DrawArgument {
   DrawArgument::new16(pos, pos, stretch, 1.0, 1.0, opacity, angle)
 }
@@ -63,7 +63,7 @@ pub fn DrawArgument::new_ex(
 ///|
 pub fn DrawArgument::new_scale(
   position~ : Point[Int] = @struct.Point::default(),
-  scale~ : Double = 1.0
+  scale~ : Double = 1.0,
 ) -> DrawArgument {
   DrawArgument::new10(position, position, scale, scale, 1.0)
 }
@@ -71,7 +71,7 @@ pub fn DrawArgument::new_scale(
 ///|
 pub fn DrawArgument::from_pos_and_stretch(
   position : Point[Int],
-  stretch : Point[Int]
+  stretch : Point[Int],
 ) -> DrawArgument {
   DrawArgument::new16(position, position, stretch, 1.0, 1.0, 1.0, 0.0)
 }
@@ -80,7 +80,7 @@ pub fn DrawArgument::from_pos_and_stretch(
 pub fn DrawArgument::new6(
   angle : Double,
   position : Point[Int],
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new15(angle, position, false, opacity)
 }
@@ -88,7 +88,7 @@ pub fn DrawArgument::new6(
 ///|
 pub fn DrawArgument::new7(
   position : Point[Int],
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new14(position, false, opacity~)
 }
@@ -96,7 +96,7 @@ pub fn DrawArgument::new7(
 ///|
 pub fn DrawArgument::from_point_and_color(
   position : Point[Int],
-  color : Color
+  color : Color,
 ) -> DrawArgument {
   DrawArgument::new17(position, position, { x: 0, y: 0 }, 1.0, 1.0, color, 0.0)
 }
@@ -105,7 +105,7 @@ pub fn DrawArgument::from_point_and_color(
 pub fn DrawArgument::new9(
   position : Point[Int],
   flip : Bool,
-  center : Point[Int]
+  center : Point[Int],
 ) -> DrawArgument {
   DrawArgument::new10(position, center, if flip { -1.0 } else { 1.0 }, 1.0, 1.0)
 }
@@ -116,7 +116,7 @@ pub fn DrawArgument::new10(
   center : Point[Int],
   xscale : Double,
   yscale : Double,
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new16(
     position,
@@ -133,7 +133,7 @@ pub fn DrawArgument::new10(
 pub fn DrawArgument::new12(
   xscale : Double,
   yscale : Double,
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new13({ x: 0, y: 0 }, xscale, yscale, opacity)
 }
@@ -143,7 +143,7 @@ pub fn DrawArgument::new13(
   position : Point[Int],
   xscale : Double,
   yscale : Double,
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new10(position, position, xscale, yscale, opacity)
 }
@@ -152,7 +152,7 @@ pub fn DrawArgument::new13(
 pub fn DrawArgument::new14(
   position : Point[Int],
   flip : Bool,
-  opacity~ : Double = 1.0
+  opacity~ : Double = 1.0,
 ) -> DrawArgument {
   DrawArgument::new10(
     position,
@@ -172,7 +172,7 @@ pub fn DrawArgument::new15(
   angle : Double,
   position : Point[Int],
   flip : Bool,
-  opacity : Double
+  opacity : Double,
 ) -> DrawArgument {
   DrawArgument::new16(
     position,
@@ -197,7 +197,7 @@ pub fn DrawArgument::new16(
   xscale : Double,
   yscale : Double,
   opacity : Double,
-  angle : Double
+  angle : Double,
 ) -> DrawArgument {
   DrawArgument::new17(
     position,
@@ -218,7 +218,7 @@ pub fn DrawArgument::new17(
   xscale : Double,
   yscale : Double,
   color : Color,
-  angle : Double
+  angle : Double,
 ) -> DrawArgument {
   { pos: position, center, stretch, xscale, yscale, angle, color } // Assuming default value
 }
@@ -292,7 +292,7 @@ pub impl Sub for DrawArgument with op_sub(self : DrawArgument, o : DrawArgument)
 pub fn get_rectangle(
   self : DrawArgument,
   origin : Point[Int],
-  dimensions : Point[Int]
+  dimensions : Point[Int],
 ) -> Rectangle[Int] {
   let w = if self.stretch.x == 0 { dimensions.x } else { self.stretch.x }
   let h = if self.stretch.y == 0 { dimensions.y } else { self.stretch.y }

@@ -33,7 +33,7 @@ pub fn handle_spawn_mob(map_mobs : MapMobs, recv : @net.InPacket) -> Unit raise 
 ///|
 pub fn handle_spawn_mob_controller(
   map_mobs : MapMobs,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> Unit raise {
   let mode = recv.read_byte()
   let oid = recv.read_int()
@@ -82,7 +82,7 @@ fn new_move_mob_packet(
   skill_level : Int,
   option : Int,
   startpos : @struct.Point[Int],
-  movement : @physics.Movement
+  movement : @physics.Movement,
 ) -> MoveMonsterMessage {
   {
     oid,

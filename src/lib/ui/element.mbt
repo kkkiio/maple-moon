@@ -153,7 +153,7 @@ pub fn on_state_changed(self : Hooks) -> Unit {
 }
 
 ///|
-type EffectHook[T] Ref[T?]
+struct EffectHook[T](Ref[T?])
 
 ///|
 pub fn[T] EffectHook::new() -> EffectHook[T] {
@@ -164,7 +164,7 @@ pub fn[T] EffectHook::new() -> EffectHook[T] {
 pub fn[T : Eq] use_effect(
   self : EffectHook[T],
   key : T,
-  f : () -> Unit
+  f : () -> Unit,
 ) -> Unit {
   match self.val {
     Some(k) => if k == key { return }
@@ -202,7 +202,7 @@ pub fn[T : Widget] Element::new(
   make_element : (Hooks) -> T,
   key : UIElementType,
   toggle_active? : () -> Unit,
-  on_close? : () -> Unit
+  on_close? : () -> Unit,
 ) -> Element {
   let runtime_state = Ref::new(None)
   let ui_model = UIModel::new(Point::default(), Point::default())
@@ -242,7 +242,7 @@ pub fn Element::update(self : Element) -> Unit {
 pub fn Element::send_cursor(
   self : Element,
   pressed : Bool,
-  cursorpos : @struct.Point[Int]
+  cursorpos : @struct.Point[Int],
 ) -> CursorState {
   send_cursor_to_areas(
     self.use_interactables(),
@@ -255,7 +255,7 @@ pub fn Element::send_cursor(
 ///|
 pub fn Element::is_in_interactive_area(
   self : Element,
-  cursorpos : Point[Int]
+  cursorpos : Point[Int],
 ) -> Bool {
   let areas = self.use_interactables()
   let container_pos = self.get_ui_model().position
@@ -337,7 +337,7 @@ pub(all) struct UIModel {
 pub fn UIModel::new(
   position : Point[Int],
   dimension : Point[Int],
-  active~ : Bool = true
+  active~ : Bool = true,
 ) -> UIModel {
   { position, dimension, active }
 }
@@ -346,7 +346,7 @@ pub fn UIModel::new(
 pub fn draw_sprites(
   sprites : Iter[@graphics.Sprite],
   position : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   sprites.each(fn(sprite) { sprite.draw(position, alpha) })
 }
@@ -390,7 +390,7 @@ struct StaticUI[T] {
 pub fn[T] StaticUI::new(
   text : T,
   pos~ : Point[Int] = Point::default(), // relative to the parent
-  stretch~ : Point[Int] = Point::default()
+  stretch~ : Point[Int] = Point::default(),
 ) -> StaticUI[T] {
   { drawable: text, args: @graphics.DrawArgument::new_ex(pos~, stretch~) }
 }
@@ -398,7 +398,7 @@ pub fn[T] StaticUI::new(
 ///|
 pub fn[T] StaticUI::new_ex(
   text : T,
-  args~ : @graphics.DrawArgument = @graphics.DrawArgument::default()
+  args~ : @graphics.DrawArgument = @graphics.DrawArgument::default(),
 ) -> StaticUI[T] {
   { drawable: text, args }
 }
@@ -406,14 +406,14 @@ pub fn[T] StaticUI::new_ex(
 ///|
 pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUI[T] with draw(
   self,
-  args
+  args,
 ) -> Unit {
   self.drawable.draw(args.merge(self.args))
 }
 
 ///|
 pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T] with update(
-  self
+  self,
 ) -> Unit {
   ignore(self)
 }
@@ -424,7 +424,7 @@ pub impl[T : ToJson] ToJson for StaticUI[T] with to_json(self) -> Json {
 }
 
 ///|
-pub(all) type SpriteUI @graphics.Sprite
+pub(all) struct SpriteUI(@graphics.Sprite)
 
 ///|
 pub impl @graphics.Drawable for SpriteUI with draw(self, args) -> Unit {
@@ -442,7 +442,7 @@ pub impl ToJson for SpriteUI with to_json(self) -> Json {
 }
 
 ///|
-pub(all) type TextureTextUI @graphics.TextureText derive(ToJson)
+pub(all) struct TextureTextUI(@graphics.TextureText) derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextureTextUI with draw(self, args) -> Unit {
@@ -450,7 +450,7 @@ pub impl @graphics.Drawable for TextureTextUI with draw(self, args) -> Unit {
 }
 
 ///|
-pub(all) type TextureUI @graphics.Texture derive(ToJson)
+pub(all) struct TextureUI(@graphics.Texture) derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextureUI with draw(self, args) -> Unit {
@@ -458,7 +458,7 @@ pub impl @graphics.Drawable for TextureUI with draw(self, args) -> Unit {
 }
 
 ///|
-pub(all) type TextUI @graphics.Text derive(ToJson)
+pub(all) struct TextUI(@graphics.Text) derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
@@ -476,7 +476,7 @@ pub fn[T] OffsetedUnit::new(unit : T, pos : Point[Int]) -> OffsetedUnit[T] {
 ///|
 pub fn OffsetedUnit::offset_element(
   element : RenderElement,
-  pos : Point[Int]
+  pos : Point[Int],
 ) -> RenderElement {
   match element {
     RenderElement::Static(ru) =>
@@ -489,7 +489,7 @@ pub fn OffsetedUnit::offset_element(
 ///|
 pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T] with draw(
   self,
-  args
+  args,
 ) -> Unit {
   self.0.draw(args.add_pos(self.1))
 }
@@ -500,7 +500,7 @@ pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T] with update(self) -> Uni
 }
 
 ///|
-type StaticUnit[T] T derive(ToJson)
+struct StaticUnit[T](T) derive(ToJson)
 
 ///|
 pub fn[T] StaticUnit::new(unit : T) -> StaticUnit[T] {
@@ -510,7 +510,7 @@ pub fn[T] StaticUnit::new(unit : T) -> StaticUnit[T] {
 ///|
 pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUnit[T] with draw(
   self,
-  args
+  args,
 ) -> Unit {
   self.inner().draw(args)
 }

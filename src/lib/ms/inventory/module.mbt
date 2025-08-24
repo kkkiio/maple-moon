@@ -12,7 +12,7 @@ pub fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module {
   {
     inventory: Inventory::new(network),
@@ -30,7 +30,7 @@ pub fn get_inventory(self : Module) -> Inventory {
 
 ///|
 pub fn make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(
@@ -52,7 +52,7 @@ pub fn make_handlers(
 
 ///|
 pub fn make_stat_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [
     (
@@ -68,7 +68,7 @@ pub fn make_stat_handlers(
 
 ///|
 pub fn make_show_status_info_handlers(
-  self : Module
+  self : Module,
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
     0: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {

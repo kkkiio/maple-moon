@@ -97,7 +97,7 @@ pub fn CharBase::new(
   damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
   stats : @char_stats.CharStats,
-  get_integer_attackspeed~ : () -> Int
+  get_integer_attackspeed~ : () -> Int,
 ) -> CharBase {
   let char_base = {
     base: MapObjectBase::new(oid),
@@ -153,7 +153,7 @@ pub fn draw(
   self : CharBase,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   self.effects.drawbelow(absp, alpha)
@@ -296,7 +296,7 @@ pub fn is_invincible(self : CharBase) -> Bool {
 ///|
 pub fn CharBase::set_afterimage(
   self : CharBase,
-  after_image : @char_look.AfterImage
+  after_image : @char_look.AfterImage,
 ) -> Unit {
   self.after_image = Some(after_image)
 }
@@ -362,7 +362,7 @@ pub fn show_heal_number(self : CharBase, n : Int) -> Unit {
 pub fn show_attack_effect(
   self : CharBase,
   toshow : @graphics.Animation,
-  z : Int
+  z : Int,
 ) -> Unit {
   let attackspeed = get_real_attackspeed((self.get_integer_attackspeed)())
   self.effects.add(

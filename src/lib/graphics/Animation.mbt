@@ -40,7 +40,7 @@ pub fn Frame::new(
   resource : FrameResource,
   loader_name : String,
   image_loader : @resource.ImageLoader,
-  default_delay~ : Int = 100
+  default_delay~ : Int = 100,
 ) -> Frame {
   let texture = Texture::load(resource.texture, loader_name, image_loader)
   let delay = match resource.delay {
@@ -249,7 +249,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise LoadError {
 pub fn Animation::new(
   resource : AnimationResource,
   loader_name : String,
-  image_loader : @resource.ImageLoader
+  image_loader : @resource.ImageLoader,
 ) -> Animation {
   let blend = resource.blend
   // 100ms delay for blend is too fast, see Map/Map1/101000000.img
@@ -329,7 +329,7 @@ pub impl Default for Animation with default() -> Animation {
 pub fn Animation::draw(
   self : Animation,
   args : DrawArgument,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let interframe = self.frame.get(alpha~)
   let interopc = self.opacity.get(alpha~) / 255.0
@@ -348,7 +348,7 @@ pub fn Animation::draw(
 ///|
 pub fn Animation::update(
   self : Animation,
-  timestep~ : Int = @config.step_time_ms
+  timestep~ : Int = @config.step_time_ms,
 ) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))

@@ -8,7 +8,7 @@ struct TilesObjs {
 pub async fn TilesObjs::load(
   ts : String?,
   tile_resource : Array[TileResource],
-  obj_resource : Array[ObjResource]
+  obj_resource : Array[ObjResource],
 ) -> TilesObjs raise {
   let tileset = if ts is Some(ts) {
     Some(tile_loader.load_res_async([ts + ".img"]))
@@ -68,7 +68,7 @@ pub fn TilesObjs::update(self : TilesObjs) -> Unit {
 pub fn TilesObjs::draw(
   self : TilesObjs,
   viewpos : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   for obj in self.objs {
     obj.draw(viewpos, alpha)
@@ -85,7 +85,7 @@ struct MapTilesObjs {
 
 ///|
 pub async fn MapTilesObjs::load(
-  layer_resource : Array[LayerResource]
+  layer_resource : Array[LayerResource],
 ) -> MapTilesObjs raise {
   let layers = []
   for id in @map_layer.ids {
@@ -118,7 +118,7 @@ pub fn MapTilesObjs::draw(
   self : MapTilesObjs,
   layer : Int,
   viewpos : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.layers[layer].draw(viewpos, alpha)
 }

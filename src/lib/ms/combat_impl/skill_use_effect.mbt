@@ -1,6 +1,6 @@
 ///|
 fn new_skill_use_effect_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
   let animation = src |> @graphics.Animation::from_resource_ex()
   let z = src["z"].get_int()
@@ -9,7 +9,7 @@ fn new_skill_use_effect_effect(
 
 ///| An effect which displays an animation over the character's position
 fn new_single_use_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effect = new_skill_use_effect_effect(src["effect"])
   fn(c : @character.Character) -> Unit { effect(c) }
@@ -18,7 +18,7 @@ fn new_single_use_effect(
 ///| An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
 fn new_twohanded_use_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = @utils.BoolPair::new(
     new_skill_use_effect_effect(src["effect"]["0"]),
@@ -32,7 +32,7 @@ fn new_twohanded_use_effect(
 
 ///| An effect which displays multiple animations over the character's position
 fn new_multi_use_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
   let mut no = -1
@@ -51,7 +51,7 @@ fn new_multi_use_effect(
 
 ///| The animation changes with the character level
 fn new_by_level_use_effect(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
   for sub in src["CharLevel"] {

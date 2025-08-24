@@ -9,7 +9,7 @@ struct Bullet {
 pub fn Bullet::new(
   animation : @graphics.Animation,
   origin : @struct.Point[Int],
-  toleft : Bool
+  toleft : Bool,
 ) -> Bullet {
   let move_obj = @physics.MovingObject::default()
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
@@ -22,7 +22,7 @@ pub fn draw(
   self : Bullet,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let bulletpos = self.move_obj.get_absolute(viewx, viewy, alpha)
   let args = @graphics.DrawArgument::new14(bulletpos, self.flip)

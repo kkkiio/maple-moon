@@ -43,7 +43,7 @@ pub enum TalkType {
 pub fn TalkType::from_int(
   msgtype : Int,
   style_b0 : Int,
-  style_b1 : Int
+  style_b1 : Int,
 ) -> TalkType? {
   match msgtype {
     0 =>
@@ -119,7 +119,7 @@ pub(all) struct NpcTalkResource {
 
 ///|
 pub fn NpcTalkResource::from_resource(
-  util_dlg_ex : @resource.NxNode
+  util_dlg_ex : @resource.NxNode,
 ) -> NpcTalkResource {
   let top = @graphics.Texture::from_resource(util_dlg_ex["t"])
   let fill = @graphics.Texture::from_resource(util_dlg_ex["c"])
@@ -178,7 +178,7 @@ pub fn UINpcTalk::new(
   resource : NpcTalkResource,
   hooks : @ui.Hooks,
   string_loader : @resource.SyncLoader,
-  name_loader : @markup_text.RefRender
+  name_loader : @markup_text.RefRender,
 ) -> UINpcTalk {
   let name = @graphics.Text::new(
     @graphics.FontId::A11M,
@@ -388,13 +388,13 @@ pub fn change_text(
   npcid : Int,
   talk_action : TalkAction,
   speakerbyte : Speaker,
-  tx : String
+  tx : String,
 ) -> Unit raise {
   self.talk_action = Some(talk_action)
   let content = convert_npc_text(tx, self.name_loader)
   self.content = content |> @option.some
   if speakerbyte is Speaker::NPC_LEFT {
-    let strid = @string_format.extend_id(npcid, 7) + ".img"
+    let strid = @string_format.stoi_left_pad0(npcid, 7) + ".img"
     self.speaker = self.string_loader.load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
     let namestr = self.string_loader
@@ -444,7 +444,7 @@ impl @net.OutMessage for NpcTalkMorePacket with pack(self) -> @net.OutPacket {
 
 ///|
 fn new_npc_talk_more_packet_with_selection(
-  selection : Int
+  selection : Int,
 ) -> NpcTalkMorePacket {
   { lastmsg: SEND_SIMPLE, response: 1, selection: Some(selection) }
 }
@@ -452,7 +452,7 @@ fn new_npc_talk_more_packet_with_selection(
 ///|
 fn new_npc_talk_more_packet(
   lastmsg : TalkType,
-  response : Int
+  response : Int,
 ) -> NpcTalkMorePacket {
   { lastmsg, response, selection: None }
 }
@@ -460,7 +460,7 @@ fn new_npc_talk_more_packet(
 ///|
 fn convert_npc_text(
   raw_text : String,
-  name_loader : @markup_text.RefRender
+  name_loader : @markup_text.RefRender,
 ) -> NPCTalkContent raise {
   let content = parse_talk_content(
     raw_text,

@@ -28,7 +28,7 @@ pub fn Module::new_char_stats(
   self : Module,
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
-  job : @job.Job
+  job : @job.Job,
 ) -> CharStats {
   let stats = CharStats::new(
     s,
@@ -44,7 +44,7 @@ pub fn Module::new_char_stats(
 
 ///|
 pub fn make_stat_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [
     @maple_stat.Id::LEVEL,

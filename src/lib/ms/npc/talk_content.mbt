@@ -11,9 +11,9 @@ test "test text" {
   inspect(result.selections, content="[]")
   inspect(
     result.text_html,
-    content=
+    content=(
       #|<span style="color: black">Take this ship and you&#039;ll head off to a bigger continent. For </span><span style="color: black, font-weight: bold;">150 mesos</span><span style="color: black">, I&#039;ll take you to </span><span style="color: blue">Victoria Island</span><span style="color: black">. The thing is, once you leave this place, you can&#039;t ever come back. What do you think? Do you want to go to Victoria Island?</span>
-    ,
+    ),
   )
 }
 
@@ -36,10 +36,10 @@ test "test selections" {
   ])
   inspect(
     result.text_html,
-    content=
+    content=(
       #|<span style="color: black">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br/>
       #|
-    ,
+    ),
   )
 }
 
@@ -50,10 +50,10 @@ test "test no options" {
   inspect(result.selections, content="[]")
   inspect(
     result.text_html,
-    content=
+    content=(
       #|<span style="color: black">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It&#039;s a bit pricey, but... for only 10,000 mesos, we&#039;ll take you safely to the </span><br/>
       #|<span style="color: black"></span><span style="color: blue">Ant Tunnel</span><span style="color: black">.</span>
-    ,
+    ),
   )
 }
 
@@ -74,7 +74,7 @@ pub fn parse_talk_content(
   },
   player_name_provider~ : (Style, @string.View) -> String raise = fn(_, v) {
     v.to_string()
-  }
+  },
 ) -> TalkContent raise {
   let tag_replace_map = {
     'o': mod_provider,
@@ -90,7 +90,7 @@ pub fn parse_talk_content(
   fn close_selection(
     index : Int,
     nodes : Array[@markup_text.Node],
-    trim_end_newline : Bool
+    trim_end_newline : Bool,
   ) raise {
     selections.push(
       (
@@ -201,9 +201,9 @@ test "parse quiz" {
   ])
   inspect(
     result.text_html,
-    content=
+    content=(
       #|<span style="color: black">Which of these NPC&#039;s will not NOT see at Kerning City?</span><br/>
       #|<span style="color: black"></span>
-    ,
+    ),
   )
 }

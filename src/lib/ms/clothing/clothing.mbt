@@ -57,7 +57,7 @@ struct Clothing {
 ///|
 pub fn Clothing::from_resource(
   item_data : @item.ItemData,
-  drawinfo : @types.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo,
 ) -> Clothing raise {
   let equipdata = @data.EquipData::parse_item_data(item_data)
   let eq_slot = equipdata.get_eqslot()
@@ -187,7 +187,7 @@ pub fn Clothing::draw(
   stance : @types.StanceId,
   layer : Layer,
   frame : Int,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   match
     self.stances

@@ -9,7 +9,7 @@ pub struct EquipData {
 
 ///| Load an equip from the game files.
 pub fn EquipData::parse_item_data(
-  item_data : @item.ItemData
+  item_data : @item.ItemData,
 ) -> EquipData raise {
   let id = item_data.item_id
   let gender = @item.get_item_gender(id)

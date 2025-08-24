@@ -25,7 +25,7 @@ pub fn get_action(self : Registry, id : @keyboard.BasicActionId) -> Descriptor? 
 ///|
 pub fn reset_actions(
   self : Registry,
-  entries : @immut/hashmap.T[@keyboard.BasicActionId, Descriptor]
+  entries : @immut/hashmap.T[@keyboard.BasicActionId, Descriptor],
 ) -> Unit {
   self.entries = entries
 }

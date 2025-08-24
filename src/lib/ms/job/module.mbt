@@ -10,7 +10,7 @@ pub fn Module::new(change_job : (Int) -> Unit) -> Module {
 
 ///|
 pub fn make_stat_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [
     (

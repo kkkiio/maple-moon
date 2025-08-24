@@ -19,7 +19,7 @@ pub impl ToJson for Charset with to_json(_) -> Json {
 ///|
 pub fn Charset::from_resource(
   src : NxNode,
-  alignment : CharsetAlignment
+  alignment : CharsetAlignment,
 ) -> Charset {
   let chars = Map::new()
   for sub in src {
@@ -58,7 +58,7 @@ pub fn getw(self : Charset, c : Char) -> Int {
 pub fn Charset::draw_text(
   self : Charset,
   text : String,
-  args : DrawArgument
+  args : DrawArgument,
 ) -> Int {
   let mut shift : Int = 0
   let mut total : Int = 0
@@ -98,7 +98,7 @@ pub fn draw_text_with_hspace(
   self : Charset,
   text : String,
   hspace : Int,
-  args : DrawArgument
+  args : DrawArgument,
 ) -> Int {
   let length = text.length()
   let mut shift : Int = 0
@@ -152,7 +152,7 @@ struct GameText {
 pub fn GameText::new(
   charset : Charset,
   text : String,
-  hspace : Int
+  hspace : Int,
 ) -> GameText {
   { charset, text, hspace }
 }

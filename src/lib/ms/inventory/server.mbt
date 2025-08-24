@@ -51,7 +51,7 @@ fn handle_modify_inventory(
   inventory : Inventory,
   player_getter : () -> @player.Player?,
   message : ModifyInventoryMessage,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Unit {
   guard player_getter() is Some(player) else { return }
   for mod in message.mods {
@@ -101,7 +101,7 @@ fn change_equipment(
   inventory : Inventory,
   player : @player.Player,
   raw_slot_id : Int,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Unit {
   let slot = @equip_slot.Id::from_int(raw_slot_id)
   match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
@@ -150,7 +150,7 @@ pub fn new_move_item_packet(
   type_id : TypeId,
   slot : Int,
   action : Int,
-  qty : Int
+  qty : Int,
 ) -> @net.OutPacket {
   let packet = @net.OutPacket::new(@net.ClientOpcode::MOVE_ITEM)
   packet

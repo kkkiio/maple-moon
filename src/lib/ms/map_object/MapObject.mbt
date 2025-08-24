@@ -20,7 +20,7 @@ pub struct MapObjectBase {
 ///|
 pub fn MapObjectBase::new(
   oid : Int,
-  position~ : @struct.Point[Int] = { x: 0, y: 0 }
+  position~ : @struct.Point[Int] = { x: 0, y: 0 },
 ) -> MapObjectBase {
   let obj = { phobj: @physics.PhysicsObject::default(), oid, active: true }
   obj.set_position(position)
@@ -30,7 +30,7 @@ pub fn MapObjectBase::new(
 ///|
 pub fn MapObjectBase::update(
   self : MapObjectBase,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Int {
   physics.move_object(self.phobj)
   self.phobj.fhlayer
@@ -45,7 +45,7 @@ pub fn set_positionxy(self : MapObjectBase, x : Int, y : Int) -> Unit {
 ///|
 pub fn set_position(
   self : MapObjectBase,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> Unit {
   self.set_positionxy(position.x, position.y)
 }

@@ -63,7 +63,7 @@ struct Job {
 pub fn Job::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  id~ : Int = 0
+  id~ : Int = 0,
 ) -> @utils.Future[Job] {
   let level = if id == 0 {
     Level::BEGINNER
@@ -102,7 +102,7 @@ pub fn Job::load(
 pub fn Job::new(
   id : Int,
   level : Level,
-  sub_job_data_map : Map[Int, JobData]
+  sub_job_data_map : Map[Int, JobData],
 ) -> Job {
   let job_id = JobId::from_int(id).unwrap() // TODO: handle error
   let name = get_name_by_id(job_id)
@@ -418,7 +418,7 @@ pub fn get_level(self : Job) -> Level {
 ///|
 pub fn get_primary(
   self : Job,
-  weapontype : @weapon.Type
+  weapontype : @weapon.Type,
 ) -> @maple_stat.EquipStatId {
   match self.id.int_value() / 100 {
     2 => return @maple_stat.EquipStatId::INT
@@ -437,7 +437,7 @@ pub fn get_primary(
 ///|
 pub fn get_secondary(
   self : Job,
-  weapontype : @weapon.Type
+  weapontype : @weapon.Type,
 ) -> @maple_stat.EquipStatId {
   match self.id.int_value() / 100 {
     2 => return @maple_stat.EquipStatId::LUK
@@ -462,7 +462,7 @@ pub fn get_subjob(self : Job, level : Level) -> Int {
 pub fn get_subjob_id(
   job_id : Int,
   now_level : Level,
-  target_level : Level
+  target_level : Level,
 ) -> Int {
   if target_level <= now_level {
     match target_level {

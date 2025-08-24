@@ -5,7 +5,7 @@ typealias (Int, Int) -> Bool as StatChangeListener
 pub fn watch_player_char_stat(
   mod : Module,
   stat_name : String,
-  listener : StatChangeListener
+  listener : StatChangeListener,
 ) -> Unit {
   guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
     @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
@@ -34,7 +34,7 @@ pub fn watch_player_char_stat(
 pub fn watch_player_total_stat(
   mod : Module,
   stat_name : String,
-  listener : StatChangeListener
+  listener : StatChangeListener,
 ) -> Unit {
   guard @maple_stat.EquipStatId::from_name(stat_name) is Some(stat) else {
     @log.error({ "stat_name": stat_name }, "unrecognized stat_name")

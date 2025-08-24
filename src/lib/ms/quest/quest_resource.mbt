@@ -11,15 +11,18 @@ pub impl @json.FromJson for QuestResource with from_json(json, path) {
   let parsed : QuestNxResource = @json.from_json(json, path~)
   {
     quest_info_map: parsed.quest_info_map.inner(),
-    quest_checks_map: parsed.quest_checks_map.inner()
+    quest_checks_map: parsed.quest_checks_map
+    .inner()
     .iter()
     .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
-    quest_say_map: parsed.quest_say_map.inner()
+    quest_say_map: parsed.quest_say_map
+    .inner()
     .iter()
     .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
-    quest_acts_map: parsed.quest_acts_map.inner()
+    quest_acts_map: parsed.quest_acts_map
+    .inner()
     .iter()
     .map(fn(i) { (i.0, i.1.inner()) })
     |> Map::from_iter(),
@@ -140,9 +143,9 @@ test "parse quest info" {
   let quest_info : QuestInfo = @json.from_json(json)
   inspect(
     quest_info,
-    content=
+    content=(
       #|{name: "Obtain the Special Agent Badge!", parent: Some("Today's Mission! "), area: 50, order: Some(1), auto_complete: true, auto_start: false, one_shot: false, descriptions: ["", "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.", "Today's mission has been completed."]}
-    ,
+    ),
   )
 }
 
@@ -163,9 +166,9 @@ test "parse quest 10200" {
   let quest_info : QuestInfo = @json.from_json(json)
   inspect(
     quest_info,
-    content=
+    content=(
       #|{name: "Richie Gold is Here", parent: None, area: 50, order: None, auto_complete: true, auto_start: true, one_shot: true, descriptions: ["A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.", "Let's try to make a deal with #b#p2084001##k.", "I engaged in a transaction with #b#p2084001##k."]}
-    ,
+    ),
   )
 }
 
@@ -185,9 +188,9 @@ test "parse quest info number desc" {
   let quest_info : QuestInfo = @json.from_json(json)
   inspect(
     quest_info,
-    content=
+    content=(
       #|{name: "Finding Sophia", parent: Some("Maya and the Weird Medicine"), area: 30, order: Some(2), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["2", "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.", "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k."]}
-    ,
+    ),
   )
 }
 
@@ -216,9 +219,9 @@ test "parse number index not desc" {
   let quest_info : QuestInfo = @json.from_json(json)
   inspect(
     quest_info,
-    content=
+    content=(
       #|{name: "New Year's Wishes 1", parent: Some("New Year : New Year's Wishes"), area: 30, order: Some(1), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "The Maple Administrator opened my present for me! Sweet!"]}
-    ,
+    ),
   )
 }
 
@@ -241,7 +244,7 @@ priv struct InfoEx {
 typealias @resource.Nullable
 
 ///|
-priv type NumbericInt Int derive(Show)
+priv struct NumbericInt(Int) derive(Show)
 
 ///|
 impl @json.FromJson for NumbericInt with from_json(json, path) {
@@ -313,7 +316,8 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
           path~,
         )
         checks.push({
-          quest_status_map: quest_status_map.inner()
+          quest_status_map: quest_status_map
+          .inner()
           .iter()
           .map(fn(i) { (i.id, i.state) })
           |> Map::from_iter(),
@@ -419,9 +423,9 @@ test "parse quest check 10015" {
   )
   inspect(
     quest_check,
-    content=
+    content=(
       #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
-    ,
+    ),
   )
 }
 
@@ -453,9 +457,9 @@ test "parse quest check 10054" {
   )
   inspect(
     quest_check.inner(),
-    content=
+    content=(
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
-    ,
+    ),
   )
 }
 

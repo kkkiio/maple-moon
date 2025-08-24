@@ -1,9 +1,10 @@
 ///|
+#callsite(autofill(loc))
 pub fn log(
   level : Level,
   context : Map[String, &Show],
   msg : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   match level {
     Level::TRACE => () // do nothing
@@ -15,37 +16,41 @@ pub fn log(
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn debug(
   context : Map[String, &Show],
   msg : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   log_debug(to_logstr(context, msg, loc))
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn info(
   context : Map[String, &Show],
   msg : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   log_info(to_logstr(context, msg, loc))
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn warn(
   context : Map[String, &Show],
   msg : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   log_warn(to_logstr(context, msg, loc))
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn error(
   context : Map[String, &Show],
   msg : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   log_error(to_logstr(context, msg, loc))
 }
@@ -54,7 +59,7 @@ pub fn error(
 fn to_logstr(
   context : Map[String, &Show],
   msg : String,
-  loc : SourceLoc
+  loc : SourceLoc,
 ) -> String {
   let buf = StringBuilder::new(
     size_hint=(msg.length() + context.size() * 12) * 2,

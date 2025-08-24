@@ -115,9 +115,9 @@ pub async fn Mob::load(
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Mob raise {
-  let strid = @string_format.extend_id(mid, 7)
+  let strid = @string_format.stoi_left_pad0(mid, 7)
   let src = mob_loader.load_res_async([strid + ".img"])
   let info : MobInfo = src["info"].value() |> @json.from_json
   let animations = if info.link is Some(link) {
@@ -237,7 +237,7 @@ fn Mob::new(
   src : @resource.NxNode,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  animations : Map[StanceType, @graphics.Animation]
+  animations : Map[StanceType, @graphics.Animation],
 ) -> Mob raise {
   let base = @map_object.MapObjectBase::new(oi)
   let info : MobInfo = src["info"].value() |> @json.from_json
@@ -374,7 +374,7 @@ pub impl @map_object.MapObject for Mob with draw(
   self : Mob,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   let headpos = self.get_head_position(position=absp)
@@ -405,7 +405,7 @@ pub impl @map_object.MapObject for Mob with draw(
 ///|
 pub impl @map_object.MapObject for Mob with update(
   self : Mob,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Int {
   if not(self.base.is_active()) {
     return self.base.phobj.fhlayer
@@ -659,7 +659,7 @@ pub fn update_movement_ex(
   skill : Int,
   skill_level : Int,
   option : Int,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   network.send_message(
     new_move_mob_packet(
@@ -708,7 +708,7 @@ pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
 ///|
 pub fn get_head_position(
   self : Mob,
-  position? : @struct.Point[Int]
+  position? : @struct.Point[Int],
 ) -> @struct.Point[Int] {
   let head = match self.animations.get(self.stance.t) {
     Some(anim) => anim.get_head()
@@ -730,7 +730,7 @@ pub fn get_head_position(
 pub fn Mob::send_movement(
   self : Mob,
   start : @struct.Point[Int],
-  movements : Array[@physics.Movement]
+  movements : Array[@physics.Movement],
 ) -> Unit {
   if self.control {
     return
@@ -751,7 +751,7 @@ pub fn get_move_skill(
   self : Mob,
   move_id : Int,
   level : Int,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> @utils.Future[Result[MobSkill, Error]] {
   self.skill_cache.get_or_init(move_id, fn() {
     io_service.submit(fn() { MobSkill::load(move_id, level) })
@@ -793,7 +793,7 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 pub fn MobSpecialAttack::new(
   mob_src : @resource.NxNode,
   _mob_id : Int,
-  move_id : Int
+  move_id : Int,
 ) -> MobSpecialAttack raise {
   // let mut strid = ""
   // if mob_id < 10000000 {
@@ -829,7 +829,7 @@ pub fn show_effect(
   animation : @graphics.Animation,
   pos : Int,
   z : Int,
-  f : Bool
+  f : Bool,
 ) -> Unit {
   if not(self.base.is_active()) {
     return
@@ -875,7 +875,7 @@ pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
 pub fn calculate_damage(
   self : Mob,
   attack : @combat.Attack,
-  network : @net.Network
+  network : @net.Network,
 ) -> Array[(Int, Bool)] {
   let greater_level = @math.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
@@ -923,7 +923,7 @@ fn next_damage(
   mindamage : Double,
   maxdamage : Double,
   hitchance : Double,
-  critical : Double
+  critical : Double,
 ) -> (Int, Bool) {
   let hit = self.randomizer.below(hitchance)
   if not(hit) {
@@ -946,7 +946,7 @@ fn calculate_weapon_damage(
   greater_level : Int,
   min : Double,
   max : Double,
-  def : Double
+  def : Double,
 ) -> (Double, Double) {
   let final_min = (min * (1.0 - 0.01 * greater_level.to_double()) - def * 0.6)
     |> @math.maximum(1.0)
@@ -960,7 +960,7 @@ fn calculate_magic_damage(
   greater_level : Int,
   min : Double,
   max : Double,
-  def : Double
+  def : Double,
 ) -> (Double, Double) {
   let final_min = (min - (1.0 + 0.01 * greater_level.to_double()) * def * 0.6)
     |> @math.maximum(1.0)
@@ -973,7 +973,7 @@ fn calculate_magic_damage(
 fn calculate_hitchance(
   self : Mob,
   greater_level : Int,
-  player_accuracy : Int
+  player_accuracy : Int,
 ) -> Double {
   let hitchance = player_accuracy.to_double() /
     (self.avoid.to_double() * (1.84 + 0.07 * greater_level.to_double()) + 1.0)
@@ -985,7 +985,7 @@ pub fn apply_damage(
   self : Mob,
   damage : Int,
   toleft : Bool,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   // self.hit_sound.play()
 
@@ -1021,7 +1021,7 @@ pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
 ///|
 fn load_animations(
   src : @resource.NxNode,
-  can_fly : Bool
+  can_fly : Bool,
 ) -> Map[StanceType, @graphics.Animation] {
   let animations : Map[StanceType, @graphics.Animation] = Map::new()
   if can_fly {

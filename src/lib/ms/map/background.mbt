@@ -26,7 +26,7 @@ pub fn int_value(self : BackgroundType) -> Int {
 
 ///|
 pub fn BackgroundType::from_int(
-  id : Int
+  id : Int,
 ) -> BackgroundType raise @utils.UnknownEnum {
   match id {
     0 => BackgroundType::BG_NORMAL
@@ -136,7 +136,7 @@ struct BackgroundResource {
 ///|
 pub async fn BackgroundResource::load(
   background_loader : @resource.AsyncLoader,
-  spec : BackgroundSpec
+  spec : BackgroundSpec,
 ) -> BackgroundResource raise {
   let animated = spec.ani
   let bg_res = background_loader.load_res_async([
@@ -233,7 +233,7 @@ pub fn Background::draw(
   self : Background,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let mut x = if self.move_obj.hmobile() {
     self.move_obj.get_absolute_x(viewx, alpha)
@@ -300,7 +300,7 @@ pub struct Backgrounds {
 }
 
 ///|
-type BackgroundsResource Array[BackgroundSpec] derive(ToJson)
+struct BackgroundsResource(Array[BackgroundSpec]) derive(ToJson)
 
 ///|
 pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
@@ -322,7 +322,7 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 ///|
 pub async fn load_backgrounds(
   background_loader : @resource.AsyncLoader,
-  spec : BackgroundsResource
+  spec : BackgroundsResource,
 ) -> Backgrounds raise {
   let fronts = Array::new()
   let backgrounds = Array::new()
@@ -352,7 +352,7 @@ pub fn drawbackgrounds(
   backgrounds : Array[Background],
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
 }
@@ -362,7 +362,7 @@ pub fn drawforegrounds(
   foregrounds : Array[Background],
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
 }

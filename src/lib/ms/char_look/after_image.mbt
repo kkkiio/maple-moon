@@ -57,7 +57,7 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
 
 ///|
 pub fn AfterNxImageResource::simplify(
-  self : AfterNxImageResource
+  self : AfterNxImageResource,
 ) -> AfterImageResource {
   {
     animation: self.animation,
@@ -76,7 +76,7 @@ struct AfterImageResource {
 ///|
 pub fn AfterImage::new(
   resource : AfterImageResource,
-  image_loader : @resource.ImageLoader
+  image_loader : @resource.ImageLoader,
 ) -> AfterImage {
   let range = resource.range
   if range.is_empty() {

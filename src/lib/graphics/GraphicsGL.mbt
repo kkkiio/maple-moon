@@ -96,7 +96,7 @@ pub fn draw_screen_fill(
   red : Double,
   green : Double,
   blue : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.draw_rectangle(0, 0, self.vwidth, self.vheight, red, green, blue, alpha)
 }
@@ -111,7 +111,7 @@ pub fn draw_rectangle(
   red : Double,
   green : Double,
   blue : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   if self.locked {
     return
@@ -128,7 +128,7 @@ pub fn draw_bitmap(
   bmp : @resource.Bitmap,
   rect : Rectangle[Int],
   color : Color,
-  angle : Double
+  angle : Double,
 ) -> Unit {
   if self.locked {
     return
@@ -160,7 +160,7 @@ fn draw_text(
   textId : String,
   point : Point[Int],
   nametag : Bool,
-  text_y_clip~ : Range[Int]? = None
+  text_y_clip~ : Range[Int]? = None,
 ) -> Unit {
   if self.locked {
     return
@@ -324,7 +324,7 @@ pub fn clear_scene(self : GraphicsGL) -> Unit {
 fn get_offset(
   self : Atlas,
   id : String,
-  bmp : @resource.LoadedImage
+  bmp : @resource.LoadedImage,
 ) -> TexOffset {
   match self.offsets.get(id) {
     Some(c) => return c
@@ -438,7 +438,7 @@ fn Quad::new(
   bottom : Int,
   offset : TexOffset,
   color : Color,
-  rotation : Double
+  rotation : Double,
 ) -> Quad {
   // if left >= right || top >= bottom {
   //   abort("Invalid Quad: left >= right || top >= bottom")
@@ -481,7 +481,7 @@ fn Vertex::new(
   localcoord_y : Int,
   texcoord_x : Int,
   texcoord_y : Int,
-  color : Color
+  color : Color,
 ) -> Vertex {
   { localcoord_x, localcoord_y, texcoord_x, texcoord_y, color }
 }
@@ -516,7 +516,7 @@ fn Leftover::height(self : Leftover) -> Int {
 ///|
 impl @quadtree.QuadCompare for Leftover with compare_to(
   self : Leftover,
-  other : Leftover
+  other : Leftover,
 ) -> @quadtree.Direction {
   let wg = self.width() >= other.width()
   let hg = self.height() >= other.height()

@@ -10,7 +10,7 @@ struct WeaponData {
 
 ///|
 pub fn WeaponData::from_item_data(
-  item_data : @item.ItemData
+  item_data : @item.ItemData,
 ) -> WeaponData raise {
   let equip_data = @data.EquipData::parse_item_data(item_data)
   let prefix = item_data.item_id / 10000

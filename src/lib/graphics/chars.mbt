@@ -1,7 +1,7 @@
 ///|
 pub fn Charset::new(
   src : @resource.NxNode,
-  alignment : CharsetAlignment
+  alignment : CharsetAlignment,
 ) -> Charset {
   let chars = Map::new()
   for sub in src {
@@ -13,7 +13,7 @@ pub fn Charset::new(
       Some(_) => ()
       None => continue
     }
-    let mut c = name[0]
+    let mut c = name.get_char(0).unwrap()
     if c == '\\' {
       c = '/'
     }

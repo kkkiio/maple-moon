@@ -8,9 +8,9 @@ pub(all) struct JobData {
 ///|
 pub async fn JobData::load(
   id : Int,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> JobData raise {
-  let strid = @string_format.extend_id(id, 3)
+  let strid = @string_format.stoi_left_pad0(id, 3)
   let src = @skill.skill_loader().load_res_async([strid + ".img"])
   JobData::new(id, src, string_loader)
 }
@@ -19,9 +19,9 @@ pub async fn JobData::load(
 pub fn JobData::new(
   id : Int,
   src : @resource.NxNode,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> JobData {
-  let strid = @string_format.extend_id(id, 3)
+  let strid = @string_format.stoi_left_pad0(id, 3)
   let strsrc = string_loader.load_res(["Skill.img", strid])
   let icon = src["info"]["icon"] |> @graphics.Texture::from_resource
   let name = strsrc["bookName"].get_string()

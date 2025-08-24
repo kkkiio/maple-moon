@@ -26,7 +26,7 @@ pub fn watch_skill_book(mod : Module, callback : SkillBookWatcher) -> Unit {
 fn get_skills_by_job_level(
   skillbook : SkillBook,
   job : @job.Job,
-  job_level : @job.Level
+  job_level : @job.Level,
 ) -> Array[SkillUIData] {
   let subid = job.get_subjob(job_level)
   let job_data = job.get_data_by_id(subid)
@@ -52,7 +52,7 @@ fn get_skills_by_job_level(
             level,
             master_level,
             icon: data.icons[0].bitmap.map_or(@resource.Image::new_pending(), fn(
-              bitmap
+              bitmap,
             ) {
               bitmap.image
             }),
@@ -68,7 +68,7 @@ fn get_skills_by_job_level(
 ///| Get all skills for the current player, grouped by job level
 fn get_player_skill_groups(
   skillbook : SkillBook,
-  player : @player.Player
+  player : @player.Player,
 ) -> Array[SkillGroup] {
   let stats = player.get_stats()
   let job = stats.get_job()
@@ -129,7 +129,7 @@ pub fn transfer_one_sp(
   mod : Module,
   job_level : Int,
   from_skill_id : Int,
-  to_skill_id : Int
+  to_skill_id : Int,
 ) -> String {
   let item_id = match job_level {
     1 => SpResetItemId::SP_RESET_1ST_JOB

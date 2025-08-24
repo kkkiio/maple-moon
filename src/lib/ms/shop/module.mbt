@@ -14,7 +14,7 @@ struct Module {
 pub fn Module::load(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module {
   // @ui.ui_window_2_loader().load_res(["Shop2"])
   // |> @utils.map(fn(src) { Module::new(container, src) })
@@ -25,7 +25,7 @@ pub fn Module::load(
 fn Module::new(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module {
   // let countset = @graphics.Charset::new(
   //   @ui.common_ui_loader().load_res(["Basic.img", "ItemNo"]),
@@ -43,7 +43,7 @@ fn Module::new(
 
 ///|
 pub fn make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(

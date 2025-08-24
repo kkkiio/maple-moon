@@ -20,7 +20,7 @@ pub fn get_key_mappings(keymap : Map[KeyCode, Mapping]) -> Array[KeyMappingJs] {
 ///| Watch function that takes a callback to be called when mappings change
 pub fn watch_keyboard(
   mod : Module,
-  callback : (Array[KeyMappingJs]) -> Unit
+  callback : (Array[KeyMappingJs]) -> Unit,
 ) -> Unit {
   // Initial call with current mappings
   callback(get_key_mappings(mod.get_keyboard().keymap))
@@ -32,7 +32,7 @@ pub fn watch_keyboard(
 ///| Update key mappings with new values from JS
 pub fn update_key_mappings(
   mod : Module,
-  mappings : Array[KeyMappingJs]
+  mappings : Array[KeyMappingJs],
 ) -> Unit {
   let update_actions = Array::new()
   for mapping in mappings {

@@ -32,7 +32,7 @@ pub fn[T : MapObject] draw(
   layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.layers[layer].each(fn(oid, _v) {
     match self.get(oid) {
@@ -45,7 +45,7 @@ pub fn[T : MapObject] draw(
 ///|
 pub fn[T : MapObject] update(
   self : MapObjects[T],
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Unit {
   self.objects.each(fn(oid, mmo) {
     let oldlayer = mmo.get_layer()
@@ -110,7 +110,7 @@ pub fn[T] size(self : MapObjects[T]) -> Int {
 ///|
 pub fn[T] MapObjects::listen_object_changes(
   self : MapObjects[T],
-  listener : (MapObjectEvent[T]) -> Bool
+  listener : (MapObjectEvent[T]) -> Bool,
 ) -> Unit {
   self.event_listeners.push(listener)
 }

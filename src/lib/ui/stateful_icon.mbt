@@ -19,7 +19,7 @@ pub fn StatefulIcon::new(
   countset : @graphics.Charset,
   ntx : @graphics.Texture,
   dtx : @graphics.Texture,
-  motx : @graphics.Texture
+  motx : @graphics.Texture,
 ) -> StatefulIcon {
   { state: NORMAL, ntx, dtx, motx, icon_model: IconModel::new(countset, None) }
 }
@@ -27,7 +27,7 @@ pub fn StatefulIcon::new(
 ///|
 pub fn StatefulIcon::draw(
   self : StatefulIcon,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> Unit {
   self.icon_model.draw(position, self.get_texture())
 }

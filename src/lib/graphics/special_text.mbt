@@ -12,7 +12,7 @@ pub fn OutlinedText::new(
   font : FontId,
   alignment : TextAlignment,
   inner_color : @struct.ColorName,
-  outer_color : @struct.ColorName
+  outer_color : @struct.ColorName,
 ) -> OutlinedText {
   {
     inner: Text::new(font, alignment, inner_color),
@@ -44,7 +44,7 @@ pub fn OutlinedText::change_text(self : OutlinedText, text : String) -> Unit {
 ///|
 pub fn OutlinedText::change_color(
   self : OutlinedText,
-  color : @struct.ColorName
+  color : @struct.ColorName,
 ) -> Unit {
   self.inner.change_color(color)
 }
@@ -70,7 +70,7 @@ pub fn ShadowText::new(
   font : FontId,
   alignment : TextAlignment,
   top_color : @struct.ColorName,
-  shadow_color : @struct.ColorName
+  shadow_color : @struct.ColorName,
 ) -> ShadowText {
   {
     top: Text::new(font, alignment, top_color),
@@ -93,7 +93,7 @@ pub fn ShadowText::change_text(self : ShadowText, text : String) -> Unit {
 ///|
 pub fn ShadowText::change_color(
   self : ShadowText,
-  color : @struct.ColorName
+  color : @struct.ColorName,
 ) -> Unit {
   self.top.change_color(color)
 }

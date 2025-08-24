@@ -15,7 +15,7 @@ extern "js" fn GL::texParameteri(
   self : GL,
   target : GLenum,
   pname : GLenum,
-  param : Int
+  param : Int,
 ) -> Unit =
   #| (gl, t, p, param) => gl.texParameteri(t, p, param)
 
@@ -31,6 +31,6 @@ extern "js" fn GL::pixelStorei(self : GL, pname : GLenum, param : Bool) -> Unit 
 extern "js" fn GL::blendFunc(
   self : GL,
   sfactor : GLenum,
-  dfactor : GLenum
+  dfactor : GLenum,
 ) -> Unit =
   #| (gl, s, d) => gl.blendFunc(s, d)

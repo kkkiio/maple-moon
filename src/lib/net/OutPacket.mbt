@@ -78,7 +78,7 @@ pub fn OutPacket::write_time(self : OutPacket) -> Unit {
 ///|
 pub fn OutPacket::write_point(
   self : OutPacket,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> Unit {
   self.write_short(position.x)
   self.write_short(position.y)

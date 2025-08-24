@@ -29,7 +29,7 @@ pub(all) struct Button {
 ///|
 pub fn Button::new(
   object : &UIButton,
-  on_click? : () -> ButtonState?
+  on_click? : () -> ButtonState?,
 ) -> Button {
   { object, on_click }
 }
@@ -94,7 +94,7 @@ pub fn ButtonModel::new(
   state~ : ButtonState = ButtonState::NORMAL,
   pos~ : Point[Int] = @struct.Point::default(),
   active~ : Bool = true,
-  pressed~ : Bool = false
+  pressed~ : Bool = false,
 ) -> ButtonModel {
   { state: Ref::new(state), position: pos, active, pressed }
 }

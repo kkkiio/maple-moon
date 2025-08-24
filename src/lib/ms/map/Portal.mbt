@@ -66,7 +66,7 @@ fn PortalWarpInfo::new(
   m : Int,
   i : Bool,
   tn : String,
-  n : String
+  n : String,
 ) -> PortalWarpInfo {
   {
     mapid: if m < 999999999 {
@@ -103,7 +103,7 @@ pub fn Portal::new(
   intramap : Bool,
   position : Point[Int],
   tomap : Int,
-  toname : String
+  toname : String,
 ) -> Portal {
   {
     animation,
@@ -136,7 +136,7 @@ pub fn Portal::update(self : Portal, playerpos : Point[Int]) -> Unit {
 pub fn Portal::draw(
   self : Portal,
   viewpos : Point[Int],
-  inter : Double
+  inter : Double,
 ) -> Unit {
   match self.animation {
     Some(animation) =>

@@ -18,7 +18,7 @@ struct MapPortalAnimations {
 pub fn MapPortals::new(
   src : Array[PortalMarker],
   mapid : Int,
-  map_portals_animations : MapPortalAnimations
+  map_portals_animations : MapPortalAnimations,
 ) -> MapPortals {
   let mut portals_by_id = @immut/sorted_map.new()
   let mut portal_ids_by_name = @immut/sorted_map.new()
@@ -73,7 +73,7 @@ pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
 pub fn MapPortals::draw(
   self : MapPortals,
   viewpos : Point[Int],
-  inter : Double
+  inter : Double,
 ) -> Unit {
   self.portals_by_id.each(fn(_k, portal) { portal.draw(viewpos, inter) })
 }
@@ -81,7 +81,7 @@ pub fn MapPortals::draw(
 ///|
 pub fn MapPortals::get_portal_pos_by_id(
   self : MapPortals,
-  portal_id : Int
+  portal_id : Int,
 ) -> Point[Int] {
   match self.portals_by_id.get(portal_id) {
     Some(portal) => portal.get_position() - @struct.Point::new(0, 30)
@@ -92,7 +92,7 @@ pub fn MapPortals::get_portal_pos_by_id(
 ///|
 pub fn get_portal_by_name(
   self : MapPortals,
-  portal_name : String
+  portal_name : String,
 ) -> Point[Int] {
   self.portal_ids_by_name
   .get(portal_name)
@@ -103,7 +103,7 @@ pub fn get_portal_by_name(
 ///|
 pub fn MapPortals::find_warp_at(
   self : MapPortals,
-  playerpos : Point[Int]
+  playerpos : Point[Int],
 ) -> PortalWarpInfo {
   if self.cooldown == 0 {
     self.cooldown = warpcd

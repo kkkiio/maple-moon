@@ -13,7 +13,7 @@ pub async fn Module::load(
   container : &@ui.Container,
   network : @net.Network,
   ref_render : @markup_text.RefRender,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Module raise {
   let npc_loader = @resource.SyncLoader::load(
     "npc",
@@ -41,7 +41,7 @@ fn Module::new(
   ref_render : @markup_text.RefRender,
   network : @net.Network,
   string_loader~ : @resource.SyncLoader,
-  npc_loader~ : @resource.SyncLoader
+  npc_loader~ : @resource.SyncLoader,
 ) -> Module {
   let npcs = MapNpcs::new(
     fn(args) {
@@ -73,7 +73,7 @@ fn open_npc_talk_ui(
   container : &@ui.Container,
   ref_render : @markup_text.RefRender,
   string_loader : @resource.SyncLoader,
-  args : TalkArgs
+  args : TalkArgs,
 ) -> Unit {
   let elem = @ui.Element::new(
     fn(hooks) {
@@ -89,7 +89,7 @@ fn open_npc_talk_ui(
 
 ///|
 pub fn make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(
@@ -150,7 +150,7 @@ pub struct SpawnNpcController {
 
 ///|
 pub fn parse_spawn_npc_controller(
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> SpawnNpcController raise {
   let mode = recv.read_byte()
   let oid = recv.read_int()
@@ -172,7 +172,7 @@ pub fn parse_spawn_npc_controller(
 ///|
 pub fn handle_spawn_npc_controller_parsed(
   npcs : MapNpcs,
-  ctrl : SpawnNpcController
+  ctrl : SpawnNpcController,
 ) -> Unit {
   if ctrl.mode == 0 {
     npcs.remove(ctrl.oid)
@@ -240,7 +240,7 @@ pub fn handle_npc_dialogue(
   name_loader : @markup_text.RefRender,
   string_loader : @resource.SyncLoader,
   npc_talk_resource : NpcTalkResource,
-  dialogue : NpcDialogue
+  dialogue : NpcDialogue,
 ) -> Unit {
   container.add_ui(
     @ui.Element::new(
@@ -301,7 +301,7 @@ fn new_npc_talk_ui(
   container : &@ui.Container,
   args : TalkArgs,
   string_loader : @resource.SyncLoader,
-  name_loader : @markup_text.RefRender
+  name_loader : @markup_text.RefRender,
 ) -> UINpcTalk {
   let ui = UINpcTalk::new(npc_talk_resource, hooks, string_loader, name_loader)
   ui.change_text(

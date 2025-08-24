@@ -38,7 +38,7 @@ struct SyncLoader {
 pub async fn SyncLoader::load(
   name : String,
   data_url : String,
-  image_loader : ImageLoader
+  image_loader : ImageLoader,
 ) -> SyncLoader raise Error {
   let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
     |> @js.Value::cast
@@ -49,7 +49,7 @@ pub async fn SyncLoader::load(
 fn SyncLoader::new(
   name : String,
   loader : SyncResourceLoader,
-  image_loader : ImageLoader
+  image_loader : ImageLoader,
 ) -> SyncLoader {
   { name, loader, image_loader }
 }
@@ -165,7 +165,7 @@ pub fn as_int(self : NxNode) -> Int raise LoadError {
 pub fn get_int_field(
   self : NxNode,
   key : String,
-  default? : Int
+  default? : Int,
 ) -> Int raise LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(Json::Number(it)) => it.to_int()
@@ -182,7 +182,7 @@ pub fn get_int_field(
 pub fn get_float_field(
   self : NxNode,
   key : String,
-  default? : Double
+  default? : Double,
 ) -> Double raise LoadError {
   match self.desc.as_object().unwrap()[key] {
     Some(Json::Number(it)) => it
@@ -328,7 +328,7 @@ fn join_path(parts : Array[String]) -> String {
 }
 
 ///|
-pub(all) type ResPath Array[String] derive(Eq)
+pub(all) struct ResPath(Array[String]) derive(Eq)
 
 ///|
 pub fn as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
@@ -347,12 +347,12 @@ pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
 }
 
 ///| Array of T which json key is index
-pub type MapBasedArray[T] Array[T] derive(Show)
+pub struct MapBasedArray[T](Array[T]) derive(Show)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
   json,
-  path
+  path,
 ) -> MapBasedArray[T] raise {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError(
@@ -375,12 +375,12 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
 }
 
 ///|
-pub type Nullable[T] T? derive(Show)
+pub struct Nullable[T](T?) derive(Show)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
   json,
-  path
+  path,
 ) {
   if json is Null {
     None
@@ -390,7 +390,7 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
 }
 
 ///|
-pub type IntBool Bool
+pub struct IntBool(Bool)
 
 ///|
 pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool raise @json.JsonDecodeError {
@@ -402,12 +402,12 @@ pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool raise 
 }
 
 ///|
-pub type IntMap[T] Map[Int, T] derive(Show)
+pub struct IntMap[T](Map[Int, T]) derive(Show)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))

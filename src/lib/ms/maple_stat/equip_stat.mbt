@@ -42,7 +42,7 @@ pub fn EquipStatId::int_value(self : EquipStatId) -> Int {
 ///|
 pub impl Hash for EquipStatId with hash_combine(
   self : EquipStatId,
-  hasher : Hasher
+  hasher : Hasher,
 ) -> Unit {
   hasher.combine(self.int_value())
 }

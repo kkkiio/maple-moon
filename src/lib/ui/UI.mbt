@@ -9,7 +9,7 @@ pub(all) struct UI {
 ///|
 pub fn UI::new(
   basic_loader : @resource.SyncLoader,
-  get_keyboard_mapping : (String) -> @keyboard.Mapping?
+  get_keyboard_mapping : (String) -> @keyboard.Mapping?,
 ) -> UI {
   {
     state: None,
@@ -57,7 +57,7 @@ pub fn send_cursor_pressed(self : UI, pressed : Bool) -> Unit {
 pub fn UI::send_cursor(
   self : UI,
   cursorpos : Point[Int],
-  cursorstate : CursorState
+  cursorstate : CursorState,
 ) -> Unit {
   let nextstate = match self.state {
     Some(state) => state.send_cursor(cursorstate, cursorpos)
@@ -104,7 +104,7 @@ pub impl Container for UI with add_ui(self : UI, elem : Element, focused : Bool)
 ///|
 pub impl Container for UI with remove_ui(
   self : UI,
-  element_type : UIElementType
+  element_type : UIElementType,
 ) -> Unit {
   guard self.state is Some(state) else { return }
   state.remove(element_type)

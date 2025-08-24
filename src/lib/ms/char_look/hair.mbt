@@ -74,7 +74,7 @@ fn get_hair_loader() -> @resource.AsyncLoader {
 pub async fn Hair::load(
   hairid : Int,
   drawinfo : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Hair raise {
   let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
   Hair::new(hairid, hairnode, drawinfo, string_loader)
@@ -85,7 +85,7 @@ fn Hair::new(
   hairid : Int,
   hairnode : @resource.NxNode,
   drawinfo : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Hair {
   let stances : Map[
     @types.StanceId,
@@ -140,7 +140,7 @@ pub fn draw(
   stance : @types.StanceId,
   layer : HairLayer,
   frame : Int,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   let frameit = self.stances
     .get(stance)

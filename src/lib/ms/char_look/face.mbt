@@ -117,7 +117,7 @@ fn get_face_loader() -> @resource.AsyncLoader {
 ///|
 pub async fn Face::load(
   faceid : Int,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Face raise {
   let strid = "000" + faceid.to_string()
   let facenode = get_face_loader().load_res_async(["\{strid}.img"])
@@ -128,7 +128,7 @@ pub async fn Face::load(
 fn Face::new(
   faceid : Int,
   facenode : @resource.NxNode,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Face {
   let expressions = expression_names.map_with_key(fn(exp, _v) {
     let frames = Map::new()
@@ -161,7 +161,7 @@ pub fn Face::draw(
   self : Face,
   expression : ExpressionId,
   frame : Int,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   match self.expressions[expression].unwrap().get(frame) {
     Some(frameit) => frameit.texture.draw(args)

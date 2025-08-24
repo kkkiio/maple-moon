@@ -2,7 +2,7 @@
 pub fn new_module(
   scheduler : &@game_mod.Scheduler,
   packet_processor : @net.Network,
-  char_stats_getter : () -> @char_stats.CharStats?
+  char_stats_getter : () -> @char_stats.CharStats?,
 ) -> @game_mod.Mod {
   let delay = @utils.Duration::from_milliseconds(5000)
   scheduler.schedule_with_fixed_delay(

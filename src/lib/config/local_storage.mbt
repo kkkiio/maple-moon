@@ -10,7 +10,7 @@ pub fn LocalStorage::new() -> LocalStorage {
 pub fn LocalStorage::set_item(
   _ : LocalStorage,
   key : String,
-  value : String
+  value : String,
 ) -> Unit {
   set_item(key, value)
 }

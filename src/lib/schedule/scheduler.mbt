@@ -21,7 +21,7 @@ pub impl @game_mod.Scheduler for Schedules with schedule_with_fixed_delay(
   self : Schedules,
   task : () -> Unit,
   initial_delay : @utils.Duration,
-  delay : @utils.Duration
+  delay : @utils.Duration,
 ) -> () -> Unit {
   let scheduled_task = {
     next_time: self.current_time.add_duration(initial_delay),

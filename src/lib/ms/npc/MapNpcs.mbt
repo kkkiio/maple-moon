@@ -13,7 +13,7 @@ pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
   packet_processor : @net.Network,
   npc_loader~ : @resource.SyncLoader,
-  string_loader~ : @resource.SyncLoader
+  string_loader~ : @resource.SyncLoader,
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
@@ -48,7 +48,7 @@ pub fn MapNpcs::draw(
   layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.npcs.draw(layer, viewx, viewy, alpha)
 }
@@ -95,7 +95,7 @@ pub fn MapNpcs::send_cursor(
   self : MapNpcs,
   pressed : Bool,
   position : @struct.Point[Int],
-  viewpos : @struct.Point[Int]
+  viewpos : @struct.Point[Int],
 ) -> @ui.CursorState? {
   for _, map_object in self.npcs {
     let npc = map_object
@@ -126,7 +126,7 @@ pub fn MapNpcs::send_cursor(
 ///|
 pub fn MapNpcs::listen_npc_changes(
   self : MapNpcs,
-  listener : (@map_object.MapObjectEvent[Npc]) -> Bool
+  listener : (@map_object.MapObjectEvent[Npc]) -> Bool,
 ) -> Unit {
   self.npcs.listen_object_changes(listener)
 }
@@ -150,7 +150,7 @@ pub fn NpcSpawn::instantiate(
   self : NpcSpawn,
   npc_loader : @resource.SyncLoader,
   string_loader : @resource.SyncLoader,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
   Npc::load(
@@ -232,10 +232,10 @@ pub fn Npc::load(
   o : Int,
   fl : Bool,
   f : Int,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
-  let strid = @string_format.extend_id(id, 7) + ".img"
+  let strid = @string_format.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_res([strid])
   let strsrc = string_loader.load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
@@ -322,7 +322,7 @@ pub impl @map_object.MapObject for Npc with draw(
   self : Npc,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   match self.animations.get(self.stance) {
@@ -338,7 +338,7 @@ pub impl @map_object.MapObject for Npc with draw(
 ///|
 pub impl @map_object.MapObject for Npc with update(
   self : Npc,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Int {
   if not(self.base.active) {
     return self.base.phobj.fhlayer
@@ -378,7 +378,7 @@ pub fn is_scripted(self : Npc) -> Bool {
 pub fn inrange(
   self : Npc,
   cursorpos : @struct.Point[Int],
-  viewpos : @struct.Point[Int]
+  viewpos : @struct.Point[Int],
 ) -> Bool {
   if not(self.base.active) {
     return false

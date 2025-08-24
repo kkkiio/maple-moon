@@ -22,7 +22,7 @@ pub async fn Module::load(
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
   io_service : @io_task.IOService,
-  local_storage : @config.LocalStorage
+  local_storage : @config.LocalStorage,
 ) -> Module raise {
   let login_loader = @resource.SyncLoader::load(
     "Login",
@@ -41,7 +41,7 @@ pub fn Module::new(
   char_look_module : @char_look.Module,
   local_storage : @config.LocalStorage,
   login_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module {
   {
     network,
@@ -71,7 +71,7 @@ pub fn make_handlers(
   ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
-  quest_module : @quest.Module
+  quest_module : @quest.Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(
@@ -135,7 +135,7 @@ pub fn make_handlers(
       log_recv=true,
     ),
     @net.make_handler(@net.LAST_CONNECTED_WORLD, parse_last_connected_world, fn(
-      _
+      _,
     ) {
 
     }),
@@ -153,7 +153,7 @@ pub fn Module::login(
   self : Module,
   account : String,
   password : String,
-  callback : (String) -> Unit
+  callback : (String) -> Unit,
 ) -> Unit {
   // TODO: support token auth
   self.local_storage.set_item("last_account", account)
@@ -166,7 +166,7 @@ fn Module::login_account(
   self : Module,
   account : String,
   password : String,
-  callback : (String) -> Unit
+  callback : (String) -> Unit,
 ) -> Unit {
   self.login_task = Some({
     processor: self.network,
@@ -181,7 +181,7 @@ fn Module::login_account(
 ///| login last used account and character
 pub fn Module::login_last_used(
   self : Module,
-  callback : (String) -> Unit
+  callback : (String) -> Unit,
 ) -> Unit {
   // TODO: support token auth
   let account = self.local_storage.get_item("last_account")
@@ -237,7 +237,7 @@ fn LoginTask::update(self : LoginTask) -> Unit {
 }
 
 ///|
-priv type LoginStartMessage Unit derive(Show)
+priv struct LoginStartMessage(Unit) derive(Show)
 
 ///|
 impl @net.OutMessage for LoginStartMessage with pack(self) -> @net.OutPacket {
@@ -424,7 +424,7 @@ pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus raise Error {
 ///|
 fn parse_server_list(
   self : Module,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> Array[World]? raise Error {
   while recv.available() > 0 {
     let world = parse_world(recv)
@@ -596,7 +596,7 @@ pub fn handle_server_ip(mod : Module, port : Int, cid : Int) -> Unit {
 fn Module::connect_channel_with_character(
   self : Module,
   cid : Int,
-  port : Int
+  port : Int,
 ) -> Unit {
   self.network.connect_channel(port)
   self.connect_task = Some({ network: self.network, cid })
@@ -611,7 +611,7 @@ fn parse_add_new_char_entry(recv : @net.InPacket) -> @character.CharEntry raise 
 ///|
 pub fn handle_add_new_char_entry(
   mod : Module,
-  character : @character.CharEntry
+  character : @character.CharEntry,
 ) -> Unit {
   mod.characters.push(character)
   mod.ui_container.remove_ui(@ui.UIElementType::CLASS_CREATION)
@@ -619,7 +619,7 @@ pub fn handle_add_new_char_entry(
 }
 
 ///| Request the list of worlds and channels online.
-priv type ServerRequest Unit derive(Show)
+priv struct ServerRequest(Unit) derive(Show)
 
 ///|
 impl @net.OutMessage for ServerRequest with pack(self) -> @net.OutPacket {
@@ -891,7 +891,7 @@ priv struct LastConnectedWorldMessage {
 
 ///|
 fn parse_last_connected_world(
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> LastConnectedWorldMessage raise {
   { world: recv.read_int() }
 }

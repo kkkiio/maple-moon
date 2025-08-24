@@ -3,7 +3,7 @@ pub fn login_account_ffi(
   mod : Module,
   account : String,
   password : String,
-  callback : (String) -> Unit
+  callback : (String) -> Unit,
 ) -> Unit {
   mod.login(account, password, callback)
 }

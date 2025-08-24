@@ -61,7 +61,7 @@ fn MapQuests::new(
   npc_quests_map : Map[Int, Array[Int]],
   network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-  get_player_deps : (@player.Player) -> PlayerDeps
+  get_player_deps : (@player.Player) -> PlayerDeps,
 ) -> MapQuests {
   {
     resource,
@@ -86,7 +86,7 @@ pub fn MapQuests::draw(
   id : Int,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.quests.draw(id, viewx, viewy, alpha)
 }
@@ -100,7 +100,7 @@ pub fn MapQuests::update(self : MapQuests, physics : @physics.Physics) -> Unit {
 pub fn MapQuests::add_npc(
   self : MapQuests,
   npc_id : Int,
-  npc_object : @physics.MovingObject
+  npc_object : @physics.MovingObject,
 ) -> Unit {
   guard self.player_deps
     is Some({ player_quest_log, item_count_provider, char_stats_provider }) else {
@@ -210,7 +210,7 @@ pub fn MapQuests::send_cursor(
   self : MapQuests,
   pressed : Bool,
   position : @struct.Point[Int],
-  viewpos : @struct.Point[Int]
+  viewpos : @struct.Point[Int],
 ) -> @ui.CursorState? {
   for _, quest in self.quests {
     if quest.is_active() && quest.inrange(position, viewpos) {
@@ -242,7 +242,7 @@ fn NpcQuest::new(
   in_progress_quest : (InProgressQuest, Bool)?,
   npc_id : Int,
   npc_object : @physics.MovingObject,
-  icon : @graphics.Animation
+  icon : @graphics.Animation,
 ) -> NpcQuest {
   @log.debug({ "npc_id": npc_id, "quest_id": quest_id }, "show quest icon")
   {
@@ -299,7 +299,7 @@ impl @map_object.MapObject for NpcQuest with get_position(self) -> @struct.Point
 fn NpcQuest::inrange(
   self : NpcQuest,
   cursorpos : @struct.Point[Int],
-  viewpos : @struct.Point[Int]
+  viewpos : @struct.Point[Int],
 ) -> Bool {
   let absp = self.get_position() + viewpos
   let dim = self.icon.get_dimensions()

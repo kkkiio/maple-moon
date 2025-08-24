@@ -8,7 +8,7 @@ pub(all) struct RegularAttack {
 pub fn RegularAttack::apply_actions(
   self : RegularAttack,
   user : @character.Character,
-  t : @combat.AttackType
+  t : @combat.AttackType,
 ) -> Unit {
   self.action.apply(user, t)
 }
@@ -18,7 +18,7 @@ pub fn make_regular_attack(
   character : @character.CharBase,
   bullet_id : Int,
   attacktype : @combat.AttackType,
-  degenerate : Bool
+  degenerate : Bool,
 ) -> @combat.Attack {
   let t = attacktype
   let mut mindamage = character.stats.get_mindamage().to_double()
@@ -69,7 +69,7 @@ pub fn make_regular_attack(
 ///|
 pub fn get_regular_attack_bullet(
   bulletid : Int,
-  bullet_module : @bullet.Module
+  bullet_module : @bullet.Module,
 ) -> @graphics.Animation {
   let data = bullet_module.get_bullet_data(bulletid).unwrap()
   data.bullet
@@ -82,7 +82,7 @@ struct RegularAction {} derive(Default)
 pub impl SkillAction for RegularAction with apply(
   self : RegularAction,
   target : @character.Character,
-  atype : @combat.AttackType
+  atype : @combat.AttackType,
 ) -> Unit {
   let weapontype = target.get_weapontype()
   let degenerate = match weapontype {
@@ -96,7 +96,7 @@ pub impl SkillAction for RegularAction with apply(
 ///|
 pub fn can_use_regular_attack(
   weapon : @weapon.Type,
-  bullets : Int
+  bullets : Int,
 ) -> ForbidReason {
   match weapon {
     @weapon.BOW | @weapon.CROSSBOW | @weapon.CLAW | @weapon.GUN =>
@@ -112,7 +112,7 @@ pub fn can_use_regular_attack(
 ///|
 pub fn new_regular_attack(
   string_loader : @resource.SyncLoader,
-  bullet_module : @bullet.Module
+  bullet_module : @bullet.Module,
 ) -> SpecialMove {
   let ra = { action: RegularAction::default(), string_loader }
   {

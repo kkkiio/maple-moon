@@ -10,7 +10,7 @@ pub struct QuestFFI {
 ///|
 pub fn watch_quest_log_ffi(
   mod : Module,
-  callback : (Array[QuestFFI]) -> Bool
+  callback : (Array[QuestFFI]) -> Bool,
 ) -> Unit {
   let cb2 = fn(quest_log : PlayerQuestLog) {
     let quests = []
@@ -67,7 +67,7 @@ pub fn watch_quest_log_ffi(
 ///|
 pub fn parse_quest_desc(
   s : String,
-  ref_name_provider~ : &QuestTextRefProvider = TestQuestRefNameProvider::default()
+  ref_name_provider~ : &QuestTextRefProvider = TestQuestRefNameProvider::default(),
 ) -> String raise {
   let tag_replace_map = {
     'R': fn(style, v) raise { ref_name_provider.get_progress(style, v) },
@@ -174,13 +174,13 @@ impl QuestTextRefProvider for RefProviderImpl with get_item_count(self, _, v) {
 }
 
 ///|
-type TestQuestRefNameProvider Unit derive(Default)
+struct TestQuestRefNameProvider(Unit) derive(Default)
 
 ///|
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_progress(
   _,
   _,
-  progress_id
+  progress_id,
 ) {
   "<progress>\{progress_id}</progress>"
 }
@@ -189,7 +189,7 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_progress(
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_mob(
   _,
   _,
-  mob_id
+  mob_id,
 ) {
   "<mob>\{mob_id}</mob>"
 }
@@ -198,7 +198,7 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_mob(
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_npc(
   _,
   _,
-  npc_id
+  npc_id,
 ) {
   "<npc>\{npc_id}</npc>"
 }
@@ -207,7 +207,7 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_npc(
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_map_name(
   _,
   _,
-  map_id
+  map_id,
 ) {
   "<map>\{map_id}</map>"
 }
@@ -216,7 +216,7 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_map_name(
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_item_name(
   _,
   _,
-  item_id
+  item_id,
 ) {
   "<item>\{item_id}</item>"
 }
@@ -225,7 +225,7 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_item_name(
 impl QuestTextRefProvider for TestQuestRefNameProvider with get_item_count(
   _,
   _,
-  item_id
+  item_id,
 ) {
   "<count>\{item_id}</count>"
 }
@@ -283,9 +283,9 @@ test "parse quest desc 1" {
   )
   inspect(
     desc,
-    content=
+    content=(
       #|<span style="color: black">Let&#039;s begin the exploration! You can earn the </span><span style="color: blue">&lt;Beginner Explorer&gt;</span><span style="color: black"> title by exploring the villages in Victoria.</span>
-    ,
+    ),
   )
 }
 
@@ -296,11 +296,11 @@ test "parse quest bold desc" {
   )
   inspect(
     desc,
-    content=
+    content=(
       #|<span style="color: blue, font-weight: bold;">Title - Beginner Explorer</span><span style="color: black"></span><br/>
       #|<span style="color: black">Explore the 20 main regions of Victoria Island.</span><br/>
       #|<span style="color: black"></span><span style="color: blue">● Status : </span><progress>27010</progress><span style="color: blue"> / 20 Completed</span>
-    ,
+    ),
   )
 }
 
@@ -311,7 +311,7 @@ test "parse monster hunt check count" {
   )
   inspect(
     q1016_1_desc,
-    content=
+    content=(
       #|<span style="color: black">I decided to get trained under the Famous Sword-Master, Mai, in Amherst. I guess hunting the weakest monsters is a good idea. Should I hunt Snail, Blue Snail, and Shroom in order?</span><br/>
       #|<span style="color: black"></span><br/>
       #|<span style="color: black"></span><mob>100100</mob> <check>10161</check> <br/>
@@ -319,7 +319,7 @@ test "parse monster hunt check count" {
       #|<mob>120100</mob> <check>10163</check><span style="color: black"></span><br/>
       #|<span style="color: black"></span><br/>
       #|<span style="color: black"> Ah, Mai told me to meet with </span><npc>20002</npc><span style="color: black"> in Southperry and try training together...</span>
-    ,
+    ),
   )
 }
 
@@ -330,11 +330,11 @@ test "parse map name" {
   )
   inspect(
     desc,
-    content=
+    content=(
       #|<span style="color: black">She says there are way too many Snails and would like you to eliminate 10 </span><span style="color: red">Red Snails</span><span style="color: black"> and 10 </span><span style="color: red">Blue Snails</span><span style="color: black">.</span><br/>
       #|<span style="color: black"></span><br/>
       #|<span style="color: black">Let&#039;s report back to </span><span style="color: blue">Ayan</span><span style="color: black"> in </span><map>102000000</map><span style="color: black"> upon completion.</span>
-    ,
+    ),
   )
 }
 
@@ -345,9 +345,9 @@ test "parse item" {
   )
   inspect(
     desc,
-    content=
+    content=(
       #|<span style="color: black">Can you get me </span><span style="color: blue, font-weight: bold;">30</span> <item>4000003</item><span style="color: blue">es</span><span style="color: black"> and </span><span style="color: blue, font-weight: bold;">50</span> <item>4000018</item><span style="color: blue">s</span><span style="color: black">? I&#039;m trying to remodel my house and make it bigger ... If you can do it, I&#039;ll hook you up with a nice </span><span style="color: blue">shield</span><span style="color: black"> that I don&#039;t really need ... You&#039;ll get plenty if you take down the ones that look like trees.</span>
-    ,
+    ),
   )
 }
 

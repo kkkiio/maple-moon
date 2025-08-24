@@ -14,7 +14,7 @@ struct AsyncLoader {
 ///|
 pub fn AsyncLoader::new(
   name : String,
-  loader? : AsyncResourceLoader
+  loader? : AsyncResourceLoader,
 ) -> AsyncLoader {
   { name, loader: loader.or_else(fn() { get_async_resource_loader(name) }) }
 }
@@ -22,7 +22,7 @@ pub fn AsyncLoader::new(
 ///|
 pub async fn AsyncLoader::load_res_async(
   self : AsyncLoader,
-  path : Array[String]
+  path : Array[String],
 ) -> NxNode raise {
   let promise = self.loader.load_data(join_path(path))
   let data : RawData = try promise.wait() |> @js.Value::cast catch {
@@ -39,5 +39,5 @@ pub async fn AsyncLoader::load_res_async(
 
 ///|
 pub fn AsyncResourceLoader::new_async_resource_loader(
-  loader : DirResourceLoader
+  loader : DirResourceLoader,
 ) -> AsyncResourceLoader = "resource" "new_async_resource_loader"

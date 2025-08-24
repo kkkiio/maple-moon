@@ -34,7 +34,7 @@ fn DropBase::new(
   dest : @struct.Point[Int],
   pickup_type : Int,
   mode : Int,
-  player_drop : Bool
+  player_drop : Bool,
 ) -> DropBase {
   let base = @map_object.MapObjectBase::new(id)
   base.set_position(@struct.Point::new(start.x, start.y - 4))
@@ -120,7 +120,7 @@ fn bounds(self : DropBase) -> @struct.Rectangle[Int] {
 fn DropBase::expire(
   self : DropBase,
   t : Int,
-  lt : @physics.PhysicsObject?
+  lt : @physics.PhysicsObject?,
 ) -> Unit {
   match t {
     0 => self.state = DropState::PICKED_UP
@@ -151,7 +151,7 @@ pub fn MesoDrop::new(
   t : Int,
   mode : Int,
   player_drop : Bool,
-  icon : @graphics.Animation
+  icon : @graphics.Animation,
 ) -> MesoDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
   { base, icon }
@@ -162,7 +162,7 @@ pub impl @map_object.MapObject for MesoDrop with draw(
   self : MesoDrop,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   if not(self.base.base.active) {
     return
@@ -186,7 +186,7 @@ pub impl @map_object.MapObject for MesoDrop with get_oid(self : MesoDrop) -> Int
 ///|
 pub impl @map_object.MapObject for MesoDrop with update(
   self : MesoDrop,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Int {
   self.base.update(physics)
 }
@@ -224,7 +224,7 @@ pub impl Drop for MesoDrop with get_bounds(self : MesoDrop) -> @struct.Rectangle
 pub impl Drop for MesoDrop with expire(
   self : MesoDrop,
   t : Int,
-  lt : @physics.PhysicsObject?
+  lt : @physics.PhysicsObject?,
 ) -> Unit {
   self.base.expire(t, lt)
 }
@@ -245,7 +245,7 @@ pub fn ItemDrop::new(
   mode : Int,
   _iid : Int,
   player_drop : Bool,
-  icon : @graphics.Texture
+  icon : @graphics.Texture,
 ) -> ItemDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
   { base, icon }
@@ -256,7 +256,7 @@ pub impl @map_object.MapObject for ItemDrop with draw(
   self : ItemDrop,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   if not(self.base.base.active) {
     return
@@ -279,7 +279,7 @@ pub impl @map_object.MapObject for ItemDrop with get_oid(self : ItemDrop) -> Int
 ///|
 pub impl @map_object.MapObject for ItemDrop with update(
   self : ItemDrop,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Int {
   self.base.update(physics)
 }
@@ -317,7 +317,7 @@ pub impl Drop for ItemDrop with get_bounds(self : ItemDrop) -> @struct.Rectangle
 pub impl Drop for ItemDrop with expire(
   self : ItemDrop,
   t : Int,
-  lt : @physics.PhysicsObject?
+  lt : @physics.PhysicsObject?,
 ) -> Unit {
   self.base.expire(t, lt)
 }

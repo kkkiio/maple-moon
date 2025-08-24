@@ -16,7 +16,7 @@ pub fn Text::new(
   color : @struct.ColorName,
   text~ : String = "",
   nametag~ : Bool = false,
-  max_width? : Int
+  max_width? : Int,
 ) -> Text {
   { font, alignment, color, image: None, text, max_width, nametag }
 }
@@ -25,7 +25,7 @@ pub fn Text::new(
 pub fn Text::draw(
   self : Text,
   point : Point[Int],
-  text_y_clip~ : Range[Int]? = None
+  text_y_clip~ : Range[Int]? = None,
 ) -> Unit {
   let image = self.get_or_init_image()
   let point = match self.alignment {

@@ -23,7 +23,7 @@ pub fn[K, V : Eq + Hash] BiMap::get_backward(self : BiMap[K, V], v : V) -> K? {
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(
   self : BiMap[K, V],
   k : K,
-  v : V
+  v : V,
 ) -> Unit {
   self.forward.set(k, v)
   self.backward.set(v, k)
@@ -31,7 +31,7 @@ pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(
 
 ///|
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::from_array(
-  array : Array[(K, V)]
+  array : Array[(K, V)],
 ) -> BiMap[K, V] {
   {
     forward: Map::from_iter(array.iter()),

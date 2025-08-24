@@ -11,7 +11,7 @@ typealias (Map[String, Mapping]) -> Unit as KeymapWatcher
 ///|
 pub fn Module::new(
   default_keymap : Map[String, Mapping],
-  network : @net.Network
+  network : @net.Network,
 ) -> Module {
   let keyboard = Keyboard::new(default_keymap)
   { keyboard, keymap_callbacks: Array::new(), network }
@@ -25,7 +25,7 @@ pub fn Module::get_keyboard(self : Module) -> Keyboard {
 ///|
 pub fn Module::on_keymap_change(
   self : Module,
-  callback : KeymapWatcher
+  callback : KeymapWatcher,
 ) -> Unit {
   self.keymap_callbacks.push(callback)
 }
@@ -33,7 +33,7 @@ pub fn Module::on_keymap_change(
 ///|Helper to notify all callbacks
 fn notify_keymap_change(
   self : Module,
-  new_keymap : Map[String, Mapping]
+  new_keymap : Map[String, Mapping],
 ) -> Unit {
   for callback in self.keymap_callbacks {
     callback(new_keymap)
@@ -42,11 +42,11 @@ fn notify_keymap_change(
 
 ///|
 pub fn Module::make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(@net.KEYMAP, fn(recv) { parse_keymap(recv) }, fn(
-      mappings : Array[(Int, Int)]
+      mappings : Array[(Int, Int)],
     ) {
       // Update keyboard with new mappings
       for i, values in mappings {

@@ -69,7 +69,7 @@ priv struct ObjNxResource {
 
 ///|
 pub fn MapTilesObjsNxResource::unwrap(
-  self : MapTilesObjsNxResource
+  self : MapTilesObjsNxResource,
 ) -> MapTilesObjsResource {
   let layers = self.layers.inner().map(fn(layer) { layer.unwrap() })
   { layers, back: self.back, portal: self.portal.inner() }
@@ -80,8 +80,12 @@ pub fn LayerNxResource::unwrap(self : LayerNxResource) -> LayerResource {
   {
     info: self.info.inner().map(fn(it) { { tS: it.tS } }),
     tile: self.tile.inner().map_or([], fn(it) { it.inner() }),
-    obj: self.obj.inner().map_or([], fn(it) {
-      it.inner().map(fn(obj) {
+    obj: self.obj
+    .inner()
+    .map_or([], fn(it) {
+      it
+      .inner()
+      .map(fn(obj) {
         {
           f: obj.f.inner(),
           l0: obj.l0,

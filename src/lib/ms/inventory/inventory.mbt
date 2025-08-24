@@ -83,7 +83,7 @@ pub fn Inventory::new(network : @net.Network) -> Inventory {
 ///| Recalculate sums of equip stats
 pub impl @player.Inventory for Inventory with recalc_stats(
   self : Inventory,
-  weapontype : @weapon.Type
+  weapontype : @weapon.Type,
 ) -> Unit {
   self.total_stats.map.clear()
   for _, slot in self.inventories[TypeId::EQUIPPED] {
@@ -145,7 +145,7 @@ pub fn Inventory::add_item(
   expiration : Int64,
   count : Int,
   owner : String,
-  flags : Int
+  flags : Int,
 ) -> Unit {
   self.items.set(self.add_slot(invtype, slot, item_id, count, cash), {
     item_id,
@@ -162,7 +162,7 @@ fn add_slot(
   slot : Int,
   item_id : Int,
   count : Int,
-  _cash : Bool
+  _cash : Bool,
 ) -> Int {
   self.running_uid += 1
   let unique_id = self.running_uid
@@ -177,7 +177,7 @@ pub fn Inventory::add_pet(
   slot : Int,
   item_id : Int,
   cash : Bool,
-  pet_name : String
+  pet_name : String,
 ) -> Unit {
   self.pets.set(self.add_slot(invtype, slot, item_id, 1, cash), { pet_name, })
 }
@@ -197,7 +197,7 @@ pub fn add_equip(
   flags : Int,
   item_level : Int,
   _iexp : Int,
-  vicious : Int
+  vicious : Int,
 ) -> Unit {
   self.equips.set(self.add_slot(invtype, slot, item_id, 1, cash), {
     stats,
@@ -217,7 +217,7 @@ pub fn add_equip(
 ///|
 pub impl @player.Inventory for Inventory with get_stat(
   self : Inventory,
-  stat : @maple_stat.EquipStatId
+  stat : @maple_stat.EquipStatId,
 ) -> Int {
   self.total_stats[stat]
 }
@@ -251,7 +251,7 @@ pub impl @player.Inventory for Inventory with get_bulletcount(self : Inventory) 
 pub fn Inventory::get_item_count_at_slot(
   self : Inventory,
   t : TypeId,
-  slot : Int
+  slot : Int,
 ) -> Int {
   self.inventories[t].get(slot).map(fn(it) { it.count }).or(0)
 }
@@ -278,7 +278,7 @@ pub fn modify(
   slot : Int,
   mode : ModificationMode,
   arg : Int,
-  mov : Movement
+  mov : Movement,
 ) -> Unit {
   let (slot, t) = if slot < 0 { (-slot, TypeId::EQUIPPED) } else { (slot, t) }
   let arg = arg.abs()
@@ -294,7 +294,7 @@ pub fn modify(
         _ => ()
       }
     ModificationMode::REMOVE => self.remove(t, slot)
-    _ => ...
+    ...
   }
   match self.item_listeners_map.get(t) {
     Some(listeners) => listeners.retain(fn(listener) { listener() })
@@ -308,7 +308,7 @@ fn swap(
   firsttype : TypeId,
   firstslot : Int,
   secondtype : TypeId,
-  secondslot : Int
+  secondslot : Int,
 ) -> Unit {
   let first = self.inventories[firsttype][firstslot]
   let second = self.inventories[secondtype][secondslot]
@@ -362,7 +362,7 @@ pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
 /// For non-ring equipment, it returns the equipment's default slot.
 pub fn find_equip_slot(
   inv : Inventory,
-  cloth : @equip_data.EquipData
+  cloth : @equip_data.EquipData,
 ) -> @equip_slot.Id {
   let eqslot = cloth.get_eqslot()
   guard eqslot is @equip_slot.Id::RING1 else { return eqslot }
@@ -381,7 +381,7 @@ pub fn has_equipped(self : Inventory, slot : @equip_slot.Id) -> Bool {
 pub fn listen_item_changes(
   self : Inventory,
   t : TypeId,
-  listener : () -> Bool
+  listener : () -> Bool,
 ) -> Unit {
   self.item_listeners_map.get_or_init(t, fn() { Array::new() }).push(listener)
 }
@@ -395,7 +395,7 @@ pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
 pub fn Inventory::find_item(
   self : Inventory,
   t : TypeId,
-  itemid : Int
+  itemid : Int,
 ) -> SlotNo? {
   for slot_no, slot in self.inventories[t] {
     if slot.item_id == itemid {
@@ -415,4 +415,4 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
 }
 
 ///| Slot number. starts from 1
-pub type SlotNo Int derive(Eq, Hash, Show, ToJson)
+pub struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)

@@ -50,7 +50,7 @@ pub fn get_hwid(self : Configuration) -> String {
 fn set_hwid(
   self : Configuration,
   hwid : String,
-  volume_serial_number : String
+  volume_serial_number : String,
 ) -> Unit {
   self.volume_serial_number = volume_serial_number
   let part1 = volume_serial_number.substring(start=0, end=2)

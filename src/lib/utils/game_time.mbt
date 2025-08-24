@@ -1,5 +1,5 @@
 ///|
-pub(all) type TimePoint Int64 derive(Eq, Compare, Default)
+pub(all) struct TimePoint(Int64) derive(Eq, Compare, Default)
 
 ///|
 pub fn TimePoint::from_micro(i : Double) -> TimePoint {
@@ -12,7 +12,7 @@ pub fn add_duration(self : TimePoint, duration : Duration) -> TimePoint {
 }
 
 ///|
-pub(all) type Duration Int derive(Eq, Compare, Show)
+pub(all) struct Duration(Int) derive(Eq, Compare, Show)
 
 ///|
 pub fn Duration::from_micro(i : Int) -> Duration {

@@ -21,7 +21,7 @@ pub impl UIButton for TextButton with get_button_base(self : TextButton) -> Butt
 ///|
 pub impl UIButton for TextButton with draw(
   self : TextButton,
-  parentpos : Point[Int]
+  parentpos : Point[Int],
 ) -> Unit {
   if self.base.active {
     self.text.draw(parentpos + self.base.position)
@@ -32,7 +32,7 @@ pub impl UIButton for TextButton with draw(
 pub fn TextButton::draw_in_range(
   self : TextButton,
   parentpos : Point[Int],
-  range : @struct.Range[Int]
+  range : @struct.Range[Int],
 ) -> Unit {
   if self.base.active {
     self.text.draw(parentpos, text_y_clip=range |> @option.some)

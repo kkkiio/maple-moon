@@ -39,7 +39,7 @@ pub(all) struct Equip {
 pub fn get_quality(
   data : EquipData,
   scrolled : Bool,
-  stats : Map[@maple_stat.EquipStatId, Int]
+  stats : Map[@maple_stat.EquipStatId, Int],
 ) -> Quality {
   let mut delta = 0
   for es, stat in stats {

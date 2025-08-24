@@ -48,7 +48,7 @@ pub fn MobAttack::new(
   watk : Int,
   origin : @struct.Point[Int],
   mobid : Int,
-  oid : Int
+  oid : Int,
 ) -> MobAttack {
   { t: AttackType::CLOSE, watk, matk: 0, mobid, oid, origin, valid: true }
 }
@@ -78,7 +78,7 @@ pub struct MobAttackResult {
 pub fn MobAttackResult::new(
   attack : MobAttack,
   damage : Int,
-  direction : Int
+  direction : Int,
 ) -> MobAttackResult {
   { damage, mobid: attack.mobid, oid: attack.oid, direction }
 }

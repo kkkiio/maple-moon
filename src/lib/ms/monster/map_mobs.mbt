@@ -11,7 +11,7 @@ struct MapMobs {
 ///|
 pub fn MapMobs::new(
   string_loader~ : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
@@ -32,7 +32,7 @@ pub fn spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
 pub fn update(
   self : MapMobs,
   physics : @physics.Physics,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
@@ -86,7 +86,7 @@ pub fn draw(
   layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.mobs.draw(layer, viewx, viewy, alpha)
 }
@@ -126,7 +126,7 @@ pub fn send_movement(
   self : MapMobs,
   oid : Int,
   start : @struct.Point[Int],
-  movements : Array[@physics.Movement]
+  movements : Array[@physics.Movement],
 ) -> Unit {
   match self.mobs.get(oid) {
     Some(mob) => mob.send_movement(start, movements)
@@ -156,7 +156,7 @@ pub fn send_attack(
   result : @combat.AttackResult,
   attack : @combat.Attack,
   targets : Array[Int],
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   for target in targets {
     guard self.mobs.get(target) is Some(mob) else { continue }
@@ -193,7 +193,7 @@ pub fn send_mobhp(
   self : MapMobs,
   oid : Int,
   percent : Int,
-  playerlevel : Int
+  playerlevel : Int,
 ) -> Unit {
   match self.mobs.get(oid) {
     Some(mob) => mob.show_hp(percent, playerlevel)
@@ -218,7 +218,7 @@ pub async fn instantiate(
   self : MobSpawn,
   randomizer : @utils.Randomizer,
   network : @net.Network,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Mob raise {
   Mob::load(
     self.oid,

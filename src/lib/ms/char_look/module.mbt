@@ -13,7 +13,7 @@ struct Module {
 pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Module raise {
   let bodynode = get_body_loader().load_res_async(["00002000.img"])
   let headnode = get_body_loader().load_res_async(["00012000.img"])
@@ -28,7 +28,7 @@ pub fn Module::new(
   headnode : @resource.NxNode,
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Module raise {
   {
     hair_cache: Map::new(),
@@ -72,7 +72,7 @@ pub async fn load_face_by_id(self : Module, face_id : Int) -> Face raise {
 
 ///|
 pub fn make_stat_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   struct ChangeLookActorState {
     mut changing_skin_id : Int?

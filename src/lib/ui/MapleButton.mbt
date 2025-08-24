@@ -18,7 +18,7 @@ pub(all) struct MapleButtonResource {
 
 ///|
 pub fn MapleButtonResource::from_resource(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> MapleButtonResource {
   let normal = src["normal"]
   let textures = {}
@@ -45,7 +45,7 @@ pub fn MapleButtonResource::from_resource(
 ///|
 pub fn MapleButton::from_resource(
   src : @resource.NxNode,
-  pos~ : Point[Int] = @struct.Point::default()
+  pos~ : Point[Int] = @struct.Point::default(),
 ) -> MapleButton {
   let res = MapleButtonResource::from_resource(src)
   MapleButton::new(res, pos~)
@@ -54,7 +54,7 @@ pub fn MapleButton::from_resource(
 ///|
 pub fn MapleButton::new(
   res : MapleButtonResource,
-  pos~ : Point[Int] = @struct.Point::default()
+  pos~ : Point[Int] = @struct.Point::default(),
 ) -> MapleButton {
   let base = ButtonModel::default()
   base.set_position(pos)
@@ -66,7 +66,7 @@ pub fn MapleButton::new(
 pub fn MapleButton::from_resource_with_x_y(
   src : @resource.NxNode,
   x : Int,
-  y : Int
+  y : Int,
 ) -> MapleButton {
   MapleButton::from_resource(src, pos=Point::new(x, y))
 }
@@ -74,7 +74,7 @@ pub fn MapleButton::from_resource_with_x_y(
 ///|
 pub impl UIButton for MapleButton with draw(
   self : MapleButton,
-  parentpos : Point[Int]
+  parentpos : Point[Int],
 ) -> Unit {
   if self.base.active {
     match self.textures.get(self.base.get_state()) {

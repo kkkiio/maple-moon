@@ -1,5 +1,5 @@
 ///| Prefix an id with zeros so that it has the minimum specified length
-pub fn extend_id(id : Int, length : Int) -> String {
+pub fn stoi_left_pad0(id : Int, length : Int) -> String {
   let strid = id.to_string()
   if strid.length() < length {
     let buf = StringBuilder::new(size_hint=length)

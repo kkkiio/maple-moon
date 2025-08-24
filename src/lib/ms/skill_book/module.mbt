@@ -17,8 +17,8 @@ pub async fn Module::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
   combat : @combat_impl2.Combat,
-  inventory : @inventory.Inventory
-) -> Module {
+  inventory : @inventory.Inventory,
+) -> Module noraise {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
   Module::new(
     player_getter, network, string_loader, io_service, combat, inventory,
@@ -32,7 +32,7 @@ fn Module::new(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
   combat : @combat_impl2.Combat,
-  inventory : @inventory.Inventory
+  inventory : @inventory.Inventory,
 ) -> Module {
   {
     player_getter,
@@ -48,11 +48,11 @@ fn Module::new(
 
 ///|
 pub fn make_handlers(
-  self : Module
+  self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(@net.UPDATE_SKILL, parse_skill_update, fn(
-      update : SkillUpdate
+      update : SkillUpdate,
     ) {
       handle_skill_update(self.player_getter, update)
     }),
@@ -62,7 +62,7 @@ pub fn make_handlers(
 
 ///|
 pub fn Module::make_actions(
-  _ : Module
+  _ : Module,
 ) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
   // [
   //   (
@@ -119,7 +119,7 @@ pub fn Module::make_actions(
 ///|
 pub fn Module::load_player_skill_book(
   self : Module,
-  job : @job.Job
+  job : @job.Job,
 ) -> @utils.Future[&@player.SkillBook] {
   SkillBook::load(self.string_loader, self.io_service, job, self.watchers)
   .tap(fn(skill_book) {

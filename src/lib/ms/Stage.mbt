@@ -376,7 +376,7 @@ fn get_character(self : Stage, cid : Int) -> @character.Character? {
 }
 
 ///|
-priv type PlayerMapTransferMessage Unit derive(Show)
+priv struct PlayerMapTransferMessage(Unit) derive(Show)
 
 ///|
 impl @net.OutMessage for PlayerMapTransferMessage with pack(self) -> @net.OutPacket {

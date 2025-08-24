@@ -62,7 +62,7 @@ pub fn[T] flatten(self : Future[Future[T]]) -> Future[T] {
 ///|
 pub fn[T, U, E : Error] map_exn(
   self : Future[T],
-  f : (T) -> U raise E
+  f : (T) -> U raise E,
 ) -> Future[Result[U, E]] {
   self.map(fn(t) { Ok(f(t)) catch { e => Err(e) } })
 }
@@ -84,7 +84,7 @@ pub fn[T, U] combine(self : Future[T], other : Future[U]) -> Future[(T, U)] {
 pub fn[T, U, V] combine3(
   self : Future[T],
   other1 : Future[U],
-  other2 : Future[V]
+  other2 : Future[V],
 ) -> Future[(T, U, V)] {
   self.bind(fn(t) { other1.bind(fn(u) { other2.map(fn(v) { (t, u, v) }) }) })
 }

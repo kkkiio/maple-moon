@@ -3,7 +3,7 @@ fn talk_about_quest(
   npc_quest : NpcQuest,
   quest_says : Array[QuestPhaseSays],
   network : @net.Network,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Unit {
   let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
   let says = quest_says[phase]
@@ -58,7 +58,7 @@ pub(all) enum TalkState {
 pub fn next_talk(
   says : QuestPhaseSays,
   state : TalkState,
-  quest_met : Bool?
+  quest_met : Bool?,
 ) -> QuestTalk? {
   // @log.info({ "state": state }, "next_talk")
   match state {
@@ -190,7 +190,7 @@ fn bind_io(
   args : QuestTalk,
   npc_quest : NpcQuest,
   network : @net.Network,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> @npc.TalkArgs {
   match args.expect_response {
     NEXT(fun) =>
@@ -257,7 +257,7 @@ fn bind_io(
 fn execute_action(
   action : Action,
   npc_quest : NpcQuest,
-  network : @net.Network
+  network : @net.Network,
 ) -> Unit {
   match action {
     StartQuest =>

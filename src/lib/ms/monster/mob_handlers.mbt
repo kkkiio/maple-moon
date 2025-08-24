@@ -9,7 +9,7 @@ pub fn handle_kill_mob(mobs : MapMobs, recv : @net.InPacket) -> Unit raise {
 pub fn handle_show_mob_hp(
   mobs : MapMobs,
   player_stats_getter : () -> @char_stats.CharStats?,
-  recv : @net.InPacket
+  recv : @net.InPacket,
 ) -> Unit raise {
   guard player_stats_getter() is Some(player_stats) else { return }
   let oid = recv.read_int()

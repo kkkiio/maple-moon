@@ -76,7 +76,7 @@ pub(all) struct LookChoices {
 
 ///|
 pub async fn ExplorerCreatorUIResource::load(
-  login_loader : @resource.SyncLoader
+  login_loader : @resource.SyncLoader,
 ) -> ExplorerCreatorUIResource raise {
   let mkinfo = get_etc_loader().load_res_async(["MakeCharInfo.img", "Info"])
   // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
@@ -196,7 +196,7 @@ pub fn ExplorerCreatorUI::new(
   resource : ExplorerCreatorUIResource,
   hooks : @ui.Hooks,
   load_char_look_async : (@char_look.LookEntry, (@char_look.CharLook) -> Unit) -> Unit,
-  on_create_char~ : (NewCharacterSettings) -> Unit = fn(_v) {  }
+  on_create_char~ : (NewCharacterSettings) -> Unit = fn(_v) {  },
 ) -> ExplorerCreatorUI {
   let gender = false
   let randomizer = @utils.Randomizer::new()
@@ -582,7 +582,7 @@ fn load_char_look(self : ExplorerCreatorUI) -> Unit {
 fn rand_char_look(
   female : Bool,
   randomizer : @utils.Randomizer,
-  resource : ExplorerCreatorUIResource
+  resource : ExplorerCreatorUIResource,
 ) -> LookSettingState {
   let choices = if female {
     resource.female_choices
@@ -613,7 +613,7 @@ fn rand_char_look(
 ///|
 fn to_look_entry(
   self : LookSettingState,
-  resource : ExplorerCreatorUIResource
+  resource : ExplorerCreatorUIResource,
 ) -> @char_look.LookEntry {
   let female = self.female
   let choices = if female {

@@ -27,7 +27,7 @@ pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill raise {
 pub fn MobSkill::new(
   id : Int,
   level : Int,
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> MobSkill raise {
   // let use_effect = MobSingleUseEffect::new(src["level"][level.to_string()])
   let is_buff = src["level"][level.to_string()]["mob"].get_children_count() > 0
@@ -104,7 +104,7 @@ pub fn Effect::new(src : @resource.NxNode) -> Effect raise {
 ///|
 pub fn Effect::apply(
   self : Effect,
-  func_show_effect : (@graphics.Animation, Int, Int, Bool) -> Unit
+  func_show_effect : (@graphics.Animation, Int, Int, Bool) -> Unit,
 ) -> Unit {
   func_show_effect(self.animation, 1, self.z, false)
   // mob.show_effect(animation_, 0, z_, true);
@@ -124,7 +124,7 @@ pub(all) struct MobSingleUseEffect {
 
 ///|
 pub fn MobSingleUseEffect::new(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> MobSingleUseEffect raise {
   { effect: Effect::new(src) }
 }
@@ -132,7 +132,7 @@ pub fn MobSingleUseEffect::new(
 ///|
 pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
   self : MobSingleUseEffect,
-  mob : Mob
+  mob : Mob,
 ) -> Unit {
   self.effect.apply(fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
     mob.show_effect(a, b, c, d)
@@ -147,7 +147,7 @@ pub(all) struct MobMultiUseEffect {
 ///|
 pub fn MobMultiUseEffect::new(
   src : @resource.NxNode,
-  area_warning : Bool
+  area_warning : Bool,
 ) -> MobMultiUseEffect raise {
   let effects = Array::new()
   if area_warning {
@@ -167,7 +167,7 @@ pub fn MobMultiUseEffect::new(
 ///|
 pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
   self : MobMultiUseEffect,
-  mob : Mob
+  mob : Mob,
 ) -> Unit {
   fn func(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
     mob.show_effect(a, b, c, d)

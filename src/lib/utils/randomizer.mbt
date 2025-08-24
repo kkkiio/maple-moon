@@ -27,7 +27,7 @@ pub fn above(self : Randomizer, percent : Double) -> Bool {
 pub fn next_real(
   self : Randomizer,
   from~ : Double = 0.0,
-  to : Double
+  to : Double,
 ) -> Double {
   if from >= to {
     return from

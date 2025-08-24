@@ -38,7 +38,7 @@ pub impl @ui.UIState for UIStateLogin with send_key(
   _self : UIStateLogin,
   _mapping : @keyboard.Mapping?,
   _pressed : Bool,
-  _escape : Bool
+  _escape : Bool,
 ) -> Unit {
 
 }
@@ -47,7 +47,7 @@ pub impl @ui.UIState for UIStateLogin with send_key(
 pub impl @ui.UIState for UIStateLogin with send_cursor(
   self : UIStateLogin,
   cursorstate : @ui.CursorState,
-  cursorpos : @struct.Point[Int]
+  cursorpos : @struct.Point[Int],
 ) -> @ui.CursorState {
   let clicked = cursorstate == @ui.CursorState::CLICKING ||
     cursorstate == @ui.CursorState::VSCROLL_IDLE
@@ -74,7 +74,7 @@ pub impl @ui.UIState for UIStateLogin with send_cursor(
 ///|
 pub impl @ui.UIState for UIStateLogin with remove(
   self : UIStateLogin,
-  key : UIElementType
+  key : UIElementType,
 ) -> Unit {
   if self.focused == key {
     self.focused = UIElementType::UI_ELEMENT_NONE
@@ -91,7 +91,7 @@ pub impl @ui.UIState for UIStateLogin with remove(
 ///|
 pub impl @ui.UIState for UIStateLogin with get(
   self : UIStateLogin,
-  t : UIElementType
+  t : UIElementType,
 ) -> @ui.Element? {
   self.elements.get(t)
 }
@@ -110,7 +110,7 @@ pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.Element)? {
 ///|
 pub impl @ui.UIState for UIStateLogin with get_front_by_types(
   self : UIStateLogin,
-  types : Array[UIElementType]
+  types : Array[UIElementType],
 ) -> @ui.Element? {
   let mut front : @ui.Element? = None
   types.rev_each(fn(t) {
@@ -128,7 +128,7 @@ pub impl @ui.UIState for UIStateLogin with get_front_by_types(
 ///|
 pub fn UIStateLogin::remove_cursor(
   self : UIStateLogin,
-  keep : UIElementType
+  keep : UIElementType,
 ) -> Unit {
   for key, element in self.elements {
     if element.get_ui_model().is_active() && key != keep {
@@ -141,7 +141,7 @@ pub fn UIStateLogin::remove_cursor(
 pub impl @ui.UIState for UIStateLogin with set_element(
   self : UIStateLogin,
   focused : Bool,
-  elem : @ui.Element
+  elem : @ui.Element,
 ) -> Unit {
   let t = elem.key
   self.remove(t)

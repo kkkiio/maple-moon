@@ -17,12 +17,12 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
 ///|
 pub async fn load_map(
   map_id : Int,
-  map_portals_animations : MapPortalAnimations
+  map_portals_animations : MapPortalAnimations,
 ) -> SceneMap raise {
   // TODO: CashShopPreview
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
-  let strid = @string_format.extend_id(map_id, 9)
+  let strid = @string_format.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
   @log.info({ "path": path }, "loading map")
   let src = get_mapx_loader().load_res_async(path)

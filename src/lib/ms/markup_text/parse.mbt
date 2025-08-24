@@ -1,7 +1,7 @@
 ///| Parse markup text
 pub fn parse_markup(
   text : String,
-  tag_map : Map[Char, MarkupType]
+  tag_map : Map[Char, MarkupType],
 ) -> Array[Node] raise ParseError {
   let nodes = []
   let mut rest_text = text[:]

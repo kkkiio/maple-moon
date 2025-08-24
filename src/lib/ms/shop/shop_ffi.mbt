@@ -17,7 +17,7 @@ pub struct ShopUIData {
 ///| 
 pub fn watch_opening_shop_ffi(
   mod : Module,
-  callback : (@js.Nullable[ShopUIData]) -> Bool
+  callback : (@js.Nullable[ShopUIData]) -> Bool,
 ) -> Unit {
   let mut cont = true
   let listener = fn(npc_shop : OpenNpcShop?) {
@@ -65,7 +65,7 @@ pub fn watch_opening_shop_ffi(
 ///|
 pub fn watch_confirm_shop_transaction_ffi(
   mod : Module,
-  callback : (String) -> Bool
+  callback : (String) -> Bool,
 ) -> Unit {
   mod.confirm_shop_transaction_listeners.push(fn(code) {
     callback(code.to_string())
@@ -77,7 +77,7 @@ pub fn buy_shop_item_ffi(
   mod : Module,
   slot : SlotNo,
   item_id : Int,
-  qty : Int
+  qty : Int,
 ) -> Unit {
   mod.network.send_message(
     ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=true),
@@ -89,7 +89,7 @@ pub fn sell_inventory_item_ffi(
   mod : Module,
   slot : @inventory.SlotNo,
   item_id : Int,
-  qty : Int
+  qty : Int,
 ) -> Unit {
   mod.network.send_message(
     ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=false),
@@ -102,7 +102,7 @@ pub fn leave_shop_ffi(mod : Module) -> Unit {
 }
 
 ///| Shop Slot number. starts from 0
-type SlotNo Int derive(Eq, Hash, Show, ToJson)
+struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)
 
 ///|
 let mode_BUY : Byte = b'\x00'

@@ -1,7 +1,7 @@
 ///|
 async fn get_all_items_by_type(
   mod : Module,
-  kind : TypeId
+  kind : TypeId,
 ) -> Array[UISlot] raise {
   let slotmax = mod.inventory.get_slotmax(kind)
   async fn load_slot(slot_no) -> WithItemSlot? raise Error {
@@ -76,7 +76,7 @@ fn get_type_id_by_kind(kind : String) -> TypeId? {
 pub fn watch_inventory_by_kind(
   mod : Module,
   kind : String,
-  watcher : InventoryWatcher
+  watcher : InventoryWatcher,
 ) -> String {
   guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"
@@ -112,7 +112,7 @@ pub fn use_item_at(
   mod : Module,
   kind : String,
   slot_no : SlotNo,
-  args : Array[String]
+  args : Array[String],
 ) -> String {
   guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"
@@ -156,7 +156,7 @@ pub fn use_item_at(
 ///|
 fn can_wear_equip(
   player : @player.Player,
-  equip_data : @equip_data.EquipData
+  equip_data : @equip_data.EquipData,
 ) -> String? {
   let look = player.character.get_look()
   let alerted = look.get_alerted()
@@ -221,7 +221,7 @@ pub fn drop_item(
   mod : Module,
   kind : String,
   slot_no : Int,
-  count : Int
+  count : Int,
 ) -> String {
   guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"

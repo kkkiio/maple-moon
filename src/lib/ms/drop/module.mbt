@@ -6,7 +6,7 @@ struct Module {
 ///|
 pub async fn Module::load(
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module raise {
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(io_service, string_loader, src) }
@@ -20,7 +20,7 @@ pub fn get_map_drops(self : Module) -> MapDrops {
 ///|
 pub fn make_handlers(
   self : Module,
-  get_character_by_id_fn : (Int) -> @physics.PhysicsObject?
+  get_character_by_id_fn : (Int) -> @physics.PhysicsObject?,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     @net.make_handler(@net.DROP_LOOT, parse_drop_loot, fn(drop : DropLoot) {

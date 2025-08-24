@@ -1,7 +1,7 @@
 ///|
 extern "js" fn load_data(
   self : AsyncResourceLoader,
-  path : String
+  path : String,
 ) -> @js.Promise =
   #| (l,p) => {
   #|   return l.loadData(p)
@@ -25,7 +25,7 @@ extern "js" fn SyncResourceLoader::make(url : String) -> @js.Promise =
 
 ///|
 pub extern "js" fn ImageLoader::new_bid_image_loader(
-  url : String
+  url : String,
 ) -> ImageLoader =
   #| (u) => resource.new_bid_image_loader(u)
 
@@ -36,7 +36,7 @@ extern "js" fn get_async_resource_loader(name : String) -> AsyncResourceLoader =
 ///|
 pub extern "js" fn load_image_by_path(
   self : ImageLoader,
-  path : String
+  path : String,
 ) -> Image =
   #| (l,p) => l.loadImageByPath(p)
 
@@ -56,7 +56,7 @@ priv struct PrefixedLoader {
 
 ///|
 extern "js" fn new_composite_async_resource_loader(
-  prefixedLoaders : Array[PrefixedLoader]
+  prefixedLoaders : Array[PrefixedLoader],
 ) -> AsyncResourceLoader =
   #| (p) => {
   #|   return resource.new_composite_async_resource_loader(p);
@@ -64,7 +64,7 @@ extern "js" fn new_composite_async_resource_loader(
 
 ///|
 pub fn AsyncResourceLoader::new_composite_async_resource_loader(
-  loaderMap : Map[String, DirResourceLoader]
+  loaderMap : Map[String, DirResourceLoader],
 ) -> AsyncResourceLoader {
   new_composite_async_resource_loader(
     loaderMap.iter().map(fn(kv) { { prefix: kv.0, loader: kv.1 } }).to_array(),

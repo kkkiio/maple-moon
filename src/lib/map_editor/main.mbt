@@ -158,7 +158,7 @@ fn draw_map(
   hide_backgrounds : Map[Int, Bool],
   hide_foregrounds : Map[Int, Bool],
   hide_portals : Map[String, Bool],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let backgrounds = map.backgrounds
   let tiles_objs = map.tiles_objs
@@ -206,7 +206,7 @@ fn draw_map(
 fn update_map(
   backgrounds : @map.Backgrounds,
   tiles_objs : @map.MapTilesObjs,
-  portals : @map.MapPortals
+  portals : @map.MapPortals,
 ) -> Unit {
   @map.update_backgrounds(backgrounds)
   tiles_objs.update()
@@ -217,7 +217,7 @@ fn update_map(
 fn update_viewpos(
   down_keys : Map[String, Bool],
   viewpos : @struct.Point[Double],
-  speed : Int
+  speed : Int,
 ) -> @struct.Point[Double] {
   let mut viewpos = viewpos
   let speed_f = speed.to_double()

@@ -19,7 +19,7 @@ pub fn parse_skill_update(recv : @net.InPacket) -> SkillUpdate raise {
 ///|
 pub fn handle_skill_update(
   player_getter : () -> @player.Player?,
-  update : SkillUpdate
+  update : SkillUpdate,
 ) -> Unit {
   match player_getter() {
     Some(player) =>

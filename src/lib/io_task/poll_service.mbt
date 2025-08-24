@@ -11,7 +11,7 @@ pub fn PollService::new() -> PollService {
 ///|
 pub fn PollService::add(
   self : PollService,
-  future : @utils.Future[Unit]
+  future : @utils.Future[Unit],
 ) -> Unit {
   self.io_tasks.push(future)
 }
@@ -20,7 +20,7 @@ pub fn PollService::add(
 pub fn[T] on_complete(
   self : PollService,
   future : @utils.Future[T],
-  cb : (T) -> Unit
+  cb : (T) -> Unit,
 ) -> Unit {
   self.io_tasks.push(future.map(fn(it) { cb(it) }))
 }

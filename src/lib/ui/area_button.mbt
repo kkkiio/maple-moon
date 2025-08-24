@@ -7,7 +7,7 @@ struct AreaButton {
 ///|
 pub fn AreaButton::new(
   pos : @struct.Point[Int],
-  dim : @struct.Point[Int]
+  dim : @struct.Point[Int],
 ) -> AreaButton {
   let model = ButtonModel::default()
   model.set_position(pos)
@@ -22,7 +22,7 @@ pub impl UIButton for AreaButton with get_button_base(self) -> ButtonModel {
 ///|
 pub impl UIButton for AreaButton with draw(
   _ : AreaButton,
-  _ : @struct.Point[Int]
+  _ : @struct.Point[Int],
 ) -> Unit {
 
 }
@@ -36,7 +36,7 @@ pub impl UIButton for AreaButton with update(_ : AreaButton) -> Unit {
 pub fn send_cursor(
   _ : AreaButton,
   _b : Bool,
-  _p : @struct.Point[Int]
+  _p : @struct.Point[Int],
 ) -> CursorState {
   CursorState::IDLE
 }

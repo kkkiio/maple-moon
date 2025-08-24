@@ -14,7 +14,7 @@ pub fn[T] Rectangle::from4(
   left : T,
   right : T,
   top : T,
-  bottom : T
+  bottom : T,
 ) -> Rectangle[T] {
   { lt: { x: left, y: top }, rb: { x: right, y: bottom } }
 }
@@ -47,7 +47,7 @@ pub fn[T : Eq] Rectangle::straight(self : Rectangle[T]) -> Bool {
 ///|
 pub fn[T : Eq + Compare] Rectangle::contains(
   self : Rectangle[T],
-  v : Point[T]
+  v : Point[T],
 ) -> Bool {
   not(self.straight()) &&
   v.x >= self.left() &&
@@ -59,7 +59,7 @@ pub fn[T : Eq + Compare] Rectangle::contains(
 ///|
 pub fn[T : Add] Rectangle::shift(
   self : Rectangle[T],
-  v : Point[T]
+  v : Point[T],
 ) -> Rectangle[T] {
   { lt: self.lt + v, rb: self.rb + v }
 }

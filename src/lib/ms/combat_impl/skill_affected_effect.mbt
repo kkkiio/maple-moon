@@ -11,7 +11,7 @@ struct SkillAffectedEffectEffect {
 
 ///|
 fn SkillAffectedEffectEffect::new(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> SkillAffectedEffectEffect raise {
   {
     animation: src |> @graphics.Animation::from_resource_ex(),
@@ -22,7 +22,7 @@ fn SkillAffectedEffectEffect::new(
 ///|
 fn SkillAffectedEffectEffect::apply(
   self : SkillAffectedEffectEffect,
-  c : @character.Character
+  c : @character.Character,
 ) -> Unit {
   c.show_attack_effect(self.animation, self.z)
 }
@@ -38,7 +38,7 @@ fn NoAffectedEffect::new() -> NoAffectedEffect {
 ///|
 fn NoAffectedEffect::apply(
   self : NoAffectedEffect,
-  c : @character.Character
+  c : @character.Character,
 ) -> Unit {
 
 }
@@ -50,7 +50,7 @@ struct SingleAffectedEffect {
 
 ///|
 fn SingleAffectedEffect::new(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> SingleAffectedEffect raise {
   { effect: SkillAffectedEffectEffect::new(src["affected"]) }
 }
@@ -58,7 +58,7 @@ fn SingleAffectedEffect::new(
 ///|
 fn SingleAffectedEffect::apply(
   self : SingleAffectedEffect,
-  c : @character.Character
+  c : @character.Character,
 ) -> Unit {
   self.effect.apply(c)
 }

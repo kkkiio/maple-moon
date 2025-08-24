@@ -26,7 +26,7 @@ pub fn Gauge::new(
   t : GaugeType,
   front : @graphics.Texture,
   max : Int,
-  percent : Double
+  percent : Double,
 ) -> Gauge {
   {
     t,
@@ -46,7 +46,7 @@ pub fn Gauge::new_with_mid(
   front : @graphics.Texture,
   mid : @graphics.Texture,
   max : Int,
-  percent : Double
+  percent : Double,
 ) -> Gauge {
   {
     t,
@@ -67,7 +67,7 @@ pub fn Gauge::new_with_mid_end(
   mid : @graphics.Texture,
   end : @graphics.Texture,
   max : Int,
-  percent : Double
+  percent : Double,
 ) -> Gauge {
   {
     t,
@@ -84,7 +84,7 @@ pub fn Gauge::new_with_mid_end(
 ///|
 pub impl @graphics.Drawable for Gauge with draw(
   self : Gauge,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   let length = (self.percentage * self.maximum.to_double()).to_int()
   if length > 0 {

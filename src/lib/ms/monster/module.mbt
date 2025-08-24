@@ -9,7 +9,7 @@ pub fn Module::new(
   add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
   string_loader~ : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Module {
   let mobs = MapMobs::new(string_loader~, io_service)
   {
@@ -26,7 +26,7 @@ pub fn get_map_mobs(self : Module) -> MapMobs {
 ///|
 pub fn make_handlers(
   self : Module,
-  player_stats_getter : () -> @char_stats.CharStats?
+  player_stats_getter : () -> @char_stats.CharStats?,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
     (
@@ -50,7 +50,7 @@ pub fn make_handlers(
     (
       @net.MOB_MOVE_RESPONSE,
       @net.with_log(@net.MOB_MOVE_RESPONSE, log_recv=false, fn(
-        recv : @net.InPacket
+        recv : @net.InPacket,
       ) {
         handle_mob_move_response(self.mob_combat, recv)
       }),

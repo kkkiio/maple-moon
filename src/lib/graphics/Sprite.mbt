@@ -12,7 +12,7 @@ pub fn Sprite::new(animation : Animation, state_args : DrawArgument) -> Sprite {
 ///|
 pub fn Sprite::from_resource(
   src : NxNode,
-  state_args~ : DrawArgument = DrawArgument::default()
+  state_args~ : DrawArgument = DrawArgument::default(),
 ) -> Sprite {
   Sprite::new(Animation::from_resource(src), state_args)
 }
@@ -21,7 +21,7 @@ pub fn Sprite::from_resource(
 pub fn Sprite::draw(
   self : Sprite,
   parentpos : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let absargs = self.state_args.add_pos(parentpos)
   self.animation.draw(absargs, alpha)

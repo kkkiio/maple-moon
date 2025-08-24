@@ -25,7 +25,7 @@ pub fn Number::draw(
   self : Number,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   let absolute = self.move_obj.get_absolute(viewx, viewy, alpha)
   let mut position = absolute - @struct.Point::new(0, self.shift)
@@ -145,7 +145,7 @@ pub fn new_number(
   t : NumberType,
   damage : Int,
   starty : Int,
-  x~ : Int = 0
+  x~ : Int = 0,
 ) -> Number {
   let charsets = match t {
     HIT_NORMAL => self.red_charset_pair

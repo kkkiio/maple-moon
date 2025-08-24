@@ -17,7 +17,7 @@ fn SimpleStatBuff::new(stat : @maple_stat.EquipStatId) -> SimpleStatBuff {
 pub impl ActiveBuff for SimpleStatBuff with apply_to(
   self : SimpleStatBuff,
   stats : CharStats,
-  value : Int
+  value : Int,
 ) -> Unit {
   // stats.add_buff(self.stat, value)
 }
@@ -31,7 +31,7 @@ struct PercentageStatBuff {
 
 ///|
 fn PercentageStatBuff::new(
-  stat : @maple_stat.EquipStatId
+  stat : @maple_stat.EquipStatId,
 ) -> PercentageStatBuff {
   { stat, }
 }
@@ -40,7 +40,7 @@ fn PercentageStatBuff::new(
 pub impl ActiveBuff for PercentageStatBuff with apply_to(
   self : PercentageStatBuff,
   stats : CharStats,
-  value : Int
+  value : Int,
 ) -> Unit {
   // stats.add_percent(self.stat, Double::from_int(value) / 100.0)
 }
@@ -48,13 +48,13 @@ pub impl ActiveBuff for PercentageStatBuff with apply_to(
 // MapleWarriorBuff
 
 ///|
-type MapleWarriorBuff Unit derive(Default)
+struct MapleWarriorBuff(Unit) derive(Default)
 
 ///|
 pub impl ActiveBuff for MapleWarriorBuff with apply_to(
   self : MapleWarriorBuff,
   stats : CharStats,
-  value : Int
+  value : Int,
 ) -> Unit {
   // stats.add_percent(@stat.Id::STR, Double::from_int(value) / 100.0)
   // stats.add_percent(@stat.Id::DEX, Double::from_int(value) / 100.0)
@@ -65,13 +65,13 @@ pub impl ActiveBuff for MapleWarriorBuff with apply_to(
 // StanceBuff
 
 ///|
-type StanceBuff Unit derive(Default)
+struct StanceBuff(Unit) derive(Default)
 
 ///|
 pub impl ActiveBuff for StanceBuff with apply_to(
   self : StanceBuff,
   stats : CharStats,
-  value : Int
+  value : Int,
 ) -> Unit {
   // stats.set_stance(Double::from_int(value) / 100.0)
 }
@@ -79,13 +79,13 @@ pub impl ActiveBuff for StanceBuff with apply_to(
 // BoosterBuff
 
 ///|
-type BoosterBuff Unit derive(Default)
+struct BoosterBuff(Unit) derive(Default)
 
 ///|
 pub impl ActiveBuff for BoosterBuff with apply_to(
   self : BoosterBuff,
   stats : CharStats,
-  value : Int
+  value : Int,
 ) -> Unit {
   // stats.set_attackspeed(value)
 }
@@ -127,7 +127,7 @@ fn apply_buff(
   self : ActiveBuffs,
   stats : CharStats,
   stat : @buff.StatId,
-  value : Int
+  value : Int,
 ) -> Unit {
   match self.buffs[stat] {
     Some(buff) => buff.apply_to(stats, value)

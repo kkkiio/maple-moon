@@ -47,7 +47,7 @@ pub fn Player::load(
   new_char_stats : (@job.Job) -> CharStats,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> @utils.Future[Player] {
   @job.Job::load(
     string_loader,
@@ -83,7 +83,7 @@ pub fn Player::new(
   network : @net.Network,
   load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
   stats : CharStats,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> Player {
   let character = @character.Character::new(
     entry.id,
@@ -156,7 +156,7 @@ pub fn has_buff(self : Player, stat : @buff.StatId) -> Bool {
 pub fn update(
   self : Player,
   physics : @physics.Physics,
-  map_info : @map.MapInfo
+  map_info : @map.MapInfo,
 ) -> Int {
   match self.changing_job.bind(fn(it) { it.poll() }) {
     Some(it) => {
@@ -213,7 +213,7 @@ pub fn update(
 pub fn respawn(
   self : Player,
   pos : @struct.Point[Int],
-  underwater : Bool
+  underwater : Bool,
 ) -> Unit {
   self.set_position(pos.x, pos.y)
   self.underwater = underwater
@@ -230,7 +230,7 @@ pub fn draw(
   layer : Int,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   if layer == self.character.get_layer() {
     self.character.draw(viewx, viewy, alpha)
@@ -244,7 +244,7 @@ pub fn draw(
 pub fn send_action(
   self : Player,
   action : @keyboard.BasicActionId,
-  down : Bool
+  down : Bool,
 ) -> Unit {
   match get_player_state(self.character.state) {
     Some(pst) => pst.send_action(self, action, down)
@@ -416,7 +416,7 @@ pub fn set_ladder(self : Player, ladder : @map.Ladder?) -> Unit {
 ///|
 pub fn damage(
   self : Player,
-  attack : @combat.MobAttack
+  attack : @combat.MobAttack,
 ) -> @combat.MobAttackResult {
   let damage = self.stats.calculate_damage(attack.watk)
   self.character.show_damage(damage)
@@ -445,7 +445,7 @@ pub fn get_skills(self : Player) -> &SkillBook {
 ///|
 pub fn get_integer_attackspeed(
   look : @char_look.CharLook,
-  stats : CharStats
+  stats : CharStats,
 ) -> Int {
   guard look.get_equips().get_weapon() is Some(weapon) else { return 0 }
   let base_speed = stats.get_attackspeed()
@@ -487,7 +487,7 @@ pub fn change_skill(
   skill_id : Int,
   skill_level : Int,
   masterlevel : Int,
-  expiration : Int
+  expiration : Int,
 ) -> Unit {
   let old_level = self.skill_book.get_level(skill_id)
   self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
@@ -515,11 +515,11 @@ pub fn attack_by_stance(self : Player, stance : @types.StanceId) -> Unit {
 pub fn change_job(
   self : Player,
   job_id : Int,
-  io_service : @io_task.IOService
+  io_service : @io_task.IOService,
 ) -> Unit {
   self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
   self.changing_job = @job.Job::load(self.string_loader, io_service, id=job_id).bind(fn(
-        job
+        job,
       ) {
         (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
       },

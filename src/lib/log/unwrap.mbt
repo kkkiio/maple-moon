@@ -1,5 +1,6 @@
 ///|
-pub fn[T] unwrap_err(result : Result[T, Error], loc~ : SourceLoc = _) -> T {
+#callsite(autofill(loc))
+pub fn[T] unwrap_err(result : Result[T, Error], loc~ : SourceLoc) -> T {
   match result {
     Ok(value) => value
     Err(err) => {

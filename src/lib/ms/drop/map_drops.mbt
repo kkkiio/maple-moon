@@ -12,7 +12,7 @@ struct MapDrops {
 fn MapDrops::new(
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader,
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> MapDrops {
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
@@ -44,7 +44,7 @@ pub fn draw(
   layer : @map_layer.Id,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.drops.draw(layer, viewx, viewy, alpha)
 }
@@ -113,7 +113,7 @@ pub fn clear(self : MapDrops) -> Unit {
 ///|
 pub fn list_loot_at(
   self : MapDrops,
-  playerpos : @struct.Point[Int]
+  playerpos : @struct.Point[Int],
 ) -> Iter[(Int, @struct.Point[Int])] {
   self.drops
   .iter2()
@@ -127,7 +127,7 @@ pub fn MapDrops::remove(
   self : MapDrops,
   oid : Int,
   mode : Int,
-  looter : @physics.PhysicsObject?
+  looter : @physics.PhysicsObject?,
 ) -> Unit {
   match self.drops.get(oid) {
     Some(drop) => drop.expire(mode, looter)
@@ -151,7 +151,7 @@ struct DropSpawn {
 ///|
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
-  icon : @graphics.Animation
+  icon : @graphics.Animation,
 ) -> &Drop {
   MesoDrop::new(
     self.oid,
@@ -168,7 +168,7 @@ fn DropSpawn::instantiate_meso(
 ///|
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
-  icon : @graphics.Texture
+  icon : @graphics.Texture,
 ) -> ItemDrop {
   ItemDrop::new(
     self.oid,

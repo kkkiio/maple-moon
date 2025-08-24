@@ -8,7 +8,7 @@ pub(all) struct BulletData {
 ///|
 pub async fn BulletData::load(
   strid : String,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> BulletData raise {
   guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
   let prefix = strid.substring(end=4)
@@ -30,7 +30,7 @@ pub async fn BulletData::load(
 ///|
 fn BulletData::new(
   src : @resource.NxNode,
-  item_data : @item.ItemData
+  item_data : @item.ItemData,
 ) -> BulletData raise {
   let bullet = src["bullet"] |> @graphics.Animation::from_resource_ex()
   let watk = src["info"]["incPAD"].get_int()

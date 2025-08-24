@@ -28,7 +28,7 @@ pub fn Network::get() -> Network {
 ///|
 pub fn reset_handlers(
   self : Network,
-  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit],
 ) -> Unit {
   self.switch.reset_handlers(handlers.add(PING, fn(_v) { handle_ping(self) }))
 }
@@ -50,11 +50,12 @@ pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
 }
 
 ///| send message to the server
+#callsite(autofill(loc))
 pub fn[T : OutMessage] Network::send_message(
   self : Network,
   message : T,
   log_level~ : @log.Level = @log.Level::DEBUG,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> Unit {
   @log.log(log_level, { "message": message.to_string() }, "send", loc~)
   self.process_out(message.pack().encode())
@@ -99,7 +100,7 @@ pub fn PacketSwitch::new() -> PacketSwitch {
 ///|
 pub fn PacketSwitch::reset_handlers(
   self : PacketSwitch,
-  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit]
+  handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit],
 ) -> Unit {
   self.handlers = handlers
 }
@@ -133,7 +134,7 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit raise,
-  log_recv~ : Bool = false
+  log_recv~ : Bool = false,
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {
@@ -150,12 +151,13 @@ pub fn with_log(
 }
 
 ///|
+#callsite(autofill(loc))
 pub fn[T : Show] make_handler(
   opcode : Opcode,
   parser : (InPacket) -> T raise,
   handler : (T) -> Unit,
   log_recv~ : Bool = false,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc,
 ) -> (Opcode, (InPacket) -> Unit) {
   (
     opcode,

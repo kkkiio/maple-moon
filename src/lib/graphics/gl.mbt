@@ -53,5 +53,5 @@ fn set(
   color_r : Double,
   color_g : Double,
   color_b : Double,
-  color_a : Double
+  color_a : Double,
 ) = "gl" "setVertices"

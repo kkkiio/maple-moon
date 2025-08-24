@@ -57,7 +57,7 @@ fn handle_set_field(
   ) -> Unit,
   inventory : @inventory.Inventory,
   setup_game_ui : (@player.Player) -> Unit,
-  message : SetFieldMessage
+  message : SetFieldMessage,
 ) -> Unit {
   // @config.constants.set_viewwidth(Setting::get(configWidth).load())
   // @config.constants.set_viewheight(Setting::get(configHeight).load())
@@ -102,7 +102,7 @@ fn set_field(
   setup_game_ui : (@player.Player) -> Unit,
   inventory_entry : InventoryEntry,
   skills : Array[SkillEntry],
-  cooldowns : Map[Int, Int]
+  cooldowns : Map[Int, Int],
 ) -> Unit {
   inventory.set_meso(inventory_entry.meso)
   for kind, slotmax in inventory_entry.slotmax {
@@ -135,7 +135,7 @@ fn set_field(
 }
 
 ///| Finished updating player stats
-priv type PlayerUpdatePacket Unit derive(Show)
+priv struct PlayerUpdatePacket(Unit) derive(Show)
 
 ///|
 impl @net.OutMessage for PlayerUpdatePacket with pack(self) -> @net.OutPacket {
@@ -209,7 +209,7 @@ fn parse_skillbook(recv : @net.InPacket) -> Array[SkillEntry] raise {
 ///|
 fn handle_skills(
   skills : &@player.SkillBook,
-  entries : Array[SkillEntry]
+  entries : Array[SkillEntry],
 ) -> Unit {
   for entry in entries {
     skills.set_skill(

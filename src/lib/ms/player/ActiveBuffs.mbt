@@ -1,9 +1,11 @@
-///| Define the ActiveBuff interface
+///|
+/// Define the ActiveBuff interface
 trait ActiveBuff {
   apply_to(Self, CharStats, Int) -> Unit
 }
 
-///| Template for SimpleStatBuff
+///|
+/// Template for SimpleStatBuff
 struct SimpleStatBuff {
   stat : @maple_stat.EquipStatId
 }
@@ -129,7 +131,7 @@ fn apply_buff(
   stat : @buff.StatId,
   value : Int,
 ) -> Unit {
-  match self.buffs[stat] {
+  match self.buffs.get(stat) {
     Some(buff) => buff.apply_to(stats, value)
     None => ()
   }

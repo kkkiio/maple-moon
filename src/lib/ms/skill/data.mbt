@@ -17,7 +17,8 @@ pub(all) struct SkillData {
   src : @resource.NxNode
 }
 
-///| The stats of one level
+///|
+/// The stats of one level
 pub(all) struct Stats {
   damage_mul : Double
   matk : Int
@@ -83,40 +84,40 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let icon : @graphics.TextureResource = @json.from_json(
-    obj.get("icon").or(Json::null()),
+    obj.get("icon").unwrap_or(Json::null()),
     path=path.add_key("icon"),
   )
   let icon_disabled : @graphics.TextureResource = @json.from_json(
-    obj.get("iconDisabled").or(Json::null()),
+    obj.get("iconDisabled").unwrap_or(Json::null()),
     path=path.add_key("iconDisabled"),
   )
   let icon_mouseover : @graphics.TextureResource = @json.from_json(
-    obj.get("iconMouseOver").or(Json::null()),
+    obj.get("iconMouseOver").unwrap_or(Json::null()),
     path=path.add_key("iconMouseOver"),
   )
   let elem_attr : String = match obj.get("elemAttr") {
     Some(String(s)) => s
-    Some(Number(n)) => n.to_string()
+    Some(Number(n, ..)) => n.to_string()
     Some(Null) | None => ""
     _ =>
       raise @json.JsonDecodeError((path.add_key("elemAttr"), "expect string"))
   }
   let req_skills : Nullable[IntMap[Int]] = @json.from_json(
-    obj.get("req").or(Json::null()),
+    obj.get("req").unwrap_or(Json::null()),
     path=path.add_key("req"),
   )
   let invisible : Bool = match obj.get("invisible") {
-    Some(Number(n)) => n == 1
+    Some(Number(n, ..)) => n == 1
     Some(Null) | None => false
     _ =>
       raise @json.JsonDecodeError((path.add_key("invisible"), "expect number"))
   }
   let level_stats : LevelStats = @json.from_json(
-    obj.get("level").or(Json::null()),
+    obj.get("level").unwrap_or(Json::null()),
     path=path.add_key("level"),
   )
   let req_weapon : WeaponType = @json.from_json(
-    obj.get("weapon").or(Json::null()),
+    obj.get("weapon").unwrap_or(Json::null()),
     path=path.add_key("weapon"),
   )
   {
@@ -255,7 +256,8 @@ fn flags_of(id : Int) -> (Bool, Bool) {
   skill_flags.get(id).or(flag_none)
 }
 
-///| Skill flags, unfortunately these just have to be hard-coded
+///|
+/// Skill flags, unfortunately these just have to be hard-coded
 let skill_flags : Map[SkillId, (Bool, Bool)] = Map::from_array([
   // Beginner
   (SkillId::THREE_SNAILS, flag_attack),
@@ -356,60 +358,60 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
           ),
         }
       Object(sub) => {
-        let damage = if sub is { "damage": Number(d), .. } {
+        let damage = if sub is { "damage": Number(d, ..) } {
           d / 100.0
         } else {
           0
         }
         let matk = if sub is { "mad": Number(m), .. } { m.to_int() } else { 0 }
-        let fixdamage = if sub is { "fixdamage": Number(f), .. } {
+        let fixdamage = if sub is { "fixdamage": Number(f, ..) } {
           f.to_int()
         } else {
           0
         }
-        let mastery = if sub is { "mastery": Number(m), .. } {
+        let mastery = if sub is { "mastery": Number(m, ..) } {
           m.to_int()
         } else {
           0
         }
-        let attackcount = if sub is { "attackCount": Number(a), .. } {
+        let attackcount = if sub is { "attackCount": Number(a, ..) } {
           a.to_int()
         } else {
           1
         }
-        let mobcount = if sub is { "mobCount": Number(m), .. } {
+        let mobcount = if sub is { "mobCount": Number(m, ..) } {
           m.to_int()
         } else {
           1
         }
-        let bulletcount = if sub is { "bulletCount": Number(b), .. } {
+        let bulletcount = if sub is { "bulletCount": Number(b, ..) } {
           b.to_int()
         } else {
           1
         }
-        let bulletcost = if sub is { "bulletConsume": Number(b), .. } {
+        let bulletcost = if sub is { "bulletConsume": Number(b, ..) } {
           b.to_int()
         } else {
           0
         }
-        let hpcost = if sub is { "hpCon": Number(h), .. } {
+        let hpcost = if sub is { "hpCon": Number(h, ..) } {
           h.to_int()
         } else {
           0
         }
-        let mpcost = if sub is { "mpCon": Number(m), .. } {
+        let mpcost = if sub is { "mpCon": Number(m, ..) } {
           m.to_int()
         } else {
           0
         }
-        let prop = if sub is { "prop": Number(p), .. } {
+        let prop = if sub is { "prop": Number(p, ..) } {
           p.to_int()
         } else {
           100
         }
         let critical = 0.0
         let ignoredef = 0.0
-        let hrange = if sub is { "range": Number(r), .. } { r / 100 } else { 1 }
+        let hrange = if sub is { "range": Number(r, ..) } { r / 100 } else { 1 }
         if mobcount == 0 || hrange == 0 {
           raise @json.JsonDecodeError((path, "invalid range"))
         }
@@ -446,7 +448,7 @@ struct WeaponType(@weapon.Type)
 pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType raise @json.JsonDecodeError {
   match json {
     Null => @weapon.Type::NONE
-    Number(v) =>
+    Number(v, ..) =>
       @weapon.Type::by_value(100 + v.to_int()) catch {
         _ => raise @json.JsonDecodeError((path, "invalid weapon type"))
       }

@@ -14,7 +14,7 @@ pub fn[T] IOService::submit(
   task : async () -> T raise,
 ) -> @utils.Future[Result[T, Error]] {
   let mut res : Result[T, Error]? = None
-  spawn_background(async fn() {
+  spawn_background(fn() {
     try {
       let value = task()
       res = Some(Ok(value))
@@ -34,5 +34,5 @@ pub fn IOService::execute(
   /// If not provided, the default behavior is to abort the program.
   on_error~ : (Error) -> Unit = fn(err) { abort(err.to_string()) },
 ) -> Unit {
-  spawn_background(async fn() { f() catch { e => on_error(e) } })
+  spawn_background(fn() { f() catch { e => on_error(e) } })
 }

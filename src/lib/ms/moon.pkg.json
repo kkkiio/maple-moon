@@ -13,7 +13,6 @@
     "KKKIIO/maple-moon-client/lib/ms/inventory",
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/job",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/monster",
@@ -39,7 +38,8 @@
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/resource",
     "KKKIIO/maple-moon-client/lib/ms/markup_text",
-    "KKKIIO/maple-moon-client/lib/ms/bullet"
+    "KKKIIO/maple-moon-client/lib/ms/bullet",
+    "Milky2018/selene/math"
   ],
 	"targets": {
 		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]

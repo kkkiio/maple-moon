@@ -392,7 +392,7 @@ pub fn change_text(
 ) -> Unit raise {
   self.talk_action = Some(talk_action)
   let content = convert_npc_text(tx, self.name_loader)
-  self.content = content |> @option.some
+  self.content = Some(content)
   if speakerbyte is Speaker::NPC_LEFT {
     let strid = @string_format.stoi_left_pad0(npcid, 7) + ".img"
     self.speaker = self.string_loader.load_res([strid, "stand", "0"])

@@ -249,16 +249,14 @@ pub fn toggle_element(
           } else {
             // Sound::new(SoundName::MENU_UP).play()
           }
-          self.ui.send_cursor_pressed(false)
+          // self.ui.send_cursor_pressed(false)
+        } else if t == UIElementType::WORLD_MAP {
+          // Sound::new(SoundName::WORLD_MAP_CLOSE).play()
         } else {
-          if t == UIElementType::WORLD_MAP {
-            // Sound::new(SoundName::WORLD_MAP_CLOSE).play()
-          } else {
-            // Sound::new(SoundName::MENU_DOWN).play()
-          }
-          // element.object.remove_cursor()
-          self.ui.send_cursor_pressed(false)
+          // Sound::new(SoundName::MENU_DOWN).play()
         }
+        // element.object.remove_cursor()
+        // self.ui.send_cursor_pressed(false)
       }
     }
     None => self.set_element(is_focused, f())

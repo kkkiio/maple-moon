@@ -12,6 +12,8 @@ pub(all) struct Game {
   scheduls : @schedule.Schedules
   stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
+  cursor : @ui.Cursor
+  select_char_ui : @login.SelectCharUI
 }
 
 ///|
@@ -27,7 +29,7 @@ struct LoadedState {
 }
 
 ///|
-pub fn Game::new() -> Game {
+pub fn Game::new() -> Game raise {
   @config.global().set_hardware_info()
   let timer = @utils.Timer::new(fn() {
     now_micro() |> @utils.TimePoint::from_micro
@@ -38,24 +40,30 @@ pub fn Game::new() -> Game {
   let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
   let stage = Ref::new(None)
+  let cursor = @ui.Cursor::new()
+  let select_char_ui_resource = @login.SelectCharUIResource::load()
+  let select_char_ui = @login.SelectCharUI::new(select_char_ui_resource, [])
   {
     timer,
     accumulator: 0,
     processor,
-    loaded_state: io_service
-    .submit(async fn() {
-      load_modules(
-        timer, processor, poll_service, io_service, scheduls, stage, keyboard_module,
-      )
-    })
-    .map(fn(it) {
-      it.unwrap() // TODO: handle error
-    }),
+    // loaded_state: io_service
+    // .submit(fn() {
+    //   load_modules(
+    //     timer, processor, poll_service, io_service, scheduls, stage, keyboard_module,
+    //   )
+    // })
+    // .map(fn(it) {
+    //   it.unwrap() // TODO: handle error
+    // }),
+    loaded_state: @utils.Future::never(),
     poll_service,
     io_service,
     scheduls,
     stage,
     keyboard_module,
+    cursor,
+    select_char_ui,
   }
 }
 
@@ -67,7 +75,7 @@ async fn load_modules(
   io_service : @io_task.IOService,
   scheduls : @schedule.Schedules,
   stage_ref : Ref[Stage?],
-  keyboard_module : @keyboard.Module
+  keyboard_module : @keyboard.Module,
 ) -> LoadedState raise {
   let local_storage = @config.LocalStorage::new()
   fn get_stage() -> Stage {
@@ -78,7 +86,7 @@ async fn load_modules(
   let action_registry = @action.Registry::new()
   let action_map = {}
   fn merge_actions(
-    map : Map[@keyboard.BasicActionId, @action.Descriptor]
+    map : Map[@keyboard.BasicActionId, @action.Descriptor],
   ) -> Unit {
     for id, descriptor in map {
       action_map.set(id, descriptor)
@@ -87,7 +95,7 @@ async fn load_modules(
 
   let net_handler_map = {}
   fn merge_handlers(
-    handlers : Map[@net.Opcode, (@net.InPacket) -> Unit]
+    handlers : Map[@net.Opcode, (@net.InPacket) -> Unit],
   ) -> Unit {
     for opcode, handler in handlers {
       net_handler_map.set(opcode, handler)
@@ -98,7 +106,7 @@ async fn load_modules(
   // character stat handlers
   let stat_handler_map = {}
   fn merge_stat_handlers(
-    handlers : Map[@maple_stat.Id, @game_mod.StatHandler]
+    handlers : Map[@maple_stat.Id, @game_mod.StatHandler],
   ) {
     for stat_id, handler in handlers {
       if stat_handler_map.contains(stat_id) {
@@ -112,23 +120,16 @@ async fn load_modules(
   // show status info handlers
   let show_status_info_handler_map = {}
   fn merge_show_status_info_handler_map(
-    handlers : Map[Int, @game_mod.SubRouteHandler]
+    handlers : Map[Int, @game_mod.SubRouteHandler],
   ) {
     for sub_id, handler in handlers {
       show_status_info_handler_map.set(sub_id, handler)
     }
   }
 
-  let basic_loader = @resource.SyncLoader::load(
-    "Basic",
-    "https://maple-res.kkkiiox.work/UI/Basic.img.json",
-    @resource.ImageLoader::get_path_image_loader(),
-  )
   let keyboard = keyboard_module.get_keyboard()
-  let ui = UI::new(basic_loader, fn(keycode) { keyboard.get_mapping(keycode) })
-  let window = Window::new(ui, fn() {
-    now_micro() |> @utils.TimePoint::from_micro
-  })
+  let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
+  let window = Window::new(ui)
   let string_loader = @resource.SyncLoader::load(
     "String",
     "https://maple-res.kkkiiox.work/String/nx.json",
@@ -255,7 +256,7 @@ async fn load_modules(
   })
   merge_stat_handlers(job_module.make_stat_handlers())
   net_handler_map.set(@net.RECALCULATE_STATS, fn(
-    _recv : @net.InPacket
+    _recv : @net.InPacket,
   ) -> Unit {
     guard get_stage().get_player() is Some(player) else { return }
     player.recalc_stats(false)
@@ -325,7 +326,7 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   let times = acc / timestep
   let remaining = acc - timestep * times
   self.accumulator = remaining
-  let update_times = @math.minimum(times, 10) // avoid halt
+  let update_times = @cmp.minimum(times, 10) // avoid halt
   for _ in 0..<update_times {
     self.update_status(loaded_state)
   }
@@ -334,7 +335,7 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
 
   // Draw the game. Interpolate to account for remaining time.
   let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
-  self.draw(alpha, loaded_state)
+  self.draw(alpha)
 }
 
 ///|
@@ -351,15 +352,11 @@ pub fn update_status(self : Game, loaded_state : LoadedState) -> Unit {
 }
 
 ///|
-pub fn Game::draw(
-  self : Game,
-  alpha : Double,
-  loaded_state : LoadedState
-) -> Unit {
+pub fn Game::draw(self : Game, alpha : Double) -> Unit {
   @graphics.GraphicsGL::get().clear_scene()
   let stage = self.stage.val.unwrap() // TODO: handle error
   stage.draw(alpha)
-  loaded_state.ui.draw(alpha)
+  // loaded_state.ui.draw(alpha)
   @graphics.GraphicsGL::get().flush(1.0)
 }
 
@@ -371,7 +368,7 @@ fn setup_game_ui(
   registry : @action.Registry,
   timer : @utils.Timer,
   map_module : @map.Module,
-  status_bar_loader : @resource.SyncLoader
+  status_bar_loader : @resource.SyncLoader,
 ) -> Unit {
   ui.change_state(UIStateGame::new(ui, stage, registry, timer))
   let stats = player.get_stats()

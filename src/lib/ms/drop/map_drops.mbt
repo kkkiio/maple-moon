@@ -190,8 +190,3 @@ priv enum MesoIcon {
   BUNDLE
   BAG
 } derive(Eq, Hash)
-
-///|
-let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "special_item",
-)

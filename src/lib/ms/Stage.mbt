@@ -57,7 +57,7 @@ pub fn Stage::new(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
   bullet_module : @bullet.Module,
-  combat : @combat_impl2.Combat
+  combat : @combat_impl2.Combat,
 ) -> Stage {
   {
     map_portals_animations,
@@ -117,11 +117,11 @@ pub fn set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
   cooldowns : Map[Int, Int],
-  callback : (@player.Player) -> Unit raise
+  callback : (@player.Player) -> Unit raise,
 ) -> Unit {
   self.combat.set_cooldowns(cooldowns)
   let player_f = self.io_service
-    .submit(async fn() { self.char_look_module.load_char_look(entry.look) })
+    .submit(fn() { self.char_look_module.load_char_look(entry.look) })
     .bind(fn(look) {
       let look = look.unwrap() // TODO: handle error
       @player.Player::load(
@@ -163,7 +163,7 @@ fn respawn(
   portal_id : Int,
   map_info : @map.MapInfo,
   portals : @map.MapPortals,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Unit {
   // TODO: Music
   let spawnpoint = portals.get_portal_pos_by_id(portal_id)
@@ -182,8 +182,8 @@ pub fn draw(self : Stage, alpha : Double) -> Unit {
   }
   let viewpos = self.camera.get_position(alpha~)
   let viewrpos = self.camera.real_position(alpha)
-  let viewx = viewrpos.x
-  let viewy = viewrpos.y
+  let viewx = viewrpos.0
+  let viewy = viewrpos.1
   @map.drawbackgrounds(backgrounds.backs, viewx, viewy, alpha)
   let player = self.player.unwrap()
   for id in @map_layer.ids {
@@ -282,7 +282,7 @@ fn update(self : Stage) -> Unit raise {
 fn send_cursor(
   self : Stage,
   pressed : Bool,
-  position : @struct.Point[Int]
+  position : @struct.Point[Int],
 ) -> @ui.CursorState {
   if self.npcs.send_cursor(pressed, position, self.camera.get_position())
     is Some(state) {
@@ -334,7 +334,7 @@ fn check_portals(
   self : Stage,
   map_info : @map.MapInfo,
   portals : @map.MapPortals,
-  physics : @physics.Physics
+  physics : @physics.Physics,
 ) -> Unit {
   let player = self.player.unwrap()
   if player.is_attacking() {
@@ -433,7 +433,7 @@ impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
 ///| From mob attack result.
 fn new_take_damage_packet_from_mob(
   result : @combat.MobAttackResult,
-  from : TakeDamageFrom
+  from : TakeDamageFrom,
 ) -> TakeDamageMessage {
   {
     from,
@@ -481,7 +481,7 @@ pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
 ///|
 pub fn listen_map_change(
   self : Stage,
-  on_change : (@map.SceneMap) -> Bool
+  on_change : (@map.SceneMap) -> Bool,
 ) -> Unit {
   self.map_change_listeners.push(on_change)
 }

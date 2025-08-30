@@ -105,7 +105,10 @@ pub fn op_get(self : NxNode, name : String) -> NxNode {
   {
     ..self,
     name,
-    desc: self.desc.as_object().bind(fn(it) { it.get(name) }).or(Json::null()),
+    desc: self.desc
+    .as_object()
+    .bind(fn(it) { it.get(name) })
+    .unwrap_or(Json::null()),
     path: self.path.push(name),
   }
 }
@@ -167,8 +170,8 @@ pub fn get_int_field(
   key : String,
   default? : Int,
 ) -> Int raise LoadError {
-  match self.desc.as_object().unwrap()[key] {
-    Some(Json::Number(it)) => it.to_int()
+  match self.desc.as_object().unwrap().get(key) {
+    Some(Json::Number(it, ..)) => it.to_int()
     None =>
       match default {
         Some(it) => it
@@ -184,8 +187,8 @@ pub fn get_float_field(
   key : String,
   default? : Double,
 ) -> Double raise LoadError {
-  match self.desc.as_object().unwrap()[key] {
-    Some(Json::Number(it)) => it
+  match self.desc.as_object().unwrap().get(key) {
+    Some(Json::Number(it, ..)) => it
     None =>
       match default {
         Some(it) => it
@@ -346,7 +349,8 @@ pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
   @struct.Rectangle::new(left_top, right_bottom)
 }
 
-///| Array of T which json key is index
+///|
+/// Array of T which json key is index
 pub struct MapBasedArray[T](Array[T]) derive(Show)
 
 ///|

@@ -372,8 +372,3 @@ pub fn update_backgrounds(backgrounds : Backgrounds) -> Unit {
   backgrounds.backs.each(fn(background) { background.update() })
   backgrounds.fores.each(fn(foreground) { foreground.update() })
 }
-
-///|
-let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "background",
-)

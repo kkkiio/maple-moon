@@ -9,7 +9,7 @@ struct GraphicsGL {
   screen : Rectangle[Int]
   atlas : Atlas
   text_cache : @lru_cache.Cache[TextKey, Image]
-  mut locked : Bool
+  // mut locked : Bool
 }
 
 ///|
@@ -53,7 +53,7 @@ fn GraphicsGL::new(vwidth : Int, vheight : Int) -> GraphicsGL {
     vheight,
     screen: Rectangle::from4(0, vwidth, 0, vheight),
     text_cache: @lru_cache.Cache::new(32),
-    locked: false,
+    // locked: false,
   }
 }
 
@@ -73,25 +73,22 @@ fn Atlas::new(width : Int, height : Int) -> Atlas {
 }
 
 ///|
-let gl : GraphicsGL = GraphicsGL::new(1366, 768)
-
-///|
 pub fn GraphicsGL::get() -> GraphicsGL {
-  gl
+  ...
 }
 
-///|
-pub fn lock(self : GraphicsGL) -> Unit {
-  self.locked = true
-}
+// ///|
+// pub fn lock(self : GraphicsGL) -> Unit {
+//   self.locked = true
+// }
+
+// ///|
+// pub fn unlock(self : GraphicsGL) -> Unit {
+//   self.locked = false
+// }
 
 ///|
-pub fn unlock(self : GraphicsGL) -> Unit {
-  self.locked = false
-}
-
-///|
-pub fn draw_screen_fill(
+pub fn GraphicsGL::draw_screen_fill(
   self : GraphicsGL,
   red : Double,
   green : Double,
@@ -102,7 +99,7 @@ pub fn draw_screen_fill(
 }
 
 ///|
-pub fn draw_rectangle(
+pub fn GraphicsGL::draw_rectangle(
   self : GraphicsGL,
   x : Int,
   y : Int,
@@ -113,9 +110,9 @@ pub fn draw_rectangle(
   blue : Double,
   alpha : Double,
 ) -> Unit {
-  if self.locked {
-    return
-  }
+  // if self.locked {
+  //   return
+  // }
   let color = Color::new_rgba(red, green, blue, alpha)
   self.quads.push(
     Quad::new(x, x + width, y, y + height, TexOffset::default(), color, 0.0),
@@ -123,16 +120,16 @@ pub fn draw_rectangle(
 }
 
 ///|
-pub fn draw_bitmap(
+pub fn GraphicsGL::draw_bitmap(
   self : GraphicsGL,
   bmp : @resource.Bitmap,
   rect : Rectangle[Int],
   color : Color,
   angle : Double,
 ) -> Unit {
-  if self.locked {
-    return
-  }
+  // if self.locked {
+  //   return
+  // }
   if color.invisible() {
     return
   }
@@ -154,7 +151,7 @@ pub fn draw_bitmap(
 }
 
 ///|
-fn draw_text(
+fn GraphicsGL::draw_text(
   self : GraphicsGL,
   image : Image,
   textId : String,
@@ -162,9 +159,9 @@ fn draw_text(
   nametag : Bool,
   text_y_clip~ : Range[Int]? = None,
 ) -> Unit {
-  if self.locked {
-    return
-  }
+  // if self.locked {
+  //   return
+  // }
   guard image.poll() is Some(image) else { return }
   let rect = Rectangle::from4(
     point.x,
@@ -218,7 +215,7 @@ fn draw_text(
 }
 
 ///|
-pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
+pub fn GraphicsGL::create_text_image(self : GraphicsGL, key : TextKey) -> Image {
   if self.text_cache.get(key) is Some(image) {
     return image
   }
@@ -241,7 +238,7 @@ pub fn create_text_image(self : GraphicsGL, key : TextKey) -> Image {
     fontName,
     "rgb(\{r} \{g} \{b} / \{key.color.a()/255})", // rgb($r $g $b / $a)
     text_align,
-    key.max_width.or(0),
+    key.max_width.unwrap_or(0),
   )
   self.text_cache.set(key, img)
   img
@@ -264,7 +261,7 @@ pub(all) enum TextAlignment {
 } derive(Eq, Hash)
 
 ///|
-pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
+pub fn GraphicsGL::flush(self : GraphicsGL, opacity : Double) -> Unit {
   let coverscene = opacity != 1.0
   if coverscene {
     let complement = 1.0 - opacity
@@ -298,7 +295,7 @@ pub fn flush(self : GraphicsGL, opacity : Double) -> Unit {
 }
 
 ///|
-pub fn clear(self : GraphicsGL) -> Unit {
+pub fn GraphicsGL::clear(self : GraphicsGL) -> Unit {
   self.atlas.clear()
   self.text_cache.clear()
 }
@@ -313,11 +310,12 @@ fn Atlas::clear(self : Atlas) -> Unit {
 }
 
 ///|
-pub fn clear_scene(self : GraphicsGL) -> Unit {
-  if not(self.locked) {
-    self.quads.clear()
-    // self.circles.clear();
-  }
+pub fn GraphicsGL::clear_scene(self : GraphicsGL) -> Unit {
+  // if self.locked {
+  //   return
+  // }
+  self.quads.clear()
+  // self.circles.clear();
 }
 
 ///|
@@ -428,7 +426,7 @@ fn clear_internal(self : Atlas) -> Unit {
 ///|
 priv struct Quad {
   vertices : FixedArray[Vertex]
-} derive(Show)
+}
 
 ///|
 fn Quad::new(
@@ -473,7 +471,7 @@ priv struct Vertex {
   texcoord_x : Int
   texcoord_y : Int
   color : Color
-} derive(Show)
+}
 
 ///|
 fn Vertex::new(

@@ -44,7 +44,8 @@ struct Hair {
   color : String
 }
 
-///| For testing
+///|
+/// For testing
 pub fn Hair::default() -> Hair {
   { stances: Map::new(), name: "", color: "" }
 }
@@ -111,7 +112,7 @@ fn Hair::new(
             continue
           }
         }
-        let brow = layernode["map"]["brow"].as_point?().unwrap()
+        let brow = (try? layernode["map"]["brow"].as_point()).unwrap()
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
         let tex = @graphics.Texture::from_resource(layernode)
         stances

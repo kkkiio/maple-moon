@@ -1,13 +1,12 @@
+import tailwindcss from '@tailwindcss/vite';
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
 	plugins: [vue(), tailwindcss()],
 	resolve: {
 		alias: {
 			"@": "/src",
-			lib: "/target/js/release/build/lib",
 		},
 	},
 	server: {

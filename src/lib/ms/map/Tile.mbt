@@ -30,6 +30,3 @@ pub fn Tile::draw(self : Tile, viewpos : Point[Int]) -> Unit {
 pub fn Tile::get_z(self : Tile) -> Int {
   self.z
 }
-
-///|
-let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("tile")

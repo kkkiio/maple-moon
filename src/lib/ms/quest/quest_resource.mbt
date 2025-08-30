@@ -47,14 +47,6 @@ priv struct QuestNxResource {
 )
 
 ///|
-let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "Quest",
-  loader=@resource.AsyncResourceLoader::new_async_resource_loader(
-    @resource.DirResourceLoader::new("https://maple-res.kkkiiox.work/Quest"),
-  ),
-)
-
-///|
 struct QuestInfo {
   name : String
   parent : String?
@@ -362,7 +354,7 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let id : Int = @json.from_json(obj.get("id").or(Json::null()), path~)
+  let id : Int = @json.from_json(obj.get("id").unwrap_or(Json::null()), path~)
   let state = @json.from_json(obj.get("state").or(Json::number(0)), path~)
   { id, state }
 }
@@ -560,19 +552,19 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
   }
   let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
   let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
-    obj.get("yes").or(Json::null()),
+    obj.get("yes").unwrap_or(Json::null()),
     path=path.add_key("yes"),
   )
   let no_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
-    obj.get("no").or(Json::null()),
+    obj.get("no").unwrap_or(Json::null()),
     path=path.add_key("no"),
   )
   let stop_hint : Nullable[Hints] = @json.from_json(
-    obj.get("stop").or(Json::null()),
+    obj.get("stop").unwrap_or(Json::null()),
     path=path.add_key("stop"),
   )
   let restore_lost : Nullable[Lost] = @json.from_json(
-    obj.get("lost").or(Json::null()),
+    obj.get("lost").unwrap_or(Json::null()),
     path=path.add_key("lost"),
   )
   let ask = match obj.get("ask") {
@@ -597,11 +589,11 @@ impl @json.FromJson for Hints with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let item : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
-    obj.get("item").or(Json::null()),
+    obj.get("item").unwrap_or(Json::null()),
     path=path.add_key("item"),
   )
   let npc : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
-    obj.get("npc").or(Json::null()),
+    obj.get("npc").unwrap_or(Json::null()),
     path=path.add_key("npc"),
   )
   {
@@ -620,7 +612,7 @@ impl @json.FromJson for Hint with from_json(json, path) {
   }
   let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
   let answer : Int = @json.from_json(
-    obj.get("answer").or(Json::null()),
+    obj.get("answer").unwrap_or(Json::null()),
     path=path.add_key("answer"),
   )
   { says: says.inner(), answer }
@@ -633,7 +625,7 @@ impl @json.FromJson for Lost with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let yes_reply : Nullable[@resource.MapBasedArray[String]] = @json.from_json(
-    obj.get("yes").or(Json::null()),
+    obj.get("yes").unwrap_or(Json::null()),
     path=path.add_key("yes"),
   )
   {
@@ -697,13 +689,16 @@ impl @json.FromJson for ActItem with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let id : NumbericInt = @json.from_json(obj.get("id").or(Json::null()), path~)
+  let id : NumbericInt = @json.from_json(
+    obj.get("id").unwrap_or(Json::null()),
+    path~,
+  )
   let count : Nullable[NumbericInt] = @json.from_json(
-    obj.get("count").or(Json::null()),
+    obj.get("count").unwrap_or(Json::null()),
     path=path.add_key("count"),
   )
   let period : Nullable[NumbericInt] = @json.from_json(
-    obj.get("period").or(Json::null()),
+    obj.get("period").unwrap_or(Json::null()),
     path=path.add_key("period"),
   )
   {

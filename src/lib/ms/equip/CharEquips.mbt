@@ -9,7 +9,8 @@ pub(all) enum CapType {
   FULL_COVER
 }
 
-///| A characters equipment (The visual part)
+///|
+/// A characters equipment (The visual part)
 struct CharEquips {
   clothes : Map[@slot.Id, @clothing.Clothing]
   mut weapon_data : @weapon.WeaponData?
@@ -27,7 +28,7 @@ pub fn get_weapon(self : CharEquips) -> @weapon.WeaponData? {
 
 ///|
 pub fn get_equip(self : CharEquips, slot : @slot.Id) -> Int {
-  self.clothes.get(slot).map(fn(it) { it.get_id() }).or(0)
+  self.clothes.get(slot).map(fn(it) { it.get_id() }).unwrap_or(0)
 }
 
 ///|
@@ -37,13 +38,14 @@ pub fn CharEquips::draw(
   stance : @types.StanceId,
   layer : @clothing.Layer,
   frame : Int,
-  args : @graphics.DrawArgument
+  args : @graphics.DrawArgument,
 ) -> Unit {
   guard self.clothes.get(slot) is Some(cloth) else { return }
   cloth.draw(stance, layer, frame, args)
 }
 
-///| WARN: not accurate
+///|
+/// WARN: not accurate
 pub fn getcaptype(self : CharEquips) -> CapType {
   guard self.clothes.get(@slot.Id::HAT) is Some(cap) else {
     return CapType::NONE
@@ -72,7 +74,7 @@ pub fn add_equip(
   self : CharEquips,
   item_data : @item.ItemData,
   slot : @slot.Id,
-  drawinfo : @types.BodyDrawInfo
+  drawinfo : @types.BodyDrawInfo,
 ) -> Unit raise {
   let cloth = @clothing.Clothing::from_resource(item_data, drawinfo)
   self.clothes[slot] = cloth
@@ -97,7 +99,7 @@ pub fn has_weapon(self : CharEquips) -> Bool {
 ///|
 pub fn adjust_stance(
   self : CharEquips,
-  stance : @types.StanceId
+  stance : @types.StanceId,
 ) -> @types.StanceId {
   guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else {
     return stance

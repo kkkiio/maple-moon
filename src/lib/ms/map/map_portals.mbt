@@ -120,6 +120,9 @@ pub fn MapPortals::find_warp_at(
 
 ///|
 pub async fn MapPortalAnimations::load() -> MapPortalAnimations raise {
+  let map_helper_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "maphelper",
+  )
   let src1 = map_helper_loader.load_res_async([
     "portal", "game", "ph", "default", "portalContinue",
   ])
@@ -136,11 +139,6 @@ pub async fn MapPortalAnimations::load() -> MapPortalAnimations raise {
     ]),
   }
 }
-
-///|
-let map_helper_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "maphelper",
-)
 
 ///|
 test "" {

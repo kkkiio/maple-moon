@@ -1,4 +1,5 @@
-///| A standard maplestory-button with 4 states and a texture for each state.
+///|
+/// A standard maplestory-button with 4 states and a texture for each state.
 pub(all) struct MapleButton {
   base : ButtonModel
   textures : Map[ButtonState, @graphics.Texture]
@@ -12,64 +13,92 @@ pub impl UIButton for MapleButton with get_button_base(self : MapleButton) -> Bu
 
 ///|
 pub(all) struct MapleButtonResource {
-  textures : Map[ButtonState, @graphics.Texture]
-  animations : Map[ButtonState, @graphics.Animation]
-} derive(Default)
+  textures : Map[ButtonState, @graphics.NxFrame]
+  animations : Map[ButtonState, @graphics.NxAnimation]
+}
 
 ///|
 pub fn MapleButtonResource::from_resource(
   src : @resource.NxNode,
 ) -> MapleButtonResource {
-  let normal = src["normal"]
+  ...
+}
+
+///|
+pub impl @json.FromJson for MapleButtonResource with from_json(
+  src : Json,
+  path : @json.JsonPath,
+) -> MapleButtonResource {
+  guard src
+    is {
+      "normal": { "0": normal0, .. } as normal,
+      "pressed": { "0": pressed0, .. },
+      "mouseOver": { "0": mouseOver0, .. },
+      "disabled": { "0": disabled0, .. },
+      ..
+    } else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
   let textures = {}
   let animations = {}
-  if normal.get_children_count() > 1 {
-    animations[ButtonState::NORMAL] = @graphics.Animation::from_resource(normal)
+  if normal is { "0": _, "1": _, .. } {
+    animations[ButtonState::NORMAL] = @json.from_json(
+      normal,
+      path=path.add_key("normal"),
+    )
   } else {
-    textures[ButtonState::NORMAL] = @graphics.Texture::from_resource(
-      normal["0"],
+    textures[ButtonState::NORMAL] = @json.from_json(
+      normal0,
+      path=path.add_key("normal").add_key("0"),
     )
   }
-  textures[ButtonState::PRESSED] = @graphics.Texture::from_resource(
-    src["pressed"]["0"],
+  textures[ButtonState::PRESSED] = @json.from_json(
+    pressed0,
+    path=path.add_key("pressed").add_key("0"),
   )
-  textures[ButtonState::MOUSEOVER] = @graphics.Texture::from_resource(
-    src["mouseOver"]["0"],
+  textures[ButtonState::MOUSEOVER] = @json.from_json(
+    mouseOver0,
+    path=path.add_key("mouseOver").add_key("0"),
   )
-  textures[ButtonState::DISABLED] = @graphics.Texture::from_resource(
-    src["disabled"]["0"],
+  textures[ButtonState::DISABLED] = @json.from_json(
+    disabled0,
+    path=path.add_key("disabled").add_key("0"),
   )
   { textures, animations }
 }
 
+// ///|
+
 ///|
 pub fn MapleButton::from_resource(
   src : @resource.NxNode,
-  pos~ : Point[Int] = @struct.Point::default(),
+  pos? : Point[Int] = @struct.Point::default(),
 ) -> MapleButton {
-  let res = MapleButtonResource::from_resource(src)
-  MapleButton::new(res, pos~)
+  ...
+  // let res = MapleButtonResource::from_resource(src)
+  // MapleButton::new(res, pos~)
 }
 
 ///|
 pub fn MapleButton::new(
   res : MapleButtonResource,
-  pos~ : Point[Int] = @struct.Point::default(),
+  pos? : Point[Int] = @struct.Point::default(),
 ) -> MapleButton {
   let base = ButtonModel::default()
   base.set_position(pos)
   base.set_state(ButtonState::NORMAL)
-  { base, textures: res.textures, animations: res.animations }
+  ...
+  // { base, textures: res.textures, animations: res.animations }
 }
 
-///|
-pub fn MapleButton::from_resource_with_x_y(
-  src : @resource.NxNode,
-  x : Int,
-  y : Int,
-) -> MapleButton {
-  MapleButton::from_resource(src, pos=Point::new(x, y))
-}
+// ///|
+// pub fn MapleButton::from_resource_with_x_y(
+//   src : @resource.NxNode,
+//   x : Int,
+//   y : Int,
+// ) -> MapleButton {
+//   MapleButton::from_resource(src, pos=Point::new(x, y))
+// }
 
 ///|
 pub impl UIButton for MapleButton with draw(

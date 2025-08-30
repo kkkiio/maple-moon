@@ -33,7 +33,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
     Some(bmp) =>
       {
         bitmap: Some(bmp),
-        origin: src["origin"].as_point?().unwrap(),
+        origin: (try? src["origin"].as_point()).unwrap(),
         dimensions: { x: bmp.width, y: bmp.height },
       }
     None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
@@ -44,7 +44,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
 pub fn Texture::load(
   resource : TextureResource,
   loader_name : String,
-  image_loader : @resource.ImageLoader
+  image_loader : @resource.ImageLoader,
 ) -> Texture {
   let origin = resource.origin
   match resource.bitmap {
@@ -91,7 +91,7 @@ pub impl @json.FromJson for TextureResource with from_json(json, path) -> Textur
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let origin = @json.from_json(
-    obj.get("origin").or(Json::null()),
+    obj.get("origin").unwrap_or(Json::null()),
     path=path.add_key("origin"),
   )
   { bitmap, origin }
@@ -133,5 +133,32 @@ pub impl Drawable for Texture with draw(self : Texture, args : DrawArgument) -> 
         args.color,
         args.angle,
       )
+  }
+}
+
+///|
+pub(all) struct NxFrame(@sprite.AnimationFrame)
+
+///|
+pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
+  match json {
+    {
+      "__i": String(sprite_path),
+      "__w": Number(w, ..),
+      "__h": Number(h, ..),
+      ..
+    } => {
+      let offset = match json {
+        { "__off": [Number(offx, ..), Number(offy, ..)], .. } =>
+          @selene_math.Vec2D(offx, offy)
+        _ => @selene_math.Vec2D(0, 0)
+      }
+      NxFrame(@sprite.AnimationFrame::{
+        sprite_path,
+        size: @selene_math.Vec2D(w, h),
+        offset,
+      })
+    }
+    _ => raise @json.JsonDecodeError((path, "invalid nx frame"))
   }
 }

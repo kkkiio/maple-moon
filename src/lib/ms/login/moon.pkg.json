@@ -1,5 +1,5 @@
 {
-	"import": [
+  "import": [
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/config",
@@ -11,7 +11,6 @@
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
-    "KKKIIO/maple-moon-client/lib/ui",
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/struct",
     "KKKIIO/maple-moon-client/lib/io_task",
@@ -19,12 +18,27 @@
     "KKKIIO/maple-moon-client/lib/ms/equip/slot",
     "KKKIIO/maple-moon-client/lib/ms/map",
     "KKKIIO/maple-moon-client/lib/ms/quest",
-    "KKKIIO/maple-moon-client/lib/ms/combat_impl2"
+    "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon-client/lib/ui",
+    "Milky2018/selene/system",
+    {
+      "path": "Milky2018/selene/ui",
+      "alias": "selene_ui"
+    },
+    "Milky2018/selene/position",
+    {
+      "path": "Milky2018/selene/math",
+      "alias": "selene_math"
+    },
+    "Milky2018/selene/sprite"
   ],
-	"link": {
-		"js": {
-			"exports": ["login_account_ffi", "login_last_used_ffi"],
-			"format": "esm"
-		}
-	}
+  "link": {
+    "js": {
+      "exports": [
+        "login_account_ffi",
+        "login_last_used_ffi"
+      ],
+      "format": "esm"
+    }
+  }
 }

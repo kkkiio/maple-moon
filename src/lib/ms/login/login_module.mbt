@@ -178,7 +178,8 @@ fn Module::login_account(
   self.connect_task = None
 }
 
-///| login last used account and character
+///|
+/// login last used account and character
 pub fn Module::login_last_used(
   self : Module,
   callback : (String) -> Unit,
@@ -330,7 +331,8 @@ fn parse_login_result(recv : @net.InPacket) -> LoginResult raise Error {
   }
 }
 
-///| handle_login_result handles a packet that contains the response to an
+///|
+/// handle_login_result handles a packet that contains the response to an
 /// attempt at logging in
 pub fn handle_login_result(self : Module, result : LoginResult) -> Unit {
 
@@ -496,8 +498,8 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
       match mod.select_cid {
         Some(cid) => mod.network.send_message({ character_id: cid })
         None =>
-          mod.io_service.execute(async fn() {
-            let resource = SelectCharUIResource::load(mod.login_loader)
+          mod.io_service.execute(fn() {
+            let resource = SelectCharUIResource::load()
             let char_looks = []
             for ce in mod.characters {
               let char_look = mod.char_look_module.load_char_look(ce.look)
@@ -515,9 +517,9 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
                   },
                   on_new_character=fn() {
                     mod.ui_container.remove_ui(key)
-                    mod.io_service.execute(async fn() { on_new_character(mod) })
+                    mod.io_service.execute(fn() { on_new_character(mod) })
                   },
-                  hooks,
+                  // hooks,
                 )
               },
               key,
@@ -542,7 +544,7 @@ async fn on_new_character(mod : Module) -> Unit raise {
           res,
           hooks,
           fn(entry, cb) {
-            mod.io_service.execute(async fn() {
+            mod.io_service.execute(fn() {
               let char_look = mod.char_look_module.load_char_look(entry)
               cb(char_look)
             })
@@ -570,7 +572,8 @@ async fn on_new_character(mod : Module) -> Unit raise {
   )
 }
 
-///| Parse server IP response packet
+///|
+/// Parse server IP response packet
 fn parse_server_ip(recv : @net.InPacket) -> (Int, Int) raise {
   recv.skip_byte()
   let (_, port) = parse_login(recv)
@@ -578,7 +581,8 @@ fn parse_server_ip(recv : @net.InPacket) -> (Int, Int) raise {
   (port, cid)
 }
 
-///| Handle server IP response
+///|
+/// Handle server IP response
 pub fn handle_server_ip(mod : Module, port : Int, cid : Int) -> Unit {
   match mod.characters.search_by(fn(c) { c.id == cid }) {
     Some(i) => mod.selected_index = Some(i)
@@ -618,7 +622,8 @@ pub fn handle_add_new_char_entry(
   // TODO: show character selection UI
 }
 
-///| Request the list of worlds and channels online.
+///|
+/// Request the list of worlds and channels online.
 priv struct ServerRequest(Unit) derive(Show)
 
 ///|
@@ -807,7 +812,8 @@ fn parse_login(recv : @net.InPacket) -> (String, Int) raise {
   (Array::join(addrstr.map(fn(b) { b.to_string() }), "."), portstr)
 }
 
-///| Represents a request to log in to a channel server with a specific character
+///|
+/// Represents a request to log in to a channel server with a specific character
 priv struct PlayerLoginPacket {
   cid : Int
 } derive(Show)
@@ -867,7 +873,8 @@ pub fn get_map_pretty_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new("map_pretty")
 }
 
-///| Tell the server which character was picked.
+///|
+/// Tell the server which character was picked.
 priv struct SelectCharPacket {
   character_id : Int
 } derive(Show)

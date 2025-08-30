@@ -117,19 +117,20 @@ pub fn init_totalstats(self : CharStats) -> Unit {
   self.reduce_damage = 0.0
 }
 
-///| Returns the total stat after applying equipment, buffs, and percentages
+///|
+/// Returns the total stat after applying equipment, buffs, and percentages
 pub fn get_total(self : CharStats, stat : @maple_stat.EquipStatId) -> Int {
   self.total_stats[stat]
 }
 
 ///|
 pub fn get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
-  self.base_stats[stat].or(0)
+  self.base_stats.get(stat).unwrap_or(0)
 }
 
 ///|
 pub fn get_i64stat(self : CharStats, stat : @maple_stat.Id) -> Int64 {
-  self.base_i64stats[stat].or(0)
+  self.base_i64stats.get(stat).unwrap_or(0)
 }
 
 ///|
@@ -275,7 +276,8 @@ fn get_multiplier(self : CharStats) -> Double {
   }
 }
 
-///| Externalising this for easier configurability.
+///|
+/// Externalising this for easier configurability.
 let eqstat_caps : Map[@maple_stat.EquipStatId, Int] = Map::from_array([
   (@maple_stat.EquipStatId::STR, 999),
   (@maple_stat.EquipStatId::DEX, 999),
@@ -386,13 +388,14 @@ pub fn get_matk(self : CharStats) -> Int {
   self.total_stats[@maple_stat.MAGIC]
 }
 
-///| Watch for stat changes
+///|
+/// Watch for stat changes
 /// 
 /// The `listener` will be called when the stat changes.
 pub fn watch_stat_changes(
   self : CharStats,
   stat_id : MapleStatId,
-  trigger_now~ : Bool = false,
+  trigger_now? : Bool = false,
   listener : (Int, Int) -> IterResult,
 ) -> Unit {
   if trigger_now {
@@ -409,7 +412,7 @@ pub fn watch_stat_changes(
 pub fn watch_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
-  trigger_now~ : Bool = false,
+  trigger_now? : Bool = false,
   listener : (Int64, Int64) -> IterResult,
 ) -> Unit {
   if trigger_now {

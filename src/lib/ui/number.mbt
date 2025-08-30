@@ -113,7 +113,7 @@ pub struct NumberSet {
 
 ///|
 pub async fn NumberSet::load() -> NumberSet raise {
-  let loader = effect_loader
+  let loader = @resource.AsyncLoader::new("effect")
   async fn load_charset_pair(path0, path1) raise {
     let res0 = loader.load_res_async(path0)
     let res1 = loader.load_res_async(path1)
@@ -186,6 +186,3 @@ pub fn new_number(
   let opacity = @utils.Linear::new(1.5)
   { charsets, t, miss, multiple, first_num, rest_num, shift, move_obj, opacity }
 }
-
-///|
-let effect_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("effect")

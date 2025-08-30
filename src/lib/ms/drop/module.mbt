@@ -8,6 +8,9 @@ pub async fn Module::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
 ) -> Module raise {
+  let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "special_item",
+  )
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(io_service, string_loader, src) }
 }

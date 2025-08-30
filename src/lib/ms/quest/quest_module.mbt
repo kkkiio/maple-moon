@@ -16,6 +16,12 @@ pub async fn Module::load(
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module raise {
+  let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "Quest",
+    loader=@resource.AsyncResourceLoader::new_async_resource_loader(
+      @resource.DirResourceLoader::new("https://maple-res.kkkiiox.work/Quest"),
+    ),
+  )
   let quests_resource = quest_resource_loader.load_res_async(["nx"])
   let map_quests_resource = MapQuestsResource::load()
   let quests_resource : QuestResource = @json.from_json(quests_resource.value())

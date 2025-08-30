@@ -15,11 +15,11 @@ pub impl @json.FromJson for MapTilesObjsNxResource with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expected object"))
   }
   let back : BackgroundsResource = @json.from_json(
-    obj.get("back").or(Json::null()),
+    obj.get("back").unwrap_or(Json::null()),
     path=path.add_key("back"),
   )
   let portal : @resource.MapBasedArray[PortalMarker] = @json.from_json(
-    obj.get("portal").or(Json::null()),
+    obj.get("portal").unwrap_or(Json::null()),
     path=path.add_key("portal"),
   )
   { layers, back, portal }

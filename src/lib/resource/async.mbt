@@ -16,7 +16,10 @@ pub fn AsyncLoader::new(
   name : String,
   loader? : AsyncResourceLoader,
 ) -> AsyncLoader {
-  { name, loader: loader.or_else(fn() { get_async_resource_loader(name) }) }
+  {
+    name,
+    loader: loader.unwrap_or_else(fn() { get_async_resource_loader(name) }),
+  }
 }
 
 ///|

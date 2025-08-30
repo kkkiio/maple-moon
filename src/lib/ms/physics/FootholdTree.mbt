@@ -12,7 +12,7 @@ struct FootholdTree {
 
 ///|
 pub fn FootholdTree::load_from_resource(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> FootholdTree raise @resource.LoadError {
   let footholds = Map::new()
   let footholds_by_x = Map::new()
@@ -50,23 +50,23 @@ pub fn FootholdTree::load_from_resource(
     .values()
     .iter()
     .map(fn(f) { f.l() })
-    .fold(init=30000, @math.minimum)
+    .fold(init=30000, @cmp.minimum)
   let rightw = footholds
     .values()
     .iter()
     .map(fn(f) { f.r() })
-    .fold(init=-30000, @math.maximum)
+    .fold(init=-30000, @cmp.maximum)
   let walls = @struct.Range::new(leftw + 25, rightw - 25)
   let topb = footholds
     .values()
     .iter()
     .map(fn(f) { f.t() })
-    .fold(init=30000, @math.minimum)
+    .fold(init=30000, @cmp.minimum)
   let botb = footholds
     .values()
     .iter()
     .map(fn(f) { f.b() })
-    .fold(init=-30000, @math.maximum)
+    .fold(init=-30000, @cmp.maximum)
   let borders = @struct.Range::new(topb - 300, botb + 100)
   { footholds, footholds_by_x, null_fh, walls, borders }
 }
@@ -192,7 +192,7 @@ pub fn get_wall(
   self : FootholdTree,
   curid : Int,
   left : Bool,
-  fy : Double
+  fy : Double,
 ) -> Double {
   let shorty = fy.to_int()
   let vertical = @struct.Range::new(shorty - 50, shorty - 1)

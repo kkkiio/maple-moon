@@ -154,7 +154,8 @@ pub fn BodyDrawInfo::new(
         Json::Object(frame_json) => {
           let stance = StanceId::by_string(ststr)
           let delay = match frame_json {
-            { "delay": Json::Number(delay_value), .. } => delay_value.to_int()
+            { "delay": Json::Number(delay_value, ..), .. } =>
+              delay_value.to_int()
             _ => 100
           }
           stance_delays[stance.int_value()].set(frame, delay)
@@ -174,7 +175,7 @@ pub fn BodyDrawInfo::new(
             .bind(fn(it) { it.get(ststr) })
             .bind(fn(it) { it.as_object() })
             .bind(fn(it) { it.get(frame.to_string()) })
-            .or(Json::null())
+            .unwrap_or(Json::null())
           let head_shift_map = match head_json {
             { "head": { "map": map_json, .. }, .. } => @json.from_json(map_json)
             _ => ShiftMap(Map::new())
@@ -188,7 +189,7 @@ pub fn BodyDrawInfo::new(
             bodyshiftmap
             .get(layer)
             .bind(fn(it) { it.get(key) })
-            .or(Point::default())
+            .unwrap_or(Point::default())
           }
 
           body_positions[stance.int_value()].set(

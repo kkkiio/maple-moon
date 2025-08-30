@@ -32,6 +32,9 @@ pub async fn load_map(
   let res : MapTilesObjsNxResource = @json.from_json(src.value())
   let res = res.unwrap()
   let tiles_objs = MapTilesObjs::load(res.layers)
+  let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "background",
+  )
   let backgrounds = load_backgrounds(background_loader, res.back)
   let physics = @physics.Physics::from_resource(src["foothold"])
   let map_info = MapInfo::from_resource(

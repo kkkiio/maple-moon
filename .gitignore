@@ -12,3 +12,6 @@ assets
 # windsurf rules
 .windsurfrules
 .DS_Store
+
+tools/
+.local/

@@ -13,7 +13,7 @@ pub impl @json.FromJson for HitEffectNxResource with from_json(json, path) {
     _ => 0
   }
   let z = match json {
-    { "z": Number(z), .. } => z.to_int()
+    { "z": Number(z, ..), .. } => z.to_int()
     _ => 0
   }
   { animation, pos, z }

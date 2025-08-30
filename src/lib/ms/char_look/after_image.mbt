@@ -22,11 +22,11 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
   // Parse range from "lt" and "rb" fields
   let range = {
     let left_top = @json.from_json(
-      obj.get("lt").or(Json::null()),
+      obj.get("lt").unwrap_or(Json::null()),
       path=path.add_key("lt"),
     )
     let right_bottom = @json.from_json(
-      obj.get("rb").or(Json::null()),
+      obj.get("rb").unwrap_or(Json::null()),
       path=path.add_key("rb"),
     )
     @struct.Rectangle::new(left_top, right_bottom)

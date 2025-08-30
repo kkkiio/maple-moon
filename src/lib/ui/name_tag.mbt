@@ -9,26 +9,35 @@ struct NameTag {
 
 ///|
 pub(all) type NameTagResource (
-  (@graphics.Texture, @graphics.Texture, @graphics.Texture),
-  (@graphics.Texture, @graphics.Texture, @graphics.Texture),
-) derive(Default)
+  (@graphics.NxFrame, @graphics.NxFrame, @graphics.NxFrame),
+  (@graphics.NxFrame, @graphics.NxFrame, @graphics.NxFrame),
+)
 
 ///|
-pub fn NameTagResource::from_resource(
-  src : @resource.NxNode,
+pub impl @json.FromJson for NameTagResource with from_json(
+  src : Json,
+  path : @json.JsonPath,
 ) -> NameTagResource {
-  (
-    (
-      src["0"]["0"] |> @graphics.Texture::from_resource,
-      src["0"]["1"] |> @graphics.Texture::from_resource,
-      src["0"]["2"] |> @graphics.Texture::from_resource,
-    ),
-    (
-      src["1"]["0"] |> @graphics.Texture::from_resource,
-      src["1"]["1"] |> @graphics.Texture::from_resource,
-      src["1"]["2"] |> @graphics.Texture::from_resource,
-    ),
-  )
+  match src {
+    {
+      "0": { "0": j00, "1": j01, "2": j02, .. },
+      "1": { "0": j10, "1": j11, "2": j12, .. },
+      ..
+    } =>
+      (
+        (
+          @graphics.NxFrame::from_json(j00, path.add_key("0").add_key("0")),
+          @graphics.NxFrame::from_json(j01, path.add_key("0").add_key("1")),
+          @graphics.NxFrame::from_json(j02, path.add_key("0").add_key("2")),
+        ),
+        (
+          @graphics.NxFrame::from_json(j10, path.add_key("1").add_key("0")),
+          @graphics.NxFrame::from_json(j11, path.add_key("1").add_key("1")),
+          @graphics.NxFrame::from_json(j12, path.add_key("1").add_key("2")),
+        ),
+      )
+    _ => raise @json.JsonDecodeError((path, "invalid name tag resource"))
+  }
 }
 
 ///|
@@ -45,7 +54,8 @@ pub fn NameTag::new(
   )
   name.change_text(n)
   let textures = @utils.BoolPair::new(textures.inner().0, textures.inner().1)
-  { name, textures, selected: false }
+  ...
+  // { name, textures, selected: false }
 }
 
 ///|

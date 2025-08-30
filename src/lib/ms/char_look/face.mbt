@@ -135,7 +135,7 @@ fn Face::new(
     if exp == ExpressionId::DEFAULT {
       frames.set(0, FaceFrame::from_resource(facenode["default"]))
     } else {
-      let expname = expression_names[exp].unwrap()
+      let expname = expression_names[exp]
       let expnode = facenode[expname]
       let mut frame = 0
       while true {
@@ -163,7 +163,7 @@ pub fn Face::draw(
   frame : Int,
   args : @graphics.DrawArgument,
 ) -> Unit {
-  match self.expressions[expression].unwrap().get(frame) {
+  match self.expressions[expression].get(frame) {
     Some(frameit) => frameit.texture.draw(args)
     None => ()
   }
@@ -171,7 +171,7 @@ pub fn Face::draw(
 
 ///|
 pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
-  if self.expressions[expression].unwrap().contains(frame + 1) {
+  if self.expressions[expression].contains(frame + 1) {
     frame + 1
   } else {
     0
@@ -180,7 +180,7 @@ pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
 
 ///|
 pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
-  match self.expressions[expression].unwrap().get(frame) {
+  match self.expressions[expression].get(frame) {
     Some(delayit) => delayit.delay
     None => 100
   }

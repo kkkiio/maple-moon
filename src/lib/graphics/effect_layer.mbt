@@ -1,4 +1,5 @@
-///| A list of animations. Animations will be removed after all frames were displayed.
+///|
+/// A list of animations. Animations will be removed after all frames were displayed.
 struct EffectLayer {
   effects : @sorted_map.T[Int, Array[Effect]]
 }
@@ -12,7 +13,7 @@ pub fn EffectLayer::default() -> EffectLayer {
 pub fn EffectLayer::drawbelow(
   self : EffectLayer,
   position : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   // draw (-inf,-1]
   for k, v in self.effects {
@@ -29,7 +30,7 @@ pub fn EffectLayer::drawbelow(
 pub fn EffectLayer::drawabove(
   self : EffectLayer,
   position : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   // draw (-1,+inf)
   for k, v in self.effects {
@@ -53,11 +54,11 @@ pub fn EffectLayer::update(self : EffectLayer) -> Unit {
 pub fn EffectLayer::add(
   self : EffectLayer,
   animation : Animation,
-  args~ : DrawArgument = DrawArgument::default(),
-  z~ : Int = 0,
-  speed~ : Double = 1.0
+  args? : DrawArgument = DrawArgument::default(),
+  z? : Int = 0,
+  speed? : Double = 1.0,
 ) -> Unit {
-  match self.effects[z] {
+  match self.effects.get(z) {
     Some(effects) =>
       effects.push({ sprite: Sprite::new(animation, args), speed })
     None => self.effects[z] = [{ sprite: Sprite::new(animation, args), speed }]
@@ -81,7 +82,7 @@ pub fn Effect::update(self : Effect) -> Bool {
 pub fn Effect::draw(
   self : Effect,
   position : Point[Int],
-  alpha : Double
+  alpha : Double,
 ) -> Unit {
   self.sprite.draw(position, alpha)
 }

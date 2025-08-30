@@ -234,6 +234,3 @@ pub async fn instantiate(
     string_loader,
   )
 }
-
-///|
-let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mob")

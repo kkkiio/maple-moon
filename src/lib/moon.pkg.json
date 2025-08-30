@@ -1,21 +1,18 @@
 {
-	"import": [
+  "is-main": true,
+  "import": [
     "KKKIIO/maple-moon-client/lib/ms",
     "KKKIIO/maple-moon-client/lib/utils",
-    "rami3l/js-ffi/js"
-  ],
-	"link": {
-		"js": {
-			"exports": [
-				"game_start",
-				"game_update",
-				"onmousemove",
-				"onmousedown",
-				"onmouseup",
-				"onkeydown",
-				"onkeyup"
-			],
-			"format": "esm"
-		}
-	}
+    "Milky2018/selene/system",
+    {
+      "path": "Milky2018/selene-canvas",
+      "alias": "canvas"
+    },
+    "Milky2018/selene/plugins",
+    "KKKIIO/maple-moon-client/lib/ms/keyboard",
+    "KKKIIO/maple-moon-client/lib/config",
+    "KKKIIO/maple-moon-client/lib/ui",
+    "Milky2018/selene/position",
+    "KKKIIO/maple-moon-client/lib/log"
+  ]
 }

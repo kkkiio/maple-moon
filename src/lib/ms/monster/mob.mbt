@@ -117,6 +117,7 @@ pub async fn Mob::load(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
 ) -> Mob raise {
+  let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mob")
   let strid = @string_format.stoi_left_pad0(mid, 7)
   let src = mob_loader.load_res_async([strid + ".img"])
   let info : MobInfo = src["info"].value() |> @json.from_json
@@ -877,7 +878,7 @@ pub fn calculate_damage(
   attack : @combat.Attack,
   network : @net.Network,
 ) -> Array[(Int, Bool)] {
-  let greater_level = @math.maximum(self.level - attack.playerlevel, 0)
+  let greater_level = @cmp.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
   let (mindamage, maxdamage, hitchance, critical) = match damagetype {
     @combat.AttackDamageType::DMG_WEAPON(min~, max~) => {
@@ -935,9 +936,7 @@ fn next_damage(
   if iscritical {
     damage *= 1.5
   }
-  let intdamage = damage.to_int()
-    |> @math.maximum(1)
-    |> @math.minimum(damagecap)
+  let intdamage = damage.to_int() |> @cmp.maximum(1) |> @cmp.minimum(damagecap)
   return (intdamage, iscritical)
 }
 
@@ -949,9 +948,9 @@ fn calculate_weapon_damage(
   def : Double,
 ) -> (Double, Double) {
   let final_min = (min * (1.0 - 0.01 * greater_level.to_double()) - def * 0.6)
-    |> @math.maximum(1.0)
+    |> @cmp.maximum(1.0)
   let final_max = (max * (1.0 - 0.01 * greater_level.to_double()) - def * 0.5)
-    |> @math.maximum(1.0)
+    |> @cmp.maximum(1.0)
   (final_min, final_max)
 }
 
@@ -963,9 +962,9 @@ fn calculate_magic_damage(
   def : Double,
 ) -> (Double, Double) {
   let final_min = (min - (1.0 + 0.01 * greater_level.to_double()) * def * 0.6)
-    |> @math.maximum(1.0)
+    |> @cmp.maximum(1.0)
   let final_max = (max - (1.0 + 0.01 * greater_level.to_double()) * def * 0.5)
-    |> @math.maximum(1.0)
+    |> @cmp.maximum(1.0)
   (final_min, final_max)
 }
 
@@ -977,7 +976,7 @@ fn calculate_hitchance(
 ) -> Double {
   let hitchance = player_accuracy.to_double() /
     (self.avoid.to_double() * (1.84 + 0.07 * greater_level.to_double()) + 1.0)
-  @math.maximum(hitchance, 0.01)
+  @cmp.maximum(hitchance, 0.01)
 }
 
 ///|
@@ -1013,7 +1012,7 @@ pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
       self.name_label.change_color(@struct.ColorName::GREEN)
     }
   }
-  let percent = percent |> @math.minimum(100) |> @math.maximum(0)
+  let percent = percent |> @cmp.minimum(100) |> @cmp.maximum(0)
   self.hp_percent = percent
   self.show_hp.set_for(2000)
 }

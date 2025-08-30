@@ -40,7 +40,7 @@ pub fn Frame::new(
   resource : FrameResource,
   loader_name : String,
   image_loader : @resource.ImageLoader,
-  default_delay~ : Int = 100,
+  default_delay? : Int = 100,
 ) -> Frame {
   let texture = Texture::load(resource.texture, loader_name, image_loader)
   let delay = match resource.delay {
@@ -72,7 +72,7 @@ pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameRes
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let head = @json.from_json(
-    obj.get("head").or(Json::null()),
+    obj.get("head").unwrap_or(Json::null()),
     path=path.add_key("head"),
   )
   let delay = match obj {
@@ -348,7 +348,7 @@ pub fn Animation::draw(
 ///|
 pub fn Animation::update(
   self : Animation,
-  timestep~ : Int = @config.step_time_ms,
+  timestep? : Int = @config.step_time_ms,
 ) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))
@@ -452,4 +452,34 @@ pub fn Animation::get_head(self : Animation) -> Point[Int] {
 ///|
 pub fn Animation::get_bounds(self : Animation) -> Rectangle[Int] {
   self.get_frame().get_bounds()
+}
+
+///|
+pub(all) struct NxAnimation(@sprite.Animation)
+
+///|
+pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimation raise @json.JsonDecodeError {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let frames = []
+  if obj.get("0") is None {
+    let frame : NxFrame = @json.from_json(json, path~)
+    frames.push(frame.inner())
+  } else {
+    for i = 0; ; i = i + 1 {
+      guard obj.get(i.to_string()) is Some(res) else { break }
+      let frame : NxFrame = @json.from_json(
+        res,
+        path=path.add_key(i.to_string()),
+      )
+      frames.push(frame.0)
+    }
+  }
+  if frames.length() <= 0 {
+    raise @json.JsonDecodeError(
+      (path, "Animation must have at least one frame."),
+    )
+  }
+  NxAnimation(@sprite.Animation::new(frames, loop_=true))
 }

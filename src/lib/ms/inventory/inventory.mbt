@@ -25,7 +25,8 @@ enum ModificationMode {
   ADD_COUNT
 } derive(Show, ToJson)
 
-///| Return the move type by value
+///|
+/// Return the move type by value
 pub fn Movement::from_int(value : Int) -> Movement raise @utils.UnknownEnum {
   match value {
     -1 => Movement::MOVE_NONE
@@ -36,7 +37,8 @@ pub fn Movement::from_int(value : Int) -> Movement raise @utils.UnknownEnum {
   }
 }
 
-///| The player's inventory
+///|
+/// The player's inventory
 struct Inventory {
   inventories : @utils.DefaultMap[TypeId, Map[SlotNo, SlotItem]]
   items : Map[Int, Item]
@@ -80,7 +82,8 @@ pub fn Inventory::new(network : @net.Network) -> Inventory {
   }
 }
 
-///| Recalculate sums of equip stats
+///|
+/// Recalculate sums of equip stats
 pub impl @player.Inventory for Inventory with recalc_stats(
   self : Inventory,
   weapontype : @weapon.Type,
@@ -124,7 +127,8 @@ pub fn get_meso(self : Inventory) -> Int {
   self.meso
 }
 
-///| Set the meso amount.
+///|
+/// Set the meso amount.
 pub fn set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
   self.meso_listeners.retain(fn(listener) { listener(meso) })
@@ -310,8 +314,8 @@ fn swap(
   secondtype : TypeId,
   secondslot : Int,
 ) -> Unit {
-  let first = self.inventories[firsttype][firstslot]
-  let second = self.inventories[secondtype][secondslot]
+  let first = self.inventories[firsttype].get(firstslot)
+  let second = self.inventories[secondtype].get(secondslot)
   match second {
     Some(second) => self.inventories[firsttype][firstslot] = second
     None => self.remove(firsttype, firstslot)
@@ -355,7 +359,8 @@ pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
   self.type_slot_count_map.get(t).or(0)
 }
 
-///| Determines the appropriate equipment slot for a given piece of clothing.
+///|
+/// Determines the appropriate equipment slot for a given piece of clothing.
 /// 
 /// If the clothing is a ring, it checks for available ring slots and returns the first unoccupied slot. 
 /// If all ring slots are occupied, it defaults to RING1.
@@ -414,5 +419,6 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
   }
 }
 
-///| Slot number. starts from 1
+///|
+/// Slot number. starts from 1
 pub struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)

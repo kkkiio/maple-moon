@@ -88,9 +88,6 @@ pub fn Camera::get_position(
 }
 
 ///|
-pub fn Camera::real_position(
-  self : Camera,
-  alpha : Double,
-) -> @struct.Point[Double] {
-  @struct.Point::new(self.x.get(alpha~), self.y.get(alpha~))
+pub fn Camera::real_position(self : Camera, alpha : Double) -> @math.Vec2D {
+  @math.Vec2D(self.x.get(alpha~), self.y.get(alpha~))
 }

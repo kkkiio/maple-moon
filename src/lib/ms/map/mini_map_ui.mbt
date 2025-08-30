@@ -205,14 +205,14 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
       // 48 (offset for text) + longer text's width + 10 (space for right side
       // border)
       let mark_text_width = 48 +
-        @math.maximum(region_text.width(), town_text.width()) +
+        @cmp.maximum(region_text.width(), town_text.width()) +
         10
-      let window_width = @math.maximum(
+      let window_width = @cmp.maximum(
         178,
-        @math.maximum(mark_text_width, map_dimensions.x + 20),
+        @cmp.maximum(mark_text_width, map_dimensions.x + 20),
       )
-      let c_stretch = @math.maximum(0, window_width - 128)
-      let map_draw_origin_x_ = @math.maximum(
+      let c_stretch = @cmp.maximum(0, window_width - 128)
+      let map_draw_origin_x_ = @cmp.maximum(
         10,
         window_width / 2 - map_dimensions.x / 2,
       )
@@ -394,21 +394,18 @@ pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-let map_latest_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  "MapLatest",
-  loader=@resource.AsyncResourceLoader::new_composite_async_resource_loader({
-    "Obj/login.img/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/MapLatest/Obj/login.img",
-    ),
-    "MapHelper.img/minimap/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/MapLatest/MapHelper.img/minimap",
-    ),
-  }),
-)
-
-///|
 pub fn get_map_latest_loader() -> @resource.AsyncLoader {
-  map_latest_loader
+  @resource.AsyncLoader::new(
+    "MapLatest",
+    loader=@resource.AsyncResourceLoader::new_composite_async_resource_loader({
+      "Obj/login.img/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/MapLatest/Obj/login.img",
+      ),
+      "MapHelper.img/minimap/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/MapLatest/MapHelper.img/minimap",
+      ),
+    }),
+  )
 }
 
 ///|

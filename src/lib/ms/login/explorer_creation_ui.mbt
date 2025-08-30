@@ -196,7 +196,7 @@ pub fn ExplorerCreatorUI::new(
   resource : ExplorerCreatorUIResource,
   hooks : @ui.Hooks,
   load_char_look_async : (@char_look.LookEntry, (@char_look.CharLook) -> Unit) -> Unit,
-  on_create_char~ : (NewCharacterSettings) -> Unit = fn(_v) {  },
+  on_create_char? : (NewCharacterSettings) -> Unit = fn(_v) {  },
 ) -> ExplorerCreatorUI {
   let gender = false
   let randomizer = @utils.Randomizer::new()
@@ -530,7 +530,8 @@ const JOB_ID_EXPLORER = 1
 //   @net.OutPacket::new(@net.OutPacketOpcode::NAME_CHAR)..write_string(name)
 // }
 
-///| Requests creation of a character with the specified stats.
+///|
+/// Requests creation of a character with the specified stats.
 priv struct CreateCharPacket {
   name : String
   job : Int

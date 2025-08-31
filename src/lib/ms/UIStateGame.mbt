@@ -6,7 +6,6 @@ let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
 
 ///|
 struct UIStateGame {
-  ui : UI
   stage : Stage
   registry : @action.Registry
   timer : @utils.Timer
@@ -28,13 +27,11 @@ struct UIStateGame {
 
 ///|
 pub fn UIStateGame::new(
-  ui : UI,
   stage : Stage,
   registry : @action.Registry,
   timer : @utils.Timer,
 ) -> UIStateGame {
   {
-    ui,
     stage,
     registry,
     timer,

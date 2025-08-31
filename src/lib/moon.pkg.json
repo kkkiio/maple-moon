@@ -11,8 +11,8 @@
     "Milky2018/selene/plugins",
     "KKKIIO/maple-moon-client/lib/ms/keyboard",
     "KKKIIO/maple-moon-client/lib/config",
-    "KKKIIO/maple-moon-client/lib/ui",
-    "Milky2018/selene/position",
-    "KKKIIO/maple-moon-client/lib/log"
+    "KKKIIO/maple-moon-client/lib/log",
+    "KKKIIO/maple-moon-client/lib/cursor",
+    "KKKIIO/maple-moon-client/lib/ms/login"
   ]
 }

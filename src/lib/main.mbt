@@ -13,12 +13,7 @@ fn EntryPoint::get_game(self : EntryPoint) -> @ms.Game {
 
 ///|
 fn game_start(_backend : &@system.Backend) -> Unit {
-  let game = @ms.Game::new() catch {
-    e => {
-      @log.error({ "error": e }, "failed to start game")
-      panic()
-    }
-  }
+  let game = @ms.Game::new()
   entrypoint.game = game |> Some
 }
 
@@ -128,23 +123,11 @@ fn player_state_system(_backend : &@system.Backend) -> Unit {
 }
 
 ///|
-fn cursor_system(_backend : &@system.Backend) -> Unit {
-  let cursor = entrypoint.get_game().cursor
-  cursor.update()
-  @position.positions.set(cursor.entity, @system.mouse.pos)
-}
-
-///|
-fn select_char_system(_backend : &@system.Backend) -> Unit {
-  let cursor = entrypoint.get_game().cursor
-  cursor.update()
-  @position.positions.set(cursor.entity, @system.mouse.pos)
-}
-
-///|
 fn main {
   @log.info({ "msg": "main" }, "main")
-  @system.App::new(@canvas.CanvasBackend::new())
+  @system.App::new(
+    @canvas.CanvasBackend::new().with_cross_origin(Some("anonymous")),
+  )
   .with_canvas_width(@config.constants.get_viewwidth() |> Double::from_int)
   .with_canvas_height(@config.constants.get_viewheight() |> Double::from_int)
   .with_fps(60)
@@ -152,7 +135,7 @@ fn main {
   .add_plugin(@plugins.debug_plugin)
   .add_system(game_start, schedule=Startup)
   .add_system(player_state_system, system_name="player_state_system")
-  .add_system(cursor_system, system_name="cursor_system")
-  .add_system(select_char_system, system_name="select_char_system")
+  .add_system(@cursor.cursor_system, system_name="cursor_system")
+  .add_system(@login.select_char_system, system_name="select_char_system")
   .run()
 }

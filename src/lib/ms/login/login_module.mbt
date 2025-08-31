@@ -4,7 +4,7 @@ struct Module {
   ui_container : &@ui.Container
   char_look_module : @char_look.Module
   local_storage : @config.LocalStorage
-  mut characters : Array[@character.CharEntry]
+  characters : Array[@character.CharEntry]
   mut selected_index : Int?
   mut receiving_server_list : Array[World] // temporary storage for unfinished server list
   mut login_task : LoginTask?
@@ -490,48 +490,49 @@ struct CharListMessage {
 
 ///|
 fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
-  let { characters, pic } = message
-  mod.characters = characters
-  mod.selected_index = None
-  match pic {
-    2 =>
-      match mod.select_cid {
-        Some(cid) => mod.network.send_message({ character_id: cid })
-        None =>
-          mod.io_service.execute(fn() {
-            let resource = SelectCharUIResource::load()
-            let char_looks = []
-            for ce in mod.characters {
-              let char_look = mod.char_look_module.load_char_look(ce.look)
-              char_looks.push((ce.id, char_look, ce.stats.name))
-            }
-            let key = @ui.UIElementType::UI_ELEMENT_CHAR_SELECT
-            let elem = @ui.Element::new(
-              fn(hooks) {
-                SelectCharUI::new(
-                  resource,
-                  char_looks,
-                  on_select_character=fn(cid) {
-                    mod.select_cid = Some(cid)
-                    mod.network.send_message(SelectCharPacket::new(cid))
-                  },
-                  on_new_character=fn() {
-                    mod.ui_container.remove_ui(key)
-                    mod.io_service.execute(fn() { on_new_character(mod) })
-                  },
-                  // hooks,
-                )
-              },
-              key,
-            )
-            mod.ui_container.add_ui(elem, false)
-          })
-      }
-    _ => {
-      @log.error({ "pic": pic }, "pic not ok") // TODO: show error
-      panic()
-    }
-  }
+  ...
+  // let { characters, pic } = message
+  // mod.characters = characters
+  // mod.selected_index = None
+  // match pic {
+  //   2 =>
+  //     match mod.select_cid {
+  //       Some(cid) => mod.network.send_message({ character_id: cid })
+  //       None =>
+  //         mod.io_service.execute(fn() {
+  //           let resource = SelectCharUIResource::load()
+  //           let char_looks = []
+  //           for ce in mod.characters {
+  //             let char_look = mod.char_look_module.load_char_look(ce.look)
+  //             char_looks.push((ce.id, char_look, ce.stats.name))
+  //           }
+  //           let key = @ui.UIElementType::UI_ELEMENT_CHAR_SELECT
+  //           let elem = @ui.Element::new(
+  //             fn(hooks) {
+  //               SelectCharUI::new(
+  //                 resource,
+  //                 char_looks,
+  //                 on_select_character=fn(cid) {
+  //                   mod.select_cid = Some(cid)
+  //                   mod.network.send_message(SelectCharPacket::new(cid))
+  //                 },
+  //                 on_new_character=fn() {
+  //                   mod.ui_container.remove_ui(key)
+  //                   mod.io_service.execute(fn() { on_new_character(mod) })
+  //                 },
+  //                 // hooks,
+  //               )
+  //             },
+  //             key,
+  //           )
+  //           mod.ui_container.add_ui(elem, false)
+  //         })
+  //     }
+  //   _ => {
+  //     @log.error({ "pic": pic }, "pic not ok") // TODO: show error
+  //     panic()
+  //   }
+  // }
 }
 
 ///|

@@ -12,8 +12,6 @@ pub(all) struct Game {
   scheduls : @schedule.Schedules
   stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
-  cursor : @ui.Cursor
-  select_char_ui : @login.SelectCharUI
 }
 
 ///|
@@ -29,7 +27,7 @@ struct LoadedState {
 }
 
 ///|
-pub fn Game::new() -> Game raise {
+pub fn Game::new() -> Game {
   @config.global().set_hardware_info()
   let timer = @utils.Timer::new(fn() {
     now_micro() |> @utils.TimePoint::from_micro
@@ -40,9 +38,6 @@ pub fn Game::new() -> Game raise {
   let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
   let stage = Ref::new(None)
-  let cursor = @ui.Cursor::new()
-  let select_char_ui_resource = @login.SelectCharUIResource::load()
-  let select_char_ui = @login.SelectCharUI::new(select_char_ui_resource, [])
   {
     timer,
     accumulator: 0,
@@ -62,8 +57,6 @@ pub fn Game::new() -> Game raise {
     scheduls,
     stage,
     keyboard_module,
-    cursor,
-    select_char_ui,
   }
 }
 
@@ -370,7 +363,7 @@ fn setup_game_ui(
   map_module : @map.Module,
   status_bar_loader : @resource.SyncLoader,
 ) -> Unit {
-  ui.change_state(UIStateGame::new(ui, stage, registry, timer))
+  ui.change_state(UIStateGame::new(stage, registry, timer))
   let stats = player.get_stats()
   ui.set_element(
     false,
@@ -504,3 +497,7 @@ fn default_keymap() -> Map[String, @keyboard.Mapping] {
 //     @graphics.CharsetAlignment::LEFT,
 //   )
 // }
+
+///|
+extern "js" fn now_micro() -> Double =
+  #| () => performance.now() * 1000

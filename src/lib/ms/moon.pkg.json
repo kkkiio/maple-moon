@@ -1,5 +1,5 @@
 {
-	"import": [
+  "import": [
     "KKKIIO/maple-moon-client/lib/ms/maple_stat",
     "KKKIIO/maple-moon-client/lib/action",
     "KKKIIO/maple-moon-client/lib/ms/map_layer",
@@ -40,15 +40,5 @@
     "KKKIIO/maple-moon-client/lib/ms/markup_text",
     "KKKIIO/maple-moon-client/lib/ms/bullet",
     "Milky2018/selene/math"
-  ],
-	"targets": {
-		"time-ffi.mbt": ["js", "wasm-gc", "wasm"]
-	},
-	"link": {
-		"js": {
-			"exports": [
-				"reset_player_position"
-			]
-		}
-	}
+  ]
 }

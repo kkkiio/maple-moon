@@ -12,24 +12,16 @@ pub(all) struct SelectCharUIResource {
   name_tag : @ui.NameTagResource
   bt_select : @ui.MapleButtonResource
   bt_new : @ui.MapleButtonResource
-  back13 : @graphics.NxAnimation
-  ani17 : @graphics.NxAnimation
-  ani18 : @graphics.NxAnimation
-  ani19 : @graphics.NxAnimation
+  ani17 : @sprite.Animation
+  ani18 : @sprite.Animation
+  ani19 : @sprite.Animation
   // frame : @graphics.Animation
   // step2 : @graphics.Animation
 }
 
 ///|
 pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
-  let back13 : Json = {
-    "__h": 600,
-    "__w": 800,
-    "origin": [392, 297],
-    "z": 0,
-    "__i": "assets/ui/login.img/char_select/back13.png",
-  }
-  let ani17 : Json = {
+  let ani17_res : Json = {
     "0": {
       "__h": 505,
       "__w": 242,
@@ -52,7 +44,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "__i": "assets/ui/login.img/char_select/light17.png",
     },
   }
-  let ani18 : Json = {
+  let ani18_res : Json = {
     "0": {
       "__h": 442,
       "__w": 432,
@@ -75,7 +67,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "__i": "assets/ui/login.img/char_select/light18.png",
     },
   }
-  let ani19 : Json = {
+  let ani19_res : Json = {
     "0": {
       "__h": 355,
       "__w": 312,
@@ -354,14 +346,16 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       },
     },
   }
+  let ani17 : @graphics.NxAnimation = @json.from_json(ani17_res)
+  let ani18 : @graphics.NxAnimation = @json.from_json(ani18_res)
+  let ani19 : @graphics.NxAnimation = @json.from_json(ani19_res)
   {
     name_tag: @json.from_json(name_tag_res),
     bt_select: @json.from_json(bt_select_res),
     bt_new: @json.from_json(bt_new_res),
-    back13: @json.from_json(back13),
-    ani17: @json.from_json(ani17),
-    ani18: @json.from_json(ani18),
-    ani19: @json.from_json(ani19),
+    ani17: ani17.inner(),
+    ani18: ani18.inner(),
+    ani19: ani19.inner(),
     // frame: @graphics.Animation::from_resource_ex(frame),
     // step2: @graphics.Animation::from_resource_ex(step2),
   }
@@ -378,28 +372,34 @@ pub fn SelectCharUI::new(
   @position.positions.set(entity, @position.Position(@selene_math.Vec2D(0, 0)))
   @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   // ui_model.dimension = @struct.Point::new(800, 600)
+
+  let back13 = @sprite.Animation::single_frame(
+    "assets/ui/login.img/char_select/back13.png",
+    @selene_math.Vec2D(800, 600),
+    //   "origin": [392, 297],
+  )
   for
     t in [
-      (resources.back13, @selene_math.Vec2D(392, 297)),
+      (back13, @selene_math.Vec2D(0, 0)),
       (resources.ani17, @selene_math.Vec2D(151, 283)),
       (resources.ani18, @selene_math.Vec2D(365, 252)),
       (resources.ani19, @selene_math.Vec2D(191, 208)),
+      // @graphics.Sprite::new(
+      //   resources.frame,
+      //   @graphics.DrawArgument::new(pos=@struct.Point::new(400, 300)),
+      // ),
+      // @graphics.Sprite::new(
+      //   resources.step2,
+      //   @graphics.DrawArgument::new(pos=@struct.Point::new(40, 0)),
+      // ),
     ] {
-    // @graphics.Sprite::new(
-    //   resources.frame,
-    //   @graphics.DrawArgument::new(pos=@struct.Point::new(400, 300)),
-    // ),
-    // @graphics.Sprite::new(
-    //   resources.step2,
-    //   @graphics.DrawArgument::new(pos=@struct.Point::new(40, 0)),
-    // ),
     let (s, pos) = t
     let entity = @system.Entity::new()
     @position.positions.set(entity, @position.Position(pos))
     @selene_ui.uis.set(entity, @selene_ui.Ui::new())
     @sprite.sprites.set(
       entity,
-      @sprite.Sprite::from_animation(s.inner(), @selene_ui.UI_ZINDEX),
+      @sprite.Sprite::from_animation(s, @selene_ui.UI_ZINDEX),
     )
   }
   {
@@ -511,3 +511,19 @@ fn get_character_slot_pos(
 
 ///|
 const PAGE_SIZE = 8
+
+///|
+let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
+
+///|
+pub fn select_char_system(_backend : &@system.Backend) -> Unit {
+  let ui = match select_char_ui.val {
+    Some(ui) => ui
+    None => {
+      let n = SelectCharUI::new((try? SelectCharUIResource::load()).unwrap(), [])
+      select_char_ui.val = Some(n)
+      n
+    }
+  }
+  ignore(ui)
+}

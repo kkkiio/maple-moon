@@ -3,7 +3,7 @@ struct SelectCharUI {
   characters : Array[(Int, @char_look.CharLook, @ui.NameTag)]
   on_select_character : (Int) -> Unit
   on_new_character : () -> Unit
-  mut select_slot : Int?
+  select_slot : Int?
   resource : SelectCharUIResource
 }
 
@@ -362,9 +362,15 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
 }
 
 ///|
+pub(all) struct SelectableCharacter {
+  cid : Int
+  char_look : @char_look.CharLook
+  name : String
+}
+
+///|
 pub fn SelectCharUI::new(
   resources : SelectCharUIResource,
-  characters : Array[(Int, @char_look.CharLook, String)],
   on_select_character? : (Int) -> Unit = fn(_i) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
@@ -397,25 +403,57 @@ pub fn SelectCharUI::new(
     let entity = @system.Entity::new()
     @position.positions.set(entity, @position.Position(pos))
     @selene_ui.uis.set(entity, @selene_ui.Ui::new())
-    @sprite.sprites.set(
-      entity,
-      @sprite.Sprite::from_animation(s, @selene_ui.UI_ZINDEX),
-    )
+    @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
   }
   {
     select_slot: None,
     on_select_character,
     on_new_character,
-    characters: characters.map(fn(it) {
-      let (cid, char_look, name) = it
-      (
-        cid,
-        char_look,
-        @ui.NameTag::new(@graphics.FontId::A13M, name, resources.name_tag),
-      )
-    }),
+    characters: [],
     resource: resources,
   }
+}
+
+///|
+pub fn SelectCharUI::add_character(
+  self : SelectCharUI,
+  character : SelectableCharacter,
+) -> Unit {
+  let { cid, char_look, name } = character
+  let character = (
+    cid,
+    char_look,
+    @ui.NameTag::new(@graphics.FontId::A13M, name, self.resource.name_tag),
+  )
+  self.characters.push(character)
+  let i = self.characters.length() - 1
+  // render_elements.push(
+  //   @ui.AreaButton::new(
+  //     get_character_slot_pos(i, 105, 144),
+  //     @struct.Point::new(50, 90),
+  //   )
+  //   |> @ui.Button::new(on_click=fn() {
+  //     self.select_slot = Some(i)
+  //     // (self.hooks.on_state_changed)()
+  //     None
+  //   })
+  //   |> @ui.Button::as_interactable,
+  // )
+  let (_, char_look, name_tag) = self.characters[i]
+  char_look.set_stance(
+    if Some(i) == self.select_slot {
+      @types.StanceId::WALK1
+    } else {
+      @types.StanceId::STAND1
+    },
+  )
+  char_look.set_direction(true)
+  char_look.set_sprites(get_character_slot_pos(i, 135, 234))
+  // name_tag.set_selected(Some(i) == self.select_slot)
+  // render_elements.push(
+  //   @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
+  //   |> @ui.RenderElement::Static,
+  // )
 }
 
 ///|
@@ -442,38 +480,6 @@ pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
     })
     |> @ui.Button::as_interactable,
   )
-  for i in 0..<@cmp.minimum(self.characters.length(), PAGE_SIZE) {
-    render_elements.push(
-      @ui.AreaButton::new(
-        get_character_slot_pos(i, 105, 144),
-        @struct.Point::new(50, 90),
-      )
-      |> @ui.Button::new(on_click=fn() {
-        self.select_slot = Some(i)
-        // (self.hooks.on_state_changed)()
-        None
-      })
-      |> @ui.Button::as_interactable,
-    )
-    let (_, char_look, name_tag) = self.characters[i]
-    char_look.set_stance(
-      if Some(i) == self.select_slot {
-        @types.StanceId::WALK1
-      } else {
-        @types.StanceId::STAND1
-      },
-    )
-    char_look.set_direction(true)
-    render_elements.push(
-      { char_look, pos: get_character_slot_pos(i, 135, 234) }
-      |> @ui.RenderElement::Static,
-    )
-    name_tag.set_selected(Some(i) == self.select_slot)
-    render_elements.push(
-      @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
-      |> @ui.RenderElement::Static,
-    )
-  }
   { render_elements, }
 }
 
@@ -516,14 +522,33 @@ const PAGE_SIZE = 8
 let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
+pub fn add_select_char_ui() -> Unit raise {
+  let ui = SelectCharUI::new(SelectCharUIResource::load())
+  select_char_ui.val = Some(ui)
+  ui.add_character({
+    cid: 1,
+    char_look: @char_look.CharLook::new(
+      {},
+      @char_look.Body::new(
+        0,
+        @char_look.get_draw_info(),
+        @char_look.get_stance_bodys_map(),
+        @char_look.get_stance_heads_map(),
+      ),
+      @char_look.Hair::new(
+        0,
+        @json.from_json(@char_look.male_1_white_hair),
+        @char_look.get_draw_info(),
+      ),
+      @char_look.Face::new(20800, @char_look.male_1_white_face),
+      @char_look.get_draw_info(),
+    ),
+    name: "kkkiio",
+  })
+}
+
+///|
 pub fn select_char_system(_backend : &@system.Backend) -> Unit {
-  let ui = match select_char_ui.val {
-    Some(ui) => ui
-    None => {
-      let n = SelectCharUI::new((try? SelectCharUIResource::load()).unwrap(), [])
-      select_char_ui.val = Some(n)
-      n
-    }
-  }
+  let ui = select_char_ui.val.unwrap()
   ignore(ui)
 }

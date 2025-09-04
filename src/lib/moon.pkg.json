@@ -13,6 +13,7 @@
     "KKKIIO/maple-moon-client/lib/config",
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/cursor",
-    "KKKIIO/maple-moon-client/lib/ms/login"
+    "KKKIIO/maple-moon-client/lib/ms/login",
+    "KKKIIO/maple-moon-client/lib/graphics"
   ]
 }

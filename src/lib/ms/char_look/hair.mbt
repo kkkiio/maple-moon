@@ -1,13 +1,13 @@
 ///|
 pub(all) enum HairLayer {
-  HAIR_LAYER_NONE
-  HAIR_LAYER_DEFAULT
-  BELOW_BODY
-  OVER_HEAD
-  SHADE
-  BACK
-  BELOW_CAP
-} derive(Eq, Compare, Show)
+  HAIR_LAYER_NONE = 0
+  HAIR_LAYER_DEFAULT = 1
+  BELOW_BODY = 2
+  OVER_HEAD = 3
+  SHADE = 4
+  BACK = 5
+  BELOW_CAP = 6
+} derive(Eq, Compare, Show, Hash)
 
 ///|
 pub impl ToJson for HairLayer with to_json(self) {
@@ -15,39 +15,13 @@ pub impl ToJson for HairLayer with to_json(self) {
 }
 
 ///|
-pub fn int_value(self : HairLayer) -> Int {
-  match self {
-    HairLayer::HAIR_LAYER_NONE => 0
-    HairLayer::HAIR_LAYER_DEFAULT => 1
-    HairLayer::BELOW_BODY => 2
-    HairLayer::OVER_HEAD => 3
-    HairLayer::SHADE => 4
-    HairLayer::BACK => 5
-    HairLayer::BELOW_CAP => 6
-  }
-}
-
-///|
-pub fn hash(self : HairLayer) -> Int {
-  self.int_value()
-}
-
-///|
-pub impl Hash for HairLayer with hash_combine(self, hasher : Hasher) {
-  hasher.combine(self.int_value())
-}
+pub fn int_value(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
-  stances : Map[@types.StanceId, Map[HairLayer, Map[Int, @graphics.Texture]]]
+  stances : Map[@types.StanceId, Map[HairLayer, @sprite.Sprite]]
   name : String
   color : String
-}
-
-///|
-/// For testing
-pub fn Hair::default() -> Hair {
-  { stances: Map::new(), name: "", color: "" }
 }
 
 ///|
@@ -67,44 +41,29 @@ pub let layers_by_name : @immut/sorted_map.T[String, HairLayer] = @immut/sorted_
 )
 
 ///|
-fn get_hair_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("hair")
-}
-
-///|
 pub async fn Hair::load(
   hairid : Int,
   drawinfo : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader,
 ) -> Hair raise {
-  let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
-  Hair::new(hairid, hairnode, drawinfo, string_loader)
+  // let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
+  // Hair::new(hairid, hairnode, drawinfo)
+  ...
 }
 
 ///|
-fn Hair::new(
+pub fn Hair::new(
   hairid : Int,
-  hairnode : @resource.NxNode,
+  hairnode : NxStanceLooks[@types.NxLayerTextures],
   drawinfo : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader,
 ) -> Hair {
-  let stances : Map[
-    @types.StanceId,
-    Map[HairLayer, Map[Int, @graphics.Texture]],
-  ] = Map::new()
-  for stancename, stance in @types.stance_name_id_map {
-    let stancenode = hairnode[stancename]
-    if stancenode.is_null() {
-      continue
-    }
-    let mut frame = 0
-    while true {
-      let framenode = stancenode[frame.to_string()]
-      if framenode.is_null() {
-        break
-      }
-      for layernode in framenode {
-        let layername = layernode.name()
+  let stances : Map[@types.StanceId, Map[HairLayer, @sprite.Sprite]] = Map::new()
+  for stance, stancenode in hairnode.inner() {
+    let layers : Map[
+      HairLayer,
+      (Array[@sprite.AnimationFrame], @selene_math.Vec2D),
+    ] = Map::new()
+    for frame, framenode in stancenode {
+      for layername, layernode in framenode.textures {
         let layer = match layers_by_name.get(layername) {
           Some(v) => v
           None => {
@@ -112,21 +71,48 @@ fn Hair::new(
             continue
           }
         }
-        let brow = (try? layernode["map"]["brow"].as_point()).unwrap()
+        let brow = layernode.map
+          .inner()
+          .get("brow")
+          .unwrap_or(@struct.Point::default())
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
-        let tex = @graphics.Texture::from_resource(layernode)
-        stances
-        .get_or_init(stance, fn() { Map::new() })
-        .get_or_init(layer, fn() { Map::new() })
-        .set(frame, tex)
-        tex.shift(shift)
+        let tex : @resource.NxTexture = layernode.texture.frames[0].texture
+        let tex = { ..tex, origin: tex.origin - shift }
+        let ani = layers.get_or_init(layer, fn() {
+          (
+            Array::make(stancenode.length(), @sprite.AnimationFrame::{
+              sprite_path: "",
+              size: @selene_math.Vec2D(0, 0),
+              offset: @selene_math.Vec2D(0, 0),
+            }),
+            @selene_math.Vec2D(
+              tex.origin.x.to_double(),
+              tex.origin.y.to_double(),
+            ),
+          )
+        })
+        ani.0[frame] = {
+          sprite_path: tex.i,
+          size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
+          offset: @selene_math.Vec2D(
+            tex.offset.x.to_double(),
+            tex.offset.y.to_double(),
+          ),
+        }
       }
-      frame += 1
     }
+    stances.set(
+      stance,
+      layers.map(fn(_, frames) {
+        @sprite.Sprite::from_animation(
+          @sprite.Animation::new(frames.0, loop_=true),
+          0,
+          offset=-frames.1,
+        )
+      }),
+    )
   }
-  let name = string_loader
-    .load_res(["Eqp.img", "Eqp", "Hair", "\{hairid}", "name"])
-    .get_string()
+  let name = hair_names.get(hairid.to_string()).unwrap_or("")
   let haircolors = [
     "Black", "Red", "Orange", "Blonde", "Green", "Blue", "Violet", "Brown",
   ]
@@ -143,14 +129,14 @@ pub fn draw(
   frame : Int,
   args : @graphics.DrawArgument,
 ) -> Unit {
-  let frameit = self.stances
-    .get(stance)
-    .bind(fn(it) { it.get(layer) })
-    .bind(fn(it) { it.get(frame) })
-  match frameit {
-    None => ()
-    Some(frameit) => frameit.draw(args)
-  }
+  // let frameit = self.stances
+  //   .get(stance)
+  //   .bind(fn(it) { it.get(layer) })
+  //   .bind(fn(it) { it.get(frame) })
+  // match frameit {
+  //   None => ()
+  //   Some(frameit) => frameit.draw(args)
+  // }
 }
 
 ///|

@@ -15,17 +15,13 @@ pub async fn Module::load(
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader,
 ) -> Module raise {
-  let bodynode = get_body_loader().load_res_async(["00002000.img"])
-  let headnode = get_body_loader().load_res_async(["00012000.img"])
-  Module::new(
-    bodynode, headnode, on_player_look_changed, io_service, string_loader,
-  )
+  // let bodynode = get_body_loader().load_res_async(["00002000.img"])
+  // let headnode = get_body_loader().load_res_async(["00012000.img"])
+  Module::new(on_player_look_changed, io_service, string_loader)
 }
 
 ///|
 pub fn Module::new(
-  bodynode : @resource.NxNode,
-  headnode : @resource.NxNode,
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
   string_loader : @resource.SyncLoader,
@@ -33,7 +29,7 @@ pub fn Module::new(
   {
     hair_cache: Map::new(),
     string_loader,
-    draw_info: @types.BodyDrawInfo::new(bodynode.value(), headnode.value()),
+    draw_info: get_draw_info(),
     face_types: Map::new(),
     body_cache: Map::new(),
     on_player_look_changed,
@@ -50,22 +46,31 @@ pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook raise 
 }
 
 ///|
-pub async fn load_body_by_skin_id(self : Module, skin_id : Int) -> Body raise {
-  let body = Body::load(skin_id, self.draw_info)
+pub async fn Module::load_body_by_skin_id(
+  self : Module,
+  skin_id : Int,
+) -> Body raise {
+  guard skin_id == 0 else { fail("only support default skin for now") }
+  let body = Body::new(
+    skin_id,
+    self.draw_info,
+    get_stance_bodys_map(),
+    get_stance_heads_map(),
+  )
   self.body_cache.set(skin_id, body)
   body
 }
 
 ///|
 pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair raise {
-  let hair = Hair::load(hair_id, self.draw_info, self.string_loader)
+  let hair = Hair::load(hair_id, self.draw_info)
   self.hair_cache.set(hair_id, hair)
   hair
 }
 
 ///|
 pub async fn load_face_by_id(self : Module, face_id : Int) -> Face raise {
-  let face = Face::load(face_id, self.string_loader)
+  let face = Face::load(face_id)
   self.face_types.set(face_id, face)
   face
 }
@@ -85,7 +90,7 @@ pub fn make_stat_handlers(
       @maple_stat.Id::SKIN,
       fn(skin_id) {
         state.changing_skin_id = Some(skin_id)
-        self.io_service.execute(async fn() {
+        self.io_service.execute(fn() {
           let body = self.load_body_by_skin_id(skin_id)
           guard state.changing_skin_id == Some(skin_id) else { return }
           state.changing_skin_id = None
@@ -100,7 +105,7 @@ pub fn make_stat_handlers(
       @maple_stat.Id::FACE,
       fn(face_id) {
         state.changing_face_id = Some(face_id)
-        self.io_service.execute(async fn() {
+        self.io_service.execute(fn() {
           let face = self.load_face_by_id(face_id)
           guard state.changing_face_id == Some(face_id) else { return }
           state.changing_face_id = None
@@ -115,7 +120,7 @@ pub fn make_stat_handlers(
       @maple_stat.Id::HAIR,
       fn(hair_id) {
         state.changing_hair_id = Some(hair_id)
-        self.io_service.execute(async fn() {
+        self.io_service.execute(fn() {
           let hair = self.load_hair_by_id(hair_id)
           guard state.changing_hair_id == Some(hair_id) else { return }
           state.changing_hair_id = None
@@ -128,4 +133,84 @@ pub fn make_stat_handlers(
     ),
   ]
   |> Map::from_array
+}
+
+// let     draw_info: @types.BodyDrawInfo::new(bodynode, headnode),
+
+///|
+let draw_info : Ref[@types.BodyDrawInfo?] = Ref::new(None)
+
+///|
+let stance_bodys_map : Ref[NxStanceLooks[@types.NxStanceBody]?] = Ref::new(None)
+
+///|
+let stance_heads_map : Ref[NxStanceLooks[@types.NxLayerTextures]?] = Ref::new(
+  None,
+)
+
+///|
+pub fn get_stance_bodys_map() -> Map[
+  @types.StanceId,
+  Array[@types.NxStanceBody],
+] raise {
+  match stance_bodys_map.val {
+    Some(v) => v.inner()
+    None => {
+      let v = @json.from_json(bodynode)
+      stance_bodys_map.val = Some(v)
+      v.inner()
+    }
+  }
+}
+
+///|
+pub fn get_stance_heads_map() -> Map[
+  @types.StanceId,
+  Array[@types.NxLayerTextures],
+] raise {
+  match stance_heads_map.val {
+    Some(v) => v.inner()
+    None => {
+      let v = @json.from_json(headnode)
+      stance_heads_map.val = Some(v)
+      v.inner()
+    }
+  }
+}
+
+///|
+pub fn get_draw_info() -> @types.BodyDrawInfo raise {
+  match draw_info.val {
+    Some(v) => v
+    None => {
+      let bodynode : NxStanceLooks[@types.NxStanceBody] = get_stance_bodys_map()
+      let headnode : NxStanceLooks[@types.NxLayerTextures] = get_stance_heads_map()
+      let v = @types.BodyDrawInfo::new(bodynode.inner(), headnode.inner())
+      draw_info.val = Some(v)
+      v
+    }
+  }
+}
+
+///|
+struct NxStanceLooks[T](Map[@types.StanceId, Array[T]])
+
+///|
+pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(
+  json,
+  path,
+) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let map = Map::new()
+  for k, v in obj {
+    guard @types.StanceId::from_name(k) is Some(stance_id) else { continue }
+    let nodes : Array[T] = @resource.parse_map_based_array(
+      v,
+      path=path.add_key(k),
+    )
+    map.set(stance_id, nodes)
+  }
+  map
 }

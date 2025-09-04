@@ -1,42 +1,42 @@
 ///|
 pub(all) enum StanceId {
-  NONE
-  ALERT
-  DEAD
-  FLY
-  HEAL
-  JUMP
-  LADDER
-  PRONE
-  PRONESTAB
-  ROPE
-  SHOT
-  SHOOT1
-  SHOOT2
-  SHOOTF
-  SIT
-  STABO1
-  STABO2
-  STABOF
-  STABT1
-  STABT2
-  STABTF
-  STAND1
-  STAND2
-  SWINGO1
-  SWINGO2
-  SWINGO3
-  SWINGOF
-  SWINGP1
-  SWINGP2
-  SWINGPF
-  SWINGT1
-  SWINGT2
-  SWINGT3
-  SWINGTF
-  WALK1
-  WALK2
-} derive(Eq, Compare)
+  NONE = 0
+  ALERT = 1
+  DEAD = 2
+  FLY = 3
+  HEAL = 4
+  JUMP = 5
+  LADDER = 6
+  PRONE = 7
+  PRONESTAB = 8
+  ROPE = 9
+  SHOT = 10
+  SHOOT1 = 11
+  SHOOT2 = 12
+  SHOOTF = 13
+  SIT = 14
+  STABO1 = 15
+  STABO2 = 16
+  STABOF = 17
+  STABT1 = 18
+  STABT2 = 19
+  STABTF = 20
+  STAND1 = 21
+  STAND2 = 22
+  SWINGO1 = 23
+  SWINGO2 = 24
+  SWINGO3 = 25
+  SWINGOF = 26
+  SWINGP1 = 27
+  SWINGP2 = 28
+  SWINGPF = 29
+  SWINGT1 = 30
+  SWINGT2 = 31
+  SWINGT3 = 32
+  SWINGTF = 33
+  WALK1 = 34
+  WALK2 = 35
+} derive(Eq, Compare, Hash)
 
 ///|
 pub impl Show for StanceId with output(self, logger) {
@@ -49,51 +49,7 @@ pub impl ToJson for StanceId with to_json(self) {
 }
 
 ///|
-pub fn StanceId::int_value(self : StanceId) -> Int {
-  match self {
-    StanceId::NONE => 0
-    StanceId::ALERT => 1
-    StanceId::DEAD => 2
-    StanceId::FLY => 3
-    StanceId::HEAL => 4
-    StanceId::JUMP => 5
-    StanceId::LADDER => 6
-    StanceId::PRONE => 7
-    StanceId::PRONESTAB => 8
-    StanceId::ROPE => 9
-    StanceId::SHOT => 10
-    StanceId::SHOOT1 => 11
-    StanceId::SHOOT2 => 12
-    StanceId::SHOOTF => 13
-    StanceId::SIT => 14
-    StanceId::STABO1 => 15
-    StanceId::STABO2 => 16
-    StanceId::STABOF => 17
-    StanceId::STABT1 => 18
-    StanceId::STABT2 => 19
-    StanceId::STABTF => 20
-    StanceId::STAND1 => 21
-    StanceId::STAND2 => 22
-    StanceId::SWINGO1 => 23
-    StanceId::SWINGO2 => 24
-    StanceId::SWINGO3 => 25
-    StanceId::SWINGOF => 26
-    StanceId::SWINGP1 => 27
-    StanceId::SWINGP2 => 28
-    StanceId::SWINGPF => 29
-    StanceId::SWINGT1 => 30
-    StanceId::SWINGT2 => 31
-    StanceId::SWINGT3 => 32
-    StanceId::SWINGTF => 33
-    StanceId::WALK1 => 34
-    StanceId::WALK2 => 35
-  }
-}
-
-///|
-pub impl Hash for StanceId with hash_combine(self, hasher) {
-  hasher.combine(self.int_value())
-}
+pub fn StanceId::int_value(self : StanceId) -> Int = "%identity"
 
 ///|
 pub impl Default for StanceId with default() -> StanceId {
@@ -241,6 +197,11 @@ pub fn StanceId::by_string(name : String) -> StanceId {
 }
 
 ///|
+pub fn StanceId::from_name(name : String) -> StanceId? {
+  stance_name_id_map.get(name)
+}
+
+///|
 pub fn name(self : StanceId) -> String {
   match self {
     StanceId::NONE => ""
@@ -280,9 +241,4 @@ pub fn name(self : StanceId) -> String {
     StanceId::WALK1 => "walk1"
     StanceId::WALK2 => "walk2"
   }
-}
-
-///|
-pub fn hash_combine(self : StanceId, hasher : Hasher) -> Unit {
-  hasher.combine(self.int_value())
 }

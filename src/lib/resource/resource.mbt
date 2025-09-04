@@ -358,9 +358,17 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
   json,
   path,
 ) -> MapBasedArray[T] raise {
+  parse_map_based_array(json, path~) |> MapBasedArray
+}
+
+///|
+pub fn[T : @json.FromJson] parse_map_based_array(
+  json : Json,
+  path~ : @json.JsonPath,
+) -> Array[T] raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError(
-      (path, "MapBasedArray::from_json: expected object"),
+      (path, "parse_map_based_array: expected object"),
     )
   }
   let mut i = 0
@@ -375,7 +383,7 @@ pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
     }
     i += 1
   }
-  MapBasedArray(array)
+  array
 }
 
 ///|

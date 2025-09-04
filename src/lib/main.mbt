@@ -14,6 +14,12 @@ fn EntryPoint::get_game(self : EntryPoint) -> @ms.Game {
 ///|
 fn game_start(_backend : &@system.Backend) -> Unit {
   let game = @ms.Game::new()
+  @login.add_select_char_ui() catch {
+    e => {
+      @log.error({ "e": e.to_string() }, "add select char ui failed")
+      panic()
+    }
+  }
   entrypoint.game = game |> Some
 }
 
@@ -130,9 +136,8 @@ fn main {
   )
   .with_canvas_width(@config.constants.get_viewwidth() |> Double::from_int)
   .with_canvas_height(@config.constants.get_viewheight() |> Double::from_int)
-  .with_fps(60)
+  .with_fps(@graphics.fps)
   .add_plugin(@plugins.default_plugin)
-  .add_plugin(@plugins.debug_plugin)
   .add_system(game_start, schedule=Startup)
   .add_system(player_state_system, system_name="player_state_system")
   .add_system(@cursor.cursor_system, system_name="cursor_system")

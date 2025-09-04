@@ -28,12 +28,14 @@ pub impl[T : Neg] Neg for Point[T] with op_neg(self : Point[T]) -> Point[T] {
   { x: -self.x, y: -self.y }
 }
 
-///| Shift the x-coordinate by the specified amount
+///|
+/// Shift the x-coordinate by the specified amount
 pub fn[T : Add] shift_x(self : Point[T], v : T) -> Point[T] {
   { x: self.x + v, y: self.y }
 }
 
-///| Shift the y-coordinate by the specified amount
+///|
+/// Shift the y-coordinate by the specified amount
 pub fn[T : Add] shift_y(self : Point[T], v : T) -> Point[T] {
   { x: self.x, y: self.y + v }
 }
@@ -43,7 +45,8 @@ pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
   (self.x - v.x).abs() + (self.y - v.y).abs()
 }
 
-///| Check whether the coordinates are equal
+///|
+/// Check whether the coordinates are equal
 pub fn[T : Eq] Point::straight(self : Point[T]) -> Bool {
   self.x == self.y
 }
@@ -51,7 +54,8 @@ pub fn[T : Eq] Point::straight(self : Point[T]) -> Bool {
 ///|
 pub impl @json.FromJson for Point[Int] with from_json(value, path) {
   match value {
-    [Json::Number(x), Json::Number(y)] => Point::new(x.to_int(), y.to_int())
+    [Json::Number(x, ..), Json::Number(y, ..)] =>
+      Point::new(x.to_int(), y.to_int())
     Null => Point::default()
     _ =>
       raise @json.JsonDecodeError(

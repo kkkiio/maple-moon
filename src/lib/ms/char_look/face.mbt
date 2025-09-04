@@ -24,7 +24,7 @@ pub(all) enum ExpressionId {
   SHINE
   VOMIT
   WINK
-} derive(Eq, Compare)
+} derive(Eq, Compare, Hash)
 
 ///|
 pub impl Default for ExpressionId with default() -> ExpressionId {
@@ -66,8 +66,8 @@ pub impl ToJson for ExpressionId with to_json(self) {
 }
 
 ///|
-let all_expressions : FixedArray[ExpressionId] = expression_names.keys()
-  |> FixedArray::from_array
+let all_expressions : FixedArray[ExpressionId] = expression_names.keys_as_iter()
+  |> FixedArray::from_iter()
 
 ///|
 pub fn byaction(action : Int) -> ExpressionId {
@@ -82,7 +82,7 @@ pub fn byaction(action : Int) -> ExpressionId {
 
 ///|
 struct Face {
-  expressions : @immut/sorted_map.T[ExpressionId, Map[Int, FaceFrame]]
+  expressions : Map[ExpressionId, Map[Int, FaceFrame]]
   name : String
 } derive(Default)
 
@@ -93,18 +93,24 @@ pub impl ToJson for Face with to_json(self) -> Json {
 
 ///|
 struct FaceFrame {
-  texture : @graphics.Texture
+  texture : @resource.NxTexture
   delay : Int
 }
 
 ///|
-pub fn FaceFrame::from_resource(src : @resource.NxNode) -> FaceFrame {
-  let texture = @graphics.Texture::from_resource(src["face"])
-  let shift : Point[Int] = src["face"]["map"]["brow"].as_point?().unwrap()
-  texture.shift(-shift)
-  let mut delay : Int = src["delay"].get_int?().unwrap()
-  if delay == 0 {
-    delay = 2500
+pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
+  guard src is { "face": face, .. }
+  let texture : @resource.NxTexture = @json.from_json(face)
+  // let shift : Point[Int] = face["map"]["brow"].as_point?().unwrap()
+  let shift = match face {
+    { "map": { "brow": brow, .. }, .. } => @json.from_json(brow)
+    _ => @struct.Point::default()
+  }
+  // texture.shift(-shift)
+  let texture = { ..texture, origin: texture.origin + shift }
+  let delay : Int = match src {
+    { "delay": Number(delay, ..), .. } => delay.to_int()
+    _ => 2500
   }
   { texture, delay }
 }
@@ -115,44 +121,37 @@ fn get_face_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn Face::load(
-  faceid : Int,
-  string_loader : @resource.SyncLoader,
-) -> Face raise {
+pub async fn Face::load(faceid : Int) -> Face raise {
   let strid = "000" + faceid.to_string()
   let facenode = get_face_loader().load_res_async(["\{strid}.img"])
-  Face::new(faceid, facenode, string_loader)
+  Face::new(faceid, facenode.value())
 }
 
 ///|
-fn Face::new(
-  faceid : Int,
-  facenode : @resource.NxNode,
-  string_loader : @resource.SyncLoader,
-) -> Face {
-  let expressions = expression_names.map_with_key(fn(exp, _v) {
+pub fn Face::new(faceid : Int, facenode : Json) -> Face raise {
+  guard facenode is Json::Object(facenode)
+  let expressions = Map::new()
+  for exp, _ in expression_names {
     let frames = Map::new()
     if exp == ExpressionId::DEFAULT {
       frames.set(0, FaceFrame::from_resource(facenode["default"]))
     } else {
       let expname = expression_names[exp]
       let expnode = facenode[expname]
+      guard expnode is Json::Object(expnode)
       let mut frame = 0
       while true {
-        let framenode = expnode[frame.to_string()]
-        if framenode.is_null() {
-          break
-        } else {
+        if expnode.get(frame.to_string()) is Some(framenode) {
           frames.set(frame, FaceFrame::from_resource(framenode))
           frame += 1
+        } else {
+          break
         }
       }
     }
-    frames
-  })
-  let name = string_loader
-    .load_res(["Eqp.img", "Eqp", "Face", "\{faceid}", "name"])
-    .get_string()
+    expressions.set(exp, frames)
+  }
+  let name = face_names.get(faceid.to_string()).unwrap_or("")
   { expressions, name }
 }
 
@@ -163,10 +162,10 @@ pub fn Face::draw(
   frame : Int,
   args : @graphics.DrawArgument,
 ) -> Unit {
-  match self.expressions[expression].get(frame) {
-    Some(frameit) => frameit.texture.draw(args)
-    None => ()
-  }
+  // match self.expressions[expression].get(frame) {
+  //   Some(frameit) => frameit.texture.draw(args)
+  //   None => ()
+  // }
 }
 
 ///|
@@ -190,6 +189,3 @@ pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
 pub fn Face::get_name(self : Face) -> String {
   self.name
 }
-
-///|
-typealias @struct.Point

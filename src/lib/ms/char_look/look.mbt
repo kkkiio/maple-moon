@@ -12,11 +12,12 @@ struct CharLook {
   body : Body
   hair : Hair
   face : Face
-  mut action : @types.BodyAction?
+  mut action : @types.NxStanceBodyAction?
   equips : @equip.CharEquips
   randomizer : @utils.Randomizer
   alerted : @utils.TimedBool
   draw_info : @types.BodyDrawInfo
+  mut entities : Array[@system.Entity]
 }
 
 ///|
@@ -43,7 +44,7 @@ pub async fn CharLook::load(
     .iter()
     .map(fn(it) {
       let (slot_id, itemid) = it
-      async fn() {
+      fn() {
         let itemdata = @item.ItemData::get_async(itemid, string_loader)
         (slot_id, itemdata)
       }
@@ -84,6 +85,7 @@ pub fn CharLook::new(
     randomizer: @utils.Randomizer::new(),
     alerted: @utils.TimedBool::default(),
     draw_info,
+    entities: [],
   }
 }
 
@@ -615,6 +617,175 @@ pub fn CharLook::draw(
 }
 
 ///|
+pub fn CharLook::set_sprites(self : CharLook, pos : @struct.Point[Int]) -> Unit {
+  let acmove = @struct.Point::default()
+  let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
+  // let interstance = self.stance.get()
+  // let interexpression = self.expression.get()
+  // let interframe = self.st_frame.get()
+  // let interexpframe = self.exp_frame.get()
+  let stance : @types.StanceId = self.stance.get()
+  let expression : ExpressionId = self.expression.get()
+  let stance_frame : Int = self.st_frame.get()
+  let expr_frame : Int = self.exp_frame.get()
+  // if interstance == @types.StanceId::DEAD {
+  //   return self.draw_dead(
+  //     args, interstance, interexpression, interframe, interexpframe,
+  //   )
+  // }
+  // if @types.StanceId::is_climbing(interstance) {
+  //   return self.draw_climbing(args, interstance, interframe)
+  // }
+  let drawables : Array[&@graphics.Drawable] = []
+  let entities : Array[@system.Entity] = []
+  let mut next_z = CHAR_LOOK_ZINDEX
+  let pos = @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double())
+  fn new_hair_entity(layer) {
+    let entity = @system.Entity::new()
+    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(sp) {
+      let sprite = { ..sp, zindex: next_z }
+      next_z += 1
+      @sprite.sprites.set(entity, sprite)
+      @position.positions.set(entity, @position.Position(pos))
+    }
+    entity
+  }
+
+  fn make_face_draw() {
+    {
+      face: self.face,
+      expression,
+      exp_frame: expr_frame,
+      draw_info: self.draw_info,
+      stance,
+      stance_frame,
+    }
+  }
+
+  fn new_body_entity(layer) {
+    let entity = @system.Entity::new()
+    if self.body.stances.get(stance).bind(_.get(layer)) is Some(sp) {
+      let sprite = { ..sp, zindex: next_z }
+      next_z += 1
+      @sprite.sprites.set(entity, sprite)
+      @position.positions.set(entity, @position.Position(pos))
+    }
+    entity
+  }
+
+  fn make_equip_draw(slot, layer) -> &@graphics.Drawable {
+    NoopDrawable(())
+    // {
+    //   equips: self.equips,
+    //   stance,
+    //   slot,
+    //   layer,
+    //   frame: stance_frame,
+    //   draw_info: self.draw_info,
+    // }
+  }
+
+  entities.push(new_hair_entity(HairLayer::BELOW_BODY))
+  drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.Layer::CAPE))
+  drawables.push(
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_BELOW_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_BELOW_BODY),
+  )
+  entities.push(new_body_entity(@types.BodyLayer::BODY))
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_BODY),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_BODY),
+  )
+  drawables.push(make_equip_draw(@slot.Id::SHOES, @clothing.Layer::SHOES))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD))
+  if self.equips.has_overall() {
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAIL))
+  } else {
+    drawables.push(
+      make_equip_draw(@slot.Id::BOTTOM_DEFAULT, @clothing.Layer::PANTS_DEFAULT),
+    )
+    drawables.push(make_equip_draw(@slot.Id::BOTTOM, @clothing.Layer::PANTS))
+    drawables.push(
+      make_equip_draw(@slot.Id::TOP_DEFAULT, @clothing.Layer::TOP_DEFAULT),
+    )
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::TOP))
+  }
+  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL))
+  entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
+  drawables.push(
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_OVER_HAIR),
+  )
+  drawables.push(make_equip_draw(@slot.Id::EARACC, @clothing.Layer::EARRINGS))
+  entities.push(new_body_entity(@types.BodyLayer::HEAD))
+  entities.push(new_hair_entity(HairLayer::SHADE))
+  drawables.push(make_face_draw())
+  drawables.push(make_equip_draw(@slot.Id::FACE, @clothing.Layer::FACE_ACC))
+  drawables.push(make_equip_draw(@slot.Id::EYE_ACC, @clothing.Layer::EYE_ACC))
+  drawables.push(make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD))
+  match self.equips.getcaptype() {
+    @equip.CapType::NONE => entities.push(new_hair_entity(HairLayer::OVER_HEAD))
+    @equip.CapType::HEADBAND => {
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+      entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
+      entities.push(new_hair_entity(HairLayer::OVER_HEAD))
+      drawables.push(
+        make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_OVER_HAIR),
+      )
+    }
+    @equip.CapType::HALF_COVER => {
+      entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+    }
+    @equip.CapType::FULL_COVER =>
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+    _ => ()
+  }
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_ARM),
+  )
+  let twohanded : Bool = self.is_twohanded(stance)
+  if twohanded {
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
+    entities.push(new_body_entity(@types.BodyLayer::ARM))
+    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
+  } else {
+    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
+    entities.push(new_body_entity(@types.BodyLayer::ARM))
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
+  }
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST))
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE))
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_GLOVE),
+  )
+  entities.push(new_body_entity(@types.BodyLayer::HAND_BELOW_WEAPON))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON))
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_HAND),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_BODY),
+  )
+  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_HAIR))
+  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_WEAPON))
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_HAIR),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_HAIR),
+  )
+  self.entities = entities
+}
+
+///|
 pub fn draw_with_stance(
   self : CharLook,
   position : @struct.Point[Int],
@@ -641,7 +812,8 @@ pub fn is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
   }
 }
 
-///| Sets the direction of the character
+///|
+/// Sets the direction of the character
 pub fn set_direction(self : CharLook, facing_right : Bool) -> Unit {
   self.flip = facing_right
 }
@@ -980,3 +1152,17 @@ pub fn get_hair(self : CharLook) -> Hair {
 pub fn get_body(self : CharLook) -> Body {
   self.body
 }
+
+///|
+struct NoopDrawable(Unit) derive(ToJson)
+
+///|
+pub impl @graphics.Drawable for NoopDrawable with draw(
+  self : NoopDrawable,
+  args : @graphics.DrawArgument,
+) -> Unit {
+
+}
+
+///|
+pub const CHAR_LOOK_ZINDEX = 10

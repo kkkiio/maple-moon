@@ -1,4 +1,5 @@
-///| A packet to be sent to the server
+///|
+/// A packet to be sent to the server
 struct OutPacket {
   buf : @buffer.T
   opcode : ClientOpcode
@@ -117,7 +118,8 @@ pub fn OutPacket::write_hardware_info(self : OutPacket) -> Unit {
   self.write_string(hwid)
 }
 
-///| Message to be sent to the server
+///|
+/// Message to be sent to the server
 pub(open) trait OutMessage: Show {
   pack(Self) -> OutPacket
 }
@@ -127,7 +129,8 @@ pub fn hex_to_dec(hex_val : String) -> Byte raise @strconv.StrConvError {
   @strconv.parse_int(hex_val, base=16).to_byte()
 }
 
-///| Opcodes for packets sent from the client to the server associated with version 83 of the game
+///|
+/// Opcodes for packets sent from the client to the server associated with version 83 of the game
 pub(all) enum ClientOpcode {
   LOGIN = 1
   CHAR_LIST_REQUEST = 5

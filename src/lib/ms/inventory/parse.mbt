@@ -84,7 +84,8 @@ pub fn handle_item(inventory : Inventory, item : InventoryItemEntry) -> Unit {
   }
 }
 
-///| Parse an equip from a packet
+///|
+/// Parse an equip from a packet
 fn parse_add_equip(
   recv : @net.InPacket,
   invtype : TypeId,
@@ -147,7 +148,8 @@ fn parse_add_equip(
   )
 }
 
-///| Parse a normal item from a packet
+///|
+/// Parse a normal item from a packet
 fn parse_add_item(
   recv : @net.InPacket,
   invtype : TypeId,
@@ -171,7 +173,8 @@ fn parse_add_item(
   Item(invtype~, slot~, id~, cash~, expire~, count~, owner~, flag~)
 }
 
-///| Parse a pet from a packet
+///|
+/// Parse a pet from a packet
 fn parse_add_pet(
   recv : @net.InPacket,
   invtype : TypeId,

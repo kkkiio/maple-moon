@@ -32,7 +32,8 @@ pub(all) struct Attack {
   toleft : Bool
 } derive(Show, ToJson)
 
-///| an attack coming from a mob
+///|
+/// an attack coming from a mob
 pub struct MobAttack {
   t : AttackType
   watk : Int
@@ -43,7 +44,8 @@ pub struct MobAttack {
   valid : Bool
 }
 
-///| Create a mob attack for touch damage.
+///|
+/// Create a mob attack for touch damage.
 pub fn MobAttack::new(
   watk : Int,
   origin : @struct.Point[Int],
@@ -66,7 +68,8 @@ pub fn MobAttack::default() -> MobAttack {
   }
 }
 
-///| result of a mob's attack
+///|
+/// result of a mob's attack
 pub struct MobAttackResult {
   damage : Int
   mobid : Int
@@ -83,7 +86,8 @@ pub fn MobAttackResult::new(
   { damage, mobid: attack.mobid, oid: attack.oid, direction }
 }
 
-///| result of a player's attack
+///|
+/// result of a player's attack
 pub(all) struct AttackResult {
   t : AttackType
   attacker : Int
@@ -145,7 +149,8 @@ pub fn AttackResult::new(attack : Attack) -> AttackResult {
   }
 }
 
-///| an attack coming from a user
+///|
+/// an attack coming from a user
 pub(all) struct AttackUser {
   skill_level : Int
   level : Int

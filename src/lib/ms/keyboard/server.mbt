@@ -1,4 +1,5 @@
-///| Parses key mappings and sends them to the keyboard
+///|
+/// Parses key mappings and sends them to the keyboard
 pub fn parse_keymap(recv : @net.InPacket) -> Array[(Int, Int)] raise {
   // Skip first byte
   recv.skip(1)
@@ -13,7 +14,8 @@ pub fn parse_keymap(recv : @net.InPacket) -> Array[(Int, Int)] raise {
   mappings
 }
 
-///| Requests the server to change key mappings
+///|
+/// Requests the server to change key mappings
 struct ChangeKeymapMessage {
   updated_actions : Array[(MsKey, Mapping?)]
 } derive(Show)

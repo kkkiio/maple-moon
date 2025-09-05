@@ -35,7 +35,7 @@ pub fn Movement::new(
   ly : Int,
   f : Int,
   s : Int,
-  d : Int
+  d : Int,
 ) -> Movement {
   {
     t,
@@ -57,7 +57,7 @@ pub fn Movement::from_coords(
   lx : Int,
   ly : Int,
   s : Int,
-  d : Int
+  d : Int,
 ) -> Movement {
   Movement::new(MovementType::ABSOLUTE, 0, x, y, lx, ly, 0, s, d)
 }
@@ -65,7 +65,7 @@ pub fn Movement::from_coords(
 ///|
 pub fn Movement::from_physics_object(
   phobj : PhysicsObject,
-  s : Int
+  s : Int,
 ) -> Movement {
   Movement::new(
     MovementType::ABSOLUTE,

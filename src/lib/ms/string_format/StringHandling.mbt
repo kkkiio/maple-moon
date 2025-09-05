@@ -1,4 +1,5 @@
-///| Prefix an id with zeros so that it has the minimum specified length
+///|
+/// Prefix an id with zeros so that it has the minimum specified length
 pub fn stoi_left_pad0(id : Int, length : Int) -> String {
   let strid = id.to_string()
   if strid.length() < length {
@@ -13,7 +14,8 @@ pub fn stoi_left_pad0(id : Int, length : Int) -> String {
   }
 }
 
-///| Format a number so that each 3 decimal points are seperated by a ',' character.
+///|
+/// Format a number so that each 3 decimal points are seperated by a ',' character.
 pub fn format_decimal_separator(num : Int) -> String {
   if num < 0 {
     return abort("num must be positive")

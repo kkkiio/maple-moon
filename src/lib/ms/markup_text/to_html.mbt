@@ -4,7 +4,7 @@ pub fn to_html(
   style : Style,
   color_map : Map[Char, ColorName],
   tag_replace_map : Map[Char, (Style, @string.View) -> String raise],
-  trim_end_newline~ : Bool = false,
+  trim_end_newline? : Bool = false,
 ) -> String raise {
   let mut current_style = style
   let builder = StringBuilder::new()
@@ -41,7 +41,7 @@ pub fn write_text_as_html(
   builder : StringBuilder,
   text : @string.View,
   style : Style,
-  trim_end_newline~ : Bool = false,
+  trim_end_newline? : Bool = false,
 ) -> Unit {
   if text.is_blank() {
     let mut text = text.replace_all(old="\r\n", new="\n")

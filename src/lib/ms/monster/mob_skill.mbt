@@ -4,7 +4,8 @@ pub(all) struct MobBuff {
   anim : @graphics.Animation
 }
 
-///| The skill implementation of special move
+///|
+/// The skill implementation of special move
 pub(all) struct MobSkill {
   // TODO: implement Effect
   // use_effect : MobSkillUseEffect

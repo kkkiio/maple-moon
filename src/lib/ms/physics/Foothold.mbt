@@ -1,4 +1,5 @@
-///| Represents a platform part on a maple map
+///|
+/// Represents a platform part on a maple map
 struct Foothold {
   id : Int
   prev : Int
@@ -12,7 +13,7 @@ struct Foothold {
 pub fn Foothold::load_from_resource(
   src : @resource.NxNode,
   id : Int,
-  ly : Int
+  ly : Int,
 ) -> Foothold raise @resource.LoadError {
   match src.value() {
     {

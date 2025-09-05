@@ -569,7 +569,8 @@ pub impl @map_object.MapObject for Mob with get_layer(self : Mob) -> Int {
   self.base.get_layer()
 }
 
-///| Change this mob's control mode:
+///|
+/// Change this mob's control mode:
 /// 0 - no control, 1 - control, 2 - aggro
 pub fn Mob::set_control(self : Mob, mode : Int) -> Unit {
   self.control = mode > 0
@@ -940,7 +941,8 @@ fn next_damage(
   return (intdamage, iscritical)
 }
 
-///| Calculate weapon damage
+///|
+/// Calculate weapon damage
 fn calculate_weapon_damage(
   greater_level : Int,
   min : Double,
@@ -954,7 +956,8 @@ fn calculate_weapon_damage(
   (final_min, final_max)
 }
 
-///| Calculate magic damage
+///|
+/// Calculate magic damage
 fn calculate_magic_damage(
   greater_level : Int,
   min : Double,

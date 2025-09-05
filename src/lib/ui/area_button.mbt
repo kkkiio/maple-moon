@@ -1,4 +1,5 @@
-///| An invisible button which is only defined by it's area.
+///|
+/// An invisible button which is only defined by it's area.
 struct AreaButton {
   model : ButtonModel
   dimension : @struct.Point[Int]

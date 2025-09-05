@@ -14,7 +14,7 @@ pub struct ShopUIData {
   shop_items : Array[SellableItemUIData]
 }
 
-///| 
+///|
 pub fn watch_opening_shop_ffi(
   mod : Module,
   callback : (@js.Nullable[ShopUIData]) -> Bool,
@@ -101,7 +101,8 @@ pub fn leave_shop_ffi(mod : Module) -> Unit {
   mod.leave_shop()
 }
 
-///| Shop Slot number. starts from 0
+///|
+/// Shop Slot number. starts from 0
 struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)
 
 ///|

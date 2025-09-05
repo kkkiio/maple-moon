@@ -123,7 +123,7 @@ pub fn get_position(self : MovingObject) -> Point[Int] {
 pub fn get_absolute_x(
   self : MovingObject,
   viewx : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Int {
   get_absolute_coord(self.x, viewx, alpha)
 }
@@ -132,7 +132,7 @@ pub fn get_absolute_x(
 pub fn get_absolute_y(
   self : MovingObject,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Int {
   get_absolute_coord(self.y, viewy, alpha)
 }
@@ -141,7 +141,7 @@ pub fn get_absolute_y(
 pub fn get_absolute_coord(
   coord : @utils.Linear,
   view : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Int {
   let inter = if coord.normalized() {
     coord.get().round()
@@ -156,7 +156,7 @@ pub fn MovingObject::get_absolute(
   self : MovingObject,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Point[Int] {
   { x: self.get_absolute_x(viewx, alpha), y: self.get_absolute_y(viewy, alpha) }
 }
@@ -291,7 +291,7 @@ pub fn PhysicsObject::get_position(self : PhysicsObject) -> Point[Int] {
 pub fn PhysicsObject::get_absolute_x(
   self : PhysicsObject,
   viewx : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Int {
   self.moving_object.get_absolute_x(viewx, alpha)
 }
@@ -300,7 +300,7 @@ pub fn PhysicsObject::get_absolute_x(
 pub fn PhysicsObject::get_absolute_y(
   self : PhysicsObject,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Int {
   self.moving_object.get_absolute_y(viewy, alpha)
 }
@@ -310,7 +310,7 @@ pub fn PhysicsObject::get_absolute(
   self : PhysicsObject,
   viewx : Double,
   viewy : Double,
-  alpha : Double
+  alpha : Double,
 ) -> Point[Int] {
   self.moving_object.get_absolute(viewx, viewy, alpha)
 }

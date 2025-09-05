@@ -337,7 +337,7 @@ pub(all) struct UIModel {
 pub fn UIModel::new(
   position : Point[Int],
   dimension : Point[Int],
-  active~ : Bool = true,
+  active? : Bool = true,
 ) -> UIModel {
   { position, dimension, active }
 }
@@ -389,8 +389,8 @@ struct StaticUI[T] {
 ///|
 pub fn[T] StaticUI::new(
   text : T,
-  pos~ : Point[Int] = Point::default(), // relative to the parent
-  stretch~ : Point[Int] = Point::default(),
+  pos? : Point[Int] = Point::default(), // relative to the parent
+  stretch? : Point[Int] = Point::default(),
 ) -> StaticUI[T] {
   { drawable: text, args: @graphics.DrawArgument::new_ex(pos~, stretch~) }
 }
@@ -398,7 +398,7 @@ pub fn[T] StaticUI::new(
 ///|
 pub fn[T] StaticUI::new_ex(
   text : T,
-  args~ : @graphics.DrawArgument = @graphics.DrawArgument::default(),
+  args? : @graphics.DrawArgument = @graphics.DrawArgument::default(),
 ) -> StaticUI[T] {
   { drawable: text, args }
 }

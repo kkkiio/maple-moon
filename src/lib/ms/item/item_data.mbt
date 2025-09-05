@@ -1,4 +1,5 @@
-///| Class that represents an item loaded from the game's files
+///|
+/// Class that represents an item loaded from the game's files
 /// Contains all shared data between concrete items
 pub(all) struct ItemData {
   src : @resource.NxNode
@@ -41,7 +42,7 @@ pub async fn ItemData::load(
   item_id : Int,
   character_loader : @resource.AsyncLoader,
   item_loader : @resource.AsyncLoader,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> ItemData raise {
   let zid = "0" + item_id.to_string()
   let (category, src, strsrc) = match
@@ -143,7 +144,7 @@ pub fn ItemData::get_loaded(id : Int) -> ItemData? {
 ///|
 pub async fn ItemData::get_async(
   id : Int,
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.SyncLoader,
 ) -> ItemData raise {
   if cache.get(id) is Some(data) {
     return data

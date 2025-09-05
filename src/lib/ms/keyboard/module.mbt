@@ -30,7 +30,8 @@ pub fn Module::on_keymap_change(
   self.keymap_callbacks.push(callback)
 }
 
-///|Helper to notify all callbacks
+///|
+///Helper to notify all callbacks
 fn notify_keymap_change(
   self : Module,
   new_keymap : Map[String, Mapping],

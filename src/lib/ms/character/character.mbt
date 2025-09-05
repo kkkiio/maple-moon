@@ -4,7 +4,8 @@ typealias @map_object.MapObjectBase
 ///|
 typealias @physics.PhysicsObject
 
-///| Player states which determine animation and state
+///|
+/// Player states which determine animation and state
 pub(all) enum CharState {
   WALK
   STAND
@@ -32,7 +33,8 @@ pub fn Facing::is_facing_right(self : Facing) -> Bool {
   }
 }
 
-///| Values are used in movement packets (Add one if facing left)
+///|
+/// Values are used in movement packets (Add one if facing left)
 pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
   (match self {
     WALK => 2
@@ -76,7 +78,8 @@ pub(all) struct CharBase {
   get_integer_attackspeed : () -> Int // Return the character's base attacking speed.
 }
 
-///| Type alias for backward compatibility
+///|
+/// Type alias for backward compatibility
 pub typealias CharBase as Character
 
 ///|
@@ -249,7 +252,8 @@ pub fn is_facing_right(self : CharBase) -> Bool {
   self.facing_right
 }
 
-///| Get a speed modifier for the current stance.
+///|
+/// Get a speed modifier for the current stance.
 pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   if self.attacking {
     return get_real_attackspeed(base_attack_speed)
@@ -262,7 +266,8 @@ pub fn get_stancespeed(self : CharBase, base_attack_speed : Int) -> Double {
   }
 }
 
-///| Return the attack speed as a multiplier
+///|
+/// Return the attack speed as a multiplier
 pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
   return 1.7 - base_attack_speed.to_double() / 10.0
 }

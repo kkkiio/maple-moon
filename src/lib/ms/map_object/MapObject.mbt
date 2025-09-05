@@ -20,7 +20,7 @@ pub struct MapObjectBase {
 ///|
 pub fn MapObjectBase::new(
   oid : Int,
-  position~ : @struct.Point[Int] = { x: 0, y: 0 },
+  position? : @struct.Point[Int] = { x: 0, y: 0 },
 ) -> MapObjectBase {
   let obj = { phobj: @physics.PhysicsObject::default(), oid, active: true }
   obj.set_position(position)

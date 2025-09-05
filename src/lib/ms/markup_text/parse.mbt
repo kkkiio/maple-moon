@@ -1,4 +1,5 @@
-///| Parse markup text
+///|
+/// Parse markup text
 pub fn parse_markup(
   text : String,
   tag_map : Map[Char, MarkupType],

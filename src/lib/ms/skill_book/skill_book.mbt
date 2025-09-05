@@ -154,7 +154,8 @@ pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {
   mod.network.send_message({ skill_id, }, log_level=@log.Level::INFO)
 }
 
-///| Requests a skill level increase by spending SP
+///|
+/// Requests a skill level increase by spending SP
 priv struct SpendSPPacket {
   skill_id : Int
 } derive(Show)

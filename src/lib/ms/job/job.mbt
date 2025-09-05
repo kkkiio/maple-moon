@@ -37,7 +37,7 @@ pub impl Hash for Level with hash_combine(self : Level, hasher : Hasher) -> Unit
 let all_levels : Array[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
 
 ///|
-pub fn get_levels(upto~ : Level = FOURTH) -> Iter[Level] {
+pub fn get_levels(upto? : Level = FOURTH) -> Iter[Level] {
   all_levels.iter().take_while(fn(level) { level <= upto })
 }
 
@@ -63,7 +63,7 @@ struct Job {
 pub fn Job::load(
   string_loader : @resource.SyncLoader,
   io_service : @io_task.IOService,
-  id~ : Int = 0,
+  id? : Int = 0,
 ) -> @utils.Future[Job] {
   let level = if id == 0 {
     Level::BEGINNER
@@ -402,7 +402,8 @@ pub fn get_name_by_id(jid : JobId) -> String {
   jid.to_string()
 }
 
-///| Return true if the job is a branch of the required job
+///|
+/// Return true if the job is a branch of the required job
 pub fn Job::is_a(self : Job, base_job_id : Int) -> Bool {
   let self_id = self.id.int_value()
   let basebranch = base_job_id / 10

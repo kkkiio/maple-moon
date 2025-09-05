@@ -92,7 +92,8 @@ pub fn plus(self : Linear, value : Double) -> Double {
   self.now + value
 }
 
-///|https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
+///|
+///https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
 pub fn lerp(a : Double, b : Double, t : Double) -> Double {
   // Exact, monotonic, bounded, determinate, and (for a=b=0) consistent:
   if (a <= 0.0 && b >= 0.0) || (a >= 0.0 && b <= 0.0) {

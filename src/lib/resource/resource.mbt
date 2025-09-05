@@ -258,21 +258,25 @@ pub fn as_string(self : NxNode) -> String raise LoadError {
 
 ///|
 pub fn get_bitmap(self : NxNode) -> Bitmap? {
-  match self.desc {
-    { "__i": Json::String(path), .. } =>
-      Some({
-        image: self.image_loader.unwrap().load_image_by_path(path),
-        id: self.loader_name + "/" + path,
-        width: self["__w"].as_int?().unwrap(),
-        height: self["__h"].as_int?().unwrap(),
-      })
-    { "__b": Json::Number(bid), .. } =>
-      Some({
-        image: self.image_loader.unwrap().load_image(bid.to_int()),
-        id: self.loader_name + "/" + bid.to_string(),
-        width: self["__w"].as_int?().unwrap(),
-        height: self["__h"].as_int?().unwrap(),
-      })
+  try {
+    match self.desc {
+      { "__i": Json::String(path), .. } =>
+        Some({
+          image: self.image_loader.unwrap().load_image_by_path(path),
+          id: self.loader_name + "/" + path,
+          width: self["__w"].as_int(),
+          height: self["__h"].as_int(),
+        })
+      { "__b": Json::Number(bid), .. } =>
+        Some({
+          image: self.image_loader.unwrap().load_image(bid.to_int()),
+          id: self.loader_name + "/" + bid.to_string(),
+          width: self["__w"].as_int(),
+          height: self["__h"].as_int(),
+        })
+      _ => None
+    }
+  } catch {
     _ => None
   }
 }
@@ -426,8 +430,9 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
   }
   let map = {}
   for key, value in obj {
-    guard @strconv.parse_int?(key) is Ok(key_int) else {
-      raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
+    let key_int = @strconv.parse_int(key) catch {
+      _ =>
+        raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
     }
     let value : T = @json.from_json(value, path=path.add_key(key))
     map[key_int] = value

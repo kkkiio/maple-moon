@@ -1,4 +1,5 @@
-///| Represents an obj (map decoration) on a map.
+///|
+/// Represents an obj (map decoration) on a map.
 struct Obj {
   animation : @graphics.Animation
   pos : Point[Int]

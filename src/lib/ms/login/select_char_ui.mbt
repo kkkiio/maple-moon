@@ -5,6 +5,10 @@ struct SelectCharUI {
   on_new_character : () -> Unit
   select_slot : Int?
   resource : SelectCharUIResource
+  // 以数组配置驱动三段光照动画，减少重复代码
+  // 每项：(entity, frame_counter_ref, segments)
+  // segment: (duration_frames, from_alpha, to_alpha)
+  animations : Array[(@system.Entity, Ref[Int], Array[(Int, Double, Double)])]
 }
 
 ///|
@@ -12,38 +16,11 @@ pub(all) struct SelectCharUIResource {
   name_tag : @ui.NameTagResource
   bt_select : @ui.MapleButtonResource
   bt_new : @ui.MapleButtonResource
-  ani17 : @sprite.Animation
   ani18 : @sprite.Animation
-  ani19 : @sprite.Animation
-  // frame : @graphics.Animation
-  // step2 : @graphics.Animation
 }
 
 ///|
 pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
-  let ani17_res : Json = {
-    "0": {
-      "__h": 505,
-      "__w": 242,
-      "a0": 255,
-      "a1": 50,
-      "delay": 3000,
-      "origin": [121, 252],
-      "z": 0,
-      "__i": "assets/ui/login.img/char_select/light17.png",
-    },
-    "1": {
-      "__h": 505,
-      "__w": 242,
-      "_inlink": "ani/17/0",
-      "a0": 50,
-      "a1": 255,
-      "delay": 3000,
-      "origin": [121, 252],
-      "z": 0,
-      "__i": "assets/ui/login.img/char_select/light17.png",
-    },
-  }
   let ani18_res : Json = {
     "0": {
       "__h": 442,
@@ -67,44 +44,6 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "__i": "assets/ui/login.img/char_select/light18.png",
     },
   }
-  let ani19_res : Json = {
-    "0": {
-      "__h": 355,
-      "__w": 312,
-      "a0": 200,
-      "a1": 80,
-      "delay": 2300,
-      "origin": [156, 177],
-      "z": 0,
-      "__i": "assets/ui/login.img/char_select/light19.png",
-      "__off": [0, 0],
-    },
-    "1": {
-      "__h": 355,
-      "__w": 312,
-      "a0": 80,
-      "a1": 255,
-      "delay": 3300,
-      "origin": [156, 177],
-      "z": 0,
-      "__i": "assets/ui/login.img/char_select/light19.png",
-      "__off": [312, 0],
-    },
-    "2": {
-      "__h": 355,
-      "__w": 312,
-      "_inlink": "ani/19/1",
-      "a0": 255,
-      "a1": 200,
-      "delay": 1000,
-      "origin": [156, 177],
-      "z": 0,
-      "__i": "assets/ui/login.img/char_select/light19.png",
-      "__off": [312, 0],
-    },
-  }
-  // let frame = login_loader.load_res(["Common", "frame"])
-  // let step2 = login_loader.load_res(["Common", "step", "2"])
   let name_tag_res : Json = {
     "0": {
       "0": {
@@ -346,18 +285,12 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       },
     },
   }
-  let ani17 : @graphics.NxAnimation = @json.from_json(ani17_res)
   let ani18 : @graphics.NxAnimation = @json.from_json(ani18_res)
-  let ani19 : @graphics.NxAnimation = @json.from_json(ani19_res)
   {
     name_tag: @json.from_json(name_tag_res),
     bt_select: @json.from_json(bt_select_res),
     bt_new: @json.from_json(bt_new_res),
-    ani17: ani17.inner(),
     ani18: ani18.inner(),
-    ani19: ani19.inner(),
-    // frame: @graphics.Animation::from_resource_ex(frame),
-    // step2: @graphics.Animation::from_resource_ex(step2),
   }
 }
 
@@ -384,33 +317,109 @@ pub fn SelectCharUI::new(
     @selene_math.Vec2D(800, 600),
     //   "origin": [392, 297],
   )
+  let ani17 = @sprite.Animation::new([
+    @sprite.AnimationFrame::{
+      sprite_path: "assets/ui/login.img/char_select/light17.png",
+      size: @selene_math.Vec2D(505, 242),
+      offset: @selene_math.Vec2D(0, 0),
+      //     "origin": [121, 252],
+      //     "a0": 255,
+      //     "a1": 50,
+      //     "delay": 3000,
+    },
+    @sprite.AnimationFrame::{
+      sprite_path: "assets/ui/login.img/char_select/light17.png",
+      size: @selene_math.Vec2D(505, 242),
+      offset: @selene_math.Vec2D(0, 0),
+      //     "origin": [121, 252],
+      //     "a0": 50,
+      //     "a1": 255,
+      //     "delay": 3000,
+    },
+  ])
+  let ani19 : @sprite.Animation = @sprite.Animation::new([
+    @sprite.AnimationFrame::{
+      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      size: @selene_math.Vec2D(355, 312),
+      offset: @selene_math.Vec2D(0, 0),
+      //     "origin": [156, 177],
+      //     "a0": 200,
+      //     "a1": 80,
+      //     "delay": 2300,
+      // "origin": [156, 177],
+    },
+    @sprite.AnimationFrame::{
+      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      offset: @selene_math.Vec2D(312, 0),
+      size: @selene_math.Vec2D(355, 312),
+      // "a0": 80,
+      // "a1": 255,
+      // "delay": 3300,
+      // "origin": [156, 177],
+    },
+    @sprite.AnimationFrame::{
+      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      offset: @selene_math.Vec2D(312, 0),
+      size: @selene_math.Vec2D(355, 312),
+      // "_inlink": "ani/19/1",
+      // "a0": 255,
+      // "a1": 200,
+      // "delay": 1000,
+      // "origin": [156, 177],
+    },
+  ])
+  let frame = @sprite.Animation::single_frame(
+    "assets/ui/login.img/char_select/frame.png",
+    @selene_math.Vec2D(800, 600),
+    //   "origin": [400, 300],
+  )
+  let step2 = @sprite.Animation::single_frame(
+    "assets/ui/login.img/char_select/select_character_btn.png",
+    @selene_math.Vec2D(127, 45),
+    //   "origin": [0, 0],
+  )
+  let entities = []
   for
     t in [
       (back13, @selene_math.Vec2D(0, 0)),
-      (resources.ani17, @selene_math.Vec2D(151, 283)),
-      (resources.ani18, @selene_math.Vec2D(365, 252)),
-      (resources.ani19, @selene_math.Vec2D(191, 208)),
-      // @graphics.Sprite::new(
-      //   resources.frame,
-      //   @graphics.DrawArgument::new(pos=@struct.Point::new(400, 300)),
-      // ),
-      // @graphics.Sprite::new(
-      //   resources.step2,
-      //   @graphics.DrawArgument::new(pos=@struct.Point::new(40, 0)),
-      // ),
+      (ani17, @selene_math.Vec2D(151 - 121, 283 - 252)), //   "origin": [121, 252],
+      (resources.ani18, @selene_math.Vec2D(365 - 216, 252 - 221)), // "origin": [216, 221],
+      (ani19, @selene_math.Vec2D(191 - 156, 208 - 177)), // "origin": [156, 177],
+      (frame, @selene_math.Vec2D(0, 0)),
+      (step2, @selene_math.Vec2D(40, 0)),
     ] {
     let (s, pos) = t
     let entity = @system.Entity::new()
     @position.positions.set(entity, @position.Position(pos))
     @selene_ui.uis.set(entity, @selene_ui.Ui::new())
     @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
+    entities.push(entity)
   }
+  // (@ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
+  // |> @ui.Button::new(on_click=fn() {
+  //   guard self.select_slot is Some(slot) else { return None }
+  //   let cid = self.characters[slot].0
+  //   (self.on_select_character)(cid)
+  //   None
+  // })).as_interactable(),
   {
     select_slot: None,
     on_select_character,
     on_new_character,
     characters: [],
     resource: resources,
+    animations: [
+      // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
+      (entities[1], Ref::new(0), [(180, 255.0, 50.0), (180, 50.0, 255.0)]),
+      // ani18: 100->255 (2.5s=150f), 255->100 (2.5s=150f)
+      (entities[2], Ref::new(0), [(150, 100.0, 255.0), (150, 255.0, 100.0)]),
+      // ani19: 200->80 (2.3s=138f), 80->255 (3.3s=198f), 255->200 (1s=60f)
+      (
+        entities[3],
+        Ref::new(0),
+        [(138, 200.0, 80.0), (198, 80.0, 255.0), (60, 255.0, 200.0)],
+      ),
+    ],
   }
 }
 
@@ -550,5 +559,33 @@ pub fn add_select_char_ui() -> Unit raise {
 ///|
 pub fn select_char_system(_backend : &@system.Backend) -> Unit {
   let ui = select_char_ui.val.unwrap()
-  ignore(ui)
+  for item in ui.animations {
+    let (entity, counter, segments) = item
+    // 计算总帧数
+    let mut total = 0
+    for seg in segments {
+      total += seg.0
+    }
+    // 推进计数
+    counter.val = (counter.val + 1) % total
+    let p = counter.val
+    // 定位当前段
+    let mut acc = 0
+    let mut alpha_val = 255.0
+    for seg in segments {
+      let dur = seg.0
+      let from = seg.1
+      let to = seg.2
+      if p < acc + dur {
+        let t = (p - acc).to_double() / dur.to_double()
+        alpha_val = from + (to - from) * t
+        break
+      }
+      acc += dur
+    }
+    let alpha_norm = alpha_val / 255.0
+    if @sprite.sprites.get(entity) is Some(spr) {
+      @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
+    }
+  }
 }

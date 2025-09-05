@@ -30,10 +30,10 @@ pub fn DrawArgument::from_xy(x : Int, y : Int) -> DrawArgument {
 
 ///|
 pub fn DrawArgument::new(
-  pos~ : Point[Int] = @struct.Point::default(),
-  flip~ : Bool = false,
-  opacity~ : Double = 1.0,
-  angle~ : Double = 0.0,
+  pos? : Point[Int] = @struct.Point::default(),
+  flip? : Bool = false,
+  opacity? : Double = 1.0,
+  angle? : Double = 0.0,
 ) -> DrawArgument {
   DrawArgument::new16(
     pos,
@@ -52,18 +52,18 @@ pub fn DrawArgument::new(
 
 ///|
 pub fn DrawArgument::new_ex(
-  pos~ : Point[Int] = @struct.Point::default(),
-  stretch~ : Point[Int] = @struct.Point::default(),
-  opacity~ : Double = 1.0,
-  angle~ : Double = 0.0,
+  pos? : Point[Int] = @struct.Point::default(),
+  stretch? : Point[Int] = @struct.Point::default(),
+  opacity? : Double = 1.0,
+  angle? : Double = 0.0,
 ) -> DrawArgument {
   DrawArgument::new16(pos, pos, stretch, 1.0, 1.0, opacity, angle)
 }
 
 ///|
 pub fn DrawArgument::new_scale(
-  position~ : Point[Int] = @struct.Point::default(),
-  scale~ : Double = 1.0,
+  position? : Point[Int] = @struct.Point::default(),
+  scale? : Double = 1.0,
 ) -> DrawArgument {
   DrawArgument::new10(position, position, scale, scale, 1.0)
 }
@@ -152,7 +152,7 @@ pub fn DrawArgument::new13(
 pub fn DrawArgument::new14(
   position : Point[Int],
   flip : Bool,
-  opacity~ : Double = 1.0,
+  opacity? : Double = 1.0,
 ) -> DrawArgument {
   DrawArgument::new10(
     position,

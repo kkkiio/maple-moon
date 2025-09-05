@@ -1,4 +1,5 @@
-///| A tile and obj layer.
+///|
+/// A tile and obj layer.
 struct TilesObjs {
   tiles : Array[Tile] // sorted by z
   objs : Array[Obj] // sorted by z
@@ -79,7 +80,8 @@ pub fn TilesObjs::draw(
   }
 }
 
-///| The collection of tile and obj layers on a map.
+///|
+/// The collection of tile and obj layers on a map.
 struct MapTilesObjs {
   layers : Array[TilesObjs]
 }

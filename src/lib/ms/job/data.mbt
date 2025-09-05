@@ -27,7 +27,7 @@ pub fn JobData::new(
   let name = strsrc["bookName"].get_string()
   let skills = Array::new()
   for sub in src["skill"] {
-    let skill_id = @strconv.parse_int?(sub.name()).or(0)
+    let skill_id = @strconv.parse_int(sub.name()) catch { _ => 0 }
     if skill_id == 0 {
       continue
     }

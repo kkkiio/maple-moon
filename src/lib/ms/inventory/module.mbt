@@ -100,7 +100,8 @@ pub fn make_show_status_info_handlers(
   }
 }
 
-///| Packet which requests that an item is equipped
+///|
+/// Packet which requests that an item is equipped
 priv struct EquipItemMessage {
   src : Int
   dest : @equip_slot.Id

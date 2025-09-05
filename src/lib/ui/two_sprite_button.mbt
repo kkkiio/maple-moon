@@ -10,10 +10,10 @@ struct TwoSpriteButton {
 pub fn TwoSpriteButton::new(
   disabled : @graphics.Texture,
   enabled : @graphics.Texture,
-  np~ : Point[Int] = @struct.Point::default(),
-  sp~ : Point[Int] = np,
-  active~ : Bool = true,
-  state~ : ButtonState = ButtonState::NORMAL,
+  np? : Point[Int] = @struct.Point::default(),
+  sp? : Point[Int] = np,
+  active? : Bool = true,
+  state? : ButtonState = ButtonState::NORMAL,
 ) -> TwoSpriteButton {
   let textures = @utils.BoolPair::new(disabled, enabled)
   let base = ButtonModel::default()

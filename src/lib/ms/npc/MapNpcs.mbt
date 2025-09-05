@@ -30,7 +30,8 @@ priv struct TalkToNpcPacket {
   oid : Int
 } derive(Show)
 
-///| Packet which requests a dialog with a server-sided NPC
+///|
+/// Packet which requests a dialog with a server-sided NPC
 fn TalkToNpcPacket::new(oid : Int) -> TalkToNpcPacket {
   { oid, }
 }
@@ -164,7 +165,8 @@ pub fn NpcSpawn::instantiate(
   )
 }
 
-///| Represents a NPC on the current map
+///|
+/// Represents a NPC on the current map
 struct Npc {
   base : @map_object.MapObjectBase
   animations : Map[String, @graphics.Animation]
@@ -193,7 +195,8 @@ pub(all) struct TalkArgs {
   talk_action : TalkAction
 }
 
-///| Talk action and callback
+///|
+/// Talk action and callback
 pub(all) enum TalkAction {
   SEND_YESNO((Bool?) -> Unit)
   SEND_OK((Unit?) -> Unit)
@@ -243,10 +246,11 @@ pub fn Npc::load(
     src = npc_loader.load_res([link + ".img"])
   }
   let info = src["info"]
-  let hide_name = info["hideName"].get_bool?().unwrap()
+  let hide_name = info["hideName"].get_bool() catch { _ => panic() }
   // let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
-  let scripted = not(info["script"].is_null()) ||
-    info["shop"].get_bool?().unwrap()
+  let scripted = (not(info["script"].is_null()) || info["shop"].get_bool()) catch {
+    _ => panic()
+  }
   let dialogue = {}
   let mut i = 0
   while true {

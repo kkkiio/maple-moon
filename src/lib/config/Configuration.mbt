@@ -156,7 +156,9 @@ pub fn IntEntry::new(name : String, value : String) -> IntEntry {
 
 ///|
 pub fn IntEntry::load(self : IntEntry) -> Int {
-  @strconv.parse_int?(self.value).or(0)
+  @strconv.parse_int(self.value) catch {
+    _ => 0
+  }
 }
 
 ///|

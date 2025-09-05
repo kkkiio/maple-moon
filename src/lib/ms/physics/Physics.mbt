@@ -26,7 +26,7 @@ pub let swimfriction : Double = 0.08
 
 ///|
 pub fn Physics::from_resource(
-  src : @resource.NxNode
+  src : @resource.NxNode,
 ) -> Physics raise @resource.LoadError {
   let fh_tree = FootholdTree::load_from_resource(src)
   { fh_tree, }
@@ -139,7 +139,7 @@ fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
 ///|
 pub fn Physics::get_y_below(
   self : Physics,
-  position : Point[Int]
+  position : Point[Int],
 ) -> Point[Int] {
   let ground = self.fh_tree.get_y_below(position)
   { x: position.x, y: ground - 1 }

@@ -1,4 +1,5 @@
-///| Resources needed for the MiniMap UI (display only, normal mode).
+///|
+/// Resources needed for the MiniMap UI (display only, normal mode).
 /// Contains parsed graphical assets for markers and the background canvas.
 struct MiniMapUIResource {
   /// Marker for portals.
@@ -15,7 +16,8 @@ struct MiniMapUIResource {
   minmap_down_right : @graphics.Animation
 }
 
-///| Loads the necessary graphical resources for displaying the MiniMap UI.
+///|
+/// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub async fn MiniMapUIResource::load() -> MiniMapUIResource raise {
   let map_latest_loader = get_map_latest_loader()
   let portal_node = map_latest_loader.load_res_async([
@@ -59,7 +61,8 @@ priv enum MiniMapType {
   MAX
 }
 
-///| Represents the state and logic for the MiniMap UI widget.
+///|
+/// Represents the state and logic for the MiniMap UI widget.
 struct MiniMapUI {
   resource : MiniMapUIResource
   type_ : MiniMapType
@@ -83,7 +86,8 @@ fn MiniMapUI::new(
   }
 }
 
-///| 地图绘制信息
+///|
+/// 地图绘制信息
 priv struct MapDrawData {
   scale : Float // 缩放比例
   center_x : Int // 中心X偏移
@@ -92,7 +96,8 @@ priv struct MapDrawData {
   height : Int // 地图高度
 }
 
-///| 静态标记（传送门）
+///|
+/// 静态标记（传送门）
 struct PortalMarker {
   /// portal name
   pn : String
@@ -106,14 +111,16 @@ struct PortalMarker {
   pt : PortalType
 } derive(Show, @json.FromJson, ToJson)
 
-///| 完整的迷你地图资源
+///|
+/// 完整的迷你地图资源
 struct MiniMapRuntimeResource {
   canvas : @graphics.Animation // 地图画布纹理
   draw_data : MapDrawData // 绘制数据
   portals : Array[PortalMarker] // 传送门标记列表
 }
 
-///| Loads minimap resources from a map node
+///|
+/// Loads minimap resources from a map node
 fn MiniMapRuntimeResource::load(
   resource : MiniMapResource,
   portals : Array[PortalMarker],
@@ -162,7 +169,8 @@ pub fn MiniMapUI::set_map(
   (self.on_state_changed)()
 }
 
-///| Renders the MiniMap based on current state.
+///|
+/// Renders the MiniMap based on current state.
 pub impl @ui.Widget for MiniMapUI with render(self) -> @ui.RenderSpec {
   guard self.current_map is Some((map_id, map_info, mini_map_resources)) else {
     return { render_elements: [] }

@@ -12,11 +12,11 @@ struct Frame {
 pub typealias @resource.NxNode
 
 ///|
-fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame {
+fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame raise {
   let texture = Texture::from_resource(src)
-  let bounds = src.as_rectangle?().unwrap()
-  let head = src["head"].as_point?().unwrap()
-  let delay = match src["delay"].get_int?().unwrap() {
+  let bounds = src.as_rectangle()
+  let head = src["head"].as_point()
+  let delay = match src["delay"].get_int() {
     0 => default_delay.or(100)
     it => it
   }
@@ -193,7 +193,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 }
 
 ///|
-pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise LoadError {
+pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
   if src.is_null() {
     raise NotFound
   }
@@ -207,17 +207,14 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise LoadError {
       [Frame::from_resource(src, default_delay?)]
     }
     None => {
-      let fs = @utils.ints()
-        .map_while(fn(i) {
-          let node = src[i.to_string()]
-          if node.is_null() {
-            None
-          } else {
-            Some(node)
-          }
-        })
-        .map(fn(it) { Frame::from_resource(it) })
-        .collect()
+      let fs = []
+      for i = 0; ; i = i + 1 {
+        let node = src[i.to_string()]
+        if node.is_null() {
+          break
+        }
+        fs.push(Frame::from_resource(node))
+      }
       if fs.length() <= 0 {
         raise InvalidFormat("Animation must have at least one frame.")
       }

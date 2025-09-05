@@ -145,7 +145,7 @@ pub fn new_number(
   t : NumberType,
   damage : Int,
   starty : Int,
-  x~ : Int = 0,
+  x? : Int = 0,
 ) -> Number {
   let charsets = match t {
     HIT_NORMAL => self.red_charset_pair

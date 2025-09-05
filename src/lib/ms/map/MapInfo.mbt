@@ -7,14 +7,17 @@ typealias @struct.Point
 ///|
 typealias @resource.NxNode
 
-///| Define the Seat struct and its methods
+///|
+/// Define the Seat struct and its methods
 struct Seat {
   pos : Point[Int]
 }
 
 ///|
 pub fn Seat::from_resource(src : NxNode) -> Seat {
-  { pos: src.as_point?().unwrap() }
+  { pos: src.as_point() } catch {
+    _ => panic()
+  }
 }
 
 ///|
@@ -29,7 +32,8 @@ pub fn getpos(self : Seat) -> Point[Int] {
   self.pos
 }
 
-///| Define the Ladder struct and its methods
+///|
+/// Define the Ladder struct and its methods
 struct Ladder {
   x : Int
   y1 : Int
@@ -40,10 +44,12 @@ struct Ladder {
 ///|
 pub fn Ladder::from_resource(src : NxNode) -> Ladder {
   {
-    x: src["x"].get_int?().unwrap(),
-    y1: src["y1"].get_int?().unwrap(),
-    y2: src["y2"].get_int?().unwrap(),
-    ladder: src["l"].get_bool?().unwrap(),
+    x: src["x"].get_int(),
+    y1: src["y1"].get_int(),
+    y2: src["y2"].get_int(),
+    ladder: src["l"].get_bool(),
+  } catch {
+    _ => panic()
   }
 }
 
@@ -56,7 +62,7 @@ pub fn is_ladder(self : Ladder) -> Bool {
 pub fn Ladder::inrange(
   self : Ladder,
   position : Point[Int],
-  upwards : Bool
+  upwards : Bool,
 ) -> Bool {
   let hor = Range::symmetric(position.x, 10)
   let ver = Range::new(self.y1, self.y2)
@@ -75,7 +81,8 @@ pub fn get_x(self : Ladder) -> Int {
   self.x
 }
 
-///| Define the MapInfo struct and its methods
+///|
+/// Define the MapInfo struct and its methods
 struct MapInfo {
   field_limit : Int
   cloud : Bool
@@ -97,7 +104,7 @@ struct MapInfo {
 pub fn MapInfo::from_resource(
   src : NxNode,
   walls : Range[Int],
-  borders : Range[Int]
+  borders : Range[Int],
 ) -> MapInfo {
   let info = src["info"]
   let (map_walls, map_borders) = match info.value() {
@@ -128,20 +135,22 @@ pub fn MapInfo::from_resource(
     ladders.push(Ladder::from_resource(it))
   }
   {
-    field_limit: info["fieldLimit"].get_int?().unwrap(),
-    cloud: info["cloud"].get_bool?().unwrap(),
+    field_limit: info["fieldLimit"].get_int(),
+    cloud: info["cloud"].get_bool(),
     bgm,
     map_desc: info["mapDesc"].get_string(),
     map_name: info["mapName"].get_string(),
     street_name: info["streetName"].get_string(),
     map_mark: info["mapMark"].get_string(),
-    swim: info["swim"].get_bool?().unwrap(),
-    town: info["town"].get_bool?().unwrap(),
-    hide_minimap: info["hideMinimap"].get_bool?().unwrap(),
+    swim: info["swim"].get_bool(),
+    town: info["town"].get_bool(),
+    hide_minimap: info["hideMinimap"].get_bool(),
     map_walls,
     map_borders,
     seats,
     ladders,
+  } catch {
+    _ => panic()
   }
 }
 
@@ -194,7 +203,7 @@ pub fn findseat(self : MapInfo, position : Point[Int]) -> Seat? {
 pub fn find_ladder(
   self : MapInfo,
   position : Point[Int],
-  upwards : Bool
+  upwards : Bool,
 ) -> Ladder? {
   self.ladders
   .iter()

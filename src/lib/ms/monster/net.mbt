@@ -97,7 +97,8 @@ fn new_move_mob_packet(
   }
 }
 
-///| Message for moving a monster
+///|
+/// Message for moving a monster
 priv struct MoveMonsterMessage {
   oid : Int
   move_id : Int

@@ -1,4 +1,5 @@
-///| Quality of an equip
+///|
+/// Quality of an equip
 pub(all) enum Quality {
   GREY
   WHITE

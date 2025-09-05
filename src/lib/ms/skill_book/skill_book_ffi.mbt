@@ -22,7 +22,8 @@ pub fn watch_skill_book(mod : Module, callback : SkillBookWatcher) -> Unit {
   mod.watchers.push(callback)
 }
 
-///| Get all skills for a given job level
+///|
+/// Get all skills for a given job level
 fn get_skills_by_job_level(
   skillbook : SkillBook,
   job : @job.Job,
@@ -65,7 +66,8 @@ fn get_skills_by_job_level(
   })
 }
 
-///| Get all skills for the current player, grouped by job level
+///|
+/// Get all skills for the current player, grouped by job level
 fn get_player_skill_groups(
   skillbook : SkillBook,
   player : @player.Player,
@@ -112,7 +114,8 @@ pub struct SkillBookLevelEvent {
   available_sp : Int
 }
 
-///| Data structure for representing a skill in the UI
+///|
+/// Data structure for representing a skill in the UI
 pub struct SkillUIData {
   id : Int
   name : String
@@ -162,7 +165,7 @@ enum SpResetItemId {
 ///|
 pub fn SpResetItemId::int_value(self : SpResetItemId) -> Int = "%identity"
 
-///| 
+///|
 priv struct SpResetItemMessage {
   slot_no : Int
   item_id : Int

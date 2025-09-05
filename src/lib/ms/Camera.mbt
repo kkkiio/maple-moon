@@ -1,7 +1,8 @@
 ///|
 typealias @utils.Linear
 
-///| View on stage which follows the player object.
+///|
+/// View on stage which follows the player object.
 struct Camera {
   /// Movement variables.
   x : Linear
@@ -13,7 +14,8 @@ struct Camera {
   vheight : Int
 }
 
-///| offset y to see more above the player
+///|
+/// offset y to see more above the player
 let y_offset : Int = 80
 
 ///|
@@ -67,7 +69,8 @@ pub fn Camera::set_position(
   self.y.set((self.vheight / 2 - position.y + y_offset).to_double())
 }
 
-///| Updates the view's boundaries. Determined by mapinfo or footholds.
+///|
+/// Updates the view's boundaries. Determined by mapinfo or footholds.
 pub fn set_view(
   self : Camera,
   hborders : @struct.Range[Int],

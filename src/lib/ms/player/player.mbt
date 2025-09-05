@@ -73,7 +73,8 @@ pub fn Player::load(
   })
 }
 
-///| Construct a player object from the given character entry.
+///|
+/// Construct a player object from the given character entry.
 pub fn Player::new(
   entry : @character.CharEntry,
   inventory : &Inventory,
@@ -321,7 +322,8 @@ pub fn get_flyforce(self : Player) -> Double {
   0.25
 }
 
-///| Returns the current jumping force, calculated from the total ES_JUMP stat.
+///|
+/// Returns the current jumping force, calculated from the total ES_JUMP stat.
 pub fn get_jumpforce(self : Player) -> Double {
   1.0 +
   3.5 * self.stats.get_total(@maple_stat.EquipStatId::JUMP).to_double() / 100.0
@@ -332,7 +334,8 @@ pub fn get_climbforce(self : Player) -> Double {
   self.stats.get_total(@maple_stat.EquipStatId::SPEED).to_double() / 100.0
 }
 
-///| Returns the current walking force, calculated from the total ES_SPEED stat.
+///|
+/// Returns the current walking force, calculated from the total ES_SPEED stat.
 pub fn get_walkforce(self : Player) -> Double {
   0.05 +
   0.11 *
@@ -348,7 +351,8 @@ pub fn get_stats(self : Player) -> CharStats {
   self.stats
 }
 
-///| Recalculates the total stats from base stats, inventories and skills.
+///|
+/// Recalculates the total stats from base stats, inventories and skills.
 pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   let weapontype = self.character.get_weapontype()
   self.stats.init_totalstats()

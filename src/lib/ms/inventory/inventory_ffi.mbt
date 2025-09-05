@@ -45,7 +45,8 @@ async fn get_all_items_by_type(
 ///|
 typealias WithItemSlot? as UISlot // Slot in UI may be empty
 
-///| Type for inventory change watcher callback
+///|
+/// Type for inventory change watcher callback
 typealias (Array[UISlot]) -> Bool as InventoryWatcher
 
 ///|
@@ -72,7 +73,8 @@ fn get_type_id_by_kind(kind : String) -> TypeId? {
   Some(type_id)
 }
 
-///| Watch inventory changes for a specific kind of items
+///|
+/// Watch inventory changes for a specific kind of items
 pub fn watch_inventory_by_kind(
   mod : Module,
   kind : String,
@@ -98,7 +100,8 @@ pub fn watch_inventory_by_kind(
   ""
 }
 
-///| Watch meso changes
+///|
+/// Watch meso changes
 pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
   let cont = watcher(mod.inventory.get_meso())
   if not(cont) {
@@ -216,7 +219,8 @@ fn can_wear_equip(
   }
 }
 
-///| Drop an item
+///|
+/// Drop an item
 pub fn drop_item(
   mod : Module,
   kind : String,
@@ -233,7 +237,8 @@ pub fn drop_item(
   ""
 }
 
-///| Packet which requests that an item is moved
+///|
+/// Packet which requests that an item is moved
 priv struct MoveItemPacket {
   type_id : TypeId
   slot : Int
@@ -258,7 +263,8 @@ fn make_html_desc(desc : String) -> String {
   desc.replace_all(old="\\n", new="<br/>")
 }
 
-///| Make equip description
+///|
+/// Make equip description
 /// show req stats and incr stats
 fn make_equip_desc(item_data : @item.ItemData) -> String {
   let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {

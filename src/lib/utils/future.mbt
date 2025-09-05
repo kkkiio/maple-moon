@@ -1,4 +1,5 @@
-///| A poll-based future. Holds a value that will be available in the future.
+///|
+/// A poll-based future. Holds a value that will be available in the future.
 ///
 /// Once the future is resolved, the value is cached and the function is not called again.
 struct Future[T] {
@@ -6,7 +7,8 @@ struct Future[T] {
   mut resolved : T?
 }
 
-///| Poll the future.
+///|
+/// Poll the future.
 pub fn[T] poll(self : Future[T]) -> T? {
   match self.resolved {
     Some(_) => self.resolved
@@ -18,17 +20,20 @@ pub fn[T] poll(self : Future[T]) -> T? {
   }
 }
 
-///| Create a new future from a poll function.
+///|
+/// Create a new future from a poll function.
 pub fn[T] Future::new(poll_fn : () -> T?) -> Future[T] {
   { poll_fn, resolved: None }
 }
 
-///| Create a future from a resolved value.
+///|
+/// Create a future from a resolved value.
 pub fn[T] Future::from_value(v : T) -> Future[T] {
   { poll_fn: fn() { Some(v) }, resolved: Some(v) }
 }
 
-///| Create a future that never resolves.
+///|
+/// Create a future that never resolves.
 /// Useful for representing a uninitialized value.
 pub fn[T] Future::never() -> Future[T] {
   Future::new(fn() { None })
@@ -105,7 +110,8 @@ pub fn[T] Future::all_of(futures : Array[Future[T]]) -> Future[Array[T]] {
   })
 }
 
-///| Advance and remove completed futures.
+///|
+/// Advance and remove completed futures.
 pub fn advance_futures(futures : Array[Future[Unit]]) -> Unit {
   futures.retain(fn(f) {
     match f.poll() {
@@ -115,7 +121,8 @@ pub fn advance_futures(futures : Array[Future[Unit]]) -> Unit {
   })
 }
 
-///| Return a future that will be resolved when the `poll` is called.
+///|
+/// Return a future that will be resolved when the `poll` is called.
 pub fn[T] Future::lazy(f : () -> T) -> Future[T] {
   Future::new(fn() { f() |> Some })
 }

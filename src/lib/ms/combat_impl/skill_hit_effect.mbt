@@ -33,7 +33,8 @@ fn new_hit_effect(res : HitEffectNxResource) -> (@monster.Mob, Bool) -> Unit {
   }
 }
 
-///| A single animation
+///|
+/// A single animation
 fn new_single_hit_effect(
   res : HitEffectNxResource,
 ) -> (@combat.AttackUser, @monster.Mob) -> Unit {
@@ -43,7 +44,8 @@ fn new_single_hit_effect(
   }
 }
 
-///| The animation changes depending on the weapon used
+///|
+/// The animation changes depending on the weapon used
 fn new_twohanded_hit_effect(
   hit0 : HitEffectNxResource,
   hit1 : HitEffectNxResource,
@@ -54,7 +56,8 @@ fn new_twohanded_hit_effect(
   }
 }
 
-///| The animation changes with the character level
+///|
+/// The animation changes with the character level
 fn new_by_level_hit_effect(
   src : @resource.NxNode,
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
@@ -81,7 +84,8 @@ fn new_by_level_hit_effect(
   }
 }
 
-///| The animation changes with the character level and weapon used
+///|
+/// The animation changes with the character level and weapon used
 fn new_by_level_twohanded_hit_effect(
   src : @resource.NxNode,
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
@@ -112,7 +116,8 @@ fn new_by_level_twohanded_hit_effect(
   }
 }
 
-///| The animation changes with the skill level
+///|
+/// The animation changes with the skill level
 fn new_by_skill_level_hit_effect(
   src : @resource.NxNode,
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {

@@ -1,4 +1,5 @@
-///| Recovery HP & MP over time
+///|
+/// Recovery HP & MP over time
 pub fn new_module(
   scheduler : &@game_mod.Scheduler,
   packet_processor : @net.Network,

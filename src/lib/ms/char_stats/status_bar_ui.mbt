@@ -1,4 +1,5 @@
-///| Display character stats (hp/mp/exp)
+///|
+/// Display character stats (hp/mp/exp)
 struct StatusBarUI {
   stats : CharStats
   sprites : Array[@graphics.Sprite]

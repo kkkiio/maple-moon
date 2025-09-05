@@ -38,7 +38,8 @@ pub fn process_out(self : Network, data : Bytes) -> Unit {
   self.session.write(data)
 }
 
-///| send packet to the server
+///|
+/// send packet to the server
 #deprecated("use send_message instead")
 pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
   @log.log(
@@ -49,12 +50,13 @@ pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
   self.process_out(packet.encode())
 }
 
-///| send message to the server
+///|
+/// send message to the server
 #callsite(autofill(loc))
 pub fn[T : OutMessage] Network::send_message(
   self : Network,
   message : T,
-  log_level~ : @log.Level = @log.Level::DEBUG,
+  log_level? : @log.Level = @log.Level::DEBUG,
   loc~ : SourceLoc,
 ) -> Unit {
   @log.log(log_level, { "message": message.to_string() }, "send", loc~)
@@ -130,11 +132,12 @@ pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   }
 }
 
-///| @alert deprecated "use make_handler instead"
+///|
+/// @alert deprecated "use make_handler instead"
 pub fn with_log(
   opcode : Opcode,
   handler : (InPacket) -> Unit raise,
-  log_recv~ : Bool = false,
+  log_recv? : Bool = false,
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {
@@ -156,7 +159,7 @@ pub fn[T : Show] make_handler(
   opcode : Opcode,
   parser : (InPacket) -> T raise,
   handler : (T) -> Unit,
-  log_recv~ : Bool = false,
+  log_recv? : Bool = false,
   loc~ : SourceLoc,
 ) -> (Opcode, (InPacket) -> Unit) {
   (

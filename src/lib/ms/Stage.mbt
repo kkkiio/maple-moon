@@ -394,7 +394,8 @@ pub fn get_inventory(self : Stage) -> @inventory.Inventory {
   self.inventory
 }
 
-///| Tells the server that the player took damage.
+///|
+/// Tells the server that the player took damage.
 priv enum TakeDamageFrom {
   TOUCH
 } derive(Show)
@@ -406,7 +407,8 @@ fn int_value(self : TakeDamageFrom) -> Int {
   }
 }
 
-///| Message sent when player takes damage
+///|
+/// Message sent when player takes damage
 priv struct TakeDamageMessage {
   from : TakeDamageFrom
   element : Int
@@ -430,7 +432,8 @@ impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
   p
 }
 
-///| From mob attack result.
+///|
+/// From mob attack result.
 fn new_take_damage_packet_from_mob(
   result : @combat.MobAttackResult,
   from : TakeDamageFrom,
@@ -486,7 +489,8 @@ pub fn listen_map_change(
   self.map_change_listeners.push(on_change)
 }
 
-///| reset player position. for debug
+///|
+/// reset player position. for debug
 pub fn reset_player_position(self : Stage) -> Unit {
   guard self.state
     is StageState::ACTIVE(portals~, map_info~, enter_portal_id~, physics~, ..) else {

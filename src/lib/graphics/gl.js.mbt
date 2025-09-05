@@ -10,7 +10,7 @@ extern "js" fn GL::ge(self : GL, name : String) -> GLenum =
 extern "js" fn GL::gi(self : GL, name : String) -> Int =
   #| (gl, n) => gl[n]
 
-///| 
+///|
 extern "js" fn GL::texParameteri(
   self : GL,
   target : GLenum,
@@ -19,15 +19,15 @@ extern "js" fn GL::texParameteri(
 ) -> Unit =
   #| (gl, t, p, param) => gl.texParameteri(t, p, param)
 
-///| 
+///|
 extern "js" fn GL::enable(self : GL, cap : GLenum) -> Unit =
   #| (gl, c) => gl.enable(c)
 
-///| 
+///|
 extern "js" fn GL::pixelStorei(self : GL, pname : GLenum, param : Bool) -> Unit =
   #| (gl, p, param) => gl.pixelStorei(p, param)
 
-///| 
+///|
 extern "js" fn GL::blendFunc(
   self : GL,
   sfactor : GLenum,

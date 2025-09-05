@@ -1,4 +1,5 @@
-///| Maple-specific keycodes sent via the Keymap Packet.
+///|
+/// Maple-specific keycodes sent via the Keymap Packet.
 pub(all) enum BasicActionId {
   EQUIPMENT
   ITEMS

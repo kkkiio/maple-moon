@@ -91,10 +91,10 @@ pub fn ButtonModel::default() -> ButtonModel {
 
 ///|
 pub fn ButtonModel::new(
-  state~ : ButtonState = ButtonState::NORMAL,
-  pos~ : Point[Int] = @struct.Point::default(),
-  active~ : Bool = true,
-  pressed~ : Bool = false,
+  state? : ButtonState = ButtonState::NORMAL,
+  pos? : Point[Int] = @struct.Point::default(),
+  active? : Bool = true,
+  pressed? : Bool = false,
 ) -> ButtonModel {
   { state: Ref::new(state), position: pos, active, pressed }
 }

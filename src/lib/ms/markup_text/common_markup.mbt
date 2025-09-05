@@ -13,16 +13,20 @@ pub let font_weight_tag_map : Map[Char, Bool] = { 'n': false, 'e': true }
 ///|
 typealias @struct.ColorName
 
-///| #p[npcid]# - Shows the name of the NPC.
+///|
+/// #p[npcid]# - Shows the name of the NPC.
 pub let npc_tag : (Char, MarkupType) = ('p', MarkupType::Pair)
 
-///| #m[mapid]# - Shows the name of the map.
+///|
+/// #m[mapid]# - Shows the name of the map.
 pub let map_tag : (Char, MarkupType) = ('m', MarkupType::Pair)
 
-///| #t[itemid]# - Shows the name of the item.
+///|
+/// #t[itemid]# - Shows the name of the item.
 pub let item_tag : (Char, MarkupType) = ('t', MarkupType::Pair)
 
-///| #h # - Shows the name of the player.
+///|
+/// #h # - Shows the name of the player.
 pub let player_tag : (Char, MarkupType) = ('h', MarkupType::Pair)
 
 ///|

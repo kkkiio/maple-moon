@@ -107,7 +107,8 @@ pub fn Combat::update(self : Combat) -> Unit {
   self.damage_numbers.retain(fn(dn) { not(dn.update()) })
 }
 
-///| Use a skill or regular attack
+///|
+/// Use a skill or regular attack
 pub fn Combat::use_move(
   self : Combat,
   player : @player.Player,
@@ -264,7 +265,8 @@ fn Combat::apply_move(
   }
 }
 
-///| Apply attack to mobs
+///|
+/// Apply attack to mobs
 pub fn Combat::apply_attack_to_mobs(
   self : Combat,
   character : @character.Character,
@@ -389,7 +391,8 @@ impl @net.OutMessage for UseSkillMessage with pack(self) {
 //   packet
 // }
 
-///| Notifies the server of an attack. 
+///|
+/// Notifies the server of an attack. 
 struct AttackMessage(AttackResult) derive(Show)
 
 ///|
@@ -590,7 +593,8 @@ fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
   }
 }
 
-///| Find out the type of attack and whether it should be degenerate
+///|
+/// Find out the type of attack and whether it should be degenerate
 /// 
 /// Returns (degenerate, attack_type) where degenerate is true if the skill or ammunition is missing
 pub fn check_attack_type(

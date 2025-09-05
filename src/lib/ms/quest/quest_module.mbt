@@ -161,7 +161,8 @@ pub fn Module::get_map_quests(self : Module) -> MapQuests {
   self.map_quests
 }
 
-///| PlayerQuestLog stores information on the quest log of an individual character
+///|
+/// PlayerQuestLog stores information on the quest log of an individual character
 priv struct PlayerQuestLog {
   in_progress : Map[Int, InProgressQuest]
   completed : Map[Int, CompletedQuest]
@@ -560,7 +561,8 @@ impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Uni
   self.mod.map_quests.update_quest(self.message.quest_id) // TODO: convert to listener
 }
 
-///| list all quests that can be started by npc
+///|
+/// list all quests that can be started by npc
 fn list_quests_by_npc(
   npc_quests_map : Map[Int, Array[Int]],
   npc_id : Int,
@@ -568,7 +570,8 @@ fn list_quests_by_npc(
   npc_quests_map.get(npc_id).map_or([], fn(quest_ids) { quest_ids })
 }
 
-///| list all acceptable quests by npc
+///|
+/// list all acceptable quests by npc
 /// 
 /// This function returns an iterator of all quests that can be started by the player
 fn filter_acceptable_quests(
@@ -613,7 +616,8 @@ fn filter_acceptable_quests(
   })
 }
 
-///| check if a quest can be started or completed
+///|
+/// check if a quest can be started or completed
 fn check_quest_requirements(
   check : QuestPhaseChecks,
   item_count_provider : (Int) -> Int,

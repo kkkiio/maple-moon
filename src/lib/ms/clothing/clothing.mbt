@@ -135,7 +135,7 @@ pub fn Clothing::from_resource(
             }
           }
           let (parent, parentpos) = for mapnode in partnode["map"] {
-            match mapnode.as_point?().to_option() {
+            match (try? mapnode.as_point()).to_option() {
               Some(point) => break (mapnode.name(), point)
               None => ()
             }

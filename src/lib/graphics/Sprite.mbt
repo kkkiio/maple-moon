@@ -12,7 +12,7 @@ pub fn Sprite::new(animation : Animation, state_args : DrawArgument) -> Sprite {
 ///|
 pub fn Sprite::from_resource(
   src : NxNode,
-  state_args~ : DrawArgument = DrawArgument::default(),
+  state_args? : DrawArgument = DrawArgument::default(),
 ) -> Sprite {
   Sprite::new(Animation::from_resource(src), state_args)
 }
@@ -28,7 +28,7 @@ pub fn Sprite::draw(
 }
 
 ///|
-pub fn update(self : Sprite, timestep~ : Int = @config.step_time_ms) -> Bool {
+pub fn update(self : Sprite, timestep? : Int = @config.step_time_ms) -> Bool {
   self.animation.update(timestep~)
 }
 

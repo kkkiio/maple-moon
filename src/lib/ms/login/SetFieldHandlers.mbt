@@ -44,7 +44,8 @@ priv enum SetFieldMessage {
   )
 } derive(Show)
 
-///| handle_set_field handles packets which contains all character information on first login
+///|
+/// handle_set_field handles packets which contains all character information on first login
 /// or warps the player to a different map
 fn handle_set_field(
   transition : (Int, Int) -> Unit,
@@ -134,7 +135,8 @@ fn set_field(
   })
 }
 
-///| Finished updating player stats
+///|
+/// Finished updating player stats
 priv struct PlayerUpdatePacket(Unit) derive(Show)
 
 ///|

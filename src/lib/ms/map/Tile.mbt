@@ -1,4 +1,5 @@
-///| Represents a tile on a map.
+///|
+/// Represents a tile on a map.
 struct Tile {
   texture : @graphics.Texture
   pos : Point[Int]
@@ -14,9 +15,9 @@ pub fn Tile::new(tile : TileResource, tileset : @resource.NxNode?) -> Tile {
   let src_u = tile.u
   let src_no = tile.no.to_string()
   let dsrc = tileset[src_u][src_no]
-  let mut z = dsrc["z"].get_int?().unwrap()
+  let mut z = dsrc["z"].get_int() catch { _ => panic() }
   if z == 0 {
-    z = dsrc["zM"].get_int?().unwrap()
+    z = dsrc["zM"].get_int() catch { _ => panic() }
   }
   { texture: @graphics.Texture::from_resource(dsrc), pos, z }
 }

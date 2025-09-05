@@ -1,4 +1,5 @@
-///| Logic frame time in milliseconds.
+///|
+/// Logic frame time in milliseconds.
 pub let step_time_ms = 8
 
 ///|

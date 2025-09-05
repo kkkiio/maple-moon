@@ -67,7 +67,7 @@ pub fn watch_quest_log_ffi(
 ///|
 pub fn parse_quest_desc(
   s : String,
-  ref_name_provider~ : &QuestTextRefProvider = TestQuestRefNameProvider::default(),
+  ref_name_provider? : &QuestTextRefProvider = TestQuestRefNameProvider::default(),
 ) -> String raise {
   let tag_replace_map = {
     'R': fn(style, v) raise { ref_name_provider.get_progress(style, v) },
@@ -235,16 +235,20 @@ impl QuestTextRefProvider for TestQuestRefNameProvider with get_check(_, _, v) {
   "<check>\{v}</check>"
 }
 
-///| #R[info_number]#
+///|
+/// #R[info_number]#
 let info_number_tag : Char = 'R'
 
-///| #o[mobid]# - Shows the name of the mob.
+///|
+/// #o[mobid]# - Shows the name of the mob.
 let mob_tag : Char = 'o'
 
-///| #a[quest_id][number]# - monster hunt check count
+///|
+/// #a[quest_id][number]# - monster hunt check count
 let mob_count_tag : Char = 'a'
 
-///| #c[itemid]# Shows how many [itemid] the player has in their inventory.
+///|
+/// #c[itemid]# Shows how many [itemid] the player has in their inventory.
 let item_count_tag : Char = 'c'
 
 ///|

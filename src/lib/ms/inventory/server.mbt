@@ -12,7 +12,8 @@ priv struct ModifyInventoryMessage {
   mov : Movement?
 } derive(ToJson, Show)
 
-///| Parse MODIFY_INVENTORY message
+///|
+/// Parse MODIFY_INVENTORY message
 fn parse_modify_inventory(recv : @net.InPacket) -> ModifyInventoryMessage raise {
   recv.read_bool() |> ignore // 'updatetick'
   let mods = Array::new()
@@ -114,7 +115,8 @@ fn change_equipment(
   }
 }
 
-///| Packet which requests that an item is unequipped
+///|
+/// Packet which requests that an item is unequipped
 struct UnequipItemPacket {
   src : Int
   dest : Int
@@ -145,7 +147,8 @@ impl @net.OutMessage for UseItemMessage with pack(self) -> @net.OutPacket {
   packet
 }
 
-///| Packet which requests that an item is moved
+///|
+/// Packet which requests that an item is moved
 pub fn new_move_item_packet(
   type_id : TypeId,
   slot : Int,

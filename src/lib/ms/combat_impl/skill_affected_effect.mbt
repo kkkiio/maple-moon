@@ -27,7 +27,8 @@ fn SkillAffectedEffectEffect::apply(
   c.show_attack_effect(self.animation, self.z)
 }
 
-///| no animation
+///|
+/// no animation
 struct NoAffectedEffect {} derive(Default)
 
 ///|
@@ -43,7 +44,8 @@ fn NoAffectedEffect::apply(
 
 }
 
-///| An effect which displays an animation over the character's position
+///|
+/// An effect which displays an animation over the character's position
 struct SingleAffectedEffect {
   effect : SkillAffectedEffectEffect
 }

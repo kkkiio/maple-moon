@@ -17,7 +17,8 @@ pub fn get_key_mappings(keymap : Map[KeyCode, Mapping]) -> Array[KeyMappingJs] {
   .to_array()
 }
 
-///| Watch function that takes a callback to be called when mappings change
+///|
+/// Watch function that takes a callback to be called when mappings change
 pub fn watch_keyboard(
   mod : Module,
   callback : (Array[KeyMappingJs]) -> Unit,
@@ -29,7 +30,8 @@ pub fn watch_keyboard(
   mod.on_keymap_change(fn(new_keymap) { callback(get_key_mappings(new_keymap)) })
 }
 
-///| Update key mappings with new values from JS
+///|
+/// Update key mappings with new values from JS
 pub fn update_key_mappings(
   mod : Module,
   mappings : Array[KeyMappingJs],
@@ -67,7 +69,8 @@ pub fn update_key_mappings(
   mod.network.send_message(ChangeKeymapMessage::new(update_actions))
 }
 
-///| Helper function to find MsKey from keycode
+///|
+/// Helper function to find MsKey from keycode
 fn find_mskey_from_keycode(keycode : KeyCode) -> MsKey? {
   ms_key_keycode_table.get_backward(keycode)
 }

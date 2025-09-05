@@ -1,4 +1,5 @@
-///| Display quest status icons above NPCs
+///|
+/// Display quest status icons above NPCs
 ///
 /// Shows quest availability/completion icons above NPCs and enables quest interaction when clicking the icons
 struct MapQuests {
@@ -19,7 +20,8 @@ priv struct PlayerDeps {
   player_quest_log : PlayerQuestLog
 }
 
-///| Resources for MapQuests - holds icons for different quest states
+///|
+/// Resources for MapQuests - holds icons for different quest states
 struct MapQuestsResource {
   /// Icon shown when a quest is available from an NPC
   available_quest_icon : @graphics.Animation
@@ -29,7 +31,8 @@ struct MapQuestsResource {
   completed_quest_icon : @graphics.Animation
 }
 
-///| Loads the graphical resources for quest icons
+///|
+/// Loads the graphical resources for quest icons
 pub async fn MapQuestsResource::load() -> MapQuestsResource raise {
   let ui_window_2_loader = @ui.ui_window_2_loader()
   let available_quest_icon = ui_window_2_loader.load_res_async([
@@ -226,7 +229,8 @@ pub fn MapQuests::send_cursor(
   None
 }
 
-///| Represents a quest on the current map
+///|
+/// Represents a quest on the current map
 priv struct NpcQuest {
   npc_id : Int
   npc_object : @physics.MovingObject

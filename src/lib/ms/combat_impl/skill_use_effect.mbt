@@ -7,7 +7,8 @@ fn new_skill_use_effect_effect(
   fn(c : @character.Character) -> Unit { c.show_attack_effect(animation, z) }
 }
 
-///| An effect which displays an animation over the character's position
+///|
+/// An effect which displays an animation over the character's position
 fn new_single_use_effect(
   src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
@@ -15,7 +16,8 @@ fn new_single_use_effect(
   fn(c : @character.Character) -> Unit { effect(c) }
 }
 
-///| An effect which displays an animation over the character's position
+///|
+/// An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
 fn new_twohanded_use_effect(
   src : @resource.NxNode,
@@ -30,7 +32,8 @@ fn new_twohanded_use_effect(
   }
 }
 
-///| An effect which displays multiple animations over the character's position
+///|
+/// An effect which displays multiple animations over the character's position
 fn new_multi_use_effect(
   src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
@@ -49,7 +52,8 @@ fn new_multi_use_effect(
   }
 }
 
-///| The animation changes with the character level
+///|
+/// The animation changes with the character level
 fn new_by_level_use_effect(
   src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
@@ -76,7 +80,8 @@ fn new_by_level_use_effect(
   }
 }
 
-///| Use effect for Iron Body
+///|
+/// Use effect for Iron Body
 fn new_iron_body_use_effect() -> (@character.Character) -> Unit {
   fn(c) { c.show_iron_body() }
 }

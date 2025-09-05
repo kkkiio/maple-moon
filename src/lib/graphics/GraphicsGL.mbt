@@ -157,7 +157,7 @@ fn GraphicsGL::draw_text(
   textId : String,
   point : Point[Int],
   nametag : Bool,
-  text_y_clip~ : Range[Int]? = None,
+  text_y_clip? : Range[Int]? = None,
 ) -> Unit {
   // if self.locked {
   //   return

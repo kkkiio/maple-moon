@@ -57,7 +57,7 @@ struct Background {
   hoffset : Int
 }
 
-///| 
+///|
 /// example: {"a":255,"ani":0,"bS":"","cx":0,"cy":0,"f":0,"front":0,"no":0,"rx":0,"ry":0,"type":0,"x":0,"y":0}
 struct BackgroundSpec {
   a : Int

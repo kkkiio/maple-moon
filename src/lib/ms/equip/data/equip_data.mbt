@@ -1,4 +1,5 @@
-///| Contains information about an equip
+///|
+/// Contains information about an equip
 pub struct EquipData {
   category : String
   gender : Int
@@ -7,7 +8,8 @@ pub struct EquipData {
   eq_slot : @slot.Id
 }
 
-///| Load an equip from the game files.
+///|
+/// Load an equip from the game files.
 pub fn EquipData::parse_item_data(
   item_data : @item.ItemData,
 ) -> EquipData raise {

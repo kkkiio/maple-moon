@@ -43,7 +43,8 @@ pub fn connect(self : Session, path : String) -> Unit {
   }
 }
 
-///| Send a packet to the server
+///|
+/// Send a packet to the server
 pub fn write(self : Session, bytes : Bytes) -> Unit {
   match self.conn {
     READY(socket~) => socket.write(bytes)
@@ -55,7 +56,8 @@ pub fn write(self : Session, bytes : Bytes) -> Unit {
   }
 }
 
-///| Check for incoming packets and handle them
+///|
+/// Check for incoming packets and handle them
 pub fn read(self : Session) -> Unit {
   match self.conn {
     CLOSED => ()
@@ -83,7 +85,8 @@ pub enum ConnectionStatus {
   READY
 } derive(Show, Eq)
 
-///| Check if the connection is alive
+///|
+/// Check if the connection is alive
 pub fn Session::get_status(self : Session) -> ConnectionStatus {
   match self.conn {
     CLOSED => CLOSED

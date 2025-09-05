@@ -47,7 +47,8 @@ impl QuestCheck for IntervalMinutesCheck with check(_self, _context) {
   Err("not implemented")
 }
 
-///| Checks if a character meets the progress conditions defined by the quest's infoEx data.
+///|
+/// Checks if a character meets the progress conditions defined by the quest's infoEx data.
 ///
 /// This method validates quest progress by comparing the character's current progress values
 /// against the expected values defined in the quest's infoEx data. The progress values are
@@ -151,7 +152,8 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
   Ok(())
 }
 
-///| progress data is a 3-digit string that contains kill counts for each monster
+///|
+/// progress data is a 3-digit string that contains kill counts for each monster
 fn check_mob_progress_data(progress_data : @string.View) -> Unit raise {
   guard progress_data.iter().all(Char::is_ascii_digit(_)) &&
     progress_data.length() % 3 == 0 else {

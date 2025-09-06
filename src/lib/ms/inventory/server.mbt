@@ -109,7 +109,7 @@ fn change_equipment(
     0 => player.character.get_look().remove_equip(slot)
     itemid =>
       io_service.execute(async fn() {
-        let itemdata = @item.ItemData::get_async(itemid, player.string_loader)
+        let itemdata = @item.ItemData::get_async(itemid)
         player.character.get_look().add_equip(itemdata, slot)
       })
   }

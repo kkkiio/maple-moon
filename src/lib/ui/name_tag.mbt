@@ -9,8 +9,8 @@ struct NameTag {
 
 ///|
 pub(all) struct NameTagResource {
-  not_selected : (@graphics.NxFrame, @graphics.NxFrame, @graphics.NxFrame)
-  selected : (@graphics.NxFrame, @graphics.NxFrame, @graphics.NxFrame)
+  not_selected : (@resource.NxFrame, @resource.NxFrame, @resource.NxFrame)
+  selected : (@resource.NxFrame, @resource.NxFrame, @resource.NxFrame)
 }
 
 ///|
@@ -26,14 +26,14 @@ pub impl @json.FromJson for NameTagResource with from_json(
     } =>
       {
         not_selected: (
-          @graphics.NxFrame::from_json(j00, path.add_key("0").add_key("0")),
-          @graphics.NxFrame::from_json(j01, path.add_key("0").add_key("1")),
-          @graphics.NxFrame::from_json(j02, path.add_key("0").add_key("2")),
+          @resource.NxFrame::from_json(j00, path.add_key("0").add_key("0")),
+          @resource.NxFrame::from_json(j01, path.add_key("0").add_key("1")),
+          @resource.NxFrame::from_json(j02, path.add_key("0").add_key("2")),
         ),
         selected: (
-          @graphics.NxFrame::from_json(j10, path.add_key("1").add_key("0")),
-          @graphics.NxFrame::from_json(j11, path.add_key("1").add_key("1")),
-          @graphics.NxFrame::from_json(j12, path.add_key("1").add_key("2")),
+          @resource.NxFrame::from_json(j10, path.add_key("1").add_key("0")),
+          @resource.NxFrame::from_json(j11, path.add_key("1").add_key("1")),
+          @resource.NxFrame::from_json(j12, path.add_key("1").add_key("2")),
         ),
       }
     _ => raise @json.JsonDecodeError((path, "invalid name tag resource"))
@@ -55,14 +55,14 @@ pub fn NameTag::new(
   name.change_text(n)
   let textures = @utils.BoolPair::new(
     (
-      textures.not_selected.0.inner(),
-      textures.not_selected.1.inner(),
-      textures.not_selected.2.inner(),
+      nx_frame_to_animation_frame(textures.not_selected.0),
+      nx_frame_to_animation_frame(textures.not_selected.1),
+      nx_frame_to_animation_frame(textures.not_selected.2),
     ),
     (
-      textures.selected.0.inner(),
-      textures.selected.1.inner(),
-      textures.selected.2.inner(),
+      nx_frame_to_animation_frame(textures.selected.0),
+      nx_frame_to_animation_frame(textures.selected.1),
+      nx_frame_to_animation_frame(textures.selected.2),
     ),
   )
   { name, textures, selected: false }
@@ -100,4 +100,21 @@ pub fn set_selected(self : NameTag, s : Bool) -> Unit {
 ///|
 pub impl ToJson for NameTag with to_json(self) -> Json {
   { "name": self.name.to_json(), "selected": self.selected.to_json() }
+}
+
+///|
+fn nx_frame_to_animation_frame(
+  frame : @resource.NxFrame,
+) -> @sprite.AnimationFrame {
+  {
+    sprite_path: frame.texture.i,
+    size: @selene_math.Vec2D(
+      frame.texture.w.to_double(),
+      frame.texture.h.to_double(),
+    ),
+    offset: @selene_math.Vec2D(
+      frame.texture.offset.x.to_double(),
+      frame.texture.offset.y.to_double(),
+    ),
+  }
 }

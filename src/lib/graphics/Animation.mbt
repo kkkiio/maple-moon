@@ -480,3 +480,53 @@ pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimatio
   }
   NxAnimation(@sprite.Animation::new(frames, loop_=true))
 }
+
+///|
+pub(all) struct AnimationData {
+  frames : Array[@sprite.AnimationFrame]
+  left_top : @selene_math.Vec2D
+  delay_ms : Int
+}
+
+///|
+pub fn AnimationData::from_nx_animation(
+  src : @resource.NxAnimation,
+) -> AnimationData {
+  let origin = src.frames
+    .get(0)
+    .map(fn(frame) { frame.texture.origin })
+    .unwrap_or(@struct.Point::default())
+  {
+    frames: src.frames.map(fn(frame) {
+      {
+        sprite_path: frame.texture.i,
+        size: @selene_math.Vec2D(
+          frame.texture.w.to_double(),
+          frame.texture.h.to_double(),
+        ),
+        offset: @selene_math.Vec2D(
+          frame.texture.offset.x.to_double(),
+          frame.texture.offset.y.to_double(),
+        ),
+      }
+    }),
+    left_top: -@selene_math.Vec2D(origin.x.to_double(), origin.y.to_double()),
+    delay_ms: 100,
+  }
+}
+
+///|
+pub fn AnimationData::to_selene_sprite(
+  self : AnimationData,
+  z? : Int = 0,
+) -> @sprite.Sprite {
+  @sprite.Sprite::from_animation(
+    @sprite.Animation::new(
+      self.frames,
+      loop_=true,
+      rate=1000.0 / self.delay_ms.to_double() / fps.to_double(),
+    ),
+    z,
+    offset=self.left_top,
+  )
+}

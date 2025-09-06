@@ -1,17 +1,15 @@
 ///|
 struct MapDrops {
   io_service : @io_task.IOService
-  string_loader : @resource.SyncLoader
   drops : @map_object.MapObjects[&Drop]
   loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
-  spawns : @queue.T[DropSpawn]
+  spawns : @queue.Queue[DropSpawn]
   meso_icons : Map[MesoIcon, @graphics.Animation]
 }
 
 ///|
 fn MapDrops::new(
   io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader,
   src : @resource.NxNode,
 ) -> MapDrops {
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
@@ -25,7 +23,6 @@ fn MapDrops::new(
     |> @graphics.Animation::from_resource
   {
     io_service,
-    string_loader,
     drops: @map_object.MapObjects::new(),
     loading_drops: Array::new(),
     spawns: @queue.new(),
@@ -74,10 +71,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
           } else {
             self.loading_drops.push(
               self.io_service.submit(fn() {
-                let item_data = @item.ItemData::get_async(
-                  itemid,
-                  self.string_loader,
-                )
+                let item_data = @item.ItemData::get_async(itemid)
                 spawn.instantiate_item(item_data.get_icon(true))
               }),
             )

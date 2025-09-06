@@ -34,20 +34,13 @@ pub fn Body::new(
 }
 
 ///|
-struct MyAnimation {
-  frames : Array[@sprite.AnimationFrame]
-  lt : @selene_math.Vec2D
-  delay_ms : Int
-}
-
-///|
 fn new_body_stance(
   stance : @types.StanceId,
   stance_nx_resource : Array[@types.NxStanceBody],
   head_nx_resource : Array[@types.NxLayerTextures],
   drawinfo : @types.BodyDrawInfo,
 ) -> Map[@types.BodyLayer, @sprite.Sprite] {
-  let layer_frames_map : Map[@types.BodyLayer, MyAnimation] = Map::new()
+  let layer_frames_map : Map[@types.BodyLayer, AnimationData] = Map::new()
   for frame, framenode in stance_nx_resource {
     guard framenode is @types.NxStanceBody::LayerTextures(layer_textures) else {
       continue
@@ -80,7 +73,7 @@ fn new_body_stance(
             size: @selene_math.Vec2D(0, 0),
             offset: @selene_math.Vec2D(0, 0),
           }),
-          lt: -@selene_math.Vec2D(
+          left_top: -@selene_math.Vec2D(
             texture.origin.x.to_double(),
             texture.origin.y.to_double(),
           ),
@@ -108,7 +101,7 @@ fn new_body_stance(
             size: @selene_math.Vec2D(0, 0),
             offset: @selene_math.Vec2D(0, 0),
           }),
-          lt: -@selene_math.Vec2D(
+          left_top: -@selene_math.Vec2D(
             texture.origin.x.to_double(),
             texture.origin.y.to_double(),
           ),
@@ -133,7 +126,7 @@ fn new_body_stance(
         rate=1000.0 / frames.delay_ms.to_double() / @graphics.fps.to_double(),
       ), // fps * rate == 1000 / delay_ms
       0,
-      offset=frames.lt,
+      offset=frames.left_top,
     )
   })
 }
@@ -170,3 +163,6 @@ pub fn Body::get_name(self : Body) -> String {
 pub impl ToJson for Body with to_json(self) -> Json {
   { "name": self.name.to_json() }
 }
+
+///|
+typealias @graphics.AnimationData

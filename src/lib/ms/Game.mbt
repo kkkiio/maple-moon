@@ -134,7 +134,6 @@ async fn load_modules(
       player.character.look = f(player.character.look)
     },
     io_service,
-    string_loader,
   )
   merge_stat_handlers(char_look_module.make_stat_handlers())
   let map_module = @map.Module::load()
@@ -204,7 +203,7 @@ async fn load_modules(
       get_stage().get_player().map(fn(p) { p.get_stats() })
     }),
   )
-  let drop_module = @drop.Module::load(string_loader, io_service)
+  let drop_module = @drop.Module::load(io_service)
   merge_handlers(
     drop_module.make_handlers(fn(id) {
       get_stage().get_character(id).map(fn(c) { c.get_phobj() })
@@ -213,7 +212,7 @@ async fn load_modules(
   let char_stats_module = @char_stats.Module::load(network)
   merge_stat_handlers(char_stats_module.make_stat_handlers())
   let damage_number_set = @ui.NumberSet::load()
-  let bullet_module = @bullet.Module::load(string_loader)
+  let bullet_module = @bullet.Module::load()
   let combat = @combat_impl2.Combat::new(
     damage_number_set,
     monster_module.get_map_mobs(),

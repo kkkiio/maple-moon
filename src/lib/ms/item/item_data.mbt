@@ -42,58 +42,74 @@ pub async fn ItemData::load(
   item_id : Int,
   character_loader : @resource.AsyncLoader,
   item_loader : @resource.AsyncLoader,
-  string_loader : @resource.SyncLoader,
 ) -> ItemData raise {
   let zid = "0" + item_id.to_string()
-  let (category, src, strsrc) = match
+  let (category, src, strsrc) : (String, @resource.NxNode, Json) = match
     parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
     EQUIP => {
       guard parse_equip_category(item_id) is Some(category) else {
         raise LoadDataError::INVALID_ITEM_ID(item_id)
       }
       let src = character_loader.load_res_async([category, zid + ".img"])
-      let strsrc = string_loader.load_res([
-        "Eqp.img",
-        "Eqp",
-        category,
-        item_id.to_string(),
-      ])
+      // let strsrc = equip_texts.get(category).get(item_id.to_string())
+      let strsrc = equip_texts
+        .as_object()
+        .bind(_.get(category))
+        .bind(_.as_object())
+        .bind(_.get(item_id.to_string()))
+        .unwrap_or(Json::null())
       (category, src, strsrc)
     }
     CONSUME => {
       let category = "Consume"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let src = item_loader.load_res_async(["Consume", strprefix + ".img", zid])
-      let strsrc = string_loader.load_res(["Consume.img", item_id.to_string()])
+      let strsrc = consume_texts
+        .as_object()
+        .bind(_.get(category))
+        .bind(_.as_object())
+        .bind(_.get(item_id.to_string()))
+        .unwrap_or(Json::null())
       (category, src, strsrc)
     }
     INSTALL => {
       let category = "Install"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let src = item_loader.load_res_async(["Install", strprefix + ".img", zid])
-      let strsrc = string_loader.load_res(["Ins.img", item_id.to_string()])
+      let strsrc = install_texts
+        .as_object()
+        .bind(_.get(category))
+        .bind(_.as_object())
+        .bind(_.get(item_id.to_string()))
+        .unwrap_or(Json::null())
       (category, src, strsrc)
     }
     ETC => {
       let category = "Etc"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let src = item_loader.load_res_async(["Etc", strprefix + ".img", zid])
-      let strsrc = string_loader.load_res([
-        "Etc.img",
-        "Etc",
-        item_id.to_string(),
-      ])
+      let strsrc = etc_texts
+        .as_object()
+        .bind(_.get(category))
+        .bind(_.as_object())
+        .bind(_.get(item_id.to_string()))
+        .unwrap_or(Json::null())
       (category, src, strsrc)
     }
     CASH => {
       let category = "Cash"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let src = item_loader.load_res_async(["Cash", strprefix + ".img", zid])
-      let strsrc = string_loader.load_res(["Cash.img", item_id.to_string()])
+      let strsrc = cash_texts
+        .as_object()
+        .bind(_.get(category))
+        .bind(_.as_object())
+        .bind(_.get(item_id.to_string()))
+        .unwrap_or(Json::null())
       (category, src, strsrc)
     }
   }
-  let str_src = strsrc.value()
+  let str_src = strsrc
   let name = match str_src {
     { "name": String(name), .. } => name
     _ => ""
@@ -142,19 +158,11 @@ pub fn ItemData::get_loaded(id : Int) -> ItemData? {
 }
 
 ///|
-pub async fn ItemData::get_async(
-  id : Int,
-  string_loader : @resource.SyncLoader,
-) -> ItemData raise {
+pub async fn ItemData::get_async(id : Int) -> ItemData raise {
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load(
-    id,
-    get_character_loader(),
-    get_item_loader(),
-    string_loader,
-  )
+  let data = ItemData::load(id, get_character_loader(), get_item_loader())
   cache.set(id, data)
   data
 }

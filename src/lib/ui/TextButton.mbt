@@ -35,7 +35,7 @@ pub fn TextButton::draw_in_range(
   range : @struct.Range[Int],
 ) -> Unit {
   if self.base.active {
-    self.text.draw(parentpos, text_y_clip=range |> @option.some)
+    self.text.draw(parentpos, text_y_clip=range |> Some)
   }
 }
 

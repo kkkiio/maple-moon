@@ -7,10 +7,7 @@ async fn get_all_items_by_type(
   async fn load_slot(slot_no) -> WithItemSlot? raise Error {
     match mod.inventory.get_slot_item_at(kind, slot_no) {
       Some(slot_item) => {
-        let item_data = @item.ItemData::get_async(
-          slot_item.item_id,
-          mod.string_loader,
-        )
+        let item_data = @item.ItemData::get_async(slot_item.item_id)
         Some({
           slot_no,
           id: item_data.item_id,

@@ -21,7 +21,7 @@ test {
       "y": 0,
     },
   }
-  let map_tiles_objs_resource : BackgroundsResource = @json.from_json!(json)
+  let map_tiles_objs_resource : BackgroundsResource = @json.from_json(json)
   @json.inspect(map_tiles_objs_resource, content=[
     {
       "a": 255,

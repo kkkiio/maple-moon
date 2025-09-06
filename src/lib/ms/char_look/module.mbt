@@ -1,7 +1,6 @@
 ///|
 struct Module {
   io_service : @io_task.IOService
-  string_loader : @resource.SyncLoader
   draw_info : @types.BodyDrawInfo
   hair_cache : Map[Int, Hair]
   face_types : Map[Int, Face]
@@ -13,22 +12,19 @@ struct Module {
 pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader,
 ) -> Module raise {
   // let bodynode = get_body_loader().load_res_async(["00002000.img"])
   // let headnode = get_body_loader().load_res_async(["00012000.img"])
-  Module::new(on_player_look_changed, io_service, string_loader)
+  Module::new(on_player_look_changed, io_service)
 }
 
 ///|
 pub fn Module::new(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
-  string_loader : @resource.SyncLoader,
 ) -> Module raise {
   {
     hair_cache: Map::new(),
-    string_loader,
     draw_info: get_draw_info(),
     face_types: Map::new(),
     body_cache: Map::new(),
@@ -42,7 +38,7 @@ pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook raise 
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
-  CharLook::load(entry, body, hair, face, self.draw_info, self.string_loader)
+  CharLook::load(entry, body, hair, face, self.draw_info)
 }
 
 ///|

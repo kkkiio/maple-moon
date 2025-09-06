@@ -38,14 +38,13 @@ pub async fn CharLook::load(
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
-  string_loader : @resource.SyncLoader,
 ) -> CharLook raise {
   let equips = entry.equips
     .iter()
     .map(fn(it) {
       let (slot_id, itemid) = it
       fn() {
-        let itemdata = @item.ItemData::get_async(itemid, string_loader)
+        let itemdata = @item.ItemData::get_async(itemid)
         (slot_id, itemdata)
       }
     })
@@ -638,7 +637,7 @@ pub fn CharLook::set_sprites(self : CharLook, pos : @struct.Point[Int]) -> Unit 
   // }
   let drawables : Array[&@graphics.Drawable] = []
   let entities : Array[@system.Entity] = []
-  let mut next_z = CHAR_LOOK_ZINDEX
+  let mut next_z = @graphics.CHAR_LOOK_ZINDEX
   let pos = @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double())
   fn new_hair_entity(layer) {
     let entity = @system.Entity::new()
@@ -1163,6 +1162,3 @@ pub impl @graphics.Drawable for NoopDrawable with draw(
 ) -> Unit {
 
 }
-
-///|
-pub const CHAR_LOOK_ZINDEX = 10

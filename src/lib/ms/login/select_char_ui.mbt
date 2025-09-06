@@ -14,8 +14,6 @@ struct SelectCharUI {
 ///|
 pub(all) struct SelectCharUIResource {
   name_tag : @ui.NameTagResource
-  bt_select : @ui.MapleButtonResource
-  bt_new : @ui.MapleButtonResource
   ani18 : @sprite.Animation
 }
 
@@ -100,196 +98,102 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       },
     },
   }
-  let bt_select_res : Json = {
-    "disabled": {
-      "0": {
-        "__h": 52,
-        "__w": 140,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28154",
-      },
-    },
-    "keyFocused": {
-      "0": {
-        "__h": 25,
-        "__w": 35,
-        "delay": "50",
-        "origin": [-132, 14],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-      "1": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtSelect/keyFocused/0",
-        "delay": "50",
-        "origin": [-132, 13],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-      "2": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtSelect/keyFocused/0",
-        "delay": "50",
-        "origin": [-132, 12],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-      "3": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtSelect/keyFocused/0",
-        "delay": "50",
-        "origin": [-132, 11],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-      "4": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtSelect/keyFocused/0",
-        "delay": "50",
-        "origin": [-132, 12],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-      "5": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtSelect/keyFocused/0",
-        "delay": "50",
-        "origin": [-132, 13],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28155",
-      },
-    },
-    "mouseOver": {
-      "0": {
-        "__h": 52,
-        "__w": 140,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28152",
-      },
-    },
-    "normal": {
-      "0": {
-        "__h": 52,
-        "__w": 140,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28151",
-      },
-    },
-    "pressed": {
-      "0": {
-        "__h": 52,
-        "__w": 140,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtSelect#28153",
-      },
-    },
-  }
-  let bt_new_res : Json = {
-    "disabled": {
-      "0": {
-        "__h": 37,
-        "__w": 110,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28164",
-      },
-    },
-    "keyFocused": {
-      "0": {
-        "__h": 25,
-        "__w": 35,
-        "origin": [-85, 17],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-      "1": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtNew/keyFocused/0",
-        "delay": "50",
-        "origin": [-85, 16],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-      "2": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtNew/keyFocused/0",
-        "delay": "50",
-        "origin": [-85, 15],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-      "3": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtNew/keyFocused/0",
-        "delay": "50",
-        "origin": [-85, 14],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-      "4": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtNew/keyFocused/0",
-        "delay": "50",
-        "origin": [-85, 15],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-      "5": {
-        "__h": 25,
-        "__w": 35,
-        "_inlink": "CharSelect/BtNew/keyFocused/0",
-        "delay": "50",
-        "origin": [-85, 16],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-      },
-    },
-    "mouseOver": {
-      "0": {
-        "__h": 37,
-        "__w": 110,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28162",
-      },
-    },
-    "normal": {
-      "0": {
-        "__h": 37,
-        "__w": 110,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28161",
-      },
-    },
-    "pressed": {
-      "0": {
-        "__h": 37,
-        "__w": 110,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28163",
-      },
-    },
-  }
+  // let bt_new_res : Json = {
+  //   "disabled": {
+  //     "0": {
+  //       "__h": 37,
+  //       "__w": 110,
+  //       "origin": [0, 0],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28164",
+  //     },
+  //   },
+  //   "keyFocused": {
+  //     "0": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "origin": [-85, 17],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //     "1": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
+  //       "delay": "50",
+  //       "origin": [-85, 16],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //     "2": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
+  //       "delay": "50",
+  //       "origin": [-85, 15],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //     "3": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
+  //       "delay": "50",
+  //       "origin": [-85, 14],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //     "4": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
+  //       "delay": "50",
+  //       "origin": [-85, 15],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //     "5": {
+  //       "__h": 25,
+  //       "__w": 35,
+  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
+  //       "delay": "50",
+  //       "origin": [-85, 16],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
+  //     },
+  //   },
+  //   "mouseOver": {
+  //     "0": {
+  //       "__h": 37,
+  //       "__w": 110,
+  //       "origin": [0, 0],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28162",
+  //     },
+  //   },
+  //   "normal": {
+  //     "0": {
+  //       "__h": 37,
+  //       "__w": 110,
+  //       "origin": [0, 0],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28161",
+  //     },
+  //   },
+  //   "pressed": {
+  //     "0": {
+  //       "__h": 37,
+  //       "__w": 110,
+  //       "origin": [0, 0],
+  //       "z": 0,
+  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28163",
+  //     },
+  //   },
+  // }
   let ani18 : @graphics.NxAnimation = @json.from_json(ani18_res)
   {
     name_tag: @json.from_json(name_tag_res),
-    bt_select: @json.from_json(bt_select_res),
-    bt_new: @json.from_json(bt_new_res),
+    // bt_new: @json.from_json(bt_new_res),
     ani18: ani18.inner(),
   }
 }
@@ -395,18 +299,91 @@ pub fn SelectCharUI::new(
     @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
     entities.push(entity)
   }
-  // (@ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
-  // |> @ui.Button::new(on_click=fn() {
-  //   guard self.select_slot is Some(slot) else { return None }
-  //   let cid = self.characters[slot].0
-  //   (self.on_select_character)(cid)
-  //   None
-  // })).as_interactable(),
+  let characters : Array[(Int, @char_look.CharLook, @ui.NameTag)] = []
+  let res : Map[@ui.ButtonState, @resource.NxAnimation] = {}
+  res[NORMAL] = {
+    frames: [
+      {
+        texture: {
+          i: "assets/ui/login.img/char_select/bt_select.png",
+          w: 140,
+          h: 52,
+          offset: @struct.Point::new(0, 0),
+          origin: @struct.Point::new(0, 0),
+        },
+      },
+    ],
+    blend: false,
+    zigzag: false,
+  }
+  res[MOUSEOVER] = {
+    frames: [
+      {
+        texture: {
+          i: "assets/ui/login.img/char_select/bt_select.png",
+          w: 140,
+          h: 52,
+          offset: @struct.Point::new(140, 0),
+          origin: @struct.Point::new(0, 0),
+        },
+      },
+    ],
+    blend: false,
+    zigzag: false,
+  }
+  res[PRESSED] = {
+    frames: [
+      {
+        texture: {
+          i: "assets/ui/login.img/char_select/bt_select.png",
+          w: 140,
+          h: 52,
+          offset: @struct.Point::new(280, 0),
+          origin: @struct.Point::new(0, 0),
+        },
+      },
+    ],
+    blend: false,
+    zigzag: false,
+  }
+  res[DISABLED] = {
+    frames: [
+      {
+        texture: {
+          i: "assets/ui/login.img/char_select/bt_select.png",
+          w: 140,
+          h: 52,
+          offset: @struct.Point::new(420, 0),
+          origin: @struct.Point::new(0, 0),
+        },
+      },
+    ],
+    blend: false,
+    zigzag: false,
+  }
+  let bt_select = @ui.MapleButton::new(
+    @ui.MapleButtonResource(res),
+    pos=@struct.Point::new(601, 393),
+    on_click=fn() {
+      // guard self.select_slot is Some(slot) else { return None }
+      let slot = 0
+      let cid = characters[slot].0
+      on_select_character(cid)
+    },
+  )
+  // render_elements.push(
+  //   @ui.MapleButton::new(resources.bt_new, pos=@struct.Point::new(200, 495))
+  //   |> @ui.Button::new(on_click=fn() {
+  //     (self.on_new_character)()
+  //     None
+  //   })
+  //   |> @ui.Button::as_interactable,
+  // )
   {
     select_slot: None,
     on_select_character,
     on_new_character,
-    characters: [],
+    characters,
     resource: resources,
     animations: [
       // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
@@ -469,26 +446,9 @@ pub fn SelectCharUI::add_character(
 pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
   let resources = self.resource
   let render_elements = []
-  render_elements.push(
-    (@ui.MapleButton::new(resources.bt_select, pos=@struct.Point::new(601, 393))
-    |> @ui.Button::new(on_click=fn() {
-      guard self.select_slot is Some(slot) else { return None }
-      let cid = self.characters[slot].0
-      (self.on_select_character)(cid)
-      None
-    })).as_interactable(),
-  )
   // Point<int16_t> character_new_pos = Point<int16_t>(200, 495);
   // buttons_[Buttons::CHARACTER_NEW] =
   //     std::make_unique<MapleButton>(CharSelect["BtNew"], character_new_pos);
-  render_elements.push(
-    @ui.MapleButton::new(resources.bt_new, pos=@struct.Point::new(200, 495))
-    |> @ui.Button::new(on_click=fn() {
-      (self.on_new_character)()
-      None
-    })
-    |> @ui.Button::as_interactable,
-  )
   { render_elements, }
 }
 
@@ -533,6 +493,7 @@ let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 ///|
 pub fn add_select_char_ui() -> Unit raise {
   let ui = SelectCharUI::new(SelectCharUIResource::load())
+  let draw_info = @char_look.get_draw_info()
   select_char_ui.val = Some(ui)
   ui.add_character({
     cid: 1,
@@ -540,17 +501,17 @@ pub fn add_select_char_ui() -> Unit raise {
       {},
       @char_look.Body::new(
         0,
-        @char_look.get_draw_info(),
+        draw_info,
         @char_look.get_stance_bodys_map(),
         @char_look.get_stance_heads_map(),
       ),
       @char_look.Hair::new(
         0,
         @json.from_json(@char_look.male_1_white_hair),
-        @char_look.get_draw_info(),
+        draw_info,
       ),
       @char_look.Face::new(20800, @char_look.male_1_white_face),
-      @char_look.get_draw_info(),
+      draw_info,
     ),
     name: "kkkiio",
   })

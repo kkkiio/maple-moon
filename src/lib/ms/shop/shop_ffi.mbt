@@ -29,10 +29,7 @@ pub fn watch_opening_shop_ffi(
         npc_id: npc_shop.npc_id,
         shop_items: npc_shop.items.mapi(fn(i, item) {
           async fn() {
-            let item_data = @item.ItemData::get_async(
-              item.id,
-              mod.string_loader,
-            )
+            let item_data = @item.ItemData::get_async(item.id)
             {
               slot_no: i,
               item_id: item.id,

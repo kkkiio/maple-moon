@@ -1,21 +1,18 @@
 ///|
 /// A standard maplestory-button with 4 states and a texture for each state.
 pub(all) struct MapleButton {
-  base : ButtonModel
-  textures : Map[ButtonState, @graphics.Texture]
-  animations : Map[ButtonState, @graphics.Animation]
+  // textures : Map[ButtonState, @graphics.Texture]
+  // animations : Map[ButtonState, @graphics.Animation]
+  entity : @system.Entity
 }
 
 ///|
 pub impl UIButton for MapleButton with get_button_base(self : MapleButton) -> ButtonModel {
-  self.base
+  ...
 }
 
 ///|
-pub(all) struct MapleButtonResource {
-  textures : Map[ButtonState, @graphics.NxFrame]
-  animations : Map[ButtonState, @graphics.NxAnimation]
-}
+pub(all) struct MapleButtonResource(Map[ButtonState, @resource.NxAnimation])
 
 ///|
 pub fn MapleButtonResource::from_resource(
@@ -39,32 +36,24 @@ pub impl @json.FromJson for MapleButtonResource with from_json(
     } else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let textures = {}
   let animations = {}
-  if normal is { "0": _, "1": _, .. } {
-    animations[ButtonState::NORMAL] = @json.from_json(
-      normal,
-      path=path.add_key("normal"),
-    )
-  } else {
-    textures[ButtonState::NORMAL] = @json.from_json(
-      normal0,
-      path=path.add_key("normal").add_key("0"),
-    )
-  }
-  textures[ButtonState::PRESSED] = @json.from_json(
+  animations[ButtonState::NORMAL] = @json.from_json(
+    normal,
+    path=path.add_key("normal"),
+  )
+  animations[ButtonState::PRESSED] = @json.from_json(
     pressed0,
     path=path.add_key("pressed").add_key("0"),
   )
-  textures[ButtonState::MOUSEOVER] = @json.from_json(
+  animations[ButtonState::MOUSEOVER] = @json.from_json(
     mouseOver0,
     path=path.add_key("mouseOver").add_key("0"),
   )
-  textures[ButtonState::DISABLED] = @json.from_json(
+  animations[ButtonState::DISABLED] = @json.from_json(
     disabled0,
     path=path.add_key("disabled").add_key("0"),
   )
-  { textures, animations }
+  animations
 }
 
 // ///|
@@ -83,12 +72,34 @@ pub fn MapleButton::from_resource(
 pub fn MapleButton::new(
   res : MapleButtonResource,
   pos? : Point[Int] = @struct.Point::default(),
+  on_click? : () -> Unit = fn() { () },
 ) -> MapleButton {
-  let base = ButtonModel::default()
-  base.set_position(pos)
-  base.set_state(ButtonState::NORMAL)
-  ...
-  // { base, textures: res.textures, animations: res.animations }
+  let button = @system.Entity::new()
+  @position.positions.set(
+    button,
+    @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double()),
+  )
+  let animation = res.inner().get(ButtonState::NORMAL).unwrap()
+  let sp = @graphics.AnimationData::from_nx_animation(animation).to_selene_sprite(
+    z=@graphics.UI_ZINDEX,
+  )
+  @sprite.sprites.set(button, sp)
+  @collision.shapes.set(
+    button,
+    @collision.CollisionShape::Rect(
+      size=@selene_math.Vec2D(21.0, 22.0),
+      offset=@selene_math.Vec2D::zero(),
+    ),
+  )
+  let pickable = @collision.Pickable::new()
+  pickable.on_just_released(fn(mouse_button) {
+    if mouse_button == Left {
+      on_click()
+    }
+  })
+  @collision.pickables.set(button, pickable)
+  @ui.uis.set(button, @ui.Ui::new())
+  { entity: button }
 }
 
 // ///|
@@ -105,63 +116,56 @@ pub impl UIButton for MapleButton with draw(
   self : MapleButton,
   parentpos : Point[Int],
 ) -> Unit {
-  if self.base.active {
-    match self.textures.get(self.base.get_state()) {
-      Some(texture) =>
-        texture.draw(
-          @graphics.DrawArgument::new(pos=self.base.position + parentpos),
-        )
-      None => ()
-    }
-    match self.animations.get(self.base.get_state()) {
-      Some(animation) =>
-        animation.draw(
-          @graphics.DrawArgument::new(pos=self.base.position + parentpos),
-          1.0,
-        )
-      None => ()
-    }
-  }
+  ...
 }
 
 ///|
 pub impl UIButton for MapleButton with update(self : MapleButton) -> Unit {
-  if self.base.active {
-    match self.animations.get(self.base.get_state()) {
-      Some(animation) => animation.update(timestep=6) |> ignore
-      None => ()
-    }
-  }
+  // if self.base.active {
+  //   match self.animations.get(self.base.get_state()) {
+  //     Some(animation) => animation.update(timestep=6) |> ignore
+  //     None => ()
+  //   }
+  // }
 }
 
 ///|
 pub impl UIButton for MapleButton with bounds(self : MapleButton) -> @struct.Rectangle[
   Int,
 ] {
-  let (origin, dimensions) = match self.textures.get(self.base.get_state()) {
-    Some(texture) => (texture.get_origin(), texture.get_dimensions())
-    None => {
-      let animation = self.animations.get(self.base.get_state()).unwrap()
-      (animation.get_origin(), animation.get_dimensions())
-    }
-  }
-  let lt = self.base.position - origin
-  let rb = lt + dimensions
-  @struct.Rectangle::new(lt, rb)
+  // let (origin, dimensions) = match self.textures.get(self.base.get_state()) {
+  //   Some(texture) => (texture.get_origin(), texture.get_dimensions())
+  //   None => {
+  //     let animation = self.animations.get(self.base.get_state()).unwrap()
+  //     (animation.get_origin(), animation.get_dimensions())
+  //   }
+  // }
+  // let lt = self.base.position - origin
+  // let rb = lt + dimensions
+  // @struct.Rectangle::new(lt, rb)
+  ...
 }
 
 ///|
 pub impl UIButton for MapleButton with width(self : MapleButton) -> Int {
-  match self.textures.get(self.base.get_state()) {
-    Some(texture) => texture.width()
-    None => 0
-  }
+  // match self.textures.get(self.base.get_state()) {
+  //   Some(texture) => texture.width()
+  //   None => 0
+  // }
+  ...
 }
 
 ///|
 pub impl UIButton for MapleButton with origin(self : MapleButton) -> Point[Int] {
-  match self.textures.get(self.base.get_state()) {
-    Some(texture) => texture.get_origin()
-    None => @struct.Point::default()
-  }
+  // match self.textures.get(self.base.get_state()) {
+  //   Some(texture) => texture.get_origin()
+  //   None => @struct.Point::default()
+  // }
+  ...
+}
+
+///|
+fn get_dimensions(animation : @resource.NxAnimation) -> @struct.Point[Int] {
+  let texture = animation.frames[0].texture
+  { x: texture.w, y: texture.h }
 }

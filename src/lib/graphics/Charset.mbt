@@ -7,7 +7,7 @@ pub(all) enum CharsetAlignment {
 
 ///|
 struct Charset {
-  chars : Map[Char, Texture]
+  chars : Map[Char, @resource.NxTexture]
   alignment : CharsetAlignment
 }
 
@@ -18,18 +18,17 @@ pub impl ToJson for Charset with to_json(_) -> Json {
 
 ///|
 pub fn Charset::from_resource(
-  src : NxNode,
+  src : Json,
   alignment : CharsetAlignment,
-) -> Charset {
+) -> Charset raise {
+  guard src is Object(src) else { return { chars: Map::new(), alignment } }
   let chars = Map::new()
-  for sub in src {
-    let name = sub.name()
-    if sub.get_bitmap().is_empty() {
-      continue
-    }
-    guard name.iter().peek() is Some(c) else { continue }
+  for name, sub in src {
+    guard sub is { "__i": String(_), .. } else { continue }
+    guard name.get_char(0) is Some(c) else { continue }
     let c = if c == '\\' { '/' } else { c }
-    chars.set(c, Texture::from_resource(sub))
+    let tex : @resource.NxTexture = @json.from_json(sub)
+    chars.set(c, tex)
   }
   { chars, alignment }
 }
@@ -41,17 +40,18 @@ pub impl Default for Charset with default() {
 
 ///|
 pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
-  let iter = self.chars.get(c)
-  match iter {
-    Some(iter) => iter.draw(args)
-    None => ()
-  }
+  // let iter = self.chars.get(c)
+  // match iter {
+  //   Some(iter) => iter.draw(args)
+  //   None => ()
+  // }
 }
 
 ///|
 pub fn getw(self : Charset, c : Char) -> Int {
-  let iter = self.chars.get(c)
-  iter.map(fn(it) { it.width() }).or(0)
+  ...
+  // let iter = self.chars.get(c)
+  // iter.map(fn(it) { it.width() }).or(0)
 }
 
 ///|

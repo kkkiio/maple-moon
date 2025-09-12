@@ -1,16 +1,5 @@
 ///|
 #external
-priv type RawData
-
-///|
-fn as_moonjson(self : RawData) -> Json {
-  @json.parse(as_jsonstring(self)) catch {
-    _ => abort("failed to parse moonjson")
-  }
-}
-
-///|
-#external
 type ImageLoader
 
 ///|
@@ -40,9 +29,10 @@ pub async fn SyncLoader::load(
   data_url : String,
   image_loader : ImageLoader,
 ) -> SyncLoader raise Error {
-  let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
-    |> @js.Value::cast
-  SyncLoader::new(name, loader, image_loader)
+  ...
+  // let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
+  //   |> @js.Value::cast
+  // SyncLoader::new(name, loader, image_loader)
 }
 
 ///|
@@ -56,13 +46,14 @@ fn SyncLoader::new(
 
 ///|
 pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
-  {
-    loader_name: self.name,
-    image_loader: Some(self.image_loader),
-    name: path.last().unwrap(),
-    desc: self.loader.load_desc(join_path(path)).as_moonjson(),
-    path: path |> @immut/array.from_array,
-  }
+  ...
+  // {
+  //   loader_name: self.name,
+  //   image_loader: Some(self.image_loader),
+  //   name: path.last().unwrap(),
+  //   desc: self.loader.load_desc(join_path(path)).as_moonjson(),
+  //   path: path |> @immut/array.from_array,
+  // }
 }
 
 ///|
@@ -262,15 +253,14 @@ pub fn get_bitmap(self : NxNode) -> Bitmap? {
     match self.desc {
       { "__i": Json::String(path), .. } =>
         Some({
-          image: self.image_loader.unwrap().load_image_by_path(path),
-          id: self.loader_name + "/" + path,
+          // image: self.image_loader.unwrap().load_image_by_path(path),
+          image: panic(),
           width: self["__w"].as_int(),
           height: self["__h"].as_int(),
         })
       { "__b": Json::Number(bid), .. } =>
         Some({
           image: self.image_loader.unwrap().load_image(bid.to_int()),
-          id: self.loader_name + "/" + bid.to_string(),
           width: self["__w"].as_int(),
           height: self["__h"].as_int(),
         })
@@ -314,19 +304,13 @@ pub impl @json.FromJson for BitmapResource with from_json(json, path) -> BitmapR
 ///|
 pub(all) struct Bitmap {
   image : Image
-  id : String
   width : Int
   height : Int
 }
 
-// ///|
-// pub fn to_string(self : Bitmap) -> String {
-//   "{id=\{self.id}, width=\{self.width}, height=\{self.height}}"
-// }
-
 ///|
 pub impl ToJson for Bitmap with to_json(self) -> Json {
-  { "id": self.id.to_json() }
+  {}
 }
 
 ///|

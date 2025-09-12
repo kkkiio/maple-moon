@@ -38,11 +38,9 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame raise {
 ///|
 pub fn Frame::new(
   resource : FrameResource,
-  loader_name : String,
-  image_loader : @resource.ImageLoader,
   default_delay? : Int = 100,
 ) -> Frame {
-  let texture = Texture::load(resource.texture, loader_name, image_loader)
+  let texture = Texture::load(resource.texture)
   let delay = match resource.delay {
     0 => default_delay
     it => it
@@ -62,7 +60,7 @@ struct FrameResource {
   head : Point[Int]
   opacities : (Int, Int)
   scales : (Int, Int)
-} derive(ToJson)
+}
 
 ///|
 pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameResource raise @json.JsonDecodeError {
@@ -200,13 +198,8 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
   let blend = src["blend"].get_bool() catch {
     _ => raise InvalidFormat("blend must be a bool")
   }
-  let frames = match src.get_bitmap() {
-    Some(_) => {
-      // 100ms delay for blend is too fast, see Map/Map1/101000000.img
-      let default_delay = if blend { Some(2500) } else { None }
-      [Frame::from_resource(src, default_delay?)]
-    }
-    None => {
+  let frames = match src.value() {
+    { "0": _, .. } => {
       let fs = []
       for i = 0; ; i = i + 1 {
         let node = src[i.to_string()]
@@ -219,6 +212,11 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
         raise InvalidFormat("Animation must have at least one frame.")
       }
       fs
+    }
+    _ => {
+      // 100ms delay for blend is too fast, see Map/Map1/101000000.img
+      let default_delay = if blend { Some(2500) } else { None }
+      [Frame::from_resource(src, default_delay?)]
     }
   }
   let zigzag = src["zigzag"].get_bool() catch {
@@ -243,16 +241,12 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
 }
 
 ///|
-pub fn Animation::new(
-  resource : AnimationResource,
-  loader_name : String,
-  image_loader : @resource.ImageLoader,
-) -> Animation {
+pub fn Animation::new(resource : AnimationResource) -> Animation {
   let blend = resource.blend
   // 100ms delay for blend is too fast, see Map/Map1/101000000.img
   let default_delay = if blend { 2500 } else { 100 }
   let frames = resource.frames.map(fn(frame) {
-    Frame::new(frame, loader_name, image_loader, default_delay~)
+    Frame::new(frame, default_delay~)
   })
   if blend && frames.length() == 1 {
     // add a dual frame with reversed opacity to achieve zigzag effect
@@ -277,7 +271,7 @@ struct AnimationResource {
   blend : Bool
   frames : Array[FrameResource]
   zigzag : Bool
-} derive(ToJson)
+}
 
 ///|
 pub impl @json.FromJson for AnimationResource with from_json(json, path) -> AnimationResource raise @json.JsonDecodeError {
@@ -529,4 +523,12 @@ pub fn AnimationData::to_selene_sprite(
     z,
     offset=self.left_top,
   )
+}
+
+///|
+pub fn nx_animation_to_selene_sprite(
+  src : @resource.NxAnimation,
+  z? : Int = 0,
+) -> @sprite.Sprite {
+  AnimationData::from_nx_animation(src).to_selene_sprite(z~)
 }

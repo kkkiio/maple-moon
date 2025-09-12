@@ -7,6 +7,9 @@ struct Module {
 pub async fn Module::load(io_service : @io_task.IOService) -> Module raise {
   let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "special_item",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Item/Special",
+    ),
   )
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(io_service, src) }

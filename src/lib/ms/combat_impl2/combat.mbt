@@ -143,13 +143,14 @@ pub fn Combat::use_move(
       .map(@log.unwrap_err(_))
     return
   }
-  let reason = self.can_use(
-    player.character,
-    player.skill_book,
-    player.stats,
-    player.inventory,
-    act,
-  )
+  // let reason = self.can_use(
+  //   player.character,
+  //   player.skill_book,
+  //   player.stats,
+  //   player.inventory,
+  //   act,
+  // )
+  let reason = @combat_impl.ForbidReason::FBR_NONE
   if reason == @combat_impl.ForbidReason::FBR_NONE {
     let after_images = match attack_weapon {
       Some(weapon) => {
@@ -222,40 +223,41 @@ fn Combat::apply_move(
   after_images : Map[String, @char_look.AfterImage],
 ) -> Unit {
   if act.is_attack() {
-    let (degenerate, attacktype) = check_attack_type(
-      player.character,
-      player.inventory,
-      act.is_skill(),
-    )
-    act.apply_useeffects(player.character)
-    act.apply_actions(player.character, attacktype) // WARN: this will change the stance
-    let stance_name = player.character.get_look().get_stance().name()
-    player.character.set_afterimage(after_images.get(stance_name).unwrap())
-    let attack = act.make_attack(
-      player.character,
-      player.inventory,
-      attacktype,
-      degenerate,
-    )
-    let range = make_attack_range(attack)
-    let mobcount = attack.mobcount
-    let result = {
-      ..AttackResult::new(attack),
-      attacker: player.character.get_oid(),
-    }
-    let mob_objs = self.mobs.get_mobs()
-    // TODO: check reactor objects
-    let origin = attack.origin
-    let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
-    self.apply_result_movement(player, act, result)
-    self.apply_attack_to_mobs(
-      player.character,
-      act,
-      attack,
-      mob_targets,
-      result,
-      true,
-    )
+    ...
+    // let (degenerate, attacktype) = check_attack_type(
+    //   player.character,
+    //   player.inventory,
+    //   act.is_skill(),
+    // )
+    // act.apply_useeffects(player.character)
+    // act.apply_actions(player.character, attacktype) // WARN: this will change the stance
+    // let stance_name = player.character.get_look().get_stance().name()
+    // player.character.set_afterimage(after_images.get(stance_name).unwrap())
+    // let attack = act.make_attack(
+    //   player.character,
+    //   player.inventory,
+    //   attacktype,
+    //   degenerate,
+    // )
+    // let range = make_attack_range(attack)
+    // let mobcount = attack.mobcount
+    // let result = {
+    //   ..AttackResult::new(attack),
+    //   attacker: player.character.get_oid(),
+    // }
+    // let mob_objs = self.mobs.get_mobs()
+    // // TODO: check reactor objects
+    // let origin = attack.origin
+    // let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
+    // self.apply_result_movement(player, act, result)
+    // self.apply_attack_to_mobs(
+    //   player.character,
+    //   act,
+    //   attack,
+    //   mob_targets,
+    //   result,
+    //   true,
+    // )
   } else {
     act.apply_useeffects(player.character)
     act.apply_actions(player.character, @combat_proto.AttackType::MAGIC)
@@ -727,7 +729,7 @@ async fn load_after_images_by_skill_weapon(
   let (skill_id, wepon_after_image_name, weapon_level) = key.inner()
   let after_images = Map::new()
   if skill_id > 0 {
-    let strid = @string_format.stoi_left_pad0(skill_id, 7)
+    let strid = @utils.stoi_left_pad0(skill_id, 7)
     let skill_srcs = @skill.skill_loader().load_res_async([
       strid.substring(end=3) + ".img",
       "skill",
@@ -740,10 +742,7 @@ async fn load_after_images_by_skill_weapon(
       let resource : @char_look.AfterNxImageResource = @json.from_json(
         src.value(),
       )
-      let after_image = @char_look.AfterImage::new(
-        resource.simplify(),
-        src.get_image_loader(),
-      )
+      let after_image = @char_look.AfterImage::new(resource.simplify())
       after_images[stance_name] = after_image
     }
   }
@@ -757,10 +756,7 @@ async fn load_after_images_by_skill_weapon(
     let resource : @char_look.AfterNxImageResource = @json.from_json(
       src.value(),
     )
-    let after_image = @char_look.AfterImage::new(
-      resource.simplify(),
-      src.get_image_loader(),
-    )
+    let after_image = @char_look.AfterImage::new(resource.simplify())
     after_images[stance_name] = after_image
   }
   after_images

@@ -9,7 +9,12 @@ struct Obj {
 
 ///|
 fn get_object_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("obj")
+  @resource.AsyncLoader::new(
+    "obj",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Obj",
+    ),
+  )
 }
 
 ///|
@@ -24,12 +29,10 @@ pub async fn Obj::load(obj : ObjResource) -> Obj raise {
 
 ///|
 fn Obj::from_resource(obj : ObjResource, obj_src : NxNode) -> Obj raise {
-  {
-    animation: @graphics.Animation::from_resource_ex(obj_src),
-    pos: @struct.Point::new(obj.x, obj.y),
-    flip: obj.f,
-    z: obj.z,
+  let animation = @graphics.Animation::from_resource_ex(obj_src) catch {
+    e => fail("Failed to load animation: \{e}, obj_src=\{obj_src.path()}")
   }
+  { animation, pos: @struct.Point::new(obj.x, obj.y), flip: obj.f, z: obj.z }
 }
 
 ///|

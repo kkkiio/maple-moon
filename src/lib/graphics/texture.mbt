@@ -1,16 +1,15 @@
 ///|
 pub(all) struct Texture {
-  bitmap : @resource.Bitmap?
+  bitmap : @sprite.AnimationFrame?
   mut origin : @struct.Point[Int]
   dimensions : @struct.Point[Int]
 } derive(Default)
 
 ///|
 pub fn Texture::to_string(self : Texture) -> String {
-  let bid = self.bitmap.map_or("", fn(bitmap) { bitmap.id })
   let origin = self.origin
   let dimensions = self.dimensions
-  "Texture{bid=\{bid}, origin=\{origin}, dimensions=\{dimensions}}"
+  "Texture{origin=\{origin}, dimensions=\{dimensions}}"
 }
 
 ///|
@@ -18,7 +17,7 @@ pub impl ToJson for Texture with to_json(self) -> Json {
   match self.bitmap {
     Some(bitmap) =>
       {
-        "bitmap": bitmap.to_json(),
+        "bitmap": bitmap.sprite_path.to_json(),
         "origin": self.origin.to_json(),
         "dimensions": self.dimensions.to_json(),
       }
@@ -29,73 +28,50 @@ pub impl ToJson for Texture with to_json(self) -> Json {
 ///|
 pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
   // TODO: source,_outlink,_inlink
-  match src.get_bitmap() {
-    Some(bmp) =>
-      {
-        bitmap: Some(bmp),
-        origin: (try? src["origin"].as_point()).unwrap(),
-        dimensions: { x: bmp.width, y: bmp.height },
-      }
-    None => { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
+  let v = src.value()
+  if v is Null {
+    return { bitmap: None, origin: { x: 0, y: 0 }, dimensions: { x: 0, y: 0 } }
   }
-}
-
-///|
-pub fn Texture::load(
-  resource : TextureResource,
-  loader_name : String,
-  image_loader : @resource.ImageLoader,
-) -> Texture {
-  let origin = resource.origin
-  match resource.bitmap {
-    Bid(bid, w, h) => {
-      let bitmap = image_loader.load_image(bid)
-      {
-        bitmap: Some({
-          image: bitmap,
-          id: loader_name + "/" + bid.to_string(),
-          width: w,
-          height: h,
-        }),
-        origin,
-        dimensions: { x: w, y: h },
-      }
-    }
-    Path(path, w, h) => {
-      let bitmap = image_loader.load_image_by_path(path)
-      {
-        bitmap: Some({
-          image: bitmap,
-          id: loader_name + "/" + path,
-          width: w,
-          height: h,
-        }),
-        origin,
-        dimensions: { x: w, y: h },
-      }
+  let tex : @resource.NxTexture = @json.from_json(v) catch {
+    err => {
+      @log.error({ "err": err }, "failed to parse nx texture")
+      panic()
     }
   }
-}
-
-///|
-struct TextureResource {
-  bitmap : @resource.BitmapResource
-  origin : @struct.Point[Int]
-} derive(ToJson)
-
-///|
-pub impl @json.FromJson for TextureResource with from_json(json, path) -> TextureResource raise @json.JsonDecodeError {
-  // TODO: source,_outlink,_inlink
-  let bitmap : @resource.BitmapResource = @json.from_json(json)
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expect object"))
+  {
+    bitmap: Some(@sprite.AnimationFrame::{
+      sprite_path: tex.i,
+      size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
+      offset: @selene_math.Vec2D(
+        tex.offset.x.to_double(),
+        tex.offset.y.to_double(),
+      ),
+    }),
+    origin: tex.origin,
+    dimensions: { x: tex.w, y: tex.h },
   }
-  let origin = @json.from_json(
-    obj.get("origin").unwrap_or(Json::null()),
-    path=path.add_key("origin"),
-  )
-  { bitmap, origin }
 }
+
+///|
+pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
+  {
+    bitmap: Some(@sprite.AnimationFrame::{
+      sprite_path: tex.i,
+      size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
+      offset: @selene_math.Vec2D(
+        tex.offset.x.to_double(),
+        tex.offset.y.to_double(),
+      ),
+    }),
+    origin: tex.origin,
+    dimensions: { x: tex.w, y: tex.h },
+  }
+}
+
+///|
+pub typealias @resource.NxTexture as TextureResource
+
+///|
 
 ///|
 pub fn Texture::shift(self : Texture, amount : @struct.Point[Int]) -> Unit {
@@ -124,16 +100,16 @@ pub fn Texture::get_dimensions(self : Texture) -> @struct.Point[Int] {
 
 ///|
 pub impl Drawable for Texture with draw(self : Texture, args : DrawArgument) -> Unit {
-  match self.bitmap {
-    None => ()
-    Some(bitmap) =>
-      GraphicsGL::get().draw_bitmap(
-        bitmap,
-        args.get_rectangle(self.origin, self.dimensions),
-        args.color,
-        args.angle,
-      )
-  }
+  // match self.bitmap {
+  //   None => ()
+  //   Some(bitmap) =>
+  //     GraphicsGL::get().draw_bitmap(
+  //       bitmap,
+  //       args.get_rectangle(self.origin, self.dimensions),
+  //       args.color,
+  //       args.angle,
+  //     )
+  // }
 }
 
 ///|

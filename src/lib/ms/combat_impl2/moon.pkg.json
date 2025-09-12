@@ -22,7 +22,6 @@
     "KKKIIO/maple-moon-client/lib/ms/char_look",
     "KKKIIO/maple-moon-client/lib/ms/char_look/types",
     "KKKIIO/maple-moon-client/lib/ms/equip",
-    "KKKIIO/maple-moon-client/lib/ms/equip/data",
-    "KKKIIO/maple-moon-client/lib/ms/string_format"
+    "KKKIIO/maple-moon-client/lib/ms/equip/data"
   ]
 }

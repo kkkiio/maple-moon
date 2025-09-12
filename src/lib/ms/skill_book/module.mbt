@@ -117,25 +117,23 @@ pub fn Module::make_actions(
 }
 
 ///|
-pub fn Module::load_player_skill_book(
+pub async fn Module::load_player_skill_book(
   self : Module,
   job : @job.Job,
-) -> @utils.Future[&@player.SkillBook] {
-  SkillBook::load(self.string_loader, self.io_service, job, self.watchers)
-  .tap(fn(skill_book) {
-    if self.player_skill_book is Some((_, cont_listen)) {
-      cont_listen.val = false // dispose
-    }
-    let cont_listen = Ref::new(true)
-    self.player_skill_book = Some((skill_book, cont_listen))
-    self.combat.listen_attack_events(fn(event) {
-      skill_book.on_attack_event(
-        event,
-        self.combat,
-        (self.player_getter)().unwrap(),
-      )
-      cont_listen.val
-    })
+) -> &@player.SkillBook raise {
+  let skill_book = SkillBook::load(self.string_loader, job, self.watchers)
+  if self.player_skill_book is Some((_, cont_listen)) {
+    cont_listen.val = false // dispose
+  }
+  let cont_listen = Ref::new(true)
+  self.player_skill_book = Some((skill_book, cont_listen))
+  self.combat.listen_attack_events(fn(event) {
+    skill_book.on_attack_event(
+      event,
+      self.combat,
+      (self.player_getter)().unwrap(),
+    )
+    cont_listen.val
   })
-  .map(fn(skill_book) { skill_book })
+  skill_book
 }

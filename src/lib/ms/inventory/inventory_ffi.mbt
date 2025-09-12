@@ -3,40 +3,41 @@ async fn get_all_items_by_type(
   mod : Module,
   kind : TypeId,
 ) -> Array[UISlot] raise {
-  let slotmax = mod.inventory.get_slotmax(kind)
-  async fn load_slot(slot_no) -> WithItemSlot? raise Error {
-    match mod.inventory.get_slot_item_at(kind, slot_no) {
-      Some(slot_item) => {
-        let item_data = @item.ItemData::get_async(slot_item.item_id)
-        Some({
-          slot_no,
-          id: item_data.item_id,
-          name: item_data.name,
-          desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
-            make_equip_desc(item_data)
-          } else {
-            make_html_desc(item_data.desc)
-          },
-          count: if kind == TypeId::EQUIP {
-            1
-          } else {
-            mod.inventory.get_item_count_at_slot(kind, slot_no)
-          },
-          icon: item_data.get_icon(false).bitmap.map_or(
-            @resource.Image::new_pending(),
-            fn(bitmap) { bitmap.image },
-          ),
-        })
-      }
-      None => None
-    }
-  }
+  ...
+  // let slotmax = mod.inventory.get_slotmax(kind)
+  // async fn load_slot(slot_no) -> WithItemSlot? raise Error {
+  //   match mod.inventory.get_slot_item_at(kind, slot_no) {
+  //     Some(slot_item) => {
+  //       let item_data = @item.ItemData::get_async(slot_item.item_id)
+  //       Some({
+  //         slot_no,
+  //         id: item_data.item_id,
+  //         name: item_data.name,
+  //         desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
+  //           make_equip_desc(item_data)
+  //         } else {
+  //           make_html_desc(item_data.desc)
+  //         },
+  //         count: if kind == TypeId::EQUIP {
+  //           1
+  //         } else {
+  //           mod.inventory.get_item_count_at_slot(kind, slot_no)
+  //         },
+  //         icon: item_data.get_icon(false).bitmap.map_or(
+  //           @resource.Image::new_pending(),
+  //           fn(bitmap) { bitmap.image },
+  //         ),
+  //       })
+  //     }
+  //     None => None
+  //   }
+  // }
 
-  (1)
-  .until(slotmax, inclusive=true)
-  .map(fn(slot_no) { fn() raise { load_slot(slot_no) } })
-  |> Array::from_iter()
-  |> @js.async_all()
+  // (1)
+  // .until(slotmax, inclusive=true)
+  // .map(fn(slot_no) { fn() raise { load_slot(slot_no) } })
+  // |> Array::from_iter()
+  // |> @js.async_all()
 }
 
 ///|

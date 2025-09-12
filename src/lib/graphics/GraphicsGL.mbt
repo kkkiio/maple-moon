@@ -130,24 +130,24 @@ pub fn GraphicsGL::draw_bitmap(
   // if self.locked {
   //   return
   // }
-  if color.invisible() {
-    return
-  }
-  if not(rect.overlaps(self.screen)) {
-    return
-  }
-  guard bmp.image.poll() is Some(image) else { return }
-  self.quads.push(
-    Quad::new(
-      rect.left(),
-      rect.right(),
-      rect.top(),
-      rect.bottom(),
-      self.atlas.get_offset(bmp.id, image),
-      color,
-      angle,
-    ),
-  )
+  // if color.invisible() {
+  //   return
+  // }
+  // if not(rect.overlaps(self.screen)) {
+  //   return
+  // }
+  // guard bmp.image.poll() is Some(image) else { return }
+  // self.quads.push(
+  //   Quad::new(
+  //     rect.left(),
+  //     rect.right(),
+  //     rect.top(),
+  //     rect.bottom(),
+  //     self.atlas.get_offset(bmp.id, image),
+  //     color,
+  //     angle,
+  //   ),
+  // )
 }
 
 ///|

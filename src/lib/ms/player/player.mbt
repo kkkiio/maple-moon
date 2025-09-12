@@ -12,19 +12,19 @@ pub(open) trait SkillBook {
 
 ///|
 pub(all) struct Player {
-  string_loader : @resource.SyncLoader
+  entity : @system.Entity
   character : @character.CharBase
   stats : CharStats
   keys_down : Map[@keyboard.BasicActionId, Bool]
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
-  inventory : &Inventory
+  // inventory : &Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
-  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook]
-  mut skill_book : &SkillBook
+  // load_skill_book : async (@job.Job) -> &SkillBook raise
+  // mut skill_book : &SkillBook
   mut changing_job : @utils.Future[(@job.Job, &SkillBook)]?
 }
 
@@ -38,78 +38,66 @@ pub(open) trait Inventory {
 }
 
 ///|
-pub fn Player::load(
+pub async fn Player::load(
   entry : @character.CharEntry,
-  inventory : &Inventory,
+  // inventory : &Inventory,
   look : @char_look.CharLook,
   damage_number_set : @ui.NumberSet,
-  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
+  // load_skill_book : async (@job.Job) -> &SkillBook raise,
   new_char_stats : (@job.Job) -> CharStats,
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
-) -> @utils.Future[Player] {
-  @job.Job::load(
-    string_loader,
-    io_service,
-    id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0),
+) -> Player raise {
+  let job = @job.Job::load(id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0))
+  // let skill_book = load_skill_book(job)
+  Player::new(
+    entry.id,
+    entry.stats.name,
+    // inventory,
+    // skill_book,
+    look,
+    damage_number_set,
+    // load_skill_book,
+    new_char_stats(job),
   )
-  .bind(fn(job) {
-    load_skill_book(job).map(fn(skill_book) { (job, skill_book) })
-  })
-  .map(fn(it) {
-    let (job, skill_book) = it
-    Player::new(
-      entry,
-      inventory,
-      skill_book,
-      look,
-      damage_number_set,
-      network,
-      load_skill_book,
-      new_char_stats(job),
-      string_loader,
-    )
-  })
 }
 
 ///|
 /// Construct a player object from the given character entry.
 pub fn Player::new(
-  entry : @character.CharEntry,
-  inventory : &Inventory,
-  skill_book : &SkillBook,
+  id : Int,
+  name : String,
+  // inventory : &Inventory,
+  // skill_book : &SkillBook,
   look : @char_look.CharLook,
   damage_number_set : @ui.NumberSet,
-  network : @net.Network,
-  load_skill_book : (@job.Job) -> @utils.Future[&SkillBook],
+  // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
-  string_loader : @resource.SyncLoader,
 ) -> Player {
   let character = @character.Character::new(
-    entry.id,
+    id,
     look,
-    entry.stats.name,
+    name,
     damage_number_set,
-    get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
+    // get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
+    get_skilllevel=fn(_) { 0 }, // TODO: implement
     stats,
     get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
   )
-  let p = {
-    string_loader,
+  let entity = @system.Entity::new()
+  let p : Player = {
+    entity,
     character,
     stats,
     keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
-    inventory,
+    // inventory,
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::new(),
-    skill_book,
+    // skill_book,
     changing_job: None,
-    load_skill_book,
+    // load_skill_book,
   }
   p.set_state(CharState::STAND)
   p.set_direction(true)
@@ -118,10 +106,10 @@ pub fn Player::new(
       p.set_state(@character.CharState::DIED)
       let died = true
       let target_id = 0
-      network.send_message(
-        { died, target_id, target_p: "sp", use_wheel: false },
-        log_level=@log.Level::INFO,
-      )
+      // network.send_message(
+      //   { died, target_id, target_p: "sp", use_wheel: false },
+      //   log_level=@log.Level::INFO,
+      // )
     }
     IterContinue
   })
@@ -163,7 +151,7 @@ pub fn update(
     Some(it) => {
       let (job, skill_book) = it
       self.stats.change_job(job)
-      self.skill_book = skill_book
+      // self.skill_book = skill_book
       self.changing_job = None
     }
     None => ()
@@ -357,11 +345,11 @@ pub fn recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   let weapontype = self.character.get_weapontype()
   self.stats.init_totalstats()
   if equip_changed {
-    self.inventory.recalc_stats(weapontype)
+    // self.inventory.recalc_stats(weapontype)
   }
   for stat in @maple_stat.all_equip_stats {
-    let inventory_total = self.inventory.get_stat(stat)
-    self.stats.add_value(stat, inventory_total)
+    // let inventory_total = self.inventory.get_stat(stat)
+    // self.stats.add_value(stat, inventory_total)
   }
   // TODO: Implement passive skills
   for buff in self.buffs.values() {
@@ -443,7 +431,8 @@ pub fn damage(
 
 ///|
 pub fn get_skills(self : Player) -> &SkillBook {
-  self.skill_book
+  ...
+  // self.skill_book
 }
 
 ///|
@@ -493,11 +482,11 @@ pub fn change_skill(
   masterlevel : Int,
   expiration : Int,
 ) -> Unit {
-  let old_level = self.skill_book.get_level(skill_id)
-  self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
-  if old_level != skill_level {
-    self.recalc_stats(false)
-  }
+  // let old_level = self.skill_book.get_level(skill_id)
+  // self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
+  // if old_level != skill_level {
+  //   self.recalc_stats(false)
+  // }
 }
 
 ///|
@@ -521,14 +510,17 @@ pub fn change_job(
   job_id : Int,
   io_service : @io_task.IOService,
 ) -> Unit {
-  self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
-  self.changing_job = @job.Job::load(self.string_loader, io_service, id=job_id).bind(fn(
-        job,
-      ) {
-        (self.load_skill_book)(job).map(fn(skill_book) { (job, skill_book) })
-      },
-    )
-    |> Some
+  // self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
+  // self.changing_job = io_service
+  //   .submit(fn() {
+  //     let job = @job.Job::load(id=job_id)
+  //     let skill_book = (self.load_skill_book)(job)
+  //     (job, skill_book)
+  //   })
+  //   .map(fn(it) {
+  //     it.unwrap() // TODO: handle error
+  //   })
+  //   |> Some
 }
 
 ///|

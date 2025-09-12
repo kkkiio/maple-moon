@@ -43,7 +43,7 @@ pub async fn SkillData::load(
   string_loader : @resource.SyncLoader,
   id : Int,
 ) -> SkillData raise {
-  let strid = @string_format.stoi_left_pad0(id, 7)
+  let strid = @utils.stoi_left_pad0(id, 7)
   let jobid = strid.substring(end=3)
   let src = skill_loader().load_res_async([jobid + ".img", "skill", strid])
   let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
@@ -156,7 +156,7 @@ struct SkillResource {
   invisible : Bool
   level_stats : Map[Int, Stats]
   req_weapon : @weapon.Type
-} derive(ToJson)
+}
 
 ///|
 struct SkillTextResource {
@@ -192,16 +192,14 @@ pub fn SkillData::new(
   skill_res : SkillResource,
   text_src : SkillTextResource,
 ) -> SkillData {
-  let strid = @string_format.stoi_left_pad0(id, 7)
+  let strid = @utils.stoi_left_pad0(id, 7)
   let jobid = strid.substring(end=3)
 
   // Load icons
   let icons = FixedArray::from_array([
-    skill_res.icon |> @graphics.Texture::load("", skill_src.get_image_loader()),
-    skill_res.icon_disabled
-    |> @graphics.Texture::load("", skill_src.get_image_loader()),
-    skill_res.icon_mouseover
-    |> @graphics.Texture::load("", skill_src.get_image_loader()),
+    skill_res.icon |> @graphics.Texture::load(),
+    skill_res.icon_disabled |> @graphics.Texture::load(),
+    skill_res.icon_mouseover |> @graphics.Texture::load(),
   ])
   let name = text_src.name
   let desc = text_src.desc
@@ -321,7 +319,12 @@ pub fn get_stats(self : SkillData, level : Int) -> Stats? {
 
 ///|
 pub fn skill_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("skill")
+  @resource.AsyncLoader::new(
+    "skill",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Skill",
+    ),
+  )
 }
 
 ///|

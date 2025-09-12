@@ -74,20 +74,24 @@ pub fn MapleButton::new(
   pos? : Point[Int] = @struct.Point::default(),
   on_click? : () -> Unit = fn() { () },
 ) -> MapleButton {
-  let button = @system.Entity::new()
+  let entity = @system.Entity::new()
   @position.positions.set(
-    button,
+    entity,
     @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double()),
   )
   let animation = res.inner().get(ButtonState::NORMAL).unwrap()
-  let sp = @graphics.AnimationData::from_nx_animation(animation).to_selene_sprite(
+  let sp = @graphics.nx_animation_to_selene_sprite(
+    animation,
     z=@graphics.UI_ZINDEX,
   )
-  @sprite.sprites.set(button, sp)
+  @sprite.sprites.set(entity, sp)
   @collision.shapes.set(
-    button,
+    entity,
     @collision.CollisionShape::Rect(
-      size=@selene_math.Vec2D(21.0, 22.0),
+      size=@selene_math.Vec2D(
+        animation.frames[0].texture.w.to_double(),
+        animation.frames[0].texture.h.to_double(),
+      ),
       offset=@selene_math.Vec2D::zero(),
     ),
   )
@@ -97,9 +101,9 @@ pub fn MapleButton::new(
       on_click()
     }
   })
-  @collision.pickables.set(button, pickable)
-  @ui.uis.set(button, @ui.Ui::new())
-  { entity: button }
+  @collision.pickables.set(entity, pickable)
+  @ui.uis.set(entity, @ui.Ui::new())
+  { entity, }
 }
 
 // ///|
@@ -168,4 +172,9 @@ pub impl UIButton for MapleButton with origin(self : MapleButton) -> Point[Int] 
 fn get_dimensions(animation : @resource.NxAnimation) -> @struct.Point[Int] {
   let texture = animation.frames[0].texture
   { x: texture.w, y: texture.h }
+}
+
+///|
+pub fn MapleButton::destroy(self : MapleButton) -> Unit {
+  self.entity.destroy()
 }

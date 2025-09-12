@@ -1,7 +1,6 @@
 ///|
 struct SelectCharUI {
   characters : Array[(Int, @char_look.CharLook, @ui.NameTag)]
-  on_select_character : (Int) -> Unit
   on_new_character : () -> Unit
   select_slot : Int?
   resource : SelectCharUIResource
@@ -9,6 +8,8 @@ struct SelectCharUI {
   // 每项：(entity, frame_counter_ref, segments)
   // segment: (duration_frames, from_alpha, to_alpha)
   animations : Array[(@system.Entity, Ref[Int], Array[(Int, Double, Double)])]
+  btn_select : @ui.MapleButton
+  entities : Array[@system.Entity]
 }
 
 ///|
@@ -208,12 +209,9 @@ pub(all) struct SelectableCharacter {
 ///|
 pub fn SelectCharUI::new(
   resources : SelectCharUIResource,
-  on_select_character? : (Int) -> Unit = fn(_i) {  },
+  on_select_character? : (Int) -> Unit = fn(_) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
-  let entity = @system.Entity::new()
-  @position.positions.set(entity, @position.Position(@selene_math.Vec2D(0, 0)))
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   // ui_model.dimension = @struct.Point::new(800, 600)
 
   let back13 = @sprite.Animation::single_frame(
@@ -361,7 +359,7 @@ pub fn SelectCharUI::new(
     blend: false,
     zigzag: false,
   }
-  let bt_select = @ui.MapleButton::new(
+  let btn_select = @ui.MapleButton::new(
     @ui.MapleButtonResource(res),
     pos=@struct.Point::new(601, 393),
     on_click=fn() {
@@ -380,8 +378,9 @@ pub fn SelectCharUI::new(
   //   |> @ui.Button::as_interactable,
   // )
   {
+    btn_select,
+    entities,
     select_slot: None,
-    on_select_character,
     on_new_character,
     characters,
     resource: resources,
@@ -444,7 +443,6 @@ pub fn SelectCharUI::add_character(
 
 ///|
 pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
-  let resources = self.resource
   let render_elements = []
   // Point<int16_t> character_new_pos = Point<int16_t>(200, 495);
   // buttons_[Buttons::CHARACTER_NEW] =
@@ -491,35 +489,54 @@ const PAGE_SIZE = 8
 let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
+fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
+  self.btn_select.destroy()
+  for entity in self.entities {
+    entity.destroy()
+  }
+  for character in self.characters {
+    let (_, char_look, _) = character
+    char_look.destroy()
+  }
+}
+
+///|
 pub fn add_select_char_ui() -> Unit raise {
-  let ui = SelectCharUI::new(SelectCharUIResource::load())
   let draw_info = @char_look.get_draw_info()
-  select_char_ui.val = Some(ui)
-  ui.add_character({
-    cid: 1,
-    char_look: @char_look.CharLook::new(
-      {},
-      @char_look.Body::new(
-        0,
-        draw_info,
-        @char_look.get_stance_bodys_map(),
-        @char_look.get_stance_heads_map(),
-      ),
-      @char_look.Hair::new(
-        0,
-        @json.from_json(@char_look.male_1_white_hair),
-        draw_info,
-      ),
-      @char_look.Face::new(20800, @char_look.male_1_white_face),
+  let char_look = @char_look.CharLook::new(
+    {},
+    @char_look.Body::new(
+      0,
+      draw_info,
+      @char_look.get_stance_bodys_map(),
+      @char_look.get_stance_heads_map(),
+    ),
+    @char_look.Hair::new(
+      0,
+      @json.from_json(@char_look.male_1_white_hair),
       draw_info,
     ),
-    name: "kkkiio",
+    @char_look.Face::new(20800, @char_look.male_1_white_face),
+    draw_info,
+  )
+  let ui = SelectCharUI::new(SelectCharUIResource::load(), on_select_character=fn(
+    _cid,
+  ) {
+    @game_state.game_state.state = @game_state.GameStateType::Game(
+      map_id=100000000,
+      portal_id=23,
+      char_look~,
+    )
+    guard select_char_ui.val is Some(ui) else { return }
+    ui.destroy()
   })
+  select_char_ui.val = Some(ui)
+  ui.add_character({ cid: 1, char_look, name: "kkkiio" })
 }
 
 ///|
 pub fn select_char_system(_backend : &@system.Backend) -> Unit {
-  let ui = select_char_ui.val.unwrap()
+  guard select_char_ui.val is Some(ui) else { return }
   for item in ui.animations {
     let (entity, counter, segments) = item
     // 计算总帧数

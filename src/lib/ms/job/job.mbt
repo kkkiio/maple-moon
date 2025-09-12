@@ -60,11 +60,7 @@ struct Job {
 }
 
 ///|
-pub fn Job::load(
-  string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
-  id? : Int = 0,
-) -> @utils.Future[Job] {
+pub async fn Job::load(id? : Int = 0) -> Job raise {
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -79,23 +75,17 @@ pub fn Job::load(
   let subids = get_levels(upto=level).map(fn(sub_level) {
     get_subjob_id(id, level, sub_level)
   })
-  @utils.Future::all_of(
-    subids
-    .iter()
-    .map(fn(subid) {
-      io_service
-      .submit(fn() { JobData::load(subid, string_loader) })
-      .map(fn(data) { (subid, data.unwrap()) }) // TODO: handle error
+  let async_ops = subids.map(fn(subid) {
+      async fn() raise { (subid, JobData::load(subid)) }
     })
-    |> Array::from_iter,
-  ).map(fn(data_list) {
-    let sub_job_data_map = Map::new()
-    for _, it in data_list {
-      let (subid, data) = it
-      sub_job_data_map[subid] = data
-    }
-    Job::new(id, level, sub_job_data_map)
-  })
+    |> Array::from_iter
+  let data_list = @js.async_all(async_ops)
+  let sub_job_data_map = Map::new()
+  for _, it in data_list {
+    let (subid, data) = it
+    sub_job_data_map[subid] = data
+  }
+  Job::new(id, level, sub_job_data_map)
 }
 
 ///|

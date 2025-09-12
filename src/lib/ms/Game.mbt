@@ -10,7 +10,7 @@ pub(all) struct Game {
   poll_service : @io_task.PollService
   io_service : @io_task.IOService
   scheduls : @schedule.Schedules
-  stage : Ref[Stage?]
+  // stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
 }
 
@@ -55,7 +55,7 @@ pub fn Game::new() -> Game {
     poll_service,
     io_service,
     scheduls,
-    stage,
+    // stage,
     keyboard_module,
   }
 }
@@ -67,13 +67,13 @@ async fn load_modules(
   poll_service : @io_task.PollService,
   io_service : @io_task.IOService,
   scheduls : @schedule.Schedules,
-  stage_ref : Ref[Stage?],
+  // stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module,
 ) -> LoadedState raise {
   let local_storage = @config.LocalStorage::new()
-  fn get_stage() -> Stage {
-    stage_ref.val.unwrap() // TODO: handle error
-  }
+  // fn get_stage() -> Stage {
+  //   stage_ref.val.unwrap() // TODO: handle error
+  // }
 
   let add_io_task = fn(task) { poll_service.add(task) }
   let action_registry = @action.Registry::new()
@@ -130,15 +130,19 @@ async fn load_modules(
   )
   let char_look_module = @char_look.Module::load(
     fn(f) {
-      guard get_stage().get_player() is Some(player) else { return }
-      player.character.look = f(player.character.look)
+      ...
+      // guard get_stage().get_player() is Some(player) else { return }
+      // player.character.look = f(player.character.look)
     },
     io_service,
   )
   merge_stat_handlers(char_look_module.make_stat_handlers())
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(
-    fn() { get_stage().get_player() },
+    fn() {
+      ...
+      // get_stage().get_player() 
+    },
     network,
     string_loader,
     io_service,
@@ -149,8 +153,9 @@ async fn load_modules(
     inventory_module.make_show_status_info_handlers(),
   )
   let ref_render = @markup_text.RefRender::new(string_loader, fn() {
-    guard get_stage().get_player() is Some(player) else { return "" }
-    player.character.get_name()
+    // guard get_stage().get_player() is Some(player) else { return "" }
+    // player.character.get_name()
+    ...
   })
   let npc_module = @npc.Module::load(ui, network, ref_render, string_loader)
   merge_handlers(npc_module.make_handlers())
@@ -173,21 +178,26 @@ async fn load_modules(
     network, ui, char_look_module, io_service, local_storage,
   )
   let handlers = login_module.make_handlers(
-    fn(map_id, portal_id) { get_stage().transition(map_id, portal_id) },
+    fn(map_id, portal_id) {
+      ...
+      // get_stage().transition(map_id, portal_id) 
+    },
     fn(char_entry, cooldowns, callback) {
-      get_stage().set_player_stage(char_entry, cooldowns, callback)
+      ...
+      // get_stage().set_player_stage(char_entry, cooldowns, callback)
     },
     inventory_module.get_inventory(),
     fn(player) {
-      setup_game_ui(
-        ui,
-        get_stage(),
-        player,
-        action_registry,
-        timer,
-        map_module,
-        status_bar_loader,
-      )
+      ...
+      // setup_game_ui(
+      //   ui,
+      //   get_stage(),
+      //   player,
+      //   action_registry,
+      //   timer,
+      //   map_module,
+      //   status_bar_loader,
+      // )
     },
     quest_module,
   )
@@ -200,13 +210,15 @@ async fn load_modules(
   )
   merge_handlers(
     monster_module.make_handlers(fn() {
-      get_stage().get_player().map(fn(p) { p.get_stats() })
+      // get_stage().get_player().map(fn(p) { p.get_stats() })
+      ...
     }),
   )
   let drop_module = @drop.Module::load(io_service)
   merge_handlers(
     drop_module.make_handlers(fn(id) {
-      get_stage().get_character(id).map(fn(c) { c.get_phobj() })
+      // get_stage().get_character(id).map(fn(c) { c.get_phobj() })
+      ...
     }),
   )
   let char_stats_module = @char_stats.Module::load(network)
@@ -222,7 +234,10 @@ async fn load_modules(
     bullet_module,
   )
   let skill_book_module = @skill_book.Module::load(
-    fn() { get_stage().get_player() },
+    fn() {
+      ...
+      // get_stage().get_player() 
+    },
     network,
     string_loader,
     io_service,
@@ -234,8 +249,9 @@ async fn load_modules(
   let shop_module = @shop.Module::load(network, string_loader, io_service)
   merge_handlers(shop_module.make_handlers())
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
-    guard get_stage().get_player() is Some(player) else { return }
-    player.recalc_stats(false)
+    // guard get_stage().get_player() is Some(player) else { return }
+    // player.recalc_stats(false)
+    ...
   })
   net_handler_map.set(change_stat_handler.0, change_stat_handler.1)
   let show_status_info_handler = make_show_status_info_handler(
@@ -243,18 +259,21 @@ async fn load_modules(
   )
   net_handler_map.set(show_status_info_handler.0, show_status_info_handler.1)
   let job_module = @job.Module::new(fn(job_id) {
-    guard get_stage().get_player() is Some(player) else { return }
-    player.change_job(job_id, io_service)
+    // guard get_stage().get_player() is Some(player) else { return }
+    // player.change_job(job_id, io_service)
+    ...
   })
   merge_stat_handlers(job_module.make_stat_handlers())
   net_handler_map.set(@net.RECALCULATE_STATS, fn(
     _recv : @net.InPacket,
   ) -> Unit {
-    guard get_stage().get_player() is Some(player) else { return }
-    player.recalc_stats(false)
+    // guard get_stage().get_player() is Some(player) else { return }
+    // player.recalc_stats(false)
+    ...
   })
   let _ = @heal_over_time.new_module(scheduls, network, fn() {
-    get_stage().get_player().map(fn(p) { p.get_stats() })
+    // get_stage().get_player().map(fn(p) { p.get_stats() })
+    ...
   })
   let npcs = npc_module.get_npcs()
   let quests = quest_module.get_map_quests()
@@ -267,25 +286,25 @@ async fn load_modules(
     }
     true
   })
-  let stage = Stage::new(
-    map_module.get_portals_animations(),
-    monster_module.get_map_mobs(),
-    drop_module.get_map_drops(),
-    inventory_module.get_inventory(),
-    npcs,
-    quests,
-    char_look_module,
-    skill_book_module,
-    char_stats_module,
-    damage_number_set,
-    add_io_task,
-    network,
-    string_loader,
-    io_service,
-    bullet_module,
-    combat,
-  )
-  stage_ref.val = Some(stage)
+  // let stage = Stage::new(
+  //   map_module.get_portals_animations(),
+  //   monster_module.get_map_mobs(),
+  //   drop_module.get_map_drops(),
+  //   inventory_module.get_inventory(),
+  //   npcs,
+  //   quests,
+  //   char_look_module,
+  //   skill_book_module,
+  //   char_stats_module,
+  //   damage_number_set,
+  //   add_io_task,
+  //   network,
+  //   string_loader,
+  //   io_service,
+  //   bullet_module,
+  //   combat,
+  // )
+  // stage_ref.val = Some(stage)
   network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
   timer.reset()
   ui.change_state(UIStateLogin::new())
@@ -334,41 +353,46 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
 pub fn update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
-  let stage = self.stage.val.unwrap() // TODO: handle error
-  match (try? stage.update()) {
-    Ok(_) => ()
-    Err(e) => @log.error({ "err": e }, "failed to update stage")
-  }
-  loaded_state.ui.update()
+  ...
+  // let stage = self.stage.val.unwrap() // TODO: handle error
+  // match (try? stage.update()) {
+  //   Ok(_) => ()
+  //   Err(e) => @log.error({ "err": e }, "failed to update stage")
+  // }
+  // loaded_state.ui.update()
   // Music::update_context();
 }
 
 ///|
 pub fn Game::draw(self : Game, alpha : Double) -> Unit {
   @graphics.GraphicsGL::get().clear_scene()
-  let stage = self.stage.val.unwrap() // TODO: handle error
-  stage.draw(alpha)
-  // loaded_state.ui.draw(alpha)
-  @graphics.GraphicsGL::get().flush(1.0)
+  ...
+  // let stage = self.stage.val.unwrap() // TODO: handle error
+  // stage.draw(alpha)
+  // // loaded_state.ui.draw(alpha)
+  // @graphics.GraphicsGL::get().flush(1.0)
 }
 
 ///|
 fn setup_game_ui(
   ui : UI,
-  stage : Stage,
+  // stage : Stage,
   player : @player.Player,
   registry : @action.Registry,
   timer : @utils.Timer,
   map_module : @map.Module,
   status_bar_loader : @resource.SyncLoader,
 ) -> Unit {
-  ui.change_state(UIStateGame::new(stage, registry, timer))
+  ...
+  // ui.change_state(UIStateGame::new(stage, registry, timer))
   let stats = player.get_stats()
   ui.set_element(
     false,
     @ui.Element::new(
       fn(hooks) {
-        @char_stats.StatusBarUI::new(stats, hooks, status_bar_loader)
+        @char_stats.StatusBarUI::new(stats, hooks, status_bar_loader) catch {
+          e => panic()
+        }
       },
       @ui.UIElementType::STATUS_BAR,
     ),
@@ -380,17 +404,17 @@ fn setup_game_ui(
         let ui_model = hooks.ui_model
         let mini_map_ui = map_module.new_mini_map_ui(
           ui_model,
-          hooks.on_state_changed,
+          // hooks.on_state_changed,
         )
-        stage.listen_map_change(fn(map_struct) {
-          guard ui_model.active else { return false }
-          mini_map_ui.set_map(
-            map_struct.id,
-            map_struct.map_info,
-            map_struct.mini_map_resources,
-          )
-          true
-        })
+        // stage.listen_map_change(fn(map_struct) {
+        //   guard ui_model.active else { return false }
+        //   mini_map_ui.set_map(
+        //     map_struct.id,
+        //     map_struct.map_info,
+        //     map_struct.mini_map_resources,
+        //   )
+        //   true
+        // })
         mini_map_ui
       },
       @ui.UIElementType::MINI_MAP,
@@ -429,9 +453,9 @@ pub fn Game::get_login_mod(self : Game) -> @login.Module? {
 }
 
 ///|
-pub fn Game::get_stage(self : Game) -> Stage? {
-  self.stage.val
-}
+// pub fn Game::get_stage(self : Game) -> Stage? {
+//   self.stage.val
+// }
 
 ///|
 pub fn Game::get_shop_mod(self : Game) -> @shop.Module? {

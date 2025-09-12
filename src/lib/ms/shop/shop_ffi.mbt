@@ -19,44 +19,44 @@ pub fn watch_opening_shop_ffi(
   mod : Module,
   callback : (@js.Nullable[ShopUIData]) -> Bool,
 ) -> Unit {
-  let mut cont = true
-  let listener = fn(npc_shop : OpenNpcShop?) {
-    guard npc_shop is Some(npc_shop) else {
-      return callback(@js.Nullable::null())
-    }
-    async fn async_callback() raise {
-      let shop_data = {
-        npc_id: npc_shop.npc_id,
-        shop_items: npc_shop.items.mapi(fn(i, item) {
-          async fn() {
-            let item_data = @item.ItemData::get_async(item.id)
-            {
-              slot_no: i,
-              item_id: item.id,
-              name: item_data.name,
-              price: item.price,
-              icon: item_data.get_icon(false).bitmap.map_or(
-                @resource.Image::new_pending(),
-                fn(bitmap) { bitmap.image },
-              ),
-              buyable_qty: item.buyable,
-            }
-          }
-        })
-        |> @js.async_all(),
-      }
-      cont = callback(@js.Nullable::from_option(Some(shop_data)))
-    }
+  // let mut cont = true
+  // let listener = fn(npc_shop : OpenNpcShop?) {
+  //   guard npc_shop is Some(npc_shop) else {
+  //     return callback(@js.Nullable::null())
+  //   }
+  //   async fn async_callback() raise {
+  //     let shop_data = {
+  //       npc_id: npc_shop.npc_id,
+  //       shop_items: npc_shop.items.mapi(fn(i, item) {
+  //         async fn() {
+  //           let item_data = @item.ItemData::get_async(item.id)
+  //           {
+  //             slot_no: i,
+  //             item_id: item.id,
+  //             name: item_data.name,
+  //             price: item.price,
+  //             icon: item_data.get_icon(false).bitmap.map_or(
+  //               @resource.Image::new_pending(),
+  //               fn(bitmap) { bitmap.image },
+  //             ),
+  //             buyable_qty: item.buyable,
+  //           }
+  //         }
+  //       })
+  //       |> @js.async_all(),
+  //     }
+  //     cont = callback(@js.Nullable::from_option(Some(shop_data)))
+  //   }
 
-    if cont {
-      mod.io_service.execute(async_callback)
-    }
-    cont
-  }
-  if not(listener(mod.opening_shop)) {
-    return
-  }
-  mod.opening_shop_listeners.push(listener)
+  //   if cont {
+  //     mod.io_service.execute(async_callback)
+  //   }
+  //   cont
+  // }
+  // if not(listener(mod.opening_shop)) {
+  //   return
+  // }
+  // mod.opening_shop_listeners.push(listener)
 }
 
 ///|

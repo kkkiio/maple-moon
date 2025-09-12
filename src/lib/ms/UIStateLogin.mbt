@@ -1,4 +1,7 @@
 ///|
+typealias @ui.UIElementType
+
+///|
 struct UIStateLogin {
   elements : @sorted_map.T[UIElementType, @ui.Element]
   mut focused : UIElementType

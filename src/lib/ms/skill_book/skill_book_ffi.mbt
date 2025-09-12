@@ -29,41 +29,42 @@ fn get_skills_by_job_level(
   job : @job.Job,
   job_level : @job.Level,
 ) -> Array[SkillUIData] {
-  let subid = job.get_subjob(job_level)
-  let job_data = job.get_data_by_id(subid)
-  job_data.skill_ids.filter_map(fn(skill_id) {
-    let level = skillbook.get_level(skill_id)
-    let master_level = skillbook.get_masterlevel(skill_id)
-    match skillbook.get_skill_data(skill_id) {
-      Some(data) =>
-        if data.invisible && master_level == 0 {
-          None
-        } else {
-          let master_level = match master_level {
-            0 =>
-              skillbook
-              .get_skill_data(skill_id)
-              .map_or(0, fn(data) { data.master_level })
-            v => v
-          }
-          Some({
-            id: skill_id,
-            name: data.name,
-            desc: (try? markup_to_html(data.desc)).or(data.desc),
-            level,
-            master_level,
-            icon: data.icons[0].bitmap.map_or(@resource.Image::new_pending(), fn(
-              bitmap,
-            ) {
-              bitmap.image
-            }),
-            enabled: check_required(skillbook, skill_id),
-            job_level_value: job_level.int_value(),
-          })
-        }
-      None => None
-    }
-  })
+  ...
+  // let subid = job.get_subjob(job_level)
+  // let job_data = job.get_data_by_id(subid)
+  // job_data.skill_ids.filter_map(fn(skill_id) {
+  //   let level = skillbook.get_level(skill_id)
+  //   let master_level = skillbook.get_masterlevel(skill_id)
+  //   match skillbook.get_skill_data(skill_id) {
+  //     Some(data) =>
+  //       if data.invisible && master_level == 0 {
+  //         None
+  //       } else {
+  //         let master_level = match master_level {
+  //           0 =>
+  //             skillbook
+  //             .get_skill_data(skill_id)
+  //             .map_or(0, fn(data) { data.master_level })
+  //           v => v
+  //         }
+  //         Some({
+  //           id: skill_id,
+  //           name: data.name,
+  //           desc: (try? markup_to_html(data.desc)).or(data.desc),
+  //           level,
+  //           master_level,
+  //           icon: data.icons[0].bitmap.map_or(@resource.Image::new_pending(), fn(
+  //             bitmap,
+  //           ) {
+  //             bitmap.image
+  //           }),
+  //           enabled: check_required(skillbook, skill_id),
+  //           job_level_value: job_level.int_value(),
+  //         })
+  //       }
+  //     None => None
+  //   }
+  // })
 }
 
 ///|

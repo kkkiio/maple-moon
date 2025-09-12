@@ -22,6 +22,7 @@
     "KKKIIO/maple-moon-client/lib/ms/keyboard",
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "Milky2018/selene/system"
   ]
 }

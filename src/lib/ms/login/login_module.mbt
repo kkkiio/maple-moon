@@ -828,7 +828,12 @@ impl @net.OutMessage for PlayerLoginPacket with pack(self) -> @net.OutPacket {
 
 ///|
 fn get_etc_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("Etc")
+  @resource.AsyncLoader::new(
+    "Etc",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Etc",
+    ),
+  )
 }
 
 ///|
@@ -866,12 +871,26 @@ pub fn Module::update(self : Module) -> Unit {
 
 ///|
 pub fn get_map001_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("map001")
+  @resource.AsyncLoader::new(
+    "map001",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Back/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Map001/Back",
+      ),
+    }),
+  )
 }
 
 ///|
 pub fn get_map_pretty_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("map_pretty")
+  @resource.AsyncLoader::new(
+    "map_pretty",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Back/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/MapPretty/Back",
+      ),
+    }),
+  )
 }
 
 ///|

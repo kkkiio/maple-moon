@@ -117,7 +117,12 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 
 ///|
 fn get_face_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("face")
+  @resource.AsyncLoader::new(
+    "face",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Character/Face",
+    ),
+  )
 }
 
 ///|

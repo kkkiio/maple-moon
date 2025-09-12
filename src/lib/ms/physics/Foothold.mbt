@@ -7,35 +7,33 @@ struct Foothold {
   layer : Int
   horizontal : @struct.Range[Int]
   vertical : @struct.Range[Int]
-} derive(Default)
+} derive(Default, Show)
+
+///|
+pub(all) struct NxFoothold {
+  prev : Int
+  next : Int
+  x1 : Int
+  x2 : Int
+  y1 : Int
+  y2 : Int
+} derive(@json.FromJson)
 
 ///|
 pub fn Foothold::load_from_resource(
-  src : @resource.NxNode,
+  nx_foothold : NxFoothold,
   id : Int,
   ly : Int,
-) -> Foothold raise @resource.LoadError {
-  match src.value() {
-    {
-      "prev": Json::Number(prev),
-      "next": Json::Number(next),
-      "x1": Json::Number(x1),
-      "x2": Json::Number(x2),
-      "y1": Json::Number(y1),
-      "y2": Json::Number(y2),
-    } => {
-      let horizontal = @struct.Range::new(x1.to_int(), x2.to_int())
-      let vertical = @struct.Range::new(y1.to_int(), y2.to_int())
-      {
-        id,
-        prev: prev.to_int(),
-        next: next.to_int(),
-        layer: ly,
-        horizontal,
-        vertical,
-      }
-    }
-    _ => raise @resource.LoadError("invalid foothold")
+) -> Foothold {
+  let horizontal = @struct.Range::new(nx_foothold.x1, nx_foothold.x2)
+  let vertical = @struct.Range::new(nx_foothold.y1, nx_foothold.y2)
+  {
+    id,
+    prev: nx_foothold.prev,
+    next: nx_foothold.next,
+    layer: ly,
+    horizontal,
+    vertical,
   }
 }
 

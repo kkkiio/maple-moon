@@ -8,16 +8,30 @@ pub(all) struct NxTexture {
   offset : @struct.Point[Int]
   /// Coordinate of the drawing origin within the image. In other words, distance from the top-left corner of the image.
   origin : @struct.Point[Int]
-} derive (
-  FromJson(
-    fields(
-      i(rename="__i"),
-      w(rename="__w"),
-      h(rename="__h"),
-      offset(rename="__off"),
-    ),
-  ),
-)
+}
+
+///|
+pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
+  guard json
+    is { "__i": String(i), "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
+    raise @json.JsonDecodeError((path, "invalid nx texture=\{json}"))
+  }
+  let i = i
+  let w = w.to_int()
+  let h = h.to_int()
+  let offset = if json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } {
+    @struct.Point::new(offx.to_int(), offy.to_int())
+  } else {
+    @struct.Point::default()
+  }
+  let origin = if json
+    is { "origin": [Number(originx, ..), Number(originy, ..)], .. } {
+    @struct.Point::new(originx.to_int(), originy.to_int())
+  } else {
+    @struct.Point::default()
+  }
+  { i, w, h, offset, origin }
+}
 
 ///|
 pub(all) struct NxFrame {

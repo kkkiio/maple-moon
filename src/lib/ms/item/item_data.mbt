@@ -19,7 +19,38 @@ pub(all) struct ItemData {
 
 ///|
 pub fn get_character_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("character")
+  @resource.AsyncLoader::new(
+    "character",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Pants/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Pants",
+      ),
+      "Weapon/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Weapon",
+      ),
+      "Coat/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Coat",
+      ),
+      "Cap/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Cap",
+      ),
+      "Longcoat/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Longcoat",
+      ),
+      "Shield/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Shield",
+      ),
+      "Shoes/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Shoes",
+      ),
+      "Glove/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Glove",
+      ),
+      "Accessory/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Accessory",
+      ),
+    }),
+  )
 }
 
 ///|
@@ -271,5 +302,24 @@ pub fn get_src(self : ItemData) -> @resource.NxNode {
 
 ///|
 pub fn get_item_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("item")
+  @resource.AsyncLoader::new(
+    "item",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Consume/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Item/Consume",
+      ),
+      "Cash/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Item/Cash",
+      ),
+      "Etc/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Item/Etc",
+      ),
+      "Install/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Item/Install",
+      ),
+      "Pet/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Item/Pet",
+      ),
+    }),
+  )
 }

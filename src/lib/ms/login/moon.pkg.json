@@ -30,7 +30,8 @@
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
     },
-    "Milky2018/selene/sprite"
+    "Milky2018/selene/sprite",
+    "KKKIIO/maple-moon-client/lib/game_state"
   ],
   "link": {
     "js": {

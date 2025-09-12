@@ -117,8 +117,13 @@ pub async fn Mob::load(
   network : @net.Network,
   string_loader : @resource.SyncLoader,
 ) -> Mob raise {
-  let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("mob")
-  let strid = @string_format.stoi_left_pad0(mid, 7)
+  let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "mob",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Mob",
+    ),
+  )
+  let strid = @utils.stoi_left_pad0(mid, 7)
   let src = mob_loader.load_res_async([strid + ".img"])
   let info : MobInfo = src["info"].value() |> @json.from_json
   let animations = if info.link is Some(link) {

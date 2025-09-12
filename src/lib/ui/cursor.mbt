@@ -20,4 +20,4 @@ pub(all) enum CursorState {
   CHAT_BAR_BLTRDRAG = 69
   CHAT_BAR_MOVE = 72
   CHAT_BAR_BRTLDRAG = 73
-} derive(Eq, Compare, Hash)
+} derive(Eq, Compare, Hash, Show)

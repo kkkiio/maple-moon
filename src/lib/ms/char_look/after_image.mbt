@@ -71,99 +71,29 @@ struct AfterImageResource {
   animation : @graphics.AnimationResource
   range : @struct.Rectangle[Int]
   first_frame : Int
-} derive(ToJson)
+}
 
 ///|
-pub fn AfterImage::new(
-  resource : AfterImageResource,
-  image_loader : @resource.ImageLoader,
-) -> AfterImage {
+pub fn AfterImage::new(resource : AfterImageResource) -> AfterImage {
   let range = resource.range
   if range.is_empty() {
     @log.error({}, "afterimage range is empty")
     panic()
   }
-  let animation = @graphics.Animation::new(
-    resource.animation,
-    "afterimage",
-    image_loader,
-  )
+  let animation = @graphics.Animation::new(resource.animation)
   let first_frame = resource.first_frame
   let displayed = false
   { animation, range, first_frame, displayed }
 }
 
 ///|
-test "parse afterimage" {
-  let stab_t1_json : Json = {
-    "2": {
-      "0": {
-        "__h": 45,
-        "__w": 72,
-        "delay": 30,
-        "origin": [97, 41],
-        "__i": "/Character/Afterimage/spritesheets/poleArm.img#291283",
-      },
-      "1": {
-        "__h": 45,
-        "__w": 72,
-        "a1": 0,
-        "delay": 200,
-        "origin": [135, 41],
-        "__i": "/Character/Afterimage/spritesheets/poleArm.img#291284",
-      },
-    },
-    "lt": [-130, -33],
-    "rb": [-36, -4],
-  }
-  let resource : AfterNxImageResource = @json.from_json(stab_t1_json)
-  @json.inspect(resource.simplify(), content={
-    "animation": {
-      "blend": false,
-      "frames": [
-        {
-          "texture": {
-            "bitmap": {
-              "$tag": "Path",
-              "0": "/Character/Afterimage/spritesheets/poleArm.img#291283",
-              "1": 72,
-              "2": 45,
-            },
-            "origin": [97, 41],
-          },
-          "delay": 30,
-          "bounds": { "lt": [0, 0], "rb": [0, 0] },
-          "head": [0, 0],
-          "opacities": [255, 255],
-          "scales": [100, 100],
-        },
-        {
-          "texture": {
-            "bitmap": {
-              "$tag": "Path",
-              "0": "/Character/Afterimage/spritesheets/poleArm.img#291284",
-              "1": 72,
-              "2": 45,
-            },
-            "origin": [135, 41],
-          },
-          "delay": 200,
-          "bounds": { "lt": [0, 0], "rb": [0, 0] },
-          "head": [0, 0],
-          "opacities": [255, 0],
-          "scales": [100, 100],
-        },
-      ],
-      "zigzag": false,
-    },
-    "range": { "lt": [-130, -33], "rb": [-36, -4] },
-    "first_frame": 2,
-  })
-}
-
-///|
 pub fn get_afterimage_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("afterimage")
+  @resource.AsyncLoader::new(
+    "afterimage",
+    loader=@resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Character/Afterimage",
+    ),
+  )
 }
 
 ///|

@@ -8,6 +8,8 @@
     {
       "path": "Milky2018/selene/ui",
       "alias": "selene_ui"
-    }
+    },
+    "KKKIIO/maple-moon-client/lib/config",
+    "KKKIIO/maple-moon-client/lib/log"
   ]
 }

@@ -11,7 +11,7 @@ let warpcd : Int = 48
 
 ///|
 struct MapPortalAnimations {
-  animations : @immut/sorted_map.T[PortalType, @graphics.Animation]
+  animations : Map[PortalType, @sprite.Sprite]
 }
 
 ///|
@@ -48,16 +48,16 @@ pub fn MapPortals::new(
 
 ///|
 pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
-  self.map_portals_animations.animations
-  .get(PortalType::REGULAR)
-  .unwrap()
-  .update(timestep=@config.step_time_ms)
-  |> ignore
-  self.map_portals_animations.animations
-  .get(PortalType::HIDDEN)
-  .unwrap()
-  .update(timestep=@config.step_time_ms)
-  |> ignore
+  // self.map_portals_animations.animations
+  // .get(PortalType::REGULAR)
+  // .unwrap()
+  // .update(timestep=@config.step_time_ms)
+  // |> ignore
+  // self.map_portals_animations.animations
+  // .get(PortalType::HIDDEN)
+  // .unwrap()
+  // .update(timestep=@config.step_time_ms)
+  // |> ignore
   for _, portal in self.portals_by_id {
     match portal.get_type() {
       PortalType::HIDDEN | PortalType::TOUCH => portal.update(playerpos)
@@ -119,20 +119,33 @@ pub fn MapPortals::find_warp_at(
 }
 
 ///|
-pub async fn MapPortalAnimations::load() -> MapPortalAnimations raise {
-  let map_helper_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "maphelper",
+pub fn MapPortalAnimations::load() -> MapPortalAnimations {
+  let ani1 = @sprite.Sprite::from_animation(
+    @sprite.Animation::new(
+      @sprite.frames_from_atlas(
+        "assets/portal/continue.png",
+        7,
+        width=128,
+        height=122,
+      ),
+    ),
+    0,
+    offset=-@selene_math.Vec2D(62, 199),
   )
-  let src1 = map_helper_loader.load_res_async([
-    "portal", "game", "ph", "default", "portalContinue",
-  ])
-  let src2 = map_helper_loader.load_res_async(["portal", "game", "pv"])
-  let (ani1, ani2) = (
-    @graphics.Animation::from_resource(src1),
-    @graphics.Animation::from_resource(src2),
+  let ani2 = @sprite.Sprite::from_animation(
+    @sprite.Animation::new(
+      @sprite.frames_from_atlas(
+        "assets/portal/regular.png",
+        8,
+        width=89,
+        height=257,
+      ),
+    ),
+    0,
+    offset=-@selene_math.Vec2D(44, 248),
   )
   {
-    animations: @immut/sorted_map.from_array([
+    animations: Map::from_array([
       (PortalType::HIDDEN, ani1),
       (PortalType::REGULAR, ani2),
       (PortalType::SCRIPTED, ani2),

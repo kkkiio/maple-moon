@@ -7,28 +7,25 @@ struct SkillBook {
 }
 
 ///|
-pub fn SkillBook::load(
+pub async fn SkillBook::load(
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
   job : @job.Job,
   watchers : Array[SkillBookWatcher],
-) -> @utils.Future[SkillBook] {
-  job
-  .get_all_subjobs()
-  .flat_map(fn(it) { it.skill_ids.iter() })
-  .map(fn(skill_id) {
-    io_service.submit(fn() { @skill.SkillData::load(string_loader, skill_id) })
-  })
-  .collect()
-  |> @utils.Future::all_of()
-  |> _.map(fn(it) {
-    let available_skills = Map::new()
-    for skill_data in it {
-      let skill_data = skill_data.unwrap() // TODO: handle error
-      available_skills.set(skill_data.id, skill_data)
-    }
-    SkillBook::new(available_skills, watchers, @utils.Randomizer::new())
-  })
+) -> SkillBook raise {
+  let async_ops = job
+    .get_all_subjobs()
+    .flat_map(fn(it) { it.skill_ids.iter() })
+    .map(fn(skill_id) {
+      async fn() raise { @skill.SkillData::load(string_loader, skill_id) }
+    })
+    |> Array::from_iter
+  let it = @js.async_all(async_ops)
+  let available_skills = Map::new()
+  for skill_data in it {
+    let skill_data = skill_data
+    available_skills.set(skill_data.id, skill_data)
+  }
+  SkillBook::new(available_skills, watchers, @utils.Randomizer::new())
 }
 
 ///|
@@ -121,24 +118,25 @@ pub fn SkillBook::on_attack_event(
   if mob_targets.length() == 0 {
     return
   }
-  let attack = act.make_attack(
-    player.character,
-    player.inventory,
-    @combat_proto.AttackType::MAGIC, // TODO: check attack type
-    false,
-  )
-  let result = {
-    ..@combat_proto.AttackResult::new(attack),
-    attacker: player.character.get_oid(),
-  }
-  combat.apply_attack_to_mobs(
-    player.character,
-    act,
-    attack,
-    mob_targets,
-    result,
-    false,
-  )
+  ...
+  // let attack = act.make_attack(
+  //   player.character,
+  //   player.inventory,
+  //   @combat_proto.AttackType::MAGIC, // TODO: check attack type
+  //   false,
+  // )
+  // let result = {
+  //   ..@combat_proto.AttackResult::new(attack),
+  //   attacker: player.character.get_oid(),
+  // }
+  // combat.apply_attack_to_mobs(
+  //   player.character,
+  //   act,
+  //   attack,
+  //   mob_targets,
+  //   result,
+  //   false,
+  // )
 }
 
 ///|

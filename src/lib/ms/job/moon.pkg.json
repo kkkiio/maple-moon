@@ -5,9 +5,9 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/ms/skill",
     "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/ms/string_format",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/game_mod",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "rami3l/js-ffi/js"
   ]
 }

@@ -238,7 +238,7 @@ pub fn Npc::load(
   position : @struct.Point[Int],
 ) -> Npc {
   let base = @map_object.MapObjectBase::new(o)
-  let strid = @string_format.stoi_left_pad0(id, 7) + ".img"
+  let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_res([strid])
   let strsrc = string_loader.load_res(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()

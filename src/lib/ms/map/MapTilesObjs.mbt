@@ -12,7 +12,12 @@ pub async fn TilesObjs::load(
   obj_resource : Array[ObjResource],
 ) -> TilesObjs raise {
   let tileset = if ts is Some(ts) {
-    let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new("tile")
+    let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+      "tile",
+      loader=@resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Map/Tile",
+      ),
+    )
     Some(tile_loader.load_res_async([ts + ".img"]))
   } else {
     None

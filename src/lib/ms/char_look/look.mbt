@@ -1162,3 +1162,10 @@ pub impl @graphics.Drawable for NoopDrawable with draw(
 ) -> Unit {
 
 }
+
+///|
+pub fn CharLook::destroy(self : CharLook) -> Unit {
+  for entity in self.entities {
+    entity.destroy()
+  }
+}

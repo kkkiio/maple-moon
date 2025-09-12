@@ -2,39 +2,23 @@
 typealias @ui.UIElementType
 
 ///|
-let min_delay_next_grab : @utils.Duration = 10 |> @utils.Duration::from_micro
-
-///|
 struct UIStateGame {
   stage : Stage
-  registry : @action.Registry
-  timer : @utils.Timer
+  // timer : @utils.Timer
   elements : Map[UIElementType, @ui.Element]
   element_order : Array[UIElementType]
   mut focused : UIElementType
   mut dragged : @ui.Element?
-  // eq_tooltip : EquipTooltip
-  // it_tooltip : ItemTooltip
-  // sk_tooltip : SkillTooltip
-  // te_tooltip : TextTooltip
-  // ma_tooltip : MapTooltip
-  // mut tooltip : Option[Tooltip]
-  // tooltip_parent : TooltipParent
-  time_rel_grabbed : @utils.TimePoint
+  // time_rel_grabbed : @utils.TimePoint
   mut vwidth : Int
   mut vheight : Int
 }
 
 ///|
-pub fn UIStateGame::new(
-  stage : Stage,
-  registry : @action.Registry,
-  timer : @utils.Timer,
-) -> UIStateGame {
+pub fn UIStateGame::new(stage : Stage) -> UIStateGame {
   {
     stage,
-    registry,
-    timer,
+    // timer,
     elements: Map::new(),
     element_order: [],
     focused: UIElementType::UI_ELEMENT_NONE,
@@ -46,7 +30,7 @@ pub fn UIStateGame::new(
     // ma_tooltip: @Tooltip.MapTooltip::default(),
     // tooltip: None,
     // tooltip_parent: TooltipParent::NONE,
-    time_rel_grabbed: timer.now(),
+    // time_rel_grabbed: timer.now(),
     vwidth: @config.constants.get_viewwidth(),
     vheight: @config.constants.get_viewheight(),
   }
@@ -115,17 +99,7 @@ pub impl @ui.UIState for UIStateGame with send_key(
 ) -> Unit {
   guard mapping is Some(mapping) else { return }
   match mapping {
-    @keyboard.Mapping::MENU(action) =>
-      if pressed {
-        match self.registry.get_action(action) {
-          Some(descriptor) =>
-            match descriptor {
-              @action.Descriptor::UI(key~, make_element~, focused~) =>
-                self.toggle_element(key, focused, make_element)
-            }
-          None => ()
-        }
-      }
+    @keyboard.Mapping::MENU(_action) => if pressed {  }
     @keyboard.Mapping::ACTION(_)
     | @keyboard.Mapping::FACE(_)
     | @keyboard.Mapping::ITEM(_)
@@ -198,9 +172,9 @@ pub impl @ui.UIState for UIStateGame with send_cursor(
       self.element_order.push(drag_element_type)
     }
   }
-  if self.timer.now().since(self.time_rel_grabbed) < min_delay_next_grab {
-    return @ui.CursorState::IDLE
-  }
+  // if self.timer.now().since(self.time_rel_grabbed) < min_delay_next_grab {
+  //   return @ui.CursorState::IDLE
+  // }
   match self.dragged {
     Some(dragged) => return dragged.send_cursor(clicked, cursorpos)
     None => ()

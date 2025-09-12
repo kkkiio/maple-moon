@@ -11,25 +11,66 @@ struct FootholdTree {
 }
 
 ///|
+struct NxFootholdTree {
+  footholds : Map[Int, Map[Int, Map[Int, NxFoothold]]]
+}
+
+///|
+pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
+  guard json is Object(footholds) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  let l0 = {}
+  for basefname, basef in footholds {
+    let path = path.add_key(basefname)
+    let layer = @strconv.parse_int(basefname) catch {
+      _ =>
+        raise @json.JsonDecodeError(
+          (path, "invalid foothold layer \{basefname}"),
+        )
+    }
+    guard basef is Object(basef) else {
+      raise @json.JsonDecodeError((path, "expect object"))
+    }
+    let l1 = {}
+    for midfname, midf in basef {
+      let path = path.add_key(midfname)
+      let id = @strconv.parse_int(midfname) catch {
+        _ =>
+          raise @json.JsonDecodeError((path, "invalid foothold id \{midfname}"))
+      }
+      guard midf is Object(midf) else {
+        raise @json.JsonDecodeError((path, "expect object"))
+      }
+      let l2 = {}
+      for lastfname, lastf in midf {
+        let path = path.add_key(lastfname)
+        let id = @strconv.parse_int(lastfname) catch {
+          _ =>
+            raise @json.JsonDecodeError(
+              (path, "invalid foothold id \{lastfname}"),
+            )
+        }
+        let nx_foothold : NxFoothold = @json.from_json(lastf, path~)
+        l2.set(id, nx_foothold)
+      }
+      l1.set(id, l2)
+    }
+    l0.set(layer, l1)
+  }
+  { footholds: l0 }
+}
+
+///|
 pub fn FootholdTree::load_from_resource(
-  src : @resource.NxNode,
-) -> FootholdTree raise @resource.LoadError {
+  src : NxFootholdTree,
+) -> FootholdTree raise {
   let footholds = Map::new()
   let footholds_by_x = Map::new()
   let null_fh = Foothold::default()
-  for basef in src {
-    let basefname = basef.name()
-    let layer = @strconv.parse_int(basefname) catch {
-      @strconv.StrConvError(e) =>
-        raise @resource.LoadError("invalid foothold layer \{e}")
-    }
-    for midf in basef {
-      for lastf in midf {
-        let lastfname = lastf.name()
-        let id = @strconv.parse_int(lastfname) catch {
-          @strconv.StrConvError(e) =>
-            raise @resource.LoadError("invalid foothold id \{e}")
-        }
+  for layer, basef in src.footholds {
+    for _, midf in basef {
+      for id, lastf in midf {
         let foothold = Foothold::load_from_resource(lastf, id, layer)
         footholds.set(id, foothold)
         if foothold.is_wall() {
@@ -37,6 +78,10 @@ pub fn FootholdTree::load_from_resource(
         }
         let start = foothold.l()
         let end = foothold.r()
+        if end - start > 1000 {
+          @log.error({ "foothold": foothold }, "foothold is too wide")
+          panic()
+        }
         for i in start..=end {
           footholds_by_x.get_or_init(i, fn() { Array::new() }).push(id)
         }
@@ -46,27 +91,15 @@ pub fn FootholdTree::load_from_resource(
   if footholds.size() == 0 {
     raise @resource.LoadError("no footholds")
   }
-  let leftw = footholds
-    .values()
-    .iter()
-    .map(fn(f) { f.l() })
-    .fold(init=30000, @cmp.minimum)
+  let leftw = footholds.values().map(fn(f) { f.l() }).minimum().unwrap_or(30000)
   let rightw = footholds
     .values()
-    .iter()
     .map(fn(f) { f.r() })
-    .fold(init=-30000, @cmp.maximum)
+    .maximum()
+    .unwrap_or(-30000)
   let walls = @struct.Range::new(leftw + 25, rightw - 25)
-  let topb = footholds
-    .values()
-    .iter()
-    .map(fn(f) { f.t() })
-    .fold(init=30000, @cmp.minimum)
-  let botb = footholds
-    .values()
-    .iter()
-    .map(fn(f) { f.b() })
-    .fold(init=-30000, @cmp.maximum)
+  let topb = footholds.values().map(fn(f) { f.t() }).minimum().unwrap_or(30000)
+  let botb = footholds.values().map(fn(f) { f.b() }).maximum().unwrap_or(-30000)
   let borders = @struct.Range::new(topb - 300, botb + 100)
   { footholds, footholds_by_x, null_fh, walls, borders }
 }
@@ -183,8 +216,8 @@ pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-fn get_fh(self : FootholdTree, fhid : Int) -> Foothold {
-  self.footholds.get(fhid).or(self.null_fh)
+fn FootholdTree::get_fh(self : FootholdTree, fhid : Int) -> Foothold {
+  self.footholds.get(fhid).unwrap_or(self.null_fh)
 }
 
 ///|

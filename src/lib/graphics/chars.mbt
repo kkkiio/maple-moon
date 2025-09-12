@@ -1,23 +1,15 @@
 ///|
-pub fn Charset::new(
-  src : @resource.NxNode,
-  alignment : CharsetAlignment,
-) -> Charset {
+pub fn Charset::new(src : Json, alignment : CharsetAlignment) -> Charset raise {
   let chars = Map::new()
-  for sub in src {
-    let name = sub.name()
-    if name.is_empty() {
-      continue
-    }
-    match sub.get_bitmap() {
-      Some(_) => ()
-      None => continue
-    }
+  guard src is Object(obj) else { return { chars, alignment } }
+  for name, sub in obj {
+    guard sub is { "__i": String(_), .. } else { continue }
     let mut c = name.get_char(0).unwrap()
     if c == '\\' {
       c = '/'
     }
-    chars.set(c, Texture::from_resource(sub))
+    let tex : @resource.NxTexture = @json.from_json(sub)
+    chars.set(c, tex)
   }
   { chars, alignment }
 }

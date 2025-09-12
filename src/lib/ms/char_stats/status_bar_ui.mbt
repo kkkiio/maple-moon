@@ -23,7 +23,7 @@ pub fn StatusBarUI::new(
   stats : CharStats,
   hooks : @ui.Hooks,
   status_bar_loader : @resource.SyncLoader,
-) -> StatusBarUI {
+) -> StatusBarUI raise {
   let vwidth = @config.constants.get_viewwidth()
   let mainBar = status_bar_loader.load_res(["mainBar"])
   let stat = "status"
@@ -100,16 +100,19 @@ pub fn StatusBarUI::new(
     hpmp_max,
     0.0,
   )
+  let exp_number = @json.from_json(expBar["number"].value())
   let stat_set = @graphics.Charset::new(
-    expBar["number"],
+    exp_number,
     @graphics.CharsetAlignment::RIGHT,
   )
+  let hpmp_number = @json.from_json(status["gauge"]["number"].value())
   let hpmp_set = @graphics.Charset::new(
-    status["gauge"]["number"],
+    hpmp_number,
     @graphics.CharsetAlignment::RIGHT,
   )
+  let level_number = @json.from_json(status["lvNumber"].value())
   let level_set = @graphics.Charset::new(
-    status["lvNumber"],
+    level_number,
     @graphics.CharsetAlignment::LEFT,
   )
   let position = @struct.Point::new(0, 648)

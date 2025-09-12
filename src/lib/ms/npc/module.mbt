@@ -15,23 +15,24 @@ pub async fn Module::load(
   ref_render : @markup_text.RefRender,
   string_loader : @resource.SyncLoader,
 ) -> Module raise {
-  let npc_loader = @resource.SyncLoader::load(
-    "npc",
-    "https://maple-res.kkkiiox.work/Npc/nx.json",
-    @resource.ImageLoader::new_bid_image_loader(
-      "https://maple-res.kkkiiox.work/Npc/images",
-    ),
-  )
-  let res = @ui.ui_window_2_loader().load_res_async(["UtilDlgEx"])
-  let npc_talk_resource = NpcTalkResource::from_resource(res)
-  Module::new(
-    container,
-    npc_talk_resource,
-    ref_render,
-    network,
-    string_loader~,
-    npc_loader~,
-  )
+  ...
+  // let npc_loader = @resource.SyncLoader::load(
+  //   "npc",
+  //   "https://maple-res.kkkiiox.work/Npc/nx.json",
+  //   @resource.ImageLoader::new_bid_image_loader(
+  //     "https://maple-res.kkkiiox.work/Npc/images",
+  //   ),
+  // )
+  // let res = @ui.ui_window_2_loader().load_res_async(["UtilDlgEx"])
+  // let npc_talk_resource = NpcTalkResource::from_resource(res)
+  // Module::new(
+  //   container,
+  //   npc_talk_resource,
+  //   ref_render,
+  //   network,
+  //   string_loader~,
+  //   npc_loader~,
+  // )
 }
 
 ///|

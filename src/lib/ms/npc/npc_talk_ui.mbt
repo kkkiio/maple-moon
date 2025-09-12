@@ -394,7 +394,7 @@ pub fn change_text(
   let content = convert_npc_text(tx, self.name_loader)
   self.content = Some(content)
   if speakerbyte is Speaker::NPC_LEFT {
-    let strid = @string_format.stoi_left_pad0(npcid, 7) + ".img"
+    let strid = @utils.stoi_left_pad0(npcid, 7) + ".img"
     self.speaker = self.string_loader.load_res([strid, "stand", "0"])
       |> @graphics.Texture::from_resource
     let namestr = self.string_loader

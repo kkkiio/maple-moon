@@ -1,6 +1,8 @@
 ///|
 pub fn set_hardware_info(self : Configuration) -> Unit {
-  self.set_hwid("9A9A9A9A9A9A", "9A9A9A9A")
+  self.set_hwid("9A9A9A9A9A9A", "9A9A9A9A") catch {
+    e => abort(e.to_string())
+  }
   self.set_macs("11-22-33-44-55-66")
 }
 
@@ -51,12 +53,12 @@ fn set_hwid(
   self : Configuration,
   hwid : String,
   volume_serial_number : String,
-) -> Unit {
+) -> Unit raise {
   self.volume_serial_number = volume_serial_number
-  let part1 = volume_serial_number.substring(start=0, end=2)
-  let part2 = volume_serial_number.substring(start=2, end=4)
-  let part3 = volume_serial_number.substring(start=4, end=6)
-  let part4 = volume_serial_number.substring(start=6, end=8)
+  let part1 = volume_serial_number[:2]
+  let part2 = volume_serial_number[2:4]
+  let part3 = volume_serial_number[4:6]
+  let part4 = volume_serial_number[6:8]
   self.hwid = "\{hwid}_\{part4}\{part3}\{part2}\{part1}"
 }
 
@@ -104,7 +106,7 @@ pub fn StringEntry::new(name : String, default : String) -> StringEntry {
 
 ///|
 pub fn load(self : StringEntry) -> String {
-  configuration.settings.get(self.name).or(self.default)
+  configuration.settings.get(self.name).unwrap_or(self.default)
 }
 
 ///|

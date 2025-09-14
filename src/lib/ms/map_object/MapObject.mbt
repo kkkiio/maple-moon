@@ -15,14 +15,15 @@ pub struct MapObjectBase {
   phobj : @physics.PhysicsObject
   oid : Int
   mut active : Bool
-} derive(Default)
+}
 
 ///|
 pub fn MapObjectBase::new(
+  entity : @system.Entity,
   oid : Int,
   position? : @struct.Point[Int] = { x: 0, y: 0 },
 ) -> MapObjectBase {
-  let obj = { phobj: @physics.PhysicsObject::default(), oid, active: true }
+  let obj = { phobj: @physics.PhysicsObject::new(entity), oid, active: true }
   obj.set_position(position)
   obj
 }

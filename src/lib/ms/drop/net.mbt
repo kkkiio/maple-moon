@@ -55,35 +55,38 @@ pub fn handle_drop_loot_parsed(map_drops : MapDrops, drop : DropLoot) -> Unit {
 pub struct RemoveLoot {
   mode : Int
   oid : Int
-  looter : @physics.PhysicsObject?
-} derive(Show, ToJson)
+  cid : Int?
+} derive(Show)
 
 ///|
-pub fn parse_remove_loot(
-  get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
-  recv : @net.InPacket,
-) -> RemoveLoot raise {
+pub fn parse_remove_loot(recv : @net.InPacket) -> RemoveLoot raise {
   let mode = recv.read_byte()
   let oid = recv.read_int()
-  let looter = if mode > 1 {
+  let cid = if mode > 1 {
     let cid = recv.read_int()
     if recv.available() > 0 {
       recv.read_byte() |> ignore // pet
       None
     } else {
-      get_character_phys_by_id_fn(cid)
+      Some(cid)
     }
     // TODO: sound
   } else {
     None
   }
-  { mode, oid, looter }
+  { mode, oid, cid }
 }
 
 ///|
 pub fn handle_remove_loot_parsed(
   map_drops : MapDrops,
   remove : RemoveLoot,
+  get_character_phys_by_id_fn : (Int) -> @physics.PhysicsObject?,
 ) -> Unit {
-  map_drops.remove(remove.oid, remove.mode, remove.looter)
+  let looter = if remove.cid is Some(cid) {
+    get_character_phys_by_id_fn(cid)
+  } else {
+    None
+  }
+  map_drops.remove(remove.oid, remove.mode, looter)
 }

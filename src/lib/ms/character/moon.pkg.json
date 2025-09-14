@@ -12,6 +12,7 @@
     "KKKIIO/maple-moon-client/lib/ms/weapon",
     "KKKIIO/maple-moon-client/lib/ms/equip",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
-    "KKKIIO/maple-moon-client/lib/ui"
+    "KKKIIO/maple-moon-client/lib/ui",
+    "Milky2018/selene/system"
   ]
 }

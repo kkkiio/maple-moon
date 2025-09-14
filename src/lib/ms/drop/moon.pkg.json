@@ -1,5 +1,5 @@
 {
-	"import": [
+  "import": [
     "KKKIIO/maple-moon-client/lib/net",
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/struct",
@@ -10,6 +10,7 @@
     "KKKIIO/maple-moon-client/lib/graphics",
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "KKKIIO/maple-moon-client/lib/io_task",
+    "Milky2018/selene/system"
   ]
 }

@@ -424,7 +424,7 @@ pub fn SelectCharUI::add_character(
   //   })
   //   |> @ui.Button::as_interactable,
   // )
-  let (_, char_look, name_tag) = self.characters[i]
+  let (_, char_look, _name_tag) = self.characters[i]
   char_look.set_stance(
     if Some(i) == self.select_slot {
       @types.StanceId::WALK1
@@ -433,7 +433,8 @@ pub fn SelectCharUI::add_character(
     },
   )
   char_look.set_direction(true)
-  char_look.set_sprites(get_character_slot_pos(i, 135, 234))
+  char_look.set_sprites()
+  char_look.set_pos(get_character_slot_pos(i, 135, 234).to_vec2d())
   // name_tag.set_selected(Some(i) == self.select_slot)
   // render_elements.push(
   //   @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
@@ -494,10 +495,10 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
   for entity in self.entities {
     entity.destroy()
   }
-  for character in self.characters {
-    let (_, char_look, _) = character
-    char_look.destroy()
-  }
+  // for character in self.characters {
+  //   let (_, char_look, _) = character
+  //   char_look.destroy()
+  // }
 }
 
 ///|

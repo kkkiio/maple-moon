@@ -25,14 +25,14 @@ pub fn new_module(
     delay,
   )
   |> ignore
-  { message_handlers: {}, actions: {}, stat_handlers: {} }
+  { message_handlers: {}, stat_handlers: {} }
 }
 
 ///|
 priv struct HealOverTimeMessage {
   hp : Int
   mp : Int
-} derive(ToJson, Show)
+} derive(Show)
 
 ///|
 impl @net.OutMessage for HealOverTimeMessage with pack(self) {

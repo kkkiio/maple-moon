@@ -138,7 +138,7 @@ impl QuestTextRefProvider for RefProviderImpl with get_check(self, _, v) {
   let quest_id = quest.quest_id.to_string()
   guard v.has_prefix(quest_id) else { fail("unknown check: \{v}") }
   let check_no = @strconv.parse_int(
-    v.charcodes(start=quest_id.length()).to_string(),
+    v.view(start_offset=quest_id.length()).to_string(),
   ) // start from 1
   guard quest.checks.get(quest.phase) is Some(checks) else {
     fail("no checks: \{quest_id}")
@@ -150,7 +150,7 @@ impl QuestTextRefProvider for RefProviderImpl with get_check(self, _, v) {
   let progress_data = quest.get_phase_progress(quest.phase)
   check_mob_progress_data(progress_data)
   let current_count = @strconv.parse_int(
-    progress_data.substring(start=index * 3, end=index * 3 + 3),
+    progress_data.view(start_offset=index * 3, end_offset=index * 3 + 3),
     base=10,
   )
   "\{current_count} / \{check.count}"

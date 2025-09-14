@@ -2,12 +2,24 @@
 typealias @struct.Point
 
 ///|
-pub(all) struct MovingObject {
+pub struct MovingObject {
+  entity : @system.Entity
   x : @utils.Linear
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
-} derive(Show, ToJson, Default)
+}
+
+///|
+pub fn MovingObject::new(entity : @system.Entity) -> MovingObject {
+  {
+    entity,
+    x: @utils.Linear::default(),
+    y: @utils.Linear::default(),
+    hspeed: 0.0,
+    vspeed: 0.0,
+  }
+}
 
 ///|
 pub fn normalize(self : MovingObject) -> Unit {
@@ -17,30 +29,52 @@ pub fn normalize(self : MovingObject) -> Unit {
 
 ///|
 pub fn MovingObject::do_move(self : MovingObject) -> Unit {
-  self.x.set(self.x.get() + self.hspeed)
-  self.y.set(self.y.get() + self.vspeed)
+  let x = self.x.get() + self.hspeed
+  let y = self.y.get() + self.vspeed
+  self.x.set(x)
+  self.y.set(y)
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(x, y)),
+  )
 }
 
 ///|
 pub fn set_x(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(d, self.y.get())),
+  )
 }
 
 ///|
 pub fn set_y(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(self.x.get(), d)),
+  )
 }
 
 ///|
 pub fn limitx(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   self.hspeed = 0.0
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(d, self.y.get())),
+  )
 }
 
 ///|
 pub fn limity(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   self.vspeed = 0.0
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(self.x.get(), d)),
+  )
 }
 
 ///|
@@ -162,6 +196,16 @@ pub fn MovingObject::get_absolute(
 }
 
 ///|
+pub fn MovingObject::set_vspeed(self : MovingObject, vspeed : Double) -> Unit {
+  self.vspeed = vspeed
+}
+
+///|
+pub fn MovingObject::set_hspeed(self : MovingObject, hspeed : Double) -> Unit {
+  self.hspeed = hspeed
+}
+
+///|
 pub(all) enum PhysicsObjectType {
   NORMAL
   ICE
@@ -187,7 +231,7 @@ pub fn int_value(self : PhysicsObjectFlag) -> Int {
 }
 
 ///|
-pub(all) struct PhysicsObject {
+pub struct PhysicsObject {
   moving_object : MovingObject
   mut t : PhysicsObjectType
   mut flags : Int
@@ -201,12 +245,12 @@ pub(all) struct PhysicsObject {
   mut vforce : Double
   mut hacc : Double
   mut vacc : Double
-} derive(Show, ToJson)
+}
 
 ///|
-pub impl Default for PhysicsObject with default() -> PhysicsObject {
+pub fn PhysicsObject::new(entity : @system.Entity) -> PhysicsObject {
   {
-    moving_object: MovingObject::default(),
+    moving_object: MovingObject::new(entity),
     t: PhysicsObjectType::NORMAL,
     flags: 0,
     fhid: 0,
@@ -248,7 +292,7 @@ pub fn clear_flags(self : PhysicsObject) -> Unit {
 }
 
 ///|
-pub fn PhysicsObject::move(self : PhysicsObject) -> Unit {
+pub fn PhysicsObject::do_move(self : PhysicsObject) -> Unit {
   self.moving_object.do_move()
 }
 
@@ -333,4 +377,32 @@ pub fn set_hspeed(self : PhysicsObject, hspeed : Double) -> Unit {
 ///|
 pub fn set_vspeed(self : PhysicsObject, vspeed : Double) -> Unit {
   self.moving_object.vspeed = vspeed
+}
+
+///|
+pub fn PhysicsObject::set_t(
+  self : PhysicsObject,
+  t : PhysicsObjectType,
+) -> Unit {
+  self.t = t
+}
+
+///|
+pub fn PhysicsObject::set_fhid(self : PhysicsObject, fhid : Int) -> Unit {
+  self.fhid = fhid
+}
+
+///|
+pub fn PhysicsObject::set_fhlayer(self : PhysicsObject, fhlayer : Int) -> Unit {
+  self.fhlayer = fhlayer
+}
+
+///|
+pub fn PhysicsObject::set_hforce(self : PhysicsObject, hforce : Double) -> Unit {
+  self.hforce = hforce
+}
+
+///|
+pub fn PhysicsObject::set_vforce(self : PhysicsObject, vforce : Double) -> Unit {
+  self.vforce = vforce
 }

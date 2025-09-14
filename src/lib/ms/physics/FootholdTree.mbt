@@ -4,14 +4,14 @@
 ///|
 struct FootholdTree {
   footholds : Map[Int, Foothold]
-  footholds_by_x : Map[Int, Array[Int]]
+  seg_tree : SegTree
   null_fh : Foothold
   walls : @struct.Range[Int]
   borders : @struct.Range[Int]
 }
 
 ///|
-struct NxFootholdTree {
+pub(all) struct NxFootholdTree {
   footholds : Map[Int, Map[Int, Map[Int, NxFoothold]]]
 }
 
@@ -66,25 +66,12 @@ pub fn FootholdTree::load_from_resource(
   src : NxFootholdTree,
 ) -> FootholdTree raise {
   let footholds = Map::new()
-  let footholds_by_x = Map::new()
   let null_fh = Foothold::default()
   for layer, basef in src.footholds {
     for _, midf in basef {
       for id, lastf in midf {
         let foothold = Foothold::load_from_resource(lastf, id, layer)
         footholds.set(id, foothold)
-        if foothold.is_wall() {
-          continue
-        }
-        let start = foothold.l()
-        let end = foothold.r()
-        if end - start > 1000 {
-          @log.error({ "foothold": foothold }, "foothold is too wide")
-          panic()
-        }
-        for i in start..=end {
-          footholds_by_x.get_or_init(i, fn() { Array::new() }).push(id)
-        }
       }
     }
   }
@@ -101,7 +88,8 @@ pub fn FootholdTree::load_from_resource(
   let topb = footholds.values().map(fn(f) { f.t() }).minimum().unwrap_or(30000)
   let botb = footholds.values().map(fn(f) { f.b() }).maximum().unwrap_or(-30000)
   let borders = @struct.Range::new(topb - 300, botb + 100)
-  { footholds, footholds_by_x, null_fh, walls, borders }
+  let seg_tree = SegTree::build(footholds)
+  { footholds, seg_tree, null_fh, walls, borders }
 }
 
 ///|
@@ -279,17 +267,18 @@ pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
 
 ///|
 pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
-  guard self.footholds_by_x.get(fx.to_int()) is Some(range) else { return 0 }
-  range.fold(init=(0, self.borders.second().to_double()), fn(acc, id) {
+  let ix = fx.floor().to_int()
+  let mut best_id = 0
+  let mut best_y = self.borders.second().to_double()
+  self.seg_tree.for_each_ids_at(ix, fn(id) {
     let fh = self.footholds.get(id).unwrap()
     let ycomp = fh.ground_below(fx)
-    let (_, comp) = acc
-    if comp >= ycomp && ycomp >= fy {
-      (fh.id(), ycomp)
-    } else {
-      acc
+    if best_y >= ycomp && ycomp >= fy {
+      best_id = fh.id()
+      best_y = ycomp
     }
-  }).0
+  })
+  best_id
 }
 
 ///|
@@ -310,4 +299,130 @@ pub fn get_walls(self : FootholdTree) -> @struct.Range[Int] {
 ///|
 pub fn get_borders(self : FootholdTree) -> @struct.Range[Int] {
   self.borders
+}
+
+///|
+priv struct SegNode {
+  lo : Int
+  hi : Int
+  left : Int
+  right : Int
+  ids : Array[Int]
+}
+
+///|
+priv struct SegTree {
+  xs : Array[Int]
+  nodes : Array[SegNode]
+  root : Int
+}
+
+///|
+fn SegTree::build(footholds : Map[Int, Foothold]) -> SegTree {
+  // 1) 收集端点（跳过墙）; 使用半开区间 [l, r+1)
+  let xs = {
+    let tmp : Set[Int] = Set::new()
+    for _, f in footholds {
+      if f.is_wall() {
+        continue
+      }
+      tmp.add(f.l())
+      tmp.add(f.r() + 1)
+    }
+    let xs = tmp.to_array()
+    xs.sort()
+    xs
+  }
+  if xs.length() < 2 {
+    return { xs, nodes: Array::new(), root: -1 }
+  }
+  // 2) 建树节点（基于基本区间索引 [0, xs.len-2]）
+  let nodes : Array[SegNode] = Array::new()
+  let root = 0
+  nodes.push({ lo: 0, hi: xs.length() - 2, left: -1, right: -1, ids: [] })
+  let build_tasks : Array[Int] = [root]
+  for p = 0; p < build_tasks.length(); p = p + 1 {
+    let idx = build_tasks[p]
+    let node = nodes[idx]
+    if node.lo < node.hi {
+      let mid = (node.lo + node.hi) / 2
+      let left_idx = nodes.length()
+      nodes.push({ lo: node.lo, hi: mid, left: -1, right: -1, ids: [] })
+      let right_idx = nodes.length()
+      nodes.push({ lo: mid + 1, hi: node.hi, left: -1, right: -1, ids: [] })
+      nodes[idx] = {
+        lo: node.lo,
+        hi: node.hi,
+        left: left_idx,
+        right: right_idx,
+        ids: node.ids,
+      }
+      build_tasks.push(left_idx)
+      build_tasks.push(right_idx)
+    }
+  }
+  // 3) 把每个水平段分发到“最高完全覆盖”的节点（基于 [l, r+1)）
+  for _, f in footholds {
+    if f.is_wall() {
+      continue
+    }
+    let l = f.l()
+    let r1 = f.r() + 1
+    let stack : Array[Int] = [root]
+    let mut sp = 0
+    while sp < stack.length() {
+      let i = stack[sp]
+      sp = sp + 1
+      let n = nodes[i]
+      let left_bound = xs[n.lo]
+      let right_bound = xs[n.hi + 1]
+      if r1 <= left_bound || right_bound <= l {
+        continue
+      }
+      if l <= left_bound && right_bound <= r1 {
+        nodes[i].ids.push(f.id())
+      } else {
+        if n.left >= 0 {
+          stack.push(n.left)
+        }
+        if n.right >= 0 {
+          stack.push(n.right)
+        }
+      }
+    }
+  }
+  { xs, nodes, root }
+}
+
+///|
+fn SegTree::for_each_ids_at(
+  self : SegTree,
+  ix : Int,
+  on_id : (Int) -> Unit,
+) -> Unit {
+  if self.root < 0 || self.xs.length() < 2 {
+    return
+  }
+  let xmin = self.xs[0]
+  let xmax = self.xs[self.xs.length() - 1]
+  if ix < xmin || ix >= xmax {
+    return
+  }
+  let mut idx = self.root
+  while idx >= 0 {
+    let node = self.nodes[idx]
+    for id in node.ids {
+      on_id(id)
+    }
+    if node.lo == node.hi {
+      break
+    }
+    let mid = (node.lo + node.hi) / 2
+    let boundary = self.xs[mid + 1]
+    if ix < boundary {
+      idx = node.left
+    } else {
+      idx = node.right
+    }
+  }
 }

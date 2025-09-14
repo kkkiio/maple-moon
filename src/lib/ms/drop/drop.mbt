@@ -6,6 +6,7 @@ trait Drop: @map_object.MapObject {
 
 ///|
 priv struct DropBase {
+  entity : @system.Entity
   base : @map_object.MapObjectBase
   opacity : @utils.Linear
   angle : @utils.Linear
@@ -36,22 +37,24 @@ fn DropBase::new(
   mode : Int,
   player_drop : Bool,
 ) -> DropBase {
-  let base = @map_object.MapObjectBase::new(id)
+  let entity = @system.Entity::new()
+  let base = @map_object.MapObjectBase::new(entity, id)
   base.set_position(@struct.Point::new(start.x, start.y - 4))
   let (state, base_y) = match mode {
     0 | 1 => {
-      base.phobj.moving_object.vspeed = -5.0
-      base.phobj.moving_object.hspeed = (dest.x - start.x).to_double() / 48
+      base.phobj.set_vspeed(-5.0)
+      base.phobj.set_hspeed((dest.x - start.x).to_double() / 48)
       (DropState::DROPPED, (dest.y - 4).to_double())
     }
     2 => {
-      base.phobj.t = @physics.PhysicsObjectType::FIXATED
+      base.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
       (DropState::FLOATING, base.phobj.moving_object.crnt_y())
     }
     3 => (DropState::PICKED_UP, -5.0)
     _ => abort("Invalid drop mode: \{mode}")
   }
   {
+    entity,
     base,
     angle: @utils.Linear::new(0.0),
     opacity: @utils.Linear::new(1.0),
@@ -71,8 +74,8 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
   physics.move_object(self.base.phobj)
   if self.state == DropState::DROPPED {
     if self.base.phobj.onground {
-      self.base.phobj.moving_object.hspeed = 0.0
-      self.base.phobj.t = @physics.PhysicsObjectType::FIXATED
+      self.base.phobj.set_hspeed(0.0)
+      self.base.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
       self.state = DropState::FLOATING
       self.angle.set(0.0)
       self.base.set_positionxy(self.dest.x, self.dest.y - 4)
@@ -94,8 +97,9 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
       Some(looter) => {
         let hdelta = looter.moving_object.x.get() -
           self.base.phobj.moving_object.x.get()
-        self.base.phobj.moving_object.hspeed = looter.moving_object.hspeed / 2.0 +
-          (hdelta - 16.0) / pickuptime
+        self.base.phobj.set_hspeed(
+          looter.moving_object.hspeed / 2.0 + (hdelta - 16.0) / pickuptime,
+        )
       }
       None => ()
     }
@@ -129,8 +133,8 @@ fn DropBase::expire(
       self.angle.set(0.0)
       self.state = DropState::PICKED_UP
       self.looter = lt
-      self.base.phobj.moving_object.vspeed = -4.5
-      self.base.phobj.t = @physics.PhysicsObjectType::NORMAL
+      self.base.phobj.set_vspeed(-4.5)
+      self.base.phobj.set_t(@physics.PhysicsObjectType::NORMAL)
     }
     _ => abort("Invalid drop type: \{t}")
   }

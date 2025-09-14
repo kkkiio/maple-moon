@@ -79,7 +79,7 @@ pub impl PlayerState for PlayerStandState with initialize(
   self : PlayerStandState,
   player : Player,
 ) -> Unit {
-  player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
+  player.character.get_phobj().set_t(@physics.PhysicsObjectType::NORMAL)
 }
 
 ///|
@@ -104,7 +104,7 @@ pub impl PlayerState for PlayerStandState with send_action(
       }
       @keyboard.BasicActionId::JUMP => {
         play_jumpsound()
-        player.character.get_phobj().vforce = -player.get_jumpforce()
+        player.character.get_phobj().set_vforce(-player.get_jumpforce())
       }
       @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
       _ => ()
@@ -142,7 +142,7 @@ pub impl PlayerState for PlayerWalkState with initialize(
   self : PlayerWalkState,
   player : Player,
 ) -> Unit {
-  player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
+  player.character.get_phobj().set_t(@physics.PhysicsObjectType::NORMAL)
 }
 
 ///|
@@ -161,7 +161,7 @@ pub impl PlayerState for PlayerWalkState with send_action(
       @keyboard.BasicActionId::RIGHT => player.set_direction(true)
       @keyboard.BasicActionId::JUMP => {
         play_jumpsound()
-        player.character.get_phobj().vforce = -player.get_jumpforce()
+        player.character.get_phobj().set_vforce(-player.get_jumpforce())
       }
       @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
       _ => ()
@@ -186,7 +186,9 @@ pub impl PlayerState for PlayerWalkState with update(
     } else {
       -player.get_walkforce()
     }
-    player.character.get_phobj().hforce += hforce
+    player.character
+    .get_phobj()
+    .set_hforce(player.character.get_phobj().hforce + hforce)
   }
   if not(player.character.get_phobj().enablejd) {
     player.character
@@ -218,7 +220,7 @@ pub impl PlayerState for PlayerFallState with initialize(
   self : PlayerFallState,
   player : Player,
 ) -> Unit {
-  player.character.get_phobj().t = @physics.PhysicsObjectType::NORMAL
+  player.character.get_phobj().set_t(@physics.PhysicsObjectType::NORMAL)
 }
 
 ///|
@@ -244,14 +246,14 @@ pub impl PlayerState for PlayerFallState with update(
 ) -> Unit {
   let hspeed = player.character.get_phobj().moving_object.hspeed
   if player.is_key_down(@keyboard.BasicActionId::LEFT) && hspeed > 0.0 {
-    player.character.get_phobj().moving_object.hspeed -= 0.025
+    player.character.get_phobj().moving_object.set_hspeed(hspeed - 0.025)
     if player.character.get_phobj().moving_object.hspeed < 0.0 {
-      player.character.get_phobj().moving_object.hspeed = 0.0
+      player.character.get_phobj().moving_object.set_hspeed(0.0)
     }
   } else if player.is_key_down(@keyboard.BasicActionId::RIGHT) && hspeed < 0.0 {
-    player.character.get_phobj().moving_object.hspeed += 0.025
+    player.character.get_phobj().moving_object.set_hspeed(hspeed + 0.025)
     if player.character.get_phobj().moving_object.hspeed > 0.0 {
-      player.character.get_phobj().moving_object.hspeed = 0.0
+      player.character.get_phobj().moving_object.set_hspeed(0.0)
     }
   }
 }
@@ -401,11 +403,15 @@ pub impl PlayerState for PlayerFlyState with initialize(
   self : PlayerFlyState,
   player : Player,
 ) -> Unit {
-  player.character.get_phobj().t = if player.is_underwater() {
-    @physics.PhysicsObjectType::SWIMMING
-  } else {
-    @physics.PhysicsObjectType::FLYING
-  }
+  player.character
+  .get_phobj()
+  .set_t(
+    if player.is_underwater() {
+      @physics.PhysicsObjectType::SWIMMING
+    } else {
+      @physics.PhysicsObjectType::FLYING
+    },
+  )
 }
 
 ///|
@@ -433,14 +439,14 @@ pub impl PlayerState for PlayerFlyState with update(
     return
   }
   if player.is_key_down(@keyboard.BasicActionId::LEFT) {
-    player.character.get_phobj().hforce = -player.get_flyforce()
+    player.character.get_phobj().set_hforce(-player.get_flyforce())
   } else if player.is_key_down(@keyboard.BasicActionId::RIGHT) {
-    player.character.get_phobj().hforce = player.get_flyforce()
+    player.character.get_phobj().set_hforce(player.get_flyforce())
   }
   if player.is_key_down(@keyboard.BasicActionId::UP) {
-    player.character.get_phobj().vforce = -player.get_flyforce()
+    player.character.get_phobj().set_vforce(-player.get_flyforce())
   } else if player.is_key_down(@keyboard.BasicActionId::DOWN) {
-    player.character.get_phobj().vforce = player.get_flyforce()
+    player.character.get_phobj().set_vforce(player.get_flyforce())
   }
 }
 
@@ -473,7 +479,7 @@ pub impl PlayerState for PlayerClimbState with initialize(
   self : PlayerClimbState,
   player : Player,
 ) -> Unit {
-  player.character.get_phobj().t = @physics.PhysicsObjectType::FIXATED
+  player.character.get_phobj().set_t(@physics.PhysicsObjectType::FIXATED)
 }
 
 ///|
@@ -489,18 +495,22 @@ pub impl PlayerState for PlayerClimbState with send_action(
         if player.is_key_down(@keyboard.BasicActionId::LEFT) {
           play_jumpsound()
           player.set_direction(false)
-          player.character.get_phobj().moving_object.hspeed = -player.get_walkforce() *
-            8.0
-          player.character.get_phobj().moving_object.vspeed = -player.get_jumpforce() /
-            1.5
+          player.character.get_phobj().moving_object.set_hspeed(
+            -player.get_walkforce() * 8.0,
+          )
+          player.character.get_phobj().moving_object.set_vspeed(
+            -player.get_jumpforce() / 1.5,
+          )
           self.cancel_ladder(player)
         } else if player.is_key_down(@keyboard.BasicActionId::RIGHT) {
           play_jumpsound()
           player.set_direction(true)
-          player.character.get_phobj().moving_object.hspeed = player.get_walkforce() *
-            8.0
-          player.character.get_phobj().moving_object.vspeed = -player.get_jumpforce() /
-            1.5
+          player.character.get_phobj().moving_object.set_hspeed(
+            player.get_walkforce() * 8.0,
+          )
+          player.character.get_phobj().moving_object.set_vspeed(
+            -player.get_jumpforce() / 1.5,
+          )
           self.cancel_ladder(player)
         }
       _ => ()

@@ -9,7 +9,13 @@ pub let step_time_ms = 8
 pub let fps : UInt = 60
 
 ///|
-pub const CHAR_LOOK_ZINDEX = 10
+pub const BG_ZINDEX = 1
+
+///|
+pub const CHAR_LOOK_ZINDEX = 70
 
 ///|
 pub const UI_ZINDEX = 100
+
+///|
+pub const MINI_MAP_ZINDEX_ = 101

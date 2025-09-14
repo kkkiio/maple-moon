@@ -2,7 +2,7 @@
 struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
-  spawns : @queue.T[MobSpawn]
+  spawns : @queue.Queue[MobSpawn]
   randomizer : @utils.Randomizer
   string_loader : @resource.SyncLoader
   io_service : @io_task.IOService

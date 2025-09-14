@@ -12,24 +12,24 @@ pub fn parse_markup(
       break
     }
     if markup_start > 0 {
-      nodes.push(to_text(rest_text.charcodes(end=markup_start)))
+      nodes.push(to_text(rest_text.view(end_offset=markup_start)))
     }
-    let tag = rest_text.char_at(markup_start + 1)
+    let tag = rest_text.get_char(markup_start + 1).unwrap()
     guard tag_map.get(tag) is Some(tag_type) else { raise UnknownTag(tag) }
     match tag_type {
       MarkupType::SelfClosing => {
         nodes.push(Node::Tag(tag, ""))
-        rest_text = rest_text.charcodes(start=markup_start + 2)
+        rest_text = rest_text.view(start_offset=markup_start + 2)
       }
       MarkupType::Pair => {
-        rest_text = rest_text.charcodes(start=markup_start + 2)
+        rest_text = rest_text.view(start_offset=markup_start + 2)
         guard rest_text.find("#") is Some(markup_end) else {
           // TODO: allow # in text?
           raise MissingMarkupClose
         }
-        let payload = rest_text.charcodes(end=markup_end)
+        let payload = rest_text.view(end_offset=markup_end)
         nodes.push(Node::Tag(tag, payload))
-        rest_text = rest_text.charcodes(start=markup_end + 1)
+        rest_text = rest_text.view(start_offset=markup_end + 1)
       }
     }
   }

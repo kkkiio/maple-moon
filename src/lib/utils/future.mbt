@@ -120,9 +120,3 @@ pub fn advance_futures(futures : Array[Future[Unit]]) -> Unit {
     }
   })
 }
-
-///|
-/// Return a future that will be resolved when the `poll` is called.
-pub fn[T] Future::lazy(f : () -> T) -> Future[T] {
-  Future::new(fn() { f() |> Some })
-}

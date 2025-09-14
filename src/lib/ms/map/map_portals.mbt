@@ -1,8 +1,8 @@
 ///|
 pub struct MapPortals {
   map_portals_animations : MapPortalAnimations
-  portals_by_id : @immut/sorted_map.T[Int, Portal]
-  portal_ids_by_name : @immut/sorted_map.T[String, Int]
+  portals_by_id : @immut/sorted_map.SortedMap[Int, Portal]
+  portal_ids_by_name : @immut/sorted_map.SortedMap[String, Int]
   mut cooldown : Int
 }
 
@@ -97,7 +97,7 @@ pub fn get_portal_by_name(
   self.portal_ids_by_name
   .get(portal_name)
   .map(self.get_portal_pos_by_id(_))
-  .or_default()
+  .unwrap_or_default()
 }
 
 ///|

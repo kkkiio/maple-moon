@@ -422,7 +422,7 @@ pub fn MiniMapUI::set_map(
         frames.push({
           ..@graphics.nx_animation_to_selene_sprite(
             res.canvas,
-            z=MINI_MAP_ZINDEX_,
+            z=@graphics.MINI_MAP_ZINDEX_,
           ),
           offset: @selene_math.Vec2D(
             map_draw_origin_x_.to_double(),
@@ -440,7 +440,7 @@ pub fn MiniMapUI::set_map(
               m_stretch.to_double(),
             ),
           ),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(0, ML_MR_Y_.to_double()),
         ),
       )
@@ -456,7 +456,7 @@ pub fn MiniMapUI::set_map(
               m_stretch.to_double(),
             ),
           ),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(
             middle_right_x_.to_double(),
             ML_MR_Y_.to_double(),
@@ -473,23 +473,26 @@ pub fn MiniMapUI::set_map(
               0,
             ),
           ),
-          MINI_MAP_ZINDEX_,
-          //   @struct.Point::new(CENTER_START_X_, 0) + window_ul_pos_,
-          offset=@selene_math.Vec2D(CENTER_START_X_.to_double(), 0) +
+          @graphics.MINI_MAP_ZINDEX_,
+          offset=@selene_math.Vec2D(
+              //   @struct.Point::new(CENTER_START_X_, 0) + window_ul_pos_,
+              CENTER_START_X_.to_double(),
+              0,
+            ) +
             window_ul_pos_,
         ),
       )
       frames.push(
         @sprite.Sprite::from_animation(
           @sprite.Animation::new([self.resource.minmap_up_left]),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=window_ul_pos_,
         ),
       )
       frames.push(
         @sprite.Sprite::from_animation(
           @sprite.Animation::new([self.resource.minmap_up_right]),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(ur_x_offset.to_double(), 0) + window_ul_pos_,
         ),
       )
@@ -503,7 +506,7 @@ pub fn MiniMapUI::set_map(
               0,
             ),
           ),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(
             CENTER_START_X_.to_double(),
             (down_y_offset + 18).to_double(),
@@ -513,14 +516,14 @@ pub fn MiniMapUI::set_map(
       frames.push(
         @sprite.Sprite::from_animation(
           @sprite.Animation::new([self.resource.minmap_down_left]),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(0, down_y_offset.to_double()),
         ),
       )
       frames.push(
         @sprite.Sprite::from_animation(
           @sprite.Animation::new([self.resource.minmap_down_right]),
-          MINI_MAP_ZINDEX_,
+          @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(
             ur_x_offset.to_double(),
             down_y_offset.to_double(),
@@ -562,7 +565,7 @@ pub fn MiniMapUI::set_map(
               let entity = @system.Entity::new()
               let sprite = @sprite.Sprite::from_animation(
                 portal_marker,
-                MINI_MAP_ZINDEX_,
+                @graphics.MINI_MAP_ZINDEX_,
                 offset=marker_pos,
               )
               @sprite.sprites.set(entity, sprite)
@@ -727,6 +730,3 @@ fn nx_texture_to_frame(
     ),
   }
 }
-
-///|
-const MINI_MAP_ZINDEX_ = 1000

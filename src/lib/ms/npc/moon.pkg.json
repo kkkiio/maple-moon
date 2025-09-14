@@ -11,6 +11,6 @@
     "KKKIIO/maple-moon-client/lib/ms/map_layer",
     "KKKIIO/maple-moon-client/lib/ms/map_object",
     "KKKIIO/maple-moon-client/lib/ms/markup_text",
-    "KKKIIO/maple-moon-client/lib/io_task"
+    "Milky2018/selene/system"
   ]
 }

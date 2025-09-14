@@ -76,15 +76,15 @@ async fn load_modules(
   // }
 
   let add_io_task = fn(task) { poll_service.add(task) }
-  let action_registry = @action.Registry::new()
-  let action_map = {}
-  fn merge_actions(
-    map : Map[@keyboard.BasicActionId, @action.Descriptor],
-  ) -> Unit {
-    for id, descriptor in map {
-      action_map.set(id, descriptor)
-    }
-  }
+  // let action_registry = @action.Registry::new()
+  // let action_map = {}
+  // fn merge_actions(
+  //   map : Map[@keyboard.BasicActionId, @action.Descriptor],
+  // ) -> Unit {
+  //   for id, descriptor in map {
+  //     action_map.set(id, descriptor)
+  //   }
+  // }
 
   let net_handler_map = {}
   fn merge_handlers(
@@ -245,7 +245,7 @@ async fn load_modules(
     inventory_module.get_inventory(),
   )
   merge_handlers(skill_book_module.make_handlers())
-  merge_actions(skill_book_module.make_actions())
+  // merge_actions(skill_book_module.make_actions())
   let shop_module = @shop.Module::load(network, string_loader, io_service)
   merge_handlers(shop_module.make_handlers())
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
@@ -378,7 +378,7 @@ fn setup_game_ui(
   ui : UI,
   // stage : Stage,
   player : @player.Player,
-  registry : @action.Registry,
+  // registry : @action.Registry,
   timer : @utils.Timer,
   map_module : @map.Module,
   status_bar_loader : @resource.SyncLoader,

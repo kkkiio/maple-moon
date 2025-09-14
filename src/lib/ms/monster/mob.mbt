@@ -53,6 +53,7 @@ pub fn flip(self : Stance) -> Stance {
 
 ///|
 struct Mob {
+  entity : @system.Entity
   base : @map_object.MapObjectBase
   animations : Map[StanceType, @graphics.Animation]
   skill_cache : Map[Int, @utils.Future[Result[MobSkill, Error]]]
@@ -174,32 +175,32 @@ pub impl @json.FromJson for MobInfo with from_json(json, path) {
   } else {
     None
   }
-  let fly_speed = if json is { "flySpeed": Number(fly_speed), .. } {
+  let fly_speed = if json is { "flySpeed": Number(fly_speed, ..), .. } {
     fly_speed
   } else {
     0.0
   }
-  let boss = json is { "boss": Number(1), .. }
-  let no_flip = json is { "noFlip": Number(1), .. }
+  let boss = json is { "boss": Number(1, ..), .. }
+  let no_flip = json is { "noFlip": Number(1, ..), .. }
   match json {
     {
-      "MADamage": Number(ma_damage),
-      "MDDamage": Number(md_damage),
-      "PADamage": Number(pa_damage),
-      "PDDamage": Number(pd_damage),
-      "acc": Number(acc),
-      "bodyAttack": Number(body_attack),
-      "eva": Number(eva),
-      "exp": Number(exp),
-      "fs": Number(fs),
-      "level": Number(level),
-      "maxHP": Number(max_hp),
-      "maxMP": Number(max_mp),
-      "mobType": Number(mob_type),
-      "pushed": Number(pushed),
-      "speed": Number(speed),
-      "summonType": Number(summon_type),
-      "undead": Number(undead),
+      "MADamage": Number(ma_damage, ..),
+      "MDDamage": Number(md_damage, ..),
+      "PADamage": Number(pa_damage, ..),
+      "PDDamage": Number(pd_damage, ..),
+      "acc": Number(acc, ..),
+      "bodyAttack": Number(body_attack, ..),
+      "eva": Number(eva, ..),
+      "exp": Number(exp, ..),
+      "fs": Number(fs, ..),
+      "level": Number(level, ..),
+      "maxHP": Number(max_hp, ..),
+      "maxMP": Number(max_mp, ..),
+      "mobType": Number(mob_type, ..),
+      "pushed": Number(pushed, ..),
+      "speed": Number(speed, ..),
+      "summonType": Number(summon_type, ..),
+      "undead": Number(undead, ..),
       ..
     } =>
       {
@@ -245,7 +246,8 @@ fn Mob::new(
   string_loader : @resource.SyncLoader,
   animations : Map[StanceType, @graphics.Animation],
 ) -> Mob raise {
-  let base = @map_object.MapObjectBase::new(oi)
+  let entity = @system.Entity::new()
+  let base = @map_object.MapObjectBase::new(entity, oi)
   let info : MobInfo = src["info"].value() |> @json.from_json
   let level = info.level
   let watk = info.pa_damage
@@ -300,13 +302,13 @@ fn Mob::new(
   fly_speed += 100
   fly_speed *= 0.0005
   if can_fly {
-    base.phobj.t = @physics.PhysicsObjectType::FLYING
+    base.phobj.set_t(@physics.PhysicsObjectType::FLYING)
   }
   let id = mid
   base.set_position(position)
   let control = mode > 0
   let aggro = mode == 2
-  base.phobj.fhid = fh
+  base.phobj.set_fhid(fh)
   base.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
   let hp_percent = 0
   let dying = false
@@ -326,6 +328,7 @@ fn Mob::new(
     nametag=true,
   )
   {
+    entity,
     base,
     animations,
     skill_cache: Map::new(),
@@ -463,33 +466,40 @@ pub impl @map_object.MapObject for Mob with update(
     match self.stance.t {
       StanceType::MOVE =>
         if self.can_fly {
-          self.base.phobj.hforce = if self.stance.face_right {
-            self.fly_speed
-          } else {
-            -self.fly_speed
-          }
+          self.base.phobj.set_hforce(
+            if self.stance.face_right {
+              self.fly_speed
+            } else {
+              -self.fly_speed
+            },
+          )
           match self.fly_direction {
-            FlyDirection::UPWARDS => self.base.phobj.vforce = -self.fly_speed
-            FlyDirection::DOWNWARDS => self.base.phobj.vforce = self.fly_speed
+            FlyDirection::UPWARDS => self.base.phobj.set_vforce(-self.fly_speed)
+            FlyDirection::DOWNWARDS =>
+              self.base.phobj.set_vforce(self.fly_speed)
             _ => ()
           }
         } else {
-          self.base.phobj.hforce = if self.stance.face_right {
-            self.speed
-          } else {
-            -self.speed
-          }
+          self.base.phobj.set_hforce(
+            if self.stance.face_right {
+              self.speed
+            } else {
+              -self.speed
+            },
+          )
         }
       StanceType::HIT =>
         if self.can_move {
           let kbforce = if self.base.phobj.onground { 0.2 } else { 0.1 }
-          self.base.phobj.hforce = if self.stance.face_right { // backwards
-            -kbforce
-          } else {
-            kbforce
-          }
+          self.base.phobj.set_hforce(
+            if self.stance.face_right { // backwards
+              -kbforce
+            } else {
+              kbforce
+            },
+          )
         }
-      StanceType::JUMP => self.base.phobj.vforce = -5.0
+      StanceType::JUMP => self.base.phobj.set_vforce(-5.0)
       _ => ()
     }
     physics.move_object(self.base.phobj)
@@ -722,7 +732,7 @@ pub fn get_head_position(
     None => @struct.Point::default()
   }
   position
-  .or(self.get_position())
+  .unwrap_or(self.get_position())
   .shift_x(
     if self.stance.face_right && not(self.no_flip) {
       -head.x
@@ -750,7 +760,7 @@ pub fn Mob::send_movement(
   let lastmove = self.movements[0]
   let laststance = lastmove.newstate
   self.set_stance(laststance |> Stance::from_byte)
-  self.base.phobj.fhid = lastmove.fh
+  self.base.phobj.set_fhid(lastmove.fh)
 }
 
 ///|

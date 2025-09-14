@@ -63,3 +63,9 @@ pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimatio
   let zigzag = json is { "zigzag": Number(1, ..), .. }
   { frames, blend, zigzag }
 }
+
+///|
+pub fn NxAnimation::get_size(self : NxAnimation) -> (Int, Int) {
+  let texture = self.frames[0].texture
+  (texture.w, texture.h)
+}

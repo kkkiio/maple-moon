@@ -168,6 +168,7 @@ pub fn NpcSpawn::instantiate(
 ///|
 /// Represents a NPC on the current map
 struct Npc {
+  entity : @system.Entity
   base : @map_object.MapObjectBase
   animations : Map[String, @graphics.Animation]
   dialogue : Map[String, Array[String]]
@@ -237,7 +238,8 @@ pub fn Npc::load(
   f : Int,
   position : @struct.Point[Int],
 ) -> Npc {
-  let base = @map_object.MapObjectBase::new(o)
+  let entity = @system.Entity::new()
+  let base = @map_object.MapObjectBase::new(entity, o)
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_res([strid])
   let strsrc = string_loader.load_res(["Npc.img", id.to_string()])
@@ -283,7 +285,7 @@ pub fn Npc::load(
   let flip = not(fl)
   // let control = cnt
   let stance = "stand"
-  base.phobj.fhid = f
+  base.phobj.set_fhid(f)
   base.set_position(position)
   let name_label = @graphics.Text::new(
     @graphics.FontId::A13B,
@@ -300,6 +302,7 @@ pub fn Npc::load(
     nametag=true,
   )
   {
+    entity,
     base,
     animations,
     // lines,

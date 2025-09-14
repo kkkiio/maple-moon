@@ -18,6 +18,7 @@ struct CharLook {
   alerted : @utils.TimedBool
   draw_info : @types.BodyDrawInfo
   mut entities : Array[@system.Entity]
+  mut pos : @selene_math.Vec2D
 }
 
 ///|
@@ -85,6 +86,7 @@ pub fn CharLook::new(
     alerted: @utils.TimedBool::default(),
     draw_info,
     entities: [],
+    pos: @selene_math.Vec2D::zero(),
   }
 }
 
@@ -616,9 +618,17 @@ pub fn CharLook::draw(
 }
 
 ///|
-pub fn CharLook::set_sprites(self : CharLook, pos : @struct.Point[Int]) -> Unit {
-  let acmove = @struct.Point::default()
-  let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
+pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
+  self.pos = pos
+  for entity in self.entities {
+    @position.positions.set(entity, @position.Position(pos))
+  }
+}
+
+///|
+pub fn CharLook::set_sprites(self : CharLook) -> Unit {
+  // let acmove = @struct.Point::default()
+  // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
   // let interstance = self.stance.get()
   // let interexpression = self.expression.get()
   // let interframe = self.st_frame.get()
@@ -638,14 +648,13 @@ pub fn CharLook::set_sprites(self : CharLook, pos : @struct.Point[Int]) -> Unit 
   let drawables : Array[&@graphics.Drawable] = []
   let entities : Array[@system.Entity] = []
   let mut next_z = @graphics.CHAR_LOOK_ZINDEX
-  let pos = @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double())
+  let pos = self.pos
   fn new_hair_entity(layer) {
     let entity = @system.Entity::new()
     if self.hair.stances.get(stance).bind(_.get(layer)) is Some(sp) {
       let sprite = { ..sp, zindex: next_z }
       next_z += 1
       @sprite.sprites.set(entity, sprite)
-      @position.positions.set(entity, @position.Position(pos))
     }
     entity
   }
@@ -667,7 +676,6 @@ pub fn CharLook::set_sprites(self : CharLook, pos : @struct.Point[Int]) -> Unit 
       let sprite = { ..sp, zindex: next_z }
       next_z += 1
       @sprite.sprites.set(entity, sprite)
-      @position.positions.set(entity, @position.Position(pos))
     }
     entity
   }

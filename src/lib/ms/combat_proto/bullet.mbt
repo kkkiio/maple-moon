@@ -1,5 +1,6 @@
 ///|
 struct Bullet {
+  entity : @system.Entity
   animation : @graphics.Animation
   move_obj : @physics.MovingObject
   mut flip : Bool
@@ -11,10 +12,11 @@ pub fn Bullet::new(
   origin : @struct.Point[Int],
   toleft : Bool,
 ) -> Bullet {
-  let move_obj = @physics.MovingObject::default()
+  let entity = @system.Entity::new()
+  let move_obj = @physics.MovingObject::new(entity)
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
   move_obj.set_y(origin.y.to_double() - 26.0)
-  { animation, move_obj, flip: toleft }
+  { entity, animation, move_obj, flip: toleft }
 }
 
 ///|
@@ -49,22 +51,22 @@ pub fn set_target(self : Bullet, target : @struct.Point[Int]) -> Bool {
     return true
   }
   self.flip = xdelta > 0
-  self.move_obj.hspeed = xdelta.to_double() / 32.0
+  self.move_obj.set_hspeed(xdelta.to_double() / 32.0)
   if xdelta > 0 {
     if self.move_obj.hspeed < 3.0 {
-      self.move_obj.hspeed = 3.0
+      self.move_obj.set_hspeed(3.0)
     } else if self.move_obj.hspeed > 6.0 {
-      self.move_obj.hspeed = 6.0
+      self.move_obj.set_hspeed(6.0)
     }
   } else if xdelta < 0 {
     if self.move_obj.hspeed > -3.0 {
-      self.move_obj.hspeed = -3.0
+      self.move_obj.set_hspeed(-3.0)
     } else if self.move_obj.hspeed < -6.0 {
-      self.move_obj.hspeed = -6.0
+      self.move_obj.set_hspeed(-6.0)
     }
   }
-  self.move_obj.vspeed = self.move_obj.hspeed *
-    ydelta.to_double() /
-    xdelta.to_double()
+  self.move_obj.set_vspeed(
+    self.move_obj.hspeed * ydelta.to_double() / xdelta.to_double(),
+  )
   return false
 }

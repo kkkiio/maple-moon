@@ -34,15 +34,10 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
   })
   // load all the spritesheet json and cache them
   if spritesheet_paths.length() > 0 {
-    @log.info({ "spritesheet_paths": spritesheet_paths }, "spritesheet paths")
     @js.async_all(
       spritesheet_paths.map(fn(path) {
         async fn() {
-          let spritesheet_json_url = if path.has_prefix("/") {
-            BASE_URL + path + ".json"
-          } else {
-            BASE_URL + "/" + path + ".json"
-          }
+          let spritesheet_json_url = join_2path(BASE_URL, path + ".json")
           let fetched = js_fetch_string(spritesheet_json_url).wait()
             |> @js.Value::cast
           let j = @json.from_json(@json.parse(fetched)) catch {
@@ -57,20 +52,24 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
     )
     |> ignore
   }
-  let value = preorder_replace(origin_value, fn(data) {
-    fill_offset_from_spritesheet_json(data, self.spritesheet_json_cache)
-  })
+  let value = patch_image(origin_value, self.spritesheet_json_cache)
   self.cache.set(path, value)
   value
 }
 
 ///|
-pub fn patch_spritesheet_json(
+/// patch the image path in the json.
+/// 1. replace the 'spritesheet-ref' with the image path and the offset of the frame.
+/// 2. prefix the image path with the base url.
+pub fn patch_image(
   data : Json,
   spritesheet_jsons : Map[String, SpritesheetMetadata],
 ) -> Json raise {
   preorder_replace(data, fn(data) {
-    fill_offset_from_spritesheet_json(data, spritesheet_jsons)
+    let filled = fill_offset_from_spritesheet_json(data, spritesheet_jsons).unwrap_or(
+      data,
+    )
+    prefix_imagebase_url(filled)
   })
 }
 
@@ -171,16 +170,17 @@ fn fill_offset_from_spritesheet_json(
 }
 
 ///|
+fn prefix_imagebase_url(json : Json) -> Json? {
+  guard json is Object(o) else { return None }
+  guard o is { "__i": String(path), .. } else { return None }
+  o["__i"] = Json::string(join_2path(BASE_URL, path))
+  Some(Json::object(o))
+}
+
+///|
 pub(all) struct SpritesheetMetadata {
   frames : Map[String, SpritesheetImageMetadata]
 } derive(@json.FromJson)
-// {
-// 			"frame": {"x":0,"y":0,"w":90,"h":91},
-// 			"rotated": false,
-// 			"trimmed": false,
-// 			"spriteSourceSize": {"x":0,"y":0,"w":90,"h":91},
-// 			"sourceSize": {"w":90,"h":91}
-// 		}
 
 ///|
 pub(all) struct SpritesheetImageMetadata {
@@ -219,4 +219,13 @@ fn collect_spritesheet_paths(json : Json) -> Array[String] {
 
   dfs(json)
   paths.to_array()
+}
+
+///|
+fn join_2path(path1 : String, path2 : String) -> String {
+  if path2.has_prefix("/") {
+    path1 + path2
+  } else {
+    path1 + "/" + path2
+  }
 }

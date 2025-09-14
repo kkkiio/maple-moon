@@ -17,7 +17,7 @@ pub(all) enum PortalType {
   SPRING1 = 12
   SPRING2 = 13
   TYPE14 = 14
-} derive(Eq, Compare, Show, ToJson(style="flat"), Hash)
+} derive(Eq, Compare, Show, ToJson, Hash)
 
 ///|
 pub fn PortalType::typebyid(id : Int) -> PortalType? {

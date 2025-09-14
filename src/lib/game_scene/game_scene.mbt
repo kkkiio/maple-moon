@@ -151,29 +151,43 @@ fn respawn(
   // TODO: Music
   let spawnpoint = portals.get_portal_pos_by_id(portal_id)
   let startpos = physics.get_y_below(spawnpoint)
-  @log.info({ "spawnpoint": spawnpoint, "startpos": startpos }, "respawn")
-  self.player.respawn(startpos, map_info.is_underwater())
-  // self.camera.set_position(startpos)
-  @camera.attach_entity(self.player.entity, @selene_math.Vec2D(16.0, 16.0))
-  // self.camera.set_view(map_info.get_walls(), map_info.get_borders())
   let left = map_info.get_walls().first().to_double()
   let right = map_info.get_walls().second().to_double()
   let top = map_info.get_borders().first().to_double()
   let bottom = map_info.get_borders().second().to_double()
+  @log.info(
+    {
+      "spawnpoint": spawnpoint,
+      "startpos": startpos,
+      "left": left,
+      "right": right,
+      "top": top,
+      "bottom": bottom,
+    },
+    "respawn",
+  )
+  self.player.respawn(startpos, map_info.is_underwater())
+  // self.camera.set_position(startpos)
+  @camera.attach_entity(self.player.entity, @selene_math.Vec2D(16.0, 16.0))
+  // self.camera.set_view(map_info.get_walls(), map_info.get_borders())
   @camera.set_limits(left~, right~, top~, bottom~)
 }
 
 ///|
-pub fn draw(self : Stage, alpha : Double) -> Unit {
-  // guard self.state
-  //   is StageState::ACTIVE(tiles_objs~, backgrounds~, portals~, ..) else {
-  //   return
-  // }
+fn set_sprites(
+  backgrounds : @map.Backgrounds,
+  world_size : @selene_math.Vec2D,
+) -> Unit {
   // let viewpos = self.camera.get_position(alpha~)
   // let viewrpos = self.camera.real_position(alpha)
   // let viewx = viewrpos.0
   // let viewy = viewrpos.1
   // @map.drawbackgrounds(backgrounds.backs, viewx, viewy, alpha)
+  for i, background in backgrounds.backs {
+    // background.draw(viewx, viewy, alpha)
+    let z = @graphics.BG_ZINDEX + i
+    background.set_sprites(world_size, z)
+  }
   // let player = self.player.unwrap()
   // for id in @map_layer.ids {
   //   tiles_objs.draw(id, viewpos, alpha)
@@ -536,6 +550,12 @@ pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
         map_info=sence_map.map_info,
         portals=sence_map.portals,
         enter_portal_id=portal_id,
+      )
+      let width = sence_map.map_info.get_walls().delta()
+      let height = sence_map.map_info.get_borders().delta()
+      set_sprites(
+        sence_map.backgrounds,
+        @selene_math.Vec2D(width.to_double(), height.to_double()),
       )
       stage.respawn(
         portal_id,

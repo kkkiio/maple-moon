@@ -138,7 +138,7 @@ fn main {
   .with_canvas_height(@config.constants.get_viewheight() |> Double::from_int)
   .with_fps(@graphics.fps)
   .add_plugin(@plugins.default_plugin)
-  .add_plugin(@plugins.debug_plugin)
+  // .add_plugin(@plugins.debug_plugin)
   .add_system(game_start, schedule=Startup)
   .add_system(legacy_input_system, system_name="legacy_input_system")
   .add_system(@cursor.cursor_system, system_name="cursor_system")

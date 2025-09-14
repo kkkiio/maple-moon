@@ -29,13 +29,11 @@ pub fn make_handlers(
     @net.make_handler(@net.DROP_LOOT, parse_drop_loot, fn(drop : DropLoot) {
       handle_drop_loot_parsed(self.map_drops, drop)
     }),
-    @net.make_handler(
-      @net.REMOVE_LOOT,
-      fn(recv) { parse_remove_loot(get_character_by_id_fn, recv) },
-      fn(remove : RemoveLoot) {
-        handle_remove_loot_parsed(self.map_drops, remove)
-      },
-    ),
+    @net.make_handler(@net.REMOVE_LOOT, fn(recv) { parse_remove_loot(recv) }, fn(
+      remove : RemoveLoot,
+    ) {
+      handle_remove_loot_parsed(self.map_drops, remove, get_character_by_id_fn)
+    }),
   ]
   |> Map::from_array
 }

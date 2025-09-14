@@ -72,7 +72,9 @@ pub fn Player::new(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
+  let entity = @system.Entity::new()
   let character = @character.Character::new(
+    entity,
     id,
     look,
     name,
@@ -82,7 +84,6 @@ pub fn Player::new(
     stats,
     get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
   )
-  let entity = @system.Entity::new()
   let p : Player = {
     entity,
     character,
@@ -390,9 +391,9 @@ pub fn set_ladder(self : Player, ladder : @map.Ladder?) -> Unit {
   match ladder {
     Some(ladder) => {
       self.character.get_phobj().set_x(ladder.get_x().to_double())
-      self.character.get_phobj().moving_object.hspeed = 0.0
-      self.character.get_phobj().moving_object.vspeed = 0.0
-      self.character.get_phobj().fhlayer = 7
+      self.character.get_phobj().set_hspeed(0.0)
+      self.character.get_phobj().set_vspeed(0.0)
+      self.character.get_phobj().set_fhlayer(7)
       self.set_state(
         if ladder.is_ladder() {
           CharState::LADDER
@@ -418,12 +419,16 @@ pub fn damage(
     self.character.state == CharState::DIED
   let knockback = not(missed) && not(immovable)
   if knockback && self.randomizer.above(self.stats.get_stance()) {
-    self.character.get_phobj().moving_object.hspeed = if fromleft {
-      -1.5
-    } else {
-      1.5
-    }
-    self.character.get_phobj().vforce -= 3.5
+    self.character.get_phobj().moving_object.set_hspeed(
+      if fromleft {
+        -1.5
+      } else {
+        1.5
+      },
+    )
+    self.character
+    .get_phobj()
+    .set_vforce(self.character.get_phobj().vforce - 3.5)
   }
   let direction = if fromleft { 0 } else { 1 }
   @combat.MobAttackResult::new(attack, damage, direction)

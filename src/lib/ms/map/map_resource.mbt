@@ -107,7 +107,7 @@ struct MapTilesObjsResource {
   layers : Array[LayerResource]
   back : BackgroundsResource
   portal : Array[PortalMarker]
-} derive(ToJson)
+}
 
 ///|
 priv struct MapLayerInfoResource {

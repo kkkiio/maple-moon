@@ -1,5 +1,6 @@
 ///|
 struct Number {
+  entity : @system.Entity
   charsets : @utils.BoolPair[@graphics.Charset]
   t : NumberType
   miss : Bool
@@ -661,20 +662,20 @@ pub fn NumberSet::load() -> NumberSet raise {
     ),
   }
   let red_charset_pair = load_charset_pair(
-    @resource.patch_spritesheet_json(no_red1, spritesheet_jsons),
-    @resource.patch_spritesheet_json(no_red0, spritesheet_jsons),
+    @resource.patch_image(no_red1, spritesheet_jsons),
+    @resource.patch_image(no_red0, spritesheet_jsons),
   )
   let cri_charset_pair = load_charset_pair(
-    @resource.patch_spritesheet_json(no_cri1, spritesheet_jsons),
-    @resource.patch_spritesheet_json(no_cri0, spritesheet_jsons),
+    @resource.patch_image(no_cri1, spritesheet_jsons),
+    @resource.patch_image(no_cri0, spritesheet_jsons),
   )
   let violet_charset_pair = load_charset_pair(
-    @resource.patch_spritesheet_json(no_violet1, spritesheet_jsons),
-    @resource.patch_spritesheet_json(no_violet0, spritesheet_jsons),
+    @resource.patch_image(no_violet1, spritesheet_jsons),
+    @resource.patch_image(no_violet0, spritesheet_jsons),
   )
   let blue_charset_pair = load_charset_pair(
-    @resource.patch_spritesheet_json(no_blue1, spritesheet_jsons),
-    @resource.patch_spritesheet_json(no_blue0, spritesheet_jsons),
+    @resource.patch_image(no_blue1, spritesheet_jsons),
+    @resource.patch_image(no_blue0, spritesheet_jsons),
   )
   { red_charset_pair, cri_charset_pair, violet_charset_pair, blue_charset_pair }
 }
@@ -719,12 +720,24 @@ pub fn new_number(
     let shift = charsets[true].getw('M') / 2
     (true, shift, false, Char::default(), [])
   }
-  let move_obj = @physics.MovingObject::default()
+  let entity = @system.Entity::new()
+  let move_obj = @physics.MovingObject::new(entity)
   move_obj.set_x(x.to_double())
   move_obj.set_y(starty.to_double())
-  move_obj.vspeed = -0.25
+  move_obj.set_vspeed(-0.25)
   let opacity = @utils.Linear::new(1.5)
-  { charsets, t, miss, multiple, first_num, rest_num, shift, move_obj, opacity }
+  {
+    entity,
+    charsets,
+    t,
+    miss,
+    multiple,
+    first_num,
+    rest_num,
+    shift,
+    move_obj,
+    opacity,
+  }
 }
 
 ///|

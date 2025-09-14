@@ -55,6 +55,7 @@ pub fn stance_value(self : CharState, facing_right~ : Bool) -> Int {
 
 ///|
 pub(all) struct CharBase {
+  entity : @system.Entity
   base : MapObjectBase
   mut look : @char_look.CharLook
   stats : @char_stats.CharStats
@@ -88,12 +89,17 @@ pub fn get_position(self : CharBase) -> @struct.Point[Int] {
 }
 
 ///|
-pub fn set_position(self : CharBase, pos : @struct.Point[Int]) -> Unit {
+pub fn CharBase::set_position(
+  self : CharBase,
+  pos : @struct.Point[Int],
+) -> Unit {
   self.base.set_position(pos)
+  self.look.set_pos(pos.to_vec2d())
 }
 
 ///|
 pub fn CharBase::new(
+  entity : @system.Entity,
   oid : Int,
   look : @char_look.CharLook,
   name : String,
@@ -103,7 +109,8 @@ pub fn CharBase::new(
   get_integer_attackspeed~ : () -> Int,
 ) -> CharBase {
   let char_base = {
-    base: MapObjectBase::new(oid),
+    entity,
+    base: MapObjectBase::new(entity, oid),
     look,
     stats,
     attacking: false,

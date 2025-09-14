@@ -10,21 +10,21 @@ pub fn[T] Point::new(x : T, y : T) -> Point[T] {
 }
 
 ///|
-pub impl[T : Add] Add for Point[T] with op_add(self : Point[T], p2 : Point[T]) -> Point[
+pub impl[T : Add] Add for Point[T] with add(self : Point[T], p2 : Point[T]) -> Point[
   T,
 ] {
   { x: self.x + p2.x, y: self.y + p2.y }
 }
 
 ///|
-pub impl[T : Sub] Sub for Point[T] with op_sub(self : Point[T], p2 : Point[T]) -> Point[
+pub impl[T : Sub] Sub for Point[T] with sub(self : Point[T], p2 : Point[T]) -> Point[
   T,
 ] {
   { x: self.x - p2.x, y: self.y - p2.y }
 }
 
 ///|
-pub impl[T : Neg] Neg for Point[T] with op_neg(self : Point[T]) -> Point[T] {
+pub impl[T : Neg] Neg for Point[T] with neg(self : Point[T]) -> Point[T] {
   { x: -self.x, y: -self.y }
 }
 
@@ -82,4 +82,9 @@ pub fn to_float(self : Point[Int]) -> Point[Float] {
 ///|
 pub fn to_int(self : Point[Float]) -> Point[Int] {
   { x: self.x.to_int(), y: self.y.to_int() }
+}
+
+///|
+pub fn Point::to_vec2d(self : Point[Int]) -> @selene_math.Vec2D {
+  @selene_math.Vec2D(self.x.to_double(), self.y.to_double())
 }

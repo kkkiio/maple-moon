@@ -79,10 +79,10 @@ pub fn Clothing::from_resource(
     Layer::CAPE
   }
   let info = item_data.get_info()
-  let vslot = info.get("vslot").bind(fn(it) { it.as_string() }).or("")
+  let vslot = info.get("vslot").bind(fn(it) { it.as_string() }).unwrap_or("")
   let stand = match info {
-    { "stand": Json::Number(1), .. } => @types.StanceId::STAND1
-    { "stand": Json::Number(2), .. } => @types.StanceId::STAND2
+    { "stand": Json::Number(1, ..), .. } => @types.StanceId::STAND1
+    { "stand": Json::Number(2, ..), .. } => @types.StanceId::STAND2
     _ =>
       if two_handed {
         @types.StanceId::STAND2
@@ -91,8 +91,8 @@ pub fn Clothing::from_resource(
       }
   }
   let walk = match info {
-    { "walk": Json::Number(1), .. } => @types.StanceId::WALK1
-    { "walk": Json::Number(2), .. } => @types.StanceId::WALK2
+    { "walk": Json::Number(1, ..), .. } => @types.StanceId::WALK1
+    { "walk": Json::Number(2, ..), .. } => @types.StanceId::WALK2
     _ =>
       if two_handed {
         @types.StanceId::WALK2

@@ -17,19 +17,19 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame raise {
   let bounds = src.as_rectangle()
   let head = src["head"].as_point()
   let delay = match src["delay"].get_int() {
-    0 => default_delay.or(100)
+    0 => default_delay.unwrap_or(100)
     it => it
   }
   let opacities = match (src["a0"].value(), src["a1"].value()) {
-    (Json::Number(a0), Json::Number(a1)) => (a0.to_int(), a1.to_int())
+    (Json::Number(a0, ..), Json::Number(a1, ..)) => (a0.to_int(), a1.to_int())
     (Json::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
     (_, Json::Number(a1)) => (255 - a1.to_int(), a1.to_int())
     _ => (255, 255)
   }
   let scales = match (src["z0"].value(), src["z1"].value()) {
     (Json::Number(z0), Json::Number(z1)) => (z0.to_int(), z1.to_int())
-    (Json::Number(z0), _) => (z0.to_int(), 0)
-    (_, Json::Number(z1)) => (100, z1.to_int())
+    (Json::Number(z0, ..), _) => (z0.to_int(), 0)
+    (_, Json::Number(z1, ..)) => (100, z1.to_int())
     _ => (100, 100)
   }
   { texture, delay, head, bounds, opacities, scales }
@@ -74,19 +74,21 @@ pub impl @json.FromJson for FrameResource with from_json(json, path) -> FrameRes
     path=path.add_key("head"),
   )
   let delay = match obj {
-    { "delay": Number(delay), .. } if delay != 0 => delay.to_int()
+    { "delay": Number(delay, ..), .. } if delay != 0 => delay.to_int()
     _ => 100
   }
   let opacities = match json {
-    { "a0": Number(a0), "a1": Number(a1), .. } => (a0.to_int(), a1.to_int())
-    { "a0": Number(a0), .. } => (a0.to_int(), 255 - a0.to_int())
-    { "a1": Number(a1), .. } => (255 - a1.to_int(), a1.to_int())
+    { "a0": Number(a0, ..), "a1": Number(a1, ..), .. } =>
+      (a0.to_int(), a1.to_int())
+    { "a0": Number(a0, ..), .. } => (a0.to_int(), 255 - a0.to_int())
+    { "a1": Number(a1, ..), .. } => (255 - a1.to_int(), a1.to_int())
     _ => (255, 255)
   }
   let scales = match json {
-    { "z0": Number(z0), "z1": Number(z1), .. } => (z0.to_int(), z1.to_int())
-    { "z0": Number(z0), .. } => (z0.to_int(), 0)
-    { "z1": Number(z1), .. } => (100, z1.to_int())
+    { "z0": Number(z0, ..), "z1": Number(z1, ..), .. } =>
+      (z0.to_int(), z1.to_int())
+    { "z0": Number(z0, ..), .. } => (z0.to_int(), 0)
+    { "z1": Number(z1, ..), .. } => (100, z1.to_int())
     _ => (100, 100)
   }
   { texture, delay, head, bounds, opacities, scales }
@@ -283,7 +285,7 @@ pub impl @json.FromJson for AnimationResource with from_json(json, path) -> Anim
   }
   let blend = obj
     .get("blend")
-    .map_or(false, fn(blend) { blend is Json::Number(1) })
+    .map_or(false, fn(blend) { blend is Json::Number(1, ..) })
   let frames = [@json.from_json(json)] catch {
     _ => {
       let fs : @resource.MapBasedArray[FrameResource] = @json.from_json(json)
@@ -297,7 +299,7 @@ pub impl @json.FromJson for AnimationResource with from_json(json, path) -> Anim
   }
   let zigzag = obj
     .get("zigzag")
-    .map_or(false, fn(zigzag) { zigzag is Json::Number(1) })
+    .map_or(false, fn(zigzag) { zigzag is Json::Number(1, ..) })
   { blend, frames, zigzag }
 }
 
@@ -513,12 +515,14 @@ pub fn AnimationData::from_nx_animation(
 pub fn AnimationData::to_selene_sprite(
   self : AnimationData,
   z? : Int = 0,
+  transform? : @selene_math.Transform = @selene_math.Transform::new(),
 ) -> @sprite.Sprite {
   @sprite.Sprite::from_animation(
     @sprite.Animation::new(
       self.frames,
       loop_=true,
       rate=1000.0 / self.delay_ms.to_double() / fps.to_double(),
+      transform~,
     ),
     z,
     offset=self.left_top,
@@ -529,6 +533,7 @@ pub fn AnimationData::to_selene_sprite(
 pub fn nx_animation_to_selene_sprite(
   src : @resource.NxAnimation,
   z? : Int = 0,
+  transform? : @selene_math.Transform = @selene_math.Transform::new(),
 ) -> @sprite.Sprite {
-  AnimationData::from_nx_animation(src).to_selene_sprite(z~)
+  AnimationData::from_nx_animation(src).to_selene_sprite(z~, transform~)
 }

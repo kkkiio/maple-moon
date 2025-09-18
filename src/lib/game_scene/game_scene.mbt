@@ -176,6 +176,7 @@ fn respawn(
 ///|
 fn set_sprites(
   backgrounds : @map.Backgrounds,
+  tiles_objs : @map.MapTilesObjs,
   world_size : @selene_math.Vec2D,
 ) -> Unit {
   // let viewpos = self.camera.get_position(alpha~)
@@ -190,7 +191,7 @@ fn set_sprites(
   }
   // let player = self.player.unwrap()
   // for id in @map_layer.ids {
-  //   tiles_objs.draw(id, viewpos, alpha)
+  tiles_objs.set_sprites()
   //   // reactors_.draw(id, viewx, viewy, alpha);
   //   self.npcs.draw(id, viewx, viewy, alpha)
   //   self.quests.draw(id, viewx, viewy, alpha)
@@ -555,6 +556,7 @@ pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
       let height = sence_map.map_info.get_borders().delta()
       set_sprites(
         sence_map.backgrounds,
+        sence_map.tiles_objs,
         @selene_math.Vec2D(width.to_double(), height.to_double()),
       )
       stage.respawn(

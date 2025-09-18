@@ -1,6 +1,3 @@
 {
-  "import": [
-    "KKKIIO/maple-moon-client/lib/ui",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard"
-  ]
+  "import": []
 }

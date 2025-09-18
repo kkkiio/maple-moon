@@ -127,7 +127,8 @@ pub fn get_foreground_count() -> Int {
 ///|
 pub fn get_portal_names() -> @js.Value {
   let names = match g_state.state {
-    State::ACTIVE(map~, ..) => map.portals.portal_ids_by_name.keys()
+    State::ACTIVE(map~, ..) =>
+      map.portals.portal_ids_by_name.keys_as_iter().to_array()
     _ => []
   }
   @js.Value::cast_from(names)
@@ -175,7 +176,7 @@ fn draw_map(
   }
   if g_state.draw_tiles {
     for id in @map_layer.ids {
-      tiles_objs.draw(id, int_viewpos, alpha)
+      // tiles_objs.draw(id, int_viewpos, alpha)
     }
   }
   let hide_portal_ids = portals.portal_ids_by_name

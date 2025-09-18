@@ -69,8 +69,7 @@ pub async fn load_map(
   guard not(src.is_null()) else {
     raise @resource.LoadError("map not found, id=\{map_id}")
   }
-  let res : MapTilesObjsNxResource = @json.from_json(src.value())
-  let res = res.unwrap()
+  let res : NxMapTilesObjs = @json.from_json(src.value())
   let tiles_objs = MapTilesObjs::load(res.layers)
   let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "background",

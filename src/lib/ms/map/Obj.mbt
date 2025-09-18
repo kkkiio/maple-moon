@@ -1,7 +1,8 @@
 ///|
 /// Represents an obj (map decoration) on a map.
 struct Obj {
-  animation : @graphics.Animation
+  entity : @system.Entity
+  animation : @resource.NxAnimation
   pos : Point[Int]
   z : Int
   flip : Bool
@@ -18,34 +19,55 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn Obj::load(obj : ObjResource) -> Obj raise {
+pub async fn Obj::load(obj : NxObj) -> Obj raise {
   let oS = obj.oS
   let l0 = obj.l0
   let l1 = obj.l1
   let l2 = obj.l2
   let res = get_object_loader().load_res_async(["\{oS}.img", l0, l1, l2])
-  Obj::from_resource(obj, res)
+  let animation = @json.from_json(res.value())
+  Obj::new(obj, animation)
 }
 
 ///|
-fn Obj::from_resource(obj : ObjResource, obj_src : NxNode) -> Obj raise {
-  let animation = @graphics.Animation::from_resource_ex(obj_src) catch {
-    e => fail("Failed to load animation: \{e}, obj_src=\{obj_src.path()}")
+fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
+  {
+    entity: @system.Entity::new(),
+    animation,
+    pos: @struct.Point::new(obj.x, obj.y),
+    flip: obj.f,
+    z: obj.z,
   }
-  { animation, pos: @struct.Point::new(obj.x, obj.y), flip: obj.f, z: obj.z }
 }
 
 ///|
 pub fn update(self : Obj) -> Unit {
-  self.animation.update() |> ignore
+  // self.animation.update() |> ignore
 }
 
 ///|
-pub fn draw(self : Obj, viewpos : Point[Int], inter : Double) -> Unit {
-  self.animation.draw(
-    @graphics.DrawArgument::new(pos=self.pos + viewpos, flip=self.flip),
-    inter,
+pub fn Obj::set_sprites(self : Obj) -> Unit {
+  let transform = if self.flip {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
+  }
+  let sprite = @graphics.nx_animation_to_selene_sprite(
+    self.animation,
+    z=self.z + @graphics.SCENE_ZINDEX,
+    transform~,
   )
+  @sprite.sprites.set(self.entity, sprite)
+  @position.positions.set(
+    self.entity,
+    @position.Position(
+      @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
+    ),
+  )
+  // self.animation.draw(
+  //   @graphics.DrawArgument::new(pos=self.pos + viewpos, flip=self.flip),
+  //   inter,
+  // )
 }
 
 ///|

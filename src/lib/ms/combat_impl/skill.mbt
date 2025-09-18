@@ -59,14 +59,14 @@ pub fn Skill::new(
   // } else {
   //   NoAffectedEffect::new() as &SkillAffectedEffect
   // }
-  let has_action0 = (try? src["action"]["0"].as_string()).is_ok()
-  let has_action1 = (try? src["action"]["1"].as_string()).is_ok()
+  let has_action0 = (try? src["action"]["0"].as_string()) is Ok(_)
+  let has_action1 = (try? src["action"]["1"].as_string()) is Ok(_)
   let action = if has_action0 && has_action1 {
     TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {
     SingleAction::new(src) as &SkillAction
   } else if is_attack {
-    let by_level = (try? src["level"]["1"]["action"].as_string()).is_ok()
+    let by_level = (try? src["level"]["1"]["action"].as_string()) is Ok(_)
     if by_level {
       ByLevelAction::new(src, skill_id) as &SkillAction
     } else {

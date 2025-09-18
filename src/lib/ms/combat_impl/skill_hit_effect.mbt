@@ -9,7 +9,7 @@ struct HitEffectNxResource {
 pub impl @json.FromJson for HitEffectNxResource with from_json(json, path) {
   let animation = @json.from_json(json, path~)
   let pos = match json {
-    { "pos": Number(pos), .. } => pos.to_int()
+    { "pos": Number(pos, ..), .. } => pos.to_int()
     _ => 0
   }
   let z = match json {

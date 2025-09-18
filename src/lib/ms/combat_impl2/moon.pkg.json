@@ -20,7 +20,6 @@
     "KKKIIO/maple-moon-client/lib/io_task",
     "KKKIIO/maple-moon-client/lib/ms/bullet",
     "KKKIIO/maple-moon-client/lib/ms/char_look",
-    "KKKIIO/maple-moon-client/lib/ms/char_look/types",
     "KKKIIO/maple-moon-client/lib/ms/equip",
     "KKKIIO/maple-moon-client/lib/ms/equip/data"
   ]

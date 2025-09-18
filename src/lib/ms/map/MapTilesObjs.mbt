@@ -8,8 +8,8 @@ struct TilesObjs {
 ///|
 pub async fn TilesObjs::load(
   ts : String?,
-  tile_resource : Array[TileResource],
-  obj_resource : Array[ObjResource],
+  tile_resource : Array[NxTileRef],
+  obj_resource : Array[NxObj],
 ) -> TilesObjs raise {
   let tileset = if ts is Some(ts) {
     let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
@@ -18,7 +18,8 @@ pub async fn TilesObjs::load(
         "https://maple-res.kkkiiox.work/Map/Tile",
       ),
     )
-    Some(tile_loader.load_res_async([ts + ".img"]))
+    let node = tile_loader.load_res_async([ts + ".img"])
+    Some(@json.from_json(node.value()))
   } else {
     None
   }
@@ -41,7 +42,7 @@ fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
   // Sort tiles and objs by z
   let tileZMap = Map::new()
   for tile in tiles {
-    let z = tile.get_z()
+    let z = tile.z
     tileZMap.get_or_init(z, fn() { [] }).push(tile)
   }
   let objZMap = Map::new()
@@ -72,16 +73,12 @@ pub fn TilesObjs::update(self : TilesObjs) -> Unit {
 }
 
 ///|
-pub fn TilesObjs::draw(
-  self : TilesObjs,
-  viewpos : Point[Int],
-  alpha : Double,
-) -> Unit {
+pub fn TilesObjs::set_sprites(self : TilesObjs) -> Unit {
   for obj in self.objs {
-    obj.draw(viewpos, alpha)
+    obj.set_sprites()
   }
   for tile in self.tiles {
-    tile.draw(viewpos)
+    tile.set_sprites()
   }
 }
 
@@ -93,7 +90,7 @@ struct MapTilesObjs {
 
 ///|
 pub async fn MapTilesObjs::load(
-  layer_resource : Array[LayerResource],
+  layer_resource : Array[NxLayer],
 ) -> MapTilesObjs raise {
   let layers = []
   for id in @map_layer.ids {
@@ -106,15 +103,6 @@ pub async fn MapTilesObjs::load(
 }
 
 ///|
-pub fn MapTilesObjs::default() -> MapTilesObjs {
-  {
-    layers: Array::makei(@map_layer.ids.length(), fn(_i) {
-      TilesObjs::default()
-    }),
-  }
-}
-
-///|
 pub fn MapTilesObjs::update(self : MapTilesObjs) -> Unit {
   for layer in self.layers {
     layer.update()
@@ -122,11 +110,8 @@ pub fn MapTilesObjs::update(self : MapTilesObjs) -> Unit {
 }
 
 ///|
-pub fn MapTilesObjs::draw(
-  self : MapTilesObjs,
-  layer : Int,
-  viewpos : Point[Int],
-  alpha : Double,
-) -> Unit {
-  self.layers[layer].draw(viewpos, alpha)
+pub fn MapTilesObjs::set_sprites(self : MapTilesObjs) -> Unit {
+  for layer in self.layers {
+    layer.set_sprites()
+  }
 }

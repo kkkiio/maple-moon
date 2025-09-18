@@ -12,6 +12,9 @@ pub let fps : UInt = 60
 pub const BG_ZINDEX = 1
 
 ///|
+pub const SCENE_ZINDEX = 50
+
+///|
 pub const CHAR_LOOK_ZINDEX = 70
 
 ///|

@@ -239,7 +239,9 @@ pub fn Npc::load(
   position : @struct.Point[Int],
 ) -> Npc {
   let entity = @system.Entity::new()
-  let base = @map_object.MapObjectBase::new(entity, o)
+  let base = @map_object.MapObjectBase::new(o, on_pos_change=fn(pos) {
+    @position.positions.set(entity, @position.Position(pos))
+  })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_res([strid])
   let strsrc = string_loader.load_res(["Npc.img", id.to_string()])

@@ -1,7 +1,7 @@
 ///|
 /// A list of animations. Animations will be removed after all frames were displayed.
 struct EffectLayer {
-  effects : @sorted_map.T[Int, Array[Effect]]
+  effects : @sorted_map.SortedMap[Int, Array[Effect]]
 }
 
 ///|

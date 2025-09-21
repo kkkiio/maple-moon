@@ -130,7 +130,6 @@ fn legacy_input_system(_backend : &@system.Backend) -> Unit {
 
 ///|
 fn main {
-  @log.info({ "msg": "main" }, "main")
   @system.App::new(
     @canvas.CanvasBackend::new().with_cross_origin(Some("anonymous")),
   )

@@ -97,15 +97,15 @@ pub impl @ui.UIState for UIStateGame with send_key(
   pressed : Bool,
   _escape : Bool,
 ) -> Unit {
-  guard mapping is Some(mapping) else { return }
-  match mapping {
-    @keyboard.Mapping::MENU(_action) => if pressed {  }
-    @keyboard.Mapping::ACTION(_)
-    | @keyboard.Mapping::FACE(_)
-    | @keyboard.Mapping::ITEM(_)
-    | @keyboard.Mapping::SKILL(_) => self.stage.send_key(mapping, pressed)
-    _ => ()
-  }
+  // guard mapping is Some(mapping) else { return }
+  // match mapping {
+  //   @keyboard.Mapping::MENU(_action) => if pressed {  }
+  //   @keyboard.Mapping::ACTION(_)
+  //   | @keyboard.Mapping::FACE(_)
+  //   | @keyboard.Mapping::ITEM(_)
+  //   | @keyboard.Mapping::SKILL(_) => self.stage.send_key(mapping, pressed)
+  //   _ => ()
+  // }
 }
 
 ///|

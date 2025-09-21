@@ -1,6 +1,6 @@
 ///|
 pub(all) enum HairLayer {
-  HAIR_LAYER_NONE = 0
+  // HAIR_LAYER_NONE = 0
   HAIR_LAYER_DEFAULT = 1
   BELOW_BODY = 2
   OVER_HEAD = 3
@@ -41,10 +41,7 @@ pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut
 )
 
 ///|
-pub async fn Hair::load(
-  hairid : Int,
-  drawinfo : @types.BodyDrawInfo,
-) -> Hair raise {
+pub async fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
   // let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
   // Hair::new(hairid, hairnode, drawinfo)
   ...
@@ -71,8 +68,7 @@ pub fn Hair::new(
             continue
           }
         }
-        let brow = layernode.map
-          .inner()
+        let brow = layernode.map.0
           .get("brow")
           .unwrap_or(@struct.Point::default())
         let shift = drawinfo.get_hair_pos(stance, frame) - brow

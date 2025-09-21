@@ -19,11 +19,15 @@ pub struct MapObjectBase {
 
 ///|
 pub fn MapObjectBase::new(
-  entity : @system.Entity,
   oid : Int,
   position? : @struct.Point[Int] = { x: 0, y: 0 },
+  on_pos_change~ : (@selene_math.Vec2D) -> Unit,
 ) -> MapObjectBase {
-  let obj = { phobj: @physics.PhysicsObject::new(entity), oid, active: true }
+  let obj = {
+    phobj: @physics.PhysicsObject::new(on_pos_change~),
+    oid,
+    active: true,
+  }
   obj.set_position(position)
   obj
 }
@@ -39,8 +43,7 @@ pub fn MapObjectBase::update(
 
 ///|
 pub fn set_positionxy(self : MapObjectBase, x : Int, y : Int) -> Unit {
-  self.phobj.set_x(x.to_double())
-  self.phobj.set_y(y.to_double())
+  self.phobj.set_position(@selene_math.Vec2D(x.to_double(), y.to_double()))
 }
 
 ///|

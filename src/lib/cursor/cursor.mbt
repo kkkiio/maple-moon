@@ -80,7 +80,7 @@ pub fn Cursor::set_state(self : Cursor, state : CursorState) -> Unit {
 ///|
 pub fn Cursor::set_position(self : Cursor, position : @math.Vec2D) -> Unit {
   if @position.positions.get(self.entity) is Some(old_position) &&
-    old_position.inner() == position {
+    old_position.0 == position {
     return
   }
   @position.positions.set(self.entity, position)

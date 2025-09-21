@@ -195,7 +195,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
   {
     name_tag: @json.from_json(name_tag_res),
     // bt_new: @json.from_json(bt_new_res),
-    ani18: ani18.inner(),
+    ani18: ani18.0,
   }
 }
 

@@ -76,7 +76,7 @@ pub(all) struct CharBase {
   damage_numbers : Array[@ui.Number]
   // Character trait methods converted to function fields
   get_skilllevel : (Int) -> Int
-  get_integer_attackspeed : () -> Int // Return the character's base attacking speed.
+  alerted : @utils.TimedBool
 }
 
 ///|
@@ -94,7 +94,6 @@ pub fn CharBase::set_position(
   pos : @struct.Point[Int],
 ) -> Unit {
   self.base.set_position(pos)
-  self.look.set_pos(pos.to_vec2d())
 }
 
 ///|
@@ -106,11 +105,13 @@ pub fn CharBase::new(
   damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
   stats : @char_stats.CharStats,
-  get_integer_attackspeed~ : () -> Int,
 ) -> CharBase {
   let char_base = {
     entity,
-    base: MapObjectBase::new(entity, oid),
+    base: MapObjectBase::new(oid, on_pos_change=fn(pos) {
+      @position.positions.set(entity, @position.Position(pos))
+      look.set_pos(pos)
+    }),
     look,
     stats,
     attacking: false,
@@ -130,7 +131,7 @@ pub fn CharBase::new(
     damage_number_set,
     damage_numbers: Array::new(),
     get_skilllevel,
-    get_integer_attackspeed,
+    alerted: @utils.TimedBool::default(),
   }
   stats.watch_stat_changes(@maple_stat.Id::LEVEL, fn(old, new) {
     if new > old {
@@ -213,6 +214,7 @@ pub fn draw(
 }
 
 ///|
+/// speed is the multiplier of the timestep.
 pub fn update(self : CharBase, speed : Double) -> Bool {
   @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
     number.update()
@@ -223,16 +225,16 @@ pub fn update(self : CharBase, speed : Double) -> Bool {
   self.invincible.update(timestep=@config.step_time_ms)
   //     iron_body_.update();
 
-  let stancespeed = if speed >= 1.0 / @config.step_time_ms.to_double() {
-    (@config.step_time_ms.to_double() * speed).to_int()
-  } else {
-    0
-  }
+  let stancespeed_ms = @cmp.maximum(
+    (@config.step_time_ms.to_double() * speed).to_int(),
+    0,
+  )
   match self.after_image {
     None => ()
-    Some(image) => image.update(self.look.get_frame(), stancespeed)
+    Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
   }
-  self.look.update(stancespeed)
+  self.alerted.update(timestep=stancespeed_ms)
+  self.look.update(stancespeed_ms)
 }
 
 ///|
@@ -329,7 +331,9 @@ pub fn get_attackdelay(self : CharBase, no : Int) -> Int {
     image.get_first_frame()
   }) // WARN: may produce incorrect delay
   let delay = self.look.get_attackdelay(no, first_frame)
-  let fspeed = get_real_attackspeed((self.get_integer_attackspeed)())
+  let fspeed = get_real_attackspeed(
+    get_integer_attackspeed(self.look, self.stats),
+  )
   (delay.to_double() / fspeed).to_int()
 }
 
@@ -342,7 +346,7 @@ pub fn is_twohanded(self : CharBase) -> Bool {
 pub fn regular_attack(self : CharBase, degenerate : Bool) -> Unit {
   self.look.attack(degenerate)
   self.attacking = true
-  self.look.set_alerted(5000)
+  self.set_alerted(5000)
 }
 
 ///|
@@ -357,7 +361,7 @@ pub fn show_damage(self : CharBase, damage : Int) -> Unit {
   self.damage_numbers.push(
     self.damage_number_set.new_number(@ui.NumberType::HURT, damage, start_y, x~),
   )
-  self.look.set_alerted(5000)
+  self.set_alerted(5000)
   self.invincible.set_for(2000)
 }
 
@@ -376,7 +380,9 @@ pub fn show_attack_effect(
   toshow : @graphics.Animation,
   z : Int,
 ) -> Unit {
-  let attackspeed = get_real_attackspeed((self.get_integer_attackspeed)())
+  let attackspeed = get_real_attackspeed(
+    get_integer_attackspeed(self.look, self.stats),
+  )
   self.effects.add(
     toshow,
     args=@graphics.DrawArgument::new(flip=self.facing_right),
@@ -394,14 +400,14 @@ pub fn show_iron_body(self : CharBase) -> Unit {
 pub fn attack_by_action(self : CharBase, action : String) -> Unit {
   self.look.set_action(action)
   self.attacking = true
-  self.look.set_alerted(5000)
+  self.set_alerted(5000)
 }
 
 ///|
 pub fn attack_by_stance(self : CharBase, stance : @types.StanceId) -> Unit {
   self.look.attack_by_stance(stance)
   self.attacking = true
-  self.look.set_alerted(5000)
+  self.set_alerted(5000)
 }
 
 ///|
@@ -425,3 +431,25 @@ pub(all) struct CharEntry {
   look : @char_look.LookEntry
   id : Int
 } derive(Show, ToJson)
+
+///|
+/// Whether the character is alerted. When alerted, some operations are forbidden, like changing equips.
+pub fn is_alerted(self : CharBase) -> Bool {
+  self.alerted.get()
+}
+
+///|
+pub fn set_alerted(self : CharBase, millis : Int) -> Unit {
+  self.alerted.set_for(millis)
+}
+
+///|
+pub fn get_integer_attackspeed(
+  look : @char_look.CharLook,
+  stats : @char_stats.CharStats,
+) -> Int {
+  guard look.get_equips().get_weapon() is Some(weapon) else { return 0 }
+  let base_speed = stats.get_attackspeed()
+  let weapon_speed = weapon.get_speed()
+  base_speed + weapon_speed
+}

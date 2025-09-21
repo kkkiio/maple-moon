@@ -13,7 +13,9 @@ pub fn Bullet::new(
   toleft : Bool,
 ) -> Bullet {
   let entity = @system.Entity::new()
-  let move_obj = @physics.MovingObject::new(entity)
+  let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
+    @position.positions.set(entity, @position.Position(pos))
+  })
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
   move_obj.set_y(origin.y.to_double() - 26.0)
   { entity, animation, move_obj, flip: toleft }

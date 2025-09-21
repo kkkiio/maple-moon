@@ -42,10 +42,10 @@ pub(all) struct Stats {
 pub async fn SkillData::load(
   string_loader : @resource.SyncLoader,
   id : Int,
-) -> SkillData raise {
+) -> SkillData {
   let strid = @utils.stoi_left_pad0(id, 7)
-  let jobid = strid.substring(end=3)
-  let src = skill_loader().load_res_async([jobid + ".img", "skill", strid])
+  let jobid = strid.view(end_offset=3)
+  let src = skill_loader().load_res_async(["\{jobid}.img", "skill", strid])
   let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
     e => fail("failed to load skill: \{e}, id=\{id}")
   }
@@ -193,7 +193,7 @@ pub fn SkillData::new(
   text_src : SkillTextResource,
 ) -> SkillData {
   let strid = @utils.stoi_left_pad0(id, 7)
-  let jobid = strid.substring(end=3)
+  let jobid = strid.view(end_offset=3)
 
   // Load icons
   let icons = FixedArray::from_array([

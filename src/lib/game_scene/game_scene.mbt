@@ -306,30 +306,45 @@ fn send_cursor(
 }
 
 ///|
-pub fn send_key(self : Stage, mapping : @keyboard.Mapping, down : Bool) -> Unit {
-  guard self.state is StageState::ACTIVE(physics~, map_info~, portals~, ..) else {
-    return
-  }
-  let player = self.player
-  match mapping {
-    ACTION(action) => {
-      if down {
-        match action {
-          @keyboard.BasicActionId::UP =>
-            self.check_portals(map_info, portals, physics)
-          // @keyboard.ActionId::SIT => self.check_seats()
-          @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
-          @keyboard.BasicActionId::PICKUP => self.check_drops(player)
-          _ => ()
-        }
-      }
-      player.send_action(action, down)
+pub fn check_input(
+  player : @player.Player,
+  physics : @physics.Physics,
+  map_info : @map.MapInfo,
+) -> Unit {
+  // match mapping {
+  //   ACTION(action) => {
+  //     if down {
+  //       match action {
+  //         @keyboard.BasicActionId::UP =>
+  //           self.check_portals(map_info, portals, physics)
+  //         // @keyboard.ActionId::SIT => self.check_seats()
+  //         @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
+  //         @keyboard.BasicActionId::PICKUP => self.check_drops(player)
+  //         _ => ()
+  //       }
+  //     }
+  //   }
+  //   SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
+  //   ITEM(item_id) => () //self.inventory.use_item(item_id)
+  //   // @keyboard.Id::FACE => self.player.set_expression(action)
+  //   _ => ()
+  // }
+  for
+    it in [
+      (@system.ArrowUp, @keyboard.BasicActionId::UP),
+      (@system.ArrowDown, @keyboard.BasicActionId::DOWN),
+      (@system.ArrowLeft, @keyboard.BasicActionId::LEFT),
+      (@system.ArrowRight, @keyboard.BasicActionId::RIGHT),
+      (@system.Space, @keyboard.BasicActionId::JUMP),
+    ] {
+    let (code, action) = it
+    if @system.is_just_pressed(code) {
+      player.send_action(action, true)
+    } else if @system.is_just_released(code) {
+      player.send_action(action, false)
     }
-    SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
-    ITEM(item_id) => () //self.inventory.use_item(item_id)
-    // @keyboard.Id::FACE => self.player.set_expression(action)
-    _ => ()
   }
+  player.update(physics, map_info)
 }
 
 ///|
@@ -569,6 +584,7 @@ pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
       stage.map_change_listeners.retain(fn(listener) { listener(sence_map) })
       return // for simplicity, just wait for the next update
     }
-    StageState::ACTIVE(..) => ()
+    StageState::ACTIVE(physics~, map_info~, ..) =>
+      check_input(stage.player, physics, map_info)
   }
 }

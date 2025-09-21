@@ -38,7 +38,9 @@ fn DropBase::new(
   player_drop : Bool,
 ) -> DropBase {
   let entity = @system.Entity::new()
-  let base = @map_object.MapObjectBase::new(entity, id)
+  let base = @map_object.MapObjectBase::new(id, on_pos_change=fn(pos) {
+    @position.positions.set(entity, @position.Position(pos))
+  })
   base.set_position(@struct.Point::new(start.x, start.y - 4))
   let (state, base_y) = match mode {
     0 | 1 => {

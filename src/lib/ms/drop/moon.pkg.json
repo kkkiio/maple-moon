@@ -11,6 +11,7 @@
     "KKKIIO/maple-moon-client/lib/utils",
     "KKKIIO/maple-moon-client/lib/log",
     "KKKIIO/maple-moon-client/lib/io_task",
-    "Milky2018/selene/system"
+    "Milky2018/selene/system",
+    "Milky2018/selene/position"
   ]
 }

@@ -15,10 +15,8 @@ struct CharLook {
   mut action : @types.NxStanceBodyAction?
   equips : @equip.CharEquips
   randomizer : @utils.Randomizer
-  alerted : @utils.TimedBool
   draw_info : @types.BodyDrawInfo
   mut entities : Array[@system.Entity]
-  mut pos : @selene_math.Vec2D
 }
 
 ///|
@@ -39,7 +37,7 @@ pub async fn CharLook::load(
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
-) -> CharLook raise {
+) -> CharLook {
   let equips = entry.equips
     .iter()
     .map(fn(it) {
@@ -83,10 +81,8 @@ pub fn CharLook::new(
     face,
     equips,
     randomizer: @utils.Randomizer::new(),
-    alerted: @utils.TimedBool::default(),
     draw_info,
     entities: [],
-    pos: @selene_math.Vec2D::zero(),
   }
 }
 
@@ -619,7 +615,6 @@ pub fn CharLook::draw(
 
 ///|
 pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
-  self.pos = pos
   for entity in self.entities {
     @position.positions.set(entity, @position.Position(pos))
   }
@@ -645,21 +640,14 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // if @types.StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
+  for entity in self.entities {
+    entity.destroy()
+  }
+  self.entities = []
   let drawables : Array[&@graphics.Drawable] = []
   let entities : Array[@system.Entity] = []
-  let mut next_z = @graphics.CHAR_LOOK_ZINDEX
-  let pos = self.pos
-  fn new_hair_entity(layer) {
-    let entity = @system.Entity::new()
-    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(sp) {
-      let sprite = { ..sp, zindex: next_z }
-      next_z += 1
-      @sprite.sprites.set(entity, sprite)
-    }
-    entity
-  }
-
-  fn make_face_draw() {
+  fn make_face_draw(z : Int) {
+    ignore(z)
     {
       face: self.face,
       expression,
@@ -670,17 +658,17 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     }
   }
 
-  fn new_body_entity(layer) {
+  fn new_body_entity(layer, z) {
     let entity = @system.Entity::new()
     if self.body.stances.get(stance).bind(_.get(layer)) is Some(sp) {
-      let sprite = { ..sp, zindex: next_z }
-      next_z += 1
+      let sprite = { ..sp, zindex: z + @graphics.CHAR_LOOK_ZINDEX }
       @sprite.sprites.set(entity, sprite)
     }
     entity
   }
 
-  fn make_equip_draw(slot, layer) -> &@graphics.Drawable {
+  fn make_equip_draw(slot, layer, z : Int) -> &@graphics.Drawable {
+    ignore(z)
     NoopDrawable(())
     // {
     //   equips: self.equips,
@@ -692,102 +680,141 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     // }
   }
 
-  entities.push(new_hair_entity(HairLayer::BELOW_BODY))
-  drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.Layer::CAPE))
+  fn new_hair_sprite(layer, z) {
+    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(sp) {
+      Some({ ..sp, zindex: z + @graphics.CHAR_LOOK_ZINDEX })
+    } else {
+      None
+    }
+  }
+
+  for
+    sprite in [
+      new_hair_sprite(HairLayer::BELOW_BODY, 0),
+      new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 16),
+      new_hair_sprite(HairLayer::SHADE, 20),
+      ..match self.equips.getcaptype() {
+        @equip.CapType::NONE => [new_hair_sprite(HairLayer::OVER_HEAD, 25)]
+        @equip.CapType::HEADBAND =>
+          [
+            new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 27),
+            new_hair_sprite(HairLayer::OVER_HEAD, 28),
+          ]
+        @equip.CapType::HALF_COVER =>
+          [new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 30)]
+        _ => []
+      },
+    ]
+    .iter()
+    .filter_map(fn(sprite) { sprite }) {
+    let entity = @system.Entity::new()
+    @sprite.sprites.set(entity, sprite)
+    entities.push(entity)
+  }
+  drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.Layer::CAPE, 1))
   drawables.push(
-    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_BELOW_BODY),
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_BELOW_BODY, 2),
   )
   drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_BODY),
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_BODY, 3),
   )
   drawables.push(
-    make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_BELOW_BODY),
+    make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_BELOW_BODY, 4),
   )
-  entities.push(new_body_entity(@types.BodyLayer::BODY))
+  entities.push(new_body_entity(@types.BodyLayer::BODY, 5))
   drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_BODY),
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_BODY, 6),
   )
   drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_BODY),
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_BODY, 7),
   )
-  drawables.push(make_equip_draw(@slot.Id::SHOES, @clothing.Layer::SHOES))
-  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD))
+  drawables.push(make_equip_draw(@slot.Id::SHOES, @clothing.Layer::SHOES, 8))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD, 9))
   if self.equips.has_overall() {
-    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAIL))
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAIL, 10))
   } else {
     drawables.push(
-      make_equip_draw(@slot.Id::BOTTOM_DEFAULT, @clothing.Layer::PANTS_DEFAULT),
+      make_equip_draw(
+        @slot.Id::BOTTOM_DEFAULT,
+        @clothing.Layer::PANTS_DEFAULT,
+        11,
+      ),
     )
-    drawables.push(make_equip_draw(@slot.Id::BOTTOM, @clothing.Layer::PANTS))
     drawables.push(
-      make_equip_draw(@slot.Id::TOP_DEFAULT, @clothing.Layer::TOP_DEFAULT),
+      make_equip_draw(@slot.Id::BOTTOM, @clothing.Layer::PANTS, 12),
     )
-    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::TOP))
+    drawables.push(
+      make_equip_draw(@slot.Id::TOP_DEFAULT, @clothing.Layer::TOP_DEFAULT, 13),
+    )
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::TOP, 14))
   }
-  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL))
-  entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL, 15))
   drawables.push(
-    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_OVER_HAIR),
+    make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_OVER_HAIR, 17),
   )
-  drawables.push(make_equip_draw(@slot.Id::EARACC, @clothing.Layer::EARRINGS))
-  entities.push(new_body_entity(@types.BodyLayer::HEAD))
-  entities.push(new_hair_entity(HairLayer::SHADE))
-  drawables.push(make_face_draw())
-  drawables.push(make_equip_draw(@slot.Id::FACE, @clothing.Layer::FACE_ACC))
-  drawables.push(make_equip_draw(@slot.Id::EYE_ACC, @clothing.Layer::EYE_ACC))
-  drawables.push(make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD))
+  drawables.push(
+    make_equip_draw(@slot.Id::EARACC, @clothing.Layer::EARRINGS, 18),
+  )
+  entities.push(new_body_entity(@types.BodyLayer::HEAD, 19))
+  drawables.push(make_face_draw(21))
+  drawables.push(make_equip_draw(@slot.Id::FACE, @clothing.Layer::FACE_ACC, 22))
+  drawables.push(
+    make_equip_draw(@slot.Id::EYE_ACC, @clothing.Layer::EYE_ACC, 23),
+  )
+  drawables.push(make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD, 24))
   match self.equips.getcaptype() {
-    @equip.CapType::NONE => entities.push(new_hair_entity(HairLayer::OVER_HEAD))
     @equip.CapType::HEADBAND => {
-      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
-      entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
-      entities.push(new_hair_entity(HairLayer::OVER_HEAD))
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP, 26))
       drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_OVER_HAIR),
+        make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_OVER_HAIR, 29),
       )
     }
-    @equip.CapType::HALF_COVER => {
-      entities.push(new_hair_entity(HairLayer::HAIR_LAYER_DEFAULT))
-      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
-    }
+    @equip.CapType::HALF_COVER =>
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP, 31))
     @equip.CapType::FULL_COVER =>
-      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP))
+      drawables.push(make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP, 32))
     _ => ()
   }
   drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_ARM),
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_BELOW_ARM, 33),
   )
   let twohanded : Bool = self.is_twohanded(stance)
   if twohanded {
-    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
-    entities.push(new_body_entity(@types.BodyLayer::ARM))
-    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM, 34))
+    entities.push(new_body_entity(@types.BodyLayer::ARM, 35))
+    drawables.push(
+      make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON, 36),
+    )
   } else {
-    drawables.push(make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON))
-    entities.push(new_body_entity(@types.BodyLayer::ARM))
-    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM))
+    drawables.push(
+      make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON, 37),
+    )
+    entities.push(new_body_entity(@types.BodyLayer::ARM, 38))
+    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM, 39))
   }
-  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST))
-  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE))
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST, 40))
+  drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE, 41))
   drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_GLOVE),
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_GLOVE, 42),
   )
-  entities.push(new_body_entity(@types.BodyLayer::HAND_BELOW_WEAPON))
-  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR))
-  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON))
-  drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_HAND),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_BODY),
-  )
-  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_HAIR))
-  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_WEAPON))
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_HAIR),
+  entities.push(new_body_entity(@types.BodyLayer::HAND_BELOW_WEAPON, 43))
+  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR, 44))
+  entities.push(
+    new_body_entity(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON, 45),
   )
   drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_HAIR),
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_HAND, 46),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_BODY, 47),
+  )
+  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_HAIR, 48))
+  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_WEAPON, 49))
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_HAIR, 50),
+  )
+  drawables.push(
+    make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_HAIR, 51),
   )
   self.entities = entities
 }
@@ -863,7 +890,6 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
     self.exp_frame.normalize()
     return false
   }
-  self.alerted.update(timestep~)
   let mut aniend : Bool = false
   match self.action {
     None => {
@@ -877,9 +903,10 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
         )
         let threshold : Double = delta.to_double() / timestep.to_double()
         self.st_frame.next(nextframe, threshold)
-        if self.st_frame.get() == 0 {
+        if nextframe == 0 {
           aniend = true
         }
+        self.set_sprites()
       } else {
         self.stance.normalize()
         self.st_frame.normalize()
@@ -906,6 +933,7 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
           self.actionstr = ""
           self.set_stance(@types.StanceId::STAND1)
         }
+        self.set_sprites()
       } else {
         self.stance.normalize()
         self.st_frame.normalize()
@@ -933,13 +961,14 @@ fn update_face(self : CharLook, timestep : Int) -> Unit {
     )
     let fcthreshold : Double = expdelta.to_double() / timestep.to_double()
     self.exp_frame.next(nextexpframe, fcthreshold)
-    if self.exp_frame.get() == 0 {
+    if nextexpframe == 0 {
       if self.expression.get() == ExpressionId::DEFAULT {
         self.expression.next(ExpressionId::BLINK, fcthreshold)
       } else {
         self.expression.next(ExpressionId::DEFAULT, fcthreshold)
       }
     }
+    self.set_sprites()
   } else {
     self.expression.normalize()
     self.exp_frame.normalize()
@@ -1126,18 +1155,8 @@ let attack_stances : FixedArray[FixedArray[@types.StanceId]] = [
 ]
 
 ///|
-pub fn set_alerted(self : CharLook, millis : Int) -> Unit {
-  self.alerted.set_for(millis)
-}
-
-///|
 pub fn get_frame(self : CharLook) -> Int {
   self.st_frame.get()
-}
-
-///|
-pub fn get_alerted(self : CharLook) -> Bool {
-  self.alerted.get()
 }
 
 ///|

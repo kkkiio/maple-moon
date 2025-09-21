@@ -277,31 +277,6 @@ pub fn NxNode::get_image_loader(self : NxNode) -> ImageLoader {
 }
 
 ///|
-pub enum BitmapResource {
-  Bid(Int, Int, Int)
-  Path(String, Int, Int)
-} derive(ToJson)
-
-///|
-pub impl @json.FromJson for BitmapResource with from_json(json, path) -> BitmapResource raise @json.JsonDecodeError {
-  match json {
-    {
-      "__i": Json::String(path),
-      "__w": Json::Number(w),
-      "__h": Json::Number(h),
-      ..
-    } => BitmapResource::Path(path, w.to_int(), h.to_int())
-    {
-      "__b": Json::Number(bid),
-      "__w": Json::Number(w),
-      "__h": Json::Number(h),
-      ..
-    } => BitmapResource::Bid(bid.to_int(), w.to_int(), h.to_int())
-    _ => raise @json.JsonDecodeError((path, "expect bitmap resource"))
-  }
-}
-
-///|
 pub(all) struct Bitmap {
   image : Image
   width : Int
@@ -324,7 +299,8 @@ pub(all) struct ResPath(Array[String]) derive(Eq)
 ///|
 pub fn as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
   match self.value() {
-    [Json::Number(x), Json::Number(y)] => { x: x.to_int(), y: y.to_int() }
+    [Json::Number(x, ..), Json::Number(y, ..)] =>
+      { x: x.to_int(), y: y.to_int() }
     Json::Null => @struct.Point::default()
     _ as a => raise LoadError("expect array, got \{a}, path=\{self.path}")
   }
@@ -386,18 +362,6 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
     None
   } else {
     Some(@json.from_json(json, path~))
-  }
-}
-
-///|
-pub struct IntBool(Bool)
-
-///|
-pub impl @json.FromJson for IntBool with from_json(json, path) -> IntBool raise @json.JsonDecodeError {
-  if json is Number(it) {
-    it.to_int() != 0
-  } else {
-    raise @json.JsonDecodeError((path, "expect number"))
   }
 }
 

@@ -19,7 +19,7 @@ pub async fn Skill::load(
   skill_id : Int,
   bullet_module : @bullet.Module,
   string_loader~ : @resource.SyncLoader,
-) -> Skill raise {
+) -> Skill {
   let data = @skill.SkillData::load(string_loader, skill_id)
   Skill::new(
     skill_id,
@@ -157,7 +157,7 @@ pub fn Skill::make_attack(
   let range = chr.stats.get_range()
   let origin = chr.get_position()
   let toleft = chr.facing_right |> not()
-  let speed = (chr.get_integer_attackspeed)()
+  let speed = @character.get_integer_attackspeed(chr.get_look(), chr.stats)
   let level = (chr.get_skilllevel)(self.skill_id)
   let stats = self.stats.get(level).unwrap() // TODO: Handle error
   let attack : @combat.Attack = {
@@ -304,14 +304,15 @@ pub fn make_use_effect(
 }
 
 ///|
-struct SkillNxResource {
+struct NxSkill {
   hit : Array[HitEffectNxResource]
 }
 
 ///|
-pub impl @json.FromJson for SkillNxResource with from_json(json, path) {
+pub impl @json.FromJson for NxSkill with from_json(json, path) {
   let hit = match json {
-    { "hit": hit, .. } => @resource.MapBasedArray::from_json(hit, path).inner()
+    { "hit": hit, .. } =>
+      @resource.parse_map_based_array(hit, path=path.add_key("hit"))
     _ => []
   }
   { hit, }
@@ -323,7 +324,7 @@ pub fn make_hit_effect(
 ) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
   let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
   let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
-  let res : SkillNxResource = @json.from_json(src.value())
+  let res : NxSkill = @json.from_json(src.value())
   let has_hit0 = res.hit.get(0) is Some(_)
   let has_hit1 = res.hit.get(1) is Some(_)
   if by_level_hit {

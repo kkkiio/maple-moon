@@ -1,8 +1,11 @@
 {
-	"import": [
+  "import": [
     "KKKIIO/maple-moon-client/lib/ms/physics",
     "KKKIIO/maple-moon-client/lib/ms/map_layer",
     "KKKIIO/maple-moon-client/lib/struct",
-    "Milky2018/selene/system"
+    {
+      "path": "Milky2018/selene/math",
+      "alias": "selene_math"
+    }
   ]
 }

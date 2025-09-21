@@ -13,6 +13,12 @@
     "KKKIIO/maple-moon-client/lib/ms/equip",
     "KKKIIO/maple-moon-client/lib/ms/char_stats",
     "KKKIIO/maple-moon-client/lib/ui",
-    "Milky2018/selene/system"
+    "Milky2018/selene/system",
+    "Milky2018/selene/position",
+    "KKKIIO/maple-moon-client/lib/log",
+    {
+      "path": "Milky2018/selene/math",
+      "alias": "selene_math"
+    }
   ]
 }

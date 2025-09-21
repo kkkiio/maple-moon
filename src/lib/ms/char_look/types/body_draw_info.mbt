@@ -2,7 +2,7 @@
 typealias @struct.Point
 
 ///|
-struct NxStanceBodyAction {
+pub(all) struct NxStanceBodyAction {
   stance : StanceId
   frame : Int
   delay : Int
@@ -328,7 +328,8 @@ pub fn next_action_frame(
   frame : Int,
 ) -> Int {
   guard StanceId::from_name(action) is Some(stance) else { return 0 }
-  match self.body_actions.get(stance).bind(fn(it) { it.get(frame + 1) }) {
+  guard self.body_actions.get(stance) is Some(frames) else { return 0 }
+  match frames.get(frame + 1) {
     Some(_) => frame + 1
     None => 0
   }

@@ -109,10 +109,10 @@ pub fn MapInfo::from_resource(
   let info = src["info"]
   let (map_walls, map_borders) = match info.value() {
     {
-      "VRLeft": Json::Number(vrLeft),
-      "VRRight": Json::Number(vrRight),
-      "VRTop": Json::Number(vrTop),
-      "VRBottom": Json::Number(vrBottom),
+      "VRLeft": Json::Number(vrLeft, ..),
+      "VRRight": Json::Number(vrRight, ..),
+      "VRTop": Json::Number(vrTop, ..),
+      "VRBottom": Json::Number(vrBottom, ..),
       ..
     } =>
       (
@@ -123,9 +123,9 @@ pub fn MapInfo::from_resource(
   }
   let bgmpath = info["bgm"].get_string()
   let split = bgmpath.to_array().search('/').unwrap()
-  let bgm = bgmpath.substring(start=0, end=split) +
+  let bgm = bgmpath.view(start_offset=0, end_offset=split) +
     ".img/" +
-    bgmpath.substring(start=split + 1)
+    bgmpath.view(start_offset=split + 1)
   let seats = Array::new()
   for it in src["seat"] {
     seats.push(Seat::from_resource(it))
@@ -137,7 +137,7 @@ pub fn MapInfo::from_resource(
   {
     field_limit: info["fieldLimit"].get_int(),
     cloud: info["cloud"].get_bool(),
-    bgm,
+    bgm: bgm.to_string(),
     map_desc: info["mapDesc"].get_string(),
     map_name: info["mapName"].get_string(),
     street_name: info["streetName"].get_string(),

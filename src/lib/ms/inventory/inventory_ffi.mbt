@@ -1,8 +1,5 @@
 ///|
-async fn get_all_items_by_type(
-  mod : Module,
-  kind : TypeId,
-) -> Array[UISlot] raise {
+async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
   ...
   // let slotmax = mod.inventory.get_slotmax(kind)
   // async fn load_slot(slot_no) -> WithItemSlot? raise Error {
@@ -159,8 +156,7 @@ fn can_wear_equip(
   player : @player.Player,
   equip_data : @equip_data.EquipData,
 ) -> String? {
-  let look = player.character.get_look()
-  let alerted = look.get_alerted()
+  let alerted = player.character.is_alerted()
   if alerted {
     return Some("character is alerted")
   }

@@ -15,7 +15,6 @@ pub(all) struct Player {
   entity : @system.Entity
   character : @character.CharBase
   stats : CharStats
-  keys_down : Map[@keyboard.BasicActionId, Bool]
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
@@ -25,7 +24,6 @@ pub(all) struct Player {
   randomizer : @utils.Randomizer
   // load_skill_book : async (@job.Job) -> &SkillBook raise
   // mut skill_book : &SkillBook
-  mut changing_job : @utils.Future[(@job.Job, &SkillBook)]?
 }
 
 ///|
@@ -45,7 +43,7 @@ pub async fn Player::load(
   damage_number_set : @ui.NumberSet,
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   new_char_stats : (@job.Job) -> CharStats,
-) -> Player raise {
+) -> Player {
   let job = @job.Job::load(id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0))
   // let skill_book = load_skill_book(job)
   Player::new(
@@ -82,13 +80,11 @@ pub fn Player::new(
     // get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
     get_skilllevel=fn(_) { 0 }, // TODO: implement
     stats,
-    get_integer_attackspeed=fn() { get_integer_attackspeed(look, stats) },
   )
   let p : Player = {
     entity,
     character,
     stats,
-    keys_down: Map::new(),
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
@@ -97,7 +93,6 @@ pub fn Player::new(
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::new(),
     // skill_book,
-    changing_job: None,
     // load_skill_book,
   }
   p.set_state(CharState::STAND)
@@ -147,30 +142,24 @@ pub fn update(
   self : Player,
   physics : @physics.Physics,
   map_info : @map.MapInfo,
-) -> Int {
-  match self.changing_job.bind(fn(it) { it.poll() }) {
-    Some(it) => {
-      let (job, skill_book) = it
-      self.stats.change_job(job)
-      // self.skill_book = skill_book
-      self.changing_job = None
-    }
-    None => ()
-  }
+) -> Unit {
   match get_player_state(self.character.state) {
     Some(pst) => {
       pst.update(self)
       physics.move_object(self.character.get_phobj())
 
       // Check for ladder interaction
-      if self.keys_down.get(@keyboard.BasicActionId::UP).or(false) {
+      if @system.is_pressed(@system.Code::ArrowUp) {
         self.check_ladders(map_info, true)
-      } else if self.keys_down.get(@keyboard.BasicActionId::DOWN).or(false) {
+      } else if @system.is_pressed(@system.Code::ArrowDown) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.character.update(
         self.character.get_stancespeed(
-          (self.character.get_integer_attackspeed)(),
+          @character.get_integer_attackspeed(
+            self.character.get_look(),
+            self.stats,
+          ),
         ),
       )
       if aniend && self.character.attacking {
@@ -191,15 +180,13 @@ pub fn update(
   )
   let needupdate = self.last_move.hasmoved(newmove)
   if needupdate {
-    new_move_player_packet(newmove).dispatch()
+    // new_move_player_packet(newmove).dispatch()
     self.last_move = newmove
   }
-  self.character.get_layer()
 }
 
-// Respawn the player at the given position
-
 ///|
+/// Respawn the player at the given position
 pub fn respawn(
   self : Player,
   pos : @struct.Point[Int],
@@ -240,40 +227,32 @@ pub fn send_action(
     Some(pst) => pst.send_action(self, action, down)
     None => ()
   }
-  self.keys_down[action] = down
 }
-
-///|
-struct PlayerStates {
-  standing : PlayerStandState
-  walking : PlayerWalkState
-  falling : PlayerFallState
-  lying : PlayerProneState
-  climbing : PlayerClimbState
-  sitting : PlayerSitState
-  flying : PlayerFlyState
-} derive(Default)
-
-///|
-let g_player_states : PlayerStates = PlayerStates::default()
 
 ///|
 fn get_player_state(state : CharState) -> &PlayerState? {
   match state {
-    CharState::STAND => Some(g_player_states.standing)
-    CharState::WALK => Some(g_player_states.walking)
-    CharState::FALL => Some(g_player_states.falling)
-    CharState::PRONE => Some(g_player_states.lying)
-    CharState::LADDER | CharState::ROPE => Some(g_player_states.climbing)
-    CharState::SIT => Some(g_player_states.sitting)
-    CharState::SWIM => Some(g_player_states.flying)
+    CharState::STAND => Some(PlayerStandState::default())
+    CharState::WALK => Some(PlayerWalkState::default())
+    CharState::FALL => Some(PlayerFallState::default())
+    CharState::PRONE => Some(PlayerProneState::default())
+    CharState::LADDER | CharState::ROPE => Some(PlayerClimbState::default())
+    CharState::SIT => Some(PlayerSitState::default())
+    CharState::SWIM => Some(PlayerFlyState::default())
     _ => None
   }
 }
 
 ///|
 pub fn is_key_down(self : Player, key : @keyboard.BasicActionId) -> Bool {
-  self.keys_down.get(key).or(false)
+  match key {
+    @keyboard.BasicActionId::UP => @system.is_pressed(@system.Code::ArrowUp)
+    @keyboard.BasicActionId::DOWN => @system.is_pressed(@system.Code::ArrowDown)
+    @keyboard.BasicActionId::LEFT => @system.is_pressed(@system.Code::ArrowLeft)
+    @keyboard.BasicActionId::RIGHT =>
+      @system.is_pressed(@system.Code::ArrowRight)
+    _ => false
+  }
 }
 
 ///|
@@ -438,17 +417,6 @@ pub fn damage(
 pub fn get_skills(self : Player) -> &SkillBook {
   ...
   // self.skill_book
-}
-
-///|
-pub fn get_integer_attackspeed(
-  look : @char_look.CharLook,
-  stats : CharStats,
-) -> Int {
-  guard look.get_equips().get_weapon() is Some(weapon) else { return 0 }
-  let base_speed = stats.get_attackspeed()
-  let weapon_speed = weapon.get_speed()
-  base_speed + weapon_speed
 }
 
 ///|

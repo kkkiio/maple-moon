@@ -22,12 +22,12 @@ fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame raise {
   }
   let opacities = match (src["a0"].value(), src["a1"].value()) {
     (Json::Number(a0, ..), Json::Number(a1, ..)) => (a0.to_int(), a1.to_int())
-    (Json::Number(a0), _) => (a0.to_int(), 255 - a0.to_int())
-    (_, Json::Number(a1)) => (255 - a1.to_int(), a1.to_int())
+    (Json::Number(a0, ..), _) => (a0.to_int(), 255 - a0.to_int())
+    (_, Json::Number(a1, ..)) => (255 - a1.to_int(), a1.to_int())
     _ => (255, 255)
   }
   let scales = match (src["z0"].value(), src["z1"].value()) {
-    (Json::Number(z0), Json::Number(z1)) => (z0.to_int(), z1.to_int())
+    (Json::Number(z0, ..), Json::Number(z1, ..)) => (z0.to_int(), z1.to_int())
     (Json::Number(z0, ..), _) => (z0.to_int(), 0)
     (_, Json::Number(z1, ..)) => (100, z1.to_int())
     _ => (100, 100)
@@ -289,12 +289,12 @@ pub impl @json.FromJson for AnimationResource with from_json(json, path) -> Anim
   let frames = [@json.from_json(json)] catch {
     _ => {
       let fs : @resource.MapBasedArray[FrameResource] = @json.from_json(json)
-      if fs.inner().length() <= 0 {
+      if fs.0.length() <= 0 {
         raise @json.JsonDecodeError(
           (path, "Animation must have at least one frame."),
         )
       }
-      fs.inner()
+      fs.0
     }
   }
   let zigzag = obj

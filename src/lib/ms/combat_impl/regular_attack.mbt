@@ -33,7 +33,10 @@ pub fn make_regular_attack(
   let playerlevel = character.stats.get_stat(@maple_stat.Id::LEVEL)
   let origin = character.get_position()
   let toleft = character.facing_right |> not()
-  let speed = (character.get_integer_attackspeed)()
+  let speed = @character.get_integer_attackspeed(
+    character.get_look(),
+    character.stats,
+  )
   {
     damagetype: @combat.AttackDamageType::DMG_WEAPON(
       min=mindamage,

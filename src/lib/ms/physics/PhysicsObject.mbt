@@ -3,21 +3,23 @@ typealias @struct.Point
 
 ///|
 pub struct MovingObject {
-  entity : @system.Entity
   x : @utils.Linear
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
+  mut on_pos_change : (@selene_math.Vec2D) -> Unit
 }
 
 ///|
-pub fn MovingObject::new(entity : @system.Entity) -> MovingObject {
+pub fn MovingObject::new(
+  on_pos_change~ : (@selene_math.Vec2D) -> Unit,
+) -> MovingObject {
   {
-    entity,
     x: @utils.Linear::default(),
     y: @utils.Linear::default(),
     hspeed: 0.0,
     vspeed: 0.0,
+    on_pos_change,
   }
 }
 
@@ -33,48 +35,43 @@ pub fn MovingObject::do_move(self : MovingObject) -> Unit {
   let y = self.y.get() + self.vspeed
   self.x.set(x)
   self.y.set(y)
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(x, y)),
-  )
+  (self.on_pos_change)(@selene_math.Vec2D(x, y))
 }
 
 ///|
 pub fn set_x(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(d, self.y.get())),
-  )
+  (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
 }
 
 ///|
 pub fn set_y(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(self.x.get(), d)),
-  )
+  (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
+}
+
+///|
+pub fn MovingObject::set_position(
+  self : MovingObject,
+  d : @selene_math.Vec2D,
+) -> Unit {
+  self.x.set(d.0)
+  self.y.set(d.1)
+  (self.on_pos_change)(d)
 }
 
 ///|
 pub fn limitx(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   self.hspeed = 0.0
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(d, self.y.get())),
-  )
+  (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
 }
 
 ///|
 pub fn limity(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   self.vspeed = 0.0
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(self.x.get(), d)),
-  )
+  (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
 }
 
 ///|
@@ -206,6 +203,14 @@ pub fn MovingObject::set_hspeed(self : MovingObject, hspeed : Double) -> Unit {
 }
 
 ///|
+pub fn MovingObject::set_on_pos_change(
+  self : MovingObject,
+  on_pos_change : (@selene_math.Vec2D) -> Unit,
+) -> Unit {
+  self.on_pos_change = on_pos_change
+}
+
+///|
 pub(all) enum PhysicsObjectType {
   NORMAL
   ICE
@@ -248,9 +253,11 @@ pub struct PhysicsObject {
 }
 
 ///|
-pub fn PhysicsObject::new(entity : @system.Entity) -> PhysicsObject {
+pub fn PhysicsObject::new(
+  on_pos_change~ : (@selene_math.Vec2D) -> Unit,
+) -> PhysicsObject {
   {
-    moving_object: MovingObject::new(entity),
+    moving_object: MovingObject::new(on_pos_change~),
     t: PhysicsObjectType::NORMAL,
     flags: 0,
     fhid: 0,
@@ -329,6 +336,14 @@ pub fn PhysicsObject::get_y(self : PhysicsObject) -> Int {
 ///|
 pub fn PhysicsObject::get_position(self : PhysicsObject) -> Point[Int] {
   self.moving_object.get_position()
+}
+
+///|
+pub fn PhysicsObject::set_position(
+  self : PhysicsObject,
+  d : @selene_math.Vec2D,
+) -> Unit {
+  self.moving_object.set_position(d)
 }
 
 ///|

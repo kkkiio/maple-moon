@@ -3,7 +3,7 @@ typealias @ui.UIElementType
 
 ///|
 struct UIStateLogin {
-  elements : @sorted_map.T[UIElementType, @ui.Element]
+  elements : @sorted_map.SortedMap[UIElementType, @ui.Element]
   mut focused : UIElementType
   uis_to_remove : Array[UIElementType]
 }

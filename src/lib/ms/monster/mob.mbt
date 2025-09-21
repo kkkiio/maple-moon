@@ -117,7 +117,7 @@ pub async fn Mob::load(
   randomizer : @utils.Randomizer,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-) -> Mob raise {
+) -> Mob {
   let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "mob",
     loader=@resource.DirResourceLoader::new(
@@ -247,7 +247,9 @@ fn Mob::new(
   animations : Map[StanceType, @graphics.Animation],
 ) -> Mob raise {
   let entity = @system.Entity::new()
-  let base = @map_object.MapObjectBase::new(entity, oi)
+  let base = @map_object.MapObjectBase::new(oi, on_pos_change=fn(pos) {
+    @position.positions.set(entity, @position.Position(pos))
+  })
   let info : MobInfo = src["info"].value() |> @json.from_json
   let level = info.level
   let watk = info.pa_damage

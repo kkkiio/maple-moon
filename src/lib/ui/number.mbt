@@ -681,7 +681,7 @@ pub fn NumberSet::load() -> NumberSet raise {
 }
 
 ///|
-pub fn new_number(
+pub fn NumberSet::new_number(
   self : NumberSet,
   t : NumberType,
   damage : Int,
@@ -721,7 +721,9 @@ pub fn new_number(
     (true, shift, false, Char::default(), [])
   }
   let entity = @system.Entity::new()
-  let move_obj = @physics.MovingObject::new(entity)
+  let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
+    @position.positions.set(entity, @position.Position(pos))
+  })
   move_obj.set_x(x.to_double())
   move_obj.set_y(starty.to_double())
   move_obj.set_vspeed(-0.25)

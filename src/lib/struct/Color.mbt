@@ -359,12 +359,12 @@ pub fn blend(self : Color, other : Color, alpha : Double) -> Color {
 }
 
 ///|
-pub impl Mul for Color with op_mul(self, o) {
+pub impl Mul for Color with mul(self, o) {
   (self.r() * o.r(), self.g() * o.g(), self.b() * o.b(), self.a() * o.a())
 }
 
 ///|
-pub impl Div for Color with op_div(self, o) {
+pub impl Div for Color with div(self, o) {
   (self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
 }
 

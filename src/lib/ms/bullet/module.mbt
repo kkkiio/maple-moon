@@ -4,7 +4,7 @@ struct Module {
 }
 
 ///|
-pub async fn Module::load() -> Module raise {
+pub async fn Module::load() -> Module {
   let all_bullet_ids = [
     "02060003", "02060005", "02060006", "02061003", "02060004", "02061004", "02060000",
     "02060001", "02060002", "02061000", "02061001", "02061002", "02070000", "02070001",

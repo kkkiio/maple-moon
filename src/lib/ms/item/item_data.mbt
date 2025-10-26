@@ -73,7 +73,7 @@ pub async fn ItemData::load(
   item_id : Int,
   character_loader : @resource.AsyncLoader,
   item_loader : @resource.AsyncLoader,
-) -> ItemData raise {
+) -> ItemData {
   let zid = "0" + item_id.to_string()
   let (category, src, strsrc) : (String, @resource.NxNode, Json) = match
     parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
@@ -189,7 +189,7 @@ pub fn ItemData::get_loaded(id : Int) -> ItemData? {
 }
 
 ///|
-pub async fn ItemData::get_async(id : Int) -> ItemData raise {
+pub async fn ItemData::get_async(id : Int) -> ItemData {
   if cache.get(id) is Some(data) {
     return data
   }

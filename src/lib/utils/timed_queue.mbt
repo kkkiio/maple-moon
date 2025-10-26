@@ -36,7 +36,7 @@ pub fn[T] process(self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
 }
 
 ///|
-struct Timed[T](Int64,T)
+struct Timed[T](Int64, T)
 
 ///|
 pub impl[T] Compare for Timed[T] with compare(self, other) -> Int {

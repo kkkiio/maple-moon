@@ -441,10 +441,7 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-async fn load_sp_move(
-  self : Combat,
-  move_id : Int,
-) -> @combat_impl.SpecialMove raise {
+async fn load_sp_move(self : Combat, move_id : Int) -> @combat_impl.SpecialMove {
   let it = @combat_impl.Skill::load(
     move_id,
     self.bullet_module,
@@ -671,7 +668,7 @@ pub fn can_use(
 
 ///|
 fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
-  self.cooldowns.get(skill_id).or(0) > 0
+  self.cooldowns.get(skill_id).unwrap_or(0) > 0
 }
 
 ///|
@@ -725,7 +722,7 @@ priv type CacheKey (Int, String, Int) derive(Show, Eq, Hash)
 ///|
 async fn load_after_images_by_skill_weapon(
   key : CacheKey,
-) -> Map[String, @char_look.AfterImage] raise {
+) -> Map[String, @char_look.AfterImage] {
   let (skill_id, wepon_after_image_name, weapon_level) = key.inner()
   let after_images = Map::new()
   if skill_id > 0 {

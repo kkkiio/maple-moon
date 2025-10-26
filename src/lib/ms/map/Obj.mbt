@@ -19,7 +19,7 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn Obj::load(obj : NxObj) -> Obj raise {
+pub async fn Obj::load(obj : NxObj) -> Obj {
   let oS = obj.oS
   let l0 = obj.l0
   let l1 = obj.l1

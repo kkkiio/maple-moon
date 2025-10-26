@@ -44,7 +44,9 @@ pub async fn Player::load(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   new_char_stats : (@job.Job) -> CharStats,
 ) -> Player {
-  let job = @job.Job::load(id=entry.stats.stats.get(@maple_stat.Id::JOB).or(0))
+  let job = @job.Job::load(
+    id=entry.stats.stats.get(@maple_stat.Id::JOB).unwrap_or(0),
+  )
   // let skill_book = load_skill_book(job)
   Player::new(
     entry.id,

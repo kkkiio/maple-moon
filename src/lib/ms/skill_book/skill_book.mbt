@@ -11,12 +11,12 @@ pub async fn SkillBook::load(
   string_loader : @resource.SyncLoader,
   job : @job.Job,
   watchers : Array[SkillBookWatcher],
-) -> SkillBook raise {
+) -> SkillBook {
   let async_ops = job
     .get_all_subjobs()
     .flat_map(fn(it) { it.skill_ids.iter() })
     .map(fn(skill_id) {
-      async fn() raise { @skill.SkillData::load(string_loader, skill_id) }
+      async fn() { @skill.SkillData::load(string_loader, skill_id) }
     })
     |> Array::from_iter
   let it = @js.async_all(async_ops)

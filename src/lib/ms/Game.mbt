@@ -69,7 +69,7 @@ async fn load_modules(
   scheduls : @schedule.Schedules,
   // stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module,
-) -> LoadedState raise {
+) -> LoadedState {
   let local_storage = @config.LocalStorage::new()
   // fn get_stage() -> Stage {
   //   stage_ref.val.unwrap() // TODO: handle error

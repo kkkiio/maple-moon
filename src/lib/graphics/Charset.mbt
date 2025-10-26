@@ -51,7 +51,7 @@ pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
 pub fn getw(self : Charset, c : Char) -> Int {
   ...
   // let iter = self.chars.get(c)
-  // iter.map(fn(it) { it.width() }).or(0)
+  // iter.map(fn(it) { it.width() }).unwrap_or(0)
 }
 
 ///|

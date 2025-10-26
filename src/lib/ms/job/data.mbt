@@ -6,7 +6,7 @@ pub(all) struct JobData {
 }
 
 ///|
-pub async fn JobData::load(id : Int) -> JobData raise {
+pub async fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
   let src = @skill.skill_loader().load_res_async([strid + ".img"])
   JobData::new(id, src)

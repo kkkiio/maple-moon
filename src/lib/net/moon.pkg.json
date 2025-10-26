@@ -1,13 +1,18 @@
 {
-    "import": [
-      "KKKIIO/maple-moon-client/lib/log",
-      "KKKIIO/maple-moon-client/lib/config",
-      "KKKIIO/maple-moon-client/lib/struct",
-      "KKKIIO/maple-moon-client/lib/utils",
-      "moonbitlang/x/encoding"
+  "import": [
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/struct",
+    "KKKIIO/maple-moon/lib/utils",
+    "moonbitlang/x/encoding"
+  ],
+  "targets": {
+    "socket.js.mbt": [
+      "js"
     ],
-    "targets":{
-      "socket.js.mbt": ["js"],
-      "socket.wasm.mbt": ["wasm-gc","wasm"]
-    }
+    "socket.wasm.mbt": [
+      "wasm-gc",
+      "wasm"
+    ]
+  }
 }

@@ -219,7 +219,7 @@ pub async fn instantiate(
   randomizer : @utils.Randomizer,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-) -> Mob raise {
+) -> Mob {
   Mob::load(
     self.oid,
     self.id,

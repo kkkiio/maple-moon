@@ -69,7 +69,7 @@ pub fn Tile::set_sprites(self : Tile) -> Unit {
   )
   let sprite = @graphics.nx_animation_to_selene_sprite(
     @resource.NxAnimation::{
-      frames: [@resource.NxFrame::{ texture, }],
+      frames: [@resource.NxFrame::{ texture, delay: None }],
       blend: false,
       zigzag: false,
     },

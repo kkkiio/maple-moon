@@ -65,7 +65,7 @@ fn handle_modify_inventory(
       _ => ()
     }
   }
-  let mov = message.mov.or(Movement::MOVE_INTERNAL)
+  let mov = message.mov.unwrap_or(Movement::MOVE_INTERNAL)
   for mod in message.mods {
     match mod.mode {
       ModificationMode::SWAP =>

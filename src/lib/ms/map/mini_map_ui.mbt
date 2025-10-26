@@ -646,7 +646,7 @@ pub fn get_map_latest_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn load_map_node(map_id : Int) -> @resource.NxNode raise {
+pub async fn load_map_node(map_id : Int) -> @resource.NxNode {
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)

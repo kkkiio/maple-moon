@@ -6,7 +6,7 @@ pub(all) struct BulletData {
 }
 
 ///|
-pub async fn BulletData::load(strid : String) -> BulletData raise {
+pub async fn BulletData::load(strid : String) -> BulletData {
   guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
   let prefix = strid.substring(end=4)
   let src = @item.get_item_loader().load_res_async([

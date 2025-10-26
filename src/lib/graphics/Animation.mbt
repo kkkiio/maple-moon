@@ -405,15 +405,6 @@ fn Animation::get_frame(self : Animation) -> Frame {
 }
 
 ///|
-fn Animation::get_delay(self : Animation, frame_id : Int) -> Int {
-  if frame_id < self.frames.length() {
-    self.frames[frame_id].get_delay()
-  } else {
-    0
-  }
-}
-
-///|
 pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
   let mut total : Int = 0
   let mut i = 0
@@ -516,12 +507,14 @@ pub fn AnimationData::to_selene_sprite(
   self : AnimationData,
   z? : Int = 0,
   transform? : @selene_math.Transform = @selene_math.Transform::new(),
+  loop_? : Bool = true,
 ) -> @sprite.Sprite {
   @sprite.Sprite::from_animation(
     @sprite.Animation::new(
       self.frames,
-      loop_=true,
+      loop_~,
       rate=1000.0 / self.delay_ms.to_double() / fps.to_double(),
+      // fps=1000.0 / self.delay_ms.to_double(),
       transform~,
     ),
     z,
@@ -534,6 +527,7 @@ pub fn nx_animation_to_selene_sprite(
   src : @resource.NxAnimation,
   z? : Int = 0,
   transform? : @selene_math.Transform = @selene_math.Transform::new(),
+  loop_? : Bool = true,
 ) -> @sprite.Sprite {
-  AnimationData::from_nx_animation(src).to_selene_sprite(z~, transform~)
+  AnimationData::from_nx_animation(src).to_selene_sprite(z~, transform~, loop_~)
 }

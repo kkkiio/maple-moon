@@ -1,12 +1,12 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/quadtree",
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/config",
-    "KKKIIO/maple-moon-client/lib/lru_cache",
-    "KKKIIO/maple-moon-client/lib/log",
+    "KKKIIO/maple-moon/lib/struct",
+    "KKKIIO/maple-moon/lib/quadtree",
+    "KKKIIO/maple-moon/lib/utils",
+    "KKKIIO/maple-moon/lib/resource",
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/lru_cache",
+    "KKKIIO/maple-moon/lib/log",
     "Milky2018/selene/sprite",
     {
       "path": "Milky2018/selene/math",

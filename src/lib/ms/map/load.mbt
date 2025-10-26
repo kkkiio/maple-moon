@@ -58,7 +58,7 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
 pub async fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations,
-) -> SceneMap raise {
+) -> SceneMap {
   // TODO: CashShopPreview
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()

@@ -14,7 +14,7 @@ pub async fn Module::load(
   network : @net.Network,
   ref_render : @markup_text.RefRender,
   string_loader : @resource.SyncLoader,
-) -> Module raise {
+) -> Module {
   ...
   // let npc_loader = @resource.SyncLoader::load(
   //   "npc",

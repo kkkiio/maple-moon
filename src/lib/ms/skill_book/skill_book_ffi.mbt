@@ -50,7 +50,7 @@ fn get_skills_by_job_level(
   //         Some({
   //           id: skill_id,
   //           name: data.name,
-  //           desc: (try? markup_to_html(data.desc)).or(data.desc),
+  //           desc: (try? markup_to_html(data.desc)).unwrap_or(data.desc),
   //           level,
   //           master_level,
   //           icon: data.icons[0].bitmap.map_or(@resource.Image::new_pending(), fn(

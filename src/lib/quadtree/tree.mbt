@@ -179,7 +179,7 @@ fn[K : Hash + Eq, V : QuadCompare] set_link(
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] add_or_next(
+fn[K, V : QuadCompare] add_or_next(
   self : Node[K, V],
   child : Node[K, V],
 ) -> Node[K, V]? {

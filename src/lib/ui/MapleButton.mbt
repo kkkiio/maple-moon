@@ -97,7 +97,7 @@ pub fn MapleButton::new(
   )
   let pickable = @collision.Pickable::new()
   pickable.on_just_released(fn(mouse_button) {
-    if mouse_button == Left {
+    if mouse_button is @system.MouseButton::Left {
       on_click()
     }
   })

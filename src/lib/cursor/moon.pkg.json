@@ -4,12 +4,11 @@
     "Milky2018/selene/math",
     "Milky2018/selene/system",
     "Milky2018/selene/position",
-    "KKKIIO/maple-moon-client/lib/ui",
+    "KKKIIO/maple-moon/lib/ui",
     {
       "path": "Milky2018/selene/ui",
       "alias": "selene_ui"
     },
-    "KKKIIO/maple-moon-client/lib/config",
-    "KKKIIO/maple-moon-client/lib/log"
+    "KKKIIO/maple-moon/lib/config",
   ]
 }

@@ -91,7 +91,7 @@ let equipslots : FixedArray[@slot.Id] = [
 
 ///|
 pub fn get_defstat(self : EquipData, stat : @maple_stat.EquipStatId) -> Int {
-  self.incr_stats.get(stat).or(0)
+  self.incr_stats.get(stat).unwrap_or(0)
 }
 
 ///|
@@ -106,7 +106,7 @@ pub fn get_category(self : EquipData) -> String {
 
 ///|
 pub fn get_reqstat(self : EquipData, stat : @maple_stat.Id) -> Int {
-  self.req_stats.get(stat).or(0)
+  self.req_stats.get(stat).unwrap_or(0)
 }
 
 ///|

@@ -1,6 +1,9 @@
 ///|
 pub(all) struct Body {
-  stances : Map[@types.StanceId, Map[@types.BodyLayer, @sprite.Sprite]]
+  stances : Map[
+    @types.StanceId,
+    Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])],
+  ]
   name : String
 }
 
@@ -25,7 +28,9 @@ pub fn Body::new(
     let stance_head = headnode.get(stance).unwrap_or([])
     stances.set(
       stance,
-      new_body_stance(stance, stance_body, stance_head, drawinfo),
+      parse_body_animations_by_stance(
+        stance, stance_body, stance_head, drawinfo,
+      ),
     )
   }
   let index = skin
@@ -34,101 +39,114 @@ pub fn Body::new(
 }
 
 ///|
-fn new_body_stance(
+fn parse_body_animations_by_stance(
   stance : @types.StanceId,
   stance_nx_resource : Array[@types.NxStanceBody],
   head_nx_resource : Array[@types.NxLayerTextures],
   drawinfo : @types.BodyDrawInfo,
-) -> Map[@types.BodyLayer, @sprite.Sprite] {
-  let layer_frames_map : Map[@types.BodyLayer, AnimationData] = Map::new()
-  for frame, framenode in stance_nx_resource {
+) -> Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])] {
+  let part_frames_map = Map::new()
+  let body_frame_delays = []
+  for frame, framenode in stance_nx_resource { // 一个动作的动画有多帧, 每个帧可能包含多个部位的动画
     guard framenode is @types.NxStanceBody::LayerTextures(layer_textures) else {
       continue
     }
-    for _, partnode in layer_textures.textures {
-      let layer = partnode.z
+    body_frame_delays.push(layer_textures.delay)
+    for partname, partnode in layer_textures.textures {
+      guard partname != "head" else {
+        @log.error({ "stance": stance, "frame": frame }, "unexpected head part")
+        panic()
+      }
+      guard partnode.z is Some(layer) else {
+        @log.error(
+          { "partname": partname, "stance": stance, "frame": frame },
+          "Unknown BodyLayer",
+        )
+        panic()
+      }
       let shift = match layer {
         @types.BodyLayer::HAND_BELOW_WEAPON =>
           drawinfo.get_hand_position(stance, frame) -
-          partnode.map
-          .inner()
-          .get_or_default("handMove", @struct.Point::default())
-        _ => {
-          let mut shift = drawinfo.get_body_position(stance, frame)
-          if stance == @types.StanceId::DEAD {
-            shift -= @struct.Point::new(5, 4)
-          }
-          shift -= partnode.map
-            .inner()
-            .get_or_default("navel", @struct.Point::default())
-          shift
-        }
+          partnode.map.0.get_or_default("handMove", @struct.Point::default())
+        _ =>
+          drawinfo.get_body_position(stance, frame) -
+          (if stance is @types.StanceId::DEAD {
+            @struct.Point::new(5, 4)
+          } else {
+            @struct.Point::default()
+          }) -
+          partnode.map.0.get_or_default("navel", @struct.Point::default())
       }
       let texture = partnode.texture.frames[0].texture
       let texture = { ..texture, origin: texture.origin - shift }
-      let layer_frames = layer_frames_map.get_or_init(layer, fn() {
-        {
-          frames: Array::make(stance_nx_resource.length(), @sprite.AnimationFrame::{
-            sprite_path: "",
-            size: @selene_math.Vec2D(0, 0),
-            offset: @selene_math.Vec2D(0, 0),
-          }),
-          left_top: -@selene_math.Vec2D(
-            texture.origin.x.to_double(),
-            texture.origin.y.to_double(),
-          ),
-          delay_ms: layer_textures.delay.unwrap_or(100),
-        }
+      let (frames, layers) = part_frames_map.get_or_init(partname, fn() {
+        // {
+        //   frames: Array::make(stance_nx_resource.length(), @sprite.AnimationFrame::{
+        //     sprite_path: "",
+        //     size: @selene_math.Vec2D(0, 0),
+        //     offset: @selene_math.Vec2D(0, 0),
+        //   }),
+        //   left_top: -@selene_math.Vec2D(
+        //     texture.origin.x.to_double(),
+        //     texture.origin.y.to_double(),
+        //   ),
+        //   delay_ms: layer_textures.delay.unwrap_or(100),
+        // }
+        ([], [])
       })
-      layer_frames.frames[frame] = {
-        sprite_path: texture.i,
-        size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-        offset: @selene_math.Vec2D(
-          texture.offset.x.to_double(),
-          texture.offset.y.to_double(),
-        ),
+      // guard frames.length() == frame else {
+      //   @log.error(
+      //     {
+      //       "frames": frames.length(),
+      //       "frame": frame,
+      //       "stance": stance,
+      //       "partname": partname,
+      //     },
+      //     "frames length mismatch",
+      //   )
+      //   panic()
+      // }
+      while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
+        frames.push(@resource.NxFrame::{ texture, delay: None }) // TODO: 填充为空白帧
       }
+      frames.push(@resource.NxFrame::{ texture, delay: None })
+      layers.push(layer)
     }
+  }
+  // reset delays
+  for _, layer_frams in part_frames_map {
+    layer_frams.0.mapi_inplace(fn(i, frame) {
+      { ..frame, delay: body_frame_delays[i] }
+    })
+  }
+  // add head part
+  for frame, _ in stance_nx_resource {
     if head_nx_resource.get(frame)
       is Some({ textures: { "head": head_texture, .. }, delay }) {
       let texture = head_texture.texture.frames[0].texture
       let shift = drawinfo.get_head_position(stance, frame)
       let texture = { ..texture, origin: texture.origin - shift }
-      let layer_frames = layer_frames_map.get_or_init(@types.BodyLayer::HEAD, fn() {
-        {
-          frames: Array::make(stance_nx_resource.length(), @sprite.AnimationFrame::{
-            sprite_path: "",
-            size: @selene_math.Vec2D(0, 0),
-            offset: @selene_math.Vec2D(0, 0),
-          }),
-          left_top: -@selene_math.Vec2D(
-            texture.origin.x.to_double(),
-            texture.origin.y.to_double(),
-          ),
-          delay_ms: delay.unwrap_or(100),
-        }
+      let (frames, layers) = part_frames_map.get_or_init("head", fn() {
+        // {
+        //   frames: Array::make(stance_nx_resource.length(), @sprite.AnimationFrame::{
+        //     sprite_path: "",
+        //     size: @selene_math.Vec2D(0, 0),
+        //     offset: @selene_math.Vec2D(0, 0),
+        //   }),
+        //   left_top: -@selene_math.Vec2D(
+        //     texture.origin.x.to_double(),
+        //     texture.origin.y.to_double(),
+        //   ),
+        //   delay_ms: delay.unwrap_or(100),
+        // }
+        ([], [])
       })
-      layer_frames.frames[frame] = {
-        sprite_path: texture.i,
-        size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-        offset: @selene_math.Vec2D(
-          texture.offset.x.to_double(),
-          texture.offset.y.to_double(),
-        ),
-      }
+      guard frames.length() == frame
+      frames.push(@resource.NxFrame::{ texture, delay })
+      layers.push(@types.BodyLayer::HEAD)
     }
   }
-  layer_frames_map.map(fn(_, frames) {
-    @sprite.Sprite::from_animation(
-      @sprite.Animation::new(
-        frames.frames,
-        loop_=true,
-        rate=1000.0 / frames.delay_ms.to_double() / @graphics.fps.to_double(),
-      ), // fps * rate == 1000 / delay_ms
-      0,
-      offset=frames.left_top,
-    )
-  })
+  part_frames_map
 }
 
 ///|
@@ -163,6 +181,3 @@ pub fn Body::get_name(self : Body) -> String {
 pub impl ToJson for Body with to_json(self) -> Json {
   { "name": self.name.to_json() }
 }
-
-///|
-typealias @graphics.AnimationData

@@ -1,20 +1,19 @@
 {
   "is-main": true,
   "import": [
-    "KKKIIO/maple-moon-client/lib/ms",
-    "KKKIIO/maple-moon-client/lib/utils",
+    "KKKIIO/maple-moon/lib/ms",
+    "KKKIIO/maple-moon/lib/utils",
     "Milky2018/selene/system",
     {
       "path": "Milky2018/selene-canvas",
       "alias": "canvas"
     },
     "Milky2018/selene/plugins",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard",
-    "KKKIIO/maple-moon-client/lib/config",
-    "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/cursor",
-    "KKKIIO/maple-moon-client/lib/ms/login",
-    "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/game_scene"
-  ]
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/cursor",
+    "KKKIIO/maple-moon/lib/ms/login",
+    "KKKIIO/maple-moon/lib/graphics",
+    "KKKIIO/maple-moon/lib/game_scene"
+  ],
 }

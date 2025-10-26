@@ -624,6 +624,11 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // let acmove = @struct.Point::default()
   // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
+  let transform = if self.flip {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
+  }
   // let interstance = self.stance.get()
   // let interexpression = self.expression.get()
   // let interframe = self.st_frame.get()
@@ -640,6 +645,7 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // if @types.StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
+  let loop_ = stance is @types.StanceId::STAND1 // loop default stance
   for entity in self.entities {
     entity.destroy()
   }
@@ -658,13 +664,22 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     }
   }
 
-  fn new_body_entity(layer, z) {
-    let entity = @system.Entity::new()
-    if self.body.stances.get(stance).bind(_.get(layer)) is Some(sp) {
-      let sprite = { ..sp, zindex: z + @graphics.CHAR_LOOK_ZINDEX }
-      @sprite.sprites.set(entity, sprite)
+  fn new_body_sprites() {
+    guard self.body.stances.get(stance) is Some(stance_stances) else {
+      return []
     }
-    entity
+    stance_stances
+    .values()
+    .map(fn(it) {
+      let (frames, layers) = it
+      @graphics.nx_animation_to_selene_sprite(
+        { frames, blend: false, zigzag: false },
+        transform~,
+        z=layers[0].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        loop_~,
+      )
+    })
+    .to_array()
   }
 
   fn make_equip_draw(slot, layer, z : Int) -> &@graphics.Drawable {
@@ -680,9 +695,15 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     // }
   }
 
-  fn new_hair_sprite(layer, z) {
-    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(sp) {
-      Some({ ..sp, zindex: z + @graphics.CHAR_LOOK_ZINDEX })
+  fn new_hair_sprite(layer) {
+    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) {
+      let sprite = @graphics.nx_animation_to_selene_sprite(
+        anim,
+        transform~,
+        z=layer.int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        loop_~,
+      )
+      Some(sprite)
     } else {
       None
     }
@@ -690,23 +711,28 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
 
   for
     sprite in [
-      new_hair_sprite(HairLayer::BELOW_BODY, 0),
-      new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 16),
-      new_hair_sprite(HairLayer::SHADE, 20),
+      new_hair_sprite(HairLayer::BELOW_BODY),
+      new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT),
+      new_hair_sprite(HairLayer::SHADE),
       ..match self.equips.getcaptype() {
-        @equip.CapType::NONE => [new_hair_sprite(HairLayer::OVER_HEAD, 25)]
+        @equip.CapType::NONE => [new_hair_sprite(HairLayer::OVER_HEAD)]
         @equip.CapType::HEADBAND =>
           [
-            new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 27),
-            new_hair_sprite(HairLayer::OVER_HEAD, 28),
+            new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT),
+            new_hair_sprite(HairLayer::OVER_HEAD),
           ]
         @equip.CapType::HALF_COVER =>
-          [new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT, 30)]
+          [new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT)]
         _ => []
       },
     ]
     .iter()
     .filter_map(fn(sprite) { sprite }) {
+    let entity = @system.Entity::new()
+    @sprite.sprites.set(entity, sprite)
+    entities.push(entity)
+  }
+  for sprite in new_body_sprites() {
     let entity = @system.Entity::new()
     @sprite.sprites.set(entity, sprite)
     entities.push(entity)
@@ -721,7 +747,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   drawables.push(
     make_equip_draw(@slot.Id::HAT, @clothing.Layer::CAP_BELOW_BODY, 4),
   )
-  entities.push(new_body_entity(@types.BodyLayer::BODY, 5))
   drawables.push(
     make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_BODY, 6),
   )
@@ -729,7 +754,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_BODY, 7),
   )
   drawables.push(make_equip_draw(@slot.Id::SHOES, @clothing.Layer::SHOES, 8))
-  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD, 9))
   if self.equips.has_overall() {
     drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAIL, 10))
   } else {
@@ -748,14 +772,12 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     )
     drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::TOP, 14))
   }
-  entities.push(new_body_entity(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL, 15))
   drawables.push(
     make_equip_draw(@slot.Id::SHIELD, @clothing.Layer::SHIELD_OVER_HAIR, 17),
   )
   drawables.push(
     make_equip_draw(@slot.Id::EARACC, @clothing.Layer::EARRINGS, 18),
   )
-  entities.push(new_body_entity(@types.BodyLayer::HEAD, 19))
   drawables.push(make_face_draw(21))
   drawables.push(make_equip_draw(@slot.Id::FACE, @clothing.Layer::FACE_ACC, 22))
   drawables.push(
@@ -781,7 +803,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   let twohanded : Bool = self.is_twohanded(stance)
   if twohanded {
     drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM, 34))
-    entities.push(new_body_entity(@types.BodyLayer::ARM, 35))
     drawables.push(
       make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON, 36),
     )
@@ -789,7 +810,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     drawables.push(
       make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON, 37),
     )
-    entities.push(new_body_entity(@types.BodyLayer::ARM, 38))
     drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.Layer::MAILARM, 39))
   }
   drawables.push(make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST, 40))
@@ -797,19 +817,12 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   drawables.push(
     make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_GLOVE, 42),
   )
-  entities.push(new_body_entity(@types.BodyLayer::HAND_BELOW_WEAPON, 43))
-  entities.push(new_body_entity(@types.BodyLayer::ARM_OVER_HAIR, 44))
-  entities.push(
-    new_body_entity(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON, 45),
-  )
   drawables.push(
     make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_HAND, 46),
   )
   drawables.push(
     make_equip_draw(@slot.Id::WEAPON, @clothing.Layer::WEAPON_OVER_BODY, 47),
   )
-  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_HAIR, 48))
-  entities.push(new_body_entity(@types.BodyLayer::HAND_OVER_WEAPON, 49))
   drawables.push(
     make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::WRIST_OVER_HAIR, 50),
   )
@@ -1184,8 +1197,8 @@ struct NoopDrawable(Unit) derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for NoopDrawable with draw(
-  self : NoopDrawable,
-  args : @graphics.DrawArgument,
+  _ : NoopDrawable,
+  _ : @graphics.DrawArgument,
 ) -> Unit {
 
 }

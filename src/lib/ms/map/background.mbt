@@ -130,7 +130,7 @@ struct BackgroundResource {
 pub async fn BackgroundResource::load(
   background_loader : @resource.AsyncLoader,
   spec : NxBackground,
-) -> BackgroundResource raise {
+) -> BackgroundResource {
   let animated = spec.ani
   let bg_res = background_loader.load_res_async([
     spec.bS + ".img",
@@ -342,7 +342,7 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 pub async fn load_backgrounds(
   background_loader : @resource.AsyncLoader,
   spec : BackgroundsResource,
-) -> Backgrounds raise {
+) -> Backgrounds {
   let fronts = Array::new()
   let backgrounds = Array::new()
   for back_spec in spec.inner() {

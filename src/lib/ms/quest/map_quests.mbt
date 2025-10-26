@@ -33,7 +33,7 @@ struct MapQuestsResource {
 
 ///|
 /// Loads the graphical resources for quest icons
-pub async fn MapQuestsResource::load() -> MapQuestsResource raise {
+pub async fn MapQuestsResource::load() -> MapQuestsResource {
   let ui_window_2_loader = @ui.ui_window_2_loader()
   let available_quest_icon = ui_window_2_loader.load_res_async([
     "QuestIcon", "0",

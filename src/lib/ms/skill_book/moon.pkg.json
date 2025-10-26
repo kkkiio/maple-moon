@@ -1,29 +1,33 @@
 {
-	"import": [
-    "KKKIIO/maple-moon-client/lib/action",
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/net",
-    "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/ms/skill",
-    "KKKIIO/maple-moon-client/lib/ms/job",
-    "KKKIIO/maple-moon-client/lib/ms/player",
-    "KKKIIO/maple-moon-client/lib/ms/char_stats",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard",
-    "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/io_task",
-    "KKKIIO/maple-moon-client/lib/ms/combat_proto",
-    "KKKIIO/maple-moon-client/lib/ms/combat_impl",
-    "KKKIIO/maple-moon-client/lib/ms/combat_impl2",
-    "KKKIIO/maple-moon-client/lib/ms/character",
-    "KKKIIO/maple-moon-client/lib/ms/inventory",
-    "KKKIIO/maple-moon-client/lib/ms/markup_text",
-    "KKKIIO/maple-moon-client/lib/struct",
+  "import": [
+    "KKKIIO/maple-moon/lib/action",
+    "KKKIIO/maple-moon/lib/utils",
+    "KKKIIO/maple-moon/lib/net",
+    "KKKIIO/maple-moon/lib/graphics",
+    "KKKIIO/maple-moon/lib/resource",
+    "KKKIIO/maple-moon/lib/ms/skill",
+    "KKKIIO/maple-moon/lib/ms/job",
+    "KKKIIO/maple-moon/lib/ms/player",
+    "KKKIIO/maple-moon/lib/ms/char_stats",
+    "KKKIIO/maple-moon/lib/ms/keyboard",
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/ms/combat_proto",
+    "KKKIIO/maple-moon/lib/ms/combat_impl",
+    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/character",
+    "KKKIIO/maple-moon/lib/ms/inventory",
+    "KKKIIO/maple-moon/lib/ms/markup_text",
+    "KKKIIO/maple-moon/lib/struct",
     "rami3l/js-ffi/js"
   ],
-	"link": {
-		"js": {
-			"exports": ["watch_skill_book", "increase_sp", "transfer_one_sp"]
-		}
-	}
+  "link": {
+    "js": {
+      "exports": [
+        "watch_skill_book",
+        "increase_sp",
+        "transfer_one_sp"
+      ]
+    }
+  }
 }

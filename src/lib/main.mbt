@@ -41,94 +41,6 @@ pub fn onkeyup(key : String) -> Unit {
 }
 
 ///|
-let all_codes : @set.Set[@system.Code] = @set.Set::from_array([
-  KeyA,
-  KeyB,
-  KeyC,
-  KeyD,
-  KeyE,
-  KeyF,
-  KeyG,
-  KeyH,
-  KeyI,
-  KeyJ,
-  KeyK,
-  KeyL,
-  KeyM,
-  KeyN,
-  KeyO,
-  KeyP,
-  KeyQ,
-  KeyR,
-  KeyS,
-  KeyT,
-  KeyU,
-  KeyV,
-  KeyW,
-  KeyX,
-  KeyY,
-  KeyZ,
-  ArrowUp,
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  Space,
-  Enter,
-  Escape,
-])
-
-///|
-fn to_html_key(code : @system.Code) -> String {
-  match code {
-    ArrowUp => @keyboard.arrowUp
-    ArrowDown => @keyboard.arrowDown
-    ArrowLeft => @keyboard.arrowLeft
-    ArrowRight => @keyboard.arrowRight
-    Space => @keyboard.space
-    Enter => @keyboard.enter
-    KeyB => @keyboard.keyB
-    KeyA => @keyboard.keyA
-    KeyC => @keyboard.keyC
-    KeyD => @keyboard.keyD
-    KeyE => @keyboard.keyE
-    KeyF => @keyboard.keyF
-    KeyG => @keyboard.keyG
-    KeyH => @keyboard.keyH
-    KeyI => @keyboard.keyI
-    KeyJ => @keyboard.keyJ
-    KeyK => @keyboard.keyK
-    KeyL => @keyboard.keyL
-    KeyM => @keyboard.keyM
-    KeyN => @keyboard.keyN
-    KeyO => @keyboard.keyO
-    KeyP => @keyboard.keyP
-    KeyQ => @keyboard.keyQ
-    KeyR => @keyboard.keyR
-    KeyS => @keyboard.keyS
-    KeyT => @keyboard.keyT
-    KeyU => @keyboard.keyU
-    KeyV => @keyboard.keyV
-    KeyW => @keyboard.keyW
-    KeyX => @keyboard.keyX
-    KeyY => @keyboard.keyY
-    KeyZ => @keyboard.keyZ
-    Escape => @keyboard.escape
-  }
-}
-
-///|
-fn legacy_input_system(_backend : &@system.Backend) -> Unit {
-  for code in all_codes {
-    if @system.is_just_pressed(code) {
-      onkeydown(to_html_key(code))
-    }
-    if @system.is_just_released(code) {
-      onkeyup(to_html_key(code))
-    }
-  }
-}
-
-///|
 fn main {
   @system.App::new(
     @canvas.CanvasBackend::new().with_cross_origin(Some("anonymous")),
@@ -139,7 +51,6 @@ fn main {
   .add_plugin(@plugins.default_plugin)
   // .add_plugin(@plugins.debug_plugin)
   .add_system(game_start, schedule=Startup)
-  .add_system(legacy_input_system, system_name="legacy_input_system")
   .add_system(@cursor.cursor_system, system_name="cursor_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
   .add_system(@game_scene.game_scene_system, system_name="game_scene_system")

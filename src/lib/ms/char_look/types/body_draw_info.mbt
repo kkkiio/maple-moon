@@ -160,7 +160,8 @@ pub fn BodyDrawInfo::new(
             .unwrap_or({})
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
           for _, part in parts {
-            bodyshiftmap.set(part.z, part.map.inner())
+            guard part.z is Some(z) else { continue }
+            bodyshiftmap.set(z, part.map.inner())
           }
           bodyshiftmap[BodyLayer::HEAD] = head_shift_map
           fn get_shift(layer, key) {
@@ -389,7 +390,7 @@ pub impl @json.FromJson for NxLayerTextures with from_json(json, path) {
 
 ///|
 pub(all) struct NxBodyLayerTexture {
-  z : BodyLayer
+  z : BodyLayer?
   texture : @resource.NxAnimation
   map : ShiftMap
 }
@@ -397,9 +398,8 @@ pub(all) struct NxBodyLayerTexture {
 ///|
 pub impl @json.FromJson for NxBodyLayerTexture with from_json(json, path) {
   let z = match json {
-    { "z": Json::String(z), .. } =>
-      layers_by_name_.get(z).unwrap_or(BodyLayer::BODY_NONE)
-    _ => BodyLayer::BODY_NONE
+    { "z": Json::String(z), .. } => BodyLayer::from_name(z)
+    _ => None
   }
   let texture = @json.from_json(json, path~)
   let map = match json {

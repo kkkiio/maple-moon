@@ -119,7 +119,7 @@ pub fn make_handlers(
 pub async fn Module::load_player_skill_book(
   self : Module,
   job : @job.Job,
-) -> &@player.SkillBook raise {
+) -> &@player.SkillBook {
   let skill_book = SkillBook::load(self.string_loader, job, self.watchers)
   if self.player_skill_book is Some((_, cont_listen)) {
     cont_listen.val = false // dispose

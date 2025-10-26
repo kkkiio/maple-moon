@@ -238,7 +238,7 @@ pub impl @player.Inventory for Inventory with get_bulletid(self : Inventory) -> 
 
 ///|
 pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
-  self.inventories[t].get(slot).map(fn(it) { it.item_id }).or(0)
+  self.inventories[t].get(slot).map(fn(it) { it.item_id }).unwrap_or(0)
 }
 
 ///|
@@ -257,7 +257,7 @@ pub fn Inventory::get_item_count_at_slot(
   t : TypeId,
   slot : Int,
 ) -> Int {
-  self.inventories[t].get(slot).map(fn(it) { it.count }).or(0)
+  self.inventories[t].get(slot).map(fn(it) { it.count }).unwrap_or(0)
 }
 
 ///|
@@ -356,7 +356,7 @@ pub fn get_bulletslot(self : Inventory) -> Int {
 
 ///|
 pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
-  self.type_slot_count_map.get(t).or(0)
+  self.type_slot_count_map.get(t).unwrap_or(0)
 }
 
 ///|
@@ -374,7 +374,7 @@ pub fn find_equip_slot(
   [@equip_slot.Id::RING2, @equip_slot.Id::RING3, @equip_slot.Id::RING4]
   .iter()
   .find_first(fn(slot) { not(inv.has_equipped(slot)) })
-  .or(@equip_slot.Id::RING1)
+  .unwrap_or(@equip_slot.Id::RING1)
 }
 
 ///|

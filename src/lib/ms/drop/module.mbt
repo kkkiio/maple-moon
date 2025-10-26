@@ -4,7 +4,7 @@ struct Module {
 }
 
 ///|
-pub async fn Module::load(io_service : @io_task.IOService) -> Module raise {
+pub async fn Module::load(io_service : @io_task.IOService) -> Module {
   let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "special_item",
     loader=@resource.DirResourceLoader::new(

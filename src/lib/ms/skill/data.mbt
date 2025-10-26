@@ -251,7 +251,7 @@ let flag_range_attack : (Bool, Bool) = (true, true)
 ///|
 fn flags_of(id : Int) -> (Bool, Bool) {
   guard SkillId::from_int(id) is Some(id) else { flag_none }
-  skill_flags.get(id).or(flag_none)
+  skill_flags.get(id).unwrap_or(flag_none)
 }
 
 ///|
@@ -333,7 +333,7 @@ priv struct LevelStats(Map[Int, Stats])
 ///|
 impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats raise @json.JsonDecodeError {
   let stats = {}
-  for key, value in json.as_object().or({}) {
+  for key, value in json.as_object().unwrap_or({}) {
     let level = try key |> @strconv.parse_int() catch {
       _ => raise @json.JsonDecodeError((path, "invalid level"))
     }

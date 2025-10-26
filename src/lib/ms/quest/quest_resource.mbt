@@ -85,7 +85,7 @@ impl @json.FromJson for QuestInfo with from_json(json, path) {
           _ => raise @json.JsonDecodeError((path.add_key(key), "invalid desc"))
         }
       }
-      let max_phase : Int = description_map.keys().maximum().or(0)
+      let max_phase : Int = description_map.keys().maximum().unwrap_or(0)
       let descriptions = Array::makei(max_phase + 1, fn(i) {
         description_map.get_or_default(i, "")
       })
@@ -296,46 +296,45 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         checks.push({ interval_minutes: interval_minutes.inner() })
       }
       "infoex" => {
-        let info_ex_value : @resource.MapBasedArray[InfoEx] = @json.from_json(
+        let info_ex : Array[InfoEx] = @resource.parse_map_based_array(
           value,
           path~,
         )
-        checks.push({ info_ex: info_ex_value.inner() })
+        checks.push({ info_ex, })
       }
       "quest" => {
-        let quest_status_map : @resource.MapBasedArray[QuestStatusCheck] = @json.from_json(
+        let quest_status_map : Array[QuestStatusCheck] = @resource.parse_map_based_array(
           value,
           path~,
         )
         checks.push({
           quest_status_map: quest_status_map
-          .inner()
           .iter()
           .map(fn(i) { (i.id, i.state) })
           |> Map::from_iter(),
         })
       }
       "job" => {
-        let jobs : @resource.MapBasedArray[@job.JobId] = @json.from_json(
+        let jobs : Array[@job.JobId] = @resource.parse_map_based_array(
           value,
           path~,
         )
-        checks.push({ jobs: jobs.inner() })
+        checks.push({ jobs, })
       }
       "mob" => {
-        let mob : @resource.MapBasedArray[MonHuntCheck] = @json.from_json(
+        let mob : Array[MonHuntCheck] = @resource.parse_map_based_array(
           value,
           path~,
         )
-        monster_hunts = mob.inner()
+        monster_hunts = mob
         checks.push({ monster_hunts, })
       }
       "item" => {
-        let items : @resource.MapBasedArray[ItemCount] = @json.from_json(
+        let items : Array[ItemCount] = @resource.parse_map_based_array(
           value,
           path~,
         )
-        checks.push({ items: items.inner() })
+        checks.push({ items, })
       }
       _ => unknown_checks.push(key)
     }
@@ -355,7 +354,10 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let id : Int = @json.from_json(obj.get("id").unwrap_or(Json::null()), path~)
-  let state = @json.from_json(obj.get("state").or(Json::number(0)), path~)
+  let state = @json.from_json(
+    obj.get("state").unwrap_or(Json::number(0)),
+    path~,
+  )
   { id, state }
 }
 

@@ -60,7 +60,7 @@ struct Job {
 }
 
 ///|
-pub async fn Job::load(id? : Int = 0) -> Job raise {
+pub async fn Job::load(id? : Int = 0) -> Job {
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -76,7 +76,7 @@ pub async fn Job::load(id? : Int = 0) -> Job raise {
     get_subjob_id(id, level, sub_level)
   })
   let async_ops = subids.map(fn(subid) {
-      async fn() raise { (subid, JobData::load(subid)) }
+      async fn() { (subid, JobData::load(subid)) }
     })
     |> Array::from_iter
   let data_list = @js.async_all(async_ops)

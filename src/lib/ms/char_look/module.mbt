@@ -12,7 +12,7 @@ struct Module {
 pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
   io_service : @io_task.IOService,
-) -> Module raise {
+) -> Module {
   // let bodynode = get_body_loader().load_res_async(["00002000.img"])
   // let headnode = get_body_loader().load_res_async(["00012000.img"])
   Module::new(on_player_look_changed, io_service)
@@ -34,7 +34,7 @@ pub fn Module::new(
 }
 
 ///|
-pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook raise {
+pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook {
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
@@ -42,10 +42,7 @@ pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook raise 
 }
 
 ///|
-pub async fn Module::load_body_by_skin_id(
-  self : Module,
-  skin_id : Int,
-) -> Body raise {
+pub async fn Module::load_body_by_skin_id(self : Module, skin_id : Int) -> Body {
   guard skin_id == 0 else { fail("only support default skin for now") }
   let body = Body::new(
     skin_id,
@@ -58,14 +55,14 @@ pub async fn Module::load_body_by_skin_id(
 }
 
 ///|
-pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair raise {
+pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair {
   let hair = Hair::load(hair_id, self.draw_info)
   self.hair_cache.set(hair_id, hair)
   hair
 }
 
 ///|
-pub async fn load_face_by_id(self : Module, face_id : Int) -> Face raise {
+pub async fn load_face_by_id(self : Module, face_id : Int) -> Face {
   let face = Face::load(face_id)
   self.face_types.set(face_id, face)
   face

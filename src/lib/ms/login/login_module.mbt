@@ -23,7 +23,7 @@ pub async fn Module::load(
   char_look_module : @char_look.Module,
   io_service : @io_task.IOService,
   local_storage : @config.LocalStorage,
-) -> Module raise {
+) -> Module {
   let login_loader = @resource.SyncLoader::load(
     "Login",
     "https://maple-res.kkkiiox.work/UI/Login.img.json",
@@ -536,7 +536,7 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
 }
 
 ///|
-async fn on_new_character(mod : Module) -> Unit raise {
+async fn on_new_character(mod : Module) -> Unit {
   let res = ExplorerCreatorUIResource::load(mod.login_loader)
   mod.ui_container.add_ui(
     @ui.Element::new(

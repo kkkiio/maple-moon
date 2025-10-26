@@ -1,10 +1,16 @@
 ///|
 pub(all) enum HairLayer {
   // HAIR_LAYER_NONE = 0
-  HAIR_LAYER_DEFAULT = 1
-  BELOW_BODY = 2
-  OVER_HEAD = 3
-  SHADE = 4
+  // HAIR_LAYER_DEFAULT = 1
+  // BELOW_BODY = 2
+  // OVER_HEAD = 3
+  // SHADE = 4
+  // BACK = 5
+  // BELOW_CAP = 6
+  HAIR_LAYER_DEFAULT = 16
+  BELOW_BODY = 0
+  OVER_HEAD = 25
+  SHADE = 20
   BACK = 5
   BELOW_CAP = 6
 } derive(Eq, Compare, Show, Hash)
@@ -19,7 +25,7 @@ pub fn int_value(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
-  stances : Map[@types.StanceId, Map[HairLayer, @sprite.Sprite]]
+  stances : Map[@types.StanceId, Map[HairLayer, @resource.NxAnimation]]
   name : String
   color : String
 }
@@ -53,12 +59,9 @@ pub fn Hair::new(
   hairnode : NxStanceLooks[@types.NxLayerTextures],
   drawinfo : @types.BodyDrawInfo,
 ) -> Hair {
-  let stances : Map[@types.StanceId, Map[HairLayer, @sprite.Sprite]] = Map::new()
+  let stances : Map[@types.StanceId, Map[HairLayer, @resource.NxAnimation]] = Map::new()
   for stance, stancenode in hairnode.inner() {
-    let layers : Map[
-      HairLayer,
-      (Array[@sprite.AnimationFrame], @selene_math.Vec2D),
-    ] = Map::new()
+    let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map::new()
     for frame, framenode in stancenode {
       for layername, layernode in framenode.textures {
         let layer = match layers_by_name.get(layername) {
@@ -72,40 +75,29 @@ pub fn Hair::new(
           .get("brow")
           .unwrap_or(@struct.Point::default())
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
-        let tex : @resource.NxTexture = layernode.texture.frames[0].texture
-        let tex = { ..tex, origin: tex.origin - shift }
+        let texture : @resource.NxTexture = layernode.texture.frames[0].texture
+        let texture = { ..texture, origin: texture.origin - shift }
         let ani = layers.get_or_init(layer, fn() {
-          (
-            Array::make(stancenode.length(), @sprite.AnimationFrame::{
-              sprite_path: "",
-              size: @selene_math.Vec2D(0, 0),
-              offset: @selene_math.Vec2D(0, 0),
-            }),
-            @selene_math.Vec2D(
-              tex.origin.x.to_double(),
-              tex.origin.y.to_double(),
-            ),
-          )
+          // (
+          //   Array::make(stancenode.length(), @sprite.AnimationFrame::{
+          //     sprite_path: "",
+          //     size: @selene_math.Vec2D(0, 0),
+          //     offset: @selene_math.Vec2D(0, 0),
+          //   }),
+          //   @selene_math.Vec2D(
+          //     tex.origin.x.to_double(),
+          //     tex.origin.y.to_double(),
+          //   ),
+          // )
+          []
         })
-        ani.0[frame] = {
-          sprite_path: tex.i,
-          size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
-          offset: @selene_math.Vec2D(
-            tex.offset.x.to_double(),
-            tex.offset.y.to_double(),
-          ),
-        }
+        guard ani.length() == frame
+        ani.push(@resource.NxFrame::{ texture, delay: None })
       }
     }
     stances.set(
       stance,
-      layers.map(fn(_, frames) {
-        @sprite.Sprite::from_animation(
-          @sprite.Animation::new(frames.0, loop_=true),
-          0,
-          offset=-frames.1,
-        )
-      }),
+      layers.map(fn(_, frames) { { frames, blend: false, zigzag: false } }),
     )
   }
   let name = hair_names.get(hairid.to_string()).unwrap_or("")

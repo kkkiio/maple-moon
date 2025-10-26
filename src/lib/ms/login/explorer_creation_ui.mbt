@@ -77,7 +77,7 @@ pub(all) struct LookChoices {
 ///|
 pub async fn ExplorerCreatorUIResource::load(
   login_loader : @resource.SyncLoader,
-) -> ExplorerCreatorUIResource raise {
+) -> ExplorerCreatorUIResource {
   let mkinfo = get_etc_loader().load_res_async(["MakeCharInfo.img", "Info"])
   // for f, char in [(true, mkinfo["CharFemale"])(false, mkinfo["CharMale"])] {
   fn parse_choices(char : @resource.NxNode) -> LookChoices raise {

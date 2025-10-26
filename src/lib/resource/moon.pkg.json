@@ -1,8 +1,8 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/struct",
+    "KKKIIO/maple-moon/lib/struct",
     "rami3l/js-ffi/js",
-    "KKKIIO/maple-moon-client/lib/lru_cache",
-    "KKKIIO/maple-moon-client/lib/log"
+    "KKKIIO/maple-moon/lib/lru_cache",
+    "KKKIIO/maple-moon/lib/log"
   ]
 }

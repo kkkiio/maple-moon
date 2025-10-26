@@ -1,15 +1,15 @@
 {
 	"import": [
-    "KKKIIO/maple-moon-client/lib/ms/map",
-    "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/ms/map_layer",
-    "KKKIIO/maple-moon-client/lib/log",
-    "KKKIIO/maple-moon-client/lib/graphics",
-    "KKKIIO/maple-moon-client/lib/ms/keyboard",
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/io_task",
-    "rami3l/js-ffi/js"
-  ],
+		"KKKIIO/maple-moon/lib/ms/map",
+		"KKKIIO/maple-moon/lib/struct",
+		"KKKIIO/maple-moon/lib/ms/map_layer",
+		"KKKIIO/maple-moon/lib/log",
+		"KKKIIO/maple-moon/lib/graphics",
+		"KKKIIO/maple-moon/lib/ms/keyboard",
+		"KKKIIO/maple-moon/lib/utils",
+		"KKKIIO/maple-moon/lib/io_task",
+		"rami3l/js-ffi/js"
+	],
 	"link": {
 		"js": {
 			"exports": [

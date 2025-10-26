@@ -15,7 +15,7 @@ pub async fn Module::load(
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-) -> Module raise {
+) -> Module {
   ...
   // let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
   //   "Quest",
@@ -189,7 +189,7 @@ fn InProgressQuest::get_phase_progress(
   .get(phase)
   .bind(fn(it) { it.info_number })
   .bind(fn(it) { self.info_number_progress_map.get(it) })
-  .or(self.progress_data)
+  .unwrap_or(self.progress_data)
 }
 
 ///|
@@ -408,8 +408,8 @@ fn PlayerQuestLog::add_in_progress_quest(
   let quest = {
     quest_id: id,
     quest_info,
-    checks: checks.or([]),
-    acts: quests_resource.quest_acts_map.get(id).or([]),
+    checks: checks.unwrap_or([]),
+    acts: quests_resource.quest_acts_map.get(id).unwrap_or([]),
     progress_data,
     phase: 1, // phase 0 is start requirements
     info_number_progress_map: {},

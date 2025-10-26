@@ -212,8 +212,8 @@ pub fn[T : Widget] Element::new(
     key,
     ui_model,
     object,
-    toggle_active: toggle_active.or(fn() { ui_model.toggle_active() }),
-    on_close: on_close.or(fn() {  }),
+    toggle_active: toggle_active.unwrap_or(fn() { ui_model.toggle_active() }),
+    on_close: on_close.unwrap_or(fn() {  }),
     runtime_state,
   }
 }
@@ -466,11 +466,11 @@ pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
 }
 
 ///|
-type OffsetedUnit[T] (T, Point[Int]) derive(ToJson)
+struct OffsetedUnit[T](T, Point[Int]) derive(ToJson)
 
 ///|
 pub fn[T] OffsetedUnit::new(unit : T, pos : Point[Int]) -> OffsetedUnit[T] {
-  (unit, pos)
+  OffsetedUnit(unit, pos)
 }
 
 ///|

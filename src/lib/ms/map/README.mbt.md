@@ -6,6 +6,7 @@
 - `ani` 表示是否是动画，默认是 false
 
 ```mbt
+///|
 test {
   let json : Json = {
     "0": {

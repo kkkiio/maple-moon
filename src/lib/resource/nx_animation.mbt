@@ -36,12 +36,17 @@ pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture ra
 ///|
 pub(all) struct NxFrame {
   texture : NxTexture
+  delay : Int?
 }
 
 ///|
 pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
   let texture = @json.from_json(json, path~)
-  { texture, }
+  let delay = match json {
+    { "delay": Number(delay, ..), .. } => Some(delay.to_int())
+    _ => None
+  }
+  { texture, delay }
 }
 
 ///|

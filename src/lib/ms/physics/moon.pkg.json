@@ -1,10 +1,10 @@
 {
   "import": [
-    "KKKIIO/maple-moon-client/lib/utils",
-    "KKKIIO/maple-moon-client/lib/config",
-    "KKKIIO/maple-moon-client/lib/struct",
-    "KKKIIO/maple-moon-client/lib/resource",
-    "KKKIIO/maple-moon-client/lib/net",
+    "KKKIIO/maple-moon/lib/utils",
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/struct",
+    "KKKIIO/maple-moon/lib/resource",
+    "KKKIIO/maple-moon/lib/net",
     {
       "path": "Milky2018/selene/math",
       "alias": "selene_math"

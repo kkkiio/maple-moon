@@ -20,7 +20,9 @@ pub fn watch_quest_log_ffi(
         ref_render: mod.ref_render,
         inventory: mod.inventory,
       }
-      let markup_desc = quest.quest_info.descriptions.get(quest.phase).or("")
+      let markup_desc = quest.quest_info.descriptions
+        .get(quest.phase)
+        .unwrap_or("")
       let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
@@ -41,7 +43,7 @@ pub fn watch_quest_log_ffi(
         ref_render: mod.ref_render,
         inventory: mod.inventory,
       }
-      let markup_desc = quest.quest_info.descriptions.last().or("")
+      let markup_desc = quest.quest_info.descriptions.last().unwrap_or("")
       let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
           @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")

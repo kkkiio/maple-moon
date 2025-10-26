@@ -10,7 +10,7 @@ pub async fn TilesObjs::load(
   ts : String?,
   tile_resource : Array[NxTileRef],
   obj_resource : Array[NxObj],
-) -> TilesObjs raise {
+) -> TilesObjs {
   let tileset = if ts is Some(ts) {
     let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
       "tile",
@@ -91,7 +91,7 @@ struct MapTilesObjs {
 ///|
 pub async fn MapTilesObjs::load(
   layer_resource : Array[NxLayer],
-) -> MapTilesObjs raise {
+) -> MapTilesObjs {
   let layers = []
   for id in @map_layer.ids {
     let layer = layer_resource[id]

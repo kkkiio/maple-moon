@@ -77,29 +77,35 @@ pub fn CharStats::new(
 
 ///|
 pub fn init_totalstats(self : CharStats) -> Unit {
-  self.total_stats.inner().clear()
-  self.buff_deltas.inner().clear()
+  self.total_stats.0.clear()
+  self.buff_deltas.0.clear()
   self.percentages.clear()
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::HP, self.get_stat(@maple_stat.Id::MAXHP))
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::MP, self.get_stat(@maple_stat.Id::MAXMP))
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::STR, self.get_stat(@maple_stat.Id::STR))
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::DEX, self.get_stat(@maple_stat.Id::DEX))
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::INT, self.get_stat(@maple_stat.Id::INT))
-  self.total_stats
-  .inner()
-  .set(@maple_stat.EquipStatId::LUK, self.get_stat(@maple_stat.Id::LUK))
-  self.total_stats.inner().set(@maple_stat.EquipStatId::SPEED, 100)
-  self.total_stats.inner().set(@maple_stat.EquipStatId::JUMP, 100)
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::HP,
+    self.get_stat(@maple_stat.Id::MAXHP),
+  )
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::MP,
+    self.get_stat(@maple_stat.Id::MAXMP),
+  )
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::STR,
+    self.get_stat(@maple_stat.Id::STR),
+  )
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::DEX,
+    self.get_stat(@maple_stat.Id::DEX),
+  )
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::INT,
+    self.get_stat(@maple_stat.Id::INT),
+  )
+  self.total_stats.0.set(
+    @maple_stat.EquipStatId::LUK,
+    self.get_stat(@maple_stat.Id::LUK),
+  )
+  self.total_stats.0.set(@maple_stat.EquipStatId::SPEED, 100)
+  self.total_stats.0.set(@maple_stat.EquipStatId::JUMP, 100)
   self.max_damage = 0
   self.min_damage = 0
   // honor_ = 0;

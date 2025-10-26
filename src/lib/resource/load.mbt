@@ -6,7 +6,7 @@ pub fn ImageLoader::get_path_image_loader() -> ImageLoader = "resource" "get_pat
 
 ///|
 pub trait AsyncResourceLoader {
-  async load_data(self : Self, path : @string.View) -> Json raise
+  async load_data(self : Self, path : @string.View) -> Json
 }
 
 ///|
@@ -27,7 +27,7 @@ pub fn AsyncLoader::new(
 pub async fn AsyncLoader::load_res_async(
   self : AsyncLoader,
   path : Array[String],
-) -> NxNode raise {
+) -> NxNode {
   let promise = self.loader.load_data(join_path(path))
   {
     loader_name: self.name,

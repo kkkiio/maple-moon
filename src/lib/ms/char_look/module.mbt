@@ -4,7 +4,7 @@ struct Module {
   draw_info : @types.BodyDrawInfo
   hair_cache : Map[Int, Hair]
   face_types : Map[Int, Face]
-  body_cache : Map[Int, Body]
+  body_cache : Map[Int, FullBody]
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit
 }
 
@@ -34,7 +34,10 @@ pub fn Module::new(
 }
 
 ///|
-pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook {
+pub async fn Module::load_char_look(
+  self : Module,
+  entry : LookEntry,
+) -> CharLook {
   let body = self.load_body_by_skin_id(entry.skin)
   let hair = self.load_hair_by_id(entry.hairid)
   let face = self.load_face_by_id(entry.faceid)
@@ -42,9 +45,12 @@ pub async fn load_char_look(self : Module, entry : LookEntry) -> CharLook {
 }
 
 ///|
-pub async fn Module::load_body_by_skin_id(self : Module, skin_id : Int) -> Body {
+pub async fn Module::load_body_by_skin_id(
+  self : Module,
+  skin_id : Int,
+) -> FullBody {
   guard skin_id == 0 else { fail("only support default skin for now") }
-  let body = Body::new(
+  let body = FullBody::new(
     skin_id,
     self.draw_info,
     get_stance_bodys_map(),
@@ -55,21 +61,21 @@ pub async fn Module::load_body_by_skin_id(self : Module, skin_id : Int) -> Body 
 }
 
 ///|
-pub async fn load_hair_by_id(self : Module, hair_id : Int) -> Hair {
+pub async fn Module::load_hair_by_id(self : Module, hair_id : Int) -> Hair {
   let hair = Hair::load(hair_id, self.draw_info)
   self.hair_cache.set(hair_id, hair)
   hair
 }
 
 ///|
-pub async fn load_face_by_id(self : Module, face_id : Int) -> Face {
+pub async fn Module::load_face_by_id(self : Module, face_id : Int) -> Face {
   let face = Face::load(face_id)
   self.face_types.set(face_id, face)
   face
 }
 
 ///|
-pub fn make_stat_handlers(
+pub fn Module::make_stat_handlers(
   self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   struct ChangeLookActorState {
@@ -147,11 +153,11 @@ pub fn get_stance_bodys_map() -> Map[
   Array[@types.NxStanceBody],
 ] raise {
   match stance_bodys_map.val {
-    Some(v) => v.inner()
+    Some(v) => v.0
     None => {
       let v = @json.from_json(bodynode)
       stance_bodys_map.val = Some(v)
-      v.inner()
+      v.0
     }
   }
 }
@@ -162,11 +168,11 @@ pub fn get_stance_heads_map() -> Map[
   Array[@types.NxLayerTextures],
 ] raise {
   match stance_heads_map.val {
-    Some(v) => v.inner()
+    Some(v) => v.0
     None => {
       let v = @json.from_json(headnode)
       stance_heads_map.val = Some(v)
-      v.inner()
+      v.0
     }
   }
 }

@@ -7,7 +7,7 @@ enum Movement {
 } derive(Eq, Hash, Show, ToJson)
 
 ///|
-pub fn int_value(self : Movement) -> Int {
+pub fn Movement::int_value(self : Movement) -> Int {
   match self {
     Movement::MOVE_NONE => -1
     Movement::MOVE_INTERNAL => 0
@@ -123,19 +123,23 @@ pub impl @player.Inventory for Inventory with recalc_stats(
 }
 
 ///|
-pub fn get_meso(self : Inventory) -> Int {
+pub fn Inventory::get_meso(self : Inventory) -> Int {
   self.meso
 }
 
 ///|
 /// Set the meso amount.
-pub fn set_meso(self : Inventory, meso : Int) -> Unit {
+pub fn Inventory::set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
   self.meso_listeners.retain(fn(listener) { listener(meso) })
 }
 
 ///|
-pub fn set_slotmax(self : Inventory, type_id : TypeId, slotmax : Int) -> Unit {
+pub fn Inventory::set_slotmax(
+  self : Inventory,
+  type_id : TypeId,
+  slotmax : Int,
+) -> Unit {
   self.type_slot_count_map.set(type_id, slotmax)
 }
 
@@ -160,7 +164,7 @@ pub fn Inventory::add_item(
 }
 
 ///|
-fn add_slot(
+fn Inventory::add_slot(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
@@ -187,7 +191,7 @@ pub fn Inventory::add_pet(
 }
 
 ///|
-pub fn add_equip(
+pub fn Inventory::add_equip(
   self : Inventory,
   invtype : TypeId,
   slot : Int,
@@ -237,12 +241,16 @@ pub impl @player.Inventory for Inventory with get_bulletid(self : Inventory) -> 
 }
 
 ///|
-pub fn get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
+pub fn Inventory::get_item_id(self : Inventory, t : TypeId, slot : Int) -> Int {
   self.inventories[t].get(slot).map(fn(it) { it.item_id }).unwrap_or(0)
 }
 
 ///|
-pub fn get_slot_item_at(self : Inventory, t : TypeId, slot : Int) -> SlotItem? {
+pub fn Inventory::get_slot_item_at(
+  self : Inventory,
+  t : TypeId,
+  slot : Int,
+) -> SlotItem? {
   self.inventories[t].get(slot)
 }
 
@@ -276,7 +284,7 @@ pub fn Inventory::get_item_count(self : Inventory, item_id : Int) -> Int {
 }
 
 ///|
-pub fn modify(
+pub fn Inventory::modify(
   self : Inventory,
   t : TypeId,
   slot : Int,
@@ -307,7 +315,7 @@ pub fn modify(
 }
 
 ///|
-fn swap(
+fn Inventory::swap(
   self : Inventory,
   firsttype : TypeId,
   firstslot : Int,
@@ -327,7 +335,7 @@ fn swap(
 }
 
 ///|
-fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
+fn Inventory::remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
   guard self.inventories[t].get(slot_id) is Some(slot) else { return }
   let unique_id = slot.unique_id
   self.inventories[t].remove(slot_id)
@@ -342,7 +350,12 @@ fn remove(self : Inventory, t : TypeId, slot_id : Int) -> Unit {
 }
 
 ///|
-fn change_count(self : Inventory, t : TypeId, slot : Int, count : Int) -> Unit {
+fn Inventory::change_count(
+  self : Inventory,
+  t : TypeId,
+  slot : Int,
+  count : Int,
+) -> Unit {
   match self.inventories[t].get(slot) {
     Some(slot) => slot.count = count
     None => ()
@@ -350,12 +363,12 @@ fn change_count(self : Inventory, t : TypeId, slot : Int, count : Int) -> Unit {
 }
 
 ///|
-pub fn get_bulletslot(self : Inventory) -> Int {
+pub fn Inventory::get_bulletslot(self : Inventory) -> Int {
   self.bullet_slot
 }
 
 ///|
-pub fn get_slotmax(self : Inventory, t : TypeId) -> Int {
+pub fn Inventory::get_slotmax(self : Inventory, t : TypeId) -> Int {
   self.type_slot_count_map.get(t).unwrap_or(0)
 }
 
@@ -378,12 +391,12 @@ pub fn find_equip_slot(
 }
 
 ///|
-pub fn has_equipped(self : Inventory, slot : @equip_slot.Id) -> Bool {
+pub fn Inventory::has_equipped(self : Inventory, slot : @equip_slot.Id) -> Bool {
   self.inventories[TypeId::EQUIPPED].contains(slot.int_value())
 }
 
 ///|
-pub fn listen_item_changes(
+pub fn Inventory::listen_item_changes(
   self : Inventory,
   t : TypeId,
   listener : () -> Bool,
@@ -392,7 +405,10 @@ pub fn listen_item_changes(
 }
 
 ///|
-pub fn listen_meso_changes(self : Inventory, listener : (Int) -> Bool) -> Unit {
+pub fn Inventory::listen_meso_changes(
+  self : Inventory,
+  listener : (Int) -> Bool,
+) -> Unit {
   self.meso_listeners.push(listener)
 }
 

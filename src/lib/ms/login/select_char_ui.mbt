@@ -510,13 +510,13 @@ pub fn add_select_char_ui() -> Unit raise {
   let draw_info = @char_look.get_draw_info()
   let char_look = @char_look.CharLook::new(
     {},
-    @char_look.Body::new(
+    @char_look.FullBody::new(
       0,
       draw_info,
       @char_look.get_stance_bodys_map(),
       @char_look.get_stance_heads_map(),
     ),
-    @char_look.Hair::new(
+    @char_look.Hair::parse(
       0,
       @json.from_json(@char_look.male_1_white_hair),
       draw_info,

@@ -9,7 +9,7 @@ struct CharLook {
   mut flip : Bool
   mut actionstr : String
   mut actframe : Int
-  body : Body
+  full_body : FullBody
   hair : Hair
   face : Face
   mut action : @types.NxStanceBodyAction?
@@ -33,7 +33,7 @@ pub(all) struct LookEntry {
 ///|
 pub async fn CharLook::load(
   entry : LookEntry,
-  body : Body,
+  body : FullBody,
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
@@ -56,7 +56,7 @@ pub async fn CharLook::load(
 ///|
 pub fn CharLook::new(
   slot_equips : Map[Int, @item.ItemData],
-  body : Body,
+  body : FullBody,
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
@@ -76,7 +76,7 @@ pub fn CharLook::new(
     action: None,
     actionstr: "",
     actframe: 0,
-    body,
+    full_body: body,
     hair,
     face,
     equips,
@@ -87,13 +87,13 @@ pub fn CharLook::new(
 }
 
 ///|
-fn updatetwohanded(self : CharLook) -> Unit {
+fn CharLook::updatetwohanded(self : CharLook) -> Unit {
   let basestance = @types.StanceId::baseof(self.stance.get())
   self.set_stance(basestance)
 }
 
 ///|
-fn draw_dead(
+fn CharLook::draw_dead(
   self : CharLook,
   args : @graphics.DrawArgument,
   interstance : @types.StanceId,
@@ -101,7 +101,7 @@ fn draw_dead(
   interframe : Int,
   interexpframe : Int,
 ) -> Unit {
-  let body = self.body
+  let body = self.full_body
   let hair = self.hair
   let face = self.face
   let faceshift = self.draw_info.get_face_pos(@types.StanceId::STAND1, 1)
@@ -179,13 +179,13 @@ fn draw_dead(
 }
 
 ///|
-fn draw_climbing(
+fn CharLook::draw_climbing(
   self : CharLook,
   args : @graphics.DrawArgument,
   interstance : @types.StanceId,
   interframe : Int,
 ) -> Unit {
-  let body = self.body
+  let body = self.full_body
   let hair = self.hair
   fn draw_interframe_hair(layer) {
     hair.draw(interstance, layer, interframe, args)
@@ -305,7 +305,7 @@ fn draw_climbing(
 }
 
 ///|
-fn draw_impl(
+fn CharLook::draw_impl(
   self : CharLook,
   args : @graphics.DrawArgument,
   interstance : @types.StanceId,
@@ -330,7 +330,7 @@ fn draw_impl(
 }
 
 ///|
-pub fn make_draw_front(
+pub fn CharLook::make_draw_front(
   self : CharLook,
   stance : @types.StanceId,
   expression : ExpressionId,
@@ -354,7 +354,7 @@ pub fn make_draw_front(
   }
 
   fn make_body_draw(layer) {
-    { body: self.body, layer, frame: stance_frame, stance }
+    { body: self.full_body, layer, frame: stance_frame, stance }
   }
 
   fn make_equip_draw(slot, layer) {
@@ -470,7 +470,7 @@ pub fn make_draw_front(
 
 ///|
 struct BodyLayerDrawable {
-  body : Body
+  body : FullBody
   stance : @types.StanceId
   layer : @types.BodyLayer
   frame : Int
@@ -624,11 +624,6 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // let acmove = @struct.Point::default()
   // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
-  let transform = if self.flip {
-    @selene_math.Transform::from_scale(-1.0, 1.0)
-  } else {
-    @selene_math.Transform::new()
-  }
   // let interstance = self.stance.get()
   // let interexpression = self.expression.get()
   // let interframe = self.st_frame.get()
@@ -665,7 +660,7 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   }
 
   fn new_body_sprites() {
-    guard self.body.stances.get(stance) is Some(stance_stances) else {
+    guard self.full_body.stances.get(stance) is Some(stance_stances) else {
       return []
     }
     stance_stances
@@ -674,7 +669,7 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
       let (frames, layers) = it
       @graphics.nx_animation_to_selene_sprite(
         { frames, blend: false, zigzag: false },
-        transform~,
+        flip_x=self.flip,
         z=layers[0].int_value() + @graphics.CHAR_LOOK_ZINDEX,
         loop_~,
       )
@@ -696,17 +691,16 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   }
 
   fn new_hair_sprite(layer) {
-    if self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) {
-      let sprite = @graphics.nx_animation_to_selene_sprite(
-        anim,
-        transform~,
-        z=layer.int_value() + @graphics.CHAR_LOOK_ZINDEX,
-        loop_~,
-      )
-      Some(sprite)
-    } else {
-      None
+    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
+      return None
     }
+    let sprite = @graphics.nx_animation_to_selene_sprite(
+      anim,
+      flip_x=self.flip,
+      z=layer.z_value() + @graphics.CHAR_LOOK_ZINDEX,
+      loop_~,
+    )
+    Some(sprite)
   }
 
   for
@@ -833,7 +827,7 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
 }
 
 ///|
-pub fn draw_with_stance(
+pub fn CharLook::draw_with_stance(
   self : CharLook,
   position : @struct.Point[Int],
   flip : Bool,
@@ -851,7 +845,7 @@ pub fn draw_with_stance(
 }
 
 ///|
-pub fn is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
+pub fn CharLook::is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
   match st {
     @types.StanceId::STAND1 | @types.StanceId::WALK1 => false
     @types.StanceId::STAND2 | @types.StanceId::WALK2 => true
@@ -861,12 +855,12 @@ pub fn is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
 
 ///|
 /// Sets the direction of the character
-pub fn set_direction(self : CharLook, facing_right : Bool) -> Unit {
+pub fn CharLook::set_direction(self : CharLook, facing_right : Bool) -> Unit {
   self.flip = facing_right
 }
 
 ///|
-pub fn set_stance(self : CharLook, st : @types.StanceId) -> Unit {
+pub fn CharLook::set_stance(self : CharLook, st : @types.StanceId) -> Unit {
   if not(self.action.is_empty()) || st == @types.StanceId::NONE {
     return
   }
@@ -880,17 +874,17 @@ pub fn set_stance(self : CharLook, st : @types.StanceId) -> Unit {
 }
 
 ///|
-fn change_body(self : CharLook, body : Body) -> CharLook {
-  { ..self, body, }
+fn CharLook::change_body(self : CharLook, body : FullBody) -> CharLook {
+  { ..self, full_body: body }
 }
 
 ///|
-fn change_hair(self : CharLook, hair : Hair) -> CharLook {
+fn CharLook::change_hair(self : CharLook, hair : Hair) -> CharLook {
   { ..self, hair, }
 }
 
 ///|
-fn change_face(self : CharLook, face : Face) -> CharLook {
+fn CharLook::change_face(self : CharLook, face : Face) -> CharLook {
   { ..self, face, }
 }
 
@@ -959,7 +953,7 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
 }
 
 ///|
-fn update_face(self : CharLook, timestep : Int) -> Unit {
+fn CharLook::update_face(self : CharLook, timestep : Int) -> Unit {
   let face = self.face
   let expdelay : Int = face.get_delay(
     self.expression.get(),
@@ -999,12 +993,16 @@ pub fn CharLook::get_delay(
 }
 
 ///|
-pub fn getnextframe(self : CharLook, st : @types.StanceId, fr : Int) -> Int {
+pub fn CharLook::getnextframe(
+  self : CharLook,
+  st : @types.StanceId,
+  fr : Int,
+) -> Int {
   self.draw_info.next_frame(st, fr)
 }
 
 ///|
-pub fn get_equips(self : CharLook) -> @equip.CharEquips {
+pub fn CharLook::get_equips(self : CharLook) -> @equip.CharEquips {
   self.equips
 }
 
@@ -1019,7 +1017,7 @@ pub fn CharLook::add_equip(
 }
 
 ///|
-pub fn remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
+pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
   self.equips.remove_equip(slot)
   if slot == @slot.Id::WEAPON {
     self.updatetwohanded()
@@ -1027,12 +1025,16 @@ pub fn remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
 }
 
 ///|
-pub fn get_stance(self : CharLook) -> @types.StanceId {
+pub fn CharLook::get_stance(self : CharLook) -> @types.StanceId {
   self.stance.get()
 }
 
 ///|
-pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
+pub fn CharLook::get_attackdelay(
+  self : CharLook,
+  no : Int,
+  first_frame : Int,
+) -> Int {
   match self.action {
     Some(_) => return self.draw_info.get_attack_delay(self.actionstr, no)
     None => ()
@@ -1045,7 +1047,7 @@ pub fn get_attackdelay(self : CharLook, no : Int, first_frame : Int) -> Int {
 }
 
 ///|
-pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
+pub fn CharLook::attack(self : CharLook, degenerate : Bool) -> Unit {
   guard self.equips.get_weapon() is Some(weapon) else { return }
   let attacktype = weapon.get_attack()
   if attacktype == 9 && not(degenerate) {
@@ -1061,7 +1063,10 @@ pub fn attack(self : CharLook, degenerate : Bool) -> Unit {
 }
 
 ///|
-pub fn attack_by_stance(self : CharLook, newstance : @types.StanceId) -> Unit {
+pub fn CharLook::attack_by_stance(
+  self : CharLook,
+  newstance : @types.StanceId,
+) -> Unit {
   if not(self.action.is_empty()) || newstance == @types.StanceId::NONE {
     return
   }
@@ -1072,7 +1077,7 @@ pub fn attack_by_stance(self : CharLook, newstance : @types.StanceId) -> Unit {
 }
 
 ///|
-pub fn set_action(self : CharLook, acstr : String) -> Unit {
+pub fn CharLook::set_action(self : CharLook, acstr : String) -> Unit {
   if acstr == self.actionstr || acstr.is_empty() {
     return
   }
@@ -1095,7 +1100,7 @@ pub fn set_action(self : CharLook, acstr : String) -> Unit {
 }
 
 ///|
-fn getattackstance(
+fn CharLook::getattackstance(
   self : CharLook,
   attack : Int,
   degenerate : Bool,
@@ -1168,7 +1173,7 @@ let attack_stances : FixedArray[FixedArray[@types.StanceId]] = [
 ]
 
 ///|
-pub fn get_frame(self : CharLook) -> Int {
+pub fn CharLook::get_frame(self : CharLook) -> Int {
   self.st_frame.get()
 }
 
@@ -1178,18 +1183,18 @@ pub impl ToJson for CharLook with to_json(_) -> Json {
 }
 
 ///|
-pub fn get_face(self : CharLook) -> Face {
+pub fn CharLook::get_face(self : CharLook) -> Face {
   self.face
 }
 
 ///|
-pub fn get_hair(self : CharLook) -> Hair {
+pub fn CharLook::get_hair(self : CharLook) -> Hair {
   self.hair
 }
 
 ///|
-pub fn get_body(self : CharLook) -> Body {
-  self.body
+pub fn CharLook::get_body(self : CharLook) -> FullBody {
+  self.full_body
 }
 
 ///|

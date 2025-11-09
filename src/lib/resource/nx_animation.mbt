@@ -4,10 +4,24 @@ pub(all) struct NxTexture {
   i : String
   w : Int
   h : Int
-  /// Pixel offset within the sprite sheet where this frame is located.
-  offset : @struct.Point[Int]
-  /// Coordinate of the drawing origin within the image. In other words, distance from the top-left corner of the image.
-  origin : @struct.Point[Int]
+  /// 图片在 spritesheet 里的偏移量, 相对于 spritesheet 左上角的位置.
+  offset : Point[Int]
+  /// 图片的坐标原点, 相对于图片左上角的位置.
+  /// 绘制sprite时, sprite的位置是与origin重合的, 再根据width和height确定绘制范围.
+  /// 翻转x轴时, 是以origin.x为对称轴, 翻转x轴.
+  /// ```mbt
+  /// let t = NxTexture::{
+  ///     i: "/assets/character/body/male_1_white_face.png",
+  ///     w: 39,
+  ///     h: 35,
+  ///     offset: {x: 41, y: 0},
+  ///     origin: {x: 19, y: 17},
+  /// }
+  /// let sprite_pos : @struct.Point[Int] = {x: 100, y: 100}
+  /// let left_top = sprite_pos - t.origin
+  /// ignore(left_top)
+  /// ```
+  origin : Point[Int]
 }
 
 ///|
@@ -20,15 +34,15 @@ pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture ra
   let w = w.to_int()
   let h = h.to_int()
   let offset = if json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } {
-    @struct.Point::new(offx.to_int(), offy.to_int())
+    Point::new(offx.to_int(), offy.to_int())
   } else {
-    @struct.Point::default()
+    Point::default()
   }
   let origin = if json
     is { "origin": [Number(originx, ..), Number(originy, ..)], .. } {
-    @struct.Point::new(originx.to_int(), originy.to_int())
+    Point::new(originx.to_int(), originy.to_int())
   } else {
-    @struct.Point::default()
+    Point::default()
   }
   { i, w, h, offset, origin }
 }
@@ -74,3 +88,6 @@ pub fn NxAnimation::get_size(self : NxAnimation) -> (Int, Int) {
   let texture = self.frames[0].texture
   (texture.w, texture.h)
 }
+
+///|
+using @struct {type Point}

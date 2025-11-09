@@ -1,12 +1,12 @@
 ///|
-pub fn load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
+pub fn ImageLoader::load_image(self : ImageLoader, bid : Int) -> Image = "resource" "load_image"
 
 ///|
 pub fn ImageLoader::get_path_image_loader() -> ImageLoader = "resource" "get_path_image_loader"
 
 ///|
 pub trait AsyncResourceLoader {
-  async load_data(self : Self, path : @string.View) -> Json
+  async load_data(self : Self, path : StringView) -> Json
 }
 
 ///|
@@ -83,7 +83,7 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
     (path, "")
   }
   let path = join_dir(self.rootPath, child.to_string() + ".json")
-  let text : String = js_fetch_string(path).wait() |> @js.Value::cast
+  let text : String = fetch_string(path)
   let root_value : Json = @json.parse(text)
   get_by_path(root_value, rest.to_string())
 }
@@ -91,6 +91,18 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
 ///|
 extern "js" fn js_fetch_string(path : String) -> @js.Promise =
   #| (p) => fetch(p).then((res) => res.text())
+
+///|
+async fn fetch_string(path : String) -> String {
+  (js_fetch_string(path).wait() catch {
+    @js.Error_(e) => {
+      let message : String = e.get_with_string("message")
+      fail("failed to fetch string: \{path}, error=\{message}")
+    }
+    e => raise e
+  })
+  |> @js.Value::cast
+}
 
 ///|
 fn join_dir(root : String, path : String) -> String {

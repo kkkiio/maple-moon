@@ -9,7 +9,7 @@ struct Frame {
 }
 
 ///|
-pub typealias @resource.NxNode
+pub using @resource {type NxNode}
 
 ///|
 fn Frame::from_resource(src : NxNode, default_delay? : Int) -> Frame raise {
@@ -107,22 +107,22 @@ fn Frame::default() -> Frame {
 }
 
 ///|
-pub fn start_opacity(self : Frame) -> Int {
+pub fn Frame::start_opacity(self : Frame) -> Int {
   self.opacities.0
 }
 
 ///|
-pub fn end_opacity(self : Frame) -> Int {
+pub fn Frame::end_opacity(self : Frame) -> Int {
   self.opacities.1
 }
 
 ///|
-pub fn start_scale(self : Frame) -> Int {
+pub fn Frame::start_scale(self : Frame) -> Int {
   self.scales.0
 }
 
 ///|
-pub fn get_delay(self : Frame) -> Int {
+pub fn Frame::get_delay(self : Frame) -> Int {
   self.delay
 }
 
@@ -142,18 +142,18 @@ pub fn Frame::get_head(self : Frame) -> Point[Int] {
 }
 
 ///|
-pub fn get_bounds(self : Frame) -> Rectangle[Int] {
+pub fn Frame::get_bounds(self : Frame) -> Rectangle[Int] {
   self.bounds
 }
 
 ///|
-pub fn opcstep(self : Frame, timestep : Int) -> Double {
+pub fn Frame::opcstep(self : Frame, timestep : Int) -> Double {
   ((self.opacities.1 - self.opacities.0) * timestep).to_double() /
   self.delay.to_double()
 }
 
 ///|
-pub fn scalestep(self : Frame, timestep : Int) -> Double {
+pub fn Frame::scalestep(self : Frame, timestep : Int) -> Double {
   timestep.to_double() *
   (self.scales.1 - self.scales.0).to_double() /
   self.delay.to_double()
@@ -405,7 +405,7 @@ fn Animation::get_frame(self : Animation) -> Frame {
 }
 
 ///|
-pub fn get_delay_until(self : Animation, frame_id : Int) -> Int {
+pub fn Animation::get_delay_until(self : Animation, frame_id : Int) -> Int {
   let mut total : Int = 0
   let mut i = 0
   while i < frame_id {
@@ -469,65 +469,54 @@ pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimatio
 }
 
 ///|
-pub(all) struct AnimationData {
-  frames : Array[@sprite.AnimationFrame]
-  left_top : @selene_math.Vec2D
-  delay_ms : Int
-}
-
-///|
-pub fn AnimationData::from_nx_animation(
+pub fn nx_animation_to_selene_sprite(
   src : @resource.NxAnimation,
-) -> AnimationData {
+  z? : Int = 0,
+  flip_x? : Bool = false,
+  loop_? : Bool = true,
+) -> @sprite.Sprite {
   let origin = src.frames
     .get(0)
     .map(fn(frame) { frame.texture.origin })
     .unwrap_or(@struct.Point::default())
-  {
-    frames: src.frames.map(fn(frame) {
-      {
-        sprite_path: frame.texture.i,
-        size: @selene_math.Vec2D(
-          frame.texture.w.to_double(),
-          frame.texture.h.to_double(),
-        ),
-        offset: @selene_math.Vec2D(
-          frame.texture.offset.x.to_double(),
-          frame.texture.offset.y.to_double(),
-        ),
-      }
-    }),
-    left_top: -@selene_math.Vec2D(origin.x.to_double(), origin.y.to_double()),
-    delay_ms: 100,
+  let delay_ms = src.frames
+    .iter()
+    .map_while(fn(frame) { frame.delay })
+    .peek()
+    .unwrap_or(100)
+  let frames = src.frames.map(fn(frame) {
+    @sprite.AnimationFrame::{
+      sprite_path: frame.texture.i,
+      size: @selene_math.Vec2D(
+        frame.texture.w.to_double(),
+        frame.texture.h.to_double(),
+      ),
+      offset: @selene_math.Vec2D(
+        frame.texture.offset.x.to_double(),
+        frame.texture.offset.y.to_double(),
+      ),
+    }
+  })
+  let transform = if flip_x {
+    // flip x axis around origin.x(pivot)
+    // expected: x' = 2p - x = (-x) + 2p
+    // from_scale(-1.0, 1.0) translate x to (-x), then +2p to get x'
+    let translate_x = 2.0 * origin.x.to_double()
+    @selene_math.Transform::from_translation(translate_x, 0.0) *
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::identity()
   }
-}
-
-///|
-pub fn AnimationData::to_selene_sprite(
-  self : AnimationData,
-  z? : Int = 0,
-  transform? : @selene_math.Transform = @selene_math.Transform::new(),
-  loop_? : Bool = true,
-) -> @sprite.Sprite {
+  let left_top = -@selene_math.Vec2D(origin.x.to_double(), origin.y.to_double())
   @sprite.Sprite::from_animation(
     @sprite.Animation::new(
-      self.frames,
+      frames,
       loop_~,
-      rate=1000.0 / self.delay_ms.to_double() / fps.to_double(),
+      rate=1000.0 / delay_ms.to_double() / fps.to_double(),
       // fps=1000.0 / self.delay_ms.to_double(),
       transform~,
     ),
     z,
-    offset=self.left_top,
+    offset=left_top,
   )
-}
-
-///|
-pub fn nx_animation_to_selene_sprite(
-  src : @resource.NxAnimation,
-  z? : Int = 0,
-  transform? : @selene_math.Transform = @selene_math.Transform::new(),
-  loop_? : Bool = true,
-) -> @sprite.Sprite {
-  AnimationData::from_nx_animation(src).to_selene_sprite(z~, transform~, loop_~)
 }

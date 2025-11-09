@@ -38,8 +38,7 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
       spritesheet_paths.map(fn(path) {
         async fn() {
           let spritesheet_json_url = join_2path(BASE_URL, path + ".json")
-          let fetched = js_fetch_string(spritesheet_json_url).wait()
-            |> @js.Value::cast
+          let fetched = fetch_string(spritesheet_json_url)
           let j = @json.from_json(@json.parse(fetched)) catch {
             e =>
               fail(

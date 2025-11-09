@@ -21,7 +21,7 @@ pub impl ToJson for HairLayer with to_json(self) {
 }
 
 ///|
-pub fn int_value(self : HairLayer) -> Int = "%identity"
+pub fn z_value(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
@@ -54,7 +54,7 @@ pub async fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
 }
 
 ///|
-pub fn Hair::new(
+pub fn Hair::parse(
   hairid : Int,
   hairnode : NxStanceLooks[@types.NxLayerTextures],
   drawinfo : @types.BodyDrawInfo,
@@ -77,22 +77,11 @@ pub fn Hair::new(
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
         let texture : @resource.NxTexture = layernode.texture.frames[0].texture
         let texture = { ..texture, origin: texture.origin - shift }
-        let ani = layers.get_or_init(layer, fn() {
-          // (
-          //   Array::make(stancenode.length(), @sprite.AnimationFrame::{
-          //     sprite_path: "",
-          //     size: @selene_math.Vec2D(0, 0),
-          //     offset: @selene_math.Vec2D(0, 0),
-          //   }),
-          //   @selene_math.Vec2D(
-          //     tex.origin.x.to_double(),
-          //     tex.origin.y.to_double(),
-          //   ),
-          // )
-          []
-        })
-        guard ani.length() == frame
-        ani.push(@resource.NxFrame::{ texture, delay: None })
+        let frames = layers.get_or_init(layer, fn() { [] })
+        while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
+          frames.push(@resource.NxFrame::{ texture, delay: None }) // TODO: 填充为空白帧
+        }
+        frames.push(@resource.NxFrame::{ texture, delay: None })
       }
     }
     stances.set(

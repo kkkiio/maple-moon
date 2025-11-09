@@ -41,21 +41,16 @@ fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
 }
 
 ///|
-pub fn update(self : Obj) -> Unit {
+pub fn Obj::update(self : Obj) -> Unit {
   // self.animation.update() |> ignore
 }
 
 ///|
 pub fn Obj::set_sprites(self : Obj) -> Unit {
-  let transform = if self.flip {
-    @selene_math.Transform::from_scale(-1.0, 1.0)
-  } else {
-    @selene_math.Transform::new()
-  }
   let sprite = @graphics.nx_animation_to_selene_sprite(
     self.animation,
     z=self.z + @graphics.SCENE_ZINDEX,
-    transform~,
+    flip_x=self.flip,
   )
   @sprite.sprites.set(self.entity, sprite)
   @position.positions.set(
@@ -71,6 +66,6 @@ pub fn Obj::set_sprites(self : Obj) -> Unit {
 }
 
 ///|
-pub fn get_z(self : Obj) -> Int {
+pub fn Obj::get_z(self : Obj) -> Int {
   self.z
 }

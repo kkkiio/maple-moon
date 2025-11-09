@@ -80,7 +80,7 @@ pub fn Stage::new(
 }
 
 ///|
-fn clear(self : Stage) -> Unit {
+fn Stage::clear(self : Stage) -> Unit {
   self.state = StageState::INACTIVE
   // self.chars.clear()
   // self.npcs.clear()
@@ -91,7 +91,7 @@ fn clear(self : Stage) -> Unit {
 }
 
 ///|
-pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
+pub fn Stage::load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
   match self.state {
     StageState::INACTIVE => {
       self.map_id = map_id
@@ -108,7 +108,7 @@ pub fn load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
 }
 
 ///|
-pub fn set_player_stage(
+pub fn Stage::set_player_stage(
   self : Stage,
   entry : @character.CharEntry,
   cooldowns : Map[Int, Int],
@@ -141,7 +141,7 @@ pub fn set_player_stage(
 }
 
 ///|
-fn respawn(
+fn Stage::respawn(
   self : Stage,
   portal_id : Int,
   map_info : @map.MapInfo,
@@ -284,7 +284,7 @@ fn Stage::update(self : Stage) -> Unit raise {
 }
 
 ///|
-fn send_cursor(
+fn Stage::send_cursor(
   self : Stage,
   pressed : Bool,
   position : @struct.Point[Int],
@@ -306,11 +306,11 @@ fn send_cursor(
 }
 
 ///|
-pub fn check_input(
-  player : @player.Player,
-  physics : @physics.Physics,
-  map_info : @map.MapInfo,
-) -> Unit {
+pub fn player_state_system(_backend : &@system.Backend) -> Unit {
+  guard stage_ref.val
+    is Some({ state: StageState::ACTIVE(physics~, map_info~, ..), player, .. }) else {
+    return
+  }
   // match mapping {
   //   ACTION(action) => {
   //     if down {
@@ -348,7 +348,7 @@ pub fn check_input(
 }
 
 ///|
-fn check_portals(
+fn Stage::check_portals(
   self : Stage,
   map_info : @map.MapInfo,
   portals : @map.MapPortals,
@@ -366,12 +366,12 @@ fn check_portals(
     player.respawn(startpos, map_info.is_underwater())
     // } else if warpinfo.valid {
   } else {
-    let message : @player.ChangeMapMessage = {
-      died: false,
-      target_id: -1,
-      target_p: warpinfo.name,
-      use_wheel: false,
-    }
+    // let message : @player.ChangeMapMessage = {
+    //   died: false,
+    //   target_id: -1,
+    //   target_p: warpinfo.name,
+    //   use_wheel: false,
+    // }
     // self.network.send_message(message, log_level=@log.Level::INFO)
     // let stats = player.get_stats()
     // stats.set_map_id(warpinfo.mapid)
@@ -390,12 +390,12 @@ impl @net.OutMessage for PlayerMapTransferMessage with pack(self) -> @net.OutPac
 }
 
 ///|
-pub fn get_mobs(self : Stage) -> @monster.MapMobs {
+pub fn Stage::get_mobs(self : Stage) -> @monster.MapMobs {
   ...
 }
 
 ///|
-pub fn get_inventory(self : Stage) -> @inventory.Inventory {
+pub fn Stage::get_inventory(self : Stage) -> @inventory.Inventory {
   ...
   // self.inventory
 }
@@ -407,7 +407,7 @@ priv enum TakeDamageFrom {
 } derive(Show)
 
 ///|
-fn int_value(self : TakeDamageFrom) -> Int {
+fn TakeDamageFrom::int_value(self : TakeDamageFrom) -> Int {
   match self {
     TakeDamageFrom::TOUCH => -1
   }
@@ -455,7 +455,7 @@ fn new_take_damage_packet_from_mob(
 }
 
 ///|
-fn check_drops(self : Stage, player : @player.Player) -> Unit {
+fn Stage::check_drops(self : Stage, player : @player.Player) -> Unit {
   ...
   // for it in self.drops.list_loot_at(player.character.get_position()) {
   //   let (drop_oid, drop_pos) = it
@@ -481,7 +481,7 @@ impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
 }
 
 ///|
-pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
+pub fn Stage::transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
   self.clear()
   // @graphics.GraphicsGL::get().clear()
   self.load(mapid, portalid)
@@ -489,7 +489,7 @@ pub fn transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
 }
 
 ///|
-pub fn listen_map_change(
+pub fn Stage::listen_map_change(
   self : Stage,
   on_change : (@map.SceneMap) -> Bool,
 ) -> Unit {
@@ -498,7 +498,7 @@ pub fn listen_map_change(
 
 ///|
 /// reset player position. for debug
-pub fn reset_player_position(self : Stage) -> Unit {
+pub fn Stage::reset_player_position(self : Stage) -> Unit {
   guard self.state
     is StageState::ACTIVE(portals~, map_info~, enter_portal_id~, physics~, ..) else {
     return
@@ -513,6 +513,7 @@ let stage_ref : Ref[Stage?] = Ref::new(None)
 pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
   guard @game_state.game_state.state
     is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~) else {
+    stage_ref.val = None
     return
   }
   let stage = match stage_ref.val {
@@ -584,7 +585,6 @@ pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
       stage.map_change_listeners.retain(fn(listener) { listener(sence_map) })
       return // for simplicity, just wait for the next update
     }
-    StageState::ACTIVE(physics~, map_info~, ..) =>
-      check_input(stage.player, physics, map_info)
+    StageState::ACTIVE(..) => ()
   }
 }

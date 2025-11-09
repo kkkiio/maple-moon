@@ -855,7 +855,7 @@ pub fn CharLook::is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
 
 ///|
 /// Sets the direction of the character
-pub fn CharLook::set_direction(self : CharLook, facing_right : Bool) -> Unit {
+pub fn CharLook::set_facing_right(self : CharLook, facing_right : Bool) -> Unit {
   self.flip = facing_right
 }
 

@@ -436,7 +436,7 @@ pub fn SelectCharUI::add_character(
       @types.StanceId::STAND1
     },
   )
-  char_look.set_direction(true)
+  char_look.set_facing_right(true)
   char_look.set_sprites()
   char_look.set_pos(get_character_slot_pos(i, 135, 234).to_vec2d())
   // name_tag.set_selected(Some(i) == self.select_slot)

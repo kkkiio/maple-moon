@@ -7,11 +7,6 @@ priv struct EntryPoint {
 let entrypoint : EntryPoint = { game: None }
 
 ///|
-fn EntryPoint::get_game(self : EntryPoint) -> @ms.Game {
-  return self.game.unwrap()
-}
-
-///|
 fn game_start(_backend : &@system.Backend) -> Unit {
   let game = @ms.Game::new()
   @login.add_select_char_ui() catch {
@@ -21,23 +16,6 @@ fn game_start(_backend : &@system.Backend) -> Unit {
     }
   }
   entrypoint.game = game |> Some
-}
-
-///|
-pub fn game_update(time : Double) -> Unit {
-  entrypoint.get_game().update(time |> @utils.TimePoint::from_micro)
-}
-
-///|
-pub fn onkeydown(key : String) -> Unit {
-  guard entrypoint.get_game().get_window() is Some(window) else { return }
-  window.key_callback(key, true)
-}
-
-///|
-pub fn onkeyup(key : String) -> Unit {
-  guard entrypoint.get_game().get_window() is Some(window) else { return }
-  window.key_callback(key, false)
 }
 
 ///|
@@ -54,5 +32,9 @@ fn main {
   .add_system(@cursor.cursor_system, system_name="cursor_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
   .add_system(@game_scene.game_scene_system, system_name="game_scene_system")
+  .add_system(
+    @game_scene.player_state_system,
+    system_name="player_state_system",
+  )
   .run()
 }

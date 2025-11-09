@@ -565,7 +565,7 @@ impl @net.OutMessage for CreateCharPacket with pack(self) -> @net.OutPacket {
 }
 
 ///|
-fn load_char_look(self : ExplorerCreatorUI) -> Unit {
+fn ExplorerCreatorUI::load_char_look(self : ExplorerCreatorUI) -> Unit {
   match self.char_look_hook {
     Some((actual, _)) => if self.settings == actual { return }
     None => ()
@@ -573,7 +573,7 @@ fn load_char_look(self : ExplorerCreatorUI) -> Unit {
   let expect = { ..self.settings }
   (self.load_char_look_async)(expect.to_look_entry(self.resource), fn(look) {
     look.set_stance(@types.StanceId::STAND1)
-    look.set_direction(true)
+    look.set_facing_right(true)
     self.char_look_hook = Some((expect, look))
     self.hooks.on_state_changed()
   })
@@ -612,7 +612,7 @@ fn rand_char_look(
 }
 
 ///|
-fn to_look_entry(
+fn LookSettingState::to_look_entry(
   self : LookSettingState,
   resource : ExplorerCreatorUIResource,
 ) -> @char_look.LookEntry {

@@ -897,11 +897,10 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
     self.exp_frame.normalize()
     return false
   }
-  let mut aniend : Bool = false
-  match self.action {
+  let ani_end = match self.action {
     None => {
-      let delay : Int = self.get_delay(self.stance.get(), self.st_frame.get())
-      let delta : Int = delay - self.st_elapsed
+      let delay = self.get_delay(self.stance.get(), self.st_frame.get())
+      let delta = delay - self.st_elapsed
       if timestep >= delta {
         self.st_elapsed = timestep - delta
         let nextframe : Int = self.getnextframe(
@@ -910,14 +909,13 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
         )
         let threshold : Double = delta.to_double() / timestep.to_double()
         self.st_frame.next(nextframe, threshold)
-        if nextframe == 0 {
-          aniend = true
-        }
         self.set_sprites()
+        nextframe == 0
       } else {
         self.stance.normalize()
         self.st_frame.normalize()
         self.st_elapsed += timestep
+        false
       }
     }
     Some(action) => {
@@ -929,27 +927,30 @@ pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
           self.actionstr,
           self.actframe,
         )
-        if self.actframe > 0 {
+        let aniend = if self.actframe > 0 {
           self.action = self.draw_info.get_action(self.actionstr, self.actframe)
           let threshold : Double = delta.to_double() / timestep.to_double()
           self.stance.next(action.get_stance(), threshold)
           self.st_frame.next(action.get_frame(), threshold)
+          false
         } else {
-          aniend = true
           self.action = None
           self.actionstr = ""
           self.set_stance(@types.StanceId::STAND1)
+          true
         }
         self.set_sprites()
+        aniend
       } else {
         self.stance.normalize()
         self.st_frame.normalize()
         self.st_elapsed += timestep
+        false
       }
     }
   }
   self.update_face(timestep)
-  aniend
+  ani_end
 }
 
 ///|

@@ -14,7 +14,7 @@ pub fn[T] Nominal::get(self : Nominal[T], alpha? : Double) -> T {
 }
 
 ///|
-pub fn[T] last(self : Nominal[T]) -> T {
+pub fn[T] Nominal::last(self : Nominal[T]) -> T {
   self.before
 }
 
@@ -25,17 +25,17 @@ pub fn[T] Nominal::set(self : Nominal[T], value : T) -> Unit {
 }
 
 ///|
-pub fn[T] normalize(self : Nominal[T]) -> Unit {
+pub fn[T] Nominal::normalize(self : Nominal[T]) -> Unit {
   self.before = self.now
 }
 
 ///|
-pub fn[T : Eq] normalized(self : Nominal[T]) -> Bool {
+pub fn[T : Eq] Nominal::normalized(self : Nominal[T]) -> Bool {
   self.before == self.now
 }
 
 ///|
-pub fn[T] next(self : Nominal[T], value : T, thrs : Double) -> Unit {
+pub fn[T] Nominal::next(self : Nominal[T], value : T, thrs : Double) -> Unit {
   self.before = self.now
   self.now = value
   self.threshold = thrs
@@ -72,7 +72,7 @@ pub fn Linear::last(self : Linear) -> Double {
 }
 
 ///|
-pub fn add(self : Linear, value : Double) -> Unit {
+pub fn Linear::add(self : Linear, value : Double) -> Unit {
   self.before = self.now
   self.now += value
 }
@@ -88,7 +88,7 @@ pub fn Linear::normalized(self : Linear) -> Bool {
 }
 
 ///|
-pub fn plus(self : Linear, value : Double) -> Double {
+pub fn Linear::plus(self : Linear, value : Double) -> Double {
   self.now + value
 }
 

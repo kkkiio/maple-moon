@@ -449,7 +449,7 @@ pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimatio
   let frames = []
   if obj.get("0") is None {
     let frame : NxFrame = @json.from_json(json, path~)
-    frames.push(frame.inner())
+    frames.push(frame.0)
   } else {
     for i = 0; ; i = i + 1 {
       guard obj.get(i.to_string()) is Some(res) else { break }
@@ -497,17 +497,17 @@ pub fn nx_animation_to_selene_sprite(
       ),
     }
   })
+  // translate to origin
+  let base = @selene_math.Transform::from_translation(
+    -origin.x.to_double(),
+    -origin.y.to_double(),
+  )
+  // flip x axis around origin.x(pivot)
   let transform = if flip_x {
-    // flip x axis around origin.x(pivot)
-    // expected: x' = 2p - x = (-x) + 2p
-    // from_scale(-1.0, 1.0) translate x to (-x), then +2p to get x'
-    let translate_x = 2.0 * origin.x.to_double()
-    @selene_math.Transform::from_translation(translate_x, 0.0) *
-    @selene_math.Transform::from_scale(-1.0, 1.0)
+    @selene_math.Transform::from_scale(-1.0, 1.0) * base
   } else {
-    @selene_math.Transform::identity()
+    base
   }
-  let left_top = -@selene_math.Vec2D(origin.x.to_double(), origin.y.to_double())
   @sprite.Sprite::from_animation(
     @sprite.Animation::new(
       frames,
@@ -517,6 +517,5 @@ pub fn nx_animation_to_selene_sprite(
       transform~,
     ),
     z,
-    offset=left_top,
   )
 }

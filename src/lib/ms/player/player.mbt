@@ -146,7 +146,7 @@ pub fn Player::update(
   map_info : @map.MapInfo,
 ) -> Unit {
   match get_player_state(self.character.state) {
-    Some(pst) => {
+    Some(_) => {
       let player = self
       match self.character.state {
         STAND =>

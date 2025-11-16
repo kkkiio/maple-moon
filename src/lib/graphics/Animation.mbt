@@ -469,12 +469,23 @@ pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimatio
 }
 
 ///|
+#deprecated("use nx_animation_to_selene_animation instead")
 pub fn nx_animation_to_selene_sprite(
   src : @resource.NxAnimation,
   z? : Int = 0,
   flip_x? : Bool = false,
   loop_? : Bool = true,
 ) -> @sprite.Sprite {
+  nx_animation_to_selene_animation(src, flip_x~, loop_~)
+  |> @sprite.Sprite::from_animation(z)
+}
+
+///|
+pub fn nx_animation_to_selene_animation(
+  src : @resource.NxAnimation,
+  flip_x? : Bool = false,
+  loop_? : Bool = true,
+) -> @sprite.Animation {
   let origin = src.frames
     .get(0)
     .map(fn(frame) { frame.texture.origin })
@@ -508,14 +519,11 @@ pub fn nx_animation_to_selene_sprite(
   } else {
     base
   }
-  @sprite.Sprite::from_animation(
-    @sprite.Animation::new(
-      frames,
-      loop_~,
-      // rate=1000.0 / delay_ms.to_double() / fps.to_double(),
-      fps=1000.0 / delay_ms.to_double(),
-      transform~,
-    ),
-    z,
+  @sprite.Animation::new(
+    frames,
+    loop_~,
+    // rate=1000.0 / delay_ms.to_double() / fps.to_double(),
+    fps=1000.0 / delay_ms.to_double(),
+    transform~,
   )
 }

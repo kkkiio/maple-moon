@@ -21,7 +21,7 @@ pub impl ToJson for HairLayer with to_json(self) {
 }
 
 ///|
-pub fn HairLayer::z_value(self : HairLayer) -> Int = "%identity"
+pub fn HairLayer::z(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {

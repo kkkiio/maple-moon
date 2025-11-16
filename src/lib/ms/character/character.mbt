@@ -110,7 +110,6 @@ pub fn CharBase::new(
     entity,
     base: MapObjectBase::new(oid, on_pos_change=fn(pos) {
       @position.positions.set(entity, @position.Position(pos))
-      look.set_pos(pos)
     }),
     look,
     stats,
@@ -231,10 +230,12 @@ pub fn CharBase::update(self : CharBase, speed : Double) -> Bool {
   )
   match self.after_image {
     None => ()
-    Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
+    // Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
+    Some(image) => ... // TODO: update after_image
   }
   self.alerted.update(timestep=stancespeed_ms)
-  self.look.update(stancespeed_ms)
+  // self.look.update(stancespeed_ms)
+  false // TODO: remove this
 }
 
 ///|

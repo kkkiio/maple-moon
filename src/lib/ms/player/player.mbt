@@ -37,6 +37,7 @@ pub(open) trait Inventory {
 
 ///|
 pub async fn Player::load(
+  entity : @entity.Entity,
   entry : @character.CharEntry,
   // inventory : &Inventory,
   look : @char_look.CharLook,
@@ -49,6 +50,7 @@ pub async fn Player::load(
   )
   // let skill_book = load_skill_book(job)
   Player::new(
+    entity,
     entry.id,
     entry.stats.name,
     // inventory,
@@ -63,6 +65,7 @@ pub async fn Player::load(
 ///|
 /// Construct a player object from the given character entry.
 pub fn Player::new(
+  entity : @entity.Entity,
   id : Int,
   name : String,
   // inventory : &Inventory,
@@ -72,7 +75,6 @@ pub fn Player::new(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
-  let entity = @entity.Entity::new()
   let character = @character.Character::new(
     entity,
     id,

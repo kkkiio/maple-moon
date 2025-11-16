@@ -534,8 +534,10 @@ pub fn game_scene_system(_delta : Double) -> Unit {
           panic()
         }
       }
+      let entity = char_look.get_root_entity()
+      entity.respawn()
       let player : @player.Player = @player.Player::new(
-        1, "kkkiio", char_look, number_set, stats,
+        entity, 1, "kkkiio", char_look, number_set, stats,
       )
       let stage = Stage::new(
         map_module.get_portals_animations(),

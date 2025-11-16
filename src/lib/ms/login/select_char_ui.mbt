@@ -468,8 +468,11 @@ pub fn to_selectable_character_ui(
   // )
   char_look.set_stance(@types.StanceId::STAND1)
   char_look.set_facing_right(true)
-  char_look.set_sprites()
-  char_look.set_pos(get_character_slot_pos(i, 135, 234).to_vec2d())
+  char_look.play_animations()
+  @position.positions.set(
+    entity,
+    @position.Position(get_character_slot_pos(i, 135, 234).to_vec2d()),
+  )
   // name_tag.set_selected(Some(i) == self.select_slot)
   // render_elements.push(
   //   @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
@@ -504,7 +507,8 @@ impl @graphics.Drawable for CharLookUI with draw(self, _) -> Unit {
 
 ///|
 impl @ui.RenderUnit for CharLookUI with update(self) -> Unit {
-  self.char_look.update(@config.step_time_ms) |> ignore
+  ignore(self)
+  // self.char_look.update(@config.step_time_ms) |> ignore
 }
 
 ///|

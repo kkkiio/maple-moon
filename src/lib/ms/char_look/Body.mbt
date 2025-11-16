@@ -84,6 +84,7 @@ fn parse_body_animations_by_stance(
       })
       while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
         frames.push(@resource.NxFrame::{ texture, delay: None }) // TODO: 填充为空白帧
+        layers.push(layer)
       }
       frames.push(@resource.NxFrame::{ texture, delay: None })
       layers.push(layer)

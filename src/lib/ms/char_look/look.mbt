@@ -2,14 +2,14 @@
 struct CharLook {
   root_entity : @entity.Entity
   stance : @utils.Nominal[@types.StanceId]
-  st_frame : @utils.Nominal[Int]
-  mut st_elapsed : Int
+  // st_frame : @utils.Nominal[Int]
+  // mut st_elapsed : Int
   expression : @utils.Nominal[ExpressionId]
   exp_frame : @utils.Nominal[Int]
-  mut exp_elapsed : Int
+  // mut exp_elapsed : Int
   mut flip : Bool
   mut actionstr : String
-  mut actframe : Int
+  // mut actframe : Int
   full_body : FullBody
   hair : Hair
   face : Face
@@ -17,7 +17,8 @@ struct CharLook {
   equips : @equip.CharEquips
   randomizer : @utils.Randomizer
   draw_info : @types.BodyDrawInfo
-  mut entities : Array[@entity.Entity]
+  body_entities : Map[String, @entity.Entity]
+  hair_entities : Map[HairLayer, @entity.Entity]
 }
 
 ///|
@@ -67,27 +68,30 @@ pub fn CharLook::new(
   let root_entity = entity
   let equips = @equip.CharEquips::new()
   for slot_id, itemdata in slot_equips {
-    (try? equips.add_equip(itemdata, @slot.Id::from_int(slot_id), draw_info)).unwrap() // TODO: handle error
+    equips.add_equip(itemdata, @slot.Id::from_int(slot_id), draw_info) catch {
+      e => abort(e.to_string()) // TODO: handle error
+    }
   }
   {
     root_entity,
     stance: @utils.Nominal::default(),
-    st_frame: @utils.Nominal::default(),
-    st_elapsed: 0,
+    // st_frame: @utils.Nominal::default(),
+    // st_elapsed: 0,
     expression: @utils.Nominal::default(),
     exp_frame: @utils.Nominal::default(),
-    exp_elapsed: 0,
+    // exp_elapsed: 0,
     flip: false,
     action: None,
     actionstr: "",
-    actframe: 0,
+    // actframe: 0,
     full_body: body,
     hair,
     face,
     equips,
     randomizer: @utils.Randomizer::new(),
     draw_info,
-    entities: [],
+    body_entities: Map::new(),
+    hair_entities: Map::new(),
   }
 }
 
@@ -603,19 +607,20 @@ pub fn CharLook::draw(
   args : @graphics.DrawArgument,
   alpha : Double,
 ) -> Unit {
-  let acmove = @struct.Point::default()
-  let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
-  let interstance = self.stance.get(alpha~)
-  let interexpression = self.expression.get(alpha~)
-  let interframe = self.st_frame.get(alpha~)
-  let interexpframe = self.exp_frame.get(alpha~)
-  self.draw_impl(
-    relargs + args,
-    interstance,
-    interexpression,
-    interframe,
-    interexpframe,
-  )
+  ...
+  // let acmove = @struct.Point::default()
+  // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
+  // let interstance = self.stance.get(alpha~)
+  // let interexpression = self.expression.get(alpha~)
+  // let interframe = self.st_frame.get(alpha~)
+  // let interexpframe = self.exp_frame.get(alpha~)
+  // self.draw_impl(
+  //   relargs + args,
+  //   interstance,
+  //   interexpression,
+  //   interframe,
+  //   interexpframe,
+  // )
 }
 
 ///|
@@ -624,7 +629,7 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 }
 
 ///|
-pub fn CharLook::set_sprites(self : CharLook) -> Unit {
+pub fn CharLook::play_animations(self : CharLook) -> Unit {
   // let acmove = @struct.Point::default()
   // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
   // let interstance = self.stance.get()
@@ -633,7 +638,8 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // let interexpframe = self.exp_frame.get()
   let stance : @types.StanceId = self.stance.get()
   let expression : ExpressionId = self.expression.get()
-  let stance_frame : Int = self.st_frame.get()
+  // let stance_frame : Int = self.st_frame.get()
+  let stance_frame : Int = 0
   let expr_frame : Int = self.exp_frame.get()
   // if interstance == @types.StanceId::DEAD {
   //   return self.draw_dead(
@@ -643,13 +649,18 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   // if @types.StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
-  let loop_ = stance is @types.StanceId::STAND1 // loop default stance
-  for entity in self.entities {
-    entity.destroy()
+  let loop_ = true
+  fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
+    for entity in entities {
+      if @sprite.sprites.get(entity) is Some(sprite) {
+        sprite.visible = false
+      }
+    }
   }
-  self.entities = []
+
+  reset_sprites_hide(self.body_entities.values())
+  reset_sprites_hide(self.hair_entities.values())
   let drawables : Array[&@graphics.Drawable] = []
-  let entities : Array[@entity.Entity] = []
   fn make_face_draw(z : Int) {
     ignore(z)
     {
@@ -660,24 +671,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
       stance,
       stance_frame,
     }
-  }
-
-  fn new_body_sprites() {
-    guard self.full_body.stances.get(stance) is Some(stance_stances) else {
-      return []
-    }
-    stance_stances
-    .values()
-    .map(fn(it) {
-      let (frames, layers) = it
-      @graphics.nx_animation_to_selene_sprite(
-        { frames, blend: false, zigzag: false },
-        flip_x=self.flip,
-        z=layers[0].int_value() + @graphics.CHAR_LOOK_ZINDEX,
-        loop_~,
-      )
-    })
-    .to_array()
   }
 
   fn make_equip_draw(slot, layer, z : Int) -> &@graphics.Drawable {
@@ -693,46 +686,94 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     // }
   }
 
-  fn new_hair_sprite(layer) {
-    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
-      return None
+  fn ensure_sprite_with_z(
+    entity : @entity.Entity,
+    animation : @sprite.Animation,
+    z : Int,
+  ) -> @sprite.Sprite {
+    if @sprite.sprites.get(entity) is Some(sprite) {
+      if sprite.zindex == z {
+        return sprite
+      }
+      let sprite = { ..sprite, zindex: z }
+      @sprite.sprites.set(entity, sprite)
+      return sprite
     }
-    let sprite = @graphics.nx_animation_to_selene_sprite(
-      anim,
-      flip_x=self.flip,
-      z=layer.z_value() + @graphics.CHAR_LOOK_ZINDEX,
-      loop_~,
-    )
-    Some(sprite)
+    let sprite = @sprite.Sprite::from_animation(animation, z)
+    @sprite.sprites.set(entity, sprite)
+    sprite
   }
 
+  let flip_x = self.flip
   for
-    sprite in [
-      new_hair_sprite(HairLayer::BELOW_BODY),
-      new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT),
-      new_hair_sprite(HairLayer::SHADE),
+    layer in [
+      HairLayer::BELOW_BODY,
+      HairLayer::HAIR_LAYER_DEFAULT,
+      HairLayer::SHADE,
       ..match self.equips.getcaptype() {
-        @equip.CapType::NONE => [new_hair_sprite(HairLayer::OVER_HEAD)]
+        @equip.CapType::NONE => [HairLayer::OVER_HEAD]
         @equip.CapType::HEADBAND =>
-          [
-            new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT),
-            new_hair_sprite(HairLayer::OVER_HEAD),
-          ]
-        @equip.CapType::HALF_COVER =>
-          [new_hair_sprite(HairLayer::HAIR_LAYER_DEFAULT)]
+          [HairLayer::HAIR_LAYER_DEFAULT, HairLayer::OVER_HEAD]
+        @equip.CapType::HALF_COVER => [HairLayer::HAIR_LAYER_DEFAULT]
         _ => []
       },
-    ]
-    .iter()
-    .filter_map(fn(sprite) { sprite }) {
-    let entity = self.root_entity.spawn_child()
-    @sprite.sprites.set(entity, sprite)
-    entities.push(entity)
+    ] {
+    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
+      continue
+    }
+    let animation = @graphics.nx_animation_to_selene_animation(
+      anim,
+      flip_x~,
+      loop_~,
+    ) // TODO: cache animation
+    let entity = self.hair_entities.get_or_init(layer, fn() {
+      self.root_entity.spawn_child()
+    })
+    let sprite = ensure_sprite_with_z(
+      entity,
+      animation,
+      layer.z() + @graphics.CHAR_LOOK_ZINDEX,
+    )
+    sprite.visible = true
+    @sprite.play_animation(entity, animation, loop_~)
   }
-  for sprite in new_body_sprites() {
-    let entity = self.root_entity.spawn_child()
-    @sprite.sprites.set(entity, sprite)
-    entities.push(entity)
+  if self.full_body.stances.get(stance) is Some(stance_stances) {
+    for name, it in stance_stances {
+      let (frames, layers) = it
+      if frames.length() != layers.length() {
+        @log.error(
+          { "name": name, "frames": frames.length(), "layers": layers.length() },
+          "frames.length() != layers.length()",
+        )
+        panic()
+      }
+      let animation = @graphics.nx_animation_to_selene_animation(
+        { frames, blend: false, zigzag: false },
+        flip_x=self.flip,
+        loop_~,
+      )
+      let entity = self.body_entities.get_or_init(name, fn() {
+        self.root_entity.spawn_child()
+      })
+      let current_frame = if @sprite.sprites.get(entity)
+        is Some({ sprite_type: Animation(_, frame~), .. }) {
+        let frame = frame.to_int()
+        if frame >= frames.length() { // maybe a different animation from previous stance
+          0
+        } else {
+          frame
+        }
+      } else {
+        0
+      }
+      let sprite = ensure_sprite_with_z(
+        entity,
+        animation,
+        layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+      )
+      sprite.visible = true
+      @sprite.play_animation(entity, animation, loop_~)
+    }
   }
   drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.Layer::CAPE, 1))
   drawables.push(
@@ -826,7 +867,6 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   drawables.push(
     make_equip_draw(@slot.Id::GLOVES, @clothing.Layer::GLOVE_OVER_HAIR, 51),
   )
-  self.entities = entities
 }
 
 ///|
@@ -871,9 +911,10 @@ pub fn CharLook::set_stance(self : CharLook, st : @types.StanceId) -> Unit {
   let adjstance = st
   if self.stance.get() != adjstance {
     self.stance.set(adjstance)
-    self.st_frame.set(0)
-    self.st_elapsed = 0
+    // self.st_frame.set(0)
+    // self.st_elapsed = 0
   }
+  self.play_animations()
 }
 
 ///|
@@ -892,100 +933,103 @@ fn CharLook::change_face(self : CharLook, face : Face) -> CharLook {
 }
 
 ///|
-pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
-  if timestep == 0 {
-    self.stance.normalize()
-    self.st_frame.normalize()
-    self.expression.normalize()
-    self.exp_frame.normalize()
-    return false
-  }
-  let ani_end = match self.action {
-    None => {
-      let delay = self.get_delay(self.stance.get(), self.st_frame.get())
-      let delta = delay - self.st_elapsed
-      if timestep >= delta {
-        self.st_elapsed = timestep - delta
-        let nextframe : Int = self.getnextframe(
-          self.stance.get(),
-          self.st_frame.get(),
-        )
-        let threshold : Double = delta.to_double() / timestep.to_double()
-        self.st_frame.next(nextframe, threshold)
-        self.set_sprites()
-        nextframe == 0
-      } else {
-        self.stance.normalize()
-        self.st_frame.normalize()
-        self.st_elapsed += timestep
-        false
-      }
-    }
-    Some(action) => {
-      let delay : Int = action.get_delay()
-      let delta : Int = delay - self.st_elapsed
-      if timestep >= delta {
-        self.st_elapsed = timestep - delta
-        self.actframe = self.draw_info.next_action_frame(
-          self.actionstr,
-          self.actframe,
-        )
-        let aniend = if self.actframe > 0 {
-          self.action = self.draw_info.get_action(self.actionstr, self.actframe)
-          let threshold : Double = delta.to_double() / timestep.to_double()
-          self.stance.next(action.get_stance(), threshold)
-          self.st_frame.next(action.get_frame(), threshold)
-          false
-        } else {
-          self.action = None
-          self.actionstr = ""
-          self.set_stance(@types.StanceId::STAND1)
-          true
-        }
-        self.set_sprites()
-        aniend
-      } else {
-        self.stance.normalize()
-        self.st_frame.normalize()
-        self.st_elapsed += timestep
-        false
-      }
-    }
-  }
-  self.update_face(timestep)
-  ani_end
-}
+let default_stance : @types.StanceId = @types.StanceId::STAND1
 
 ///|
-fn CharLook::update_face(self : CharLook, timestep : Int) -> Unit {
-  let face = self.face
-  let expdelay : Int = face.get_delay(
-    self.expression.get(),
-    self.exp_frame.get(),
-  )
-  let expdelta : Int = expdelay - self.exp_elapsed
-  if timestep >= expdelta {
-    self.exp_elapsed = timestep - expdelta
-    let nextexpframe : Int = face.nextframe(
-      self.expression.get(),
-      self.exp_frame.get(),
-    )
-    let fcthreshold : Double = expdelta.to_double() / timestep.to_double()
-    self.exp_frame.next(nextexpframe, fcthreshold)
-    if nextexpframe == 0 {
-      if self.expression.get() == ExpressionId::DEFAULT {
-        self.expression.next(ExpressionId::BLINK, fcthreshold)
-      } else {
-        self.expression.next(ExpressionId::DEFAULT, fcthreshold)
-      }
-    }
-    self.set_sprites()
-  } else {
-    self.expression.normalize()
-    self.exp_frame.normalize()
-    self.exp_elapsed += timestep
-  }
-}
+// pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
+// if timestep == 0 {
+//   self.stance.normalize()
+//   self.st_frame.normalize()
+//   self.expression.normalize()
+//   self.exp_frame.normalize()
+//   return false
+// }
+// let ani_end = match self.action {
+//   None => {
+//     let delay = self.get_delay(self.stance.get(), self.st_frame.get())
+//     let delta = delay - self.st_elapsed
+//     if timestep >= delta {
+//       self.st_elapsed = timestep - delta
+//       let nextframe : Int = self.getnextframe(
+//         self.stance.get(),
+//         self.st_frame.get(),
+//       )
+//       let threshold : Double = delta.to_double() / timestep.to_double()
+//       self.st_frame.next(nextframe, threshold)
+//       self.set_sprites()
+//       nextframe == 0
+//     } else {
+//       self.stance.normalize()
+//       self.st_frame.normalize()
+//       self.st_elapsed += timestep
+//       false
+//     }
+//   }
+//   Some(action) => {
+//     let delay : Int = action.get_delay()
+//     let delta : Int = delay - self.st_elapsed
+//     if timestep >= delta {
+//       self.st_elapsed = timestep - delta
+//       self.actframe = self.draw_info.next_action_frame(
+//         self.actionstr,
+//         self.actframe,
+//       )
+//       let aniend = if self.actframe > 0 {
+//         self.action = self.draw_info.get_action(self.actionstr, self.actframe)
+//         let threshold : Double = delta.to_double() / timestep.to_double()
+//         self.stance.next(action.get_stance(), threshold)
+//         self.st_frame.next(action.get_frame(), threshold)
+//         false
+//       } else {
+//         self.action = None
+//         self.actionstr = ""
+//         self.set_stance(@types.StanceId::STAND1)
+//         true
+//       }
+//       self.set_sprites()
+//       aniend
+//     } else {
+//       self.stance.normalize()
+//       self.st_frame.normalize()
+//       self.st_elapsed += timestep
+//       false
+//     }
+//   }
+// }
+// self.update_face(timestep)
+// ani_end
+// }
+
+///|
+// fn CharLook::update_face(self : CharLook, timestep : Int) -> Unit {
+// let face = self.face
+// let expdelay : Int = face.get_delay(
+//   self.expression.get(),
+//   self.exp_frame.get(),
+// )
+// let expdelta : Int = expdelay - self.exp_elapsed
+// if timestep >= expdelta {
+//   self.exp_elapsed = timestep - expdelta
+//   let nextexpframe : Int = face.nextframe(
+//     self.expression.get(),
+//     self.exp_frame.get(),
+//   )
+//   let fcthreshold : Double = expdelta.to_double() / timestep.to_double()
+//   self.exp_frame.next(nextexpframe, fcthreshold)
+//   if nextexpframe == 0 {
+//     if self.expression.get() == ExpressionId::DEFAULT {
+//       self.expression.next(ExpressionId::BLINK, fcthreshold)
+//     } else {
+//       self.expression.next(ExpressionId::DEFAULT, fcthreshold)
+//     }
+//   }
+//   self.set_sprites()
+// } else {
+//   self.expression.normalize()
+//   self.exp_frame.normalize()
+//   self.exp_elapsed += timestep
+// }
+// }
 
 ///|
 pub fn CharLook::get_delay(
@@ -1059,8 +1103,8 @@ pub fn CharLook::attack(self : CharLook, degenerate : Bool) -> Unit {
     self.set_action("handgun")
   } else {
     self.set_stance(self.getattackstance(attacktype, degenerate))
-    self.st_frame.set(0)
-    self.st_elapsed = 0
+    // self.st_frame.set(0)
+    // self.st_elapsed = 0
   }
   // TODO: weapon sound
   // weapon.get_usesound(degenerate).play()
@@ -1092,11 +1136,11 @@ pub fn CharLook::set_action(self : CharLook, acstr : String) -> Unit {
     self.action = self.draw_info.get_action(acstr, 0)
     match self.action {
       Some(action) => {
-        self.actframe = 0
-        self.st_elapsed = 0
+        // self.actframe = 0
+        // self.st_elapsed = 0
         self.actionstr = acstr
         self.set_stance(action.get_stance())
-        self.st_frame.set(action.get_frame())
+        // self.st_frame.set(action.get_frame())
       }
       None => ()
     }
@@ -1177,11 +1221,6 @@ let attack_stances : FixedArray[FixedArray[@types.StanceId]] = [
 ]
 
 ///|
-pub fn CharLook::get_frame(self : CharLook) -> Int {
-  self.st_frame.get()
-}
-
-///|
 pub impl ToJson for CharLook with to_json(_) -> Json {
   {} // TODO
 }
@@ -1210,4 +1249,9 @@ pub impl @graphics.Drawable for NoopDrawable with draw(
   _ : @graphics.DrawArgument,
 ) -> Unit {
 
+}
+
+///|
+pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {
+  self.root_entity
 }

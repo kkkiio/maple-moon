@@ -12,6 +12,7 @@
     "KKKIIO/maple-moon/lib/ms/map_object",
     "KKKIIO/maple-moon/lib/ms/markup_text",
     "Milky2018/selene/system",
-    "Milky2018/selene/position"
+    "Milky2018/selene/position",
+    "Milky2018/selene/entity"
   ]
 }

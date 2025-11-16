@@ -3,7 +3,7 @@
 pub(all) struct MapleButton {
   // textures : Map[ButtonState, @graphics.Texture]
   // animations : Map[ButtonState, @graphics.Animation]
-  entity : @system.Entity
+  entity : @entity.Entity
 }
 
 ///|
@@ -74,7 +74,7 @@ pub fn MapleButton::new(
   pos? : Point[Int] = @struct.Point::default(),
   on_click? : () -> Unit = fn() { () },
 ) -> MapleButton {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   @position.positions.set(
     entity,
     @selene_math.Vec2D(pos.x.to_double(), pos.y.to_double()),
@@ -97,7 +97,7 @@ pub fn MapleButton::new(
   )
   let pickable = @collision.Pickable::new()
   pickable.on_just_released(fn(mouse_button) {
-    if mouse_button is @system.MouseButton::Left {
+    if mouse_button is @inputs.MouseButton::Left {
       on_click()
     }
   })

@@ -2,12 +2,7 @@
   "is-main": true,
   "import": [
     "KKKIIO/maple-moon/lib/ms",
-    "KKKIIO/maple-moon/lib/utils",
     "Milky2018/selene/system",
-    {
-      "path": "Milky2018/selene-canvas",
-      "alias": "canvas"
-    },
     "Milky2018/selene/plugins",
     "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/log",
@@ -15,5 +10,8 @@
     "KKKIIO/maple-moon/lib/ms/login",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/game_scene"
+  ],
+  "overrides": [
+    "Milky2018/selene-canvas"
   ]
 }

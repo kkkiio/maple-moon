@@ -148,7 +148,7 @@ pub impl RenderUnit for Gauge with update(self) -> Unit {
 }
 
 ///|
-pub fn set_target(self : Gauge, t : Double) -> Unit {
+pub fn Gauge::set_target(self : Gauge, t : Double) -> Unit {
   if self.target != t {
     self.target = t
     self.step = (self.target - self.percentage) / 24.0

@@ -19,6 +19,7 @@
     {
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
-    }
+    },
+    "Milky2018/selene/entity"
   ]
 }

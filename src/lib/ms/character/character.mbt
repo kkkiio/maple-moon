@@ -55,7 +55,7 @@ pub fn CharState::stance_value(self : CharState, facing_right~ : Bool) -> Int {
 
 ///|
 pub(all) struct CharBase {
-  entity : @system.Entity
+  entity : @entity.Entity
   base : MapObjectBase
   mut look : @char_look.CharLook
   stats : @char_stats.CharStats
@@ -98,7 +98,7 @@ pub fn CharBase::set_position(
 
 ///|
 pub fn CharBase::new(
-  entity : @system.Entity,
+  entity : @entity.Entity,
   oid : Int,
   look : @char_look.CharLook,
   name : String,

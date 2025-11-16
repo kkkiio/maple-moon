@@ -7,9 +7,9 @@ struct SelectCharUI {
   // 以数组配置驱动三段光照动画，减少重复代码
   // 每项：(entity, frame_counter_ref, segments)
   // segment: (duration_frames, from_alpha, to_alpha)
-  animations : Array[(@system.Entity, Ref[Int], Array[(Int, Double, Double)])]
+  animations : Array[(@entity.Entity, Ref[Int], Array[(Int, Double, Double)])]
   btn_select : @ui.MapleButton
-  entities : Array[@system.Entity]
+  entities : Array[@entity.Entity]
 }
 
 ///|
@@ -291,7 +291,7 @@ pub fn SelectCharUI::new(
       (step2, @selene_math.Vec2D(40, 0)),
     ] {
     let (s, pos) = t
-    let entity = @system.Entity::new()
+    let entity = @entity.Entity::new()
     @position.positions.set(entity, @position.Position(pos))
     @selene_ui.uis.set(entity, @selene_ui.Ui::new())
     @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
@@ -540,7 +540,7 @@ pub fn add_select_char_ui() -> Unit raise {
 }
 
 ///|
-pub fn select_char_system(_backend : &@system.Backend) -> Unit {
+pub fn select_char_system(_delta : Double) -> Unit {
   guard select_char_ui.val is Some(ui) else { return }
   for item in ui.animations {
     let (entity, counter, segments) = item
@@ -567,8 +567,9 @@ pub fn select_char_system(_backend : &@system.Backend) -> Unit {
       acc += dur
     }
     let alpha_norm = alpha_val / 255.0
-    if @sprite.sprites.get(entity) is Some(spr) {
-      @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
-    }
+    // if @sprite.sprites.get(entity) is Some(spr) {
+    //   @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
+    // }
+    ignore(alpha_norm) // TODO: modify upstream selene to support alpha
   }
 }

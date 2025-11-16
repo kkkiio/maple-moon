@@ -1,12 +1,12 @@
 ///|
-typealias @ui.CursorState
+using @ui {type CursorState}
 
 ///|
 pub(all) struct Cursor {
   mut state : CursorState
   mut inactive_counte : Int
   sprites : Map[CursorState, @sprite.Sprite]
-  entity : @system.Entity
+  entity : @entity.Entity
 }
 
 ///|
@@ -64,7 +64,7 @@ pub fn Cursor::new() -> Cursor {
       CURSOR_ZINDEX,
     ),
   )
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   @sprite.sprites.set(entity, sprites.get(CursorState::IDLE).unwrap())
   @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   { state: CursorState::IDLE, inactive_counte: 0, sprites, entity }
@@ -96,10 +96,10 @@ fn Cursor::get_sprite(self : Cursor) -> @sprite.Sprite {
 let cursor : Cursor = Cursor::new()
 
 ///|
-pub fn cursor_system(_backend : &@system.Backend) -> Unit {
+pub fn cursor_system(_delta : Double) -> Unit {
   // sync pos and state
-  cursor.set_position(@system.mouse.pos)
-  if @system.is_mouse_pressed(@system.MouseButton::Left) {
+  cursor.set_position(@inputs.mouse.pos)
+  if @inputs.is_mouse_pressed(@inputs.MouseButton::Left) {
     cursor.set_state(CursorState::CLICKING)
   } else {
     cursor.set_state(CursorState::IDLE)

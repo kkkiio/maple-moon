@@ -36,7 +36,7 @@ fn handle_change_stats(
   recalc_stats_fn : () -> Unit,
 ) -> Unit {
   let mut recalculate = false
-  for stat_id, v in changes.inner() {
+  for stat_id, v in changes.0 {
     match stat_handler_map.get(stat_id) {
       Some(update_fn) => {
         let res = update_fn(v)

@@ -1,7 +1,7 @@
 ///|
 /// Represents a tile on a map.
 struct Tile {
-  entity : @system.Entity
+  entity : @entity.Entity
   texture : @resource.NxTexture?
   pos : Point[Int]
   z : Int
@@ -49,7 +49,7 @@ pub impl @json.FromJson for NxTileSet with from_json(json, path) {
 
 ///|
 pub fn Tile::new(tile : NxTileRef, tileset : NxTileSet?) -> Tile {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let pos = @struct.Point::new(tile.x, tile.y)
   guard tileset is Some(tileset) else {
     return { entity, texture: None, pos, z: 0 }

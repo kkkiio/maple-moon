@@ -28,7 +28,7 @@ pub fn Stance::from_byte(b : Int) -> Stance {
 }
 
 ///|
-pub fn int_value(self : Stance) -> Int {
+pub fn Stance::int_value(self : Stance) -> Int {
   (match self.t {
     StanceType::MOVE => 1
     StanceType::STAND => 2
@@ -47,13 +47,13 @@ pub fn Stance::from_type(t : StanceType) -> Stance {
 }
 
 ///|
-pub fn flip(self : Stance) -> Stance {
+pub fn Stance::flip(self : Stance) -> Stance {
   { t: self.t, face_right: not(self.face_right) }
 }
 
 ///|
 struct Mob {
-  entity : @system.Entity
+  entity : @entity.Entity
   base : @map_object.MapObjectBase
   animations : Map[StanceType, @graphics.Animation]
   skill_cache : Map[Int, @utils.Future[Result[MobSkill, Error]]]
@@ -246,7 +246,7 @@ fn Mob::new(
   string_loader : @resource.SyncLoader,
   animations : Map[StanceType, @graphics.Animation],
 ) -> Mob raise {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let base = @map_object.MapObjectBase::new(oi, on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
@@ -526,7 +526,7 @@ pub impl @map_object.MapObject for Mob with update(
 }
 
 ///|
-fn next_move(self : Mob) -> Unit {
+fn Mob::next_move(self : Mob) -> Unit {
   if self.can_move {
     match self.stance.t {
       StanceType::HIT | StanceType::STAND =>
@@ -561,7 +561,7 @@ fn next_move(self : Mob) -> Unit {
 }
 
 ///|
-pub fn set_stance(self : Mob, newstance : Stance) -> Unit {
+pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
   if self.stance != newstance {
     self.stance = newstance
     match self.animations.get(self.stance.t) {
@@ -595,12 +595,12 @@ pub fn Mob::set_control(self : Mob, mode : Int) -> Unit {
 }
 
 ///|
-pub fn is_alive(self : Mob) -> Bool {
+pub fn Mob::is_alive(self : Mob) -> Bool {
   self.base.is_active() && not(self.dying)
 }
 
 ///|
-pub fn is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
+pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   if range.get_horizontal().delta().is_neg() ||
     range.get_vertical().delta().is_neg() {
     @log.error({ "range": range }, "invalid range")
@@ -633,7 +633,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
 }
 
 ///|
-pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
+pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
   if not(self.touch_damage) {
     return @combat.MobAttack::default()
   }
@@ -649,7 +649,7 @@ pub fn create_touch_attack(self : Mob) -> @combat.MobAttack {
 }
 
 ///|
-pub fn update_movement(self : Mob, network : @net.Network) -> Unit {
+pub fn Mob::update_movement(self : Mob, network : @net.Network) -> Unit {
   network.send_message(
     new_move_mob_packet(
       self.base.get_oid(),
@@ -670,7 +670,7 @@ pub fn update_movement(self : Mob, network : @net.Network) -> Unit {
 }
 
 ///|
-pub fn update_movement_ex(
+pub fn Mob::update_movement_ex(
   self : Mob,
   t : Int,
   nibbles : Int,
@@ -699,12 +699,12 @@ pub fn update_movement_ex(
 }
 
 ///|
-pub fn give_buff(self : Mob, buff : MobBuff) -> Unit {
+pub fn Mob::give_buff(self : Mob, buff : MobBuff) -> Unit {
   self.buffs.push(buff)
 }
 
 ///|
-pub fn use_skill(self : Mob, skill : MobSkill) -> Unit {
+pub fn Mob::use_skill(self : Mob, skill : MobSkill) -> Unit {
   match self.skill_stands.get(skill.get_id()) {
     Some(anim) => self.animations[StanceType::SKILL] = anim
     None => self.animations.remove(StanceType::SKILL)
@@ -716,7 +716,7 @@ pub fn use_skill(self : Mob, skill : MobSkill) -> Unit {
 }
 
 ///|
-pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
+pub fn Mob::use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
   match self.attack_stands.get(attack.get_id()) {
     Some(anim) => self.animations[StanceType::SKILL] = anim
     None => self.animations.remove(StanceType::SKILL)
@@ -725,7 +725,7 @@ pub fn use_attack(self : Mob, attack : MobSpecialAttack) -> Unit {
 }
 
 ///|
-pub fn get_head_position(
+pub fn Mob::get_head_position(
   self : Mob,
   position? : @struct.Point[Int],
 ) -> @struct.Point[Int] {
@@ -766,7 +766,7 @@ pub fn Mob::send_movement(
 }
 
 ///|
-pub fn get_move_skill(
+pub fn Mob::get_move_skill(
   self : Mob,
   move_id : Int,
   level : Int,
@@ -778,7 +778,10 @@ pub fn get_move_skill(
 }
 
 ///|
-pub fn get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack raise {
+pub fn Mob::get_move_attack(
+  self : Mob,
+  move_id : Int,
+) -> MobSpecialAttack raise {
   match self.attacks.get(move_id) {
     Some(attack) => attack
     None => {
@@ -843,7 +846,7 @@ pub fn MobSpecialAttack::new(
 }
 
 ///|
-pub fn show_effect(
+pub fn Mob::show_effect(
   self : Mob,
   animation : @graphics.Animation,
   pos : Int,
@@ -862,7 +865,7 @@ pub fn show_effect(
 }
 
 ///|
-pub fn kill(self : Mob, animation : Int) -> Unit {
+pub fn Mob::kill(self : Mob, animation : Int) -> Unit {
   match animation {
     0 => self.base.deactivate()
     1 => {
@@ -878,20 +881,23 @@ pub fn kill(self : Mob, animation : Int) -> Unit {
 }
 
 ///|
-fn apply_death(self : Mob) -> Unit {
+fn Mob::apply_death(self : Mob) -> Unit {
   self.set_stance(Stance::from_type(StanceType::DIE))
   // die_sound_.play();
   self.dying = true
 }
 
 ///|
-pub fn apply_useeffects(self : MobSpecialAttack, mob : Mob) -> Unit {
+pub fn MobSpecialAttack::apply_useeffects(
+  self : MobSpecialAttack,
+  mob : Mob,
+) -> Unit {
   self.use_effect.apply(mob)
   // sound_->play_use();
 }
 
 ///|
-pub fn calculate_damage(
+pub fn Mob::calculate_damage(
   self : Mob,
   attack : @combat.Attack,
   network : @net.Network,
@@ -937,7 +943,7 @@ pub fn calculate_damage(
 }
 
 ///|
-fn next_damage(
+fn Mob::next_damage(
   self : Mob,
   mindamage : Double,
   maxdamage : Double,
@@ -989,7 +995,7 @@ fn calculate_magic_damage(
 }
 
 ///|
-fn calculate_hitchance(
+fn Mob::calculate_hitchance(
   self : Mob,
   greater_level : Int,
   player_accuracy : Int,
@@ -1000,7 +1006,7 @@ fn calculate_hitchance(
 }
 
 ///|
-pub fn apply_damage(
+pub fn Mob::apply_damage(
   self : Mob,
   damage : Int,
   toleft : Bool,
@@ -1021,7 +1027,7 @@ pub fn apply_damage(
 }
 
 ///|
-pub fn show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
+pub fn Mob::show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   if self.hp_percent == 0 {
     let delta = self.level - playerlevel
     if delta >= 10 {

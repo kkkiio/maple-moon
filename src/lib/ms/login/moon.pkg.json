@@ -31,7 +31,8 @@
       "alias": "selene_math"
     },
     "Milky2018/selene/sprite",
-    "KKKIIO/maple-moon/lib/game_state"
+    "KKKIIO/maple-moon/lib/game_state",
+    "Milky2018/selene/entity"
   ],
   "link": {
     "js": {

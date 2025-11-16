@@ -4,12 +4,8 @@
   "deps": {
     "Yoorkin/rabbit-tea": "0.10.10",
     "moonbitlang/x": "0.4.34",
-    "Milky2018/selene": {
-      "path": "../selene/selene-core"
-    },
-    "Milky2018/selene-canvas": {
-      "path": "../selene/selene-canvas"
-    }
+    "Milky2018/selene": "0.18.2",
+    "Milky2018/selene-canvas": "0.18.2"
   },
   "readme": "README.md",
   "repository": "",

@@ -1,6 +1,6 @@
 ///|
 struct Number {
-  entity : @system.Entity
+  entity : @entity.Entity
   charsets : @utils.BoolPair[@graphics.Charset]
   t : NumberType
   miss : Bool
@@ -720,7 +720,7 @@ pub fn NumberSet::new_number(
     let shift = charsets[true].getw('M') / 2
     (true, shift, false, Char::default(), [])
   }
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })

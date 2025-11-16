@@ -7,7 +7,7 @@ priv struct EntryPoint {
 let entrypoint : EntryPoint = { game: None }
 
 ///|
-fn game_start(_backend : &@system.Backend) -> Unit {
+fn game_start(_delta : Double) -> Unit {
   let game = @ms.Game::new()
   @login.add_select_char_ui() catch {
     e => {
@@ -20,9 +20,9 @@ fn game_start(_backend : &@system.Backend) -> Unit {
 
 ///|
 fn main {
-  @system.App::new(
-    @canvas.CanvasBackend::new().with_cross_origin(Some("anonymous")),
-  )
+  println("main")
+  // @canvas.CanvasBackend::new().with_cross_origin(Some("anonymous")),
+  @system.App::new()
   .with_canvas_width(@config.constants.get_viewwidth() |> Double::from_int)
   .with_canvas_height(@config.constants.get_viewheight() |> Double::from_int)
   .with_fps(@graphics.fps)
@@ -37,4 +37,5 @@ fn main {
     system_name="player_state_system",
   )
   .run()
+  println("main end")
 }

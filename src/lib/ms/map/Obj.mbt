@@ -1,7 +1,7 @@
 ///|
 /// Represents an obj (map decoration) on a map.
 struct Obj {
-  entity : @system.Entity
+  entity : @entity.Entity
   animation : @resource.NxAnimation
   pos : Point[Int]
   z : Int
@@ -32,7 +32,7 @@ pub async fn Obj::load(obj : NxObj) -> Obj {
 ///|
 fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
   {
-    entity: @system.Entity::new(),
+    entity: @entity.Entity::new(),
     animation,
     pos: @struct.Point::new(obj.x, obj.y),
     flip: obj.f,

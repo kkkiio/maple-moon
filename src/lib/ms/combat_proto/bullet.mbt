@@ -1,6 +1,6 @@
 ///|
 struct Bullet {
-  entity : @system.Entity
+  entity : @entity.Entity
   animation : @graphics.Animation
   move_obj : @physics.MovingObject
   mut flip : Bool
@@ -12,7 +12,7 @@ pub fn Bullet::new(
   origin : @struct.Point[Int],
   toleft : Bool,
 ) -> Bullet {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
@@ -22,7 +22,7 @@ pub fn Bullet::new(
 }
 
 ///|
-pub fn draw(
+pub fn Bullet::draw(
   self : Bullet,
   viewx : Double,
   viewy : Double,
@@ -34,7 +34,7 @@ pub fn draw(
 }
 
 ///|
-pub fn update(self : Bullet, target : @struct.Point[Int]) -> Bool {
+pub fn Bullet::update(self : Bullet, target : @struct.Point[Int]) -> Bool {
   self.animation.update() |> ignore
   self.move_obj.do_move()
   let xdelta = target.x - self.move_obj.get_x()
@@ -46,7 +46,7 @@ pub fn update(self : Bullet, target : @struct.Point[Int]) -> Bool {
 }
 
 ///|
-pub fn set_target(self : Bullet, target : @struct.Point[Int]) -> Bool {
+pub fn Bullet::set_target(self : Bullet, target : @struct.Point[Int]) -> Bool {
   let xdelta = target.x - self.move_obj.get_x()
   let ydelta = target.y - self.move_obj.get_y()
   if xdelta.abs() < 10 {

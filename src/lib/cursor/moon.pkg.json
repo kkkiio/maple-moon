@@ -3,6 +3,7 @@
     "Milky2018/selene/sprite",
     "Milky2018/selene/math",
     "Milky2018/selene/system",
+    "Milky2018/selene/entity",
     "Milky2018/selene/position",
     "KKKIIO/maple-moon/lib/ui",
     {
@@ -10,5 +11,6 @@
       "alias": "selene_ui"
     },
     "KKKIIO/maple-moon/lib/config",
+    "Milky2018/selene/inputs"
   ]
 }

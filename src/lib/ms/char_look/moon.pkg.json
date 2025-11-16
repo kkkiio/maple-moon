@@ -15,13 +15,13 @@
     "KKKIIO/maple-moon/lib/game_mod",
     "KKKIIO/maple-moon/lib/ms/item",
     "rami3l/js-ffi/js",
-    "Milky2018/selene/system",
     "Milky2018/selene/sprite",
     {
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
     },
-    "Milky2018/selene/position"
+    "Milky2018/selene/position",
+    "Milky2018/selene/entity"
   ],
   "test-import": []
 }

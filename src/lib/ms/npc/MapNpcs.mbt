@@ -55,7 +55,7 @@ pub fn MapNpcs::draw(
 }
 
 ///|
-pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
+pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.get_oid()
@@ -74,12 +74,12 @@ pub fn update(self : MapNpcs, physics : @physics.Physics) -> Unit {
 }
 
 ///|
-pub fn spawn(self : MapNpcs, spawn : NpcSpawn) -> Unit {
+pub fn MapNpcs::spawn(self : MapNpcs, spawn : NpcSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
 ///|
-pub fn remove(self : MapNpcs, oid : Int) -> Unit {
+pub fn MapNpcs::remove(self : MapNpcs, oid : Int) -> Unit {
   match self.npcs.get(oid) {
     Some(npc) => npc.deactivate()
     None => ()
@@ -87,7 +87,7 @@ pub fn remove(self : MapNpcs, oid : Int) -> Unit {
 }
 
 ///|
-pub fn clear(self : MapNpcs) -> Unit {
+pub fn MapNpcs::clear(self : MapNpcs) -> Unit {
   self.npcs.clear()
 }
 
@@ -142,7 +142,7 @@ struct NpcSpawn {
 } derive(Show, ToJson)
 
 ///|
-pub fn get_oid(self : NpcSpawn) -> Int {
+pub fn NpcSpawn::get_oid(self : NpcSpawn) -> Int {
   self.oid
 }
 
@@ -168,7 +168,7 @@ pub fn NpcSpawn::instantiate(
 ///|
 /// Represents a NPC on the current map
 struct Npc {
-  entity : @system.Entity
+  entity : @entity.Entity
   base : @map_object.MapObjectBase
   animations : Map[String, @graphics.Animation]
   dialogue : Map[String, Array[String]]
@@ -238,7 +238,7 @@ pub fn Npc::load(
   f : Int,
   position : @struct.Point[Int],
 ) -> Npc {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let base = @map_object.MapObjectBase::new(o, on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
@@ -368,7 +368,7 @@ pub impl @map_object.MapObject for Npc with update(
 }
 
 ///|
-pub fn set_stance(self : Npc, st : String) -> Unit {
+pub fn Npc::set_stance(self : Npc, st : String) -> Unit {
   if self.stance != st {
     self.stance = st
     match self.animations.get(st) {
@@ -379,12 +379,12 @@ pub fn set_stance(self : Npc, st : String) -> Unit {
 }
 
 ///|
-pub fn is_scripted(self : Npc) -> Bool {
+pub fn Npc::is_scripted(self : Npc) -> Bool {
   self.scripted
 }
 
 ///|
-pub fn inrange(
+pub fn Npc::inrange(
   self : Npc,
   cursorpos : @struct.Point[Int],
   viewpos : @struct.Point[Int],
@@ -406,12 +406,12 @@ pub fn inrange(
 }
 
 ///|
-pub fn get_name(self : Npc) -> String {
+pub fn Npc::get_name(self : Npc) -> String {
   self.name
 }
 
 ///|
-pub fn get_func(self : Npc) -> String {
+pub fn Npc::get_func(self : Npc) -> String {
   self.func
 }
 
@@ -426,7 +426,7 @@ pub impl @map_object.MapObject for Npc with makeactive(self : Npc) -> Unit {
 }
 
 ///|
-pub fn deactivate(self : Npc) -> Unit {
+pub fn Npc::deactivate(self : Npc) -> Unit {
   self.base.deactivate()
 }
 
@@ -448,11 +448,11 @@ pub impl @map_object.MapObject for Npc with get_position(self : Npc) -> @struct.
 }
 
 ///|
-pub fn get_npc_object(self : Npc) -> @physics.MovingObject {
+pub fn Npc::get_npc_object(self : Npc) -> @physics.MovingObject {
   self.base.phobj.moving_object
 }
 
 ///|
-pub fn get_npc_id(self : Npc) -> Int {
+pub fn Npc::get_npc_id(self : Npc) -> Int {
   self.npc_id
 }

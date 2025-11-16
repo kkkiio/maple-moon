@@ -1,11 +1,5 @@
 ///|
-typealias @struct.Point
-
-///|
-typealias @struct.Color
-
-///|
-typealias @struct.Rectangle
+using @struct {type Point, type Color, type Rectangle}
 
 ///|
 pub(all) struct DrawArgument {
@@ -224,7 +218,10 @@ pub fn DrawArgument::new17(
 }
 
 ///|
-pub fn add_pos(self : DrawArgument, argpos : Point[Int]) -> DrawArgument {
+pub fn DrawArgument::add_pos(
+  self : DrawArgument,
+  argpos : Point[Int],
+) -> DrawArgument {
   DrawArgument::new17(
     self.pos + argpos,
     self.center + argpos,
@@ -237,7 +234,10 @@ pub fn add_pos(self : DrawArgument, argpos : Point[Int]) -> DrawArgument {
 }
 
 ///|
-pub fn add_opacity(self : DrawArgument, argopc : Double) -> DrawArgument {
+pub fn DrawArgument::add_opacity(
+  self : DrawArgument,
+  argopc : Double,
+) -> DrawArgument {
   DrawArgument::new16(
     self.pos,
     self.center,
@@ -263,7 +263,10 @@ pub impl Add for DrawArgument with add(self : DrawArgument, o : DrawArgument) ->
 }
 
 ///|
-pub fn merge(self : DrawArgument, o : DrawArgument) -> DrawArgument {
+pub fn DrawArgument::merge(
+  self : DrawArgument,
+  o : DrawArgument,
+) -> DrawArgument {
   DrawArgument::new17(
     self.pos + o.pos,
     self.center + o.center,
@@ -289,7 +292,7 @@ pub impl Sub for DrawArgument with sub(self : DrawArgument, o : DrawArgument) ->
 }
 
 ///|
-pub fn get_rectangle(
+pub fn DrawArgument::get_rectangle(
   self : DrawArgument,
   origin : Point[Int],
   dimensions : Point[Int],
@@ -312,6 +315,6 @@ pub fn get_rectangle(
 }
 
 ///|
-pub fn get_pos(self : DrawArgument) -> Point[Int] {
+pub fn DrawArgument::get_pos(self : DrawArgument) -> Point[Int] {
   self.pos
 }

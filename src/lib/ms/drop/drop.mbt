@@ -6,7 +6,7 @@ trait Drop: @map_object.MapObject {
 
 ///|
 priv struct DropBase {
-  entity : @system.Entity
+  entity : @entity.Entity
   base : @map_object.MapObjectBase
   opacity : @utils.Linear
   angle : @utils.Linear
@@ -37,7 +37,7 @@ fn DropBase::new(
   mode : Int,
   player_drop : Bool,
 ) -> DropBase {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let base = @map_object.MapObjectBase::new(id, on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
@@ -116,7 +116,7 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
 }
 
 ///|
-fn bounds(self : DropBase) -> @struct.Rectangle[Int] {
+fn DropBase::bounds(self : DropBase) -> @struct.Rectangle[Int] {
   let lt = self.base.get_position()
   let rb = lt + @struct.Point::new(32, 32)
   @struct.Rectangle::new(lt, rb)

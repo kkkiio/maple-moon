@@ -8,7 +8,7 @@ pub(all) enum Level {
 }
 
 ///|
-pub fn int_value(self : Level) -> Int {
+pub fn Level::int_value(self : Level) -> Int {
   match self {
     BEGINNER => 0
     FIRST => 1
@@ -19,7 +19,7 @@ pub fn int_value(self : Level) -> Int {
 }
 
 ///|
-pub impl Eq for Level with op_equal(self : Level, other : Level) -> Bool {
+pub impl Eq for Level with equal(self : Level, other : Level) -> Bool {
   self.int_value() == other.int_value()
 }
 
@@ -95,17 +95,17 @@ pub fn Job::new(
   sub_job_data_map : Map[Int, JobData],
 ) -> Job {
   let job_id = JobId::from_int(id).unwrap() // TODO: handle error
-  let name = get_name_by_id(job_id)
+  let name = job_id.get_name_by_id()
   { name, id: job_id, level, sub_job_data_map }
 }
 
 ///|
-pub fn get_id(self : Job) -> JobId {
+pub fn Job::get_id(self : Job) -> JobId {
   self.id
 }
 
 ///|
-pub fn get_name(self : Job) -> String {
+pub fn Job::get_name(self : Job) -> String {
   self.name
 }
 
@@ -388,7 +388,7 @@ pub impl @json.FromJson for JobId with from_json(json, path) {
 }
 
 ///|
-pub fn get_name_by_id(jid : JobId) -> String {
+pub fn JobId::get_name_by_id(jid : JobId) -> String {
   jid.to_string()
 }
 
@@ -402,12 +402,12 @@ pub fn Job::is_a(self : Job, base_job_id : Int) -> Bool {
 }
 
 ///|
-pub fn get_level(self : Job) -> Level {
+pub fn Job::get_level(self : Job) -> Level {
   self.level
 }
 
 ///|
-pub fn get_primary(
+pub fn Job::get_primary(
   self : Job,
   weapontype : @weapon.Type,
 ) -> @maple_stat.EquipStatId {
@@ -426,7 +426,7 @@ pub fn get_primary(
 }
 
 ///|
-pub fn get_secondary(
+pub fn Job::get_secondary(
   self : Job,
   weapontype : @weapon.Type,
 ) -> @maple_stat.EquipStatId {
@@ -445,7 +445,7 @@ pub fn get_secondary(
 }
 
 ///|
-pub fn get_subjob(self : Job, level : Level) -> Int {
+pub fn Job::get_subjob(self : Job, level : Level) -> Int {
   get_subjob_id(self.id.int_value(), self.level, level)
 }
 
@@ -474,17 +474,17 @@ pub fn get_subjob_id(
 }
 
 ///|
-pub fn get_all_subjobs(self : Job) -> Iter[JobData] {
+pub fn Job::get_all_subjobs(self : Job) -> Iter[JobData] {
   self.sub_job_data_map.values()
 }
 
 ///|
-pub fn can_use(self : Job, skill_id : Int) -> Bool {
+pub fn Job::can_use(self : Job, skill_id : Int) -> Bool {
   let required = skill_id / 10000
   self.is_a(required)
 }
 
 ///|
-pub fn get_data_by_id(self : Job, subid : Int) -> JobData {
+pub fn Job::get_data_by_id(self : Job, subid : Int) -> JobData {
   self.sub_job_data_map.get(subid).unwrap() // TODO: handle error
 }

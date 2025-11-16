@@ -87,7 +87,7 @@ fn PortalWarpInfo::default() -> PortalWarpInfo {
 
 ///|
 struct Portal {
-  entity : @system.Entity
+  entity : @entity.Entity
   animation : @sprite.Sprite?
   t : PortalType
   name : String
@@ -106,7 +106,7 @@ pub fn Portal::new(
   tomap : Int,
   toname : String,
 ) -> Portal {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   @position.positions.set(
     entity,
     @position.Position(

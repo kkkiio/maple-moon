@@ -244,7 +244,7 @@ struct MiniMapUI {
   resource : MiniMapUIResource
   type_ : MiniMapType
   mut current_map : (Int, MapInfo, MiniMapRuntimeResource?)?
-  entities : Array[@system.Entity]
+  entities : Array[@entity.Entity]
   ui_model : @ui.UIModel
 }
 
@@ -531,7 +531,7 @@ pub fn MiniMapUI::set_map(
         ),
       )
       for sprite in frames {
-        let entity = @system.Entity::new()
+        let entity = @entity.Entity::new()
         @sprite.sprites.set(entity, sprite)
         self.entities.push(entity)
       }
@@ -562,7 +562,7 @@ pub fn MiniMapUI::set_map(
                   map_draw_origin_x_.to_double(),
                   map_draw_origin_y_.to_double(),
                 )
-              let entity = @system.Entity::new()
+              let entity = @entity.Entity::new()
               let sprite = @sprite.Sprite::from_animation(
                 portal_marker,
                 @graphics.MINI_MAP_ZINDEX_,

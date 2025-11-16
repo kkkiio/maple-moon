@@ -512,8 +512,8 @@ pub fn nx_animation_to_selene_sprite(
     @sprite.Animation::new(
       frames,
       loop_~,
-      rate=1000.0 / delay_ms.to_double() / fps.to_double(),
-      // fps=1000.0 / self.delay_ms.to_double(),
+      // rate=1000.0 / delay_ms.to_double() / fps.to_double(),
+      fps=1000.0 / delay_ms.to_double(),
       transform~,
     ),
     z,

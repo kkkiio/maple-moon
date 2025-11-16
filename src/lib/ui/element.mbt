@@ -1,5 +1,5 @@
 ///|
-typealias @struct.Point
+using @struct {type Point}
 
 ///|
 pub(all) enum UIElementType {
@@ -148,7 +148,7 @@ pub fn Hooks::default() -> Hooks {
 }
 
 ///|
-pub fn on_state_changed(self : Hooks) -> Unit {
+pub fn Hooks::on_state_changed(self : Hooks) -> Unit {
   (self.on_state_changed)()
 }
 
@@ -161,7 +161,7 @@ pub fn[T] EffectHook::new() -> EffectHook[T] {
 }
 
 ///|
-pub fn[T : Eq] use_effect(
+pub fn[T : Eq] EffectHook::use_effect(
   self : EffectHook[T],
   key : T,
   f : () -> Unit,
@@ -281,7 +281,7 @@ pub fn Element::doubleclick(self : Element, pos : @struct.Point[Int]) -> Bool {
 }
 
 ///|
-fn use_runtime_state(self : Element) -> RuntimeState {
+fn Element::use_runtime_state(self : Element) -> RuntimeState {
   match self.runtime_state.val {
     Some(rs) => rs
     None => {
@@ -312,17 +312,17 @@ fn use_runtime_state(self : Element) -> RuntimeState {
 }
 
 ///|
-fn use_drawables(self : Element) -> Iter[&@graphics.Drawable] {
+fn Element::use_drawables(self : Element) -> Iter[&@graphics.Drawable] {
   self.use_runtime_state().render_units.iter().map(fn(ru) { ru })
 }
 
 ///|
-fn use_interactables(self : Element) -> Iter[InteractiveArea] {
+fn Element::use_interactables(self : Element) -> Iter[InteractiveArea] {
   self.use_runtime_state().interactables.iter()
 }
 
 ///|
-fn use_updateables(self : Element) -> Iter[&RenderUnit] {
+fn Element::use_updateables(self : Element) -> Iter[&RenderUnit] {
   self.use_runtime_state().render_units.iter()
 }
 
@@ -357,12 +357,12 @@ pub fn update_sprites(sprites : Iter[@graphics.Sprite]) -> Unit {
 }
 
 ///|
-pub fn makeactive(self : UIModel) -> Unit {
+pub fn UIModel::makeactive(self : UIModel) -> Unit {
   self.active = true
 }
 
 ///|
-pub fn deactivate(self : UIModel) -> Unit {
+pub fn UIModel::deactivate(self : UIModel) -> Unit {
   self.active = false
 }
 
@@ -428,17 +428,17 @@ pub(all) struct SpriteUI(@graphics.Sprite)
 
 ///|
 pub impl @graphics.Drawable for SpriteUI with draw(self, args) -> Unit {
-  self.inner().draw(args.pos, 0)
+  self.0.draw(args.pos, 0)
 }
 
 ///|
 pub impl RenderUnit for SpriteUI with update(self) -> Unit {
-  self.inner().update() |> ignore
+  self.0.update() |> ignore
 }
 
 ///|
 pub impl ToJson for SpriteUI with to_json(self) -> Json {
-  self.inner().to_json()
+  self.0.to_json()
 }
 
 ///|
@@ -462,7 +462,7 @@ pub(all) struct TextUI(@graphics.Text) derive(ToJson)
 
 ///|
 pub impl @graphics.Drawable for TextUI with draw(self, args) -> Unit {
-  self.inner().draw(args.pos)
+  self.0.draw(args.pos)
 }
 
 ///|

@@ -63,7 +63,7 @@ pub fn TalkType::from_int(
 }
 
 ///|
-pub fn int_value(self : TalkType) -> Int {
+pub fn TalkType::int_value(self : TalkType) -> Int {
   match self {
     // SEND_TEXT_ONLY => 0
     SEND_YESNO => 1
@@ -383,7 +383,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
 }
 
 ///|
-pub fn change_text(
+pub fn UINpcTalk::change_text(
   self : UINpcTalk,
   npcid : Int,
   talk_action : TalkAction,
@@ -485,4 +485,4 @@ fn convert_npc_text(
 }
 
 ///|
-typealias @struct.Point
+using @struct {type Point}

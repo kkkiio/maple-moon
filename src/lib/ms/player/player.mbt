@@ -12,7 +12,7 @@ pub(open) trait SkillBook {
 
 ///|
 pub(all) struct Player {
-  entity : @system.Entity
+  entity : @entity.Entity
   character : @character.CharBase
   stats : CharStats
   mut underwater : Bool
@@ -72,7 +72,7 @@ pub fn Player::new(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let character = @character.Character::new(
     entity,
     id,
@@ -225,9 +225,9 @@ pub fn Player::update(
       physics.move_object(self.character.get_phobj())
 
       // Check for ladder interaction
-      if @system.is_pressed(@system.Code::ArrowUp) {
+      if @inputs.is_pressed(@inputs.Code::ArrowUp) {
         self.check_ladders(map_info, true)
-      } else if @system.is_pressed(@system.Code::ArrowDown) {
+      } else if @inputs.is_pressed(@inputs.Code::ArrowDown) {
         self.check_ladders(map_info, false)
       }
       let aniend = self.character.update(
@@ -529,11 +529,11 @@ pub fn Player::is_key_down(
   key : @keyboard.BasicActionId,
 ) -> Bool {
   match key {
-    @keyboard.BasicActionId::UP => @system.is_pressed(@system.Code::ArrowUp)
-    @keyboard.BasicActionId::DOWN => @system.is_pressed(@system.Code::ArrowDown)
-    @keyboard.BasicActionId::LEFT => @system.is_pressed(@system.Code::ArrowLeft)
+    @keyboard.BasicActionId::UP => @inputs.is_pressed(@inputs.Code::ArrowUp)
+    @keyboard.BasicActionId::DOWN => @inputs.is_pressed(@inputs.Code::ArrowDown)
+    @keyboard.BasicActionId::LEFT => @inputs.is_pressed(@inputs.Code::ArrowLeft)
     @keyboard.BasicActionId::RIGHT =>
-      @system.is_pressed(@system.Code::ArrowRight)
+      @inputs.is_pressed(@inputs.Code::ArrowRight)
     _ => false
   }
 }

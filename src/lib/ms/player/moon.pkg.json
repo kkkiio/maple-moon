@@ -24,5 +24,7 @@
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/io_task",
     "Milky2018/selene/system",
+    "Milky2018/selene/inputs",
+    "Milky2018/selene/entity"
   ]
 }

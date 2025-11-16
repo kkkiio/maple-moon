@@ -36,13 +36,14 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
   let mut first_frame = 0
   let mut animation_json = Json::null()
   for key, value in obj {
-    match (try? @strconv.parse_int(key)) {
-      Ok(frame_num) => {
+    try @strconv.parse_int(key) catch {
+      _ => continue
+    } noraise {
+      frame_num => {
         first_frame = frame_num
         animation_json = value
         break
       }
-      Err(_) => continue
     }
   }
   if animation_json is Json::Null {
@@ -97,17 +98,21 @@ pub fn get_afterimage_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub fn get_first_frame(self : AfterImage) -> Int {
+pub fn AfterImage::get_first_frame(self : AfterImage) -> Int {
   self.first_frame
 }
 
 ///|
-pub fn get_range(self : AfterImage) -> @struct.Rectangle[Int] {
+pub fn AfterImage::get_range(self : AfterImage) -> @struct.Rectangle[Int] {
   self.range
 }
 
 ///|
-pub fn update(self : AfterImage, stframe : Int, timestep : Int) -> Unit {
+pub fn AfterImage::update(
+  self : AfterImage,
+  stframe : Int,
+  timestep : Int,
+) -> Unit {
   if not(self.displayed) && stframe >= self.first_frame {
     self.displayed = self.animation.update(timestep~)
   }

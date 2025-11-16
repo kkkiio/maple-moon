@@ -1,5 +1,5 @@
 ///|
-pub fn set_hardware_info(self : Configuration) -> Unit {
+pub fn Configuration::set_hardware_info(self : Configuration) -> Unit {
   self.set_hwid("9A9A9A9A9A9A", "9A9A9A9A") catch {
     e => abort(e.to_string())
   }
@@ -39,17 +39,17 @@ pub fn global() -> Configuration {
 }
 
 ///|
-pub fn get_volume_serial_number(self : Configuration) -> String {
+pub fn Configuration::get_volume_serial_number(self : Configuration) -> String {
   self.volume_serial_number
 }
 
 ///|
-pub fn get_hwid(self : Configuration) -> String {
+pub fn Configuration::get_hwid(self : Configuration) -> String {
   self.hwid
 }
 
 ///|
-fn set_hwid(
+fn Configuration::set_hwid(
   self : Configuration,
   hwid : String,
   volume_serial_number : String,
@@ -63,22 +63,22 @@ fn set_hwid(
 }
 
 ///|
-pub fn get_macs(self : Configuration) -> String {
+pub fn Configuration::get_macs(self : Configuration) -> String {
   self.macs
 }
 
 ///|
-fn set_macs(self : Configuration, macs : String) -> Unit {
+fn Configuration::set_macs(self : Configuration, macs : String) -> Unit {
   self.macs = macs
 }
 
 ///|
-pub fn get_admin(self : Configuration) -> Bool {
+pub fn Configuration::get_admin(self : Configuration) -> Bool {
   self.admin
 }
 
 ///|
-pub fn set_admin(self : Configuration, admin : Bool) -> Unit {
+pub fn Configuration::set_admin(self : Configuration, admin : Bool) -> Unit {
   self.admin = admin
 }
 
@@ -95,7 +95,7 @@ struct StringEntry {
 }
 
 ///|
-pub fn name(self : StringEntry) -> String {
+pub fn StringEntry::name(self : StringEntry) -> String {
   self.name
 }
 
@@ -105,12 +105,12 @@ pub fn StringEntry::new(name : String, default : String) -> StringEntry {
 }
 
 ///|
-pub fn load(self : StringEntry) -> String {
+pub fn StringEntry::load(self : StringEntry) -> String {
   configuration.settings.get(self.name).unwrap_or(self.default)
 }
 
 ///|
-pub fn save(self : StringEntry, value : String) -> Unit {
+pub fn StringEntry::save(self : StringEntry, value : String) -> Unit {
   configuration.settings[self.name] = value
 }
 

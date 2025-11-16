@@ -306,7 +306,7 @@ fn Stage::send_cursor(
 }
 
 ///|
-pub fn player_state_system(_backend : &@system.Backend) -> Unit {
+pub fn player_state_system(_delta : Double) -> Unit {
   guard stage_ref.val
     is Some({ state: StageState::ACTIVE(physics~, map_info~, ..), player, .. }) else {
     return
@@ -331,16 +331,16 @@ pub fn player_state_system(_backend : &@system.Backend) -> Unit {
   // }
   for
     it in [
-      (@system.ArrowUp, @keyboard.BasicActionId::UP),
-      (@system.ArrowDown, @keyboard.BasicActionId::DOWN),
-      (@system.ArrowLeft, @keyboard.BasicActionId::LEFT),
-      (@system.ArrowRight, @keyboard.BasicActionId::RIGHT),
-      (@system.Space, @keyboard.BasicActionId::JUMP),
+      (@inputs.ArrowUp, @keyboard.BasicActionId::UP),
+      (@inputs.ArrowDown, @keyboard.BasicActionId::DOWN),
+      (@inputs.ArrowLeft, @keyboard.BasicActionId::LEFT),
+      (@inputs.ArrowRight, @keyboard.BasicActionId::RIGHT),
+      (@inputs.Space, @keyboard.BasicActionId::JUMP),
     ] {
     let (code, action) = it
-    if @system.is_just_pressed(code) {
+    if @inputs.is_just_pressed(code) {
       player.send_action(action, true)
-    } else if @system.is_just_released(code) {
+    } else if @inputs.is_just_released(code) {
       player.send_action(action, false)
     }
   }
@@ -510,7 +510,7 @@ pub fn Stage::reset_player_position(self : Stage) -> Unit {
 let stage_ref : Ref[Stage?] = Ref::new(None)
 
 ///|
-pub fn game_scene_system(_backend : &@system.Backend) -> Unit {
+pub fn game_scene_system(_delta : Double) -> Unit {
   guard @game_state.game_state.state
     is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~) else {
     stage_ref.val = None

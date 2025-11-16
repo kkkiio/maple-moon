@@ -88,7 +88,7 @@ pub impl @graphics.Drawable for NameTag with draw(
 }
 
 ///|
-pub fn set_selected(self : NameTag, s : Bool) -> Unit {
+pub fn NameTag::set_selected(self : NameTag, s : Bool) -> Unit {
   self.selected = s
   if s {
     self.name.change_color(@struct.ColorName::WHITE)

@@ -11,7 +11,7 @@ pub(all) enum BackgroundType {
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
-pub fn int_value(self : BackgroundType) -> Int = "%identity"
+pub fn BackgroundType::int_value(self : BackgroundType) -> Int = "%identity"
 
 ///|
 pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
@@ -31,7 +31,7 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
 
 ///|
 struct Background {
-  entity : @system.Entity
+  entity : @entity.Entity
   animation : @resource.NxAnimation
   position : @position.Position
   t : BackgroundType
@@ -219,7 +219,7 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
   //   woffset,
   //   hoffset,
   // }
-  let entity = @system.Entity::new()
+  let entity = @entity.Entity::new()
   let position = @position.Position(
     @selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
   )

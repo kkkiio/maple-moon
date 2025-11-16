@@ -16,7 +16,7 @@ struct CharLook {
   equips : @equip.CharEquips
   randomizer : @utils.Randomizer
   draw_info : @types.BodyDrawInfo
-  mut entities : Array[@system.Entity]
+  mut entities : Array[@entity.Entity]
 }
 
 ///|
@@ -646,7 +646,7 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
   }
   self.entities = []
   let drawables : Array[&@graphics.Drawable] = []
-  let entities : Array[@system.Entity] = []
+  let entities : Array[@entity.Entity] = []
   fn make_face_draw(z : Int) {
     ignore(z)
     {
@@ -722,12 +722,12 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     ]
     .iter()
     .filter_map(fn(sprite) { sprite }) {
-    let entity = @system.Entity::new()
+    let entity = @entity.Entity::new()
     @sprite.sprites.set(entity, sprite)
     entities.push(entity)
   }
   for sprite in new_body_sprites() {
-    let entity = @system.Entity::new()
+    let entity = @entity.Entity::new()
     @sprite.sprites.set(entity, sprite)
     entities.push(entity)
   }

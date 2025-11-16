@@ -43,7 +43,7 @@ pub fn Module::new_char_stats(
 }
 
 ///|
-pub fn make_stat_handlers(
+pub fn Module::make_stat_handlers(
   self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [

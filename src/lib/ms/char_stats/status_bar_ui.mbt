@@ -240,7 +240,7 @@ pub impl @ui.Widget for StatusBarUI with render(self) {
 }
 
 ///|
-pub fn update(self : StatusBarUI) -> Unit {
+pub fn StatusBarUI::update(self : StatusBarUI) -> Unit {
   @ui.update_sprites(self.sprites.iter())
   for sprite in self.hpmp_sprites {
     sprite.update() |> ignore

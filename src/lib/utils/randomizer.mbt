@@ -9,22 +9,22 @@ pub fn Randomizer::new() -> Randomizer {
 }
 
 ///|
-pub fn next_bool(self : Randomizer) -> Bool {
+pub fn Randomizer::next_bool(self : Randomizer) -> Bool {
   self.next_int(2) == 1
 }
 
 ///|
-pub fn below(self : Randomizer, percent : Double) -> Bool {
+pub fn Randomizer::below(self : Randomizer, percent : Double) -> Bool {
   self.next_real(1.0) < percent
 }
 
 ///|
-pub fn above(self : Randomizer, percent : Double) -> Bool {
+pub fn Randomizer::above(self : Randomizer, percent : Double) -> Bool {
   self.next_real(1.0) > percent
 }
 
 ///|
-pub fn next_real(
+pub fn Randomizer::next_real(
   self : Randomizer,
   from? : Double = 0.0,
   to : Double,
@@ -36,7 +36,11 @@ pub fn next_real(
 }
 
 ///|
-pub fn next_int(self : Randomizer, from? : Int = 0, to : Int) -> Int {
+pub fn Randomizer::next_int(
+  self : Randomizer,
+  from? : Int = 0,
+  to : Int,
+) -> Int {
   if from >= to {
     return from
   }
@@ -44,6 +48,6 @@ pub fn next_int(self : Randomizer, from? : Int = 0, to : Int) -> Int {
 }
 
 ///|
-pub fn[T] choose(self : Randomizer, items : Array[T]) -> T {
+pub fn[T] Randomizer::choose(self : Randomizer, items : Array[T]) -> T {
   items[self.next_int(items.length())]
 }

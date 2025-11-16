@@ -10,17 +10,17 @@ pub fn[T] Range::new(first : T, second : T) -> Range[T] {
 }
 
 ///|
-pub fn[T] first(self : Range[T]) -> T {
+pub fn[T] Range::first(self : Range[T]) -> T {
   self.a
 }
 
 ///|
-pub fn[T] second(self : Range[T]) -> T {
+pub fn[T] Range::second(self : Range[T]) -> T {
   self.b
 }
 
 ///|
-pub fn[T : Compare] greater(self : Range[T]) -> T {
+pub fn[T : Compare] Range::greater(self : Range[T]) -> T {
   if self.a > self.b {
     self.a
   } else {
@@ -29,7 +29,7 @@ pub fn[T : Compare] greater(self : Range[T]) -> T {
 }
 
 ///|
-pub fn[T : Compare] smaller(self : Range[T]) -> T {
+pub fn[T : Compare] Range::smaller(self : Range[T]) -> T {
   if self.a < self.b {
     self.a
   } else {
@@ -38,39 +38,42 @@ pub fn[T : Compare] smaller(self : Range[T]) -> T {
 }
 
 ///|
-pub fn delta(self : Range[Int]) -> Int {
+pub fn Range::delta(self : Range[Int]) -> Int {
   self.b - self.a
 }
 
 ///|
-pub fn length(self : Range[Int]) -> Int {
+pub fn Range::length(self : Range[Int]) -> Int {
   let greater = self.greater()
   let smaller = self.smaller()
   greater - smaller
 }
 
 ///|
-pub fn center(self : Range[Int]) -> Int {
+pub fn Range::center(self : Range[Int]) -> Int {
   (self.a + self.b) / 2
 }
 
 ///|
-pub fn[T : Eq] empty(self : Range[T]) -> Bool {
+pub fn[T : Eq] Range::empty(self : Range[T]) -> Bool {
   self.a == self.b
 }
 
 ///|
-pub fn[T : Compare] contains(self : Range[T], v : T) -> Bool {
+pub fn[T : Compare] Range::contains(self : Range[T], v : T) -> Bool {
   v >= self.a && v <= self.b
 }
 
 ///|
-pub fn[T : Compare] contains_range(self : Range[T], v : Range[T]) -> Bool {
+pub fn[T : Compare] Range::contains_range(
+  self : Range[T],
+  v : Range[T],
+) -> Bool {
   v.a >= self.a && v.b <= self.b
 }
 
 ///|
-pub fn[T : Compare] overlaps(self : Range[T], v : Range[T]) -> Bool {
+pub fn[T : Compare] Range::overlaps(self : Range[T], v : Range[T]) -> Bool {
   Range::contains(self, v.a) ||
   Range::contains(self, v.b) ||
   Range::contains_range(v, self)

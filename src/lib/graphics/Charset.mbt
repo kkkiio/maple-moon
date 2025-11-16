@@ -39,7 +39,11 @@ pub impl Default for Charset with default() {
 }
 
 ///|
-pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
+pub fn Charset::draw_char(
+  self : Charset,
+  c : Char,
+  args : DrawArgument,
+) -> Unit {
   // let iter = self.chars.get(c)
   // match iter {
   //   Some(iter) => iter.draw(args)
@@ -48,7 +52,7 @@ pub fn draw_char(self : Charset, c : Char, args : DrawArgument) -> Unit {
 }
 
 ///|
-pub fn getw(self : Charset, c : Char) -> Int {
+pub fn Charset::getw(self : Charset, c : Char) -> Int {
   ...
   // let iter = self.chars.get(c)
   // iter.map(fn(it) { it.width() }).unwrap_or(0)
@@ -94,7 +98,7 @@ pub fn Charset::draw_text(
 }
 
 ///|
-pub fn draw_text_with_hspace(
+pub fn Charset::draw_text_with_hspace(
   self : Charset,
   text : String,
   hspace : Int,
@@ -137,7 +141,7 @@ pub impl ToJson for TextureText with to_json(self) -> Json {
 }
 
 ///|
-pub fn create_text(self : Charset, text : String) -> TextureText {
+pub fn Charset::create_text(self : Charset, text : String) -> TextureText {
   { charset: self, text }
 }
 

@@ -21,7 +21,7 @@ pub(all) enum Type {
 } derive(Eq, ToJson)
 
 ///|
-pub fn int_value(self : Type) -> Int {
+pub fn Type::int_value(self : Type) -> Int {
   match self {
     NONE => 0
     SWORD_1H => 130

@@ -1,6 +1,6 @@
 ///|
 struct SelectCharUI {
-  characters : Array[(Int, @char_look.CharLook, @ui.NameTag)]
+  characters : Array[SelectableCharacterUI]
   on_new_character : () -> Unit
   select_slot : Int?
   resource : SelectCharUIResource
@@ -16,6 +16,13 @@ struct SelectCharUI {
 pub(all) struct SelectCharUIResource {
   name_tag : @ui.NameTagResource
   ani18 : @sprite.Animation
+}
+
+///|
+struct SelectableCharacterUI {
+  cid : Int
+  char_look : @char_look.CharLook
+  name_tag : @ui.NameTag
 }
 
 ///|
@@ -202,16 +209,17 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
 ///|
 pub(all) struct SelectableCharacter {
   cid : Int
-  char_look : @char_look.CharLook
+  // char_look : @char_look.CharLook
   name : String
 }
 
 ///|
 pub fn SelectCharUI::new(
   resources : SelectCharUIResource,
-  on_select_character? : (Int) -> Unit = fn(_) {  },
+  characters : Array[SelectableCharacter],
+  on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
-) -> SelectCharUI {
+) -> SelectCharUI raise {
   // ui_model.dimension = @struct.Point::new(800, 600)
 
   let back13 = @sprite.Animation::single_frame(
@@ -297,7 +305,17 @@ pub fn SelectCharUI::new(
     @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
     entities.push(entity)
   }
-  let characters : Array[(Int, @char_look.CharLook, @ui.NameTag)] = []
+  let characters_entities = Array::makei(characters.length(), fn(_) {
+    @entity.Entity::new()
+  })
+  let characters : Array[SelectableCharacterUI] = characters.mapi(fn(
+    i,
+    character,
+  ) raise {
+    let entity = characters_entities[i]
+    to_selectable_character_ui(entity, i, character, resources)
+  })
+  entities.append(characters_entities)
   let res : Map[@ui.ButtonState, @resource.NxAnimation] = {}
   res[NORMAL] = {
     frames: [
@@ -368,9 +386,8 @@ pub fn SelectCharUI::new(
     pos=@struct.Point::new(601, 393),
     on_click=fn() {
       // guard self.select_slot is Some(slot) else { return None }
-      let slot = 0
-      let cid = characters[slot].0
-      on_select_character(cid)
+      let slot = 0 // TODO: get slot from UI
+      on_select_character(slot)
     },
   )
   // render_elements.push(
@@ -404,18 +421,39 @@ pub fn SelectCharUI::new(
 }
 
 ///|
-pub fn SelectCharUI::add_character(
-  self : SelectCharUI,
-  character : SelectableCharacter,
-) -> Unit {
-  let { cid, char_look, name } = character
-  let character = (
-    cid,
-    char_look,
-    @ui.NameTag::new(@graphics.FontId::A13M, name, self.resource.name_tag),
+pub fn load_char_look(
+  entity : @entity.Entity,
+  _character : SelectableCharacter, // TODO: use character look data
+) -> @char_look.CharLook raise {
+  let draw_info = @char_look.get_draw_info()
+  @char_look.CharLook::new(
+    entity,
+    {},
+    @char_look.FullBody::new(
+      0,
+      draw_info,
+      @char_look.get_stance_bodys_map(),
+      @char_look.get_stance_heads_map(),
+    ),
+    @char_look.Hair::parse(
+      0,
+      @json.from_json(@char_look.male_1_white_hair),
+      draw_info,
+    ),
+    @char_look.Face::new(20800, @char_look.male_1_white_face),
+    draw_info,
   )
-  self.characters.push(character)
-  let i = self.characters.length() - 1
+}
+
+///|
+pub fn to_selectable_character_ui(
+  entity : @entity.Entity,
+  i : Int,
+  character : SelectableCharacter,
+  resource : SelectCharUIResource,
+) -> SelectableCharacterUI raise {
+  let char_look = load_char_look(entity, character)
+  let { cid, name } = character
   // render_elements.push(
   //   @ui.AreaButton::new(
   //     get_character_slot_pos(i, 105, 144),
@@ -428,14 +466,7 @@ pub fn SelectCharUI::add_character(
   //   })
   //   |> @ui.Button::as_interactable,
   // )
-  let (_, char_look, _name_tag) = self.characters[i]
-  char_look.set_stance(
-    if Some(i) == self.select_slot {
-      @types.StanceId::WALK1
-    } else {
-      @types.StanceId::STAND1
-    },
-  )
+  char_look.set_stance(@types.StanceId::STAND1)
   char_look.set_facing_right(true)
   char_look.set_sprites()
   char_look.set_pos(get_character_slot_pos(i, 135, 234).to_vec2d())
@@ -444,6 +475,11 @@ pub fn SelectCharUI::add_character(
   //   @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
   //   |> @ui.RenderElement::Static,
   // )
+  {
+    cid,
+    char_look,
+    name_tag: @ui.NameTag::new(@graphics.FontId::A13M, name, resource.name_tag),
+  }
 }
 
 ///|
@@ -507,36 +543,22 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
 
 ///|
 pub fn add_select_char_ui() -> Unit raise {
-  let draw_info = @char_look.get_draw_info()
-  let char_look = @char_look.CharLook::new(
-    {},
-    @char_look.FullBody::new(
-      0,
-      draw_info,
-      @char_look.get_stance_bodys_map(),
-      @char_look.get_stance_heads_map(),
-    ),
-    @char_look.Hair::parse(
-      0,
-      @json.from_json(@char_look.male_1_white_hair),
-      draw_info,
-    ),
-    @char_look.Face::new(20800, @char_look.male_1_white_face),
-    draw_info,
+  let ui = SelectCharUI::new(
+    SelectCharUIResource::load(),
+    [{ cid: 1, name: "kkkiio" }],
+    on_select_character=fn(slot) {
+      guard select_char_ui.val is Some(ui) else { return }
+      let char_look = ui.characters[slot].char_look
+      @game_state.game_state.state = @game_state.GameStateType::Game(
+        map_id=100000000,
+        portal_id=23,
+        char_look~,
+      )
+      select_char_ui.val = None
+      ui.destroy()
+    },
   )
-  let ui = SelectCharUI::new(SelectCharUIResource::load(), on_select_character=fn(
-    _cid,
-  ) {
-    @game_state.game_state.state = @game_state.GameStateType::Game(
-      map_id=100000000,
-      portal_id=23,
-      char_look~,
-    )
-    guard select_char_ui.val is Some(ui) else { return }
-    ui.destroy()
-  })
   select_char_ui.val = Some(ui)
-  ui.add_character({ cid: 1, char_look, name: "kkkiio" })
 }
 
 ///|

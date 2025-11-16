@@ -3,13 +3,13 @@
 pub type Image
 
 ///|
-fn loading(self : Image) -> Bool = "bitmap" "loading"
+fn Image::loading(self : Image) -> Bool = "bitmap" "loading"
 
 ///|
-fn load(self : Image) -> LoadedImage = "bitmap" "load"
+fn Image::load(self : Image) -> LoadedImage = "bitmap" "load"
 
 ///|
-pub fn poll(self : Image) -> LoadedImage? {
+pub fn Image::poll(self : Image) -> LoadedImage? {
   if self.loading() {
     return None
   }
@@ -24,7 +24,7 @@ pub fn Image::new_pending() -> Image = "bitmap" "new_pending"
 pub type LoadedImage
 
 ///|
-pub fn width(self : LoadedImage) -> Int = "bitmap" "width"
+pub fn LoadedImage::width(self : LoadedImage) -> Int = "bitmap" "width"
 
 ///|
-pub fn height(self : LoadedImage) -> Int = "bitmap" "height"
+pub fn LoadedImage::height(self : LoadedImage) -> Int = "bitmap" "height"

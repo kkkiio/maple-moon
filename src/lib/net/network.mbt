@@ -26,7 +26,7 @@ pub fn Network::get() -> Network {
 }
 
 ///|
-pub fn reset_handlers(
+pub fn Network::reset_handlers(
   self : Network,
   handlers : @immut/hashmap.T[Opcode, (InPacket) -> Unit],
 ) -> Unit {
@@ -34,14 +34,14 @@ pub fn reset_handlers(
 }
 
 ///|
-pub fn process_out(self : Network, data : Bytes) -> Unit {
+pub fn Network::process_out(self : Network, data : Bytes) -> Unit {
   self.session.write(data)
 }
 
 ///|
 /// send packet to the server
 #deprecated("use send_message instead")
-pub fn send_packet(self : Network, packet : OutPacket) -> Unit {
+pub fn Network::send_packet(self : Network, packet : OutPacket) -> Unit {
   @log.log(
     packet.opcode.log_level(),
     { "opcode": packet.opcode },
@@ -64,17 +64,17 @@ pub fn[T : OutMessage] Network::send_message(
 }
 
 ///|
-pub fn process_in(self : Network) -> Unit {
+pub fn Network::process_in(self : Network) -> Unit {
   self.session.read()
 }
 
 ///|
-pub fn connect_login(self : Network) -> Unit {
+pub fn Network::connect_login(self : Network) -> Unit {
   self.session.connect("/login")
 }
 
 ///|
-pub fn connect_channel(self : Network, channel : Int) -> Unit {
+pub fn Network::connect_channel(self : Network, channel : Int) -> Unit {
   self.session.close()
   self.session.connect("/channel/\{channel}")
 }
@@ -85,7 +85,7 @@ pub fn Network::close(self : Network) -> Unit {
 }
 
 ///|
-pub fn get_status(self : Network) -> ConnectionStatus {
+pub fn Network::get_status(self : Network) -> ConnectionStatus {
   self.session.get_status()
 }
 
@@ -108,7 +108,7 @@ pub fn PacketSwitch::reset_handlers(
 }
 
 ///|
-pub fn forward(self : PacketSwitch, bytes : Bytes) -> Unit {
+pub fn PacketSwitch::forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   // Wrap the bytes with a parser
   let recv = InPacket::new(bytes)
 

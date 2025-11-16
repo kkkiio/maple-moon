@@ -30,18 +30,18 @@ pub impl[T : Neg] Neg for Point[T] with neg(self : Point[T]) -> Point[T] {
 
 ///|
 /// Shift the x-coordinate by the specified amount
-pub fn[T : Add] shift_x(self : Point[T], v : T) -> Point[T] {
+pub fn[T : Add] Point::shift_x(self : Point[T], v : T) -> Point[T] {
   { x: self.x + v, y: self.y }
 }
 
 ///|
 /// Shift the y-coordinate by the specified amount
-pub fn[T : Add] shift_y(self : Point[T], v : T) -> Point[T] {
+pub fn[T : Add] Point::shift_y(self : Point[T], v : T) -> Point[T] {
   { x: self.x, y: self.y + v }
 }
 
 ///|
-pub fn distance(self : Point[Int], v : Point[Int]) -> Int {
+pub fn Point::distance(self : Point[Int], v : Point[Int]) -> Int {
   (self.x - v.x).abs() + (self.y - v.y).abs()
 }
 
@@ -70,17 +70,17 @@ pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
 }
 
 ///|
-pub fn div_float(self : Point[Float], f : Float) -> Point[Float] {
+pub fn Point::div_float(self : Point[Float], f : Float) -> Point[Float] {
   { x: self.x / f, y: self.y / f }
 }
 
 ///|
-pub fn to_float(self : Point[Int]) -> Point[Float] {
+pub fn Point::to_float(self : Point[Int]) -> Point[Float] {
   { x: self.x.to_float(), y: self.y.to_float() }
 }
 
 ///|
-pub fn to_int(self : Point[Float]) -> Point[Int] {
+pub fn Point::to_int(self : Point[Float]) -> Point[Int] {
   { x: self.x.to_int(), y: self.y.to_int() }
 }
 

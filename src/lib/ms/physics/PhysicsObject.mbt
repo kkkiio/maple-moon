@@ -1,5 +1,5 @@
 ///|
-typealias @struct.Point
+using @struct {type Point}
 
 ///|
 pub struct MovingObject {
@@ -24,7 +24,7 @@ pub fn MovingObject::new(
 }
 
 ///|
-pub fn normalize(self : MovingObject) -> Unit {
+pub fn MovingObject::normalize(self : MovingObject) -> Unit {
   self.x.normalize()
   self.y.normalize()
 }
@@ -39,13 +39,13 @@ pub fn MovingObject::do_move(self : MovingObject) -> Unit {
 }
 
 ///|
-pub fn set_x(self : MovingObject, d : Double) -> Unit {
+pub fn MovingObject::set_x(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
 }
 
 ///|
-pub fn set_y(self : MovingObject, d : Double) -> Unit {
+pub fn MovingObject::set_y(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
 }
@@ -61,21 +61,25 @@ pub fn MovingObject::set_position(
 }
 
 ///|
-pub fn limitx(self : MovingObject, d : Double) -> Unit {
+pub fn MovingObject::limitx(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   self.hspeed = 0.0
   (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
 }
 
 ///|
-pub fn limity(self : MovingObject, d : Double) -> Unit {
+pub fn MovingObject::limity(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   self.vspeed = 0.0
   (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
 }
 
 ///|
-pub fn movexuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
+pub fn MovingObject::movexuntil(
+  self : MovingObject,
+  d : Double,
+  delay : Int,
+) -> Unit {
   if delay != 0 {
     let hdelta = d - self.x.get()
     self.hspeed = @config.step_time_ms.to_double() * hdelta / delay.to_double()
@@ -83,7 +87,11 @@ pub fn movexuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
 }
 
 ///|
-pub fn moveyuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
+pub fn MovingObject::moveyuntil(
+  self : MovingObject,
+  d : Double,
+  delay : Int,
+) -> Unit {
   if delay != 0 {
     let vdelta = d - self.y.get()
     self.vspeed = @config.step_time_ms.to_double() * vdelta / delay.to_double()
@@ -91,67 +99,67 @@ pub fn moveyuntil(self : MovingObject, d : Double, delay : Int) -> Unit {
 }
 
 ///|
-pub fn hmobile(self : MovingObject) -> Bool {
+pub fn MovingObject::hmobile(self : MovingObject) -> Bool {
   self.hspeed != 0.0
 }
 
 ///|
-pub fn vmobile(self : MovingObject) -> Bool {
+pub fn MovingObject::vmobile(self : MovingObject) -> Bool {
   self.vspeed != 0.0
 }
 
 ///|
-pub fn mobile(self : MovingObject) -> Bool {
+pub fn MovingObject::mobile(self : MovingObject) -> Bool {
   self.hmobile() || self.vmobile()
 }
 
 ///|
-pub fn crnt_x(self : MovingObject) -> Double {
+pub fn MovingObject::crnt_x(self : MovingObject) -> Double {
   self.x.get()
 }
 
 ///|
-pub fn crnt_y(self : MovingObject) -> Double {
+pub fn MovingObject::crnt_y(self : MovingObject) -> Double {
   self.y.get()
 }
 
 ///|
-pub fn next_x(self : MovingObject) -> Double {
+pub fn MovingObject::next_x(self : MovingObject) -> Double {
   self.x.plus(self.hspeed)
 }
 
 ///|
-pub fn next_y(self : MovingObject) -> Double {
+pub fn MovingObject::next_y(self : MovingObject) -> Double {
   self.y.plus(self.vspeed)
 }
 
 ///|
-pub fn get_x(self : MovingObject) -> Int {
+pub fn MovingObject::get_x(self : MovingObject) -> Int {
   self.x.get().round().to_int()
 }
 
 ///|
-pub fn get_y(self : MovingObject) -> Int {
+pub fn MovingObject::get_y(self : MovingObject) -> Int {
   self.y.get().round().to_int()
 }
 
 ///|
-pub fn get_last_x(self : MovingObject) -> Int {
+pub fn MovingObject::get_last_x(self : MovingObject) -> Int {
   self.x.last().round().to_int()
 }
 
 ///|
-pub fn get_last_y(self : MovingObject) -> Int {
+pub fn MovingObject::get_last_y(self : MovingObject) -> Int {
   self.y.last().round().to_int()
 }
 
 ///|
-pub fn get_position(self : MovingObject) -> Point[Int] {
+pub fn MovingObject::get_position(self : MovingObject) -> Point[Int] {
   { x: self.get_x(), y: self.get_y() }
 }
 
 ///|
-pub fn get_absolute_x(
+pub fn MovingObject::get_absolute_x(
   self : MovingObject,
   viewx : Double,
   alpha : Double,
@@ -160,7 +168,7 @@ pub fn get_absolute_x(
 }
 
 ///|
-pub fn get_absolute_y(
+pub fn MovingObject::get_absolute_y(
   self : MovingObject,
   viewy : Double,
   alpha : Double,
@@ -227,7 +235,7 @@ pub(all) enum PhysicsObjectFlag {
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
-pub fn int_value(self : PhysicsObjectFlag) -> Int {
+pub fn PhysicsObjectFlag::int_value(self : PhysicsObjectFlag) -> Int {
   match self {
     PhysicsObjectFlag::NO_GRAVITY => 0x0001
     PhysicsObjectFlag::TURN_AT_EDGES => 0x0002
@@ -274,27 +282,39 @@ pub fn PhysicsObject::new(
 }
 
 ///|
-pub fn is_flag_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
+pub fn PhysicsObject::is_flag_set(
+  self : PhysicsObject,
+  f : PhysicsObjectFlag,
+) -> Bool {
   (self.flags & f.int_value()) != 0
 }
 
 ///|
-pub fn is_flag_not_set(self : PhysicsObject, f : PhysicsObjectFlag) -> Bool {
+pub fn PhysicsObject::is_flag_not_set(
+  self : PhysicsObject,
+  f : PhysicsObjectFlag,
+) -> Bool {
   not(self.is_flag_set(f))
 }
 
 ///|
-pub fn set_flag(self : PhysicsObject, f : PhysicsObjectFlag) -> Unit {
+pub fn PhysicsObject::set_flag(
+  self : PhysicsObject,
+  f : PhysicsObjectFlag,
+) -> Unit {
   self.flags = self.flags | f.int_value()
 }
 
 ///|
-pub fn clear_flag(self : PhysicsObject, f : PhysicsObjectFlag) -> Unit {
+pub fn PhysicsObject::clear_flag(
+  self : PhysicsObject,
+  f : PhysicsObjectFlag,
+) -> Unit {
   self.flags = self.flags & f.int_value().lnot()
 }
 
 ///|
-pub fn clear_flags(self : PhysicsObject) -> Unit {
+pub fn PhysicsObject::clear_flags(self : PhysicsObject) -> Unit {
   self.flags = 0
 }
 
@@ -385,12 +405,12 @@ pub fn PhysicsObject::get_last_y(self : PhysicsObject) -> Int {
 }
 
 ///|
-pub fn set_hspeed(self : PhysicsObject, hspeed : Double) -> Unit {
+pub fn PhysicsObject::set_hspeed(self : PhysicsObject, hspeed : Double) -> Unit {
   self.moving_object.hspeed = hspeed
 }
 
 ///|
-pub fn set_vspeed(self : PhysicsObject, vspeed : Double) -> Unit {
+pub fn PhysicsObject::set_vspeed(self : PhysicsObject, vspeed : Double) -> Unit {
   self.moving_object.vspeed = vspeed
 }
 

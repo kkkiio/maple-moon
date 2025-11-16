@@ -1,5 +1,6 @@
 ///|
 struct CharLook {
+  root_entity : @entity.Entity
   stance : @utils.Nominal[@types.StanceId]
   st_frame : @utils.Nominal[Int]
   mut st_elapsed : Int
@@ -32,6 +33,7 @@ pub(all) struct LookEntry {
 
 ///|
 pub async fn CharLook::load(
+  entity : @entity.Entity,
   entry : LookEntry,
   body : FullBody,
   hair : Hair,
@@ -50,22 +52,25 @@ pub async fn CharLook::load(
     |> Array::from_iter()
     |> @js.async_all()
     |> Map::from_array()
-  CharLook::new(equips, body, hair, face, draw_info)
+  CharLook::new(entity, equips, body, hair, face, draw_info)
 }
 
 ///|
 pub fn CharLook::new(
+  entity : @entity.Entity,
   slot_equips : Map[Int, @item.ItemData],
   body : FullBody,
   hair : Hair,
   face : Face,
   draw_info : @types.BodyDrawInfo,
 ) -> CharLook {
+  let root_entity = entity
   let equips = @equip.CharEquips::new()
   for slot_id, itemdata in slot_equips {
     (try? equips.add_equip(itemdata, @slot.Id::from_int(slot_id), draw_info)).unwrap() // TODO: handle error
   }
   {
+    root_entity,
     stance: @utils.Nominal::default(),
     st_frame: @utils.Nominal::default(),
     st_elapsed: 0,
@@ -615,9 +620,7 @@ pub fn CharLook::draw(
 
 ///|
 pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
-  for entity in self.entities {
-    @position.positions.set(entity, @position.Position(pos))
-  }
+  @position.positions.set(self.root_entity, @position.Position(pos))
 }
 
 ///|
@@ -722,12 +725,12 @@ pub fn CharLook::set_sprites(self : CharLook) -> Unit {
     ]
     .iter()
     .filter_map(fn(sprite) { sprite }) {
-    let entity = @entity.Entity::new()
+    let entity = self.root_entity.spawn_child()
     @sprite.sprites.set(entity, sprite)
     entities.push(entity)
   }
   for sprite in new_body_sprites() {
-    let entity = @entity.Entity::new()
+    let entity = self.root_entity.spawn_child()
     @sprite.sprites.set(entity, sprite)
     entities.push(entity)
   }
@@ -1207,11 +1210,4 @@ pub impl @graphics.Drawable for NoopDrawable with draw(
   _ : @graphics.DrawArgument,
 ) -> Unit {
 
-}
-
-///|
-pub fn CharLook::destroy(self : CharLook) -> Unit {
-  for entity in self.entities {
-    entity.destroy()
-  }
 }

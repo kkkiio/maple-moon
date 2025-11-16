@@ -183,10 +183,10 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
 pub(all) suberror ParseTalkError String derive(Show)
 
 ///|
-typealias @struct.ColorName
+using @struct {type ColorName}
 
 ///|
-typealias @markup_text.Style
+using @markup_text {type Style}
 
 ///|
 test "parse quiz" {

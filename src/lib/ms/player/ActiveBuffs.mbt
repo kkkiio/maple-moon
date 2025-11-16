@@ -125,7 +125,7 @@ fn ActiveBuffs::new() -> ActiveBuffs {
 }
 
 ///|
-fn apply_buff(
+fn ActiveBuffs::apply_buff(
   self : ActiveBuffs,
   stats : CharStats,
   stat : @buff.StatId,

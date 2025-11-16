@@ -81,7 +81,7 @@ pub fn Movement::from_physics_object(
 }
 
 ///|
-pub fn hasmoved(self : Movement, newmove : Movement) -> Bool {
+pub fn Movement::hasmoved(self : Movement, newmove : Movement) -> Bool {
   newmove.newstate != self.newstate ||
   newmove.xpos != self.xpos ||
   newmove.ypos != self.ypos ||

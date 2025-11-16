@@ -1,5 +1,5 @@
 ///|
-typealias @ui.UI
+using @ui {type UI}
 
 ///|
 pub(all) struct Game {
@@ -350,7 +350,7 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
 }
 
 ///|
-pub fn update_status(self : Game, loaded_state : LoadedState) -> Unit {
+pub fn Game::update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // Window::get().check_events();
   // Window::get().update()
   ...

@@ -90,27 +90,30 @@ let equipslots : FixedArray[@slot.Id] = [
 ]
 
 ///|
-pub fn get_defstat(self : EquipData, stat : @maple_stat.EquipStatId) -> Int {
+pub fn EquipData::get_defstat(
+  self : EquipData,
+  stat : @maple_stat.EquipStatId,
+) -> Int {
   self.incr_stats.get(stat).unwrap_or(0)
 }
 
 ///|
-pub fn get_eqslot(self : EquipData) -> @slot.Id {
+pub fn EquipData::get_eqslot(self : EquipData) -> @slot.Id {
   self.eq_slot
 }
 
 ///|
-pub fn get_category(self : EquipData) -> String {
+pub fn EquipData::get_category(self : EquipData) -> String {
   self.category
 }
 
 ///|
-pub fn get_reqstat(self : EquipData, stat : @maple_stat.Id) -> Int {
+pub fn EquipData::get_reqstat(self : EquipData, stat : @maple_stat.Id) -> Int {
   self.req_stats.get(stat).unwrap_or(0)
 }
 
 ///|
-pub fn get_gender(self : EquipData) -> Int {
+pub fn EquipData::get_gender(self : EquipData) -> Int {
   self.gender
 }
 

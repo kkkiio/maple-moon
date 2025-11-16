@@ -17,7 +17,7 @@ pub fn Session::new(forwarder : (Bytes) -> Unit) -> Session {
 }
 
 ///|
-pub fn close(self : Session) -> Unit {
+pub fn Session::close(self : Session) -> Unit {
   match self.conn {
     OPENED(socket) => {
       socket.close()
@@ -32,7 +32,7 @@ pub fn close(self : Session) -> Unit {
 }
 
 ///|
-pub fn connect(self : Session, path : String) -> Unit {
+pub fn Session::connect(self : Session, path : String) -> Unit {
   // Connect to the server
   match self.conn {
     CLOSED => self.conn = OPENED(Socket::open(path))
@@ -45,7 +45,7 @@ pub fn connect(self : Session, path : String) -> Unit {
 
 ///|
 /// Send a packet to the server
-pub fn write(self : Session, bytes : Bytes) -> Unit {
+pub fn Session::write(self : Session, bytes : Bytes) -> Unit {
   match self.conn {
     READY(socket~) => socket.write(bytes)
     _ =>
@@ -58,7 +58,7 @@ pub fn write(self : Session, bytes : Bytes) -> Unit {
 
 ///|
 /// Check for incoming packets and handle them
-pub fn read(self : Session) -> Unit {
+pub fn Session::read(self : Session) -> Unit {
   match self.conn {
     CLOSED => ()
     OPENED(socket) =>

@@ -29,22 +29,22 @@ pub(all) struct SpecialMove {
 } derive(Show)
 
 ///|
-pub fn get_id(self : SpecialMove) -> Int {
+pub fn SpecialMove::get_id(self : SpecialMove) -> Int {
   self.id
 }
 
 ///|
-pub fn is_attack(self : SpecialMove) -> Bool {
+pub fn SpecialMove::is_attack(self : SpecialMove) -> Bool {
   self.attack
 }
 
 ///|
-pub fn is_skill(self : SpecialMove) -> Bool {
+pub fn SpecialMove::is_skill(self : SpecialMove) -> Bool {
   self.skill
 }
 
 ///|
-pub fn apply_useeffects(
+pub fn SpecialMove::apply_useeffects(
   self : SpecialMove,
   char : @character.Character,
 ) -> Unit {
@@ -52,7 +52,7 @@ pub fn apply_useeffects(
 }
 
 ///|
-pub fn apply_actions(
+pub fn SpecialMove::apply_actions(
   self : SpecialMove,
   char : @character.Character,
   attack_type : @combat.AttackType,
@@ -61,7 +61,7 @@ pub fn apply_actions(
 }
 
 ///|
-pub fn make_attack(
+pub fn SpecialMove::make_attack(
   self : SpecialMove,
   char : @character.CharBase,
   inventory : &@player.Inventory,
@@ -72,7 +72,7 @@ pub fn make_attack(
 }
 
 ///|
-pub fn get_bullet(
+pub fn SpecialMove::get_bullet(
   self : SpecialMove,
   char : @character.Character,
   value : Int,
@@ -81,7 +81,7 @@ pub fn get_bullet(
 }
 
 ///|
-pub fn can_use(
+pub fn SpecialMove::can_use(
   self : SpecialMove,
   value : Int,
   weapon_type : @weapon.Type,
@@ -94,7 +94,7 @@ pub fn can_use(
 }
 
 ///|
-pub fn apply_hit_effects(
+pub fn SpecialMove::apply_hit_effects(
   self : SpecialMove,
   attack_user : @combat.AttackUser,
   mob : @monster.Mob,

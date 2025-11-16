@@ -42,12 +42,16 @@ pub fn MapObjectBase::update(
 }
 
 ///|
-pub fn set_positionxy(self : MapObjectBase, x : Int, y : Int) -> Unit {
+pub fn MapObjectBase::set_positionxy(
+  self : MapObjectBase,
+  x : Int,
+  y : Int,
+) -> Unit {
   self.phobj.set_position(@selene_math.Vec2D(x.to_double(), y.to_double()))
 }
 
 ///|
-pub fn set_position(
+pub fn MapObjectBase::set_position(
   self : MapObjectBase,
   position : @struct.Point[Int],
 ) -> Unit {
@@ -55,31 +59,31 @@ pub fn set_position(
 }
 
 ///|
-pub fn makeactive(self : MapObjectBase) -> Unit {
+pub fn MapObjectBase::makeactive(self : MapObjectBase) -> Unit {
   self.active = true
 }
 
 ///|
-pub fn deactivate(self : MapObjectBase) -> Unit {
+pub fn MapObjectBase::deactivate(self : MapObjectBase) -> Unit {
   self.active = false
 }
 
 ///|
-pub fn is_active(self : MapObjectBase) -> Bool {
+pub fn MapObjectBase::is_active(self : MapObjectBase) -> Bool {
   self.active
 }
 
 ///|
-pub fn get_layer(self : MapObjectBase) -> Int {
+pub fn MapObjectBase::get_layer(self : MapObjectBase) -> Int {
   self.phobj.fhlayer
 }
 
 ///|
-pub fn get_oid(self : MapObjectBase) -> Int {
+pub fn MapObjectBase::get_oid(self : MapObjectBase) -> Int {
   self.oid
 }
 
 ///|
-pub fn get_position(self : MapObjectBase) -> @struct.Point[Int] {
+pub fn MapObjectBase::get_position(self : MapObjectBase) -> @struct.Point[Int] {
   self.phobj.get_position()
 }

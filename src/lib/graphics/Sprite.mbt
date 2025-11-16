@@ -28,32 +28,35 @@ pub fn Sprite::draw(
 }
 
 ///|
-pub fn update(self : Sprite, timestep? : Int = @config.step_time_ms) -> Bool {
+pub fn Sprite::update(
+  self : Sprite,
+  timestep? : Int = @config.step_time_ms,
+) -> Bool {
   self.animation.update(timestep~)
 }
 
 ///|
-pub fn reset(self : Sprite) -> Unit {
+pub fn Sprite::reset(self : Sprite) -> Unit {
   self.animation.reset()
 }
 
 ///|
-pub fn width(self : Sprite) -> Int {
+pub fn Sprite::width(self : Sprite) -> Int {
   self.get_dimensions().x
 }
 
 ///|
-pub fn height(self : Sprite) -> Int {
+pub fn Sprite::height(self : Sprite) -> Int {
   self.get_dimensions().y
 }
 
 ///|
-pub fn get_origin(self : Sprite) -> Point[Int] {
+pub fn Sprite::get_origin(self : Sprite) -> Point[Int] {
   self.animation.get_origin()
 }
 
 ///|
-pub fn get_dimensions(self : Sprite) -> Point[Int] {
+pub fn Sprite::get_dimensions(self : Sprite) -> Point[Int] {
   self.animation.get_dimensions()
 }
 

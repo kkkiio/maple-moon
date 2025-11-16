@@ -38,11 +38,11 @@ async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
 }
 
 ///|
-typealias WithItemSlot? as UISlot // Slot in UI may be empty
+type UISlot = WithItemSlot? // Slot in UI may be empty
 
 ///|
 /// Type for inventory change watcher callback
-typealias (Array[UISlot]) -> Bool as InventoryWatcher
+type InventoryWatcher = (Array[UISlot]) -> Bool
 
 ///|
 pub struct WithItemSlot {

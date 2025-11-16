@@ -43,31 +43,31 @@ pub fn WeaponData::from_item_data(
 }
 
 ///|
-pub fn get_type(self : WeaponData) -> Type {
+pub fn WeaponData::get_type(self : WeaponData) -> Type {
   self.t
 }
 
 ///|
-pub fn is_twohanded(self : WeaponData) -> Bool {
+pub fn WeaponData::is_twohanded(self : WeaponData) -> Bool {
   self.two_handed
 }
 
 ///|
-pub fn get_speed(self : WeaponData) -> Int {
+pub fn WeaponData::get_speed(self : WeaponData) -> Int {
   self.attack_speed
 }
 
 ///|
-pub fn get_afterimage(self : WeaponData) -> String {
+pub fn WeaponData::get_afterimage(self : WeaponData) -> String {
   self.after_image
 }
 
 ///|
-pub fn get_equipdata(self : WeaponData) -> @data.EquipData {
+pub fn WeaponData::get_equipdata(self : WeaponData) -> @data.EquipData {
   self.equip_data
 }
 
 ///|
-pub fn get_attack(self : WeaponData) -> Int {
+pub fn WeaponData::get_attack(self : WeaponData) -> Int {
   self.attack
 }

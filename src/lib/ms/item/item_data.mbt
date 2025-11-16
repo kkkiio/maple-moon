@@ -274,7 +274,7 @@ pub fn get_item_gender(id : Int) -> Int {
 }
 
 ///|
-pub fn get_category(self : ItemData) -> String {
+pub fn ItemData::get_category(self : ItemData) -> String {
   self.category
 }
 
@@ -288,7 +288,7 @@ pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
 }
 
 ///|
-pub fn get_info(self : ItemData) -> Map[String, Json] {
+pub fn ItemData::get_info(self : ItemData) -> Map[String, Json] {
   match self.src.value() {
     { "info": Object(info), .. } => info
     _ => Map::new()
@@ -296,7 +296,7 @@ pub fn get_info(self : ItemData) -> Map[String, Json] {
 }
 
 ///|
-pub fn get_src(self : ItemData) -> @resource.NxNode {
+pub fn ItemData::get_src(self : ItemData) -> @resource.NxNode {
   self.src
 }
 

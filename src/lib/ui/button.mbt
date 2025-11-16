@@ -100,36 +100,36 @@ pub fn ButtonModel::new(
 }
 
 ///|
-pub fn set_position(self : ButtonModel, pos : Point[Int]) -> Unit {
+pub fn ButtonModel::set_position(self : ButtonModel, pos : Point[Int]) -> Unit {
   self.position = pos
 }
 
 ///|
-pub fn set_state(self : ButtonModel, s : ButtonState) -> Unit {
+pub fn ButtonModel::set_state(self : ButtonModel, s : ButtonState) -> Unit {
   self.state.val = s
 }
 
 ///|
-pub fn set_active(self : ButtonModel, a : Bool) -> Unit {
+pub fn ButtonModel::set_active(self : ButtonModel, a : Bool) -> Unit {
   self.active = a
 }
 
 ///|
-pub fn toggle_pressed(self : ButtonModel) -> Unit {
+pub fn ButtonModel::toggle_pressed(self : ButtonModel) -> Unit {
   self.pressed = self.pressed |> not()
 }
 
 ///|
-pub fn is_active(self : ButtonModel) -> Bool {
+pub fn ButtonModel::is_active(self : ButtonModel) -> Bool {
   self.active && self.get_state() != ButtonState::DISABLED
 }
 
 ///|
-pub fn get_state(self : ButtonModel) -> ButtonState {
+pub fn ButtonModel::get_state(self : ButtonModel) -> ButtonState {
   self.state.val
 }
 
 ///|
-pub fn is_pressed(self : ButtonModel) -> Bool {
+pub fn ButtonModel::is_pressed(self : ButtonModel) -> Bool {
   self.pressed
 }

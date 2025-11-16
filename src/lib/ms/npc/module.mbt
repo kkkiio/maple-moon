@@ -89,7 +89,7 @@ fn open_npc_talk_ui(
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
@@ -121,7 +121,7 @@ pub fn make_handlers(
 }
 
 ///|
-pub fn get_npcs(self : Module) -> MapNpcs {
+pub fn Module::get_npcs(self : Module) -> MapNpcs {
   self.npcs
 }
 

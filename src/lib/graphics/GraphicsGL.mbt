@@ -1,5 +1,5 @@
 ///|
-typealias @struct.Range
+using @struct {type Range}
 
 ///|
 struct GraphicsGL {
@@ -319,7 +319,7 @@ pub fn GraphicsGL::clear_scene(self : GraphicsGL) -> Unit {
 }
 
 ///|
-fn get_offset(
+fn Atlas::get_offset(
   self : Atlas,
   id : String,
   bmp : @resource.LoadedImage,
@@ -414,7 +414,7 @@ fn get_offset(
 }
 
 ///|
-fn clear_internal(self : Atlas) -> Unit {
+fn Atlas::clear_internal(self : Atlas) -> Unit {
   self.border_x = 0
   self.border_y = 1
   self.y_range = Range::default()
@@ -572,7 +572,7 @@ pub(all) enum FontId {
 } derive(Eq, Show, Hash)
 
 ///|
-pub fn is_bold(self : FontId) -> Bool {
+pub fn FontId::is_bold(self : FontId) -> Bool {
   match self {
     A11B | A12B | A13B | A15B => true
     _ => false

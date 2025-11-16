@@ -1,11 +1,11 @@
 ///|
-typealias @struct.Range
+using @struct {type Range}
 
 ///|
-typealias @struct.Point
+using @struct {type Point}
 
 ///|
-typealias @resource.NxNode
+using @resource {type NxNode}
 
 ///|
 /// Define the Seat struct and its methods
@@ -21,14 +21,14 @@ pub fn Seat::from_resource(src : NxNode) -> Seat {
 }
 
 ///|
-pub fn inrange(self : Seat, position : Point[Int]) -> Bool {
+pub fn Seat::inrange(self : Seat, position : Point[Int]) -> Bool {
   let hor = Range::symmetric(position.x, 10)
   let ver = Range::symmetric(position.y, 10)
   hor.contains(self.pos.x) && ver.contains(self.pos.y)
 }
 
 ///|
-pub fn getpos(self : Seat) -> Point[Int] {
+pub fn Seat::getpos(self : Seat) -> Point[Int] {
   self.pos
 }
 
@@ -54,7 +54,7 @@ pub fn Ladder::from_resource(src : NxNode) -> Ladder {
 }
 
 ///|
-pub fn is_ladder(self : Ladder) -> Bool {
+pub fn Ladder::is_ladder(self : Ladder) -> Bool {
   self.ladder
 }
 
@@ -71,13 +71,13 @@ pub fn Ladder::inrange(
 }
 
 ///|
-pub fn felloff(self : Ladder, y : Int, downwards : Bool) -> Bool {
+pub fn Ladder::felloff(self : Ladder, y : Int, downwards : Bool) -> Bool {
   let dy = if downwards { y + 1 } else { y - 1 }
   dy > self.y2 || y + 1 < self.y1
 }
 
 ///|
-pub fn get_x(self : Ladder) -> Int {
+pub fn Ladder::get_x(self : Ladder) -> Int {
   self.x
 }
 
@@ -175,32 +175,32 @@ pub fn MapInfo::new() -> MapInfo {
 }
 
 ///|
-pub fn is_underwater(self : MapInfo) -> Bool {
+pub fn MapInfo::is_underwater(self : MapInfo) -> Bool {
   self.swim
 }
 
 ///|
-pub fn get_bgm(self : MapInfo) -> String {
+pub fn MapInfo::get_bgm(self : MapInfo) -> String {
   self.bgm
 }
 
 ///|
-pub fn get_walls(self : MapInfo) -> Range[Int] {
+pub fn MapInfo::get_walls(self : MapInfo) -> Range[Int] {
   self.map_walls
 }
 
 ///|
-pub fn get_borders(self : MapInfo) -> Range[Int] {
+pub fn MapInfo::get_borders(self : MapInfo) -> Range[Int] {
   self.map_borders
 }
 
 ///|
-pub fn findseat(self : MapInfo, position : Point[Int]) -> Seat? {
+pub fn MapInfo::findseat(self : MapInfo, position : Point[Int]) -> Seat? {
   self.seats.iter().find_first(fn(seat) { seat.inrange(position) })
 }
 
 ///|
-pub fn find_ladder(
+pub fn MapInfo::find_ladder(
   self : MapInfo,
   position : Point[Int],
   upwards : Bool,

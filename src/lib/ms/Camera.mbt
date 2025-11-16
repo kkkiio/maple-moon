@@ -1,5 +1,5 @@
 ///|
-typealias @utils.Linear
+using @utils {type Linear}
 
 ///|
 /// View on stage which follows the player object.
@@ -71,7 +71,7 @@ pub fn Camera::set_position(
 
 ///|
 /// Updates the view's boundaries. Determined by mapinfo or footholds.
-pub fn set_view(
+pub fn Camera::set_view(
   self : Camera,
   hborders : @struct.Range[Int],
   vborders : @struct.Range[Int],

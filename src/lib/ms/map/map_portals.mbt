@@ -90,7 +90,7 @@ pub fn MapPortals::get_portal_pos_by_id(
 }
 
 ///|
-pub fn get_portal_by_name(
+pub fn MapPortals::get_portal_by_name(
   self : MapPortals,
   portal_name : String,
 ) -> Point[Int] {

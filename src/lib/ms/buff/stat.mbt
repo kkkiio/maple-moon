@@ -153,7 +153,7 @@ pub fn StatId::int_value(self : StatId) -> Int {
 }
 
 ///|
-pub fn hash(self : StatId) -> Int {
+pub fn StatId::hash(self : StatId) -> Int {
   self.int_value()
 }
 

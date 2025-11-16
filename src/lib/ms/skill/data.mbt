@@ -308,12 +308,12 @@ let skill_flags : Map[SkillId, (Bool, Bool)] = Map::from_array([
 ])
 
 ///|
-pub fn is_attack(self : SkillData) -> Bool {
+pub fn SkillData::is_attack(self : SkillData) -> Bool {
   not(self.passive) && self.is_attack
 }
 
 ///|
-pub fn get_stats(self : SkillData, level : Int) -> Stats? {
+pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats? {
   self.stats.get(level)
 }
 
@@ -460,7 +460,7 @@ pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType 
 }
 
 ///|
-typealias @resource.IntMap
+using @resource {type IntMap}
 
 ///|
-typealias @resource.Nullable
+using @resource {type Nullable}

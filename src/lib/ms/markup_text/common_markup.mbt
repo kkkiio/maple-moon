@@ -11,7 +11,7 @@ pub let color_map : Map[Char, ColorName] = {
 pub let font_weight_tag_map : Map[Char, Bool] = { 'n': false, 'e': true }
 
 ///|
-typealias @struct.ColorName
+using @struct {type ColorName}
 
 ///|
 /// #p[npcid]# - Shows the name of the NPC.

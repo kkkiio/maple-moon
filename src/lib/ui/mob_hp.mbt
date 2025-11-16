@@ -10,7 +10,7 @@ pub fn MobHpBar::default() -> MobHpBar {
 }
 
 ///|
-pub fn draw(
+pub fn MobHpBar::draw(
   self : MobHpBar,
   position : @struct.Point[Int],
   hppercent : Int,

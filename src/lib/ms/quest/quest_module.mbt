@@ -688,7 +688,7 @@ impl @game_mod.SubRouteAction for ShowExpGainAction with handle(_) -> Unit {
 }
 
 ///|
-fn handle_update_quest_info(
+fn Module::handle_update_quest_info(
   self : Module,
   msg : UpdateQuestInfoMessage,
 ) -> Unit {

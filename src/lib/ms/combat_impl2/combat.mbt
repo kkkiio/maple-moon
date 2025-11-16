@@ -286,7 +286,7 @@ pub fn Combat::apply_attack_to_mobs(
 }
 
 ///|
-fn apply_result_movement(
+fn Combat::apply_result_movement(
   self : Combat,
   player : @player.Player,
   act : @combat_impl.SpecialMove,
@@ -300,7 +300,7 @@ fn apply_result_movement(
 }
 
 ///|
-fn apply_rush(
+fn Combat::apply_rush(
   self : Combat,
   player : @player.Player,
   result : AttackResult,
@@ -441,7 +441,10 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-async fn load_sp_move(self : Combat, move_id : Int) -> @combat_impl.SpecialMove {
+async fn Combat::load_sp_move(
+  self : Combat,
+  move_id : Int,
+) -> @combat_impl.SpecialMove {
   let it = @combat_impl.Skill::load(
     move_id,
     self.bullet_module,
@@ -465,7 +468,7 @@ async fn load_sp_move(self : Combat, move_id : Int) -> @combat_impl.SpecialMove 
 }
 
 ///|
-fn extract_effects(
+fn Combat::extract_effects(
   self : Combat,
   user : @character.Character,
   act : @combat_impl.SpecialMove,
@@ -551,7 +554,7 @@ fn extract_effects(
 }
 
 ///|
-fn place_numbers(
+fn Combat::place_numbers(
   self : Combat,
   oid : Int,
   damage_lines : Array[(Int, Bool)],
@@ -572,7 +575,7 @@ fn place_numbers(
 }
 
 ///|
-fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
+fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let number = effect.number
   self.damage_numbers.push(number)
@@ -584,7 +587,7 @@ fn apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
 }
 
 ///|
-fn apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
+fn Combat::apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
   if effect.bullet.set_target(effect.target) {
     self.apply_damage_effect(effect.damageeffect)
   } else {
@@ -636,7 +639,7 @@ pub fn check_attack_type(
 }
 
 ///|
-pub fn can_use(
+pub fn Combat::can_use(
   self : Combat,
   character : @character.CharBase,
   skill_book : &@player.SkillBook,
@@ -667,7 +670,7 @@ pub fn can_use(
 }
 
 ///|
-fn has_cooldown(self : Combat, skill_id : Int) -> Bool {
+fn Combat::has_cooldown(self : Combat, skill_id : Int) -> Bool {
   self.cooldowns.get(skill_id).unwrap_or(0) > 0
 }
 
@@ -686,7 +689,7 @@ pub fn[E : Show] log_background_err(
 }
 
 ///|
-typealias @struct.Rectangle
+using @struct {type Rectangle}
 
 ///|
 pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
@@ -702,7 +705,7 @@ pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
 }
 
 ///|
-typealias @combat_proto.AttackResult
+using @combat_proto {type AttackResult}
 
 ///|
 pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {

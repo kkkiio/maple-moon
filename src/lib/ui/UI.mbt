@@ -53,12 +53,12 @@ pub fn UI::update(self : UI) -> Unit {
 // }
 
 ///|
-pub fn change_state(self : UI, state : &UIState) -> Unit {
+pub fn UI::change_state(self : UI, state : &UIState) -> Unit {
   self.state = Some(state)
 }
 
 ///|
-pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
+pub fn UI::send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
   guard self.state is Some(state) else { return }
   let mapping = (self.get_keyboard_mapping)(keycode)
   let escape = keycode == @keyboard.escape
@@ -66,7 +66,7 @@ pub fn send_key(self : UI, keycode : String, pressed : Bool) -> Unit {
 }
 
 ///|
-pub fn set_element(self : UI, focused : Bool, elem : Element) -> Unit {
+pub fn UI::set_element(self : UI, focused : Bool, elem : Element) -> Unit {
   guard self.state is Some(state) else { return }
   state.set_element(focused, elem)
 }

@@ -19,12 +19,12 @@ pub fn Module::new(
 }
 
 ///|
-pub fn get_map_mobs(self : Module) -> MapMobs {
+pub fn Module::get_map_mobs(self : Module) -> MapMobs {
   self.map_mobs
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
   player_stats_getter : () -> @char_stats.CharStats?,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {

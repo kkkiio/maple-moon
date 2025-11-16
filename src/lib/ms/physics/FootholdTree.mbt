@@ -93,7 +93,10 @@ pub fn FootholdTree::load_from_resource(
 }
 
 ///|
-pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
+pub fn FootholdTree::limit_movement(
+  self : FootholdTree,
+  phobj : PhysicsObject,
+) -> Unit {
   if phobj.moving_object.hmobile() {
     let crnt_x = phobj.moving_object.crnt_x()
     let next_x = phobj.moving_object.next_x()
@@ -137,7 +140,10 @@ pub fn limit_movement(self : FootholdTree, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-pub fn update_fh(self : FootholdTree, phobj : PhysicsObject) -> Unit {
+pub fn FootholdTree::update_fh(
+  self : FootholdTree,
+  phobj : PhysicsObject,
+) -> Unit {
   if phobj.t == PhysicsObjectType::FIXATED && phobj.fhid > 0 {
     return
   }
@@ -209,7 +215,7 @@ fn FootholdTree::get_fh(self : FootholdTree, fhid : Int) -> Foothold {
 }
 
 ///|
-pub fn get_wall(
+pub fn FootholdTree::get_wall(
   self : FootholdTree,
   curid : Int,
   left : Bool,
@@ -241,7 +247,11 @@ pub fn get_wall(
 }
 
 ///|
-pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
+pub fn FootholdTree::get_edge(
+  self : FootholdTree,
+  curid : Int,
+  left : Bool,
+) -> Double {
   let fh = self.get_fh(curid)
   if left {
     let previd = fh.prev()
@@ -266,7 +276,11 @@ pub fn get_edge(self : FootholdTree, curid : Int, left : Bool) -> Double {
 }
 
 ///|
-pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
+pub fn FootholdTree::get_fhid_below(
+  self : FootholdTree,
+  fx : Double,
+  fy : Double,
+) -> Int {
   let ix = fx.floor().to_int()
   let mut best_id = 0
   let mut best_y = self.borders.second().to_double()
@@ -282,7 +296,10 @@ pub fn get_fhid_below(self : FootholdTree, fx : Double, fy : Double) -> Int {
 }
 
 ///|
-pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {
+pub fn FootholdTree::get_y_below(
+  self : FootholdTree,
+  position : Point[Int],
+) -> Int {
   let fhid = self.get_fhid_below(position.x.to_double(), position.y.to_double())
   if fhid > 0 {
     let fh = self.get_fh(fhid)
@@ -292,12 +309,12 @@ pub fn get_y_below(self : FootholdTree, position : Point[Int]) -> Int {
 }
 
 ///|
-pub fn get_walls(self : FootholdTree) -> @struct.Range[Int] {
+pub fn FootholdTree::get_walls(self : FootholdTree) -> @struct.Range[Int] {
   self.walls
 }
 
 ///|
-pub fn get_borders(self : FootholdTree) -> @struct.Range[Int] {
+pub fn FootholdTree::get_borders(self : FootholdTree) -> @struct.Range[Int] {
   self.borders
 }
 

@@ -76,7 +76,7 @@ pub fn CharStats::new(
 }
 
 ///|
-pub fn init_totalstats(self : CharStats) -> Unit {
+pub fn CharStats::init_totalstats(self : CharStats) -> Unit {
   self.total_stats.0.clear()
   self.buff_deltas.0.clear()
   self.percentages.clear()
@@ -125,22 +125,29 @@ pub fn init_totalstats(self : CharStats) -> Unit {
 
 ///|
 /// Returns the total stat after applying equipment, buffs, and percentages
-pub fn get_total(self : CharStats, stat : @maple_stat.EquipStatId) -> Int {
+pub fn CharStats::get_total(
+  self : CharStats,
+  stat : @maple_stat.EquipStatId,
+) -> Int {
   self.total_stats[stat]
 }
 
 ///|
-pub fn get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
+pub fn CharStats::get_stat(self : CharStats, stat : @maple_stat.Id) -> Int {
   self.base_stats.get(stat).unwrap_or(0)
 }
 
 ///|
-pub fn get_i64stat(self : CharStats, stat : @maple_stat.Id) -> Int64 {
+pub fn CharStats::get_i64stat(self : CharStats, stat : @maple_stat.Id) -> Int64 {
   self.base_i64stats.get(stat).unwrap_or(0)
 }
 
 ///|
-pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
+pub fn CharStats::set_stat(
+  self : CharStats,
+  stat : @maple_stat.Id,
+  value : Int,
+) -> Unit {
   let old_value = self.get_stat(stat)
   self.base_stats.set(stat, value)
   match self.stat_listeners.get(stat) {
@@ -156,7 +163,7 @@ pub fn set_stat(self : CharStats, stat : @maple_stat.Id, value : Int) -> Unit {
 }
 
 ///|
-pub fn set_i64stat(
+pub fn CharStats::set_i64stat(
   self : CharStats,
   stat : @maple_stat.Id,
   value : Int64,
@@ -173,27 +180,27 @@ pub fn set_i64stat(
 }
 
 ///|
-pub fn get_stance(self : CharStats) -> Double {
+pub fn CharStats::get_stance(self : CharStats) -> Double {
   self.stance
 }
 
 ///|
-pub fn get_portal(self : CharStats) -> Int {
+pub fn CharStats::get_portal(self : CharStats) -> Int {
   self.portal
 }
 
 ///|
-pub fn get_map_id(self : CharStats) -> Int {
+pub fn CharStats::get_map_id(self : CharStats) -> Int {
   self.map_id
 }
 
 ///|
-pub fn set_map_id(self : CharStats, id : Int) -> Unit {
+pub fn CharStats::set_map_id(self : CharStats, id : Int) -> Unit {
   self.map_id = id
 }
 
 ///|
-pub fn add_value(
+pub fn CharStats::add_value(
   self : CharStats,
   stat : @maple_stat.EquipStatId,
   value : Int,
@@ -203,7 +210,7 @@ pub fn add_value(
 }
 
 ///|
-pub fn set_total(
+pub fn CharStats::set_total(
   self : CharStats,
   stat : @maple_stat.EquipStatId,
   value : Int,
@@ -222,7 +229,7 @@ pub fn set_total(
 }
 
 ///|
-pub fn close_totalstats(self : CharStats) -> Unit {
+pub fn CharStats::close_totalstats(self : CharStats) -> Unit {
   self.total_stats[@maple_stat.EquipStatId::ACC] += self.calculate_accuracy()
   for stat, p in self.percentages {
     let total = self.get_total(stat)
@@ -241,26 +248,26 @@ pub fn close_totalstats(self : CharStats) -> Unit {
 }
 
 ///|
-fn get_primary_stat(self : CharStats) -> Int {
+fn CharStats::get_primary_stat(self : CharStats) -> Int {
   let primary = self.job.get_primary(self.get_weapon_type())
   return (self.get_multiplier() * self.get_total(primary).to_double()).to_int()
 }
 
 ///|
-fn get_secondary_stat(self : CharStats) -> Int {
+fn CharStats::get_secondary_stat(self : CharStats) -> Int {
   let secondary = self.job.get_secondary(self.get_weapon_type())
   return self.get_total(secondary)
 }
 
 ///|
-fn calculate_accuracy(self : CharStats) -> Int {
+fn CharStats::calculate_accuracy(self : CharStats) -> Int {
   let totaldex = self.get_total(@maple_stat.EquipStatId::DEX)
   let totalluk = self.get_total(@maple_stat.EquipStatId::LUK)
   return (totaldex.to_double() * 0.8 + totalluk.to_double() * 0.5).to_int()
 }
 
 ///|
-fn get_multiplier(self : CharStats) -> Double {
+fn CharStats::get_multiplier(self : CharStats) -> Double {
   match self.get_weapon_type() {
     @weapon.Type::SWORD_1H => 4.0
     @weapon.Type::AXE_1H => 4.0
@@ -303,7 +310,7 @@ let eqstat_caps : Map[@maple_stat.EquipStatId, Int] = Map::from_array([
 ])
 
 ///|
-pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
+pub fn CharStats::calculate_damage(self : CharStats, mobatk : Int) -> Int {
   // TODO: Random stuff, need to find the actual formula somewhere.
   let weapon_def = self.get_total(@maple_stat.EquipStatId::WDEF)
   if weapon_def == 0 {
@@ -314,83 +321,86 @@ pub fn calculate_damage(self : CharStats, mobatk : Int) -> Int {
 }
 
 ///|
-pub fn get_maxdamage(self : CharStats) -> Int {
+pub fn CharStats::get_maxdamage(self : CharStats) -> Int {
   self.max_damage
 }
 
 ///|
-pub fn get_mindamage(self : CharStats) -> Int {
+pub fn CharStats::get_mindamage(self : CharStats) -> Int {
   self.min_damage
 }
 
 ///|
-pub fn get_critical(self : CharStats) -> Double {
+pub fn CharStats::get_critical(self : CharStats) -> Double {
   self.critical
 }
 
 ///|
-pub fn get_ignoredef(self : CharStats) -> Double {
+pub fn CharStats::get_ignoredef(self : CharStats) -> Double {
   self.ignore_def
 }
 
 ///|
-pub fn get_range(self : CharStats) -> @struct.Rectangle[Int] {
+pub fn CharStats::get_range(self : CharStats) -> @struct.Rectangle[Int] {
   @struct.Rectangle::from4(-self.projectile_range, -5, -50, 50)
 }
 
 ///|
-pub fn get_attackspeed(self : CharStats) -> Int {
+pub fn CharStats::get_attackspeed(self : CharStats) -> Int {
   self.attack_speed
 }
 
 ///|
-pub fn get_job(self : CharStats) -> @job.Job {
+pub fn CharStats::get_job(self : CharStats) -> @job.Job {
   self.job
 }
 
 ///|
-pub fn get_weapon_type(self : CharStats) -> @weapon.Type {
+pub fn CharStats::get_weapon_type(self : CharStats) -> @weapon.Type {
   (self.weapon_type_getter)()
 }
 
 ///|
-pub fn get_exp(self : CharStats) -> Int64 {
+pub fn CharStats::get_exp(self : CharStats) -> Int64 {
   self.get_i64stat(@maple_stat.Id::EXP)
 }
 
 ///|
-pub fn set_exp(self : CharStats, exp : Int64) -> Unit {
+pub fn CharStats::set_exp(self : CharStats, exp : Int64) -> Unit {
   self.set_i64stat(@maple_stat.Id::EXP, exp)
 }
 
 ///|
-pub fn get_female(self : CharStats) -> Bool {
+pub fn CharStats::get_female(self : CharStats) -> Bool {
   self.female
 }
 
 ///|
-pub fn get_buffdelta(self : CharStats, stat : @maple_stat.EquipStatId) -> Int {
+pub fn CharStats::get_buffdelta(
+  self : CharStats,
+  stat : @maple_stat.EquipStatId,
+) -> Int {
   self.buff_deltas[stat]
 }
 
 ///|
-pub fn get_name(self : CharStats) -> String {
+pub fn CharStats::get_name(self : CharStats) -> String {
   self.name
 }
 
 ///|
-pub fn is_damage_buffed(self : CharStats) -> Bool {
+pub fn CharStats::is_damage_buffed(self : CharStats) -> Bool {
   self.get_buffdelta(@maple_stat.EquipStatId::WATK) > 0 ||
   self.get_buffdelta(@maple_stat.EquipStatId::MAGIC) > 0
 }
 
 ///|
-pub fn change_job(self : CharStats, job : @job.Job) -> Unit {
+pub fn CharStats::change_job(self : CharStats, job : @job.Job) -> Unit {
   self.job = job
 }
 
 ///|
-pub fn get_matk(self : CharStats) -> Int {
+pub fn CharStats::get_matk(self : CharStats) -> Int {
   self.total_stats[@maple_stat.MAGIC]
 }
 
@@ -398,7 +408,7 @@ pub fn get_matk(self : CharStats) -> Int {
 /// Watch for stat changes
 /// 
 /// The `listener` will be called when the stat changes.
-pub fn watch_stat_changes(
+pub fn CharStats::watch_stat_changes(
   self : CharStats,
   stat_id : MapleStatId,
   trigger_now? : Bool = false,
@@ -415,7 +425,7 @@ pub fn watch_stat_changes(
 }
 
 ///|
-pub fn watch_i64stat_changes(
+pub fn CharStats::watch_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
   trigger_now? : Bool = false,

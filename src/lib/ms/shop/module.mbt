@@ -42,7 +42,7 @@ fn Module::new(
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [

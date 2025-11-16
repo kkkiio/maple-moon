@@ -52,7 +52,7 @@ pub impl @player.SkillBook for SkillBook with get_level(
 }
 
 ///|
-pub fn collect_required(
+pub fn SkillBook::collect_required(
   self : SkillBook,
   id : Int,
 ) -> @immut/hashmap.T[Int, Int] {
@@ -64,7 +64,7 @@ pub fn collect_required(
 }
 
 ///|
-pub fn get_masterlevel(self : SkillBook, id : Int) -> Int {
+pub fn SkillBook::get_masterlevel(self : SkillBook, id : Int) -> Int {
   let iter = self.skill_entries.get(id)
   match iter {
     Some(entry) => entry.master_level
@@ -140,12 +140,15 @@ pub fn SkillBook::on_attack_event(
 }
 
 ///|
-pub fn get_skill_data(self : SkillBook, id : Int) -> @skill.SkillData? {
+pub fn SkillBook::get_skill_data(
+  self : SkillBook,
+  id : Int,
+) -> @skill.SkillData? {
   self.available_skills.get(id)
 }
 
 ///|
-pub typealias (SkillBookEvent) -> Bool as SkillBookWatcher
+pub type SkillBookWatcher = (SkillBookEvent) -> Bool
 
 ///|
 pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {

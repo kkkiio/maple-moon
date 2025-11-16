@@ -38,10 +38,11 @@ pub async fn Module::load_char_look(
   self : Module,
   entry : LookEntry,
 ) -> CharLook {
-  let body = self.load_body_by_skin_id(entry.skin)
-  let hair = self.load_hair_by_id(entry.hairid)
-  let face = self.load_face_by_id(entry.faceid)
-  CharLook::load(entry, body, hair, face, self.draw_info)
+  // let body = self.load_body_by_skin_id(entry.skin)
+  // let hair = self.load_hair_by_id(entry.hairid)
+  // let face = self.load_face_by_id(entry.faceid)
+  // CharLook::load(entry, body, hair, face, self.draw_info)
+  ...
 }
 
 ///|

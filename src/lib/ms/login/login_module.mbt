@@ -61,7 +61,7 @@ pub fn Module::new(
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
   transition : (Int, Int) -> Unit,
   set_player_stage : (
@@ -334,7 +334,7 @@ fn parse_login_result(recv : @net.InPacket) -> LoginResult raise Error {
 ///|
 /// handle_login_result handles a packet that contains the response to an
 /// attempt at logging in
-pub fn handle_login_result(self : Module, result : LoginResult) -> Unit {
+pub fn Module::handle_login_result(self : Module, result : LoginResult) -> Unit {
 
   // The packet should contain a 'reason' integer which can signify
   // various things
@@ -424,7 +424,7 @@ pub fn parse_server_status(recv : @net.InPacket) -> ServerStatus raise Error {
 }
 
 ///|
-fn parse_server_list(
+fn Module::parse_server_list(
   self : Module,
   recv : @net.InPacket,
 ) -> Array[World]? raise Error {
@@ -442,7 +442,7 @@ fn parse_server_list(
 }
 
 ///|
-fn handle_server_list(self : Module, worlds : Array[World]?) -> Unit {
+fn Module::handle_server_list(self : Module, worlds : Array[World]?) -> Unit {
   guard worlds is Some(worlds) else { // unfinished server list
     return
   }

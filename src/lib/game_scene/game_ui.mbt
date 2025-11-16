@@ -1,5 +1,5 @@
 ///|
-typealias @ui.UIElementType
+using @ui {type UIElementType}
 
 ///|
 struct UIStateGame {
@@ -198,7 +198,7 @@ pub impl @ui.UIState for UIStateGame with set_element(
 }
 
 ///|
-pub fn toggle_element(
+pub fn UIStateGame::toggle_element(
   self : UIStateGame,
   t : UIElementType,
   is_focused : Bool,

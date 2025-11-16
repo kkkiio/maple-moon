@@ -11,29 +11,36 @@ pub fn Keyboard::new(keymap : Map[String, Mapping]) -> Keyboard {
 }
 
 ///|
-pub fn get_maplekeys(self : Keyboard) -> Map[MsKey, Mapping] {
+pub fn Keyboard::get_maplekeys(self : Keyboard) -> Map[MsKey, Mapping] {
   self.maple_keys
 }
 
 ///|
-pub fn assign(self : Keyboard, key : MsKey, mapping : Mapping) -> Unit {
+pub fn Keyboard::assign(
+  self : Keyboard,
+  key : MsKey,
+  mapping : Mapping,
+) -> Unit {
   self.keymap.set(mskey_to_keycode(key), mapping)
   self.maple_keys.set(key, mapping)
 }
 
 ///|
-pub fn remove(self : Keyboard, key : MsKey) -> Unit {
+pub fn Keyboard::remove(self : Keyboard, key : MsKey) -> Unit {
   self.keymap.remove(mskey_to_keycode(key))
   self.maple_keys.remove(key)
 }
 
 ///|
-pub fn get_mapping(self : Keyboard, keycode : KeyCode) -> Mapping? {
+pub fn Keyboard::get_mapping(self : Keyboard, keycode : KeyCode) -> Mapping? {
   self.keymap.get(keycode)
 }
 
 ///|
-pub fn get_mapping_by_ms_key(self : Keyboard, key : MsKey) -> Mapping? {
+pub fn Keyboard::get_mapping_by_ms_key(
+  self : Keyboard,
+  key : MsKey,
+) -> Mapping? {
   self.maple_keys.get(key)
 }
 

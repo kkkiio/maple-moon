@@ -174,7 +174,11 @@ pub fn Face::draw(
 }
 
 ///|
-pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
+pub fn Face::nextframe(
+  self : Face,
+  expression : ExpressionId,
+  frame : Int,
+) -> Int {
   if self.expressions[expression].contains(frame + 1) {
     frame + 1
   } else {
@@ -183,7 +187,11 @@ pub fn nextframe(self : Face, expression : ExpressionId, frame : Int) -> Int {
 }
 
 ///|
-pub fn get_delay(self : Face, expression : ExpressionId, frame : Int) -> Int {
+pub fn Face::get_delay(
+  self : Face,
+  expression : ExpressionId,
+  frame : Int,
+) -> Int {
   match self.expressions[expression].get(frame) {
     Some(delayit) => delayit.delay
     None => 100

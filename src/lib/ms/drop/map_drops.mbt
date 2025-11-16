@@ -31,12 +31,12 @@ fn MapDrops::new(
 }
 
 ///|
-pub fn spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
+pub fn MapDrops::spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
 ///|
-pub fn draw(
+pub fn MapDrops::draw(
   self : MapDrops,
   layer : @map_layer.Id,
   viewx : Double,
@@ -100,12 +100,12 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
 }
 
 ///|
-pub fn clear(self : MapDrops) -> Unit {
+pub fn MapDrops::clear(self : MapDrops) -> Unit {
   self.drops.clear()
 }
 
 ///|
-pub fn list_loot_at(
+pub fn MapDrops::list_loot_at(
   self : MapDrops,
   playerpos : @struct.Point[Int],
 ) -> Iter[(Int, @struct.Point[Int])] {

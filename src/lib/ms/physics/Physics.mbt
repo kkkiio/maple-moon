@@ -31,7 +31,7 @@ pub fn Physics::from_resource(src : NxFootholdTree) -> Physics raise {
 }
 
 ///|
-pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
+pub fn Physics::move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   // Determine which platform the object is currently on
   self.fh_tree.update_fh(tomove)
 
@@ -57,7 +57,7 @@ pub fn move_object(self : Physics, tomove : PhysicsObject) -> Unit {
 }
 
 ///|
-fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
+fn Physics::move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.vacc = 0.0
   phobj.hacc = 0.0
   if phobj.onground {
@@ -88,7 +88,7 @@ fn move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-fn move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
+fn Physics::move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
   phobj.hforce = 0.0
@@ -110,7 +110,7 @@ fn move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-fn move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
+fn Physics::move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
   phobj.hforce = 0.0
@@ -144,6 +144,6 @@ pub fn Physics::get_y_below(
 }
 
 ///|
-pub fn get_fht(self : Physics) -> FootholdTree {
+pub fn Physics::get_fht(self : Physics) -> FootholdTree {
   self.fh_tree
 }

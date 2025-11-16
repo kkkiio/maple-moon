@@ -2,7 +2,7 @@
 pub(all) suberror UnknownEnum Int derive(Show)
 
 ///|
-pub fn to_string(self : UnknownEnum) -> String {
+pub fn UnknownEnum::to_string(self : UnknownEnum) -> String {
   "UnknownEnum(\{self})"
 }
 

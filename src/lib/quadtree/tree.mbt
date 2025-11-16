@@ -34,7 +34,7 @@ pub fn[K, V] Tree::new() -> Tree[K, V] {
 }
 
 ///|
-pub fn[K : Hash + Eq, V : QuadCompare] add(
+pub fn[K : Hash + Eq, V : QuadCompare] Tree::add(
   self : Tree[K, V],
   key : K,
   value : V,
@@ -57,7 +57,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] add(
 }
 
 ///|
-pub fn[K : Hash + Eq, V : QuadCompare] ceiling_key(
+pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_key(
   self : Tree[K, V],
   value : V,
 ) -> K? {
@@ -65,7 +65,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] ceiling_key(
 }
 
 ///|
-pub fn[K : Hash + Eq, V : QuadCompare] ceiling_entry(
+pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_entry(
   self : Tree[K, V],
   value : V,
 ) -> Node[K, V]? {
@@ -73,7 +73,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] ceiling_entry(
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] find_ceiling_from(
+fn[K : Hash + Eq, V : QuadCompare] Tree::find_ceiling_from(
   self : Tree[K, V],
   start : Node[K, V]?,
   value : V,
@@ -156,13 +156,13 @@ pub fn[K : Hash + Eq, V : QuadCompare] Tree::remove(
 }
 
 ///|
-pub fn[K, V] clear(self : Tree[K, V]) -> Unit {
+pub fn[K, V] Tree::clear(self : Tree[K, V]) -> Unit {
   self.nodes.clear()
   self.root = None
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] set_link(
+fn[K : Hash + Eq, V : QuadCompare] Tree::set_link(
   self : Tree[K, V],
   start : Node[K, V]?,
   node : Node[K, V],
@@ -179,7 +179,7 @@ fn[K : Hash + Eq, V : QuadCompare] set_link(
 }
 
 ///|
-fn[K, V : QuadCompare] add_or_next(
+fn[K, V : QuadCompare] Node::add_or_next(
   self : Node[K, V],
   child : Node[K, V],
 ) -> Node[K, V]? {
@@ -221,7 +221,7 @@ fn[K, V : QuadCompare] add_or_next(
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] remove_child(
+fn[K : Hash + Eq, V : QuadCompare] Node::remove_child(
   self : Node[K, V],
   key : K,
 ) -> Unit {

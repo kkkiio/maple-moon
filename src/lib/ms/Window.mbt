@@ -20,6 +20,10 @@ fn Window::new(ui : UI) -> Window {
 // }
 
 ///|
-pub fn key_callback(self : Window, keyCode : String, pressed : Bool) -> Unit {
+pub fn Window::key_callback(
+  self : Window,
+  keyCode : String,
+  pressed : Bool,
+) -> Unit {
   self.ui.send_key(keyCode, pressed)
 }

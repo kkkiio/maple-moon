@@ -14,12 +14,12 @@ pub fn OutPacket::new(opcode : ClientOpcode) -> OutPacket {
 
 ///|
 #deprecated("use send_message instead")
-pub fn dispatch(self : OutPacket) -> Unit {
+pub fn OutPacket::dispatch(self : OutPacket) -> Unit {
   Network::get().send_packet(self)
 }
 
 ///|
-pub fn encode(self : OutPacket) -> Bytes {
+pub fn OutPacket::encode(self : OutPacket) -> Bytes {
   self.buf.to_bytes()
 }
 
@@ -49,7 +49,7 @@ pub fn OutPacket::write_short(self : OutPacket, sh : Int) -> Unit {
 }
 
 ///|
-pub fn write_int(self : OutPacket, in_val : Int) -> Unit {
+pub fn OutPacket::write_int(self : OutPacket, in_val : Int) -> Unit {
   let mut i = 0
   let mut in_val = in_val
   while i < 4 {
@@ -185,10 +185,10 @@ pub(all) enum ClientOpcode {
 } derive(Eq, Compare, Show)
 
 ///|
-pub fn int_value(self : ClientOpcode) -> Int = "%identity"
+pub fn ClientOpcode::int_value(self : ClientOpcode) -> Int = "%identity"
 
 ///|
-pub fn log_level(self : ClientOpcode) -> @log.Level {
+pub fn ClientOpcode::log_level(self : ClientOpcode) -> @log.Level {
   match self {
     MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE
     _ => @log.Level::INFO

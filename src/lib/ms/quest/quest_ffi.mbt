@@ -277,10 +277,10 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.color_map
   |> Map::from_iter
 
 ///|
-typealias @struct.ColorName
+using @struct {type ColorName}
 
 ///|
-typealias @markup_text.Style
+using @markup_text {type Style}
 
 ///|
 test "parse quest desc 1" {

@@ -1,5 +1,5 @@
 ///|
-fn read(self : Socket) -> Bytes = "socket" "read"
+fn Socket::read(self : Socket) -> Bytes = "socket" "read"
 
 ///|
-fn write(self : Socket, packet : Bytes) -> Unit = "socket" "write"
+fn Socket::write(self : Socket, packet : Bytes) -> Unit = "socket" "write"

@@ -23,7 +23,7 @@ pub fn MobCombat::new(
 }
 
 ///|
-pub fn use_move(
+pub fn MobCombat::use_move(
   self : MobCombat,
   oid : Int,
   move_id : Int,

@@ -10,12 +10,12 @@ pub fn InPacket::new(bytes : Bytes) -> InPacket {
 }
 
 ///|
-pub fn available(self : InPacket) -> Int {
+pub fn InPacket::available(self : InPacket) -> Int {
   self.bytes.length() - self.pos
 }
 
 ///|
-pub fn check_available(
+pub fn InPacket::check_available(
   self : InPacket,
   size : Int,
 ) -> Unit raise ReadPacketError {
@@ -25,14 +25,14 @@ pub fn check_available(
 }
 
 ///|
-pub fn check_finished(self : InPacket) -> Unit raise ReadPacketError {
+pub fn InPacket::check_finished(self : InPacket) -> Unit raise ReadPacketError {
   if self.pos < self.bytes.length() {
     raise ReadPacketError("Remaining \{self.bytes.length() - self.pos} bytes")
   }
 }
 
 ///|
-pub fn read_ubyte(self : InPacket) -> Int raise ReadPacketError {
+pub fn InPacket::read_ubyte(self : InPacket) -> Int raise ReadPacketError {
   self.check_available(1)
   let res = self.bytes[self.pos]
   self.pos += 1
@@ -40,7 +40,7 @@ pub fn read_ubyte(self : InPacket) -> Int raise ReadPacketError {
 }
 
 ///|
-pub fn read_byte(self : InPacket) -> Int raise ReadPacketError {
+pub fn InPacket::read_byte(self : InPacket) -> Int raise ReadPacketError {
   let u = self.read_ubyte()
   if u > 0x7f {
     u - 0x100
@@ -50,7 +50,7 @@ pub fn read_byte(self : InPacket) -> Int raise ReadPacketError {
 }
 
 ///|
-pub fn read_bool(self : InPacket) -> Bool raise ReadPacketError {
+pub fn InPacket::read_bool(self : InPacket) -> Bool raise ReadPacketError {
   match self.read_byte() {
     0 => false
     1 => true
@@ -59,7 +59,7 @@ pub fn read_bool(self : InPacket) -> Bool raise ReadPacketError {
 }
 
 ///|
-pub fn read_ushort(self : InPacket) -> Int raise ReadPacketError {
+pub fn InPacket::read_ushort(self : InPacket) -> Int raise ReadPacketError {
   self.check_available(2)
   let res = read_le_uint16(self.bytes, self.pos)
   self.pos += 2
@@ -67,7 +67,7 @@ pub fn read_ushort(self : InPacket) -> Int raise ReadPacketError {
 }
 
 ///|
-pub fn read_short(self : InPacket) -> Int raise ReadPacketError {
+pub fn InPacket::read_short(self : InPacket) -> Int raise ReadPacketError {
   let u = self.read_ushort()
   if u > 0x7fff {
     u - 0x10000
@@ -77,7 +77,7 @@ pub fn read_short(self : InPacket) -> Int raise ReadPacketError {
 }
 
 ///|
-pub fn read_uint(self : InPacket) -> UInt raise ReadPacketError {
+pub fn InPacket::read_uint(self : InPacket) -> UInt raise ReadPacketError {
   self.check_available(4)
   let res = read_le_uint32(self.bytes, self.pos)
   self.pos += 4
@@ -85,12 +85,12 @@ pub fn read_uint(self : InPacket) -> UInt raise ReadPacketError {
 }
 
 ///|
-pub fn read_int(self : InPacket) -> Int raise ReadPacketError {
+pub fn InPacket::read_int(self : InPacket) -> Int raise ReadPacketError {
   self.read_uint().reinterpret_as_int()
 }
 
 ///|
-pub fn read_long(self : InPacket) -> Int64 raise ReadPacketError {
+pub fn InPacket::read_long(self : InPacket) -> Int64 raise ReadPacketError {
   self.check_available(8)
   let res = read_le_uint64(self.bytes, self.pos)
   self.pos += 8
@@ -98,7 +98,7 @@ pub fn read_long(self : InPacket) -> Int64 raise ReadPacketError {
 }
 
 ///|
-pub fn read_string(self : InPacket) -> String raise ReadPacketError {
+pub fn InPacket::read_string(self : InPacket) -> String raise ReadPacketError {
   let size = self.read_ushort()
   self.check_available(size)
   let res = byte_iter_to_string(
@@ -109,7 +109,7 @@ pub fn read_string(self : InPacket) -> String raise ReadPacketError {
 }
 
 ///|
-pub fn read_padded_string(
+pub fn InPacket::read_padded_string(
   self : InPacket,
   size : Int,
 ) -> String raise ReadPacketError {
@@ -131,28 +131,31 @@ fn byte_iter_to_string(byte_iter : Iter[Byte]) -> String {
 }
 
 ///|
-pub fn skip(self : InPacket, size : Int) -> Unit raise ReadPacketError {
+pub fn InPacket::skip(
+  self : InPacket,
+  size : Int,
+) -> Unit raise ReadPacketError {
   self.check_available(size)
   self.pos += size
 }
 
 ///|
-pub fn skip_byte(self : InPacket) -> Unit raise ReadPacketError {
+pub fn InPacket::skip_byte(self : InPacket) -> Unit raise ReadPacketError {
   self.skip(1)
 }
 
 ///|
-pub fn skip_short(self : InPacket) -> Unit raise ReadPacketError {
+pub fn InPacket::skip_short(self : InPacket) -> Unit raise ReadPacketError {
   self.skip(2)
 }
 
 ///|
-pub fn skip_int(self : InPacket) -> Unit raise ReadPacketError {
+pub fn InPacket::skip_int(self : InPacket) -> Unit raise ReadPacketError {
   self.skip(4)
 }
 
 ///|
-pub fn skip_long(self : InPacket) -> Unit raise ReadPacketError {
+pub fn InPacket::skip_long(self : InPacket) -> Unit raise ReadPacketError {
   self.skip(8)
 }
 
@@ -182,7 +185,9 @@ fn read_le_uint64(bytes : Bytes, offset : Int) -> UInt64 {
 }
 
 ///|
-pub fn read_point(self : InPacket) -> @struct.Point[Int] raise ReadPacketError {
+pub fn InPacket::read_point(
+  self : InPacket,
+) -> @struct.Point[Int] raise ReadPacketError {
   { x: self.read_short(), y: self.read_short() }
 }
 

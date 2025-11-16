@@ -69,7 +69,7 @@ pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
 }
 
 ///|
-pub typealias @resource.NxTexture as TextureResource
+pub using @resource {type NxTexture as TextureResource}
 
 ///|
 

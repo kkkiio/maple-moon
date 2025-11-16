@@ -20,22 +20,22 @@ pub fn[T] Rectangle::from4(
 }
 
 ///|
-pub fn[T] left(self : Rectangle[T]) -> T {
+pub fn[T] Rectangle::left(self : Rectangle[T]) -> T {
   self.lt.x
 }
 
 ///|
-pub fn[T] top(self : Rectangle[T]) -> T {
+pub fn[T] Rectangle::top(self : Rectangle[T]) -> T {
   self.lt.y
 }
 
 ///|
-pub fn[T] right(self : Rectangle[T]) -> T {
+pub fn[T] Rectangle::right(self : Rectangle[T]) -> T {
   self.rb.x
 }
 
 ///|
-pub fn[T] bottom(self : Rectangle[T]) -> T {
+pub fn[T] Rectangle::bottom(self : Rectangle[T]) -> T {
   self.rb.y
 }
 
@@ -71,22 +71,22 @@ pub fn Rectangle::overlaps(self : Rectangle[Int], ar : Rectangle[Int]) -> Bool {
 }
 
 ///|
-pub fn get_horizontal(self : Rectangle[Int]) -> Range[Int] {
+pub fn Rectangle::get_horizontal(self : Rectangle[Int]) -> Range[Int] {
   Range::new(self.left(), self.right())
 }
 
 ///|
-pub fn get_vertical(self : Rectangle[Int]) -> Range[Int] {
+pub fn Rectangle::get_vertical(self : Rectangle[Int]) -> Range[Int] {
   Range::new(self.top(), self.bottom())
 }
 
 ///|
-pub fn[T : Eq] is_empty(self : Rectangle[T]) -> Bool {
+pub fn[T : Eq] Rectangle::is_empty(self : Rectangle[T]) -> Bool {
   self.lt.straight() && self.rb.straight() && self.straight()
 }
 
 ///|
-pub fn flip_x(self : Rectangle[Int]) -> Rectangle[Int] {
+pub fn Rectangle::flip_x(self : Rectangle[Int]) -> Rectangle[Int] {
   {
     lt: { x: -self.right(), y: self.top() },
     rb: { x: -self.left(), y: self.bottom() },

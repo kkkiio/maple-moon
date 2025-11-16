@@ -129,7 +129,7 @@ pub fn StanceId::by_id(id : Int) -> StanceId {
 }
 
 ///|
-pub fn is_climbing(self : StanceId) -> Bool {
+pub fn StanceId::is_climbing(self : StanceId) -> Bool {
   return self == StanceId::LADDER || self == StanceId::ROPE
 }
 
@@ -202,7 +202,7 @@ pub fn StanceId::from_name(name : String) -> StanceId? {
 }
 
 ///|
-pub fn name(self : StanceId) -> String {
+pub fn StanceId::name(self : StanceId) -> String {
   match self {
     StanceId::NONE => ""
     StanceId::ALERT => "alert"

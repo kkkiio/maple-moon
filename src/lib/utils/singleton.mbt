@@ -14,6 +14,6 @@ pub fn[T] Singleton::set(self : Singleton[T], value : T) -> Unit {
 }
 
 ///|
-pub fn[T] must_get(self : Singleton[T]) -> T {
+pub fn[T] Singleton::must_get(self : Singleton[T]) -> T {
   self.instance.unwrap()
 }

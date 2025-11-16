@@ -22,12 +22,12 @@ pub fn CharEquips::new() -> CharEquips {
 }
 
 ///|
-pub fn get_weapon(self : CharEquips) -> @weapon.WeaponData? {
+pub fn CharEquips::get_weapon(self : CharEquips) -> @weapon.WeaponData? {
   self.weapon_data
 }
 
 ///|
-pub fn get_equip(self : CharEquips, slot : @slot.Id) -> Int {
+pub fn CharEquips::get_equip(self : CharEquips, slot : @slot.Id) -> Int {
   self.clothes.get(slot).map(fn(it) { it.get_id() }).unwrap_or(0)
 }
 
@@ -46,7 +46,7 @@ pub fn CharEquips::draw(
 
 ///|
 /// WARN: not accurate
-pub fn getcaptype(self : CharEquips) -> CapType {
+pub fn CharEquips::getcaptype(self : CharEquips) -> CapType {
   guard self.clothes.get(@slot.Id::HAT) is Some(cap) else {
     return CapType::NONE
   }
@@ -59,18 +59,18 @@ pub fn getcaptype(self : CharEquips) -> CapType {
 }
 
 ///|
-pub fn has_overall(self : CharEquips) -> Bool {
+pub fn CharEquips::has_overall(self : CharEquips) -> Bool {
   self.get_equip(@slot.Id::TOP) / 10000 == 105
 }
 
 ///|
-pub fn is_twohanded(self : CharEquips) -> Bool {
+pub fn CharEquips::is_twohanded(self : CharEquips) -> Bool {
   guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else { return false }
   weapon.is_twohanded()
 }
 
 ///|
-pub fn add_equip(
+pub fn CharEquips::add_equip(
   self : CharEquips,
   item_data : @item.ItemData,
   slot : @slot.Id,
@@ -84,7 +84,7 @@ pub fn add_equip(
 }
 
 ///|
-pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
+pub fn CharEquips::remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
   self.clothes.remove(slot)
   if slot == @slot.Id::WEAPON {
     self.weapon_data = None
@@ -92,12 +92,12 @@ pub fn remove_equip(self : CharEquips, slot : @slot.Id) -> Unit {
 }
 
 ///|
-pub fn has_weapon(self : CharEquips) -> Bool {
+pub fn CharEquips::has_weapon(self : CharEquips) -> Bool {
   self.clothes.get(@slot.Id::WEAPON) is Some(_)
 }
 
 ///|
-pub fn adjust_stance(
+pub fn CharEquips::adjust_stance(
   self : CharEquips,
   stance : @types.StanceId,
 ) -> @types.StanceId {

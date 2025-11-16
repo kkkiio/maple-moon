@@ -40,7 +40,7 @@ pub impl ToJson for Id with to_json(self) -> Json {
 }
 
 ///|
-pub fn int_value(self : Id) -> Int {
+pub fn Id::int_value(self : Id) -> Int {
   match self {
     NONE => 0
     HAT => 1

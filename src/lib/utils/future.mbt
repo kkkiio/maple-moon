@@ -9,7 +9,7 @@ struct Future[T] {
 
 ///|
 /// Poll the future.
-pub fn[T] poll(self : Future[T]) -> T? {
+pub fn[T] Future::poll(self : Future[T]) -> T? {
   match self.resolved {
     Some(_) => self.resolved
     None => {
@@ -40,7 +40,7 @@ pub fn[T] Future::never() -> Future[T] {
 }
 
 ///|
-pub fn[T, U] map(self : Future[T], f : (T) -> U) -> Future[U] {
+pub fn[T, U] Future::map(self : Future[T], f : (T) -> U) -> Future[U] {
   Future::new(fn() {
     match self.poll() {
       Some(t) => Some(f(t))
@@ -50,12 +50,12 @@ pub fn[T, U] map(self : Future[T], f : (T) -> U) -> Future[U] {
 }
 
 ///|
-pub fn[T, U] bind(self : Future[T], f : (T) -> Future[U]) -> Future[U] {
+pub fn[T, U] Future::bind(self : Future[T], f : (T) -> Future[U]) -> Future[U] {
   self.map(f).flatten()
 }
 
 ///|
-pub fn[T] flatten(self : Future[Future[T]]) -> Future[T] {
+pub fn[T] Future::flatten(self : Future[Future[T]]) -> Future[T] {
   Future::new(fn() {
     match self.poll() {
       Some(f) => f.poll()
@@ -65,7 +65,7 @@ pub fn[T] flatten(self : Future[Future[T]]) -> Future[T] {
 }
 
 ///|
-pub fn[T, U, E : Error] map_exn(
+pub fn[T, U, E : Error] Future::map_exn(
   self : Future[T],
   f : (T) -> U raise E,
 ) -> Future[Result[U, E]] {
@@ -73,7 +73,7 @@ pub fn[T, U, E : Error] map_exn(
 }
 
 ///|
-pub fn[T] tap(self : Future[T], f : (T) -> Unit) -> Future[T] {
+pub fn[T] Future::tap(self : Future[T], f : (T) -> Unit) -> Future[T] {
   self.map(fn(t) {
     f(t)
     t
@@ -81,12 +81,15 @@ pub fn[T] tap(self : Future[T], f : (T) -> Unit) -> Future[T] {
 }
 
 ///|
-pub fn[T, U] combine(self : Future[T], other : Future[U]) -> Future[(T, U)] {
+pub fn[T, U] Future::combine(
+  self : Future[T],
+  other : Future[U],
+) -> Future[(T, U)] {
   self.map(fn(t) { other.map(fn(u) { (t, u) }) }).flatten()
 }
 
 ///|
-pub fn[T, U, V] combine3(
+pub fn[T, U, V] Future::combine3(
   self : Future[T],
   other1 : Future[U],
   other2 : Future[V],

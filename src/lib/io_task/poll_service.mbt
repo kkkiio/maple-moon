@@ -17,7 +17,7 @@ pub fn PollService::add(
 }
 
 ///|
-pub fn[T] on_complete(
+pub fn[T] PollService::on_complete(
   self : PollService,
   future : @utils.Future[T],
   cb : (T) -> Unit,
@@ -26,6 +26,6 @@ pub fn[T] on_complete(
 }
 
 ///|
-pub fn run(self : PollService) -> Unit {
+pub fn PollService::run(self : PollService) -> Unit {
   self.io_tasks.retain(fn(f) { f.poll().is_empty() })
 }

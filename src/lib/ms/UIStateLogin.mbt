@@ -1,5 +1,5 @@
 ///|
-typealias @ui.UIElementType
+using @ui {type UIElementType}
 
 ///|
 struct UIStateLogin {
@@ -100,7 +100,9 @@ pub impl @ui.UIState for UIStateLogin with get(
 }
 
 ///|
-pub fn get_front(self : UIStateLogin) -> (@ui.UIElementType, @ui.Element)? {
+pub fn UIStateLogin::get_front(
+  self : UIStateLogin,
+) -> (@ui.UIElementType, @ui.Element)? {
   // TODO: use rev_iter
   self.elements
   .iter()

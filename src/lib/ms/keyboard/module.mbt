@@ -6,7 +6,7 @@ struct Module {
 }
 
 ///|
-typealias (Map[String, Mapping]) -> Unit as KeymapWatcher
+type KeymapWatcher = (Map[String, Mapping]) -> Unit
 
 ///|
 pub fn Module::new(
@@ -32,7 +32,7 @@ pub fn Module::on_keymap_change(
 
 ///|
 ///Helper to notify all callbacks
-fn notify_keymap_change(
+fn Module::notify_keymap_change(
   self : Module,
   new_keymap : Map[String, Mapping],
 ) -> Unit {

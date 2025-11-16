@@ -22,12 +22,12 @@ pub fn[T] MapObjects::new() -> MapObjects[T] {
 }
 
 ///|
-pub fn[T] get(self : MapObjects[T], oid : Int) -> T? {
+pub fn[T] MapObjects::get(self : MapObjects[T], oid : Int) -> T? {
   self.objects.get(oid)
 }
 
 ///|
-pub fn[T : MapObject] draw(
+pub fn[T : MapObject] MapObjects::draw(
   self : MapObjects[T],
   layer : @map_layer.Id,
   viewx : Double,
@@ -43,7 +43,7 @@ pub fn[T : MapObject] draw(
 }
 
 ///|
-pub fn[T : MapObject] update(
+pub fn[T : MapObject] MapObjects::update(
   self : MapObjects[T],
   physics : @physics.Physics,
 ) -> Unit {
@@ -60,19 +60,19 @@ pub fn[T : MapObject] update(
 }
 
 ///|
-pub fn[T] clear(self : MapObjects[T]) -> Unit {
+pub fn[T] MapObjects::clear(self : MapObjects[T]) -> Unit {
   self.objects.clear()
   self.layers.each(fn(layer) { layer.clear() })
   self.event_listeners.retain(fn(listener) { listener(MapObjectEvent::Clear) })
 }
 
 ///|
-pub fn[T] contains(self : MapObjects[T], oid : Int) -> Bool {
+pub fn[T] MapObjects::contains(self : MapObjects[T], oid : Int) -> Bool {
   self.objects.contains(oid)
 }
 
 ///|
-pub fn[T : MapObject] add(self : MapObjects[T], toadd : T) -> Unit {
+pub fn[T : MapObject] MapObjects::add(self : MapObjects[T], toadd : T) -> Unit {
   let oid = toadd.get_oid()
   let layer = toadd.get_layer()
   self.objects.set(oid, toadd)
@@ -83,7 +83,10 @@ pub fn[T : MapObject] add(self : MapObjects[T], toadd : T) -> Unit {
 }
 
 ///|
-pub fn[T : MapObject] remove(self : MapObjects[T], oid : Int) -> Unit {
+pub fn[T : MapObject] MapObjects::remove(
+  self : MapObjects[T],
+  oid : Int,
+) -> Unit {
   match self.objects.get(oid) {
     Some(mmo) => {
       let layer = mmo.get_layer()
@@ -98,12 +101,12 @@ pub fn[T : MapObject] remove(self : MapObjects[T], oid : Int) -> Unit {
 }
 
 ///|
-pub fn[T] iter2(self : MapObjects[T]) -> Iter2[Int, T] {
+pub fn[T] MapObjects::iter2(self : MapObjects[T]) -> Iter2[Int, T] {
   self.objects.iter2()
 }
 
 ///|
-pub fn[T] size(self : MapObjects[T]) -> Int {
+pub fn[T] MapObjects::size(self : MapObjects[T]) -> Int {
   self.objects.size()
 }
 

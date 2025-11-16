@@ -11,19 +11,19 @@ pub fn TimedBool::default() -> TimedBool {
 }
 
 ///|
-pub fn get(self : TimedBool) -> Bool {
+pub fn TimedBool::get(self : TimedBool) -> Bool {
   self.value
 }
 
 ///|
-pub fn set_for(self : TimedBool, millis : Int) -> Unit {
+pub fn TimedBool::set_for(self : TimedBool, millis : Int) -> Unit {
   self.last = millis
   self.delay = millis
   self.value = true
 }
 
 ///|
-pub fn update(self : TimedBool, timestep~ : Int) -> Unit {
+pub fn TimedBool::update(self : TimedBool, timestep~ : Int) -> Unit {
   if self.value {
     if timestep >= self.delay {
       self.value = false
@@ -35,13 +35,13 @@ pub fn update(self : TimedBool, timestep~ : Int) -> Unit {
 }
 
 ///|
-pub fn set(self : TimedBool, value : Bool) -> Unit {
+pub fn TimedBool::set(self : TimedBool, value : Bool) -> Unit {
   self.value = value
   self.delay = 0
   self.last = 0
 }
 
 ///|
-pub fn alpha(self : TimedBool) -> Double {
+pub fn TimedBool::alpha(self : TimedBool) -> Double {
   1.0 - self.delay.to_double() / self.last.to_double()
 }

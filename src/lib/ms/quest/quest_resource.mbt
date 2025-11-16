@@ -233,7 +233,7 @@ priv struct InfoEx {
 } derive(Show, @json.FromJson)
 
 ///|
-typealias @resource.Nullable
+using @resource {type Nullable}
 
 ///|
 priv struct NumbericInt(Int) derive(Show)
@@ -711,4 +711,4 @@ impl @json.FromJson for ActItem with from_json(json, path) {
 }
 
 ///|
-typealias @resource.IntMap
+using @resource {type IntMap}

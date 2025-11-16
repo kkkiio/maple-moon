@@ -1,5 +1,5 @@
 ///|
-typealias (Int, Int) -> Bool as StatChangeListener
+type StatChangeListener = (Int, Int) -> Bool
 
 ///|
 pub fn watch_player_char_stat(

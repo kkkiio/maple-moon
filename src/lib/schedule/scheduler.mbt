@@ -39,7 +39,7 @@ pub impl @game_mod.Scheduler for Schedules with schedule_with_fixed_delay(
 }
 
 ///|
-pub fn update(self : Schedules, timestep : @utils.Duration) -> Unit {
+pub fn Schedules::update(self : Schedules, timestep : @utils.Duration) -> Unit {
   self.current_time = self.current_time.add_duration(timestep)
   for task in self.scheduled_tasks {
     if self.current_time >= task.next_time {

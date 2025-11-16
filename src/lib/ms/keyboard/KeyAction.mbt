@@ -80,7 +80,7 @@ pub(all) enum BasicActionId {
 } derive(Show, Eq, Compare, ToJson, FromJson)
 
 ///|
-pub fn int_value(self : BasicActionId) -> Int {
+pub fn BasicActionId::int_value(self : BasicActionId) -> Int {
   match self {
     EQUIPMENT => 1
     ITEMS => 2

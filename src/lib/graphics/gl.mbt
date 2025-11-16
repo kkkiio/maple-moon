@@ -22,7 +22,7 @@ fn Image::loading(self : Image) -> Bool = "bitmap" "loading"
 fn Image::load(self : Image) -> @resource.LoadedImage = "bitmap" "load"
 
 ///|
-fn poll(self : Image) -> @resource.LoadedImage? {
+fn Image::poll(self : Image) -> @resource.LoadedImage? {
   if self.loading() {
     return None
   }
@@ -43,7 +43,7 @@ priv type Vertices
 fn Vertices::new(length : Int) -> Vertices = "gl" "newVertices"
 
 ///|
-fn set(
+fn Vertices::set(
   self : Vertices,
   i : Int,
   localcoord_x : Int,

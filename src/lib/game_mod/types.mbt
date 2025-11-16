@@ -6,10 +6,10 @@ pub(all) struct Mod {
 }
 
 ///|
-pub typealias (Int) -> Bool as StatHandler
+pub type StatHandler = (Int) -> Bool
 
 ///|
-pub typealias (@net.InPacket) -> &SubRouteAction raise as SubRouteHandler
+pub type SubRouteHandler = (@net.InPacket) -> &SubRouteAction raise
 
 ///|
 pub(open) trait SubRouteAction: Show {

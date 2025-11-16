@@ -16,12 +16,12 @@ pub async fn Module::load(io_service : @io_task.IOService) -> Module {
 }
 
 ///|
-pub fn get_map_drops(self : Module) -> MapDrops {
+pub fn Module::get_map_drops(self : Module) -> MapDrops {
   self.map_drops
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
   get_character_by_id_fn : (Int) -> @physics.PhysicsObject?,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {

@@ -1,5 +1,5 @@
 ///|
-typealias @struct.Point
+using @struct {type Point}
 
 ///|
 pub(all) struct NxStanceBodyAction {
@@ -59,27 +59,27 @@ pub fn NxStanceBodyAction::default() -> NxStanceBodyAction {
 }
 
 ///|
-pub fn is_attack_frame(self : NxStanceBodyAction) -> Bool {
+pub fn NxStanceBodyAction::is_attack_frame(self : NxStanceBodyAction) -> Bool {
   self.attack_frame
 }
 
 ///|
-pub fn get_frame(self : NxStanceBodyAction) -> Int {
+pub fn NxStanceBodyAction::get_frame(self : NxStanceBodyAction) -> Int {
   self.frame
 }
 
 ///|
-pub fn get_delay(self : NxStanceBodyAction) -> Int {
+pub fn NxStanceBodyAction::get_delay(self : NxStanceBodyAction) -> Int {
   self.delay
 }
 
 ///|
-pub fn get_move(self : NxStanceBodyAction) -> Point[Int] {
+pub fn NxStanceBodyAction::get_move(self : NxStanceBodyAction) -> Point[Int] {
   self.mov
 }
 
 ///|
-pub fn get_stance(self : NxStanceBodyAction) -> StanceId {
+pub fn NxStanceBodyAction::get_stance(self : NxStanceBodyAction) -> StanceId {
   self.stance
 }
 
@@ -245,7 +245,7 @@ pub fn BodyDrawInfo::default() -> BodyDrawInfo {
 pub(all) struct ShiftMap(Map[String, @struct.Point[Int]]) derive(FromJson)
 
 ///|
-pub fn get_body_position(
+pub fn BodyDrawInfo::get_body_position(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -254,7 +254,7 @@ pub fn get_body_position(
 }
 
 ///|
-pub fn get_arm_position(
+pub fn BodyDrawInfo::get_arm_position(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -263,7 +263,7 @@ pub fn get_arm_position(
 }
 
 ///|
-pub fn get_hand_position(
+pub fn BodyDrawInfo::get_hand_position(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -272,7 +272,7 @@ pub fn get_hand_position(
 }
 
 ///|
-pub fn get_head_position(
+pub fn BodyDrawInfo::get_head_position(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -281,7 +281,7 @@ pub fn get_head_position(
 }
 
 ///|
-pub fn get_hair_pos(
+pub fn BodyDrawInfo::get_hair_pos(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -290,7 +290,7 @@ pub fn get_hair_pos(
 }
 
 ///|
-pub fn get_face_pos(
+pub fn BodyDrawInfo::get_face_pos(
   self : BodyDrawInfo,
   stance : StanceId,
   frame : Int,
@@ -299,7 +299,11 @@ pub fn get_face_pos(
 }
 
 ///|
-pub fn next_frame(self : BodyDrawInfo, stance : StanceId, frame : Int) -> Int {
+pub fn BodyDrawInfo::next_frame(
+  self : BodyDrawInfo,
+  stance : StanceId,
+  frame : Int,
+) -> Int {
   if self.stance_delays[stance.int_value()].contains(frame + 1) {
     frame + 1
   } else {
@@ -317,13 +321,17 @@ pub fn BodyDrawInfo::get_delay(
 }
 
 ///|
-pub fn get_attack_delay(self : BodyDrawInfo, action : String, no : Int) -> Int {
+pub fn BodyDrawInfo::get_attack_delay(
+  self : BodyDrawInfo,
+  action : String,
+  no : Int,
+) -> Int {
   guard StanceId::from_name(action) is Some(stance) else { return 0 }
   self.attack_delays.get(stance).bind(fn(it) { it.get(no) }).unwrap_or(0)
 }
 
 ///|
-pub fn next_action_frame(
+pub fn BodyDrawInfo::next_action_frame(
   self : BodyDrawInfo,
   action : String,
   frame : Int,
@@ -337,7 +345,7 @@ pub fn next_action_frame(
 }
 
 ///|
-pub fn get_action(
+pub fn BodyDrawInfo::get_action(
   self : BodyDrawInfo,
   action : String,
   frame : Int,

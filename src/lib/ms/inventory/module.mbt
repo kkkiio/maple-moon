@@ -24,12 +24,12 @@ pub fn Module::load(
 }
 
 ///|
-pub fn get_inventory(self : Module) -> Inventory {
+pub fn Module::get_inventory(self : Module) -> Inventory {
   self.inventory
 }
 
 ///|
-pub fn make_handlers(
+pub fn Module::make_handlers(
   self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
@@ -51,7 +51,7 @@ pub fn make_handlers(
 }
 
 ///|
-pub fn make_stat_handlers(
+pub fn Module::make_stat_handlers(
   self : Module,
 ) -> Map[@maple_stat.Id, @game_mod.StatHandler] {
   [
@@ -67,7 +67,7 @@ pub fn make_stat_handlers(
 }
 
 ///|
-pub fn make_show_status_info_handlers(
+pub fn Module::make_show_status_info_handlers(
   self : Module,
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {

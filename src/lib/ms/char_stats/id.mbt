@@ -1,2 +1,2 @@
 ///|
-pub typealias @maple_stat.Id as MapleStatId
+pub using @maple_stat {type Id as MapleStatId}

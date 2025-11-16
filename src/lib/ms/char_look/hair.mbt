@@ -21,7 +21,7 @@ pub impl ToJson for HairLayer with to_json(self) {
 }
 
 ///|
-pub fn z_value(self : HairLayer) -> Int = "%identity"
+pub fn HairLayer::z_value(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
@@ -99,7 +99,7 @@ pub fn Hair::parse(
 }
 
 ///|
-pub fn draw(
+pub fn Hair::draw(
   self : Hair,
   stance : @types.StanceId,
   layer : HairLayer,
@@ -117,11 +117,11 @@ pub fn draw(
 }
 
 ///|
-pub fn get_name(self : Hair) -> String {
+pub fn Hair::get_name(self : Hair) -> String {
   self.name
 }
 
 ///|
-pub fn getcolor(self : Hair) -> String {
+pub fn Hair::getcolor(self : Hair) -> String {
   self.color
 }

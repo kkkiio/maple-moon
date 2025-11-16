@@ -203,22 +203,22 @@ pub fn Clothing::draw(
 }
 
 ///|
-pub fn get_id(self : Clothing) -> Int {
+pub fn Clothing::get_id(self : Clothing) -> Int {
   self.item_id
 }
 
 ///|
-pub fn get_vslot(self : Clothing) -> String {
+pub fn Clothing::get_vslot(self : Clothing) -> String {
   self.vslot
 }
 
 ///|
-pub fn is_twohanded(self : Clothing) -> Bool {
+pub fn Clothing::is_twohanded(self : Clothing) -> Bool {
   self.two_handed
 }
 
 ///|
-pub fn get_eqslot(self : Clothing) -> @slot.Id {
+pub fn Clothing::get_eqslot(self : Clothing) -> @slot.Id {
   self.eq_slot
 }
 
@@ -243,12 +243,12 @@ let sub_layer_names : Map[String, Layer] = {
 }
 
 ///|
-pub fn get_stand(self : Clothing) -> @types.StanceId {
+pub fn Clothing::get_stand(self : Clothing) -> @types.StanceId {
   self.stand
 }
 
 ///|
-pub fn get_walk(self : Clothing) -> @types.StanceId {
+pub fn Clothing::get_walk(self : Clothing) -> @types.StanceId {
   self.walk
 }
 

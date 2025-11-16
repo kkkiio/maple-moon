@@ -12,7 +12,7 @@ pub(all) enum Code {
 } derive(Eq)
 
 ///|
-pub fn int_value(self : Code) -> Int {
+pub fn Code::int_value(self : Code) -> Int {
   match self {
     CNONE => 0x00000000
     CWHITE => 0xFFFFFFFF
@@ -27,7 +27,7 @@ pub fn int_value(self : Code) -> Int {
 }
 
 ///|
-pub fn color(self : Code) -> Color {
+pub fn Code::color(self : Code) -> Color {
   self.int_value() |> Color::from_value
 }
 
@@ -71,7 +71,7 @@ pub(all) enum ColorName {
 } derive(Eq)
 
 ///|
-pub fn css_name(self : ColorName) -> String {
+pub fn ColorName::css_name(self : ColorName) -> String {
   match self {
     BLACK => "black"
     WHITE => "white"
@@ -324,32 +324,32 @@ pub fn Color::from_name(name : ColorName) -> Color {
 }
 
 ///|
-pub fn invisible(self : Color) -> Bool {
+pub fn Color::invisible(self : Color) -> Bool {
   self.inner().3 <= 0.0
 }
 
 ///|
-pub fn r(self : Color) -> Double {
+pub fn Color::r(self : Color) -> Double {
   self.inner().0
 }
 
 ///|
-pub fn g(self : Color) -> Double {
+pub fn Color::g(self : Color) -> Double {
   self.inner().1
 }
 
 ///|
-pub fn b(self : Color) -> Double {
+pub fn Color::b(self : Color) -> Double {
   self.inner().2
 }
 
 ///|
-pub fn a(self : Color) -> Double {
+pub fn Color::a(self : Color) -> Double {
   self.inner().3
 }
 
 ///|
-pub fn blend(self : Color, other : Color, alpha : Double) -> Color {
+pub fn Color::blend(self : Color, other : Color, alpha : Double) -> Color {
   (
     @utils.lerp(self.inner().0, other.inner().0, alpha),
     @utils.lerp(self.inner().1, other.inner().1, alpha),

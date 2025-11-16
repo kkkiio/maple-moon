@@ -45,7 +45,7 @@ fn SyncLoader::new(
 }
 
 ///|
-pub fn load_res(self : SyncLoader, path : Array[String]) -> NxNode {
+pub fn SyncLoader::load_res(self : SyncLoader, path : Array[String]) -> NxNode {
   ...
   // {
   //   loader_name: self.name,
@@ -77,22 +77,22 @@ pub fn NxNode::from_test_value(value : Json) -> NxNode {
 }
 
 ///|
-pub fn name(self : NxNode) -> String {
+pub fn NxNode::name(self : NxNode) -> String {
   self.name
 }
 
 ///|
-pub fn value(self : NxNode) -> Json {
+pub fn NxNode::value(self : NxNode) -> Json {
   self.desc
 }
 
 ///|
-pub fn path(self : NxNode) -> @immut/array.T[String] {
+pub fn NxNode::path(self : NxNode) -> @immut/array.T[String] {
   self.path
 }
 
 ///|
-pub fn op_get(self : NxNode, name : String) -> NxNode {
+pub fn NxNode::op_get(self : NxNode, name : String) -> NxNode {
   {
     ..self,
     name,
@@ -105,7 +105,7 @@ pub fn op_get(self : NxNode, name : String) -> NxNode {
 }
 
 ///|
-pub fn contains(self : NxNode, name : String) -> Bool {
+pub fn NxNode::contains(self : NxNode, name : String) -> Bool {
   match self.desc {
     Json::Object(it) => it.contains(name)
     _ => false
@@ -113,7 +113,7 @@ pub fn contains(self : NxNode, name : String) -> Bool {
 }
 
 ///|
-pub fn get_children_count(self : NxNode) -> Int {
+pub fn NxNode::get_children_count(self : NxNode) -> Int {
   match self.desc {
     Json::Object(it) => it.size()
     _ => 0
@@ -121,17 +121,17 @@ pub fn get_children_count(self : NxNode) -> Int {
 }
 
 ///|
-pub fn get_bool(self : NxNode) -> Bool raise LoadError {
+pub fn NxNode::get_bool(self : NxNode) -> Bool raise LoadError {
   self.get_int() != 0
 }
 
 ///|
-pub fn as_strict_bool(self : NxNode) -> Bool raise LoadError {
+pub fn NxNode::as_strict_bool(self : NxNode) -> Bool raise LoadError {
   self.as_int() != 0
 }
 
 ///|
-pub fn get_string(self : NxNode) -> String {
+pub fn NxNode::get_string(self : NxNode) -> String {
   match self.desc {
     Json::Number(it) => it.to_string()
     Json::String(it) => it
@@ -140,7 +140,7 @@ pub fn get_string(self : NxNode) -> String {
 }
 
 ///|
-pub fn get_int(self : NxNode) -> Int raise LoadError {
+pub fn NxNode::get_int(self : NxNode) -> Int raise LoadError {
   self.get_float().to_int()
 }
 
@@ -148,7 +148,7 @@ pub fn get_int(self : NxNode) -> Int raise LoadError {
 pub(all) suberror LoadError String derive(Show)
 
 ///|
-pub fn as_int(self : NxNode) -> Int raise LoadError {
+pub fn NxNode::as_int(self : NxNode) -> Int raise LoadError {
   match self.desc {
     Json::Number(it) => it.to_int()
     _ as a => raise LoadError("expect number, got \{a}, path=\{self.path}")
@@ -156,7 +156,7 @@ pub fn as_int(self : NxNode) -> Int raise LoadError {
 }
 
 ///|
-pub fn get_int_field(
+pub fn NxNode::get_int_field(
   self : NxNode,
   key : String,
   default? : Int,
@@ -173,7 +173,7 @@ pub fn get_int_field(
 }
 
 ///|
-pub fn get_float_field(
+pub fn NxNode::get_float_field(
   self : NxNode,
   key : String,
   default? : Double,
@@ -190,7 +190,7 @@ pub fn get_float_field(
 }
 
 ///|
-pub fn get_float(self : NxNode) -> Double raise LoadError {
+pub fn NxNode::get_float(self : NxNode) -> Double raise LoadError {
   match self.desc {
     Json::Number(it) => it
     Json::Null => 0.0
@@ -203,7 +203,7 @@ pub fn get_float(self : NxNode) -> Double raise LoadError {
 }
 
 ///|
-pub fn iter(self : NxNode) -> Iter[NxNode] {
+pub fn NxNode::iter(self : NxNode) -> Iter[NxNode] {
   match self.desc {
     Json::Object(it) =>
       it
@@ -217,7 +217,7 @@ pub fn iter(self : NxNode) -> Iter[NxNode] {
 }
 
 ///|
-pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
+pub fn NxNode::iter2(self : NxNode) -> Iter2[String, NxNode] {
   Iter2::new(fn(yield_) {
     match self.desc {
       Json::Object(it) =>
@@ -232,7 +232,7 @@ pub fn iter2(self : NxNode) -> Iter2[String, NxNode] {
 }
 
 ///|
-pub fn is_null(self : NxNode) -> Bool {
+pub fn NxNode::is_null(self : NxNode) -> Bool {
   match self.desc {
     Json::Null => true
     _ => false
@@ -240,7 +240,7 @@ pub fn is_null(self : NxNode) -> Bool {
 }
 
 ///|
-pub fn as_string(self : NxNode) -> String raise LoadError {
+pub fn NxNode::as_string(self : NxNode) -> String raise LoadError {
   match self.desc {
     Json::String(it) => it
     _ as a => raise LoadError("expect string, got \{a}, path=\{self.path}")
@@ -248,7 +248,7 @@ pub fn as_string(self : NxNode) -> String raise LoadError {
 }
 
 ///|
-pub fn get_bitmap(self : NxNode) -> Bitmap? {
+pub fn NxNode::get_bitmap(self : NxNode) -> Bitmap? {
   try {
     match self.desc {
       { "__i": Json::String(path), .. } =>
@@ -297,7 +297,7 @@ fn join_path(parts : Array[String]) -> String {
 pub(all) struct ResPath(Array[String]) derive(Eq)
 
 ///|
-pub fn as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
+pub fn NxNode::as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
   match self.value() {
     [Json::Number(x, ..), Json::Number(y, ..)] =>
       { x: x.to_int(), y: y.to_int() }
@@ -307,7 +307,7 @@ pub fn as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
 }
 
 ///|
-pub fn as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
+pub fn NxNode::as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
   let left_top = self["lt"].as_point()
   let right_bottom = self["rb"].as_point()
   @struct.Rectangle::new(left_top, right_bottom)

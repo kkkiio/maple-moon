@@ -29,7 +29,7 @@ pub impl ToJson for BodyLayer with to_json(self) {
 }
 
 ///|
-pub fn int_value(self : BodyLayer) -> Int = "%identity"
+pub fn BodyLayer::int_value(self : BodyLayer) -> Int = "%identity"
 
 ///|
 pub fn BodyLayer::from_name(name : String) -> BodyLayer? {

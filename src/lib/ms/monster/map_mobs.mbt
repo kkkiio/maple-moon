@@ -24,12 +24,12 @@ pub fn MapMobs::new(
 }
 
 ///|
-pub fn spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
+pub fn MapMobs::spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
   self.spawns.push(spawn)
 }
 
 ///|
-pub fn update(
+pub fn MapMobs::update(
   self : MapMobs,
   physics : @physics.Physics,
   network : @net.Network,
@@ -67,7 +67,7 @@ pub fn update(
 }
 
 ///|
-pub fn set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
+pub fn MapMobs::set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
   let mode = if control { 1 } else { 0 }
   match self.mobs.get(oid) {
     Some(mob) => mob.set_control(mode)
@@ -76,12 +76,12 @@ pub fn set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
 }
 
 ///|
-pub fn clear(self : MapMobs) -> Unit {
+pub fn MapMobs::clear(self : MapMobs) -> Unit {
   self.mobs.clear()
 }
 
 ///|
-pub fn draw(
+pub fn MapMobs::draw(
   self : MapMobs,
   layer : @map_layer.Id,
   viewx : Double,
@@ -92,7 +92,10 @@ pub fn draw(
 }
 
 ///|
-pub fn find_colliding(self : MapMobs, moveobj : @physics.MovingObject) -> Int? {
+pub fn MapMobs::find_colliding(
+  self : MapMobs,
+  moveobj : @physics.MovingObject,
+) -> Int? {
   let horizontal = @struct.Range::new(moveobj.get_last_x(), moveobj.get_x())
   let vertical = @struct.Range::new(moveobj.get_last_y(), moveobj.get_y())
   let player_rect = @struct.Rectangle::from4(
@@ -114,7 +117,7 @@ pub fn find_colliding(self : MapMobs, moveobj : @physics.MovingObject) -> Int? {
 }
 
 ///|
-pub fn create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
+pub fn MapMobs::create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
   match self.mobs.get(oid) {
     Some(mob) => Some(mob.create_touch_attack())
     None => None
@@ -122,7 +125,7 @@ pub fn create_attack(self : MapMobs, oid : Int) -> @combat.MobAttack? {
 }
 
 ///|
-pub fn send_movement(
+pub fn MapMobs::send_movement(
   self : MapMobs,
   oid : Int,
   start : @struct.Point[Int],
@@ -135,12 +138,12 @@ pub fn send_movement(
 }
 
 ///|
-pub fn get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
+pub fn MapMobs::get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
   self.mobs
 }
 
 ///|
-pub fn remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
+pub fn MapMobs::remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
   match self.mobs.get(oid) {
     Some(mob) => mob.kill(animation)
     None => ()
@@ -151,7 +154,7 @@ pub fn remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
 }
 
 ///|
-pub fn send_attack(
+pub fn MapMobs::send_attack(
   self : MapMobs,
   result : @combat.AttackResult,
   attack : @combat.Attack,
@@ -170,26 +173,32 @@ pub fn send_attack(
 }
 
 ///|
-pub fn contains(self : MapMobs, oid : Int) -> Bool {
+pub fn MapMobs::contains(self : MapMobs, oid : Int) -> Bool {
   self.mobs.contains(oid)
 }
 
 ///|
-pub fn get_mob_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
+pub fn MapMobs::get_mob_position(
+  self : MapMobs,
+  oid : Int,
+) -> @struct.Point[Int] {
   self.mobs
   .get(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_position() })
 }
 
 ///|
-pub fn get_mob_head_position(self : MapMobs, oid : Int) -> @struct.Point[Int] {
+pub fn MapMobs::get_mob_head_position(
+  self : MapMobs,
+  oid : Int,
+) -> @struct.Point[Int] {
   self.mobs
   .get(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
 }
 
 ///|
-pub fn send_mobhp(
+pub fn MapMobs::send_mobhp(
   self : MapMobs,
   oid : Int,
   percent : Int,
@@ -214,7 +223,7 @@ struct MobSpawn {
 }
 
 ///|
-pub async fn instantiate(
+pub async fn MobSpawn::instantiate(
   self : MobSpawn,
   randomizer : @utils.Randomizer,
   network : @net.Network,

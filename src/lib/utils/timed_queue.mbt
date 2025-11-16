@@ -10,12 +10,15 @@ pub fn[T] TimedQueue::new() -> TimedQueue[T] {
 }
 
 ///|
-pub fn[T] push(self : TimedQueue[T], delay : Int64, t : T) -> Unit {
+pub fn[T] TimedQueue::push(self : TimedQueue[T], delay : Int64, t : T) -> Unit {
   self.queue.push(Timed(delay, t))
 }
 
 ///|
-pub fn[T] process(self : TimedQueue[T], timestep~ : Int64) -> Iter[T] {
+pub fn[T] TimedQueue::process(
+  self : TimedQueue[T],
+  timestep~ : Int64,
+) -> Iter[T] {
   self.time += timestep
   Iter::new(fn(yield_) {
     loop self.queue.peek() {

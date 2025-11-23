@@ -15,8 +15,10 @@ pub async fn TilesObjs::load(
     let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
       "tile",
       loader=@resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Map/Tile",
+        // "https://maple-res.kkkiiox.work/Map/Tile",
+        "assets/map/tile",
       ),
+      base_url="/assets",
     )
     let node = tile_loader.load_res_async([ts + ".img"])
     Some(@json.from_json(node.value()))

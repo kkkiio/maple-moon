@@ -19,8 +19,9 @@ struct AsyncLoader {
 pub fn AsyncLoader::new(
   name : String,
   loader~ : &AsyncResourceLoader,
+  base_url? : String = OLD_BASE_URL,
 ) -> AsyncLoader {
-  { name, loader: SpritesheetMergeLoader::new(loader) }
+  { name, loader: SpritesheetMergeLoader::new(loader, base_url) }
 }
 
 ///|
@@ -66,6 +67,9 @@ pub impl AsyncResourceLoader for CompositeAsyncResourceLoader with load_data(
 }
 
 ///|
+/// A resource loader that loads resources from a directory.
+/// The directory splits resources by first level of the path and stores them in json files.
+/// For example, if we want to load grassySoil/ani/0, it will load $rootPath/grassySoil.img.json and then get the value of "ani/0".
 struct DirResourceLoader {
   rootPath : String
 }
@@ -89,12 +93,18 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
 }
 
 ///|
-extern "js" fn js_fetch_string(path : String) -> @js.Promise =
-  #| (p) => fetch(p).then((res) => res.text())
+extern "js" fn js_fetch_json_string(path : String) -> @js.Promise =
+  #| (p) => fetch(p).then((res) => {
+  #|  const contentType = res.headers.get('content-type') || '';
+  #|  if (!contentType.includes('application/json')) {
+  #|    throw new Error(`expected JSON response, got content-type: ${contentType}`);
+  #|  }
+  #|  return res.text();
+  #|})
 
 ///|
 async fn fetch_string(path : String) -> String {
-  (js_fetch_string(path).wait() catch {
+  (js_fetch_json_string(path).wait() catch {
     @js.Error_(e) => {
       let message : String = e.get_with_string("message")
       fail("failed to fetch string: \{path}, error=\{message}")
@@ -128,3 +138,6 @@ fn get_by_path(obj : Json, path : String) -> Json {
     value
   })
 }
+
+///|
+pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"

@@ -558,7 +558,7 @@ pub fn game_scene_system(_delta : Double) -> Unit {
       let sence_map = match res {
         Ok(sence_map) => sence_map
         Err(e) => {
-          @log.error({ "error": e }, "load map")
+          @log.error({ "error": e, "map_id": map_id }, "fail to load map")
           panic()
         }
       }

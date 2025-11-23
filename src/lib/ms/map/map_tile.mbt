@@ -38,7 +38,7 @@ pub impl @json.FromJson for NxTileSet with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
-  let groups = Map::new(capacity=obj.size())
+  let groups = Map::new(capacity=obj.length())
   for name, tiles in obj {
     guard tiles is { "0": _, .. } else { continue }
     let tiles = @resource.parse_map_based_array(tiles, path=path.add_key(name))
@@ -63,17 +63,14 @@ pub fn Tile::new(tile : NxTileRef, tileset : NxTileSet?) -> Tile {
 ///|
 pub fn Tile::set_sprites(self : Tile) -> Unit {
   guard self.texture is Some(texture) else { return }
-  @log.info(
-    { "texture": texture.i, "z": self.z, "pos": self.pos },
-    "setting tile sprite",
-  )
-  let sprite = @graphics.nx_animation_to_selene_sprite(
-    @resource.NxAnimation::{
-      frames: [@resource.NxFrame::{ texture, delay: None }],
-      blend: false,
-      zigzag: false,
-    },
-    z=self.z + @graphics.SCENE_ZINDEX,
+  let animation = @graphics.nx_animation_to_selene_animation(@resource.NxAnimation::{
+    frames: [@resource.NxFrame::{ texture, delay: None }],
+    blend: false,
+    zigzag: false,
+  })
+  let sprite = @sprite.Sprite::from_animation(
+    animation,
+    self.z + @graphics.SCENE_ZINDEX,
   )
   @sprite.sprites.set(self.entity, sprite)
   @position.positions.set(

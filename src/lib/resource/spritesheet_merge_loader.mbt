@@ -1,5 +1,6 @@
 ///|
 struct SpritesheetMergeLoader {
+  base_url : String
   source : &AsyncResourceLoader
   cache : @lru_cache.Cache[String, Json]
   spritesheet_json_cache : Map[String, SpritesheetMetadata]
@@ -8,11 +9,13 @@ struct SpritesheetMergeLoader {
 ///|
 pub fn SpritesheetMergeLoader::new(
   source : &AsyncResourceLoader,
+  base_url : String,
 ) -> SpritesheetMergeLoader {
   {
     source,
     cache: @lru_cache.Cache::new(100),
     spritesheet_json_cache: Map::new(),
+    base_url,
   }
 }
 
@@ -37,7 +40,7 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
     @js.async_all(
       spritesheet_paths.map(fn(path) {
         async fn() {
-          let spritesheet_json_url = join_2path(BASE_URL, path + ".json")
+          let spritesheet_json_url = join_2path(self.base_url, path + ".json")
           let fetched = fetch_string(spritesheet_json_url)
           let j = @json.from_json(@json.parse(fetched)) catch {
             e =>
@@ -51,7 +54,11 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
     )
     |> ignore
   }
-  let value = patch_image(origin_value, self.spritesheet_json_cache)
+  let value = patch_image(
+    origin_value,
+    self.spritesheet_json_cache,
+    base_url=self.base_url,
+  )
   self.cache.set(path, value)
   value
 }
@@ -63,12 +70,13 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
 pub fn patch_image(
   data : Json,
   spritesheet_jsons : Map[String, SpritesheetMetadata],
+  base_url? : String = OLD_BASE_URL,
 ) -> Json raise {
   preorder_replace(data, fn(data) {
     let filled = fill_offset_from_spritesheet_json(data, spritesheet_jsons).unwrap_or(
       data,
     )
-    prefix_imagebase_url(filled)
+    prefix_image_base_url(filled, base_url)
   })
 }
 
@@ -169,10 +177,14 @@ fn fill_offset_from_spritesheet_json(
 }
 
 ///|
-fn prefix_imagebase_url(json : Json) -> Json? {
+/// prefix the image path with the base url. return None if no change is needed.
+fn prefix_image_base_url(json : Json, base_url : String) -> Json? {
+  if base_url.is_empty() {
+    return None
+  }
   guard json is Object(o) else { return None }
   guard o is { "__i": String(path), .. } else { return None }
-  o["__i"] = Json::string(join_2path(BASE_URL, path))
+  o["__i"] = Json::string(join_2path(base_url, path))
   Some(Json::object(o))
 }
 
@@ -191,9 +203,6 @@ pub(all) struct SpritesheetFrameMetadata {
   x : Int
   y : Int
 } derive(@json.FromJson)
-
-///|
-const BASE_URL : String = "https://maple-res.kkkiiox.work"
 
 ///|
 fn collect_spritesheet_paths(json : Json) -> Array[String] {

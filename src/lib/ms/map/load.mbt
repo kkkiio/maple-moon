@@ -74,8 +74,10 @@ pub async fn load_map(
   let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "background",
     loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Back",
+      // "https://maple-res.kkkiiox.work/Map/Back",
+      "assets/map/back",
     ),
+    base_url="/assets",
   )
   let backgrounds = load_backgrounds(background_loader, res.back)
   let foothold_tree = @json.from_json(src["foothold"].value())

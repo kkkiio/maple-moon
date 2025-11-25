@@ -761,3 +761,29 @@ async fn load_after_images_by_skill_weapon(
   }
   after_images
 }
+
+///|
+pub fn combat_system(_delta : Double) -> Unit {
+  guard @game_scene.get_stage() is Some({ state: ACTIVE(..), player, mobs, .. }) else {
+    return
+  }
+  if player.is_invincible() {
+    return
+  }
+  let moving_object : @physics.MovingObject = player.character.get_phobj().moving_object
+  match mobs.find_colliding(moving_object) {
+    Some(oid_id) =>
+      match mobs.create_attack(oid_id) {
+        Some(attack) => {
+          let result = player.damage(attack)
+          // TODO: handle result
+          // self.network.send_message(
+          //   new_take_damage_packet_from_mob(result, TakeDamageFrom::TOUCH),
+          // )
+          ignore(result)
+        }
+        None => ()
+      }
+    None => ()
+  }
+}

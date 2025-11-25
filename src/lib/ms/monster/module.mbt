@@ -6,16 +6,11 @@ struct Module {
 
 ///|
 pub fn Module::new(
-  add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
-  string_loader~ : @resource.SyncLoader,
   io_service : @io_task.IOService,
 ) -> Module {
-  let mobs = MapMobs::new(string_loader~, io_service)
-  {
-    map_mobs: mobs,
-    mob_combat: MobCombat::new(mobs, add_task_fn, network, io_service),
-  }
+  let mobs = MapMobs::new(io_service)
+  { map_mobs: mobs, mob_combat: MobCombat::new(mobs, network, io_service) }
 }
 
 ///|

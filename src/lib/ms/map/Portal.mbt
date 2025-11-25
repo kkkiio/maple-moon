@@ -58,7 +58,8 @@ pub(all) struct PortalWarpInfo {
   mapid : Int?
   toname : String
   name : String
-  intramap : Bool
+  /// whether the target is in the current map
+  intra_map : Bool
 }
 
 ///|
@@ -76,13 +77,13 @@ fn PortalWarpInfo::new(
     },
     toname: tn,
     name: n,
-    intramap: i,
+    intra_map: i,
   }
 }
 
 ///|
 fn PortalWarpInfo::default() -> PortalWarpInfo {
-  { mapid: None, toname: "", name: "", intramap: false }
+  { mapid: None, toname: "", name: "", intra_map: false }
 }
 
 ///|

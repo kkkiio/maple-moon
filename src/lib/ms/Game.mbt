@@ -202,12 +202,7 @@ async fn load_modules(
     quest_module,
   )
   merge_handlers(handlers)
-  let monster_module = @monster.Module::new(
-    add_io_task,
-    network,
-    string_loader~,
-    io_service,
-  )
+  let monster_module = @monster.Module::new(network, io_service)
   merge_handlers(
     monster_module.make_handlers(fn() {
       // get_stage().get_player().map(fn(p) { p.get_stats() })

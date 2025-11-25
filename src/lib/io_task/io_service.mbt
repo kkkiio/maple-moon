@@ -40,3 +40,31 @@ pub fn IOService::execute(
 ) -> Unit {
   spawn_background(fn() { f() catch { e => on_error(e) } })
 }
+
+///|
+pub async fn[T] IOService::wait(
+  self : IOService,
+  future : @utils.Future[T],
+) -> T {
+  if future.poll() is Some(res) {
+    return res
+  }
+  suspend(fn(resume_ok, _resume_err) {
+    spawn_background_ffi(fn() { resume_ok(()) })
+  })
+  return self.wait(future)
+}
+
+///|
+/// `suspend` will suspend the execution of the current coroutine.
+/// The suspension will be handled by a callback passed to `suspend`
+async fn[T, E : Error] suspend(
+  // `f` is a callback for handling suspension
+  f : (
+    // the first parameter of `f` is used to resume the execution of the coroutine normally
+    (T) -> Unit,
+    // the second parameter of `f` is used to cancel the execution of the current coroutine
+    // by throwing an error at suspension point
+    (E) -> Unit,
+  ) -> Unit,
+) -> T raise E = "%async.suspend"

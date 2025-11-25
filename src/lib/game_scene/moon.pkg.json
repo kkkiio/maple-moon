@@ -30,6 +30,7 @@
     "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/ms/weapon",
     "KKKIIO/maple-moon/lib/ms/job",
-    "KKKIIO/maple-moon/lib/ms/char_look"
+    "KKKIIO/maple-moon/lib/ms/char_look",
+    "KKKIIO/maple-moon/lib/resource"
   ]
 }

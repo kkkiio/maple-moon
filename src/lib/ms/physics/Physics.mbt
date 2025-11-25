@@ -26,7 +26,7 @@ pub let swimfriction : Double = 0.08
 
 ///|
 pub fn Physics::from_resource(src : NxFootholdTree) -> Physics raise {
-  let fh_tree = FootholdTree::load_from_resource(src)
+  let fh_tree = FootholdTree::from_resource(src)
   { fh_tree, }
 }
 

@@ -8,18 +8,16 @@ struct MobCombat {
   // attack_results : @utils.TimedQueue[@combat.AttackResult]
   // damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[DamageNumber]
-  add_task_fn : (@utils.Future[Unit]) -> Unit
   io_service : @io_task.IOService
 }
 
 ///|
 pub fn MobCombat::new(
   mobs : MapMobs,
-  add_task_fn : (@utils.Future[Unit]) -> Unit,
   network : @net.Network,
   io_service : @io_task.IOService,
 ) -> MobCombat {
-  { mobs, add_task_fn, network, io_service }
+  { mobs, network, io_service }
 }
 
 ///|
@@ -38,25 +36,11 @@ pub fn MobCombat::use_move(
         let mov = mob.get_move_attack(action_id)
         apply_move_attack(mov, mob, self.network)
       } else if skill_id != 0 {
-        let task = mob
-          .get_move_skill(skill_id, level, self.io_service)
-          .map(fn(res) {
-            match res {
-              Ok(mov) => apply_move_skill(mov, mob, self.network)
-              Err(err) =>
-                @log.error(
-                  {
-                    "oid": oid,
-                    "move_id": move_id,
-                    "skill_id": skill_id,
-                    "level": level,
-                    "err": err,
-                  },
-                  "Failed to get move skill",
-                )
-            }
-          })
-        (self.add_task_fn)(task)
+        let fut = mob.get_move_skill(skill_id, level, self.io_service)
+        self.io_service.execute(fn() {
+          let mov = self.io_service.wait(fut).unwrap_or_error()
+          apply_move_skill(mov, mob, self.network)
+        })
       }
     None => ()
   }

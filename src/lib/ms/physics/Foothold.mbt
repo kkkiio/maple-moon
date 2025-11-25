@@ -20,10 +20,10 @@ pub(all) struct NxFoothold {
 } derive(@json.FromJson)
 
 ///|
-pub fn Foothold::load_from_resource(
+pub fn Foothold::new(
   nx_foothold : NxFoothold,
   id : Int,
-  ly : Int,
+  layer : Int,
 ) -> Foothold {
   let horizontal = @struct.Range::new(nx_foothold.x1, nx_foothold.x2)
   let vertical = @struct.Range::new(nx_foothold.y1, nx_foothold.y2)
@@ -31,7 +31,7 @@ pub fn Foothold::load_from_resource(
     id,
     prev: nx_foothold.prev,
     next: nx_foothold.next,
-    layer: ly,
+    layer,
     horizontal,
     vertical,
   }

@@ -116,7 +116,6 @@ pub async fn Mob::load(
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
   network : @net.Network,
-  string_loader : @resource.SyncLoader,
 ) -> Mob {
   let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "mob",
@@ -136,8 +135,7 @@ pub async fn Mob::load(
     load_animations(src, can_fly)
   }
   Mob::new(
-    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network, string_loader,
-    animations,
+    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network, animations,
   )
 }
 
@@ -243,7 +241,6 @@ fn Mob::new(
   randomizer : @utils.Randomizer,
   src : @resource.NxNode,
   network : @net.Network,
-  string_loader : @resource.SyncLoader,
   animations : Map[StanceType, @graphics.Animation],
 ) -> Mob raise {
   let entity = @entity.Entity::new()
@@ -266,9 +263,7 @@ fn Mob::new(
   let can_jump = src["jump"].get_children_count() > 0
   let can_fly = src["fly"].get_children_count() > 0
   let can_move = src["move"].get_children_count() > 0 || can_fly
-  let name = string_loader
-    .load_res(["Mob.img", mid.to_string(), "name"])
-    .get_string()
+  let name = mob_names[mid.to_string()]
 
   //TODO: sound
 

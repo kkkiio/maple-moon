@@ -1,7 +1,6 @@
-// The collection of platforms in a maple map
-// Used for collision-detection
-
 ///|
+/// The collection of platforms in a maple map
+/// Used for collision-detection
 struct FootholdTree {
   footholds : Map[Int, Foothold]
   seg_tree : SegTree
@@ -11,71 +10,33 @@ struct FootholdTree {
 }
 
 ///|
-pub(all) struct NxFootholdTree {
-  footholds : Map[Int, Map[Int, Map[Int, NxFoothold]]]
-}
+pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]]) // layer -> mid -> last -> foothold
 
 ///|
 pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
-  guard json is Object(footholds) else {
-    raise @json.JsonDecodeError((path, "expect object"))
-  }
-  let l0 = {}
-  for basefname, basef in footholds {
-    let path = path.add_key(basefname)
-    let layer = @strconv.parse_int(basefname) catch {
-      _ =>
-        raise @json.JsonDecodeError(
-          (path, "invalid foothold layer \{basefname}"),
-        )
-    }
-    guard basef is Object(basef) else {
-      raise @json.JsonDecodeError((path, "expect object"))
-    }
-    let l1 = {}
-    for midfname, midf in basef {
-      let path = path.add_key(midfname)
-      let id = @strconv.parse_int(midfname) catch {
-        _ =>
-          raise @json.JsonDecodeError((path, "invalid foothold id \{midfname}"))
-      }
-      guard midf is Object(midf) else {
-        raise @json.JsonDecodeError((path, "expect object"))
-      }
-      let l2 = {}
-      for lastfname, lastf in midf {
-        let path = path.add_key(lastfname)
-        let id = @strconv.parse_int(lastfname) catch {
-          _ =>
-            raise @json.JsonDecodeError(
-              (path, "invalid foothold id \{lastfname}"),
-            )
-        }
-        let nx_foothold : NxFoothold = @json.from_json(lastf, path~)
-        l2.set(id, nx_foothold)
-      }
-      l1.set(id, l2)
-    }
-    l0.set(layer, l1)
-  }
-  { footholds: l0 }
+  let wrapper : @resource.IntMap[@resource.IntMap[@resource.IntMap[NxFoothold]]] = @resource.IntMap::from_json(
+    json, path,
+  )
+  return NxFootholdTree(
+    wrapper.0.map(fn(_, mid) {
+      mid.0.map(fn(_, last) { last.0.map(fn(_, foothold) { foothold }) })
+    }),
+  )
 }
 
 ///|
-pub fn FootholdTree::load_from_resource(
-  src : NxFootholdTree,
-) -> FootholdTree raise {
+pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
   let footholds = Map::new()
   let null_fh = Foothold::default()
-  for layer, basef in src.footholds {
+  for layer, basef in src.0 {
     for _, midf in basef {
       for id, lastf in midf {
-        let foothold = Foothold::load_from_resource(lastf, id, layer)
+        let foothold = Foothold::new(lastf, id, layer)
         footholds.set(id, foothold)
       }
     }
   }
-  if footholds.size() == 0 {
+  if footholds.length() == 0 {
     raise @resource.LoadError("no footholds")
   }
   let leftw = footholds.values().map(fn(f) { f.l() }).minimum().unwrap_or(30000)

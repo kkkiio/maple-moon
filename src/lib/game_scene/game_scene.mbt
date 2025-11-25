@@ -1,5 +1,5 @@
 ///|
-enum StageState {
+pub enum StageState {
   INACTIVE
   TRANSITION(
     portal_id~ : Int,
@@ -24,7 +24,7 @@ pub(all) struct Stage {
   mut map_id : Int
   // npcs : @npc.MapNpcs
   // quests : @quest.MapQuests
-  // mobs : @monster.MapMobs
+  mobs : @monster.MapMobs
   // drops : @drop.MapDrops
   // inventory : @inventory.Inventory
   // damage_number_set : @ui.NumberSet
@@ -41,7 +41,7 @@ pub(all) struct Stage {
 ///|
 pub fn Stage::new(
   map_portals_animations : @map.MapPortalAnimations,
-  // mobs : @monster.MapMobs,
+  mobs : @monster.MapMobs,
   // drops : @drop.MapDrops,
   // inventory : @inventory.Inventory,
   // npcs : @npc.MapNpcs,
@@ -66,7 +66,7 @@ pub fn Stage::new(
     // quests,
     // damage_number_set,
     // combat,
-    // mobs,
+    mobs,
     // drops,
     // inventory,
     // char_look_module,
@@ -85,7 +85,7 @@ fn Stage::clear(self : Stage) -> Unit {
   // self.chars.clear()
   // self.npcs.clear()
   // self.quests.clear()
-  // self.mobs.clear()
+  self.mobs.clear()
   // self.drops.clear()
   // self.reactors.clear()
 }
@@ -260,26 +260,6 @@ fn Stage::update(self : Stage) -> Unit raise {
   // self.mobs.update(physics, self.network)
   // // chars_.update(self.physics);
   // self.drops.update(physics)
-  // let player = self.player.unwrap()
-  // player.update(physics, map_info) |> ignore // Pass map_info here
-  // portals.update(player.character.get_position())
-  // self.camera.update(player.character.get_position())
-  // if player.is_invincible() {
-  //   return
-  // }
-  // match self.mobs.find_colliding(player.character.get_phobj().moving_object) {
-  //   Some(oid_id) =>
-  //     match self.mobs.create_attack(oid_id) {
-  //       Some(attack) => {
-  //         let result = player.damage(attack)
-  //         self.network.send_message(
-  //           new_take_damage_packet_from_mob(result, TakeDamageFrom::TOUCH),
-  //         )
-  //       }
-  //       None => ()
-  //     }
-  //   None => ()
-  // }
   ...
 }
 
@@ -308,27 +288,18 @@ fn Stage::send_cursor(
 ///|
 pub fn player_state_system(_delta : Double) -> Unit {
   guard stage_ref.val
-    is Some({ state: StageState::ACTIVE(physics~, map_info~, ..), player, .. }) else {
+    is Some(
+      {
+        state: StageState::ACTIVE(physics~, map_info~, portals~, ..),
+        player,
+        ..,
+      }
+    ) else {
     return
   }
-  // match mapping {
-  //   ACTION(action) => {
-  //     if down {
-  //       match action {
-  //         @keyboard.BasicActionId::UP =>
-  //           self.check_portals(map_info, portals, physics)
-  //         // @keyboard.ActionId::SIT => self.check_seats()
-  //         @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
-  //         @keyboard.BasicActionId::PICKUP => self.check_drops(player)
-  //         _ => ()
-  //       }
-  //     }
-  //   }
-  //   SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
-  //   ITEM(item_id) => () //self.inventory.use_item(item_id)
-  //   // @keyboard.Id::FACE => self.player.set_expression(action)
-  //   _ => ()
-  // }
+  if @inputs.is_just_pressed(@inputs.ArrowUp) {
+    check_portals(player, map_info, portals, physics)
+  }
   for
     it in [
       (@inputs.ArrowUp, @keyboard.BasicActionId::UP),
@@ -345,22 +316,30 @@ pub fn player_state_system(_delta : Double) -> Unit {
     }
   }
   player.update(physics, map_info)
+  // portals.update(player.character.get_position())
+  // TODO: check portals, seats, attacks, drops, skills, items, expressions
+  //         @keyboard.BasicActionId::UP =>
+  //         // @keyboard.ActionId::SIT => self.check_seats()
+  //         @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
+  //         @keyboard.BasicActionId::PICKUP => self.check_drops(player)
+  //   SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
+  //   ITEM(item_id) => () //self.inventory.use_item(item_id)
+  //   // @keyboard.Id::FACE => self.player.set_expression(action)
 }
 
 ///|
-fn Stage::check_portals(
-  self : Stage,
+fn check_portals(
+  player : @player.Player,
   map_info : @map.MapInfo,
   portals : @map.MapPortals,
   physics : @physics.Physics,
 ) -> Unit {
-  let player = self.player
   if player.is_attacking() {
     return
   }
   let playerpos = player.character.get_position()
   let warpinfo = portals.find_warp_at(playerpos)
-  if warpinfo.intramap {
+  if warpinfo.intra_map {
     let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
     let startpos = physics.get_y_below(spawnpoint)
     player.respawn(startpos, map_info.is_underwater())
@@ -510,7 +489,12 @@ pub fn Stage::reset_player_position(self : Stage) -> Unit {
 let stage_ref : Ref[Stage?] = Ref::new(None)
 
 ///|
-pub fn game_scene_system(_delta : Double) -> Unit {
+pub fn get_stage() -> Stage? {
+  stage_ref.val
+}
+
+///|
+pub fn scene_transition_system(_delta : Double) -> Unit {
   guard @game_state.game_state.state
     is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~) else {
     stage_ref.val = None
@@ -539,8 +523,11 @@ pub fn game_scene_system(_delta : Double) -> Unit {
       let player : @player.Player = @player.Player::new(
         entity, 1, "kkkiio", char_look, number_set, stats,
       )
+      let io_service = @io_task.IOService::new()
+      let monster_module = @monster.Module::new(@net.Network::get(), io_service)
       let stage = Stage::new(
         map_module.get_portals_animations(),
+        monster_module.get_map_mobs(),
         @io_task.IOService::new(),
         player,
       )

@@ -31,10 +31,14 @@ fn main {
   .add_system(game_start, schedule=Startup)
   .add_system(@cursor.cursor_system, system_name="cursor_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
-  .add_system(@game_scene.game_scene_system, system_name="game_scene_system")
+  .add_system(
+    @game_scene.scene_transition_system,
+    system_name="scene_transition_system",
+  )
   .add_system(
     @game_scene.player_state_system,
     system_name="player_state_system",
   )
+  .add_system(@combat_impl2.combat_system, system_name="combat_system")
   .run()
 }

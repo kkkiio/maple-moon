@@ -21,6 +21,7 @@
     "KKKIIO/maple-moon/lib/io_task",
     "Milky2018/selene/system",
     "Milky2018/selene/position",
-    "Milky2018/selene/entity"
+    "Milky2018/selene/entity",
+    "rami3l/js-ffi/js"
   ]
 }

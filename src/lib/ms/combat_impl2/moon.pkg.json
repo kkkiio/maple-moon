@@ -21,6 +21,8 @@
     "KKKIIO/maple-moon/lib/ms/bullet",
     "KKKIIO/maple-moon/lib/ms/char_look",
     "KKKIIO/maple-moon/lib/ms/equip",
-    "KKKIIO/maple-moon/lib/ms/equip/data"
+    "KKKIIO/maple-moon/lib/ms/equip/data",
+    "KKKIIO/maple-moon/lib/game_scene",
+    "KKKIIO/maple-moon/lib/ms/physics"
   ]
 }

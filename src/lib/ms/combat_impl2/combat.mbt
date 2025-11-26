@@ -600,7 +600,7 @@ fn Combat::apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
 /// 
 /// Returns (degenerate, attack_type) where degenerate is true if the skill or ammunition is missing
 pub fn check_attack_type(
-  character : @character.CharBase,
+  character : @character.Character,
   inventory : &@player.Inventory,
   skill : Bool,
 ) -> (Bool, @combat_proto.AttackType) {
@@ -641,7 +641,7 @@ pub fn check_attack_type(
 ///|
 pub fn Combat::can_use(
   self : Combat,
-  character : @character.CharBase,
+  character : @character.Character,
   skill_book : &@player.SkillBook,
   stats : @char_stats.CharStats,
   inventory : &@player.Inventory,

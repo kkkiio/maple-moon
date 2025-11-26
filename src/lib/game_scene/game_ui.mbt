@@ -31,8 +31,8 @@ pub fn UIStateGame::new(stage : Stage) -> UIStateGame {
     // tooltip: None,
     // tooltip_parent: TooltipParent::NONE,
     // time_rel_grabbed: timer.now(),
-    vwidth: @config.constants.get_viewwidth(),
-    vheight: @config.constants.get_viewheight(),
+    vwidth: @graphics.view_size.0,
+    vheight: @graphics.view_size.1,
   }
   // icon_map: Map::from_array([
   //   (Icon.IconType::NONE, Widget.Type::NONE),
@@ -66,28 +66,7 @@ pub impl @ui.UIState for UIStateGame with draw(
 
 ///|
 pub impl @ui.UIState for UIStateGame with update(self : UIStateGame) -> Unit {
-  let mut update_screen = false
-  let new_width = @config.constants.get_viewwidth()
-  let new_height = @config.constants.get_viewheight()
-  if self.vwidth != new_width || self.vheight != new_height {
-    update_screen = true
-    self.vwidth = new_width
-    self.vheight = new_height
-    //TODO: adjust status bar
-  }
-  self.element_order.each(fn(t) {
-    match self.elements.get(t) {
-      Some(element) =>
-        if element.get_ui_model().is_active() {
-          element.update()
-          if update_screen {
-            //TODO: update screen
-            // element.update_screen(new_width, new_height)
-          }
-        }
-      None => ()
-    }
-  })
+
 }
 
 ///|

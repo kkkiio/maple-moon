@@ -315,7 +315,10 @@ pub fn player_state_system(_delta : Double) -> Unit {
       player.send_action(action, false)
     }
   }
-  player.update(physics, map_info)
+  let times = @config.get_logic_times()
+  for _ in 0..<times {
+    player.update(physics, map_info)
+  }
   // portals.update(player.character.get_position())
   // TODO: check portals, seats, attacks, drops, skills, items, expressions
   //         @keyboard.BasicActionId::UP =>

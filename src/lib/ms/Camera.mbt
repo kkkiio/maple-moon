@@ -20,14 +20,13 @@ let y_offset : Int = 80
 
 ///|
 fn Camera::new() -> Camera {
-  let constants = @config.constants
   {
     x: Linear::new(0.0),
     y: Linear::new(0.0 + y_offset.to_double()),
     hbounds: @struct.Range::default(),
     vbounds: @struct.Range::default(),
-    vwidth: constants.get_viewwidth(),
-    vheight: constants.get_viewheight(),
+    vwidth: @graphics.view_size.0,
+    vheight: @graphics.view_size.1,
   }
 }
 

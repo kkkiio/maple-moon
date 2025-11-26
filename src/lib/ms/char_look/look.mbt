@@ -630,6 +630,7 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 
 ///|
 pub fn CharLook::play_animations(self : CharLook) -> Unit {
+  // TODO: support stance speed
   // let acmove = @struct.Point::default()
   // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
   // let interstance = self.stance.get()

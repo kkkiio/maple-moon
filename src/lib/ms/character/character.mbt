@@ -17,7 +17,7 @@ pub(all) enum CharState {
   ROPE
   DIED
   SIT
-} derive(Eq, Compare)
+} derive(Eq, Compare, Show)
 
 ///|
 pub(all) enum Facing {
@@ -54,7 +54,7 @@ pub fn CharState::stance_value(self : CharState, facing_right~ : Bool) -> Int {
 // Base for characters, e.g. the player and other clients on the same map.
 
 ///|
-pub(all) struct CharBase {
+pub(all) struct Character {
   entity : @entity.Entity
   base : MapObjectBase
   mut look : @char_look.CharLook
@@ -80,24 +80,20 @@ pub(all) struct CharBase {
 }
 
 ///|
-/// Type alias for backward compatibility
-pub typealias CharBase as Character
-
-///|
-pub fn CharBase::get_position(self : CharBase) -> @struct.Point[Int] {
+pub fn Character::get_position(self : Character) -> @struct.Point[Int] {
   self.base.get_position()
 }
 
 ///|
-pub fn CharBase::set_position(
-  self : CharBase,
+pub fn Character::set_position(
+  self : Character,
   pos : @struct.Point[Int],
 ) -> Unit {
   self.base.set_position(pos)
 }
 
 ///|
-pub fn CharBase::new(
+pub fn Character::new(
   entity : @entity.Entity,
   oid : Int,
   look : @char_look.CharLook,
@@ -105,7 +101,7 @@ pub fn CharBase::new(
   damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
   stats : @char_stats.CharStats,
-) -> CharBase {
+) -> Character {
   let char_base = {
     entity,
     base: MapObjectBase::new(oid, on_pos_change=fn(pos) {
@@ -142,7 +138,7 @@ pub fn CharBase::new(
 }
 
 ///|
-pub fn CharBase::is_climbing(self : CharBase) -> Bool {
+pub fn Character::is_climbing(self : Character) -> Bool {
   match self.state {
     CharState::LADDER | CharState::ROPE => true
     _ => false
@@ -150,7 +146,7 @@ pub fn CharBase::is_climbing(self : CharBase) -> Bool {
 }
 
 ///|
-pub fn CharBase::get_layer(self : CharBase) -> Int {
+pub fn Character::get_layer(self : Character) -> Int {
   if self.is_climbing() {
     7
   } else {
@@ -159,8 +155,8 @@ pub fn CharBase::get_layer(self : CharBase) -> Int {
 }
 
 ///|
-pub fn CharBase::draw(
-  self : CharBase,
+pub fn Character::draw(
+  self : Character,
   viewx : Double,
   viewy : Double,
   alpha : Double,
@@ -214,14 +210,17 @@ pub fn CharBase::draw(
 
 ///|
 /// speed is the multiplier of the timestep.
-pub fn CharBase::update(self : CharBase, speed : Double) -> Bool {
+pub fn Character::update(self : Character, speed : Double) -> Unit {
   @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
     number.update()
   })
   self.effects.update()
+  // TODO: implement recurring_effects
   //     recurring_effects_.update();
+  // TODO: implement chat_balloon
   //     chat_balloon_.update();
   self.invincible.update(timestep=@config.step_time_ms)
+  // TODO: implement iron_body
   //     iron_body_.update();
 
   let stancespeed_ms = @cmp.maximum(
@@ -234,23 +233,21 @@ pub fn CharBase::update(self : CharBase, speed : Double) -> Bool {
     Some(image) => ... // TODO: update after_image
   }
   self.alerted.update(timestep=stancespeed_ms)
-  // self.look.update(stancespeed_ms)
-  false // TODO: remove this
 }
 
 ///|
-pub fn CharBase::get_phobj(self : CharBase) -> PhysicsObject {
+pub fn Character::get_phobj(self : Character) -> PhysicsObject {
   self.base.phobj
 }
 
 ///|
-pub fn CharBase::set_facing_right(self : CharBase, f : Bool) -> Unit {
+pub fn Character::set_facing_right(self : Character, f : Bool) -> Unit {
   self.facing_right = f
   self.look.set_facing_right(f)
 }
 
 ///|
-pub fn CharBase::set_state(self : CharBase, st : CharState) -> Unit {
+pub fn Character::set_state(self : Character, st : CharState) -> Unit {
   self.state = st
   self.look.set_stance(
     @types.StanceId::by_state(st.stance_value(facing_right=self.facing_right)),
@@ -258,14 +255,14 @@ pub fn CharBase::set_state(self : CharBase, st : CharState) -> Unit {
 }
 
 ///|
-pub fn CharBase::is_facing_right(self : CharBase) -> Bool {
+pub fn Character::is_facing_right(self : Character) -> Bool {
   self.facing_right
 }
 
 ///|
 /// Get a speed modifier for the current stance.
-pub fn CharBase::get_stancespeed(
-  self : CharBase,
+pub fn Character::get_stancespeed(
+  self : Character,
   base_attack_speed : Int,
 ) -> Double {
   if self.attacking {
@@ -286,12 +283,12 @@ pub fn get_real_attackspeed(base_attack_speed : Int) -> Double {
 }
 
 ///|
-pub fn CharBase::get_name(self : CharBase) -> String {
+pub fn Character::get_name(self : Character) -> String {
   self.name
 }
 
 ///|
-pub fn CharBase::get_weapontype(self : CharBase) -> @weapon.Type {
+pub fn Character::get_weapontype(self : Character) -> @weapon.Type {
   self.look
   .get_equips()
   .get_weapon()
@@ -307,30 +304,30 @@ pub fn get_weapon_type_in_look(look : @char_look.CharLook) -> @weapon.Type {
 }
 
 ///|
-pub fn CharBase::is_invincible(self : CharBase) -> Bool {
+pub fn Character::is_invincible(self : Character) -> Bool {
   self.invincible.get()
 }
 
 ///|
-pub fn CharBase::set_afterimage(
-  self : CharBase,
+pub fn Character::set_afterimage(
+  self : Character,
   after_image : @char_look.AfterImage,
 ) -> Unit {
   self.after_image = Some(after_image)
 }
 
 ///|
-pub fn CharBase::is_sitting(self : CharBase) -> Bool {
+pub fn Character::is_sitting(self : Character) -> Bool {
   self.state == CharState::SIT
 }
 
 ///|
-pub fn CharBase::get_oid(self : CharBase) -> Int {
+pub fn Character::get_oid(self : Character) -> Int {
   self.base.get_oid()
 }
 
 ///|
-pub fn CharBase::get_attackdelay(self : CharBase, no : Int) -> Int {
+pub fn Character::get_attackdelay(self : Character, no : Int) -> Int {
   let first_frame = self.after_image.map_or(0, fn(image) {
     image.get_first_frame()
   }) // WARN: may produce incorrect delay
@@ -342,24 +339,27 @@ pub fn CharBase::get_attackdelay(self : CharBase, no : Int) -> Int {
 }
 
 ///|
-pub fn CharBase::is_twohanded(self : CharBase) -> Bool {
+pub fn Character::is_twohanded(self : Character) -> Bool {
   self.look.get_equips().is_twohanded()
 }
 
 ///|
-pub fn CharBase::regular_attack(self : CharBase, degenerate : Bool) -> Unit {
+pub fn Character::regular_attack(self : Character, degenerate : Bool) -> Unit {
   self.look.attack(degenerate)
   self.attacking = true
   self.set_alerted(5000)
 }
 
 ///|
-pub fn CharBase::show_effect_id(self : CharBase, toshow : CharEffectId) -> Unit {
+pub fn Character::show_effect_id(
+  self : Character,
+  toshow : CharEffectId,
+) -> Unit {
   // TODO: Implement
 }
 
 ///|
-pub fn CharBase::show_damage(self : CharBase, damage : Int) -> Unit {
+pub fn Character::show_damage(self : Character, damage : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
   self.damage_numbers.push(
@@ -370,7 +370,7 @@ pub fn CharBase::show_damage(self : CharBase, damage : Int) -> Unit {
 }
 
 ///|
-pub fn CharBase::show_heal_number(self : CharBase, n : Int) -> Unit {
+pub fn Character::show_heal_number(self : Character, n : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
   self.damage_numbers.push(
@@ -379,8 +379,8 @@ pub fn CharBase::show_heal_number(self : CharBase, n : Int) -> Unit {
 }
 
 ///|
-pub fn CharBase::show_attack_effect(
-  self : CharBase,
+pub fn Character::show_attack_effect(
+  self : Character,
   toshow : @graphics.Animation,
   z : Int,
 ) -> Unit {
@@ -396,20 +396,20 @@ pub fn CharBase::show_attack_effect(
 }
 
 ///|
-pub fn CharBase::show_iron_body(self : CharBase) -> Unit {
+pub fn Character::show_iron_body(self : Character) -> Unit {
   // self.iron_body.set_for(500) // TODO: Implement
 }
 
 ///|
-pub fn CharBase::attack_by_action(self : CharBase, action : String) -> Unit {
+pub fn Character::attack_by_action(self : Character, action : String) -> Unit {
   self.look.set_action(action)
   self.attacking = true
   self.set_alerted(5000)
 }
 
 ///|
-pub fn CharBase::attack_by_stance(
-  self : CharBase,
+pub fn Character::attack_by_stance(
+  self : Character,
   stance : @types.StanceId,
 ) -> Unit {
   self.look.attack_by_stance(stance)
@@ -418,17 +418,17 @@ pub fn CharBase::attack_by_stance(
 }
 
 ///|
-pub fn CharBase::get_look(self : CharBase) -> @char_look.CharLook {
+pub fn Character::get_look(self : Character) -> @char_look.CharLook {
   self.look
 }
 
 ///|
-pub fn CharBase::get_afterimage(self : CharBase) -> @char_look.AfterImage? {
+pub fn Character::get_afterimage(self : Character) -> @char_look.AfterImage? {
   self.after_image
 }
 
 ///|
-pub fn CharBase::get_stats(self : CharBase) -> @char_stats.CharStats {
+pub fn Character::get_stats(self : Character) -> @char_stats.CharStats {
   self.stats
 }
 
@@ -441,12 +441,12 @@ pub(all) struct CharEntry {
 
 ///|
 /// Whether the character is alerted. When alerted, some operations are forbidden, like changing equips.
-pub fn CharBase::is_alerted(self : CharBase) -> Bool {
+pub fn Character::is_alerted(self : Character) -> Bool {
   self.alerted.get()
 }
 
 ///|
-pub fn CharBase::set_alerted(self : CharBase, millis : Int) -> Unit {
+pub fn Character::set_alerted(self : Character, millis : Int) -> Unit {
   self.alerted.set_for(millis)
 }
 

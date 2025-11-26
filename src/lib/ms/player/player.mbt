@@ -13,7 +13,7 @@ pub(open) trait SkillBook {
 ///|
 pub(all) struct Player {
   entity : @entity.Entity
-  character : @character.CharBase
+  character : @character.Character
   stats : CharStats
   mut underwater : Bool
   mut last_move : Movement
@@ -232,7 +232,7 @@ pub fn Player::update(
       } else if @inputs.is_pressed(@inputs.Code::ArrowDown) {
         self.check_ladders(map_info, false)
       }
-      let aniend = self.character.update(
+      self.character.update(
         self.character.get_stancespeed(
           @character.get_integer_attackspeed(
             self.character.get_look(),
@@ -240,6 +240,7 @@ pub fn Player::update(
           ),
         ),
       )
+      let aniend = false // TODO: implement this, assign true if the character animation has ended
       if aniend && self.character.attacking {
         self.character.attacking = false
         let state : CharState = if player.character.get_phobj().onground {
@@ -267,7 +268,7 @@ pub fn Player::update(
           }
         }
         player.character.get_phobj().clear_flags()
-        player.character.set_state(state)
+        player.set_state(state)
       } else {
         match self.character.state {
           STAND =>
@@ -556,25 +557,26 @@ pub fn Player::is_attacking(self : Player) -> Bool {
 
 ///|
 pub fn Player::set_state(self : Player, st : CharState) -> Unit {
-  if not(self.character.attacking) {
-    self.character.set_state(st)
-    match st {
-      STAND | WALK | FALL =>
-        self.character.get_phobj().set_t(@physics.PhysicsObjectType::NORMAL)
-      SWIM =>
-        self.character
-        .get_phobj()
-        .set_t(
-          if self.is_underwater() {
-            @physics.PhysicsObjectType::SWIMMING
-          } else {
-            @physics.PhysicsObjectType::FLYING
-          },
-        )
-      LADDER | ROPE =>
-        self.character.get_phobj().set_t(@physics.PhysicsObjectType::FIXATED)
-      _ => ()
-    }
+  if self.character.attacking {
+    return
+  }
+  self.character.set_state(st)
+  match st {
+    STAND | WALK | FALL =>
+      self.character.get_phobj().set_t(@physics.PhysicsObjectType::NORMAL)
+    SWIM =>
+      self.character
+      .get_phobj()
+      .set_t(
+        if self.is_underwater() {
+          @physics.PhysicsObjectType::SWIMMING
+        } else {
+          @physics.PhysicsObjectType::FLYING
+        },
+      )
+    LADDER | ROPE =>
+      self.character.get_phobj().set_t(@physics.PhysicsObjectType::FIXATED)
+    _ => ()
   }
 }
 

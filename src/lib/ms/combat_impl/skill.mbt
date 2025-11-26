@@ -140,7 +140,7 @@ pub fn Skill::apply_actions(
 ///|
 pub fn Skill::make_attack(
   self : Skill,
-  chr : @character.CharBase,
+  chr : @character.Character,
   bullet_id : Int,
   attack_type : @combat.AttackType,
 ) -> @combat.Attack {

@@ -18,7 +18,7 @@ pub(all) struct SpecialMove {
   apply_actions : (@character.Character, @combat.AttackType) -> Unit
   // TODO: find a better place for inventory arguments
   make_attack : (
-    @character.CharBase,
+    @character.Character,
     &@player.Inventory,
     @combat.AttackType,
     Bool,
@@ -63,7 +63,7 @@ pub fn SpecialMove::apply_actions(
 ///|
 pub fn SpecialMove::make_attack(
   self : SpecialMove,
-  char : @character.CharBase,
+  char : @character.Character,
   inventory : &@player.Inventory,
   attack_type : @combat.AttackType,
   degenerate : Bool,

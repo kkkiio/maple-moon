@@ -15,7 +15,7 @@ pub fn RegularAttack::apply_actions(
 
 ///|
 pub fn make_regular_attack(
-  character : @character.CharBase,
+  character : @character.Character,
   bullet_id : Int,
   attacktype : @combat.AttackType,
   degenerate : Bool,

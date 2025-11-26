@@ -24,7 +24,7 @@ pub fn StatusBarUI::new(
   hooks : @ui.Hooks,
   status_bar_loader : @resource.SyncLoader,
 ) -> StatusBarUI raise {
-  let vwidth = @config.constants.get_viewwidth()
+  let vwidth = @graphics.view_size.0
   let mainBar = status_bar_loader.load_res(["mainBar"])
   let stat = "status"
   let status = mainBar[stat]

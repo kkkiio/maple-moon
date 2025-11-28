@@ -49,10 +49,14 @@ pub fn Obj::update(self : Obj) -> Unit {
 
 ///|
 pub fn Obj::set_sprites(self : Obj) -> Unit {
-  let sprite = @graphics.nx_animation_to_selene_sprite(
+  let animation = @graphics.nx_animation_to_selene_animation(
     self.animation,
-    z=self.z + @graphics.SCENE_ZINDEX,
     flip_x=self.flip,
+    loop_=true,
+  )
+  let sprite = @sprite.Sprite::from_animation(
+    animation,
+    self.z + @graphics.SCENE_ZINDEX,
   )
   @sprite.sprites.set(self.entity, sprite)
   @position.positions.set(

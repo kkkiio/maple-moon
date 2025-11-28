@@ -168,7 +168,7 @@ fn draw_map(
     if hide_backgrounds.get_or_default(i, false) {
       continue
     }
-    background.draw(viewpos.x, viewpos.y, alpha)
+    // background.draw(viewpos.x, viewpos.y, alpha)
   }
   let int_viewpos : @struct.Point[Int] = {
     x: viewpos.x.round().to_int(),
@@ -199,7 +199,7 @@ fn draw_map(
     if hide_foregrounds.get_or_default(i, false) {
       continue
     }
-    background.draw(viewpos.x, viewpos.y, alpha)
+    // background.draw(viewpos.x, viewpos.y, alpha)
   }
 }
 
@@ -209,7 +209,12 @@ fn update_map(
   tiles_objs : @map.MapTilesObjs,
   portals : @map.MapPortals,
 ) -> Unit {
-  @map.update_backgrounds(backgrounds)
+  for background in backgrounds.backs {
+    background.update()
+  }
+  for background in backgrounds.fores {
+    background.update()
+  }
   tiles_objs.update()
   portals.update(@struct.Point::default()) // TODO: add player
 }

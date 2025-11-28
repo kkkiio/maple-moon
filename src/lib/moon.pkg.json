@@ -10,7 +10,8 @@
     "KKKIIO/maple-moon/lib/ms/login",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/game_scene",
-    "KKKIIO/maple-moon/lib/ms/combat_impl2"
+    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/map"
   ],
   "overrides": [
     "Milky2018/selene-canvas"

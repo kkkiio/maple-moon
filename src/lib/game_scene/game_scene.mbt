@@ -174,21 +174,12 @@ fn Stage::respawn(
 }
 
 ///|
-fn set_sprites(
-  backgrounds : @map.Backgrounds,
-  tiles_objs : @map.MapTilesObjs,
-  world_size : @selene_math.Vec2D,
-) -> Unit {
+fn set_sprites(tiles_objs : @map.MapTilesObjs) -> Unit {
   // let viewpos = self.camera.get_position(alpha~)
   // let viewrpos = self.camera.real_position(alpha)
   // let viewx = viewrpos.0
   // let viewy = viewrpos.1
   // @map.drawbackgrounds(backgrounds.backs, viewx, viewy, alpha)
-  for i, background in backgrounds.backs {
-    // background.draw(viewx, viewy, alpha)
-    let z = @graphics.BG_ZINDEX + i
-    background.set_sprites(world_size, z)
-  }
   // let player = self.player.unwrap()
   // for id in @map_layer.ids {
   tiles_objs.set_sprites()
@@ -250,7 +241,6 @@ fn Stage::update(self : Stage) -> Unit raise {
   //     }
   // }
   // self.combat.update()
-  // @map.update_backgrounds(backgrounds)
   // // effect_.update();
   // tiles_objs.update()
 
@@ -562,11 +552,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       )
       let width = sence_map.map_info.get_walls().delta()
       let height = sence_map.map_info.get_borders().delta()
-      set_sprites(
+      @map.set_backgrounds(
         sence_map.backgrounds,
-        sence_map.tiles_objs,
         @selene_math.Vec2D(width.to_double(), height.to_double()),
       )
+      set_sprites(sence_map.tiles_objs)
       stage.respawn(
         portal_id,
         sence_map.map_info,

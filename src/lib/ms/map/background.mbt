@@ -4,10 +4,10 @@ pub(all) enum BackgroundType {
   HTILED = 1
   VTILED = 2
   TILED = 3
-  HMOVEA = 4
+  HMOVEA = 4 // horizontal moving tiled background
   VMOVEA = 5
-  HMOVEB = 6
-  VMOVEB = 7
+  // HMOVEB = 6
+  // VMOVEB = 7
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
@@ -22,8 +22,8 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
     3 => BackgroundType::TILED
     4 => BackgroundType::HMOVEA
     5 => BackgroundType::VMOVEA
-    6 => BackgroundType::HMOVEB
-    7 => BackgroundType::VMOVEB
+    // 6 => BackgroundType::HMOVEB
+    // 7 => BackgroundType::VMOVEB
     _ => return None
   }
   Some(t)
@@ -33,19 +33,17 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
 struct Background {
   entity : @entity.Entity
   animation : @resource.NxAnimation
-  position : @position.Position
+  /// position in world space
+  mut position : @selene_math.Vec2D
   t : BackgroundType
   // cx : Int
   // cy : Int
-  // rx : Double
-  // ry : Double
+  rx : Double
+  ry : Double
   // htile : Int
   // vtile : Int
   // opacity : Double
   // flipped : Bool
-  // move_obj : @physics.MovingObject
-  // woffset : Int
-  // hoffset : Int
 }
 
 ///|
@@ -102,7 +100,7 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
     no: no.to_int(),
     rx: rx.to_int(),
     ry: ry.to_int(),
-    t: BackgroundType::from_int(t.to_int()).or_error(
+    t: BackgroundType::from_int(t.to_int()).unwrap_or_error(
       @json.JsonDecodeError(
         (path.add_key("type"), "unknown background type \{t}"),
       ),
@@ -173,10 +171,6 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
   //   0 => dim_y
   //   cy => cy
   // }
-  // let vwidth = @config.constants.get_viewwidth()
-  // let vheight = @config.constants.get_viewheight()
-  // let woffset = vwidth / 2
-  // let hoffset = vheight / 2
   // let htile = match t {
   //   BackgroundType::HTILED
   //   | BackgroundType::HMOVEA
@@ -193,37 +187,18 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
   //   | BackgroundType::VMOVEB => vheight / cy + 3
   //   _ => 1
   // }
-  // let rx = res.rx
-  // let ry = res.ry
-  // let move_obj = @physics.MovingObject::default()
-  // move_obj.set_x(res.x)
-  // move_obj.set_y(res.y)
-  // match t {
-  //   BackgroundType::HMOVEA | BackgroundType::HMOVEB =>
-  //     move_obj.hspeed = rx / 16.0
-  //   BackgroundType::VMOVEA | BackgroundType::VMOVEB =>
-  //     move_obj.vspeed = ry / 16.0
-  //   _ => ()
-  // }
-  // {
-  //   animation,
-  //   cx,
-  //   cy,
-  //   rx,
-  //   ry,
-  //   htile,
-  //   vtile,
-  //   opacity,
-  //   flipped,
-  //   move_obj,
-  //   woffset,
-  //   hoffset,
-  // }
   let entity = @entity.Entity::new()
   let position = @position.Position(
     @selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
   )
-  { entity, animation: res.animation, position, t: res.t }
+  {
+    entity,
+    animation: res.animation,
+    position: position.0,
+    t: res.t,
+    rx: res.rx.to_double(),
+    ry: res.ry.to_double(),
+  }
 }
 
 ///|
@@ -282,46 +257,74 @@ pub fn Background::set_sprites(
   //   }
   //   tx += self.cx
   // }
-  @log.info(
-    {
-      "position": self.position,
-      "size": self.animation.get_size(),
-      "z": z,
-      "t": self.t,
-    },
+  @log.debug(
+    { "size": self.animation.get_size(), "z": z, "t": self.t },
     "set background sprites",
   )
   let sprite = match self.t {
-    BackgroundType::TILED =>
+    BackgroundType::TILED => {
+      guard self.animation.frames[0].texture.offset is { x: 0, y: 0 } else {
+        @log.error(
+          { "offset": self.animation.frames[0].texture.offset },
+          "tiled background in spritesheet is not supported",
+        )
+        panic()
+      }
+      let i = self.animation.frames[0].texture.i
       @sprite.Sprite::from_picture(
-        @sprite.Picture::new(
-          world_size,
-          self.animation.frames[0].texture.i,
-          repeat=Repeat,
-        ),
+        @sprite.Picture::new(world_size, i, repeat=Repeat),
         z,
       )
-    _ => @graphics.nx_animation_to_selene_sprite(self.animation, z~)
-    // _ => return
+    }
+    _ =>
+      @sprite.Sprite::from_animation(
+        @graphics.nx_animation_to_selene_animation(self.animation),
+        z,
+      )
   }
   @sprite.sprites.set(self.entity, sprite)
-  @position.positions.set(self.entity, self.position)
-}
-
-///|
-pub fn Background::draw(
-  self : Background,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-
+  @position.positions.set(self.entity, @position.Position(self.position))
 }
 
 ///|
 pub fn Background::update(self : Background) -> Unit {
-  // self.move_obj.do_move()
-  // self.animation.update() |> ignore
+  // FIXME: 实现循环滚动, 当移动了一个背景的宽度时, 重置位置
+  match self.t {
+    BackgroundType::HMOVEA => {
+      // TODO: why divide 16.0?
+      let h_speed = self.rx / 16.0
+      self.position = self.position.update(X, self.position.0 + h_speed)
+    }
+    BackgroundType::VMOVEA => {
+      // TODO: why divide 16.0?
+      let v_speed = self.ry / 16.0
+      self.position = self.position.update(Y, self.position.1 + v_speed)
+    }
+    _ => ()
+  }
+  // 视差滚动: 远处移动慢、近处移动快
+  let view_size = @graphics.view_size
+  let woffset = view_size.0 / 2
+  let hoffset = view_size.1 / 2
+  let view_pos = @camera.get_position()
+  let x = if self.t is BackgroundType::HMOVEA {
+    self.position[X] + view_pos[X]
+  } else {
+    let shift_x = self.rx * (woffset.to_double() - view_pos[X]) / 100.0 +
+      woffset.to_double()
+    self.position[X] + shift_x
+  }
+  let y = if self.t is BackgroundType::VMOVEA {
+    self.position[Y] + view_pos[Y]
+  } else {
+    let shift_y = self.ry * (hoffset.to_double() - view_pos[Y]) / 100.0 +
+      hoffset.to_double()
+    self.position[Y] + shift_y
+  }
+  @position.positions.set(
+    self.entity,
+    @position.Position(@selene_math.Vec2D(x, y)),
+  )
 }
 
 ///|
@@ -345,7 +348,7 @@ pub async fn load_backgrounds(
 ) -> Backgrounds {
   let fronts = Array::new()
   let backgrounds = Array::new()
-  for back_spec in spec.inner() {
+  for back_spec in spec.0 {
     // TODO: what does empty bS mean?
     if back_spec.bS == "" {
       continue
@@ -366,28 +369,44 @@ pub async fn load_backgrounds(
   { backs, fores }
 }
 
-// ///|
-// pub fn drawbackgrounds(
-//   backgrounds : Array[Background],
-//   viewx : Double,
-//   viewy : Double,
-//   alpha : Double,
-// ) -> Unit {
-//   backgrounds.each(fn(background) { background.draw(viewx, viewy, alpha) })
-// }
-
 ///|
-pub fn drawforegrounds(
-  foregrounds : Array[Background],
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  foregrounds.each(fn(foreground) { foreground.draw(viewx, viewy, alpha) })
+struct BackgroundsContext {
+  backgrounds : Backgrounds
+  world_size : @selene_math.Vec2D
+  mut set_sprites : Bool
 }
 
 ///|
-pub fn update_backgrounds(backgrounds : Backgrounds) -> Unit {
-  backgrounds.backs.each(fn(background) { background.update() })
-  backgrounds.fores.each(fn(foreground) { foreground.update() })
+let backgrounds_context : Ref[BackgroundsContext?] = Ref::new(None)
+
+///|
+pub fn set_backgrounds(
+  backgrounds : Backgrounds,
+  world_size : @selene_math.Vec2D,
+) -> Unit {
+  let context = { backgrounds, world_size, set_sprites: false }
+  backgrounds_context.val = Some(context)
+}
+
+///|
+/// 背景系统. 负责初始化背景, 更新背景的位置, 实现视差滚动、循环滚动等效果.
+pub fn background_system(_delta : Double) -> Unit {
+  guard backgrounds_context.val is Some(ctx) else { return }
+  let { backgrounds, world_size, .. } = ctx
+  if !ctx.set_sprites {
+    ctx.set_sprites = true
+    for i, b in backgrounds.backs {
+      let z = @graphics.BACKGROUND_ZINDEX + i // WORKAROUND: 暂时给每个背景图一个递增的zindex, 模拟顺序渲染的效果
+      b.set_sprites(world_size, z)
+    }
+    for i, f in backgrounds.fores {
+      let z = @graphics.FOREGROUND_ZINDEX + i // WORKAROUND: 暂时给每个前景图一个递增的zindex, 模拟顺序渲染的效果
+      f.set_sprites(world_size, z)
+    }
+  }
+  let times = @config.get_logic_times()
+  for _ in 0..<times {
+    backgrounds.backs.each(_.update())
+    backgrounds.fores.each(_.update())
+  }
 }

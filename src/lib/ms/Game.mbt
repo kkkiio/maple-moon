@@ -7,7 +7,6 @@ pub(all) struct Game {
   mut accumulator : Int
   processor : @net.Network
   loaded_state : @utils.Future[LoadedState]
-  poll_service : @io_task.PollService
   io_service : @io_task.IOService
   scheduls : @schedule.Schedules
   // stage : Ref[Stage?]
@@ -34,7 +33,6 @@ pub fn Game::new() -> Game {
   })
   let processor = @net.Network::init()
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
-  let poll_service = @io_task.PollService::new()
   let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
   let stage = Ref::new(None)
@@ -52,7 +50,6 @@ pub fn Game::new() -> Game {
     //   it.unwrap() // TODO: handle error
     // }),
     loaded_state: @utils.Future::never(),
-    poll_service,
     io_service,
     scheduls,
     // stage,
@@ -64,7 +61,6 @@ pub fn Game::new() -> Game {
 async fn load_modules(
   timer : @utils.Timer,
   network : @net.Network,
-  poll_service : @io_task.PollService,
   io_service : @io_task.IOService,
   scheduls : @schedule.Schedules,
   // stage_ref : Ref[Stage?],
@@ -75,7 +71,6 @@ async fn load_modules(
   //   stage_ref.val.unwrap() // TODO: handle error
   // }
 
-  let add_io_task = fn(task) { poll_service.add(task) }
   // let action_registry = @action.Registry::new()
   // let action_map = {}
   // fn merge_actions(
@@ -336,7 +331,6 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   for _ in 0..<update_times {
     self.update_status(loaded_state)
   }
-  self.poll_service.run() // run once per frame, after update network
   self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.

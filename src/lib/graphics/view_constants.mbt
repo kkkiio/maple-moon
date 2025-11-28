@@ -5,13 +5,16 @@ pub let view_size : (Int, Int) = (1366, 768) // Fixed to 1366x768
 pub let fps : UInt = 60
 
 ///|
-pub const BG_ZINDEX = 1
+pub const BACKGROUND_ZINDEX = 1
 
 ///|
 pub const SCENE_ZINDEX = 50
 
 ///|
 pub const CHAR_LOOK_ZINDEX = 70
+
+///|
+pub const FOREGROUND_ZINDEX = 80
 
 ///|
 pub const UI_ZINDEX = 100

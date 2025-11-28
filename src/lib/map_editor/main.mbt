@@ -209,13 +209,13 @@ fn update_map(
   tiles_objs : @map.MapTilesObjs,
   portals : @map.MapPortals,
 ) -> Unit {
-  for background in backgrounds.backs {
-    background.update()
-  }
-  for background in backgrounds.fores {
-    background.update()
-  }
-  tiles_objs.update()
+  // for background in backgrounds.backs {
+  //   background.update()
+  // }
+  // for background in backgrounds.fores {
+  //   background.update()
+  // }
+  // tiles_objs.update()
   portals.update(@struct.Point::default()) // TODO: add player
 }
 

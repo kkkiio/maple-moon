@@ -43,11 +43,6 @@ fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
 }
 
 ///|
-pub fn Obj::update(self : Obj) -> Unit {
-  // self.animation.update() |> ignore
-}
-
-///|
 pub fn Obj::set_sprites(self : Obj) -> Unit {
   let animation = @graphics.nx_animation_to_selene_animation(
     self.animation,

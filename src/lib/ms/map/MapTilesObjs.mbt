@@ -68,13 +68,6 @@ pub fn TilesObjs::default() -> TilesObjs {
 }
 
 ///|
-pub fn TilesObjs::update(self : TilesObjs) -> Unit {
-  for obj in self.objs {
-    obj.update()
-  }
-}
-
-///|
 pub fn TilesObjs::set_sprites(self : TilesObjs) -> Unit {
   for obj in self.objs {
     obj.set_sprites()
@@ -102,13 +95,6 @@ pub async fn MapTilesObjs::load(
     )
   }
   { layers, }
-}
-
-///|
-pub fn MapTilesObjs::update(self : MapTilesObjs) -> Unit {
-  for layer in self.layers {
-    layer.update()
-  }
 }
 
 ///|

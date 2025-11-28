@@ -31,7 +31,6 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
 
 ///|
 struct Background {
-  entity : @entity.Entity
   animation : @resource.NxAnimation
   /// position in world space
   mut position : @selene_math.Vec2D
@@ -111,7 +110,7 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
 }
 
 ///|
-struct BackgroundResource {
+pub struct BackgroundResource {
   animation : @resource.NxAnimation
   t : BackgroundType
   x : Int
@@ -187,14 +186,10 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
   //   | BackgroundType::VMOVEB => vheight / cy + 3
   //   _ => 1
   // }
-  let entity = @entity.Entity::new()
-  let position = @position.Position(
-    @selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
-  )
+  let position = @selene_math.Vec2D(res.x.to_double(), res.y.to_double())
   {
-    entity,
     animation: res.animation,
-    position: position.0,
+    position,
     t: res.t,
     rx: res.rx.to_double(),
     ry: res.ry.to_double(),
@@ -202,8 +197,9 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
 }
 
 ///|
-pub fn Background::set_sprites(
-  self : Background,
+pub fn set_background_sprites(
+  entity : @entity.Entity,
+  background : Background,
   world_size : @selene_math.Vec2D,
   z : Int,
 ) -> Unit {
@@ -257,20 +253,21 @@ pub fn Background::set_sprites(
   //   }
   //   tx += self.cx
   // }
+  let { animation, position, t, .. } = background
   @log.debug(
-    { "size": self.animation.get_size(), "z": z, "t": self.t },
+    { "size": animation.get_size(), "z": z, "t": t },
     "set background sprites",
   )
-  let sprite = match self.t {
+  let sprite = match t {
     BackgroundType::TILED => {
-      guard self.animation.frames[0].texture.offset is { x: 0, y: 0 } else {
+      guard animation.frames[0].texture.offset is { x: 0, y: 0 } else {
         @log.error(
-          { "offset": self.animation.frames[0].texture.offset },
+          { "offset": animation.frames[0].texture.offset },
           "tiled background in spritesheet is not supported",
         )
         panic()
       }
-      let i = self.animation.frames[0].texture.i
+      let i = animation.frames[0].texture.i
       @sprite.Sprite::from_picture(
         @sprite.Picture::new(world_size, i, repeat=Repeat),
         z,
@@ -278,27 +275,31 @@ pub fn Background::set_sprites(
     }
     _ =>
       @sprite.Sprite::from_animation(
-        @graphics.nx_animation_to_selene_animation(self.animation),
+        @graphics.nx_animation_to_selene_animation(animation),
         z,
       )
   }
-  @sprite.sprites.set(self.entity, sprite)
-  @position.positions.set(self.entity, @position.Position(self.position))
+  @sprite.sprites.set(entity, sprite)
+  @position.positions.set(entity, @position.Position(position))
 }
 
 ///|
-pub fn Background::update(self : Background) -> Unit {
+pub fn update_background_position(
+  entity : @entity.Entity,
+  background : Background,
+) -> Unit {
   // FIXME: 实现循环滚动, 当移动了一个背景的宽度时, 重置位置
-  match self.t {
+  let { t, position, rx, ry, .. } = background
+  match t {
     BackgroundType::HMOVEA => {
       // TODO: why divide 16.0?
-      let h_speed = self.rx / 16.0
-      self.position = self.position.update(X, self.position.0 + h_speed)
+      let h_speed = rx / 16.0
+      background.position = position.update(X, position[X] + h_speed)
     }
     BackgroundType::VMOVEA => {
       // TODO: why divide 16.0?
-      let v_speed = self.ry / 16.0
-      self.position = self.position.update(Y, self.position.1 + v_speed)
+      let v_speed = ry / 16.0
+      background.position = position.update(Y, position[Y] + v_speed)
     }
     _ => ()
   }
@@ -307,24 +308,21 @@ pub fn Background::update(self : Background) -> Unit {
   let woffset = view_size.0 / 2
   let hoffset = view_size.1 / 2
   let view_pos = @camera.get_position()
-  let x = if self.t is BackgroundType::HMOVEA {
-    self.position[X] + view_pos[X]
+  let x = if t is BackgroundType::HMOVEA {
+    position[X] + view_pos[X]
   } else {
-    let shift_x = self.rx * (woffset.to_double() - view_pos[X]) / 100.0 +
+    let shift_x = rx * (woffset.to_double() - view_pos[X]) / 100.0 +
       woffset.to_double()
-    self.position[X] + shift_x
+    position[X] + shift_x
   }
-  let y = if self.t is BackgroundType::VMOVEA {
-    self.position[Y] + view_pos[Y]
+  let y = if t is BackgroundType::VMOVEA {
+    position[Y] + view_pos[Y]
   } else {
-    let shift_y = self.ry * (hoffset.to_double() - view_pos[Y]) / 100.0 +
+    let shift_y = ry * (hoffset.to_double() - view_pos[Y]) / 100.0 +
       hoffset.to_double()
-    self.position[Y] + shift_y
+    position[Y] + shift_y
   }
-  @position.positions.set(
-    self.entity,
-    @position.Position(@selene_math.Vec2D(x, y)),
-  )
+  @position.positions.set(entity, @position.Position(@selene_math.Vec2D(x, y)))
 }
 
 ///|
@@ -370,10 +368,10 @@ pub async fn load_backgrounds(
 }
 
 ///|
-struct BackgroundsContext {
+priv struct BackgroundsContext {
   backgrounds : Backgrounds
   world_size : @selene_math.Vec2D
-  mut set_sprites : Bool
+  entities : Array[@entity.Entity]
 }
 
 ///|
@@ -384,7 +382,13 @@ pub fn set_backgrounds(
   backgrounds : Backgrounds,
   world_size : @selene_math.Vec2D,
 ) -> Unit {
-  let context = { backgrounds, world_size, set_sprites: false }
+  if backgrounds_context.val is Some({ entities, .. }) {
+    for entity in entities {
+      entity.destroy()
+    }
+    entities.clear()
+  }
+  let context = { backgrounds, world_size, entities: [] }
   backgrounds_context.val = Some(context)
 }
 
@@ -393,20 +397,32 @@ pub fn set_backgrounds(
 pub fn background_system(_delta : Double) -> Unit {
   guard backgrounds_context.val is Some(ctx) else { return }
   let { backgrounds, world_size, .. } = ctx
-  if !ctx.set_sprites {
-    ctx.set_sprites = true
+  if ctx.entities.length() !=
+    backgrounds.backs.length() + backgrounds.fores.length() {
+    ctx.entities.clear()
     for i, b in backgrounds.backs {
       let z = @graphics.BACKGROUND_ZINDEX + i // WORKAROUND: 暂时给每个背景图一个递增的zindex, 模拟顺序渲染的效果
-      b.set_sprites(world_size, z)
+      let entity = @entity.Entity::new()
+      set_background_sprites(entity, b, world_size, z)
+      ctx.entities.push(entity)
     }
     for i, f in backgrounds.fores {
       let z = @graphics.FOREGROUND_ZINDEX + i // WORKAROUND: 暂时给每个前景图一个递增的zindex, 模拟顺序渲染的效果
-      f.set_sprites(world_size, z)
+      let entity = @entity.Entity::new()
+      set_background_sprites(entity, f, world_size, z)
+      ctx.entities.push(entity)
     }
   }
   let times = @config.get_logic_times()
   for _ in 0..<times {
-    backgrounds.backs.each(_.update())
-    backgrounds.fores.each(_.update())
+    let mut i = 0
+    for b in backgrounds.backs {
+      update_background_position(ctx.entities[i], b)
+      i += 1
+    }
+    for f in backgrounds.fores {
+      update_background_position(ctx.entities[i], f)
+      i += 1
+    }
   }
 }

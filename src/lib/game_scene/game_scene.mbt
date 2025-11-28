@@ -489,7 +489,7 @@ pub fn get_stage() -> Stage? {
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   guard @game_state.game_state.state
-    is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~) else {
+    is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~, server~) else {
     stage_ref.val = None
     return
   }
@@ -517,7 +517,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         entity, 1, "kkkiio", char_look, number_set, stats,
       )
       let io_service = @io_task.IOService::new()
-      let monster_module = @monster.Module::new(@net.Network::get(), io_service)
+      let monster_module = @monster.Module::new(server, io_service)
       let stage = Stage::new(
         map_module.get_portals_animations(),
         monster_module.get_map_mobs(),

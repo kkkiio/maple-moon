@@ -1,21 +1,11 @@
 ///|
-priv struct EntryPoint {
-  mut game : @ms.Game?
-}
-
-///|
-let entrypoint : EntryPoint = { game: None }
-
-///|
 fn game_start(_delta : Double) -> Unit {
-  let game = @ms.Game::new()
   @login.add_select_char_ui() catch {
     e => {
       @log.error({ "e": e.to_string() }, "add select char ui failed")
       panic()
     }
   }
-  entrypoint.game = game |> Some
 }
 
 ///|

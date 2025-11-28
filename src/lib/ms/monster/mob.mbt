@@ -673,9 +673,9 @@ pub fn Mob::update_movement_ex(
   skill : Int,
   skill_level : Int,
   option : Int,
-  network : @net.Network,
+  server : @net.Server,
 ) -> Unit {
-  network.send_message(
+  server.send_message(
     new_move_mob_packet(
       self.base.get_oid(),
       t,

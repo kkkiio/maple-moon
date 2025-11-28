@@ -557,6 +557,7 @@ pub fn add_select_char_ui() -> Unit raise {
         map_id=100000000,
         portal_id=23,
         char_look~,
+        server=@net.Server::new(),
       )
       select_char_ui.val = None
       ui.destroy()

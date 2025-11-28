@@ -6,11 +6,11 @@ struct Module {
 
 ///|
 pub fn Module::new(
-  network : @net.Network,
+  server : @net.Server,
   io_service : @io_task.IOService,
 ) -> Module {
   let mobs = MapMobs::new(io_service)
-  { map_mobs: mobs, mob_combat: MobCombat::new(mobs, network, io_service) }
+  { map_mobs: mobs, mob_combat: MobCombat::new(mobs, server, io_service) }
 }
 
 ///|

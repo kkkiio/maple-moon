@@ -6,7 +6,12 @@ pub(all) struct GameState {
 ///|
 pub(all) enum GameStateType {
   Login
-  Game(map_id~ : Int, portal_id~ : Int, char_look~ : @char_look.CharLook)
+  Game(
+    map_id~ : Int,
+    portal_id~ : Int,
+    char_look~ : @char_look.CharLook,
+    server~ : @net.Server
+  )
 }
 
 ///|

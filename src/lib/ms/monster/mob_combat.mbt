@@ -3,7 +3,7 @@ struct MobCombat {
   // player : Player
   // chars : MapChars
   mobs : MapMobs
-  network : @net.Network
+  server : @net.Server
   // regular_attack : @combat.RegularAttack
   // attack_results : @utils.TimedQueue[@combat.AttackResult]
   // damage_effects : @utils.TimedQueue[DamageEffect]
@@ -14,10 +14,10 @@ struct MobCombat {
 ///|
 pub fn MobCombat::new(
   mobs : MapMobs,
-  network : @net.Network,
+  server : @net.Server,
   io_service : @io_task.IOService,
 ) -> MobCombat {
-  { mobs, network, io_service }
+  { mobs, server, io_service }
 }
 
 ///|
@@ -34,12 +34,12 @@ pub fn MobCombat::use_move(
     Some(mob) =>
       if 0 < action_id && action_id < 7 {
         let mov = mob.get_move_attack(action_id)
-        apply_move_attack(mov, mob, self.network)
+        apply_move_attack(mov, mob, self.server)
       } else if skill_id != 0 {
         let fut = mob.get_move_skill(skill_id, level, self.io_service)
         self.io_service.execute(fn() {
           let mov = self.io_service.wait(fut).unwrap_or_error()
-          apply_move_skill(mov, mob, self.network)
+          apply_move_skill(mov, mob, self.server)
         })
       }
     None => ()
@@ -50,9 +50,9 @@ pub fn MobCombat::use_move(
 pub fn apply_move_skill(
   mov : MobSkill,
   mob : Mob,
-  network : @net.Network,
+  server : @net.Server,
 ) -> Unit {
-  mob.update_movement_ex(1, 1, 47, mov.get_id(), mov.get_level(), 0, network)
+  mob.update_movement_ex(1, 1, 47, mov.get_id(), mov.get_level(), 0, server)
   if mov.is_buff() {
     mob.give_buff(mov.get_buff())
   }
@@ -65,9 +65,9 @@ pub fn apply_move_skill(
 pub fn apply_move_attack(
   mov : MobSpecialAttack,
   mob : Mob,
-  network : @net.Network,
+  server : @net.Server,
 ) -> Unit {
-  mob.update_movement_ex(1, 1, 2 * (mov.get_id() + 24), 0, 0, 0, network)
+  mob.update_movement_ex(1, 1, 2 * (mov.get_id() + 24), 0, 0, 0, server)
   mob.use_attack(mov)
   mov.apply_useeffects(mob)
   // move.apply_hit_effects(mob);

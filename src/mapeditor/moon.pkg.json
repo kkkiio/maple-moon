@@ -1,0 +1,18 @@
+{
+  "is-main": true,
+  "import": [
+    "Milky2018/selene/system",
+    "Milky2018/selene/plugins",
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/cursor",
+    "KKKIIO/maple-moon/lib/ms/login",
+    "KKKIIO/maple-moon/lib/graphics",
+    "KKKIIO/maple-moon/lib/game_scene",
+    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/map"
+  ],
+  "overrides": [
+    "Milky2018/selene-canvas"
+  ]
+}

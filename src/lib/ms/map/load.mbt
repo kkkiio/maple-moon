@@ -23,7 +23,7 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
     ),
     "Map1/": @resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Map1",
-      "assets/map/map1",
+      "/assets/map/map1",
     ),
     "Map2/": @resource.DirResourceLoader::new(
       "https://maple-res.kkkiiox.work/Map/Map2",
@@ -76,10 +76,10 @@ pub async fn load_map(
     "background_set_loader",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Back",
-      "assets/map/back",
+      "/assets/map/back",
     ),
     base_url="/assets",
-    image_base_url="",
+    image_base_url="/",
   )
   let backgrounds = load_backgrounds(bs_loader, res.back)
   let foothold_tree = @json.from_json(src["foothold"].value())

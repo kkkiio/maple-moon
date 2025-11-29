@@ -14,7 +14,7 @@ fn get_object_loader() -> @resource.AsyncLoader {
     "obj",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Obj",
-      "assets/map/obj",
+      "/assets/map/obj",
     ),
     base_url="/assets",
   )

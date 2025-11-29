@@ -234,9 +234,9 @@ fn collect_spritesheet_paths(json : Json) -> Array[String] {
 
 ///|
 fn join_2path(path1 : String, path2 : String) -> String {
-  if path2.has_prefix("/") {
-    path1 + path2
-  } else {
-    path1 + "/" + path2
+  match (path1.strip_suffix("/"), path2.strip_prefix("/")) {
+    (Some(_), Some(p2)) => path1 + p2.to_string()
+    (Some(_), None) | (None, Some(_)) => path1 + path2
+    (None, None) => path1 + "/" + path2
   }
 }

@@ -554,6 +554,13 @@ pub fn nx_texture_to_selene_picture(
   repeat? : @selene_math.RepeatMode = NoRepeat,
   flip_x? : Bool = false,
 ) -> @sprite.Picture {
+  guard repeat is NoRepeat || texture.offset is { x: 0, y: 0 } else {
+    @log.error(
+      { "offset": texture.offset },
+      "tiled texture in spritesheet is not supported",
+    )
+    panic()
+  }
   let resolved_size = size.unwrap_or(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
   )

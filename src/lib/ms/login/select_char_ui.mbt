@@ -36,7 +36,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "assets/ui/login.img/char_select/light18.png",
+      "__i": "/assets/ui/login.img/char_select/light18.png",
     },
     "1": {
       "__h": 442,
@@ -47,7 +47,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "assets/ui/login.img/char_select/light18.png",
+      "__i": "/assets/ui/login.img/char_select/light18.png",
     },
   }
   let name_tag_res : Json = {
@@ -57,7 +57,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 6,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [0, 0],
       },
       "1": {
@@ -65,7 +65,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 1,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [12, 0],
       },
       "2": {
@@ -73,7 +73,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 6,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [6, 0],
       },
     },
@@ -84,7 +84,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         // "_inlink": "CharSelect/nameTag/0/0",
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [0, 0],
       },
       "1": {
@@ -92,7 +92,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 1,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [13, 0],
       },
       "2": {
@@ -101,7 +101,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         // "_inlink": "CharSelect/nameTag/0/2",
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/name_tag.png",
+        "__i": "/assets/ui/login.img/char_select/name_tag.png",
         "__off": [6, 0],
       },
     },
@@ -223,13 +223,13 @@ pub fn SelectCharUI::new(
   // ui_model.dimension = @struct.Point::new(800, 600)
 
   let back13 = @sprite.Animation::single_frame(
-    "assets/ui/login.img/char_select/back13.png",
+    "/assets/ui/login.img/char_select/back13.png",
     @selene_math.Vec2D(800, 600),
     //   "origin": [392, 297],
   )
   let ani17 = @sprite.Animation::new([
     @sprite.AnimationFrame::{
-      sprite_path: "assets/ui/login.img/char_select/light17.png",
+      sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
       //     "origin": [121, 252],
@@ -238,7 +238,7 @@ pub fn SelectCharUI::new(
       //     "delay": 3000,
     },
     @sprite.AnimationFrame::{
-      sprite_path: "assets/ui/login.img/char_select/light17.png",
+      sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
       //     "origin": [121, 252],
@@ -249,7 +249,7 @@ pub fn SelectCharUI::new(
   ])
   let ani19 : @sprite.Animation = @sprite.Animation::new([
     @sprite.AnimationFrame::{
-      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      sprite_path: "/assets/ui/login.img/char_select/light19.png",
       size: @selene_math.Vec2D(355, 312),
       offset: @selene_math.Vec2D(0, 0),
       //     "origin": [156, 177],
@@ -259,7 +259,7 @@ pub fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @sprite.AnimationFrame::{
-      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
       // "a0": 80,
@@ -268,7 +268,7 @@ pub fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @sprite.AnimationFrame::{
-      sprite_path: "assets/ui/login.img/char_select/light19.png",
+      sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
       // "_inlink": "ani/19/1",
@@ -279,12 +279,12 @@ pub fn SelectCharUI::new(
     },
   ])
   let frame = @sprite.Animation::single_frame(
-    "assets/ui/login.img/char_select/frame.png",
+    "/assets/ui/login.img/char_select/frame.png",
     @selene_math.Vec2D(800, 600),
     //   "origin": [400, 300],
   )
   let step2 = @sprite.Animation::single_frame(
-    "assets/ui/login.img/char_select/select_character_btn.png",
+    "/assets/ui/login.img/char_select/select_character_btn.png",
     @selene_math.Vec2D(127, 45),
     //   "origin": [0, 0],
   )
@@ -321,7 +321,7 @@ pub fn SelectCharUI::new(
     frames: [
       {
         texture: {
-          i: "assets/ui/login.img/char_select/bt_select.png",
+          i: "/assets/ui/login.img/char_select/bt_select.png",
           w: 140,
           h: 52,
           offset: @struct.Point::new(0, 0),
@@ -337,7 +337,7 @@ pub fn SelectCharUI::new(
     frames: [
       {
         texture: {
-          i: "assets/ui/login.img/char_select/bt_select.png",
+          i: "/assets/ui/login.img/char_select/bt_select.png",
           w: 140,
           h: 52,
           offset: @struct.Point::new(140, 0),
@@ -353,7 +353,7 @@ pub fn SelectCharUI::new(
     frames: [
       {
         texture: {
-          i: "assets/ui/login.img/char_select/bt_select.png",
+          i: "/assets/ui/login.img/char_select/bt_select.png",
           w: 140,
           h: 52,
           offset: @struct.Point::new(280, 0),
@@ -369,7 +369,7 @@ pub fn SelectCharUI::new(
     frames: [
       {
         texture: {
-          i: "assets/ui/login.img/char_select/bt_select.png",
+          i: "/assets/ui/login.img/char_select/bt_select.png",
           w: 140,
           h: 52,
           offset: @struct.Point::new(420, 0),

@@ -123,7 +123,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
   let ani1 = @sprite.Sprite::from_animation(
     @sprite.Animation::new(
       @sprite.frames_from_atlas(
-        "assets/portal/continue.png",
+        "/assets/portal/continue.png",
         7,
         width=128,
         height=122,
@@ -135,7 +135,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
   let ani2 = @sprite.Sprite::from_animation(
     @sprite.Animation::new(
       @sprite.frames_from_atlas(
-        "assets/portal/regular.png",
+        "/assets/portal/regular.png",
         8,
         width=89,
         height=257,

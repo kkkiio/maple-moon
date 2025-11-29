@@ -30,32 +30,19 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
 }
 
 ///|
-struct Background {
-  animation : @resource.NxAnimation
-  /// position in world space
-  mut position : @selene_math.Vec2D
-  t : BackgroundType
-  // cx : Int
-  // cy : Int
-  rx : Double
-  ry : Double
-  // htile : Int
-  // vtile : Int
-  // opacity : Double
-  // flipped : Bool
-}
-
-///|
-/// example: {"a":255,"ani":0,"bS":"","cx":0,"cy":0,"f":0,"front":0,"no":0,"rx":0,"ry":0,"type":0,"x":0,"y":0}
+/// background in a map
 struct NxBackground {
   a : Int
+  /// whether the background is animated
   ani : Bool
   /// background set
   bS : String
   cx : Int
   cy : Int
-  f : Bool
+  f : Bool // TODO: what does it mean?
+  /// whether the background is a foreground
   front : Bool
+  /// number of the background in the background set
   no : Int
   /// parallax ratio of horizontal movement
   rx : Int
@@ -87,17 +74,16 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
     } else {
     raise @json.JsonDecodeError((path, "missing background fields"))
   }
-  let front = obj
-    .get("front")
-    .map_or(false, fn(front) { front is Json::Number(1, ..) })
-  let ani = obj.get("ani").map_or(false, fn(ani) { ani is Json::Number(1, ..) })
+  let front = obj is { "front": Json::Number(1, ..), .. }
+  let ani = obj is { "ani": Json::Number(1, ..), .. }
+  let f = obj is { "f": Json::Number(1, ..), .. }
   {
     a: a.to_int(),
     ani,
     bS,
     cx: cx.to_int(),
     cy: cy.to_int(),
-    f: json is { "f": Json::Number(f, ..), .. } && f != 0,
+    f,
     front,
     no: no.to_int(),
     rx: rx.to_int(),
@@ -179,6 +165,29 @@ pub async fn BackgroundResource::load(
 }
 
 ///|
+/// Background runtime data
+struct Background {
+  animation : @resource.NxAnimation
+  display : BackgroundDisplay
+  // cx : Int
+  // cy : Int
+  // htile : Int
+  // vtile : Int
+  // opacity : Double
+  // flipped : Bool
+}
+
+///|
+priv enum BackgroundDisplay {
+  Normal(position~ : @selene_math.Vec2D, ratio~ : @selene_math.Vec2D)
+  Tiled(
+    tile_directions~ : (Bool, Bool),
+    offset~ : @selene_math.Vec2D,
+    moving_speed~ : @selene_math.Vec2D
+  )
+} derive(Show)
+
+///|
 fn Background::from_resource(res : BackgroundResource) -> Background {
   // let animation = res.animation
   // let t = res.t
@@ -213,14 +222,49 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
   //   | BackgroundType::VMOVEB => vheight / cy + 3
   //   _ => 1
   // }
-  let position = @selene_math.Vec2D(res.x.to_double(), res.y.to_double())
-  {
-    animation: res.animation,
-    position,
-    t: res.t,
-    rx: res.rx.to_double(),
-    ry: res.ry.to_double(),
+  let display = match res.t {
+    BackgroundType::BG_NORMAL =>
+      // Adjust position to be Top-Left relative to world (canceling the origin subtraction in sprite rendering)
+      // Only apply this to normal backgrounds (objects).
+      BackgroundDisplay::Normal(
+        position=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
+        ratio=@selene_math.Vec2D(res.rx.to_double(), res.ry.to_double()),
+      )
+    BackgroundType::TILED
+    | BackgroundType::HTILED
+    | BackgroundType::VTILED
+    | BackgroundType::HMOVEA
+    | BackgroundType::VMOVEA =>
+      // For Tiled backgrounds, (x,y) usually means offset/phase, and shifting the entity position
+      // would shrink the render area (clipping the top-left).
+      BackgroundDisplay::Tiled(
+        tile_directions=(
+          res.t
+          is (BackgroundType::HTILED
+          | BackgroundType::HMOVEA
+          | BackgroundType::TILED),
+          res.t
+          is (BackgroundType::VTILED
+          | BackgroundType::VMOVEA
+          | BackgroundType::TILED),
+        ),
+        offset=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
+        // TODO: why divide 16.0?
+        moving_speed=@selene_math.Vec2D(
+          if res.t is BackgroundType::HMOVEA {
+            res.rx.to_double() / 16.0
+          } else {
+            0.0
+          },
+          if res.t is BackgroundType::VMOVEA {
+            res.ry.to_double() / 16.0
+          } else {
+            0.0
+          },
+        ),
+      )
   }
+  { animation: res.animation, display }
 }
 
 ///|
@@ -280,64 +324,62 @@ pub fn set_background_sprites(
   //   }
   //   tx += self.cx
   // }
-  let { animation, position, t, .. } = background
+  let { animation, display } = background
   @log.debug(
-    { "size": animation.get_size(), "z": z, "t": t },
+    { "size": animation.get_size(), "z": z, "display": display },
     "set background sprites",
   )
-  let sprite = match t {
-    BackgroundType::TILED => {
-      guard animation.frames[0].texture.offset is { x: 0, y: 0 } else {
-        @log.error(
-          { "offset": animation.frames[0].texture.offset },
-          "tiled background in spritesheet is not supported",
-        )
-        panic()
-      }
+  let sprite = match display {
+    BackgroundDisplay::Tiled(tile_directions~, offset~, ..) => {
+      @position.positions.set(entity, @position.Position(offset))
       let texture = animation.frames[0].texture
+      let repeat = match tile_directions {
+        (true, true) => @selene_math.RepeatMode::Repeat
+        (true, false) => @selene_math.RepeatMode::RepeatX
+        (false, true) => @selene_math.RepeatMode::RepeatY
+        (false, false) => @selene_math.RepeatMode::NoRepeat
+      }
       @sprite.Sprite::from_picture(
         @graphics.nx_texture_to_selene_picture(
           texture,
           size=world_size,
-          repeat=Repeat,
+          repeat~,
         ),
         z,
       )
     }
-    _ =>
+    BackgroundDisplay::Normal(..) =>
       @sprite.Sprite::from_animation(
         @graphics.nx_animation_to_selene_animation(animation),
         z,
       )
   }
   @sprite.sprites.set(entity, sprite)
-  @position.positions.set(entity, @position.Position(position))
 }
 
 ///|
 pub fn update_background_position(
   entity : @entity.Entity,
   background : Background,
+  camera_center : @selene_math.Vec2D,
 ) -> Unit {
-  // FIXME: 实现循环滚动, 当移动了一个背景的宽度时, 重置位置
-  let { t, position, rx, ry, .. } = background
-  match t {
-    BackgroundType::HMOVEA => {
-      // TODO: why divide 16.0?
-      let h_speed = rx / 16.0
-      background.position = position.update(X, position[X] + h_speed)
+  match background.display {
+    BackgroundDisplay::Normal(position~, ratio~) => {
+      // 实现视差滚动: 远处移动慢、近处移动快
+      // Parallax formula: pos' = pos + (pos - center) * rate / 100
+      let new_pos = (position - camera_center).mul(ratio.scalar_div(100.0))
+      @position.positions.set(entity, @position.Position(new_pos))
     }
-    BackgroundType::VMOVEA => {
-      // TODO: why divide 16.0?
-      let v_speed = ry / 16.0
-      background.position = position.update(Y, position[Y] + v_speed)
+    BackgroundDisplay::Tiled(offset~, moving_speed~, ..) => {
+      // 平铺背景不需要视差滚动
+      // FIXME: 实现循环滚动, 当移动了一个背景的宽度时, 重置位置
+      let new_pos = @position.positions
+        .get(entity)
+        .map_or(offset, fn(pos) { pos.0 }) +
+        moving_speed
+      @position.positions.set(entity, @position.Position(new_pos))
     }
-    _ => ()
   }
-  // TODO: 实现视差滚动: 远处移动慢、近处移动快
-  let x = if t is BackgroundType::HMOVEA { position[X] } else { position[X] }
-  let y = if t is BackgroundType::VMOVEA { position[Y] } else { position[Y] }
-  @position.positions.set(entity, @position.Position(@selene_math.Vec2D(x, y)))
 }
 
 ///|
@@ -428,15 +470,20 @@ pub fn background_system(_delta : Double) -> Unit {
       ctx.entities.push(entity)
     }
   }
+  // get camera position (top-left)
+  let camera_pos = @camera.get_position()
+  let zoom = @backend.get_zoom()
+  let viewport_size = @backend.get_canvas_size() * Vec2D(1 / zoom, 1 / zoom)
+  let camera_center = (camera_pos + viewport_size).scalar_div(2)
   let times = @config.get_logic_times()
   for _ in 0..<times {
     let mut i = 0
     for b in backgrounds.backs {
-      update_background_position(ctx.entities[i], b)
+      update_background_position(ctx.entities[i], b, camera_center)
       i += 1
     }
     for f in backgrounds.fores {
-      update_background_position(ctx.entities[i], f)
+      update_background_position(ctx.entities[i], f, camera_center)
       i += 1
     }
   }

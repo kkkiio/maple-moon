@@ -16,7 +16,7 @@ pub async fn TilesObjs::load(
       "tile",
       loader=@resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Map/Tile",
-        "assets/map/tile",
+        "/assets/map/tile",
       ),
       base_url="/assets",
     )

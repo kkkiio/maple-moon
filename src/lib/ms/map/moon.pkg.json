@@ -17,6 +17,7 @@
     "Milky2018/selene/system",
     "Milky2018/selene/entity",
     "Milky2018/selene/camera",
-    "KKKIIO/maple-moon/lib/config"
+    "KKKIIO/maple-moon/lib/config",
+    "Milky2018/selene/backend"
   ]
 }

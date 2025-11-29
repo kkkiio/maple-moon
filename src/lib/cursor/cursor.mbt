@@ -22,7 +22,7 @@ pub fn Cursor::new() -> Cursor {
     CursorState::IDLE,
     @sprite.Sprite::from_animation(
       @sprite.Animation::single_frame(
-        "assets/ui/cursor/cursor_idle.png",
+        "/assets/ui/cursor/cursor_idle.png",
         @math.Vec2D(24.0, 28.0),
       ),
       CURSOR_ZINDEX,
@@ -34,7 +34,7 @@ pub fn Cursor::new() -> Cursor {
     @sprite.Sprite::from_animation(
       @sprite.Animation::new(
         @sprite.frames_from_atlas(
-          "assets/ui/cursor/cursor_can_click.png",
+          "/assets/ui/cursor/cursor_can_click.png",
           2,
           width=30,
           height=30,
@@ -58,7 +58,7 @@ pub fn Cursor::new() -> Cursor {
     CursorState::CLICKING,
     @sprite.Sprite::from_animation(
       @sprite.Animation::single_frame(
-        "assets/ui/cursor/cursor_clicking.png",
+        "/assets/ui/cursor/cursor_clicking.png",
         @math.Vec2D(24.0, 28.0),
       ),
       CURSOR_ZINDEX,

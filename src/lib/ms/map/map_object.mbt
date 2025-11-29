@@ -1,7 +1,6 @@
 ///|
 /// Represents an obj (map decoration) on a map.
 struct Obj {
-  entity : @entity.Entity
   animation : @resource.NxAnimation
   pos : Point[Int]
   z : Int
@@ -33,17 +32,13 @@ pub async fn Obj::load(obj : NxObj) -> Obj {
 
 ///|
 fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
-  {
-    entity: @entity.Entity::new(),
-    animation,
-    pos: @struct.Point::new(obj.x, obj.y),
-    flip: obj.f,
-    z: obj.z,
-  }
+  { animation, pos: @struct.Point::new(obj.x, obj.y), flip: obj.f, z: obj.z }
 }
 
 ///|
-pub fn Obj::set_sprites(self : Obj) -> Unit {
+/// 将 Obj 动画设置到指定实体上，隐藏时会移除对应 sprite。
+/// - `entity`: 需要渲染该 Obj 的实体。
+pub fn Obj::attach_entity(self : Obj, entity : @entity.Entity) -> Unit {
   let animation = @graphics.nx_animation_to_selene_animation(
     self.animation,
     flip_x=self.flip,
@@ -53,9 +48,9 @@ pub fn Obj::set_sprites(self : Obj) -> Unit {
     animation,
     self.z + @graphics.SCENE_ZINDEX,
   )
-  @sprite.sprites.set(self.entity, sprite)
+  @sprite.sprites.set(entity, sprite)
   @position.positions.set(
-    self.entity,
+    entity,
     @position.Position(
       @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
     ),

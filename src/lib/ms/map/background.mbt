@@ -429,46 +429,134 @@ priv struct BackgroundsContext {
   backgrounds : Backgrounds
   world_size : @selene_math.Vec2D
   entities : Array[@entity.Entity]
+  mut back_visible : Bool
+  mut fore_visible : Bool
+  mut debug_index : Int?
+  mut dirty : Bool
 }
 
 ///|
 let backgrounds_context : Ref[BackgroundsContext?] = Ref::new(None)
 
 ///|
+/// 设置游戏场景的背景.
+/// 
+/// - `backgrounds`: 背景数据.
+/// - `world_size`: 游戏场景大小.
 pub fn set_backgrounds(
   backgrounds : Backgrounds,
   world_size : @selene_math.Vec2D,
 ) -> Unit {
-  if backgrounds_context.val is Some({ entities, .. }) {
-    for entity in entities {
+  if backgrounds_context.val is Some(ctx) {
+    for entity in ctx.entities {
       entity.destroy()
     }
-    entities.clear()
+    ctx.entities.clear()
   }
-  let context = { backgrounds, world_size, entities: [] }
+  let context = {
+    backgrounds,
+    world_size,
+    entities: [],
+    back_visible: true,
+    fore_visible: true,
+    debug_index: None,
+    dirty: true,
+  }
   backgrounds_context.val = Some(context)
+}
+
+///|
+pub struct BackgroundVisibilityState {
+  back_visible : Bool
+  fore_visible : Bool
+  debug_index : Int?
+  total_layers : Int
+} derive(Show)
+
+///|
+/// 设置前/后景背景的整体可见性。
+/// - `back_visible`: 是否显示背景层。
+/// - `fore_visible`: 是否显示前景层。
+pub fn set_background_visibility(
+  back_visible : Bool,
+  fore_visible : Bool,
+) -> Unit {
+  guard backgrounds_context.val is Some(ctx) else { return }
+  if ctx.back_visible == back_visible && ctx.fore_visible == fore_visible {
+    return
+  }
+  ctx.back_visible = back_visible
+  ctx.fore_visible = fore_visible
+  ctx.dirty = true
+}
+
+///|
+/// 在调试模式下切换指定背景，只显示某一个背景元素。
+/// - `step`: 正数表示下一个背景，负数表示上一个。
+pub fn step_background_debug(step : Int) -> Unit {
+  guard backgrounds_context.val is Some(ctx) else { return }
+  let total = total_background_count(ctx.backgrounds)
+  if total == 0 {
+    return
+  }
+  let next = match ctx.debug_index {
+    Some(current) => (current + step + total) % total
+    None => if step >= 0 { 0 } else { total - 1 }
+  }
+  ctx.debug_index = Some(next)
+  ctx.dirty = true
+}
+
+///|
+/// 退出背景调试模式，重新显示符合可见性设置的全部背景。
+pub fn clear_background_debug() -> Unit {
+  guard backgrounds_context.val is Some(ctx) && ctx.debug_index is Some(_) else {
+    return
+  }
+  ctx.debug_index = None
+  ctx.dirty = true
+}
+
+///|
+/// 获取当前背景可见状态，便于调试 UI 显示。
+pub fn get_background_visibility_state() -> BackgroundVisibilityState {
+  match backgrounds_context.val {
+    Some({ back_visible, fore_visible, debug_index, backgrounds, .. }) =>
+      {
+        back_visible,
+        fore_visible,
+        debug_index,
+        total_layers: total_background_count(backgrounds),
+      }
+    None =>
+      {
+        back_visible: true,
+        fore_visible: true,
+        debug_index: None,
+        total_layers: 0,
+      }
+  }
 }
 
 ///|
 /// 背景系统. 负责初始化背景, 更新背景的位置, 实现视差滚动、循环滚动等效果.
 pub fn background_system(_delta : Double) -> Unit {
   guard backgrounds_context.val is Some(ctx) else { return }
-  let { backgrounds, world_size, .. } = ctx
-  if ctx.entities.length() !=
-    backgrounds.backs.length() + backgrounds.fores.length() {
+  let { backgrounds, .. } = ctx
+  let expected = total_background_count(backgrounds)
+  if ctx.entities.length() != expected {
+    for entity in ctx.entities {
+      entity.destroy()
+    }
     ctx.entities.clear()
-    for i, b in backgrounds.backs {
-      let z = @graphics.BACKGROUND_ZINDEX + i // WORKAROUND: 暂时给每个背景图一个递增的zindex, 模拟顺序渲染的效果
-      let entity = @entity.Entity::new()
-      set_background_sprites(entity, b, world_size, z)
-      ctx.entities.push(entity)
+    for _ in 0..<expected {
+      ctx.entities.push(@entity.Entity::new())
     }
-    for i, f in backgrounds.fores {
-      let z = @graphics.FOREGROUND_ZINDEX + i // WORKAROUND: 暂时给每个前景图一个递增的zindex, 模拟顺序渲染的效果
-      let entity = @entity.Entity::new()
-      set_background_sprites(entity, f, world_size, z)
-      ctx.entities.push(entity)
-    }
+    ctx.dirty = true
+  }
+  if ctx.dirty {
+    refresh_background_sprites(ctx)
+    ctx.dirty = false
   }
   // get camera position (top-left)
   let camera_pos = @camera.get_position()
@@ -479,12 +567,91 @@ pub fn background_system(_delta : Double) -> Unit {
   for _ in 0..<times {
     let mut i = 0
     for b in backgrounds.backs {
-      update_background_position(ctx.entities[i], b, camera_center)
+      if should_render_background(ctx, i, false) {
+        update_background_position(ctx.entities[i], b, camera_center)
+      }
       i += 1
     }
     for f in backgrounds.fores {
-      update_background_position(ctx.entities[i], f, camera_center)
+      if should_render_background(ctx, i, true) {
+        update_background_position(ctx.entities[i], f, camera_center)
+      }
       i += 1
     }
+  }
+}
+
+///|
+/// 刷新背景精灵, 设置精灵的可见性。
+/// 
+/// WORKAROUND: 暂时给每个背景图一个递增的zindex, 模拟顺序渲染的效果, 但会导致 z 值太多了.
+fn refresh_background_sprites(ctx : BackgroundsContext) -> Unit {
+  let mut idx = 0
+  for i, b in ctx.backgrounds.backs {
+    let entity = ctx.entities[idx]
+    if should_render_background(ctx, idx, false) {
+      let z = @graphics.BACKGROUND_ZINDEX + i
+      ensure_background_sprite(entity, b, ctx.world_size, z)
+      set_sprite_visibility(entity, true)
+    } else {
+      set_sprite_visibility(entity, false)
+    }
+    idx += 1
+  }
+  for i, f in ctx.backgrounds.fores {
+    let entity = ctx.entities[idx]
+    if should_render_background(ctx, idx, true) {
+      let z = @graphics.FOREGROUND_ZINDEX + i
+      ensure_background_sprite(entity, f, ctx.world_size, z)
+      set_sprite_visibility(entity, true)
+    } else {
+      set_sprite_visibility(entity, false)
+    }
+    idx += 1
+  }
+}
+
+///|
+fn should_render_background(
+  ctx : BackgroundsContext,
+  global_index : Int,
+  is_foreground : Bool,
+) -> Bool {
+  let base_visible = if is_foreground {
+    ctx.fore_visible
+  } else {
+    ctx.back_visible
+  }
+  if not(base_visible) {
+    return false
+  }
+  match ctx.debug_index {
+    Some(debug_index) => debug_index == global_index
+    None => true
+  }
+}
+
+///|
+fn total_background_count(backgrounds : Backgrounds) -> Int {
+  backgrounds.backs.length() + backgrounds.fores.length()
+}
+
+///|
+fn ensure_background_sprite(
+  entity : @entity.Entity,
+  background : Background,
+  world_size : @selene_math.Vec2D,
+  z : Int,
+) -> Unit {
+  if @sprite.sprites.get(entity) is Some(_) {
+    return
+  }
+  set_background_sprites(entity, background, world_size, z)
+}
+
+///|
+fn set_sprite_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
+  if @sprite.sprites.get(entity) is Some(sprite) {
+    sprite.visible = visible
   }
 }

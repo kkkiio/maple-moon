@@ -12,6 +12,8 @@
     "Milky2018/selene/inputs",
     "Milky2018/selene/camera",
     "Milky2018/selene/backend",
+    "Milky2018/selene/sprite",
+    "Milky2018/selene/style",
     "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/graphics",

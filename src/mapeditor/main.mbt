@@ -22,6 +22,11 @@ fn main {
   .add_system(map_loading_poll_system, system_name="map_loader")
   .add_system(camera_control_system, system_name="camera_controller")
   .add_system(@map.background_system, system_name="background_system")
+  .add_system(@map.tile_objects_system, system_name="tile_objects_system")
+  .add_system(
+    viewer_visibility_input_system,
+    system_name="viewer_visibility_controls",
+  )
   .add_system(
     render_debug_overlay,
     schedule=Render(1),
@@ -39,6 +44,18 @@ struct MapLimits {
 }
 
 ///|
+struct LayerVisibility {
+  mut backgrounds : Bool
+  mut tiles : Bool
+  mut objs : Bool
+}
+
+///|
+fn default_visibility() -> LayerVisibility {
+  { backgrounds: true, tiles: true, objs: true }
+}
+
+///|
 struct ViewerState {
   io_service : @io_task.IOService
   mut map_future : @utils.Future[Result[@map.SceneMap, Error]]?
@@ -46,7 +63,9 @@ struct ViewerState {
   mut map_limits : MapLimits?
   mut camera_entity : @entity.Entity?
   mut map_loaded : Bool
+  mut debug_overlay_entity : @entity.Entity?
   mut error_message : String?
+  layer_visibility : LayerVisibility
 }
 
 ///|
@@ -57,7 +76,9 @@ let viewer_state : Ref[ViewerState] = Ref::new({
   map_limits: None,
   camera_entity: None,
   map_loaded: false,
+  debug_overlay_entity: None,
   error_message: None,
+  layer_visibility: default_visibility(),
 })
 
 ///|
@@ -78,17 +99,13 @@ fn start_map_loading_system(_delta : Double) -> Unit {
 ///|
 fn map_loading_poll_system(_delta : Double) -> Unit {
   guard viewer_state.val.map_future is Some(future) else { return }
-  match future.poll() {
-    None => ()
-    Some(result) => {
-      viewer_state.val.map_future = None
-      match result {
-        Ok(scene_map) => finalize_scene(scene_map)
-        Err(e) => {
-          viewer_state.val.error_message = Some(e.to_string())
-          @log.error({ "map_id": MAP_ID, "error": e }, "load map failed")
-        }
-      }
+  guard future.poll() is Some(result) else { return }
+  viewer_state.val.map_future = None
+  match result {
+    Ok(scene_map) => finalize_scene(scene_map)
+    Err(e) => {
+      viewer_state.val.error_message = Some(e.to_string())
+      @log.error({ "map_id": MAP_ID, "error": e }, "load map failed")
     }
   }
 }
@@ -104,7 +121,8 @@ fn finalize_scene(scene_map : @map.SceneMap) -> Unit {
   let height = borders.delta().to_double()
   let world_size = @selene_math.Vec2D(width, height)
   @map.set_backgrounds(backgrounds, world_size)
-  @map.MapTilesObjs::set_sprites(tiles_objs)
+  @map.set_tiles_objs(tiles_objs)
+  apply_visibility_to_modules()
   let center = @selene_math.Vec2D(
     ((walls.first() + walls.second()) / 2).to_double(),
     ((borders.first() + borders.second()) / 2).to_double(),
@@ -148,19 +166,12 @@ fn ensure_camera_entity() -> @entity.Entity {
 ///|
 fn camera_control_system(delta : Double) -> Unit {
   guard viewer_state.val.camera_entity is Some(entity) else { return }
-  let wasd = @inputs.key_vector(
-    @inputs.Code::KeyW,
-    @inputs.Code::KeyS,
-    @inputs.Code::KeyA,
-    @inputs.Code::KeyD,
-  )
-  let arrow = @inputs.key_vector(
+  let direction = @inputs.key_vector(
     @inputs.Code::ArrowUp,
     @inputs.Code::ArrowDown,
     @inputs.Code::ArrowLeft,
     @inputs.Code::ArrowRight,
   )
-  let direction = wasd + arrow
   if direction.distance() == 0.0 {
     return
   }
@@ -175,6 +186,31 @@ fn camera_control_system(delta : Double) -> Unit {
     None => next_pos
   }
   @position.positions.set(entity, @position.Position(clamped_pos))
+}
+
+///|
+fn viewer_visibility_input_system(_delta : Double) -> Unit {
+  if not(viewer_state.val.map_loaded) {
+    return
+  }
+  if @inputs.is_just_pressed(@inputs.Code::KeyQ) {
+    toggle_background_visibility()
+  }
+  if @inputs.is_just_pressed(@inputs.Code::KeyW) {
+    toggle_tiles_visibility()
+  }
+  if @inputs.is_just_pressed(@inputs.Code::KeyE) {
+    toggle_objs_visibility()
+  }
+  if @inputs.is_just_pressed(@inputs.Code::KeyR) {
+    @map.step_background_debug(-1)
+  }
+  if @inputs.is_just_pressed(@inputs.Code::KeyT) {
+    @map.step_background_debug(1)
+  }
+  if @inputs.is_just_pressed(@inputs.Code::Escape) {
+    @map.clear_background_debug()
+  }
 }
 
 ///|
@@ -209,16 +245,113 @@ fn render_debug_overlay(_delta : Double) -> Unit {
   let cam_x = camera_pos[@selene_math.Axis::X]
   let cam_y = camera_pos[@selene_math.Axis::Y]
   let zoom = @backend.get_zoom()
-  let info = "\{map_line}\n相机: (\{cam_x}, \{cam_y})  Zoom: \{zoom}\n控制: WASD / 方向键 平移镜头\n\{status_line}"
-  @backend.draw_text(
-    text=info,
-    x=12.0,
-    y=16.0,
-    font="16px monospace",
-    color="#f8fafc",
-    align=@selene_math.HAlign::Left,
-    baseline=@selene_math.VAlign::Top,
+  let tile_visibility = @map.get_tile_objects_visibility()
+  let background_visibility = @map.get_background_visibility_state()
+  let layer_line = "显示: BG(后/前)=\{flag_text(background_visibility.back_visible)}/\{flag_text(background_visibility.fore_visible)}  Tile=\{flag_text(tile_visibility.tiles_visible)}  Obj=\{flag_text(tile_visibility.objs_visible)}"
+  let debug_line = match background_visibility.debug_index {
+    Some(idx) => {
+      let total = background_visibility.total_layers
+      let upper = if total == 0 { 0 } else { idx + 1 }
+      "背景调试: [\{upper}/\{total}] (使用 R/T 切换)"
+    }
+    None => "背景调试: 全部 (R/T 单步, Esc 重置)"
+  }
+  let lines = [
+    map_line,
+    "相机: (\{cam_x}, \{cam_y})  Zoom: \{zoom}",
+    layer_line,
+    debug_line,
+    "控制: Q/W/E 显示切换, 方向键 平移镜头, R/T 背景单步, Esc 重置",
+    status_line,
+  ]
+  let panel = match viewer_state.val.debug_overlay_entity {
+    Some(entity) if entity.is_alive() => entity
+    _ => {
+      let entity = @style.add_widget(
+        @style.screen_root,
+        size_plan=@style.SizePlan::FromChildren,
+        flex=@style.Flex::Vertical,
+        h_offset=12.0,
+        v_offset=16.0,
+        v_padding=4.0,
+      )
+      viewer_state.val.debug_overlay_entity = Some(entity)
+      entity
+    }
+  }
+  let mut children = panel.get_children()
+  if children.length() > lines.length() {
+    for index in lines.length()..<children.length() {
+      children[index].destroy()
+    }
+    children = panel.get_children()
+  }
+  for i in 0..<lines.length() {
+    let text_value = lines[i]
+    if i < children.length() {
+      let entity = children[i]
+      let zindex = match @sprite.sprites.get(entity) {
+        Some(sprite) => sprite.zindex
+        None => 0
+      }
+      let sprite = @sprite.Sprite::from_text(
+        @sprite.Text::new(
+          text_value,
+          color="#f8fafc",
+          font="16px monospace",
+          align=@selene_math.HAlign::Left,
+          baseline=@selene_math.VAlign::Top,
+        ),
+        zindex,
+      )
+      @sprite.sprites.set(entity, sprite)
+    } else {
+      @style.add_widget(panel, sprite=zindex => @sprite.Sprite::from_text(
+        @sprite.Text::new(
+          text_value,
+          color="#f8fafc",
+          font="16px monospace",
+          align=@selene_math.HAlign::Left,
+          baseline=@selene_math.VAlign::Top,
+        ),
+        zindex,
+      ))
+      |> ignore
+    }
+  }
+}
+
+///|
+fn flag_text(value : Bool) -> String {
+  if value {
+    "ON"
+  } else {
+    "OFF"
+  }
+}
+
+///|
+fn toggle_background_visibility() -> Unit {
+  viewer_state.val.layer_visibility.backgrounds = not(
+    viewer_state.val.layer_visibility.backgrounds,
   )
+  apply_visibility_to_modules()
+}
+
+///|
+fn toggle_tiles_visibility() -> Unit {
+  viewer_state.val.layer_visibility.tiles = not(
+    viewer_state.val.layer_visibility.tiles,
+  )
+  apply_visibility_to_modules()
+}
+
+///|
+fn toggle_objs_visibility() -> Unit {
+  viewer_state.val.layer_visibility.objs = not(
+    viewer_state.val.layer_visibility.objs,
+  )
+  apply_visibility_to_modules()
 }
 
 ///|
@@ -229,5 +362,16 @@ fn clamp(value : Double, min_value : Double, max_value : Double) -> Double {
     max_value
   } else {
     value
+  }
+}
+
+///|
+fn apply_visibility_to_modules() -> Unit {
+  let visibility = viewer_state.val.layer_visibility
+  @map.set_background_visibility(visibility.backgrounds, visibility.backgrounds)
+  @map.set_tiles_visible(visibility.tiles)
+  @map.set_objs_visible(visibility.objs)
+  if not(visibility.backgrounds) {
+    @map.clear_background_debug()
   }
 }

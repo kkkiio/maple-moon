@@ -22,7 +22,8 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
       "https://maple-res.kkkiiox.work/Map/Map0",
     ),
     "Map1/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map1",
+      // "https://maple-res.kkkiiox.work/Map/Map1",
+      "assets/map/map1",
     ),
     "Map2/": @resource.DirResourceLoader::new(
       "https://maple-res.kkkiiox.work/Map/Map2",

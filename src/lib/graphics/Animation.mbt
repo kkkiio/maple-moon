@@ -527,3 +527,44 @@ pub fn nx_animation_to_selene_animation(
     transform~,
   )
 }
+
+///|
+/// 将 Nx 资源中的单帧贴图转换为 Selene 的 `@sprite.Picture`, 自动套用 `origin`
+/// 信息以确保实体位置与 Nx 定义的参考点一致。
+///
+/// Parameters:
+/// * `texture` : 解析后的 Nx 贴图数据, 包含尺寸、原点与图片路径。
+/// * `size` : 可选的绘制尺寸, 不传时默认使用贴图自身宽高。
+/// * `repeat` : 纹理平铺模式, 默认为 `NoRepeat`。
+/// * `flip_x` : 是否围绕 `origin` 做水平镜像, 默认为 `false`。
+///
+/// Return:
+/// A `@sprite.Picture` with the correct translation matrix to align rendering
+/// position with Nx `origin`.
+///
+/// Edge cases:
+/// * If the Nx data is missing `origin`, it will fall back to (0, 0) and not
+///   perform additional translation.
+/// * If `size` is different from the texture dimensions and `repeat` is
+///   `Repeat`, the texture will still be tiled, only affecting the starting
+///   offset.
+pub fn nx_texture_to_selene_picture(
+  texture : @resource.NxTexture,
+  size? : @selene_math.Vec2D,
+  repeat? : @selene_math.RepeatMode = NoRepeat,
+  flip_x? : Bool = false,
+) -> @sprite.Picture {
+  let resolved_size = size.unwrap_or(
+    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  )
+  let base = @selene_math.Transform::from_translation(
+    -texture.origin.x.to_double(),
+    -texture.origin.y.to_double(),
+  )
+  let transform = if flip_x {
+    @selene_math.Transform::from_scale(-1.0, 1.0) * base
+  } else {
+    base
+  }
+  @sprite.Picture::new(resolved_size, texture.i, transform~, repeat~)
+}

@@ -50,13 +50,16 @@ struct Background {
 struct NxBackground {
   a : Int
   ani : Bool
-  bS : String // background set
+  /// background set
+  bS : String
   cx : Int
   cy : Int
   f : Bool
   front : Bool
   no : Int
+  /// parallax ratio of horizontal movement
   rx : Int
+  /// parallax ratio of vertical movement
   ry : Int
   t : BackgroundType
   x : Int
@@ -107,6 +110,30 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
     x: x.to_int(),
     y: y.to_int(),
   }
+}
+
+///|
+test "parse NxBackground" {
+  let spec : NxBackground = @json.from_json({
+    "a": 255,
+    "ani": 0,
+    "bS": "",
+    "cx": 0,
+    "cy": 0,
+    "front": 0,
+    "no": 0,
+    "rx": 0,
+    "ry": 0,
+    "type": 0,
+    "x": 0,
+    "y": 0,
+  })
+  inspect(
+    spec,
+    content=(
+      #|{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, t: BG_NORMAL, x: 0, y: 0}
+    ),
+  )
 }
 
 ///|
@@ -267,9 +294,13 @@ pub fn set_background_sprites(
         )
         panic()
       }
-      let i = animation.frames[0].texture.i
+      let texture = animation.frames[0].texture
       @sprite.Sprite::from_picture(
-        @sprite.Picture::new(world_size, i, repeat=Repeat),
+        @graphics.nx_texture_to_selene_picture(
+          texture,
+          size=world_size,
+          repeat=Repeat,
+        ),
         z,
       )
     }
@@ -303,25 +334,9 @@ pub fn update_background_position(
     }
     _ => ()
   }
-  // 视差滚动: 远处移动慢、近处移动快
-  let view_size = @graphics.view_size
-  let woffset = view_size.0 / 2
-  let hoffset = view_size.1 / 2
-  let view_pos = @camera.get_position()
-  let x = if t is BackgroundType::HMOVEA {
-    position[X] + view_pos[X]
-  } else {
-    let shift_x = rx * (woffset.to_double() - view_pos[X]) / 100.0 +
-      woffset.to_double()
-    position[X] + shift_x
-  }
-  let y = if t is BackgroundType::VMOVEA {
-    position[Y] + view_pos[Y]
-  } else {
-    let shift_y = ry * (hoffset.to_double() - view_pos[Y]) / 100.0 +
-      hoffset.to_double()
-    position[Y] + shift_y
-  }
+  // TODO: 实现视差滚动: 远处移动慢、近处移动快
+  let x = if t is BackgroundType::HMOVEA { position[X] } else { position[X] }
+  let y = if t is BackgroundType::VMOVEA { position[Y] } else { position[Y] }
   @position.positions.set(entity, @position.Position(@selene_math.Vec2D(x, y)))
 }
 

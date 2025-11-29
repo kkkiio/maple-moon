@@ -14,6 +14,9 @@ pub const SCENE_ZINDEX = 50
 pub const CHAR_LOOK_ZINDEX = 70
 
 ///|
+pub const PORTAL_ZINDEX = 79
+
+///|
 pub const FOREGROUND_ZINDEX = 80
 
 ///|

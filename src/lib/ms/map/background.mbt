@@ -117,7 +117,8 @@ test "parse NxBackground" {
   inspect(
     spec,
     content=(
-      #|{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, t: BG_NORMAL, x: 0, y: 0}
+      #|{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, type_: BG_NORMAL, x: 0, y: 0}
+
     ),
   )
 }

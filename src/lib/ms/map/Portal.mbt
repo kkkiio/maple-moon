@@ -88,8 +88,7 @@ fn PortalWarpInfo::default() -> PortalWarpInfo {
 
 ///|
 struct Portal {
-  entity : @entity.Entity
-  animation : @sprite.Sprite?
+  animation : @sprite.Animation?
   t : PortalType
   name : String
   position : Point[Int]
@@ -99,7 +98,7 @@ struct Portal {
 
 ///|
 pub fn Portal::new(
-  animation : @sprite.Sprite?,
+  animation : @sprite.Animation?,
   t : PortalType,
   name : String,
   intramap : Bool,
@@ -107,18 +106,7 @@ pub fn Portal::new(
   tomap : Int,
   toname : String,
 ) -> Portal {
-  let entity = @entity.Entity::new()
-  @position.positions.set(
-    entity,
-    @position.Position(
-      @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
-    ),
-  )
-  if animation is Some(animation) {
-    @sprite.sprites.set(entity, animation)
-  }
   {
-    entity,
     animation,
     t,
     name,
@@ -129,13 +117,17 @@ pub fn Portal::new(
 }
 
 ///|
-pub fn Portal::update(self : Portal, playerpos : Point[Int]) -> Unit {
+pub fn Portal::update(
+  self : Portal,
+  playerpos : Point[Int],
+  entity : @entity.Entity,
+) -> Unit {
   self.touched = self.bounds().contains(playerpos)
-  guard self.animation is Some(animation) else { return }
+  guard @sprite.sprites.get(entity) is Some(sp) else { return }
   if self.t != PortalType::HIDDEN || self.touched {
-    animation.visible = true
+    sp.visible = true
   } else {
-    animation.visible = false
+    sp.visible = false
   }
 }
 

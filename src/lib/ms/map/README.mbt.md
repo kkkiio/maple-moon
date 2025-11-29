@@ -23,6 +23,8 @@ test {
     },
   }
   let map_tiles_objs_resource : BackgroundsResource = @json.from_json(json)
-  inspect(map_tiles_objs_resource)
+  inspect(map_tiles_objs_resource, content=(
+    #|BackgroundsResource([{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, type_: BG_NORMAL, x: 0, y: 0}])
+  ))
 }
 ```

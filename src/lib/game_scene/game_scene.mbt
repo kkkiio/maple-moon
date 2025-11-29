@@ -533,6 +533,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         @selene_math.Vec2D(width.to_double(), height.to_double()),
       )
       @map.set_tiles_objs(sence_map.tiles_objs)
+      @map.set_portals(sence_map.portals, fn() {
+        stage.player.character.get_position()
+      })
       stage.respawn(
         portal_id,
         sence_map.map_info,

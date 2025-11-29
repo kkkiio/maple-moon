@@ -11,7 +11,7 @@ let warpcd : Int = 48
 
 ///|
 struct MapPortalAnimations {
-  animations : Map[PortalType, @sprite.Sprite]
+  animations : Map[PortalType, @sprite.Animation]
 }
 
 ///|
@@ -43,29 +43,6 @@ pub fn MapPortals::new(
     portal_ids_by_name,
     cooldown: warpcd,
     map_portals_animations,
-  }
-}
-
-///|
-pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
-  // self.map_portals_animations.animations
-  // .get(PortalType::REGULAR)
-  // .unwrap()
-  // .update(timestep=@config.step_time_ms)
-  // |> ignore
-  // self.map_portals_animations.animations
-  // .get(PortalType::HIDDEN)
-  // .unwrap()
-  // .update(timestep=@config.step_time_ms)
-  // |> ignore
-  for _, portal in self.portals_by_id {
-    match portal.get_type() {
-      PortalType::HIDDEN | PortalType::TOUCH => portal.update(playerpos)
-      _ => ()
-    }
-  }
-  if self.cooldown > 0 {
-    self.cooldown -= 1
   }
 }
 
@@ -111,29 +88,25 @@ pub fn MapPortals::find_warp_at(
 
 ///|
 pub fn MapPortalAnimations::load() -> MapPortalAnimations {
-  let ani1 = @sprite.Sprite::from_animation(
-    @sprite.Animation::new(
-      @sprite.frames_from_atlas(
-        "/assets/portal/continue.png",
-        7,
-        width=128,
-        height=122,
-      ),
+  let ani1 = @sprite.Animation::new(
+    @sprite.frames_from_atlas(
+      "/assets/portal/continue.png",
+      7,
+      width=128,
+      height=122,
     ),
-    0,
-    offset=-@selene_math.Vec2D(62, 199),
+    transform=@selene_math.Transform::from_translation(-62.0, -199.0),
+    // offset=-@selene_math.Vec2D(62, 199),
   )
-  let ani2 = @sprite.Sprite::from_animation(
-    @sprite.Animation::new(
-      @sprite.frames_from_atlas(
-        "/assets/portal/regular.png",
-        8,
-        width=89,
-        height=257,
-      ),
+  let ani2 = @sprite.Animation::new(
+    @sprite.frames_from_atlas(
+      "/assets/portal/regular.png",
+      8,
+      width=89,
+      height=257,
     ),
-    0,
-    offset=-@selene_math.Vec2D(44, 248),
+    transform=@selene_math.Transform::from_translation(-44.0, -248.0),
+    // offset=-@selene_math.Vec2D(44, 248),
   )
   {
     animations: Map::from_array([
@@ -145,7 +118,87 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
 }
 
 ///|
-test "" {
+priv struct PortalsContext {
+  portals : MapPortals
+  portal_entities : Map[Int, @entity.Entity]
+  get_player_pos : () -> Point[Int]
+  mut dirty : Bool
+}
+
+///|
+let portals_context : Ref[PortalsContext?] = Ref::new(None)
+
+///|
+pub fn set_portals(
+  portals : MapPortals,
+  get_player_pos : () -> Point[Int],
+) -> Unit {
+  if portals_context.val is Some(ctx) {
+    destroy_entities_iter(ctx.portal_entities.values())
+  }
+  portals_context.val = Some({
+    portals,
+    portal_entities: Map::new(),
+    get_player_pos,
+    dirty: true,
+  })
+}
+
+///|
+pub fn portal_system(_delta : Double) -> Unit {
+  guard portals_context.val is Some(ctx) else { return }
+  if ctx.dirty {
+    ensure_portal_entities(ctx)
+    ctx.dirty = false
+  }
+  let playerpos = (ctx.get_player_pos)()
+  for id, portal in ctx.portals.portals_by_id {
+    match portal.get_type() {
+      PortalType::HIDDEN | PortalType::TOUCH => {
+        let entity = ctx.portal_entities.get(id)
+        guard entity is Some(entity) else { abort("portal entity not found") }
+        portal.update(playerpos, entity)
+      }
+      _ => ()
+    }
+  }
+  if ctx.portals.cooldown > 0 {
+    ctx.portals.cooldown -= 1
+  }
+}
+
+///|
+fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
+  for id, portal in ctx.portals.portals_by_id {
+    if ctx.portal_entities.contains(id) {
+      continue
+    }
+    let entity = @entity.Entity::new()
+    let position = portal.get_position()
+    @position.positions.set(
+      entity,
+      @position.Position(
+        @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
+      ),
+    )
+    if portal.animation is Some(animation) {
+      let sprite = @sprite.Sprite::from_animation(
+        animation,
+        @graphics.PORTAL_ZINDEX,
+      )
+      @sprite.sprites.set(entity, sprite)
+    }
+    ctx.portal_entities.set(id, entity)
+  }
+}
+
+///|
+fn destroy_entities_iter(entities : Iter[@entity.Entity]) -> Unit {
+  entities.each(fn(e) { e.destroy() })
+}
+
+///|
+test "parse portals" {
   let json : Json = {
     "0": { "pn": "sp", "pt": 0, "tm": 999999999, "tn": "", "x": -258, "y": 138 },
     "1": { "pn": "sp", "pt": 0, "tm": 999999999, "tn": "", "x": 1115, "y": 66 },
@@ -176,23 +229,16 @@ test "" {
       "x": -258,
       "y": 138,
       "tm": 999999999,
-      "pt": { "$tag": "SPAWN" },
+      "pt": "SPAWN",
     },
-    {
-      "pn": "sp",
-      "tn": "",
-      "x": 1115,
-      "y": 66,
-      "tm": 999999999,
-      "pt": { "$tag": "SPAWN" },
-    },
+    { "pn": "sp", "tn": "", "x": 1115, "y": 66, "tm": 999999999, "pt": "SPAWN" },
     {
       "pn": "in00",
       "tn": "out00",
       "x": 3120,
       "y": 155,
       "tm": 103000102,
-      "pt": { "$tag": "INVISIBLE" },
+      "pt": "INVISIBLE",
     },
     {
       "pn": "out00",
@@ -200,7 +246,7 @@ test "" {
       "x": -230,
       "y": 194,
       "tm": 103000100,
-      "pt": { "$tag": "REGULAR" },
+      "pt": "REGULAR",
     },
   ])
 }

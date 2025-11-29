@@ -290,6 +290,7 @@ fn main {
   )
   .add_system(@map.background_system, system_name="background_system")
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
+  .add_system(@map.portal_system, system_name="portal_system")
   .add_system(@combat_impl2.combat_system, system_name="combat_system")
   .run()
 }

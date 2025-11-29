@@ -23,6 +23,7 @@ fn main {
   .add_system(camera_control_system, system_name="camera_controller")
   .add_system(@map.background_system, system_name="background_system")
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
+  .add_system(@map.portal_system, system_name="portal_system")
   .add_system(
     viewer_visibility_input_system,
     system_name="viewer_visibility_controls",
@@ -122,6 +123,14 @@ fn finalize_scene(scene_map : @map.SceneMap) -> Unit {
   let world_size = @selene_math.Vec2D(width, height)
   @map.set_backgrounds(backgrounds, world_size)
   @map.set_tiles_objs(tiles_objs)
+  @map.set_portals(scene_map.portals, fn() {
+    let camera_pos = @camera.get_position()
+    let zoom = @backend.get_zoom()
+    let viewport_size = @backend.get_canvas_size() *
+      @selene_math.Vec2D(1.0 / zoom, 1.0 / zoom)
+    let center = (camera_pos + viewport_size).scalar_div(2.0)
+    @struct.Point::new(center.0.to_int(), center.1.to_int())
+  })
   apply_visibility_to_modules()
   let center = @selene_math.Vec2D(
     ((walls.first() + walls.second()) / 2).to_double(),

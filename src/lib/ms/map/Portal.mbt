@@ -46,7 +46,7 @@ pub fn PortalType::typebyid(id : Int) -> PortalType? {
 pub impl @json.FromJson for PortalType with from_json(json, path) -> PortalType {
   match json {
     Number(n, ..) =>
-      PortalType::typebyid(n.to_int()).or_error(
+      PortalType::typebyid(n.to_int()).unwrap_or_error(
         @json.JsonDecodeError((path, "Unknown portal type \{n}")),
       )
     _ => raise @json.JsonDecodeError((path, "Expected a number"))
@@ -137,15 +137,6 @@ pub fn Portal::update(self : Portal, playerpos : Point[Int]) -> Unit {
   } else {
     animation.visible = false
   }
-}
-
-///|
-pub fn Portal::draw(
-  self : Portal,
-  viewpos : Point[Int],
-  inter : Double,
-) -> Unit {
-
 }
 
 ///|

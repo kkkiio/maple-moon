@@ -3,13 +3,21 @@
   "import": [
     "Milky2018/selene/system",
     "Milky2018/selene/plugins",
+    {
+      "path": "Milky2018/selene/math",
+      "alias": "selene_math"
+    },
+    "Milky2018/selene/entity",
+    "Milky2018/selene/position",
+    "Milky2018/selene/inputs",
+    "Milky2018/selene/camera",
+    "Milky2018/selene/backend",
     "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/log",
-    "KKKIIO/maple-moon/lib/cursor",
-    "KKKIIO/maple-moon/lib/ms/login",
     "KKKIIO/maple-moon/lib/graphics",
-    "KKKIIO/maple-moon/lib/game_scene",
-    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/struct",
+    "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/map"
   ],
   "overrides": [

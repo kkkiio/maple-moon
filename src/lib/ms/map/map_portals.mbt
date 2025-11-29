@@ -70,15 +70,6 @@ pub fn MapPortals::update(self : MapPortals, playerpos : Point[Int]) -> Unit {
 }
 
 ///|
-pub fn MapPortals::draw(
-  self : MapPortals,
-  viewpos : Point[Int],
-  inter : Double,
-) -> Unit {
-  self.portals_by_id.each(fn(_k, portal) { portal.draw(viewpos, inter) })
-}
-
-///|
 pub fn MapPortals::get_portal_pos_by_id(
   self : MapPortals,
   portal_id : Int,
@@ -178,7 +169,7 @@ test "" {
     },
   }
   let res : @resource.MapBasedArray[PortalMarker] = @json.from_json(json)
-  @json.inspect(res.inner(), content=[
+  @json.inspect(res.0, content=[
     {
       "pn": "sp",
       "tn": "",

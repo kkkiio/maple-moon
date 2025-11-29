@@ -48,7 +48,7 @@ struct NxBackground {
   rx : Int
   /// parallax ratio of vertical movement
   ry : Int
-  t : BackgroundType
+  type_ : BackgroundType
   x : Int
   y : Int
 } derive(Show)
@@ -67,7 +67,7 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
       "no": Json::Number(no, ..),
       "rx": Json::Number(rx, ..),
       "ry": Json::Number(ry, ..),
-      "type": Json::Number(t, ..),
+      "type": Json::Number(type_, ..),
       "x": Json::Number(x, ..),
       "y": Json::Number(y, ..),
       ..
@@ -88,9 +88,9 @@ pub impl @json.FromJson for NxBackground with from_json(json, path) {
     no: no.to_int(),
     rx: rx.to_int(),
     ry: ry.to_int(),
-    t: BackgroundType::from_int(t.to_int()).unwrap_or_error(
+    type_: BackgroundType::from_int(type_.to_int()).unwrap_or_error(
       @json.JsonDecodeError(
-        (path.add_key("type"), "unknown background type \{t}"),
+        (path.add_key("type"), "unknown background type \{type_}"),
       ),
     ),
     x: x.to_int(),
@@ -152,7 +152,7 @@ pub async fn BackgroundResource::load(
     spec.no.to_string(),
   ])
   let animation = @json.from_json(bg_res.value())
-  let t = spec.t
+  let t = spec.type_
   let opacity = spec.a.to_double() / 255.0
   let flipped = spec.f
   let cx = spec.cx

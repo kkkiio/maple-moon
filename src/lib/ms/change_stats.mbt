@@ -88,16 +88,19 @@ test "parse stat changes" {
     |> @net.InPacket::new()
   inspect(recv.read_ushort() |> @net.Opcode::from_int(), content="CHANGE_STATS")
   let changes = parse_stat_changes(recv)
-  @json.inspect(changes, content={
-    "LEVEL": 7,
-    "STR": 41,
-    "DEX": 6,
-    "HP": 132,
-    "MAXHP": 132,
-    "MP": 71,
-    "MAXMP": 71,
-    "AP": 0,
-    "SP": 0,
-    "EXP": 25,
-  })
+  @json.inspect(changes, content=[
+    "StatChanges",
+    {
+      "LEVEL": 7,
+      "STR": 41,
+      "DEX": 6,
+      "HP": 132,
+      "MAXHP": 132,
+      "MP": 71,
+      "MAXMP": 71,
+      "AP": 0,
+      "SP": 0,
+      "EXP": 25,
+    },
+  ])
 }

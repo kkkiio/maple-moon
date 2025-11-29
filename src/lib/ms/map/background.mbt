@@ -152,11 +152,11 @@ pub struct BackgroundResource {
 
 ///|
 pub async fn BackgroundResource::load(
-  background_loader : @resource.AsyncLoader,
+  bs_loader : @resource.AsyncLoader,
   spec : NxBackground,
 ) -> BackgroundResource {
   let animated = spec.ani
-  let bg_res = background_loader.load_res_async([
+  let bg_res = bs_loader.load_res_async([
     spec.bS + ".img",
     if animated {
       "ani"
@@ -356,7 +356,7 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 
 ///|
 pub async fn load_backgrounds(
-  background_loader : @resource.AsyncLoader,
+  bs_loader : @resource.AsyncLoader,
   spec : BackgroundsResource,
 ) -> Backgrounds {
   let fronts = Array::new()
@@ -366,7 +366,7 @@ pub async fn load_backgrounds(
     if back_spec.bS == "" {
       continue
     }
-    let backi = BackgroundResource::load(background_loader, back_spec)
+    let backi = BackgroundResource::load(bs_loader, back_spec)
     backgrounds.push(Background::from_resource(backi))
     fronts.push(back_spec.front)
   }

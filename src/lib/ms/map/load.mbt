@@ -72,15 +72,16 @@ pub async fn load_map(
   }
   let res : NxMapTilesObjs = @json.from_json(src.value())
   let tiles_objs = MapTilesObjs::load(res.layers)
-  let background_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "background",
+  let bs_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "background_set_loader",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Back",
       "assets/map/back",
     ),
     base_url="/assets",
+    image_base_url="",
   )
-  let backgrounds = load_backgrounds(background_loader, res.back)
+  let backgrounds = load_backgrounds(bs_loader, res.back)
   let foothold_tree = @json.from_json(src["foothold"].value())
   let physics = @physics.Physics::from_resource(foothold_tree)
   let map_info = MapInfo::from_resource(

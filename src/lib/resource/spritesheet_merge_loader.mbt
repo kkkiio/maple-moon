@@ -1,6 +1,7 @@
 ///|
 struct SpritesheetMergeLoader {
   base_url : String
+  image_base_url : String
   source : &AsyncResourceLoader
   cache : @lru_cache.Cache[String, Json]
   spritesheet_json_cache : Map[String, SpritesheetMetadata]
@@ -10,12 +11,14 @@ struct SpritesheetMergeLoader {
 pub fn SpritesheetMergeLoader::new(
   source : &AsyncResourceLoader,
   base_url : String,
+  image_base_url : String,
 ) -> SpritesheetMergeLoader {
   {
     source,
     cache: @lru_cache.Cache::new(100),
     spritesheet_json_cache: Map::new(),
     base_url,
+    image_base_url,
   }
 }
 
@@ -57,7 +60,7 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
   let value = patch_image(
     origin_value,
     self.spritesheet_json_cache,
-    base_url=self.base_url,
+    base_url=self.image_base_url,
   )
   self.cache.set(path, value)
   value

@@ -2,23 +2,11 @@
 
 A make from scratch game client for Maplestory.
 
-Focused on learning graphics and AI pairing development.
-
-## Goal
-
-- Easy to understand the code.
-- Easy to test the code.
-
-## Non-goal
-
-- Implement all features of the original game.
-
-## Design
-
-Considering web as the main platform.
+It is not a goal to implement all features of the original game.
 
 ## Development
 
 ```bash
 npm run dev
+moon build --watch
 ```

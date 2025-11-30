@@ -16,7 +16,6 @@ test {
       #|<span style="color: black">I must begin the traditional ceremony for our ancestors shortly, but I don&#039;t have enough </span><span style="color: red">Leaves</span><span style="color: black"> for the ceremony. I don&#039;t have much time.</span><br/>
       #|<span style="color: black"></span><br/>
       #|<span style="color: black">Oh, you look like an adventurer. Won&#039;t you help me?</span>
-
     ),
   )
 }

@@ -6,25 +6,26 @@ struct TilesObjs {
 }
 
 ///|
-pub async fn TilesObjs::load(
-  ts : String?,
+pub async fn load_tileset(ts : String) -> NxTileSet {
+  let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
+    "tile",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Tile",
+      "/assets/map/tile",
+    ),
+    base_url="/assets",
+  )
+  let node = tile_loader.load_res_async([ts + ".img"])
+  @json.from_json(node.value())
+}
+
+///|
+pub fn TilesObjs::load(
+  tileset : NxTileSet?,
+  object_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]],
   tile_resource : Array[NxTileRef],
   obj_resource : Array[NxObj],
 ) -> TilesObjs {
-  let tileset = if ts is Some(ts) {
-    let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-      "tile",
-      loader=@resource.DirResourceLoader::new(
-        // "https://maple-res.kkkiiox.work/Map/Tile",
-        "/assets/map/tile",
-      ),
-      base_url="/assets",
-    )
-    let node = tile_loader.load_res_async([ts + ".img"])
-    Some(@json.from_json(node.value()))
-  } else {
-    None
-  }
   // Load tiles
   let tiles = []
   for tilenode in tile_resource {
@@ -33,8 +34,9 @@ pub async fn TilesObjs::load(
 
   // Load objects
   let objs = []
-  for objnode in obj_resource {
-    objs.push(Obj::load(objnode))
+  for nx_obj in obj_resource {
+    let animation = object_sets[nx_obj.oS][ObjectAnimationPath::from_obj(nx_obj)]
+    objs.push(Obj::new(nx_obj, animation))
   }
   TilesObjs::new(tiles, objs)
 }
@@ -74,15 +76,20 @@ struct MapTilesObjs {
 }
 
 ///|
-pub async fn MapTilesObjs::load(
+pub fn MapTilesObjs::load(
+  tilesets : Map[String, NxTileSet],
+  object_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]],
   layer_resource : Array[NxLayer],
 ) -> MapTilesObjs {
   let layers = []
   for id in @map_layer.ids {
     let layer = layer_resource[id]
-    layers.push(
-      TilesObjs::load(layer.info.map(fn(it) { it.tS }), layer.tile, layer.obj),
-    )
+    let tileset = if layer.info is Some({ tS }) {
+      Some(tilesets[tS])
+    } else {
+      None
+    }
+    layers.push(TilesObjs::load(tileset, object_sets, layer.tile, layer.obj))
   }
   { layers, }
 }

@@ -1,12 +1,12 @@
 ///|
-struct NxMapTilesObjs {
+pub struct NxMap {
   layers : Array[NxLayer]
   back : BackgroundsResource
   portal : Array[PortalMarker]
 }
 
 ///|
-pub impl @json.FromJson for NxMapTilesObjs with from_json(json, path) {
+pub impl @json.FromJson for NxMap with from_json(json, path) {
   let layers = @resource.parse_map_based_array(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
@@ -25,7 +25,7 @@ pub impl @json.FromJson for NxMapTilesObjs with from_json(json, path) {
 }
 
 ///|
-struct NxLayer {
+pub struct NxLayer {
   info : MapLayerInfoResource?
   tile : Array[NxTileRef]
   obj : Array[NxObj]
@@ -68,7 +68,7 @@ test "parse empty layer" {
 }
 
 ///|
-struct NxTileRef {
+pub struct NxTileRef {
   /// tile index
   no : Int
   /// group name
@@ -122,6 +122,6 @@ pub impl @json.FromJson for NxObj with from_json(json, path) {
 }
 
 ///|
-priv struct MapLayerInfoResource {
+pub struct MapLayerInfoResource {
   tS : String
 } derive(@json.FromJson, Show)

@@ -83,7 +83,7 @@ pub fn Ladder::get_x(self : Ladder) -> Int {
 
 ///|
 /// Define the MapInfo struct and its methods
-struct MapInfo {
+pub struct MapInfo {
   field_limit : Int
   cloud : Bool
   bgm : String

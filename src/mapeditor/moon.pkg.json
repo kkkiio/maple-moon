@@ -1,5 +1,4 @@
 {
-  "is-main": true,
   "import": [
     "Milky2018/selene/system",
     "Milky2018/selene/plugins",
@@ -14,14 +13,28 @@
     "Milky2018/selene/backend",
     "Milky2018/selene/sprite",
     "Milky2018/selene/style",
+    "Milky2018/selene/ui",
     "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/io_task",
     "KKKIIO/maple-moon/lib/struct",
     "KKKIIO/maple-moon/lib/utils",
-    "KKKIIO/maple-moon/lib/ms/map"
+    "KKKIIO/maple-moon/lib/ms/map",
+    "KKKIIO/maple-moon/lib/cursor",
+    "rami3l/js-ffi/js"
   ],
+  "link": {
+    "js": {
+      "exports": [
+        "start_editor",
+        "load_map_ffi",
+        "set_view_options_ffi",
+        "export_scene_graph_ffi"
+      ],
+      "format": "esm"
+    }
+  },
   "overrides": [
     "Milky2018/selene-canvas"
   ]

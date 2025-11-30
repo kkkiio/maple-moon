@@ -5,8 +5,7 @@ const MAP_ID : Int = 100000000
 const CAMERA_SPEED : Double = 640.0
 
 ///|
-/// 地图查看器入口，创建最小化的渲染 App 并挂载调试系统。
-fn main {
+pub fn start_editor() -> Unit {
   @system.App::new()
   .with_image_smooth(false)
   .with_canvas_width(@graphics.view_size.0 |> Double::from_int)
@@ -33,11 +32,74 @@ fn main {
     schedule=Render(1),
     system_name="debug_overlay",
   )
+  .add_system(render_mouse_info, schedule=Render(2), system_name="mouse_info")
   .run()
 }
 
 ///|
-struct MapLimits {
+pub fn load_map_ffi(id : Int) -> Unit {
+  viewer_state.val.map_future = Some(
+    viewer_state.val.io_service.submit(fn() {
+      let portal_animations = @map.Module::load().get_portals_animations()
+      let raw = @map.load_map_raw(id)
+      let scene = @map.parse_scene_map(raw, portal_animations)
+      (raw, scene)
+    }),
+  )
+  viewer_state.val.scene_state = None
+  viewer_state.val.error_message = None
+}
+
+///|
+pub fn set_view_options_ffi(
+  show_bg : Bool,
+  show_tiles : Bool,
+  show_objs : Bool,
+) -> Unit {
+  viewer_state.val.layer_visibility.backgrounds = show_bg
+  viewer_state.val.layer_visibility.tiles = show_tiles
+  viewer_state.val.layer_visibility.objs = show_objs
+  apply_visibility_to_modules()
+}
+
+///|
+fn render_mouse_info(_delta : Double) -> Unit {
+  let mouse_screen = @inputs.mouse.pos
+  let camera_pos = @camera.get_position()
+  let zoom = @backend.get_zoom()
+  let mouse_world = camera_pos + mouse_screen.scalar_div(zoom)
+  let entity = match viewer_state.val.mouse_info_entity {
+    Some(entity) => entity
+    None => {
+      let entity = @entity.Entity::new()
+      // Attach UI component to render in Screen Space
+      @ui.uis.set(entity, @ui.Ui::new())
+      viewer_state.val.mouse_info_entity = Some(entity)
+      entity
+    }
+  }
+
+  // Offset text slightly from cursor
+  let offset = @selene_math.Vec2D(20.0, 20.0)
+  @position.positions.set(entity, @position.Position(mouse_screen + offset))
+  let text = "S:(\{mouse_screen.0.to_int()}, \{mouse_screen.1.to_int()}) W:(\{mouse_world.0.to_int()}, \{mouse_world.1.to_int()})"
+  @sprite.sprites.set(
+    entity,
+    @sprite.Sprite::from_text(
+      @sprite.Text::new(
+        text,
+        color="#ffff00", // Yellow for visibility
+        font="14px monospace",
+        align=@selene_math.HAlign::Left,
+        baseline=@selene_math.VAlign::Top,
+      ),
+      @graphics.UI_ZINDEX + 200,
+    ),
+  )
+}
+
+///|
+priv struct MapLimits {
   left : Double
   right : Double
   top : Double
@@ -45,7 +107,7 @@ struct MapLimits {
 }
 
 ///|
-struct LayerVisibility {
+priv struct LayerVisibility {
   mut backgrounds : Bool
   mut tiles : Bool
   mut objs : Bool
@@ -57,41 +119,51 @@ fn default_visibility() -> LayerVisibility {
 }
 
 ///|
-struct ViewerState {
+priv struct ViewerState {
   io_service : @io_task.IOService
-  mut map_future : @utils.Future[Result[@map.SceneMap, Error]]?
-  mut map_info : @map.MapInfo?
-  mut map_limits : MapLimits?
-  mut camera_entity : @entity.Entity?
-  mut map_loaded : Bool
-  mut debug_overlay_entity : @entity.Entity?
+  mut map_future : @utils.Future[
+    Result[(@map.MapRawResources, @map.SceneMap), Error],
+  ]?
   mut error_message : String?
+  mut scene_state : SceneState?
+  mut camera_entity : @entity.Entity?
+  mut debug_overlay_entity : @entity.Entity?
+  mut mouse_info_entity : @entity.Entity?
   layer_visibility : LayerVisibility
+}
+
+///|
+priv struct SceneState {
+  raw_resources : @map.MapRawResources
+  scene_map : @map.SceneMap
+  map_limits : MapLimits
 }
 
 ///|
 let viewer_state : Ref[ViewerState] = Ref::new({
   io_service: @io_task.IOService::new(),
   map_future: None,
-  map_info: None,
-  map_limits: None,
-  camera_entity: None,
-  map_loaded: false,
-  debug_overlay_entity: None,
+  scene_state: None,
   error_message: None,
+  camera_entity: None,
+  debug_overlay_entity: None,
+  mouse_info_entity: None,
   layer_visibility: default_visibility(),
 })
 
 ///|
 fn start_map_loading_system(_delta : Double) -> Unit {
-  if viewer_state.val.map_loaded || viewer_state.val.map_future is Some(_) {
+  if viewer_state.val.scene_state is Some(_) ||
+    viewer_state.val.map_future is Some(_) {
     return
   }
   viewer_state.val.error_message = None
   let portal_animations = @map.Module::load().get_portals_animations()
   viewer_state.val.map_future = Some(
     viewer_state.val.io_service.submit(fn() {
-      @map.load_map(MAP_ID, portal_animations)
+      let raw = @map.load_map_raw(MAP_ID)
+      let scene = @map.parse_scene_map(raw, portal_animations)
+      (raw, scene)
     }),
   )
   @log.info({ "map_id": MAP_ID }, "start loading map for viewer")
@@ -103,7 +175,7 @@ fn map_loading_poll_system(_delta : Double) -> Unit {
   guard future.poll() is Some(result) else { return }
   viewer_state.val.map_future = None
   match result {
-    Ok(scene_map) => finalize_scene(scene_map)
+    Ok((raw_resources, scene_map)) => finalize_scene(raw_resources, scene_map)
     Err(e) => {
       viewer_state.val.error_message = Some(e.to_string())
       @log.error({ "map_id": MAP_ID, "error": e }, "load map failed")
@@ -112,7 +184,10 @@ fn map_loading_poll_system(_delta : Double) -> Unit {
 }
 
 ///|
-fn finalize_scene(scene_map : @map.SceneMap) -> Unit {
+fn finalize_scene(
+  raw_resources : @map.MapRawResources,
+  scene_map : @map.SceneMap,
+) -> Unit {
   let map_info = scene_map.map_info
   let tiles_objs = scene_map.tiles_objs
   let backgrounds = scene_map.backgrounds
@@ -138,21 +213,19 @@ fn finalize_scene(scene_map : @map.SceneMap) -> Unit {
   )
   let entity = ensure_camera_entity()
   @position.positions.set(entity, @position.Position(center))
-  let limits = MapLimits::{
+  let map_limits = MapLimits::{
     left: walls.first().to_double(),
     right: walls.second().to_double(),
     top: borders.first().to_double(),
     bottom: borders.second().to_double(),
   }
   @camera.set_limits(
-    top=limits.top,
-    bottom=limits.bottom,
-    left=limits.left,
-    right=limits.right,
+    top=map_limits.top,
+    bottom=map_limits.bottom,
+    left=map_limits.left,
+    right=map_limits.right,
   )
-  viewer_state.val.map_limits = Some(limits)
-  viewer_state.val.map_info = Some(map_info)
-  viewer_state.val.map_loaded = true
+  viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
   @log.info(
     { "map_id": MAP_ID, "width": width, "height": height },
     "map ready in viewer",
@@ -190,8 +263,8 @@ fn camera_control_system(delta : Double) -> Unit {
     .unwrap_or(@selene_math.Vec2D::zero())
   let next_pos = current_pos +
     direction.normalize().scalar_mul(CAMERA_SPEED * delta)
-  let clamped_pos = match viewer_state.val.map_limits {
-    Some(limits) => clamp_vec(next_pos, limits)
+  let clamped_pos = match viewer_state.val.scene_state {
+    Some({ map_limits, .. }) => clamp_vec(next_pos, map_limits)
     None => next_pos
   }
   @position.positions.set(entity, @position.Position(clamped_pos))
@@ -199,7 +272,7 @@ fn camera_control_system(delta : Double) -> Unit {
 
 ///|
 fn viewer_visibility_input_system(_delta : Double) -> Unit {
-  if not(viewer_state.val.map_loaded) {
+  if viewer_state.val.scene_state is None {
     return
   }
   if @inputs.is_just_pressed(@inputs.Code::KeyQ) {
@@ -240,14 +313,15 @@ fn render_debug_overlay(_delta : Double) -> Unit {
   let status_line = match viewer_state.val.error_message {
     Some(msg) => "载入失败: \{msg}"
     None =>
-      if viewer_state.val.map_loaded {
+      if viewer_state.val.scene_state is Some(_) {
         "地图载入完成"
       } else {
         "正在载入地图..."
       }
   }
-  let map_line = match viewer_state.val.map_info {
-    Some(info) => "地图 \{MAP_ID}: \{info.get_full_name()}"
+  let map_line = match viewer_state.val.scene_state {
+    Some({ scene_map: { map_info: { map_name, .. }, .. }, .. }) =>
+      "地图 \{MAP_ID}: \{map_name}"
     None => "地图 \{MAP_ID}"
   }
   let camera_pos = @camera.get_position()

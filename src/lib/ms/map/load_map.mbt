@@ -10,100 +10,55 @@ pub(all) struct SceneMap {
 }
 
 ///|
-let mapx_loader : Ref[@resource.AsyncLoader?] = Ref::new(None)
-
-///|
-fn get_mapx_loader() -> @resource.AsyncLoader {
-  if mapx_loader.val is Some(loader) {
-    return loader
-  }
-  let loader = @resource.CompositeAsyncResourceLoader::new({
-    "Map0/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map0",
-    ),
-    "Map1/": @resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Map1",
-      "/assets/map/map1",
-    ),
-    "Map2/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map2",
-    ),
-    "Map3/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map3",
-    ),
-    "Map4/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map4",
-    ),
-    "Map5/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map5",
-    ),
-    "Map6/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map6",
-    ),
-    "Map7/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map7",
-    ),
-    "Map8/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map8",
-    ),
-    "Map9/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map9",
-    ),
-  })
-  let loader = @resource.AsyncLoader::new("mapx", loader~)
-  mapx_loader.val = Some(loader)
-  loader
-}
-
-///|
 pub async fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations,
 ) -> SceneMap {
+  let raw = load_map_raw(map_id)
+  parse_scene_map(raw, map_portals_animations)
+}
+
+///|
+pub fn parse_scene_map(
+  raw : MapRawResources,
+  map_portals_animations : MapPortalAnimations,
+) -> SceneMap raise {
   // TODO: CashShopPreview
-  guard map_id >= 0
-  let prefix = (map_id / 100000000).to_string()
-  let strid = @utils.stoi_left_pad0(map_id, 9)
-  let path = ["Map\{prefix}", "\{strid}.img"]
-  @log.info({ "path": path }, "loading map")
-  let src = get_mapx_loader().load_res_async(path)
-  guard not(src.is_null()) else {
-    raise @resource.LoadError("map not found, id=\{map_id}")
-  }
-  let res : NxMapTilesObjs = @json.from_json(src.value())
-  let tiles_objs = MapTilesObjs::load(res.layers)
-  let bs_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "background_set_loader",
-    loader=@resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Back",
-      "/assets/map/back",
-    ),
-    base_url="/assets",
-    image_base_url="/",
+  let layers = raw.nx_map.layers
+  let tiles_objs = MapTilesObjs::load(
+    raw.tilesets,
+    raw.object_animation_sets,
+    layers,
   )
-  let backgrounds = load_backgrounds(bs_loader, res.back)
-  let foothold_tree = @json.from_json(src["foothold"].value())
-  let physics = @physics.Physics::from_resource(foothold_tree)
+  let backgrounds = load_backgrounds(
+    raw.nx_map.back,
+    raw.background_animation_sets,
+  )
+  let physics = @physics.Physics::from_resource(raw.foothold)
   let map_info = MapInfo::from_resource(
-    src,
+    raw.root,
     physics.get_fht().get_walls(),
     physics.get_fht().get_borders(),
   )
-  let portals = MapPortals::new(res.portal, map_id, map_portals_animations)
+  let portals = MapPortals::new(
+    raw.get_portals(),
+    raw.id,
+    map_portals_animations,
+  )
   // Check if miniMap exists
-  let mini_map_node = src["miniMap"]
+  let mini_map_node = raw.root["miniMap"]
   let mini_map_resources = if mini_map_node.is_null() {
     None
   } else {
     Some(
       MiniMapRuntimeResource::load(
         @json.from_json(mini_map_node.value()),
-        res.portal,
+        raw.get_portals(),
       ),
     )
   }
   {
-    id: map_id,
+    id: raw.id,
     tiles_objs,
     backgrounds,
     physics,

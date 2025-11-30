@@ -20,18 +20,35 @@ fn get_object_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn Obj::load(obj : NxObj) -> Obj {
-  let oS = obj.oS
-  let l0 = obj.l0
-  let l1 = obj.l1
-  let l2 = obj.l2
-  let res = get_object_loader().load_res_async(["\{oS}.img", l0, l1, l2])
-  let animation = @json.from_json(res.value())
-  Obj::new(obj, animation)
+struct ObjectAnimationPath {
+  l0 : String
+  l1 : String
+  l2 : String
+} derive(Show, Eq, Hash)
+
+///|
+pub fn ObjectAnimationPath::from_obj(obj : NxObj) -> ObjectAnimationPath {
+  { l0: obj.l0, l1: obj.l1, l2: obj.l2 }
 }
 
 ///|
-fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
+pub async fn load_obj_animation(
+  object_set_name : String,
+  key : ObjectAnimationPath,
+) -> @resource.NxAnimation {
+  let { l0, l1, l2 } = key
+  let res = get_object_loader().load_res_async([
+    "\{object_set_name}.img",
+    l0,
+    l1,
+    l2,
+  ])
+  let animation = @json.from_json(res.value())
+  animation
+}
+
+///|
+pub fn Obj::new(obj : NxObj, animation : @resource.NxAnimation) -> Obj {
   { animation, pos: @struct.Point::new(obj.x, obj.y), flip: obj.f, z: obj.z }
 }
 

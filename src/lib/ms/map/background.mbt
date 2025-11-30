@@ -31,7 +31,7 @@ pub fn BackgroundType::from_int(id : Int) -> BackgroundType? {
 
 ///|
 /// background in a map
-struct NxBackground {
+pub struct NxBackground {
   a : Int
   /// whether the background is animated
   ani : Bool
@@ -137,21 +137,42 @@ pub struct BackgroundResource {
 }
 
 ///|
-pub async fn BackgroundResource::load(
+struct BackgroundAnimationPath {
+  animated : Bool
+  no : Int
+} derive(Show, Eq, Hash)
+
+///|
+pub fn BackgroundAnimationPath::from_nx(
+  background : NxBackground,
+) -> BackgroundAnimationPath {
+  { animated: background.ani, no: background.no }
+}
+
+///|
+pub async fn load_background_animation(
   bs_loader : @resource.AsyncLoader,
-  spec : NxBackground,
-) -> BackgroundResource {
-  let animated = spec.ani
+  background_set_name : String,
+  path : BackgroundAnimationPath,
+) -> @resource.NxAnimation {
+  let { animated, no } = path
   let bg_res = bs_loader.load_res_async([
-    spec.bS + ".img",
+    background_set_name + ".img",
     if animated {
       "ani"
     } else {
       "back"
     },
-    spec.no.to_string(),
+    no.to_string(),
   ])
-  let animation = @json.from_json(bg_res.value())
+  @json.from_json(bg_res.value())
+}
+
+///|
+pub fn BackgroundResource::new(
+  spec : NxBackground,
+  animation : @resource.NxAnimation,
+) -> BackgroundResource {
   let t = spec.type_
   let opacity = spec.a.to_double() / 255.0
   let flipped = spec.f
@@ -365,13 +386,14 @@ pub fn set_background_sprites(
 pub fn update_background_position(
   entity : @entity.Entity,
   background : Background,
-  camera_center : @selene_math.Vec2D,
+  camera_pos : @selene_math.Vec2D,
 ) -> Unit {
   match background.display {
     BackgroundDisplay::Normal(position~, ratio~) => {
-      // 实现视差滚动: 远处移动慢、近处移动快
-      // Parallax formula: pos' = pos + (pos - center) * rate / 100
-      let new_pos = (position - camera_center).mul(ratio.scalar_div(100.0))
+      // 实现视差滚动
+      // standard parallax: WorldPos = Origin + Camera * (1 - ratio/100)
+      let factor = @selene_math.Vec2D(1.0, 1.0) - ratio.scalar_div(100.0)
+      let new_pos = position + camera_pos.mul(factor)
       @position.positions.set(entity, @position.Position(new_pos))
     }
     BackgroundDisplay::Tiled(start~, moving_speed~, ..) => {
@@ -404,7 +426,7 @@ pub struct Backgrounds {
 }
 
 ///|
-struct BackgroundsResource(Array[NxBackground]) derive(Show)
+pub struct BackgroundsResource(Array[NxBackground]) derive(Show)
 
 ///|
 pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
@@ -412,9 +434,12 @@ pub impl @json.FromJson for BackgroundsResource with from_json(json, path) {
 }
 
 ///|
-pub async fn load_backgrounds(
-  bs_loader : @resource.AsyncLoader,
+pub fn load_backgrounds(
   spec : BackgroundsResource,
+  background_animation_sets : Map[
+    String,
+    Map[BackgroundAnimationPath, @resource.NxAnimation],
+  ],
 ) -> Backgrounds {
   let fronts = Array::new()
   let backgrounds = Array::new()
@@ -423,17 +448,22 @@ pub async fn load_backgrounds(
     if back_spec.bS == "" {
       continue
     }
-    let backi = BackgroundResource::load(bs_loader, back_spec)
+    let backi = BackgroundResource::new(
+      back_spec,
+      background_animation_sets[back_spec.bS][BackgroundAnimationPath::from_nx(
+        back_spec,
+      )],
+    )
     backgrounds.push(Background::from_resource(backi))
     fronts.push(back_spec.front)
   }
   let backs = Array::new()
   let fores = Array::new()
-  for i, front in fronts {
-    if front {
-      fores.push(backgrounds[i])
+  for i, b in backgrounds {
+    if fronts[i] {
+      fores.push(b)
     } else {
-      backs.push(backgrounds[i])
+      backs.push(b)
     }
   }
   { backs, fores }
@@ -575,21 +605,18 @@ pub fn background_system(_delta : Double) -> Unit {
   }
   // get camera position (top-left)
   let camera_pos = @camera.get_position()
-  let zoom = @backend.get_zoom()
-  let viewport_size = @backend.get_canvas_size() * Vec2D(1 / zoom, 1 / zoom)
-  let camera_center = (camera_pos + viewport_size).scalar_div(2)
   let times = @config.get_logic_times()
   for _ in 0..<times {
     let mut i = 0
     for b in backgrounds.backs {
       if should_render_background(ctx, i, false) {
-        update_background_position(ctx.entities[i], b, camera_center)
+        update_background_position(ctx.entities[i], b, camera_pos)
       }
       i += 1
     }
     for f in backgrounds.fores {
       if should_render_background(ctx, i, true) {
-        update_background_position(ctx.entities[i], f, camera_center)
+        update_background_position(ctx.entities[i], f, camera_pos)
       }
       i += 1
     }

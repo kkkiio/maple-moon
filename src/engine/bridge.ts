@@ -9,14 +9,23 @@ interface MoonBitModule {
     load_map_ffi: (id: number) => void;
     set_view_options_ffi: (bg: boolean, tiles: boolean, objs: boolean) => void;
     export_scene_graph_ffi?: () => any;
+    export_mouse_info_ffi?: () => MouseInfo;
     // Add other exported MoonBit functions here as needed
     [key: string]: any;
+}
+
+export interface MouseInfo {
+    screen_x: number;
+    screen_y: number;
+    world_x: number;
+    world_y: number;
 }
 
 interface EditorAPI {
     loadMap: (id: number) => void;
     setViewOptions: (showBg: boolean, showTiles: boolean, showObjs: boolean) => void;
     getSceneGraph: () => any;
+    getMouseInfo: () => MouseInfo | null;
     cleanup: () => void;
 }
 
@@ -45,7 +54,7 @@ export async function initMoonBitEngine(
 
     // Start the editor engine
     if (m.start_editor) {
-        m.start_editor(canvasId);
+        m.start_editor();
     } else {
         console.error("start_editor function not found in MoonBit module");
     }
@@ -63,10 +72,14 @@ export async function initMoonBitEngine(
             }
             return null;
         },
+        getMouseInfo: () => {
+            if (m.export_mouse_info_ffi) {
+                return m.export_mouse_info_ffi();
+            }
+            return null;
+        },
         cleanup: () => {
             // If there's a way to stop the engine, call it here
         }
     };
 }
-
-

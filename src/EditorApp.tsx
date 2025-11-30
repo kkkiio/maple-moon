@@ -1,4 +1,4 @@
-import { AppShell, Group, ScrollArea, Tabs, Text } from '@mantine/core';
+import { AppShell, Group, ScrollArea, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Allotment } from 'allotment';
 import React, { useEffect, useRef, useState } from 'react';
@@ -47,7 +47,6 @@ export default function EditorApp() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [sceneGraph, setSceneGraph] = useState<EditorSceneGraph | null>(null);
   const [mouseInfo, setMouseInfo] = useState<MouseInfo | null>(null);
-  const [activeTab, setActiveTab] = useState<string | null>('assets');
 
   useEffect(() => {
     let intervalId: number | undefined;
@@ -110,54 +109,61 @@ export default function EditorApp() {
             {/* Sidebar: Assets & Inspector */}
             <Allotment.Pane minSize={250} preferredSize={350} maxSize={500}>
               <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-800 border-r border-gray-300 dark:border-gray-700">
-                <Tabs value={activeTab} onChange={setActiveTab} className="flex-1 flex flex-col">
-                  <Tabs.List>
-                    <Tabs.Tab value="assets">Assets / Hierarchy</Tabs.Tab>
-                    <Tabs.Tab value="inspector">Inspector</Tabs.Tab>
-                  </Tabs.List>
-
-                  <Tabs.Panel value="assets" className="flex-1 overflow-hidden">
-                    <ScrollArea h="100%" p="xs">
-                      {sceneGraph ? (
-                        <div className="space-y-3 text-sm">
-                          <div>
-                            <Text size="sm" fw={500}>背景 ({sceneGraph.backgrounds.length})</Text>
-                            <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
-                              {sceneGraph.backgrounds.map(bg => (
-                                <li key={`bg-${bg.id}`}>
-                                  #{bg.id} {bg.bS}:{bg.no} ({bg.type_})
-                                </li>
-                              ))}
-                            </ul>
+                <Allotment vertical>
+                  {/* Assets Panel */}
+                  <Allotment.Pane minSize={100}>
+                    <div className="flex flex-col h-full">
+                      <div className="px-3 py-2 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50">
+                        <Text size="xs" fw={700} c="dimmed" style={{ textTransform: 'uppercase' }}>Assets / Hierarchy</Text>
+                      </div>
+                      <ScrollArea className="flex-1" p="xs">
+                        {sceneGraph ? (
+                          <div className="space-y-3 text-sm">
+                            <div>
+                              <Text size="sm" fw={500}>背景 ({sceneGraph.backgrounds.length})</Text>
+                              <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
+                                {sceneGraph.backgrounds.map(bg => (
+                                  <li key={`bg-${bg.id}`}>
+                                    #{bg.id} {bg.bS}:{bg.no} ({bg.type_})
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <Text size="sm" fw={500}>图层 ({sceneGraph.layers.length})</Text>
+                              <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
+                                {sceneGraph.layers.map(layer => (
+                                  <li key={`layer-${layer.index}`}>
+                                    Layer {layer.index}
+                                    <span className="ml-2 opacity-70">
+                                      Tiles: {layer.tiles.length}, Objs: {layer.objects.length}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           </div>
-                          <div>
-                            <Text size="sm" fw={500}>图层 ({sceneGraph.layers.length})</Text>
-                            <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
-                              {sceneGraph.layers.map(layer => (
-                                <li key={`layer-${layer.index}`}>
-                                  Layer {layer.index}
-                                  <span className="ml-2 opacity-70">
-                                    Tiles: {layer.tiles.length}, Objs: {layer.objects.length}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
+                        ) : (
+                          <div className="p-4 text-center">
+                            <Text size="sm" c="dimmed">等待地图加载...</Text>
                           </div>
+                        )}
+                      </ScrollArea>
+                    </div>
+                  </Allotment.Pane>
+                  
+                  {/* Inspector Panel */}
+                  <Allotment.Pane minSize={100} preferredSize={200}>
+                     <div className="flex flex-col h-full border-t border-gray-300 dark:border-gray-700">
+                        <div className="px-3 py-2 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50">
+                           <Text size="xs" fw={700} c="dimmed" style={{ textTransform: 'uppercase' }}>Inspector</Text>
                         </div>
-                      ) : (
-                        <div className="p-4 text-center">
-                          <Text size="sm" c="dimmed">等待地图加载...</Text>
-                        </div>
-                      )}
-                    </ScrollArea>
-                  </Tabs.Panel>
-
-                  <Tabs.Panel value="inspector" className="flex-1 overflow-hidden">
-                     <ScrollArea h="100%" p="md">
-                        <Text size="sm">选择一个对象查看属性</Text>
-                     </ScrollArea>
-                  </Tabs.Panel>
-                </Tabs>
+                        <ScrollArea className="flex-1" p="md">
+                           <Text size="sm">选择一个对象查看属性</Text>
+                        </ScrollArea>
+                     </div>
+                  </Allotment.Pane>
+                </Allotment>
               </div>
             </Allotment.Pane>
             

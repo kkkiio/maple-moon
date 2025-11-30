@@ -200,7 +200,16 @@ struct Background {
 
 ///|
 priv enum BackgroundDisplay {
-  Normal(position~ : @selene_math.Vec2D, ratio~ : @selene_math.Vec2D)
+  /// Normal background.
+  ///
+  /// - `offset`: screen position of the background
+  /// - `parallax_ratio`: parallax ratio of the background
+  Normal(offset~ : @selene_math.Vec2D, parallax_ratio~ : @selene_math.Vec2D)
+  /// Tiled background.
+  ///
+  /// - `tile_directions`: whether the background is tiled in the horizontal and vertical directions
+  /// - `start`: start position of the background
+  /// - `moving_speed`: moving speed of the background in the horizontal and vertical directions
   Tiled(
     tile_directions~ : (Bool, Bool),
     start~ : @selene_math.Vec2D,
@@ -248,8 +257,11 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
       // Adjust position to be Top-Left relative to world (canceling the origin subtraction in sprite rendering)
       // Only apply this to normal backgrounds (objects).
       BackgroundDisplay::Normal(
-        position=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
-        ratio=@selene_math.Vec2D(res.rx.to_double(), res.ry.to_double()),
+        offset=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
+        parallax_ratio=@selene_math.Vec2D(
+          res.rx.to_double(),
+          res.ry.to_double(),
+        ).scalar_div(100.0),
       )
     BackgroundType::TILED
     | BackgroundType::HTILED
@@ -383,17 +395,32 @@ pub fn set_background_sprites(
 }
 
 ///|
+/// Update the position of a background sprite.
+/// 
+/// - `entity`: the entity to update the position of
+/// - `background`: the background to update the position of
+/// - `camera_pos`: the position of the camera
+///
+/// Maple client's parallax formula:
+/// ```text
+/// shift = parallax_ratio * (cam_left + view_half) + view_half
+/// screen_pos = origin + shift
+/// world_pos = screen_pos + cam_left
+/// ```
 pub fn update_background_position(
   entity : @entity.Entity,
   background : Background,
   camera_pos : @selene_math.Vec2D,
 ) -> Unit {
   match background.display {
-    BackgroundDisplay::Normal(position~, ratio~) => {
-      // 实现视差滚动
-      // standard parallax: WorldPos = Origin + Camera * (1 - ratio/100)
-      let factor = @selene_math.Vec2D(1.0, 1.0) - ratio.scalar_div(100.0)
-      let new_pos = position + camera_pos.mul(factor)
+    BackgroundDisplay::Normal(offset~, parallax_ratio~) => {
+      let view_half = @selene_math.Vec2D(
+        @graphics.view_size.0.to_double() / 2.0,
+        @graphics.view_size.1.to_double() / 2.0,
+      )
+      let camera_center = camera_pos + view_half
+      let shift = camera_center.mul(parallax_ratio) + view_half
+      let new_pos = offset + shift + camera_pos
       @position.positions.set(entity, @position.Position(new_pos))
     }
     BackgroundDisplay::Tiled(start~, moving_speed~, ..) => {
@@ -417,6 +444,58 @@ pub fn update_background_position(
       )
     }
   }
+}
+
+///|
+test "parallax check map 100000000" {
+  let camera_pos = @selene_math.Vec2D(1691, -132) // top-left of the viewport
+  let background_ref_json : Json = {
+    "a": 255,
+    "ani": 0,
+    "bS": "grassySoil",
+    "cx": 0,
+    "cy": 0,
+    "f": 0,
+    "front": 0,
+    "no": 5,
+    "rx": -40,
+    "ry": -5,
+    "type": 0,
+    "x": 1982,
+    "y": 186,
+  }
+  let background : NxBackground = @json.from_json(background_ref_json)
+  let ratio = @selene_math.Vec2D(
+    background.rx.to_double(),
+    background.ry.to_double(),
+  )
+  let position = @selene_math.Vec2D(
+    background.x.to_double(),
+    background.y.to_double(),
+  )
+  let view_half = @selene_math.Vec2D(
+    @graphics.view_size.0.to_double() / 2.0,
+    @graphics.view_size.1.to_double() / 2.0,
+  )
+  let camera_center = camera_pos + view_half
+  let parallax_ratio = ratio.scalar_div(100.0)
+  let shift = camera_center.mul(parallax_ratio) + view_half
+  let new_pos = position + shift + camera_pos
+  let tile_json : Json = { "no": 2, "u": "bsc", "x": 3735, "y": 330, "zM": 4 }
+  let tile : NxTileRef = @json.from_json(tile_json)
+  let background_json : Json = {
+    "__h": 257,
+    "__w": 1024,
+    "origin": [512, 128],
+    "z": 0,
+    "__i": "assets/map/back/grass_2.png",
+  }
+  let background : @resource.NxTexture = @json.from_json(background_json)
+  assert_true(
+    new_pos.1 + background.h.to_double() - background.origin.y.to_double() >
+    tile.y.to_double(),
+    msg="background bottom should be covered by the tile, origin_pos=\{position}, new_pos=\{new_pos}, background_h=\{background.h}",
+  )
 }
 
 ///|

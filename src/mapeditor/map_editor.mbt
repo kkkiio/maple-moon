@@ -32,7 +32,6 @@ pub fn start_editor() -> Unit {
     schedule=Render(1),
     system_name="debug_overlay",
   )
-  .add_system(render_mouse_info, schedule=Render(2), system_name="mouse_info")
   .run()
 }
 
@@ -60,42 +59,6 @@ pub fn set_view_options_ffi(
   viewer_state.val.layer_visibility.tiles = show_tiles
   viewer_state.val.layer_visibility.objs = show_objs
   apply_visibility_to_modules()
-}
-
-///|
-fn render_mouse_info(_delta : Double) -> Unit {
-  let mouse_screen = @inputs.mouse.pos
-  let camera_pos = @camera.get_position()
-  let zoom = @backend.get_zoom()
-  let mouse_world = camera_pos + mouse_screen.scalar_div(zoom)
-  let entity = match viewer_state.val.mouse_info_entity {
-    Some(entity) => entity
-    None => {
-      let entity = @entity.Entity::new()
-      // Attach UI component to render in Screen Space
-      @ui.uis.set(entity, @ui.Ui::new())
-      viewer_state.val.mouse_info_entity = Some(entity)
-      entity
-    }
-  }
-
-  // Offset text slightly from cursor
-  let offset = @selene_math.Vec2D(20.0, 20.0)
-  @position.positions.set(entity, @position.Position(mouse_screen + offset))
-  let text = "S:(\{mouse_screen.0.to_int()}, \{mouse_screen.1.to_int()}) W:(\{mouse_world.0.to_int()}, \{mouse_world.1.to_int()})"
-  @sprite.sprites.set(
-    entity,
-    @sprite.Sprite::from_text(
-      @sprite.Text::new(
-        text,
-        color="#ffff00", // Yellow for visibility
-        font="14px monospace",
-        align=@selene_math.HAlign::Left,
-        baseline=@selene_math.VAlign::Top,
-      ),
-      @graphics.UI_ZINDEX + 200,
-    ),
-  )
 }
 
 ///|
@@ -128,7 +91,6 @@ priv struct ViewerState {
   mut scene_state : SceneState?
   mut camera_entity : @entity.Entity?
   mut debug_overlay_entity : @entity.Entity?
-  mut mouse_info_entity : @entity.Entity?
   layer_visibility : LayerVisibility
 }
 
@@ -147,7 +109,6 @@ let viewer_state : Ref[ViewerState] = Ref::new({
   error_message: None,
   camera_entity: None,
   debug_overlay_entity: None,
-  mouse_info_entity: None,
   layer_visibility: default_visibility(),
 })
 

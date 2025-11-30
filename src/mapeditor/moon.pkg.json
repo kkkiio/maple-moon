@@ -30,7 +30,8 @@
         "start_editor",
         "load_map_ffi",
         "set_view_options_ffi",
-        "export_scene_graph_ffi"
+        "export_scene_graph_ffi",
+        "export_mouse_info_ffi"
       ],
       "format": "esm"
     }

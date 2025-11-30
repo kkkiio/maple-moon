@@ -2,7 +2,7 @@ import { AppShell, Group, ScrollArea, Tabs, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Allotment } from 'allotment';
 import React, { useEffect, useRef, useState } from 'react';
-import { initMoonBitEngine } from './engine/bridge';
+import { initMoonBitEngine, MouseInfo } from './engine/bridge';
 
 type EditorBackground = {
   id: number;
@@ -46,10 +46,12 @@ export default function EditorApp() {
   const [opened, { toggle }] = useDisclosure();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [sceneGraph, setSceneGraph] = useState<EditorSceneGraph | null>(null);
+  const [mouseInfo, setMouseInfo] = useState<MouseInfo | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>('assets');
 
   useEffect(() => {
     let intervalId: number | undefined;
+    let animationFrameId: number | undefined;
     
     // Pass the canvas ID string to the engine
     initMoonBitEngine("canvas", (msg, type) => {
@@ -73,16 +75,28 @@ export default function EditorApp() {
           }
         }, 1000);
       }
+
+      // Poll for mouse info
+      const pollMouse = () => {
+        const info = api.getMouseInfo();
+        if (info) {
+          setMouseInfo(info);
+        }
+        animationFrameId = requestAnimationFrame(pollMouse);
+      };
+      pollMouse();
     });
 
     return () => {
       if (intervalId) window.clearInterval(intervalId);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
     <AppShell
       header={{ height: 40 }}
+      footer={{ height: 30 }}
       padding="0"
     >
       <AppShell.Header>
@@ -91,7 +105,7 @@ export default function EditorApp() {
         </Group>
       </AppShell.Header>
 
-      <AppShell.Main style={{ height: 'calc(100vh - 40px)' }}>
+      <AppShell.Main style={{ height: 'calc(100vh - 70px)' }}>
          <Allotment>
             {/* Sidebar: Assets & Inspector */}
             <Allotment.Pane minSize={250} preferredSize={350} maxSize={500}>
@@ -165,6 +179,22 @@ export default function EditorApp() {
             </Allotment.Pane>
           </Allotment>
       </AppShell.Main>
+
+      <AppShell.Footer p="xs" className="flex items-center border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <Group justify="space-between" w="100%">
+          <Text size="xs" c="dimmed">Ready</Text>
+          {mouseInfo && (
+             <Group gap="md">
+               <Text size="xs" fw={500} style={{ fontFamily: 'monospace' }}>
+                 Screen: ({mouseInfo.screen_x}, {mouseInfo.screen_y})
+               </Text>
+               <Text size="xs" fw={500} style={{ fontFamily: 'monospace' }}>
+                 World: ({mouseInfo.world_x}, {mouseInfo.world_y})
+               </Text>
+             </Group>
+          )}
+        </Group>
+      </AppShell.Footer>
     </AppShell>
   );
 }

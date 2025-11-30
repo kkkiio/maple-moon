@@ -48,6 +48,11 @@ pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture ra
 }
 
 ///|
+pub fn NxTexture::get_size(self : NxTexture) -> (Int, Int) {
+  (self.w, self.h)
+}
+
+///|
 pub(all) struct NxFrame {
   texture : NxTexture
   delay : Int?

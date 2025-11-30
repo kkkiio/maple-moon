@@ -118,7 +118,6 @@ test "parse NxBackground" {
     spec,
     content=(
       #|{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, type_: BG_NORMAL, x: 0, y: 0}
-
     ),
   )
 }
@@ -183,7 +182,7 @@ priv enum BackgroundDisplay {
   Normal(position~ : @selene_math.Vec2D, ratio~ : @selene_math.Vec2D)
   Tiled(
     tile_directions~ : (Bool, Bool),
-    offset~ : @selene_math.Vec2D,
+    start~ : @selene_math.Vec2D,
     moving_speed~ : @selene_math.Vec2D
   )
 } derive(Show)
@@ -249,7 +248,7 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
           | BackgroundType::VMOVEA
           | BackgroundType::TILED),
         ),
-        offset=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
+        start=@selene_math.Vec2D(res.x.to_double(), res.y.to_double()),
         // TODO: why divide 16.0?
         moving_speed=@selene_math.Vec2D(
           if res.t is BackgroundType::HMOVEA {
@@ -331,8 +330,8 @@ pub fn set_background_sprites(
     "set background sprites",
   )
   let sprite = match display {
-    BackgroundDisplay::Tiled(tile_directions~, offset~, ..) => {
-      @position.positions.set(entity, @position.Position(offset))
+    BackgroundDisplay::Tiled(tile_directions~, start~, ..) => {
+      @position.positions.set(entity, @position.Position(start))
       let texture = animation.frames[0].texture
       let repeat = match tile_directions {
         (true, true) => @selene_math.RepeatMode::Repeat
@@ -343,7 +342,11 @@ pub fn set_background_sprites(
       @sprite.Sprite::from_picture(
         @graphics.nx_texture_to_selene_picture(
           texture,
-          size=world_size,
+          size=world_size +
+            @selene_math.Vec2D(
+              texture.get_size().0.to_double(),
+              texture.get_size().1.to_double(),
+            ),
           repeat~,
         ),
         z,
@@ -371,14 +374,25 @@ pub fn update_background_position(
       let new_pos = (position - camera_center).mul(ratio.scalar_div(100.0))
       @position.positions.set(entity, @position.Position(new_pos))
     }
-    BackgroundDisplay::Tiled(offset~, moving_speed~, ..) => {
-      // 平铺背景不需要视差滚动
-      // FIXME: 实现循环滚动, 当移动了一个背景的宽度时, 重置位置
-      let new_pos = @position.positions
-        .get(entity)
-        .map_or(offset, fn(pos) { pos.0 }) +
-        moving_speed
-      @position.positions.set(entity, @position.Position(new_pos))
+    BackgroundDisplay::Tiled(start~, moving_speed~, ..) => {
+      // TODO: 平铺背景需要视差滚动吗?
+      // circle in [start, start + size)
+      let size = background.animation.get_size()
+      let pos = @position.positions.get(entity).map_or(start, fn(pos) { pos.0 })
+      let x = circle_in_range(
+        pos.0 + moving_speed.0,
+        start.0,
+        start.0 + size.0.to_double(),
+      )
+      let y = circle_in_range(
+        pos.1 + moving_speed.1,
+        start.1,
+        start.1 + size.1.to_double(),
+      )
+      @position.positions.set(
+        entity,
+        @position.Position(@selene_math.Vec2D(x, y)),
+      )
     }
   }
 }
@@ -654,5 +668,20 @@ fn ensure_background_sprite(
 fn set_sprite_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
   if @sprite.sprites.get(entity) is Some(sprite) {
     sprite.visible = visible
+  }
+}
+
+///|
+/// 将一个值限制在一个环形范围内, 超出范围后会循环到另一端。
+/// - `value`: 要限制的值。
+/// - `start`: 环形的起始位置。
+/// - `size`: 环形的大小。
+fn circle_in_range(value : Double, start : Double, size : Double) -> Double {
+  if value >= start + size {
+    value - size
+  } else if value < start {
+    value + size
+  } else {
+    value
   }
 }

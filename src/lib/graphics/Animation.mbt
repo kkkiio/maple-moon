@@ -341,7 +341,7 @@ pub fn Animation::draw(
 ///|
 pub fn Animation::update(
   self : Animation,
-  timestep? : Int = @config.step_time_ms,
+  timestep? : Int = @config.STEP_TIME_MS,
 ) -> Bool {
   let framedata = self.get_frame()
   self.opacity.add(framedata.opcstep(timestep))

@@ -445,7 +445,7 @@ pub impl @map_object.MapObject for Mob with update(
     return -1
   }
   self.effects.update()
-  self.show_hp.update(timestep=@config.step_time_ms)
+  self.show_hp.update(timestep=@config.STEP_TIME_MS)
 
   // TODO: add buffs animation?
   if not(self.dying) {

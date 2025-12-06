@@ -526,12 +526,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         portals=sence_map.portals,
         enter_portal_id=portal_id,
       )
-      let width = sence_map.map_info.get_walls().delta()
-      let height = sence_map.map_info.get_borders().delta()
-      @map.set_backgrounds(
-        sence_map.backgrounds,
-        @selene_math.Vec2D(width.to_double(), height.to_double()),
-      )
+      // let width = sence_map.map_info.get_walls().delta()
+      // let height = sence_map.map_info.get_borders().delta()
+      @map.set_backgrounds(sence_map.backgrounds)
       @map.set_tiles_objs(sence_map.tiles_objs)
       @map.set_portals(sence_map.portals, fn() {
         stage.player.character.get_position()
@@ -542,7 +539,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         sence_map.portals,
         sence_map.physics,
       )
-      // stage.quests.set_player(stage.player.unwrap())
       stage.map_change_listeners.retain(fn(listener) { listener(sence_map) })
       return // for simplicity, just wait for the next update
     }

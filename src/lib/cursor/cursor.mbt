@@ -115,7 +115,7 @@ pub fn cursor_system(_delta : Double) -> Unit {
     | CursorState::GRABBING => cursor.inactive_counte = 0
     _ => cursor.inactive_counte += 1
   }
-  let hide_after = hide_time / @config.step_time_ms
+  let hide_after = hide_time / @config.STEP_TIME_MS
   if cursor.inactive_counte == hide_after {
     @sprite.sprites.remove(cursor.entity)
   }

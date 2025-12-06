@@ -232,10 +232,10 @@ pub fn MiniMapUIResource::load() -> MiniMapUIResource {
 }
 
 ///|
-priv enum MiniMapType {
-  MIN
+pub enum MiniMapType {
+  // MIN
   NORMAL
-  MAX
+  // MAX
 }
 
 ///|

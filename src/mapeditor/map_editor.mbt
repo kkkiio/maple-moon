@@ -67,7 +67,7 @@ priv struct MapLimits {
   right : Double
   top : Double
   bottom : Double
-}
+} derive(Show)
 
 ///|
 priv struct LayerVisibility {
@@ -154,10 +154,7 @@ fn finalize_scene(
   let backgrounds = scene_map.backgrounds
   let walls = map_info.get_walls()
   let borders = map_info.get_borders()
-  let width = walls.delta().to_double()
-  let height = borders.delta().to_double()
-  let world_size = @selene_math.Vec2D(width, height)
-  @map.set_backgrounds(backgrounds, world_size)
+  @map.set_backgrounds(backgrounds)
   @map.set_tiles_objs(tiles_objs)
   @map.set_portals(scene_map.portals, fn() {
     let camera_pos = @camera.get_position()
@@ -188,7 +185,7 @@ fn finalize_scene(
   )
   viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
   @log.info(
-    { "map_id": MAP_ID, "width": width, "height": height },
+    { "map_id": MAP_ID, "map_limits": map_limits },
     "map ready in viewer",
   )
 }

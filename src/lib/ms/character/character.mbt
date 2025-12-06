@@ -219,12 +219,12 @@ pub fn Character::update(self : Character, speed : Double) -> Unit {
   //     recurring_effects_.update();
   // TODO: implement chat_balloon
   //     chat_balloon_.update();
-  self.invincible.update(timestep=@config.step_time_ms)
+  self.invincible.update(timestep=@config.STEP_TIME_MS)
   // TODO: implement iron_body
   //     iron_body_.update();
 
   let stancespeed_ms = @cmp.maximum(
-    (@config.step_time_ms.to_double() * speed).to_int(),
+    (@config.STEP_TIME_MS.to_double() * speed).to_int(),
     0,
   )
   match self.after_image {

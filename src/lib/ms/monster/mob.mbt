@@ -94,7 +94,6 @@ struct Mob {
   mut fade_in : Bool
   opacity : @utils.Linear
   src : @resource.NxNode
-  network : @net.Network
 }
 
 ///|
@@ -366,7 +365,6 @@ fn Mob::new(
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
     src,
-    network,
   }
 }
 
@@ -445,7 +443,7 @@ pub impl @map_object.MapObject for Mob with update(
     return -1
   }
   self.effects.update()
-  self.show_hp.update(timestep=@config.STEP_TIME_MS)
+  self.show_hp.update(timestep=@logic_fps.STEP_TIME_MS)
 
   // TODO: add buffs animation?
   if not(self.dying) {
@@ -509,7 +507,7 @@ pub impl @map_object.MapObject for Mob with update(
       }
       if next {
         self.next_move()
-        self.update_movement(self.network)
+        self.update_movement()
         self.counter = 0
       }
     }
@@ -644,8 +642,8 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
 }
 
 ///|
-pub fn Mob::update_movement(self : Mob, network : @net.Network) -> Unit {
-  network.send_message(
+pub fn Mob::update_movement(self : Mob) -> Unit {
+  @game_server.send(
     new_move_mob_packet(
       self.base.get_oid(),
       1,
@@ -673,9 +671,8 @@ pub fn Mob::update_movement_ex(
   skill : Int,
   skill_level : Int,
   option : Int,
-  server : @net.Server,
 ) -> Unit {
-  server.send_message(
+  @game_server.send(
     new_move_mob_packet(
       self.base.get_oid(),
       t,
@@ -933,7 +930,7 @@ pub fn Mob::calculate_damage(
   let result = Array::makei(attack.hitcount, fn(_i) {
     self.next_damage(mindamage, maxdamage, hitchance, critical)
   })
-  self.update_movement(network)
+  self.update_movement()
   result
 }
 
@@ -1017,7 +1014,7 @@ pub fn Mob::apply_damage(
     not(self.is_boss) {
     self.counter = 170
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
-    self.update_movement(network)
+    self.update_movement()
   }
 }
 

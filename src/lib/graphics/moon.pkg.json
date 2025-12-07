@@ -11,7 +11,8 @@
     {
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
-    }
+    },
+    "KKKIIO/maple-moon/lib/logic_fps"
   ],
   "targets": {
     "gl.mbt": [

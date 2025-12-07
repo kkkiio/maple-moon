@@ -4,13 +4,13 @@ using @ui {type CursorState}
 ///|
 pub(all) struct Cursor {
   mut state : CursorState
-  mut inactive_counte : Int
+  mut inactive_seconds : Double
   sprites : Map[CursorState, @sprite.Sprite]
   entity : @entity.Entity
 }
 
 ///|
-pub let hide_time : Int = 15_000
+pub const HIDE_SECONDS : Int = 12
 
 ///|
 pub const CURSOR_ZINDEX : Int = @selene_ui.UI_ZINDEX + 100
@@ -67,14 +67,14 @@ pub fn Cursor::new() -> Cursor {
   let entity = @entity.Entity::new()
   @sprite.sprites.set(entity, sprites.get(CursorState::IDLE).unwrap())
   @selene_ui.uis.set(entity, @selene_ui.Ui::new())
-  { state: CursorState::IDLE, inactive_counte: 0, sprites, entity }
+  { state: CursorState::IDLE, inactive_seconds: 0, sprites, entity }
 }
 
 ///|
 pub fn Cursor::set_state(self : Cursor, state : CursorState) -> Unit {
   guard self.state != state else { return }
   self.state = state
-  self.inactive_counte = 0
+  self.inactive_seconds = 0.0
 }
 
 ///|
@@ -84,7 +84,7 @@ pub fn Cursor::set_position(self : Cursor, position : @math.Vec2D) -> Unit {
     return
   }
   @position.positions.set(self.entity, position)
-  self.inactive_counte = 0
+  self.inactive_seconds = 0.0
 }
 
 ///|
@@ -96,7 +96,7 @@ fn Cursor::get_sprite(self : Cursor) -> @sprite.Sprite {
 let cursor : Cursor = Cursor::new()
 
 ///|
-pub fn cursor_system(_delta : Double) -> Unit {
+pub fn cursor_system(delta : Double) -> Unit {
   // sync pos and state
   cursor.set_position(@inputs.mouse.pos)
   if @inputs.is_mouse_pressed(@inputs.MouseButton::Left) {
@@ -104,7 +104,7 @@ pub fn cursor_system(_delta : Double) -> Unit {
   } else {
     cursor.set_state(CursorState::IDLE)
   }
-  if cursor.inactive_counte == 0 { // reset
+  if cursor.inactive_seconds == 0.0 { // reset
     @sprite.sprites.set(cursor.entity, cursor.get_sprite())
   }
   match cursor.state {
@@ -112,11 +112,10 @@ pub fn cursor_system(_delta : Double) -> Unit {
     | CursorState::CAN_CLICK2
     | CursorState::CAN_GRAB
     | CursorState::CLICKING
-    | CursorState::GRABBING => cursor.inactive_counte = 0
-    _ => cursor.inactive_counte += 1
+    | CursorState::GRABBING => cursor.inactive_seconds = 0.0
+    _ => cursor.inactive_seconds += delta
   }
-  let hide_after = hide_time / @config.STEP_TIME_MS
-  if cursor.inactive_counte == hide_after {
+  if cursor.inactive_seconds >= HIDE_SECONDS.to_double() {
     @sprite.sprites.remove(cursor.entity)
   }
 }

@@ -1,8 +1,8 @@
 ///|
 pub struct MapPortals {
   map_portals_animations : MapPortalAnimations
-  portals_by_id : @immut/sorted_map.SortedMap[Int, Portal]
-  portal_ids_by_name : @immut/sorted_map.SortedMap[String, Int]
+  id_portal_map : Map[Int, Portal]
+  name_portal_id_map : Map[String, Int]
   mut cooldown : Int
 }
 
@@ -20,8 +20,8 @@ pub fn MapPortals::new(
   mapid : Int,
   map_portals_animations : MapPortalAnimations,
 ) -> MapPortals {
-  let mut portals_by_id = @immut/sorted_map.new()
-  let mut portal_ids_by_name = @immut/sorted_map.new()
+  let portals_by_id = Map::new()
+  let name_portal_id_map = Map::new()
   for portal_id, res in src {
     let portal_type = res.pt
     let name = res.pn
@@ -30,17 +30,17 @@ pub fn MapPortals::new(
     let position = Point::new(res.x, res.y)
     let animation = map_portals_animations.animations.get(portal_type)
     let intramap = target_id == mapid
-    portals_by_id = portals_by_id.add(
+    portals_by_id.set(
       portal_id,
       Portal::new(
         animation, portal_type, name, intramap, position, target_id, target_name,
       ),
     )
-    portal_ids_by_name = portal_ids_by_name.add(name, portal_id)
+    name_portal_id_map.set(name, portal_id)
   }
   {
-    portals_by_id,
-    portal_ids_by_name,
+    id_portal_map: portals_by_id,
+    name_portal_id_map,
     cooldown: warpcd,
     map_portals_animations,
   }
@@ -51,7 +51,7 @@ pub fn MapPortals::get_portal_pos_by_id(
   self : MapPortals,
   portal_id : Int,
 ) -> Point[Int] {
-  match self.portals_by_id.get(portal_id) {
+  match self.id_portal_map.get(portal_id) {
     Some(portal) => portal.get_position() - @struct.Point::new(0, 30)
     None => @struct.Point::default()
   }
@@ -62,7 +62,7 @@ pub fn MapPortals::get_portal_by_name(
   self : MapPortals,
   portal_name : String,
 ) -> Point[Int] {
-  self.portal_ids_by_name
+  self.name_portal_id_map
   .get(portal_name)
   .map(self.get_portal_pos_by_id(_))
   .unwrap_or_default()
@@ -72,18 +72,17 @@ pub fn MapPortals::get_portal_by_name(
 pub fn MapPortals::find_warp_at(
   self : MapPortals,
   playerpos : Point[Int],
-) -> PortalWarpInfo {
-  if self.cooldown == 0 {
-    self.cooldown = warpcd
-    if self.portals_by_id
-      .iter()
-      .map(fn(it) { it.1 })
-      .find_first(fn(portal) { portal.bounds().contains(playerpos) })
-      is Some(portal) {
-      return portal.getwarpinfo()
-    }
+) -> PortalWarpInfo? {
+  guard self.cooldown == 0 else { return None }
+  self.cooldown = warpcd
+  if self.id_portal_map
+    .iter()
+    .map(fn(it) { it.1 })
+    .find_first(fn(portal) { portal.bounds().contains(playerpos) })
+    is Some(portal) {
+    return Some(portal.getwarpinfo())
   }
-  PortalWarpInfo::default()
+  None
 }
 
 ///|
@@ -121,7 +120,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
 priv struct PortalsContext {
   portals : MapPortals
   portal_entities : Map[Int, @entity.Entity]
-  get_player_pos : () -> Point[Int]
+  get_touch_pos : () -> Point[Int]?
   mut dirty : Bool
 }
 
@@ -131,7 +130,7 @@ let portals_context : Ref[PortalsContext?] = Ref::new(None)
 ///|
 pub fn set_portals(
   portals : MapPortals,
-  get_player_pos : () -> Point[Int],
+  get_touch_pos? : () -> Point[Int]? = fn() { None },
 ) -> Unit {
   if portals_context.val is Some(ctx) {
     destroy_entities_iter(ctx.portal_entities.values())
@@ -139,7 +138,7 @@ pub fn set_portals(
   portals_context.val = Some({
     portals,
     portal_entities: Map::new(),
-    get_player_pos,
+    get_touch_pos,
     dirty: true,
   })
 }
@@ -151,13 +150,13 @@ pub fn portal_system(_delta : Double) -> Unit {
     ensure_portal_entities(ctx)
     ctx.dirty = false
   }
-  let playerpos = (ctx.get_player_pos)()
-  for id, portal in ctx.portals.portals_by_id {
+  let touch_pos = (ctx.get_touch_pos)()
+  for id, portal in ctx.portals.id_portal_map {
     match portal.get_type() {
       PortalType::HIDDEN | PortalType::TOUCH => {
         let entity = ctx.portal_entities.get(id)
         guard entity is Some(entity) else { abort("portal entity not found") }
-        portal.update(playerpos, entity)
+        portal.update_touched(entity, touch_pos)
       }
       _ => ()
     }
@@ -169,7 +168,7 @@ pub fn portal_system(_delta : Double) -> Unit {
 
 ///|
 fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
-  for id, portal in ctx.portals.portals_by_id {
+  for id, portal in ctx.portals.id_portal_map {
     if ctx.portal_entities.contains(id) {
       continue
     }

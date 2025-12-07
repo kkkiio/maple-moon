@@ -82,7 +82,9 @@ pub fn MovingObject::movexuntil(
 ) -> Unit {
   if delay != 0 {
     let hdelta = d - self.x.get()
-    self.hspeed = @config.STEP_TIME_MS.to_double() * hdelta / delay.to_double()
+    self.hspeed = @logic_fps.STEP_TIME_MS.to_double() *
+      hdelta /
+      delay.to_double()
   }
 }
 
@@ -94,7 +96,9 @@ pub fn MovingObject::moveyuntil(
 ) -> Unit {
   if delay != 0 {
     let vdelta = d - self.y.get()
-    self.vspeed = @config.STEP_TIME_MS.to_double() * vdelta / delay.to_double()
+    self.vspeed = @logic_fps.STEP_TIME_MS.to_double() *
+      vdelta /
+      delay.to_double()
   }
 }
 

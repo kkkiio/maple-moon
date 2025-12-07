@@ -9,9 +9,10 @@
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/job",
     "KKKIIO/maple-moon/lib/ms/weapon",
-    "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/game_mod",
-    "KKKIIO/maple-moon/lib/log"
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ],
   "link": {
     "js": {

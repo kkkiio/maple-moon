@@ -20,6 +20,9 @@
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
     },
-    "Milky2018/selene/entity"
+    "Milky2018/selene/entity",
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/logic_fps",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ]
 }

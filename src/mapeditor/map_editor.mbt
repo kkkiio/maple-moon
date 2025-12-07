@@ -12,7 +12,7 @@ pub fn start_editor() -> Unit {
   .with_canvas_height(@graphics.view_size.1 |> Double::from_int)
   .with_fps(@graphics.fps)
   .add_plugin(@plugins.default_plugin)
-  .add_system(@config.logic_fps_system, system_name="logic_fps_system")
+  .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
   .add_system(
     start_map_loading_system,
     schedule=Startup,
@@ -40,7 +40,7 @@ pub fn load_map_ffi(id : Int) -> Unit {
   viewer_state.val.map_future = Some(
     viewer_state.val.io_service.submit(fn() {
       let portal_animations = @map.Module::load().get_portals_animations()
-      let raw = @map.load_map_raw(id)
+      let raw = @map.load_map_resources_by_id(id)
       let scene = @map.parse_scene_map(raw, portal_animations)
       (raw, scene)
     }),
@@ -122,7 +122,7 @@ fn start_map_loading_system(_delta : Double) -> Unit {
   let portal_animations = @map.Module::load().get_portals_animations()
   viewer_state.val.map_future = Some(
     viewer_state.val.io_service.submit(fn() {
-      let raw = @map.load_map_raw(MAP_ID)
+      let raw = @map.load_map_resources_by_id(MAP_ID)
       let scene = @map.parse_scene_map(raw, portal_animations)
       (raw, scene)
     }),
@@ -156,14 +156,7 @@ fn finalize_scene(
   let borders = map_info.get_borders()
   @map.set_backgrounds(backgrounds)
   @map.set_tiles_objs(tiles_objs)
-  @map.set_portals(scene_map.portals, fn() {
-    let camera_pos = @camera.get_position()
-    let zoom = @backend.get_zoom()
-    let viewport_size = @backend.get_canvas_size() *
-      @selene_math.Vec2D(1.0 / zoom, 1.0 / zoom)
-    let center = (camera_pos + viewport_size).scalar_div(2.0)
-    @struct.Point::new(center.0.to_int(), center.1.to_int())
-  })
+  @map.set_portals(scene_map.portals)
   apply_visibility_to_modules()
   let center = @selene_math.Vec2D(
     ((walls.first() + walls.second()) / 2).to_double(),

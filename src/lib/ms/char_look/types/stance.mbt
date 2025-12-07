@@ -83,7 +83,7 @@ pub fn StanceId::by_state(state : Int) -> StanceId {
 }
 
 ///|
-let int_id_map : @immut/sorted_map.T[Int, StanceId] = @immut/sorted_map.from_array([
+let int_id_map : @immut/sorted_map.SortedMap[Int, StanceId] = @immut/sorted_map.from_array([
     (0, StanceId::NONE),
     (1, StanceId::ALERT),
     (2, StanceId::DEAD),

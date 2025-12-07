@@ -7,7 +7,7 @@ fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage raise {
     recv.skip(3)
     let mapid = recv.read_int()
     let portalid = recv.read_byte()
-    return SetFieldMessage::ChangeMap(mapid~, portalid~)
+    return SetFieldMessage::ChangeMap(map_id=mapid, portal_id=portalid)
   } else {
     recv.skip(23)
     recv.read_int() |> ignore // cid
@@ -33,18 +33,6 @@ fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage raise {
 }
 
 ///|
-priv enum SetFieldMessage {
-  ChangeMap(mapid~ : Int, portalid~ : Int)
-  SetField(
-    stats~ : @char_stats.StatsEntry,
-    inventory_entry~ : InventoryEntry,
-    skills~ : Array[SkillEntry],
-    cooldowns~ : Map[Int, Int],
-    quests~ : @quest.PlayerQuestLogInfo
-  )
-} derive(Show)
-
-///|
 /// handle_set_field handles packets which contains all character information on first login
 /// or warps the player to a different map
 fn handle_set_field(
@@ -63,7 +51,8 @@ fn handle_set_field(
   // @config.constants.set_viewwidth(Setting::get(configWidth).load())
   // @config.constants.set_viewheight(Setting::get(configHeight).load())
   match message {
-    SetFieldMessage::ChangeMap(mapid~, portalid~) => transition(mapid, portalid)
+    SetFieldMessage::ChangeMap(map_id=mapid, portal_id=portalid) =>
+      transition(mapid, portalid)
     SetFieldMessage::SetField(
       stats~,
       inventory_entry~,
@@ -83,7 +72,7 @@ fn handle_set_field(
         setup_game_ui,
         inventory_entry,
         skills,
-        cooldowns,
+        cooldowns.0,
       )
     }
   }
@@ -106,7 +95,7 @@ fn set_field(
   cooldowns : Map[Int, Int],
 ) -> Unit {
   inventory.set_meso(inventory_entry.meso)
-  for kind, slotmax in inventory_entry.slotmax {
+  for kind, slotmax in inventory_entry.slot_maxs.0 {
     inventory.set_slotmax(kind, slotmax)
   }
 
@@ -146,28 +135,24 @@ impl @net.OutMessage for PlayerUpdatePacket with pack(self) -> @net.OutPacket {
 }
 
 ///|
-priv struct InventoryEntry {
-  meso : Int
-  slotmax : Map[@inventory.TypeId, Int]
-  items : Array[@inventory.InventoryItemEntry]
-} derive(Show)
+using @maple_protocol {type InventoryType}
 
 ///|
 fn parse_inventory(recv : @net.InPacket) -> InventoryEntry raise {
   let meso = recv.read_int()
   let slotmax = Map::new()
   let items = Array::new()
-  slotmax.set(@inventory.TypeId::EQUIP, recv.read_ubyte())
-  slotmax.set(@inventory.TypeId::USE, recv.read_ubyte())
-  slotmax.set(@inventory.TypeId::SETUP, recv.read_ubyte())
-  slotmax.set(@inventory.TypeId::ETC, recv.read_ubyte())
-  slotmax.set(@inventory.TypeId::CASH, recv.read_ubyte())
+  slotmax.set(InventoryType::EQUIP, recv.read_ubyte())
+  slotmax.set(InventoryType::USE, recv.read_ubyte())
+  slotmax.set(InventoryType::SETUP, recv.read_ubyte())
+  slotmax.set(InventoryType::ETC, recv.read_ubyte())
+  slotmax.set(InventoryType::CASH, recv.read_ubyte())
   recv.skip(8)
   for i in 0..<3 {
     let inv = if i == 0 {
-      @inventory.TypeId::EQUIPPED
+      InventoryType::EQUIPPED
     } else {
-      @inventory.TypeId::EQUIP
+      InventoryType::EQUIP
     }
     let mut pos = recv.read_short()
     while pos != 0 {
@@ -178,10 +163,10 @@ fn parse_inventory(recv : @net.InPacket) -> InventoryEntry raise {
   }
   recv.skip(2)
   let toparse = [
-    @inventory.TypeId::USE,
-    @inventory.TypeId::SETUP,
-    @inventory.TypeId::ETC,
-    @inventory.TypeId::CASH,
+    InventoryType::USE,
+    InventoryType::SETUP,
+    InventoryType::ETC,
+    InventoryType::CASH,
   ]
   for inv in toparse {
     let mut pos = recv.read_byte()
@@ -190,7 +175,7 @@ fn parse_inventory(recv : @net.InPacket) -> InventoryEntry raise {
       pos = recv.read_byte()
     }
   }
-  { meso, slotmax, items }
+  { meso, slot_maxs: slotmax, items }
 }
 
 ///|
@@ -203,7 +188,7 @@ fn parse_skillbook(recv : @net.InPacket) -> Array[SkillEntry] raise {
     let expiration = recv.read_long()
     let fourthtjob = skill_id % 100000 / 10000 == 2
     let masterlevel = if fourthtjob { recv.read_int() } else { 0 }
-    entries.push({ skill_id, level, masterlevel, expiration })
+    entries.push(SkillEntry::{ skill_id, level, masterlevel, expiration })
   }
   entries
 }
@@ -224,9 +209,4 @@ fn handle_skills(
 }
 
 ///|
-priv struct SkillEntry {
-  skill_id : Int
-  level : Int
-  masterlevel : Int
-  expiration : Int64
-} derive(Show)
+using @maple_protocol {type InventoryEntry, type SkillEntry}

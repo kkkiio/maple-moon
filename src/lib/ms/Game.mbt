@@ -35,7 +35,6 @@ pub fn Game::new() -> Game {
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
   let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
-  let stage = Ref::new(None)
   {
     timer,
     accumulator: 0,
@@ -197,7 +196,7 @@ async fn load_modules(
     quest_module,
   )
   merge_handlers(handlers)
-  let monster_module = @monster.Module::new(@net.Server::new(), io_service)
+  let monster_module = @monster.Module::new(io_service)
   merge_handlers(
     monster_module.make_handlers(fn() {
       // get_stage().get_player().map(fn(p) { p.get_stats() })
@@ -321,7 +320,7 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   //   _ => ()
   // }
   loaded_state.login_module.update()
-  let timestep = @config.STEP_TIME_MS * 1000
+  let timestep = @logic_fps.STEP_TIME_MS * 1000
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()
   let times = acc / timestep
@@ -380,7 +379,7 @@ fn setup_game_ui(
     @ui.Element::new(
       fn(hooks) {
         @char_stats.StatusBarUI::new(stats, hooks, status_bar_loader) catch {
-          e => panic()
+          e => abort("failed to create status bar ui: \{e}")
         }
       },
       @ui.UIElementType::STATUS_BAR,

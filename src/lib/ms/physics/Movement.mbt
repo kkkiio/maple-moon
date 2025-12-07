@@ -5,7 +5,7 @@ enum MovementType {
   RELATIVE
   CHAIR
   JUMPDOWN
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Show, ToJson, FromJson)
 
 ///|
 pub struct Movement {
@@ -18,7 +18,7 @@ pub struct Movement {
   fh : Int
   newstate : Int
   duration : Int
-} derive(Show)
+} derive(Show, ToJson, FromJson)
 
 ///|
 pub fn Movement::default() -> Movement {

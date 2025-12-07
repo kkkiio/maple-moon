@@ -260,7 +260,7 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
     BackgroundType::TILED | BackgroundType::HTILED | BackgroundType::HMOVEA => {
       // TODO: Figure out why divide 16.0?
       let moving_speed = if res.t is BackgroundType::HMOVEA {
-        (res.rx * @config.LOGIC_FPS).to_double() / 16.0
+        (res.rx * @logic_fps.LOGIC_FPS).to_double() / 16.0
       } else {
         0.0
       }
@@ -278,7 +278,7 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
     BackgroundType::TILED | BackgroundType::VTILED | BackgroundType::VMOVEA => {
       // TODO: Figure out why divide 16.0?
       let moving_speed = if res.t is BackgroundType::VMOVEA {
-        (res.ry * @config.LOGIC_FPS).to_double() / 16.0
+        (res.ry * @logic_fps.LOGIC_FPS).to_double() / 16.0
       } else {
         0.0
       }

@@ -1,27 +1,7 @@
 ///|
-pub enum StageState {
-  INACTIVE
-  TRANSITION(
-    portal_id~ : Int,
-    loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]
-  )
-  ACTIVE(
-    tiles_objs~ : @map.MapTilesObjs,
-    backgrounds~ : @map.Backgrounds,
-    physics~ : @physics.Physics,
-    map_info~ : @map.MapInfo,
-    portals~ : @map.MapPortals,
-    enter_portal_id~ : Int
-  )
-}
-
-///|
 pub(all) struct Stage {
   // camera : Camera
   map_portals_animations : @map.MapPortalAnimations
-  mut player : @player.Player
-  mut state : StageState
-  mut map_id : Int
   // npcs : @npc.MapNpcs
   // quests : @quest.MapQuests
   mobs : @monster.MapMobs
@@ -54,14 +34,10 @@ pub fn Stage::new(
   io_service : @io_task.IOService,
   // bullet_module : @bullet.Module,
   // combat : @combat_impl2.Combat,
-  player : @player.Player,
 ) -> Stage {
   {
     map_portals_animations,
     // camera: Camera::new(),
-    player,
-    state: StageState::INACTIVE,
-    map_id: 10000,
     // npcs,
     // quests,
     // damage_number_set,
@@ -81,7 +57,7 @@ pub fn Stage::new(
 
 ///|
 fn Stage::clear(self : Stage) -> Unit {
-  self.state = StageState::INACTIVE
+  // self.state = StageState::INACTIVE
   // self.chars.clear()
   // self.npcs.clear()
   // self.quests.clear()
@@ -91,58 +67,8 @@ fn Stage::clear(self : Stage) -> Unit {
 }
 
 ///|
-pub fn Stage::load(self : Stage, map_id : Int, portal_id : Int) -> Unit {
-  match self.state {
-    StageState::INACTIVE => {
-      self.map_id = map_id
-      let loading_map = self.io_service.submit(fn() {
-        @map.load_map(map_id, self.map_portals_animations)
-      })
-      self.state = StageState::TRANSITION(portal_id~, loading_map~)
-    }
-    StageState::TRANSITION(_) =>
-      // TODO: respawn?
-      @log.warn({ "map_id": map_id }, "map already loading")
-    StageState::ACTIVE(_) => ()
-  }
-}
-
-///|
-pub fn Stage::set_player_stage(
-  self : Stage,
-  entry : @character.CharEntry,
-  cooldowns : Map[Int, Int],
-  callback : (@player.Player) -> Unit raise,
-) -> Unit {
-  // self.combat.set_cooldowns(cooldowns)
-  // self.io_service.execute(
-  //   fn() {
-  //     let look = self.char_look_module.load_char_look(entry.look)
-  //     let player = @player.Player::load(
-  //       entry,
-  //       self.inventory,
-  //       look,
-  //       self.damage_number_set,
-  //       fn(job) { self.skill_book_module.load_player_skill_book(job) },
-  //       fn(job) {
-  //         self.char_stats_module.new_char_stats(
-  //           entry.stats,
-  //           fn() { @character.get_weapon_type_in_look(look) },
-  //           job,
-  //         )
-  //       },
-  //       self.network,
-  //     )
-  //     self.player = Some(player)
-  //     callback(player)
-  //   },
-  //   on_error=fn(e) { @log.error({ "error": e }, "set_player_stage") },
-  // )
-}
-
-///|
-fn Stage::respawn(
-  self : Stage,
+fn respawn_player(
+  player : @player.Player,
   portal_id : Int,
   map_info : @map.MapInfo,
   portals : @map.MapPortals,
@@ -166,10 +92,8 @@ fn Stage::respawn(
     },
     "respawn",
   )
-  self.player.respawn(startpos, map_info.is_underwater())
-  // self.camera.set_position(startpos)
-  @camera.attach_entity(self.player.entity, @selene_math.Vec2D(16.0, 16.0))
-  // self.camera.set_view(map_info.get_walls(), map_info.get_borders())
+  player.respawn(startpos, map_info.is_underwater())
+  @camera.attach_entity(player.entity, @selene_math.Vec2D(16.0, 16.0))
   @camera.set_limits(left~, right~, top~, bottom~)
 }
 
@@ -249,83 +173,6 @@ fn Stage::send_cursor(
   //   @ui.CursorState::IDLE
   // }
   ...
-}
-
-///|
-pub fn player_state_system(_delta : Double) -> Unit {
-  guard stage_ref.val
-    is Some(
-      {
-        state: StageState::ACTIVE(physics~, map_info~, portals~, ..),
-        player,
-        ..,
-      }
-    ) else {
-    return
-  }
-  if @inputs.is_just_pressed(@inputs.ArrowUp) {
-    check_portals(player, map_info, portals, physics)
-  }
-  for
-    it in [
-      (@inputs.ArrowUp, @keyboard.BasicActionId::UP),
-      (@inputs.ArrowDown, @keyboard.BasicActionId::DOWN),
-      (@inputs.ArrowLeft, @keyboard.BasicActionId::LEFT),
-      (@inputs.ArrowRight, @keyboard.BasicActionId::RIGHT),
-      (@inputs.Space, @keyboard.BasicActionId::JUMP),
-    ] {
-    let (code, action) = it
-    if @inputs.is_just_pressed(code) {
-      player.send_action(action, true)
-    } else if @inputs.is_just_released(code) {
-      player.send_action(action, false)
-    }
-  }
-  let times = @config.get_logic_times()
-  for _ in 0..<times {
-    player.update(physics, map_info)
-  }
-  // portals.update(player.character.get_position())
-  // TODO: check portals, seats, attacks, drops, skills, items, expressions
-  //         @keyboard.BasicActionId::UP =>
-  //         // @keyboard.ActionId::SIT => self.check_seats()
-  //         @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
-  //         @keyboard.BasicActionId::PICKUP => self.check_drops(player)
-  //   SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
-  //   ITEM(item_id) => () //self.inventory.use_item(item_id)
-  //   // @keyboard.Id::FACE => self.player.set_expression(action)
-}
-
-///|
-fn check_portals(
-  player : @player.Player,
-  map_info : @map.MapInfo,
-  portals : @map.MapPortals,
-  physics : @physics.Physics,
-) -> Unit {
-  if player.is_attacking() {
-    return
-  }
-  let playerpos = player.character.get_position()
-  let warpinfo = portals.find_warp_at(playerpos)
-  if warpinfo.intra_map {
-    let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
-    let startpos = physics.get_y_below(spawnpoint)
-    player.respawn(startpos, map_info.is_underwater())
-    // } else if warpinfo.valid {
-  } else {
-    // let message : @player.ChangeMapMessage = {
-    //   died: false,
-    //   target_id: -1,
-    //   target_p: warpinfo.name,
-    //   use_wheel: false,
-    // }
-    // self.network.send_message(message, log_level=@log.Level::INFO)
-    // let stats = player.get_stats()
-    // stats.set_map_id(warpinfo.mapid)
-  }
-
-  // Sound(Sound::Name::PORTAL).play();
 }
 
 ///|
@@ -429,14 +276,6 @@ impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
 }
 
 ///|
-pub fn Stage::transition(self : Stage, mapid : Int, portalid : Int) -> Unit {
-  self.clear()
-  // @graphics.GraphicsGL::get().clear()
-  self.load(mapid, portalid)
-  // self.network.send_message(PlayerMapTransferMessage(()))
-}
-
-///|
 pub fn Stage::listen_map_change(
   self : Stage,
   on_change : (@map.SceneMap) -> Bool,
@@ -446,12 +285,19 @@ pub fn Stage::listen_map_change(
 
 ///|
 /// reset player position. for debug
-pub fn Stage::reset_player_position(self : Stage) -> Unit {
-  guard self.state
-    is StageState::ACTIVE(portals~, map_info~, enter_portal_id~, physics~, ..) else {
+pub fn reset_player_position() -> Unit {
+  guard @game_state.game_state.phase
+    is @game_state.GamePhase::GameActive(
+      portals~,
+      map_info~,
+      portal_id~,
+      physics~,
+      ..
+    ) else {
     return
   }
-  self.respawn(enter_portal_id, map_info, portals, physics)
+  guard @player.get_player() is Some(player) else { return }
+  respawn_player(player, portal_id, map_info, portals, physics)
 }
 
 ///|
@@ -463,54 +309,69 @@ pub fn get_stage() -> Stage? {
 }
 
 ///|
+using @maple_protocol {type StatsEntry}
+
+///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
-  guard @game_state.game_state.state
-    is @game_state.GameStateType::Game(map_id~, portal_id~, char_look~, server~) else {
-    stage_ref.val = None
-    return
-  }
-  let stage = match stage_ref.val {
-    Some(stage) => stage
-    None => {
-      let map_module = @map.Module::load()
-      let stats : @char_stats.CharStats = @char_stats.CharStats::new(
-        @char_stats.StatsEntry::default(),
-        fn() { @weapon.Type::NONE },
-        @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
-        Map::new(),
-        Map::new(),
-        Map::new(),
-      )
-      let number_set : @ui.NumberSet = @ui.NumberSet::load() catch {
+  match @game_state.game_state.phase {
+    Login => {
+      stage_ref.val = None
+      return
+    }
+    GameStart(map_id~, portal_id~) => {
+      let char_look = try {
+        let draw_info = @char_look.get_draw_info()
+        let hair_node : @char_look.NxStanceLooks[@types.NxLayerTextures] = @json.from_json(
+          @char_look.male_1_white_hair,
+        )
+        let entity = @entity.Entity::new()
+        @char_look.CharLook::new(
+          entity,
+          {},
+          @char_look.FullBody::new(
+            0,
+            draw_info,
+            @char_look.get_stance_bodys_map(),
+            @char_look.get_stance_heads_map(),
+          ),
+          @char_look.Hair::parse(0, hair_node, draw_info),
+          @char_look.Face::new(20800, @char_look.male_1_white_face),
+          draw_info,
+        )
+      } catch {
         e => {
-          @log.error({ "error": e }, "load number set")
+          @log.error({ "error": e }, "fail to load char look")
           panic()
         }
       }
-      let entity = char_look.get_root_entity()
-      entity.respawn()
-      let player : @player.Player = @player.Player::new(
-        entity, 1, "kkkiio", char_look, number_set, stats,
+      let stage = match stage_ref.val {
+        Some(stage) => stage
+        None => {
+          let stage = new_stage(char_look)
+          stage_ref.val = Some(stage)
+          stage
+        }
+      }
+      stage.clear()
+      // @graphics.GraphicsGL::get().clear()
+      @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
+        map_id~,
+        portal_id~,
+        loading_map=None,
       )
-      let io_service = @io_task.IOService::new()
-      let monster_module = @monster.Module::new(server, io_service)
-      let stage = Stage::new(
-        map_module.get_portals_animations(),
-        monster_module.get_map_mobs(),
-        @io_task.IOService::new(),
-        player,
-      )
-      stage_ref.val = Some(stage)
-      stage
+      // self.network.send_message(PlayerMapTransferMessage(()))
     }
-  }
-  match stage.state {
-    StageState::INACTIVE => {
-      stage.transition(map_id, portal_id)
-      return
-    }
-    StageState::TRANSITION(portal_id~, loading_map~) => {
-      guard loading_map.poll() is Some(res) else { return }
+    GameTransiting(map_id~, portal_id~, loading_map~) as t => {
+      let stage = stage_ref.val.unwrap()
+      guard loading_map is Some(fut) else {
+        t.loading_map = Some(
+          stage.io_service.submit(fn() {
+            @map.load_map(map_id, stage.map_portals_animations)
+          }),
+        )
+        return
+      }
+      guard fut.poll() is Some(res) else { return }
       let sence_map = match res {
         Ok(sence_map) => sence_map
         Err(e) => {
@@ -518,30 +379,90 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           panic()
         }
       }
-      stage.state = StageState::ACTIVE(
+      @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+        map_id~,
+        portal_id~,
         tiles_objs=sence_map.tiles_objs,
         backgrounds=sence_map.backgrounds,
         physics=sence_map.physics,
         map_info=sence_map.map_info,
         portals=sence_map.portals,
-        enter_portal_id=portal_id,
+        mobs=stage.mobs,
       )
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
       @map.set_backgrounds(sence_map.backgrounds)
       @map.set_tiles_objs(sence_map.tiles_objs)
-      @map.set_portals(sence_map.portals, fn() {
-        stage.player.character.get_position()
+      @map.set_portals(sence_map.portals, get_touch_pos=fn() {
+        @player.get_player().map(fn(player) { player.character.get_position() })
       })
-      stage.respawn(
+      let player = @player.get_player().unwrap()
+      respawn_player(
+        player,
         portal_id,
         sence_map.map_info,
         sence_map.portals,
         sence_map.physics,
       )
       stage.map_change_listeners.retain(fn(listener) { listener(sence_map) })
-      return // for simplicity, just wait for the next update
+      return
     }
-    StageState::ACTIVE(..) => ()
+    @game_state.GamePhase::GameActive(..) => ()
   }
 }
+
+///|
+fn new_stage(char_look : @char_look.CharLook) -> Stage {
+  let map_module = @map.Module::load()
+  let stats : @char_stats.CharStats = @char_stats.CharStats::new(
+    StatsEntry::default(),
+    fn() { @weapon.Type::NONE },
+    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
+    Map::new(),
+    Map::new(),
+    Map::new(),
+  )
+  let number_set : @ui.NumberSet = @ui.NumberSet::load() catch {
+    e => {
+      @log.error({ "error": e }, "load number set")
+      panic()
+    }
+  }
+  let entity = char_look.get_root_entity()
+  entity.respawn()
+  let player : @player.Player = @player.Player::new(
+    entity, 1, "kkkiio", char_look, number_set, stats,
+  )
+  @player.set_player(player)
+  // TODO: reset cooldowns
+  // self.combat.set_cooldowns(cooldowns)
+  let io_service = @io_task.IOService::new()
+  let monster_module = @monster.Module::new(io_service)
+  let stage = Stage::new(
+    map_module.get_portals_animations(),
+    monster_module.get_map_mobs(),
+    @io_task.IOService::new(),
+  )
+  stage_ref.val = Some(stage)
+  stage
+}
+
+///|
+pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "set_field",
+    @net.Opcode::SET_FIELD.int_value(),
+    fn(json : Json) -> Unit raise {
+      let set_field_message : SetFieldMessage = @json.from_json(json)
+      guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
+      @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
+        map_id~,
+        portal_id~,
+        loading_map=None,
+      )
+    },
+  )
+}
+
+///|
+using @maple_protocol {type SetFieldMessage}

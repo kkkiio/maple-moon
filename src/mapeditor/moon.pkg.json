@@ -13,14 +13,14 @@
     "Milky2018/selene/backend",
     "Milky2018/selene/sprite",
     "Milky2018/selene/style",
-    "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/io_task",
     "KKKIIO/maple-moon/lib/struct",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/map",
-    "rami3l/js-ffi/js"
+    "rami3l/js-ffi/js",
+    "KKKIIO/maple-moon/lib/logic_fps"
   ],
   "link": {
     "js": {

@@ -60,19 +60,19 @@ test "test no options" {
 ///|
 pub fn parse_talk_content(
   text : String,
-  mod_provider? : (Style, @string.View) -> String raise = fn(_, v) {
+  mod_provider? : (Style, StringView) -> String raise = fn(_, v) {
     v.to_string()
   },
-  npc_provider? : (Style, @string.View) -> String raise = fn(_, v) {
+  npc_provider? : (Style, StringView) -> String raise = fn(_, v) {
     v.to_string()
   },
-  map_provider? : (Style, @string.View) -> String raise = fn(_, v) {
+  map_provider? : (Style, StringView) -> String raise = fn(_, v) {
     v.to_string()
   },
-  item_provider? : (Style, @string.View) -> String raise = fn(_, v) {
+  item_provider? : (Style, StringView) -> String raise = fn(_, v) {
     v.to_string()
   },
-  player_name_provider? : (Style, @string.View) -> String raise = fn(_, v) {
+  player_name_provider? : (Style, StringView) -> String raise = fn(_, v) {
     v.to_string()
   },
 ) -> TalkContent raise {

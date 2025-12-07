@@ -27,14 +27,7 @@ struct CharStats {
 }
 
 ///|
-pub(all) struct StatsEntry {
-  name : String
-  female : Bool
-  stats : Map[@maple_stat.Id, Int]
-  i64stats : Map[@maple_stat.Id, Int64]
-  mapid : Int
-  portal : Int
-} derive(Show, ToJson, Default)
+using @maple_protocol {type StatsEntry}
 
 ///|
 pub fn CharStats::new(
@@ -49,10 +42,10 @@ pub fn CharStats::new(
     name: s.name,
     weapon_type_getter,
     job,
-    map_id: s.mapid,
-    portal: s.portal,
-    base_stats: s.stats,
-    base_i64stats: s.i64stats,
+    map_id: s.map_id,
+    portal: s.portal_id,
+    base_stats: s.stats.0,
+    base_i64stats: s.i64stats.0,
     total_stats: @utils.Counter::new(),
     buff_deltas: @utils.Counter::new(),
     percentages: Map::new(),

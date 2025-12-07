@@ -1,71 +1,24 @@
 ///|
 pub(all) enum EquipStatId {
-  STR
-  DEX
-  INT
-  LUK
-  HP
-  MP
-  WATK
-  MAGIC
-  WDEF
-  // TODO: Does current GMS use these anymore?
-  MDEF
-  ACC
-  AVOID
-  HANDS
-  SPEED
-  JUMP
-} derive(Eq, Compare)
+  STR = 0
+  DEX = 1
+  INT = 2
+  LUK = 3
+  HP = 4
+  MP = 5
+  WATK = 6
+  MAGIC = 7
+  WDEF = 8
+  MDEF = 9
+  ACC = 10
+  AVOID = 11
+  HANDS = 12
+  SPEED = 13
+  JUMP = 14
+} derive(Eq, Compare, Hash)
 
 ///|
-pub fn EquipStatId::int_value(self : EquipStatId) -> Int {
-  match self {
-    STR => 0
-    DEX => 1
-    INT => 2
-    LUK => 3
-    HP => 4
-    MP => 5
-    WATK => 6
-    MAGIC => 7
-    WDEF => 8
-    MDEF => 9
-    ACC => 10
-    AVOID => 11
-    HANDS => 12
-    SPEED => 13
-    JUMP => 14
-  }
-}
-
-///|
-pub impl Hash for EquipStatId with hash_combine(
-  self : EquipStatId,
-  hasher : Hasher,
-) -> Unit {
-  hasher.combine(self.int_value())
-}
-// pub impl Show for EquipStatId with output(self : EquipStatId, logger : &Logger) -> Unit {
-//   let str = match self {
-//     STR => "STR"
-//     DEX => "DEX"
-//     INT => "INT"
-//     LUK => "LUK"
-//     HP => "MaxHP"
-//     MP => "MaxMP"
-//     WATK => "Attack Power"
-//     MAGIC => "Magic Attack"
-//     WDEF => "Defense"
-//     MDEF => "MAGIC DEFENSE"
-//     ACC => "ACCURACY"
-//     AVOID => "AVOID"
-//     HANDS => "HANDS"
-//     SPEED => "Speed"
-//     JUMP => "Jump"
-//   }
-//   logger.write_string(str)
-// }
+pub fn EquipStatId::int_value(self : EquipStatId) -> Int = "%identity"
 
 ///|
 pub fn EquipStatId::name(self : EquipStatId) -> String {
@@ -114,6 +67,21 @@ pub fn EquipStatId::from_name(name : String) -> EquipStatId? {
 ///|
 pub impl Show for EquipStatId with output(self : EquipStatId, logger : &Logger) -> Unit {
   logger.write_string(self.name())
+}
+
+///|
+pub impl ToJson for EquipStatId with to_json(self) -> Json {
+  Json::string(self.name())
+}
+
+///|
+pub impl @json.FromJson for EquipStatId with from_json(json, path) -> EquipStatId {
+  guard json is String(name) else {
+    raise @json.JsonDecodeError((path, "expect string"))
+  }
+  EquipStatId::from_name(name).unwrap_or_error(
+    @json.JsonDecodeError((path, "invalid equip stat name: \{name}")),
+  )
 }
 
 ///|

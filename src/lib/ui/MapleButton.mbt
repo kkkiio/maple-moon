@@ -16,7 +16,7 @@ pub(all) struct MapleButtonResource(Map[ButtonState, @resource.NxAnimation])
 
 ///|
 pub fn MapleButtonResource::from_resource(
-  src : @resource.NxNode,
+  _src : @resource.NxNode,
 ) -> MapleButtonResource {
   ...
 }
@@ -28,7 +28,7 @@ pub impl @json.FromJson for MapleButtonResource with from_json(
 ) -> MapleButtonResource {
   guard src
     is {
-      "normal": { "0": normal0, .. } as normal,
+      "normal": { "0": _, .. } as normal,
       "pressed": { "0": pressed0, .. },
       "mouseOver": { "0": mouseOver0, .. },
       "disabled": { "0": disabled0, .. },

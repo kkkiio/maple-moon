@@ -17,11 +17,11 @@
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/ms/char_stats",
     "KKKIIO/maple-moon/lib/ms/maple_stat",
-    "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/io_task",
-    "Milky2018/selene/system",
     "Milky2018/selene/position",
     "Milky2018/selene/entity",
-    "rami3l/js-ffi/js"
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/logic_fps",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ]
 }

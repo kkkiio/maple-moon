@@ -539,30 +539,19 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
   for entity in self.entities {
     entity.destroy()
   }
-  // for character in self.characters {
-  //   let (_, char_look, _) = character
-  //   char_look.destroy()
-  // }
 }
 
 ///|
 pub fn add_select_char_ui() -> Unit raise {
-  let ui = SelectCharUI::new(
-    SelectCharUIResource::load(),
-    [{ cid: 1, name: "kkkiio" }],
-    on_select_character=fn(slot) {
-      guard select_char_ui.val is Some(ui) else { return }
-      let char_look = ui.characters[slot].char_look
-      @game_state.game_state.state = @game_state.GameStateType::Game(
-        map_id=100000000,
-        portal_id=23,
-        char_look~,
-        server=@net.Server::new(),
-      )
-      select_char_ui.val = None
-      ui.destroy()
-    },
-  )
+  let slots = [{ cid: 1, name: "kkkiio" }]
+  let ui = SelectCharUI::new(SelectCharUIResource::load(), slots, on_select_character=fn(
+    slot,
+  ) {
+    guard select_char_ui.val is Some(ui) else { return }
+    @game_server.send(SelectCharMessage::{
+      character_id: ui.characters[slot].cid,
+    })
+  })
   select_char_ui.val = Some(ui)
 }
 
@@ -600,3 +589,27 @@ pub fn select_char_system(_delta : Double) -> Unit {
     ignore(alpha_norm) // TODO: modify upstream selene to support alpha
   }
 }
+
+///|
+pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "select_char",
+    @net.Opcode::SET_FIELD.int_value(),
+    fn(json) {
+      let set_field_message : SetFieldMessage = @json.from_json(json)
+      guard set_field_message is SetField(stats={ map_id, portal_id, .. }, ..) else {
+        return
+      }
+      guard select_char_ui.val is Some(ui) else { return }
+      @game_state.game_state.phase = @game_state.GamePhase::GameStart(
+        map_id~,
+        portal_id~,
+      )
+      select_char_ui.val = None
+      ui.destroy()
+    },
+  )
+}
+
+///|
+using @maple_protocol {type SetFieldMessage, type SelectCharMessage}

@@ -20,7 +20,6 @@
     "KKKIIO/maple-moon/lib/ms/quest",
     "KKKIIO/maple-moon/lib/ms/combat_impl2",
     "KKKIIO/maple-moon/lib/ui",
-    "Milky2018/selene/system",
     {
       "path": "Milky2018/selene/ui",
       "alias": "selene_ui"
@@ -32,7 +31,9 @@
     },
     "Milky2018/selene/sprite",
     "KKKIIO/maple-moon/lib/game_state",
-    "Milky2018/selene/entity"
+    "Milky2018/selene/entity",
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ],
   "link": {
     "js": {

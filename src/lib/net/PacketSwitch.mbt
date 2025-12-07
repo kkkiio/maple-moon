@@ -36,7 +36,7 @@ pub(all) enum Opcode {
   SERVER_MESSAGE = 68
   WEEK_EVENT_MESSAGE = 77
   SKILL_MACROS = 124
-  SET_FIELD = 125
+  SET_FIELD = 0x7D
   WHISPER = 135
   FIELD_EFFECT = 138
   /// MapObject

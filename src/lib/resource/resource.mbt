@@ -3,25 +3,7 @@
 type ImageLoader
 
 ///|
-#external
-priv type SyncResourceLoader
-
-///|
-impl @js.Cast for SyncResourceLoader with into(it) -> SyncResourceLoader? {
-  @js.Value::cast(it)
-}
-
-///|
-impl @js.Cast for SyncResourceLoader with from(it) -> @js.Value {
-  @js.Value::cast_from(it)
-}
-
-///|
-struct SyncLoader {
-  name : String
-  loader : SyncResourceLoader
-  image_loader : ImageLoader
-}
+struct SyncLoader {}
 
 ///|
 pub async fn SyncLoader::load(
@@ -33,15 +15,6 @@ pub async fn SyncLoader::load(
   // let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
   //   |> @js.Value::cast
   // SyncLoader::new(name, loader, image_loader)
-}
-
-///|
-fn SyncLoader::new(
-  name : String,
-  loader : SyncResourceLoader,
-  image_loader : ImageLoader,
-) -> SyncLoader {
-  { name, loader, image_loader }
 }
 
 ///|
@@ -373,17 +346,48 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
   json,
   path,
 ) {
+  parse_enum_map(json, path~) |> IntMap
+}
+
+///|
+pub(all) struct EnumMap[K, V](Map[K, V]) derive(Show)
+
+///|
+pub impl[K, V] Default for EnumMap[K, V] with default() -> EnumMap[K, V] {
+  EnumMap(Map::new())
+}
+
+///|
+pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V] with to_json(self) -> Json {
+  let map = Map::new(capacity=self.0.length())
+  for key, value in self.0 {
+    guard key.to_json() is String(key) else { abort("expect string") }
+    map.set(key, value.to_json())
+  }
+  Json::object(map)
+}
+
+///|
+pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[
+  K,
+  V,
+] with from_json(json, path) {
+  parse_enum_map(json, path~) |> EnumMap
+}
+
+///|
+pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(
+  json : Json,
+  path~ : @json.JsonPath,
+) -> Map[K, V] raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let map = {}
   for key, value in obj {
-    let key_int = @strconv.parse_int(key) catch {
-      _ =>
-        raise @json.JsonDecodeError((path.add_key(key), "expect numberic key"))
-    }
-    let value : T = @json.from_json(value, path=path.add_key(key))
-    map[key_int] = value
+    let k : K = @json.from_json(Json::string(key), path=path.add_key(key))
+    let value : V = @json.from_json(value, path=path.add_key(key))
+    map[k] = value
   }
   map
 }

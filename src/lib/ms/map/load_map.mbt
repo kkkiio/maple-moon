@@ -14,7 +14,7 @@ pub async fn load_map(
   map_id : Int,
   map_portals_animations : MapPortalAnimations,
 ) -> SceneMap {
-  let raw = load_map_raw(map_id)
+  let raw = load_map_resources_by_id(map_id)
   parse_scene_map(raw, map_portals_animations)
 }
 

@@ -129,6 +129,9 @@ pub struct SkillUIData {
 }
 
 ///|
+using @maple_protocol {type InventoryType}
+
+///|
 pub fn transfer_one_sp(
   mod : Module,
   job_level : Int,
@@ -142,7 +145,7 @@ pub fn transfer_one_sp(
     4 => SpResetItemId::SP_RESET_4TH_JOB
     _ => return "invalid job level \{job_level}"
   }
-  guard mod.inventory.find_item(@inventory.TypeId::CASH, item_id.int_value())
+  guard mod.inventory.find_item(InventoryType::CASH, item_id.int_value())
     is Some(slot_no) else {
     return "not found item id \{item_id.int_value()}"
   }

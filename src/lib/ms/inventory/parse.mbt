@@ -1,40 +1,4 @@
 ///|
-enum InventoryItemEntry {
-  Equip(
-    invtype~ : TypeId,
-    slot~ : Int,
-    id~ : Int,
-    cash~ : Bool,
-    expire~ : Int64,
-    slots~ : Int,
-    level~ : Int,
-    stats~ : Map[@maple_stat.EquipStatId, Int],
-    owner~ : String,
-    flag~ : Int,
-    itemlevel~ : Int,
-    itemexp~ : Int,
-    vicious~ : Int
-  )
-  Pet(
-    invtype~ : TypeId,
-    slot~ : Int,
-    id~ : Int,
-    cash~ : Bool,
-    petname~ : String
-  )
-  Item(
-    invtype~ : TypeId,
-    slot~ : Int,
-    id~ : Int,
-    cash~ : Bool,
-    expire~ : Int64,
-    count~ : Int,
-    owner~ : String,
-    flag~ : Int
-  )
-} derive(Show, ToJson)
-
-///|
 pub fn parse_item(
   recv : @net.InPacket,
   invtype : TypeId,
@@ -74,8 +38,19 @@ pub fn handle_item(inventory : Inventory, item : InventoryItemEntry) -> Unit {
       vicious~
     ) =>
       inventory.add_equip(
-        invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel,
-        itemexp, vicious,
+        invtype,
+        slot,
+        id,
+        cash,
+        expire,
+        slots,
+        level,
+        stats.0,
+        owner,
+        flag,
+        itemlevel,
+        itemexp,
+        vicious,
       )
     Pet(invtype~, slot~, id~, cash~, petname~) =>
       inventory.add_pet(invtype, slot, id, cash, petname)
@@ -139,7 +114,7 @@ fn parse_add_equip(
     expire~,
     slots~,
     level~,
-    stats~,
+    stats=@resource.EnumMap(stats),
     owner~,
     flag~,
     itemlevel~,

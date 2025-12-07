@@ -30,7 +30,7 @@ pub fn Sprite::draw(
 ///|
 pub fn Sprite::update(
   self : Sprite,
-  timestep? : Int = @config.STEP_TIME_MS,
+  timestep? : Int = @logic_fps.STEP_TIME_MS,
 ) -> Bool {
   self.animation.update(timestep~)
 }

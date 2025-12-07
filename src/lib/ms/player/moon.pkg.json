@@ -25,6 +25,11 @@
     "KKKIIO/maple-moon/lib/io_task",
     "Milky2018/selene/system",
     "Milky2018/selene/inputs",
-    "Milky2018/selene/entity"
+    "Milky2018/selene/entity",
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/game_state",
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/logic_fps",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ]
 }

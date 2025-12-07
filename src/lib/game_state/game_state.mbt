@@ -1,18 +1,28 @@
 ///|
 pub(all) struct GameState {
-  mut state : GameStateType
+  mut phase : GamePhase
 }
 
 ///|
-pub(all) enum GameStateType {
+pub(all) enum GamePhase {
   Login
-  Game(
+  GameStart(map_id~ : Int, portal_id~ : Int)
+  GameTransiting(
     map_id~ : Int,
     portal_id~ : Int,
-    char_look~ : @char_look.CharLook,
-    server~ : @net.Server
+    mut loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]?
+  )
+  GameActive(
+    map_id~ : Int,
+    portal_id~ : Int,
+    tiles_objs~ : @map.MapTilesObjs,
+    backgrounds~ : @map.Backgrounds,
+    physics~ : @physics.Physics,
+    map_info~ : @map.MapInfo,
+    portals~ : @map.MapPortals,
+    mobs~ : @monster.MapMobs
   )
 }
 
 ///|
-pub let game_state : GameState = { state: GameStateType::Login }
+pub let game_state : GameState = { phase: GamePhase::Login }

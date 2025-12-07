@@ -119,7 +119,7 @@ pub impl @ui.UIState for UIStateLogin with get_front_by_types(
 ) -> @ui.Element? {
   let mut front : @ui.Element? = None
   types.rev_each(fn(t) {
-    if not(front.is_empty()) {
+    if front is Some(_) {
       return
     }
     match self.elements.get(t) {

@@ -193,7 +193,7 @@ pub fn get_draw_info() -> @types.BodyDrawInfo raise {
 }
 
 ///|
-struct NxStanceLooks[T](Map[@types.StanceId, Array[T]])
+pub(all) struct NxStanceLooks[T](Map[@types.StanceId, Array[T]])
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(

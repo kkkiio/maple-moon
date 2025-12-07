@@ -738,7 +738,10 @@ fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry raise {
 }
 
 ///|
-fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry raise {
+using @maple_protocol {type StatsEntry}
+
+///|
+fn parse_stats(recv : @net.InPacket) -> StatsEntry raise {
   let name = recv.read_padded_string(13)
   let female = recv.read_bool()
   recv.read_byte() |> ignore // skin
@@ -768,7 +771,7 @@ fn parse_stats(recv : @net.InPacket) -> @char_stats.StatsEntry raise {
   let mapid = recv.read_int()
   let portal = recv.read_ubyte()
   recv.skip(4) // timestamp
-  { name, female, stats, i64stats, mapid, portal }
+  { name, female, stats, i64stats, map_id: mapid, portal_id: portal }
 }
 
 ///|
@@ -891,24 +894,6 @@ pub fn get_map_pretty_loader() -> @resource.AsyncLoader {
       ),
     }),
   )
-}
-
-///|
-/// Tell the server which character was picked.
-priv struct SelectCharPacket {
-  character_id : Int
-} derive(Show)
-
-///|
-fn SelectCharPacket::new(character_id : Int) -> SelectCharPacket {
-  { character_id, }
-}
-
-///|
-impl @net.OutMessage for SelectCharPacket with pack(self) -> @net.OutPacket {
-  let p = @net.OutPacket::new(@net.ClientOpcode::SELECT_CHAR)
-  p..write_int(self.character_id)..write_hardware_info()
-  p
 }
 
 ///|

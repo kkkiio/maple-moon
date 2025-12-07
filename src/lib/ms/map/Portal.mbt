@@ -60,7 +60,7 @@ pub(all) struct PortalWarpInfo {
   name : String
   /// whether the target is in the current map
   intra_map : Bool
-}
+} derive(Show)
 
 ///|
 fn PortalWarpInfo::new(
@@ -117,12 +117,14 @@ pub fn Portal::new(
 }
 
 ///|
-pub fn Portal::update(
+/// Update the portal's touched state based on the touch position.
+pub fn Portal::update_touched(
   self : Portal,
-  playerpos : Point[Int],
   entity : @entity.Entity,
+  touch_pos : Point[Int]?,
 ) -> Unit {
-  self.touched = self.bounds().contains(playerpos)
+  self.touched = touch_pos is Some(touch_pos) &&
+    self.bounds().contains(touch_pos)
   guard @sprite.sprites.get(entity) is Some(sp) else { return }
   if self.t != PortalType::HIDDEN || self.touched {
     sp.visible = true

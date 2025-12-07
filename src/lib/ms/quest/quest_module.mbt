@@ -220,10 +220,7 @@ priv enum StartedQuest {
 } derive(Show)
 
 ///|
-struct PlayerQuestLogInfo {
-  started : Array[(Int, String)]
-  completed : Array[(Int, Int64)]
-} derive(Show)
+using @maple_protocol {type PlayerQuestLogInfo}
 
 ///|
 pub fn parse_player_quest_info(

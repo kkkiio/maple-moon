@@ -46,7 +46,7 @@ pub async fn Player::load(
   new_char_stats : (@job.Job) -> CharStats,
 ) -> Player {
   let job = @job.Job::load(
-    id=entry.stats.stats.get(@maple_stat.Id::JOB).unwrap_or(0),
+    id=entry.stats.stats.0.get(@maple_stat.Id::JOB).unwrap_or(0),
   )
   // let skill_book = load_skill_book(job)
   Player::new(
@@ -799,3 +799,99 @@ pub fn Player::change_job(
   //   })
   //   |> Some
 }
+
+///|
+pub let player_ref : Ref[Player?] = Ref::new(None)
+
+///|
+pub fn get_player() -> Player? {
+  player_ref.val
+}
+
+///|
+pub fn set_player(player : Player) -> Unit {
+  if player_ref.val is Some(existing_player) {
+    existing_player.entity.destroy()
+  }
+  player_ref.val = Some(player)
+}
+
+///|
+/// Checks if the player is in a portal and transfers them to the target position.
+fn check_portals(
+  player : Player,
+  map_info : @map.MapInfo,
+  portals : @map.MapPortals,
+  physics : @physics.Physics,
+) -> Unit {
+  if player.is_attacking() {
+    return
+  }
+  let playerpos = player.character.get_position()
+  guard portals.find_warp_at(playerpos) is Some(warpinfo) else { return }
+  if warpinfo.intra_map {
+    let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
+    let startpos = physics.get_y_below(spawnpoint)
+    player.respawn(startpos, map_info.is_underwater())
+    // } else if warpinfo.valid {
+  } else {
+    guard warpinfo.mapid is Some(map_id) else {
+      @log.error({ "warpinfo": warpinfo }, "missing map id")
+      panic()
+    }
+    let message = ChangeMapMessage::{
+      died: false,
+      target_id: -1,
+      target_p: warpinfo.name,
+      use_wheel: false,
+    }
+    let stats = player.get_stats()
+    stats.set_map_id(map_id)
+    @game_server.send(message, log_level=@log.Level::INFO)
+  }
+
+  // Sound(Sound::Name::PORTAL).play();
+}
+
+///|
+/// System that watches the inputs and updates the player state.
+pub fn player_state_system(_delta : Double) -> Unit {
+  guard @game_state.game_state.phase
+    is GameActive(physics~, map_info~, portals~, ..) else {
+    return
+  }
+  guard player_ref.val is Some(player) else { return }
+  if @inputs.is_just_pressed(@inputs.ArrowUp) {
+    check_portals(player, map_info, portals, physics)
+  }
+  for
+    it in [
+      (@inputs.ArrowUp, @keyboard.BasicActionId::UP),
+      (@inputs.ArrowDown, @keyboard.BasicActionId::DOWN),
+      (@inputs.ArrowLeft, @keyboard.BasicActionId::LEFT),
+      (@inputs.ArrowRight, @keyboard.BasicActionId::RIGHT),
+      (@inputs.Space, @keyboard.BasicActionId::JUMP),
+    ] {
+    let (code, action) = it
+    if @inputs.is_just_pressed(code) {
+      player.send_action(action, true)
+    } else if @inputs.is_just_released(code) {
+      player.send_action(action, false)
+    }
+  }
+  let times = @logic_fps.get_logic_times()
+  for _ in 0..<times {
+    player.update(physics, map_info)
+  }
+  // TODO: check seats, attacks, drops, skills, items, expressions
+  //         @keyboard.BasicActionId::UP =>
+  //         // @keyboard.ActionId::SIT => self.check_seats()
+  //         @keyboard.BasicActionId::ATTACK => () //self.combat.use_move(player, 0)
+  //         @keyboard.BasicActionId::PICKUP => self.check_drops(player)
+  //   SKILL(skill_id) => () //self.combat.use_move(player, skill_id)
+  //   ITEM(item_id) => () //self.inventory.use_item(item_id)
+  //   // @keyboard.Id::FACE => self.player.set_expression(action)
+}
+
+///|
+using @maple_protocol {type ChangeMapMessage}

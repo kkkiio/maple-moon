@@ -82,13 +82,13 @@ pub fn Combat::draw(
 pub fn Combat::update(self : Combat) -> Unit {
   for
     bullet_effect in self.bullet_effects.process(
-      timestep=@config.STEP_TIME_MS.to_int64(),
+      timestep=@logic_fps.STEP_TIME_MS.to_int64(),
     ) {
     self.apply_bullet_effect(bullet_effect)
   }
   for
     dmg_eff in self.damage_effects.process(
-      timestep=@config.STEP_TIME_MS.to_int64(),
+      timestep=@logic_fps.STEP_TIME_MS.to_int64(),
     ) {
     self.apply_damage_effect(dmg_eff)
   }
@@ -764,9 +764,8 @@ async fn load_after_images_by_skill_weapon(
 
 ///|
 pub fn combat_system(_delta : Double) -> Unit {
-  guard @game_scene.get_stage() is Some({ state: ACTIVE(..), player, mobs, .. }) else {
-    return
-  }
+  guard @game_state.game_state.phase is GameActive(mobs~, ..) else { return }
+  guard @player.get_player() is Some(player) else { return }
   if player.is_invincible() {
     return
   }

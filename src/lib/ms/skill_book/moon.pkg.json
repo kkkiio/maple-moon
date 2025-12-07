@@ -19,7 +19,9 @@
     "KKKIIO/maple-moon/lib/ms/inventory",
     "KKKIIO/maple-moon/lib/ms/markup_text",
     "KKKIIO/maple-moon/lib/struct",
-    "rami3l/js-ffi/js"
+    "rami3l/js-ffi/js",
+    "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/maple_protocol"
   ],
   "link": {
     "js": {

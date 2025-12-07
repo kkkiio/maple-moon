@@ -219,12 +219,12 @@ pub fn Character::update(self : Character, speed : Double) -> Unit {
   //     recurring_effects_.update();
   // TODO: implement chat_balloon
   //     chat_balloon_.update();
-  self.invincible.update(timestep=@config.STEP_TIME_MS)
+  self.invincible.update(timestep=@logic_fps.STEP_TIME_MS)
   // TODO: implement iron_body
   //     iron_body_.update();
 
   let stancespeed_ms = @cmp.maximum(
-    (@config.STEP_TIME_MS.to_double() * speed).to_int(),
+    (@logic_fps.STEP_TIME_MS.to_double() * speed).to_int(),
     0,
   )
   match self.after_image {
@@ -433,8 +433,11 @@ pub fn Character::get_stats(self : Character) -> @char_stats.CharStats {
 }
 
 ///|
+using @maple_protocol {type StatsEntry}
+
+///|
 pub(all) struct CharEntry {
-  stats : @char_stats.StatsEntry
+  stats : StatsEntry
   look : @char_look.LookEntry
   id : Int
 } derive(Show, ToJson)

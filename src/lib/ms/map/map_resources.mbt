@@ -62,7 +62,8 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
 }
 
 ///|
-pub async fn load_map_raw(map_id : Int) -> MapRawResources {
+/// Loads the raw map resources by map id.
+pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   guard map_id >= 0
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
@@ -134,3 +135,131 @@ pub fn MapRawResources::get_portals(
 ) -> Array[PortalMarker] {
   self.nx_map.portal
 }
+
+///|
+pub struct NxMap {
+  layers : Array[NxLayer]
+  back : BackgroundsResource
+  portal : Array[PortalMarker]
+}
+
+///|
+pub impl @json.FromJson for NxMap with from_json(json, path) {
+  let layers = @resource.parse_map_based_array(json, path~)
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
+  }
+  let back : BackgroundsResource = if obj.get("back") is Some(back) {
+    @json.from_json(back, path=path.add_key("back"))
+  } else {
+    BackgroundsResource([])
+  }
+  let portal : Array[PortalMarker] = if obj.get("portal") is Some(portal) {
+    @resource.parse_map_based_array(portal, path=path.add_key("portal"))
+  } else {
+    []
+  }
+  { layers, back, portal }
+}
+
+///|
+pub struct NxLayer {
+  info : MapLayerInfoResource?
+  tile : Array[NxTileRef]
+  obj : Array[NxObj]
+} derive(Show)
+
+///|
+pub impl @json.FromJson for NxLayer with from_json(json, path) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "expected object"))
+  }
+  let info = if obj is { "info": Object(_) as info, .. } {
+    Some(@json.from_json(info, path=path.add_key("info")))
+  } else {
+    None
+  }
+  let tile = if obj is { "tile": Object(_) as tile, .. } {
+    @resource.parse_map_based_array(tile, path=path.add_key("tile"))
+  } else {
+    []
+  }
+  let obj = if obj is { "obj": Object(_) as obj, .. } {
+    @resource.parse_map_based_array(obj, path=path.add_key("obj"))
+  } else {
+    []
+  }
+  { info, tile, obj }
+}
+
+///|
+test "parse empty layer" {
+  let data =
+    #|{
+    #|    "info": null,
+    #|    "obj": null,
+    #|    "tile": null
+    #|}
+  let json = @json.parse(data)
+  let layer : NxLayer = @json.from_json(json)
+  inspect(layer, content="{info: None, tile: [], obj: []}")
+}
+
+///|
+pub struct NxTileRef {
+  /// tile index
+  no : Int
+  /// group name
+  u : String
+  x : Int
+  y : Int
+  zM : Int
+} derive(@json.FromJson, Show)
+
+///|
+pub struct NxObj {
+  f : Bool
+  l0 : String
+  l1 : String
+  l2 : String
+  oS : String
+  x : Int
+  y : Int
+  z : Int
+  zM : Int
+} derive(Show)
+
+///|
+pub impl @json.FromJson for NxObj with from_json(json, path) {
+  match json {
+    {
+      "f": Number(f, ..),
+      "l0": String(l0),
+      "l1": String(l1),
+      "l2": String(l2),
+      "oS": String(oS),
+      "x": Number(x, ..),
+      "y": Number(y, ..),
+      "z": Number(z, ..),
+      "zM": Number(zM, ..),
+      ..
+    } =>
+      {
+        f: f != 0,
+        l0,
+        l1,
+        l2,
+        oS,
+        x: x.to_int(),
+        y: y.to_int(),
+        z: z.to_int(),
+        zM: zM.to_int(),
+      }
+    _ => raise @json.JsonDecodeError((path, "missing obj fields"))
+  }
+}
+
+///|
+pub struct MapLayerInfoResource {
+  tS : String
+} derive(@json.FromJson, Show)

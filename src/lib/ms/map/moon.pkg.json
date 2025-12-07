@@ -16,6 +16,7 @@
     "Milky2018/selene/position",
     "Milky2018/selene/entity",
     "Milky2018/selene/camera",
-    "KKKIIO/maple-moon/lib/config"
+    "KKKIIO/maple-moon/lib/config",
+    "KKKIIO/maple-moon/lib/logic_fps"
   ]
 }

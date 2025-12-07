@@ -17,7 +17,7 @@
     "KKKIIO/maple-moon/lib/ms/char_stats",
     "KKKIIO/maple-moon/lib/ms/weapon",
     "KKKIIO/maple-moon/lib/resource",
-    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/io_service",
     "KKKIIO/maple-moon/lib/ms/bullet",
     "KKKIIO/maple-moon/lib/ms/char_look",
     "KKKIIO/maple-moon/lib/ms/equip",

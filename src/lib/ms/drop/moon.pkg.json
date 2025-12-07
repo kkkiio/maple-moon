@@ -10,7 +10,7 @@
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/log",
-    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/io_service",
     "Milky2018/selene/system",
     "Milky2018/selene/position",
     "Milky2018/selene/entity"

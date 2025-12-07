@@ -5,9 +5,9 @@ struct Module {
 }
 
 ///|
-pub fn Module::new(io_service : @io_task.IOService) -> Module {
-  let mobs = MapMobs::new(io_service)
-  { map_mobs: mobs, mob_combat: MobCombat::new(mobs, io_service) }
+pub fn Module::new() -> Module {
+  let mobs = MapMobs::new()
+  { map_mobs: mobs, mob_combat: MobCombat::new(mobs) }
 }
 
 ///|

@@ -11,7 +11,6 @@ struct Combat {
   cooldowns : Map[Int, Int]
   network : @net.Network
   string_loader : @resource.SyncLoader
-  io_service : @io_task.IOService
   bullet_module : @bullet.Module
   skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
   after_image_cache : Map[
@@ -27,7 +26,6 @@ pub fn Combat::new(
   mobs : @monster.MapMobs,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
   bullet_module : @bullet.Module,
 ) -> Combat {
   let server_listener = fn(event : AttackEvent) -> Bool {
@@ -48,7 +46,6 @@ pub fn Combat::new(
     cooldowns: {},
     network,
     string_loader,
-    io_service,
     bullet_module,
     after_image_cache: Map::new(),
     attack_events_listeners: [server_listener],
@@ -138,9 +135,9 @@ pub fn Combat::use_move(
     }
   } else {
     @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
-    self.skill_cache[move_id] = self.io_service
-      .submit(fn() { self.load_sp_move(move_id) })
-      .map(@log.unwrap_err(_))
+    self.skill_cache[move_id] = @io_service.submit_background_task(fn() {
+      self.load_sp_move(move_id)
+    }).map(@log.unwrap_err(_))
     return
   }
   // let reason = self.can_use(
@@ -168,9 +165,9 @@ pub fn Combat::use_move(
           }
         } else {
           @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
-          self.after_image_cache[key] = self.io_service
-            .submit(fn() { load_after_images_by_skill_weapon(key) })
-            .map(@log.unwrap_err(_))
+          self.after_image_cache[key] = @io_service.submit_background_task(fn() {
+            load_after_images_by_skill_weapon(key)
+          }).map(@log.unwrap_err(_))
           return
         }
       }
@@ -208,9 +205,9 @@ pub fn Combat::get_skill_move(
     return fut
   }
   @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
-  let fut = self.io_service
-    .submit(fn() { self.load_sp_move(move_id) })
-    .map(@log.unwrap_err(_))
+  let fut = @io_service.submit_background_task(fn() {
+    self.load_sp_move(move_id)
+  }).map(@log.unwrap_err(_))
   self.skill_cache[move_id] = fut
   fut
 }

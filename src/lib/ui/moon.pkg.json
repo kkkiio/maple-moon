@@ -2,13 +2,11 @@
   "import": [
     "KKKIIO/maple-moon/lib/struct",
     "KKKIIO/maple-moon/lib/graphics",
-    "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/keyboard",
     "KKKIIO/maple-moon/lib/ms/physics",
     "Milky2018/selene/sprite",
-    "Milky2018/selene/system",
     "Milky2018/selene/position",
     "Milky2018/selene/ui",
     "Milky2018/selene/collision",

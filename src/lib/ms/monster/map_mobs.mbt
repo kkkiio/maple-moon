@@ -4,17 +4,15 @@ struct MapMobs {
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
   randomizer : @utils.Randomizer
-  io_service : @io_task.IOService
 }
 
 ///|
-pub fn MapMobs::new(io_service : @io_task.IOService) -> MapMobs {
+pub fn MapMobs::new() -> MapMobs {
   {
     mobs: @map_object.MapObjects::new(),
     spawns: @queue.new(),
     loading_mobs: Array::new(),
     randomizer: @utils.Randomizer::new(),
-    io_service,
   }
 }
 
@@ -41,7 +39,7 @@ pub fn MapMobs::update(
         }
         None =>
           self.loading_mobs.push(
-            self.io_service.submit(fn() {
+            @io_service.submit_background_task(fn() {
               spawn.instantiate(self.randomizer, network)
             }),
           )

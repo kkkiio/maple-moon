@@ -1,3 +1,5 @@
+/// Messages for transitioning between maps.
+
 ///|
 pub(all) struct ChangeMapMessage {
   died : Bool

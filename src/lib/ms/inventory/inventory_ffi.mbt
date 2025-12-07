@@ -81,7 +81,7 @@ pub fn watch_inventory_by_kind(
   let mut cont = true
   fn sync_callback() {
     if cont {
-      mod.io_service.execute(fn() {
+      @io_service.execute_background(fn() {
         let items = get_all_items_by_type(mod, type_id)
         cont = watcher(items)
       })
@@ -118,8 +118,7 @@ pub fn use_item_at(
   match type_id {
     TypeId::EQUIP => {
       guard (mod.player_getter)() is Some(player) else { return "" }
-      guard mod.inventory.get_slot_item_at(type_id, slot_no.inner())
-        is Some(item) else {
+      guard mod.inventory.get_slot_item_at(type_id, slot_no.0) is Some(item) else {
         return "no item at slot \{slot_no} of \{kind}"
       }
       guard @item.ItemData::get_loaded(item.item_id) is Some(item_data) else {
@@ -133,18 +132,18 @@ pub fn use_item_at(
         None => ()
       }
       let equip_message : EquipItemMessage = {
-        src: slot_no.inner(),
+        src: slot_no.0,
         dest: find_equip_slot(mod.inventory, equip_data),
       }
       mod.network.send_message(equip_message)
       ""
     }
     TypeId::USE => {
-      let item_id = mod.inventory.get_item_id(type_id, slot_no.inner())
+      let item_id = mod.inventory.get_item_id(type_id, slot_no.0)
       if item_id <= 0 {
         return "not found item id at slot \{slot_no} of \{kind}"
       }
-      mod.network.send_message(UseItemMessage::new(slot_no.inner(), item_id))
+      mod.network.send_message(UseItemMessage::new(slot_no.0, item_id))
       ""
     }
     _ => return "not supported kind \{kind}"

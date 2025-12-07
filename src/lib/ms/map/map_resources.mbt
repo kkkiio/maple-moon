@@ -16,50 +16,7 @@ pub(all) struct MapRawResources {
 }
 
 ///|
-let mapx_loader : Ref[@resource.AsyncLoader?] = Ref::new(None)
-
-///|
-fn get_mapx_loader() -> @resource.AsyncLoader {
-  if mapx_loader.val is Some(loader) {
-    return loader
-  }
-  let loader = @resource.CompositeAsyncResourceLoader::new({
-    "Map0/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map0",
-    ),
-    "Map1/": @resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Map1",
-      "/assets/map/map1",
-    ),
-    "Map2/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map2",
-    ),
-    "Map3/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map3",
-    ),
-    "Map4/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map4",
-    ),
-    "Map5/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map5",
-    ),
-    "Map6/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map6",
-    ),
-    "Map7/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map7",
-    ),
-    "Map8/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map8",
-    ),
-    "Map9/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map9",
-    ),
-  })
-  let loader = @resource.AsyncLoader::new("mapx", loader~)
-  mapx_loader.val = Some(loader)
-  loader
-}
+using @resource {get_mapx_loader}
 
 ///|
 /// Loads the raw map resources by map id.

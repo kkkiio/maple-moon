@@ -782,11 +782,7 @@ pub fn Player::attack_by_stance(
 }
 
 ///|
-pub fn Player::change_job(
-  self : Player,
-  job_id : Int,
-  io_service : @io_task.IOService,
-) -> Unit {
+pub fn Player::change_job(self : Player, job_id : Int) -> Unit {
   // self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
   // self.changing_job = io_service
   //   .submit(fn() {

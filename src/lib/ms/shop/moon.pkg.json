@@ -6,7 +6,7 @@
     "KKKIIO/maple-moon/lib/ms/inventory",
     "KKKIIO/maple-moon/lib/ms/item",
     "rami3l/js-ffi/js",
-    "KKKIIO/maple-moon/lib/io_task"
+    "KKKIIO/maple-moon/lib/io_service"
   ],
   "link": {
     "js": {

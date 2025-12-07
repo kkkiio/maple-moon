@@ -15,7 +15,7 @@
     "Milky2018/selene/style",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/graphics",
-    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/io_service",
     "KKKIIO/maple-moon/lib/struct",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/map",

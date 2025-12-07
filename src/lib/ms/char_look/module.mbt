@@ -1,6 +1,5 @@
 ///|
 struct Module {
-  io_service : @io_task.IOService
   draw_info : @types.BodyDrawInfo
   hair_cache : Map[Int, Hair]
   face_types : Map[Int, Face]
@@ -11,17 +10,15 @@ struct Module {
 ///|
 pub async fn Module::load(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.IOService,
 ) -> Module {
   // let bodynode = get_body_loader().load_res_async(["00002000.img"])
   // let headnode = get_body_loader().load_res_async(["00012000.img"])
-  Module::new(on_player_look_changed, io_service)
+  Module::new(on_player_look_changed)
 }
 
 ///|
 pub fn Module::new(
   on_player_look_changed : ((CharLook) -> CharLook) -> Unit,
-  io_service : @io_task.IOService,
 ) -> Module raise {
   {
     hair_cache: Map::new(),
@@ -29,7 +26,6 @@ pub fn Module::new(
     face_types: Map::new(),
     body_cache: Map::new(),
     on_player_look_changed,
-    io_service,
   }
 }
 
@@ -90,7 +86,7 @@ pub fn Module::make_stat_handlers(
       @maple_stat.Id::SKIN,
       fn(skin_id) {
         state.changing_skin_id = Some(skin_id)
-        self.io_service.execute(fn() {
+        @io_service.execute_background(fn() {
           let body = self.load_body_by_skin_id(skin_id)
           guard state.changing_skin_id == Some(skin_id) else { return }
           state.changing_skin_id = None
@@ -105,7 +101,7 @@ pub fn Module::make_stat_handlers(
       @maple_stat.Id::FACE,
       fn(face_id) {
         state.changing_face_id = Some(face_id)
-        self.io_service.execute(fn() {
+        @io_service.execute_background(fn() {
           let face = self.load_face_by_id(face_id)
           guard state.changing_face_id == Some(face_id) else { return }
           state.changing_face_id = None
@@ -120,7 +116,7 @@ pub fn Module::make_stat_handlers(
       @maple_stat.Id::HAIR,
       fn(hair_id) {
         state.changing_hair_id = Some(hair_id)
-        self.io_service.execute(fn() {
+        @io_service.execute_background(fn() {
           let hair = self.load_hair_by_id(hair_id)
           guard state.changing_hair_id == Some(hair_id) else { return }
           state.changing_hair_id = None
@@ -185,7 +181,7 @@ pub fn get_draw_info() -> @types.BodyDrawInfo raise {
     None => {
       let bodynode : NxStanceLooks[@types.NxStanceBody] = get_stance_bodys_map()
       let headnode : NxStanceLooks[@types.NxLayerTextures] = get_stance_heads_map()
-      let v = @types.BodyDrawInfo::new(bodynode.inner(), headnode.inner())
+      let v = @types.BodyDrawInfo::new(bodynode.0, headnode.0)
       draw_info.val = Some(v)
       v
     }

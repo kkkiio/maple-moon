@@ -1,6 +1,5 @@
 ///|
 struct MapDrops {
-  io_service : @io_task.IOService
   drops : @map_object.MapObjects[&Drop]
   loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.Queue[DropSpawn]
@@ -8,10 +7,7 @@ struct MapDrops {
 }
 
 ///|
-fn MapDrops::new(
-  io_service : @io_task.IOService,
-  src : @resource.NxNode,
-) -> MapDrops {
+fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
   let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
     |> @graphics.Animation::from_resource
@@ -22,7 +18,6 @@ fn MapDrops::new(
   meso_icons[MesoIcon::BAG] = src["09000003"]["iconRaw"]
     |> @graphics.Animation::from_resource
   {
-    io_service,
     drops: @map_object.MapObjects::new(),
     loading_drops: Array::new(),
     spawns: @queue.new(),
@@ -70,7 +65,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
             self.drops.add(spawn.instantiate_meso(icon))
           } else {
             self.loading_drops.push(
-              self.io_service.submit(fn() {
+              @io_service.submit_background_task(fn() {
                 let item_data = @item.ItemData::get_async(itemid)
                 spawn.instantiate_item(item_data.get_icon(true))
               }),

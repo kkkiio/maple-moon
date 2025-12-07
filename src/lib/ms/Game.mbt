@@ -7,7 +7,6 @@ pub(all) struct Game {
   mut accumulator : Int
   processor : @net.Network
   loaded_state : @utils.Future[LoadedState]
-  io_service : @io_task.IOService
   scheduls : @schedule.Schedules
   // stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
@@ -33,7 +32,6 @@ pub fn Game::new() -> Game {
   })
   let processor = @net.Network::init()
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
-  let io_service = @io_task.IOService::new()
   let scheduls = @schedule.Schedules::new()
   {
     timer,
@@ -49,7 +47,6 @@ pub fn Game::new() -> Game {
     //   it.unwrap() // TODO: handle error
     // }),
     loaded_state: @utils.Future::never(),
-    io_service,
     scheduls,
     // stage,
     keyboard_module,
@@ -60,7 +57,6 @@ pub fn Game::new() -> Game {
 async fn load_modules(
   timer : @utils.Timer,
   network : @net.Network,
-  io_service : @io_task.IOService,
   scheduls : @schedule.Schedules,
   // stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module,
@@ -122,14 +118,11 @@ async fn load_modules(
     "https://maple-res.kkkiiox.work/String/nx.json",
     @resource.ImageLoader::get_path_image_loader(),
   )
-  let char_look_module = @char_look.Module::load(
-    fn(f) {
-      ...
-      // guard get_stage().get_player() is Some(player) else { return }
-      // player.character.look = f(player.character.look)
-    },
-    io_service,
-  )
+  let char_look_module = @char_look.Module::load(fn(f) {
+    ...
+    // guard get_stage().get_player() is Some(player) else { return }
+    // player.character.look = f(player.character.look)
+  })
   merge_stat_handlers(char_look_module.make_stat_handlers())
   let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(
@@ -139,7 +132,6 @@ async fn load_modules(
     },
     network,
     string_loader,
-    io_service,
   )
   merge_handlers(inventory_module.make_handlers())
   merge_stat_handlers(inventory_module.make_stat_handlers())
@@ -169,7 +161,7 @@ async fn load_modules(
     @resource.ImageLoader::get_path_image_loader(),
   )
   let login_module = @login.Module::load(
-    network, ui, char_look_module, io_service, local_storage,
+    network, ui, char_look_module, local_storage,
   )
   let handlers = login_module.make_handlers(
     fn(map_id, portal_id) {
@@ -196,14 +188,14 @@ async fn load_modules(
     quest_module,
   )
   merge_handlers(handlers)
-  let monster_module = @monster.Module::new(io_service)
+  let monster_module = @monster.Module::new()
   merge_handlers(
     monster_module.make_handlers(fn() {
       // get_stage().get_player().map(fn(p) { p.get_stats() })
       ...
     }),
   )
-  let drop_module = @drop.Module::load(io_service)
+  let drop_module = @drop.Module::load()
   merge_handlers(
     drop_module.make_handlers(fn(id) {
       // get_stage().get_character(id).map(fn(c) { c.get_phobj() })
@@ -219,7 +211,6 @@ async fn load_modules(
     monster_module.get_map_mobs(),
     network,
     string_loader,
-    io_service,
     bullet_module,
   )
   let skill_book_module = @skill_book.Module::load(
@@ -229,13 +220,12 @@ async fn load_modules(
     },
     network,
     string_loader,
-    io_service,
     combat,
     inventory_module.get_inventory(),
   )
   merge_handlers(skill_book_module.make_handlers())
   // merge_actions(skill_book_module.make_actions())
-  let shop_module = @shop.Module::load(network, string_loader, io_service)
+  let shop_module = @shop.Module::load(network, string_loader)
   merge_handlers(shop_module.make_handlers())
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
     // guard get_stage().get_player() is Some(player) else { return }

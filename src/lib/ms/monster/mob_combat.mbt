@@ -7,15 +7,11 @@ struct MobCombat {
   // attack_results : @utils.TimedQueue[@combat.AttackResult]
   // damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[DamageNumber]
-  io_service : @io_task.IOService
 }
 
 ///|
-pub fn MobCombat::new(
-  mobs : MapMobs,
-  io_service : @io_task.IOService,
-) -> MobCombat {
-  { mobs, io_service }
+pub fn MobCombat::new(mobs : MapMobs) -> MobCombat {
+  { mobs, }
 }
 
 ///|
@@ -34,9 +30,9 @@ pub fn MobCombat::use_move(
         let mov = mob.get_move_attack(action_id)
         apply_move_attack(mov, mob)
       } else if skill_id != 0 {
-        let fut = mob.get_move_skill(skill_id, level, self.io_service)
-        self.io_service.execute(fn() {
-          let mov = self.io_service.wait(fut).unwrap_or_error()
+        let fut = mob.get_move_skill(skill_id, level)
+        @io_service.execute_background(fn() {
+          let mov = @io_service.wait_future(fut).unwrap_or_error()
           apply_move_skill(mov, mob)
         })
       }

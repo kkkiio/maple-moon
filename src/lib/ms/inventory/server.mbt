@@ -52,7 +52,6 @@ fn handle_modify_inventory(
   inventory : Inventory,
   player_getter : () -> @player.Player?,
   message : ModifyInventoryMessage,
-  io_service : @io_task.IOService,
 ) -> Unit {
   guard player_getter() is Some(player) else { return }
   for mod in message.mods {
@@ -76,8 +75,8 @@ fn handle_modify_inventory(
       Movement::MOVE_INTERNAL =>
         match mod.t {
           TypeId::EQUIPPED => {
-            change_equipment(inventory, player, -mod.pos, io_service)
-            change_equipment(inventory, player, -mod.arg, io_service)
+            change_equipment(inventory, player, -mod.pos)
+            change_equipment(inventory, player, -mod.arg)
           }
           TypeId::EQUIP
           | TypeId::USE
@@ -87,9 +86,9 @@ fn handle_modify_inventory(
         }
       Movement::MOVE_EQUIP | Movement::MOVE_UNEQUIP =>
         if mod.pos < 0 {
-          change_equipment(inventory, player, -mod.pos, io_service)
+          change_equipment(inventory, player, -mod.pos)
         } else if mod.arg < 0 {
-          change_equipment(inventory, player, -mod.arg, io_service)
+          change_equipment(inventory, player, -mod.arg)
         }
       _ => ()
     }
@@ -102,13 +101,12 @@ fn change_equipment(
   inventory : Inventory,
   player : @player.Player,
   raw_slot_id : Int,
-  io_service : @io_task.IOService,
 ) -> Unit {
   let slot = @equip_slot.Id::from_int(raw_slot_id)
   match inventory.get_item_id(TypeId::EQUIPPED, raw_slot_id) {
     0 => player.character.get_look().remove_equip(slot)
     itemid =>
-      io_service.execute(async fn() {
+      @io_service.execute_background(async fn() {
         let itemdata = @item.ItemData::get_async(itemid)
         player.character.get_look().add_equip(itemdata, slot)
       })

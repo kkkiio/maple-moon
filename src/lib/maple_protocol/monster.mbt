@@ -1,8 +1,4 @@
-///|
-using @struct {type Point}
-
-///|
-using @physics {type Movement}
+/// Messages for monsters activities.
 
 ///|
 /// Message for moving a monster
@@ -39,3 +35,9 @@ pub impl @net.OutMessage for MoveMonsterMessage with pack(self) -> @net.OutPacke
   @physics.write_movement(packet, self.movement)
   packet
 }
+
+///|
+using @struct {type Point}
+
+///|
+using @physics {type Movement}

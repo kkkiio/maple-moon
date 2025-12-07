@@ -4,7 +4,6 @@ struct Module {
   player_getter : () -> @player.Player?
   network : @net.Network
   string_loader : @resource.SyncLoader
-  io_service : @io_task.IOService
 }
 
 ///|
@@ -12,15 +11,8 @@ pub fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
 ) -> Module {
-  {
-    inventory: Inventory::new(network),
-    player_getter,
-    network,
-    string_loader,
-    io_service,
-  }
+  { inventory: Inventory::new(network), player_getter, network, string_loader }
 }
 
 ///|
@@ -37,12 +29,7 @@ pub fn Module::make_handlers(
       @net.MODIFY_INVENTORY,
       parse_modify_inventory,
       fn(message) {
-        handle_modify_inventory(
-          self.inventory,
-          self.player_getter,
-          message,
-          self.io_service,
-        )
+        handle_modify_inventory(self.inventory, self.player_getter, message)
       },
       log_recv=true,
     ),

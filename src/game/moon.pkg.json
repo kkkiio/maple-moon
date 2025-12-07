@@ -11,7 +11,8 @@
     "KKKIIO/maple-moon/lib/ms/map",
     "KKKIIO/maple-moon/lib/game_server",
     "KKKIIO/maple-moon/lib/logic_fps",
-    "KKKIIO/maple-moon/lib/ms/player"
+    "KKKIIO/maple-moon/lib/ms/player",
+    "KKKIIO/maple-moon/lib/io_service"
   ],
   "overrides": [
     "Milky2018/selene-canvas"

@@ -7,7 +7,7 @@
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/game_mod",
-    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/io_service",
     "rami3l/js-ffi/js"
   ]
 }

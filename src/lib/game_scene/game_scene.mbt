@@ -14,7 +14,6 @@ pub(all) struct Stage {
   // char_stats_module : @char_stats.Module
   // network : @net.Network
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
-  io_service : @io_task.IOService
   // bullet_module : @bullet.Module
 }
 
@@ -31,7 +30,6 @@ pub fn Stage::new(
   // char_stats_module : @char_stats.Module,
   // damage_number_set : @ui.NumberSet,
   // network : @net.Network,
-  io_service : @io_task.IOService,
   // bullet_module : @bullet.Module,
   // combat : @combat_impl2.Combat,
 ) -> Stage {
@@ -50,9 +48,8 @@ pub fn Stage::new(
     // char_stats_module,
     // network,
     map_change_listeners: Array::new(),
-    io_service,
-    // bullet_module,
   }
+  // bullet_module,
 }
 
 ///|
@@ -365,7 +362,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       let stage = stage_ref.val.unwrap()
       guard loading_map is Some(fut) else {
         t.loading_map = Some(
-          stage.io_service.submit(fn() {
+          @io_service.submit_background_task(fn() {
             @map.load_map(map_id, stage.map_portals_animations)
           }),
         )
@@ -436,12 +433,10 @@ fn new_stage(char_look : @char_look.CharLook) -> Stage {
   @player.set_player(player)
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
-  let io_service = @io_task.IOService::new()
-  let monster_module = @monster.Module::new(io_service)
+  let monster_module = @monster.Module::new()
   let stage = Stage::new(
     map_module.get_portals_animations(),
     monster_module.get_map_mobs(),
-    @io_task.IOService::new(),
   )
   stage_ref.val = Some(stage)
   stage

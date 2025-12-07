@@ -762,10 +762,9 @@ pub fn Mob::get_move_skill(
   self : Mob,
   move_id : Int,
   level : Int,
-  io_service : @io_task.IOService,
 ) -> @utils.Future[Result[MobSkill, Error]] {
   self.skill_cache.get_or_init(move_id, fn() {
-    io_service.submit(fn() { MobSkill::load(move_id, level) })
+    @io_service.submit_background_task(fn() { MobSkill::load(move_id, level) })
   })
 }
 

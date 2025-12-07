@@ -38,7 +38,7 @@ pub fn start_editor() -> Unit {
 ///|
 pub fn load_map_ffi(id : Int) -> Unit {
   viewer_state.val.map_future = Some(
-    viewer_state.val.io_service.submit(fn() {
+    @io_service.submit_background_task(fn() {
       let portal_animations = @map.Module::load().get_portals_animations()
       let raw = @map.load_map_resources_by_id(id)
       let scene = @map.parse_scene_map(raw, portal_animations)
@@ -83,7 +83,6 @@ fn default_visibility() -> LayerVisibility {
 
 ///|
 priv struct ViewerState {
-  io_service : @io_task.IOService
   mut map_future : @utils.Future[
     Result[(@map.MapRawResources, @map.SceneMap), Error],
   ]?
@@ -103,7 +102,6 @@ priv struct SceneState {
 
 ///|
 let viewer_state : Ref[ViewerState] = Ref::new({
-  io_service: @io_task.IOService::new(),
   map_future: None,
   scene_state: None,
   error_message: None,
@@ -121,7 +119,7 @@ fn start_map_loading_system(_delta : Double) -> Unit {
   viewer_state.val.error_message = None
   let portal_animations = @map.Module::load().get_portals_animations()
   viewer_state.val.map_future = Some(
-    viewer_state.val.io_service.submit(fn() {
+    @io_service.submit_background_task(fn() {
       let raw = @map.load_map_resources_by_id(MAP_ID)
       let scene = @map.parse_scene_map(raw, portal_animations)
       (raw, scene)

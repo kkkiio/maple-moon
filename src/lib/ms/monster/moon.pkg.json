@@ -17,7 +17,7 @@
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/ms/char_stats",
     "KKKIIO/maple-moon/lib/ms/maple_stat",
-    "KKKIIO/maple-moon/lib/io_task",
+    "KKKIIO/maple-moon/lib/io_service",
     "Milky2018/selene/position",
     "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/game_server",

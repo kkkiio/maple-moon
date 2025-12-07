@@ -4,7 +4,7 @@ struct Module {
 }
 
 ///|
-pub async fn Module::load(io_service : @io_task.IOService) -> Module {
+pub async fn Module::load() -> Module {
   let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
     "special_item",
     loader=@resource.DirResourceLoader::new(
@@ -12,7 +12,7 @@ pub async fn Module::load(io_service : @io_task.IOService) -> Module {
     ),
   )
   let src = special_item_loader.load_res_async(["0900.img"])
-  { map_drops: MapDrops::new(io_service, src) }
+  { map_drops: MapDrops::new(src) }
 }
 
 ///|

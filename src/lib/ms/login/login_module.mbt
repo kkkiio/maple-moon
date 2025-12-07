@@ -13,7 +13,6 @@ struct Module {
   // mut input_acc_pass : (String, String)?
   mut select_cid : Int?
   login_loader : @resource.SyncLoader
-  io_service : @io_task.IOService
 }
 
 ///|
@@ -21,7 +20,6 @@ pub async fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
   char_look_module : @char_look.Module,
-  io_service : @io_task.IOService,
   local_storage : @config.LocalStorage,
 ) -> Module {
   let login_loader = @resource.SyncLoader::load(
@@ -30,7 +28,7 @@ pub async fn Module::load(
     @resource.ImageLoader::get_path_image_loader(),
   )
   Module::new(
-    network, ui_container, char_look_module, local_storage, login_loader, io_service,
+    network, ui_container, char_look_module, local_storage, login_loader,
   )
 }
 
@@ -41,7 +39,6 @@ pub fn Module::new(
   char_look_module : @char_look.Module,
   local_storage : @config.LocalStorage,
   login_loader : @resource.SyncLoader,
-  io_service : @io_task.IOService,
 ) -> Module {
   {
     network,
@@ -54,7 +51,6 @@ pub fn Module::new(
     connect_task: None,
     // input_acc_pass: None,
     select_cid: None,
-    io_service,
     local_storage,
     login_loader,
   }
@@ -545,7 +541,7 @@ async fn on_new_character(mod : Module) -> Unit {
           res,
           hooks,
           fn(entry, cb) {
-            mod.io_service.execute(fn() {
+            @io_service.execute_background(fn() {
               let char_look = mod.char_look_module.load_char_look(entry)
               cb(char_look)
             })

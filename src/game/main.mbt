@@ -29,5 +29,6 @@ fn main {
   .add_system(@map.portal_system, system_name="portal_system")
   .add_system(@combat_impl2.combat_system, system_name="combat_system")
   .add_system(@game_server.server_system, system_name="server_system")
+  .add_system(@io_service.io_system, system_name="io_system")
   .run()
 }

@@ -16,7 +16,7 @@ struct MapPortalAnimations {
 
 ///|
 pub fn MapPortals::new(
-  src : Array[PortalMarker],
+  src : Array[NxPortal],
   mapid : Int,
   map_portals_animations : MapPortalAnimations,
 ) -> MapPortals {
@@ -78,9 +78,11 @@ pub fn MapPortals::find_warp_at(
   if self.id_portal_map
     .iter()
     .map(fn(it) { it.1 })
-    .find_first(fn(portal) { portal.bounds().contains(playerpos) })
+    .find_first(fn(portal) {
+      portal.warp_info.map_id < 999999999 && portal.bounds().contains(playerpos)
+    })
     is Some(portal) {
-    return Some(portal.getwarpinfo())
+    return Some(portal.warp_info)
   }
   None
 }
@@ -220,7 +222,7 @@ test "parse portals" {
       "y": 194,
     },
   }
-  let res : @resource.MapBasedArray[PortalMarker] = @json.from_json(json)
+  let res : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
   @json.inspect(res.0, content=[
     {
       "pn": "sp",

@@ -831,10 +831,6 @@ fn check_portals(
     player.respawn(startpos, map_info.is_underwater())
     // } else if warpinfo.valid {
   } else {
-    guard warpinfo.mapid is Some(map_id) else {
-      @log.error({ "warpinfo": warpinfo }, "missing map id")
-      panic()
-    }
     let message = ChangeMapMessage::{
       died: false,
       target_id: -1,
@@ -842,7 +838,7 @@ fn check_portals(
       use_wheel: false,
     }
     let stats = player.get_stats()
-    stats.set_map_id(map_id)
+    stats.set_map_id(warpinfo.map_id)
     @game_server.send(message, log_level=@log.Level::INFO)
   }
 

@@ -86,9 +86,7 @@ pub fn MapRawResources::get_backgrounds(
 }
 
 ///|
-pub fn MapRawResources::get_portals(
-  self : MapRawResources,
-) -> Array[PortalMarker] {
+pub fn MapRawResources::get_portals(self : MapRawResources) -> Array[NxPortal] {
   self.nx_map.portal
 }
 
@@ -96,7 +94,7 @@ pub fn MapRawResources::get_portals(
 pub struct NxMap {
   layers : Array[NxLayer]
   back : BackgroundsResource
-  portal : Array[PortalMarker]
+  portal : Array[NxPortal]
   foothold : @physics.NxFootholdTree
   mini_map : MiniMapResource?
 }
@@ -112,7 +110,7 @@ pub impl @json.FromJson for NxMap with from_json(json, path) {
   } else {
     BackgroundsResource([])
   }
-  let portal : Array[PortalMarker] = if obj.get("portal") is Some(portal) {
+  let portal : Array[NxPortal] = if obj.get("portal") is Some(portal) {
     @resource.parse_map_based_array(portal, path=path.add_key("portal"))
   } else {
     []

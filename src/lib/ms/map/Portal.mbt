@@ -1,5 +1,21 @@
 ///|
+/// 传送门
+struct NxPortal {
+  /// portal name
+  pn : String
+  /// target map id. `999999999` 通常表示无目标 (常用于出生点).
+  tm : Int
+  /// target portal name.
+  tn : String
+  x : Int
+  y : Int
+  /// portal type
+  pt : PortalType
+} derive(Show, @json.FromJson, ToJson)
+
+///|
 pub(all) enum PortalType {
+  /// 出生点
   SPAWN = 0
   /// A normal portal that is not visible and not hidden.
   INVISIBLE = 1
@@ -55,7 +71,7 @@ pub impl @json.FromJson for PortalType with from_json(json, path) -> PortalType 
 
 ///|
 pub(all) struct PortalWarpInfo {
-  mapid : Int?
+  map_id : Int
   toname : String
   name : String
   /// whether the target is in the current map
@@ -69,21 +85,7 @@ fn PortalWarpInfo::new(
   tn : String,
   n : String,
 ) -> PortalWarpInfo {
-  {
-    mapid: if m < 999999999 {
-      Some(m)
-    } else {
-      None
-    },
-    toname: tn,
-    name: n,
-    intra_map: i,
-  }
-}
-
-///|
-fn PortalWarpInfo::default() -> PortalWarpInfo {
-  { mapid: None, toname: "", name: "", intra_map: false }
+  { map_id: m, toname: tn, name: n, intra_map: i }
 }
 
 ///|

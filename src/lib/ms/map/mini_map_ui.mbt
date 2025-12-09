@@ -275,33 +275,18 @@ priv struct MapDrawData {
 }
 
 ///|
-/// 静态标记（传送门）
-struct PortalMarker {
-  /// portal name
-  pn : String
-  /// target name
-  tn : String
-  x : Int
-  y : Int
-  /// target map id
-  tm : Int
-  /// portal type
-  pt : PortalType
-} derive(Show, @json.FromJson, ToJson)
-
-///|
 /// 完整的迷你地图资源
 struct MiniMapRuntimeResource {
   canvas : @resource.NxAnimation // 地图画布纹理
   draw_data : MapDrawData // 绘制数据
-  portals : Array[PortalMarker] // 传送门标记列表
+  portals : Array[NxPortal] // 传送门标记列表
 }
 
 ///|
 /// Loads minimap resources from a map node
 fn MiniMapRuntimeResource::load(
   resource : MiniMapResource,
-  portals : Array[PortalMarker],
+  portals : Array[NxPortal],
 ) -> MiniMapRuntimeResource {
   let mag = resource.mag
   let center_x = resource.center_x
@@ -661,9 +646,7 @@ test "parse portal marker" {
       #| {"0":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-289,"y":227},"1":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-147,"y":235},"2":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-68,"y":235},"3":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":2,"y":237},"4":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":84,"y":234},"5":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":2685,"y":57},"6":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":2752,"y":59},"7":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":2836,"y":58},"8":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":2900,"y":60},"9":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":3064,"y":48},"10":{"pn":"west00","pt":2,"tm":105050100,"tn":"east00","x":-222,"y":318},"11":{"pn":"east00","pt":2,"tm":105050300,"tn":"west00","x":3013,"y":138}}
     ),
   )
-  let portal_markers : @resource.MapBasedArray[PortalMarker] = @json.from_json(
-    json,
-  )
+  let portal_markers : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
   inspect(
     portal_markers,
     content=(
@@ -679,9 +662,7 @@ test "parse portal marker of Ellinia" {
       #|{"0":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-810,"y":99},"1":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":705,"y":256},"2":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-849,"y":-1069},"3":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":990,"y":-939},"4":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-856,"y":-2563},"5":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":452,"y":-1982},"6":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":584,"y":-2764},"7":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":344,"y":-3603},"8":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-183,"y":146},"9":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-382,"y":-443},"10":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":707,"y":-445},"11":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":116,"y":-1023},"12":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-428,"y":-986},"13":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-611,"y":-1423},"14":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":1053,"y":-1732},"15":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":907,"y":-1465},"16":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":283,"y":-2357},"17":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":425,"y":-2543},"18":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":1067,"y":-2349},"19":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-251,"y":-2571},"20":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-545,"y":-1855},"21":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-1016,"y":-1800},"22":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-688,"y":-2248},"23":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-390,"y":-3142},"24":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":-370,"y":-3931},"25":{"pn":"sp","pt":0,"tm":999999999,"tn":"","x":1063,"y":-3805},"26":{"pn":"jobin00","pt":7,"script":"enterMagiclibrar","tm":999999999,"tn":"","x":334,"y":-3987},"27":{"pn":"in04","pt":7,"script":"inERShip","tm":999999999,"tn":"","x":-702,"y":-3123},"28":{"image":"","pn":"ph00","pt":10,"tm":101000000,"tn":"ph00_1","x":-1068,"y":-2475},"29":{"image":"","pn":"ph00_1","pt":10,"tm":101000000,"tn":"ph00","x":425,"y":180},"30":{"pn":"in02","pt":2,"tm":101000200,"tn":"out00","x":1330,"y":236},"31":{"pn":"h001","pt":1,"tm":999999999,"tn":"","x":313,"y":-3529},"32":{"pn":"h002","pt":1,"tm":999999999,"tn":"","x":386,"y":-1886},"33":{"pn":"h003","pt":1,"tm":999999999,"tn":"","x":51,"y":108},"34":{"pn":"gm00","pt":1,"tm":999999999,"tn":"","x":44,"y":-1924},"35":{"pn":"gm01","pt":1,"tm":999999999,"tn":"","x":-644,"y":250},"36":{"pn":"gm02","pt":1,"tm":999999999,"tn":"","x":414,"y":-357},"37":{"pn":"gm03","pt":1,"tm":999999999,"tn":"","x":-439,"y":-2929},"38":{"pn":"gm04","pt":1,"tm":999999999,"tn":"","x":480,"y":-3547},"39":{"image":"","pn":"ph01","pt":10,"tm":101000000,"tn":"ph01_1","x":-609,"y":-54},"40":{"image":"","pn":"ph01_1","pt":10,"tm":101000000,"tn":"ph01","x":-120,"y":-3177},"41":{"pn":"wd00","pt":1,"tm":999999999,"tn":"","x":27,"y":-1417},"42":{"pn":"west00","pt":2,"tm":100050000,"tn":"east00","x":-1012,"y":298},"43":{"pn":"top00","pt":2,"tm":101010000,"tn":"east00","x":-1091,"y":-2809},"44":{"pn":"in00","pt":2,"tm":101000001,"tn":"out00","x":786,"y":-2281},"45":{"pn":"in01","pt":2,"tm":101000002,"tn":"out01","x":-123,"y":-1940},"46":{"pn":"in03","pt":2,"tm":101000300,"tn":"out00","x":819,"y":-3072},"47":{"pn":"hp02","pt":10,"tm":101000000,"tn":"hp02_1","x":-429,"y":-945},"48":{"pn":"hp02_1","pt":10,"tm":101000000,"tn":"hp02","x":1191,"y":-2315},"49":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":516,"y":-1714},"50":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":584,"y":-1677},"51":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":286,"y":-1698},"52":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":213,"y":-1699},"53":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":365,"y":-1702},"54":{"pn":"tp","pt":6,"tm":999999999,"tn":"","x":445,"y":-1712}}
     ),
   )
-  let portal_markers : @resource.MapBasedArray[PortalMarker] = @json.from_json(
-    json,
-  )
+  let portal_markers : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
   inspect(
     portal_markers,
     content=(

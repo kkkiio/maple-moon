@@ -10,16 +10,8 @@ pub(all) struct SceneMap {
 }
 
 ///|
-pub async fn load_map(
-  map_id : Int,
-  map_portals_animations : MapPortalAnimations,
-) -> SceneMap {
-  let raw = load_map_resources_by_id(map_id)
-  parse_scene_map(raw, map_portals_animations)
-}
-
-///|
-pub fn parse_scene_map(
+/// Creates a new scene map from the given raw map resources.
+pub fn create_scene_map(
   raw : MapRawResources,
   map_portals_animations : MapPortalAnimations,
 ) -> SceneMap raise {
@@ -34,7 +26,7 @@ pub fn parse_scene_map(
     raw.nx_map.back,
     raw.background_animation_sets,
   )
-  let physics = @physics.Physics::from_resource(raw.foothold)
+  let physics = @physics.Physics::from_resource(raw.nx_map.foothold)
   let map_info = MapInfo::from_resource(
     raw.root,
     physics.get_fht().get_walls(),
@@ -46,17 +38,9 @@ pub fn parse_scene_map(
     map_portals_animations,
   )
   // Check if miniMap exists
-  let mini_map_node = raw.root["miniMap"]
-  let mini_map_resources = if mini_map_node.is_null() {
-    None
-  } else {
-    Some(
-      MiniMapRuntimeResource::load(
-        @json.from_json(mini_map_node.value()),
-        raw.get_portals(),
-      ),
-    )
-  }
+  let mini_map_resources = raw.nx_map.mini_map.map(fn(it) {
+    MiniMapRuntimeResource::load(it, raw.get_portals())
+  })
   {
     id: raw.id,
     tiles_objs,

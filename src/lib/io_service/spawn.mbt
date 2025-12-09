@@ -1,5 +1,5 @@
 ///|
-// fn spawn_background_ffi(f : () -> Unit) -> Unit = "async" "spawn_background"
+/// run f in the background.
 extern "js" fn spawn_background_ffi(f : () -> Unit) -> Unit =
   #| (f) => setTimeout(f, 0)
 

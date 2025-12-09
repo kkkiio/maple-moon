@@ -1,5 +1,6 @@
 ///|
 fn game_start(_delta : Double) -> Unit {
+  @login.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @login.add_select_char_ui() catch {
     e => abort("add select char ui failed: \{e.to_string()}")

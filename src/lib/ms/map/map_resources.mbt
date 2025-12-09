@@ -11,7 +11,6 @@ pub(all) struct MapRawResources {
     String,
     Map[BackgroundAnimationPath, @resource.NxAnimation],
   ]
-  foothold : @physics.NxFootholdTree
   root : @resource.NxNode
 }
 
@@ -21,7 +20,7 @@ using @resource {get_mapx_loader}
 ///|
 /// Loads the raw map resources by map id.
 pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
-  guard map_id >= 0
+  guard map_id >= 0 else { fail("invalid map_id=\{map_id}") }
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
@@ -30,7 +29,9 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   guard not(src.is_null()) else {
     raise @resource.LoadError("map not found, id=\{map_id}")
   }
-  let nx_map : NxMap = @json.from_json(src.value())
+  let nx_map : NxMap = @json.from_json(src.value()) catch {
+    err => fail("failed to parse nx map: \{err.to_string()}")
+  }
   let tilesets = {}
   for layer in nx_map.layers {
     if layer.info is Some({ tS }) {
@@ -62,14 +63,12 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
     let path = BackgroundAnimationPath::from_nx(background)
     sets[path] = load_background_animation(bs_loader, background.bS, path)
   }
-  let foothold = @json.from_json(src["foothold"].value())
   {
     id: map_id,
     nx_map,
     tilesets,
     object_animation_sets,
     background_animation_sets,
-    foothold,
     root: src,
   }
 }
@@ -98,6 +97,8 @@ pub struct NxMap {
   layers : Array[NxLayer]
   back : BackgroundsResource
   portal : Array[PortalMarker]
+  foothold : @physics.NxFootholdTree
+  mini_map : MiniMapResource?
 }
 
 ///|
@@ -116,7 +117,17 @@ pub impl @json.FromJson for NxMap with from_json(json, path) {
   } else {
     []
   }
-  { layers, back, portal }
+  let foothold = if obj.get("foothold") is Some(foothold) {
+    @json.from_json(foothold, path=path.add_key("foothold"))
+  } else {
+    @physics.NxFootholdTree(Map::new())
+  }
+  let mini_map = if obj.get("mini_map") is Some(mini_map) {
+    @json.from_json(mini_map, path=path.add_key("mini_map"))
+  } else {
+    None
+  }
+  { layers, back, portal, foothold, mini_map }
 }
 
 ///|

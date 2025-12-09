@@ -363,7 +363,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard loading_map is Some(fut) else {
         t.loading_map = Some(
           @io_service.submit_background_task(fn() {
-            @map.load_map(map_id, stage.map_portals_animations)
+            let map_resources = @map.load_map_resources_by_id(map_id)
+            @map.create_scene_map(map_resources, stage.map_portals_animations)
           }),
         )
         return

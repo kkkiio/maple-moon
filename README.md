@@ -20,4 +20,6 @@ Visit http://localhost:8080/mapeditor to open the map editor.
 ```bash
 # run all unit tests
 moon test
+# test specific file
+moon test src/lib/map/background.mbt
 ```

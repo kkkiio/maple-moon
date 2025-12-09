@@ -41,7 +41,7 @@ pub fn load_map_ffi(id : Int) -> Unit {
     @io_service.submit_background_task(fn() {
       let portal_animations = @map.Module::load().get_portals_animations()
       let raw = @map.load_map_resources_by_id(id)
-      let scene = @map.parse_scene_map(raw, portal_animations)
+      let scene = @map.create_scene_map(raw, portal_animations)
       (raw, scene)
     }),
   )
@@ -121,7 +121,7 @@ fn start_map_loading_system(_delta : Double) -> Unit {
   viewer_state.val.map_future = Some(
     @io_service.submit_background_task(fn() {
       let raw = @map.load_map_resources_by_id(MAP_ID)
-      let scene = @map.parse_scene_map(raw, portal_animations)
+      let scene = @map.create_scene_map(raw, portal_animations)
       (raw, scene)
     }),
   )

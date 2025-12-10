@@ -15,7 +15,7 @@ pub(all) struct MapRawResources {
 }
 
 ///|
-using @resource {get_mapx_loader}
+using @resource {get_mapx_loader, get_background_set_loader}
 
 ///|
 /// Loads the raw map resources by map id.
@@ -46,15 +46,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
       sets[path] = load_obj_animation(obj.oS, path)
     }
   }
-  let bs_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "background_set_loader",
-    loader=@resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Back",
-      "/assets/map/back",
-    ),
-    base_url="/assets",
-    image_base_url="/",
-  )
+  let bs_loader = get_background_set_loader()
   let background_animation_sets = {}
   for background in nx_map.back.0 {
     let sets = background_animation_sets.get_or_init(background.bS, fn() {

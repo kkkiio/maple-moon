@@ -102,7 +102,7 @@ pub fn MapleButton::new(
     }
   })
   @collision.pickables.set(entity, pickable)
-  @ui.uis.set(entity, @ui.Ui::new())
+  @sui.uis.set(entity, @sui.Ui::new())
   { entity, }
 }
 

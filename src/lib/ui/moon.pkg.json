@@ -8,7 +8,10 @@
     "KKKIIO/maple-moon/lib/ms/physics",
     "Milky2018/selene/sprite",
     "Milky2018/selene/position",
-    "Milky2018/selene/ui",
+    {
+      "path": "Milky2018/selene/ui",
+      "alias": "sui"
+    },
     "Milky2018/selene/collision",
     {
       "path": "Milky2018/selene/math",

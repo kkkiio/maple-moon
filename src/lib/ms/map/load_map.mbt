@@ -1,7 +1,7 @@
 ///|
 pub(all) struct SceneMap {
   id : Int
-  tiles_objs : MapTilesObjs
+  tiles_objs : MapLayers
   backgrounds : Backgrounds
   physics : @physics.Physics
   map_info : MapInfo
@@ -17,7 +17,7 @@ pub fn create_scene_map(
 ) -> SceneMap raise {
   // TODO: CashShopPreview
   let layers = raw.nx_map.layers
-  let tiles_objs = MapTilesObjs::new(
+  let tiles_objs = MapLayers::new(
     raw.tilesets,
     raw.object_animation_sets,
     layers,

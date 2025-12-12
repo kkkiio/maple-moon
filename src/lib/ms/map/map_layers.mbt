@@ -75,16 +75,16 @@ fn TilesObjsLayer::new(
 
 ///|
 /// The collection of tile and obj layers on a map.
-struct MapTilesObjs {
+struct MapLayers {
   layers : Array[TilesObjsLayer]
 }
 
 ///|
-pub fn MapTilesObjs::new(
+pub fn MapLayers::new(
   tilesets : Map[String, NxTileSet],
   object_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]],
   layer_resource : Array[NxLayer],
-) -> MapTilesObjs {
+) -> MapLayers {
   let layers = []
   let mut z_offset = @graphics.OBJECT_TILE_LAYER_ZINDEX
   for i in @graphics.map_layers {
@@ -115,7 +115,7 @@ pub struct TileObjectsVisibility {
 
 ///|
 priv struct TileObjectsContext {
-  tiles_objs : MapTilesObjs
+  tiles_objs : MapLayers
   tile_entities : Array[@entity.Entity]
   obj_entities : Array[@entity.Entity]
   mut tiles_visible : Bool
@@ -130,7 +130,7 @@ let tile_objects_context : Ref[TileObjectsContext?] = Ref::new(None)
 ///|
 /// 将地图的 Tile 与 Obj 数据绑定到渲染系统，创建/重建对应实体。
 /// - `tiles_objs`: 解析后的 Tile/Obj 数据。
-pub fn set_tiles_objs(tiles_objs : MapTilesObjs) -> Unit {
+pub fn set_tiles_objs(tiles_objs : MapLayers) -> Unit {
   if tile_objects_context.val is Some(ctx) {
     destroy_entities(ctx.tile_entities)
     destroy_entities(ctx.obj_entities)
@@ -266,7 +266,7 @@ fn apply_obj_visibility(ctx : TileObjectsContext) -> Unit {
 }
 
 ///|
-fn count_tiles(tiles_objs : MapTilesObjs) -> Int {
+fn count_tiles(tiles_objs : MapLayers) -> Int {
   let mut total = 0
   for layer in tiles_objs.layers {
     total += layer.tiles.length()
@@ -275,7 +275,7 @@ fn count_tiles(tiles_objs : MapTilesObjs) -> Int {
 }
 
 ///|
-fn count_objs(tiles_objs : MapTilesObjs) -> Int {
+fn count_objs(tiles_objs : MapLayers) -> Int {
   let mut total = 0
   for layer in tiles_objs.layers {
     total += layer.objs.length()

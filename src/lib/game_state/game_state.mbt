@@ -15,7 +15,7 @@ pub(all) enum GamePhase {
   GameActive(
     map_id~ : Int,
     portal_id~ : Int,
-    tiles_objs~ : @map.MapTilesObjs,
+    tiles_objs~ : @map.MapLayers,
     backgrounds~ : @map.Backgrounds,
     physics~ : @physics.Physics,
     map_info~ : @map.MapInfo,

@@ -17,7 +17,7 @@ pub fn create_scene_map(
 ) -> SceneMap raise {
   // TODO: CashShopPreview
   let layers = raw.nx_map.layers
-  let tiles_objs = MapTilesObjs::load(
+  let tiles_objs = MapTilesObjs::new(
     raw.tilesets,
     raw.object_animation_sets,
     layers,

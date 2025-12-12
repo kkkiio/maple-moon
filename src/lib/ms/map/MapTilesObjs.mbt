@@ -1,31 +1,27 @@
 ///|
 /// A tile and obj layer.
-struct TilesObjs {
-  tiles : Array[Tile] // sorted by z
+struct TilesObjsLayer {
+  object_z_offset : Int
   objs : Array[Obj] // sorted by z
+  tile_z_offset : Int
+  tiles : Array[Tile] // sorted by z
+  z_end : Int
 }
 
 ///|
 pub async fn load_tileset(ts : String) -> NxTileSet {
-  let tile_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "tile",
-    loader=@resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Tile",
-      "/assets/map/tile",
-    ),
-    base_url="/assets",
-  )
-  let node = tile_loader.load_res_async([ts + ".img"])
+  let node = get_tile_loader().load_res_async([ts + ".img"])
   @json.from_json(node.value())
 }
 
 ///|
-pub fn TilesObjs::load(
+pub fn TilesObjsLayer::from_resources(
   tileset : NxTileSet?,
   object_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]],
   tile_resource : Array[NxTileRef],
   obj_resource : Array[NxObj],
-) -> TilesObjs {
+  z_offset : Int,
+) -> TilesObjsLayer {
   // Load tiles
   let tiles = []
   for tilenode in tile_resource {
@@ -38,58 +34,75 @@ pub fn TilesObjs::load(
     let animation = object_sets[nx_obj.oS][ObjectAnimationPath::from_obj(nx_obj)]
     objs.push(Obj::new(nx_obj, animation))
   }
-  TilesObjs::new(tiles, objs)
+  TilesObjsLayer::new(tiles, objs, z_offset)
 }
 
 ///|
-fn TilesObjs::new(tiles : Array[Tile], objs : Array[Obj]) -> TilesObjs {
-  // Sort tiles and objs by z
-  let tileZMap = Map::new()
-  for tile in tiles {
-    let z = tile.z
-    tileZMap.get_or_init(z, fn() { [] }).push(tile)
-  }
-  let objZMap = Map::new()
+fn TilesObjsLayer::new(
+  tiles : Array[Tile],
+  objs : Array[Obj],
+  z_offset : Int,
+) -> TilesObjsLayer {
+  let obj_z_map = Map::new()
+  let object_z_offset = z_offset
+  let mut max_z = 0
   for obj in objs {
     let z = obj.get_z()
-    objZMap.get_or_init(z, fn() { [] }).push(obj)
+    max_z = @cmp.maximum(max_z, z)
+    obj_z_map.get_or_init(z, fn() { [] }).push(obj)
   }
-  let zTiles = tileZMap.to_array()
+  let tile_z_map = Map::new()
+  let tile_z_offset = object_z_offset + max_z
+  let mut max_z = 0
+  for tile in tiles {
+    let z = tile.z
+    max_z = @cmp.maximum(max_z, z)
+    tile_z_map.get_or_init(z, fn() { [] }).push(tile)
+  }
+  let z_end = tile_z_offset + max_z
+  let zTiles = tile_z_map.to_array()
   zTiles.sort_by_key(fn(it) { it.0 })
-  let zObjs = objZMap.to_array()
+  let zObjs = obj_z_map.to_array()
   zObjs.sort_by_key(fn(it) { it.0 })
   {
     tiles: zTiles.iter().flat_map(fn(it) { it.1.iter() }).collect(),
     objs: zObjs.iter().flat_map(fn(it) { it.1.iter() }).collect(),
+    tile_z_offset,
+    object_z_offset,
+    z_end,
   }
-}
-
-///|
-pub fn TilesObjs::default() -> TilesObjs {
-  { tiles: [], objs: [] }
 }
 
 ///|
 /// The collection of tile and obj layers on a map.
 struct MapTilesObjs {
-  layers : Array[TilesObjs]
+  layers : Array[TilesObjsLayer]
 }
 
 ///|
-pub fn MapTilesObjs::load(
+pub fn MapTilesObjs::new(
   tilesets : Map[String, NxTileSet],
   object_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]],
   layer_resource : Array[NxLayer],
 ) -> MapTilesObjs {
   let layers = []
-  for id in @map_layer.ids {
-    let layer = layer_resource[id]
-    let tileset = if layer.info is Some({ tS }) {
+  let mut z_offset = @graphics.OBJECT_TILE_LAYER_ZINDEX
+  for i in @graphics.map_layers {
+    let nx_layer = layer_resource[i]
+    let tileset = if nx_layer.info is Some({ tS }) {
       Some(tilesets[tS])
     } else {
       None
     }
-    layers.push(TilesObjs::load(tileset, object_sets, layer.tile, layer.obj))
+    let layer = TilesObjsLayer::from_resources(
+      tileset,
+      object_sets,
+      nx_layer.tile,
+      nx_layer.obj,
+      z_offset,
+    )
+    z_offset = layer.z_end
+    layers.push(layer)
   }
   { layers, }
 }
@@ -220,10 +233,11 @@ fn ensure_obj_entities(ctx : TileObjectsContext) -> Unit {
 fn apply_tile_visibility(ctx : TileObjectsContext) -> Unit {
   let mut idx = 0
   for layer in ctx.tiles_objs.layers {
+    let z_offset = layer.tile_z_offset
     for tile in layer.tiles {
       let entity = ctx.tile_entities[idx]
       if ctx.tiles_visible {
-        ensure_tile_sprite(tile, entity)
+        ensure_tile_sprite(tile, entity, z_offset)
         set_entity_visibility(entity, true)
       } else {
         set_entity_visibility(entity, false)
@@ -237,10 +251,11 @@ fn apply_tile_visibility(ctx : TileObjectsContext) -> Unit {
 fn apply_obj_visibility(ctx : TileObjectsContext) -> Unit {
   let mut idx = 0
   for layer in ctx.tiles_objs.layers {
+    let z_offset = layer.object_z_offset
     for obj in layer.objs {
       let entity = ctx.obj_entities[idx]
       if ctx.objs_visible {
-        ensure_obj_sprite(obj, entity)
+        ensure_obj_sprite(obj, entity, z_offset)
         set_entity_visibility(entity, true)
       } else {
         set_entity_visibility(entity, false)
@@ -269,19 +284,27 @@ fn count_objs(tiles_objs : MapTilesObjs) -> Int {
 }
 
 ///|
-fn ensure_tile_sprite(tile : Tile, entity : @entity.Entity) -> Unit {
+fn ensure_tile_sprite(
+  tile : Tile,
+  entity : @entity.Entity,
+  z_offset : Int,
+) -> Unit {
   if @sprite.sprites.get(entity) is Some(_) {
     return
   }
-  tile.attach_entity(entity)
+  tile.attach_entity(entity, z_offset)
 }
 
 ///|
-fn ensure_obj_sprite(obj : Obj, entity : @entity.Entity) -> Unit {
+fn ensure_obj_sprite(
+  obj : Obj,
+  entity : @entity.Entity,
+  z_offset : Int,
+) -> Unit {
   if @sprite.sprites.get(entity) is Some(_) {
     return
   }
-  obj.attach_entity(entity)
+  obj.attach_entity(entity, z_offset)
 }
 
 ///|
@@ -290,3 +313,6 @@ fn set_entity_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
     sprite.visible = visible
   }
 }
+
+///|
+using @resource {get_tile_loader}

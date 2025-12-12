@@ -40,15 +40,8 @@ pub fn get_mapx_loader() -> AsyncLoader {
 }
 
 ///|
-let background_set_loader : Ref[AsyncLoader?] = Ref::new(None)
-
-///|
-/// 获取背景集的加载器.
-pub fn get_background_set_loader() -> AsyncLoader {
-  if background_set_loader.val is Some(loader) {
-    return loader
-  }
-  let loader = AsyncLoader::new(
+let background_set_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
     "background_set_loader",
     loader=DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Back",
@@ -56,6 +49,68 @@ pub fn get_background_set_loader() -> AsyncLoader {
     ),
     base_url="/assets",
   )
-  background_set_loader.val = Some(loader)
-  return loader
+})
+
+///|
+/// 获取背景集的加载器.
+pub fn get_background_set_loader() -> AsyncLoader {
+  background_set_loader.get()
+}
+
+///|
+let object_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "object_loader",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Obj",
+      "/assets/map/obj",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取地图对象的加载器.
+pub fn get_object_loader() -> AsyncLoader {
+  object_loader.get()
+}
+
+///|
+let tile_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "tile",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Tile",
+      "/assets/map/tile",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取地图瓦片的加载器.
+pub fn get_tile_loader() -> AsyncLoader {
+  tile_loader.get()
+}
+
+///|
+/// Lazy initialization.
+priv struct Lazy[T] {
+  mut val : T?
+  init_f : () -> T
+}
+
+///|
+fn[T] Lazy::new(init_f : () -> T) -> Lazy[T] {
+  { val: None, init_f }
+}
+
+///|
+fn[T] Lazy::get(self : Lazy[T]) -> T {
+  if self.val is Some(val) {
+    return val
+  }
+  let val = (self.init_f)()
+  self.val = Some(val)
+  val
 }

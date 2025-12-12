@@ -61,7 +61,12 @@ pub fn Tile::new(tile : NxTileRef, tileset : NxTileSet?) -> Tile {
 ///|
 /// 将 Tile 的纹理绑定到传入的实体上，若纹理缺失则移除该实体的 sprite。
 /// - `entity`: 需要绑定 sprite 的实体。
-pub fn Tile::attach_entity(self : Tile, entity : @entity.Entity) -> Unit {
+/// - `z_offset`: z 值偏移量，用于计算最终的 z 值。
+pub fn Tile::attach_entity(
+  self : Tile,
+  entity : @entity.Entity,
+  z_offset : Int,
+) -> Unit {
   guard self.texture is Some(texture) else {
     @sprite.sprites.remove(entity)
     return
@@ -71,10 +76,7 @@ pub fn Tile::attach_entity(self : Tile, entity : @entity.Entity) -> Unit {
     blend: false,
     zigzag: false,
   })
-  let sprite = @sprite.Sprite::from_animation(
-    animation,
-    self.z + @graphics.SCENE_ZINDEX,
-  )
+  let sprite = @sprite.Sprite::from_animation(animation, self.z + z_offset)
   @sprite.sprites.set(entity, sprite)
   @position.positions.set(
     entity,

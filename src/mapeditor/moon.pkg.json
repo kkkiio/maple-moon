@@ -11,8 +11,7 @@
     "Milky2018/selene/inputs",
     "Milky2018/selene/camera",
     "Milky2018/selene/backend",
-    "Milky2018/selene/sprite",
-    "Milky2018/selene/style",
+    "Milky2018/selene/backend",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/io_service",
@@ -29,7 +28,8 @@
         "load_map_ffi",
         "set_view_options_ffi",
         "export_scene_graph_ffi",
-        "export_mouse_info_ffi"
+        "export_mouse_info_ffi",
+        "export_editor_status_ffi"
       ],
       "format": "esm"
     }

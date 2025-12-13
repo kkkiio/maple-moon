@@ -1,66 +1,52 @@
-import { AppShell, Group, ScrollArea, Text } from '@mantine/core';
+import { AppShell, Group, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Allotment } from 'allotment';
-import React, { useEffect, useRef, useState } from 'react';
-import { initMoonBitEngine, MouseInfo } from './engine/bridge';
-
-type EditorBackground = {
-  id: number;
-  type_: string;
-  bS: string;
-  no: number;
-  x: number;
-  y: number;
-  rx: number;
-  ry: number;
-  type_val: number;
-  front: boolean;
-};
-
-type EditorTile = {
-  x: number;
-  y: number;
-  z: number;
-  _off: number[];
-};
-
-type EditorObj = {
-  x: number;
-  y: number;
-  z: number;
-  flip: boolean;
-};
-
-type EditorLayer = {
-  index: number;
-  tiles: EditorTile[];
-  objects: EditorObj[];
-};
-
-type EditorSceneGraph = {
-  backgrounds: EditorBackground[];
-  layers: EditorLayer[];
-};
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AssetsPanel } from './components/AssetsPanel';
+import { FooterInfo } from './components/FooterInfo';
+import { InspectorPanel } from './components/InspectorPanel';
+import { MapSelector } from './components/MapSelector';
+import { StatusPanel } from './components/StatusPanel';
+import { EditorAPI, EditorSceneGraph, initMoonBitEngine } from './engine/bridge';
+import mapDataRaw from './utils/map.img.json';
 
 export default function EditorApp() {
   const [opened, { toggle }] = useDisclosure();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [sceneGraph, setSceneGraph] = useState<EditorSceneGraph | null>(null);
-  const [mouseInfo, setMouseInfo] = useState<MouseInfo | null>(null);
   const [selectedObj, setSelectedObj] = useState<any | null>(null);
+  const [api, setApi] = useState<EditorAPI | null>(null);
+  const editorApiRef = useRef<EditorAPI | null>(null);
+
+  const mapOptions = useMemo(() => {
+    const options: { group: string; items: { value: string; label: string }[] }[] = [];
+    for (const [region, maps] of Object.entries(mapDataRaw)) {
+      const items: { value: string; label: string }[] = [];
+      for (const [id, info] of Object.entries(maps)) {
+        // @ts-ignore
+        const label = `${info.mapName} (${id})`;
+        items.push({ value: id, label });
+      }
+      if (items.length > 0) {
+        options.push({ group: region, items });
+      }
+    }
+    return options;
+  }, []);
 
   useEffect(() => {
     let intervalId: number | undefined;
-    let animationFrameId: number | undefined;
     
     // Pass the canvas ID string to the engine
     initMoonBitEngine("canvas", (msg, type) => {
       console.log(`[MoonBit ${type}]: ${msg}`);
-    }).then(api => {
+    }).then(editorApi => {
       console.log("MoonBit Engine Initialized");
+      editorApiRef.current = editorApi;
+      setApi(editorApi);
       
       const checkGraph = () => {
-        const graph = api.getSceneGraph?.();
+        const graph = editorApi.getSceneGraph?.();
         if (graph) {
           setSceneGraph(graph);
           return true;
@@ -75,23 +61,27 @@ export default function EditorApp() {
           }
         }, 1000);
       }
-
-      // Poll for mouse info
-      const pollMouse = () => {
-        const info = api.getMouseInfo();
-        if (info) {
-          setMouseInfo(info);
-        }
-        animationFrameId = requestAnimationFrame(pollMouse);
-      };
-      pollMouse();
+      
+      // Removed main loop polling from here
     });
 
     return () => {
       if (intervalId) window.clearInterval(intervalId);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      editorApiRef.current?.cleanup();
     };
   }, []);
+
+  const handleMapLoad = () => {
+    // Reset selection when map changes
+    setSelectedObj(null);
+    // Force a re-check of the scene graph after map load
+    if (api) {
+      const graph = api.getSceneGraph?.();
+      if (graph) {
+        setSceneGraph(graph);
+      }
+    }
+  };
 
   return (
     <AppShell
@@ -100,8 +90,13 @@ export default function EditorApp() {
       padding="0"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Text size="sm" fw={700}>Maple Moon Editor</Text>
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            <Text size="sm" fw={700}>Maple Moon Editor</Text>
+          </Group>
+          <Group>
+             <MapSelector api={api} mapOptions={mapOptions} onMapLoad={handleMapLoad} />
+          </Group>
         </Group>
       </AppShell.Header>
 
@@ -110,100 +105,30 @@ export default function EditorApp() {
             {/* Sidebar: Assets & Inspector */}
             <Allotment.Pane minSize={250} preferredSize={350} maxSize={500}>
               <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-800 border-r border-gray-300 dark:border-gray-700">
-                <Allotment vertical>
-                  {/* Assets Panel */}
-                  <Allotment.Pane minSize={100}>
-                    <div className="flex flex-col h-full">
-                      <div className="px-3 py-2 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50">
-                        <Text size="xs" fw={700} c="dimmed" style={{ textTransform: 'uppercase' }}>Assets / Hierarchy</Text>
-                      </div>
-                      <ScrollArea className="flex-1" p="xs">
-                        {sceneGraph ? (
-                          <div className="space-y-3 text-sm">
-                            <div>
-                              <Text size="sm" fw={500}>背景 ({sceneGraph.backgrounds.length})</Text>
-                              <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
-                                {sceneGraph.backgrounds.map(bg => (
-                                  <li 
-                                    key={`bg-${bg.id}`}
-                                    className={`cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 px-1 rounded ${selectedObj === bg ? 'bg-blue-200 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200' : ''}`}
-                                    onClick={() => setSelectedObj(bg)}
-                                  >
-                                    #{bg.id} {bg.bS}:{bg.no} ({bg.type_})
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            <div>
-                              <Text size="sm" fw={500}>图层 ({sceneGraph.layers.length})</Text>
-                              <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-400 pl-2">
-                                {sceneGraph.layers.map(layer => (
-                                  <li key={`layer-${layer.index}`}>
-                                    Layer {layer.index}
-                                    <span className="ml-2 opacity-70">
-                                      Tiles: {layer.tiles.length}, Objs: {layer.objects.length}
-                                    </span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="p-4 text-center">
-                            <Text size="sm" c="dimmed">等待地图加载...</Text>
-                          </div>
-                        )}
-                      </ScrollArea>
-                    </div>
-                  </Allotment.Pane>
-                  
-                  {/* Inspector Panel */}
-                  <Allotment.Pane minSize={100} preferredSize={200}>
-                     <div className="flex flex-col h-full border-t border-gray-300 dark:border-gray-700">
-                        <div className="px-3 py-2 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50">
-                           <Text size="xs" fw={700} c="dimmed" style={{ textTransform: 'uppercase' }}>Inspector</Text>
-                        </div>
-                        <ScrollArea className="flex-1" p="md">
-                           {selectedObj ? (
-                             <div className="space-y-3">
-                                <div>
-                                  <Text size="sm" fw={700} className="border-b border-gray-200 dark:border-gray-700 pb-1 mb-2">
-                                    {selectedObj.type_ ? 'Background' : 'Object'} Properties
-                                  </Text>
-                                  <div className="space-y-1">
-                                    {Object.entries(selectedObj).map(([key, value]) => (
-                                      <div key={key} className="grid grid-cols-[80px_1fr] gap-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-800/50 p-1 rounded">
-                                         <span className="font-mono text-gray-500 truncate" title={key}>{key}</span>
-                                         <span className="font-mono break-all" title={String(value)}>{String(value)}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                
-                                {selectedObj.type_ && (
-                                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <Text size="xs" c="dimmed" mb="xs">Asset Reference</Text>
-                                    <div className="text-xs font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded select-all">
-                                      assets/map/back/{selectedObj.bS}.img.json
-                                      <br/>
-                                      (Index: {selectedObj.no})
-                                    </div>
-                                  </div>
-                                )}
-                             </div>
-                           ) : (
-                             <Text size="sm" c="dimmed">选择一个对象查看属性</Text>
-                           )}
-                        </ScrollArea>
-                     </div>
-                  </Allotment.Pane>
-                </Allotment>
+                <StatusPanel api={api} />
+                <div className="flex-1 min-h-0">
+                  <Allotment vertical>
+                    {/* Assets Panel */}
+                    <Allotment.Pane minSize={100}>
+                      <AssetsPanel 
+                        sceneGraph={sceneGraph} 
+                        selectedObj={selectedObj} 
+                        setSelectedObj={setSelectedObj} 
+                      />
+                    </Allotment.Pane>
+                    
+                    {/* Inspector Panel */}
+                    <Allotment.Pane minSize={100} preferredSize={200}>
+                       <InspectorPanel selectedObj={selectedObj} />
+                    </Allotment.Pane>
+                  </Allotment>
+                </div>
               </div>
             </Allotment.Pane>
             
             {/* Main Canvas Area */}
             <Allotment.Pane>
-              <div className="w-full h-full bg-gray-900 overflow-auto flex items-center justify-center p-4">
+              <div className="w-full h-full bg-gray-900 overflow-auto flex items-center justify-center p-4 relative">
                  {/* Fixed size canvas wrapper */}
                  <div style={{ width: 1366, height: 768, flexShrink: 0 }} className="bg-black shadow-lg relative">
                     <canvas 
@@ -221,19 +146,7 @@ export default function EditorApp() {
       </AppShell.Main>
 
       <AppShell.Footer p="xs" className="flex items-center border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <Group justify="space-between" w="100%">
-          <Text size="xs" c="dimmed">Ready</Text>
-          {mouseInfo && (
-             <Group gap="md">
-               <Text size="xs" fw={500} style={{ fontFamily: 'monospace' }}>
-                 Screen: ({mouseInfo.screen_x}, {mouseInfo.screen_y})
-               </Text>
-               <Text size="xs" fw={500} style={{ fontFamily: 'monospace' }}>
-                 World: ({mouseInfo.world_x}, {mouseInfo.world_y})
-               </Text>
-             </Group>
-          )}
-        </Group>
+         <FooterInfo api={api} />
       </AppShell.Footer>
     </AppShell>
   );

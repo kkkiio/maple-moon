@@ -86,3 +86,58 @@ fn get_mouse_info() -> MouseInfo {
 pub fn export_mouse_info_ffi() -> MouseInfo {
   get_mouse_info()
 }
+
+///|
+pub(all) struct EditorStatus {
+  loading : Bool
+  error_msg : String?
+  map_id : Int
+  map_name : String
+  cam_x : Int
+  cam_y : Int
+  zoom : Double
+  bg_visible : Bool
+  tiles_visible : Bool
+  objs_visible : Bool
+  bg_back_visible : Bool
+  bg_fore_visible : Bool
+  bg_debug_index : Int?
+  bg_total_layers : Int
+  fps : Double
+} derive(ToJson, Show)
+
+///|
+fn get_editor_status() -> EditorStatus {
+  let viewer = viewer_state.val
+  let (loading, map_name) = match viewer.scene_state {
+    Some({ scene_map: { map_info: { map_name, .. }, .. }, .. }) =>
+      (false, map_name)
+    None => (true, "")
+  }
+  let camera_pos = @camera.get_position()
+  let bg_vis = @map.get_background_visibility_state()
+  // let tile_vis = @map.get_tile_objects_visibility()
+
+  {
+    loading,
+    error_msg: viewer.error_message,
+    map_id: MAP_ID,
+    map_name,
+    cam_x: camera_pos[@selene_math.Axis::X].to_int(),
+    cam_y: camera_pos[@selene_math.Axis::Y].to_int(),
+    zoom: @backend.get_zoom(),
+    bg_visible: viewer.layer_visibility.backgrounds,
+    tiles_visible: viewer.layer_visibility.tiles,
+    objs_visible: viewer.layer_visibility.objs,
+    bg_back_visible: bg_vis.back_visible,
+    bg_fore_visible: bg_vis.fore_visible,
+    bg_debug_index: bg_vis.debug_index,
+    bg_total_layers: bg_vis.total_layers,
+    fps: viewer.fps,
+  }
+}
+
+///|
+pub fn export_editor_status_ffi() -> EditorStatus {
+  get_editor_status()
+}

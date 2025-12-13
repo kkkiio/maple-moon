@@ -62,7 +62,7 @@ pub fn set_view_options_ffi(
 }
 
 ///|
-priv struct MapLimits {
+pub struct MapLimits {
   left : Double
   right : Double
   top : Double
@@ -70,7 +70,7 @@ priv struct MapLimits {
 } derive(Show)
 
 ///|
-priv struct LayerVisibility {
+pub struct LayerVisibility {
   mut backgrounds : Bool
   mut tiles : Bool
   mut objs : Bool
@@ -82,19 +82,19 @@ fn default_visibility() -> LayerVisibility {
 }
 
 ///|
-priv struct ViewerState {
+pub struct ViewerState {
   mut map_future : @utils.Future[
     Result[(@map.MapRawResources, @map.SceneMap), Error],
   ]?
   mut error_message : String?
   mut scene_state : SceneState?
   mut camera_entity : @entity.Entity?
-  mut debug_overlay_entity : @entity.Entity?
   layer_visibility : LayerVisibility
+  mut fps : Double
 }
 
 ///|
-priv struct SceneState {
+pub struct SceneState {
   raw_resources : @map.MapRawResources
   scene_map : @map.SceneMap
   map_limits : MapLimits
@@ -106,8 +106,8 @@ let viewer_state : Ref[ViewerState] = Ref::new({
   scene_state: None,
   error_message: None,
   camera_entity: None,
-  debug_overlay_entity: None,
   layer_visibility: default_visibility(),
+  fps: 0.0,
 })
 
 ///|
@@ -258,109 +258,13 @@ fn clamp_vec(
 }
 
 ///|
-fn render_debug_overlay(_delta : Double) -> Unit {
-  let status_line = match viewer_state.val.error_message {
-    Some(msg) => "载入失败: \{msg}"
-    None =>
-      if viewer_state.val.scene_state is Some(_) {
-        "地图载入完成"
-      } else {
-        "正在载入地图..."
-      }
-  }
-  let map_line = match viewer_state.val.scene_state {
-    Some({ scene_map: { map_info: { map_name, .. }, .. }, .. }) =>
-      "地图 \{MAP_ID}: \{map_name}"
-    None => "地图 \{MAP_ID}"
-  }
-  let camera_pos = @camera.get_position()
-  let cam_x = camera_pos[@selene_math.Axis::X]
-  let cam_y = camera_pos[@selene_math.Axis::Y]
-  let zoom = @backend.get_zoom()
-  let tile_visibility = @map.get_tile_objects_visibility()
-  let background_visibility = @map.get_background_visibility_state()
-  let layer_line = "显示: BG(后/前)=\{flag_text(background_visibility.back_visible)}/\{flag_text(background_visibility.fore_visible)}  Tile=\{flag_text(tile_visibility.tiles_visible)}  Obj=\{flag_text(tile_visibility.objs_visible)}"
-  let debug_line = match background_visibility.debug_index {
-    Some(idx) => {
-      let total = background_visibility.total_layers
-      let upper = if total == 0 { 0 } else { idx + 1 }
-      "背景调试: [\{upper}/\{total}] (使用 R/T 切换)"
-    }
-    None => "背景调试: 全部 (R/T 单步, Esc 重置)"
-  }
-  let lines = [
-    map_line,
-    "相机: (\{cam_x}, \{cam_y})  Zoom: \{zoom}",
-    layer_line,
-    debug_line,
-    "控制: Q/W/E 显示切换, 方向键 平移镜头, R/T 背景单步, Esc 重置",
-    status_line,
-  ]
-  let panel = match viewer_state.val.debug_overlay_entity {
-    Some(entity) if entity.is_alive() => entity
-    _ => {
-      let entity = @style.add_widget(
-        @style.screen_root,
-        size_plan=@style.SizePlan::FromChildren,
-        flex=@style.Flex::Vertical,
-        h_offset=12.0,
-        v_offset=16.0,
-        v_padding=4.0,
-      )
-      viewer_state.val.debug_overlay_entity = Some(entity)
-      entity
-    }
-  }
-  let mut children = panel.get_children()
-  if children.length() > lines.length() {
-    for index in lines.length()..<children.length() {
-      children[index].destroy()
-    }
-    children = panel.get_children()
-  }
-  for i in 0..<lines.length() {
-    let text_value = lines[i]
-    if i < children.length() {
-      let entity = children[i]
-      let zindex = match @sprite.sprites.get(entity) {
-        Some(sprite) => sprite.zindex
-        None => 0
-      }
-      let sprite = @sprite.Sprite::from_text(
-        @sprite.Text::new(
-          text_value,
-          color="#f8fafc",
-          font="16px monospace",
-          align=@selene_math.HAlign::Left,
-          baseline=@selene_math.VAlign::Top,
-        ),
-        zindex,
-      )
-      @sprite.sprites.set(entity, sprite)
-    } else {
-      @style.add_widget(panel, sprite=zindex => @sprite.Sprite::from_text(
-        @sprite.Text::new(
-          text_value,
-          color="#f8fafc",
-          font="16px monospace",
-          align=@selene_math.HAlign::Left,
-          baseline=@selene_math.VAlign::Top,
-        ),
-        zindex,
-      ))
-      |> ignore
-    }
+fn render_debug_overlay(delta : Double) -> Unit {
+  if delta > 0.0 {
+    viewer_state.val.fps = 1.0 / delta
   }
 }
 
 ///|
-fn flag_text(value : Bool) -> String {
-  if value {
-    "ON"
-  } else {
-    "OFF"
-  }
-}
 
 ///|
 fn toggle_background_visibility() -> Unit {

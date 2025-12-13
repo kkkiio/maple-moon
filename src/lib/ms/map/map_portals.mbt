@@ -96,7 +96,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
       width=128,
       height=122,
     ),
-    transform=@selene_math.Transform::from_translation(-62.0, -199.0),
+    transform=@selene_math.Transform::from_translation(-62.0, -119.0),
     // offset=-@selene_math.Vec2D(62, 199),
   )
   let ani2 = @sprite.Animation::new(

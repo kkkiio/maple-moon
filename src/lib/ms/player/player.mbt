@@ -142,7 +142,8 @@ pub fn Player::has_buff(self : Player, stat : @buff.StatId) -> Bool {
 }
 
 ///|
-pub fn Player::update(
+/// update player state
+fn Player::update(
   self : Player,
   physics : @physics.Physics,
   map_info : @map.MapInfo,
@@ -193,12 +194,16 @@ pub fn Player::update(
             }
           }
         }
-        PRONE =>
+        PRONE => {
           if not(player.character.get_phobj().enablejd) {
             player.character
             .get_phobj()
             .set_flag(@physics.PhysicsObjectFlag::CHECK_BELOW)
           }
+          if not(player.is_key_down(@keyboard.BasicActionId::DOWN)) {
+            player.set_state(CharState::STAND)
+          }
+        }
         SWIM => {
           if player.is_attacking() {
             return
@@ -377,7 +382,8 @@ pub fn Player::draw(
 
 ///|
 /// Sends a Keyaction to the player's state, to apply forces, change the state and other behaviour.
-pub fn Player::send_action(
+#deprecated("should merge into update")
+fn Player::send_action(
   self : Player,
   action : @keyboard.BasicActionId,
   down : Bool,
@@ -445,11 +451,6 @@ pub fn Player::send_action(
               )
               player.set_state(CharState::FALL)
             }
-          _ => ()
-        }
-      } else {
-        match ka {
-          @keyboard.BasicActionId::DOWN => player.set_state(CharState::STAND)
           _ => ()
         }
       }

@@ -15,6 +15,13 @@ pub(all) struct Stance {
 } derive(Eq)
 
 ///|
+pub(all) struct MobAnimation {
+  nx : @resource.NxAnimation
+  selene_l : @sprite.Animation
+  selene_r : @sprite.Animation
+}
+
+///|
 pub fn Stance::from_byte(b : Int) -> Stance {
   let face_right = b % 2 == 0
   let t = match b / 2 {
@@ -55,11 +62,11 @@ pub fn Stance::flip(self : Stance) -> Stance {
 struct Mob {
   entity : @entity.Entity
   base : @map_object.MapObjectBase
-  animations : Map[StanceType, @graphics.Animation]
+  animations : Map[StanceType, MobAnimation]
   skill_cache : Map[Int, @utils.Future[Result[MobSkill, Error]]]
   attacks : Map[Int, MobSpecialAttack]
-  skill_stands : Map[Int, @graphics.Animation]
-  attack_stands : Map[Int, @graphics.Animation]
+  skill_stands : Map[Int, MobAnimation]
+  attack_stands : Map[Int, MobAnimation]
   buffs : Array[MobBuff]
   level : Int
   speed : Double
@@ -80,6 +87,7 @@ struct Mob {
   hp_bar : @ui.MobHpBar
   randomizer : @utils.Randomizer
   show_hp : @utils.TimedBool
+  mut anim_time : Double
   mut movements : Array[@physics.Movement]
   mut counter : Int
   id : Int
@@ -88,6 +96,7 @@ struct Mob {
   mut control : Bool
   mut aggro : Bool
   mut stance : Stance
+  mut last_synced_stance : Stance?
   mut fly_direction : FlyDirection
   mut hp_percent : Int
   mut fading : Bool
@@ -114,14 +123,8 @@ pub async fn Mob::load(
   _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
-  network : @net.Network,
 ) -> Mob {
-  let mob_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "mob",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Mob",
-    ),
-  )
+  let mob_loader = @resource.get_mob_loader()
   let strid = @utils.stoi_left_pad0(mid, 7)
   let src = mob_loader.load_res_async([strid + ".img"])
   let info : MobInfo = src["info"].value() |> @json.from_json
@@ -134,7 +137,7 @@ pub async fn Mob::load(
     load_animations(src, can_fly)
   }
   Mob::new(
-    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, network, animations,
+    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, animations,
   )
 }
 
@@ -239,8 +242,7 @@ fn Mob::new(
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
   src : @resource.NxNode,
-  network : @net.Network,
-  animations : Map[StanceType, @graphics.Animation],
+  animations : Map[StanceType, MobAnimation],
 ) -> Mob raise {
   let entity = @entity.Entity::new()
   let base = @map_object.MapObjectBase::new(oi, on_pos_change=fn(pos) {
@@ -267,26 +269,24 @@ fn Mob::new(
   //TODO: sound
 
   let skillnode = src["info"]["skill"]
-  let skill_stands = {}
+  let skill_stands = Map::new()
   for i in 0..<skillnode.get_children_count() {
     let skill_id = skillnode[i.to_string()]["skill"].get_int()
     let action = skillnode[i.to_string()]["action"].get_int()
     skill_stands.set(
       skill_id,
-      src["skill" + action.to_string()] |> @graphics.Animation::from_resource,
+      src["skill" + action.to_string()] |> load_animation,
     )
   }
-  let attack_stands = (1)
-    .until(@int.max_value)
-    .map_while(fn(i) {
-      let attack_node = src["attack" + i.to_string()]
-      if attack_node.get_children_count() > 0 {
-        Some((i, attack_node |> @graphics.Animation::from_resource))
-      } else {
-        None
-      }
-    })
-    |> Map::from_iter
+  let attack_stands : Map[Int, MobAnimation] = Map::new()
+  for i = 1; ; i = i + 1 {
+    let attack_node = src["attack" + i.to_string()]
+    if attack_node.get_children_count() > 0 {
+      attack_stands.set(i, attack_node |> load_animation)
+    } else {
+      break
+    }
+  }
 
   // init or risk crash
   match animations.get(StanceType::STAND) {
@@ -311,7 +311,7 @@ fn Mob::new(
   let dead = false
   let stance = Stance::from_byte(st)
   match animations.get(stance.t) {
-    Some(anim) => anim.reset()
+    Some(_) => ()
     None => ()
   }
   let fly_direction = STRAIGHT
@@ -351,6 +351,7 @@ fn Mob::new(
     hp_bar: @ui.MobHpBar::default(),
     randomizer,
     show_hp: @utils.TimedBool::default(),
+    anim_time: 0.0,
     movements: [],
     counter,
     id,
@@ -359,6 +360,7 @@ fn Mob::new(
     control,
     aggro,
     stance,
+    last_synced_stance: None,
     fly_direction,
     hp_percent,
     fading: false,
@@ -383,26 +385,7 @@ pub impl @map_object.MapObject for Mob with draw(
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   let headpos = self.get_head_position(position=absp)
   self.effects.drawbelow(absp, alpha)
-  if not(self.dead) {
-    match self.animations.get(self.stance.t) {
-      Some(anim) =>
-        anim.draw(
-          @graphics.DrawArgument::new14(
-            absp,
-            self.stance.face_right && not(self.no_flip),
-            opacity=self.opacity.get(alpha~),
-          ),
-          alpha,
-        )
-      None => ()
-    }
-    if self.show_hp.get() {
-      self.name_label.draw(absp)
-      if not(self.dying) && self.hp_percent > 0 {
-        self.hp_bar.draw(headpos, self.hp_percent)
-      }
-    }
-  }
+  // Deprecated manual draw, handled by map_monsters_system
   self.effects.drawabove(absp, alpha)
 }
 
@@ -414,9 +397,25 @@ pub impl @map_object.MapObject for Mob with update(
   if not(self.base.is_active()) {
     return self.base.phobj.fhlayer
   }
-  let aniend = match self.animations.get(self.stance.t) {
-    Some(anim) => anim.update()
-    None => false
+  let mut aniend = false
+  match self.animations.get(self.stance.t) {
+    Some(anim) => {
+      self.anim_time += @logic_fps.STEP_TIME_MS.to_double()
+      // Estimate duration from frames
+      let total_delay = anim.nx.frames
+        .iter()
+        .fold(init=0, fn(acc, f) { acc + f.delay.unwrap_or(100) })
+      if self.anim_time >= total_delay.to_double() {
+        if self.stance.t == StanceType::DIE {
+          aniend = true // Die animation ends
+        } else {
+          // Loop
+          self.anim_time = 0.0
+          aniend = true
+        }
+      }
+    }
+    None => ()
   }
   if aniend && self.stance.t == StanceType::SKILL {
     self.set_stance(Stance::from_type(StanceType::STAND))
@@ -557,10 +556,7 @@ fn Mob::next_move(self : Mob) -> Unit {
 pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
   if self.stance != newstance {
     self.stance = newstance
-    match self.animations.get(self.stance.t) {
-      Some(anim) => anim.reset()
-      None => ()
-    }
+    self.anim_time = 0.0
   }
 }
 
@@ -604,7 +600,10 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let bounds = anim.get_bounds()
+      // Use frame 0 bounds as hitbox approximation (Selene handles animation playback)
+      let bounds = anim.nx.frames[0].bounds.unwrap_or(
+        @struct.Rectangle::default(),
+      )
       range.overlaps(bounds.shift(self.base.get_position()))
     }
     None => false
@@ -618,7 +617,9 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let bounds = anim.get_bounds()
+      let bounds = anim.nx.frames[0].bounds.unwrap_or(
+        @struct.Rectangle::default(),
+      )
       Some(bounds.shift(self.base.get_position()))
     }
     None => None
@@ -722,7 +723,7 @@ pub fn Mob::get_head_position(
   position? : @struct.Point[Int],
 ) -> @struct.Point[Int] {
   let head = match self.animations.get(self.stance.t) {
-    Some(anim) => anim.get_head()
+    Some(anim) => anim.nx.frames[0].head.unwrap_or(@struct.Point::default())
     None => @struct.Point::default()
   }
   position
@@ -891,7 +892,6 @@ pub fn MobSpecialAttack::apply_useeffects(
 pub fn Mob::calculate_damage(
   self : Mob,
   attack : @combat.Attack,
-  network : @net.Network,
 ) -> Array[(Int, Bool)] {
   let greater_level = @cmp.maximum(self.level - attack.playerlevel, 0)
   let damagetype = attack.damagetype
@@ -1038,24 +1038,25 @@ pub fn Mob::show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
 fn load_animations(
   src : @resource.NxNode,
   can_fly : Bool,
-) -> Map[StanceType, @graphics.Animation] {
-  let animations : Map[StanceType, @graphics.Animation] = Map::new()
+) -> Map[StanceType, MobAnimation] raise {
+  let animations : Map[StanceType, MobAnimation] = Map::new()
   if can_fly {
-    animations[StanceType::STAND] = src["fly"]
-      |> @graphics.Animation::from_resource
-    animations[StanceType::MOVE] = src["fly"]
-      |> @graphics.Animation::from_resource
+    animations[StanceType::STAND] = src["fly"] |> load_animation
+    animations[StanceType::MOVE] = src["fly"] |> load_animation
   } else {
-    animations[StanceType::STAND] = src["stand"]
-      |> @graphics.Animation::from_resource
-    animations[StanceType::MOVE] = src["move"]
-      |> @graphics.Animation::from_resource
+    animations[StanceType::STAND] = src["stand"] |> load_animation
+    animations[StanceType::MOVE] = src["move"] |> load_animation
   }
-  animations[StanceType::JUMP] = src["jump"]
-    |> @graphics.Animation::from_resource
-  animations[StanceType::HIT] = src["hit1"]
-    |> @graphics.Animation::from_resource
-  animations[StanceType::DIE] = src["die1"]
-    |> @graphics.Animation::from_resource
+  animations[StanceType::JUMP] = src["jump"] |> load_animation
+  animations[StanceType::HIT] = src["hit1"] |> load_animation
+  animations[StanceType::DIE] = src["die1"] |> load_animation
   animations
+}
+
+///|
+fn load_animation(src : @resource.NxNode) -> MobAnimation raise {
+  let nx : @resource.NxAnimation = @json.from_json(src.value())
+  let selene_l = @graphics.nx_animation_to_selene_animation(nx, flip_x=false)
+  let selene_r = @graphics.nx_animation_to_selene_animation(nx, flip_x=true)
+  { nx, selene_l, selene_r }
 }

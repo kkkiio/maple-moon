@@ -24,6 +24,10 @@ pub fn start_editor() -> Unit {
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
   .add_system(@map.portal_system, system_name="portal_system")
   .add_system(
+    @monster.map_monsters_system,
+    system_name="monster_rendering_system",
+  )
+  .add_system(
     viewer_visibility_input_system,
     system_name="viewer_visibility_controls",
   )
@@ -91,6 +95,7 @@ pub struct ViewerState {
   mut camera_entity : @entity.Entity?
   layer_visibility : LayerVisibility
   mut fps : Double
+  mut physics : @physics.Physics?
 }
 
 ///|
@@ -108,6 +113,7 @@ let viewer_state : Ref[ViewerState] = Ref::new({
   camera_entity: None,
   layer_visibility: default_visibility(),
   fps: 0.0,
+  physics: None,
 })
 
 ///|
@@ -175,8 +181,44 @@ fn finalize_scene(
     right=map_limits.right,
   )
   viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
+
+  // Initialize Physics
+  let physics = @physics.Physics::from_resource(raw_resources.nx_map.foothold) catch {
+    e => {
+      viewer_state.val.error_message = Some("Physics Error: " + e.to_string())
+      @physics.empty_physics() // Fallback to empty physics
+    }
+  }
+  viewer_state.val.physics = Some(physics)
+
+  // Initialize Monsters
+  let mobs = @monster.MapMobs::new()
+  let mut oid_counter = 100000
+  for life in raw_resources.nx_map.life {
+    guard life.type_ == "m" else { continue }
+    let oid = oid_counter
+    oid_counter += 1
+    let id = @strconv.parse_int(life.id) catch { _ => 0 }
+    mobs.spawn(
+      @monster.create_mob_spawn(
+        oid,
+        id,
+        0, // mode
+        0, // stance
+        life.fh,
+        true, // new_spawn
+        0, // team
+        @struct.Point::new(life.x, life.y),
+      ),
+    )
+  }
+  @monster.set_mobs({ map_mobs: mobs, physics })
   @log.info(
-    { "map_id": MAP_ID, "map_limits": map_limits },
+    {
+      "map_id": MAP_ID,
+      "map_limits": map_limits,
+      "mob_count": oid_counter - 100000,
+    },
     "map ready in viewer",
   )
 }

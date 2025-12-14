@@ -30,8 +30,58 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
     default_server.server_message_queue.push(
       (@net.Opcode::SET_FIELD.int_value(), set_field_json),
     )
+
+    // spawn mobs
+    @io_service.execute_background(async fn() {
+      let loader = get_mapx_loader()
+      let prefix = (tm / 100000000).to_string()
+      let strid = @utils.stoi_left_pad0(tm, 9)
+      let path = ["Map\{prefix}", "\{strid}.img"]
+      let node_res = loader.load_res_async(path)
+      guard node_res.value() is { "life": Object(life_map), .. } else { return }
+      for _, entity in life_map {
+        match entity {
+          {
+            "type": String("m"),
+            "id": String(id_str),
+            "x": Number(x, ..),
+            "y": Number(y, ..),
+            "f": Number(f, ..),
+            "fh": Number(fh, ..),
+            ..
+          } => {
+            let monster_id = @strconv.parse_int(id_str) catch { _ => 0 }
+            self.last_object_id += 1
+            let spawn_msg = MobSpawnMessage::{
+              oid: self.last_object_id,
+              id: monster_id,
+              x: x.to_int(),
+              y: y.to_int(),
+              stance: f.to_int(),
+              fh: fh.to_int(),
+              team: -1,
+            }
+            default_server.server_message_queue.push(
+              (@net.Opcode::SPAWN_MOB.int_value(), spawn_msg.to_json()),
+            )
+          }
+          _ => ()
+        }
+      }
+    })
   })
 }
+
+///|
+struct MobSpawnMessage {
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  stance : Int
+  fh : Int
+  team : Int
+} derive(ToJson)
 
 ///|
 async fn get_target_by_map_id_and_portal_name(

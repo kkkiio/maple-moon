@@ -165,6 +165,7 @@ pub fn Frame::draw(self : Frame, args : DrawArgument) -> Unit {
 }
 
 ///|
+#deprecated("use @resource.NxAnimation instead")
 struct Animation {
   frames : Array[Frame]
   zigzag : Bool
@@ -182,6 +183,7 @@ pub(all) suberror LoadError {
 } derive(Show)
 
 ///|
+#deprecated("use @resource.NxAnimation instead")
 pub fn Animation::from_resource(src : NxNode) -> Animation {
   Animation::from_resource_ex(src) catch {
     NotFound => Animation::default()
@@ -193,6 +195,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
 }
 
 ///|
+#deprecated("use @resource.NxAnimation instead")
 pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
   if src.is_null() {
     raise NotFound
@@ -243,6 +246,7 @@ pub fn Animation::from_resource_ex(src : NxNode) -> Animation raise {
 }
 
 ///|
+#deprecated("use @resource.NxAnimation instead")
 pub fn Animation::new(resource : AnimationResource) -> Animation {
   let blend = resource.blend
   // 100ms delay for blend is too fast, see Map/Map1/101000000.img
@@ -436,36 +440,6 @@ pub fn Animation::get_head(self : Animation) -> Point[Int] {
 ///|
 pub fn Animation::get_bounds(self : Animation) -> Rectangle[Int] {
   self.get_frame().get_bounds()
-}
-
-///|
-pub(all) struct NxAnimation(@sprite.Animation)
-
-///|
-pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimation raise @json.JsonDecodeError {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expect object"))
-  }
-  let frames = []
-  if obj.get("0") is None {
-    let frame : NxFrame = @json.from_json(json, path~)
-    frames.push(frame.0)
-  } else {
-    for i = 0; ; i = i + 1 {
-      guard obj.get(i.to_string()) is Some(res) else { break }
-      let frame : NxFrame = @json.from_json(
-        res,
-        path=path.add_key(i.to_string()),
-      )
-      frames.push(frame.0)
-    }
-  }
-  if frames.length() <= 0 {
-    raise @json.JsonDecodeError(
-      (path, "Animation must have at least one frame."),
-    )
-  }
-  NxAnimation(@sprite.Animation::new(frames, loop_=true))
 }
 
 ///|

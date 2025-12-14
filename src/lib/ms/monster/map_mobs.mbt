@@ -1,8 +1,19 @@
 ///|
-pub let map_mobs : Ref[MapMobs?] = Ref::new(None)
+pub(all) struct MapMobsContext {
+  map_mobs : MapMobs
+  physics : @physics.Physics
+}
 
 ///|
-struct MapMobs {
+let map_mobs_ctx : Ref[MapMobsContext?] = Ref::new(None)
+
+///|
+pub fn set_mobs(ctx : MapMobsContext) -> Unit {
+  map_mobs_ctx.val = Some(ctx)
+}
+
+///|
+pub struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
@@ -25,11 +36,7 @@ pub fn MapMobs::spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
 }
 
 ///|
-pub fn MapMobs::update(
-  self : MapMobs,
-  physics : @physics.Physics,
-  network : @net.Network,
-) -> Unit {
+pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       match self.mobs.get(spawn.oid) {
@@ -43,7 +50,7 @@ pub fn MapMobs::update(
         None =>
           self.loading_mobs.push(
             @io_service.submit_background_task(fn() {
-              spawn.instantiate(self.randomizer, network)
+              spawn.instantiate(self.randomizer)
             }),
           )
       }
@@ -155,11 +162,10 @@ pub fn MapMobs::send_attack(
   result : @combat.AttackResult,
   attack : @combat.Attack,
   targets : Array[Int],
-  network : @net.Network,
 ) -> Unit {
   for target in targets {
     guard self.mobs.get(target) is Some(mob) else { continue }
-    result.damage_lines[target] = mob.calculate_damage(attack, network)
+    result.damage_lines[target] = mob.calculate_damage(attack)
     result.mob_count += 1
     if result.mob_count == 1 {
       result.first_oid = target
@@ -207,7 +213,9 @@ pub fn MapMobs::send_mobhp(
 }
 
 ///|
-struct MobSpawn {
+
+///|
+pub(all) struct MobSpawn {
   oid : Int
   id : Int
   mode : Int
@@ -219,10 +227,23 @@ struct MobSpawn {
 }
 
 ///|
+pub fn create_mob_spawn(
+  oid : Int,
+  id : Int,
+  mode : Int,
+  stance : Int,
+  fh : Int,
+  new_spawn : Bool,
+  team : Int,
+  position : @struct.Point[Int],
+) -> MobSpawn {
+  { oid, id, mode, stance, fh, new_spawn, team, position }
+}
+
+///|
 pub async fn MobSpawn::instantiate(
   self : MobSpawn,
   randomizer : @utils.Randomizer,
-  network : @net.Network,
 ) -> Mob {
   Mob::load(
     self.oid,
@@ -234,7 +255,6 @@ pub async fn MobSpawn::instantiate(
     self.team,
     self.position,
     randomizer,
-    network,
   )
 }
 
@@ -246,7 +266,8 @@ const MAP_LAYER_STRIDE = 5000
 
 ///|
 pub fn map_monsters_system(_delta : Double) -> Unit {
-  guard map_mobs.val is Some(map_mobs) else { return }
+  guard map_mobs_ctx.val is Some({ map_mobs, physics }) else { return }
+  map_mobs.update(physics)
   for _oid, mob in map_mobs.mobs.iter2() {
     let entity = mob.entity
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }

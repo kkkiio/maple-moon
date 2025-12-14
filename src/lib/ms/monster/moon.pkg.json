@@ -22,6 +22,8 @@
     "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/game_server",
     "KKKIIO/maple-moon/lib/logic_fps",
-    "KKKIIO/maple-moon/lib/maple_protocol"
+    "KKKIIO/maple-moon/lib/maple_protocol",
+    "KKKIIO/maple-moon/lib/maple_protocol",
+    "Milky2018/selene/sprite"
   ]
 }

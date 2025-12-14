@@ -14,6 +14,7 @@ priv struct LocalServer {
   server_message_handlers_map : Map[Int, Array[(String, (Json) -> Unit raise)]]
   mut last_map_id : Int
   mut last_portal_id : Int
+  mut last_object_id : Int
 }
 
 ///|
@@ -25,6 +26,7 @@ fn LocalServer::new() -> LocalServer {
     server_message_handlers_map: {},
     last_map_id: 100000000,
     last_portal_id: 23,
+    last_object_id: 100000,
   }
 }
 

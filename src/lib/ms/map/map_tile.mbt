@@ -72,7 +72,9 @@ pub fn Tile::attach_entity(
     return
   }
   let animation = @graphics.nx_animation_to_selene_animation(@resource.NxAnimation::{
-    frames: [@resource.NxFrame::{ texture, delay: None }],
+    frames: [
+      @resource.NxFrame::{ texture, delay: None, head: None, bounds: None },
+    ],
     blend: false,
     zigzag: false,
   })

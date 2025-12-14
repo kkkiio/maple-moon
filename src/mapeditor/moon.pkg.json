@@ -19,7 +19,15 @@
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/map",
     "rami3l/js-ffi/js",
-    "KKKIIO/maple-moon/lib/logic_fps"
+    "KKKIIO/maple-moon/lib/logic_fps",
+    {
+      "path": "KKKIIO/maple-moon/lib/ms/monster",
+      "alias": "monster"
+    },
+    {
+      "path": "KKKIIO/maple-moon/lib/ms/physics",
+      "alias": "physics"
+    }
   ],
   "link": {
     "js": {

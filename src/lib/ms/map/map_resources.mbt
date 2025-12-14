@@ -89,6 +89,7 @@ pub struct NxMap {
   portal : Array[NxPortal]
   foothold : @physics.NxFootholdTree
   mini_map : MiniMapResource?
+  life : Array[NxLife]
 }
 
 ///|
@@ -117,7 +118,12 @@ pub impl @json.FromJson for NxMap with from_json(json, path) {
   } else {
     None
   }
-  { layers, back, portal, foothold, mini_map }
+  let life : Array[NxLife] = if obj.get("life") is Some(life) {
+    @resource.parse_map_based_array(life, path=path.add_key("life"))
+  } else {
+    []
+  }
+  { layers, back, portal, foothold, mini_map, life }
 }
 
 ///|
@@ -221,3 +227,58 @@ pub impl @json.FromJson for NxObj with from_json(json, path) {
 pub struct MapLayerInfoResource {
   tS : String
 } derive(@json.FromJson, Show)
+
+///|
+pub struct NxLife {
+  cy : Int
+  f : Int
+  fh : Int
+  hide : Int
+  id : String
+  mob_time : Int? // mobTime can be null or missing
+  rx0 : Int
+  rx1 : Int
+  type_ : String
+  x : Int
+  y : Int
+} derive(Show)
+
+///|
+pub impl @json.FromJson for NxLife with from_json(json, path) {
+  match json {
+    {
+      "cy": Number(cy, ..),
+      "f": Number(f, ..),
+      "fh": Number(fh, ..),
+      "hide": Number(hide, ..),
+      "id": String(id),
+      "rx0": Number(rx0, ..),
+      "rx1": Number(rx1, ..),
+      "type": String(type_),
+      "x": Number(x, ..),
+      "y": Number(y, ..),
+      ..
+    } => {
+      // mobTime is optional
+      let mob_time = if json is { "mobTime": Number(mob_time, ..), .. } {
+        Some(mob_time.to_int())
+      } else {
+        None
+      }
+      {
+        cy: cy.to_int(),
+        f: f.to_int(),
+        fh: fh.to_int(),
+        hide: hide.to_int(),
+        id,
+        mob_time,
+        rx0: rx0.to_int(),
+        rx1: rx1.to_int(),
+        type_,
+        x: x.to_int(),
+        y: y.to_int(),
+      }
+    }
+    _ => raise @json.JsonDecodeError((path, "missing life fields"))
+  }
+}

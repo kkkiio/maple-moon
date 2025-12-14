@@ -1,5 +1,5 @@
 ///|
-pub(all) struct Physics {
+pub struct Physics {
   mut fh_tree : FootholdTree
 }
 
@@ -28,6 +28,19 @@ pub let swimfriction : Double = 0.08
 pub fn Physics::from_resource(src : NxFootholdTree) -> Physics raise {
   let fh_tree = FootholdTree::from_resource(src)
   { fh_tree, }
+}
+
+///|
+pub fn empty_physics() -> Physics {
+  {
+    fh_tree: {
+      footholds: Map::new(),
+      seg_tree: { xs: [], nodes: [], root: -1 },
+      null_fh: Foothold::default(),
+      walls: @struct.Range::new(-100000, 100000),
+      borders: @struct.Range::new(-100000, 100000),
+    },
+  }
 }
 
 ///|

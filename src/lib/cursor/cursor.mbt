@@ -2,6 +2,9 @@
 using @ui {type CursorState}
 
 ///|
+using @graphics {CURSOR_ZINDEX}
+
+///|
 pub(all) struct Cursor {
   mut state : CursorState
   mut inactive_seconds : Double
@@ -11,9 +14,6 @@ pub(all) struct Cursor {
 
 ///|
 pub const HIDE_SECONDS : Int = 12
-
-///|
-pub const CURSOR_ZINDEX : Int = @selene_ui.UI_ZINDEX + 100
 
 ///|
 pub fn Cursor::new() -> Cursor {
@@ -45,15 +45,6 @@ pub fn Cursor::new() -> Cursor {
       offset=-@math.Vec2D(4, 6),
     ),
   )
-  // {
-  //       "0": {
-  //         "__h": 23,
-  //         "__w": 25,
-  //         "_hash": "389f2688a117d691d8dfa42ca084c64eef59084bc15195f9d91c6e394e2f5cd8",
-  //         "origin": [4, 1],
-  //         "__i": "spritesheets/UI/Basic.img/Cursor#1052"
-  //       }
-  //     }
   sprites.set(
     CursorState::CLICKING,
     @sprite.Sprite::from_animation(

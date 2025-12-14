@@ -27,5 +27,8 @@ pub const UI_ZINDEX = 100000
 pub const MINI_MAP_ZINDEX_ = 101000
 
 ///|
+pub const CURSOR_ZINDEX : Int = 200000
+
+///|
 /// 地图场景的层级. 用于组织地图瓦片和物品的渲染顺序.
 pub let map_layers : FixedArray[Int] = [0, 1, 2, 3, 4, 5, 6, 7]

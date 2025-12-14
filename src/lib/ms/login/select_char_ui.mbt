@@ -198,11 +198,11 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
   //     },
   //   },
   // }
-  let ani18 : @graphics.NxAnimation = @json.from_json(ani18_res)
+  let ani18 : @resource.NxAnimation = @json.from_json(ani18_res)
   {
     name_tag: @json.from_json(name_tag_res),
     // bt_new: @json.from_json(bt_new_res),
-    ani18: ani18.0,
+    ani18: @graphics.nx_animation_to_selene_animation(ani18),
   }
 }
 
@@ -328,6 +328,8 @@ pub fn SelectCharUI::new(
           origin: @struct.Point::new(0, 0),
         },
         delay: None,
+        head: None,
+        bounds: None,
       },
     ],
     blend: false,
@@ -344,6 +346,8 @@ pub fn SelectCharUI::new(
           origin: @struct.Point::new(0, 0),
         },
         delay: None,
+        head: None,
+        bounds: None,
       },
     ],
     blend: false,
@@ -360,6 +364,8 @@ pub fn SelectCharUI::new(
           origin: @struct.Point::new(0, 0),
         },
         delay: None,
+        head: None,
+        bounds: None,
       },
     ],
     blend: false,
@@ -376,6 +382,8 @@ pub fn SelectCharUI::new(
           origin: @struct.Point::new(0, 0),
         },
         delay: None,
+        head: None,
+        bounds: None,
       },
     ],
     blend: false,

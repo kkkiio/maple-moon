@@ -18,5 +18,3 @@ tools/
 .local/
 
 # ignore for now
-AGENTS.md
-src/cmd

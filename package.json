@@ -2,7 +2,7 @@
   "name": "maple-moon",
   "version": "1.0.0",
   "description": "Maple Moon Game",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.html",
   "directories": {
     "lib": "lib"

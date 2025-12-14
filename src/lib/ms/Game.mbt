@@ -323,8 +323,8 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.
-  let alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
-  self.draw(alpha)
+  let _alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)
+  // self.draw(alpha)
 }
 
 ///|
@@ -339,65 +339,6 @@ pub fn Game::update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // }
   // loaded_state.ui.update()
   // Music::update_context();
-}
-
-///|
-pub fn Game::draw(self : Game, alpha : Double) -> Unit {
-  @graphics.GraphicsGL::get().clear_scene()
-  ...
-  // let stage = self.stage.val.unwrap() // TODO: handle error
-  // stage.draw(alpha)
-  // // loaded_state.ui.draw(alpha)
-  // @graphics.GraphicsGL::get().flush(1.0)
-}
-
-///|
-fn setup_game_ui(
-  ui : UI,
-  // stage : Stage,
-  player : @player.Player,
-  // registry : @action.Registry,
-  timer : @utils.Timer,
-  map_module : @map.Module,
-  status_bar_loader : @resource.SyncLoader,
-) -> Unit {
-  ...
-  // ui.change_state(UIStateGame::new(stage, registry, timer))
-  let stats = player.get_stats()
-  ui.set_element(
-    false,
-    @ui.Element::new(
-      fn(hooks) {
-        @char_stats.StatusBarUI::new(stats, hooks, status_bar_loader) catch {
-          e => abort("failed to create status bar ui: \{e}")
-        }
-      },
-      @ui.UIElementType::STATUS_BAR,
-    ),
-  )
-  ui.set_element(
-    false,
-    @ui.Element::new(
-      fn(hooks) {
-        let ui_model = hooks.ui_model
-        let mini_map_ui = map_module.new_mini_map_ui(
-          ui_model,
-          // hooks.on_state_changed,
-        )
-        // stage.listen_map_change(fn(map_struct) {
-        //   guard ui_model.active else { return false }
-        //   mini_map_ui.set_map(
-        //     map_struct.id,
-        //     map_struct.map_info,
-        //     map_struct.mini_map_resources,
-        //   )
-        //   true
-        // })
-        mini_map_ui
-      },
-      @ui.UIElementType::MINI_MAP,
-    ),
-  )
 }
 
 ///|

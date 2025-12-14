@@ -1116,7 +1116,7 @@ pub fn CharLook::attack_by_stance(
   self : CharLook,
   newstance : @types.StanceId,
 ) -> Unit {
-  if not(self.action.is_empty()) || newstance == @types.StanceId::NONE {
+  if not(self.action is None) || newstance == @types.StanceId::NONE {
     return
   }
   match newstance {

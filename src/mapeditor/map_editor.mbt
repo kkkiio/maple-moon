@@ -1,5 +1,5 @@
 ///|
-const MAP_ID : Int = 100000000
+const MAP_ID : Int = 100030000
 
 ///|
 const CAMERA_SPEED : Double = 640.0

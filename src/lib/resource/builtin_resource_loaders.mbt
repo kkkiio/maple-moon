@@ -94,6 +94,24 @@ pub fn get_tile_loader() -> AsyncLoader {
 }
 
 ///|
+let mob_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "mob",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Mob",
+      "/assets/mob",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取怪物资源的加载器.
+pub fn get_mob_loader() -> AsyncLoader {
+  mob_loader.get()
+}
+
+///|
 /// Lazy initialization.
 priv struct Lazy[T] {
   mut val : T?

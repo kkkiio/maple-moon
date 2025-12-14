@@ -83,10 +83,20 @@ fn parse_body_animations_by_stance(
         ([], [])
       })
       while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
-        frames.push(@resource.NxFrame::{ texture, delay: None }) // TODO: 填充为空白帧
+        frames.push(@resource.NxFrame::{
+          texture,
+          delay: None,
+          head: None,
+          bounds: None,
+        }) // TODO: 填充为空白帧
         layers.push(layer)
       }
-      frames.push(@resource.NxFrame::{ texture, delay: None })
+      frames.push(@resource.NxFrame::{
+        texture,
+        delay: None,
+        head: None,
+        bounds: None,
+      })
       layers.push(layer)
     }
   }
@@ -107,7 +117,12 @@ fn parse_body_animations_by_stance(
         ([], [])
       })
       guard frames.length() == frame
-      frames.push(@resource.NxFrame::{ texture, delay })
+      frames.push(@resource.NxFrame::{
+        texture,
+        delay,
+        head: None,
+        bounds: None,
+      })
       layers.push(@types.BodyLayer::HEAD)
     }
   }

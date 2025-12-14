@@ -79,9 +79,19 @@ pub fn Hair::parse(
         let texture = { ..texture, origin: texture.origin - shift }
         let frames = layers.get_or_init(layer, fn() { [] })
         while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
-          frames.push(@resource.NxFrame::{ texture, delay: None }) // TODO: 填充为空白帧
+          frames.push(@resource.NxFrame::{
+            texture,
+            delay: None,
+            head: None,
+            bounds: None,
+          }) // TODO: 填充为空白帧
         }
-        frames.push(@resource.NxFrame::{ texture, delay: None })
+        frames.push(@resource.NxFrame::{
+          texture,
+          delay: None,
+          head: None,
+          bounds: None,
+        })
       }
     }
     stances.set(

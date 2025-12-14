@@ -60,7 +60,7 @@ pub(all) enum Opcode {
   /// Player
   ADD_COOLDOWN = 234
   /// MapObject
-  SPAWN_MOB = 236
+  SPAWN_MOB = 0xEC
   KILL_MOB = 237
   SPAWN_MOB_C = 238
   MOB_MOVED = 239

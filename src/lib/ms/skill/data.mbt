@@ -402,19 +402,23 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
         } else {
           0
         }
-        let mpcost = if sub is { "mpCon": Number(m, ..) } {
+        let mpcost = if sub is { "mpCon": Number(m, ..), .. } {
           m.to_int()
         } else {
           0
         }
-        let prop = if sub is { "prop": Number(p, ..) } {
+        let prop = if sub is { "prop": Number(p, ..), .. } {
           p.to_int()
         } else {
           100
         }
         let critical = 0.0
         let ignoredef = 0.0
-        let hrange = if sub is { "range": Number(r, ..) } { r / 100 } else { 1 }
+        let hrange = if sub is { "range": Number(r, ..), .. } {
+          r / 100
+        } else {
+          1
+        }
         if mobcount == 0 || hrange == 0 {
           raise @json.JsonDecodeError((path, "invalid range"))
         }

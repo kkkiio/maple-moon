@@ -1,4 +1,7 @@
 ///|
+pub let map_mobs : Ref[MapMobs?] = Ref::new(None)
+
+///|
 struct MapMobs {
   mobs : @map_object.MapObjects[Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
@@ -233,4 +236,46 @@ pub async fn MobSpawn::instantiate(
     randomizer,
     network,
   )
+}
+
+///|
+const MOB_ZINDEX_OFFSET = 2000
+
+///|
+const MAP_LAYER_STRIDE = 5000
+
+///|
+pub fn map_monsters_system(_delta : Double) -> Unit {
+  guard map_mobs.val is Some(map_mobs) else { return }
+  for _oid, mob in map_mobs.mobs.iter2() {
+    let entity = mob.entity
+    guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }
+
+    // Check for direction/animation change
+    if @sprite.sprites.get(entity) is None ||
+      mob.last_synced_stance != Some(mob.stance) {
+      // Create or Replace sprite
+      let flip = mob.stance.face_right && not(mob.no_flip)
+      let selene_anim = if flip { anim.selene_r } else { anim.selene_l }
+      let layer = mob.get_layer()
+      let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
+        layer * MAP_LAYER_STRIDE +
+        MOB_ZINDEX_OFFSET
+      let sprite = @sprite.Sprite::from_animation(selene_anim, z)
+      @sprite.sprites.set(entity, sprite)
+      mob.last_synced_stance = Some(mob.stance)
+    } else {
+      // Only update Z
+      match @sprite.sprites.get(entity) {
+        Some(sprite) => {
+          let layer = mob.get_layer()
+          let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
+            layer * MAP_LAYER_STRIDE +
+            MOB_ZINDEX_OFFSET
+          @sprite.sprites.set(entity, { ..sprite, zindex: z })
+        }
+        None => ()
+      }
+    }
+  }
 }

@@ -13,5 +13,6 @@
   "keywords": [],
   "description": "",
   "source": "src",
-  "preferred-target": "js"
+  "preferred-target": "js",
+  "warn-list": "-A"
 }

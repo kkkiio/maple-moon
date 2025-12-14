@@ -275,7 +275,7 @@ pub fn Combat::apply_attack_to_mobs(
   result : AttackResult,
   user_input : Bool,
 ) -> Unit {
-  self.mobs.send_attack(result, attack, mob_targets, self.network)
+  self.mobs.send_attack(result, attack, mob_targets)
   self.extract_effects(character, act, result)
   self.attack_events_listeners.retain(fn(listener) {
     listener({ result, user_input })

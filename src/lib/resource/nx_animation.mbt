@@ -22,7 +22,7 @@ pub(all) struct NxTexture {
   /// ignore(left_top)
   /// ```
   origin : Point[Int]
-}
+} derive(Show)
 
 ///|
 pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
@@ -55,8 +55,13 @@ pub fn NxTexture::get_size(self : NxTexture) -> (Int, Int) {
 ///|
 pub(all) struct NxFrame {
   texture : NxTexture
+  /// 帧显示时长（毫秒），None 表示使用默认值 100ms 或静态帧
   delay : Int?
-}
+  /// 怪物/角色头部位置，用于计算名牌显示位置、伤害数字位置等
+  head : Point[Int]?
+  /// 碰撞检测边界框 (lt: 左上角, rb: 右下角)，用于判断攻击范围
+  bounds : Rectangle[Int]?
+} derive(Show)
 
 ///|
 pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
@@ -65,7 +70,40 @@ pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise 
     { "delay": Number(delay, ..), .. } => Some(delay.to_int())
     _ => None
   }
-  { texture, delay }
+  let head = match json {
+    { "head": head, .. } =>
+      Some(@json.from_json(head, path=path.add_key("head"))) catch {
+        _ => None
+      }
+    _ => None
+  }
+  let bounds = if json is { "lt": _, "rb": _, .. } {
+    Some(@json.from_json(json, path~))
+  } else {
+    None
+  }
+  { texture, delay, head, bounds }
+}
+
+///|
+test "parse nx frame" {
+  let data : Json = {
+    "__h": 58,
+    "__w": 63,
+    "delay": 180,
+    "head": [2, -54],
+    "lt": [-27, -58],
+    "origin": [27, 58],
+    "rb": [36, 0],
+    "__i": "spritesheets/Mob/1210102.img#10728",
+  }
+  let frame : NxFrame = @json.from_json(data)
+  inspect(
+    frame,
+    content=(
+      #|{texture: {i: "spritesheets/Mob/1210102.img#10728", w: 63, h: 58, offset: {x: 0, y: 0}, origin: {x: 27, y: 58}}, delay: Some(180), head: Some({x: 2, y: -54}), bounds: Some({lt: {x: -27, y: -58}, rb: {x: 36, y: 0}})}
+    ),
+  )
 }
 
 ///|
@@ -95,4 +133,4 @@ pub fn NxAnimation::get_size(self : NxAnimation) -> (Int, Int) {
 }
 
 ///|
-using @struct {type Point}
+using @struct {type Point, type Rectangle}

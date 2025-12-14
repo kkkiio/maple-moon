@@ -387,6 +387,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         portals=sence_map.portals,
         mobs=stage.mobs,
       )
+      // 设置怪物上下文，让怪物生成消息能被正确处理
+      @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
       @map.set_backgrounds(sence_map.backgrounds)

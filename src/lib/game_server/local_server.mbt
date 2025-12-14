@@ -33,6 +33,7 @@ fn LocalServer::new() -> LocalServer {
 ///|
 using @maple_protocol {
   trait ClientMessage,
+  trait ServerMessage,
   type ChangeMapMessage,
   type SetFieldMessage,
   type SelectCharMessage,
@@ -67,6 +68,20 @@ pub fn[T : ClientMessage] send(
   let json = message.to_json()
   @log.log(log_level, { "message": json }, "send", loc~)
   default_server.client_message_queue.push((type_code, json))
+}
+
+///|
+#callsite(autofill(loc))
+fn[T : ServerMessage] LocalServer::send_server_message(
+  self : LocalServer,
+  message : T,
+  log_level? : @log.Level = @log.Level::DEBUG,
+  loc~ : SourceLoc,
+) -> Unit {
+  let type_code = T::type_code()
+  let json = message.to_json()
+  @log.log(log_level, { "message": json }, "send_server_message", loc~)
+  self.server_message_queue.push((type_code, json))
 }
 
 ///|

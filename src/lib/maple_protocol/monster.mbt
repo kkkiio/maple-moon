@@ -37,6 +37,22 @@ pub impl @net.OutMessage for MoveMonsterMessage with pack(self) -> @net.OutPacke
 }
 
 ///|
+pub(all) struct MobSpawnMessage {
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  stance : Int
+  fh : Int
+  team : Int
+} derive(ToJson, @json.FromJson)
+
+///|
+pub impl ServerMessage for MobSpawnMessage with type_code() {
+  @net.Opcode::SPAWN_MOB.int_value()
+}
+
+///|
 using @struct {type Point}
 
 ///|

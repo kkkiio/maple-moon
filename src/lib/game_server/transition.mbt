@@ -26,10 +26,7 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
       portal_id~,
     )
     self.last_portal_id = portal_id
-    let set_field_json = set_field_message.to_json()
-    default_server.server_message_queue.push(
-      (@net.Opcode::SET_FIELD.int_value(), set_field_json),
-    )
+    default_server.send_server_message(set_field_message)
 
     // spawn mobs
     @io_service.execute_background(async fn() {
@@ -50,7 +47,7 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
             "fh": Number(fh, ..),
             ..
           } => {
-            let monster_id = @strconv.parse_int(id_str) catch { _ => 0 }
+            let monster_id = @strconv.parse_int(id_str)
             self.last_object_id += 1
             let spawn_msg = MobSpawnMessage::{
               oid: self.last_object_id,
@@ -61,9 +58,7 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
               fh: fh.to_int(),
               team: -1,
             }
-            default_server.server_message_queue.push(
-              (@net.Opcode::SPAWN_MOB.int_value(), spawn_msg.to_json()),
-            )
+            default_server.send_server_message(spawn_msg)
           }
           _ => ()
         }
@@ -71,17 +66,6 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
     })
   })
 }
-
-///|
-struct MobSpawnMessage {
-  oid : Int
-  id : Int
-  x : Int
-  y : Int
-  stance : Int
-  fh : Int
-  team : Int
-} derive(ToJson)
 
 ///|
 async fn get_target_by_map_id_and_portal_name(
@@ -134,3 +118,6 @@ async fn get_portal_id_by_map_id_and_portal_name(
   }
   None
 }
+
+///|
+using @maple_protocol {type MobSpawnMessage}

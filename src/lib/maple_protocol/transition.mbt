@@ -26,6 +26,11 @@ pub(all) enum SetFieldMessage {
 } derive(Show, ToJson, @json.FromJson)
 
 ///|
+pub impl ServerMessage for SetFieldMessage with type_code() {
+  @net.Opcode::SET_FIELD.int_value()
+}
+
+///|
 pub(all) struct StatsEntry {
   name : String
   female : Bool

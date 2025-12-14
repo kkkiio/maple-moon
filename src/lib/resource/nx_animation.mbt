@@ -111,7 +111,7 @@ pub(all) struct NxAnimation {
   frames : Array[NxFrame]
   blend : Bool
   zigzag : Bool
-}
+} derive(Show)
 
 ///|
 /// animation is a map based array or a single frame

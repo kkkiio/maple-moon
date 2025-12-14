@@ -126,19 +126,21 @@ pub async fn Mob::load(
 ) -> Mob {
   let mob_loader = @resource.get_mob_loader()
   let strid = @utils.stoi_left_pad0(mid, 7)
-  let src = mob_loader.load_res_async([strid + ".img"])
-  let info : MobInfo = src["info"].value() |> @json.from_json
-  let animations = if info.link is Some(link) {
-    let can_fly = src["fly"].get_children_count() > 0 // TODO: should we use link mob's can_fly?
-    let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
-    load_animations(link_mob, can_fly)
-  } else {
-    let can_fly = src["fly"].get_children_count() > 0
-    load_animations(src, can_fly)
+  try {
+    let src = mob_loader.load_res_async([strid + ".img"])
+    let info : MobInfo = src["info"].value() |> @json.from_json
+    let animations = if info.link is Some(link) {
+      let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
+      load_animations(link_mob.value())
+    } else {
+      load_animations(src.value())
+    }
+    Mob::new(
+      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, animations,
+    )
+  } catch {
+    e => fail("Mob::load failed, mid=\{mid}, e=\{e}")
   }
-  Mob::new(
-    oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, animations,
-  )
 }
 
 ///|
@@ -1032,31 +1034,4 @@ pub fn Mob::show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
   let percent = percent |> @cmp.minimum(100) |> @cmp.maximum(0)
   self.hp_percent = percent
   self.show_hp.set_for(2000)
-}
-
-///|
-fn load_animations(
-  src : @resource.NxNode,
-  can_fly : Bool,
-) -> Map[StanceType, MobAnimation] raise {
-  let animations : Map[StanceType, MobAnimation] = Map::new()
-  if can_fly {
-    animations[StanceType::STAND] = src["fly"] |> load_animation
-    animations[StanceType::MOVE] = src["fly"] |> load_animation
-  } else {
-    animations[StanceType::STAND] = src["stand"] |> load_animation
-    animations[StanceType::MOVE] = src["move"] |> load_animation
-  }
-  animations[StanceType::JUMP] = src["jump"] |> load_animation
-  animations[StanceType::HIT] = src["hit1"] |> load_animation
-  animations[StanceType::DIE] = src["die1"] |> load_animation
-  animations
-}
-
-///|
-fn load_animation(src : @resource.NxNode) -> MobAnimation raise {
-  let nx : @resource.NxAnimation = @json.from_json(src.value())
-  let selene_l = @graphics.nx_animation_to_selene_animation(nx, flip_x=false)
-  let selene_r = @graphics.nx_animation_to_selene_animation(nx, flip_x=true)
-  { nx, selene_l, selene_r }
 }

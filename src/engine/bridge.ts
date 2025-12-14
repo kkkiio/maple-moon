@@ -91,63 +91,85 @@ export interface EditorAPI {
     cleanup: () => void;
 }
 
+// Prevent duplicate initialization (React StrictMode calls useEffect twice)
+let cachedApi: EditorAPI | null = null;
+let initPromise: Promise<EditorAPI> | null = null;
+
 export async function initMoonBitEngine(
     canvasId: string,
     onLog: (msg: string, type: 'info' | 'warn' | 'error') => void
 ): Promise<EditorAPI> {
-
-    // Import object for WASM
-    const importObject = {
-        // Basic environment expected by MoonBit/Selene
-        spectest: {
-            print_i32: (x: number) => { }, // console.log(String(x)),
-            print_f64: (x: number) => { }, // console.log(String(x)),
-            print_char: (x: number) => { }, // console.log(String.fromCharCode(x)),
-        },
-        "moonbit:ffi": {
-            "make_closure": (funcref: Function, closure: any) => funcref.bind(null, closure)
-        }
-    };
-
-    Object.assign(globalThis, importObject);
-
-    // Load the MoonBit module
-    const m = await import("../../target/js/release/build/mapeditor/mapeditor.js");
-
-    // Start the editor engine
-    if (m.start_editor) {
-        m.start_editor();
-    } else {
-        console.error("start_editor function not found in MoonBit module");
+    // Return cached API if already initialized
+    if (cachedApi) {
+        console.warn("MoonBit Engine already initialized, returning cached API");
+        return cachedApi;
     }
 
-    return {
-        loadMap: (id: number) => {
-            if (m.load_map_ffi) m.load_map_ffi(id);
-        },
-        setViewOptions: (showBg: boolean, showTiles: boolean, showObjs: boolean) => {
-            if (m.set_view_options_ffi) m.set_view_options_ffi(showBg, showTiles, showObjs);
-        },
-        getSceneGraph: () => {
-            if (m.export_scene_graph_ffi) {
-                return m.export_scene_graph_ffi();
+    // Return existing promise if initialization is in progress
+    if (initPromise) {
+        console.warn("MoonBit Engine initialization in progress, waiting...");
+        return initPromise;
+    }
+
+    // Start initialization and cache the promise
+    initPromise = (async () => {
+        // Import object for WASM
+        const importObject = {
+            // Basic environment expected by MoonBit/Selene
+            spectest: {
+                print_i32: (x: number) => { }, // console.log(String(x)),
+                print_f64: (x: number) => { }, // console.log(String(x)),
+                print_char: (x: number) => { }, // console.log(String.fromCharCode(x)),
+            },
+            "moonbit:ffi": {
+                "make_closure": (funcref: Function, closure: any) => funcref.bind(null, closure)
             }
-            return null;
-        },
-        getMouseInfo: () => {
-            if (m.export_mouse_info_ffi) {
-                return m.export_mouse_info_ffi();
-            }
-            return null;
-        },
-        getStatus: () => {
-            if (m.export_editor_status_ffi) {
-                return m.export_editor_status_ffi();
-            }
-            return null;
-        },
-        cleanup: () => {
-            // If there's a way to stop the engine, call it here
+        };
+
+        Object.assign(globalThis, importObject);
+
+        // Load the MoonBit module
+        const m = await import("../../target/js/release/build/mapeditor/mapeditor.js");
+
+        // Start the editor engine
+        if (m.start_editor) {
+            m.start_editor();
+        } else {
+            console.error("start_editor function not found in MoonBit module");
         }
-    };
+
+        return {
+            loadMap: (id: number) => {
+                if (m.load_map_ffi) m.load_map_ffi(id);
+            },
+            setViewOptions: (showBg: boolean, showTiles: boolean, showObjs: boolean) => {
+                if (m.set_view_options_ffi) m.set_view_options_ffi(showBg, showTiles, showObjs);
+            },
+            getSceneGraph: () => {
+                if (m.export_scene_graph_ffi) {
+                    return m.export_scene_graph_ffi();
+                }
+                return null;
+            },
+            getMouseInfo: () => {
+                if (m.export_mouse_info_ffi) {
+                    return m.export_mouse_info_ffi();
+                }
+                return null;
+            },
+            getStatus: () => {
+                if (m.export_editor_status_ffi) {
+                    return m.export_editor_status_ffi();
+                }
+                return null;
+            },
+            cleanup: () => {
+                // If there's a way to stop the engine, call it here
+            }
+        };
+    })();
+
+    // Cache the result and return
+    cachedApi = await initPromise;
+    return cachedApi;
 }

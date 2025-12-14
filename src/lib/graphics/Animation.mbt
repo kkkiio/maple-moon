@@ -464,12 +464,45 @@ pub fn nx_animation_to_selene_animation(
     .get(0)
     .map(fn(frame) { frame.texture.origin })
     .unwrap_or(@struct.Point::default())
-  let delay_ms = src.frames
-    .iter()
-    .map_while(fn(frame) { frame.delay })
-    .peek()
-    .unwrap_or(100)
-  let frames = src.frames.map(fn(frame) {
+
+  // Extract all delays
+  let delays = src.frames.map(fn(frame) {
+    match frame.delay {
+      Some(d) => if d <= 0 { 100 } else { d }
+      None => 100
+    }
+  })
+
+  // Handle zigzag: extend delays and maintain mapping to original indices
+  let (effective_delays, index_map) = if src.zigzag && delays.length() > 2 {
+    let extended = delays.copy()
+    let mapping = Array::make(delays.length(), 0)
+    for i = 0; i < delays.length(); i = i + 1 {
+      mapping[i] = i
+    }
+
+    // Append reversed inner frames: N-2 down to 1
+    let len = delays.length()
+    for i = len - 2; i >= 1; i = i - 1 {
+      extended.push(delays[i])
+      mapping.push(i)
+    }
+    (extended, mapping)
+  } else {
+    let mapping = Array::make(delays.length(), 0)
+    for i = 0; i < delays.length(); i = i + 1 {
+      mapping[i] = i
+    }
+    (delays, mapping)
+  }
+
+  // Calculate generic frames and speed based on effective delays
+  let (indices, speed) = make_delay_frames(effective_delays)
+
+  // Map indices back to Selene frames
+  let frames = indices.map(fn(idx) {
+    let frame_idx = index_map[idx]
+    let frame = src.frames[frame_idx]
     @sprite.AnimationFrame::{
       sprite_path: frame.texture.i,
       size: @selene_math.Vec2D(
@@ -482,6 +515,7 @@ pub fn nx_animation_to_selene_animation(
       ),
     }
   })
+
   // translate to origin
   let base = @selene_math.Transform::from_translation(
     -origin.x.to_double(),
@@ -493,13 +527,38 @@ pub fn nx_animation_to_selene_animation(
   } else {
     base
   }
-  @sprite.Animation::new(
-    frames,
-    loop_~,
-    // rate=1000.0 / delay_ms.to_double() / fps.to_double(),
-    fps=1000.0 / delay_ms.to_double(),
-    transform~,
-  )
+  @sprite.Animation::new(frames, loop_~, fps=speed, transform~)
+}
+
+///|
+fn make_delay_frames(ms_delays : Array[Int]) -> (Array[Int], Double) {
+  let gcd = ms_delays
+    .iter()
+    .fold(init=0, fn(a, b) { if a == 0 { b } else { calc_gcd(a, b) } })
+
+  // Safety fallback
+  let step = if gcd <= 0 { 10 } else { gcd }
+  let speed = 1000.0 / step.to_double()
+  let delays = ms_delays.map(fn(d) { d / step })
+  let total_frames = delays.iter().fold(init=0, fn(acc, d) { acc + d })
+  let result_frames = Array::make(total_frames, 0)
+  let mut acc = 0
+  for i, count in delays.iter2() {
+    for j = 0; j < count; j = j + 1 {
+      result_frames[acc + j] = i
+    }
+    acc += count
+  }
+  (result_frames, speed)
+}
+
+///|
+fn calc_gcd(a : Int, b : Int) -> Int {
+  if b == 0 {
+    a
+  } else {
+    calc_gcd(b, a % b)
+  }
 }
 
 ///|

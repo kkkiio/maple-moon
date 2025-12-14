@@ -62,7 +62,7 @@ fn to_logstr(
   loc : SourceLoc,
 ) -> String {
   let buf = StringBuilder::new(
-    size_hint=(msg.length() + context.size() * 12) * 2,
+    size_hint=(msg.length() + context.length() * 12) * 2,
   )
   buf.write_string("loc=")
   buf.write_string(loc.to_string())

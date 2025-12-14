@@ -248,9 +248,7 @@ pub impl @json.FromJson for NxLife with from_json(json, path) {
   match json {
     {
       "cy": Number(cy, ..),
-      "f": Number(f, ..),
       "fh": Number(fh, ..),
-      "hide": Number(hide, ..),
       "id": String(id),
       "rx0": Number(rx0, ..),
       "rx1": Number(rx1, ..),
@@ -259,7 +257,13 @@ pub impl @json.FromJson for NxLife with from_json(json, path) {
       "y": Number(y, ..),
       ..
     } => {
-      // mobTime is optional
+      // f, hide, mobTime are optional
+      let f = if json is { "f": Number(f, ..), .. } { f.to_int() } else { 0 }
+      let hide = if json is { "hide": Number(hide, ..), .. } {
+        hide.to_int()
+      } else {
+        0
+      }
       let mob_time = if json is { "mobTime": Number(mob_time, ..), .. } {
         Some(mob_time.to_int())
       } else {
@@ -267,9 +271,9 @@ pub impl @json.FromJson for NxLife with from_json(json, path) {
       }
       {
         cy: cy.to_int(),
-        f: f.to_int(),
+        f,
         fh: fh.to_int(),
-        hide: hide.to_int(),
+        hide,
         id,
         mob_time,
         rx0: rx0.to_int(),
@@ -281,4 +285,22 @@ pub impl @json.FromJson for NxLife with from_json(json, path) {
     }
     _ => raise @json.JsonDecodeError((path, "missing life fields"))
   }
+}
+
+///|
+test "parse misssing" {
+  let src : Json = {
+    "cy": 274,
+    "fh": 126,
+    "id": "1012000",
+    "rx0": 99,
+    "rx1": 199,
+    "type": "n",
+    "x": 149,
+    "y": 267,
+  }
+  let life : NxLife = @json.from_json(src)
+  inspect(life, content=(
+    #|{cy: 274, f: 0, fh: 126, hide: 0, id: "1012000", mob_time: None, rx0: 99, rx1: 199, type_: "n", x: 149, y: 267}
+  ))
 }

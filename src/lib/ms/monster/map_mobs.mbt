@@ -267,7 +267,10 @@ const MAP_LAYER_STRIDE = 5000
 ///|
 pub fn map_monsters_system(_delta : Double) -> Unit {
   guard map_mobs_ctx.val is Some({ map_mobs, physics }) else { return }
-  map_mobs.update(physics)
+  let times = @logic_fps.get_logic_times()
+  for i = 0; i < times; i = i + 1 {
+    map_mobs.update(physics)
+  }
   for _oid, mob in map_mobs.mobs.iter2() {
     let entity = mob.entity
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }

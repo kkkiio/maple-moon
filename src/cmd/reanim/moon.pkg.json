@@ -1,0 +1,13 @@
+{
+    "is-main": true,
+    "import": [
+        "moonbitlang/x/sys",
+        "moonbitlang/x/fs",
+        "rami3l/js-ffi/js"
+    ],
+    "link": {
+        "js": {
+            "format": "cjs"
+        }
+    }
+}

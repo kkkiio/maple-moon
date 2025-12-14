@@ -5,7 +5,6 @@ build
 .cache
 node_modules
 dist
-assets
 output
 
 .vscode
@@ -18,3 +17,6 @@ tools/
 .local/
 
 # ignore for now
+assets/images
+assets/spritesheets
+assets/map

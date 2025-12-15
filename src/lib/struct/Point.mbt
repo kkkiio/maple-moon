@@ -70,21 +70,6 @@ pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
 }
 
 ///|
-pub fn Point::div_float(self : Point[Float], f : Float) -> Point[Float] {
-  { x: self.x / f, y: self.y / f }
-}
-
-///|
-pub fn Point::to_float(self : Point[Int]) -> Point[Float] {
-  { x: self.x.to_float(), y: self.y.to_float() }
-}
-
-///|
-pub fn Point::to_int(self : Point[Float]) -> Point[Int] {
-  { x: self.x.to_int(), y: self.y.to_int() }
-}
-
-///|
 pub fn Point::to_vec2d(self : Point[Int]) -> @selene_math.Vec2D {
   @selene_math.Vec2D(self.x.to_double(), self.y.to_double())
 }

@@ -67,9 +67,6 @@ nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit struct 
 
 # MoonBit Project Layouts
 
-You have the ability to detect specific types of MoonBit projects and work with
-them adaptively.
-
 MoonBit source files use the `.mbt` extension and interface files `.mbti`. At
 the top-level of a MoonBit project there is a `moon.mod.json` file specifying
 the metadata of the project. The project may contain multiple packages, each
@@ -100,8 +97,6 @@ Core facts that impact how you write and refactor code.
 - **Placeholders**: `...` is a valid placeholder in MoonBit code for incomplete implementations.
 - **Global values**: immutable by default and generally require type annotations.
 - **Garbage collection**: MoonBit has a GC, there is no lifetime annotation, there's no ownership system.
-  <Important> Delimit top-level items with `///|` comments so tools can split the file reliably.
-  </Important>
 
 Quick reference:
 

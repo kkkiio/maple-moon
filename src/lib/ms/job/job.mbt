@@ -1,37 +1,15 @@
 ///|
+/// 职业等级
 pub(all) enum Level {
-  BEGINNER
-  FIRST
-  SECOND
-  THIRD
-  FOURTH
-}
+  BEGINNER = 0
+  FIRST = 1
+  SECOND = 2
+  THIRD = 3
+  FOURTH = 4
+} derive(Eq, Compare, Hash)
 
 ///|
-pub fn Level::int_value(self : Level) -> Int {
-  match self {
-    BEGINNER => 0
-    FIRST => 1
-    SECOND => 2
-    THIRD => 3
-    FOURTH => 4
-  }
-}
-
-///|
-pub impl Eq for Level with equal(self : Level, other : Level) -> Bool {
-  self.int_value() == other.int_value()
-}
-
-///|
-pub impl Compare for Level with compare(self : Level, other : Level) -> Int {
-  self.int_value().compare(other.int_value())
-}
-
-///|
-pub impl Hash for Level with hash_combine(self : Level, hasher : Hasher) -> Unit {
-  hasher.combine(self.int_value())
-}
+pub fn Level::int_value(self : Level) -> Int = "%identity"
 
 ///|
 let all_levels : Array[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
@@ -123,9 +101,11 @@ pub(all) enum JobId {
   DRAGONKNIGHT = 131
   DARKKNIGHT = 132
   MAGICIAN = 200
+  /// Fire, Poison Wizard
   FP_WIZARD = 210
   FP_MAGE = 211
   FP_ARCHMAGE = 212
+  /// Ice, Lightning Wizard
   IL_WIZARD = 220
   IL_MAGE = 221
   IL_ARCHMAGE = 222

@@ -39,19 +39,18 @@ pub(all) struct Stats {
 } derive(ToJson, Show)
 
 ///|
-pub async fn SkillData::load(
-  string_loader : @resource.SyncLoader,
-  id : Int,
-) -> SkillData {
+pub async fn SkillData::load(id : Int) -> SkillData {
   let strid = @utils.stoi_left_pad0(id, 7)
   let jobid = strid.view(end_offset=3)
-  let src = skill_loader().load_res_async(["\{jobid}.img", "skill", strid])
+  let src = get_skill_loader().load_res_async(["\{jobid}.img", "skill", strid])
   let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
     e => fail("failed to load skill: \{e}, id=\{id}")
   }
-  let strsrc : SkillTextResource = string_loader
-    .load_res(["Skill.img", strid])
-    .value()
+  let strsrc : SkillTextResource = text_src
+    .as_object()
+    .unwrap()
+    .get(strid)
+    .unwrap()
     |> @json.from_json()
   SkillData::new(id, src, skill_res.simplify(), strsrc)
 }
@@ -318,16 +317,6 @@ pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats? {
 }
 
 ///|
-pub fn skill_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "skill",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Skill",
-    ),
-  )
-}
-
-///|
 priv struct LevelStats(Map[Int, Stats])
 
 ///|
@@ -464,7 +453,4 @@ pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType 
 }
 
 ///|
-using @resource {type IntMap}
-
-///|
-using @resource {type Nullable}
+using @resource {type IntMap, type Nullable, get_skill_loader}

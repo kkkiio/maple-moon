@@ -5,7 +5,6 @@
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/combat_impl",
     "KKKIIO/maple-moon/lib/net",
-    "KKKIIO/maple-moon/lib/config",
     "KKKIIO/maple-moon/lib/ms/player",
     "KKKIIO/maple-moon/lib/ms/combat_proto",
     "KKKIIO/maple-moon/lib/ms/character",
@@ -22,9 +21,9 @@
     "KKKIIO/maple-moon/lib/ms/char_look",
     "KKKIIO/maple-moon/lib/ms/equip",
     "KKKIIO/maple-moon/lib/ms/equip/data",
-    "KKKIIO/maple-moon/lib/game_scene",
     "KKKIIO/maple-moon/lib/ms/physics",
     "KKKIIO/maple-moon/lib/game_state",
-    "KKKIIO/maple-moon/lib/logic_fps"
+    "KKKIIO/maple-moon/lib/logic_fps",
+    "Milky2018/selene/inputs"
   ]
 }

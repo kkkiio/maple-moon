@@ -15,9 +15,7 @@ pub async fn SkillBook::load(
   let async_ops = job
     .get_all_subjobs()
     .flat_map(fn(it) { it.skill_ids.iter() })
-    .map(fn(skill_id) {
-      async fn() { @skill.SkillData::load(string_loader, skill_id) }
-    })
+    .map(fn(skill_id) { async fn() { @skill.SkillData::load(skill_id) } })
     |> Array::from_iter
   let it = @js.async_all(async_ops)
   let available_skills = Map::new()

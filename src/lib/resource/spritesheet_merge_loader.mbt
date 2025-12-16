@@ -208,7 +208,7 @@ pub(all) struct SpritesheetFrameMetadata {
 } derive(@json.FromJson)
 
 ///|
-fn collect_spritesheet_paths(json : Json) -> Array[String] {
+pub fn collect_spritesheet_paths(json : Json) -> Array[String] {
   let paths : Set[String] = Set::new()
   fn dfs(json : Json) -> Unit {
     match json {

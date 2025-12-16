@@ -999,12 +999,7 @@ fn Mob::calculate_hitchance(
 }
 
 ///|
-pub fn Mob::apply_damage(
-  self : Mob,
-  damage : Int,
-  toleft : Bool,
-  network : @net.Network,
-) -> Unit {
+pub fn Mob::apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
   // self.hit_sound.play()
 
   if self.dying && self.stance.t != StanceType::DIE {

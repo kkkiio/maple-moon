@@ -18,9 +18,8 @@ struct Skill {
 pub async fn Skill::load(
   skill_id : Int,
   bullet_module : @bullet.Module,
-  string_loader~ : @resource.SyncLoader,
 ) -> Skill {
-  let data = @skill.SkillData::load(string_loader, skill_id)
+  let data = @skill.SkillData::load(skill_id)
   Skill::new(
     skill_id,
     bullet_module,
@@ -61,7 +60,14 @@ pub fn Skill::new(
   // }
   let has_action0 = (try? src["action"]["0"].as_string()) is Ok(_)
   let has_action1 = (try? src["action"]["1"].as_string()) is Ok(_)
-  let action = if has_action0 && has_action1 {
+  let action = if @skill.SkillId::from_int(skill_id) is Some(sk) &&
+    (
+      sk == @skill.SkillId::TELEPORT_FP ||
+      sk == @skill.SkillId::IL_TELEPORT ||
+      sk == @skill.SkillId::PRIEST_TELEPORT
+    ) {
+    FuncSkillAction(fn(c, _) { @builtin_skills.teleport(c) }) as &SkillAction
+  } else if has_action0 && has_action1 {
     TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {
     SingleAction::new(src) as &SkillAction
@@ -229,6 +235,9 @@ pub fn Skill::can_use(
   mp : Int,
   bullets : Int,
 ) -> ForbidReason {
+  if true {
+    return FBR_NONE
+  }
   if level <= 0 || level > self.master_level {
     return FBR_OTHER
   }

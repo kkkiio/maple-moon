@@ -1,0 +1,8 @@
+{
+    "import": [
+      "KKKIIO/maple-moon/lib/ms/player",
+      "KKKIIO/maple-moon/lib/ms/keyboard",
+      "KKKIIO/maple-moon/lib/ms/character",
+      "Milky2018/selene/inputs"
+    ]
+}

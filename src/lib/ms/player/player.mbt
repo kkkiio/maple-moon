@@ -5,12 +5,6 @@ using @physics {type Movement}
 using @char_stats {type CharStats}
 
 ///|
-pub(open) trait SkillBook {
-  get_level(Self, Int) -> Int
-  set_skill(Self, Int, Int, Int, Int) -> Unit
-}
-
-///|
 pub(all) struct Player {
   entity : @entity.Entity
   character : @character.Character
@@ -18,21 +12,12 @@ pub(all) struct Player {
   mut underwater : Bool
   mut last_move : Movement
   mut ladder : @map.Ladder?
-  // inventory : &Inventory
+  inventory : &Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
   active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
   // load_skill_book : async (@job.Job) -> &SkillBook raise
-  // mut skill_book : &SkillBook
-}
-
-///|
-pub(open) trait Inventory {
-  recalc_stats(Self, @weapon.Type) -> Unit
-  get_stat(Self, @maple_stat.EquipStatId) -> Int
-  has_projectile(Self) -> Bool
-  get_bulletid(Self) -> Int
-  get_bulletcount(Self) -> Int
+  mut skill_book : &SkillBook
 }
 
 ///|
@@ -92,11 +77,11 @@ pub fn Player::new(
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
-    // inventory,
+    inventory: MockInventory::{  },
     buffs: Map::new(),
     active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::new(),
-    // skill_book,
+    skill_book: MockSkillBook::{  },
     // load_skill_book,
   }
   p.set_state(CharState::STAND)
@@ -554,9 +539,8 @@ pub fn Player::is_attacking(self : Player) -> Bool {
   self.character.attacking
 }
 
-// Set state ignore if attacking.
-
 ///|
+/// Set state ignore if attacking.
 pub fn Player::set_state(self : Player, st : CharState) -> Unit {
   if self.character.attacking {
     return
@@ -637,27 +621,6 @@ pub fn Player::recalc_stats(self : Player, equip_changed : Bool) -> Unit {
 }
 
 ///|
-fn new_move_player_packet(movement : Movement) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::MOVE_PLAYER)
-  packet.skip(9)
-  packet.write_byte((1).to_byte())
-  write_movement(packet, movement)
-  packet
-}
-
-///|
-fn write_movement(out : @net.OutPacket, movement : @physics.Movement) -> Unit {
-  out.write_byte(movement.command.to_byte())
-  out.write_short(movement.xpos)
-  out.write_short(movement.ypos)
-  out.write_short(movement.lastx)
-  out.write_short(movement.lasty)
-  out.write_short(movement.fh)
-  out.write_byte(movement.newstate.to_byte())
-  out.write_short(movement.duration)
-}
-
-///|
 pub fn Player::get_ladder(self : Player) -> @map.Ladder? {
   self.ladder
 }
@@ -692,8 +655,8 @@ pub fn Player::damage(
   self.character.show_damage(damage)
   let fromleft = attack.origin.x > self.character.get_phobj().get_x()
   let missed = damage <= 0
-  let immovable = not(self.get_ladder().is_empty()) ||
-    self.character.state == CharState::DIED
+  let immovable = self.get_ladder() is Some(_) ||
+    self.character.state is CharState::DIED
   let knockback = not(missed) && not(immovable)
   if knockback && self.randomizer.above(self.stats.get_stance()) {
     self.character.get_phobj().moving_object.set_hspeed(
@@ -713,8 +676,7 @@ pub fn Player::damage(
 
 ///|
 pub fn Player::get_skills(self : Player) -> &SkillBook {
-  ...
-  // self.skill_book
+  self.skill_book
 }
 
 ///|
@@ -830,7 +792,6 @@ fn check_portals(
     let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
     let startpos = physics.get_y_below(spawnpoint)
     player.respawn(startpos, map_info.is_underwater())
-    // } else if warpinfo.valid {
   } else {
     let message = ChangeMapMessage::{
       died: false,

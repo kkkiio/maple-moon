@@ -90,3 +90,11 @@ pub impl SkillAction for ByLevelAction with apply(
     None => ()
   }
 }
+
+///|
+struct FuncSkillAction((@character.Character, @combat.AttackType) -> Unit)
+
+///|
+pub impl SkillAction for FuncSkillAction with apply(self, c, t) {
+  (self.0)(c, t)
+}

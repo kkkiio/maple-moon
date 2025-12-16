@@ -19,6 +19,7 @@
     "KKKIIO/maple-moon/lib/ms/monster",
     "KKKIIO/maple-moon/lib/ms/bullet",
     "KKKIIO/maple-moon/lib/ms/player",
-    "KKKIIO/maple-moon/lib/log"
+    "KKKIIO/maple-moon/lib/log",
+    "KKKIIO/maple-moon/lib/ms/builtin_skills"
   ]
 }

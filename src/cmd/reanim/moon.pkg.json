@@ -3,7 +3,11 @@
     "import": [
         "moonbitlang/x/sys",
         "moonbitlang/x/fs",
-        "rami3l/js-ffi/js"
+        "rami3l/js-ffi/js",
+        "KKKIIO/maple-moon/lib/resource"
+    ],
+    "test-import": [
+        "moonbitlang/async"
     ],
     "link": {
         "js": {

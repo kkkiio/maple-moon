@@ -209,8 +209,6 @@ async fn load_modules(
   let combat = @combat_impl2.Combat::new(
     damage_number_set,
     monster_module.get_map_mobs(),
-    network,
-    string_loader,
     bullet_module,
   )
   let skill_book_module = @skill_book.Module::load(

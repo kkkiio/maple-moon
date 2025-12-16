@@ -102,7 +102,7 @@ fn parse_body_animations_by_stance(
   }
   // reset delays
   for _, layer_frams in part_frames_map {
-    layer_frams.0.mapi_inplace(fn(i, frame) {
+    layer_frams.0.mapi_in_place(fn(i, frame) {
       { ..frame, delay: body_frame_delays[i] }
     })
   }
@@ -130,7 +130,7 @@ fn parse_body_animations_by_stance(
 }
 
 ///|
-let skintypes = [
+let skintypes : Array[String] = [
   "Light", "Tan", "Dark", "Pale", "Blue", "Green", "", "", "", "Grey", "Pink", "Red",
 ]
 

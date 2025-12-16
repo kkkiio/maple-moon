@@ -1,7 +1,6 @@
 ///|
 pub(all) struct RegularAttack {
   action : RegularAction
-  string_loader : @resource.SyncLoader
 }
 
 ///|
@@ -113,11 +112,8 @@ pub fn can_use_regular_attack(
 }
 
 ///|
-pub fn new_regular_attack(
-  string_loader : @resource.SyncLoader,
-  bullet_module : @bullet.Module,
-) -> SpecialMove {
-  let ra = { action: RegularAction::default(), string_loader }
+pub fn new_regular_attack(bullet_module : @bullet.Module) -> SpecialMove {
+  let ra = RegularAttack::{ action: RegularAction::default() }
   {
     id: 0,
     attack: true,

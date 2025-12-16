@@ -9,8 +9,6 @@ struct Combat {
   bullets : Array[BulletEffect]
   damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
-  network : @net.Network
-  string_loader : @resource.SyncLoader
   bullet_module : @bullet.Module
   skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
   after_image_cache : Map[
@@ -24,28 +22,23 @@ struct Combat {
 pub fn Combat::new(
   damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
   bullet_module : @bullet.Module,
 ) -> Combat {
-  let server_listener = fn(event : AttackEvent) -> Bool {
-    network.send_message(AttackMessage(event.result))
+  let server_listener = fn(_event : AttackEvent) -> Bool {
+    // TODO: send to server
+    // network.send_message(AttackMessage(event.result))
     true // keep the listener
   }
   {
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_impl.new_regular_attack(
-      string_loader, bullet_module,
-    ),
+    regular_attack: @combat_impl.new_regular_attack(bullet_module),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
     damage_numbers: Array::new(),
     cooldowns: {},
-    network,
-    string_loader,
     bullet_module,
     after_image_cache: Map::new(),
     attack_events_listeners: [server_listener],
@@ -111,9 +104,6 @@ pub fn Combat::use_move(
   player : @player.Player,
   move_id : Int,
 ) -> Unit {
-  if not(player.can_attack()) {
-    return
-  }
   let (act, attack_weapon) = if move_id == 0 {
     guard player.character.get_look().get_equips().get_weapon() is Some(weapon) else {
       return
@@ -140,18 +130,20 @@ pub fn Combat::use_move(
     }).map(@log.unwrap_err(_))
     return
   }
-  // let reason = self.can_use(
-  //   player.character,
-  //   player.skill_book,
-  //   player.stats,
-  //   player.inventory,
-  //   act,
-  // )
-  let reason = @combat_impl.ForbidReason::FBR_NONE
+  if act.is_attack() && not(player.can_attack()) {
+    return
+  }
+  let reason = self.can_use(
+    player.character,
+    player.skill_book,
+    player.stats,
+    player.inventory,
+    act,
+  )
   if reason == @combat_impl.ForbidReason::FBR_NONE {
     let after_images = match attack_weapon {
       Some(weapon) => {
-        let key = (
+        let key = CacheKey(
           move_id,
           weapon.get_afterimage(),
           weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL),
@@ -220,47 +212,48 @@ fn Combat::apply_move(
   after_images : Map[String, @char_look.AfterImage],
 ) -> Unit {
   if act.is_attack() {
-    ...
-    // let (degenerate, attacktype) = check_attack_type(
-    //   player.character,
-    //   player.inventory,
-    //   act.is_skill(),
-    // )
-    // act.apply_useeffects(player.character)
-    // act.apply_actions(player.character, attacktype) // WARN: this will change the stance
-    // let stance_name = player.character.get_look().get_stance().name()
-    // player.character.set_afterimage(after_images.get(stance_name).unwrap())
-    // let attack = act.make_attack(
-    //   player.character,
-    //   player.inventory,
-    //   attacktype,
-    //   degenerate,
-    // )
-    // let range = make_attack_range(attack)
-    // let mobcount = attack.mobcount
-    // let result = {
-    //   ..AttackResult::new(attack),
-    //   attacker: player.character.get_oid(),
-    // }
-    // let mob_objs = self.mobs.get_mobs()
-    // // TODO: check reactor objects
-    // let origin = attack.origin
-    // let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
-    // self.apply_result_movement(player, act, result)
-    // self.apply_attack_to_mobs(
-    //   player.character,
-    //   act,
-    //   attack,
-    //   mob_targets,
-    //   result,
-    //   true,
-    // )
+    let (degenerate, attacktype) = check_attack_type(
+      player.character,
+      player.inventory,
+      act.is_skill(),
+    )
+    act.apply_useeffects(player.character)
+    act.apply_actions(player.character, attacktype) // WARN: this will change the stance
+    let stance_name = player.character.get_look().get_stance().name()
+    player.character.set_afterimage(after_images.get(stance_name).unwrap())
+    let attack = act.make_attack(
+      player.character,
+      player.inventory,
+      attacktype,
+      degenerate,
+    )
+    let range = make_attack_range(attack)
+    let mobcount = attack.mobcount
+    let result = {
+      ..AttackResult::new(attack),
+      attacker: player.character.get_oid(),
+    }
+    let mob_objs = self.mobs.get_mobs()
+    // TODO: check reactor objects
+    let origin = attack.origin
+    let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
+    self.apply_result_movement(player, act, result)
+    self.apply_attack_to_mobs(
+      player.character,
+      act,
+      attack,
+      mob_targets,
+      result,
+      true,
+    )
   } else {
     act.apply_useeffects(player.character)
     act.apply_actions(player.character, @combat_proto.AttackType::MAGIC)
     let moveid = act.get_id()
     let level = player.get_skills().get_level(moveid)
-    self.network.send_message({ move_id: moveid, level })
+    // self.network.send_message({ move_id: moveid, level })
+    // TODO: send to server
+    ignore(level)
   }
 }
 
@@ -375,28 +368,13 @@ impl @net.OutMessage for UseSkillMessage with pack(self) {
   packet
 }
 
-// fn new_damage_reactor_packet(
-//   oid : Int,
-//   position : @struct.Point[Int],
-//   stance : Int,
-//   skillid : Int
-// ) -> @net.OutPacket {
-//   let packet = @net.OutPacket::new(@net.OutPacketOpcode::DAMAGE_REACTOR)
-//   packet.write_int(oid)
-//   packet.write_point(position)
-//   packet.write_short(stance)
-//   packet.skip(4)
-//   packet.write_int(skillid)
-//   packet
-// }
-
 ///|
 /// Notifies the server of an attack. 
 struct AttackMessage(AttackResult) derive(Show)
 
 ///|
 pub impl @net.OutMessage for AttackMessage with pack(self) {
-  let attack = self.inner()
+  let attack = self.0
   let opcode = match attack.t {
     @combat_proto.AttackType::CLOSE => @net.ClientOpcode::CLOSE_ATTACK
     @combat_proto.AttackType::RANGED => @net.ClientOpcode::RANGED_ATTACK
@@ -442,11 +420,7 @@ async fn Combat::load_sp_move(
   self : Combat,
   move_id : Int,
 ) -> @combat_impl.SpecialMove {
-  let it = @combat_impl.Skill::load(
-    move_id,
-    self.bullet_module,
-    string_loader=self.string_loader,
-  )
+  let it = @combat_impl.Skill::load(move_id, self.bullet_module)
   {
     id: it.get_id(),
     attack: it.is_attack(),
@@ -578,7 +552,7 @@ fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   self.damage_numbers.push(number)
   number.set_x(head_position.x)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
-  mob.apply_damage(effect.damage, effect.toleft, self.network)
+  mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move
   act.apply_hit_effects(effect.user, mob)
 }
@@ -717,18 +691,20 @@ pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {
 }
 
 ///|
-priv type CacheKey (Int, String, Int) derive(Show, Eq, Hash)
+priv struct CacheKey(Int, String, Int) derive(Show, Eq, Hash)
 
 ///|
 async fn load_after_images_by_skill_weapon(
   key : CacheKey,
 ) -> Map[String, @char_look.AfterImage] {
-  let (skill_id, wepon_after_image_name, weapon_level) = key.inner()
+  let skill_id = key.0
+  let wepon_after_image_name = key.1
+  let weapon_level = key.2
   let after_images = Map::new()
   if skill_id > 0 {
     let strid = @utils.stoi_left_pad0(skill_id, 7)
-    let skill_srcs = @skill.skill_loader().load_res_async([
-      strid.substring(end=3) + ".img",
+    let skill_srcs = @resource.get_skill_loader().load_res_async([
+      "\{strid[:3]}.img",
       "skill",
       strid,
       "afterimage",
@@ -760,7 +736,16 @@ async fn load_after_images_by_skill_weapon(
 }
 
 ///|
+let combat_ref : Ref[Combat?] = Ref::new(None)
+
+///|
+pub fn set_combat(combat : Combat?) -> Unit {
+  combat_ref.val = combat
+}
+
+///|
 pub fn combat_system(_delta : Double) -> Unit {
+  guard combat_ref.val is Some(combat) else { return }
   guard @game_state.game_state.phase is GameActive(mobs~, ..) else { return }
   guard @player.get_player() is Some(player) else { return }
   if player.is_invincible() {
@@ -781,5 +766,12 @@ pub fn combat_system(_delta : Double) -> Unit {
         None => ()
       }
     None => ()
+  }
+  // TODO: move to player input system
+  if @inputs.is_just_pressed(@inputs.KeyF) {
+    combat.use_move(player, @skill.TELEPORT_FP.int_value())
+  }
+  for i in 0..<@logic_fps.get_logic_times() {
+    combat.update()
   }
 }

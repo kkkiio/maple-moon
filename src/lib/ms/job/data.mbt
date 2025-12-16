@@ -8,7 +8,7 @@ pub(all) struct JobData {
 ///|
 pub async fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
-  let src = @skill.skill_loader().load_res_async([strid + ".img"])
+  let src = get_skill_loader().load_res_async([strid + ".img"])
   JobData::new(id, src)
 }
 
@@ -34,3 +34,6 @@ pub fn JobData::new(id : Int, src : @resource.NxNode) -> JobData {
   }
   { icon, skill_ids: skills, name }
 }
+
+///|
+using @resource {get_skill_loader}

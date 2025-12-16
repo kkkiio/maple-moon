@@ -3,56 +3,8 @@
 /// - Generate spritesheets
 /// - Transform __i references to __i + __off format
 
-// ============== Sharp FFI ==============
-
 ///|
-extern "js" fn require_sharp() -> @js.Value = "() => require('sharp')"
-
-///|
-let sharp : @js.Value = require_sharp()
-
-///|
-/// Read file as Buffer
-extern "js" fn read_file_buffer_ffi(path : String) -> @js.Value = "(path) => require('fs').readFileSync(path)"
-
-///|
-/// Write Buffer to file
-extern "js" fn write_file_buffer_ffi(path : String, buffer : @js.Value) -> Unit = "(path, buffer) => require('fs').writeFileSync(path, buffer)"
-
-///|
-/// Create sharp instance from buffer
-fn sharp_from_buffer(buffer : @js.Value) -> @js.Value {
-  sharp.apply([buffer])
-}
-
-///|
-/// Create empty canvas
-extern "js" fn sharp_create_ffi(w : Int, h : Int) -> @js.Value =
-  #| (w, h) => require('sharp')({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-
-///|
-/// Extract region from image (async)
-extern "js" fn extract_ffi(
-  image : @js.Value,
-  left : Int,
-  top : Int,
-  width : Int,
-  height : Int,
-) -> @js.Promise =
-  #| (img, l, t, w, h) => img.clone().extract({ left: l, top: t, width: w, height: h }).png().toBuffer()
-
-///|
-/// Composite images onto base (async)
-extern "js" fn composite_ffi(
-  base : @js.Value,
-  inputs : @js.Value,
-) -> @js.Promise =
-  #| (base, inputs) => base.composite(inputs).png().toBuffer()
-
-// ============== Data Structures ==============
-
-///|
-struct FrameData {
+pub(all) struct FrameData {
   id : Int
   width : Int
   height : Int
@@ -63,6 +15,8 @@ struct FrameData {
   // Position in source spritesheet
   src_x : Int
   src_y : Int
+  // Which spritesheet this frame comes from
+  spritesheet_path : String
 }
 
 ///|
@@ -72,7 +26,7 @@ struct ExtractedFrame {
 }
 
 ///|
-struct UnifiedSize {
+pub(all) struct UnifiedSize {
   width : Int
   height : Int
   anchor_x : Int
@@ -102,70 +56,46 @@ fn parse_args() -> CliArgs? {
   Some({ input: args[1], spritesheet_dir: args[2], output: args[3] })
 }
 
-// ============== JSON Helpers ==============
-
 ///|
-fn get_string(json : Json, key : String) -> String? {
-  match json {
-    Object(obj) =>
-      match obj.get(key) {
-        Some(String(s)) => Some(s)
-        _ => None
-      }
-    _ => None
-  }
+/// Check if json is a frame resource (has __i, __h, __w)
+fn is_frame_resource(json : Json) -> Bool {
+  json is { "__i": String(_), "__h": Number(_), "__w": Number(_), .. }
 }
 
 ///|
+/// Check if object is an animation node.
+/// Requirements:
+/// - Has consecutive numeric keys starting from 0 (at least 2 frames)
+/// - Each numeric key's value is a frame resource (has __i, __h, __w)
 fn is_animation_node(json : Json) -> Bool {
-  // Check if object has "0" key (animation frames are numbered)
-  match json {
-    Object(obj) => obj.get("0") != None
-    _ => false
+  guard json is Object(obj) else { return false }
+  let mut i = 0
+  while true {
+    match obj.get(i.to_string()) {
+      Some(value) =>
+        if is_frame_resource(value) {
+          i = i + 1
+        } else {
+          return false
+        }
+      None => break
+    }
   }
+  i >= 1
 }
 
 // ============== Core Processing ==============
 
 ///|
-/// Parse spritesheet atlas JSON to get frame positions
-fn parse_atlas(atlas_json : Json) -> Map[String, (Int, Int, Int, Int)]? {
-  // Returns map of frame_id -> (x, y, w, h)
-  guard atlas_json is { "frames": Object(frames), .. } else { return None }
-  let result : Map[String, (Int, Int, Int, Int)] = {}
-  for name, frame_data in frames {
-    guard frame_data
-      is {
-        "frame": {
-          "x": Number(x, ..),
-          "y": Number(y, ..),
-          "w": Number(w, ..),
-          "h": Number(h, ..),
-          ..
-        },
-        ..
-      } else {
-      continue
-    }
-    // Remove .png suffix if present
-    let id = if name.has_suffix(".png") {
-      name.substring(end=name.length() - 4)
-    } else {
-      name
-    }
-    result[id] = (x.to_int(), y.to_int(), w.to_int(), h.to_int())
-  }
-  Some(result)
-}
-
-///|
-/// Collect frame data from an animation node
-fn collect_frames(
+/// Collect frame data from an animation node.
+/// All frames in an animation must come from the same spritesheet.
+pub fn collect_frames(
   animation_json : Json,
-  atlas : Map[String, (Int, Int, Int, Int)],
-) -> Array[FrameData] {
+  atlases : Map[String, @resource.SpritesheetMetadata],
+) -> Array[FrameData] raise {
   let frames : Array[FrameData] = []
   guard animation_json is Object(obj) else { return frames }
+  let mut expected_spritesheet : String? = None
   for key, frame_json in obj {
     // Skip non-numeric keys
     guard key.iter().all(fn(c) { c >= '0' && c <= '9' }) else { continue }
@@ -195,17 +125,32 @@ fn collect_frames(
       _ => 100
     }
 
-    // Parse __i to get sprite ID
+    // Parse __i to get spritesheet path and sprite ID
     // Format: "spritesheets/Mob/1210100.img#837"
     guard img_ref.contains("#") else { continue }
     let parts = img_ref.split("#").to_array()
     guard parts.length() == 2 else { continue }
+    let spritesheet_path = parts[0].to_string()
     let sprite_id = parts[1].to_string()
+    let frame_key = sprite_id + ".png"
 
-    // Look up position in atlas
-    guard atlas.get(sprite_id) is Some((src_x, src_y, _, _)) else {
-      println("Warning: sprite \{sprite_id} not found in atlas")
-      continue
+    // Validate all frames come from the same spritesheet
+    match expected_spritesheet {
+      None => expected_spritesheet = Some(spritesheet_path)
+      Some(expected) =>
+        if expected != spritesheet_path {
+          fail(
+            "Frame \{frame_index} comes from \{spritesheet_path}, expected \{expected}",
+          )
+        }
+    }
+
+    // Look up position in atlas for this spritesheet
+    guard atlases.get(spritesheet_path) is Some(atlas) else {
+      fail("Spritesheet \{spritesheet_path} not found in atlases")
+    }
+    guard atlas.frames.get(frame_key) is Some(frame_meta) else {
+      fail("Frame \{frame_key} not found in spritesheet \{spritesheet_path}")
     }
     frames.push({
       id: @strconv.parse_int(sprite_id) catch {
@@ -217,8 +162,9 @@ fn collect_frames(
       origin_y,
       delay,
       frame_index,
-      src_x,
-      src_y,
+      src_x: frame_meta.frame.x,
+      src_y: frame_meta.frame.y,
+      spritesheet_path,
     })
   }
 
@@ -228,17 +174,20 @@ fn collect_frames(
 }
 
 ///|
+using @cmp {maximum}
+
+///|
 /// Calculate unified size based on origin alignment
-fn calculate_unified_size(frames : Array[FrameData]) -> UnifiedSize {
+pub fn calculate_unified_size(frames : Array[FrameData]) -> UnifiedSize {
   let mut max_left = 0
   let mut max_right = 0
   let mut max_top = 0
   let mut max_bottom = 0
   for frame in frames {
-    max_left = @math.maximum(max_left, frame.origin_x)
-    max_top = @math.maximum(max_top, frame.origin_y)
-    max_right = @math.maximum(max_right, frame.width - frame.origin_x)
-    max_bottom = @math.maximum(max_bottom, frame.height - frame.origin_y)
+    max_left = maximum(max_left, frame.origin_x)
+    max_top = maximum(max_top, frame.origin_y)
+    max_right = maximum(max_right, frame.width - frame.origin_x)
+    max_bottom = maximum(max_bottom, frame.height - frame.origin_y)
   }
   {
     width: max_left + max_right,
@@ -249,12 +198,21 @@ fn calculate_unified_size(frames : Array[FrameData]) -> UnifiedSize {
 }
 
 ///|
-/// Extract frames from spritesheet
+/// Extract frames from spritesheet.
+/// All frames must come from the same spritesheet.
 async fn extract_frames(
   frames : Array[FrameData],
-  spritesheet_buffer : @js.Value,
+  spritesheet_buffers : Map[String, @js.Value],
 ) -> Array[ExtractedFrame] {
-  let sharp_img = sharp_from_buffer(spritesheet_buffer)
+  if frames.is_empty() {
+    return []
+  }
+  // All frames are from the same spritesheet (validated in collect_frames)
+  let spritesheet_path = frames[0].spritesheet_path
+  guard spritesheet_buffers.get(spritesheet_path) is Some(buffer) else {
+    fail("Spritesheet buffer not found for \{spritesheet_path}")
+  }
+  let sharp_img = sharp_from_buffer(buffer)
   let extracted : Array[ExtractedFrame] = []
   for frame in frames {
     let buffer = extract_ffi(
@@ -366,53 +324,104 @@ fn update_animation_json(
 }
 
 ///|
-/// Process a single animation
-async fn process_animation(
-  action_name : String,
-  animation_json : Json,
-  spritesheet_buffer : @js.Value,
-  atlas : Map[String, (Int, Int, Int, Int)],
-  output_dir : String,
+/// Process game animations in resource:
+/// 
+/// - Recursively traverse JSON to find all animation nodes
+/// - Unify origin for each animation
+/// - Generate spritesheets
+/// - Transform __i references to __i + __off format
+/// 
+/// When `load_spritesheet` or `save_image` is None, image operations are skipped
+/// and only JSON transformation is performed (useful for testing).
+pub async fn process_resource(
+  src : Json,
+  atlases : Map[String, @resource.SpritesheetMetadata],
   base_name : String,
   output_rel_path : String,
+  load_spritesheet? : (String) -> @js.Value,
+  save_image? : (String, @js.Value) -> Unit,
 ) -> Json {
-  println("Processing animation: \{action_name}")
-
-  // Collect frame data
-  let frames = collect_frames(animation_json, atlas)
-  if frames.is_empty() {
-    println("  No frames found, skipping")
-    return animation_json
+  // Load spritesheet buffers if load_spritesheet is provided
+  let spritesheet_buffers : Map[String, @js.Value] = {}
+  match load_spritesheet {
+    Some(loader) => {
+      let spritesheet_paths = @resource.collect_spritesheet_paths(src)
+      for spritesheet_ref in spritesheet_paths {
+        spritesheet_buffers[spritesheet_ref] = loader(spritesheet_ref)
+      }
+    }
+    None => ()
   }
-  println("  Found \{frames.length()} frames")
 
-  // Calculate unified size
-  let unified = calculate_unified_size(frames)
-  println(
-    "  Unified size: \{unified.width}x\{unified.height}, anchor: (\{unified.anchor_x}, \{unified.anchor_y})",
+  // Recursively process JSON tree
+  process_node(
+    src,
+    [],
+    atlases,
+    spritesheet_buffers,
+    base_name,
+    output_rel_path,
+    load_spritesheet,
+    save_image,
   )
+}
 
-  // Extract frames from spritesheet
-  let extracted = extract_frames(frames, spritesheet_buffer)
-  println("  Extracted \{extracted.length()} frames")
+///|
+/// Recursive helper to process a JSON node
+async fn process_node(
+  json : Json,
+  path : Array[String],
+  atlases : Map[String, @resource.SpritesheetMetadata],
+  spritesheet_buffers : Map[String, @js.Value],
+  base_name : String,
+  output_rel_path : String,
+  load_spritesheet : ((String) -> @js.Value)?,
+  save_image : ((String, @js.Value) -> Unit)?,
+) -> Json {
+  if is_animation_node(json) {
+    // This is an animation node, process it
+    let action_name = path.join("_")
+    let frames = collect_frames(json, atlases)
+    if frames.is_empty() {
+      return json
+    }
+    let unified = calculate_unified_size(frames)
 
-  // Resize to unified size
-  let resized = resize_frames(extracted, unified)
-  println("  Resized frames")
+    // Process images if callbacks are provided
+    match (load_spritesheet, save_image) {
+      (Some(_), Some(saver)) => {
+        let extracted = extract_frames(frames, spritesheet_buffers)
+        let resized = resize_frames(extracted, unified)
+        let new_spritesheet = generate_spritesheet(resized, unified)
+        let output_filename = "\{base_name}_\{action_name}.png"
+        saver(output_filename, new_spritesheet)
+      }
+      _ => ()
+    }
 
-  // Generate new spritesheet
-  let new_spritesheet = generate_spritesheet(resized, unified)
-  println("  Generated spritesheet")
-
-  // Save spritesheet
-  let output_path = "\{output_dir}/\{base_name}_\{action_name}.png"
-  write_file_buffer_ffi(output_path, new_spritesheet)
-  println("  Saved: \{output_path}")
-
-  // Update JSON
-  update_animation_json(
-    animation_json, action_name, unified, base_name, output_rel_path,
-  )
+    // Update JSON
+    update_animation_json(
+      json, action_name, unified, base_name, output_rel_path,
+    )
+  } else {
+    // Not an animation node
+    match json {
+      Object(obj) => {
+        // Recurse into child objects
+        let new_obj : Map[String, Json] = {}
+        for key, value in obj {
+          let child_path = path.copy()
+          child_path.push(key)
+          new_obj[key] = process_node(
+            value, child_path, atlases, spritesheet_buffers, base_name, output_rel_path,
+            load_spritesheet, save_image,
+          )
+        }
+        Json::object(new_obj)
+      }
+      _ => json // Keep primitives and arrays as-is
+    }
+  }
 }
 
 ///|
@@ -425,9 +434,6 @@ async fn process_mob(args : CliArgs) -> Unit {
   // Read input JSON
   let input_content = @fs.read_file_to_string(args.input)
   let input_json = @json.parse(input_content)
-  guard input_json is Object(root_obj) else {
-    fail("Input is not a JSON object")
-  }
 
   // Extract base name from input path (e.g., "1210100.img" from ".../1210100.img.json")
   let input_filename = args.input
@@ -436,45 +442,40 @@ async fn process_mob(args : CliArgs) -> Unit {
     .last()
     .unwrap()
     .to_string()
-  let base_name = if input_filename.has_suffix(".json") {
-    input_filename.substring(end=input_filename.length() - 5)
-  } else {
-    input_filename
-  }
+  let base_name = input_filename
+    .strip_suffix(".json")
+    .map_or(input_filename, _.to_string())
 
-  // Find spritesheet atlas JSON
-  // The __i references like "spritesheets/Mob/1210100.img#837" tell us which spritesheet to use
-  let mut spritesheet_ref = ""
-  for _, v in root_obj {
-    if is_animation_node(v) {
-      guard v is Object(anim_obj) else { continue }
-      for _, frame in anim_obj {
-        if get_string(frame, "__i") is Some(ref) && ref.contains("#") {
-          spritesheet_ref = ref.split("#").to_array()[0].to_string()
-          break
-        }
-      }
-      if spritesheet_ref != "" {
-        break
-      }
+  // Collect all spritesheet paths using resource package
+  let spritesheet_paths = @resource.collect_spritesheet_paths(input_json)
+  if spritesheet_paths.is_empty() {
+    fail("No spritesheet references found in input JSON")
+  }
+  println("Found \{spritesheet_paths.length()} spritesheet(s)")
+
+  // Load all spritesheet atlases
+  let atlases : Map[String, @resource.SpritesheetMetadata] = {}
+  for spritesheet_ref in spritesheet_paths {
+    // Extract relative path from spritesheet ref
+    // e.g. "spritesheets/Skill/210.img/skill/2100000/effect" -> "210.img/skill/2100000/effect"
+    //      "spritesheets/Mob/1210100.img" -> "1210100.img"
+    let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
+    // Skip "spritesheets" and type (e.g. "Skill" or "Mob")
+    let rel_parts : Array[String] = []
+    for i = 2; i < spritesheet_path_parts.length(); i = i + 1 {
+      rel_parts.push(spritesheet_path_parts[i].to_string())
     }
+    let rel_path = rel_parts.join("/")
+    let atlas_path = "\{args.spritesheet_dir}/\{rel_path}.json"
+    println("Loading atlas: \{atlas_path}")
+    let atlas_content = @fs.read_file_to_string(atlas_path)
+    let atlas_json = @json.parse(atlas_content)
+    let metadata : @resource.SpritesheetMetadata = @json.from_json(atlas_json) catch {
+      e => fail("Failed to parse atlas \{atlas_path}: \{e}")
+    }
+    atlases[spritesheet_ref] = metadata
+    println("Loaded \{metadata.frames.length()} frames from atlas")
   }
-  if spritesheet_ref == "" {
-    fail("No spritesheet reference found in input JSON")
-  }
-
-  // spritesheets/Mob/1210100.img -> .local/r2/spritesheets/Mob/1210100.img
-  let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
-  let spritesheet_filename = spritesheet_path_parts.last().unwrap().to_string()
-  let atlas_path = "\{args.spritesheet_dir}/\{spritesheet_filename}.json"
-  let png_path = "\{args.spritesheet_dir}/\{spritesheet_filename}.png"
-  println("Loading atlas: \{atlas_path}")
-  let atlas_content = @fs.read_file_to_string(atlas_path)
-  let atlas_json = @json.parse(atlas_content)
-  let atlas = parse_atlas(atlas_json).unwrap()
-  println("Loaded \{atlas.size()} frames from atlas")
-  println("Loading spritesheet: \{png_path}")
-  let spritesheet_buffer = read_file_buffer_ffi(png_path)
 
   // Ensure output directory exists
   @fs.create_dir(args.output) catch {
@@ -504,29 +505,34 @@ async fn process_mob(args : CliArgs) -> Unit {
   }
   println("Output relative path: \{output_rel_path}")
 
-  // Process each animation
-  let new_root : Map[String, Json] = {}
-  for key, value in root_obj {
-    if is_animation_node(value) {
-      let new_anim = process_animation(
-        key,
-        value,
-        spritesheet_buffer,
-        atlas,
-        args.output,
-        base_name,
-        output_rel_path,
-      )
-      new_root[key] = new_anim
-    } else {
-      // Keep non-animation nodes as-is (like "info")
-      new_root[key] = value
-    }
-  }
+  // Process resource using process_resource
+  let result_json = process_resource(
+    input_json,
+    atlases,
+    base_name,
+    output_rel_path,
+    load_spritesheet=fn(spritesheet_ref : String) {
+      let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
+      // Skip "spritesheets" and type (e.g. "Skill" or "Mob")
+      let rel_parts : Array[String] = []
+      for i = 2; i < spritesheet_path_parts.length(); i = i + 1 {
+        rel_parts.push(spritesheet_path_parts[i].to_string())
+      }
+      let rel_path = rel_parts.join("/")
+      let png_path = "\{args.spritesheet_dir}/\{rel_path}.png"
+      println("Loading spritesheet: \{png_path}")
+      read_file_buffer_ffi(png_path)
+    },
+    save_image=fn(filename : String, buffer : @js.Value) {
+      let output_path = "\{args.output}/\{filename}"
+      write_file_buffer_ffi(output_path, buffer)
+      println("  Saved: \{output_path}")
+    },
+  )
 
   // Save output JSON
   let output_json_path = "\{args.output}/\{base_name}.json"
-  let output_content = Object(new_root).stringify(indent=2)
+  let output_content = result_json.stringify(indent=2)
   @fs.write_string_to_file(output_json_path, output_content)
   println("Saved: \{output_json_path}")
   println("Done!")

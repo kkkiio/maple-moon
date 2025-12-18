@@ -38,22 +38,107 @@ pub(all) struct UnifiedSize {
 ///|
 struct CliArgs {
   input : String
-  spritesheet_dir : String
   output : String
+  spritesheet_dir : String // For __i mode
+  bitmaps_dir : String // For __b mode (default: <input-dir>/bitmaps)
+  match_pattern : String? // Optional path pattern filter
+}
+
+///|
+enum Mode {
+  Spritesheet // __i references
+  Bitmap // __b references
 }
 
 ///|
 fn parse_args() -> CliArgs? {
   let args = @sys.get_cli_args()
   // args[0] is the script path
-  if args.length() < 4 {
-    println("Usage: reanim <input.json> <spritesheet-dir> <output-dir>")
+  if args.length() < 3 {
+    println("Usage: reanim <input.json> <output-dir> [options]")
+    println("")
+    println("Options:")
     println(
-      "Example: reanim .local/r2/Mob/1210100.img.json .local/r2/spritesheets/Mob assets/mob",
+      "  --match <pattern>         Filter by path (e.g., BasicEff.img/Teleport)",
+    )
+    println(
+      "  --bitmaps-dir <path>      Override bitmaps dir (default: <input-dir>/bitmaps)",
+    )
+    println("  --spritesheet-dir <path>  Spritesheet dir (for __i mode)")
+    println("")
+    println("Examples:")
+    println("  # Process with __i refs (spritesheet mode)")
+    println(
+      "  reanim .local/r2/Mob/1210100.img.json assets/mob --spritesheet-dir .local/r2/spritesheets/Mob",
+    )
+    println("")
+    println("  # Process with __b refs (bitmap mode)")
+    println(
+      "  reanim .local/nx/Effect.nx/nx.json assets/Effect --match BasicEff.img/Teleport",
     )
     return None
   }
-  Some({ input: args[1], spritesheet_dir: args[2], output: args[3] })
+  let input = args[1]
+  let output = args[2]
+
+  // Parse optional arguments
+  let mut spritesheet_dir = ""
+  let mut bitmaps_dir = ""
+  let mut match_pattern : String? = None
+  let mut i = 3
+  while i < args.length() {
+    let arg = args[i]
+    if arg == "--match" && i + 1 < args.length() {
+      match_pattern = Some(args[i + 1])
+      i = i + 2
+    } else if arg == "--bitmaps-dir" && i + 1 < args.length() {
+      bitmaps_dir = args[i + 1]
+      i = i + 2
+    } else if arg == "--spritesheet-dir" && i + 1 < args.length() {
+      spritesheet_dir = args[i + 1]
+      i = i + 2
+    } else {
+      println("Unknown argument: \{arg}")
+      return None
+    }
+  }
+
+  // Default bitmaps_dir to <input-dir>/bitmaps
+  if bitmaps_dir.is_empty() {
+    let input_parts = input.split("/").to_array()
+    let input_dir_parts : Array[String] = []
+    for j = 0; j < input_parts.length() - 1; j = j + 1 {
+      input_dir_parts.push(input_parts[j].to_string())
+    }
+    bitmaps_dir = input_dir_parts.join("/") + "/bitmaps"
+  }
+  Some({ input, output, spritesheet_dir, bitmaps_dir, match_pattern })
+}
+
+///|
+/// Detect mode by scanning JSON for __b or __i keys
+fn detect_mode(json : Json) -> Mode {
+  match json {
+    Object(obj) => {
+      for _, value in obj {
+        // Check if this is a frame with __b or __i
+        if value is { "__b": Number(_), .. } {
+          return Bitmap
+        }
+        if value is { "__i": String(_), .. } {
+          return Spritesheet
+        }
+        // Recurse into child objects
+        let child_mode = detect_mode(value)
+        match child_mode {
+          Bitmap => return Bitmap
+          Spritesheet => return Spritesheet
+        }
+      }
+      Spritesheet // Default
+    }
+    _ => Spritesheet
+  }
 }
 
 ///|
@@ -539,14 +624,155 @@ async fn process_mob(args : CliArgs) -> Unit {
 }
 
 ///|
-fn main {
-  guard parse_args() is Some(args) else { return }
-  @js.async_run(fn() {
-    process_mob(args) catch {
-      e => {
-        println("Error: \{e}")
-        @sys.exit(1)
+/// Process bitmap resources
+async fn process_bitmap(args : CliArgs) -> Unit {
+  println("Input: \{args.input}")
+  println("Bitmaps dir: \{args.bitmaps_dir}")
+  println("Output: \{args.output}")
+  if args.match_pattern is Some(p) {
+    println("Match pattern: \{p}")
+  }
+
+  // Read input JSON
+  let input_content = @fs.read_file_to_string(args.input)
+  let input_json = @json.parse(input_content)
+
+  // Apply match filter if provided
+  let entries_to_process : Array[(String, Json)] = match args.match_pattern {
+    Some(pattern) => {
+      let matched = match_entries(input_json, pattern)
+      println("Found \{matched.length()} matched entries")
+      matched
+    }
+    None =>
+      // No filter, process entire JSON
+      [("", input_json)]
+  }
+
+  // Ensure output directory exists
+  @fs.create_dir(args.output) catch {
+    e => println("Warning: could not create output dir: \{e}")
+  }
+
+  // Calculate output_rel_path (relative to assets directory)
+  let output_rel_path = {
+    let parts = args.output.split("/").to_array()
+    let mut found_assets = false
+    let result : Array[String] = []
+    for part in parts {
+      if found_assets {
+        result.push(part.to_string())
+      } else if part == "assets" {
+        found_assets = true
       }
     }
-  })
+    if result.is_empty() {
+      parts.last().unwrap().to_string()
+    } else {
+      result.join("/")
+    }
+  }
+
+  // Process each matched entry
+  for entry in entries_to_process {
+    let (path, json) = entry
+    let action_name = if path.is_empty() {
+      // Use input filename as base name
+      let input_parts = args.input.split("/").to_array()
+      let filename = input_parts.last().unwrap().to_string()
+      filename.strip_suffix(".json").map_or(filename, _.to_string())
+    } else {
+      path.split("/").to_array().last().unwrap().to_string()
+    }
+
+    // Create subdirectory based on path
+    let output_subdir = if path.is_empty() {
+      args.output.to_string()
+    } else {
+      let path_parts = path.split("/").to_array()
+      let dir_parts : Array[String] = [args.output.to_string()]
+      for i = 0; i < path_parts.length() - 1; i = i + 1 {
+        dir_parts.push(path_parts[i].to_string())
+      }
+      dir_parts.join("/")
+    }
+    @fs.create_dir(output_subdir) catch {
+      e => println("Warning: could not create subdir: \{e}")
+    }
+
+    // Calculate relative path for the output
+    let full_output_rel_path = if path.is_empty() {
+      output_rel_path
+    } else {
+      let path_parts = path.split("/").to_array()
+      let parts : Array[String] = [output_rel_path.to_string()]
+      for i = 0; i < path_parts.length() - 1; i = i + 1 {
+        parts.push(path_parts[i].to_string())
+      }
+      parts.join("/")
+    }
+    println("Processing: \{action_name}")
+    let result_json = process_bitmap_resource(
+      json,
+      full_output_rel_path,
+      action_name,
+      load_bitmap=fn(bitmap_id : Int) {
+        let png_path = "\{args.bitmaps_dir}/\{bitmap_id}.png"
+        read_file_buffer_ffi(png_path)
+      },
+      save_image=fn(filename : String, buffer : @js.Value) {
+        let output_path = "\{output_subdir}/\{filename}"
+        write_file_buffer_ffi(output_path, buffer)
+        println("  Saved: \{output_path}")
+      },
+    )
+
+    // Save output JSON
+    let output_json_path = "\{output_subdir}/\{action_name}.json"
+    let output_content = result_json.stringify(indent=2)
+    @fs.write_string_to_file(output_json_path, output_content)
+    println("  Saved: \{output_json_path}")
+  }
+  println("Done!")
+}
+
+///|
+async fn main {
+  guard parse_args() is Some(args) else { return }
+  // Read input JSON to detect mode
+  let input_content = @fs.read_file_to_string(args.input) catch {
+    e => {
+      println("Error reading input: \{e}")
+      @sys.exit(1)
+      return
+    }
+  }
+  let input_json = @json.parse(input_content) catch {
+    e => {
+      println("Error parsing JSON: \{e}")
+      @sys.exit(1)
+      return
+    }
+  }
+  let mode = detect_mode(input_json)
+  match mode {
+    Bitmap => {
+      println("Detected bitmap mode (__b references)")
+      process_bitmap(args) catch {
+        e => {
+          println("Error: \{e}")
+          @sys.exit(1)
+        }
+      }
+    }
+    Spritesheet => {
+      println("Detected spritesheet mode (__i references)")
+      process_mob(args) catch {
+        e => {
+          println("Error: \{e}")
+          @sys.exit(1)
+        }
+      }
+    }
+  }
 }

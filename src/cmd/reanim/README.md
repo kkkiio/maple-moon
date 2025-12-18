@@ -21,47 +21,67 @@ npm install sharp
 ```bash
 moon build --target js
 node target/js/release/build/cmd/reanim/reanim.js \
-  <input.json> <spritesheet-dir> <output-dir>
+  <input.json> <output-dir> [options]
 ```
 
-**示例**:
+### 选项
+
+- `--match <pattern>`: 按路径过滤（例如 `BasicEff.img/Teleport`）
+- `--bitmaps-dir <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
+- `--spritesheet-dir <path>`: 指定 spritesheets 目录（仅用于 Spritesheet 模式）
+
+### 模式自动检测
+
+工具会自动根据输入 JSON 的内容检测模式：
+
+1. **Spritesheet 模式**: 当检测到 `__i` 引用时（引用 spritesheet 中的图片）。
+2. **Bitmap 模式**: 当检测到 `__b` 引用时（引用 `bitmaps/` 目录下的图片）。
+
+### 示例 1: Spritesheet 模式
+
+处理 `1210100.img.json`，使用 `__i` 引用。
 
 ```bash
 node target/js/release/build/cmd/reanim/reanim.js \
   .local/r2/Mob/1210100.img.json \
-  .local/r2/spritesheets/Mob \
-  assets/mob
+  assets/mob \
+  --spritesheet-dir .local/r2/spritesheets/Mob
 ```
+
+### 示例 2: Bitmap 模式
+
+处理 `nx.json` 中的 "Teleport" 动画，使用 `__b` 引用。
+
+```bash
+node target/js/release/build/cmd/reanim/reanim.js \
+  .local/nx/Effect.nx/nx.json \
+  assets/Effect \
+  --match "BasicEff.img/Teleport"
+```
+
+这会自动：
+
+1. 从 `BasicEff.img/Teleport` 路径提取动画数据
+2. 从 `.local/nx/Effect.nx/bitmaps/` 加载对应 ID 的图片
+3. 生成 `assets/Effect/BasicEff.img/Teleport.png` 和对应的 JSON
 
 ## 输入/输出
 
 **输入**:
 
-- 怪物 JSON 文件（如 `.local/r2/Mob/1210100.img.json`）
-- Spritesheet 目录（包含 `.json` 和 `.png` 文件）
+- 动画 JSON 文件
+- 资源目录（spritesheets 或 bitmaps）
 
 **输出**:
 
 - 转换后的 JSON（`__i` + `__off` 格式，路径相对于 `assets`）
 - 每个动画的 spritesheet 图片
 
-## 示例输出
+## 示例输出 (Bitmap 模式)
 
 ```
-assets/mob/
-├── 1210100.img.json      # 转换后的 JSON
-├── 1210100.img_die1.png
-├── 1210100.img_hit1.png
-├── 1210100.img_jump.png
-├── 1210100.img_move.png
-└── 1210100.img_stand.png
-```
-
-**JSON 中的 `__i` 格式**:
-
-```json
-{
-  "__i": "mob/1210100.img_stand.png",
-  "__off": [0, 0]
-}
+assets/Effect/
+└── BasicEff.img/
+    ├── Teleport.json       # 转换后的 JSON
+    └── Teleport.png        # 生成的 spritesheet
 ```

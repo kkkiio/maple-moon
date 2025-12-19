@@ -1,6 +1,6 @@
 ///|
 struct HitEffectNxResource {
-  animation : @graphics.AnimationResource
+  animation : @resource.NxAnimation
   pos : Int
   z : Int
 }
@@ -21,7 +21,7 @@ pub impl @json.FromJson for HitEffectNxResource with from_json(json, path) {
 
 ///|
 fn new_hit_effect(res : HitEffectNxResource) -> (@monster.Mob, Bool) -> Unit {
-  let animation = @graphics.Animation::new(res.animation)
+  let animation = res.animation
   let pos = res.pos
   let z = res.z
   fn(target : @monster.Mob, flip : Bool) -> Unit {

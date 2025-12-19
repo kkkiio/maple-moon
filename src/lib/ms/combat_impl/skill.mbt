@@ -2,7 +2,7 @@
 struct Skill {
   action : &SkillAction
   bullet : (@character.Character, Int) -> @graphics.Animation
-  use_effect : (@character.Character) -> Unit
+  use_effect : UseEffect
   hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
   skill_id : Int
@@ -42,7 +42,7 @@ pub fn Skill::new(
   master_level : Int,
   stats : Map[Int, @skill.Stats],
   req_weapon : @weapon.Type,
-  use_effect : (@character.Character) -> Unit,
+  use_effect : UseEffect,
   hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit,
 ) -> Skill raise {
   let mut projectile = true
@@ -66,7 +66,7 @@ pub fn Skill::new(
       sk == @skill.SkillId::IL_TELEPORT ||
       sk == @skill.SkillId::PRIEST_TELEPORT
     ) {
-    FuncSkillAction(fn(c, _) { @builtin_skills.teleport(c) }) as &SkillAction
+    FuncSkillAction(fn(c, _) { teleport(c) }) as &SkillAction
   } else if has_action0 && has_action1 {
     TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {
@@ -284,10 +284,15 @@ pub fn Skill::apply_hit_effects(
 }
 
 ///|
+/// 负责播放“技能使用时”的动画的闭包。
+/// 通常用于播放脚下的光圈、头顶的图标等施法特效。
+pub struct UseEffect((@character.Character) -> Unit)
+
+///|
 pub fn make_use_effect(
   src : @resource.NxNode,
   skill_id : Int,
-) -> ((@character.Character) -> Unit) raise Error {
+) -> UseEffect raise Error {
   let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
     0
   let multi_effect = src["effect0"].get_children_count() > 0
@@ -296,8 +301,8 @@ pub fn make_use_effect(
   } else if multi_effect {
     new_multi_use_effect(src)
   } else {
-    let is_animation = not(src["effect"]["0"].get_bitmap().is_empty())
-    let has_effect1 = not(src["effect"]["1"].get_bitmap().is_empty())
+    let is_animation = src["effect"]["0"].get_bitmap() is Some(_)
+    let has_effect1 = src["effect"]["1"].get_bitmap() is Some(_)
     if is_animation {
       new_single_use_effect(src)
     } else if has_effect1 {
@@ -306,6 +311,9 @@ pub fn make_use_effect(
       match @skill.SkillId::from_int(skill_id) {
         Some(@skill.SkillId::IRON_BODY) | Some(@skill.SkillId::MAGIC_ARMOR) =>
           new_iron_body_use_effect()
+        Some(@skill.SkillId::TELEPORT_FP)
+        | Some(@skill.SkillId::IL_TELEPORT)
+        | Some(@skill.SkillId::PRIEST_TELEPORT) => show_teleport_effect
         _ => fn(_) {  }
       }
     }

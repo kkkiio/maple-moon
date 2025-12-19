@@ -15,7 +15,7 @@
 ///
 /// 3. Map Bounds Check:
 ///    - Clamp new_x/new_y within the map boundaries.
-pub fn teleport(character : @character.Character) -> Unit {
+fn teleport(character : @character.Character) -> Unit {
   let dist = 150.0
   let mut dx = 0.0
 

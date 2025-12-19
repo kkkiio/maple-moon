@@ -12,6 +12,7 @@
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
     },
+    "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/logic_fps"
   ],
   "targets": {

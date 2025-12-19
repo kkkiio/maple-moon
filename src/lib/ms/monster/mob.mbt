@@ -82,7 +82,6 @@ struct Mob {
   can_jump : Bool
   can_fly : Bool
   is_boss : Bool
-  effects : @graphics.EffectLayer
   name_label : @graphics.Text
   hp_bar : @ui.MobHpBar
   randomizer : @utils.Randomizer
@@ -348,7 +347,6 @@ fn Mob::new(
     can_jump,
     can_fly,
     is_boss,
-    effects: @graphics.EffectLayer::default(),
     name_label,
     hp_bar: @ui.MobHpBar::default(),
     randomizer,
@@ -386,9 +384,7 @@ pub impl @map_object.MapObject for Mob with draw(
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
   let headpos = self.get_head_position(position=absp)
-  self.effects.drawbelow(absp, alpha)
-  // Deprecated manual draw, handled by map_monsters_system
-  self.effects.drawabove(absp, alpha)
+
 }
 
 ///|
@@ -443,7 +439,6 @@ pub impl @map_object.MapObject for Mob with update(
     self.base.deactivate()
     return -1
   }
-  self.effects.update()
   self.show_hp.update(timestep=@logic_fps.STEP_TIME_MS)
 
   // TODO: add buffs animation?
@@ -842,20 +837,21 @@ pub fn MobSpecialAttack::new(
 ///|
 pub fn Mob::show_effect(
   self : Mob,
-  animation : @graphics.Animation,
+  animation : @resource.NxAnimation,
   pos : Int,
   z : Int,
-  f : Bool,
+  flip : Bool,
 ) -> Unit {
   if not(self.base.is_active()) {
     return
   }
-  let shift = match pos {
-    0 => self.get_head_position(position=@struct.Point::default())
-    _ => @struct.Point::default()
-  }
-  let args = @graphics.DrawArgument::new14(shift, f)
-  self.effects.add(animation, args~, z~)
+  // TODO: add shift
+  ignore(pos)
+  // let shift = match pos {
+  //   0 => self.get_head_position(position=@struct.Point::default())
+  //   _ => @struct.Point::default()
+  // }
+  @graphics.add_effect(self.entity, animation, z~, flip~)
 }
 
 ///|

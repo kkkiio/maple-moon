@@ -20,6 +20,7 @@ fn main {
   .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
   .add_system(game_start, schedule=Startup)
   .add_system(@cursor.cursor_system, system_name="cursor_system")
+  .add_system(@graphics.effect_layer_system, system_name="effect_layer_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
   .add_system(
     @game_scene.scene_transition_system,

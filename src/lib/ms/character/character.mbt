@@ -67,7 +67,6 @@ pub(all) struct Character {
   name : String
   name_label : @graphics.Text
   // chat_balloon: ChatBalloon
-  effects : @graphics.EffectLayer
   // recurring_effects: RecurringEffect
   mut after_image : @char_look.AfterImage?
   invincible : @utils.TimedBool
@@ -119,7 +118,6 @@ pub fn Character::new(
       @struct.ColorName::WHITE,
       nametag=true,
     ),
-    effects: @graphics.EffectLayer::default(),
     state: CharState::STAND,
     after_image: None,
     invincible: @utils.TimedBool::default(),
@@ -162,7 +160,6 @@ pub fn Character::draw(
   alpha : Double,
 ) -> Unit {
   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-  self.effects.drawbelow(absp, alpha)
 
   //     recurring_effects_.drawbelow(absp, alpha);
 
@@ -200,7 +197,6 @@ pub fn Character::draw(
   self.name_label.draw(absp + @struct.Point::new(0, -4))
   // chat_balloon_.draw(absp - Point<int16_t>(0, 85));
 
-  self.effects.drawabove(absp, alpha)
   //     recurring_effects_.drawabove(absp, alpha);
 
   for number in self.damage_numbers {
@@ -214,7 +210,6 @@ pub fn Character::update(self : Character, speed : Double) -> Unit {
   @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
     number.update()
   })
-  self.effects.update()
   // TODO: implement recurring_effects
   //     recurring_effects_.update();
   // TODO: implement chat_balloon
@@ -381,17 +376,18 @@ pub fn Character::show_heal_number(self : Character, n : Int) -> Unit {
 ///|
 pub fn Character::show_attack_effect(
   self : Character,
-  toshow : @graphics.Animation,
+  toshow : @resource.NxAnimation,
   z : Int,
 ) -> Unit {
   let attackspeed = get_real_attackspeed(
     get_integer_attackspeed(self.look, self.stats),
   )
-  self.effects.add(
+  @graphics.add_effect(
+    self.entity,
     toshow,
-    args=@graphics.DrawArgument::new(flip=self.facing_right),
     z~,
     speed=attackspeed,
+    flip=self.facing_right,
   )
 }
 

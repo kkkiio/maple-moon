@@ -1,88 +1,71 @@
 ///|
-/// A list of animations. Animations will be removed after all frames were displayed.
-struct EffectLayer {
-  effects : @sorted_map.SortedMap[Int, Array[Effect]]
+// This acts as a manual component system for "LifeTime".
+let active_effects : Array[EffectEntity] = []
+
+///|
+priv struct EffectEntity {
+  entity : @entity.Entity
+  mut ttl : Double
 }
 
 ///|
-pub fn EffectLayer::default() -> EffectLayer {
-  { effects: @sorted_map.new() }
-}
-
-///|
-pub fn EffectLayer::drawbelow(
-  self : EffectLayer,
-  position : Point[Int],
-  alpha : Double,
-) -> Unit {
-  // draw (-inf,-1]
-  for k, v in self.effects {
-    if k > -1 {
-      break
+pub fn effect_layer_system(delta : Double) -> Unit {
+  active_effects.retain(fn(effect) {
+    effect.ttl -= delta
+    if effect.ttl > 0 {
+      return true
     }
-    for effect in v {
-      effect.draw(position, alpha)
-    }
-  }
+    effect.entity.destroy()
+    false
+  })
 }
 
 ///|
-pub fn EffectLayer::drawabove(
-  self : EffectLayer,
-  position : Point[Int],
-  alpha : Double,
-) -> Unit {
-  // draw (-1,+inf)
-  for k, v in self.effects {
-    if k < -1 { // TODO: optimize 
-      continue
-    }
-    for effect in v {
-      effect.draw(position, alpha)
-    }
-  }
-}
-
-///|
-pub fn EffectLayer::update(self : EffectLayer) -> Unit {
-  for _, effectlist in self.effects {
-    effectlist.retain(fn(effect : Effect) -> Bool { not(effect.update()) })
-  }
-}
-
-///|
-pub fn EffectLayer::add(
-  self : EffectLayer,
-  animation : Animation,
-  args? : DrawArgument = DrawArgument::default(),
+/// Adds an effect to the given parent entity.
+/// 
+/// TODO: support speed
+pub fn add_effect(
+  parent : @entity.Entity,
+  animation : @resource.NxAnimation,
   z? : Int = 0,
   speed? : Double = 1.0,
+  flip? : Bool = false,
 ) -> Unit {
-  match self.effects.get(z) {
-    Some(effects) =>
-      effects.push({ sprite: Sprite::new(animation, args), speed })
-    None => self.effects[z] = [{ sprite: Sprite::new(animation, args), speed }]
-  }
-}
-
-///|
-struct Effect {
-  sprite : Sprite
-  speed : Double
-}
-
-///|
-pub fn Effect::update(self : Effect) -> Bool {
-  self.sprite.update(
-    timestep=(@logic_fps.STEP_TIME_MS.to_double() * self.speed).to_int(),
+  ignore(speed)
+  let loop_ = false
+  let sprite_anim = nx_animation_to_selene_animation(
+    animation,
+    flip_x=flip,
+    loop_~,
   )
+  let sprite = @sprite.Sprite::from_animation(sprite_anim, z)
+  let child = parent.spawn_child()
+  @sprite.sprites.set(child, sprite)
+  @sprite.play_animation(child, sprite_anim, loop_~)
+  let duration = nx_animation_duration(animation)
+  let ttl = duration.to_double() / 1000
+
+  // Register to global list
+  active_effects.push({ entity: child, ttl })
 }
 
 ///|
-pub fn Effect::draw(
-  self : Effect,
-  position : Point[Int],
-  alpha : Double,
-) -> Unit {
-  self.sprite.draw(position, alpha)
+fn nx_animation_duration(src : @resource.NxAnimation) -> Int {
+  let delays = src.frames.map(fn(frame) {
+    match frame.delay {
+      Some(d) => if d <= 0 { 100 } else { d }
+      None => 100
+    }
+  })
+  let base_duration = delays.iter().fold(init=0, fn(acc, d) { acc + d })
+  if src.zigzag && delays.length() > 2 {
+    let mut extra = 0
+    // add durations of frames N-2 down to 1
+    for i = delays.length() - 2; i >= 1; i = i - 1 {
+      extra += delays[i]
+    }
+    base_duration + extra
+  } else {
+    base_duration
+  }
 }

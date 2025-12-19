@@ -133,7 +133,9 @@ pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
   mob : Mob,
 ) -> Unit {
   self.effect.apply(fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
-    mob.show_effect(a, b, c, d)
+    // TODO: show effect
+    ...
+    // mob.show_effect(a, b, c, d)
   })
 }
 
@@ -168,7 +170,9 @@ pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
   mob : Mob,
 ) -> Unit {
   fn func(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
-    mob.show_effect(a, b, c, d)
+    // TODO: show effect
+    ...
+    // mob.show_effect(a, b, c, d)
   }
 
   for effect in self.effects {

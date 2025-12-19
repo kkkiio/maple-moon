@@ -2,7 +2,7 @@
 fn new_skill_use_effect_effect(
   src : @resource.NxNode,
 ) -> ((@character.Character) -> Unit) raise Error {
-  let animation = src |> @graphics.Animation::from_resource_ex()
+  let animation : @resource.NxAnimation = @json.from_json(src.value())
   let z = src["z"].get_int()
   fn(c : @character.Character) -> Unit { c.show_attack_effect(animation, z) }
 }

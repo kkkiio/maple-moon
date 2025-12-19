@@ -1,6 +1,6 @@
 ///|
 struct AfterImage {
-  animation : @graphics.Animation
+  animation : @resource.NxAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
   mut displayed : Bool
@@ -8,7 +8,7 @@ struct AfterImage {
 
 ///|
 struct AfterNxImageResource {
-  animation : @graphics.AnimationResource
+  animation : @resource.NxAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
 }
@@ -49,7 +49,7 @@ pub impl @json.FromJson for AfterNxImageResource with from_json(json, path) -> A
   if animation_json is Json::Null {
     raise @json.JsonDecodeError((path, "no frame data found"))
   }
-  let animation = @json.from_json(
+  let animation : @resource.NxAnimation = @json.from_json(
     animation_json,
     path=path.add_key(first_frame.to_string()),
   )
@@ -69,7 +69,7 @@ pub fn AfterNxImageResource::simplify(
 
 ///|
 struct AfterImageResource {
-  animation : @graphics.AnimationResource
+  animation : @resource.NxAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
 }
@@ -81,7 +81,7 @@ pub fn AfterImage::new(resource : AfterImageResource) -> AfterImage {
     @log.error({}, "afterimage range is empty")
     panic()
   }
-  let animation = @graphics.Animation::new(resource.animation)
+  let animation = resource.animation
   let first_frame = resource.first_frame
   let displayed = false
   { animation, range, first_frame, displayed }
@@ -113,7 +113,8 @@ pub fn AfterImage::update(
   stframe : Int,
   timestep : Int,
 ) -> Unit {
-  if not(self.displayed) && stframe >= self.first_frame {
-    self.displayed = self.animation.update(timestep~)
-  }
+  ...
+  // if not(self.displayed) && stframe >= self.first_frame {
+  //   self.displayed = self.animation.update(timestep~)
+  // }
 }

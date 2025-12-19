@@ -5,7 +5,7 @@ trait SkillAffectedEffect {
 
 ///|
 struct SkillAffectedEffectEffect {
-  animation : @graphics.Animation
+  animation : @resource.NxAnimation
   z : Int
 }
 
@@ -13,10 +13,7 @@ struct SkillAffectedEffectEffect {
 fn SkillAffectedEffectEffect::new(
   src : @resource.NxNode,
 ) -> SkillAffectedEffectEffect raise {
-  {
-    animation: src |> @graphics.Animation::from_resource_ex(),
-    z: src["z"].get_int(),
-  }
+  { animation: @json.from_json(src.value()), z: src["z"].get_int() }
 }
 
 ///|

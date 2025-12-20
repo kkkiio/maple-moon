@@ -297,9 +297,10 @@ fn Player::update(
           ),
         ),
       )
-      let aniend = false // TODO: implement this, assign true if the character animation has ended
+      let aniend = self.character.is_animation_finished()
       if aniend && self.character.attacking {
         self.character.attacking = false
+        self.character.clear_afterimage()
         let state : CharState = if player.character.get_phobj().onground {
           if player.is_key_down(@keyboard.BasicActionId::LEFT) {
             player.set_facing_right(false)

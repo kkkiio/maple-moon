@@ -134,6 +134,27 @@ pub fn StanceId::is_climbing(self : StanceId) -> Bool {
 }
 
 ///|
+pub fn StanceId::is_attack(self : StanceId) -> Bool {
+  match self {
+    StanceId::SHOT | StanceId::SHOOT1 | StanceId::SHOOT2 | StanceId::SHOOTF =>
+      true
+    StanceId::STABO1 | StanceId::STABO2 | StanceId::STABOF => true
+    StanceId::STABT1 | StanceId::STABT2 | StanceId::STABTF => true
+    StanceId::SWINGO1
+    | StanceId::SWINGO2
+    | StanceId::SWINGO3
+    | StanceId::SWINGOF => true
+    StanceId::SWINGP1 | StanceId::SWINGP2 | StanceId::SWINGPF => true
+    StanceId::SWINGT1
+    | StanceId::SWINGT2
+    | StanceId::SWINGT3
+    | StanceId::SWINGTF => true
+    StanceId::PRONESTAB => true
+    _ => false
+  }
+}
+
+///|
 pub fn StanceId::baseof(value : StanceId) -> StanceId {
   match value {
     StanceId::STAND2 => StanceId::STAND1

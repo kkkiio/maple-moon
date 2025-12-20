@@ -647,7 +647,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   // if @types.StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
-  let loop_ = true
+  let loop_ = not(stance.is_attack())
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       if @sprite.sprites.get(entity) is Some(sprite) {
@@ -1268,4 +1268,12 @@ pub impl @graphics.Drawable for NoopDrawable with draw(
 ///|
 pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {
   self.root_entity
+}
+
+///|
+pub fn CharLook::is_animation_finished(self : CharLook) -> Bool {
+  match self.body_entities.get("body") {
+    Some(entity) => @sprite.is_animation_finished(entity)
+    None => false
+  }
 }

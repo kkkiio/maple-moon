@@ -311,6 +311,14 @@ pub fn Character::set_afterimage(
 }
 
 ///|
+pub fn Character::clear_afterimage(self : Character) -> Unit {
+  if self.after_image is Some(old) {
+    old.dispose()
+  }
+  self.after_image = None
+}
+
+///|
 pub fn Character::is_sitting(self : Character) -> Bool {
   self.state == CharState::SIT
 }
@@ -415,6 +423,11 @@ pub fn Character::attack_by_stance(
 ///|
 pub fn Character::get_look(self : Character) -> @char_look.CharLook {
   self.look
+}
+
+///|
+pub fn Character::is_animation_finished(self : Character) -> Bool {
+  self.look.is_animation_finished()
 }
 
 ///|

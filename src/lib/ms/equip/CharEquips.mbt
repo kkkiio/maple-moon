@@ -110,8 +110,3 @@ pub fn CharEquips::adjust_stance(
     _ => stance
   }
 }
-
-///|
-pub impl ToJson for CharEquips with to_json(self) -> Json {
-  { "clothes": self.clothes }
-}

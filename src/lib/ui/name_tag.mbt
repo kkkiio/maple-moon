@@ -116,5 +116,6 @@ fn nx_frame_to_animation_frame(
       frame.texture.offset.x.to_double(),
       frame.texture.offset.y.to_double(),
     ),
+    duration: 0.0,
   }
 }

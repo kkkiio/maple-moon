@@ -1,9 +1,12 @@
 ///|
+using @resource {type AsyncLoader}
+
+///|
 /// Class that represents an item loaded from the game's files
 /// Contains all shared data between concrete items
 pub(all) struct ItemData {
-  src : @resource.NxNode
-  icons : (@graphics.Texture, @graphics.Texture)
+  src : Json
+  icons : (@resource.NxTexture, @resource.NxTexture)
   item_id : Int
   price : Int
   gender : Int
@@ -15,42 +18,6 @@ pub(all) struct ItemData {
   unique : Bool
   unsellable : Bool
   cash_item : Bool
-}
-
-///|
-pub fn get_character_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "character",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "Pants/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Pants",
-      ),
-      "Weapon/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Weapon",
-      ),
-      "Coat/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Coat",
-      ),
-      "Cap/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Cap",
-      ),
-      "Longcoat/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Longcoat",
-      ),
-      "Shield/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Shield",
-      ),
-      "Shoes/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Shoes",
-      ),
-      "Glove/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Glove",
-      ),
-      "Accessory/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Accessory",
-      ),
-    }),
-  )
 }
 
 ///|
@@ -71,18 +38,19 @@ fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
 ///|
 pub async fn ItemData::load(
   item_id : Int,
-  character_loader : @resource.AsyncLoader,
-  item_loader : @resource.AsyncLoader,
+  character_loader : AsyncLoader,
+  item_loader : AsyncLoader,
 ) -> ItemData {
-  let zid = "0" + item_id.to_string()
-  let (category, src, strsrc) : (String, @resource.NxNode, Json) = match
-    parse_category1(item_id).or_error(INVALID_ITEM_ID(item_id)) {
+  let zid = "0\{item_id}"
+  let (category, src, strsrc) : (String, Json, Json) = match
+    parse_category1(item_id).unwrap_or_error(INVALID_ITEM_ID(item_id)) {
     EQUIP => {
       guard parse_equip_category(item_id) is Some(category) else {
         raise LoadDataError::INVALID_ITEM_ID(item_id)
       }
-      let src = character_loader.load_res_async([category, zid + ".img"])
-      // let strsrc = equip_texts.get(category).get(item_id.to_string())
+      let src = character_loader
+        .load_res_async([category, "\{zid}.img"])
+        .value()
       let strsrc = equip_texts
         .as_object()
         .bind(_.get(category))
@@ -101,7 +69,7 @@ pub async fn ItemData::load(
         .bind(_.as_object())
         .bind(_.get(item_id.to_string()))
         .unwrap_or(Json::null())
-      (category, src, strsrc)
+      (category, src.value(), strsrc)
     }
     INSTALL => {
       let category = "Install"
@@ -113,7 +81,7 @@ pub async fn ItemData::load(
         .bind(_.as_object())
         .bind(_.get(item_id.to_string()))
         .unwrap_or(Json::null())
-      (category, src, strsrc)
+      (category, src.value(), strsrc)
     }
     ETC => {
       let category = "Etc"
@@ -125,7 +93,7 @@ pub async fn ItemData::load(
         .bind(_.as_object())
         .bind(_.get(item_id.to_string()))
         .unwrap_or(Json::null())
-      (category, src, strsrc)
+      (category, src.value(), strsrc)
     }
     CASH => {
       let category = "Cash"
@@ -137,7 +105,7 @@ pub async fn ItemData::load(
         .bind(_.as_object())
         .bind(_.get(item_id.to_string()))
         .unwrap_or(Json::null())
-      (category, src, strsrc)
+      (category, src.value(), strsrc)
     }
   }
   let str_src = strsrc
@@ -149,19 +117,33 @@ pub async fn ItemData::load(
     { "desc": String(desc), .. } => desc
     _ => ""
   }
-  let info = src["info"]
-  if info.is_null() {
+  guard src is { "info": Object(info), .. } else {
     raise LoadDataError::DATA_NOT_FOUND(item_id)
   }
-  let icons = (
-    info["icon"] |> @graphics.Texture::from_resource,
-    info["iconRaw"] |> @graphics.Texture::from_resource,
+  let icons : (@resource.NxTexture, @resource.NxTexture) = (
+    info["icon"] |> @json.from_json,
+    info["iconRaw"] |> @json.from_json,
   )
-  let price = info["price"].get_int()
-  let untradable = info["tradeBlock"].get_bool()
-  let unique = info["only"].get_bool()
-  let unsellable = info["notSale"].get_bool()
-  let cash_item = info["cash"].get_bool()
+  let price = match info {
+    { "price": Number(price, ..), .. } => price.to_int()
+    _ => 0
+  }
+  let untradable = match info {
+    { "tradeBlock": Number(1, ..), .. } => true
+    _ => false
+  }
+  let unique = match info {
+    { "only": Number(1, ..), .. } => true
+    _ => false
+  }
+  let unsellable = match info {
+    { "notSale": Number(1, ..), .. } => true
+    _ => false
+  }
+  let cash_item = match info {
+    { "cash": Number(1, ..), .. } => true
+    _ => false
+  }
   let gender = get_item_gender(item_id)
   {
     src,
@@ -193,7 +175,11 @@ pub async fn ItemData::get_async(id : Int) -> ItemData {
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load(id, get_character_loader(), get_item_loader())
+  let data = ItemData::load(
+    id,
+    @resource.get_character_loader(),
+    get_item_loader(),
+  )
   cache.set(id, data)
   data
 }
@@ -279,7 +265,7 @@ pub fn ItemData::get_category(self : ItemData) -> String {
 }
 
 ///|
-pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
+pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @resource.NxTexture {
   if raw {
     self.icons.1
   } else {
@@ -289,15 +275,10 @@ pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @graphics.Texture {
 
 ///|
 pub fn ItemData::get_info(self : ItemData) -> Map[String, Json] {
-  match self.src.value() {
+  match self.src {
     { "info": Object(info), .. } => info
     _ => Map::new()
   }
-}
-
-///|
-pub fn ItemData::get_src(self : ItemData) -> @resource.NxNode {
-  self.src
 }
 
 ///|

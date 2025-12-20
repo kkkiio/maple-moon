@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_animation_to_selene_animation}
+
+///|
 struct CharLook {
   root_entity : @entity.Entity
   stance : @utils.Nominal[@types.StanceId]
@@ -515,13 +518,7 @@ struct EquipLayerDrawable {
 
 ///|
 pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
-  {
-    "equips": self.equips.to_json(),
-    "stance": self.stance.to_json(),
-    "slot": self.slot.to_json(),
-    "layer": self.layer.to_json(),
-    "frame": self.frame.to_json(),
-  }
+  ...
 }
 
 ///|
@@ -722,11 +719,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
       continue
     }
-    let animation = @graphics.nx_animation_to_selene_animation(
-      anim,
-      flip_x~,
-      loop_~,
-    ) // TODO: cache animation
+    let animation = nx_animation_to_selene_animation(anim, flip_x~, loop_~) // TODO: cache animation
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.root_entity.spawn_child()
     })
@@ -748,21 +741,28 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         )
         panic()
       }
-      let animation = @graphics.nx_animation_to_selene_animation(
-        { frames, blend: false, zigzag: false },
+      let nx_anim = @resource.NxAnimation::{
+        frames,
+        blend: false,
+        zigzag: false,
+      } // Reconstruct approximate NxAnimation container
+      let animation = nx_animation_to_selene_animation(
+        nx_anim,
         flip_x=self.flip,
         loop_~,
       )
+
+      // Calculate frame mapping for this animation (needed for correct Z-index lookup)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.root_entity.spawn_child()
       })
       let current_frame = if @sprite.sprites.get(entity)
-        is Some({ sprite_type: Animation(_, frame~), .. }) {
-        let frame = frame.to_int()
-        if frame >= frames.length() { // maybe a different animation from previous stance
-          0
-        } else {
+        is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
+        // Use frame directly as requested, correcting for potential bounds
+        if frame < layers.length() {
           frame
+        } else {
+          0
         }
       } else {
         0
@@ -905,7 +905,7 @@ pub fn CharLook::set_facing_right(self : CharLook, facing_right : Bool) -> Unit 
 
 ///|
 pub fn CharLook::set_stance(self : CharLook, st : @types.StanceId) -> Unit {
-  if not(self.action.is_empty()) || st == @types.StanceId::NONE {
+  if self.action is Some(_) || st == @types.StanceId::NONE {
     return
   }
   // let adjstance = self.equips.adjust_stance(st)
@@ -1076,6 +1076,19 @@ pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
 ///|
 pub fn CharLook::get_stance(self : CharLook) -> @types.StanceId {
   self.stance.get()
+}
+
+///|
+pub fn CharLook::get_frame(self : CharLook) -> Int {
+  // Try to find the "body" entity which drives the main animation
+  match self.body_entities.get("body") {
+    Some(entity) =>
+      match @sprite.sprites.get(entity) {
+        Some({ sprite_type: Animation(_, frame~, ..), .. }) => frame
+        _ => 0
+      }
+    None => 0
+  }
 }
 
 ///|

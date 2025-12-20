@@ -16,6 +16,14 @@ using @legacy_types {
 }
 
 ///|
+using @combat_proto {
+  REGULAR_ATTACK,
+  type MobAttack,
+  type AttackResult,
+  type MobAttackResult,
+}
+
+///|
 using @combat_impl2 {trait CombatCharacter, trait DamagableCharacter}
 
 ///|
@@ -661,7 +669,18 @@ pub fn Player::get_stats(self : Player) -> CharStats {
 }
 
 ///|
-/// Recalculates the total stats from base stats, inventories and skills.
+/// recalc_stats 的主要目的是基于角色的基础属性（Base Stats）、装备（Equipment）、以及Buff状态，重新计算角色的**最终属性（Total Stats）**。
+///
+/// 具体流程如下：
+/// 1.  **初始化 (`init_totalstats`)**: 清除当前的最终属性，并将基础属性（如 STR, DEX, INT, LUK, HP, MP）作为初始值。
+/// 2.  **累加装备属性**: （代码中预留了位置）将所有装备提供的属性加成累加到最终属性上。
+/// 3.  **应用 Buff**: 遍历当前激活的 Buff，将其属性加成应用到 ultimately 属性上。
+/// 4.  **结算 (`close_totalstats`)**:
+///     *   计算衍生属性，如命中率（Accuracy）。
+///     *   应用百分比加成（如装备或技能提供的 x% 属性提升）。
+///     *   计算攻击力范围（Min/Max Damage），这是基于主属性、副属性、武器系数和攻击力计算得出的。
+///
+/// 简而言之，每当角色的装备、Buff 或基础属性发生变化时，都需要调用此方法来刷新角色的战斗面板数据。
 pub fn Player::recalc_stats(self : Player, equip_changed : Bool) -> Unit {
   let weapontype = self.character.get_weapontype()
   self.stats.init_totalstats()
@@ -706,10 +725,7 @@ pub fn Player::set_ladder(self : Player, ladder : @map.Ladder?) -> Unit {
 }
 
 ///|
-pub fn Player::damage(
-  self : Player,
-  attack : @combat.MobAttack,
-) -> @combat.MobAttackResult {
+pub fn Player::damage(self : Player, attack : MobAttack) -> MobAttackResult {
   let damage = self.stats.calculate_damage(attack.watk)
   self.character.show_damage(damage)
   let fromleft = attack.origin.x > self.character.get_phobj().get_x()
@@ -730,7 +746,7 @@ pub fn Player::damage(
     .set_vforce(self.character.get_phobj().vforce - 3.5)
   }
   let direction = if fromleft { 0 } else { 1 }
-  @combat.MobAttackResult::new(attack, damage, direction)
+  MobAttackResult::new(attack, damage, direction)
 }
 
 ///|
@@ -894,6 +910,9 @@ pub fn player_state_system(_delta : Double) -> Unit {
   }
   if @inputs.is_just_pressed(@inputs.KeyF) {
     @combat_impl2.use_move(player, @skill.TELEPORT_FP.int_value())
+  }
+  if @inputs.is_just_pressed(@inputs.KeyX) {
+    @combat_impl2.use_move(player, REGULAR_ATTACK)
   }
   let times = @logic_fps.get_logic_times()
   for _ in 0..<times {

@@ -44,7 +44,10 @@ pub impl ToJson for Layer with to_json(self) {
 
 ///|
 struct Clothing {
-  stances : Map[@types.StanceId, Map[Layer, Map[Int, Array[@graphics.Texture]]]]
+  stances : Map[
+    @types.StanceId,
+    Map[Layer, Map[Int, Array[@resource.NxTexture]]],
+  ]
   item_id : Int
   eq_slot : @slot.Id
   walk : @types.StanceId
@@ -52,7 +55,7 @@ struct Clothing {
   vslot : String
   two_handed : Bool
   // transparent : Bool
-} derive(ToJson)
+} derive(Show)
 
 ///|
 pub fn Clothing::from_resource(
@@ -100,83 +103,85 @@ pub fn Clothing::from_resource(
         @types.StanceId::WALK1
       }
   }
-  let src = item_data.get_src()
-  let stances = @types.stance_name_id_map
-    .iter()
-    .filter_map(fn(it) {
-      let (stancename, stance) = it
-      let node = src[stancename]
-      if node.is_null() {
-        None
-      } else {
-        Some((stance, node))
-      }
-    })
-    .map(fn(it) {
-      let (stance, stancenode) = it
-      let layeredFrames = Map::new()
-      for frame = 0; ; frame = frame + 1 {
-        let framenode = stancenode[frame.to_string()]
-        if framenode.is_null() {
-          break
+  let src = item_data.src
+  let stances = {}
+  for stancename, stance in @types.stance_name_id_map {
+    guard src is Object(obj) else { continue }
+    guard obj.get(stancename) is Some(stancenode) else { continue }
+    let layeredFrames = Map::new()
+    for frame = 0; ; frame = frame + 1 {
+      guard stancenode is Object(stance_obj) else { break }
+      guard stance_obj.get(frame.to_string()) is Some(framenode) else { break }
+      guard framenode is Object(frame_obj) else { break }
+      for part, partnode in frame_obj {
+        // Check if partnode has texture data (__i field)
+        guard partnode is Object(part_obj) else { continue }
+        guard part_obj.contains("__i") else { continue }
+        let mut z = chlayer
+        let zs = match part_obj.get("z") {
+          Some(String(s)) => s
+          _ => ""
         }
-        for part, partnode in framenode {
-          if partnode.is_null() || partnode.get_bitmap().is_empty() {
-            continue
+        if part == "mailArm" {
+          z = Layer::MAILARM
+        } else {
+          match sub_layer_names.get(zs) {
+            Some(sublayer) => z = sublayer
+            None => ()
           }
-          let mut z = chlayer
-          let zs = partnode["z"].get_string()
-          if part == "mailArm" {
-            z = Layer::MAILARM
-          } else {
-            match sub_layer_names.get(zs) {
-              Some(sublayer) => z = sublayer
-              None => ()
-            }
-          }
-          let (parent, parentpos) = for mapnode in partnode["map"] {
-            match (try? mapnode.as_point()).to_option() {
-              Some(point) => break (mapnode.name(), point)
-              None => ()
-            }
-          } else {
-            ("", @struct.Point::default())
-          }
-          let shift = match eq_slot {
-            @slot.Id::FACE => -parentpos
-            @slot.Id::SHOES
-            | @slot.Id::GLOVES
-            | @slot.Id::TOP
-            | @slot.Id::TOP_DEFAULT
-            | @slot.Id::BOTTOM
-            | @slot.Id::BOTTOM_DEFAULT
-            | @slot.Id::CAPE =>
-              drawinfo.get_body_position(stance, frame) - parentpos
-            @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
-              drawinfo.get_face_pos(stance, frame) - parentpos
-            @slot.Id::SHIELD | @slot.Id::WEAPON =>
-              (if parent == "handMove" {
-                drawinfo.get_hand_position(stance, frame)
-              } else if parent == "hand" {
-                drawinfo.get_arm_position(stance, frame)
-              } else if parent == "navel" {
-                drawinfo.get_body_position(stance, frame)
-              } else {
-                @struct.Point::default()
-              }) -
-              parentpos
-            _ => @struct.Point::default()
-          }
-          let tex = @graphics.Texture::from_resource(partnode)..shift(shift)
-          layeredFrames
-          .get_or_init(z, fn() { Map::new() })
-          .get_or_init(frame, fn() { Array::new() })
-          .push(tex)
         }
+        // Parse map data for parent position
+        let (parent, parentpos) = match part_obj.get("map") {
+          Some(Object(map_obj)) => {
+            let mut result = ("", @struct.Point::default())
+            for key, value in map_obj {
+              match value {
+                Array([Number(x, ..), Number(y, ..)]) => {
+                  result = (key, @struct.Point::new(x.to_int(), y.to_int()))
+                  break
+                }
+                _ => ()
+              }
+            }
+            result
+          }
+          _ => ("", @struct.Point::default())
+        }
+        let shift = match eq_slot {
+          @slot.Id::FACE => -parentpos
+          @slot.Id::SHOES
+          | @slot.Id::GLOVES
+          | @slot.Id::TOP
+          | @slot.Id::TOP_DEFAULT
+          | @slot.Id::BOTTOM
+          | @slot.Id::BOTTOM_DEFAULT
+          | @slot.Id::CAPE =>
+            drawinfo.get_body_position(stance, frame) - parentpos
+          @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
+            drawinfo.get_face_pos(stance, frame) - parentpos
+          @slot.Id::SHIELD | @slot.Id::WEAPON =>
+            (if parent == "handMove" {
+              drawinfo.get_hand_position(stance, frame)
+            } else if parent == "hand" {
+              drawinfo.get_arm_position(stance, frame)
+            } else if parent == "navel" {
+              drawinfo.get_body_position(stance, frame)
+            } else {
+              @struct.Point::default()
+            }) -
+            parentpos
+          _ => @struct.Point::default()
+        }
+        let tex : @resource.NxTexture = @json.from_json(partnode)
+        let tex = { ..tex, origin: tex.origin - shift }
+        layeredFrames
+        .get_or_init(z, fn() { Map::new() })
+        .get_or_init(frame, fn() { Array::new() })
+        .push(tex)
       }
-      (stance, layeredFrames)
-    })
-    |> Map::from_iter
+    }
+    stances.set(stance, layeredFrames)
+  }
   // let transparent = item_id == 1002186
   { stances, item_id, eq_slot, vslot, two_handed, walk, stand }
 }
@@ -196,7 +201,8 @@ pub fn Clothing::draw(
     .bind(fn(m) { m.get(frame) }) {
     Some(textures) =>
       for texture in textures {
-        texture.draw(args)
+        // texture.draw(args)
+        ...
       }
     None => ()
   }

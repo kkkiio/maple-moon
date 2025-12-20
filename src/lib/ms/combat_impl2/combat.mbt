@@ -14,10 +14,6 @@ struct Combat {
   cooldowns : Map[Int, Int]
   bullet_module : @bullet.Module
   skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
-  after_image_cache : Map[
-    CacheKey,
-    @utils.Future[Map[String, @char_look.AfterImage]],
-  ]
   attack_events_listeners : Array[(AttackEvent) -> Bool]
 }
 
@@ -43,7 +39,6 @@ pub fn Combat::new(
     damage_numbers: Array::new(),
     cooldowns: {},
     bullet_module,
-    after_image_cache: Map::new(),
     attack_events_listeners: [server_listener],
   }
 }
@@ -147,27 +142,19 @@ fn Combat::use_move(
   if reason == @combat_impl.ForbidReason::FBR_NONE {
     let after_images = match attack_weapon {
       Some(weapon) => {
-        let key = CacheKey(
-          move_id,
-          weapon.get_afterimage(),
-          weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL),
-        )
-        if self.after_image_cache.get(key) is Some(fut) {
-          if fut.poll() is Some(after_images) {
-            after_images
-          } else {
-            @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
-            return
+        let name = weapon.get_afterimage()
+        let level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
+        let after_images = @char_look.AfterImage::get_collection(name, level)
+        if act.is_skill() {
+          let skill_resources = act.get_afterimage()
+          for k, v in skill_resources {
+            // Override weapon afterimages with skill-specific ones
+            after_images.set(k, @char_look.AfterImage::new(v))
           }
-        } else {
-          @log.warn({ "move_id": move_id }, "loading afterimage") // TODO: load afterimage early
-          self.after_image_cache[key] = @io_service.submit_background_task(fn() {
-            load_after_images_by_skill_weapon(key)
-          }).map(@log.unwrap_err(_))
-          return
         }
+        after_images
       }
-      None => {}
+      None => Map::new()
     }
     self.apply_move(cc, act, after_images)
   } else {
@@ -427,6 +414,7 @@ async fn Combat::load_sp_move(
     apply_hit_effects: fn(attack_user, mob) {
       it.apply_hit_effects(attack_user, mob)
     },
+    get_afterimage: fn() { it.get_afterimage() },
   }
 }
 
@@ -678,51 +666,6 @@ pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {
     cooldowns[skill_id] = cooltime
   }
   cooldowns
-}
-
-///|
-priv struct CacheKey(Int, String, Int) derive(Show, Eq, Hash)
-
-///|
-async fn load_after_images_by_skill_weapon(
-  key : CacheKey,
-) -> Map[String, @char_look.AfterImage] {
-  let skill_id = key.0
-  let wepon_after_image_name = key.1
-  let weapon_level = key.2
-  let after_images = Map::new()
-  if skill_id > 0 {
-    let strid = @utils.stoi_left_pad0(skill_id, 7)
-    let skill_srcs = @resource.get_skill_loader().load_res_async([
-      "\{strid[:3]}.img",
-      "skill",
-      strid,
-      "afterimage",
-      wepon_after_image_name,
-    ])
-    for src in skill_srcs {
-      let stance_name = src.name()
-      let resource : @char_look.AfterNxImageResource = @json.from_json(
-        src.value(),
-      )
-      let after_image = @char_look.AfterImage::new(resource.simplify())
-      after_images[stance_name] = after_image
-    }
-  }
-  let path = [wepon_after_image_name + ".img", (weapon_level / 10).to_string()]
-  let srcs = @char_look.get_afterimage_loader().load_res_async(path)
-  for src in srcs {
-    let stance_name = src.name()
-    if after_images.get(stance_name) is Some(_) { // prefer skill afterimage
-      continue
-    }
-    let resource : @char_look.AfterNxImageResource = @json.from_json(
-      src.value(),
-    )
-    let after_image = @char_look.AfterImage::new(resource.simplify())
-    after_images[stance_name] = after_image
-  }
-  after_images
 }
 
 ///|

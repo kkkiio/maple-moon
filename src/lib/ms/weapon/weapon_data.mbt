@@ -27,8 +27,8 @@ pub fn WeaponData::from_item_data(
   let info = item_data.get_info()
   match info {
     {
-      "attackSpeed": Json::Number(attack_speed),
-      "attack": Json::Number(attack),
+      "attackSpeed": Json::Number(attack_speed, ..),
+      "attack": Json::Number(attack, ..),
       "afterImage": Json::String(after_image),
       ..
     } => {

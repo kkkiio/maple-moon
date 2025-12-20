@@ -26,6 +26,7 @@ pub(all) struct SpecialMove {
   get_bullet : (@character.Character, Int) -> @graphics.Animation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
+  get_afterimage : () -> Map[String, @char_look.NxAfterImage]
 } derive(Show)
 
 ///|
@@ -100,4 +101,11 @@ pub fn SpecialMove::apply_hit_effects(
   mob : @monster.Mob,
 ) -> Unit {
   (self.apply_hit_effects)(attack_user, mob)
+}
+
+///|
+pub fn SpecialMove::get_afterimage(
+  self : SpecialMove,
+) -> Map[String, @char_look.NxAfterImage] {
+  (self.get_afterimage)()
 }

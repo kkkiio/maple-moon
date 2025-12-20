@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_animation_to_selene_animation}
+
+///|
 struct SelectCharUI {
   characters : Array[SelectableCharacterUI]
   on_new_character : () -> Unit
@@ -202,7 +205,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
   {
     name_tag: @json.from_json(name_tag_res),
     // bt_new: @json.from_json(bt_new_res),
-    ani18: @graphics.nx_animation_to_selene_animation(ani18),
+    ani18: nx_animation_to_selene_animation(ani18),
   }
 }
 
@@ -232,6 +235,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
+      duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 255,
       //     "a1": 50,
@@ -241,6 +245,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
+      duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 50,
       //     "a1": 255,
@@ -252,6 +257,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       size: @selene_math.Vec2D(355, 312),
       offset: @selene_math.Vec2D(0, 0),
+      duration: 2.3,
       //     "origin": [156, 177],
       //     "a0": 200,
       //     "a1": 80,
@@ -262,6 +268,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
+      duration: 3.3,
       // "a0": 80,
       // "a1": 255,
       // "delay": 3300,
@@ -271,6 +278,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
+      duration: 1.0,
       // "_inlink": "ani/19/1",
       // "a0": 255,
       // "a1": 200,
@@ -594,7 +602,9 @@ pub fn select_char_system(_delta : Double) -> Unit {
     // if @sprite.sprites.get(entity) is Some(spr) {
     //   @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
     // }
-    ignore(alpha_norm) // TODO: modify upstream selene to support alpha
+    // TODO: modify upstream selene to support alpha
+    ignore(entity)
+    ignore(alpha_norm)
   }
 }
 
@@ -612,6 +622,7 @@ pub fn setup_game_server_handlers() -> Unit {
       @game_state.game_state.phase = @game_state.GamePhase::GameStart(
         map_id~,
         portal_id~,
+        loading_data=None,
       )
       select_char_ui.val = None
       ui.destroy()

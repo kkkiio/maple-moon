@@ -12,7 +12,7 @@ pub(all) struct SkillData {
   name : String
   desc : String
   levels : Map[Int, String]
-  req_skills : @immut/hashmap.T[Int, Int]
+  req_skills : @immut/hashmap.HashMap[Int, Int]
   icons : FixedArray[@graphics.Texture] // NORMAL, DISABLED, MOUSEOVER
   src : @resource.NxNode
 }

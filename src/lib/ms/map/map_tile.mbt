@@ -71,7 +71,7 @@ pub fn Tile::attach_entity(
     @sprite.sprites.remove(entity)
     return
   }
-  let animation = @graphics.nx_animation_to_selene_animation(@resource.NxAnimation::{
+  let animation = nx_animation_to_selene_animation(@resource.NxAnimation::{
     frames: [
       @resource.NxFrame::{ texture, delay: None, head: None, bounds: None },
     ],

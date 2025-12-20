@@ -175,10 +175,6 @@ pub fn Character::draw(
     alpha,
   )
 
-  //     after_image_.draw(self.look.get_frame(),
-  //                       DrawArgument(absp, facing_right_),
-  //                       alpha);
-
   //     if (iron_body_) {
   //         float ibalpha = iron_body_.alpha();
   //         float scale = 1.0f + ibalpha;
@@ -224,8 +220,7 @@ pub fn Character::update(self : Character, speed : Double) -> Unit {
   )
   match self.after_image {
     None => ()
-    // Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
-    Some(image) => ... // TODO: update after_image
+    Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
   }
   self.alerted.update(timestep=stancespeed_ms)
 }
@@ -308,6 +303,10 @@ pub fn Character::set_afterimage(
   self : Character,
   after_image : @char_look.AfterImage,
 ) -> Unit {
+  if self.after_image is Some(old) {
+    old.dispose()
+  }
+  after_image.attach(self.entity)
   self.after_image = Some(after_image)
 }
 

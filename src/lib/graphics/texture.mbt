@@ -1,4 +1,5 @@
 ///|
+#deprecated("use @resource.NxTexture instead")
 pub(all) struct Texture {
   bitmap : @sprite.AnimationFrame?
   mut origin : @struct.Point[Int]
@@ -46,6 +47,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
         tex.offset.x.to_double(),
         tex.offset.y.to_double(),
       ),
+      duration: 0.0,
     }),
     origin: tex.origin,
     dimensions: { x: tex.w, y: tex.h },
@@ -62,6 +64,7 @@ pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
         tex.offset.x.to_double(),
         tex.offset.y.to_double(),
       ),
+      duration: 0.0,
     }),
     origin: tex.origin,
     dimensions: { x: tex.w, y: tex.h },
@@ -133,6 +136,7 @@ pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise 
         sprite_path,
         size: @selene_math.Vec2D(w, h),
         offset,
+        duration: 0.0,
       })
     }
     _ => raise @json.JsonDecodeError((path, "invalid nx frame"))

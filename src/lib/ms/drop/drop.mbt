@@ -238,7 +238,7 @@ pub impl Drop for MesoDrop with expire(
 ///|
 struct ItemDrop {
   base : DropBase
-  icon : @graphics.Texture
+  icon : @resource.NxTexture
 }
 
 ///|
@@ -251,7 +251,7 @@ pub fn ItemDrop::new(
   mode : Int,
   _iid : Int,
   player_drop : Bool,
-  icon : @graphics.Texture,
+  icon : @resource.NxTexture,
 ) -> ItemDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
   { base, icon }
@@ -268,13 +268,14 @@ pub impl @map_object.MapObject for ItemDrop with draw(
     return
   }
   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
-  self.icon.draw(
-    @graphics.DrawArgument::new(
-      pos=absp,
-      angle=self.base.angle.get(alpha~),
-      opacity=self.base.opacity.get(alpha~),
-    ),
-  )
+  // self.icon.draw(
+  //   @graphics.DrawArgument::new(
+  //     pos=absp,
+  //     angle=self.base.angle.get(alpha~),
+  //     opacity=self.base.opacity.get(alpha~),
+  //   ),
+  // )
+  ...
 }
 
 ///|

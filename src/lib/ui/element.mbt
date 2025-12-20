@@ -343,15 +343,6 @@ pub fn UIModel::new(
 }
 
 ///|
-pub fn draw_sprites(
-  sprites : Iter[@graphics.Sprite],
-  position : Point[Int],
-  alpha : Double,
-) -> Unit {
-  sprites.each(fn(sprite) { sprite.draw(position, alpha) })
-}
-
-///|
 pub fn update_sprites(sprites : Iter[@graphics.Sprite]) -> Unit {
   sprites.each(fn(sprite) { sprite.update() |> ignore })
 }

@@ -1,4 +1,7 @@
 ///|
+pub const REGULAR_ATTACK : Int = 0
+
+///|
 pub(all) enum AttackType {
   CLOSE
   RANGED

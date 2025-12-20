@@ -17,7 +17,7 @@ pub async fn BulletData::load(strid : String) -> BulletData {
   let id = strid.trim_start(chars="0").to_string() |> @strconv.parse_int
   let item_data = @item.ItemData::load(
     id,
-    @item.get_character_loader(),
+    @resource.get_character_loader(),
     @item.get_item_loader(),
   )
   BulletData::new(src, item_data)

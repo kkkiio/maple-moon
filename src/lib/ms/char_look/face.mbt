@@ -32,7 +32,7 @@ pub impl Default for ExpressionId with default() -> ExpressionId {
 }
 
 ///|
-pub let expression_names : @immut/sorted_map.T[ExpressionId, String] = @immut/sorted_map.from_array([
+pub let expression_names : @immut/sorted_map.SortedMap[ExpressionId, String] = @immut/sorted_map.from_array([
     (ExpressionId::DEFAULT, "default"),
     (ExpressionId::BLINK, "blink"),
     (ExpressionId::HIT, "hit"),

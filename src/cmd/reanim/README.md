@@ -29,6 +29,7 @@ node target/js/release/build/cmd/reanim/reanim.js \
 - `--match <pattern>`: 按路径过滤（例如 `BasicEff.img/Teleport`）
 - `--bitmaps-dir <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
 - `--spritesheet-dir <path>`: 指定 spritesheets 目录（仅用于 Spritesheet 模式）
+- `--layer <name>`: 指定嵌套层级名称（用于处理 Weapon 等嵌套资源，例如 `weapon`）
 
 ### 模式自动检测
 
@@ -37,7 +38,11 @@ node target/js/release/build/cmd/reanim/reanim.js \
 1. **Spritesheet 模式**: 当检测到 `__i` 引用时（引用 spritesheet 中的图片）。
 2. **Bitmap 模式**: 当检测到 `__b` 引用时（引用 `bitmaps/` 目录下的图片）。
 
-### 示例 1: Spritesheet 模式
+### 单帧资源支持
+
+工具现已支持处理非动画序列的单帧资源（如 `info.icon`），它们会被自动识别并转换为独立的图片文件（例如 `..._info_icon.png`）。
+
+### 示例 1: Spritesheet 模式 (普通 Mob)
 
 处理 `1210100.img.json`，使用 `__i` 引用。
 
@@ -47,6 +52,23 @@ node target/js/release/build/cmd/reanim/reanim.js \
   assets/mob \
   --spritesheet-dir .local/r2/spritesheets/Mob
 ```
+
+### 示例 2: Spritesheet 模式 (Weapon 资源)
+
+处理 `01302000.img.json`，指定 `--layer weapon` 以解析嵌套的帧数据。
+
+```bash
+node target/js/release/build/cmd/reanim/reanim.js \
+  .local/r2/Character/Weapon/01302000.img.json \
+  assets/character/weapon \
+  --spritesheet-dir .local/r2/Character/Weapon/spritesheets \
+  --layer weapon
+```
+
+这将自动处理：
+
+- 嵌套在 `weapon` 对象下的动画帧
+- `info` 节点下的单帧图标 (`icon`, `iconRaw`)
 
 ### 示例 2: Bitmap 模式
 

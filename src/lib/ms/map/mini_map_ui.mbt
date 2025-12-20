@@ -709,5 +709,6 @@ fn nx_texture_to_frame(
       nx_texture.offset.x.to_double(),
       nx_texture.offset.y.to_double(),
     ),
+    duration: 0.0,
   }
 }

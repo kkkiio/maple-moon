@@ -138,13 +138,10 @@ pub(all) enum SkillId {
 
   // Bandit
   MESO_EXPLOSION = 4211006
-} derive(Eq)
+} derive(Eq, Hash)
 
 ///|
 pub fn SkillId::int_value(self : SkillId) -> Int = "%identity"
-
-///|
-pub(all) suberror UnknownSkillId Int derive(Show)
 
 ///|
 pub fn SkillId::from_int(value : Int) -> SkillId? {
@@ -289,9 +286,4 @@ pub fn SkillId::from_int(value : Int) -> SkillId? {
     _ => return None
   }
   Some(it)
-}
-
-///|
-pub impl Hash for SkillId with hash_combine(self, hasher) -> Unit {
-  hasher.combine(self.int_value())
 }

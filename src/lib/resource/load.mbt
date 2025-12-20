@@ -113,7 +113,7 @@ async fn fetch_string(path : String) -> String {
       let message : String = e.get_with_string("message")
       fail("failed to fetch string: \{path}, error=\{message}")
     }
-    e => raise e
+    e => fail("failed to fetch string: \{path}, error=\{e}")
   })
   |> @js.Value::cast
 }

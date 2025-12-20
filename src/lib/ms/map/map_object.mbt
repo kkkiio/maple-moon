@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_animation_to_selene_animation}
+
+///|
 /// Represents an obj (map decoration) on a map.
 struct Obj {
   animation : NxAnimation
@@ -48,7 +51,7 @@ pub fn Obj::attach_entity(
   entity : @entity.Entity,
   z_offset : Int,
 ) -> Unit {
-  let animation = @graphics.nx_animation_to_selene_animation(
+  let animation = nx_animation_to_selene_animation(
     self.animation,
     flip_x=self.flip,
     loop_=true,

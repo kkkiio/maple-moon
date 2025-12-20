@@ -157,7 +157,7 @@ fn DropSpawn::instantiate_meso(
 ///|
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
-  icon : @graphics.Texture,
+  icon : @resource.NxTexture,
 ) -> ItemDrop {
   ItemDrop::new(
     self.oid,

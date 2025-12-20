@@ -318,14 +318,43 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       stage_ref.val = None
       return
     }
-    GameStart(map_id~, portal_id~) => {
+    GameStart(map_id~, portal_id~, loading_data~) as t => {
+      // 1. 如果没有开始加载数据，启动后台任务加载默认武器
+      guard loading_data is Some(fut) else {
+        t.loading_data = Some(
+          @io_service.submit_background_task(async fn() {
+            let swordOL = @resource.get_afterimage_loader().load_res_async([
+              "swordOL.img",
+            ])
+            let res = swordOL.value()
+            let after_images = @json.from_json(res)
+            @char_look.set_after_images("swordOL", after_images)
+            @item.ItemData::get_async(1302000)
+          }),
+        )
+        return
+      }
+
+      // 2. 轮询 Future，如果没有完成则直接返回（等待下一帧）
+      guard fut.poll() is Some(res) else { return }
+
+      // 3. 数据加载完成，处理结果
+      let weapon_data = match res {
+        Ok(data) => data
+        Err(e) => {
+          @log.error({ "error": e }, "fail to load weapon data")
+          panic()
+        }
+      }
+
+      // 4. 创建 Character Look 并装备武器
       let char_look = try {
         let draw_info = @char_look.get_draw_info()
         let hair_node : @char_look.NxStanceLooks[@types.NxLayerTextures] = @json.from_json(
           @char_look.male_1_white_hair,
         )
         let entity = @entity.Entity::new()
-        @char_look.CharLook::new(
+        let look = @char_look.CharLook::new(
           entity,
           {},
           @char_look.FullBody::new(
@@ -338,12 +367,17 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           @char_look.Face::new(20800, @char_look.male_1_white_face),
           draw_info,
         )
+        // 装备加载好的武器
+        look.add_equip(weapon_data, @slot.Id::WEAPON)
+        look
       } catch {
         e => {
           @log.error({ "error": e }, "fail to load char look")
           panic()
         }
       }
+
+      // 5. 初始化 Stage 并切换到 GameTransiting 状态
       let stage = match stage_ref.val {
         Some(stage) => stage
         None => {
@@ -353,13 +387,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         }
       }
       stage.clear()
-      // @graphics.GraphicsGL::get().clear()
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
         loading_map=None,
       )
-      // self.network.send_message(PlayerMapTransferMessage(()))
     }
     GameTransiting(map_id~, portal_id~, loading_map~) as t => {
       let stage = stage_ref.val.unwrap()

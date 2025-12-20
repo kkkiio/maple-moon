@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_texture_to_selene_picture}
+
+///|
 pub(all) enum BackgroundType {
   BG_NORMAL = 0
   /// horizontal tiled background. spans the viewport horizontally.
@@ -362,7 +365,7 @@ fn new_background_sprite(background : Background, z : Int) -> @sprite.Sprite {
   }
   let size = @selene_math.Vec2D(w.to_double(), h.to_double())
   @sprite.Sprite::from_picture(
-    @graphics.nx_texture_to_selene_picture(texture, size~, repeat~),
+    nx_texture_to_selene_picture(texture, size~, repeat~),
     z,
   )
 }

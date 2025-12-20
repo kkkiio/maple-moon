@@ -130,5 +130,6 @@ pub fn new_regular_attack(bullet_module : @bullet.Module) -> SpecialMove {
       can_use_regular_attack(weapon_type, bullet)
     },
     apply_hit_effects: fn(_, _) {  },
+    get_afterimage: fn() { Map::new() },
   }
 }

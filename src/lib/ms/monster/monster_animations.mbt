@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_animation_to_selene_animation}
+
+///|
 fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
   let mob_animations : MobAnimations = @json.from_json(src)
   let animations : Map[StanceType, MobAnimation] = Map::new()
@@ -39,15 +42,15 @@ pub(all) struct MobAnimations {
 ///|
 fn load_animation(src : @resource.NxNode) -> MobAnimation raise {
   let nx : @resource.NxAnimation = @json.from_json(src.value())
-  let selene_l = @graphics.nx_animation_to_selene_animation(nx, flip_x=false)
-  let selene_r = @graphics.nx_animation_to_selene_animation(nx, flip_x=true)
+  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
+  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)
   { nx, selene_l, selene_r }
 }
 
 ///|
 fn nx_animation_to_mob_animation(nx : @resource.NxAnimation) -> MobAnimation {
-  let selene_l = @graphics.nx_animation_to_selene_animation(nx, flip_x=false)
-  let selene_r = @graphics.nx_animation_to_selene_animation(nx, flip_x=true)
+  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
+  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)
   { nx, selene_l, selene_r }
 }
 

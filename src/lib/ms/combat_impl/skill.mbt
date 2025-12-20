@@ -12,6 +12,7 @@ struct Skill {
   master_level : Int
   stats : Map[Int, @skill.Stats]
   req_weapon : @weapon.Type
+  after_image : Map[String, @char_look.NxAfterImage]
 }
 
 ///|
@@ -101,6 +102,16 @@ pub fn Skill::new(
       bullet.get(user, bulletid)
     }
   }
+  let after_image = Map::new()
+  if src.value() is { "afterimage": Object(map), .. } {
+    for k, v in map {
+      if k.has_suffix(".img") {
+        continue
+      }
+      let resource : @char_look.NxAfterImage = @json.from_json(v)
+      after_image.set(k, resource)
+    }
+  }
   {
     skill_id,
     over_regular,
@@ -113,6 +124,7 @@ pub fn Skill::new(
     master_level,
     stats,
     req_weapon,
+    after_image,
   }
 }
 
@@ -124,6 +136,13 @@ pub fn Skill::get_id(self : Skill) -> Int {
 ///|
 pub fn Skill::is_attack(self : Skill) -> Bool {
   self.is_attack
+}
+
+///|
+pub fn Skill::get_afterimage(
+  self : Skill,
+) -> Map[String, @char_look.NxAfterImage] {
+  self.after_image
 }
 
 ///|

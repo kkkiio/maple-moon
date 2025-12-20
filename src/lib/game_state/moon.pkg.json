@@ -1,9 +1,9 @@
 {
   "import": [
-    "KKKIIO/maple-moon/lib/ms/char_look",
     "KKKIIO/maple-moon/lib/ms/map",
     "KKKIIO/maple-moon/lib/ms/physics",
     "KKKIIO/maple-moon/lib/utils",
-    "KKKIIO/maple-moon/lib/ms/monster"
+    "KKKIIO/maple-moon/lib/ms/monster",
+    "KKKIIO/maple-moon/lib/ms/item"
   ]
 }

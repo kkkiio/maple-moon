@@ -1,4 +1,7 @@
 ///|
+using @struct {type Point, type Rectangle}
+
+///|
 pub(all) struct NxTexture {
   /// File path to the sprite sheet image containing this frame.
   i : String
@@ -86,27 +89,6 @@ pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise 
 }
 
 ///|
-test "parse nx frame" {
-  let data : Json = {
-    "__h": 58,
-    "__w": 63,
-    "delay": 180,
-    "head": [2, -54],
-    "lt": [-27, -58],
-    "origin": [27, 58],
-    "rb": [36, 0],
-    "__i": "spritesheets/Mob/1210102.img#10728",
-  }
-  let frame : NxFrame = @json.from_json(data)
-  inspect(
-    frame,
-    content=(
-      #|{texture: {i: "spritesheets/Mob/1210102.img#10728", w: 63, h: 58, offset: {x: 0, y: 0}, origin: {x: 27, y: 58}}, delay: Some(180), head: Some({x: 2, y: -54}), bounds: Some({lt: {x: -27, y: -58}, rb: {x: 36, y: 0}})}
-    ),
-  )
-}
-
-///|
 pub(all) struct NxAnimation {
   frames : Array[NxFrame]
   blend : Bool
@@ -133,4 +115,119 @@ pub fn NxAnimation::get_size(self : NxAnimation) -> (Int, Int) {
 }
 
 ///|
-using @struct {type Point, type Rectangle}
+pub fn nx_animation_to_selene_animation(
+  src : NxAnimation,
+  flip_x? : Bool = false,
+  loop_? : Bool = false,
+) -> @sprite.Animation {
+  let origin = src.frames
+    .get(0)
+    .map(fn(frame) { frame.texture.origin })
+    .unwrap_or(@struct.Point::default())
+
+  // Extract all delays
+  let delays = src.frames.map(fn(frame) {
+    match frame.delay {
+      Some(d) => if d <= 0 { 100 } else { d }
+      None => 100
+    }
+  })
+
+  // Handle zigzag: extend delays and maintain mapping to original indices
+  let (effective_delays, index_map) = if src.zigzag && delays.length() > 2 {
+    let extended = delays.copy()
+    let mapping = Array::make(delays.length(), 0)
+    for i = 0; i < delays.length(); i = i + 1 {
+      mapping[i] = i
+    }
+
+    // Append reversed inner frames: N-2 down to 1
+    let len = delays.length()
+    for i = len - 2; i >= 1; i = i - 1 {
+      extended.push(delays[i])
+      mapping.push(i)
+    }
+    (extended, mapping)
+  } else {
+    let mapping = Array::make(delays.length(), 0)
+    for i = 0; i < delays.length(); i = i + 1 {
+      mapping[i] = i
+    }
+    (delays, mapping)
+  }
+
+  // Create frames explicitly with duration
+  let frames = index_map.mapi(fn(i, original_index) {
+    let frame = src.frames[original_index]
+    let delay_ms = effective_delays[i]
+    @sprite.AnimationFrame::{
+      sprite_path: frame.texture.i,
+      size: @selene_math.Vec2D(
+        frame.texture.w.to_double(),
+        frame.texture.h.to_double(),
+      ),
+      offset: @selene_math.Vec2D(
+        frame.texture.offset.x.to_double(),
+        frame.texture.offset.y.to_double(),
+      ),
+      duration: delay_ms.to_double() / 1000.0,
+    }
+  })
+
+  // translate to origin
+  let base = @selene_math.Transform::from_translation(
+    -origin.x.to_double(),
+    -origin.y.to_double(),
+  )
+  // flip x axis around origin.x(pivot)
+  let transform = if flip_x {
+    @selene_math.Transform::from_scale(-1.0, 1.0) * base
+  } else {
+    base
+  }
+  @sprite.Animation::new(frames, loop_~, transform~)
+}
+
+///|
+/// 将 Nx 资源中的单帧贴图转换为 Selene 的 `@sprite.Picture`, 自动套用 `origin`
+/// 信息以确保实体位置与 Nx 定义的参考点一致。
+///
+/// Parameters:
+/// * `texture` : 解析后的 Nx 贴图数据, 包含尺寸、原点与图片路径。
+/// * `size` : 可选的绘制尺寸, 不传时默认使用贴图自身宽高。
+/// * `repeat` : 纹理平铺模式, 默认为 `NoRepeat`。
+/// * `flip_x` : 是否围绕 `origin` 做水平镜像, 默认为 `false`。
+///
+/// Return:
+/// A `@sprite.Picture` with the correct translation matrix to align rendering
+/// position with Nx `origin`.
+///
+/// Edge cases:
+/// * If the Nx data is missing `origin`, it will fall back to (0, 0) and not
+///   perform additional translation.
+/// * If `size` is different from the texture dimensions and `repeat` is
+///   `Repeat`, the texture will still be tiled, only affecting the starting
+///   offset.
+pub fn nx_texture_to_selene_picture(
+  texture : NxTexture,
+  size? : @selene_math.Vec2D,
+  repeat? : @selene_math.RepeatMode = NoRepeat,
+  flip_x? : Bool = false,
+) -> @sprite.Picture {
+  guard repeat is NoRepeat || texture.offset is { x: 0, y: 0 } else {
+    abort("tiled texture in spritesheet is not supported")
+  }
+  let resolved_size = size.unwrap_or(
+    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  )
+  let base = @selene_math.Transform::from_translation(
+    -texture.origin.x.to_double(),
+    -texture.origin.y.to_double(),
+  )
+  let transform = if flip_x {
+    @selene_math.Transform::from_scale(-1.0, 1.0) * base
+  } else {
+    base
+  }
+  @sprite.Picture::new(resolved_size, texture.i, transform~, repeat~)
+}

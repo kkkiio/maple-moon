@@ -6,7 +6,11 @@ pub(all) struct GameState {
 ///|
 pub(all) enum GamePhase {
   Login
-  GameStart(map_id~ : Int, portal_id~ : Int)
+  GameStart(
+    map_id~ : Int,
+    portal_id~ : Int,
+    mut loading_data~ : @utils.Future[Result[@item.ItemData, Error]]?
+  )
   GameTransiting(
     map_id~ : Int,
     portal_id~ : Int,

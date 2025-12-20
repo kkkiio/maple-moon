@@ -153,3 +153,63 @@ let skill_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
 pub fn get_skill_loader() -> AsyncLoader {
   skill_loader.get()
 }
+
+///|
+let character_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "character",
+    base_url="/assets",
+    loader=CompositeAsyncResourceLoader::new({
+      "Pants/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Pants",
+      ),
+      "Weapon/": DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Weapon",
+        "/assets/character/weapon",
+      ),
+      "Coat/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Coat",
+      ),
+      "Cap/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Cap",
+      ),
+      "Longcoat/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Longcoat",
+      ),
+      "Shield/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Shield",
+      ),
+      "Shoes/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Shoes",
+      ),
+      "Glove/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Glove",
+      ),
+      "Accessory/": DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Accessory",
+      ),
+    }),
+  )
+})
+
+///|
+pub fn get_character_loader() -> AsyncLoader {
+  character_loader.get()
+}
+
+///|
+let afterimage_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "afterimage",
+    base_url="/assets",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Afterimage",
+      "/assets/Character/Afterimage",
+    ),
+  )
+})
+
+///|
+pub fn get_afterimage_loader() -> AsyncLoader {
+  afterimage_loader.get()
+}

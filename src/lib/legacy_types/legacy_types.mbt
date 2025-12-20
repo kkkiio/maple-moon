@@ -8,7 +8,13 @@ pub(open) trait Inventory {
 }
 
 ///|
-struct MockInventory {}
+pub(open) trait SkillBook {
+  get_level(Self, Int) -> Int
+  set_skill(Self, Int, Int, Int, Int) -> Unit
+}
+
+///|
+pub(all) struct MockInventory {}
 
 ///|
 pub impl Inventory for MockInventory with recalc_stats(_, _) {
@@ -36,13 +42,7 @@ pub impl Inventory for MockInventory with get_bulletcount(_) {
 }
 
 ///|
-pub(open) trait SkillBook {
-  get_level(Self, Int) -> Int
-  set_skill(Self, Int, Int, Int, Int) -> Unit
-}
-
-///|
-struct MockSkillBook {}
+pub(all) struct MockSkillBook {}
 
 ///|
 pub impl SkillBook for MockSkillBook with get_level(_, _) {

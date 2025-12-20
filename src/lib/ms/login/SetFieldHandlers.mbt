@@ -195,7 +195,7 @@ fn parse_skillbook(recv : @net.InPacket) -> Array[SkillEntry] raise {
 
 ///|
 fn handle_skills(
-  skills : &@player.SkillBook,
+  skills : &@legacy_types.SkillBook,
   entries : Array[SkillEntry],
 ) -> Unit {
   for entry in entries {

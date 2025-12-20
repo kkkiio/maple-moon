@@ -42,7 +42,7 @@ priv struct SkillEntry {
 }
 
 ///|
-pub impl @player.SkillBook for SkillBook with get_level(
+pub impl @legacy_types.SkillBook for SkillBook with get_level(
   self : SkillBook,
   id : Int,
 ) -> Int {
@@ -71,7 +71,7 @@ pub fn SkillBook::get_masterlevel(self : SkillBook, id : Int) -> Int {
 }
 
 ///|
-pub impl @player.SkillBook for SkillBook with set_skill(
+pub impl @legacy_types.SkillBook for SkillBook with set_skill(
   self : SkillBook,
   id : Int,
   level : Int,

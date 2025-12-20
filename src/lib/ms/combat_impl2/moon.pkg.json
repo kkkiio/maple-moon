@@ -5,7 +5,6 @@
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/combat_impl",
     "KKKIIO/maple-moon/lib/net",
-    "KKKIIO/maple-moon/lib/ms/player",
     "KKKIIO/maple-moon/lib/ms/combat_proto",
     "KKKIIO/maple-moon/lib/ms/character",
     "KKKIIO/maple-moon/lib/ms/skill",
@@ -24,6 +23,6 @@
     "KKKIIO/maple-moon/lib/ms/physics",
     "KKKIIO/maple-moon/lib/game_state",
     "KKKIIO/maple-moon/lib/logic_fps",
-    "Milky2018/selene/inputs"
+    "KKKIIO/maple-moon/lib/legacy_types"
   ]
 }

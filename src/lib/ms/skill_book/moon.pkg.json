@@ -21,7 +21,8 @@
     "KKKIIO/maple-moon/lib/struct",
     "rami3l/js-ffi/js",
     "KKKIIO/maple-moon/lib/game_server",
-    "KKKIIO/maple-moon/lib/maple_protocol"
+    "KKKIIO/maple-moon/lib/maple_protocol",
+    "KKKIIO/maple-moon/lib/legacy_types"
   ],
   "link": {
     "js": {

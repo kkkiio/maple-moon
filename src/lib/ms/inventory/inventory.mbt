@@ -84,7 +84,7 @@ pub fn Inventory::new(network : @net.Network) -> Inventory {
 
 ///|
 /// Recalculate sums of equip stats
-pub impl @player.Inventory for Inventory with recalc_stats(
+pub impl @legacy_types.Inventory for Inventory with recalc_stats(
   self : Inventory,
   weapontype : @weapon.Type,
 ) -> Unit {
@@ -223,7 +223,7 @@ pub fn Inventory::add_equip(
 }
 
 ///|
-pub impl @player.Inventory for Inventory with get_stat(
+pub impl @legacy_types.Inventory for Inventory with get_stat(
   self : Inventory,
   stat : @maple_stat.EquipStatId,
 ) -> Int {
@@ -231,12 +231,16 @@ pub impl @player.Inventory for Inventory with get_stat(
 }
 
 ///|
-pub impl @player.Inventory for Inventory with has_projectile(self : Inventory) -> Bool {
+pub impl @legacy_types.Inventory for Inventory with has_projectile(
+  self : Inventory,
+) -> Bool {
   self.bullet_slot > 0
 }
 
 ///|
-pub impl @player.Inventory for Inventory with get_bulletid(self : Inventory) -> Int {
+pub impl @legacy_types.Inventory for Inventory with get_bulletid(
+  self : Inventory,
+) -> Int {
   self.get_item_id(TypeId::USE, self.bullet_slot)
 }
 
@@ -255,7 +259,9 @@ pub fn Inventory::get_slot_item_at(
 }
 
 ///|
-pub impl @player.Inventory for Inventory with get_bulletcount(self : Inventory) -> Int {
+pub impl @legacy_types.Inventory for Inventory with get_bulletcount(
+  self : Inventory,
+) -> Int {
   self.get_item_count_at_slot(TypeId::USE, self.bullet_slot)
 }
 

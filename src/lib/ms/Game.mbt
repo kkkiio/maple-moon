@@ -18,7 +18,6 @@ struct LoadedState {
   ui : UI
   login_module : @login.Module
   inventory_module : @inventory.Module
-  skill_book_module : @skill_book.Module
   char_stats_module : @char_stats.Module
   shop_module : @shop.Module
   quest_module : @quest.Module
@@ -206,22 +205,6 @@ async fn load_modules(
   merge_stat_handlers(char_stats_module.make_stat_handlers())
   let damage_number_set = @ui.NumberSet::load()
   let bullet_module = @bullet.Module::load()
-  let combat = @combat_impl2.Combat::new(
-    damage_number_set,
-    monster_module.get_map_mobs(),
-    bullet_module,
-  )
-  let skill_book_module = @skill_book.Module::load(
-    fn() {
-      ...
-      // get_stage().get_player() 
-    },
-    network,
-    string_loader,
-    combat,
-    inventory_module.get_inventory(),
-  )
-  merge_handlers(skill_book_module.make_handlers())
   // merge_actions(skill_book_module.make_actions())
   let shop_module = @shop.Module::load(network, string_loader)
   merge_handlers(shop_module.make_handlers())
@@ -290,7 +273,6 @@ async fn load_modules(
     window,
     login_module,
     inventory_module,
-    skill_book_module,
     char_stats_module,
     shop_module,
     quest_module,
@@ -351,7 +333,7 @@ pub fn Game::get_inventory_mod(self : Game) -> @inventory.Module? {
 
 ///|
 pub fn Game::get_skill_book_mod(self : Game) -> @skill_book.Module? {
-  self.loaded_state.poll().map(fn(it) { it.skill_book_module })
+  ...
 }
 
 ///|

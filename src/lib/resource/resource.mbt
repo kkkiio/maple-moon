@@ -30,6 +30,7 @@ pub fn SyncLoader::load_res(self : SyncLoader, path : Array[String]) -> NxNode {
 }
 
 ///|
+#deprecated("use Json instead")
 struct NxNode {
   loader_name : String
   image_loader : ImageLoader? // TODO: remove optional

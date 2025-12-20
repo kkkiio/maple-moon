@@ -5,6 +5,20 @@ using @physics {type Movement}
 using @char_stats {type CharStats}
 
 ///|
+using @maple_protocol {type ChangeMapMessage}
+
+///|
+using @legacy_types {
+  trait Inventory,
+  trait SkillBook,
+  type MockInventory,
+  type MockSkillBook,
+}
+
+///|
+using @combat_impl2 {trait CombatCharacter, trait DamagableCharacter}
+
+///|
 pub(all) struct Player {
   entity : @entity.Entity
   character : @character.Character
@@ -18,6 +32,51 @@ pub(all) struct Player {
   randomizer : @utils.Randomizer
   // load_skill_book : async (@job.Job) -> &SkillBook raise
   mut skill_book : &SkillBook
+}
+
+///|
+pub impl CombatCharacter for Player with get_character(self) {
+  self.character
+}
+
+///|
+pub impl CombatCharacter for Player with get_stats(self) {
+  self.get_stats()
+}
+
+///|
+pub impl CombatCharacter for Player with get_inventory(self) {
+  self.inventory
+}
+
+///|
+pub impl CombatCharacter for Player with get_skill_book(self) {
+  self.skill_book
+}
+
+///|
+pub impl CombatCharacter for Player with can_attack(self) {
+  self.can_attack()
+}
+
+///|
+pub impl CombatCharacter for Player with rush(self, targetx) {
+  self.rush(targetx)
+}
+
+///|
+pub impl DamagableCharacter for Player with is_invincible(self) {
+  self.is_invincible()
+}
+
+///|
+pub impl DamagableCharacter for Player with get_phobj(self) {
+  self.character.get_phobj()
+}
+
+///|
+pub impl DamagableCharacter for Player with damage(self, attack) {
+  self.damage(attack)
 }
 
 ///|
@@ -833,6 +892,9 @@ pub fn player_state_system(_delta : Double) -> Unit {
       player.send_action(action, false)
     }
   }
+  if @inputs.is_just_pressed(@inputs.KeyF) {
+    @combat_impl2.use_move(player, @skill.TELEPORT_FP.int_value())
+  }
   let times = @logic_fps.get_logic_times()
   for _ in 0..<times {
     player.update(physics, map_info)
@@ -846,6 +908,3 @@ pub fn player_state_system(_delta : Double) -> Unit {
   //   ITEM(item_id) => () //self.inventory.use_item(item_id)
   //   // @keyboard.Id::FACE => self.player.set_expression(action)
 }
-
-///|
-using @maple_protocol {type ChangeMapMessage}

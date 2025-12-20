@@ -1,4 +1,7 @@
 ///|
+using @maple_protocol {type SetFieldMessage}
+
+///|
 pub(all) struct Stage {
   // camera : Camera
   map_portals_animations : @map.MapPortalAnimations
@@ -389,12 +392,14 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
+      let player = @player.get_player().unwrap()
       let combat = @combat_impl2.Combat::new(
         damage_number_set,
         stage.mobs,
         bullet_module,
       )
       @combat_impl2.set_combat(Some(combat))
+      @combat_impl2.set_player(Some(player))
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
       @map.set_backgrounds(sence_map.backgrounds)
@@ -402,7 +407,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @map.set_portals(sence_map.portals, get_touch_pos=fn() {
         @player.get_player().map(fn(player) { player.character.get_position() })
       })
-      let player = @player.get_player().unwrap()
       respawn_player(
         player,
         portal_id,
@@ -467,9 +471,6 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
-
-///|
-using @maple_protocol {type SetFieldMessage}
 
 ///|
 let damage_number_set : @ui.NumberSet = @ui.NumberSet::load() catch {

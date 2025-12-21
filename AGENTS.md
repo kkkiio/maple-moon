@@ -8,6 +8,10 @@
 
 使用 `selene` , 非常新且小巧的 2D 游戏引擎, 便于学习。缺少功能时，先要对比其他现代游戏引擎的实现，再提出改进方案。
 
+## Sprite
+
+使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.
+
 ## 资源
 
 资源放在 `./assets` 目录下, 目前还没提交到 git 仓库, 暂时用 `.gitignore` 忽略了, 等资源格式和组织方式确定/稳定后, 再提交到 git 仓库.

@@ -116,9 +116,11 @@ pub fn server_system(_delta : Double) -> Unit {
   while default_server.client_message_queue.pop() is Some((type_code, json)) {
     guard default_server.client_message_handler_map.get(type_code)
       is Some(handler) else {
-      abort(
-        "Missing client message handler for type code: \{type_code}, json: \{json}",
+      @log.debug(
+        { "type_code": type_code, "json": json },
+        "Missing client message handler",
       )
+      return
     }
     handler(json) catch {
       err => abort("Error handling client message: \{err.to_string()}")

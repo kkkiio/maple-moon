@@ -71,8 +71,8 @@ pub(all) struct Character {
   mut after_image : @char_look.AfterImage?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
-  damage_number_set : @ui.NumberSet
-  damage_numbers : Array[@ui.Number]
+  // damage_number_set : @ui.NumberSet
+  // damage_numbers : Array[@ui.Number]
   // Character trait methods converted to function fields
   get_skilllevel : (Int) -> Int
   alerted : @utils.TimedBool
@@ -97,7 +97,7 @@ pub fn Character::new(
   oid : Int,
   look : @char_look.CharLook,
   name : String,
-  damage_number_set : @ui.NumberSet,
+  // damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
   stats : @char_stats.CharStats,
 ) -> Character {
@@ -121,8 +121,8 @@ pub fn Character::new(
     state: CharState::STAND,
     after_image: None,
     invincible: @utils.TimedBool::default(),
-    damage_number_set,
-    damage_numbers: Array::new(),
+    // damage_number_set,
+    // damage_numbers: Array::new(),
     get_skilllevel,
     alerted: @utils.TimedBool::default(),
   }
@@ -195,17 +195,17 @@ pub fn Character::draw(
 
   //     recurring_effects_.drawabove(absp, alpha);
 
-  for number in self.damage_numbers {
-    number.draw(viewx, viewy, alpha)
-  }
+  // for number in self.damage_numbers {
+  //   number.draw(viewx, viewy, alpha)
+  // }
 }
 
 ///|
 /// speed is the multiplier of the timestep.
 pub fn Character::update(self : Character, speed : Double) -> Unit {
-  @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
-    number.update()
-  })
+  // @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
+  //   number.update()
+  // })
   // TODO: implement recurring_effects
   //     recurring_effects_.update();
   // TODO: implement chat_balloon
@@ -364,9 +364,9 @@ pub fn Character::show_effect_id(
 pub fn Character::show_damage(self : Character, damage : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
-  self.damage_numbers.push(
-    self.damage_number_set.new_number(@ui.NumberType::HURT, damage, start_y, x~),
-  )
+  @ui.get_number_set()
+  .unwrap()
+  .new_number(@ui.NumberType::HURT, damage, start_y, x~)
   self.set_alerted(5000)
   self.invincible.set_for(2000)
 }
@@ -375,9 +375,9 @@ pub fn Character::show_damage(self : Character, damage : Int) -> Unit {
 pub fn Character::show_heal_number(self : Character, n : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
-  self.damage_numbers.push(
-    self.damage_number_set.new_number(@ui.NumberType::HEAL_HP, n, start_y, x~),
-  )
+  @ui.get_number_set()
+  .unwrap()
+  .new_number(@ui.NumberType::HEAL_HP, n, start_y, x~)
 }
 
 ///|

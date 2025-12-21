@@ -350,6 +350,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
+        guard @ui.get_ui_module() is Some(_) else { return }
         let draw_info = char_look_mod.draw_info
         let stance_bodys_map = char_look_mod.stance_bodys_map.0
         let stance_heads_map = char_look_mod.stance_heads_map.0
@@ -426,7 +427,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       let player = @player.get_player().unwrap()
       let combat = @combat_impl2.Combat::new(
-        damage_number_set,
+        @ui.get_number_set().unwrap(),
         stage.mobs,
         bullet_module,
       )
@@ -464,16 +465,10 @@ fn new_stage(char_look : @char_look.CharLook) -> Stage {
     Map::new(),
     Map::new(),
   )
-  let number_set : @ui.NumberSet = @ui.NumberSet::load() catch {
-    e => {
-      @log.error({ "error": e }, "load number set")
-      panic()
-    }
-  }
   let entity = char_look.get_root_entity()
   entity.respawn()
   let player : @player.Player = @player.Player::new(
-    entity, 1, "kkkiio", char_look, number_set, stats,
+    entity, 1, "kkkiio", char_look, stats,
   )
   @player.set_player(player)
   // TODO: reset cooldowns
@@ -502,11 +497,6 @@ pub fn setup_game_server_handlers() -> Unit {
       )
     },
   )
-}
-
-///|
-let damage_number_set : @ui.NumberSet = @ui.NumberSet::load() catch {
-  e => abort(e.to_string())
 }
 
 ///|

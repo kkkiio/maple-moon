@@ -93,7 +93,6 @@ pub async fn Player::load(
   entry : @character.CharEntry,
   // inventory : &Inventory,
   look : @char_look.CharLook,
-  damage_number_set : @ui.NumberSet,
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   new_char_stats : (@job.Job) -> CharStats,
 ) -> Player {
@@ -108,7 +107,6 @@ pub async fn Player::load(
     // inventory,
     // skill_book,
     look,
-    damage_number_set,
     // load_skill_book,
     new_char_stats(job),
   )
@@ -123,7 +121,6 @@ pub fn Player::new(
   // inventory : &Inventory,
   // skill_book : &SkillBook,
   look : @char_look.CharLook,
-  damage_number_set : @ui.NumberSet,
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
@@ -132,7 +129,6 @@ pub fn Player::new(
     id,
     look,
     name,
-    damage_number_set,
     // get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
     get_skilllevel=fn(_) { 0 }, // TODO: implement
     stats,

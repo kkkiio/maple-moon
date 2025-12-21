@@ -14,9 +14,11 @@
     "KKKIIO/maple-moon/lib/ms/player",
     "KKKIIO/maple-moon/lib/io_service",
     "KKKIIO/maple-moon/lib/ms/monster",
-    "KKKIIO/maple-moon/lib/ms/char_look"
+    "KKKIIO/maple-moon/lib/ms/char_look",
+    "KKKIIO/maple-moon/lib/ui"
   ],
   "overrides": [
-    "Milky2018/selene-canvas"
+    "Milky2018/selene-canvas",
+    "KKKIIO/maple-moon/lib/abort_with_log"
   ]
 }

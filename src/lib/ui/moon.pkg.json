@@ -4,6 +4,7 @@
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/utils",
+    "KKKIIO/maple-moon/lib/io_service",
     "KKKIIO/maple-moon/lib/ms/keyboard",
     "KKKIIO/maple-moon/lib/ms/physics",
     "Milky2018/selene/sprite",

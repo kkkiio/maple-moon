@@ -22,3 +22,5 @@ assets/spritesheets
 assets/map
 assets/map001
 assets/minimap
+src/lib/resource/AGENTS.md
+src/App.vue

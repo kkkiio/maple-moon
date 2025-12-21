@@ -230,3 +230,26 @@ let body_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
 pub fn get_body_loader() -> AsyncLoader {
   body_loader.get()
 }
+
+///|
+let effect_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "effect",
+    base_url="/assets",
+    loader=CompositeAsyncResourceLoader::new({
+      "BasicEff.img/": DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Effect/BasicEff.img",
+        "/assets/Effect/BasicEff.img",
+      ),
+      "CharacterEff.img/": DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Effect/CharacterEff.img",
+        "/assets/Effect/CharacterEff.img",
+      ),
+    }),
+  )
+})
+
+///|
+pub fn get_effect_loader() -> AsyncLoader {
+  effect_loader.get()
+}

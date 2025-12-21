@@ -10,7 +10,7 @@ struct Combat {
   bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
   bullets : Array[BulletEffect]
-  damage_numbers : Array[@ui.Number]
+  // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   bullet_module : @bullet.Module
   skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
@@ -36,7 +36,7 @@ pub fn Combat::new(
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
-    damage_numbers: Array::new(),
+    // damage_numbers: Array::new(),
     cooldowns: {},
     bullet_module,
     attack_events_listeners: [server_listener],
@@ -61,9 +61,9 @@ pub fn Combat::draw(
   for bullet_eff in self.bullets {
     bullet_eff.bullet.draw(viewx, viewy, alpha)
   }
-  for dmg_eff in self.damage_numbers {
-    dmg_eff.draw(viewx, viewy, alpha)
-  }
+  // for dmg_eff in self.damage_numbers {
+  //   dmg_eff.draw(viewx, viewy, alpha)
+  // }
 }
 
 ///|
@@ -92,7 +92,7 @@ pub fn Combat::update(self : Combat) -> Unit {
     }
     not(mb.bullet.update(mb.target))
   })
-  self.damage_numbers.retain(fn(dn) { not(dn.update()) })
+  // self.damage_numbers.retain(fn(dn) { not(dn.update()) })
 }
 
 ///|
@@ -311,7 +311,7 @@ fn find_closest_mob(
 ///|
 priv struct DamageEffect {
   user : @combat_proto.AttackUser
-  number : @ui.Number
+  number_params : (@ui.NumberType, Int, Int) // type, damage, y_pos
   damage : Int
   toleft : Bool
   target_oid : Int
@@ -445,7 +445,7 @@ fn Combat::extract_effects(
         for number in numbers {
           let effect : DamageEffect = {
             user: attack_user,
-            number,
+            number_params: number,
             damage: vec[i].0,
             toleft: result.toleft,
             target_oid: oid,
@@ -466,11 +466,7 @@ fn Combat::extract_effects(
       for i in 0..<result.hitcount {
         let effect : DamageEffect = {
           user: attack_user,
-          number: self.damage_number_set.new_number(
-            @ui.NumberType::HIT_NORMAL,
-            0,
-            user.get_position().y,
-          ),
+          number_params: (@ui.NumberType::HIT_NORMAL, 0, user.get_position().y),
           damage: 0,
           toleft: false,
           target_oid: 0,
@@ -491,7 +487,7 @@ fn Combat::extract_effects(
         for number in numbers {
           self.damage_effects.push(user.get_attackdelay(i).to_int64(), {
             user: attack_user,
-            number,
+            number_params: number,
             damage: vec[i].0,
             toleft: result.toleft,
             target_oid: oid,
@@ -509,7 +505,7 @@ fn Combat::place_numbers(
   self : Combat,
   oid : Int,
   damage_lines : Array[(Int, Bool)],
-) -> Array[@ui.Number] {
+) -> Array[(@ui.NumberType, Int, Int)] {
   let numbers = Array::new()
   let mut head = self.mobs.get_mob_head_position(oid).y
   for it in damage_lines {
@@ -519,7 +515,7 @@ fn Combat::place_numbers(
     } else {
       @ui.NumberType::HIT_NORMAL
     }
-    numbers.push(self.damage_number_set.new_number(t, amount, head))
+    numbers.push((t, amount, head))
     head -= @ui.Number::row_height(is_critical)
   }
   return numbers
@@ -528,9 +524,9 @@ fn Combat::place_numbers(
 ///|
 fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
-  let number = effect.number
-  self.damage_numbers.push(number)
-  number.set_x(head_position.x)
+  let (t, amount, start_y) = effect.number_params
+  // Create and auto-register the number now
+  self.damage_number_set.new_number(t, amount, start_y, x=head_position.x)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move

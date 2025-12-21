@@ -327,41 +327,6 @@ is mostly the same as String, except it does not own the memory.
 
 From String to StringView using `s[:]`, from StringView to String using `s.to_string()`.
 
-### Bytes, BytesView
-
-`Bytes` is immutable; use `BytesView` (`b[:]`) for slices. Indexing (`b[i]`)
-returns a `Byte`.
-
-```moonbit
-
-///|
-test "bytes literal" {
-  let b0 : Bytes = b"abcd"
-  let b1 : Bytes = "abcd" // b is optional, when we know the type
-  let b2 : Bytes = [0xff, 0x00, 0x01]
-  // this also works
-}
-```
-
-From Bytes to BytesView using `b[:]`, from BytesView to Bytes using `b.to_bytes()`.
-
-### Array, ArrayView
-
-MoonBit Array is resizable array, FixedArray is fixed size array.
-
-```moonbit
-
-///|
-test "array literal" {
-  let a0 : Array[Int] = [1, 2, 3] // resizable
-  let a1 : FixedArray[Int] = [1, 2, 3]
-
-}
-```
-
-You can get ArrayView using `a[:]`, it does not allocate which is similar to
-`StringView` and `BytesView`.
-
 ### Map
 
 MoonBit provides a built-in `Map` type that preserves insertion order (like
@@ -429,10 +394,6 @@ test "int and char literal" {
 ## Complex Types
 
 ```moonbit
-
-///|
-///  Type aliases use 'typealias'
-typealias Int as UserId // Int is aliased to UserId - no runtime overhead
 
 ///|
 ///  Tuple-struct for callback
@@ -561,43 +522,6 @@ fn is_palindrome(s : StringView) -> Bool {
   }
 }
 ```
-
-## Functional `loop` control flow
-
-The `loop` construct is unique to MoonBit:
-
-```moonbit
-
-///|
-/// Functional loop with pattern matching on loop variables
-/// @list.List is from the standard library
-fn sum_list(list : @list.List[Int]) -> Int {
-  loop (list, 0) {
-    (Empty, acc) => acc // Base case returns accumulator
-    (More(x, tail=rest), acc) => continue (rest, x + acc) // Recurse with new values
-  }
-}
-
-///|
-///  Multiple loop variables with complex control flow
-fn find_pair(arr : Array[Int], target : Int) -> (Int, Int)? {
-  loop (0, arr.length() - 1) {
-    (i, j) if i >= j => None
-    (i, j) => {
-      let sum = arr[i] + arr[j]
-      if sum == target {
-        Some((i, j)) // Found pair
-      } else if sum < target {
-        continue (i + 1, j) // Move left pointer
-      } else {
-        continue (i, j - 1) // Move right pointer
-      }
-    }
-  }
-}
-```
-
-**Note**: You must provide a payload to `loop`. If you want an infinite loop, use `while true { ... }` instead. The syntax `loop { ... }` without arguments is invalid.
 
 ## Functional `for` control flow
 
@@ -760,96 +684,6 @@ fn handle_parse(s : String) -> Int {
 }
 ```
 
-# Methods and Traits
-
-Methods use `Type::method_name` syntax, traits require explicit implementation:
-
-```moonbit
-
-///|
-struct Rectangle {
-  width : Double
-  height : Double
-}
-
-///|
-// Methods are prefixed with Type::
-fn Rectangle::area(self : Rectangle) -> Double {
-  self.width * self.height
-}
-
-///|
-/// Static methods don't need self
-fn Rectangle::new(w : Double, h : Double) -> Rectangle {
-  { width: w, height: h }
-}
-
-///|
-/// Show trait now uses output(self, logger) for custom formatting
-/// to_string() is automatically derived from this
-pub impl Show for Rectangle with output(self, logger) {
-  logger.write_string("Rectangle(\{self.width}x\{self.height})")
-}
-
-///|
-/// Traits can have non-object-safe methods
-trait Named {
-  name() -> String // No 'self' parameter - not object-safe
-}
-
-///|
-/// Trait bounds in generics
-fn[T : Show + Named] describe(value : T) -> String {
-  "\{T::name()}: \{value.to_string()}"
-}
-
-///|
-///  Trait implementation
-impl Hash for Rectangle with hash_combine(self, hasher) {
-  hasher..combine(self.width)..combine(self.height)
-}
-```
-
-## Operator Overloading
-
-MoonBit supports operator overloading through traits:
-
-```moonbit
-
-///|
-struct Vector(Int, Int)
-
-///|
-/// Implement arithmetic operators
-pub impl Add for Vector with add(self, other) {
-  Vector(self.0 + other.0, self.1 + other.1)
-}
-
-///|
-pub impl Mul for Vector with mul(self, other) {
-  Vector(self.0 * other.0, self.1 * other.1)
-}
-
-///|
-struct Person {
-  age : Int
-} derive(Eq)
-
-///|
-/// Comparison operators
-pub impl Compare for Person with compare(self, other) {
-  self.age.compare(other.age)
-}
-
-///|
-test "overloading" {
-  let v1 : Vector = Vector(1, 2)
-  let v2 : Vector = Vector(3, 4)
-  let _v3 : Vector = v1 + v2
-
-}
-```
-
 ## Access Control Modifiers
 
 MoonBit has fine-grained visibility control:
@@ -894,23 +728,12 @@ pub(open) trait Extendable {}
 ## Common Pitfalls to Avoid
 
 1. **Don't use uppercase for variables/functions** - compilation error
-2. **Don't forget `mut` for mutable fields** - immutable by default
-3. **Don't assume value semantics** - most types pass by reference
-4. **Don't ignore error handling** - errors must be explicitly handled
-5. **Don't use `return` unnecessarily** - last expression is the return value
-6. **Don't create methods without Type:: prefix** - methods need explicit type prefix
-7. Don't forget to handle array bounds - use get() for safe access
-8. Don't mix up String indexing (returns Int). Use `for char in s {...}` for char iteration
-9. Don't forget @package prefix when calling functions from other packages
-10. Don't use ++ or -- (not supported), use `i = i + 1` or `i += 1`
-11. **Don't add explicit `try` for error-raising functions** - errors propagate automatically (unlike Swift)
-
-## Legacy Note
-
-**Older code may use**:
-
-- `function_name!(...)` for raising functions. This is deprecated; call without `!`.
-- `function_name(...)?` for raising functions. This is deprecated; use `try? function_name(...)` instead, the expression is of type `Result[_]`.
+2. **Don't assume value semantics** - most types pass by reference
+3. **Don't create methods without Type:: prefix** - methods need explicit type prefix
+4. Don't mix up String indexing (returns Int). Use `for char in s {...}` for char iteration
+5. Don't forget @package prefix when calling functions from other packages
+6. Don't use ++ or -- (not supported), use `i = i + 1` or `i += 1`
+7. **Don't add explicit `try` for error-raising functions** - errors propagate automatically (unlike Swift)
 
 # MoonBit Build System - Essential Guide
 
@@ -1108,54 +931,6 @@ Target specific backends/modes in `moon.pkg.json`:
 }
 ```
 
-## Warning Control
-
-Disable specific warnings in `moon.mod.json` or `moon.pkg.json`:
-
-```json
-{
-  "warn-list": "-2-29" // Disable unused variable (2) & unused package (29)
-}
-```
-
-**Common warning numbers:**
-
-- `1` - Unused function
-- `2` - Unused variable
-- `11` - Partial pattern matching
-- `12` - Unreachable code
-- `29` - Unused package
-
-Use `moonc build-package -warn-help` to see all available warnings.
-
-## Pre-build Commands
-
-Embed external files as MoonBit code:
-
-```json
-{
-  "pre-build": [
-    {
-      "input": "data.txt",
-      "output": "embedded.mbt",
-      "command": ":embed -i $input -o $output --name data --text"
-    },
-    ... // more embed commands
-  ]
-}
-```
-
-Generated code example:
-
-```moonbit
-
-///|
-let data : String =
-  #|hello,
-  #|world
-  #|
-```
-
 # Documentation
 
 Write documentation using `///` comments (started with `///|` to delimit the
@@ -1230,15 +1005,6 @@ The MoonBit code in docstring will be type checked and tested automatically.
 
 - In the toplevel directory, there is a `moon.mod.json` file describing the
   module and metadata.
-
-## MoonBit Package `README` Generation Guide
-
-- Output `README.mbt.md` in the package directory; `*.mbt.md` files including runnable MoonBit `test { ... }` blocks will be tested by `moon test`, and symlink it to `README.md` to produce verifiable `README.md` filde.
-- DON'T duplicate definitions in `*.mbt.md` files wrapped in MoonBit snippets, they are REAL code that shadow the original definitions
-- Aim to cover ≥70% of the public API with concise sections and examples.
-- Use black‑box tests: call via `@package.fn`. The package name used to be the same as the directory name.
-- Organize by feature: construction, consumption, transformation, and key usage tips.
-- Verify with `moon test -p=<PACKAGE>`. Fix only errors from your package; ignore external warnings.
 
 ## MoonBit Testing Guide
 

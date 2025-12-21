@@ -213,3 +213,20 @@ let afterimage_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
 pub fn get_afterimage_loader() -> AsyncLoader {
   afterimage_loader.get()
 }
+
+///|
+let body_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "body",
+    base_url="/assets",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Body",
+      "/assets/Character/Body",
+    ),
+  )
+})
+
+///|
+pub fn get_body_loader() -> AsyncLoader {
+  body_loader.get()
+}

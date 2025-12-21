@@ -74,6 +74,7 @@ pub fn collect_frames_from_bitmaps(animation_json : Json) -> Array[FrameData] {
       src_x: 0,
       src_y: 0,
       spritesheet_path: "", // Will be set later
+      is_bitmap: true,
     })
   }
 

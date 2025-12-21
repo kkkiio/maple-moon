@@ -83,52 +83,6 @@ pub fn StanceId::by_state(state : Int) -> StanceId {
 }
 
 ///|
-let int_id_map : @immut/sorted_map.SortedMap[Int, StanceId] = @immut/sorted_map.from_array([
-    (0, StanceId::NONE),
-    (1, StanceId::ALERT),
-    (2, StanceId::DEAD),
-    (3, StanceId::FLY),
-    (4, StanceId::HEAL),
-    (5, StanceId::JUMP),
-    (6, StanceId::LADDER),
-    (7, StanceId::PRONE),
-    (8, StanceId::PRONESTAB),
-    (9, StanceId::ROPE),
-    (10, StanceId::SHOT),
-    (11, StanceId::SHOOT1),
-    (12, StanceId::SHOOT2),
-    (13, StanceId::SHOOTF),
-    (14, StanceId::SIT),
-    (15, StanceId::STABO1),
-    (16, StanceId::STABO2),
-    (17, StanceId::STABOF),
-    (18, StanceId::STABT1),
-    (19, StanceId::STABT2),
-    (20, StanceId::STABTF),
-    (21, StanceId::STAND1),
-    (22, StanceId::STAND2),
-    (23, StanceId::SWINGO1),
-    (24, StanceId::SWINGO2),
-    (25, StanceId::SWINGO3),
-    (26, StanceId::SWINGOF),
-    (27, StanceId::SWINGP1),
-    (28, StanceId::SWINGP2),
-    (29, StanceId::SWINGPF),
-    (30, StanceId::SWINGT1),
-    (31, StanceId::SWINGT2),
-    (32, StanceId::SWINGT3),
-    (33, StanceId::SWINGTF),
-    (34, StanceId::WALK1),
-    (35, StanceId::WALK2),
-  ],
-)
-
-///|
-pub fn StanceId::by_id(id : Int) -> StanceId {
-  int_id_map.get(id).unwrap()
-}
-
-///|
 pub fn StanceId::is_climbing(self : StanceId) -> Bool {
   return self == StanceId::LADDER || self == StanceId::ROPE
 }
@@ -210,11 +164,6 @@ pub let stance_name_id_map : Map[String, StanceId] = {
   "swingTF": StanceId::SWINGTF,
   "walk1": StanceId::WALK1,
   "walk2": StanceId::WALK2,
-}
-
-///|
-pub fn StanceId::by_string(name : String) -> StanceId {
-  stance_name_id_map.get(name).unwrap()
 }
 
 ///|

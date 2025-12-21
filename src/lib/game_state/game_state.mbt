@@ -5,7 +5,7 @@ pub(all) struct GameState {
 
 ///|
 pub(all) enum GamePhase {
-  Login
+  SelectCharacter
   GameStart(
     map_id~ : Int,
     portal_id~ : Int,
@@ -29,4 +29,4 @@ pub(all) enum GamePhase {
 }
 
 ///|
-pub let game_state : GameState = { phase: GamePhase::Login }
+pub let game_state : GameState = { phase: GamePhase::SelectCharacter }

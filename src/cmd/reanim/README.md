@@ -26,10 +26,10 @@ node target/js/release/build/cmd/reanim/reanim.js \
 
 ### 选项
 
-- `--match <pattern>`: 按路径过滤（例如 `BasicEff.img/Teleport`）
-- `--bitmaps-dir <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
-- `--spritesheet-dir <path>`: 指定 spritesheets 目录（仅用于 Spritesheet 模式）
-- `--layer <name>`: 指定嵌套层级名称（用于处理 Weapon 等嵌套资源，例如 `weapon`）
+- `--match, -m <pattern>`: 按路径过滤（例如 `BasicEff.img/Teleport`）
+- `--bitmaps-dir, -b <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
+- `--spritesheet-dir, -s <path>`: 指定 spritesheets 目录（仅用于 Spritesheet 模式）
+- `--help, -h`: 显示帮助信息
 
 ### 模式自动检测
 
@@ -38,9 +38,31 @@ node target/js/release/build/cmd/reanim/reanim.js \
 1. **Spritesheet 模式**: 当检测到 `__i` 引用时（引用 spritesheet 中的图片）。
 2. **Bitmap 模式**: 当检测到 `__b` 引用时（引用 `bitmaps/` 目录下的图片）。
 
-### 单帧资源支持
+> **注意**: `__i` 和 `__b` 是互斥的格式。一个 JSON 资源文件只会使用其中一种格式，不会同时出现两种格式。
 
-工具现已支持处理非动画序列的单帧资源（如 `info.icon`），它们会被自动识别并转换为独立的图片文件（例如 `..._info_icon.png`）。
+### 自动结构识别（设计中）
+
+为了去掉 `--layer` 参数并支持更多种类的动画结构，工具采用如下策略自动识别节点类型：
+
+1. **Simple Animation (简单动画)**
+
+   - 特征：节点包含连续的数字 key (`"0"`, `"1"`...)，且 `node["0"]` 本身就是一个帧资源（包含 `__i` 或 `__b`）。
+   - 处理：将整个节点视为一个动画序列。
+   - 示例：`Mob/1210100.img.json` 中的 `stand`。
+
+2. **Multi-Part Animation (多部位/层级动画)**
+
+   - 特征：节点包含连续的数字 key，但 `node["0"]` **不是**帧资源，而是一个包含多个子节点的容器对象。
+   - 处理：遍历 `node["0"]` 的所有子键，检查它们是否为帧资源。对于每个确认是帧资源的子键（例如 `body`, `arm`, `weapon`），提取该层级的所有帧（`node["0"][layer]`, `node["1"][layer]`...）组成一个独立的动画序列。
+   - 输出命名：`{base_name}_{action}_{layer}.png` (例如 `00002000_alert_body.png`, `01302000_swingO1_weapon.png`)。
+   - 示例：`Character/Body/00002000.img.json` (包含 body, arm 等即多部位)，`Character/Weapon/01302000.img.json` (包含 weapon 即单层级)。
+
+3. **Single Frame (单帧资源)**
+   - 特征：节点本身不包含数字序列，但它本身就是一个帧资源。
+   - 处理：作为单张图片处理。
+   - 示例：`info/icon`。
+
+这种策略能够同时兼容普通怪物动画、角色武器（嵌套在 `weapon` 层）、角色身体（多层嵌套）等多种情况，无需人工指定 `--layer`。
 
 ### 示例 1: Spritesheet 模式 (普通 Mob)
 
@@ -53,24 +75,23 @@ node target/js/release/build/cmd/reanim/reanim.js \
   --spritesheet-dir .local/r2/spritesheets/Mob
 ```
 
-### 示例 2: Spritesheet 模式 (Weapon 资源)
+### 示例 2: Spritesheet 模式 (多部位/Weapon 资源)
 
-处理 `01302000.img.json`，指定 `--layer weapon` 以解析嵌套的帧数据。
+处理 `01302000.img.json`，工具会自动识别 `weapon` 层。
 
 ```bash
 node target/js/release/build/cmd/reanim/reanim.js \
   .local/r2/Character/Weapon/01302000.img.json \
   assets/character/weapon \
-  --spritesheet-dir .local/r2/Character/Weapon/spritesheets \
-  --layer weapon
+  --spritesheet-dir .local/r2/Character/Weapon/spritesheets
 ```
 
 这将自动处理：
 
-- 嵌套在 `weapon` 对象下的动画帧
-- `info` 节点下的单帧图标 (`icon`, `iconRaw`)
+- 嵌套在 `weapon` 对象下的动画帧 -> 生成 `..._swingO1_weapon.png`
+- `info` 节点下的单帧图标 (`icon`, `iconRaw`) -> 生成 `..._info_icon.png`
 
-### 示例 2: Bitmap 模式
+### 示例 3: Bitmap 模式
 
 处理 `nx.json` 中的 "Teleport" 动画，使用 `__b` 引用。
 

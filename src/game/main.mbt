@@ -3,9 +3,6 @@ fn game_start(_delta : Double) -> Unit {
   @login.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @monster.setup_game_server_handlers()
-  @login.add_select_char_ui() catch {
-    e => abort("add select char ui failed: \{e.to_string()}")
-  }
 }
 
 ///|
@@ -20,6 +17,7 @@ fn main {
   .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
   .add_system(game_start, schedule=Startup)
   .add_system(@cursor.cursor_system, system_name="cursor_system")
+  .add_system(@char_look.char_look_system, system_name="char_look_system")
   .add_system(@graphics.effect_layer_system, system_name="effect_layer_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
   .add_system(

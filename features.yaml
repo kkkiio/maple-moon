@@ -1,0 +1,19 @@
+features:
+  - name: Teleport Skill
+    description: Support skill that teleport the character to the position ahead
+    pass: true
+  - name: Skill Use Effect
+    description: Show effect when using skill
+    pass: true
+  - name: Character Stand Look
+    description: Show stand look
+    pass: true
+  - name: Character Walk Look
+    description: Show walk look
+    pass: false
+  - name: Character Weapon Look
+    description: Show weapon the character is holding
+    pass: false
+  - name: Character Attack Look
+    description: Show attack look
+    pass: false

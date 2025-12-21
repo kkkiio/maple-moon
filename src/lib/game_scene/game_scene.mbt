@@ -314,7 +314,7 @@ using @maple_protocol {type StatsEntry}
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
-    Login => {
+    SelectCharacter => {
       stage_ref.val = None
       return
     }
@@ -349,7 +349,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
 
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
-        let draw_info = @char_look.get_draw_info()
+        guard @char_look.get_module() is Some(char_look_mod) else { return }
+        let draw_info = char_look_mod.draw_info
+        let stance_bodys_map = char_look_mod.stance_bodys_map.0
+        let stance_heads_map = char_look_mod.stance_heads_map.0
         let hair_node : @char_look.NxStanceLooks[@types.NxLayerTextures] = @json.from_json(
           @char_look.male_1_white_hair,
         )
@@ -358,10 +361,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           entity,
           {},
           @char_look.FullBody::new(
-            0,
-            draw_info,
-            @char_look.get_stance_bodys_map(),
-            @char_look.get_stance_heads_map(),
+            0, draw_info, stance_bodys_map, stance_heads_map,
           ),
           @char_look.Hair::parse(0, hair_node, draw_info),
           @char_look.Face::new(20800, @char_look.male_1_white_face),

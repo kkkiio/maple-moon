@@ -4,45 +4,12 @@
 /// - Transform __i references to __i + __off format
 
 ///|
-pub(all) struct FrameData {
-  id : Int
-  width : Int
-  height : Int
-  origin_x : Int
-  origin_y : Int
-  delay : Int
-  frame_index : Int
-  // Position in source spritesheet
-  src_x : Int
-  src_y : Int
-  // Which spritesheet this frame comes from
-  spritesheet_path : String
-}
-
-///|
-struct ExtractedFrame {
-  data : FrameData
-  buffer : @js.Value
-}
-
-///|
-pub(all) struct UnifiedSize {
-  width : Int
-  height : Int
-  anchor_x : Int
-  anchor_y : Int
-}
-
-// ============== CLI Argument Parsing ==============
-
-///|
 struct CliArgs {
   input : String
   output : String
   spritesheet_dir : String // For __i mode
   bitmaps_dir : String // For __b mode (default: <input-dir>/bitmaps)
   match_pattern : String? // Optional path pattern filter
-  layer : String? // Optional layer name (e.g. "weapon") for nested frame data
 }
 
 ///|
@@ -54,62 +21,77 @@ enum Mode {
 ///|
 fn parse_args() -> CliArgs? {
   let args = @sys.get_cli_args()
-  // args[0] is the script path
-  if args.length() < 3 {
-    println("Usage: reanim <input.json> <output-dir> [options]")
-    println("")
-    println("Options:")
-    println(
-      "  --match <pattern>         Filter by path (e.g., BasicEff.img/Teleport)",
-    )
-    println(
-      "  --bitmaps-dir <path>      Override bitmaps dir (default: <input-dir>/bitmaps)",
-    )
-    println("  --spritesheet-dir <path>  Spritesheet dir (for __i mode)")
-    println(
-      "  --layer <name>            Layer name for nested frames (e.g. weapon)",
-    )
-    println("")
-    println("Examples:")
-    println("  # Process with __i refs (spritesheet mode)")
-    println(
-      "  reanim .local/r2/Mob/1210100.img.json assets/mob --spritesheet-dir .local/r2/spritesheets/Mob",
-    )
-    println("")
-    println("  # Process with __b refs (bitmap mode)")
-    println(
-      "  reanim .local/nx/Effect.nx/nx.json assets/Effect --match BasicEff.img/Teleport",
-    )
-    return None
+  // Skip the first argument (script path)
+  let argv = if args.length() > 0 {
+    let arr : Array[String] = []
+    for i = 1; i < args.length(); i = i + 1 {
+      arr.push(args[i].to_string())
+    }
+    arr
+  } else {
+    []
   }
-  let input = args[1]
-  let output = args[2]
 
-  // Parse optional arguments
-  let mut spritesheet_dir = ""
-  let mut bitmaps_dir = ""
-  let mut match_pattern : String? = None
-  let mut layer : String? = None
-  let mut i = 3
-  while i < args.length() {
-    let arg = args[i]
-    if arg == "--match" && i + 1 < args.length() {
-      match_pattern = Some(args[i + 1])
-      i = i + 2
-    } else if arg == "--bitmaps-dir" && i + 1 < args.length() {
-      bitmaps_dir = args[i + 1]
-      i = i + 2
-    } else if arg == "--spritesheet-dir" && i + 1 < args.length() {
-      spritesheet_dir = args[i + 1]
-      i = i + 2
-    } else if arg == "--layer" && i + 1 < args.length() {
-      layer = Some(args[i + 1])
-      i = i + 2
-    } else {
-      println("Unknown argument: \{arg}")
+  // Refs for ArgParser
+  let match_pattern : Ref[String] = Ref::new("")
+  let bitmaps_dir : Ref[String] = Ref::new("")
+  let spritesheet_dir : Ref[String] = Ref::new("")
+
+  // Positional arguments
+  let positional : Array[String] = []
+
+  // Spec: (long_opt, short_opt, spec, description)
+  let spec : Array[(String, String, @ArgParser.Spec, String)] = [
+    (
+      "--match",
+      "-m",
+      @ArgParser.Set_string(match_pattern),
+      "Filter by path pattern (e.g., BasicEff.img/Teleport)",
+    ),
+    (
+      "--bitmaps-dir",
+      "-b",
+      @ArgParser.Set_string(bitmaps_dir),
+      "Override bitmaps dir (default: <input-dir>/bitmaps)",
+    ),
+    (
+      "--spritesheet-dir",
+      "-s",
+      @ArgParser.Set_string(spritesheet_dir),
+      "Spritesheet dir (for __i mode)",
+    ),
+  ]
+  let usage =
+    #| Reanim CLI tool - Process game animations
+    #| 
+    #| Usage: reanim <input.json> <output-dir> [options]
+    #| 
+    #| Examples:
+    #|   reanim .local/r2/Mob/1210100.img.json assets/mob -s .local/r2/spritesheets/Mob
+    #|   reanim .local/nx/Effect.nx/nx.json assets/Effect -m BasicEff.img/Teleport
+    #|
+
+  // Parse arguments
+  @ArgParser.parse(spec, fn(arg) { positional.push(arg) }, usage, argv) catch {
+    @ArgParser.ErrorMsg(msg) => {
+      println(msg)
+      return None
+    }
+    e => {
+      println("Error: \{e}")
       return None
     }
   }
+
+  // Validate positional arguments
+  if positional.length() < 2 {
+    println("Error: Missing required arguments <input.json> <output-dir>")
+    println("")
+    println(usage)
+    return None
+  }
+  let input = positional[0]
+  let output = positional[1]
 
   // Derive input directory
   let input_dir = {
@@ -126,92 +108,44 @@ fn parse_args() -> CliArgs? {
   }
 
   // Set defaults
-  if bitmaps_dir.is_empty() {
-    bitmaps_dir = input_dir + "/bitmaps"
+  let final_bitmaps_dir = if bitmaps_dir.val.is_empty() {
+    input_dir + "/bitmaps"
+  } else {
+    bitmaps_dir.val
   }
-  if spritesheet_dir.is_empty() {
-    spritesheet_dir = input_dir + "/spritesheets"
+  let final_spritesheet_dir = if spritesheet_dir.val.is_empty() {
+    input_dir + "/spritesheets"
+  } else {
+    spritesheet_dir.val
   }
-  Some({ input, output, spritesheet_dir, bitmaps_dir, match_pattern, layer })
+  let final_match : String? = if match_pattern.val.is_empty() {
+    None
+  } else {
+    Some(match_pattern.val)
+  }
+  Some({
+    input,
+    output,
+    spritesheet_dir: final_spritesheet_dir,
+    bitmaps_dir: final_bitmaps_dir,
+    match_pattern: final_match,
+  })
 }
 
 ///|
-/// Detect mode by scanning JSON for __b or __i keys
-fn detect_mode(json : Json) -> Mode {
-  match json {
-    Object(obj) => {
-      for _, value in obj {
-        // Check if this is a frame with __b or __i
-        if value is { "__b": Number(_), .. } {
-          return Bitmap
-        }
-        if value is { "__i": String(_), .. } {
-          return Spritesheet
-        }
-        // Recurse into child objects
-        let child_mode = detect_mode(value)
-        match child_mode {
-          Bitmap => return Bitmap
-          Spritesheet => return Spritesheet
-        }
-      }
-      Spritesheet // Default
-    }
-    _ => Spritesheet
-  }
-}
-
-///|
-/// Check if json is a frame resource (has __i, __h, __w)
-fn is_frame_resource(json : Json) -> Bool {
-  json is { "__i": String(_), "__h": Number(_), "__w": Number(_), .. }
-}
-
-///|
-/// Check if object is an animation node.
-/// Requirements:
-/// - Has consecutive numeric keys starting from 0 (at least 2 frames)
-/// - Each numeric key's value is a frame resource (has __i, __h, __w)
-fn is_animation_node(json : Json, layer : String?) -> Bool {
-  guard json is Object(obj) else { return false }
-  let mut i = 0
-  while true {
-    match obj.get(i.to_string()) {
-      Some(value) => {
-        let node_to_check = match layer {
-          Some(l) =>
-            match value {
-              Object(frame_obj) => frame_obj.get(l)
-              _ => None
-            }
-          None => Some(value)
-        }
-        match node_to_check {
-          Some(v) => if is_frame_resource(v) { i = i + 1 } else { return false }
-          None => return false
-        }
-      }
-      None => break
-    }
-  }
-  i >= 1
-}
-
-// ============== Core Processing ==============
-
-///|
+/// Parse frame data from a JSON node.
+///
+/// Frame resources come in two mutually exclusive formats:
+/// - `__i` (spritesheet mode): References sprites via paths like "spritesheets/Mob/xxx.img#123"
+/// - `__b` (bitmap mode): References bitmaps via numeric IDs like `"__b": 1902`
+///
+/// A JSON resource file will use either `__i` or `__b` format, never both.
 fn parse_frame_data(
   json : Json,
   atlases : Map[String, @resource.SpritesheetMetadata],
 ) -> FrameData? {
-  // Parse frame data
-  guard json
-    is {
-      "__i": String(img_ref),
-      "__w": Number(w, ..),
-      "__h": Number(h, ..),
-      ..
-    } else {
+  // Check common fields
+  guard json is { "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
     return None
   }
 
@@ -228,48 +162,71 @@ fn parse_frame_data(
     _ => 100
   }
 
-  // Parse __i to get spritesheet path and sprite ID
-  // Format: "spritesheets/Mob/1210100.img#837"
-  guard img_ref.contains("#") else { return None }
-  let parts = img_ref.split("#").to_array()
-  guard parts.length() == 2 else { return None }
-  let spritesheet_path = parts[0].to_string()
-  let sprite_id = parts[1].to_string()
+  // Check for __i (Spritesheet)
+  if json is { "__i": String(img_ref), .. } {
+    // Parse __i to get spritesheet path and sprite ID
+    // Format: "spritesheets/Mob/1210100.img#837"
+    guard img_ref.contains("#") else { return None }
+    let parts = img_ref.split("#").to_array()
+    guard parts.length() == 2 else { return None }
+    let spritesheet_path = parts[0].to_string()
+    let sprite_id = parts[1].to_string()
 
-  // Find in atlases
-  guard atlases.get(spritesheet_path) is Some(metadata) else { return None }
+    // Find in atlases
+    guard atlases.get(spritesheet_path) is Some(metadata) else { return None }
 
-  // Find frame in metadata
-  // sprite_id usually is like "837", but in frames map it might be "837.png"
-  let frame_name = if sprite_id.ends_with(".png") {
-    sprite_id
-  } else {
-    "\{sprite_id}.png"
+    // Find frame in metadata
+    let frame_name = if sprite_id.has_suffix(".png") {
+      sprite_id
+    } else {
+      "\{sprite_id}.png"
+    }
+    guard metadata.frames.get(frame_name) is Some(frame_meta) else {
+      return None
+    }
+    return Some({
+      id: @strconv.parse_int(sprite_id) catch {
+        _ => 0
+      },
+      width: w.to_int(),
+      height: h.to_int(),
+      origin_x,
+      origin_y,
+      delay,
+      frame_index: 0,
+      src_x: frame_meta.frame.x,
+      src_y: frame_meta.frame.y,
+      spritesheet_path,
+      is_bitmap: false,
+    })
   }
-  guard metadata.frames.get(frame_name) is Some(frame_meta) else { return None }
-  Some({
-    id: @strconv.parse_int(sprite_id) catch {
-      _ => 0
-    },
-    width: w.to_int(),
-    height: h.to_int(),
-    origin_x,
-    origin_y,
-    delay,
-    frame_index: 0,
-    src_x: frame_meta.frame.x,
-    src_y: frame_meta.frame.y,
-    spritesheet_path,
-  })
+
+  // Check for __b (Bitmap)
+  if json is { "__b": Number(b_id, ..), .. } {
+    return Some({
+      id: b_id.to_int(),
+      width: w.to_int(),
+      height: h.to_int(),
+      origin_x,
+      origin_y,
+      delay,
+      frame_index: 0,
+      src_x: 0, // Ignored for bitmap
+      src_y: 0, // Ignored for bitmap
+      spritesheet_path: "", // Ignored/empty for bitmap
+      is_bitmap: true,
+    })
+  }
+  None
 }
 
 ///|
 /// Collect frame data from an animation node.
-/// All frames in an animation must come from the same spritesheet.
+/// All frames in an animation must come from the same spritesheet (if using spritesheets).
 pub fn collect_frames(
   animation_json : Json,
   atlases : Map[String, @resource.SpritesheetMetadata],
-  layer? : String,
+  layer : String?,
 ) -> Array[FrameData] raise {
   let frames : Array[FrameData] = []
   guard animation_json is Object(obj) else { return frames }
@@ -283,81 +240,35 @@ pub fn collect_frames(
     let frame_data_json = match layer {
       Some(l) =>
         match frame_json {
-          Object(o) =>
-            match o.get(l) {
-              Some(v) => v
-              None => continue
-            }
-          _ => continue
+          Object(o) => o.get(l).unwrap_or(Json::null())
+          _ => Json::null()
         }
       None => frame_json
     }
 
+    // Check if valid frame resource first
+    guard is_frame_resource(frame_data_json) else { continue }
+
     // Parse frame data
-    guard frame_data_json
-      is {
-        "__i": String(img_ref),
-        "__w": Number(w, ..),
-        "__h": Number(h, ..),
-        ..
-      } else {
-      continue
-    }
-
-    // Get origin (default [0, 0])
-    let (origin_x, origin_y) = match frame_data_json {
-      { "origin": Array([Number(x, ..), Number(y, ..)]), .. } =>
-        (x.to_int(), y.to_int())
-      _ => (0, 0)
-    }
-
-    // Get delay (default 100)
-    let delay = match frame_data_json {
-      { "delay": Number(d, ..), .. } => d.to_int()
-      _ => 100
-    }
-
-    // Parse __i to get spritesheet path and sprite ID
-    // Format: "spritesheets/Mob/1210100.img#837"
-    guard img_ref.contains("#") else { continue }
-    let parts = img_ref.split("#").to_array()
-    guard parts.length() == 2 else { continue }
-    let spritesheet_path = parts[0].to_string()
-    let sprite_id = parts[1].to_string()
-    let frame_key = sprite_id + ".png"
-
-    // Validate all frames come from the same spritesheet
-    match expected_spritesheet {
-      None => expected_spritesheet = Some(spritesheet_path)
-      Some(expected) =>
-        if expected != spritesheet_path {
-          fail(
-            "Frame \{frame_index} comes from \{spritesheet_path}, expected \{expected}",
-          )
+    match parse_frame_data(frame_data_json, atlases) {
+      Some(fd) => {
+        fd.frame_index = frame_index
+        // Validate spritesheet consistency
+        if not(fd.is_bitmap) {
+          match expected_spritesheet {
+            None => expected_spritesheet = Some(fd.spritesheet_path)
+            Some(expected) =>
+              if expected != fd.spritesheet_path {
+                fail(
+                  "Frame \{frame_index} comes from \{fd.spritesheet_path}, expected \{expected}",
+                )
+              }
+          }
         }
+        frames.push(fd)
+      }
+      None => continue
     }
-
-    // Look up position in atlas for this spritesheet
-    guard atlases.get(spritesheet_path) is Some(atlas) else {
-      fail("Spritesheet \{spritesheet_path} not found in atlases")
-    }
-    guard atlas.frames.get(frame_key) is Some(frame_meta) else {
-      fail("Frame \{frame_key} not found in spritesheet \{spritesheet_path}")
-    }
-    frames.push({
-      id: @strconv.parse_int(sprite_id) catch {
-        _ => 0
-      },
-      width: w.to_int(),
-      height: h.to_int(),
-      origin_x,
-      origin_y,
-      delay,
-      frame_index,
-      src_x: frame_meta.frame.x,
-      src_y: frame_meta.frame.y,
-      spritesheet_path,
-    })
   }
 
   // Sort by frame index
@@ -366,193 +277,13 @@ pub fn collect_frames(
 }
 
 ///|
-using @cmp {maximum}
-
-///|
-/// Calculate unified size based on origin alignment
-pub fn calculate_unified_size(frames : Array[FrameData]) -> UnifiedSize {
-  let mut max_left = 0
-  let mut max_right = 0
-  let mut max_top = 0
-  let mut max_bottom = 0
-  for frame in frames {
-    max_left = maximum(max_left, frame.origin_x)
-    max_top = maximum(max_top, frame.origin_y)
-    max_right = maximum(max_right, frame.width - frame.origin_x)
-    max_bottom = maximum(max_bottom, frame.height - frame.origin_y)
-  }
-  {
-    width: max_left + max_right,
-    height: max_top + max_bottom,
-    anchor_x: max_left,
-    anchor_y: max_top,
-  }
-}
-
-///|
-/// Extract frames from spritesheet.
-/// All frames must come from the same spritesheet.
-async fn extract_frames(
-  frames : Array[FrameData],
-  spritesheet_buffers : Map[String, @js.Value],
-) -> Array[ExtractedFrame] {
-  if frames.is_empty() {
-    return []
-  }
-  // All frames are from the same spritesheet (validated in collect_frames)
-  let spritesheet_path = frames[0].spritesheet_path
-  guard spritesheet_buffers.get(spritesheet_path) is Some(buffer) else {
-    fail("Spritesheet buffer not found for \{spritesheet_path}")
-  }
-  let sharp_img = sharp_from_buffer(buffer)
-  let extracted : Array[ExtractedFrame] = []
-  for frame in frames {
-    let buffer = extract_ffi(
-      sharp_img,
-      frame.src_x,
-      frame.src_y,
-      frame.width,
-      frame.height,
-    ).wait()
-    extracted.push({ data: frame, buffer })
-  }
-  extracted
-}
-
-///|
-/// Resize frames to unified size
-async fn resize_frames(
-  frames : Array[ExtractedFrame],
-  unified : UnifiedSize,
-) -> Array[@js.Value] {
-  let resized : Array[@js.Value] = []
-  for frame in frames {
-    let left = unified.anchor_x - frame.data.origin_x
-    let top = unified.anchor_y - frame.data.origin_y
-    let base = sharp_create_ffi(unified.width, unified.height)
-    let composite_input = @js.Object::new()
-    composite_input["input"] = frame.buffer
-    composite_input["left"] = left
-    composite_input["top"] = top
-    let inputs_array : Array[@js.Value] = [composite_input.to_value()]
-    let buffer = composite_ffi(base, @js.Value::cast_from(inputs_array)).wait()
-    resized.push(buffer)
-  }
-  resized
-}
-
-///|
-/// Generate spritesheet from frames (horizontal layout)
-async fn generate_spritesheet(
-  frames : Array[@js.Value],
-  unified : UnifiedSize,
-) -> @js.Value {
-  let total_width = unified.width * frames.length()
-  let base = sharp_create_ffi(total_width, unified.height)
-  let inputs : Array[@js.Value] = []
-  for i, buffer in frames {
-    let input = @js.Object::new()
-    input["input"] = buffer
-    input["left"] = i * unified.width
-    input["top"] = 0
-    inputs.push(input.to_value())
-  }
-  composite_ffi(base, @js.Value::cast_from(inputs)).wait()
-}
-
-///|
-/// Update animation JSON with new __i and __off
-fn update_animation_json(
-  animation_json : Json,
-  action_name : String,
-  unified : UnifiedSize,
-  base_name : String,
-  output_rel_path : String,
-  layer : String?,
-) -> Json {
-  guard animation_json is Object(obj) else { return animation_json }
-  let new_obj : Map[String, Json] = {}
-  let mut frame_idx = 0
-  for key, frame_json in obj {
-    // Check if numeric key (frame)
-    if key.iter().all(fn(c) { c >= '0' && c <= '9' }) {
-
-      // Determine the object containing __i etc.
-      let target_json_opt = match layer {
-        Some(l) =>
-          match frame_json {
-            Object(o) => o.get(l)
-            _ => None
-          }
-        None => Some(frame_json)
-      }
-      match target_json_opt {
-        Some(Object(target_obj)) => {
-          // Found frame data, update it
-          let new_frame_data : Map[String, Json] = {}
-          for k, v in target_obj {
-            if k == "__i" {
-              new_frame_data["__i"] = Json::string(
-                "\{output_rel_path}/\{base_name}_\{action_name}.png",
-              )
-            } else if k == "origin" {
-              new_frame_data["origin"] = Json::array([
-                Json::number(unified.anchor_x.to_double()),
-                Json::number(unified.anchor_y.to_double()),
-              ])
-            } else {
-              new_frame_data[k] = v
-            }
-          }
-          // Add extra fields
-          new_frame_data["__off"] = Json::array([
-            Json::number((frame_idx * unified.width).to_double()),
-            Json::number(0.0),
-          ])
-          new_frame_data["__w"] = Json::number(unified.width.to_double())
-          new_frame_data["__h"] = Json::number(unified.height.to_double())
-
-          // Reconstruct final frame JSON
-          let final_json = match layer {
-            Some(l) =>
-              match frame_json {
-                Object(o) => {
-                  let wrapper : Map[String, Json] = {}
-                  for k, v in o {
-                    if k == l {
-                      wrapper[k] = Json::object(new_frame_data)
-                    } else {
-                      wrapper[k] = v
-                    }
-                  }
-                  Json::object(wrapper)
-                }
-                _ => frame_json // Should not happen given guard above
-              }
-            None => Json::object(new_frame_data)
-          }
-          new_obj[key] = final_json
-          frame_idx += 1
-        }
-        _ =>
-          // Not a valid frame structure or missing layer, keep as is
-          new_obj[key] = frame_json
-      }
-    } else {
-      new_obj[key] = frame_json
-    }
-  }
-  Json::object(new_obj)
-}
-
-///|
 /// Process game animations in resource:
-/// 
+///
 /// - Recursively traverse JSON to find all animation nodes
 /// - Unify origin for each animation
 /// - Generate spritesheets
 /// - Transform __i references to __i + __off format
-/// 
+///
 /// When `load_spritesheet` or `save_image` is None, image operations are skipped
 /// and only JSON transformation is performed (useful for testing).
 pub async fn process_resource(
@@ -560,8 +291,9 @@ pub async fn process_resource(
   atlases : Map[String, @resource.SpritesheetMetadata],
   base_name : String,
   output_rel_path : String,
-  layer? : String,
+  bitmaps_dir? : String = "",
   load_spritesheet? : (String) -> @js.Value,
+  load_bitmap? : (String) -> @js.Value,
   save_image? : (String, @js.Value) -> Unit,
 ) -> Json {
   // Load spritesheet buffers if load_spritesheet is provided
@@ -584,143 +316,16 @@ pub async fn process_resource(
     spritesheet_buffers,
     base_name,
     output_rel_path,
-    layer?,
+    bitmaps_dir,
     load_spritesheet,
+    load_bitmap,
     save_image,
   )
 }
 
 ///|
-/// Recursive helper to process a JSON node
-async fn process_node(
-  json : Json,
-  path : Array[String],
-  atlases : Map[String, @resource.SpritesheetMetadata],
-  spritesheet_buffers : Map[String, @js.Value],
-  base_name : String,
-  output_rel_path : String,
-  layer? : String,
-  load_spritesheet : ((String) -> @js.Value)?,
-  save_image : ((String, @js.Value) -> Unit)?,
-) -> Json {
-  if is_animation_node(json, layer) {
-    // This is an animation node, process it
-    let action_name = path.join("_")
-    let frames = collect_frames(json, atlases, layer?)
-    if frames.is_empty() {
-      return json
-    }
-    let unified = calculate_unified_size(frames)
-
-    // Process images if callbacks are provided
-    match (load_spritesheet, save_image) {
-      (Some(_), Some(saver)) => {
-        let extracted = extract_frames(frames, spritesheet_buffers)
-        let resized = resize_frames(extracted, unified)
-        let new_spritesheet = generate_spritesheet(resized, unified)
-        let output_filename = "\{base_name}_\{action_name}.png"
-        saver(output_filename, new_spritesheet)
-      }
-      _ => ()
-    }
-
-    // Update JSON
-    update_animation_json(
-      json, action_name, unified, base_name, output_rel_path, layer,
-    )
-  } else if is_frame_resource(json) {
-    // Single frame resource (e.g. icon)
-    let frame_data = parse_frame_data(json, atlases)
-    match frame_data {
-      Some(frame) => {
-        let frames = [frame]
-        let unified = calculate_unified_size(frames)
-        match (load_spritesheet, save_image) {
-          (Some(_), Some(saver)) => {
-            let extracted = extract_frames(frames, spritesheet_buffers)
-            let resized = resize_frames(extracted, unified)
-            let new_spritesheet = generate_spritesheet(resized, unified)
-            // Use base_name + path (e.g. "01382032.img_info_icon")
-            let suffix = path.join("_")
-            let output_filename = "\{base_name}_\{suffix}.png"
-            saver(output_filename, new_spritesheet)
-          }
-          _ => ()
-        }
-
-        // Update the single frame JSON
-        update_frame_json(
-          json,
-          path.join("_"),
-          unified,
-          base_name,
-          output_rel_path,
-        )
-      }
-      None => json
-    }
-  } else {
-    // Not an animation node
-    match json {
-      Object(obj) => {
-        // Recurse into child objects
-        let new_obj : Map[String, Json] = {}
-        for key, value in obj {
-          let child_path = path.copy()
-          child_path.push(key)
-          new_obj[key] = process_node(
-            value,
-            child_path,
-            atlases,
-            spritesheet_buffers,
-            base_name,
-            output_rel_path,
-            layer?,
-            load_spritesheet,
-            save_image,
-          )
-        }
-        Json::object(new_obj)
-      }
-      _ => json // Keep primitives and arrays as-is
-    }
-  }
-}
-
-///|
-/// Helper to update a single frame JSON
-fn update_frame_json(
-  json : Json,
-  action_suffix : String,
-  unified : UnifiedSize,
-  base_name : String,
-  output_rel_path : String,
-) -> Json {
-  guard json is Object(obj) else { return json }
-  let new_frame_data : Map[String, Json] = {}
-  for k, v in obj {
-    if k == "__i" {
-      new_frame_data["__i"] = Json::string(
-        "\{output_rel_path}/\{base_name}_\{action_suffix}.png",
-      )
-    } else if k == "origin" {
-      new_frame_data["origin"] = Json::array([
-        Json::number(unified.anchor_x.to_double()),
-        Json::number(unified.anchor_y.to_double()),
-      ])
-    } else {
-      new_frame_data[k] = v
-    }
-  }
-  // We should also update __w and __h to match unified size
-  new_frame_data["__w"] = Json::number(unified.width.to_double())
-  new_frame_data["__h"] = Json::number(unified.height.to_double())
-  Json::object(new_frame_data)
-}
-
-///|
 /// Main processing function
-async fn process_spritesheet(args : CliArgs) -> Unit {
+pub async fn process_spritesheet(args : CliArgs) -> Unit {
   println("Input: \{args.input}")
   println("Spritesheet dir: \{args.spritesheet_dir}")
   println("Output: \{args.output}")
@@ -738,25 +343,19 @@ async fn process_spritesheet(args : CliArgs) -> Unit {
     .to_string()
   let base_name = input_filename
     .strip_suffix(".json")
-    .map_or(input_filename, _.to_string())
+    .map_or(input_filename, fn(s) { s.to_string() })
 
-  // Collect all spritesheet paths using resource package
+  // Find all spritesheet paths (for info only)
   let spritesheet_paths = @resource.collect_spritesheet_paths(input_json)
-  if spritesheet_paths.is_empty() {
-    fail("No spritesheet references found in input JSON")
-  }
-  println("Found \{spritesheet_paths.length()} spritesheet(s)")
+  println("Found \{spritesheet_paths.length()} spritesheet references")
 
-  // Load all spritesheet atlases
+  // Load all atlases (still needed for metadata lookup during processing)
   let atlases : Map[String, @resource.SpritesheetMetadata] = {}
   for spritesheet_ref in spritesheet_paths {
     // Extract relative path from spritesheet ref
-    // e.g. "spritesheets/Skill/210.img/skill/2100000/effect" -> "210.img/skill/2100000/effect"
-    //      "spritesheets/Mob/1210100.img" -> "1210100.img"
     let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
     // Skip "spritesheets" and type (e.g. "Skill" or "Mob")
     let rel_parts : Array[String] = []
-    // Handle Weapon path: /Character/Weapon/spritesheets/...
     let start_idx = if spritesheet_path_parts.length() >= 5 &&
       spritesheet_path_parts[1] == "Character" &&
       spritesheet_path_parts[3] == "spritesheets" {
@@ -769,14 +368,23 @@ async fn process_spritesheet(args : CliArgs) -> Unit {
     }
     let rel_path = rel_parts.join("/")
     let atlas_path = "\{args.spritesheet_dir}/\{rel_path}.json"
-    println("Loading atlas: \{atlas_path}")
-    let atlas_content = @fs.read_file_to_string(atlas_path)
-    let atlas_json = @json.parse(atlas_content)
-    let metadata : @resource.SpritesheetMetadata = @json.from_json(atlas_json) catch {
-      e => fail("Failed to parse atlas \{atlas_path}: \{e}")
+
+    // Warn instead of fail if missing, or maybe valid for bitmaps
+    if @fs.path_exists(atlas_path) {
+      println("Loading atlas: \{atlas_path}")
+      let atlas_content = @fs.read_file_to_string(atlas_path)
+      let atlas_json = @json.parse(atlas_content)
+      let metadata : @resource.SpritesheetMetadata = @json.from_json(atlas_json) catch {
+        e => {
+          println("Warning: Failed to parse atlas \{atlas_path}: \{e}")
+          continue
+        }
+      }
+      atlases[spritesheet_ref] = metadata
+      println("Loaded \{metadata.frames.length()} frames from atlas")
+    } else {
+      println("Warning: Atlas not found at \{atlas_path}")
     }
-    atlases[spritesheet_ref] = metadata
-    println("Loaded \{metadata.frames.length()} frames from atlas")
   }
 
   // Ensure output directory exists
@@ -785,35 +393,32 @@ async fn process_spritesheet(args : CliArgs) -> Unit {
   }
 
   // Calculate output_rel_path (relative to assets directory)
-  // e.g. "assets/mob" -> "mob", "/Users/.../assets/mob" -> "mob"
   let output_rel_path = {
     let parts = args.output.split("/").to_array()
-    // Find "assets" in path and take everything after it
     let mut found_assets = false
     let result : Array[String] = []
     for part in parts {
       if found_assets {
         result.push(part.to_string())
-      } else if part == "assets" {
+      }
+      if part == "assets" {
         found_assets = true
       }
     }
     if result.is_empty() {
-      // Fallback: use last component
-      parts.last().unwrap().to_string()
+      args.output
     } else {
       result.join("/")
     }
   }
-  println("Output relative path: \{output_rel_path}")
 
-  // Process resource using process_resource
-  let result_json = process_resource(
+  // Process resource
+  let processed_json = process_resource(
     input_json,
     atlases,
     base_name,
     output_rel_path,
-    layer?=args.layer,
+    bitmaps_dir=args.bitmaps_dir,
     load_spritesheet=fn(spritesheet_ref : String) {
       let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
       // Skip "spritesheets" and type (e.g. "Skill" or "Mob")
@@ -834,6 +439,10 @@ async fn process_spritesheet(args : CliArgs) -> Unit {
       println("Loading spritesheet: \{png_path}")
       read_file_buffer_ffi(png_path)
     },
+    load_bitmap=fn(bitmap_path : String) {
+      println("Loading bitmap: \{bitmap_path}")
+      read_file_buffer_ffi(bitmap_path)
+    },
     save_image=fn(filename : String, buffer : @js.Value) {
       let output_path = "\{args.output}/\{filename}"
       write_file_buffer_ffi(output_path, buffer)
@@ -843,14 +452,14 @@ async fn process_spritesheet(args : CliArgs) -> Unit {
 
   // Save output JSON
   let output_json_path = "\{args.output}/\{base_name}.json"
-  let output_content = result_json.stringify(indent=2)
+  let output_content = processed_json.stringify(indent=2)
   @fs.write_string_to_file(output_json_path, output_content)
   println("Saved: \{output_json_path}")
   println("Done!")
 }
 
 ///|
-/// Process bitmap resources
+/// Process bitmap mode with --match pattern support
 async fn process_bitmap(args : CliArgs) -> Unit {
   println("Input: \{args.input}")
   println("Bitmaps dir: \{args.bitmaps_dir}")
@@ -960,6 +569,32 @@ async fn process_bitmap(args : CliArgs) -> Unit {
     println("  Saved: \{output_json_path}")
   }
   println("Done!")
+}
+
+///|
+/// Detect mode by scanning JSON for __b or __i keys
+fn detect_mode(json : Json) -> Mode {
+  match json {
+    Object(obj) => {
+      for _, value in obj {
+        // Check if this is a frame with __b or __i
+        if value is { "__b": Number(_), .. } {
+          return Bitmap
+        }
+        if value is { "__i": String(_), .. } {
+          return Spritesheet
+        }
+        // Recurse into child objects
+        let child_mode = detect_mode(value)
+        match child_mode {
+          Bitmap => return Bitmap
+          Spritesheet => return Spritesheet
+        }
+      }
+      Spritesheet // Default
+    }
+    _ => Spritesheet
+  }
 }
 
 ///|

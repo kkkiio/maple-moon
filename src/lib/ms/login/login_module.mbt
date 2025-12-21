@@ -2,7 +2,7 @@
 struct Module {
   network : @net.Network
   ui_container : &@ui.Container
-  char_look_module : @char_look.Module
+  char_look_module : @char_look.CharLookMod
   local_storage : @config.LocalStorage
   characters : Array[@character.CharEntry]
   mut selected_index : Int?
@@ -19,7 +19,7 @@ struct Module {
 pub async fn Module::load(
   network : @net.Network,
   ui_container : &@ui.Container,
-  char_look_module : @char_look.Module,
+  char_look_module : @char_look.CharLookMod,
   local_storage : @config.LocalStorage,
 ) -> Module {
   let login_loader = @resource.SyncLoader::load(
@@ -36,7 +36,7 @@ pub async fn Module::load(
 pub fn Module::new(
   network : @net.Network,
   ui_container : &@ui.Container,
-  char_look_module : @char_look.Module,
+  char_look_module : @char_look.CharLookMod,
   local_storage : @config.LocalStorage,
   login_loader : @resource.SyncLoader,
 ) -> Module {

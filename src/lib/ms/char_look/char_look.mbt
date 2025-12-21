@@ -1143,7 +1143,7 @@ pub fn CharLook::set_action(self : CharLook, acstr : String) -> Unit {
   if acstr == self.actionstr || acstr.is_empty() {
     return
   }
-  let ac_stance = @types.StanceId::by_string(acstr)
+  let ac_stance = @types.StanceId::from_name(acstr).unwrap_or(NONE)
   if ac_stance != NONE {
     self.set_stance(ac_stance)
   } else {

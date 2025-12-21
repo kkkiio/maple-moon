@@ -5,7 +5,8 @@
         "moonbitlang/x/fs",
         "rami3l/js-ffi/js",
         "moonbitlang/async",
-        "KKKIIO/maple-moon/lib/resource"
+        "KKKIIO/maple-moon/lib/resource",
+        "Yoorkin/ArgParser"
     ],
     "link": {
         "js": {

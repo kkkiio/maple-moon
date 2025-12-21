@@ -2,6 +2,18 @@
 using @resource {nx_animation_to_selene_animation}
 
 ///|
+using @char_look {type CharLookMod, type CharLook}
+
+///|
+using @io_service {execute_background}
+
+///|
+using @maple_protocol {type SetFieldMessage, type SelectCharMessage}
+
+///|
+using @game_state {type GamePhase, game_state}
+
+///|
 struct SelectCharUI {
   characters : Array[SelectableCharacterUI]
   on_new_character : () -> Unit
@@ -220,6 +232,7 @@ pub(all) struct SelectableCharacter {
 pub fn SelectCharUI::new(
   resources : SelectCharUIResource,
   characters : Array[SelectableCharacter],
+  mod : CharLookMod,
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI raise {
@@ -321,7 +334,7 @@ pub fn SelectCharUI::new(
     character,
   ) raise {
     let entity = characters_entities[i]
-    to_selectable_character_ui(entity, i, character, resources)
+    to_selectable_character_ui(entity, i, character, resources, mod)
   })
   entities.append(characters_entities)
   let res : Map[@ui.ButtonState, @resource.NxAnimation] = {}
@@ -439,18 +452,16 @@ pub fn SelectCharUI::new(
 ///|
 pub fn load_char_look(
   entity : @entity.Entity,
+  mod : @char_look.CharLookMod,
   _character : SelectableCharacter, // TODO: use character look data
 ) -> @char_look.CharLook raise {
-  let draw_info = @char_look.get_draw_info()
+  let draw_info = mod.draw_info
+  let stance_bodys_map = mod.stance_bodys_map.0
+  let stance_heads_map = mod.stance_heads_map.0
   @char_look.CharLook::new(
     entity,
     {},
-    @char_look.FullBody::new(
-      0,
-      draw_info,
-      @char_look.get_stance_bodys_map(),
-      @char_look.get_stance_heads_map(),
-    ),
+    @char_look.FullBody::new(0, draw_info, stance_bodys_map, stance_heads_map),
     @char_look.Hair::parse(
       0,
       @json.from_json(@char_look.male_1_white_hair),
@@ -467,8 +478,9 @@ pub fn to_selectable_character_ui(
   i : Int,
   character : SelectableCharacter,
   resource : SelectCharUIResource,
+  mod : CharLookMod,
 ) -> SelectableCharacterUI raise {
-  let char_look = load_char_look(entity, character)
+  let char_look = load_char_look(entity, mod, character)
   let { cid, name } = character
   // render_elements.push(
   //   @ui.AreaButton::new(
@@ -558,22 +570,32 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
 }
 
 ///|
-pub fn add_select_char_ui() -> Unit raise {
+fn add_select_char_ui(mod : CharLookMod) -> Unit raise {
   let slots = [{ cid: 1, name: "kkkiio" }]
-  let ui = SelectCharUI::new(SelectCharUIResource::load(), slots, on_select_character=fn(
-    slot,
-  ) {
-    guard select_char_ui.val is Some(ui) else { return }
-    @game_server.send(SelectCharMessage::{
-      character_id: ui.characters[slot].cid,
-    })
-  })
+  let ui = SelectCharUI::new(
+    SelectCharUIResource::load(),
+    slots,
+    on_select_character=fn(slot) {
+      guard select_char_ui.val is Some(ui) else { return }
+      @game_server.send(SelectCharMessage::{
+        character_id: ui.characters[slot].cid,
+      })
+    },
+    mod,
+  )
   select_char_ui.val = Some(ui)
 }
 
 ///|
 pub fn select_char_system(_delta : Double) -> Unit {
-  guard select_char_ui.val is Some(ui) else { return }
+  guard @char_look.get_module() is Some(mod) else { return }
+  guard game_state.phase is GamePhase::SelectCharacter else { return }
+  guard select_char_ui.val is Some(ui) else {
+    add_select_char_ui(mod) catch {
+      e => abort("add select char ui failed: \{e.to_string()}")
+    }
+    return
+  }
   for item in ui.animations {
     let (entity, counter, segments) = item
     // 计算总帧数
@@ -629,6 +651,3 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
-
-///|
-using @maple_protocol {type SetFieldMessage, type SelectCharMessage}

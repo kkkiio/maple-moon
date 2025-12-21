@@ -16,7 +16,6 @@ pub(all) struct Game {
 struct LoadedState {
   window : Window
   ui : UI
-  login_module : @login.Module
   inventory_module : @inventory.Module
   char_stats_module : @char_stats.Module
   shop_module : @shop.Module
@@ -117,13 +116,9 @@ async fn load_modules(
     "https://maple-res.kkkiiox.work/String/nx.json",
     @resource.ImageLoader::get_path_image_loader(),
   )
-  let char_look_module = @char_look.Module::load(fn(f) {
-    ...
-    // guard get_stage().get_player() is Some(player) else { return }
-    // player.character.look = f(player.character.look)
-  })
-  merge_stat_handlers(char_look_module.make_stat_handlers())
-  let map_module = @map.Module::load()
+  // let char_look_module = @char_look.Module::load()
+  // merge_stat_handlers(char_look_module.make_stat_handlers())
+  // let map_module = @map.Module::load()
   let inventory_module = @inventory.Module::load(
     fn() {
       ...
@@ -159,34 +154,6 @@ async fn load_modules(
     "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",
     @resource.ImageLoader::get_path_image_loader(),
   )
-  let login_module = @login.Module::load(
-    network, ui, char_look_module, local_storage,
-  )
-  let handlers = login_module.make_handlers(
-    fn(map_id, portal_id) {
-      ...
-      // get_stage().transition(map_id, portal_id) 
-    },
-    fn(char_entry, cooldowns, callback) {
-      ...
-      // get_stage().set_player_stage(char_entry, cooldowns, callback)
-    },
-    inventory_module.get_inventory(),
-    fn(player) {
-      ...
-      // setup_game_ui(
-      //   ui,
-      //   get_stage(),
-      //   player,
-      //   action_registry,
-      //   timer,
-      //   map_module,
-      //   status_bar_loader,
-      // )
-    },
-    quest_module,
-  )
-  merge_handlers(handlers)
   let monster_module = @monster.Module::new()
   merge_handlers(
     monster_module.make_handlers(fn() {
@@ -268,15 +235,7 @@ async fn load_modules(
   network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
   timer.reset()
   ui.change_state(UIStateLogin::new())
-  {
-    ui,
-    window,
-    login_module,
-    inventory_module,
-    char_stats_module,
-    shop_module,
-    quest_module,
-  }
+  { ui, window, inventory_module, char_stats_module, shop_module, quest_module }
 }
 
 ///|
@@ -289,7 +248,6 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   //   @net.CLOSED => loaded_state.login_module.reconnect_if_needed()
   //   _ => ()
   // }
-  loaded_state.login_module.update()
   let timestep = @logic_fps.STEP_TIME_MS * 1000
   // Update game with constant timestep as many times as possible.
   let acc = self.accumulator + elapsed.to_micro_seconds()
@@ -319,51 +277,6 @@ pub fn Game::update_status(self : Game, loaded_state : LoadedState) -> Unit {
   // }
   // loaded_state.ui.update()
   // Music::update_context();
-}
-
-///|
-pub fn Game::get_window(self : Game) -> Window? {
-  self.loaded_state.poll().map(fn(it) { it.window })
-}
-
-///|
-pub fn Game::get_inventory_mod(self : Game) -> @inventory.Module? {
-  self.loaded_state.poll().map(fn(it) { it.inventory_module })
-}
-
-///|
-pub fn Game::get_skill_book_mod(self : Game) -> @skill_book.Module? {
-  ...
-}
-
-///|
-pub fn Game::get_char_stats_mod(self : Game) -> @char_stats.Module? {
-  self.loaded_state.poll().map(fn(it) { it.char_stats_module })
-}
-
-///|
-pub fn Game::get_keyboard_mod(self : Game) -> @keyboard.Module {
-  self.keyboard_module
-}
-
-///|
-pub fn Game::get_login_mod(self : Game) -> @login.Module? {
-  self.loaded_state.poll().map(fn(it) { it.login_module })
-}
-
-///|
-// pub fn Game::get_stage(self : Game) -> Stage? {
-//   self.stage.val
-// }
-
-///|
-pub fn Game::get_shop_mod(self : Game) -> @shop.Module? {
-  self.loaded_state.poll().map(fn(it) { it.shop_module })
-}
-
-///|
-pub fn Game::get_quest_mod(self : Game) -> @quest.Module? {
-  self.loaded_state.poll().map(fn(it) { it.quest_module })
 }
 
 ///|

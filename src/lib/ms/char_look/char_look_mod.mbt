@@ -76,8 +76,8 @@ pub fn char_look_system(_delta : Double) -> Unit {
 
 ///|
 pub async fn CharLookMod::load_char_look(
-  self : CharLookMod,
-  entry : LookEntry,
+  _self : CharLookMod,
+  _entry : LookEntry,
 ) -> CharLook {
   // let body = self.load_body_by_skin_id(entry.skin)
   // let hair = self.load_hair_by_id(entry.hairid)

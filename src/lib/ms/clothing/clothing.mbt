@@ -1,41 +1,46 @@
 ///|
 pub(all) enum Layer {
-  CAPE
-  SHOES
-  PANTS
-  TOP
-  MAIL
-  MAILARM
-  EARRINGS
-  FACE_ACC
-  EYE_ACC
+  CAPE = 1
+  SHIELD_BELOW_BODY = 2
+  WEAPON_BELOW_BODY = 3
+  CAP_BELOW_BODY = 4
+  WRIST_OVER_BODY = 6
+  GLOVE_OVER_BODY = 7
+  SHOES = 8
+  MAIL = 10
+  PANTS_DEFAULT = 11
+  PANTS = 12
+  TOP_DEFAULT = 13
+  TOP = 14
+  SHIELD_OVER_HAIR = 17
+  EARRINGS = 18
+  FACE_ACC = 22
+  EYE_ACC = 23
+  SHIELD = 24
+  CAP = 26
+  CAP_OVER_HAIR = 29
+  WEAPON_BELOW_ARM = 33
+  MAILARM = 34
+  WEAPON = 36
+  WRIST = 40
+  GLOVE = 41
+  WEAPON_OVER_GLOVE = 42
+  WEAPON_OVER_HAND = 46
+  WEAPON_OVER_BODY = 47
+  HAND_OVER_WEAPON = 49
+  WRIST_OVER_HAIR = 50
+  GLOVE_OVER_HAIR = 51
+  // Unused layers (no z-value in play_animations)
   PENDANT
   BELT
   MEDAL
   RING
-  CAP
-  CAP_BELOW_BODY
-  CAP_OVER_HAIR
-  GLOVE
-  WRIST
-  GLOVE_OVER_HAIR
-  WRIST_OVER_HAIR
-  GLOVE_OVER_BODY
-  WRIST_OVER_BODY
-  SHIELD
   BACK_SHIELD
-  SHIELD_BELOW_BODY
-  SHIELD_OVER_HAIR
-  WEAPON
   BACK_WEAPON
-  WEAPON_BELOW_ARM
-  WEAPON_BELOW_BODY
-  WEAPON_OVER_HAND
-  WEAPON_OVER_BODY
-  WEAPON_OVER_GLOVE
-  PANTS_DEFAULT
-  TOP_DEFAULT
 } derive(Eq, Hash, Show)
+
+///|
+pub fn Layer::int_value(self : Layer) -> Int = "%identity"
 
 ///|
 pub impl ToJson for Layer with to_json(self) {
@@ -46,7 +51,7 @@ pub impl ToJson for Layer with to_json(self) {
 struct Clothing {
   stances : Map[
     @types.StanceId,
-    Map[Layer, Map[Int, Array[@resource.NxTexture]]],
+    Map[String, (Array[@resource.NxFrame], Array[Layer])],
   ]
   item_id : Int
   eq_slot : @slot.Id
@@ -104,11 +109,14 @@ pub fn Clothing::from_resource(
       }
   }
   let src = item_data.src
-  let stances = {}
+  let stances : Map[
+    @types.StanceId,
+    Map[String, (Array[@resource.NxFrame], Array[Layer])],
+  ] = {}
   for stancename, stance in @types.stance_name_id_map {
     guard src is Object(obj) else { continue }
     guard obj.get(stancename) is Some(stancenode) else { continue }
-    let layeredFrames = Map::new()
+    let part_frames_map : Map[String, (Array[@resource.NxFrame], Array[Layer])] = Map::new()
     for frame = 0; ; frame = frame + 1 {
       guard stancenode is Object(stance_obj) else { break }
       guard stance_obj.get(frame.to_string()) is Some(framenode) else { break }
@@ -174,38 +182,51 @@ pub fn Clothing::from_resource(
         }
         let tex : @resource.NxTexture = @json.from_json(partnode)
         let tex = { ..tex, origin: tex.origin - shift }
-        layeredFrames
-        .get_or_init(z, fn() { Map::new() })
-        .get_or_init(frame, fn() { Array::new() })
-        .push(tex)
+        let nx_frame = @resource.NxFrame::{
+          texture: tex,
+          delay: None, // Will be set later if available
+          head: None,
+          bounds: None,
+        }
+        let (frames, layers) = part_frames_map.get_or_init(part, fn() {
+          ([], [])
+        })
+        // Handle frame discontinuity: fill gaps with previous frame
+        while frames.length() < frame {
+          if frames.length() > 0 {
+            frames.push(frames[frames.length() - 1])
+            layers.push(layers[layers.length() - 1])
+          } else {
+            // First frame is missing, push current as placeholder
+            frames.push(nx_frame)
+            layers.push(z)
+          }
+        }
+        frames.push(nx_frame)
+        layers.push(z)
       }
     }
-    stances.set(stance, layeredFrames)
+    stances.set(stance, part_frames_map)
   }
   // let transparent = item_id == 1002186
   { stances, item_id, eq_slot, vslot, two_handed, walk, stand }
 }
 
 ///|
-pub fn Clothing::draw(
+pub fn Clothing::get_animation(
   self : Clothing,
   stance : @types.StanceId,
-  layer : Layer,
-  frame : Int,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  match
-    self.stances
-    .get(stance)
-    .bind(fn(m) { m.get(layer) })
-    .bind(fn(m) { m.get(frame) }) {
-    Some(textures) =>
-      for texture in textures {
-        // texture.draw(args)
-        ...
-      }
-    None => ()
-  }
+  part : String,
+) -> (Array[@resource.NxFrame], Array[Layer])? {
+  self.stances.get(stance).bind(fn(m) { m.get(part) })
+}
+
+///|
+pub fn Clothing::get_parts_for_stance(
+  self : Clothing,
+  stance : @types.StanceId,
+) -> Map[String, (Array[@resource.NxFrame], Array[Layer])]? {
+  self.stances.get(stance)
 }
 
 ///|

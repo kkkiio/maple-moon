@@ -32,16 +32,11 @@ pub fn CharEquips::get_equip(self : CharEquips, slot : @slot.Id) -> Int {
 }
 
 ///|
-pub fn CharEquips::draw(
+pub fn CharEquips::get_clothing(
   self : CharEquips,
   slot : @slot.Id,
-  stance : @types.StanceId,
-  layer : @clothing.Layer,
-  frame : Int,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  guard self.clothes.get(slot) is Some(cloth) else { return }
-  cloth.draw(stance, layer, frame, args)
+) -> @clothing.Clothing? {
+  self.clothes.get(slot)
 }
 
 ///|

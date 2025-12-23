@@ -1,6 +1,6 @@
 ///|
 /// 残影. 角色移动或攻击时，在身后留下的半透明或特效化的影子效果，用来表现速度感或技能的威力。
-struct AfterImage {
+pub struct AfterImage {
   animation : @sprite.Animation
   range : @struct.Rectangle[Int]
   first_frame : Int
@@ -10,11 +10,13 @@ struct AfterImage {
 
 ///|
 #alias(AfterImageResource, deprecated)
-struct NxAfterImage {
+pub(all) struct NxAfterImage {
   animation : @resource.NxAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
 }
+
+///|
 
 ///|
 pub impl @json.FromJson for NxAfterImage with from_json(json, path) -> NxAfterImage raise @json.JsonDecodeError {
@@ -61,7 +63,7 @@ pub impl @json.FromJson for NxAfterImage with from_json(json, path) -> NxAfterIm
 
 ///|
 /// Cache stores: Name -> Level -> Stance -> Resource
-let after_image_cache : Map[String, Map[Int, Map[String, NxAfterImage]]] = Map::new()
+let nx_after_image_resources : Map[String, Map[Int, Map[String, NxAfterImage]]] = Map::new()
 
 ///|
 struct NxAfterImages {
@@ -90,7 +92,7 @@ pub impl @json.FromJson for NxAfterImages with from_json(json, path) -> NxAfterI
 
 ///|
 pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
-  after_image_cache.set(name, after_images.level_map)
+  nx_after_image_resources.set(name, after_images.level_map)
 }
 
 ///|
@@ -98,21 +100,23 @@ pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
 pub fn AfterImage::get_collection(
   name : String,
   level : Int,
-) -> Map[String, AfterImage] {
+) -> Map[String, NxAfterImage] {
   let res_map = Map::new()
-  guard after_image_cache.get(name) is Some(levels) else { return res_map }
+  guard nx_after_image_resources.get(name) is Some(levels) else {
+    return res_map
+  }
 
   // The cache keys are "0", "1", etc. which correspond to level / 10
   let level_key = level / 10
   guard levels.get(level_key) is Some(stances) else { return res_map }
   for stance, resource in stances {
-    res_map.set(stance, AfterImage::new(resource))
+    res_map.set(stance, resource)
   }
   res_map
 }
 
 ///|
-pub fn AfterImage::new(resource : NxAfterImage) -> AfterImage {
+fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
   let range = resource.range
   if range.is_empty() {
     @log.error({}, "afterimage range is empty")
@@ -123,7 +127,10 @@ pub fn AfterImage::new(resource : NxAfterImage) -> AfterImage {
   let displayed = false
 
   // Create selene Sprite
-  let selene_anim = nx_animation_to_selene_animation(animation)
+  let selene_anim = nx_animation_to_selene_animation(
+    animation,
+    flip_x=facing_right,
+  )
   { animation: selene_anim, range, first_frame, displayed, entity: None }
 }
 
@@ -137,6 +144,7 @@ pub fn AfterImage::attach(self : AfterImage, parent : @entity.Entity) -> Unit {
 ///|
 pub fn AfterImage::dispose(self : AfterImage) -> Unit {
   if self.entity is Some(e) {
+    @sprite.sprites.remove(e)
     e.destroy()
     self.entity = None
   }
@@ -170,5 +178,80 @@ pub fn AfterImage::update(
       @sprite.sprites.set(e, sprite)
       @sprite.play_animation(e, self.animation, loop_=false)
     }
+  }
+}
+
+// ============================================================================
+// AfterImage System - ECS-style management
+// ============================================================================
+
+///|
+/// Entry storing an AfterImage with its frame getter function.
+/// The get_frame_fn is called each update to get the current animation frame.
+struct AfterImageEntry {
+  after_image : AfterImage
+  get_frame_fn : () -> Int
+}
+
+///|
+/// Global storage for active AfterImages, keyed by host entity.
+/// Follows Selene's pattern (e.g., `@sprite.sprites`).
+pub let after_images : Map[@entity.Entity, AfterImageEntry] = Map::new()
+
+///|
+/// Add an AfterImage to an entity, disposing any existing one.
+/// 
+/// Parameters:
+/// - `entity`: The character's root entity (used for keying and as parent for AfterImage sprite)
+/// - `get_frame_fn`: A function that returns the current animation frame
+/// - `after_image`: The AfterImage to add
+pub fn add_after_image(
+  entity : @entity.Entity,
+  get_frame_fn : () -> Int,
+  resource : NxAfterImage,
+  facing_right : Bool,
+) -> Unit {
+  // Dispose old if exists
+  if after_images.get(entity) is Some(old) {
+    old.after_image.dispose()
+  }
+  let after_image = AfterImage::new(resource, facing_right)
+  after_image.attach(entity)
+  after_images.set(entity, { after_image, get_frame_fn })
+}
+
+///|
+/// Get the current AfterImage for an entity.
+pub fn get_after_image(entity : @entity.Entity) -> AfterImage? {
+  after_images.get(entity).map(fn(entry) { entry.after_image })
+}
+
+///|
+/// Clear/remove the AfterImage for an entity.
+pub fn clear_after_image(entity : @entity.Entity) -> Unit {
+  if after_images.get(entity) is Some(old) {
+    old.after_image.dispose()
+  }
+  after_images.remove(entity)
+}
+
+///|
+/// Update all AfterImages based on their frame getter function.
+/// Should be called from the main game loop.
+pub fn update_after_image_system(delta : Double) -> Unit {
+  let to_remove : Array[@entity.Entity] = []
+  for entity, entry in after_images {
+    if not(entity.is_alive()) {
+      entry.after_image.dispose()
+      to_remove.push(entity)
+      continue
+    }
+    // Get frame from the callback
+    let frame = (entry.get_frame_fn)()
+    entry.after_image.update(frame, (delta * 1000.0).to_int())
+  }
+  // Clean up dead entities
+  for entity in to_remove {
+    after_images.remove(entity)
   }
 }

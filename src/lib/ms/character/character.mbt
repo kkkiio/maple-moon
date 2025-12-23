@@ -2,6 +2,9 @@
 using @map_object {type MapObjectBase}
 
 ///|
+using @maple_protocol {type StatsEntry}
+
+///|
 using @physics {type PhysicsObject}
 
 ///|
@@ -68,7 +71,6 @@ pub(all) struct Character {
   name_label : @graphics.Text
   // chat_balloon: ChatBalloon
   // recurring_effects: RecurringEffect
-  mut after_image : @char_look.AfterImage?
   invincible : @utils.TimedBool
   // iron_body: TimedBool
   // damage_number_set : @ui.NumberSet
@@ -119,7 +121,6 @@ pub fn Character::new(
       nametag=true,
     ),
     state: CharState::STAND,
-    after_image: None,
     invincible: @utils.TimedBool::default(),
     // damage_number_set,
     // damage_numbers: Array::new(),
@@ -218,10 +219,6 @@ pub fn Character::update(self : Character, speed : Double) -> Unit {
     (@logic_fps.STEP_TIME_MS.to_double() * speed).to_int(),
     0,
   )
-  match self.after_image {
-    None => ()
-    Some(image) => image.update(self.look.get_frame(), stancespeed_ms)
-  }
   self.alerted.update(timestep=stancespeed_ms)
 }
 
@@ -294,28 +291,15 @@ pub fn get_weapon_type_in_look(look : @char_look.CharLook) -> @weapon.Type {
 }
 
 ///|
+/// Returns true if the character is invincible.
 pub fn Character::is_invincible(self : Character) -> Bool {
   self.invincible.get()
 }
 
 ///|
-pub fn Character::set_afterimage(
-  self : Character,
-  after_image : @char_look.AfterImage,
-) -> Unit {
-  if self.after_image is Some(old) {
-    old.dispose()
-  }
-  after_image.attach(self.entity)
-  self.after_image = Some(after_image)
-}
-
-///|
-pub fn Character::clear_afterimage(self : Character) -> Unit {
-  if self.after_image is Some(old) {
-    old.dispose()
-  }
-  self.after_image = None
+/// Get the entity associated with this character.
+pub fn Character::get_entity(self : Character) -> @entity.Entity {
+  self.entity
 }
 
 ///|
@@ -330,9 +314,11 @@ pub fn Character::get_oid(self : Character) -> Int {
 
 ///|
 pub fn Character::get_attackdelay(self : Character, no : Int) -> Int {
-  let first_frame = self.after_image.map_or(0, fn(image) {
+  let first_frame = @char_look.get_after_image(self.entity).map_or(0, fn(
+    image,
+  ) {
     image.get_first_frame()
-  }) // WARN: may produce incorrect delay
+  })
   let delay = self.look.get_attackdelay(no, first_frame)
   let fspeed = get_real_attackspeed(
     get_integer_attackspeed(self.look, self.stats),
@@ -341,8 +327,8 @@ pub fn Character::get_attackdelay(self : Character, no : Int) -> Int {
 }
 
 ///|
-pub fn Character::is_twohanded(self : Character) -> Bool {
-  self.look.get_equips().is_twohanded()
+pub fn Character::is_two_handed(self : Character) -> Bool {
+  self.look.get_equips().is_two_handed()
 }
 
 ///|
@@ -354,8 +340,8 @@ pub fn Character::regular_attack(self : Character, degenerate : Bool) -> Unit {
 
 ///|
 pub fn Character::show_effect_id(
-  self : Character,
-  toshow : CharEffectId,
+  _self : Character,
+  _toshow : CharEffectId,
 ) -> Unit {
   // TODO: Implement
 }
@@ -399,8 +385,9 @@ pub fn Character::show_attack_effect(
 }
 
 ///|
-pub fn Character::show_iron_body(self : Character) -> Unit {
-  // self.iron_body.set_for(500) // TODO: Implement
+pub fn Character::show_iron_body(_self : Character) -> Unit {
+  // TODO: Implement
+  // self.iron_body.set_for(500) 
 }
 
 ///|
@@ -431,17 +418,9 @@ pub fn Character::is_animation_finished(self : Character) -> Bool {
 }
 
 ///|
-pub fn Character::get_afterimage(self : Character) -> @char_look.AfterImage? {
-  self.after_image
-}
-
-///|
 pub fn Character::get_stats(self : Character) -> @char_stats.CharStats {
   self.stats
 }
-
-///|
-using @maple_protocol {type StatsEntry}
 
 ///|
 pub(all) struct CharEntry {
@@ -457,6 +436,7 @@ pub fn Character::is_alerted(self : Character) -> Bool {
 }
 
 ///|
+/// Set the character to be alerted for a certain amount of time.
 pub fn Character::set_alerted(self : Character, millis : Int) -> Unit {
   self.alerted.set_for(millis)
 }

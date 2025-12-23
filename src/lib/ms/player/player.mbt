@@ -296,7 +296,7 @@ fn Player::update(
       let aniend = self.character.is_animation_finished()
       if aniend && self.character.attacking {
         self.character.attacking = false
-        self.character.clear_afterimage()
+        @char_look.clear_after_image(self.entity)
         let state : CharState = if player.character.get_phobj().onground {
           if player.is_key_down(@keyboard.BasicActionId::LEFT) {
             player.set_facing_right(false)

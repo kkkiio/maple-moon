@@ -63,12 +63,12 @@ pub fn RefRender::new(
 }
 
 ///|
-pub fn RefRender::get_npc_name(self : RefRender, nid : @string.View) -> String {
+pub fn RefRender::get_npc_name(self : RefRender, nid : StringView) -> String {
   self.string_loader.load_res(["Npc.img", nid.to_string(), "name"]).get_string()
 }
 
 ///|
-pub fn RefRender::get_mob_name(self : RefRender, mid : @string.View) -> String {
+pub fn RefRender::get_mob_name(self : RefRender, mid : StringView) -> String {
   self.string_loader
   .load_res(["Mob.img", mid.trim_start("0").to_string(), "name"])
   .get_string()
@@ -77,7 +77,7 @@ pub fn RefRender::get_mob_name(self : RefRender, mid : @string.View) -> String {
 ///|
 pub fn RefRender::get_map_name(
   self : RefRender,
-  v : @string.View,
+  v : StringView,
 ) -> String raise {
   let mapid = @strconv.parse_int(v.to_string())
   let map_category = @map.get_map_category(mapid)
@@ -92,7 +92,7 @@ pub fn RefRender::get_map_name(
 ///|
 pub fn RefRender::get_item_name(
   self : RefRender,
-  v : @string.View,
+  v : StringView,
 ) -> String raise {
   let item_id_str = v.to_string()
   let item_id = @strconv.parse_int(item_id_str)

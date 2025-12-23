@@ -27,7 +27,7 @@ fn new_twohanded_use_effect(
     new_skill_use_effect_effect(src["effect"]["1"]),
   )
   fn(c : @character.Character) -> Unit {
-    let twohanded = c.is_twohanded()
+    let twohanded = c.is_two_handed()
     effects[twohanded](c)
   }
 }

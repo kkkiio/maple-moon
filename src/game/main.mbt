@@ -20,6 +20,10 @@ fn main {
   .add_system(@ui.ui_system, system_name="ui_system")
   .add_system(@ui.number_system, system_name="number_system")
   .add_system(@char_look.char_look_system, system_name="char_look_system")
+  .add_system(
+    @char_look.update_after_image_system,
+    system_name="after_image_system",
+  )
   .add_system(@graphics.effect_layer_system, system_name="effect_layer_system")
   .add_system(@login.select_char_system, system_name="select_char_system")
   .add_system(

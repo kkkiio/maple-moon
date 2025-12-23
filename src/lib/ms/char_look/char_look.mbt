@@ -943,7 +943,7 @@ pub fn CharLook::is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
   match st {
     @types.StanceId::STAND1 | @types.StanceId::WALK1 => false
     @types.StanceId::STAND2 | @types.StanceId::WALK2 => true
-    _ => self.equips.is_twohanded()
+    _ => self.equips.is_two_handed()
   }
 }
 

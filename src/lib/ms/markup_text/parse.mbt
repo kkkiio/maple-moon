@@ -37,7 +37,7 @@ pub fn parse_markup(
 }
 
 ///|
-fn to_text(text : @string.View) -> Node {
+fn to_text(text : StringView) -> Node {
   Node::Text(
     text.replace_all(old="\\r", new="\r").replace_all(old="\\n", new="\n"),
   )
@@ -51,8 +51,8 @@ pub(all) enum MarkupType {
 
 ///|
 pub enum Node {
-  Text(@string.View)
-  Tag(Char, @string.View)
+  Text(StringView)
+  Tag(Char, StringView)
 }
 
 ///|

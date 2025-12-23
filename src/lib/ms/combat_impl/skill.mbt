@@ -234,7 +234,7 @@ pub fn Skill::make_attack(
   if self.over_regular {
     attack.stance = chr.get_look().get_stance().int_value()
     if attack.t == @combat.AttackType::CLOSE && not(self.projectile) {
-      guard chr.get_afterimage() is Some(after_image) else {
+      guard @char_look.get_after_image(chr.entity) is Some(after_image) else {
         @log.error({}, "No afterimage")
         panic()
       }

@@ -48,7 +48,7 @@ pub fn make_regular_attack(
     playerlevel,
     range: match t {
       @combat.AttackType::CLOSE => {
-        guard character.get_afterimage() is Some(after_image) else {
+        guard @char_look.get_after_image(character.entity) is Some(after_image) else {
           @log.error({}, "No afterimage when making regular attack")
           panic()
         }

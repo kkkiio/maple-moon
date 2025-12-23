@@ -80,7 +80,7 @@ pub fn parse_quest_desc(
     't': fn(style, v) raise { ref_name_provider.get_item_name(style, v) },
     'c': fn(style, v) raise { ref_name_provider.get_item_count(style, v) },
     '@': fn(style, v) raise {
-      ref_name_provider.get_npc(style, v.trim_end(":"))
+      ref_name_provider.get_npc(style, v.trim_end(chars=":"))
     },
   }
   let node = @markup_text.parse_markup(s, tag_map)
@@ -95,13 +95,13 @@ pub fn parse_quest_desc(
 
 ///|
 trait QuestTextRefProvider {
-  get_progress(Self, Style, @string.View) -> String raise
-  get_mob(Self, Style, @string.View) -> String raise
-  get_npc(Self, Style, @string.View) -> String raise
-  get_check(Self, Style, @string.View) -> String raise
-  get_map_name(Self, Style, @string.View) -> String raise
-  get_item_name(Self, Style, @string.View) -> String raise
-  get_item_count(Self, Style, @string.View) -> String raise
+  get_progress(Self, Style, StringView) -> String raise
+  get_mob(Self, Style, StringView) -> String raise
+  get_npc(Self, Style, StringView) -> String raise
+  get_check(Self, Style, StringView) -> String raise
+  get_map_name(Self, Style, StringView) -> String raise
+  get_item_name(Self, Style, StringView) -> String raise
+  get_item_count(Self, Style, StringView) -> String raise
 }
 
 ///|

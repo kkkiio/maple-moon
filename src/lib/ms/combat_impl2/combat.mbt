@@ -149,7 +149,7 @@ fn Combat::use_move(
           let skill_resources = act.get_afterimage()
           for k, v in skill_resources {
             // Override weapon afterimages with skill-specific ones
-            after_images.set(k, @char_look.AfterImage::new(v))
+            after_images.set(k, v)
           }
         }
         after_images
@@ -200,7 +200,7 @@ fn Combat::apply_move(
   self : Combat,
   cc : &CombatCharacter,
   act : @combat_impl.SpecialMove,
-  after_images : Map[String, @char_look.AfterImage],
+  after_images : Map[String, @char_look.NxAfterImage],
 ) -> Unit {
   let character = cc.get_character()
   let inventory = cc.get_inventory()
@@ -213,7 +213,17 @@ fn Combat::apply_move(
     act.apply_useeffects(character)
     act.apply_actions(character, attacktype) // WARN: this will change the stance
     let stance_name = character.get_look().get_stance().name()
-    character.set_afterimage(after_images.get(stance_name).unwrap())
+    // Get AfterImage for this stance
+    guard after_images.get(stance_name) is Some(after_image) else { return }
+    // Create frame getter that captures CharLook reference
+    let look = character.get_look()
+    let get_frame_fn = fn() { look.get_frame() }
+    @char_look.add_after_image(
+      character.get_entity(),
+      get_frame_fn,
+      after_image,
+      character.is_facing_right(),
+    )
     let attack = act.make_attack(character, inventory, attacktype, degenerate)
     let range = make_attack_range(attack)
     let mobcount = attack.mobcount
@@ -428,7 +438,7 @@ fn Combat::extract_effects(
   let attack_user : @combat_proto.AttackUser = {
     skill_level: (user.get_skilllevel)(act.get_id()),
     level: user.get_stats().get_stat(@maple_stat.Id::LEVEL),
-    second_weapon: user.is_twohanded(),
+    second_weapon: user.is_two_handed(),
     flip: not(result.toleft),
   }
   if result.bullet != 0 {

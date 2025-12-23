@@ -3,7 +3,7 @@ pub fn to_html(
   nodes : Array[Node],
   style : Style,
   color_map : Map[Char, ColorName],
-  tag_replace_map : Map[Char, (Style, @string.View) -> String raise],
+  tag_replace_map : Map[Char, (Style, StringView) -> String raise],
   trim_end_newline? : Bool = false,
 ) -> String raise {
   let mut current_style = style
@@ -39,14 +39,14 @@ pub fn to_html(
 ///|
 pub fn write_text_as_html(
   builder : StringBuilder,
-  text : @string.View,
+  text : StringView,
   style : Style,
   trim_end_newline? : Bool = false,
 ) -> Unit {
   if text.is_blank() {
     let mut text = text.replace_all(old="\r\n", new="\n")
     if trim_end_newline {
-      text = text.trim_end("\n")
+      text = text.trim_end(chars="\n")
     }
     text = text.replace_all(old="\n", new="<br/>\n")
     builder.write_string(text.to_string())

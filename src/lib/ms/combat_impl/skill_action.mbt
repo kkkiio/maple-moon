@@ -56,7 +56,7 @@ fn TwoHandedAction::new(src : @resource.NxNode) -> TwoHandedAction {
 
 ///|
 pub impl SkillAction for TwoHandedAction with apply(self, target, _) {
-  let twohanded = target.is_twohanded()
+  let twohanded = target.is_two_handed()
   let action = self.actions[twohanded]
   target.attack_by_action(action)
 }

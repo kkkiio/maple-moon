@@ -59,7 +59,7 @@ pub fn CharEquips::has_overall(self : CharEquips) -> Bool {
 }
 
 ///|
-pub fn CharEquips::is_twohanded(self : CharEquips) -> Bool {
+pub fn CharEquips::is_two_handed(self : CharEquips) -> Bool {
   guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else { return false }
   weapon.is_twohanded()
 }

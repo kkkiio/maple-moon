@@ -1,0 +1,117 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/mapeditor"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/map"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/utils"
+  "Milky2018/selene/entity"
+  "rami3l/js-ffi/js"
+)
+
+// Values
+pub fn export_editor_status_ffi() -> EditorStatus
+
+pub fn export_mouse_info_ffi() -> MouseInfo
+
+pub fn export_scene_graph_ffi() -> @js.Optional[EditorSceneGraph]
+
+pub fn load_map_ffi(Int) -> Unit
+
+pub fn set_view_options_ffi(Bool, Bool, Bool) -> Unit
+
+pub fn start_editor() -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) struct EditorBackground {
+  id : Int
+  type_ : String
+  bS : String
+  no : Int
+  x : Int
+  y : Int
+  rx : Int
+  ry : Int
+  type_val : Int
+  front : Bool
+}
+pub impl Show for EditorBackground
+pub impl ToJson for EditorBackground
+
+pub(all) struct EditorLayer {
+  index : Int
+  tiles : Array[@map.NxTileRef]
+  objects : Array[@map.NxObj]
+}
+pub impl Show for EditorLayer
+
+pub(all) struct EditorSceneGraph {
+  backgrounds : Array[EditorBackground]
+  layers : Array[EditorLayer]
+}
+pub impl Show for EditorSceneGraph
+
+pub(all) struct EditorStatus {
+  loading : Bool
+  error_msg : String?
+  map_id : Int
+  map_name : String
+  cam_x : Int
+  cam_y : Int
+  zoom : Double
+  bg_visible : Bool
+  tiles_visible : Bool
+  objs_visible : Bool
+  bg_back_visible : Bool
+  bg_fore_visible : Bool
+  bg_debug_index : Int?
+  bg_total_layers : Int
+  fps : Double
+}
+pub impl Show for EditorStatus
+pub impl ToJson for EditorStatus
+
+pub struct LayerVisibility {
+  mut backgrounds : Bool
+  mut tiles : Bool
+  mut objs : Bool
+}
+
+pub struct MapLimits {
+  left : Double
+  right : Double
+  top : Double
+  bottom : Double
+}
+pub impl Show for MapLimits
+
+pub(all) struct MouseInfo {
+  screen_x : Int
+  screen_y : Int
+  world_x : Int
+  world_y : Int
+}
+pub impl Show for MouseInfo
+
+pub struct SceneState {
+  raw_resources : @map.MapRawResources
+  scene_map : @map.SceneMap
+  map_limits : MapLimits
+}
+
+pub struct ViewerState {
+  mut map_future : @utils.Future[Result[(@map.MapRawResources, @map.SceneMap), Error]]?
+  mut error_message : String?
+  mut scene_state : SceneState?
+  mut camera_entity : @entity.Entity?
+  layer_visibility : LayerVisibility
+  mut fps : Double
+  mut physics : @physics.Physics?
+}
+
+// Type aliases
+
+// Traits
+

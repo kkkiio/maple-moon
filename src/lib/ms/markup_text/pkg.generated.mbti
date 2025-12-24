@@ -1,0 +1,65 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/markup_text"
+
+import(
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+)
+
+// Values
+pub let color_map : Map[Char, @struct.ColorName]
+
+pub let common_tags : Map[Char, MarkupType]
+
+pub let font_weight_tag_map : Map[Char, Bool]
+
+pub let item_tag : (Char, MarkupType)
+
+pub let map_tag : (Char, MarkupType)
+
+pub let npc_tag : (Char, MarkupType)
+
+pub fn parse_markup(String, Map[Char, MarkupType]) -> Array[Node] raise ParseError
+
+pub let player_tag : (Char, MarkupType)
+
+pub fn to_html(Array[Node], Style, Map[Char, @struct.ColorName], Map[Char, (Style, StringView) -> String raise], trim_end_newline? : Bool) -> String raise
+
+pub fn write_text_as_html(StringBuilder, StringView, Style, trim_end_newline? : Bool) -> Unit
+
+// Errors
+pub(all) suberror ParseError {
+  UnknownTag(Char)
+  MissingMarkupClose
+}
+pub impl Show for ParseError
+
+// Types and methods
+pub(all) enum MarkupType {
+  SelfClosing
+  Pair
+}
+
+pub enum Node {
+  Text(StringView)
+  Tag(Char, StringView)
+}
+
+type RefRender
+pub fn RefRender::get_item_name(Self, StringView) -> String raise
+pub fn RefRender::get_map_name(Self, StringView) -> String raise
+pub fn RefRender::get_mob_name(Self, StringView) -> String
+pub fn RefRender::get_npc_name(Self, StringView) -> String
+pub fn RefRender::get_player_name(Self) -> String
+pub fn RefRender::new(@resource.SyncLoader, () -> String) -> Self
+
+pub(all) struct Style {
+  color : @struct.ColorName
+  bold : Bool
+}
+pub fn Style::to_css_style(Self) -> String
+
+// Type aliases
+
+// Traits
+

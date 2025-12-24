@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/legacy_types"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/maple_stat"
+  "KKKIIO/maple-moon/lib/ms/weapon"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct MockInventory {
+}
+pub impl Inventory for MockInventory
+
+pub(all) struct MockSkillBook {
+}
+pub impl SkillBook for MockSkillBook
+
+// Type aliases
+
+// Traits
+pub(open) trait Inventory {
+  recalc_stats(Self, @weapon.Type) -> Unit
+  get_stat(Self, @maple_stat.EquipStatId) -> Int
+  has_projectile(Self) -> Bool
+  get_bulletid(Self) -> Int
+  get_bulletcount(Self) -> Int
+}
+
+pub(open) trait SkillBook {
+  get_level(Self, Int) -> Int
+  set_skill(Self, Int, Int, Int, Int) -> Unit
+}
+

@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/bullet"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/item"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct BulletData {
+  item_data : @item.ItemData
+  bullet : @graphics.Animation
+  watk : Int
+}
+pub async fn BulletData::load(String) -> Self
+
+type Module
+pub fn Module::get_bullet_data(Self, Int) -> BulletData?
+pub async fn Module::load() -> Self
+pub fn Module::new(Map[Int, BulletData]) -> Self
+
+// Type aliases
+
+// Traits
+

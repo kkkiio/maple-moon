@@ -1,0 +1,153 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/maple_protocol"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/maple_stat"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "moonbitlang/core/json"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct ChangeMapMessage {
+  died : Bool
+  target_id : Int
+  target_p : String
+  use_wheel : Bool
+}
+pub impl ClientMessage for ChangeMapMessage
+pub impl ToJson for ChangeMapMessage
+pub impl @json.FromJson for ChangeMapMessage
+
+pub(all) struct InventoryEntry {
+  meso : Int
+  slot_maxs : @resource.EnumMap[InventoryType, Int]
+  items : Array[InventoryItemEntry]
+}
+pub impl Default for InventoryEntry
+pub impl Show for InventoryEntry
+pub impl ToJson for InventoryEntry
+pub impl @json.FromJson for InventoryEntry
+
+pub(all) enum InventoryItemEntry {
+  Equip(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, expire~ : Int64, slots~ : Int, level~ : Int, stats~ : @resource.EnumMap[@maple_stat.EquipStatId, Int], owner~ : String, flag~ : Int, itemlevel~ : Int, itemexp~ : Int, vicious~ : Int)
+  Pet(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, petname~ : String)
+  Item(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, expire~ : Int64, count~ : Int, owner~ : String, flag~ : Int)
+}
+pub impl Show for InventoryItemEntry
+pub impl ToJson for InventoryItemEntry
+pub impl @json.FromJson for InventoryItemEntry
+
+pub(all) enum InventoryType {
+  EQUIP
+  USE
+  SETUP
+  ETC
+  CASH
+  EQUIPPED
+}
+pub fn InventoryType::by_item_id(Int) -> Self?
+pub fn InventoryType::by_value(Int) -> Self?
+pub fn InventoryType::int_value(Self) -> Int
+pub impl Eq for InventoryType
+pub impl Hash for InventoryType
+pub impl Show for InventoryType
+pub impl ToJson for InventoryType
+pub impl @json.FromJson for InventoryType
+
+pub(all) struct MobSpawnMessage {
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  stance : Int
+  fh : Int
+  team : Int
+}
+pub impl ServerMessage for MobSpawnMessage
+pub impl ToJson for MobSpawnMessage
+pub impl @json.FromJson for MobSpawnMessage
+
+pub(all) struct MoveMonsterMessage {
+  oid : Int
+  move_id : Int
+  nibbles : Int
+  action : Int
+  skill : Int
+  skill_level : Int
+  option : Int
+  start_pos : @struct.Point[Int]
+  movement : @physics.Movement
+}
+pub impl ClientMessage for MoveMonsterMessage
+pub impl @net.OutMessage for MoveMonsterMessage
+pub impl Show for MoveMonsterMessage
+pub impl ToJson for MoveMonsterMessage
+pub impl @json.FromJson for MoveMonsterMessage
+
+pub(all) struct PlayerQuestLogInfo {
+  started : Array[(Int, String)]
+  completed : Array[(Int, Int64)]
+}
+pub impl Default for PlayerQuestLogInfo
+pub impl Show for PlayerQuestLogInfo
+pub impl ToJson for PlayerQuestLogInfo
+pub impl @json.FromJson for PlayerQuestLogInfo
+
+pub(all) struct SelectCharMessage {
+  character_id : Int
+}
+pub impl ClientMessage for SelectCharMessage
+pub impl Show for SelectCharMessage
+pub impl ToJson for SelectCharMessage
+pub impl @json.FromJson for SelectCharMessage
+
+pub(all) enum SetFieldMessage {
+  ChangeMap(map_id~ : Int, portal_id~ : Int)
+  SetField(stats~ : StatsEntry, inventory_entry~ : InventoryEntry, skills~ : Array[SkillEntry], cooldowns~ : @resource.EnumMap[Int, Int], quests~ : PlayerQuestLogInfo)
+}
+pub impl ServerMessage for SetFieldMessage
+pub impl Show for SetFieldMessage
+pub impl ToJson for SetFieldMessage
+pub impl @json.FromJson for SetFieldMessage
+
+pub(all) struct SkillEntry {
+  skill_id : Int
+  level : Int
+  masterlevel : Int
+  expiration : Int64
+}
+pub impl Show for SkillEntry
+pub impl ToJson for SkillEntry
+pub impl @json.FromJson for SkillEntry
+
+pub(all) struct StatsEntry {
+  name : String
+  female : Bool
+  stats : @resource.EnumMap[@maple_stat.Id, Int]
+  i64stats : @resource.EnumMap[@maple_stat.Id, Int64]
+  map_id : Int
+  portal_id : Int
+}
+pub impl Default for StatsEntry
+pub impl Show for StatsEntry
+pub impl ToJson for StatsEntry
+pub impl @json.FromJson for StatsEntry
+
+// Type aliases
+
+// Traits
+pub(open) trait ClientMessage : ToJson + @json.FromJson {
+  type_code() -> Int
+}
+
+pub(open) trait ServerMessage : ToJson + @json.FromJson {
+  type_code() -> Int
+}
+

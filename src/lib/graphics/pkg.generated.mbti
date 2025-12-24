@@ -1,0 +1,289 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/graphics"
+
+import(
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "Milky2018/selene/entity"
+  "Milky2018/selene/sprite"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub const BACKGROUND_ZINDEX : Int = 1000
+
+pub const CHAR_LOOK_ZINDEX : Int = 70000
+
+pub const CURSOR_ZINDEX : Int = 200000
+
+pub const DAMAGE_NUMBER_ZINDEX : Int = 75000
+
+pub const EFFECT_ZINDEX : Int = 90000
+
+pub const FOREGROUND_ZINDEX : Int = 80000
+
+pub const MINI_MAP_ZINDEX_ : Int = 101000
+
+pub const OBJECT_TILE_LAYER_ZINDEX : Int = 30000
+
+pub const PORTAL_ZINDEX : Int = 79000
+
+pub const UI_ZINDEX : Int = 100000
+
+pub fn add_effect(@entity.Entity, @resource.NxAnimation, z? : Int, speed? : Double, flip? : Bool) -> Unit
+
+pub fn effect_layer_system(Double) -> Unit
+
+pub let fps : UInt
+
+pub let map_layers : FixedArray[Int]
+
+#deprecated
+pub fn nx_animation_to_selene_sprite(@resource.NxAnimation, z? : Int, flip_x? : Bool, loop_? : Bool) -> @sprite.Sprite
+
+pub let view_size : (Int, Int)
+
+// Errors
+pub(all) suberror LoadError {
+  NotFound
+  InvalidFormat(String)
+}
+pub impl Show for LoadError
+
+// Types and methods
+#deprecated
+type Animation
+pub fn Animation::draw(Self, DrawArgument, Double) -> Unit
+#deprecated
+pub fn Animation::from_resource(@resource.NxNode) -> Self
+#deprecated
+pub fn Animation::from_resource_ex(@resource.NxNode) -> Self raise
+pub fn Animation::get_bounds(Self) -> @struct.Rectangle[Int]
+pub fn Animation::get_delay_until(Self, Int) -> Int
+pub fn Animation::get_dimensions(Self) -> @struct.Point[Int]
+pub fn Animation::get_head(Self) -> @struct.Point[Int]
+pub fn Animation::get_origin(Self) -> @struct.Point[Int]
+#deprecated
+pub fn Animation::new(AnimationResource) -> Self
+pub fn Animation::reset(Self) -> Unit
+pub fn Animation::update(Self, timestep? : Int) -> Bool
+pub impl Default for Animation
+
+type AnimationResource
+pub impl @json.FromJson for AnimationResource
+
+type Charset
+pub fn Charset::create_text(Self, String) -> TextureText
+pub fn Charset::draw_char(Self, Char, DrawArgument) -> Unit
+pub fn Charset::draw_text(Self, String, DrawArgument) -> Int
+pub fn Charset::draw_text_with_hspace(Self, String, Int, DrawArgument) -> Int
+pub fn Charset::from_resource(Json, CharsetAlignment) -> Self raise
+pub fn Charset::getw(Self, Char) -> Int
+pub fn Charset::new(Json, CharsetAlignment) -> Self raise
+pub impl Default for Charset
+pub impl ToJson for Charset
+
+pub(all) enum CharsetAlignment {
+  LEFT
+  CENTER
+  RIGHT
+}
+pub impl Compare for CharsetAlignment
+pub impl Eq for CharsetAlignment
+
+pub(all) struct DrawArgument {
+  pos : @struct.Point[Int]
+  center : @struct.Point[Int]
+  stretch : @struct.Point[Int]
+  xscale : Double
+  yscale : Double
+  angle : Double
+  color : @struct.Color
+}
+pub fn DrawArgument::add_opacity(Self, Double) -> Self
+pub fn DrawArgument::add_pos(Self, @struct.Point[Int]) -> Self
+pub fn DrawArgument::from_point_and_color(@struct.Point[Int], @struct.Color) -> Self
+pub fn DrawArgument::from_pos_and_stretch(@struct.Point[Int], @struct.Point[Int]) -> Self
+pub fn DrawArgument::from_xy(Int, Int) -> Self
+pub fn DrawArgument::get_pos(Self) -> @struct.Point[Int]
+pub fn DrawArgument::get_rectangle(Self, @struct.Point[Int], @struct.Point[Int]) -> @struct.Rectangle[Int]
+pub fn DrawArgument::merge(Self, Self) -> Self
+pub fn DrawArgument::new(pos? : @struct.Point[Int], flip? : Bool, opacity? : Double, angle? : Double) -> Self
+pub fn DrawArgument::new10(@struct.Point[Int], @struct.Point[Int], Double, Double, Double) -> Self
+pub fn DrawArgument::new12(Double, Double, Double) -> Self
+pub fn DrawArgument::new13(@struct.Point[Int], Double, Double, Double) -> Self
+pub fn DrawArgument::new14(@struct.Point[Int], Bool, opacity? : Double) -> Self
+pub fn DrawArgument::new15(Double, @struct.Point[Int], Bool, Double) -> Self
+pub fn DrawArgument::new16(@struct.Point[Int], @struct.Point[Int], @struct.Point[Int], Double, Double, Double, Double) -> Self
+pub fn DrawArgument::new17(@struct.Point[Int], @struct.Point[Int], @struct.Point[Int], Double, Double, @struct.Color, Double) -> Self
+pub fn DrawArgument::new6(Double, @struct.Point[Int], Double) -> Self
+pub fn DrawArgument::new7(@struct.Point[Int], Double) -> Self
+pub fn DrawArgument::new9(@struct.Point[Int], Bool, @struct.Point[Int]) -> Self
+pub fn DrawArgument::new_ex(pos? : @struct.Point[Int], stretch? : @struct.Point[Int], opacity? : Double, angle? : Double) -> Self
+pub fn DrawArgument::new_scale(position? : @struct.Point[Int], scale? : Double) -> Self
+pub impl Add for DrawArgument
+pub impl Default for DrawArgument
+pub impl Show for DrawArgument
+pub impl Sub for DrawArgument
+pub impl ToJson for DrawArgument
+
+pub(all) enum FontId {
+  A11M
+  A11B
+  A12M
+  A12B
+  A13M
+  A13B
+  A15B
+  A18M
+}
+pub fn FontId::height(Self) -> Int
+pub fn FontId::is_bold(Self) -> Bool
+pub impl Eq for FontId
+pub impl Hash for FontId
+pub impl Show for FontId
+
+type Frame
+pub fn Frame::draw(Self, DrawArgument) -> Unit
+pub fn Frame::end_opacity(Self) -> Int
+pub fn Frame::get_bounds(Self) -> @struct.Rectangle[Int]
+pub fn Frame::get_delay(Self) -> Int
+pub fn Frame::get_dimensions(Self) -> @struct.Point[Int]
+pub fn Frame::get_head(Self) -> @struct.Point[Int]
+pub fn Frame::get_origin(Self) -> @struct.Point[Int]
+pub fn Frame::new(FrameResource, default_delay? : Int) -> Self
+pub fn Frame::opcstep(Self, Int) -> Double
+pub fn Frame::scalestep(Self, Int) -> Double
+pub fn Frame::start_opacity(Self) -> Int
+pub fn Frame::start_scale(Self) -> Int
+
+type FrameResource
+pub impl @json.FromJson for FrameResource
+
+type GameText
+pub fn GameText::draw(Self, DrawArgument) -> Int
+pub fn GameText::new(Charset, String, Int) -> Self
+
+type GraphicsGL
+pub fn GraphicsGL::clear(Self) -> Unit
+pub fn GraphicsGL::clear_scene(Self) -> Unit
+pub fn GraphicsGL::create_text_image(Self, TextKey) -> Image
+pub fn GraphicsGL::draw_bitmap(Self, @resource.Bitmap, @struct.Rectangle[Int], @struct.Color, Double) -> Unit
+pub fn GraphicsGL::draw_rectangle(Self, Int, Int, Int, Int, Double, Double, Double, Double) -> Unit
+pub fn GraphicsGL::draw_screen_fill(Self, Double, Double, Double, Double) -> Unit
+pub fn GraphicsGL::flush(Self, Double) -> Unit
+pub fn GraphicsGL::get() -> Self
+
+type Image
+
+pub(all) struct NxFrame(@sprite.AnimationFrame)
+#deprecated
+pub fn NxFrame::inner(Self) -> @sprite.AnimationFrame
+pub impl @json.FromJson for NxFrame
+
+type OutlinedText
+pub fn OutlinedText::change_color(Self, @struct.ColorName) -> Unit
+pub fn OutlinedText::change_text(Self, String) -> Unit
+pub fn OutlinedText::draw(Self, @struct.Point[Int]) -> Unit
+pub fn OutlinedText::new(FontId, TextAlignment, @struct.ColorName, @struct.ColorName) -> Self
+pub fn OutlinedText::width(Self) -> Int
+pub impl ToJson for OutlinedText
+
+pub(all) struct RenderSpec {
+  drawables : Array[&Drawable]
+  statefuls : Array[&Stateful]
+}
+pub impl ToJson for RenderSpec
+
+pub(all) struct ShadowText {
+  mut top : Text
+  mut shadow : Text
+}
+pub fn ShadowText::change_color(Self, @struct.ColorName) -> Unit
+pub fn ShadowText::change_text(Self, String) -> Unit
+pub fn ShadowText::draw(Self, @struct.Point[Int]) -> Unit
+pub fn ShadowText::new(FontId, TextAlignment, @struct.ColorName, @struct.ColorName) -> Self
+pub fn ShadowText::width(Self) -> Int
+
+pub(all) struct Sprite {
+  mut animation : Animation
+  mut state_args : DrawArgument
+}
+pub fn Sprite::draw(Self, @struct.Point[Int], Double) -> Unit
+pub fn Sprite::from_resource(@resource.NxNode, state_args? : DrawArgument) -> Self
+pub fn Sprite::get_dimensions(Self) -> @struct.Point[Int]
+pub fn Sprite::get_origin(Self) -> @struct.Point[Int]
+pub fn Sprite::height(Self) -> Int
+pub fn Sprite::new(Animation, DrawArgument) -> Self
+pub fn Sprite::reset(Self) -> Unit
+pub fn Sprite::update(Self, timestep? : Int) -> Bool
+pub fn Sprite::width(Self) -> Int
+pub impl Default for Sprite
+pub impl ToJson for Sprite
+
+type Text
+pub fn Text::change_color(Self, @struct.ColorName) -> Unit
+pub fn Text::change_text(Self, String) -> Unit
+pub fn Text::dimensions(Self) -> @struct.Point[Int]
+pub fn Text::draw(Self, @struct.Point[Int], text_y_clip? : @struct.Range[Int]?) -> Unit
+pub fn Text::get_or_init_image(Self) -> Image
+pub fn Text::get_text(Self) -> String
+pub fn Text::height(Self) -> Int
+pub fn Text::new(FontId, TextAlignment, @struct.ColorName, text? : String, nametag? : Bool, max_width? : Int) -> Self
+pub fn Text::width(Self) -> Int
+pub fn Text::with_text(Self, String) -> Self
+pub impl ToJson for Text
+
+pub(all) enum TextAlignment {
+  LEFT
+  CENTER
+  RIGHT
+}
+pub impl Eq for TextAlignment
+pub impl Hash for TextAlignment
+
+type TextKey
+pub impl Eq for TextKey
+pub impl Hash for TextKey
+
+#deprecated
+pub(all) struct Texture {
+  bitmap : @sprite.AnimationFrame?
+  mut origin : @struct.Point[Int]
+  dimensions : @struct.Point[Int]
+}
+pub fn Texture::from_resource(@resource.NxNode) -> Self
+pub fn Texture::get_dimensions(Self) -> @struct.Point[Int]
+pub fn Texture::get_origin(Self) -> @struct.Point[Int]
+pub fn Texture::height(Self) -> Int
+pub fn Texture::load(@resource.NxTexture) -> Self
+pub fn Texture::shift(Self, @struct.Point[Int]) -> Unit
+pub fn Texture::to_string(Self) -> String
+pub fn Texture::width(Self) -> Int
+pub impl Drawable for Texture
+pub impl Default for Texture
+pub impl ToJson for Texture
+
+type TextureText
+pub fn TextureText::draw(Self, DrawArgument) -> Int
+pub impl ToJson for TextureText
+
+type TileUnit
+pub fn TileUnit::new(Texture, rows? : Int, cols? : Int, row_height? : Int, col_width? : Int) -> Self
+pub impl Drawable for TileUnit
+pub impl ToJson for TileUnit
+
+// Type aliases
+pub using @resource {type NxNode}
+
+pub using @resource {type NxTexture as TextureResource}
+
+// Traits
+pub(open) trait Drawable : ToJson {
+  draw(Self, DrawArgument) -> Unit
+}
+
+pub(open) trait Stateful : ToJson {
+  update(Self, Int) -> Unit
+}
+

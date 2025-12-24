@@ -1,0 +1,148 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/char_look/types"
+
+import(
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub fn secondof(StanceId) -> StanceId
+
+pub let stance_name_id_map : Map[String, StanceId]
+
+// Errors
+
+// Types and methods
+type BodyDrawInfo
+pub fn BodyDrawInfo::default() -> Self
+pub fn BodyDrawInfo::get_action(Self, String, Int) -> NxStanceBodyAction?
+pub fn BodyDrawInfo::get_arm_position(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::get_attack_delay(Self, String, Int) -> Int
+pub fn BodyDrawInfo::get_body_position(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::get_delay(Self, StanceId, Int) -> Int
+pub fn BodyDrawInfo::get_face_pos(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::get_hair_pos(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::get_hand_position(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::get_head_position(Self, StanceId, Int) -> @struct.Point[Int]
+pub fn BodyDrawInfo::new(Map[StanceId, Array[NxStanceBody]], Map[StanceId, Array[NxMultiPartFrame]]) -> Self
+pub fn BodyDrawInfo::next_action_frame(Self, String, Int) -> Int
+pub fn BodyDrawInfo::next_frame(Self, StanceId, Int) -> Int
+
+pub(all) enum BodyLayer {
+  BODY
+  ARM
+  ARM_BELOW_HEAD
+  ARM_BELOW_HEAD_OVER_MAIL
+  ARM_OVER_HAIR
+  ARM_OVER_HAIR_BELOW_WEAPON
+  HAND_BELOW_WEAPON
+  HAND_OVER_HAIR
+  HAND_OVER_WEAPON
+  HEAD
+}
+pub fn BodyLayer::from_name(String) -> Self?
+pub fn BodyLayer::int_value(Self) -> Int
+pub impl Compare for BodyLayer
+pub impl Eq for BodyLayer
+pub impl Hash for BodyLayer
+pub impl Show for BodyLayer
+pub impl ToJson for BodyLayer
+
+pub(all) struct NxBodyLayerTexture {
+  z : BodyLayer?
+  texture : @resource.NxAnimation
+  map : ShiftMap
+}
+pub impl @json.FromJson for NxBodyLayerTexture
+
+pub(all) struct NxMultiPartFrame {
+  part_texture_map : Map[String, NxBodyLayerTexture]
+  delay : Int?
+}
+pub impl @json.FromJson for NxMultiPartFrame
+
+pub enum NxStanceBody {
+  Action(NxStanceBodyAction)
+  MultiPartFrame(NxMultiPartFrame)
+}
+pub impl @json.FromJson for NxStanceBody
+
+pub(all) struct NxStanceBodyAction {
+  stance : StanceId
+  frame : Int
+  delay : Int
+  mov : @struct.Point[Int]
+  attack_frame : Bool
+}
+pub fn NxStanceBodyAction::default() -> Self
+pub fn NxStanceBodyAction::get_delay(Self) -> Int
+pub fn NxStanceBodyAction::get_frame(Self) -> Int
+pub fn NxStanceBodyAction::get_move(Self) -> @struct.Point[Int]
+pub fn NxStanceBodyAction::get_stance(Self) -> StanceId
+pub fn NxStanceBodyAction::is_attack_frame(Self) -> Bool
+pub impl @json.FromJson for NxStanceBodyAction
+
+pub(all) struct ShiftMap(Map[String, @struct.Point[Int]])
+#deprecated
+pub fn ShiftMap::inner(Self) -> Map[String, @struct.Point[Int]]
+pub impl @json.FromJson for ShiftMap
+
+pub(all) enum StanceId {
+  NONE
+  ALERT
+  DEAD
+  FLY
+  HEAL
+  JUMP
+  LADDER
+  PRONE
+  PRONESTAB
+  ROPE
+  SHOT
+  SHOOT1
+  SHOOT2
+  SHOOTF
+  SIT
+  STABO1
+  STABO2
+  STABOF
+  STABT1
+  STABT2
+  STABTF
+  STAND1
+  STAND2
+  SWINGO1
+  SWINGO2
+  SWINGO3
+  SWINGOF
+  SWINGP1
+  SWINGP2
+  SWINGPF
+  SWINGT1
+  SWINGT2
+  SWINGT3
+  SWINGTF
+  WALK1
+  WALK2
+}
+pub fn StanceId::baseof(Self) -> Self
+pub fn StanceId::by_state(Int) -> Self
+pub fn StanceId::count() -> Int
+pub fn StanceId::from_name(String) -> Self?
+pub fn StanceId::int_value(Self) -> Int
+pub fn StanceId::is_attack(Self) -> Bool
+pub fn StanceId::is_climbing(Self) -> Bool
+pub fn StanceId::name(Self) -> String
+pub impl Compare for StanceId
+pub impl Default for StanceId
+pub impl Eq for StanceId
+pub impl Hash for StanceId
+pub impl Show for StanceId
+pub impl ToJson for StanceId
+
+// Type aliases
+
+// Traits
+

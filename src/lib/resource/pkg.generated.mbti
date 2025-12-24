@@ -1,0 +1,201 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/resource"
+
+import(
+  "KKKIIO/maple-moon/lib/struct"
+  "Milky2018/selene/math"
+  "Milky2018/selene/sprite"
+  "moonbitlang/core/immut/array"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
+
+pub fn collect_spritesheet_paths(Json) -> Array[String]
+
+pub fn get_afterimage_loader() -> AsyncLoader
+
+pub fn get_background_set_loader() -> AsyncLoader
+
+pub fn get_body_loader() -> AsyncLoader
+
+pub fn get_character_loader() -> AsyncLoader
+
+pub fn get_effect_loader() -> AsyncLoader
+
+pub fn get_mapx_loader() -> AsyncLoader
+
+pub fn get_mob_loader() -> AsyncLoader
+
+pub fn get_object_loader() -> AsyncLoader
+
+pub fn get_skill_loader() -> AsyncLoader
+
+pub fn get_tile_loader() -> AsyncLoader
+
+pub fn nx_animation_to_selene_animation(NxAnimation, flip_x? : Bool, loop_? : Bool) -> @sprite.Animation
+
+pub fn nx_texture_to_selene_picture(NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> @sprite.Picture
+
+pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
+
+pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -> Array[T] raise @json.JsonDecodeError
+
+pub fn patch_image(Json, Map[String, SpritesheetMetadata], base_url? : String) -> Json raise
+
+// Errors
+pub(all) suberror LoadError String
+pub impl Show for LoadError
+
+// Types and methods
+type AsyncLoader
+pub async fn AsyncLoader::load_res_async(Self, Array[String]) -> NxNode
+pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader, base_url? : String, image_base_url? : String) -> Self
+
+pub(all) struct Bitmap {
+  image : Image
+  width : Int
+  height : Int
+}
+pub impl ToJson for Bitmap
+
+type CompositeAsyncResourceLoader
+pub fn CompositeAsyncResourceLoader::new(Map[String, &AsyncResourceLoader]) -> Self
+pub impl AsyncResourceLoader for CompositeAsyncResourceLoader
+
+type DirResourceLoader
+pub fn DirResourceLoader::new(String) -> Self
+pub impl AsyncResourceLoader for DirResourceLoader
+
+pub(all) struct EnumMap[K, V](Map[K, V])
+#deprecated
+pub fn[K, V] EnumMap::inner(Self[K, V]) -> Map[K, V]
+pub impl[K, V] Default for EnumMap[K, V]
+pub impl[K : Show, V : Show] Show for EnumMap[K, V]
+pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
+pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
+
+#external
+pub type Image
+pub fn Image::new_pending() -> Self
+pub fn Image::poll(Self) -> LoadedImage?
+
+type ImageLoader
+pub fn ImageLoader::get_path_image_loader() -> Self
+pub fn ImageLoader::load_image(Self, Int) -> Image
+
+pub struct IntMap[T](Map[Int, T])
+#deprecated
+pub fn[T] IntMap::inner(Self[T]) -> Map[Int, T]
+pub impl[T : Show] Show for IntMap[T]
+pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
+
+#external
+pub type LoadedImage
+pub fn LoadedImage::height(Self) -> Int
+pub fn LoadedImage::width(Self) -> Int
+
+pub struct MapBasedArray[T](Array[T])
+#deprecated
+pub fn[T] MapBasedArray::inner(Self[T]) -> Array[T]
+pub impl[T : Show] Show for MapBasedArray[T]
+pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T]
+
+pub struct Nullable[T](T?)
+#deprecated
+pub fn[T] Nullable::inner(Self[T]) -> T?
+pub impl[T : Show] Show for Nullable[T]
+pub impl[T : @json.FromJson] @json.FromJson for Nullable[T]
+
+pub(all) struct NxAnimation {
+  frames : Array[NxFrame]
+  blend : Bool
+  zigzag : Bool
+}
+pub fn NxAnimation::get_size(Self) -> (Int, Int)
+pub impl Show for NxAnimation
+pub impl @json.FromJson for NxAnimation
+
+pub(all) struct NxFrame {
+  texture : NxTexture
+  delay : Int?
+  head : @struct.Point[Int]?
+  bounds : @struct.Rectangle[Int]?
+}
+pub impl Show for NxFrame
+pub impl @json.FromJson for NxFrame
+
+#deprecated
+type NxNode
+pub fn NxNode::as_int(Self) -> Int raise LoadError
+pub fn NxNode::as_point(Self) -> @struct.Point[Int] raise LoadError
+pub fn NxNode::as_rectangle(Self) -> @struct.Rectangle[Int] raise
+pub fn NxNode::as_strict_bool(Self) -> Bool raise LoadError
+pub fn NxNode::as_string(Self) -> String raise LoadError
+pub fn NxNode::contains(Self, String) -> Bool
+pub fn NxNode::from_test_value(Json) -> Self
+pub fn NxNode::get_bitmap(Self) -> Bitmap?
+pub fn NxNode::get_bool(Self) -> Bool raise LoadError
+pub fn NxNode::get_children_count(Self) -> Int
+pub fn NxNode::get_float(Self) -> Double raise LoadError
+pub fn NxNode::get_float_field(Self, String, default? : Double) -> Double raise LoadError
+pub fn NxNode::get_image_loader(Self) -> ImageLoader
+pub fn NxNode::get_int(Self) -> Int raise LoadError
+pub fn NxNode::get_int_field(Self, String, default? : Int) -> Int raise LoadError
+pub fn NxNode::get_string(Self) -> String
+pub fn NxNode::is_null(Self) -> Bool
+pub fn NxNode::iter(Self) -> Iter[Self]
+pub fn NxNode::iter2(Self) -> Iter2[String, Self]
+pub fn NxNode::name(Self) -> String
+pub fn NxNode::op_get(Self, String) -> Self
+pub fn NxNode::path(Self) -> @array.T[String]
+pub fn NxNode::value(Self) -> Json
+
+pub(all) struct NxTexture {
+  i : String
+  w : Int
+  h : Int
+  offset : @struct.Point[Int]
+  origin : @struct.Point[Int]
+}
+pub fn NxTexture::get_size(Self) -> (Int, Int)
+pub impl Show for NxTexture
+pub impl @json.FromJson for NxTexture
+
+pub(all) struct ResPath(Array[String])
+#deprecated
+pub fn ResPath::inner(Self) -> Array[String]
+pub impl Eq for ResPath
+
+pub(all) struct SpritesheetFrameMetadata {
+  x : Int
+  y : Int
+}
+pub impl @json.FromJson for SpritesheetFrameMetadata
+
+pub(all) struct SpritesheetImageMetadata {
+  frame : SpritesheetFrameMetadata
+}
+pub impl @json.FromJson for SpritesheetImageMetadata
+
+type SpritesheetMergeLoader
+pub fn SpritesheetMergeLoader::new(&AsyncResourceLoader, String, String) -> Self
+pub impl AsyncResourceLoader for SpritesheetMergeLoader
+
+pub(all) struct SpritesheetMetadata {
+  frames : Map[String, SpritesheetImageMetadata]
+}
+pub impl @json.FromJson for SpritesheetMetadata
+
+type SyncLoader
+pub async fn SyncLoader::load(String, String, ImageLoader) -> Self
+pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode
+
+// Type aliases
+
+// Traits
+pub trait AsyncResourceLoader {
+  async load_data(Self, StringView) -> Json
+}
+

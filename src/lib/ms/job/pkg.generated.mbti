@@ -1,0 +1,154 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/job"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/maple_stat"
+  "KKKIIO/maple-moon/lib/ms/weapon"
+  "KKKIIO/maple-moon/lib/resource"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub fn get_levels(upto? : Level) -> Iter[Level]
+
+pub fn get_next_level(Level) -> Level
+
+pub fn get_subjob_id(Int, Level, Level) -> Int
+
+// Errors
+
+// Types and methods
+type Job
+pub fn Job::can_use(Self, Int) -> Bool
+pub fn Job::get_all_subjobs(Self) -> Iter[JobData]
+pub fn Job::get_data_by_id(Self, Int) -> JobData
+pub fn Job::get_id(Self) -> JobId
+pub fn Job::get_level(Self) -> Level
+pub fn Job::get_name(Self) -> String
+pub fn Job::get_primary(Self, @weapon.Type) -> @maple_stat.EquipStatId
+pub fn Job::get_secondary(Self, @weapon.Type) -> @maple_stat.EquipStatId
+pub fn Job::get_subjob(Self, Level) -> Int
+pub fn Job::is_a(Self, Int) -> Bool
+pub async fn Job::load(id? : Int) -> Self
+pub fn Job::new(Int, Level, Map[Int, JobData]) -> Self
+
+pub(all) struct JobData {
+  icon : @graphics.Texture
+  skill_ids : Array[Int]
+  name : String
+}
+pub async fn JobData::load(Int) -> Self
+pub fn JobData::new(Int, @resource.NxNode) -> Self
+
+pub(all) enum JobId {
+  BEGINNER
+  WARRIOR
+  FIGHTER
+  CRUSADER
+  HERO
+  PAGE
+  WHITEKNIGHT
+  PALADIN
+  SPEARMAN
+  DRAGONKNIGHT
+  DARKKNIGHT
+  MAGICIAN
+  FP_WIZARD
+  FP_MAGE
+  FP_ARCHMAGE
+  IL_WIZARD
+  IL_MAGE
+  IL_ARCHMAGE
+  CLERIC
+  PRIEST
+  BISHOP
+  BOWMAN
+  HUNTER
+  RANGER
+  BOWMASTER
+  CROSSBOWMAN
+  SNIPER
+  MARKSMAN
+  THIEF
+  ASSASSIN
+  HERMIT
+  NIGHTLORD
+  BANDIT
+  CHIEFBANDIT
+  SHADOWER
+  PIRATE
+  BRAWLER
+  MARAUDER
+  BUCCANEER
+  GUNSLINGER
+  OUTLAW
+  CORSAIR
+  MAPLELEAF_BRIGADIER
+  GM
+  SUPERGM
+  NOBLESSE
+  DAWNWARRIOR1
+  DAWNWARRIOR2
+  DAWNWARRIOR3
+  DAWNWARRIOR4
+  BLAZEWIZARD1
+  BLAZEWIZARD2
+  BLAZEWIZARD3
+  BLAZEWIZARD4
+  WINDARCHER1
+  WINDARCHER2
+  WINDARCHER3
+  WINDARCHER4
+  NIGHTWALKER1
+  NIGHTWALKER2
+  NIGHTWALKER3
+  NIGHTWALKER4
+  THUNDERBREAKER1
+  THUNDERBREAKER2
+  THUNDERBREAKER3
+  THUNDERBREAKER4
+  LEGEND
+  EVAN
+  ARAN1
+  ARAN2
+  ARAN3
+  ARAN4
+  EVAN1
+  EVAN2
+  EVAN3
+  EVAN4
+  EVAN5
+  EVAN6
+  EVAN7
+  EVAN8
+  EVAN9
+  EVAN10
+}
+pub fn JobId::from_int(Int) -> Self?
+pub fn JobId::get_name_by_id(Self) -> String
+pub fn JobId::int_value(Self) -> Int
+pub impl Eq for JobId
+pub impl Show for JobId
+pub impl @json.FromJson for JobId
+
+pub(all) enum Level {
+  BEGINNER
+  FIRST
+  SECOND
+  THIRD
+  FOURTH
+}
+pub fn Level::int_value(Self) -> Int
+pub impl Compare for Level
+pub impl Eq for Level
+pub impl Hash for Level
+
+type Module
+pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
+pub fn Module::new((Int) -> Unit) -> Self
+
+// Type aliases
+
+// Traits
+

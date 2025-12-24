@@ -1,0 +1,50 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms"
+
+import(
+  "KKKIIO/maple-moon/lib/game_mod"
+  "KKKIIO/maple-moon/lib/ms/keyboard"
+  "KKKIIO/maple-moon/lib/ms/maple_stat"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/schedule"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/ui"
+  "KKKIIO/maple-moon/lib/utils"
+)
+
+// Values
+pub fn make_change_stats_handler(Map[@maple_stat.Id, (Int) -> Bool], () -> Unit) -> (@net.Opcode, (@net.InPacket) -> Unit)
+
+pub fn make_show_status_info_handler(Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]) -> (@net.Opcode, (@net.InPacket) -> Unit)
+
+pub fn parse_show_status_info(@net.InPacket, Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]) -> &@game_mod.SubRouteAction raise
+
+// Errors
+
+// Types and methods
+pub(all) struct Game {
+  timer : @utils.Timer
+  mut accumulator : Int
+  processor : @net.Network
+  loaded_state : @utils.Future[LoadedState]
+  scheduls : @schedule.Schedules
+  keyboard_module : @keyboard.Module
+}
+pub fn Game::new() -> Self
+pub fn Game::update(Self, @utils.TimePoint) -> Unit
+pub fn Game::update_status(Self, LoadedState) -> Unit
+
+type LoadedState
+
+type UIStateLogin
+pub fn UIStateLogin::get_front(Self) -> (@ui.UIElementType, @ui.Element)?
+pub fn UIStateLogin::remove_cursor(Self, @ui.UIElementType) -> Unit
+pub impl @ui.UIState for UIStateLogin
+
+type Window
+pub fn Window::key_callback(Self, String, Bool) -> Unit
+
+// Type aliases
+
+// Traits
+

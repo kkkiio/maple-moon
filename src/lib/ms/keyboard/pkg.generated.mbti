@@ -1,0 +1,554 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/keyboard"
+
+import(
+  "KKKIIO/maple-moon/lib/net"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub fn action_by_id(Int) -> MsKey?
+
+pub let altLeft : String
+
+pub let altRight : String
+
+pub let arrowDown : String
+
+pub let arrowLeft : String
+
+pub let arrowRight : String
+
+pub let arrowUp : String
+
+pub let audioVolumeDown : String
+
+pub let audioVolumeMute : String
+
+pub let audioVolumeUp : String
+
+pub let backquote : String
+
+pub let backslash : String
+
+pub let backspace : String
+
+pub let bracketLeft : String
+
+pub let bracketRight : String
+
+pub let browserBack : String
+
+pub let browserFavorites : String
+
+pub let browserForward : String
+
+pub let browserHome : String
+
+pub let browserRefresh : String
+
+pub let browserSearch : String
+
+pub let browserStop : String
+
+pub let capsLock : String
+
+pub let comma : String
+
+pub let contextMenu : String
+
+pub let controlLeft : String
+
+pub let controlRight : String
+
+pub let convert : String
+
+pub let copy : String
+
+pub let cut : String
+
+pub let delete : String
+
+pub let digit0 : String
+
+pub let digit1 : String
+
+pub let digit2 : String
+
+pub let digit3 : String
+
+pub let digit4 : String
+
+pub let digit5 : String
+
+pub let digit6 : String
+
+pub let digit7 : String
+
+pub let digit8 : String
+
+pub let digit9 : String
+
+pub let eject : String
+
+pub let end : String
+
+pub let enter : String
+
+pub let equal : String
+
+pub let escape : String
+
+pub let f1 : String
+
+pub let f10 : String
+
+pub let f11 : String
+
+pub let f12 : String
+
+pub let f13 : String
+
+pub let f14 : String
+
+pub let f15 : String
+
+pub let f16 : String
+
+pub let f17 : String
+
+pub let f18 : String
+
+pub let f19 : String
+
+pub let f2 : String
+
+pub let f20 : String
+
+pub let f21 : String
+
+pub let f22 : String
+
+pub let f23 : String
+
+pub let f24 : String
+
+pub let f3 : String
+
+pub let f4 : String
+
+pub let f5 : String
+
+pub let f6 : String
+
+pub let f7 : String
+
+pub let f8 : String
+
+pub let f9 : String
+
+pub fn get_key_mappings(Map[String, Mapping]) -> Array[KeyMappingJs]
+
+pub let help : String
+
+pub let home : String
+
+pub let insert : String
+
+pub let intlBackslash : String
+
+pub let intlRo : String
+
+pub let intlYen : String
+
+pub let kanaMode : String
+
+pub let keyA : String
+
+pub let keyB : String
+
+pub let keyC : String
+
+pub let keyD : String
+
+pub let keyE : String
+
+pub let keyF : String
+
+pub let keyG : String
+
+pub let keyH : String
+
+pub let keyI : String
+
+pub let keyJ : String
+
+pub let keyK : String
+
+pub let keyL : String
+
+pub let keyM : String
+
+pub let keyN : String
+
+pub let keyO : String
+
+pub let keyP : String
+
+pub let keyQ : String
+
+pub let keyR : String
+
+pub let keyS : String
+
+pub let keyT : String
+
+pub let keyU : String
+
+pub let keyV : String
+
+pub let keyW : String
+
+pub let keyX : String
+
+pub let keyY : String
+
+pub let keyZ : String
+
+pub let lang1 : String
+
+pub let lang2 : String
+
+pub let lang3 : String
+
+pub let lang4 : String
+
+pub let launchApp1 : String
+
+pub let launchApp2 : String
+
+pub let launchMail : String
+
+pub let mediaPlayPause : String
+
+pub let mediaSelect : String
+
+pub let mediaStop : String
+
+pub let mediaTrackNext : String
+
+pub let mediaTrackPrevious : String
+
+pub let metaLeft : String
+
+pub let metaRight : String
+
+pub let minus : String
+
+pub let nonConvert : String
+
+pub let numLock : String
+
+pub let numpad0 : String
+
+pub let numpad1 : String
+
+pub let numpad2 : String
+
+pub let numpad3 : String
+
+pub let numpad4 : String
+
+pub let numpad5 : String
+
+pub let numpad6 : String
+
+pub let numpad7 : String
+
+pub let numpad8 : String
+
+pub let numpad9 : String
+
+pub let numpadAdd : String
+
+pub let numpadComma : String
+
+pub let numpadDecimal : String
+
+pub let numpadDivide : String
+
+pub let numpadEnter : String
+
+pub let numpadEqual : String
+
+pub let numpadMultiply : String
+
+pub let numpadSubtract : String
+
+pub let pageDown : String
+
+pub let pageUp : String
+
+pub fn parse_keymap(@net.InPacket) -> Array[(Int, Int)] raise
+
+pub let paste : String
+
+pub let pause : String
+
+pub let period : String
+
+pub let power : String
+
+pub let printScreen : String
+
+pub let quote : String
+
+pub let scrollLock : String
+
+pub let semicolon : String
+
+pub let shiftLeft : String
+
+pub let shiftRight : String
+
+pub let slash : String
+
+pub let sleep : String
+
+pub let space : String
+
+pub let tab : String
+
+pub let undo : String
+
+pub fn update_key_mappings(Module, Array[KeyMappingJs]) -> Unit
+
+pub let wakeUp : String
+
+pub fn watch_keyboard(Module, (Array[KeyMappingJs]) -> Unit) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) enum BasicActionId {
+  EQUIPMENT
+  ITEMS
+  STATS
+  SKILLS
+  FRIENDS
+  WORLD_MAP
+  MAPLE_CHAT
+  MINI_MAP
+  QUEST_LOG
+  KEY_BINDINGS
+  TOGGLE_CHAT
+  WHISPER
+  SAY
+  PARTY_CHAT
+  MENU
+  QUICK_SLOTS
+  GUILD
+  FRIENDS_CHAT
+  PARTY
+  NOTIFIER
+  CASHSHOP
+  GUILD_CHAT
+  MEDALS
+  BITS
+  ALLIANCE_CHAT
+  MAPLE_NEWS
+  MANAGE_LEGION
+  PROFESSION
+  BOSS_PARTY
+  ITEM_POT
+  EVENT
+  SILENT_CRUSADE
+  BATTLE_ANALYSIS
+  GUIDE
+  VIEWERS_CHAT
+  ENHANCE_EQUIP
+  MONSTER_COLLECTION
+  SOUL_WEAPON
+  CHAR_INFO
+  CHANGE_CHANNEL
+  MAIN_MENU
+  SCREENSHOT
+  PICTURE_MODE
+  MAPLE_ACHIEVEMENT
+  PICKUP
+  SIT
+  ATTACK
+  JUMP
+  INTERACT_HARVEST
+  MAPLE_STORAGE
+  SAFE_MODE
+  MUTE
+  MONSTER_BOOK
+  TO_SPOUSE
+  FACE1
+  FACE2
+  FACE3
+  FACE4
+  FACE5
+  FACE6
+  FACE7
+  LEFT
+  RIGHT
+  UP
+  DOWN
+  BACK
+  TAB
+  RETURN
+  ESCAPE
+  SPACE
+  DELETE
+  HOME
+  END
+  COPY
+  PASTE
+}
+pub fn BasicActionId::from_int(Int) -> Self?
+pub fn BasicActionId::from_name(String) -> Self raise
+pub fn BasicActionId::int_value(Self) -> Int
+pub fn BasicActionId::name(Self) -> String
+pub impl Compare for BasicActionId
+pub impl Eq for BasicActionId
+pub impl Hash for BasicActionId
+pub impl Show for BasicActionId
+pub impl ToJson for BasicActionId
+pub impl @json.FromJson for BasicActionId
+
+type ChangeKeymapMessage
+pub fn ChangeKeymapMessage::new(Array[(MsKey, Mapping?)]) -> Self
+pub impl @net.OutMessage for ChangeKeymapMessage
+pub impl Show for ChangeKeymapMessage
+
+pub struct KeyMappingJs {
+  keycode : String
+  kind : String
+  action : Int
+}
+
+pub(all) struct Keyboard {
+  keymap : Map[String, Mapping]
+  maple_keys : Map[MsKey, Mapping]
+  key_state : Map[Int, Bool]
+}
+pub fn Keyboard::assign(Self, MsKey, Mapping) -> Unit
+pub fn Keyboard::get_maplekeys(Self) -> Map[MsKey, Mapping]
+pub fn Keyboard::get_mapping(Self, String) -> Mapping?
+pub fn Keyboard::get_mapping_by_ms_key(Self, MsKey) -> Mapping?
+pub fn Keyboard::new(Map[String, Mapping]) -> Self
+pub fn Keyboard::remove(Self, MsKey) -> Unit
+
+pub(all) enum Mapping {
+  SKILL(Int)
+  ITEM(Int)
+  CASH(Int)
+  MENU(BasicActionId)
+  ACTION(BasicActionId)
+  FACE(Int)
+  MACRO(Int)
+  TEXT(Int)
+}
+pub fn Mapping::from_int_enum(Int, Int) -> Self?
+pub fn Mapping::from_name_value(String, Int) -> Self?
+pub fn Mapping::get_action_value(Self) -> Int
+pub fn Mapping::to_enum_value(Self) -> (Int, Int)
+pub fn Mapping::to_name_value(Self) -> (String, Int)
+pub impl Eq for Mapping
+pub impl Hash for Mapping
+pub impl Show for Mapping
+
+type Module
+pub fn Module::get_keyboard(Self) -> Keyboard
+pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::new(Map[String, Mapping], @net.Network) -> Self
+pub fn Module::on_keymap_change(Self, (Map[String, Mapping]) -> Unit) -> Unit
+
+pub enum MsKey {
+  NUM0
+  NUM1
+  NUM2
+  NUM3
+  NUM4
+  NUM5
+  NUM6
+  NUM7
+  NUM8
+  NUM9
+  MINUS
+  EQUAL
+  Q
+  W
+  E
+  R
+  T
+  Y
+  U
+  I
+  O
+  P
+  LEFT_BRACKET
+  RIGHT_BRACKET
+  LEFT_CONTROL
+  A
+  S
+  D
+  F
+  G
+  H
+  J
+  K
+  L
+  SEMICOLON
+  APOSTROPHE
+  GRAVE_ACCENT
+  LEFT_SHIFT
+  BACKSLASH
+  Z
+  X
+  C
+  V
+  B
+  N
+  M
+  COMMA
+  PERIOD
+  LEFT_ALT
+  SPACE
+  F1
+  F2
+  F3
+  F4
+  F5
+  F6
+  F7
+  F8
+  F9
+  F10
+  F11
+  F12
+  HOME
+  PAGE_UP
+  END
+  PAGE_DOWN
+  INSERT
+  DELETE
+  ESCAPE
+  RIGHT_CONTROL
+  RIGHT_SHIFT
+  RIGHT_ALT
+  SCROLL_LOCK
+}
+pub fn MsKey::from_int(Int) -> Self?
+pub fn MsKey::from_name(String) -> Self?
+pub fn MsKey::int_value(Self) -> Int
+pub impl Eq for MsKey
+pub impl Hash for MsKey
+pub impl Show for MsKey
+
+// Type aliases
+
+// Traits
+

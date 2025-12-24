@@ -1,0 +1,174 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/struct"
+
+import(
+  "Milky2018/selene/math"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub let clr_opaque : Color
+
+pub let color_names : FixedArray[ColorName]
+
+pub fn new_array(FixedArray[Double]) -> Color
+
+// Errors
+
+// Types and methods
+pub(all) enum Code {
+  CNONE
+  CWHITE
+  CBLACK
+  CRED
+  CGREEN
+  CBLUE
+  CYELLOW
+  CTURQUOISE
+  CPURPLE
+}
+pub fn Code::color(Self) -> Color
+pub fn Code::int_value(Self) -> Int
+pub impl Eq for Code
+
+pub(all) struct Color((Double, Double, Double, Double))
+pub fn Color::a(Self) -> Double
+pub fn Color::b(Self) -> Double
+pub fn Color::blend(Self, Self, Double) -> Self
+pub fn Color::from_code(Code) -> Self
+pub fn Color::from_name(ColorName) -> Self
+pub fn Color::from_value(Int) -> Self
+pub fn Color::g(Self) -> Double
+#deprecated
+pub fn Color::inner(Self) -> (Double, Double, Double, Double)
+pub fn Color::invisible(Self) -> Bool
+pub fn Color::new_rgba(Double, Double, Double, Double) -> Self
+pub fn Color::r(Self) -> Double
+pub impl Div for Color
+pub impl Eq for Color
+pub impl Mul for Color
+pub impl Show for Color
+pub impl ToJson for Color
+
+pub(all) enum ColorName {
+  BLACK
+  WHITE
+  YELLOW
+  BLUE
+  RED
+  DARKRED
+  BROWN
+  JAMBALAYA
+  LIGHTGREY
+  DARKGREY
+  ORANGE
+  MEDIUMBLUE
+  VIOLET
+  TOBACCOBROWN
+  EAGLE
+  LEMONGRASS
+  TUNA
+  GALLERY
+  DUSTYGRAY
+  EMPEROR
+  MINESHAFT
+  HALFANDHALF
+  ENDEAVOUR
+  BROWNDERBY
+  PORCELAIN
+  IRISHCOFFEE
+  BOULDER
+  GREEN
+  LIGHTGREEN
+  JAPANESELAUREL
+  GRAYOLIVE
+  ELECTRICLIME
+  SUPERNOVA
+  CHARTREUSE
+  MALIBU
+}
+pub fn ColorName::color(Self) -> Color
+pub fn ColorName::css_name(Self) -> String
+pub fn ColorName::int_value(Self) -> Int
+pub impl Eq for ColorName
+pub impl Show for ColorName
+pub impl ToJson for ColorName
+
+type IntColor
+pub fn IntColor::a(Self) -> Int
+pub fn IntColor::b(Self) -> Int
+pub fn IntColor::from_color(Color) -> Self
+pub fn IntColor::g(Self) -> Int
+pub fn IntColor::r(Self) -> Int
+pub impl Eq for IntColor
+pub impl Hash for IntColor
+pub impl Show for IntColor
+
+pub(all) struct Point[T] {
+  x : T
+  y : T
+}
+pub fn Point::distance(Self[Int], Self[Int]) -> Int
+pub fn[T] Point::new(T, T) -> Self[T]
+pub fn[T : Add] Point::shift_x(Self[T], T) -> Self[T]
+pub fn[T : Add] Point::shift_y(Self[T], T) -> Self[T]
+pub fn[T : Eq] Point::straight(Self[T]) -> Bool
+pub fn Point::to_vec2d(Self[Int]) -> @math.Vec2D
+pub impl[T : Add] Add for Point[T]
+pub impl[T : Default] Default for Point[T]
+pub impl[T : Eq] Eq for Point[T]
+pub impl[T : Neg] Neg for Point[T]
+pub impl[T : Show] Show for Point[T]
+pub impl[T : Sub] Sub for Point[T]
+pub impl[T : ToJson] ToJson for Point[T]
+pub impl @json.FromJson for Point[Int]
+
+pub(all) struct Range[T] {
+  a : T
+  b : T
+}
+pub fn Range::center(Self[Int]) -> Int
+pub fn[T : Compare] Range::contains(Self[T], T) -> Bool
+pub fn[T : Compare] Range::contains_range(Self[T], Self[T]) -> Bool
+pub fn Range::delta(Self[Int]) -> Int
+pub fn[T : Eq] Range::empty(Self[T]) -> Bool
+pub fn[T] Range::first(Self[T]) -> T
+pub fn[T : Compare] Range::greater(Self[T]) -> T
+pub fn Range::length(Self[Int]) -> Int
+pub fn[T] Range::new(T, T) -> Self[T]
+pub fn[T : Compare] Range::overlaps(Self[T], Self[T]) -> Bool
+pub fn[T] Range::second(Self[T]) -> T
+pub fn[T : Compare] Range::smaller(Self[T]) -> T
+pub fn Range::symmetric(Int, Int) -> Self[Int]
+pub impl[T : Add] Add for Range[T]
+pub impl[T : Default] Default for Range[T]
+pub impl[T : Eq] Eq for Range[T]
+pub impl[T : Neg] Neg for Range[T]
+pub impl[T : Show] Show for Range[T]
+pub impl[T : Sub] Sub for Range[T]
+
+type Rectangle[T]
+pub fn[T] Rectangle::bottom(Self[T]) -> T
+pub fn[T : Eq + Compare] Rectangle::contains(Self[T], Point[T]) -> Bool
+pub fn Rectangle::flip_x(Self[Int]) -> Self[Int]
+pub fn[T] Rectangle::from4(T, T, T, T) -> Self[T]
+pub fn Rectangle::get_horizontal(Self[Int]) -> Range[Int]
+pub fn Rectangle::get_vertical(Self[Int]) -> Range[Int]
+pub fn[T : Eq] Rectangle::is_empty(Self[T]) -> Bool
+pub fn[T] Rectangle::left(Self[T]) -> T
+pub fn[T] Rectangle::new(Point[T], Point[T]) -> Self[T]
+pub fn Rectangle::overlaps(Self[Int], Self[Int]) -> Bool
+pub fn[T] Rectangle::right(Self[T]) -> T
+pub fn[T : Add] Rectangle::shift(Self[T], Point[T]) -> Self[T]
+pub fn[T : Eq] Rectangle::straight(Self[T]) -> Bool
+pub fn[T] Rectangle::top(Self[T]) -> T
+pub impl[T : Default] Default for Rectangle[T]
+pub impl[T : Eq] Eq for Rectangle[T]
+pub impl[T : Show] Show for Rectangle[T]
+pub impl[T : ToJson] ToJson for Rectangle[T]
+pub impl @json.FromJson for Rectangle[Int]
+
+// Type aliases
+
+// Traits
+

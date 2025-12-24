@@ -1,0 +1,415 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ui"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/keyboard"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/utils"
+  "Milky2018/selene/entity"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub let all_types : FixedArray[UIElementType]
+
+pub fn draw_rectangle(Int, Int, Int, Int, @struct.ColorName, Double) -> Unit
+
+pub fn get_number_set() -> NumberSet?
+
+pub fn get_ui_module() -> UIMod?
+
+pub fn number_system(Double) -> Unit
+
+pub fn remove_cursor(Iter[ButtonModel]) -> Unit
+
+pub fn send_cursor(AreaButton, Bool, @struct.Point[Int]) -> CursorState
+
+pub fn send_cursor_to_areas(Iter[InteractiveArea], @struct.Point[Int], Bool, @struct.Point[Int]) -> CursorState
+
+pub fn send_cursor_to_btns(Iter[Button], @struct.Point[Int], Bool, @struct.Point[Int]) -> CursorState
+
+pub fn ui_system(Double) -> Unit
+
+pub fn ui_window_2_loader() -> @resource.AsyncLoader
+
+pub fn ui_window_4_loader() -> @resource.AsyncLoader
+
+pub fn update_sprites(Iter[@graphics.Sprite]) -> Unit
+
+// Errors
+
+// Types and methods
+type AreaButton
+pub fn AreaButton::new(@struct.Point[Int], @struct.Point[Int]) -> Self
+pub impl UIButton for AreaButton
+
+pub(all) struct Button {
+  object : &UIButton
+  on_click : (() -> ButtonState?)?
+}
+pub fn Button::as_interactable(Self) -> RenderElement
+pub fn Button::get_interactive_area(Self) -> InteractiveArea?
+pub fn Button::new(&UIButton, on_click? : () -> ButtonState?) -> Self
+pub impl @graphics.Drawable for Button
+pub impl RenderUnit for Button
+pub impl ToJson for Button
+
+type ButtonModel
+pub fn ButtonModel::default() -> Self
+pub fn ButtonModel::get_state(Self) -> ButtonState
+pub fn ButtonModel::is_active(Self) -> Bool
+pub fn ButtonModel::is_pressed(Self) -> Bool
+pub fn ButtonModel::new(state? : ButtonState, pos? : @struct.Point[Int], active? : Bool, pressed? : Bool) -> Self
+pub fn ButtonModel::set_active(Self, Bool) -> Unit
+pub fn ButtonModel::set_position(Self, @struct.Point[Int]) -> Unit
+pub fn ButtonModel::set_state(Self, ButtonState) -> Unit
+pub fn ButtonModel::toggle_pressed(Self) -> Unit
+
+pub(all) enum ButtonState {
+  NORMAL
+  DISABLED
+  MOUSEOVER
+  PRESSED
+}
+pub impl Eq for ButtonState
+pub impl Hash for ButtonState
+
+pub(all) enum CursorState {
+  IDLE
+  CAN_CLICK
+  GAME
+  HOUSE
+  CAN_CLICK2
+  CAN_GRAB
+  GIFT
+  VSCROLL
+  HSCROLL
+  VSCROLL_IDLE
+  HSCROLL_IDLE
+  GRABBING
+  CLICKING
+  RCLICK
+  LEAF
+  CHAT_BAR_VDRAG
+  CHAT_BAR_HDRAG
+  CHAT_BAR_BLTRDRAG
+  CHAT_BAR_MOVE
+  CHAT_BAR_BRTLDRAG
+}
+pub impl Compare for CursorState
+pub impl Eq for CursorState
+pub impl Hash for CursorState
+pub impl Show for CursorState
+
+type DamageSkin
+pub impl Default for DamageSkin
+
+type EffectHook[T]
+pub fn[T] EffectHook::new() -> Self[T]
+pub fn[T : Eq] EffectHook::use_effect(Self[T], T, () -> Unit) -> Unit
+
+pub(all) struct Element {
+  key : UIElementType
+  ui_model : UIModel
+  object : &Widget
+  toggle_active : () -> Unit
+  on_close : () -> Unit
+  runtime_state : Ref[RuntimeState?]
+}
+pub fn Element::doubleclick(Self, @struct.Point[Int]) -> Bool
+pub fn Element::draw(Self) -> Unit
+pub fn Element::get_ui_model(Self) -> UIModel
+pub fn Element::is_in_interactive_area(Self, @struct.Point[Int]) -> Bool
+pub fn[T : Widget] Element::new((Hooks) -> T, UIElementType, toggle_active? : () -> Unit, on_close? : () -> Unit) -> Self
+pub fn Element::send_cursor(Self, Bool, @struct.Point[Int]) -> CursorState
+pub fn Element::update(Self) -> Unit
+
+type Gauge
+pub fn Gauge::new(GaugeType, @graphics.Texture, Int, Double) -> Self
+pub fn Gauge::new_with_mid(GaugeType, @graphics.Texture, @graphics.Texture, Int, Double) -> Self
+pub fn Gauge::new_with_mid_end(GaugeType, @graphics.Texture, @graphics.Texture, @graphics.Texture, Int, Double) -> Self
+pub fn Gauge::set_target(Self, Double) -> Unit
+pub impl @graphics.Drawable for Gauge
+pub impl RenderUnit for Gauge
+pub impl ToJson for Gauge
+
+pub(all) enum GaugeType {
+  GAME
+  CASHSHOP
+}
+pub impl Show for GaugeType
+pub impl ToJson for GaugeType
+
+pub(all) struct Hooks {
+  ui_model : UIModel
+  on_state_changed : () -> Unit
+}
+pub fn Hooks::default() -> Self
+pub fn Hooks::on_state_changed(Self) -> Unit
+
+pub(all) struct IconModel {
+  countset : @graphics.Charset
+  mut count : Int?
+  mut dragged : Bool
+  mut cursor_offset : @struct.Point[Int]
+}
+pub fn IconModel::draw(Self, @struct.Point[Int], @graphics.Texture) -> Unit
+pub fn IconModel::get_bounds(@graphics.Texture) -> @struct.Rectangle[Int]
+pub fn IconModel::new(@graphics.Charset, Int?) -> Self
+pub impl ToJson for IconModel
+
+pub(all) struct InteractiveArea {
+  bounds : @struct.Rectangle[Int]
+  on_click : () -> Unit
+  on_double_click : () -> Unit
+  state : Ref[ButtonState]
+}
+pub impl ToJson for InteractiveArea
+
+pub(all) struct MapleButton {
+  entity : @entity.Entity
+}
+pub fn MapleButton::destroy(Self) -> Unit
+pub fn MapleButton::from_resource(@resource.NxNode, pos? : @struct.Point[Int]) -> Self
+pub fn MapleButton::new(MapleButtonResource, pos? : @struct.Point[Int], on_click? : () -> Unit) -> Self
+pub impl UIButton for MapleButton
+
+pub(all) struct MapleButtonResource(Map[ButtonState, @resource.NxAnimation])
+pub fn MapleButtonResource::from_resource(@resource.NxNode) -> Self
+#deprecated
+pub fn MapleButtonResource::inner(Self) -> Map[ButtonState, @resource.NxAnimation]
+pub impl @json.FromJson for MapleButtonResource
+
+type MobHpBar
+pub fn MobHpBar::default() -> Self
+pub fn MobHpBar::draw(Self, @struct.Point[Int], Int) -> Unit
+
+type NameTag
+pub fn NameTag::new(@graphics.FontId, String, NameTagResource) -> Self
+pub fn NameTag::set_selected(Self, Bool) -> Unit
+pub impl @graphics.Drawable for NameTag
+pub impl ToJson for NameTag
+
+pub(all) struct NameTagResource {
+  not_selected : (@resource.NxFrame, @resource.NxFrame, @resource.NxFrame)
+  selected : (@resource.NxFrame, @resource.NxFrame, @resource.NxFrame)
+}
+pub impl @json.FromJson for NameTagResource
+
+type Number
+pub fn Number::row_height(Bool) -> Int
+pub fn Number::set_x(Self, Int) -> Unit
+
+pub struct NumberSet {
+  red_skins : @utils.BoolPair[DamageSkin]
+  cri_skins : @utils.BoolPair[DamageSkin]
+  violet_skins : @utils.BoolPair[DamageSkin]
+  blue_skins : @utils.BoolPair[DamageSkin]
+}
+pub async fn NumberSet::load() -> Self
+pub fn NumberSet::new_number(Self, NumberType, Int, Int, x? : Int) -> Unit
+pub impl Default for NumberSet
+
+pub(all) enum NumberType {
+  HIT_NORMAL
+  HIT_CRITICAL
+  HURT
+  HEAL_HP
+  HEAL_MP
+}
+
+type OffsetedUnit[T]
+pub fn[T] OffsetedUnit::new(T, @struct.Point[Int]) -> Self[T]
+pub fn OffsetedUnit::offset_element(RenderElement, @struct.Point[Int]) -> RenderElement
+pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T]
+pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T]
+pub impl[T : ToJson] ToJson for OffsetedUnit[T]
+
+pub(all) enum RenderElement {
+  Static(&RenderUnit)
+  Interactable(&RenderUnit, InteractiveArea)
+}
+pub impl ToJson for RenderElement
+
+pub(all) struct RenderSpec {
+  render_elements : Array[RenderElement]
+}
+pub impl ToJson for RenderSpec
+
+type RuntimeState
+
+pub(all) struct SpriteUI(@graphics.Sprite)
+#deprecated
+pub fn SpriteUI::inner(Self) -> @graphics.Sprite
+pub impl @graphics.Drawable for SpriteUI
+pub impl RenderUnit for SpriteUI
+pub impl ToJson for SpriteUI
+
+type StatefulIcon
+pub fn StatefulIcon::draw(Self, @struct.Point[Int]) -> Unit
+pub fn StatefulIcon::get_texture(Self) -> @graphics.Texture
+pub fn StatefulIcon::new(@graphics.Charset, @graphics.Texture, @graphics.Texture, @graphics.Texture) -> Self
+
+type StaticUI[T]
+pub fn[T] StaticUI::new(T, pos? : @struct.Point[Int], stretch? : @struct.Point[Int]) -> Self[T]
+pub fn[T] StaticUI::new_ex(T, args? : @graphics.DrawArgument) -> Self[T]
+pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUI[T]
+pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T]
+pub impl[T : ToJson] ToJson for StaticUI[T]
+
+type StaticUnit[T]
+pub fn[T] StaticUnit::new(T) -> Self[T]
+pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUnit[T]
+pub impl[T : @graphics.Drawable] RenderUnit for StaticUnit[T]
+pub impl[T : ToJson] ToJson for StaticUnit[T]
+
+type TextButton
+pub fn TextButton::draw_in_range(Self, @struct.Point[Int], @struct.Range[Int]) -> Unit
+pub fn TextButton::get_option_number(Self) -> Int
+pub fn TextButton::height(Self) -> Int
+pub fn TextButton::new(@graphics.Text, Int) -> Self
+pub impl UIButton for TextButton
+
+pub(all) struct TextUI(@graphics.Text)
+#deprecated
+pub fn TextUI::inner(Self) -> @graphics.Text
+pub impl @graphics.Drawable for TextUI
+pub impl ToJson for TextUI
+
+pub(all) struct TextureTextUI(@graphics.TextureText)
+#deprecated
+pub fn TextureTextUI::inner(Self) -> @graphics.TextureText
+pub impl @graphics.Drawable for TextureTextUI
+pub impl ToJson for TextureTextUI
+
+pub(all) struct TextureUI(@graphics.Texture)
+#deprecated
+pub fn TextureUI::inner(Self) -> @graphics.Texture
+pub impl @graphics.Drawable for TextureUI
+pub impl ToJson for TextureUI
+
+type TwoSpriteButton
+pub fn TwoSpriteButton::new(@graphics.Texture, @graphics.Texture, np? : @struct.Point[Int], sp? : @struct.Point[Int], active? : Bool, state? : ButtonState) -> Self
+pub impl UIButton for TwoSpriteButton
+
+pub(all) struct UI {
+  mut state : &UIState?
+  get_keyboard_mapping : (String) -> @keyboard.Mapping?
+}
+pub fn UI::change_state(Self, &UIState) -> Unit
+pub fn UI::new((String) -> @keyboard.Mapping?) -> Self
+pub fn UI::send_key(Self, String, Bool) -> Unit
+pub fn UI::set_element(Self, Bool, Element) -> Unit
+pub fn UI::update(Self) -> Unit
+pub impl Container for UI
+
+pub(all) enum UIElementType {
+  UI_ELEMENT_NONE
+  START
+  LOGIN
+  TOS
+  GENDER
+  WORLD_SELECT
+  REGION
+  UI_ELEMENT_CHAR_SELECT
+  LOGIN_WAIT
+  UI_ELEMENT_RACE_SELECT
+  CLASS_CREATION
+  SOFT_KEYBOARD
+  LOGIN_NOTICE
+  LOGIN_NOTICE_CONFIRM
+  STATUS_MESSENGER
+  STATUS_BAR
+  CHAT_BAR
+  BUFF_LIST
+  NOTICE
+  NPC_TALK
+  SHOP
+  STATS_INFO
+  ITEM_INVENTORY
+  EQUIP_INVENTORY
+  SKILL_BOOK
+  QUEST_LOG
+  WORLD_MAP
+  USER_LIST
+  MINI_MAP
+  CHANNEL
+  CHAT
+  CHAT_RANK
+  JOYPAD
+  EVENT
+  KEY_CONFIG
+  OPTION_MENU
+  QUIT
+  CHAR_INFO
+  CASHSHOP
+  GAUGE_BOSS
+  NOTIFICATION
+  TRADE
+}
+pub impl Compare for UIElementType
+pub impl Eq for UIElementType
+pub impl Hash for UIElementType
+
+pub struct UIMod {
+  number_set : NumberSet
+}
+pub fn UIMod::get_number_set(Self) -> NumberSet
+pub async fn UIMod::load() -> Self
+
+pub(all) struct UIModel {
+  mut position : @struct.Point[Int]
+  mut dimension : @struct.Point[Int]
+  mut active : Bool
+}
+pub fn UIModel::deactivate(Self) -> Unit
+pub fn UIModel::is_active(Self) -> Bool
+pub fn UIModel::makeactive(Self) -> Unit
+pub fn UIModel::new(@struct.Point[Int], @struct.Point[Int], active? : Bool) -> Self
+pub fn UIModel::toggle_active(Self) -> Unit
+
+// Type aliases
+
+// Traits
+pub(open) trait Container {
+  add_ui(Self, Element, Bool) -> Unit
+  remove_ui(Self, UIElementType) -> Unit
+}
+
+pub(open) trait RenderUnit : ToJson + @graphics.Drawable {
+  update(Self) -> Unit
+}
+
+pub(open) trait UIButton {
+  draw(Self, @struct.Point[Int]) -> Unit
+  update(Self) -> Unit
+  bounds(Self) -> @struct.Rectangle[Int]
+  width(Self) -> Int
+  origin(Self) -> @struct.Point[Int]
+  get_button_base(Self) -> ButtonModel
+}
+
+pub(open) trait UIElementDescriptor {
+  const_type() -> UIElementType
+  const_toggled() -> Bool
+  const_focused() -> Bool
+}
+
+pub(open) trait UIState {
+  draw(Self, Double, @struct.Point[Int]) -> Unit
+  update(Self) -> Unit
+  send_key(Self, @keyboard.Mapping?, Bool, Bool) -> Unit
+  send_cursor(Self, CursorState, @struct.Point[Int]) -> CursorState
+  doubleclick(Self, @struct.Point[Int]) -> Unit
+  set_element(Self, Bool, Element) -> Unit
+  remove(Self, UIElementType) -> Unit
+  get(Self, UIElementType) -> Element?
+  get_front_by_types(Self, Array[UIElementType]) -> Element?
+}
+
+pub(open) trait Widget {
+  render(Self) -> RenderSpec
+}
+

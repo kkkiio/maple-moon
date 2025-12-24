@@ -1,0 +1,210 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/monster"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/char_stats"
+  "KKKIIO/maple-moon/lib/ms/combat_proto"
+  "KKKIIO/maple-moon/lib/ms/map_object"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/utils"
+  "Milky2018/selene/sprite"
+  "moonbitlang/core/json"
+  "moonbitlang/core/queue"
+)
+
+// Values
+pub fn apply_move_attack(MobSpecialAttack, Mob) -> Unit
+
+pub fn apply_move_skill(MobSkill, Mob) -> Unit
+
+pub fn create_mob_spawn(Int, Int, Int, Int, Int, Bool, Int, @struct.Point[Int]) -> MobSpawn
+
+pub fn handle_kill_mob(MapMobs, @net.InPacket) -> Unit raise
+
+pub fn handle_mob_move_response(MobCombat, @net.InPacket) -> Unit raise
+
+pub fn handle_mob_moved(MapMobs, MobCombat, @net.InPacket) -> Unit raise
+
+pub fn handle_show_mob_hp(MapMobs, () -> @char_stats.CharStats?, @net.InPacket) -> Unit raise
+
+pub fn handle_spawn_mob(MapMobs, @net.InPacket) -> Unit raise
+
+pub fn handle_spawn_mob_controller(MapMobs, @net.InPacket) -> Unit raise
+
+pub fn map_monsters_system(Double) -> Unit
+
+pub fn set_mobs(MapMobsContext) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+type Effect
+pub fn Effect::apply(Self, (@graphics.Animation, Int, Int, Bool) -> Unit) -> Unit
+pub fn Effect::new(@resource.NxNode) -> Self raise
+
+type FlyDirection
+
+pub struct MapMobs {
+  mobs : @map_object.MapObjects[Mob]
+  loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
+  spawns : @queue.Queue[MobSpawn]
+  randomizer : @utils.Randomizer
+}
+pub fn MapMobs::clear(Self) -> Unit
+pub fn MapMobs::contains(Self, Int) -> Bool
+pub fn MapMobs::create_attack(Self, Int) -> @combat_proto.MobAttack?
+pub fn MapMobs::draw(Self, Int, Double, Double, Double) -> Unit
+pub fn MapMobs::find_colliding(Self, @physics.MovingObject) -> Int?
+pub fn MapMobs::get_mob_head_position(Self, Int) -> @struct.Point[Int]
+pub fn MapMobs::get_mob_position(Self, Int) -> @struct.Point[Int]
+pub fn MapMobs::get_mobs(Self) -> @map_object.MapObjects[Mob]
+pub fn MapMobs::new() -> Self
+pub fn MapMobs::remove(Self, Int, Int) -> Unit
+pub fn MapMobs::send_attack(Self, @combat_proto.AttackResult, @combat_proto.Attack, Array[Int]) -> Unit
+pub fn MapMobs::send_mobhp(Self, Int, Int, Int) -> Unit
+pub fn MapMobs::send_movement(Self, Int, @struct.Point[Int], Array[@physics.Movement]) -> Unit
+pub fn MapMobs::set_control(Self, Int, Bool) -> Unit
+pub fn MapMobs::spawn(Self, MobSpawn) -> Unit
+pub fn MapMobs::update(Self, @physics.Physics) -> Unit
+
+pub(all) struct MapMobsContext {
+  map_mobs : MapMobs
+  physics : @physics.Physics
+}
+
+type Mob
+pub fn Mob::apply_damage(Self, Int, Bool) -> Unit
+pub fn Mob::calculate_damage(Self, @combat_proto.Attack) -> Array[(Int, Bool)]
+pub fn Mob::create_touch_attack(Self) -> @combat_proto.MobAttack
+pub fn Mob::get_head_position(Self, position? : @struct.Point[Int]) -> @struct.Point[Int]
+pub fn Mob::get_live_range(Self) -> @struct.Rectangle[Int]?
+pub fn Mob::get_move_attack(Self, Int) -> MobSpecialAttack raise
+pub fn Mob::get_move_skill(Self, Int, Int) -> @utils.Future[Result[MobSkill, Error]]
+pub fn Mob::give_buff(Self, MobBuff) -> Unit
+pub fn Mob::is_alive(Self) -> Bool
+pub fn Mob::is_in_range(Self, @struct.Rectangle[Int]) -> Bool
+pub fn Mob::kill(Self, Int) -> Unit
+pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, Int, @struct.Point[Int], @utils.Randomizer) -> Self
+pub fn Mob::send_movement(Self, @struct.Point[Int], Array[@physics.Movement]) -> Unit
+pub fn Mob::set_control(Self, Int) -> Unit
+pub fn Mob::set_stance(Self, Stance) -> Unit
+pub fn Mob::show_effect(Self, @resource.NxAnimation, Int, Int, Bool) -> Unit
+pub fn Mob::show_hp(Self, Int, Int) -> Unit
+pub fn Mob::update_movement(Self) -> Unit
+pub fn Mob::update_movement_ex(Self, Int, Int, Int, Int, Int, Int) -> Unit
+pub fn Mob::use_attack(Self, MobSpecialAttack) -> Unit
+pub fn Mob::use_skill(Self, MobSkill) -> Unit
+pub impl @map_object.MapObject for Mob
+
+pub(all) struct MobAnimation {
+  nx : @resource.NxAnimation
+  selene_l : @sprite.Animation
+  selene_r : @sprite.Animation
+}
+
+pub(all) struct MobAnimations {
+  fly : @resource.NxAnimation?
+  stand : @resource.NxAnimation?
+  move_ : @resource.NxAnimation?
+  jump : @resource.NxAnimation?
+  hit1 : @resource.NxAnimation
+  die1 : @resource.NxAnimation
+}
+pub impl Show for MobAnimations
+pub impl @json.FromJson for MobAnimations
+
+pub(all) struct MobBuff {
+  time : Int
+  anim : @graphics.Animation
+}
+
+type MobCombat
+pub fn MobCombat::new(MapMobs) -> Self
+pub fn MobCombat::use_move(Self, Int, Int, Int, Int) -> Unit raise
+
+type MobInfo
+pub impl ToJson for MobInfo
+pub impl @json.FromJson for MobInfo
+
+pub(all) struct MobMultiUseEffect {
+  effects : Array[Effect]
+}
+pub fn MobMultiUseEffect::new(@resource.NxNode, Bool) -> Self raise
+pub impl MobSkillUseEffect for MobMultiUseEffect
+
+pub(all) struct MobSingleUseEffect {
+  effect : Effect
+}
+pub fn MobSingleUseEffect::new(@resource.NxNode) -> Self raise
+pub impl MobSkillUseEffect for MobSingleUseEffect
+
+pub(all) struct MobSkill {
+  skill_id : Int
+  level : Int
+  buff : MobBuff
+}
+pub fn MobSkill::apply_hit_effects(Self, Mob) -> Unit
+pub fn MobSkill::apply_useeffects(Self, Mob) -> Unit
+pub fn MobSkill::get_buff(Self) -> MobBuff
+pub fn MobSkill::get_id(Self) -> Int
+pub fn MobSkill::get_level(Self) -> Int
+pub fn MobSkill::is_attack(Self) -> Bool
+pub fn MobSkill::is_buff(Self) -> Bool
+pub fn MobSkill::is_skill(Self) -> Bool
+pub async fn MobSkill::load(Int, Int) -> Self
+pub fn MobSkill::new(Int, Int, @resource.NxNode) -> Self raise
+
+pub(all) struct MobSpawn {
+  oid : Int
+  id : Int
+  mode : Int
+  stance : Int
+  fh : Int
+  new_spawn : Bool
+  team : Int
+  position : @struct.Point[Int]
+}
+pub async fn MobSpawn::instantiate(Self, @utils.Randomizer) -> Mob
+
+type MobSpecialAttack
+pub fn MobSpecialAttack::apply_useeffects(Self, Mob) -> Unit
+pub fn MobSpecialAttack::get_id(Self) -> Int
+pub fn MobSpecialAttack::new(@resource.NxNode, Int, Int) -> Self raise
+
+type Module
+pub fn Module::get_map_mobs(Self) -> MapMobs
+pub fn Module::make_handlers(Self, () -> @char_stats.CharStats?) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::new() -> Self
+
+pub(all) struct Stance {
+  t : StanceType
+  face_right : Bool
+}
+pub fn Stance::flip(Self) -> Self
+pub fn Stance::from_byte(Int) -> Self
+pub fn Stance::from_type(StanceType) -> Self
+pub fn Stance::int_value(Self) -> Int
+pub impl Eq for Stance
+
+pub(all) enum StanceType {
+  MOVE
+  STAND
+  JUMP
+  HIT
+  DIE
+  SKILL
+}
+pub impl Eq for StanceType
+pub impl Hash for StanceType
+
+// Type aliases
+
+// Traits
+trait MobSkillUseEffect
+

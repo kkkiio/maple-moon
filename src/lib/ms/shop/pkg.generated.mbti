@@ -1,0 +1,82 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/shop"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "rami3l/js-ffi/js"
+)
+
+// Values
+pub fn buy_shop_item_ffi(Module, SlotNo, Int, Int) -> Unit
+
+pub fn leave_shop_ffi(Module) -> Unit
+
+pub fn parse_open_npc_shop(@net.InPacket) -> OpenNpcShop raise
+
+pub fn sell_inventory_item_ffi(Module, @inventory.SlotNo, Int, Int) -> Unit
+
+pub fn watch_confirm_shop_transaction_ffi(Module, (String) -> Bool) -> Unit
+
+pub fn watch_opening_shop_ffi(Module, (@js.Nullable[ShopUIData]) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+pub enum ConfirmShopTransactionCode {
+  Ok
+  NotEnoughMesos
+  InventoryFull
+  NotEnoughInStock
+  DueToError
+  NotEnoughItems
+}
+pub impl Show for ConfirmShopTransactionCode
+
+type Module
+pub fn Module::load(@net.Network, @resource.SyncLoader) -> Self
+pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+
+pub struct OpenNpcShop {
+  npc_id : Int
+  items : Array[ShopItem]
+}
+pub impl Show for OpenNpcShop
+pub impl ToJson for OpenNpcShop
+
+pub struct SellableItemUIData {
+  slot_no : SlotNo
+  item_id : Int
+  name : String
+  price : Int
+  icon : @resource.Image
+  buyable_qty : Int
+}
+
+pub struct ShopItem {
+  id : Int
+  price : Int
+  pitch : Int
+  time : Int
+  charge_price : Int
+  buyable : Int
+}
+pub impl Show for ShopItem
+pub impl ToJson for ShopItem
+
+pub struct ShopUIData {
+  npc_id : Int
+  shop_items : Array[SellableItemUIData]
+}
+
+type SlotNo
+pub impl Eq for SlotNo
+pub impl Hash for SlotNo
+pub impl Show for SlotNo
+pub impl ToJson for SlotNo
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/log"
+
+// Values
+#callsite(autofill(loc))
+pub fn debug(Map[String, &Show], String, loc~ : SourceLoc) -> Unit
+
+#callsite(autofill(loc))
+pub fn error(Map[String, &Show], String, loc~ : SourceLoc) -> Unit
+
+#callsite(autofill(loc))
+pub fn info(Map[String, &Show], String, loc~ : SourceLoc) -> Unit
+
+#callsite(autofill(loc))
+pub fn log(Level, Map[String, &Show], String, loc~ : SourceLoc) -> Unit
+
+#callsite(autofill(loc))
+pub fn[T] unwrap_err(Result[T, Error], loc~ : SourceLoc) -> T
+
+#callsite(autofill(loc))
+pub fn warn(Map[String, &Show], String, loc~ : SourceLoc) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) enum Level {
+  TRACE
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
+// Type aliases
+
+// Traits
+

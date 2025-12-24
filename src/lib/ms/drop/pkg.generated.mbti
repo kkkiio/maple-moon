@@ -1,0 +1,75 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/drop"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/map_object"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+)
+
+// Values
+pub fn handle_drop_loot_parsed(MapDrops, DropLoot) -> Unit
+
+pub fn handle_remove_loot_parsed(MapDrops, RemoveLoot, (Int) -> @physics.PhysicsObject?) -> Unit
+
+pub fn parse_drop_loot(@net.InPacket) -> DropLoot raise
+
+pub fn parse_remove_loot(@net.InPacket) -> RemoveLoot raise
+
+// Errors
+
+// Types and methods
+pub struct DropLoot {
+  mode : Int
+  oid : Int
+  meso : Bool
+  item_id : Int
+  owner : Int
+  pickuptype : Int
+  dropto : @struct.Point[Int]
+  dropfrom : @struct.Point[Int]
+  player_drop : Bool
+}
+pub impl Show for DropLoot
+pub impl ToJson for DropLoot
+
+type DropSpawn
+
+type ItemDrop
+pub fn ItemDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Int, Bool, @resource.NxTexture) -> Self
+pub impl Drop for ItemDrop
+pub impl @map_object.MapObject for ItemDrop
+
+type MapDrops
+pub fn MapDrops::clear(Self) -> Unit
+pub fn MapDrops::draw(Self, Int, Double, Double, Double) -> Unit
+pub fn MapDrops::list_loot_at(Self, @struct.Point[Int]) -> Iter[(Int, @struct.Point[Int])]
+pub fn MapDrops::remove(Self, Int, Int, @physics.PhysicsObject?) -> Unit
+pub fn MapDrops::spawn(Self, DropSpawn) -> Unit
+pub fn MapDrops::update(Self, @physics.Physics) -> Unit
+
+type MesoDrop
+pub fn MesoDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Bool, @graphics.Animation) -> Self
+pub impl Drop for MesoDrop
+pub impl @map_object.MapObject for MesoDrop
+
+type Module
+pub fn Module::get_map_drops(Self) -> MapDrops
+pub async fn Module::load() -> Self
+pub fn Module::make_handlers(Self, (Int) -> @physics.PhysicsObject?) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+
+pub struct RemoveLoot {
+  mode : Int
+  oid : Int
+  cid : Int?
+}
+pub impl Show for RemoveLoot
+
+// Type aliases
+
+// Traits
+trait Drop : @map_object.MapObject
+

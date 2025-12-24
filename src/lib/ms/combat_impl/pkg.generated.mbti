@@ -1,0 +1,140 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/combat_impl"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/legacy_types"
+  "KKKIIO/maple-moon/lib/ms/bullet"
+  "KKKIIO/maple-moon/lib/ms/char_look"
+  "KKKIIO/maple-moon/lib/ms/character"
+  "KKKIIO/maple-moon/lib/ms/combat_proto"
+  "KKKIIO/maple-moon/lib/ms/job"
+  "KKKIIO/maple-moon/lib/ms/monster"
+  "KKKIIO/maple-moon/lib/ms/skill"
+  "KKKIIO/maple-moon/lib/ms/weapon"
+  "KKKIIO/maple-moon/lib/resource"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub fn can_use_regular_attack(@weapon.Type, Int) -> ForbidReason
+
+pub fn get_basic_effect() -> BasicEffect
+
+pub fn get_regular_attack_bullet(Int, @bullet.Module) -> @graphics.Animation
+
+pub fn make_hit_effect(@resource.NxNode) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
+
+pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
+
+pub fn make_use_effect(@resource.NxNode, Int) -> UseEffect raise
+
+pub fn new_regular_attack(@bullet.Module) -> SpecialMove
+
+pub fn show_teleport_effect(@character.Character) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct BasicEffect {
+  teleport : @resource.NxAnimation
+}
+pub fn BasicEffect::load() -> Self raise
+
+type ByLevelAction
+pub impl SkillAction for ByLevelAction
+
+pub(all) enum ForbidReason {
+  FBR_NONE
+  FBR_WEAPONTYPE
+  FBR_HPCOST
+  FBR_MPCOST
+  FBR_BULLETCOST
+  FBR_COOLDOWN
+  FBR_OTHER
+}
+pub impl Eq for ForbidReason
+
+type FuncSkillAction
+pub impl SkillAction for FuncSkillAction
+
+type HitEffectNxResource
+pub impl @json.FromJson for HitEffectNxResource
+
+type NoAction
+pub impl SkillAction for NoAction
+pub impl Default for NoAction
+
+type NoAffectedEffect
+pub impl Default for NoAffectedEffect
+
+type NxSkill
+pub impl @json.FromJson for NxSkill
+
+type RegularAction
+pub impl SkillAction for RegularAction
+pub impl Default for RegularAction
+
+pub(all) struct RegularAttack {
+  action : RegularAction
+}
+pub fn RegularAttack::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
+
+type SingleAction
+pub impl SkillAction for SingleAction
+
+type SingleAffectedEffect
+
+type Skill
+pub fn Skill::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
+pub fn Skill::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn Skill::apply_useeffects(Self, @character.Character) -> Unit
+pub fn Skill::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+pub fn Skill::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]
+pub fn Skill::get_bullet(Self, @character.Character, Int) -> @graphics.Animation
+pub fn Skill::get_id(Self) -> Int
+pub fn Skill::is_attack(Self) -> Bool
+pub async fn Skill::load(Int, @bullet.Module) -> Self
+pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
+pub fn Skill::new(Int, @bullet.Module, @resource.NxNode, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
+
+type SkillAffectedEffectEffect
+
+pub(all) struct SpecialMove {
+  id : Int
+  attack : Bool
+  skill : Bool
+  apply_useeffects : (@character.Character) -> Unit
+  apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
+  make_attack : (@character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
+  get_bullet : (@character.Character, Int) -> @graphics.Animation
+  can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+  apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
+  get_afterimage : () -> Map[String, @char_look.NxAfterImage]
+}
+pub fn SpecialMove::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
+pub fn SpecialMove::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn SpecialMove::apply_useeffects(Self, @character.Character) -> Unit
+pub fn SpecialMove::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
+pub fn SpecialMove::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]
+pub fn SpecialMove::get_bullet(Self, @character.Character, Int) -> @graphics.Animation
+pub fn SpecialMove::get_id(Self) -> Int
+pub fn SpecialMove::is_attack(Self) -> Bool
+pub fn SpecialMove::is_skill(Self) -> Bool
+pub fn SpecialMove::make_attack(Self, @character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
+pub impl Show for SpecialMove
+
+type TwoHandedAction
+pub impl SkillAction for TwoHandedAction
+
+pub struct UseEffect((@character.Character) -> Unit)
+#deprecated
+pub fn UseEffect::inner(Self) -> (@character.Character) -> Unit
+
+// Type aliases
+
+// Traits
+trait SkillAction
+
+trait SkillAffectedEffect
+

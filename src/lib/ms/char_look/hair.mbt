@@ -56,14 +56,14 @@ pub async fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
 ///|
 pub fn Hair::parse(
   hairid : Int,
-  hairnode : NxStanceLooks[@types.NxLayerTextures],
+  hairnode : NxStanceLooks[@types.NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
 ) -> Hair {
   let stances : Map[@types.StanceId, Map[HairLayer, @resource.NxAnimation]] = Map::new()
-  for stance, stancenode in hairnode.inner() {
+  for stance, stancenode in hairnode.0 {
     let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map::new()
     for frame, framenode in stancenode {
-      for layername, layernode in framenode.textures {
+      for layername, layernode in framenode.part_texture_map {
         let layer = match layers_by_name.get(layername) {
           Some(v) => v
           None => {

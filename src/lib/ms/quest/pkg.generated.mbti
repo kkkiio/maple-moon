@@ -1,0 +1,130 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/quest"
+
+import(
+  "KKKIIO/maple-moon/lib/game_mod"
+  "KKKIIO/maple-moon/lib/maple_protocol"
+  "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/ms/markup_text"
+  "KKKIIO/maple-moon/lib/ms/npc"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/ms/player"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/ui"
+  "moonbitlang/core/json"
+)
+
+// Values
+pub fn forfeit_quest_ffi(Module, Int) -> Unit
+
+pub fn next_talk(QuestPhaseSays, TalkState, Bool?) -> QuestTalk?
+
+pub fn parse_player_quest_info(@net.InPacket) -> @maple_protocol.PlayerQuestLogInfo raise
+
+pub fn parse_quest_desc(String, ref_name_provider? : &QuestTextRefProvider) -> String raise
+
+pub fn watch_quest_log_ffi(Module, (Array[QuestFFI]) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+pub enum Action {
+  StartQuest
+  CompleteQuest
+}
+pub impl Show for Action
+
+pub enum ExpectResponse {
+  NEXT(() -> QuestTalk?)
+  YES_NO((Bool) -> (QuestTalk?, Action?))
+  OK(() -> Action?)
+  SELECT((Int) -> QuestTalk?)
+}
+
+type MapQuests
+pub fn MapQuests::add_npc(Self, Int, @physics.MovingObject) -> Unit
+pub fn MapQuests::clear(Self) -> Unit
+pub fn MapQuests::draw(Self, Int, Double, Double, Double) -> Unit
+pub fn MapQuests::remove_npc(Self, Int) -> Unit
+pub fn MapQuests::send_cursor(Self, Bool, @struct.Point[Int], @struct.Point[Int]) -> @ui.CursorState?
+pub fn MapQuests::set_player(Self, @player.Player) -> Unit
+pub fn MapQuests::update(Self, @physics.Physics) -> Unit
+pub fn MapQuests::update_quest(Self, Int) -> Unit
+
+type MapQuestsResource
+pub async fn MapQuestsResource::load() -> Self
+
+type Module
+pub fn Module::get_map_quests(Self) -> MapQuests
+pub fn Module::handle_player_quest_info(Self, @maple_protocol.PlayerQuestLogInfo) -> Unit
+pub async fn Module::load(@net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]
+pub fn Module::new(QuestResource, MapQuestsResource, @net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+
+pub struct QuestFFI {
+  id : Int
+  name : String
+  desc : String
+  progress : String
+  completed_time : Double
+}
+
+type QuestInfo
+pub impl Show for QuestInfo
+
+type QuestPhaseAct
+pub impl Default for QuestPhaseAct
+pub impl Show for QuestPhaseAct
+pub impl @json.FromJson for QuestPhaseAct
+
+type QuestPhaseChecks
+pub impl Default for QuestPhaseChecks
+pub impl Show for QuestPhaseChecks
+
+type QuestPhaseSays
+pub impl Default for QuestPhaseSays
+pub impl Show for QuestPhaseSays
+pub impl @json.FromJson for QuestPhaseSays
+
+pub struct QuestResource {
+  quest_info_map : Map[Int, QuestInfo]
+  quest_checks_map : Map[Int, Array[QuestPhaseChecks]]
+  quest_say_map : Map[Int, Array[QuestPhaseSays]]
+  quest_acts_map : Map[Int, Array[QuestPhaseAct]]
+}
+pub impl @json.FromJson for QuestResource
+
+pub(all) enum QuestStatus {
+  NotStarted
+  InProgress
+  Completed
+}
+pub fn QuestStatus::from_int(Int) -> Self?
+pub fn QuestStatus::int_value(Self) -> Unit
+pub impl Eq for QuestStatus
+pub impl Hash for QuestStatus
+pub impl Show for QuestStatus
+
+pub struct QuestTalk {
+  content : String
+  expect_response : ExpectResponse
+}
+
+pub(all) enum TalkState {
+  Narrative(next~ : Int)
+  YesReply(next~ : Int)
+  NoReply(next~ : Int)
+  Ask(next~ : Int, expect_answer~ : Int, error_replys~ : Array[String], answer~ : Int)
+}
+pub impl Show for TalkState
+
+type TestQuestRefNameProvider
+pub impl Default for TestQuestRefNameProvider
+
+// Type aliases
+
+// Traits
+trait QuestTextRefProvider
+

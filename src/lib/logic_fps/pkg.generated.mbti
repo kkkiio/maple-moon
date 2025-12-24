@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/logic_fps"
+
+// Values
+pub const LOGIC_FPS : Int = 125
+
+pub const STEP_TIME_MS : Int = 8
+
+pub fn get_logic_time_delta() -> Double
+
+pub fn get_logic_times() -> Int
+
+pub fn logic_fps_system(Double) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

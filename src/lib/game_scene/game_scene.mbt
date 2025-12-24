@@ -354,7 +354,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         let draw_info = char_look_mod.draw_info
         let stance_bodys_map = char_look_mod.stance_bodys_map.0
         let stance_heads_map = char_look_mod.stance_heads_map.0
-        let hair_node : @char_look.NxStanceLooks[@types.NxLayerTextures] = @json.from_json(
+        let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
           @char_look.male_1_white_hair,
         )
         let entity = @entity.Entity::new()

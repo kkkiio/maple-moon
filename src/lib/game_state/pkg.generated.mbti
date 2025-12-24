@@ -1,0 +1,32 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/game_state"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/item"
+  "KKKIIO/maple-moon/lib/ms/map"
+  "KKKIIO/maple-moon/lib/ms/monster"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/utils"
+)
+
+// Values
+pub let game_state : GameState
+
+// Errors
+
+// Types and methods
+pub(all) enum GamePhase {
+  SelectCharacter
+  GameStart(map_id~ : Int, portal_id~ : Int, mut loading_data~ : @utils.Future[Result[@item.ItemData, Error]]?)
+  GameTransiting(map_id~ : Int, portal_id~ : Int, mut loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]?)
+  GameActive(map_id~ : Int, portal_id~ : Int, tiles_objs~ : @map.MapLayers, backgrounds~ : @map.Backgrounds, physics~ : @physics.Physics, map_info~ : @map.MapInfo, portals~ : @map.MapPortals, mobs~ : @monster.MapMobs)
+}
+
+pub(all) struct GameState {
+  mut phase : GamePhase
+}
+
+// Type aliases
+
+// Traits
+

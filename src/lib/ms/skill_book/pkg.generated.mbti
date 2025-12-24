@@ -1,0 +1,96 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/skill_book"
+
+import(
+  "KKKIIO/maple-moon/lib/legacy_types"
+  "KKKIIO/maple-moon/lib/ms/combat_impl2"
+  "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/ms/job"
+  "KKKIIO/maple-moon/lib/ms/player"
+  "KKKIIO/maple-moon/lib/ms/skill"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/utils"
+  "moonbitlang/core/immut/hashmap"
+)
+
+// Values
+pub fn handle_skill_update(() -> @player.Player?, SkillUpdate) -> Unit
+
+pub fn increase_sp(Module, Int) -> Unit
+
+pub fn markup_to_html(String) -> String raise
+
+pub fn parse_skill_update(@net.InPacket) -> SkillUpdate raise
+
+pub fn transfer_one_sp(Module, Int, Int, Int) -> String
+
+pub fn watch_skill_book(Module, (SkillBookEvent) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+type Module
+pub async fn Module::load(() -> @player.Player?, @net.Network, @resource.SyncLoader, @combat_impl2.Combat, @inventory.Inventory) -> Self noraise
+pub async fn Module::load_player_skill_book(Self, @job.Job) -> &@legacy_types.SkillBook
+pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+
+type SkillBook
+pub fn SkillBook::collect_required(Self, Int) -> @hashmap.HashMap[Int, Int]
+pub fn SkillBook::get_masterlevel(Self, Int) -> Int
+pub fn SkillBook::get_skill_data(Self, Int) -> @skill.SkillData?
+pub async fn SkillBook::load(@resource.SyncLoader, @job.Job, Array[(SkillBookEvent) -> Bool]) -> Self
+pub fn SkillBook::new(Map[Int, @skill.SkillData], Array[(SkillBookEvent) -> Bool], @utils.Randomizer) -> Self
+pub fn SkillBook::on_attack_event(Self, @combat_impl2.AttackEvent, @combat_impl2.Combat, @player.Player) -> Unit
+pub impl @legacy_types.SkillBook for SkillBook
+
+pub struct SkillBookDataEvent {
+  skill_groups : Array[SkillGroup]
+}
+
+pub struct SkillBookEvent {
+  kind : String
+  data_event : SkillBookDataEvent?
+  level_event : SkillBookLevelEvent?
+}
+
+pub struct SkillBookLevelEvent {
+  skill_id : Int
+  level : Int
+  available_sp : Int
+}
+
+pub struct SkillGroup {
+  job_level_value : Int
+  skills : Array[SkillUIData]
+}
+
+pub struct SkillUIData {
+  id : Int
+  name : String
+  desc : String
+  level : Int
+  master_level : Int
+  icon : @resource.Image
+  enabled : Bool
+  job_level_value : Int
+}
+
+pub struct SkillUpdate {
+  skillid : Int
+  level : Int
+  masterlevel : Int
+  expire : Int
+}
+pub impl Show for SkillUpdate
+pub impl ToJson for SkillUpdate
+
+type SpResetItemId
+pub fn SpResetItemId::int_value(Self) -> Int
+pub impl Show for SpResetItemId
+
+// Type aliases
+pub type SkillBookWatcher = (SkillBookEvent) -> Bool
+
+// Traits
+

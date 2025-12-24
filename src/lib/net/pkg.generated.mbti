@@ -1,0 +1,246 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/net"
+
+import(
+  "KKKIIO/maple-moon/lib/log"
+  "KKKIIO/maple-moon/lib/struct"
+  "moonbitlang/core/buffer"
+  "moonbitlang/core/immut/hashmap"
+  "moonbitlang/core/strconv"
+)
+
+// Values
+pub fn buf_write_utf8(@buffer.Buffer, String) -> Unit
+
+pub fn handle_ping(Network) -> Unit
+
+pub fn hex_to_dec(String) -> Byte raise @strconv.StrConvError
+
+#callsite(autofill(loc))
+pub fn[T : Show] make_handler(Opcode, (InPacket) -> T raise, (T) -> Unit, log_recv? : Bool, loc~ : SourceLoc) -> (Opcode, (InPacket) -> Unit)
+
+pub fn with_log(Opcode, (InPacket) -> Unit raise, log_recv? : Bool) -> (InPacket) -> Unit
+
+// Errors
+pub suberror ReadPacketError String
+pub impl Show for ReadPacketError
+
+type UnknownOpCodeError
+
+// Types and methods
+pub(all) enum ClientOpcode {
+  LOGIN
+  CHAR_LIST_REQUEST
+  SERVER_STATUS_REQUEST
+  ACCEPT_TOS
+  SET_GENDER
+  SERVERLIST_REQUEST
+  SELECT_CHAR
+  PLAYER_LOGIN
+  NAME_CHAR
+  CREATE_CHAR
+  DELETE_CHAR
+  PONG
+  REGISTER_PIC
+  SELECT_CHAR_PIC
+  LOGIN_START
+  CHANGE_MAP
+  CHANGE_CHANNEL
+  ENTER_CASHSHOP
+  MOVE_PLAYER
+  CLOSE_ATTACK
+  RANGED_ATTACK
+  MAGIC_ATTACK
+  TAKE_DAMAGE
+  GENERAL_CHAT
+  TALK_TO_NPC
+  NPC_TALK_MORE
+  NPC_SHOP_ACTION
+  GIVE_FAME
+  CHAR_INFO_REQUEST
+  GATHER_ITEMS
+  SORT_ITEMS
+  MOVE_ITEM
+  USE_ITEM
+  USE_CASH_ITEM
+  SCROLL_EQUIP
+  DROP_MESOS
+  SPEND_AP
+  HEAL_OVER_TIME
+  SPEND_SP
+  CHANGE_KEYMAP
+  USE_SKILL
+  QUEST_ACTION
+  PLAYER_INTERACTION
+  PARTY_OPERATION
+  ADMIN_COMMAND
+  MOVE_MONSTER
+  PICKUP_ITEM
+  DAMAGE_REACTOR
+  PLAYER_MAP_TRANSFER
+  PLAYER_UPDATE
+}
+pub fn ClientOpcode::int_value(Self) -> Int
+pub fn ClientOpcode::log_level(Self) -> @log.Level
+pub impl Compare for ClientOpcode
+pub impl Eq for ClientOpcode
+pub impl Show for ClientOpcode
+
+pub enum ConnectionStatus {
+  CLOSED
+  OPENED
+  READY
+}
+pub impl Eq for ConnectionStatus
+pub impl Show for ConnectionStatus
+
+type InPacket
+pub fn InPacket::available(Self) -> Int
+pub fn InPacket::check_available(Self, Int) -> Unit raise ReadPacketError
+pub fn InPacket::check_finished(Self) -> Unit raise ReadPacketError
+pub fn InPacket::new(Bytes) -> Self
+pub fn InPacket::read_bool(Self) -> Bool raise ReadPacketError
+pub fn InPacket::read_byte(Self) -> Int raise ReadPacketError
+pub fn InPacket::read_int(Self) -> Int raise ReadPacketError
+pub fn InPacket::read_long(Self) -> Int64 raise ReadPacketError
+pub fn InPacket::read_padded_string(Self, Int) -> String raise ReadPacketError
+pub fn InPacket::read_point(Self) -> @struct.Point[Int] raise ReadPacketError
+pub fn InPacket::read_short(Self) -> Int raise ReadPacketError
+pub fn InPacket::read_string(Self) -> String raise ReadPacketError
+pub fn InPacket::read_ubyte(Self) -> Int raise ReadPacketError
+pub fn InPacket::read_uint(Self) -> UInt raise ReadPacketError
+pub fn InPacket::read_ushort(Self) -> Int raise ReadPacketError
+pub fn InPacket::skip(Self, Int) -> Unit raise ReadPacketError
+pub fn InPacket::skip_byte(Self) -> Unit raise ReadPacketError
+pub fn InPacket::skip_int(Self) -> Unit raise ReadPacketError
+pub fn InPacket::skip_long(Self) -> Unit raise ReadPacketError
+pub fn InPacket::skip_short(Self) -> Unit raise ReadPacketError
+
+type Network
+pub fn Network::close(Self) -> Unit
+pub fn Network::connect_channel(Self, Int) -> Unit
+pub fn Network::connect_login(Self) -> Unit
+pub fn Network::get() -> Self
+pub fn Network::get_status(Self) -> ConnectionStatus
+pub fn Network::init() -> Self
+pub fn Network::new() -> Self
+pub fn Network::process_in(Self) -> Unit
+pub fn Network::process_out(Self, Bytes) -> Unit
+pub fn Network::reset_handlers(Self, @hashmap.HashMap[Opcode, (InPacket) -> Unit]) -> Unit
+#callsite(autofill(loc))
+pub fn[T : OutMessage] Network::send_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+#deprecated
+pub fn Network::send_packet(Self, OutPacket) -> Unit
+
+pub(all) enum Opcode {
+  LOGIN_RESULT
+  SERVER_STATUS
+  SERVER_LIST
+  CHAR_LIST
+  SERVER_IP
+  CHARNAME_RESPONSE
+  ADD_NEWCHAR_ENTRY
+  DELCHAR_RESPONSE
+  PING
+  LAST_CONNECTED_WORLD
+  RECOMMENDED_WORLDS
+  CHECK_SPW_RESULT
+  MODIFY_INVENTORY
+  CHANGE_CHANNEL
+  CHANGE_STATS
+  GIVE_BUFF
+  CANCEL_BUFF
+  RECALCULATE_STATS
+  UPDATE_SKILL
+  FAME_RESPONSE
+  SHOW_STATUS_INFO
+  GATHER_RESULT
+  SORT_RESULT
+  UPDATE_QUEST_INFO
+  SERVER_MESSAGE
+  WEEK_EVENT_MESSAGE
+  SKILL_MACROS
+  SET_FIELD
+  WHISPER
+  FIELD_EFFECT
+  SPAWN_CHAR
+  REMOVE_CHAR
+  CHAT_RECEIVED
+  SCROLL_RESULT
+  SPAWN_PET
+  CHAR_MOVED
+  ATTACKED_CLOSE
+  ATTACKED_RANGED
+  ATTACKED_MAGIC
+  UPDATE_CHARLOOK
+  SHOW_FOREIGN_EFFECT
+  GIVE_FOREIGN_BUFF
+  CANCEL_FOREIGN_BUFF
+  SHOW_ITEM_GAIN_INCHAT
+  ADD_COOLDOWN
+  SPAWN_MOB
+  KILL_MOB
+  SPAWN_MOB_C
+  MOB_MOVED
+  MOB_MOVE_RESPONSE
+  APPLY_MONSTER_STATUS
+  CANCEL_MONSTER_STATUS
+  SHOW_MOB_HP
+  SPAWN_NPC
+  SPAWN_NPC_C
+  SET_NPC_SCRIPTABLE
+  DROP_LOOT
+  REMOVE_LOOT
+  HIT_REACTOR
+  SPAWN_REACTOR
+  REMOVE_REACTOR
+  NPC_DIALOGUE
+  OPEN_NPC_SHOP
+  CONFIRM_SHOP_TRANSACTION
+  KEYMAP
+  CHAR_INFO
+  PLAYER_INTERACTION
+  SET_CASH_SHOP
+}
+pub fn Opcode::from_int(Int) -> Self raise UnknownOpCodeError
+pub fn Opcode::int_value(Self) -> Int
+pub impl Compare for Opcode
+pub impl Eq for Opcode
+pub impl Hash for Opcode
+pub impl Show for Opcode
+
+type OutPacket
+#deprecated
+pub fn OutPacket::dispatch(Self) -> Unit
+pub fn OutPacket::encode(Self) -> Bytes
+pub fn OutPacket::new(ClientOpcode) -> Self
+pub fn OutPacket::skip(Self, Int) -> Unit
+pub fn OutPacket::write_byte(Self, Byte) -> Unit
+pub fn OutPacket::write_hardware_info(Self) -> Unit
+pub fn OutPacket::write_int(Self, Int) -> Unit
+pub fn OutPacket::write_long(Self, Int64) -> Unit
+pub fn OutPacket::write_point(Self, @struct.Point[Int]) -> Unit
+pub fn OutPacket::write_short(Self, Int) -> Unit
+pub fn OutPacket::write_string(Self, String) -> Unit
+pub fn OutPacket::write_time(Self) -> Unit
+
+type PacketSwitch
+pub fn PacketSwitch::forward(Self, Bytes) -> Unit
+pub fn PacketSwitch::new() -> Self
+pub fn PacketSwitch::reset_handlers(Self, @hashmap.HashMap[Opcode, (InPacket) -> Unit]) -> Unit
+
+type Session
+pub fn Session::close(Self) -> Unit
+pub fn Session::connect(Self, String) -> Unit
+pub fn Session::get_status(Self) -> ConnectionStatus
+pub fn Session::new((Bytes) -> Unit) -> Self
+pub fn Session::read(Self) -> Unit
+pub fn Session::write(Self, Bytes) -> Unit
+
+// Type aliases
+
+// Traits
+pub(open) trait OutMessage : Show {
+  pack(Self) -> OutPacket
+}
+

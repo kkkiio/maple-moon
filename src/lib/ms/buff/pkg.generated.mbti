@@ -1,0 +1,112 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/buff"
+
+import(
+  "moonbitlang/core/immut/hashmap"
+)
+
+// Values
+pub let diseases : @hashmap.HashMap[StatId, Int64]
+
+pub let first_codes : @hashmap.HashMap[StatId, Int64]
+
+pub fn is_disease(StatId) -> Bool
+
+pub let second_codes : @hashmap.HashMap[StatId, Int64]
+
+// Errors
+
+// Types and methods
+pub struct Buff {
+  stat : StatId
+  value : Int
+  skillid : Int
+  duration : Int
+}
+pub fn Buff::default() -> Self
+pub fn Buff::make(StatId, Int, Int, Int) -> Self
+
+pub(all) enum StatId {
+  NONE
+  MORPH
+  RECOVERY
+  MAPLE_WARRIOR
+  STANCE
+  SHARP_EYES
+  MANA_REFLECTION
+  SHADOW_CLAW
+  INFINITY_
+  HOLY_SHIELD
+  HAMSTRING
+  BLIND
+  CONCENTRATE
+  ECHO_OF_HERO
+  GHOST_MORPH
+  AURA
+  CONFUSE
+  BERSERK_FURY
+  DIVINE_BODY
+  SPARK
+  FINALATTACK
+  BATTLESHIP
+  WATK
+  WDEF
+  MATK
+  MDEF
+  ACC
+  AVOID
+  HANDS
+  SHOWDASH
+  SPEED
+  JUMP
+  MAGIC_GUARD
+  DARKSIGHT
+  BOOSTER
+  POWERGUARD
+  HYPERBODYHP
+  HYPERBODYMP
+  INVINCIBLE
+  SOULARROW
+  STUN
+  POISON
+  SEAL
+  DARKNESS
+  COMBO
+  SUMMON
+  WK_CHARGE
+  DRAGONBLOOD
+  HOLY_SYMBOL
+  MESOUP
+  SHADOWPARTNER
+  PICKPOCKET
+  PUPPET
+  MESOGUARD
+  WEAKEN
+  DASH
+  DASH2
+  ELEMENTAL_RESET
+  ARAN_COMBO
+  COMBO_DRAIN
+  COMBO_BARRIER
+  BODY_PRESSURE
+  SMART_KNOCKBACK
+  PYRAMID_PQ
+  ENERGY_CHARGE
+  MONSTER_RIDING
+  HOMING_BEACON
+  SPEED_INFUSION
+  ZOMBIFY
+  CURSE
+  SEDUCE
+  SLOW
+}
+pub fn StatId::hash(Self) -> Int
+pub fn StatId::int_value(Self) -> Int
+pub impl Compare for StatId
+pub impl Eq for StatId
+pub impl Hash for StatId
+
+// Type aliases
+
+// Traits
+

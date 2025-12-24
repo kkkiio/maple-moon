@@ -87,7 +87,7 @@ pub fn Clothing::from_resource(
     Layer::CAPE
   }
   let info = item_data.get_info()
-  let vslot = info.get("vslot").bind(fn(it) { it.as_string() }).unwrap_or("")
+  let vslot = if info is { "vslot": String(vslot), .. } { vslot } else { "" }
   let stand = match info {
     { "stand": Json::Number(1, ..), .. } => @types.StanceId::STAND1
     { "stand": Json::Number(2, ..), .. } => @types.StanceId::STAND2

@@ -1,0 +1,88 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/char_stats"
+
+import(
+  "KKKIIO/maple-moon/lib/maple_protocol"
+  "KKKIIO/maple-moon/lib/ms/job"
+  "KKKIIO/maple-moon/lib/ms/maple_stat"
+  "KKKIIO/maple-moon/lib/ms/weapon"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/ui"
+)
+
+// Values
+pub const LEVEL_CAP : Int = 201
+
+pub let exp_table : FixedArray[Int64]
+
+pub fn get_recommend_assign(Module) -> Assign
+
+pub fn spend_ap(Module, String) -> Unit
+
+pub fn watch_player_char_stat(Module, String, (Int, Int) -> Bool) -> Unit
+
+pub fn watch_player_total_stat(Module, String, (Int, Int) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct Assign {
+  str : Int
+  dex : Int
+  int : Int
+  luk : Int
+}
+pub impl Default for Assign
+
+type CharStats
+pub fn CharStats::add_value(Self, @maple_stat.EquipStatId, Int) -> Unit
+pub fn CharStats::calculate_damage(Self, Int) -> Int
+pub fn CharStats::change_job(Self, @job.Job) -> Unit
+pub fn CharStats::close_totalstats(Self) -> Unit
+pub fn CharStats::get_attackspeed(Self) -> Int
+pub fn CharStats::get_buffdelta(Self, @maple_stat.EquipStatId) -> Int
+pub fn CharStats::get_critical(Self) -> Double
+pub fn CharStats::get_exp(Self) -> Int64
+pub fn CharStats::get_female(Self) -> Bool
+pub fn CharStats::get_i64stat(Self, @maple_stat.Id) -> Int64
+pub fn CharStats::get_ignoredef(Self) -> Double
+pub fn CharStats::get_job(Self) -> @job.Job
+pub fn CharStats::get_map_id(Self) -> Int
+pub fn CharStats::get_matk(Self) -> Int
+pub fn CharStats::get_maxdamage(Self) -> Int
+pub fn CharStats::get_mindamage(Self) -> Int
+pub fn CharStats::get_name(Self) -> String
+pub fn CharStats::get_portal(Self) -> Int
+pub fn CharStats::get_range(Self) -> @struct.Rectangle[Int]
+pub fn CharStats::get_stance(Self) -> Double
+pub fn CharStats::get_stat(Self, @maple_stat.Id) -> Int
+pub fn CharStats::get_total(Self, @maple_stat.EquipStatId) -> Int
+pub fn CharStats::get_weapon_type(Self) -> @weapon.Type
+pub fn CharStats::init_totalstats(Self) -> Unit
+pub fn CharStats::is_damage_buffed(Self) -> Bool
+pub fn CharStats::new(@maple_protocol.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> IterResult]], Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
+pub fn CharStats::set_exp(Self, Int64) -> Unit
+pub fn CharStats::set_i64stat(Self, @maple_stat.Id, Int64) -> Unit
+pub fn CharStats::set_map_id(Self, Int) -> Unit
+pub fn CharStats::set_stat(Self, @maple_stat.Id, Int) -> Unit
+pub fn CharStats::set_total(Self, @maple_stat.EquipStatId, Int) -> Unit
+pub fn CharStats::watch_i64stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int64, Int64) -> IterResult) -> Unit
+pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int, Int) -> IterResult) -> Unit
+
+type Module
+pub fn Module::load(@net.Network) -> Self
+pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
+pub fn Module::new_char_stats(Self, @maple_protocol.StatsEntry, () -> @weapon.Type, @job.Job) -> CharStats
+
+type StatusBarUI
+pub fn StatusBarUI::new(CharStats, @ui.Hooks, @resource.SyncLoader) -> Self raise
+pub fn StatusBarUI::update(Self) -> Unit
+pub impl @ui.Widget for StatusBarUI
+
+// Type aliases
+pub using @maple_stat {type Id as MapleStatId}
+
+// Traits
+

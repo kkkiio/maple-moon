@@ -1,0 +1,64 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/item"
+
+import(
+  "KKKIIO/maple-moon/lib/resource"
+)
+
+// Values
+pub fn get_item_gender(Int) -> Int
+
+pub fn get_item_loader() -> @resource.AsyncLoader
+
+pub fn parse_category1(Int) -> Category1?
+
+pub fn parse_equip_category(Int) -> String?
+
+// Errors
+pub(all) suberror LoadDataError {
+  INVALID_ITEM_ID(Int)
+  DATA_NOT_FOUND(Int)
+  INVALID_DATA(String)
+}
+pub impl Show for LoadDataError
+
+// Types and methods
+pub enum Category1 {
+  EQUIP
+  CONSUME
+  INSTALL
+  ETC
+  CASH
+}
+
+pub(all) struct EquipId {
+  category : String
+  zid : String
+}
+
+pub(all) struct ItemData {
+  src : Json
+  icons : (@resource.NxTexture, @resource.NxTexture)
+  item_id : Int
+  price : Int
+  gender : Int
+  name : String
+  desc : String
+  category : String
+  valid : Bool
+  untradable : Bool
+  unique : Bool
+  unsellable : Bool
+  cash_item : Bool
+}
+pub async fn ItemData::get_async(Int) -> Self
+pub fn ItemData::get_category(Self) -> String
+pub fn ItemData::get_icon(Self, Bool) -> @resource.NxTexture
+pub fn ItemData::get_info(Self) -> Map[String, Json]
+pub fn ItemData::get_loaded(Int) -> Self?
+pub async fn ItemData::load(Int, @resource.AsyncLoader, @resource.AsyncLoader) -> Self
+
+// Type aliases
+
+// Traits
+

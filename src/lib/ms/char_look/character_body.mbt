@@ -1,8 +1,14 @@
 ///|
+using @types {type StanceId, type NxStanceBody, type NxMultiPartFrame}
+
+///|
+using @resource {type NxFrame}
+
+///|
 pub(all) struct FullBody {
   stances : Map[
-    @types.StanceId,
-    Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])],
+    StanceId,
+    Map[String, (Array[NxFrame], Array[@types.BodyLayer])],
   ]
   name : String
 }
@@ -20,8 +26,8 @@ pub(all) struct FullBody {
 pub fn FullBody::new(
   skin : Int,
   drawinfo : @types.BodyDrawInfo,
-  bodynode : Map[@types.StanceId, Array[@types.NxStanceBody]],
-  headnode : Map[@types.StanceId, Array[@types.NxLayerTextures]],
+  bodynode : Map[@types.StanceId, Array[NxStanceBody]],
+  headnode : Map[@types.StanceId, Array[NxMultiPartFrame]],
 ) -> FullBody {
   let stances = {}
   for stance, stance_body in bodynode {
@@ -39,20 +45,25 @@ pub fn FullBody::new(
 }
 
 ///|
+/// 解析一个动作的全身动画
+/// - stance: 动作
+/// - stance_nx_resource: 一个动作的身体动画, 每个帧可能包含多个部位的动画
+/// - head_nx_resource: 一个动作的头部动画, 每个帧可能包含多个部位的动画
+/// - drawinfo: 用于计算身体部位位置的绘制信息
 fn parse_body_animations_by_stance(
   stance : @types.StanceId,
-  stance_nx_resource : Array[@types.NxStanceBody],
-  head_nx_resource : Array[@types.NxLayerTextures],
+  stance_nx_resource : Array[NxStanceBody],
+  head_nx_resource : Array[NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
-) -> Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])] {
+) -> Map[String, (Array[NxFrame], Array[@types.BodyLayer])] {
   let part_frames_map = Map::new()
   let body_frame_delays = []
-  for frame, framenode in stance_nx_resource { // 一个动作的动画有多帧, 每个帧可能包含多个部位的动画
-    guard framenode is @types.NxStanceBody::LayerTextures(layer_textures) else {
+  for frame, framenode in stance_nx_resource {
+    guard framenode is NxStanceBody::MultiPartFrame(layer_textures) else {
       continue
     }
     body_frame_delays.push(layer_textures.delay)
-    for partname, partnode in layer_textures.textures {
+    for partname, partnode in layer_textures.part_texture_map {
       guard partname != "head" else {
         @log.error({ "stance": stance, "frame": frame }, "unexpected head part")
         panic()
@@ -84,11 +95,11 @@ fn parse_body_animations_by_stance(
       })
       while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
         frames.push(@resource.NxFrame::{
-          texture,
+          texture: { ..texture, w: 0, h: 0 },
           delay: None,
           head: None,
           bounds: None,
-        }) // TODO: 填充为空白帧
+        })
         layers.push(layer)
       }
       frames.push(@resource.NxFrame::{
@@ -100,8 +111,23 @@ fn parse_body_animations_by_stance(
       layers.push(layer)
     }
   }
-  // reset delays
+  // reset delays and pad tails
+  let total_frames = stance_nx_resource.length()
   for _, layer_frams in part_frames_map {
+    let (frames, layers) = layer_frams
+    // Pad tail if necessary
+    if frames.length() > 0 && frames.length() < total_frames {
+      let last_texture = frames[frames.length() - 1].texture
+      while frames.length() < total_frames {
+        frames.push(@resource.NxFrame::{
+          texture: { ..last_texture, w: 0, h: 0 },
+          delay: None,
+          head: None,
+          bounds: None,
+        })
+        layers.push(layers[layers.length() - 1])
+      }
+    }
     layer_frams.0.mapi_in_place(fn(i, frame) {
       { ..frame, delay: body_frame_delays[i] }
     })
@@ -109,7 +135,7 @@ fn parse_body_animations_by_stance(
   // add head part
   for frame, _ in stance_nx_resource {
     if head_nx_resource.get(frame)
-      is Some({ textures: { "head": head_texture, .. }, delay }) {
+      is Some({ part_texture_map: { "head": head_texture, .. }, delay }) {
       let texture = head_texture.texture.frames[0].texture
       let shift = drawinfo.get_head_position(stance, frame)
       let texture = { ..texture, origin: texture.origin - shift }

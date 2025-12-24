@@ -99,7 +99,7 @@ struct BodyDrawInfo {
 ///|
 pub fn BodyDrawInfo::new(
   bodynode : Map[StanceId, Array[NxStanceBody]],
-  headnode : Map[StanceId, Array[NxLayerTextures]],
+  headnode : Map[StanceId, Array[NxMultiPartFrame]],
 ) -> BodyDrawInfo {
   let body_positions = FixedArray::makei(StanceId::count(), fn(_i) {
     Map::new()
@@ -145,17 +145,17 @@ pub fn BodyDrawInfo::new(
           }
           attackdelay += action.get_delay()
         }
-        NxStanceBody::LayerTextures(layer_textures) => {
+        NxStanceBody::MultiPartFrame(layer_textures) => {
           let delay = layer_textures.delay.unwrap_or(100)
           stance_delays[stance.int_value()].set(frame, delay)
           let parts = []
-          for _, partnode in layer_textures.textures {
+          for _, partnode in layer_textures.part_texture_map {
             parts.push(partnode)
           }
           let head_shift_map = headnode
             .get(stance)
             .bind(fn(it) { it.get(frame) })
-            .bind(fn(it) { it.textures.get("head") })
+            .bind(fn(it) { it.part_texture_map.get("head") })
             .map(fn(it) { it.map.0 })
             .unwrap_or({})
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
@@ -357,25 +357,27 @@ pub fn BodyDrawInfo::get_action(
 ///|
 pub enum NxStanceBody {
   Action(NxStanceBodyAction)
-  LayerTextures(NxLayerTextures)
+  MultiPartFrame(NxMultiPartFrame)
 }
 
 ///|
 pub impl @json.FromJson for NxStanceBody with from_json(json, path) {
   match json {
     { "action": Json::String(_), .. } => Action(@json.from_json(json, path~))
-    _ => LayerTextures(@json.from_json(json, path~))
+    _ => MultiPartFrame(@json.from_json(json, path~))
   }
 }
 
 ///|
-pub(all) struct NxLayerTextures {
-  textures : Map[String, NxBodyLayerTexture]
+/// 动作每个帧可能包含多个部位的动画
+pub(all) struct NxMultiPartFrame {
+  /// part name => texture. 注意: 整个动画里, 有些部位不是一直显示的.
+  part_texture_map : Map[String, NxBodyLayerTexture]
   delay : Int?
 }
 
 ///|
-pub impl @json.FromJson for NxLayerTextures with from_json(json, path) {
+pub impl @json.FromJson for NxMultiPartFrame with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -393,7 +395,7 @@ pub impl @json.FromJson for NxLayerTextures with from_json(json, path) {
     let layer_texture = @json.from_json(v, path=path.add_key(k))
     layer_textures.set(k, layer_texture)
   }
-  { textures: layer_textures, delay }
+  { part_texture_map: layer_textures, delay }
 }
 
 ///|

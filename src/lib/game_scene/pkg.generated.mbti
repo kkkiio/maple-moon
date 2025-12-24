@@ -1,0 +1,45 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/game_scene"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/ms/keyboard"
+  "KKKIIO/maple-moon/lib/ms/map"
+  "KKKIIO/maple-moon/lib/ms/monster"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/ui"
+)
+
+// Values
+pub fn get_stage() -> Stage?
+
+pub fn reset_player_position() -> Unit
+
+pub fn scene_transition_system(Double) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) struct Stage {
+  map_portals_animations : @map.MapPortalAnimations
+  mobs : @monster.MapMobs
+  map_change_listeners : Array[(@map.SceneMap) -> Bool]
+}
+pub fn Stage::get_inventory(Self) -> @inventory.Inventory
+pub fn Stage::get_mobs(Self) -> @monster.MapMobs
+pub fn Stage::listen_map_change(Self, (@map.SceneMap) -> Bool) -> Unit
+pub fn Stage::new(@map.MapPortalAnimations, @monster.MapMobs) -> Self
+
+type UIStateGame
+pub fn UIStateGame::get_front(Self, @struct.Point[Int]) -> @ui.Element?
+pub fn UIStateGame::new(Stage) -> Self
+pub fn UIStateGame::remove_cursor(Self, @ui.UIElementType) -> Unit
+pub fn UIStateGame::toggle_element(Self, @ui.UIElementType, Bool, () -> @ui.Element) -> Unit
+pub impl @ui.UIState for UIStateGame
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,178 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/npc"
+
+import(
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/map_object"
+  "KKKIIO/maple-moon/lib/ms/markup_text"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/ui"
+)
+
+// Values
+pub fn handle_npc_dialogue(&@ui.Container, @net.Network, @markup_text.RefRender, @resource.SyncLoader, NpcTalkResource, NpcDialogue) -> Unit
+
+pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
+
+pub fn handle_spawn_npc_parsed(MapNpcs, NpcSpawn) -> Unit
+
+pub fn parse_npc_dialogue(@net.InPacket) -> NpcDialogue raise
+
+pub fn parse_spawn_npc(@net.InPacket) -> NpcSpawn raise
+
+pub fn parse_spawn_npc_controller(@net.InPacket) -> SpawnNpcController raise
+
+pub fn parse_talk_content(String, mod_provider? : (@markup_text.Style, StringView) -> String raise, npc_provider? : (@markup_text.Style, StringView) -> String raise, map_provider? : (@markup_text.Style, StringView) -> String raise, item_provider? : (@markup_text.Style, StringView) -> String raise, player_name_provider? : (@markup_text.Style, StringView) -> String raise) -> TalkContent raise
+
+// Errors
+pub(all) suberror ParseTalkError String
+pub impl Show for ParseTalkError
+
+// Types and methods
+type MapNpcs
+pub fn MapNpcs::clear(Self) -> Unit
+pub fn MapNpcs::draw(Self, Int, Double, Double, Double) -> Unit
+pub fn MapNpcs::listen_npc_changes(Self, (@map_object.MapObjectEvent[Npc]) -> Bool) -> Unit
+pub fn MapNpcs::new((TalkArgs) -> Unit, @net.Network, npc_loader~ : @resource.SyncLoader, string_loader~ : @resource.SyncLoader) -> Self
+pub fn MapNpcs::remove(Self, Int) -> Unit
+pub fn MapNpcs::send_cursor(Self, Bool, @struct.Point[Int], @struct.Point[Int]) -> @ui.CursorState?
+pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
+pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
+
+type Module
+pub fn Module::get_npcs(Self) -> MapNpcs
+pub async fn Module::load(&@ui.Container, @net.Network, @markup_text.RefRender, @resource.SyncLoader) -> Self
+pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::open_npc_talk_ui(Self, TalkArgs) -> Unit
+
+type Npc
+pub fn Npc::deactivate(Self) -> Unit
+pub fn Npc::get_func(Self) -> String
+pub fn Npc::get_name(Self) -> String
+pub fn Npc::get_npc_id(Self) -> Int
+pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
+pub fn Npc::inrange(Self, @struct.Point[Int], @struct.Point[Int]) -> Bool
+pub fn Npc::is_scripted(Self) -> Bool
+pub fn Npc::load(@resource.SyncLoader, @resource.SyncLoader, Int, Int, Bool, Int, @struct.Point[Int]) -> Self
+pub fn Npc::set_stance(Self, String) -> Unit
+pub fn Npc::talk(Self) -> TalkArgs?
+pub impl @map_object.MapObject for Npc
+
+pub struct NpcDialogue {
+  npcid : Int
+  t : TalkType
+  speaker : Speaker
+  text : String
+}
+pub impl Show for NpcDialogue
+pub impl ToJson for NpcDialogue
+
+type NpcSpawn
+pub fn NpcSpawn::get_oid(Self) -> Int
+pub fn NpcSpawn::instantiate(Self, @resource.SyncLoader, @resource.SyncLoader, @physics.Physics) -> Npc
+pub impl Show for NpcSpawn
+pub impl ToJson for NpcSpawn
+
+pub(all) struct NpcTalkResource {
+  top : @graphics.Texture
+  fill : @graphics.Texture
+  bottom : @graphics.Texture
+  nametag : @graphics.Texture
+  bt_yes : @ui.MapleButtonResource
+  bt_no : @ui.MapleButtonResource
+  bt_ok : @ui.MapleButtonResource
+  bt_next : @ui.MapleButtonResource
+  bt_prev : @ui.MapleButtonResource
+  bt_close : @ui.MapleButtonResource
+  bt_qstart : @ui.MapleButtonResource
+  bt_qyes : @ui.MapleButtonResource
+  bt_qno : @ui.MapleButtonResource
+  bt_qcyes : @ui.MapleButtonResource
+  bt_qcno : @ui.MapleButtonResource
+  bt_qgiveup : @ui.MapleButtonResource
+  bt_qafter : @ui.MapleButtonResource
+  bt_my_level : @ui.MapleButtonResource
+  bt_all_level : @ui.MapleButtonResource
+}
+pub fn NpcTalkResource::from_resource(@resource.NxNode) -> Self
+
+pub struct SpawnNpcController {
+  mode : Int
+  oid : Int
+  npc : NpcSpawn?
+}
+pub impl Show for SpawnNpcController
+pub impl ToJson for SpawnNpcController
+
+pub(all) enum Speaker {
+  NPC_LEFT
+  NPC_RIGHT
+  PLAYER_LEFT
+  PLAYER_RIGHT
+}
+pub fn Speaker::from_int(Int) -> Self?
+pub fn Speaker::int_value(Self) -> Int
+pub impl Show for Speaker
+pub impl ToJson for Speaker
+
+pub(all) enum TalkAction {
+  SEND_YESNO((Bool?) -> Unit)
+  SEND_OK((Unit?) -> Unit)
+  SEND_NEXT((Unit?) -> Unit)
+  SEND_PREV((Unit?) -> Unit)
+  SEND_SIMPLE((Int?) -> Unit)
+  SEND_NEXT_PREV((Bool?) -> Unit)
+}
+pub impl Show for TalkAction
+
+pub(all) struct TalkArgs {
+  npc_id : Int
+  speaker : Speaker
+  str : String
+  talk_action : TalkAction
+}
+
+pub(all) enum TalkChoice {
+  SEND_YESNO(answer~ : Bool?)
+  SEND_SIMPLE(option~ : Int?)
+  SEND_OK(ok~ : Unit?)
+  SEND_NEXT(next~ : Unit?)
+  SEND_NEXT_PREV(next~ : Bool?)
+  SEND_PREV(prev~ : Unit?)
+}
+pub impl Show for TalkChoice
+
+pub(all) struct TalkContent {
+  text_html : String
+  selections : Array[(@struct.ColorName, Int, String)]
+}
+pub impl Show for TalkContent
+
+pub enum TalkType {
+  SEND_YESNO
+  SEND_SIMPLE
+  SEND_OK
+  SEND_NEXT
+  SEND_NEXT_PREV
+  SEND_PREV
+}
+pub fn TalkType::from_int(Int, Int, Int) -> Self?
+pub fn TalkType::int_value(Self) -> Int
+pub impl Eq for TalkType
+pub impl Hash for TalkType
+pub impl Show for TalkType
+pub impl ToJson for TalkType
+
+type UINpcTalk
+pub fn UINpcTalk::change_text(Self, Int, TalkAction, Speaker, String) -> Unit raise
+pub fn UINpcTalk::const_focused() -> Bool
+pub fn UINpcTalk::new(NpcTalkResource, @ui.Hooks, @resource.SyncLoader, @markup_text.RefRender) -> Self
+pub impl @ui.Widget for UINpcTalk
+
+// Type aliases
+
+// Traits
+

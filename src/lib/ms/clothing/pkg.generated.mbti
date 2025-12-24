@@ -1,0 +1,75 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/clothing"
+
+import(
+  "KKKIIO/maple-moon/lib/ms/char_look/types"
+  "KKKIIO/maple-moon/lib/ms/equip/slot"
+  "KKKIIO/maple-moon/lib/ms/item"
+  "KKKIIO/maple-moon/lib/resource"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+type Clothing
+pub fn Clothing::from_resource(@item.ItemData, @types.BodyDrawInfo) -> Self raise
+pub fn Clothing::get_animation(Self, @types.StanceId, String) -> (Array[@resource.NxFrame], Array[Layer])?
+pub fn Clothing::get_eqslot(Self) -> @slot.Id
+pub fn Clothing::get_id(Self) -> Int
+pub fn Clothing::get_parts_for_stance(Self, @types.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[Layer])]?
+pub fn Clothing::get_stand(Self) -> @types.StanceId
+pub fn Clothing::get_vslot(Self) -> String
+pub fn Clothing::get_walk(Self) -> @types.StanceId
+pub fn Clothing::is_twohanded(Self) -> Bool
+pub impl Show for Clothing
+
+pub(all) enum Layer {
+  CAPE
+  SHIELD_BELOW_BODY
+  WEAPON_BELOW_BODY
+  CAP_BELOW_BODY
+  WRIST_OVER_BODY
+  GLOVE_OVER_BODY
+  SHOES
+  MAIL
+  PANTS_DEFAULT
+  PANTS
+  TOP_DEFAULT
+  TOP
+  SHIELD_OVER_HAIR
+  EARRINGS
+  FACE_ACC
+  EYE_ACC
+  SHIELD
+  CAP
+  CAP_OVER_HAIR
+  WEAPON_BELOW_ARM
+  MAILARM
+  WEAPON
+  WRIST
+  GLOVE
+  WEAPON_OVER_GLOVE
+  WEAPON_OVER_HAND
+  WEAPON_OVER_BODY
+  HAND_OVER_WEAPON
+  WRIST_OVER_HAIR
+  GLOVE_OVER_HAIR
+  PENDANT
+  BELT
+  MEDAL
+  RING
+  BACK_SHIELD
+  BACK_WEAPON
+}
+pub fn Layer::int_value(Self) -> Int
+pub impl Eq for Layer
+pub impl Hash for Layer
+pub impl Show for Layer
+pub impl ToJson for Layer
+
+// Type aliases
+
+// Traits
+

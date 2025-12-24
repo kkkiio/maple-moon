@@ -1,0 +1,141 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/login"
+
+import(
+  "KKKIIO/maple-moon/lib/config"
+  "KKKIIO/maple-moon/lib/graphics"
+  "KKKIIO/maple-moon/lib/ms/char_look"
+  "KKKIIO/maple-moon/lib/ms/character"
+  "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/ms/player"
+  "KKKIIO/maple-moon/lib/ms/quest"
+  "KKKIIO/maple-moon/lib/net"
+  "KKKIIO/maple-moon/lib/resource"
+  "KKKIIO/maple-moon/lib/ui"
+  "Milky2018/selene/entity"
+  "Milky2018/selene/sprite"
+)
+
+// Values
+pub fn get_map001_loader() -> @resource.AsyncLoader
+
+pub fn get_map_pretty_loader() -> @resource.AsyncLoader
+
+pub fn handle_add_new_char_entry(Module, @character.CharEntry) -> Unit
+
+pub fn handle_server_ip(Module, Int, Int) -> Unit
+
+pub fn load_char_look(@entity.Entity, @char_look.CharLookMod, SelectableCharacter) -> @char_look.CharLook raise
+
+pub fn login_account_ffi(Module, String, String, (String) -> Unit) -> Unit
+
+pub fn login_last_used_ffi(Module, (String) -> Unit) -> Unit
+
+pub fn parse_char_list(@net.InPacket) -> CharListMessage raise
+
+pub fn parse_server_status(@net.InPacket) -> ServerStatus raise
+
+pub fn select_char_system(Double) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+pub fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, SelectCharUIResource, @char_look.CharLookMod) -> SelectableCharacterUI raise
+
+// Errors
+
+// Types and methods
+type CharListMessage
+pub impl Show for CharListMessage
+pub impl ToJson for CharListMessage
+
+type CharLookUI
+pub impl ToJson for CharLookUI
+
+type CloudUI
+pub impl @graphics.Drawable for CloudUI
+pub impl @ui.RenderUnit for CloudUI
+pub impl ToJson for CloudUI
+
+type ConnectChannelTask
+pub fn ConnectChannelTask::update(Self) -> Bool
+
+type ExplorerCreatorUI
+pub fn ExplorerCreatorUI::new(ExplorerCreatorUIResource, @ui.Hooks, (@char_look.LookEntry, (@char_look.CharLook) -> Unit) -> Unit, on_create_char? : (NewCharacterSettings) -> Unit) -> Self
+pub impl @ui.Widget for ExplorerCreatorUI
+
+pub(all) struct ExplorerCreatorUIResource {
+  male_choices : LookChoices
+  female_choices : LookChoices
+  sky : @graphics.Texture
+  cloud : @graphics.Texture
+  nameboard : @graphics.Texture
+  board_gender_top : @graphics.Animation
+  board_gender_mid : @graphics.Animation
+  board_gender_bottom : @graphics.Animation
+  board_char_set : @graphics.Animation
+  back14 : @graphics.Animation
+  signboard2 : @graphics.Animation
+  bt_gender_male : @ui.MapleButtonResource
+  bt_gender_female : @ui.MapleButtonResource
+  bt_left : @ui.MapleButtonResource
+  bt_right : @ui.MapleButtonResource
+  bt_yes : @ui.MapleButtonResource
+  bt_no : @ui.MapleButtonResource
+  avatar_sel : Array[@graphics.Animation]
+}
+pub async fn ExplorerCreatorUIResource::load(@resource.SyncLoader) -> Self
+
+type LoginResult
+pub impl Show for LoginResult
+
+pub(all) struct LookChoices {
+  skins : Array[Int]
+  haircolors : Array[Int]
+  faces : Array[Int]
+  hairs : Array[Int]
+  tops : Array[Int]
+  bots : Array[Int]
+  shoes : Array[Int]
+  weapons : Array[Int]
+}
+
+type Module
+pub fn Module::get_selected_char(Self) -> @character.CharEntry?
+pub fn Module::handle_login_result(Self, LoginResult) -> Unit
+pub async fn Module::load(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage) -> Self
+pub fn Module::login(Self, String, String, (String) -> Unit) -> Unit
+pub fn Module::login_last_used(Self, (String) -> Unit) -> Unit
+pub fn Module::make_handlers(Self, (Int, Int) -> Unit, (@character.CharEntry, Map[Int, Int], (@player.Player) -> Unit raise) -> Unit, @inventory.Inventory, (@player.Player) -> Unit, @quest.Module) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::new(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage, @resource.SyncLoader) -> Self
+pub fn Module::update(Self) -> Unit
+
+type NewCharacterSettings
+pub impl Default for NewCharacterSettings
+
+type SelectCharUI
+pub fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @char_look.CharLookMod, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self raise
+pub impl @ui.Widget for SelectCharUI
+
+pub(all) struct SelectCharUIResource {
+  name_tag : @ui.NameTagResource
+  ani18 : @sprite.Animation
+}
+pub fn SelectCharUIResource::load() -> Self raise
+
+pub(all) struct SelectableCharacter {
+  cid : Int
+  name : String
+}
+
+type SelectableCharacterUI
+
+type ServerStatus
+pub impl Show for ServerStatus
+
+// Type aliases
+
+// Traits
+pub(open) trait BgTask {
+  update(Self) -> Bool
+}
+

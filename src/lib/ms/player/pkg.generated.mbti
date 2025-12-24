@@ -1,0 +1,104 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/player"
+
+import(
+  "KKKIIO/maple-moon/lib/legacy_types"
+  "KKKIIO/maple-moon/lib/ms/buff"
+  "KKKIIO/maple-moon/lib/ms/char_look"
+  "KKKIIO/maple-moon/lib/ms/char_look/types"
+  "KKKIIO/maple-moon/lib/ms/char_stats"
+  "KKKIIO/maple-moon/lib/ms/character"
+  "KKKIIO/maple-moon/lib/ms/combat_impl2"
+  "KKKIIO/maple-moon/lib/ms/combat_proto"
+  "KKKIIO/maple-moon/lib/ms/job"
+  "KKKIIO/maple-moon/lib/ms/keyboard"
+  "KKKIIO/maple-moon/lib/ms/map"
+  "KKKIIO/maple-moon/lib/ms/physics"
+  "KKKIIO/maple-moon/lib/struct"
+  "KKKIIO/maple-moon/lib/utils"
+  "Milky2018/selene/entity"
+)
+
+// Values
+pub fn get_player() -> Player?
+
+pub let player_ref : Ref[Player?]
+
+pub fn player_state_system(Double) -> Unit
+
+pub fn set_player(Player) -> Unit
+
+// Errors
+
+// Types and methods
+type ActiveBuffs
+
+type BoosterBuff
+pub impl ActiveBuff for BoosterBuff
+pub impl Default for BoosterBuff
+
+type MapleWarriorBuff
+pub impl ActiveBuff for MapleWarriorBuff
+pub impl Default for MapleWarriorBuff
+
+type PercentageStatBuff
+pub impl ActiveBuff for PercentageStatBuff
+
+pub(all) struct Player {
+  entity : @entity.Entity
+  character : @character.Character
+  stats : @char_stats.CharStats
+  mut underwater : Bool
+  mut last_move : @physics.Movement
+  mut ladder : @map.Ladder?
+  inventory : &@legacy_types.Inventory
+  buffs : Map[@buff.StatId, @buff.Buff]
+  active_buffs : ActiveBuffs
+  randomizer : @utils.Randomizer
+  mut skill_book : &@legacy_types.SkillBook
+}
+pub fn Player::attack_by_action(Self, String) -> Unit
+pub fn Player::attack_by_stance(Self, @types.StanceId) -> Unit
+pub fn Player::can_attack(Self) -> Bool
+pub fn Player::change_job(Self, Int) -> Unit
+pub fn Player::change_skill(Self, Int, Int, Int, Int) -> Unit
+pub fn Player::check_ladders(Self, @map.MapInfo, Bool) -> Unit
+pub fn Player::damage(Self, @combat_proto.MobAttack) -> @combat_proto.MobAttackResult
+pub fn Player::draw(Self, Int, Double, Double, Double) -> Unit
+pub fn Player::get_climbforce(Self) -> Double
+pub fn Player::get_flyforce(Self) -> Double
+pub fn Player::get_jumpforce(Self) -> Double
+pub fn Player::get_ladder(Self) -> @map.Ladder?
+pub fn Player::get_skills(Self) -> &@legacy_types.SkillBook
+pub fn Player::get_stats(Self) -> @char_stats.CharStats
+pub fn Player::get_walkforce(Self) -> Double
+pub fn Player::has_buff(Self, @buff.StatId) -> Bool
+pub fn Player::is_attacking(Self) -> Bool
+pub fn Player::is_invincible(Self) -> Bool
+pub fn Player::is_key_down(Self, @keyboard.BasicActionId) -> Bool
+pub fn Player::is_underwater(Self) -> Bool
+pub async fn Player::load(@entity.Entity, @character.CharEntry, @char_look.CharLook, (@job.Job) -> @char_stats.CharStats) -> Self
+pub fn Player::new(@entity.Entity, Int, String, @char_look.CharLook, @char_stats.CharStats) -> Self
+pub fn Player::recalc_stats(Self, Bool) -> Unit
+pub fn Player::respawn(Self, @struct.Point[Int], Bool) -> Unit
+pub fn Player::rush(Self, Double) -> Unit
+pub fn Player::set_facing_right(Self, Bool) -> Unit
+pub fn Player::set_ladder(Self, @map.Ladder?) -> Unit
+pub fn Player::set_position(Self, Int, Int) -> Unit
+pub fn Player::set_state(Self, @character.CharState) -> Unit
+pub fn Player::show_iron_body(Self) -> Unit
+pub impl @combat_impl2.CombatCharacter for Player
+pub impl @combat_impl2.DamagableCharacter for Player
+
+type SimpleStatBuff
+pub impl ActiveBuff for SimpleStatBuff
+
+type StanceBuff
+pub impl ActiveBuff for StanceBuff
+pub impl Default for StanceBuff
+
+// Type aliases
+
+// Traits
+trait ActiveBuff
+

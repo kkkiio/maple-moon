@@ -1,0 +1,156 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/utils"
+
+// Values
+pub fn advance_futures(Array[Future[Unit]]) -> Unit
+
+pub fn ellipsis(String, Int, ellipsis? : String) -> String
+
+pub fn[T, E] flatten_ok(Array[Result[T, E]]) -> Result[Array[T], E]
+
+pub fn[A, B, E] flatten_ok_2(Result[A, E], Result[B, E]) -> Result[(A, B), E]
+
+pub fn format_decimal_separator(Int) -> String
+
+pub fn ints(start? : Int) -> Iter[Int]
+
+pub fn lerp(Double, Double, Double) -> Double
+
+pub fn[T] remove_if(Array[T], (T) -> Bool) -> Unit
+
+pub fn stoi_left_pad0(Int, Int) -> String
+
+pub fn to_hex_string(UInt) -> String
+
+// Errors
+pub(all) suberror UnknownEnum Int
+pub fn UnknownEnum::to_string(Self) -> String
+pub impl Show for UnknownEnum
+
+// Types and methods
+type BiMap[K, V]
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::from_array(Array[(K, V)]) -> Self[K, V]
+pub fn[K, V : Eq + Hash] BiMap::get_backward(Self[K, V], V) -> K?
+pub fn[K : Eq + Hash, V] BiMap::get_forward(Self[K, V], K) -> V?
+pub fn[K, V] BiMap::new() -> Self[K, V]
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(Self[K, V], K, V) -> Unit
+
+type BoolPair[T]
+pub fn[T] BoolPair::new(T, T) -> Self[T]
+pub fn[T] BoolPair::op_get(Self[T], Bool) -> T
+pub impl[T : Default] Default for BoolPair[T]
+
+pub(all) struct Counter[K, V](Map[K, V])
+#deprecated
+pub fn[K, V] Counter::inner(Self[K, V]) -> Map[K, V]
+pub fn[K, V] Counter::new() -> Self[K, V]
+pub fn[K : Hash + Eq, V : Default] Counter::op_get(Self[K, V], K) -> V
+pub fn[K : Hash + Eq, V] Counter::op_set(Self[K, V], K, V) -> Unit
+
+pub(all) struct DefaultMap[K, V] {
+  map : Map[K, V]
+  default_fn : () -> V
+}
+pub fn[K, V] DefaultMap::new(() -> V) -> Self[K, V]
+pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
+
+pub(all) struct Duration(Int)
+pub fn Duration::from_micro(Int) -> Self
+pub fn Duration::from_milliseconds(Int) -> Self
+#deprecated
+pub fn Duration::inner(Self) -> Int
+pub fn Duration::to_micro_seconds(Self) -> Int
+pub fn Duration::to_milliseconds(Self) -> Int
+pub fn Duration::to_seconds(Self) -> Int
+pub impl Compare for Duration
+pub impl Eq for Duration
+pub impl Show for Duration
+
+type Future[T]
+pub fn[T] Future::all_of(Array[Self[T]]) -> Self[Array[T]]
+pub fn[T, U] Future::bind(Self[T], (T) -> Self[U]) -> Self[U]
+pub fn[T, U] Future::combine(Self[T], Self[U]) -> Self[(T, U)]
+pub fn[T, U, V] Future::combine3(Self[T], Self[U], Self[V]) -> Self[(T, U, V)]
+pub fn[T] Future::flatten(Self[Self[T]]) -> Self[T]
+pub fn[T] Future::from_value(T) -> Self[T]
+pub fn[T, U] Future::map(Self[T], (T) -> U) -> Self[U]
+pub fn[T, U, E : Error] Future::map_exn(Self[T], (T) -> U raise E) -> Self[Result[U, E]]
+pub fn[T] Future::never() -> Self[T]
+pub fn[T] Future::new(() -> T?) -> Self[T]
+pub fn[T] Future::poll(Self[T]) -> T?
+pub fn[T] Future::tap(Self[T], (T) -> Unit) -> Self[T]
+
+type Linear
+pub fn Linear::add(Self, Double) -> Unit
+pub fn Linear::get(Self, alpha? : Double) -> Double
+pub fn Linear::last(Self) -> Double
+pub fn Linear::new(Double) -> Self
+pub fn Linear::normalize(Self) -> Unit
+pub fn Linear::normalized(Self) -> Bool
+pub fn Linear::plus(Self, Double) -> Double
+pub fn Linear::set(Self, Double) -> Unit
+pub impl Default for Linear
+pub impl Show for Linear
+pub impl ToJson for Linear
+
+type Nominal[T]
+pub fn[T] Nominal::get(Self[T], alpha? : Double) -> T
+pub fn[T] Nominal::last(Self[T]) -> T
+pub fn[T] Nominal::next(Self[T], T, Double) -> Unit
+pub fn[T] Nominal::normalize(Self[T]) -> Unit
+pub fn[T : Eq] Nominal::normalized(Self[T]) -> Bool
+pub fn[T] Nominal::set(Self[T], T) -> Unit
+pub impl[T : Default] Default for Nominal[T]
+
+type Randomizer
+pub fn Randomizer::above(Self, Double) -> Bool
+pub fn Randomizer::below(Self, Double) -> Bool
+pub fn[T] Randomizer::choose(Self, Array[T]) -> T
+pub fn Randomizer::new() -> Self
+pub fn Randomizer::next_bool(Self) -> Bool
+pub fn Randomizer::next_int(Self, from? : Int, Int) -> Int
+pub fn Randomizer::next_real(Self, from? : Double, Double) -> Double
+
+type Singleton[T]
+pub fn[T] Singleton::must_get(Self[T]) -> T
+pub fn[T] Singleton::new() -> Self[T]
+pub fn[T] Singleton::set(Self[T], T) -> Unit
+
+pub(all) struct TimePoint(Int64)
+pub fn TimePoint::add_duration(Self, Duration) -> Self
+pub fn TimePoint::from_micro(Double) -> Self
+#deprecated
+pub fn TimePoint::inner(Self) -> Int64
+pub fn TimePoint::since(Self, Self) -> Duration
+pub impl Compare for TimePoint
+pub impl Default for TimePoint
+pub impl Eq for TimePoint
+
+type Timed[T]
+pub impl[T] Compare for Timed[T]
+pub impl[T] Eq for Timed[T]
+
+type TimedBool
+pub fn TimedBool::alpha(Self) -> Double
+pub fn TimedBool::default() -> Self
+pub fn TimedBool::get(Self) -> Bool
+pub fn TimedBool::set(Self, Bool) -> Unit
+pub fn TimedBool::set_for(Self, Int) -> Unit
+pub fn TimedBool::update(Self, timestep~ : Int) -> Unit
+
+type TimedQueue[T]
+pub fn[T] TimedQueue::new() -> Self[T]
+pub fn[T] TimedQueue::process(Self[T], timestep~ : Int64) -> Iter[T]
+pub fn[T] TimedQueue::push(Self[T], Int64, T) -> Unit
+
+type Timer
+pub fn Timer::new(() -> TimePoint) -> Self
+pub fn Timer::now(Self) -> TimePoint
+pub fn Timer::reset(Self) -> Unit
+pub fn Timer::since(Self, TimePoint) -> Duration
+pub fn Timer::stop(Self, TimePoint) -> Duration
+
+// Type aliases
+
+// Traits
+

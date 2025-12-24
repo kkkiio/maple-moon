@@ -1,0 +1,76 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/cmd/reanim"
+
+import(
+  "KKKIIO/maple-moon/lib/resource"
+  "rami3l/js-ffi/js"
+)
+
+// Values
+pub fn calculate_unified_size(Array[FrameData]) -> UnifiedSize
+
+pub fn collect_frames(Json, Map[String, @resource.SpritesheetMetadata], String?) -> Array[FrameData] raise
+
+pub fn collect_frames_from_bitmaps(Json) -> Array[FrameData]
+
+pub fn get_animation_layers(Json) -> Array[String]
+
+pub fn identify_node_type(Json) -> NodeType
+
+pub fn is_bitmap_animation_node(Json) -> Bool
+
+pub fn is_bitmap_frame(Json) -> Bool
+
+pub fn is_frame_resource(Json) -> Bool
+
+pub fn match_entries(Json, String) -> Array[(String, Json)]
+
+pub async fn process_bitmap_resource(Json, String, String, load_bitmap? : (Int) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
+
+pub async fn process_resource(Json, Map[String, @resource.SpritesheetMetadata], String, String, bitmaps_dir? : String, load_spritesheet? : (String) -> @js.Value, load_bitmap? : (String) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
+
+pub async fn process_spritesheet(CliArgs) -> Unit
+
+// Errors
+
+// Types and methods
+type CliArgs
+
+type ExtractedFrame
+
+pub(all) struct FrameData {
+  id : Int
+  width : Int
+  height : Int
+  origin_x : Int
+  origin_y : Int
+  delay : Int
+  mut frame_index : Int
+  src_x : Int
+  src_y : Int
+  spritesheet_path : String
+  is_bitmap : Bool
+}
+
+type Mode
+
+pub enum NodeType {
+  Frame
+  Animation
+  MultiPartAnimation
+  Unknown
+}
+
+type ProcessStackItem
+
+pub(all) struct UnifiedSize {
+  width : Int
+  height : Int
+  anchor_x : Int
+  anchor_y : Int
+}
+
+// Type aliases
+
+// Traits
+

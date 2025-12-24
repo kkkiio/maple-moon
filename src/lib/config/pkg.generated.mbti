@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/config"
+
+// Values
+pub let configFontPathBold : StringEntry
+
+pub let configFontPathNormal : StringEntry
+
+pub fn global() -> Configuration
+
+// Errors
+
+// Types and methods
+type BoolEntry
+pub fn BoolEntry::load(Self) -> Bool
+pub fn BoolEntry::name(Self) -> String
+pub fn BoolEntry::new(String, String) -> Self
+pub fn BoolEntry::save(Self, Bool) -> Unit
+
+type Configuration
+pub fn Configuration::get_admin(Self) -> Bool
+pub fn Configuration::get_hwid(Self) -> String
+pub fn Configuration::get_macs(Self) -> String
+pub fn Configuration::get_volume_serial_number(Self) -> String
+pub fn Configuration::set_admin(Self, Bool) -> Unit
+pub fn Configuration::set_hardware_info(Self) -> Unit
+
+type IntEntry
+pub fn IntEntry::load(Self) -> Int
+pub fn IntEntry::name(Self) -> String
+pub fn IntEntry::new(String, String) -> Self
+pub fn IntEntry::save(Self, String) -> Unit
+
+type LocalStorage
+pub fn LocalStorage::get_item(Self, String) -> String?
+pub fn LocalStorage::new() -> Self
+pub fn LocalStorage::remove_item(Self, String) -> Unit
+pub fn LocalStorage::set_item(Self, String, String) -> Unit
+pub impl Default for LocalStorage
+
+type StringEntry
+pub fn StringEntry::load(Self) -> String
+pub fn StringEntry::name(Self) -> String
+pub fn StringEntry::new(String, String) -> Self
+pub fn StringEntry::save(Self, String) -> Unit
+
+// Type aliases
+
+// Traits
+pub(open) trait ConfigEntry {
+  name(Self) -> String
+  new(String, String) -> Self
+}
+

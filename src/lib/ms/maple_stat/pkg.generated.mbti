@@ -1,0 +1,78 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/maple_stat"
+
+import(
+  "moonbitlang/core/json"
+)
+
+// Values
+pub let all_equip_stats : FixedArray[EquipStatId]
+
+pub let all_stats : Array[Id]
+
+// Errors
+
+// Types and methods
+pub(all) enum EquipStatId {
+  STR
+  DEX
+  INT
+  LUK
+  HP
+  MP
+  WATK
+  MAGIC
+  WDEF
+  MDEF
+  ACC
+  AVOID
+  HANDS
+  SPEED
+  JUMP
+}
+pub fn EquipStatId::from_name(String) -> Self?
+pub fn EquipStatId::int_value(Self) -> Int
+pub fn EquipStatId::name(Self) -> String
+pub impl Compare for EquipStatId
+pub impl Eq for EquipStatId
+pub impl Hash for EquipStatId
+pub impl Show for EquipStatId
+pub impl ToJson for EquipStatId
+pub impl @json.FromJson for EquipStatId
+
+pub(all) enum Id {
+  SKIN
+  FACE
+  HAIR
+  LEVEL
+  JOB
+  STR
+  DEX
+  INT
+  LUK
+  HP
+  MAXHP
+  MP
+  MAXMP
+  AP
+  SP
+  EXP
+  FAME
+  MESO
+  PET
+  GACHAEXP
+}
+pub fn Id::from_name(String) -> Self?
+pub fn Id::int_value(Self) -> Int
+pub fn Id::name(Self) -> String
+pub impl Compare for Id
+pub impl Eq for Id
+pub impl Hash for Id
+pub impl Show for Id
+pub impl ToJson for Id
+pub impl @json.FromJson for Id
+
+// Type aliases
+
+// Traits
+

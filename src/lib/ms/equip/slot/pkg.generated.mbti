@@ -1,0 +1,54 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/equip/slot"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Id {
+  NONE
+  HAT
+  FACE
+  EYE_ACC
+  EARACC
+  TOP
+  BOTTOM
+  SHOES
+  GLOVES
+  CAPE
+  SHIELD
+  WEAPON
+  RING1
+  RING2
+  RING3
+  RING4
+  PENDANT1
+  TAMEDMOB
+  SADDLE
+  MEDAL
+  BELT
+  POCKET
+  BOOK
+  PENDANT2
+  SHOULDER
+  ANDROID_
+  EMBLEM
+  BADGE
+  SUBWEAPON
+  HEART
+  TOP_DEFAULT
+  BOTTOM_DEFAULT
+}
+pub fn Id::from_int(Int) -> Self
+pub fn Id::int_value(Self) -> Int
+pub fn Id::length() -> Int
+pub impl Eq for Id
+pub impl Hash for Id
+pub impl Show for Id
+pub impl ToJson for Id
+
+// Type aliases
+
+// Traits
+

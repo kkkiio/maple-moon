@@ -11,7 +11,7 @@ using @io_service {submit_background_task}
 pub struct CharLookMod {
   draw_info : @types.BodyDrawInfo
   stance_bodys_map : NxStanceLooks[@types.NxStanceBody]
-  stance_heads_map : NxStanceLooks[@types.NxLayerTextures]
+  stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame]
   hair_cache : Map[Int, Hair]
   face_types : Map[Int, Face]
   body_cache : Map[Int, FullBody]
@@ -31,7 +31,7 @@ pub async fn CharLookMod::load() -> CharLookMod {
 ///|
 pub fn CharLookMod::new(
   stance_bodys_map : NxStanceLooks[@types.NxStanceBody],
-  stance_heads_map : NxStanceLooks[@types.NxLayerTextures],
+  stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame],
   draw_info : @types.BodyDrawInfo,
 ) -> CharLookMod {
   {
@@ -190,9 +190,9 @@ async fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
 }
 
 ///|
-async fn load_stance_heads_map() -> NxStanceLooks[@types.NxLayerTextures] {
+async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
   let headnode = get_body_loader().load_res_async(["00012000.img"]).value()
-  let v : NxStanceLooks[@types.NxLayerTextures] = @json.from_json(headnode)
+  let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode)
   v
 }
 

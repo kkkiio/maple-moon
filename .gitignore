@@ -9,6 +9,8 @@ output
 
 .vscode
 
+.agent
+
 # windsurf rules
 .windsurfrules
 .DS_Store

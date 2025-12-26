@@ -2,7 +2,7 @@
   "import": [
     "Milky2018/selene/inputs",
     "Milky2018/selene/math",
-    "KKKIIO/maple-moon/test/capture_canvas",
+    "KKKIIO/maple-moon/test/capture_app",
     "moonbitlang/x/fs"
   ],
   "implement": "Milky2018/selene/backend"

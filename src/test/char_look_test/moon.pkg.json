@@ -7,11 +7,18 @@
     "KKKIIO/maple-moon/lib/ms/equip/slot",
     "moonbitlang/x/fs",
     "Milky2018/selene/entity",
-    "Milky2018/selene/sprite",
     "Milky2018/selene/inherit",
-    "KKKIIO/maple-moon/test/capture_canvas"
+    "KKKIIO/maple-moon/test/capture_app",
+    "Milky2018/selene/math",
+    "Milky2018/selene/system",
+    "Milky2018/selene/plugins"
   ],
   "overrides": [
-    "KKKIIO/maple-moon/test/capture_sprite"
+    "KKKIIO/maple-moon/test/capture_backend"
+  ],
+  "import": [
+    "Milky2018/selene/sprite",
+    "Milky2018/selene/math",
+    "Milky2018/selene"
   ]
 }

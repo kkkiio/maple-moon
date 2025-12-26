@@ -46,10 +46,12 @@ pub fn FullBody::new(
 
 ///|
 /// 解析一个动作的全身动画
-/// - stance: 动作
-/// - stance_nx_resource: 一个动作的身体动画, 每个帧可能包含多个部位的动画
-/// - head_nx_resource: 一个动作的头部动画, 每个帧可能包含多个部位的动画
-/// - drawinfo: 用于计算身体部位位置的绘制信息
+/// - stance: 动作 ID
+/// - stance_nx_resource: 动作的身体动画资源 (Body)
+/// - head_nx_resource: 动作的头部动画资源 (Head)
+/// - drawinfo: 绘制信息 (BodyDrawInfo)
+/// 
+/// Returns a map of part names to their animation frames and z-layers.
 fn parse_body_animations_by_stance(
   stance : @types.StanceId,
   stance_nx_resource : Array[NxStanceBody],
@@ -133,23 +135,27 @@ fn parse_body_animations_by_stance(
     })
   }
   // add head part
-  for frame, _ in stance_nx_resource {
-    if head_nx_resource.get(frame)
-      is Some({ part_texture_map: { "head": head_texture, .. }, delay }) {
-      let texture = head_texture.texture.frames[0].texture
-      let shift = drawinfo.get_head_position(stance, frame)
-      let texture = { ..texture, origin: texture.origin - shift }
-      let (frames, layers) = part_frames_map.get_or_init("head", fn() {
-        ([], [])
-      })
-      guard frames.length() == frame
-      frames.push(@resource.NxFrame::{
-        texture,
-        delay,
-        head: None,
-        bounds: None,
-      })
-      layers.push(@types.BodyLayer::HEAD)
+  if head_nx_resource.length() > 0 {
+    let head_frames = []
+    let head_layers = []
+    part_frames_map.set("head", (head_frames, head_layers))
+    for frame, _ in stance_nx_resource {
+      if head_nx_resource[frame]
+        is { part_texture_map: { "head": head_texture, .. }, .. } {
+        let texture = head_texture.texture.frames[0].texture
+        let shift = drawinfo.get_head_position(stance, frame)
+        let texture = { ..texture, origin: texture.origin - shift }
+        head_frames.push(@resource.NxFrame::{
+          texture,
+          delay: body_frame_delays[frame],
+          head: None,
+          bounds: None,
+        })
+        head_layers.push(@types.BodyLayer::HEAD)
+      } else {
+        @log.error({ "stance": stance, "frame": frame }, "head not found")
+        panic()
+      }
     }
   }
   part_frames_map

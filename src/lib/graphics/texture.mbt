@@ -47,6 +47,10 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
         tex.offset.x.to_double(),
         tex.offset.y.to_double(),
       ),
+      pivot: @selene_math.Vec2D(
+        tex.origin.x.to_double(),
+        tex.origin.y.to_double(),
+      ),
       duration: 0.0,
     }),
     origin: tex.origin,
@@ -63,6 +67,10 @@ pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
       offset: @selene_math.Vec2D(
         tex.offset.x.to_double(),
         tex.offset.y.to_double(),
+      ),
+      pivot: @selene_math.Vec2D(
+        tex.origin.x.to_double(),
+        tex.origin.y.to_double(),
       ),
       duration: 0.0,
     }),
@@ -113,32 +121,4 @@ pub impl Drawable for Texture with draw(self : Texture, args : DrawArgument) -> 
   //       args.angle,
   //     )
   // }
-}
-
-///|
-pub(all) struct NxFrame(@sprite.AnimationFrame)
-
-///|
-pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
-  match json {
-    {
-      "__i": String(sprite_path),
-      "__w": Number(w, ..),
-      "__h": Number(h, ..),
-      ..
-    } => {
-      let offset = match json {
-        { "__off": [Number(offx, ..), Number(offy, ..)], .. } =>
-          @selene_math.Vec2D(offx, offy)
-        _ => @selene_math.Vec2D(0, 0)
-      }
-      NxFrame(@sprite.AnimationFrame::{
-        sprite_path,
-        size: @selene_math.Vec2D(w, h),
-        offset,
-        duration: 0.0,
-      })
-    }
-    _ => raise @json.JsonDecodeError((path, "invalid nx frame"))
-  }
 }

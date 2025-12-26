@@ -248,6 +248,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
+      pivot: @selene_math.Vec2D(121, 252), // origin
       duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 255,
@@ -258,6 +259,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light17.png",
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
+      pivot: @selene_math.Vec2D(121, 252), // origin
       duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 50,
@@ -270,6 +272,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       size: @selene_math.Vec2D(355, 312),
       offset: @selene_math.Vec2D(0, 0),
+      pivot: @selene_math.Vec2D(156, 177), // origin
       duration: 2.3,
       //     "origin": [156, 177],
       //     "a0": 200,
@@ -281,6 +284,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
+      pivot: @selene_math.Vec2D(156, 177), // origin
       duration: 3.3,
       // "a0": 80,
       // "a1": 255,
@@ -291,6 +295,7 @@ pub fn SelectCharUI::new(
       sprite_path: "/assets/ui/login.img/char_select/light19.png",
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
+      pivot: @selene_math.Vec2D(156, 177), // origin
       duration: 1.0,
       // "_inlink": "ani/19/1",
       // "a0": 255,

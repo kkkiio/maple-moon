@@ -1,0 +1,2334 @@
+{
+  "alert": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_alert_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_alert_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_alert_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "backDefault": {
+    "backHair": {
+      "__h": 32,
+      "__w": 35,
+      "map": {
+        "brow": [
+          0,
+          0
+        ]
+      },
+      "origin": [
+        13,
+        12
+      ],
+      "z": "backHair",
+      "__i": "Character/Hair/00030030.img_backDefault_backHair.png"
+    },
+    "backHairBelowCap": {
+      "__h": 32,
+      "__w": 35,
+      "map": {
+        "brow": [
+          0,
+          0
+        ]
+      },
+      "origin": [
+        13,
+        12
+      ],
+      "z": "backHairBelowCap",
+      "__i": "Character/Hair/00030030.img_backDefault_backHairBelowCap.png"
+    }
+  },
+  "default": {
+    "hair": {
+      "__h": 22,
+      "__w": 35,
+      "map": {
+        "brow": [
+          0,
+          0
+        ]
+      },
+      "origin": [
+        14,
+        12
+      ],
+      "z": "hair",
+      "__i": "Character/Hair/00030030.img_default_hair.png"
+    }
+  },
+  "fly": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_fly_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_fly_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_heal_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_heal_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_heal_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "info": {
+    "islot": "Hr",
+    "vslot": "H1H2H3H4H5H6HfHsHb"
+  },
+  "jump": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_jump_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHair",
+        "__i": "Character/Hair/00030030.img_ladder_backHair.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_ladder_backHairBelowCap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHair",
+        "__i": "Character/Hair/00030030.img_ladder_backHair.png",
+        "__off": [
+          35,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_ladder_backHairBelowCap.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_prone_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_proneStab_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_proneStab_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHair",
+        "__i": "Character/Hair/00030030.img_rope_backHair.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_rope_backHairBelowCap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHair",
+        "__i": "Character/Hair/00030030.img_rope_backHair.png",
+        "__off": [
+          35,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_rope_backHairBelowCap.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot2_hair.png",
+        "__off": [
+          105,
+          0
+        ]
+      }
+    },
+    "4": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shoot2_hair.png",
+        "__off": [
+          140,
+          0
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shootF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shootF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_shootF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_sit_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabO1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabO1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabO2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabO2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabOF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabOF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabOF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabT2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabTF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabTF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabTF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stabTF_hair.png",
+        "__off": [
+          105,
+          0
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_stand2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO3_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO3_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingO3_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingOF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_swingOF_backHair.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_swingOF_backHairBelowCap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingOF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingOF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingP2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingPF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingPF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingPF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingPF_hair.png",
+        "__off": [
+          105,
+          0
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT3_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT3_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingT3_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "backHair": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_swingTF_backHair.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "backHairBelowCap": {
+        "__h": 32,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          13,
+          12
+        ],
+        "z": "backHairBelowCap",
+        "__i": "Character/Hair/00030030.img_swingTF_backHairBelowCap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingTF_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingTF_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_swingTF_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk1_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk1_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk1_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk1_hair.png",
+        "__off": [
+          105,
+          0
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk2_hair.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk2_hair.png",
+        "__off": [
+          35,
+          0
+        ]
+      }
+    },
+    "2": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk2_hair.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    },
+    "3": {
+      "hair": {
+        "__h": 22,
+        "__w": 35,
+        "map": {
+          "brow": [
+            0,
+            0
+          ]
+        },
+        "origin": [
+          14,
+          12
+        ],
+        "z": "hair",
+        "__i": "Character/Hair/00030030.img_walk2_hair.png",
+        "__off": [
+          105,
+          0
+        ]
+      }
+    }
+  }
+}

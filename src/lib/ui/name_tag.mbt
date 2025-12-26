@@ -116,6 +116,10 @@ fn nx_frame_to_animation_frame(
       frame.texture.offset.x.to_double(),
       frame.texture.offset.y.to_double(),
     ),
+    pivot: @selene_math.Vec2D(
+      frame.texture.origin.x.to_double(),
+      frame.texture.origin.y.to_double(),
+    ),
     duration: 0.0,
   }
 }

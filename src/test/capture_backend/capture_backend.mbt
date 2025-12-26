@@ -25,29 +25,16 @@ pub fn initialize(
   image_smooth~ : Bool,
   zoom~ : Double,
 ) -> () -> Unit {
+  // Canvas is already initialized by init_app before App::run() is called
+  // Just store the dimensions for get_canvas_size()
   ignore(startup)
   ignore(render_loop)
   ignore(game_loop)
-  default_backend.canvas_width = canvas_width
-  default_backend.canvas_height = canvas_height
   ignore(fps)
   ignore(image_smooth)
+  default_backend.canvas_width = canvas_width
+  default_backend.canvas_height = canvas_height
   default_backend.zoom = zoom
-
-  // Initialize Node.js Canvas
-  let canvas = @capture_canvas.create_canvas(
-    canvas_width.to_int(),
-    canvas_height.to_int(),
-  )
-  let ctx = canvas.get_context("2d")
-  ctx.set_image_smoothing_enabled(image_smooth)
-  ctx.scale(zoom, zoom)
-  println("DEBUG: CaptureBackend Initialized with Zoom: " + zoom.to_string())
-  // default_backend fields removed
-
-  // Share with global state
-  @capture_canvas.set_canvas(canvas)
-  @capture_canvas.set_ctx(ctx)
   fn() {  }
 }
 
@@ -81,7 +68,7 @@ pub fn draw_sprite(
   height~ : Double,
   transform~ : @math.Transform,
 ) -> Unit {
-  let ctx = @capture_canvas.get_ctx().unwrap()
+  let ctx = @capture_app.get_ctx().unwrap()
   // tolerate relative path
   let sprite_path = sprite_path.strip_prefix("/").unwrap_or(sprite_path)
   let sprite_path = sprite_path.strip_prefix("assets/").unwrap_or(sprite_path)
@@ -89,8 +76,8 @@ pub fn draw_sprite(
   let img_bytes = @fs.read_file_to_bytes(sprite_path) catch {
     e => abort(e.to_string())
   }
-  let img = @capture_canvas.create_image()
-  img.set_src(@capture_canvas.Buffer::from_bytes(img_bytes))
+  let img = @capture_app.create_image()
+  img.set_src(@capture_app.Buffer::from_bytes(img_bytes))
   ctx.save()
 
   // Transform logic: 

@@ -8,6 +8,8 @@ using @types {type NxStanceBody}
 
 ///|
 async test "character stand1" {
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites.clear()
   let bodynode = @fs.read_file_to_string(
       "assets/Character/Body/00002000.img.json",
     )
@@ -72,16 +74,235 @@ async test "character stand1" {
   }
   look.add_equip(weapon_item, @slot.Id::WEAPON)
   look.play_animations()
-  // Setup canvas for capture
-  let canvas = @capture_canvas.create_canvas(200, 200)
-  let ctx = canvas.get_context("2d")
-  @capture_canvas.set_canvas(canvas)
-  @capture_canvas.set_ctx(ctx)
-  @inherit.inherit_position_system(0.016)
-  @sprite.render_sprite_system(0.016)
-  let buffer = canvas.to_buffer("image/png").to_bytes()
+  // Initialize test app and run one loop
+  @capture_app.init_app(
+    @system.App::new()
+    .with_canvas_width(200.0)
+    .with_canvas_height(200.0)
+    .add_plugin(@plugins.default_plugin),
+  )
+  @capture_app.run_loop(0.016)
+  let buffer = @capture_app.to_buffer().to_bytes()
   @fs.create_dir("src/test/char_look_test/__snapshot__")
   @fs.write_bytes_to_file(
     "src/test/char_look_test/__snapshot__/stand1.png", buffer,
   )
+  let sprites = @sprite.sprites
+    .iter()
+    .map(fn(it) { @char_look_test.TestSprite(it.1) })
+  @json.inspect(sprites, content=[
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [35, 20],
+              "offset": [35, 33],
+              "pivot": [22, 64],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [35, 20],
+              "offset": [35, 33],
+              "pivot": [22, 64],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [35, 20],
+              "offset": [35, 33],
+              "pivot": [22, 64],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70016,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [33, 17],
+              "offset": [76, 0],
+              "pivot": [21, 60],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [33, 17],
+              "offset": [76, 0],
+              "pivot": [21, 60],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [33, 17],
+              "offset": [76, 0],
+              "pivot": [21, 60],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70020,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [38, 22],
+              "offset": [38, 0],
+              "pivot": [23, 66],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [38, 22],
+              "offset": [38, 0],
+              "pivot": [23, 66],
+            },
+            {
+              "sprite_path": "/assets/character/hair/male_1_white_hair.png",
+              "size": [38, 22],
+              "offset": [38, 0],
+              "pivot": [23, 66],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70025,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_arm.png",
+              "size": [11, 19],
+              "pivot": [1, 29],
+            },
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_arm.png",
+              "size": [11, 19],
+              "offset": [11, 0],
+              "pivot": [0, 29],
+            },
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_arm.png",
+              "size": [11, 19],
+              "offset": [22, 0],
+              "pivot": [-1, 29],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70035,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_body.png",
+              "size": [23, 31],
+              "pivot": [18, 31],
+            },
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_body.png",
+              "size": [23, 31],
+              "offset": [23, 0],
+              "pivot": [18, 31],
+            },
+            {
+              "sprite_path": "Character/Body/00002000.img_stand1_body.png",
+              "size": [23, 31],
+              "offset": [46, 0],
+              "pivot": [18, 31],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70005,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "Character/Body/00012000.img_stand1_head.png",
+              "size": [39, 35],
+              "pivot": [23, 64],
+            },
+            {
+              "sprite_path": "Character/Body/00012000.img_stand1_head.png",
+              "size": [39, 35],
+              "offset": [39, 0],
+              "pivot": [23, 64],
+            },
+            {
+              "sprite_path": "Character/Body/00012000.img_stand1_head.png",
+              "size": [39, 35],
+              "offset": [78, 0],
+              "pivot": [23, 64],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70019,
+      "visible": true,
+    },
+    {
+      "sprite_type": [
+        "Animation",
+        {
+          "frames": [
+            {
+              "sprite_path": "character/weapon/01302000.img_stand1.png",
+              "size": [41, 13],
+              "pivot": [27, 17],
+            },
+            {
+              "sprite_path": "character/weapon/01302000.img_stand1.png",
+              "size": [41, 13],
+              "offset": [41, 0],
+              "pivot": [26, 17],
+            },
+            {
+              "sprite_path": "character/weapon/01302000.img_stand1.png",
+              "size": [41, 13],
+              "offset": [82, 0],
+              "pivot": [25, 17],
+            },
+          ],
+          "loop_": true,
+        },
+        0,
+      ],
+      "zindex": 70036,
+      "visible": true,
+    },
+  ])
 }

@@ -653,6 +653,15 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
   }
 
+  // Extract body delays for synchronization
+  let body_delays : Array[Int?] = match self.full_body.stances.get(stance) {
+    Some(map) =>
+      match map.get("body") {
+        Some((body_frames, _)) => body_frames.map(fn(f) { f.delay })
+        None => []
+      }
+    None => []
+  }
   reset_sprites_hide(self.body_entities.values())
   reset_sprites_hide(self.hair_entities.values())
   let drawables : Array[&@graphics.Drawable] = []
@@ -716,6 +725,16 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
       continue
     }
+    // Inject body delays into hair frames
+    let frames = anim.frames.mapi(fn(i, f) {
+      let delay = if i < body_delays.length() {
+        body_delays[i]
+      } else {
+        f.delay
+      }
+      { ..f, delay, }
+    })
+    let anim = { ..anim, frames, }
     let animation = nx_animation_to_selene_animation(anim, flip_x~, loop_~) // TODO: cache animation
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.root_entity.spawn_child()
@@ -793,6 +812,25 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         if frames.length() == 0 {
           continue
         }
+        // Extract body delays for synchronization
+        let body_delays : Array[Int?] = match
+          self.full_body.stances.get(stance) {
+          Some(map) =>
+            match map.get("body") {
+              Some((body_frames, _)) => body_frames.map(fn(f) { f.delay })
+              None => []
+            }
+          None => []
+        }
+        // Clone and inject delays
+        let frames = frames.mapi(fn(i, f) {
+          let delay = if i < body_delays.length() {
+            body_delays[i]
+          } else {
+            f.delay
+          }
+          { ..f, delay, }
+        })
         let nx_anim = @resource.NxAnimation::{
           frames,
           blend: false,

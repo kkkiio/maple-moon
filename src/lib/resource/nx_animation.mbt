@@ -120,11 +120,6 @@ pub fn nx_animation_to_selene_animation(
   flip_x? : Bool = false,
   loop_? : Bool = false,
 ) -> @sprite.Animation {
-  let origin = src.frames
-    .get(0)
-    .map(fn(frame) { frame.texture.origin })
-    .unwrap_or(@struct.Point::default())
-
   // Extract all delays
   let delays = src.frames.map(fn(frame) {
     match frame.delay {
@@ -170,20 +165,19 @@ pub fn nx_animation_to_selene_animation(
         frame.texture.offset.x.to_double(),
         frame.texture.offset.y.to_double(),
       ),
+      pivot: @selene_math.Vec2D(
+        frame.texture.origin.x.to_double(),
+        frame.texture.origin.y.to_double(),
+      ),
       duration: delay_ms.to_double() / 1000.0,
     }
   })
 
-  // translate to origin
-  let base = @selene_math.Transform::from_translation(
-    -origin.x.to_double(),
-    -origin.y.to_double(),
-  )
   // flip x axis around origin.x(pivot)
   let transform = if flip_x {
-    @selene_math.Transform::from_scale(-1.0, 1.0) * base
+    @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
-    base
+    @selene_math.Transform::new()
   }
   @sprite.Animation::new(frames, loop_~, transform~)
 }

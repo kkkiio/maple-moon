@@ -95,9 +95,8 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
       7,
       width=128,
       height=122,
+      pivot=@selene_math.Vec2D(62, 119),
     ),
-    transform=@selene_math.Transform::from_translation(-62.0, -119.0),
-    // offset=-@selene_math.Vec2D(62, 199),
   )
   let ani2 = @sprite.Animation::new(
     @sprite.frames_from_atlas(
@@ -105,9 +104,8 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
       8,
       width=89,
       height=257,
+      pivot=@selene_math.Vec2D(44, 248),
     ),
-    transform=@selene_math.Transform::from_translation(-44.0, -248.0),
-    // offset=-@selene_math.Vec2D(44, 248),
   )
   {
     animations: Map::from_array([

@@ -258,6 +258,7 @@ pub fn get_effect_loader() -> AsyncLoader {
 let face_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
   AsyncLoader::new(
     "face",
+    base_url="/assets",
     loader=DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Face",
       "/assets/Character/Face",
@@ -274,6 +275,7 @@ pub fn get_face_loader() -> AsyncLoader {
 let hair_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
   AsyncLoader::new(
     "hair",
+    base_url="/assets",
     loader=DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Hair",
       "/assets/Character/Hair",

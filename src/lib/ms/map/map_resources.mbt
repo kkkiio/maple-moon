@@ -300,7 +300,10 @@ test "parse misssing" {
     "y": 267,
   }
   let life : NxLife = @json.from_json(src)
-  inspect(life, content=(
-    #|{cy: 274, f: 0, fh: 126, hide: 0, id: "1012000", mob_time: None, rx0: 99, rx1: 199, type_: "n", x: 149, y: 267}
-  ))
+  inspect(
+    life,
+    content=(
+      #|{cy: 274, f: 0, fh: 126, hide: 0, id: "1012000", mob_time: None, rx0: 99, rx1: 199, type_: "n", x: 149, y: 267}
+    ),
+  )
 }

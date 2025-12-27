@@ -116,19 +116,9 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 }
 
 ///|
-fn get_face_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "face",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Character/Face",
-    ),
-  )
-}
-
-///|
 pub async fn Face::load(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
-  let facenode = get_face_loader().load_res_async(["\{strid}.img"])
+  let facenode = @resource.get_face_loader().load_res_async(["\{strid}.img"])
   Face::new(faceid, facenode.value())
 }
 

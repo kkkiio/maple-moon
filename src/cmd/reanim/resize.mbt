@@ -1,18 +1,4 @@
-/// Merge frames - extract, resize, and generate spritesheets from animation frames
-
-///|
-struct ExtractedFrame {
-  data : FrameData
-  buffer : @js.Value
-}
-
-///|
-pub(all) struct UnifiedSize {
-  width : Int
-  height : Int
-  anchor_x : Int
-  anchor_y : Int
-}
+/// Resize mode - resize frames to unified size and generate spritesheet
 
 ///|
 using @cmp {maximum}
@@ -39,65 +25,8 @@ pub fn calculate_unified_size(frames : Array[FrameData]) -> UnifiedSize {
 }
 
 ///|
-/// Extract frames from sources.
-async fn extract_frames(
-  frames : Array[FrameData],
-  spritesheet_buffers : Map[String, @js.Value],
-  bitmaps_dir : String,
-  load_bitmap : (String) -> @js.Value,
-) -> Array[ExtractedFrame] {
-  if frames.is_empty() {
-    return []
-  }
-
-  // For spritesheet mode, we can optimize by loading the sharp instance once if all are from same sheet
-  // But since we might mix or have bitmaps, let's just handle per frame or group by sheet if needed.
-  // Current logic assumes single sheet per animation for spritesheet mode, but bitmaps are individual.
-
-  let extracted : Array[ExtractedFrame] = []
-
-  // Optimization: Pre-load the spritesheet sharp instance if applicable
-  let mut current_sheet_path = ""
-  let mut current_sharp_img : @js.Value? = None
-  if not(frames[0].is_bitmap) {
-    current_sheet_path = frames[0].spritesheet_path
-    if spritesheet_buffers.get(current_sheet_path) is Some(buffer) {
-      current_sharp_img = Some(sharp_from_buffer(buffer))
-    } else {
-      fail("Spritesheet buffer not found for \{current_sheet_path}")
-    }
-  }
-  for frame in frames {
-    if frame.is_bitmap {
-      let bitmap_path = "\{bitmaps_dir}/\{frame.id}.png"
-      let buffer = load_bitmap(bitmap_path)
-      let sharp_img = sharp_from_buffer(buffer)
-      let extracted_buffer = extract_ffi(
-        sharp_img,
-        0,
-        0,
-        frame.width,
-        frame.height,
-      ).wait()
-      extracted.push({ data: frame, buffer: extracted_buffer })
-    } else {
-      // Spritesheet frame
-      let buffer = extract_ffi(
-        current_sharp_img.unwrap(),
-        frame.src_x,
-        frame.src_y,
-        frame.width,
-        frame.height,
-      ).wait()
-      extracted.push({ data: frame, buffer })
-    }
-  }
-  extracted
-}
-
-///|
 /// Resize frames to unified size
-async fn resize_frames(
+pub async fn resize_frames(
   frames : Array[ExtractedFrame],
   unified : UnifiedSize,
 ) -> Array[@js.Value] {
@@ -118,8 +47,8 @@ async fn resize_frames(
 }
 
 ///|
-/// Generate spritesheet from frames (horizontal layout)
-async fn generate_spritesheet(
+/// Generate spritesheet from resized frames (horizontal layout)  
+pub async fn generate_resized_spritesheet(
   frames : Array[@js.Value],
   unified : UnifiedSize,
 ) -> @js.Value {
@@ -137,8 +66,8 @@ async fn generate_spritesheet(
 }
 
 ///|
-/// Update animation JSON with new __i and __off
-fn update_animation_json(
+/// Update animation JSON with unified size and offsets
+pub fn update_resized_animation_json(
   animation_json : Json,
   action_name : String,
   unified : UnifiedSize,
@@ -152,7 +81,6 @@ fn update_animation_json(
   for key, frame_json in obj {
     // Check if numeric key (frame)
     if key.iter().all(fn(c) { c >= '0' && c <= '9' }) {
-
       // Determine the object containing __i etc.
       let target_json_opt = match layer {
         Some(l) =>
@@ -203,16 +131,14 @@ fn update_animation_json(
                   }
                   Json::object(wrapper)
                 }
-                _ => frame_json // Should not happen given guard above
+                _ => frame_json
               }
             None => Json::object(new_frame_data)
           }
           new_obj[key] = final_json
           frame_idx += 1
         }
-        _ =>
-          // Not a valid frame structure or missing layer, keep as is
-          new_obj[key] = frame_json
+        _ => new_obj[key] = frame_json
       }
     } else {
       new_obj[key] = frame_json

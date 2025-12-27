@@ -74,7 +74,10 @@ pub fn draw_sprite(
   let sprite_path = sprite_path.strip_prefix("assets/").unwrap_or(sprite_path)
   let sprite_path = "assets/\{sprite_path}"
   let img_bytes = @fs.read_file_to_bytes(sprite_path) catch {
-    e => abort(e.to_string())
+    e => {
+      @log.error({ "error": e }, "Failed to load sprite")
+      panic()
+    }
   }
   let img = @capture_app.create_image()
   img.set_src(@capture_app.Buffer::from_bytes(img_bytes))

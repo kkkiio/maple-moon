@@ -229,13 +229,13 @@ pub(all) struct SelectableCharacter {
 }
 
 ///|
-pub fn SelectCharUI::new(
+pub async fn SelectCharUI::new(
   resources : SelectCharUIResource,
   characters : Array[SelectableCharacter],
   mod : CharLookMod,
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
-) -> SelectCharUI raise {
+) -> SelectCharUI {
   // ui_model.dimension = @struct.Point::new(800, 600)
 
   let back13 = @sprite.Animation::single_frame(
@@ -334,13 +334,13 @@ pub fn SelectCharUI::new(
   let characters_entities = Array::makei(characters.length(), fn(_) {
     @entity.Entity::new()
   })
-  let characters : Array[SelectableCharacterUI] = characters.mapi(fn(
-    i,
-    character,
-  ) raise {
+  let characters_ui : Array[SelectableCharacterUI] = []
+  for i, character in characters {
     let entity = characters_entities[i]
-    to_selectable_character_ui(entity, i, character, resources, mod)
-  })
+    characters_ui.push(
+      to_selectable_character_ui(entity, i, character, resources, mod),
+    )
+  }
   entities.append(characters_entities)
   let res : Map[@ui.ButtonState, @resource.NxAnimation] = {}
   res[NORMAL] = {
@@ -437,7 +437,7 @@ pub fn SelectCharUI::new(
     entities,
     select_slot: None,
     on_new_character,
-    characters,
+    characters: characters_ui,
     resource: resources,
     animations: [
       // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
@@ -455,36 +455,34 @@ pub fn SelectCharUI::new(
 }
 
 ///|
-pub fn load_char_look(
+pub async fn load_char_look(
   entity : @entity.Entity,
   mod : @char_look.CharLookMod,
   _character : SelectableCharacter, // TODO: use character look data
-) -> @char_look.CharLook raise {
+) -> @char_look.CharLook {
   let draw_info = mod.draw_info
   let stance_bodys_map = mod.stance_bodys_map.0
   let stance_heads_map = mod.stance_heads_map.0
+  let hair = @char_look.Hair::load(30030, draw_info)
+  let face = @char_look.Face::load(20000)
   @char_look.CharLook::new(
     entity,
     {},
     @char_look.FullBody::new(0, draw_info, stance_bodys_map, stance_heads_map),
-    @char_look.Hair::parse(
-      0,
-      @json.from_json(@char_look.male_1_white_hair),
-      draw_info,
-    ),
-    @char_look.Face::new(20800, @char_look.male_1_white_face),
+    hair,
+    face,
     draw_info,
   )
 }
 
 ///|
-pub fn to_selectable_character_ui(
+pub async fn to_selectable_character_ui(
   entity : @entity.Entity,
   i : Int,
   character : SelectableCharacter,
   resource : SelectCharUIResource,
   mod : CharLookMod,
-) -> SelectableCharacterUI raise {
+) -> SelectableCharacterUI {
   let char_look = load_char_look(entity, mod, character)
   let { cid, name } = character
   // render_elements.push(
@@ -516,15 +514,6 @@ pub fn to_selectable_character_ui(
     char_look,
     name_tag: @ui.NameTag::new(@graphics.FontId::A13M, name, resource.name_tag),
   }
-}
-
-///|
-pub impl @ui.Widget for SelectCharUI with render(self) -> @ui.RenderSpec {
-  let render_elements = []
-  // Point<int16_t> character_new_pos = Point<int16_t>(200, 495);
-  // buttons_[Buttons::CHARACTER_NEW] =
-  //     std::make_unique<MapleButton>(CharSelect["BtNew"], character_new_pos);
-  { render_elements, }
 }
 
 ///|
@@ -575,9 +564,9 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
 }
 
 ///|
-fn add_select_char_ui(mod : CharLookMod) -> Unit raise {
+async fn add_select_char_ui(mod : CharLookMod) -> SelectCharUI {
   let slots = [{ cid: 1, name: "kkkiio" }]
-  let ui = SelectCharUI::new(
+  SelectCharUI::new(
     SelectCharUIResource::load(),
     slots,
     on_select_character=fn(slot) {
@@ -588,50 +577,71 @@ fn add_select_char_ui(mod : CharLookMod) -> Unit raise {
     },
     mod,
   )
-  select_char_ui.val = Some(ui)
 }
+
+///|
+let select_char_loading_future : Ref[
+  @utils.Future[Result[SelectCharUI, Error]]?,
+] = Ref::new(None)
 
 ///|
 pub fn select_char_system(_delta : Double) -> Unit {
   guard @char_look.get_module() is Some(mod) else { return }
   guard game_state.phase is GamePhase::SelectCharacter else { return }
-  guard select_char_ui.val is Some(ui) else {
-    add_select_char_ui(mod) catch {
-      e => abort("add select char ui failed: \{e.to_string()}")
+
+  // If UI is already loaded, update animations
+  if select_char_ui.val is Some(ui) {
+    for item in ui.animations {
+      let (entity, counter, segments) = item
+      // 计算总帧数
+      let mut total = 0
+      for seg in segments {
+        total += seg.0
+      }
+      // 推进计数
+      counter.val = (counter.val + 1) % total
+      let p = counter.val
+      // 定位当前段
+      let mut acc = 0
+      let mut alpha_val = 255.0
+      for seg in segments {
+        let dur = seg.0
+        let from = seg.1
+        let to = seg.2
+        if p < acc + dur {
+          let t = (p - acc).to_double() / dur.to_double()
+          alpha_val = from + (to - from) * t
+          break
+        }
+        acc += dur
+      }
+      let alpha_norm = alpha_val / 255.0
+      // if @sprite.sprites.get(entity) is Some(spr) {
+      //   @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
+      // }
+      // TODO: modify upstream selene to support alpha
+      ignore(entity)
+      ignore(alpha_norm)
     }
     return
   }
-  for item in ui.animations {
-    let (entity, counter, segments) = item
-    // 计算总帧数
-    let mut total = 0
-    for seg in segments {
-      total += seg.0
-    }
-    // 推进计数
-    counter.val = (counter.val + 1) % total
-    let p = counter.val
-    // 定位当前段
-    let mut acc = 0
-    let mut alpha_val = 255.0
-    for seg in segments {
-      let dur = seg.0
-      let from = seg.1
-      let to = seg.2
-      if p < acc + dur {
-        let t = (p - acc).to_double() / dur.to_double()
-        alpha_val = from + (to - from) * t
-        break
-      }
-      acc += dur
-    }
-    let alpha_norm = alpha_val / 255.0
-    // if @sprite.sprites.get(entity) is Some(spr) {
-    //   @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
-    // }
-    // TODO: modify upstream selene to support alpha
-    ignore(entity)
-    ignore(alpha_norm)
+
+  // If not loading yet, start background task
+  guard select_char_loading_future.val is Some(fut) else {
+    select_char_loading_future.val = Some(
+      @io_service.submit_background_task(fn() { add_select_char_ui(mod) }),
+    )
+    return
+  }
+
+  // Poll for completion
+  guard fut.poll() is Some(res) else { return }
+
+  // Process result
+  select_char_loading_future.val = None
+  match res {
+    Ok(ui) => select_char_ui.val = Some(ui)
+    Err(e) => abort("add select char ui failed: \{e.to_string()}")
   }
 }
 

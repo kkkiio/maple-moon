@@ -65,7 +65,7 @@ pub struct NxBackground {
 
 ///|
 pub impl @json.FromJson for NxBackground with from_json(json, path) {
-  guard json.as_object() is Some(obj) else {
+  guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object"))
   }
   guard obj

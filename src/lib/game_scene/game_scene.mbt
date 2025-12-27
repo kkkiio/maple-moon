@@ -319,8 +319,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       return
     }
     GameStart(map_id~, portal_id~, loading_data~) as t => {
-      // 1. 如果没有开始加载数据，启动后台任务加载默认武器
+      // 1. 如果没有开始加载数据，启动后台任务加载默认武器、头发和脸
       guard loading_data is Some(fut) else {
+        guard @char_look.get_module() is Some(char_look_mod) else { return }
+        let draw_info = char_look_mod.draw_info
         t.loading_data = Some(
           @io_service.submit_background_task(async fn() {
             let swordOL = @resource.get_afterimage_loader().load_res_async([
@@ -329,7 +331,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             let res = swordOL.value()
             let after_images = @json.from_json(res)
             @char_look.set_after_images("swordOL", after_images)
-            @item.ItemData::get_async(1302000)
+            let hair = @char_look.Hair::load(30000, draw_info)
+            let face = @char_look.Face::load(20000)
+            let weapon_data = @item.ItemData::get_async(1302000)
+            (weapon_data, hair, face)
           }),
         )
         return
@@ -339,10 +344,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard fut.poll() is Some(res) else { return }
 
       // 3. 数据加载完成，处理结果
-      let weapon_data = match res {
+      let (weapon_data, hair, face) = match res {
         Ok(data) => data
         Err(e) => {
-          @log.error({ "error": e }, "fail to load weapon data")
+          @log.error({ "error": e }, "fail to load game start data")
           panic()
         }
       }
@@ -354,9 +359,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         let draw_info = char_look_mod.draw_info
         let stance_bodys_map = char_look_mod.stance_bodys_map.0
         let stance_heads_map = char_look_mod.stance_heads_map.0
-        let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
-          @char_look.male_1_white_hair,
-        )
         let entity = @entity.Entity::new()
         let look = @char_look.CharLook::new(
           entity,
@@ -364,8 +366,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           @char_look.FullBody::new(
             0, draw_info, stance_bodys_map, stance_heads_map,
           ),
-          @char_look.Hair::parse(0, hair_node, draw_info),
-          @char_look.Face::new(20800, @char_look.male_1_white_face),
+          hair,
+          face,
           draw_info,
         )
         // 装备加载好的武器

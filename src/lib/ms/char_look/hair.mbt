@@ -48,9 +48,12 @@ pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut
 
 ///|
 pub async fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
-  // let hairnode = get_hair_loader().load_res_async(["000\{hairid}.img"])
-  // Hair::new(hairid, hairnode, drawinfo)
-  ...
+  let strid = "000" + hairid.to_string()
+  let hairnode = @resource.get_hair_loader().load_res_async(["\{strid}.img"])
+  let hairnode : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
+    hairnode.value(),
+  )
+  Hair::parse(hairid, hairnode, drawinfo)
 }
 
 ///|

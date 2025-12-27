@@ -4,6 +4,7 @@
     "KKKIIO/maple-moon/lib/ms/physics",
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/ms/monster",
-    "KKKIIO/maple-moon/lib/ms/item"
+    "KKKIIO/maple-moon/lib/ms/item",
+    "KKKIIO/maple-moon/lib/ms/char_look"
   ]
 }

@@ -171,7 +171,7 @@ async fn process_bitmap_animation(
     (Some(loader), Some(saver)) => {
       let extracted = load_bitmap_images(frames, loader)
       let resized = resize_frames(extracted, unified)
-      let new_spritesheet = generate_spritesheet(resized, unified)
+      let new_spritesheet = generate_resized_spritesheet(resized, unified)
       let output_filename = "\{action_name}.png"
       saver(output_filename, new_spritesheet)
     }

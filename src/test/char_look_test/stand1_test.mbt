@@ -194,6 +194,21 @@ async test "character stand1" {
         "Animation",
         {
           "current": {
+            "sprite_path": "Character/Face/00020000.img_default_face.png",
+            "size": [26, 16],
+            "pivot": [20, 48],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70021,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
             "sprite_path": "character/weapon/01302000.img_stand1.png",
             "size": [41, 13],
             "pivot": [27, 17],

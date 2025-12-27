@@ -189,6 +189,21 @@ async test "character stabO1" {
         "Animation",
         {
           "current": {
+            "sprite_path": "Character/Face/00020000.img_default_face.png",
+            "size": [26, 16],
+            "pivot": [20, 45],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70021,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
             "sprite_path": "character/weapon/01302000.img_stabO1.png",
             "size": [43, 8],
             "pivot": [24, 18],
@@ -317,6 +332,21 @@ async test "character stabO1" {
         },
       ],
       "zindex": 70019,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Character/Face/00020000.img_default_face.png",
+            "size": [26, 16],
+            "pivot": [39, 42],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70021,
       "visible": true,
     },
     {

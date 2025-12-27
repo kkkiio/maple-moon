@@ -1,5 +1,5 @@
 ///|
-pub(all) enum Layer {
+pub(all) enum ClothingLayer {
   CAPE = 1
   SHIELD_BELOW_BODY = 2
   WEAPON_BELOW_BODY = 3
@@ -40,10 +40,10 @@ pub(all) enum Layer {
 } derive(Eq, Hash, Show)
 
 ///|
-pub fn Layer::int_value(self : Layer) -> Int = "%identity"
+pub fn ClothingLayer::int_value(self : ClothingLayer) -> Int = "%identity"
 
 ///|
-pub impl ToJson for Layer with to_json(self) {
+pub impl ToJson for ClothingLayer with to_json(self) {
   self.to_string().to_json()
 }
 
@@ -51,7 +51,7 @@ pub impl ToJson for Layer with to_json(self) {
 struct Clothing {
   stances : Map[
     @types.StanceId,
-    Map[String, (Array[@resource.NxFrame], Array[Layer])],
+    Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
   ]
   item_id : Int
   eq_slot : @slot.Id
@@ -82,9 +82,9 @@ pub fn Clothing::from_resource(
   let chlayer = if index < non_weapon_types {
     layers[index]
   } else if index >= weapon_offset && index < weapon_offset + weapon_types {
-    Layer::WEAPON
+    ClothingLayer::WEAPON
   } else {
-    Layer::CAPE
+    ClothingLayer::CAPE
   }
   let info = item_data.get_info()
   let vslot = if info is { "vslot": String(vslot), .. } { vslot } else { "" }
@@ -111,12 +111,15 @@ pub fn Clothing::from_resource(
   let src = item_data.src
   let stances : Map[
     @types.StanceId,
-    Map[String, (Array[@resource.NxFrame], Array[Layer])],
+    Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
   ] = {}
   for stancename, stance in @types.stance_name_id_map {
     guard src is Object(obj) else { continue }
     guard obj.get(stancename) is Some(stancenode) else { continue }
-    let part_frames_map : Map[String, (Array[@resource.NxFrame], Array[Layer])] = Map::new()
+    let part_frames_map : Map[
+      String,
+      (Array[@resource.NxFrame], Array[ClothingLayer]),
+    ] = Map::new()
     for frame = 0; ; frame = frame + 1 {
       guard stancenode is Object(stance_obj) else { break }
       guard stance_obj.get(frame.to_string()) is Some(framenode) else { break }
@@ -131,7 +134,7 @@ pub fn Clothing::from_resource(
           _ => ""
         }
         if part == "mailArm" {
-          z = Layer::MAILARM
+          z = ClothingLayer::MAILARM
         } else {
           match sub_layer_names.get(zs) {
             Some(sublayer) => z = sublayer
@@ -217,7 +220,7 @@ pub fn Clothing::get_animation(
   self : Clothing,
   stance : @types.StanceId,
   part : String,
-) -> (Array[@resource.NxFrame], Array[Layer])? {
+) -> (Array[@resource.NxFrame], Array[ClothingLayer])? {
   self.stances.get(stance).bind(fn(m) { m.get(part) })
 }
 
@@ -225,7 +228,7 @@ pub fn Clothing::get_animation(
 pub fn Clothing::get_parts_for_stance(
   self : Clothing,
   stance : @types.StanceId,
-) -> Map[String, (Array[@resource.NxFrame], Array[Layer])]? {
+) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]? {
   self.stances.get(stance)
 }
 
@@ -250,23 +253,23 @@ pub fn Clothing::get_eqslot(self : Clothing) -> @slot.Id {
 }
 
 ///|
-let sub_layer_names : Map[String, Layer] = {
-  "weaponOverHand": Layer::WEAPON_OVER_HAND,
-  "weaponOverGlove": Layer::WEAPON_OVER_GLOVE,
-  "weaponOverBody": Layer::WEAPON_OVER_BODY,
-  "weaponBelowArm": Layer::WEAPON_BELOW_ARM,
-  "weaponBelowBody": Layer::WEAPON_BELOW_BODY,
-  "backWeaponOverShield": Layer::BACK_WEAPON,
-  "shieldOverHair": Layer::SHIELD_OVER_HAIR,
-  "shieldBelowBody": Layer::SHIELD_BELOW_BODY,
-  "backShield": Layer::BACK_SHIELD,
-  "gloveWrist": Layer::WRIST,
-  "gloveOverHair": Layer::GLOVE_OVER_HAIR,
-  "gloveOverBody": Layer::GLOVE_OVER_BODY,
-  "gloveWristOverHair": Layer::WRIST_OVER_HAIR,
-  "gloveWristOverBody": Layer::WRIST_OVER_BODY,
-  "capOverHair": Layer::CAP_OVER_HAIR,
-  "capBelowBody": Layer::CAP_BELOW_BODY,
+let sub_layer_names : Map[String, ClothingLayer] = {
+  "weaponOverHand": ClothingLayer::WEAPON_OVER_HAND,
+  "weaponOverGlove": ClothingLayer::WEAPON_OVER_GLOVE,
+  "weaponOverBody": ClothingLayer::WEAPON_OVER_BODY,
+  "weaponBelowArm": ClothingLayer::WEAPON_BELOW_ARM,
+  "weaponBelowBody": ClothingLayer::WEAPON_BELOW_BODY,
+  "backWeaponOverShield": ClothingLayer::BACK_WEAPON,
+  "shieldOverHair": ClothingLayer::SHIELD_OVER_HAIR,
+  "shieldBelowBody": ClothingLayer::SHIELD_BELOW_BODY,
+  "backShield": ClothingLayer::BACK_SHIELD,
+  "gloveWrist": ClothingLayer::WRIST,
+  "gloveOverHair": ClothingLayer::GLOVE_OVER_HAIR,
+  "gloveOverBody": ClothingLayer::GLOVE_OVER_BODY,
+  "gloveWristOverHair": ClothingLayer::WRIST_OVER_HAIR,
+  "gloveWristOverBody": ClothingLayer::WRIST_OVER_BODY,
+  "capOverHair": ClothingLayer::CAP_OVER_HAIR,
+  "capBelowBody": ClothingLayer::CAP_BELOW_BODY,
 }
 
 ///|
@@ -280,20 +283,20 @@ pub fn Clothing::get_walk(self : Clothing) -> @types.StanceId {
 }
 
 ///|
-let layers : Array[Layer] = [
-  Layer::CAP,
-  Layer::FACE_ACC,
-  Layer::EYE_ACC,
-  Layer::EARRINGS,
-  Layer::TOP,
-  Layer::MAIL,
-  Layer::PANTS,
-  Layer::SHOES,
-  Layer::GLOVE,
-  Layer::SHIELD,
-  Layer::CAPE,
-  Layer::RING,
-  Layer::PENDANT,
-  Layer::BELT,
-  Layer::MEDAL,
+let layers : Array[ClothingLayer] = [
+  ClothingLayer::CAP,
+  ClothingLayer::FACE_ACC,
+  ClothingLayer::EYE_ACC,
+  ClothingLayer::EARRINGS,
+  ClothingLayer::TOP,
+  ClothingLayer::MAIL,
+  ClothingLayer::PANTS,
+  ClothingLayer::SHOES,
+  ClothingLayer::GLOVE,
+  ClothingLayer::SHIELD,
+  ClothingLayer::CAPE,
+  ClothingLayer::RING,
+  ClothingLayer::PENDANT,
+  ClothingLayer::BELT,
+  ClothingLayer::MEDAL,
 ]

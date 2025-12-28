@@ -707,6 +707,11 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
   }
 
+  if @types.StanceId::is_climbing(stance) {
+    self.play_climbing_animations(stance)
+    return
+  }
+
   // Extract body delays for synchronization
   let body_delays : Array[Int?] = match self.full_body.stances.get(stance) {
     Some(map) =>
@@ -1321,7 +1326,7 @@ pub fn CharLook::is_animation_finished(self : CharLook) -> Bool {
 /// 对于动画的每一帧 i，我们调用 self.draw_info.get_face_pos(stance, i)。这个函数会查找配置表 (WZ/Json 数据)，计算出当前这一帧，脸部相对于角色原点应该在什么位置。
 /// 我们通过修改 Sprite 的 Pivot (锚点) 来实现这个位移：pivot = source_pivot - face_pos。
 /// 
-/// 设定 Z-index 为 21 + CHAR_LOOK_ZINDEX，确保脸部渲染在头部图层之上，但在头发图层（刘海）之下。
+/// 设定 Z-index 为 FACE_ACC - 1, 在头发图层（刘海）之下。
 fn attach_face(
   entity : @entity.Entity,
   stance : @types.StanceId,
@@ -1389,7 +1394,9 @@ fn attach_face(
     let sprite = ensure_sprite_with_z(
       entity,
       animation,
-      @graphics.CHAR_LOOK_ZINDEX + @clothing.ClothingLayer::FACE_ACC.int_value(),
+      @graphics.CHAR_LOOK_ZINDEX +
+      @clothing.ClothingLayer::FACE_ACC.int_value() -
+      1,
     )
     sprite.visible = true
     @sprite.play_animation(entity, animation, loop_=true)
@@ -1439,4 +1446,149 @@ fn attach_equipment(
   )
   sprite.visible = true
   @sprite.play_animation(entity, animation, loop_~)
+}
+
+///|
+fn CharLook::play_climbing_animations(
+  self : CharLook,
+  stance : @types.StanceId,
+) -> Unit {
+  let loop_ = true
+  fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
+    for entity in entities {
+      if @sprite.sprites.get(entity) is Some(sprite) {
+        sprite.visible = false
+      }
+    }
+  }
+
+  // Extract body delays for synchronization
+  let body_delays : Array[Int?] = match self.full_body.stances.get(stance) {
+    Some(map) =>
+      match map.get("body") {
+        Some((body_frames, _)) => body_frames.map(fn(f) { f.delay })
+        None => []
+      }
+    None => []
+  }
+  reset_sprites_hide(self.body_entities.values())
+  reset_sprites_hide(self.hair_entities.values())
+  let flip_x = self.flip
+
+  // Hair Animation (Include BACK for climbing, exclude front layers)
+  for
+    layer in [
+      HairLayer::BELOW_BODY,
+      HairLayer::BACK,
+      HairLayer::BELOW_CAP,
+      HairLayer::HAIR_LAYER_DEFAULT,
+    ] {
+    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
+      continue
+    }
+    // Inject body delays into hair frames
+    let frames = anim.frames.mapi(fn(i, f) {
+      let delay = if i < body_delays.length() {
+        body_delays[i]
+      } else {
+        f.delay
+      }
+      { ..f, delay, }
+    })
+    let anim = { ..anim, frames, }
+    let animation = nx_animation_to_selene_animation(anim, flip_x~, loop_~)
+    let entity = self.hair_entities.get_or_init(layer, fn() {
+      self.root_entity.spawn_child()
+    })
+    let z_index = if layer == HairLayer::BACK {
+      @types.BodyLayer::HEAD.int_value() + 5
+    } else {
+      layer.z()
+    }
+    let sprite = ensure_sprite_with_z(
+      entity,
+      animation,
+      z_index + @graphics.CHAR_LOOK_ZINDEX,
+    )
+    sprite.visible = true
+    @sprite.play_animation(entity, animation, loop_~)
+  }
+
+  // Body Animation
+  if self.full_body.stances.get(stance) is Some(stance_stances) {
+    for name, it in stance_stances {
+      let (frames, layers) = it
+      if frames.length() != layers.length() {
+        @log.error(
+          { "name": name, "frames": frames.length(), "layers": layers.length() },
+          "frames.length() != layers.length()",
+        )
+        panic()
+      }
+      let nx_anim = @resource.NxAnimation::{
+        frames,
+        blend: false,
+        zigzag: false,
+      }
+      let animation = nx_animation_to_selene_animation(
+        nx_anim,
+        flip_x=self.flip,
+        loop_~,
+      )
+      let entity = self.body_entities.get_or_init(name, fn() {
+        self.root_entity.spawn_child()
+      })
+      // Simplified frame logic for climbing (loop 0)
+      let current_frame = 0
+      let sprite = ensure_sprite_with_z(
+        entity,
+        animation,
+        layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+      )
+      sprite.visible = true
+      @sprite.play_animation(entity, animation, loop_~)
+    }
+  }
+
+  // Equipment Animation
+  reset_sprites_hide(self.equip_entities.values())
+  reset_sprites_hide(self.weapon_entities.values())
+  for item in self.equips.iter() {
+    let (slot, clothing) = item
+    if clothing.get_parts_for_stance(stance) is Some(stance_parts) {
+      for part, it in stance_parts {
+        let (frames, layers) = it
+        if frames.length() == 0 {
+          continue
+        }
+        let key = slot.to_string() + "_" + part
+        let entity = self.equip_entities.get_or_init(key, fn() {
+          self.root_entity.spawn_child()
+        })
+        let z_layer = if layers.length() > 0 {
+          layers[0].int_value()
+        } else {
+          0
+        }
+        attach_equipment(
+          entity,
+          stance,
+          self.flip,
+          frames,
+          z_layer,
+          body_delays,
+          loop_,
+        )
+      }
+    }
+  }
+
+  // Skip Face Animation for Climbing
+  match self.face_entity {
+    Some(e) =>
+      if @sprite.sprites.get(e) is Some(sprite) {
+        sprite.visible = false
+      }
+    None => ()
+  }
 }

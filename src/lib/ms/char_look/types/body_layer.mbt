@@ -45,6 +45,7 @@ pub fn BodyLayer::from_name(name : String) -> BodyLayer? {
     "handOverHair" => BodyLayer::HAND_OVER_HAIR
     "handOverWeapon" => BodyLayer::HAND_OVER_WEAPON
     "head" => BodyLayer::HEAD
+    "backHead" => BodyLayer::HEAD
     _ => return None
   }
   Some(it)

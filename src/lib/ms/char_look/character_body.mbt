@@ -1,5 +1,5 @@
 ///|
-using @types {type StanceId, type NxStanceBody, type NxMultiPartFrame}
+using @types {type NxStanceBody, type NxMultiPartFrame}
 
 ///|
 using @resource {type NxFrame}
@@ -26,8 +26,8 @@ pub(all) struct FullBody {
 pub fn FullBody::new(
   skin : Int,
   drawinfo : @types.BodyDrawInfo,
-  bodynode : Map[@types.StanceId, Array[NxStanceBody]],
-  headnode : Map[@types.StanceId, Array[NxMultiPartFrame]],
+  bodynode : Map[StanceId, Array[NxStanceBody]],
+  headnode : Map[StanceId, Array[NxMultiPartFrame]],
 ) -> FullBody {
   let stances = {}
   for stance, stance_body in bodynode {
@@ -53,7 +53,7 @@ pub fn FullBody::new(
 /// 
 /// Returns a map of part names to their animation frames and z-layers.
 fn parse_body_animations_by_stance(
-  stance : @types.StanceId,
+  stance : StanceId,
   stance_nx_resource : Array[NxStanceBody],
   head_nx_resource : Array[NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
@@ -83,7 +83,7 @@ fn parse_body_animations_by_stance(
           partnode.map.0.get_or_default("handMove", @struct.Point::default())
         _ =>
           drawinfo.get_body_position(stance, frame) -
-          (if stance is @types.StanceId::DEAD {
+          (if stance is StanceId::DEAD {
             @struct.Point::new(5, 4)
           } else {
             @struct.Point::default()
@@ -169,7 +169,7 @@ let skintypes : Array[String] = [
 ///|
 pub fn FullBody::draw(
   _self : FullBody,
-  _stance : @types.StanceId,
+  _stance : StanceId,
   _layer : @types.BodyLayer,
   _frame : Int,
   _args : @graphics.DrawArgument,

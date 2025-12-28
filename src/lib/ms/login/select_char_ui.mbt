@@ -497,7 +497,7 @@ pub async fn to_selectable_character_ui(
   //   })
   //   |> @ui.Button::as_interactable,
   // )
-  char_look.set_stance(@types.StanceId::STAND1)
+  char_look.set_stance(StanceId::STAND1)
   char_look.set_facing_right(true)
   char_look.play_animations()
   @position.positions.set(

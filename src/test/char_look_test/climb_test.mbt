@@ -1,4 +1,7 @@
 ///|
+using @char_stance {type StanceId}
+
+///|
 async test "character climbing ladder" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites.clear()
@@ -11,7 +14,7 @@ async test "character climbing ladder" {
       "assets/Character/Body/00012000.img.json",
     )
     |> @json.parse
-  let stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
+  let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @types.BodyDrawInfo::new(
@@ -43,7 +46,7 @@ async test "character climbing ladder" {
   )
 
   // Set Climbing Stance
-  look.set_stance(@types.StanceId::LADDER)
+  look.set_stance(StanceId::LADDER)
   look.set_pos(Vec2D(100.0, 100.0))
 
   // Add Weapon

@@ -1,4 +1,7 @@
 ///|
+using @char_stance {type StanceId}
+
+///|
 using @map_object {type MapObjectBase}
 
 ///|
@@ -237,7 +240,7 @@ pub fn Character::set_facing_right(self : Character, f : Bool) -> Unit {
 pub fn Character::set_state(self : Character, st : CharState) -> Unit {
   self.state = st
   self.look.set_stance(
-    @types.StanceId::by_state(st.stance_value(facing_right=self.facing_right)),
+    StanceId::by_state(st.stance_value(facing_right=self.facing_right)),
   )
 }
 
@@ -398,10 +401,7 @@ pub fn Character::attack_by_action(self : Character, action : String) -> Unit {
 }
 
 ///|
-pub fn Character::attack_by_stance(
-  self : Character,
-  stance : @types.StanceId,
-) -> Unit {
+pub fn Character::attack_by_stance(self : Character, stance : StanceId) -> Unit {
   self.look.attack_by_stance(stance)
   self.attacking = true
   self.set_alerted(5000)

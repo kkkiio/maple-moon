@@ -2,6 +2,9 @@
 using @physics {type Movement}
 
 ///|
+using @char_stance {type StanceId}
+
+///|
 using @char_stats {type CharStats}
 
 ///|
@@ -809,10 +812,7 @@ pub fn Player::attack_by_action(self : Player, action : String) -> Unit {
 }
 
 ///|
-pub fn Player::attack_by_stance(
-  self : Player,
-  stance : @types.StanceId,
-) -> Unit {
+pub fn Player::attack_by_stance(self : Player, stance : StanceId) -> Unit {
   self.character.attack_by_stance(stance)
 }
 

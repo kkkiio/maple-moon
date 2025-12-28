@@ -1,4 +1,7 @@
 ///|
+using @char_stance {type StanceId}
+
+///|
 struct ExplorerCreatorUI {
   resource : ExplorerCreatorUIResource
   randomizer : @utils.Randomizer
@@ -572,7 +575,7 @@ fn ExplorerCreatorUI::load_char_look(self : ExplorerCreatorUI) -> Unit {
   }
   let expect = { ..self.settings }
   (self.load_char_look_async)(expect.to_look_entry(self.resource), fn(look) {
-    look.set_stance(@types.StanceId::STAND1)
+    look.set_stance(StanceId::STAND1)
     look.set_facing_right(true)
     self.char_look_hook = Some((expect, look))
     self.hooks.on_state_changed()

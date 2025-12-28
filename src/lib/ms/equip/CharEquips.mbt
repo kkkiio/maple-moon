@@ -1,3 +1,6 @@
+///|
+using @char_stance {type StanceId}
+
 // Cap types (vslot)
 
 ///|
@@ -94,14 +97,14 @@ pub fn CharEquips::has_weapon(self : CharEquips) -> Bool {
 ///|
 pub fn CharEquips::adjust_stance(
   self : CharEquips,
-  stance : @types.StanceId,
-) -> @types.StanceId {
+  stance : StanceId,
+) -> StanceId {
   guard self.clothes.get(@slot.Id::WEAPON) is Some(weapon) else {
     return stance
   }
   match stance {
-    @types.StanceId::STAND1 | @types.StanceId::STAND2 => weapon.get_stand()
-    @types.StanceId::WALK1 | @types.StanceId::WALK2 => weapon.get_walk()
+    StanceId::STAND1 | StanceId::STAND2 => weapon.get_stand()
+    StanceId::WALK1 | StanceId::WALK2 => weapon.get_walk()
     _ => stance
   }
 }

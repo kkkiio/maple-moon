@@ -197,7 +197,7 @@ async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
 }
 
 ///|
-pub(all) struct NxStanceLooks[T](Map[@types.StanceId, Array[T]])
+pub(all) struct NxStanceLooks[T](Map[StanceId, Array[T]])
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(
@@ -209,7 +209,7 @@ pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(
   }
   let map = Map::new()
   for k, v in obj {
-    guard @types.StanceId::from_name(k) is Some(stance_id) else { continue }
+    guard StanceId::from_name(k) is Some(stance_id) else { continue }
     let nodes : Array[T] = @resource.parse_map_based_array(
       v,
       path=path.add_key(k),

@@ -13,12 +13,14 @@ async test "character stabO1" {
       "assets/Character/Body/00002000.img.json",
     )
     |> @json.parse
-  let stance_bodys_map : NxStanceLooks[NxStanceBody] = @json.from_json(bodynode)
+  let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
+    bodynode,
+  )
   let headnode = @fs.read_file_to_string(
       "assets/Character/Body/00012000.img.json",
     )
     |> @json.parse
-  let stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
+  let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @types.BodyDrawInfo::new(
@@ -48,7 +50,7 @@ async test "character stabO1" {
     ),
     draw_info,
   )
-  look.set_stance(@types.StanceId::STABO1)
+  look.set_stance(StanceId::STABO1)
   look.set_pos(Vec2D(100.0, 100.0))
   let weapon_node = @fs.read_file_to_string(
       "assets/Character/Weapon/01302000.img.json",

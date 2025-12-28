@@ -2,12 +2,15 @@
 using @resource {nx_animation_to_selene_animation}
 
 ///|
+using @char_stance {type StanceId}
+
+///|
 using @types {type BodyDrawInfo}
 
 ///|
 struct CharLook {
   root_entity : @entity.Entity
-  stance : @utils.Nominal[@types.StanceId]
+  stance : @utils.Nominal[StanceId]
   // st_frame : @utils.Nominal[Int]
   // mut st_elapsed : Int
   expression : @utils.Nominal[ExpressionId]
@@ -109,7 +112,7 @@ pub fn CharLook::new(
 
 ///|
 fn CharLook::updatetwohanded(self : CharLook) -> Unit {
-  let basestance = @types.StanceId::baseof(self.stance.get())
+  let basestance = StanceId::baseof(self.stance.get())
   self.set_stance(basestance)
 }
 
@@ -118,7 +121,7 @@ fn CharLook::updatetwohanded(self : CharLook) -> Unit {
 fn CharLook::draw_dead(
   self : CharLook,
   _args : @graphics.DrawArgument,
-  _interstance : @types.StanceId,
+  _interstance : StanceId,
   _interexpression : ExpressionId,
   _interframe : Int,
   _interexpframe : Int,
@@ -126,7 +129,7 @@ fn CharLook::draw_dead(
   // let body = self.full_body
   // let hair = self.hair
   // let face = self.face
-  // let faceshift = self.draw_info.get_face_pos(@types.StanceId::STAND1, 1)
+  // let faceshift = self.draw_info.get_face_pos(StanceId::STAND1, 1)
   // let faceargs = args +
   //   @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default())
   // fn draw_face(expression, frame) {
@@ -151,7 +154,7 @@ fn CharLook::draw_dead(
   // )
   // body.draw(interstance, @types.BodyLayer::BODY, interframe, args)
   // draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
-  // body.draw(@types.StanceId::STAND1, @types.BodyLayer::HEAD, 1, args)
+  // body.draw(StanceId::STAND1, @types.BodyLayer::HEAD, 1, args)
   // draw_interframe_hair(HairLayer::SHADE)
   // draw_interframe_hair(HairLayer::HAIR_LAYER_DEFAULT)
   // body.draw(interstance, @types.BodyLayer::HEAD, interframe, args)
@@ -162,26 +165,26 @@ fn CharLook::draw_dead(
   //   @equip.CapType::HEADBAND => {
   //     self.equips.draw(
   //       @slot.Id::HAT,
-  //       @types.StanceId::STAND1,
+  //       StanceId::STAND1,
   //       @clothing.Layer::CAP,
   //       1,
   //       args,
   //     )
-  //     draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
-  //     draw_hair(@types.StanceId::STAND1, HairLayer::OVER_HEAD, 1)
+  //     draw_hair(StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
+  //     draw_hair(StanceId::STAND1, HairLayer::OVER_HEAD, 1)
   //     self.equips.draw(
   //       @slot.Id::HAT,
-  //       @types.StanceId::STAND1,
+  //       StanceId::STAND1,
   //       @clothing.Layer::CAP_OVER_HAIR,
   //       1,
   //       args,
   //     )
   //   }
   //   @equip.CapType::HALF_COVER => {
-  //     draw_hair(@types.StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
+  //     draw_hair(StanceId::STAND1, HairLayer::HAIR_LAYER_DEFAULT, 1)
   //     self.equips.draw(
   //       @slot.Id::HAT,
-  //       @types.StanceId::STAND1,
+  //       StanceId::STAND1,
   //       @clothing.Layer::CAP,
   //       1,
   //       args,
@@ -190,7 +193,7 @@ fn CharLook::draw_dead(
   //   @equip.CapType::FULL_COVER =>
   //     self.equips.draw(
   //       @slot.Id::HAT,
-  //       @types.StanceId::STAND1,
+  //       StanceId::STAND1,
   //       @clothing.Layer::CAP,
   //       1,
   //       args,
@@ -205,7 +208,7 @@ fn CharLook::draw_dead(
 fn CharLook::draw_climbing(
   self : CharLook,
   _args : @graphics.DrawArgument,
-  _interstance : @types.StanceId,
+  _interstance : StanceId,
   _interframe : Int,
 ) -> Unit {
   // let body = self.full_body
@@ -331,17 +334,17 @@ fn CharLook::draw_climbing(
 fn CharLook::draw_impl(
   self : CharLook,
   args : @graphics.DrawArgument,
-  interstance : @types.StanceId,
+  interstance : StanceId,
   interexpression : ExpressionId,
   interframe : Int,
   interexpframe : Int,
 ) -> Unit {
-  if interstance == @types.StanceId::DEAD {
+  if interstance == StanceId::DEAD {
     return self.draw_dead(
       args, interstance, interexpression, interframe, interexpframe,
     )
   }
-  if @types.StanceId::is_climbing(interstance) {
+  if StanceId::is_climbing(interstance) {
     return self.draw_climbing(args, interstance, interframe)
   }
   let drawables = self.make_draw_front(
@@ -355,7 +358,7 @@ fn CharLook::draw_impl(
 ///|
 pub fn CharLook::make_draw_front(
   self : CharLook,
-  stance : @types.StanceId,
+  stance : StanceId,
   expression : ExpressionId,
   stance_frame : Int,
   expr_frame : Int,
@@ -541,7 +544,7 @@ pub fn CharLook::make_draw_front(
 ///|
 struct BodyLayerDrawable {
   body : FullBody
-  stance : @types.StanceId
+  stance : StanceId
   layer : @types.BodyLayer
   frame : Int
 }
@@ -567,7 +570,7 @@ pub impl @graphics.Drawable for BodyLayerDrawable with draw(
 ///|
 struct EquipLayerDrawable {
   equips : @equip.CharEquips
-  stance : @types.StanceId
+  stance : StanceId
   slot : @slot.Id
   layer : @clothing.ClothingLayer
   frame : Int
@@ -594,7 +597,7 @@ struct FaceDrawable {
   expression : ExpressionId
   exp_frame : Int
   draw_info : @types.BodyDrawInfo
-  stance : @types.StanceId
+  stance : StanceId
   stance_frame : Int
 }
 
@@ -626,7 +629,7 @@ pub impl ToJson for FaceDrawable with to_json(self) -> Json {
 ///|
 struct HairDrawable {
   hair : Hair
-  stance : @types.StanceId
+  stance : StanceId
   layer : HairLayer
   frame : Int
 }
@@ -685,17 +688,17 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   // let interexpression = self.expression.get()
   // let interframe = self.st_frame.get()
   // let interexpframe = self.exp_frame.get()
-  let stance : @types.StanceId = self.stance.get()
+  let stance : StanceId = self.stance.get()
   let expression : ExpressionId = self.expression.get()
   // let stance_frame : Int = self.st_frame.get()
   let stance_frame : Int = 0
   let expr_frame : Int = self.exp_frame.get()
-  // if interstance == @types.StanceId::DEAD {
+  // if interstance == StanceId::DEAD {
   //   return self.draw_dead(
   //     args, interstance, interexpression, interframe, interexpframe,
   //   )
   // }
-  // if @types.StanceId::is_climbing(interstance) {
+  // if StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
   let loop_ = not(stance.is_attack())
@@ -707,7 +710,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
   }
 
-  if @types.StanceId::is_climbing(stance) {
+  if StanceId::is_climbing(stance) {
     self.play_climbing_animations(stance)
     return
   }
@@ -908,7 +911,7 @@ pub fn CharLook::draw_with_stance(
   self : CharLook,
   position : @struct.Point[Int],
   flip : Bool,
-  interstance : @types.StanceId,
+  interstance : StanceId,
   interexpression : ExpressionId,
 ) -> Unit {
   let interstance = self.equips.adjust_stance(interstance)
@@ -922,10 +925,10 @@ pub fn CharLook::draw_with_stance(
 }
 
 ///|
-pub fn CharLook::is_twohanded(self : CharLook, st : @types.StanceId) -> Bool {
+pub fn CharLook::is_twohanded(self : CharLook, st : StanceId) -> Bool {
   match st {
-    @types.StanceId::STAND1 | @types.StanceId::WALK1 => false
-    @types.StanceId::STAND2 | @types.StanceId::WALK2 => true
+    StanceId::STAND1 | StanceId::WALK1 => false
+    StanceId::STAND2 | StanceId::WALK2 => true
     _ => self.equips.is_two_handed()
   }
 }
@@ -937,8 +940,8 @@ pub fn CharLook::set_facing_right(self : CharLook, facing_right : Bool) -> Unit 
 }
 
 ///|
-pub fn CharLook::set_stance(self : CharLook, st : @types.StanceId) -> Unit {
-  if self.action is Some(_) || st == @types.StanceId::NONE {
+pub fn CharLook::set_stance(self : CharLook, st : StanceId) -> Unit {
+  if self.action is Some(_) || st == StanceId::NONE {
     return
   }
   // let adjstance = self.equips.adjust_stance(st)
@@ -967,7 +970,7 @@ fn CharLook::change_face(self : CharLook, face : Face) -> CharLook {
 }
 
 ///|
-let default_stance : @types.StanceId = @types.StanceId::STAND1
+let default_stance : StanceId = StanceId::STAND1
 
 ///|
 // pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
@@ -1017,7 +1020,7 @@ let default_stance : @types.StanceId = @types.StanceId::STAND1
 //       } else {
 //         self.action = None
 //         self.actionstr = ""
-//         self.set_stance(@types.StanceId::STAND1)
+//         self.set_stance(StanceId::STAND1)
 //         true
 //       }
 //       self.set_sprites()
@@ -1066,20 +1069,12 @@ let default_stance : @types.StanceId = @types.StanceId::STAND1
 // }
 
 ///|
-pub fn CharLook::get_delay(
-  self : CharLook,
-  st : @types.StanceId,
-  fr : Int,
-) -> Int {
+pub fn CharLook::get_delay(self : CharLook, st : StanceId, fr : Int) -> Int {
   self.draw_info.get_delay(st, fr)
 }
 
 ///|
-pub fn CharLook::getnextframe(
-  self : CharLook,
-  st : @types.StanceId,
-  fr : Int,
-) -> Int {
+pub fn CharLook::getnextframe(self : CharLook, st : StanceId, fr : Int) -> Int {
   self.draw_info.next_frame(st, fr)
 }
 
@@ -1107,7 +1102,7 @@ pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
 }
 
 ///|
-pub fn CharLook::get_stance(self : CharLook) -> @types.StanceId {
+pub fn CharLook::get_stance(self : CharLook) -> StanceId {
   self.stance.get()
 }
 
@@ -1146,7 +1141,7 @@ pub fn CharLook::attack(self : CharLook, degenerate : Bool) -> Unit {
   guard self.equips.get_weapon() is Some(weapon) else { return }
   let attacktype = weapon.get_attack()
   if attacktype == 9 && not(degenerate) {
-    self.set_stance(@types.StanceId::SHOT)
+    self.set_stance(StanceId::SHOT)
     self.set_action("handgun")
   } else {
     self.set_stance(self.getattackstance(attacktype, degenerate))
@@ -1160,13 +1155,13 @@ pub fn CharLook::attack(self : CharLook, degenerate : Bool) -> Unit {
 ///|
 pub fn CharLook::attack_by_stance(
   self : CharLook,
-  newstance : @types.StanceId,
+  newstance : StanceId,
 ) -> Unit {
-  if not(self.action is None) || newstance == @types.StanceId::NONE {
+  if not(self.action is None) || newstance == StanceId::NONE {
     return
   }
   match newstance {
-    @types.StanceId::SHOT => self.set_action("handgun")
+    StanceId::SHOT => self.set_action("handgun")
     _ => self.set_stance(newstance)
   }
 }
@@ -1176,7 +1171,7 @@ pub fn CharLook::set_action(self : CharLook, acstr : String) -> Unit {
   if acstr == self.actionstr || acstr.is_empty() {
     return
   }
-  let ac_stance = @types.StanceId::from_name(acstr).unwrap_or(NONE)
+  let ac_stance = StanceId::from_name(acstr).unwrap_or(NONE)
   if ac_stance != NONE {
     self.set_stance(ac_stance)
   } else {
@@ -1199,12 +1194,12 @@ fn CharLook::getattackstance(
   self : CharLook,
   attack : Int,
   degenerate : Bool,
-) -> @types.StanceId {
-  if self.stance.get() == @types.StanceId::PRONE {
-    return @types.StanceId::PRONESTAB
+) -> StanceId {
+  if self.stance.get() == StanceId::PRONE {
+    return StanceId::PRONESTAB
   }
   if attack <= 0 || attack >= degen_stances.length() {
-    return @types.StanceId::STAND1
+    return StanceId::STAND1
   }
   let stances = if degenerate {
     degen_stances[attack]
@@ -1212,7 +1207,7 @@ fn CharLook::getattackstance(
     attack_stances[attack]
   }
   if stances.length() == 0 {
-    return @types.StanceId::STAND1
+    return StanceId::STAND1
   }
   let index = self.randomizer.next_int(stances.length())
   return stances[index]
@@ -1228,43 +1223,43 @@ fn CharLook::getattackstance(
 // let attack_GUN = 9
 
 ///|
-let degen_stances : FixedArray[FixedArray[@types.StanceId]] = [
-  [@types.StanceId::NONE],
-  [@types.StanceId::NONE],
-  [@types.StanceId::NONE],
-  [@types.StanceId::SWINGT1, @types.StanceId::SWINGT3],
-  [@types.StanceId::SWINGT1, @types.StanceId::STABT1],
-  [@types.StanceId::NONE],
-  [@types.StanceId::NONE],
-  [@types.StanceId::SWINGT1, @types.StanceId::STABT1],
-  [@types.StanceId::NONE],
-  [@types.StanceId::SWINGP1, @types.StanceId::STABT2],
+let degen_stances : FixedArray[FixedArray[StanceId]] = [
+  [StanceId::NONE],
+  [StanceId::NONE],
+  [StanceId::NONE],
+  [StanceId::SWINGT1, StanceId::SWINGT3],
+  [StanceId::SWINGT1, StanceId::STABT1],
+  [StanceId::NONE],
+  [StanceId::NONE],
+  [StanceId::SWINGT1, StanceId::STABT1],
+  [StanceId::NONE],
+  [StanceId::SWINGP1, StanceId::STABT2],
 ]
 
 ///|
-let attack_stances : FixedArray[FixedArray[@types.StanceId]] = [
-  [@types.StanceId::NONE],
+let attack_stances : FixedArray[FixedArray[StanceId]] = [
+  [StanceId::NONE],
   [
-    @types.StanceId::STABO1,
-    @types.StanceId::STABO2,
-    @types.StanceId::SWINGO1,
-    @types.StanceId::SWINGO2,
-    @types.StanceId::SWINGO3,
+    StanceId::STABO1,
+    StanceId::STABO2,
+    StanceId::SWINGO1,
+    StanceId::SWINGO2,
+    StanceId::SWINGO3,
   ],
-  [@types.StanceId::STABT1, @types.StanceId::SWINGP1],
-  [@types.StanceId::SHOOT1],
-  [@types.StanceId::SHOOT2],
+  [StanceId::STABT1, StanceId::SWINGP1],
+  [StanceId::SHOOT1],
+  [StanceId::SHOOT2],
   [
-    @types.StanceId::STABO1,
-    @types.StanceId::STABO2,
-    @types.StanceId::SWINGT1,
-    @types.StanceId::SWINGT2,
-    @types.StanceId::SWINGT3,
+    StanceId::STABO1,
+    StanceId::STABO2,
+    StanceId::SWINGT1,
+    StanceId::SWINGT2,
+    StanceId::SWINGT3,
   ],
-  [@types.StanceId::SWINGO1, @types.StanceId::SWINGO2],
-  [@types.StanceId::SWINGO1, @types.StanceId::SWINGO2],
-  [@types.StanceId::NONE],
-  [@types.StanceId::SHOT],
+  [StanceId::SWINGO1, StanceId::SWINGO2],
+  [StanceId::SWINGO1, StanceId::SWINGO2],
+  [StanceId::NONE],
+  [StanceId::SHOT],
 ]
 
 ///|
@@ -1329,7 +1324,7 @@ pub fn CharLook::is_animation_finished(self : CharLook) -> Bool {
 /// 设定 Z-index 为 FACE_ACC - 1, 在头发图层（刘海）之下。
 fn attach_face(
   entity : @entity.Entity,
-  stance : @types.StanceId,
+  stance : StanceId,
   flip_x : Bool,
   face_frames : Map[Int, FaceFrame],
   draw_info : BodyDrawInfo,
@@ -1425,7 +1420,7 @@ fn ensure_sprite_with_z(
 ///|
 fn attach_equipment(
   entity : @entity.Entity,
-  stance : @types.StanceId,
+  stance : StanceId,
   flip_x : Bool,
   frames : Array[@resource.NxFrame],
   z : Int,
@@ -1451,7 +1446,7 @@ fn attach_equipment(
 ///|
 fn CharLook::play_climbing_animations(
   self : CharLook,
-  stance : @types.StanceId,
+  stance : StanceId,
 ) -> Unit {
   let loop_ = true
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {

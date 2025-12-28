@@ -25,7 +25,7 @@ pub fn HairLayer::z(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
-  stances : Map[@types.StanceId, Map[HairLayer, @resource.NxAnimation]]
+  stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]]
   name : String
   color : String
 }
@@ -62,7 +62,7 @@ pub fn Hair::parse(
   hairnode : NxStanceLooks[@types.NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
 ) -> Hair {
-  let stances : Map[@types.StanceId, Map[HairLayer, @resource.NxAnimation]] = Map::new()
+  let stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]] = Map::new()
   for stance, stancenode in hairnode.0 {
     let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map::new()
     for frame, framenode in stancenode {
@@ -114,7 +114,7 @@ pub fn Hair::parse(
 ///|
 pub fn Hair::draw(
   self : Hair,
-  stance : @types.StanceId,
+  stance : StanceId,
   layer : HairLayer,
   frame : Int,
   args : @graphics.DrawArgument,

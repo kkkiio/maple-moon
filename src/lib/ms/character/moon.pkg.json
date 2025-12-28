@@ -16,6 +16,7 @@
     "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/logic_fps",
     "KKKIIO/maple-moon/lib/maple_protocol",
-    "KKKIIO/maple-moon/lib/resource"
+    "KKKIIO/maple-moon/lib/resource",
+    "KKKIIO/maple-moon/lib/char_stance"
   ]
 }

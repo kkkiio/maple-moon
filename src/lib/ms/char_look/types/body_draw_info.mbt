@@ -2,6 +2,9 @@
 using @struct {type Point}
 
 ///|
+using @char_stance {type StanceId}
+
+///|
 pub(all) struct NxStanceBodyAction {
   stance : StanceId
   frame : Int

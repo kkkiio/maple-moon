@@ -1,4 +1,7 @@
 ///|
+using @char_stance {type StanceId, stance_name_id_map}
+
+///|
 pub(all) enum ClothingLayer {
   CAPE = 1
   SHIELD_BELOW_BODY = 2
@@ -50,13 +53,13 @@ pub impl ToJson for ClothingLayer with to_json(self) {
 ///|
 struct Clothing {
   stances : Map[
-    @types.StanceId,
+    StanceId,
     Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
   ]
   item_id : Int
   eq_slot : @slot.Id
-  walk : @types.StanceId
-  stand : @types.StanceId
+  walk : StanceId
+  stand : StanceId
   vslot : String
   two_handed : Bool
   // transparent : Bool
@@ -89,31 +92,21 @@ pub fn Clothing::from_resource(
   let info = item_data.get_info()
   let vslot = if info is { "vslot": String(vslot), .. } { vslot } else { "" }
   let stand = match info {
-    { "stand": Json::Number(1, ..), .. } => @types.StanceId::STAND1
-    { "stand": Json::Number(2, ..), .. } => @types.StanceId::STAND2
-    _ =>
-      if two_handed {
-        @types.StanceId::STAND2
-      } else {
-        @types.StanceId::STAND1
-      }
+    { "stand": Json::Number(1, ..), .. } => StanceId::STAND1
+    { "stand": Json::Number(2, ..), .. } => StanceId::STAND2
+    _ => if two_handed { StanceId::STAND2 } else { StanceId::STAND1 }
   }
   let walk = match info {
-    { "walk": Json::Number(1, ..), .. } => @types.StanceId::WALK1
-    { "walk": Json::Number(2, ..), .. } => @types.StanceId::WALK2
-    _ =>
-      if two_handed {
-        @types.StanceId::WALK2
-      } else {
-        @types.StanceId::WALK1
-      }
+    { "walk": Json::Number(1, ..), .. } => StanceId::WALK1
+    { "walk": Json::Number(2, ..), .. } => StanceId::WALK2
+    _ => if two_handed { StanceId::WALK2 } else { StanceId::WALK1 }
   }
   let src = item_data.src
   let stances : Map[
-    @types.StanceId,
+    StanceId,
     Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
   ] = {}
-  for stancename, stance in @types.stance_name_id_map {
+  for stancename, stance in stance_name_id_map {
     guard src is Object(obj) else { continue }
     guard obj.get(stancename) is Some(stancenode) else { continue }
     let part_frames_map : Map[
@@ -218,7 +211,7 @@ pub fn Clothing::from_resource(
 ///|
 pub fn Clothing::get_animation(
   self : Clothing,
-  stance : @types.StanceId,
+  stance : StanceId,
   part : String,
 ) -> (Array[@resource.NxFrame], Array[ClothingLayer])? {
   self.stances.get(stance).bind(fn(m) { m.get(part) })
@@ -227,7 +220,7 @@ pub fn Clothing::get_animation(
 ///|
 pub fn Clothing::get_parts_for_stance(
   self : Clothing,
-  stance : @types.StanceId,
+  stance : StanceId,
 ) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]? {
   self.stances.get(stance)
 }
@@ -273,12 +266,12 @@ let sub_layer_names : Map[String, ClothingLayer] = {
 }
 
 ///|
-pub fn Clothing::get_stand(self : Clothing) -> @types.StanceId {
+pub fn Clothing::get_stand(self : Clothing) -> StanceId {
   self.stand
 }
 
 ///|
-pub fn Clothing::get_walk(self : Clothing) -> @types.StanceId {
+pub fn Clothing::get_walk(self : Clothing) -> StanceId {
   self.walk
 }
 

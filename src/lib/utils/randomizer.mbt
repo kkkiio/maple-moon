@@ -4,8 +4,10 @@ struct Randomizer {
 }
 
 ///|
-pub fn Randomizer::new() -> Randomizer {
-  { state: @random.Rand::new() }
+pub fn Randomizer::new(
+  state? : @random.Rand = @random.Rand::new(),
+) -> Randomizer {
+  { state, }
 }
 
 ///|

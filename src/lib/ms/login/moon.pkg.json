@@ -33,6 +33,7 @@
     "KKKIIO/maple-moon/lib/game_state",
     "Milky2018/selene/entity",
     "KKKIIO/maple-moon/lib/game_server",
+    "KKKIIO/maple-moon/lib/game_scene",
     "KKKIIO/maple-moon/lib/maple_protocol",
     "KKKIIO/maple-moon/lib/legacy_types",
     "KKKIIO/maple-moon/lib/char_stance"

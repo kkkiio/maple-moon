@@ -5,6 +5,7 @@
     "KKKIIO/maple-moon/lib/maple_protocol",
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/io_service",
-    "KKKIIO/maple-moon/lib/utils"
+    "KKKIIO/maple-moon/lib/utils",
+    "KKKIIO/maple-moon/lib/ms/maple_stat"
   ]
 }

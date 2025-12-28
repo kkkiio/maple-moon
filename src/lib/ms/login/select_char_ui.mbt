@@ -659,7 +659,7 @@ pub fn setup_game_server_handlers() -> Unit {
       @game_state.game_state.phase = @game_state.GamePhase::GameStart(
         map_id~,
         portal_id~,
-        loading_data=None,
+        set_field_message~,
       )
       select_char_ui.val = None
       ui.destroy()

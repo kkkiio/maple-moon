@@ -108,7 +108,7 @@ pub(all) struct AttackResult {
   damage_lines : Map[Int, Array[(Int, Bool)]]
   mut first_oid : Int
   mut last_oid : Int
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn AttackResult::default() -> AttackResult {

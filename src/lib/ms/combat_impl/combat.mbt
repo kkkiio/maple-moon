@@ -23,9 +23,17 @@ pub fn Combat::new(
   mobs : @monster.MapMobs,
   bullet_module : @bullet.Module,
 ) -> Combat {
-  let server_listener = fn(_event : AttackEvent) -> Bool {
-    // TODO: send to server
-    // network.send_message(AttackMessage(event.result))
+  let server_listener = fn(event : AttackEvent) -> Bool {
+    for target_oid, damage_lines in event.result.damage_lines {
+      let mut total_damage = 0
+      for line in damage_lines {
+        total_damage += line.0
+      }
+      @game_server.send(@maple_protocol.MobDamageMessage::{
+        oid: target_oid,
+        damage: total_damage,
+      })
+    }
     true // keep the listener
   }
   {
@@ -177,7 +185,7 @@ pub struct AttackEvent {
   result : @combat_proto.AttackResult
   /// 是否是玩家输入的攻击, 而不是技能追加的攻击
   user_input : Bool
-} derive(Show)
+} derive(Show, ToJson)
 
 ///|
 pub fn Combat::get_skill_move(
@@ -214,7 +222,13 @@ fn Combat::apply_move(
     act.apply_actions(character, attacktype) // WARN: this will change the stance
     let stance_name = character.get_look().get_stance().name()
     // Get AfterImage for this stance
-    guard after_images.get(stance_name) is Some(after_image) else { return }
+    guard after_images.get(stance_name) is Some(after_image) else {
+      @log.error(
+        { "stance": stance_name, "available": after_images.keys().collect() },
+        "No afterimage for stance",
+      )
+      panic()
+    }
     // Create frame getter that captures CharLook reference
     let look = character.get_look()
     let get_frame_fn = fn() { look.get_frame() }

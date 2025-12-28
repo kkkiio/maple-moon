@@ -74,9 +74,11 @@ pub fn[T : Compare] Range::contains_range(
 
 ///|
 pub fn[T : Compare] Range::overlaps(self : Range[T], v : Range[T]) -> Bool {
-  Range::contains(self, v.a) ||
-  Range::contains(self, v.b) ||
-  Range::contains_range(v, self)
+  let s_min = self.smaller()
+  let s_max = self.greater()
+  let v_min = v.smaller()
+  let v_max = v.greater()
+  v_min <= s_max && v_max >= s_min
 }
 
 ///|

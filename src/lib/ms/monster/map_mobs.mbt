@@ -1,4 +1,11 @@
 ///|
+using @maple_protocol {
+  type MobSpawnMessage,
+  type MobHpMessage,
+  type KillMobMessage,
+}
+
+///|
 pub(all) struct MapMobsContext {
   map_mobs : MapMobs
   physics : @physics.Physics
@@ -324,7 +331,22 @@ pub fn setup_game_server_handlers() -> Unit {
       })
     },
   )
+  @game_server.add_server_message_handler(
+    "mob_hp",
+    @net.Opcode::SHOW_MOB_HP.int_value(),
+    fn(json) {
+      guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
+      let msg : MobHpMessage = @json.from_json(json)
+      map_mobs.send_mobhp(msg.oid, msg.percent, 0) // TODO: player level
+    },
+  )
+  @game_server.add_server_message_handler(
+    "kill_mob",
+    @net.Opcode::KILL_MOB.int_value(),
+    fn(json) {
+      guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
+      let msg : KillMobMessage = @json.from_json(json)
+      map_mobs.remove(msg.oid, msg.animation)
+    },
+  )
 }
-
-///|
-using @maple_protocol {type MobSpawnMessage}

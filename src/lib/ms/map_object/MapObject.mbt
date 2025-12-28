@@ -1,7 +1,7 @@
 ///|
 pub(open) trait MapObject {
   get_oid(Self) -> Int
-  draw(Self, Double, Double, Double) -> Unit
+  // draw(Self, Double, Double, Double) -> Unit
   update(Self, @physics.Physics) -> Int
   makeactive(Self) -> Unit
   // deactivate(Self) -> Unit

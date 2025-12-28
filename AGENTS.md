@@ -16,14 +16,7 @@
 
 资源放在 `./assets` 目录下, 目前还没提交到 git 仓库, 暂时用 `.gitignore` 忽略了, 等资源格式和组织方式确定/稳定后, 再提交到 git 仓库.
 
-部分资源还保存在 r2:maple 存储里, 旧域名是 maple-res.kkkiiox.work.
-这些资源需要先复制回本地项目, 可以通过 `rclone` 复制, 例如:
-
-```bash
-rclone copy -v --no-update-modtime r2:maple/Map/Map0 assets/map/map0
-```
-
-本地目录名优先用 `lower_snake` 风格.
+详情阅读 [builtin_resource_loaders.mbt](src/lib/resource/builtin_resource_loaders.mbt) 和 [AGENTS.md](src/lib/resource/AGENTS.md).
 
 ### 地图资源
 
@@ -36,38 +29,9 @@ rclone copy -v --no-update-modtime r2:maple/Map/Map0 assets/map/map0
 nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit struct , 并实现 `FromJson` 接口来解析数据.
 这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .
 
-### 转换 nx spritesheet 引用
+## 测试
 
-用 `src/cmd/resprite` 工具转换 nx json 文件里的旧格式 spritesheet 引用为新的格式.
-
-旧格式里用 `#` 分隔 spritesheet 路径和帧名, 例如 `"/Character/Body/spritesheets/00002000.img#36"`, 还需要一个 spritesheet.json 文件才能定位到图片里的对应帧.
-
-```json
-{
-  "__h": 14,
-  "__w": 8,
-  "group": "skin",
-  "map": { "hand": [-5, 5], "navel": [-11, 1] },
-  "origin": [6, 8],
-  "z": "armOverHair",
-  "__i": "/Character/Body/spritesheets/00002000.img#36"
-}
-```
-
-新格式里增加了 `__off` 字段, 表示帧在图片里的偏移量, 单个 nx json 文件就包含帧的所有信息.
-
-```json
-{
-  "__h": 14,
-  "__w": 8,
-  "group": "skin",
-  "map": { "hand": [-5, 5], "navel": [-11, 1] },
-  "origin": [6, 8],
-  "z": "armOverHair",
-  "__i": "/Character/Body/spritesheets/00002000.img.png",
-  "__off": [444, 244]
-}
-```
+只写黑盒测试.
 
 # MoonBit Project Layouts
 

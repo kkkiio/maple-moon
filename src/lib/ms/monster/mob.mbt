@@ -59,7 +59,9 @@ pub fn Stance::flip(self : Stance) -> Stance {
 }
 
 ///|
-struct Mob {
+
+///|
+pub struct Mob {
   entity : @entity.Entity
   base : @map_object.MapObjectBase
   animations : Map[StanceType, MobAnimation]
@@ -101,11 +103,11 @@ struct Mob {
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
-  src : @resource.NxNode
+  src : NxMob
 }
 
 ///|
-enum FlyDirection {
+pub enum FlyDirection {
   STRAIGHT
   UPWARDS
   DOWNWARDS
@@ -127,15 +129,16 @@ pub async fn Mob::load(
   let strid = @utils.stoi_left_pad0(mid, 7)
   try {
     let src = mob_loader.load_res_async([strid + ".img"])
-    let info : MobInfo = src["info"].value() |> @json.from_json
-    let animations = if info.link is Some(link) {
-      let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
-      load_animations(link_mob.value())
-    } else {
-      load_animations(src.value())
-    }
+    let nx_mob : NxMob = src.value() |> @json.from_json
+    // let info : MobInfo = src["info"].value() |> @json.from_json
+    // let animations = if info.link is Some(link) {
+    //   let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
+    //   load_animations(link_mob.value())
+    // } else {
+    //   load_animations(src.value())
+    // }
     Mob::new(
-      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, src, animations,
+      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, nx_mob,
     )
   } catch {
     e => fail("Mob::load failed, mid=\{mid}, e=\{e}")
@@ -143,7 +146,7 @@ pub async fn Mob::load(
 }
 
 ///|
-struct MobInfo {
+pub struct MobInfo {
   magic_damage : Int
   md_damage : Int
   pa_damage : Int
@@ -232,7 +235,7 @@ pub impl @json.FromJson for MobInfo with from_json(json, path) {
 }
 
 ///|
-fn Mob::new(
+pub fn Mob::new(
   oi : Int,
   mid : Int,
   mode : Int,
@@ -242,14 +245,15 @@ fn Mob::new(
   _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
-  src : @resource.NxNode,
-  animations : Map[StanceType, MobAnimation],
-) -> Mob raise {
+  nx_mob : NxMob,
+) -> Mob {
   let entity = @entity.Entity::new()
   let base = @map_object.MapObjectBase::new(oi, on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
-  let info : MobInfo = src["info"].value() |> @json.from_json
+
+  // Use data from nx_mob
+  let info = nx_mob.info
   let level = info.level
   let watk = info.pa_damage
   let wdef = info.pd_damage
@@ -261,33 +265,25 @@ fn Mob::new(
   let touch_damage = info.body_attack
   let is_boss = info.boss
   let no_flip = info.no_flip
-  // let not_attack = info["notAttack"].get_bool!()
-  let can_jump = src["jump"].get_children_count() > 0
-  let can_fly = src["fly"].get_children_count() > 0
-  let can_move = src["move"].get_children_count() > 0 || can_fly
+  let can_jump = nx_mob.meta.can_jump
+  let can_fly = nx_mob.meta.can_fly
+  let can_move = nx_mob.meta.can_move
   let name = mob_names[mid.to_string()]
 
   //TODO: sound
 
-  let skillnode = src["info"]["skill"]
+  // Skills are already parsed in nx_mob.skills
   let skill_stands = Map::new()
-  for i in 0..<skillnode.get_children_count() {
-    let skill_id = skillnode[i.to_string()]["skill"].get_int()
-    let action = skillnode[i.to_string()]["action"].get_int()
-    skill_stands.set(
-      skill_id,
-      src["skill" + action.to_string()].value() |> load_animation,
-    )
+  for skill_id, entry in nx_mob.skills {
+    skill_stands.set(skill_id, entry.animation)
   }
+
+  // Attacks are already parsed in nx_mob.attacks
   let attack_stands : Map[Int, MobAnimation] = Map::new()
-  for i = 1; ; i = i + 1 {
-    let attack_node = src["attack" + i.to_string()]
-    if attack_node.get_children_count() > 0 {
-      attack_stands.set(i, attack_node.value() |> load_animation)
-    } else {
-      break
-    }
+  for id, entry in nx_mob.attacks {
+    attack_stands.set(id, entry.animation)
   }
+  let animations = nx_mob.animations
 
   // init or risk crash
   match animations.get(StanceType::STAND) {
@@ -366,25 +362,13 @@ fn Mob::new(
     fading: false,
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
-    src,
+    src: nx_mob,
   }
 }
 
 ///|
 pub impl @map_object.MapObject for Mob with get_oid(self : Mob) -> Int {
   self.base.get_oid()
-}
-
-///|
-pub impl @map_object.MapObject for Mob with draw(
-  self : Mob,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-  let headpos = self.get_head_position(position=absp)
-
 }
 
 ///|
@@ -598,9 +582,14 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   match self.animations.get(self.stance.t) {
     Some(anim) => {
       // Use frame 0 bounds as hitbox approximation (Selene handles animation playback)
-      let bounds = anim.nx.frames[0].bounds.unwrap_or(
+      let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
+      let bounds = if self.stance.face_right && not(self.no_flip) {
+        raw_bounds.flip_x()
+      } else {
+        raw_bounds
+      }
       range.overlaps(bounds.shift(self.base.get_position()))
     }
     None => false
@@ -614,9 +603,14 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let bounds = anim.nx.frames[0].bounds.unwrap_or(
+      let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
+      let bounds = if self.stance.face_right && not(self.no_flip) {
+        raw_bounds.flip_x()
+      } else {
+        raw_bounds
+      }
       Some(bounds.shift(self.base.get_position()))
     }
     None => None
@@ -772,12 +766,16 @@ pub fn Mob::get_move_attack(
   move_id : Int,
 ) -> MobSpecialAttack raise {
   match self.attacks.get(move_id) {
-    Some(attack) => attack
-    None => {
-      let new_attack = MobSpecialAttack::new(self.src, self.id, move_id)
-      self.attacks.set(move_id, new_attack)
-      new_attack
-    }
+    Some(ma) => ma
+    None =>
+      match self.src.attacks.get(move_id) {
+        Some(entry) => {
+          let new_attack = MobSpecialAttack::new(entry.info, self.id, move_id)
+          self.attacks.set(move_id, new_attack)
+          new_attack
+        }
+        None => abort("Attack not found: " + move_id.to_string())
+      }
   }
 }
 
@@ -802,29 +800,25 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 
 ///|
 pub fn MobSpecialAttack::new(
-  mob_src : @resource.NxNode,
+  info : NxMobAttackInfo,
   _mob_id : Int,
   move_id : Int,
 ) -> MobSpecialAttack raise {
-  // let mut strid = ""
-  // if mob_id < 10000000 {
-  //   strid = @string_format.extend_id(mob_id, 7)
-  // } else {
-  //   strid = mob_id.to_string()
-  // }
-  let src = mob_src["attack" + move_id.to_string()]["info"]
-
-  // sound_ = SingleSkillSound::new(strid)
-
-  let has_multi_effect = src["effect0"].get_children_count() > 0
-  let has_area_warning_effect = src["areaWarning"].get_children_count() > 0
-  let use_effect = if has_multi_effect || has_area_warning_effect {
-    MobMultiUseEffect::new(src, has_area_warning_effect) as &MobSkillUseEffect
+  let effects_arr = info.effects.map(fn(e) {
+    Effect::{ animation: e.animation.nx, z: e.z }
+  })
+  let has_multi = effects_arr.length() > 1 ||
+    info.effects.iter().find_first(fn(e) { e.is_area_warning }) is Some(_)
+  let use_effect : &MobSkillUseEffect = if has_multi {
+    { effects: effects_arr } as &MobSkillUseEffect
+  } else if effects_arr.length() == 1 {
+    { effect: effects_arr[0] } as &MobSkillUseEffect
   } else {
-    MobSingleUseEffect::new(src) as &MobSkillUseEffect
+    // Should not happen for valid attacks, but construct a dummy
+    let dummy = Effect::{ animation: @json.from_json(Json::null()), z: 0 }
+    { effect: dummy } as &MobSkillUseEffect
   }
   { move_id, use_effect }
-
   // hit_effect_ = std::make_unique<MobSingleHitEffect>(src["level"][4]);
 
   // hit_effect_ =

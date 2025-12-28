@@ -164,25 +164,25 @@ pub fn MesoDrop::new(
 }
 
 ///|
-pub impl @map_object.MapObject for MesoDrop with draw(
-  self : MesoDrop,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  if not(self.base.base.active) {
-    return
-  }
-  let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
-  self.icon.draw(
-    @graphics.DrawArgument::new(
-      pos=absp,
-      angle=self.base.angle.get(alpha~),
-      opacity=self.base.opacity.get(alpha~),
-    ),
-    alpha,
-  )
-}
+// pub impl @map_object.MapObject for MesoDrop with draw(
+//   self : MesoDrop,
+//   viewx : Double,
+//   viewy : Double,
+//   alpha : Double,
+// ) -> Unit {
+//   if not(self.base.base.active) {
+//     return
+//   }
+//   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
+//   self.icon.draw(
+//     @graphics.DrawArgument::new(
+//       pos=absp,
+//       angle=self.base.angle.get(alpha~),
+//       opacity=self.base.opacity.get(alpha~),
+//     ),
+//     alpha,
+//   )
+// }
 
 ///|
 pub impl @map_object.MapObject for MesoDrop with get_oid(self : MesoDrop) -> Int {
@@ -258,25 +258,25 @@ pub fn ItemDrop::new(
 }
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with draw(
-  self : ItemDrop,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  if not(self.base.base.active) {
-    return
-  }
-  let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
-  // self.icon.draw(
-  //   @graphics.DrawArgument::new(
-  //     pos=absp,
-  //     angle=self.base.angle.get(alpha~),
-  //     opacity=self.base.opacity.get(alpha~),
-  //   ),
-  // )
-  ...
-}
+// pub impl @map_object.MapObject for ItemDrop with draw(
+//   self : ItemDrop,
+//   viewx : Double,
+//   viewy : Double,
+//   alpha : Double,
+// ) -> Unit {
+//   if not(self.base.base.active) {
+//     return
+//   }
+//   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
+//   // self.icon.draw(
+//   //   @graphics.DrawArgument::new(
+//   //     pos=absp,
+//   //     angle=self.base.angle.get(alpha~),
+//   //     opacity=self.base.opacity.get(alpha~),
+//   //   ),
+//   // )
+//   ...
+// }
 
 ///|
 pub impl @map_object.MapObject for ItemDrop with get_oid(self : ItemDrop) -> Int {

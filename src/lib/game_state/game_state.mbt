@@ -9,19 +9,7 @@ pub(all) enum GamePhase {
   GameStart(
     map_id~ : Int,
     portal_id~ : Int,
-    mut loading_data~ : @utils.Future[
-      Result[
-        (
-          @item.ItemData,
-          @item.ItemData,
-          @item.ItemData,
-          @item.ItemData,
-          @char_look.Hair,
-          @char_look.Face,
-        ),
-        Error,
-      ],
-    ]?
+    set_field_message~ : @maple_protocol.SetFieldMessage
   )
   GameTransiting(
     map_id~ : Int,

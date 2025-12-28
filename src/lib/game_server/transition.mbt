@@ -59,6 +59,23 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
               team: -1,
             }
             default_server.send_server_message(spawn_msg)
+
+            // Initialize server-side mob state
+            let mob_loader = @resource.get_mob_loader()
+            let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
+            let mob_path = ["\{mob_strid}.img"]
+            let mob_node = mob_loader.load_res_async(mob_path)
+            guard mob_node.value()
+              is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
+              return
+            }
+            let server_mob = ServerMob::{
+              oid: spawn_msg.oid,
+              id: monster_id,
+              hp: max_hp.to_int(),
+              max_hp: max_hp.to_int(),
+            }
+            self.mobs.set(spawn_msg.oid, server_mob)
           }
           _ => ()
         }

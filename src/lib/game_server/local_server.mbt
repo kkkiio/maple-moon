@@ -1,4 +1,17 @@
 ///|
+using @maple_protocol {
+  trait ClientMessage,
+  trait ServerMessage,
+  type ChangeMapMessage,
+  type SetFieldMessage,
+  type SelectCharMessage,
+  type StatsEntry,
+  type InventoryEntry,
+  type PlayerQuestLogInfo,
+  type InventoryType,
+}
+
+///|
 /// A local server implementation for playing the game offline.
 /// 
 /// Although there is a open-source server implementation `Cosmic`, 
@@ -15,6 +28,15 @@ priv struct LocalServer {
   mut last_map_id : Int
   mut last_portal_id : Int
   mut last_object_id : Int
+  mobs : Map[Int, ServerMob]
+}
+
+///|
+priv struct ServerMob {
+  oid : Int
+  id : Int
+  mut hp : Int
+  max_hp : Int
 }
 
 ///|
@@ -27,19 +49,8 @@ fn LocalServer::new() -> LocalServer {
     last_map_id: 100000000,
     last_portal_id: 23,
     last_object_id: 100000,
+    mobs: Map::new(),
   }
-}
-
-///|
-using @maple_protocol {
-  trait ClientMessage,
-  trait ServerMessage,
-  type ChangeMapMessage,
-  type SetFieldMessage,
-  type SelectCharMessage,
-  type StatsEntry,
-  type InventoryEntry,
-  type PlayerQuestLogInfo,
 }
 
 ///|
@@ -48,10 +59,39 @@ fn init {
   default_server.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = default_server.on_change_map(
     _,
   )
+  default_server.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = on_mob_damage
+  default_server.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = on_mob_damage
+  default_server.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = on_mob_damage
+  default_server.client_message_handler_map[@net.ClientOpcode::MOVE_MONSTER.int_value()] = fn(
+    _,
+  ) {
+
+  }
 }
 
 ///|
 using @resource {get_mapx_loader}
+
+///|
+fn on_mob_damage(json : Json) -> Unit raise {
+  let msg : @maple_protocol.MobDamageMessage = @json.from_json(json)
+  guard default_server.mobs.get(msg.oid) is Some(mob) else { return }
+  mob.hp -= msg.damage
+  if mob.hp <= 0 {
+    mob.hp = 0
+    default_server.send_server_message(@maple_protocol.KillMobMessage::{
+      oid: msg.oid,
+      animation: 1,
+    })
+    default_server.mobs.remove(msg.oid)
+  } else {
+    let percent = (mob.hp.to_double() / mob.max_hp.to_double() * 100.0).to_int()
+    default_server.send_server_message(@maple_protocol.MobHpMessage::{
+      oid: msg.oid,
+      percent,
+    })
+  }
+}
 
 ///|
 let default_server : LocalServer = LocalServer::new()

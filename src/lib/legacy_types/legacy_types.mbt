@@ -14,7 +14,7 @@ pub(open) trait SkillBook {
 }
 
 ///|
-pub(all) struct MockInventory {}
+pub(all) struct MockInventory {} derive(Default)
 
 ///|
 pub impl Inventory for MockInventory with recalc_stats(_, _) {
@@ -42,7 +42,7 @@ pub impl Inventory for MockInventory with get_bulletcount(_) {
 }
 
 ///|
-pub(all) struct MockSkillBook {}
+pub(all) struct MockSkillBook {} derive(Default)
 
 ///|
 pub impl SkillBook for MockSkillBook with get_level(_, _) {

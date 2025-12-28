@@ -1,7 +1,7 @@
 ///|
 pub(all) struct MobBuff {
   time : Int
-  anim : @graphics.Animation
+  anim : @resource.NxAnimation
 }
 
 ///|
@@ -32,12 +32,10 @@ pub fn MobSkill::new(
   let buff = if is_buff {
     {
       time: src["level"][level.to_string()]["time"].get_int(),
-      anim: @graphics.Animation::from_resource(
-        src["level"][level.to_string()]["mob"],
-      ),
+      anim: @json.from_json(src["level"][level.to_string()]["mob"].value()),
     }
   } else {
-    { time: 0, anim: @graphics.Animation::default() }
+    { time: 0, anim: @json.from_json(Json::null()) }
   }
   {
     // use_effect,
@@ -90,19 +88,19 @@ pub fn MobSkill::get_buff(self : MobSkill) -> MobBuff {
 
 ///|
 struct Effect {
-  animation : @graphics.Animation
+  animation : @resource.NxAnimation
   z : Int
 }
 
 ///|
 pub fn Effect::new(src : @resource.NxNode) -> Effect raise {
-  { animation: @graphics.Animation::from_resource(src), z: src["z"].get_int() }
+  { animation: @json.from_json(src.value()), z: src["z"].get_int() }
 }
 
 ///|
 pub fn Effect::apply(
   self : Effect,
-  func_show_effect : (@graphics.Animation, Int, Int, Bool) -> Unit,
+  func_show_effect : (@resource.NxAnimation, Int, Int, Bool) -> Unit,
 ) -> Unit {
   func_show_effect(self.animation, 1, self.z, false)
   // mob.show_effect(animation_, 0, z_, true);
@@ -132,10 +130,8 @@ pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
   self : MobSingleUseEffect,
   mob : Mob,
 ) -> Unit {
-  self.effect.apply(fn(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
-    // TODO: show effect
-    ...
-    // mob.show_effect(a, b, c, d)
+  self.effect.apply(fn(a : @resource.NxAnimation, b : Int, c : Int, d : Bool) {
+    mob.show_effect(a, b, c, d)
   })
 }
 
@@ -169,10 +165,10 @@ pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
   self : MobMultiUseEffect,
   mob : Mob,
 ) -> Unit {
-  fn func(a : @graphics.Animation, b : Int, c : Int, d : Bool) {
+  fn func(a : @resource.NxAnimation, b : Int, c : Int, d : Bool) {
     // TODO: show effect
-    ...
-    // mob.show_effect(a, b, c, d)
+    // ...
+    mob.show_effect(a, b, c, d)
   }
 
   for effect in self.effects {

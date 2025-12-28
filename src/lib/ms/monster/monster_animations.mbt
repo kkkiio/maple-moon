@@ -40,7 +40,7 @@ pub(all) struct MobAnimations {
 } derive(@json.FromJson(fields(move_(rename="move"))), Show)
 
 ///|
-fn load_animation(src : Json) -> MobAnimation raise {
+fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
   let nx : @resource.NxAnimation = @json.from_json(src)
   let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
   let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)

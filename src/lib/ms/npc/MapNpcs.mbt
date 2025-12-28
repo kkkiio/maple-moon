@@ -327,22 +327,22 @@ pub fn Npc::load(
 }
 
 ///|
-pub impl @map_object.MapObject for Npc with draw(
-  self : Npc,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-  match self.animations.get(self.stance) {
-    Some(ani) => ani.draw(@graphics.DrawArgument::new14(absp, self.flip), alpha)
-    None => ()
-  }
-  if not(self.hide_name) {
-    self.name_label.draw(absp + @struct.Point::new(0, -4))
-    self.func_label.draw(absp + @struct.Point::new(0, 18))
-  }
-}
+// pub impl @map_object.MapObject for Npc with draw(
+//   self : Npc,
+//   viewx : Double,
+//   viewy : Double,
+//   alpha : Double,
+// ) -> Unit {
+//   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
+//   match self.animations.get(self.stance) {
+//     Some(ani) => ani.draw(@graphics.DrawArgument::new14(absp, self.flip), alpha)
+//     None => ()
+//   }
+//   if not(self.hide_name) {
+//     self.name_label.draw(absp + @struct.Point::new(0, -4))
+//     self.func_label.draw(absp + @struct.Point::new(0, 18))
+//   }
+// }
 
 ///|
 pub impl @map_object.MapObject for Npc with update(

@@ -36,7 +36,7 @@ pub fn[T : MapObject] MapObjects::draw(
 ) -> Unit {
   self.layers[layer].each(fn(oid, _v) {
     match self.get(oid) {
-      Some(mmo) => if mmo.is_active() { mmo.draw(viewx, viewy, alpha) }
+      Some(mmo) => if mmo.is_active() { ... }
       None => ()
     }
   })

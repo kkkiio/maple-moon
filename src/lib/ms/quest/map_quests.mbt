@@ -265,11 +265,11 @@ impl @map_object.MapObject for NpcQuest with get_oid(self) {
 }
 
 ///|
-impl @map_object.MapObject for NpcQuest with draw(self, viewx, viewy, alpha) {
-  let absp = self.npc_object.get_absolute(viewx, viewy, alpha)
-  let icon_pos = absp + self.icon_offset
-  self.icon.draw(@graphics.DrawArgument::new(pos=icon_pos), alpha)
-}
+// impl @map_object.MapObject for NpcQuest with draw(self, viewx, viewy, alpha) {
+//   let absp = self.npc_object.get_absolute(viewx, viewy, alpha)
+//   let icon_pos = absp + self.icon_offset
+//   self.icon.draw(@graphics.DrawArgument::new(pos=icon_pos), alpha)
+// }
 
 ///|
 impl @map_object.MapObject for NpcQuest with update(self, _) {

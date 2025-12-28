@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {type SetFieldMessage}
+using @maple_protocol {type SetFieldMessage, type StatsEntry}
 
 ///|
 pub(all) struct Stage {
@@ -309,34 +309,57 @@ pub fn get_stage() -> Stage? {
 }
 
 ///|
-using @maple_protocol {type StatsEntry}
-
-///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
       return
     }
-    GameStart(map_id~, portal_id~, loading_data~) as t => {
+    GameStart(map_id~, portal_id~, set_field_message~) => {
+      guard set_field_message is SetField(
+        stats~,
+        inventory_entry~,
+        ..
+      ) else { return }
       // 1. 如果没有开始加载数据，启动后台任务加载默认武器、头发和脸
-      guard loading_data is Some(fut) else {
+      guard get_loading_data() is Some(fut) else {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
         let draw_info = char_look_mod.draw_info
-        t.loading_data = Some(
+        let weapon_id = find_equipped_item_id(
+          inventory_entry.items,
+          @slot.Id::WEAPON,
+        ).unwrap_or(1302000)
+        let top_id = find_equipped_item_id(
+          inventory_entry.items,
+          @slot.Id::TOP,
+        ).unwrap_or(1040002)
+        let bottom_id = find_equipped_item_id(
+          inventory_entry.items,
+          @slot.Id::BOTTOM,
+        ).unwrap_or(1060002)
+        let shoes_id = find_equipped_item_id(
+          inventory_entry.items,
+          @slot.Id::SHOES,
+        ).unwrap_or(1072005)
+        set_loading_data(
           @io_service.submit_background_task(async fn() {
-            let swordOL = @resource.get_afterimage_loader().load_res_async([
-              "swordOL.img",
-            ])
-            let res = swordOL.value()
-            let after_images = @json.from_json(res)
-            @char_look.set_after_images("swordOL", after_images)
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
-            let weapon_data = @item.ItemData::get_async(1302000)
-            let top_data = @item.ItemData::get_async(1040002)
-            let bottom_data = @item.ItemData::get_async(1060002)
-            let shoes_data = @item.ItemData::get_async(1072005)
+            let weapon_data = @item.ItemData::get_async(weapon_id)
+            let top_data = @item.ItemData::get_async(top_id)
+            let bottom_data = @item.ItemData::get_async(bottom_id)
+            let shoes_data = @item.ItemData::get_async(shoes_id)
+            let after_image_name = if weapon_data.get_info()
+              is { "afterImage": Json::String(after_image), .. } {
+              after_image
+            } else {
+              "swordOL"
+            }
+            let after_image_res = @resource.get_afterimage_loader()
+              .load_res_async(["\{after_image_name}.img"])
+              .value()
+            let after_images = @json.from_json(after_image_res)
+            @char_look.set_after_images(after_image_name, after_images)
             (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
         )
@@ -391,11 +414,16 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       let stage = match stage_ref.val {
         Some(stage) => stage
         None => {
-          let stage = new_stage(char_look)
+          let stage = new_stage(char_look, stats)
           stage_ref.val = Some(stage)
           stage
         }
       }
+      match @player.get_player() {
+        Some(player) => apply_equipped_stats(player.get_stats(), inventory_entry.items)
+        None => ()
+      }
+      clear_loading_data()
       stage.clear()
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
@@ -464,12 +492,21 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
 }
 
 ///|
-fn new_stage(char_look : @char_look.CharLook) -> Stage {
+fn new_stage(
+  char_look : @char_look.CharLook,
+  stats_entry : StatsEntry,
+) -> Stage {
   let map_module = @map.Module::load()
   let stats : @char_stats.CharStats = @char_stats.CharStats::new(
-    StatsEntry::default(),
-    fn() { @weapon.Type::NONE },
-    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
+    stats_entry,
+    fn() {
+      char_look
+      .get_equips()
+      .get_weapon()
+      .map(fn(w) { w.get_type() })
+      .unwrap_or(@weapon.Type::NONE)
+    },
+    make_job_from_stats(stats_entry),
     Map::new(),
     Map::new(),
     Map::new(),

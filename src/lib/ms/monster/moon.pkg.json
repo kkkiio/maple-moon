@@ -13,7 +13,6 @@
       "alias": "combat"
     },
     "KKKIIO/maple-moon/lib/ui",
-    "KKKIIO/maple-moon/lib/ms/skill",
     "KKKIIO/maple-moon/lib/log",
     "KKKIIO/maple-moon/lib/ms/char_stats",
     "KKKIIO/maple-moon/lib/ms/maple_stat",
@@ -25,5 +24,8 @@
     "KKKIIO/maple-moon/lib/maple_protocol",
     "KKKIIO/maple-moon/lib/maple_protocol",
     "Milky2018/selene/sprite"
+  ],
+  "test-import": [
+    "moonbitlang/x/fs"
   ]
 }

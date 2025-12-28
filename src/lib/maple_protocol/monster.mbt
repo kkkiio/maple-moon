@@ -53,6 +53,41 @@ pub impl ServerMessage for MobSpawnMessage with type_code() {
 }
 
 ///|
+
+///|
+pub(all) struct MobDamageMessage {
+  oid : Int
+  damage : Int
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ClientMessage for MobDamageMessage with type_code() {
+  @net.ClientOpcode::CLOSE_ATTACK.int_value()
+}
+
+///|
+pub(all) struct MobHpMessage {
+  oid : Int
+  percent : Int
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for MobHpMessage with type_code() {
+  @net.Opcode::SHOW_MOB_HP.int_value()
+}
+
+///|
+pub(all) struct KillMobMessage {
+  oid : Int
+  animation : Int
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for KillMobMessage with type_code() {
+  @net.Opcode::KILL_MOB.int_value()
+}
+
+///|
 using @struct {type Point}
 
 ///|

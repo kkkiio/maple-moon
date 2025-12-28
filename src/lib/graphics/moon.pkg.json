@@ -5,7 +5,7 @@
     "KKKIIO/maple-moon/lib/utils",
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/config",
-    "KKKIIO/maple-moon/lib/lru_cache",
+    "KKKIIO/maple-moon/lib/utils/lru_cache",
     "KKKIIO/maple-moon/lib/log",
     "Milky2018/selene/sprite",
     {

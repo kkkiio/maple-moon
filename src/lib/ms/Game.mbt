@@ -7,7 +7,6 @@ pub(all) struct Game {
   mut accumulator : Int
   processor : @net.Network
   loaded_state : @utils.Future[LoadedState]
-  scheduls : @schedule.Schedules
   // stage : Ref[Stage?]
   keyboard_module : @keyboard.Module
 }
@@ -30,7 +29,6 @@ pub fn Game::new() -> Game {
   })
   let processor = @net.Network::init()
   let keyboard_module = @keyboard.Module::new(default_keymap(), processor)
-  let scheduls = @schedule.Schedules::new()
   {
     timer,
     accumulator: 0,
@@ -45,7 +43,6 @@ pub fn Game::new() -> Game {
     //   it.unwrap() // TODO: handle error
     // }),
     loaded_state: @utils.Future::never(),
-    scheduls,
     // stage,
     keyboard_module,
   }
@@ -55,7 +52,6 @@ pub fn Game::new() -> Game {
 async fn load_modules(
   timer : @utils.Timer,
   network : @net.Network,
-  scheduls : @schedule.Schedules,
   // stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module,
 ) -> LoadedState {
@@ -198,10 +194,6 @@ async fn load_modules(
     // player.recalc_stats(false)
     ...
   })
-  let _ = @heal_over_time.new_module(scheduls, network, fn() {
-    // get_stage().get_player().map(fn(p) { p.get_stats() })
-    ...
-  })
   let npcs = npc_module.get_npcs()
   let quests = quest_module.get_map_quests()
   npcs.listen_npc_changes(fn(event) {
@@ -258,7 +250,6 @@ pub fn Game::update(self : Game, current_time : @utils.TimePoint) -> Unit {
   for _ in 0..<update_times {
     self.update_status(loaded_state)
   }
-  self.scheduls.update(timestep * times) // low priority, low resolution
 
   // Draw the game. Interpolate to account for remaining time.
   let _alpha = Double::from_int(self.accumulator) / Double::from_int(timestep)

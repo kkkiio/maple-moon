@@ -155,7 +155,7 @@ pub fn NxFootholdTree::inner(Self) -> Map[Int, Map[Int, Map[Int, NxFoothold]]]
 pub impl @json.FromJson for NxFootholdTree
 
 pub struct Physics {
-  mut fh_tree : FootholdTree
+  fh_tree : FootholdTree
 }
 pub fn Physics::from_resource(NxFootholdTree) -> Self raise
 pub fn Physics::get_fht(Self) -> FootholdTree

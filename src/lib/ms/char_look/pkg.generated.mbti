@@ -37,10 +37,6 @@ pub let hair_names : Map[String, String]
 
 pub let layers_by_name : @sorted_map.SortedMap[String, HairLayer]
 
-pub let male_1_white_face : Json
-
-pub let male_1_white_hair : Json
-
 pub fn set_after_images(String, NxAfterImages) -> Unit
 
 pub fn update_after_image_system(Double) -> Unit

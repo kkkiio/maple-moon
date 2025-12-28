@@ -176,11 +176,6 @@ pub fn GraphicsGL::get() -> Self
 
 type Image
 
-pub(all) struct NxFrame(@sprite.AnimationFrame)
-#deprecated
-pub fn NxFrame::inner(Self) -> @sprite.AnimationFrame
-pub impl @json.FromJson for NxFrame
-
 type OutlinedText
 pub fn OutlinedText::change_color(Self, @struct.ColorName) -> Unit
 pub fn OutlinedText::change_text(Self, String) -> Unit

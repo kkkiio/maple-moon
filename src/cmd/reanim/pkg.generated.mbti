@@ -9,9 +9,17 @@ import(
 // Values
 pub fn calculate_unified_size(Array[FrameData]) -> UnifiedSize
 
-pub fn collect_frames(Json, Map[String, @resource.SpritesheetMetadata], String?) -> Array[FrameData] raise
+pub fn collect_all_frames(Json, Array[String], Map[String, @resource.SpritesheetMetadata], Array[FrameWithPath]) -> Unit
 
 pub fn collect_frames_from_bitmaps(Json) -> Array[FrameData]
+
+pub fn detect_mode(Json) -> Mode
+
+pub async fn extract_frames(Array[FrameData], Map[String, @js.Value], String, (String) -> @js.Value) -> Array[ExtractedFrame]
+
+pub async fn generate_resized_spritesheet(Array[@js.Value], UnifiedSize) -> @js.Value
+
+pub async fn generate_simple_spritesheet(Array[ExtractedFrame]) -> (@js.Value, Array[Int])
 
 pub fn get_animation_layers(Json) -> Array[String]
 
@@ -25,18 +33,38 @@ pub fn is_frame_resource(Json) -> Bool
 
 pub fn match_entries(Json, String) -> Array[(String, Json)]
 
+pub fn parse_frame_data(Json, Map[String, @resource.SpritesheetMetadata]) -> FrameData?
+
+pub async fn process_bitmap(CliArgs) -> Unit
+
 pub async fn process_bitmap_resource(Json, String, String, load_bitmap? : (Int) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
 
-pub async fn process_resource(Json, Map[String, @resource.SpritesheetMetadata], String, String, bitmaps_dir? : String, load_spritesheet? : (String) -> @js.Value, load_bitmap? : (String) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
+pub async fn process_resource(Json, Map[String, @resource.SpritesheetMetadata], String, String, bitmaps_dir? : String, resize? : Bool, load_spritesheet? : (String) -> @js.Value, load_bitmap? : (String) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
+
+pub async fn process_simple_pack(Json, Map[String, @resource.SpritesheetMetadata], Map[String, @js.Value], String, String, String, ((String) -> @js.Value)?, ((String, @js.Value) -> Unit)?) -> Json
 
 pub async fn process_spritesheet(CliArgs) -> Unit
+
+pub async fn resize_frames(Array[ExtractedFrame], UnifiedSize) -> Array[@js.Value]
+
+pub fn update_resized_animation_json(Json, String, UnifiedSize, String, String, String?) -> Json
 
 // Errors
 
 // Types and methods
-type CliArgs
+pub(all) struct CliArgs {
+  input : String
+  output : String
+  spritesheet_dir : String
+  bitmaps_dir : String
+  match_pattern : String?
+  resize : Bool
+}
 
-type ExtractedFrame
+pub(all) struct ExtractedFrame {
+  data : FrameData
+  buffer : @js.Value
+}
 
 pub(all) struct FrameData {
   id : Int
@@ -52,7 +80,15 @@ pub(all) struct FrameData {
   is_bitmap : Bool
 }
 
-type Mode
+pub(all) struct FrameWithPath {
+  path : Array[String]
+  data : FrameData
+}
+
+pub(all) enum Mode {
+  Spritesheet
+  Bitmap
+}
 
 pub enum NodeType {
   Frame
@@ -60,8 +96,6 @@ pub enum NodeType {
   MultiPartAnimation
   Unknown
 }
-
-type ProcessStackItem
 
 pub(all) struct UnifiedSize {
   width : Int

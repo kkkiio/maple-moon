@@ -1,6 +1,6 @@
 ///|
 pub struct Physics {
-  mut fh_tree : FootholdTree
+  fh_tree : FootholdTree
 }
 
 ///|

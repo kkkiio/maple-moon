@@ -32,6 +32,7 @@ pub fn CharEquips::getcaptype(Self) -> CapType
 pub fn CharEquips::has_overall(Self) -> Bool
 pub fn CharEquips::has_weapon(Self) -> Bool
 pub fn CharEquips::is_two_handed(Self) -> Bool
+pub fn CharEquips::iter(Self) -> Iter[(@slot.Id, @clothing.Clothing)]
 pub fn CharEquips::new() -> Self
 pub fn CharEquips::remove_equip(Self, @slot.Id) -> Unit
 

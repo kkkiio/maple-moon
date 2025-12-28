@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/lru_cache"
+package "KKKIIO/maple-moon/lib/utils/lru_cache"
 
 // Values
 

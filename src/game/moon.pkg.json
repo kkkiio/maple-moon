@@ -19,6 +19,6 @@
   ],
   "overrides": [
     "Milky2018/selene-canvas",
-    "KKKIIO/maple-moon/lib/abort_with_log"
+    "KKKIIO/maple-moon/lib/utils/abort_with_log"
   ]
 }

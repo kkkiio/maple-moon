@@ -1,11 +1,29 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/test/char_look_test"
 
+import(
+  "Milky2018/selene/sprite"
+)
+
 // Values
 
 // Errors
 
 // Types and methods
+pub(all) struct DebugAnimation(@sprite.Animation, Int)
+
+
+pub impl ToJson for DebugAnimation
+
+pub(all) struct DebugFrame(@sprite.AnimationFrame)
+#deprecated
+pub fn DebugFrame::inner(Self) -> @sprite.AnimationFrame
+pub impl ToJson for DebugFrame
+
+pub(all) struct DebugSprite(@sprite.Sprite)
+#deprecated
+pub fn DebugSprite::inner(Self) -> @sprite.Sprite
+pub impl ToJson for DebugSprite
 
 // Type aliases
 

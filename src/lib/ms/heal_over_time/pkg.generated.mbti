@@ -1,14 +1,7 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/heal_over_time"
 
-import(
-  "KKKIIO/maple-moon/lib/game_mod"
-  "KKKIIO/maple-moon/lib/ms/char_stats"
-  "KKKIIO/maple-moon/lib/net"
-)
-
 // Values
-pub fn new_module(&@game_mod.Scheduler, @net.Network, () -> @char_stats.CharStats?) -> @game_mod.Mod
 
 // Errors
 

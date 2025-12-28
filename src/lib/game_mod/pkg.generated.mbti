@@ -2,9 +2,7 @@
 package "KKKIIO/maple-moon/lib/game_mod"
 
 import(
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
   "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/utils"
 )
 
 // Values
@@ -12,10 +10,6 @@ import(
 // Errors
 
 // Types and methods
-pub(all) struct Mod {
-  message_handlers : Map[@net.Opcode, (@net.InPacket) -> Unit]
-  stat_handlers : Map[@maple_stat.Id, (Int) -> Bool]
-}
 
 // Type aliases
 pub type StatHandler = (Int) -> Bool
@@ -23,10 +17,6 @@ pub type StatHandler = (Int) -> Bool
 pub type SubRouteHandler = (@net.InPacket) -> &SubRouteAction raise
 
 // Traits
-pub(open) trait Scheduler {
-  schedule_with_fixed_delay(Self, () -> Unit, @utils.Duration, @utils.Duration) -> () -> Unit
-}
-
 pub(open) trait SubRouteAction : Show {
   handle(Self) -> Unit
 }

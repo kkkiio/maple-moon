@@ -15,8 +15,6 @@
     "KKKIIO/maple-moon/lib/ui",
     "KKKIIO/maple-moon/lib/ms/shop",
     "KKKIIO/maple-moon/lib/ms/char_stats",
-    "KKKIIO/maple-moon/lib/ms/heal_over_time",
-    "KKKIIO/maple-moon/lib/schedule",
     "KKKIIO/maple-moon/lib/game_mod",
     "KKKIIO/maple-moon/lib/ms/quest",
     "KKKIIO/maple-moon/lib/ms/map_object",

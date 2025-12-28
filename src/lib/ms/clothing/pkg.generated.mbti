@@ -15,17 +15,17 @@ import(
 // Types and methods
 type Clothing
 pub fn Clothing::from_resource(@item.ItemData, @types.BodyDrawInfo) -> Self raise
-pub fn Clothing::get_animation(Self, @types.StanceId, String) -> (Array[@resource.NxFrame], Array[Layer])?
+pub fn Clothing::get_animation(Self, @types.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
 pub fn Clothing::get_eqslot(Self) -> @slot.Id
 pub fn Clothing::get_id(Self) -> Int
-pub fn Clothing::get_parts_for_stance(Self, @types.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[Layer])]?
+pub fn Clothing::get_parts_for_stance(Self, @types.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]?
 pub fn Clothing::get_stand(Self) -> @types.StanceId
 pub fn Clothing::get_vslot(Self) -> String
 pub fn Clothing::get_walk(Self) -> @types.StanceId
 pub fn Clothing::is_twohanded(Self) -> Bool
 pub impl Show for Clothing
 
-pub(all) enum Layer {
+pub(all) enum ClothingLayer {
   CAPE
   SHIELD_BELOW_BODY
   WEAPON_BELOW_BODY
@@ -63,11 +63,11 @@ pub(all) enum Layer {
   BACK_SHIELD
   BACK_WEAPON
 }
-pub fn Layer::int_value(Self) -> Int
-pub impl Eq for Layer
-pub impl Hash for Layer
-pub impl Show for Layer
-pub impl ToJson for Layer
+pub fn ClothingLayer::int_value(Self) -> Int
+pub impl Eq for ClothingLayer
+pub impl Hash for ClothingLayer
+pub impl Show for ClothingLayer
+pub impl ToJson for ClothingLayer
 
 // Type aliases
 

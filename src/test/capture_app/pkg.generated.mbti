@@ -1,36 +1,42 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/test/capture_canvas"
+package "KKKIIO/maple-moon/test/capture_app"
+
+import(
+  "Milky2018/selene/system"
+)
 
 // Values
 pub fn create_canvas(Int, Int) -> Canvas
 
 pub fn create_image() -> Image
 
-pub fn fs_exists(String) -> Bool
+pub fn get_ctx() -> Context2D?
 
-pub fn fs_read_file_sync(String) -> Buffer
+pub fn init_app(@system.App) -> Unit
 
-pub fn get_canvas() -> CanvasRef
+pub fn run_loop(Double) -> Unit
+
+pub fn set_canvas(Canvas) -> Unit
+
+pub fn set_ctx(Context2D) -> Unit
+
+pub fn to_buffer() -> Buffer
 
 // Errors
 
 // Types and methods
 pub type Buffer
+pub fn Buffer::from_bytes(Bytes) -> Self
 pub fn Buffer::to_bytes(Self) -> Bytes
 
 pub type Canvas
 pub fn Canvas::get_context(Self, String) -> Context2D
 pub fn Canvas::to_buffer(Self, String) -> Buffer
 
-pub struct CanvasRef {
-  canvas : Canvas?
-  ctx : Context2D?
-}
-
 pub type Context2D
-pub fn Context2D::draw_image_with_size(Self, Image, Double, Double, Double, Double) -> Unit
+pub fn Context2D::clear_rect(Self, Double, Double, Double, Double) -> Unit
+pub fn Context2D::draw_image(Self, Image, Double, Double, Double, Double, Double, Double, Double, Double) -> Unit
 pub fn Context2D::restore(Self) -> Unit
-pub fn Context2D::rotate(Self, Double) -> Unit
 pub fn Context2D::save(Self) -> Unit
 pub fn Context2D::scale(Self, Double, Double) -> Unit
 pub fn Context2D::set_image_smoothing_enabled(Self, Bool) -> Unit

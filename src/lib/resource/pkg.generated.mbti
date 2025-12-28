@@ -24,6 +24,10 @@ pub fn get_character_loader() -> AsyncLoader
 
 pub fn get_effect_loader() -> AsyncLoader
 
+pub fn get_face_loader() -> AsyncLoader
+
+pub fn get_hair_loader() -> AsyncLoader
+
 pub fn get_mapx_loader() -> AsyncLoader
 
 pub fn get_mob_loader() -> AsyncLoader

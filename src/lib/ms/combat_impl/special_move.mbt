@@ -15,17 +15,17 @@ pub(all) struct SpecialMove {
   attack : Bool
   skill : Bool
   apply_useeffects : (@character.Character) -> Unit
-  apply_actions : (@character.Character, @combat.AttackType) -> Unit
+  apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
   // TODO: find a better place for inventory arguments
   make_attack : (
     @character.Character,
     &@legacy_types.Inventory,
-    @combat.AttackType,
+    @combat_proto.AttackType,
     Bool,
-  ) -> @combat.Attack
+  ) -> @combat_proto.Attack
   get_bullet : (@character.Character, Int) -> @graphics.Animation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
-  apply_hit_effects : (@combat.AttackUser, @monster.Mob) -> Unit
+  apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @char_look.NxAfterImage]
 } derive(Show)
 
@@ -56,7 +56,7 @@ pub fn SpecialMove::apply_useeffects(
 pub fn SpecialMove::apply_actions(
   self : SpecialMove,
   char : @character.Character,
-  attack_type : @combat.AttackType,
+  attack_type : @combat_proto.AttackType,
 ) -> Unit {
   (self.apply_actions)(char, attack_type)
 }
@@ -66,9 +66,9 @@ pub fn SpecialMove::make_attack(
   self : SpecialMove,
   char : @character.Character,
   inventory : &@legacy_types.Inventory,
-  attack_type : @combat.AttackType,
+  attack_type : @combat_proto.AttackType,
   degenerate : Bool,
-) -> @combat.Attack {
+) -> @combat_proto.Attack {
   (self.make_attack)(char, inventory, attack_type, degenerate)
 }
 
@@ -97,7 +97,7 @@ pub fn SpecialMove::can_use(
 ///|
 pub fn SpecialMove::apply_hit_effects(
   self : SpecialMove,
-  attack_user : @combat.AttackUser,
+  attack_user : @combat_proto.AttackUser,
   mob : @monster.Mob,
 ) -> Unit {
   (self.apply_hit_effects)(attack_user, mob)

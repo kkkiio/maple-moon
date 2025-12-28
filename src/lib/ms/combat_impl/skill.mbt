@@ -3,7 +3,7 @@ struct Skill {
   action : &SkillAction
   bullet : (@character.Character, Int) -> @graphics.Animation
   use_effect : UseEffect
-  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit
+  hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
   skill_id : Int
   over_regular : Bool
@@ -44,7 +44,7 @@ pub fn Skill::new(
   stats : Map[Int, @skill.Stats],
   req_weapon : @weapon.Type,
   use_effect : UseEffect,
-  hit_effect : (@combat.AttackUser, @monster.Mob) -> Unit,
+  hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit,
 ) -> Skill raise {
   let mut projectile = true
   let mut over_regular = false
@@ -157,7 +157,7 @@ pub fn Skill::apply_useeffects(
 pub fn Skill::apply_actions(
   self : Skill,
   user : @character.Character,
-  attack_type : @combat.AttackType,
+  attack_type : @combat_proto.AttackType,
 ) -> Unit {
   self.action.apply(user, attack_type)
 }
@@ -167,8 +167,8 @@ pub fn Skill::make_attack(
   self : Skill,
   chr : @character.Character,
   bullet_id : Int,
-  attack_type : @combat.AttackType,
-) -> @combat.Attack {
+  attack_type : @combat_proto.AttackType,
+) -> @combat_proto.Attack {
   // let mut mindamage = char_stats.get_mindamage().to_double()
   // let mut maxdamage = char_stats.get_maxdamage().to_double()
   // if degenerate {
@@ -185,15 +185,17 @@ pub fn Skill::make_attack(
   let speed = @character.get_integer_attackspeed(chr.get_look(), chr.stats)
   let level = (chr.get_skilllevel)(self.skill_id)
   let stats = self.stats.get(level).unwrap() // TODO: Handle error
-  let attack : @combat.Attack = {
+  let attack : @combat_proto.Attack = {
     hitcount: 0,
     stance: 0,
     damagetype: if stats.fixdamage != 0 {
-      @combat.AttackDamageType::DMG_FIXED(stats.fixdamage)
+      @combat_proto.AttackDamageType::DMG_FIXED(stats.fixdamage)
     } else if stats.matk != 0 {
-      @combat.AttackDamageType::DMG_MAGIC(chr.stats.get_matk() + stats.matk)
+      @combat_proto.AttackDamageType::DMG_MAGIC(
+        chr.stats.get_matk() + stats.matk,
+      )
     } else {
-      @combat.AttackDamageType::DMG_WEAPON(
+      @combat_proto.AttackDamageType::DMG_WEAPON(
         min=chr.stats.get_mindamage().to_double() * stats.damage_mul,
         max=chr.stats.get_maxdamage().to_double() * stats.damage_mul,
       )
@@ -213,7 +215,7 @@ pub fn Skill::make_attack(
     hrange: stats.hrange,
   }
   match attack.t {
-    @combat.AttackType::RANGED => attack.hitcount = stats.bulletcount
+    @combat_proto.AttackType::RANGED => attack.hitcount = stats.bulletcount
     _ => attack.hitcount = stats.attackcount
   }
   if not(stats.range.is_empty()) {
@@ -233,7 +235,7 @@ pub fn Skill::make_attack(
   }
   if self.over_regular {
     attack.stance = chr.get_look().get_stance().int_value()
-    if attack.t == @combat.AttackType::CLOSE && not(self.projectile) {
+    if attack.t == @combat_proto.AttackType::CLOSE && not(self.projectile) {
       guard @char_look.get_after_image(chr.entity) is Some(after_image) else {
         @log.error({}, "No afterimage")
         panic()
@@ -296,7 +298,7 @@ pub fn Skill::get_bullet(
 ///|
 pub fn Skill::apply_hit_effects(
   self : Skill,
-  user : @combat.AttackUser,
+  user : @combat_proto.AttackUser,
   target : @monster.Mob,
 ) -> Unit {
   (self.hit_effect)(user, target)
@@ -357,7 +359,7 @@ pub impl @json.FromJson for NxSkill with from_json(json, path) {
 ///|
 pub fn make_hit_effect(
   src : @resource.NxNode,
-) -> ((@combat.AttackUser, @monster.Mob) -> Unit) raise Error {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
   let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
   let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
   let res : NxSkill = @json.from_json(src.value())
@@ -376,6 +378,6 @@ pub fn make_hit_effect(
   } else if has_hit0 {
     new_single_hit_effect(res.hit[0])
   } else {
-    fn(_ : @combat.AttackUser, _ : @monster.Mob) -> Unit {  }
+    fn(_ : @combat_proto.AttackUser, _ : @monster.Mob) -> Unit {  }
   }
 }

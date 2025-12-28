@@ -91,8 +91,8 @@ pub impl @legacy_types.SkillBook for SkillBook with set_skill(
 ///|
 pub fn SkillBook::on_attack_event(
   self : SkillBook,
-  event : @combat_impl2.AttackEvent,
-  combat : @combat_impl2.Combat,
+  event : @combat_impl.AttackEvent,
+  combat : @combat_impl.Combat,
   player : @player.Player,
 ) -> Unit {
   // 追加攻击

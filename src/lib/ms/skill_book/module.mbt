@@ -5,7 +5,7 @@ struct Module {
   mut player_skill_book : (SkillBook, Ref[Bool])?
   watchers : Array[SkillBookWatcher]
   string_loader : @resource.SyncLoader
-  combat : @combat_impl2.Combat
+  combat : @combat_impl.Combat
   inventory : @inventory.Inventory
 }
 
@@ -14,7 +14,7 @@ pub async fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  combat : @combat_impl2.Combat,
+  combat : @combat_impl.Combat,
   inventory : @inventory.Inventory,
 ) -> Module noraise {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
@@ -26,7 +26,7 @@ fn Module::new(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  combat : @combat_impl2.Combat,
+  combat : @combat_impl.Combat,
   inventory : @inventory.Inventory,
 ) -> Module {
   {

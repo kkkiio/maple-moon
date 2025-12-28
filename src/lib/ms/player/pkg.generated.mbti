@@ -2,13 +2,13 @@
 package "KKKIIO/maple-moon/lib/ms/player"
 
 import(
+  "KKKIIO/maple-moon/lib/char_stance"
   "KKKIIO/maple-moon/lib/legacy_types"
   "KKKIIO/maple-moon/lib/ms/buff"
   "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_look/types"
   "KKKIIO/maple-moon/lib/ms/char_stats"
   "KKKIIO/maple-moon/lib/ms/character"
-  "KKKIIO/maple-moon/lib/ms/combat_impl2"
+  "KKKIIO/maple-moon/lib/ms/combat_impl"
   "KKKIIO/maple-moon/lib/ms/combat_proto"
   "KKKIIO/maple-moon/lib/ms/job"
   "KKKIIO/maple-moon/lib/ms/keyboard"
@@ -58,7 +58,7 @@ pub(all) struct Player {
   mut skill_book : &@legacy_types.SkillBook
 }
 pub fn Player::attack_by_action(Self, String) -> Unit
-pub fn Player::attack_by_stance(Self, @types.StanceId) -> Unit
+pub fn Player::attack_by_stance(Self, @char_stance.StanceId) -> Unit
 pub fn Player::can_attack(Self) -> Bool
 pub fn Player::change_job(Self, Int) -> Unit
 pub fn Player::change_skill(Self, Int, Int, Int, Int) -> Unit
@@ -87,8 +87,8 @@ pub fn Player::set_ladder(Self, @map.Ladder?) -> Unit
 pub fn Player::set_position(Self, Int, Int) -> Unit
 pub fn Player::set_state(Self, @character.CharState) -> Unit
 pub fn Player::show_iron_body(Self) -> Unit
-pub impl @combat_impl2.CombatCharacter for Player
-pub impl @combat_impl2.DamagableCharacter for Player
+pub impl @combat_impl.CombatCharacter for Player
+pub impl @combat_impl.DamagableCharacter for Player
 
 type SimpleStatBuff
 pub impl ActiveBuff for SimpleStatBuff

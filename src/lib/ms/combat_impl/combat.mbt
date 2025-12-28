@@ -5,7 +5,7 @@ using @combat_proto {type AttackResult}
 struct Combat {
   damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
-  regular_attack : @combat_impl.SpecialMove
+  regular_attack : SpecialMove
   // TODO: Add reactors
   bullet_effects : @utils.TimedQueue[BulletEffect]
   damage_effects : @utils.TimedQueue[DamageEffect]
@@ -13,7 +13,7 @@ struct Combat {
   // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   bullet_module : @bullet.Module
-  skill_cache : Map[Int, @utils.Future[@combat_impl.SpecialMove]]
+  skill_cache : Map[Int, @utils.Future[SpecialMove]]
   attack_events_listeners : Array[(AttackEvent) -> Bool]
 }
 
@@ -32,7 +32,7 @@ pub fn Combat::new(
     damage_number_set,
     mobs,
     skill_cache: Map::new(),
-    regular_attack: @combat_impl.new_regular_attack(bullet_module),
+    regular_attack: new_regular_attack(bullet_module),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
     bullets: Array::new(),
@@ -139,7 +139,7 @@ fn Combat::use_move(
     return
   }
   let reason = self.can_use(cc, act)
-  if reason == @combat_impl.ForbidReason::FBR_NONE {
+  if reason == ForbidReason::FBR_NONE {
     let after_images = match attack_weapon {
       Some(weapon) => {
         let name = weapon.get_afterimage()
@@ -183,7 +183,7 @@ pub struct AttackEvent {
 pub fn Combat::get_skill_move(
   self : Combat,
   move_id : Int,
-) -> @utils.Future[@combat_impl.SpecialMove] {
+) -> @utils.Future[SpecialMove] {
   if self.skill_cache.get(move_id) is Some(fut) {
     return fut
   }
@@ -199,7 +199,7 @@ pub fn Combat::get_skill_move(
 fn Combat::apply_move(
   self : Combat,
   cc : &CombatCharacter,
-  act : @combat_impl.SpecialMove,
+  act : SpecialMove,
   after_images : Map[String, @char_look.NxAfterImage],
 ) -> Unit {
   let character = cc.get_character()
@@ -251,7 +251,7 @@ fn Combat::apply_move(
 pub fn Combat::apply_attack_to_mobs(
   self : Combat,
   character : @character.Character,
-  act : @combat_impl.SpecialMove,
+  act : SpecialMove,
   attack : @combat_proto.Attack,
   mob_targets : Array[Int],
   result : AttackResult,
@@ -268,7 +268,7 @@ pub fn Combat::apply_attack_to_mobs(
 fn Combat::apply_result_movement(
   self : Combat,
   cc : &CombatCharacter,
-  act : @combat_impl.SpecialMove,
+  act : SpecialMove,
   result : AttackResult,
 ) -> Unit {
   if act.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
@@ -325,7 +325,7 @@ priv struct DamageEffect {
   damage : Int
   toleft : Bool
   target_oid : Int
-  sp_move : @combat_impl.SpecialMove
+  sp_move : SpecialMove
 }
 
 ///|
@@ -405,11 +405,8 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-async fn Combat::load_sp_move(
-  self : Combat,
-  move_id : Int,
-) -> @combat_impl.SpecialMove {
-  let it = @combat_impl.Skill::load(move_id, self.bullet_module)
+async fn Combat::load_sp_move(self : Combat, move_id : Int) -> SpecialMove {
+  let it = Skill::load(move_id, self.bullet_module)
   {
     id: it.get_id(),
     attack: it.is_attack(),
@@ -432,7 +429,7 @@ async fn Combat::load_sp_move(
 fn Combat::extract_effects(
   self : Combat,
   user : @character.Character,
-  act : @combat_impl.SpecialMove,
+  act : SpecialMove,
   result : AttackResult,
 ) -> Unit {
   let attack_user : @combat_proto.AttackUser = {
@@ -599,24 +596,24 @@ pub fn check_attack_type(
 pub fn Combat::can_use(
   self : Combat,
   cc : &CombatCharacter,
-  act : @combat_impl.SpecialMove,
-) -> @combat_impl.ForbidReason {
+  act : SpecialMove,
+) -> ForbidReason {
   let character = cc.get_character()
   let skill_book = cc.get_skill_book()
   let stats = cc.get_stats()
   let inventory = cc.get_inventory()
   if act.is_skill() && character.state == @character.CharState::PRONE {
-    return @combat_impl.ForbidReason::FBR_OTHER
+    return ForbidReason::FBR_OTHER
   }
   if act.is_attack() &&
     (
       character.state == @character.CharState::LADDER ||
       character.state == @character.CharState::ROPE
     ) {
-    return @combat_impl.ForbidReason::FBR_OTHER
+    return ForbidReason::FBR_OTHER
   }
   if self.has_cooldown(act.get_id()) {
-    return @combat_impl.ForbidReason::FBR_COOLDOWN
+    return ForbidReason::FBR_COOLDOWN
   }
   let level = skill_book.get_level(act.get_id())
   let weapontype = character.get_weapontype()

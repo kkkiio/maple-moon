@@ -7,7 +7,7 @@ pub(all) struct RegularAttack {
 pub fn RegularAttack::apply_actions(
   self : RegularAttack,
   user : @character.Character,
-  t : @combat.AttackType,
+  t : @combat_proto.AttackType,
 ) -> Unit {
   self.action.apply(user, t)
 }
@@ -16,9 +16,9 @@ pub fn RegularAttack::apply_actions(
 pub fn make_regular_attack(
   character : @character.Character,
   bullet_id : Int,
-  attacktype : @combat.AttackType,
+  attacktype : @combat_proto.AttackType,
   degenerate : Bool,
-) -> @combat.Attack {
+) -> @combat_proto.Attack {
   let t = attacktype
   let mut mindamage = character.stats.get_mindamage().to_double()
   let mut maxdamage = character.stats.get_maxdamage().to_double()
@@ -37,7 +37,7 @@ pub fn make_regular_attack(
     character.stats,
   )
   {
-    damagetype: @combat.AttackDamageType::DMG_WEAPON(
+    damagetype: @combat_proto.AttackDamageType::DMG_WEAPON(
       min=mindamage,
       max=maxdamage,
     ),
@@ -47,7 +47,7 @@ pub fn make_regular_attack(
     accuracy,
     playerlevel,
     range: match t {
-      @combat.AttackType::CLOSE => {
+      @combat_proto.AttackType::CLOSE => {
         guard @char_look.get_after_image(character.entity) is Some(after_image) else {
           @log.error({}, "No afterimage when making regular attack")
           panic()
@@ -84,12 +84,12 @@ struct RegularAction {} derive(Default)
 pub impl SkillAction for RegularAction with apply(
   self : RegularAction,
   target : @character.Character,
-  atype : @combat.AttackType,
+  atype : @combat_proto.AttackType,
 ) -> Unit {
   let weapontype = target.get_weapontype()
   let degenerate = match weapontype {
     @weapon.BOW | @weapon.CROSSBOW | @weapon.CLAW | @weapon.GUN =>
-      atype != @combat.AttackType::RANGED
+      atype != @combat_proto.AttackType::RANGED
     _ => false
   }
   target.regular_attack(degenerate)

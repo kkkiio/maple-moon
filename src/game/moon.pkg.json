@@ -7,7 +7,7 @@
     "KKKIIO/maple-moon/lib/ms/login",
     "KKKIIO/maple-moon/lib/graphics",
     "KKKIIO/maple-moon/lib/game_scene",
-    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/combat_impl",
     "KKKIIO/maple-moon/lib/ms/map",
     "KKKIIO/maple-moon/lib/game_server",
     "KKKIIO/maple-moon/lib/logic_fps",

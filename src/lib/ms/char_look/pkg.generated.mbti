@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/char_look"
 
 import(
+  "KKKIIO/maple-moon/lib/char_stance"
   "KKKIIO/maple-moon/lib/graphics"
   "KKKIIO/maple-moon/lib/ms/char_look/types"
   "KKKIIO/maple-moon/lib/ms/equip"
@@ -67,30 +68,30 @@ pub impl ToJson for BodyLayerDrawable
 type CharLook
 pub fn CharLook::add_equip(Self, @item.ItemData, @slot.Id) -> Unit raise
 pub fn CharLook::attack(Self, Bool) -> Unit
-pub fn CharLook::attack_by_stance(Self, @types.StanceId) -> Unit
+pub fn CharLook::attack_by_stance(Self, @char_stance.StanceId) -> Unit
 pub fn CharLook::draw(Self, @graphics.DrawArgument, Double) -> Unit
-pub fn CharLook::draw_with_stance(Self, @struct.Point[Int], Bool, @types.StanceId, ExpressionId) -> Unit
+pub fn CharLook::draw_with_stance(Self, @struct.Point[Int], Bool, @char_stance.StanceId, ExpressionId) -> Unit
 pub fn CharLook::get_attackdelay(Self, Int, Int) -> Int
 pub fn CharLook::get_body(Self) -> FullBody
-pub fn CharLook::get_delay(Self, @types.StanceId, Int) -> Int
+pub fn CharLook::get_delay(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::get_equips(Self) -> @equip.CharEquips
 pub fn CharLook::get_face(Self) -> Face
 pub fn CharLook::get_frame(Self) -> Int
 pub fn CharLook::get_hair(Self) -> Hair
 pub fn CharLook::get_root_entity(Self) -> @entity.Entity
-pub fn CharLook::get_stance(Self) -> @types.StanceId
-pub fn CharLook::getnextframe(Self, @types.StanceId, Int) -> Int
+pub fn CharLook::get_stance(Self) -> @char_stance.StanceId
+pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::is_animation_finished(Self) -> Bool
-pub fn CharLook::is_twohanded(Self, @types.StanceId) -> Bool
+pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
 pub async fn CharLook::load(@entity.Entity, LookEntry, FullBody, Hair, Face, @types.BodyDrawInfo) -> Self
-pub fn CharLook::make_draw_front(Self, @types.StanceId, ExpressionId, Int, Int) -> Array[&@graphics.Drawable]
+pub fn CharLook::make_draw_front(Self, @char_stance.StanceId, ExpressionId, Int, Int) -> Array[&@graphics.Drawable]
 pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @types.BodyDrawInfo) -> Self
 pub fn CharLook::play_animations(Self) -> Unit
 pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
 pub fn CharLook::set_action(Self, String) -> Unit
 pub fn CharLook::set_facing_right(Self, Bool) -> Unit
 pub fn CharLook::set_pos(Self, @math.Vec2D) -> Unit
-pub fn CharLook::set_stance(Self, @types.StanceId) -> Unit
+pub fn CharLook::set_stance(Self, @char_stance.StanceId) -> Unit
 pub impl ToJson for CharLook
 
 pub struct CharLookMod {
@@ -162,16 +163,16 @@ type FaceFrame
 pub fn FaceFrame::from_resource(Json) -> Self raise
 
 pub(all) struct FullBody {
-  stances : Map[@types.StanceId, Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])]]
+  stances : Map[@char_stance.StanceId, Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])]]
   name : String
 }
-pub fn FullBody::draw(Self, @types.StanceId, @types.BodyLayer, Int, @graphics.DrawArgument) -> Unit
+pub fn FullBody::draw(Self, @char_stance.StanceId, @types.BodyLayer, Int, @graphics.DrawArgument) -> Unit
 pub fn FullBody::get_name(Self) -> String
-pub fn FullBody::new(Int, @types.BodyDrawInfo, Map[@types.StanceId, Array[@types.NxStanceBody]], Map[@types.StanceId, Array[@types.NxMultiPartFrame]]) -> Self
+pub fn FullBody::new(Int, @types.BodyDrawInfo, Map[@char_stance.StanceId, Array[@types.NxStanceBody]], Map[@char_stance.StanceId, Array[@types.NxMultiPartFrame]]) -> Self
 pub impl ToJson for FullBody
 
 type Hair
-pub fn Hair::draw(Self, @types.StanceId, HairLayer, Int, @graphics.DrawArgument) -> Unit
+pub fn Hair::draw(Self, @char_stance.StanceId, HairLayer, Int, @graphics.DrawArgument) -> Unit
 pub fn Hair::get_name(Self) -> String
 pub fn Hair::getcolor(Self) -> String
 pub async fn Hair::load(Int, @types.BodyDrawInfo) -> Self
@@ -225,9 +226,9 @@ pub impl @json.FromJson for NxAfterImage
 type NxAfterImages
 pub impl @json.FromJson for NxAfterImages
 
-pub(all) struct NxStanceLooks[T](Map[@types.StanceId, Array[T]])
+pub(all) struct NxStanceLooks[T](Map[@char_stance.StanceId, Array[T]])
 #deprecated
-pub fn[T] NxStanceLooks::inner(Self[T]) -> Map[@types.StanceId, Array[T]]
+pub fn[T] NxStanceLooks::inner(Self[T]) -> Map[@char_stance.StanceId, Array[T]]
 pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T]
 
 // Type aliases

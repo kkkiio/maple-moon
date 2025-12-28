@@ -2,10 +2,10 @@
 package "KKKIIO/maple-moon/lib/ms/character"
 
 import(
+  "KKKIIO/maple-moon/lib/char_stance"
   "KKKIIO/maple-moon/lib/graphics"
   "KKKIIO/maple-moon/lib/maple_protocol"
   "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_look/types"
   "KKKIIO/maple-moon/lib/ms/char_stats"
   "KKKIIO/maple-moon/lib/ms/map_object"
   "KKKIIO/maple-moon/lib/ms/physics"
@@ -76,7 +76,7 @@ pub(all) struct Character {
   alerted : @utils.TimedBool
 }
 pub fn Character::attack_by_action(Self, String) -> Unit
-pub fn Character::attack_by_stance(Self, @types.StanceId) -> Unit
+pub fn Character::attack_by_stance(Self, @char_stance.StanceId) -> Unit
 pub fn Character::draw(Self, Double, Double, Double) -> Unit
 pub fn Character::get_attackdelay(Self, Int) -> Int
 pub fn Character::get_entity(Self) -> @entity.Entity

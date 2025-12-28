@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/equip"
 
 import(
+  "KKKIIO/maple-moon/lib/char_stance"
   "KKKIIO/maple-moon/lib/ms/char_look/types"
   "KKKIIO/maple-moon/lib/ms/clothing"
   "KKKIIO/maple-moon/lib/ms/equip/slot"
@@ -24,7 +25,7 @@ pub(all) enum CapType {
 
 type CharEquips
 pub fn CharEquips::add_equip(Self, @item.ItemData, @slot.Id, @types.BodyDrawInfo) -> Unit raise
-pub fn CharEquips::adjust_stance(Self, @types.StanceId) -> @types.StanceId
+pub fn CharEquips::adjust_stance(Self, @char_stance.StanceId) -> @char_stance.StanceId
 pub fn CharEquips::get_clothing(Self, @slot.Id) -> @clothing.Clothing?
 pub fn CharEquips::get_equip(Self, @slot.Id) -> Int
 pub fn CharEquips::get_weapon(Self) -> @weapon.WeaponData?

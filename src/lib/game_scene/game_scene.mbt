@@ -11,7 +11,7 @@ pub(all) struct Stage {
   // drops : @drop.MapDrops
   // inventory : @inventory.Inventory
   // damage_number_set : @ui.NumberSet
-  // combat : @combat_impl2.Combat
+  // combat : @combat_impl.Combat
   // char_look_module : @char_look.Module
   // skill_book_module : @skill_book.Module
   // char_stats_module : @char_stats.Module
@@ -34,7 +34,7 @@ pub fn Stage::new(
   // damage_number_set : @ui.NumberSet,
   // network : @net.Network,
   // bullet_module : @bullet.Module,
-  // combat : @combat_impl2.Combat,
+  // combat : @combat_impl.Combat,
 ) -> Stage {
   {
     map_portals_animations,
@@ -435,13 +435,13 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       let player = @player.get_player().unwrap()
-      let combat = @combat_impl2.Combat::new(
+      let combat = @combat_impl.Combat::new(
         @ui.get_number_set().unwrap(),
         stage.mobs,
         bullet_module,
       )
-      @combat_impl2.set_combat(Some(combat))
-      @combat_impl2.set_player(Some(player))
+      @combat_impl.set_combat(Some(combat))
+      @combat_impl.set_player(Some(player))
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
       @map.set_backgrounds(sence_map.backgrounds)

@@ -27,7 +27,7 @@ using @combat_proto {
 }
 
 ///|
-using @combat_impl2 {trait CombatCharacter, trait DamagableCharacter}
+using @combat_impl {trait CombatCharacter, trait DamagableCharacter}
 
 ///|
 pub(all) struct Player {
@@ -906,10 +906,10 @@ pub fn player_state_system(_delta : Double) -> Unit {
     }
   }
   if @inputs.is_just_pressed(@inputs.KeyF) {
-    @combat_impl2.use_move(player, @skill.TELEPORT_FP.int_value())
+    @combat_impl.use_move(player, @skill.TELEPORT_FP.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyX) {
-    @combat_impl2.use_move(player, REGULAR_ATTACK)
+    @combat_impl.use_move(player, REGULAR_ATTACK)
   }
   let times = @logic_fps.get_logic_times()
   for _ in 0..<times {

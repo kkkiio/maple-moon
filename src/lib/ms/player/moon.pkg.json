@@ -24,7 +24,7 @@
     "KKKIIO/maple-moon/lib/logic_fps",
     "KKKIIO/maple-moon/lib/maple_protocol",
     "KKKIIO/maple-moon/lib/legacy_types",
-    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/combat_impl",
     "KKKIIO/maple-moon/lib/ms/skill",
     "KKKIIO/maple-moon/lib/ms/item",
     "KKKIIO/maple-moon/lib/ms/equip/slot",

@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/clothing"
 
 import(
+  "KKKIIO/maple-moon/lib/char_stance"
   "KKKIIO/maple-moon/lib/ms/char_look/types"
   "KKKIIO/maple-moon/lib/ms/equip/slot"
   "KKKIIO/maple-moon/lib/ms/item"
@@ -15,13 +16,13 @@ import(
 // Types and methods
 type Clothing
 pub fn Clothing::from_resource(@item.ItemData, @types.BodyDrawInfo) -> Self raise
-pub fn Clothing::get_animation(Self, @types.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
+pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
 pub fn Clothing::get_eqslot(Self) -> @slot.Id
 pub fn Clothing::get_id(Self) -> Int
-pub fn Clothing::get_parts_for_stance(Self, @types.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]?
-pub fn Clothing::get_stand(Self) -> @types.StanceId
+pub fn Clothing::get_parts_for_stance(Self, @char_stance.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]?
+pub fn Clothing::get_stand(Self) -> @char_stance.StanceId
 pub fn Clothing::get_vslot(Self) -> String
-pub fn Clothing::get_walk(Self) -> @types.StanceId
+pub fn Clothing::get_walk(Self) -> @char_stance.StanceId
 pub fn Clothing::is_twohanded(Self) -> Bool
 pub impl Show for Clothing
 

@@ -32,7 +32,7 @@
     "KKKIIO/maple-moon/lib/game_server",
     "KKKIIO/maple-moon/lib/maple_protocol",
     "KKKIIO/maple-moon/lib/ms/char_look/types",
-    "KKKIIO/maple-moon/lib/ms/combat_impl2",
+    "KKKIIO/maple-moon/lib/ms/combat_impl",
     "KKKIIO/maple-moon/lib/ms/bullet",
     "KKKIIO/maple-moon/lib/legacy_types",
     "KKKIIO/maple-moon/lib/ms/item",

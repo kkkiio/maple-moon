@@ -196,7 +196,7 @@ async test "character stabO1" {
           "loop_": true,
         },
       ],
-      "zindex": 70022,
+      "zindex": 70021,
       "visible": true,
     },
     {
@@ -346,7 +346,7 @@ async test "character stabO1" {
           "loop_": true,
         },
       ],
-      "zindex": 70022,
+      "zindex": 70021,
       "visible": true,
     },
     {

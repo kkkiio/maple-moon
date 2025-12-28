@@ -276,14 +276,14 @@ fn Mob::new(
     let action = skillnode[i.to_string()]["action"].get_int()
     skill_stands.set(
       skill_id,
-      src["skill" + action.to_string()] |> load_animation,
+      src["skill" + action.to_string()].value() |> load_animation,
     )
   }
   let attack_stands : Map[Int, MobAnimation] = Map::new()
   for i = 1; ; i = i + 1 {
     let attack_node = src["attack" + i.to_string()]
     if attack_node.get_children_count() > 0 {
-      attack_stands.set(i, attack_node |> load_animation)
+      attack_stands.set(i, attack_node.value() |> load_animation)
     } else {
       break
     }

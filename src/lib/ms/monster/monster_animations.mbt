@@ -40,8 +40,8 @@ pub(all) struct MobAnimations {
 } derive(@json.FromJson(fields(move_(rename="move"))), Show)
 
 ///|
-fn load_animation(src : @resource.NxNode) -> MobAnimation raise {
-  let nx : @resource.NxAnimation = @json.from_json(src.value())
+fn load_animation(src : Json) -> MobAnimation raise {
+  let nx : @resource.NxAnimation = @json.from_json(src)
   let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
   let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)
   { nx, selene_l, selene_r }
@@ -49,8 +49,8 @@ fn load_animation(src : @resource.NxNode) -> MobAnimation raise {
 
 ///|
 fn nx_animation_to_mob_animation(nx : @resource.NxAnimation) -> MobAnimation {
-  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
-  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)
+  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false, loop_=true)
+  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true, loop_=true)
   { nx, selene_l, selene_r }
 }
 

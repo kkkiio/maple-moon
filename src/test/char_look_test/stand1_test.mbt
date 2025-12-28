@@ -291,7 +291,7 @@ async test "character stand1" {
           "loop_": true,
         },
       ],
-      "zindex": 70022,
+      "zindex": 70021,
       "visible": true,
     },
     {

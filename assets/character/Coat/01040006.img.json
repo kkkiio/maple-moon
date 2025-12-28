@@ -1,0 +1,2198 @@
+{
+  "alert": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          15,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          30,
+          0
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          45,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          59,
+          0
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          15,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          73,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          87,
+          0
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 28,
+      "__w": 26,
+      "origin": [
+        -4,
+        28
+      ],
+      "__i": "Character/Coat/01040006.img.png",
+      "__off": [
+        101,
+        0
+      ]
+    },
+    "iconRaw": {
+      "__h": 25,
+      "__w": 23,
+      "origin": [
+        -4,
+        28
+      ],
+      "__i": "Character/Coat/01040006.img.png",
+      "__off": [
+        127,
+        0
+      ]
+    },
+    "incPDD": 3,
+    "islot": "Ma",
+    "price": 25,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 0,
+    "reqLUK": 0,
+    "reqLevel": 0,
+    "reqSTR": 0,
+    "tuc": 7,
+    "vslot": "Ma"
+  },
+  "jump": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          150,
+          0
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          164,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          179,
+          0
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 29,
+        "map": {
+          "navel": [
+            13,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          194,
+          0
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 29,
+        "map": {
+          "navel": [
+            13,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          194,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 29,
+        "map": {
+          "navel": [
+            13,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          194,
+          0
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          223,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          238,
+          0
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          253,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          267,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          267,
+          0
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          295,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          309,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          323,
+          0
+        ]
+      }
+    },
+    "4": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          337,
+          0
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          351,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          367,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          367,
+          0
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          383,
+          0
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          394,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          408,
+          0
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          424,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          438,
+          0
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 14,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          455,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 16,
+        "map": {
+          "navel": [
+            1,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          469,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          485,
+          0
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          505,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 17,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          520,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          538,
+          0
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          556,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 17,
+        "__w": 19,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          572,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          591,
+          0
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "mail": {
+        "__h": 17,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          608,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          624,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -1,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          640,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          538,
+          0
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -8,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          656,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          670,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          684,
+          0
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -8,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          698,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          712,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          726,
+          0
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          740,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          754,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          768,
+          0
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          87,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          73,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          786,
+          0
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          800,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          816,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -9,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          830,
+          0
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          844,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 17,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          858,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 12,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -6,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          875,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          891,
+          0
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          908,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          922,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 12,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          937,
+          0
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          955,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          969,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          984,
+          0
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "mail": {
+        "__h": 17,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          608,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          624,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -2,
+            4
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1002,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 12,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -1,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1018,
+          0
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1035,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1049,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 12,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1063,
+          0
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "mail": {
+        "__h": 16,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1081,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1096,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1110,
+          0
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1128,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1143,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1159,
+          0
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1177,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 15,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1192,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1207,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 14,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1222,
+          0
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1242,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -7,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1256,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1242,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1271,
+          0
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1285,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1299,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1285,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -7,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestBelowPants",
+        "__i": "Character/Coat/01040006.img.png",
+        "__off": [
+          1313,
+          0
+        ]
+      }
+    }
+  }
+}

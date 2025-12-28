@@ -161,14 +161,16 @@ let character_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
     base_url="/assets",
     loader=CompositeAsyncResourceLoader::new({
       "Pants/": DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Pants",
+        // "https://maple-res.kkkiiox.work/Character/Pants",
+        "/assets/character/pants",
       ),
       "Weapon/": DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Weapon",
         "/assets/character/weapon",
       ),
       "Coat/": DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Coat",
+        // "https://maple-res.kkkiiox.work/Character/Coat",
+        "/assets/character/coat",
       ),
       "Cap/": DirResourceLoader::new(
         "https://maple-res.kkkiiox.work/Character/Cap",
@@ -180,7 +182,8 @@ let character_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
         "https://maple-res.kkkiiox.work/Character/Shield",
       ),
       "Shoes/": DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Shoes",
+        // "https://maple-res.kkkiiox.work/Character/Shoes",
+        "/assets/character/shoes",
       ),
       "Glove/": DirResourceLoader::new(
         "https://maple-res.kkkiiox.work/Character/Glove",

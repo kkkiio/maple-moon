@@ -105,3 +105,10 @@ pub fn CharEquips::adjust_stance(
     _ => stance
   }
 }
+
+///|
+pub fn CharEquips::iter(
+  self : CharEquips,
+) -> Iter[(@slot.Id, @clothing.Clothing)] {
+  self.clothes.iter()
+}

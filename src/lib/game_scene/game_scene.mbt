@@ -334,7 +334,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
             let weapon_data = @item.ItemData::get_async(1302000)
-            (weapon_data, hair, face)
+            let top_data = @item.ItemData::get_async(1040002)
+            let bottom_data = @item.ItemData::get_async(1060002)
+            let shoes_data = @item.ItemData::get_async(1072005)
+            (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
         )
         return
@@ -344,7 +347,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard fut.poll() is Some(res) else { return }
 
       // 3. 数据加载完成，处理结果
-      let (weapon_data, hair, face) = match res {
+      let (weapon_data, top_data, bottom_data, shoes_data, hair, face) = match
+        res {
         Ok(data) => data
         Err(e) => {
           @log.error({ "error": e }, "fail to load game start data")
@@ -370,8 +374,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           face,
           draw_info,
         )
-        // 装备加载好的武器
+        // 装备加载好的武器和初始装备
         look.add_equip(weapon_data, @slot.Id::WEAPON)
+        look.add_equip(top_data, @slot.Id::TOP)
+        look.add_equip(bottom_data, @slot.Id::BOTTOM)
+        look.add_equip(shoes_data, @slot.Id::SHOES)
         look
       } catch {
         e => {

@@ -79,6 +79,96 @@ async test "character stand1" {
     cash_item: false,
   }
   look.add_equip(weapon_item, @slot.Id::WEAPON)
+
+  // Add Coat
+  let coat_node = @fs.read_file_to_string(
+      "assets/Character/Coat/01040002.img.json",
+    )
+    |> @json.parse
+  let coat_info = match coat_node {
+    { "info": Object(info), .. } => info
+    _ => Map::new()
+  }
+  let coat_icons = (
+    coat_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
+    coat_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+  )
+  let coat_item = @item.ItemData::{
+    src: coat_node,
+    icons: coat_icons,
+    item_id: 1040002,
+    price: 0,
+    gender: 0,
+    name: "Coat",
+    desc: "",
+    category: "Coat",
+    valid: true,
+    untradable: false,
+    unique: false,
+    unsellable: false,
+    cash_item: false,
+  }
+  look.add_equip(coat_item, @slot.Id::TOP)
+
+  // Add Pants
+  let pants_node = @fs.read_file_to_string(
+      "assets/Character/Pants/01060002.img.json",
+    )
+    |> @json.parse
+  let pants_info = match pants_node {
+    { "info": Object(info), .. } => info
+    _ => Map::new()
+  }
+  let pants_icons = (
+    pants_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
+    pants_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+  )
+  let pants_item = @item.ItemData::{
+    src: pants_node,
+    icons: pants_icons,
+    item_id: 1060002,
+    price: 0,
+    gender: 0,
+    name: "Pants",
+    desc: "",
+    category: "Pants",
+    valid: true,
+    untradable: false,
+    unique: false,
+    unsellable: false,
+    cash_item: false,
+  }
+  look.add_equip(pants_item, @slot.Id::BOTTOM)
+
+  // Add Shoes
+  let shoes_node = @fs.read_file_to_string(
+      "assets/Character/Shoes/01072001.img.json",
+    )
+    |> @json.parse
+  let shoes_info = match shoes_node {
+    { "info": Object(info), .. } => info
+    _ => Map::new()
+  }
+  let shoes_icons = (
+    shoes_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
+    shoes_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+  )
+  let shoes_item = @item.ItemData::{
+    src: shoes_node,
+    icons: shoes_icons,
+    item_id: 1072001,
+    price: 0,
+    gender: 0,
+    name: "Red Rubber Boots",
+    desc: "",
+    category: "Shoes",
+    valid: true,
+    untradable: false,
+    unique: false,
+    unsellable: false,
+    cash_item: false,
+  }
+  look.add_equip(shoes_item, @slot.Id::SHOES)
   look.play_animations()
   // Initialize test app and run one loop
   @capture_app.init_app(
@@ -201,7 +291,7 @@ async test "character stand1" {
           "loop_": true,
         },
       ],
-      "zindex": 70021,
+      "zindex": 70022,
       "visible": true,
     },
     {
@@ -217,6 +307,70 @@ async test "character stand1" {
         },
       ],
       "zindex": 70036,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Character/Coat/01040002.img.png",
+            "size": [14, 14],
+            "offset": [910, 0],
+            "pivot": [11, 31],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70014,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Character/Coat/01040002.img.png",
+            "size": [5, 7],
+            "offset": [924, 0],
+            "pivot": [-1, 29],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70034,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Character/Pants/01060002.img.png",
+            "size": [16, 11],
+            "offset": [697, 0],
+            "pivot": [12, 21],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70012,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Character/Shoes/01072001.img.png",
+            "size": [20, 9],
+            "offset": [930, 0],
+            "pivot": [15, 9],
+          },
+          "loop_": true,
+        },
+      ],
+      "zindex": 70008,
       "visible": true,
     },
   ])

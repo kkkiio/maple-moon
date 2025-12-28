@@ -10,7 +10,17 @@ pub(all) enum GamePhase {
     map_id~ : Int,
     portal_id~ : Int,
     mut loading_data~ : @utils.Future[
-      Result[(@item.ItemData, @char_look.Hair, @char_look.Face), Error],
+      Result[
+        (
+          @item.ItemData,
+          @item.ItemData,
+          @item.ItemData,
+          @item.ItemData,
+          @char_look.Hair,
+          @char_look.Face,
+        ),
+        Error,
+      ],
     ]?
   )
   GameTransiting(

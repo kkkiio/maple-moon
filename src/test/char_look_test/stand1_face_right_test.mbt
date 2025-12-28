@@ -201,7 +201,7 @@ async test "character stand1 face right" {
           "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
-      "zindex": 70021,
+      "zindex": 70022,
       "visible": true,
     },
     {

@@ -26,6 +26,7 @@ struct CharLook {
   body_entities : Map[String, @entity.Entity]
   hair_entities : Map[HairLayer, @entity.Entity]
   weapon_entities : Map[String, @entity.Entity]
+  equip_entities : Map[String, @entity.Entity]
   mut face_entity : @entity.Entity?
 }
 
@@ -101,6 +102,7 @@ pub fn CharLook::new(
     body_entities: Map::new(),
     hair_entities: Map::new(),
     weapon_entities: Map::new(),
+    equip_entities: Map::new(),
     face_entity: None,
   }
 }
@@ -729,19 +731,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
   }
 
-  fn make_equip_draw(slot, layer, z : Int) -> &@graphics.Drawable {
-    ignore(z)
-    NoopDrawable(())
-    // {
-    //   equips: self.equips,
-    //   stance,
-    //   slot,
-    //   layer,
-    //   frame: stance_frame,
-    //   draw_info: self.draw_info,
-    // }
-  }
-
   let flip_x = self.flip
   for
     layer in [
@@ -827,74 +816,60 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
   }
   // Weapon animation
-  reset_sprites_hide(self.weapon_entities.values())
-  if self.equips.get_clothing(@slot.Id::WEAPON) is Some(weapon_clothing) {
-    if weapon_clothing.get_parts_for_stance(stance) is Some(stance_parts) {
+  // Equipment Animation
+  reset_sprites_hide(self.equip_entities.values())
+  reset_sprites_hide(self.weapon_entities.values()) // Also hide weapon sprites as they are now handled by equip entities
+
+  // We need to iterate over all equipped items
+  for item in self.equips.iter() {
+    let (slot, clothing) = item
+    // Get parts for the current stance
+    if clothing.get_parts_for_stance(stance) is Some(stance_parts) {
       for part, it in stance_parts {
         let (frames, layers) = it
         if frames.length() != layers.length() {
           @log.error(
             {
+              "slot": slot.to_string(),
               "part": part,
               "frames": frames.length(),
               "layers": layers.length(),
             },
-            "weapon frames.length() != layers.length()",
+            "equipment frames.length() != layers.length()",
           )
           continue
         }
         if frames.length() == 0 {
           continue
         }
-        // Extract body delays for synchronization
-        let body_delays : Array[Int?] = match
-          self.full_body.stances.get(stance) {
-          Some(map) =>
-            match map.get("body") {
-              Some((body_frames, _)) => body_frames.map(fn(f) { f.delay })
-              None => []
-            }
-          None => []
-        }
-        // Clone and inject delays
-        let frames = frames.mapi(fn(i, f) {
-          let delay = if i < body_delays.length() {
-            body_delays[i]
-          } else {
-            f.delay
-          }
-          { ..f, delay, }
-        })
-        let nx_anim = @resource.NxAnimation::{
-          frames,
-          blend: false,
-          zigzag: false,
-        }
-        let animation = nx_animation_to_selene_animation(
-          nx_anim,
-          flip_x=self.flip,
-          loop_~,
-        )
-        let entity = self.weapon_entities.get_or_init(part, fn() {
+
+        // Get or init entity for this specific part
+        // We use slot + part as key to avoid collision (e.g. Mail + mail vs Mail + mailArm)
+        let key = slot.to_string() + "_" + part
+        let entity = self.equip_entities.get_or_init(key, fn() {
           self.root_entity.spawn_child()
         })
-        let current_frame = if @sprite.sprites.get(entity)
-          is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
-          if frame < layers.length() {
-            frame
-          } else {
-            0
-          }
+
+        // Determine Z-index
+        // Ideally we should pick the Z-index of the current frame, but for now we pick the first one
+        // or we need to pass the layer array to attach_equipment and let it handle per-frame Z?
+        // Since play_animation sets a single Z for the whole animation in Selene's Sprite,
+        // we usually take the Z of the first frame or force them to be consistent.
+        // Looking at the data, usually layers are consistent across frames for a single motion.
+        let z_layer = if layers.length() > 0 {
+          layers[0].int_value()
         } else {
           0
         }
-        let sprite = ensure_sprite_with_z(
+        attach_equipment(
           entity,
-          animation,
-          layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+          stance,
+          self.flip,
+          frames,
+          z_layer,
+          body_delays,
+          loop_,
         )
-        sprite.visible = true
-        @sprite.play_animation(entity, animation, loop_~)
       }
     }
   }
@@ -921,176 +896,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
     None => ()
   }
-  drawables.push(
-    make_equip_draw(@slot.Id::CAPE, @clothing.ClothingLayer::CAPE, 1),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::SHIELD,
-      @clothing.ClothingLayer::SHIELD_BELOW_BODY,
-      2,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_BELOW_BODY,
-      3,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP_BELOW_BODY, 4),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::GLOVES,
-      @clothing.ClothingLayer::WRIST_OVER_BODY,
-      6,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::GLOVES,
-      @clothing.ClothingLayer::GLOVE_OVER_BODY,
-      7,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::SHOES, @clothing.ClothingLayer::SHOES, 8),
-  )
-  if self.equips.has_overall() {
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAIL, 10),
-    )
-  } else {
-    drawables.push(
-      make_equip_draw(
-        @slot.Id::BOTTOM_DEFAULT,
-        @clothing.ClothingLayer::PANTS_DEFAULT,
-        11,
-      ),
-    )
-    drawables.push(
-      make_equip_draw(@slot.Id::BOTTOM, @clothing.ClothingLayer::PANTS, 12),
-    )
-    drawables.push(
-      make_equip_draw(
-        @slot.Id::TOP_DEFAULT,
-        @clothing.ClothingLayer::TOP_DEFAULT,
-        13,
-      ),
-    )
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::TOP, 14),
-    )
-  }
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::SHIELD,
-      @clothing.ClothingLayer::SHIELD_OVER_HAIR,
-      17,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::EARACC, @clothing.ClothingLayer::EARRINGS, 18),
-  )
-  drawables.push(make_face_draw(21))
-  drawables.push(
-    make_equip_draw(@slot.Id::FACE, @clothing.ClothingLayer::FACE_ACC, 22),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::EYE_ACC, @clothing.ClothingLayer::EYE_ACC, 23),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::SHIELD, @clothing.ClothingLayer::SHIELD, 24),
-  )
-  match self.equips.getcaptype() {
-    @equip.CapType::HEADBAND => {
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP, 26),
-      )
-      drawables.push(
-        make_equip_draw(
-          @slot.Id::HAT,
-          @clothing.ClothingLayer::CAP_OVER_HAIR,
-          29,
-        ),
-      )
-    }
-    @equip.CapType::HALF_COVER =>
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP, 31),
-      )
-    @equip.CapType::FULL_COVER =>
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP, 32),
-      )
-    _ => ()
-  }
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_BELOW_ARM,
-      33,
-    ),
-  )
-  let twohanded : Bool = self.is_twohanded(stance)
-  if twohanded {
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAILARM, 34),
-    )
-    drawables.push(
-      make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON, 36),
-    )
-  } else {
-    drawables.push(
-      make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON, 37),
-    )
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAILARM, 39),
-    )
-  }
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::WRIST, 40),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::GLOVE, 41),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_OVER_GLOVE,
-      42,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_OVER_HAND,
-      46,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_OVER_BODY,
-      47,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::GLOVES,
-      @clothing.ClothingLayer::WRIST_OVER_HAIR,
-      50,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::GLOVES,
-      @clothing.ClothingLayer::GLOVE_OVER_HAIR,
-      51,
-    ),
-  )
 }
 
 ///|
@@ -1608,4 +1413,30 @@ fn ensure_sprite_with_z(
   let sprite = @sprite.Sprite::from_animation(animation, z)
   @sprite.sprites.set(entity, sprite)
   sprite
+}
+
+///|
+fn attach_equipment(
+  entity : @entity.Entity,
+  stance : @types.StanceId,
+  flip_x : Bool,
+  frames : Array[@resource.NxFrame],
+  z : Int,
+  body_delays : Array[Int?],
+  loop_ : Bool,
+) -> Unit {
+  // Clone and inject delays
+  let frames = frames.mapi(fn(i, f) {
+    let delay = if i < body_delays.length() { body_delays[i] } else { f.delay }
+    { ..f, delay, }
+  })
+  let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
+  let animation = nx_animation_to_selene_animation(nx_anim, flip_x~, loop_~)
+  let sprite = ensure_sprite_with_z(
+    entity,
+    animation,
+    z + @graphics.CHAR_LOOK_ZINDEX,
+  )
+  sprite.visible = true
+  @sprite.play_animation(entity, animation, loop_~)
 }

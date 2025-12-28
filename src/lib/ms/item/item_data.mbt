@@ -217,7 +217,7 @@ fn ItemData::get_item_prefix(id : Int) -> Int {
 }
 
 ///|
-let categorynames = [
+let category_names : Array[String] = [
   "Cap", "Accessory", "Accessory", "Accessory", "Coat", "Longcoat", "Pants", "Shoes",
   "Glove", "Shield", "Cape", "Ring", "Accessory", "Accessory", "Accessory",
 ]
@@ -235,8 +235,8 @@ pub fn parse_equip_category(id : Int) -> String? {
   if index < 0 {
     return None
   }
-  if index < categorynames.length() {
-    return Some(categorynames[index])
+  if index < category_names.length() {
+    return Some(category_names[index])
   }
   if index >= 30 && index <= 70 {
     return Some("Weapon")

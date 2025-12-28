@@ -6,26 +6,32 @@ fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
   let mob_animations : MobAnimations = @json.from_json(src)
   let animations : Map[StanceType, MobAnimation] = Map::new()
   if mob_animations.fly is Some(fly) {
-    let fly = nx_animation_to_mob_animation(fly)
+    let fly = nx_animation_to_mob_animation(fly, loop_=true)
     animations[StanceType::STAND] = fly
     animations[StanceType::MOVE] = fly
   } else if mob_animations.stand is Some(stand) &&
     mob_animations.move_ is Some(move_) {
-    let stand = nx_animation_to_mob_animation(stand)
+    let stand = nx_animation_to_mob_animation(stand, loop_=true)
     animations[StanceType::STAND] = stand
-    let move_ = nx_animation_to_mob_animation(move_)
+    let move_ = nx_animation_to_mob_animation(move_, loop_=true)
     animations[StanceType::MOVE] = move_
   } else {
     fail("missing fly,stand,move animation, animations=\{mob_animations}")
   }
   if mob_animations.jump is Some(jump) {
-    animations[StanceType::JUMP] = nx_animation_to_mob_animation(jump)
+    animations[StanceType::JUMP] = nx_animation_to_mob_animation(
+      jump,
+      loop_=false,
+    )
   }
   animations[StanceType::HIT] = nx_animation_to_mob_animation(
     mob_animations.hit1,
+    loop_=false,
   )
-  animations[StanceType::DIE] = mob_animations.die1
-    |> nx_animation_to_mob_animation
+  animations[StanceType::DIE] = nx_animation_to_mob_animation(
+    mob_animations.die1,
+    loop_=false,
+  )
   animations
 }
 
@@ -48,9 +54,12 @@ fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
 }
 
 ///|
-fn nx_animation_to_mob_animation(nx : @resource.NxAnimation) -> MobAnimation {
-  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false, loop_=true)
-  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true, loop_=true)
+fn nx_animation_to_mob_animation(
+  nx : @resource.NxAnimation,
+  loop_~ : Bool,
+) -> MobAnimation {
+  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false, loop_~)
+  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true, loop_~)
   { nx, selene_l, selene_r }
 }
 

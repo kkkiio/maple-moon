@@ -1,4 +1,12 @@
 ///|
+/// Manages a collection of map objects, organizing them by ID and layer.
+///
+/// `MapObjects` serves as a central registry for dynamic entities on a map, such as monsters, drops, or NPCs.
+/// It provides mechanisms to:
+/// - **Storage**: Efficient lookups by Object ID (OID).
+/// - **Layering**: Tracking objects across different map layers (e.g. for collision or rendering sorting).
+/// - **Lifecycle**: Handling updates, additions, and removals via `update()`.
+/// - **Events**: Notifying listeners when objects are added, removed, or the collection is cleared.
 struct MapObjects[T] {
   objects : Map[Int, T]
   layers : FixedArray[Map[Int, Unit]]
@@ -27,22 +35,6 @@ pub fn[T] MapObjects::get(self : MapObjects[T], oid : Int) -> T? {
 }
 
 ///|
-pub fn[T : MapObject] MapObjects::draw(
-  self : MapObjects[T],
-  layer : @map_layer.Id,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  self.layers[layer].each(fn(oid, _v) {
-    match self.get(oid) {
-      Some(mmo) => if mmo.is_active() { ... }
-      None => ()
-    }
-  })
-}
-
-///|
 pub fn[T : MapObject] MapObjects::update(
   self : MapObjects[T],
   physics : @physics.Physics,
@@ -60,7 +52,8 @@ pub fn[T : MapObject] MapObjects::update(
 }
 
 ///|
-pub fn[T] MapObjects::clear(self : MapObjects[T]) -> Unit {
+pub fn[T : MapObject] MapObjects::clear(self : MapObjects[T]) -> Unit {
+  self.objects.each(fn(_oid, obj) { obj.destroy() })
   self.objects.clear()
   self.layers.each(fn(layer) { layer.clear() })
   self.event_listeners.retain(fn(listener) { listener(MapObjectEvent::Clear) })
@@ -89,6 +82,7 @@ pub fn[T : MapObject] MapObjects::remove(
 ) -> Unit {
   match self.objects.get(oid) {
     Some(mmo) => {
+      mmo.destroy()
       let layer = mmo.get_layer()
       self.objects.remove(oid)
       self.layers[layer].remove(oid)
@@ -107,7 +101,7 @@ pub fn[T] MapObjects::iter2(self : MapObjects[T]) -> Iter2[Int, T] {
 
 ///|
 pub fn[T] MapObjects::size(self : MapObjects[T]) -> Int {
-  self.objects.size()
+  self.objects.length()
 }
 
 ///|

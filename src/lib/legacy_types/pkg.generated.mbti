@@ -14,10 +14,12 @@ import(
 pub(all) struct MockInventory {
 }
 pub impl Inventory for MockInventory
+pub impl Default for MockInventory
 
 pub(all) struct MockSkillBook {
 }
 pub impl SkillBook for MockSkillBook
+pub impl Default for MockSkillBook
 
 // Type aliases
 

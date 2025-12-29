@@ -45,7 +45,6 @@ pub enum ExpectResponse {
 type MapQuests
 pub fn MapQuests::add_npc(Self, Int, @physics.MovingObject) -> Unit
 pub fn MapQuests::clear(Self) -> Unit
-pub fn MapQuests::draw(Self, Int, Double, Double, Double) -> Unit
 pub fn MapQuests::remove_npc(Self, Int) -> Unit
 pub fn MapQuests::send_cursor(Self, Bool, @struct.Point[Int], @struct.Point[Int]) -> @ui.CursorState?
 pub fn MapQuests::set_player(Self, @player.Player) -> Unit

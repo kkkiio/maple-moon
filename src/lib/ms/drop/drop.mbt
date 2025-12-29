@@ -108,7 +108,7 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
     self.opacity.add(-opcstep)
     if self.opacity.last() <= opcstep {
       self.opacity.set(1.0)
-      self.base.deactivate()
+      self.entity.destroy()
       return -1
     }
   }
@@ -130,7 +130,7 @@ fn DropBase::expire(
 ) -> Unit {
   match t {
     0 => self.state = DropState::PICKED_UP
-    1 => self.base.deactivate()
+    1 => self.entity.destroy()
     2 => {
       self.angle.set(0.0)
       self.state = DropState::PICKED_UP
@@ -198,13 +198,10 @@ pub impl @map_object.MapObject for MesoDrop with update(
 }
 
 ///|
-pub impl @map_object.MapObject for MesoDrop with is_active(self : MesoDrop) -> Bool {
-  self.base.base.active
-}
 
 ///|
-pub impl @map_object.MapObject for MesoDrop with makeactive(self : MesoDrop) -> Unit {
-  self.base.base.makeactive()
+pub impl @map_object.MapObject for MesoDrop with destroy(self : MesoDrop) -> Unit {
+  self.base.entity.destroy()
 }
 
 ///|
@@ -292,13 +289,10 @@ pub impl @map_object.MapObject for ItemDrop with update(
 }
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with is_active(self : ItemDrop) -> Bool {
-  self.base.base.active
-}
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with makeactive(self : ItemDrop) -> Unit {
-  self.base.base.makeactive()
+pub impl @map_object.MapObject for ItemDrop with destroy(self : ItemDrop) -> Unit {
+  self.base.entity.destroy()
 }
 
 ///|

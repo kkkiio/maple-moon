@@ -64,6 +64,7 @@ pub struct AttackEvent {
   user_input : Bool
 }
 pub impl Show for AttackEvent
+pub impl ToJson for AttackEvent
 
 type AttackMessage
 pub impl @net.OutMessage for AttackMessage

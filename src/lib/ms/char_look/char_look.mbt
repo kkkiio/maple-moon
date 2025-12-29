@@ -701,7 +701,21 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   // if StanceId::is_climbing(interstance) {
   //   return self.draw_climbing(args, interstance, interframe)
   // }
-  let loop_ = not(stance.is_attack())
+  fn should_loop(stance : StanceId) -> Bool {
+    match stance {
+      StanceId::STAND1
+      | StanceId::STAND2
+      | StanceId::WALK1
+      | StanceId::WALK2
+      | StanceId::ALERT
+      | StanceId::SIT
+      | StanceId::FLY
+      | StanceId::PRONE => true
+      StanceId::LADDER | StanceId::ROPE => true
+      _ => false
+    }
+  }
+  let loop_ = should_loop(stance)
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       if @sprite.sprites.get(entity) is Some(sprite) {

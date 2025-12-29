@@ -31,46 +31,34 @@ pub fn MapDrops::spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
 }
 
 ///|
-pub fn MapDrops::draw(
-  self : MapDrops,
-  layer : @map_layer.Id,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  self.drops.draw(layer, viewx, viewy, alpha)
-}
 
 ///|
 pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.oid
-      match self.drops.get(oid) {
-        Some(drop) => drop.makeactive()
-        None => {
-          let itemid = spawn.item_id
-          let meso = spawn.meso
-          if meso {
-            let mesotype = if itemid > 999 {
-              BAG
-            } else if itemid > 99 {
-              BUNDLE
-            } else if itemid > 49 {
-              GOLD
-            } else {
-              BRONZE
-            }
-            let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
-            self.drops.add(spawn.instantiate_meso(icon))
+      if not(self.drops.contains(oid)) {
+        let itemid = spawn.item_id
+        let meso = spawn.meso
+        if meso {
+          let mesotype = if itemid > 999 {
+            BAG
+          } else if itemid > 99 {
+            BUNDLE
+          } else if itemid > 49 {
+            GOLD
           } else {
-            self.loading_drops.push(
-              @io_service.submit_background_task(fn() {
-                let item_data = @item.ItemData::get_async(itemid)
-                spawn.instantiate_item(item_data.get_icon(true))
-              }),
-            )
+            BRONZE
           }
+          let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
+          self.drops.add(spawn.instantiate_meso(icon))
+        } else {
+          self.loading_drops.push(
+            @io_service.submit_background_task(fn() {
+              let item_data = @item.ItemData::get_async(itemid)
+              spawn.instantiate_item(item_data.get_icon(true))
+            }),
+          )
         }
       }
       continue self.spawns.pop()

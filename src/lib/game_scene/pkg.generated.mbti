@@ -2,20 +2,39 @@
 package "KKKIIO/maple-moon/lib/game_scene"
 
 import(
+  "KKKIIO/maple-moon/lib/maple_protocol"
+  "KKKIIO/maple-moon/lib/ms/char_look"
+  "KKKIIO/maple-moon/lib/ms/char_stats"
+  "KKKIIO/maple-moon/lib/ms/equip/slot"
   "KKKIIO/maple-moon/lib/ms/inventory"
+  "KKKIIO/maple-moon/lib/ms/item"
+  "KKKIIO/maple-moon/lib/ms/job"
   "KKKIIO/maple-moon/lib/ms/keyboard"
   "KKKIIO/maple-moon/lib/ms/map"
   "KKKIIO/maple-moon/lib/ms/monster"
   "KKKIIO/maple-moon/lib/struct"
   "KKKIIO/maple-moon/lib/ui"
+  "KKKIIO/maple-moon/lib/utils"
 )
 
 // Values
+pub fn apply_equipped_stats(@char_stats.CharStats, Array[@maple_protocol.InventoryItemEntry]) -> Unit
+
+pub fn clear_loading_data() -> Unit
+
+pub fn find_equipped_item_id(Array[@maple_protocol.InventoryItemEntry], @slot.Id) -> Int?
+
+pub fn get_loading_data() -> @utils.Future[Result[(@item.ItemData, @item.ItemData, @item.ItemData, @item.ItemData, @char_look.Hair, @char_look.Face), Error]]?
+
 pub fn get_stage() -> Stage?
+
+pub fn make_job_from_stats(@maple_protocol.StatsEntry) -> @job.Job
 
 pub fn reset_player_position() -> Unit
 
 pub fn scene_transition_system(Double) -> Unit
+
+pub fn set_loading_data(@utils.Future[Result[(@item.ItemData, @item.ItemData, @item.ItemData, @item.ItemData, @char_look.Hair, @char_look.Face), Error]]) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 

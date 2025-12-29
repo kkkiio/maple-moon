@@ -62,6 +62,7 @@ pub(all) struct AttackResult {
 pub fn AttackResult::default() -> Self
 pub fn AttackResult::new(Attack) -> Self
 pub impl Show for AttackResult
+pub impl ToJson for AttackResult
 
 pub(all) enum AttackType {
   CLOSE

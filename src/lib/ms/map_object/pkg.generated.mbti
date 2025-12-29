@@ -15,14 +15,10 @@ import(
 pub struct MapObjectBase {
   phobj : @physics.PhysicsObject
   oid : Int
-  mut active : Bool
 }
-pub fn MapObjectBase::deactivate(Self) -> Unit
 pub fn MapObjectBase::get_layer(Self) -> Int
 pub fn MapObjectBase::get_oid(Self) -> Int
 pub fn MapObjectBase::get_position(Self) -> @struct.Point[Int]
-pub fn MapObjectBase::is_active(Self) -> Bool
-pub fn MapObjectBase::makeactive(Self) -> Unit
 pub fn MapObjectBase::new(Int, position? : @struct.Point[Int], on_pos_change~ : (@math.Vec2D) -> Unit) -> Self
 pub fn MapObjectBase::set_position(Self, @struct.Point[Int]) -> Unit
 pub fn MapObjectBase::set_positionxy(Self, Int, Int) -> Unit
@@ -36,9 +32,8 @@ pub enum MapObjectEvent[T] {
 
 type MapObjects[T]
 pub fn[T : MapObject] MapObjects::add(Self[T], T) -> Unit
-pub fn[T] MapObjects::clear(Self[T]) -> Unit
+pub fn[T : MapObject] MapObjects::clear(Self[T]) -> Unit
 pub fn[T] MapObjects::contains(Self[T], Int) -> Bool
-pub fn[T : MapObject] MapObjects::draw(Self[T], Int, Double, Double, Double) -> Unit
 pub fn[T] MapObjects::get(Self[T], Int) -> T?
 pub fn[T] MapObjects::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[T] MapObjects::listen_object_changes(Self[T], (MapObjectEvent[T]) -> Bool) -> Unit
@@ -52,10 +47,8 @@ pub fn[T : MapObject] MapObjects::update(Self[T], @physics.Physics) -> Unit
 // Traits
 pub(open) trait MapObject {
   get_oid(Self) -> Int
-  draw(Self, Double, Double, Double) -> Unit
   update(Self, @physics.Physics) -> Int
-  makeactive(Self) -> Unit
-  is_active(Self) -> Bool
+  destroy(Self) -> Unit
   get_layer(Self) -> Int
   get_position(Self) -> @struct.Point[Int]
 }

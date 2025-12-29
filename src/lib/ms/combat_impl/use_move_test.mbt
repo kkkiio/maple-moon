@@ -18,21 +18,18 @@ test "use_move_integration_test" {
   let content = @fs.read_file_to_string(json_path)
   let nx_mob : @monster.NxMob = @json.from_json(@json.parse(content))
   let mob_random = @utils.Randomizer::new(
-    state=@random.Rand::chacha8(
-      seed=b"0123456789abcdef0123456789abcdef",
-    ),
+    state=@random.Rand::chacha8(seed=b"0123456789abcdef0123456789abcdef"),
   )
   let mob = @monster.Mob::new(
-    1,
-    1210102,
+    nx_mob,
+    object_id=1,
+    monster_id=1210102,
     0,
     4,
     0,
     true,
-    0,
     { x: 50, y: 0 },
-    mob_random,
-    nx_mob,
+    randomizer=mob_random,
   )
   mobs.get_mobs().add(mob)
 
@@ -171,16 +168,13 @@ test "use_move_integration_test" {
     attach_damage = Some(total_damage)
     true
   })
-
   assert_true(char_stats.get_total(@maple_stat.EquipStatId::ACC) >= 2)
   assert_true(char_stats.get_maxdamage() >= 1)
 
   // 6. Trigger use_move (0 is Regular Attack)
   @combat_impl.use_move(cc, 0)
   match attach_damage {
-    Some(total_damage) => {
-      assert_true(total_damage >= 1)
-    }
+    Some(total_damage) => assert_true(total_damage >= 1)
     None => assert_true(false)
   }
 }

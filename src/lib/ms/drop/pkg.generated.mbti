@@ -45,7 +45,6 @@ pub impl @map_object.MapObject for ItemDrop
 
 type MapDrops
 pub fn MapDrops::clear(Self) -> Unit
-pub fn MapDrops::draw(Self, Int, Double, Double, Double) -> Unit
 pub fn MapDrops::list_loot_at(Self, @struct.Point[Int]) -> Iter[(Int, @struct.Point[Int])]
 pub fn MapDrops::remove(Self, Int, Int, @physics.PhysicsObject?) -> Unit
 pub fn MapDrops::spawn(Self, DropSpawn) -> Unit

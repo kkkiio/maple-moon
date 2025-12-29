@@ -44,26 +44,15 @@ pub fn MapMobs::spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
 
 ///|
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
-  loop self.spawns.pop() {
-    Some(spawn) => {
-      match self.mobs.get(spawn.oid) {
-        Some(mob) => {
-          let mode = spawn.mode
-          if mode > 0 {
-            mob.set_control(mode)
-          }
-          mob.makeactive()
-        }
-        None =>
-          self.loading_mobs.push(
-            @io_service.submit_background_task(fn() {
-              spawn.instantiate(self.randomizer)
-            }),
-          )
-      }
-      continue self.spawns.pop()
+  for {
+    guard self.spawns.pop() is Some(spawn) else { break }
+    if not(self.mobs.contains(spawn.oid)) {
+      self.loading_mobs.push(
+        @io_service.submit_background_task(fn() {
+          spawn.instantiate(self.randomizer)
+        }),
+      )
     }
-    None => break
   }
   self.loading_mobs.retain(fn(future) {
     guard future.poll() is Some(rs) else { return true }
@@ -91,15 +80,6 @@ pub fn MapMobs::clear(self : MapMobs) -> Unit {
 }
 
 ///|
-pub fn MapMobs::draw(
-  self : MapMobs,
-  layer : @map_layer.Id,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  self.mobs.draw(layer, viewx, viewy, alpha)
-}
 
 ///|
 pub fn MapMobs::find_colliding(
@@ -259,7 +239,6 @@ pub async fn MobSpawn::instantiate(
     self.stance,
     self.fh,
     self.new_spawn,
-    self.team,
     self.position,
     randomizer,
   )

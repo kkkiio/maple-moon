@@ -121,7 +121,6 @@ pub async fn Mob::load(
   st : Int,
   fh : Int,
   newspawn : Bool,
-  _team : Int,
   position : @struct.Point[Int],
   randomizer : @utils.Randomizer,
 ) -> Mob {
@@ -138,7 +137,15 @@ pub async fn Mob::load(
     //   load_animations(src.value())
     // }
     Mob::new(
-      oi, mid, mode, st, fh, newspawn, _team, position, randomizer, nx_mob,
+      nx_mob,
+      object_id=oi,
+      monster_id=mid,
+      mode,
+      st,
+      fh,
+      newspawn,
+      position,
+      randomizer~,
     )
   } catch {
     e => fail("Mob::load failed, mid=\{mid}, e=\{e}")
@@ -236,19 +243,18 @@ pub impl @json.FromJson for MobInfo with from_json(json, path) {
 
 ///|
 pub fn Mob::new(
-  oi : Int,
-  mid : Int,
+  nx_mob : NxMob,
   mode : Int,
   st : Int,
   fh : Int,
   newspawn : Bool,
-  _team : Int,
   position : @struct.Point[Int],
-  randomizer : @utils.Randomizer,
-  nx_mob : NxMob,
+  object_id~ : Int,
+  monster_id~ : Int,
+  randomizer? : @utils.Randomizer = @utils.Randomizer::default(),
 ) -> Mob {
   let entity = @entity.Entity::new()
-  let base = @map_object.MapObjectBase::new(oi, on_pos_change=fn(pos) {
+  let base = @map_object.MapObjectBase::new(object_id, on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
 
@@ -268,7 +274,7 @@ pub fn Mob::new(
   let can_jump = nx_mob.meta.can_jump
   let can_fly = nx_mob.meta.can_fly
   let can_move = nx_mob.meta.can_move
-  let name = mob_names[mid.to_string()]
+  let name = mob_names[monster_id.to_string()]
 
   //TODO: sound
 
@@ -297,7 +303,7 @@ pub fn Mob::new(
   if can_fly {
     base.phobj.set_t(@physics.PhysicsObjectType::FLYING)
   }
-  let id = mid
+  let id = monster_id
   base.set_position(position)
   let control = mode > 0
   let aggro = mode == 2
@@ -376,7 +382,7 @@ pub impl @map_object.MapObject for Mob with update(
   self : Mob,
   physics : @physics.Physics,
 ) -> Int {
-  if not(self.base.is_active()) {
+  if not(self.entity.is_alive()) {
     return self.base.phobj.fhlayer
   }
   let mut aniend = false
@@ -420,7 +426,7 @@ pub impl @map_object.MapObject for Mob with update(
     }
   }
   if self.dead {
-    self.base.deactivate()
+    self.destroy()
     return -1
   }
   self.show_hp.update(timestep=@logic_fps.STEP_TIME_MS)
@@ -542,13 +548,10 @@ pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
 }
 
 ///|
-pub impl @map_object.MapObject for Mob with makeactive(self : Mob) -> Unit {
-  self.base.makeactive()
-}
 
 ///|
-pub impl @map_object.MapObject for Mob with is_active(self : Mob) -> Bool {
-  self.base.is_active()
+pub impl @map_object.MapObject for Mob with destroy(self : Mob) -> Unit {
+  self.entity.destroy()
 }
 
 ///|
@@ -566,7 +569,7 @@ pub fn Mob::set_control(self : Mob, mode : Int) -> Unit {
 
 ///|
 pub fn Mob::is_alive(self : Mob) -> Bool {
-  self.base.is_active() && not(self.dying)
+  self.entity.is_alive() && not(self.dying)
 }
 
 ///|
@@ -576,7 +579,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
     @log.error({ "range": range }, "invalid range")
     panic()
   }
-  if not(self.base.is_active()) {
+  if not(self.entity.is_alive()) {
     return false
   }
   match self.animations.get(self.stance.t) {
@@ -598,7 +601,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
 
 ///|
 pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
-  if not(self.base.is_active()) {
+  if not(self.entity.is_alive()) {
     return None
   }
   match self.animations.get(self.stance.t) {
@@ -836,7 +839,7 @@ pub fn Mob::show_effect(
   z : Int,
   flip : Bool,
 ) -> Unit {
-  if not(self.base.is_active()) {
+  if not(self.entity.is_alive()) {
     return
   }
   // TODO: add shift
@@ -851,7 +854,7 @@ pub fn Mob::show_effect(
 ///|
 pub fn Mob::kill(self : Mob, animation : Int) -> Unit {
   match animation {
-    0 => self.base.deactivate()
+    0 => self.destroy()
     1 => {
       self.dying = true
       self.apply_death()

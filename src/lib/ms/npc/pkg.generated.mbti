@@ -34,7 +34,6 @@ pub impl Show for ParseTalkError
 // Types and methods
 type MapNpcs
 pub fn MapNpcs::clear(Self) -> Unit
-pub fn MapNpcs::draw(Self, Int, Double, Double, Double) -> Unit
 pub fn MapNpcs::listen_npc_changes(Self, (@map_object.MapObjectEvent[Npc]) -> Bool) -> Unit
 pub fn MapNpcs::new((TalkArgs) -> Unit, @net.Network, npc_loader~ : @resource.SyncLoader, string_loader~ : @resource.SyncLoader) -> Self
 pub fn MapNpcs::remove(Self, Int) -> Unit
@@ -49,7 +48,6 @@ pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::open_npc_talk_ui(Self, TalkArgs) -> Unit
 
 type Npc
-pub fn Npc::deactivate(Self) -> Unit
 pub fn Npc::get_func(Self) -> String
 pub fn Npc::get_name(Self) -> String
 pub fn Npc::get_npc_id(Self) -> Int

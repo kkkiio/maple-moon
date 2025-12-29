@@ -61,6 +61,33 @@ pub impl Show for InventoryType
 pub impl ToJson for InventoryType
 pub impl @json.FromJson for InventoryType
 
+pub(all) struct KillMobMessage {
+  oid : Int
+  animation : Int
+}
+pub impl ServerMessage for KillMobMessage
+pub impl Show for KillMobMessage
+pub impl ToJson for KillMobMessage
+pub impl @json.FromJson for KillMobMessage
+
+pub(all) struct MobDamageMessage {
+  oid : Int
+  damage : Int
+}
+pub impl ClientMessage for MobDamageMessage
+pub impl Show for MobDamageMessage
+pub impl ToJson for MobDamageMessage
+pub impl @json.FromJson for MobDamageMessage
+
+pub(all) struct MobHpMessage {
+  oid : Int
+  percent : Int
+}
+pub impl ServerMessage for MobHpMessage
+pub impl Show for MobHpMessage
+pub impl ToJson for MobHpMessage
+pub impl @json.FromJson for MobHpMessage
+
 pub(all) struct MobSpawnMessage {
   oid : Int
   id : Int

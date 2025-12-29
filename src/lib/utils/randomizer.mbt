@@ -11,6 +11,11 @@ pub fn Randomizer::new(
 }
 
 ///|
+pub impl Default for Randomizer with default() {
+  Randomizer::new()
+}
+
+///|
 pub fn Randomizer::next_bool(self : Randomizer) -> Bool {
   self.next_int(2) == 1
 }

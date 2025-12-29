@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/utils"
 
+import(
+  "moonbitlang/core/random"
+)
+
 // Values
 pub fn advance_futures(Array[Future[Unit]]) -> Unit
 
@@ -106,10 +110,11 @@ type Randomizer
 pub fn Randomizer::above(Self, Double) -> Bool
 pub fn Randomizer::below(Self, Double) -> Bool
 pub fn[T] Randomizer::choose(Self, Array[T]) -> T
-pub fn Randomizer::new() -> Self
+pub fn Randomizer::new(state? : @random.Rand) -> Self
 pub fn Randomizer::next_bool(Self) -> Bool
 pub fn Randomizer::next_int(Self, from? : Int, Int) -> Int
 pub fn Randomizer::next_real(Self, from? : Double, Double) -> Double
+pub impl Default for Randomizer
 
 type Singleton[T]
 pub fn[T] Singleton::must_get(Self[T]) -> T

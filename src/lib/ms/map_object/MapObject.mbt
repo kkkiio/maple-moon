@@ -1,11 +1,8 @@
 ///|
 pub(open) trait MapObject {
   get_oid(Self) -> Int
-  // draw(Self, Double, Double, Double) -> Unit
   update(Self, @physics.Physics) -> Int
-  makeactive(Self) -> Unit
-  // deactivate(Self) -> Unit
-  is_active(Self) -> Bool
+  destroy(Self) -> Unit
   get_layer(Self) -> Int
   get_position(Self) -> @struct.Point[Int]
 }
@@ -14,7 +11,6 @@ pub(open) trait MapObject {
 pub struct MapObjectBase {
   phobj : @physics.PhysicsObject
   oid : Int
-  mut active : Bool
 }
 
 ///|
@@ -23,11 +19,7 @@ pub fn MapObjectBase::new(
   position? : @struct.Point[Int] = { x: 0, y: 0 },
   on_pos_change~ : (@selene_math.Vec2D) -> Unit,
 ) -> MapObjectBase {
-  let obj = {
-    phobj: @physics.PhysicsObject::new(on_pos_change~),
-    oid,
-    active: true,
-  }
+  let obj = { phobj: @physics.PhysicsObject::new(on_pos_change~), oid }
   obj.set_position(position)
   obj
 }
@@ -56,21 +48,6 @@ pub fn MapObjectBase::set_position(
   position : @struct.Point[Int],
 ) -> Unit {
   self.set_positionxy(position.x, position.y)
-}
-
-///|
-pub fn MapObjectBase::makeactive(self : MapObjectBase) -> Unit {
-  self.active = true
-}
-
-///|
-pub fn MapObjectBase::deactivate(self : MapObjectBase) -> Unit {
-  self.active = false
-}
-
-///|
-pub fn MapObjectBase::is_active(self : MapObjectBase) -> Bool {
-  self.active
 }
 
 ///|

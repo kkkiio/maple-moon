@@ -44,27 +44,16 @@ impl @net.OutMessage for TalkToNpcPacket with pack(self) {
 }
 
 ///|
-pub fn MapNpcs::draw(
-  self : MapNpcs,
-  layer : @map_layer.Id,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  self.npcs.draw(layer, viewx, viewy, alpha)
-}
 
 ///|
 pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.get_oid()
-      match self.npcs.get(oid) {
-        Some(npc) => npc.makeactive()
-        None =>
-          self.npcs.add(
-            spawn.instantiate(self.npc_loader, self.string_loader, physics),
-          )
+      if not(self.npcs.contains(oid)) {
+        self.npcs.add(
+          spawn.instantiate(self.npc_loader, self.string_loader, physics),
+        )
       }
       continue self.spawns.pop()
     }
@@ -81,7 +70,7 @@ pub fn MapNpcs::spawn(self : MapNpcs, spawn : NpcSpawn) -> Unit {
 ///|
 pub fn MapNpcs::remove(self : MapNpcs, oid : Int) -> Unit {
   match self.npcs.get(oid) {
-    Some(npc) => npc.deactivate()
+    Some(npc) => self.npcs.remove(oid)
     None => ()
   }
 }
@@ -100,7 +89,7 @@ pub fn MapNpcs::send_cursor(
 ) -> @ui.CursorState? {
   for _, map_object in self.npcs {
     let npc = map_object
-    if npc.is_active() && npc.inrange(position, viewpos) {
+    if npc.entity.is_alive() && npc.inrange(position, viewpos) {
       if pressed {
         match npc.talk() {
           Some(talk_args) =>
@@ -349,7 +338,7 @@ pub impl @map_object.MapObject for Npc with update(
   self : Npc,
   physics : @physics.Physics,
 ) -> Int {
-  if not(self.base.active) {
+  if not(self.entity.is_alive()) {
     return self.base.phobj.fhlayer
   }
   physics.move_object(self.base.phobj)
@@ -389,7 +378,7 @@ pub fn Npc::inrange(
   cursorpos : @struct.Point[Int],
   viewpos : @struct.Point[Int],
 ) -> Bool {
-  if not(self.base.active) {
+  if not(self.entity.is_alive()) {
     return false
   }
   let absp = self.base.get_position() + viewpos
@@ -421,19 +410,13 @@ pub impl @map_object.MapObject for Npc with get_oid(self : Npc) -> Int {
 }
 
 ///|
-pub impl @map_object.MapObject for Npc with makeactive(self : Npc) -> Unit {
-  self.base.makeactive()
+
+///|
+pub impl @map_object.MapObject for Npc with destroy(self : Npc) -> Unit {
+  self.entity.destroy()
 }
 
 ///|
-pub fn Npc::deactivate(self : Npc) -> Unit {
-  self.base.deactivate()
-}
-
-///|
-pub impl @map_object.MapObject for Npc with is_active(self : Npc) -> Bool {
-  self.base.is_active()
-}
 
 ///|
 pub impl @map_object.MapObject for Npc with get_layer(self : Npc) -> Int {

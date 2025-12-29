@@ -84,15 +84,6 @@ pub fn MapQuests::set_player(self : MapQuests, player : @player.Player) -> Unit 
 }
 
 ///|
-pub fn MapQuests::draw(
-  self : MapQuests,
-  id : Int,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  self.quests.draw(id, viewx, viewy, alpha)
-}
 
 ///|
 pub fn MapQuests::update(self : MapQuests, physics : @physics.Physics) -> Unit {
@@ -216,7 +207,7 @@ pub fn MapQuests::send_cursor(
   viewpos : @struct.Point[Int],
 ) -> @ui.CursorState? {
   for _, quest in self.quests {
-    if quest.is_active() && quest.inrange(position, viewpos) {
+    if quest.inrange(position, viewpos) {
       if pressed {
         guard self.quests_resource.quest_say_map.get(quest.quest_id)
           is Some(phase_says)  // must have a say
@@ -278,13 +269,8 @@ impl @map_object.MapObject for NpcQuest with update(self, _) {
 }
 
 ///|
-impl @map_object.MapObject for NpcQuest with makeactive(_self) {
+impl @map_object.MapObject for NpcQuest with destroy(_self) {
 
-}
-
-///|
-impl @map_object.MapObject for NpcQuest with is_active(_self) -> Bool {
-  true
 }
 
 ///|

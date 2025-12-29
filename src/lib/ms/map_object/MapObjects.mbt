@@ -24,7 +24,7 @@ pub enum MapObjectEvent[T] {
 pub fn[T] MapObjects::new() -> MapObjects[T] {
   {
     objects: {},
-    layers: @map_layer.ids.map(fn(_id) { {} }),
+    layers: @graphics.map_layers.map(fn(_id) { {} }),
     event_listeners: Array::new(),
   }
 }

@@ -7,7 +7,6 @@
     "KKKIIO/maple-moon/lib/ms/physics",
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/graphics",
-    "KKKIIO/maple-moon/lib/ms/map_layer",
     {
       "path": "KKKIIO/maple-moon/lib/ms/combat_proto",
       "alias": "combat"

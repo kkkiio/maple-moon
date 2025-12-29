@@ -1,11 +1,11 @@
 {
   "import": [
     "KKKIIO/maple-moon/lib/ms/physics",
-    "KKKIIO/maple-moon/lib/ms/map_layer",
     "KKKIIO/maple-moon/lib/struct",
     {
       "path": "Milky2018/selene/math",
       "alias": "selene_math"
-    }
+    },
+    "KKKIIO/maple-moon/lib/graphics"
   ]
 }

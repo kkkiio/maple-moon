@@ -10,14 +10,14 @@
     "KKKIIO/maple-moon/test/capture_app",
     "Milky2018/selene/system",
     "Milky2018/selene/plugins",
-    "KKKIIO/maple-moon/lib/char_stance"
+    "KKKIIO/maple-moon/lib/char_stance",
+    "KKKIIO/maple-moon/lib/utils/test_snapshots"
   ],
   "overrides": [
     "KKKIIO/maple-moon/test/capture_backend"
   ],
   "import": [
     "Milky2018/selene/sprite",
-    "Milky2018/selene/math",
-    "Milky2018/selene"
+    "Milky2018/selene/math"
   ]
 }

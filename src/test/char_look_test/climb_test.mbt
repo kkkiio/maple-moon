@@ -185,7 +185,8 @@ async test "character climbing ladder" {
   )
   let sprites = @sprite.sprites
     .iter()
-    .map(fn(it) { @char_look_test.DebugSprite(it.1) })
+    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
+    .collect()
   @json.inspect(sprites, content=[
     {
       "draw": [

@@ -50,28 +50,26 @@ pub let common_tags : Map[Char, MarkupType] = color_map
 
 ///|
 struct RefRender {
-  string_loader : @resource.SyncLoader
   get_player_name : () -> String
 }
 
 ///|
-pub fn RefRender::new(
-  string_loader : @resource.SyncLoader,
-  get_player_name : () -> String,
-) -> RefRender {
-  { string_loader, get_player_name }
+pub fn RefRender::new(get_player_name : () -> String) -> RefRender {
+  { get_player_name, }
 }
 
 ///|
 pub fn RefRender::get_npc_name(self : RefRender, nid : StringView) -> String {
-  self.string_loader.load_res(["Npc.img", nid.to_string(), "name"]).get_string()
+  // self.string_loader.load_res(["Npc.img", nid.to_string(), "name"]).get_string()
+  ...
 }
 
 ///|
 pub fn RefRender::get_mob_name(self : RefRender, mid : StringView) -> String {
-  self.string_loader
-  .load_res(["Mob.img", mid.trim_start("0").to_string(), "name"])
-  .get_string()
+  // self.string_loader
+  // .load_res(["Mob.img", mid.trim_start("0").to_string(), "name"])
+  // .get_string()
+  ...
 }
 
 ///|
@@ -81,12 +79,13 @@ pub fn RefRender::get_map_name(
 ) -> String raise {
   let mapid = @strconv.parse_int(v.to_string())
   let map_category = @map.get_map_category(mapid)
-  let map_info = self.string_loader.load_res([
-    "Map.img",
-    map_category,
-    mapid.to_string(),
-  ])
-  map_info["mapName"].get_string()
+  // let map_info = self.string_loader.load_res([
+  //   "Map.img",
+  //   map_category,
+  //   mapid.to_string(),
+  // ])
+  // map_info["mapName"].get_string()
+  ...
 }
 
 ///|
@@ -109,7 +108,8 @@ pub fn RefRender::get_item_name(
     Some(@item.Category1::CASH) => ["Cash.img", item_id_str, "name"]
     None => fail("unknown category, item_id: \{item_id}")
   }
-  self.string_loader.load_res(path_parts).get_string()
+  // self.string_loader.load_res(path_parts).get_string()
+  ...
 }
 
 ///|

@@ -32,18 +32,6 @@ pub fn UIMod::get_number_set(self : UIMod) -> NumberSet {
 let ui_mod : Ref[UIMod?] = Ref::new(None)
 
 ///|
-/// Get the loaded UI module if available.
-pub fn get_ui_module() -> UIMod? {
-  ui_mod.val
-}
-
-///|
-/// Get the loaded NumberSet if UI module is loaded.
-pub fn get_number_set() -> NumberSet? {
-  ui_mod.val.map(fn(m) { m.number_set })
-}
-
-///|
 /// Loading future reference.
 let loading_mod_future : Ref[Future[Result[UIMod, Error]]?] = Ref::new(None)
 
@@ -71,4 +59,16 @@ pub fn ui_system(_delta : Double) -> Unit {
     Ok(m) => ui_mod.val = Some(m)
     Err(e) => abort("loading UI module failed, error=\{e}")
   }
+}
+
+///|
+/// 显示漂浮数字（如伤害值、治疗量等）. 如果数值 (<= 0)，显示 "MISS".
+pub fn show_number(
+  t : NumberType,
+  damage : Int,
+  starty : Int,
+  x? : Int = 0,
+) -> Unit {
+  guard ui_mod.val is Some(ui_mod) else { return }
+  ui_mod.number_set.show_number(t, damage, starty, x~)
 }

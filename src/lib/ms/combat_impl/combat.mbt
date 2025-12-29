@@ -3,7 +3,6 @@ using @combat_proto {type AttackResult}
 
 ///|
 struct Combat {
-  damage_number_set : @ui.NumberSet
   mobs : @monster.MapMobs
   regular_attack : SpecialMove
   // TODO: Add reactors
@@ -19,7 +18,6 @@ struct Combat {
 
 ///|
 pub fn Combat::new(
-  damage_number_set : @ui.NumberSet,
   mobs : @monster.MapMobs,
   bullet_module : @bullet.Module,
 ) -> Combat {
@@ -37,7 +35,6 @@ pub fn Combat::new(
     true // keep the listener
   }
   {
-    damage_number_set,
     mobs,
     skill_cache: Map::new(),
     regular_attack: new_regular_attack(bullet_module),
@@ -546,8 +543,7 @@ fn Combat::place_numbers(
 fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let (t, amount, start_y) = effect.number_params
-  // Create and auto-register the number now
-  self.damage_number_set.new_number(t, amount, start_y, x=head_position.x)
+  @ui.show_number(t, amount, start_y, x=head_position.x)
   guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move

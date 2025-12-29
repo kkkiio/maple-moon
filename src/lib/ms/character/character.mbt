@@ -353,9 +353,7 @@ pub fn Character::show_effect_id(
 pub fn Character::show_damage(self : Character, damage : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
-  @ui.get_number_set()
-  .unwrap()
-  .new_number(@ui.NumberType::HURT, damage, start_y, x~)
+  @ui.show_number(@ui.NumberType::HURT, damage, start_y, x~)
   self.set_alerted(5000)
   self.invincible.set_for(2000)
 }
@@ -364,9 +362,7 @@ pub fn Character::show_damage(self : Character, damage : Int) -> Unit {
 pub fn Character::show_heal_number(self : Character, n : Int) -> Unit {
   let start_y = self.base.phobj.get_y() - 60
   let x = self.base.phobj.get_x() - 10
-  @ui.get_number_set()
-  .unwrap()
-  .new_number(@ui.NumberType::HEAL_HP, n, start_y, x~)
+  @ui.show_number(@ui.NumberType::HEAL_HP, n, start_y, x~)
 }
 
 ///|

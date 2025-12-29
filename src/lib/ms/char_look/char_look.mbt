@@ -715,6 +715,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       _ => false
     }
   }
+
   let loop_ = should_loop(stance)
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {

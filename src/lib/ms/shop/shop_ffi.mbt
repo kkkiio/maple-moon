@@ -76,9 +76,9 @@ pub fn buy_shop_item_ffi(
   item_id : Int,
   qty : Int,
 ) -> Unit {
-  mod.network.send_message(
-    ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=true),
-  )
+  // mod.network.send_message(
+  //   ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=true),
+  // )
 }
 
 ///|
@@ -88,9 +88,9 @@ pub fn sell_inventory_item_ffi(
   item_id : Int,
   qty : Int,
 ) -> Unit {
-  mod.network.send_message(
-    ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=false),
-  )
+  // mod.network.send_message(
+  //   ShopActionMessage::Item(slot=slot.inner(), item_id~, qty~, buy=false),
+  // )
 }
 
 ///|

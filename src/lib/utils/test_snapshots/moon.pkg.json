@@ -1,0 +1,6 @@
+{
+  "import": [
+    "Milky2018/selene/sprite",
+    "Milky2018/selene/math"
+  ]
+}

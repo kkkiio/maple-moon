@@ -5,8 +5,6 @@ using @char_look {type NxStanceLooks}
 using @types {type NxStanceBody}
 
 ///|
-
-///|
 async test "character stand1" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites.clear()
@@ -187,7 +185,7 @@ async test "character stand1" {
   )
   let sprites = @sprite.sprites
     .iter()
-    .map(fn(it) { @char_look_test.DebugSprite(it.1) })
+    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
   @json.inspect(sprites, content=[
     {
       "draw": [

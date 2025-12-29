@@ -1,4 +1,5 @@
 ///|
+#deprecated("use @game_server.send")
 struct Network {
   session : Session
   switch : PacketSwitch

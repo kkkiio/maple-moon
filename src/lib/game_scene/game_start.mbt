@@ -1,17 +1,19 @@
 ///|
-let loading_data_ref : Ref[@utils.Future[
-  Result[
-    (
-      @item.ItemData,
-      @item.ItemData,
-      @item.ItemData,
-      @item.ItemData,
-      @char_look.Hair,
-      @char_look.Face,
-    ),
-    Error,
-  ],
-]?] = Ref::new(None)
+let loading_data_ref : Ref[
+  @utils.Future[
+    Result[
+      (
+        @item.ItemData,
+        @item.ItemData,
+        @item.ItemData,
+        @item.ItemData,
+        @char_look.Hair,
+        @char_look.Face,
+      ),
+      Error,
+    ],
+  ]?,
+] = Ref::new(None)
 
 ///|
 pub fn get_loading_data() -> @utils.Future[
@@ -55,7 +57,10 @@ pub fn clear_loading_data() -> Unit {
 }
 
 ///|
-fn get_equipped_slot(slot : Int, invtype : @maple_protocol.InventoryType) -> Int? {
+fn get_equipped_slot(
+  slot : Int,
+  invtype : @maple_protocol.InventoryType,
+) -> Int? {
   if invtype == @maple_protocol.InventoryType::EQUIPPED || slot < 0 {
     let real_slot = if slot < 0 { 0 - slot } else { slot }
     Some(real_slot)
@@ -111,7 +116,9 @@ pub fn apply_equipped_stats(
 }
 
 ///|
-pub fn make_job_from_stats(stats_entry : @maple_protocol.StatsEntry) -> @job.Job {
+pub fn make_job_from_stats(
+  stats_entry : @maple_protocol.StatsEntry,
+) -> @job.Job {
   let job_id = stats_entry.stats.0.get(@maple_stat.Id::JOB).unwrap_or(0)
   let level = if job_id == 0 {
     @job.Level::BEGINNER

@@ -290,3 +290,9 @@ let hair_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
 pub fn get_hair_loader() -> AsyncLoader {
   hair_loader.get()
 }
+
+// let status_bar_loader = @resource.SyncLoader::load(
+//   "StatusBar",
+//   "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",
+//   @resource.ImageLoader::get_path_image_loader(),
+// )

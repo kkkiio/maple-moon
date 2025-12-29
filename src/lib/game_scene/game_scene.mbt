@@ -316,11 +316,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       return
     }
     GameStart(map_id~, portal_id~, set_field_message~) => {
-      guard set_field_message is SetField(
-        stats~,
-        inventory_entry~,
-        ..
-      ) else { return }
+      guard set_field_message is SetField(stats~, inventory_entry~, ..) else {
+        return
+      }
       // 1. 如果没有开始加载数据，启动后台任务加载默认武器、头发和脸
       guard get_loading_data() is Some(fut) else {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
@@ -329,10 +327,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           inventory_entry.items,
           @slot.Id::WEAPON,
         ).unwrap_or(1302000)
-        let top_id = find_equipped_item_id(
-          inventory_entry.items,
-          @slot.Id::TOP,
-        ).unwrap_or(1040002)
+        let top_id = find_equipped_item_id(inventory_entry.items, @slot.Id::TOP).unwrap_or(
+          1040002,
+        )
         let bottom_id = find_equipped_item_id(
           inventory_entry.items,
           @slot.Id::BOTTOM,
@@ -382,7 +379,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
-        guard @ui.get_ui_module() is Some(_) else { return }
         let draw_info = char_look_mod.draw_info
         let stance_bodys_map = char_look_mod.stance_bodys_map.0
         let stance_heads_map = char_look_mod.stance_heads_map.0
@@ -420,7 +416,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         }
       }
       match @player.get_player() {
-        Some(player) => apply_equipped_stats(player.get_stats(), inventory_entry.items)
+        Some(player) =>
+          apply_equipped_stats(player.get_stats(), inventory_entry.items)
         None => ()
       }
       clear_loading_data()
@@ -463,11 +460,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       let player = @player.get_player().unwrap()
-      let combat = @combat_impl.Combat::new(
-        @ui.get_number_set().unwrap(),
-        stage.mobs,
-        bullet_module,
-      )
+      let combat = @combat_impl.Combat::new(stage.mobs, bullet_module)
       @combat_impl.set_combat(Some(combat))
       @combat_impl.set_player(Some(player))
       // let width = sence_map.map_info.get_walls().delta()

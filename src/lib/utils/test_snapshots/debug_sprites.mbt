@@ -5,12 +5,28 @@ pub(all) struct DebugSprite(@sprite.Sprite)
 pub impl ToJson for DebugSprite with to_json(self) {
   let r : Map[String, Json] = {
     "draw": match self.sprite_type {
-      @sprite.SpriteType::Picture(picture) => ...
+      @sprite.SpriteType::Picture(picture) =>
+        [
+          "Picture",
+          {
+            "size": [picture.size.0, picture.size.1],
+            "tile_path": picture.tile_path,
+            "transform": {
+              "a": picture.transform.a,
+              "b": picture.transform.b,
+              "c": picture.transform.c,
+              "d": picture.transform.d,
+              "tx": picture.transform.tx,
+              "ty": picture.transform.ty,
+            },
+            "repeat": picture.repeat.to_string().to_json(),
+          },
+        ]
       @sprite.SpriteType::Animation(animation, frame~, ..) =>
         ["Animation", DebugAnimation(animation, frame).to_json()]
-      @sprite.SpriteType::Text(text) => ...
-      @sprite.SpriteType::ColorRect(color_rect) => ...
-      @sprite.SpriteType::ColorCircle(color_circle) => ...
+      @sprite.SpriteType::Text(text) => ["Text", Json::string(text.content)]
+      @sprite.SpriteType::ColorRect(_) => ["ColorRect", Json::null()]
+      @sprite.SpriteType::ColorCircle(_) => ["ColorCircle", Json::null()]
     },
     "zindex": self.zindex,
     "visible": self.visible,

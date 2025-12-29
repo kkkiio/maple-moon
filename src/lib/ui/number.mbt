@@ -1,5 +1,10 @@
 ///|
-using @resource {get_effect_loader, nx_texture_to_selene_picture}
+using @resource {
+  get_effect_loader,
+  nx_animation_to_selene_animation,
+  type NxFrame,
+  type NxAnimation,
+}
 
 ///|
 using @selene_math {type Vec2D}
@@ -7,7 +12,7 @@ using @selene_math {type Vec2D}
 ///|
 /// 类似于 Charset, 但是专门用于 DamageSkin, 存储 selene @sprite.Picture
 struct DamageSkin {
-  sprites : Map[Char, @sprite.Picture]
+  sprites : Map[Char, @sprite.Animation]
 }
 
 ///|
@@ -16,7 +21,7 @@ pub impl Default for DamageSkin with default() {
 }
 
 ///|
-fn DamageSkin::from_json(json : Json) -> DamageSkin {
+pub impl @json.FromJson for DamageSkin with from_json(json, path) {
   let sprites = Map::new()
   guard json is Object(obj) else { return { sprites, } }
   for name, sub in obj {
@@ -24,8 +29,19 @@ fn DamageSkin::from_json(json : Json) -> DamageSkin {
     guard name.length() == 1 else { continue }
     let c = name.to_array()[0]
     try {
-      let tex : @resource.NxTexture = @json.from_json(sub)
-      let pic = nx_texture_to_selene_picture(tex)
+      let tex : @resource.NxTexture = @json.from_json(
+        sub,
+        path=path.add_key(name),
+      )
+      // Wrap texture into an animation since single frames need to support offsets
+      let frame = NxFrame::{
+        texture: tex,
+        delay: None,
+        head: None,
+        bounds: None,
+      }
+      let anim = NxAnimation::{ frames: [frame], blend: false, zigzag: false }
+      let pic = nx_animation_to_selene_animation(anim)
       sprites.set(c, pic)
     } catch {
       _ => ()
@@ -37,7 +53,7 @@ fn DamageSkin::from_json(json : Json) -> DamageSkin {
 ///|
 fn DamageSkin::get_width(self : DamageSkin, c : Char) -> Int {
   match self.sprites.get(c) {
-    Some(pic) => pic.size.0.to_int()
+    Some(anim) => anim.frames[0].size.0.to_int()
     None => 0
   }
 }
@@ -134,42 +150,52 @@ pub fn Number::row_height(critical : Bool) -> Int {
 }
 
 ///|
-pub struct NumberSet {
-  red_skins : @utils.BoolPair[DamageSkin]
-  cri_skins : @utils.BoolPair[DamageSkin]
-  violet_skins : @utils.BoolPair[DamageSkin]
-  blue_skins : @utils.BoolPair[DamageSkin]
+/// 存储大号和小号两种尺寸的 DamageSkin
+pub(all) struct Skins {
+  big : DamageSkin
+  small : DamageSkin
+} derive(Default)
+
+///|
+pub(all) struct NumberSet {
+  red_skins : Skins
+  cri_skins : Skins
+  violet_skins : Skins
+  blue_skins : Skins
 } derive(Default)
 
 ///|
 pub async fn NumberSet::load() -> NumberSet {
   let loader = get_effect_loader()
-  async fn load_skin_pair(path0, path1) {
-    let res0 = loader.load_res_async(path0)
-    let res1 = loader.load_res_async(path1)
-    @utils.BoolPair::new(
-      DamageSkin::from_json(res0.value()),
-      DamageSkin::from_json(res1.value()),
-    )
-  }
   // 'No' for Number
-  let red_skins = load_skin_pair(["BasicEff.img", "NoRed1"], [
-    "BasicEff.img", "NoRed0",
-  ])
-  let cri_skins = load_skin_pair(["BasicEff.img", "NoCri1"], [
-    "BasicEff.img", "NoCri0",
-  ])
-  let violet_skins = load_skin_pair(["BasicEff.img", "NoViolet1"], [
-    "BasicEff.img", "NoViolet0",
-  ])
-  let blue_skins = load_skin_pair(["BasicEff.img", "NoBlue1"], [
-    "BasicEff.img", "NoBlue0",
-  ])
+  let no_red_1 = loader.load_res_async(["BasicEff.img", "NoRed1"]).value()
+    |> @json.from_json
+  let no_red_0 = loader.load_res_async(["BasicEff.img", "NoRed0"]).value()
+    |> @json.from_json
+  let no_cri_1 = loader.load_res_async(["BasicEff.img", "NoCri1"]).value()
+    |> @json.from_json
+  let no_cri_0 = loader.load_res_async(["BasicEff.img", "NoCri0"]).value()
+    |> @json.from_json
+  let no_violet_1 = loader.load_res_async(["BasicEff.img", "NoViolet1"]).value()
+    |> @json.from_json
+  let no_violet_0 = loader.load_res_async(["BasicEff.img", "NoViolet0"]).value()
+    |> @json.from_json
+  let no_blue_1 = loader.load_res_async(["BasicEff.img", "NoBlue1"]).value()
+    |> @json.from_json
+  let no_blue_0 = loader.load_res_async(["BasicEff.img", "NoBlue0"]).value()
+    |> @json.from_json
+  let red_skins : Skins = { big: no_red_1, small: no_red_0 }
+  let cri_skins : Skins = { big: no_cri_1, small: no_cri_0 }
+  let violet_skins : Skins = { big: no_violet_1, small: no_violet_0 }
+  let blue_skins : Skins = { big: no_blue_1, small: no_blue_0 }
   { red_skins, cri_skins, violet_skins, blue_skins }
 }
 
 ///|
-pub fn NumberSet::new_number(
+/// 显示漂浮数字（如伤害值、治疗量等）. 样式包括多种颜色, 居中, 数字交错跳动, 缓慢向上飘动, 淡出.
+/// 
+/// 如果数值 (<= 0)，显示 "MISS"（通过 DamageSkin 中的 'M' 字符对应的图片）。
+pub fn NumberSet::show_number(
   self : NumberSet,
   t : NumberType,
   damage : Int,
@@ -207,7 +233,7 @@ pub fn NumberSet::new_number(
     let shift = total / 2
     (false, shift, multiple, first_num, rest_num)
   } else {
-    let shift = skins[true].get_width('M') / 2
+    let shift = skins.small.get_width('M') / 2
     (true, shift, false, Char::default(), [])
   }
 
@@ -220,14 +246,14 @@ pub fn NumberSet::new_number(
   let mut current_offset = start_offset
   fn spawn_sprite(skin : DamageSkin, c : Char, offset : @struct.Point[Int]) {
     match skin.sprites.get(c) {
-      Some(pic) => {
+      Some(anim) => {
         let offset_vec = @selene_math.Vec2D(
           offset.x.to_double(),
           offset.y.to_double(),
         )
         let child = parent_entity.spawn_child(offset=offset_vec)
-        let sprite = @sprite.Sprite::from_picture(
-          pic,
+        let sprite = @sprite.Sprite::from_animation(
+          anim,
           @graphics.DAMAGE_NUMBER_ZINDEX,
         )
         @sprite.sprites.set(child, sprite)
@@ -237,16 +263,16 @@ pub fn NumberSet::new_number(
   }
 
   if miss {
-    spawn_sprite(skins[true], 'M', current_offset)
+    spawn_sprite(skins.small, 'M', current_offset)
   } else {
-    spawn_sprite(skins[false], first_num, current_offset)
+    spawn_sprite(skins.big, first_num, current_offset)
     if multiple {
       let first_advance = get_advance(t, first_num, true)
       current_offset = current_offset.shift_x(first_advance)
       for i in 0..<rest_num.length() {
         let c = rest_num[i]
         let yshift = @struct.Point::new(0, if i % 2 == 0 { -2 } else { 2 })
-        spawn_sprite(skins[true], rest_num[i], current_offset + yshift)
+        spawn_sprite(skins.small, rest_num[i], current_offset + yshift)
         let advance = if i < rest_num.length() - 1 {
           let n = rest_num[i + 1]
           let c_advance = get_advance(t, c, false)

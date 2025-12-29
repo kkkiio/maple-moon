@@ -89,9 +89,9 @@ async test "character stabO1" {
   @fs.write_bytes_to_file(
     "src/test/char_look_test/__snapshot__/stabO1_0.png", buffer0,
   )
-  let sprites : Array[@char_look_test.DebugSprite] = @sprite.sprites
+  let sprites : Array[@test_snapshots.DebugSprite] = @sprite.sprites
     .iter()
-    .map(fn(it) { @char_look_test.DebugSprite(it.1) })
+    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
   @json.inspect(sprites, content=[
     {
@@ -222,9 +222,9 @@ async test "character stabO1" {
   @capture_app.run_loop(0.1)
   // let buffer1 = @capture_app.to_buffer().to_bytes()
   // assert_eq(buffer0, buffer1, msg="frame 0 not sync")
-  let sprites1 : Array[@char_look_test.DebugSprite] = @sprite.sprites
+  let sprites1 : Array[@test_snapshots.DebugSprite] = @sprite.sprites
     .iter()
-    .map(fn(it) { @char_look_test.DebugSprite(it.1) })
+    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
   assert_eq(sprites.to_json(), sprites1.to_json())
 
@@ -236,9 +236,9 @@ async test "character stabO1" {
   @fs.write_bytes_to_file(
     "src/test/char_look_test/__snapshot__/stabO1_1.png", buffer,
   )
-  let sprites : Array[@char_look_test.DebugSprite] = @sprite.sprites
+  let sprites = @sprite.sprites
     .iter()
-    .map(fn(it) { @char_look_test.DebugSprite(it.1) })
+    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
   @json.inspect(sprites, content=[
     {

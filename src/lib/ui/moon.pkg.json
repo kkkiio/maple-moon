@@ -21,5 +21,9 @@
     "Milky2018/selene/entity",
     "Milky2018/selene/inputs",
     "KKKIIO/maple-moon/lib/logic_fps"
+  ],
+  "test-import": [
+    "KKKIIO/maple-moon/lib/utils/test_snapshots",
+    "moonbitlang/x/fs"
   ]
 }

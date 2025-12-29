@@ -13,7 +13,6 @@ pub async fn Module::load(
   container : &@ui.Container,
   network : @net.Network,
   ref_render : @markup_text.RefRender,
-  string_loader : @resource.SyncLoader,
 ) -> Module {
   ...
   // let npc_loader = @resource.SyncLoader::load(

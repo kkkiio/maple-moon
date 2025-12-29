@@ -3,16 +3,12 @@ struct Module {
   inventory : Inventory
   player_getter : () -> @player.Player?
   network : @net.Network
-  string_loader : @resource.SyncLoader
 }
 
 ///|
-pub fn Module::load(
-  player_getter : () -> @player.Player?,
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
-) -> Module {
-  { inventory: Inventory::new(network), player_getter, network, string_loader }
+pub fn Module::load(player_getter : () -> @player.Player?) -> Module {
+  ...
+  // { inventory: Inventory::new(network), player_getter, network, string_loader }
 }
 
 ///|

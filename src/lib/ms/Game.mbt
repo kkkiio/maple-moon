@@ -55,21 +55,6 @@ async fn load_modules(
   // stage_ref : Ref[Stage?],
   keyboard_module : @keyboard.Module,
 ) -> LoadedState {
-  let local_storage = @config.LocalStorage::new()
-  // fn get_stage() -> Stage {
-  //   stage_ref.val.unwrap() // TODO: handle error
-  // }
-
-  // let action_registry = @action.Registry::new()
-  // let action_map = {}
-  // fn merge_actions(
-  //   map : Map[@keyboard.BasicActionId, @action.Descriptor],
-  // ) -> Unit {
-  //   for id, descriptor in map {
-  //     action_map.set(id, descriptor)
-  //   }
-  // }
-
   let net_handler_map = {}
   fn merge_handlers(
     handlers : Map[@net.Opcode, (@net.InPacket) -> Unit],
@@ -107,33 +92,24 @@ async fn load_modules(
   let keyboard = keyboard_module.get_keyboard()
   let ui = UI::new(fn(keycode) { keyboard.get_mapping(keycode) })
   let window = Window::new(ui)
-  let string_loader = @resource.SyncLoader::load(
-    "String",
-    "https://maple-res.kkkiiox.work/String/nx.json",
-    @resource.ImageLoader::get_path_image_loader(),
-  )
   // let char_look_module = @char_look.Module::load()
   // merge_stat_handlers(char_look_module.make_stat_handlers())
   // let map_module = @map.Module::load()
-  let inventory_module = @inventory.Module::load(
-    fn() {
-      ...
-      // get_stage().get_player() 
-    },
-    network,
-    string_loader,
-  )
+  let inventory_module = @inventory.Module::load(fn() {
+    ...
+    // get_stage().get_player() 
+  })
   merge_handlers(inventory_module.make_handlers())
   merge_stat_handlers(inventory_module.make_stat_handlers())
   merge_show_status_info_handler_map(
     inventory_module.make_show_status_info_handlers(),
   )
-  let ref_render = @markup_text.RefRender::new(string_loader, fn() {
+  let ref_render = @markup_text.RefRender::new(fn() {
     // guard get_stage().get_player() is Some(player) else { return "" }
     // player.character.get_name()
     ...
   })
-  let npc_module = @npc.Module::load(ui, network, ref_render, string_loader)
+  let npc_module = @npc.Module::load(ui, network, ref_render)
   merge_handlers(npc_module.make_handlers())
   let quest_module = @quest.Module::load(
     network,
@@ -144,11 +120,6 @@ async fn load_modules(
   merge_handlers(quest_module.make_handlers())
   merge_show_status_info_handler_map(
     quest_module.make_show_status_info_handlers(),
-  )
-  let status_bar_loader = @resource.SyncLoader::load(
-    "StatusBar",
-    "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",
-    @resource.ImageLoader::get_path_image_loader(),
   )
   let monster_module = @monster.Module::new()
   merge_handlers(
@@ -166,10 +137,8 @@ async fn load_modules(
   )
   let char_stats_module = @char_stats.Module::load(network)
   merge_stat_handlers(char_stats_module.make_stat_handlers())
-  let damage_number_set = @ui.NumberSet::load()
-  let bullet_module = @bullet.Module::load()
   // merge_actions(skill_book_module.make_actions())
-  let shop_module = @shop.Module::load(network, string_loader)
+  let shop_module = @shop.Module::load()
   merge_handlers(shop_module.make_handlers())
   let change_stat_handler = make_change_stats_handler(stat_handler_map, fn() {
     // guard get_stage().get_player() is Some(player) else { return }
@@ -205,25 +174,6 @@ async fn load_modules(
     }
     true
   })
-  // let stage = Stage::new(
-  //   map_module.get_portals_animations(),
-  //   monster_module.get_map_mobs(),
-  //   drop_module.get_map_drops(),
-  //   inventory_module.get_inventory(),
-  //   npcs,
-  //   quests,
-  //   char_look_module,
-  //   skill_book_module,
-  //   char_stats_module,
-  //   damage_number_set,
-  //   add_io_task,
-  //   network,
-  //   string_loader,
-  //   io_service,
-  //   bullet_module,
-  //   combat,
-  // )
-  // stage_ref.val = Some(stage)
   network.reset_handlers(net_handler_map.iter() |> @immut/hashmap.from_iter)
   timer.reset()
   ui.change_state(UIStateLogin::new())

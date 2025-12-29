@@ -1,7 +1,7 @@
 ///|
 /// A packet to be sent to the server
 struct OutPacket {
-  buf : @buffer.T
+  buf : @buffer.Buffer
   opcode : ClientOpcode
 }
 

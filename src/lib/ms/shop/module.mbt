@@ -1,39 +1,29 @@
 ///|
 struct Module {
-  network : @net.Network
   mut opening_shop : OpenNpcShop?
   opening_shop_listeners : Array[(OpenNpcShop?) -> Bool]
   confirm_shop_transaction_listeners : Array[
     (ConfirmShopTransactionCode) -> Bool,
   ]
-  string_loader : @resource.SyncLoader
 }
 
 ///|
-pub fn Module::load(
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
-) -> Module {
+pub fn Module::load() -> Module {
   // @ui.ui_window_2_loader().load_res(["Shop2"])
   // |> @utils.map(fn(src) { Module::new(container, src) })
-  Module::new(network, string_loader)
+  Module::new()
 }
 
 ///|
-fn Module::new(
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
-) -> Module {
+fn Module::new() -> Module {
   // let countset = @graphics.Charset::new(
   //   @ui.common_ui_loader().load_res(["Basic.img", "ItemNo"]),
   //   @graphics.CharsetAlignment::LEFT,
   // )
   {
-    network,
     opening_shop_listeners: [],
     confirm_shop_transaction_listeners: [],
     opening_shop: None,
-    string_loader,
   }
 }
 
@@ -90,7 +80,7 @@ pub enum ConfirmShopTransactionCode {
 
 ///|
 fn Module::leave_shop(self : Module) -> Unit {
-  self.network.send_message(ShopActionMessage::Leave)
+  // self.network.send_message(ShopActionMessage::Leave)
   self.opening_shop = None
   self.opening_shop_listeners.retain(fn(listener) { listener(None) })
 }

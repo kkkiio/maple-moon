@@ -8,6 +8,29 @@
 
 使用 `selene` , 非常新且小巧的 2D 游戏引擎, 便于学习。缺少功能时，先要对比其他现代游戏引擎的实现，再提出改进方案。
 
+## 文档/注释
+
+所有 public 函数/类型/变量都要写接口注释.
+
+Write documentation using `///` comments (started with `///|` to delimit the
+block code)
+
+````moonbit
+///|
+/// Get the largest element of a non-empty `Array`.
+///
+/// # Example
+/// ```moonbit
+/// inspect(my_maximum([1,2,3,4,5,6]), content="6")
+/// ```
+///
+/// # Panics
+/// Panics if the `xs` is empty.
+pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
+  ...
+}
+````
+
 ## Sprite
 
 使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.
@@ -898,31 +921,6 @@ Target specific backends/modes in `moon.pkg.json`:
   }
 }
 ```
-
-# Documentation
-
-Write documentation using `///` comments (started with `///|` to delimit the
-block code)
-
-````moonbit
-
-///|
-/// Get the largest element of a non-empty `Array`.
-///
-/// # Example
-/// ```moonbit
-/// inspect(my_maximum([1,2,3,4,5,6]), content="6")
-/// ```
-///
-/// # Panics
-/// Panics if the `xs` is empty.
-pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
-  ...
-}
-````
-
-The MoonBit code in docstring will be type checked and tested automatically.
-(using `moon test --update`)
 
 # Development Workflow
 

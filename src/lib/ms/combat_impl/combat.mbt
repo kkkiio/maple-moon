@@ -2,6 +2,18 @@
 using @combat_proto {type AttackResult}
 
 ///|
+/// Global registry of all available moves (skills and regular attack).
+/// Populated during game start via `register_move`.
+pub let move_map : Map[Int, SpecialMove] = Map::new()
+
+///|
+/// Register a move (skill) into the global move_map.
+/// Should be called during game initialization.
+pub fn register_move(sp_move : SpecialMove) -> Unit {
+  move_map.set(sp_move.get_id(), sp_move)
+}
+
+///|
 struct Combat {
   mobs : @monster.MapMobs
   regular_attack : SpecialMove
@@ -12,7 +24,6 @@ struct Combat {
   // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   bullet_module : @bullet.Module
-  skill_cache : Map[Int, @utils.Future[SpecialMove]]
   attack_events_listeners : Array[(AttackEvent) -> Bool]
 }
 
@@ -36,7 +47,6 @@ pub fn Combat::new(
   }
   {
     mobs,
-    skill_cache: Map::new(),
     regular_attack: new_regular_attack(bullet_module),
     bullet_effects: @utils.TimedQueue::new(),
     damage_effects: @utils.TimedQueue::new(),
@@ -120,11 +130,7 @@ fn Combat::use_move(
       return
     }
     (self.regular_attack, Some(weapon))
-  } else if self.skill_cache.get(move_id) is Some(act_fut) {
-    guard act_fut.poll() is Some(act) else {
-      @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
-      return
-    }
+  } else if move_map.get(move_id) is Some(act) {
     if act.is_attack() {
       guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
         return
@@ -134,10 +140,7 @@ fn Combat::use_move(
       (act, None)
     }
   } else {
-    @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
-    self.skill_cache[move_id] = @io_service.submit_background_task(fn() {
-      self.load_sp_move(move_id)
-    }).map(@log.unwrap_err(_))
+    @log.warn({ "move_id": move_id }, "skill not registered")
     return
   }
   if act.is_attack() && not(cc.can_attack()) {
@@ -185,19 +188,10 @@ pub struct AttackEvent {
 } derive(Show, ToJson)
 
 ///|
-pub fn Combat::get_skill_move(
-  self : Combat,
-  move_id : Int,
-) -> @utils.Future[SpecialMove] {
-  if self.skill_cache.get(move_id) is Some(fut) {
-    return fut
-  }
-  @log.warn({ "move_id": move_id }, "loading skill") // TODO: load skill early
-  let fut = @io_service.submit_background_task(fn() {
-    self.load_sp_move(move_id)
-  }).map(@log.unwrap_err(_))
-  self.skill_cache[move_id] = fut
-  fut
+/// Get a registered skill move by ID.
+/// Returns None if the skill is not registered.
+pub fn get_skill_move(move_id : Int) -> SpecialMove? {
+  move_map.get(move_id)
 }
 
 ///|
@@ -416,8 +410,13 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 }
 
 ///|
-async fn Combat::load_sp_move(self : Combat, move_id : Int) -> SpecialMove {
-  let it = Skill::load(move_id, self.bullet_module)
+/// Load a skill and create a SpecialMove from it.
+/// This is used during game initialization to pre-load skills.
+pub async fn load_skill_move(
+  move_id : Int,
+  bullet_module : @bullet.Module,
+) -> SpecialMove {
+  let it = Skill::load(move_id, bullet_module)
   {
     id: it.get_id(),
     attack: it.is_attack(),

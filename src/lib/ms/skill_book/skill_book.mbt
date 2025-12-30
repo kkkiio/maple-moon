@@ -106,8 +106,7 @@ pub fn SkillBook::on_attack_event(
   guard skill_data is Some(skill_data) else { return }
   let stats = skill_data.stats.get(entry.level)
   guard stats is Some(stats) else { return }
-  let act_fut = combat.get_skill_move(skill_id)
-  guard act_fut.poll() is Some(act) else { return }
+  guard @combat_impl.get_skill_move(skill_id) is Some(act) else { return }
   // try on each mob
   let mob_targets = event.result.damage_lines
     .keys()

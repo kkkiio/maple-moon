@@ -357,6 +357,12 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               .value()
             let after_images = @json.from_json(after_image_res)
             @char_look.set_after_images(after_image_name, after_images)
+            // Load and register skills
+            let sk = @combat_impl.load_skill_move(
+              @skill.SkillId::TELEPORT_FP.int_value(),
+              bullet_module,
+            )
+            @combat_impl.register_move(sk)
             (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
         )

@@ -1,6 +1,7 @@
 ///|
 using @maple_protocol {
   type MobSpawnMessage,
+  type MobSpawnControllerMessage,
   type MobHpMessage,
   type KillMobMessage,
 }
@@ -305,6 +306,24 @@ pub fn setup_game_server_handlers() -> Unit {
         stance: msg.stance,
         fh: msg.fh,
         new_spawn: true, // Assuming new spawn for map load
+        team: msg.team,
+        position: @struct.Point::new(msg.x, msg.y),
+      })
+    },
+  )
+  @game_server.add_server_message_handler(
+    "spawn_mob_controller",
+    @net.Opcode::SPAWN_MOB_C.int_value(),
+    fn(json) {
+      guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
+      let msg : MobSpawnControllerMessage = @json.from_json(json)
+      map_mobs.spawn({
+        oid: msg.oid,
+        id: msg.id,
+        mode: msg.mode,
+        stance: msg.stance,
+        fh: msg.fh,
+        new_spawn: true,
         team: msg.team,
         position: @struct.Point::new(msg.x, msg.y),
       })

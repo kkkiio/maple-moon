@@ -49,9 +49,10 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
           } => {
             let monster_id = @strconv.parse_int(id_str)
             self.last_object_id += 1
-            let spawn_msg = MobSpawnMessage::{
+            let spawn_msg = MobSpawnControllerMessage::{
               oid: self.last_object_id,
               id: monster_id,
+              mode: 1, // Passive Control
               x: x.to_int(),
               y: y.to_int(),
               stance: f.to_int(),
@@ -137,4 +138,4 @@ async fn get_portal_id_by_map_id_and_portal_name(
 }
 
 ///|
-using @maple_protocol {type MobSpawnMessage}
+using @maple_protocol {type MobSpawnMessage, type MobSpawnControllerMessage}

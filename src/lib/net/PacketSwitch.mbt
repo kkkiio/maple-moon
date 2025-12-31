@@ -60,9 +60,14 @@ pub(all) enum Opcode {
   /// Player
   ADD_COOLDOWN = 234
   /// MapObject
+  /// Spawn a monster for a player who is NOT controlling it.
+  /// The client will not calculate AI or physics for this mob.
   SPAWN_MOB = 0xEC
   KILL_MOB = 237
-  SPAWN_MOB_C = 238
+  /// Spawn a monster for a player who IS controlling it.
+  /// The client will calculate AI and physics for this mob.
+  /// For local server (single player), we always use this.
+  SPAWN_MOB_C = 0xEE
   MOB_MOVED = 239
   MOB_MOVE_RESPONSE = 240
   APPLY_MONSTER_STATUS = 242

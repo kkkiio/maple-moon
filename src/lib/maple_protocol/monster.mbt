@@ -88,6 +88,23 @@ pub impl ServerMessage for KillMobMessage with type_code() {
 }
 
 ///|
+pub(all) struct MobSpawnControllerMessage {
+  mode : Int
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  stance : Int
+  fh : Int
+  team : Int
+} derive(ToJson, @json.FromJson)
+
+///|
+pub impl ServerMessage for MobSpawnControllerMessage with type_code() {
+  @net.Opcode::SPAWN_MOB_C.int_value()
+}
+
+///|
 using @struct {type Point}
 
 ///|

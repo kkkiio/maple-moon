@@ -31,6 +31,29 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 }
 ````
 
+## JSON Match Pattern
+
+处理 JSON 数据时, 优先用模式匹配, 而不是 `Object::get` 等方法.
+
+```mbt
+match json {
+  { "version": "1.0.0", "import": [..] as imports, .. } => ...
+  { "version": Number(i, ..), "import": Array(imports), .. } => ...
+  ...
+}
+```
+
+## JSON Literal
+
+moonbit 支持 JSON 语法构造 `JSON` 类型的数据:
+
+```mbt
+let v : Json = {
+  "version": "1.0.0",
+  "import": ["import1", "import2"],
+}
+```
+
 ## Sprite
 
 使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.

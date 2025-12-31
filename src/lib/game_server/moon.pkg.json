@@ -6,6 +6,7 @@
     "KKKIIO/maple-moon/lib/resource",
     "KKKIIO/maple-moon/lib/io_service",
     "KKKIIO/maple-moon/lib/utils",
-    "KKKIIO/maple-moon/lib/ms/maple_stat"
+    "KKKIIO/maple-moon/lib/ms/maple_stat",
+    "rami3l/js-ffi/js"
   ]
 }

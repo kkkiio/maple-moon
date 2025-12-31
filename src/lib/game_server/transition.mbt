@@ -21,6 +21,9 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
       return
     }
     self.last_map_id = tm
+    if self.db is Some(db) {
+      db.save_character_data({ "character_id": 1.0, "map_id": tm.to_double() })
+    }
     let set_field_message : SetFieldMessage = SetFieldMessage::ChangeMap(
       map_id=tm,
       portal_id~,

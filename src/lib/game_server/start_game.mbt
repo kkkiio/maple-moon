@@ -3,55 +3,67 @@
 ///|
 fn on_select_char(json : Json) -> Unit raise {
   let _ : SelectCharMessage = @json.from_json(json)
-  // hardcode character for mvp
-  let stats : @resource.EnumMap[@maple_stat.Id, Int] = @resource.EnumMap::default()
-  stats.0.set(@maple_stat.Id::LEVEL, 10)
-  stats.0.set(@maple_stat.Id::STR, 50)
-  stats.0.set(@maple_stat.Id::DEX, 50)
-  stats.0.set(@maple_stat.Id::MAXHP, 500)
-  stats.0.set(@maple_stat.Id::HP, 500)
-  stats.0.set(@maple_stat.Id::MAXMP, 200)
-  stats.0.set(@maple_stat.Id::MP, 200)
-  let items = Array::new()
-  let weapon_stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
-  weapon_stats.0.set(@maple_stat.EquipStatId::WATK, 10)
-  items.push(
-    @maple_protocol.InventoryItemEntry::Equip(
-      invtype=InventoryType::EQUIPPED,
-      slot=-11,
-      id=1302000, // beginner sword
-      cash=false,
-      expire=0,
-      slots=7,
-      level=0,
-      stats=weapon_stats,
-      owner="",
-      flag=0,
-      itemlevel=0,
-      itemexp=0,
-      vicious=0,
-    ),
-  )
-  let set_field_message = SetFieldMessage::SetField(
-    stats=StatsEntry::{
-      name: "kkkiio",
-      female: false,
-      stats,
-      i64stats: @resource.EnumMap::default(),
-      map_id: default_server.last_map_id,
-      portal_id: default_server.last_portal_id,
-    },
-    inventory_entry=InventoryEntry::{
-      meso: 0,
-      slot_maxs: @resource.EnumMap::default(),
-      items,
-    },
-    skills=[],
-    cooldowns=@resource.EnumMap::default(),
-    quests=PlayerQuestLogInfo::default(),
-  )
-  let set_field_json = set_field_message.to_json()
-  default_server.server_message_queue.push(
-    (@net.Opcode::SET_FIELD.int_value(), set_field_json),
-  )
+  @io_service.execute_background(async fn() {
+    if default_server.db is Some(db) {
+      if db.load_character_data(1) is Some(data) {
+        match data {
+          { "map_id": Number(map_id, ..), .. } =>
+            default_server.last_map_id = map_id.to_int()
+          _ => ()
+        }
+      }
+    }
+
+    // hardcode character for mvp
+    let stats : @resource.EnumMap[@maple_stat.Id, Int] = @resource.EnumMap::default()
+    stats.0.set(@maple_stat.Id::LEVEL, 10)
+    stats.0.set(@maple_stat.Id::STR, 50)
+    stats.0.set(@maple_stat.Id::DEX, 50)
+    stats.0.set(@maple_stat.Id::MAXHP, 500)
+    stats.0.set(@maple_stat.Id::HP, 500)
+    stats.0.set(@maple_stat.Id::MAXMP, 200)
+    stats.0.set(@maple_stat.Id::MP, 200)
+    let items = Array::new()
+    let weapon_stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
+    weapon_stats.0.set(@maple_stat.EquipStatId::WATK, 10)
+    items.push(
+      @maple_protocol.InventoryItemEntry::Equip(
+        invtype=InventoryType::EQUIPPED,
+        slot=-11,
+        id=1302000, // beginner sword
+        cash=false,
+        expire=0,
+        slots=7,
+        level=0,
+        stats=weapon_stats,
+        owner="",
+        flag=0,
+        itemlevel=0,
+        itemexp=0,
+        vicious=0,
+      ),
+    )
+    let set_field_message = SetFieldMessage::SetField(
+      stats=StatsEntry::{
+        name: "kkkiio",
+        female: false,
+        stats,
+        i64stats: @resource.EnumMap::default(),
+        map_id: default_server.last_map_id,
+        portal_id: default_server.last_portal_id,
+      },
+      inventory_entry=InventoryEntry::{
+        meso: 0,
+        slot_maxs: @resource.EnumMap::default(),
+        items,
+      },
+      skills=[],
+      cooldowns=@resource.EnumMap::default(),
+      quests=PlayerQuestLogInfo::default(),
+    )
+    let set_field_json = set_field_message.to_json()
+    default_server.server_message_queue.push(
+      (@net.Opcode::SET_FIELD.int_value(), set_field_json),
+    )
+  })
 }

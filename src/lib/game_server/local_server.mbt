@@ -29,6 +29,7 @@ priv struct LocalServer {
   mut last_portal_id : Int
   mut last_object_id : Int
   mobs : Map[Int, ServerMob]
+  mut db : IndexedDB?
 }
 
 ///|
@@ -50,6 +51,7 @@ fn LocalServer::new() -> LocalServer {
     last_portal_id: 23,
     last_object_id: 100000,
     mobs: Map::new(),
+    db: None,
   }
 }
 
@@ -166,4 +168,12 @@ pub fn server_system(_delta : Double) -> Unit {
       err => abort("Error handling client message: \{err.to_string()}")
     }
   }
+}
+
+///|
+pub fn init_server() -> Unit {
+  @io_service.execute_background(async fn() {
+    let db = init_db()
+    default_server.db = Some(db)
+  })
 }

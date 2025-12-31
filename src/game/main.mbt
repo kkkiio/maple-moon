@@ -1,5 +1,6 @@
 ///|
 fn game_start(_delta : Double) -> Unit {
+  @game_server.init_server()
   @login.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @monster.setup_game_server_handlers()

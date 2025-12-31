@@ -406,7 +406,7 @@ pub impl @map_object.MapObject for Mob with update(
     None => ()
   }
   if aniend && self.stance.t == StanceType::SKILL {
-    self.set_stance(Stance::from_type(StanceType::STAND))
+    self.set_stance({ t: StanceType::STAND, face_right: self.stance.face_right })
   }
   if aniend && self.stance.t == StanceType::DIE {
     self.dead = true
@@ -440,7 +440,10 @@ pub impl @map_object.MapObject for Mob with update(
         self.stance = self.stance.flip()
         self.base.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
         if self.stance.t == StanceType::HIT {
-          self.set_stance(Stance::from_type(StanceType::STAND))
+          self.set_stance({
+            t: StanceType::STAND,
+            face_right: self.stance.face_right,
+          })
         }
       }
     }
@@ -517,10 +520,17 @@ fn Mob::next_move(self : Mob) -> Unit {
         if self.can_jump &&
           self.base.phobj.onground &&
           self.randomizer.below(0.25) {
-          self.set_stance(Stance::from_type(StanceType::JUMP))
+          self.set_stance({
+            t: StanceType::JUMP,
+            face_right: self.stance.face_right,
+          })
         } else {
           match self.randomizer.next_int(3) {
-            0 => self.set_stance(Stance::from_type(StanceType::STAND))
+            0 =>
+              self.set_stance({
+                t: StanceType::STAND,
+                face_right: self.stance.face_right,
+              })
             1 => self.set_stance({ t: StanceType::MOVE, face_right: false })
             _ => self.set_stance({ t: StanceType::MOVE, face_right: true })
           }
@@ -535,7 +545,7 @@ fn Mob::next_move(self : Mob) -> Unit {
       ])
     }
   } else {
-    self.set_stance(Stance::from_type(StanceType::STAND))
+    self.set_stance({ t: StanceType::STAND, face_right: self.stance.face_right })
   }
 }
 
@@ -869,7 +879,7 @@ pub fn Mob::kill(self : Mob, animation : Int) -> Unit {
 
 ///|
 fn Mob::apply_death(self : Mob) -> Unit {
-  self.set_stance(Stance::from_type(StanceType::DIE))
+  self.set_stance({ t: StanceType::DIE, face_right: self.stance.face_right })
   // die_sound_.play();
   self.dying = true
 }

@@ -23,3 +23,10 @@ moon test
 # test specific file
 moon test src/lib/map/background.mbt
 ```
+
+## Project Structure
+
+- **`features.yaml`**: High-level feature tracking and status.
+- **`docs/`**: Game Design & Features documentation.
+- **`src/lib/game_server`**: Local server simulation and authoritative game state.
+- **`src/lib/ui`**: Game UI components.

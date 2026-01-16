@@ -233,32 +233,28 @@ pub(all) enum PhysicsObjectType {
 
 ///|
 pub(all) enum PhysicsObjectFlag {
-  NO_GRAVITY
-  TURN_AT_EDGES
-  CHECK_BELOW
+  NO_GRAVITY = 0x0001
+  TURN_AT_EDGES = 0x0002
+  CHECK_BELOW = 0x0004
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
-pub fn PhysicsObjectFlag::int_value(self : PhysicsObjectFlag) -> Int {
-  match self {
-    PhysicsObjectFlag::NO_GRAVITY => 0x0001
-    PhysicsObjectFlag::TURN_AT_EDGES => 0x0002
-    PhysicsObjectFlag::CHECK_BELOW => 0x0004
-  }
-}
+pub fn PhysicsObjectFlag::int_value(self : PhysicsObjectFlag) -> Int = "%identity"
 
 ///|
 pub struct PhysicsObject {
   moving_object : MovingObject
   mut t : PhysicsObjectType
   mut flags : Int
-  mut fhid : Int
-  mut fhslope : Double
+  mut fh_id : Int
+  mut fh_slope : Double
   mut fhlayer : Int
   mut groundbelow : Double
-  mut onground : Bool
+  mut on_ground : Bool
   mut enablejd : Bool
+  /// 水平瞬时力
   mut hforce : Double
+  /// 垂直瞬时力
   mut vforce : Double
   mut hacc : Double
   mut vacc : Double
@@ -272,11 +268,11 @@ pub fn PhysicsObject::new(
     moving_object: MovingObject::new(on_pos_change~),
     t: PhysicsObjectType::NORMAL,
     flags: 0,
-    fhid: 0,
-    fhslope: 0.0,
+    fh_id: 0,
+    fh_slope: 0.0,
     fhlayer: 0,
     groundbelow: 0.0,
-    onground: true,
+    on_ground: true,
     enablejd: false,
     hforce: 0.0,
     vforce: 0.0,
@@ -428,7 +424,7 @@ pub fn PhysicsObject::set_t(
 
 ///|
 pub fn PhysicsObject::set_fhid(self : PhysicsObject, fhid : Int) -> Unit {
-  self.fhid = fhid
+  self.fh_id = fhid
 }
 
 ///|

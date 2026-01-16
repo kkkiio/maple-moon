@@ -92,9 +92,10 @@ pub async fn ExplorerCreatorUIResource::load(
     let bots = []
     let shoes = []
     let weapons = []
-    for name, node in char {
+    for node in char {
+      let name = node.name()
       let num = @strconv.parse_int(name)
-      for _, idnode in node {
+      for idnode in node {
         let value = idnode.get_int()
         match num {
           0 => faces.push(value)

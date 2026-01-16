@@ -20,21 +20,17 @@ pub fn[T] TimedQueue::process(
   timestep~ : Int64,
 ) -> Iter[T] {
   self.time += timestep
-  Iter::new(fn(yield_) {
-    loop self.queue.peek() {
+  Iter::new(fn() {
+    match self.queue.peek() {
       Some(top) => {
         if top.0 > self.time {
-          break
-        }
-        if yield_(top.1) == IterEnd {
-          return IterEnd
+          return None
         }
         self.queue.pop() |> ignore
-        continue self.queue.peek()
+        return Some(top.1)
       }
-      None => break
+      None => return None
     }
-    IterContinue
   })
 }
 

@@ -1,5 +1,7 @@
 ///|
-pub(all) suberror UnknownEnum Int derive(Show)
+pub(all) suberror UnknownEnum {
+  UnknownEnum(Int)
+} derive(Show)
 
 ///|
 pub fn UnknownEnum::to_string(self : UnknownEnum) -> String {

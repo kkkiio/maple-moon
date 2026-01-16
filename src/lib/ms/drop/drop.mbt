@@ -75,7 +75,7 @@ fn DropBase::new(
 fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
   physics.move_object(self.base.phobj)
   if self.state == DropState::DROPPED {
-    if self.base.phobj.onground {
+    if self.base.phobj.on_ground {
       self.base.phobj.set_hspeed(0.0)
       self.base.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
       self.state = DropState::FLOATING

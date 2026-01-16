@@ -192,7 +192,9 @@ pub fn InPacket::read_point(
 }
 
 ///|
-pub suberror ReadPacketError String
+pub suberror ReadPacketError {
+  ReadPacketError(String)
+}
 
 ///|
 pub impl Show for ReadPacketError with output(self, logger) {

@@ -74,7 +74,7 @@ pub fn Movement::from_physics_object(
     phobj.get_y(),
     phobj.get_last_x(),
     phobj.get_last_y(),
-    phobj.fhid,
+    phobj.fh_id,
     s,
     1,
   )

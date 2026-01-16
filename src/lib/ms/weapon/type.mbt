@@ -45,7 +45,9 @@ pub fn Type::int_value(self : Type) -> Int {
 }
 
 ///|
-pub(all) suberror UnknownWeaponType Int derive(Show)
+pub(all) suberror UnknownWeaponType {
+  UnknownWeaponType(Int)
+} derive(Show)
 
 ///|
 pub fn Type::by_value(value : Int) -> Type raise UnknownWeaponType {

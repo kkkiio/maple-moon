@@ -53,5 +53,52 @@ test "damage number" {
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
-  @json.inspect(sprites, content=([{"draw":["Animation",{"current":{"sprite_path":"Effect/BasicEff.img/NoRed1.png","size":[37,39],"offset":[37,0],"pivot":[18,38]},"loop_":false}],"zindex":75000,"visible":true},{"draw":["Animation",{"current":{"sprite_path":"Effect/BasicEff.img/NoRed0.png","size":[31,33],"pivot":[15,32]},"loop_":false}],"zindex":75000,"visible":true},{"draw":["Animation",{"current":{"sprite_path":"Effect/BasicEff.img/NoRed0.png","size":[31,33],"pivot":[15,32]},"loop_":false}],"zindex":75000,"visible":true}]))
+  @json.inspect(sprites, content=[
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Effect/BasicEff.img/NoRed1.png",
+            "size": [37, 39],
+            "offset": [37, 0],
+            "pivot": [18, 38],
+          },
+          "loop_": false,
+        },
+      ],
+      "zindex": 75000,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Effect/BasicEff.img/NoRed0.png",
+            "size": [31, 33],
+            "pivot": [15, 32],
+          },
+          "loop_": false,
+        },
+      ],
+      "zindex": 75000,
+      "visible": true,
+    },
+    {
+      "draw": [
+        "Animation",
+        {
+          "current": {
+            "sprite_path": "Effect/BasicEff.img/NoRed0.png",
+            "size": [31, 33],
+            "pivot": [15, 32],
+          },
+          "loop_": false,
+        },
+      ],
+      "zindex": 75000,
+      "visible": true,
+    },
+  ])
 }

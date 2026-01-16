@@ -119,7 +119,9 @@ pub fn NxNode::get_int(self : NxNode) -> Int raise LoadError {
 }
 
 ///|
-pub(all) suberror LoadError String derive(Show)
+pub(all) suberror LoadError {
+  LoadError(String)
+} derive(Show)
 
 ///|
 pub fn NxNode::as_int(self : NxNode) -> Int raise LoadError {
@@ -188,21 +190,6 @@ pub fn NxNode::iter(self : NxNode) -> Iter[NxNode] {
       })
     _ => Iter::empty()
   }
-}
-
-///|
-pub fn NxNode::iter2(self : NxNode) -> Iter2[String, NxNode] {
-  Iter2::new(fn(yield_) {
-    match self.desc {
-      Json::Object(it) =>
-        it
-        .iter2()
-        .run(fn(k, v) {
-          yield_(k, { ..self, name: k, desc: v, path: self.path.push(k) })
-        })
-      _ => IterContinue
-    }
-  })
 }
 
 ///|

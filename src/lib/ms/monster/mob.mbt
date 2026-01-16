@@ -474,7 +474,7 @@ pub impl @map_object.MapObject for Mob with update(
         }
       StanceType::HIT =>
         if self.can_move {
-          let kbforce = if self.base.phobj.onground { 0.2 } else { 0.1 }
+          let kbforce = if self.base.phobj.on_ground { 0.2 } else { 0.1 }
           self.base.phobj.set_hforce(
             if self.stance.face_right { // backwards
               -kbforce
@@ -491,7 +491,7 @@ pub impl @map_object.MapObject for Mob with update(
       self.counter += 1
       let next = match self.stance.t {
         StanceType::HIT => self.counter > 200
-        StanceType::JUMP => self.base.phobj.onground
+        StanceType::JUMP => self.base.phobj.on_ground
         _ => aniend && self.counter > self.randomizer.next_int(from=200, 500)
       }
       if next {
@@ -518,7 +518,7 @@ fn Mob::next_move(self : Mob) -> Unit {
         })
       StanceType::MOVE | StanceType::JUMP =>
         if self.can_jump &&
-          self.base.phobj.onground &&
+          self.base.phobj.on_ground &&
           self.randomizer.below(0.25) {
           self.set_stance({
             t: StanceType::JUMP,

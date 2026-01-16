@@ -300,7 +300,7 @@ fn Player::update(
       if aniend && self.character.attacking {
         self.character.attacking = false
         @char_look.clear_after_image(self.entity)
-        let state : CharState = if player.character.get_phobj().onground {
+        let state : CharState = if player.character.get_phobj().on_ground {
           if player.is_key_down(@keyboard.BasicActionId::LEFT) {
             player.set_facing_right(false)
             CharState::WALK
@@ -329,11 +329,11 @@ fn Player::update(
       } else {
         match self.character.state {
           STAND =>
-            if not(player.character.get_phobj().onground) {
+            if not(player.character.get_phobj().on_ground) {
               player.set_state(CharState::FALL)
             }
           WALK =>
-            if player.character.get_phobj().onground {
+            if player.character.get_phobj().on_ground {
               if not(haswalkinput(player)) ||
                 player.character.get_phobj().moving_object.hspeed == 0.0 {
                 player.set_state(CharState::STAND)
@@ -342,7 +342,7 @@ fn Player::update(
               player.set_state(CharState::FALL)
             }
           FALL =>
-            if player.character.get_phobj().onground {
+            if player.character.get_phobj().on_ground {
               if player.is_key_down(@keyboard.BasicActionId::LEFT) {
                 player.set_facing_right(false)
                 player.set_state(CharState::WALK)
@@ -358,7 +358,7 @@ fn Player::update(
               player.set_state(CharState::SWIM)
             }
           SWIM =>
-            if player.character.get_phobj().onground && player.is_underwater() {
+            if player.character.get_phobj().on_ground && player.is_underwater() {
               let state = if player.is_key_down(@keyboard.BasicActionId::LEFT) {
                 player.set_facing_right(false)
                 CharState::WALK
@@ -764,7 +764,7 @@ pub fn Player::can_attack(self : Player) -> Bool {
 
 ///|
 pub fn Player::rush(self : Player, targetx : Double) -> Unit {
-  if self.character.get_phobj().onground {
+  if self.character.get_phobj().on_ground {
     let delay = self.character.get_attackdelay(1)
     self.character.get_phobj().moving_object.movexuntil(targetx, delay)
     self.character

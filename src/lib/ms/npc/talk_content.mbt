@@ -180,7 +180,9 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
   |> Map::from_iter
 
 ///|
-pub(all) suberror ParseTalkError String derive(Show)
+pub(all) suberror ParseTalkError {
+  ParseTalkError(String)
+} derive(Show)
 
 ///|
 using @struct {type ColorName}

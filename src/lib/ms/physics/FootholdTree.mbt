@@ -62,14 +62,18 @@ pub fn FootholdTree::limit_movement(
     let crnt_x = phobj.moving_object.crnt_x()
     let next_x = phobj.moving_object.next_x()
     let left = phobj.moving_object.hspeed < 0.0
-    let mut wall = self.get_wall(phobj.fhid, left, phobj.moving_object.next_y())
+    let mut wall = self.get_wall(
+      phobj.fh_id,
+      left,
+      phobj.moving_object.next_y(),
+    )
     let mut collision = if left {
       crnt_x >= wall && next_x <= wall
     } else {
       crnt_x <= wall && next_x >= wall
     }
     if not(collision) && phobj.is_flag_set(PhysicsObjectFlag::TURN_AT_EDGES) {
-      wall = self.get_edge(phobj.fhid, left)
+      wall = self.get_edge(phobj.fh_id, left)
       collision = if left {
         crnt_x >= wall && next_x <= wall
       } else {
@@ -85,8 +89,8 @@ pub fn FootholdTree::limit_movement(
     let crnt_y = phobj.moving_object.crnt_y()
     let next_y = phobj.moving_object.next_y()
     let ground = @struct.Range::new(
-      self.get_fh(phobj.fhid).ground_below(phobj.moving_object.crnt_x()),
-      self.get_fh(phobj.fhid).ground_below(phobj.moving_object.next_x()),
+      self.get_fh(phobj.fh_id).ground_below(phobj.moving_object.crnt_x()),
+      self.get_fh(phobj.fh_id).ground_below(phobj.moving_object.next_x()),
     )
     let collision = crnt_y <= ground.first() && next_y >= ground.second()
     if collision {
@@ -105,39 +109,40 @@ pub fn FootholdTree::update_fh(
   self : FootholdTree,
   phobj : PhysicsObject,
 ) -> Unit {
-  if phobj.t == PhysicsObjectType::FIXATED && phobj.fhid > 0 {
+  if phobj.t == PhysicsObjectType::FIXATED && phobj.fh_id > 0 {
     return
   }
-  let curfh = self.get_fh(phobj.fhid)
+  let curfh = self.get_fh(phobj.fh_id)
   let mut checkslope = false
   let x = phobj.moving_object.crnt_x()
   let y = phobj.moving_object.crnt_y()
-  if phobj.onground {
+  if phobj.on_ground {
     if x.floor() > curfh.r().to_double() {
-      phobj.fhid = curfh.next()
+      phobj.fh_id = curfh.next()
     } else if x.ceil() < curfh.l().to_double() {
-      phobj.fhid = curfh.prev()
+      phobj.fh_id = curfh.prev()
     }
-    if phobj.fhid == 0 {
-      phobj.fhid = self.get_fhid_below(x, y)
+    if phobj.fh_id == 0 {
+      phobj.fh_id = self.get_fhid_below(x, y)
     } else {
       checkslope = true
     }
   } else {
-    phobj.fhid = self.get_fhid_below(x, y)
-    if phobj.fhid == 0 {
+    phobj.fh_id = self.get_fhid_below(x, y)
+    if phobj.fh_id == 0 {
       return
     }
   }
-  let nextfh = self.get_fh(phobj.fhid)
-  phobj.fhslope = nextfh.slope()
+  let nextfh = self.get_fh(phobj.fh_id)
+  phobj.fh_slope = nextfh.slope()
   let ground = nextfh.ground_below(x)
   if phobj.moving_object.vspeed == 0.0 && checkslope {
-    let mut vdelta = phobj.fhslope.abs()
-    if phobj.fhslope < 0.0 {
-      vdelta *= ground - y
-    } else if phobj.fhslope > 0.0 {
-      vdelta *= y - ground
+    let vdelta = if phobj.fh_slope < 0.0 {
+      -phobj.fh_slope * (ground - y)
+    } else if phobj.fh_slope > 0.0 {
+      phobj.fh_slope * (y - ground)
+    } else {
+      0
     }
     if curfh.slope() != 0.0 || nextfh.slope() != 0.0 {
       if phobj.moving_object.hspeed > 0.0 &&
@@ -149,7 +154,7 @@ pub fn FootholdTree::update_fh(
       }
     }
   }
-  phobj.onground = phobj.moving_object.y.get() == ground
+  phobj.on_ground = phobj.moving_object.y.get() == ground
   if phobj.enablejd || phobj.is_flag_set(PhysicsObjectFlag::CHECK_BELOW) {
     let belowid = self.get_fhid_below(x, nextfh.ground_below(x) + 1.0)
     if belowid > 0 {
@@ -161,11 +166,11 @@ pub fn FootholdTree::update_fh(
     }
     phobj.clear_flag(PhysicsObjectFlag::CHECK_BELOW)
   }
-  if phobj.fhlayer == 0 || phobj.onground {
+  if phobj.fhlayer == 0 || phobj.on_ground {
     phobj.fhlayer = nextfh.layer()
   }
-  if phobj.fhid == 0 {
-    phobj.fhid = curfh.id()
+  if phobj.fh_id == 0 {
+    phobj.fh_id = curfh.id()
     phobj.moving_object.limitx(curfh.x1().to_double())
   }
 }

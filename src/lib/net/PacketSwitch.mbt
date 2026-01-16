@@ -206,7 +206,9 @@ pub fn Opcode::from_int(v : Int) -> Opcode raise UnknownOpCodeError {
 }
 
 ///|
-suberror UnknownOpCodeError Int
+suberror UnknownOpCodeError {
+  UnknownOpCodeError(Int)
+}
 
 ///|
 pub impl Hash for Opcode with hash_combine(self : Opcode, hasher : Hasher) -> Unit {

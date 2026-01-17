@@ -797,10 +797,11 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     for name, it in stance_stances {
       let (frames, layers) = it
       if frames.length() != layers.length() {
-        @log.error(
-          { "name": name, "frames": frames.length(), "layers": layers.length() },
-          "frames.length() != layers.length()",
-        )
+        @log.error("frames.length() != layers.length()", data={
+          "name": name,
+          "frames": frames.length(),
+          "layers": layers.length(),
+        })
         panic()
       }
       let nx_anim = @resource.NxAnimation::{
@@ -851,15 +852,12 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       for part, it in stance_parts {
         let (frames, layers) = it
         if frames.length() != layers.length() {
-          @log.error(
-            {
-              "slot": slot.to_string(),
-              "part": part,
-              "frames": frames.length(),
-              "layers": layers.length(),
-            },
-            "equipment frames.length() != layers.length()",
-          )
+          @log.error("equipment frames.length() != layers.length()", data={
+            "slot": slot.to_string(),
+            "part": part,
+            "frames": frames.length(),
+            "layers": layers.length(),
+          })
           continue
         }
         if frames.length() == 0 {
@@ -1529,10 +1527,11 @@ fn CharLook::play_climbing_animations(
     for name, it in stance_stances {
       let (frames, layers) = it
       if frames.length() != layers.length() {
-        @log.error(
-          { "name": name, "frames": frames.length(), "layers": layers.length() },
-          "frames.length() != layers.length()",
-        )
+        @log.error("frames.length() != layers.length()", data={
+          "name": name,
+          "frames": frames.length(),
+          "layers": layers.length(),
+        })
         panic()
       }
       let nx_anim = @resource.NxAnimation::{

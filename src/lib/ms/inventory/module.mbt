@@ -114,6 +114,6 @@ impl Show for ShowGainAction with output(self, logger) {
 
 ///|
 impl @game_mod.SubRouteAction for ShowGainAction with handle(self) {
-  @log.info({ "message": self.message }, "ShowGainAction")
+  @log.info("ShowGainAction", data={ "message": self.message })
   // TODO: Handle the message
 }

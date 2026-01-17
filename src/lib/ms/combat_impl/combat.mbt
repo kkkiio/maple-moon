@@ -140,7 +140,7 @@ fn Combat::use_move(
       (act, None)
     }
   } else {
-    @log.warn({ "move_id": move_id }, "skill not registered")
+    @log.warn("skill not registered", data={ "move_id": move_id })
     return
   }
   if act.is_attack() && not(cc.can_attack()) {
@@ -214,10 +214,10 @@ fn Combat::apply_move(
     let stance_name = character.get_look().get_stance().name()
     // Get AfterImage for this stance
     guard after_images.get(stance_name) is Some(after_image) else {
-      @log.error(
-        { "stance": stance_name, "available": after_images.keys().collect() },
-        "No afterimage for stance",
-      )
+      @log.error("No afterimage for stance", data={
+        "stance": stance_name,
+        "available": after_images.keys().collect(),
+      })
       panic()
     }
     // Create frame getter that captures CharLook reference
@@ -647,7 +647,8 @@ pub fn[E : Show] log_background_err(
   f.map(fn(res) {
     match res {
       Ok(_) => ()
-      Err(e) => @log.error({ "err": Show::to_string(e) }, "task failed", loc~)
+      Err(e) =>
+        @log.error("task failed", data={ "err": Show::to_string(e) }, loc~)
     }
   })
 }

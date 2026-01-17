@@ -48,7 +48,7 @@ fn LocalServer::new() -> LocalServer {
     client_message_handler_map: {},
     server_message_handlers_map: {},
     last_map_id: 100000000,
-    last_portal_id: 23,
+    last_portal_id: 0,
     last_object_id: 100000,
     mobs: Map::new(),
     db: None,
@@ -108,7 +108,7 @@ pub fn[T : ClientMessage] send(
 ) -> Unit {
   let type_code = T::type_code()
   let json = message.to_json()
-  @log.log(log_level, { "message": json }, "send", loc~)
+  @log.log(log_level, "send", data={ "message": json }, loc~)
   default_server.client_message_queue.push((type_code, json))
 }
 
@@ -122,7 +122,7 @@ fn[T : ServerMessage] LocalServer::send_server_message(
 ) -> Unit {
   let type_code = T::type_code()
   let json = message.to_json()
-  @log.log(log_level, { "message": json }, "send_server_message", loc~)
+  @log.log(log_level, "send_server_message", data={ "message": json }, loc~)
   self.server_message_queue.push((type_code, json))
 }
 
@@ -140,7 +140,7 @@ pub fn add_server_message_handler(
 ///|
 pub fn server_system(_delta : Double) -> Unit {
   while default_server.server_message_queue.pop() is Some((type_code, json)) {
-    @log.debug({ "type_code": type_code, "json": json }, "server message")
+    @log.debug("server message", data={ "type_code": type_code, "json": json })
     guard default_server.server_message_handlers_map.get(type_code)
       is Some(handlers) else {
       continue
@@ -148,20 +148,20 @@ pub fn server_system(_delta : Double) -> Unit {
     for handler in handlers {
       (handler.1)(json) catch {
         err =>
-          @log.error(
-            { "error": err.to_string(), "name": handler.0 },
-            "Error handling server message",
-          )
+          @log.error("Error handling server message", data={
+            "error": err.to_string(),
+            "name": handler.0,
+          })
       }
     }
   }
   while default_server.client_message_queue.pop() is Some((type_code, json)) {
     guard default_server.client_message_handler_map.get(type_code)
       is Some(handler) else {
-      @log.debug(
-        { "type_code": type_code, "json": json },
-        "Missing client message handler",
-      )
+      @log.debug("Missing client message handler", data={
+        "type_code": type_code,
+        "json": json,
+      })
       return
     }
     handler(json) catch {

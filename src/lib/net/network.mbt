@@ -43,11 +43,9 @@ pub fn Network::process_out(self : Network, data : Bytes) -> Unit {
 /// send packet to the server
 #deprecated("use send_message instead")
 pub fn Network::send_packet(self : Network, packet : OutPacket) -> Unit {
-  @log.log(
-    packet.opcode.log_level(),
-    { "opcode": packet.opcode },
-    "sending packet",
-  )
+  @log.log(packet.opcode.log_level(), "sending packet", data={
+    "opcode": packet.opcode,
+  })
   self.process_out(packet.encode())
 }
 
@@ -60,7 +58,7 @@ pub fn[T : OutMessage] Network::send_message(
   log_level? : @log.Level = @log.Level::DEBUG,
   loc~ : SourceLoc,
 ) -> Unit {
-  @log.log(log_level, { "message": message.to_string() }, "send", loc~)
+  @log.log(log_level, "send", data={ "message": message.to_string() }, loc~)
   self.process_out(message.pack().encode())
 }
 
@@ -116,20 +114,22 @@ pub fn PacketSwitch::forward(self : PacketSwitch, bytes : Bytes) -> Unit {
   // Read the opcode to determine handler responsible
   let opcode = Opcode::from_int(recv.read_ushort()) catch {
     UnknownOpCodeError(opcode) => {
-      @log.warn(
-        { "opcode": @utils.to_hex_string(opcode.reinterpret_as_uint()) },
-        "unknown opcode",
-      )
+      @log.warn("unknown opcode", data={
+        "opcode": @utils.to_hex_string(opcode.reinterpret_as_uint()),
+      })
       return
     }
     err => {
-      @log.warn({ "blen": bytes.length(), "err": err }, "read opcode failed")
+      @log.warn("read opcode failed", data={
+        "blen": bytes.length(),
+        "err": err,
+      })
       return
     }
   }
   match self.handlers.get(opcode) {
     Some(handler) => handler(recv)
-    None => @log.warn({ "opcode": opcode }, "Unhandled packet detected")
+    None => @log.warn("Unhandled packet detected", data={ "opcode": opcode })
   }
 }
 
@@ -142,14 +142,14 @@ pub fn with_log(
 ) -> (InPacket) -> Unit {
   fn(recv : InPacket) {
     if log_recv {
-      @log.debug(
-        { "opcode": opcode, "len": recv.bytes.length() - recv.pos },
-        "received",
-      )
+      @log.debug("received", data={
+        "opcode": opcode,
+        "len": recv.bytes.length() - recv.pos,
+      })
     }
     handler(recv) catch {
       err =>
-        @log.error({ "opcode": opcode, "err": err }, "handle packet failed")
+        @log.error("handle packet failed", data={ "opcode": opcode, "err": err })
     }
   }
 }
@@ -169,15 +169,15 @@ pub fn[T : Show] make_handler(
       let message = parser(recv) catch {
         err => {
           @log.error(
-            { "op": opcode, "err": err, "raw_body": recv.bytes },
             "parse packet failed",
+            data={ "op": opcode, "err": err, "raw_body": recv.bytes },
             loc~,
           )
           return
         }
       }
       if log_recv {
-        @log.debug({ "op": opcode, "body": message }, "received", loc~)
+        @log.debug("received", data={ "op": opcode, "body": message }, loc~)
       }
       handler(message)
     },

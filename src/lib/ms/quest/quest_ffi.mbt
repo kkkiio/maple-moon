@@ -25,7 +25,10 @@ pub fn watch_quest_log_ffi(
         .unwrap_or("")
       let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
-          @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
+          @log.warn("failed to parse desc", data={
+            "desc": markup_desc,
+            "err": err,
+          })
           markup_desc
         }
       }
@@ -46,7 +49,10 @@ pub fn watch_quest_log_ffi(
       let markup_desc = quest.quest_info.descriptions.last().unwrap_or("")
       let desc = parse_quest_desc(markup_desc, ref_name_provider~) catch {
         err => {
-          @log.warn({ "desc": markup_desc, "err": err }, "failed to parse desc")
+          @log.warn("failed to parse desc", data={
+            "desc": markup_desc,
+            "err": err,
+          })
           markup_desc
         }
       }

@@ -75,7 +75,7 @@ pub fn draw_sprite(
   let sprite_path = "assets/\{sprite_path}"
   let img_bytes = @fs.read_file_to_bytes(sprite_path) catch {
     e => {
-      @log.error({ "error": e }, "Failed to load sprite")
+      @log.error("Failed to load sprite", data={ "error": e })
       panic()
     }
   }

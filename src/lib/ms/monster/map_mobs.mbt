@@ -59,7 +59,7 @@ pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
     guard future.poll() is Some(rs) else { return true }
     match rs {
       Ok(mob) => self.mobs.add(mob)
-      Err(e) => @log.error({ "err": e }, "Failed to load mob")
+      Err(e) => @log.error("Failed to load mob", data={ "err": e })
     }
     false
   })

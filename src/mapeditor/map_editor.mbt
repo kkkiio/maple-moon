@@ -131,7 +131,7 @@ fn start_map_loading_system(_delta : Double) -> Unit {
       (raw, scene)
     }),
   )
-  @log.info({ "map_id": MAP_ID }, "start loading map for viewer")
+  @log.info("start loading map for viewer", data={ "map_id": MAP_ID })
 }
 
 ///|
@@ -143,7 +143,7 @@ fn map_loading_poll_system(_delta : Double) -> Unit {
     Ok((raw_resources, scene_map)) => finalize_scene(raw_resources, scene_map)
     Err(e) => {
       viewer_state.val.error_message = Some(e.to_string())
-      @log.error({ "map_id": MAP_ID, "error": e }, "load map failed")
+      @log.error("load map failed", data={ "map_id": MAP_ID, "error": e })
     }
   }
 }
@@ -213,14 +213,11 @@ fn finalize_scene(
     )
   }
   @monster.set_mobs({ map_mobs: mobs, physics })
-  @log.info(
-    {
-      "map_id": MAP_ID,
-      "map_limits": map_limits,
-      "mob_count": oid_counter - 100000,
-    },
-    "map ready in viewer",
-  )
+  @log.info("map ready in viewer", data={
+    "map_id": MAP_ID,
+    "map_limits": map_limits,
+    "mob_count": oid_counter - 100000,
+  })
 }
 
 ///|

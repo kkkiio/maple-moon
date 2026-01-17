@@ -16,7 +16,6 @@
     "KKKIIO/maple-moon/lib/ms/npc",
     "KKKIIO/maple-moon/lib/ms/markup_text",
     "KKKIIO/maple-moon/lib/ms/inventory",
-    "KKKIIO/maple-moon/lib/game_server",
     "KKKIIO/maple-moon/lib/maple_protocol"
   ],
   "link": {

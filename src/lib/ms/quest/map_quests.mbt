@@ -98,7 +98,7 @@ pub fn MapQuests::add_npc(
 ) -> Unit {
   guard self.player_deps
     is Some({ player_quest_log, item_count_provider, char_stats_provider }) else {
-    @log.error({ "npc_id": npc_id }, "player not set yet")
+    @log.error("player not set yet", data={ "npc_id": npc_id })
     return
   }
 
@@ -143,10 +143,10 @@ pub fn MapQuests::add_npc(
               return
             }
             Err(err) =>
-              @log.debug(
-                { "quest_id": quest_id, "error": err },
-                "quest completion check failed",
-              )
+              @log.debug("quest completion check failed", data={
+                "quest_id": quest_id,
+                "error": err,
+              })
           }
         }
         let icon_animation = self.resource.inprogress_quest_icon
@@ -172,7 +172,7 @@ pub fn MapQuests::add_npc(
       item_count_provider,
       char_stats_provider,
       player_quest_log,
-    ).peek()
+    ).next()
     is Some((quest_id, _)) {
     let icon_animation = self.resource.available_quest_icon
     self.quests.add(
@@ -239,7 +239,7 @@ fn NpcQuest::new(
   npc_object : @physics.MovingObject,
   icon : @graphics.Animation,
 ) -> NpcQuest {
-  @log.debug({ "npc_id": npc_id, "quest_id": quest_id }, "show quest icon")
+  @log.debug("show quest icon", data={ "npc_id": npc_id, "quest_id": quest_id })
   {
     quest_id,
     in_progress_quest,

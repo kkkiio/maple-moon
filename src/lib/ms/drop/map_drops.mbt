@@ -70,7 +70,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
     match res {
       Ok(drop) => self.drops.add(drop)
       Err(e) => {
-        @log.error({ "err": Show::to_string(e) }, "failed to load drop")
+        @log.error("failed to load drop", data={ "err": Show::to_string(e) })
         return true
       }
     }

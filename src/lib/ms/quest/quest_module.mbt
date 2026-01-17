@@ -360,7 +360,7 @@ fn PlayerQuestLog::from_packet(
     let quest_info = if quest_info is Some(quest_info) {
       quest_info
     } else {
-      @log.warn({ "quest_id": quest_id }, "quest info not found")
+      @log.warn("quest info not found", data={ "quest_id": quest_id })
       {
         name: "Unknown Quest \{quest_id}",
         parent: None,
@@ -389,7 +389,7 @@ fn PlayerQuestLog::add_in_progress_quest(
   let quest_info = if quest_info is Some(quest_info) {
     quest_info
   } else {
-    @log.warn({ "id": id }, "quest info not found")
+    @log.warn("quest info not found", data={ "id": id })
     {
       name: "Unknown Quest \{id}",
       parent: None,
@@ -478,7 +478,7 @@ impl @game_mod.SubRouteAction for ShowCompleteQuestAction with handle(self) -> U
   let quest_info = if quest_info is Some(quest_info) {
     quest_info
   } else {
-    @log.warn({ "quest_id": quest_id }, "quest info not found")
+    @log.warn("quest info not found", data={ "quest_id": quest_id })
     {
       name: "Unknown Quest \{quest_id}",
       parent: None,
@@ -537,7 +537,9 @@ impl @game_mod.SubRouteAction for ShowUpdateQuestAction with handle(self) -> Uni
     // accept quest
     guard self.mod.quests_resource.quest_info_map.get(self.message.quest_id)
       is Some(quest_info) else {
-      @log.warn({ "quest_id": self.message.quest_id }, "quest info not found")
+      @log.warn("quest info not found", data={
+        "quest_id": self.message.quest_id,
+      })
       return
     }
     let quest = {

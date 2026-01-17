@@ -40,10 +40,9 @@ pub fn update_key_mappings(
   for mapping in mappings {
     // Find the MsKey from the keycode
     guard find_mskey_from_keycode(mapping.keycode) is Some(ms_key) else {
-      @log.error(
-        { "keycode": mapping.keycode },
-        "update_key_mappings: key not found",
-      )
+      @log.error("update_key_mappings: key not found", data={
+        "keycode": mapping.keycode,
+      })
       continue
     }
     if mapping.kind == "" { // remove mapping
@@ -51,10 +50,9 @@ pub fn update_key_mappings(
       continue
     }
     guard Mapping::from_name_value(mapping.kind, mapping.action) is Some(kt) else {
-      @log.error(
-        { "kind": mapping.kind },
-        "update_key_mappings: key type not found",
-      )
+      @log.error("update_key_mappings: key type not found", data={
+        "kind": mapping.kind,
+      })
       continue
     }
     update_actions.push((ms_key, Some(kt)))

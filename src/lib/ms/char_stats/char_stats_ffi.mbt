@@ -8,7 +8,7 @@ pub fn watch_player_char_stat(
   listener : StatChangeListener,
 ) -> Unit {
   guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
-    @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
+    @log.error("unrecognized stat_name", data={ "stat_name": stat_name })
     return
   }
   match mod.player_char_stats {
@@ -37,7 +37,7 @@ pub fn watch_player_total_stat(
   listener : StatChangeListener,
 ) -> Unit {
   guard @maple_stat.EquipStatId::from_name(stat_name) is Some(stat) else {
-    @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
+    @log.error("unrecognized stat_name", data={ "stat_name": stat_name })
     return
   }
   match mod.player_char_stats {
@@ -57,7 +57,7 @@ pub fn watch_player_total_stat(
 ///|
 pub fn spend_ap(mod : Module, stat_name : String) -> Unit {
   guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
-    @log.error({ "stat_name": stat_name }, "unrecognized stat_name")
+    @log.error("unrecognized stat_name", data={ "stat_name": stat_name })
     return
   }
   mod.network.send_message({ stat, })

@@ -122,7 +122,7 @@ pub fn next_talk(
       }
       // correct answer
       guard says.says.get(i) is Some(str) else {
-        @log.error({ "says": says.says, "i": i }, "says.get(i) is None")
+        @log.error("says.get(i) is None", data={ "says": says.says, "i": i })
         return None
       }
       let last = says.says.get(i + 1) is None
@@ -159,14 +159,14 @@ pub fn next_talk(
           _,
         ) => {
           guard says.stop is Some(hints) else {
-            @log.error({ "says": says.stop }, "says.stop is None")
+            @log.error("says.stop is None", data={ "says": says.stop })
             return None
           }
           guard hints.base.get(i) is Some(quiz) else {
-            @log.error(
-              { "hints": hints.base, "i": i },
-              "hints.base.get(i) is None",
-            )
+            @log.error("hints.base.get(i) is None", data={
+              "hints": hints.base,
+              "i": i,
+            })
             return None
           }
           let expect_answer = quiz.answer - 1 // CONFUSING: option missmatch with the answer

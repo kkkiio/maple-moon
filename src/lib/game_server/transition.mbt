@@ -7,17 +7,14 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
         change_map_message.target_p,
       )
       is Some({ tm, tn }) else {
-      @log.error(
-        {
-          "map_id": self.last_map_id,
-          "portal_name": change_map_message.target_p,
-        },
-        "portal target not found",
-      )
+      @log.error("portal target not found", data={
+        "map_id": self.last_map_id,
+        "portal_name": change_map_message.target_p,
+      })
       return
     }
     guard get_portal_id_by_map_id_and_portal_name(tm, tn) is Some(portal_id) else {
-      @log.error({ "tm": tm, "tn": tn }, "target portal not found")
+      @log.error("target portal not found", data={ "tm": tm, "tn": tn })
       return
     }
     self.last_map_id = tm

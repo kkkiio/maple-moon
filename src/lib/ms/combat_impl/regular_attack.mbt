@@ -49,8 +49,7 @@ pub fn make_regular_attack(
     range: match t {
       @combat_proto.AttackType::CLOSE => {
         guard @char_look.get_after_image(character.entity) is Some(after_image) else {
-          @log.error({}, "No afterimage when making regular attack")
-          panic()
+          @log.fatal("No afterimage when making regular attack")
         }
         after_image.get_range()
       }

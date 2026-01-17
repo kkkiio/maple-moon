@@ -342,7 +342,7 @@ fn new_npc_talk_ui(
     args.str,
   ) catch {
     e => {
-      @log.error({ "error": e }, "error changing text")
+      @log.error("error changing text", data={ "error": e })
       panic()
     }
   }

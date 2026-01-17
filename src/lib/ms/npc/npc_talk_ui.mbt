@@ -272,7 +272,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
     self.resource.bt_close,
     pos=@struct.Point::new(9, y_cord),
   )
-  @log.debug({ "talk_action": self.talk_action }, "render talk action")
+  @log.debug("render talk action", data={ "talk_action": self.talk_action })
   fn new_btn(btn, on_click) {
     btn
     |> @ui.Button::new(on_click=fn() {

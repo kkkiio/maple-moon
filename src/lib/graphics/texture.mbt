@@ -35,7 +35,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
   }
   let tex : @resource.NxTexture = @json.from_json(v) catch {
     err => {
-      @log.error({ "err": err }, "failed to parse nx texture")
+      @log.error("failed to parse nx texture", data={ "err": err })
       panic()
     }
   }

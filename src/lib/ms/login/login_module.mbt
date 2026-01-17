@@ -77,7 +77,7 @@ pub fn Module::make_handlers(
       log_recv=true,
     ),
     @net.make_handler(@net.SERVER_STATUS, parse_server_status, fn(status) {
-      @log.info({ "status": status }, "server status")
+      @log.info("server status", data={ "status": status })
     }),
     @net.make_handler(
       @net.SERVER_LIST,
@@ -97,7 +97,7 @@ pub fn Module::make_handlers(
       fn(info) {
         let (name, used) = info
         if used {
-          @log.warn({ "name": name }, "Name already in use")
+          @log.warn("Name already in use", data={ "name": name })
         } else {
           ...
         }
@@ -584,7 +584,7 @@ pub fn handle_server_ip(mod : Module, port : Int, cid : Int) -> Unit {
   match mod.characters.search_by(fn(c) { c.id == cid }) {
     Some(i) => mod.selected_index = Some(i)
     None => {
-      @log.error({ "cid": cid }, "no character with id=\{cid}")
+      @log.error("no character with id=\{cid}", data={ "cid": cid })
       panic()
     }
   }

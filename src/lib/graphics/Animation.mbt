@@ -191,7 +191,7 @@ pub fn Animation::from_resource(src : NxNode) -> Animation {
   Animation::from_resource_ex(src) catch {
     NotFound => Animation::default()
     e => {
-      @log.error({ "err": Show::to_string(e) }, "Failed to load animation")
+      @log.error("Failed to load animation", data={ "err": Show::to_string(e) })
       panic()
     }
   }

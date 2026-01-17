@@ -237,7 +237,7 @@ pub fn Skill::make_attack(
     attack.stance = chr.get_look().get_stance().int_value()
     if attack.t == @combat_proto.AttackType::CLOSE && not(self.projectile) {
       guard @char_look.get_after_image(chr.entity) is Some(after_image) else {
-        @log.error({}, "No afterimage")
+        @log.error("No afterimage")
         panic()
       }
       attack.range = after_image.get_range()

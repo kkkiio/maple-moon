@@ -70,7 +70,9 @@ pub fn Hair::parse(
         let layer = match layers_by_name.get(layername) {
           Some(v) => v
           None => {
-            @log.warn({ "layer_name": layername }, "Unknown Hair::Layer name")
+            @log.warn("Unknown Hair::Layer name", data={
+              "layer_name": layername,
+            })
             continue
           }
         }

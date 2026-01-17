@@ -75,23 +75,23 @@ fn respawn_player(
   physics : @physics.Physics,
 ) -> Unit {
   // TODO: Music
-  let spawnpoint = portals.get_portal_pos_by_id(portal_id)
-  let startpos = physics.get_y_below(spawnpoint)
+  guard portals.get_portal_pos_by_id(portal_id) is Some(spawn_point) else {
+    @log.fatal("portal not found", data={ "portal_id": portal_id })
+  }
+  let startpos = physics.get_y_below(spawn_point)
   let left = map_info.get_walls().first().to_double()
   let right = map_info.get_walls().second().to_double()
   let top = map_info.get_borders().first().to_double()
   let bottom = map_info.get_borders().second().to_double()
-  @log.info(
-    {
-      "spawnpoint": spawnpoint,
-      "startpos": startpos,
-      "left": left,
-      "right": right,
-      "top": top,
-      "bottom": bottom,
-    },
-    "respawn",
-  )
+  @log.info("respawn", data={
+    "spawn_point": spawn_point,
+    "portal_id": portal_id,
+    "startpos": startpos,
+    "left": left,
+    "right": right,
+    "top": top,
+    "bottom": bottom,
+  })
   player.respawn(startpos, map_info.is_underwater())
   @camera.attach_entity(player.entity, @selene_math.Vec2D(16.0, 16.0))
   @camera.set_limits(left~, right~, top~, bottom~)
@@ -377,7 +377,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         res {
         Ok(data) => data
         Err(e) => {
-          @log.error({ "error": e }, "fail to load game start data")
+          @log.error("fail to load game start data", data={ "error": e })
           panic()
         }
       }
@@ -406,10 +406,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         look.add_equip(shoes_data, @slot.Id::SHOES)
         look
       } catch {
-        e => {
-          @log.error({ "error": e }, "fail to load char look")
-          panic()
-        }
+        e => @log.fatal("fail to load char look", data={ "error": e })
       }
 
       // 5. 初始化 Stage 并切换到 GameTransiting 状态
@@ -449,7 +446,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       let sence_map = match res {
         Ok(sence_map) => sence_map
         Err(e) => {
-          @log.error({ "error": e, "map_id": map_id }, "fail to load map")
+          @log.error("fail to load map", data={ "error": e, "map_id": map_id })
           panic()
         }
       }

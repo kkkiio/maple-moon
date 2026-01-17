@@ -67,14 +67,18 @@ fn parse_body_animations_by_stance(
     body_frame_delays.push(layer_textures.delay)
     for partname, partnode in layer_textures.part_texture_map {
       guard partname != "head" else {
-        @log.error({ "stance": stance, "frame": frame }, "unexpected head part")
+        @log.error("unexpected head part", data={
+          "stance": stance,
+          "frame": frame,
+        })
         panic()
       }
       guard partnode.z is Some(layer) else {
-        @log.error(
-          { "partname": partname, "stance": stance, "frame": frame },
-          "Unknown BodyLayer",
-        )
+        @log.error("Unknown BodyLayer", data={
+          "partname": partname,
+          "stance": stance,
+          "frame": frame,
+        })
         panic()
       }
       let shift = match layer {
@@ -153,7 +157,7 @@ fn parse_body_animations_by_stance(
         })
         head_layers.push(@types.BodyLayer::HEAD)
       } else {
-        @log.error({ "stance": stance, "frame": frame }, "head not found")
+        @log.error("head not found", data={ "stance": stance, "frame": frame })
         panic()
       }
     }

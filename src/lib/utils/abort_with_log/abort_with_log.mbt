@@ -1,5 +1,5 @@
 ///|
 pub fn[T] abort(message : String) -> T {
-  @log.error({}, message)
+  @log.error(message)
   panic()
 }

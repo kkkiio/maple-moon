@@ -861,8 +861,11 @@ fn check_portals(
   let playerpos = player.character.get_position()
   guard portals.find_warp_at(playerpos) is Some(warpinfo) else { return }
   if warpinfo.intra_map {
-    let spawnpoint = portals.get_portal_by_name(warpinfo.toname)
-    let startpos = physics.get_y_below(spawnpoint)
+    guard portals.get_portal_by_name(warpinfo.toname) is Some(spawn_point) else {
+      @log.error("portal not found", data={ "warpinfo": warpinfo })
+      return
+    }
+    let startpos = physics.get_y_below(spawn_point)
     player.respawn(startpos, map_info.is_underwater())
   } else {
     let message = ChangeMapMessage::{

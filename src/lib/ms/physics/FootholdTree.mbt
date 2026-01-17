@@ -54,6 +54,8 @@ pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
 }
 
 ///|
+/// - slide along wall
+/// - snap to floor
 pub fn FootholdTree::limit_movement(
   self : FootholdTree,
   phobj : PhysicsObject,

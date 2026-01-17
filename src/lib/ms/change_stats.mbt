@@ -42,7 +42,7 @@ fn handle_change_stats(
         let res = update_fn(v)
         recalculate = res || recalculate
       }
-      None => @log.warn({ "stat": stat_id }, "unhandled stat")
+      None => @log.warn("unhandled stat", data={ "stat": stat_id })
     }
   }
   if recalculate {

@@ -50,22 +50,18 @@ pub fn MapPortals::new(
 pub fn MapPortals::get_portal_pos_by_id(
   self : MapPortals,
   portal_id : Int,
-) -> Point[Int] {
-  match self.id_portal_map.get(portal_id) {
-    Some(portal) => portal.get_position() - @struct.Point::new(0, 30)
-    None => @struct.Point::default()
-  }
+) -> Point[Int]? {
+  self.id_portal_map
+  .get(portal_id)
+  .map(fn(portal) { portal.get_position() - @struct.Point::new(0, 30) })
 }
 
 ///|
 pub fn MapPortals::get_portal_by_name(
   self : MapPortals,
   portal_name : String,
-) -> Point[Int] {
-  self.name_portal_id_map
-  .get(portal_name)
-  .map(self.get_portal_pos_by_id(_))
-  .unwrap_or_default()
+) -> Point[Int]? {
+  self.name_portal_id_map.get(portal_name).bind(self.get_portal_pos_by_id(_))
 }
 
 ///|
@@ -224,27 +220,27 @@ test "parse portals" {
   @json.inspect(res.0, content=[
     {
       "pn": "sp",
+      "tm": 999999999,
       "tn": "",
       "x": -258,
       "y": 138,
-      "tm": 999999999,
       "pt": "SPAWN",
     },
-    { "pn": "sp", "tn": "", "x": 1115, "y": 66, "tm": 999999999, "pt": "SPAWN" },
+    { "pn": "sp", "tm": 999999999, "tn": "", "x": 1115, "y": 66, "pt": "SPAWN" },
     {
       "pn": "in00",
+      "tm": 103000102,
       "tn": "out00",
       "x": 3120,
       "y": 155,
-      "tm": 103000102,
       "pt": "INVISIBLE",
     },
     {
       "pn": "out00",
+      "tm": 103000100,
       "tn": "in00",
       "x": -230,
       "y": 194,
-      "tm": 103000100,
       "pt": "REGULAR",
     },
   ])

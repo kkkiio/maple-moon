@@ -37,7 +37,7 @@ pub fn Session::connect(self : Session, path : String) -> Unit {
   match self.conn {
     CLOSED => self.conn = OPENED(Socket::open(path))
     _ => {
-      @log.warn({ "path": path }, "previous connection still open")
+      @log.warn("previous connection still open", data={ "path": path })
       panic()
     }
   }
@@ -49,10 +49,9 @@ pub fn Session::write(self : Session, bytes : Bytes) -> Unit {
   match self.conn {
     READY(socket~) => socket.write(bytes)
     _ =>
-      @log.warn(
-        { "blen": bytes.length() },
-        "faild to write, connection not established",
-      )
+      @log.warn("faild to write, connection not established", data={
+        "blen": bytes.length(),
+      })
   }
 }
 

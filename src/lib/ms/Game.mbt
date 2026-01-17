@@ -72,7 +72,7 @@ async fn load_modules(
   ) {
     for stat_id, handler in handlers {
       if stat_handler_map.contains(stat_id) {
-        @log.error({ "stat": stat_id }, "duplicate stat handler")
+        @log.error("duplicate stat handler", data={ "stat": stat_id })
         panic()
       } else {
         stat_handler_map.set(stat_id, handler)

@@ -24,7 +24,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
-  @log.info({ "path": path }, "loading raw map resource")
+  @log.info("loading raw map resource", data={ "path": path })
   let src = get_mapx_loader().load_res_async(path)
   guard not(src.is_null()) else {
     raise @resource.LoadError("map not found, id=\{map_id}")

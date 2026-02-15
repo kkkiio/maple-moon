@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/combat_proto"
 
-import(
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/struct"
-)
+import {
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/struct",
+}
 
 // Values
 pub const REGULAR_ATTACK : Int = 0

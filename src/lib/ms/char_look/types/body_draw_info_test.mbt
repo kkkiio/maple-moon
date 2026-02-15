@@ -75,5 +75,4 @@ test "parse stand1" {
     },
   }
   let _ : @resource.MapBasedArray[NxStanceBody] = @json.from_json(stand1)
-
 }

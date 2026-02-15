@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/physics"
 
-import(
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/utils"
-  "Milky2018/selene/math"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/math",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn empty_physics() -> Physics
@@ -166,11 +166,11 @@ pub struct PhysicsObject {
   moving_object : MovingObject
   mut t : PhysicsObjectType
   mut flags : Int
-  mut fhid : Int
-  mut fhslope : Double
+  mut fh_id : Int
+  mut fh_slope : Double
   mut fhlayer : Int
   mut groundbelow : Double
-  mut onground : Bool
+  mut on_ground : Bool
   mut enablejd : Bool
   mut hforce : Double
   mut vforce : Double

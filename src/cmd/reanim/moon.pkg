@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/x/sys",
+  "moonbitlang/x/fs",
+  "rami3l/js-ffi/js",
+  "moonbitlang/async",
+  "KKKIIO/maple-moon/lib/resource",
+  "Yoorkin/ArgParser",
+}
+
+options(
+  "is-main": true,
+  link: { "js": { "format": "cjs" } },
+)

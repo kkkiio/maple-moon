@@ -1,14 +1,14 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/maple_protocol"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "moonbitlang/core/json",
+}
 
 // Values
 
@@ -87,6 +87,20 @@ pub impl ServerMessage for MobHpMessage
 pub impl Show for MobHpMessage
 pub impl ToJson for MobHpMessage
 pub impl @json.FromJson for MobHpMessage
+
+pub(all) struct MobSpawnControllerMessage {
+  mode : Int
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  stance : Int
+  fh : Int
+  team : Int
+}
+pub impl ServerMessage for MobSpawnControllerMessage
+pub impl ToJson for MobSpawnControllerMessage
+pub impl @json.FromJson for MobSpawnControllerMessage
 
 pub(all) struct MobSpawnMessage {
   oid : Int

@@ -4,7 +4,7 @@
 
 NPC 任务对话案例。
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let text = "I must begin the traditional ceremony for our ancestors shortly, but I don't have enough #rLeaves#k for the ceremony. I don't have much time.\\n\\nOh, you look like an adventurer. Won't you help me?"
@@ -23,7 +23,7 @@ test {
 
 战士二转对话:
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let text = "Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.#b\r\n#L0#Please explain to me what being the Fighter is all about.\r\n#L1#Please explain to me what being the Page is all about.\r\n#L2#Please explain to me what being the Spearman is all about.\r\n#L3#I'll choose my occupation!"

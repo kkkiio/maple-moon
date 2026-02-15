@@ -1,18 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/skill_book"
 
-import(
-  "KKKIIO/maple-moon/lib/legacy_types"
-  "KKKIIO/maple-moon/lib/ms/combat_impl"
-  "KKKIIO/maple-moon/lib/ms/inventory"
-  "KKKIIO/maple-moon/lib/ms/job"
-  "KKKIIO/maple-moon/lib/ms/player"
-  "KKKIIO/maple-moon/lib/ms/skill"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/utils"
-  "moonbitlang/core/immut/hashmap"
-)
+import {
+  "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/ms/combat_impl",
+  "KKKIIO/maple-moon/lib/ms/inventory",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/skill",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/immut/hashmap",
+}
 
 // Values
 pub fn handle_skill_update(() -> @player.Player?, SkillUpdate) -> Unit

@@ -1,10 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/markup_text"
 
-import(
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-)
+import {
+  "KKKIIO/maple-moon/lib/struct",
+}
 
 // Values
 pub let color_map : Map[Char, @struct.ColorName]
@@ -51,7 +50,7 @@ pub fn RefRender::get_map_name(Self, StringView) -> String raise
 pub fn RefRender::get_mob_name(Self, StringView) -> String
 pub fn RefRender::get_npc_name(Self, StringView) -> String
 pub fn RefRender::get_player_name(Self) -> String
-pub fn RefRender::new(@resource.SyncLoader, () -> String) -> Self
+pub fn RefRender::new(() -> String) -> Self
 
 pub(all) struct Style {
   color : @struct.ColorName

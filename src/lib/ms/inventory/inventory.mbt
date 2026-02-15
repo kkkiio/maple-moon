@@ -284,7 +284,7 @@ pub fn Inventory::get_item_count(self : Inventory, item_id : Int) -> Int {
         return slot.count
       }
     }
-  } else {
+  } nobreak {
     0
   }
 }

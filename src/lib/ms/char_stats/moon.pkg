@@ -1,0 +1,29 @@
+import {
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/utils",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/game_mod",
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/game_server",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+}
+
+options(
+  link: {
+    "js": {
+      "exports": [
+        "watch_player_char_stat",
+        "watch_player_total_stat",
+        "spend_ap",
+        "get_recommend_assign",
+      ],
+      "format": "esm",
+    },
+  },
+)

@@ -1,26 +1,25 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/combat_impl"
 
-import(
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/legacy_types"
-  "KKKIIO/maple-moon/lib/ms/bullet"
-  "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_stats"
-  "KKKIIO/maple-moon/lib/ms/character"
-  "KKKIIO/maple-moon/lib/ms/combat_proto"
-  "KKKIIO/maple-moon/lib/ms/job"
-  "KKKIIO/maple-moon/lib/ms/monster"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/ms/skill"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-  "KKKIIO/maple-moon/lib/utils"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/ms/bullet",
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/char_stats",
+  "KKKIIO/maple-moon/lib/ms/character",
+  "KKKIIO/maple-moon/lib/ms/combat_proto",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/monster",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/skill",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn can_use_regular_attack(@weapon.Type, Int) -> ForbidReason
@@ -33,6 +32,10 @@ pub fn get_basic_effect() -> BasicEffect
 
 pub fn get_regular_attack_bullet(Int, @bullet.Module) -> @graphics.Animation
 
+pub fn get_skill_move(Int) -> SpecialMove?
+
+pub async fn load_skill_move(Int, @bullet.Module) -> SpecialMove
+
 #callsite(autofill(loc))
 pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : SourceLoc) -> @utils.Future[Unit]
 
@@ -44,9 +47,13 @@ pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, 
 
 pub fn make_use_effect(@resource.NxNode, Int) -> UseEffect raise
 
+pub let move_map : Map[Int, SpecialMove]
+
 pub fn new_regular_attack(@bullet.Module) -> SpecialMove
 
 pub fn parse_cooldowns(@net.InPacket) -> Map[Int, Int] raise
+
+pub fn register_move(SpecialMove) -> Unit
 
 pub fn set_combat(Combat?) -> Unit
 
@@ -82,9 +89,8 @@ type Combat
 pub fn Combat::apply_attack_to_mobs(Self, @character.Character, SpecialMove, @combat_proto.Attack, Array[Int], @combat_proto.AttackResult, Bool) -> Unit
 pub fn Combat::can_use(Self, &CombatCharacter, SpecialMove) -> ForbidReason
 pub fn Combat::draw(Self, Double, Double, Double) -> Unit
-pub fn Combat::get_skill_move(Self, Int) -> @utils.Future[SpecialMove]
 pub fn Combat::listen_attack_events(Self, (AttackEvent) -> Bool) -> Unit
-pub fn Combat::new(@ui.NumberSet, @monster.MapMobs, @bullet.Module) -> Self
+pub fn Combat::new(@monster.MapMobs, @bullet.Module) -> Self
 pub fn Combat::set_cooldowns(Self, Map[Int, Int]) -> Unit
 pub fn Combat::update(Self) -> Unit
 

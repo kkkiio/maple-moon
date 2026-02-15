@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/char_look/types"
 
-import(
-  "KKKIIO/maple-moon/lib/char_stance"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "moonbitlang/core/json",
+}
 
 // Values
 

@@ -1,16 +1,16 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/npc"
 
-import(
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/ms/map_object"
-  "KKKIIO/maple-moon/lib/ms/markup_text"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-)
+import {
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/map_object",
+  "KKKIIO/maple-moon/lib/ms/markup_text",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ui",
+}
 
 // Values
 pub fn handle_npc_dialogue(&@ui.Container, @net.Network, @markup_text.RefRender, @resource.SyncLoader, NpcTalkResource, NpcDialogue) -> Unit
@@ -28,7 +28,9 @@ pub fn parse_spawn_npc_controller(@net.InPacket) -> SpawnNpcController raise
 pub fn parse_talk_content(String, mod_provider? : (@markup_text.Style, StringView) -> String raise, npc_provider? : (@markup_text.Style, StringView) -> String raise, map_provider? : (@markup_text.Style, StringView) -> String raise, item_provider? : (@markup_text.Style, StringView) -> String raise, player_name_provider? : (@markup_text.Style, StringView) -> String raise) -> TalkContent raise
 
 // Errors
-pub(all) suberror ParseTalkError String
+pub(all) suberror ParseTalkError {
+  ParseTalkError(String)
+}
 pub impl Show for ParseTalkError
 
 // Types and methods
@@ -43,7 +45,7 @@ pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
 
 type Module
 pub fn Module::get_npcs(Self) -> MapNpcs
-pub async fn Module::load(&@ui.Container, @net.Network, @markup_text.RefRender, @resource.SyncLoader) -> Self
+pub async fn Module::load(&@ui.Container, @net.Network, @markup_text.RefRender) -> Self
 pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::open_npc_talk_ui(Self, TalkArgs) -> Unit
 

@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/shop"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/inventory"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "rami3l/js-ffi/js"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/inventory",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "rami3l/js-ffi/js",
+}
 
 // Values
 pub fn buy_shop_item_ffi(Module, SlotNo, Int, Int) -> Unit
@@ -35,7 +35,7 @@ pub enum ConfirmShopTransactionCode {
 pub impl Show for ConfirmShopTransactionCode
 
 type Module
-pub fn Module::load(@net.Network, @resource.SyncLoader) -> Self
+pub fn Module::load() -> Self
 pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 
 pub struct OpenNpcShop {

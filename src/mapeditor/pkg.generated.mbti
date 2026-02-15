@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/mapeditor"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/map"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/utils"
-  "Milky2018/selene/entity"
-  "rami3l/js-ffi/js"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/map",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/entity",
+  "rami3l/js-ffi/js",
+}
 
 // Values
 pub fn export_editor_status_ffi() -> EditorStatus

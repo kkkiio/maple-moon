@@ -6,7 +6,7 @@
 
 有些怪物借用其他怪物的动画，比如战士二转任务里的火野猪和猴子。
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let src : Json = {

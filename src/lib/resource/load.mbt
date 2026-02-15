@@ -64,7 +64,7 @@ pub impl AsyncResourceLoader for CompositeAsyncResourceLoader with load_data(
     if path.strip_prefix(prefix) is Some(path) {
       break (path, loader)
     }
-  } else {
+  } nobreak {
     fail("path not found: \{path}")
   }
   loader.load_data(path.to_string())

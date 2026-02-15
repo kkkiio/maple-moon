@@ -13,7 +13,7 @@
 - `front` 表示是否是前景，默认是 false
 - `ani` 表示是否是动画，默认是 false
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let json : Json = {

@@ -1,20 +1,20 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/character"
 
-import(
-  "KKKIIO/maple-moon/lib/char_stance"
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/maple_protocol"
-  "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_stats"
-  "KKKIIO/maple-moon/lib/ms/map_object"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/utils"
-  "Milky2018/selene/entity"
-)
+import {
+  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/char_stats",
+  "KKKIIO/maple-moon/lib/ms/map_object",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/entity",
+}
 
 // Values
 pub fn get_integer_attackspeed(@char_look.CharLook, @char_stats.CharStats) -> Int

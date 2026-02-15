@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/resource"
 
-import(
-  "KKKIIO/maple-moon/lib/struct"
-  "Milky2018/selene/math"
-  "Milky2018/selene/sprite"
-  "moonbitlang/core/immut/array"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/struct",
+  "Milky2018/selene/math",
+  "Milky2018/selene/sprite",
+  "moonbitlang/core/immut/array",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
@@ -49,7 +49,9 @@ pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -
 pub fn patch_image(Json, Map[String, SpritesheetMetadata], base_url? : String) -> Json raise
 
 // Errors
-pub(all) suberror LoadError String
+pub(all) suberror LoadError {
+  LoadError(String)
+}
 pub impl Show for LoadError
 
 // Types and methods
@@ -150,7 +152,6 @@ pub fn NxNode::get_int_field(Self, String, default? : Int) -> Int raise LoadErro
 pub fn NxNode::get_string(Self) -> String
 pub fn NxNode::is_null(Self) -> Bool
 pub fn NxNode::iter(Self) -> Iter[Self]
-pub fn NxNode::iter2(Self) -> Iter2[String, Self]
 pub fn NxNode::name(Self) -> String
 pub fn NxNode::op_get(Self, String) -> Self
 pub fn NxNode::path(Self) -> @array.T[String]

@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/legacy_types"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+}
 
 // Values
 

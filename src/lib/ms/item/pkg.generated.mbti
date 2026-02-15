@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/item"
 
-import(
-  "KKKIIO/maple-moon/lib/resource"
-)
+import {
+  "KKKIIO/maple-moon/lib/resource",
+}
 
 // Values
 pub fn get_item_gender(Int) -> Int

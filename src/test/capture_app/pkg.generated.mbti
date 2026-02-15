@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/test/capture_app"
 
-import(
-  "Milky2018/selene/system"
-)
+import {
+  "Milky2018/selene/system",
+}
 
 // Values
 pub fn create_canvas(Int, Int) -> Canvas

@@ -1,19 +1,19 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/quest"
 
-import(
-  "KKKIIO/maple-moon/lib/game_mod"
-  "KKKIIO/maple-moon/lib/maple_protocol"
-  "KKKIIO/maple-moon/lib/ms/inventory"
-  "KKKIIO/maple-moon/lib/ms/markup_text"
-  "KKKIIO/maple-moon/lib/ms/npc"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/ms/player"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/game_mod",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/inventory",
+  "KKKIIO/maple-moon/lib/ms/markup_text",
+  "KKKIIO/maple-moon/lib/ms/npc",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ui",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn forfeit_quest_ffi(Module, Int) -> Unit

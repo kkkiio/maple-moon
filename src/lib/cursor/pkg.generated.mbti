@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/cursor"
 
-import(
-  "KKKIIO/maple-moon/lib/ui"
-  "Milky2018/selene/entity"
-  "Milky2018/selene/math"
-  "Milky2018/selene/sprite"
-)
+import {
+  "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+  "Milky2018/selene/sprite",
+}
 
 // Values
 pub const HIDE_SECONDS : Int = 12

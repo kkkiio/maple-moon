@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/graphics"
 
-import(
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "Milky2018/selene/entity"
-  "Milky2018/selene/sprite"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/sprite",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub const BACKGROUND_ZINDEX : Int = 1000

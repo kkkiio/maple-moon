@@ -1,14 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/game_server"
 
-import(
-  "KKKIIO/maple-moon/lib/log"
-  "KKKIIO/maple-moon/lib/maple_protocol"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn add_server_message_handler(String, Int, (Json) -> Unit raise) -> Unit
+
+pub async fn init_db() -> IndexedDB
+
+pub fn init_server() -> Unit
 
 #callsite(autofill(loc))
 pub fn[T : @maple_protocol.ClientMessage] send(T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
@@ -18,6 +22,9 @@ pub fn server_system(Double) -> Unit
 // Errors
 
 // Types and methods
+type IndexedDB
+pub async fn IndexedDB::load_character_data(Self, Int) -> Json?
+pub fn IndexedDB::save_character_data(Self, Json) -> Unit
 
 // Type aliases
 

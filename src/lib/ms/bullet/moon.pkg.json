@@ -1,7 +1,0 @@
-{
-  "import": [
-    "KKKIIO/maple-moon/lib/graphics",
-    "KKKIIO/maple-moon/lib/ms/item",
-    "KKKIIO/maple-moon/lib/resource"
-  ]
-}

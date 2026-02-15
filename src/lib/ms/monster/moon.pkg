@@ -1,0 +1,26 @@
+import {
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/ms/map_object",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/utils",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/combat_proto" @combat,
+  "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/ms/char_stats",
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/io_service",
+  "Milky2018/selene/position",
+  "Milky2018/selene/entity",
+  "KKKIIO/maple-moon/lib/game_server",
+  "KKKIIO/maple-moon/lib/logic_fps",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "Milky2018/selene/sprite",
+}
+
+import {
+  "moonbitlang/x/fs",
+} for "test"

@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/net"
 
-import(
-  "KKKIIO/maple-moon/lib/log"
-  "KKKIIO/maple-moon/lib/struct"
-  "moonbitlang/core/buffer"
-  "moonbitlang/core/immut/hashmap"
-  "moonbitlang/core/strconv"
-)
+import {
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/struct",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/immut/hashmap",
+  "moonbitlang/core/strconv",
+}
 
 // Values
 pub fn buf_write_utf8(@buffer.Buffer, String) -> Unit
@@ -22,7 +22,9 @@ pub fn[T : Show] make_handler(Opcode, (InPacket) -> T raise, (T) -> Unit, log_re
 pub fn with_log(Opcode, (InPacket) -> Unit raise, log_recv? : Bool) -> (InPacket) -> Unit
 
 // Errors
-pub suberror ReadPacketError String
+pub suberror ReadPacketError {
+  ReadPacketError(String)
+}
 pub impl Show for ReadPacketError
 
 type UnknownOpCodeError
@@ -116,6 +118,7 @@ pub fn InPacket::skip_int(Self) -> Unit raise ReadPacketError
 pub fn InPacket::skip_long(Self) -> Unit raise ReadPacketError
 pub fn InPacket::skip_short(Self) -> Unit raise ReadPacketError
 
+#deprecated
 type Network
 pub fn Network::close(Self) -> Unit
 pub fn Network::connect_channel(Self, Int) -> Unit

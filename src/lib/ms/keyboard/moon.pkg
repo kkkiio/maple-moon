@@ -1,0 +1,14 @@
+import {
+  "KKKIIO/maple-moon/lib/utils",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/log",
+}
+
+options(
+  link: {
+    "js": {
+      "exports": [ "watch_keyboard", "update_key_mappings" ],
+      "format": "esm",
+    },
+  },
+)

@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/utils"
 
-import(
-  "moonbitlang/core/random"
-)
+import {
+  "moonbitlang/core/random",
+}
 
 // Values
 pub fn advance_futures(Array[Future[Unit]]) -> Unit
@@ -27,7 +27,9 @@ pub fn stoi_left_pad0(Int, Int) -> String
 pub fn to_hex_string(UInt) -> String
 
 // Errors
-pub(all) suberror UnknownEnum Int
+pub(all) suberror UnknownEnum {
+  UnknownEnum(Int)
+}
 pub fn UnknownEnum::to_string(Self) -> String
 pub impl Show for UnknownEnum
 

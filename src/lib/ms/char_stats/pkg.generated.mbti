@@ -1,16 +1,16 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/char_stats"
 
-import(
-  "KKKIIO/maple-moon/lib/maple_protocol"
-  "KKKIIO/maple-moon/lib/ms/job"
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-)
+import {
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ui",
+}
 
 // Values
 pub const LEVEL_CAP : Int = 201

@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/io_service"
 
-import(
-  "KKKIIO/maple-moon/lib/utils"
-)
+import {
+  "KKKIIO/maple-moon/lib/utils",
+}
 
 // Values
 pub fn execute_background(async () -> Unit, on_error? : (Error) -> Unit) -> Unit

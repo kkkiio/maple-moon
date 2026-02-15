@@ -1,23 +1,23 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/player"
 
-import(
-  "KKKIIO/maple-moon/lib/char_stance"
-  "KKKIIO/maple-moon/lib/legacy_types"
-  "KKKIIO/maple-moon/lib/ms/buff"
-  "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_stats"
-  "KKKIIO/maple-moon/lib/ms/character"
-  "KKKIIO/maple-moon/lib/ms/combat_impl"
-  "KKKIIO/maple-moon/lib/ms/combat_proto"
-  "KKKIIO/maple-moon/lib/ms/job"
-  "KKKIIO/maple-moon/lib/ms/keyboard"
-  "KKKIIO/maple-moon/lib/ms/map"
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/utils"
-  "Milky2018/selene/entity"
-)
+import {
+  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/ms/buff",
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/char_stats",
+  "KKKIIO/maple-moon/lib/ms/character",
+  "KKKIIO/maple-moon/lib/ms/combat_impl",
+  "KKKIIO/maple-moon/lib/ms/combat_proto",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/keyboard",
+  "KKKIIO/maple-moon/lib/ms/map",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/entity",
+}
 
 // Values
 pub fn get_player() -> Player?

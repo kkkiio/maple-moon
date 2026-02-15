@@ -13,7 +13,6 @@ pub async fn init_db() -> IndexedDB {
 pub fn IndexedDB::save_character_data(self : IndexedDB, data : Json) -> Unit {
   let json_str = data.stringify()
   let _ = save_character_data_promise(self.db, json_str)
-
 }
 
 ///|

@@ -1,11 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/equip/data"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/equip/slot"
-  "KKKIIO/maple-moon/lib/ms/item"
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/equip/slot",
+  "KKKIIO/maple-moon/lib/ms/item",
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+}
 
 // Values
 pub fn get_quality(EquipData, Bool, Map[@maple_stat.EquipStatId, Int]) -> Quality

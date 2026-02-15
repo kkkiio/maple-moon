@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/buff"
 
-import(
-  "moonbitlang/core/immut/hashmap"
-)
+import {
+  "moonbitlang/core/immut/hashmap",
+}
 
 // Values
 pub let diseases : @hashmap.HashMap[StatId, Int64]

@@ -1,14 +1,14 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/skill"
 
-import(
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "moonbitlang/core/immut/hashmap"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "moonbitlang/core/immut/hashmap",
+  "moonbitlang/core/json",
+}
 
 // Values
 

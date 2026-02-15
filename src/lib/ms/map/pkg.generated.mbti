@@ -1,16 +1,16 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/map"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-  "Milky2018/selene/entity"
-  "Milky2018/selene/math"
-  "Milky2018/selene/sprite"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+  "Milky2018/selene/sprite",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn background_system(Double) -> Unit
@@ -170,8 +170,8 @@ pub struct MapPortals {
   mut cooldown : Int
 }
 pub fn MapPortals::find_warp_at(Self, @struct.Point[Int]) -> PortalWarpInfo?
-pub fn MapPortals::get_portal_by_name(Self, String) -> @struct.Point[Int]
-pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @struct.Point[Int]
+pub fn MapPortals::get_portal_by_name(Self, String) -> @struct.Point[Int]?
+pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @struct.Point[Int]?
 pub fn MapPortals::new(Array[NxPortal], Int, MapPortalAnimations) -> Self
 
 pub(all) struct MapRawResources {

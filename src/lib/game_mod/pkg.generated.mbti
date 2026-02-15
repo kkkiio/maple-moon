@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/game_mod"
 
-import(
-  "KKKIIO/maple-moon/lib/net"
-)
+import {
+  "KKKIIO/maple-moon/lib/net",
+}
 
 // Values
 

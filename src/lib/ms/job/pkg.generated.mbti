@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/job"
 
-import(
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/ms/maple_stat"
-  "KKKIIO/maple-moon/lib/ms/weapon"
-  "KKKIIO/maple-moon/lib/resource"
-  "moonbitlang/core/json"
-)
+import {
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/ms/weapon",
+  "KKKIIO/maple-moon/lib/resource",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub fn get_levels(upto? : Level) -> Iter[Level]

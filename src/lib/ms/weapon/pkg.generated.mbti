@@ -1,15 +1,17 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/weapon"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/equip/data"
-  "KKKIIO/maple-moon/lib/ms/item"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/equip/data",
+  "KKKIIO/maple-moon/lib/ms/item",
+}
 
 // Values
 
 // Errors
-pub(all) suberror UnknownWeaponType Int
+pub(all) suberror UnknownWeaponType {
+  UnknownWeaponType(Int)
+}
 pub impl Show for UnknownWeaponType
 
 // Types and methods

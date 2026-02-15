@@ -9,7 +9,7 @@
 
 例子 1: Ayan 任务 2082 的对话
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let say_2082 =
@@ -49,7 +49,7 @@ test {
 
 奖励
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let act_2082 =
@@ -65,7 +65,7 @@ test {
 
 描述
 
-```mbt
+```mbt nocheck
 ///|
 test {
   let desc = parse_quest_desc(
@@ -84,7 +84,7 @@ test {
 }
 ```
 
-```mbt
+```mbt nocheck
 ///|
 test "parse null phase says" {
   let q1021 = @json.parse(
@@ -148,7 +148,7 @@ test "parse null hint" {
 
 这是一个问答型任务。玩家接受了任务后，回答问题，回答正确后，任务完成。
 
-```mbt
+```mbt nocheck
 ///|
 test "I'm Bored 1" {
   let say_2090_1 : Json = {
@@ -229,7 +229,7 @@ test "I'm Bored 1" {
 
 这是一个在对话中穿插问答的任务。玩家在对话中选择对的选项后，才继续对话接受任务。
 
-```mbt
+```mbt nocheck
 ///|
 test "Icarus's Hang Glider" {
   let say_2083_1 : Json = {

@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/cmd/reanim"
 
-import(
-  "KKKIIO/maple-moon/lib/resource"
-  "rami3l/js-ffi/js"
-)
+import {
+  "KKKIIO/maple-moon/lib/resource",
+  "rami3l/js-ffi/js",
+}
 
 // Values
 pub fn calculate_unified_size(Array[FrameData]) -> UnifiedSize

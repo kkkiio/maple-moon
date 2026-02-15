@@ -1,20 +1,20 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/login"
 
-import(
-  "KKKIIO/maple-moon/lib/config"
-  "KKKIIO/maple-moon/lib/graphics"
-  "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/character"
-  "KKKIIO/maple-moon/lib/ms/inventory"
-  "KKKIIO/maple-moon/lib/ms/player"
-  "KKKIIO/maple-moon/lib/ms/quest"
-  "KKKIIO/maple-moon/lib/net"
-  "KKKIIO/maple-moon/lib/resource"
-  "KKKIIO/maple-moon/lib/ui"
-  "Milky2018/selene/entity"
-  "Milky2018/selene/sprite"
-)
+import {
+  "KKKIIO/maple-moon/lib/config",
+  "KKKIIO/maple-moon/lib/graphics",
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/character",
+  "KKKIIO/maple-moon/lib/ms/inventory",
+  "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/quest",
+  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/sprite",
+}
 
 // Values
 pub fn get_map001_loader() -> @resource.AsyncLoader

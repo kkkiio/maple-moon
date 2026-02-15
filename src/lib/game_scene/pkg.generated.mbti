@@ -1,21 +1,21 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/game_scene"
 
-import(
-  "KKKIIO/maple-moon/lib/maple_protocol"
-  "KKKIIO/maple-moon/lib/ms/char_look"
-  "KKKIIO/maple-moon/lib/ms/char_stats"
-  "KKKIIO/maple-moon/lib/ms/equip/slot"
-  "KKKIIO/maple-moon/lib/ms/inventory"
-  "KKKIIO/maple-moon/lib/ms/item"
-  "KKKIIO/maple-moon/lib/ms/job"
-  "KKKIIO/maple-moon/lib/ms/keyboard"
-  "KKKIIO/maple-moon/lib/ms/map"
-  "KKKIIO/maple-moon/lib/ms/monster"
-  "KKKIIO/maple-moon/lib/struct"
-  "KKKIIO/maple-moon/lib/ui"
-  "KKKIIO/maple-moon/lib/utils"
-)
+import {
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/char_stats",
+  "KKKIIO/maple-moon/lib/ms/equip/slot",
+  "KKKIIO/maple-moon/lib/ms/inventory",
+  "KKKIIO/maple-moon/lib/ms/item",
+  "KKKIIO/maple-moon/lib/ms/job",
+  "KKKIIO/maple-moon/lib/ms/keyboard",
+  "KKKIIO/maple-moon/lib/ms/map",
+  "KKKIIO/maple-moon/lib/ms/monster",
+  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/utils",
+}
 
 // Values
 pub fn apply_equipped_stats(@char_stats.CharStats, Array[@maple_protocol.InventoryItemEntry]) -> Unit

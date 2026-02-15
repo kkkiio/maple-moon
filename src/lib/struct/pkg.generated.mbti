@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/struct"
 
-import(
-  "Milky2018/selene/math"
-  "moonbitlang/core/json"
-)
+import {
+  "Milky2018/selene/math",
+  "moonbitlang/core/json",
+}
 
 // Values
 pub let clr_opaque : Color

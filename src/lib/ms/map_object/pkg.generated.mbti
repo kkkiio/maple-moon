@@ -1,11 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/map_object"
 
-import(
-  "KKKIIO/maple-moon/lib/ms/physics"
-  "KKKIIO/maple-moon/lib/struct"
-  "Milky2018/selene/math"
-)
+import {
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/struct",
+  "Milky2018/selene/math",
+}
 
 // Values
 

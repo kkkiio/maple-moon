@@ -5,6 +5,7 @@ using @maple_protocol {
   type ChangeMapMessage,
   type SetFieldMessage,
   type SelectCharMessage,
+  type MobSpawnControllerMessage,
   type StatsEntry,
   type InventoryEntry,
   type PlayerQuestLogInfo,
@@ -28,7 +29,10 @@ priv struct LocalServer {
   mut last_map_id : Int
   mut last_portal_id : Int
   mut last_object_id : Int
+  mut spawn_batch_id : Int
+  mut map_transfer_ready : Bool
   mobs : Map[Int, ServerMob]
+  pending_mob_spawns : Array[PendingMobSpawn]
   mut db : IndexedDB?
 }
 
@@ -37,6 +41,12 @@ priv struct ServerMob {
   oid : Int
   id : Int
   mut hp : Int
+  max_hp : Int
+}
+
+///|
+priv struct PendingMobSpawn {
+  msg : MobSpawnControllerMessage
   max_hp : Int
 }
 
@@ -50,7 +60,10 @@ fn LocalServer::new() -> LocalServer {
     last_map_id: 100000000,
     last_portal_id: 0,
     last_object_id: 100000,
+    spawn_batch_id: 0,
+    map_transfer_ready: false,
     mobs: Map::new(),
+    pending_mob_spawns: Array::new(),
     db: None,
   }
 }
@@ -61,6 +74,12 @@ fn init {
   default_server.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = default_server.on_change_map(
     _,
   )
+  default_server.client_message_handler_map[@net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = fn(
+    _,
+  ) {
+    default_server.map_transfer_ready = true
+    default_server.flush_pending_mob_spawns()
+  }
   default_server.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = on_mob_damage
   default_server.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = on_mob_damage
   default_server.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = on_mob_damage
@@ -93,6 +112,83 @@ fn on_mob_damage(json : Json) -> Unit raise {
       percent,
     })
   }
+}
+
+///|
+fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
+  self.spawn_batch_id += 1
+  let batch_id = self.spawn_batch_id
+  self.map_transfer_ready = false
+  self.mobs.clear()
+  self.pending_mob_spawns.clear()
+  @io_service.execute_background(async fn() {
+    let loader = get_mapx_loader()
+    let prefix = (map_id / 100000000).to_string()
+    let strid = @utils.stoi_left_pad0(map_id, 9)
+    let path = ["Map\{prefix}", "\{strid}.img"]
+    let node_res = loader.load_res_async(path)
+    guard node_res.value() is { "life": Object(life_map), .. } else { return }
+    for _, entity in life_map {
+      if self.spawn_batch_id != batch_id {
+        return
+      }
+      match entity {
+        {
+          "type": String("m"),
+          "id": String(id_str),
+          "x": Number(x, ..),
+          "y": Number(y, ..),
+          "f": Number(f, ..),
+          "fh": Number(fh, ..),
+          ..
+        } => {
+          let monster_id = @strconv.parse_int(id_str)
+          self.last_object_id += 1
+          let spawn_msg = MobSpawnControllerMessage::{
+            oid: self.last_object_id,
+            id: monster_id,
+            mode: 1, // Passive Control
+            x: x.to_int(),
+            y: y.to_int(),
+            stance: f.to_int(),
+            fh: fh.to_int(),
+            team: -1,
+          }
+          let mob_loader = @resource.get_mob_loader()
+          let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
+          let mob_path = ["\{mob_strid}.img"]
+          let mob_node = mob_loader.load_res_async(mob_path)
+          guard mob_node.value()
+            is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
+            continue
+          }
+          self.pending_mob_spawns.push({
+            msg: spawn_msg,
+            max_hp: max_hp.to_int(),
+          })
+        }
+        _ => ()
+      }
+    }
+    if self.map_transfer_ready && self.spawn_batch_id == batch_id {
+      self.flush_pending_mob_spawns()
+    }
+  })
+}
+
+///|
+fn LocalServer::flush_pending_mob_spawns(self : LocalServer) -> Unit {
+  for pending in self.pending_mob_spawns {
+    self.send_server_message(pending.msg)
+    let server_mob = ServerMob::{
+      oid: pending.msg.oid,
+      id: pending.msg.id,
+      hp: pending.max_hp,
+      max_hp: pending.max_hp,
+    }
+    self.mobs.set(pending.msg.oid, server_mob)
+  }
+  self.pending_mob_spawns.clear()
 }
 
 ///|

@@ -176,15 +176,6 @@ fn Stage::send_cursor(
 }
 
 ///|
-priv struct PlayerMapTransferMessage(Unit) derive(Show)
-
-///|
-impl @net.OutMessage for PlayerMapTransferMessage with pack(self) -> @net.OutPacket {
-  ignore(self)
-  @net.OutPacket::new(@net.ClientOpcode::PLAYER_MAP_TRANSFER)
-}
-
-///|
 pub fn Stage::get_mobs(self : Stage) -> @monster.MapMobs {
   ...
 }
@@ -462,6 +453,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
+      @game_server.send(@maple_protocol.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
       let combat = @combat_impl.Combat::new(stage.mobs, bullet_module)
       @combat_impl.set_combat(Some(combat))

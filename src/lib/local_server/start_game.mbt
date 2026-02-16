@@ -1,6 +1,4 @@
 ///|
-
-///|
 fn on_select_char(json : Json) -> Unit raise {
   let _ : SelectCharMessage = @json.from_json(json)
   @io_service.execute_background(async fn() {
@@ -65,5 +63,6 @@ fn on_select_char(json : Json) -> Unit raise {
     default_server.server_message_queue.push(
       (@net.Opcode::SET_FIELD.int_value(), set_field_json),
     )
+    default_server.spawn_mobs_for_map(default_server.last_map_id)
   })
 }

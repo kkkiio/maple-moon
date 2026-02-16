@@ -132,6 +132,15 @@ pub impl Show for MoveMonsterMessage
 pub impl ToJson for MoveMonsterMessage
 pub impl @json.FromJson for MoveMonsterMessage
 
+pub(all) struct PlayerMapTransferMessage(Unit)
+#deprecated
+pub fn PlayerMapTransferMessage::inner(Self) -> Unit
+pub impl ClientMessage for PlayerMapTransferMessage
+pub impl Default for PlayerMapTransferMessage
+pub impl Show for PlayerMapTransferMessage
+pub impl ToJson for PlayerMapTransferMessage
+pub impl @json.FromJson for PlayerMapTransferMessage
+
 pub(all) struct PlayerQuestLogInfo {
   started : Array[(Int, String)]
   completed : Array[(Int, Int64)]

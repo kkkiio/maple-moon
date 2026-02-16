@@ -10,8 +10,6 @@ import {
 // Values
 pub fn add_server_message_handler(String, Int, (Json) -> Unit raise) -> Unit
 
-pub async fn init_db() -> IndexedDB
-
 pub fn init_server() -> Unit
 
 #callsite(autofill(loc))
@@ -22,9 +20,6 @@ pub fn server_system(Double) -> Unit
 // Errors
 
 // Types and methods
-type IndexedDB
-pub async fn IndexedDB::load_character_data(Self, Int) -> Json?
-pub fn IndexedDB::save_character_data(Self, Json) -> Unit
 
 // Type aliases
 

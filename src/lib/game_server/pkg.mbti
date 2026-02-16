@@ -1,0 +1,24 @@
+package "KKKIIO/maple-moon/lib/game_server"
+
+import {
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "moonbitlang/core/json",
+}
+
+#callsite(autofill(loc))
+fn[T : @maple_protocol.ClientMessage] send(
+  T,
+  log_level? : @log.Level,
+  loc~ : SourceLoc
+) -> Unit
+
+fn add_server_message_handler(
+  String,
+  Int,
+  (Json) -> Unit raise
+) -> Unit
+
+fn server_system(Double) -> Unit
+
+fn init_server() -> Unit

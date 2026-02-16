@@ -146,3 +146,17 @@ pub(all) struct SelectCharMessage {
 pub impl ClientMessage for SelectCharMessage with type_code() {
   @net.ClientOpcode::SELECT_CHAR.int_value()
 }
+
+///|
+/// Tell the server that the client has finished map transition and can receive map objects.
+pub(all) struct PlayerMapTransferMessage(Unit) derive (
+  Show,
+  Default,
+  ToJson,
+  FromJson,
+)
+
+///|
+pub impl ClientMessage for PlayerMapTransferMessage with type_code() {
+  @net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()
+}

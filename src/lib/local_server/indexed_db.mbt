@@ -1,22 +1,22 @@
 ///|
-struct IndexedDB {
+priv struct IndexedDB {
   db : @js.Value
 }
 
 ///|
-pub async fn init_db() -> IndexedDB {
+async fn init_db() -> IndexedDB {
   let db = indexed_db_open_promise("MapleMoonDB", 1).wait()
   IndexedDB::{ db: @js.Value::cast_from(db) }
 }
 
 ///|
-pub fn IndexedDB::save_character_data(self : IndexedDB, data : Json) -> Unit {
+fn IndexedDB::save_character_data(self : IndexedDB, data : Json) -> Unit {
   let json_str = data.stringify()
   let _ = save_character_data_promise(self.db, json_str)
 }
 
 ///|
-pub async fn IndexedDB::load_character_data(
+async fn IndexedDB::load_character_data(
   self : IndexedDB,
   character_id : Int,
 ) -> Json? {

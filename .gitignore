@@ -1,4 +1,3 @@
-target/
 .mooncakes/
 .xmake
 build
@@ -9,10 +8,6 @@ output
 
 .vscode
 
-.agent
-
-# windsurf rules
-.windsurfrules
 .DS_Store
 
 tools/
@@ -29,3 +24,7 @@ src/App.vue
 
 _build
 target
+
+.agent
+.codex
+.windsurfrules

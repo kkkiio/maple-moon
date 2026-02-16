@@ -14,7 +14,6 @@ struct CharLook {
   // st_frame : @utils.Nominal[Int]
   // mut st_elapsed : Int
   expression : @utils.Nominal[ExpressionId]
-  exp_frame : @utils.Nominal[Int]
   // mut exp_elapsed : Int
   mut flip : Bool
   mut actionstr : String
@@ -90,7 +89,6 @@ pub fn CharLook::new(
     // st_frame: @utils.Nominal::default(),
     // st_elapsed: 0,
     expression: @utils.Nominal::default(),
-    exp_frame: @utils.Nominal::default(),
     // exp_elapsed: 0,
     flip: false,
     action: None,
@@ -680,8 +678,35 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 }
 
 ///|
+/// Set animation playback speed for all sprite entities used by this look.
+pub fn CharLook::set_animation_speed(self : CharLook, speed : Double) -> Unit {
+  fn set_speed_if_animation(entity : @entity.Entity) {
+    if @sprite.sprites.get(entity)
+      is Some({ sprite_type: Animation(_, ..), .. }) {
+      @sprite.set_animation_speed(entity, speed)
+    }
+  }
+
+  for entity in self.body_entities.values() {
+    set_speed_if_animation(entity)
+  }
+  for entity in self.hair_entities.values() {
+    set_speed_if_animation(entity)
+  }
+  for entity in self.equip_entities.values() {
+    set_speed_if_animation(entity)
+  }
+  for entity in self.weapon_entities.values() {
+    set_speed_if_animation(entity)
+  }
+  match self.face_entity {
+    Some(entity) => set_speed_if_animation(entity)
+    None => ()
+  }
+}
+
+///|
 pub fn CharLook::play_animations(self : CharLook) -> Unit {
-  // TODO: support stance speed
   // let acmove = @struct.Point::default()
   // let relargs = @graphics.DrawArgument::new14(acmove, self.flip)
   // let interstance = self.stance.get()
@@ -691,8 +716,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   let stance : StanceId = self.stance.get()
   let expression : ExpressionId = self.expression.get()
   // let stance_frame : Int = self.st_frame.get()
-  let stance_frame : Int = 0
-  let expr_frame : Int = self.exp_frame.get()
   // if interstance == StanceId::DEAD {
   //   return self.draw_dead(
   //     args, interstance, interexpression, interframe, interexpframe,
@@ -741,18 +764,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   }
   reset_sprites_hide(self.body_entities.values())
   reset_sprites_hide(self.hair_entities.values())
-  let drawables : Array[&@graphics.Drawable] = []
-  fn make_face_draw(z : Int) {
-    ignore(z)
-    {
-      face: self.face,
-      expression,
-      exp_frame: expr_frame,
-      draw_info: self.draw_info,
-      stance,
-      stance_frame,
-    }
-  }
 
   let flip_x = self.flip
   for
@@ -768,7 +779,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         _ => []
       },
     ] {
-    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
+    guard self.hair.stances.get(stance).bind(v => v.get(layer)) is Some(anim) else {
       continue
     }
     // Inject body delays into hair frames
@@ -1491,7 +1502,7 @@ fn CharLook::play_climbing_animations(
       HairLayer::BELOW_CAP,
       HairLayer::HAIR_LAYER_DEFAULT,
     ] {
-    guard self.hair.stances.get(stance).bind(_.get(layer)) is Some(anim) else {
+    guard self.hair.stances.get(stance).bind(v => v.get(layer)) is Some(anim) else {
       continue
     }
     // Inject body delays into hair frames

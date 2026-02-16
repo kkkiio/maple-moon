@@ -57,9 +57,8 @@ pub fn CharState::stance_value(self : CharState, facing_right~ : Bool) -> Int {
   (if facing_right { 0 } else { 1 })
 }
 
-// Base for characters, e.g. the player and other clients on the same map.
-
 ///|
+/// Base for characters, e.g. the player and other clients on the same map.
 pub(all) struct Character {
   entity : @entity.Entity
   base : MapObjectBase
@@ -102,7 +101,6 @@ pub fn Character::new(
   oid : Int,
   look : @char_look.CharLook,
   name : String,
-  // damage_number_set : @ui.NumberSet,
   get_skilllevel~ : (Int) -> Int,
   stats : @char_stats.CharStats,
 ) -> Character {
@@ -125,8 +123,6 @@ pub fn Character::new(
     ),
     state: CharState::STAND,
     invincible: @utils.TimedBool::default(),
-    // damage_number_set,
-    // damage_numbers: Array::new(),
     get_skilllevel,
     alerted: @utils.TimedBool::default(),
   }
@@ -207,14 +203,12 @@ pub fn Character::draw(
 ///|
 /// speed is the multiplier of the timestep.
 pub fn Character::update(self : Character, speed : Double) -> Unit {
-  // @utils.remove_if(self.damage_numbers, fn(number : @ui.Number) {
-  //   number.update()
-  // })
   // TODO: implement recurring_effects
   //     recurring_effects_.update();
   // TODO: implement chat_balloon
   //     chat_balloon_.update();
   self.invincible.update(timestep=@logic_fps.STEP_TIME_MS)
+  self.look.set_animation_speed(speed)
   // TODO: implement iron_body
   //     iron_body_.update();
 

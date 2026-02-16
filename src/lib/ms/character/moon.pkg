@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/math",
+  "moonbitlang/core/cmp",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/utils",

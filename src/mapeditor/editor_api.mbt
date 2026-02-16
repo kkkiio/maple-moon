@@ -97,8 +97,6 @@ pub(all) struct EditorStatus {
   cam_y : Int
   zoom : Double
   bg_visible : Bool
-  tiles_visible : Bool
-  objs_visible : Bool
   bg_back_visible : Bool
   bg_fore_visible : Bool
   bg_debug_index : Int?
@@ -116,7 +114,6 @@ fn get_editor_status() -> EditorStatus {
   }
   let camera_pos = @camera.get_position()
   let bg_vis = @map.get_background_visibility_state()
-  // let tile_vis = @map.get_tile_objects_visibility()
 
   {
     loading,
@@ -127,8 +124,6 @@ fn get_editor_status() -> EditorStatus {
     cam_y: camera_pos[@selene_math.Axis::Y].to_int(),
     zoom: @backend.get_zoom(),
     bg_visible: viewer.layer_visibility.backgrounds,
-    tiles_visible: viewer.layer_visibility.tiles,
-    objs_visible: viewer.layer_visibility.objs,
     bg_back_visible: bg_vis.back_visible,
     bg_fore_visible: bg_vis.fore_visible,
     bg_debug_index: bg_vis.debug_index,
@@ -140,4 +135,43 @@ fn get_editor_status() -> EditorStatus {
 ///|
 pub fn export_editor_status_ffi() -> EditorStatus {
   get_editor_status()
+}
+
+///|
+pub(all) struct EditorTileObjLayerVisibility {
+  layer : Int
+  tiles_visible : Bool
+  objs_visible : Bool
+} derive(ToJson, Show)
+
+///|
+pub(all) struct EditorTileObjVisibilityState {
+  tiles_visible : Bool
+  objs_visible : Bool
+  layers : Array[EditorTileObjLayerVisibility]
+  tile_items : Array[Array[Bool]]
+  obj_items : Array[Array[Bool]]
+} derive(ToJson, Show)
+
+///|
+fn get_tile_obj_visibility_state() -> EditorTileObjVisibilityState {
+  let st = @map.get_tile_objects_visibility()
+  {
+    tiles_visible: st.tiles_visible,
+    objs_visible: st.objs_visible,
+    layers: st.layers.map(fn(layer) {
+      {
+        layer: layer.layer,
+        tiles_visible: layer.tiles_visible,
+        objs_visible: layer.objs_visible,
+      }
+    }),
+    tile_items: st.tile_items,
+    obj_items: st.obj_items,
+  }
+}
+
+///|
+pub fn export_tile_obj_visibility_state_ffi() -> EditorTileObjVisibilityState {
+  get_tile_obj_visibility_state()
 }

@@ -1,11 +1,11 @@
 ///|
-
-///|
 /// 表示地图中的一个 Tile, 保存纹理以及静态位置数据。
 struct Tile {
   texture : @resource.NxTexture?
   pos : Point[Int]
   z : Int
+  layer : Int
+  resource_index : Int
 }
 
 ///|
@@ -49,13 +49,20 @@ pub impl @json.FromJson for NxTileSet with from_json(json, path) {
 }
 
 ///|
-pub fn Tile::new(tile : NxTileRef, tileset : NxTileSet?) -> Tile {
+pub fn Tile::new(
+  tile : NxTileRef,
+  tileset : NxTileSet?,
+  layer : Int,
+  resource_index : Int,
+) -> Tile {
   let pos = @struct.Point::new(tile.x, tile.y)
-  guard tileset is Some(tileset) else { return { texture: None, pos, z: 0 } }
+  guard tileset is Some(tileset) else {
+    return { texture: None, pos, z: 0, layer, resource_index }
+  }
   let src_u = tile.u
   let dsrc = tileset.groups[src_u][tile.no]
   let z = if dsrc.z == 0 && dsrc.zm is Some(zm) { zm } else { dsrc.z }
-  { texture: Some(dsrc.texture), pos, z }
+  { texture: Some(dsrc.texture), pos, z, layer, resource_index }
 }
 
 ///|

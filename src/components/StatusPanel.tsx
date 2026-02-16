@@ -56,8 +56,6 @@ export const StatusPanel = ({ api }: { api: EditorAPI | null }) => {
 
           <div className="flex flex-wrap gap-1 items-center">
             <Badge size="xs" color={status.bg_visible ? "green" : "gray"} variant="light">BG(Q)</Badge>
-            <Badge size="xs" color={status.tiles_visible ? "green" : "gray"} variant="light">Tile(W)</Badge>
-            <Badge size="xs" color={status.objs_visible ? "green" : "gray"} variant="light">Obj(E)</Badge>
           </div>
           
           <div className="text-gray-500 text-[10px]">

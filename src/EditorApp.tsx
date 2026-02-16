@@ -111,6 +111,7 @@ export default function EditorApp() {
                     {/* Assets Panel */}
                     <Allotment.Pane minSize={100}>
                       <AssetsPanel 
+                        api={api}
                         sceneGraph={sceneGraph} 
                         selectedObj={selectedObj} 
                         setSelectedObj={setSelectedObj} 

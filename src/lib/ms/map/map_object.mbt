@@ -1,5 +1,9 @@
 ///|
-using @resource {nx_animation_to_selene_animation}
+using @resource {
+  nx_animation_to_selene_animation,
+  get_object_loader,
+  type NxAnimation,
+}
 
 ///|
 /// Represents an obj (map decoration) on a map.
@@ -8,6 +12,8 @@ struct Obj {
   pos : Point[Int]
   z : Int
   flip : Bool
+  layer : Int
+  resource_index : Int
 }
 
 ///|
@@ -38,8 +44,20 @@ pub async fn load_obj_animation(
 }
 
 ///|
-pub fn Obj::new(obj : NxObj, animation : NxAnimation) -> Obj {
-  { animation, pos: Point::new(obj.x, obj.y), flip: obj.f, z: obj.z }
+pub fn Obj::new(
+  obj : NxObj,
+  animation : NxAnimation,
+  layer : Int,
+  resource_index : Int,
+) -> Obj {
+  {
+    animation,
+    pos: Point::new(obj.x, obj.y),
+    flip: obj.f,
+    z: obj.z,
+    layer,
+    resource_index,
+  }
 }
 
 ///|
@@ -70,6 +88,3 @@ pub fn Obj::attach_entity(
 pub fn Obj::get_z(self : Obj) -> Int {
   self.z
 }
-
-///|
-using @resource {get_object_loader, type NxAnimation}

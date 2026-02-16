@@ -25,7 +25,7 @@ pub fn get_map_category(Int) -> String
 
 pub fn get_map_latest_loader() -> @resource.AsyncLoader
 
-pub fn get_tile_objects_visibility() -> TileObjectsVisibility
+pub fn get_tile_objects_visibility() -> TileObjVisibilityState
 
 pub async fn load_background_animation(@resource.AsyncLoader, String, BackgroundAnimationPath) -> @resource.NxAnimation
 
@@ -43,13 +43,21 @@ pub fn new_background_position(Background, @math.Vec2D, Double) -> @math.Vec2D
 
 pub fn portal_system(Double) -> Unit
 
+pub fn reset_tile_obj_visibility() -> Unit
+
 pub fn set_background_visibility(Bool, Bool) -> Unit
 
 pub fn set_backgrounds(Backgrounds) -> Unit
 
+pub fn set_layer_visibility(Int, Bool, Bool) -> Unit
+
+pub fn set_obj_visibility(Int, Int, Bool) -> Unit
+
 pub fn set_objs_visible(Bool) -> Unit
 
 pub fn set_portals(MapPortals, get_touch_pos? : () -> @struct.Point[Int]?) -> Unit
+
+pub fn set_tile_visibility(Int, Int, Bool) -> Unit
 
 pub fn set_tiles_objs(MapLayers) -> Unit
 
@@ -303,7 +311,7 @@ pub impl @json.FromJson for NxTileSet
 type Obj
 pub fn Obj::attach_entity(Self, @entity.Entity, Int) -> Unit
 pub fn Obj::get_z(Self) -> Int
-pub fn Obj::new(NxObj, @resource.NxAnimation) -> Self
+pub fn Obj::new(NxObj, @resource.NxAnimation, Int, Int) -> Self
 
 type ObjectAnimationPath
 pub fn ObjectAnimationPath::from_obj(NxObj) -> Self
@@ -370,16 +378,26 @@ pub fn Seat::inrange(Self, @struct.Point[Int]) -> Bool
 
 type Tile
 pub fn Tile::attach_entity(Self, @entity.Entity, Int) -> Unit
-pub fn Tile::new(NxTileRef, NxTileSet?) -> Self
+pub fn Tile::new(NxTileRef, NxTileSet?, Int, Int) -> Self
+
+pub struct TileObjVisibilityState {
+  tiles_visible : Bool
+  objs_visible : Bool
+  layers : Array[TileObjectsVisibility]
+  tile_items : Array[Array[Bool]]
+  obj_items : Array[Array[Bool]]
+}
+pub impl Show for TileObjVisibilityState
 
 pub struct TileObjectsVisibility {
+  layer : Int
   tiles_visible : Bool
   objs_visible : Bool
 }
 pub impl Show for TileObjectsVisibility
 
 type TilesObjsLayer
-pub fn TilesObjsLayer::from_resources(NxTileSet?, Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxTileRef], Array[NxObj], Int) -> Self
+pub fn TilesObjsLayer::from_resources(Int, NxTileSet?, Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxTileRef], Array[NxObj], Int) -> Self
 
 // Type aliases
 

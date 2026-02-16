@@ -1,53 +1,54 @@
 {
-  "name": "maple-moon",
-  "version": "1.0.0",
-  "description": "Maple Moon Game",
-  "type": "commonjs",
-  "main": "index.html",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "moon test",
-    "moon:build": "moon build --target js",
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KKKIIO/maple-moon.git"
-  },
-  "author": "",
-  "license": "GPLV3",
-  "bugs": {
-    "url": "https://github.com/KKKIIO/maple-moon/issues"
-  },
-  "homepage": "https://github.com/KKKIIO/maple-moon#readme",
-  "dependencies": {
-    "@mantine/core": "^8.3.9",
-    "@mantine/hooks": "^8.3.9",
-    "@tailwindcss/vite": "^4.1.10",
-    "@types/node": "^24.10.1",
-    "@uiw/react-json-view": "^2.0.0-alpha.39",
-    "allotment": "^1.20.4",
-    "canvas": "^3.2.0",
-    "clsx": "^2.1.1",
-    "leva": "^0.10.1",
-    "lucide-react": "^0.555.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-hotkeys-hook": "^5.2.1",
-    "sharp": "^0.34.5",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.10",
-    "zustand": "^5.0.9"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.1",
-    "autoprefixer": "^10.4.22",
-    "postcss": "^8.5.6",
-    "vite": "^6.1.0"
-  }
+	"name": "maple-moon",
+	"version": "1.0.0",
+	"description": "Maple Moon Game",
+	"type": "module",
+	"main": "index.html",
+	"directories": {
+		"lib": "lib"
+	},
+	"scripts": {
+		"test": "moon test",
+		"moon:build": "moon build --target js",
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/KKKIIO/maple-moon.git"
+	},
+	"author": "",
+	"license": "GPLV3",
+	"bugs": {
+		"url": "https://github.com/KKKIIO/maple-moon/issues"
+	},
+	"homepage": "https://github.com/KKKIIO/maple-moon#readme",
+	"dependencies": {
+		"@mantine/core": "^8.3.9",
+		"@mantine/hooks": "^8.3.9",
+		"@tailwindcss/vite": "^4.1.10",
+		"@types/node": "^24.10.1",
+		"@uiw/react-json-view": "^2.0.0-alpha.39",
+		"allotment": "^1.20.4",
+		"canvas": "^3.2.0",
+		"clsx": "^2.1.1",
+		"leva": "^0.10.1",
+		"lucide-react": "^0.555.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-hotkeys-hook": "^5.2.1",
+		"sharp": "^0.34.5",
+		"tailwind-merge": "^3.4.0",
+		"tailwindcss": "^4.1.10",
+		"zustand": "^5.0.9"
+	},
+	"devDependencies": {
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react": "^5.1.1",
+		"autoprefixer": "^10.4.22",
+		"baseline-browser-mapping": "^2.9.19",
+		"postcss": "^8.5.6",
+		"vite": "^6.1.0"
+	}
 }

@@ -16,9 +16,23 @@ pub fn export_mouse_info_ffi() -> MouseInfo
 
 pub fn export_scene_graph_ffi() -> @js.Optional[EditorSceneGraph]
 
+pub fn export_tile_obj_visibility_state_ffi() -> EditorTileObjVisibilityState
+
 pub fn load_map_ffi(Int) -> Unit
 
-pub fn set_view_options_ffi(Bool, Bool, Bool) -> Unit
+pub fn reset_tile_obj_visibility_ffi() -> Unit
+
+pub fn set_background_visible_ffi(Bool) -> Unit
+
+pub fn set_layer_visibility_ffi(Int, Bool, Bool) -> Unit
+
+pub fn set_obj_visibility_ffi(Int, Int, Bool) -> Unit
+
+pub fn set_objs_scope_visibility_ffi(Bool) -> Unit
+
+pub fn set_tile_visibility_ffi(Int, Int, Bool) -> Unit
+
+pub fn set_tiles_scope_visibility_ffi(Bool) -> Unit
 
 pub fn start_editor() -> Unit
 
@@ -62,8 +76,6 @@ pub(all) struct EditorStatus {
   cam_y : Int
   zoom : Double
   bg_visible : Bool
-  tiles_visible : Bool
-  objs_visible : Bool
   bg_back_visible : Bool
   bg_fore_visible : Bool
   bg_debug_index : Int?
@@ -73,10 +85,26 @@ pub(all) struct EditorStatus {
 pub impl Show for EditorStatus
 pub impl ToJson for EditorStatus
 
+pub(all) struct EditorTileObjLayerVisibility {
+  layer : Int
+  tiles_visible : Bool
+  objs_visible : Bool
+}
+pub impl Show for EditorTileObjLayerVisibility
+pub impl ToJson for EditorTileObjLayerVisibility
+
+pub(all) struct EditorTileObjVisibilityState {
+  tiles_visible : Bool
+  objs_visible : Bool
+  layers : Array[EditorTileObjLayerVisibility]
+  tile_items : Array[Array[Bool]]
+  obj_items : Array[Array[Bool]]
+}
+pub impl Show for EditorTileObjVisibilityState
+pub impl ToJson for EditorTileObjVisibilityState
+
 pub struct LayerVisibility {
   mut backgrounds : Bool
-  mut tiles : Bool
-  mut objs : Bool
 }
 
 pub struct MapLimits {

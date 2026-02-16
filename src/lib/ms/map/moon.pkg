@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/cmp",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/log",

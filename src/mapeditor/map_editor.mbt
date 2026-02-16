@@ -54,15 +54,51 @@ pub fn load_map_ffi(id : Int) -> Unit {
 }
 
 ///|
-pub fn set_view_options_ffi(
-  show_bg : Bool,
-  show_tiles : Bool,
-  show_objs : Bool,
-) -> Unit {
+pub fn set_background_visible_ffi(show_bg : Bool) -> Unit {
   viewer_state.val.layer_visibility.backgrounds = show_bg
-  viewer_state.val.layer_visibility.tiles = show_tiles
-  viewer_state.val.layer_visibility.objs = show_objs
   apply_visibility_to_modules()
+}
+
+///|
+pub fn set_layer_visibility_ffi(
+  layer : Int,
+  tiles_visible : Bool,
+  objs_visible : Bool,
+) -> Unit {
+  @map.set_layer_visibility(layer, tiles_visible, objs_visible)
+}
+
+///|
+pub fn set_tile_visibility_ffi(
+  layer : Int,
+  resource_index : Int,
+  visible : Bool,
+) -> Unit {
+  @map.set_tile_visibility(layer, resource_index, visible)
+}
+
+///|
+pub fn set_obj_visibility_ffi(
+  layer : Int,
+  resource_index : Int,
+  visible : Bool,
+) -> Unit {
+  @map.set_obj_visibility(layer, resource_index, visible)
+}
+
+///|
+pub fn set_tiles_scope_visibility_ffi(visible : Bool) -> Unit {
+  @map.set_tiles_visible(visible)
+}
+
+///|
+pub fn set_objs_scope_visibility_ffi(visible : Bool) -> Unit {
+  @map.set_objs_visible(visible)
+}
+
+///|
+pub fn reset_tile_obj_visibility_ffi() -> Unit {
+  @map.reset_tile_obj_visibility()
 }
 
 ///|
@@ -76,13 +112,11 @@ pub struct MapLimits {
 ///|
 pub struct LayerVisibility {
   mut backgrounds : Bool
-  mut tiles : Bool
-  mut objs : Bool
 }
 
 ///|
 fn default_visibility() -> LayerVisibility {
-  { backgrounds: true, tiles: true, objs: true }
+  { backgrounds: true }
 }
 
 ///|
@@ -266,12 +300,6 @@ fn viewer_visibility_input_system(_delta : Double) -> Unit {
   if @inputs.is_just_pressed(@inputs.Code::KeyQ) {
     toggle_background_visibility()
   }
-  if @inputs.is_just_pressed(@inputs.Code::KeyW) {
-    toggle_tiles_visibility()
-  }
-  if @inputs.is_just_pressed(@inputs.Code::KeyE) {
-    toggle_objs_visibility()
-  }
   if @inputs.is_just_pressed(@inputs.Code::KeyR) {
     @map.step_background_debug(-1)
   }
@@ -314,22 +342,6 @@ fn toggle_background_visibility() -> Unit {
 }
 
 ///|
-fn toggle_tiles_visibility() -> Unit {
-  viewer_state.val.layer_visibility.tiles = not(
-    viewer_state.val.layer_visibility.tiles,
-  )
-  apply_visibility_to_modules()
-}
-
-///|
-fn toggle_objs_visibility() -> Unit {
-  viewer_state.val.layer_visibility.objs = not(
-    viewer_state.val.layer_visibility.objs,
-  )
-  apply_visibility_to_modules()
-}
-
-///|
 fn clamp(value : Double, min_value : Double, max_value : Double) -> Double {
   if value < min_value {
     min_value
@@ -344,8 +356,6 @@ fn clamp(value : Double, min_value : Double, max_value : Double) -> Double {
 fn apply_visibility_to_modules() -> Unit {
   let visibility = viewer_state.val.layer_visibility
   @map.set_background_visibility(visibility.backgrounds, visibility.backgrounds)
-  @map.set_tiles_visible(visibility.tiles)
-  @map.set_objs_visible(visibility.objs)
   if not(visibility.backgrounds) {
     @map.clear_background_debug()
   }

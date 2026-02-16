@@ -60,8 +60,6 @@ export interface EditorStatus {
     cam_y: number;
     zoom: number;
     bg_visible: boolean;
-    tiles_visible: boolean;
-    objs_visible: boolean;
     bg_back_visible: boolean;
     bg_fore_visible: boolean;
     bg_debug_index?: number;
@@ -69,13 +67,34 @@ export interface EditorStatus {
     fps: number;
 }
 
+export type EditorTileObjLayerVisibility = {
+    layer: number;
+    tiles_visible: boolean;
+    objs_visible: boolean;
+};
+
+export type EditorTileObjVisibilityState = {
+    tiles_visible: boolean;
+    objs_visible: boolean;
+    layers: EditorTileObjLayerVisibility[];
+    tile_items: boolean[][];
+    obj_items: boolean[][];
+};
+
 interface MoonBitModule {
     start_editor: (canvas_id: string) => void;
     load_map_ffi: (id: number) => void;
-    set_view_options_ffi: (bg: boolean, tiles: boolean, objs: boolean) => void;
+    set_background_visible_ffi?: (visible: boolean) => void;
+    set_layer_visibility_ffi?: (layer: number, tilesVisible: boolean, objsVisible: boolean) => void;
+    set_tile_visibility_ffi?: (layer: number, resourceIndex: number, visible: boolean) => void;
+    set_obj_visibility_ffi?: (layer: number, resourceIndex: number, visible: boolean) => void;
+    set_tiles_scope_visibility_ffi?: (visible: boolean) => void;
+    set_objs_scope_visibility_ffi?: (visible: boolean) => void;
+    reset_tile_obj_visibility_ffi?: () => void;
     export_scene_graph_ffi?: () => any;
     export_mouse_info_ffi?: () => MouseInfo;
     export_editor_status_ffi?: () => EditorStatus;
+    export_tile_obj_visibility_state_ffi?: () => EditorTileObjVisibilityState;
     // Add other exported MoonBit functions here as needed
     [key: string]: any;
 }
@@ -84,10 +103,17 @@ interface MoonBitModule {
 
 export interface EditorAPI {
     loadMap: (id: number) => void;
-    setViewOptions: (showBg: boolean, showTiles: boolean, showObjs: boolean) => void;
+    setBackgroundVisible: (visible: boolean) => void;
+    setLayerVisibility: (layer: number, tilesVisible: boolean, objsVisible: boolean) => void;
+    setTileVisibility: (layer: number, resourceIndex: number, visible: boolean) => void;
+    setObjVisibility: (layer: number, resourceIndex: number, visible: boolean) => void;
+    setTilesScopeVisibility: (visible: boolean) => void;
+    setObjsScopeVisibility: (visible: boolean) => void;
+    resetTileObjVisibility: () => void;
     getSceneGraph: () => any;
     getMouseInfo: () => MouseInfo | null;
     getStatus: () => EditorStatus | null;
+    getTileObjVisibilityState: () => EditorTileObjVisibilityState | null;
     cleanup: () => void;
 }
 
@@ -142,8 +168,26 @@ export async function initMoonBitEngine(
             loadMap: (id: number) => {
                 if (m.load_map_ffi) m.load_map_ffi(id);
             },
-            setViewOptions: (showBg: boolean, showTiles: boolean, showObjs: boolean) => {
-                if (m.set_view_options_ffi) m.set_view_options_ffi(showBg, showTiles, showObjs);
+            setBackgroundVisible: (visible: boolean) => {
+                if (m.set_background_visible_ffi) m.set_background_visible_ffi(visible);
+            },
+            setLayerVisibility: (layer: number, tilesVisible: boolean, objsVisible: boolean) => {
+                if (m.set_layer_visibility_ffi) m.set_layer_visibility_ffi(layer, tilesVisible, objsVisible);
+            },
+            setTileVisibility: (layer: number, resourceIndex: number, visible: boolean) => {
+                if (m.set_tile_visibility_ffi) m.set_tile_visibility_ffi(layer, resourceIndex, visible);
+            },
+            setObjVisibility: (layer: number, resourceIndex: number, visible: boolean) => {
+                if (m.set_obj_visibility_ffi) m.set_obj_visibility_ffi(layer, resourceIndex, visible);
+            },
+            setTilesScopeVisibility: (visible: boolean) => {
+                if (m.set_tiles_scope_visibility_ffi) m.set_tiles_scope_visibility_ffi(visible);
+            },
+            setObjsScopeVisibility: (visible: boolean) => {
+                if (m.set_objs_scope_visibility_ffi) m.set_objs_scope_visibility_ffi(visible);
+            },
+            resetTileObjVisibility: () => {
+                if (m.reset_tile_obj_visibility_ffi) m.reset_tile_obj_visibility_ffi();
             },
             getSceneGraph: () => {
                 if (m.export_scene_graph_ffi) {
@@ -160,6 +204,12 @@ export async function initMoonBitEngine(
             getStatus: () => {
                 if (m.export_editor_status_ffi) {
                     return m.export_editor_status_ffi();
+                }
+                return null;
+            },
+            getTileObjVisibilityState: () => {
+                if (m.export_tile_obj_visibility_state_ffi) {
+                    return m.export_tile_obj_visibility_state_ffi();
                 }
                 return null;
             },

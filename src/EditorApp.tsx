@@ -10,33 +10,73 @@ import { StatusPanel } from './components/StatusPanel';
 import { EditorAPI, EditorSceneGraph, initMoonBitEngine } from './engine/bridge';
 import mapDataRaw from './utils/map.img.json';
 
+const DEFAULT_MAP_ID = '100030000';
+
+function replaceMapIdQuery(mapId: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('mapId', mapId);
+  window.history.replaceState({}, '', url);
+}
+
+function pushMapIdQuery(mapId: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('mapId', mapId);
+  window.history.pushState({}, '', url);
+}
+
 export default function EditorApp() {
   const [opened, { toggle }] = useDisclosure();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [sceneGraph, setSceneGraph] = useState<EditorSceneGraph | null>(null);
   const [selectedObj, setSelectedObj] = useState<any | null>(null);
   const [api, setApi] = useState<EditorAPI | null>(null);
+  const [selectedMapId, setSelectedMapId] = useState<string>(DEFAULT_MAP_ID);
   const editorApiRef = useRef<EditorAPI | null>(null);
+  const lastSceneRevisionRef = useRef<number>(-1);
+  const wasLoadingRef = useRef<boolean>(false);
 
-  const mapOptions = useMemo(() => {
+  const { mapOptions, mapIdSet } = useMemo(() => {
     const options: { group: string; items: { value: string; label: string }[] }[] = [];
+    const ids = new Set<string>();
     for (const [region, maps] of Object.entries(mapDataRaw)) {
       const items: { value: string; label: string }[] = [];
       for (const [id, info] of Object.entries(maps)) {
         // @ts-ignore
         const label = `${info.mapName} (${id})`;
         items.push({ value: id, label });
+        ids.add(id);
       }
       if (items.length > 0) {
         options.push({ group: region, items });
       }
     }
-    return options;
+    return { mapOptions: options, mapIdSet: ids };
   }, []);
 
   useEffect(() => {
-    let intervalId: number | undefined;
-    
+    const search = new URLSearchParams(window.location.search);
+    const mapId = search.get('mapId');
+    const validMapId = mapId && mapIdSet.has(mapId) ? mapId : DEFAULT_MAP_ID;
+    setSelectedMapId(validMapId);
+    if (mapId !== validMapId) {
+      replaceMapIdQuery(validMapId);
+    }
+    const onPopState = () => {
+      const nextSearch = new URLSearchParams(window.location.search);
+      const nextMapId = nextSearch.get('mapId');
+      const nextValidMapId = nextMapId && mapIdSet.has(nextMapId)
+        ? nextMapId
+        : DEFAULT_MAP_ID;
+      setSelectedMapId(nextValidMapId);
+      if (nextMapId !== nextValidMapId) {
+        replaceMapIdQuery(nextValidMapId);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [mapIdSet]);
+
+  useEffect(() => {
     // Pass the canvas ID string to the engine
     initMoonBitEngine("canvas", (msg, type) => {
       console.log(`[MoonBit ${type}]: ${msg}`);
@@ -44,43 +84,54 @@ export default function EditorApp() {
       console.log("MoonBit Engine Initialized");
       editorApiRef.current = editorApi;
       setApi(editorApi);
-      
-      const checkGraph = () => {
-        const graph = editorApi.getSceneGraph?.();
-        if (graph) {
-          setSceneGraph(graph);
-          return true;
-        }
-        return false;
-      };
-
-      if (!checkGraph()) {
-        intervalId = window.setInterval(() => {
-          if (checkGraph()) {
-            window.clearInterval(intervalId);
-          }
-        }, 1000);
-      }
-      
-      // Removed main loop polling from here
     });
 
     return () => {
-      if (intervalId) window.clearInterval(intervalId);
       editorApiRef.current?.cleanup();
     };
   }, []);
 
-  const handleMapLoad = () => {
-    // Reset selection when map changes
+  useEffect(() => {
+    if (!api) return;
+    const mapId = Number.parseInt(selectedMapId, 10);
+    if (Number.isNaN(mapId)) return;
+    api.loadMap(mapId);
     setSelectedObj(null);
-    // Force a re-check of the scene graph after map load
-    if (api) {
-      const graph = api.getSceneGraph?.();
-      if (graph) {
-        setSceneGraph(graph);
+  }, [api, selectedMapId]);
+
+  useEffect(() => {
+    if (!api) return;
+    let animationFrameId = 0;
+
+    const poll = () => {
+      const status = api.getStatus?.();
+      if (status) {
+        if (status.loading) {
+          if (!wasLoadingRef.current) {
+            setSceneGraph(null);
+          }
+          wasLoadingRef.current = true;
+        } else {
+          wasLoadingRef.current = false;
+          if (status.scene_revision != lastSceneRevisionRef.current) {
+            const graph = api.getSceneGraph?.();
+            if (graph) {
+              setSceneGraph(graph);
+              lastSceneRevisionRef.current = status.scene_revision;
+            }
+          }
+        }
       }
-    }
+      animationFrameId = requestAnimationFrame(poll);
+    };
+    poll();
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [api]);
+
+  const handleMapChange = (mapId: string) => {
+    setSelectedMapId(mapId);
+    pushMapIdQuery(mapId);
   };
 
   return (
@@ -95,7 +146,12 @@ export default function EditorApp() {
             <Text size="sm" fw={700}>Maple Moon Editor</Text>
           </Group>
           <Group>
-             <MapSelector api={api} mapOptions={mapOptions} onMapLoad={handleMapLoad} />
+             <MapSelector
+               api={api}
+               mapOptions={mapOptions}
+               selectedMapId={selectedMapId}
+               onMapChange={handleMapChange}
+             />
           </Group>
         </Group>
       </AppShell.Header>

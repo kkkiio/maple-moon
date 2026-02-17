@@ -9,26 +9,35 @@ import { EditorAPI } from '../engine/bridge';
  * 
  * Functions:
  * - Loads available maps from mapDataRaw (passed as options).
- * - Triggers `api.loadMap` when a selection is made.
- * - Notifies parent via `onMapLoad` to reset selection state.
+ * - Notifies parent when a map is selected.
  * 
  * Optimization:
  * - Wrapped in `memo` to prevent re-renders when parent state updates.
  * - Uses `limit={20}` to reduce rendering cost of the large dropdown list.
  */
-export const MapSelector = memo(({ api, mapOptions, onMapLoad }: { api: EditorAPI | null, mapOptions: any[], onMapLoad: () => void }) => {
+export const MapSelector = memo(({
+  api,
+  mapOptions,
+  selectedMapId,
+  onMapChange,
+}: {
+  api: EditorAPI | null,
+  mapOptions: any[],
+  selectedMapId: string,
+  onMapChange: (mapId: string) => void,
+}) => {
   return (
     <Select
       placeholder="Select Map"
       data={mapOptions}
+      value={selectedMapId}
       searchable
       limit={20} // Performance optimization for large lists
       size="xs"
       style={{ width: 300 }}
       onChange={(value) => {
         if (value && api) {
-          api.loadMap(parseInt(value));
-          onMapLoad(); // Notify parent that map has loaded/changed
+          onMapChange(value);
         }
       }}
     />

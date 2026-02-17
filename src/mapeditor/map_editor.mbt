@@ -41,6 +41,7 @@ pub fn start_editor() -> Unit {
 
 ///|
 pub fn load_map_ffi(id : Int) -> Unit {
+  viewer_state.val.current_map_id = id
   viewer_state.val.map_future = Some(
     @io_service.submit_background_task(fn() {
       let portal_animations = @map.Module::load().get_portals_animations()
@@ -121,6 +122,8 @@ fn default_visibility() -> LayerVisibility {
 
 ///|
 pub struct ViewerState {
+  mut current_map_id : Int
+  mut scene_revision : Int
   mut map_future : @utils.Future[
     Result[(@map.MapRawResources, @map.SceneMap), Error],
   ]?
@@ -141,6 +144,8 @@ pub struct SceneState {
 
 ///|
 let viewer_state : Ref[ViewerState] = Ref::new({
+  current_map_id: MAP_ID,
+  scene_revision: 0,
   map_future: None,
   scene_state: None,
   error_message: None,
@@ -157,6 +162,7 @@ fn start_map_loading_system(_delta : Double) -> Unit {
     return
   }
   viewer_state.val.error_message = None
+  viewer_state.val.current_map_id = MAP_ID
   let portal_animations = @map.Module::load().get_portals_animations()
   viewer_state.val.map_future = Some(
     @io_service.submit_background_task(fn() {
@@ -174,10 +180,16 @@ fn map_loading_poll_system(_delta : Double) -> Unit {
   guard future.poll() is Some(result) else { return }
   viewer_state.val.map_future = None
   match result {
-    Ok((raw_resources, scene_map)) => finalize_scene(raw_resources, scene_map)
+    Ok((raw_resources, scene_map)) => {
+      viewer_state.val.current_map_id = raw_resources.id
+      finalize_scene(raw_resources, scene_map)
+    }
     Err(e) => {
       viewer_state.val.error_message = Some(e.to_string())
-      @log.error("load map failed", data={ "map_id": MAP_ID, "error": e })
+      @log.error("load map failed", data={
+        "map_id": viewer_state.val.current_map_id,
+        "error": e,
+      })
     }
   }
 }
@@ -208,11 +220,17 @@ fn finalize_scene(
     top: borders.first().to_double(),
     bottom: borders.second().to_double(),
   }
+  let (left, right, top, bottom) = normalize_camera_limits(
+    map_limits.left,
+    map_limits.right,
+    map_limits.top,
+    map_limits.bottom,
+  )
   @camera.set_limits(
-    top=map_limits.top,
-    bottom=map_limits.bottom,
-    left=map_limits.left,
-    right=map_limits.right,
+    top~,
+    bottom~,
+    left~,
+    right~,
   )
   viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
 
@@ -247,8 +265,10 @@ fn finalize_scene(
     )
   }
   @monster.set_mobs({ map_mobs: mobs, physics })
+  viewer_state.val.scene_revision += 1
   @log.info("map ready in viewer", data={
-    "map_id": MAP_ID,
+    "map_id": raw_resources.id,
+    "scene_revision": viewer_state.val.scene_revision,
     "map_limits": map_limits,
     "mob_count": oid_counter - 100000,
   })
@@ -329,6 +349,28 @@ fn render_debug_overlay(delta : Double) -> Unit {
   if delta > 0.0 {
     viewer_state.val.fps = 1.0 / delta
   }
+}
+
+///|
+fn normalize_camera_limits(
+  left : Double,
+  right : Double,
+  top : Double,
+  bottom : Double,
+) -> (Double, Double, Double, Double) {
+  let viewport_width = @graphics.view_size.0.to_double()
+  let viewport_height = @graphics.view_size.1.to_double()
+  let right = if right - left < viewport_width {
+    left + viewport_width
+  } else {
+    right
+  }
+  let top = if bottom - top < viewport_height {
+    bottom - viewport_height
+  } else {
+    top
+  }
+  (left, right, top, bottom)
 }
 
 ///|

@@ -92,6 +92,7 @@ pub(all) struct EditorStatus {
   loading : Bool
   error_msg : String?
   map_id : Int
+  scene_revision : Int
   map_name : String
   cam_x : Int
   cam_y : Int
@@ -118,7 +119,8 @@ fn get_editor_status() -> EditorStatus {
   {
     loading,
     error_msg: viewer.error_message,
-    map_id: MAP_ID,
+    map_id: viewer.current_map_id,
+    scene_revision: viewer.scene_revision,
     map_name,
     cam_x: camera_pos[@selene_math.Axis::X].to_int(),
     cam_y: camera_pos[@selene_math.Axis::Y].to_int(),

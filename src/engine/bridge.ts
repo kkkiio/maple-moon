@@ -55,6 +55,7 @@ export interface EditorStatus {
     loading: boolean;
     error_msg?: string;
     map_id: number;
+    scene_revision: number;
     map_name: string;
     cam_x: number;
     cam_y: number;

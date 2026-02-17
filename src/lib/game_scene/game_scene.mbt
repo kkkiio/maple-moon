@@ -94,7 +94,35 @@ fn respawn_player(
   })
   player.respawn(startpos, map_info.is_underwater())
   @camera.attach_entity(player.entity, @selene_math.Vec2D(16.0, 16.0))
+  let (left, right, top, bottom) = normalize_camera_limits(
+    left,
+    right,
+    top,
+    bottom,
+  )
   @camera.set_limits(left~, right~, top~, bottom~)
+}
+
+///|
+fn normalize_camera_limits(
+  left : Double,
+  right : Double,
+  top : Double,
+  bottom : Double,
+) -> (Double, Double, Double, Double) {
+  let viewport_width = @graphics.view_size.0.to_double()
+  let viewport_height = @graphics.view_size.1.to_double()
+  let right = if right - left < viewport_width {
+    left + viewport_width
+  } else {
+    right
+  }
+  let top = if bottom - top < viewport_height {
+    bottom - viewport_height
+  } else {
+    top
+  }
+  (left, right, top, bottom)
 }
 
 ///|
@@ -263,7 +291,6 @@ impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
   ..write_byte((0).to_byte())
   ..write_point(self.position)
   ..write_int(self.oid)
-  p
 }
 
 ///|

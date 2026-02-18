@@ -84,16 +84,12 @@ async test "character stabO1" {
 
   // Frame 0
   @capture_app.run_loop(0.016)
-  let buffer0 = @capture_app.to_buffer().to_bytes()
-  @fs.create_dir("src/test/char_look_test/__snapshot__")
-  @fs.write_bytes_to_file(
-    "src/test/char_look_test/__snapshot__/stabO1_0.png", buffer0,
-  )
+  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_0.png")
   let sprites : Array[@test_snapshots.DebugSprite] = @sprite.sprites
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",
@@ -232,15 +228,12 @@ async test "character stabO1" {
   for i = 0; i < 4; i = i + 1 {
     @capture_app.run_loop(0.1)
   }
-  let buffer = @capture_app.to_buffer().to_bytes()
-  @fs.write_bytes_to_file(
-    "src/test/char_look_test/__snapshot__/stabO1_1.png", buffer,
-  )
+  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_1.png")
   let sprites = @sprite.sprites
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",

@@ -9,3 +9,5 @@ import {
 import {
   "moonbitlang/x/fs",
 } for "test"
+
+warnings = "-A"

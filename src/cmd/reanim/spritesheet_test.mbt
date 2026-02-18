@@ -197,7 +197,7 @@ async test "process monster resource" {
   let res = process_resource(
     test_mob_0100101_json, atlases, "0100101.img", "mob",
   )
-  @json.inspect(res, content={
+  json_inspect(res, content={
     "die1": {
       "0": {
         "__h": 32,
@@ -318,6 +318,74 @@ async test "process monster resource" {
         "rb": [19, 0],
         "__i": "mob/0100101.img.png",
         "__off": [335, 0],
+      },
+    },
+  })
+}
+
+///|
+async test "keep source sheets writes __off from atlas" {
+  let input : Json = {
+    "walk": {
+      "0": {
+        "__h": 10,
+        "__w": 8,
+        "__i": "spritesheets/Item/Special/0900.img/09000000#498",
+      },
+      "1": {
+        "__h": 11,
+        "__w": 9,
+        "__i": "spritesheets/Item/Special/0900.img/09000000#500",
+      },
+    },
+  }
+  let atlas_json : Json = {
+    "meta": {
+      "image": "09000000.png",
+      "size": { "w": 64, "h": 64 },
+      "scale": "1",
+    },
+    "frames": {
+      "498.png": {
+        "frame": { "x": 25, "y": 0, "w": 8, "h": 10 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 10 },
+        "sourceSize": { "w": 8, "h": 10 },
+      },
+      "500.png": {
+        "frame": { "x": 0, "y": 24, "w": 9, "h": 11 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 9, "h": 11 },
+        "sourceSize": { "w": 9, "h": 11 },
+      },
+    },
+  }
+  let metadata : @resource.SpritesheetMetadata = @json.from_json(atlas_json)
+  let atlases : Map[String, @resource.SpritesheetMetadata] = {
+    "spritesheets/Item/Special/0900.img/09000000": metadata,
+  }
+  let res = process_resource(
+    input,
+    atlases,
+    "0900.img",
+    "Item/Special",
+    keep_source_sheets=true,
+  )
+  json_inspect(res, content={
+    "walk": {
+      "0": {
+        "__h": 10,
+        "__w": 8,
+        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__off": [25, 0],
+      },
+      "1": {
+        "__h": 11,
+        "__w": 9,
+        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__off": [0, 24],
       },
     },
   })

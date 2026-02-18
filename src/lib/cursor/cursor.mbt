@@ -2,7 +2,7 @@
 using @ui {type CursorState}
 
 ///|
-using @graphics {CURSOR_ZINDEX}
+const CURSOR_ZINDEX : Int = @graphics.CURSOR_ZINDEX
 
 ///|
 pub(all) struct Cursor {

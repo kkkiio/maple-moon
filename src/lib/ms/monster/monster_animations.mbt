@@ -48,9 +48,8 @@ pub(all) struct MobAnimations {
 ///|
 fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
   let nx : @resource.NxAnimation = @json.from_json(src)
-  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false)
-  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true)
-  { nx, selene_l, selene_r }
+  let selene = nx_animation_to_selene_animation(nx)
+  { nx, selene }
 }
 
 ///|
@@ -58,9 +57,8 @@ fn nx_animation_to_mob_animation(
   nx : @resource.NxAnimation,
   loop_~ : Bool,
 ) -> MobAnimation {
-  let selene_l = nx_animation_to_selene_animation(nx, flip_x=false, loop_~)
-  let selene_r = nx_animation_to_selene_animation(nx, flip_x=true, loop_~)
-  { nx, selene_l, selene_r }
+  let selene = nx_animation_to_selene_animation(nx, loop_~)
+  { nx, selene }
 }
 
 ///|

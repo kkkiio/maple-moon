@@ -17,6 +17,7 @@ fn parse_args() -> CliArgs? {
   let bitmaps_dir : Ref[String] = Ref::new("")
   let spritesheet_dir : Ref[String] = Ref::new("")
   let resize : Ref[Bool] = Ref::new(false)
+  let keep_source_sheets : Ref[Bool] = Ref::new(false)
   let positional : Array[String] = []
   let spec : Array[(String, String, @ArgParser.Spec, String)] = [
     (
@@ -42,6 +43,12 @@ fn parse_args() -> CliArgs? {
       "-r",
       @ArgParser.Set(resize),
       "Resize frames to unified size (legacy mode, default: off)",
+    ),
+    (
+      "--keep-source-sheets",
+      "-k",
+      @ArgParser.Set(keep_source_sheets),
+      "Keep source spritesheets and only inject __off",
     ),
   ]
   let usage =
@@ -87,6 +94,7 @@ fn parse_args() -> CliArgs? {
       Some(match_pattern.val)
     },
     resize: resize.val,
+    keep_source_sheets: keep_source_sheets.val,
   })
 }
 

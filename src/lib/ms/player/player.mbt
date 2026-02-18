@@ -39,7 +39,6 @@ pub(all) struct Player {
   mut ladder : @map.Ladder?
   inventory : &Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
-  active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
   // load_skill_book : async (@job.Job) -> &SkillBook raise
   mut skill_book : &SkillBook
@@ -145,7 +144,6 @@ pub fn Player::new(
     ladder: None,
     inventory: MockInventory::{  },
     buffs: Map::new(),
-    active_buffs: ActiveBuffs::new(),
     randomizer: @utils.Randomizer::new(),
     skill_book: MockSkillBook::{  },
     // load_skill_book,
@@ -553,9 +551,6 @@ pub fn Player::recalc_stats(self : Player, equip_changed : Bool) -> Unit {
     // self.stats.add_value(stat, inventory_total)
   }
   // TODO: Implement passive skills
-  for buff in self.buffs.values() {
-    self.active_buffs.apply_buff(self.stats, buff.stat, buff.value)
-  }
   self.stats.close_totalstats()
 }
 

@@ -85,7 +85,7 @@ pub fn collect_frames_from_bitmaps(animation_json : Json) -> Array[FrameData] {
 
 ///|
 /// Load bitmap images for frames
-async fn load_bitmap_images(
+fn load_bitmap_images(
   frames : Array[FrameData],
   load_bitmap : (Int) -> @js.Value,
 ) -> Array[ExtractedFrame] {

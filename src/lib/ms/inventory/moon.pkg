@@ -9,7 +9,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/item",
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/char_stats",
@@ -22,6 +21,7 @@ import {
   "KKKIIO/maple-moon/lib/legacy_types",
 }
 
+warnings = "-A"
 options(
   link: {
     "js": {

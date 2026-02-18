@@ -1,12 +1,12 @@
 ///|
 struct TimedQueue[T] {
-  queue : @priority_queue.T[Timed[T]]
+  queue : @priority_queue.PriorityQueue[Timed[T]]
   mut time : Int64
 }
 
 ///|
 pub fn[T] TimedQueue::new() -> TimedQueue[T] {
-  { queue: @priority_queue.new(), time: 0 }
+  { queue: @priority_queue.PriorityQueue::new(), time: 0 }
 }
 
 ///|

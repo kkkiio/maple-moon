@@ -5,3 +5,5 @@ import {
 options(
   implement: "moonbitlang/core/abort",
 )
+
+warnings = "-A"

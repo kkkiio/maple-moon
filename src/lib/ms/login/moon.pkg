@@ -32,6 +32,7 @@ import {
   "KKKIIO/maple-moon/lib/char_stance",
 }
 
+warnings = "-A"
 options(
   link: {
     "js": {

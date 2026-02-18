@@ -30,7 +30,7 @@ test {
     "undead": 0,
   }
   let info : MobInfo = src |> @json.from_json
-  @json.inspect(info, content={
+  json_inspect(info, content={
     "magic_damage": 120,
     "md_damage": 50,
     "pa_damage": 110,

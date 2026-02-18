@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/queue",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/maple_protocol",
@@ -13,3 +14,5 @@ import {
 options(
   implement: "KKKIIO/maple-moon/lib/game_server",
 )
+
+warnings = "-A"

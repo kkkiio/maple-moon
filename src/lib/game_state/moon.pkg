@@ -5,3 +5,5 @@ import {
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/maple_protocol",
 }
+
+warnings = "-A"

@@ -9,6 +9,7 @@ pub(all) struct CliArgs {
   bitmaps_dir : String // For __b mode (default: <input-dir>/bitmaps)
   match_pattern : String? // Optional path pattern filter
   resize : Bool // Whether to resize frames to unified size (legacy mode)
+  keep_source_sheets : Bool // Keep source spritesheets and only inject __off
 }
 
 ///|
@@ -64,31 +65,27 @@ pub fn collect_all_frames(
 fn update_json_tree(
   json : Json,
   path : Array[String],
-  frame_updates : Map[String, (Int, Int, Int)], // path -> (offset_x, w, h)
-  base_name : String,
-  output_rel_path : String,
+  frame_updates : Map[String, (String, Int, Int, Int, Int)], // path -> (__i, off_x, off_y, w, h)
 ) -> Json {
   let path_key = path.join("/")
 
   // Check if this path has a frame update
   match frame_updates.get(path_key) {
-    Some((offset_x, w, h)) =>
+    Some((target_i, offset_x, offset_y, w, h)) =>
       // This is a frame that was processed
       match json {
         Object(obj) => {
           let new_obj : Map[String, Json] = {}
           for k, v in obj {
             if k == "__i" {
-              new_obj["__i"] = Json::string(
-                "\{output_rel_path}/\{base_name}.png",
-              )
+              new_obj["__i"] = Json::string(target_i)
             } else {
               new_obj[k] = v
             }
           }
           new_obj["__off"] = Json::array([
             Json::number(offset_x.to_double()),
-            Json::number(0.0),
+            Json::number(offset_y.to_double()),
           ])
           new_obj["__w"] = Json::number(w.to_double())
           new_obj["__h"] = Json::number(h.to_double())
@@ -105,7 +102,7 @@ fn update_json_tree(
             let child_path = path.copy()
             child_path.push(key)
             new_obj[key] = update_json_tree(
-              value, child_path, frame_updates, base_name, output_rel_path,
+              value, child_path, frame_updates,
             )
           }
           Json::object(new_obj)
@@ -117,7 +114,7 @@ fn update_json_tree(
             child_path.push(i.to_string())
             new_arr.push(
               update_json_tree(
-                value, child_path, frame_updates, base_name, output_rel_path,
+                value, child_path, frame_updates,
               ),
             )
           }
@@ -139,6 +136,7 @@ pub async fn process_simple_pack(
   bitmaps_dir : String,
   load_bitmap : ((String) -> @js.Value)?,
   save_image : ((String, @js.Value) -> Unit)?,
+  keep_source_sheets? : Bool = false,
 ) -> Json {
   // 1. Recursively collect all frames
   let frames_with_paths : Array[FrameWithPath] = []
@@ -180,35 +178,53 @@ pub async fn process_simple_pack(
     total_width += frame_data.width
   }
 
-  // 4. Extract unique frames from source (optional)
-  match load_bitmap {
-    Some(lb) => {
-      let extracted = extract_frames(
-        unique_frames, spritesheet_buffers, bitmaps_dir, lb,
-      )
+  // 4. Extract unique frames from source and write unified sheet (optional)
+  if not(keep_source_sheets) {
+    match load_bitmap {
+      Some(lb) => {
+        let extracted = extract_frames(
+          unique_frames, spritesheet_buffers, bitmaps_dir, lb,
+        )
 
-      // 5. Generate spritesheet from unique frames
-      let (spritesheet, _offsets) = generate_simple_spritesheet(extracted)
+        // 5. Generate spritesheet from unique frames
+        let (spritesheet, _offsets) = generate_simple_spritesheet(extracted)
 
-      // 6. Save spritesheet
-      match save_image {
-        Some(saver) => saver("\{base_name}.png", spritesheet)
-        None => ()
+        // 6. Save spritesheet
+        match save_image {
+          Some(saver) => saver("\{base_name}.png", spritesheet)
+          None => ()
+        }
       }
+      None => ()
     }
-    None => ()
   }
 
   // 7. Build frame_updates map for all original paths
-  let frame_updates : Map[String, (Int, Int, Int)] = {}
+  let frame_updates : Map[String, (String, Int, Int, Int, Int)] = {}
   for path_key, unique_idx in path_to_unique_index {
-    let offset_x = offsets[unique_idx]
     let frame_data = unique_frames[unique_idx]
-    frame_updates[path_key] = (offset_x, frame_data.width, frame_data.height)
+    if keep_source_sheets && not(frame_data.is_bitmap) {
+      frame_updates[path_key] = (
+        "\{frame_data.spritesheet_path}.png",
+        frame_data.src_x,
+        frame_data.src_y,
+        frame_data.width,
+        frame_data.height,
+      )
+    } else {
+      let offset_x = offsets[unique_idx]
+      frame_updates[path_key] = (
+        "\{output_rel_path}/\{base_name}.png",
+        offset_x,
+        0,
+        frame_data.width,
+        frame_data.height,
+      )
+    }
   }
 
   // 8. Update JSON tree even if images are not loaded
-  update_json_tree(json, [], frame_updates, base_name, output_rel_path)
+  update_json_tree(json, [], frame_updates)
 }
 
 ///|
@@ -223,6 +239,7 @@ pub async fn process_resource(
   load_spritesheet? : (String) -> @js.Value,
   load_bitmap? : (String) -> @js.Value,
   save_image? : (String, @js.Value) -> Unit,
+  keep_source_sheets? : Bool = false,
 ) -> Json {
   // Load spritesheet buffers if load_spritesheet is provided
   let spritesheet_buffers : Map[String, @js.Value] = {}
@@ -242,7 +259,7 @@ pub async fn process_resource(
     // Default: simple pack mode - recursively collect all frames
     process_simple_pack(
       src, atlases, spritesheet_buffers, base_name, output_rel_path, bitmaps_dir,
-      load_bitmap, save_image,
+      load_bitmap, save_image, keep_source_sheets=keep_source_sheets,
     )
   }
 }
@@ -340,6 +357,7 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
     output_rel_path,
     bitmaps_dir=args.bitmaps_dir,
     resize=args.resize,
+    keep_source_sheets=args.keep_source_sheets,
     load_spritesheet=fn(spritesheet_ref : String) {
       let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
       let rel_parts : Array[String] = []
@@ -519,32 +537,53 @@ pub fn parse_frame_data(
 
   // Check for __i (Spritesheet)
   if json is { "__i": String(img_ref), .. } {
-    guard img_ref.contains("#") else { return None }
-    let parts = img_ref.split("#").to_array()
-    guard parts.length() == 2 else { return None }
-    let spritesheet_path = parts[0].to_string()
-    let sprite_id = parts[1].to_string()
-    guard atlases.get(spritesheet_path) is Some(metadata) else { return None }
-    let frame_name = if sprite_id.has_suffix(".png") {
-      sprite_id
-    } else {
-      "\{sprite_id}.png"
+    // source format: "path/to/sheet#123"
+    if img_ref.contains("#") {
+      let parts = img_ref.split("#").to_array()
+      guard parts.length() == 2 else { return None }
+      let spritesheet_path = parts[0].to_string()
+      let sprite_id = parts[1].to_string()
+      guard atlases.get(spritesheet_path) is Some(metadata) else { return None }
+      let frame_name = if sprite_id.has_suffix(".png") {
+        sprite_id
+      } else {
+        "\{sprite_id}.png"
+      }
+      guard metadata.frames.get(frame_name) is Some(frame_meta) else {
+        return None
+      }
+      return Some({
+        id: @strconv.parse_int(sprite_id) catch {
+          _ => 0
+        },
+        width: w.to_int(),
+        height: h.to_int(),
+        origin_x,
+        origin_y,
+        delay,
+        frame_index: 0,
+        src_x: frame_meta.frame.x,
+        src_y: frame_meta.frame.y,
+        spritesheet_path,
+        is_bitmap: false,
+      })
     }
-    guard metadata.frames.get(frame_name) is Some(frame_meta) else {
+
+    // processed format: "path/to/sheet.png" + "__off": [x, y]
+    guard json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } else {
       return None
     }
+    let spritesheet_path = img_ref.strip_suffix(".png").map_or(img_ref, _.to_string())
     return Some({
-      id: @strconv.parse_int(sprite_id) catch {
-        _ => 0
-      },
+      id: 0,
       width: w.to_int(),
       height: h.to_int(),
       origin_x,
       origin_y,
       delay,
       frame_index: 0,
-      src_x: frame_meta.frame.x,
-      src_y: frame_meta.frame.y,
+      src_x: offx.to_int(),
+      src_y: offy.to_int(),
       spritesheet_path,
       is_bitmap: false,
     })

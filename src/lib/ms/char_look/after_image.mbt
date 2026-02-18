@@ -4,6 +4,7 @@ pub struct AfterImage {
   animation : @sprite.Animation
   range : @struct.Rectangle[Int]
   first_frame : Int
+  facing_right : Bool
   mut displayed : Bool
   mut entity : @entity.Entity?
 }
@@ -127,11 +128,8 @@ fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
   let displayed = false
 
   // Create selene Sprite
-  let selene_anim = nx_animation_to_selene_animation(
-    animation,
-    flip_x=facing_right,
-  )
-  { animation: selene_anim, range, first_frame, displayed, entity: None }
+  let selene_anim = nx_animation_to_selene_animation(animation)
+  { animation: selene_anim, range, first_frame, facing_right, displayed, entity: None }
 }
 
 ///|
@@ -169,14 +167,20 @@ pub fn AfterImage::update(
   if not(self.displayed) && stframe >= self.first_frame {
     self.displayed = true
     if self.entity is Some(e) {
+      let transform = if self.facing_right {
+        @selene_math.Transform::from_scale(-1.0, 1.0)
+      } else {
+        @selene_math.Transform::new()
+      }
       // Attach sprite and play
       // Use CHAR_LOOK_ZINDEX to align with character rendering layer
       let sprite = @sprite.Sprite::from_animation(
         self.animation,
         @graphics.CHAR_LOOK_ZINDEX,
+        transform~,
       )
       @sprite.sprites.set(e, sprite)
-      @sprite.play_animation(e, self.animation, loop_=false)
+      @sprite.play_animation(e, self.animation, loop_=false, transform~)
     }
   }
 }

@@ -32,7 +32,7 @@ pub fn[K : Hash + Eq, V] Cache::set(
   value : V,
 ) -> Unit {
   self.map.remove(key) // ensure we re-insert the key
-  if self.map.size() >= self.capacity {
+  if self.map.length() >= self.capacity {
     let first_key = self.map.iter().find_first(fn(_it) { true }).unwrap().0
     self.map.remove(first_key)
   }

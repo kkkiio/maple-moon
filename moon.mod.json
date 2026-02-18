@@ -6,7 +6,9 @@
     "Milky2018/selene": {
       "path": "../selene/selene-core"
     },
-    "Milky2018/selene-canvas": "0.19.1",
+    "Milky2018/selene-canvas": {
+      "path": "../selene/selene-canvas"
+    },
     "rami3l/js-ffi": "0.4.0",
     "moonbitlang/async": "0.15.0",
     "Yoorkin/ArgParser": "0.2.0"
@@ -17,6 +19,5 @@
   "keywords": [],
   "description": "",
   "source": "src",
-  "warn-list": "-A",
   "preferred-target": "js"
 }

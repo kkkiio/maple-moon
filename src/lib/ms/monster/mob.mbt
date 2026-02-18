@@ -17,8 +17,7 @@ pub(all) struct Stance {
 ///|
 pub(all) struct MobAnimation {
   nx : @resource.NxAnimation
-  selene_l : @sprite.Animation
-  selene_r : @sprite.Animation
+  selene : @sprite.Animation
 }
 
 ///|

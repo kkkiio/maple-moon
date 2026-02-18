@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/struct",
@@ -19,8 +20,11 @@ import {
   "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/maple_protocol",
   "Milky2018/selene/sprite",
+  "Milky2018/selene/math" @selene_math,
 }
 
 import {
   "moonbitlang/x/fs",
 } for "test"
+
+warnings = "-A"

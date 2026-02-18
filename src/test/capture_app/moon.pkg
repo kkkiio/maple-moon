@@ -1,3 +1,8 @@
 import {
   "Milky2018/selene/system",
+  "moonbitlang/x/fs",
+  "moonbitlang/x/path",
+  "moonbitlang/x/sys",
 }
+
+warnings = "-A"

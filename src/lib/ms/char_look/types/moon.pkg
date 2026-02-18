@@ -3,3 +3,5 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/char_stance",
 }
+
+warnings = "-A"

@@ -267,12 +267,16 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
       mob.last_synced_stance != Some(mob.stance) {
       // Create or Replace sprite
       let flip = mob.stance.face_right && not(mob.no_flip)
-      let selene_anim = if flip { anim.selene_r } else { anim.selene_l }
+      let transform = if flip {
+        @selene_math.Transform::from_scale(-1.0, 1.0)
+      } else {
+        @selene_math.Transform::new()
+      }
       let layer = mob.get_layer()
       let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
         layer * MAP_LAYER_STRIDE +
         MOB_ZINDEX_OFFSET
-      let sprite = @sprite.Sprite::from_animation(selene_anim, z)
+      let sprite = @sprite.Sprite::from_animation(anim.selene, z, transform~)
       @sprite.sprites.set(entity, sprite)
       mob.last_synced_stance = Some(mob.stance)
     } else {

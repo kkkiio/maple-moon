@@ -1307,7 +1307,7 @@ async test "parse character body" {
   }
   // Skip image operations by not providing load_spritesheet and save_image
   let res = process_resource(src, atlases, "00002000.img", "Character/Body")
-  @json.inspect(res, content={
+  json_inspect(res, content={
     "stabTF": {
       "0": {
         "arm": {

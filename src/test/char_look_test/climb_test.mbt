@@ -178,16 +178,12 @@ async test "character climbing ladder" {
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
-  let buffer = @capture_app.to_buffer().to_bytes()
-  @fs.create_dir("src/test/char_look_test/__snapshot__")
-  @fs.write_bytes_to_file(
-    "src/test/char_look_test/__snapshot__/climb.png", buffer,
-  )
+  @capture_app.snapshot("src/test/char_look_test/__snapshot__/climb.png")
   let sprites = @sprite.sprites
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",

@@ -792,7 +792,8 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = nx_animation_to_selene_animation(anim, flip_x~, loop_~) // TODO: cache animation
+    let animation = nx_animation_to_selene_animation(anim, loop_~) // TODO: cache animation
+    let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.root_entity.spawn_child()
     })
@@ -800,9 +801,10 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       entity,
       animation,
       layer.z() + @graphics.CHAR_LOOK_ZINDEX,
+      transform,
     )
     sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_~)
+    @sprite.play_animation(entity, animation, loop_~, transform~)
   }
   if self.full_body.stances.get(stance) is Some(stance_stances) {
     for name, it in stance_stances {
@@ -822,9 +824,9 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       } // Reconstruct approximate NxAnimation container
       let animation = nx_animation_to_selene_animation(
         nx_anim,
-        flip_x=self.flip,
         loop_~,
       )
+      let transform = facing_transform(self.flip)
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
       let entity = self.body_entities.get_or_init(name, fn() {
@@ -845,9 +847,10 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         entity,
         animation,
         layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        transform,
       )
       sprite.visible = true
-      @sprite.play_animation(entity, animation, loop_~)
+      @sprite.play_animation(entity, animation, loop_~, transform~)
     }
   }
   // Weapon animation
@@ -1370,9 +1373,9 @@ fn attach_face(
     let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
     let animation = nx_animation_to_selene_animation(
       nx_anim,
-      flip_x~,
       loop_=true,
     )
+    let transform = facing_transform(flip_x)
 
     // Face Animation Sync
     let body_delays : Array[Int?] = match full_body.stances.get(stance) {
@@ -1408,7 +1411,6 @@ fn attach_face(
     let animation = @sprite.Animation::new(
       face_frames,
       loop_=true,
-      transform=animation.transform,
     )
     let sprite = ensure_sprite_with_z(
       entity,
@@ -1416,9 +1418,19 @@ fn attach_face(
       @graphics.CHAR_LOOK_ZINDEX +
       @clothing.ClothingLayer::FACE_ACC.int_value() -
       1,
+      transform,
     )
     sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_=true)
+    @sprite.play_animation(entity, animation, loop_=true, transform~)
+  }
+}
+
+///|
+fn facing_transform(flip_x : Bool) -> @selene_math.Transform {
+  if flip_x {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
   }
 }
 
@@ -1427,16 +1439,18 @@ fn ensure_sprite_with_z(
   entity : @entity.Entity,
   animation : @sprite.Animation,
   z : Int,
+  transform : @selene_math.Transform,
 ) -> @sprite.Sprite {
   if @sprite.sprites.get(entity) is Some(sprite) {
-    if sprite.zindex == z {
+    @sprite.set_animation_transform(entity, transform)
+    if sprite.zindex != z {
+      let sprite = { ..sprite, zindex: z }
+      @sprite.sprites.set(entity, sprite)
       return sprite
     }
-    let sprite = { ..sprite, zindex: z }
-    @sprite.sprites.set(entity, sprite)
     return sprite
   }
-  let sprite = @sprite.Sprite::from_animation(animation, z)
+  let sprite = @sprite.Sprite::from_animation(animation, z, transform~)
   @sprite.sprites.set(entity, sprite)
   sprite
 }
@@ -1457,14 +1471,16 @@ fn attach_equipment(
     { ..f, delay, }
   })
   let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
-  let animation = nx_animation_to_selene_animation(nx_anim, flip_x~, loop_~)
+  let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
+  let transform = facing_transform(flip_x)
   let sprite = ensure_sprite_with_z(
     entity,
     animation,
     z + @graphics.CHAR_LOOK_ZINDEX,
+    transform,
   )
   sprite.visible = true
-  @sprite.play_animation(entity, animation, loop_~)
+  @sprite.play_animation(entity, animation, loop_~, transform~)
 }
 
 ///|
@@ -1515,7 +1531,8 @@ fn CharLook::play_climbing_animations(
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = nx_animation_to_selene_animation(anim, flip_x~, loop_~)
+    let animation = nx_animation_to_selene_animation(anim, loop_~)
+    let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.root_entity.spawn_child()
     })
@@ -1528,9 +1545,10 @@ fn CharLook::play_climbing_animations(
       entity,
       animation,
       z_index + @graphics.CHAR_LOOK_ZINDEX,
+      transform,
     )
     sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_~)
+    @sprite.play_animation(entity, animation, loop_~, transform~)
   }
 
   // Body Animation
@@ -1552,9 +1570,9 @@ fn CharLook::play_climbing_animations(
       }
       let animation = nx_animation_to_selene_animation(
         nx_anim,
-        flip_x=self.flip,
         loop_~,
       )
+      let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.root_entity.spawn_child()
       })
@@ -1564,9 +1582,10 @@ fn CharLook::play_climbing_animations(
         entity,
         animation,
         layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        transform,
       )
       sprite.visible = true
-      @sprite.play_animation(entity, animation, loop_~)
+      @sprite.play_animation(entity, animation, loop_~, transform~)
     }
   }
 

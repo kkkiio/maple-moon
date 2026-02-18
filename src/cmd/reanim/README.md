@@ -14,7 +14,8 @@ Maplestory 资源处理工具。主要用于将原始解包资源（JSON 结构 
 
 - **递归搜集 (Recursive Collection)**：自动遍历 JSON 树中的所有节点，搜集所有帧资源（`__i` 或 `__b`），无论它们嵌套在多深的层级下（自动处理 `hairShade`, `weapon`, 多部位动画等）。
 - **智能去重 (Deduplication)**：根据源路径或 ID 自动识别重复引用的帧。例如，不同动作可能复用相同的站立帧，或者不同肤色变体引用同一张遮罩图，工具只会打包一份图片数据，显著减小 Spritesheet 体积。
-- **合并输出 (Unified Output)**：为一个输入的 JSON 资源生成**单张** Spritesheet (`.png`)，并输出更新了引用路径和坐标偏移 (`__off`) 的 JSON 文件。
+- **合并输出 (Unified Output)**：默认为一个输入的 JSON 资源生成**单张** Spritesheet (`.png`)，并输出更新了引用路径和坐标偏移 (`__off`) 的 JSON 文件。
+- **保留源图集 (Keep Source Sheets)**：可选保留原始多个 spritesheet，不重新合图，仅将 `__i: sheet#id` 重写为 `__i: sheet.png` 并写入 `__off: [x, y]`。
 
 ## 现状与特性
 
@@ -60,6 +61,7 @@ node target/js/release/build/cmd/reanim/reanim.js \
 - `--bitmaps-dir, -b <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
 - `--spritesheet-dir, -s <path>`: 指定 spritesheets 目录（仅用于 `__i` 模式）
 - `--resize, -r`: 开启遗留的 Resize 模式（统一帧尺寸）
+- `--keep-source-sheets, -k`: 保留源 spritesheet，不合并输出单图，仅写 `__off`
 - `--help, -h`: 显示帮助信息
 
 ## 示例

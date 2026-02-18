@@ -1,13 +1,11 @@
 import {
   "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/inventory",
-  "KKKIIO/maple-moon/lib/ms/item",
   "rami3l/js-ffi/js",
-  "KKKIIO/maple-moon/lib/io_service",
 }
 
+warnings = "-A"
 options(
   link: {
     "js": {

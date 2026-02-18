@@ -27,7 +27,7 @@ test "test selections" {
     #|#L3##m103000000# (100 mesos)#l
     #|#L4##m120000000# (80 mesos)#l
   let result = parse_talk_content(template)
-  @json.inspect(result.selections, content=[
+  json_inspect(result.selections, content=[
     ["blue", 0, "104000000<span style=\"color: blue\"> (100 mesos)</span>"],
     ["blue", 1, "102000000<span style=\"color: blue\"> (100 mesos)</span>"],
     ["blue", 2, "100000000<span style=\"color: blue\"> (100 mesos)</span>"],
@@ -194,7 +194,7 @@ using @markup_text {type Style}
 test "parse quiz" {
   let template = "Which of these NPC's will not NOT see at Kerning City?\\r\\n#L0##b1. Don Giovanni#k #l\\r\\n#L1##b2. Andre#k #l\\r\\n#L2##b3. Mong From the Kong#k #l\\r\\n#L3##b4. Valen#k \\r\\n#L4##b5. Don Hwang#k #l"
   let result = parse_talk_content(template)
-  @json.inspect(result.selections, content=[
+  json_inspect(result.selections, content=[
     ["black", 0, "<span style=\"color: blue\">1. Don Giovanni</span> "],
     ["black", 1, "<span style=\"color: blue\">2. Andre</span> "],
     ["black", 2, "<span style=\"color: blue\">3. Mong From the Kong</span> "],

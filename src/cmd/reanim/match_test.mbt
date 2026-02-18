@@ -24,7 +24,7 @@ async test "process bitmap with matched entry" {
   )
 
   // Verify the output has unified dimensions and __i + __off format
-  @json.inspect(res, content={
+  json_inspect(res, content={
     "0": {
       "__h": 172,
       "__w": 62,

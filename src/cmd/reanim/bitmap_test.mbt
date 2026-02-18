@@ -25,7 +25,7 @@ async test "process bitmap resource" {
   let res = process_bitmap_resource(
     test_bitmap_json, "BasicEff.img", "BasicEff.img",
   )
-  @json.inspect(res, content={
+  json_inspect(res, content={
     "Teleport": {
       "0": {
         "__h": 172,

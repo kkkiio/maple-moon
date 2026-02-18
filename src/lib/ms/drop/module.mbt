@@ -4,13 +4,28 @@ struct Module {
 }
 
 ///|
-pub async fn Module::load() -> Module {
-  let special_item_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-    "special_item",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Item/Special",
-    ),
-  )
+struct MapDropsContext {
+  mut map_drops : MapDrops?
+  mut loading : @utils.Future[Result[MapDrops, Error]]?
+  pending_spawns : Array[DropLoot]
+  pending_removes : Array[RemoveLoot]
+  mut physics : @physics.Physics?
+}
+
+///|
+let map_drops_ctx : Ref[MapDropsContext?] = Ref::new(None)
+
+///|
+fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
+  @io_service.submit_background_task(async fn() {
+    let module = Module::load()
+    module.get_map_drops()
+  })
+}
+
+///|
+pub async fn Module::load() -> Module raise {
+  let special_item_loader = @resource.get_item_special_loader()
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(src) }
 }
@@ -36,4 +51,116 @@ pub fn Module::make_handlers(
     }),
   ]
   |> Map::from_array
+}
+
+///|
+pub fn setup_game_server_handlers() -> Unit {
+  if map_drops_ctx.val is None {
+    map_drops_ctx.val = Some({
+      map_drops: None,
+      loading: Some(new_loading_future()),
+      pending_spawns: [],
+      pending_removes: [],
+      physics: None,
+    })
+  }
+  @game_server.add_server_message_handler(
+    "drop_loot",
+    @net.Opcode::DROP_LOOT.int_value(),
+    fn(json) {
+      guard map_drops_ctx.val is Some(ctx) else { return }
+      let drop : @maple_protocol.DropLootMessage = @json.from_json(json)
+      let parsed : DropLoot = {
+        mode: drop.mode,
+        oid: drop.oid,
+        meso: drop.meso,
+        item_id: drop.item_id,
+        owner: drop.owner,
+        pickuptype: drop.pickuptype,
+        dropto: drop.dropto,
+        dropfrom: drop.dropfrom,
+        player_drop: drop.player_drop,
+      }
+      match ctx.map_drops {
+        Some(map_drops) => handle_drop_loot_parsed(map_drops, parsed)
+        None => ctx.pending_spawns.push(parsed)
+      }
+    },
+  )
+  @game_server.add_server_message_handler(
+    "remove_loot",
+    @net.Opcode::REMOVE_LOOT.int_value(),
+    fn(json) {
+      guard map_drops_ctx.val is Some(ctx) else { return }
+      let remove : @maple_protocol.RemoveLootMessage = @json.from_json(json)
+      let parsed : RemoveLoot = {
+        mode: remove.mode,
+        oid: remove.oid,
+        cid: remove.cid,
+      }
+      match ctx.map_drops {
+        Some(map_drops) =>
+          handle_remove_loot_parsed(map_drops, parsed, fn(_id) { None })
+        None => ctx.pending_removes.push(parsed)
+      }
+    },
+  )
+}
+
+///|
+pub fn set_map_physics(physics : @physics.Physics) -> Unit {
+  if map_drops_ctx.val is Some(ctx) {
+    ctx.physics = Some(physics)
+  }
+}
+
+///|
+pub fn clear_map_drops() -> Unit {
+  if map_drops_ctx.val is Some(ctx) {
+    match ctx.map_drops {
+      Some(map_drops) => map_drops.clear()
+      None => ()
+    }
+    ctx.pending_spawns.clear()
+    ctx.pending_removes.clear()
+  }
+}
+
+///|
+pub fn map_drops_system(_delta : Double) -> Unit {
+  guard map_drops_ctx.val is Some(ctx) else { return }
+  if ctx.map_drops is None {
+    match ctx.loading {
+      Some(loading) =>
+        match loading.poll() {
+          Some(Ok(map_drops)) => {
+            ctx.map_drops = Some(map_drops)
+            ctx.loading = None
+            for drop in ctx.pending_spawns {
+              handle_drop_loot_parsed(map_drops, drop)
+            }
+            for remove in ctx.pending_removes {
+              handle_remove_loot_parsed(map_drops, remove, fn(_id) { None })
+            }
+            ctx.pending_spawns.clear()
+            ctx.pending_removes.clear()
+          }
+          Some(Err(err)) => {
+            @log.error("failed to load map drops", data={ "err": err.to_string() })
+            ctx.loading = None
+          }
+          None => return
+        }
+      None => {
+        ctx.loading = Some(new_loading_future())
+        return
+      }
+    }
+  }
+  guard ctx.map_drops is Some(map_drops) else { return }
+  guard ctx.physics is Some(physics) else { return }
+  let times = @logic_fps.get_logic_times()
+  for i = 0; i < times; i = i + 1 {
+    map_drops.update(physics)
+  }
 }

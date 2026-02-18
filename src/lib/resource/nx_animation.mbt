@@ -117,7 +117,6 @@ pub fn NxAnimation::get_size(self : NxAnimation) -> (Int, Int) {
 ///|
 pub fn nx_animation_to_selene_animation(
   src : NxAnimation,
-  flip_x? : Bool = false,
   loop_? : Bool = false,
 ) -> @sprite.Animation {
   // Extract all delays
@@ -173,13 +172,8 @@ pub fn nx_animation_to_selene_animation(
     }
   })
 
-  // flip x axis around origin.x(pivot)
-  let transform = if flip_x {
-    @selene_math.Transform::from_scale(-1.0, 1.0)
-  } else {
-    @selene_math.Transform::new()
-  }
-  @sprite.Animation::new(frames, loop_~, transform~)
+  // Note: transform is set at Sprite level.
+  @sprite.Animation::new(frames, loop_~)
 }
 
 ///|

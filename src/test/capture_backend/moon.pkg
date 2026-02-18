@@ -9,3 +9,5 @@ import {
 options(
   implement: "Milky2018/selene/backend",
 )
+
+warnings = "-A"

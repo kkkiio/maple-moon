@@ -683,7 +683,7 @@ async test "parse weapon resource" {
   }
   // Skip image operations by not providing load_spritesheet and save_image
   let res = process_resource(src, atlases, "01382032.img", "weapon")
-  @json.inspect(res, content={
+  json_inspect(res, content={
     "alert": {
       "0": {
         "weapon": {

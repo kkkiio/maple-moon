@@ -6,11 +6,13 @@ let sharp : @js.Value = require_sharp()
 
 ///|
 /// Read file as Buffer
-extern "js" fn read_file_buffer_ffi(path : String) -> @js.Value = "(path) => require('fs').readFileSync(path)"
+extern "js" fn read_file_buffer_ffi(path : String) -> @js.Value =
+  "(path) => require('node:fs').readFileSync(path)"
 
 ///|
 /// Write Buffer to file
-extern "js" fn write_file_buffer_ffi(path : String, buffer : @js.Value) -> Unit = "(path, buffer) => require('fs').writeFileSync(path, buffer)"
+extern "js" fn write_file_buffer_ffi(path : String, buffer : @js.Value) -> Unit =
+  "(path, buffer) => require('node:fs').writeFileSync(path, buffer)"
 
 ///|
 /// Create sharp instance from buffer

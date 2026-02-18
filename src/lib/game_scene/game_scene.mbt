@@ -328,6 +328,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
+      @drop.clear_map_drops()
       return
     }
     GameStart(map_id~, portal_id~, set_field_message~) => {
@@ -440,6 +441,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       }
       clear_loading_data()
       stage.clear()
+      @drop.clear_map_drops()
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
@@ -477,6 +479,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
+      @drop.set_map_physics(sence_map.physics)
       @game_server.send(@maple_protocol.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
       let combat = @combat_impl.Combat::new(stage.mobs, bullet_module)

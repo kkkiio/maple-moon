@@ -3,26 +3,29 @@ struct MapDrops {
   drops : @map_object.MapObjects[&Drop]
   loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.Queue[DropSpawn]
-  meso_icons : Map[MesoIcon, @graphics.Animation]
+  meso_icons : Map[MesoIcon, @resource.NxAnimation]
 }
 
 ///|
-fn MapDrops::new(src : @resource.NxNode) -> MapDrops {
-  let meso_icons : Map[MesoIcon, @graphics.Animation] = Map::new()
-  meso_icons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"]
-    |> @graphics.Animation::from_resource
-  meso_icons[MesoIcon::GOLD] = src["09000001"]["iconRaw"]
-    |> @graphics.Animation::from_resource
-  meso_icons[MesoIcon::BUNDLE] = src["09000002"]["iconRaw"]
-    |> @graphics.Animation::from_resource
-  meso_icons[MesoIcon::BAG] = src["09000003"]["iconRaw"]
-    |> @graphics.Animation::from_resource
+fn MapDrops::new(src : @resource.NxNode) -> MapDrops raise @json.JsonDecodeError {
+  let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map::new()
+  meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(src["09000000"]["iconRaw"])
+  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(src["09000001"]["iconRaw"])
+  meso_icons[MesoIcon::BUNDLE] = nx_node_to_animation(src["09000002"]["iconRaw"])
+  meso_icons[MesoIcon::BAG] = nx_node_to_animation(src["09000003"]["iconRaw"])
   {
     drops: @map_object.MapObjects::new(),
     loading_drops: Array::new(),
     spawns: @queue.new(),
     meso_icons,
   }
+}
+
+///|
+fn nx_node_to_animation(
+  node : @resource.NxNode,
+) -> @resource.NxAnimation raise @json.JsonDecodeError {
+  @json.from_json(node.value())
 }
 
 ///|
@@ -76,9 +79,6 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
     }
     false
   })
-  for _, mesoicon in self.meso_icons {
-    mesoicon.update() |> ignore
-  }
   self.drops.update(physics)
 }
 
@@ -128,7 +128,7 @@ struct DropSpawn {
 ///|
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
-  icon : @graphics.Animation,
+  icon : @resource.NxAnimation,
 ) -> &Drop {
   MesoDrop::new(
     self.oid,
@@ -159,7 +159,6 @@ fn DropSpawn::instantiate_item(
     icon,
   )
 }
-
 ///|
 priv enum MesoIcon {
   BRONZE

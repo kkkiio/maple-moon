@@ -22,3 +22,5 @@ import {
 options(
   overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )
+
+warnings = "-A"

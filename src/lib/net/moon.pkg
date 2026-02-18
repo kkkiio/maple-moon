@@ -6,6 +6,7 @@ import {
   "moonbitlang/x/encoding",
 }
 
+warnings = "-A"
 options(
   targets: {
     "socket.js.mbt": [ "js" ],

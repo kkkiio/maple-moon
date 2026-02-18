@@ -15,3 +15,5 @@ import {
   "Milky2018/selene/camera",
   "KKKIIO/maple-moon/lib/logic_fps",
 }
+
+warnings = "-A"

@@ -3,12 +3,12 @@ test "parse_nx_mob" {
   let content = @fs.read_file_to_string("assets/mob/1210102.img.json")
   let json = @json.parse(content)
   let nx_mob : @monster.NxMob = @json.from_json(json)
-  @json.inspect(nx_mob.meta, content={
+  json_inspect(nx_mob.meta, content={
     "can_move": true,
     "can_jump": true,
     "can_fly": false,
   })
-  @json.inspect(nx_mob.info, content={
+  json_inspect(nx_mob.info, content={
     "magic_damage": 0,
     "md_damage": 10,
     "pa_damage": 42,

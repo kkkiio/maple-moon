@@ -43,3 +43,5 @@ options(
   },
   overrides: [ "Milky2018/selene-canvas" ],
 )
+
+warnings = "-A"

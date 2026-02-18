@@ -39,7 +39,7 @@ pub let fps : UInt
 pub let map_layers : FixedArray[Int]
 
 #deprecated
-pub fn nx_animation_to_selene_sprite(@resource.NxAnimation, z? : Int, flip_x? : Bool, loop_? : Bool) -> @sprite.Sprite
+pub fn nx_animation_to_selene_sprite(@resource.NxAnimation, z? : Int, loop_? : Bool) -> @sprite.Sprite
 
 pub let view_size : (Int, Int)
 
@@ -279,4 +279,3 @@ pub(open) trait Drawable : ToJson {
 pub(open) trait Stateful : ToJson {
   update(Self, Int) -> Unit
 }
-

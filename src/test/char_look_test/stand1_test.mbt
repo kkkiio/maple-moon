@@ -60,8 +60,8 @@ async test "character stand1" {
     _ => Map::new()
   }
   let weapon_icons = (
-    weapon_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
-    weapon_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+    weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    weapon_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let weapon_item = @item.ItemData::{
     src: weapon_node,
@@ -178,15 +178,11 @@ async test "character stand1" {
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
-  let buffer = @capture_app.to_buffer().to_bytes()
-  @fs.create_dir("src/test/char_look_test/__snapshot__")
-  @fs.write_bytes_to_file(
-    "src/test/char_look_test/__snapshot__/stand1.png", buffer,
-  )
+  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stand1.png")
   let sprites = @sprite.sprites
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",

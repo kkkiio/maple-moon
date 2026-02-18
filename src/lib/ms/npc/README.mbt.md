@@ -28,7 +28,7 @@ test {
 test {
   let text = "Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.#b\r\n#L0#Please explain to me what being the Fighter is all about.\r\n#L1#Please explain to me what being the Page is all about.\r\n#L2#Please explain to me what being the Spearman is all about.\r\n#L3#I'll choose my occupation!"
   let result = parse_talk_content(text)
-  @json.inspect(result.selections, content=[
+  json_inspect(result.selections, content=[
     [
       "blue", 0, "<span style=\"color: blue\">Please explain to me what being the Fighter is all about.</span><br/>\n<span style=\"color: blue\"></span>",
     ],

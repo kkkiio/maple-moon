@@ -53,7 +53,7 @@ test "damage number" {
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",

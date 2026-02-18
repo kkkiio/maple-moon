@@ -8,3 +8,5 @@ import {
   "Milky2018/selene/inputs",
   "KKKIIO/maple-moon/lib/graphics",
 }
+
+warnings = "-A"

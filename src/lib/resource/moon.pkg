@@ -1,7 +1,10 @@
 import {
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/struct",
   "rami3l/js-ffi/js",
   "KKKIIO/maple-moon/lib/utils/lru_cache",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
 }
+
+warnings = "-A"

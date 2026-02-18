@@ -217,7 +217,7 @@ test "parse portals" {
     },
   }
   let res : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
-  @json.inspect(res.0, content=[
+  json_inspect(res.0, content=[
     {
       "pn": "sp",
       "tm": 999999999,

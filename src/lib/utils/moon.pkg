@@ -1,2 +1,9 @@
 import {
+  "moonbitlang/core/priority_queue",
+  "moonbitlang/core/int",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/json",
+  "moonbitlang/core/random",
 }
+
+warnings = "-A"

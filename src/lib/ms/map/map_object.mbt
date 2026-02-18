@@ -71,10 +71,18 @@ pub fn Obj::attach_entity(
 ) -> Unit {
   let animation = nx_animation_to_selene_animation(
     self.animation,
-    flip_x=self.flip,
     loop_=true,
   )
-  let sprite = @sprite.Sprite::from_animation(animation, self.z + z_offset)
+  let transform = if self.flip {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
+  }
+  let sprite = @sprite.Sprite::from_animation(
+    animation,
+    self.z + z_offset,
+    transform~,
+  )
   @sprite.sprites.set(entity, sprite)
   @position.positions.set(
     entity,

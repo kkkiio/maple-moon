@@ -17,6 +17,7 @@ import {
   "KKKIIO/maple-moon/lib/legacy_types",
 }
 
+warnings = "-A"
 options(
   link: {
     "js": {

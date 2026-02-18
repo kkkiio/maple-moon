@@ -153,8 +153,7 @@ pub impl @map_object.MapObject for Mob
 
 pub(all) struct MobAnimation {
   nx : @resource.NxAnimation
-  selene_l : @sprite.Animation
-  selene_r : @sprite.Animation
+  selene : @sprite.Animation
 }
 
 pub(all) struct MobAnimations {
@@ -321,4 +320,3 @@ pub impl Hash for StanceType
 
 // Traits
 trait MobSkillUseEffect
-

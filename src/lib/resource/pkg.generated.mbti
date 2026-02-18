@@ -38,7 +38,7 @@ pub fn get_skill_loader() -> AsyncLoader
 
 pub fn get_tile_loader() -> AsyncLoader
 
-pub fn nx_animation_to_selene_animation(NxAnimation, flip_x? : Bool, loop_? : Bool) -> @sprite.Animation
+pub fn nx_animation_to_selene_animation(NxAnimation, loop_? : Bool) -> @sprite.Animation
 
 pub fn nx_texture_to_selene_picture(NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> @sprite.Picture
 
@@ -203,4 +203,3 @@ pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode
 pub trait AsyncResourceLoader {
   async load_data(Self, StringView) -> Json
 }
-

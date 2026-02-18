@@ -291,6 +291,23 @@ pub fn get_hair_loader() -> AsyncLoader {
   hair_loader.get()
 }
 
+///|
+let item_special_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "item_special",
+    base_url="/assets",
+    loader=DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Item/Special",
+      "/assets/Item/Special",
+    ),
+  )
+})
+
+///|
+pub fn get_item_special_loader() -> AsyncLoader {
+  item_special_loader.get()
+}
+
 // let status_bar_loader = @resource.SyncLoader::load(
 //   "StatusBar",
 //   "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",

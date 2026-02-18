@@ -11,3 +11,5 @@ options(
   "is-main": true,
   link: { "js": { "format": "esm" } },
 )
+
+warnings = "-A"

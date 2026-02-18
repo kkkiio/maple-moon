@@ -4,3 +4,5 @@ import {
   "Milky2018/selene/math" @selene_math,
   "KKKIIO/maple-moon/lib/graphics",
 }
+
+warnings = "-A"

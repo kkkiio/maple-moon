@@ -17,8 +17,8 @@ import {
   "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/map_object",
-  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/markup_text",
-  "KKKIIO/maple-moon/lib/ms/bullet",
   "KKKIIO/maple-moon/lib/logic_fps",
 }
+
+warnings = "-A"

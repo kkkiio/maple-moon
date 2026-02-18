@@ -12,6 +12,9 @@ pub const CHAR_LOOK_ZINDEX = 70000
 pub const DAMAGE_NUMBER_ZINDEX = 75000
 
 ///|
+pub const DROP_LAYER_ZINDEX = 76000
+
+///|
 pub const PORTAL_ZINDEX = 79000
 
 ///|

@@ -3,6 +3,8 @@ using @maple_protocol {
   trait ClientMessage,
   trait ServerMessage,
   type ChangeMapMessage,
+  type DropLootMessage,
+  type MoveMonsterMessage,
   type SetFieldMessage,
   type SelectCharMessage,
   type MobSpawnControllerMessage,
@@ -40,6 +42,8 @@ priv struct LocalServer {
 priv struct ServerMob {
   oid : Int
   id : Int
+  x : Int
+  y : Int
   mut hp : Int
   max_hp : Int
 }
@@ -84,9 +88,19 @@ fn init {
   default_server.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = on_mob_damage
   default_server.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = on_mob_damage
   default_server.client_message_handler_map[@net.ClientOpcode::MOVE_MONSTER.int_value()] = fn(
-    _,
+    json,
   ) {
-
+    let msg : MoveMonsterMessage = @json.from_json(json)
+    match default_server.mobs.get(msg.oid) {
+      Some(mob) => {
+        default_server.mobs.set(msg.oid, {
+          ..mob,
+          x: msg.start_pos.x,
+          y: msg.start_pos.y,
+        })
+      }
+      None => ()
+    }
   }
 }
 
@@ -103,6 +117,18 @@ fn on_mob_damage(json : Json) -> Unit raise {
     default_server.send_server_message(@maple_protocol.KillMobMessage::{
       oid: msg.oid,
       animation: 1,
+    })
+    default_server.last_object_id += 1
+    default_server.send_server_message(DropLootMessage::{
+      mode: 0,
+      oid: default_server.last_object_id,
+      meso: true,
+      item_id: 20,
+      owner: 0,
+      pickuptype: 0,
+      dropto: { x: mob.x, y: mob.y },
+      dropfrom: { x: mob.x, y: mob.y - 30 },
+      player_drop: false,
     })
     default_server.mobs.remove(msg.oid)
   } else {
@@ -183,6 +209,8 @@ fn LocalServer::flush_pending_mob_spawns(self : LocalServer) -> Unit {
     let server_mob = ServerMob::{
       oid: pending.msg.oid,
       id: pending.msg.id,
+      x: pending.msg.x,
+      y: pending.msg.y,
       hp: pending.max_hp,
       max_hp: pending.max_hp,
     }

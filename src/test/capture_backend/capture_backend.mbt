@@ -67,7 +67,9 @@ pub fn draw_sprite(
   width~ : Double,
   height~ : Double,
   transform~ : @math.Transform,
+  alpha~ : Double,
 ) -> Unit {
+  ignore(alpha)
   let ctx = @capture_app.get_ctx().unwrap()
   // tolerate relative path
   let sprite_path = sprite_path.strip_prefix("/").unwrap_or(sprite_path)

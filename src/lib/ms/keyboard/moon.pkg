@@ -4,6 +4,7 @@ import {
   "KKKIIO/maple-moon/lib/log",
 }
 
+warnings = "-A"
 options(
   link: {
     "js": {

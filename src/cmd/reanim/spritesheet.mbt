@@ -52,14 +52,29 @@ pub async fn extract_frames(
       ).wait()
       extracted.push({ data: frame, buffer: extracted_buffer })
     } else {
+      if frame.spritesheet_path != current_sheet_path {
+        current_sheet_path = frame.spritesheet_path
+        current_sharp_img = match spritesheet_buffers.get(current_sheet_path) {
+          Some(buffer) => Some(sharp_from_buffer(buffer))
+          None => fail("Spritesheet buffer not found for \{current_sheet_path}")
+        }
+      }
       // Spritesheet frame
-      let buffer = extract_ffi(
-        current_sharp_img.unwrap(),
-        frame.src_x,
-        frame.src_y,
-        frame.width,
-        frame.height,
-      ).wait()
+      let buffer = try {
+        extract_ffi(
+          current_sharp_img.unwrap(),
+          frame.src_x,
+          frame.src_y,
+          frame.width,
+          frame.height,
+        )
+        .wait()
+      } catch {
+        e =>
+          fail(
+            "Failed to extract frame id=\{frame.id} sheet=\{frame.spritesheet_path} rect=(\{frame.src_x},\{frame.src_y},\{frame.width},\{frame.height}) err=\{e}",
+          )
+      }
       extracted.push({ data: frame, buffer })
     }
   }

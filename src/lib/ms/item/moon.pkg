@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/graphics",
 }
+
+warnings = "-A"

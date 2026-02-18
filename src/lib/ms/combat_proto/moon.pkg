@@ -5,3 +5,5 @@ import {
   "Milky2018/selene/position",
   "Milky2018/selene/entity",
 }
+
+warnings = "-A"

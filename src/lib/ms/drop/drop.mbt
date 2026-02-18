@@ -145,7 +145,7 @@ fn DropBase::expire(
 ///|
 struct MesoDrop {
   base : DropBase
-  icon : @graphics.Animation
+  icon : @sprite.Animation
 }
 
 ///|
@@ -157,10 +157,11 @@ pub fn MesoDrop::new(
   t : Int,
   mode : Int,
   player_drop : Bool,
-  icon : @graphics.Animation,
+  icon : @resource.NxAnimation,
 ) -> MesoDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
-  { base, icon }
+  let selene_anim = @resource.nx_animation_to_selene_animation(icon, loop_=true)
+  { base, icon: selene_anim }
 }
 
 ///|
@@ -194,13 +195,40 @@ pub impl @map_object.MapObject for MesoDrop with update(
   self : MesoDrop,
   physics : @physics.Physics,
 ) -> Int {
-  self.base.update(physics)
+  let layer = self.base.update(physics)
+  let entity = self.base.entity
+  let z = @graphics.DROP_LAYER_ZINDEX + layer
+  let angle = self.base.angle.get()
+  let opacity = self.base.opacity.get()
+  // Check if sprite already exists
+  match @sprite.sprites.get(entity) {
+    Some(sprite) => {
+      // Update existing sprite: alpha and transform
+      @sprite.sprites.set(entity, { ..sprite, alpha: opacity })
+      @sprite.set_animation_transform(
+        entity,
+        @selene_math.Transform::from_rotation_rad(angle),
+      )
+    }
+    None => {
+      // Create new sprite with initial transform
+      let sprite = @sprite.Sprite::from_animation(
+        self.icon,
+        z,
+        alpha=opacity,
+        transform=@selene_math.Transform::from_rotation_rad(angle),
+      )
+      @sprite.sprites.set(entity, sprite)
+    }
+  }
+  layer
 }
 
 ///|
 
 ///|
 pub impl @map_object.MapObject for MesoDrop with destroy(self : MesoDrop) -> Unit {
+  @sprite.sprites.remove(self.base.entity)
   self.base.entity.destroy()
 }
 
@@ -235,7 +263,7 @@ pub impl Drop for MesoDrop with expire(
 ///|
 struct ItemDrop {
   base : DropBase
-  icon : @resource.NxTexture
+  icon : @sprite.Picture
 }
 
 ///|
@@ -251,7 +279,8 @@ pub fn ItemDrop::new(
   icon : @resource.NxTexture,
 ) -> ItemDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
-  { base, icon }
+  let selene_picture = @resource.nx_texture_to_selene_picture(icon)
+  { base, icon: selene_picture }
 }
 
 ///|
@@ -285,13 +314,30 @@ pub impl @map_object.MapObject for ItemDrop with update(
   self : ItemDrop,
   physics : @physics.Physics,
 ) -> Int {
-  self.base.update(physics)
+  let layer = self.base.update(physics)
+  let entity = self.base.entity
+  let z = @graphics.DROP_LAYER_ZINDEX + layer
+  let opacity = self.base.opacity.get()
+  // For ItemDrop, we use Picture which doesn't support rotation transform
+  // We only update alpha for PICKED_UP fade effect
+  match @sprite.sprites.get(entity) {
+    Some(sprite) =>
+      // Update existing sprite: alpha only
+      @sprite.sprites.set(entity, { ..sprite, alpha: opacity })
+    None => {
+      // Create new sprite with initial alpha
+      let sprite = @sprite.Sprite::from_picture(self.icon, z, alpha=opacity)
+      @sprite.sprites.set(entity, sprite)
+    }
+  }
+  layer
 }
 
 ///|
 
 ///|
 pub impl @map_object.MapObject for ItemDrop with destroy(self : ItemDrop) -> Unit {
+  @sprite.sprites.remove(self.base.entity)
   self.base.entity.destroy()
 }
 

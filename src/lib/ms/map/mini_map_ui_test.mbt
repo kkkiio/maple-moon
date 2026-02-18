@@ -6,7 +6,7 @@ test "parse portal marker" {
     ),
   )
   let portal_markers : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
-  @json.inspect(portal_markers.0, content=[
+  json_inspect(portal_markers.0, content=[
     {
       "pn": "sp",
       "tm": 999999999,
@@ -58,7 +58,7 @@ test "parse portal marker of Ellinia" {
     ),
   )
   let portal_markers : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
-  @json.inspect(portal_markers.0, content=[
+  json_inspect(portal_markers.0, content=[
     { "pn": "sp", "tm": 999999999, "tn": "", "x": -810, "y": 99, "pt": "SPAWN" },
     { "pn": "sp", "tm": 999999999, "tn": "", "x": 705, "y": 256, "pt": "SPAWN" },
     {

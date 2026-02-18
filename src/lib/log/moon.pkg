@@ -2,3 +2,5 @@ options(
   link: { "wasm-gc": { "use-js-builtin-string": true } },
   targets: { "out.js.mbt": [ "js" ] },
 )
+
+warnings = "-A"

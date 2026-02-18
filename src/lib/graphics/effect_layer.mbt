@@ -33,15 +33,16 @@ pub fn add_effect(
 ) -> Unit {
   ignore(speed)
   let loop_ = false
-  let sprite_anim = nx_animation_to_selene_animation(
-    animation,
-    flip_x=flip,
-    loop_~,
-  )
-  let sprite = @sprite.Sprite::from_animation(sprite_anim, z)
+  let sprite_anim = nx_animation_to_selene_animation(animation, loop_~)
+  let transform = if flip {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
+  }
+  let sprite = @sprite.Sprite::from_animation(sprite_anim, z, transform~)
   let child = parent.spawn_child()
   @sprite.sprites.set(child, sprite)
-  @sprite.play_animation(child, sprite_anim, loop_~)
+  @sprite.play_animation(child, sprite_anim, loop_~, transform~)
   let duration = nx_animation_duration(animation)
   let ttl = duration.to_double() / 1000
 

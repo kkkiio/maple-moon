@@ -2,6 +2,7 @@
 /// Send a client message to game server.
 ///
 /// The default virtual-package implementation is a no-op fallback.
+#warnings("-unused_trait_bound")
 #callsite(autofill(loc))
 pub fn[T : @maple_protocol.ClientMessage] send(
   message : T,

@@ -132,6 +132,37 @@ pub fn to_buffer() -> Buffer {
   global_state.canvas.unwrap().to_buffer("image/png")
 }
 
+///|
+pub fn snapshot(path : String) -> Unit raise {
+  let actual = to_buffer().to_bytes()
+  let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
+  if update_snapshot || !@fs.path_exists(path) {
+    let dir = @path.Path(path).dirname().to_string()
+    @fs.create_dir(dir)
+    @fs.write_bytes_to_file(path, actual)
+  } else {
+    let expected = @fs.read_file_to_bytes(path)
+    if actual != expected {
+      abort(snapshot_mismatch_msg(path, actual, expected))
+    }
+  }
+}
+
+///|
+fn snapshot_mismatch_msg(path : String, actual : Bytes, expected : Bytes) -> String {
+  if actual.length() != expected.length() {
+    return "snapshot mismatch: \{path}, size changed: expected=\{expected.length()}, actual=\{actual.length()}"
+  }
+  let mut idx = 0
+  while idx < actual.length() {
+    if actual[idx] != expected[idx] {
+      return "snapshot mismatch: \{path}, first diff at byte=\{idx}, expected=\{expected[idx].to_int()}, actual=\{actual[idx].to_int()}"
+    }
+    idx += 1
+  }
+  "snapshot mismatch: \{path}"
+}
+
 // canvas module
 
 ///|

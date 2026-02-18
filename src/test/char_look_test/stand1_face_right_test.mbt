@@ -83,15 +83,13 @@ async test "character stand1 face right" {
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
-  let buffer = @capture_app.to_buffer().to_bytes()
-  @fs.create_dir("src/test/char_look_test/__snapshot__")
-  @fs.write_bytes_to_file(
-    "src/test/char_look_test/__snapshot__/stand1_face_right.png", buffer,
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/stand1_face_right.png",
   )
   let sprites = @sprite.sprites
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
-  @json.inspect(sprites, content=[
+  json_inspect(sprites, content=[
     {
       "draw": [
         "Animation",
@@ -102,7 +100,6 @@ async test "character stand1 face right" {
             "pivot": [22, 64],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70016,
@@ -119,7 +116,6 @@ async test "character stand1 face right" {
             "pivot": [21, 60],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70020,
@@ -136,7 +132,6 @@ async test "character stand1 face right" {
             "pivot": [23, 66],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70025,
@@ -152,7 +147,6 @@ async test "character stand1 face right" {
             "pivot": [1, 29],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70035,
@@ -168,7 +162,6 @@ async test "character stand1 face right" {
             "pivot": [18, 31],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70005,
@@ -184,7 +177,6 @@ async test "character stand1 face right" {
             "pivot": [23, 64],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70019,
@@ -200,7 +192,6 @@ async test "character stand1 face right" {
             "pivot": [20, 48],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70021,
@@ -216,7 +207,6 @@ async test "character stand1 face right" {
             "pivot": [27, 17],
           },
           "loop_": true,
-          "transform": { "a": -1, "b": 0, "c": 0, "d": 1, "tx": 0, "ty": 0 },
         },
       ],
       "zindex": 70036,

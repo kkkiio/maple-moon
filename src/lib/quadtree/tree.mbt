@@ -57,7 +57,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] Tree::add(
 }
 
 ///|
-pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_key(
+pub fn[K, V : QuadCompare] Tree::ceiling_key(
   self : Tree[K, V],
   value : V,
 ) -> K? {
@@ -65,7 +65,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_key(
 }
 
 ///|
-pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_entry(
+pub fn[K, V : QuadCompare] Tree::ceiling_entry(
   self : Tree[K, V],
   value : V,
 ) -> Node[K, V]? {
@@ -73,7 +73,7 @@ pub fn[K : Hash + Eq, V : QuadCompare] Tree::ceiling_entry(
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] Tree::find_ceiling_from(
+fn[K, V : QuadCompare] Tree::find_ceiling_from(
   self : Tree[K, V],
   start : Node[K, V]?,
   value : V,
@@ -162,12 +162,12 @@ pub fn[K, V] Tree::clear(self : Tree[K, V]) -> Unit {
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] Tree::set_link(
+fn[K, V : QuadCompare] Tree::set_link(
   self : Tree[K, V],
   start : Node[K, V]?,
   node : Node[K, V],
 ) -> Unit {
-  if self.root.is_empty() {
+  if self.root is None {
     self.root = Some(node)
     node.parent = None
     return
@@ -187,7 +187,7 @@ fn[K, V : QuadCompare] Node::add_or_next(
   match cmp {
     BL => {
       let prev = self.bl
-      if self.bl.is_empty() {
+      if self.bl is None {
         self.bl = Some(child)
         child.parent = Some(self)
       }
@@ -195,7 +195,7 @@ fn[K, V : QuadCompare] Node::add_or_next(
     }
     TR => {
       let prev = self.tr
-      if self.tr.is_empty() {
+      if self.tr is None {
         self.tr = Some(child)
         child.parent = Some(self)
       }
@@ -203,7 +203,7 @@ fn[K, V : QuadCompare] Node::add_or_next(
     }
     TL => {
       let prev = self.tl
-      if self.tl.is_empty() {
+      if self.tl is None {
         self.tl = Some(child)
         child.parent = Some(self)
       }
@@ -211,7 +211,7 @@ fn[K, V : QuadCompare] Node::add_or_next(
     }
     BR => {
       let prev = self.br
-      if self.br.is_empty() {
+      if self.br is None {
         self.br = Some(child)
         child.parent = Some(self)
       }
@@ -221,10 +221,7 @@ fn[K, V : QuadCompare] Node::add_or_next(
 }
 
 ///|
-fn[K : Hash + Eq, V : QuadCompare] Node::remove_child(
-  self : Node[K, V],
-  key : K,
-) -> Unit {
+fn[K : Eq, V] Node::remove_child(self : Node[K, V], key : K) -> Unit {
   match self.bl {
     Some(k) =>
       if k.key == key {

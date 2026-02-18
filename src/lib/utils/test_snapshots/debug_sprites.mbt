@@ -48,19 +48,7 @@ pub impl ToJson for DebugAnimation with to_json(self) {
     "current": DebugFrame(animation.frames[frame]).to_json(),
     "loop_": animation.loop_,
   }
-  let transform = animation.transform
-  if transform is { a: 1.0, b: 0.0, c: 0.0, d: 1.0, tx: 0.0, ty: 0.0 } {
-
-  } else {
-    r["transform"] = {
-      "a": transform.a,
-      "b": transform.b,
-      "c": transform.c,
-      "d": transform.d,
-      "tx": transform.tx,
-      "ty": transform.ty,
-    }
-  }
+  // Note: transform is now at Sprite level, not Animation level
   Json::object(r)
 }
 

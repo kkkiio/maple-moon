@@ -282,12 +282,6 @@ fn Player::update(
       }
       physics.move_object(self.character.get_phobj())
 
-      // Check for ladder interaction
-      if @inputs.is_pressed(@inputs.Code::ArrowUp) {
-        self.check_ladders(map_info, true)
-      } else if @inputs.is_pressed(@inputs.Code::ArrowDown) {
-        self.check_ladders(map_info, false)
-      }
       self.character.update(
         self.character.get_stancespeed(
           @character.get_integer_attackspeed(
@@ -429,139 +423,6 @@ pub fn Player::draw(
 ) -> Unit {
   if layer == self.character.get_layer() {
     self.character.draw(viewx, viewy, alpha)
-  }
-}
-
-///|
-/// Sends a Keyaction to the player's state, to apply forces, change the state and other behaviour.
-#deprecated("should merge into update")
-fn Player::send_action(
-  self : Player,
-  action : @keyboard.BasicActionId,
-  down : Bool,
-) -> Unit {
-  let player = self
-  let ka = action
-  match self.character.state {
-    STAND => {
-      if player.is_attacking() {
-        return
-      }
-      if down {
-        match ka {
-          @keyboard.BasicActionId::LEFT => {
-            player.set_facing_right(false)
-            player.set_state(CharState::WALK)
-          }
-          @keyboard.BasicActionId::RIGHT => {
-            player.set_facing_right(true)
-            player.set_state(CharState::WALK)
-          }
-          @keyboard.BasicActionId::JUMP => {
-            play_jumpsound()
-            player.character.get_phobj().set_vforce(-player.get_jumpforce())
-          }
-          @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
-          _ => ()
-        }
-      }
-    }
-    WALK => {
-      if player.is_attacking() {
-        return
-      }
-      if down {
-        match ka {
-          @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
-          @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
-          @keyboard.BasicActionId::JUMP => {
-            play_jumpsound()
-            player.character.get_phobj().set_vforce(-player.get_jumpforce())
-          }
-          @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
-          _ => ()
-        }
-      }
-    }
-    FALL =>
-      if down {
-        match ka {
-          @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
-          @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
-          _ => ()
-        }
-      }
-    PRONE =>
-      if down {
-        match ka {
-          @keyboard.BasicActionId::JUMP =>
-            if player.character.get_phobj().enablejd &&
-              player.is_key_down(@keyboard.BasicActionId::DOWN) {
-              play_jumpsound()
-              player.character.get_phobj().moving_object.set_y(
-                player.character.get_phobj().groundbelow,
-              )
-              player.set_state(CharState::FALL)
-            }
-          _ => ()
-        }
-      }
-    SIT =>
-      if down {
-        match ka {
-          @keyboard.BasicActionId::LEFT => {
-            player.set_facing_right(false)
-            player.set_state(CharState::WALK)
-          }
-          @keyboard.BasicActionId::RIGHT => {
-            player.set_facing_right(true)
-            player.set_state(CharState::WALK)
-          }
-          @keyboard.BasicActionId::JUMP => {
-            play_jumpsound()
-            player.set_state(CharState::STAND)
-          }
-          @keyboard.BasicActionId::UP => player.set_state(CharState::STAND)
-          _ => ()
-        }
-      }
-    SWIM =>
-      if down {
-        match ka {
-          @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
-          @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
-          _ => ()
-        }
-      }
-    LADDER | ROPE =>
-      if down {
-        match ka {
-          @keyboard.BasicActionId::JUMP =>
-            if player.is_key_down(@keyboard.BasicActionId::LEFT) {
-              play_jumpsound()
-              player.set_facing_right(false)
-              player.character.get_phobj().moving_object.set_hspeed(
-                -player.get_walkforce() * 8.0,
-              )
-              player.character.get_phobj().moving_object.set_vspeed(
-                -player.get_jumpforce() / 1.5,
-              )
-              cancel_ladder(player)
-            } else if player.is_key_down(@keyboard.BasicActionId::RIGHT) {
-              play_jumpsound()
-              player.set_facing_right(true)
-              player.character.get_phobj().moving_object.set_hspeed(
-                player.get_walkforce() * 8.0,
-              )
-              player.character.get_phobj().moving_object.set_vspeed(
-                -player.get_jumpforce() / 1.5,
-              )
-              cancel_ladder(player)
-            }
-          _ => ()
-        }
-      }
-    _ => ()
   }
 }
 
@@ -890,6 +751,12 @@ pub fn player_state_system(_delta : Double) -> Unit {
     return
   }
   guard player_ref.val is Some(player) else { return }
+  // Check holding ladder interaction
+  if @inputs.is_pressed(@inputs.ArrowUp) {
+    player.check_ladders(map_info, true)
+  } else if @inputs.is_pressed(@inputs.ArrowDown) {
+    player.check_ladders(map_info, false)
+  }
   if @inputs.is_just_pressed(@inputs.ArrowUp) {
     check_portals(player, map_info, portals, physics)
   }
@@ -903,9 +770,105 @@ pub fn player_state_system(_delta : Double) -> Unit {
     ] {
     let (code, action) = it
     if @inputs.is_just_pressed(code) {
-      player.send_action(action, true)
-    } else if @inputs.is_just_released(code) {
-      player.send_action(action, false)
+      match player.character.state {
+        STAND if !player.is_attacking() =>
+          match action {
+            @keyboard.BasicActionId::LEFT => {
+              player.set_facing_right(false)
+              player.set_state(CharState::WALK)
+            }
+            @keyboard.BasicActionId::RIGHT => {
+              player.set_facing_right(true)
+              player.set_state(CharState::WALK)
+            }
+            @keyboard.BasicActionId::JUMP => {
+              play_jumpsound()
+              player.character.get_phobj().set_vforce(-player.get_jumpforce())
+            }
+            @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
+            _ => ()
+          }
+        WALK if !player.is_attacking() =>
+          match action {
+            @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
+            @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
+            @keyboard.BasicActionId::JUMP => {
+              play_jumpsound()
+              player.character.get_phobj().set_vforce(-player.get_jumpforce())
+            }
+            @keyboard.BasicActionId::DOWN => player.set_state(CharState::PRONE)
+            _ => ()
+          }
+        FALL =>
+          match action {
+            @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
+            @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
+            _ => ()
+          }
+        PRONE =>
+          match action {
+            @keyboard.BasicActionId::JUMP =>
+              if player.character.get_phobj().enablejd &&
+                player.is_key_down(@keyboard.BasicActionId::DOWN) {
+                play_jumpsound()
+                player.character.get_phobj().moving_object.set_y(
+                  player.character.get_phobj().groundbelow,
+                )
+                player.set_state(CharState::FALL)
+              }
+            _ => ()
+          }
+        SIT =>
+          match action {
+            @keyboard.BasicActionId::LEFT => {
+              player.set_facing_right(false)
+              player.set_state(CharState::WALK)
+            }
+            @keyboard.BasicActionId::RIGHT => {
+              player.set_facing_right(true)
+              player.set_state(CharState::WALK)
+            }
+            @keyboard.BasicActionId::JUMP => {
+              play_jumpsound()
+              player.set_state(CharState::STAND)
+            }
+            @keyboard.BasicActionId::UP => player.set_state(CharState::STAND)
+            _ => ()
+          }
+        SWIM =>
+          match action {
+            @keyboard.BasicActionId::LEFT => player.set_facing_right(false)
+            @keyboard.BasicActionId::RIGHT => player.set_facing_right(true)
+            _ => ()
+          }
+        LADDER | ROPE =>
+          match action {
+            @keyboard.BasicActionId::JUMP =>
+              if player.is_key_down(@keyboard.BasicActionId::LEFT) {
+                play_jumpsound()
+                player.set_facing_right(false)
+                player.character.get_phobj().moving_object.set_hspeed(
+                  -player.get_walkforce() * 8.0,
+                )
+                player.character.get_phobj().moving_object.set_vspeed(
+                  -player.get_jumpforce() / 1.5,
+                )
+                cancel_ladder(player)
+              } else if player.is_key_down(@keyboard.BasicActionId::RIGHT) {
+                play_jumpsound()
+                player.set_facing_right(true)
+                player.character.get_phobj().moving_object.set_hspeed(
+                  player.get_walkforce() * 8.0,
+                )
+                player.character.get_phobj().moving_object.set_vspeed(
+                  -player.get_jumpforce() / 1.5,
+                )
+                cancel_ladder(player)
+              }
+            _ => ()
+          }
+        _ => ()
+      }
     }
   }
   if @inputs.is_just_pressed(@inputs.KeyF) {

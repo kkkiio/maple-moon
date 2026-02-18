@@ -80,9 +80,6 @@ pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
 }
 
 ///|
-pub using @resource {type NxTexture as TextureResource}
-
-///|
 
 ///|
 pub fn Texture::shift(self : Texture, amount : @struct.Point[Int]) -> Unit {

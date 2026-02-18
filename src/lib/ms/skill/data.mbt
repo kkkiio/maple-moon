@@ -57,9 +57,9 @@ pub async fn SkillData::load(id : Int) -> SkillData {
 
 ///|
 struct SkillNxResource {
-  icon : @graphics.TextureResource
-  icon_disabled : @graphics.TextureResource
-  icon_mouseover : @graphics.TextureResource
+  icon : @resource.NxTexture
+  icon_disabled : @resource.NxTexture
+  icon_mouseover : @resource.NxTexture
   elem_attr : String
   req_skills : Nullable[IntMap[Int]]
   invisible : Bool
@@ -82,15 +82,15 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let icon : @graphics.TextureResource = @json.from_json(
+  let icon : @resource.NxTexture = @json.from_json(
     obj.get("icon").unwrap_or(Json::null()),
     path=path.add_key("icon"),
   )
-  let icon_disabled : @graphics.TextureResource = @json.from_json(
+  let icon_disabled : @resource.NxTexture = @json.from_json(
     obj.get("iconDisabled").unwrap_or(Json::null()),
     path=path.add_key("iconDisabled"),
   )
-  let icon_mouseover : @graphics.TextureResource = @json.from_json(
+  let icon_mouseover : @resource.NxTexture = @json.from_json(
     obj.get("iconMouseOver").unwrap_or(Json::null()),
     path=path.add_key("iconMouseOver"),
   )
@@ -147,9 +147,9 @@ pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
 
 ///|
 struct SkillResource {
-  icon : @graphics.TextureResource
-  icon_disabled : @graphics.TextureResource
-  icon_mouseover : @graphics.TextureResource
+  icon : @resource.NxTexture
+  icon_disabled : @resource.NxTexture
+  icon_mouseover : @resource.NxTexture
   elem_attr : String
   req_skills : Map[Int, Int]
   invisible : Bool

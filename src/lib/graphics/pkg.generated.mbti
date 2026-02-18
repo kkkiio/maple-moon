@@ -271,8 +271,6 @@ pub impl ToJson for TileUnit
 // Type aliases
 pub using @resource {type NxNode}
 
-pub using @resource {type NxTexture as TextureResource}
-
 // Traits
 pub(open) trait Drawable : ToJson {
   draw(Self, DrawArgument) -> Unit

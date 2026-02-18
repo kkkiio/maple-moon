@@ -57,7 +57,7 @@ pub fn Frame::new(
 
 ///|
 struct FrameResource {
-  texture : TextureResource
+  texture : @resource.NxTexture
   delay : Int
   bounds : Rectangle[Int]
   head : Point[Int]

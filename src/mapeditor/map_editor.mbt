@@ -226,12 +226,7 @@ fn finalize_scene(
     map_limits.top,
     map_limits.bottom,
   )
-  @camera.set_limits(
-    top~,
-    bottom~,
-    left~,
-    right~,
-  )
+  @camera.set_limits(top~, bottom~, left~, right~)
   viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
 
   // Initialize Physics

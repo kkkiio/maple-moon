@@ -4,6 +4,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "moonbitlang/async",
   "KKKIIO/maple-moon/lib/ms/char_look/types",

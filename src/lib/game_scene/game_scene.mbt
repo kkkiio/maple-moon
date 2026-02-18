@@ -95,10 +95,7 @@ fn respawn_player(
   player.respawn(startpos, map_info.is_underwater())
   @camera.attach_entity(player.entity, @selene_math.Vec2D(16.0, 16.0))
   let (left, right, top, bottom) = normalize_camera_limits(
-    left,
-    right,
-    top,
-    bottom,
+    left, right, top, bottom,
   )
   @camera.set_limits(left~, right~, top~, bottom~)
 }

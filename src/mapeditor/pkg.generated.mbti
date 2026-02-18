@@ -71,6 +71,7 @@ pub(all) struct EditorStatus {
   loading : Bool
   error_msg : String?
   map_id : Int
+  scene_revision : Int
   map_name : String
   cam_x : Int
   cam_y : Int
@@ -130,6 +131,8 @@ pub struct SceneState {
 }
 
 pub struct ViewerState {
+  mut current_map_id : Int
+  mut scene_revision : Int
   mut map_future : @utils.Future[Result[(@map.MapRawResources, @map.SceneMap), Error]]?
   mut error_message : String?
   mut scene_state : SceneState?

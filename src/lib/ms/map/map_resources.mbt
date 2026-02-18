@@ -49,6 +49,9 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let bs_loader = get_background_set_loader()
   let background_animation_sets = {}
   for background in nx_map.back.0 {
+    if background.bS == "" {
+      continue
+    }
     let sets = background_animation_sets.get_or_init(background.bS, fn() {
       Map::new()
     })

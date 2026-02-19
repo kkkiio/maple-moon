@@ -1,6 +1,6 @@
 ///|
 struct MapDrops {
-  drops : @map_object.MapObjects[&Drop]
+  drops : Map[Int, &Drop]
   loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.Queue[DropSpawn]
   meso_icons : Map[MesoIcon, @resource.NxAnimation]
@@ -8,19 +8,19 @@ struct MapDrops {
 
 ///|
 fn MapDrops::new(
-  src : @resource.NxNode,
+  src : Json,
 ) -> MapDrops raise @json.JsonDecodeError {
   let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
-    src["09000000"]["iconRaw"],
+    get_icon_raw(src, "09000000"),
   )
-  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(src["09000001"]["iconRaw"])
+  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(get_icon_raw(src, "09000001"))
   meso_icons[MesoIcon::BUNDLE] = nx_node_to_animation(
-    src["09000002"]["iconRaw"],
+    get_icon_raw(src, "09000002"),
   )
-  meso_icons[MesoIcon::BAG] = nx_node_to_animation(src["09000003"]["iconRaw"])
+  meso_icons[MesoIcon::BAG] = nx_node_to_animation(get_icon_raw(src, "09000003"))
   {
-    drops: @map_object.MapObjects::new(),
+    drops: Map::new(),
     loading_drops: Array::new(),
     spawns: @queue.new(),
     meso_icons,
@@ -29,9 +29,21 @@ fn MapDrops::new(
 
 ///|
 fn nx_node_to_animation(
-  node : @resource.NxNode,
+  node : Json,
 ) -> @resource.NxAnimation raise @json.JsonDecodeError {
-  @json.from_json(node.value())
+  @json.from_json(node)
+}
+
+///|
+fn get_icon_raw(src : Json, id : String) -> Json {
+  match src {
+    Json::Object(root) =>
+      match root.get(id) {
+        Some(Json::Object(item)) => item.get("iconRaw").unwrap_or(Json::null())
+        _ => Json::null()
+      }
+    _ => Json::null()
+  }
 }
 
 ///|
@@ -60,10 +72,11 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
             BRONZE
           }
           let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
-          self.drops.add(spawn.instantiate_meso(icon))
+          let drop = spawn.instantiate_meso(icon)
+          self.drops.set(drop.get_oid(), drop)
         } else {
           self.loading_drops.push(
-            @io_service.submit_background_task(fn() {
+            @io_service.submit_background_task(async fn() {
               let item_data = @item.ItemData::get_async(itemid)
               spawn.instantiate_item(item_data.get_icon(true))
             }),
@@ -77,7 +90,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
   self.loading_drops.retain(fn(it) {
     guard it.poll() is Some(res) else { return true }
     match res {
-      Ok(drop) => self.drops.add(drop)
+      Ok(drop) => self.drops.set(drop.get_oid(), drop)
       Err(e) => {
         @log.error("failed to load drop", data={ "err": Show::to_string(e) })
         return true
@@ -85,11 +98,29 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
     }
     false
   })
-  self.drops.update(physics)
+  let to_remove = Array::new()
+  for oid, drop in self.drops {
+    let layer = drop.update(physics)
+    if layer == -1 {
+      to_remove.push(oid)
+    }
+  }
+  for oid in to_remove {
+    match self.drops.get(oid) {
+      Some(drop) => {
+        drop.destroy()
+        self.drops.remove(oid) |> ignore
+      }
+      None => ()
+    }
+  }
 }
 
 ///|
 pub fn MapDrops::clear(self : MapDrops) -> Unit {
+  for _, drop in self.drops {
+    drop.destroy()
+  }
   self.drops.clear()
 }
 
@@ -99,7 +130,6 @@ pub fn MapDrops::list_loot_at(
   playerpos : @struct.Point[Int],
 ) -> Iter[(Int, @struct.Point[Int])] {
   self.drops
-  .iter2()
   .iter()
   .filter(fn(it) { it.1.get_bounds().contains(playerpos) })
   .map(fn(it) { (it.0, it.1.get_position()) })
@@ -152,7 +182,7 @@ fn DropSpawn::instantiate_meso(
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
   icon : @resource.NxTexture,
-) -> ItemDrop {
+) -> &Drop {
   ItemDrop::new(
     self.oid,
     self.owner,

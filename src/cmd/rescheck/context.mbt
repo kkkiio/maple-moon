@@ -2,7 +2,6 @@
 struct RescheckContext {
   assets_root : String
   all_files : Array[String]
-  file_set : Map[String, Bool]
 }
 
 ///|
@@ -100,12 +99,7 @@ extern "js" fn read_file_to_string_ffi(path : String) -> String =
 fn build_context(assets_root : String) -> RescheckContext {
   let root = normalize_path(assets_root)
   let files = list_files_recursive_ffi(root)
-  let file_set : Map[String, Bool] = Map::new()
-  for abs_path in files {
-    let rel_path = path_relative(abs_path, root)
-    file_set[normalize_path(rel_path)] = true
-  }
-  { assets_root: root, all_files: files, file_set }
+  { assets_root: root, all_files: files }
 }
 
 ///|

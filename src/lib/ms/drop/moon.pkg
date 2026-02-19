@@ -1,11 +1,11 @@
 import {
+  "moonbitlang/core/math",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/logic_fps",
-  "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/item",
@@ -19,5 +19,3 @@ import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
 }
-
-warnings = "-A"

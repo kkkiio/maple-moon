@@ -439,7 +439,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
     let action_name = if path.is_empty() {
       let input_parts = args.input.split("/").to_array()
       let filename = input_parts.last().unwrap().to_string()
-      filename.strip_suffix(".json").map_or(filename, _.to_string())
+      filename.strip_suffix(".json").map_or(filename, fn(v) { v.to_string() })
     } else {
       path.split("/").to_array().last().unwrap().to_string()
     }
@@ -576,7 +576,7 @@ pub fn parse_frame_data(
     }
     let spritesheet_path = img_ref
       .strip_suffix(".png")
-      .map_or(img_ref, _.to_string())
+      .map_or(img_ref, fn(v) { v.to_string() })
     return Some({
       id: 0,
       width: w.to_int(),

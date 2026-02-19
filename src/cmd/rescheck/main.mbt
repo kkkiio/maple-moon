@@ -115,6 +115,9 @@ fn main {
     "[rescheck] assets_root=\{ctx.assets_root}, files=\{ctx.all_files.length()}",
   )
   let summary = run_pipeline(ctx, checks, args.only_modules)
+  println(
+    "[rescheck] summary total=\{summary.issue_count}, warnings=\{summary.warning_count}, errors=\{summary.error_count}",
+  )
   if summary.error_count > 0 {
     @sys.exit(1)
   }

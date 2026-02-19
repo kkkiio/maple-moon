@@ -2,8 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/drop"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
@@ -11,13 +9,21 @@ import {
 }
 
 // Values
+pub fn clear_map_drops() -> Unit
+
 pub fn handle_drop_loot_parsed(MapDrops, DropLoot) -> Unit
 
 pub fn handle_remove_loot_parsed(MapDrops, RemoveLoot, (Int) -> @physics.PhysicsObject?) -> Unit
 
+pub fn map_drops_system(Double) -> Unit
+
 pub fn parse_drop_loot(@net.InPacket) -> DropLoot raise
 
 pub fn parse_remove_loot(@net.InPacket) -> RemoveLoot raise
+
+pub fn set_map_physics(@physics.Physics) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
 
 // Errors
 
@@ -41,7 +47,6 @@ type DropSpawn
 type ItemDrop
 pub fn ItemDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Int, Bool, @resource.NxTexture) -> Self
 pub impl Drop for ItemDrop
-pub impl @map_object.MapObject for ItemDrop
 
 type MapDrops
 pub fn MapDrops::clear(Self) -> Unit
@@ -51,9 +56,8 @@ pub fn MapDrops::spawn(Self, DropSpawn) -> Unit
 pub fn MapDrops::update(Self, @physics.Physics) -> Unit
 
 type MesoDrop
-pub fn MesoDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Bool, @graphics.Animation) -> Self
+pub fn MesoDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Bool, @resource.NxAnimation) -> Self
 pub impl Drop for MesoDrop
-pub impl @map_object.MapObject for MesoDrop
 
 type Module
 pub fn Module::get_map_drops(Self) -> MapDrops
@@ -70,5 +74,5 @@ pub impl Show for RemoveLoot
 // Type aliases
 
 // Traits
-trait Drop : @map_object.MapObject
+trait Drop
 

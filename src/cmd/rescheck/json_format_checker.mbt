@@ -14,19 +14,7 @@ fn check_json_format(ctx : RescheckContext) -> Array[CheckIssue] {
       continue
     }
     let rel_path = path_relative(abs_path, ctx.assets_root)
-    let content = read_text_file(abs_path) catch {
-      e => {
-        issues.push(
-          make_issue(
-            "json",
-            Error,
-            rel_path,
-            "failed to read file: \{e}",
-          ),
-        )
-        continue
-      }
-    }
+    let content = read_text_file(abs_path)
     ignore(@json.parse(content)) catch {
       e => {
         issues.push(

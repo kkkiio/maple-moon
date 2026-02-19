@@ -1,4 +1,7 @@
 import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "moonbitlang/core/cmp",
   "moonbitlang/x/sys",
   "moonbitlang/x/fs",
   "rami3l/js-ffi/js",
@@ -6,8 +9,6 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Yoorkin/ArgParser",
 }
-
-warnings = "-A"
 
 options(
   "is-main": true,

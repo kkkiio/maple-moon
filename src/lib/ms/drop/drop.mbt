@@ -1,5 +1,9 @@
 ///|
-trait Drop: @map_object.MapObject {
+trait Drop {
+  get_oid(Self) -> Int
+  update(Self, @physics.Physics) -> Int
+  destroy(Self) -> Unit
+  get_position(Self) -> @struct.Point[Int]
   get_bounds(Self) -> @struct.Rectangle[Int]
   expire(Self, Int, @physics.PhysicsObject?) -> Unit
 }
@@ -7,12 +11,10 @@ trait Drop: @map_object.MapObject {
 ///|
 priv struct DropBase {
   entity : @entity.Entity
-  base : @map_object.MapObjectBase
+  oid : Int
+  phobj : @physics.PhysicsObject
   opacity : @utils.Linear
   angle : @utils.Linear
-  owner : Int
-  pickup_type : Int
-  player_drop : Bool
   mut looter : @physics.PhysicsObject?
   mut state : DropState
   dest : @struct.Point[Int]
@@ -30,39 +32,37 @@ priv enum DropState {
 ///|
 fn DropBase::new(
   id : Int,
-  owner : Int,
+  _owner : Int,
   start : @struct.Point[Int],
   dest : @struct.Point[Int],
-  pickup_type : Int,
+  _pickup_type : Int,
   mode : Int,
-  player_drop : Bool,
+  _player_drop : Bool,
 ) -> DropBase {
   let entity = @entity.Entity::new()
-  let base = @map_object.MapObjectBase::new(id, on_pos_change=fn(pos) {
+  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
-  base.set_position(@struct.Point::new(start.x, start.y - 4))
+  phobj.set_position(@selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()))
   let (state, base_y) = match mode {
     0 | 1 => {
-      base.phobj.set_vspeed(-5.0)
-      base.phobj.set_hspeed((dest.x - start.x).to_double() / 48)
+      phobj.set_vspeed(-5.0)
+      phobj.set_hspeed((dest.x - start.x).to_double() / 48)
       (DropState::DROPPED, (dest.y - 4).to_double())
     }
     2 => {
-      base.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
-      (DropState::FLOATING, base.phobj.moving_object.crnt_y())
+      phobj.set_t(@physics.PhysicsObjectType::FIXATED)
+      (DropState::FLOATING, phobj.moving_object.crnt_y())
     }
     3 => (DropState::PICKED_UP, -5.0)
     _ => abort("Invalid drop mode: \{mode}")
   }
   {
     entity,
-    base,
+    oid: id,
+    phobj,
     angle: @utils.Linear::new(0.0),
     opacity: @utils.Linear::new(1.0),
-    owner,
-    pickup_type,
-    player_drop,
     looter: None,
     state,
     dest,
@@ -73,21 +73,23 @@ fn DropBase::new(
 
 ///|
 fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
-  physics.move_object(self.base.phobj)
+  physics.move_object(self.phobj)
   if self.state == DropState::DROPPED {
-    if self.base.phobj.on_ground {
-      self.base.phobj.set_hspeed(0.0)
-      self.base.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
+    if self.phobj.on_ground {
+      self.phobj.set_hspeed(0.0)
+      self.phobj.set_t(@physics.PhysicsObjectType::FIXATED)
       self.state = DropState::FLOATING
       self.angle.set(0.0)
-      self.base.set_positionxy(self.dest.x, self.dest.y - 4)
+      self.phobj.set_position(
+        @selene_math.Vec2D(self.dest.x.to_double(), (self.dest.y - 4).to_double()),
+      )
     } else {
       let spinstep = 0.2
       self.angle.add(spinstep)
     }
   }
   if self.state == DropState::FLOATING {
-    self.base.phobj.moving_object.y.set(
+    self.phobj.moving_object.y.set(
       self.base_y + 5.0 + (@math.cos(self.moved) - 1.0) * 2.5,
     )
     self.moved = if self.moved < 360.0 { self.moved + 0.025 } else { 0.0 }
@@ -98,8 +100,8 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
     match self.looter {
       Some(looter) => {
         let hdelta = looter.moving_object.x.get() -
-          self.base.phobj.moving_object.x.get()
-        self.base.phobj.set_hspeed(
+          self.phobj.moving_object.x.get()
+        self.phobj.set_hspeed(
           looter.moving_object.hspeed / 2.0 + (hdelta - 16.0) / pickuptime,
         )
       }
@@ -112,12 +114,12 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
       return -1
     }
   }
-  self.base.phobj.fhlayer
+  self.phobj.fhlayer
 }
 
 ///|
 fn DropBase::bounds(self : DropBase) -> @struct.Rectangle[Int] {
-  let lt = self.base.get_position()
+  let lt = self.phobj.get_position()
   let rb = lt + @struct.Point::new(32, 32)
   @struct.Rectangle::new(lt, rb)
 }
@@ -135,8 +137,8 @@ fn DropBase::expire(
       self.angle.set(0.0)
       self.state = DropState::PICKED_UP
       self.looter = lt
-      self.base.phobj.set_vspeed(-4.5)
-      self.base.phobj.set_t(@physics.PhysicsObjectType::NORMAL)
+      self.phobj.set_vspeed(-4.5)
+      self.phobj.set_t(@physics.PhysicsObjectType::NORMAL)
     }
     _ => abort("Invalid drop type: \{t}")
   }
@@ -165,16 +167,16 @@ pub fn MesoDrop::new(
 }
 
 ///|
-// pub impl @map_object.MapObject for MesoDrop with draw(
+// pub impl Drop for MesoDrop with draw(
 //   self : MesoDrop,
 //   viewx : Double,
 //   viewy : Double,
 //   alpha : Double,
 // ) -> Unit {
-//   if not(self.base.base.active) {
+//   if not(self.base.entity.is_alive()) {
 //     return
 //   }
-//   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
+//   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
 //   self.icon.draw(
 //     @graphics.DrawArgument::new(
 //       pos=absp,
@@ -186,12 +188,12 @@ pub fn MesoDrop::new(
 // }
 
 ///|
-pub impl @map_object.MapObject for MesoDrop with get_oid(self : MesoDrop) -> Int {
-  self.base.base.oid
+pub impl Drop for MesoDrop with get_oid(self : MesoDrop) -> Int {
+  self.base.oid
 }
 
 ///|
-pub impl @map_object.MapObject for MesoDrop with update(
+pub impl Drop for MesoDrop with update(
   self : MesoDrop,
   physics : @physics.Physics,
 ) -> Int {
@@ -226,22 +228,15 @@ pub impl @map_object.MapObject for MesoDrop with update(
 
 ///|
 
-///|
-pub impl @map_object.MapObject for MesoDrop with destroy(self : MesoDrop) -> Unit {
+pub impl Drop for MesoDrop with destroy(self : MesoDrop) -> Unit {
   @sprite.sprites.remove(self.base.entity)
   self.base.entity.destroy()
 }
 
-///|
-pub impl @map_object.MapObject for MesoDrop with get_layer(self : MesoDrop) -> Int {
-  self.base.base.get_layer()
-}
-
-///|
-pub impl @map_object.MapObject for MesoDrop with get_position(self : MesoDrop) -> @struct.Point[
+pub impl Drop for MesoDrop with get_position(self : MesoDrop) -> @struct.Point[
   Int,
 ] {
-  self.base.base.get_position()
+  self.base.phobj.get_position()
 }
 
 ///|
@@ -284,16 +279,16 @@ pub fn ItemDrop::new(
 }
 
 ///|
-// pub impl @map_object.MapObject for ItemDrop with draw(
+// pub impl Drop for ItemDrop with draw(
 //   self : ItemDrop,
 //   viewx : Double,
 //   viewy : Double,
 //   alpha : Double,
 // ) -> Unit {
-//   if not(self.base.base.active) {
+//   if not(self.base.entity.is_alive()) {
 //     return
 //   }
-//   let absp = self.base.base.phobj.get_absolute(viewx, viewy, alpha)
+//   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
 //   // self.icon.draw(
 //   //   @graphics.DrawArgument::new(
 //   //     pos=absp,
@@ -305,12 +300,12 @@ pub fn ItemDrop::new(
 // }
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with get_oid(self : ItemDrop) -> Int {
-  self.base.base.oid
+pub impl Drop for ItemDrop with get_oid(self : ItemDrop) -> Int {
+  self.base.oid
 }
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with update(
+pub impl Drop for ItemDrop with update(
   self : ItemDrop,
   physics : @physics.Physics,
 ) -> Int {
@@ -336,21 +331,15 @@ pub impl @map_object.MapObject for ItemDrop with update(
 ///|
 
 ///|
-pub impl @map_object.MapObject for ItemDrop with destroy(self : ItemDrop) -> Unit {
+pub impl Drop for ItemDrop with destroy(self : ItemDrop) -> Unit {
   @sprite.sprites.remove(self.base.entity)
   self.base.entity.destroy()
 }
 
-///|
-pub impl @map_object.MapObject for ItemDrop with get_layer(self : ItemDrop) -> Int {
-  self.base.base.get_layer()
-}
-
-///|
-pub impl @map_object.MapObject for ItemDrop with get_position(self : ItemDrop) -> @struct.Point[
+pub impl Drop for ItemDrop with get_position(self : ItemDrop) -> @struct.Point[
   Int,
 ] {
-  self.base.base.get_position()
+  self.base.phobj.get_position()
 }
 
 ///|

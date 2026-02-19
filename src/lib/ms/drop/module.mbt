@@ -4,7 +4,7 @@ struct Module {
 }
 
 ///|
-struct MapDropsContext {
+priv struct MapDropsContext {
   mut map_drops : MapDrops?
   mut loading : @utils.Future[Result[MapDrops, Error]]?
   pending_spawns : Array[DropLoot]
@@ -18,8 +18,8 @@ let map_drops_ctx : Ref[MapDropsContext?] = Ref::new(None)
 ///|
 fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
   @io_service.submit_background_task(async fn() {
-    let module = Module::load()
-    module.get_map_drops()
+    let loaded = Module::load()
+    loaded.get_map_drops()
   })
 }
 
@@ -27,7 +27,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 pub async fn Module::load() -> Module {
   let special_item_loader = @resource.get_item_special_loader()
   let src = special_item_loader.load_res_async(["0900.img"])
-  { map_drops: MapDrops::new(src) }
+  { map_drops: MapDrops::new(src.value()) }
 }
 
 ///|
@@ -41,12 +41,12 @@ pub fn Module::make_handlers(
   get_character_by_id_fn : (Int) -> @physics.PhysicsObject?,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    @net.make_handler(@net.DROP_LOOT, parse_drop_loot, fn(drop : DropLoot) {
+    @net.make_handler(@net.DROP_LOOT, parse_drop_loot, (drop : DropLoot) => {
       handle_drop_loot_parsed(self.map_drops, drop)
     }),
-    @net.make_handler(@net.REMOVE_LOOT, fn(recv) { parse_remove_loot(recv) }, fn(
+    @net.make_handler(@net.REMOVE_LOOT, parse_remove_loot, ( 
       remove : RemoveLoot,
-    ) {
+    ) => {
       handle_remove_loot_parsed(self.map_drops, remove, get_character_by_id_fn)
     }),
   ]
@@ -67,7 +67,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "drop_loot",
     @net.Opcode::DROP_LOOT.int_value(),
-    fn(json) {
+    (json) => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let drop : @maple_protocol.DropLootMessage = @json.from_json(json)
       let parsed : DropLoot = {
@@ -90,7 +90,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "remove_loot",
     @net.Opcode::REMOVE_LOOT.int_value(),
-    fn(json) {
+    (json) => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let remove : @maple_protocol.RemoveLootMessage = @json.from_json(json)
       let parsed : RemoveLoot = {

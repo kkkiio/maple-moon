@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/x/sys",
+  "KKKIIO/maple-moon/lib/resource",
+}
+
+options(
+  "is-main": true,
+  link: { "js": { "format": "esm" } },
+)

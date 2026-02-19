@@ -69,10 +69,7 @@ pub fn Obj::attach_entity(
   entity : @entity.Entity,
   z_offset : Int,
 ) -> Unit {
-  let animation = nx_animation_to_selene_animation(
-    self.animation,
-    loop_=true,
-  )
+  let animation = nx_animation_to_selene_animation(self.animation, loop_=true)
   let transform = if self.flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {

@@ -19,8 +19,8 @@ import {
   "KKKIIO/maple-moon/lib/utils/test_snapshots",
 } for "test"
 
+warnings = "-A"
+
 options(
   overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )
-
-warnings = "-A"

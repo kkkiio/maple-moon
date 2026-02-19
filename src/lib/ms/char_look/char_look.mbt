@@ -822,10 +822,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         blend: false,
         zigzag: false,
       } // Reconstruct approximate NxAnimation container
-      let animation = nx_animation_to_selene_animation(
-        nx_anim,
-        loop_~,
-      )
+      let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
@@ -1371,10 +1368,7 @@ fn attach_face(
   }
   if frames.length() > 0 {
     let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
-    let animation = nx_animation_to_selene_animation(
-      nx_anim,
-      loop_=true,
-    )
+    let animation = nx_animation_to_selene_animation(nx_anim, loop_=true)
     let transform = facing_transform(flip_x)
 
     // Face Animation Sync
@@ -1408,10 +1402,7 @@ fn attach_face(
       }
       face_frames.push(frame)
     }
-    let animation = @sprite.Animation::new(
-      face_frames,
-      loop_=true,
-    )
+    let animation = @sprite.Animation::new(face_frames, loop_=true)
     let sprite = ensure_sprite_with_z(
       entity,
       animation,
@@ -1568,10 +1559,7 @@ fn CharLook::play_climbing_animations(
         blend: false,
         zigzag: false,
       }
-      let animation = nx_animation_to_selene_animation(
-        nx_anim,
-        loop_~,
-      )
+      let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.root_entity.spawn_child()

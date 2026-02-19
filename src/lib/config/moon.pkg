@@ -2,6 +2,7 @@ import {
 }
 
 warnings = "-A"
+
 options(
   targets: { "local_storage.js.mbt": [ "js" ] },
 )

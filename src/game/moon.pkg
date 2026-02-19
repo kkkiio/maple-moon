@@ -17,13 +17,13 @@ import {
   "KKKIIO/maple-moon/lib/ui",
 }
 
+warnings = "-A"
+
 options(
   "is-main": true,
   overrides: [
     "Milky2018/selene-canvas",
     "KKKIIO/maple-moon/lib/utils/abort_with_log",
-    "KKKIIO/maple-moon/lib/local_server",
+    "KKKIIO/maple-moon/lib/local_server/local_server_workaround",
   ],
 )
-
-warnings = "-A"

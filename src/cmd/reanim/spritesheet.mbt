@@ -60,16 +60,13 @@ pub async fn extract_frames(
         }
       }
       // Spritesheet frame
-      let buffer = try {
-        extract_ffi(
-          current_sharp_img.unwrap(),
-          frame.src_x,
-          frame.src_y,
-          frame.width,
-          frame.height,
-        )
-        .wait()
-      } catch {
+      let buffer = extract_ffi(
+        current_sharp_img.unwrap(),
+        frame.src_x,
+        frame.src_y,
+        frame.width,
+        frame.height,
+      ).wait() catch {
         e =>
           fail(
             "Failed to extract frame id=\{frame.id} sheet=\{frame.spritesheet_path} rect=(\{frame.src_x},\{frame.src_y},\{frame.width},\{frame.height}) err=\{e}",

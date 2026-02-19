@@ -149,7 +149,11 @@ pub fn snapshot(path : String) -> Unit raise {
 }
 
 ///|
-fn snapshot_mismatch_msg(path : String, actual : Bytes, expected : Bytes) -> String {
+fn snapshot_mismatch_msg(
+  path : String,
+  actual : Bytes,
+  expected : Bytes,
+) -> String {
   if actual.length() != expected.length() {
     return "snapshot mismatch: \{path}, size changed: expected=\{expected.length()}, actual=\{actual.length()}"
   }

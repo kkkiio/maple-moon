@@ -129,7 +129,14 @@ fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
 
   // Create selene Sprite
   let selene_anim = nx_animation_to_selene_animation(animation)
-  { animation: selene_anim, range, first_frame, facing_right, displayed, entity: None }
+  {
+    animation: selene_anim,
+    range,
+    first_frame,
+    facing_right,
+    displayed,
+    entity: None,
+  }
 }
 
 ///|

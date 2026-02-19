@@ -19,6 +19,7 @@ import {
 }
 
 warnings = "-A"
+
 options(
   link: { "js": { "exports": [ "watch_quest_log_ffi", "forfeit_quest_ffi" ] } },
 )

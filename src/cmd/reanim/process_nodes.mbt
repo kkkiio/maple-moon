@@ -101,9 +101,7 @@ fn update_json_tree(
           for key, value in obj {
             let child_path = path.copy()
             child_path.push(key)
-            new_obj[key] = update_json_tree(
-              value, child_path, frame_updates,
-            )
+            new_obj[key] = update_json_tree(value, child_path, frame_updates)
           }
           Json::object(new_obj)
         }
@@ -112,11 +110,7 @@ fn update_json_tree(
           for i, value in arr {
             let child_path = path.copy()
             child_path.push(i.to_string())
-            new_arr.push(
-              update_json_tree(
-                value, child_path, frame_updates,
-              ),
-            )
+            new_arr.push(update_json_tree(value, child_path, frame_updates))
           }
           Json::array(new_arr)
         }
@@ -258,8 +252,15 @@ pub async fn process_resource(
   } else {
     // Default: simple pack mode - recursively collect all frames
     process_simple_pack(
-      src, atlases, spritesheet_buffers, base_name, output_rel_path, bitmaps_dir,
-      load_bitmap, save_image, keep_source_sheets=keep_source_sheets,
+      src,
+      atlases,
+      spritesheet_buffers,
+      base_name,
+      output_rel_path,
+      bitmaps_dir,
+      load_bitmap,
+      save_image,
+      keep_source_sheets~,
     )
   }
 }
@@ -573,7 +574,9 @@ pub fn parse_frame_data(
     guard json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } else {
       return None
     }
-    let spritesheet_path = img_ref.strip_suffix(".png").map_or(img_ref, _.to_string())
+    let spritesheet_path = img_ref
+      .strip_suffix(".png")
+      .map_or(img_ref, _.to_string())
     return Some({
       id: 0,
       width: w.to_int(),

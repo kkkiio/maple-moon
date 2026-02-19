@@ -420,10 +420,7 @@ pub fn MiniMapUI::set_map(
           @sprite.Animation::new([self.resource.minmap_middle_left]),
           @graphics.MINI_MAP_ZINDEX_,
           offset=@selene_math.Vec2D(0, ML_MR_Y_.to_double()),
-          transform=@selene_math.Transform::from_scale(
-            0,
-            m_stretch.to_double(),
-          ),
+          transform=@selene_math.Transform::from_scale(0, m_stretch.to_double()),
         ),
       )
       let ur_x_offset = CENTER_START_X_ + c_stretch
@@ -436,10 +433,7 @@ pub fn MiniMapUI::set_map(
             middle_right_x_.to_double(),
             ML_MR_Y_.to_double(),
           ),
-          transform=@selene_math.Transform::from_scale(
-            0,
-            m_stretch.to_double(),
-          ),
+          transform=@selene_math.Transform::from_scale(0, m_stretch.to_double()),
         ),
       )
       frames.push(
@@ -452,10 +446,7 @@ pub fn MiniMapUI::set_map(
               0,
             ) +
             window_ul_pos_,
-          transform=@selene_math.Transform::from_scale(
-            c_stretch.to_double(),
-            0,
-          ),
+          transform=@selene_math.Transform::from_scale(c_stretch.to_double(), 0),
         ),
       )
       frames.push(
@@ -480,10 +471,7 @@ pub fn MiniMapUI::set_map(
             CENTER_START_X_.to_double(),
             (down_y_offset + 18).to_double(),
           ),
-          transform=@selene_math.Transform::from_scale(
-            c_stretch.to_double(),
-            0,
-          ),
+          transform=@selene_math.Transform::from_scale(c_stretch.to_double(), 0),
         ),
       )
       frames.push(

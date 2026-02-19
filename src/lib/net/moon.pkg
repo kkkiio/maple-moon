@@ -7,6 +7,7 @@ import {
 }
 
 warnings = "-A"
+
 options(
   targets: {
     "socket.js.mbt": [ "js" ],

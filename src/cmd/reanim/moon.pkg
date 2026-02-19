@@ -7,9 +7,9 @@ import {
   "Yoorkin/ArgParser",
 }
 
+warnings = "-A"
+
 options(
   "is-main": true,
   link: { "js": { "format": "esm" } },
 )
-
-warnings = "-A"

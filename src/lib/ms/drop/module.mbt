@@ -24,7 +24,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 }
 
 ///|
-pub async fn Module::load() -> Module raise {
+pub async fn Module::load() -> Module {
   let special_item_loader = @resource.get_item_special_loader()
   let src = special_item_loader.load_res_async(["0900.img"])
   { map_drops: MapDrops::new(src) }
@@ -146,7 +146,9 @@ pub fn map_drops_system(_delta : Double) -> Unit {
             ctx.pending_removes.clear()
           }
           Some(Err(err)) => {
-            @log.error("failed to load map drops", data={ "err": err.to_string() })
+            @log.error("failed to load map drops", data={
+              "err": err.to_string(),
+            })
             ctx.loading = None
           }
           None => return

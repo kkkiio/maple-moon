@@ -13,6 +13,7 @@ import {
 }
 
 warnings = "-A"
+
 options(
   targets: {
     "gl.js.mbt": [ "js" ],

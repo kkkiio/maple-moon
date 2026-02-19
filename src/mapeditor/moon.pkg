@@ -20,6 +20,8 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics" @physics,
 }
 
+warnings = "-A"
+
 options(
   link: {
     "js": {
@@ -43,5 +45,3 @@ options(
   },
   overrides: [ "Milky2018/selene-canvas" ],
 )
-
-warnings = "-A"

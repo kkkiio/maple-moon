@@ -63,7 +63,7 @@ pub(all) enum Opcode {
   /// Spawn a monster for a player who is NOT controlling it.
   /// The client will not calculate AI or physics for this mob.
   SPAWN_MOB = 0xEC
-  KILL_MOB = 237
+  KILL_MOB = 0xED
   /// Spawn a monster for a player who IS controlling it.
   /// The client will calculate AI and physics for this mob.
   /// For local server (single player), we always use this.

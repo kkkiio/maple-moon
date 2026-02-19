@@ -1,5 +1,6 @@
 ///|
-fn on_select_char(json : Json) -> Unit raise {
+fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
+  let default_server = self
   let _ : SelectCharMessage = @json.from_json(json)
   @io_service.execute_background(async fn() {
     if default_server.db is Some(db) {

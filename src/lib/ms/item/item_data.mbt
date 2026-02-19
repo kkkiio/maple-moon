@@ -283,24 +283,5 @@ pub fn ItemData::get_info(self : ItemData) -> Map[String, Json] {
 
 ///|
 pub fn get_item_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "item",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "Consume/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Item/Consume",
-      ),
-      "Cash/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Item/Cash",
-      ),
-      "Etc/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Item/Etc",
-      ),
-      "Install/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Item/Install",
-      ),
-      "Pet/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Item/Pet",
-      ),
-    }),
-  )
+  @resource.get_item_loader()
 }

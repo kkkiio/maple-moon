@@ -308,6 +308,26 @@ pub fn get_item_special_loader() -> AsyncLoader {
   item_special_loader.get()
 }
 
+///|
+let item_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "item",
+    base_url="/assets",
+    loader=CompositeAsyncResourceLoader::new({
+      "Consume/": DirResourceLoader::new("/assets/Item/Consume"),
+      "Cash/": DirResourceLoader::new("/assets/Item/Cash"),
+      "Etc/": DirResourceLoader::new("/assets/Item/Etc"),
+      "Install/": DirResourceLoader::new("/assets/Item/Install"),
+      "Pet/": DirResourceLoader::new("/assets/Item/Pet"),
+    }),
+  )
+})
+
+///|
+pub fn get_item_loader() -> AsyncLoader {
+  item_loader.get()
+}
+
 // let status_bar_loader = @resource.SyncLoader::load(
 //   "StatusBar",
 //   "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",

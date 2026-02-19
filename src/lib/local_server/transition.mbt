@@ -26,7 +26,7 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
       portal_id~,
     )
     self.last_portal_id = portal_id
-    default_server.send_server_message(set_field_message)
+    self.send_server_message(set_field_message)
     self.spawn_mobs_for_map(tm)
   })
 }

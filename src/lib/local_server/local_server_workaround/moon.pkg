@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/core/json",
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/local_server",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/io_service",
+}
+
+options(
+  implement: "KKKIIO/maple-moon/lib/game_server",
+)

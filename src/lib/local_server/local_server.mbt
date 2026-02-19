@@ -15,15 +15,18 @@ using @maple_protocol {
 }
 
 ///|
+using @resource {get_mapx_loader}
+
+///|
 /// A local server implementation for playing the game offline.
-/// 
-/// Although there is a open-source server implementation `Cosmic`, 
+///
+/// Although there is a open-source server implementation `Cosmic`,
 /// it is burdensome to implement the full client features, so we implement a local server here to play the game offline.
-/// 
+///
 /// We can use the built-in resource loader in `@resource` package to load the resources and implement the server logic here.
-/// 
+///
 /// We should not reference any game-packages(like `@map`, `@monster`, etc.) here to avoid circular dependencies.
-priv struct LocalServer {
+struct LocalServer {
   client_message_queue : @queue.Queue[(Int, Json)]
   server_message_queue : @queue.Queue[(Int, Json)]
   client_message_handler_map : Map[Int, (Json) -> Unit raise]
@@ -36,6 +39,9 @@ priv struct LocalServer {
   mobs : Map[Int, ServerMob]
   pending_mob_spawns : Array[PendingMobSpawn]
   mut db : IndexedDB?
+  mut drop_db : MobDropDatabase?
+  mut global_drop_db : MobDropDatabase?
+  drop_rng : @random.Rand
 }
 
 ///|
@@ -55,7 +61,7 @@ priv struct PendingMobSpawn {
 }
 
 ///|
-fn LocalServer::new() -> LocalServer {
+pub fn LocalServer::new() -> LocalServer {
   {
     client_message_queue: @queue.new(),
     server_message_queue: @queue.new(),
@@ -69,75 +75,118 @@ fn LocalServer::new() -> LocalServer {
     mobs: Map::new(),
     pending_mob_spawns: Array::new(),
     db: None,
+    drop_db: None,
+    global_drop_db: None,
+    drop_rng: @random.Rand::new(),
   }
 }
 
 ///|
-fn init {
-  default_server.client_message_handler_map[@net.ClientOpcode::SELECT_CHAR.int_value()] = on_select_char
-  default_server.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = default_server.on_change_map(
-    _,
-  )
-  default_server.client_message_handler_map[@net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = fn(
-    _,
-  ) {
-    default_server.map_transfer_ready = true
-    default_server.flush_pending_mob_spawns()
+pub async fn init_server(server : LocalServer) -> Unit {
+  init_router(server)
+  let db = init_db()
+  server.db = Some(db)
+  // 加载掉落数据库
+  server.load_drop_databases()
+}
+
+///|
+fn init_router(server : LocalServer) -> Unit {
+  server.client_message_handler_map[@net.ClientOpcode::SELECT_CHAR.int_value()] = v => {
+    server.on_select_char(v)
   }
-  default_server.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = on_mob_damage
-  default_server.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = on_mob_damage
-  default_server.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = on_mob_damage
-  default_server.client_message_handler_map[@net.ClientOpcode::MOVE_MONSTER.int_value()] = fn(
-    json,
-  ) {
+  server.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = v => {
+    server.on_change_map(v)
+  }
+  server.client_message_handler_map[@net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = _ => {
+    server.map_transfer_ready = true
+    server.flush_pending_mob_spawns()
+  }
+  server.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = v => {
+    server.on_mob_damage(v)
+  }
+  server.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = v => {
+    server.on_mob_damage(v)
+  }
+  server.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = v => {
+    server.on_mob_damage(v)
+  }
+  server.client_message_handler_map[@net.ClientOpcode::MOVE_MONSTER.int_value()] = json => {
     let msg : MoveMonsterMessage = @json.from_json(json)
-    match default_server.mobs.get(msg.oid) {
-      Some(mob) => {
-        default_server.mobs.set(msg.oid, {
+    match server.mobs.get(msg.oid) {
+      Some(mob) =>
+        server.mobs.set(msg.oid, {
           ..mob,
           x: msg.start_pos.x,
           y: msg.start_pos.y,
         })
-      }
       None => ()
     }
   }
 }
 
 ///|
-using @resource {get_mapx_loader}
+/// send client message to the server
+#callsite(autofill(loc))
+pub fn[T : ClientMessage] LocalServer::send_client_message(
+  self : LocalServer,
+  message : T,
+  log_level? : @log.Level = @log.Level::DEBUG,
+  loc~ : SourceLoc,
+) -> Unit {
+  let type_code = T::type_code()
+  let json = message.to_json()
+  @log.log(
+    log_level,
+    "send_client_message",
+    data={ "message": @log.JsonValue(json) },
+    loc~,
+  )
+  self.client_message_queue.push((type_code, json))
+}
 
 ///|
-fn on_mob_damage(json : Json) -> Unit raise {
+fn LocalServer::on_mob_damage(self : LocalServer, json : Json) -> Unit raise {
   let msg : @maple_protocol.MobDamageMessage = @json.from_json(json)
-  guard default_server.mobs.get(msg.oid) is Some(mob) else { return }
+  guard self.mobs.get(msg.oid) is Some(mob) else { return }
   mob.hp -= msg.damage
   if mob.hp <= 0 {
     mob.hp = 0
-    default_server.send_server_message(@maple_protocol.KillMobMessage::{
+    self.send_server_message(@maple_protocol.KillMobMessage::{
       oid: msg.oid,
       animation: 1,
     })
-    default_server.last_object_id += 1
-    default_server.send_server_message(DropLootMessage::{
-      mode: 0,
-      oid: default_server.last_object_id,
-      meso: true,
-      item_id: 20,
-      owner: 0,
-      pickuptype: 0,
-      dropto: { x: mob.x, y: mob.y },
-      dropfrom: { x: mob.x, y: mob.y - 30 },
-      player_drop: false,
-    })
-    default_server.mobs.remove(msg.oid)
+    // 生成掉落
+    self.spawn_drops_for_mob(mob)
+    self.mobs.remove(msg.oid)
   } else {
     let percent = (mob.hp.to_double() / mob.max_hp.to_double() * 100.0).to_int()
-    default_server.send_server_message(@maple_protocol.MobHpMessage::{
+    self.send_server_message(@maple_protocol.MobHpMessage::{
       oid: msg.oid,
       percent,
     })
   }
+}
+
+///|
+/// 为怪物生成掉落
+fn LocalServer::spawn_drops_for_mob(
+  self : LocalServer,
+  mob : ServerMob,
+) -> Unit {
+  let (messages, next_oid) = calculate_mob_drops(
+    mob.id,
+    mob.x,
+    mob.y,
+    self.last_object_id,
+    self.drop_db,
+    self.global_drop_db,
+    self.drop_rng,
+  )
+  for msg in messages {
+    self.send_server_message(msg)
+  }
+  self.last_object_id = next_oid
 }
 
 ///|
@@ -220,23 +269,6 @@ fn LocalServer::flush_pending_mob_spawns(self : LocalServer) -> Unit {
 }
 
 ///|
-let default_server : LocalServer = LocalServer::new()
-
-///|
-/// send client message to the server
-#callsite(autofill(loc))
-pub fn[T : ClientMessage] send(
-  message : T,
-  log_level? : @log.Level = @log.Level::DEBUG,
-  loc~ : SourceLoc,
-) -> Unit {
-  let type_code = T::type_code()
-  let json = message.to_json()
-  @log.log(log_level, "send", data={ "message": json }, loc~)
-  default_server.client_message_queue.push((type_code, json))
-}
-
-///|
 #callsite(autofill(loc))
 fn[T : ServerMessage] LocalServer::send_server_message(
   self : LocalServer,
@@ -246,27 +278,35 @@ fn[T : ServerMessage] LocalServer::send_server_message(
 ) -> Unit {
   let type_code = T::type_code()
   let json = message.to_json()
-  @log.log(log_level, "send_server_message", data={ "message": json }, loc~)
+  @log.log(
+    log_level,
+    "send_server_message",
+    data={ "type_code": @log.HexInt(type_code), "json": @log.JsonValue(json) },
+    loc~,
+  )
   self.server_message_queue.push((type_code, json))
 }
 
 ///|
-pub fn add_server_message_handler(
+pub fn LocalServer::add_server_message_handler(
+  self : LocalServer,
   name : String,
   type_code : Int,
   handler : (Json) -> Unit raise,
 ) -> Unit {
-  default_server.server_message_handlers_map
+  self.server_message_handlers_map
   .get_or_init(type_code, fn() { Array::new() })
   .push((name, handler))
 }
 
 ///|
-pub fn server_system(_delta : Double) -> Unit {
-  while default_server.server_message_queue.pop() is Some((type_code, json)) {
-    @log.debug("server message", data={ "type_code": type_code, "json": json })
-    guard default_server.server_message_handlers_map.get(type_code)
-      is Some(handlers) else {
+pub fn server_system(server : LocalServer) -> Unit {
+  while server.server_message_queue.pop() is Some((type_code, json)) {
+    @log.debug("receive server message", data={
+      "type_code": @log.HexInt(type_code),
+      "json": @log.JsonValue(json),
+    })
+    guard server.server_message_handlers_map.get(type_code) is Some(handlers) else {
       continue
     }
     for handler in handlers {
@@ -279,12 +319,11 @@ pub fn server_system(_delta : Double) -> Unit {
       }
     }
   }
-  while default_server.client_message_queue.pop() is Some((type_code, json)) {
-    guard default_server.client_message_handler_map.get(type_code)
-      is Some(handler) else {
+  while server.client_message_queue.pop() is Some((type_code, json)) {
+    guard server.client_message_handler_map.get(type_code) is Some(handler) else {
       @log.debug("Missing client message handler", data={
-        "type_code": type_code,
-        "json": json,
+        "type_code": @log.HexInt(type_code),
+        "json": @log.JsonValue(json),
       })
       return
     }
@@ -295,9 +334,25 @@ pub fn server_system(_delta : Double) -> Unit {
 }
 
 ///|
-pub fn init_server() -> Unit {
+/// 通过 JS fetch 加载文本
+extern "js" fn fetch_text(path : String) -> @js.Promise =
+  #| (p) => fetch(p).then((res) => res.text())
+
+///|
+/// 加载怪物掉落数据库
+fn LocalServer::load_drop_databases(self : LocalServer) -> Unit raise {
+  // 加载怪物特定掉落
   @io_service.execute_background(async fn() {
-    let db = init_db()
-    default_server.db = Some(db)
+    let text : String = fetch_text("/assets/data/mob_drops.csv").wait()
+      |> @js.Value::cast
+    self.drop_db = Some(MobDropDatabase::from_csv(text))
+    @log.info("Loaded mob_drops.csv", data={})
+  })
+  // 加载全局掉落
+  @io_service.execute_background(async fn() {
+    let text : String = fetch_text("/assets/data/drop_data_global.csv").wait()
+      |> @js.Value::cast
+    self.global_drop_db = Some(MobDropDatabase::from_csv(text))
+    @log.info("Loaded drop_data_global.csv", data={})
   })
 }

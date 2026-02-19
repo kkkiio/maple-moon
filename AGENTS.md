@@ -10,7 +10,7 @@
 
 ## 验证
 
-修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新js内容:
+修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新 js 内容:
 
 ```bash
 moon build --release
@@ -20,9 +20,13 @@ moon 默认告警比较多, 主动修正代码减少告警.
 
 只写黑盒测试.
 
+### Moonbit 快照测试
+
+使用 `inspect`/`json_inspect` 做快照断言, 不要自己填/修改 `content` 参数, 用 `moon test --update` 更新快照.
+
 ### Canvas 快照测试
 
-涉及画面回归时，统一使用 `@capture_app.snapshot(path)` 做图片快照断言，不要在测试里手动 `write_bytes_to_file`。
+涉及画面回归时，统一使用 `@capture_app.snapshot(path)` 做图片快照断言.
 
 `@capture_app.snapshot` 的规则:
 

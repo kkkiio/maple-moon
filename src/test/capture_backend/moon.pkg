@@ -6,8 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/log",
 }
 
-warnings = "-A"
-
 options(
   implement: "Milky2018/selene/backend",
 )

@@ -284,3 +284,31 @@ pub extern "js" fn Context2D::clear_rect(
   h : Double,
 ) -> Unit =
   #|(ctx, x, y, w, h) => { ctx.clearRect(x, y, w, h); }
+
+///|
+pub extern "js" fn Context2D::set_fill_style(self : Context2D, v : String) -> Unit =
+  #|(ctx, v) => { ctx.fillStyle = v; }
+
+///|
+pub extern "js" fn Context2D::set_stroke_style(self : Context2D, v : String) -> Unit =
+  #|(ctx, v) => { ctx.strokeStyle = v; }
+
+///|
+pub extern "js" fn Context2D::fill_rect(
+  self : Context2D,
+  x : Double,
+  y : Double,
+  w : Double,
+  h : Double,
+) -> Unit =
+  #|(ctx, x, y, w, h) => { ctx.fillRect(x, y, w, h); }
+
+///|
+pub extern "js" fn Context2D::stroke_rect(
+  self : Context2D,
+  x : Double,
+  y : Double,
+  w : Double,
+  h : Double,
+) -> Unit =
+  #|(ctx, x, y, w, h) => { ctx.strokeRect(x, y, w, h); }

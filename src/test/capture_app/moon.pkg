@@ -4,5 +4,3 @@ import {
   "moonbitlang/x/path",
   "moonbitlang/x/sys",
 }
-
-warnings = "-A"

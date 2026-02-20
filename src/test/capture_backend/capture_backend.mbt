@@ -183,12 +183,15 @@ pub fn draw_color_rect(
   color~ : String,
   stroke_color~ : String,
 ) -> Unit {
-  ignore(x)
-  ignore(y)
-  ignore(width)
-  ignore(height)
-  ignore(color)
-  ignore(stroke_color)
+  let ctx = @capture_app.get_ctx().unwrap()
+  ctx.save()
+  ctx.set_fill_style(color)
+  ctx.fill_rect(x, y, width, height)
+  if stroke_color != "" {
+    ctx.set_stroke_style(stroke_color)
+    ctx.stroke_rect(x, y, width, height)
+  }
+  ctx.restore()
 }
 
 ///|

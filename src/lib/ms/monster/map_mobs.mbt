@@ -2,7 +2,6 @@
 using @maple_protocol {
   type MobSpawnMessage,
   type MobSpawnControllerMessage,
-  type MobHpMessage,
   type KillMobMessage,
 }
 
@@ -269,21 +268,6 @@ pub fn MapMobs::get_mob_head_position(
 }
 
 ///|
-pub fn MapMobs::send_mobhp(
-  self : MapMobs,
-  oid : Int,
-  percent : Int,
-  playerlevel : Int,
-) -> Unit {
-  match self.mobs.get(oid) {
-    Some(mob) => mob.show_hp(percent, playerlevel)
-    None => ()
-  }
-}
-
-///|
-
-///|
 pub(all) struct MobSpawn {
   oid : Int
   id : Int
@@ -416,15 +400,6 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
   @game_server.add_server_message_handler(
-    "mob_hp",
-    @net.Opcode::SHOW_MOB_HP.int_value(),
-    fn(json) raise {
-      guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
-      let msg : MobHpMessage = @json.from_json(json)
-      map_mobs.send_mobhp(msg.oid, msg.percent, 0) // TODO: player level
-    },
-  )
-  @game_server.add_server_message_handler(
     "kill_mob",
     @net.Opcode::KILL_MOB.int_value(),
     fn(json) raise {
@@ -433,4 +408,5 @@ pub fn setup_game_server_handlers() -> Unit {
       map_mobs.remove(msg.oid, msg.animation)
     },
   )
+  setup_mob_hpbar_game_server_handlers()
 }

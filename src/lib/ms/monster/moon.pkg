@@ -10,7 +10,6 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/combat_proto" @combat,
-  "KKKIIO/maple-moon/lib/ui",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/maple_stat",

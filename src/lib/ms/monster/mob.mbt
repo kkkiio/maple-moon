@@ -85,9 +85,7 @@ pub struct Mob {
   can_fly : Bool
   is_boss : Bool
   name_label : @graphics.Text
-  hp_bar : @ui.MobHpBar
   randomizer : @utils.Randomizer
-  show_hp : @utils.TimedBool
   mut anim_time : Double
   mut movements : Array[@physics.Movement]
   mut counter : Int
@@ -99,7 +97,6 @@ pub struct Mob {
   mut stance : Stance
   mut last_synced_stance : Stance?
   mut fly_direction : FlyDirection
-  mut hp_percent : Int
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
@@ -309,7 +306,6 @@ pub fn Mob::new(
   let aggro = mode == 2
   phobj.set_fhid(fh)
   phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
-  let hp_percent = 0
   let dying = false
   let dead = false
   let stance = Stance::from_byte(st)
@@ -351,9 +347,7 @@ pub fn Mob::new(
     can_fly,
     is_boss,
     name_label,
-    hp_bar: @ui.MobHpBar::default(),
     randomizer,
-    show_hp: @utils.TimedBool::default(),
     anim_time: 0.0,
     movements: [],
     counter,
@@ -365,7 +359,6 @@ pub fn Mob::new(
     stance,
     last_synced_stance: None,
     fly_direction,
-    hp_percent,
     fading: false,
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
@@ -376,6 +369,11 @@ pub fn Mob::new(
 ///|
 pub fn Mob::get_oid(self : Mob) -> Int {
   self.oid
+}
+
+///|
+pub fn Mob::get_entity(self : Mob) -> @entity.Entity {
+  self.entity
 }
 
 ///|
@@ -430,7 +428,6 @@ pub fn Mob::update(
     self.destroy()
     return -1
   }
-  self.show_hp.update(timestep=@logic_fps.STEP_TIME_MS)
 
   // TODO: add buffs animation?
   if not(self.dying) {
@@ -1018,21 +1015,4 @@ pub fn Mob::apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
     self.update_movement()
   }
-}
-
-///|
-pub fn Mob::show_hp(self : Mob, percent : Int, playerlevel : Int) -> Unit {
-  if self.hp_percent == 0 {
-    let delta = self.level - playerlevel
-    if delta >= 10 {
-      self.name_label.change_color(@struct.ColorName::RED)
-    } else if delta >= 5 {
-      self.name_label.change_color(@struct.ColorName::YELLOW)
-    } else if delta <= -5 {
-      self.name_label.change_color(@struct.ColorName::GREEN)
-    }
-  }
-  let percent = percent |> @cmp.minimum(100) |> @cmp.maximum(0)
-  self.hp_percent = percent
-  self.show_hp.set_for(2000)
 }

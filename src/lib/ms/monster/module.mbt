@@ -53,7 +53,7 @@ pub fn Module::make_handlers(
     (
       @net.SHOW_MOB_HP,
       @net.with_log(@net.SHOW_MOB_HP, fn(recv : @net.InPacket) raise {
-        handle_show_mob_hp(self.map_mobs, player_stats_getter, recv)
+        handle_show_mob_hp_packet(player_stats_getter, recv)
       }),
     ),
     (

@@ -37,6 +37,7 @@ fn main {
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
   .add_system(@map.portal_system, system_name="portal_system")
   .add_system(@monster.map_monsters_system, system_name="map_monsters_system")
+  .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system")
   .add_system(@drop.map_drops_system, system_name="map_drops_system")
   .add_system(@combat_impl.combat_system, system_name="combat_system")
   .add_system(@game_server.server_system, system_name="server_system")

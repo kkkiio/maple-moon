@@ -6,5 +6,3 @@ import {
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/resource",
 }
-
-warnings = "-A"

@@ -872,6 +872,9 @@ pub fn player_state_system(_delta : Double) -> Unit {
   if @inputs.is_just_pressed(@inputs.KeyX) {
     @combat_impl.use_move(player, REGULAR_ATTACK)
   }
+  if @inputs.is_just_pressed(@inputs.KeyZ) {
+    @drop.try_pickup_at(player.character.get_position()) |> ignore
+  }
   let times = @logic_fps.get_logic_times()
   for _ in 0..<times {
     player.update(physics, map_info)

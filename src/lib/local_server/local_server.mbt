@@ -4,6 +4,7 @@ using @maple_protocol {
   trait ServerMessage,
   type ChangeMapMessage,
   type DropLootMessage,
+  type PickupItemMessage,
   type MoveMonsterMessage,
   type SetFieldMessage,
   type SelectCharMessage,
@@ -37,6 +38,7 @@ struct LocalServer {
   mut spawn_batch_id : Int
   mut map_transfer_ready : Bool
   mobs : Map[Int, ServerMob]
+  drops : Map[Int, DropLootMessage]
   pending_mob_spawns : Array[PendingMobSpawn]
   mut db : IndexedDB?
   mut drop_db : MobDropDatabase?
@@ -73,6 +75,7 @@ pub fn LocalServer::new() -> LocalServer {
     spawn_batch_id: 0,
     map_transfer_ready: false,
     mobs: Map::new(),
+    drops: Map::new(),
     pending_mob_spawns: Array::new(),
     db: None,
     drop_db: None,
@@ -122,6 +125,9 @@ fn init_router(server : LocalServer) -> Unit {
         })
       None => ()
     }
+  }
+  server.client_message_handler_map[@net.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
+    server.on_pickup_item(json)
   }
 }
 
@@ -184,9 +190,22 @@ fn LocalServer::spawn_drops_for_mob(
     self.drop_rng,
   )
   for msg in messages {
+    self.drops.set(msg.oid, msg)
     self.send_server_message(msg)
   }
   self.last_object_id = next_oid
+}
+
+///|
+fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
+  let msg : PickupItemMessage = @json.from_json(json)
+  guard self.drops.get(msg.oid) is Some(_) else { return }
+  self.drops.remove(msg.oid) |> ignore
+  self.send_server_message(@maple_protocol.RemoveLootMessage::{
+    mode: 2,
+    oid: msg.oid,
+    cid: Some(1),
+  })
 }
 
 ///|
@@ -195,6 +214,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   let batch_id = self.spawn_batch_id
   self.map_transfer_ready = false
   self.mobs.clear()
+  self.drops.clear()
   self.pending_mob_spawns.clear()
   @io_service.execute_background(async fn() {
     let loader = get_mapx_loader()

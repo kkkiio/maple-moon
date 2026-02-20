@@ -181,3 +181,16 @@ pub fn map_drops_system(_delta : Double) -> Unit {
     map_drops.update(physics)
   }
 }
+
+///|
+/// Try to pick up one drop intersecting the player's current position.
+pub fn try_pickup_at(player_pos : @struct.Point[Int]) -> Bool {
+  guard map_drops_ctx.val is Some(ctx) else { return false }
+  guard ctx.map_drops is Some(map_drops) else { return false }
+  for loot in map_drops.list_loot_at(player_pos) {
+    let (oid, pos) = loot
+    @game_server.send(@maple_protocol.PickupItemMessage::{ oid, position: pos })
+    return true
+  }
+  false
+}

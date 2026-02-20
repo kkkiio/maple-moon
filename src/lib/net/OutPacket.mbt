@@ -1,5 +1,6 @@
 ///|
 /// A packet to be sent to the server
+#deprecated("Use ClientMessage instead")
 struct OutPacket {
   buf : @buffer.Buffer
   opcode : ClientOpcode

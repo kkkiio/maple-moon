@@ -157,7 +157,7 @@ pub impl @json.FromJson for NxMob with from_json(json, path) {
         let id = @strconv.parse_int(suffix)
         // check children count > 0 equivalent
         let has_children = match value {
-          Object(o) => o.size() > 0
+          Object(o) => o.length() > 0
           _ => false
         }
         if has_children {
@@ -185,7 +185,7 @@ pub impl @json.FromJson for NxMob with from_json(json, path) {
     Some(Object(info_obj)) =>
       match info_obj.get("skill") {
         Some(Object(skill_node)) =>
-          for key, val in skill_node {
+          for _key, val in skill_node {
             try {
               // skill node structure: "0": { "skill": 123, "action": 1, "level": ... }
               guard val is Object(sk_obj) else { continue }

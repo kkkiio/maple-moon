@@ -118,6 +118,8 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
 
 ///|
 pub fn MapDrops::clear(self : MapDrops) -> Unit {
+  self.loading_drops.clear()
+  while self.spawns.pop() is Some(_) {}
   for _, drop in self.drops {
     drop.destroy()
   }

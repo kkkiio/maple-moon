@@ -16,13 +16,45 @@ pub(all) struct MapMobsContext {
 let map_mobs_ctx : Ref[MapMobsContext?] = Ref::new(None)
 
 ///|
+let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
+
+///|
 pub fn set_mobs(ctx : MapMobsContext) -> Unit {
   map_mobs_ctx.val = Some(ctx)
 }
 
 ///|
+pub fn get_map_mobs() -> MapMobs? {
+  map_mobs_ctx.val.map(fn(ctx) { ctx.map_mobs })
+}
+
+///|
+/// Clear all map-scoped monsters and detach monster scene context.
+///
+/// This is intended to be called on scene/map transitions.
+pub fn clear_map_monsters() -> Unit {
+  match map_mobs_ctx.val {
+    Some({ map_mobs, .. }) => map_mobs.clear()
+    None => ()
+  }
+  map_mobs_ctx.val = None
+}
+
+///|
+fn register_scene_cleanup_once() -> Unit {
+  if scene_cleanup_registered.val {
+    return
+  }
+  scene_cleanup_registered.val = true
+  @game_state.listen_scene_clear(fn(_reason) {
+    clear_map_monsters()
+    true
+  })
+}
+
+///|
 pub struct MapMobs {
-  mobs : @map_object.MapObjects[Mob]
+  mobs : Map[Int, Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
   randomizer : @utils.Randomizer
@@ -31,7 +63,7 @@ pub struct MapMobs {
 ///|
 pub fn MapMobs::new() -> MapMobs {
   {
-    mobs: @map_object.MapObjects::new(),
+    mobs: Map::new(),
     spawns: @queue.new(),
     loading_mobs: Array::new(),
     randomizer: @utils.Randomizer::new(),
@@ -44,12 +76,17 @@ pub fn MapMobs::spawn(self : MapMobs, spawn : MobSpawn) -> Unit {
 }
 
 ///|
+pub fn MapMobs::add_mob(self : MapMobs, mob : Mob) -> Unit {
+  self.mobs.set(mob.get_oid(), mob)
+}
+
+///|
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   for {
     guard self.spawns.pop() is Some(spawn) else { break }
     if not(self.mobs.contains(spawn.oid)) {
       self.loading_mobs.push(
-        @io_service.submit_background_task(fn() {
+        @io_service.submit_background_task(async fn() {
           spawn.instantiate(self.randomizer)
         }),
       )
@@ -58,12 +95,27 @@ pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   self.loading_mobs.retain(fn(future) {
     guard future.poll() is Some(rs) else { return true }
     match rs {
-      Ok(mob) => self.mobs.add(mob)
+      Ok(mob) => self.mobs.set(mob.get_oid(), mob)
       Err(e) => @log.error("Failed to load mob", data={ "err": e })
     }
     false
   })
-  self.mobs.update(physics)
+  let to_remove = Array::new()
+  for oid, mob in self.mobs {
+    let layer = mob.update(physics)
+    if layer == -1 {
+      to_remove.push(oid)
+    }
+  }
+  for oid in to_remove {
+    match self.mobs.get(oid) {
+      Some(mob) => {
+        mob.destroy()
+        self.mobs.remove(oid) |> ignore
+      }
+      None => ()
+    }
+  }
 }
 
 ///|
@@ -77,6 +129,11 @@ pub fn MapMobs::set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
 
 ///|
 pub fn MapMobs::clear(self : MapMobs) -> Unit {
+  self.loading_mobs.clear()
+  while self.spawns.pop() is Some(_) {}
+  for _, mob in self.mobs {
+    mob.destroy()
+  }
   self.mobs.clear()
 }
 
@@ -129,8 +186,26 @@ pub fn MapMobs::send_movement(
 }
 
 ///|
-pub fn MapMobs::get_mobs(self : MapMobs) -> @map_object.MapObjects[Mob] {
-  self.mobs
+pub fn MapMobs::get_mob(self : MapMobs, oid : Int) -> Mob? {
+  self.mobs.get(oid)
+}
+
+///|
+pub fn MapMobs::with_mob(self : MapMobs, oid : Int, f : (Mob) -> Unit) -> Unit {
+  match self.mobs.get(oid) {
+    Some(mob) => f(mob)
+    None => ()
+  }
+}
+
+///|
+pub fn MapMobs::for_each_mob(
+  self : MapMobs,
+  f : (Int, Mob) -> Unit,
+) -> Unit {
+  for oid, mob in self.mobs {
+    f(oid, mob)
+  }
 }
 
 ///|
@@ -140,7 +215,13 @@ pub fn MapMobs::remove(self : MapMobs, oid : Int, animation : Int) -> Unit {
     None => ()
   }
   if animation == 0 {
-    self.mobs.remove(oid)
+    match self.mobs.get(oid) {
+      Some(mob) => {
+        mob.destroy()
+        self.mobs.remove(oid) |> ignore
+      }
+      None => ()
+    }
   }
 }
 
@@ -258,7 +339,7 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
   for i = 0; i < times; i = i + 1 {
     map_mobs.update(physics)
   }
-  for _oid, mob in map_mobs.mobs.iter2() {
+  for _oid, mob in map_mobs.mobs {
     let entity = mob.entity
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }
 
@@ -297,10 +378,11 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
 
 ///|
 pub fn setup_game_server_handlers() -> Unit {
+  register_scene_cleanup_once()
   @game_server.add_server_message_handler(
     "spawn_mob",
     @net.Opcode::SPAWN_MOB.int_value(),
-    fn(json) {
+    fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : MobSpawnMessage = @json.from_json(json)
       map_mobs.spawn({
@@ -318,7 +400,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "spawn_mob_controller",
     @net.Opcode::SPAWN_MOB_C.int_value(),
-    fn(json) {
+    fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : MobSpawnControllerMessage = @json.from_json(json)
       map_mobs.spawn({
@@ -336,7 +418,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "mob_hp",
     @net.Opcode::SHOW_MOB_HP.int_value(),
-    fn(json) {
+    fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : MobHpMessage = @json.from_json(json)
       map_mobs.send_mobhp(msg.oid, msg.percent, 0) // TODO: player level
@@ -345,7 +427,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "kill_mob",
     @net.Opcode::KILL_MOB.int_value(),
-    fn(json) {
+    fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : KillMobMessage = @json.from_json(json)
       map_mobs.remove(msg.oid, msg.animation)

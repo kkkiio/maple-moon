@@ -23,8 +23,7 @@ pub(all) enum GamePhase {
     backgrounds~ : @map.Backgrounds,
     physics~ : @physics.Physics,
     map_info~ : @map.MapInfo,
-    portals~ : @map.MapPortals,
-    mobs~ : @monster.MapMobs
+    portals~ : @map.MapPortals
   )
 }
 

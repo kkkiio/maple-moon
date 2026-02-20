@@ -27,7 +27,7 @@ test "use_move_integration_test" {
     { x: 50, y: 0 },
     randomizer=mob_random,
   )
-  mobs.get_mobs().add(mob)
+  mobs.add_mob(mob)
 
   // 3. Setup Character & Mocks
   let entity = @entity.Entity::new()

@@ -21,7 +21,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/skill",
-  "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/log",

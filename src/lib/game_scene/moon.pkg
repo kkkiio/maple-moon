@@ -1,19 +1,16 @@
 import {
-  "KKKIIO/maple-moon/lib/ms/keyboard",
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/drop",
   "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/ms/combat_proto" @combat,
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/character",
-  "KKKIIO/maple-moon/lib/ui",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/game_state",
@@ -33,5 +30,3 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/skill",
 }
-
-warnings = "-A"

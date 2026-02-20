@@ -56,17 +56,6 @@ pub fn Stage::new(
 }
 
 ///|
-fn Stage::clear(self : Stage) -> Unit {
-  // self.state = StageState::INACTIVE
-  // self.chars.clear()
-  // self.npcs.clear()
-  // self.quests.clear()
-  self.mobs.clear()
-  // self.drops.clear()
-  // self.reactors.clear()
-}
-
-///|
 fn respawn_player(
   player : @player.Player,
   portal_id : Int,
@@ -123,171 +112,8 @@ fn normalize_camera_limits(
 }
 
 ///|
-fn Stage::update(self : Stage) -> Unit raise {
-  // let (
-  //   tiles_objs,
-  //   backgrounds,
-  //   physics,
-  //   portals, // Make sure to destructure map_info here
-  //   map_info,
-  // ) = match self.state {
-  //   StageState::ACTIVE(
-  //     tiles_objs~,
-  //     backgrounds~,
-  //     physics~,
-  //     portals~,
-  //     map_info~,
-  //     ..
-  //   ) => (tiles_objs, backgrounds, physics, portals, map_info)
-  //   StageState::INACTIVE => return ()
-  //   StageState::TRANSITION(portal_id~, loading_map~) =>
-  //     match loading_map.poll() {
-  //       Some(res) => {
-  //         let sence_map = res.unwrap_or_error()
-  //         self.state = StageState::ACTIVE(
-  //           tiles_objs=sence_map.tiles_objs,
-  //           backgrounds=sence_map.backgrounds,
-  //           physics=sence_map.physics,
-  //           map_info=sence_map.map_info,
-  //           portals=sence_map.portals,
-  //           enter_portal_id=portal_id,
-  //         )
-  //         self.respawn(
-  //           portal_id,
-  //           sence_map.map_info,
-  //           sence_map.portals,
-  //           sence_map.physics,
-  //         )
-  //         self.quests.set_player(self.player.unwrap())
-  //         self.map_change_listeners.retain(fn(listener) { listener(sence_map) })
-  //         return // for simplicity, just wait for the next update
-  //       }
-  //       None => return ()
-  //     }
-  // }
-  // self.combat.update()
-  // // effect_.update();
-  // tiles_objs.update()
-
-  // // reactors_.update(self.physics);
-  // self.npcs.update(physics)
-  // self.quests.update(physics)
-  // self.mobs.update(physics, self.network)
-  // // chars_.update(self.physics);
-  // self.drops.update(physics)
-  ...
-}
-
-///|
-fn Stage::send_cursor(
-  self : Stage,
-  pressed : Bool,
-  position : @struct.Point[Int],
-) -> @ui.CursorState {
-  // if self.npcs.send_cursor(pressed, position, self.camera.get_position())
-  //   is Some(state) {
-  //   return state
-  // }
-  // if self.quests.send_cursor(pressed, position, self.camera.get_position())
-  //   is Some(state) {
-  //   return state
-  // }
-  // if pressed {
-  //   @ui.CursorState::CLICKING
-  // } else {
-  //   @ui.CursorState::IDLE
-  // }
-  ...
-}
-
-///|
 pub fn Stage::get_mobs(self : Stage) -> @monster.MapMobs {
-  ...
-}
-
-///|
-pub fn Stage::get_inventory(self : Stage) -> @inventory.Inventory {
-  ...
-  // self.inventory
-}
-
-///|
-/// Tells the server that the player took damage.
-priv enum TakeDamageFrom {
-  TOUCH
-} derive(Show)
-
-///|
-fn TakeDamageFrom::int_value(self : TakeDamageFrom) -> Int {
-  match self {
-    TakeDamageFrom::TOUCH => -1
-  }
-}
-
-///|
-/// Message sent when player takes damage
-priv struct TakeDamageMessage {
-  from : TakeDamageFrom
-  element : Int
-  damage : Int
-  mobid : Int
-  oid : Int
-  direction : Int
-} derive(Show)
-
-///|
-impl @net.OutMessage for TakeDamageMessage with pack(self) -> @net.OutPacket {
-  let p = @net.OutPacket::new(@net.ClientOpcode::TAKE_DAMAGE)
-  p
-  ..write_time()
-  ..write_byte(self.from.int_value().to_byte())
-  ..write_byte(self.element.to_byte())
-  ..write_int(self.damage)
-  ..write_int(self.mobid)
-  ..write_int(self.oid)
-  ..write_byte(self.direction.to_byte())
-  p
-}
-
-///|
-/// From mob attack result.
-fn new_take_damage_packet_from_mob(
-  result : @combat.MobAttackResult,
-  from : TakeDamageFrom,
-) -> TakeDamageMessage {
-  {
-    from,
-    element: 0,
-    damage: result.damage,
-    mobid: result.mobid,
-    oid: result.oid,
-    direction: result.direction,
-  }
-}
-
-///|
-fn Stage::check_drops(self : Stage, player : @player.Player) -> Unit {
-  ...
-  // for it in self.drops.list_loot_at(player.character.get_position()) {
-  //   let (drop_oid, drop_pos) = it
-  //   self.network.send_message({ oid: drop_oid, position: drop_pos })
-  // }
-}
-
-///|
-priv struct PickupItemMessage {
-  oid : Int
-  position : @struct.Point[Int]
-} derive(Show)
-
-///|
-impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
-  let p = @net.OutPacket::new(@net.ClientOpcode::PICKUP_ITEM)
-  p
-  ..write_int(0)
-  ..write_byte((0).to_byte())
-  ..write_point(self.position)
-  ..write_int(self.oid)
+  self.mobs
 }
 
 ///|
@@ -328,7 +154,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
-      @drop.clear_map_drops()
+      @game_state.emit_scene_clear(@game_state.SceneClearReason::LeaveToSelectCharacter)
       return
     }
     GameStart(map_id~, portal_id~, set_field_message~) => {
@@ -426,13 +252,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       }
 
       // 5. 初始化 Stage 并切换到 GameTransiting 状态
-      let stage = match stage_ref.val {
-        Some(stage) => stage
-        None => {
-          let stage = new_stage(char_look, stats)
-          stage_ref.val = Some(stage)
-          stage
-        }
+      match stage_ref.val {
+        Some(_) => ()
+        None => ignore(new_stage(char_look, stats))
       }
       match @player.get_player() {
         Some(player) =>
@@ -440,8 +262,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         None => ()
       }
       clear_loading_data()
-      stage.clear()
-      @drop.clear_map_drops()
+      @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
@@ -452,7 +273,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       let stage = stage_ref.val.unwrap()
       guard loading_map is Some(fut) else {
         t.loading_map = Some(
-          @io_service.submit_background_task(fn() {
+          @io_service.submit_background_task(async fn() {
             let map_resources = @map.load_map_resources_by_id(map_id)
             @map.create_scene_map(map_resources, stage.map_portals_animations)
           }),
@@ -475,7 +296,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         physics=sence_map.physics,
         map_info=sence_map.map_info,
         portals=sence_map.portals,
-        mobs=stage.mobs,
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
@@ -551,6 +371,7 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json : Json) -> Unit raise {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
+      @game_state.emit_scene_clear(@game_state.SceneClearReason::ChangeMap)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,

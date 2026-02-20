@@ -24,14 +24,14 @@ pub fn MobCombat::use_move(
 ) -> Unit raise {
   let at = move_id - 24
   let action_id = if at % 2 == 0 { at / 2 } else { (at + 1) / 2 }
-  match self.mobs.get_mobs().get(oid) {
+  match self.mobs.get_mob(oid) {
     Some(mob) =>
       if 0 < action_id && action_id < 7 {
         let mov = mob.get_move_attack(action_id)
         apply_move_attack(mov, mob)
       } else if skill_id != 0 {
         let fut = mob.get_move_skill(skill_id, level)
-        @io_service.execute_background(fn() {
+        @io_service.execute_background(async fn() {
           let mov = @io_service.wait_future(fut).unwrap_or_error()
           apply_move_skill(mov, mob)
         })

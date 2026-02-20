@@ -233,10 +233,9 @@ fn Combat::apply_move(
     let range = make_attack_range(attack)
     let mobcount = attack.mobcount
     let result = { ..AttackResult::new(attack), attacker: character.get_oid() }
-    let mob_objs = self.mobs.get_mobs()
     // TODO: check reactor objects
     let origin = attack.origin
-    let mob_targets = find_closest_mob(mob_objs, range, origin, mobcount)
+    let mob_targets = find_closest_mob(self.mobs, range, origin, mobcount)
     self.apply_result_movement(cc, act, result)
     self.apply_attack_to_mobs(character, act, attack, mob_targets, result, true)
   } else {
@@ -299,7 +298,7 @@ fn Combat::apply_rush(
 
 ///|
 fn find_closest_mob(
-  objs : @map_object.MapObjects[@monster.Mob],
+  mobs : @monster.MapMobs,
   range : @struct.Rectangle[Int],
   origin : @struct.Point[Int],
   objcount : Int,
@@ -308,7 +307,7 @@ fn find_closest_mob(
     panic()
   }
   let arr = Array::new()
-  for _, mob in objs {
+  mobs.for_each_mob(fn(_oid, mob) {
     match mob.get_live_range() {
       Some(mob_range) =>
         if mob_range.overlaps(range) {
@@ -318,7 +317,7 @@ fn find_closest_mob(
         }
       None => ()
     }
-  }
+  })
   arr.sort_by_key(fn(pair) { pair.0 })
   arr.iter().take(objcount).map(fn(pair) { pair.1 }).collect()
 }
@@ -543,7 +542,7 @@ fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let (t, amount, start_y) = effect.number_params
   @ui.show_number(t, amount, start_y, x=head_position.x)
-  guard self.mobs.get_mobs().get(effect.target_oid) is Some(mob) else { return }
+  guard self.mobs.get_mob(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move
   act.apply_hit_effects(effect.user, mob)
@@ -700,7 +699,8 @@ pub fn set_player(player : &DamagableCharacter?) -> Unit {
 ///|
 pub fn combat_system(_delta : Double) -> Unit {
   guard combat_ref.val is Some(combat) else { return }
-  guard @game_state.game_state.phase is GameActive(mobs~, ..) else { return }
+  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @monster.get_map_mobs() is Some(mobs) else { return }
   if player_ref.val is Some(player) && not(player.is_invincible()) {
     let moving_object : @physics.MovingObject = player.get_phobj().moving_object
     match mobs.find_colliding(moving_object) {

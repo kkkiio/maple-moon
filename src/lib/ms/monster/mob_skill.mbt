@@ -17,7 +17,9 @@ pub(all) struct MobSkill {
 
 ///|
 pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = get_skill_loader().load_res_async(["MobSkill.img", id.to_string()])
+  let src = get_skill_loader()
+    .load_res_async(["MobSkill.img", id.to_string()])
+    .value()
   MobSkill::new(id, level, src)
 }
 
@@ -25,14 +27,19 @@ pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
 pub fn MobSkill::new(
   id : Int,
   level : Int,
-  src : @resource.NxNode,
+  src : Json,
 ) -> MobSkill raise {
-  // let use_effect = MobSingleUseEffect::new(src["level"][level.to_string()])
-  let is_buff = src["level"][level.to_string()]["mob"].get_children_count() > 0
+  // let use_effect = MobSingleUseEffect::new(get_path(src, ["level", level.to_string()]))
+  let level_json = get_path(src, ["level", level.to_string()])
+  let mob_json = get_path(level_json, ["mob"])
+  let is_buff = match mob_json {
+    Object(obj) => obj.length() > 0
+    _ => false
+  }
   let buff = if is_buff {
     {
-      time: src["level"][level.to_string()]["time"].get_int(),
-      anim: @json.from_json(src["level"][level.to_string()]["mob"].value()),
+      time: json_int(get_path(level_json, ["time"])),
+      anim: @json.from_json(mob_json),
     }
   } else {
     { time: 0, anim: @json.from_json(Json::null()) }
@@ -47,22 +54,22 @@ pub fn MobSkill::new(
 }
 
 ///|
-pub fn MobSkill::apply_useeffects(self : MobSkill, mob : Mob) -> Unit {
+pub fn MobSkill::apply_useeffects(_self : MobSkill, _mob : Mob) -> Unit {
   // self.use_effect.apply(mob)
 }
 
 ///|
-pub fn MobSkill::apply_hit_effects(self : MobSkill, mob : Mob) -> Unit {
+pub fn MobSkill::apply_hit_effects(_self : MobSkill, _mob : Mob) -> Unit {
   // self.hit_effect.apply(mob)
 }
 
 ///|
-pub fn MobSkill::is_attack(self : MobSkill) -> Bool {
+pub fn MobSkill::is_attack(_self : MobSkill) -> Bool {
   false
 }
 
 ///|
-pub fn MobSkill::is_skill(self : MobSkill) -> Bool {
+pub fn MobSkill::is_skill(_self : MobSkill) -> Bool {
   true
 }
 
@@ -93,8 +100,8 @@ struct Effect {
 }
 
 ///|
-pub fn Effect::new(src : @resource.NxNode) -> Effect raise {
-  { animation: @json.from_json(src.value()), z: src["z"].get_int() }
+pub fn Effect::new(src : Json) -> Effect raise {
+  { animation: @json.from_json(src), z: json_int(get_path(src, ["z"])) }
 }
 
 ///|
@@ -111,6 +118,26 @@ trait MobSkillUseEffect {
   apply(Self, Mob) -> Unit
 }
 
+///|
+fn get_path(json : Json, keys : Array[String]) -> Json {
+  let mut current = json
+  for key in keys {
+    current = match current {
+      Object(obj) => obj.get(key).unwrap_or(Json::null())
+      _ => Json::null()
+    }
+  }
+  current
+}
+
+///|
+fn json_int(json : Json) -> Int {
+  match json {
+    Number(v, ..) => v.to_int()
+    _ => 0
+  }
+}
+
 // An effect which displays an animation over the mob's position
 
 ///|
@@ -120,7 +147,7 @@ pub(all) struct MobSingleUseEffect {
 
 ///|
 pub fn MobSingleUseEffect::new(
-  src : @resource.NxNode,
+  src : Json,
 ) -> MobSingleUseEffect raise {
   { effect: Effect::new(src) }
 }
@@ -142,19 +169,25 @@ pub(all) struct MobMultiUseEffect {
 
 ///|
 pub fn MobMultiUseEffect::new(
-  src : @resource.NxNode,
+  src : Json,
   area_warning : Bool,
 ) -> MobMultiUseEffect raise {
   let effects = Array::new()
   if area_warning {
-    effects.push(Effect::new(src["areaWarning"]))
+    let area_warning_json = get_path(src, ["areaWarning"])
+    if area_warning_json != Json::null() {
+      effects.push(Effect::new(area_warning_json))
+    }
   }
-  let mut no = -1
-  let mut sub = src["effect"]
-  effects.push(Effect::new(sub))
-  while not(sub.is_null()) {
-    no += 1
-    sub = src["effect" + no.to_string()]
+  let effect0 = get_path(src, ["effect"])
+  if effect0 != Json::null() {
+    effects.push(Effect::new(effect0))
+  }
+  for no in 0..<999 {
+    let sub = get_path(src, ["effect" + no.to_string()])
+    if sub == Json::null() {
+      break
+    }
     effects.push(Effect::new(sub))
   }
   { effects, }

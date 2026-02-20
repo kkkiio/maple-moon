@@ -62,7 +62,8 @@ pub fn Stance::flip(self : Stance) -> Stance {
 ///|
 pub struct Mob {
   entity : @entity.Entity
-  base : @map_object.MapObjectBase
+  oid : Int
+  phobj : @physics.PhysicsObject
   animations : Map[StanceType, MobAnimation]
   skill_cache : Map[Int, @utils.Future[Result[MobSkill, Error]]]
   attacks : Map[Int, MobSpecialAttack]
@@ -253,7 +254,7 @@ pub fn Mob::new(
   randomizer? : @utils.Randomizer = @utils.Randomizer::default(),
 ) -> Mob {
   let entity = @entity.Entity::new()
-  let base = @map_object.MapObjectBase::new(object_id, on_pos_change=fn(pos) {
+  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
 
@@ -300,14 +301,14 @@ pub fn Mob::new(
   fly_speed += 100
   fly_speed *= 0.0005
   if can_fly {
-    base.phobj.set_t(@physics.PhysicsObjectType::FLYING)
+    phobj.set_t(@physics.PhysicsObjectType::FLYING)
   }
   let id = monster_id
-  base.set_position(position)
+  phobj.set_position(position.to_vec2d())
   let control = mode > 0
   let aggro = mode == 2
-  base.phobj.set_fhid(fh)
-  base.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
+  phobj.set_fhid(fh)
+  phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
   let hp_percent = 0
   let dying = false
   let dead = false
@@ -327,7 +328,8 @@ pub fn Mob::new(
   )
   {
     entity,
-    base,
+    oid: object_id,
+    phobj,
     animations,
     skill_cache: Map::new(),
     attacks: Map::new(),
@@ -372,17 +374,17 @@ pub fn Mob::new(
 }
 
 ///|
-pub impl @map_object.MapObject for Mob with get_oid(self : Mob) -> Int {
-  self.base.get_oid()
+pub fn Mob::get_oid(self : Mob) -> Int {
+  self.oid
 }
 
 ///|
-pub impl @map_object.MapObject for Mob with update(
+pub fn Mob::update(
   self : Mob,
   physics : @physics.Physics,
 ) -> Int {
   if not(self.entity.is_alive()) {
-    return self.base.phobj.fhlayer
+    return self.phobj.fhlayer
   }
   let mut aniend = false
   match self.animations.get(self.stance.t) {
@@ -433,11 +435,11 @@ pub impl @map_object.MapObject for Mob with update(
   // TODO: add buffs animation?
   if not(self.dying) {
     if not(self.can_fly) {
-      if self.base.phobj.is_flag_not_set(
+      if self.phobj.is_flag_not_set(
           @physics.PhysicsObjectFlag::TURN_AT_EDGES,
         ) {
         self.stance = self.stance.flip()
-        self.base.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
+        self.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
         if self.stance.t == StanceType::HIT {
           self.set_stance({
             t: StanceType::STAND,
@@ -449,7 +451,7 @@ pub impl @map_object.MapObject for Mob with update(
     match self.stance.t {
       StanceType::MOVE =>
         if self.can_fly {
-          self.base.phobj.set_hforce(
+          self.phobj.set_hforce(
             if self.stance.face_right {
               self.fly_speed
             } else {
@@ -457,13 +459,13 @@ pub impl @map_object.MapObject for Mob with update(
             },
           )
           match self.fly_direction {
-            FlyDirection::UPWARDS => self.base.phobj.set_vforce(-self.fly_speed)
+            FlyDirection::UPWARDS => self.phobj.set_vforce(-self.fly_speed)
             FlyDirection::DOWNWARDS =>
-              self.base.phobj.set_vforce(self.fly_speed)
+              self.phobj.set_vforce(self.fly_speed)
             _ => ()
           }
         } else {
-          self.base.phobj.set_hforce(
+          self.phobj.set_hforce(
             if self.stance.face_right {
               self.speed
             } else {
@@ -473,8 +475,8 @@ pub impl @map_object.MapObject for Mob with update(
         }
       StanceType::HIT =>
         if self.can_move {
-          let kbforce = if self.base.phobj.on_ground { 0.2 } else { 0.1 }
-          self.base.phobj.set_hforce(
+          let kbforce = if self.phobj.on_ground { 0.2 } else { 0.1 }
+          self.phobj.set_hforce(
             if self.stance.face_right { // backwards
               -kbforce
             } else {
@@ -482,15 +484,15 @@ pub impl @map_object.MapObject for Mob with update(
             },
           )
         }
-      StanceType::JUMP => self.base.phobj.set_vforce(-5.0)
+      StanceType::JUMP => self.phobj.set_vforce(-5.0)
       _ => ()
     }
-    physics.move_object(self.base.phobj)
+    physics.move_object(self.phobj)
     if self.control {
       self.counter += 1
       let next = match self.stance.t {
         StanceType::HIT => self.counter > 200
-        StanceType::JUMP => self.base.phobj.on_ground
+        StanceType::JUMP => self.phobj.on_ground
         _ => aniend && self.counter > self.randomizer.next_int(from=200, 500)
       }
       if next {
@@ -500,10 +502,10 @@ pub impl @map_object.MapObject for Mob with update(
       }
     }
   } else {
-    self.base.phobj.moving_object.normalize()
-    physics.get_fht().update_fh(self.base.phobj)
+    self.phobj.moving_object.normalize()
+    physics.get_fht().update_fh(self.phobj)
   }
-  return self.base.phobj.fhlayer
+  return self.phobj.fhlayer
 }
 
 ///|
@@ -517,7 +519,7 @@ fn Mob::next_move(self : Mob) -> Unit {
         })
       StanceType::MOVE | StanceType::JUMP =>
         if self.can_jump &&
-          self.base.phobj.on_ground &&
+          self.phobj.on_ground &&
           self.randomizer.below(0.25) {
           self.set_stance({
             t: StanceType::JUMP,
@@ -559,13 +561,14 @@ pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
 ///|
 
 ///|
-pub impl @map_object.MapObject for Mob with destroy(self : Mob) -> Unit {
+pub fn Mob::destroy(self : Mob) -> Unit {
+  @sprite.sprites.remove(self.entity)
   self.entity.destroy()
 }
 
 ///|
-pub impl @map_object.MapObject for Mob with get_layer(self : Mob) -> Int {
-  self.base.get_layer()
+pub fn Mob::get_layer(self : Mob) -> Int {
+  self.phobj.fhlayer
 }
 
 ///|
@@ -601,7 +604,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
       } else {
         raw_bounds
       }
-      range.overlaps(bounds.shift(self.base.get_position()))
+      range.overlaps(bounds.shift(self.get_position()))
     }
     None => false
   }
@@ -622,7 +625,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
       } else {
         raw_bounds
       }
-      Some(bounds.shift(self.base.get_position()))
+      Some(bounds.shift(self.get_position()))
     }
     None => None
   }
@@ -638,9 +641,9 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
   let attack = self.randomizer.next_int(from=minattack, maxattack)
   return @combat.MobAttack::new(
     attack,
-    self.base.get_position(),
+    self.get_position(),
     self.id,
-    self.base.get_oid(),
+    self.oid,
   )
 }
 
@@ -648,16 +651,16 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
 pub fn Mob::update_movement(self : Mob) -> Unit {
   @game_server.send(
     new_move_mob_packet(
-      self.base.get_oid(),
+      self.oid,
       1,
       0,
       0,
       0,
       0,
       0,
-      self.base.get_position(),
+      self.get_position(),
       @physics.Movement::from_physics_object(
-        self.base.phobj,
+        self.phobj,
         self.stance.int_value(),
       ),
     ),
@@ -677,16 +680,16 @@ pub fn Mob::update_movement_ex(
 ) -> Unit {
   @game_server.send(
     new_move_mob_packet(
-      self.base.get_oid(),
+      self.oid,
       t,
       nibbles,
       action,
       skill,
       skill_level,
       option,
-      self.base.get_position(),
+      self.get_position(),
       @physics.Movement::from_physics_object(
-        self.base.phobj,
+        self.phobj,
         self.stance.int_value(),
       ),
     ),
@@ -749,7 +752,7 @@ pub fn Mob::send_movement(
   if self.control {
     return
   }
-  self.base.set_position(start)
+  self.phobj.set_position(start.to_vec2d())
   self.movements = movements
   if self.movements.is_empty() {
     return
@@ -757,7 +760,7 @@ pub fn Mob::send_movement(
   let lastmove = self.movements[0]
   let laststance = lastmove.newstate
   self.set_stance(laststance |> Stance::from_byte)
-  self.base.phobj.set_fhid(lastmove.fh)
+  self.phobj.set_fhid(lastmove.fh)
 }
 
 ///|
@@ -767,7 +770,9 @@ pub fn Mob::get_move_skill(
   level : Int,
 ) -> @utils.Future[Result[MobSkill, Error]] {
   self.skill_cache.get_or_init(move_id, fn() {
-    @io_service.submit_background_task(fn() { MobSkill::load(move_id, level) })
+    @io_service.submit_background_task(async fn() {
+      MobSkill::load(move_id, level)
+    })
   })
 }
 
@@ -791,10 +796,10 @@ pub fn Mob::get_move_attack(
 }
 
 ///|
-pub impl @map_object.MapObject for Mob with get_position(self : Mob) -> @struct.Point[
+pub fn Mob::get_position(self : Mob) -> @struct.Point[
   Int,
 ] {
-  self.base.get_position()
+  self.phobj.get_position()
 }
 
 ///|

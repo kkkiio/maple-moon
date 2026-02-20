@@ -73,7 +73,7 @@ node target/js/release/build/cmd/reanim/reanim.js \
 ```bash
 node target/js/release/build/cmd/reanim/reanim.js \
   .local/r2/Mob/1210100.img.json \
-  assets/mob \
+  assets/Mob \
   --spritesheet-dir .local/r2/spritesheets/Mob
 ```
 

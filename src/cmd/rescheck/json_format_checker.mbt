@@ -1,9 +1,6 @@
 ///|
 fn register_json_format_checker() -> Checker {
-  {
-    name: "json",
-    run: fn(ctx) { check_json_format(ctx) },
-  }
+  { name: "json", run: fn(ctx) { check_json_format(ctx) } }
 }
 
 ///|
@@ -16,16 +13,8 @@ fn check_json_format(ctx : RescheckContext) -> Array[CheckIssue] {
     let rel_path = path_relative(abs_path, ctx.assets_root)
     let content = read_text_file(abs_path)
     ignore(@json.parse(content)) catch {
-      e => {
-        issues.push(
-          make_issue(
-            "json",
-            Error,
-            rel_path,
-            "invalid json: \{e}",
-          ),
-        )
-      }
+      e =>
+        issues.push(make_issue("json", Error, rel_path, "invalid json: \{e}"))
     }
   }
   issues

@@ -43,7 +43,9 @@ fn DropBase::new(
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
-  phobj.set_position(@selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()))
+  phobj.set_position(
+    @selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()),
+  )
   let (state, base_y) = match mode {
     0 | 1 => {
       phobj.set_vspeed(-5.0)
@@ -81,7 +83,10 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
       self.state = DropState::FLOATING
       self.angle.set(0.0)
       self.phobj.set_position(
-        @selene_math.Vec2D(self.dest.x.to_double(), (self.dest.y - 4).to_double()),
+        @selene_math.Vec2D(
+          self.dest.x.to_double(),
+          (self.dest.y - 4).to_double(),
+        ),
       )
     } else {
       let spinstep = 0.2
@@ -227,12 +232,12 @@ pub impl Drop for MesoDrop with update(
 }
 
 ///|
-
 pub impl Drop for MesoDrop with destroy(self : MesoDrop) -> Unit {
   @sprite.sprites.remove(self.base.entity)
   self.base.entity.destroy()
 }
 
+///|
 pub impl Drop for MesoDrop with get_position(self : MesoDrop) -> @struct.Point[
   Int,
 ] {
@@ -336,6 +341,7 @@ pub impl Drop for ItemDrop with destroy(self : ItemDrop) -> Unit {
   self.base.entity.destroy()
 }
 
+///|
 pub impl Drop for ItemDrop with get_position(self : ItemDrop) -> @struct.Point[
   Int,
 ] {

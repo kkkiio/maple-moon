@@ -22,7 +22,9 @@ pub(all) enum SceneClearReason {
 pub type SceneClearListener = (SceneClearReason) -> Bool
 
 ///|
-let scene_clear_listeners : Ref[Array[SceneClearListener]] = Ref::new(Array::new())
+let scene_clear_listeners : Ref[Array[SceneClearListener]] = Ref::new(
+  Array::new(),
+)
 
 ///|
 /// Register a scene-clear listener.

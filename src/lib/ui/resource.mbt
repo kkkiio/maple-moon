@@ -1,19 +1,9 @@
 ///|
 pub fn ui_window_2_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "UI/UIWindow2.img",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/UI/UIWindow2.img",
-    ),
-  )
+  @resource.get_ui_window_2_loader()
 }
 
 ///|
 pub fn ui_window_4_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "UI/UIWindow4.img",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/UI/UIWindow4.img",
-    ),
-  )
+  @resource.get_ui_window_4_loader()
 }

@@ -24,11 +24,7 @@ pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
 }
 
 ///|
-pub fn MobSkill::new(
-  id : Int,
-  level : Int,
-  src : Json,
-) -> MobSkill raise {
+pub fn MobSkill::new(id : Int, level : Int, src : Json) -> MobSkill raise {
   // let use_effect = MobSingleUseEffect::new(get_path(src, ["level", level.to_string()]))
   let level_json = get_path(src, ["level", level.to_string()])
   let mob_json = get_path(level_json, ["mob"])
@@ -146,9 +142,7 @@ pub(all) struct MobSingleUseEffect {
 }
 
 ///|
-pub fn MobSingleUseEffect::new(
-  src : Json,
-) -> MobSingleUseEffect raise {
+pub fn MobSingleUseEffect::new(src : Json) -> MobSingleUseEffect raise {
   { effect: Effect::new(src) }
 }
 

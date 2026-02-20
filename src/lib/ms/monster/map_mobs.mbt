@@ -129,7 +129,9 @@ pub fn MapMobs::set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
 ///|
 pub fn MapMobs::clear(self : MapMobs) -> Unit {
   self.loading_mobs.clear()
-  while self.spawns.pop() is Some(_) {}
+  while self.spawns.pop() is Some(_) {
+
+  }
   for _, mob in self.mobs {
     mob.destroy()
   }
@@ -198,10 +200,7 @@ pub fn MapMobs::with_mob(self : MapMobs, oid : Int, f : (Mob) -> Unit) -> Unit {
 }
 
 ///|
-pub fn MapMobs::for_each_mob(
-  self : MapMobs,
-  f : (Int, Mob) -> Unit,
-) -> Unit {
+pub fn MapMobs::for_each_mob(self : MapMobs, f : (Int, Mob) -> Unit) -> Unit {
   for oid, mob in self.mobs {
     f(oid, mob)
   }

@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol { type MobHpMessage }
+using @maple_protocol {type MobHpMessage}
 
 ///|
 priv struct MobHpEvent {
@@ -35,7 +35,7 @@ const HP_BAR_TOP_SHIFT : Int = -30
 ///|
 fn hp_fill_width(percent : Int) -> Double {
   let clamped = percent |> @cmp.maximum(0) |> @cmp.minimum(100)
-  (((HP_BAR_WIDTH - 6).to_double() * clamped.to_double()) / 100.0)
+  ((HP_BAR_WIDTH - 6).to_double() * clamped.to_double() / 100.0)
   .to_int()
   .to_double()
 }
@@ -98,15 +98,30 @@ fn create_hpbar_state(parent : @entity.Entity) -> MobHpBarState {
     HP_BAR_HEIGHT.to_double(),
     "rgba(0, 0, 0, 1)",
   )
-  set_rect_sprite(frame_top, (HP_BAR_WIDTH - 2).to_double(), 1.0, "rgba(255, 255, 255, 1)")
+  set_rect_sprite(
+    frame_top,
+    (HP_BAR_WIDTH - 2).to_double(),
+    1.0,
+    "rgba(255, 255, 255, 1)",
+  )
   set_rect_sprite(
     frame_bottom,
     (HP_BAR_WIDTH - 2).to_double(),
     1.0,
     "rgba(255, 255, 255, 1)",
   )
-  set_rect_sprite(frame_left, 1.0, (HP_BAR_HEIGHT - 4).to_double(), "rgba(255, 255, 255, 1)")
-  set_rect_sprite(frame_right, 1.0, (HP_BAR_HEIGHT - 4).to_double(), "rgba(255, 255, 255, 1)")
+  set_rect_sprite(
+    frame_left,
+    1.0,
+    (HP_BAR_HEIGHT - 4).to_double(),
+    "rgba(255, 255, 255, 1)",
+  )
+  set_rect_sprite(
+    frame_right,
+    1.0,
+    (HP_BAR_HEIGHT - 4).to_double(),
+    "rgba(255, 255, 255, 1)",
+  )
 
   let state = { root, fill_light, fill_dark, percent: 0, ttl_ms: 0.0 }
   upsert_fill_sprite(state)
@@ -157,7 +172,9 @@ pub fn setup_mob_hpbar_game_server_handlers() -> Unit {
 /// ECS system that updates and renders mob hp bars using selene child entities.
 pub fn mob_hpbars_system(delta : Double) -> Unit {
   guard get_map_mobs() is Some(mobs) else {
-    while hp_events.pop() is Some(_) {}
+    while hp_events.pop() is Some(_) {
+
+    }
     for _, state in hp_states {
       if state.root.is_alive() {
         state.root.destroy()
@@ -171,10 +188,9 @@ pub fn mob_hpbars_system(delta : Double) -> Unit {
     guard hp_events.pop() is Some(event) else { break }
     ignore(event.player_level)
     guard mobs.get_mob(event.oid) is Some(mob) else { continue }
-    let state = hp_states.get_or_init(
-      event.oid,
-      fn() { create_hpbar_state(mob.get_entity()) },
-    )
+    let state = hp_states.get_or_init(event.oid, fn() {
+      create_hpbar_state(mob.get_entity())
+    })
     state.percent = event.percent |> @cmp.maximum(0) |> @cmp.minimum(100)
     state.ttl_ms = 2000.0
     refresh_hpbar_state(mob, state)

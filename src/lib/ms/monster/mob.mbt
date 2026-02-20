@@ -377,10 +377,7 @@ pub fn Mob::get_entity(self : Mob) -> @entity.Entity {
 }
 
 ///|
-pub fn Mob::update(
-  self : Mob,
-  physics : @physics.Physics,
-) -> Int {
+pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
   if not(self.entity.is_alive()) {
     return self.phobj.fhlayer
   }
@@ -432,9 +429,7 @@ pub fn Mob::update(
   // TODO: add buffs animation?
   if not(self.dying) {
     if not(self.can_fly) {
-      if self.phobj.is_flag_not_set(
-          @physics.PhysicsObjectFlag::TURN_AT_EDGES,
-        ) {
+      if self.phobj.is_flag_not_set(@physics.PhysicsObjectFlag::TURN_AT_EDGES) {
         self.stance = self.stance.flip()
         self.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
         if self.stance.t == StanceType::HIT {
@@ -457,8 +452,7 @@ pub fn Mob::update(
           )
           match self.fly_direction {
             FlyDirection::UPWARDS => self.phobj.set_vforce(-self.fly_speed)
-            FlyDirection::DOWNWARDS =>
-              self.phobj.set_vforce(self.fly_speed)
+            FlyDirection::DOWNWARDS => self.phobj.set_vforce(self.fly_speed)
             _ => ()
           }
         } else {
@@ -515,9 +509,7 @@ fn Mob::next_move(self : Mob) -> Unit {
           face_right: self.randomizer.next_bool(),
         })
       StanceType::MOVE | StanceType::JUMP =>
-        if self.can_jump &&
-          self.phobj.on_ground &&
-          self.randomizer.below(0.25) {
+        if self.can_jump && self.phobj.on_ground && self.randomizer.below(0.25) {
           self.set_stance({
             t: StanceType::JUMP,
             face_right: self.stance.face_right,
@@ -636,12 +628,7 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
   let minattack = (self.watk.to_double() * 0.8).to_int()
   let maxattack = self.watk
   let attack = self.randomizer.next_int(from=minattack, maxattack)
-  return @combat.MobAttack::new(
-    attack,
-    self.get_position(),
-    self.id,
-    self.oid,
-  )
+  return @combat.MobAttack::new(attack, self.get_position(), self.id, self.oid)
 }
 
 ///|
@@ -793,9 +780,7 @@ pub fn Mob::get_move_attack(
 }
 
 ///|
-pub fn Mob::get_position(self : Mob) -> @struct.Point[
-  Int,
-] {
+pub fn Mob::get_position(self : Mob) -> @struct.Point[Int] {
   self.phobj.get_position()
 }
 

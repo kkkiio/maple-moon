@@ -21,6 +21,10 @@ fn main {
   .add_system(@cursor.cursor_system, system_name="cursor_system")
   .add_system(@ui.ui_system, system_name="ui_system")
   .add_system(@ui.number_system, system_name="number_system")
+  .add_system(
+    @inventory_ui.inventory_ui_system,
+    system_name="inventory_ui_system",
+  )
   .add_system(@char_look.char_look_system, system_name="char_look_system")
   .add_system(
     @char_look.update_after_image_system,

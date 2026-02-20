@@ -154,7 +154,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
-      @game_state.emit_scene_clear(@game_state.SceneClearReason::LeaveToSelectCharacter)
+      @game_state.emit_scene_clear(
+        @game_state.SceneClearReason::LeaveToSelectCharacter,
+      )
       return
     }
     GameStart(map_id~, portal_id~, set_field_message~) => {
@@ -261,6 +263,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
         None => ()
       }
+      @inventory_ui.set_inventory_entry(inventory_entry)
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(

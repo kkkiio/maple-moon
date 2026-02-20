@@ -7,18 +7,20 @@ struct MapDrops {
 }
 
 ///|
-fn MapDrops::new(
-  src : Json,
-) -> MapDrops raise @json.JsonDecodeError {
+fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
   let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map::new()
   meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
     get_icon_raw(src, "09000000"),
   )
-  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(get_icon_raw(src, "09000001"))
+  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(
+    get_icon_raw(src, "09000001"),
+  )
   meso_icons[MesoIcon::BUNDLE] = nx_node_to_animation(
     get_icon_raw(src, "09000002"),
   )
-  meso_icons[MesoIcon::BAG] = nx_node_to_animation(get_icon_raw(src, "09000003"))
+  meso_icons[MesoIcon::BAG] = nx_node_to_animation(
+    get_icon_raw(src, "09000003"),
+  )
   {
     drops: Map::new(),
     loading_drops: Array::new(),
@@ -119,7 +121,9 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
 ///|
 pub fn MapDrops::clear(self : MapDrops) -> Unit {
   self.loading_drops.clear()
-  while self.spawns.pop() is Some(_) {}
+  while self.spawns.pop() is Some(_) {
+
+  }
   for _, drop in self.drops {
     drop.destroy()
   }

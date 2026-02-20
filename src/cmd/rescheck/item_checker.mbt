@@ -11,10 +11,7 @@ struct ItemRef {
 
 ///|
 fn register_item_checker() -> Checker {
-  {
-    name: "item",
-    run: fn(ctx) { check_item_resources(ctx) },
-  }
+  { name: "item", run: fn(ctx) { check_item_resources(ctx) } }
 }
 
 ///|
@@ -27,12 +24,7 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
     let abs_dir = path_join(ctx.assets_root, rel_dir)
     if not(file_exists(abs_dir)) {
       issues.push(
-        make_issue(
-          "item",
-          Error,
-          rel_dir,
-          "missing item category directory",
-        ),
+        make_issue("item", Error, rel_dir, "missing item category directory"),
       )
     }
   }
@@ -71,7 +63,7 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
 
     guard parsed_file.get(abs_file) is Some(bundle) else { continue }
     match bundle {
-      Object(obj) => {
+      Object(obj) =>
         if not(obj.contains(item_ref.zid)) {
           issues.push(
             make_issue(
@@ -85,17 +77,10 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
           let entry = obj[item_ref.zid]
           validate_item_entry_texture(entry, rel_file, item_ref.zid, issues)
         }
-      }
-      _ => {
+      _ =>
         issues.push(
-          make_issue(
-            "item",
-            Error,
-            rel_file,
-            "item bundle root must be object",
-          ),
+          make_issue("item", Error, rel_file, "item bundle root must be object"),
         )
-      }
     }
   }
 
@@ -185,7 +170,7 @@ fn validate_texture_field(
         )
       }
     }
-    None => {
+    None =>
       issues.push(
         make_issue(
           "item",
@@ -194,7 +179,6 @@ fn validate_texture_field(
           "item '\{zid}' missing info.\{field}",
         ),
       )
-    }
   }
 }
 
@@ -296,7 +280,9 @@ fn zero_pad4(s : String) -> String {
 ///|
 fn strip_quotes(s : String) -> String {
   let trimmed = s.trim().to_string()
-  if trimmed.length() >= 2 && trimmed.has_prefix("\"") && trimmed.has_suffix("\"") {
+  if trimmed.length() >= 2 &&
+    trimmed.has_prefix("\"") &&
+    trimmed.has_suffix("\"") {
     return trimmed[1:trimmed.length() - 1].to_string() catch { _ => trimmed }
   }
   trimmed

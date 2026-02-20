@@ -125,7 +125,7 @@ let mob_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
     "mob",
     loader=DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Mob",
-      "/assets/mob",
+      "/assets/Mob",
     ),
     base_url="/assets",
   )
@@ -326,6 +326,34 @@ let item_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
 ///|
 pub fn get_item_loader() -> AsyncLoader {
   item_loader.get()
+}
+
+///|
+let ui_window_2_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "UI/UIWindow2.img",
+    loader=DirResourceLoader::new("/assets/ui/UIWindow2.img"),
+    base_url="/assets",
+  )
+})
+
+///|
+pub fn get_ui_window_2_loader() -> AsyncLoader {
+  ui_window_2_loader.get()
+}
+
+///|
+let ui_window_4_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "UI/UIWindow4.img",
+    loader=DirResourceLoader::new("/assets/ui/UIWindow4.img"),
+    base_url="/assets",
+  )
+})
+
+///|
+pub fn get_ui_window_4_loader() -> AsyncLoader {
+  ui_window_4_loader.get()
 }
 
 // let status_bar_loader = @resource.SyncLoader::load(

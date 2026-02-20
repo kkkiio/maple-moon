@@ -23,10 +23,9 @@ pub fn Module::make_handlers(
   [
     (
       @net.SPAWN_MOB,
-      @net.with_log(
-        @net.SPAWN_MOB,
-        log_recv=false,
-        fn(recv : @net.InPacket) raise {
+      @net.with_log(@net.SPAWN_MOB, log_recv=false, fn(
+        recv : @net.InPacket,
+      ) raise {
         handle_spawn_mob(self.map_mobs, recv)
       }),
     ),

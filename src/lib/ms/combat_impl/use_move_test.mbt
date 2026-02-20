@@ -10,7 +10,7 @@ test "use_move_integration_test" {
   @combat_impl.set_combat(Some(combat))
 
   // 2. Setup Mob
-  let json_path = "assets/mob/1210102.img.json"
+  let json_path = "assets/Mob/1210102.img.json"
   let content = @fs.read_file_to_string(json_path)
   let nx_mob : @monster.NxMob = @json.from_json(@json.parse(content))
   let mob_random = @utils.Randomizer::new(

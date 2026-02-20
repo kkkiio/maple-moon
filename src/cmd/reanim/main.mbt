@@ -57,7 +57,7 @@ fn parse_args() -> CliArgs? {
     #| Usage: reanim <input.json> <output-dir> [options]
     #| 
     #| Examples:
-    #|   reanim .local/r2/Mob/1210100.img.json assets/mob -s .local/r2/spritesheets/Mob
+    #|   reanim .local/r2/Mob/1210100.img.json assets/Mob -s .local/r2/spritesheets/Mob
     #|   reanim .local/nx/Effect.nx/nx.json assets/Effect -m BasicEff.img/Teleport
     #|
   @ArgParser.parse(spec, fn(arg) { positional.push(arg) }, usage, argv) catch {

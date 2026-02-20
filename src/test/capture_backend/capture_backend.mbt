@@ -48,13 +48,44 @@ pub fn draw_picture(
   transform~ : @math.Transform,
   repeat~ : @math.RepeatMode,
 ) -> Unit {
-  ignore(png)
-  ignore(x)
-  ignore(y)
-  ignore(width)
-  ignore(height)
-  ignore(transform)
   ignore(repeat)
+  let ctx = @capture_app.get_ctx().unwrap()
+  // tolerate relative path
+  let png = png.strip_prefix("/").unwrap_or(png)
+  let png = png.strip_prefix("assets/").unwrap_or(png)
+  let png = "assets/\{png}"
+  let img_bytes = @fs.read_file_to_bytes(png) catch {
+    e => {
+      @log.error("Failed to load picture", data={ "error": e })
+      panic()
+    }
+  }
+  let img = @capture_app.create_image()
+  img.set_src(@capture_app.Buffer::from_bytes(img_bytes))
+
+  ctx.save()
+  // Keep the same transform order as draw_sprite.
+  ctx.translate(x, y)
+  ctx.transform(
+    transform.a,
+    transform.b,
+    transform.c,
+    transform.d,
+    transform.tx,
+    transform.ty,
+  )
+  ctx.draw_image(
+    img,
+    0.0,
+    0.0,
+    width,
+    height,
+    0.0,
+    0.0,
+    width,
+    height,
+  )
+  ctx.restore()
 }
 
 ///|

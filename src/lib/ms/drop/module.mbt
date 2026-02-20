@@ -47,9 +47,7 @@ pub fn Module::make_handlers(
     @net.make_handler(@net.DROP_LOOT, parse_drop_loot, (drop : DropLoot) => {
       handle_drop_loot_parsed(self.map_drops, drop)
     }),
-    @net.make_handler(@net.REMOVE_LOOT, parse_remove_loot, ( 
-      remove : RemoveLoot,
-    ) => {
+    @net.make_handler(@net.REMOVE_LOOT, parse_remove_loot, (remove : RemoveLoot) => {
       handle_remove_loot_parsed(self.map_drops, remove, get_character_by_id_fn)
     }),
   ]
@@ -71,7 +69,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "drop_loot",
     @net.Opcode::DROP_LOOT.int_value(),
-    (json) => {
+    json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let drop : @maple_protocol.DropLootMessage = @json.from_json(json)
       let parsed : DropLoot = {
@@ -94,7 +92,7 @@ pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "remove_loot",
     @net.Opcode::REMOVE_LOOT.int_value(),
-    (json) => {
+    json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let remove : @maple_protocol.RemoveLootMessage = @json.from_json(json)
       let parsed : RemoveLoot = {

@@ -63,6 +63,8 @@ fn all_checkers() -> Array[Checker] {
   [
     register_json_format_checker(),
     register_item_checker(),
+    register_mob_checker(),
+    register_ui_checker(),
   ]
 }
 

@@ -212,6 +212,7 @@ pub impl Eq for Opcode
 pub impl Hash for Opcode
 pub impl Show for Opcode
 
+#deprecated
 type OutPacket
 #deprecated
 pub fn OutPacket::dispatch(Self) -> Unit

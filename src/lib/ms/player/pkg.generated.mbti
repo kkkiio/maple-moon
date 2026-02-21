@@ -31,19 +31,6 @@ pub fn set_player(Player) -> Unit
 // Errors
 
 // Types and methods
-type ActiveBuffs
-
-type BoosterBuff
-pub impl ActiveBuff for BoosterBuff
-pub impl Default for BoosterBuff
-
-type MapleWarriorBuff
-pub impl ActiveBuff for MapleWarriorBuff
-pub impl Default for MapleWarriorBuff
-
-type PercentageStatBuff
-pub impl ActiveBuff for PercentageStatBuff
-
 pub(all) struct Player {
   entity : @entity.Entity
   character : @character.Character
@@ -53,7 +40,6 @@ pub(all) struct Player {
   mut ladder : @map.Ladder?
   inventory : &@legacy_types.Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
-  active_buffs : ActiveBuffs
   randomizer : @utils.Randomizer
   mut skill_book : &@legacy_types.SkillBook
 }
@@ -90,15 +76,7 @@ pub fn Player::show_iron_body(Self) -> Unit
 pub impl @combat_impl.CombatCharacter for Player
 pub impl @combat_impl.DamagableCharacter for Player
 
-type SimpleStatBuff
-pub impl ActiveBuff for SimpleStatBuff
-
-type StanceBuff
-pub impl ActiveBuff for StanceBuff
-pub impl Default for StanceBuff
-
 // Type aliases
 
 // Traits
-trait ActiveBuff
 

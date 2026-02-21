@@ -1,5 +1,30 @@
 ///|
+extern "js" fn new_seed_from_time() -> Bytes =
+  #| () => {
+  #|   const seed = new Uint8Array(32);
+  #|   const now = BigInt(Date.now());
+  #|   for (let i = 0; i < 8; i += 1) {
+  #|     seed[i] = Number((now >> BigInt(i * 8)) & 0xffn);
+  #|   }
+  #|   const perf = Math.floor(
+  #|     (typeof performance !== "undefined" ? performance.now() : 0) * 1000
+  #|   );
+  #|   for (let i = 0; i < 8; i += 1) {
+  #|     seed[8 + i] = (perf >> ((i % 4) * 8)) & 0xff;
+  #|   }
+  #|   const rnd = Math.floor(Math.random() * 0xffffffff);
+  #|   for (let i = 0; i < 8; i += 1) {
+  #|     seed[16 + i] = (rnd >> ((i % 4) * 8)) & 0xff;
+  #|   }
+  #|   for (let i = 24; i < 32; i += 1) {
+  #|     seed[i] = seed[i - 24] ^ seed[i - 8] ^ ((i * 37) & 0xff);
+  #|   }
+  #|   return Array.from(seed);
+  #| }
+
+///|
 fn game_start(_delta : Double) -> Unit {
+  @local_server.default_rand_seed.val = new_seed_from_time()
   @game_server.init_server()
   @login.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()

@@ -1,0 +1,50 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/local_server"
+
+import {
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "moonbitlang/core/json",
+  "moonbitlang/core/random",
+}
+
+// Values
+pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand) -> (Array[@maple_protocol.DropLootMessage], Int)
+
+pub let default_rand_seed : Ref[Bytes]
+
+pub async fn init_server(LocalServer) -> Unit
+
+pub fn server_system(LocalServer) -> Unit
+
+// Errors
+
+// Types and methods
+type LocalServer
+pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
+pub fn LocalServer::new(drop_rng? : @random.Rand) -> Self
+#callsite(autofill(loc))
+pub fn[T : @maple_protocol.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+
+type MobDropDatabase
+pub fn MobDropDatabase::from_csv(String) -> Self
+pub fn MobDropDatabase::get_drops(Self, Int) -> Array[MobDropEntry]
+pub fn MobDropDatabase::get_mob_ids(Self) -> Iter[Int]
+pub fn MobDropDatabase::has_drops(Self, Int) -> Bool
+pub fn MobDropDatabase::roll_drops(Self, Int, @random.Rand) -> Array[(Int, Int)]
+
+pub(all) struct MobDropEntry {
+  dropperid : Int
+  itemid : Int
+  minimum_quantity : Int
+  maximum_quantity : Int
+  questid : Int
+  chance : Int
+}
+pub fn MobDropEntry::roll_drop(Self, @random.Rand) -> Bool
+pub fn MobDropEntry::roll_quantity(Self, @random.Rand) -> Int
+
+// Type aliases
+
+// Traits
+

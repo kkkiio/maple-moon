@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/cmd/rescheck"
+
+// Values
+
+// Errors
+
+// Types and methods
+type CheckIssue
+
+type Checker
+
+type CliArgs
+
+type ItemRef
+
+type RescheckContext
+
+type RunSummary
+
+type Severity
+
+// Type aliases
+
+// Traits
+

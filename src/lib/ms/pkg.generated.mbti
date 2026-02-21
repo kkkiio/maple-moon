@@ -8,7 +8,6 @@ import {
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/ui",
-  "KKKIIO/maple-moon/lib/utils",
 }
 
 // Values
@@ -21,26 +20,10 @@ pub fn parse_show_status_info(@net.InPacket, Map[Int, (@net.InPacket) -> &@game_
 // Errors
 
 // Types and methods
-pub(all) struct Game {
-  timer : @utils.Timer
-  mut accumulator : Int
-  processor : @net.Network
-  loaded_state : @utils.Future[LoadedState]
-  keyboard_module : @keyboard.Module
-}
-pub fn Game::new() -> Self
-pub fn Game::update(Self, @utils.TimePoint) -> Unit
-pub fn Game::update_status(Self, LoadedState) -> Unit
-
-type LoadedState
-
 type UIStateLogin
 pub fn UIStateLogin::get_front(Self) -> (@ui.UIElementType, @ui.Element)?
 pub fn UIStateLogin::remove_cursor(Self, @ui.UIElementType) -> Unit
 pub impl @ui.UIState for UIStateLogin
-
-type Window
-pub fn Window::key_callback(Self, String, Bool) -> Unit
 
 // Type aliases
 

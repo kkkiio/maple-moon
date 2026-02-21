@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/test/local_loader"
+
+import {
+  "KKKIIO/maple-moon/lib/resource",
+}
+
+// Values
+pub fn make_local_character_loader() -> @resource.AsyncLoader
+
+pub fn make_local_item_loader() -> @resource.AsyncLoader
+
+// Errors
+
+// Types and methods
+pub struct LocalDirResourceLoader {
+  root_path : String
+}
+pub fn LocalDirResourceLoader::new(String) -> Self
+pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader
+
+// Type aliases
+
+// Traits
+

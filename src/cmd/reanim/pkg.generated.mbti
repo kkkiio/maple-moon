@@ -39,9 +39,9 @@ pub async fn process_bitmap(CliArgs) -> Unit
 
 pub async fn process_bitmap_resource(Json, String, String, load_bitmap? : (Int) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
 
-pub async fn process_resource(Json, Map[String, @resource.SpritesheetMetadata], String, String, bitmaps_dir? : String, resize? : Bool, load_spritesheet? : (String) -> @js.Value, load_bitmap? : (String) -> @js.Value, save_image? : (String, @js.Value) -> Unit) -> Json
+pub async fn process_resource(Json, Map[String, @resource.SpritesheetMetadata], String, String, bitmaps_dir? : String, resize? : Bool, load_spritesheet? : (String) -> @js.Value, load_bitmap? : (String) -> @js.Value, save_image? : (String, @js.Value) -> Unit, keep_source_sheets? : Bool) -> Json
 
-pub async fn process_simple_pack(Json, Map[String, @resource.SpritesheetMetadata], Map[String, @js.Value], String, String, String, ((String) -> @js.Value)?, ((String, @js.Value) -> Unit)?) -> Json
+pub async fn process_simple_pack(Json, Map[String, @resource.SpritesheetMetadata], Map[String, @js.Value], String, String, String, ((String) -> @js.Value)?, ((String, @js.Value) -> Unit)?, keep_source_sheets? : Bool) -> Json
 
 pub async fn process_spritesheet(CliArgs) -> Unit
 
@@ -59,6 +59,7 @@ pub(all) struct CliArgs {
   bitmaps_dir : String
   match_pattern : String?
   resize : Bool
+  keep_source_sheets : Bool
 }
 
 pub(all) struct ExtractedFrame {

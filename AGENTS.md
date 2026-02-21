@@ -8,11 +8,18 @@
 
 使用 `selene` , 非常新且小巧的 2D 游戏引擎, 便于学习。缺少功能时，先要对比其他现代游戏引擎的实现，再提出改进方案。
 
+## 文档
+
+每个 `package` 下都写 `README.mbt.md`, 说明包的用途和使用方法.
+更具体的说明写在代码的 Doc comments 里.
+
 ## 验证
 
 修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新 js 内容:
 
 ```bash
+moon fmt
+moon info
 moon build --release
 ```
 
@@ -62,9 +69,9 @@ UPDATE_CANVAS_SNAPS=true moon test <test-target>
 
 ## Coding Style
 
-### 文档/注释
+### 注释
 
-所有接口都要写使用注释, 包括:
+所有 public symbol 都要写 Doc comments, 包括:
 
 - `pub fn`.
 - `pub enum`, 尽量给每个 variant 加注释.

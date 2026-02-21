@@ -13,8 +13,6 @@ import {
 // Values
 pub let all_types : FixedArray[UIElementType]
 
-pub fn draw_rectangle(Int, Int, Int, Int, @struct.ColorName, Double) -> Unit
-
 pub fn number_system(Double) -> Unit
 
 pub fn remove_cursor(Iter[ButtonModel]) -> Unit
@@ -179,10 +177,6 @@ pub fn MapleButtonResource::from_resource(@resource.NxNode) -> Self
 #deprecated
 pub fn MapleButtonResource::inner(Self) -> Map[ButtonState, @resource.NxAnimation]
 pub impl @json.FromJson for MapleButtonResource
-
-type MobHpBar
-pub fn MobHpBar::default() -> Self
-pub fn MobHpBar::draw(Self, @struct.Point[Int], Int) -> Unit
 
 type NameTag
 pub fn NameTag::new(@graphics.FontId, String, NameTagResource) -> Self

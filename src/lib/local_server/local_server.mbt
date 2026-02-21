@@ -23,6 +23,11 @@ using @maple_protocol {
 using @resource {get_mapx_loader}
 
 ///|
+pub let default_rand_seed : Ref[Bytes] = Ref::new(
+  b"0123456789abcdef0123456789abcdef",
+)
+
+///|
 /// A local server implementation for playing the game offline.
 ///
 /// Although there is a open-source server implementation `Cosmic`,
@@ -70,7 +75,9 @@ priv struct PendingMobSpawn {
 }
 
 ///|
-pub fn LocalServer::new() -> LocalServer {
+pub fn LocalServer::new(
+  drop_rng~ : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
+) -> LocalServer {
   {
     client_message_queue: @queue.new(),
     server_message_queue: @queue.new(),
@@ -106,7 +113,7 @@ pub fn LocalServer::new() -> LocalServer {
     db: None,
     drop_db: None,
     global_drop_db: None,
-    drop_rng: @random.Rand::new(),
+    drop_rng,
   }
 }
 

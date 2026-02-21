@@ -6,14 +6,10 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
-  "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ms/job",
-  "KKKIIO/maple-moon/lib/ms/keyboard",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/monster",
-  "KKKIIO/maple-moon/lib/struct",
-  "KKKIIO/maple-moon/lib/ui",
   "KKKIIO/maple-moon/lib/utils",
 }
 
@@ -21,6 +17,8 @@ import {
 pub fn apply_equipped_stats(@char_stats.CharStats, Array[@maple_protocol.InventoryItemEntry]) -> Unit
 
 pub fn clear_loading_data() -> Unit
+
+pub fn collect_inventory_item_ids(Array[@maple_protocol.InventoryItemEntry]) -> Array[Int]
 
 pub fn find_equipped_item_id(Array[@maple_protocol.InventoryItemEntry], @slot.Id) -> Int?
 
@@ -46,17 +44,9 @@ pub(all) struct Stage {
   mobs : @monster.MapMobs
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
 }
-pub fn Stage::get_inventory(Self) -> @inventory.Inventory
 pub fn Stage::get_mobs(Self) -> @monster.MapMobs
 pub fn Stage::listen_map_change(Self, (@map.SceneMap) -> Bool) -> Unit
 pub fn Stage::new(@map.MapPortalAnimations, @monster.MapMobs) -> Self
-
-type UIStateGame
-pub fn UIStateGame::get_front(Self, @struct.Point[Int]) -> @ui.Element?
-pub fn UIStateGame::new(Stage) -> Self
-pub fn UIStateGame::remove_cursor(Self, @ui.UIElementType) -> Unit
-pub fn UIStateGame::toggle_element(Self, @ui.UIElementType, Bool, () -> @ui.Element) -> Unit
-pub impl @ui.UIState for UIStateGame
 
 // Type aliases
 

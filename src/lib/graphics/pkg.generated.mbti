@@ -18,11 +18,15 @@ pub const CURSOR_ZINDEX : Int = 200000
 
 pub const DAMAGE_NUMBER_ZINDEX : Int = 75000
 
+pub const DROP_LAYER_ZINDEX : Int = 76000
+
 pub const EFFECT_ZINDEX : Int = 90000
 
 pub const FOREGROUND_ZINDEX : Int = 80000
 
 pub const MINI_MAP_ZINDEX_ : Int = 101000
+
+pub const MOB_HP_BAR_ZINDEX : Int = 74000
 
 pub const OBJECT_TILE_LAYER_ZINDEX : Int = 30000
 
@@ -279,3 +283,4 @@ pub(open) trait Drawable : ToJson {
 pub(open) trait Stateful : ToJson {
   update(Self, Int) -> Unit
 }
+

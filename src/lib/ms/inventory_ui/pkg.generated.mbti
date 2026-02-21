@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/inventory_ui"
+
+import {
+  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/inventory",
+}
+
+// Values
+pub fn bind_inventory(@inventory.Inventory) -> Unit
+
+pub fn init_inventory_ui() -> Unit
+
+pub fn inventory_ui_system(Double) -> Unit
+
+pub fn set_inventory_entry(@maple_protocol.InventoryEntry) -> Unit
+
+pub fn set_inventory_visible(Bool) -> Unit
+
+pub fn set_item_json_for_test(Json) -> Unit raise
+
+pub fn set_panel_position_for_test(Int, Int) -> Unit
+
+pub fn set_tab_index_for_test(Int) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

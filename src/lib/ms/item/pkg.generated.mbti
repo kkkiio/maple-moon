@@ -55,6 +55,7 @@ pub(all) struct ItemData {
   unsellable : Bool
   cash_item : Bool
 }
+pub fn ItemData::add_item_data(Int, Self) -> Unit
 pub fn ItemData::all_requested_ready_or_fail(Array[Int]) -> Bool
 pub fn ItemData::get_category(Self) -> String
 pub fn ItemData::get_icon(Self, Bool) -> @resource.NxTexture

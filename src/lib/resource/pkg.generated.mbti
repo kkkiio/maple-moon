@@ -28,6 +28,10 @@ pub fn get_face_loader() -> AsyncLoader
 
 pub fn get_hair_loader() -> AsyncLoader
 
+pub fn get_item_loader() -> AsyncLoader
+
+pub fn get_item_special_loader() -> AsyncLoader
+
 pub fn get_mapx_loader() -> AsyncLoader
 
 pub fn get_mob_loader() -> AsyncLoader
@@ -37,6 +41,10 @@ pub fn get_object_loader() -> AsyncLoader
 pub fn get_skill_loader() -> AsyncLoader
 
 pub fn get_tile_loader() -> AsyncLoader
+
+pub fn get_ui_window_2_loader() -> AsyncLoader
+
+pub fn get_ui_window_4_loader() -> AsyncLoader
 
 pub fn nx_animation_to_selene_animation(NxAnimation, loop_? : Bool) -> @sprite.Animation
 
@@ -200,6 +208,7 @@ pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode
 // Type aliases
 
 // Traits
-pub trait AsyncResourceLoader {
+pub(open) trait AsyncResourceLoader {
   async load_data(Self, StringView) -> Json
 }
+

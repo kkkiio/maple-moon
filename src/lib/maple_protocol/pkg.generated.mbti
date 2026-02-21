@@ -4,7 +4,6 @@ package "KKKIIO/maple-moon/lib/maple_protocol"
 import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/struct",
   "moonbitlang/core/json",
@@ -24,6 +23,30 @@ pub(all) struct ChangeMapMessage {
 pub impl ClientMessage for ChangeMapMessage
 pub impl ToJson for ChangeMapMessage
 pub impl @json.FromJson for ChangeMapMessage
+
+pub(all) struct ChangeStatsMesoMessage {
+  meso : Int
+}
+pub impl ServerMessage for ChangeStatsMesoMessage
+pub impl Show for ChangeStatsMesoMessage
+pub impl ToJson for ChangeStatsMesoMessage
+pub impl @json.FromJson for ChangeStatsMesoMessage
+
+pub(all) struct DropLootMessage {
+  mode : Int
+  oid : Int
+  meso : Bool
+  item_id : Int
+  owner : Int
+  pickuptype : Int
+  dropto : @struct.Point[Int]
+  dropfrom : @struct.Point[Int]
+  player_drop : Bool
+}
+pub impl ServerMessage for DropLootMessage
+pub impl Show for DropLootMessage
+pub impl ToJson for DropLootMessage
+pub impl @json.FromJson for DropLootMessage
 
 pub(all) struct InventoryEntry {
   meso : Int
@@ -115,6 +138,14 @@ pub impl ServerMessage for MobSpawnMessage
 pub impl ToJson for MobSpawnMessage
 pub impl @json.FromJson for MobSpawnMessage
 
+pub(all) struct ModifyInventoryItemMessage {
+  item : InventoryItemEntry
+}
+pub impl ServerMessage for ModifyInventoryItemMessage
+pub impl Show for ModifyInventoryItemMessage
+pub impl ToJson for ModifyInventoryItemMessage
+pub impl @json.FromJson for ModifyInventoryItemMessage
+
 pub(all) struct MoveMonsterMessage {
   oid : Int
   move_id : Int
@@ -127,10 +158,18 @@ pub(all) struct MoveMonsterMessage {
   movement : @physics.Movement
 }
 pub impl ClientMessage for MoveMonsterMessage
-pub impl @net.OutMessage for MoveMonsterMessage
 pub impl Show for MoveMonsterMessage
 pub impl ToJson for MoveMonsterMessage
 pub impl @json.FromJson for MoveMonsterMessage
+
+pub(all) struct PickupItemMessage {
+  oid : Int
+  position : @struct.Point[Int]
+}
+pub impl ClientMessage for PickupItemMessage
+pub impl Show for PickupItemMessage
+pub impl ToJson for PickupItemMessage
+pub impl @json.FromJson for PickupItemMessage
 
 pub(all) struct PlayerMapTransferMessage(Unit)
 #deprecated
@@ -150,6 +189,16 @@ pub impl Show for PlayerQuestLogInfo
 pub impl ToJson for PlayerQuestLogInfo
 pub impl @json.FromJson for PlayerQuestLogInfo
 
+pub(all) struct RemoveLootMessage {
+  mode : Int
+  oid : Int
+  cid : Int?
+}
+pub impl ServerMessage for RemoveLootMessage
+pub impl Show for RemoveLootMessage
+pub impl ToJson for RemoveLootMessage
+pub impl @json.FromJson for RemoveLootMessage
+
 pub(all) struct SelectCharMessage {
   character_id : Int
 }
@@ -166,6 +215,14 @@ pub impl ServerMessage for SetFieldMessage
 pub impl Show for SetFieldMessage
 pub impl ToJson for SetFieldMessage
 pub impl @json.FromJson for SetFieldMessage
+
+pub(all) struct ShowStatusMesoGainMessage {
+  gain : Int
+}
+pub impl ServerMessage for ShowStatusMesoGainMessage
+pub impl Show for ShowStatusMesoGainMessage
+pub impl ToJson for ShowStatusMesoGainMessage
+pub impl @json.FromJson for ShowStatusMesoGainMessage
 
 pub(all) struct SkillEntry {
   skill_id : Int

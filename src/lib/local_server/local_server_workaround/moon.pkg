@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/random",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/local_server",
   "KKKIIO/maple-moon/lib/maple_protocol",

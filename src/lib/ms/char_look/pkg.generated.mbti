@@ -49,6 +49,7 @@ pub struct AfterImage {
   animation : @sprite.Animation
   range : @struct.Rectangle[Int]
   first_frame : Int
+  facing_right : Bool
   mut displayed : Bool
   mut entity : @entity.Entity?
 }

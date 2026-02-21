@@ -20,6 +20,8 @@ pub fn set_canvas(Canvas) -> Unit
 
 pub fn set_ctx(Context2D) -> Unit
 
+pub fn snapshot(String) -> Unit raise
+
 pub fn to_buffer() -> Buffer
 
 // Errors
@@ -36,10 +38,18 @@ pub fn Canvas::to_buffer(Self, String) -> Buffer
 pub type Context2D
 pub fn Context2D::clear_rect(Self, Double, Double, Double, Double) -> Unit
 pub fn Context2D::draw_image(Self, Image, Double, Double, Double, Double, Double, Double, Double, Double) -> Unit
+pub fn Context2D::fill_rect(Self, Double, Double, Double, Double) -> Unit
+pub fn Context2D::fill_text(Self, String, Double, Double) -> Unit
 pub fn Context2D::restore(Self) -> Unit
 pub fn Context2D::save(Self) -> Unit
 pub fn Context2D::scale(Self, Double, Double) -> Unit
+pub fn Context2D::set_fill_style(Self, String) -> Unit
+pub fn Context2D::set_font(Self, String) -> Unit
 pub fn Context2D::set_image_smoothing_enabled(Self, Bool) -> Unit
+pub fn Context2D::set_stroke_style(Self, String) -> Unit
+pub fn Context2D::set_text_align(Self, String) -> Unit
+pub fn Context2D::set_text_baseline(Self, String) -> Unit
+pub fn Context2D::stroke_rect(Self, Double, Double, Double, Double) -> Unit
 pub fn Context2D::transform(Self, Double, Double, Double, Double, Double, Double) -> Unit
 pub fn Context2D::translate(Self, Double, Double) -> Unit
 

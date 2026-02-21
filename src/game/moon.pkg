@@ -17,6 +17,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/inventory_ui",
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/local_server",
 }
 
 warnings = "-A"

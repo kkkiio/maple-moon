@@ -4,13 +4,16 @@ package "KKKIIO/maple-moon/lib/game_state"
 import {
   "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/map",
-  "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/utils",
 }
 
 // Values
+pub fn emit_scene_clear(SceneClearReason) -> Unit
+
 pub let game_state : GameState
+
+pub fn listen_scene_clear((SceneClearReason) -> Bool) -> Unit
 
 // Errors
 
@@ -19,14 +22,23 @@ pub(all) enum GamePhase {
   SelectCharacter
   GameStart(map_id~ : Int, portal_id~ : Int, set_field_message~ : @maple_protocol.SetFieldMessage)
   GameTransiting(map_id~ : Int, portal_id~ : Int, mut loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]?)
-  GameActive(map_id~ : Int, portal_id~ : Int, tiles_objs~ : @map.MapLayers, backgrounds~ : @map.Backgrounds, physics~ : @physics.Physics, map_info~ : @map.MapInfo, portals~ : @map.MapPortals, mobs~ : @monster.MapMobs)
+  GameActive(map_id~ : Int, portal_id~ : Int, tiles_objs~ : @map.MapLayers, backgrounds~ : @map.Backgrounds, physics~ : @physics.Physics, map_info~ : @map.MapInfo, portals~ : @map.MapPortals)
 }
 
 pub(all) struct GameState {
   mut phase : GamePhase
 }
 
+pub(all) enum SceneClearReason {
+  LeaveToSelectCharacter
+  GameStart
+  ChangeMap
+}
+pub impl Eq for SceneClearReason
+pub impl Show for SceneClearReason
+
 // Type aliases
+pub type SceneClearListener = (SceneClearReason) -> Bool
 
 // Traits
 

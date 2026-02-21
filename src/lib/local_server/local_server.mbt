@@ -1,16 +1,20 @@
 ///|
 using @maple_protocol {
+  type ChangeStatsMesoMessage,
   trait ClientMessage,
   trait ServerMessage,
   type ChangeMapMessage,
   type DropLootMessage,
+  type ModifyInventoryItemMessage,
   type PickupItemMessage,
+  type ShowStatusMesoGainMessage,
   type MoveMonsterMessage,
   type SetFieldMessage,
   type SelectCharMessage,
   type MobSpawnControllerMessage,
   type StatsEntry,
   type InventoryEntry,
+  type InventoryItemEntry,
   type PlayerQuestLogInfo,
   type InventoryType,
 }
@@ -37,6 +41,9 @@ struct LocalServer {
   mut last_object_id : Int
   mut spawn_batch_id : Int
   mut map_transfer_ready : Bool
+  mut player_meso : Int
+  player_items : Map[InventoryType, Map[Int, (Int, Int)]]
+  slot_max_by_tab : Map[InventoryType, Int]
   mobs : Map[Int, ServerMob]
   drops : Map[Int, DropLootMessage]
   pending_mob_spawns : Array[PendingMobSpawn]
@@ -74,6 +81,25 @@ pub fn LocalServer::new() -> LocalServer {
     last_object_id: 100000,
     spawn_batch_id: 0,
     map_transfer_ready: false,
+    player_meso: 0,
+    player_items: {
+      let m : Map[InventoryType, Map[Int, (Int, Int)]] = Map::new()
+      m.set(InventoryType::EQUIP, Map::new())
+      m.set(InventoryType::USE, Map::new())
+      m.set(InventoryType::SETUP, Map::new())
+      m.set(InventoryType::ETC, Map::new())
+      m.set(InventoryType::CASH, Map::new())
+      m
+    },
+    slot_max_by_tab: {
+      let m : Map[InventoryType, Int] = Map::new()
+      m.set(InventoryType::EQUIP, 96)
+      m.set(InventoryType::USE, 96)
+      m.set(InventoryType::SETUP, 96)
+      m.set(InventoryType::ETC, 96)
+      m.set(InventoryType::CASH, 96)
+      m
+    },
     mobs: Map::new(),
     drops: Map::new(),
     pending_mob_spawns: Array::new(),
@@ -199,13 +225,88 @@ fn LocalServer::spawn_drops_for_mob(
 ///|
 fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
   let msg : PickupItemMessage = @json.from_json(json)
-  guard self.drops.get(msg.oid) is Some(_) else { return }
+  guard self.drops.get(msg.oid) is Some(drop) else { return }
+  if drop.meso {
+    let gain = drop.item_id
+    self.player_meso += gain
+    self.send_server_message(ChangeStatsMesoMessage::{
+      meso: self.player_meso,
+    })
+    self.send_server_message(ShowStatusMesoGainMessage::{
+      gain,
+    })
+    self.drops.remove(msg.oid) |> ignore
+    self.send_server_message(@maple_protocol.RemoveLootMessage::{
+      mode: 2,
+      oid: msg.oid,
+      cid: Some(1),
+    })
+    return
+  }
+  guard self.apply_pickup_item(drop.item_id) else { return }
   self.drops.remove(msg.oid) |> ignore
   self.send_server_message(@maple_protocol.RemoveLootMessage::{
     mode: 2,
     oid: msg.oid,
     cid: Some(1),
   })
+}
+
+///|
+fn apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
+  guard InventoryType::by_item_id(item_id) is Some(invtype) else { return false }
+  guard self.player_items.get(invtype) is Some(tab_items) else { return false }
+  let stackable = invtype != InventoryType::EQUIP
+  if stackable {
+    for slot, it in tab_items {
+      let (existing_item_id, existing_count) = it
+      if existing_item_id == item_id {
+        let next_count = existing_count + 1
+        tab_items.set(slot, (item_id, next_count))
+        self.send_server_message(ModifyInventoryItemMessage::{
+          item: InventoryItemEntry::Item(
+            invtype~,
+            slot~,
+            id=item_id,
+            cash=false,
+            expire=0,
+            count=next_count,
+            owner="",
+            flag=0,
+          ),
+        })
+        return true
+      }
+    }
+  }
+  guard find_next_empty_slot(tab_items, self.slot_max_by_tab.get(invtype).unwrap_or(0))
+    is Some(slot) else {
+    return false
+  }
+  tab_items.set(slot, (item_id, 1))
+  self.send_server_message(ModifyInventoryItemMessage::{
+    item: InventoryItemEntry::Item(
+      invtype~,
+      slot~,
+      id=item_id,
+      cash=false,
+      expire=0,
+      count=1,
+      owner="",
+      flag=0,
+    ),
+  })
+  true
+}
+
+///|
+fn find_next_empty_slot(items : Map[Int, (Int, Int)], slot_max : Int) -> Int? {
+  for slot in 1..=slot_max {
+    if not(items.contains(slot)) {
+      return Some(slot)
+    }
+  }
+  None
 }
 
 ///|
@@ -375,4 +476,145 @@ fn LocalServer::load_drop_databases(self : LocalServer) -> Unit raise {
     self.global_drop_db = Some(MobDropDatabase::from_csv(text))
     @log.info("Loaded drop_data_global.csv", data={})
   })
+}
+
+///|
+test "pickup meso updates inventory meso and removes drop" {
+  let server = LocalServer::new()
+  init_router(server)
+  let oid = 100001
+  server.drops.set(oid, @maple_protocol.DropLootMessage::{
+    mode: 0,
+    oid,
+    meso: true,
+    item_id: 321,
+    owner: 0,
+    pickuptype: 0,
+    dropto: { x: 10, y: 20 },
+    dropfrom: { x: 10, y: 0 },
+    player_drop: false,
+  })
+  server.send_client_message(@maple_protocol.PickupItemMessage::{
+    oid,
+    position: { x: 10, y: 20 },
+  })
+  server_system(server)
+  inspect(server.player_meso, content="321")
+  inspect(server.drops.contains(oid), content="false")
+  guard server.server_message_queue.pop() is Some((first_code, first_json)) else {
+    fail("missing first server message")
+  }
+  inspect(first_code, content="31")
+  let first_msg : ChangeStatsMesoMessage = @json.from_json(first_json)
+  inspect(first_msg.meso, content="321")
+  guard server.server_message_queue.pop() is Some((second_code, second_json)) else {
+    fail("missing second server message")
+  }
+  inspect(second_code, content="39")
+  let second_msg : ShowStatusMesoGainMessage = @json.from_json(second_json)
+  inspect(second_msg.gain, content="321")
+  guard server.server_message_queue.pop() is Some((third_code, third_json)) else {
+    fail("missing third server message")
+  }
+  inspect(third_code, content="269")
+  let third_msg : @maple_protocol.RemoveLootMessage = @json.from_json(third_json)
+  inspect(third_msg.oid, content="100001")
+}
+
+///|
+test "pickup item adds inventory entry and removes drop" {
+  let server = LocalServer::new()
+  init_router(server)
+  let oid = 100002
+  server.drops.set(oid, @maple_protocol.DropLootMessage::{
+    mode: 0,
+    oid,
+    meso: false,
+    item_id: 2000000,
+    owner: 0,
+    pickuptype: 0,
+    dropto: { x: 10, y: 20 },
+    dropfrom: { x: 10, y: 0 },
+    player_drop: false,
+  })
+  server.send_client_message(@maple_protocol.PickupItemMessage::{
+    oid,
+    position: { x: 10, y: 20 },
+  })
+  server_system(server)
+  guard server.player_items.get(InventoryType::USE) is Some(tab_items) else {
+    fail("missing use tab")
+  }
+  guard tab_items.get(1) is Some((item_id, count)) else {
+    fail("item not stored in slot 1")
+  }
+  inspect(item_id, content="2000000")
+  inspect(count, content="1")
+  guard server.server_message_queue.pop() is Some((first_code, first_json)) else {
+    fail("missing first server message")
+  }
+  inspect(first_code, content="29")
+  let first_msg : ModifyInventoryItemMessage = @json.from_json(first_json)
+  match first_msg.item {
+    InventoryItemEntry::Item(invtype~, slot~, id~, count~, ..) => {
+      inspect(invtype, content="USE")
+      inspect(slot, content="1")
+      inspect(id, content="2000000")
+      inspect(count, content="1")
+    }
+    _ => fail("unexpected inventory entry kind")
+  }
+  guard server.server_message_queue.pop() is Some((second_code, second_json)) else {
+    fail("missing second server message")
+  }
+  inspect(second_code, content="269")
+  let second_msg : @maple_protocol.RemoveLootMessage = @json.from_json(second_json)
+  inspect(second_msg.oid, content="100002")
+}
+
+///|
+test "pickup stackable item updates count in same slot" {
+  let server = LocalServer::new()
+  init_router(server)
+  let oid1 = 100003
+  let oid2 = 100004
+  server.drops.set(oid1, @maple_protocol.DropLootMessage::{
+    mode: 0,
+    oid: oid1,
+    meso: false,
+    item_id: 2000000,
+    owner: 0,
+    pickuptype: 0,
+    dropto: { x: 10, y: 20 },
+    dropfrom: { x: 10, y: 0 },
+    player_drop: false,
+  })
+  server.drops.set(oid2, @maple_protocol.DropLootMessage::{
+    mode: 0,
+    oid: oid2,
+    meso: false,
+    item_id: 2000000,
+    owner: 0,
+    pickuptype: 0,
+    dropto: { x: 10, y: 20 },
+    dropfrom: { x: 10, y: 0 },
+    player_drop: false,
+  })
+  server.send_client_message(@maple_protocol.PickupItemMessage::{
+    oid: oid1,
+    position: { x: 10, y: 20 },
+  })
+  server.send_client_message(@maple_protocol.PickupItemMessage::{
+    oid: oid2,
+    position: { x: 10, y: 20 },
+  })
+  server_system(server)
+  guard server.player_items.get(InventoryType::USE) is Some(tab_items) else {
+    fail("missing use tab")
+  }
+  guard tab_items.get(1) is Some((item_id, count)) else {
+    fail("item not stored in slot 1")
+  }
+  inspect(item_id, content="2000000")
+  inspect(count, content="2")
 }

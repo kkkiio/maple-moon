@@ -1,6 +1,9 @@
 import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/io_service",
+  "KKKIIO/maple-moon/lib/utils",
 }
 
 warnings = "-A"

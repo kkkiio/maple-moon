@@ -48,6 +48,7 @@ pub fn error(
 }
 
 ///|
+/// Always panic after logging.
 #callsite(autofill(loc))
 pub fn[T] fatal(
   msg : String,

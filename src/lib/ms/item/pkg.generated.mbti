@@ -10,9 +10,13 @@ pub fn get_item_gender(Int) -> Int
 
 pub fn get_item_loader() -> @resource.AsyncLoader
 
+pub fn item_data_system(Double) -> Unit
+
 pub fn parse_category1(Int) -> Category1?
 
 pub fn parse_equip_category(Int) -> String?
+
+pub fn request_item_data(Int) -> ItemData
 
 // Errors
 pub(all) suberror LoadDataError {
@@ -51,12 +55,14 @@ pub(all) struct ItemData {
   unsellable : Bool
   cash_item : Bool
 }
-pub async fn ItemData::get_async(Int) -> Self
+pub fn ItemData::all_requested_ready_or_fail(Array[Int]) -> Bool
 pub fn ItemData::get_category(Self) -> String
 pub fn ItemData::get_icon(Self, Bool) -> @resource.NxTexture
 pub fn ItemData::get_info(Self) -> Map[String, Json]
-pub fn ItemData::get_loaded(Int) -> Self?
 pub async fn ItemData::load(Int, @resource.AsyncLoader, @resource.AsyncLoader) -> Self
+pub async fn ItemData::load_item_data(Int) -> Self
+pub fn ItemData::request(Int) -> Unit
+pub fn ItemData::request_many(Array[Int]) -> Unit
 
 // Type aliases
 

@@ -166,12 +166,12 @@ pub async fn ItemData::load(
 let cache : Map[Int, ItemData] = Map::new()
 
 ///|
-pub fn ItemData::get_loaded(id : Int) -> ItemData? {
+fn ItemData::get_loaded(id : Int) -> ItemData? {
   cache.get(id)
 }
 
 ///|
-pub async fn ItemData::get_async(id : Int) -> ItemData {
+pub async fn ItemData::load_item_data(id : Int) -> ItemData {
   if cache.get(id) is Some(data) {
     return data
   }

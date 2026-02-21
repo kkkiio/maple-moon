@@ -91,6 +91,29 @@ pub fn find_equipped_item_id(
 }
 
 ///|
+/// Collect all item ids carried by `SetField` inventory snapshot.
+pub fn collect_inventory_item_ids(
+  items : Array[@maple_protocol.InventoryItemEntry],
+) -> Array[Int] {
+  let id_set : Map[Int, Bool] = Map::new()
+  for item in items {
+    let item_id = match item {
+      @maple_protocol.InventoryItemEntry::Equip(id~, ..) => id
+      @maple_protocol.InventoryItemEntry::Item(id~, ..) => id
+      @maple_protocol.InventoryItemEntry::Pet(id~, ..) => id
+    }
+    if item_id > 0 {
+      id_set.set(item_id, true)
+    }
+  }
+  let ids : Array[Int] = []
+  for item_id, _ in id_set {
+    ids.push(item_id)
+  }
+  ids
+}
+
+///|
 pub fn apply_equipped_stats(
   stats : @char_stats.CharStats,
   items : Array[@maple_protocol.InventoryItemEntry],

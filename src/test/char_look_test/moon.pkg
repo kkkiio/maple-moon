@@ -1,9 +1,6 @@
 import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/math",
-}
-
-import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "moonbitlang/async",
@@ -18,8 +15,6 @@ import {
   "KKKIIO/maple-moon/lib/char_stance",
   "KKKIIO/maple-moon/lib/utils/test_snapshots",
 } for "test"
-
-warnings = "-A"
 
 options(
   overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],

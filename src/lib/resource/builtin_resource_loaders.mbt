@@ -195,7 +195,6 @@ let character_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
   )
 })
 
-///|
 pub fn get_character_loader() -> AsyncLoader {
   character_loader.get()
 }
@@ -323,7 +322,6 @@ let item_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
   )
 })
 
-///|
 pub fn get_item_loader() -> AsyncLoader {
   item_loader.get()
 }

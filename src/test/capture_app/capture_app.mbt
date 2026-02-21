@@ -294,6 +294,30 @@ pub extern "js" fn Context2D::set_stroke_style(self : Context2D, v : String) -> 
   #|(ctx, v) => { ctx.strokeStyle = v; }
 
 ///|
+pub extern "js" fn Context2D::set_font(self : Context2D, v : String) -> Unit =
+  #|(ctx, v) => { ctx.font = v; }
+
+///|
+pub extern "js" fn Context2D::set_text_align(self : Context2D, v : String) -> Unit =
+  #|(ctx, v) => { ctx.textAlign = v; }
+
+///|
+pub extern "js" fn Context2D::set_text_baseline(
+  self : Context2D,
+  v : String,
+) -> Unit =
+  #|(ctx, v) => { ctx.textBaseline = v; }
+
+///|
+pub extern "js" fn Context2D::fill_text(
+  self : Context2D,
+  text : String,
+  x : Double,
+  y : Double,
+) -> Unit =
+  #|(ctx, text, x, y) => { ctx.fillText(text, x, y); }
+
+///|
 pub extern "js" fn Context2D::fill_rect(
   self : Context2D,
   x : Double,

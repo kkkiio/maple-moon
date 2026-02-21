@@ -57,7 +57,7 @@ pub async fn CharLook::load(
     .map(fn(it) {
       let (slot_id, itemid) = it
       fn() {
-        let itemdata = @item.ItemData::get_async(itemid)
+        let itemdata = @item.ItemData::load_item_data(itemid)
         (slot_id, itemdata)
       }
     })

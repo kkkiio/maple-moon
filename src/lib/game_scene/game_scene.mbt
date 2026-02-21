@@ -149,6 +149,21 @@ pub fn get_stage() -> Stage? {
   stage_ref.val
 }
 
+fn required_equipped_item_id_or_fail(
+  items : Array[@maple_protocol.InventoryItemEntry],
+  slot_id : @slot.Id,
+) -> Int {
+  match find_equipped_item_id(items, slot_id) {
+    Some(item_id) => item_id
+    None => {
+      @log.fatal("missing required equipped item", data={
+        "slot_id": slot_id.int_value(),
+      })
+      panic()
+    }
+  }
+}
+
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
@@ -163,38 +178,47 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard set_field_message is SetField(stats~, inventory_entry~, ..) else {
         return
       }
-      // 1. 如果没有开始加载数据，启动后台任务加载默认武器、头发和脸
+      let player_item_ids = collect_inventory_item_ids(inventory_entry.items)
+      @item.ItemData::request_many(player_item_ids)
+
+      if not(@item.ItemData::all_requested_ready_or_fail(player_item_ids)) {
+        return
+      }
+
+      // 1. 如果没有开始加载数据，启动后台任务加载开局资源
       guard get_loading_data() is Some(fut) else {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
         let draw_info = char_look_mod.draw_info
-        let weapon_id = find_equipped_item_id(
+        let weapon_id = required_equipped_item_id_or_fail(
           inventory_entry.items,
           @slot.Id::WEAPON,
-        ).unwrap_or(1302000)
-        let top_id = find_equipped_item_id(inventory_entry.items, @slot.Id::TOP).unwrap_or(
-          1040002,
         )
-        let bottom_id = find_equipped_item_id(
+        let top_id = required_equipped_item_id_or_fail(
+          inventory_entry.items,
+          @slot.Id::TOP,
+        )
+        let bottom_id = required_equipped_item_id_or_fail(
           inventory_entry.items,
           @slot.Id::BOTTOM,
-        ).unwrap_or(1060002)
-        let shoes_id = find_equipped_item_id(
+        )
+        let shoes_id = required_equipped_item_id_or_fail(
           inventory_entry.items,
           @slot.Id::SHOES,
-        ).unwrap_or(1072005)
+        )
         set_loading_data(
           @io_service.submit_background_task(async fn() {
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
-            let weapon_data = @item.ItemData::get_async(weapon_id)
-            let top_data = @item.ItemData::get_async(top_id)
-            let bottom_data = @item.ItemData::get_async(bottom_id)
-            let shoes_data = @item.ItemData::get_async(shoes_id)
-            let after_image_name = if weapon_data.get_info()
-              is { "afterImage": Json::String(after_image), .. } {
-              after_image
-            } else {
-              "swordOL"
+            let weapon_data = @item.request_item_data(weapon_id)
+            let top_data = @item.request_item_data(top_id)
+            let bottom_data = @item.request_item_data(bottom_id)
+            let shoes_data = @item.request_item_data(shoes_id)
+            let after_image_name = match weapon_data.get_info() {
+              { "afterImage": Json::String(after_image), .. } => after_image
+              _ => {
+                @log.fatal("weapon missing afterImage", data={ "item_id": weapon_id })
+                panic()
+              }
             }
             let after_image_res = @resource.get_afterimage_loader()
               .load_res_async(["\{after_image_name}.img"])

@@ -165,13 +165,24 @@ pub fn draw_text(
   align~ : @math.HAlign,
   baseline~ : @math.VAlign,
 ) -> Unit {
-  ignore(text)
-  ignore(x)
-  ignore(y)
-  ignore(font)
-  ignore(color)
-  ignore(align)
-  ignore(baseline)
+  let ctx = @capture_app.get_ctx().unwrap()
+  ctx.save()
+  ctx.set_fill_style(color)
+  ctx.set_font(font)
+  let align_value = match align {
+    @math.HAlign::Left => "left"
+    @math.HAlign::Center => "center"
+    @math.HAlign::Right => "right"
+  }
+  let baseline_value = match baseline {
+    @math.VAlign::Top => "top"
+    @math.VAlign::Center => "center"
+    @math.VAlign::Bottom => "bottom"
+  }
+  ctx.set_text_align(align_value)
+  ctx.set_text_baseline(baseline_value)
+  ctx.fill_text(text, x, y)
+  ctx.restore()
 }
 
 ///|

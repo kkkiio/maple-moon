@@ -43,11 +43,34 @@ pub impl ClientMessage for PickupItemMessage with type_code() {
 }
 
 ///|
-pub impl @net.OutMessage for PickupItemMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::PICKUP_ITEM)
-  packet.write_int(0)
-  packet.write_byte((0).to_byte())
-  packet.write_point(self.position)
-  packet.write_int(self.oid)
-  packet
+/// Local-server CHANGE_STATS (meso only) sync event.
+pub(all) struct ChangeStatsMesoMessage {
+  meso : Int
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for ChangeStatsMesoMessage with type_code() {
+  @net.Opcode::CHANGE_STATS.int_value()
+}
+
+///|
+/// Local-server SHOW_STATUS_INFO (meso gain) sync event.
+pub(all) struct ShowStatusMesoGainMessage {
+  gain : Int
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for ShowStatusMesoGainMessage with type_code() {
+  @net.Opcode::SHOW_STATUS_INFO.int_value()
+}
+
+///|
+/// Local-server MODIFY_INVENTORY sync event.
+pub(all) struct ModifyInventoryItemMessage {
+  item : InventoryItemEntry
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for ModifyInventoryItemMessage with type_code() {
+  @net.Opcode::MODIFY_INVENTORY.int_value()
 }

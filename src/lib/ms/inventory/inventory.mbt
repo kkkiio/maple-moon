@@ -161,6 +161,7 @@ pub fn Inventory::add_item(
     owner,
     flags,
   })
+  self.notify_item_listeners(invtype)
 }
 
 ///|
@@ -188,6 +189,7 @@ pub fn Inventory::add_pet(
   pet_name : String,
 ) -> Unit {
   self.pets.set(self.add_slot(invtype, slot, item_id, 1, cash), { pet_name, })
+  self.notify_item_listeners(invtype)
 }
 
 ///|
@@ -220,6 +222,7 @@ pub fn Inventory::add_equip(
     potential_rank: @equip_data.Potential::POT_NONE,
     // quality: @equip_data.get_quality(item_id, level > 0, stats),
   })
+  self.notify_item_listeners(invtype)
 }
 
 ///|
@@ -314,6 +317,11 @@ pub fn Inventory::modify(
     ModificationMode::REMOVE => self.remove(t, slot)
     ...
   }
+  self.notify_item_listeners(t)
+}
+
+///|
+fn Inventory::notify_item_listeners(self : Inventory, t : TypeId) -> Unit {
   match self.item_listeners_map.get(t) {
     Some(listeners) => listeners.retain(fn(listener) { listener() })
     None => ()

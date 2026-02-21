@@ -14,6 +14,10 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
     }
 
     // hardcode character for mvp
+    default_server.player_meso = 0
+    for _, items in default_server.player_items {
+      items.clear()
+    }
     let stats : @resource.EnumMap[@maple_stat.Id, Int] = @resource.EnumMap::default()
     stats.0.set(@maple_stat.Id::LEVEL, 10)
     stats.0.set(@maple_stat.Id::STR, 50)
@@ -42,6 +46,58 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
         vicious=0,
       ),
     )
+    let empty_equip_stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
+    items.push(
+      @maple_protocol.InventoryItemEntry::Equip(
+        invtype=InventoryType::EQUIPPED,
+        slot=-5,
+        id=1040002, // top
+        cash=false,
+        expire=0,
+        slots=7,
+        level=0,
+        stats=empty_equip_stats,
+        owner="",
+        flag=0,
+        itemlevel=0,
+        itemexp=0,
+        vicious=0,
+      ),
+    )
+    items.push(
+      @maple_protocol.InventoryItemEntry::Equip(
+        invtype=InventoryType::EQUIPPED,
+        slot=-6,
+        id=1060002, // bottom
+        cash=false,
+        expire=0,
+        slots=7,
+        level=0,
+        stats=empty_equip_stats,
+        owner="",
+        flag=0,
+        itemlevel=0,
+        itemexp=0,
+        vicious=0,
+      ),
+    )
+    items.push(
+      @maple_protocol.InventoryItemEntry::Equip(
+        invtype=InventoryType::EQUIPPED,
+        slot=-7,
+        id=1072005, // shoes
+        cash=false,
+        expire=0,
+        slots=7,
+        level=0,
+        stats=empty_equip_stats,
+        owner="",
+        flag=0,
+        itemlevel=0,
+        itemexp=0,
+        vicious=0,
+      ),
+    )
     let set_field_message = SetFieldMessage::SetField(
       stats=StatsEntry::{
         name: "kkkiio",
@@ -52,8 +108,8 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
         portal_id: default_server.last_portal_id,
       },
       inventory_entry=InventoryEntry::{
-        meso: 0,
-        slot_maxs: @resource.EnumMap::default(),
+        meso: default_server.player_meso,
+        slot_maxs: @resource.EnumMap(default_server.slot_max_by_tab),
         items,
       },
       skills=[],

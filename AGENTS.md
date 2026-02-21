@@ -20,6 +20,13 @@ moon 默认告警比较多, 主动修正代码减少告警.
 
 只写黑盒测试.
 
+执行 `moon test` 前先加载测试环境变量，避免 `selene-canvas` 在 Node.js 下因缺少 DOM 报错：
+
+```bash
+# 在仓库根目录执行
+source .env.test && moon test
+```
+
 ### Moonbit 快照测试
 
 使用 `inspect`/`json_inspect` 做快照断言, 不要自己填/修改 `content` 参数, 用 `moon test --update` 更新快照.
@@ -57,7 +64,11 @@ UPDATE_CANVAS_SNAPS=true moon test <test-target>
 
 ### 文档/注释
 
-所有 public 函数/类型/变量都要写接口注释.
+所有接口都要写使用注释, 包括:
+
+- `pub fn`.
+- `pub enum`, 尽量给每个 variant 加注释.
+- `pub struct`, 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
 
 Write documentation using `///` comments (started with `///|` to delimit the block code)
 
@@ -112,7 +123,7 @@ let v : Json = {
 
 资源放在 `./assets` 目录下, 目前还没提交到 git 仓库, 暂时用 `.gitignore` 忽略了, 等资源格式和组织方式确定/稳定后, 再提交到 git 仓库.
 
-详情阅读 [builtin_resource_loaders.mbt](src/lib/resource/builtin_resource_loaders.mbt) 和 [AGENTS.md](src/lib/resource/AGENTS.md).
+详情阅读 [builtin_resource_loaders.mbt](src/lib/resource/builtin_resource_loaders.mbt) .
 
 ### 地图资源
 
@@ -120,5 +131,5 @@ let v : Json = {
 
 ### 解析 nx 资源
 
-nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit struct , 并实现 `FromJson` 接口来解析数据.
+nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit `struct` , 并实现 `FromJson` 接口来解析数据.
 这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .

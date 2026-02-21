@@ -107,7 +107,7 @@ fn change_equipment(
     0 => player.character.get_look().remove_equip(slot)
     itemid =>
       @io_service.execute_background(async fn() {
-        let itemdata = @item.ItemData::get_async(itemid)
+        let itemdata = @item.ItemData::load_item_data(itemid)
         player.character.get_look().add_equip(itemdata, slot)
       })
   }

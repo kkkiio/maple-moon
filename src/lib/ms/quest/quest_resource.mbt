@@ -463,7 +463,9 @@ test "parse item check" {
   )
   inspect(
     quest_check.0,
-    content="MapBasedArray([{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4031162, count: 1}, {id: 4031161, count: 1}]}], unknown_checks: []}])",
+    content=(
+      #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4031162, count: 1}, {id: 4031161, count: 1}]}], unknown_checks: []}]
+    ),
   )
 }
 

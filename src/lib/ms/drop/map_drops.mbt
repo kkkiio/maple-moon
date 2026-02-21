@@ -1,7 +1,6 @@
 ///|
 struct MapDrops {
   drops : Map[Int, &Drop]
-  loading_drops : Array[@utils.Future[Result[&Drop, Error]]]
   spawns : @queue.Queue[DropSpawn]
   meso_icons : Map[MesoIcon, @resource.NxAnimation]
 }
@@ -23,7 +22,6 @@ fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
   )
   {
     drops: Map::new(),
-    loading_drops: Array::new(),
     spawns: @queue.new(),
     meso_icons,
   }
@@ -77,29 +75,15 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
           let drop = spawn.instantiate_meso(icon)
           self.drops.set(drop.get_oid(), drop)
         } else {
-          self.loading_drops.push(
-            @io_service.submit_background_task(async fn() {
-              let item_data = @item.ItemData::get_async(itemid)
-              spawn.instantiate_item(item_data.get_icon(true))
-            }),
-          )
+          let item_data = @item.request_item_data(itemid)
+          let drop = spawn.instantiate_item(item_data.get_icon(true))
+          self.drops.set(drop.get_oid(), drop)
         }
       }
       continue self.spawns.pop()
     }
     None => break
   }
-  self.loading_drops.retain(fn(it) {
-    guard it.poll() is Some(res) else { return true }
-    match res {
-      Ok(drop) => self.drops.set(drop.get_oid(), drop)
-      Err(e) => {
-        @log.error("failed to load drop", data={ "err": Show::to_string(e) })
-        return true
-      }
-    }
-    false
-  })
   let to_remove = Array::new()
   for oid, drop in self.drops {
     let layer = drop.update(physics)
@@ -120,10 +104,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
 
 ///|
 pub fn MapDrops::clear(self : MapDrops) -> Unit {
-  self.loading_drops.clear()
-  while self.spawns.pop() is Some(_) {
-
-  }
+  while self.spawns.pop() is Some(_) {}
   for _, drop in self.drops {
     drop.destroy()
   }

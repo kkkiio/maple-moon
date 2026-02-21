@@ -5,6 +5,8 @@ fn game_start(_delta : Double) -> Unit {
   @game_scene.setup_game_server_handlers()
   @monster.setup_game_server_handlers()
   @drop.setup_game_server_handlers()
+  @inventory_ui.setup_game_server_handlers()
+  @inventory_ui.init_inventory_ui()
 }
 
 ///|
@@ -25,6 +27,7 @@ fn main {
     @inventory_ui.inventory_ui_system,
     system_name="inventory_ui_system",
   )
+  .add_system(@item.item_data_system, system_name="item_data_system")
   .add_system(@char_look.char_look_system, system_name="char_look_system")
   .add_system(
     @char_look.update_after_image_system,

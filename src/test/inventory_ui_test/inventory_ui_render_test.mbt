@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol { type InventoryEntry, type InventoryType }
+using @maple_protocol { type InventoryEntry, type InventoryItemEntry, type InventoryType }
 
 ///|
 fn make_inventory_entry() -> InventoryEntry {
@@ -8,19 +8,37 @@ fn make_inventory_entry() -> InventoryEntry {
   slot_maxs.0.set(InventoryType::USE, 24)
   slot_maxs.0.set(InventoryType::SETUP, 24)
   slot_maxs.0.set(InventoryType::ETC, 24)
+  let items : Array[InventoryItemEntry] = [
+    InventoryItemEntry::Item(
+      invtype=InventoryType::EQUIP,
+      slot=1,
+      id=1060002,
+      cash=false,
+      expire=0,
+      count=25,
+      owner="",
+      flag=0,
+    ),
+    InventoryItemEntry::Item(
+      invtype=InventoryType::USE,
+      slot=1,
+      id=2000000,
+      cash=false,
+      expire=0,
+      count=25,
+      owner="",
+      flag=0,
+    ),
+  ]
   {
-    meso: 123456,
+    meso: 654321,
     slot_maxs,
-    items: [],
+    items,
   }
 }
 
 ///|
-async test "inventory ui render snapshot" {
-  defer @inventory_ui.set_inventory_visible(false)
-  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
-
+async fn setup_inventory_ui_test_scene() -> Unit {
   @capture_app.init_app(
     @system.App::new()
     .with_canvas_width(800.0)
@@ -30,6 +48,13 @@ async test "inventory ui render snapshot" {
     .add_system(@io_service.io_system, system_name="io_system"),
   )
 
+  let character_loader = @local_loader.make_local_character_loader()
+  let item_loader = @local_loader.make_local_item_loader()
+  let equip_data = @item.ItemData::load(1060002, character_loader, item_loader)
+  let use_data = @item.ItemData::load(2000000, character_loader, item_loader)
+  @item.ItemData::add_item_data(1060002, equip_data)
+  @item.ItemData::add_item_data(2000000, use_data)
+
   let ui_item_json = @fs.read_file_to_string("assets/ui/UIWindow2.img/Item.json")
     |> @json.parse
   @inventory_ui.set_panel_position_for_test(16, 16)
@@ -37,11 +62,33 @@ async test "inventory ui render snapshot" {
   @inventory_ui.set_inventory_entry(make_inventory_entry())
   @inventory_ui.set_inventory_visible(true)
 
+  for _ in 0..<60 {
+    @capture_app.run_loop(0.016)
+  }
+}
+
+///|
+async test "inventory ui renders equip tab with icon count and meso" {
+  defer @inventory_ui.set_inventory_visible(false)
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites.clear()
+  setup_inventory_ui_test_scene()
+  @capture_app.snapshot(
+    "src/test/inventory_ui_test/__snapshot__/inventory_ui_default.png",
+  )
+}
+
+///|
+async test "inventory ui renders use tab with icon count and meso" {
+  defer @inventory_ui.set_inventory_visible(false)
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites.clear()
+  setup_inventory_ui_test_scene()
+  @inventory_ui.set_tab_index_for_test(1)
   for _ in 0..<2 {
     @capture_app.run_loop(0.016)
   }
-
   @capture_app.snapshot(
-    "src/test/inventory_ui_test/__snapshot__/inventory_ui_default.png",
+    "src/test/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
   )
 }

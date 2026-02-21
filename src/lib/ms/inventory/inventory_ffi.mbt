@@ -121,9 +121,7 @@ pub fn use_item_at(
       guard mod.inventory.get_slot_item_at(type_id, slot_no.0) is Some(item) else {
         return "no item at slot \{slot_no} of \{kind}"
       }
-      guard @item.ItemData::get_loaded(item.item_id) is Some(item_data) else {
-        return "item data not loaded \{item.item_id}"
-      }
+      let item_data = @item.request_item_data(item.item_id)
       let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {
         e => return "failed to parse equip data: \{e}, id=\{item.item_id}"
       }

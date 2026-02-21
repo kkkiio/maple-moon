@@ -5,7 +5,7 @@ pub fn ImageLoader::load_image(self : ImageLoader, bid : Int) -> Image = "resour
 pub fn ImageLoader::get_path_image_loader() -> ImageLoader = "resource" "get_path_image_loader"
 
 ///|
-pub trait AsyncResourceLoader {
+pub(open) trait AsyncResourceLoader {
   async load_data(self : Self, path : StringView) -> Json
 }
 

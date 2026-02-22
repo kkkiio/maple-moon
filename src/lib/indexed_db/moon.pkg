@@ -1,4 +1,4 @@
 import {
-  "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/json",
   "rami3l/js-ffi/js",
 }

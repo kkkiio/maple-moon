@@ -554,20 +554,22 @@ fn register_scene_cleanup_once() -> Unit {
     return
   }
   scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(_reason) {
+  @game_state.listen_scene_clear(fn(reason) {
     let state = state_ref.val
     clear_render(state)
-    state.visible = false
-    state.tab_index = 0
-    state.panel_x = PANEL_X
-    state.panel_y = PANEL_Y
-    state.items_by_tab = new_items_map()
-    state.slot_max_by_tab = new_slot_max_map()
-    state.ui_resources = None
-    state.ui_loading = None
-    state.icon_by_item_id.clear()
-    state.icon_loading.clear()
-    state.binding_version += 1
+    if reason != @game_state.SceneClearReason::ChangeMap {
+      state.visible = false
+      state.tab_index = 0
+      state.panel_x = PANEL_X
+      state.panel_y = PANEL_Y
+      state.items_by_tab = new_items_map()
+      state.slot_max_by_tab = new_slot_max_map()
+      state.ui_resources = None
+      state.ui_loading = None
+      state.icon_by_item_id.clear()
+      state.icon_loading.clear()
+      state.binding_version += 1
+    }
     true
   })
 }

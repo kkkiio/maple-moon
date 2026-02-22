@@ -6,7 +6,7 @@ pub fn[T] submit_background_task(
   task : async () -> T,
 ) -> Future[Result[T, Error]] {
   let mut res : Result[T, Error]? = None
-  spawn_background(fn() {
+  spawn_background(() => {
     try {
       let value = task()
       res = Some(Ok(value))
@@ -26,7 +26,7 @@ pub fn execute_background(
   /// If not provided, the default behavior is to abort the program.
   on_error? : (Error) -> Unit = fn(err) { abort(err.to_string()) },
 ) -> Unit {
-  spawn_background(fn() { f() catch { e => on_error(e) } })
+  spawn_background(() => f() catch { e => on_error(e) })
 }
 
 ///|

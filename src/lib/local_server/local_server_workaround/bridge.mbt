@@ -12,12 +12,11 @@ let state : BridgeState = { server: None }
 ///|
 pub fn init_server() -> Unit {
   let server = @local_server.LocalServer::new(
+    db=@local_server.BrowserDB::new(),
     drop_rng=@random.Rand::chacha8(seed=@local_server.default_rand_seed.val),
   )
   state.server = Some(server)
-  @io_service.execute_background(async fn() {
-    @local_server.init_server(server)
-  })
+  @local_server.init_server(server)
 }
 
 ///|

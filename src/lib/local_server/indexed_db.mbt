@@ -1,75 +1,350 @@
 ///|
-priv struct IndexedDB {
-  db : @js.Value
+let local_server_db_name : String = "MapleMoonLocalServerDB"
+
+///|
+let character_meta_store_name : String = "character_meta"
+
+///|
+let character_core_store_name : String = "character_core"
+
+///|
+let character_inventory_store_name : String = "character_inventory"
+
+///|
+/// Generic async persistence backend.
+pub(open) trait DB {
+  async save_json(Self, String, String, Json) -> Unit
+  async load_json(Self, String, String) -> Json?
 }
 
 ///|
-async fn init_db() -> IndexedDB {
-  let db = indexed_db_open_promise("MapleMoonDB", 1).wait()
-  IndexedDB::{ db: @js.Value::cast_from(db) }
+pub struct BrowserDB {
+  db_ref : Ref[@indexed_db.IndexedDB?]
 }
 
 ///|
-fn IndexedDB::save_character_data(self : IndexedDB, data : Json) -> Unit {
-  let json_str = data.stringify()
-  let _ = save_character_data_promise(self.db, json_str)
+pub fn BrowserDB::new() -> BrowserDB {
+  { db_ref: Ref::new(None) }
 }
 
 ///|
-async fn IndexedDB::load_character_data(
-  self : IndexedDB,
-  character_id : Int,
+async fn BrowserDB::ensure_indexed_db(
+  self : BrowserDB,
+) -> @indexed_db.IndexedDB {
+  if self.db_ref.val is Some(db) {
+    return db
+  }
+  let db = @indexed_db.open(local_server_db_name, 2, [
+    character_meta_store_name, character_core_store_name, character_inventory_store_name,
+  ])
+  self.db_ref.val = Some(db)
+  db
+}
+
+///|
+pub impl DB for BrowserDB with save_json(self, store, key, data) {
+  let db = self.ensure_indexed_db()
+  let _ = db.save_json_promise(store, key, data).wait()
+}
+
+///|
+pub impl DB for BrowserDB with load_json(self, store, key) {
+  let db = self.ensure_indexed_db()
+  db.load_json(store, key)
+}
+
+///|
+/// In-memory DB implementation for tests.
+pub struct MemoryDB {
+  stores : Ref[Map[String, Map[String, Json]]]
+}
+
+///|
+pub fn MemoryDB::new() -> MemoryDB {
+  { stores: Ref::new({}) }
+}
+
+///|
+pub fn MemoryDB::get_json(
+  self : MemoryDB,
+  store : String,
+  key : String,
 ) -> Json? {
-  let val = load_character_data_promise(self.db, character_id).wait()
-  if @js.Value::is_null(val) || @js.Value::is_undefined(val) {
-    None
-  } else {
-    let json_str : String = @js.Value::cast(val)
-    Some(@json.parse(json_str))
+  guard self.stores.val.get(store) is Some(store_map) else { return None }
+  match store_map.get(key) {
+    Some(data) => Some(clone_json(data))
+    None => None
   }
 }
 
-// FFI
+///|
+fn MemoryDB::get_or_init_store(
+  self : MemoryDB,
+  store : String,
+) -> Map[String, Json] {
+  self.stores.val.get_or_init(store, fn() { Map::new() })
+}
 
 ///|
-extern "js" fn indexed_db_open_promise(
-  name : String,
-  version : Int,
-) -> @js.Promise =
-  #| (name, version) => new Promise((resolve, reject) => {
-  #|   const req = indexedDB.open(name, version);
-  #|   req.onsuccess = () => resolve(req.result);
-  #|   req.onerror = () => reject(req.error);
-  #|   req.onupgradeneeded = (e) => {
-  #|     const db = e.target.result;
-  #|     if (!db.objectStoreNames.contains("characters")) {
-  #|       db.createObjectStore("characters", { keyPath: "character_id" });
-  #|     }
-  #|   }
-  #| })
+pub impl DB for MemoryDB with save_json(self, store, key, data) {
+  self.get_or_init_store(store).set(key, clone_json(data))
+}
 
 ///|
-extern "js" fn save_character_data_promise(
-  db : @js.Value,
-  json_str : String,
-) -> @js.Promise =
-  #| (db, json_str) => new Promise((resolve, reject) => {
-  #|   const tx = db.transaction("characters", "readwrite");
-  #|   const store = tx.objectStore("characters");
-  #|   const req = store.put(JSON.parse(json_str));
-  #|   req.onsuccess = () => resolve(req.result);
-  #|   req.onerror = () => reject(req.error);
-  #| })
+pub impl DB for MemoryDB with load_json(self, store, key) {
+  guard self.stores.val.get(store) is Some(store_map) else { return None }
+  match store_map.get(key) {
+    Some(data) => Some(clone_json(data))
+    None => None
+  }
+}
 
 ///|
-extern "js" fn load_character_data_promise(
-  db : @js.Value,
-  key : Int,
-) -> @js.Promise =
-  #| (db, key) => new Promise((resolve, reject) => {
-  #|   const tx = db.transaction("characters", "readonly");
-  #|   const store = tx.objectStore("characters");
-  #|   const req = store.get(key);
-  #|   req.onsuccess = () => resolve(req.result ? JSON.stringify(req.result) : null);
-  #|   req.onerror = () => reject(req.error);
-  #| })
+fn clone_json(data : Json) -> Json {
+  @json.parse(data.stringify()) catch {
+    err => abort("failed to clone json: \{err.to_string()}")
+  }
+}
+
+///|
+fn character_meta_key(character_id : Int) -> String {
+  "char:\{character_id}:meta"
+}
+
+///|
+fn character_core_key(character_id : Int) -> String {
+  "char:\{character_id}:core"
+}
+
+///|
+fn character_inventory_tab_key(
+  character_id : Int,
+  invtype : @maple_protocol.InventoryType,
+) -> String {
+  "char:\{character_id}:inventory:\{invtype.int_value()}"
+}
+
+///|
+fn inventory_tabs() -> Array[@maple_protocol.InventoryType] {
+  [
+    @maple_protocol.InventoryType::EQUIP,
+    @maple_protocol.InventoryType::USE,
+    @maple_protocol.InventoryType::SETUP,
+    @maple_protocol.InventoryType::ETC,
+    @maple_protocol.InventoryType::CASH,
+  ]
+}
+
+///|
+async fn LocalServer::save_character_meta(
+  self : LocalServer,
+  character_id : Int,
+  revision : Int,
+  segment : String,
+) -> Unit {
+  self.db.save_json(
+    character_meta_store_name,
+    character_meta_key(character_id),
+    {
+      "version": 2,
+      "character_id": character_id,
+      "revision": revision,
+      "updated_segment": segment,
+    },
+  )
+}
+
+///|
+async fn LocalServer::save_character_core_data(
+  self : LocalServer,
+  character_id : Int,
+  revision : Int,
+) -> Unit {
+  self.db.save_json(
+    character_core_store_name,
+    character_core_key(character_id),
+    {
+      "character_id": character_id,
+      "revision": revision,
+      "map_id": self.last_map_id,
+      "portal_id": self.last_portal_id,
+      "meso": self.player_meso,
+    },
+  )
+}
+
+///|
+async fn LocalServer::save_character_inventory_data(
+  self : LocalServer,
+  character_id : Int,
+  revision : Int,
+) -> Unit {
+  for invtype in inventory_tabs() {
+    guard self.player_items.get(invtype) is Some(tab_items) else { continue }
+    let items : Array[Json] = []
+    for slot, item in tab_items {
+      let (item_id, count) = item
+      items.push({ "slot": slot, "item_id": item_id, "count": count })
+    }
+    self.db.save_json(
+      character_inventory_store_name,
+      character_inventory_tab_key(character_id, invtype),
+      {
+        "character_id": character_id,
+        "revision": revision,
+        "invtype": invtype.int_value(),
+        "slot_max": self.slot_max_by_tab.get(invtype).unwrap_or(0),
+        "items": items,
+      },
+    )
+  }
+}
+
+///|
+pub async fn LocalServer::save_character_core(
+  self : LocalServer,
+  character_id : Int,
+) -> Unit {
+  let revision = self.bump_character_revision()
+  self.save_character_core_data(character_id, revision)
+  self.save_character_meta(character_id, revision, "core")
+}
+
+///|
+pub async fn LocalServer::save_character_inventory(
+  self : LocalServer,
+  character_id : Int,
+) -> Unit {
+  let revision = self.bump_character_revision()
+  self.save_character_inventory_data(character_id, revision)
+  self.save_character_meta(character_id, revision, "inventory")
+}
+
+///|
+pub async fn LocalServer::save_character(
+  self : LocalServer,
+  character_id : Int,
+) -> Unit {
+  let revision = self.bump_character_revision()
+  self.save_character_core_data(character_id, revision)
+  self.save_character_inventory_data(character_id, revision)
+  self.save_character_meta(character_id, revision, "full")
+}
+
+///|
+fn LocalServer::load_character_core_data(
+  self : LocalServer,
+  data : Json,
+) -> Unit {
+  match data {
+    {
+      "map_id": Number(map_id, ..),
+      "portal_id": Number(portal_id, ..),
+      "meso": Number(meso, ..),
+      "revision": Number(revision, ..),
+      ..
+    } => {
+      self.last_map_id = map_id.to_int()
+      self.last_portal_id = portal_id.to_int()
+      self.player_meso = meso.to_int()
+      self.character_revision = revision.to_int()
+    }
+    {
+      "map_id": Number(map_id, ..),
+      "portal_id": Number(portal_id, ..),
+      "meso": Number(meso, ..),
+      ..
+    } => {
+      self.last_map_id = map_id.to_int()
+      self.last_portal_id = portal_id.to_int()
+      self.player_meso = meso.to_int()
+    }
+    _ => ()
+  }
+}
+
+///|
+fn LocalServer::load_character_inventory_tab_data(
+  self : LocalServer,
+  data : Json,
+) -> Unit {
+  match data {
+    {
+      "invtype": Number(invtype, ..),
+      "items": Array(items),
+      "revision": Number(revision, ..),
+      ..
+    } => {
+      if revision.to_int() > self.character_revision {
+        self.character_revision = revision.to_int()
+      }
+      guard @maple_protocol.InventoryType::by_value(invtype.to_int())
+        is Some(invtype) else {
+        return
+      }
+      guard self.player_items.get(invtype) is Some(tab_items) else { return }
+      tab_items.clear()
+      for item in items {
+        match item {
+          {
+            "slot": Number(slot, ..),
+            "item_id": Number(item_id, ..),
+            "count": Number(count, ..),
+            ..
+          } => tab_items.set(slot.to_int(), (item_id.to_int(), count.to_int()))
+          _ => ()
+        }
+      }
+    }
+    { "invtype": Number(invtype, ..), "items": Array(items), .. } => {
+      guard @maple_protocol.InventoryType::by_value(invtype.to_int())
+        is Some(invtype) else {
+        return
+      }
+      guard self.player_items.get(invtype) is Some(tab_items) else { return }
+      tab_items.clear()
+      for item in items {
+        match item {
+          {
+            "slot": Number(slot, ..),
+            "item_id": Number(item_id, ..),
+            "count": Number(count, ..),
+            ..
+          } => tab_items.set(slot.to_int(), (item_id.to_int(), count.to_int()))
+          _ => ()
+        }
+      }
+    }
+    _ => ()
+  }
+}
+
+///|
+pub async fn LocalServer::load_character(
+  self : LocalServer,
+  character_id : Int,
+) -> Unit {
+  self.reset_player_inventory_state()
+  let mut loaded_any = false
+  if self.db.load_json(
+      character_core_store_name,
+      character_core_key(character_id),
+    )
+    is Some(data) {
+    loaded_any = true
+    self.load_character_core_data(data)
+  }
+  for invtype in inventory_tabs() {
+    if self.db.load_json(
+        character_inventory_store_name,
+        character_inventory_tab_key(character_id, invtype),
+      )
+      is Some(data) {
+      loaded_any = true
+      self.load_character_inventory_tab_data(data)
+    }
+  }
+  if loaded_any {
+    return
+  }
+}

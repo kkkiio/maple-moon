@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/local_server"
 
 import {
+  "KKKIIO/maple-moon/lib/indexed_db",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/maple_protocol",
   "moonbitlang/core/json",
@@ -13,18 +14,36 @@ pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase
 
 pub let default_rand_seed : Ref[Bytes]
 
-pub async fn init_server(LocalServer) -> Unit
+pub fn init_server(LocalServer) -> Unit
 
 pub fn server_system(LocalServer) -> Unit
 
 // Errors
 
 // Types and methods
+pub struct BrowserDB {
+  db_ref : Ref[@indexed_db.IndexedDB?]
+}
+pub fn BrowserDB::new() -> Self
+pub impl DB for BrowserDB
+
 type LocalServer
 pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
-pub fn LocalServer::new(drop_rng? : @random.Rand) -> Self
+pub fn LocalServer::init_routes(Self) -> Unit
+pub async fn LocalServer::load_character(Self, Int) -> Unit
+pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
+pub async fn LocalServer::save_character(Self, Int) -> Unit
+pub async fn LocalServer::save_character_core(Self, Int) -> Unit
+pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
 #callsite(autofill(loc))
 pub fn[T : @maple_protocol.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+
+pub struct MemoryDB {
+  stores : Ref[Map[String, Map[String, Json]]]
+}
+pub fn MemoryDB::get_json(Self, String, String) -> Json?
+pub fn MemoryDB::new() -> Self
+pub impl DB for MemoryDB
 
 type MobDropDatabase
 pub fn MobDropDatabase::from_csv(String) -> Self
@@ -47,4 +66,8 @@ pub fn MobDropEntry::roll_quantity(Self, @random.Rand) -> Int
 // Type aliases
 
 // Traits
+pub(open) trait DB {
+  async save_json(Self, String, String, Json) -> Unit
+  async load_json(Self, String, String) -> Json?
+}
 

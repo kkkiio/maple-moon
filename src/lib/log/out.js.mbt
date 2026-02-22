@@ -1,6 +1,15 @@
 ///|
 extern "js" fn log_debug(msg : String) -> Unit =
-  #| (m) => console.debug(m)
+  #| (m) => {
+  #|   const isNode = typeof process !== "undefined" && !!process.versions?.node;
+  #|   if (isNode) {
+  #|     const flag = process.env?.MAPLE_DEBUG ?? "";
+  #|     if (flag !== "1" && flag !== "true" && flag !== "TRUE") {
+  #|       return;
+  #|     }
+  #|   }
+  #|   console.debug(m);
+  #| }
 
 ///|
 extern "js" fn log_info(msg : String) -> Unit =

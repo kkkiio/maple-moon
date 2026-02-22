@@ -1,23 +1,12 @@
 ///|
 fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
   let default_server = self
-  let _ : SelectCharMessage = @json.from_json(json)
+  let select_char_message : SelectCharMessage = @json.from_json(json)
+  default_server.current_character_id = select_char_message.character_id
   @io_service.execute_background(async fn() {
-    if default_server.db is Some(db) {
-      if db.load_character_data(1) is Some(data) {
-        match data {
-          { "map_id": Number(map_id, ..), .. } =>
-            default_server.last_map_id = map_id.to_int()
-          _ => ()
-        }
-      }
-    }
+    default_server.load_character(default_server.current_character_id)
 
     // hardcode character for mvp
-    default_server.player_meso = 0
-    for _, items in default_server.player_items {
-      items.clear()
-    }
     let stats : @resource.EnumMap[@maple_stat.Id, Int] = @resource.EnumMap::default()
     stats.0.set(@maple_stat.Id::LEVEL, 10)
     stats.0.set(@maple_stat.Id::STR, 50)
@@ -98,6 +87,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
         vicious=0,
       ),
     )
+    default_server.append_inventory_entries(items)
     let set_field_message = SetFieldMessage::SetField(
       stats=StatsEntry::{
         name: "kkkiio",

@@ -18,14 +18,12 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
       return
     }
     self.last_map_id = tm
-    if self.db is Some(db) {
-      db.save_character_data({ "character_id": 1.0, "map_id": tm.to_double() })
-    }
+    self.last_portal_id = portal_id
+    self.save_character_core_snapshot()
     let set_field_message : SetFieldMessage = SetFieldMessage::ChangeMap(
       map_id=tm,
       portal_id~,
     )
-    self.last_portal_id = portal_id
     self.send_server_message(set_field_message)
     self.spawn_mobs_for_map(tm)
   })

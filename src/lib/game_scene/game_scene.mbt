@@ -295,9 +295,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
         None => ()
       }
-      @inventory_ui.set_inventory_entry(inventory_entry)
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
+      @inventory_ui.set_inventory_entry(inventory_entry)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,

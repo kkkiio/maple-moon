@@ -38,10 +38,7 @@ async test "mob hpbar render snapshot" {
 
   let map_mobs = @monster.MapMobs::new()
   map_mobs.add_mob(load_test_mob())
-  @monster.set_mobs({
-    map_mobs,
-    physics: @physics.empty_physics(),
-  })
+  @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
   map_mobs.for_each_mob(fn(_, mob) {
     mob.update(@physics.empty_physics()) |> ignore
     @position.positions.set(

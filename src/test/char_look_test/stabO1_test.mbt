@@ -61,8 +61,8 @@ async test "character stabO1" {
     _ => Map::new()
   }
   let weapon_icons = (
-    weapon_info.get("icon").map((json) => @json.from_json(json)).unwrap(),
-    weapon_info.get("iconRaw").map((json) => @json.from_json(json)).unwrap(),
+    weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    weapon_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let weapon_item = @item.ItemData::{
     src: weapon_node,

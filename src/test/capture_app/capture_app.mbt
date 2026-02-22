@@ -286,11 +286,17 @@ pub extern "js" fn Context2D::clear_rect(
   #|(ctx, x, y, w, h) => { ctx.clearRect(x, y, w, h); }
 
 ///|
-pub extern "js" fn Context2D::set_fill_style(self : Context2D, v : String) -> Unit =
+pub extern "js" fn Context2D::set_fill_style(
+  self : Context2D,
+  v : String,
+) -> Unit =
   #|(ctx, v) => { ctx.fillStyle = v; }
 
 ///|
-pub extern "js" fn Context2D::set_stroke_style(self : Context2D, v : String) -> Unit =
+pub extern "js" fn Context2D::set_stroke_style(
+  self : Context2D,
+  v : String,
+) -> Unit =
   #|(ctx, v) => { ctx.strokeStyle = v; }
 
 ///|
@@ -298,7 +304,10 @@ pub extern "js" fn Context2D::set_font(self : Context2D, v : String) -> Unit =
   #|(ctx, v) => { ctx.font = v; }
 
 ///|
-pub extern "js" fn Context2D::set_text_align(self : Context2D, v : String) -> Unit =
+pub extern "js" fn Context2D::set_text_align(
+  self : Context2D,
+  v : String,
+) -> Unit =
   #|(ctx, v) => { ctx.textAlign = v; }
 
 ///|

@@ -36,6 +36,9 @@ fn game_start(_delta : Double) -> Unit {
 
 ///|
 fn main {
+  @item.set_item_data_system(
+    @item.ItemDataSystem::new(@resource.get_item_loader()),
+  )
   @system.App::new()
   .with_image_smooth(false)
   .with_canvas_width(@graphics.view_size.0 |> Double::from_int)
@@ -52,7 +55,10 @@ fn main {
     @inventory_ui.inventory_ui_system,
     system_name="inventory_ui_system",
   )
-  .add_system(@item.item_data_system, system_name="item_data_system")
+  .add_system(
+    delta => @item.get_item_data_system().run(delta),
+    system_name="item_data_system",
+  )
   .add_system(@char_look.char_look_system, system_name="char_look_system")
   .add_system(
     @char_look.update_after_image_system,

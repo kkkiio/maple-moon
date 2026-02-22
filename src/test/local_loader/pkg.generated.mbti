@@ -2,13 +2,18 @@
 package "KKKIIO/maple-moon/test/local_loader"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/resource",
 }
 
 // Values
 pub fn make_local_character_loader() -> @resource.AsyncLoader
 
+pub fn make_local_item_data_system() -> @item.ItemDataSystem
+
 pub fn make_local_item_loader() -> @resource.AsyncLoader
+
+pub fn use_local_item_data_system() -> Unit
 
 // Errors
 

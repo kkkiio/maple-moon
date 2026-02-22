@@ -1,9 +1,12 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/utils",
 }
 
-warnings = "-A"
+import {
+  "moonbitlang/async",
+} for "test"

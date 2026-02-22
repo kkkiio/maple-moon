@@ -36,6 +36,19 @@ fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
 }
 
 ///|
+fn get_item_text_src(texts : Json, category : String, item_id : Int) -> Json {
+  match texts {
+    Object(categories) =>
+      match categories.get(category) {
+        Some(Object(items)) =>
+          items.get(item_id.to_string()).unwrap_or(Json::null())
+        _ => Json::null()
+      }
+    _ => Json::null()
+  }
+}
+
+///|
 pub async fn ItemData::load(
   item_id : Int,
   character_loader : AsyncLoader,
@@ -45,67 +58,50 @@ pub async fn ItemData::load(
   let (category, src, strsrc) : (String, Json, Json) = match
     parse_category1(item_id).unwrap_or_error(INVALID_ITEM_ID(item_id)) {
     EQUIP => {
-      guard parse_equip_category(item_id) is Some(category) else {
-        raise LoadDataError::INVALID_ITEM_ID(item_id)
-      }
+      let equip_id = EquipId::parse(item_id)
+      let category = equip_id.category
+      let equip_zid = equip_id.zid
       let src = character_loader
-        .load_res_async([category, "\{zid}.img"])
+        .load_res_async([category, "\{equip_zid}.img"])
         .value()
-      let strsrc = equip_texts
-        .as_object()
-        .bind(_.get(category))
-        .bind(_.as_object())
-        .bind(_.get(item_id.to_string()))
-        .unwrap_or(Json::null())
+      let strsrc = get_item_text_src(equip_texts, category, item_id)
       (category, src, strsrc)
     }
     CONSUME => {
       let category = "Consume"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-      let src = item_loader.load_res_async(["Consume", strprefix + ".img", zid])
-      let strsrc = consume_texts
-        .as_object()
-        .bind(_.get(category))
-        .bind(_.as_object())
-        .bind(_.get(item_id.to_string()))
-        .unwrap_or(Json::null())
-      (category, src.value(), strsrc)
+      let bundle = strprefix + ".img"
+      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let src = get_item_data_from_bundle(bundle_json, item_id, zid)
+      let strsrc = get_item_text_src(consume_texts, category, item_id)
+      (category, src, strsrc)
     }
     INSTALL => {
       let category = "Install"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-      let src = item_loader.load_res_async(["Install", strprefix + ".img", zid])
-      let strsrc = install_texts
-        .as_object()
-        .bind(_.get(category))
-        .bind(_.as_object())
-        .bind(_.get(item_id.to_string()))
-        .unwrap_or(Json::null())
-      (category, src.value(), strsrc)
+      let bundle = strprefix + ".img"
+      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let src = get_item_data_from_bundle(bundle_json, item_id, zid)
+      let strsrc = get_item_text_src(install_texts, category, item_id)
+      (category, src, strsrc)
     }
     ETC => {
       let category = "Etc"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-      let src = item_loader.load_res_async(["Etc", strprefix + ".img", zid])
-      let strsrc = etc_texts
-        .as_object()
-        .bind(_.get(category))
-        .bind(_.as_object())
-        .bind(_.get(item_id.to_string()))
-        .unwrap_or(Json::null())
-      (category, src.value(), strsrc)
+      let bundle = strprefix + ".img"
+      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let src = get_item_data_from_bundle(bundle_json, item_id, zid)
+      let strsrc = get_item_text_src(etc_texts, category, item_id)
+      (category, src, strsrc)
     }
     CASH => {
       let category = "Cash"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
-      let src = item_loader.load_res_async(["Cash", strprefix + ".img", zid])
-      let strsrc = cash_texts
-        .as_object()
-        .bind(_.get(category))
-        .bind(_.as_object())
-        .bind(_.get(item_id.to_string()))
-        .unwrap_or(Json::null())
-      (category, src.value(), strsrc)
+      let bundle = strprefix + ".img"
+      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let src = get_item_data_from_bundle(bundle_json, item_id, zid)
+      let strsrc = get_item_text_src(cash_texts, category, item_id)
+      (category, src, strsrc)
     }
   }
   let str_src = strsrc
@@ -166,20 +162,58 @@ pub async fn ItemData::load(
 let cache : Map[Int, ItemData] = Map::new()
 
 ///|
+let bundle_cache : Map[String, Json] = Map::new()
+
+///|
+async fn load_item_bundle_cached(
+  category : String,
+  bundle : String,
+  item_loader : AsyncLoader,
+) -> Json {
+  let key = "\{category}/\{bundle}"
+  if bundle_cache.get(key) is Some(cached) {
+    return cached
+  }
+  let bundle_json = item_loader.load_res_async([category, bundle]).value()
+  bundle_cache.set(key, bundle_json)
+  bundle_json
+}
+
+///|
+fn get_item_data_from_bundle(
+  bundle_json : Json,
+  item_id : Int,
+  zid : String,
+) -> Json raise LoadDataError {
+  match bundle_json {
+    Object(items) =>
+      match items.get(zid) {
+        Some(item_data) => item_data
+        None => raise LoadDataError::DATA_NOT_FOUND(item_id)
+      }
+    _ => raise LoadDataError::DATA_NOT_FOUND(item_id)
+  }
+}
+
+///|
 fn ItemData::get_loaded(id : Int) -> ItemData? {
   cache.get(id)
 }
 
 ///|
 pub async fn ItemData::load_item_data(id : Int) -> ItemData {
+  ItemData::load_item_data_with_loader(id, get_item_loader())
+}
+
+///|
+pub async fn ItemData::load_item_data_with_loader(
+  id : Int,
+  item_loader : AsyncLoader,
+) -> ItemData {
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load(
-    id,
-    @resource.get_character_loader(),
-    get_item_loader(),
-  )
+  let data = ItemData::load(id, @resource.get_character_loader(), item_loader)
   cache.set(id, data)
   data
 }

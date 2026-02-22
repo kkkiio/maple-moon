@@ -1,5 +1,9 @@
 ///|
-using @maple_protocol { type InventoryEntry, type InventoryItemEntry, type InventoryType }
+using @maple_protocol {
+  type InventoryEntry,
+  type InventoryItemEntry,
+  type InventoryType,
+}
 
 ///|
 fn make_inventory_entry() -> InventoryEntry {
@@ -30,11 +34,7 @@ fn make_inventory_entry() -> InventoryEntry {
       flag=0,
     ),
   ]
-  {
-    meso: 654321,
-    slot_maxs,
-    items,
-  }
+  { meso: 654321, slot_maxs, items }
 }
 
 ///|
@@ -44,7 +44,10 @@ async fn setup_inventory_ui_test_scene() -> Unit {
     .with_canvas_width(800.0)
     .with_canvas_height(540.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@inventory_ui.inventory_ui_system, system_name="inventory_ui_system")
+    .add_system(
+      @inventory_ui.inventory_ui_system,
+      system_name="inventory_ui_system",
+    )
     .add_system(@io_service.io_system, system_name="io_system"),
   )
 
@@ -55,7 +58,9 @@ async fn setup_inventory_ui_test_scene() -> Unit {
   @item.ItemData::add_item_data(1060002, equip_data)
   @item.ItemData::add_item_data(2000000, use_data)
 
-  let ui_item_json = @fs.read_file_to_string("assets/ui/UIWindow2.img/Item.json")
+  let ui_item_json = @fs.read_file_to_string(
+      "assets/ui/UIWindow2.img/Item.json",
+    )
     |> @json.parse
   @inventory_ui.set_panel_position_for_test(16, 16)
   @inventory_ui.set_item_json_for_test(ui_item_json)

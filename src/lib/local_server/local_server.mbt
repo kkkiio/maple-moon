@@ -34,8 +34,6 @@ pub let default_rand_seed : Ref[Bytes] = Ref::new(
 /// it is burdensome to implement the full client features, so we implement a local server here to play the game offline.
 ///
 /// We can use the built-in resource loader in `@resource` package to load the resources and implement the server logic here.
-///
-/// We should not reference any game-packages(like `@map`, `@monster`, etc.) here to avoid circular dependencies.
 struct LocalServer {
   client_message_queue : @queue.Queue[(Int, Json)]
   server_message_queue : @queue.Queue[(Int, Json)]
@@ -76,7 +74,7 @@ priv struct PendingMobSpawn {
 
 ///|
 pub fn LocalServer::new(
-  drop_rng~ : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
+  drop_rng? : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
 ) -> LocalServer {
   {
     client_message_queue: @queue.new(),
@@ -209,6 +207,8 @@ fn LocalServer::on_mob_damage(self : LocalServer, json : Json) -> Unit raise {
 
 ///|
 /// 为怪物生成掉落
+/// 
+/// WORKAROUND: skip equip items before we implement the equip data preloading.
 fn LocalServer::spawn_drops_for_mob(
   self : LocalServer,
   mob : ServerMob,
@@ -223,6 +223,10 @@ fn LocalServer::spawn_drops_for_mob(
     self.drop_rng,
   )
   for msg in messages {
+    if not(msg.meso) &&
+      InventoryType::by_item_id(msg.item_id) == Some(InventoryType::EQUIP) {
+      continue
+    }
     self.drops.set(msg.oid, msg)
     self.send_server_message(msg)
   }
@@ -236,12 +240,8 @@ fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
   if drop.meso {
     let gain = drop.item_id
     self.player_meso += gain
-    self.send_server_message(ChangeStatsMesoMessage::{
-      meso: self.player_meso,
-    })
-    self.send_server_message(ShowStatusMesoGainMessage::{
-      gain,
-    })
+    self.send_server_message(ChangeStatsMesoMessage::{ meso: self.player_meso })
+    self.send_server_message(ShowStatusMesoGainMessage::{ gain, })
     self.drops.remove(msg.oid) |> ignore
     self.send_server_message(@maple_protocol.RemoveLootMessage::{
       mode: 2,
@@ -260,8 +260,10 @@ fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
-fn apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
-  guard InventoryType::by_item_id(item_id) is Some(invtype) else { return false }
+fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
+  guard InventoryType::by_item_id(item_id) is Some(invtype) else {
+    return false
+  }
   guard self.player_items.get(invtype) is Some(tab_items) else { return false }
   let stackable = invtype != InventoryType::EQUIP
   if stackable {
@@ -286,7 +288,10 @@ fn apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
       }
     }
   }
-  guard find_next_empty_slot(tab_items, self.slot_max_by_tab.get(invtype).unwrap_or(0))
+  guard find_next_empty_slot(
+      tab_items,
+      self.slot_max_by_tab.get(invtype).unwrap_or(0),
+    )
     is Some(slot) else {
     return false
   }
@@ -308,7 +313,7 @@ fn apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
 
 ///|
 fn find_next_empty_slot(items : Map[Int, (Int, Int)], slot_max : Int) -> Int? {
-  for slot in 1..=slot_max {
+  for slot in 1..<=slot_max {
     if not(items.contains(slot)) {
       return Some(slot)
     }
@@ -524,7 +529,9 @@ test "pickup meso updates inventory meso and removes drop" {
     fail("missing third server message")
   }
   inspect(third_code, content="269")
-  let third_msg : @maple_protocol.RemoveLootMessage = @json.from_json(third_json)
+  let third_msg : @maple_protocol.RemoveLootMessage = @json.from_json(
+    third_json,
+  )
   inspect(third_msg.oid, content="100001")
 }
 
@@ -575,7 +582,9 @@ test "pickup item adds inventory entry and removes drop" {
     fail("missing second server message")
   }
   inspect(second_code, content="269")
-  let second_msg : @maple_protocol.RemoveLootMessage = @json.from_json(second_json)
+  let second_msg : @maple_protocol.RemoveLootMessage = @json.from_json(
+    second_json,
+  )
   inspect(second_msg.oid, content="100002")
 }
 

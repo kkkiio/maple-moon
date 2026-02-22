@@ -74,17 +74,7 @@ pub fn draw_picture(
     transform.tx,
     transform.ty,
   )
-  ctx.draw_image(
-    img,
-    0.0,
-    0.0,
-    width,
-    height,
-    0.0,
-    0.0,
-    width,
-    height,
-  )
+  ctx.draw_image(img, 0.0, 0.0, width, height, 0.0, 0.0, width, height)
   ctx.restore()
 }
 

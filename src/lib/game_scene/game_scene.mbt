@@ -149,6 +149,7 @@ pub fn get_stage() -> Stage? {
   stage_ref.val
 }
 
+///|
 fn required_equipped_item_id_or_fail(
   items : Array[@maple_protocol.InventoryItemEntry],
   slot_id : @slot.Id,
@@ -179,9 +180,14 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         return
       }
       let player_item_ids = collect_inventory_item_ids(inventory_entry.items)
-      @item.ItemData::request_many(player_item_ids)
+      let item_data_system = @item.get_item_data_system()
+      item_data_system.request_consume_and_etc_preload()
+      item_data_system.request_many(player_item_ids)
 
-      if not(@item.ItemData::all_requested_ready_or_fail(player_item_ids)) {
+      if not(item_data_system.consume_and_etc_preload_ready_or_fail()) {
+        return
+      }
+      if not(item_data_system.all_requested_ready_or_fail(player_item_ids)) {
         return
       }
 
@@ -216,7 +222,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             let after_image_name = match weapon_data.get_info() {
               { "afterImage": Json::String(after_image), .. } => after_image
               _ => {
-                @log.fatal("weapon missing afterImage", data={ "item_id": weapon_id })
+                @log.fatal("weapon missing afterImage", data={
+                  "item_id": weapon_id,
+                })
                 panic()
               }
             }

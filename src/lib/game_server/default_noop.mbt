@@ -41,4 +41,5 @@ pub fn server_system(delta : Double) -> Unit {
 ///
 /// The default virtual-package implementation is a no-op fallback.
 pub fn init_server() -> Unit {
+
 }

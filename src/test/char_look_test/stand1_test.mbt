@@ -90,8 +90,8 @@ async test "character stand1" {
     _ => Map::new()
   }
   let coat_icons = (
-    coat_info.get("icon").map((json) => @json.from_json(json)).unwrap(),
-    coat_info.get("iconRaw").map((json) => @json.from_json(json)).unwrap(),
+    coat_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    coat_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let coat_item = @item.ItemData::{
     src: coat_node,
@@ -120,8 +120,8 @@ async test "character stand1" {
     _ => Map::new()
   }
   let pants_icons = (
-    pants_info.get("icon").map((json) => @json.from_json(json)).unwrap(),
-    pants_info.get("iconRaw").map((json) => @json.from_json(json)).unwrap(),
+    pants_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    pants_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let pants_item = @item.ItemData::{
     src: pants_node,
@@ -150,8 +150,8 @@ async test "character stand1" {
     _ => Map::new()
   }
   let shoes_icons = (
-    shoes_info.get("icon").map((json) => @json.from_json(json)).unwrap(),
-    shoes_info.get("iconRaw").map((json) => @json.from_json(json)).unwrap(),
+    shoes_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    shoes_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let shoes_item = @item.ItemData::{
     src: shoes_node,

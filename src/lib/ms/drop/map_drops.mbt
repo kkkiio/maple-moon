@@ -20,11 +20,7 @@ fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
   meso_icons[MesoIcon::BAG] = nx_node_to_animation(
     get_icon_raw(src, "09000003"),
   )
-  {
-    drops: Map::new(),
-    spawns: @queue.new(),
-    meso_icons,
-  }
+  { drops: Map::new(), spawns: @queue.new(), meso_icons }
 }
 
 ///|
@@ -104,7 +100,9 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
 
 ///|
 pub fn MapDrops::clear(self : MapDrops) -> Unit {
-  while self.spawns.pop() is Some(_) {}
+  while self.spawns.pop() is Some(_) {
+
+  }
   for _, drop in self.drops {
     drop.destroy()
   }

@@ -6,7 +6,9 @@ pub struct LocalDirResourceLoader {
 
 ///|
 /// Creates a local directory loader rooted at `root_path`.
-pub fn LocalDirResourceLoader::new(root_path : String) -> LocalDirResourceLoader {
+pub fn LocalDirResourceLoader::new(
+  root_path : String,
+) -> LocalDirResourceLoader {
   { root_path, }
 }
 
@@ -42,6 +44,18 @@ pub fn make_local_item_loader() -> @resource.AsyncLoader {
       "Pet/": LocalDirResourceLoader::new("assets/Item/Pet"),
     }),
   )
+}
+
+///|
+/// Creates an item-data system wired to the local test item loader.
+pub fn make_local_item_data_system() -> @item.ItemDataSystem {
+  @item.ItemDataSystem::new(make_local_item_loader())
+}
+
+///|
+/// Installs the local-loader-backed item-data system for tests.
+pub fn use_local_item_data_system() -> Unit {
+  @item.set_item_data_system(make_local_item_data_system())
 }
 
 ///|

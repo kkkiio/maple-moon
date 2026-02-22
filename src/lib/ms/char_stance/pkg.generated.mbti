@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/char_stance"
+package "KKKIIO/maple-moon/lib/ms/char_stance"
 
 // Values
 pub fn secondof(StanceId) -> StanceId

@@ -9,7 +9,7 @@ import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/entity",
-  "KKKIIO/maple-moon/lib/logic_fps",
+  "KKKIIO/maple-moon/lib/ms/logic_fps",
 }
 
 warnings = "-A"

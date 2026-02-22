@@ -16,7 +16,7 @@ import {
   "Milky2018/selene/position",
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/io_service",
-  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
 }
 
 import {

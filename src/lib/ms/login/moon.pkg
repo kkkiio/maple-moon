@@ -30,7 +30,7 @@ import {
   "KKKIIO/maple-moon/lib/game_scene",
   "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/legacy_types",
-  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
 }
 
 warnings = "-A"

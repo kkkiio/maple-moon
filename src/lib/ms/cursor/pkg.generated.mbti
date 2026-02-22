@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/cursor"
+package "KKKIIO/maple-moon/lib/ms/cursor"
 
 import {
   "KKKIIO/maple-moon/lib/ui",

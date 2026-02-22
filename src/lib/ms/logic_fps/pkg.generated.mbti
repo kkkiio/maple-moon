@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/logic_fps"
+package "KKKIIO/maple-moon/lib/ms/logic_fps"
 
 // Values
 pub const LOGIC_FPS : Int = 125

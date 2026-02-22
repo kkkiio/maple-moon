@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/character"
 
 import {
-  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/char_look",

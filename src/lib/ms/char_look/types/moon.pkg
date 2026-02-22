@@ -1,7 +1,7 @@
 import {
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/char_stance",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
 }
 
 warnings = "-A"

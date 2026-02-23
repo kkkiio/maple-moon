@@ -15,10 +15,10 @@ pub(all) struct SkillData {
   desc : String
   levels : Map[Int, String]
   req_skills : @hashmap.HashMap[Int, Int]
-  icons : FixedArray[@graphics.Texture] // NORMAL, DISABLED, MOUSEOVER
+  icons : (@resource.NxTexture, @resource.NxTexture, @resource.NxTexture) // NORMAL, DISABLED, MOUSEOVER
   /// Internal: raw JSON source for legacy effect construction.
   /// Will be removed when effect system is refactored.
-  src : @resource.NxNode
+  src : Json
 }
 
 ///|
@@ -139,10 +139,10 @@ pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
     icon_disabled: self.icon_disabled,
     icon_mouseover: self.icon_mouseover,
     elem_attr: self.elem_attr,
-    req_skills: self.req_skills.inner().map_or({}, fn(it) { it.inner() }),
+    req_skills: self.req_skills.0.map_or({}, fn(it) { it.0 }),
     invisible: self.invisible,
-    level_stats: self.level_stats.inner(),
-    req_weapon: self.req_weapon.inner(),
+    level_stats: self.level_stats.0,
+    req_weapon: self.req_weapon.0,
   }
 }
 
@@ -190,19 +190,19 @@ pub impl @json.FromJson for SkillTextResource with from_json(json, path) -> Skil
 /// Note: src is used for legacy effect construction and will be removed.
 pub fn SkillData::new(
   id : Int,
-  skill_src : @resource.NxNode,
+  skill_src : Json,
   skill_res : SkillResource,
   text_src : SkillTextResource,
 ) -> SkillData {
   let strid = @utils.stoi_left_pad0(id, 7)
   let jobid = strid.view(end_offset=3)
 
-  // Load icons
-  let icons = FixedArray::from_array([
-    skill_res.icon |> @graphics.Texture::load(),
-    skill_res.icon_disabled |> @graphics.Texture::load(),
-    skill_res.icon_mouseover |> @graphics.Texture::load(),
-  ])
+  // Keep raw icon resources; UI decides when/how to materialize render assets.
+  let icons = (
+    skill_res.icon,
+    skill_res.icon_disabled,
+    skill_res.icon_mouseover,
+  )
   let name = text_src.name
   let desc = text_src.desc
   let levels = text_src.levels
@@ -215,7 +215,7 @@ pub fn SkillData::new(
   } else {
     req_weapon_type
   }
-  let master_level = stats.size()
+  let master_level = stats.length()
   let passive = id % 10000 / 1000 == 0
   let invisible = skill_res.invisible
   let (is_attack, is_ranged) = flags_of(id)
@@ -325,8 +325,11 @@ priv struct LevelStats(Map[Int, Stats])
 ///|
 impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats raise @json.JsonDecodeError {
   let stats = {}
-  for key, value in json.as_object().unwrap_or({}) {
-    let level = try key |> @strconv.parse_int() catch {
+  guard json is Object(levels) else {
+    raise @json.JsonDecodeError((path, "expect object"))
+  }
+  for key, value in levels {
+    let level = @strconv.parse_int(key) catch {
       _ => raise @json.JsonDecodeError((path, "invalid level"))
     }
     let stat = match value {
@@ -353,43 +356,47 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
           ),
         }
       Object(sub) => {
-        let damage = if sub is { "damage": Number(d, ..) } {
+        let damage = if sub is { "damage": Number(d, ..), .. } {
           d / 100.0
         } else {
           0
         }
-        let matk = if sub is { "mad": Number(m), .. } { m.to_int() } else { 0 }
-        let fixdamage = if sub is { "fixdamage": Number(f, ..) } {
+        let matk = if sub is { "mad": Number(m, ..), .. } {
+          m.to_int()
+        } else {
+          0
+        }
+        let fixdamage = if sub is { "fixdamage": Number(f, ..), .. } {
           f.to_int()
         } else {
           0
         }
-        let mastery = if sub is { "mastery": Number(m, ..) } {
+        let mastery = if sub is { "mastery": Number(m, ..), .. } {
           m.to_int()
         } else {
           0
         }
-        let attackcount = if sub is { "attackCount": Number(a, ..) } {
+        let attackcount = if sub is { "attackCount": Number(a, ..), .. } {
           a.to_int()
         } else {
           1
         }
-        let mobcount = if sub is { "mobCount": Number(m, ..) } {
+        let mobcount = if sub is { "mobCount": Number(m, ..), .. } {
           m.to_int()
         } else {
           1
         }
-        let bulletcount = if sub is { "bulletCount": Number(b, ..) } {
+        let bulletcount = if sub is { "bulletCount": Number(b, ..), .. } {
           b.to_int()
         } else {
           1
         }
-        let bulletcost = if sub is { "bulletConsume": Number(b, ..) } {
+        let bulletcost = if sub is { "bulletConsume": Number(b, ..), .. } {
           b.to_int()
         } else {
           0
         }
-        let hpcost = if sub is { "hpCon": Number(h, ..) } {
+        let hpcost = if sub is { "hpCon": Number(h, ..), .. } {
           h.to_int()
         } else {
           0

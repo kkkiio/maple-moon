@@ -82,3 +82,14 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     "src/test/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
   )
 }
+
+///|
+test "parse CharLevel hit from real skill asset with structured decoder" {
+  let skill_json = @fs.read_file_to_string("assets/skill/500.img.json")
+    |> @json.parse
+  let skill_5001001 = match skill_json {
+    { "skill": { "5001001": skill, .. }, .. } => skill
+    _ => fail("missing skill 5001001 in assets/skill/500.img.json")
+  }
+  let _ = @combat_system.make_hit_effect(skill_5001001)
+}

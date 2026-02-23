@@ -38,7 +38,7 @@ pub async fn Skill::load(
 pub fn Skill::new(
   skill_id : Int,
   bullet_module : @bullet.Module,
-  src : @resource.NxNode,
+  src : Json,
   is_attack : Bool,
   master_level : Int,
   stats : Map[Int, @skill.Stats],
@@ -59,8 +59,10 @@ pub fn Skill::new(
   // } else {
   //   NoAffectedEffect::new() as &SkillAffectedEffect
   // }
-  let has_action0 = (try? src["action"]["0"].as_string()) is Ok(_)
-  let has_action1 = (try? src["action"]["1"].as_string()) is Ok(_)
+  let has_action0 = json_get_string(skill_get_path(src, ["action", "0"]))
+    is Some(_)
+  let has_action1 = json_get_string(skill_get_path(src, ["action", "1"]))
+    is Some(_)
   let action = if @skill.SkillId::from_int(skill_id) is Some(sk) &&
     (
       sk == @skill.SkillId::TELEPORT_FP ||
@@ -73,7 +75,10 @@ pub fn Skill::new(
   } else if has_action0 {
     SingleAction::new(src) as &SkillAction
   } else if is_attack {
-    let by_level = (try? src["level"]["1"]["action"].as_string()) is Ok(_)
+    let by_level = json_get_string(
+        skill_get_path(src, ["level", "1", "action"]),
+      )
+      is Some(_)
     if by_level {
       ByLevelAction::new(src, skill_id) as &SkillAction
     } else {
@@ -83,8 +88,10 @@ pub fn Skill::new(
   } else {
     NoAction::new() as &SkillAction
   }
-  let has_ball = src["ball"].get_children_count() > 0
-  let by_level_ball = src["level"]["1"]["ball"].get_children_count() > 0
+  let has_ball = json_has_children(skill_get_path(src, ["ball"]))
+  let by_level_ball = json_has_children(
+    skill_get_path(src, ["level", "1", "ball"]),
+  )
   let bullet = if by_level_ball {
     let bullet = BySkillLevelBullet::new(src, skill_id)
     fn(user : @character.Character, bulletid : Int) {
@@ -103,7 +110,7 @@ pub fn Skill::new(
     }
   }
   let after_image = Map::new()
-  if src.value() is { "afterimage": Object(map), .. } {
+  if src is { "afterimage": Object(map), .. } {
     for k, v in map {
       if k.has_suffix(".img") {
         continue
@@ -309,20 +316,18 @@ pub fn Skill::apply_hit_effects(
 pub struct UseEffect((@character.Character) -> Unit)
 
 ///|
-pub fn make_use_effect(
-  src : @resource.NxNode,
-  skill_id : Int,
-) -> UseEffect raise Error {
-  let by_level_effect = src["CharLevel"]["10"]["effect"].get_children_count() >
-    0
-  let multi_effect = src["effect0"].get_children_count() > 0
+pub fn make_use_effect(src : Json, skill_id : Int) -> UseEffect raise Error {
+  let by_level_effect = json_has_children(
+    skill_get_path(src, ["CharLevel", "10", "effect"]),
+  )
+  let multi_effect = json_has_children(skill_get_path(src, ["effect0"]))
   if by_level_effect {
     new_by_level_use_effect(src)
   } else if multi_effect {
     new_multi_use_effect(src)
   } else {
-    let is_animation = src["effect"]["0"].get_bitmap() is Some(_)
-    let has_effect1 = src["effect"]["1"].get_bitmap() is Some(_)
+    let is_animation = is_texture_node(skill_get_path(src, ["effect", "0"]))
+    let has_effect1 = is_texture_node(skill_get_path(src, ["effect", "1"]))
     if is_animation {
       new_single_use_effect(src)
     } else if has_effect1 {
@@ -342,7 +347,7 @@ pub fn make_use_effect(
 
 ///|
 struct NxSkill {
-  hit : Array[HitEffectNxResource]
+  hit : Array[NxHitEffect]
 }
 
 ///|
@@ -357,11 +362,15 @@ pub impl @json.FromJson for NxSkill with from_json(json, path) {
 
 ///|
 pub fn make_hit_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
-  let by_level_hit = src["CharLevel"]["10"]["hit"].get_children_count() > 0
-  let by_skill_level_hit = src["level"]["1"]["hit"].get_children_count() > 0
-  let res : NxSkill = @json.from_json(src.value())
+  let by_level_hit = json_has_children(
+    skill_get_path(src, ["CharLevel", "10", "hit"]),
+  )
+  let by_skill_level_hit = json_has_children(
+    skill_get_path(src, ["level", "1", "hit"]),
+  )
+  let res : NxSkill = @json.from_json(src)
   let has_hit0 = res.hit.get(0) is Some(_)
   let has_hit1 = res.hit.get(1) is Some(_)
   if by_level_hit {
@@ -379,4 +388,40 @@ pub fn make_hit_effect(
   } else {
     fn(_ : @combat_proto.AttackUser, _ : @monster.Mob) -> Unit {  }
   }
+}
+
+///|
+fn skill_get_path(json : Json, keys : Array[String]) -> Json {
+  let mut current = json
+  for key in keys {
+    current = match current {
+      Object(obj) => obj.get(key).unwrap_or(Json::null())
+      _ => Json::null()
+    }
+  }
+  current
+}
+
+///|
+fn json_has_children(json : Json) -> Bool {
+  match json {
+    Object(obj) => not(obj.is_empty())
+    _ => false
+  }
+}
+
+///|
+fn json_get_string(json : Json) -> String? {
+  match json {
+    String(s) => Some(s)
+    _ => None
+  }
+}
+
+///|
+fn is_texture_node(json : Json) -> Bool {
+  let texture_result : Result[@resource.NxTexture, Error] = try? @json.from_json(
+    json,
+  )
+  texture_result is Ok(_)
 }

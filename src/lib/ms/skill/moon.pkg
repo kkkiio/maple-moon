@@ -3,7 +3,6 @@ import {
   "moonbitlang/core/strconv",
   "moonbitlang/core/immut/hashmap",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",

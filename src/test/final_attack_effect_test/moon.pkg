@@ -4,6 +4,7 @@ import {
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/monster",
+  "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/test/capture_app",

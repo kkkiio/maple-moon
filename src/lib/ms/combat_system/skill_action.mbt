@@ -26,8 +26,12 @@ struct SingleAction {
 }
 
 ///|
-fn SingleAction::new(src : @resource.NxNode) -> SingleAction {
-  { action: src["action"]["0"].get_string() }
+fn SingleAction::new(src : Json) -> SingleAction {
+  let action = match src {
+    { "action": { "0": String(action), .. }, .. } => action
+    _ => ""
+  }
+  { action, }
 }
 
 ///|
@@ -45,13 +49,13 @@ struct TwoHandedAction {
 }
 
 ///|
-fn TwoHandedAction::new(src : @resource.NxNode) -> TwoHandedAction {
-  {
-    actions: @utils.BoolPair::new(
-      src["action"]["0"].get_string(),
-      src["action"]["1"].get_string(),
-    ),
+fn TwoHandedAction::new(src : Json) -> TwoHandedAction {
+  let (action0, action1) = match src {
+    { "action": { "0": String(action0), "1": String(action1), .. }, .. } =>
+      (action0, action1)
+    _ => ("", "")
   }
+  { actions: @utils.BoolPair::new(action0, action1) }
 }
 
 ///|
@@ -68,12 +72,14 @@ struct ByLevelAction {
 }
 
 ///|
-fn ByLevelAction::new(src : @resource.NxNode, id : Int) -> ByLevelAction raise {
+fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
   let actions = Map::new()
-  for sub in src["level"] {
-    let level = @strconv.parse_int(sub.name())
-    let action = sub["action"].get_string()
-    actions.set(level, action)
+  if src is { "level": Object(levels), .. } {
+    for level, sub in levels {
+      if sub is { "action": String(action), .. } {
+        actions.set(@strconv.parse_int(level), action)
+      }
+    }
   }
   { actions, skill_id: id }
 }

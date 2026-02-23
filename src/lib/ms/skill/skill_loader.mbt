@@ -59,7 +59,7 @@ pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
   let skill_json = extract_skill_from_bundle(bundle_json, strid, id)
 
   // 5. Load text data (skill name, description)
-  let text_json = load_skill_text(id, strid)
+  let text_json = load_skill_text(strid)
 
   // 6. Parse and cache
   let data = parse_skill_data(id, skill_json, text_json)
@@ -147,11 +147,11 @@ fn extract_skill_from_bundle(
 
 ///|
 /// Load skill text (name, description, level descriptions).
-fn load_skill_text(id : Int, strid : String) -> Json {
+fn load_skill_text(strid : String) -> Json {
   // text_src is loaded from String.wz in text_data.mbt
-  match text_src.as_object() {
-    Some(obj) => obj.get(strid).unwrap_or(Json::null())
-    None => Json::null()
+  match text_src {
+    Object(obj) => obj.get(strid).unwrap_or(Json::null())
+    _ => Json::null()
   }
 }
 
@@ -172,14 +172,8 @@ fn parse_skill_data(
     _ => { name: "", desc: "", levels: {} }
   }
 
-  // Build SkillData (pass skill_json for legacy NxNode construction)
+  // Build SkillData from parsed resources
   SkillData::from_resources(id, skill_json, skill_res.simplify(), text_res)
-}
-
-///|
-/// Create NxNode from parsed skill JSON (for legacy effect construction).
-fn create_nx_node(skill_json : Json) -> @resource.NxNode {
-  @resource.NxNode::from_test_value(skill_json)
 }
 
 ///|
@@ -190,9 +184,7 @@ fn SkillData::from_resources(
   skill_res : SkillResource,
   text_res : SkillTextResource,
 ) -> SkillData {
-  // Create legacy NxNode for effect construction
-  let src = create_nx_node(skill_json)
-  SkillData::new(id, src, skill_res, text_res)
+  SkillData::new(id, skill_json, skill_res, text_res)
 }
 
 ///|

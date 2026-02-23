@@ -1,18 +1,21 @@
 ///|
 fn new_skill_use_effect_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@character.Character) -> Unit) raise Error {
-  let animation : @resource.NxAnimation = @json.from_json(src.value())
-  let z = src["z"].get_int()
+  let animation : @resource.NxAnimation = @json.from_json(src)
+  let z = match src {
+    { "z": Number(z, ..), .. } => z.to_int()
+    _ => 0
+  }
   fn(c : @character.Character) -> Unit { c.show_attack_effect(animation, z) }
 }
 
 ///|
 /// An effect which displays an animation over the character's position
 fn new_single_use_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@character.Character) -> Unit) raise Error {
-  let effect = new_skill_use_effect_effect(src["effect"])
+  let effect = new_skill_use_effect_effect(use_effect_get_path(src, ["effect"]))
   fn(c : @character.Character) -> Unit { effect(c) }
 }
 
@@ -20,11 +23,11 @@ fn new_single_use_effect(
 /// An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
 fn new_twohanded_use_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = @utils.BoolPair::new(
-    new_skill_use_effect_effect(src["effect"]["0"]),
-    new_skill_use_effect_effect(src["effect"]["1"]),
+    new_skill_use_effect_effect(use_effect_get_path(src, ["effect", "0"])),
+    new_skill_use_effect_effect(use_effect_get_path(src, ["effect", "1"])),
   )
   fn(c : @character.Character) -> Unit {
     let twohanded = c.is_two_handed()
@@ -35,15 +38,15 @@ fn new_twohanded_use_effect(
 ///|
 /// An effect which displays multiple animations over the character's position
 fn new_multi_use_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
   let mut no = -1
-  let mut sub = src["effect"]
-  while not(sub.is_null()) {
+  let mut sub = use_effect_get_path(src, ["effect"])
+  while sub != Json::null() {
     effects.push(new_skill_use_effect_effect(sub))
     no += 1
-    sub = src["effect" + no.to_string()]
+    sub = use_effect_get_path(src, ["effect" + no.to_string()])
   }
   fn(c) {
     for effect in effects {
@@ -55,13 +58,16 @@ fn new_multi_use_effect(
 ///|
 /// The animation changes with the character level
 fn new_by_level_use_effect(
-  src : @resource.NxNode,
+  src : Json,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
-  for sub in src["CharLevel"] {
-    let level = @strconv.parse_int(sub.name())
-    let effect = new_skill_use_effect_effect(sub["effect"])
-    effects.push((level, effect))
+  if src is { "CharLevel": Object(level_map), .. } {
+    for level, sub in level_map {
+      let effect = new_skill_use_effect_effect(
+        use_effect_get_path(sub, ["effect"]),
+      )
+      effects.push((@strconv.parse_int(level), effect))
+    }
   }
   effects.sort_by_key(fn(it) { it.0 })
   fn(c) {
@@ -84,4 +90,16 @@ fn new_by_level_use_effect(
 /// Use effect for Iron Body
 fn new_iron_body_use_effect() -> (@character.Character) -> Unit {
   fn(c) { c.show_iron_body() }
+}
+
+///|
+fn use_effect_get_path(json : Json, keys : Array[String]) -> Json {
+  let mut current = json
+  for key in keys {
+    current = match current {
+      Object(obj) => obj.get(key).unwrap_or(Json::null())
+      _ => Json::null()
+    }
+  }
+  current
 }

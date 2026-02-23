@@ -11,9 +11,13 @@ struct SkillAffectedEffectEffect {
 
 ///|
 fn SkillAffectedEffectEffect::new(
-  src : @resource.NxNode,
+  src : Json,
 ) -> SkillAffectedEffectEffect raise {
-  { animation: @json.from_json(src.value()), z: src["z"].get_int() }
+  let z = match src {
+    { "z": Number(z, ..), .. } => z.to_int()
+    _ => 0
+  }
+  { animation: @json.from_json(src), z }
 }
 
 ///|
@@ -48,10 +52,13 @@ struct SingleAffectedEffect {
 }
 
 ///|
-fn SingleAffectedEffect::new(
-  src : @resource.NxNode,
-) -> SingleAffectedEffect raise {
-  { effect: SkillAffectedEffectEffect::new(src["affected"]) }
+fn SingleAffectedEffect::new(src : Json) -> SingleAffectedEffect raise {
+  let effect = if src is { "affected": affected, .. } {
+    SkillAffectedEffectEffect::new(affected)
+  } else {
+    SkillAffectedEffectEffect::new(Json::null())
+  }
+  { effect, }
 }
 
 ///|

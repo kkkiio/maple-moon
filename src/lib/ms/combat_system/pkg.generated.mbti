@@ -49,11 +49,11 @@ pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : Sourc
 
 pub fn make_attack_range(@combat_proto.Attack) -> @struct.Rectangle[Int]
 
-pub fn make_hit_effect(@resource.NxNode) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
+pub fn make_hit_effect(Json) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
 pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
 
-pub fn make_use_effect(@resource.NxNode, Int) -> UseEffect raise
+pub fn make_use_effect(Json, Int) -> UseEffect raise
 
 pub let move_map : Map[Int, SpecialMove]
 
@@ -117,9 +117,6 @@ pub impl Eq for ForbidReason
 type FuncSkillAction
 pub impl SkillAction for FuncSkillAction
 
-type HitEffectNxResource
-pub impl @json.FromJson for HitEffectNxResource
-
 pub(all) struct HitEvent {
   attacker_oid : Int
   move_id : Int
@@ -149,8 +146,22 @@ pub impl Default for NoAction
 type NoAffectedEffect
 pub impl Default for NoAffectedEffect
 
+type NxCharLevelHit
+pub impl @json.FromJson for NxCharLevelHit
+
+type NxHitEffect
+pub impl @json.FromJson for NxHitEffect
+
+type NxHitEntry
+pub impl @json.FromJson for NxHitEntry
+
 type NxSkill
 pub impl @json.FromJson for NxSkill
+
+type NxSkillLevelHit
+pub impl @json.FromJson for NxSkillLevelHit
+
+type NxTwoHandedHit
 
 type RegularAction
 pub impl SkillAction for RegularAction
@@ -177,7 +188,7 @@ pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
 pub async fn Skill::load(Int, @bullet.Module) -> Self
 pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
-pub fn Skill::new(Int, @bullet.Module, @resource.NxNode, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
+pub fn Skill::new(Int, @bullet.Module, Json, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
 
 type SkillAffectedEffectEffect
 

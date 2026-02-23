@@ -4,8 +4,8 @@ priv struct Ball {
 }
 
 ///|
-fn Ball::new(src : @resource.NxNode) -> Ball raise {
-  { animation: src |> @graphics.Animation::from_resource_ex() }
+fn Ball::new(src : Json) -> Ball raise {
+  ...
 }
 
 ///|
@@ -36,8 +36,12 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::new(src : @resource.NxNode) -> SingleBullet raise {
-  { ball: Ball::new(src["ball"]) }
+fn SingleBullet::new(src : Json) -> SingleBullet raise {
+  let ball = match src {
+    { "ball": ball, .. } => Ball::new(ball)
+    _ => Ball::new(Json::null())
+  }
+  { ball, }
 }
 
 ///|
@@ -56,14 +60,14 @@ priv struct BySkillLevelBullet {
 }
 
 ///|
-fn BySkillLevelBullet::new(
-  src : @resource.NxNode,
-  id : Int,
-) -> BySkillLevelBullet raise {
+fn BySkillLevelBullet::new(src : Json, id : Int) -> BySkillLevelBullet raise {
   let bullets = Map::new()
-  for sub in src["level"] {
-    let level = @strconv.parse_int(sub.name())
-    bullets.set(level, Ball::new(sub["ball"]))
+  if src is { "level": Object(levels), .. } {
+    for level, sub in levels {
+      if sub is { "ball": ball, .. } {
+        bullets.set(@strconv.parse_int(level), Ball::new(ball))
+      }
+    }
   }
   { bullets, skill_id: id }
 }

@@ -11,6 +11,11 @@ import {
 // Errors
 
 // Types and methods
+pub(all) struct MaxLevelSkillBook {
+}
+pub impl SkillBook for MaxLevelSkillBook
+pub impl Default for MaxLevelSkillBook
+
 pub(all) struct MockInventory {
 }
 pub impl Inventory for MockInventory

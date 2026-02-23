@@ -11,11 +11,7 @@ using @char_stats {type CharStats}
 using @maple_protocol {type ChangeMapMessage}
 
 ///|
-using @legacy_types {
-  trait Inventory,
-  trait SkillBook,
-  type MockInventory,
-}
+using @legacy_types {trait Inventory, trait SkillBook, type MockInventory}
 
 ///|
 /// SkillBook that returns max level for each skill from skill data.
@@ -139,7 +135,7 @@ pub fn Player::new(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
-  let skill_book : &SkillBook = CachedMaxLevelSkillBook::{}
+  let skill_book : &SkillBook = CachedMaxLevelSkillBook::{  }
   let character = @character.Character::new(
     entity,
     id,

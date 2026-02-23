@@ -138,6 +138,21 @@ test "MobDropDatabase::roll_drops" {
 }
 
 ///|
+test "MobDropDatabase::roll_drops filters quest drops" {
+  let csv =
+    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
+    #|1,100100,4000019,1,1,0,1000000
+    #|2,100100,4000020,1,1,2001,1000000
+
+  let db = MobDropDatabase::from_csv(csv)
+
+  let rand = @random.Rand::new()
+  let drops = db.roll_drops(100100, rand)
+  inspect(drops.length(), content="1")
+  inspect(drops[0].0, content="4000019")
+}
+
+///|
 test "parse csv with empty lines" {
   let csv =
     #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"

@@ -197,6 +197,10 @@ pub fn MobDropDatabase::roll_drops(
   let entries = self.get_drops(dropperid)
 
   for entry in entries {
+    // Local server 暂不支持 quest 条件判定，先过滤任务限定掉落（questid != 0）。
+    if entry.questid != 0 {
+      continue
+    }
     if entry.roll_drop(rand) {
       let qty = entry.roll_quantity(rand)
       result.push((entry.itemid, qty))

@@ -14,6 +14,7 @@ import {
   "Milky2018/selene/sprite",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
+  "moonbitlang/core/random",
 }
 
 // Values
@@ -68,7 +69,7 @@ pub struct MapMobs {
   mobs : Map[Int, Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
 }
 pub fn MapMobs::add_mob(Self, Mob) -> Unit
 pub fn MapMobs::clear(Self) -> Unit
@@ -118,7 +119,7 @@ pub struct Mob {
   can_fly : Bool
   is_boss : Bool
   name_label : @graphics.Text
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   mut anim_time : Double
   mut movements : Array[@physics.Movement]
   mut counter : Int
@@ -151,8 +152,8 @@ pub fn Mob::give_buff(Self, MobBuff) -> Unit
 pub fn Mob::is_alive(Self) -> Bool
 pub fn Mob::is_in_range(Self, @struct.Rectangle[Int]) -> Bool
 pub fn Mob::kill(Self, Int) -> Unit
-pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, @struct.Point[Int], @utils.Randomizer) -> Self
-pub fn Mob::new(NxMob, Int, Int, Int, Bool, @struct.Point[Int], object_id~ : Int, monster_id~ : Int, randomizer? : @utils.Randomizer) -> Self
+pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, @struct.Point[Int], @random.Rand) -> Self
+pub fn Mob::new(NxMob, Int, Int, Int, Bool, @struct.Point[Int], object_id~ : Int, monster_id~ : Int, randomizer? : @random.Rand) -> Self
 pub fn Mob::send_movement(Self, @struct.Point[Int], Array[@physics.Movement]) -> Unit
 pub fn Mob::set_control(Self, Int) -> Unit
 pub fn Mob::set_stance(Self, Stance) -> Unit
@@ -252,7 +253,7 @@ pub(all) struct MobSpawn {
   team : Int
   position : @struct.Point[Int]
 }
-pub async fn MobSpawn::instantiate(Self, @utils.Randomizer) -> Mob
+pub async fn MobSpawn::instantiate(Self, @random.Rand) -> Mob
 
 type MobSpecialAttack
 pub fn MobSpecialAttack::apply_useeffects(Self, Mob) -> Unit

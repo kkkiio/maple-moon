@@ -56,7 +56,7 @@ pub struct MapMobs {
   mobs : Map[Int, Mob]
   loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
 }
 
 ///|
@@ -65,7 +65,7 @@ pub fn MapMobs::new() -> MapMobs {
     mobs: Map::new(),
     spawns: @queue.new(),
     loading_mobs: Array::new(),
-    randomizer: @utils.Randomizer::new(),
+    randomizer: @random.Rand::new(),
   }
 }
 
@@ -295,7 +295,7 @@ pub fn create_mob_spawn(
 ///|
 pub async fn MobSpawn::instantiate(
   self : MobSpawn,
-  randomizer : @utils.Randomizer,
+  randomizer : @random.Rand,
 ) -> Mob {
   Mob::load(
     self.oid,

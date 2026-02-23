@@ -8,15 +8,15 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/character",
-  "KKKIIO/maple-moon/lib/ms/combat_impl",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
+  "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/job",
   "KKKIIO/maple-moon/lib/ms/keyboard",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/struct",
-  "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
+  "moonbitlang/core/random",
 }
 
 // Values
@@ -40,7 +40,7 @@ pub(all) struct Player {
   mut ladder : @map.Ladder?
   inventory : &@legacy_types.Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   mut skill_book : &@legacy_types.SkillBook
 }
 pub fn Player::attack_by_action(Self, String) -> Unit
@@ -73,8 +73,8 @@ pub fn Player::set_ladder(Self, @map.Ladder?) -> Unit
 pub fn Player::set_position(Self, Int, Int) -> Unit
 pub fn Player::set_state(Self, @character.CharState) -> Unit
 pub fn Player::show_iron_body(Self) -> Unit
-pub impl @combat_impl.CombatCharacter for Player
-pub impl @combat_impl.DamagableCharacter for Player
+pub impl @combat_system.CombatCharacter for Player
+pub impl @combat_system.DamagableCharacter for Player
 
 // Type aliases
 

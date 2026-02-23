@@ -14,7 +14,7 @@ pub(all) struct SkillData {
   name : String
   desc : String
   levels : Map[Int, String]
-  req_skills : @immut/hashmap.HashMap[Int, Int]
+  req_skills : @hashmap.HashMap[Int, Int]
   icons : FixedArray[@graphics.Texture] // NORMAL, DISABLED, MOUSEOVER
   /// Internal: raw JSON source for legacy effect construction.
   /// Will be removed when effect system is refactored.
@@ -235,7 +235,7 @@ pub fn SkillData::new(
     name,
     desc,
     levels,
-    req_skills: @immut/hashmap.from_iter(req_skills.iter()),
+    req_skills: @hashmap.from_iter(req_skills.iter()),
     icons,
     src: skill_src,
   }

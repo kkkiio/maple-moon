@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/ms/combat_impl"
+package "KKKIIO/maple-moon/lib/ms/combat_system"
 
 import {
   "KKKIIO/maple-moon/lib/graphics",
@@ -26,13 +26,21 @@ pub fn can_use_regular_attack(@weapon.Type, Int) -> ForbidReason
 
 pub fn check_attack_type(@character.Character, &@legacy_types.Inventory, Bool) -> (Bool, @combat_proto.AttackType)
 
+pub fn clear_events() -> Unit
+
 pub fn combat_system(Double) -> Unit
 
+pub fn gc_consumed_events() -> Unit
+
 pub fn get_basic_effect() -> BasicEffect
+
+pub fn get_combat() -> Combat?
 
 pub fn get_regular_attack_bullet(Int, @bullet.Module) -> @graphics.Animation
 
 pub fn get_skill_move(Int) -> SpecialMove?
+
+pub fn is_empty() -> Bool
 
 pub async fn load_skill_move(Int, @bullet.Module) -> SpecialMove
 
@@ -53,7 +61,13 @@ pub fn new_regular_attack(@bullet.Module) -> SpecialMove
 
 pub fn parse_cooldowns(@net.InPacket) -> Map[Int, Int] raise
 
+pub fn push_event(HitEvent) -> Unit
+
+pub fn read_new_events(Int) -> Array[HitEvent]
+
 pub fn register_move(SpecialMove) -> Unit
+
+pub fn register_reader() -> Int
 
 pub fn set_combat(Combat?) -> Unit
 
@@ -61,18 +75,13 @@ pub fn set_player(&DamagableCharacter?) -> Unit
 
 pub fn show_teleport_effect(@character.Character) -> Unit
 
+pub fn unregister_reader(Int) -> Unit
+
 pub fn use_move(&CombatCharacter, Int) -> Unit
 
 // Errors
 
 // Types and methods
-pub struct AttackEvent {
-  result : @combat_proto.AttackResult
-  user_input : Bool
-}
-pub impl Show for AttackEvent
-pub impl ToJson for AttackEvent
-
 type AttackMessage
 pub impl @net.OutMessage for AttackMessage
 pub impl Show for AttackMessage
@@ -89,9 +98,9 @@ type Combat
 pub fn Combat::apply_attack_to_mobs(Self, @character.Character, SpecialMove, @combat_proto.Attack, Array[Int], @combat_proto.AttackResult, Bool) -> Unit
 pub fn Combat::can_use(Self, &CombatCharacter, SpecialMove) -> ForbidReason
 pub fn Combat::draw(Self, Double, Double, Double) -> Unit
-pub fn Combat::listen_attack_events(Self, (AttackEvent) -> Bool) -> Unit
 pub fn Combat::new(@monster.MapMobs, @bullet.Module) -> Self
 pub fn Combat::set_cooldowns(Self, Map[Int, Int]) -> Unit
+pub fn Combat::trigger_extra_attack(Self, @character.Character, Int, Array[Int]) -> Unit
 pub fn Combat::update(Self) -> Unit
 
 pub(all) enum ForbidReason {
@@ -110,6 +119,28 @@ pub impl SkillAction for FuncSkillAction
 
 type HitEffectNxResource
 pub impl @json.FromJson for HitEffectNxResource
+
+pub(all) struct HitEvent {
+  attacker_oid : Int
+  move_id : Int
+  source : HitSource
+  target_oids : Array[Int]
+  result : @combat_proto.AttackResult
+}
+pub fn HitEvent::attacker_oid(Self) -> Int
+pub fn HitEvent::is_user_input(Self) -> Bool
+pub fn HitEvent::move_id(Self) -> Int
+pub fn HitEvent::source(Self) -> HitSource
+pub fn HitEvent::target_oids(Self) -> Array[Int]
+pub impl Show for HitEvent
+pub impl ToJson for HitEvent
+
+pub(all) enum HitSource {
+  UserInput
+  Passive(Int)
+}
+pub impl Show for HitSource
+pub impl ToJson for HitSource
 
 type NoAction
 pub impl SkillAction for NoAction

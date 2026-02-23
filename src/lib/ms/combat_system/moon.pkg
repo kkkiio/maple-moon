@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/random",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/utils",

@@ -20,7 +20,7 @@ fn parse_set_field(recv : @net.InPacket) -> SetFieldMessage raise {
     }
     let inventory = parse_inventory(recv)
     let skills = parse_skillbook(recv)
-    let cooldowns = @combat_impl.parse_cooldowns(recv)
+    let cooldowns = @combat_system.parse_cooldowns(recv)
     let quests = @quest.parse_player_quest_info(recv)
     return SetFieldMessage::SetField(
       stats~,

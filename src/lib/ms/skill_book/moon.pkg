@@ -1,5 +1,7 @@
 import {
+  "moonbitlang/core/random",
   "KKKIIO/maple-moon/lib/utils",
+  "KKKIIO/maple-moon/lib/randx",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/skill",
@@ -8,7 +10,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
-  "KKKIIO/maple-moon/lib/ms/combat_impl",
+  "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/struct",

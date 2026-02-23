@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/random",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
   "moonbitlang/core/strconv",
@@ -6,6 +7,7 @@ import {
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",
+  "KKKIIO/maple-moon/lib/randx",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/graphics",

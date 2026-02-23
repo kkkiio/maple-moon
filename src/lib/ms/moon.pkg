@@ -1,24 +1,2 @@
 import {
-  "KKKIIO/maple-moon/lib/ms/maple_stat",
-  "KKKIIO/maple-moon/lib/ms/keyboard",
-  "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/ms/npc",
-  "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/config",
-  "KKKIIO/maple-moon/lib/ms/inventory",
-  "KKKIIO/maple-moon/lib/struct",
-  "KKKIIO/maple-moon/lib/utils",
-  "KKKIIO/maple-moon/lib/ms/job",
-  "KKKIIO/maple-moon/lib/ms/monster",
-  "KKKIIO/maple-moon/lib/ms/drop",
-  "KKKIIO/maple-moon/lib/ui",
-  "KKKIIO/maple-moon/lib/ms/shop",
-  "KKKIIO/maple-moon/lib/ms/char_stats",
-  "KKKIIO/maple-moon/lib/game_mod",
-  "KKKIIO/maple-moon/lib/ms/quest",
-  "KKKIIO/maple-moon/lib/ms/map_object",
-  "KKKIIO/maple-moon/lib/ms/markup_text",
-  "KKKIIO/maple-moon/lib/ms/logic_fps",
 }
-
-warnings = "-A"

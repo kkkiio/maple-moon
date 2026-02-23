@@ -5,7 +5,7 @@ struct Module {
   mut player_skill_book : (SkillBook, Ref[Bool])?
   watchers : Array[SkillBookWatcher]
   string_loader : @resource.SyncLoader
-  combat : @combat_impl.Combat
+  combat : @combat_system.Combat
   inventory : @inventory.Inventory
 }
 
@@ -14,7 +14,7 @@ pub async fn Module::load(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  combat : @combat_impl.Combat,
+  combat : @combat_system.Combat,
   inventory : @inventory.Inventory,
 ) -> Module noraise {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
@@ -26,7 +26,7 @@ fn Module::new(
   player_getter : () -> @player.Player?,
   network : @net.Network,
   string_loader : @resource.SyncLoader,
-  combat : @combat_impl.Combat,
+  combat : @combat_system.Combat,
   inventory : @inventory.Inventory,
 ) -> Module {
   {
@@ -120,13 +120,5 @@ pub async fn Module::load_player_skill_book(
   }
   let cont_listen = Ref::new(true)
   self.player_skill_book = Some((skill_book, cont_listen))
-  self.combat.listen_attack_events(fn(event) {
-    skill_book.on_attack_event(
-      event,
-      self.combat,
-      (self.player_getter)().unwrap(),
-    )
-    cont_listen.val
-  })
   skill_book
 }

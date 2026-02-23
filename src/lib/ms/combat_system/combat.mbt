@@ -24,7 +24,6 @@ struct Combat {
   // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
   bullet_module : @bullet.Module
-  attack_events_listeners : Array[(AttackEvent) -> Bool]
 }
 
 ///|
@@ -32,19 +31,6 @@ pub fn Combat::new(
   mobs : @monster.MapMobs,
   bullet_module : @bullet.Module,
 ) -> Combat {
-  let server_listener = fn(event : AttackEvent) -> Bool {
-    for target_oid, damage_lines in event.result.damage_lines {
-      let mut total_damage = 0
-      for line in damage_lines {
-        total_damage += line.0
-      }
-      @game_server.send(@maple_protocol.MobDamageMessage::{
-        oid: target_oid,
-        damage: total_damage,
-      })
-    }
-    true // keep the listener
-  }
   {
     mobs,
     regular_attack: new_regular_attack(bullet_module),
@@ -54,7 +40,6 @@ pub fn Combat::new(
     // damage_numbers: Array::new(),
     cooldowns: {},
     bullet_module,
-    attack_events_listeners: [server_listener],
   }
 }
 
@@ -173,21 +158,6 @@ fn Combat::use_move(
 }
 
 ///|
-pub fn Combat::listen_attack_events(
-  self : Combat,
-  listener : (AttackEvent) -> Bool,
-) -> Unit {
-  self.attack_events_listeners.push(listener)
-}
-
-///|
-pub struct AttackEvent {
-  result : @combat_proto.AttackResult
-  /// 是否是玩家输入的攻击, 而不是技能追加的攻击
-  user_input : Bool
-} derive(Show, ToJson)
-
-///|
 /// Get a registered skill move by ID.
 /// Returns None if the skill is not registered.
 pub fn get_skill_move(move_id : Int) -> SpecialMove? {
@@ -209,35 +179,21 @@ fn Combat::apply_move(
       inventory,
       act.is_skill(),
     )
-    act.apply_useeffects(character)
-    act.apply_actions(character, attacktype) // WARN: this will change the stance
-    let stance_name = character.get_look().get_stance().name()
-    // Get AfterImage for this stance
-    guard after_images.get(stance_name) is Some(after_image) else {
-      @log.error("No afterimage for stance", data={
-        "stance": stance_name,
-        "available": after_images.keys().collect(),
-      })
-      panic()
-    }
-    // Create frame getter that captures CharLook reference
-    let look = character.get_look()
-    let get_frame_fn = fn() { look.get_frame() }
-    @char_look.add_after_image(
-      character.get_entity(),
-      get_frame_fn,
-      after_image,
-      character.is_facing_right(),
+    let result = self.execute_attack_pipeline(
+      character,
+      act,
+      inventory,
+      attack_type=attacktype,
+      degenerate~,
+      fixed_targets=None,
+      user_input=true,
+      after_images=Some(after_images),
+      strict_afterimage=true,
     )
-    let attack = act.make_attack(character, inventory, attacktype, degenerate)
-    let range = make_attack_range(attack)
-    let mobcount = attack.mobcount
-    let result = { ..AttackResult::new(attack), attacker: character.get_oid() }
-    // TODO: check reactor objects
-    let origin = attack.origin
-    let mob_targets = find_closest_mob(self.mobs, range, origin, mobcount)
-    self.apply_result_movement(cc, act, result)
-    self.apply_attack_to_mobs(character, act, attack, mob_targets, result, true)
+    match result {
+      Some(result) => self.apply_result_movement(cc, act, result)
+      None => ()
+    }
   } else {
     act.apply_useeffects(character)
     act.apply_actions(character, @combat_proto.AttackType::MAGIC)
@@ -248,6 +204,101 @@ fn Combat::apply_move(
     // TODO: send to server
     ignore(level)
   }
+}
+
+///|
+/// Unified attack execution pipeline used by both normal attacks and passive extra attacks.
+///
+/// Pipeline stages:
+/// 1. play use-effects (`apply_useeffects`) and action animation (`apply_actions`);
+/// 2. resolve and spawn afterimage for current stance;
+/// 3. build `Attack` via `SpecialMove::make_attack`;
+/// 4. resolve targets (either fixed targets or nearest mobs by range);
+/// 5. apply damage/effects/network and emit `HitEvent` via `apply_attack_to_mobs`.
+fn Combat::execute_attack_pipeline(
+  self : Combat,
+  character : @character.Character,
+  act : SpecialMove,
+  inventory : &@legacy_types.Inventory,
+  attack_type~ : @combat_proto.AttackType,
+  degenerate~ : Bool,
+  fixed_targets~ : Array[Int]?,
+  user_input~ : Bool,
+  after_images~ : Map[String, @char_look.NxAfterImage]?,
+  strict_afterimage~ : Bool,
+) -> AttackResult? {
+  act.apply_useeffects(character)
+  act.apply_actions(character, attack_type)
+  guard self.apply_attack_afterimage(
+    character, act, after_images, strict_afterimage,
+  ) else {
+    return None
+  }
+  let attack = act.make_attack(character, inventory, attack_type, degenerate)
+  let mob_targets = match fixed_targets {
+    Some(targets) => targets
+    None => {
+      let range = make_attack_range(attack)
+      let origin = attack.origin
+      find_closest_mob(self.mobs, range, origin, attack.mobcount)
+    }
+  }
+  let result : AttackResult = {
+    ..AttackResult::new(attack),
+    attacker: character.get_oid(),
+  }
+  self.apply_attack_to_mobs(
+    character, act, attack, mob_targets, result, user_input,
+  )
+  Some(result)
+}
+
+///|
+fn Combat::apply_attack_afterimage(
+  self : Combat,
+  character : @character.Character,
+  act : SpecialMove,
+  after_images : Map[String, @char_look.NxAfterImage]?,
+  strict_afterimage : Bool,
+) -> Bool {
+  let after_images = match after_images {
+    Some(after_images) => after_images
+    None => {
+      guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
+        return false
+      }
+      let after_image_name = weapon.get_afterimage()
+      let level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
+      let after_images = @char_look.AfterImage::get_collection(
+        after_image_name, level,
+      )
+      let skill_resources = act.get_afterimage()
+      for k, v in skill_resources {
+        after_images.set(k, v)
+      }
+      after_images
+    }
+  }
+  let stance_name = character.get_look().get_stance().name()
+  guard after_images.get(stance_name) is Some(after_image) else {
+    @log.error("No afterimage for stance", data={
+      "stance": stance_name,
+      "available": after_images.keys().collect(),
+    })
+    if strict_afterimage {
+      panic()
+    }
+    return false
+  }
+  let look = character.get_look()
+  let get_frame_fn = fn() { look.get_frame() }
+  @char_look.add_after_image(
+    character.get_entity(),
+    get_frame_fn,
+    after_image,
+    character.is_facing_right(),
+  )
+  true
 }
 
 ///|
@@ -263,9 +314,62 @@ pub fn Combat::apply_attack_to_mobs(
 ) -> Unit {
   self.mobs.send_attack(result, attack, mob_targets)
   self.extract_effects(character, act, result)
-  self.attack_events_listeners.retain(fn(listener) {
-    listener({ result, user_input })
-  })
+  // Create and queue hit event for passive skills
+  let source : HitSource = if user_input {
+    UserInput
+  } else {
+    Passive(act.get_id())
+  }
+  let hit_event : HitEvent = {
+    attacker_oid: character.get_oid(),
+    move_id: act.get_id(),
+    source,
+    target_oids: result.damage_lines.keys().to_array(),
+    result,
+  }
+  push_event(hit_event)
+  for target_oid, damage_lines in result.damage_lines {
+    let mut total_damage = 0
+    for line in damage_lines {
+      total_damage += line.0
+    }
+    @game_server.send(@maple_protocol.MobDamageMessage::{
+      oid: target_oid,
+      damage: total_damage,
+    })
+  }
+}
+
+///|
+/// Trigger an extra attack (used by passive skills like Final Attack).
+/// Reuses the same attack execution pipeline as normal attacks.
+pub fn Combat::trigger_extra_attack(
+  self : Combat,
+  character : @character.Character,
+  skill_id : Int,
+  targets : Array[Int],
+) -> Unit {
+  guard move_map.get(skill_id) is Some(act) else {
+    @log.warn("Passive skill not registered", data={ "skill_id": skill_id })
+    return
+  }
+  guard character.get_look().get_equips().get_weapon() is Some(_weapon) else {
+    return
+  }
+  let inventory : &@legacy_types.Inventory = @legacy_types.MockInventory::{  }
+  ignore(
+    self.execute_attack_pipeline(
+      character,
+      act,
+      inventory,
+      attack_type=@combat_proto.AttackType::MAGIC,
+      degenerate=false,
+      fixed_targets=Some(targets),
+      user_input=false,
+      after_images=None,
+      strict_afterimage=false,
+    ),
+  )
 }
 
 ///|
@@ -686,6 +790,12 @@ let combat_ref : Ref[Combat?] = Ref::new(None)
 ///|
 pub fn set_combat(combat : Combat?) -> Unit {
   combat_ref.val = combat
+}
+
+///|
+/// Get the current combat instance. Returns None if not initialized.
+pub fn get_combat() -> Combat? {
+  combat_ref.val
 }
 
 ///|

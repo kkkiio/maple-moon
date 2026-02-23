@@ -23,7 +23,7 @@ struct CharLook {
   face : Face
   mut action : @types.NxStanceBodyAction?
   equips : @equip.CharEquips
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   draw_info : @types.BodyDrawInfo
   body_entities : Map[String, @entity.Entity]
   hair_entities : Map[HairLayer, @entity.Entity]
@@ -98,7 +98,7 @@ pub fn CharLook::new(
     hair,
     face,
     equips,
-    randomizer: @utils.Randomizer::new(),
+    randomizer: @random.Rand::new(),
     draw_info,
     body_entities: Map::new(),
     hair_entities: Map::new(),
@@ -1233,7 +1233,7 @@ fn CharLook::getattackstance(
   if stances.length() == 0 {
     return StanceId::STAND1
   }
-  let index = self.randomizer.next_int(stances.length())
+  let index = @randx.next_int(self.randomizer, stances.length())
   return stances[index]
 }
 

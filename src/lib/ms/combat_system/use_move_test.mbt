@@ -6,16 +6,14 @@ test "use_move_integration_test" {
   // 1. Setup Global Combat
   let mobs : @monster.MapMobs = @monster.MapMobs::new()
   let bullet_module : @bullet.Module = @bullet.Module::new({})
-  let combat = @combat_impl.Combat::new(mobs, bullet_module)
-  @combat_impl.set_combat(Some(combat))
+  let combat = @combat_system.Combat::new(mobs, bullet_module)
+  @combat_system.set_combat(Some(combat))
 
   // 2. Setup Mob
   let json_path = "assets/Mob/1210102.img.json"
   let content = @fs.read_file_to_string(json_path)
   let nx_mob : @monster.NxMob = @json.from_json(@json.parse(content))
-  let mob_random = @utils.Randomizer::new(
-    state=@random.Rand::chacha8(seed=b"0123456789abcdef0123456789abcdef"),
-  )
+  let mob_random = @random.Rand::new()
   let mob = @monster.Mob::new(
     nx_mob,
     object_id=1,
@@ -150,11 +148,16 @@ test "use_move_integration_test" {
   }
 
   // 5. Verify result
-  // Since we don't have a server listener here, we can check if the attack was applied to mobs.
-  // Note: apply_attack_to_mobs normally sends a packet. 
-  // We can listen to attack events.
+  // Since we don't have a real server assertion here, verify through hit event bus.
+  let reader_id = @combat_system.register_reader()
   let mut attach_damage : Int? = None
-  combat.listen_attack_events(fn(event) {
+  assert_true(char_stats.get_total(@maple_stat.EquipStatId::ACC) >= 2)
+  assert_true(char_stats.get_maxdamage() >= 1)
+
+  // 6. Trigger use_move (0 is Regular Attack)
+  @combat_system.use_move(cc, 0)
+  let events = @combat_system.read_new_events(reader_id)
+  for event in events {
     let mut total_damage = 0
     for _target_oid, damage_lines in event.result.damage_lines {
       for line in damage_lines {
@@ -162,13 +165,9 @@ test "use_move_integration_test" {
       }
     }
     attach_damage = Some(total_damage)
-    true
-  })
-  assert_true(char_stats.get_total(@maple_stat.EquipStatId::ACC) >= 2)
-  assert_true(char_stats.get_maxdamage() >= 1)
-
-  // 6. Trigger use_move (0 is Regular Attack)
-  @combat_impl.use_move(cc, 0)
+  }
+  @combat_system.unregister_reader(reader_id)
+  @combat_system.gc_consumed_events()
   match attach_damage {
     Some(total_damage) => assert_true(total_damage >= 1)
     None => assert_true(false)
@@ -184,37 +183,39 @@ struct MockCombatCharacter {
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with get_character(
+impl @combat_system.CombatCharacter for MockCombatCharacter with get_character(
   self,
 ) {
   self.character
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with get_stats(self) {
+impl @combat_system.CombatCharacter for MockCombatCharacter with get_stats(self) {
   self.stats
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with get_inventory(
+impl @combat_system.CombatCharacter for MockCombatCharacter with get_inventory(
   self,
 ) {
   self.inventory
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with get_skill_book(
+impl @combat_system.CombatCharacter for MockCombatCharacter with get_skill_book(
   self,
 ) {
   self.skill_book
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with can_attack(_self) {
+impl @combat_system.CombatCharacter for MockCombatCharacter with can_attack(
+  _self,
+) {
   true
 }
 
 ///|
-impl @combat_impl.CombatCharacter for MockCombatCharacter with rush(_self, _x) {
+impl @combat_system.CombatCharacter for MockCombatCharacter with rush(_self, _x) {
 
 }

@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/passive"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/combat_system",
+  "moonbitlang/core/random",
+}
+
+// Values
+pub fn passive_system(Double) -> Unit
+
+pub fn register_passive_skill(&PassiveSkill) -> Unit
+
+pub let sword_fa_fighter_passive : SwordFaFighterPassive
+
+// Errors
+
+// Types and methods
+pub(all) struct PassiveContext {
+}
+pub impl Default for PassiveContext
+
+pub struct SwordFaFighterPassive {
+  randomizer : @random.Rand
+  trigger_fn : (Int, Array[Int]) -> Unit
+  get_trigger_prob_fn : () -> Double
+}
+pub fn SwordFaFighterPassive::new_with_trigger((Int, Array[Int]) -> Unit, get_trigger_prob_fn? : () -> Double) -> Self
+pub impl PassiveSkill for SwordFaFighterPassive
+pub impl Default for SwordFaFighterPassive
+
+// Type aliases
+
+// Traits
+pub(open) trait PassiveSkill {
+  id(Self) -> Int
+  on_hit(Self, PassiveContext, @combat_system.HitEvent) -> Unit
+}
+

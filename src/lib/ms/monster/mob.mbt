@@ -85,7 +85,7 @@ pub struct Mob {
   can_fly : Bool
   is_boss : Bool
   name_label : @graphics.Text
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   mut anim_time : Double
   mut movements : Array[@physics.Movement]
   mut counter : Int
@@ -119,7 +119,7 @@ pub async fn Mob::load(
   fh : Int,
   newspawn : Bool,
   position : @struct.Point[Int],
-  randomizer : @utils.Randomizer,
+  randomizer : @random.Rand,
 ) -> Mob {
   let mob_loader = @resource.get_mob_loader()
   let strid = @utils.stoi_left_pad0(mid, 7)
@@ -248,7 +248,7 @@ pub fn Mob::new(
   position : @struct.Point[Int],
   object_id~ : Int,
   monster_id~ : Int,
-  randomizer? : @utils.Randomizer = @utils.Randomizer::default(),
+  randomizer? : @random.Rand = @random.Rand::new(),
 ) -> Mob {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
@@ -484,7 +484,9 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
       let next = match self.stance.t {
         StanceType::HIT => self.counter > 200
         StanceType::JUMP => self.phobj.on_ground
-        _ => aniend && self.counter > self.randomizer.next_int(from=200, 500)
+        _ =>
+          aniend &&
+          self.counter > @randx.next_int(self.randomizer, from=200, 500)
       }
       if next {
         self.next_move()
@@ -506,16 +508,18 @@ fn Mob::next_move(self : Mob) -> Unit {
       StanceType::HIT | StanceType::STAND =>
         self.set_stance({
           t: StanceType::MOVE,
-          face_right: self.randomizer.next_bool(),
+          face_right: @randx.next_bool(self.randomizer),
         })
       StanceType::MOVE | StanceType::JUMP =>
-        if self.can_jump && self.phobj.on_ground && self.randomizer.below(0.25) {
+        if self.can_jump &&
+          self.phobj.on_ground &&
+          @randx.below(self.randomizer, 0.25) {
           self.set_stance({
             t: StanceType::JUMP,
             face_right: self.stance.face_right,
           })
         } else {
-          match self.randomizer.next_int(3) {
+          match @randx.next_int(self.randomizer, 3) {
             0 =>
               self.set_stance({
                 t: StanceType::STAND,
@@ -528,7 +532,7 @@ fn Mob::next_move(self : Mob) -> Unit {
       _ => ()
     }
     if self.stance.t == StanceType::MOVE && self.can_fly {
-      self.fly_direction = self.randomizer.choose([
+      self.fly_direction = @randx.choose(self.randomizer, [
         FlyDirection::STRAIGHT,
         FlyDirection::UPWARDS,
         FlyDirection::DOWNWARDS,
@@ -627,7 +631,7 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
   }
   let minattack = (self.watk.to_double() * 0.8).to_int()
   let maxattack = self.watk
-  let attack = self.randomizer.next_int(from=minattack, maxattack)
+  let attack = @randx.next_int(self.randomizer, from=minattack, maxattack)
   return @combat.MobAttack::new(attack, self.get_position(), self.id, self.oid)
 }
 
@@ -843,7 +847,12 @@ pub fn Mob::show_effect(
   //   0 => self.get_head_position(position=@struct.Point::default())
   //   _ => @struct.Point::default()
   // }
-  @graphics.add_effect(self.entity, animation, z~, flip~)
+  @graphics.add_effect(
+    self.entity,
+    animation,
+    z=@graphics.EFFECT_ZINDEX + z,
+    flip~,
+  )
 }
 
 ///|
@@ -931,13 +940,13 @@ fn Mob::next_damage(
   hitchance : Double,
   critical : Double,
 ) -> (Int, Bool) {
-  let hit = self.randomizer.below(hitchance)
+  let hit = @randx.below(self.randomizer, hitchance)
   if not(hit) {
     return (0, false)
   }
   let damagecap = 999999
-  let iscritical = self.randomizer.below(critical)
-  let mut damage = self.randomizer.next_real(from=mindamage, maxdamage)
+  let iscritical = @randx.below(self.randomizer, critical)
+  let mut damage = @randx.next_real(self.randomizer, from=mindamage, maxdamage)
   if iscritical {
     damage *= 1.5
   }

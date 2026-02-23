@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/random",
+  "KKKIIO/maple-moon/lib/randx",
+  "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/skill",
+  "KKKIIO/maple-moon/lib/ms/combat_system",
+}
+
+import {
+  "KKKIIO/maple-moon/lib/ms/combat_proto",
+} for "test"
+
+import {
+  "KKKIIO/maple-moon/lib/legacy_types",
+} for "wbtest"

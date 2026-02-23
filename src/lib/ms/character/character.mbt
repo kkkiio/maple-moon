@@ -371,7 +371,7 @@ pub fn Character::show_attack_effect(
   @graphics.add_effect(
     self.entity,
     toshow,
-    z~,
+    z=@graphics.EFFECT_ZINDEX + z,
     speed=attackspeed,
     flip=self.facing_right,
   )

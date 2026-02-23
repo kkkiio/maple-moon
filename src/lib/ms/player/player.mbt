@@ -36,7 +36,7 @@ using @combat_proto {
 }
 
 ///|
-using @combat_impl {trait CombatCharacter, trait DamagableCharacter}
+using @combat_system {trait CombatCharacter, trait DamagableCharacter}
 
 ///|
 pub(all) struct Player {
@@ -48,7 +48,7 @@ pub(all) struct Player {
   mut ladder : @map.Ladder?
   inventory : &Inventory
   buffs : Map[@buff.StatId, @buff.Buff]
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   // load_skill_book : async (@job.Job) -> &SkillBook raise
   mut skill_book : &SkillBook
 }
@@ -153,7 +153,7 @@ pub fn Player::new(
     ladder: None,
     inventory: MockInventory::{  },
     buffs: Map::new(),
-    randomizer: @utils.Randomizer::new(),
+    randomizer: @random.Rand::new(),
     skill_book,
     // load_skill_book,
   }
@@ -598,7 +598,7 @@ pub fn Player::damage(self : Player, attack : MobAttack) -> MobAttackResult {
   let immovable = self.get_ladder() is Some(_) ||
     self.character.state is CharState::DIED
   let knockback = not(missed) && not(immovable)
-  if knockback && self.randomizer.above(self.stats.get_stance()) {
+  if knockback && @randx.above(self.randomizer, self.stats.get_stance()) {
     self.character.get_phobj().moving_object.set_hspeed(
       if fromleft {
         -1.5
@@ -876,13 +876,13 @@ pub fn player_state_system(_delta : Double) -> Unit {
     }
   }
   if @inputs.is_just_pressed(@inputs.KeyF) {
-    @combat_impl.use_move(player, @skill.TELEPORT_FP.int_value())
+    @combat_system.use_move(player, @skill.TELEPORT_FP.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyX) {
-    @combat_impl.use_move(player, REGULAR_ATTACK)
+    @combat_system.use_move(player, REGULAR_ATTACK)
   }
   if @inputs.is_just_pressed(@inputs.KeyA) {
-    @combat_impl.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())
+    @combat_system.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyZ) {
     @drop.try_pickup_at(player.character.get_position()) |> ignore

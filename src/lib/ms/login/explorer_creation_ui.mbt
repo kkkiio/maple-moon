@@ -4,7 +4,7 @@ using @char_stance {type StanceId}
 ///|
 struct ExplorerCreatorUI {
   resource : ExplorerCreatorUIResource
-  randomizer : @utils.Randomizer
+  randomizer : @random.Rand
   settings : LookSettingState
   mut gender_selected : Bool
   mut charset_selected : Bool
@@ -203,7 +203,7 @@ pub fn ExplorerCreatorUI::new(
   on_create_char? : (NewCharacterSettings) -> Unit = fn(_v) {  },
 ) -> ExplorerCreatorUI {
   let gender = false
-  let randomizer = @utils.Randomizer::new()
+  let randomizer = @random.Rand::new()
   let settings = rand_char_look(gender, randomizer, resource)
   let ui_model = hooks.ui_model
   ui_model.position = @struct.Point::new(0, 0)
@@ -506,7 +506,8 @@ pub impl @ui.Widget for ExplorerCreatorUI with render(self) -> @ui.RenderSpec {
       )
       |> @ui.Button::new(on_click=fn() {
         (self.on_create_char)({
-          name: "kkkiio" + self.randomizer.next_int(1000, from=2).to_string(),
+          name: "kkkiio" +
+          @randx.next_int(self.randomizer, 1000, from=2).to_string(),
           job: JOB_ID_EXPLORER,
           female: self.settings.female,
           skin_id: choices.skins[self.settings.skin_idx],
@@ -586,7 +587,7 @@ fn ExplorerCreatorUI::load_char_look(self : ExplorerCreatorUI) -> Unit {
 ///|
 fn rand_char_look(
   female : Bool,
-  randomizer : @utils.Randomizer,
+  randomizer : @random.Rand,
   resource : ExplorerCreatorUIResource,
 ) -> LookSettingState {
   let choices = if female {
@@ -594,14 +595,14 @@ fn rand_char_look(
   } else {
     resource.male_choices
   }
-  let hair_idx = randomizer.next_int(choices.hairs.length())
-  let face_idx = randomizer.next_int(choices.faces.length())
-  let skin_idx = randomizer.next_int(choices.skins.length())
-  let hair_color_idx = randomizer.next_int(choices.haircolors.length())
-  let top_idx = randomizer.next_int(choices.tops.length())
+  let hair_idx = @randx.next_int(randomizer, choices.hairs.length())
+  let face_idx = @randx.next_int(randomizer, choices.faces.length())
+  let skin_idx = @randx.next_int(randomizer, choices.skins.length())
+  let hair_color_idx = @randx.next_int(randomizer, choices.haircolors.length())
+  let top_idx = @randx.next_int(randomizer, choices.tops.length())
   let bot_idx = 0
-  let shoe_idx = randomizer.next_int(choices.shoes.length())
-  let weapon_idx = randomizer.next_int(choices.weapons.length())
+  let shoe_idx = @randx.next_int(randomizer, choices.shoes.length())
+  let weapon_idx = @randx.next_int(randomizer, choices.weapons.length())
   {
     female,
     skin_idx,

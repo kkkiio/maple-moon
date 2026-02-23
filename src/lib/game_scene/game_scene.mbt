@@ -11,7 +11,7 @@ pub(all) struct Stage {
   // drops : @drop.MapDrops
   // inventory : @inventory.Inventory
   // damage_number_set : @ui.NumberSet
-  // combat : @combat_impl.Combat
+  // combat : @combat_system.Combat
   // char_look_module : @char_look.Module
   // skill_book_module : @skill_book.Module
   // char_stats_module : @char_stats.Module
@@ -34,7 +34,7 @@ pub fn Stage::new(
   // damage_number_set : @ui.NumberSet,
   // network : @net.Network,
   // bullet_module : @bullet.Module,
-  // combat : @combat_impl.Combat,
+  // combat : @combat_system.Combat,
 ) -> Stage {
   {
     map_portals_animations,
@@ -237,10 +237,13 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
               @skill.SkillId::POWER_STRIKE.int_value(),
+              // Final attack passives
+              @skill.SkillId::SWORD_FA_FIGHTER.int_value(),
+              @skill.SkillId::AXE_FA.int_value(),
             ]
             for skill_id in skill_ids {
-              let sk = @combat_impl.load_skill_move(skill_id, bullet_module)
-              @combat_impl.register_move(sk)
+              let sk = @combat_system.load_skill_move(skill_id, bullet_module)
+              @combat_system.register_move(sk)
             }
             (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
@@ -340,9 +343,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @drop.set_map_physics(sence_map.physics)
       @game_server.send(@maple_protocol.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
-      let combat = @combat_impl.Combat::new(stage.mobs, bullet_module)
-      @combat_impl.set_combat(Some(combat))
-      @combat_impl.set_player(Some(player))
+      let combat = @combat_system.Combat::new(stage.mobs, bullet_module)
+      @combat_system.set_combat(Some(combat))
+      @combat_system.set_player(Some(player))
+      // Register passive skills
+      @passive.register_passive_skill(@passive.sword_fa_fighter_passive)
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
       @map.set_backgrounds(sence_map.backgrounds)

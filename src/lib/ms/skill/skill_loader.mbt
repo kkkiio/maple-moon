@@ -117,7 +117,7 @@ pub fn is_skill_cached(id : Int) -> Bool {
 ///|
 /// Get cache statistics for debugging.
 pub fn skill_cache_stats() -> (Int, Int) {
-  (bundle_cache.size(), skill_cache.size())
+  (bundle_cache.length(), skill_cache.length())
 }
 
 ///|

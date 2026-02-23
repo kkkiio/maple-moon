@@ -172,7 +172,7 @@ struct Npc {
   flip : Bool
   mut stance : String
   // control : Bool
-  random : @utils.Randomizer
+  random : @random.Rand
   name_label : @graphics.Text
   func_label : @graphics.Text
 }
@@ -309,7 +309,7 @@ pub fn Npc::load(
     flip,
     stance,
     // control,
-    random: @utils.Randomizer::new(),
+    random: @random.Rand::new(),
     name_label,
     func_label,
   }
@@ -346,7 +346,7 @@ pub impl @map_object.MapObject for Npc with update(
     Some(ani) => {
       let aniend = ani.update()
       if aniend && self.states.length() > 0 {
-        let next_stance = self.random.next_int(self.states.length())
+        let next_stance = @randx.next_int(self.random, self.states.length())
         let new_stance = self.states[next_stance]
         self.set_stance(new_stance)
       }

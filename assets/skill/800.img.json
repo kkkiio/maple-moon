@@ -1,0 +1,97 @@
+{
+  "info": {
+    "icon": {
+      "__h": 30,
+      "__w": 26,
+      "origin": [
+        -4,
+        30
+      ],
+      "__i": "images/Skill/14993.png"
+    }
+  },
+  "skill": {
+    "8001000": {
+      "action": {
+        "0": "stabO1"
+      },
+      "icon": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14994.png"
+      },
+      "iconDisabled": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14996.png"
+      },
+      "iconMouseOver": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14995.png"
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "prop": 100
+        }
+      }
+    },
+    "8001001": {
+      "action": {
+        "0": "alert2"
+      },
+      "icon": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14997.png"
+      },
+      "iconDisabled": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14999.png"
+      },
+      "iconMouseOver": {
+        "__h": 32,
+        "__w": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0,
+        "__i": "images/Skill/14998.png"
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "range": 150
+        }
+      }
+    }
+  }
+}

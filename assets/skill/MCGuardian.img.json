@@ -1,0 +1,74 @@
+{
+  "0": {
+    "desc": "The Weapon Attack stats for the monster working for your party has increased by 50.",
+    "level": 1,
+    "mobSkillID": 150,
+    "name": "Power UP",
+    "spendCP": 17,
+    "type": 0
+  },
+  "1": {
+    "desc": "The Weapon Defense stats for the monster working for your party has increased by 50.",
+    "level": 1,
+    "mobSkillID": 151,
+    "name": "Guard UP",
+    "spendCP": 16,
+    "type": 1
+  },
+  "2": {
+    "desc": "The Magic Attack stats for the monster working for your party has increased by 40.",
+    "level": 1,
+    "mobSkillID": 152,
+    "name": "Magic UP",
+    "spendCP": 17,
+    "type": 2
+  },
+  "3": {
+    "desc": "The Magic Defense stats for the monster working for your party has increased by 50.",
+    "level": 1,
+    "mobSkillID": 153,
+    "name": "Shield UP",
+    "spendCP": 16,
+    "type": 3
+  },
+  "4": {
+    "desc": "The Accuracy stats for the monster working for your party has increased by 30.",
+    "level": 1,
+    "mobSkillID": 154,
+    "name": "Accuracy UP",
+    "spendCP": 13,
+    "type": 4
+  },
+  "5": {
+    "desc": "The Avoidability stats for the monster working for your party has increased by 30.",
+    "level": 1,
+    "mobSkillID": 155,
+    "name": "Avoidability UP",
+    "spendCP": 16,
+    "type": 5
+  },
+  "6": {
+    "desc": "The Speed stats for the monster working for your party has increased by 30.",
+    "level": 1,
+    "mobSkillID": 156,
+    "name": "Speed UP",
+    "spendCP": 12,
+    "type": 6
+  },
+  "7": {
+    "desc": "The monster working for your party is now immune to weapon attack.",
+    "level": 10,
+    "mobSkillID": 140,
+    "name": "Cancel Weapon Attack",
+    "spendCP": 35,
+    "type": 7
+  },
+  "8": {
+    "desc": " The monster working for your party is now immune to magic attack.",
+    "level": 9,
+    "mobSkillID": 141,
+    "name": "Cancel Magic Attack",
+    "spendCP": 35,
+    "type": 8
+  }
+}

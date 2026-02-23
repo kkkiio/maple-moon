@@ -1,40 +1,33 @@
 ///|
 async fn get_all_items_by_type(mod : Module, kind : TypeId) -> Array[UISlot] {
-  ...
-  // let slotmax = mod.inventory.get_slotmax(kind)
-  // async fn load_slot(slot_no) -> WithItemSlot? raise Error {
-  //   match mod.inventory.get_slot_item_at(kind, slot_no) {
-  //     Some(slot_item) => {
-  //       let item_data = @item.ItemData::get_async(slot_item.item_id)
-  //       Some({
-  //         slot_no,
-  //         id: item_data.item_id,
-  //         name: item_data.name,
-  //         desc: if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
-  //           make_equip_desc(item_data)
-  //         } else {
-  //           make_html_desc(item_data.desc)
-  //         },
-  //         count: if kind == TypeId::EQUIP {
-  //           1
-  //         } else {
-  //           mod.inventory.get_item_count_at_slot(kind, slot_no)
-  //         },
-  //         icon: item_data.get_icon(false).bitmap.map_or(
-  //           @resource.Image::new_pending(),
-  //           fn(bitmap) { bitmap.image },
-  //         ),
-  //       })
-  //     }
-  //     None => None
-  //   }
-  // }
-
-  // (1)
-  // .until(slotmax, inclusive=true)
-  // .map(fn(slot_no) { fn() raise { load_slot(slot_no) } })
-  // |> Array::from_iter()
-  // |> @js.async_all()
+  let slotmax = mod.inventory.get_slotmax(kind)
+  let items : Array[UISlot] = []
+  for slot_no in 1..<=slotmax {
+    match mod.inventory.get_slot_item_at(kind, slot_no) {
+      Some(slot_item) => {
+        let item_data = @item.ItemData::load_item_data(slot_item.item_id)
+        let desc = if kind is TypeId::EQUIP || kind is TypeId::EQUIPPED {
+          make_equip_desc(item_data)
+        } else {
+          make_html_desc(item_data.desc)
+        }
+        let count = if kind == TypeId::EQUIP { 1 } else { slot_item.count }
+        let icon = @resource.Image::new_pending()
+        items.push(
+          Some({
+            slot_no: SlotNo(slot_no),
+            id: item_data.item_id,
+            name: item_data.name,
+            desc,
+            count,
+            icon,
+          }),
+        )
+      }
+      None => items.push(None)
+    }
+  }
+  items
 }
 
 ///|
@@ -81,7 +74,7 @@ pub fn watch_inventory_by_kind(
   let mut cont = true
   fn sync_callback() {
     if cont {
-      @io_service.execute_background(fn() {
+      @io_service.execute_background(async fn() {
         let items = get_all_items_by_type(mod, type_id)
         cont = watcher(items)
       })
@@ -110,7 +103,7 @@ pub fn use_item_at(
   mod : Module,
   kind : String,
   slot_no : SlotNo,
-  args : Array[String],
+  _args : Array[String],
 ) -> String {
   guard get_type_id_by_kind(kind) is Some(type_id) else {
     return "unknown inventory kind \{kind}"
@@ -245,7 +238,7 @@ impl @net.OutMessage for MoveItemPacket with pack(self) -> @net.OutPacket {
   ..write_byte(self.type_id.int_value().to_byte())
   ..write_short(self.slot)
   ..write_short(self.action)
-  ..write_short(self.qty)
+  .write_short(self.qty)
   packet
 }
 

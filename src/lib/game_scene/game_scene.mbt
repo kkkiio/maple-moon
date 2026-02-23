@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {type SetFieldMessage, type StatsEntry}
+using @server_proto {type SetFieldMessage, type StatsEntry}
 
 ///|
 pub(all) struct Stage {
@@ -151,7 +151,7 @@ pub fn get_stage() -> Stage? {
 
 ///|
 fn required_equipped_item_id_or_fail(
-  items : Array[@maple_protocol.InventoryItemEntry],
+  items : Array[@server_proto.InventoryItemEntry],
   slot_id : @slot.Id,
 ) -> Int {
   match find_equipped_item_id(items, slot_id) {
@@ -341,7 +341,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       @drop.set_map_physics(sence_map.physics)
-      @game_server.send(@maple_protocol.PlayerMapTransferMessage::default())
+      @game_server.send(@server_proto.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
       let combat = @combat_system.Combat::new(stage.mobs, bullet_module)
       @combat_system.set_combat(Some(combat))

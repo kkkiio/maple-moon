@@ -734,7 +734,7 @@ fn parse_charentry(recv : @net.InPacket) -> @character.CharEntry raise {
 }
 
 ///|
-using @maple_protocol {type StatsEntry}
+using @server_proto {type StatsEntry}
 
 ///|
 fn parse_stats(recv : @net.InPacket) -> StatsEntry raise {

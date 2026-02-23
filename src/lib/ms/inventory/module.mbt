@@ -7,8 +7,8 @@ struct Module {
 
 ///|
 pub fn Module::load(player_getter : () -> @player.Player?) -> Module {
-  ...
-  // { inventory: Inventory::new(network), player_getter, network, string_loader }
+  let network = @net.Network::get()
+  { inventory: Inventory::new(network), player_getter, network }
 }
 
 ///|
@@ -51,7 +51,7 @@ pub fn Module::make_stat_handlers(
 
 ///|
 pub fn Module::make_show_status_info_handlers(
-  self : Module,
+  _self : Module,
 ) -> Map[Int, @game_mod.SubRouteHandler] {
   {
     0: fn(recv : @net.InPacket) -> &@game_mod.SubRouteAction raise {
@@ -103,7 +103,7 @@ priv enum ShowGainMessage {
 } derive(Show)
 
 ///|
-struct ShowGainAction {
+priv struct ShowGainAction {
   message : ShowGainMessage
 }
 

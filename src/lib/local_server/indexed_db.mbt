@@ -119,19 +119,19 @@ fn character_core_key(character_id : Int) -> String {
 ///|
 fn character_inventory_tab_key(
   character_id : Int,
-  invtype : @maple_protocol.InventoryType,
+  invtype : @server_proto.InventoryType,
 ) -> String {
   "char:\{character_id}:inventory:\{invtype.int_value()}"
 }
 
 ///|
-fn inventory_tabs() -> Array[@maple_protocol.InventoryType] {
+fn inventory_tabs() -> Array[@server_proto.InventoryType] {
   [
-    @maple_protocol.InventoryType::EQUIP,
-    @maple_protocol.InventoryType::USE,
-    @maple_protocol.InventoryType::SETUP,
-    @maple_protocol.InventoryType::ETC,
-    @maple_protocol.InventoryType::CASH,
+    @server_proto.InventoryType::EQUIP,
+    @server_proto.InventoryType::USE,
+    @server_proto.InventoryType::SETUP,
+    @server_proto.InventoryType::ETC,
+    @server_proto.InventoryType::CASH,
   ]
 }
 
@@ -278,7 +278,7 @@ fn LocalServer::load_character_inventory_tab_data(
       if revision.to_int() > self.character_revision {
         self.character_revision = revision.to_int()
       }
-      guard @maple_protocol.InventoryType::by_value(invtype.to_int())
+      guard @server_proto.InventoryType::by_value(invtype.to_int())
         is Some(invtype) else {
         return
       }
@@ -297,7 +297,7 @@ fn LocalServer::load_character_inventory_tab_data(
       }
     }
     { "invtype": Number(invtype, ..), "items": Array(items), .. } => {
-      guard @maple_protocol.InventoryType::by_value(invtype.to_int())
+      guard @server_proto.InventoryType::by_value(invtype.to_int())
         is Some(invtype) else {
         return
       }

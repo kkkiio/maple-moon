@@ -57,11 +57,8 @@ pub fn clear_loading_data() -> Unit {
 }
 
 ///|
-fn get_equipped_slot(
-  slot : Int,
-  invtype : @maple_protocol.InventoryType,
-) -> Int? {
-  if invtype == @maple_protocol.InventoryType::EQUIPPED || slot < 0 {
+fn get_equipped_slot(slot : Int, invtype : @server_proto.InventoryType) -> Int? {
+  if invtype == @server_proto.InventoryType::EQUIPPED || slot < 0 {
     let real_slot = if slot < 0 { 0 - slot } else { slot }
     Some(real_slot)
   } else {
@@ -71,12 +68,12 @@ fn get_equipped_slot(
 
 ///|
 pub fn find_equipped_item_id(
-  items : Array[@maple_protocol.InventoryItemEntry],
+  items : Array[@server_proto.InventoryItemEntry],
   slot_id : @slot.Id,
 ) -> Int? {
   for item in items {
     match item {
-      @maple_protocol.InventoryItemEntry::Equip(invtype~, slot~, id~, ..) =>
+      @server_proto.InventoryItemEntry::Equip(invtype~, slot~, id~, ..) =>
         match get_equipped_slot(slot, invtype) {
           Some(real_slot) =>
             if real_slot == slot_id.int_value() {
@@ -93,14 +90,14 @@ pub fn find_equipped_item_id(
 ///|
 /// Collect all item ids carried by `SetField` inventory snapshot.
 pub fn collect_inventory_item_ids(
-  items : Array[@maple_protocol.InventoryItemEntry],
+  items : Array[@server_proto.InventoryItemEntry],
 ) -> Array[Int] {
   let id_set : Map[Int, Bool] = Map::new()
   for item in items {
     let item_id = match item {
-      @maple_protocol.InventoryItemEntry::Equip(id~, ..) => id
-      @maple_protocol.InventoryItemEntry::Item(id~, ..) => id
-      @maple_protocol.InventoryItemEntry::Pet(id~, ..) => id
+      @server_proto.InventoryItemEntry::Equip(id~, ..) => id
+      @server_proto.InventoryItemEntry::Item(id~, ..) => id
+      @server_proto.InventoryItemEntry::Pet(id~, ..) => id
     }
     if item_id > 0 {
       id_set.set(item_id, true)
@@ -116,12 +113,12 @@ pub fn collect_inventory_item_ids(
 ///|
 pub fn apply_equipped_stats(
   stats : @char_stats.CharStats,
-  items : Array[@maple_protocol.InventoryItemEntry],
+  items : Array[@server_proto.InventoryItemEntry],
 ) -> Unit {
   stats.init_totalstats()
   for item in items {
     match item {
-      @maple_protocol.InventoryItemEntry::Equip(
+      @server_proto.InventoryItemEntry::Equip(
         invtype~,
         slot~,
         stats=equip_stats,
@@ -139,9 +136,7 @@ pub fn apply_equipped_stats(
 }
 
 ///|
-pub fn make_job_from_stats(
-  stats_entry : @maple_protocol.StatsEntry,
-) -> @job.Job {
+pub fn make_job_from_stats(stats_entry : @server_proto.StatsEntry) -> @job.Job {
   let job_id = stats_entry.stats.0.get(@maple_stat.Id::JOB).unwrap_or(0)
   let level = if job_id == 0 {
     @job.Level::BEGINNER

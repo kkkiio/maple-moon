@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {
+using @server_proto {
   type ChangeStatsMesoMessage,
   trait ClientMessage,
   trait ServerMessage,
@@ -182,12 +182,12 @@ pub fn[T : ClientMessage] LocalServer::send_client_message(
 
 ///|
 fn LocalServer::on_mob_damage(self : LocalServer, json : Json) -> Unit raise {
-  let msg : @maple_protocol.MobDamageMessage = @json.from_json(json)
+  let msg : @server_proto.MobDamageMessage = @json.from_json(json)
   guard self.mobs.get(msg.oid) is Some(mob) else { return }
   mob.hp -= msg.damage
   if mob.hp <= 0 {
     mob.hp = 0
-    self.send_server_message(@maple_protocol.KillMobMessage::{
+    self.send_server_message(@server_proto.KillMobMessage::{
       oid: msg.oid,
       animation: 1,
     })
@@ -196,7 +196,7 @@ fn LocalServer::on_mob_damage(self : LocalServer, json : Json) -> Unit raise {
     self.mobs.remove(msg.oid)
   } else {
     let percent = (mob.hp.to_double() / mob.max_hp.to_double() * 100.0).to_int()
-    self.send_server_message(@maple_protocol.MobHpMessage::{
+    self.send_server_message(@server_proto.MobHpMessage::{
       oid: msg.oid,
       percent,
     })
@@ -242,7 +242,7 @@ fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
     self.send_server_message(ChangeStatsMesoMessage::{ meso: self.player_meso })
     self.send_server_message(ShowStatusMesoGainMessage::{ gain, })
     self.drops.remove(msg.oid) |> ignore
-    self.send_server_message(@maple_protocol.RemoveLootMessage::{
+    self.send_server_message(@server_proto.RemoveLootMessage::{
       mode: 2,
       oid: msg.oid,
       cid: Some(1),
@@ -252,7 +252,7 @@ fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
   guard self.apply_pickup_item(drop.item_id) else { return }
   self.save_character_inventory_snapshot()
   self.drops.remove(msg.oid) |> ignore
-  self.send_server_message(@maple_protocol.RemoveLootMessage::{
+  self.send_server_message(@server_proto.RemoveLootMessage::{
     mode: 2,
     oid: msg.oid,
     cid: Some(1),

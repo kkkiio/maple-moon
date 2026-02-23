@@ -129,7 +129,7 @@ pub struct SkillUIData {
 }
 
 ///|
-using @maple_protocol {type InventoryType}
+using @server_proto {type InventoryType}
 
 ///|
 pub fn transfer_one_sp(

@@ -1,2 +1,5 @@
 ///|
-using @maple_protocol {type InventoryType as TypeId, type InventoryItemEntry}
+using @server_proto {type InventoryItemEntry}
+
+///|
+type TypeId = @server_proto.InventoryType

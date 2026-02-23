@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {type StatsEntry}
+using @server_proto {type StatsEntry}
 
 ///|
 test "use_move_integration_test" {

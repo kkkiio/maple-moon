@@ -8,7 +8,7 @@ using @char_stance {type StanceId}
 using @char_stats {type CharStats}
 
 ///|
-using @maple_protocol {type ChangeMapMessage}
+using @server_proto {type ChangeMapMessage}
 
 ///|
 using @legacy_types {trait Inventory, trait SkillBook, type MockInventory}

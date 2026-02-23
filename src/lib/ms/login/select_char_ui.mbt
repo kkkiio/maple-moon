@@ -8,7 +8,7 @@ using @char_look {type CharLookMod, type CharLook}
 using @io_service {execute_background}
 
 ///|
-using @maple_protocol {type SetFieldMessage, type SelectCharMessage}
+using @server_proto {type SetFieldMessage, type SelectCharMessage}
 
 ///|
 using @game_state {type GamePhase, game_state}

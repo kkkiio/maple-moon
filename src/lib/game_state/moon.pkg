@@ -2,7 +2,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/utils",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
 }
 
 warnings = "-A"

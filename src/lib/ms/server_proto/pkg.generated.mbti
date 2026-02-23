@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/maple_protocol"
+package "KKKIIO/maple-moon/lib/ms/server_proto"
 
 import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",

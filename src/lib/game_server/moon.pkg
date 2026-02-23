@@ -1,6 +1,6 @@
 import {
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/json",
 }
 

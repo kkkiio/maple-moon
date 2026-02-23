@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {trait ClientMessage}
+using @server_proto {trait ClientMessage}
 
 ///|
 priv struct BridgeState {

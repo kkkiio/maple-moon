@@ -98,4 +98,4 @@ fn new_move_mob_packet(
 }
 
 ///|
-using @maple_protocol {type MoveMonsterMessage}
+using @server_proto {type MoveMonsterMessage}

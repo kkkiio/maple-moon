@@ -71,7 +71,7 @@ pub fn setup_game_server_handlers() -> Unit {
     @net.Opcode::DROP_LOOT.int_value(),
     json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
-      let drop : @maple_protocol.DropLootMessage = @json.from_json(json)
+      let drop : @server_proto.DropLootMessage = @json.from_json(json)
       let parsed : DropLoot = {
         mode: drop.mode,
         oid: drop.oid,
@@ -94,7 +94,7 @@ pub fn setup_game_server_handlers() -> Unit {
     @net.Opcode::REMOVE_LOOT.int_value(),
     json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
-      let remove : @maple_protocol.RemoveLootMessage = @json.from_json(json)
+      let remove : @server_proto.RemoveLootMessage = @json.from_json(json)
       let parsed : RemoveLoot = {
         mode: remove.mode,
         oid: remove.oid,
@@ -189,7 +189,7 @@ pub fn try_pickup_at(player_pos : @struct.Point[Int]) -> Bool {
   guard ctx.map_drops is Some(map_drops) else { return false }
   for loot in map_drops.list_loot_at(player_pos) {
     let (oid, pos) = loot
-    @game_server.send(@maple_protocol.PickupItemMessage::{ oid, position: pos })
+    @game_server.send(@server_proto.PickupItemMessage::{ oid, position: pos })
     return true
   }
   false

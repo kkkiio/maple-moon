@@ -19,7 +19,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
     let weapon_stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
     weapon_stats.0.set(@maple_stat.EquipStatId::WATK, 10)
     items.push(
-      @maple_protocol.InventoryItemEntry::Equip(
+      @server_proto.InventoryItemEntry::Equip(
         invtype=InventoryType::EQUIPPED,
         slot=-11,
         id=1302000, // beginner sword
@@ -37,7 +37,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
     )
     let empty_equip_stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
     items.push(
-      @maple_protocol.InventoryItemEntry::Equip(
+      @server_proto.InventoryItemEntry::Equip(
         invtype=InventoryType::EQUIPPED,
         slot=-5,
         id=1040002, // top
@@ -54,7 +54,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       ),
     )
     items.push(
-      @maple_protocol.InventoryItemEntry::Equip(
+      @server_proto.InventoryItemEntry::Equip(
         invtype=InventoryType::EQUIPPED,
         slot=-6,
         id=1060002, // bottom
@@ -71,7 +71,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       ),
     )
     items.push(
-      @maple_protocol.InventoryItemEntry::Equip(
+      @server_proto.InventoryItemEntry::Equip(
         invtype=InventoryType::EQUIPPED,
         slot=-7,
         id=1072005, // shoes

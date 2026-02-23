@@ -3,12 +3,12 @@ package "KKKIIO/maple-moon/lib/ms/quest"
 
 import {
   "KKKIIO/maple-moon/lib/game_mod",
-  "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/ui",
@@ -20,7 +20,7 @@ pub fn forfeit_quest_ffi(Module, Int) -> Unit
 
 pub fn next_talk(QuestPhaseSays, TalkState, Bool?) -> QuestTalk?
 
-pub fn parse_player_quest_info(@net.InPacket) -> @maple_protocol.PlayerQuestLogInfo raise
+pub fn parse_player_quest_info(@net.InPacket) -> @server_proto.PlayerQuestLogInfo raise
 
 pub fn parse_quest_desc(String, ref_name_provider? : &QuestTextRefProvider) -> String raise
 
@@ -56,7 +56,7 @@ pub async fn MapQuestsResource::load() -> Self
 
 type Module
 pub fn Module::get_map_quests(Self) -> MapQuests
-pub fn Module::handle_player_quest_info(Self, @maple_protocol.PlayerQuestLogInfo) -> Unit
+pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
 pub async fn Module::load(@net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
 pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]

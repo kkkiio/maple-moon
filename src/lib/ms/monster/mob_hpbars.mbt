@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {type MobHpMessage}
+using @server_proto {type MobHpMessage}
 
 ///|
 priv struct MobHpEvent {

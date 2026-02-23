@@ -2,12 +2,12 @@ package "KKKIIO/maple-moon/lib/game_server"
 
 import {
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/json",
 }
 
 #callsite(autofill(loc))
-fn[T : @maple_protocol.ClientMessage] send(
+fn[T : @server_proto.ClientMessage] send(
   T,
   log_level? : @log.Level,
   loc~ : SourceLoc

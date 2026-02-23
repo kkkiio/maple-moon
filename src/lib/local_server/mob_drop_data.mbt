@@ -231,8 +231,8 @@ pub fn calculate_mob_drops(
   drop_db : MobDropDatabase?,
   global_drop_db : MobDropDatabase?,
   rand : @random.Rand,
-) -> (Array[@maple_protocol.DropLootMessage], Int) {
-  let messages : Array[@maple_protocol.DropLootMessage] = []
+) -> (Array[@server_proto.DropLootMessage], Int) {
+  let messages : Array[@server_proto.DropLootMessage] = []
   let mut drop_index = 0
   let mut current_oid = start_oid
   let base_x = mob_x
@@ -249,7 +249,7 @@ pub fn calculate_mob_drops(
         let is_meso = item_id == 0
         let final_item_id = if is_meso { quantity } else { item_id }
         let drop_x = base_x + (drop_index % 2 * 40 - 20)
-        messages.push(@maple_protocol.DropLootMessage::{
+        messages.push(@server_proto.DropLootMessage::{
           mode: 0,
           oid: current_oid,
           meso: is_meso,
@@ -276,7 +276,7 @@ pub fn calculate_mob_drops(
         let is_meso = item_id == 0
         let final_item_id = if is_meso { quantity } else { item_id }
         let drop_x = base_x + (drop_index % 2 * 40 - 20)
-        messages.push(@maple_protocol.DropLootMessage::{
+        messages.push(@server_proto.DropLootMessage::{
           mode: 0,
           oid: current_oid,
           meso: is_meso,

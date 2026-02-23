@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {
+using @server_proto {
   type InventoryEntry,
   type InventoryItemEntry,
   type InventoryType,

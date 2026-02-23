@@ -141,9 +141,7 @@ fn register_local_inventory_sync_handler_once(
     "change_stats_meso",
     @net.Opcode::CHANGE_STATS.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @maple_protocol.ChangeStatsMesoMessage = @json.from_json(
-        json,
-      )
+      let message : @server_proto.ChangeStatsMesoMessage = @json.from_json(json)
       inventory.set_meso(message.meso)
     },
   )
@@ -151,7 +149,7 @@ fn register_local_inventory_sync_handler_once(
     "show_status_info_meso_gain",
     @net.Opcode::SHOW_STATUS_INFO.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @maple_protocol.ShowStatusMesoGainMessage = @json.from_json(
+      let message : @server_proto.ShowStatusMesoGainMessage = @json.from_json(
         json,
       )
       @log.info("local show status meso gain", data={ "gain": message.gain })
@@ -161,7 +159,7 @@ fn register_local_inventory_sync_handler_once(
     "modify_inventory_local",
     @net.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @maple_protocol.ModifyInventoryItemMessage = @json.from_json(
+      let message : @server_proto.ModifyInventoryItemMessage = @json.from_json(
         json,
       )
       @inventory.handle_item(inventory, message.item)
@@ -180,7 +178,7 @@ impl @net.OutMessage for PlayerUpdatePacket with pack(self) -> @net.OutPacket {
 }
 
 ///|
-using @maple_protocol {type InventoryType}
+using @server_proto {type InventoryType}
 
 ///|
 fn parse_inventory(recv : @net.InPacket) -> InventoryEntry raise {
@@ -254,7 +252,7 @@ fn handle_skills(
 }
 
 ///|
-using @maple_protocol {
+using @server_proto {
   type ChangeStatsMesoMessage,
   type InventoryEntry,
   type ModifyInventoryItemMessage,

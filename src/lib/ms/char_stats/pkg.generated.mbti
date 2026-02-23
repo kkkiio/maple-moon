@@ -2,9 +2,9 @@
 package "KKKIIO/maple-moon/lib/ms/char_stats"
 
 import {
-  "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/job",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
@@ -62,7 +62,7 @@ pub fn CharStats::get_total(Self, @maple_stat.EquipStatId) -> Int
 pub fn CharStats::get_weapon_type(Self) -> @weapon.Type
 pub fn CharStats::init_totalstats(Self) -> Unit
 pub fn CharStats::is_damage_buffed(Self) -> Bool
-pub fn CharStats::new(@maple_protocol.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> IterResult]], Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
+pub fn CharStats::new(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> IterResult]], Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
 pub fn CharStats::set_exp(Self, Int64) -> Unit
 pub fn CharStats::set_i64stat(Self, @maple_stat.Id, Int64) -> Unit
 pub fn CharStats::set_map_id(Self, Int) -> Unit
@@ -74,7 +74,7 @@ pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, 
 type Module
 pub fn Module::load(@net.Network) -> Self
 pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
-pub fn Module::new_char_stats(Self, @maple_protocol.StatsEntry, () -> @weapon.Type, @job.Job) -> CharStats
+pub fn Module::new_char_stats(Self, @server_proto.StatsEntry, () -> @weapon.Type, @job.Job) -> CharStats
 
 type StatusBarUI
 pub fn StatusBarUI::new(CharStats, @ui.Hooks, @resource.SyncLoader) -> Self raise

@@ -5,7 +5,7 @@ using @char_stance {type StanceId}
 using @map_object {type MapObjectBase}
 
 ///|
-using @maple_protocol {type StatsEntry}
+using @server_proto {type StatsEntry}
 
 ///|
 using @physics {type PhysicsObject}

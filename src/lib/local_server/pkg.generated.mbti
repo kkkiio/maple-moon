@@ -4,13 +4,13 @@ package "KKKIIO/maple-moon/lib/local_server"
 import {
   "KKKIIO/maple-moon/lib/indexed_db",
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/json",
   "moonbitlang/core/random",
 }
 
 // Values
-pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand) -> (Array[@maple_protocol.DropLootMessage], Int)
+pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand) -> (Array[@server_proto.DropLootMessage], Int)
 
 pub let default_rand_seed : Ref[Bytes]
 
@@ -36,7 +36,7 @@ pub async fn LocalServer::save_character(Self, Int) -> Unit
 pub async fn LocalServer::save_character_core(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
 #callsite(autofill(loc))
-pub fn[T : @maple_protocol.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 
 pub struct MemoryDB {
   stores : Ref[Map[String, Map[String, Json]]]

@@ -305,6 +305,7 @@ pub fn Inventory::modify(
   let arg = arg.abs()
   match mode {
     ModificationMode::CHANGE_COUNT => self.change_count(t, slot, arg)
+    ModificationMode::ADD_COUNT => self.add_count(t, slot, arg)
     ModificationMode::SWAP =>
       match mov {
         Movement::MOVE_INTERNAL => self.swap(t, slot, t, arg)
@@ -315,7 +316,7 @@ pub fn Inventory::modify(
         _ => ()
       }
     ModificationMode::REMOVE => self.remove(t, slot)
-    ...
+    ModificationMode::ADD(_) => ()
   }
   self.notify_item_listeners(t)
 }
@@ -372,6 +373,19 @@ fn Inventory::change_count(
 ) -> Unit {
   match self.inventories[t].get(slot) {
     Some(slot) => slot.count = count
+    None => ()
+  }
+}
+
+///|
+fn Inventory::add_count(
+  self : Inventory,
+  t : TypeId,
+  slot : Int,
+  count : Int,
+) -> Unit {
+  match self.inventories[t].get(slot) {
+    Some(slot_item) => slot_item.count += count
     None => ()
   }
 }
@@ -445,7 +459,7 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
   guard TypeId::by_item_id(itemid) is Some(type_) else { return }
   guard self.find_item(type_, itemid) is Some(slot_no) else { return }
   if type_ is TypeId::USE {
-    self.network.send_message(UseItemMessage::new(slot_no.inner(), itemid))
+    self.network.send_message(UseItemMessage::new(slot_no.0, itemid))
   }
 }
 

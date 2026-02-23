@@ -220,7 +220,7 @@ priv enum StartedQuest {
 } derive(Show)
 
 ///|
-using @maple_protocol {type PlayerQuestLogInfo}
+using @server_proto {type PlayerQuestLogInfo}
 
 ///|
 pub fn parse_player_quest_info(

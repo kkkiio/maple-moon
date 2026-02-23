@@ -5,7 +5,7 @@ import {
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/indexed_db",

@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {
+using @server_proto {
   type InventoryEntry,
   type InventoryItemEntry,
   type InventoryType,
@@ -593,9 +593,7 @@ pub fn setup_game_server_handlers() -> Unit {
     "inventory_ui_change_stats_meso",
     @net.Opcode::CHANGE_STATS.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @maple_protocol.ChangeStatsMesoMessage = @json.from_json(
-        json,
-      )
+      let message : @server_proto.ChangeStatsMesoMessage = @json.from_json(json)
       let state = state_ref.val
       state.meso = message.meso
       if state.visible {
@@ -607,7 +605,7 @@ pub fn setup_game_server_handlers() -> Unit {
     "inventory_ui_modify_inventory",
     @net.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @maple_protocol.ModifyInventoryItemMessage = @json.from_json(
+      let message : @server_proto.ModifyInventoryItemMessage = @json.from_json(
         json,
       )
       apply_modify_inventory_message(state_ref.val, message.item)

@@ -4,11 +4,11 @@ package "KKKIIO/maple-moon/lib/ms/inventory"
 import {
   "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/legacy_types",
-  "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/equip/data",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
@@ -20,11 +20,11 @@ pub fn drop_item(Module, String, Int, Int) -> String
 
 pub fn find_equip_slot(Inventory, @data.EquipData) -> @slot.Id
 
-pub fn handle_item(Inventory, @maple_protocol.InventoryItemEntry) -> Unit
+pub fn handle_item(Inventory, @server_proto.InventoryItemEntry) -> Unit
 
-pub fn new_move_item_packet(@maple_protocol.InventoryType, Int, Int, Int) -> @net.OutPacket
+pub fn new_move_item_packet(@server_proto.InventoryType, Int, Int, Int) -> @net.OutPacket
 
-pub fn parse_item(@net.InPacket, @maple_protocol.InventoryType, Int) -> @maple_protocol.InventoryItemEntry raise
+pub fn parse_item(@net.InPacket, @server_proto.InventoryType, Int) -> @server_proto.InventoryItemEntry raise
 
 pub fn use_item_at(Module, String, SlotNo, Array[String]) -> String
 
@@ -36,24 +36,24 @@ pub fn watch_meso(Module, (Int) -> Bool) -> Unit
 
 // Types and methods
 type Inventory
-pub fn Inventory::add_equip(Self, @maple_protocol.InventoryType, Int, Int, Bool, Int64, Int, Int, Map[@maple_stat.EquipStatId, Int], String, Int, Int, Int, Int) -> Unit
-pub fn Inventory::add_item(Self, @maple_protocol.InventoryType, Int, Int, Bool, Int64, Int, String, Int) -> Unit
-pub fn Inventory::add_pet(Self, @maple_protocol.InventoryType, Int, Int, Bool, String) -> Unit
-pub fn Inventory::find_item(Self, @maple_protocol.InventoryType, Int) -> SlotNo?
+pub fn Inventory::add_equip(Self, @server_proto.InventoryType, Int, Int, Bool, Int64, Int, Int, Map[@maple_stat.EquipStatId, Int], String, Int, Int, Int, Int) -> Unit
+pub fn Inventory::add_item(Self, @server_proto.InventoryType, Int, Int, Bool, Int64, Int, String, Int) -> Unit
+pub fn Inventory::add_pet(Self, @server_proto.InventoryType, Int, Int, Bool, String) -> Unit
+pub fn Inventory::find_item(Self, @server_proto.InventoryType, Int) -> SlotNo?
 pub fn Inventory::get_bulletslot(Self) -> Int
 pub fn Inventory::get_item_count(Self, Int) -> Int
-pub fn Inventory::get_item_count_at_slot(Self, @maple_protocol.InventoryType, Int) -> Int
-pub fn Inventory::get_item_id(Self, @maple_protocol.InventoryType, Int) -> Int
+pub fn Inventory::get_item_count_at_slot(Self, @server_proto.InventoryType, Int) -> Int
+pub fn Inventory::get_item_id(Self, @server_proto.InventoryType, Int) -> Int
 pub fn Inventory::get_meso(Self) -> Int
-pub fn Inventory::get_slot_item_at(Self, @maple_protocol.InventoryType, Int) -> SlotItem?
-pub fn Inventory::get_slotmax(Self, @maple_protocol.InventoryType) -> Int
+pub fn Inventory::get_slot_item_at(Self, @server_proto.InventoryType, Int) -> SlotItem?
+pub fn Inventory::get_slotmax(Self, @server_proto.InventoryType) -> Int
 pub fn Inventory::has_equipped(Self, @slot.Id) -> Bool
-pub fn Inventory::listen_item_changes(Self, @maple_protocol.InventoryType, () -> Bool) -> Unit
+pub fn Inventory::listen_item_changes(Self, @server_proto.InventoryType, () -> Bool) -> Unit
 pub fn Inventory::listen_meso_changes(Self, (Int) -> Bool) -> Unit
-pub fn Inventory::modify(Self, @maple_protocol.InventoryType, Int, ModificationMode, Int, Movement) -> Unit
+pub fn Inventory::modify(Self, @server_proto.InventoryType, Int, ModificationMode, Int, Movement) -> Unit
 pub fn Inventory::new(@net.Network) -> Self
 pub fn Inventory::set_meso(Self, Int) -> Unit
-pub fn Inventory::set_slotmax(Self, @maple_protocol.InventoryType, Int) -> Unit
+pub fn Inventory::set_slotmax(Self, @server_proto.InventoryType, Int) -> Unit
 pub fn Inventory::use_item(Self, Int) -> Unit
 pub impl @legacy_types.Inventory for Inventory
 
@@ -67,7 +67,6 @@ pub fn Item::new(Int, Int64, String, Int) -> Self
 
 type Mod
 pub impl Show for Mod
-pub impl ToJson for Mod
 
 type ModificationMode
 pub impl Show for ModificationMode
@@ -88,8 +87,6 @@ pub impl Hash for Movement
 pub impl Show for Movement
 pub impl ToJson for Movement
 
-type ShowGainAction
-
 pub struct SlotItem {
   unique_id : Int
   item_id : Int
@@ -103,11 +100,6 @@ pub impl Eq for SlotNo
 pub impl Hash for SlotNo
 pub impl Show for SlotNo
 pub impl ToJson for SlotNo
-
-type UnequipItemPacket
-pub impl @net.OutMessage for UnequipItemPacket
-pub impl Show for UnequipItemPacket
-pub impl ToJson for UnequipItemPacket
 
 pub struct WithItemSlot {
   slot_no : SlotNo

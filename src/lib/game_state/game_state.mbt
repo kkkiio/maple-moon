@@ -9,7 +9,7 @@ pub(all) enum GamePhase {
   GameStart(
     map_id~ : Int,
     portal_id~ : Int,
-    set_field_message~ : @maple_protocol.SetFieldMessage
+    set_field_message~ : @server_proto.SetFieldMessage
   )
   GameTransiting(
     map_id~ : Int,

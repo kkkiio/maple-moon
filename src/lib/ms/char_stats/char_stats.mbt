@@ -27,7 +27,7 @@ struct CharStats {
 }
 
 ///|
-using @maple_protocol {type StatsEntry}
+using @server_proto {type StatsEntry}
 
 ///|
 pub fn CharStats::new(

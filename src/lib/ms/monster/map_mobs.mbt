@@ -1,5 +1,5 @@
 ///|
-using @maple_protocol {
+using @server_proto {
   type MobSpawnMessage,
   type MobSpawnControllerMessage,
   type KillMobMessage,

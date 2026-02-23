@@ -3,7 +3,7 @@ package "KKKIIO/maple-moon/lib/game_server"
 
 import {
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/json",
 }
 
@@ -13,7 +13,7 @@ pub fn add_server_message_handler(String, Int, (Json) -> Unit raise) -> Unit
 pub fn init_server() -> Unit
 
 #callsite(autofill(loc))
-pub fn[T : @maple_protocol.ClientMessage] send(T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+pub fn[T : @server_proto.ClientMessage] send(T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 
 pub fn server_system(Double) -> Unit
 

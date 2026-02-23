@@ -3,12 +3,12 @@ package "KKKIIO/maple-moon/lib/ms/character"
 
 import {
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/maple_protocol",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/struct",
@@ -37,7 +37,7 @@ pub impl Eq for CharEffectId
 pub impl Hash for CharEffectId
 
 pub(all) struct CharEntry {
-  stats : @maple_protocol.StatsEntry
+  stats : @server_proto.StatsEntry
   look : @char_look.LookEntry
   id : Int
 }

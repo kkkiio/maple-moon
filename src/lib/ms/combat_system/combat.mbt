@@ -333,7 +333,7 @@ pub fn Combat::apply_attack_to_mobs(
     for line in damage_lines {
       total_damage += line.0
     }
-    @game_server.send(@maple_protocol.MobDamageMessage::{
+    @game_server.send(@server_proto.MobDamageMessage::{
       oid: target_oid,
       damage: total_damage,
     })

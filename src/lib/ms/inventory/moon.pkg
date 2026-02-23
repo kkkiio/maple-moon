@@ -15,13 +15,9 @@ import {
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/io_service",
-  "rami3l/js-ffi/js",
-  "KKKIIO/maple-moon/lib/game_server",
-  "KKKIIO/maple-moon/lib/maple_protocol",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/legacy_types",
 }
-
-warnings = "-A"
 
 options(
   link: {

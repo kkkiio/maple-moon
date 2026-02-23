@@ -239,16 +239,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               @skill.SkillId::POWER_STRIKE.int_value(),
             ]
             for skill_id in skill_ids {
-              try {
-                let sk = @combat_impl.load_skill_move(skill_id, bullet_module)
-                @combat_impl.register_move(sk)
-              } catch {
-                e =>
-                  @log.warn("Failed to load skill, skipping", data={
-                    "skill_id": skill_id,
-                    "error": e.to_string(),
-                  })
-              }
+              let sk = @combat_impl.load_skill_move(skill_id, bullet_module)
+              @combat_impl.register_move(sk)
             }
             (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),

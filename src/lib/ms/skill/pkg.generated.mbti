@@ -11,8 +11,24 @@ import {
 }
 
 // Values
+pub fn clear_skill_cache() -> Unit
+
+pub fn get_cached_skill(Int) -> SkillData?
+
+pub fn is_skill_cached(Int) -> Bool
+
+pub async fn load_skill(Int) -> SkillData raise SkillLoadError
+
+pub async fn preload_skills(Array[Int]) -> Unit raise SkillLoadError
+
+pub fn skill_cache_stats() -> (Int, Int)
 
 // Errors
+pub(all) suberror SkillLoadError {
+  NOT_FOUND(Int)
+  INVALID_DATA(String)
+}
+pub impl Show for SkillLoadError
 
 // Types and methods
 pub(all) struct SkillData {
@@ -32,6 +48,7 @@ pub(all) struct SkillData {
   icons : FixedArray[@graphics.Texture]
   src : @resource.NxNode
 }
+pub fn SkillData::get_cached(Int) -> Self?
 pub fn SkillData::get_stats(Self, Int) -> Stats?
 pub fn SkillData::is_attack(Self) -> Bool
 pub async fn SkillData::load(Int) -> Self

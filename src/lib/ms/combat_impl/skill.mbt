@@ -184,7 +184,7 @@ pub fn Skill::make_attack(
   let toleft = chr.facing_right |> not()
   let speed = @character.get_integer_attackspeed(chr.get_look(), chr.stats)
   let level = (chr.get_skilllevel)(self.skill_id)
-  let stats = self.stats.get(level).unwrap() // TODO: Handle error
+  let stats = self.stats.get(level).unwrap()
   let attack : @combat_proto.Attack = {
     hitcount: 0,
     stance: 0,
@@ -236,11 +236,10 @@ pub fn Skill::make_attack(
   if self.over_regular {
     attack.stance = chr.get_look().get_stance().int_value()
     if attack.t == @combat_proto.AttackType::CLOSE && not(self.projectile) {
-      guard @char_look.get_after_image(chr.entity) is Some(after_image) else {
-        @log.error("No afterimage")
-        panic()
+      // Use afterimage range if available, otherwise keep default range
+      if @char_look.get_after_image(chr.entity) is Some(after_image) {
+        attack.range = after_image.get_range()
       }
-      attack.range = after_image.get_range()
     }
   }
   attack

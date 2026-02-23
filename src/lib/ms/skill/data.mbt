@@ -1,4 +1,6 @@
 ///|
+/// Pure data structure for skill configuration.
+/// Use load_skill() to load, get_cached_skill() for synchronous access.
 pub(all) struct SkillData {
   id : Int
   stats : Map[Int, Stats]
@@ -14,6 +16,8 @@ pub(all) struct SkillData {
   levels : Map[Int, String]
   req_skills : @immut/hashmap.HashMap[Int, Int]
   icons : FixedArray[@graphics.Texture] // NORMAL, DISABLED, MOUSEOVER
+  /// Internal: raw JSON source for legacy effect construction.
+  /// Will be removed when effect system is refactored.
   src : @resource.NxNode
 }
 
@@ -39,20 +43,17 @@ pub(all) struct Stats {
 } derive(ToJson, Show)
 
 ///|
+/// Load skill data asynchronously with caching.
+/// Raises error if resource not found - caller must ensure preloading.
 pub async fn SkillData::load(id : Int) -> SkillData {
-  let strid = @utils.stoi_left_pad0(id, 7)
-  let jobid = strid.view(end_offset=3)
-  let src = get_skill_loader().load_res_async(["\{jobid}.img", "skill", strid])
-  let skill_res : SkillNxResource = @json.from_json(src.value()) catch {
-    e => fail("failed to load skill: \{e}, id=\{id}")
-  }
-  let strsrc : SkillTextResource = text_src
-    .as_object()
-    .unwrap()
-    .get(strid)
-    .unwrap()
-    |> @json.from_json()
-  SkillData::new(id, src, skill_res.simplify(), strsrc)
+  load_skill(id)
+}
+
+///|
+/// Get cached skill data synchronously.
+/// Returns None if not loaded yet. Use for runtime skill access.
+pub fn SkillData::get_cached(id : Int) -> SkillData? {
+  get_cached_skill(id)
 }
 
 ///|
@@ -185,6 +186,8 @@ pub impl @json.FromJson for SkillTextResource with from_json(json, path) -> Skil
 }
 
 ///|
+/// Create SkillData from resources (internal use, use load_skill for public API).
+/// Note: src is used for legacy effect construction and will be removed.
 pub fn SkillData::new(
   id : Int,
   skill_src : @resource.NxNode,

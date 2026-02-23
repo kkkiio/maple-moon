@@ -233,12 +233,23 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               .value()
             let after_images = @json.from_json(after_image_res)
             @char_look.set_after_images(after_image_name, after_images)
-            // Load and register skills
-            let sk = @combat_impl.load_skill_move(
+            // Load and register skills (optional - missing skills log warning only)
+            let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
-              bullet_module,
-            )
-            @combat_impl.register_move(sk)
+              @skill.SkillId::POWER_STRIKE.int_value(),
+            ]
+            for skill_id in skill_ids {
+              try {
+                let sk = @combat_impl.load_skill_move(skill_id, bullet_module)
+                @combat_impl.register_move(sk)
+              } catch {
+                e =>
+                  @log.warn("Failed to load skill, skipping", data={
+                    "skill_id": skill_id,
+                    "error": e.to_string(),
+                  })
+              }
+            }
             (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
         )

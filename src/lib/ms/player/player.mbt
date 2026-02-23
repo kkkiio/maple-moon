@@ -15,7 +15,20 @@ using @legacy_types {
   trait Inventory,
   trait SkillBook,
   type MockInventory,
-  type MockSkillBook,
+}
+
+///|
+/// SkillBook that returns max level for each skill from skill data.
+priv struct CachedMaxLevelSkillBook {} derive(Default)
+
+///|
+impl SkillBook for CachedMaxLevelSkillBook with get_level(_, skill_id) {
+  @skill.get_skill_max_level(skill_id)
+}
+
+///|
+impl SkillBook for CachedMaxLevelSkillBook with set_skill(_, _, _, _, _) {
+
 }
 
 ///|
@@ -126,13 +139,13 @@ pub fn Player::new(
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   stats : CharStats,
 ) -> Player {
+  let skill_book : &SkillBook = CachedMaxLevelSkillBook::{}
   let character = @character.Character::new(
     entity,
     id,
     look,
     name,
-    // get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
-    get_skilllevel=fn(_) { 0 }, // TODO: implement
+    get_skilllevel=fn(skill_id) { skill_book.get_level(skill_id) },
     stats,
   )
   let p : Player = {
@@ -145,7 +158,7 @@ pub fn Player::new(
     inventory: MockInventory::{  },
     buffs: Map::new(),
     randomizer: @utils.Randomizer::new(),
-    skill_book: MockSkillBook::{  },
+    skill_book,
     // load_skill_book,
   }
   p.set_state(CharState::STAND)
@@ -871,6 +884,9 @@ pub fn player_state_system(_delta : Double) -> Unit {
   }
   if @inputs.is_just_pressed(@inputs.KeyX) {
     @combat_impl.use_move(player, REGULAR_ATTACK)
+  }
+  if @inputs.is_just_pressed(@inputs.KeyA) {
+    @combat_impl.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyZ) {
     @drop.try_pickup_at(player.character.get_position()) |> ignore

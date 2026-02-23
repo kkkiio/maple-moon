@@ -53,3 +53,17 @@ pub impl SkillBook for MockSkillBook with get_level(_, _) {
 pub impl SkillBook for MockSkillBook with set_skill(_, _, _, _, _) {
 
 }
+
+///|
+/// SkillBook that returns max level (20) for all skills (no leveling system)
+pub(all) struct MaxLevelSkillBook {} derive(Default)
+
+///|
+pub impl SkillBook for MaxLevelSkillBook with get_level(_, _) {
+  20
+}
+
+///|
+pub impl SkillBook for MaxLevelSkillBook with set_skill(_, _, _, _, _) {
+
+}

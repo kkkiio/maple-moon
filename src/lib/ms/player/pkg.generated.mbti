@@ -2,10 +2,10 @@
 package "KKKIIO/maple-moon/lib/ms/player"
 
 import {
-  "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/legacy_types",
   "KKKIIO/maple-moon/lib/ms/buff",
   "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/combat_impl",

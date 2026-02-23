@@ -2,8 +2,8 @@
 package "KKKIIO/maple-moon/lib/ms/equip"
 
 import {
-  "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_look/types",
+  "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/clothing",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
   "KKKIIO/maple-moon/lib/ms/item",

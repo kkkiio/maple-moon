@@ -128,17 +128,18 @@ pub fn Stage::listen_map_change(
 /// reset player position. for debug
 pub fn reset_player_position() -> Unit {
   guard @game_state.game_state.phase
-    is @game_state.GamePhase::GameActive(
-      portals~,
-      map_info~,
-      portal_id~,
-      physics~,
-      ..
-    ) else {
+    is @game_state.GamePhase::GameActive(portal_id~, ..) else {
     return
   }
+  guard get_active_scene_map() is Some(scene_map) else { return }
   guard @player.get_player() is Some(player) else { return }
-  respawn_player(player, portal_id, map_info, portals, physics)
+  respawn_player(
+    player,
+    portal_id,
+    scene_map.map_info,
+    scene_map.portals,
+    scene_map.physics,
+  )
 }
 
 ///|
@@ -170,6 +171,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
+      clear_active_scene_map()
+      @map.clear_runtime_context()
       @mini_map_ui.clear_current_map()
       @game_state.emit_scene_clear(
         @game_state.SceneClearReason::LeaveToSelectCharacter,
@@ -305,6 +308,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       @inventory_ui.set_inventory_entry(inventory_entry)
+      clear_active_scene_map()
+      @map.clear_runtime_context()
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
@@ -330,14 +335,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           panic()
         }
       }
+      set_active_scene_map(sence_map)
+      @map.set_runtime_context(sence_map.map_info, sence_map.physics)
       @game_state.game_state.phase = @game_state.GamePhase::GameActive(
         map_id~,
         portal_id~,
-        tiles_objs=sence_map.tiles_objs,
-        backgrounds=sence_map.backgrounds,
-        physics=sence_map.physics,
-        map_info=sence_map.map_info,
-        portals=sence_map.portals,
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
@@ -421,6 +423,8 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json : Json) -> Unit raise {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
+      clear_active_scene_map()
+      @map.clear_runtime_context()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::ChangeMap)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,

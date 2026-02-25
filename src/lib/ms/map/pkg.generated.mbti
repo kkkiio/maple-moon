@@ -16,11 +16,21 @@ pub fn background_system(Double) -> Unit
 
 pub fn clear_background_debug() -> Unit
 
+pub fn clear_runtime_context() -> Unit
+
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
+
+pub fn find_warp_at_current(@struct.Point[Int]) -> PortalWarpInfo?
 
 pub fn get_background_visibility_state() -> BackgroundVisibilityState
 
 pub fn get_map_category(Int) -> String
+
+pub fn get_portal_by_name_current(String) -> @struct.Point[Int]?
+
+pub fn get_portal_pos_by_id_current(Int) -> @struct.Point[Int]?
+
+pub fn get_runtime_context() -> (MapInfo, @physics.Physics)?
 
 pub fn get_tile_objects_visibility() -> TileObjVisibilityState
 
@@ -51,6 +61,8 @@ pub fn set_obj_visibility(Int, Int, Bool) -> Unit
 pub fn set_objs_visible(Bool) -> Unit
 
 pub fn set_portals(MapPortals, get_touch_pos? : () -> @struct.Point[Int]?) -> Unit
+
+pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
 pub fn set_tile_visibility(Int, Int, Bool) -> Unit
 
@@ -123,7 +135,7 @@ pub impl @json.FromJson for BackgroundsResource
 
 type Ladder
 pub fn Ladder::felloff(Self, Int, Bool) -> Bool
-pub fn Ladder::from_resource(Json) -> Self
+pub fn Ladder::from_resource(NxLadder) -> Self
 pub fn Ladder::get_x(Self) -> Int
 pub fn Ladder::inrange(Self, @struct.Point[Int], Bool) -> Bool
 pub fn Ladder::is_ladder(Self) -> Bool
@@ -261,6 +273,9 @@ pub struct NxBackground {
 pub impl Show for NxBackground
 pub impl @json.FromJson for NxBackground
 
+type NxLadder
+pub impl @json.FromJson for NxLadder
+
 pub struct NxLayer {
   info : MapLayerInfoResource?
   tile : Array[NxTileRef]
@@ -313,6 +328,9 @@ type NxPortal
 pub impl Show for NxPortal
 pub impl ToJson for NxPortal
 pub impl @json.FromJson for NxPortal
+
+type NxSeat
+pub impl @json.FromJson for NxSeat
 
 pub struct NxTile {
   texture : @resource.NxTexture
@@ -400,7 +418,7 @@ pub(all) struct SceneMap {
 }
 
 type Seat
-pub fn Seat::from_resource(Json) -> Self
+pub fn Seat::from_resource(NxSeat) -> Self
 pub fn Seat::getpos(Self) -> @struct.Point[Int]
 pub fn Seat::inrange(Self, @struct.Point[Int]) -> Bool
 

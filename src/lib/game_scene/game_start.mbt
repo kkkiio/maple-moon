@@ -57,6 +57,27 @@ pub fn clear_loading_data() -> Unit {
 }
 
 ///|
+let active_scene_map_ref : Ref[@map.SceneMap?] = Ref::new(None)
+
+///|
+/// Store the active map runtime objects after map loading finished.
+pub fn set_active_scene_map(scene_map : @map.SceneMap) -> Unit {
+  active_scene_map_ref.val = Some(scene_map)
+}
+
+///|
+/// Get the active map runtime objects for in-scene systems.
+pub fn get_active_scene_map() -> @map.SceneMap? {
+  active_scene_map_ref.val
+}
+
+///|
+/// Clear active map runtime objects when leaving current scene.
+pub fn clear_active_scene_map() -> Unit {
+  active_scene_map_ref.val = None
+}
+
+///|
 fn get_equipped_slot(slot : Int, invtype : @server_proto.InventoryType) -> Int? {
   if invtype == @server_proto.InventoryType::EQUIPPED || slot < 0 {
     let real_slot = if slot < 0 { 0 - slot } else { slot }

@@ -142,6 +142,28 @@ pub fn set_portals(
 }
 
 ///|
+/// Find warp portal at `playerpos` from current portals context.
+pub fn find_warp_at_current(playerpos : Point[Int]) -> PortalWarpInfo? {
+  portals_context.val.bind(fn(ctx) { ctx.portals.find_warp_at(playerpos) })
+}
+
+///|
+/// Resolve portal spawn point by portal name from current portals context.
+pub fn get_portal_by_name_current(portal_name : String) -> Point[Int]? {
+  portals_context.val.bind(fn(ctx) {
+    ctx.portals.get_portal_by_name(portal_name)
+  })
+}
+
+///|
+/// Resolve portal spawn point by portal id from current portals context.
+pub fn get_portal_pos_by_id_current(portal_id : Int) -> Point[Int]? {
+  portals_context.val.bind(fn(ctx) {
+    ctx.portals.get_portal_pos_by_id(portal_id)
+  })
+}
+
+///|
 pub fn portal_system(_delta : Double) -> Unit {
   guard portals_context.val is Some(ctx) else { return }
   if ctx.dirty {

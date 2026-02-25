@@ -16,11 +16,15 @@ import {
 // Values
 pub fn apply_equipped_stats(@char_stats.CharStats, Array[@server_proto.InventoryItemEntry]) -> Unit
 
+pub fn clear_active_scene_map() -> Unit
+
 pub fn clear_loading_data() -> Unit
 
 pub fn collect_inventory_item_ids(Array[@server_proto.InventoryItemEntry]) -> Array[Int]
 
 pub fn find_equipped_item_id(Array[@server_proto.InventoryItemEntry], @slot.Id) -> Int?
+
+pub fn get_active_scene_map() -> @map.SceneMap?
 
 pub fn get_loading_data() -> @utils.Future[Result[(@item.ItemData, @item.ItemData, @item.ItemData, @item.ItemData, @char_look.Hair, @char_look.Face), Error]]?
 
@@ -31,6 +35,8 @@ pub fn make_job_from_stats(@server_proto.StatsEntry) -> @job.Job
 pub fn reset_player_position() -> Unit
 
 pub fn scene_transition_system(Double) -> Unit
+
+pub fn set_active_scene_map(@map.SceneMap) -> Unit
 
 pub fn set_loading_data(@utils.Future[Result[(@item.ItemData, @item.ItemData, @item.ItemData, @item.ItemData, @char_look.Hair, @char_look.Face), Error]]) -> Unit
 

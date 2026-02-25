@@ -16,15 +16,7 @@ pub(all) enum GamePhase {
     portal_id~ : Int,
     mut loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]?
   )
-  GameActive(
-    map_id~ : Int,
-    portal_id~ : Int,
-    tiles_objs~ : @map.MapLayers,
-    backgrounds~ : @map.Backgrounds,
-    physics~ : @physics.Physics,
-    map_info~ : @map.MapInfo,
-    portals~ : @map.MapPortals
-  )
+  GameActive(map_id~ : Int, portal_id~ : Int)
 }
 
 ///|

@@ -717,16 +717,15 @@ pub fn set_player(player : Player) -> Unit {
 fn check_portals(
   player : Player,
   map_info : @map.MapInfo,
-  portals : @map.MapPortals,
   physics : @physics.Physics,
 ) -> Unit {
   if player.is_attacking() {
     return
   }
   let playerpos = player.character.get_position()
-  guard portals.find_warp_at(playerpos) is Some(warpinfo) else { return }
+  guard @map.find_warp_at_current(playerpos) is Some(warpinfo) else { return }
   if warpinfo.intra_map {
-    guard portals.get_portal_by_name(warpinfo.toname) is Some(spawn_point) else {
+    guard @map.get_portal_by_name_current(warpinfo.toname) is Some(spawn_point) else {
       @log.error("portal not found", data={ "warpinfo": warpinfo })
       return
     }
@@ -750,10 +749,8 @@ fn check_portals(
 ///|
 /// System that watches the inputs and updates the player state.
 pub fn player_state_system(_delta : Double) -> Unit {
-  guard @game_state.game_state.phase
-    is GameActive(physics~, map_info~, portals~, ..) else {
-    return
-  }
+  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @map.get_runtime_context() is Some((map_info, physics)) else { return }
   guard player_ref.val is Some(player) else { return }
   // Check holding ladder interaction
   if @inputs.is_pressed(@inputs.ArrowUp) {
@@ -762,7 +759,7 @@ pub fn player_state_system(_delta : Double) -> Unit {
     player.check_ladders(map_info, false)
   }
   if @inputs.is_just_pressed(@inputs.ArrowUp) {
-    check_portals(player, map_info, portals, physics)
+    check_portals(player, map_info, physics)
   }
   for
     it in [

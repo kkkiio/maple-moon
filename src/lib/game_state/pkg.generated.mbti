@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/game_state"
 
 import {
   "KKKIIO/maple-moon/lib/ms/map",
-  "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/utils",
 }
@@ -22,7 +21,7 @@ pub(all) enum GamePhase {
   SelectCharacter
   GameStart(map_id~ : Int, portal_id~ : Int, set_field_message~ : @server_proto.SetFieldMessage)
   GameTransiting(map_id~ : Int, portal_id~ : Int, mut loading_map~ : @utils.Future[Result[@map.SceneMap, Error]]?)
-  GameActive(map_id~ : Int, portal_id~ : Int, tiles_objs~ : @map.MapLayers, backgrounds~ : @map.Backgrounds, physics~ : @physics.Physics, map_info~ : @map.MapInfo, portals~ : @map.MapPortals)
+  GameActive(map_id~ : Int, portal_id~ : Int)
 }
 
 pub(all) struct GameState {

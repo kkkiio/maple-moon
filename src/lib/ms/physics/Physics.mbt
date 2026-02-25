@@ -42,38 +42,48 @@
 /// 它的特点是不仅计算碰撞，还模拟了手感（通过复杂的摩擦力和坡度公式），这是 MapleStory 类游戏操作感的关键来源。
 
 ///|
+/// Physics world wrapper containing foothold collision data.
 pub struct Physics {
   fh_tree : FootholdTree
 }
 
 ///|
+/// Gravity acceleration applied to normal objects each tick.
 pub let gravforce : Double = 0.14
 
 ///|
+/// Gravity acceleration applied to swimming objects each tick.
 pub let swimgravforce : Double = 0.03
 
 ///|
+/// Ground friction coefficient for normal movement.
 pub let friction : Double = 0.3
 
 ///|
+/// Extra slope factor used to model uphill/downhill resistance.
 pub let slopefactor : Double = 0.1
 
 ///|
+/// Inertia divisor used when converting speed to ground slip.
 pub let groundslip : Double = 3.0
 
 ///|
+/// Air friction coefficient for flying objects.
 pub let flyfriction : Double = 0.05
 
 ///|
+/// Fluid friction coefficient for swimming objects.
 pub let swimfriction : Double = 0.08
 
 ///|
+/// Build physics world from foothold resource.
 pub fn Physics::from_resource(src : NxFootholdTree) -> Physics raise {
   let fh_tree = FootholdTree::from_resource(src)
   { fh_tree, }
 }
 
 ///|
+/// Build an empty physics world for tests or bootstrap.
 pub fn empty_physics() -> Physics {
   {
     fh_tree: {
@@ -87,6 +97,7 @@ pub fn empty_physics() -> Physics {
 }
 
 ///|
+/// Advance one physics tick for a single object.
 pub fn Physics::move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   // Determine which platform the object is currently on
   self.fh_tree.update_fh(tomove)
@@ -191,6 +202,11 @@ fn Physics::move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
+/// Return a snapped integer point right above ground below `position`.
+///
+/// Warning: this is a discrete placement helper for spawn/NPC placement.
+/// It relies on `FootholdTree::get_y_below` (integer y), so do not use it for
+/// continuous movement/teleport landing on slopes.
 pub fn Physics::get_y_below(
   self : Physics,
   position : Point[Int],
@@ -200,6 +216,7 @@ pub fn Physics::get_y_below(
 }
 
 ///|
+/// Access underlying foothold tree.
 pub fn Physics::get_fht(self : Physics) -> FootholdTree {
   self.fh_tree
 }

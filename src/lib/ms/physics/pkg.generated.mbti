@@ -70,6 +70,7 @@ pub fn FootholdTree::from_resource(NxFootholdTree) -> Self raise
 pub fn FootholdTree::get_borders(Self) -> @res_types.Range[Int]
 pub fn FootholdTree::get_edge(Self, Int, Bool) -> Double
 pub fn FootholdTree::get_fhid_below(Self, Double, Double) -> Int
+pub fn FootholdTree::get_ground_below_by_id(Self, Int, Double) -> Double
 pub fn FootholdTree::get_wall(Self, Int, Bool, Double) -> Double
 pub fn FootholdTree::get_walls(Self) -> @res_types.Range[Int]
 pub fn FootholdTree::get_y_below(Self, @res_types.Point[Int]) -> Int

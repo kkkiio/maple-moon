@@ -1,4 +1,5 @@
 ///|
+/// Network movement record type.
 enum MovementType {
   NONE
   ABSOLUTE
@@ -8,6 +9,7 @@ enum MovementType {
 } derive(Eq, Compare, Show, ToJson, FromJson)
 
 ///|
+/// One movement segment parsed from packet or built from physics state.
 pub struct Movement {
   t : MovementType
   command : Int
@@ -21,11 +23,13 @@ pub struct Movement {
 } derive(Show, ToJson, FromJson)
 
 ///|
+/// Build an empty movement segment.
 pub fn Movement::default() -> Movement {
   Movement::new(MovementType::NONE, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
 ///|
+/// Construct a movement segment with all raw fields.
 pub fn Movement::new(
   t : MovementType,
   c : Int,
@@ -51,6 +55,7 @@ pub fn Movement::new(
 }
 
 ///|
+/// Construct an ABSOLUTE movement from coordinates.
 pub fn Movement::from_coords(
   x : Int,
   y : Int,
@@ -63,6 +68,7 @@ pub fn Movement::from_coords(
 }
 
 ///|
+/// Build an ABSOLUTE movement from current physics object state.
 pub fn Movement::from_physics_object(
   phobj : PhysicsObject,
   s : Int,
@@ -81,6 +87,7 @@ pub fn Movement::from_physics_object(
 }
 
 ///|
+/// Check whether two movement segments are different in visible state.
 pub fn Movement::hasmoved(self : Movement, newmove : Movement) -> Bool {
   newmove.newstate != self.newstate ||
   newmove.xpos != self.xpos ||
@@ -90,6 +97,7 @@ pub fn Movement::hasmoved(self : Movement, newmove : Movement) -> Bool {
 }
 
 ///|
+/// Serialize a movement segment into outbound packet format.
 pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
   out.write_byte(movement.command.to_byte())
   out.write_short(movement.xpos)
@@ -102,6 +110,7 @@ pub fn write_movement(out : @net.OutPacket, movement : Movement) -> Unit {
 }
 
 ///|
+/// Parse movement segments from inbound movement packet.
 pub fn parse_movements(recv : @net.InPacket) -> Array[Movement] raise {
   let movements = []
   let length = recv.read_byte()

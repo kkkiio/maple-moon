@@ -69,7 +69,13 @@ pub fn Skill::new(
       sk == @skill.SkillId::IL_TELEPORT ||
       sk == @skill.SkillId::PRIEST_TELEPORT
     ) {
-    FuncSkillAction(fn(c, _) { teleport(c) }) as &SkillAction
+    FuncSkillAction(fn(c, _) {
+      match @map.get_runtime_context() {
+        Some((_, physics)) => teleport(c, physics)
+        None => () // Do nothing if physics is not available
+      }
+    })
+    as &SkillAction
   } else if has_action0 && has_action1 {
     TwoHandedAction::new(src) as &SkillAction
   } else if has_action0 {

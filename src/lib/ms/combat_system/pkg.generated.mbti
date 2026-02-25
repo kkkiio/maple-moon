@@ -75,6 +75,8 @@ pub fn set_player(&DamagableCharacter?) -> Unit
 
 pub fn show_teleport_effect(@character.Character) -> Unit
 
+pub fn teleport_phobj(@physics.PhysicsObject, Bool, @physics.Physics) -> Unit
+
 pub fn unregister_reader(Int) -> Unit
 
 pub fn use_move(&CombatCharacter, Int) -> Unit

@@ -10,9 +10,11 @@ struct FootholdTree {
 }
 
 ///|
+/// Raw foothold tree from map JSON: layer -> group -> id -> foothold.
 pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]]) // layer -> mid -> last -> foothold
 
 ///|
+/// Decode foothold tree from JSON object.
 pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
   let wrapper : @resource.IntMap[@resource.IntMap[@resource.IntMap[NxFoothold]]] = @resource.IntMap::from_json(
     json, path,
@@ -25,6 +27,7 @@ pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFooth
 }
 
 ///|
+/// Build runtime foothold tree and acceleration structure from resource.
 pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
   let footholds = Map::new()
   let null_fh = Foothold::default()
@@ -54,6 +57,8 @@ pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
 }
 
 ///|
+/// Clamp movement against walls/floors and map vertical borders.
+/// 
 /// - slide along wall
 /// - snap to floor
 pub fn FootholdTree::limit_movement(
@@ -107,6 +112,7 @@ pub fn FootholdTree::limit_movement(
 }
 
 ///|
+/// Refresh foothold attachment and ground state for a physics object.
 pub fn FootholdTree::update_fh(
   self : FootholdTree,
   phobj : PhysicsObject,
@@ -183,6 +189,7 @@ fn FootholdTree::get_fh(self : FootholdTree, fhid : Int) -> Foothold {
 }
 
 ///|
+/// Get collision wall x for current foothold chain and moving direction.
 pub fn FootholdTree::get_wall(
   self : FootholdTree,
   curid : Int,
@@ -215,6 +222,7 @@ pub fn FootholdTree::get_wall(
 }
 
 ///|
+/// Get edge x for turn-at-edge behavior.
 pub fn FootholdTree::get_edge(
   self : FootholdTree,
   curid : Int,
@@ -244,6 +252,7 @@ pub fn FootholdTree::get_edge(
 }
 
 ///|
+/// Find the nearest foothold id below (fx, fy).
 pub fn FootholdTree::get_fhid_below(
   self : FootholdTree,
   fx : Double,
@@ -264,6 +273,16 @@ pub fn FootholdTree::get_fhid_below(
 }
 
 ///|
+/// Get integer ground y of the foothold below `position`.
+///
+/// This API is intended for discrete spawn/snap placement.
+/// It truncates slope y to `Int`, so do not use it for continuous movement
+/// (for example teleport/mid-air correction), otherwise one-frame falling can occur.
+/// For continuous movement, use:
+/// - `get_fhid_below(fx, fy)` to choose foothold
+/// - `get_ground_below_by_id(fhid, x)` to get precise `Double` y
+///
+/// Falls back to bottom border when no foothold is found.
 pub fn FootholdTree::get_y_below(
   self : FootholdTree,
   position : Point[Int],
@@ -277,11 +296,23 @@ pub fn FootholdTree::get_y_below(
 }
 
 ///|
+/// Get precise ground y on a specific foothold at x.
+pub fn FootholdTree::get_ground_below_by_id(
+  self : FootholdTree,
+  fhid : Int,
+  x : Double,
+) -> Double {
+  self.get_fh(fhid).ground_below(x)
+}
+
+///|
+/// Return horizontal map walls range used by physics.
 pub fn FootholdTree::get_walls(self : FootholdTree) -> @struct.Range[Int] {
   self.walls
 }
 
 ///|
+/// Return vertical map borders range used by physics.
 pub fn FootholdTree::get_borders(self : FootholdTree) -> @struct.Range[Int] {
   self.borders
 }

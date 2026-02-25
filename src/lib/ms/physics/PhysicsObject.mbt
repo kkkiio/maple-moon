@@ -2,6 +2,7 @@
 using @struct {type Point}
 
 ///|
+/// Mutable kinematic state used by physics integration.
 pub struct MovingObject {
   x : @utils.Linear
   y : @utils.Linear
@@ -11,6 +12,7 @@ pub struct MovingObject {
 }
 
 ///|
+/// Create a moving object with zeroed position/speed.
 pub fn MovingObject::new(
   on_pos_change~ : (@selene_math.Vec2D) -> Unit,
 ) -> MovingObject {
@@ -24,12 +26,14 @@ pub fn MovingObject::new(
 }
 
 ///|
+/// Normalize interpolation state of both axes.
 pub fn MovingObject::normalize(self : MovingObject) -> Unit {
   self.x.normalize()
   self.y.normalize()
 }
 
 ///|
+/// Apply current speed to position for one tick.
 pub fn MovingObject::do_move(self : MovingObject) -> Unit {
   let x = self.x.get() + self.hspeed
   let y = self.y.get() + self.vspeed
@@ -39,18 +43,21 @@ pub fn MovingObject::do_move(self : MovingObject) -> Unit {
 }
 
 ///|
+/// Set x immediately and notify position callback.
 pub fn MovingObject::set_x(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
 }
 
 ///|
+/// Set y immediately and notify position callback.
 pub fn MovingObject::set_y(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
 }
 
 ///|
+/// Set full position immediately and notify callback.
 pub fn MovingObject::set_position(
   self : MovingObject,
   d : @selene_math.Vec2D,
@@ -61,6 +68,7 @@ pub fn MovingObject::set_position(
 }
 
 ///|
+/// Clamp x and clear horizontal speed.
 pub fn MovingObject::limitx(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   self.hspeed = 0.0
@@ -68,6 +76,7 @@ pub fn MovingObject::limitx(self : MovingObject, d : Double) -> Unit {
 }
 
 ///|
+/// Clamp y and clear vertical speed.
 pub fn MovingObject::limity(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   self.vspeed = 0.0
@@ -75,6 +84,7 @@ pub fn MovingObject::limity(self : MovingObject, d : Double) -> Unit {
 }
 
 ///|
+/// Set horizontal speed so object reaches target x after `delay`.
 pub fn MovingObject::movexuntil(
   self : MovingObject,
   d : Double,
@@ -89,6 +99,7 @@ pub fn MovingObject::movexuntil(
 }
 
 ///|
+/// Set vertical speed so object reaches target y after `delay`.
 pub fn MovingObject::moveyuntil(
   self : MovingObject,
   d : Double,
@@ -103,66 +114,79 @@ pub fn MovingObject::moveyuntil(
 }
 
 ///|
+/// Whether horizontal speed is non-zero.
 pub fn MovingObject::hmobile(self : MovingObject) -> Bool {
   self.hspeed != 0.0
 }
 
 ///|
+/// Whether vertical speed is non-zero.
 pub fn MovingObject::vmobile(self : MovingObject) -> Bool {
   self.vspeed != 0.0
 }
 
 ///|
+/// Whether either axis is moving.
 pub fn MovingObject::mobile(self : MovingObject) -> Bool {
   self.hmobile() || self.vmobile()
 }
 
 ///|
+/// Current x in double precision.
 pub fn MovingObject::crnt_x(self : MovingObject) -> Double {
   self.x.get()
 }
 
 ///|
+/// Current y in double precision.
 pub fn MovingObject::crnt_y(self : MovingObject) -> Double {
   self.y.get()
 }
 
 ///|
+/// Predicted next x using current horizontal speed.
 pub fn MovingObject::next_x(self : MovingObject) -> Double {
   self.x.plus(self.hspeed)
 }
 
 ///|
+/// Predicted next y using current vertical speed.
 pub fn MovingObject::next_y(self : MovingObject) -> Double {
   self.y.plus(self.vspeed)
 }
 
 ///|
+/// Current x rounded to integer.
 pub fn MovingObject::get_x(self : MovingObject) -> Int {
   self.x.get().round().to_int()
 }
 
 ///|
+/// Current y rounded to integer.
 pub fn MovingObject::get_y(self : MovingObject) -> Int {
   self.y.get().round().to_int()
 }
 
 ///|
+/// Previous tick x rounded to integer.
 pub fn MovingObject::get_last_x(self : MovingObject) -> Int {
   self.x.last().round().to_int()
 }
 
 ///|
+/// Previous tick y rounded to integer.
 pub fn MovingObject::get_last_y(self : MovingObject) -> Int {
   self.y.last().round().to_int()
 }
 
 ///|
+/// Current position rounded to integer point.
 pub fn MovingObject::get_position(self : MovingObject) -> Point[Int] {
   { x: self.get_x(), y: self.get_y() }
 }
 
 ///|
+/// Interpolated absolute x in screen space.
 pub fn MovingObject::get_absolute_x(
   self : MovingObject,
   viewx : Double,
@@ -172,6 +196,7 @@ pub fn MovingObject::get_absolute_x(
 }
 
 ///|
+/// Interpolated absolute y in screen space.
 pub fn MovingObject::get_absolute_y(
   self : MovingObject,
   viewy : Double,
@@ -181,6 +206,7 @@ pub fn MovingObject::get_absolute_y(
 }
 
 ///|
+/// Convert linear coordinate to absolute screen coordinate.
 pub fn get_absolute_coord(
   coord : @utils.Linear,
   view : Double,
@@ -195,6 +221,7 @@ pub fn get_absolute_coord(
 }
 
 ///|
+/// Interpolated absolute position in screen space.
 pub fn MovingObject::get_absolute(
   self : MovingObject,
   viewx : Double,
@@ -205,16 +232,19 @@ pub fn MovingObject::get_absolute(
 }
 
 ///|
+/// Set vertical speed directly.
 pub fn MovingObject::set_vspeed(self : MovingObject, vspeed : Double) -> Unit {
   self.vspeed = vspeed
 }
 
 ///|
+/// Set horizontal speed directly.
 pub fn MovingObject::set_hspeed(self : MovingObject, hspeed : Double) -> Unit {
   self.hspeed = hspeed
 }
 
 ///|
+/// Replace position-change callback.
 pub fn MovingObject::set_on_pos_change(
   self : MovingObject,
   on_pos_change : (@selene_math.Vec2D) -> Unit,
@@ -223,25 +253,37 @@ pub fn MovingObject::set_on_pos_change(
 }
 
 ///|
+/// High-level movement mode for a physics object.
 pub(all) enum PhysicsObjectType {
+  /// Ground physics with gravity and foothold friction.
   NORMAL
+  /// Reserved: icy movement behavior.
   ICE
+  /// Water-like movement mode.
   SWIMMING
+  /// Free-flying movement mode.
   FLYING
+  /// Fixed foothold attachment without auto update.
   FIXATED
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
+/// Bit flags controlling optional physics behaviors.
 pub(all) enum PhysicsObjectFlag {
+  /// Disable gravity integration.
   NO_GRAVITY = 0x0001
+  /// Turn around when reaching edge instead of falling.
   TURN_AT_EDGES = 0x0002
+  /// Re-check foothold below for jump-down support.
   CHECK_BELOW = 0x0004
 } derive(Eq, Compare, Show, ToJson)
 
 ///|
+/// Return underlying bit value of flag.
 pub fn PhysicsObjectFlag::int_value(self : PhysicsObjectFlag) -> Int = "%identity"
 
 ///|
+/// Physical state bound to one gameplay object/entity.
 pub struct PhysicsObject {
   moving_object : MovingObject
   mut t : PhysicsObjectType
@@ -261,6 +303,7 @@ pub struct PhysicsObject {
 }
 
 ///|
+/// Create a physics object with default NORMAL state.
 pub fn PhysicsObject::new(
   on_pos_change~ : (@selene_math.Vec2D) -> Unit,
 ) -> PhysicsObject {
@@ -282,6 +325,7 @@ pub fn PhysicsObject::new(
 }
 
 ///|
+/// Check whether flag is set.
 pub fn PhysicsObject::is_flag_set(
   self : PhysicsObject,
   f : PhysicsObjectFlag,
@@ -290,6 +334,7 @@ pub fn PhysicsObject::is_flag_set(
 }
 
 ///|
+/// Check whether flag is not set.
 pub fn PhysicsObject::is_flag_not_set(
   self : PhysicsObject,
   f : PhysicsObjectFlag,
@@ -298,6 +343,7 @@ pub fn PhysicsObject::is_flag_not_set(
 }
 
 ///|
+/// Enable one flag bit.
 pub fn PhysicsObject::set_flag(
   self : PhysicsObject,
   f : PhysicsObjectFlag,
@@ -306,6 +352,7 @@ pub fn PhysicsObject::set_flag(
 }
 
 ///|
+/// Clear one flag bit.
 pub fn PhysicsObject::clear_flag(
   self : PhysicsObject,
   f : PhysicsObjectFlag,
@@ -314,51 +361,61 @@ pub fn PhysicsObject::clear_flag(
 }
 
 ///|
+/// Clear all flag bits.
 pub fn PhysicsObject::clear_flags(self : PhysicsObject) -> Unit {
   self.flags = 0
 }
 
 ///|
+/// Move using wrapped moving object integration.
 pub fn PhysicsObject::do_move(self : PhysicsObject) -> Unit {
   self.moving_object.do_move()
 }
 
 ///|
+/// Set x immediately.
 pub fn PhysicsObject::set_x(self : PhysicsObject, x : Double) -> Unit {
   self.moving_object.set_x(x)
 }
 
 ///|
+/// Set y immediately.
 pub fn PhysicsObject::set_y(self : PhysicsObject, y : Double) -> Unit {
   self.moving_object.set_y(y)
 }
 
 ///|
+/// Clamp x and stop horizontal speed.
 pub fn PhysicsObject::limitx(self : PhysicsObject, x : Double) -> Unit {
   self.moving_object.limitx(x)
 }
 
 ///|
+/// Clamp y and stop vertical speed.
 pub fn PhysicsObject::limity(self : PhysicsObject, y : Double) -> Unit {
   self.moving_object.limity(y)
 }
 
 ///|
+/// Current x rounded to integer.
 pub fn PhysicsObject::get_x(self : PhysicsObject) -> Int {
   self.moving_object.get_x()
 }
 
 ///|
+/// Current y rounded to integer.
 pub fn PhysicsObject::get_y(self : PhysicsObject) -> Int {
   self.moving_object.get_y()
 }
 
 ///|
+/// Current position rounded to integer point.
 pub fn PhysicsObject::get_position(self : PhysicsObject) -> Point[Int] {
   self.moving_object.get_position()
 }
 
 ///|
+/// Set full position immediately.
 pub fn PhysicsObject::set_position(
   self : PhysicsObject,
   d : @selene_math.Vec2D,
@@ -367,6 +424,7 @@ pub fn PhysicsObject::set_position(
 }
 
 ///|
+/// Interpolated absolute x in screen space.
 pub fn PhysicsObject::get_absolute_x(
   self : PhysicsObject,
   viewx : Double,
@@ -376,6 +434,7 @@ pub fn PhysicsObject::get_absolute_x(
 }
 
 ///|
+/// Interpolated absolute y in screen space.
 pub fn PhysicsObject::get_absolute_y(
   self : PhysicsObject,
   viewy : Double,
@@ -385,6 +444,7 @@ pub fn PhysicsObject::get_absolute_y(
 }
 
 ///|
+/// Interpolated absolute position in screen space.
 pub fn PhysicsObject::get_absolute(
   self : PhysicsObject,
   viewx : Double,
@@ -395,26 +455,31 @@ pub fn PhysicsObject::get_absolute(
 }
 
 ///|
+/// Previous tick x rounded to integer.
 pub fn PhysicsObject::get_last_x(self : PhysicsObject) -> Int {
   self.moving_object.get_last_x()
 }
 
 ///|
+/// Previous tick y rounded to integer.
 pub fn PhysicsObject::get_last_y(self : PhysicsObject) -> Int {
   self.moving_object.get_last_y()
 }
 
 ///|
+/// Set horizontal speed directly.
 pub fn PhysicsObject::set_hspeed(self : PhysicsObject, hspeed : Double) -> Unit {
   self.moving_object.hspeed = hspeed
 }
 
 ///|
+/// Set vertical speed directly.
 pub fn PhysicsObject::set_vspeed(self : PhysicsObject, vspeed : Double) -> Unit {
   self.moving_object.vspeed = vspeed
 }
 
 ///|
+/// Set high-level movement mode.
 pub fn PhysicsObject::set_t(
   self : PhysicsObject,
   t : PhysicsObjectType,
@@ -423,21 +488,25 @@ pub fn PhysicsObject::set_t(
 }
 
 ///|
+/// Set current foothold id manually.
 pub fn PhysicsObject::set_fhid(self : PhysicsObject, fhid : Int) -> Unit {
   self.fh_id = fhid
 }
 
 ///|
+/// Set current foothold layer manually.
 pub fn PhysicsObject::set_fhlayer(self : PhysicsObject, fhlayer : Int) -> Unit {
   self.fhlayer = fhlayer
 }
 
 ///|
+/// Add horizontal force for next integration step.
 pub fn PhysicsObject::set_hforce(self : PhysicsObject, hforce : Double) -> Unit {
   self.hforce = hforce
 }
 
 ///|
+/// Add vertical force for next integration step.
 pub fn PhysicsObject::set_vforce(self : PhysicsObject, vforce : Double) -> Unit {
   self.vforce = vforce
 }

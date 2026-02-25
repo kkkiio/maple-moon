@@ -682,7 +682,13 @@ async test "parse weapon resource" {
     "/Character/Weapon/spritesheets/01382032.img": metadata,
   }
   // Skip image operations by not providing load_spritesheet and save_image
-  let res = process_resource(src, atlases, "01382032.img", "weapon")
+  let res = process_resource(
+    src,
+    atlases,
+    "01382032.img",
+    "weapon",
+    keep_source_sheets=false,
+  )
   json_inspect(res, content={
     "alert": {
       "0": {

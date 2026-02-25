@@ -1,6 +1,6 @@
 # Reanim CLI Tool
 
-Maplestory 资源处理工具。主要用于将原始解包资源（JSON 结构 + 散图/图集引用）转换为游戏运行时更易加载的格式（单张 Unified Spritesheet + 带有坐标偏移的 JSON）。
+Maplestory 资源处理工具。主要用于将原始解包资源（JSON 结构 + 散图/图集引用）转换为游戏运行时更易加载的格式（标准化 `__i` + `__off`）。
 
 ## 工具目的
 
@@ -14,27 +14,32 @@ Maplestory 资源处理工具。主要用于将原始解包资源（JSON 结构 
 
 - **递归搜集 (Recursive Collection)**：自动遍历 JSON 树中的所有节点，搜集所有帧资源（`__i` 或 `__b`），无论它们嵌套在多深的层级下（自动处理 `hairShade`, `weapon`, 多部位动画等）。
 - **智能去重 (Deduplication)**：根据源路径或 ID 自动识别重复引用的帧。例如，不同动作可能复用相同的站立帧，或者不同肤色变体引用同一张遮罩图，工具只会打包一份图片数据，显著减小 Spritesheet 体积。
-- **合并输出 (Unified Output)**：默认为一个输入的 JSON 资源生成**单张** Spritesheet (`.png`)，并输出更新了引用路径和坐标偏移 (`__off`) 的 JSON 文件。
-- **保留源图集 (Keep Source Sheets)**：可选保留原始多个 spritesheet，不重新合图，仅将 `__i: sheet#id` 重写为 `__i: sheet.png` 并写入 `__off: [x, y]`。
+- **保留源图集 (Keep Source Sheets)**：默认保留原始多个 spritesheet，不重新合图，仅将 `__i: sheet#id` 重写为 `__i: sheet.png` 并写入 `__off: [x, y]`。
+- **合并输出 (Unified Output)**：可选将一个输入 JSON 的帧合并为单张 Spritesheet (`.png`)。
 
 ## 现状与特性
 
-### 1. 默认模式：Recursive Simple Pack
+### 1. 默认模式：Keep Source Sheets
 
 这是目前推荐的处理方式：
 
 - **保留原尺寸**：不对图片进行 Resize，完整保留原始图片的 `width`, `height` 和 `origin` 锚点信息。
-- **水平排列**：所有去重后的唯一帧在生成的 Spritesheet 中水平排列。
-- **路径重写**：输出的 JSON 中，原有的引用（如 `path/to/sheet.img#123`）会被重写为指向新生成的 Spritesheet (`base_name.png`)，并附加 `__off` 字段指明该帧在 Spritesheet 中的 X 轴偏移量。
+- **不重打包图集**：保留原 spritesheet，输出 JSON 只做引用规范化。
+- **路径重写**：原有引用（如 `path/to/sheet.img#123`）会被重写为 `path/to/sheet.img.png` 并附加 `__off`。
 
-### 2. 遗留模式：Resize Mode (`--resize`)
+### 2. 可选模式：Merge Source Sheets (`--merge-source-sheets`)
+
+- 将去重后的唯一帧合并到一个输出 `base_name.png`。
+- 输出 JSON 的 `__i` 指向新图集路径（`<output_rel_path>/<base_name>.png`）。
+
+### 3. 遗留模式：Resize Mode (`--resize`)
 
 这是旧版本的逻辑，尝试计算所有帧的统一包围盒，并将帧 Resize 到统一尺寸。
 
 - 通过 `--resize` 或 `-r` 参数开启。
 - 主要用于某些需要统一帧尺寸的旧测试用例或特定组件。
 
-### 3. 支持两种源格式
+### 4. 支持两种源格式
 
 工具会自动根据输入 JSON 的内容检测模式：
 
@@ -61,7 +66,7 @@ node target/js/release/build/cmd/reanim/reanim.js \
 - `--bitmaps-dir, -b <path>`: 指定 bitmaps 目录（默认：`<input-dir>/bitmaps`）
 - `--spritesheet-dir, -s <path>`: 指定 spritesheets 目录（仅用于 `__i` 模式）
 - `--resize, -r`: 开启遗留的 Resize 模式（统一帧尺寸）
-- `--keep-source-sheets, -k`: 保留源 spritesheet，不合并输出单图，仅写 `__off`
+- `--merge-source-sheets, -M`: 合并为单图输出（旧默认行为）
 - `--help, -h`: 显示帮助信息
 
 ## 示例

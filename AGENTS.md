@@ -95,6 +95,27 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 }
 ````
 
+### 禁止 fallback
+
+除非必要, 否则不要写 fallback 逻辑, 干扰问题排查. 可以在函数返回值后加`raise`关键词, 让错误继续往上传播.
+`test` 里抛出错误是推荐的.
+
+### 使用 Js 模块
+
+用 MoonBit 的 `#module` attribute 声明 JavaScript 后端的依赖模块.
+
+在 cjs 格式中, 它被解释为 require, 而在 esm 格式中, 它被解释为 import.
+
+```mbt
+#module("node:fs")
+pub fn write_file_sync(file : String, data : String) = "writeFileSync"
+```
+
+### 解析 nx 资源
+
+nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit `struct` , 并实现 `FromJson` 接口来解析数据.
+这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .
+
 ### JSON Match Pattern
 
 处理 JSON 数据时, 优先用模式匹配, 而不是 `Object::get` 等方法.
@@ -118,10 +139,6 @@ let v : Json = {
 }
 ```
 
-### 禁止 fallback
-
-除非必要, 否则不要写 fallback 逻辑, 干扰问题排查. 可以在函数返回值后加`raise`关键词, 让错误继续往上传播.
-
 ### Sprite
 
 使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.
@@ -135,8 +152,3 @@ let v : Json = {
 ### 地图资源
 
 地图资源通常位于 `assets/map/mapX/YYYYYYY.img.json`, 结构参考[文档](./src/lib/ms/map/README.mbt.md).
-
-### 解析 nx 资源
-
-nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit `struct` , 并实现 `FromJson` 接口来解析数据.
-这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .

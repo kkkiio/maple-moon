@@ -38,21 +38,21 @@ pub(all) enum PortalType {
 ///|
 pub fn PortalType::typebyid(id : Int) -> PortalType? {
   let t = match id {
-    0 => SPAWN
-    1 => INVISIBLE
-    2 => REGULAR
-    3 => TOUCH
-    4 => TYPE4
-    5 => TYPE5
-    6 => WARP
-    7 => SCRIPTED
-    8 => SCRIPTED_INVISIBLE
-    9 => SCRIPTED_TOUCH
-    10 => HIDDEN
-    11 => SCRIPTED_HIDDEN
-    12 => SPRING1
-    13 => SPRING2
-    14 => TYPE14
+    0 => PortalType::SPAWN
+    1 => PortalType::INVISIBLE
+    2 => PortalType::REGULAR
+    3 => PortalType::TOUCH
+    4 => PortalType::TYPE4
+    5 => PortalType::TYPE5
+    6 => PortalType::WARP
+    7 => PortalType::SCRIPTED
+    8 => PortalType::SCRIPTED_INVISIBLE
+    9 => PortalType::SCRIPTED_TOUCH
+    10 => PortalType::HIDDEN
+    11 => PortalType::SCRIPTED_HIDDEN
+    12 => PortalType::SPRING1
+    13 => PortalType::SPRING2
+    14 => PortalType::TYPE14
     _ => return None
   }
   Some(t)

@@ -61,7 +61,9 @@ pub fn MapPortals::get_portal_by_name(
   self : MapPortals,
   portal_name : String,
 ) -> Point[Int]? {
-  self.name_portal_id_map.get(portal_name).bind(self.get_portal_pos_by_id(_))
+  self.name_portal_id_map
+  .get(portal_name)
+  .bind(fn(portal_id) { self.get_portal_pos_by_id(portal_id) })
 }
 
 ///|

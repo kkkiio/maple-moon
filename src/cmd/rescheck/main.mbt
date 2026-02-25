@@ -65,6 +65,7 @@ fn all_checkers() -> Array[Checker] {
     register_item_checker(),
     register_mob_checker(),
     register_ui_checker(),
+    register_mini_map_ui_checker(),
   ]
 }
 

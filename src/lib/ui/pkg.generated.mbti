@@ -219,12 +219,14 @@ pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T]
 pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T]
 pub impl[T : ToJson] ToJson for OffsetedUnit[T]
 
+#deprecated
 pub(all) enum RenderElement {
   Static(&RenderUnit)
   Interactable(&RenderUnit, InteractiveArea)
 }
 pub impl ToJson for RenderElement
 
+#deprecated
 pub(all) struct RenderSpec {
   render_elements : Array[RenderElement]
 }
@@ -407,6 +409,7 @@ pub(open) trait UIState {
   get_front_by_types(Self, Array[UIElementType]) -> Element?
 }
 
+#deprecated
 pub(open) trait Widget {
   render(Self) -> RenderSpec
 }

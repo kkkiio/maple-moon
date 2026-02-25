@@ -11,7 +11,7 @@ pub(all) struct MapRawResources {
     String,
     Map[BackgroundAnimationPath, @resource.NxAnimation],
   ]
-  root : @resource.NxNode
+  root : Json
 }
 
 ///|
@@ -64,7 +64,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
     tilesets,
     object_animation_sets,
     background_animation_sets,
-    root: src,
+    root: src.value(),
   }
 }
 
@@ -116,8 +116,8 @@ pub impl @json.FromJson for NxMap with from_json(json, path) {
   } else {
     @physics.NxFootholdTree(Map::new())
   }
-  let mini_map = if obj.get("mini_map") is Some(mini_map) {
-    @json.from_json(mini_map, path=path.add_key("mini_map"))
+  let mini_map = if obj.get("miniMap") is Some(mini_map) {
+    Some(@json.from_json(mini_map, path=path.add_key("miniMap")))
   } else {
     None
   }

@@ -94,12 +94,14 @@ pub let all_types : FixedArray[UIElementType] = [
 ]
 
 ///|
+#deprecated("use @selene.Sprite")
 pub(open) trait Widget {
   /// declarative ui interface
   render(Self) -> RenderSpec
 }
 
 ///|
+#deprecated("use @selene.Sprite")
 pub(all) struct RenderSpec {
   render_elements : Array[RenderElement]
 }
@@ -110,6 +112,7 @@ pub(open) trait RenderUnit: ToJson + @graphics.Drawable {
 }
 
 ///|
+#deprecated("use @selene.Sprite")
 pub(all) enum RenderElement {
   Static(&RenderUnit)
   Interactable(&RenderUnit, InteractiveArea)

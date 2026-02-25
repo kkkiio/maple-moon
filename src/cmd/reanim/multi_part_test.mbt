@@ -1306,7 +1306,13 @@ async test "parse character body" {
     "/Character/Body/spritesheets/00002000.img": metadata,
   }
   // Skip image operations by not providing load_spritesheet and save_image
-  let res = process_resource(src, atlases, "00002000.img", "Character/Body")
+  let res = process_resource(
+    src,
+    atlases,
+    "00002000.img",
+    "Character/Body",
+    keep_source_sheets=false,
+  )
   json_inspect(res, content={
     "stabTF": {
       "0": {

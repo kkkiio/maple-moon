@@ -1,5 +1,5 @@
 /// Process nodes - simplified recursive frame collection
-/// Default mode: recursively collect ALL frames, pack into one spritesheet
+/// Default mode: keep source spritesheets and inject __off.
 
 ///|
 pub(all) struct CliArgs {
@@ -130,7 +130,7 @@ pub async fn process_simple_pack(
   bitmaps_dir : String,
   load_bitmap : ((String) -> @js.Value)?,
   save_image : ((String, @js.Value) -> Unit)?,
-  keep_source_sheets? : Bool = false,
+  keep_source_sheets? : Bool = true,
 ) -> Json {
   // 1. Recursively collect all frames
   let frames_with_paths : Array[FrameWithPath] = []
@@ -234,7 +234,7 @@ pub async fn process_resource(
   load_spritesheet? : (String) -> @js.Value,
   load_bitmap? : (String) -> @js.Value,
   save_image? : (String, @js.Value) -> Unit,
-  keep_source_sheets? : Bool = false,
+  keep_source_sheets? : Bool = true,
 ) -> Json {
   // Load spritesheet buffers if load_spritesheet is provided
   let spritesheet_buffers : Map[String, @js.Value] = {}

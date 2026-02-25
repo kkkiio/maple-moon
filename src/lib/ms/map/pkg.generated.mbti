@@ -5,7 +5,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/struct",
-  "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
   "Milky2018/selene/sprite",
@@ -23,15 +22,11 @@ pub fn get_background_visibility_state() -> BackgroundVisibilityState
 
 pub fn get_map_category(Int) -> String
 
-pub fn get_map_latest_loader() -> @resource.AsyncLoader
-
 pub fn get_tile_objects_visibility() -> TileObjVisibilityState
 
 pub async fn load_background_animation(@resource.AsyncLoader, String, BackgroundAnimationPath) -> @resource.NxAnimation
 
 pub fn load_backgrounds(BackgroundsResource, Map[String, Map[BackgroundAnimationPath, @resource.NxAnimation]]) -> Backgrounds
-
-pub async fn load_map_node(Int) -> @resource.NxNode
 
 pub async fn load_map_resources_by_id(Int) -> MapRawResources
 
@@ -128,10 +123,16 @@ pub impl @json.FromJson for BackgroundsResource
 
 type Ladder
 pub fn Ladder::felloff(Self, Int, Bool) -> Bool
-pub fn Ladder::from_resource(@resource.NxNode) -> Self
+pub fn Ladder::from_resource(Json) -> Self
 pub fn Ladder::get_x(Self) -> Int
 pub fn Ladder::inrange(Self, @struct.Point[Int], Bool) -> Bool
 pub fn Ladder::is_ladder(Self) -> Bool
+
+pub(all) struct MapDrawData {
+  scale : Float
+  center_x : Int
+  center_y : Int
+}
 
 pub struct MapInfo {
   field_limit : Int
@@ -151,7 +152,7 @@ pub struct MapInfo {
 }
 pub fn MapInfo::find_ladder(Self, @struct.Point[Int], Bool) -> Ladder?
 pub fn MapInfo::findseat(Self, @struct.Point[Int]) -> Seat?
-pub fn MapInfo::from_resource(@resource.NxNode, @struct.Range[Int], @struct.Range[Int]) -> Self
+pub fn MapInfo::from_resource(Json, @struct.Range[Int], @struct.Range[Int]) -> Self
 pub fn MapInfo::get_bgm(Self) -> String
 pub fn MapInfo::get_borders(Self) -> @struct.Range[Int]
 pub fn MapInfo::get_full_name(Self) -> String
@@ -188,32 +189,59 @@ pub(all) struct MapRawResources {
   tilesets : Map[String, NxTileSet]
   object_animation_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]]
   background_animation_sets : Map[String, Map[BackgroundAnimationPath, @resource.NxAnimation]]
-  root : @resource.NxNode
+  root : Json
 }
 pub fn MapRawResources::get_backgrounds(Self) -> BackgroundsResource
 pub fn MapRawResources::get_layers(Self) -> Array[NxLayer]
 pub fn MapRawResources::get_portals(Self) -> Array[NxPortal]
 
-type MiniMapResource
+pub(all) struct MiniMapPortal {
+  x : Int
+  y : Int
+  tm : Int
+  pt : MiniMapPortalType
+}
+pub fn MiniMapPortal::new(Int, Int, Int, MiniMapPortalType) -> Self
+
+pub enum MiniMapPortalType {
+  SPAWN
+  INVISIBLE
+  REGULAR
+  TOUCH
+  TYPE4
+  TYPE5
+  WARP
+  SCRIPTED
+  SCRIPTED_INVISIBLE
+  SCRIPTED_TOUCH
+  HIDDEN
+  SCRIPTED_HIDDEN
+  SPRING1
+  SPRING2
+  TYPE14
+}
+pub fn MiniMapPortalType::from_int(Int) -> Self
+pub impl Eq for MiniMapPortalType
+pub impl Show for MiniMapPortalType
+
+pub struct MiniMapResource {
+  mag : Int
+  center_x : Int
+  center_y : Int
+  canvas : @resource.NxAnimation
+}
 pub impl @json.FromJson for MiniMapResource
 
-type MiniMapRuntimeResource
-
-pub enum MiniMapType {
-  NORMAL
+pub(all) struct MiniMapRuntimeResource {
+  canvas : @resource.NxAnimation
+  draw_data : MapDrawData
+  portals : Array[MiniMapPortal]
 }
-
-type MiniMapUI
-pub fn MiniMapUI::set_map(Self, Int, MapInfo, MiniMapRuntimeResource?) -> Unit
-pub impl @ui.Widget for MiniMapUI
-
-type MiniMapUIResource
-pub fn MiniMapUIResource::load() -> Self
+pub fn MiniMapRuntimeResource::load(MiniMapResource, Array[MiniMapPortal]) -> Self
 
 type Module
 pub fn Module::get_portals_animations(Self) -> MapPortalAnimations
 pub fn Module::load() -> Self
-pub fn Module::new_mini_map_ui(Self, @ui.UIModel) -> MiniMapUI
 
 pub struct NxBackground {
   a : Int
@@ -372,7 +400,7 @@ pub(all) struct SceneMap {
 }
 
 type Seat
-pub fn Seat::from_resource(@resource.NxNode) -> Self
+pub fn Seat::from_resource(Json) -> Self
 pub fn Seat::getpos(Self) -> @struct.Point[Int]
 pub fn Seat::inrange(Self, @struct.Point[Int]) -> Bool
 

@@ -32,6 +32,8 @@ pub fn get_item_loader() -> AsyncLoader
 
 pub fn get_item_special_loader() -> AsyncLoader
 
+pub fn get_map_latest_loader() -> AsyncLoader
+
 pub fn get_mapx_loader() -> AsyncLoader
 
 pub fn get_mob_loader() -> AsyncLoader

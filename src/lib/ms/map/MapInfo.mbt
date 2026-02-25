@@ -5,7 +5,62 @@ using @struct {type Range}
 using @struct {type Point}
 
 ///|
-using @resource {type NxNode}
+struct NxSeat {
+  x : Int
+  y : Int
+}
+
+///|
+pub impl @json.FromJson for NxSeat with from_json(json, path) -> NxSeat raise @json.JsonDecodeError {
+  match json {
+    { "x": Number(x, ..), "y": Number(y, ..), .. } =>
+      { x: x.to_int(), y: y.to_int() }
+    [Number(x, ..), Number(y, ..)] => { x: x.to_int(), y: y.to_int() }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "invalid nx seat, expected {x,y} or [x,y]"),
+      )
+  }
+}
+
+///|
+struct NxLadder {
+  x : Int
+  y1 : Int
+  y2 : Int
+  l : Bool
+}
+
+///|
+pub impl @json.FromJson for NxLadder with from_json(json, path) -> NxLadder raise @json.JsonDecodeError {
+  match json {
+    {
+      "x": Number(x, ..),
+      "y1": Number(y1, ..),
+      "y2": Number(y2, ..),
+      "l": Number(l, ..),
+      ..
+    } => { x: x.to_int(), y1: y1.to_int(), y2: y2.to_int(), l: l.to_int() != 0 }
+    {
+      "x": Number(x, ..),
+      "y1": Number(y1, ..),
+      "y2": Number(y2, ..),
+      "l": String("true"),
+      ..
+    } => { x: x.to_int(), y1: y1.to_int(), y2: y2.to_int(), l: true }
+    {
+      "x": Number(x, ..),
+      "y1": Number(y1, ..),
+      "y2": Number(y2, ..),
+      "l": String("false"),
+      ..
+    } => { x: x.to_int(), y1: y1.to_int(), y2: y2.to_int(), l: false }
+    _ =>
+      raise @json.JsonDecodeError(
+        (path, "invalid nx ladder, expected fields x/y1/y2/l"),
+      )
+  }
+}
 
 ///|
 /// Define the Seat struct and its methods
@@ -14,10 +69,8 @@ struct Seat {
 }
 
 ///|
-pub fn Seat::from_resource(src : NxNode) -> Seat {
-  { pos: src.as_point() } catch {
-    _ => panic()
-  }
+pub fn Seat::from_resource(src : NxSeat) -> Seat {
+  { pos: Point::new(src.x, src.y) }
 }
 
 ///|
@@ -42,15 +95,8 @@ struct Ladder {
 }
 
 ///|
-pub fn Ladder::from_resource(src : NxNode) -> Ladder {
-  {
-    x: src["x"].get_int(),
-    y1: src["y1"].get_int(),
-    y2: src["y2"].get_int(),
-    ladder: src["l"].get_bool(),
-  } catch {
-    _ => panic()
-  }
+pub fn Ladder::from_resource(src : NxLadder) -> Ladder {
+  { x: src.x, y1: src.y1, y2: src.y2, ladder: src.l }
 }
 
 ///|
@@ -102,12 +148,23 @@ pub struct MapInfo {
 
 ///|
 pub fn MapInfo::from_resource(
-  src : NxNode,
+  src : Json,
   walls : Range[Int],
   borders : Range[Int],
 ) -> MapInfo {
-  let info = src["info"]
-  let (map_walls, map_borders) = match info.value() {
+  let info = match src {
+    { "info": info, .. } => info
+    _ => panic()
+  }
+  let seat = match src {
+    { "seat": seat, .. } => seat
+    _ => null
+  }
+  let ladder_rope = match src {
+    { "ladderRope": ladder_rope, .. } => ladder_rope
+    _ => null
+  }
+  let (map_walls, map_borders) = match info {
     {
       "VRLeft": Json::Number(vrLeft, ..),
       "VRRight": Json::Number(vrRight, ..),
@@ -121,36 +178,71 @@ pub fn MapInfo::from_resource(
       )
     _ => (walls, borders)
   }
-  let bgmpath = info["bgm"].get_string()
-  let split = bgmpath.to_array().search('/').unwrap()
-  let bgm = bgmpath.view(start_offset=0, end_offset=split) +
-    ".img/" +
-    bgmpath.view(start_offset=split + 1)
+  guard info is Object(info_obj) else { panic() }
+  let bgmpath = json_get_string(info_obj, "bgm")
+  let bgm = match bgmpath.to_array().search('/') {
+    Some(split) =>
+      bgmpath.view(start_offset=0, end_offset=split) +
+      ".img/" +
+      bgmpath.view(start_offset=split + 1)
+    None => bgmpath
+  }
   let seats = Array::new()
-  for it in src["seat"] {
-    seats.push(Seat::from_resource(it))
+  if seat is Object(seat_obj) {
+    for _, it in seat_obj {
+      let nx_seat : NxSeat = @json.from_json(it) catch { _ => panic() }
+      seats.push(Seat::from_resource(nx_seat))
+    }
   }
   let ladders = Array::new()
-  for it in src["ladderRope"] {
-    ladders.push(Ladder::from_resource(it))
+  if ladder_rope is Object(ladder_obj) {
+    for _, it in ladder_obj {
+      let nx_ladder : NxLadder = @json.from_json(it) catch { _ => panic() }
+      ladders.push(Ladder::from_resource(nx_ladder))
+    }
   }
   {
-    field_limit: info["fieldLimit"].get_int(),
-    cloud: info["cloud"].get_bool(),
+    field_limit: json_get_int(info_obj, "fieldLimit"),
+    cloud: json_get_bool(info_obj, "cloud"),
     bgm: bgm.to_string(),
-    map_desc: info["mapDesc"].get_string(),
-    map_name: info["mapName"].get_string(),
-    street_name: info["streetName"].get_string(),
-    map_mark: info["mapMark"].get_string(),
-    swim: info["swim"].get_bool(),
-    town: info["town"].get_bool(),
-    hide_minimap: info["hideMinimap"].get_bool(),
+    map_desc: json_get_string(info_obj, "mapDesc"),
+    map_name: json_get_string(info_obj, "mapName"),
+    street_name: json_get_string(info_obj, "streetName"),
+    map_mark: json_get_string(info_obj, "mapMark"),
+    swim: json_get_bool(info_obj, "swim"),
+    town: json_get_bool(info_obj, "town"),
+    hide_minimap: json_get_bool(info_obj, "hideMinimap"),
     map_walls,
     map_borders,
     seats,
     ladders,
-  } catch {
-    _ => panic()
+  }
+}
+
+///|
+fn json_get_int(obj : Map[String, Json], key : String) -> Int {
+  match obj.get(key) {
+    Some(Number(n, ..)) => n.to_int()
+    _ => 0
+  }
+}
+
+///|
+fn json_get_bool(obj : Map[String, Json], key : String) -> Bool {
+  match obj.get(key) {
+    Some(Number(n, ..)) => n.to_int() != 0
+    Some(String("true")) => true
+    Some(String("false")) => false
+    _ => false
+  }
+}
+
+///|
+fn json_get_string(obj : Map[String, Json], key : String) -> String {
+  match obj.get(key) {
+    Some(String(s)) => s
+    Some(Number(n, ..)) => n.to_string()
+    _ => ""
   }
 }
 
@@ -256,4 +348,49 @@ pub fn get_map_category(map_id : Int) -> String {
     return "jp"
   }
   return "etc"
+}
+
+///|
+test "map info from resource tolerates missing optional fields" {
+  let src : Json = {
+    "info": {
+      "bgm": "Bgm15/Nautilus",
+      "cloud": 0,
+      "fieldLimit": 4,
+      "hideMinimap": 0,
+      "mapMark": "Nautilus",
+      "swim": 0,
+      "town": 0,
+    },
+    "ladderRope": { "0": { "x": 10, "y1": 0, "y2": 100, "l": 1 } },
+  }
+  let info = MapInfo::from_resource(
+    src,
+    Range::new(-10, 10),
+    Range::new(-20, 20),
+  )
+  inspect(info.get_full_name(), content=" : ")
+  inspect(info.find_ladder(Point::new(10, 50), true) is Some(_), content="true")
+}
+
+///|
+test "map info seat supports [x, y] nx format" {
+  let src : Json = {
+    "info": {
+      "bgm": "Bgm15/Nautilus",
+      "cloud": 0,
+      "fieldLimit": 4,
+      "hideMinimap": 0,
+      "mapMark": "Nautilus",
+      "swim": 0,
+      "town": 0,
+    },
+    "seat": { "0": [1350, -62] },
+  }
+  let info = MapInfo::from_resource(
+    src,
+    Range::new(-10, 10),
+    Range::new(-20, 20),
+  )
+  inspect(info.findseat(Point::new(1350, -62)) is Some(_), content="true")
 }

@@ -170,6 +170,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
+      @mini_map_ui.clear_current_map()
       @game_state.emit_scene_clear(
         @game_state.SceneClearReason::LeaveToSelectCharacter,
       )
@@ -363,6 +364,12 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         sence_map.physics,
       )
       stage.map_change_listeners.retain(fn(listener) { listener(sence_map) })
+      @mini_map_ui.set_current_map(
+        sence_map.id,
+        sence_map.map_info.map_name,
+        sence_map.map_info.street_name,
+        sence_map.mini_map_resources,
+      )
       return
     }
     @game_state.GamePhase::GameActive(..) => ()

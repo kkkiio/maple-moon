@@ -60,9 +60,28 @@ pub fn get_mapx_loader() -> AsyncLoader {
     "Map8/": DirResourceLoader::new("https://maple-res.kkkiiox.work/Map/Map8"),
     "Map9/": DirResourceLoader::new("https://maple-res.kkkiiox.work/Map/Map9"),
   })
-  let loader = AsyncLoader::new("mapx", loader~)
+  let loader = AsyncLoader::new("mapx", loader~, base_url="/assets")
   mapx_loader.val = Some(loader)
   loader
+}
+
+///|
+let map_latest_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "map_latest",
+    loader=CompositeAsyncResourceLoader::new({
+      "Obj/": DirResourceLoader::new("/assets/map/obj"),
+      "MapHelper.img/": DirResourceLoader::new(
+        "/assets/spritesheets/Map/MapHelper.img",
+      ),
+    }),
+    base_url="/assets",
+  )
+})
+
+///|
+pub fn get_map_latest_loader() -> AsyncLoader {
+  map_latest_loader.get()
 }
 
 ///|

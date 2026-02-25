@@ -119,7 +119,7 @@ pub async fn ExplorerCreatorUIResource::load(
   )
   let map001_loader = get_map001_loader()
   let customize_char_src = login_loader.load_res(["CustomizeChar", "000"])
-  let signboard2_src = @map.get_map_latest_loader().load_res_async([
+  let signboard2_src = @resource.get_map_latest_loader().load_res_async([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])
   let board_src = customize_char_src["board"]

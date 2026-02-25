@@ -195,7 +195,11 @@ async test "process monster resource" {
   }
   // Skip image operations by not providing load_spritesheet and save_image
   let res = process_resource(
-    test_mob_0100101_json, atlases, "0100101.img", "mob",
+    test_mob_0100101_json,
+    atlases,
+    "0100101.img",
+    "mob",
+    keep_source_sheets=false,
   )
   json_inspect(res, content={
     "die1": {
@@ -324,7 +328,7 @@ async test "process monster resource" {
 }
 
 ///|
-async test "keep source sheets writes __off from atlas" {
+async test "default keeps source sheets and writes __off from atlas" {
   let input : Json = {
     "walk": {
       "0": {
@@ -366,13 +370,7 @@ async test "keep source sheets writes __off from atlas" {
   let atlases : Map[String, @resource.SpritesheetMetadata] = {
     "spritesheets/Item/Special/0900.img/09000000": metadata,
   }
-  let res = process_resource(
-    input,
-    atlases,
-    "0900.img",
-    "Item/Special",
-    keep_source_sheets=true,
-  )
+  let res = process_resource(input, atlases, "0900.img", "Item/Special")
   json_inspect(res, content={
     "walk": {
       "0": {

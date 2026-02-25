@@ -4,8 +4,8 @@ package "KKKIIO/maple-moon/lib/ui"
 import {
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/keyboard",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "Milky2018/selene/entity",
   "moonbitlang/core/json",
 }
@@ -17,11 +17,11 @@ pub fn number_system(Double) -> Unit
 
 pub fn remove_cursor(Iter[ButtonModel]) -> Unit
 
-pub fn send_cursor(AreaButton, Bool, @struct.Point[Int]) -> CursorState
+pub fn send_cursor(AreaButton, Bool, @res_types.Point[Int]) -> CursorState
 
-pub fn send_cursor_to_areas(Iter[InteractiveArea], @struct.Point[Int], Bool, @struct.Point[Int]) -> CursorState
+pub fn send_cursor_to_areas(Iter[InteractiveArea], @res_types.Point[Int], Bool, @res_types.Point[Int]) -> CursorState
 
-pub fn send_cursor_to_btns(Iter[Button], @struct.Point[Int], Bool, @struct.Point[Int]) -> CursorState
+pub fn send_cursor_to_btns(Iter[Button], @res_types.Point[Int], Bool, @res_types.Point[Int]) -> CursorState
 
 pub fn show_number(NumberType, Int, Int, x? : Int) -> Unit
 
@@ -37,7 +37,7 @@ pub fn update_sprites(Iter[@graphics.Sprite]) -> Unit
 
 // Types and methods
 type AreaButton
-pub fn AreaButton::new(@struct.Point[Int], @struct.Point[Int]) -> Self
+pub fn AreaButton::new(@res_types.Point[Int], @res_types.Point[Int]) -> Self
 pub impl UIButton for AreaButton
 
 pub(all) struct Button {
@@ -56,9 +56,9 @@ pub fn ButtonModel::default() -> Self
 pub fn ButtonModel::get_state(Self) -> ButtonState
 pub fn ButtonModel::is_active(Self) -> Bool
 pub fn ButtonModel::is_pressed(Self) -> Bool
-pub fn ButtonModel::new(state? : ButtonState, pos? : @struct.Point[Int], active? : Bool, pressed? : Bool) -> Self
+pub fn ButtonModel::new(state? : ButtonState, pos? : @res_types.Point[Int], active? : Bool, pressed? : Bool) -> Self
 pub fn ButtonModel::set_active(Self, Bool) -> Unit
-pub fn ButtonModel::set_position(Self, @struct.Point[Int]) -> Unit
+pub fn ButtonModel::set_position(Self, @res_types.Point[Int]) -> Unit
 pub fn ButtonModel::set_state(Self, ButtonState) -> Unit
 pub fn ButtonModel::toggle_pressed(Self) -> Unit
 
@@ -114,12 +114,12 @@ pub(all) struct Element {
   on_close : () -> Unit
   runtime_state : Ref[RuntimeState?]
 }
-pub fn Element::doubleclick(Self, @struct.Point[Int]) -> Bool
+pub fn Element::doubleclick(Self, @res_types.Point[Int]) -> Bool
 pub fn Element::draw(Self) -> Unit
 pub fn Element::get_ui_model(Self) -> UIModel
-pub fn Element::is_in_interactive_area(Self, @struct.Point[Int]) -> Bool
+pub fn Element::is_in_interactive_area(Self, @res_types.Point[Int]) -> Bool
 pub fn[T : Widget] Element::new((Hooks) -> T, UIElementType, toggle_active? : () -> Unit, on_close? : () -> Unit) -> Self
-pub fn Element::send_cursor(Self, Bool, @struct.Point[Int]) -> CursorState
+pub fn Element::send_cursor(Self, Bool, @res_types.Point[Int]) -> CursorState
 pub fn Element::update(Self) -> Unit
 
 type Gauge
@@ -149,15 +149,15 @@ pub(all) struct IconModel {
   countset : @graphics.Charset
   mut count : Int?
   mut dragged : Bool
-  mut cursor_offset : @struct.Point[Int]
+  mut cursor_offset : @res_types.Point[Int]
 }
-pub fn IconModel::draw(Self, @struct.Point[Int], @graphics.Texture) -> Unit
-pub fn IconModel::get_bounds(@graphics.Texture) -> @struct.Rectangle[Int]
+pub fn IconModel::draw(Self, @res_types.Point[Int], @graphics.Texture) -> Unit
+pub fn IconModel::get_bounds(@graphics.Texture) -> @res_types.Rectangle[Int]
 pub fn IconModel::new(@graphics.Charset, Int?) -> Self
 pub impl ToJson for IconModel
 
 pub(all) struct InteractiveArea {
-  bounds : @struct.Rectangle[Int]
+  bounds : @res_types.Rectangle[Int]
   on_click : () -> Unit
   on_double_click : () -> Unit
   state : Ref[ButtonState]
@@ -168,8 +168,8 @@ pub(all) struct MapleButton {
   entity : @entity.Entity
 }
 pub fn MapleButton::destroy(Self) -> Unit
-pub fn MapleButton::from_resource(@resource.NxNode, pos? : @struct.Point[Int]) -> Self
-pub fn MapleButton::new(MapleButtonResource, pos? : @struct.Point[Int], on_click? : () -> Unit) -> Self
+pub fn MapleButton::from_resource(@resource.NxNode, pos? : @res_types.Point[Int]) -> Self
+pub fn MapleButton::new(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub impl UIButton for MapleButton
 
 pub(all) struct MapleButtonResource(Map[ButtonState, @resource.NxAnimation])
@@ -213,8 +213,8 @@ pub(all) enum NumberType {
 }
 
 type OffsetedUnit[T]
-pub fn[T] OffsetedUnit::new(T, @struct.Point[Int]) -> Self[T]
-pub fn OffsetedUnit::offset_element(RenderElement, @struct.Point[Int]) -> RenderElement
+pub fn[T] OffsetedUnit::new(T, @res_types.Point[Int]) -> Self[T]
+pub fn OffsetedUnit::offset_element(RenderElement, @res_types.Point[Int]) -> RenderElement
 pub impl[T : @graphics.Drawable] @graphics.Drawable for OffsetedUnit[T]
 pub impl[T : RenderUnit] RenderUnit for OffsetedUnit[T]
 pub impl[T : ToJson] ToJson for OffsetedUnit[T]
@@ -248,12 +248,12 @@ pub impl RenderUnit for SpriteUI
 pub impl ToJson for SpriteUI
 
 type StatefulIcon
-pub fn StatefulIcon::draw(Self, @struct.Point[Int]) -> Unit
+pub fn StatefulIcon::draw(Self, @res_types.Point[Int]) -> Unit
 pub fn StatefulIcon::get_texture(Self) -> @graphics.Texture
 pub fn StatefulIcon::new(@graphics.Charset, @graphics.Texture, @graphics.Texture, @graphics.Texture) -> Self
 
 type StaticUI[T]
-pub fn[T] StaticUI::new(T, pos? : @struct.Point[Int], stretch? : @struct.Point[Int]) -> Self[T]
+pub fn[T] StaticUI::new(T, pos? : @res_types.Point[Int], stretch? : @res_types.Point[Int]) -> Self[T]
 pub fn[T] StaticUI::new_ex(T, args? : @graphics.DrawArgument) -> Self[T]
 pub impl[T : @graphics.Drawable] @graphics.Drawable for StaticUI[T]
 pub impl[T : @graphics.Drawable + ToJson] RenderUnit for StaticUI[T]
@@ -266,7 +266,7 @@ pub impl[T : @graphics.Drawable] RenderUnit for StaticUnit[T]
 pub impl[T : ToJson] ToJson for StaticUnit[T]
 
 type TextButton
-pub fn TextButton::draw_in_range(Self, @struct.Point[Int], @struct.Range[Int]) -> Unit
+pub fn TextButton::draw_in_range(Self, @res_types.Point[Int], @res_types.Range[Int]) -> Unit
 pub fn TextButton::get_option_number(Self) -> Int
 pub fn TextButton::height(Self) -> Int
 pub fn TextButton::new(@graphics.Text, Int) -> Self
@@ -291,7 +291,7 @@ pub impl @graphics.Drawable for TextureUI
 pub impl ToJson for TextureUI
 
 type TwoSpriteButton
-pub fn TwoSpriteButton::new(@graphics.Texture, @graphics.Texture, np? : @struct.Point[Int], sp? : @struct.Point[Int], active? : Bool, state? : ButtonState) -> Self
+pub fn TwoSpriteButton::new(@graphics.Texture, @graphics.Texture, np? : @res_types.Point[Int], sp? : @res_types.Point[Int], active? : Bool, state? : ButtonState) -> Self
 pub impl UIButton for TwoSpriteButton
 
 pub(all) struct UI {
@@ -360,14 +360,14 @@ pub fn UIMod::get_number_set(Self) -> NumberSet
 pub async fn UIMod::load() -> Self
 
 pub(all) struct UIModel {
-  mut position : @struct.Point[Int]
-  mut dimension : @struct.Point[Int]
+  mut position : @res_types.Point[Int]
+  mut dimension : @res_types.Point[Int]
   mut active : Bool
 }
 pub fn UIModel::deactivate(Self) -> Unit
 pub fn UIModel::is_active(Self) -> Bool
 pub fn UIModel::makeactive(Self) -> Unit
-pub fn UIModel::new(@struct.Point[Int], @struct.Point[Int], active? : Bool) -> Self
+pub fn UIModel::new(@res_types.Point[Int], @res_types.Point[Int], active? : Bool) -> Self
 pub fn UIModel::toggle_active(Self) -> Unit
 
 // Type aliases
@@ -383,11 +383,11 @@ pub(open) trait RenderUnit : ToJson + @graphics.Drawable {
 }
 
 pub(open) trait UIButton {
-  draw(Self, @struct.Point[Int]) -> Unit
+  draw(Self, @res_types.Point[Int]) -> Unit
   update(Self) -> Unit
-  bounds(Self) -> @struct.Rectangle[Int]
+  bounds(Self) -> @res_types.Rectangle[Int]
   width(Self) -> Int
-  origin(Self) -> @struct.Point[Int]
+  origin(Self) -> @res_types.Point[Int]
   get_button_base(Self) -> ButtonModel
 }
 
@@ -398,11 +398,11 @@ pub(open) trait UIElementDescriptor {
 }
 
 pub(open) trait UIState {
-  draw(Self, Double, @struct.Point[Int]) -> Unit
+  draw(Self, Double, @res_types.Point[Int]) -> Unit
   update(Self) -> Unit
   send_key(Self, @keyboard.Mapping?, Bool, Bool) -> Unit
-  send_cursor(Self, CursorState, @struct.Point[Int]) -> CursorState
-  doubleclick(Self, @struct.Point[Int]) -> Unit
+  send_cursor(Self, CursorState, @res_types.Point[Int]) -> CursorState
+  doubleclick(Self, @res_types.Point[Int]) -> Unit
   set_element(Self, Bool, Element) -> Unit
   remove(Self, UIElementType) -> Unit
   get(Self, UIElementType) -> Element?

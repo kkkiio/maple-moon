@@ -3,7 +3,7 @@ package "KKKIIO/maple-moon/lib/net"
 
 import {
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "moonbitlang/core/buffer",
   "moonbitlang/core/immut/hashmap",
   "moonbitlang/core/strconv",
@@ -106,7 +106,7 @@ pub fn InPacket::read_byte(Self) -> Int raise ReadPacketError
 pub fn InPacket::read_int(Self) -> Int raise ReadPacketError
 pub fn InPacket::read_long(Self) -> Int64 raise ReadPacketError
 pub fn InPacket::read_padded_string(Self, Int) -> String raise ReadPacketError
-pub fn InPacket::read_point(Self) -> @struct.Point[Int] raise ReadPacketError
+pub fn InPacket::read_point(Self) -> @res_types.Point[Int] raise ReadPacketError
 pub fn InPacket::read_short(Self) -> Int raise ReadPacketError
 pub fn InPacket::read_string(Self) -> String raise ReadPacketError
 pub fn InPacket::read_ubyte(Self) -> Int raise ReadPacketError
@@ -223,7 +223,7 @@ pub fn OutPacket::write_byte(Self, Byte) -> Unit
 pub fn OutPacket::write_hardware_info(Self) -> Unit
 pub fn OutPacket::write_int(Self, Int) -> Unit
 pub fn OutPacket::write_long(Self, Int64) -> Unit
-pub fn OutPacket::write_point(Self, @struct.Point[Int]) -> Unit
+pub fn OutPacket::write_point(Self, @res_types.Point[Int]) -> Unit
 pub fn OutPacket::write_short(Self, Int) -> Unit
 pub fn OutPacket::write_string(Self, String) -> Unit
 pub fn OutPacket::write_time(Self) -> Unit

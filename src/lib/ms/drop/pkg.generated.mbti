@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/lib/ms/drop"
 
 import {
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
 }
 
 // Values
@@ -25,7 +25,7 @@ pub fn set_map_physics(@physics.Physics) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 
-pub fn try_pickup_at(@struct.Point[Int]) -> Bool
+pub fn try_pickup_at(@res_types.Point[Int]) -> Bool
 
 // Errors
 
@@ -37,8 +37,8 @@ pub struct DropLoot {
   item_id : Int
   owner : Int
   pickuptype : Int
-  dropto : @struct.Point[Int]
-  dropfrom : @struct.Point[Int]
+  dropto : @res_types.Point[Int]
+  dropfrom : @res_types.Point[Int]
   player_drop : Bool
 }
 pub impl Show for DropLoot
@@ -47,18 +47,18 @@ pub impl ToJson for DropLoot
 type DropSpawn
 
 type ItemDrop
-pub fn ItemDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Int, Bool, @resource.NxTexture) -> Self
+pub fn ItemDrop::new(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Int, Bool, @resource.NxTexture) -> Self
 pub impl Drop for ItemDrop
 
 type MapDrops
 pub fn MapDrops::clear(Self) -> Unit
-pub fn MapDrops::list_loot_at(Self, @struct.Point[Int]) -> Iter[(Int, @struct.Point[Int])]
+pub fn MapDrops::list_loot_at(Self, @res_types.Point[Int]) -> Iter[(Int, @res_types.Point[Int])]
 pub fn MapDrops::remove(Self, Int, Int, @physics.PhysicsObject?) -> Unit
 pub fn MapDrops::spawn(Self, DropSpawn) -> Unit
 pub fn MapDrops::update(Self, @physics.Physics) -> Unit
 
 type MesoDrop
-pub fn MesoDrop::new(Int, Int, @struct.Point[Int], @struct.Point[Int], Int, Int, Bool, @resource.NxAnimation) -> Self
+pub fn MesoDrop::new(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Bool, @resource.NxAnimation) -> Self
 pub impl Drop for MesoDrop
 
 type Module

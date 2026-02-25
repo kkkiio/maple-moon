@@ -3,7 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/combat_proto"
 
 import {
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types",
 }
 
 // Values
@@ -25,8 +25,8 @@ pub(all) struct Attack {
   mut stance : Int
   mut skill : Int
   mut bullet : Int
-  origin : @struct.Point[Int]
-  mut range : @struct.Rectangle[Int]
+  origin : @res_types.Point[Int]
+  mut range : @res_types.Rectangle[Int]
   mut hrange : Double
   toleft : Bool
 }
@@ -82,9 +82,9 @@ pub(all) struct AttackUser {
 
 type Bullet
 pub fn Bullet::draw(Self, Double, Double, Double) -> Unit
-pub fn Bullet::new(@graphics.Animation, @struct.Point[Int], Bool) -> Self
-pub fn Bullet::set_target(Self, @struct.Point[Int]) -> Bool
-pub fn Bullet::update(Self, @struct.Point[Int]) -> Bool
+pub fn Bullet::new(@graphics.Animation, @res_types.Point[Int], Bool) -> Self
+pub fn Bullet::set_target(Self, @res_types.Point[Int]) -> Bool
+pub fn Bullet::update(Self, @res_types.Point[Int]) -> Bool
 
 pub struct MobAttack {
   t : AttackType
@@ -92,11 +92,11 @@ pub struct MobAttack {
   matk : Int
   mobid : Int
   oid : Int
-  origin : @struct.Point[Int]
+  origin : @res_types.Point[Int]
   valid : Bool
 }
 pub fn MobAttack::default() -> Self
-pub fn MobAttack::new(Int, @struct.Point[Int], Int, Int) -> Self
+pub fn MobAttack::new(Int, @res_types.Point[Int], Int, Int) -> Self
 
 pub struct MobAttackResult {
   damage : Int

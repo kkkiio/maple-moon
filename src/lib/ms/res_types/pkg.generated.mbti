@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/struct"
+package "KKKIIO/maple-moon/lib/ms/res_types"
 
 import {
   "Milky2018/selene/math",

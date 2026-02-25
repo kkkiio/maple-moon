@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/lib/resource"
 
 import {
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "Milky2018/selene/math",
   "Milky2018/selene/sprite",
   "moonbitlang/core/immut/array",
@@ -136,8 +136,8 @@ pub impl @json.FromJson for NxAnimation
 pub(all) struct NxFrame {
   texture : NxTexture
   delay : Int?
-  head : @struct.Point[Int]?
-  bounds : @struct.Rectangle[Int]?
+  head : @res_types.Point[Int]?
+  bounds : @res_types.Rectangle[Int]?
 }
 pub impl Show for NxFrame
 pub impl @json.FromJson for NxFrame
@@ -145,8 +145,8 @@ pub impl @json.FromJson for NxFrame
 #deprecated
 type NxNode
 pub fn NxNode::as_int(Self) -> Int raise LoadError
-pub fn NxNode::as_point(Self) -> @struct.Point[Int] raise LoadError
-pub fn NxNode::as_rectangle(Self) -> @struct.Rectangle[Int] raise
+pub fn NxNode::as_point(Self) -> @res_types.Point[Int] raise LoadError
+pub fn NxNode::as_rectangle(Self) -> @res_types.Rectangle[Int] raise
 pub fn NxNode::as_strict_bool(Self) -> Bool raise LoadError
 pub fn NxNode::as_string(Self) -> String raise LoadError
 pub fn NxNode::contains(Self, String) -> Bool
@@ -171,8 +171,8 @@ pub(all) struct NxTexture {
   i : String
   w : Int
   h : Int
-  offset : @struct.Point[Int]
-  origin : @struct.Point[Int]
+  offset : @res_types.Point[Int]
+  origin : @res_types.Point[Int]
 }
 pub fn NxTexture::get_size(Self) -> (Int, Int)
 pub impl Show for NxTexture

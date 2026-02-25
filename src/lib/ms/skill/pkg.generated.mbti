@@ -2,9 +2,9 @@
 package "KKKIIO/maple-moon/lib/ms/skill"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "moonbitlang/core/immut/hashmap",
   "moonbitlang/core/json",
 }
@@ -184,7 +184,7 @@ pub(all) struct Stats {
   critical : Double
   ignoredef : Double
   hrange : Double
-  range : @struct.Rectangle[Int]
+  range : @res_types.Rectangle[Int]
 }
 pub impl Show for Stats
 pub impl ToJson for Stats

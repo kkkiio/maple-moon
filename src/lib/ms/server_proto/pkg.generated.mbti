@@ -4,8 +4,8 @@ package "KKKIIO/maple-moon/lib/ms/server_proto"
 import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "moonbitlang/core/json",
 }
 
@@ -39,8 +39,8 @@ pub(all) struct DropLootMessage {
   item_id : Int
   owner : Int
   pickuptype : Int
-  dropto : @struct.Point[Int]
-  dropfrom : @struct.Point[Int]
+  dropto : @res_types.Point[Int]
+  dropfrom : @res_types.Point[Int]
   player_drop : Bool
 }
 pub impl ServerMessage for DropLootMessage
@@ -154,7 +154,7 @@ pub(all) struct MoveMonsterMessage {
   skill : Int
   skill_level : Int
   option : Int
-  start_pos : @struct.Point[Int]
+  start_pos : @res_types.Point[Int]
   movement : @physics.Movement
 }
 pub impl ClientMessage for MoveMonsterMessage
@@ -164,7 +164,7 @@ pub impl @json.FromJson for MoveMonsterMessage
 
 pub(all) struct PickupItemMessage {
   oid : Int
-  position : @struct.Point[Int]
+  position : @res_types.Point[Int]
 }
 pub impl ClientMessage for PickupItemMessage
 pub impl Show for PickupItemMessage

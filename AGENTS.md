@@ -10,7 +10,7 @@
 
 ## 文档
 
-每个 `package` 下都写 `README.mbt.md`, 说明包的用途和使用方法.
+每个 `package` 下都写 `README.mbt.md`, 说明包的用途.
 更具体的说明写在代码的 Doc comments 里.
 
 ## 验证

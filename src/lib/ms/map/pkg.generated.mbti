@@ -3,8 +3,8 @@ package "KKKIIO/maple-moon/lib/ms/map"
 
 import {
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
   "Milky2018/selene/sprite",
@@ -20,15 +20,15 @@ pub fn clear_runtime_context() -> Unit
 
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
 
-pub fn find_warp_at_current(@struct.Point[Int]) -> PortalWarpInfo?
+pub fn find_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
 
 pub fn get_background_visibility_state() -> BackgroundVisibilityState
 
 pub fn get_map_category(Int) -> String
 
-pub fn get_portal_by_name_current(String) -> @struct.Point[Int]?
+pub fn get_portal_by_name_current(String) -> @res_types.Point[Int]?
 
-pub fn get_portal_pos_by_id_current(Int) -> @struct.Point[Int]?
+pub fn get_portal_pos_by_id_current(Int) -> @res_types.Point[Int]?
 
 pub fn get_runtime_context() -> (MapInfo, @physics.Physics)?
 
@@ -60,7 +60,7 @@ pub fn set_obj_visibility(Int, Int, Bool) -> Unit
 
 pub fn set_objs_visible(Bool) -> Unit
 
-pub fn set_portals(MapPortals, get_touch_pos? : () -> @struct.Point[Int]?) -> Unit
+pub fn set_portals(MapPortals, get_touch_pos? : () -> @res_types.Point[Int]?) -> Unit
 
 pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
@@ -137,7 +137,7 @@ type Ladder
 pub fn Ladder::felloff(Self, Int, Bool) -> Bool
 pub fn Ladder::from_resource(NxLadder) -> Self
 pub fn Ladder::get_x(Self) -> Int
-pub fn Ladder::inrange(Self, @struct.Point[Int], Bool) -> Bool
+pub fn Ladder::inrange(Self, @res_types.Point[Int], Bool) -> Bool
 pub fn Ladder::is_ladder(Self) -> Bool
 
 pub(all) struct MapDrawData {
@@ -157,18 +157,18 @@ pub struct MapInfo {
   swim : Bool
   town : Bool
   hide_minimap : Bool
-  map_walls : @struct.Range[Int]
-  map_borders : @struct.Range[Int]
+  map_walls : @res_types.Range[Int]
+  map_borders : @res_types.Range[Int]
   seats : Array[Seat]
   ladders : Array[Ladder]
 }
-pub fn MapInfo::find_ladder(Self, @struct.Point[Int], Bool) -> Ladder?
-pub fn MapInfo::findseat(Self, @struct.Point[Int]) -> Seat?
-pub fn MapInfo::from_resource(Json, @struct.Range[Int], @struct.Range[Int]) -> Self
+pub fn MapInfo::find_ladder(Self, @res_types.Point[Int], Bool) -> Ladder?
+pub fn MapInfo::findseat(Self, @res_types.Point[Int]) -> Seat?
+pub fn MapInfo::from_resource(Json, @res_types.Range[Int], @res_types.Range[Int]) -> Self
 pub fn MapInfo::get_bgm(Self) -> String
-pub fn MapInfo::get_borders(Self) -> @struct.Range[Int]
+pub fn MapInfo::get_borders(Self) -> @res_types.Range[Int]
 pub fn MapInfo::get_full_name(Self) -> String
-pub fn MapInfo::get_walls(Self) -> @struct.Range[Int]
+pub fn MapInfo::get_walls(Self) -> @res_types.Range[Int]
 pub fn MapInfo::is_underwater(Self) -> Bool
 pub fn MapInfo::new() -> Self
 
@@ -190,9 +190,9 @@ pub struct MapPortals {
   name_portal_id_map : Map[String, Int]
   mut cooldown : Int
 }
-pub fn MapPortals::find_warp_at(Self, @struct.Point[Int]) -> PortalWarpInfo?
-pub fn MapPortals::get_portal_by_name(Self, String) -> @struct.Point[Int]?
-pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @struct.Point[Int]?
+pub fn MapPortals::find_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
+pub fn MapPortals::get_portal_by_name(Self, String) -> @res_types.Point[Int]?
+pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @res_types.Point[Int]?
 pub fn MapPortals::new(Array[NxPortal], Int, MapPortalAnimations) -> Self
 
 pub(all) struct MapRawResources {
@@ -366,13 +366,13 @@ pub impl Hash for ObjectAnimationPath
 pub impl Show for ObjectAnimationPath
 
 type Portal
-pub fn Portal::bounds(Self) -> @struct.Rectangle[Int]
+pub fn Portal::bounds(Self) -> @res_types.Rectangle[Int]
 pub fn Portal::get_name(Self) -> String
-pub fn Portal::get_position(Self) -> @struct.Point[Int]
+pub fn Portal::get_position(Self) -> @res_types.Point[Int]
 pub fn Portal::get_type(Self) -> PortalType
 pub fn Portal::getwarpinfo(Self) -> PortalWarpInfo
-pub fn Portal::new(@sprite.Animation?, PortalType, String, Bool, @struct.Point[Int], Int, String) -> Self
-pub fn Portal::update_touched(Self, @entity.Entity, @struct.Point[Int]?) -> Unit
+pub fn Portal::new(@sprite.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
+pub fn Portal::update_touched(Self, @entity.Entity, @res_types.Point[Int]?) -> Unit
 
 pub(all) enum PortalType {
   SPAWN
@@ -419,8 +419,8 @@ pub(all) struct SceneMap {
 
 type Seat
 pub fn Seat::from_resource(NxSeat) -> Self
-pub fn Seat::getpos(Self) -> @struct.Point[Int]
-pub fn Seat::inrange(Self, @struct.Point[Int]) -> Bool
+pub fn Seat::getpos(Self) -> @res_types.Point[Int]
+pub fn Seat::inrange(Self, @res_types.Point[Int]) -> Bool
 
 type Tile
 pub fn Tile::attach_entity(Self, @entity.Entity, Int) -> Unit

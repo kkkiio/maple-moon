@@ -8,9 +8,9 @@ import {
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/player",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/ui",
   "moonbitlang/core/json",
 }
@@ -46,7 +46,7 @@ type MapQuests
 pub fn MapQuests::add_npc(Self, Int, @physics.MovingObject) -> Unit
 pub fn MapQuests::clear(Self) -> Unit
 pub fn MapQuests::remove_npc(Self, Int) -> Unit
-pub fn MapQuests::send_cursor(Self, Bool, @struct.Point[Int], @struct.Point[Int]) -> @ui.CursorState?
+pub fn MapQuests::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
 pub fn MapQuests::set_player(Self, @player.Player) -> Unit
 pub fn MapQuests::update(Self, @physics.Physics) -> Unit
 pub fn MapQuests::update_quest(Self, Int) -> Unit

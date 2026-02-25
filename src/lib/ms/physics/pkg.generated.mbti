@@ -2,8 +2,8 @@
 package "KKKIIO/maple-moon/lib/ms/physics"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/math",
   "moonbitlang/core/json",
@@ -40,9 +40,9 @@ pub fn Foothold::b(Self) -> Int
 pub fn Foothold::ground_below(Self, Double) -> Double
 pub fn Foothold::hcontains(Self, Int) -> Bool
 pub fn Foothold::hdelta(Self) -> Int
-pub fn Foothold::horizontal(Self) -> @struct.Range[Int]
+pub fn Foothold::horizontal(Self) -> @res_types.Range[Int]
 pub fn Foothold::id(Self) -> Int
-pub fn Foothold::is_blocking(Self, @struct.Range[Int]) -> Bool
+pub fn Foothold::is_blocking(Self, @res_types.Range[Int]) -> Bool
 pub fn Foothold::is_floor(Self) -> Bool
 pub fn Foothold::is_left_edge(Self) -> Bool
 pub fn Foothold::is_right_edge(Self) -> Bool
@@ -57,7 +57,7 @@ pub fn Foothold::slope(Self) -> Double
 pub fn Foothold::t(Self) -> Int
 pub fn Foothold::vcontains(Self, Int) -> Bool
 pub fn Foothold::vdelta(Self) -> Int
-pub fn Foothold::vertical(Self) -> @struct.Range[Int]
+pub fn Foothold::vertical(Self) -> @res_types.Range[Int]
 pub fn Foothold::x1(Self) -> Int
 pub fn Foothold::x2(Self) -> Int
 pub fn Foothold::y1(Self) -> Int
@@ -67,12 +67,12 @@ pub impl Show for Foothold
 
 type FootholdTree
 pub fn FootholdTree::from_resource(NxFootholdTree) -> Self raise
-pub fn FootholdTree::get_borders(Self) -> @struct.Range[Int]
+pub fn FootholdTree::get_borders(Self) -> @res_types.Range[Int]
 pub fn FootholdTree::get_edge(Self, Int, Bool) -> Double
 pub fn FootholdTree::get_fhid_below(Self, Double, Double) -> Int
 pub fn FootholdTree::get_wall(Self, Int, Bool, Double) -> Double
-pub fn FootholdTree::get_walls(Self) -> @struct.Range[Int]
-pub fn FootholdTree::get_y_below(Self, @struct.Point[Int]) -> Int
+pub fn FootholdTree::get_walls(Self) -> @res_types.Range[Int]
+pub fn FootholdTree::get_y_below(Self, @res_types.Point[Int]) -> Int
 pub fn FootholdTree::limit_movement(Self, PhysicsObject) -> Unit
 pub fn FootholdTree::update_fh(Self, PhysicsObject) -> Unit
 
@@ -113,12 +113,12 @@ pub struct MovingObject {
 pub fn MovingObject::crnt_x(Self) -> Double
 pub fn MovingObject::crnt_y(Self) -> Double
 pub fn MovingObject::do_move(Self) -> Unit
-pub fn MovingObject::get_absolute(Self, Double, Double, Double) -> @struct.Point[Int]
+pub fn MovingObject::get_absolute(Self, Double, Double, Double) -> @res_types.Point[Int]
 pub fn MovingObject::get_absolute_x(Self, Double, Double) -> Int
 pub fn MovingObject::get_absolute_y(Self, Double, Double) -> Int
 pub fn MovingObject::get_last_x(Self) -> Int
 pub fn MovingObject::get_last_y(Self) -> Int
-pub fn MovingObject::get_position(Self) -> @struct.Point[Int]
+pub fn MovingObject::get_position(Self) -> @res_types.Point[Int]
 pub fn MovingObject::get_x(Self) -> Int
 pub fn MovingObject::get_y(Self) -> Int
 pub fn MovingObject::hmobile(Self) -> Bool
@@ -159,7 +159,7 @@ pub struct Physics {
 }
 pub fn Physics::from_resource(NxFootholdTree) -> Self raise
 pub fn Physics::get_fht(Self) -> FootholdTree
-pub fn Physics::get_y_below(Self, @struct.Point[Int]) -> @struct.Point[Int]
+pub fn Physics::get_y_below(Self, @res_types.Point[Int]) -> @res_types.Point[Int]
 pub fn Physics::move_object(Self, PhysicsObject) -> Unit
 
 pub struct PhysicsObject {
@@ -180,12 +180,12 @@ pub struct PhysicsObject {
 pub fn PhysicsObject::clear_flag(Self, PhysicsObjectFlag) -> Unit
 pub fn PhysicsObject::clear_flags(Self) -> Unit
 pub fn PhysicsObject::do_move(Self) -> Unit
-pub fn PhysicsObject::get_absolute(Self, Double, Double, Double) -> @struct.Point[Int]
+pub fn PhysicsObject::get_absolute(Self, Double, Double, Double) -> @res_types.Point[Int]
 pub fn PhysicsObject::get_absolute_x(Self, Double, Double) -> Int
 pub fn PhysicsObject::get_absolute_y(Self, Double, Double) -> Int
 pub fn PhysicsObject::get_last_x(Self) -> Int
 pub fn PhysicsObject::get_last_y(Self) -> Int
-pub fn PhysicsObject::get_position(Self) -> @struct.Point[Int]
+pub fn PhysicsObject::get_position(Self) -> @res_types.Point[Int]
 pub fn PhysicsObject::get_x(Self) -> Int
 pub fn PhysicsObject::get_y(Self) -> Int
 pub fn PhysicsObject::is_flag_not_set(Self, PhysicsObjectFlag) -> Bool

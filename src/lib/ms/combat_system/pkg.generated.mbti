@@ -12,11 +12,11 @@ import {
   "KKKIIO/maple-moon/lib/ms/job",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",
   "moonbitlang/core/json",
 }
@@ -47,7 +47,7 @@ pub async fn load_skill_move(Int, @bullet.Module) -> SpecialMove
 #callsite(autofill(loc))
 pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : SourceLoc) -> @utils.Future[Unit]
 
-pub fn make_attack_range(@combat_proto.Attack) -> @struct.Rectangle[Int]
+pub fn make_attack_range(@combat_proto.Attack) -> @res_types.Rectangle[Int]
 
 pub fn make_hit_effect(Json) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 

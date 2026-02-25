@@ -3,7 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/map_object"
 
 import {
   "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "Milky2018/selene/math",
 }
 
@@ -18,9 +18,9 @@ pub struct MapObjectBase {
 }
 pub fn MapObjectBase::get_layer(Self) -> Int
 pub fn MapObjectBase::get_oid(Self) -> Int
-pub fn MapObjectBase::get_position(Self) -> @struct.Point[Int]
-pub fn MapObjectBase::new(Int, position? : @struct.Point[Int], on_pos_change~ : (@math.Vec2D) -> Unit) -> Self
-pub fn MapObjectBase::set_position(Self, @struct.Point[Int]) -> Unit
+pub fn MapObjectBase::get_position(Self) -> @res_types.Point[Int]
+pub fn MapObjectBase::new(Int, position? : @res_types.Point[Int], on_pos_change~ : (@math.Vec2D) -> Unit) -> Self
+pub fn MapObjectBase::set_position(Self, @res_types.Point[Int]) -> Unit
 pub fn MapObjectBase::set_positionxy(Self, Int, Int) -> Unit
 pub fn MapObjectBase::update(Self, @physics.Physics) -> Int
 
@@ -50,6 +50,6 @@ pub(open) trait MapObject {
   update(Self, @physics.Physics) -> Int
   destroy(Self) -> Unit
   get_layer(Self) -> Int
-  get_position(Self) -> @struct.Point[Int]
+  get_position(Self) -> @res_types.Point[Int]
 }
 

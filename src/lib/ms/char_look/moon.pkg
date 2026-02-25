@@ -1,6 +1,6 @@
 import {
   "moonbitlang/core/random",
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/log",

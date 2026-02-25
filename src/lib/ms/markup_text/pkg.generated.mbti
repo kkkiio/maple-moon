@@ -2,11 +2,11 @@
 package "KKKIIO/maple-moon/lib/ms/markup_text"
 
 import {
-  "KKKIIO/maple-moon/lib/struct",
+  "KKKIIO/maple-moon/lib/ms/res_types",
 }
 
 // Values
-pub let color_map : Map[Char, @struct.ColorName]
+pub let color_map : Map[Char, @res_types.ColorName]
 
 pub let common_tags : Map[Char, MarkupType]
 
@@ -22,7 +22,7 @@ pub fn parse_markup(String, Map[Char, MarkupType]) -> Array[Node] raise ParseErr
 
 pub let player_tag : (Char, MarkupType)
 
-pub fn to_html(Array[Node], Style, Map[Char, @struct.ColorName], Map[Char, (Style, StringView) -> String raise], trim_end_newline? : Bool) -> String raise
+pub fn to_html(Array[Node], Style, Map[Char, @res_types.ColorName], Map[Char, (Style, StringView) -> String raise], trim_end_newline? : Bool) -> String raise
 
 pub fn write_text_as_html(StringBuilder, StringView, Style, trim_end_newline? : Bool) -> Unit
 
@@ -53,7 +53,7 @@ pub fn RefRender::get_player_name(Self) -> String
 pub fn RefRender::new(() -> String) -> Self
 
 pub(all) struct Style {
-  color : @struct.ColorName
+  color : @res_types.ColorName
   bold : Bool
 }
 pub fn Style::to_css_style(Self) -> String

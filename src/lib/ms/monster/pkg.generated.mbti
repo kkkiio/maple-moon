@@ -6,9 +6,9 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/struct",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
@@ -24,7 +24,7 @@ pub fn apply_move_skill(MobSkill, Mob) -> Unit
 
 pub fn clear_map_monsters() -> Unit
 
-pub fn create_mob_spawn(Int, Int, Int, Int, Int, Bool, Int, @struct.Point[Int]) -> MobSpawn
+pub fn create_mob_spawn(Int, Int, Int, Int, Int, Bool, Int, @res_types.Point[Int]) -> MobSpawn
 
 pub fn enqueue_hp_event(Int, Int, Int) -> Unit
 
@@ -78,12 +78,12 @@ pub fn MapMobs::create_attack(Self, Int) -> @combat_proto.MobAttack?
 pub fn MapMobs::find_colliding(Self, @physics.MovingObject) -> Int?
 pub fn MapMobs::for_each_mob(Self, (Int, Mob) -> Unit) -> Unit
 pub fn MapMobs::get_mob(Self, Int) -> Mob?
-pub fn MapMobs::get_mob_head_position(Self, Int) -> @struct.Point[Int]
-pub fn MapMobs::get_mob_position(Self, Int) -> @struct.Point[Int]
+pub fn MapMobs::get_mob_head_position(Self, Int) -> @res_types.Point[Int]
+pub fn MapMobs::get_mob_position(Self, Int) -> @res_types.Point[Int]
 pub fn MapMobs::new() -> Self
 pub fn MapMobs::remove(Self, Int, Int) -> Unit
 pub fn MapMobs::send_attack(Self, @combat_proto.AttackResult, @combat_proto.Attack, Array[Int]) -> Unit
-pub fn MapMobs::send_movement(Self, Int, @struct.Point[Int], Array[@physics.Movement]) -> Unit
+pub fn MapMobs::send_movement(Self, Int, @res_types.Point[Int], Array[@physics.Movement]) -> Unit
 pub fn MapMobs::set_control(Self, Int, Bool) -> Unit
 pub fn MapMobs::spawn(Self, MobSpawn) -> Unit
 pub fn MapMobs::update(Self, @physics.Physics) -> Unit
@@ -141,20 +141,20 @@ pub fn Mob::calculate_damage(Self, @combat_proto.Attack) -> Array[(Int, Bool)]
 pub fn Mob::create_touch_attack(Self) -> @combat_proto.MobAttack
 pub fn Mob::destroy(Self) -> Unit
 pub fn Mob::get_entity(Self) -> @entity.Entity
-pub fn Mob::get_head_position(Self, position? : @struct.Point[Int]) -> @struct.Point[Int]
+pub fn Mob::get_head_position(Self, position? : @res_types.Point[Int]) -> @res_types.Point[Int]
 pub fn Mob::get_layer(Self) -> Int
-pub fn Mob::get_live_range(Self) -> @struct.Rectangle[Int]?
+pub fn Mob::get_live_range(Self) -> @res_types.Rectangle[Int]?
 pub fn Mob::get_move_attack(Self, Int) -> MobSpecialAttack raise
 pub fn Mob::get_move_skill(Self, Int, Int) -> @utils.Future[Result[MobSkill, Error]]
 pub fn Mob::get_oid(Self) -> Int
-pub fn Mob::get_position(Self) -> @struct.Point[Int]
+pub fn Mob::get_position(Self) -> @res_types.Point[Int]
 pub fn Mob::give_buff(Self, MobBuff) -> Unit
 pub fn Mob::is_alive(Self) -> Bool
-pub fn Mob::is_in_range(Self, @struct.Rectangle[Int]) -> Bool
+pub fn Mob::is_in_range(Self, @res_types.Rectangle[Int]) -> Bool
 pub fn Mob::kill(Self, Int) -> Unit
-pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, @struct.Point[Int], @random.Rand) -> Self
-pub fn Mob::new(NxMob, Int, Int, Int, Bool, @struct.Point[Int], object_id~ : Int, monster_id~ : Int, randomizer? : @random.Rand) -> Self
-pub fn Mob::send_movement(Self, @struct.Point[Int], Array[@physics.Movement]) -> Unit
+pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, @res_types.Point[Int], @random.Rand) -> Self
+pub fn Mob::new(NxMob, Int, Int, Int, Bool, @res_types.Point[Int], object_id~ : Int, monster_id~ : Int, randomizer? : @random.Rand) -> Self
+pub fn Mob::send_movement(Self, @res_types.Point[Int], Array[@physics.Movement]) -> Unit
 pub fn Mob::set_control(Self, Int) -> Unit
 pub fn Mob::set_stance(Self, Stance) -> Unit
 pub fn Mob::show_effect(Self, @resource.NxAnimation, Int, Int, Bool) -> Unit
@@ -251,7 +251,7 @@ pub(all) struct MobSpawn {
   fh : Int
   new_spawn : Bool
   team : Int
-  position : @struct.Point[Int]
+  position : @res_types.Point[Int]
 }
 pub async fn MobSpawn::instantiate(Self, @random.Rand) -> Mob
 
@@ -281,7 +281,7 @@ pub struct NxMobAttackEntry {
 }
 
 pub struct NxMobAttackInfo {
-  range : @struct.Rectangle[Int]?
+  range : @res_types.Rectangle[Int]?
   type_ : Int
   con_mp : Int
   magic : Bool

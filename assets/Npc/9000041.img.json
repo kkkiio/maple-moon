@@ -1,0 +1,22 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "Donation"
+      }
+    }
+  },
+  "stand": {
+    "0": {
+      "__h": 111,
+      "__w": 62,
+      "delay": 1200,
+      "origin": [
+        30,
+        111
+      ],
+      "z": 0,
+      "__i": "images/Npc/8695.png"
+    }
+  }
+}

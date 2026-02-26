@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -60,
+    "dcRight": 60,
+    "dcTop": -90,
+    "script": {
+      "0": {
+        "script": "taxi1"
+      }
+    }
+  },
+  "stand": {
+    "0": {
+      "__h": 90,
+      "__w": 122,
+      "delay": 5000,
+      "origin": [
+        61,
+        90
+      ],
+      "z": 0,
+      "__i": "images/Npc/6375.png"
+    }
+  }
+}

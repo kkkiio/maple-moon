@@ -1,0 +1,25 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "refine_perion"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "stand": {
+    "0": {
+      "__h": 73,
+      "__w": 56,
+      "origin": [
+        28,
+        73
+      ],
+      "z": 0,
+      "__i": "images/Npc/899.png"
+    }
+  }
+}

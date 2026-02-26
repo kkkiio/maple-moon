@@ -1,0 +1,30 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -16,
+    "dcRight": 46,
+    "dcTop": -78,
+    "script": {
+      "0": {
+        "script": "Manji"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1",
+      "2": "n2"
+    }
+  },
+  "stand": {
+    "0": {
+      "__h": 79,
+      "__w": 78,
+      "origin": [
+        23,
+        79
+      ],
+      "z": 0,
+      "__i": "images/Npc/13106.png"
+    }
+  }
+}

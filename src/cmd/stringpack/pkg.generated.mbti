@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/cmd/stringpack"
+
+// Values
+
+// Errors
+
+// Types and methods
+type CliArgs
+
+// Type aliases
+
+// Traits
+

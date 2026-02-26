@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/graphics",

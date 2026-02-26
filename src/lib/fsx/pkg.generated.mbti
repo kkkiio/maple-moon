@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/fsx"
+
+// Values
+pub fn exists_sync(String) -> Bool
+
+pub fn mkdir_sync(String) -> Unit
+
+pub fn read_file_sync(String, String) -> String
+
+pub fn write_file_sync(String, String) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

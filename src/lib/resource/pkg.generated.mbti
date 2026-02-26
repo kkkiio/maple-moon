@@ -38,9 +38,13 @@ pub fn get_mapx_loader() -> AsyncLoader
 
 pub fn get_mob_loader() -> AsyncLoader
 
+pub fn get_npc_loader() -> AsyncLoader
+
 pub fn get_object_loader() -> AsyncLoader
 
 pub fn get_skill_loader() -> AsyncLoader
+
+pub fn get_string_loader() -> AsyncLoader
 
 pub fn get_tile_loader() -> AsyncLoader
 
@@ -203,6 +207,7 @@ pub(all) struct SpritesheetMetadata {
 }
 pub impl @json.FromJson for SpritesheetMetadata
 
+#deprecated
 type SyncLoader
 pub async fn SyncLoader::load(String, String, ImageLoader) -> Self
 pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode

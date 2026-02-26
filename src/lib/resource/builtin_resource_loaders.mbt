@@ -375,6 +375,34 @@ pub fn get_ui_window_4_loader() -> AsyncLoader {
   ui_window_4_loader.get()
 }
 
+///|
+let npc_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "npc",
+    loader=DirResourceLoader::new("/assets/Npc"),
+    base_url="/assets",
+  )
+})
+
+///|
+pub fn get_npc_loader() -> AsyncLoader {
+  npc_loader.get()
+}
+
+///|
+let string_loader : Lazy[AsyncLoader] = Lazy::new(fn() {
+  AsyncLoader::new(
+    "string",
+    loader=DirResourceLoader::new("/assets/String"),
+    base_url="/assets",
+  )
+})
+
+///|
+pub fn get_string_loader() -> AsyncLoader {
+  string_loader.get()
+}
+
 // let status_bar_loader = @resource.SyncLoader::load(
 //   "StatusBar",
 //   "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",

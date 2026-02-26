@@ -2,19 +2,17 @@
 struct Module {
   npcs : MapNpcs
   container : &@ui.Container
-  network : @net.Network
   ref_render : @markup_text.RefRender
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.AsyncLoader
   npc_talk_resource : NpcTalkResource
 }
 
 ///|
-pub async fn Module::load(
-  container : &@ui.Container,
-  network : @net.Network,
-  ref_render : @markup_text.RefRender,
+pub fn Module::load(
+  _container : &@ui.Container,
+  _ref_render : @markup_text.RefRender,
 ) -> Module {
-  ...
+  abort("Module::load is deprecated, use MapNpcs directly")
   // let npc_loader = @resource.SyncLoader::load(
   //   "npc",
   //   "https://maple-res.kkkiiox.work/Npc/nx.json",
@@ -35,28 +33,6 @@ pub async fn Module::load(
 }
 
 ///|
-fn Module::new(
-  container : &@ui.Container,
-  npc_talk_resource : NpcTalkResource,
-  ref_render : @markup_text.RefRender,
-  network : @net.Network,
-  string_loader~ : @resource.SyncLoader,
-  npc_loader~ : @resource.SyncLoader,
-) -> Module {
-  let npcs = MapNpcs::new(
-    fn(args) {
-      open_npc_talk_ui(
-        npc_talk_resource, container, ref_render, string_loader, args,
-      )
-    },
-    network,
-    npc_loader~,
-    string_loader~,
-  )
-  { npcs, container, ref_render, npc_talk_resource, network, string_loader }
-}
-
-///|
 pub fn Module::open_npc_talk_ui(self : Module, args : TalkArgs) -> Unit {
   open_npc_talk_ui(
     self.npc_talk_resource,
@@ -72,7 +48,7 @@ fn open_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
   ref_render : @markup_text.RefRender,
-  string_loader : @resource.SyncLoader,
+  string_loader : @resource.AsyncLoader,
   args : TalkArgs,
 ) -> Unit {
   let elem = @ui.Element::new(
@@ -92,27 +68,24 @@ pub fn Module::make_handlers(
   self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
   [
-    @net.make_handler(
-      @net.SPAWN_NPC,
-      parse_spawn_npc,
-      handle_spawn_npc_parsed(self.npcs, _),
-    ),
-    @net.make_handler(
-      @net.SPAWN_NPC_C,
-      parse_spawn_npc_controller,
-      handle_spawn_npc_controller_parsed(self.npcs, _),
-    ),
+    @net.make_handler(@net.SPAWN_NPC, parse_spawn_npc, packet => {
+      handle_spawn_npc_parsed(self.npcs, packet)
+    }),
+    @net.make_handler(@net.SPAWN_NPC_C, parse_spawn_npc_controller, packet => {
+      handle_spawn_npc_controller_parsed(self.npcs, packet)
+    }),
     @net.make_handler(
       @net.NPC_DIALOGUE,
       parse_npc_dialogue,
-      handle_npc_dialogue(
-        self.container,
-        self.network,
-        self.ref_render,
-        self.string_loader,
-        self.npc_talk_resource,
-        _,
-      ),
+      packet => {
+        handle_npc_dialogue(
+          self.container,
+          self.ref_render,
+          self.string_loader,
+          self.npc_talk_resource,
+          packet,
+        )
+      },
       log_recv=true,
     ),
   ]
@@ -236,9 +209,8 @@ pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue raise {
 ///|
 pub fn handle_npc_dialogue(
   container : &@ui.Container,
-  network : @net.Network,
   name_loader : @markup_text.RefRender,
-  string_loader : @resource.SyncLoader,
+  string_loader : @resource.AsyncLoader,
   npc_talk_resource : NpcTalkResource,
   dialogue : NpcDialogue,
 ) -> Unit {
@@ -256,30 +228,25 @@ pub fn handle_npc_dialogue(
             talk_action: match dialogue.t {
               TalkType::SEND_YESNO =>
                 SEND_YESNO(fn(c) {
-                  on_npc_talk_choice(network, TalkChoice::SEND_YESNO(answer=c))
+                  on_npc_talk_choice(TalkChoice::SEND_YESNO(answer=c))
                 })
               TalkType::SEND_NEXT =>
                 SEND_NEXT(fn(c) {
-                  on_npc_talk_choice(network, TalkChoice::SEND_NEXT(next=c))
+                  on_npc_talk_choice(TalkChoice::SEND_NEXT(next=c))
                 })
               TalkType::SEND_PREV =>
                 SEND_PREV(fn(c) {
-                  on_npc_talk_choice(network, TalkChoice::SEND_PREV(prev=c))
+                  on_npc_talk_choice(TalkChoice::SEND_PREV(prev=c))
                 })
               TalkType::SEND_OK =>
-                SEND_OK(fn(c) {
-                  on_npc_talk_choice(network, TalkChoice::SEND_OK(ok=c))
-                })
+                SEND_OK(fn(c) { on_npc_talk_choice(TalkChoice::SEND_OK(ok=c)) })
               TalkType::SEND_SIMPLE =>
                 SEND_SIMPLE(fn(c) {
-                  on_npc_talk_choice(network, TalkChoice::SEND_SIMPLE(option=c))
+                  on_npc_talk_choice(TalkChoice::SEND_SIMPLE(option=c))
                 })
               TalkType::SEND_NEXT_PREV =>
                 SEND_NEXT_PREV(fn(c) {
-                  on_npc_talk_choice(
-                    network,
-                    TalkChoice::SEND_NEXT_PREV(next=c),
-                  )
+                  on_npc_talk_choice(TalkChoice::SEND_NEXT_PREV(next=c))
                 })
             },
           },
@@ -300,7 +267,7 @@ fn new_npc_talk_ui(
   npc_talk_resource : NpcTalkResource,
   container : &@ui.Container,
   args : TalkArgs,
-  string_loader : @resource.SyncLoader,
+  string_loader : @resource.AsyncLoader,
   name_loader : @markup_text.RefRender,
 ) -> UINpcTalk {
   let ui = UINpcTalk::new(npc_talk_resource, hooks, string_loader, name_loader)
@@ -347,9 +314,4 @@ fn new_npc_talk_ui(
     }
   }
   ui
-}
-
-///|
-fn on_npc_talk_choice(network : @net.Network, c : TalkChoice) -> Unit {
-  network.send_message(make_talk_packet(c))
 }

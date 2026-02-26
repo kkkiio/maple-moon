@@ -9,21 +9,16 @@ pub(all) struct JobData {
 pub async fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
   let src = get_skill_loader().load_res_async([strid + ".img"])
-  JobData::new(id, src)
+  let strsrc = get_string_loader().load_res_async(["Skill.img", strid]) catch {
+    _ => @resource.NxNode::from_test_value(Json::null())
+  }
+  let name = strsrc["bookName"].get_string() catch { _ => "" }
+  JobData::new(src, name)
 }
 
 ///|
-pub fn JobData::new(id : Int, src : @resource.NxNode) -> JobData {
-  let strid = @utils.stoi_left_pad0(id, 3)
+pub fn JobData::new(src : @resource.NxNode, name : String) -> JobData {
   let icon = src["info"]["icon"] |> @graphics.Texture::from_resource
-  let name = skill_texts
-    .as_object()
-    .bind(_.get(strid))
-    .bind(_.as_object())
-    .bind(_.get("bookName"))
-    .unwrap_or(Json::null())
-    .as_string()
-    .unwrap_or("")
   let skills = Array::new()
   for sub in src["skill"] {
     let skill_id = @strconv.parse_int(sub.name()) catch { _ => 0 }
@@ -36,4 +31,4 @@ pub fn JobData::new(id : Int, src : @resource.NxNode) -> JobData {
 }
 
 ///|
-using @resource {get_skill_loader}
+using @resource {get_skill_loader, get_string_loader}

@@ -14,6 +14,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/monster",
+  "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/ms/drop",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/inventory_ui",

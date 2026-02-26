@@ -1,6 +1,6 @@
 ///|
 struct UINpcTalk {
-  string_loader : @resource.SyncLoader
+  string_loader : @resource.AsyncLoader
   hooks : @ui.Hooks
   base : @ui.UIModel
   resource : NpcTalkResource
@@ -57,7 +57,7 @@ pub fn TalkType::from_int(
     // return Some(SEND_TEXT_ONLY)
     1 => return Some(SEND_YESNO)
     4 => return Some(SEND_SIMPLE)
-    12 => ... // return Some(SEND_ACCEPT_DECLINE)
+    12 => return None // SEND_ACCEPT_DECLINE not implemented yet
     _ => return None
   }
 }
@@ -177,7 +177,7 @@ pub fn NpcTalkResource::from_resource(
 pub fn UINpcTalk::new(
   resource : NpcTalkResource,
   hooks : @ui.Hooks,
-  string_loader : @resource.SyncLoader,
+  string_loader : @resource.AsyncLoader,
   name_loader : @markup_text.RefRender,
 ) -> UINpcTalk {
   let name = @graphics.Text::new(
@@ -283,9 +283,8 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
   }
 
   match self.talk_action {
-    Some(SEND_YESNO(callback)) =>
-      render_elements
-      ..push(
+    Some(SEND_YESNO(callback)) => {
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(
             self.resource.bt_yes,
@@ -294,16 +293,16 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           fn() { callback(Some(true)) },
         ),
       )
-      ..push(
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(self.resource.bt_no, pos=Point::new(461, y_cord)),
           fn() { callback(Some(false)) },
         ),
       )
-      ..push(new_btn(btn_close, fn() { callback(None) }))
-    Some(SEND_NEXT(callback)) =>
-      render_elements
-      ..push(
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
+    }
+    Some(SEND_NEXT(callback)) => {
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(
             self.resource.bt_next,
@@ -312,10 +311,10 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           fn() { callback(Some(())) },
         ),
       )
-      ..push(new_btn(btn_close, fn() { callback(None) }))
-    Some(SEND_PREV(callback)) =>
-      render_elements
-      ..push(
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
+    }
+    Some(SEND_PREV(callback)) => {
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(
             self.resource.bt_prev,
@@ -324,10 +323,10 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           fn() { callback(Some(())) },
         ),
       )
-      ..push(new_btn(btn_close, fn() { callback(None) }))
-    Some(SEND_NEXT_PREV(callback)) =>
-      render_elements
-      ..push(
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
+    }
+    Some(SEND_NEXT_PREV(callback)) => {
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(
             self.resource.bt_prev,
@@ -336,7 +335,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           fn() { callback(Some(false)) },
         ),
       )
-      ..push(
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(
             self.resource.bt_next,
@@ -345,16 +344,17 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           fn() { callback(Some(true)) },
         ),
       )
-      ..push(new_btn(btn_close, fn() { callback(None) }))
-    Some(SEND_OK(callback)) =>
-      render_elements
-      ..push(
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
+    }
+    Some(SEND_OK(callback)) => {
+      render_elements.push(
         new_btn(
           @ui.MapleButton::new(self.resource.bt_ok, pos=Point::new(469, y_cord)),
           fn() { callback(Some(())) },
         ),
       )
-      ..push(new_btn(btn_close, fn() { callback(None) }))
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
+    }
     Some(SEND_SIMPLE(callback)) => {
       for selection in content.selections {
         let element = @ui.TextButton::new(
@@ -375,7 +375,7 @@ pub impl @ui.Widget for UINpcTalk with render(self) -> @ui.RenderSpec {
           new_btn(element, fn() { callback(Some(selection.1)) }),
         )
       }
-      render_elements..push(new_btn(btn_close, fn() { callback(None) }))
+      render_elements.push(new_btn(btn_close, fn() { callback(None) }))
     }
     None => ()
   }
@@ -394,13 +394,11 @@ pub fn UINpcTalk::change_text(
   let content = convert_npc_text(tx, self.name_loader)
   self.content = Some(content)
   if speakerbyte is Speaker::NPC_LEFT {
-    let strid = @utils.stoi_left_pad0(npcid, 7) + ".img"
-    self.speaker = self.string_loader.load_res([strid, "stand", "0"])
-      |> @graphics.Texture::from_resource
-    let namestr = self.string_loader
-      .load_res(["Npc.img", npcid.to_string(), "name"])
-      .get_string()
-    self.name.change_text(namestr)
+    // TODO: async load speaker/name for dialog UI.
+    ignore(npcid)
+    ignore(self.string_loader)
+    self.speaker = @graphics.Texture::default()
+    self.name.change_text("")
   } else {
     self.speaker = @graphics.Texture::default()
     self.name.change_text("")
@@ -418,57 +416,17 @@ pub fn UINpcTalk::change_text(
 }
 
 ///|
-priv struct NpcTalkMorePacket {
-  lastmsg : TalkType
-  response : Int
-  selection : Int?
-} derive(Show)
-
-///|
-impl @net.OutMessage for NpcTalkMorePacket with pack(self) -> @net.OutPacket {
-  let p = @net.OutPacket::new(@net.ClientOpcode::NPC_TALK_MORE)
-  p
-  ..write_byte(self.lastmsg.int_value().to_byte())
-  ..write_byte(self.response.to_byte())
-  match self.selection {
-    Some(selection) => p.write_int(selection)
-    None => ()
-  }
-  p
-}
-
-///|
-// fn new_npc_talk_more_packet_with_response(response : String) -> @net.OutPacket {
-//   new_npc_talk_more_packet(2, 1)..write_string(response)
-// }
-
-///|
-fn new_npc_talk_more_packet_with_selection(
-  selection : Int,
-) -> NpcTalkMorePacket {
-  { lastmsg: SEND_SIMPLE, response: 1, selection: Some(selection) }
-}
-
-///|
-fn new_npc_talk_more_packet(
-  lastmsg : TalkType,
-  response : Int,
-) -> NpcTalkMorePacket {
-  { lastmsg, response, selection: None }
-}
-
-///|
 fn convert_npc_text(
   raw_text : String,
   name_loader : @markup_text.RefRender,
 ) -> NPCTalkContent raise {
   let content = parse_talk_content(
     raw_text,
-    mod_provider=fn(_, v) { name_loader.get_mob_name(v) },
-    npc_provider=fn(_, v) { name_loader.get_npc_name(v) },
-    map_provider=fn(_, v) { name_loader.get_map_name(v).to_string() },
-    item_provider=fn(_, v) { name_loader.get_item_name(v).to_string() },
-    player_name_provider=fn(_, _) { name_loader.get_player_name() },
+    mod_provider=(_, v) => name_loader.get_mob_name(v),
+    npc_provider=(_, v) => name_loader.get_npc_name(v),
+    map_provider=(_, v) => name_loader.get_map_name(v).to_string(),
+    item_provider=(_, v) => name_loader.get_item_name(v).to_string(),
+    player_name_provider=(_, _) => name_loader.get_player_name(),
   )
   {
     text_content: [

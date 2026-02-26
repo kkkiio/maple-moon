@@ -1,65 +1,126 @@
 ///|
 struct MapNpcs {
   open_npc_talk_ui : (TalkArgs) -> Unit
-  npcs : @map_object.MapObjects[Npc]
-  spawns : @queue.T[NpcSpawn]
-  packet_processor : @net.Network
-  npc_loader : @resource.SyncLoader
-  string_loader : @resource.SyncLoader
+  npcs : Map[Int, Npc]
+  loading_npcs : Array[@utils.Future[Result[Npc, Error]]]
+  spawns : @queue.Queue[NpcSpawn]
+  npc_loader : @resource.AsyncLoader
+  string_loader : @resource.AsyncLoader
+}
+
+///|
+pub(all) struct MapNpcsContext {
+  map_npcs : MapNpcs
+  physics : @physics.Physics
+}
+
+///|
+let map_npcs_ctx : Ref[MapNpcsContext?] = Ref::new(None)
+
+///|
+pub fn set_npcs(ctx : MapNpcsContext) -> Unit {
+  map_npcs_ctx.val = Some(ctx)
+}
+
+///|
+pub fn clear_map_npcs() -> Unit {
+  match map_npcs_ctx.val {
+    Some({ map_npcs, .. }) => map_npcs.clear()
+    None => ()
+  }
+  map_npcs_ctx.val = None
+}
+
+///|
+pub fn map_npcs_system(_delta : Double) -> Unit {
+  guard map_npcs_ctx.val is Some({ map_npcs, physics }) else { return }
+  let times = @logic_fps.get_logic_times()
+  for i = 0; i < times; i = i + 1 {
+    map_npcs.update(physics)
+  }
+}
+
+///|
+pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "spawn_npc",
+    @net.Opcode::SPAWN_NPC.int_value(),
+    fn(json) raise {
+      guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
+      let msg : @server_proto.NpcSpawnMessage = @json.from_json(json)
+      map_npcs.spawn({
+        oid: msg.oid,
+        id: msg.id,
+        position: @struct.Point::new(msg.x, msg.y),
+        flip: msg.flip,
+        fh: msg.fh,
+      })
+    },
+  )
+  @game_server.add_server_message_handler(
+    "spawn_npc_controller",
+    @net.Opcode::SPAWN_NPC_C.int_value(),
+    fn(json) raise {
+      guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
+      let msg : @server_proto.NpcSpawnControllerMessage = @json.from_json(json)
+      if msg.mode == 0 {
+        map_npcs.remove(msg.oid)
+      } else {
+        map_npcs.spawn({
+          oid: msg.oid,
+          id: msg.id,
+          position: @struct.Point::new(msg.x, msg.y),
+          flip: msg.flip,
+          fh: msg.fh,
+        })
+      }
+    },
+  )
 }
 
 ///|
 pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
-  packet_processor : @net.Network,
-  npc_loader~ : @resource.SyncLoader,
-  string_loader~ : @resource.SyncLoader,
+  npc_loader~ : @resource.AsyncLoader,
+  string_loader~ : @resource.AsyncLoader,
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
-    npcs: @map_object.MapObjects::new(),
+    npcs: Map::new(),
+    loading_npcs: Array::new(),
     spawns: @queue.new(),
-    packet_processor,
     npc_loader,
     string_loader,
   }
 }
 
 ///|
-priv struct TalkToNpcPacket {
-  oid : Int
-} derive(Show)
-
-///|
-/// Packet which requests a dialog with a server-sided NPC
-fn TalkToNpcPacket::new(oid : Int) -> TalkToNpcPacket {
-  { oid, }
-}
-
-///|
-impl @net.OutMessage for TalkToNpcPacket with pack(self) {
-  let p = @net.OutPacket::new(@net.ClientOpcode::TALK_TO_NPC)
-  p.write_int(self.oid)
-  p
-}
-
-///|
 
 ///|
 pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
-  loop self.spawns.pop() {
-    Some(spawn) => {
-      let oid = spawn.get_oid()
-      if not(self.npcs.contains(oid)) {
-        self.npcs.add(
-          spawn.instantiate(self.npc_loader, self.string_loader, physics),
-        )
-      }
-      continue self.spawns.pop()
+  for {
+    guard self.spawns.pop() is Some(spawn) else { break }
+    let oid = spawn.get_oid()
+    if not(self.npcs.contains(oid)) {
+      self.loading_npcs.push(
+        @io_service.submit_background_task(async fn() {
+          spawn.instantiate(self.npc_loader, self.string_loader, physics)
+        }),
+      )
     }
-    None => break
   }
-  self.npcs.update(physics)
+  self.loading_npcs.retain(fn(future) {
+    guard future.poll() is Some(rs) else { return true }
+    match rs {
+      Ok(npc) => self.npcs.set(npc.get_oid(), npc)
+      Err(e) =>
+        @log.error("failed to load npc", data={ "error": e.to_string() })
+    }
+    false
+  })
+  for _, npc in self.npcs {
+    npc.update(physics)
+  }
 }
 
 ///|
@@ -70,13 +131,23 @@ pub fn MapNpcs::spawn(self : MapNpcs, spawn : NpcSpawn) -> Unit {
 ///|
 pub fn MapNpcs::remove(self : MapNpcs, oid : Int) -> Unit {
   match self.npcs.get(oid) {
-    Some(npc) => self.npcs.remove(oid)
+    Some(npc) => {
+      npc.destroy()
+      self.npcs.remove(oid) |> ignore
+    }
     None => ()
   }
 }
 
 ///|
 pub fn MapNpcs::clear(self : MapNpcs) -> Unit {
+  self.loading_npcs.clear()
+  while self.spawns.pop() is Some(_) {
+
+  }
+  for _, npc in self.npcs {
+    npc.destroy()
+  }
   self.npcs.clear()
 }
 
@@ -96,29 +167,18 @@ pub fn MapNpcs::send_cursor(
             (self.open_npc_talk_ui)({
               ..talk_args,
               talk_action: SEND_NEXT(fn(next) {
-                on_npc_talk_choice(
-                  self.packet_processor,
-                  TalkChoice::SEND_NEXT(next~),
-                )
+                on_npc_talk_choice(TalkChoice::SEND_NEXT(next~))
               }),
             })
           None => ()
         }
-        self.packet_processor.send_message(TalkToNpcPacket::new(npc.get_oid()))
+        @game_server.send(@server_proto.TalkToNpcMessage::{ oid: npc.get_oid() })
         return Some(@ui.CursorState::IDLE)
       }
       return Some(@ui.CursorState::CAN_CLICK)
     }
   }
   None
-}
-
-///|
-pub fn MapNpcs::listen_npc_changes(
-  self : MapNpcs,
-  listener : (@map_object.MapObjectEvent[Npc]) -> Bool,
-) -> Unit {
-  self.npcs.listen_object_changes(listener)
 }
 
 ///|
@@ -136,10 +196,10 @@ pub fn NpcSpawn::get_oid(self : NpcSpawn) -> Int {
 }
 
 ///|
-pub fn NpcSpawn::instantiate(
+pub async fn NpcSpawn::instantiate(
   self : NpcSpawn,
-  npc_loader : @resource.SyncLoader,
-  string_loader : @resource.SyncLoader,
+  npc_loader : @resource.AsyncLoader,
+  string_loader : @resource.AsyncLoader,
   physics : @physics.Physics,
 ) -> Npc {
   let spawnposition = physics.get_y_below(self.position)
@@ -158,23 +218,30 @@ pub fn NpcSpawn::instantiate(
 /// Represents a NPC on the current map
 struct Npc {
   entity : @entity.Entity
-  base : @map_object.MapObjectBase
-  animations : Map[String, @graphics.Animation]
+  oid : Int
+  phobj : @physics.PhysicsObject
+  animations : Map[String, NpcAnimation]
   dialogue : Map[String, Array[String]]
   // talk_state : String
   states : Array[String]
   name : String
   func : String
-  hide_name : Bool
   scripted : Bool
   // mouse_only : Bool
   npc_id : Int
   flip : Bool
   mut stance : String
+  mut stance_elapsed_ms : Int
+  mut last_synced_stance : String?
   // control : Bool
   random : @random.Rand
-  name_label : @graphics.Text
-  func_label : @graphics.Text
+}
+
+///|
+priv struct NpcAnimation {
+  selene : @sprite.Animation
+  duration_ms : Int
+  dimensions : @struct.Point[Int]
 }
 
 ///|
@@ -218,9 +285,9 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
 }
 
 ///|
-pub fn Npc::load(
-  npc_loader : @resource.SyncLoader,
-  string_loader : @resource.SyncLoader,
+pub async fn Npc::load(
+  npc_loader : @resource.AsyncLoader,
+  string_loader : @resource.AsyncLoader,
   id : Int,
   o : Int,
   fl : Bool,
@@ -228,18 +295,18 @@ pub fn Npc::load(
   position : @struct.Point[Int],
 ) -> Npc {
   let entity = @entity.Entity::new()
-  let base = @map_object.MapObjectBase::new(o, on_pos_change=fn(pos) {
+  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @position.positions.set(entity, @position.Position(pos))
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut src = npc_loader.load_res([strid])
-  let strsrc = string_loader.load_res(["Npc.img", id.to_string()])
+  let mut src = npc_loader.load_res_async([strid])
+  let strsrc = string_loader.load_res_async(["Npc.img", id.to_string()])
   let link = src["info"]["link"].get_string()
   if not(link.is_empty()) {
-    src = npc_loader.load_res([link + ".img"])
+    src = npc_loader.load_res_async([link + ".img"])
   }
   let info = src["info"]
-  let hide_name = info["hideName"].get_bool() catch { _ => panic() }
+  ignore(info["hideName"].get_bool() catch { _ => panic() })
   // let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
   let scripted = (not(info["script"].is_null()) || info["shop"].get_bool()) catch {
     _ => panic()
@@ -261,7 +328,18 @@ pub fn Npc::load(
   for npcnode in src {
     let state = npcnode.name()
     if state != "info" {
-      animations[state] = npcnode |> @graphics.Animation::from_resource
+      let nx_anim : @resource.NxAnimation = @json.from_json(npcnode.value()) catch {
+        _ => panic()
+      }
+      let selene = @resource.nx_animation_to_selene_animation(
+        nx_anim,
+        loop_=true,
+      )
+      animations[state] = {
+        selene,
+        duration_ms: nx_animation_duration_ms(nx_anim),
+        dimensions: nx_animation_dimensions(nx_anim),
+      }
       states.push(state)
     }
     for speaknode in npcnode["speak"] {
@@ -276,25 +354,14 @@ pub fn Npc::load(
   let flip = not(fl)
   // let control = cnt
   let stance = "stand"
-  base.phobj.set_fhid(f)
-  base.set_position(position)
-  let name_label = @graphics.Text::new(
-    @graphics.FontId::A13B,
-    @graphics.TextAlignment::CENTER,
-    @struct.ColorName::YELLOW,
-    text=name,
-    nametag=true,
-  )
-  let func_label = @graphics.Text::new(
-    @graphics.FontId::A13B,
-    @graphics.TextAlignment::CENTER,
-    @struct.ColorName::YELLOW,
-    text=func,
-    nametag=true,
+  phobj.set_fhid(f)
+  phobj.set_position(
+    @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
   )
   {
     entity,
-    base,
+    oid: o,
+    phobj,
     animations,
     // lines,
     dialogue,
@@ -302,16 +369,15 @@ pub fn Npc::load(
     states,
     name,
     func,
-    hide_name,
     scripted,
     // mouse_only,
     npc_id,
     flip,
     stance,
+    stance_elapsed_ms: 0,
+    last_synced_stance: None,
     // control,
     random: @random.Rand::new(),
-    name_label,
-    func_label,
   }
 }
 
@@ -334,18 +400,17 @@ pub fn Npc::load(
 // }
 
 ///|
-pub impl @map_object.MapObject for Npc with update(
-  self : Npc,
-  physics : @physics.Physics,
-) -> Int {
+pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Unit {
   if not(self.entity.is_alive()) {
-    return self.base.phobj.fhlayer
+    return
   }
-  physics.move_object(self.base.phobj)
+  physics.move_object(self.phobj)
   match self.animations.get(self.stance) {
-    Some(ani) => {
-      let aniend = ani.update()
-      if aniend && self.states.length() > 0 {
+    Some(animation) => {
+      self.stance_elapsed_ms += @logic_fps.STEP_TIME_MS
+      if animation.duration_ms > 0 &&
+        self.stance_elapsed_ms >= animation.duration_ms &&
+        self.states.length() > 0 {
         let next_stance = @randx.next_int(self.random, self.states.length())
         let new_stance = self.states[next_stance]
         self.set_stance(new_stance)
@@ -353,15 +418,44 @@ pub impl @map_object.MapObject for Npc with update(
     }
     None => ()
   }
-  self.base.phobj.fhlayer
+  self.sync_sprite()
 }
 
 ///|
 pub fn Npc::set_stance(self : Npc, st : String) -> Unit {
   if self.stance != st {
     self.stance = st
-    match self.animations.get(st) {
-      Some(ani) => ani.reset()
+    self.stance_elapsed_ms = 0
+    self.last_synced_stance = None
+  }
+}
+
+///|
+const MAP_LAYER_STRIDE = 5000
+
+///|
+const NPC_ZINDEX_OFFSET = 2100
+
+///|
+fn Npc::sync_sprite(self : Npc) -> Unit {
+  guard self.entity.is_alive() else { return }
+  guard self.animations.get(self.stance) is Some(animation) else { return }
+  let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
+    self.phobj.fhlayer * MAP_LAYER_STRIDE +
+    NPC_ZINDEX_OFFSET
+  let transform = if self.flip {
+    @selene_math.Transform::from_scale(-1.0, 1.0)
+  } else {
+    @selene_math.Transform::new()
+  }
+  if @sprite.sprites.get(self.entity) is None ||
+    self.last_synced_stance != Some(self.stance) {
+    let sprite = @sprite.Sprite::from_animation(animation.selene, z, transform~)
+    @sprite.sprites.set(self.entity, sprite)
+    self.last_synced_stance = Some(self.stance)
+  } else {
+    match @sprite.sprites.get(self.entity) {
+      Some(sprite) => @sprite.sprites.set(self.entity, { ..sprite, zindex: z })
       None => ()
     }
   }
@@ -381,11 +475,11 @@ pub fn Npc::inrange(
   if not(self.entity.is_alive()) {
     return false
   }
-  let absp = self.base.get_position() + viewpos
+  let absp = self.phobj.get_position() + viewpos
   let dim = self.animations
     .get(self.stance)
-    .map(fn(ani) { ani.get_dimensions() })
-    .or_default()
+    .map(fn(animation) { animation.dimensions })
+    .unwrap_or_default()
   @struct.Rectangle::from4(
     absp.x - dim.x / 2,
     absp.x + dim.x / 2,
@@ -405,37 +499,63 @@ pub fn Npc::get_func(self : Npc) -> String {
 }
 
 ///|
-pub impl @map_object.MapObject for Npc with get_oid(self : Npc) -> Int {
-  self.base.get_oid()
+pub fn Npc::get_oid(self : Npc) -> Int {
+  self.oid
 }
 
 ///|
 
 ///|
-pub impl @map_object.MapObject for Npc with destroy(self : Npc) -> Unit {
+pub fn Npc::destroy(self : Npc) -> Unit {
+  @sprite.sprites.remove(self.entity)
   self.entity.destroy()
 }
 
 ///|
 
 ///|
-pub impl @map_object.MapObject for Npc with get_layer(self : Npc) -> Int {
-  self.base.get_layer()
-}
-
-///|
-pub impl @map_object.MapObject for Npc with get_position(self : Npc) -> @struct.Point[
-  Int,
-] {
-  self.base.get_position()
-}
-
-///|
 pub fn Npc::get_npc_object(self : Npc) -> @physics.MovingObject {
-  self.base.phobj.moving_object
+  self.phobj.moving_object
 }
 
 ///|
 pub fn Npc::get_npc_id(self : Npc) -> Int {
   self.npc_id
+}
+
+///|
+fn nx_frame_delay_ms(frame : @resource.NxFrame) -> Int {
+  match frame.delay {
+    Some(delay) => if delay <= 0 { 100 } else { delay }
+    None => 100
+  }
+}
+
+///|
+fn nx_animation_duration_ms(animation : @resource.NxAnimation) -> Int {
+  let base = animation.frames.fold(init=0, fn(acc, frame) {
+    acc + nx_frame_delay_ms(frame)
+  })
+  if animation.zigzag && animation.frames.length() > 2 {
+    let mut zigzag_extra = 0
+    for i = animation.frames.length() - 2; i >= 1; i = i - 1 {
+      zigzag_extra += nx_frame_delay_ms(animation.frames[i])
+    }
+    base + zigzag_extra
+  } else {
+    base
+  }
+}
+
+///|
+fn nx_animation_dimensions(
+  animation : @resource.NxAnimation,
+) -> @struct.Point[Int] {
+  let mut width = 0
+  let mut height = 0
+  for frame in animation.frames {
+    width = @cmp.maximum(width, frame.texture.w)
+    height = @cmp.maximum(height, frame.texture.h)
+  }
+  @struct.Point::new(width, height)
 }

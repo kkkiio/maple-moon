@@ -3,6 +3,7 @@
 type ImageLoader
 
 ///|
+#deprecated("use AsyncLoader instead")
 struct SyncLoader {}
 
 ///|

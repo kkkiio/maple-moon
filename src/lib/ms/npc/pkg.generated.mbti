@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ms/npc"
 
 import {
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
@@ -13,11 +12,17 @@ import {
 }
 
 // Values
-pub fn handle_npc_dialogue(&@ui.Container, @net.Network, @markup_text.RefRender, @resource.SyncLoader, NpcTalkResource, NpcDialogue) -> Unit
+pub fn clear_map_npcs() -> Unit
+
+pub fn handle_npc_dialogue(&@ui.Container, @markup_text.RefRender, @resource.AsyncLoader, NpcTalkResource, NpcDialogue) -> Unit
 
 pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
 
 pub fn handle_spawn_npc_parsed(MapNpcs, NpcSpawn) -> Unit
+
+pub fn map_npcs_system(Double) -> Unit
+
+pub fn on_npc_talk_choice(TalkChoice) -> Unit
 
 pub fn parse_npc_dialogue(@net.InPacket) -> NpcDialogue raise
 
@@ -26,6 +31,10 @@ pub fn parse_spawn_npc(@net.InPacket) -> NpcSpawn raise
 pub fn parse_spawn_npc_controller(@net.InPacket) -> SpawnNpcController raise
 
 pub fn parse_talk_content(String, mod_provider? : (@markup_text.Style, StringView) -> String raise, npc_provider? : (@markup_text.Style, StringView) -> String raise, map_provider? : (@markup_text.Style, StringView) -> String raise, item_provider? : (@markup_text.Style, StringView) -> String raise, player_name_provider? : (@markup_text.Style, StringView) -> String raise) -> TalkContent raise
+
+pub fn set_npcs(MapNpcsContext) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
 
 // Errors
 pub(all) suberror ParseTalkError {
@@ -36,30 +45,36 @@ pub impl Show for ParseTalkError
 // Types and methods
 type MapNpcs
 pub fn MapNpcs::clear(Self) -> Unit
-pub fn MapNpcs::listen_npc_changes(Self, (@map_object.MapObjectEvent[Npc]) -> Bool) -> Unit
-pub fn MapNpcs::new((TalkArgs) -> Unit, @net.Network, npc_loader~ : @resource.SyncLoader, string_loader~ : @resource.SyncLoader) -> Self
+pub fn MapNpcs::new((TalkArgs) -> Unit, npc_loader~ : @resource.AsyncLoader, string_loader~ : @resource.AsyncLoader) -> Self
 pub fn MapNpcs::remove(Self, Int) -> Unit
 pub fn MapNpcs::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
 pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
 pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
 
+pub(all) struct MapNpcsContext {
+  map_npcs : MapNpcs
+  physics : @physics.Physics
+}
+
 type Module
 pub fn Module::get_npcs(Self) -> MapNpcs
-pub async fn Module::load(&@ui.Container, @net.Network, @markup_text.RefRender) -> Self
+pub fn Module::load(&@ui.Container, @markup_text.RefRender) -> Self
 pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::open_npc_talk_ui(Self, TalkArgs) -> Unit
 
 type Npc
+pub fn Npc::destroy(Self) -> Unit
 pub fn Npc::get_func(Self) -> String
 pub fn Npc::get_name(Self) -> String
 pub fn Npc::get_npc_id(Self) -> Int
 pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
+pub fn Npc::get_oid(Self) -> Int
 pub fn Npc::inrange(Self, @res_types.Point[Int], @res_types.Point[Int]) -> Bool
 pub fn Npc::is_scripted(Self) -> Bool
-pub fn Npc::load(@resource.SyncLoader, @resource.SyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
+pub async fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
 pub fn Npc::set_stance(Self, String) -> Unit
 pub fn Npc::talk(Self) -> TalkArgs?
-pub impl @map_object.MapObject for Npc
+pub fn Npc::update(Self, @physics.Physics) -> Unit
 
 pub struct NpcDialogue {
   npcid : Int
@@ -72,7 +87,7 @@ pub impl ToJson for NpcDialogue
 
 type NpcSpawn
 pub fn NpcSpawn::get_oid(Self) -> Int
-pub fn NpcSpawn::instantiate(Self, @resource.SyncLoader, @resource.SyncLoader, @physics.Physics) -> Npc
+pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
 pub impl Show for NpcSpawn
 pub impl ToJson for NpcSpawn
 
@@ -169,7 +184,7 @@ pub impl ToJson for TalkType
 type UINpcTalk
 pub fn UINpcTalk::change_text(Self, Int, TalkAction, Speaker, String) -> Unit raise
 pub fn UINpcTalk::const_focused() -> Bool
-pub fn UINpcTalk::new(NpcTalkResource, @ui.Hooks, @resource.SyncLoader, @markup_text.RefRender) -> Self
+pub fn UINpcTalk::new(NpcTalkResource, @ui.Hooks, @resource.AsyncLoader, @markup_text.RefRender) -> Self
 pub impl @ui.Widget for UINpcTalk
 
 // Type aliases

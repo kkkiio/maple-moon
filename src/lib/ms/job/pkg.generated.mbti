@@ -39,7 +39,7 @@ pub(all) struct JobData {
   name : String
 }
 pub async fn JobData::load(Int) -> Self
-pub fn JobData::new(Int, @resource.NxNode) -> Self
+pub fn JobData::new(@resource.NxNode, String) -> Self
 
 pub(all) enum JobId {
   BEGINNER

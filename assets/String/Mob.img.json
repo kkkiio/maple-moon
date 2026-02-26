@@ -1,0 +1,4796 @@
+{
+  "100100": {
+    "name": "Snail"
+  },
+  "100101": {
+    "name": "Blue Snail"
+  },
+  "100120": {
+    "name": "Tino"
+  },
+  "100121": {
+    "name": "Tiv"
+  },
+  "100122": {
+    "name": "Timu"
+  },
+  "100123": {
+    "name": "Tiru"
+  },
+  "100124": {
+    "name": "Tiguru"
+  },
+  "100130": {
+    "name": "Muru"
+  },
+  "100131": {
+    "name": "Murupa"
+  },
+  "100132": {
+    "name": "Murupia"
+  },
+  "100133": {
+    "name": "Murumuru"
+  },
+  "100134": {
+    "name": "Murukun"
+  },
+  "1110100": {
+    "name": "Green Mushroom"
+  },
+  "1110101": {
+    "name": "Dark Stump"
+  },
+  "1110130": {
+    "name": "Dejected Green Mushroom"
+  },
+  "1120100": {
+    "name": "Octopus"
+  },
+  "1130100": {
+    "name": "Axe Stump"
+  },
+  "1140100": {
+    "name": "Ghost Stump"
+  },
+  "1140130": {
+    "name": "Smirking Ghost Stump"
+  },
+  "120100": {
+    "name": "Shroom"
+  },
+  "1210100": {
+    "name": "Pig"
+  },
+  "1210101": {
+    "name": "Ribbon Pig"
+  },
+  "1210102": {
+    "name": "Orange Mushroom"
+  },
+  "1210103": {
+    "name": "Bubbling"
+  },
+  "1210111": {
+    "name": "Strange Pig"
+  },
+  "130100": {
+    "name": "Stump"
+  },
+  "130101": {
+    "name": "Red Snail"
+  },
+  "2100100": {
+    "name": "Desert Rabbit (F)"
+  },
+  "2100101": {
+    "name": "Desert Rabbit (M)"
+  },
+  "2100102": {
+    "name": "Jr. Cactus"
+  },
+  "2100103": {
+    "name": "Cactus"
+  },
+  "2100104": {
+    "name": "Royal Cactus"
+  },
+  "2100105": {
+    "name": "Bellamoa"
+  },
+  "2100106": {
+    "name": "Ear Plug Plead"
+  },
+  "2100107": {
+    "name": "Scarf Plead"
+  },
+  "2100108": {
+    "name": "Meerkat"
+  },
+  "210100": {
+    "name": "Slime"
+  },
+  "2110200": {
+    "name": "Horny Mushroom"
+  },
+  "2110300": {
+    "name": "Sand Rat"
+  },
+  "2110301": {
+    "name": "Scorpion"
+  },
+  "2130100": {
+    "name": "Dark Axe Stump"
+  },
+  "2130103": {
+    "name": "Jr. Necki"
+  },
+  "2220000": {
+    "name": "Mano "
+  },
+  "2220100": {
+    "name": "Blue Mushroom"
+  },
+  "2220110": {
+    "name": "Crying Blue Mushroom"
+  },
+  "2230100": {
+    "name": "Evil Eye"
+  },
+  "2230101": {
+    "name": "Zombie Mushroom"
+  },
+  "2230102": {
+    "name": "Wild Boar"
+  },
+  "2230103": {
+    "name": "Trixter"
+  },
+  "2230104": {
+    "name": "Green Trixter"
+  },
+  "2230105": {
+    "name": "Seacle"
+  },
+  "2230106": {
+    "name": "Cico"
+  },
+  "2230107": {
+    "name": "Krappy"
+  },
+  "2230108": {
+    "name": "Pinboom"
+  },
+  "2230109": {
+    "name": "Bubble Fish"
+  },
+  "2230110": {
+    "name": "Wooden Mask"
+  },
+  "2230111": {
+    "name": "Rocky Mask"
+  },
+  "2230112": {
+    "name": "Terrified Wild Boar"
+  },
+  "2230131": {
+    "name": "Annoyed Zombie Mushroom"
+  },
+  "2230200": {
+    "name": "Flower Fish"
+  },
+  "2300100": {
+    "name": "Stirge"
+  },
+  "3000000": {
+    "name": "Sentinel"
+  },
+  "3000001": {
+    "name": "Fairy 1"
+  },
+  "3000002": {
+    "name": "Fairy 2"
+  },
+  "3000003": {
+    "name": "Fairy 3"
+  },
+  "3000004": {
+    "name": "Fairy 4"
+  },
+  "3000005": {
+    "name": "Brown Teddy"
+  },
+  "3000006": {
+    "name": "Krip"
+  },
+  "3100101": {
+    "name": "Sand Dwarf "
+  },
+  "3100102": {
+    "name": "Kiyo"
+  },
+  "3110100": {
+    "name": "Ligator"
+  },
+  "3110101": {
+    "name": "Pink Teddy"
+  },
+  "3110102": {
+    "name": "Ratz"
+  },
+  "3110300": {
+    "name": "Cube Slime"
+  },
+  "3110301": {
+    "name": "Dark Sand Dwarf "
+  },
+  "3110302": {
+    "name": "Rumo"
+  },
+  "3110303": {
+    "name": "Triple Rumo"
+  },
+  "3210100": {
+    "name": "Fire Boar"
+  },
+  "3210200": {
+    "name": "Jr. Cellion"
+  },
+  "3210201": {
+    "name": "Jr. Lioner"
+  },
+  "3210202": {
+    "name": "Jr. Grupin"
+  },
+  "3210203": {
+    "name": "Panda Teddy"
+  },
+  "3210204": {
+    "name": "Roloduck"
+  },
+  "3210205": {
+    "name": "Black Ratz"
+  },
+  "3210206": {
+    "name": "Helly"
+  },
+  "3210207": {
+    "name": "Tick"
+  },
+  "3210208": {
+    "name": "Retz"
+  },
+  "3210450": {
+    "name": "Scuba Pepe"
+  },
+  "3210800": {
+    "name": "Lupin"
+  },
+  "3220000": {
+    "name": "Stumpy"
+  },
+  "3220001": {
+    "name": "Deo"
+  },
+  "3230100": {
+    "name": "Curse Eye"
+  },
+  "3230101": {
+    "name": "Jr. Wraith"
+  },
+  "3230102": {
+    "name": "Lorang"
+  },
+  "3230103": {
+    "name": "King Bloctopus"
+  },
+  "3230104": {
+    "name": "Mask Fish"
+  },
+  "3230200": {
+    "name": "Star Pixie"
+  },
+  "3230300": {
+    "name": "Jr. Boogie 1"
+  },
+  "3230301": {
+    "name": "Jr. Boogie 2"
+  },
+  "3230302": {
+    "name": "Bloctopus"
+  },
+  "3230303": {
+    "name": "Propelly"
+  },
+  "3230304": {
+    "name": "Planey"
+  },
+  "3230305": {
+    "name": "Toy Trojan"
+  },
+  "3230306": {
+    "name": "Chronos"
+  },
+  "3230307": {
+    "name": "Chirppy"
+  },
+  "3230308": {
+    "name": "Tweeter"
+  },
+  "3230400": {
+    "name": "Drumming Bunny"
+  },
+  "3230405": {
+    "name": "Jr. Seal"
+  },
+  "3300000": {
+    "name": "Renegade Spores"
+  },
+  "3300001": {
+    "name": "Poison Mushroom"
+  },
+  "3300002": {
+    "name": "Intoxicated Pig"
+  },
+  "3300003": {
+    "name": "Helmet Pepe"
+  },
+  "3300004": {
+    "name": "Royal Guard Pepe"
+  },
+  "3300005": {
+    "name": "Grey Yeti and King Pepe"
+  },
+  "3300006": {
+    "name": "Gold Yeti and King Pepe"
+  },
+  "3300007": {
+    "name": "White Yeti and King Pepe"
+  },
+  "3300008": {
+    "name": "Prime Minister"
+  },
+  "3400000": {
+    "name": "Cherry Bubble Tea"
+  },
+  "3400001": {
+    "name": "Mango Bubble Tea"
+  },
+  "3400002": {
+    "name": "Melon Bubble Tea"
+  },
+  "3400003": {
+    "name": "Yeti Doll Claw Game"
+  },
+  "3400004": {
+    "name": "Yeti Doll  "
+  },
+  "3400005": {
+    "name": "Jr. Pepe Doll Claw Game"
+  },
+  "3400006": {
+    "name": "Jr. Pepe Doll  "
+  },
+  "3400007": {
+    "name": "Transformed Doll Claw Game"
+  },
+  "3400008": {
+    "name": "Transformed Doll Claw Game"
+  },
+  "4090000": {
+    "name": "Iron Hook"
+  },
+  "4110300": {
+    "name": "Iron Mutae"
+  },
+  "4110301": {
+    "name": "Reinforced Iron Mutae"
+  },
+  "4110302": {
+    "name": "Mithril  mutae"
+  },
+  "4130100": {
+    "name": "Copper Drake"
+  },
+  "4130101": {
+    "name": "Tortie"
+  },
+  "4130102": {
+    "name": "Dark Nependeath"
+  },
+  "4130103": {
+    "name": "Rombot"
+  },
+  "4130104": {
+    "name": "Dark Nependeath"
+  },
+  "4220000": {
+    "name": "Seruf"
+  },
+  "4220001": {
+    "name": "Seruf"
+  },
+  "4230100": {
+    "name": "Cold Eye"
+  },
+  "4230101": {
+    "name": "Zombie Lupin"
+  },
+  "4230102": {
+    "name": "Wraith"
+  },
+  "4230103": {
+    "name": "Iron Hog"
+  },
+  "4230104": {
+    "name": "Clang"
+  },
+  "4230105": {
+    "name": "Nependeath"
+  },
+  "4230106": {
+    "name": "Lunar Pixie"
+  },
+  "4230107": {
+    "name": "Flyeye"
+  },
+  "4230108": {
+    "name": "Jr. Cerebes"
+  },
+  "4230109": {
+    "name": "Block Golem"
+  },
+  "4230110": {
+    "name": "King Block Golem"
+  },
+  "4230111": {
+    "name": "Robo"
+  },
+  "4230112": {
+    "name": "Master Robo"
+  },
+  "4230113": {
+    "name": "Tick-Tock"
+  },
+  "4230114": {
+    "name": "Platoon Chronos"
+  },
+  "4230115": {
+    "name": "Master Chronos"
+  },
+  "4230116": {
+    "name": "Barnard Gray"
+  },
+  "4230117": {
+    "name": "Zeta Gray"
+  },
+  "4230118": {
+    "name": "Ultra Gray"
+  },
+  "4230119": {
+    "name": "Mateon"
+  },
+  "4230120": {
+    "name": "Plateon"
+  },
+  "4230121": {
+    "name": "Mecateon"
+  },
+  "4230122": {
+    "name": "Nependeath"
+  },
+  "4230123": {
+    "name": "Sparker"
+  },
+  "4230124": {
+    "name": "Freezer"
+  },
+  "4230125": {
+    "name": "Skeledog"
+  },
+  "4230126": {
+    "name": "Mummydog"
+  },
+  "4230200": {
+    "name": "Poopa"
+  },
+  "4230201": {
+    "name": "Poison Poopa"
+  },
+  "4230300": {
+    "name": "Moon Bunny"
+  },
+  "4230400": {
+    "name": "Iron Boar"
+  },
+  "4230500": {
+    "name": "Chipmunk"
+  },
+  "4230501": {
+    "name": "Red Porky"
+  },
+  "4230502": {
+    "name": "Black Porky"
+  },
+  "4230503": {
+    "name": "Blue Flower Serpent"
+  },
+  "4230504": {
+    "name": "Red Flower Serpent"
+  },
+  "4230505": {
+    "name": "Jar"
+  },
+  "4230506": {
+    "name": "Ginseng Jar"
+  },
+  "4230600": {
+    "name": "Desert Giant "
+  },
+  "4240000": {
+    "name": "Chief Gray"
+  },
+  "4250000": {
+    "name": "Mossy Snail"
+  },
+  "4250001": {
+    "name": "Tree Rod"
+  },
+  "4300000": {
+    "name": "Blue Perfume"
+  },
+  "4300001": {
+    "name": "Blue Perfume"
+  },
+  "4300002": {
+    "name": "Yellow Perfume"
+  },
+  "4300003": {
+    "name": "Yellow Perfume"
+  },
+  "4300004": {
+    "name": "Pink Perfume"
+  },
+  "4300005": {
+    "name": "Pink Perfume"
+  },
+  "4300006": {
+    "name": "Kid Mannequin"
+  },
+  "4300007": {
+    "name": "Female Mannequin"
+  },
+  "4300008": {
+    "name": "Male Mannequin"
+  },
+  "4300009": {
+    "name": "Latest Hits Compilation"
+  },
+  "4300010": {
+    "name": "Greatest Oldies"
+  },
+  "4300011": {
+    "name": "Cheap Amplifier"
+  },
+  "4300012": {
+    "name": "Fancy Amplifier "
+  },
+  "4300013": {
+    "name": "Spirit of Rock"
+  },
+  "4300014": {
+    "name": "Greatest Oldies"
+  },
+  "4300015": {
+    "name": "Cheap Amplifier"
+  },
+  "4300016": {
+    "name": "Fancy Amplifier "
+  },
+  "4300017": {
+    "name": "Spirit of Rock's Soul"
+  },
+  "5090000": {
+    "name": "Shade"
+  },
+  "5090001": {
+    "name": "Master Dummy"
+  },
+  "5100000": {
+    "name": "Jr. Yeti"
+  },
+  "5100001": {
+    "name": "Transforming Jr. Yeti"
+  },
+  "5100002": {
+    "name": "Firebomb"
+  },
+  "5100003": {
+    "name": "Hodori"
+  },
+  "5100004": {
+    "name": "Samiho"
+  },
+  "5100005": {
+    "name": "Hogul"
+  },
+  "5110300": {
+    "name": "Reinforced Mithril Mutae "
+  },
+  "5110301": {
+    "name": "Roid "
+  },
+  "5110302": {
+    "name": "Neo Huroid"
+  },
+  "5120000": {
+    "name": "Luster Pixie"
+  },
+  "5120001": {
+    "name": "Cellion"
+  },
+  "5120002": {
+    "name": "Lioner"
+  },
+  "5120003": {
+    "name": "Grupin"
+  },
+  "5120100": {
+    "name": "MT-09"
+  },
+  "5120500": {
+    "name": "Grizzly"
+  },
+  "5120501": {
+    "name": "Bellflower Root"
+  },
+  "5120502": {
+    "name": "Sr. Bellflower Root"
+  },
+  "5120503": {
+    "name": "Straw Target Dummy"
+  },
+  "5120504": {
+    "name": "Wooden Target Dummy"
+  },
+  "5120505": {
+    "name": "Reindeer"
+  },
+  "5120506": {
+    "name": "The Book Ghost"
+  },
+  "5130100": {
+    "name": "Drake"
+  },
+  "5130101": {
+    "name": "Stone Golem"
+  },
+  "5130102": {
+    "name": "Dark Stone Golem"
+  },
+  "5130103": {
+    "name": "Croco"
+  },
+  "5130104": {
+    "name": "Hector"
+  },
+  "5130105": {
+    "name": "Dark Jr. Yeti"
+  },
+  "5130106": {
+    "name": "Transforming Dark Jr. Yeti"
+  },
+  "5130107": {
+    "name": "Coolie Zombie"
+  },
+  "5130108": {
+    "name": "Miner Zombie"
+  },
+  "5140000": {
+    "name": "White Fang"
+  },
+  "5150000": {
+    "name": "Mixed Golem"
+  },
+  "5150001": {
+    "name": "Skeleton Soldier"
+  },
+  "5200000": {
+    "name": "Jr. Sentinel"
+  },
+  "5200001": {
+    "name": "Ice Sentinel"
+  },
+  "5200002": {
+    "name": "Fire Sentinel"
+  },
+  "5220000": {
+    "name": "King Clang"
+  },
+  "5220001": {
+    "name": "King Clang"
+  },
+  "5220002": {
+    "name": "Faust"
+  },
+  "5220003": {
+    "name": "Timer"
+  },
+  "5220004": {
+    "name": "Giant Centipede"
+  },
+  "5250000": {
+    "name": "Mossy Mushroom"
+  },
+  "5250001": {
+    "name": "Stone Bug"
+  },
+  "5250002": {
+    "name": "Primitive Boar"
+  },
+  "5300000": {
+    "name": "Leatty"
+  },
+  "5300001": {
+    "name": "Dark Leatty"
+  },
+  "5300100": {
+    "name": "Malady"
+  },
+  "5400000": {
+    "name": "Jr. Pepe"
+  },
+  "6090000": {
+    "name": "Riche"
+  },
+  "6090001": {
+    "name": "Snow Witch"
+  },
+  "6090002": {
+    "name": "Bamboo Warrior"
+  },
+  "6090003": {
+    "name": "Scholar Ghost"
+  },
+  "6090004": {
+    "name": "Rurumo"
+  },
+  "6110300": {
+    "name": "Homun"
+  },
+  "6110301": {
+    "name": "Saitie"
+  },
+  "6130100": {
+    "name": "Red Drake"
+  },
+  "6130101": {
+    "name": "Mushmom"
+  },
+  "6130102": {
+    "name": "Separated Pepe"
+  },
+  "6130103": {
+    "name": "Pepe"
+  },
+  "6130104": {
+    "name": "Boogie"
+  },
+  "6130200": {
+    "name": "Buffy"
+  },
+  "6130201": {
+    "name": "Blin"
+  },
+  "6130202": {
+    "name": "Morphed Blin"
+  },
+  "6130203": {
+    "name": "Panda"
+  },
+  "6130204": {
+    "name": "Mr. Alli"
+  },
+  "6130207": {
+    "name": "Peach Monkey"
+  },
+  "6130208": {
+    "name": "Kru"
+  },
+  "6130209": {
+    "name": "Sage Cat"
+  },
+  "6220000": {
+    "name": "Dyle"
+  },
+  "6220001": {
+    "name": "Zeno"
+  },
+  "6230100": {
+    "name": "Wild Kargo"
+  },
+  "6230101": {
+    "name": "Puco"
+  },
+  "6230200": {
+    "name": "Dark Pepe"
+  },
+  "6230201": {
+    "name": "Separated Dark Pepe"
+  },
+  "6230300": {
+    "name": "Lazy Buffy"
+  },
+  "6230400": {
+    "name": "Soul Teddy"
+  },
+  "6230401": {
+    "name": "Jr. Lucida "
+  },
+  "6230500": {
+    "name": "Master Soul Teddy"
+  },
+  "6230600": {
+    "name": "Ice Drake"
+  },
+  "6230601": {
+    "name": "Dark Drake"
+  },
+  "6230602": {
+    "name": "Officer Skeleton"
+  },
+  "6300000": {
+    "name": "Yeti"
+  },
+  "6300001": {
+    "name": "Transformed Yeti"
+  },
+  "6300002": {
+    "name": "Separated Yeti"
+  },
+  "6300003": {
+    "name": "Punco"
+  },
+  "6300004": {
+    "name": "Pachu"
+  },
+  "6300005": {
+    "name": "Zombie Mushmom"
+  },
+  "6300100": {
+    "name": "Buffoon"
+  },
+  "6400000": {
+    "name": "Dark Yeti"
+  },
+  "6400001": {
+    "name": "Transformed Dark Yeti"
+  },
+  "6400002": {
+    "name": "Separated Dark Yeti"
+  },
+  "6400003": {
+    "name": "Cuzco"
+  },
+  "6400004": {
+    "name": "Opachu"
+  },
+  "6400005": {
+    "name": "주니어 발록"
+  },
+  "6400006": {
+    "name": "Crimson Balrog"
+  },
+  "6400007": {
+    "name": "Baby Balrog"
+  },
+  "6400008": {
+    "name": "Jr. Balrog"
+  },
+  "6400009": {
+    "name": "Crimson Balrog"
+  },
+  "6400100": {
+    "name": "Deep Buffoon"
+  },
+  "7090000": {
+    "name": "Security Camera"
+  },
+  "7110300": {
+    "name": "D. Roy"
+  },
+  "7110301": {
+    "name": "Homunculus"
+  },
+  "7120100": {
+    "name": "Gatekeeper Nex"
+  },
+  "7120101": {
+    "name": "Gatekeeper Nex"
+  },
+  "7120102": {
+    "name": "Gatekeeper Nex"
+  },
+  "7120103": {
+    "name": "Red Slime"
+  },
+  "7120104": {
+    "name": "Silver Slime"
+  },
+  "7120105": {
+    "name": "Gold Slime  "
+  },
+  "7120106": {
+    "name": "Overlord A"
+  },
+  "7120107": {
+    "name": "Overlord B"
+  },
+  "7120108": {
+    "name": "Robby"
+  },
+  "7120109": {
+    "name": "Iruvata"
+  },
+  "7130000": {
+    "name": "Lucida"
+  },
+  "7130001": {
+    "name": "Cerebes"
+  },
+  "7130002": {
+    "name": "Beetle"
+  },
+  "7130003": {
+    "name": "Dual Beetle"
+  },
+  "7130004": {
+    "name": "Hankie"
+  },
+  "7130010": {
+    "name": "Death Teddy"
+  },
+  "7130020": {
+    "name": "Goby"
+  },
+  "7130100": {
+    "name": "Tauromacis"
+  },
+  "7130101": {
+    "name": "Taurospear"
+  },
+  "7130102": {
+    "name": "Yeti and Pepe"
+  },
+  "7130103": {
+    "name": "Commander Skeleton"
+  },
+  "7130104": {
+    "name": "Captain"
+  },
+  "7130200": {
+    "name": "Werewolf"
+  },
+  "7130300": {
+    "name": "Master Death Teddy"
+  },
+  "7130400": {
+    "name": "Yellow King Goblin"
+  },
+  "7130401": {
+    "name": "Blue King Goblin"
+  },
+  "7130402": {
+    "name": "Green King Goblin"
+  },
+  "7130500": {
+    "name": "Rash"
+  },
+  "7130501": {
+    "name": "Dark Rash"
+  },
+  "7130600": {
+    "name": "Hobi"
+  },
+  "7130601": {
+    "name": "Green Hobi"
+  },
+  "7130602": {
+    "name": "Thorny Vine"
+  },
+  "7140000": {
+    "name": "Ghost Pirate"
+  },
+  "7160000": {
+    "name": "Dual Ghost Pirate"
+  },
+  "7220000": {
+    "name": "Tae Roon"
+  },
+  "7220001": {
+    "name": "Nine-Tailed Fox"
+  },
+  "7220002": {
+    "name": "King Sage Cat"
+  },
+  "7220003": {
+    "name": "Bergamot"
+  },
+  "7220004": {
+    "name": "Bergamot"
+  },
+  "7220005": {
+    "name": "Bergamot"
+  },
+  "8090000": {
+    "name": "Deet and Roi"
+  },
+  "8110300": {
+    "name": "Homunscullo"
+  },
+  "8120100": {
+    "name": "Gatekeeper Nex"
+  },
+  "8120101": {
+    "name": "Gatekeeper Nex"
+  },
+  "8120102": {
+    "name": "Afterlord"
+  },
+  "8120103": {
+    "name": "Prototype Lord"
+  },
+  "8120104": {
+    "name": "Maverick Type A"
+  },
+  "8120105": {
+    "name": "Maverick Type S"
+  },
+  "8120106": {
+    "name": "Maverick Type D"
+  },
+  "8120107": {
+    "name": "Maverick Type D"
+  },
+  "8130100": {
+    "name": "Jr. Balrog"
+  },
+  "8140000": {
+    "name": "Lycanthrope"
+  },
+  "8140001": {
+    "name": "Harp"
+  },
+  "8140002": {
+    "name": "Blood Harp"
+  },
+  "8140100": {
+    "name": "Dark Yeti and Pepe"
+  },
+  "8140101": {
+    "name": "Black Kentaurus"
+  },
+  "8140102": {
+    "name": "Red Kentaurus"
+  },
+  "8140103": {
+    "name": "Blue Kentaurus"
+  },
+  "8140110": {
+    "name": "Birk"
+  },
+  "8140111": {
+    "name": "Dual Birk"
+  },
+  "8140200": {
+    "name": "Klock"
+  },
+  "8140300": {
+    "name": "Dark Klock"
+  },
+  "8140500": {
+    "name": "Bain"
+  },
+  "8140510": {
+    "name": "Gatekeeper Nex"
+  },
+  "8140511": {
+    "name": "Imperial Guard"
+  },
+  "8140512": {
+    "name": "Royal Guard"
+  },
+  "8140555": {
+    "name": "Bombing Fish House "
+  },
+  "8140600": {
+    "name": "Bone Fish"
+  },
+  "8140700": {
+    "name": "Blue Dragon Turtle"
+  },
+  "8140701": {
+    "name": "Red Dragon Turtle"
+  },
+  "8140702": {
+    "name": "Rexton"
+  },
+  "8140703": {
+    "name": "Brexton"
+  },
+  "8141000": {
+    "name": "Spirit Viking"
+  },
+  "8141100": {
+    "name": "Gigantic Spirit Viking"
+  },
+  "8141300": {
+    "name": "Squid"
+  },
+  "8142000": {
+    "name": "Phantom Watch"
+  },
+  "8142100": {
+    "name": "Risell Squid"
+  },
+  "8143000": {
+    "name": "Grim Phantom Watch"
+  },
+  "8150000": {
+    "name": "Crimson Balrog"
+  },
+  "8150100": {
+    "name": "Shark"
+  },
+  "8150101": {
+    "name": "Cold Shark"
+  },
+  "8150200": {
+    "name": "Green Cornian"
+  },
+  "8150201": {
+    "name": "Dark Cornian"
+  },
+  "8150300": {
+    "name": "Red Wyvern"
+  },
+  "8150301": {
+    "name": "Blue Wyvern"
+  },
+  "8150302": {
+    "name": "Dark Wyvern"
+  },
+  "8160000": {
+    "name": "Gatekeeper"
+  },
+  "8170000": {
+    "name": "Thanatos"
+  },
+  "8180000": {
+    "name": "Manon"
+  },
+  "8180001": {
+    "name": "Griffey"
+  },
+  "8190000": {
+    "name": "Jr. Newtie"
+  },
+  "8190001": {
+    "name": "Jr. Newtie"
+  },
+  "8190002": {
+    "name": "Nest Golem"
+  },
+  "8190003": {
+    "name": "Skelegon"
+  },
+  "8190004": {
+    "name": "Skelosaurus"
+  },
+  "8190005": {
+    "name": "Nest Golem"
+  },
+  "8200000": {
+    "name": "Eye of Time"
+  },
+  "8200001": {
+    "name": "Memory Monk"
+  },
+  "8200002": {
+    "name": "Memory Monk Trainee"
+  },
+  "8200003": {
+    "name": "Memory Guardian"
+  },
+  "8200004": {
+    "name": "Chief Memory Guardian"
+  },
+  "8200005": {
+    "name": "Qualm Monk"
+  },
+  "8200006": {
+    "name": "Qualm Monk Trainee"
+  },
+  "8200007": {
+    "name": "Qualm Guardian"
+  },
+  "8200008": {
+    "name": "Chief Qualm Guardian"
+  },
+  "8200009": {
+    "name": "Oblivion Monk"
+  },
+  "8200010": {
+    "name": "Oblivion Monk Trainee"
+  },
+  "8200011": {
+    "name": "Oblivion Guardian"
+  },
+  "8200012": {
+    "name": "Chief Oblivion Guardian"
+  },
+  "8220000": {
+    "name": "Eliza"
+  },
+  "8220001": {
+    "name": "Snowman"
+  },
+  "8220002": {
+    "name": "Chimera"
+  },
+  "8220003": {
+    "name": "Leviathan"
+  },
+  "8220004": {
+    "name": "Dodo"
+  },
+  "8220005": {
+    "name": "Lilynouch"
+  },
+  "8220006": {
+    "name": "Lyka"
+  },
+  "8220007": {
+    "name": "Blue Mushmom"
+  },
+  "8220008": {
+    "name": "Unknow Snack Bar"
+  },
+  "8220009": {
+    "name": "Snack Bar"
+  },
+  "8220010": {
+    "name": "Dunas"
+  },
+  "8220011": {
+    "name": "Aufheben"
+  },
+  "8220012": {
+    "name": "Oberon"
+  },
+  "8220013": {
+    "name": "Nibelung"
+  },
+  "8220014": {
+    "name": "Nibelung"
+  },
+  "8220015": {
+    "name": "Nibelung"
+  },
+  "8500000": {
+    "name": "Time Sphere"
+  },
+  "8500001": {
+    "name": "Papulatus Clock"
+  },
+  "8500002": {
+    "name": "Papulatus"
+  },
+  "8500003": {
+    "name": "High Darkstar"
+  },
+  "8500004": {
+    "name": "Low Darkstar"
+  },
+  "8510000": {
+    "name": "Pianus"
+  },
+  "8510100": {
+    "name": "Bloody Boom"
+  },
+  "8520000": {
+    "name": "Pianus"
+  },
+  "8800000": {
+    "name": "Zakum1"
+  },
+  "8800001": {
+    "name": "Zakum2"
+  },
+  "8800002": {
+    "name": "Zakum3"
+  },
+  "8800003": {
+    "name": "Zakum's Arm 1"
+  },
+  "8800004": {
+    "name": "Zakum's Arm 2"
+  },
+  "8800005": {
+    "name": "Zakum's Arm 3"
+  },
+  "8800006": {
+    "name": "Zakum's Arm 4"
+  },
+  "8800007": {
+    "name": "Zakum's Arm 5"
+  },
+  "8800008": {
+    "name": "Zakum's Arm 6"
+  },
+  "8800009": {
+    "name": "Zakum's Arm 7"
+  },
+  "8800010": {
+    "name": "Zakum's Arm 8"
+  },
+  "8810000": {
+    "name": "Horntail's Left Head"
+  },
+  "8810001": {
+    "name": "Horntail's Right Head"
+  },
+  "8810002": {
+    "name": "Horntail's Head A"
+  },
+  "8810003": {
+    "name": "Horntail's Head B"
+  },
+  "8810004": {
+    "name": "Horntail's Head C"
+  },
+  "8810005": {
+    "name": "Horntail's Left Hand"
+  },
+  "8810006": {
+    "name": "Horntail's Right Hand"
+  },
+  "8810007": {
+    "name": "Horntail's Wings"
+  },
+  "8810008": {
+    "name": "Horntail's Legs"
+  },
+  "8810009": {
+    "name": "Horntail's Tails"
+  },
+  "8810010": {
+    "name": "Dead Horntail's Head A"
+  },
+  "8810011": {
+    "name": "Dead Horntail's Head B"
+  },
+  "8810012": {
+    "name": "Dead Horntail's Head C"
+  },
+  "8810013": {
+    "name": "Dead Horntail's Left Hand"
+  },
+  "8810014": {
+    "name": "Dead Horntail's Right Hand"
+  },
+  "8810015": {
+    "name": "Dead Horntail's Wings"
+  },
+  "8810016": {
+    "name": "Dead Horntail's Legs"
+  },
+  "8810017": {
+    "name": "Dead Horntail's Tails"
+  },
+  "8810018": {
+    "name": "Horntail"
+  },
+  "8810019": {
+    "name": "Red Wyvern"
+  },
+  "8810020": {
+    "name": "Blue Wyvern"
+  },
+  "8810021": {
+    "name": "Dark Wyvern"
+  },
+  "8810022": {
+    "name": "Green Cornian"
+  },
+  "8810023": {
+    "name": "Dark Cornian"
+  },
+  "8810024": {
+    "name": "Summon Horntail's Left Head"
+  },
+  "8810025": {
+    "name": "Summon Horntail's Right Head"
+  },
+  "8810026": {
+    "name": "Summon Horntail"
+  },
+  "8820000": {
+    "name": "Pink Bean"
+  },
+  "8820001": {
+    "name": "Pink Bean"
+  },
+  "8820002": {
+    "name": "Ariel"
+  },
+  "8820003": {
+    "name": "Solomon the Wise"
+  },
+  "8820004": {
+    "name": "Rex the Wise"
+  },
+  "8820005": {
+    "name": "Hugin"
+  },
+  "8820006": {
+    "name": "Munin"
+  },
+  "8820007": {
+    "name": "Mini Bean"
+  },
+  "8820008": {
+    "name": "Transparent Mob for summoning baby boss"
+  },
+  "8820009": {
+    "name": "set0 Transparent Mob"
+  },
+  "8820010": {
+    "name": "Pink Bean"
+  },
+  "8820011": {
+    "name": "Pink Bean"
+  },
+  "8820012": {
+    "name": "Pink Bean"
+  },
+  "8820013": {
+    "name": "Pink Bean"
+  },
+  "8820014": {
+    "name": "Pink Bean"
+  },
+  "8820015": {
+    "name": "Solomon the Wise"
+  },
+  "8820016": {
+    "name": "Rex the Wise"
+  },
+  "8820017": {
+    "name": "Hugin"
+  },
+  "8820018": {
+    "name": "Munin"
+  },
+  "8820019": {
+    "name": "Ariel"
+  },
+  "8820020": {
+    "name": "Solomon the Wise"
+  },
+  "8820021": {
+    "name": "Rex the Wise"
+  },
+  "8820022": {
+    "name": "Hugin"
+  },
+  "8820023": {
+    "name": "Munin"
+  },
+  "8820024": {
+    "name": "Solomon the Wise"
+  },
+  "8820025": {
+    "name": "Rex the Wise"
+  },
+  "8820026": {
+    "name": "Hugin"
+  },
+  "8820027": {
+    "name": "Munin"
+  },
+  "8830000": {
+    "name": "Balrog"
+  },
+  "8830001": {
+    "name": "Balrog"
+  },
+  "8830002": {
+    "name": "Balrog"
+  },
+  "8830003": {
+    "name": "Balrog"
+  },
+  "8830004": {
+    "name": "Balrog"
+  },
+  "8830005": {
+    "name": "Balrog"
+  },
+  "8830006": {
+    "name": "Balrog"
+  },
+  "8830007": {
+    "name": "Balrog"
+  },
+  "8830008": {
+    "name": "Balrog"
+  },
+  "8830009": {
+    "name": "Balrog"
+  },
+  "8830010": {
+    "name": "Balrog"
+  },
+  "8830011": {
+    "name": "Balrog"
+  },
+  "8830012": {
+    "name": "Balrog"
+  },
+  "8830013": {
+    "name": "Balrog"
+  },
+  "9000001": {
+    "name": "Curse Eye 2"
+  },
+  "9000002": {
+    "name": "Horned Mushroom 2"
+  },
+  "9000100": {
+    "name": "Fire Boar 2"
+  },
+  "9000101": {
+    "name": "Lupin 2"
+  },
+  "9000200": {
+    "name": "Evil Eye 2"
+  },
+  "9000201": {
+    "name": "Zombie Mushroom 2"
+  },
+  "9000300": {
+    "name": "Cold Eye 2"
+  },
+  "9000301": {
+    "name": "Blue Mushroom 2"
+  },
+  "9001000": {
+    "name": "Dances with Balrog's Clone"
+  },
+  "9001001": {
+    "name": "Grendel the Really Old's Clone"
+  },
+  "9001002": {
+    "name": "Athena Pierce's Clone"
+  },
+  "9001003": {
+    "name": "Dark Lord's Clone"
+  },
+  "9001004": {
+    "name": "Shadow Kyrin"
+  },
+  "9001005": {
+    "name": "OctoPirate"
+  },
+  "9001006": {
+    "name": "OctoPirate"
+  },
+  "9001007": {
+    "name": "Scarecrow for Training"
+  },
+  "9001008": {
+    "name": "Shadow Kyrin's Clone"
+  },
+  "9001009": {
+    "name": "Master of Disguise"
+  },
+  "9001010": {
+    "name": "Black Witch"
+  },
+  "9001011": {
+    "name": "Tiguru of Exam"
+  },
+  "9001012": {
+    "name": "Scarred Bear"
+  },
+  "9001013": {
+    "name": "Thief Crow"
+  },
+  "9001014": {
+    "name": "Uncontrollable Maha"
+  },
+  "9100000": {
+    "name": "Super Slime"
+  },
+  "9100001": {
+    "name": "Super Jr. Necki"
+  },
+  "9100002": {
+    "name": "Super Stirge"
+  },
+  "9100003": {
+    "name": "Ultra Jr. Necki 1"
+  },
+  "9100004": {
+    "name": "Ultra Jr. Necki 2"
+  },
+  "9100005": {
+    "name": "Super Trickster"
+  },
+  "9100006": {
+    "name": "Super Green Trickster"
+  },
+  "9100007": {
+    "name": "Super Ribbon-Pig"
+  },
+  "9100008": {
+    "name": "Super Coke Snail 1"
+  },
+  "9100009": {
+    "name": "Super Coke Snail 2"
+  },
+  "9100010": {
+    "name": "Mr. Black Sheep"
+  },
+  "9100013": {
+    "name": "Adin "
+  },
+  "9101000": {
+    "name": "Green Mushroom"
+  },
+  "9101001": {
+    "name": "Zombie Mushroom"
+  },
+  "9101002": {
+    "name": "Ghost Stump"
+  },
+  "9101003": {
+    "name": "마왕발록"
+  },
+  "9200000": {
+    "name": "Wild Boar (PC)"
+  },
+  "9200001": {
+    "name": "Fire Boar (PC)"
+  },
+  "9200002": {
+    "name": "Dark Stump (PC)"
+  },
+  "9200003": {
+    "name": "Horned Mushroom (PC)"
+  },
+  "9200004": {
+    "name": "Green Mushroom (PC)"
+  },
+  "9200005": {
+    "name": "Slime (PC)"
+  },
+  "9200006": {
+    "name": "Lupin (PC)"
+  },
+  "9200007": {
+    "name": "Zombie Lupin (PC)"
+  },
+  "9200008": {
+    "name": "Blue Mushroom (PC)"
+  },
+  "9200009": {
+    "name": "Stone Golem (PC)"
+  },
+  "9200010": {
+    "name": "Zombie Mushroom (PC)"
+  },
+  "9200011": {
+    "name": "Evil Eye (PC)"
+  },
+  "9200012": {
+    "name": "Drake (PC)"
+  },
+  "9200013": {
+    "name": "Cold Eye (PC)"
+  },
+  "9200014": {
+    "name": "Wild Kargo (PC)"
+  },
+  "9200015": {
+    "name": "Brown Tanny"
+  },
+  "9200016": {
+    "name": "Drumming Bunny"
+  },
+  "9200017": {
+    "name": "Pink Tanny"
+  },
+  "9200018": {
+    "name": "Jr. Yetti"
+  },
+  "9200019": {
+    "name": "White Fang"
+  },
+  "9200020": {
+    "name": "Yetti & Pepe"
+  },
+  "9200021": {
+    "name": "Separated Yetti"
+  },
+  "9200022": {
+    "name": "Separated Pepe"
+  },
+  "9300000": {
+    "name": "Jr. Necki (PC)"
+  },
+  "9300001": {
+    "name": "Ligator (PC)"
+  },
+  "9300002": {
+    "name": "Curse Eye (PC)"
+  },
+  "9300003": {
+    "name": "King Slime"
+  },
+  "9300004": {
+    "name": "Mimic"
+  },
+  "9300005": {
+    "name": "Ratz from Another Dimension"
+  },
+  "9300006": {
+    "name": "Black Ratz from Another Dimension"
+  },
+  "9300007": {
+    "name": "Bloctopus from Another Dimension"
+  },
+  "9300008": {
+    "name": "Shadow Eye from Another Dimension"
+  },
+  "9300009": {
+    "name": "Block Golem from Another Dimension"
+  },
+  "9300010": {
+    "name": "Rombad from Another Dimension"
+  },
+  "9300011": {
+    "name": "Toy Trojan"
+  },
+  "9300012": {
+    "name": "Alishar"
+  },
+  "9300013": {
+    "name": "King Block Golem from Another Dimension"
+  },
+  "9300014": {
+    "name": "Dark Eye from Another Dimension"
+  },
+  "9300015": {
+    "name": "Cronos"
+  },
+  "9300016": {
+    "name": "Platoon Cronos"
+  },
+  "9300017": {
+    "name": "Master Cronos"
+  },
+  "9300018": {
+    "name": "Tutorial Jr. Sentinel"
+  },
+  "9300019": {
+    "name": "Master Muscle Stone"
+  },
+  "9300020": {
+    "name": "Muscle Stone"
+  },
+  "9300021": {
+    "name": "Dark Muscle Stone"
+  },
+  "9300022": {
+    "name": "Black Knight"
+  },
+  "9300023": {
+    "name": "Myst Knight"
+  },
+  "9300024": {
+    "name": "Puppet Golem"
+  },
+  "9300025": {
+    "name": "Gargoyle"
+  },
+  "9300026": {
+    "name": "Jr. Gargoyle"
+  },
+  "9300027": {
+    "name": "Devil Slime"
+  },
+  "9300028": {
+    "name": "Ergoth"
+  },
+  "9300029": {
+    "name": "Lion Statue A"
+  },
+  "9300030": {
+    "name": "Lion Statue B"
+  },
+  "9300031": {
+    "name": "Knight Statue A"
+  },
+  "9300032": {
+    "name": "Knight Statue B"
+  },
+  "9300033": {
+    "name": "Jr. Gargoyle"
+  },
+  "9300034": {
+    "name": "Mist Knight"
+  },
+  "9300035": {
+    "name": "Jr. Gargoyle"
+  },
+  "9300036": {
+    "name": "Black Knight"
+  },
+  "9300037": {
+    "name": "Mist Knight"
+  },
+  "9300038": {
+    "name": "Ghost Pixie"
+  },
+  "9300039": {
+    "name": "Papa Pixie"
+  },
+  "9300040": {
+    "name": "Cellion in Tower of Goddess"
+  },
+  "9300041": {
+    "name": "Cellion in Tower of Goddess"
+  },
+  "9300042": {
+    "name": "Grupin in Tower of Goddess"
+  },
+  "9300043": {
+    "name": "Lioner in Tower of Goddess"
+  },
+  "9300044": {
+    "name": "Lucida in Tower of Goddess"
+  },
+  "9300045": {
+    "name": "Lunar Pixie in Tower of Goddess"
+  },
+  "9300046": {
+    "name": "Star Pixie in Tower of Goddess"
+  },
+  "9300047": {
+    "name": "Luster Pixie in Tower of Goddess"
+  },
+  "9300048": {
+    "name": "Nependeath in Tower of Goddess"
+  },
+  "9300049": {
+    "name": "Royal Nependeath in Tower of Goddess"
+  },
+  "9300050": {
+    "name": "Flying Boogie"
+  },
+  "9300051": {
+    "name": "Jr. Cellion in Tower of Goddess"
+  },
+  "9300052": {
+    "name": "Jr. Lioner in Tower of Goddess"
+  },
+  "9300053": {
+    "name": "Jr. Grupin in Tower of Goddess"
+  },
+  "9300054": {
+    "name": "Lunar Pixie in Tower of Goddess(Summon Boss)"
+  },
+  "9300055": {
+    "name": "Star Pixie in Tower of Goddess(Summon Boss)"
+  },
+  "9300056": {
+    "name": "Luster Pixie in Tower of Goddess(Summon Boss)"
+  },
+  "9300057": {
+    "name": "Cellion in Tower of Goddess"
+  },
+  "9300058": {
+    "name": "Pig"
+  },
+  "9300059": {
+    "name": "Ribbon Pig"
+  },
+  "9300060": {
+    "name": "Iron Hog"
+  },
+  "9300061": {
+    "name": "Moon Bunny"
+  },
+  "9300062": {
+    "name": "Flyeye"
+  },
+  "9300063": {
+    "name": "Stirge"
+  },
+  "9300064": {
+    "name": "Goblin Fire"
+  },
+  "9300065": {
+    "name": "Green Cornian1 in Cave"
+  },
+  "9300066": {
+    "name": "Green Cornian 2 in Cave"
+  },
+  "9300067": {
+    "name": "Dark Cornian 1 in Cave"
+  },
+  "9300068": {
+    "name": "Dark Cornian 2 in Cave"
+  },
+  "9300069": {
+    "name": "Red Wyvern 1 in Cave"
+  },
+  "9300070": {
+    "name": "Red Wyvern 2 in Cave"
+  },
+  "9300071": {
+    "name": "Blue Wyvern 1 in Cave"
+  },
+  "9300072": {
+    "name": "Blue Wyvern 2 in Cave"
+  },
+  "9300073": {
+    "name": "Dark Wyvern 1 in Cave"
+  },
+  "9300074": {
+    "name": "Dark Wyvern 2 in Cave"
+  },
+  "9300075": {
+    "name": "Skelegon 1 in Cave"
+  },
+  "9300076": {
+    "name": "Skelegon 2 in Cave"
+  },
+  "9300077": {
+    "name": "T-Skelegon in Cave"
+  },
+  "9300078": {
+    "name": "Jr. Newtie in Cave"
+  },
+  "9300079": {
+    "name": "Nest Golem in Cave"
+  },
+  "9300080": {
+    "name": "Kru"
+  },
+  "9300081": {
+    "name": "Flyeye"
+  },
+  "9300082": {
+    "name": "Stirge"
+  },
+  "9300083": {
+    "name": "Goblin Fire"
+  },
+  "9300084": {
+    "name": "Deathly Fear"
+  },
+  "9300085": {
+    "name": "Jr. Balrog in Another World"
+  },
+  "9300086": {
+    "name": "The Elemental Thanatos"
+  },
+  "9300087": {
+    "name": "The Charging Taurospear"
+  },
+  "9300088": {
+    "name": "Dark Lord's Disciple"
+  },
+  "9300089": {
+    "name": "Phoenix"
+  },
+  "9300090": {
+    "name": "Freezer"
+  },
+  "9300091": {
+    "name": "Buff Rocky in the Dark"
+  },
+  "9300092": {
+    "name": "Jr. Balrog in Forgotten Shrine"
+  },
+  "9300093": {
+    "name": "Tylus"
+  },
+  "9300094": {
+    "name": "Crimson Balrog the Kidnapper"
+  },
+  "9300095": {
+    "name": "Lycanthrope the Kidnapper"
+  },
+  "9300096": {
+    "name": "Black Kentaurus"
+  },
+  "9300097": {
+    "name": "Goby in Warped Dimension"
+  },
+  "9300098": {
+    "name": "Bone Fish in Warped Dimension"
+  },
+  "9300099": {
+    "name": "Shark in Warped Dimension"
+  },
+  "9300100": {
+    "name": "The Elemental Thanatos"
+  },
+  "9300101": {
+    "name": "Tamable Hog"
+  },
+  "9300102": {
+    "name": "Watchhog"
+  },
+  "9300103": {
+    "name": "Barnard Gray"
+  },
+  "9300104": {
+    "name": "Zeta Gray"
+  },
+  "9300105": {
+    "name": "Angry Lord Pirate"
+  },
+  "9300106": {
+    "name": "Enraged Lord Pirate"
+  },
+  "9300107": {
+    "name": "Peeking Lord Pirate"
+  },
+  "9300108": {
+    "name": "Lord Pirate's Jar"
+  },
+  "9300109": {
+    "name": "Lord Pirate's Ginseng Jar"
+  },
+  "9300110": {
+    "name": "Lord Pirate's Bellflower"
+  },
+  "9300111": {
+    "name": "Lord Pirate's Ancient Bellflower"
+  },
+  "9300112": {
+    "name": "Lord Pirate's 100yrOld Bellflower"
+  },
+  "9300113": {
+    "name": "Lord Pirate's 100yrOld Ancient Bellflower"
+  },
+  "9300114": {
+    "name": "Lord Pirate's Enraged Mr. Alli"
+  },
+  "9300115": {
+    "name": "Lord Pirate's Enraged Kru"
+  },
+  "9300116": {
+    "name": "Lord Pirate's Enraged Captain"
+  },
+  "9300117": {
+    "name": "Lord Pirate's Devoted Kru"
+  },
+  "9300118": {
+    "name": "Lord Pirate's Devoted Captain"
+  },
+  "9300119": {
+    "name": "Lord Pirate"
+  },
+  "9300120": {
+    "name": "Lord Pirate's Furious Mr. Alli"
+  },
+  "9300121": {
+    "name": "Lord Pirate's Furious Kru"
+  },
+  "9300122": {
+    "name": "Lord Pirate's Furious Captain"
+  },
+  "9300123": {
+    "name": "Lord Pirate's Mr. Alli"
+  },
+  "9300124": {
+    "name": "Lord Pirate's Kru"
+  },
+  "9300125": {
+    "name": "Lord Pirate's Captain"
+  },
+  "9300126": {
+    "name": "Lord Pirate's Enraged Ginseng Jar"
+  },
+  "9300127": {
+    "name": "Brown Teddy"
+  },
+  "9300128": {
+    "name": "Bloctopus "
+  },
+  "9300129": {
+    "name": "Ratz"
+  },
+  "9300130": {
+    "name": "Chronos "
+  },
+  "9300131": {
+    "name": "Toy Trojan"
+  },
+  "9300132": {
+    "name": "Tick-Tock"
+  },
+  "9300133": {
+    "name": "Robo"
+  },
+  "9300134": {
+    "name": "King Bloctopus"
+  },
+  "9300135": {
+    "name": "Master Chronos "
+  },
+  "9300136": {
+    "name": "Rombot"
+  },
+  "9300137": {
+    "name": "Juliet"
+  },
+  "9300138": {
+    "name": "Romeo"
+  },
+  "9300139": {
+    "name": "Frankenroid"
+  },
+  "9300140": {
+    "name": "Angry Frankenroid"
+  },
+  "9300141": {
+    "name": "Homun of Closed Laboratory"
+  },
+  "9300142": {
+    "name": "Homunculu of hidden laboratory"
+  },
+  "9300143": {
+    "name": "Reinforced Iron Mutae"
+  },
+  "9300144": {
+    "name": "Reinforced Mithril Mutae"
+  },
+  "9300145": {
+    "name": "Homun"
+  },
+  "9300146": {
+    "name": "Cyti"
+  },
+  "9300147": {
+    "name": "Homunculus"
+  },
+  "9300148": {
+    "name": "Neo Huroid"
+  },
+  "9300149": {
+    "name": "Roid"
+  },
+  "9300150": {
+    "name": "Neo Huroid"
+  },
+  "9300151": {
+    "name": "Frankenroid"
+  },
+  "9300152": {
+    "name": "Angry Frankenroid"
+  },
+  "9300153": {
+    "name": "Obstacle Mutae"
+  },
+  "9300154": {
+    "name": "Experimental Neo Huroid"
+  },
+  "9300155": {
+    "name": "Pig"
+  },
+  "9300156": {
+    "name": "Black Magician's Disciple"
+  },
+  "9300157": {
+    "name": "Scorpion"
+  },
+  "9300158": {
+    "name": "Kyrin"
+  },
+  "9300159": {
+    "name": "Inferno Kyrin"
+  },
+  "9300160": {
+    "name": "Blue Flower Serpent"
+  },
+  "9300161": {
+    "name": "Red Flower Serpent"
+  },
+  "9300162": {
+    "name": "Willi"
+  },
+  "9300163": {
+    "name": "Sage Cat"
+  },
+  "9300164": {
+    "name": "The Book Ghost"
+  },
+  "9300165": {
+    "name": "Peach Monkey"
+  },
+  "9300166": {
+    "name": "Bomb"
+  },
+  "9300167": {
+    "name": "Degraded Rumo"
+  },
+  "9300168": {
+    "name": "Reinforced Roid"
+  },
+  "9300169": {
+    "name": "Ratz from Another Dimension"
+  },
+  "9300170": {
+    "name": "Black Ratz from Another Dimension"
+  },
+  "9300171": {
+    "name": "Bloctopus from Another Dimension"
+  },
+  "9300172": {
+    "name": "Poisoned Lord Tree"
+  },
+  "9300173": {
+    "name": "Poisoned Stone Bug"
+  },
+  "9300174": {
+    "name": "Poisoned Spright"
+  },
+  "9300175": {
+    "name": "Poison Flower"
+  },
+  "9300176": {
+    "name": "Poison Golem"
+  },
+  "9300177": {
+    "name": "Poison Golem Level 2"
+  },
+  "9300178": {
+    "name": "Poison Golem Level 3"
+  },
+  "9300179": {
+    "name": "Spright"
+  },
+  "9300180": {
+    "name": "Poison Golem"
+  },
+  "9300181": {
+    "name": "Charged Poison Golem"
+  },
+  "9300182": {
+    "name": "Super-Charged Poison Golem"
+  },
+  "9300183": {
+    "name": "Deeply Poisoned Stone Bug"
+  },
+  "9300184": {
+    "name": "Mano"
+  },
+  "9300185": {
+    "name": "Stumpy"
+  },
+  "9300186": {
+    "name": "Deo"
+  },
+  "9300187": {
+    "name": "King Slime"
+  },
+  "9300188": {
+    "name": "Giant Centipede"
+  },
+  "9300189": {
+    "name": "Faust"
+  },
+  "9300190": {
+    "name": "King Clang"
+  },
+  "9300191": {
+    "name": "Mushmom"
+  },
+  "9300192": {
+    "name": "Alishar"
+  },
+  "9300193": {
+    "name": "Timer"
+  },
+  "9300194": {
+    "name": "Dyle"
+  },
+  "9300195": {
+    "name": "Papa Pixie"
+  },
+  "9300196": {
+    "name": "Zombie Mushmom"
+  },
+  "9300197": {
+    "name": "Zeno"
+  },
+  "9300198": {
+    "name": "Lord Pirate"
+  },
+  "9300199": {
+    "name": "Nine-Tailed Fox"
+  },
+  "9300200": {
+    "name": "Tae Roon"
+  },
+  "9300201": {
+    "name": "Super-Charged Poison Golem"
+  },
+  "9300202": {
+    "name": "King Sage Cat"
+  },
+  "9300203": {
+    "name": "Jr. Balrog"
+  },
+  "9300204": {
+    "name": "Eliza"
+  },
+  "9300205": {
+    "name": "Frankenroid"
+  },
+  "9300206": {
+    "name": "Chimera"
+  },
+  "9300207": {
+    "name": "Snack Bar"
+  },
+  "9300208": {
+    "name": "Snowman"
+  },
+  "9300209": {
+    "name": "Blue Mushmom"
+  },
+  "9300210": {
+    "name": "Crimson Balrog"
+  },
+  "9300211": {
+    "name": "Manon"
+  },
+  "9300212": {
+    "name": "Griffey"
+  },
+  "9300213": {
+    "name": "Leviathan"
+  },
+  "9300214": {
+    "name": "Papulatus"
+  },
+  "9300215": {
+    "name": "Mu Gong Merits"
+  },
+  "9300216": {
+    "name": "A transparent item for checking elimination"
+  },
+  "9300217": {
+    "name": "Blue Snail"
+  },
+  "9300218": {
+    "name": "Red Snail"
+  },
+  "9300219": {
+    "name": "Stump"
+  },
+  "9300220": {
+    "name": "Axe Stump"
+  },
+  "9300221": {
+    "name": "Cactus"
+  },
+  "9300222": {
+    "name": "Royal Cactus"
+  },
+  "9300223": {
+    "name": "Slime"
+  },
+  "9300224": {
+    "name": "Black Sheep"
+  },
+  "9300225": {
+    "name": "Lupin"
+  },
+  "9300226": {
+    "name": "Zombie Lupin"
+  },
+  "9300227": {
+    "name": "Lorang"
+  },
+  "9300228": {
+    "name": "Clang"
+  },
+  "9300229": {
+    "name": "Orange Mushroom"
+  },
+  "9300230": {
+    "name": "Platoon Chronos"
+  },
+  "9300231": {
+    "name": "Master Chronos"
+  },
+  "9300232": {
+    "name": "Tick"
+  },
+  "9300233": {
+    "name": "Tick-Tock"
+  },
+  "9300234": {
+    "name": "Ligator"
+  },
+  "9300235": {
+    "name": "Croko"
+  },
+  "9300236": {
+    "name": "Luster Pixie"
+  },
+  "9300237": {
+    "name": "Ghost Pixie"
+  },
+  "9300238": {
+    "name": "Zombie Mushroom"
+  },
+  "9300239": {
+    "name": "Zeta"
+  },
+  "9300240": {
+    "name": "Ultra Gray"
+  },
+  "9300241": {
+    "name": "Kru"
+  },
+  "9300242": {
+    "name": "Captain"
+  },
+  "9300243": {
+    "name": "Samiho"
+  },
+  "9300244": {
+    "name": "Grizzly"
+  },
+  "9300245": {
+    "name": "Panda"
+  },
+  "9300246": {
+    "name": "Tree Road"
+  },
+  "9300247": {
+    "name": "Stone Bug"
+  },
+  "9300248": {
+    "name": "Sage Cat"
+  },
+  "9300249": {
+    "name": "Tauromacis"
+  },
+  "9300250": {
+    "name": "Taurospear"
+  },
+  "9300251": {
+    "name": "Lucida"
+  },
+  "9300252": {
+    "name": "Reinforced Iron Mutae"
+  },
+  "9300253": {
+    "name": "Reinforced Mithril Mutae"
+  },
+  "9300254": {
+    "name": "Reinforced Iron Mutae"
+  },
+  "9300255": {
+    "name": "Mithril Mutae"
+  },
+  "9300256": {
+    "name": "Transforming Doll Machine  (Before)"
+  },
+  "9300257": {
+    "name": "Transforming Doll Machine  (After)"
+  },
+  "9300258": {
+    "name": "Yeti"
+  },
+  "9300259": {
+    "name": "Blue Mushroom"
+  },
+  "9300260": {
+    "name": "Jr. Balrog"
+  },
+  "9300261": {
+    "name": "Black Kentaurus"
+  },
+  "9300262": {
+    "name": "Red Kentaurus"
+  },
+  "9300263": {
+    "name": "Blue Kentaurus"
+  },
+  "9300264": {
+    "name": "Dark Wyvern"
+  },
+  "9300265": {
+    "name": "Blue Wyvern"
+  },
+  "9300266": {
+    "name": "High Darkstar"
+  },
+  "9300267": {
+    "name": "Low Darkstar"
+  },
+  "9300268": {
+    "name": "Tae Roon"
+  },
+  "9300269": {
+    "name": "So Gong"
+  },
+  "9300270": {
+    "name": "Mingu"
+  },
+  "9300271": {
+    "name": "Target Slime"
+  },
+  "9300272": {
+    "name": "Target Orange Mushroom"
+  },
+  "9300273": {
+    "name": "Target Pig"
+  },
+  "9300274": {
+    "name": "Cynical Orange Mushroom"
+  },
+  "9300275": {
+    "name": "Yellow Snail of the Maze"
+  },
+  "9300276": {
+    "name": "Green Snail of the Maze"
+  },
+  "9300277": {
+    "name": "Blue Snail of the Maze"
+  },
+  "9300278": {
+    "name": "Red Snail of the Maze"
+  },
+  "9300279": {
+    "name": "Purple Snail of the Maze"
+  },
+  "9300280": {
+    "name": "Transforming Yellow Snail of the Maze"
+  },
+  "9300281": {
+    "name": "Transforming Green Snail of the Maze"
+  },
+  "9300282": {
+    "name": "Blue Transforming Snail of the Maze"
+  },
+  "9300283": {
+    "name": "Transforming Yellow Snail of the Maze"
+  },
+  "9300284": {
+    "name": "Transforming Yellow Snail of the Maze"
+  },
+  "9300285": {
+    "name": "Puppeteer"
+  },
+  "9300286": {
+    "name": "Dangerous Blue Mushroom"
+  },
+  "9300287": {
+    "name": "Snowman of Competence"
+  },
+  "9300288": {
+    "name": "Crimson Balrog of Competence "
+  },
+  "9300289": {
+    "name": "Snipe of Competence "
+  },
+  "9300290": {
+    "name": "Lilynouch of Competence"
+  },
+  "9300291": {
+    "name": "Advanced Manon"
+  },
+  "9300292": {
+    "name": "Advanced Griffey"
+  },
+  "9300293": {
+    "name": "Advanced Leviathan"
+  },
+  "9300294": {
+    "name": "Advanced Pianus"
+  },
+  "9300295": {
+    "name": "The Dangerous Tree of the Maze"
+  },
+  "9300296": {
+    "name": "The Cool Shade of the Maze"
+  },
+  "9300297": {
+    "name": "Mutae of the Maze"
+  },
+  "9300298": {
+    "name": "Red Ribbon Pig of the Maze"
+  },
+  "9300299": {
+    "name": "Green Ribbon Pig of the Maze"
+  },
+  "9300300": {
+    "name": "Blue Ribbon Pig of the Maze"
+  },
+  "9300301": {
+    "name": "Purple Ribbon Pig of the Maze"
+  },
+  "9300302": {
+    "name": "Pig of the Maze"
+  },
+  "9300303": {
+    "name": "Sky Mushroom of the Maze I"
+  },
+  "9300304": {
+    "name": "Sky Mushroom of the Maze II"
+  },
+  "9300305": {
+    "name": "Sky Mushroom of the Maze III"
+  },
+  "9300306": {
+    "name": "Sky Mushroom of the Maze IV"
+  },
+  "9300307": {
+    "name": "Sky Mushroom of the Maze V"
+  },
+  "9300308": {
+    "name": "Sky Mushroom of the Maze VI"
+  },
+  "9300309": {
+    "name": "Rash of the Maze"
+  },
+  "9300310": {
+    "name": "Sand Rabbit of the Maze"
+  },
+  "9300311": {
+    "name": "Bam Bam Cat"
+  },
+  "9300312": {
+    "name": "Pigmy that lays Golden Eggs"
+  },
+  "9300313": {
+    "name": "Witch Cat"
+  },
+  "9300314": {
+    "name": "Witch Cat"
+  },
+  "9300315": {
+    "name": "Buffy"
+  },
+  "9300316": {
+    "name": "Soul Teddy"
+  },
+  "9300317": {
+    "name": "Lazy Buffy"
+  },
+  "9300318": {
+    "name": "Master Soul Teddy"
+  },
+  "9300319": {
+    "name": "Klock"
+  },
+  "9300320": {
+    "name": "Buffoon"
+  },
+  "9300321": {
+    "name": "Deep Buffoon"
+  },
+  "9300322": {
+    "name": "Ghost Pirate"
+  },
+  "9300323": {
+    "name": "Death Teddy "
+  },
+  "9300324": {
+    "name": "Viking"
+  },
+  "9300325": {
+    "name": "Cat Sleeping Spot"
+  },
+  "9300326": {
+    "name": "Unknown Jr. Balrog"
+  },
+  "9300327": {
+    "name": "Balrog Corpse"
+  },
+  "9300328": {
+    "name": "Tutorial Tino"
+  },
+  "9300329": {
+    "name": "Wolf's Bomb"
+  },
+  "9300330": {
+    "name": "Rose Thorn"
+  },
+  "9300331": {
+    "name": "Gaga"
+  },
+  "9300332": {
+    "name": "Barnard Gray"
+  },
+  "9300333": {
+    "name": "Ultra Gray"
+  },
+  "9300334": {
+    "name": "Chief Gray"
+  },
+  "9300335": {
+    "name": "Mateon"
+  },
+  "9300336": {
+    "name": "Mecateon"
+  },
+  "9300337": {
+    "name": "Mecateon"
+  },
+  "9300338": {
+    "name": "Rescued Gaga"
+  },
+  "9300339": {
+    "name": "Space Mateon"
+  },
+  "9300340": {
+    "name": "Maple Bday Cake"
+  },
+  "9300341": {
+    "name": "Target Slime"
+  },
+  "9300342": {
+    "name": "Target Orange Mushroom"
+  },
+  "9300343": {
+    "name": "Target Pig"
+  },
+  "9300344": {
+    "name": "Puppeteer"
+  },
+  "9300345": {
+    "name": "Puppeteer"
+  },
+  "9300346": {
+    "name": "Puppeteer"
+  },
+  "9300347": {
+    "name": "Giant Nependeath"
+  },
+  "9300348": {
+    "name": "Giant"
+  },
+  "9300349": {
+    "name": "Gentleman"
+  },
+  "9300350": {
+    "name": "Mu Gong's Shadow"
+  },
+  "9300351": {
+    "name": "Shadow Knight"
+  },
+  "9300352": {
+    "name": "Gentleman"
+  },
+  "9300353": {
+    "name": "Gentleman"
+  },
+  "9300354": {
+    "name": "Wolf Underling"
+  },
+  "9300355": {
+    "name": "Shapeshifter"
+  },
+  "9300356": {
+    "name": "Sma Gingerman"
+  },
+  "9300357": {
+    "name": "Grii Gingerman"
+  },
+  "9300358": {
+    "name": "Grii Gingerman"
+  },
+  "9300359": {
+    "name": "Sma Gingerman"
+  },
+  "9300360": {
+    "name": "Grii Gingerman"
+  },
+  "9300361": {
+    "name": "Grii Gingerman"
+  },
+  "9300362": {
+    "name": "Grii Gingerman"
+  },
+  "9300363": {
+    "name": "Grii Gingerman"
+  },
+  "9300364": {
+    "name": "Sma Gingerman"
+  },
+  "9300365": {
+    "name": "Grii Gingerman"
+  },
+  "9300366": {
+    "name": "Grii Gingerman "
+  },
+  "9300367": {
+    "name": "Witch Bear"
+  },
+  "9300368": {
+    "name": "Witch Bear"
+  },
+  "9300369": {
+    "name": "Witch Bear"
+  },
+  "9300370": {
+    "name": "Witch Bear"
+  },
+  "9300371": {
+    "name": "Witch Bear"
+  },
+  "9300372": {
+    "name": "Witch Bear"
+  },
+  "9300373": {
+    "name": "Witch Bear"
+  },
+  "9300374": {
+    "name": "Witch Bear"
+  },
+  "9300375": {
+    "name": "Witch Bear"
+  },
+  "9300376": {
+    "name": "Witch Bear"
+  },
+  "9300377": {
+    "name": "Witch Bear"
+  },
+  "9300378": {
+    "name": "Giant Nependeath"
+  },
+  "9300379": {
+    "name": "Black Mage Wyvern"
+  },
+  "9300380": {
+    "name": "Black Mage Cornian"
+  },
+  "9300381": {
+    "name": "Black Mage Skelegon"
+  },
+  "9300382": {
+    "name": "???"
+  },
+  "9300383": {
+    "name": "Tutorial Muru"
+  },
+  "9300384": {
+    "name": "Red Slime"
+  },
+  "9300385": {
+    "name": "Treacherous Fox"
+  },
+  "9300386": {
+    "name": "Trainee Spore"
+  },
+  "9300387": {
+    "name": "Enraged Golem"
+  },
+  "9300388": {
+    "name": "Free Spirit  "
+  },
+  "9300389": {
+    "name": "Safe Guard"
+  },
+  "9300390": {
+    "name": "Door Block"
+  },
+  "9300391": {
+    "name": "Ice Wall"
+  },
+  "9300392": {
+    "name": "Black Wing Henchman"
+  },
+  "9300393": {
+    "name": "Gentleman"
+  },
+  "9301000": {
+    "name": "Bain"
+  },
+  "9301001": {
+    "name": "Gigantic Viking"
+  },
+  "9301002": {
+    "name": "Viking"
+  },
+  "9301003": {
+    "name": "Dual Ghost Pirate"
+  },
+  "9301004": {
+    "name": "Ghost Pirate"
+  },
+  "9302000": {
+    "name": "Golden Pig"
+  },
+  "9302001": {
+    "name": "Golden Pig"
+  },
+  "9302002": {
+    "name": "Golden Pig"
+  },
+  "9302003": {
+    "name": "Golden Pig"
+  },
+  "9302004": {
+    "name": "Golden Pig"
+  },
+  "9302005": {
+    "name": "Golden Pig"
+  },
+  "9302006": {
+    "name": "Golden Pig"
+  },
+  "9302007": {
+    "name": "Golden Pig"
+  },
+  "9302008": {
+    "name": "Golden Pig"
+  },
+  "9302009": {
+    "name": "Golden Pig"
+  },
+  "9302010": {
+    "name": "Golden Pig"
+  },
+  "9302011": {
+    "name": "Lupin Pig"
+  },
+  "9303000": {
+    "name": "Mano"
+  },
+  "9303001": {
+    "name": "Stumpy"
+  },
+  "9303002": {
+    "name": "King Slime"
+  },
+  "9303003": {
+    "name": "Deo"
+  },
+  "9303004": {
+    "name": "Mushmom"
+  },
+  "9303005": {
+    "name": "Tae Roon"
+  },
+  "9303006": {
+    "name": "Rombot"
+  },
+  "9303007": {
+    "name": "Zeno"
+  },
+  "9303008": {
+    "name": "Nine-Tailed Fox"
+  },
+  "9303009": {
+    "name": "King Sage Cat"
+  },
+  "9303010": {
+    "name": "Jr. Balrog"
+  },
+  "9303011": {
+    "name": "Lord Pirate"
+  },
+  "9303012": {
+    "name": "Papa Pixie"
+  },
+  "9303013": {
+    "name": "Crimson Balrog"
+  },
+  "9303014": {
+    "name": "Seruf"
+  },
+  "9303015": {
+    "name": "Eliza"
+  },
+  "9303016": {
+    "name": "Leviathan"
+  },
+  "9400000": {
+    "name": "Crow"
+  },
+  "9400001": {
+    "name": "Fire Raccoon"
+  },
+  "9400002": {
+    "name": "Cloud Fox"
+  },
+  "9400003": {
+    "name": "Nightghost"
+  },
+  "9400004": {
+    "name": "Big Cloud Fox"
+  },
+  "9400005": {
+    "name": "Red Boogie"
+  },
+  "9400006": {
+    "name": "Blue Boogie"
+  },
+  "9400007": {
+    "name": "Green Boogie"
+  },
+  "9400008": {
+    "name": "Black Boogie"
+  },
+  "9400009": {
+    "name": "Crow"
+  },
+  "9400010": {
+    "name": "Flaming Raccoon"
+  },
+  "9400011": {
+    "name": "Paper Lantern Ghost"
+  },
+  "9400012": {
+    "name": "Water Goblin"
+  },
+  "9400013": {
+    "name": "Dreamy Ghost"
+  },
+  "9400014": {
+    "name": "Black Crow"
+  },
+  "9400100": {
+    "name": "Extra A"
+  },
+  "9400101": {
+    "name": "Extra B"
+  },
+  "9400102": {
+    "name": "Extra C"
+  },
+  "9400103": {
+    "name": "Extra D"
+  },
+  "9400110": {
+    "name": "Leader A"
+  },
+  "9400111": {
+    "name": "Leader B"
+  },
+  "9400112": {
+    "name": "Bodyguard A"
+  },
+  "9400113": {
+    "name": "Bodyguard B"
+  },
+  "9400114": {
+    "name": "Slot Machine"
+  },
+  "9400120": {
+    "name": "Male Boss"
+  },
+  "9400121": {
+    "name": "Female Boss"
+  },
+  "9400122": {
+    "name": "Male Boss"
+  },
+  "9400200": {
+    "name": "Malady"
+  },
+  "9400201": {
+    "name": "Wild Cargo"
+  },
+  "9400202": {
+    "9400525": {
+      "name": "B Slime"
+    },
+    "name": "Golden Slime"
+  },
+  "9400203": {
+    "name": "Silver Slime"
+  },
+  "9400204": {
+    "name": "Red Slime"
+  },
+  "9400205": {
+    "name": "Blue Mushmom"
+  },
+  "9400209": {
+    "name": "Miner Zombie (JP)"
+  },
+  "9400210": {
+    "name": "Coolie Zombie (JP)"
+  },
+  "9400211": {
+    "name": "Dark Stone Golem (JP)"
+  },
+  "9400212": {
+    "name": "Stone Golem (JP)"
+  },
+  "9400213": {
+    "name": "Dark Jr. Yeti (JP)"
+  },
+  "9400214": {
+    "name": "Master Chronos (JP)"
+  },
+  "9400215": {
+    "name": "Ultra Gray (JP)"
+  },
+  "9400216": {
+    "name": "Zeta Gray (JP)"
+  },
+  "9400217": {
+    "name": "Flyeye (JP)"
+  },
+  "9400218": {
+    "name": "Tauromacis (JP)"
+  },
+  "9400238": {
+    "name": "Drumming Bunny"
+  },
+  "9400239": {
+    "name": "Sand Rat"
+  },
+  "9400240": {
+    "name": "Roid "
+  },
+  "9400241": {
+    "name": "Pig"
+  },
+  "9400242": {
+    "name": "Ribbon Pig"
+  },
+  "9400243": {
+    "name": "Stone Golem"
+  },
+  "9400244": {
+    "name": "Mixed Golem"
+  },
+  "9400245": {
+    "name": "Zombie Mushroom"
+  },
+  "9400246": {
+    "name": "Horny Mushroom"
+  },
+  "9400247": {
+    "name": "Drumming Bunny"
+  },
+  "9400248": {
+    "name": "Sand Rat"
+  },
+  "9400249": {
+    "name": "Roid "
+  },
+  "9400300": {
+    "name": "The Boss"
+  },
+  "9400310": {
+    "name": "Tic (Easy)"
+  },
+  "9400311": {
+    "name": "Tac (Easy)"
+  },
+  "9400312": {
+    "name": "Toe (Easy)"
+  },
+  "9400313": {
+    "name": "Tic (Medium)"
+  },
+  "9400314": {
+    "name": "Tac (Medium)"
+  },
+  "9400315": {
+    "name": "Toe (Medium)"
+  },
+  "9400316": {
+    "name": "Tic (Hard)"
+  },
+  "9400317": {
+    "name": "Tac (Hard)"
+  },
+  "9400318": {
+    "name": "Toe (Hard)"
+  },
+  "9400319": {
+    "name": "Cross (Easy)"
+  },
+  "9400320": {
+    "name": "Cross (Medium)"
+  },
+  "9400321": {
+    "name": "Cross (Hard)"
+  },
+  "9400322": {
+    "name": "Giant Snowman (Lvl 1) - Easy"
+  },
+  "9400323": {
+    "name": "Giant Snowman (Lvl 2) - Easy"
+  },
+  "9400324": {
+    "name": "Giant Snowman (Lvl 3) - Easy"
+  },
+  "9400325": {
+    "name": "Giant Snowman (Lvl 4) - Easy"
+  },
+  "9400326": {
+    "name": "Giant Snowman (Lvl 5) - Easy"
+  },
+  "9400327": {
+    "name": "Giant Snowman (Lvl 1) - Medium"
+  },
+  "9400328": {
+    "name": "Giant Snowman (Lvl 2) - Medium"
+  },
+  "9400329": {
+    "name": "Giant Snowman (Lvl 3) - Medium"
+  },
+  "9400330": {
+    "name": "Giant Snowman (Lvl 4) - Medium"
+  },
+  "9400331": {
+    "name": "Giant Snowman (Lvl 5) - Medium"
+  },
+  "9400332": {
+    "name": "Giant Snowman (Lvl 1) - Hard"
+  },
+  "9400333": {
+    "name": "Giant Snowman (Lvl 2) - Hard"
+  },
+  "9400334": {
+    "name": "Giant Snowman (Lvl 3) - Hard"
+  },
+  "9400335": {
+    "name": "Giant Snowman (Lvl 4) - Hard"
+  },
+  "9400336": {
+    "name": "Giant Snowman (Lvl 5) - Hard"
+  },
+  "9400500": {
+    "name": "Malady"
+  },
+  "9400501": {
+    "name": "Jr. Wraith"
+  },
+  "9400502": {
+    "name": "Wraith"
+  },
+  "9400503": {
+    "name": "Stirge"
+  },
+  "9400504": {
+    "name": "Coolie Zombie"
+  },
+  "9400505": {
+    "name": "Turkey"
+  },
+  "9400506": {
+    "name": "Candle Monster"
+  },
+  "9400507": {
+    "name": "Cake Monster"
+  },
+  "9400508": {
+    "name": "Mad Turkey"
+  },
+  "9400509": {
+    "name": "Sakura Cellion"
+  },
+  "9400510": {
+    "name": "Green Eggy Popp"
+  },
+  "9400511": {
+    "name": "Yellow Eggy Popp"
+  },
+  "9400512": {
+    "name": "Cake Mob (2nd) "
+  },
+  "9400513": {
+    "name": "Candle Mob (2nd) "
+  },
+  "9400514": {
+    "name": "Geist Balrog Phase 3"
+  },
+  "9400515": {
+    "name": "Indigo Eye"
+  },
+  "9400516": {
+    "name": "Crystal Boar"
+  },
+  "9400517": {
+    "name": "Magik Fierry A"
+  },
+  "9400518": {
+    "name": "Magik Fierry B"
+  },
+  "9400519": {
+    "name": "G Slime"
+  },
+  "9400520": {
+    "name": "P Slime"
+  },
+  "9400521": {
+    "name": "O Slime"
+  },
+  "9400522": {
+    "name": "B Slime"
+  },
+  "9400523": {
+    "name": "Evil Eye GL"
+  },
+  "9400524": {
+    "name": "Curse Eye GL"
+  },
+  "9400525": {
+    "name": "Cold Eye GL"
+  },
+  "9400526": {
+    "name": "Fierry GL"
+  },
+  "9400527": {
+    "name": "Fire Boar GL"
+  },
+  "9400528": {
+    "name": "Sentinel GL"
+  },
+  "9400529": {
+    "name": "Ice Sentinel GL"
+  },
+  "9400530": {
+    "name": "Zombie Lupin GL"
+  },
+  "9400531": {
+    "name": "Toy Trojan GL"
+  },
+  "9400532": {
+    "name": "King Slime GL"
+  },
+  "9400533": {
+    "name": "Indigo Eye PQ"
+  },
+  "9400534": {
+    "name": "Crystal Boar PQ"
+  },
+  "9400535": {
+    "name": "Magik Fiarry A PQ"
+  },
+  "9400536": {
+    "name": "Geist Balrog Phase 1"
+  },
+  "9400537": {
+    "name": "Geist Balrog Phase 2"
+  },
+  "9400538": {
+    "name": "Street Slime"
+  },
+  "9400539": {
+    "name": "Urban Fungus"
+  },
+  "9400540": {
+    "name": "Killa Bee"
+  },
+  "9400541": {
+    "name": "Killa Bee"
+  },
+  "9400542": {
+    "name": "Fire Tusk"
+  },
+  "9400543": {
+    "name": "Electrophant"
+  },
+  "9400544": {
+    "name": "Gryphon"
+  },
+  "9400545": {
+    "name": "Wolf Spider"
+  },
+  "9400546": {
+    "name": "I.AM.ROBOT"
+  },
+  "9400547": {
+    "name": "Boomer"
+  },
+  "9400548": {
+    "name": "Mighty Maple Eater"
+  },
+  "9400549": {
+    "name": "Headless Horseman"
+  },
+  "9400550": {
+    "name": "Boomer"
+  },
+  "9400551": {
+    "name": "Bob"
+  },
+  "9400552": {
+    "name": "Zoo Snail"
+  },
+  "9400553": {
+    "name": "Purple Flying Book"
+  },
+  "9400554": {
+    "name": "Orange Flying Book"
+  },
+  "9400555": {
+    "name": "Blue Flying Book"
+  },
+  "9400556": {
+    "name": "Glutton Ghoul"
+  },
+  "9400557": {
+    "name": "Psycho Jack Box"
+  },
+  "9400558": {
+    "name": "Psycho Jack"
+  },
+  "9400559": {
+    "name": "Sophilia Doll Ground"
+  },
+  "9400560": {
+    "name": "Sophilia Doll"
+  },
+  "9400561": {
+    "name": "Voodoo"
+  },
+  "9400562": {
+    "name": "Hoodoo"
+  },
+  "9400563": {
+    "name": "Nightmare"
+  },
+  "9400564": {
+    "name": "Mirror Ghost"
+  },
+  "9400565": {
+    "name": "Glutton Ghoul"
+  },
+  "9400566": {
+    "name": "Loki Box Ex"
+  },
+  "9400567": {
+    "name": "Loki Box Tr"
+  },
+  "9400568": {
+    "name": "Turkey Commando"
+  },
+  "9400569": {
+    "name": "Big Puff Daddy"
+  },
+  "9400570": {
+    "name": "Anniversary Cake"
+  },
+  "9400571": {
+    "name": "Headless Horseman"
+  },
+  "9400572": {
+    "name": "Geist Balrog"
+  },
+  "9400573": {
+    "name": "Baby typhon"
+  },
+  "9400574": {
+    "name": "Typhon"
+  },
+  "9400575": {
+    "name": "Bigfoot"
+  },
+  "9400576": {
+    "name": "Windraider"
+  },
+  "9400577": {
+    "name": "Firebrand"
+  },
+  "9400578": {
+    "name": "Firebrand"
+  },
+  "9400579": {
+    "name": "Nightshadow"
+  },
+  "9400580": {
+    "name": "Elderwraith"
+  },
+  "9400581": {
+    "name": "Stormbreaker"
+  },
+  "9400582": {
+    "name": "Crimson Guardian"
+  },
+  "9400583": {
+    "name": "Leprechaun"
+  },
+  "9400584": {
+    "name": "Leprechaun"
+  },
+  "9400585": {
+    "name": "Crimson Tree"
+  },
+  "9400586": {
+    "name": "Crimson Tree"
+  },
+  "9400587": {
+    "name": "Phantom Tree"
+  },
+  "9400588": {
+    "name": "Phantom Tree"
+  },
+  "9400589": {
+    "name": "MV"
+  },
+  "9400590": {
+    "name": "Margana"
+  },
+  "9400591": {
+    "name": "Red Nirg"
+  },
+  "9400592": {
+    "name": "Rellik"
+  },
+  "9400593": {
+    "name": "Hsalf"
+  },
+  "9400594": {
+    "name": "Master Guardian"
+  },
+  "9400595": {
+    "name": "Blood Stirge"
+  },
+  "9400596": {
+    "name": "Scarlet Phoenix"
+  },
+  "9400597": {
+    "name": "Azure Ocelot"
+  },
+  "9400598": {
+    "name": "Dark Menhir"
+  },
+  "9400599": {
+    "name": "Black Bird"
+  },
+  "9400600": {
+    "name": "MasteriaPQ Mob Summoner"
+  },
+  "9400601": {
+    "name": "Birthday Candle"
+  },
+  "9400602": {
+    "name": "Strawberry Cake"
+  },
+  "9400603": {
+    "name": "Angry Strawberry Cake"
+  },
+  "9400604": {
+    "name": "Deluxe Candle"
+  },
+  "9400605": {
+    "name": "Chocolate Cake"
+  },
+  "9400606": {
+    "name": "Giant Cake"
+  },
+  "9400607": {
+    "name": "Cake Monster"
+  },
+  "9400608": {
+    "name": "Big Puff Daddy"
+  },
+  "9400609": {
+    "name": "Andras"
+  },
+  "9400610": {
+    "name": "Amdusias"
+  },
+  "9400611": {
+    "name": "Crocell"
+  },
+  "9400612": {
+    "name": "Marbas"
+  },
+  "9400613": {
+    "name": "Valefor"
+  },
+  "9400614": {
+    "name": "Strange Orange Mushroom"
+  },
+  "9400615": {
+    "name": "Strange Ribbon Pig"
+  },
+  "9400616": {
+    "name": "Strange Green Mushroom"
+  },
+  "9400617": {
+    "name": "Strange Pig"
+  },
+  "9400618": {
+    "name": "Strange Dark Axe Stump"
+  },
+  "9400619": {
+    "name": "Strange Zombie Mushroom"
+  },
+  "9400620": {
+    "name": "Strange Dark Stump"
+  },
+  "9400621": {
+    "name": "Strange Horny Mushroom"
+  },
+  "9400622": {
+    "name": "Strange Blue Mushroom"
+  },
+  "9400623": {
+    "name": "Amdusias"
+  },
+  "9400630": {
+    "name": "Event Horntail's Left Head"
+  },
+  "9400631": {
+    "name": "Event Horntail's Right Head"
+  },
+  "9400632": {
+    "name": "Event Pink Bean"
+  },
+  "9400633": {
+    "name": "Astaroth"
+  },
+  "9400634": {
+    "name": "Frog"
+  },
+  "9400635": {
+    "name": "Cursed Frog"
+  },
+  "9400636": {
+    "name": "Black Cat"
+  },
+  "9400637": {
+    "name": "Cursed Black Cat"
+  },
+  "9400638": {
+    "name": "Rotting Skeleton"
+  },
+  "9400639": {
+    "name": "Dead Scarecrow"
+  },
+  "9400640": {
+    "name": "Twisted Jester"
+  },
+  "9400641": {
+    "name": "Olivia"
+  },
+  "9400642": {
+    "name": "Olivia"
+  },
+  "9400643": {
+    "name": "Olivia"
+  },
+  "9400644": {
+    "name": "Malady"
+  },
+  "9400645": {
+    "name": "Totem1"
+  },
+  "9400646": {
+    "name": "Totem2"
+  },
+  "9400647": {
+    "name": "A Parasite"
+  },
+  "9400648": {
+    "name": "Possessed Bear Doll"
+  },
+  "9400649": {
+    "name": "Possessed Rabbit Doll"
+  },
+  "9400650": {
+    "name": "Possessed Bear Doll"
+  },
+  "9400651": {
+    "name": "Possessed Rabbit Doll"
+  },
+  "9400652": {
+    "name": "Possessed Bear Doll"
+  },
+  "9400653": {
+    "name": "Possessed Rabbit Doll"
+  },
+  "9400654": {
+    "name": "Event Pink Bean"
+  },
+  "9400655": {
+    "name": "Strange Orange Mushroom"
+  },
+  "9400656": {
+    "name": "Strange Ribbon Pig"
+  },
+  "9400657": {
+    "name": "Strange Green Mushroom"
+  },
+  "9400704": {
+    "name": "Beef Eater"
+  },
+  "9400706": {
+    "name": "Jr. MV"
+  },
+  "9400707": {
+    "name": "Item Maker"
+  },
+  "9400708": {
+    "name": "Snowman1"
+  },
+  "9400709": {
+    "name": "Snowman2"
+  },
+  "9400710": {
+    "name": "Snowman3"
+  },
+  "9400711": {
+    "name": "Transparent Mob"
+  },
+  "9400712": {
+    "name": "Little Snowman"
+  },
+  "9400713": {
+    "name": "Item Killer"
+  },
+  "9400714": {
+    "name": "Snow Blower"
+  },
+  "9400715": {
+    "name": "Snow Blower"
+  },
+  "9400716": {
+    "name": "Snow Blower"
+  },
+  "9400717": {
+    "name": "Snow Blower"
+  },
+  "9400718": {
+    "name": "Snow Blower"
+  },
+  "9400719": {
+    "name": "Snow Blower"
+  },
+  "9400720": {
+    "name": "Snow Blower"
+  },
+  "9400721": {
+    "name": "Snow Blower"
+  },
+  "9400722": {
+    "name": "Snow Blower"
+  },
+  "9400723": {
+    "name": "Snow Blower"
+  },
+  "9400724": {
+    "name": "Snow Blower"
+  },
+  "9400739": {
+    "name": "MV Minion"
+  },
+  "9400740": {
+    "name": "MV Minion"
+  },
+  "9400741": {
+    "name": "Skel Guard Dog"
+  },
+  "9400742": {
+    "name": "Mummy Guard Dog"
+  },
+  "9400743": {
+    "name": "Angry Guard Dog"
+  },
+  "9400744": {
+    "name": "Crimson Balrog Minion"
+  },
+  "9400745": {
+    "name": "Jr. Balrog Minion"
+  },
+  "9400746": {
+    "name": "Muscle Stone Minion"
+  },
+  "9400747": {
+    "name": "Bain Minion"
+  },
+  "9400748": {
+    "name": "MV"
+  },
+  "9400749": {
+    "name": "Red Eggy Popp"
+  },
+  "9409000": {
+    "name": "Tutorial Leatty"
+  },
+  "9409001": {
+    "name": "Tutorial Drumming Rabbit"
+  },
+  "9410000": {
+    "name": "Stray Dog"
+  },
+  "9410001": {
+    "name": "Stylish Stray Dog"
+  },
+  "9410002": {
+    "name": "Angry Stray Dog"
+  },
+  "9410003": {
+    "name": "Clown Monkey"
+  },
+  "9410004": {
+    "name": "Biker Monkey"
+  },
+  "9410005": {
+    "name": "Red Bubble Tea"
+  },
+  "9410006": {
+    "name": "Yellow Bubble Tea"
+  },
+  "9410007": {
+    "name": "Green Bubble Tea"
+  },
+  "9410008": {
+    "name": "Yeti UFO Catcher"
+  },
+  "9410009": {
+    "name": "Yeti Doll"
+  },
+  "9410010": {
+    "name": "Jr. Pepe UFO Catcher"
+  },
+  "9410011": {
+    "name": "Jr. Pepe Doll"
+  },
+  "9410012": {
+    "name": "UFO Catcher"
+  },
+  "9410013": {
+    "name": "Doll Vending Machine"
+  },
+  "9410014": {
+    "name": "Snack Bar"
+  },
+  "9410015": {
+    "name": "Snack Bar"
+  },
+  "9410016": {
+    "name": "Bubble Fish"
+  },
+  "9410017": {
+    "name": "Krappi"
+  },
+  "9410018": {
+    "name": "Poopa"
+  },
+  "9410019": {
+    "name": "Cico"
+  },
+  "9410020": {
+    "name": "Jr. Seal"
+  },
+  "9420000": {
+    "name": "Toad"
+  },
+  "9420001": {
+    "name": "Frog"
+  },
+  "9420002": {
+    "name": "Python"
+  },
+  "9420003": {
+    "name": "Red Lizard"
+  },
+  "9420004": {
+    "name": "Yellow Lizard"
+  },
+  "9420005": {
+    "name": "White Rooster"
+  },
+  "9420006": {
+    "name": "Book Monster"
+  },
+  "9420015": {
+    "name": "NooNoo"
+  },
+  "9420500": {
+    "name": "Stopnow"
+  },
+  "9420501": {
+    "name": "Freezer"
+  },
+  "9420502": {
+    "name": "Biner"
+  },
+  "9420503": {
+    "name": "Nospeed"
+  },
+  "9420504": {
+    "name": "Tippo Red"
+  },
+  "9420505": {
+    "name": "Tippo Blue"
+  },
+  "9420506": {
+    "name": "Batoo"
+  },
+  "9420507": {
+    "name": "Trucker"
+  },
+  "9420508": {
+    "name": "Octobunny"
+  },
+  "9420509": {
+    "name": "Pac Pinky"
+  },
+  "9420510": {
+    "name": "Slimy"
+  },
+  "9420511": {
+    "name": "Selkie Jr."
+  },
+  "9420512": {
+    "name": "Mr. Anchor"
+  },
+  "9420513": {
+    "name": "Capt. Latanica"
+  },
+  "9420527": {
+    "name": "Chlorotrap"
+  },
+  "9420528": {
+    "name": "Emo Slime"
+  },
+  "9420529": {
+    "name": "Dark Fission"
+  },
+  "9420530": {
+    "name": "Oly Oly"
+  },
+  "9420531": {
+    "name": "Scaredy Scarlion"
+  },
+  "9420532": {
+    "name": "Ratatula"
+  },
+  "9420533": {
+    "name": "Rodeo"
+  },
+  "9420534": {
+    "name": "Charmer"
+  },
+  "9420535": {
+    "name": "Jester Scarlion"
+  },
+  "9420536": {
+    "name": "Froscola"
+  },
+  "9420537": {
+    "name": "Yabber Doo"
+  },
+  "9420538": {
+    "name": "Booper Scarlion"
+  },
+  "9420539": {
+    "name": "Vikerola"
+  },
+  "9420540": {
+    "name": "Gallopera"
+  },
+  "9420541": {
+    "name": "Targa"
+  },
+  "9420542": {
+    "name": "Targa"
+  },
+  "9420543": {
+    "name": "Angry Targa"
+  },
+  "9420544": {
+    "name": "Furious Targa"
+  },
+  "9420545": {
+    "name": "Ratatula"
+  },
+  "9420546": {
+    "name": "Scarlion Boss"
+  },
+  "9420547": {
+    "name": "Scarlion Boss"
+  },
+  "9420548": {
+    "name": "Angry Scarlion Boss"
+  },
+  "9420549": {
+    "name": "Furious Scarlion Boss"
+  },
+  "9420550": {
+    "name": "Scaredy Scarlion"
+  },
+  "9500000": {
+    "name": "Making a wish to full moon"
+  },
+  "9500001": {
+    "name": "Making a wish to the full moon"
+  },
+  "9500002": {
+    "name": "Making a wish to the full moon"
+  },
+  "9500003": {
+    "name": "Making a wish to the full moon"
+  },
+  "9500004": {
+    "name": "Making a wish to the full moon"
+  },
+  "9500005": {
+    "name": "Making a wish to the full moon"
+  },
+  "9500100": {
+    "name": "Slime"
+  },
+  "9500101": {
+    "name": "Pig"
+  },
+  "9500102": {
+    "name": "Orange Mushroom"
+  },
+  "9500103": {
+    "name": "Bubbling"
+  },
+  "9500104": {
+    "name": "Octopus"
+  },
+  "9500105": {
+    "name": "Green Mushroom"
+  },
+  "9500106": {
+    "name": "Horny Mushroom"
+  },
+  "9500107": {
+    "name": "Drumming Bunny"
+  },
+  "9500108": {
+    "name": "Ligator"
+  },
+  "9500109": {
+    "name": "Ratz"
+  },
+  "9500110": {
+    "name": "Star Pixie"
+  },
+  "9500111": {
+    "name": "Jr. Wraith"
+  },
+  "9500112": {
+    "name": "Jr. Pepe"
+  },
+  "9500113": {
+    "name": "Panda Teddy"
+  },
+  "9500114": {
+    "name": "King Blockpus"
+  },
+  "9500115": {
+    "name": "Lorang"
+  },
+  "9500116": {
+    "name": "Zombie Lupin"
+  },
+  "9500117": {
+    "name": "Helly"
+  },
+  "9500118": {
+    "name": "Tweeter"
+  },
+  "9500119": {
+    "name": "Toy Trojan"
+  },
+  "9500120": {
+    "name": "King Block Golem"
+  },
+  "9500121": {
+    "name": "Wraith"
+  },
+  "9500122": {
+    "name": "Chief Gray"
+  },
+  "9500123": {
+    "name": "Mixed Golem"
+  },
+  "9500124": {
+    "name": "Mushmom"
+  },
+  "9500125": {
+    "name": "Red Drake"
+  },
+  "9500126": {
+    "name": "Ice Drake"
+  },
+  "9500127": {
+    "name": "Master Soul Teddy"
+  },
+  "9500128": {
+    "name": "Dark Yeti"
+  },
+  "9500129": {
+    "name": "Taurospear"
+  },
+  "9500130": {
+    "name": "Blue King Goblin"
+  },
+  "9500131": {
+    "name": "Lucida"
+  },
+  "9500132": {
+    "name": "Werewolf"
+  },
+  "9500133": {
+    "name": "Yeti and Pepe"
+  },
+  "9500134": {
+    "name": "Lycanthrope"
+  },
+  "9500135": {
+    "name": "Death Teddy"
+  },
+  "9500136": {
+    "name": "Gigantic Viking"
+  },
+  "9500137": {
+    "name": "G. Phantom Watch"
+  },
+  "9500138": {
+    "name": "Bain"
+  },
+  "9500139": {
+    "name": "Jr. Balrog"
+  },
+  "9500140": {
+    "name": "Crimson Balrog"
+  },
+  "9500141": {
+    "name": "Separated Yeti"
+  },
+  "9500142": {
+    "name": "Separated Pepe"
+  },
+  "9500143": {
+    "name": "Coke Pig"
+  },
+  "9500144": {
+    "name": "Coke Snail"
+  },
+  "9500145": {
+    "name": "Coke Seal"
+  },
+  "9500146": {
+    "name": "Play Seal"
+  },
+  "9500147": {
+    "name": "Yeti and Coketump"
+  },
+  "9500148": {
+    "name": "Igloo Turtle"
+  },
+  "9500149": {
+    "name": "Coke Golem"
+  },
+  "9500150": {
+    "name": "Ice Golem"
+  },
+  "9500151": {
+    "name": "Coke Slime"
+  },
+  "9500152": {
+    "name": "Coke Mushroom"
+  },
+  "9500153": {
+    "name": "Coketump"
+  },
+  "9500154": {
+    "name": "Coketump Lite"
+  },
+  "9500155": {
+    "name": "Three-Tailed Fox"
+  },
+  "9500156": {
+    "name": "Wraith"
+  },
+  "9500157": {
+    "name": "Jr. Wraith"
+  },
+  "9500158": {
+    "name": "Yellow King Goblin"
+  },
+  "9500159": {
+    "name": "Blue King Goblin"
+  },
+  "9500160": {
+    "name": "Green King Goblin"
+  },
+  "9500161": {
+    "name": "Hankie"
+  },
+  "9500162": {
+    "name": "Harp"
+  },
+  "9500163": {
+    "name": "Blood Harp"
+  },
+  "9500164": {
+    "name": "Black Kentaurus"
+  },
+  "9500165": {
+    "name": "Red Kentaurus"
+  },
+  "9500166": {
+    "name": "Blue Kentaurus"
+  },
+  "9500167": {
+    "name": "Golden Pig"
+  },
+  "9500168": {
+    "name": "King Slime"
+  },
+  "9500169": {
+    "name": "Jr. Balrog"
+  },
+  "9500170": {
+    "name": "Papa Pixie"
+  },
+  "9500171": {
+    "name": "Crimson Balrog"
+  },
+  "9500172": {
+    "name": "Alishar"
+  },
+  "9500173": {
+    "name": "Griffey"
+  },
+  "9500174": {
+    "name": "Manon"
+  },
+  "9500175": {
+    "name": "Angry Lord Pirate"
+  },
+  "9500176": {
+    "name": "Blue Mushmom"
+  },
+  "9500177": {
+    "name": "Giant Centipede"
+  },
+  "9500178": {
+    "name": "Snack Bar"
+  },
+  "9500179": {
+    "name": "Transformed Snack Bar"
+  },
+  "9500180": {
+    "name": "Papulatus"
+  },
+  "9500181": {
+    "name": "Papulatus"
+  },
+  "9500182": {
+    "name": "Watermelon Guard Hogol "
+  },
+  "9500183": {
+    "name": "Watermelon Guard Hogol "
+  },
+  "9500184": {
+    "name": "Rideword P"
+  },
+  "9500185": {
+    "name": "Rideword Y"
+  },
+  "9500186": {
+    "name": "Rideword B"
+  },
+  "9500187": {
+    "name": "Busted Doll"
+  },
+  "9500188": {
+    "name": "Destroyed Doll"
+  },
+  "9500189": {
+    "name": "Gift Box"
+  },
+  "9500190": {
+    "name": "Toy Clown"
+  },
+  "9500191": {
+    "name": "Green Phantom"
+  },
+  "9500192": {
+    "name": "Pumpkin Knight"
+  },
+  "9500193": {
+    "name": "Fire Steed"
+  },
+  "9500194": {
+    "name": "Mirror Ghost"
+  },
+  "9500195": {
+    "name": "Jack-o-Lantern"
+  },
+  "9500196": {
+    "name": "Ghost"
+  },
+  "9500197": {
+    "name": "Ghost"
+  },
+  "9500198": {
+    "name": "Gift Box"
+  },
+  "9500199": {
+    "name": "Toy Clown"
+  },
+  "9500200": {
+    "name": "Zoo Balrog"
+  },
+  "9500201": {
+    "name": "Zoo Yeti"
+  },
+  "9500202": {
+    "name": "Zoo White Fang"
+  },
+  "9500203": {
+    "name": "Zoo Pig"
+  },
+  "9500204": {
+    "name": "Zoo Ribbon Pig"
+  },
+  "9500300": {
+    "name": "Busted Doll"
+  },
+  "9500301": {
+    "name": "Destroyed Doll"
+  },
+  "9500302": {
+    "name": "Jack-o-Lantern at Pumpkin Farm"
+  },
+  "9500303": {
+    "name": "Mirror Ghost 2"
+  },
+  "9500304": {
+    "name": "Mirror Ghost 3"
+  },
+  "9500305": {
+    "name": "Jack-o-Lantern"
+  },
+  "9500306": {
+    "name": "Mano"
+  },
+  "9500307": {
+    "name": "Stumpy"
+  },
+  "9500308": {
+    "name": "Faust"
+  },
+  "9500309": {
+    "name": "King Clang"
+  },
+  "9500310": {
+    "name": "Timer"
+  },
+  "9500311": {
+    "name": "Dyle"
+  },
+  "9500312": {
+    "name": "Nine-Tailed Fox"
+  },
+  "9500313": {
+    "name": "Tae Roon"
+  },
+  "9500314": {
+    "name": "King Sage Cat"
+  },
+  "9500315": {
+    "name": "Eliza"
+  },
+  "9500316": {
+    "name": "Snow Yeti"
+  },
+  "9500317": {
+    "name": "Kid Snowman"
+  },
+  "9500318": {
+    "name": "Angry Snowman"
+  },
+  "9500319": {
+    "name": "Giant Snowman"
+  },
+  "9500320": {
+    "name": "Lost Rudolph"
+  },
+  "9500321": {
+    "name": "Snowman"
+  },
+  "9500322": {
+    "name": "Kid Snowman"
+  },
+  "9500323": {
+    "name": "Kitty from Cheese Storage"
+  },
+  "9500324": {
+    "name": "Kitty from Cheese Storage"
+  },
+  "9500325": {
+    "name": "King Slime"
+  },
+  "9500326": {
+    "name": "Mushmom"
+  },
+  "9500327": {
+    "name": "Jr. Balrog"
+  },
+  "9500328": {
+    "name": "Crimson Balrog"
+  },
+  "9500329": {
+    "name": "Papa Pixie"
+  },
+  "9500330": {
+    "name": "Alishar"
+  },
+  "9500331": {
+    "name": "Papulatus"
+  },
+  "9500332": {
+    "name": "Pianus"
+  },
+  "9500333": {
+    "name": "Leviathan"
+  },
+  "9500334": {
+    "name": "Lord Pirate"
+  },
+  "9500335": {
+    "name": "Frankenroid"
+  },
+  "9500336": {
+    "name": "P Junior"
+  },
+  "9500337": {
+    "name": "Mano"
+  },
+  "9500338": {
+    "name": "Stumpy"
+  },
+  "9500339": {
+    "name": "Deo"
+  },
+  "9500340": {
+    "name": "King Slime"
+  },
+  "9500341": {
+    "name": "Faust"
+  },
+  "9500342": {
+    "name": "King Clang"
+  },
+  "9500343": {
+    "name": "Alishar"
+  },
+  "9500344": {
+    "name": "Timer"
+  },
+  "9500345": {
+    "name": "Mushmom"
+  },
+  "9500346": {
+    "name": "Dyle"
+  },
+  "9500347": {
+    "name": "Zeno"
+  },
+  "9500348": {
+    "name": "Nine-Tailed Fox"
+  },
+  "9500349": {
+    "name": "Lord Pirate"
+  },
+  "9500350": {
+    "name": "Tae Roon"
+  },
+  "9500351": {
+    "name": "Papa Pixie"
+  },
+  "9500352": {
+    "name": "King Sage Cat"
+  },
+  "9500353": {
+    "name": "Jr. Balrog"
+  },
+  "9500354": {
+    "name": "Frankenroid"
+  },
+  "9500355": {
+    "name": "Eliza"
+  },
+  "9500356": {
+    "name": "Chimera"
+  },
+  "9500357": {
+    "name": "Snow Yeti"
+  },
+  "9500358": {
+    "name": "Crimson Balrog"
+  },
+  "9500359": {
+    "name": "Manon"
+  },
+  "9500360": {
+    "name": "Griffey"
+  },
+  "9500361": {
+    "name": "Leviathan"
+  },
+  "9500362": {
+    "name": "Papulatus"
+  },
+  "9500363": {
+    "name": "Pianus"
+  },
+  "9500364": {
+    "name": "Mini Dungeon Transparent Monster"
+  },
+  "9500365": {
+    "name": "Mini Dungeon Agent Box"
+  },
+  "9500366": {
+    "name": "Barnard Gray"
+  },
+  "9500367": {
+    "name": "Zeta Gray"
+  },
+  "9500368": {
+    "name": "Ultra Gray"
+  },
+  "9500369": {
+    "name": "Chief Gray"
+  },
+  "9500370": {
+    "name": "Mecateon"
+  },
+  "9500371": {
+    "name": "Mateon"
+  },
+  "9500372": {
+    "name": "Plateon"
+  },
+  "9500373": {
+    "name": "Machine MT-09"
+  },
+  "9500400": {
+    "name": "Gourd"
+  },
+  "9501000": {
+    "name": "Sealed"
+  },
+  "9501001": {
+    "name": "Darkness"
+  },
+  "9501002": {
+    "name": "Weakness"
+  },
+  "9501003": {
+    "name": "Knocked Out"
+  },
+  "9501004": {
+    "name": "Cursed"
+  },
+  "9501005": {
+    "name": "Poisoned"
+  },
+  "9501006": {
+    "name": "Slow"
+  },
+  "9501007": {
+    "name": "Disable Buff"
+  },
+  "9501008": {
+    "name": "Seduce"
+  },
+  "9501009": {
+    "name": "Immune to Weapon"
+  },
+  "9501010": {
+    "name": "Immune to Magic"
+  },
+  "9501011": {
+    "name": "Cancel Element"
+  },
+  "9501012": {
+    "name": "Reduce Element"
+  },
+  "9501013": {
+    "name": "Expand Element"
+  },
+  "9501014": {
+    "name": "Undead"
+  },
+  "9501015": {
+    "name": "Boss"
+  },
+  "9501016": {
+    "name": "Monster Book Test"
+  },
+  "9501017": {
+    "name": "Skull"
+  },
+  "9501018": {
+    "name": "Stat Change Test"
+  },
+  "9600001": {
+    "name": "Rooster"
+  },
+  "9600002": {
+    "name": "Duck"
+  },
+  "9600003": {
+    "name": "Sheep"
+  },
+  "9600004": {
+    "name": "Goat"
+  },
+  "9600005": {
+    "name": "Black Goat"
+  },
+  "9600006": {
+    "name": "Cow"
+  },
+  "9600007": {
+    "name": "Plow Ox"
+  },
+  "9600008": {
+    "name": "Black Sheep"
+  },
+  "9600009": {
+    "name": "Giant Centipede"
+  },
+  "9600010": {
+    "name": "Giant Centipede"
+  },
+  "9600065": {
+    "name": "Holiday Super Sock"
+  },
+  "9600066": {
+    "name": "New Year's Party Pouch"
+  },
+  "9700000": {
+    "name": "Subway Slime"
+  },
+  "9700001": {
+    "name": "Subway Orange Mushroom"
+  },
+  "9700002": {
+    "name": "Subway Ribbon Pig"
+  },
+  "9700003": {
+    "name": "Subway Horny Mushroom"
+  },
+  "9700004": {
+    "name": "Pyramid Mummydog"
+  },
+  "9700005": {
+    "name": "Pyramid Skeleton"
+  },
+  "9700006": {
+    "name": "Mummy"
+  },
+  "9700007": {
+    "name": "Pharaoh Snake"
+  },
+  "9700008": {
+    "name": "Anubis"
+  },
+  "9700009": {
+    "name": "Pyramid Mummydog"
+  },
+  "9700010": {
+    "name": "Pyramid Skeleton"
+  },
+  "9700011": {
+    "name": "Mummy"
+  },
+  "9700012": {
+    "name": "Pharaoh Snake"
+  },
+  "9700013": {
+    "name": "Anubis"
+  },
+  "9700014": {
+    "name": "Pyramid Mummydog"
+  },
+  "9700015": {
+    "name": "Pyramid Skeleton"
+  },
+  "9700016": {
+    "name": "Mummy"
+  },
+  "9700017": {
+    "name": "Pharaoh Snake"
+  },
+  "9700018": {
+    "name": "Anubis"
+  },
+  "9700019": {
+    "name": "Pharaoh Jr. Yeti"
+  },
+  "9700020": {
+    "name": "Metro Bubbling"
+  },
+  "9700021": {
+    "name": "Pharaoh Yeti"
+  },
+  "9700022": {
+    "name": "Transparent Pharaoh Yeti"
+  },
+  "9700023": {
+    "name": "Transparent Pharaoh Yeti"
+  },
+  "9700024": {
+    "name": "Pyramid Mummydog"
+  },
+  "9700025": {
+    "name": "Pyramid Skeleton"
+  },
+  "9700026": {
+    "name": "Mummy"
+  },
+  "9700027": {
+    "name": "Pharaoh Snake"
+  },
+  "9700028": {
+    "name": "Anubis"
+  },
+  "9700029": {
+    "name": "Pharaoh Jr. Yeti"
+  },
+  "9700030": {
+    "name": "해군 이등병 유령"
+  },
+  "9700031": {
+    "name": "해군 일등병 유령"
+  },
+  "9700032": {
+    "name": "해군 상병 유령"
+  },
+  "9700033": {
+    "name": "해군 병장 유령"
+  },
+  "9700034": {
+    "name": "해군 하사 유령"
+  },
+  "9700035": {
+    "name": "일등 항해사"
+  },
+  "9700036": {
+    "name": "나무 상자"
+  },
+  "9700037": {
+    "name": "유령선 함장"
+  },
+  "9700038": {
+    "name": "유령선 함장의 영혼"
+  },
+  "9999998": {
+    "name": "Star Monster"
+  },
+  "9999999": {
+    "name": "???"
+  }
+}

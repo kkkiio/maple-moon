@@ -67,6 +67,7 @@ fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
 async fn ItemDataSystem::discover_consume_and_etc_item_ids(
   self : ItemDataSystem,
 ) -> Array[Int] {
+  preload_item_text_bundles(@resource.get_string_loader())
   let id_set : Map[Int, Bool] = Map::new()
   for bundle in consume_bundle_files {
     let bundle_json = load_item_bundle_cached(

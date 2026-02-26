@@ -5,7 +5,7 @@ using @server_proto {type SetFieldMessage, type StatsEntry}
 pub(all) struct Stage {
   // camera : Camera
   map_portals_animations : @map.MapPortalAnimations
-  // npcs : @npc.MapNpcs
+  npcs : @npc.MapNpcs
   // quests : @quest.MapQuests
   mobs : @monster.MapMobs
   // drops : @drop.MapDrops
@@ -23,6 +23,7 @@ pub(all) struct Stage {
 ///|
 pub fn Stage::new(
   map_portals_animations : @map.MapPortalAnimations,
+  npcs : @npc.MapNpcs,
   mobs : @monster.MapMobs,
   // drops : @drop.MapDrops,
   // inventory : @inventory.Inventory,
@@ -39,7 +40,7 @@ pub fn Stage::new(
   {
     map_portals_animations,
     // camera: Camera::new(),
-    // npcs,
+    npcs,
     // quests,
     // damage_number_set,
     // combat,
@@ -173,6 +174,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       stage_ref.val = None
       clear_active_scene_map()
       @map.clear_runtime_context()
+      @npc.clear_map_npcs()
       @mini_map_ui.clear_current_map()
       @game_state.emit_scene_clear(
         @game_state.SceneClearReason::LeaveToSelectCharacter,
@@ -249,7 +251,12 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               let sk = @combat_system.load_skill_move(skill_id, bullet_module)
               @combat_system.register_move(sk)
             }
-            (weapon_data, top_data, bottom_data, shoes_data, hair, face)
+            let npc_loader = @resource.get_npc_loader()
+            let string_loader = @resource.get_string_loader()
+            (
+              weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
+              string_loader,
+            )
           }),
         )
         return
@@ -259,8 +266,16 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard fut.poll() is Some(res) else { return }
 
       // 3. 数据加载完成，处理结果
-      let (weapon_data, top_data, bottom_data, shoes_data, hair, face) = match
-        res {
+      let (
+        weapon_data,
+        top_data,
+        bottom_data,
+        shoes_data,
+        hair,
+        face,
+        npc_loader,
+        string_loader,
+      ) = match res {
         Ok(data) => data
         Err(e) => {
           @log.error("fail to load game start data", data={ "error": e })
@@ -298,7 +313,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       // 5. 初始化 Stage 并切换到 GameTransiting 状态
       match stage_ref.val {
         Some(_) => ()
-        None => ignore(new_stage(char_look, stats))
+        None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
       }
       match @player.get_player() {
         Some(player) =>
@@ -310,6 +325,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @inventory_ui.set_inventory_entry(inventory_entry)
       clear_active_scene_map()
       @map.clear_runtime_context()
+      @npc.clear_map_npcs()
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
@@ -342,6 +358,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         portal_id~,
       )
       // 设置怪物上下文，让怪物生成消息能被正确处理
+      @npc.set_npcs({ map_npcs: stage.npcs, physics: sence_map.physics })
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       @drop.set_map_physics(sence_map.physics)
       @game_server.send(@server_proto.PlayerMapTransferMessage::default())
@@ -382,6 +399,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
 fn new_stage(
   char_look : @char_look.CharLook,
   stats_entry : StatsEntry,
+  npc_loader : @resource.AsyncLoader,
+  string_loader : @resource.AsyncLoader,
 ) -> Stage {
   let map_module = @map.Module::load()
   let stats : @char_stats.CharStats = @char_stats.CharStats::new(
@@ -406,9 +425,11 @@ fn new_stage(
   @player.set_player(player)
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
+  let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, npc_loader~, string_loader~)
   let monster_module = @monster.Module::new()
   let stage = Stage::new(
     map_module.get_portals_animations(),
+    map_npcs,
     monster_module.get_map_mobs(),
   )
   stage_ref.val = Some(stage)
@@ -425,6 +446,7 @@ pub fn setup_game_server_handlers() -> Unit {
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
       clear_active_scene_map()
       @map.clear_runtime_context()
+      @npc.clear_map_npcs()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::ChangeMap)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,

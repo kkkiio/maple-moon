@@ -36,15 +36,49 @@ fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
 }
 
 ///|
-fn get_item_text_src(texts : Json, category : String, item_id : Int) -> Json {
-  match texts {
-    Object(categories) =>
-      match categories.get(category) {
-        Some(Object(items)) =>
-          items.get(item_id.to_string()).unwrap_or(Json::null())
-        _ => Json::null()
-      }
-    _ => Json::null()
+async fn load_item_text_src(
+  string_loader : AsyncLoader,
+  bundle : String,
+  path : Array[String],
+) -> Json {
+  let bundle_json = load_item_text_bundle_cached(string_loader, bundle)
+  get_json_by_path(bundle_json, path)
+}
+
+///|
+let item_text_bundle_cache : Map[String, Json] = Map::new()
+
+///|
+async fn load_item_text_bundle_cached(
+  string_loader : AsyncLoader,
+  bundle : String,
+) -> Json {
+  if item_text_bundle_cache.get(bundle) is Some(cached) {
+    return cached
+  }
+  let bundle_json = string_loader.load_res_async([bundle]).value() catch {
+      _ => Json::null()
+    }
+  item_text_bundle_cache.set(bundle, bundle_json)
+  bundle_json
+}
+
+///|
+fn get_json_by_path(root : Json, path : Array[String]) -> Json {
+  path.fold(init=root, fn(acc, key) {
+    match acc {
+      Object(obj) => obj.get(key).unwrap_or(Json::null())
+      _ => Json::null()
+    }
+  })
+}
+
+///|
+/// Preload item text bundles into in-memory cache.
+pub async fn preload_item_text_bundles(string_loader : AsyncLoader) -> Unit {
+  let bundles = ["Eqp.img", "Consume.img", "Ins.img", "Etc.img", "Cash.img"]
+  for bundle in bundles {
+    ignore(load_item_text_bundle_cached(string_loader, bundle))
   }
 }
 
@@ -55,6 +89,7 @@ pub async fn ItemData::load(
   item_loader : AsyncLoader,
 ) -> ItemData {
   let zid = "0\{item_id}"
+  let string_loader = @resource.get_string_loader()
   let (category, src, strsrc) : (String, Json, Json) = match
     parse_category1(item_id).unwrap_or_error(INVALID_ITEM_ID(item_id)) {
     EQUIP => {
@@ -64,7 +99,11 @@ pub async fn ItemData::load(
       let src = character_loader
         .load_res_async([category, "\{equip_zid}.img"])
         .value()
-      let strsrc = get_item_text_src(equip_texts, category, item_id)
+      let strsrc = load_item_text_src(string_loader, "Eqp.img", [
+        "Eqp",
+        category,
+        item_id.to_string(),
+      ])
       (category, src, strsrc)
     }
     CONSUME => {
@@ -73,7 +112,9 @@ pub async fn ItemData::load(
       let bundle = strprefix + ".img"
       let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid)
-      let strsrc = get_item_text_src(consume_texts, category, item_id)
+      let strsrc = load_item_text_src(string_loader, "Consume.img", [
+        item_id.to_string(),
+      ])
       (category, src, strsrc)
     }
     INSTALL => {
@@ -82,7 +123,9 @@ pub async fn ItemData::load(
       let bundle = strprefix + ".img"
       let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid)
-      let strsrc = get_item_text_src(install_texts, category, item_id)
+      let strsrc = load_item_text_src(string_loader, "Ins.img", [
+        item_id.to_string(),
+      ])
       (category, src, strsrc)
     }
     ETC => {
@@ -91,7 +134,10 @@ pub async fn ItemData::load(
       let bundle = strprefix + ".img"
       let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid)
-      let strsrc = get_item_text_src(etc_texts, category, item_id)
+      let strsrc = load_item_text_src(string_loader, "Etc.img", [
+        "Etc",
+        item_id.to_string(),
+      ])
       (category, src, strsrc)
     }
     CASH => {
@@ -100,7 +146,9 @@ pub async fn ItemData::load(
       let bundle = strprefix + ".img"
       let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid)
-      let strsrc = get_item_text_src(cash_texts, category, item_id)
+      let strsrc = load_item_text_src(string_loader, "Cash.img", [
+        item_id.to_string(),
+      ])
       (category, src, strsrc)
     }
   }

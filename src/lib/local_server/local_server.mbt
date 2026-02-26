@@ -12,6 +12,7 @@ using @server_proto {
   type SetFieldMessage,
   type SelectCharMessage,
   type MobSpawnControllerMessage,
+  type NpcSpawnControllerMessage,
   type StatsEntry,
   type InventoryEntry,
   type InventoryItemEntry,
@@ -52,6 +53,7 @@ struct LocalServer {
   mobs : Map[Int, ServerMob]
   drops : Map[Int, DropLootMessage]
   pending_mob_spawns : Array[PendingMobSpawn]
+  pending_npc_spawns : Array[NpcSpawnControllerMessage]
   db : &DB
   mut drop_db : MobDropDatabase?
   mut global_drop_db : MobDropDatabase?
@@ -112,6 +114,7 @@ pub fn LocalServer::new(
     mobs: Map::new(),
     drops: Map::new(),
     pending_mob_spawns: Array::new(),
+    pending_npc_spawns: Array::new(),
     db,
     drop_db: None,
     global_drop_db: None,
@@ -137,6 +140,7 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = _ => {
     self.map_transfer_ready = true
     self.flush_pending_mob_spawns()
+    self.flush_pending_npc_spawns()
   }
   self.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = v => {
     self.on_mob_damage(v)
@@ -157,6 +161,12 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   }
   self.client_message_handler_map[@net.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
     self.on_pickup_item(json)
+  }
+  self.client_message_handler_map[@net.ClientOpcode::TALK_TO_NPC.int_value()] = _ => {
+    ()
+  }
+  self.client_message_handler_map[@net.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
+    ()
   }
 }
 
@@ -392,6 +402,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.mobs.clear()
   self.drops.clear()
   self.pending_mob_spawns.clear()
+  self.pending_npc_spawns.clear()
   @io_service.execute_background(async fn() {
     let loader = get_mapx_loader()
     let prefix = (map_id / 100000000).to_string()
@@ -438,11 +449,32 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             max_hp: max_hp.to_int(),
           })
         }
+        {
+          "type": String("n"),
+          "id": String(id_str),
+          "x": Number(x, ..),
+          "y": Number(y, ..),
+          "f": Number(f, ..),
+          "fh": Number(fh, ..),
+          ..
+        } => {
+          self.last_object_id += 1
+          self.pending_npc_spawns.push(NpcSpawnControllerMessage::{
+            mode: 1,
+            oid: self.last_object_id,
+            id: @strconv.parse_int(id_str),
+            x: x.to_int(),
+            y: y.to_int(),
+            flip: f.to_int() != 0,
+            fh: fh.to_int(),
+          })
+        }
         _ => ()
       }
     }
     if self.map_transfer_ready && self.spawn_batch_id == batch_id {
       self.flush_pending_mob_spawns()
+      self.flush_pending_npc_spawns()
     }
   })
 }
@@ -461,6 +493,14 @@ fn LocalServer::flush_pending_mob_spawns(self : LocalServer) -> Unit {
     self.mobs.set(pending.msg.oid, server_mob)
   }
   self.pending_mob_spawns.clear()
+}
+
+///|
+fn LocalServer::flush_pending_npc_spawns(self : LocalServer) -> Unit {
+  for msg in self.pending_npc_spawns {
+    self.send_server_message(msg)
+  }
+  self.pending_npc_spawns.clear()
 }
 
 ///|

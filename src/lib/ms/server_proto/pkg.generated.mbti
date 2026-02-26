@@ -162,6 +162,43 @@ pub impl Show for MoveMonsterMessage
 pub impl ToJson for MoveMonsterMessage
 pub impl @json.FromJson for MoveMonsterMessage
 
+pub(all) struct NpcSpawnControllerMessage {
+  mode : Int
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  flip : Bool
+  fh : Int
+}
+pub impl ServerMessage for NpcSpawnControllerMessage
+pub impl Show for NpcSpawnControllerMessage
+pub impl ToJson for NpcSpawnControllerMessage
+pub impl @json.FromJson for NpcSpawnControllerMessage
+
+pub(all) struct NpcSpawnMessage {
+  oid : Int
+  id : Int
+  x : Int
+  y : Int
+  flip : Bool
+  fh : Int
+}
+pub impl ServerMessage for NpcSpawnMessage
+pub impl Show for NpcSpawnMessage
+pub impl ToJson for NpcSpawnMessage
+pub impl @json.FromJson for NpcSpawnMessage
+
+pub(all) struct NpcTalkMoreMessage {
+  lastmsg : Int
+  response : Int
+  selection : Int?
+}
+pub impl ClientMessage for NpcTalkMoreMessage
+pub impl Show for NpcTalkMoreMessage
+pub impl ToJson for NpcTalkMoreMessage
+pub impl @json.FromJson for NpcTalkMoreMessage
+
 pub(all) struct PickupItemMessage {
   oid : Int
   position : @res_types.Point[Int]
@@ -246,6 +283,14 @@ pub impl Default for StatsEntry
 pub impl Show for StatsEntry
 pub impl ToJson for StatsEntry
 pub impl @json.FromJson for StatsEntry
+
+pub(all) struct TalkToNpcMessage {
+  oid : Int
+}
+pub impl ClientMessage for TalkToNpcMessage
+pub impl Show for TalkToNpcMessage
+pub impl ToJson for TalkToNpcMessage
+pub impl @json.FromJson for TalkToNpcMessage
 
 // Type aliases
 

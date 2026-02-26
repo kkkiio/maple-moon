@@ -17,6 +17,8 @@ pub fn parse_category1(Int) -> Category1?
 
 pub fn parse_equip_category(Int) -> String?
 
+pub async fn preload_item_text_bundles(@resource.AsyncLoader) -> Unit
+
 pub fn request_item_data(Int) -> ItemData
 
 pub fn set_item_data_system(ItemDataSystem) -> Unit

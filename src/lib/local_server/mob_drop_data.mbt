@@ -43,29 +43,29 @@ pub fn MobDropDatabase::from_csv(csv_content : String) -> MobDropDatabase {
     }
 
     // 解析CSV行（处理引号）
-    let fields = parse_csv_line(line.to_string())
+    let fields = @csv.parse_csv_line(line.to_string())
     // 需要7个字段: id, dropperid, itemid, minimum_quantity, maximum_quantity, questid, chance
     if fields.length() < 7 {
       continue
     }
 
     // 跳过id字段(fields[0])，从dropperid开始解析
-    let dropperid = @strconv.parse_int(strip_quotes(fields[1])) catch {
+    let dropperid = @strconv.parse_int(@csv.strip_quotes(fields[1])) catch {
       _ => continue
     }
-    let itemid = @strconv.parse_int(strip_quotes(fields[2])) catch {
+    let itemid = @strconv.parse_int(@csv.strip_quotes(fields[2])) catch {
       _ => continue
     }
-    let min_qty = @strconv.parse_int(strip_quotes(fields[3])) catch {
+    let min_qty = @strconv.parse_int(@csv.strip_quotes(fields[3])) catch {
       _ => continue
     }
-    let max_qty = @strconv.parse_int(strip_quotes(fields[4])) catch {
+    let max_qty = @strconv.parse_int(@csv.strip_quotes(fields[4])) catch {
       _ => continue
     }
-    let questid = @strconv.parse_int(strip_quotes(fields[5])) catch {
+    let questid = @strconv.parse_int(@csv.strip_quotes(fields[5])) catch {
       _ => continue
     }
-    let chance = @strconv.parse_int(strip_quotes(fields[6])) catch {
+    let chance = @strconv.parse_int(@csv.strip_quotes(fields[6])) catch {
       _ => continue
     }
 
@@ -86,47 +86,6 @@ pub fn MobDropDatabase::from_csv(csv_content : String) -> MobDropDatabase {
   }
 
   { drops, }
-}
-
-///|
-/// 去除字符串两端的引号
-fn strip_quotes(s : String) -> String {
-  let s = s.trim().to_string()
-  if s.length() >= 2 && s.has_prefix("\"") && s.has_suffix("\"") {
-    return s[1:s.length() - 1].to_string() catch { _ => s }
-  }
-  s
-}
-
-///|
-/// 解析CSV行，处理引号包裹的字段
-fn parse_csv_line(line : String) -> Array[String] {
-  let fields : Array[String] = []
-  let mut current = StringBuilder::new()
-  let mut in_quotes = false
-  let chars = line.to_array()
-
-  let mut i = 0
-  while i < chars.length() {
-    let c = chars[i]
-    if c == '"' {
-      if in_quotes && i + 1 < chars.length() && chars[i + 1] == '"' {
-        // 转义的引号
-        current.write_char('"')
-        i = i + 1
-      } else {
-        in_quotes = not(in_quotes)
-      }
-    } else if c == ',' && not(in_quotes) {
-      fields.push(current.to_string())
-      current = StringBuilder::new()
-    } else {
-      current.write_char(c)
-    }
-    i = i + 1
-  }
-  fields.push(current.to_string())
-  fields
 }
 
 ///|
@@ -298,7 +257,7 @@ pub fn calculate_mob_drops(
 ///|
 test "parse_csv_line basic" {
   let line = "1,100100,4000019,1,1,0,200000"
-  let fields = parse_csv_line(line)
+  let fields = @csv.parse_csv_line(line)
   inspect(fields.length(), content="7")
   inspect(fields[0], content="1")
   inspect(fields[1], content="100100")
@@ -312,15 +271,15 @@ test "parse_csv_line basic" {
 ///|
 test "parse_csv_line with quoted fields" {
   let line = "\"1\",\"100100\",\"4000019\",\"1\",\"1\",\"0\",\"200000\""
-  let fields = parse_csv_line(line)
+  let fields = @csv.parse_csv_line(line)
   inspect(fields.length(), content="7")
-  inspect(strip_quotes(fields[1]), content="100100")
-  inspect(strip_quotes(fields[2]), content="4000019")
+  inspect(@csv.strip_quotes(fields[1]), content="100100")
+  inspect(@csv.strip_quotes(fields[2]), content="4000019")
 }
 
 ///|
 test "strip_quotes" {
-  inspect(strip_quotes("\"hello\""), content="hello")
-  inspect(strip_quotes("hello"), content="hello")
-  inspect(strip_quotes("\"100100\""), content="100100")
+  inspect(@csv.strip_quotes("\"hello\""), content="hello")
+  inspect(@csv.strip_quotes("hello"), content="hello")
+  inspect(@csv.strip_quotes("\"100100\""), content="100100")
 }

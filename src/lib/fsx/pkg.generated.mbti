@@ -6,6 +6,8 @@ pub fn exists_sync(String) -> Bool
 
 pub fn mkdir_sync(String) -> Unit
 
+pub fn mkdir_sync_recursive(String) -> Unit
+
 pub fn read_file_sync(String, String) -> String
 
 pub fn write_file_sync(String, String) -> Unit

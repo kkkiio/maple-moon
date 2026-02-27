@@ -87,14 +87,28 @@ fn Cursor::get_sprite(self : Cursor) -> @sprite.Sprite {
 let cursor : Cursor = Cursor::new()
 
 ///|
+let requested_state : Ref[CursorState?] = Ref::new(None)
+
+///|
+pub fn request_cursor_state(state : CursorState) -> Unit {
+  requested_state.val = Some(state)
+}
+
+///|
 pub fn cursor_system(delta : Double) -> Unit {
   // sync pos and state
   cursor.set_position(@inputs.mouse.pos)
-  if @inputs.is_mouse_pressed(@inputs.MouseButton::Left) {
+  let mouse_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
+  if mouse_pressed {
     cursor.set_state(CursorState::CLICKING)
   } else {
     cursor.set_state(CursorState::IDLE)
+    match requested_state.val {
+      Some(state) => cursor.set_state(state)
+      None => ()
+    }
   }
+  requested_state.val = None
   if cursor.inactive_seconds == 0.0 { // reset
     @sprite.sprites.set(cursor.entity, cursor.get_sprite())
   }

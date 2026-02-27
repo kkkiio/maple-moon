@@ -274,7 +274,7 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
   @log.debug("reanim output dir", data={ "path": args.output })
 
   // Read input JSON
-  let input_content = @fs.read_file_to_string(args.input)
+  let input_content = @fsx.read_file_sync(args.input, "utf-8")
   let input_json = @json.parse(input_content)
 
   // Extract base name from input path
@@ -311,9 +311,9 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
     }
     let rel_path = rel_parts.join("/")
     let atlas_path = "\{args.spritesheet_dir}/\{rel_path}.json"
-    if @fs.path_exists(atlas_path) {
+    if @fsx.exists_sync(atlas_path) {
       @log.debug("loading atlas", data={ "path": atlas_path })
-      let atlas_content = @fs.read_file_to_string(atlas_path)
+      let atlas_content = @fsx.read_file_sync(atlas_path, "utf-8")
       let atlas_json = @json.parse(atlas_content)
       let metadata : @resource.SpritesheetMetadata = @json.from_json(atlas_json) catch {
         e => {
@@ -335,9 +335,7 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
   }
 
   // Ensure output directory exists
-  @fs.create_dir(args.output) catch {
-    e => @log.warn("could not create output dir", data={ "error": e })
-  }
+  @fsx.mkdir_sync_recursive(args.output)
 
   // Calculate output_rel_path
   let output_rel_path = {
@@ -400,7 +398,7 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
   // Save output JSON
   let output_json_path = "\{args.output}/\{base_name}.json"
   let output_content = processed_json.stringify(indent=2)
-  @fs.write_string_to_file(output_json_path, output_content)
+  @fsx.write_file_sync(output_json_path, output_content)
   @log.debug("saved processed json", data={ "path": output_json_path })
 }
 
@@ -413,7 +411,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
   if args.match_pattern is Some(p) {
     @log.debug("reanim match pattern", data={ "pattern": p })
   }
-  let input_content = @fs.read_file_to_string(args.input)
+  let input_content = @fsx.read_file_sync(args.input, "utf-8")
   let input_json = @json.parse(input_content)
   let entries_to_process : Array[(String, Json)] = match args.match_pattern {
     Some(pattern) => {
@@ -423,9 +421,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
     }
     None => [("", input_json)]
   }
-  @fs.create_dir(args.output) catch {
-    e => @log.warn("could not create output dir", data={ "error": e })
-  }
+  @fsx.mkdir_sync_recursive(args.output)
   let output_rel_path = {
     let parts = args.output.split("/").to_array()
     let mut found_assets = false
@@ -462,9 +458,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
       }
       dir_parts.join("/")
     }
-    @fs.create_dir(output_subdir) catch {
-      e => @log.warn("could not create output subdir", data={ "error": e })
-    }
+    @fsx.mkdir_sync_recursive(output_subdir)
     let full_output_rel_path = if path.is_empty() {
       output_rel_path
     } else {
@@ -492,7 +486,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
     )
     let output_json_path = "\{output_subdir}/\{action_name}.json"
     let output_content = result_json.stringify(indent=2)
-    @fs.write_string_to_file(output_json_path, output_content)
+    @fsx.write_file_sync(output_json_path, output_content)
     @log.debug("saved bitmap json", data={ "path": output_json_path })
   }
 }

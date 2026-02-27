@@ -242,6 +242,19 @@ pub fn request_item_data(id : Int) -> ItemData {
 }
 
 ///|
+/// Returns item data only when already loaded.
+///
+/// This function is safe for UI code paths where preload may lag behind
+/// incoming game messages:
+/// - always enqueue a background load request
+/// - return `None` until the cache is ready
+pub fn request_item_data_if_ready(id : Int) -> ItemData? {
+  let system = get_item_data_system()
+  system.request(id)
+  ItemData::get_loaded(id)
+}
+
+///|
 /// Inserts preloaded item data into cache for a specific item id.
 ///
 /// This is intended for tests that load resources with custom loaders and then

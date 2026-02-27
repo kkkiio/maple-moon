@@ -13,6 +13,8 @@ pub const HIDE_SECONDS : Int = 12
 
 pub fn cursor_system(Double) -> Unit
 
+pub fn request_cursor_state(@ui.CursorState) -> Unit
+
 // Errors
 
 // Types and methods

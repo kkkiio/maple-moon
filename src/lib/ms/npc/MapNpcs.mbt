@@ -38,6 +38,22 @@ pub fn map_npcs_system(_delta : Double) -> Unit {
   for i = 0; i < times; i = i + 1 {
     map_npcs.update(physics)
   }
+  let mouse_pos = @inputs.mouse.pos
+  let cursor_pos = @struct.Point::new(
+    mouse_pos[@selene_math.X].to_int(),
+    mouse_pos[@selene_math.Y].to_int(),
+  )
+  let camera_pos = @camera.get_position()
+  let view_pos = @struct.Point::new(
+    -camera_pos[@selene_math.X].to_int(),
+    -camera_pos[@selene_math.Y].to_int(),
+  )
+  let pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
+  match map_npcs.send_cursor(pressed, cursor_pos, view_pos) {
+    Some(@ui.CursorState::CAN_CLICK) =>
+      @cursor.request_cursor_state(@ui.CursorState::CAN_CLICK)
+    _ => ()
+  }
 }
 
 ///|
@@ -48,13 +64,7 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json) raise {
       guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
       let msg : @server_proto.NpcSpawnMessage = @json.from_json(json)
-      map_npcs.spawn({
-        oid: msg.oid,
-        id: msg.id,
-        position: @struct.Point::new(msg.x, msg.y),
-        flip: msg.flip,
-        fh: msg.fh,
-      })
+      map_npcs.apply_spawn_npc_message(msg)
     },
   )
   @game_server.add_server_message_handler(
@@ -63,19 +73,43 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json) raise {
       guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
       let msg : @server_proto.NpcSpawnControllerMessage = @json.from_json(json)
-      if msg.mode == 0 {
-        map_npcs.remove(msg.oid)
-      } else {
-        map_npcs.spawn({
-          oid: msg.oid,
-          id: msg.id,
-          position: @struct.Point::new(msg.x, msg.y),
-          flip: msg.flip,
-          fh: msg.fh,
-        })
-      }
+      map_npcs.apply_spawn_npc_controller_message(msg)
     },
   )
+}
+
+///|
+/// Apply one `SPAWN_NPC` server message to the current map NPC list.
+pub fn MapNpcs::apply_spawn_npc_message(
+  self : MapNpcs,
+  msg : @server_proto.NpcSpawnMessage,
+) -> Unit {
+  self.spawn({
+    oid: msg.oid,
+    id: msg.id,
+    position: @struct.Point::new(msg.x, msg.y),
+    flip: msg.flip,
+    fh: msg.fh,
+  })
+}
+
+///|
+/// Apply one `SPAWN_NPC_C` server message to the current map NPC list.
+pub fn MapNpcs::apply_spawn_npc_controller_message(
+  self : MapNpcs,
+  msg : @server_proto.NpcSpawnControllerMessage,
+) -> Unit {
+  if msg.mode == 0 {
+    self.remove(msg.oid)
+  } else {
+    self.spawn({
+      oid: msg.oid,
+      id: msg.id,
+      position: @struct.Point::new(msg.x, msg.y),
+      flip: msg.flip,
+      fh: msg.fh,
+    })
+  }
 }
 
 ///|
@@ -431,17 +465,14 @@ pub fn Npc::set_stance(self : Npc, st : String) -> Unit {
 }
 
 ///|
-const MAP_LAYER_STRIDE = 5000
-
-///|
-const NPC_ZINDEX_OFFSET = 2100
+const NPC_ZINDEX_OFFSET = 4
 
 ///|
 fn Npc::sync_sprite(self : Npc) -> Unit {
   guard self.entity.is_alive() else { return }
   guard self.animations.get(self.stance) is Some(animation) else { return }
   let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
-    self.phobj.fhlayer * MAP_LAYER_STRIDE +
+    self.phobj.fhlayer +
     NPC_ZINDEX_OFFSET
   let transform = if self.flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)

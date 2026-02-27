@@ -3,6 +3,7 @@ import {
   "moonbitlang/core/queue",
   "moonbitlang/core/random",
   "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/lib/csv",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/ms/server_proto",

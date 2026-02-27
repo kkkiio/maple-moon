@@ -103,7 +103,232 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
     issues.push(make_issue("item", Error, rel_file, detail))
   }
 
+  check_shop_equip_item_resources(ctx, issues)
+
   issues
+}
+
+///|
+priv struct ShopEquipRef {
+  item_id : Int
+  category : String
+  file_name : String
+}
+
+///|
+fn check_shop_equip_item_resources(
+  ctx : RescheckContext,
+  issues : Array[CheckIssue],
+) -> Unit {
+  let shops_rel_file = "data/shops.csv"
+  let shops_abs_file = path_join(ctx.assets_root, shops_rel_file)
+  if not(file_exists(shops_abs_file)) {
+    issues.push(
+      make_issue("item", Error, shops_rel_file, "missing npc shop data file"),
+    )
+    return
+  }
+  let shopitems_rel_file = "data/shopitems.csv"
+  let shopitems_abs_file = path_join(ctx.assets_root, shopitems_rel_file)
+  if not(file_exists(shopitems_abs_file)) {
+    issues.push(
+      make_issue(
+        "item",
+        Error,
+        shopitems_rel_file,
+        "missing npc shop item data file",
+      ),
+    )
+    return
+  }
+  let equip_refs = collect_shop_equip_refs(shopitems_abs_file, issues)
+  let parsed_file : Map[String, Json] = Map::new()
+  for equip_ref in equip_refs {
+    let equip_rel_file = "Character/\{equip_ref.category}/\{equip_ref.file_name}"
+    let equip_abs_file = path_join(ctx.assets_root, equip_rel_file)
+    if not(file_exists(equip_abs_file)) {
+      issues.push(
+        make_issue(
+          "item",
+          Error,
+          equip_rel_file,
+          "missing equip json referenced by npc shop item_id=\{equip_ref.item_id}",
+        ),
+      )
+      continue
+    }
+    if not(parsed_file.contains(equip_abs_file)) {
+      let content = read_text_file(equip_abs_file)
+      let json = @json.parse(content) catch {
+        e => {
+          issues.push(
+            make_issue(
+              "item",
+              Error,
+              equip_rel_file,
+              "invalid equip json: \{e}",
+            ),
+          )
+          continue
+        }
+      }
+      parsed_file[equip_abs_file] = json
+    }
+    guard parsed_file.get(equip_abs_file) is Some(equip_json) else { continue }
+    validate_equip_json_images(
+      ctx,
+      equip_json,
+      equip_rel_file,
+      equip_ref.item_id,
+      issues,
+    )
+  }
+}
+
+///|
+fn collect_shop_equip_refs(
+  shopitems_file_abs_path : String,
+  issues : Array[CheckIssue],
+) -> Array[ShopEquipRef] {
+  let refs : Array[ShopEquipRef] = []
+  let seen : Map[String, Bool] = Map::new()
+  let lines = read_text_file(shopitems_file_abs_path).split("\n").collect()
+  if lines.length() == 0 {
+    issues.push(
+      make_issue("item", Error, "data/shopitems.csv", "shopitems.csv is empty"),
+    )
+    return refs
+  }
+  let header = @csv.parse_csv_header(lines[0].to_string())
+  for i = 1; i < lines.length(); i = i + 1 {
+    let line = lines[i].trim()
+    if line.is_empty() {
+      continue
+    }
+    let fields = @csv.parse_csv_line(line.to_string())
+    let item_id = @csv.parse_csv_int_field_or_default(
+      fields, header, "itemid", -1,
+    )
+    if item_id <= 0 {
+      continue
+    }
+    guard classify_local_equip_category(item_id) is Some(category) else {
+      continue
+    }
+    let file_name = "0\{item_id}.img.json"
+    let key = "\{category}|\{file_name}"
+    if seen.contains(key) {
+      continue
+    }
+    seen[key] = true
+    refs.push({ item_id, category, file_name })
+  }
+  refs
+}
+
+///|
+fn classify_local_equip_category(item_id : Int) -> String? {
+  if item_id / 1000000 != 1 {
+    return None
+  }
+  let item_prefix = item_id / 10000
+  let index = item_prefix - 100
+  if index == 4 {
+    return Some("Coat")
+  }
+  if index == 6 {
+    return Some("Pants")
+  }
+  if index == 7 {
+    return Some("Shoes")
+  }
+  if index >= 30 && index <= 70 {
+    return Some("Weapon")
+  }
+  None
+}
+
+///|
+fn validate_equip_json_images(
+  ctx : RescheckContext,
+  json : Json,
+  rel_file : String,
+  item_id : Int,
+  issues : Array[CheckIssue],
+) -> Unit {
+  fn walk(
+    node : Json,
+    ctx : RescheckContext,
+    rel_file : String,
+    item_id : Int,
+    issues : Array[CheckIssue],
+  ) -> Unit {
+    match node {
+      Object(obj) => {
+        match obj.get("__i") {
+          Some(String(image_path)) => {
+            if image_path.contains("#") {
+              issues.push(
+                make_issue(
+                  "item",
+                  Error,
+                  rel_file,
+                  "item_id=\{item_id} still uses '#'-framed __i, reanim output expected",
+                ),
+              )
+            }
+            if not(obj.contains("__off")) {
+              issues.push(
+                make_issue(
+                  "item",
+                  Error,
+                  rel_file,
+                  "item_id=\{item_id} image node missing __off",
+                ),
+              )
+            }
+            let image_rel_path = resolve_asset_relative_path(image_path)
+            let image_abs_path = path_join(ctx.assets_root, image_rel_path)
+            if not(file_exists(image_abs_path)) {
+              issues.push(
+                make_issue(
+                  "item",
+                  Error,
+                  rel_file,
+                  "item_id=\{item_id} image missing: \{image_rel_path}",
+                ),
+              )
+            }
+          }
+          _ => ()
+        }
+        for _, value in obj {
+          walk(value, ctx, rel_file, item_id, issues)
+        }
+      }
+      Array(arr) =>
+        for value in arr {
+          walk(value, ctx, rel_file, item_id, issues)
+        }
+      _ => ()
+    }
+  }
+  walk(json, ctx, rel_file, item_id, issues)
+}
+
+///|
+fn resolve_asset_relative_path(raw_path : String) -> String {
+  let p = normalize_path(raw_path).trim_start(chars="/").to_string()
+  let parts = p.split("/").to_array()
+  if parts.length() > 1 && parts[0] == "assets" {
+    let out : Array[String] = []
+    for i = 1; i < parts.length(); i = i + 1 {
+      out.push(parts[i].to_string())
+    }
+    out.join("/")
+  } else {
+    p
+  }
 }
 
 ///|
@@ -227,11 +452,11 @@ fn collect_drop_item_refs(ctx : RescheckContext) -> Array[ItemRef] {
       if line.is_empty() {
         continue
       }
-      let fields = parse_csv_line(line.to_string())
+      let fields = @csv.parse_csv_line(line.to_string())
       if fields.length() < 3 {
         continue
       }
-      let item_id = @strconv.parse_int(strip_quotes(fields[2])) catch {
+      let item_id = @strconv.parse_int(@csv.strip_quotes(fields[2])) catch {
         _ => continue
       }
       if item_id <= 0 {
@@ -275,44 +500,4 @@ fn zero_pad4(s : String) -> String {
     out = "0" + out
   }
   out
-}
-
-///|
-fn strip_quotes(s : String) -> String {
-  let trimmed = s.trim().to_string()
-  if trimmed.length() >= 2 &&
-    trimmed.has_prefix("\"") &&
-    trimmed.has_suffix("\"") {
-    return trimmed[1:trimmed.length() - 1].to_string() catch { _ => trimmed }
-  }
-  trimmed
-}
-
-///|
-fn parse_csv_line(line : String) -> Array[String] {
-  let fields : Array[String] = []
-  let mut current = StringBuilder::new()
-  let mut in_quotes = false
-  let chars = line.to_array()
-
-  let mut i = 0
-  while i < chars.length() {
-    let c = chars[i]
-    if c == '"' {
-      if in_quotes && i + 1 < chars.length() && chars[i + 1] == '"' {
-        current.write_char('"')
-        i = i + 1
-      } else {
-        in_quotes = not(in_quotes)
-      }
-    } else if c == ',' && not(in_quotes) {
-      fields.push(current.to_string())
-      current = StringBuilder::new()
-    } else {
-      current.write_char(c)
-    }
-    i = i + 1
-  }
-  fields.push(current.to_string())
-  fields
 }

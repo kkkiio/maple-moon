@@ -101,13 +101,7 @@ fn parse_args() -> CliArgs? {
 ///|
 async fn main {
   guard parse_args() is Some(args) else { return }
-  let input_content = @fs.read_file_to_string(args.input) catch {
-    e => {
-      println("Error reading input: \{e}")
-      @sys.exit(1)
-      return
-    }
-  }
+  let input_content = @fsx.read_file_sync(args.input, "utf-8")
   let input_json = @json.parse(input_content) catch {
     e => {
       println("Error parsing JSON: \{e}")

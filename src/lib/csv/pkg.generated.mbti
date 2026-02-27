@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/csv"
+
+// Values
+pub fn parse_csv_header(String) -> Map[String, Int]
+
+pub fn parse_csv_int_field(Array[String], Map[String, Int], String, Int, String) -> Int raise
+
+pub fn parse_csv_int_field_or_default(Array[String], Map[String, Int], String, Int) -> Int
+
+pub fn parse_csv_line(String) -> Array[String]
+
+pub fn strip_quotes(String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

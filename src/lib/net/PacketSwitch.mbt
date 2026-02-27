@@ -84,7 +84,7 @@ pub(all) enum Opcode {
   /// NPC Interaction
   NPC_DIALOGUE = 0x130
   OPEN_NPC_SHOP = 305
-  CONFIRM_SHOP_TRANSACTION = 306
+  CONFIRM_SHOP_TRANSACTION = 0x132
   KEYMAP = 335
   /// Player Interaction
   CHAR_INFO = 61

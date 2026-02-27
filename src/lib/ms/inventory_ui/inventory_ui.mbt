@@ -269,7 +269,7 @@ fn display_item_from_entry(item : InventoryItemEntry) -> DisplayItem? {
         Some({ tab: invtype, slot, item_id: id, count: 1 })
       }
     InventoryItemEntry::Item(invtype~, slot~, id~, count~, ..) =>
-      if slot <= 0 {
+      if slot <= 0 || count <= 0 {
         None
       } else {
         Some({ tab: invtype, slot, item_id: id, count })
@@ -618,11 +618,28 @@ fn apply_modify_inventory_message(
   state : State,
   item : InventoryItemEntry,
 ) -> Unit {
-  guard display_item_from_entry(item) is Some(display_item) else { return }
-  if not(is_visible_tab(display_item.tab)) {
+  let invtype = match item {
+    InventoryItemEntry::Equip(invtype~, ..) => invtype
+    InventoryItemEntry::Item(invtype~, ..) => invtype
+    InventoryItemEntry::Pet(invtype~, ..) => invtype
+  }
+  let slot = match item {
+    InventoryItemEntry::Equip(slot~, ..) => slot
+    InventoryItemEntry::Item(slot~, ..) => slot
+    InventoryItemEntry::Pet(slot~, ..) => slot
+  }
+  if not(is_visible_tab(invtype)) {
     return
   }
-  let tab_items = state.items_by_tab.get(display_item.tab).unwrap_or([])
+  let tab_items = state.items_by_tab.get(invtype).unwrap_or([])
+  guard display_item_from_entry(item) is Some(display_item) else {
+    tab_items.retain(fn(it) { it.slot != slot })
+    state.items_by_tab.set(invtype, tab_items)
+    if state.visible {
+      render_inventory(state)
+    }
+    return
+  }
   let mut replaced = false
   for i in 0..<tab_items.length() {
     if tab_items[i].slot == display_item.slot {
@@ -635,7 +652,7 @@ fn apply_modify_inventory_message(
     tab_items.push(display_item)
   }
   tab_items.sort_by(slot_sort)
-  state.items_by_tab.set(display_item.tab, tab_items)
+  state.items_by_tab.set(invtype, tab_items)
   ensure_icon_loading(state, display_item.item_id)
   if state.visible {
     render_inventory(state)

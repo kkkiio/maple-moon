@@ -32,7 +32,10 @@ fn game_start(_delta : Double) -> Unit {
   @monster.setup_game_server_handlers()
   @drop.setup_game_server_handlers()
   @inventory_ui.setup_game_server_handlers()
+  @shop_ui.setup_game_server_handlers()
   @inventory_ui.init_inventory_ui()
+  @shop_ui.init_shop_ui()
+  @gm.install()
 }
 
 ///|
@@ -56,6 +59,7 @@ fn main {
     @inventory_ui.inventory_ui_system,
     system_name="inventory_ui_system",
   )
+  .add_system(@shop_ui.shop_ui_system, system_name="shop_ui_system")
   .add_system(
     delta => @item.get_item_data_system().run(delta),
     system_name="item_data_system",

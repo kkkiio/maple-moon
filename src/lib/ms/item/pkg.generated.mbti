@@ -21,6 +21,8 @@ pub async fn preload_item_text_bundles(@resource.AsyncLoader) -> Unit
 
 pub fn request_item_data(Int) -> ItemData
 
+pub fn request_item_data_if_ready(Int) -> ItemData?
+
 pub fn set_item_data_system(ItemDataSystem) -> Unit
 
 // Errors

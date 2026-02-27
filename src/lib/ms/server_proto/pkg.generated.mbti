@@ -14,6 +14,16 @@ import {
 // Errors
 
 // Types and methods
+pub(all) enum AdminCommandMessage {
+  SetMeso(meso~ : Int)
+  AddItem(item_id~ : Int, quantity~ : Int)
+  Warp(map_id~ : Int, portal_id~ : Int)
+}
+pub impl ClientMessage for AdminCommandMessage
+pub impl Show for AdminCommandMessage
+pub impl ToJson for AdminCommandMessage
+pub impl @json.FromJson for AdminCommandMessage
+
 pub(all) struct ChangeMapMessage {
   died : Bool
   target_id : Int
@@ -31,6 +41,14 @@ pub impl ServerMessage for ChangeStatsMesoMessage
 pub impl Show for ChangeStatsMesoMessage
 pub impl ToJson for ChangeStatsMesoMessage
 pub impl @json.FromJson for ChangeStatsMesoMessage
+
+pub(all) struct ConfirmShopTransactionMessage {
+  code : Int
+}
+pub impl ServerMessage for ConfirmShopTransactionMessage
+pub impl Show for ConfirmShopTransactionMessage
+pub impl ToJson for ConfirmShopTransactionMessage
+pub impl @json.FromJson for ConfirmShopTransactionMessage
 
 pub(all) struct DropLootMessage {
   mode : Int
@@ -162,6 +180,17 @@ pub impl Show for MoveMonsterMessage
 pub impl ToJson for MoveMonsterMessage
 pub impl @json.FromJson for MoveMonsterMessage
 
+pub(all) struct NpcShopActionMessage {
+  mode : Int
+  slot : Int
+  item_id : Int
+  qty : Int
+}
+pub impl ClientMessage for NpcShopActionMessage
+pub impl Show for NpcShopActionMessage
+pub impl ToJson for NpcShopActionMessage
+pub impl @json.FromJson for NpcShopActionMessage
+
 pub(all) struct NpcSpawnControllerMessage {
   mode : Int
   oid : Int
@@ -198,6 +227,15 @@ pub impl ClientMessage for NpcTalkMoreMessage
 pub impl Show for NpcTalkMoreMessage
 pub impl ToJson for NpcTalkMoreMessage
 pub impl @json.FromJson for NpcTalkMoreMessage
+
+pub(all) struct OpenNpcShopMessage {
+  npc_id : Int
+  items : Array[ShopItem]
+}
+pub impl ServerMessage for OpenNpcShopMessage
+pub impl Show for OpenNpcShopMessage
+pub impl ToJson for OpenNpcShopMessage
+pub impl @json.FromJson for OpenNpcShopMessage
 
 pub(all) struct PickupItemMessage {
   oid : Int
@@ -252,6 +290,18 @@ pub impl ServerMessage for SetFieldMessage
 pub impl Show for SetFieldMessage
 pub impl ToJson for SetFieldMessage
 pub impl @json.FromJson for SetFieldMessage
+
+pub(all) struct ShopItem {
+  id : Int
+  price : Int
+  pitch : Int
+  time : Int
+  charge_price : Int
+  buyable : Int
+}
+pub impl Show for ShopItem
+pub impl ToJson for ShopItem
+pub impl @json.FromJson for ShopItem
 
 pub(all) struct ShowStatusMesoGainMessage {
   gain : Int

@@ -1,27 +1,42 @@
 ///|
-extern "js" fn require_sharp() -> @js.Value = "() => require('sharp')"
-
-///|
-let sharp : @js.Value = require_sharp()
+#module("sharp")
+extern "js" fn sharp_default(arg : @js.Value) -> @js.Value = "default"
 
 ///|
 /// Read file as Buffer
-extern "js" fn read_file_buffer_ffi(path : String) -> @js.Value = "(path) => require('node:fs').readFileSync(path)"
+#module("node:fs")
+extern "js" fn read_file_buffer_ffi(path : String) -> @js.Value = "readFileSync"
 
 ///|
 /// Write Buffer to file
-extern "js" fn write_file_buffer_ffi(path : String, buffer : @js.Value) -> Unit = "(path, buffer) => require('node:fs').writeFileSync(path, buffer)"
+#module("node:fs")
+extern "js" fn write_file_buffer_ffi(path : String, buffer : @js.Value) -> Unit = "writeFileSync"
 
 ///|
 /// Create sharp instance from buffer
 fn sharp_from_buffer(buffer : @js.Value) -> @js.Value {
-  sharp.apply([buffer])
+  sharp_default(buffer)
 }
 
 ///|
 /// Create empty canvas
-extern "js" fn sharp_create_ffi(w : Int, h : Int) -> @js.Value =
-  #| (w, h) => require('sharp')({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+fn sharp_create_ffi(w : Int, h : Int) -> @js.Value {
+  let background = @js.Object::new()
+  background["r"] = 0
+  background["g"] = 0
+  background["b"] = 0
+  background["alpha"] = 0
+
+  let create = @js.Object::new()
+  create["width"] = w
+  create["height"] = h
+  create["channels"] = 4
+  create["background"] = background.to_value()
+
+  let options = @js.Object::new()
+  options["create"] = create.to_value()
+  sharp_default(options.to_value())
+}
 
 ///|
 /// Extract region from image (async)

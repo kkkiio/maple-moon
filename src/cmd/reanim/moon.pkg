@@ -3,11 +3,11 @@ import {
   "moonbitlang/core/strconv",
   "moonbitlang/core/cmp",
   "moonbitlang/x/sys",
-  "moonbitlang/x/fs",
   "rami3l/js-ffi/js",
   "moonbitlang/async",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/log",
+  "KKKIIO/maple-moon/lib/fsx",
   "Yoorkin/ArgParser",
 }
 

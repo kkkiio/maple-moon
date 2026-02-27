@@ -6,6 +6,7 @@ using @server_proto {
   type ChangeMapMessage,
   type DropLootMessage,
   type ModifyInventoryItemMessage,
+  type OpenNpcShopMessage,
   type PickupItemMessage,
   type ShowStatusMesoGainMessage,
   type MoveMonsterMessage,
@@ -54,6 +55,9 @@ struct LocalServer {
   drops : Map[Int, DropLootMessage]
   pending_mob_spawns : Array[PendingMobSpawn]
   pending_npc_spawns : Array[NpcSpawnControllerMessage]
+  mut active_shop : OpenNpcShopMessage?
+  npc_id_by_oid : Map[Int, Int]
+  mut npc_shop_db : NpcShopDatabase?
   db : &DB
   mut drop_db : MobDropDatabase?
   mut global_drop_db : MobDropDatabase?
@@ -115,6 +119,9 @@ pub fn LocalServer::new(
     drops: Map::new(),
     pending_mob_spawns: Array::new(),
     pending_npc_spawns: Array::new(),
+    active_shop: None,
+    npc_id_by_oid: Map::new(),
+    npc_shop_db: None,
     db,
     drop_db: None,
     global_drop_db: None,
@@ -127,6 +134,8 @@ pub fn init_server(server : LocalServer) -> Unit {
   server.init_routes()
   // 加载掉落数据库
   server.load_drop_databases()
+  // 加载 NPC 商店数据库
+  server.load_npc_shop_database()
 }
 
 ///|
@@ -162,11 +171,17 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@net.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
     self.on_pickup_item(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::TALK_TO_NPC.int_value()] = _ => {
-    ()
+  self.client_message_handler_map[@net.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
+    self.on_talk_to_npc(json)
   }
   self.client_message_handler_map[@net.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
     ()
+  }
+  self.client_message_handler_map[@net.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
+    self.on_npc_shop_action(json)
+  }
+  self.client_message_handler_map[@net.ClientOpcode::ADMIN_COMMAND.int_value()] = json => {
+    self.on_admin_command(json)
   }
 }
 
@@ -403,6 +418,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.drops.clear()
   self.pending_mob_spawns.clear()
   self.pending_npc_spawns.clear()
+  self.active_shop = None
+  self.npc_id_by_oid.clear()
   @io_service.execute_background(async fn() {
     let loader = get_mapx_loader()
     let prefix = (map_id / 100000000).to_string()
@@ -459,15 +476,17 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           ..
         } => {
           self.last_object_id += 1
+          let npc_id = @strconv.parse_int(id_str)
           self.pending_npc_spawns.push(NpcSpawnControllerMessage::{
             mode: 1,
             oid: self.last_object_id,
-            id: @strconv.parse_int(id_str),
+            id: npc_id,
             x: x.to_int(),
             y: y.to_int(),
             flip: f.to_int() != 0,
             fh: fh.to_int(),
           })
+          self.npc_id_by_oid.set(self.last_object_id, npc_id)
         }
         _ => ()
       }

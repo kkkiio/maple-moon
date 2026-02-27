@@ -1,0 +1,936 @@
+{
+  "alert": {
+    "0": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            19,
+            3
+          ]
+        },
+        "origin": [
+          23,
+          10
+        ],
+        "z": "weaponOverHand",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          19
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            18,
+            2
+          ]
+        },
+        "origin": [
+          23,
+          10
+        ],
+        "z": "weaponOverHand",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          38
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            19,
+            1
+          ]
+        },
+        "origin": [
+          23,
+          10
+        ],
+        "z": "weaponOverHand",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          57
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -8,
+            32
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "weaponOverArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          74,
+          118
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -8,
+            32
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "weaponOverArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          74,
+          118
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            18,
+            2
+          ]
+        },
+        "origin": [
+          23,
+          10
+        ],
+        "z": "weaponOverHand",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          38
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            17,
+            33
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          154,
+          39
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "navel": [
+            15,
+            21
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          99
+        ]
+      }
+    }
+  },
+  "info": {
+    "afterImage": "swordOL",
+    "attack": 1,
+    "attackSpeed": 5,
+    "cash": 0,
+    "icon": {
+      "__h": 30,
+      "__w": 30,
+      "origin": [
+        0,
+        30
+      ],
+      "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+      "__off": [
+        148,
+        118
+      ]
+    },
+    "iconRaw": {
+      "__h": 30,
+      "__w": 30,
+      "origin": [
+        0,
+        30
+      ],
+      "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+      "__off": [
+        0,
+        155
+      ]
+    },
+    "incPAD": 37,
+    "islot": "Wp",
+    "price": 5000,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 1,
+    "reqLUK": 0,
+    "reqLevel": 20,
+    "reqSTR": 65,
+    "sfx": "swordL",
+    "stand": 1,
+    "tuc": 7,
+    "vslot": "Wp",
+    "walk": 1
+  },
+  "jump": {
+    "0": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -9,
+            31
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "weaponOverArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          111,
+          118
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            45,
+            6
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "weaponBelowArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          45
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            45,
+            6
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "weaponBelowArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          45
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            60,
+            6
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "weaponBelowArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          60
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            13,
+            -1
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          30
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 5,
+        "__w": 52,
+        "map": {
+          "navel": [
+            55,
+            5
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          70
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "weapon": {
+        "__h": 5,
+        "__w": 52,
+        "map": {
+          "navel": [
+            19,
+            9
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowArm",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          75
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            51,
+            9
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          0
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            21,
+            4
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          15
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            17,
+            0
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          30
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            56,
+            9
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          45
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            13,
+            -2
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          0
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            13,
+            -2
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          0
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            13,
+            -2
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          0
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          15
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "navel": [
+            8,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          104,
+          76
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 39,
+        "__w": 39,
+        "map": {
+          "navel": [
+            -23,
+            46
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          154,
+          0
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "navel": [
+            15,
+            21
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          99
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            17,
+            33
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          154,
+          39
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -23,
+            1
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          154,
+          76
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -24,
+            34
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          118
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 5,
+        "__w": 52,
+        "map": {
+          "navel": [
+            49,
+            0
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponOverBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          60
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 5,
+        "__w": 49,
+        "map": {
+          "navel": [
+            -1,
+            0
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          75
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "weapon": {
+        "__h": 37,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -22,
+            11
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          37,
+          118
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 5,
+        "__w": 52,
+        "map": {
+          "navel": [
+            4,
+            13
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "backWeapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          52,
+          65
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 15,
+        "__w": 50,
+        "map": {
+          "navel": [
+            8,
+            18
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          50,
+          99
+        ]
+      }
+    },
+    "3": {
+      "weapon": {
+        "__h": 15,
+        "__w": 50,
+        "map": {
+          "navel": [
+            -20,
+            22
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "weaponBelowBody",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          100,
+          99
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "hand": [
+            15,
+            0
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            13,
+            6
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          80
+        ]
+      }
+    },
+    "2": {
+      "weapon": {
+        "__h": 15,
+        "__w": 52,
+        "map": {
+          "hand": [
+            15,
+            0
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "3": {
+      "weapon": {
+        "__h": 19,
+        "__w": 50,
+        "map": {
+          "hand": [
+            14,
+            0
+          ]
+        },
+        "origin": [
+          25,
+          7
+        ],
+        "z": "weapon",
+        "__i": "/Character/Weapon/spritesheets/01302002.img.png",
+        "__off": [
+          50,
+          80
+        ]
+      }
+    }
+  }
+}

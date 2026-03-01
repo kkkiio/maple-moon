@@ -22,11 +22,15 @@ pub fn find_equip_slot(Inventory, @data.EquipData) -> @slot.Id
 
 pub fn handle_item(Inventory, @server_proto.InventoryItemEntry) -> Unit
 
-pub fn new_move_item_packet(@server_proto.InventoryType, Int, Int, Int) -> @net.OutPacket
+pub let inventory : Ref[Inventory]
 
 pub fn parse_item(@net.InPacket, @server_proto.InventoryType, Int) -> @server_proto.InventoryItemEntry raise
 
+pub fn setup_game_server_handlers() -> Unit
+
 pub fn use_item_at(Module, String, SlotNo, Array[String]) -> String
+
+pub fn use_item_at_slot(@server_proto.InventoryType, Int) -> String?
 
 pub fn watch_inventory_by_kind(Module, String, (Array[WithItemSlot?]) -> Bool) -> String
 
@@ -39,6 +43,9 @@ type Inventory
 pub fn Inventory::add_equip(Self, @server_proto.InventoryType, Int, Int, Bool, Int64, Int, Int, Map[@maple_stat.EquipStatId, Int], String, Int, Int, Int, Int) -> Unit
 pub fn Inventory::add_item(Self, @server_proto.InventoryType, Int, Int, Bool, Int64, Int, String, Int) -> Unit
 pub fn Inventory::add_pet(Self, @server_proto.InventoryType, Int, Int, Bool, String) -> Unit
+pub fn Inventory::apply_local_modify_inventory_message(Self, @server_proto.ModifyInventoryMessage) -> Unit
+pub fn Inventory::apply_modify_inventory_message(Self, @server_proto.InventoryItemEntry) -> Unit
+pub fn Inventory::clear(Self) -> Unit
 pub fn Inventory::find_item(Self, @server_proto.InventoryType, Int) -> SlotNo?
 pub fn Inventory::get_bulletslot(Self) -> Int
 pub fn Inventory::get_item_count(Self, Int) -> Int
@@ -51,7 +58,7 @@ pub fn Inventory::has_equipped(Self, @slot.Id) -> Bool
 pub fn Inventory::listen_item_changes(Self, @server_proto.InventoryType, () -> Bool) -> Unit
 pub fn Inventory::listen_meso_changes(Self, (Int) -> Bool) -> Unit
 pub fn Inventory::modify(Self, @server_proto.InventoryType, Int, ModificationMode, Int, Movement) -> Unit
-pub fn Inventory::new(@net.Network) -> Self
+pub fn Inventory::new() -> Self
 pub fn Inventory::set_meso(Self, Int) -> Unit
 pub fn Inventory::set_slotmax(Self, @server_proto.InventoryType, Int) -> Unit
 pub fn Inventory::use_item(Self, Int) -> Unit
@@ -64,9 +71,6 @@ pub struct Item {
   flags : Int
 }
 pub fn Item::new(Int, Int64, String, Int) -> Self
-
-type Mod
-pub impl Show for Mod
 
 type ModificationMode
 pub impl Show for ModificationMode
@@ -111,6 +115,7 @@ pub struct WithItemSlot {
 }
 
 // Type aliases
+pub using @server_proto {type InventoryType as TypeId}
 
 // Traits
 

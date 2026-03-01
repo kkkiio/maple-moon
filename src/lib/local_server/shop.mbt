@@ -99,7 +99,21 @@ fn LocalServer::on_npc_shop_sell(
     self.send_shop_confirm(5)
     return
   }
-  guard tab_items.get(msg.slot) is Some((stored_item_id, stored_count)) else {
+  guard tab_items.get(msg.slot) is Some(stored_item_entry) else {
+    self.send_shop_confirm(5)
+    return
+  }
+  guard stored_item_entry
+    is @server_proto.InventoryItemEntry::Item(
+      id=stored_item_id,
+      count=stored_count,
+      cash~,
+      expire~,
+      owner~,
+      flag~,
+      invtype~,
+      slot~
+    ) else {
     self.send_shop_confirm(5)
     return
   }
@@ -114,22 +128,28 @@ fn LocalServer::on_npc_shop_sell(
   let sell_qty = if qty <= stored_count { qty } else { stored_count }
   let remain = stored_count - sell_qty
   if remain > 0 {
-    tab_items.set(msg.slot, (stored_item_id, remain))
+    tab_items.set(
+      msg.slot,
+      @server_proto.InventoryItemEntry::Item(
+        id=stored_item_id,
+        count=remain,
+        cash~,
+        expire~,
+        owner~,
+        flag~,
+        invtype~,
+        slot~,
+      ),
+    )
   } else {
     tab_items.remove(msg.slot) |> ignore
   }
-  self.send_server_message(@server_proto.ModifyInventoryItemMessage::{
-    item: @server_proto.InventoryItemEntry::Item(
-      invtype~,
-      slot=msg.slot,
-      id=stored_item_id,
-      cash=false,
-      expire=0,
-      count=remain,
-      owner="",
-      flag=0,
-    ),
-  })
+  let mod = if remain > 0 {
+    modify_change_count(invtype, slot, remain)
+  } else {
+    modify_remove(invtype, slot)
+  }
+  self.send_modify_inventory([mod], None)
   let unit_price = 1
   self.player_meso += unit_price * sell_qty
   self.save_character_inventory_snapshot()
@@ -168,22 +188,36 @@ fn LocalServer::add_item_to_inventory(
   let stackable = invtype != @server_proto.InventoryType::EQUIP
   if stackable {
     for slot, it in tab_items {
-      let (existing_item_id, existing_count) = it
+      guard it
+        is @server_proto.InventoryItemEntry::Item(
+          id=existing_item_id,
+          count=existing_count,
+          cash~,
+          expire~,
+          owner~,
+          flag~,
+          invtype~,
+          slot=it_slot
+        ) else {
+        continue
+      }
       if existing_item_id == item_id {
         let next_count = existing_count + quantity
-        tab_items.set(slot, (item_id, next_count))
-        self.send_server_message(@server_proto.ModifyInventoryItemMessage::{
-          item: @server_proto.InventoryItemEntry::Item(
-            invtype~,
-            slot~,
-            id=item_id,
-            cash=false,
-            expire=0,
-            count=next_count,
-            owner="",
-            flag=0,
-          ),
-        })
+        let updated_item = @server_proto.InventoryItemEntry::Item(
+          id=item_id,
+          count=next_count,
+          cash~,
+          expire~,
+          owner~,
+          flag~,
+          invtype~,
+          slot=it_slot,
+        )
+        tab_items.set(slot, updated_item)
+        self.send_modify_inventory(
+          [modify_change_count(invtype, it_slot, next_count)],
+          None,
+        )
         return true
       }
     }
@@ -194,19 +228,9 @@ fn LocalServer::add_item_to_inventory(
       is Some(slot) else {
       return false
     }
-    tab_items.set(slot, (item_id, quantity))
-    self.send_server_message(@server_proto.ModifyInventoryItemMessage::{
-      item: @server_proto.InventoryItemEntry::Item(
-        invtype~,
-        slot~,
-        id=item_id,
-        cash=false,
-        expire=0,
-        count=quantity,
-        owner="",
-        flag=0,
-      ),
-    })
+    let new_item = new_inventory_item_entry(invtype, slot, item_id, quantity)
+    tab_items.set(slot, new_item)
+    self.send_modify_inventory([modify_add(invtype, slot, new_item)], None)
     return true
   }
   let mut inserted = 0
@@ -218,19 +242,9 @@ fn LocalServer::add_item_to_inventory(
       is Some(slot) else {
       return false
     }
-    tab_items.set(slot, (item_id, 1))
-    self.send_server_message(@server_proto.ModifyInventoryItemMessage::{
-      item: @server_proto.InventoryItemEntry::Item(
-        invtype~,
-        slot~,
-        id=item_id,
-        cash=false,
-        expire=0,
-        count=1,
-        owner="",
-        flag=0,
-      ),
-    })
+    let new_item = new_inventory_item_entry(invtype, slot, item_id, 1)
+    tab_items.set(slot, new_item)
+    self.send_modify_inventory([modify_add(invtype, slot, new_item)], None)
     inserted += 1
   }
   true

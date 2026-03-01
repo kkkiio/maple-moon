@@ -30,11 +30,13 @@ pub impl DB for BrowserDB
 type LocalServer
 pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
 pub fn LocalServer::init_routes(Self) -> Unit
-pub async fn LocalServer::load_character(Self, Int) -> Unit
+pub async fn LocalServer::load_character(Self, Int) -> Bool
+pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
 pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
 pub async fn LocalServer::save_character(Self, Int) -> Unit
 pub async fn LocalServer::save_character_core(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
+pub async fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
 #callsite(autofill(loc))
 pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 
@@ -62,6 +64,41 @@ pub(all) struct MobDropEntry {
 }
 pub fn MobDropEntry::roll_drop(Self, @random.Rand) -> Bool
 pub fn MobDropEntry::roll_quantity(Self, @random.Rand) -> Int
+
+pub(all) struct StorageEquipData {
+  item_id : Int
+  slot : Int
+  stats : Map[String, Int]
+  slots : Int
+  level : Int
+  itemlevel : Int
+  itemexp : Int
+  vicious : Int
+}
+pub impl Default for StorageEquipData
+pub impl Show for StorageEquipData
+pub impl ToJson for StorageEquipData
+pub impl @json.FromJson for StorageEquipData
+
+pub(all) struct StorageItemData {
+  item_id : Int
+  slot : Int
+  count : Int
+}
+pub impl Default for StorageItemData
+pub impl Show for StorageItemData
+pub impl ToJson for StorageItemData
+pub impl @json.FromJson for StorageItemData
+
+pub(all) enum StorageItemEntry {
+  Equip(StorageEquipData)
+  Item(StorageItemData)
+}
+pub fn StorageItemEntry::from_server_proto(@server_proto.InventoryItemEntry) -> Self
+pub fn StorageItemEntry::to_server_proto(Self, @server_proto.InventoryType) -> @server_proto.InventoryItemEntry
+pub impl Show for StorageItemEntry
+pub impl ToJson for StorageItemEntry
+pub impl @json.FromJson for StorageItemEntry
 
 // Type aliases
 

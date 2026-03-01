@@ -5,7 +5,10 @@ using @server_proto {
   trait ServerMessage,
   type ChangeMapMessage,
   type DropLootMessage,
-  type ModifyInventoryItemMessage,
+  type MoveItemMessage,
+  type ModifyInventoryMessage,
+  type ModifyInventoryMod,
+  type ModifyInventoryMode,
   type OpenNpcShopMessage,
   type PickupItemMessage,
   type ShowStatusMesoGainMessage,
@@ -15,6 +18,7 @@ using @server_proto {
   type MobSpawnControllerMessage,
   type NpcSpawnControllerMessage,
   type StatsEntry,
+  type UseItemMessage,
   type InventoryEntry,
   type InventoryItemEntry,
   type PlayerQuestLogInfo,
@@ -49,7 +53,7 @@ struct LocalServer {
   mut player_meso : Int
   mut current_character_id : Int
   mut character_revision : Int
-  player_items : Map[InventoryType, Map[Int, (Int, Int)]]
+  player_items : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]]
   slot_max_by_tab : Map[InventoryType, Int]
   mobs : Map[Int, ServerMob]
   drops : Map[Int, DropLootMessage]
@@ -98,8 +102,9 @@ pub fn LocalServer::new(
     current_character_id: 1,
     character_revision: 0,
     player_items: {
-      let m : Map[InventoryType, Map[Int, (Int, Int)]] = Map::new()
+      let m : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]] = Map::new()
       m.set(InventoryType::EQUIP, Map::new())
+      m.set(InventoryType::EQUIPPED, Map::new())
       m.set(InventoryType::USE, Map::new())
       m.set(InventoryType::SETUP, Map::new())
       m.set(InventoryType::ETC, Map::new())
@@ -170,6 +175,12 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   }
   self.client_message_handler_map[@net.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
     self.on_pickup_item(json)
+  }
+  self.client_message_handler_map[@net.ClientOpcode::USE_ITEM.int_value()] = json => {
+    self.on_use_item(json)
+  }
+  self.client_message_handler_map[@net.ClientOpcode::MOVE_ITEM.int_value()] = json => {
+    self.on_move_item(json)
   }
   self.client_message_handler_map[@net.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
     self.on_talk_to_npc(json)
@@ -285,6 +296,272 @@ fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
+fn LocalServer::on_use_item(self : LocalServer, json : Json) -> Unit raise {
+  let msg : UseItemMessage = @json.from_json(json)
+  guard self.player_items.get(InventoryType::USE) is Some(use_items) else {
+    return
+  }
+  guard use_items.get(msg.slot_no) is Some(item_entry) else { return }
+  guard item_entry
+    is InventoryItemEntry::Item(
+      id=item_id,
+      count=old_count,
+      cash=c,
+      expire=e,
+      owner=o,
+      flag=f,
+      invtype=i,
+      slot=it_slot
+    ) else {
+    return
+  }
+  guard item_id == msg.item_id && old_count > 0 else { return }
+  let remain = old_count - 1
+  if remain > 0 {
+    use_items.set(
+      msg.slot_no,
+      InventoryItemEntry::Item(
+        id=item_id,
+        count=remain,
+        cash=c,
+        expire=e,
+        owner=o,
+        flag=f,
+        invtype=i,
+        slot=it_slot,
+      ),
+    )
+  } else {
+    use_items.remove(msg.slot_no) |> ignore
+  }
+  let mod = if remain > 0 {
+    modify_change_count(InventoryType::USE, msg.slot_no, remain)
+  } else {
+    modify_remove(InventoryType::USE, msg.slot_no)
+  }
+  self.send_modify_inventory([mod], None)
+  self.save_character_inventory_snapshot()
+}
+
+///|
+fn LocalServer::on_move_item(self : LocalServer, json : Json) -> Unit raise {
+  let msg : MoveItemMessage = @json.from_json(json)
+  if msg.invtype != InventoryType::EQUIP {
+    return
+  }
+  if msg.slot > 0 && msg.action < 0 {
+    self.on_equip_item(msg.slot, -msg.action)
+    return
+  }
+  if msg.slot < 0 && msg.action > 0 {
+    self.on_unequip_item(-msg.slot, msg.action)
+    return
+  }
+}
+
+///|
+fn set_item_entry_slot(
+  entry : InventoryItemEntry,
+  new_invtype : InventoryType,
+  new_slot : Int,
+) -> InventoryItemEntry {
+  match entry {
+    Equip(
+      id~,
+      cash~,
+      expire~,
+      slots~,
+      level~,
+      stats~,
+      owner~,
+      flag~,
+      itemlevel~,
+      itemexp~,
+      vicious~,
+      ..
+    ) =>
+      Equip(
+        invtype=new_invtype,
+        slot=new_slot,
+        id~,
+        cash~,
+        expire~,
+        slots~,
+        level~,
+        stats~,
+        owner~,
+        flag~,
+        itemlevel~,
+        itemexp~,
+        vicious~,
+      )
+    Item(id~, cash~, expire~, count~, owner~, flag~, ..) =>
+      Item(
+        invtype=new_invtype,
+        slot=new_slot,
+        id~,
+        cash~,
+        expire~,
+        count~,
+        owner~,
+        flag~,
+      )
+    Pet(id~, cash~, petname~, ..) =>
+      Pet(invtype=new_invtype, slot=new_slot, id~, cash~, petname~)
+  }
+}
+
+///|
+fn modify_add(
+  t : InventoryType,
+  pos : Int,
+  item : InventoryItemEntry,
+) -> ModifyInventoryMod {
+  { mode: ModifyInventoryMode::ADD, t, pos, arg: 0, item: Some(item) }
+}
+
+///|
+fn modify_change_count(
+  t : InventoryType,
+  pos : Int,
+  count : Int,
+) -> ModifyInventoryMod {
+  { mode: ModifyInventoryMode::CHANGE_COUNT, t, pos, arg: count, item: None }
+}
+
+///|
+fn modify_remove(t : InventoryType, pos : Int) -> ModifyInventoryMod {
+  { mode: ModifyInventoryMode::REMOVE, t, pos, arg: 0, item: None }
+}
+
+///|
+fn modify_swap(t : InventoryType, pos : Int, arg : Int) -> ModifyInventoryMod {
+  { mode: ModifyInventoryMode::SWAP, t, pos, arg, item: None }
+}
+
+///|
+fn LocalServer::send_modify_inventory(
+  self : LocalServer,
+  mods : Array[ModifyInventoryMod],
+  movement : Int?,
+) -> Unit {
+  self.send_server_message(ModifyInventoryMessage::{ mods, movement })
+}
+
+///|
+fn LocalServer::on_equip_item(
+  self : LocalServer,
+  from_slot : Int,
+  equipped_slot : Int,
+) -> Unit {
+  guard self.player_items.get(InventoryType::EQUIP) is Some(equip_items) else {
+    return
+  }
+  guard self.player_items.get(InventoryType::EQUIPPED) is Some(equipped_items) else {
+    return
+  }
+  guard equip_items.get(from_slot) is Some(equip_entry) else { return }
+  @log.info("local_server on_equip_item before", data={
+    "from_slot": from_slot,
+    "equipped_slot": equipped_slot,
+    "equip_has_from": equip_items.contains(from_slot),
+    "equipped_has_to": equipped_items.contains(equipped_slot),
+  })
+  match equipped_items.get(equipped_slot) {
+    Some(equipped_entry) =>
+      equip_items.set(
+        from_slot,
+        set_item_entry_slot(equipped_entry, InventoryType::EQUIP, from_slot),
+      )
+    None => equip_items.remove(from_slot) |> ignore
+  }
+  let new_equipped = set_item_entry_slot(
+    equip_entry,
+    InventoryType::EQUIPPED,
+    equipped_slot,
+  )
+  equipped_items.set(equipped_slot, new_equipped)
+  @log.info("local_server on_equip_item after", data={
+    "from_slot": from_slot,
+    "equipped_slot": equipped_slot,
+    "equip_has_from": equip_items.contains(from_slot),
+    "equipped_has_to": equipped_items.contains(equipped_slot),
+  })
+  self.send_modify_inventory(
+    [modify_swap(InventoryType::EQUIP, from_slot, -equipped_slot)],
+    Some(2),
+  )
+  self.save_character_inventory_snapshot()
+}
+
+///|
+fn LocalServer::on_unequip_item(
+  self : LocalServer,
+  equipped_slot : Int,
+  to_slot : Int,
+) -> Unit {
+  guard self.player_items.get(InventoryType::EQUIP) is Some(equip_items) else {
+    return
+  }
+  guard self.player_items.get(InventoryType::EQUIPPED) is Some(equipped_items) else {
+    return
+  }
+  guard not(equip_items.contains(to_slot)) else { return }
+  guard equipped_items.get(equipped_slot) is Some(equipped_entry) else {
+    return
+  }
+  equipped_items.remove(equipped_slot) |> ignore
+  let new_unequipped = set_item_entry_slot(
+    equipped_entry,
+    InventoryType::EQUIP,
+    to_slot,
+  )
+  equip_items.set(to_slot, new_unequipped)
+  self.send_modify_inventory(
+    [modify_swap(InventoryType::EQUIP, -equipped_slot, to_slot)],
+    Some(1),
+  )
+  self.save_character_inventory_snapshot()
+}
+
+///|
+fn new_inventory_item_entry(
+  invtype : InventoryType,
+  slot : Int,
+  item_id : Int,
+  count : Int,
+) -> InventoryItemEntry {
+  if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
+    InventoryItemEntry::Equip(
+      invtype~,
+      slot~,
+      id=item_id,
+      cash=false,
+      expire=0,
+      slots=7,
+      level=0,
+      stats=@resource.EnumMap::default(),
+      owner="",
+      flag=0,
+      itemlevel=0,
+      itemexp=0,
+      vicious=0,
+    )
+  } else {
+    InventoryItemEntry::Item(
+      invtype~,
+      slot~,
+      id=item_id,
+      cash=false,
+      expire=0,
+      count~,
+      owner="",
+      flag=0,
+    )
+  }
+}
+
+///|
 fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
   guard InventoryType::by_item_id(item_id) is Some(invtype) else {
     return false
@@ -293,22 +570,36 @@ fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
   let stackable = invtype != InventoryType::EQUIP
   if stackable {
     for slot, it in tab_items {
-      let (existing_item_id, existing_count) = it
+      guard it
+        is InventoryItemEntry::Item(
+          id=existing_item_id,
+          count=existing_count,
+          cash=c,
+          expire=e,
+          owner=o,
+          flag=f,
+          invtype=i,
+          slot=it_slot
+        ) else {
+        continue
+      }
       if existing_item_id == item_id {
         let next_count = existing_count + 1
-        tab_items.set(slot, (item_id, next_count))
-        self.send_server_message(ModifyInventoryItemMessage::{
-          item: InventoryItemEntry::Item(
-            invtype~,
-            slot~,
-            id=item_id,
-            cash=false,
-            expire=0,
-            count=next_count,
-            owner="",
-            flag=0,
-          ),
-        })
+        let updated_item = InventoryItemEntry::Item(
+          id=item_id,
+          count=next_count,
+          cash=c,
+          expire=e,
+          owner=o,
+          flag=f,
+          invtype=i,
+          slot=it_slot,
+        )
+        tab_items.set(slot, updated_item)
+        self.send_modify_inventory(
+          [modify_change_count(invtype, it_slot, next_count)],
+          None,
+        )
         return true
       }
     }
@@ -320,24 +611,17 @@ fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
     is Some(slot) else {
     return false
   }
-  tab_items.set(slot, (item_id, 1))
-  self.send_server_message(ModifyInventoryItemMessage::{
-    item: InventoryItemEntry::Item(
-      invtype~,
-      slot~,
-      id=item_id,
-      cash=false,
-      expire=0,
-      count=1,
-      owner="",
-      flag=0,
-    ),
-  })
+  let new_item = new_inventory_item_entry(invtype, slot, item_id, 1)
+  tab_items.set(slot, new_item)
+  self.send_modify_inventory([modify_add(invtype, slot, new_item)], None)
   true
 }
 
 ///|
-fn find_next_empty_slot(items : Map[Int, (Int, Int)], slot_max : Int) -> Int? {
+fn find_next_empty_slot(
+  items : Map[Int, InventoryItemEntry],
+  slot_max : Int,
+) -> Int? {
   for slot in 1..<=slot_max {
     if not(items.contains(slot)) {
       return Some(slot)
@@ -387,24 +671,9 @@ fn LocalServer::append_inventory_entries(
   self : LocalServer,
   items : Array[InventoryItemEntry],
 ) -> Unit {
-  for invtype, tab_items in self.player_items {
-    if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
-      continue
-    }
-    for slot, item in tab_items {
-      let (item_id, count) = item
-      items.push(
-        InventoryItemEntry::Item(
-          invtype~,
-          slot~,
-          id=item_id,
-          cash=false,
-          expire=0,
-          count~,
-          owner="",
-          flag=0,
-        ),
-      )
+  for _invtype, tab_items in self.player_items {
+    for _slot, item in tab_items {
+      items.push(item)
     }
   }
 }

@@ -2,6 +2,7 @@
 using @server_proto {
   type InventoryEntry,
   type InventoryItemEntry,
+  type ModifyInventoryMessage,
   type InventoryType,
 }
 
@@ -30,6 +31,7 @@ priv struct State {
   icon_by_item_id : Map[Int, @sprite.Animation]
   icon_loading : Map[Int, Bool]
   render_entities : Array[@entity.Entity]
+  slot_entities : Array[@entity.Entity]
   mut binding_version : Int
 }
 
@@ -73,6 +75,7 @@ let state_ref : Ref[State] = Ref::new({
   icon_by_item_id: Map::new(),
   icon_loading: Map::new(),
   render_entities: [],
+  slot_entities: [],
   binding_version: 0,
 })
 
@@ -436,6 +439,12 @@ fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2D) -> Int? {
 ///|
 fn render_inventory(state : State) -> Unit {
   clear_render(state)
+
+  // Hide all slot entities by default
+  for slot_entity in state.slot_entities {
+    @selene_ui.uis.remove(slot_entity)
+  }
+
   guard state.ui_resources is Some(ui_resources) else { return }
 
   let panel_x = state.panel_x
@@ -529,6 +538,26 @@ fn render_inventory(state : State) -> Unit {
         }
         None => ()
       }
+
+      // Update persistent slot entity for interaction
+      if i < state.slot_entities.length() {
+        let slot_entity = state.slot_entities[i]
+        @position.positions.set(
+          slot_entity,
+          @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+        )
+        @selene_ui.uis.set(slot_entity, @selene_ui.Ui::new())
+        @collision.shapes.set(
+          slot_entity,
+          @collision.CollisionShape::Rect(
+            size=@selene_math.Vec2D(
+              SLOT_WIDTH.to_double(),
+              SLOT_HEIGHT.to_double(),
+            ),
+            offset=@selene_math.Vec2D(0.0, 0.0),
+          ),
+        )
+      }
     }
   }
 
@@ -577,6 +606,36 @@ fn register_scene_cleanup_once() -> Unit {
 ///|
 pub fn init_inventory_ui() -> Unit {
   register_scene_cleanup_once()
+  let state = state_ref.val
+  if state.slot_entities.is_empty() {
+    for i in 0..<MAX_VISIBLE_SLOTS {
+      let entity = @entity.Entity::new()
+      state.slot_entities.push(entity)
+      @position.positions.set(
+        entity,
+        @position.Position(@selene_math.Vec2D(0.0, 0.0)),
+      )
+      // We don't set Ui yet to keep it non-interactive until render
+      @collision.shapes.set(
+        entity,
+        @collision.CollisionShape::Rect(
+          size=@selene_math.Vec2D(
+            SLOT_WIDTH.to_double(),
+            SLOT_HEIGHT.to_double(),
+          ),
+          offset=@selene_math.Vec2D(0.0, 0.0),
+        ),
+      )
+      let pickable = @collision.Pickable::new()
+      pickable.on_double_click(fn(_button) {
+        let type_id = tabs[state.tab_index]
+        let slot_no = i + 1
+        @log.info("Inventory double click type=\{type_id} slot=\{slot_no}")
+        @inventory.use_item_at_slot(type_id, slot_no) |> ignore
+      })
+      @collision.pickables.set(entity, pickable)
+    }
+  }
 }
 
 ///|
@@ -605,58 +664,9 @@ pub fn setup_game_server_handlers() -> Unit {
     "inventory_ui_modify_inventory",
     @net.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @server_proto.ModifyInventoryItemMessage = @json.from_json(
-        json,
-      )
-      apply_modify_inventory_message(state_ref.val, message.item)
+      let _msg : ModifyInventoryMessage = @json.from_json(json)
     },
   )
-}
-
-///|
-fn apply_modify_inventory_message(
-  state : State,
-  item : InventoryItemEntry,
-) -> Unit {
-  let invtype = match item {
-    InventoryItemEntry::Equip(invtype~, ..) => invtype
-    InventoryItemEntry::Item(invtype~, ..) => invtype
-    InventoryItemEntry::Pet(invtype~, ..) => invtype
-  }
-  let slot = match item {
-    InventoryItemEntry::Equip(slot~, ..) => slot
-    InventoryItemEntry::Item(slot~, ..) => slot
-    InventoryItemEntry::Pet(slot~, ..) => slot
-  }
-  if not(is_visible_tab(invtype)) {
-    return
-  }
-  let tab_items = state.items_by_tab.get(invtype).unwrap_or([])
-  guard display_item_from_entry(item) is Some(display_item) else {
-    tab_items.retain(fn(it) { it.slot != slot })
-    state.items_by_tab.set(invtype, tab_items)
-    if state.visible {
-      render_inventory(state)
-    }
-    return
-  }
-  let mut replaced = false
-  for i in 0..<tab_items.length() {
-    if tab_items[i].slot == display_item.slot {
-      tab_items[i] = display_item
-      replaced = true
-      break
-    }
-  }
-  if not(replaced) {
-    tab_items.push(display_item)
-  }
-  tab_items.sort_by(slot_sort)
-  state.items_by_tab.set(invtype, tab_items)
-  ensure_icon_loading(state, display_item.item_id)
-  if state.visible {
-    render_inventory(state)
-  }
 }
 
 ///|

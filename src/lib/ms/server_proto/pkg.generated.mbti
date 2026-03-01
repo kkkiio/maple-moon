@@ -156,13 +156,47 @@ pub impl ServerMessage for MobSpawnMessage
 pub impl ToJson for MobSpawnMessage
 pub impl @json.FromJson for MobSpawnMessage
 
-pub(all) struct ModifyInventoryItemMessage {
-  item : InventoryItemEntry
+pub(all) struct ModifyInventoryMessage {
+  mods : Array[ModifyInventoryMod]
+  movement : Int?
 }
-pub impl ServerMessage for ModifyInventoryItemMessage
-pub impl Show for ModifyInventoryItemMessage
-pub impl ToJson for ModifyInventoryItemMessage
-pub impl @json.FromJson for ModifyInventoryItemMessage
+pub impl ServerMessage for ModifyInventoryMessage
+pub impl Show for ModifyInventoryMessage
+pub impl ToJson for ModifyInventoryMessage
+pub impl @json.FromJson for ModifyInventoryMessage
+
+pub(all) struct ModifyInventoryMod {
+  mode : ModifyInventoryMode
+  t : InventoryType
+  pos : Int
+  arg : Int
+  item : InventoryItemEntry?
+}
+pub impl Show for ModifyInventoryMod
+pub impl ToJson for ModifyInventoryMod
+pub impl @json.FromJson for ModifyInventoryMod
+
+pub(all) enum ModifyInventoryMode {
+  ADD
+  CHANGE_COUNT
+  SWAP
+  REMOVE
+  ADD_COUNT
+}
+pub impl Show for ModifyInventoryMode
+pub impl ToJson for ModifyInventoryMode
+pub impl @json.FromJson for ModifyInventoryMode
+
+pub(all) struct MoveItemMessage {
+  invtype : InventoryType
+  slot : Int
+  action : Int
+  qty : Int
+}
+pub impl ClientMessage for MoveItemMessage
+pub impl Show for MoveItemMessage
+pub impl ToJson for MoveItemMessage
+pub impl @json.FromJson for MoveItemMessage
 
 pub(all) struct MoveMonsterMessage {
   oid : Int
@@ -341,6 +375,15 @@ pub impl ClientMessage for TalkToNpcMessage
 pub impl Show for TalkToNpcMessage
 pub impl ToJson for TalkToNpcMessage
 pub impl @json.FromJson for TalkToNpcMessage
+
+pub(all) struct UseItemMessage {
+  slot_no : Int
+  item_id : Int
+}
+pub impl ClientMessage for UseItemMessage
+pub impl Show for UseItemMessage
+pub impl ToJson for UseItemMessage
+pub impl @json.FromJson for UseItemMessage
 
 // Type aliases
 

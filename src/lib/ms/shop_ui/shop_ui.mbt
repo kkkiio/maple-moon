@@ -5,7 +5,9 @@ using @server_proto {
   type InventoryEntry,
   type InventoryItemEntry,
   type InventoryType,
-  type ModifyInventoryItemMessage,
+  type ModifyInventoryMessage,
+  type ModifyInventoryMode,
+  type ModifyInventoryMod,
   type NpcShopActionMessage,
   type OpenNpcShopMessage,
   type SetFieldMessage,
@@ -604,6 +606,113 @@ fn apply_modify_inventory_message(
 }
 
 ///|
+fn apply_modify_inventory_batch_message(
+  state : State,
+  message : ModifyInventoryMessage,
+) -> Unit {
+  for mod in message.mods {
+    apply_modify_inventory_mod(state, mod, message.movement)
+  }
+}
+
+///|
+fn apply_modify_inventory_mod(
+  state : State,
+  mod : ModifyInventoryMod,
+  movement : Int?,
+) -> Unit {
+  match mod.mode {
+    ModifyInventoryMode::ADD =>
+      match mod.item {
+        Some(item) => apply_modify_inventory_message(state, item)
+        None => ()
+      }
+    ModifyInventoryMode::CHANGE_COUNT | ModifyInventoryMode::ADD_COUNT => {
+      let tab_items = state.items_by_tab.get(mod.t).unwrap_or([])
+      let new_count = mod.arg
+      if new_count <= 0 {
+        tab_items.retain(fn(it) { it.slot != mod.pos })
+      } else {
+        for i in 0..<tab_items.length() {
+          if tab_items[i].slot == mod.pos {
+            tab_items[i] = { ..tab_items[i], count: new_count }
+            break
+          }
+        }
+      }
+      tab_items.sort_by(slot_sort)
+      state.items_by_tab.set(mod.t, tab_items)
+    }
+    ModifyInventoryMode::REMOVE => {
+      let tab_items = state.items_by_tab.get(mod.t).unwrap_or([])
+      tab_items.retain(fn(it) { it.slot != mod.pos })
+      state.items_by_tab.set(mod.t, tab_items)
+    }
+    ModifyInventoryMode::SWAP => apply_modify_swap(state, mod, movement)
+  }
+}
+
+///|
+fn apply_modify_swap(
+  state : State,
+  mod : ModifyInventoryMod,
+  movement : Int?,
+) -> Unit {
+  let (from_tab, from_slot, to_tab, to_slot) = match movement {
+    Some(2) =>
+      (InventoryType::EQUIP, mod.pos, InventoryType::EQUIPPED, mod.arg.abs())
+    Some(1) =>
+      (InventoryType::EQUIPPED, mod.pos.abs(), InventoryType::EQUIP, mod.arg)
+    _ => {
+      let from_tab = if mod.pos < 0 { InventoryType::EQUIPPED } else { mod.t }
+      let to_tab = if mod.arg < 0 { InventoryType::EQUIPPED } else { mod.t }
+      (from_tab, mod.pos.abs(), to_tab, mod.arg.abs())
+    }
+  }
+  let from_items = state.items_by_tab.get(from_tab).unwrap_or([])
+  let to_items = state.items_by_tab.get(to_tab).unwrap_or([])
+  let from_idx = find_slot_index(from_items, from_slot)
+  let to_idx = find_slot_index(to_items, to_slot)
+  match (from_idx, to_idx) {
+    (Some(fi), Some(ti)) => {
+      let from_item = from_items[fi]
+      let to_item = to_items[ti]
+      from_items[fi] = { ..to_item, slot: from_slot, tab: from_tab }
+      to_items[ti] = { ..from_item, slot: to_slot, tab: to_tab }
+    }
+    (Some(fi), None) => {
+      let from_item = from_items[fi]
+      ignore(from_items.remove(fi))
+      if to_tab != InventoryType::EQUIPPED {
+        to_items.push({ ..from_item, slot: to_slot, tab: to_tab })
+      }
+    }
+    (None, Some(ti)) => {
+      let to_item = to_items[ti]
+      ignore(to_items.remove(ti))
+      if from_tab != InventoryType::EQUIPPED {
+        from_items.push({ ..to_item, slot: from_slot, tab: from_tab })
+      }
+    }
+    (None, None) => ()
+  }
+  from_items.sort_by(slot_sort)
+  to_items.sort_by(slot_sort)
+  state.items_by_tab.set(from_tab, from_items)
+  state.items_by_tab.set(to_tab, to_items)
+}
+
+///|
+fn find_slot_index(items : Array[DisplayInventoryItem], slot : Int) -> Int? {
+  for i in 0..<items.length() {
+    if items[i].slot == slot {
+      return Some(i)
+    }
+  }
+  None
+}
+
+///|
 fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2D) -> Int? {
   let x = pos[@selene_math.X]
   let y = pos[@selene_math.Y]
@@ -940,9 +1049,9 @@ pub fn setup_game_server_handlers() -> Unit {
     "shop_ui_modify_inventory",
     @net.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
-      let msg : ModifyInventoryItemMessage = @json.from_json(json)
+      let msg : ModifyInventoryMessage = @json.from_json(json)
       let state = state_ref.val
-      apply_modify_inventory_message(state, msg.item)
+      apply_modify_inventory_batch_message(state, msg)
       if state.visible {
         render_shop_ui(state)
       }

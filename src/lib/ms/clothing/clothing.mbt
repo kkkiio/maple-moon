@@ -25,6 +25,7 @@ pub(all) enum ClothingLayer {
   WEAPON_BELOW_ARM = 33
   MAILARM = 34
   WEAPON = 36
+  WEAPON_OVER_ARM = 37
   WRIST = 40
   GLOVE = 41
   WEAPON_OVER_GLOVE = 42
@@ -263,6 +264,7 @@ let sub_layer_names : Map[String, ClothingLayer] = {
   "gloveWristOverBody": ClothingLayer::WRIST_OVER_BODY,
   "capOverHair": ClothingLayer::CAP_OVER_HAIR,
   "capBelowBody": ClothingLayer::CAP_BELOW_BODY,
+  "weaponOverArm": ClothingLayer::WEAPON_OVER_ARM,
 }
 
 ///|

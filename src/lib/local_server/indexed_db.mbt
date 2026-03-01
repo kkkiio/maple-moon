@@ -132,6 +132,7 @@ fn inventory_tabs() -> Array[@server_proto.InventoryType] {
     @server_proto.InventoryType::SETUP,
     @server_proto.InventoryType::ETC,
     @server_proto.InventoryType::CASH,
+    @server_proto.InventoryType::EQUIPPED,
   ]
 }
 
@@ -171,33 +172,6 @@ async fn LocalServer::save_character_core_data(
       "meso": self.player_meso,
     },
   )
-}
-
-///|
-async fn LocalServer::save_character_inventory_data(
-  self : LocalServer,
-  character_id : Int,
-  revision : Int,
-) -> Unit {
-  for invtype in inventory_tabs() {
-    guard self.player_items.get(invtype) is Some(tab_items) else { continue }
-    let items : Array[Json] = []
-    for slot, item in tab_items {
-      let (item_id, count) = item
-      items.push({ "slot": slot, "item_id": item_id, "count": count })
-    }
-    self.db.save_json(
-      character_inventory_store_name,
-      character_inventory_tab_key(character_id, invtype),
-      {
-        "character_id": character_id,
-        "revision": revision,
-        "invtype": invtype.int_value(),
-        "slot_max": self.slot_max_by_tab.get(invtype).unwrap_or(0),
-        "items": items,
-      },
-    )
-  }
 }
 
 ///|
@@ -264,66 +238,10 @@ fn LocalServer::load_character_core_data(
 }
 
 ///|
-fn LocalServer::load_character_inventory_tab_data(
-  self : LocalServer,
-  data : Json,
-) -> Unit {
-  match data {
-    {
-      "invtype": Number(invtype, ..),
-      "items": Array(items),
-      "revision": Number(revision, ..),
-      ..
-    } => {
-      if revision.to_int() > self.character_revision {
-        self.character_revision = revision.to_int()
-      }
-      guard @server_proto.InventoryType::by_value(invtype.to_int())
-        is Some(invtype) else {
-        return
-      }
-      guard self.player_items.get(invtype) is Some(tab_items) else { return }
-      tab_items.clear()
-      for item in items {
-        match item {
-          {
-            "slot": Number(slot, ..),
-            "item_id": Number(item_id, ..),
-            "count": Number(count, ..),
-            ..
-          } => tab_items.set(slot.to_int(), (item_id.to_int(), count.to_int()))
-          _ => ()
-        }
-      }
-    }
-    { "invtype": Number(invtype, ..), "items": Array(items), .. } => {
-      guard @server_proto.InventoryType::by_value(invtype.to_int())
-        is Some(invtype) else {
-        return
-      }
-      guard self.player_items.get(invtype) is Some(tab_items) else { return }
-      tab_items.clear()
-      for item in items {
-        match item {
-          {
-            "slot": Number(slot, ..),
-            "item_id": Number(item_id, ..),
-            "count": Number(count, ..),
-            ..
-          } => tab_items.set(slot.to_int(), (item_id.to_int(), count.to_int()))
-          _ => ()
-        }
-      }
-    }
-    _ => ()
-  }
-}
-
-///|
 pub async fn LocalServer::load_character(
   self : LocalServer,
   character_id : Int,
-) -> Unit {
+) -> Bool {
   self.reset_player_inventory_state()
   let mut loaded_any = false
   if self.db.load_json(
@@ -344,7 +262,5 @@ pub async fn LocalServer::load_character(
       self.load_character_inventory_tab_data(data)
     }
   }
-  if loaded_any {
-    return
-  }
+  loaded_any
 }

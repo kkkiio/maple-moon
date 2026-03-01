@@ -32,6 +32,7 @@ fn game_start(_delta : Double) -> Unit {
   @monster.setup_game_server_handlers()
   @drop.setup_game_server_handlers()
   @inventory_ui.setup_game_server_handlers()
+  @inventory.setup_game_server_handlers()
   @shop_ui.setup_game_server_handlers()
   @inventory_ui.init_inventory_ui()
   @shop_ui.init_shop_ui()
@@ -75,6 +76,7 @@ fn main {
     @game_scene.scene_transition_system,
     system_name="scene_transition_system",
   )
+  .add_system(@game_scene.look_sync_system, system_name="look_sync_system")
   .add_system(@player.player_state_system, system_name="player_state_system")
   .add_system(@map.background_system, system_name="background_system")
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")

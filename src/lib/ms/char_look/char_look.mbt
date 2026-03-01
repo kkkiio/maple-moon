@@ -888,8 +888,18 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         // Since play_animation sets a single Z for the whole animation in Selene's Sprite,
         // we usually take the Z of the first frame or force them to be consistent.
         // Looking at the data, usually layers are consistent across frames for a single motion.
+        let current_frame = if @sprite.sprites.get(entity)
+          is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
+          if frame < layers.length() {
+            frame
+          } else {
+            0
+          }
+        } else {
+          0
+        }
         let z_layer = if layers.length() > 0 {
-          layers[0].int_value()
+          layers[current_frame].int_value()
         } else {
           0
         }
@@ -968,8 +978,7 @@ pub fn CharLook::set_stance(self : CharLook, st : StanceId) -> Unit {
   if self.action is Some(_) || st == StanceId::NONE {
     return
   }
-  // let adjstance = self.equips.adjust_stance(st)
-  let adjstance = st
+  let adjstance = self.equips.adjust_stance(st)
   if self.stance.get() != adjstance {
     self.stance.set(adjstance)
     // self.st_frame.set(0)
@@ -1115,6 +1124,7 @@ pub fn CharLook::add_equip(
 ) -> Unit raise {
   self.equips.add_equip(itemdata, slot, self.draw_info)
   self.updatetwohanded()
+  self.play_animations()
 }
 
 ///|
@@ -1123,6 +1133,7 @@ pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
   if slot == @slot.Id::WEAPON {
     self.updatetwohanded()
   }
+  self.play_animations()
 }
 
 ///|
@@ -1592,8 +1603,18 @@ fn CharLook::play_climbing_animations(
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.root_entity.spawn_child()
         })
+        let current_frame = if @sprite.sprites.get(entity)
+          is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
+          if frame < layers.length() {
+            frame
+          } else {
+            0
+          }
+        } else {
+          0
+        }
         let z_layer = if layers.length() > 0 {
-          layers[0].int_value()
+          layers[current_frame].int_value()
         } else {
           0
         }

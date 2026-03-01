@@ -32,7 +32,9 @@ Local server persists character data with segmented keys:
 - `store`: `character_inventory`
   - `key`: `char:{character_id}:inventory:{invtype}`
   - fields: `character_id`, `revision`, `invtype`, `slot_max`, `items`
-  - `items` entry shape: `{ "slot": Int, "item_id": Int, "count": Int }`
+  - `items` array format: Serialised array of `StorageItemEntry`. Data format:
+    - Normal Item: `{"Item": {"item_id": Int, "slot": Int, "count": Int}}`
+    - Equipment: `{"Equip": {"item_id": Int, "slot": Int, "str": Int, "dex": Int, "int_stat": Int, "luk": Int, "watk": Int, "magic": Int, "wdef": Int, "mdef": Int, "acc": Int, "avoid": Int, "hands": Int, "speed": Int, "jump": Int, "hp": Int, "mp": Int, "slots": Int, "level": Int, "itemlevel": Int, "itemexp": Int, "vicious": Int}}`
 
 Save timing:
 

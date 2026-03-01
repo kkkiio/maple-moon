@@ -51,7 +51,6 @@ struct Inventory {
   mut bullet_slot : Int
   item_listeners_map : Map[TypeId, Array[() -> Bool]] // TODO: fine-grained listeners
   meso_listeners : Array[(Int) -> Bool]
-  network : @net.Network
 }
 
 ///|
@@ -63,7 +62,19 @@ pub struct SlotItem {
 }
 
 ///|
-pub fn Inventory::new(network : @net.Network) -> Inventory {
+pub fn Inventory::clear(self : Inventory) -> Unit {
+  for _, inv in self.inventories.map {
+    inv.clear()
+  }
+  self.items.clear()
+  self.equips.clear()
+  self.pets.clear()
+  self.meso = 0
+  self.total_stats.map.clear()
+}
+
+///|
+pub fn Inventory::new() -> Inventory {
   {
     inventories: @utils.DefaultMap::new(fn() { Map::new() }),
     items: Map::new(),
@@ -74,12 +85,170 @@ pub fn Inventory::new(network : @net.Network) -> Inventory {
     bullet_slot: 0,
     total_stats: @utils.DefaultMap::new(fn() { 0 }),
     type_slot_count_map: Map::from_array([
+      (TypeId::EQUIP, 96),
+      (TypeId::USE, 96),
+      (TypeId::SETUP, 96),
+      (TypeId::ETC, 96),
+      (TypeId::CASH, 96),
       (TypeId::EQUIPPED, @equip_slot.Id::length()),
     ]),
     item_listeners_map: Map::new(),
     meso_listeners: Array::new(),
-    network,
   }
+}
+
+///|
+pub fn Inventory::apply_modify_inventory_message(
+  self : Inventory,
+  item_entry : @server_proto.InventoryItemEntry,
+) -> Unit {
+  match item_entry {
+    Equip(invtype~, slot~, id~, cash=_, flag~, itemlevel~, vicious~, stats~, ..) => {
+      if id <= 0 {
+        self.remove_slot_entry(invtype, slot)
+        self.trigger_item_listeners(invtype)
+        return
+      }
+      let unique_id = self.running_uid
+      self.running_uid += 1
+      let slot_item : SlotItem = { unique_id, item_id: id, count: 1 }
+      if slot > 0 {
+        self.inventories[invtype][slot] = slot_item
+      } else if slot < 0 {
+        self.inventories[TypeId::EQUIPPED][-slot] = slot_item
+      }
+      self.equips[unique_id] = {
+        item_id: id,
+        stats: stats.0,
+        expiration: 0,
+        owner: "",
+        flags: flag,
+        slots: 7,
+        level: 0,
+        item_level: itemlevel,
+        vicious,
+        potential_rank: @equip_data.Potential::POT_NONE,
+      }
+      self.trigger_item_listeners(invtype)
+      if slot < 0 {
+        self.trigger_item_listeners(TypeId::EQUIPPED)
+      }
+    }
+    Item(invtype~, slot~, id~, count~, ..) => {
+      let unique_id = self.running_uid
+      self.running_uid += 1
+      let slot_item : SlotItem = { unique_id, item_id: id, count }
+      self.inventories[invtype][slot] = slot_item
+      self.trigger_item_listeners(invtype)
+    }
+    _ => ()
+  }
+}
+
+///|
+fn Inventory::remove_slot_entry(
+  self : Inventory,
+  invtype : TypeId,
+  slot : Int,
+) -> Unit {
+  if self.inventories[invtype].get(slot) is Some(slot_item) {
+    self.inventories[invtype].remove(slot) |> ignore
+    self.equips.remove(slot_item.unique_id)
+    self.items.remove(slot_item.unique_id)
+    self.pets.remove(slot_item.unique_id)
+  }
+}
+
+///|
+fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
+  match self.item_listeners_map.get(t) {
+    Some(listeners) => {
+      let survivors = Array::new()
+      for callback in listeners {
+        if callback() {
+          survivors.push(callback)
+        }
+      }
+      self.item_listeners_map.set(t, survivors)
+    }
+    None => ()
+  }
+}
+
+///|
+pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "inventory_logic_modify_inventory",
+    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    fn(message_json : Json) -> Unit raise {
+      let message : @server_proto.ModifyInventoryMessage = @json.from_json(
+        message_json,
+      )
+      inventory.val.apply_local_modify_inventory_message(message)
+    },
+  )
+}
+
+///|
+pub fn Inventory::apply_local_modify_inventory_message(
+  self : Inventory,
+  message : @server_proto.ModifyInventoryMessage,
+) -> Unit {
+  @log.info("apply_local_modify_inventory_message before", data={
+    "mods": message.mods,
+    "movement": message.movement,
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
+  })
+  for mod in message.mods {
+    match mod.mode {
+      @server_proto.ModifyInventoryMode::ADD =>
+        match mod.item {
+          Some(item) => self.apply_modify_inventory_message(item)
+          None => ()
+        }
+      @server_proto.ModifyInventoryMode::CHANGE_COUNT =>
+        self.modify(
+          mod.t,
+          mod.pos,
+          ModificationMode::CHANGE_COUNT,
+          mod.arg,
+          Movement::MOVE_NONE,
+        )
+      @server_proto.ModifyInventoryMode::REMOVE =>
+        self.modify(
+          mod.t,
+          mod.pos,
+          ModificationMode::REMOVE,
+          0,
+          Movement::MOVE_INTERNAL,
+        )
+      @server_proto.ModifyInventoryMode::ADD_COUNT =>
+        self.modify(
+          mod.t,
+          mod.pos,
+          ModificationMode::ADD_COUNT,
+          mod.arg,
+          Movement::MOVE_NONE,
+        )
+      @server_proto.ModifyInventoryMode::SWAP => ()
+    }
+  }
+  let movement = match message.movement {
+    Some(v) => Movement::from_int(v) catch { _ => Movement::MOVE_INTERNAL }
+    None => Movement::MOVE_INTERNAL
+  }
+  for mod in message.mods {
+    match mod.mode {
+      @server_proto.ModifyInventoryMode::SWAP =>
+        self.modify(mod.t, mod.pos, ModificationMode::SWAP, mod.arg, movement)
+      _ => ()
+    }
+  }
+  @log.info("apply_local_modify_inventory_message after", data={
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
+  })
 }
 
 ///|
@@ -301,6 +470,7 @@ pub fn Inventory::modify(
   arg : Int,
   mov : Movement,
 ) -> Unit {
+  let mut notify_other_tab : TypeId? = None
   let (slot, t) = if slot < 0 { (-slot, TypeId::EQUIPPED) } else { (slot, t) }
   let arg = arg.abs()
   match mode {
@@ -309,16 +479,24 @@ pub fn Inventory::modify(
     ModificationMode::SWAP =>
       match mov {
         Movement::MOVE_INTERNAL => self.swap(t, slot, t, arg)
-        Movement::MOVE_UNEQUIP =>
+        Movement::MOVE_UNEQUIP => {
           self.swap(TypeId::EQUIPPED, slot, TypeId::EQUIP, arg)
-        Movement::MOVE_EQUIP =>
+          notify_other_tab = Some(TypeId::EQUIP)
+        }
+        Movement::MOVE_EQUIP => {
           self.swap(TypeId::EQUIP, slot, TypeId::EQUIPPED, arg)
+          notify_other_tab = Some(TypeId::EQUIPPED)
+        }
         _ => ()
       }
     ModificationMode::REMOVE => self.remove(t, slot)
     ModificationMode::ADD(_) => ()
   }
   self.notify_item_listeners(t)
+  match notify_other_tab {
+    Some(other_tab) if other_tab != t => self.notify_item_listeners(other_tab)
+    _ => ()
+  }
 }
 
 ///|
@@ -459,8 +637,116 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
   guard TypeId::by_item_id(itemid) is Some(type_) else { return }
   guard self.find_item(type_, itemid) is Some(slot_no) else { return }
   if type_ is TypeId::USE {
-    self.network.send_message(UseItemMessage::new(slot_no.0, itemid))
+    @game_server.send(@server_proto.UseItemMessage::{
+      slot_no: slot_no.0,
+      item_id: itemid,
+    })
   }
+}
+
+///|
+pub let inventory : Ref[Inventory] = Ref::new(Inventory::new())
+
+///|
+pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {
+  let self = inventory.val
+  @log.info("use_item_at_slot type=\{type_id} slot=\{slot_no}")
+  match type_id {
+    EQUIP => {
+      guard @player.get_player() is Some(player) else { return None }
+      guard self.get_slot_item_at(type_id, slot_no) is Some(item) else {
+        return Some("no item at slot \{slot_no} of \{type_id}")
+      }
+      let item_data = @item.request_item_data(item.item_id)
+      let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {
+        e => return Some("failed to parse equip data: \{e}, id=\{item.item_id}")
+      }
+      match can_wear_equip(player, equip_data) {
+        Some(hint) => return Some(hint)
+        None => ()
+      }
+      let equip_message : @server_proto.MoveItemMessage = {
+        invtype: type_id,
+        slot: slot_no,
+        action: -find_equip_slot(self, equip_data).int_value(),
+        qty: 1,
+      }
+      @game_server.send(equip_message)
+      None
+    }
+    USE => {
+      let item_id = self.get_item_id(type_id, slot_no)
+      if item_id <= 0 {
+        return Some("not found item id at slot \{slot_no} of \{type_id}")
+      }
+      @game_server.send(@server_proto.UseItemMessage::{ slot_no, item_id })
+      None
+    }
+    _ => Some("not supported kind \{type_id}")
+  }
+}
+
+///|
+fn can_wear_equip(
+  player : @player.Player,
+  _equip_data : @equip_data.EquipData,
+) -> String? {
+  let alerted = player.character.is_alerted()
+  if alerted {
+    return Some("character is alerted")
+  }
+  return None
+  // let stats = player.get_stats()
+  // let reqGender = equip_data.get_gender()
+  // let female = stats.get_female()
+  // match reqGender {
+  //   0 => // Male
+  //     if female {
+  //       return Some("required gender is male")
+  //     }
+  //   1 => // Female
+  //     if not(female) {
+  //       return Some("required gender is female")
+  //     }
+  //   2 => () // Unisex
+  //   _ => panic() // unknown gender
+  // }
+  // let reqLevel = equip_data.get_reqstat(@maple_stat.Id::LEVEL)
+  // let reqDEX = equip_data.get_reqstat(@maple_stat.Id::DEX)
+  // let reqSTR = equip_data.get_reqstat(@maple_stat.Id::STR)
+  // let reqLUK = equip_data.get_reqstat(@maple_stat.Id::LUK)
+  // let reqINT = equip_data.get_reqstat(@maple_stat.Id::INT)
+  // let reqFAME = equip_data.get_reqstat(@maple_stat.Id::FAME)
+  // let hints = []
+  // let level = stats.get_stat(@maple_stat.Id::LEVEL)
+  // if reqLevel > level {
+  //   hints.push("require level \{reqLevel} but got \{level}")
+  // }
+  // let dex = stats.get_total(@maple_stat.EquipStatId::DEX)
+  // if reqDEX > dex {
+  //   hints.push("require dex \{reqDEX} but got \{dex}")
+  // }
+  // let str = stats.get_total(@maple_stat.EquipStatId::STR)
+  // if reqSTR > str {
+  //   hints.push("require str \{reqSTR} but got \{str}")
+  // }
+  // let luk = stats.get_total(@maple_stat.EquipStatId::LUK)
+  // if reqLUK > luk {
+  //   hints.push("require luk \{reqLUK} but got \{luk}")
+  // }
+  // let int = stats.get_total(@maple_stat.EquipStatId::INT)
+  // if reqINT > int {
+  //   hints.push("require int \{reqINT} but got \{int}")
+  // }
+  // let fame = 0 // TODO: support honor
+  // if reqFAME > fame {
+  //   hints.push("require fame \{reqFAME} but got \{fame}")
+  // }
+  // if hints.is_empty() {
+  //   None
+  // } else {
+  //   Some(hints.join(", "))
+  // }
 }
 
 ///|

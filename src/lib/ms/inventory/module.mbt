@@ -1,14 +1,11 @@
 ///|
 struct Module {
   inventory : Inventory
-  player_getter : () -> @player.Player?
-  network : @net.Network
 }
 
 ///|
-pub fn Module::load(player_getter : () -> @player.Player?) -> Module {
-  let network = @net.Network::get()
-  { inventory: Inventory::new(network), player_getter, network }
+pub fn Module::load(_player_getter : () -> @player.Player?) -> Module {
+  { inventory: Inventory::new() }
 }
 
 ///|
@@ -18,19 +15,9 @@ pub fn Module::get_inventory(self : Module) -> Inventory {
 
 ///|
 pub fn Module::make_handlers(
-  self : Module,
+  _self : Module,
 ) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
-  [
-    @net.make_handler(
-      @net.MODIFY_INVENTORY,
-      parse_modify_inventory,
-      fn(message) {
-        handle_modify_inventory(self.inventory, self.player_getter, message)
-      },
-      log_recv=true,
-    ),
-  ]
-  |> Map::from_array
+  {}
 }
 
 ///|
@@ -81,18 +68,6 @@ pub fn Module::make_show_status_info_handlers(
       }
     },
   }
-}
-
-///|
-/// Packet which requests that an item is equipped
-priv struct EquipItemMessage {
-  src : Int
-  dest : @equip_slot.Id
-} derive(Show)
-
-///|
-impl @net.OutMessage for EquipItemMessage with pack(self) -> @net.OutPacket {
-  new_move_item_packet(TypeId::EQUIP, self.src, -self.dest.int_value(), 1)
 }
 
 ///|

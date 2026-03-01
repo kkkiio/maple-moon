@@ -6,29 +6,14 @@ import {
   "KKKIIO/maple-moon/lib/ms/pet",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/ms/player",
-  "KKKIIO/maple-moon/lib/ms/character",
-  "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
-  "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/legacy_types",
+  "moonbitlang/core/json" @json,
+  "KKKIIO/maple-moon/lib/game_server",
 }
-
-options(
-  link: {
-    "js": {
-      "exports": [
-        "watch_inventory_by_kind",
-        "watch_meso",
-        "use_item_at",
-        "drop_item",
-      ],
-      "format": "esm",
-    },
-  },
-)

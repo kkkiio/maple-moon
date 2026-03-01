@@ -23,6 +23,7 @@ import {
   "KKKIIO/maple-moon/lib/gm",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/local_server",
 }
 

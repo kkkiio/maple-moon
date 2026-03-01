@@ -49,6 +49,7 @@ pub(all) enum ClothingLayer {
   WEAPON_BELOW_ARM
   MAILARM
   WEAPON
+  WEAPON_OVER_ARM
   WRIST
   GLOVE
   WEAPON_OVER_GLOVE

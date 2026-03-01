@@ -159,10 +159,9 @@ fn register_local_inventory_sync_handler_once(
     "modify_inventory_local",
     @net.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
-      let message : @server_proto.ModifyInventoryItemMessage = @json.from_json(
+      let _message : @server_proto.ModifyInventoryMessage = @json.from_json(
         json,
       )
-      @inventory.handle_item(inventory, message.item)
     },
   )
 }
@@ -255,7 +254,7 @@ fn handle_skills(
 using @server_proto {
   type ChangeStatsMesoMessage,
   type InventoryEntry,
-  type ModifyInventoryItemMessage,
+  type ModifyInventoryMessage,
   type ShowStatusMesoGainMessage,
   type SkillEntry,
 }

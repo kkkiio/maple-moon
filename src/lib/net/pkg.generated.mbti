@@ -96,6 +96,7 @@ pub enum ConnectionStatus {
 pub impl Eq for ConnectionStatus
 pub impl Show for ConnectionStatus
 
+#deprecated
 type InPacket
 pub fn InPacket::available(Self) -> Int
 pub fn InPacket::check_available(Self, Int) -> Unit raise ReadPacketError

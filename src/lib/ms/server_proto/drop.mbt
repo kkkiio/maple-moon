@@ -65,12 +65,33 @@ pub impl ServerMessage for ShowStatusMesoGainMessage with type_code() {
 }
 
 ///|
-/// Local-server MODIFY_INVENTORY sync event.
-pub(all) struct ModifyInventoryItemMessage {
-  item : InventoryItemEntry
+/// Local-server MODIFY_INVENTORY mod mode.
+pub(all) enum ModifyInventoryMode {
+  ADD
+  CHANGE_COUNT
+  SWAP
+  REMOVE
+  ADD_COUNT
 } derive(Show, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for ModifyInventoryItemMessage with type_code() {
+/// Local-server MODIFY_INVENTORY single mod entry.
+pub(all) struct ModifyInventoryMod {
+  mode : ModifyInventoryMode
+  t : InventoryType
+  pos : Int
+  arg : Int
+  item : InventoryItemEntry?
+} derive(Show, ToJson, FromJson)
+
+///|
+/// Local-server MODIFY_INVENTORY sync event (batch + movement).
+pub(all) struct ModifyInventoryMessage {
+  mods : Array[ModifyInventoryMod]
+  movement : Int?
+} derive(Show, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for ModifyInventoryMessage with type_code() {
   @net.Opcode::MODIFY_INVENTORY.int_value()
 }

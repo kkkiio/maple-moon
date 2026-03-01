@@ -1,4 +1,5 @@
 ///|
+#deprecated("use add_server_message_handler instead")
 struct InPacket {
   bytes : Bytes
   mut pos : Int

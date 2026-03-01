@@ -3,10 +3,10 @@ let loading_data_ref : Ref[
   @utils.Future[
     Result[
       (
-        @item.ItemData,
-        @item.ItemData,
-        @item.ItemData,
-        @item.ItemData,
+        @item.ItemData?,
+        @item.ItemData?,
+        @item.ItemData?,
+        @item.ItemData?,
         @char_look.Hair,
         @char_look.Face,
         @resource.AsyncLoader,
@@ -21,10 +21,10 @@ let loading_data_ref : Ref[
 pub fn get_loading_data() -> @utils.Future[
   Result[
     (
-      @item.ItemData,
-      @item.ItemData,
-      @item.ItemData,
-      @item.ItemData,
+      @item.ItemData?,
+      @item.ItemData?,
+      @item.ItemData?,
+      @item.ItemData?,
       @char_look.Hair,
       @char_look.Face,
       @resource.AsyncLoader,
@@ -41,10 +41,10 @@ pub fn set_loading_data(
   fut : @utils.Future[
     Result[
       (
-        @item.ItemData,
-        @item.ItemData,
-        @item.ItemData,
-        @item.ItemData,
+        @item.ItemData?,
+        @item.ItemData?,
+        @item.ItemData?,
+        @item.ItemData?,
         @char_look.Hair,
         @char_look.Face,
         @resource.AsyncLoader,

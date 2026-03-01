@@ -63,16 +63,25 @@ pub(all) struct PlayerQuestLogInfo {
 
 ///|
 pub(all) enum InventoryType {
-  EQUIP = 1
-  USE = 2
-  SETUP = 3
-  ETC = 4
-  CASH = 5
-  EQUIPPED = 6
+  EQUIP
+  USE
+  SETUP
+  ETC
+  CASH
+  EQUIPPED
 } derive(Eq, Hash, Show, ToJson, @json.FromJson)
 
 ///|
-pub fn InventoryType::int_value(self : InventoryType) -> Int = "%identity"
+pub fn InventoryType::int_value(self : InventoryType) -> Int {
+  match self {
+    InventoryType::EQUIP => 1
+    InventoryType::USE => 2
+    InventoryType::SETUP => 3
+    InventoryType::ETC => 4
+    InventoryType::CASH => 5
+    InventoryType::EQUIPPED => -1
+  }
+}
 
 ///|
 pub fn InventoryType::by_item_id(item_id : Int) -> InventoryType? {

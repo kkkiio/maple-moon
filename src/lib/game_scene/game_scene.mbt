@@ -152,20 +152,6 @@ pub fn get_stage() -> Stage? {
 }
 
 ///|
-fn required_equipped_item_id_or_fail(
-  items : Array[@server_proto.InventoryItemEntry],
-  slot_id : @slot.Id,
-) -> Int {
-  match find_equipped_item_id(items, slot_id) {
-    Some(item_id) => item_id
-    None => {
-      @log.fatal("missing required equipped item", data={
-        "slot_id": slot_id.int_value(),
-      })
-      panic()
-    }
-  }
-}
 
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
@@ -201,19 +187,16 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       guard get_loading_data() is Some(fut) else {
         guard @char_look.get_module() is Some(char_look_mod) else { return }
         let draw_info = char_look_mod.draw_info
-        let weapon_id = required_equipped_item_id_or_fail(
+        let weapon_id = find_equipped_item_id(
           inventory_entry.items,
           @slot.Id::WEAPON,
         )
-        let top_id = required_equipped_item_id_or_fail(
-          inventory_entry.items,
-          @slot.Id::TOP,
-        )
-        let bottom_id = required_equipped_item_id_or_fail(
+        let top_id = find_equipped_item_id(inventory_entry.items, @slot.Id::TOP)
+        let bottom_id = find_equipped_item_id(
           inventory_entry.items,
           @slot.Id::BOTTOM,
         )
-        let shoes_id = required_equipped_item_id_or_fail(
+        let shoes_id = find_equipped_item_id(
           inventory_entry.items,
           @slot.Id::SHOES,
         )
@@ -221,24 +204,46 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           @io_service.submit_background_task(async fn() {
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
-            let weapon_data = @item.request_item_data(weapon_id)
-            let top_data = @item.request_item_data(top_id)
-            let bottom_data = @item.request_item_data(bottom_id)
-            let shoes_data = @item.request_item_data(shoes_id)
-            let after_image_name = match weapon_data.get_info() {
-              { "afterImage": Json::String(after_image), .. } => after_image
-              _ => {
-                @log.fatal("weapon missing afterImage", data={
-                  "item_id": weapon_id,
-                })
-                panic()
-              }
+            let weapon_data = match weapon_id {
+              Some(id) => Some(@item.request_item_data(id))
+              None => None
             }
-            let after_image_res = @resource.get_afterimage_loader()
-              .load_res_async(["\{after_image_name}.img"])
-              .value()
-            let after_images = @json.from_json(after_image_res)
-            @char_look.set_after_images(after_image_name, after_images)
+            let top_data = match top_id {
+              Some(id) => Some(@item.request_item_data(id))
+              None => None
+            }
+            let bottom_data = match bottom_id {
+              Some(id) => Some(@item.request_item_data(id))
+              None => None
+            }
+            let shoes_data = match shoes_id {
+              Some(id) => Some(@item.request_item_data(id))
+              None => None
+            }
+            let after_image_name = match weapon_data {
+              Some(w_data) =>
+                match w_data.get_info() {
+                  { "afterImage": Json::String(after_image), .. } =>
+                    Some(after_image)
+                  _ => {
+                    @log.fatal("weapon missing afterImage", data={
+                      "item_id": weapon_id.unwrap_or(0),
+                    })
+                    panic()
+                  }
+                }
+              None => None
+            }
+            match after_image_name {
+              Some(after_image_name) => {
+                let after_image_res = @resource.get_afterimage_loader()
+                  .load_res_async(["\{after_image_name}.img"])
+                  .value()
+                let after_images = @json.from_json(after_image_res)
+                @char_look.set_after_images(after_image_name, after_images)
+              }
+              None => ()
+            }
             // Load and register skills (optional - missing skills log warning only)
             let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
@@ -301,10 +306,22 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
           draw_info,
         )
         // 装备加载好的武器和初始装备
-        look.add_equip(weapon_data, @slot.Id::WEAPON)
-        look.add_equip(top_data, @slot.Id::TOP)
-        look.add_equip(bottom_data, @slot.Id::BOTTOM)
-        look.add_equip(shoes_data, @slot.Id::SHOES)
+        match weapon_data {
+          Some(data) => look.add_equip(data, @slot.Id::WEAPON)
+          None => ()
+        }
+        match top_data {
+          Some(data) => look.add_equip(data, @slot.Id::TOP)
+          None => ()
+        }
+        match bottom_data {
+          Some(data) => look.add_equip(data, @slot.Id::BOTTOM)
+          None => ()
+        }
+        match shoes_data {
+          Some(data) => look.add_equip(data, @slot.Id::SHOES)
+          None => ()
+        }
         look
       } catch {
         e => @log.fatal("fail to load char look", data={ "error": e })
@@ -322,7 +339,16 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       }
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
-      @inventory_ui.set_inventory_entry(inventory_entry)
+      let global_inv = @inventory.inventory.val
+      global_inv.clear()
+      global_inv.set_meso(inventory_entry.meso)
+      for kind, slotmax in inventory_entry.slot_maxs.0 {
+        global_inv.set_slotmax(kind, slotmax)
+      }
+      for item in inventory_entry.items {
+        @inventory.handle_item(global_inv, item)
+      }
+      @inventory_ui.bind_inventory(global_inv)
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()

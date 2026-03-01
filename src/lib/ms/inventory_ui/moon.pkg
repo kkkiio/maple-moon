@@ -18,4 +18,5 @@ import {
   "Milky2018/selene/position",
   "Milky2018/selene/sprite",
   "Milky2018/selene/ui" @selene_ui,
+  "Milky2018/selene/collision",
 }

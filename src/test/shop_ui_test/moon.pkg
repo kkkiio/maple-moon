@@ -3,6 +3,7 @@ import {
   "moonbitlang/async",
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/io_service",
+  "KKKIIO/maple-moon/lib/local_server/shop_sheet" @shop_sheet,
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/shop_ui",

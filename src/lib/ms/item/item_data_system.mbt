@@ -36,20 +36,23 @@ pub fn ItemDataSystem::new(
 }
 
 ///|
-let item_data_system_ref : Ref[ItemDataSystem] = Ref::new(
-  ItemDataSystem::new(get_item_loader()),
-)
+let item_data_system_ref : Ref[ItemDataSystem?] = Ref::new(None)
 
 ///|
 /// Replaces the global item-data system instance.
 pub fn set_item_data_system(system : ItemDataSystem) -> Unit {
-  item_data_system_ref.val = system
+  item_data_system_ref.val = Some(system)
 }
 
 ///|
 /// Gets the global item-data system instance.
 pub fn get_item_data_system() -> ItemDataSystem {
-  item_data_system_ref.val
+  if item_data_system_ref.val is Some(system) {
+    return system
+  }
+  let system = ItemDataSystem::new(get_item_loader())
+  item_data_system_ref.val = Some(system)
+  system
 }
 
 ///|

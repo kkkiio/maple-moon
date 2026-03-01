@@ -16,11 +16,17 @@ pub fn collect_spritesheet_paths(Json) -> Array[String]
 
 pub fn get_afterimage_loader() -> AsyncLoader
 
+pub fn get_async_loader(String) -> AsyncLoader
+
 pub fn get_background_set_loader() -> AsyncLoader
 
 pub fn get_body_loader() -> AsyncLoader
 
 pub fn get_character_loader() -> AsyncLoader
+
+pub fn get_csv_loader() -> CsvLoader
+
+pub fn get_csv_loader_by_name(String) -> CsvLoader
 
 pub fn get_effect_loader() -> AsyncLoader
 
@@ -46,6 +52,8 @@ pub fn get_skill_loader() -> AsyncLoader
 
 pub fn get_string_loader() -> AsyncLoader
 
+pub fn get_text_loader(String) -> TextLoader
+
 pub fn get_tile_loader() -> AsyncLoader
 
 pub fn get_ui_window_2_loader() -> AsyncLoader
@@ -61,6 +69,52 @@ pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, 
 pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -> Array[T] raise @json.JsonDecodeError
 
 pub fn patch_image(Json, Map[String, SpritesheetMetadata], base_url? : String) -> Json raise
+
+pub fn register_async_loader(String, AsyncLoader) -> Unit
+
+pub fn register_csv_loader(String, CsvLoader) -> Unit
+
+pub fn register_text_loader(String, TextLoader) -> Unit
+
+pub fn set_afterimage_loader(AsyncLoader) -> Unit
+
+pub fn set_background_set_loader(AsyncLoader) -> Unit
+
+pub fn set_body_loader(AsyncLoader) -> Unit
+
+pub fn set_character_loader(AsyncLoader) -> Unit
+
+pub fn set_csv_loader(CsvLoader) -> Unit
+
+pub fn set_effect_loader(AsyncLoader) -> Unit
+
+pub fn set_face_loader(AsyncLoader) -> Unit
+
+pub fn set_hair_loader(AsyncLoader) -> Unit
+
+pub fn set_item_loader(AsyncLoader) -> Unit
+
+pub fn set_item_special_loader(AsyncLoader) -> Unit
+
+pub fn set_map_latest_loader(AsyncLoader) -> Unit
+
+pub fn set_mapx_loader(AsyncLoader) -> Unit
+
+pub fn set_mob_loader(AsyncLoader) -> Unit
+
+pub fn set_npc_loader(AsyncLoader) -> Unit
+
+pub fn set_object_loader(AsyncLoader) -> Unit
+
+pub fn set_skill_loader(AsyncLoader) -> Unit
+
+pub fn set_string_loader(AsyncLoader) -> Unit
+
+pub fn set_tile_loader(AsyncLoader) -> Unit
+
+pub fn set_ui_window_2_loader(AsyncLoader) -> Unit
+
+pub fn set_ui_window_4_loader(AsyncLoader) -> Unit
 
 // Errors
 pub(all) suberror LoadError {
@@ -83,6 +137,12 @@ pub impl ToJson for Bitmap
 type CompositeAsyncResourceLoader
 pub fn CompositeAsyncResourceLoader::new(Map[String, &AsyncResourceLoader]) -> Self
 pub impl AsyncResourceLoader for CompositeAsyncResourceLoader
+
+pub struct CsvLoader {
+  inner : TextLoader
+}
+pub async fn CsvLoader::load_text(Self, String) -> String
+pub fn CsvLoader::new(loader~ : &CsvTextLoader) -> Self
 
 type DirResourceLoader
 pub fn DirResourceLoader::new(String) -> Self
@@ -212,10 +272,24 @@ type SyncLoader
 pub async fn SyncLoader::load(String, String, ImageLoader) -> Self
 pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode
 
+pub struct TextLoader {
+  loader : &TextResourceLoader
+}
+pub async fn TextLoader::load_text(Self, String) -> String
+pub fn TextLoader::new(loader~ : &TextResourceLoader) -> Self
+
 // Type aliases
 
 // Traits
 pub(open) trait AsyncResourceLoader {
   async load_data(Self, StringView) -> Json
+}
+
+pub(open) trait CsvTextLoader {
+  async load_text(Self, String) -> String
+}
+
+pub(open) trait TextResourceLoader {
+  async load_text(Self, String) -> String
 }
 

@@ -1,0 +1,30 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/local_server/drop_sheet"
+
+import {
+  "KKKIIO/maple-moon/lib/resource",
+}
+
+// Values
+pub fn build_drop_row_map(String) -> Map[Int, Array[NxMobDropRow]]
+
+pub async fn load_drop_row_map(@resource.CsvLoader, String) -> Map[Int, Array[NxMobDropRow]]
+
+pub fn parse_drop_rows(String) -> Array[NxMobDropRow]
+
+// Errors
+
+// Types and methods
+pub struct NxMobDropRow {
+  dropperid : Int
+  itemid : Int
+  minimum_quantity : Int
+  maximum_quantity : Int
+  questid : Int
+  chance : Int
+}
+
+// Type aliases
+
+// Traits
+

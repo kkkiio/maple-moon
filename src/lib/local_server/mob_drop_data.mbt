@@ -32,59 +32,22 @@ struct MobDropDatabase {
 /// - questid: 关联任务ID (0表示无任务限制)
 /// - chance: 掉落概率 (基数 1000000)
 pub fn MobDropDatabase::from_csv(csv_content : String) -> MobDropDatabase {
-  let drops : Map[Int, Array[MobDropEntry]] = Map::new()
-  let lines = csv_content.split("\n").collect()
-
-  // 跳过表头，从第二行开始解析
-  for i = 1; i < lines.length(); i = i + 1 {
-    let line = lines[i].trim()
-    if line.is_empty() {
-      continue
+  let drops : Map[Int, Array[MobDropEntry]] = {}
+  let by_dropper = @drop_sheet.build_drop_row_map(csv_content)
+  for dropperid, rows in by_dropper {
+    let entries : Array[MobDropEntry] = []
+    for row in rows {
+      entries.push({
+        dropperid: row.dropperid,
+        itemid: row.itemid,
+        minimum_quantity: row.minimum_quantity,
+        maximum_quantity: row.maximum_quantity,
+        questid: row.questid,
+        chance: row.chance,
+      })
     }
-
-    // 解析CSV行（处理引号）
-    let fields = @csv.parse_csv_line(line.to_string())
-    // 需要7个字段: id, dropperid, itemid, minimum_quantity, maximum_quantity, questid, chance
-    if fields.length() < 7 {
-      continue
-    }
-
-    // 跳过id字段(fields[0])，从dropperid开始解析
-    let dropperid = @strconv.parse_int(@csv.strip_quotes(fields[1])) catch {
-      _ => continue
-    }
-    let itemid = @strconv.parse_int(@csv.strip_quotes(fields[2])) catch {
-      _ => continue
-    }
-    let min_qty = @strconv.parse_int(@csv.strip_quotes(fields[3])) catch {
-      _ => continue
-    }
-    let max_qty = @strconv.parse_int(@csv.strip_quotes(fields[4])) catch {
-      _ => continue
-    }
-    let questid = @strconv.parse_int(@csv.strip_quotes(fields[5])) catch {
-      _ => continue
-    }
-    let chance = @strconv.parse_int(@csv.strip_quotes(fields[6])) catch {
-      _ => continue
-    }
-
-    let entry : MobDropEntry = {
-      dropperid,
-      itemid,
-      minimum_quantity: min_qty,
-      maximum_quantity: max_qty,
-      questid,
-      chance,
-    }
-
-    // 按怪物ID分组存储
-    match drops.get(dropperid) {
-      Some(list) => list.push(entry)
-      None => drops.set(dropperid, [entry])
-    }
+    drops.set(dropperid, entries)
   }
-
   { drops, }
 }
 

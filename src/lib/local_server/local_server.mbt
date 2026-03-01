@@ -857,24 +857,20 @@ pub fn server_system(server : LocalServer) -> Unit {
 }
 
 ///|
-/// 通过 JS fetch 加载文本
-extern "js" fn fetch_text(path : String) -> @js.Promise =
-  #| (p) => fetch(p).then((res) => res.text())
-
-///|
 /// 加载怪物掉落数据库
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
+  let csv_loader = @resource.get_csv_loader()
   // 加载怪物特定掉落
   @io_service.execute_background(async fn() {
-    let text : String = fetch_text("/assets/data/mob_drops.csv").wait()
-      |> @js.Value::cast
+    let text : String = csv_loader.load_text("/assets/data/mob_drops.csv")
     self.drop_db = Some(MobDropDatabase::from_csv(text))
     @log.info("Loaded mob_drops.csv", data={})
   })
   // 加载全局掉落
   @io_service.execute_background(async fn() {
-    let text : String = fetch_text("/assets/data/drop_data_global.csv").wait()
-      |> @js.Value::cast
+    let text : String = csv_loader.load_text(
+      "/assets/data/drop_data_global.csv",
+    )
     self.global_drop_db = Some(MobDropDatabase::from_csv(text))
     @log.info("Loaded drop_data_global.csv", data={})
   })

@@ -1,0 +1,477 @@
+/// 定义一些内置的资源的加载器.
+/// 
+/// 部分资源还保存在 r2:maple 存储里, 旧域名是 maple-res.kkkiiox.work.
+/// 这些资源需要先复制回本地项目, 可以通过 `rclone` 复制, 例如:
+/// 
+/// ```bash
+/// rclone copy -v --no-update-modtime r2:maple/Map/Map0 .local/r2/Map/Map0
+/// ```
+/// 
+/// 再通过可选的 cmd/reanim 工具处理, 输出到 assets 目录下.
+///
+/// 对于从 r2 迁移的资源, 它们引用的子资源路径往往是相对于旧域名根目录的.
+/// 例如: 资源中引用 `"images/Map/29108.png"`, 而本地实际存储在 `"assets/images/Map/29108.png"`.
+/// 为了兼容这种情况, `@resource.AsyncLoader` 提供了 `base_url` 和 `image_base_url` 选项来修正路径解析.
+
+///|
+/// Lazy initialization.
+priv struct Lazy[T] {
+  mut val : T?
+  init_f : () -> T
+}
+
+///|
+fn[T] Lazy::new(init_f : () -> T) -> Lazy[T] {
+  { val: None, init_f }
+}
+
+///|
+/// get value or init.
+fn[T] Lazy::get(self : Lazy[T]) -> T {
+  if self.val is Some(val) {
+    return val
+  }
+  let val = (self.init_f)()
+  self.val = Some(val)
+  val
+}
+
+///|
+priv struct FetchCsvTextLoader {
+  dummy : Unit
+}
+
+///|
+fn FetchCsvTextLoader::new() -> FetchCsvTextLoader {
+  { dummy: () }
+}
+
+///|
+extern "js" fn fetch_text(path : String) -> @js.Promise =
+  #| (p) => fetch(p).then((res) => res.text())
+
+///|
+impl @resource.CsvTextLoader for FetchCsvTextLoader with load_text(self, path) -> String {
+  ignore(self.dummy)
+  fetch_text(path).wait() |> @js.Value::cast
+}
+
+///|
+let mapx_loader : Ref[@resource.AsyncLoader?] = Ref::new(None)
+
+///|
+/// 获取地图信息的加载器.
+fn get_mapx_loader() -> @resource.AsyncLoader {
+  if mapx_loader.val is Some(loader) {
+    return loader
+  }
+  let loader = @resource.CompositeAsyncResourceLoader::new({
+    "Map0/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map0",
+    ),
+    "Map1/": @resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Map1",
+      "/assets/map/map1",
+    ),
+    "Map2/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map2",
+    ),
+    "Map3/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map3",
+    ),
+    "Map4/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map4",
+    ),
+    "Map5/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map5",
+    ),
+    "Map6/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map6",
+    ),
+    "Map7/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map7",
+    ),
+    "Map8/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map8",
+    ),
+    "Map9/": @resource.DirResourceLoader::new(
+      "https://maple-res.kkkiiox.work/Map/Map9",
+    ),
+  })
+  let loader = @resource.AsyncLoader::new("mapx", loader~, base_url="/assets")
+  mapx_loader.val = Some(loader)
+  loader
+}
+
+///|
+let map_latest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "map_latest",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Obj/": @resource.DirResourceLoader::new("/assets/map/obj"),
+      "MapHelper.img/": @resource.DirResourceLoader::new(
+        "/assets/spritesheets/Map/MapHelper.img",
+      ),
+    }),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_map_latest_loader() -> @resource.AsyncLoader {
+  map_latest_loader.get()
+}
+
+///|
+let background_set_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "background_set_loader",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Back",
+      "/assets/map/back",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取背景集的加载器.
+fn get_background_set_loader() -> @resource.AsyncLoader {
+  background_set_loader.get()
+}
+
+///|
+let object_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "object_loader",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Obj",
+      "/assets/map/obj",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取地图对象的加载器.
+fn get_object_loader() -> @resource.AsyncLoader {
+  object_loader.get()
+}
+
+///|
+let tile_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "tile",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Map/Tile",
+      "/assets/map/tile",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取地图瓦片的加载器.
+fn get_tile_loader() -> @resource.AsyncLoader {
+  tile_loader.get()
+}
+
+///|
+let mob_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "mob",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Mob",
+      "/assets/Mob",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+/// 获取怪物资源的加载器.
+fn get_mob_loader() -> @resource.AsyncLoader {
+  mob_loader.get()
+}
+
+///|
+let skill_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "skill",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Skill",
+      "/assets/skill",
+    ),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_skill_loader() -> @resource.AsyncLoader {
+  skill_loader.get()
+}
+
+///|
+let character_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "character",
+    base_url="/assets",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Pants/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Pants",
+        "/assets/Character/Pants",
+      ),
+      "Weapon/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Weapon",
+        "/assets/Character/Weapon",
+      ),
+      "Coat/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Coat",
+        "/assets/Character/Coat",
+      ),
+      "Cap/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Cap",
+      ),
+      "Longcoat/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Longcoat",
+        "/assets/Character/Longcoat",
+      ),
+      "Shield/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Shield",
+        "/assets/Character/Shield",
+      ),
+      "Shoes/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Character/Shoes",
+        "/assets/Character/Shoes",
+      ),
+      "Glove/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Glove",
+      ),
+      "Accessory/": @resource.DirResourceLoader::new(
+        "https://maple-res.kkkiiox.work/Character/Accessory",
+      ),
+    }),
+  )
+})
+
+///|
+fn get_character_loader() -> @resource.AsyncLoader {
+  character_loader.get()
+}
+
+///|
+let afterimage_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "afterimage",
+    base_url="/assets",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Afterimage",
+      "/assets/Character/Afterimage",
+    ),
+  )
+})
+
+///|
+fn get_afterimage_loader() -> @resource.AsyncLoader {
+  afterimage_loader.get()
+}
+
+///|
+let body_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "body",
+    base_url="/assets",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Body",
+      "/assets/Character/Body",
+    ),
+  )
+})
+
+///|
+fn get_body_loader() -> @resource.AsyncLoader {
+  body_loader.get()
+}
+
+///|
+let effect_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "effect",
+    base_url="/assets",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "BasicEff.img/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Effect/BasicEff.img",
+        "/assets/Effect/BasicEff.img",
+      ),
+      "CharacterEff.img/": @resource.DirResourceLoader::new(
+        // "https://maple-res.kkkiiox.work/Effect/CharacterEff.img",
+        "/assets/Effect/CharacterEff.img",
+      ),
+    }),
+  )
+})
+
+///|
+fn get_effect_loader() -> @resource.AsyncLoader {
+  effect_loader.get()
+}
+
+///|
+let face_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "face",
+    base_url="/assets",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Face",
+      "/assets/Character/Face",
+    ),
+  )
+})
+
+///|
+fn get_face_loader() -> @resource.AsyncLoader {
+  face_loader.get()
+}
+
+///|
+let hair_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "hair",
+    base_url="/assets",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Character/Hair",
+      "/assets/Character/Hair",
+    ),
+  )
+})
+
+///|
+fn get_hair_loader() -> @resource.AsyncLoader {
+  hair_loader.get()
+}
+
+///|
+let item_special_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "item_special",
+    base_url="/assets",
+    loader=@resource.DirResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/Item/Special",
+      "/assets/Item/Special",
+    ),
+  )
+})
+
+///|
+fn get_item_special_loader() -> @resource.AsyncLoader {
+  item_special_loader.get()
+}
+
+///|
+let item_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "item",
+    base_url="/assets",
+    loader=@resource.CompositeAsyncResourceLoader::new({
+      "Consume/": @resource.DirResourceLoader::new("/assets/Item/Consume"),
+      "Cash/": @resource.DirResourceLoader::new("/assets/Item/Cash"),
+      "Etc/": @resource.DirResourceLoader::new("/assets/Item/Etc"),
+      "Install/": @resource.DirResourceLoader::new("/assets/Item/Install"),
+      "Pet/": @resource.DirResourceLoader::new("/assets/Item/Pet"),
+    }),
+  )
+})
+
+///|
+fn get_item_loader() -> @resource.AsyncLoader {
+  item_loader.get()
+}
+
+///|
+let ui_window_2_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "UI/UIWindow2.img",
+    loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow2.img"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_ui_window_2_loader() -> @resource.AsyncLoader {
+  ui_window_2_loader.get()
+}
+
+///|
+let ui_window_4_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "UI/UIWindow4.img",
+    loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow4.img"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_ui_window_4_loader() -> @resource.AsyncLoader {
+  ui_window_4_loader.get()
+}
+
+///|
+let npc_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "npc",
+    loader=@resource.DirResourceLoader::new("/assets/Npc"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_npc_loader() -> @resource.AsyncLoader {
+  npc_loader.get()
+}
+
+///|
+let string_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "string",
+    loader=@resource.DirResourceLoader::new("/assets/String"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_string_loader() -> @resource.AsyncLoader {
+  string_loader.get()
+}
+
+///|
+/// Install default resource loaders for the game runtime.
+pub fn install_builtin_resource_loaders() -> Unit {
+  @resource.set_mapx_loader(get_mapx_loader())
+  @resource.set_map_latest_loader(get_map_latest_loader())
+  @resource.set_background_set_loader(get_background_set_loader())
+  @resource.set_object_loader(get_object_loader())
+  @resource.set_tile_loader(get_tile_loader())
+  @resource.set_mob_loader(get_mob_loader())
+  @resource.set_skill_loader(get_skill_loader())
+  @resource.set_character_loader(get_character_loader())
+  @resource.set_afterimage_loader(get_afterimage_loader())
+  @resource.set_body_loader(get_body_loader())
+  @resource.set_effect_loader(get_effect_loader())
+  @resource.set_face_loader(get_face_loader())
+  @resource.set_hair_loader(get_hair_loader())
+  @resource.set_item_special_loader(get_item_special_loader())
+  @resource.set_item_loader(get_item_loader())
+  @resource.set_ui_window_2_loader(get_ui_window_2_loader())
+  @resource.set_ui_window_4_loader(get_ui_window_4_loader())
+  @resource.set_npc_loader(get_npc_loader())
+  @resource.set_string_loader(get_string_loader())
+  @resource.set_csv_loader(
+    @resource.CsvLoader::new(loader=FetchCsvTextLoader::new()),
+  )
+}
+
+// let status_bar_loader = @resource.SyncLoader::load(
+//   "StatusBar",
+//   "https://maple-res.kkkiiox.work/UI/StatusBar3.img.json",
+//   @resource.ImageLoader::get_path_image_loader(),
+// )

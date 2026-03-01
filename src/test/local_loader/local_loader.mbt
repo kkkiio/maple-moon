@@ -5,11 +5,35 @@ pub struct LocalDirResourceLoader {
 }
 
 ///|
+/// Async resource loader that always returns `null`.
+pub struct NullResourceLoader {
+  dummy : Unit
+}
+
+///|
+/// CSV text loader that reads test CSV files from local filesystem.
+pub struct LocalCsvTextLoader {
+  dummy : Unit
+}
+
+///|
 /// Creates a local directory loader rooted at `root_path`.
 pub fn LocalDirResourceLoader::new(
   root_path : String,
 ) -> LocalDirResourceLoader {
   { root_path, }
+}
+
+///|
+/// Creates a null resource loader.
+pub fn NullResourceLoader::new() -> NullResourceLoader {
+  { dummy: () }
+}
+
+///|
+/// Creates a local CSV text loader.
+pub fn LocalCsvTextLoader::new() -> LocalCsvTextLoader {
+  { dummy: () }
 }
 
 ///|
@@ -28,6 +52,26 @@ pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader with load_data
     _ => abort("invalid json in local loader: \{file_path}")
   }
   get_by_path(root_value, rest.to_string())
+}
+
+///|
+pub impl @resource.AsyncResourceLoader for NullResourceLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self.dummy)
+  ignore(path)
+  Json::null()
+}
+
+///|
+pub impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(
+  self,
+  path,
+) -> String {
+  ignore(self.dummy)
+  let fs_path = path.strip_prefix("/").unwrap_or(path)
+  @fs.read_file_to_string(fs_path.to_string())
 }
 
 ///|
@@ -76,6 +120,41 @@ pub fn make_local_character_loader() -> @resource.AsyncLoader {
       "Accessory/": LocalDirResourceLoader::new("assets/Character/Accessory"),
     }),
   )
+}
+
+///|
+/// Creates a string loader that reads from local `assets/String`.
+pub fn make_local_string_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new(
+    "test_local_string",
+    base_url="/assets",
+    loader=LocalDirResourceLoader::new("assets/String"),
+  )
+}
+
+///|
+/// Creates a string loader that always returns empty JSON.
+///
+/// This is useful for snapshot tests that intentionally assert UI layout without
+/// localized item-name text.
+pub fn make_null_string_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new(
+    "test_null_string",
+    base_url="/assets",
+    loader=NullResourceLoader::new(),
+  )
+}
+
+///|
+/// Creates a CSV loader that reads local files.
+pub fn make_local_csv_loader() -> @resource.CsvLoader {
+  @resource.CsvLoader::new(loader=LocalCsvTextLoader::new())
+}
+
+///|
+/// Installs local CSV loader into resource registry.
+pub fn install_local_csv_loader() -> Unit {
+  @resource.set_csv_loader(make_local_csv_loader())
 }
 
 ///|

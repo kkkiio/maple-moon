@@ -24,6 +24,8 @@ priv struct DisplayInventoryItem {
 ///|
 priv struct State {
   mut visible : Bool
+  mut pending_open_shop : OpenNpcShopMessage?
+  mut pending_open_shop_item_ids : Array[Int]
   mut panel_x : Int
   mut panel_y : Int
   mut sell_tab_index : Int
@@ -122,6 +124,8 @@ const SELECTION_Y_OFFSET : Int = 124
 ///|
 let state_ref : Ref[State] = Ref::new({
   visible: false,
+  pending_open_shop: None,
+  pending_open_shop_item_ids: [],
   panel_x: PANEL_X,
   panel_y: PANEL_Y,
   sell_tab_index: 0,
@@ -520,6 +524,73 @@ fn ensure_item_visual(state : State, item_id : Int) -> Unit {
 }
 
 ///|
+fn ensure_item_visual_loaded(state : State, item_id : Int) -> Unit {
+  let item_data = @item.request_item_data(item_id)
+  if not(state.icon_by_item_id.contains(item_id)) {
+    let icon = nx_texture_to_inventory_icon_animation(item_data.get_icon(false))
+    state.icon_by_item_id.set(item_id, icon)
+  }
+  if not(state.item_name_by_id.contains(item_id)) {
+    state.item_name_by_id.set(item_id, item_data.name)
+  }
+}
+
+///|
+fn collect_unique_shop_item_ids(shop : OpenNpcShopMessage) -> Array[Int] {
+  let unique : Map[Int, Bool] = {}
+  let ids : Array[Int] = []
+  for item in shop.items {
+    if unique.contains(item.id) {
+      continue
+    }
+    unique.set(item.id, true)
+    ids.push(item.id)
+  }
+  ids
+}
+
+///|
+fn open_shop_ready(state : State, shop : OpenNpcShopMessage) -> Unit {
+  state.pending_open_shop = None
+  state.pending_open_shop_item_ids = []
+  state.open_shop = Some(shop)
+  state.visible = true
+  state.buy_offset = 0
+  state.sell_offset = 0
+  state.selected_buy_slot = None
+  state.selected_sell_slot = None
+  for item in shop.items {
+    ensure_item_visual_loaded(state, item.id)
+  }
+}
+
+///|
+fn begin_open_shop(state : State, shop : OpenNpcShopMessage) -> Unit {
+  let ids = collect_unique_shop_item_ids(shop)
+  @item.get_item_data_system().request_many(ids)
+  state.pending_open_shop = Some(shop)
+  state.pending_open_shop_item_ids = ids
+  state.open_shop = None
+  state.visible = false
+  state.selected_buy_slot = None
+  state.selected_sell_slot = None
+}
+
+///|
+fn poll_open_shop_preload(state : State) -> Bool {
+  guard state.pending_open_shop is Some(shop) else { return false }
+  if not(
+      @item.get_item_data_system().all_requested_ready_or_fail(
+        state.pending_open_shop_item_ids,
+      ),
+    ) {
+    return false
+  }
+  open_shop_ready(state, shop)
+  true
+}
+
+///|
 fn display_item_from_entry(item : InventoryItemEntry) -> DisplayInventoryItem? {
   match item {
     InventoryItemEntry::Equip(invtype~, slot~, id~, ..) =>
@@ -849,7 +920,7 @@ fn render_shop_ui(state : State) -> Unit {
           break
         }
         let item = shop.items[slot]
-        ensure_item_visual(state, item.id)
+        ensure_item_visual_loaded(state, item.id)
         if state.selected_buy_slot == Some(slot) {
           spawn_ui_sprite(
             state.render_entities,
@@ -949,6 +1020,8 @@ fn close_shop(state : State) -> Unit {
     return
   }
   state.visible = false
+  state.pending_open_shop = None
+  state.pending_open_shop_item_ids = []
   state.open_shop = None
   state.selected_buy_slot = None
   state.selected_sell_slot = None
@@ -968,6 +1041,8 @@ fn register_scene_cleanup_once() -> Unit {
   @game_state.listen_scene_clear(fn(_reason) {
     let state = state_ref.val
     state.visible = false
+    state.pending_open_shop = None
+    state.pending_open_shop_item_ids = []
     state.open_shop = None
     state.selected_buy_slot = None
     state.selected_sell_slot = None
@@ -1010,16 +1085,7 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json : Json) -> Unit raise {
       let msg : OpenNpcShopMessage = @json.from_json(json)
       let state = state_ref.val
-      state.open_shop = Some(msg)
-      state.visible = true
-      state.buy_offset = 0
-      state.sell_offset = 0
-      state.selected_buy_slot = None
-      state.selected_sell_slot = None
-      for item in msg.items {
-        ensure_item_visual(state, item.id)
-      }
-      render_shop_ui(state)
+      begin_open_shop(state, msg)
     },
   )
   @game_server.add_server_message_handler(
@@ -1074,6 +1140,8 @@ pub fn set_panel_position_for_test(x : Int, y : Int) -> Unit {
 /// Sets shop open data for tests.
 pub fn set_open_shop_for_test(shop : OpenNpcShopMessage?) -> Unit {
   let state = state_ref.val
+  state.pending_open_shop = None
+  state.pending_open_shop_item_ids = []
   state.open_shop = shop
   state.visible = shop is Some(_)
   state.selected_buy_slot = None
@@ -1083,7 +1151,7 @@ pub fn set_open_shop_for_test(shop : OpenNpcShopMessage?) -> Unit {
   match shop {
     Some(shop) =>
       for item in shop.items {
-        ensure_item_visual(state, item.id)
+        ensure_item_visual_loaded(state, item.id)
       }
     None => ()
   }
@@ -1106,6 +1174,8 @@ pub fn set_shop_visible_for_test(visible : Bool) -> Unit {
   let state = state_ref.val
   state.visible = visible
   if not(visible) {
+    state.pending_open_shop = None
+    state.pending_open_shop_item_ids = []
     clear_entities(state.render_entities)
     return
   }
@@ -1174,6 +1244,10 @@ fn poll_ui_resources(state : State) -> Bool {
 /// Sprite-based NPC shop ui system.
 pub fn shop_ui_system(_delta : Double) -> Unit {
   let state = state_ref.val
+  let mut dirty = false
+  if poll_open_shop_preload(state) {
+    dirty = true
+  }
   if not(state.visible) {
     if state.render_entities.length() > 0 {
       clear_entities(state.render_entities)
@@ -1181,7 +1255,6 @@ pub fn shop_ui_system(_delta : Double) -> Unit {
     return
   }
 
-  let mut dirty = false
   if poll_ui_resources(state) {
     dirty = true
   }

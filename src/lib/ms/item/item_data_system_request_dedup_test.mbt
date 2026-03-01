@@ -53,6 +53,16 @@ fn mock_consume_0299_bundle_json() -> Json {
 }
 
 ///|
+struct MockStringLoader {
+  dummy : Unit
+}
+
+///|
+fn MockStringLoader::new() -> MockStringLoader {
+  { dummy: () }
+}
+
+///|
 impl @resource.AsyncResourceLoader for CountingItemBundleLoader with load_data(
   self,
   path,
@@ -66,12 +76,36 @@ impl @resource.AsyncResourceLoader for CountingItemBundleLoader with load_data(
 }
 
 ///|
+impl @resource.AsyncResourceLoader for MockStringLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self)
+  match path.to_string() {
+    "Consume.img" =>
+      {
+        "29999998": { "name": "mock item 1", "desc": "mock desc 1" },
+        "29999999": { "name": "mock item 2", "desc": "mock desc 2" },
+      }
+    _ => null
+  }
+}
+
+///|
 async test "item data loader should not request same bundle json twice" {
   let counting_loader = CountingItemBundleLoader::new()
   let async_loader = @resource.AsyncLoader::new(
     "counting_item_loader",
     loader=counting_loader,
     base_url="/assets",
+  )
+  @resource.set_character_loader(async_loader)
+  @resource.set_string_loader(
+    @resource.AsyncLoader::new(
+      "mock_string_loader",
+      loader=MockStringLoader::new(),
+      base_url="/assets",
+    ),
   )
 
   ignore(ItemData::load_item_data_with_loader(2999998, async_loader))

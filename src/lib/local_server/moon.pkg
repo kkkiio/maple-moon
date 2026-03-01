@@ -12,6 +12,8 @@ import {
   "KKKIIO/maple-moon/lib/indexed_db",
   "KKKIIO/maple-moon/lib/utils",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
+  "KKKIIO/maple-moon/lib/local_server/drop_sheet" @drop_sheet,
+  "KKKIIO/maple-moon/lib/local_server/shop_sheet" @shop_sheet,
   "rami3l/js-ffi/js",
 }
 

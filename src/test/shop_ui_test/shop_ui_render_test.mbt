@@ -4,7 +4,6 @@ using @server_proto {
   type InventoryItemEntry,
   type InventoryType,
   type OpenNpcShopMessage,
-  type ShopItem,
 }
 
 ///|
@@ -29,7 +28,7 @@ fn make_inventory_entry() -> InventoryEntry {
     InventoryItemEntry::Item(
       invtype=InventoryType::ETC,
       slot=1,
-      id=1060002,
+      id=4000000,
       cash=false,
       expire=0,
       count=7,
@@ -38,37 +37,6 @@ fn make_inventory_entry() -> InventoryEntry {
     ),
   ]
   { meso: 765432, slot_maxs, items }
-}
-
-///|
-fn make_open_shop_message() -> OpenNpcShopMessage {
-  let items : Array[ShopItem] = [
-    {
-      id: 2000000,
-      price: 50,
-      pitch: 0,
-      time: 0,
-      charge_price: 0,
-      buyable: 1000,
-    },
-    {
-      id: 1060002,
-      price: 300,
-      pitch: 0,
-      time: 0,
-      charge_price: 0,
-      buyable: 1000,
-    },
-    {
-      id: 2000000,
-      price: 75,
-      pitch: 0,
-      time: 0,
-      charge_price: 0,
-      buyable: 1000,
-    },
-  ]
-  { npc_id: 1022100, items }
 }
 
 ///|
@@ -94,6 +62,41 @@ fn load_shop2_json_for_test() -> Json raise {
 }
 
 ///|
+async fn load_open_shop_message_for_map_102000001() -> OpenNpcShopMessage {
+  // 102000001 has npc ids 1021000 and 1021001.
+  let map_npc_ids = [1021000, 1021001]
+  let by_npc_id = @shop_sheet.load_npc_shop_map(@resource.get_csv_loader())
+  for npc_id in map_npc_ids {
+    if by_npc_id.get(npc_id) is Some(shop) {
+      return shop
+    }
+  }
+  panic()
+}
+
+///|
+async fn preload_shop_items_for_snapshot(
+  shop : OpenNpcShopMessage,
+  character_loader : @resource.AsyncLoader,
+  item_loader : @resource.AsyncLoader,
+) -> Unit {
+  let loaded_ids : Map[Int, Bool] = {}
+  for item in shop.items {
+    if loaded_ids.contains(item.id) {
+      continue
+    }
+    let data = @item.ItemData::load(item.id, character_loader, item_loader)
+    @item.ItemData::add_item_data(item.id, data)
+    loaded_ids.set(item.id, true)
+  }
+  // Preload test inventory item data to keep sell-tab snapshot deterministic.
+  let etc_item_data = @item.ItemData::load(
+    4000000, character_loader, item_loader,
+  )
+  @item.ItemData::add_item_data(4000000, etc_item_data)
+}
+
+///|
 async fn setup_shop_ui_scene() -> Unit {
   @capture_app.init_app(
     @system.App::new()
@@ -104,18 +107,20 @@ async fn setup_shop_ui_scene() -> Unit {
     .add_system(@io_service.io_system, system_name="io_system"),
   )
 
+  @local_loader.install_local_csv_loader()
   let character_loader = @local_loader.make_local_character_loader()
   let item_loader = @local_loader.make_local_item_loader()
-  let blue_jean = @item.ItemData::load(1060002, character_loader, item_loader)
-  let red_potion = @item.ItemData::load(2000000, character_loader, item_loader)
-  @item.ItemData::add_item_data(1060002, blue_jean)
-  @item.ItemData::add_item_data(2000000, red_potion)
+  let shop = load_open_shop_message_for_map_102000001()
+  @resource.set_character_loader(character_loader)
+  @resource.set_item_loader(item_loader)
+  @resource.set_string_loader(@local_loader.make_local_string_loader())
+  preload_shop_items_for_snapshot(shop, character_loader, item_loader)
   let shop2_json = load_shop2_json_for_test()
 
   @shop_ui.set_shop2_json_for_test(shop2_json)
   @shop_ui.set_panel_position_for_test(20, 20)
   @shop_ui.set_inventory_entry_for_test(make_inventory_entry())
-  @shop_ui.set_open_shop_for_test(Some(make_open_shop_message()))
+  @shop_ui.set_open_shop_for_test(Some(shop))
 
   for _ in 0..<20 {
     @capture_app.run_loop(0.016)

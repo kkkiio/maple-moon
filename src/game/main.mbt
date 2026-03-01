@@ -41,6 +41,7 @@ fn game_start(_delta : Double) -> Unit {
 
 ///|
 fn main {
+  install_builtin_resource_loaders()
   @item.set_item_data_system(
     @item.ItemDataSystem::new(@resource.get_item_loader()),
   )

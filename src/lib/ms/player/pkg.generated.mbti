@@ -63,8 +63,8 @@ pub fn Player::is_attacking(Self) -> Bool
 pub fn Player::is_invincible(Self) -> Bool
 pub fn Player::is_key_down(Self, @keyboard.BasicActionId) -> Bool
 pub fn Player::is_underwater(Self) -> Bool
-pub async fn Player::load(@entity.Entity, @character.CharEntry, @char_look.CharLook, (@job.Job) -> @char_stats.CharStats) -> Self
-pub fn Player::new(@entity.Entity, Int, String, @char_look.CharLook, @char_stats.CharStats) -> Self
+pub async fn Player::load(@entity.Entity, @character.CharEntry, &@legacy_types.Inventory, @char_look.CharLook, (@job.Job) -> @char_stats.CharStats) -> Self
+pub fn Player::new(@entity.Entity, Int, String, &@legacy_types.Inventory, @char_look.CharLook, @char_stats.CharStats) -> Self
 pub fn Player::recalc_stats(Self, Bool) -> Unit
 pub fn Player::respawn(Self, @res_types.Point[Int], Bool) -> Unit
 pub fn Player::rush(Self, Double) -> Unit

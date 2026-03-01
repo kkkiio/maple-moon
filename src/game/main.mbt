@@ -62,6 +62,7 @@ fn main {
     system_name="inventory_ui_system",
   )
   .add_system(@shop_ui.shop_ui_system, system_name="shop_ui_system")
+  .add_system(@equip_system.equip_system, system_name="equip_system")
   .add_system(
     delta => @item.get_item_data_system().run(delta),
     system_name="item_data_system",

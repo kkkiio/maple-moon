@@ -2,21 +2,35 @@
 package "KKKIIO/maple-moon/lib/ms/bullet"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/item",
+  "KKKIIO/maple-moon/lib/ms/res_types",
+  "KKKIIO/maple-moon/lib/resource",
 }
 
 // Values
+pub let all_bullet_ids : Array[String]
+
+pub fn get_bullet_data(Int) -> BulletData
+
+pub fn get_bullet_module() -> Module
+
+pub fn set_bullet_module(Module) -> Unit
 
 // Errors
 
 // Types and methods
 pub(all) struct BulletData {
   item_data : @item.ItemData
-  bullet : @graphics.Animation
+  bullet : @resource.NxAnimation
   watk : Int
 }
 pub async fn BulletData::load(String) -> Self
+
+type BulletSystem
+pub fn BulletSystem::clear(Self) -> Unit
+pub fn BulletSystem::new() -> Self
+pub fn BulletSystem::spawn(Self, Int64, @resource.NxAnimation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
+pub fn BulletSystem::update(Self, timestep~ : Int64) -> Unit
 
 type Module
 pub fn Module::get_bullet_data(Self, Int) -> BulletData?

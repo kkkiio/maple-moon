@@ -244,6 +244,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               }
               None => ()
             }
+            let bullet_module = @bullet.Module::load()
+            @bullet.set_bullet_module(bullet_module)
             // Load and register skills (optional - missing skills log warning only)
             let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
@@ -253,7 +255,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               @skill.SkillId::AXE_FA.int_value(),
             ]
             for skill_id in skill_ids {
-              let sk = @combat_system.load_skill_move(skill_id, bullet_module)
+              let sk = @combat_system.load_skill_move(skill_id)
               @combat_system.register_move(sk)
             }
             let npc_loader = @resource.get_npc_loader()
@@ -332,6 +334,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         Some(_) => ()
         None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
       }
+      @item_use_events.clear_intents()
       match @player.get_player() {
         Some(player) =>
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
@@ -347,6 +350,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       }
       for item in inventory_entry.items {
         @inventory.handle_item(global_inv, item)
+      }
+      match @player.get_player() {
+        Some(player) =>
+          global_inv.recalc_stats(player.character.get_weapontype())
+        None => ()
       }
       @inventory_ui.bind_inventory(global_inv)
       clear_active_scene_map()
@@ -389,7 +397,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @drop.set_map_physics(sence_map.physics)
       @game_server.send(@server_proto.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
-      let combat = @combat_system.Combat::new(stage.mobs, bullet_module)
+      let combat = @combat_system.Combat::new(stage.mobs)
       @combat_system.set_combat(Some(combat))
       @combat_system.set_player(Some(player))
       // Register passive skills
@@ -444,9 +452,10 @@ fn new_stage(
     Map::new(),
   )
   let entity = char_look.get_root_entity()
+  let global_inv = @inventory.inventory.val
   entity.respawn()
   let player : @player.Player = @player.Player::new(
-    entity, 1, "kkkiio", char_look, stats,
+    entity, 1, "kkkiio", global_inv, char_look, stats,
   )
   @player.set_player(player)
   // TODO: reset cooldowns
@@ -470,6 +479,7 @@ pub fn setup_game_server_handlers() -> Unit {
     fn(json : Json) -> Unit raise {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
+      @item_use_events.clear_intents()
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
@@ -482,6 +492,3 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
-
-///|
-let bullet_module : @bullet.Module = @bullet.Module::new({}) // TODO: load bullet data

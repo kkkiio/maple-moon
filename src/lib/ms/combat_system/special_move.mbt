@@ -23,7 +23,7 @@ pub(all) struct SpecialMove {
     @combat_proto.AttackType,
     Bool,
   ) -> @combat_proto.Attack
-  get_bullet : (@character.Character, Int) -> @graphics.Animation
+  get_bullet : (@character.Character, Int) -> @resource.NxAnimation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @char_look.NxAfterImage]
@@ -77,7 +77,7 @@ pub fn SpecialMove::get_bullet(
   self : SpecialMove,
   char : @character.Character,
   value : Int,
-) -> @graphics.Animation {
+) -> @resource.NxAnimation {
   (self.get_bullet)(char, value)
 }
 

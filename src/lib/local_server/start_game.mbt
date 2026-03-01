@@ -1,4 +1,25 @@
 ///|
+fn default_player_stats() -> @resource.EnumMap[@maple_stat.Id, Int] {
+  @resource.EnumMap(
+    Map::from_array([
+      (@maple_stat.Id::LEVEL, 30),
+      (@maple_stat.Id::JOB, 0),
+      (@maple_stat.Id::STR, 12),
+      (@maple_stat.Id::DEX, 120),
+      (@maple_stat.Id::INT, 4),
+      (@maple_stat.Id::LUK, 4),
+      (@maple_stat.Id::MAXHP, 2000),
+      (@maple_stat.Id::HP, 2000),
+      (@maple_stat.Id::MAXMP, 500),
+      (@maple_stat.Id::MP, 500),
+      (@maple_stat.Id::AP, 0),
+      (@maple_stat.Id::SP, 0),
+      (@maple_stat.Id::FAME, 0),
+    ]),
+  )
+}
+
+///|
 fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
   let default_server = self
   let select_char_message : SelectCharMessage = @json.from_json(json)
@@ -22,7 +43,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       stats=StatsEntry::{
         name: "kkkiio",
         female: false,
-        stats: @resource.EnumMap::default(), // FIXME: pull actual player stats from db down the line
+        stats: default_player_stats(),
         i64stats: @resource.EnumMap::default(),
         map_id: default_server.last_map_id,
         portal_id: default_server.last_portal_id,

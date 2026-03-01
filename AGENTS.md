@@ -55,18 +55,6 @@ UPDATE_CANVAS_SNAPS=true moon test <test-target>
 
 `moon test --update` 只用于 MoonBit 官方的 `inspect`/文本快照更新，不用于 canvas PNG 快照更新。
 
-### 如何写渲染快照测试
-
-参考 `src/test/char_look_test/stand1_test.mbt` 的结构，推荐流程：
-
-1. 在 `src/test/<feature>_test/` 下新建 blackbox test 包，并复用 `capture_backend` override。
-2. 用 `@capture_app.init_app(...)` 初始化测试 App，挂上 `@plugins.default_plugin` 和被测系统。
-3. 测试里直接读取本地 `assets/...json`，并传给游戏模块解析；不要为了测试去改正式资源加载链路（例如 `src/lib/resource/load.mbt`）。
-4. 让“测试注入”和“正式流程”复用同一份解析函数，避免双份解析逻辑。
-5. 固定画布尺寸、UI 位置、输入和帧推进次数，保证快照稳定可复现。
-6. 调用 `@capture_app.snapshot(".../__snapshot__/xxx.png")` 产出或比对 PNG。
-7. 每次(重新)生成图片, 都要查看生成的快照图片, 确保与预期一致.
-
 ## Coding Style
 
 ### 注释
@@ -142,6 +130,8 @@ let v : Json = {
 ### Sprite
 
 使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.
+
+`@entity.Entity` 不要保存到单个对象`struct`里, 而是保存到全局容器里.
 
 ### 资源
 

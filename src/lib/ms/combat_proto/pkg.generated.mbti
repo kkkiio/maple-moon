@@ -2,8 +2,9 @@
 package "KKKIIO/maple-moon/lib/ms/combat_proto"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/res_types",
+  "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/entity",
 }
 
 // Values
@@ -81,8 +82,7 @@ pub(all) struct AttackUser {
 }
 
 type Bullet
-pub fn Bullet::draw(Self, Double, Double, Double) -> Unit
-pub fn Bullet::new(@graphics.Animation, @res_types.Point[Int], Bool) -> Self
+pub fn Bullet::new(@entity.Entity, @resource.NxAnimation, @res_types.Point[Int], Bool) -> Self
 pub fn Bullet::set_target(Self, @res_types.Point[Int]) -> Bool
 pub fn Bullet::update(Self, @res_types.Point[Int]) -> Bool
 

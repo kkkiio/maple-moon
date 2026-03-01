@@ -1,6 +1,6 @@
 ///|
 priv struct Ball {
-  animation : @graphics.Animation
+  animation : @resource.NxAnimation
 }
 
 ///|
@@ -9,24 +9,20 @@ fn Ball::new(src : Json) -> Ball raise {
 }
 
 ///|
-priv struct SkillRegularBullet {
-  bullet_module : @bullet.Module
-}
+priv struct SkillRegularBullet {}
 
 ///|
-fn SkillRegularBullet::new(
-  bullet_module : @bullet.Module,
-) -> SkillRegularBullet {
-  { bullet_module, }
+fn SkillRegularBullet::new() -> SkillRegularBullet {
+  SkillRegularBullet::{  }
 }
 
 ///|
 fn SkillRegularBullet::get(
-  self : SkillRegularBullet,
+  _self : SkillRegularBullet,
   _ : @character.Character,
   bulletid : Int,
-) -> @graphics.Animation {
-  let data = self.bullet_module.get_bullet_data(bulletid).unwrap()
+) -> @resource.NxAnimation {
+  let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }
 
@@ -49,7 +45,7 @@ fn SingleBullet::get(
   self : SingleBullet,
   _ : @character.Character,
   _ : Int,
-) -> @graphics.Animation {
+) -> @resource.NxAnimation {
   self.ball.animation
 }
 
@@ -77,10 +73,15 @@ fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
   _ : Int,
-) -> @graphics.Animation {
+) -> @resource.NxAnimation {
   let level = (user.get_skilllevel)(self.skill_id)
   match self.bullets.get(level) {
     Some(ball) => ball.animation
-    None => @graphics.Animation::default()
+    None => {
+      let empty_ball = Ball::new(Json::null()) catch {
+        _ => @log.fatal("invalid empty skill bullet animation")
+      }
+      empty_ball.animation
+    }
   }
 }

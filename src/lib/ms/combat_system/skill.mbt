@@ -1,7 +1,7 @@
 ///|
 struct Skill {
   action : &SkillAction
-  bullet : (@character.Character, Int) -> @graphics.Animation
+  bullet : (@character.Character, Int) -> @resource.NxAnimation
   use_effect : UseEffect
   hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
@@ -16,14 +16,10 @@ struct Skill {
 }
 
 ///|
-pub async fn Skill::load(
-  skill_id : Int,
-  bullet_module : @bullet.Module,
-) -> Skill {
+pub async fn Skill::load(skill_id : Int) -> Skill {
   let data = @skill.SkillData::load(skill_id)
   Skill::new(
     skill_id,
-    bullet_module,
     data.src,
     data.is_attack,
     data.master_level,
@@ -37,7 +33,6 @@ pub async fn Skill::load(
 ///|
 pub fn Skill::new(
   skill_id : Int,
-  bullet_module : @bullet.Module,
   src : Json,
   is_attack : Bool,
   master_level : Int,
@@ -110,7 +105,7 @@ pub fn Skill::new(
     }
   } else {
     projectile = false
-    let bullet = SkillRegularBullet::new(bullet_module)
+    let bullet = SkillRegularBullet::new()
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
@@ -251,7 +246,14 @@ pub fn Skill::make_attack(
     if attack.t == @combat_proto.AttackType::CLOSE && not(self.projectile) {
       // Use afterimage range if available, otherwise keep default range
       if @char_look.get_after_image(chr.entity) is Some(after_image) {
-        attack.range = after_image.get_range()
+        let after_image_range = after_image.get_range()
+        if after_image_range.is_empty() {
+          @log.fatal("afterimage range is empty for close skill attack", data={
+            "skill_id": self.skill_id,
+            "stance": chr.get_look().get_stance().name(),
+          })
+        }
+        attack.range = after_image_range
       }
     }
   }
@@ -303,7 +305,7 @@ pub fn Skill::get_bullet(
   self : Skill,
   user : @character.Character,
   bulletid : Int,
-) -> @graphics.Animation {
+) -> @resource.NxAnimation {
   (self.bullet)(user, bulletid)
 }
 

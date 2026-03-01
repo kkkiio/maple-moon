@@ -78,7 +78,36 @@ pub fn ColorName::css_name(self : ColorName) -> String {
     YELLOW => "yellow"
     BLUE => "blue"
     RED => "red"
-    ...
+    DARKRED => "darkred"
+    BROWN => "brown"
+    JAMBALAYA => "jambalaya"
+    LIGHTGREY => "lightgrey"
+    DARKGREY => "darkgrey"
+    ORANGE => "orange"
+    MEDIUMBLUE => "mediumblue"
+    VIOLET => "violet"
+    TOBACCOBROWN => "tobaccobrown"
+    EAGLE => "eagle"
+    LEMONGRASS => "lemongrass"
+    TUNA => "tuna"
+    GALLERY => "gallery"
+    DUSTYGRAY => "dustygray"
+    EMPEROR => "emperor"
+    MINESHAFT => "mineshaft"
+    HALFANDHALF => "halfandhalf"
+    ENDEAVOUR => "endeavour"
+    BROWNDERBY => "brownderby"
+    PORCELAIN => "porcelain"
+    IRISHCOFFEE => "irishcoffee"
+    BOULDER => "boulder"
+    GREEN => "green"
+    LIGHTGREEN => "lightgreen"
+    JAPANESELAUREL => "japaneselaurel"
+    GRAYOLIVE => "grayolive"
+    ELECTRICLIME => "electriclime"
+    SUPERNOVA => "supernova"
+    CHARTREUSE => "chartreuse"
+    MALIBU => "malibu"
   }
 }
 
@@ -286,7 +315,7 @@ pub fn ColorName::int_value(self : ColorName) -> Int {
 }
 
 ///|
-pub(all) type Color (Double, Double, Double, Double) derive(Show, Eq, ToJson)
+pub(all) struct Color(Double, Double, Double, Double) derive(Show, Eq, ToJson)
 
 ///|
 pub fn Color::new_rgba(
@@ -295,17 +324,17 @@ pub fn Color::new_rgba(
   blue : Double,
   alpha : Double,
 ) -> Color {
-  (red, green, blue, alpha)
+  Color(red, green, blue, alpha)
 }
 
 ///|
 pub fn new_array(comps : FixedArray[Double]) -> Color {
-  (comps[0], comps[1], comps[2], comps[3])
+  Color(comps[0], comps[1], comps[2], comps[3])
 }
 
 ///|
 pub fn Color::from_value(code : Int) -> Color {
-  (
+  Color(
     (code >> 24).land(0xFF).to_double() / 255.0,
     (code >> 16).land(0xFF).to_double() / 255.0,
     (code >> 8).land(0xFF).to_double() / 255.0,
@@ -325,47 +354,47 @@ pub fn Color::from_name(name : ColorName) -> Color {
 
 ///|
 pub fn Color::invisible(self : Color) -> Bool {
-  self.inner().3 <= 0.0
+  self.3 <= 0.0
 }
 
 ///|
 pub fn Color::r(self : Color) -> Double {
-  self.inner().0
+  self.0
 }
 
 ///|
 pub fn Color::g(self : Color) -> Double {
-  self.inner().1
+  self.1
 }
 
 ///|
 pub fn Color::b(self : Color) -> Double {
-  self.inner().2
+  self.2
 }
 
 ///|
 pub fn Color::a(self : Color) -> Double {
-  self.inner().3
+  self.3
 }
 
 ///|
 pub fn Color::blend(self : Color, other : Color, alpha : Double) -> Color {
-  (
-    @utils.lerp(self.inner().0, other.inner().0, alpha),
-    @utils.lerp(self.inner().1, other.inner().1, alpha),
-    @utils.lerp(self.inner().2, other.inner().2, alpha),
-    @utils.lerp(self.inner().3, other.inner().3, alpha),
+  Color(
+    @utils.lerp(self.0, other.0, alpha),
+    @utils.lerp(self.1, other.1, alpha),
+    @utils.lerp(self.2, other.2, alpha),
+    @utils.lerp(self.3, other.3, alpha),
   )
 }
 
 ///|
 pub impl Mul for Color with mul(self, o) {
-  (self.r() * o.r(), self.g() * o.g(), self.b() * o.b(), self.a() * o.a())
+  Color(self.r() * o.r(), self.g() * o.g(), self.b() * o.b(), self.a() * o.a())
 }
 
 ///|
 pub impl Div for Color with div(self, o) {
-  (self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
+  Color(self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
 }
 
 ///|
@@ -381,20 +410,20 @@ pub fn IntColor::from_color(color : Color) -> IntColor {
 
 ///|
 pub fn IntColor::r(self : IntColor) -> Int {
-  (self.inner() >> 24) & 0xFF
+  (self.0 >> 24) & 0xFF
 }
 
 ///|
 pub fn IntColor::g(self : IntColor) -> Int {
-  (self.inner() >> 16) & 0xFF
+  (self.0 >> 16) & 0xFF
 }
 
 ///|
 pub fn IntColor::b(self : IntColor) -> Int {
-  (self.inner() >> 8) & 0xFF
+  (self.0 >> 8) & 0xFF
 }
 
 ///|
 pub fn IntColor::a(self : IntColor) -> Int {
-  self.inner() & 0xFF
+  self.0 & 0xFF
 }

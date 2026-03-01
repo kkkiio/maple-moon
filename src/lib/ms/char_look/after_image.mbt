@@ -119,10 +119,6 @@ pub fn AfterImage::get_collection(
 ///|
 fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
   let range = resource.range
-  if range.is_empty() {
-    @log.error("afterimage range is empty")
-    panic()
-  }
   let animation = resource.animation
   let first_frame = resource.first_frame
   let displayed = false

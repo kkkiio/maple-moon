@@ -249,6 +249,10 @@ pub fn Inventory::apply_local_modify_inventory_message(
     "equip_1": self.get_item_id(TypeId::EQUIP, 1),
     "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
   })
+  match @player.get_player() {
+    Some(player) => self.recalc_stats(player.character.get_weapontype())
+    None => ()
+  }
 }
 
 ///|
@@ -277,9 +281,9 @@ pub impl @legacy_types.Inventory for Inventory with recalc_stats(
   }
   self.bullet_slot = 0
   if prefix != 0 {
-    for _, slot in self.inventories[TypeId::USE] {
+    for slot_no, slot in self.inventories[TypeId::USE] {
       if slot.count != 0 && slot.item_id / 1000 == prefix {
-        self.bullet_slot = slot.unique_id
+        self.bullet_slot = slot_no.0
         break
       }
     }
@@ -653,25 +657,16 @@ pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {
   @log.info("use_item_at_slot type=\{type_id} slot=\{slot_no}")
   match type_id {
     EQUIP => {
-      guard @player.get_player() is Some(player) else { return None }
       guard self.get_slot_item_at(type_id, slot_no) is Some(item) else {
         return Some("no item at slot \{slot_no} of \{type_id}")
       }
-      let item_data = @item.request_item_data(item.item_id)
-      let equip_data = @equip_data.EquipData::parse_item_data(item_data) catch {
-        e => return Some("failed to parse equip data: \{e}, id=\{item.item_id}")
-      }
-      match can_wear_equip(player, equip_data) {
-        Some(hint) => return Some(hint)
-        None => ()
-      }
-      let equip_message : @server_proto.MoveItemMessage = {
-        invtype: type_id,
-        slot: slot_no,
-        action: -find_equip_slot(self, equip_data).int_value(),
-        qty: 1,
-      }
-      @game_server.send(equip_message)
+      @item_use_events.push_intent(
+        @item_use_events.ItemUseIntent::TryEquip(
+          type_id~,
+          slot_no~,
+          item_id=item.item_id,
+        ),
+      )
       None
     }
     USE => {
@@ -679,74 +674,13 @@ pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {
       if item_id <= 0 {
         return Some("not found item id at slot \{slot_no} of \{type_id}")
       }
-      @game_server.send(@server_proto.UseItemMessage::{ slot_no, item_id })
+      @item_use_events.push_intent(
+        @item_use_events.ItemUseIntent::TryUse(type_id~, slot_no~, item_id~),
+      )
       None
     }
     _ => Some("not supported kind \{type_id}")
   }
-}
-
-///|
-fn can_wear_equip(
-  player : @player.Player,
-  _equip_data : @equip_data.EquipData,
-) -> String? {
-  let alerted = player.character.is_alerted()
-  if alerted {
-    return Some("character is alerted")
-  }
-  return None
-  // let stats = player.get_stats()
-  // let reqGender = equip_data.get_gender()
-  // let female = stats.get_female()
-  // match reqGender {
-  //   0 => // Male
-  //     if female {
-  //       return Some("required gender is male")
-  //     }
-  //   1 => // Female
-  //     if not(female) {
-  //       return Some("required gender is female")
-  //     }
-  //   2 => () // Unisex
-  //   _ => panic() // unknown gender
-  // }
-  // let reqLevel = equip_data.get_reqstat(@maple_stat.Id::LEVEL)
-  // let reqDEX = equip_data.get_reqstat(@maple_stat.Id::DEX)
-  // let reqSTR = equip_data.get_reqstat(@maple_stat.Id::STR)
-  // let reqLUK = equip_data.get_reqstat(@maple_stat.Id::LUK)
-  // let reqINT = equip_data.get_reqstat(@maple_stat.Id::INT)
-  // let reqFAME = equip_data.get_reqstat(@maple_stat.Id::FAME)
-  // let hints = []
-  // let level = stats.get_stat(@maple_stat.Id::LEVEL)
-  // if reqLevel > level {
-  //   hints.push("require level \{reqLevel} but got \{level}")
-  // }
-  // let dex = stats.get_total(@maple_stat.EquipStatId::DEX)
-  // if reqDEX > dex {
-  //   hints.push("require dex \{reqDEX} but got \{dex}")
-  // }
-  // let str = stats.get_total(@maple_stat.EquipStatId::STR)
-  // if reqSTR > str {
-  //   hints.push("require str \{reqSTR} but got \{str}")
-  // }
-  // let luk = stats.get_total(@maple_stat.EquipStatId::LUK)
-  // if reqLUK > luk {
-  //   hints.push("require luk \{reqLUK} but got \{luk}")
-  // }
-  // let int = stats.get_total(@maple_stat.EquipStatId::INT)
-  // if reqINT > int {
-  //   hints.push("require int \{reqINT} but got \{int}")
-  // }
-  // let fame = 0 // TODO: support honor
-  // if reqFAME > fame {
-  //   hints.push("require fame \{reqFAME} but got \{fame}")
-  // }
-  // if hints.is_empty() {
-  //   None
-  // } else {
-  //   Some(hints.join(", "))
-  // }
 }
 
 ///|

@@ -31,7 +31,9 @@ pub fn Code::color(Self) -> Color
 pub fn Code::int_value(Self) -> Int
 pub impl Eq for Code
 
-pub(all) struct Color((Double, Double, Double, Double))
+pub(all) struct Color(Double, Double, Double, Double)
+
+
 pub fn Color::a(Self) -> Double
 pub fn Color::b(Self) -> Double
 pub fn Color::blend(Self, Self, Double) -> Self
@@ -39,8 +41,6 @@ pub fn Color::from_code(Code) -> Self
 pub fn Color::from_name(ColorName) -> Self
 pub fn Color::from_value(Int) -> Self
 pub fn Color::g(Self) -> Double
-#deprecated
-pub fn Color::inner(Self) -> (Double, Double, Double, Double)
 pub fn Color::invisible(Self) -> Bool
 pub fn Color::new_rgba(Double, Double, Double, Double) -> Self
 pub fn Color::r(Self) -> Double

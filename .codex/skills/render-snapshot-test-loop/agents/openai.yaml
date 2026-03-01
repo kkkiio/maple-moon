@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render Snapshot Test Loop"
+  short_description: "Build and verify render snapshots in a strict visual loop."
+  default_prompt: "Use this skill to validate rendering changes by writing snapshot tests, generating images, inspecting visuals, and iterating fixes until tests and visuals both pass."

@@ -3,5 +3,3 @@ import {
   "Milky2018/selene/math" @selene_math,
   "moonbitlang/core/json",
 }
-
-warnings = "-A"

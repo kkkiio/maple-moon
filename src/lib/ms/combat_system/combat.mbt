@@ -18,28 +18,21 @@ struct Combat {
   mobs : @monster.MapMobs
   regular_attack : SpecialMove
   // TODO: Add reactors
-  bullet_effects : @utils.TimedQueue[BulletEffect]
+  bullet_system : @bullet.BulletSystem
   damage_effects : @utils.TimedQueue[DamageEffect]
-  bullets : Array[BulletEffect]
   // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
-  bullet_module : @bullet.Module
 }
 
 ///|
-pub fn Combat::new(
-  mobs : @monster.MapMobs,
-  bullet_module : @bullet.Module,
-) -> Combat {
+pub fn Combat::new(mobs : @monster.MapMobs) -> Combat {
   {
     mobs,
-    regular_attack: new_regular_attack(bullet_module),
-    bullet_effects: @utils.TimedQueue::new(),
+    regular_attack: new_regular_attack(),
+    bullet_system: @bullet.BulletSystem::new(),
     damage_effects: @utils.TimedQueue::new(),
-    bullets: Array::new(),
     // damage_numbers: Array::new(),
     cooldowns: {},
-    bullet_module,
   }
 }
 
@@ -53,45 +46,23 @@ pub fn Combat::set_cooldowns(self : Combat, cooldowns : Map[Int, Int]) -> Unit {
 
 ///|
 pub fn Combat::draw(
-  self : Combat,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
+  _self : Combat,
+  _viewx : Double,
+  _viewy : Double,
+  _alpha : Double,
 ) -> Unit {
-  for bullet_eff in self.bullets {
-    bullet_eff.bullet.draw(viewx, viewy, alpha)
-  }
-  // for dmg_eff in self.damage_numbers {
-  //   dmg_eff.draw(viewx, viewy, alpha)
-  // }
+  ()
 }
 
 ///|
 pub fn Combat::update(self : Combat) -> Unit {
-  for
-    bullet_effect in self.bullet_effects.process(
-      timestep=@logic_fps.STEP_TIME_MS.to_int64(),
-    ) {
-    self.apply_bullet_effect(bullet_effect)
-  }
+  self.bullet_system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
   for
     dmg_eff in self.damage_effects.process(
       timestep=@logic_fps.STEP_TIME_MS.to_int64(),
     ) {
     self.apply_damage_effect(dmg_eff)
   }
-  self.bullets.retain(fn(mb) {
-    let target_oid = mb.damageeffect.target_oid
-    if self.mobs.contains(target_oid) {
-      mb.target = self.mobs.get_mob_head_position(target_oid)
-      let apply = mb.bullet.update(mb.target)
-      if apply {
-        self.apply_damage_effect(mb.damageeffect)
-      }
-      return not(apply)
-    }
-    not(mb.bullet.update(mb.target))
-  })
   // self.damage_numbers.retain(fn(dn) { not(dn.update()) })
 }
 
@@ -314,6 +285,15 @@ pub fn Combat::apply_attack_to_mobs(
 ) -> Unit {
   self.mobs.send_attack(result, attack, mob_targets)
   self.extract_effects(character, act, result)
+  let target_oids = result.damage_lines.keys().to_array()
+  if attack.t == @combat_proto.AttackType::RANGED && target_oids.is_empty() {
+    @log.warn("ranged attack has no resolved targets", data={
+      "attacker_oid": character.get_oid(),
+      "move_id": act.get_id(),
+      "bullet": result.bullet,
+      "requested_target_oids": mob_targets,
+    })
+  }
   // Create and queue hit event for passive skills
   let source : HitSource = if user_input {
     UserInput
@@ -324,7 +304,7 @@ pub fn Combat::apply_attack_to_mobs(
     attacker_oid: character.get_oid(),
     move_id: act.get_id(),
     source,
-    target_oids: result.damage_lines.keys().to_array(),
+    target_oids,
     result,
   }
   push_event(hit_event)
@@ -437,13 +417,6 @@ priv struct DamageEffect {
 }
 
 ///|
-priv struct BulletEffect {
-  damageeffect : DamageEffect
-  bullet : @combat_proto.Bullet
-  mut target : @struct.Point[Int]
-}
-
-///|
 priv struct UseSkillMessage {
   move_id : Int
   level : Int
@@ -515,11 +488,8 @@ pub impl @net.OutMessage for AttackMessage with pack(self) {
 ///|
 /// Load a skill and create a SpecialMove from it.
 /// This is used during game initialization to pre-load skills.
-pub async fn load_skill_move(
-  move_id : Int,
-  bullet_module : @bullet.Module,
-) -> SpecialMove {
-  let it = Skill::load(move_id, bullet_module)
+pub async fn load_skill_move(move_id : Int) -> SpecialMove {
+  let it = Skill::load(move_id)
   {
     id: it.get_id(),
     attack: it.is_attack(),
@@ -552,11 +522,6 @@ fn Combat::extract_effects(
     flip: not(result.toleft),
   }
   if result.bullet != 0 {
-    let bullet = @combat_proto.Bullet::new(
-      act.get_bullet(user, result.bullet),
-      user.get_position(),
-      result.toleft,
-    )
     for oid, vec in result.damage_lines {
       if self.mobs.contains(oid) {
         let numbers = self.place_numbers(oid, vec)
@@ -571,11 +536,21 @@ fn Combat::extract_effects(
             target_oid: oid,
             sp_move: act,
           }
-          self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
-            damageeffect: effect,
-            bullet,
-            target: head,
-          })
+          self.bullet_system.spawn(
+            user.get_attackdelay(i).to_int64(),
+            act.get_bullet(user, result.bullet),
+            user.get_position(),
+            result.toleft,
+            head,
+            fn() { self.apply_damage_effect(effect) },
+            fn(prev_target) {
+              if self.mobs.contains(oid) {
+                self.mobs.get_mob_head_position(oid)
+              } else {
+                prev_target
+              }
+            },
+          )
           i += 1
         }
       }
@@ -592,11 +567,15 @@ fn Combat::extract_effects(
           target_oid: 0,
           sp_move: self.regular_attack, // TODO: what should this be?
         }
-        self.bullet_effects.push(user.get_attackdelay(i).to_int64(), {
-          damageeffect: effect,
-          bullet,
+        self.bullet_system.spawn(
+          user.get_attackdelay(i).to_int64(),
+          act.get_bullet(user, result.bullet),
+          user.get_position(),
+          result.toleft,
           target,
-        })
+          fn() { self.apply_damage_effect(effect) },
+          fn(prev_target) { prev_target },
+        )
       }
     }
   } else {
@@ -650,15 +629,6 @@ fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move
   act.apply_hit_effects(effect.user, mob)
-}
-
-///|
-fn Combat::apply_bullet_effect(self : Combat, effect : BulletEffect) -> Unit {
-  if effect.bullet.set_target(effect.target) {
-    self.apply_damage_effect(effect.damageeffect)
-  } else {
-    self.bullets.push(effect)
-  }
 }
 
 ///|
@@ -789,6 +759,9 @@ let combat_ref : Ref[Combat?] = Ref::new(None)
 
 ///|
 pub fn set_combat(combat : Combat?) -> Unit {
+  if combat_ref.val is Some(old_combat) {
+    old_combat.bullet_system.clear()
+  }
   combat_ref.val = combat
 }
 

@@ -1,7 +1,7 @@
 ///|
 pub(all) struct BulletData {
   item_data : @item.ItemData
-  bullet : @graphics.Animation
+  bullet : @resource.NxAnimation
   watk : Int
 }
 
@@ -28,7 +28,7 @@ fn BulletData::new(
   src : @resource.NxNode,
   item_data : @item.ItemData,
 ) -> BulletData raise {
-  let bullet = src["bullet"] |> @graphics.Animation::from_resource_ex()
+  let bullet : @resource.NxAnimation = @json.from_json(src["bullet"].value())
   let watk = src["info"]["incPAD"].get_int()
   { item_data, bullet, watk }
 }

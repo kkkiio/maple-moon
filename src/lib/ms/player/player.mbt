@@ -11,7 +11,7 @@ using @char_stats {type CharStats}
 using @server_proto {type ChangeMapMessage}
 
 ///|
-using @legacy_types {trait Inventory, trait SkillBook, type MockInventory}
+using @legacy_types {trait Inventory, trait SkillBook}
 
 ///|
 /// SkillBook that returns max level for each skill from skill data.
@@ -102,7 +102,7 @@ pub impl DamagableCharacter for Player with damage(self, attack) {
 pub async fn Player::load(
   entity : @entity.Entity,
   entry : @character.CharEntry,
-  // inventory : &Inventory,
+  inventory : &Inventory,
   look : @char_look.CharLook,
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
   new_char_stats : (@job.Job) -> CharStats,
@@ -115,7 +115,7 @@ pub async fn Player::load(
     entity,
     entry.id,
     entry.stats.name,
-    // inventory,
+    inventory,
     // skill_book,
     look,
     // load_skill_book,
@@ -129,7 +129,7 @@ pub fn Player::new(
   entity : @entity.Entity,
   id : Int,
   name : String,
-  // inventory : &Inventory,
+  inventory : &Inventory,
   // skill_book : &SkillBook,
   look : @char_look.CharLook,
   // load_skill_book : async (@job.Job) -> &SkillBook raise,
@@ -151,7 +151,7 @@ pub fn Player::new(
     underwater: false,
     last_move: Movement::default(),
     ladder: None,
-    inventory: MockInventory::{  },
+    inventory,
     buffs: Map::new(),
     randomizer: @random.Rand::new(),
     skill_book,

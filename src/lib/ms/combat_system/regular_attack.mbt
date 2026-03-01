@@ -51,7 +51,11 @@ pub fn make_regular_attack(
         guard @char_look.get_after_image(character.entity) is Some(after_image) else {
           @log.fatal("No afterimage when making regular attack")
         }
-        after_image.get_range()
+        let after_image_range = after_image.get_range()
+        if after_image_range.is_empty() {
+          @log.fatal("afterimage range is empty for close regular attack")
+        }
+        after_image_range
       }
       _ => character.stats.get_range()
     },
@@ -68,11 +72,8 @@ pub fn make_regular_attack(
 }
 
 ///|
-pub fn get_regular_attack_bullet(
-  bulletid : Int,
-  bullet_module : @bullet.Module,
-) -> @graphics.Animation {
-  let data = bullet_module.get_bullet_data(bulletid).unwrap()
+pub fn get_regular_attack_bullet(bulletid : Int) -> @resource.NxAnimation {
+  let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }
 
@@ -111,7 +112,7 @@ pub fn can_use_regular_attack(
 }
 
 ///|
-pub fn new_regular_attack(bullet_module : @bullet.Module) -> SpecialMove {
+pub fn new_regular_attack() -> SpecialMove {
   let ra = RegularAttack::{ action: RegularAction::default() }
   {
     id: 0,
@@ -122,9 +123,7 @@ pub fn new_regular_attack(bullet_module : @bullet.Module) -> SpecialMove {
     make_attack: fn(char, i, attack_type, degenerate) {
       make_regular_attack(char, i.get_bulletid(), attack_type, degenerate)
     },
-    get_bullet: fn(_char, value) {
-      get_regular_attack_bullet(value, bullet_module)
-    },
+    get_bullet: fn(_char, value) { get_regular_attack_bullet(value) },
     can_use: fn(_, weapon_type, _, _, _, bullet) {
       can_use_regular_attack(weapon_type, bullet)
     },

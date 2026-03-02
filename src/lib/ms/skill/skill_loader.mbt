@@ -59,7 +59,11 @@ pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
   let skill_json = extract_skill_from_bundle(bundle_json, strid, id)
 
   // 5. Load text data (skill name, description)
-  let text_json = load_skill_text(strid)
+  let text_json = get_string_loader()
+    .load_res_async(["Skill.img", strid])
+    .value() catch {
+      _ => Json::null()
+    }
 
   // 6. Parse and cache
   let data = parse_skill_data(id, skill_json, text_json)
@@ -143,16 +147,6 @@ fn extract_skill_from_bundle(
   }
   guard skill_obj.get(strid) is Some(skill_data) else { raise NOT_FOUND(id) }
   skill_data
-}
-
-///|
-/// Load skill text (name, description, level descriptions).
-fn load_skill_text(strid : String) -> Json {
-  // text_src is loaded from String.wz in text_data.mbt
-  match text_src {
-    Object(obj) => obj.get(strid).unwrap_or(Json::null())
-    _ => Json::null()
-  }
 }
 
 ///|

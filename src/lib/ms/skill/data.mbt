@@ -463,4 +463,9 @@ pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType 
 }
 
 ///|
-using @resource {type IntMap, type Nullable, get_skill_loader}
+using @resource {
+  type IntMap,
+  type Nullable,
+  get_skill_loader,
+  get_string_loader,
+}

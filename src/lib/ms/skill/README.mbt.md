@@ -59,6 +59,5 @@ skill/
 ├── data.mbt           # SkillData 结构定义
 ├── skill_loader.mbt   # 加载逻辑与缓存
 ├── skill_id.mbt       # 技能 ID 枚举
-├── text_data.mbt      # 技能文本资源
 └── README.mbt.md      # 本文档
 ```

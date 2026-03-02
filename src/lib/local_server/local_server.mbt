@@ -531,6 +531,26 @@ fn new_inventory_item_entry(
   item_id : Int,
   count : Int,
 ) -> InventoryItemEntry {
+  let load_equip_stats = fn(
+    item_id : Int,
+  ) -> @resource.EnumMap[@maple_stat.EquipStatId, Int] {
+    let item_data = @item.request_item_data(item_id)
+    let equip_data = @data.EquipData::parse_item_data(item_data) catch {
+      err =>
+        @log.fatal("failed to parse equip data for new equip", data={
+          "item_id": item_id,
+          "error": err.to_string(),
+        })
+    }
+    let stats = Map::new()
+    for stat_id in @maple_stat.all_equip_stats {
+      let value = equip_data.get_defstat(stat_id)
+      if value != 0 {
+        stats.set(stat_id, value)
+      }
+    }
+    @resource.EnumMap(stats)
+  }
   if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
     InventoryItemEntry::Equip(
       invtype~,
@@ -540,7 +560,7 @@ fn new_inventory_item_entry(
       expire=0,
       slots=7,
       level=0,
-      stats=@resource.EnumMap::default(),
+      stats=load_equip_stats(item_id),
       owner="",
       flag=0,
       itemlevel=0,

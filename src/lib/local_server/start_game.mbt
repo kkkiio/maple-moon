@@ -35,7 +35,6 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       })
       return
     }
-
     let current_items = Array::new()
     default_server.append_inventory_entries(current_items)
 

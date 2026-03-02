@@ -2,7 +2,9 @@
 package "KKKIIO/maple-moon/lib/ms/passive"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/combat_system",
+  "KKKIIO/maple-moon/lib/ms/skill",
   "moonbitlang/core/random",
 }
 
@@ -11,21 +13,27 @@ pub fn passive_system(Double) -> Unit
 
 pub fn register_passive_skill(&PassiveSkill) -> Unit
 
+pub fn set_passive_randomizer(@random.Rand) -> Unit
+
 pub let sword_fa_fighter_passive : SwordFaFighterPassive
 
 // Errors
 
 // Types and methods
 pub(all) struct PassiveContext {
+  randomizer : @random.Rand
+  get_character_fn : (Int) -> @character.Character?
+  get_skill_level_fn : (Int, Int) -> Int
+  get_skill_data_fn : (Int) -> @skill.SkillData?
+  trigger_extra_attack_fn : (Int, Int, Array[Int]) -> Unit
 }
-pub impl Default for PassiveContext
+pub fn PassiveContext::get_character(Self, Int) -> @character.Character?
+pub fn PassiveContext::get_skill_data(Self, Int) -> @skill.SkillData?
+pub fn PassiveContext::get_skill_level(Self, Int, Int) -> Int
+pub fn PassiveContext::trigger_extra_attack(Self, Int, Int, Array[Int]) -> Unit
 
 pub struct SwordFaFighterPassive {
-  randomizer : @random.Rand
-  trigger_fn : (Int, Array[Int]) -> Unit
-  get_trigger_prob_fn : () -> Double
 }
-pub fn SwordFaFighterPassive::new_with_trigger((Int, Array[Int]) -> Unit, get_trigger_prob_fn? : () -> Double) -> Self
 pub impl PassiveSkill for SwordFaFighterPassive
 pub impl Default for SwordFaFighterPassive
 

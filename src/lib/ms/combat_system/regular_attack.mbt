@@ -82,7 +82,7 @@ struct RegularAction {} derive(Default)
 
 ///|
 pub impl SkillAction for RegularAction with apply(
-  self : RegularAction,
+  _ : RegularAction,
   target : @character.Character,
   atype : @combat_proto.AttackType,
 ) -> Unit {

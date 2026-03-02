@@ -226,7 +226,7 @@ fn Combat::execute_attack_pipeline(
 
 ///|
 fn Combat::apply_attack_afterimage(
-  self : Combat,
+  _ : Combat,
   character : @character.Character,
   act : SpecialMove,
   after_images : Map[String, @char_look.NxAfterImage]?,
@@ -746,7 +746,7 @@ pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
 pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {
   let size = recv.read_short()
   let cooldowns = Map::new()
-  for i in 0..<size {
+  for _ in 0..<size {
     let skill_id = recv.read_int()
     let cooltime = recv.read_short()
     cooldowns[skill_id] = cooltime

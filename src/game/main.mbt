@@ -25,6 +25,7 @@ extern "js" fn new_seed_from_time() -> Bytes =
 ///|
 fn game_start(_delta : Double) -> Unit {
   @local_server.default_rand_seed.val = new_seed_from_time()
+  @passive.set_passive_randomizer(@random.Rand::new())
   @game_server.init_server()
   @login.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()

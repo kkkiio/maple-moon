@@ -461,7 +461,7 @@ fn LocalServer::on_equip_item(
     return
   }
   guard equip_items.get(from_slot) is Some(equip_entry) else { return }
-  @log.info("local_server on_equip_item before", data={
+  @log.debug("local_server on_equip_item before", data={
     "from_slot": from_slot,
     "equipped_slot": equipped_slot,
     "equip_has_from": equip_items.contains(from_slot),
@@ -481,7 +481,7 @@ fn LocalServer::on_equip_item(
     equipped_slot,
   )
   equipped_items.set(equipped_slot, new_equipped)
-  @log.info("local_server on_equip_item after", data={
+  @log.debug("local_server on_equip_item after", data={
     "from_slot": from_slot,
     "equipped_slot": equipped_slot,
     "equip_has_from": equip_items.contains(from_slot),

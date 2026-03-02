@@ -13,9 +13,9 @@ fn NoAction::new() -> NoAction {
 
 ///|
 pub impl SkillAction for NoAction with apply(
-  self : NoAction,
-  target : @character.Character,
-  atype : @combat_proto.AttackType,
+  _ : NoAction,
+  _ : @character.Character,
+  _ : @combat_proto.AttackType,
 ) -> Unit {
   // Do nothing
 }
@@ -38,7 +38,7 @@ fn SingleAction::new(src : Json) -> SingleAction {
 pub impl SkillAction for SingleAction with apply(
   self : SingleAction,
   target : @character.Character,
-  atype : @combat_proto.AttackType,
+  _ : @combat_proto.AttackType,
 ) -> Unit {
   target.attack_by_action(self.action)
 }
@@ -88,7 +88,7 @@ fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
 pub impl SkillAction for ByLevelAction with apply(
   self : ByLevelAction,
   target : @character.Character,
-  atype : @combat_proto.AttackType,
+  _ : @combat_proto.AttackType,
 ) -> Unit {
   let level = (target.get_skilllevel)(self.skill_id)
   match self.actions.get(level) {

@@ -3,7 +3,7 @@
 /// Instead of duplicating this data in every skill's JSON, we embed it here.
 
 ///|
-using @graphics {EFFECT_ZINDEX, add_effect}
+using @graphics {add_effect}
 
 ///|
 pub struct BasicEffect {
@@ -68,5 +68,5 @@ pub fn get_basic_effect() -> BasicEffect {
 ///|
 pub fn show_teleport_effect(character : @character.Character) -> Unit {
   let be = get_basic_effect()
-  add_effect(character.entity, be.teleport, z=EFFECT_ZINDEX)
+  add_effect(character.entity, be.teleport, z=@graphics.EFFECT_ZINDEX)
 }

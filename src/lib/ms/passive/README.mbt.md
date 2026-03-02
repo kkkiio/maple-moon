@@ -7,14 +7,15 @@
 使用 ECS 事件队列模式：
 
 1. **CombatSystem** 在攻击命中后生成 `HitEvent` 并入队
-2. **PassiveSystem** 每帧消费事件队列
+2. **PassiveSystem** 每帧消费事件队列并构造 `PassiveContext`
 3. **FinalAttackPassive** 检查条件并触发追加攻击
 
 ## 关键设计
 
 - **防止递归**：`HitSource::UserInput` vs `HitSource::Passive(Int)`
-- **武器匹配**：根据武器类型选择对应的终极攻击技能
+- **武器匹配**：`SWORD_FA_FIGHTER` 只在 `SWORD_1H` 攻击时触发
 - **概率判定**：使用 `stats.prop` 字段（*100 表示百分比）
+- **上下文注入**：通过 `PassiveContext` 注入共享随机源、角色查询和追加攻击触发接口
 
 ## 使用
 

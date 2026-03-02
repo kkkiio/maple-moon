@@ -161,6 +161,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
+      @character.clear_character_registry()
       @mini_map_ui.clear_current_map()
       @game_state.emit_scene_clear(
         @game_state.SceneClearReason::LeaveToSelectCharacter,
@@ -458,6 +459,7 @@ fn new_stage(
     entity, 1, "kkkiio", global_inv, char_look, stats,
   )
   @player.set_player(player)
+  @character.register_character(player.get_character())
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
   let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, npc_loader~, string_loader~)
@@ -483,6 +485,7 @@ pub fn setup_game_server_handlers() -> Unit {
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
+      @character.clear_character_registry()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::ChangeMap)
       @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
         map_id~,

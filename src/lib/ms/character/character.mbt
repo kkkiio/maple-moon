@@ -83,6 +83,34 @@ pub(all) struct Character {
 }
 
 ///|
+/// Global character registry keyed by object id.
+let character_registry : Map[Int, Character] = Map::new()
+
+///|
+/// Register a character into the global registry.
+pub fn register_character(character : Character) -> Unit {
+  character_registry.set(character.get_oid(), character)
+}
+
+///|
+/// Remove a character from the global registry by object id.
+pub fn unregister_character_by_oid(oid : Int) -> Unit {
+  ignore(character_registry.remove(oid))
+}
+
+///|
+/// Get a character from the global registry by object id.
+pub fn get_character_by_oid(oid : Int) -> Character? {
+  character_registry.get(oid)
+}
+
+///|
+/// Clear all characters from the global registry.
+pub fn clear_character_registry() -> Unit {
+  character_registry.clear()
+}
+
+///|
 pub fn Character::get_position(self : Character) -> @struct.Point[Int] {
   self.base.get_position()
 }

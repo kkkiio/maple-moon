@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/random",
   "Milky2018/selene/system",
   "Milky2018/selene/plugins",
   "KKKIIO/maple-moon/lib/ms/cursor",

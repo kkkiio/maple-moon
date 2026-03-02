@@ -15,7 +15,7 @@ using @legacy_types {trait Inventory, trait SkillBook}
 
 ///|
 /// SkillBook that returns max level for each skill from skill data.
-priv struct CachedMaxLevelSkillBook {} derive(Default)
+priv struct CachedMaxLevelSkillBook {}
 
 ///|
 impl SkillBook for CachedMaxLevelSkillBook with get_level(_, skill_id) {
@@ -28,12 +28,7 @@ impl SkillBook for CachedMaxLevelSkillBook with set_skill(_, _, _, _, _) {
 }
 
 ///|
-using @combat_proto {
-  REGULAR_ATTACK,
-  type MobAttack,
-  type AttackResult,
-  type MobAttackResult,
-}
+using @combat_proto {type MobAttack, type MobAttackResult}
 
 ///|
 using @combat_system {trait CombatCharacter, trait DamagableCharacter}
@@ -162,8 +157,6 @@ pub fn Player::new(
   stats.watch_stat_changes(@maple_stat.Id::HP, fn(_old, hp) {
     if hp <= 0 {
       p.set_state(@character.CharState::DIED)
-      let died = true
-      let target_id = 0
       // network.send_message(
       //   { died, target_id, target_p: "sp", use_wheel: false },
       //   log_level=@log.Level::INFO,
@@ -204,7 +197,7 @@ pub fn Player::has_buff(self : Player, stat : @buff.StatId) -> Bool {
 fn Player::update(
   self : Player,
   physics : @physics.Physics,
-  map_info : @map.MapInfo,
+  _ : @map.MapInfo,
 ) -> Unit {
   match get_player_state(self.character.state) {
     Some(_) => {
@@ -448,10 +441,7 @@ fn get_player_state(state : CharState) -> Unit? {
 }
 
 ///|
-pub fn Player::is_key_down(
-  self : Player,
-  key : @keyboard.BasicActionId,
-) -> Bool {
+pub fn Player::is_key_down(_ : Player, key : @keyboard.BasicActionId) -> Bool {
   match key {
     @keyboard.BasicActionId::UP => @inputs.is_pressed(@inputs.Code::ArrowUp)
     @keyboard.BasicActionId::DOWN => @inputs.is_pressed(@inputs.Code::ArrowDown)
@@ -506,7 +496,7 @@ pub fn Player::is_underwater(self : Player) -> Bool {
 }
 
 ///|
-pub fn Player::get_flyforce(self : Player) -> Double {
+pub fn Player::get_flyforce(_ : Player) -> Double {
   0.25
 }
 
@@ -550,12 +540,12 @@ pub fn Player::get_stats(self : Player) -> CharStats {
 ///
 /// 简而言之，每当角色的装备、Buff 或基础属性发生变化时，都需要调用此方法来刷新角色的战斗面板数据。
 pub fn Player::recalc_stats(self : Player, equip_changed : Bool) -> Unit {
-  let weapontype = self.character.get_weapontype()
+  let _weapontype = self.character.get_weapontype()
   self.stats.init_totalstats()
   if equip_changed {
     // self.inventory.recalc_stats(weapontype)
   }
-  for stat in @maple_stat.all_equip_stats {
+  for _ in @maple_stat.all_equip_stats {
     // let inventory_total = self.inventory.get_stat(stat)
     // self.stats.add_value(stat, inventory_total)
   }
@@ -653,11 +643,11 @@ pub fn Player::check_ladders(
 
 ///|
 pub fn Player::change_skill(
-  self : Player,
-  skill_id : Int,
-  skill_level : Int,
-  masterlevel : Int,
-  expiration : Int,
+  _ : Player,
+  _ : Int,
+  _ : Int,
+  _ : Int,
+  _ : Int,
 ) -> Unit {
   // let old_level = self.skill_book.get_level(skill_id)
   // self.skill_book.set_skill(skill_id, skill_level, masterlevel, expiration)
@@ -682,7 +672,7 @@ pub fn Player::attack_by_stance(self : Player, stance : StanceId) -> Unit {
 }
 
 ///|
-pub fn Player::change_job(self : Player, job_id : Int) -> Unit {
+pub fn Player::change_job(_ : Player, _ : Int) -> Unit {
   // self.character.show_effect_id(@character.CharEffectId::JOB_CHANGE)
   // self.changing_job = io_service
   //   .submit(fn() {
@@ -707,6 +697,7 @@ pub fn get_player() -> Player? {
 ///|
 pub fn set_player(player : Player) -> Unit {
   if player_ref.val is Some(existing_player) {
+    @character.unregister_character_by_oid(existing_player.character.get_oid())
     existing_player.entity.destroy()
   }
   player_ref.val = Some(player)
@@ -876,7 +867,7 @@ pub fn player_state_system(_delta : Double) -> Unit {
     @combat_system.use_move(player, @skill.TELEPORT_FP.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyX) {
-    @combat_system.use_move(player, REGULAR_ATTACK)
+    @combat_system.use_move(player, @combat_proto.REGULAR_ATTACK)
   }
   if @inputs.is_just_pressed(@inputs.KeyA) {
     @combat_system.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())

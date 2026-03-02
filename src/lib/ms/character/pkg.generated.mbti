@@ -17,11 +17,19 @@ import {
 }
 
 // Values
+pub fn clear_character_registry() -> Unit
+
+pub fn get_character_by_oid(Int) -> Character?
+
 pub fn get_integer_attackspeed(@char_look.CharLook, @char_stats.CharStats) -> Int
 
 pub fn get_real_attackspeed(Int) -> Double
 
 pub fn get_weapon_type_in_look(@char_look.CharLook) -> @weapon.Type
+
+pub fn register_character(Character) -> Unit
+
+pub fn unregister_character_by_oid(Int) -> Unit
 
 // Errors
 

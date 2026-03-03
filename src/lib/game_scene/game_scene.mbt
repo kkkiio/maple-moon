@@ -27,7 +27,6 @@ pub fn Stage::new(
   mobs : @monster.MapMobs,
   // drops : @drop.MapDrops,
   // inventory : @inventory.Inventory,
-  // npcs : @npc.MapNpcs,
   // quests : @quest.MapQuests,
   // char_look_module : @char_look.Module,
   // skill_book_module : @skill_book.Module,
@@ -256,8 +255,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               @skill.SkillId::AXE_FA.int_value(),
             ]
             for skill_id in skill_ids {
-              let sk = @combat_system.load_skill_move(skill_id)
-              @combat_system.register_move(sk)
+              let sk = @skill_cast.load_skill_move(skill_id)
+              @skill_cast.register_move(sk)
             }
             let npc_loader = @resource.get_npc_loader()
             let string_loader = @resource.get_string_loader()

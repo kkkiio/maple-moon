@@ -35,7 +35,7 @@ pub impl @json.FromJson for NxHitEntry with from_json(json, path) {
 }
 
 ///|
-struct NxTwoHandedHit {
+priv struct NxTwoHandedHit {
   main : NxHitEffect
   second : NxHitEffect
 }

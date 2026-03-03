@@ -73,11 +73,11 @@ pub struct MapMobs {
 }
 pub fn MapMobs::add_mob(Self, Mob) -> Unit
 pub fn MapMobs::clear(Self) -> Unit
-pub fn MapMobs::contains(Self, Int) -> Bool
+pub fn MapMobs::contains(Self, Int, include_dying? : Bool) -> Bool
 pub fn MapMobs::create_attack(Self, Int) -> @combat_proto.MobAttack?
 pub fn MapMobs::find_colliding(Self, @physics.MovingObject) -> Int?
 pub fn MapMobs::for_each_mob(Self, (Int, Mob) -> Unit) -> Unit
-pub fn MapMobs::get_mob(Self, Int) -> Mob?
+pub fn MapMobs::get_mob(Self, Int, include_dying? : Bool) -> Mob?
 pub fn MapMobs::get_mob_head_position(Self, Int) -> @res_types.Point[Int]
 pub fn MapMobs::get_mob_position(Self, Int) -> @res_types.Point[Int]
 pub fn MapMobs::new() -> Self

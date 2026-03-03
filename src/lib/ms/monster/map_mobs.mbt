@@ -187,13 +187,22 @@ pub fn MapMobs::send_movement(
 }
 
 ///|
-pub fn MapMobs::get_mob(self : MapMobs, oid : Int) -> Mob? {
-  self.mobs.get(oid)
+pub fn MapMobs::get_mob(
+  self : MapMobs,
+  oid : Int,
+  include_dying? : Bool = false,
+) -> Mob? {
+  guard self.mobs.get(oid) is Some(mob) else { return None }
+  if include_dying || mob.is_alive() {
+    Some(mob)
+  } else {
+    None
+  }
 }
 
 ///|
 pub fn MapMobs::with_mob(self : MapMobs, oid : Int, f : (Mob) -> Unit) -> Unit {
-  match self.mobs.get(oid) {
+  match self.get_mob(oid) {
     Some(mob) => f(mob)
     None => ()
   }
@@ -231,7 +240,7 @@ pub fn MapMobs::send_attack(
   targets : Array[Int],
 ) -> Unit {
   for target in targets {
-    guard self.mobs.get(target) is Some(mob) else { continue }
+    guard self.get_mob(target) is Some(mob) else { continue }
     result.damage_lines[target] = mob.calculate_damage(attack)
     result.mob_count += 1
     if result.mob_count == 1 {
@@ -242,8 +251,12 @@ pub fn MapMobs::send_attack(
 }
 
 ///|
-pub fn MapMobs::contains(self : MapMobs, oid : Int) -> Bool {
-  self.mobs.contains(oid)
+pub fn MapMobs::contains(
+  self : MapMobs,
+  oid : Int,
+  include_dying? : Bool = false,
+) -> Bool {
+  self.get_mob(oid, include_dying~) is Some(_)
 }
 
 ///|
@@ -251,8 +264,8 @@ pub fn MapMobs::get_mob_position(
   self : MapMobs,
   oid : Int,
 ) -> @struct.Point[Int] {
-  self.mobs
-  .get(oid)
+  self
+  .get_mob(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_position() })
 }
 
@@ -261,8 +274,8 @@ pub fn MapMobs::get_mob_head_position(
   self : MapMobs,
   oid : Int,
 ) -> @struct.Point[Int] {
-  self.mobs
-  .get(oid)
+  self
+  .get_mob(oid)
   .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
 }
 

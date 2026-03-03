@@ -96,7 +96,7 @@ pub impl SkillAction for RegularAction with apply(
 }
 
 ///|
-pub fn can_use_regular_attack(
+fn can_use_regular_attack_internal(
   weapon : @weapon.Type,
   bullets : Int,
 ) -> ForbidReason {
@@ -125,7 +125,7 @@ pub fn new_regular_attack() -> SpecialMove {
     },
     get_bullet: fn(_char, value) { get_regular_attack_bullet(value) },
     can_use: fn(_, weapon_type, _, _, _, bullet) {
-      can_use_regular_attack(weapon_type, bullet)
+      can_use_regular_attack_internal(weapon_type, bullet)
     },
     apply_hit_effects: fn(_, _) {  },
     get_afterimage: fn() { Map::new() },

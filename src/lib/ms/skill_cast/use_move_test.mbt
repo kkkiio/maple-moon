@@ -155,7 +155,7 @@ test "use_move_integration_test" {
   assert_true(char_stats.get_maxdamage() >= 1)
 
   // 6. Trigger use_move (0 is Regular Attack)
-  @combat_system.use_move(cc, 0)
+  @skill_cast.use_move(cc, 0)
   let events = @combat_system.read_new_events(reader_id)
   for event in events {
     let mut total_damage = 0

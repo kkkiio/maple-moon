@@ -179,6 +179,13 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
       loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
     ),
   )
+  @resource.set_string_loader(
+    @resource.AsyncLoader::new(
+      "test_local_string",
+      base_url="/assets",
+      loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
+    ),
+  )
   let player = try! make_test_player(1, Some(1302000))
   let attacker = player.get_character()
   let trigger_count = Ref::new(0)

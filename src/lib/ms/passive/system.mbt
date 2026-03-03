@@ -29,7 +29,10 @@ fn default_trigger_extra_attack(
   guard @character.get_character_by_oid(attacker_oid) is Some(character) else {
     return
   }
-  combat.trigger_extra_attack(character, skill_id, targets)
+  match @skill_cast.get_skill_move(skill_id) {
+    Some(act) => combat.trigger_extra_attack(character, act, targets)
+    None => ()
+  }
 }
 
 ///|

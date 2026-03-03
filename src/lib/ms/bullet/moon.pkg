@@ -14,3 +14,9 @@ import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/position",
 }
+
+import {
+  "moonbitlang/async",
+  "KKKIIO/maple-moon/test/local_loader",
+  "KKKIIO/maple-moon/lib/resource",
+} for "test"

@@ -6,9 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/character",
-  "KKKIIO/maple-moon/lib/ms/inventory",
-  "KKKIIO/maple-moon/lib/ms/player",
-  "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
@@ -105,7 +102,6 @@ pub fn Module::handle_login_result(Self, LoginResult) -> Unit
 pub async fn Module::load(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage) -> Self
 pub fn Module::login(Self, String, String, (String) -> Unit) -> Unit
 pub fn Module::login_last_used(Self, (String) -> Unit) -> Unit
-pub fn Module::make_handlers(Self, (Int, Int) -> Unit, (@character.CharEntry, Map[Int, Int], (@player.Player) -> Unit raise) -> Unit, @inventory.Inventory, (@player.Player) -> Unit, @quest.Module) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::new(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage, @resource.SyncLoader) -> Self
 pub fn Module::update(Self) -> Unit
 

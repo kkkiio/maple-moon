@@ -5,7 +5,8 @@ priv struct Ball {
 
 ///|
 fn Ball::new(src : Json) -> Ball raise {
-  ...
+  let animation : @resource.NxAnimation = @json.from_json(src)
+  { animation, }
 }
 
 ///|

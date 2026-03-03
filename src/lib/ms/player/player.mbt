@@ -864,13 +864,13 @@ pub fn player_state_system(_delta : Double) -> Unit {
     }
   }
   if @inputs.is_just_pressed(@inputs.KeyF) {
-    @combat_system.use_move(player, @skill.TELEPORT_FP.int_value())
+    @skill_cast.use_move(player, @skill.TELEPORT_FP.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyX) {
-    @combat_system.use_move(player, @combat_proto.REGULAR_ATTACK)
+    @skill_cast.use_move(player, @combat_proto.REGULAR_ATTACK)
   }
   if @inputs.is_just_pressed(@inputs.KeyA) {
-    @combat_system.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())
+    @skill_cast.use_move(player, @skill.SkillId::POWER_STRIKE.int_value())
   }
   if @inputs.is_just_pressed(@inputs.KeyZ) {
     @drop.try_pickup_at(player.character.get_position()) |> ignore

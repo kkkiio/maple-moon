@@ -9,11 +9,9 @@ pub(all) struct BulletData {
 pub async fn BulletData::load(strid : String) -> BulletData {
   guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @item.get_item_loader().load_res_async([
-    "Consume",
-    prefix.to_string() + ".img",
-    strid,
-  ])
+  let src = @item.get_item_loader()
+    .load_res_async(["Consume", prefix.to_string() + ".img", strid])
+    .value()
   let id = strid.trim_start(chars="0").to_string() |> @strconv.parse_int
   let item_data = @item.ItemData::load(
     id,
@@ -24,11 +22,16 @@ pub async fn BulletData::load(strid : String) -> BulletData {
 }
 
 ///|
-fn BulletData::new(
-  src : @resource.NxNode,
-  item_data : @item.ItemData,
-) -> BulletData raise {
-  let bullet : @resource.NxAnimation = @json.from_json(src["bullet"].value())
-  let watk = src["info"]["incPAD"].get_int()
-  { item_data, bullet, watk }
+fn BulletData::new(src : Json, item_data : @item.ItemData) -> BulletData raise {
+  match src {
+    { "bullet": bullet_src, "info": info, .. } => {
+      let watk = match info {
+        { "incPAD": Number(watk, ..), .. } => watk.to_int()
+        _ => 0
+      }
+      let bullet : @resource.NxAnimation = @json.from_json(bullet_src)
+      { item_data, bullet, watk }
+    }
+    _ => fail("Invalid bullet data")
+  }
 }

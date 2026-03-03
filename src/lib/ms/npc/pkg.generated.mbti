@@ -59,12 +59,6 @@ pub(all) struct MapNpcsContext {
   physics : @physics.Physics
 }
 
-type Module
-pub fn Module::get_npcs(Self) -> MapNpcs
-pub fn Module::load(&@ui.Container, @markup_text.RefRender) -> Self
-pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
-pub fn Module::open_npc_talk_ui(Self, TalkArgs) -> Unit
-
 type Npc
 pub fn Npc::destroy(Self) -> Unit
 pub fn Npc::get_func(Self) -> String

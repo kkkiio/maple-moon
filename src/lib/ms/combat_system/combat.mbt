@@ -2,18 +2,6 @@
 using @combat_proto {type AttackResult}
 
 ///|
-/// Global registry of all available moves (skills and regular attack).
-/// Populated during game start via `register_move`.
-pub let move_map : Map[Int, SpecialMove] = Map::new()
-
-///|
-/// Register a move (skill) into the global move_map.
-/// Should be called during game initialization.
-pub fn register_move(sp_move : SpecialMove) -> Unit {
-  move_map.set(sp_move.get_id(), sp_move)
-}
-
-///|
 struct Combat {
   mobs : @monster.MapMobs
   regular_attack : SpecialMove
@@ -65,76 +53,7 @@ pub fn Combat::update(self : Combat) -> Unit {
 }
 
 ///|
-/// Use a skill or regular attack
-pub fn use_move(cc : &CombatCharacter, move_id : Int) -> Unit {
-  guard combat_ref.val is Some(combat) else { return }
-  combat.use_move(cc, move_id)
-}
-
-///|
-/// Use a skill or regular attack
-fn Combat::use_move(
-  self : Combat,
-  cc : &CombatCharacter,
-  move_id : Int,
-) -> Unit {
-  let character = cc.get_character()
-  let (act, attack_weapon) = if move_id == 0 {
-    guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
-      return
-    }
-    (self.regular_attack, Some(weapon))
-  } else if move_map.get(move_id) is Some(act) {
-    if act.is_attack() {
-      guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
-        return
-      }
-      (act, Some(weapon))
-    } else {
-      (act, None)
-    }
-  } else {
-    @log.warn("skill not registered", data={ "move_id": move_id })
-    return
-  }
-  if act.is_attack() && not(cc.can_attack()) {
-    return
-  }
-  let reason = self.can_use(cc, act)
-  if reason == ForbidReason::FBR_NONE {
-    let after_images = match attack_weapon {
-      Some(weapon) => {
-        let name = weapon.get_afterimage()
-        let level = weapon.get_equipdata().get_reqstat(@maple_stat.Id::LEVEL)
-        let after_images = @char_look.AfterImage::get_collection(name, level)
-        if act.is_skill() {
-          let skill_resources = act.get_afterimage()
-          for k, v in skill_resources {
-            // Override weapon afterimages with skill-specific ones
-            after_images.set(k, v)
-          }
-        }
-        after_images
-      }
-      None => Map::new()
-    }
-    self.apply_move(cc, act, after_images)
-  } else {
-    // TODO: show forbid reason
-    // let weapontype = self.player.get_stats().get_weapontype()
-    // ForbidSkillMessage::new(reason, weapontype).drop()
-  }
-}
-
-///|
-/// Get a registered skill move by ID.
-/// Returns None if the skill is not registered.
-pub fn get_skill_move(move_id : Int) -> SpecialMove? {
-  move_map.get(move_id)
-}
-
-///|
-fn Combat::apply_move(
+pub fn Combat::apply_move(
   self : Combat,
   cc : &CombatCharacter,
   act : SpecialMove,
@@ -143,7 +62,7 @@ fn Combat::apply_move(
   let character = cc.get_character()
   let inventory = cc.get_inventory()
   if act.is_attack() {
-    let (degenerate, attacktype) = check_attack_type(
+    let (degenerate, attacktype) = resolve_attack_type(
       character,
       inventory,
       act.is_skill(),
@@ -306,15 +225,17 @@ pub fn Combat::apply_attack_to_mobs(
     result,
   }
   push_event(hit_event)
-  for target_oid, damage_lines in result.damage_lines {
-    let mut total_damage = 0
-    for line in damage_lines {
-      total_damage += line.0
+  if result.bullet == 0 {
+    for target_oid, damage_lines in result.damage_lines {
+      let mut total_damage = 0
+      for line in damage_lines {
+        total_damage += line.0
+      }
+      @game_server.send(@server_proto.MobDamageMessage::{
+        oid: target_oid,
+        damage: total_damage,
+      })
     }
-    @game_server.send(@server_proto.MobDamageMessage::{
-      oid: target_oid,
-      damage: total_damage,
-    })
   }
 }
 
@@ -324,13 +245,9 @@ pub fn Combat::apply_attack_to_mobs(
 pub fn Combat::trigger_extra_attack(
   self : Combat,
   character : @character.Character,
-  skill_id : Int,
+  act : SpecialMove,
   targets : Array[Int],
 ) -> Unit {
-  guard move_map.get(skill_id) is Some(act) else {
-    @log.warn("Passive skill not registered", data={ "skill_id": skill_id })
-    return
-  }
   guard character.get_look().get_equips().get_weapon() is Some(_weapon) else {
     return
   }
@@ -412,98 +329,7 @@ priv struct DamageEffect {
   toleft : Bool
   target_oid : Int
   sp_move : SpecialMove
-}
-
-///|
-priv struct UseSkillMessage {
-  move_id : Int
-  level : Int
-} derive(Show)
-
-///|
-impl @net.OutMessage for UseSkillMessage with pack(self) {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::USE_SKILL)
-  packet.write_time()
-  packet.write_int(self.move_id)
-  packet.write_byte(self.level.to_byte())
-
-  // If monster magnet : some more bytes
-
-  if self.move_id % 10000000 == 1004 {
-    packet.skip(2) // TODO: No idea what this could be
-  }
-  // TODO: A point (4 bytes) could be added at the end
-  packet
-}
-
-///|
-/// Notifies the server of an attack. 
-struct AttackMessage(AttackResult) derive(Show)
-
-///|
-pub impl @net.OutMessage for AttackMessage with pack(self) {
-  let attack = self.0
-  let opcode = match attack.t {
-    @combat_proto.AttackType::CLOSE => @net.ClientOpcode::CLOSE_ATTACK
-    @combat_proto.AttackType::RANGED => @net.ClientOpcode::RANGED_ATTACK
-    _ => @net.ClientOpcode::MAGIC_ATTACK
-  }
-  let packet = @net.OutPacket::new(opcode)
-  packet.skip(1)
-  packet.write_byte(((attack.mob_count << 4) | attack.hitcount).to_byte())
-  packet.write_int(attack.skill)
-  if attack.charge > 0 {
-    packet.write_int(attack.charge)
-  }
-  packet.skip(8)
-  packet.write_byte(attack.display.to_byte())
-  packet.write_byte(attack.toleft.to_int().to_byte())
-  packet.write_byte(attack.stance.to_byte())
-  packet.skip(1)
-  packet.write_byte(attack.speed.to_byte())
-  if attack.t == @combat_proto.AttackType::RANGED {
-    packet.skip(1)
-    packet.write_byte(attack.toleft.to_int().to_byte())
-    packet.skip(7)
-    // TODO: skip(4); If hurricane, piercing arrow or rapidfire
-  } else {
-    packet.skip(4)
-  }
-  for damage_to_mob, arr in attack.damage_lines {
-    packet.write_int(damage_to_mob)
-    packet.skip(14)
-    for single_damage in arr {
-      packet.write_int(single_damage.0)
-      // TODO: Add critical here
-    }
-    if attack.skill != 5221004 {
-      packet.skip(4)
-    }
-  }
-  packet
-}
-
-///|
-/// Load a skill and create a SpecialMove from it.
-/// This is used during game initialization to pre-load skills.
-pub async fn load_skill_move(move_id : Int) -> SpecialMove {
-  let it = Skill::load(move_id)
-  {
-    id: it.get_id(),
-    attack: it.is_attack(),
-    skill: true,
-    apply_useeffects: fn(c) { it.apply_useeffects(c) },
-    apply_actions: fn(attack_type, c) { it.apply_actions(attack_type, c) },
-    make_attack: fn(c, i, t, _) { it.make_attack(c, i.get_bulletid(), t) },
-    get_bullet: fn(c, bulletid) { it.get_bullet(c, bulletid) },
-    can_use: fn(level, weapontype, job, hp, mp, bullet) {
-      it.can_use(level, weapontype, job, hp, mp, bullet)
-    },
-    apply_hit_effects: fn(attack_user, mob) {
-      it.apply_hit_effects(attack_user, mob)
-    },
-    get_afterimage: fn() { it.get_afterimage() },
-  }
+  send_damage_to_server : Bool
 }
 
 ///|
@@ -521,7 +347,7 @@ fn Combat::extract_effects(
   }
   if result.bullet != 0 {
     for oid, vec in result.damage_lines {
-      if self.mobs.contains(oid) {
+      if self.mobs.get_mob(oid) is Some(_) {
         let numbers = self.place_numbers(oid, vec)
         let head = self.mobs.get_mob_head_position(oid)
         let mut i = 0
@@ -533,6 +359,7 @@ fn Combat::extract_effects(
             toleft: result.toleft,
             target_oid: oid,
             sp_move: act,
+            send_damage_to_server: true,
           }
           @bullet.spawn_bullet(
             user.get_attackdelay(i).to_int64(),
@@ -542,7 +369,7 @@ fn Combat::extract_effects(
             head,
             fn() { self.apply_damage_effect(effect) },
             fn(prev_target) {
-              if self.mobs.contains(oid) {
+              if self.mobs.get_mob(oid) is Some(_) {
                 self.mobs.get_mob_head_position(oid)
               } else {
                 prev_target
@@ -564,6 +391,7 @@ fn Combat::extract_effects(
           toleft: false,
           target_oid: 0,
           sp_move: self.regular_attack, // TODO: what should this be?
+          send_damage_to_server: false,
         }
         @bullet.spawn_bullet(
           user.get_attackdelay(i).to_int64(),
@@ -578,7 +406,7 @@ fn Combat::extract_effects(
     }
   } else {
     for oid, vec in result.damage_lines {
-      if self.mobs.contains(oid) {
+      if self.mobs.get_mob(oid) is Some(_) {
         let numbers = self.place_numbers(oid, vec)
         let mut i = 0
         for number in numbers {
@@ -589,6 +417,7 @@ fn Combat::extract_effects(
             toleft: result.toleft,
             target_oid: oid,
             sp_move: act,
+            send_damage_to_server: false,
           })
           i += 1
         }
@@ -620,20 +449,24 @@ fn Combat::place_numbers(
 
 ///|
 fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
+  guard self.mobs.get_mob(effect.target_oid) is Some(mob) else { return }
+  if effect.send_damage_to_server {
+    @game_server.send(@server_proto.MobDamageMessage::{
+      oid: effect.target_oid,
+      damage: effect.damage,
+    })
+  }
   let head_position = self.mobs.get_mob_head_position(effect.target_oid)
   let (t, amount, start_y) = effect.number_params
   @ui.show_number(t, amount, start_y, x=head_position.x)
-  guard self.mobs.get_mob(effect.target_oid) is Some(mob) else { return }
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move
   act.apply_hit_effects(effect.user, mob)
 }
 
 ///|
-/// Find out the type of attack and whether it should be degenerate
-/// 
-/// Returns (degenerate, attack_type) where degenerate is true if the skill or ammunition is missing
-pub fn check_attack_type(
+/// Internal helper for attack type resolution.
+fn resolve_attack_type(
   character : @character.Character,
   inventory : &@legacy_types.Inventory,
   skill : Bool,
@@ -738,18 +571,6 @@ pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
     attack.range.bottom(),
   )
   (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(origin)
-}
-
-///|
-pub fn parse_cooldowns(recv : @net.InPacket) -> Map[Int, Int] raise {
-  let size = recv.read_short()
-  let cooldowns = Map::new()
-  for _ in 0..<size {
-    let skill_id = recv.read_int()
-    let cooltime = recv.read_short()
-    cooldowns[skill_id] = cooltime
-  }
-  cooldowns
 }
 
 ///|

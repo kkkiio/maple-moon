@@ -605,7 +605,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
 
 ///|
 pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
-  if not(self.entity.is_alive()) {
+  if not(self.is_alive()) {
     return None
   }
   match self.animations.get(self.stance.t) {

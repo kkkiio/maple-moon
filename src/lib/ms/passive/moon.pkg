@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/skill",
+  "KKKIIO/maple-moon/lib/ms/skill_cast",
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/weapon",
 }

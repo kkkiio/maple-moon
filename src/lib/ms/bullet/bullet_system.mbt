@@ -24,11 +24,21 @@ struct BulletSystem {
 }
 
 ///|
+let current_bullet_system_ref : Ref[BulletSystem?] = Ref::new(None)
+
+///|
+let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
+
+///|
+/// Create an empty bullet runtime state.
 pub fn BulletSystem::new() -> BulletSystem {
   { pending: @utils.TimedQueue::new(), active: [] }
 }
 
 ///|
+/// Queue a bullet spawn request.
+///
+/// The bullet will be instantiated after `delay` milliseconds.
 pub fn BulletSystem::spawn(
   self : BulletSystem,
   delay : Int64,
@@ -50,6 +60,7 @@ pub fn BulletSystem::spawn(
 }
 
 ///|
+/// Advance bullet simulation by one fixed logic timestep.
 pub fn BulletSystem::update(self : BulletSystem, timestep~ : Int64) -> Unit {
   for spawn in self.pending.process(timestep~) {
     let entity = @entity.Entity::new()
@@ -86,12 +97,81 @@ pub fn BulletSystem::update(self : BulletSystem, timestep~ : Int64) -> Unit {
 }
 
 ///|
+/// Clear all active and pending bullets in this runtime state.
 pub fn BulletSystem::clear(self : BulletSystem) -> Unit {
   for active_bullet in self.active {
     clear_entity(active_bullet.entity)
   }
   self.active.clear()
   self.pending = @utils.TimedQueue::new()
+}
+
+///|
+fn register_scene_cleanup_once() -> Unit {
+  if scene_cleanup_registered.val {
+    return
+  }
+  scene_cleanup_registered.val = true
+  @game_state.listen_scene_clear(fn(_reason) {
+    clear_current_bullet_system()
+    true
+  })
+}
+
+///|
+/// Register the current scene's bullet runtime state.
+pub fn set_current_bullet_system(system : BulletSystem?) -> Unit {
+  register_scene_cleanup_once()
+  current_bullet_system_ref.val = system
+}
+
+///|
+/// Spawn a bullet through the current scene-level bullet runtime.
+///
+/// Panics if the runtime has not been initialized.
+pub fn spawn_bullet(
+  delay : Int64,
+  animation : @resource.NxAnimation,
+  origin : @struct.Point[Int],
+  toleft : Bool,
+  target : @struct.Point[Int],
+  on_hit : () -> Unit,
+  update_target : (@struct.Point[Int]) -> @struct.Point[Int],
+) -> Unit {
+  guard current_bullet_system_ref.val is Some(system) else {
+    @log.fatal("bullet system is not initialized")
+  }
+  system.spawn(delay, animation, origin, toleft, target, on_hit, update_target)
+}
+
+///|
+/// Clear and unregister the current scene-level bullet runtime state.
+pub fn clear_current_bullet_system() -> Unit {
+  match current_bullet_system_ref.val {
+    Some(system) => system.clear()
+    None => ()
+  }
+  current_bullet_system_ref.val = None
+}
+
+///|
+/// Get the current scene-level bullet runtime state.
+pub fn get_current_bullet_system() -> BulletSystem? {
+  current_bullet_system_ref.val
+}
+
+///|
+/// Selene system entry for bullet simulation.
+///
+/// This runs only during `GameActive` and advances by fixed logic steps.
+pub fn bullet_system(_delta : Double) -> Unit {
+  register_scene_cleanup_once()
+  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @monster.get_map_mobs() is Some(_) else { return }
+  guard current_bullet_system_ref.val is Some(system) else { return }
+  for _ in 0..<@logic_fps.get_logic_times() {
+    system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
+  }
 }
 
 ///|

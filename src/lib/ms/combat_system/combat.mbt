@@ -18,18 +18,17 @@ struct Combat {
   mobs : @monster.MapMobs
   regular_attack : SpecialMove
   // TODO: Add reactors
-  bullet_system : @bullet.BulletSystem
   damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[@ui.Number]
   cooldowns : Map[Int, Int]
 }
 
 ///|
+/// Create a combat runtime bound to the provided map mob collection.
 pub fn Combat::new(mobs : @monster.MapMobs) -> Combat {
   {
     mobs,
     regular_attack: new_regular_attack(),
-    bullet_system: @bullet.BulletSystem::new(),
     damage_effects: @utils.TimedQueue::new(),
     // damage_numbers: Array::new(),
     cooldowns: {},
@@ -56,7 +55,6 @@ pub fn Combat::draw(
 
 ///|
 pub fn Combat::update(self : Combat) -> Unit {
-  self.bullet_system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
   for
     dmg_eff in self.damage_effects.process(
       timestep=@logic_fps.STEP_TIME_MS.to_int64(),
@@ -536,7 +534,7 @@ fn Combat::extract_effects(
             target_oid: oid,
             sp_move: act,
           }
-          self.bullet_system.spawn(
+          @bullet.spawn_bullet(
             user.get_attackdelay(i).to_int64(),
             act.get_bullet(user, result.bullet),
             user.get_position(),
@@ -567,7 +565,7 @@ fn Combat::extract_effects(
           target_oid: 0,
           sp_move: self.regular_attack, // TODO: what should this be?
         }
-        self.bullet_system.spawn(
+        @bullet.spawn_bullet(
           user.get_attackdelay(i).to_int64(),
           act.get_bullet(user, result.bullet),
           user.get_position(),
@@ -759,9 +757,6 @@ let combat_ref : Ref[Combat?] = Ref::new(None)
 
 ///|
 pub fn set_combat(combat : Combat?) -> Unit {
-  if combat_ref.val is Some(old_combat) {
-    old_combat.bullet_system.clear()
-  }
   combat_ref.val = combat
 }
 

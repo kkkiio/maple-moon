@@ -398,8 +398,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @drop.set_map_physics(sence_map.physics)
       @game_server.send(@server_proto.PlayerMapTransferMessage::default())
       let player = @player.get_player().unwrap()
+      let bullet_system = @bullet.BulletSystem::new()
       let combat = @combat_system.Combat::new(stage.mobs)
       @combat_system.set_combat(Some(combat))
+      @bullet.set_current_bullet_system(Some(bullet_system))
       @combat_system.set_player(Some(player))
       // Register passive skills
       @passive.register_passive_skill(@passive.sword_fa_fighter_passive)

@@ -5,6 +5,7 @@ using @server_proto {type StatsEntry}
 test "use_move_integration_test" {
   // 1. Setup Global Combat
   let mobs : @monster.MapMobs = @monster.MapMobs::new()
+  @bullet.set_current_bullet_system(Some(@bullet.BulletSystem::new()))
   let combat = @combat_system.Combat::new(mobs)
   @combat_system.set_combat(Some(combat))
 

@@ -89,6 +89,7 @@ fn main {
   .add_system(@monster.map_monsters_system, system_name="map_monsters_system")
   .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system")
   .add_system(@drop.map_drops_system, system_name="map_drops_system")
+  .add_system(@bullet.bullet_system, system_name="bullet_system")
   .add_system(@combat_system.combat_system, system_name="combat_system")
   .add_system(@passive.passive_system, system_name="passive_system")
   .add_system(@game_server.server_system, system_name="server_system")

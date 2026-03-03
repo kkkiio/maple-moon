@@ -10,11 +10,21 @@ import {
 // Values
 pub let all_bullet_ids : Array[String]
 
+pub fn bullet_system(Double) -> Unit
+
+pub fn clear_current_bullet_system() -> Unit
+
 pub fn get_bullet_data(Int) -> BulletData
 
 pub fn get_bullet_module() -> Module
 
+pub fn get_current_bullet_system() -> BulletSystem?
+
 pub fn set_bullet_module(Module) -> Unit
+
+pub fn set_current_bullet_system(BulletSystem?) -> Unit
+
+pub fn spawn_bullet(Int64, @resource.NxAnimation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
 
 // Errors
 

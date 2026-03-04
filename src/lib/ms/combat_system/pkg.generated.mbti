@@ -138,6 +138,12 @@ pub impl @json.FromJson for NxSkill
 type NxSkillLevelHit
 pub impl @json.FromJson for NxSkillLevelHit
 
+pub(all) enum RangeSemantics {
+  LegacySingleRange
+  ProjectileThenAoe
+}
+pub impl Eq for RangeSemantics
+
 type RegularAction
 pub impl SkillAction for RegularAction
 pub impl Default for RegularAction

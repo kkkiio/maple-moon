@@ -125,11 +125,7 @@ fn Combat::execute_attack_pipeline(
   let attack = act.make_attack(character, inventory, attack_type, degenerate)
   let mob_targets = match fixed_targets {
     Some(targets) => targets
-    None => {
-      let range = make_attack_range(attack)
-      let origin = attack.origin
-      find_closest_mob(self.mobs, range, origin, attack.mobcount)
-    }
+    None => self.resolve_attack_targets(character, act, attack)
   }
   let result : AttackResult = {
     ..AttackResult::new(attack),
@@ -322,6 +318,64 @@ fn find_closest_mob(
 }
 
 ///|
+pub(all) enum RangeSemantics {
+  LegacySingleRange
+  ProjectileThenAoe
+} derive(Eq)
+
+///|
+fn get_range_semantics(move_id : Int) -> RangeSemantics {
+  match @skill.SkillId::from_int(move_id) {
+    Some(@skill.SkillId::ARROW_BOMB_BOW) => RangeSemantics::ProjectileThenAoe
+    _ => RangeSemantics::LegacySingleRange
+  }
+}
+
+///|
+fn Combat::resolve_attack_targets(
+  self : Combat,
+  character : @character.Character,
+  act : SpecialMove,
+  attack : @combat_proto.Attack,
+) -> Array[Int] {
+  match get_range_semantics(act.get_id()) {
+    RangeSemantics::LegacySingleRange => {
+      let range = make_attack_range(attack)
+      find_closest_mob(self.mobs, range, attack.origin, attack.mobcount)
+    }
+    RangeSemantics::ProjectileThenAoe => {
+      // Stage 1: primary target is resolved by regular ranged cast range.
+      let cast_range = make_world_range(
+        attack.origin,
+        attack.toleft,
+        character.stats.get_range(),
+        1.0,
+      )
+      let primary = find_closest_mob(self.mobs, cast_range, attack.origin, 1)
+      guard primary.length() > 0 else { return [] }
+      let primary_oid = primary[0]
+      let center = self.mobs.get_mob_position(primary_oid)
+
+      // Stage 2: splash uses skill lt/rb around the primary target.
+      let aoe_range = attack.range.shift(center)
+      let splash = find_closest_mob(
+        self.mobs,
+        aoe_range,
+        center,
+        attack.mobcount,
+      )
+      let targets = [primary_oid]
+      for oid in splash {
+        if not(targets.contains(oid)) {
+          targets.push(oid)
+        }
+      }
+      targets.iter().take(attack.mobcount).collect()
+    }
+  }
+}
+
+///|
 priv struct DamageEffect {
   user : @combat_proto.AttackUser
   number_params : (@ui.NumberType, Int, Int) // type, damage, y_pos
@@ -346,6 +400,10 @@ fn Combat::extract_effects(
     flip: not(result.toleft),
   }
   if result.bullet != 0 {
+    if get_range_semantics(act.get_id()) == RangeSemantics::ProjectileThenAoe {
+      self.extract_projectile_then_aoe_effects(user, act, result, attack_user)
+      return
+    }
     for oid, vec in result.damage_lines {
       if self.mobs.get_mob(oid) is Some(_) {
         let numbers = self.place_numbers(oid, vec)
@@ -381,8 +439,7 @@ fn Combat::extract_effects(
       }
     }
     if result.damage_lines.is_empty() { // TODO: what does this mean?
-      let xshift = if result.toleft { -400 } else { 400 }
-      let target = user.get_position() + @struct.Point::new(xshift, -26)
+      let target = miss_bullet_target_position(user, act, result)
       for i in 0..<result.hitcount {
         let effect : DamageEffect = {
           user: attack_user,
@@ -427,6 +484,83 @@ fn Combat::extract_effects(
 }
 
 ///|
+fn Combat::extract_projectile_then_aoe_effects(
+  self : Combat,
+  user : @character.Character,
+  act : SpecialMove,
+  result : AttackResult,
+  attack_user : @combat_proto.AttackUser,
+) -> Unit {
+  if result.damage_lines.is_empty() {
+    let target = miss_bullet_target_position(user, act, result)
+    @bullet.spawn_bullet(
+      user.get_attackdelay(0).to_int64(),
+      act.get_bullet(user, result.bullet),
+      user.get_position(),
+      result.toleft,
+      target,
+      fn() {  },
+      fn(prev_target) { prev_target },
+    )
+    return
+  }
+
+  let mut primary_oid = result.first_oid
+  if self.mobs.get_mob(primary_oid) is None {
+    for oid, _ in result.damage_lines {
+      if self.mobs.get_mob(oid) is Some(_) {
+        primary_oid = oid
+        break
+      }
+    }
+  }
+  guard self.mobs.get_mob(primary_oid) is Some(_) else { return }
+
+  @bullet.spawn_bullet(
+    user.get_attackdelay(0).to_int64(),
+    act.get_bullet(user, result.bullet),
+    user.get_position(),
+    result.toleft,
+    self.mobs.get_mob_head_position(primary_oid),
+    fn() { self.apply_projectile_then_aoe_hit(attack_user, act, result) },
+    fn(prev_target) {
+      if self.mobs.get_mob(primary_oid) is Some(_) {
+        self.mobs.get_mob_head_position(primary_oid)
+      } else {
+        prev_target
+      }
+    },
+  )
+}
+
+///|
+fn Combat::apply_projectile_then_aoe_hit(
+  self : Combat,
+  attack_user : @combat_proto.AttackUser,
+  act : SpecialMove,
+  result : AttackResult,
+) -> Unit {
+  for oid, vec in result.damage_lines {
+    if self.mobs.get_mob(oid) is Some(_) {
+      let numbers = self.place_numbers(oid, vec)
+      let mut i = 0
+      for number in numbers {
+        self.apply_damage_effect({
+          user: attack_user,
+          number_params: number,
+          damage: vec[i].0,
+          toleft: result.toleft,
+          target_oid: oid,
+          sp_move: act,
+          send_damage_to_server: true,
+        })
+        i += 1
+      }
+    }
+  }
+}
+
+///|
 fn Combat::place_numbers(
   self : Combat,
   oid : Int,
@@ -445,6 +579,28 @@ fn Combat::place_numbers(
     head -= @ui.Number::row_height(is_critical)
   }
   return numbers
+}
+
+///|
+fn miss_bullet_target_position(
+  user : @character.Character,
+  act : SpecialMove,
+  result : AttackResult,
+) -> @struct.Point[Int] {
+  if get_range_semantics(act.get_id()) == RangeSemantics::ProjectileThenAoe {
+    let origin = user.get_position()
+    let toleft = result.toleft
+    let cast_range = make_world_range(
+      origin,
+      toleft,
+      user.stats.get_range(),
+      1.0,
+    )
+    let x = if toleft { cast_range.left() } else { cast_range.right() }
+    return @struct.Point::new(x, origin.y - 26)
+  }
+  let xshift = if result.toleft { -400 } else { 400 }
+  user.get_position() + @struct.Point::new(xshift, -26)
 }
 
 ///|
@@ -562,15 +718,24 @@ using @struct {type Rectangle}
 
 ///|
 pub fn make_attack_range(attack : @combat_proto.Attack) -> Rectangle[Int] {
-  let origin = attack.origin
-  let left = (attack.range.left().to_double() * attack.hrange).to_int()
+  make_world_range(attack.origin, attack.toleft, attack.range, attack.hrange)
+}
+
+///|
+fn make_world_range(
+  origin : @struct.Point[Int],
+  toleft : Bool,
+  range : Rectangle[Int],
+  hrange : Double,
+) -> Rectangle[Int] {
+  let left = (range.left().to_double() * hrange).to_int()
   let rel_range = Rectangle::from4(
     left,
-    attack.range.right(),
-    attack.range.top(),
-    attack.range.bottom(),
+    range.right(),
+    range.top(),
+    range.bottom(),
   )
-  (if attack.toleft { rel_range } else { rel_range.flip_x() }).shift(origin)
+  (if toleft { rel_range } else { rel_range.flip_x() }).shift(origin)
 }
 
 ///|

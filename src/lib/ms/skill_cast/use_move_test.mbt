@@ -175,6 +175,206 @@ test "use_move_integration_test" {
 }
 
 ///|
+async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
+  @resource.set_skill_loader(
+    @resource.AsyncLoader::new(
+      "test_local_skill",
+      base_url="/assets",
+      loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
+    ),
+  )
+  @resource.set_string_loader(
+    @resource.AsyncLoader::new(
+      "test_local_string",
+      base_url="/assets",
+      loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
+    ),
+  )
+
+  // 1) Setup combat and map mobs.
+  let mobs : @monster.MapMobs = @monster.MapMobs::new()
+  @bullet.set_current_bullet_system(Some(@bullet.BulletSystem::new()))
+  let combat = @combat_system.Combat::new(mobs)
+  @combat_system.set_combat(Some(combat))
+
+  let mob_json = @fs.read_file_to_string("assets/Mob/1210102.img.json")
+  let nx_mob : @monster.NxMob = @json.from_json(@json.parse(mob_json))
+  let mob_random = @random.Rand::new()
+  mobs.add_mob(
+    @monster.Mob::new(
+      nx_mob,
+      object_id=101,
+      monster_id=1210102,
+      0,
+      4,
+      0,
+      true,
+      { x: 350, y: 0 }, // outside Arrow Bomb aoe(150) but inside regular bow cast range(400)
+      randomizer=mob_random,
+    ),
+  )
+  mobs.add_mob(
+    @monster.Mob::new(
+      nx_mob,
+      object_id=102,
+      monster_id=1210102,
+      0,
+      4,
+      0,
+      true,
+      { x: 460, y: 0 }, // outside regular cast range, but inside aoe around primary target
+      randomizer=mob_random,
+    ),
+  )
+
+  // 2) Setup bow character and afterimages.
+  let entity = @entity.Entity::new()
+  let bodynode = @fs.read_file_to_string(
+      "assets/Character/Body/00002000.img.json",
+    )
+    |> @json.parse
+  let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
+    bodynode,
+  )
+  let headnode = @fs.read_file_to_string(
+      "assets/Character/Body/00012000.img.json",
+    )
+    |> @json.parse
+  let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
+    headnode,
+  )
+  let draw_info = @types.BodyDrawInfo::new(
+    stance_bodys_map.0,
+    stance_heads_map.0,
+  )
+  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @fs.read_file_to_string(
+      "assets/Character/Hair/00030000.img.json",
+    )
+    |> @json.parse
+    |> @json.from_json
+  let look = @char_look.CharLook::new(
+    entity,
+    {},
+    @char_look.FullBody::new(
+      0,
+      draw_info,
+      stance_bodys_map.0,
+      stance_heads_map.0,
+    ),
+    @char_look.Hair::parse(0, hair_node, draw_info),
+    @char_look.Face::new(
+      20000,
+      @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
+      |> @json.parse,
+    ),
+    draw_info,
+  )
+  let weapon_node = @fs.read_file_to_string(
+      "assets/Character/Weapon/01452000.img.json",
+    )
+    |> @json.parse
+  let weapon_info = match weapon_node {
+    { "info": Object(info), .. } => info
+    _ => Map::new()
+  }
+  let weapon_icons = (
+    weapon_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
+    weapon_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+  )
+  let weapon_item = @item.ItemData::{
+    src: weapon_node,
+    icons: weapon_icons,
+    item_id: 1452000,
+    price: 0,
+    gender: 0,
+    name: "TestBow",
+    desc: "",
+    category: "Weapon",
+    valid: true,
+    untradable: false,
+    unique: false,
+    unsellable: false,
+    cash_item: false,
+  }
+  let weapon_data = try! @weapon.WeaponData::from_item_data(weapon_item)
+  let after_image_name = weapon_data.get_afterimage()
+  let after_image_path = "assets/Character/Afterimage/\{after_image_name}.img.json"
+  let after_image_node = @fs.read_file_to_string(after_image_path)
+    |> @json.parse
+  let after_images : @char_look.NxAfterImages = @json.from_json(
+    after_image_node,
+  )
+  @char_look.set_after_images(after_image_name, after_images)
+  look.add_equip(weapon_item, @slot.Id::WEAPON)
+
+  let skill_id = @skill.SkillId::ARROW_BOMB_BOW.int_value()
+  let char_stats = @char_stats.CharStats::new(
+    StatsEntry::default(),
+    fn() {
+      look
+      .get_equips()
+      .get_weapon()
+      .map(fn(w) { w.get_type() })
+      .unwrap_or(@weapon.Type::NONE)
+    },
+    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
+    Map::new(),
+    Map::new(),
+    Map::new(),
+  )
+  char_stats.set_stat(@maple_stat.Id::LEVEL, 30)
+  char_stats.set_stat(@maple_stat.Id::STR, 60)
+  char_stats.set_stat(@maple_stat.Id::DEX, 120)
+  char_stats.init_totalstats()
+  char_stats.set_total(@maple_stat.EquipStatId::WATK, 200)
+  char_stats.close_totalstats()
+  char_stats.set_total(@maple_stat.EquipStatId::ACC, 999)
+  let character = @character.Character::new(
+    entity,
+    100,
+    look,
+    "ArrowBombTester",
+    get_skilllevel=fn(sid) { if sid == skill_id { 1 } else { 0 } },
+    char_stats,
+  )
+  character.set_position({ x: 0, y: 0 })
+  character.set_facing_right(true)
+
+  let cc = ArrowBombCombatCharacter::{
+    character,
+    stats: char_stats,
+    inventory: ArrowBombInventory::default(),
+    skill_book: ArrowBombSkillBook::default(),
+  }
+  let special_move = @skill_cast.load_skill_move(skill_id)
+  @skill_cast.register_move(special_move)
+
+  // 3) Scenario A/B: primary by cast range, splash by aoe range.
+  let reader_id = @combat_system.register_reader()
+  @skill_cast.use_move(cc, skill_id)
+  let events1 = @combat_system.read_new_events(reader_id)
+  let hit_targets1 : Array[Int] = events1
+    .iter()
+    .flat_map(fn(event) { event.result.damage_lines.keys() })
+    .collect()
+  assert_true(hit_targets1.contains(101))
+  assert_true(hit_targets1.contains(102))
+
+  // 4) Scenario C: no primary target => no hit.
+  character.set_position({ x: -1200, y: 0 })
+  @skill_cast.use_move(cc, skill_id)
+  let events2 = @combat_system.read_new_events(reader_id)
+  let hit_targets2 : Array[Int] = events2
+    .iter()
+    .flat_map(fn(event) { event.result.damage_lines.keys() })
+    .collect()
+  assert_true(hit_targets2.is_empty())
+
+  @combat_system.unregister_reader(reader_id)
+  @combat_system.gc_consumed_events()
+}
+
+///|
 struct MockCombatCharacter {
   character : @character.Character
   stats : @char_stats.CharStats
@@ -217,5 +417,104 @@ impl @combat_system.CombatCharacter for MockCombatCharacter with can_attack(
 
 ///|
 impl @combat_system.CombatCharacter for MockCombatCharacter with rush(_self, _x) {
+
+}
+
+///|
+struct ArrowBombInventory {} derive(Default)
+
+///|
+impl @legacy_types.Inventory for ArrowBombInventory with recalc_stats(_, _) {
+
+}
+
+///|
+impl @legacy_types.Inventory for ArrowBombInventory with get_stat(_, _) {
+  0
+}
+
+///|
+impl @legacy_types.Inventory for ArrowBombInventory with has_projectile(_) {
+  true
+}
+
+///|
+impl @legacy_types.Inventory for ArrowBombInventory with get_bulletid(_) {
+  2060000
+}
+
+///|
+impl @legacy_types.Inventory for ArrowBombInventory with get_bulletcount(_) {
+  1000
+}
+
+///|
+struct ArrowBombSkillBook {} derive(Default)
+
+///|
+impl @legacy_types.SkillBook for ArrowBombSkillBook with get_level(_, skill_id) {
+  if skill_id == @skill.SkillId::ARROW_BOMB_BOW.int_value() {
+    1
+  } else {
+    0
+  }
+}
+
+///|
+impl @legacy_types.SkillBook for ArrowBombSkillBook with set_skill(
+  _,
+  _,
+  _,
+  _,
+  _,
+) {
+
+}
+
+///|
+struct ArrowBombCombatCharacter {
+  character : @character.Character
+  stats : @char_stats.CharStats
+  inventory : ArrowBombInventory
+  skill_book : ArrowBombSkillBook
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with get_character(
+  self,
+) {
+  self.character
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with get_stats(
+  self,
+) {
+  self.stats
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with get_inventory(
+  self,
+) {
+  self.inventory
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with get_skill_book(
+  self,
+) {
+  self.skill_book
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with can_attack(
+  _,
+) {
+  true
+}
+
+///|
+impl @combat_system.CombatCharacter for ArrowBombCombatCharacter with rush(_, _) {
 
 }

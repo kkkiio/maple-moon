@@ -80,7 +80,10 @@ fn main {
     system_name="scene_transition_system",
   )
   .add_system(@game_scene.look_sync_system, system_name="look_sync_system")
-  .add_system(@player.player_state_system, system_name="player_state_system")
+  .add_system(
+    @controller.player_controller_system,
+    system_name="player_controller_system",
+  )
   .add_system(@map.background_system, system_name="background_system")
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
   .add_system(@map.portal_system, system_name="portal_system")

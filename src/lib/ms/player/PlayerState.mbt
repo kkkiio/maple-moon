@@ -2,14 +2,9 @@
 using @character {type CharState}
 
 ///|
-fn play_jumpsound() -> Unit {
-  //   Sound::new(SoundName::SOUND_NAME_JUMP).play()
-}
-
-///|
-fn haswalkinput(player : Player) -> Bool {
-  player.is_key_down(@keyboard.BasicActionId::LEFT) ||
-  player.is_key_down(@keyboard.BasicActionId::RIGHT)
+fn haswalkinput(_player : Player) -> Bool {
+  @keymap.is_pressed(@keymap.Action::BASIC(@keymap.BasicActionId::MOVE_LEFT)) ||
+  @keymap.is_pressed(@keymap.Action::BASIC(@keymap.BasicActionId::MOVE_RIGHT))
 }
 
 ///|

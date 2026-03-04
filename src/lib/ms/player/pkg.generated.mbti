@@ -11,7 +11,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/job",
-  "KKKIIO/maple-moon/lib/ms/keyboard",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
@@ -24,9 +23,9 @@ pub fn get_player() -> Player?
 
 pub let player_ref : Ref[Player?]
 
-pub fn player_state_system(Double) -> Unit
-
 pub fn set_player(Player) -> Unit
+
+pub fn tick_player(Player, @physics.Physics, @map.MapInfo) -> Unit
 
 // Errors
 
@@ -61,7 +60,6 @@ pub fn Player::get_walkforce(Self) -> Double
 pub fn Player::has_buff(Self, @buff.StatId) -> Bool
 pub fn Player::is_attacking(Self) -> Bool
 pub fn Player::is_invincible(Self) -> Bool
-pub fn Player::is_key_down(Self, @keyboard.BasicActionId) -> Bool
 pub fn Player::is_underwater(Self) -> Bool
 pub async fn Player::load(@entity.Entity, @character.CharEntry, &@legacy_types.Inventory, @char_look.CharLook, (@job.Job) -> @char_stats.CharStats) -> Self
 pub fn Player::new(@entity.Entity, Int, String, &@legacy_types.Inventory, @char_look.CharLook, @char_stats.CharStats) -> Self

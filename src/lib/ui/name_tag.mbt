@@ -70,8 +70,8 @@ pub fn NameTag::new(
 
 ///|
 pub impl @graphics.Drawable for NameTag with draw(
-  self : NameTag,
-  args : @graphics.DrawArgument,
+  _self : NameTag,
+  _args : @graphics.DrawArgument,
 ) -> Unit {
   // let position = args.pos + { x: 1, y: 2 }
   // let (t1, t2, t3) = self.textures[self.selected]

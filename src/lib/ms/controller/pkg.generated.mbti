@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/controller"
+
+// Values
+pub fn player_controller_system(Double) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

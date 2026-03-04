@@ -57,10 +57,10 @@ pub fn Module::make_handlers(
 ///|
 // pub fn Module::make_actions(
 //   _ : Module,
-// ) -> Map[@keyboard.BasicActionId, @action.Descriptor] {
+// ) -> Map[BasicActionId, @action.Descriptor] {
 // [
 //   (
-//     @keyboard.ActionId::SKILLS,
+//     ActionId::SKILLS,
 //     @action.Descriptor::UI(key=@ui.UIElementType::SKILL_BOOK, focused=false, make_element=fn(
 
 //     ) {

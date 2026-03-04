@@ -112,6 +112,37 @@ fn normalize_camera_limits(
 }
 
 ///|
+fn default_keymap() -> @keymap.Keymap {
+  Map::from_array([
+    (
+      @inputs.Code::ArrowUp,
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
+    ),
+    (
+      @inputs.Code::ArrowDown,
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_DOWN),
+    ),
+    (
+      @inputs.Code::ArrowLeft,
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_LEFT),
+    ),
+    (
+      @inputs.Code::ArrowRight,
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_RIGHT),
+    ),
+    (@inputs.Code::Space, @keymap.Action::BASIC(@keymap.BasicActionId::JUMP)),
+    (@inputs.Code::KeyX, @keymap.Action::BASIC(@keymap.BasicActionId::ATTACK)),
+    (@inputs.Code::KeyZ, @keymap.Action::BASIC(@keymap.BasicActionId::PICKUP)),
+    // (@inputs.Code::KeyA, @keymap.Action::SKILL(1001004)), // Power Strike
+    (
+      @inputs.Code::KeyA,
+      @keymap.Action::SKILL(@skill.SkillId::ARROW_BOMB_BOW.int_value()),
+    ), // 
+    (@inputs.Code::KeyF, @keymap.Action::SKILL(2101002)), // Teleport (F/P)
+  ])
+}
+
+///|
 pub fn Stage::get_mobs(self : Stage) -> @monster.MapMobs {
   self.mobs
 }
@@ -170,6 +201,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
     GameStart(map_id~, portal_id~, set_field_message~) => {
       guard set_field_message is SetField(stats~, inventory_entry~, ..) else {
         return
+      }
+      if get_loading_data() is None {
+        @keymap.set_keymap(default_keymap())
       }
       let player_item_ids = collect_inventory_item_ids(inventory_entry.items)
       let item_data_system = @item.get_item_data_system()
@@ -250,6 +284,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
               @skill.SkillId::POWER_STRIKE.int_value(),
+              @skill.SkillId::ARROW_BOMB_BOW.int_value(),
               // Final attack passives
               @skill.SkillId::SWORD_FA_FIGHTER.int_value(),
               @skill.SkillId::AXE_FA.int_value(),

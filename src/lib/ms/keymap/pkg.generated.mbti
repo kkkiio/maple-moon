@@ -1,0 +1,58 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/keymap"
+
+import {
+  "Milky2018/selene/inputs",
+}
+
+// Values
+pub fn get_action(Map[@inputs.Code, Action], @inputs.Code) -> Action?
+
+pub fn get_keymap() -> Map[@inputs.Code, Action]?
+
+pub fn is_just_pressed(Action) -> Bool
+
+pub fn is_just_pressed_in(Map[@inputs.Code, Action], Action) -> Bool
+
+pub fn is_pressed(Action) -> Bool
+
+pub fn is_pressed_in(Map[@inputs.Code, Action], Action) -> Bool
+
+pub fn just_pressed_actions() -> Array[Action]
+
+pub fn just_pressed_actions_in(Map[@inputs.Code, Action]) -> Array[Action]
+
+pub fn pressed_actions() -> Array[Action]
+
+pub fn pressed_actions_in(Map[@inputs.Code, Action]) -> Array[Action]
+
+pub fn set_keymap(Map[@inputs.Code, Action]) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) enum Action {
+  BASIC(BasicActionId)
+  SKILL(Int)
+  ITEM(Int)
+}
+pub impl Eq for Action
+pub impl Hash for Action
+
+pub(all) enum BasicActionId {
+  MOVE_UP
+  MOVE_DOWN
+  MOVE_LEFT
+  MOVE_RIGHT
+  JUMP
+  ATTACK
+  PICKUP
+}
+pub impl Eq for BasicActionId
+pub impl Hash for BasicActionId
+
+// Type aliases
+pub type Keymap = Map[@inputs.Code, Action]
+
+// Traits
+

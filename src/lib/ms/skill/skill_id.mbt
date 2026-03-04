@@ -129,6 +129,9 @@ pub(all) enum SkillId {
   // Priest
   PRIEST_TELEPORT = 2301001
 
+  // Hunter
+  ARROW_BOMB_BOW = 3101005
+
   // Hermit
   AVENGER = 4111005
   FLASH_JUMP = 4111006
@@ -273,6 +276,9 @@ pub fn SkillId::from_int(value : Int) -> SkillId? {
 
     // Priest
     2301001 => SkillId::PRIEST_TELEPORT
+
+    // Hunter
+    3101005 => SkillId::ARROW_BOMB_BOW
 
     // Hermit
     4111005 => SkillId::AVENGER

@@ -64,7 +64,7 @@ struct SkillNxResource {
   elem_attr : String
   req_skills : Nullable[IntMap[Int]]
   invisible : Bool
-  level_stats : LevelStats
+  level_stats : NxLevelStats
   req_weapon : WeaponType
 }
 // @json.FromJson(
@@ -112,7 +112,7 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
     _ =>
       raise @json.JsonDecodeError((path.add_key("invisible"), "expect number"))
   }
-  let level_stats : LevelStats = @json.from_json(
+  let level_stats : NxLevelStats = @json.from_json(
     obj.get("level").unwrap_or(Json::null()),
     path=path.add_key("level"),
   )
@@ -303,6 +303,8 @@ let skill_flags : Map[SkillId, (Bool, Bool)] = Map::from_array([
   (SkillId::POISON_BREATH, flag_attack),
   (SkillId::SEAL_FP, flag_attack),
   (SkillId::ELEMENT_COMPOSITION_FP, flag_range_attack),
+  // Hunter
+  (SkillId::ARROW_BOMB_BOW, flag_range_attack),
   //
   (SkillId::FIRE_DEMON, flag_attack),
   (SkillId::PARALYZE, flag_range_attack),
@@ -320,10 +322,10 @@ pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats? {
 }
 
 ///|
-priv struct LevelStats(Map[Int, Stats])
+priv struct NxLevelStats(Map[Int, Stats])
 
 ///|
-impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats raise @json.JsonDecodeError {
+impl @json.FromJson for NxLevelStats with from_json(json, path) -> NxLevelStats raise @json.JsonDecodeError {
   let stats = {}
   guard json is Object(levels) else {
     raise @json.JsonDecodeError((path, "expect object"))
@@ -356,11 +358,14 @@ impl @json.FromJson for LevelStats with from_json(json, path) -> LevelStats rais
           ),
         }
       Object(sub) => {
-        let damage = if sub is { "damage": Number(d, ..), .. } {
-          d / 100.0
+        let damage_base = if sub is { "damage": Number(d, ..), .. } {
+          d
+        } else if sub is { "x": Number(x, ..), .. } {
+          x
         } else {
           0
         }
+        let damage = damage_base / 100.0
         let matk = if sub is { "mad": Number(m, ..), .. } {
           m.to_int()
         } else {

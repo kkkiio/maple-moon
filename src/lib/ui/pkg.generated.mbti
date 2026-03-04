@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ui"
 
 import {
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/keyboard",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/entity",
@@ -294,17 +293,6 @@ type TwoSpriteButton
 pub fn TwoSpriteButton::new(@graphics.Texture, @graphics.Texture, np? : @res_types.Point[Int], sp? : @res_types.Point[Int], active? : Bool, state? : ButtonState) -> Self
 pub impl UIButton for TwoSpriteButton
 
-pub(all) struct UI {
-  mut state : &UIState?
-  get_keyboard_mapping : (String) -> @keyboard.Mapping?
-}
-pub fn UI::change_state(Self, &UIState) -> Unit
-pub fn UI::new((String) -> @keyboard.Mapping?) -> Self
-pub fn UI::send_key(Self, String, Bool) -> Unit
-pub fn UI::set_element(Self, Bool, Element) -> Unit
-pub fn UI::update(Self) -> Unit
-pub impl Container for UI
-
 pub(all) enum UIElementType {
   UI_ELEMENT_NONE
   START
@@ -395,18 +383,6 @@ pub(open) trait UIElementDescriptor {
   const_type() -> UIElementType
   const_toggled() -> Bool
   const_focused() -> Bool
-}
-
-pub(open) trait UIState {
-  draw(Self, Double, @res_types.Point[Int]) -> Unit
-  update(Self) -> Unit
-  send_key(Self, @keyboard.Mapping?, Bool, Bool) -> Unit
-  send_cursor(Self, CursorState, @res_types.Point[Int]) -> CursorState
-  doubleclick(Self, @res_types.Point[Int]) -> Unit
-  set_element(Self, Bool, Element) -> Unit
-  remove(Self, UIElementType) -> Unit
-  get(Self, UIElementType) -> Element?
-  get_front_by_types(Self, Array[UIElementType]) -> Element?
 }
 
 #deprecated

@@ -42,6 +42,18 @@ pub fn get_map_latest_loader() -> AsyncLoader {
 }
 
 ///|
+/// Register world-map page loader.
+pub fn set_map_world_map_loader(loader : AsyncLoader) -> Unit {
+  register_async_loader("map_world_map", loader)
+}
+
+///|
+/// Get world-map page loader.
+pub fn get_map_world_map_loader() -> AsyncLoader {
+  get_async_loader("map_world_map")
+}
+
+///|
 /// Register background set loader.
 pub fn set_background_set_loader(loader : AsyncLoader) -> Unit {
   register_async_loader("background_set", loader)

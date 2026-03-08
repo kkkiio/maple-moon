@@ -88,6 +88,10 @@ fn main {
   .add_system(@map.tile_objects_system, system_name="tile_objects_system")
   .add_system(@map.portal_system, system_name="portal_system")
   .add_system(@mini_map_ui.mini_map_ui_system, system_name="mini_map_ui_system")
+  .add_system(
+    @world_map_ui.world_map_ui_system,
+    system_name="world_map_ui_system",
+  )
   .add_system(@npc.map_npcs_system, system_name="map_npcs_system")
   .add_system(@monster.map_monsters_system, system_name="map_monsters_system")
   .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system")

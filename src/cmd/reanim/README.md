@@ -45,6 +45,7 @@ Maplestory 资源处理工具。主要用于将原始解包资源（JSON 结构 
 
 - **Spritesheet 模式 (`__i`)**：引用 WZ 导出的 atlas 结构（通常引用 `spritesheets/` 目录下的图集 + 子 ID）。
 - **Bitmap 模式 (`__b`)**：引用 raw bitmap ID（引用 `bitmaps/` 目录下的散图 ID）。
+  当前 bitmap 模式会递归处理整个 JSON 子树中的所有 frame 资源，不仅限于 `"0"`, `"1"` 这类动画帧，也支持 `BaseImg/0`、`MapLink/*/linkImg`、`MapList/*/path` 这种单帧静态节点。
 
 ## 依赖
 
@@ -114,3 +115,31 @@ node target/js/release/build/cmd/reanim/reanim.js \
 1. 从 `BasicEff.img/Teleport` 路径提取动画数据
 2. 从 `.local/nx/Effect.nx/bitmaps/` 加载对应 ID 的图片
 3. 生成 `assets/Effect/BasicEff.img/Teleport.png` 和对应的 JSON
+
+### 示例 4: `Map.nx/WorldMap` 混合资源
+
+先用 `nx_maple_res` 导出 `WorldMap` 子树和位图：
+
+```bash
+cd /Users/xieziheng/projects/nx_maple_res
+moon run cmd/main -- to_json assets/Map.nx --nodepath WorldMap --output /tmp/WorldMap.json
+moon run cmd/main -- save_bitmap assets/Map.nx WorldMap --out-dir /tmp/worldmap_raw
+```
+
+再用 `reanim` 转成 Maple Moon 的运行资源：
+
+```bash
+node target/js/release/build/cmd/reanim/reanim.js \
+  /tmp/WorldMap.json \
+  assets/map/WorldMap \
+  --bitmaps-dir /tmp/worldmap_raw/Map.nx/bitmaps
+```
+
+这个流程会同时处理：
+
+- `BaseImg/0`
+- `MapLink/*/link/linkImg`
+- `MapList/*/path`
+- 以及子树中的动画节点
+
+输出 JSON 会统一改写成 `__i + __off`，不保留 `__b`。

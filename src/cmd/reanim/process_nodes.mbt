@@ -77,12 +77,13 @@ fn update_json_tree(
         Object(obj) => {
           let new_obj : Map[String, Json] = {}
           for k, v in obj {
-            if k == "__i" {
-              new_obj["__i"] = Json::string(target_i)
+            if k == "__i" || k == "__b" {
+              continue
             } else {
               new_obj[k] = v
             }
           }
+          new_obj["__i"] = Json::string(target_i)
           new_obj["__off"] = Json::array([
             Json::number(offset_x.to_double()),
             Json::number(offset_y.to_double()),
@@ -413,6 +414,7 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
   }
   let input_content = @fsx.read_file_sync(args.input, "utf-8")
   let input_json = @json.parse(input_content)
+  let atlases : Map[String, @resource.SpritesheetMetadata] = {}
   let entries_to_process : Array[(String, Json)] = match args.match_pattern {
     Some(pattern) => {
       let matched = match_entries(input_json, pattern)
@@ -469,14 +471,18 @@ pub async fn process_bitmap(args : CliArgs) -> Unit {
       }
       parts.join("/")
     }
-    @log.debug("processing bitmap action", data={ "action": action_name })
-    let result_json = process_bitmap_resource(
+    @log.debug("processing bitmap resource", data={ "action": action_name })
+    let result_json = process_resource(
       json,
-      full_output_rel_path,
+      atlases,
       action_name,
-      load_bitmap=fn(bitmap_id : Int) {
-        let png_path = "\{args.bitmaps_dir}/\{bitmap_id}.png"
-        read_file_buffer_ffi(png_path)
+      full_output_rel_path,
+      bitmaps_dir=args.bitmaps_dir,
+      keep_source_sheets=false,
+      resize=false,
+      load_bitmap=fn(bitmap_path : String) {
+        @log.debug("loading bitmap", data={ "path": bitmap_path })
+        read_file_buffer_ffi(bitmap_path)
       },
       save_image=fn(filename : String, buffer : @js.Value) {
         let output_path = "\{output_subdir}/\{filename}"

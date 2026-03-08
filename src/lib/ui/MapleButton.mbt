@@ -7,6 +7,37 @@ pub(all) struct MapleButton {
 }
 
 ///|
+pub(all) struct NxMapleButton {
+  normal : @resource.NxAnimation
+  mouse_over : @resource.NxAnimation
+  pressed : @resource.NxAnimation
+  disabled : @resource.NxAnimation
+}
+
+///|
+pub impl @json.FromJson for NxMapleButton with from_json(
+  src : Json,
+  path : @json.JsonPath,
+) -> NxMapleButton {
+  guard src
+    is {
+      "normal": normal,
+      "mouseOver": mouse_over,
+      "pressed": pressed,
+      "disabled": disabled,
+      ..
+    } else {
+    raise @json.JsonDecodeError((path, "expect maple button resource object"))
+  }
+  {
+    normal: @json.from_json(normal, path=path.add_key("normal")),
+    mouse_over: @json.from_json(mouse_over, path=path.add_key("mouseOver")),
+    pressed: @json.from_json(pressed, path=path.add_key("pressed")),
+    disabled: @json.from_json(disabled, path=path.add_key("disabled")),
+  }
+}
+
+///|
 pub impl UIButton for MapleButton with get_button_base(self : MapleButton) -> ButtonModel {
   ...
 }

@@ -211,6 +211,14 @@ pub(all) enum NumberType {
   HEAL_MP
 }
 
+pub(all) struct NxMapleButton {
+  normal : @resource.NxAnimation
+  mouse_over : @resource.NxAnimation
+  pressed : @resource.NxAnimation
+  disabled : @resource.NxAnimation
+}
+pub impl @json.FromJson for NxMapleButton
+
 type OffsetedUnit[T]
 pub fn[T] OffsetedUnit::new(T, @res_types.Point[Int]) -> Self[T]
 pub fn OffsetedUnit::offset_element(RenderElement, @res_types.Point[Int]) -> RenderElement
@@ -245,11 +253,6 @@ pub fn SpriteUI::inner(Self) -> @graphics.Sprite
 pub impl @graphics.Drawable for SpriteUI
 pub impl RenderUnit for SpriteUI
 pub impl ToJson for SpriteUI
-
-type StatefulIcon
-pub fn StatefulIcon::draw(Self, @res_types.Point[Int]) -> Unit
-pub fn StatefulIcon::get_texture(Self) -> @graphics.Texture
-pub fn StatefulIcon::new(@graphics.Charset, @graphics.Texture, @graphics.Texture, @graphics.Texture) -> Self
 
 type StaticUI[T]
 pub fn[T] StaticUI::new(T, pos? : @res_types.Point[Int], stretch? : @res_types.Point[Int]) -> Self[T]
@@ -288,10 +291,6 @@ pub(all) struct TextureUI(@graphics.Texture)
 pub fn TextureUI::inner(Self) -> @graphics.Texture
 pub impl @graphics.Drawable for TextureUI
 pub impl ToJson for TextureUI
-
-type TwoSpriteButton
-pub fn TwoSpriteButton::new(@graphics.Texture, @graphics.Texture, np? : @res_types.Point[Int], sp? : @res_types.Point[Int], active? : Bool, state? : ButtonState) -> Self
-pub impl UIButton for TwoSpriteButton
 
 pub(all) enum UIElementType {
   UI_ELEMENT_NONE

@@ -40,6 +40,8 @@ pub fn get_item_special_loader() -> AsyncLoader
 
 pub fn get_map_latest_loader() -> AsyncLoader
 
+pub fn get_map_world_map_loader() -> AsyncLoader
+
 pub fn get_mapx_loader() -> AsyncLoader
 
 pub fn get_mob_loader() -> AsyncLoader
@@ -97,6 +99,8 @@ pub fn set_item_loader(AsyncLoader) -> Unit
 pub fn set_item_special_loader(AsyncLoader) -> Unit
 
 pub fn set_map_latest_loader(AsyncLoader) -> Unit
+
+pub fn set_map_world_map_loader(AsyncLoader) -> Unit
 
 pub fn set_mapx_loader(AsyncLoader) -> Unit
 

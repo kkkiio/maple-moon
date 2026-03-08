@@ -123,6 +123,20 @@ fn get_map_latest_loader() -> @resource.AsyncLoader {
 }
 
 ///|
+let map_world_map_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "map_world_map",
+    loader=@resource.DirResourceLoader::new("/assets/map/WorldMap"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_map_world_map_loader() -> @resource.AsyncLoader {
+  map_world_map_loader.get()
+}
+
+///|
 let background_set_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "background_set_loader",
@@ -448,6 +462,7 @@ fn get_string_loader() -> @resource.AsyncLoader {
 pub fn install_builtin_resource_loaders() -> Unit {
   @resource.set_mapx_loader(get_mapx_loader())
   @resource.set_map_latest_loader(get_map_latest_loader())
+  @resource.set_map_world_map_loader(get_map_world_map_loader())
   @resource.set_background_set_loader(get_background_set_loader())
   @resource.set_object_loader(get_object_loader())
   @resource.set_tile_loader(get_tile_loader())

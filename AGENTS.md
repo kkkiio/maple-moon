@@ -10,7 +10,7 @@
 
 ## 文档
 
-每个 `package` 下都写 `README.mbt.md`, 说明包的用途.
+每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.
 更具体的说明写在代码的 Doc comments 里.
 
 ## 验证
@@ -22,8 +22,6 @@ moon fmt
 moon info
 moon build --release
 ```
-
-moon 默认告警比较多, 主动修正代码减少告警.
 
 只写黑盒测试.
 
@@ -124,6 +122,52 @@ moonbit 支持 JSON 语法构造 `JSON` 类型的数据:
 let v : Json = {
   "version": "1.0.0",
   "import": ["import1", "import2"],
+}
+```
+
+### String
+
+moonbit 的 `String` 是 UTF-16 编码的, API 为了考虑性能, 默认返回 UTF-16 code unit 数据:
+
+- `s[i]` 返回的是 UTF-16 code unit.
+- `s[i:j]` slice operator 被禁用, `s.charcodes(start = i, end = j)` 返回的是 UTF-16 code unit `StringView`.
+
+为了正确处理 unicode 字符, 使用:
+
+- `str.iter()` 遍历字符.
+- `match` 匹配子串.
+
+```mbt
+match path {
+  [.. "/route/", .. sub_path] => {// equivalent to ['/', 'r', 'o', 'u', 't', 'e', '/', ..]
+    ... // sub_path 匹配 /route/ 后面的所有内容
+  }
+}
+```
+
+- `lexmatch` 正则匹配
+
+```mbt
+test {
+  let text = "xxabbbcyy"
+  lexmatch text {
+    (before, "a" ("b*" as b) "c", after) => {
+      inspect(before, content="xx")
+      inspect(b, content="bbb")
+      inspect(after, content="yy")
+    }
+    _ => fail("")
+  }
+
+  if text lexmatch? ("a" ("b*" as b) "c") && b.length() > 0 {
+    inspect(b, content="bbb")
+  }
+
+  let keyword = "iff"
+  lexmatch keyword with longest {
+    ("if|[a-z]*" as ident) => inspect(ident, content="iff")
+    _ => fail("")
+  }
 }
 ```
 

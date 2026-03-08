@@ -460,6 +460,11 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         sence_map.map_info.street_name,
         sence_map.mini_map_resources,
       )
+      @world_map_ui.set_current_map(
+        sence_map.id,
+        sence_map.map_info.map_name,
+        sence_map.map_info.street_name,
+      )
       return
     }
     @game_state.GamePhase::GameActive(..) => ()

@@ -398,7 +398,7 @@ fn nx_texture_to_inventory_icon_animation(
   @sprite.Animation::new(
     [
       @sprite.AnimationFrame::{
-        sprite_path: texture.i,
+        image: @asset.load_image(texture.i),
         size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
         offset: @selene_math.Vec2D(
           texture.offset.x.to_double(),
@@ -627,13 +627,17 @@ pub fn init_inventory_ui() -> Unit {
         ),
       )
       let pickable = @collision.Pickable::new()
-      pickable.on_double_click(fn(_button) {
-        let type_id = tabs[state.tab_index]
-        let slot_no = i + 1
-        @log.info("Inventory double click type=\{type_id} slot=\{slot_no}")
-        @inventory.use_item_at_slot(type_id, slot_no) |> ignore
-      })
       @collision.pickables.set(entity, pickable)
+      let slot_no = i + 1
+      @event.observe_entity(@collision.pointer_event_bus, entity, fn(trigger) {
+        let event = trigger.event
+        if event.button is @inputs.MouseButton::Left &&
+          event.phase is @collision.PointerPhase::DoubleClicked {
+          let type_id = tabs[state_ref.val.tab_index]
+          @inventory.use_item_at_slot(type_id, slot_no) |> ignore
+        }
+      })
+      |> ignore
     }
   }
 }

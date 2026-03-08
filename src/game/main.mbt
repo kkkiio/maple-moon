@@ -27,7 +27,7 @@ fn game_start(_delta : Double) -> Unit {
   @local_server.default_rand_seed.val = new_seed_from_time()
   @passive.set_passive_randomizer(@random.Rand::new())
   @game_server.init_server()
-  @login.setup_game_server_handlers()
+  @select_char_ui.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @npc.setup_game_server_handlers()
   @monster.setup_game_server_handlers()
@@ -48,8 +48,8 @@ fn main {
   )
   @system.App::new()
   .with_image_smooth(false)
-  .with_canvas_width(@graphics.view_size.0 |> Double::from_int)
-  .with_canvas_height(@graphics.view_size.1 |> Double::from_int)
+  .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
+  .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
   .with_fps(@graphics.fps)
   .add_plugin(@plugins.default_plugin)
   // .add_plugin(@plugins.debug_plugin)
@@ -74,7 +74,10 @@ fn main {
     system_name="after_image_system",
   )
   .add_system(@graphics.effect_layer_system, system_name="effect_layer_system")
-  .add_system(@login.select_char_system, system_name="select_char_system")
+  .add_system(
+    @select_char_ui.select_char_ui_system,
+    system_name="select_char_ui_system",
+  )
   .add_system(
     @game_scene.scene_transition_system,
     system_name="scene_transition_system",

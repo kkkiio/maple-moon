@@ -54,8 +54,8 @@ fn setup_mini_map_ui_scene_with_data(
   @mini_map_ui.clear_current_map()
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(420.0)
-    .with_canvas_height(240.0)
+    .with_viewport_width(420.0)
+    .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(@mini_map_ui.mini_map_ui_system),
   )

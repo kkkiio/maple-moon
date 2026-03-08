@@ -18,7 +18,7 @@ pub impl ToJson for Texture with to_json(self) -> Json {
   match self.bitmap {
     Some(bitmap) =>
       {
-        "bitmap": bitmap.sprite_path.to_json(),
+        "bitmap": @asset.image_path(bitmap.image).unwrap_or("").to_json(),
         "origin": self.origin.to_json(),
         "dimensions": self.dimensions.to_json(),
       }
@@ -41,7 +41,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
   }
   {
     bitmap: Some(@sprite.AnimationFrame::{
-      sprite_path: tex.i,
+      image: @asset.load_image(tex.i),
       size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
       offset: @selene_math.Vec2D(
         tex.offset.x.to_double(),
@@ -62,7 +62,7 @@ pub fn Texture::from_resource(src : @resource.NxNode) -> Texture {
 pub fn Texture::load(tex : @resource.NxTexture) -> Texture {
   {
     bitmap: Some(@sprite.AnimationFrame::{
-      sprite_path: tex.i,
+      image: @asset.load_image(tex.i),
       size: @selene_math.Vec2D(tex.w.to_double(), tex.h.to_double()),
       offset: @selene_math.Vec2D(
         tex.offset.x.to_double(),

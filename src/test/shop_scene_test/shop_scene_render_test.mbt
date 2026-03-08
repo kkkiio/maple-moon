@@ -186,12 +186,42 @@ fn npc_sprite_zindices() -> Array[Int] {
 }
 
 ///|
-fn setup_camera(position : @math.Vec2D) -> Unit {
+fn normalize_camera_limits(
+  left : Double,
+  right : Double,
+  top : Double,
+  bottom : Double,
+) -> (Double, Double, Double, Double) {
+  let viewport_size = @system.get_viewport_size()
+  let viewport_width = viewport_size.0
+  let viewport_height = viewport_size.1
+  let right = if right - left < viewport_width {
+    left + viewport_width
+  } else {
+    right
+  }
+  let top = if bottom - top < viewport_height {
+    bottom - viewport_height
+  } else {
+    top
+  }
+  (left, right, top, bottom)
+}
+
+///|
+fn setup_camera(position : @math.Vec2D, map_info : @map.MapInfo) -> Unit {
   let camera_anchor = @entity.Entity::new()
   @position.positions.set(camera_anchor, @position.Position(position))
   @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
   @camera.set_follow_x(true)
   @camera.set_follow_y(true)
+  let (left, right, top, bottom) = normalize_camera_limits(
+    map_info.get_walls().first().to_double(),
+    map_info.get_walls().second().to_double(),
+    map_info.get_borders().first().to_double(),
+    map_info.get_borders().second().to_double(),
+  )
+  @camera.set_limits(left~, right~, top~, bottom~)
   @camera.camera_system(0.016)
 }
 
@@ -207,8 +237,8 @@ fn spawn_npc_from_json(map_npcs : @npc.MapNpcs, json : Json) -> Unit {
 async fn setup_shop_scene_npcs() -> Unit {
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(800.0)
-    .with_canvas_height(600.0)
+    .with_viewport_width(800.0)
+    .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
     .add_system(@map.background_system, system_name="background_system")
@@ -223,6 +253,7 @@ async fn setup_shop_scene_npcs() -> Unit {
       map_info.get_walls().first().to_double(),
       map_info.get_borders().first().to_double(),
     ),
+    map_info,
   )
   let npc_loader = @resource.AsyncLoader::new(
     "test_npc",

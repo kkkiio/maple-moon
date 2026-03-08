@@ -28,12 +28,10 @@ priv struct ButtonStateResource {
 
 ///|
 priv struct WorldMapUIResource {
-  border : @sprite.Picture
   border_texture : @resource.NxTexture
-  search_background : @sprite.Picture
   search_background_texture : @resource.NxTexture
-  search_notice : @sprite.Picture
-  title : @sprite.Picture
+  search_notice_texture : @resource.NxTexture
+  title_texture : @resource.NxTexture
   close_hitbox : Hitbox
   button_resources : Map[ButtonId, ButtonStateResource]
 }
@@ -42,21 +40,20 @@ priv struct WorldMapUIResource {
 priv struct WorldMapMarkerResource {
   cur_pos : @sprite.Animation
   npc_pos : Array[@sprite.Animation]
-  map_images : Array[@sprite.Picture]
+  map_images : Array[@resource.NxTexture]
   map_image_sizes : Array[(Int, Int)]
 }
 
 ///|
 priv struct WorldMapTooltipResource {
-  line : @sprite.Picture
-  mob : @sprite.Picture
-  npc : @sprite.Picture
-  party : @sprite.Picture
+  line : @resource.NxTexture
+  mob : @resource.NxTexture
+  npc : @resource.NxTexture
+  party : @resource.NxTexture
 }
 
 ///|
 priv struct WorldMapLink {
-  link_img : @sprite.Picture
   link_img_texture : @resource.NxTexture
   link_map : String
   tooltip : String
@@ -67,7 +64,6 @@ priv struct WorldMapSpot {
   title : String
   description : String
   bolded : Bool
-  path : @sprite.Picture?
   path_texture : @resource.NxTexture?
   spot_x : Int
   spot_y : Int
@@ -78,7 +74,7 @@ priv struct WorldMapSpot {
 ///|
 priv struct WorldMapPageResource {
   name : String
-  base_img : @sprite.Picture
+  base_img_texture : @resource.NxTexture
   parent_map : String
   map_links : Array[WorldMapLink]
   map_spots : Array[WorldMapSpot]
@@ -550,14 +546,10 @@ fn parse_world_map_ui_resource(json : Json) -> WorldMapUIResource raise {
   ignore(make_button_state_resource(src.bt_auto_fly))
   ignore(make_button_state_resource(src.bt_navi_register))
   {
-    border: @resource.nx_texture_to_selene_picture(border_texture),
     border_texture,
-    search_background: @resource.nx_texture_to_selene_picture(
-      search_background_texture,
-    ),
     search_background_texture,
-    search_notice: @resource.nx_texture_to_selene_picture(search_notice_texture),
-    title: @resource.nx_texture_to_selene_picture(title_texture),
+    search_notice_texture,
+    title_texture,
     close_hitbox,
     button_resources,
   }
@@ -581,7 +573,7 @@ fn parse_world_map_marker_resource(json : Json) -> WorldMapMarkerResource raise 
   let map_images = []
   let map_image_sizes = []
   for texture in map_textures {
-    map_images.push(@resource.nx_texture_to_selene_picture(texture))
+    map_images.push(texture)
     map_image_sizes.push((texture.w, texture.h))
   }
   {
@@ -597,12 +589,7 @@ fn parse_world_map_tooltip_resource(
   json : Json,
 ) -> WorldMapTooltipResource raise {
   let src : NxWorldMapToolTip = @json.from_json(json)
-  {
-    line: @resource.nx_texture_to_selene_picture(src.line),
-    mob: @resource.nx_texture_to_selene_picture(src.mob),
-    npc: @resource.nx_texture_to_selene_picture(src.npc),
-    party: @resource.nx_texture_to_selene_picture(src.party),
-  }
+  { line: src.line, mob: src.mob, npc: src.npc, party: src.party }
 }
 
 ///|
@@ -648,7 +635,6 @@ fn parse_world_map_page_resource(
   let map_links = []
   for link in src.map_links {
     map_links.push({
-      link_img: @resource.nx_texture_to_selene_picture(link.link.link_img),
       link_img_texture: link.link.link_img,
       link_map: link.link.link_map,
       tooltip: link.tooltip,
@@ -668,17 +654,12 @@ fn parse_world_map_page_resource(
         ("\{street_name} : \{map_name}", "", true)
       }
     }
-    let (path, path_texture) = match spot.path {
-      Some(texture) =>
-        (Some(@resource.nx_texture_to_selene_picture(texture)), Some(texture))
-      None => (None, None)
-    }
+    let path_texture = spot.path
     ignore(marker.map_images[type_])
     map_spots.push({
       title,
       description,
       bolded,
-      path,
       path_texture,
       spot_x: spot.spot_x,
       spot_y: spot.spot_y,
@@ -688,7 +669,7 @@ fn parse_world_map_page_resource(
   }
   {
     name,
-    base_img: @resource.nx_texture_to_selene_picture(base_img_texture),
+    base_img_texture,
     parent_map: src.info.parent_map,
     map_links,
     map_spots,
@@ -1043,14 +1024,26 @@ fn spawn_rect(
 }
 
 ///|
-fn spawn_picture(
+fn spawn_texture(
   state : State,
-  picture : @sprite.Picture,
+  texture : @resource.NxTexture,
   x : Int,
   y : Int,
   z : Int,
 ) -> Unit {
-  spawn_sprite(state, @sprite.Sprite::from_picture(picture, z), x, y)
+  let animation = @sprite.Animation::single_frame_from_image(
+    @asset.load_image(texture.i),
+    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    offset=@selene_math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    pivot=@selene_math.Vec2D(
+      texture.origin.x.to_double(),
+      texture.origin.y.to_double(),
+    ),
+  )
+  spawn_sprite(state, @sprite.Sprite::from_animation(animation, z), x, y)
 }
 
 ///|
@@ -1120,28 +1113,28 @@ fn render_tooltip(
     "rgba(255, 255, 255, 0.25)",
     TOOLTIP_Z + 1,
   )
-  spawn_picture(
+  spawn_texture(
     state,
     resources.tooltip.line,
     tooltip_x,
     tooltip_y + 22,
     TOOLTIP_Z + 1,
   )
-  spawn_picture(
+  spawn_texture(
     state,
     resources.tooltip.mob,
     tooltip_x + 8,
     tooltip_y + 31,
     TOOLTIP_Z + 1,
   )
-  spawn_picture(
+  spawn_texture(
     state,
     resources.tooltip.npc,
     tooltip_x + 24,
     tooltip_y + 31,
     TOOLTIP_Z + 1,
   )
-  spawn_picture(
+  spawn_texture(
     state,
     resources.tooltip.party,
     tooltip_x + 40,
@@ -1187,16 +1180,16 @@ fn render_world_map(state : State) -> Unit {
   guard state.ui_resources is Some(resources) else { return }
   guard state.current_page is Some(page) else { return }
   let base_pos = page_base_position(state, resources.ui)
-  spawn_picture(
+  spawn_texture(
     state,
-    resources.ui.border,
+    resources.ui.border_texture,
     state.panel_x,
     state.panel_y,
     PANEL_BORDER_Z,
   )
-  spawn_picture(
+  spawn_texture(
     state,
-    resources.ui.title,
+    resources.ui.title_texture,
     state.panel_x + 15,
     state.panel_y + 8,
     PAGE_Z,
@@ -1218,19 +1211,19 @@ fn render_world_map(state : State) -> Unit {
     state.panel_y,
     PAGE_Z,
   )
-  spawn_picture(state, page.base_img, base_pos.x, base_pos.y, PAGE_Z)
+  spawn_texture(state, page.base_img_texture, base_pos.x, base_pos.y, PAGE_Z)
   if state.search_visible {
     let offset_x = search_offset(resources.ui)
-    spawn_picture(
+    spawn_texture(
       state,
-      resources.ui.search_background,
+      resources.ui.search_background_texture,
       state.panel_x + offset_x,
       state.panel_y,
       PAGE_Z,
     )
-    spawn_picture(
+    spawn_texture(
       state,
-      resources.ui.search_notice,
+      resources.ui.search_notice_texture,
       state.panel_x + offset_x,
       state.panel_y,
       PAGE_Z + 1,
@@ -1247,15 +1240,21 @@ fn render_world_map(state : State) -> Unit {
   match state.hovered_link_index {
     Some(index) => {
       let link = page.map_links[index]
-      spawn_picture(state, link.link_img, base_pos.x, base_pos.y, OVERLAY_Z)
+      spawn_texture(
+        state,
+        link.link_img_texture,
+        base_pos.x,
+        base_pos.y,
+        OVERLAY_Z,
+      )
     }
     None => ()
   }
   match state.hovered_spot_index {
     Some(index) =>
-      match page.map_spots[index].path {
-        Some(path) => {
-          spawn_picture(state, path, base_pos.x, base_pos.y, OVERLAY_Z)
+      match page.map_spots[index].path_texture {
+        Some(path_texture) => {
+          spawn_texture(state, path_texture, base_pos.x, base_pos.y, OVERLAY_Z)
           render_tooltip(state, resources, page, index)
         }
         None => render_tooltip(state, resources, page, index)
@@ -1263,7 +1262,7 @@ fn render_world_map(state : State) -> Unit {
     None => ()
   }
   for spot in page.map_spots {
-    spawn_picture(
+    spawn_texture(
       state,
       resources.marker.map_images[spot.type_],
       base_pos.x + spot.spot_x,

@@ -7,8 +7,6 @@ import {
   "Milky2018/selene/position",
   "Milky2018/selene/inputs",
   "Milky2018/selene/camera",
-  "Milky2018/selene/backend",
-  "Milky2018/selene/backend",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/io_service",
@@ -42,5 +40,11 @@ options(
       "format": "esm",
     },
   },
-  overrides: [ "Milky2018/selene-canvas" ],
+  overrides: [
+    "Milky2018/selene_webgpu/platform_window",
+    "Milky2018/selene_webgpu/platform_input",
+    "Milky2018/selene_webgpu/platform_render",
+    "Milky2018/selene_webgpu/platform_audio",
+    "Milky2018/selene_webgpu/platform_asset_io",
+  ],
 )

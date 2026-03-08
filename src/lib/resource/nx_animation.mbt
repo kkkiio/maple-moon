@@ -155,7 +155,7 @@ pub fn nx_animation_to_selene_animation(
     let frame = src.frames[original_index]
     let delay_ms = effective_delays[i]
     @sprite.AnimationFrame::{
-      sprite_path: frame.texture.i,
+      image: @asset.load_image(frame.texture.i),
       size: @selene_math.Vec2D(
         frame.texture.w.to_double(),
         frame.texture.h.to_double(),

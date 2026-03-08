@@ -6,8 +6,8 @@
     "Milky2018/selene": {
       "path": "../selene/selene-core"
     },
-    "Milky2018/selene-canvas": {
-      "path": "../selene/selene-canvas"
+    "Milky2018/selene_webgpu": {
+      "path": "../selene/selene-webgpu"
     },
     "rami3l/js-ffi": "0.4.0",
     "moonbitlang/async": "0.15.0",

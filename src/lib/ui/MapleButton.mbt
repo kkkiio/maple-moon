@@ -127,12 +127,15 @@ pub fn MapleButton::new(
     ),
   )
   let pickable = @collision.Pickable::new()
-  pickable.on_just_released(fn(mouse_button) {
-    if mouse_button is @inputs.MouseButton::Left {
+  @collision.pickables.set(entity, pickable)
+  @event.observe_entity(@collision.pointer_event_bus, entity, fn(trigger) {
+    let event = trigger.event
+    if event.button is @inputs.MouseButton::Left &&
+      event.phase is @collision.PointerPhase::JustReleased {
       on_click()
     }
   })
-  @collision.pickables.set(entity, pickable)
+  |> ignore
   @sui.uis.set(entity, @sui.Ui::new())
   { entity, }
 }

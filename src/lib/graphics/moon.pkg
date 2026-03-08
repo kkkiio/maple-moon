@@ -9,6 +9,7 @@ import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/entity",
+  "Milky2018/selene/asset",
   "KKKIIO/maple-moon/lib/ms/logic_fps",
 }
 

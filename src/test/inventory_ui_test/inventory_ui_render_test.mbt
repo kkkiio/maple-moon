@@ -41,8 +41,8 @@ fn make_inventory_entry() -> InventoryEntry {
 async fn setup_inventory_ui_test_scene() -> Unit {
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(800.0)
-    .with_canvas_height(540.0)
+    .with_viewport_width(800.0)
+    .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(
       @inventory_ui.inventory_ui_system,

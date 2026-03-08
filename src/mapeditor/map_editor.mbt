@@ -8,8 +8,8 @@ const CAMERA_SPEED : Double = 640.0
 pub fn start_editor() -> Unit {
   @system.App::new()
   .with_image_smooth(false)
-  .with_canvas_width(@graphics.view_size.0 |> Double::from_int)
-  .with_canvas_height(@graphics.view_size.1 |> Double::from_int)
+  .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
+  .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
   .with_fps(@graphics.fps)
   .add_plugin(@plugins.default_plugin)
   .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
@@ -31,11 +31,7 @@ pub fn start_editor() -> Unit {
     viewer_visibility_input_system,
     system_name="viewer_visibility_controls",
   )
-  .add_system(
-    render_debug_overlay,
-    schedule=Render(1),
-    system_name="debug_overlay",
-  )
+  .add_system(render_debug_overlay, system_name="debug_overlay")
   .run()
 }
 

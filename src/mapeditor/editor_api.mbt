@@ -72,7 +72,7 @@ pub fn export_scene_graph_ffi() -> @js.Optional[EditorSceneGraph] {
 fn get_mouse_info() -> MouseInfo {
   let mouse_screen = @inputs.mouse.pos
   let camera_pos = @camera.get_position()
-  let zoom = @backend.get_zoom()
+  let zoom = @system.get_zoom()
   let mouse_world = camera_pos + mouse_screen.scalar_div(zoom)
   {
     screen_x: mouse_screen.0.to_int(),
@@ -124,7 +124,7 @@ fn get_editor_status() -> EditorStatus {
     map_name,
     cam_x: camera_pos[@selene_math.Axis::X].to_int(),
     cam_y: camera_pos[@selene_math.Axis::Y].to_int(),
-    zoom: @backend.get_zoom(),
+    zoom: @system.get_zoom(),
     bg_visible: viewer.layer_visibility.backgrounds,
     bg_back_visible: bg_vis.back_visible,
     bg_fore_visible: bg_vis.fore_visible,

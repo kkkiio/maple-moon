@@ -100,8 +100,8 @@ async fn preload_shop_items_for_snapshot(
 async fn setup_shop_ui_scene() -> Unit {
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(820.0)
-    .with_canvas_height(620.0)
+    .with_viewport_width(820.0)
+    .with_viewport_height(620.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(@shop_ui.shop_ui_system, system_name="shop_ui_system")
     .add_system(@io_service.io_system, system_name="io_system"),

@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/utils/lru_cache",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
+  "Milky2018/selene/asset",
 }
 
 warnings = "-A"

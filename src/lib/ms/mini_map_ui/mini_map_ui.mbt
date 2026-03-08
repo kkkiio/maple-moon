@@ -469,7 +469,7 @@ fn nx_texture_to_frame(
   nx_texture : @resource.NxTexture,
 ) -> @sprite.AnimationFrame {
   @sprite.AnimationFrame::{
-    sprite_path: nx_texture.i,
+    image: @asset.load_image(nx_texture.i),
     size: @selene_math.Vec2D(nx_texture.w.to_double(), nx_texture.h.to_double()),
     offset: @selene_math.Vec2D(
       nx_texture.offset.x.to_double(),

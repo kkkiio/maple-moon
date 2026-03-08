@@ -45,6 +45,7 @@ pub fn Context2D::save(Self) -> Unit
 pub fn Context2D::scale(Self, Double, Double) -> Unit
 pub fn Context2D::set_fill_style(Self, String) -> Unit
 pub fn Context2D::set_font(Self, String) -> Unit
+pub fn Context2D::set_global_alpha(Self, Double) -> Unit
 pub fn Context2D::set_image_smoothing_enabled(Self, Bool) -> Unit
 pub fn Context2D::set_stroke_style(Self, String) -> Unit
 pub fn Context2D::set_text_align(Self, String) -> Unit
@@ -54,7 +55,9 @@ pub fn Context2D::transform(Self, Double, Double, Double, Double, Double, Double
 pub fn Context2D::translate(Self, Double, Double) -> Unit
 
 pub type Image
+pub fn Image::height(Self) -> Double
 pub fn Image::set_src(Self, Buffer) -> Unit
+pub fn Image::width(Self) -> Double
 
 // Type aliases
 

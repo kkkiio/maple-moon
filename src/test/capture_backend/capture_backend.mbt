@@ -1,282 +1,200 @@
 ///|
-priv struct CaptureBackend {
-  mut canvas_width : Double
-  mut canvas_height : Double
-  mut zoom : Double
+fn normalize_asset_path(path : String) -> String {
+  let path = path.strip_prefix("/").unwrap_or(path)
+  let path = path.strip_prefix("assets/").unwrap_or(path)
+  "assets/\{path}"
 }
 
 ///|
-let default_backend : CaptureBackend = {
-  canvas_width: 32,
-  canvas_height: 32,
-  zoom: 1.0,
-}
-
-///|
-
-///|
-pub fn initialize(
-  startup~ : () -> Unit,
-  render_loop~ : (Double) -> Unit,
-  game_loop~ : (Double) -> Unit,
-  canvas_width~ : Double,
-  canvas_height~ : Double,
-  fps~ : UInt,
-  image_smooth~ : Bool,
-  zoom~ : Double,
-) -> () -> Unit {
-  // Canvas is already initialized by init_app before App::run() is called
-  // Just store the dimensions for get_canvas_size()
-  ignore(startup)
-  ignore(render_loop)
-  ignore(game_loop)
-  ignore(fps)
-  ignore(image_smooth)
-  default_backend.canvas_width = canvas_width
-  default_backend.canvas_height = canvas_height
-  default_backend.zoom = zoom
-  fn() {  }
-}
-
-///|
-pub fn draw_picture(
-  png~ : String,
-  x~ : Double,
-  y~ : Double,
-  width~ : Double,
-  height~ : Double,
-  transform~ : @math.Transform,
-  repeat~ : @math.RepeatMode,
-) -> Unit {
-  ignore(repeat)
-  let ctx = @capture_app.get_ctx().unwrap()
-  // tolerate relative path
-  let png = png.strip_prefix("/").unwrap_or(png)
-  let png = png.strip_prefix("assets/").unwrap_or(png)
-  let png = "assets/\{png}"
-  let img_bytes = @fs.read_file_to_bytes(png) catch {
-    e => {
-      @log.error("Failed to load picture", data={ "error": e })
-      panic()
-    }
-  }
+fn load_image(path : String) -> @capture_app.Image {
+  let full_path = normalize_asset_path(path)
+  let img_bytes = @fs.read_file_to_bytes(full_path) catch { _ => panic() }
   let img = @capture_app.create_image()
   img.set_src(@capture_app.Buffer::from_bytes(img_bytes))
-
-  ctx.save()
-  // Keep the same transform order as draw_sprite.
-  ctx.translate(x, y)
-  ctx.transform(
-    transform.a,
-    transform.b,
-    transform.c,
-    transform.d,
-    transform.tx,
-    transform.ty,
-  )
-  ctx.draw_image(img, 0.0, 0.0, width, height, 0.0, 0.0, width, height)
-  ctx.restore()
+  img
 }
 
 ///|
-pub fn draw_sprite(
-  sprite_path~ : String,
-  x~ : Double,
-  y~ : Double,
-  offset_x~ : Double,
-  offset_y~ : Double,
-  width~ : Double,
-  height~ : Double,
-  transform~ : @math.Transform,
-  alpha~ : Double,
-) -> Unit {
-  ignore(alpha)
+fn color_to_css(color : @render.Color) -> String {
+  "rgba(\{color.r.to_int()}, \{color.g.to_int()}, \{color.b.to_int()}, \{color.a})"
+}
+
+///|
+fn font_to_css(style : @render2d_types.TextStyle2D) -> String {
+  "\{style.size}px \{style.family}"
+}
+
+///|
+fn align_to_css(align : @math.HAlign) -> String {
+  match align {
+    Left => "left"
+    Center => "center"
+    Right => "right"
+  }
+}
+
+///|
+fn baseline_to_css(baseline : @math.VAlign) -> String {
+  match baseline {
+    Top => "top"
+    Center => "middle"
+    Bottom => "bottom"
+  }
+}
+
+///|
+fn render_image(command : @render2d_types.ImageDrawCommand2D) -> Unit {
+  guard @asset.image_path(command.image) is Some(path) else { return }
   let ctx = @capture_app.get_ctx().unwrap()
-  // tolerate relative path
-  let sprite_path = sprite_path.strip_prefix("/").unwrap_or(sprite_path)
-  let sprite_path = sprite_path.strip_prefix("assets/").unwrap_or(sprite_path)
-  let sprite_path = "assets/\{sprite_path}"
-  let img_bytes = @fs.read_file_to_bytes(sprite_path) catch {
-    e => {
-      @log.error("Failed to load sprite", data={ "error": e })
-      panic()
+  let img = load_image(path)
+  let src = match command.source {
+    Some(src) => src
+    None =>
+      {
+        position: @math.Vec2D(0.0, 0.0),
+        size: @math.Vec2D(img.width(), img.height()),
+      }
+  }
+  let dest_pos = command.destination.position
+  let dest_size = command.destination.size
+  ctx.save()
+  ctx.set_global_alpha(command.color.a)
+  ctx.translate(dest_pos.0, dest_pos.1)
+  ctx.transform(
+    command.transform.a,
+    command.transform.b,
+    command.transform.c,
+    command.transform.d,
+    command.transform.tx,
+    command.transform.ty,
+  )
+  if command.repeat is NoRepeat {
+    ctx.draw_image(
+      img,
+      src.position.0,
+      src.position.1,
+      src.size.0,
+      src.size.1,
+      0.0,
+      0.0,
+      dest_size.0,
+      dest_size.1,
+    )
+  } else {
+    let repeat_x = command.repeat is Repeat || command.repeat is RepeatX
+    let repeat_y = command.repeat is Repeat || command.repeat is RepeatY
+    let tile_w = src.size.0
+    let tile_h = src.size.1
+    let span_x = if repeat_x {
+      dest_size.0
+    } else {
+      @cmp.minimum(dest_size.0, tile_w)
+    }
+    let span_y = if repeat_y {
+      dest_size.1
+    } else {
+      @cmp.minimum(dest_size.1, tile_h)
+    }
+    let mut ox = 0.0
+    while ox < span_x {
+      let mut oy = 0.0
+      while oy < span_y {
+        let x1 = @cmp.minimum(ox + tile_w, span_x)
+        let y1 = @cmp.minimum(oy + tile_h, span_y)
+        let local_w = x1 - ox
+        let local_h = y1 - oy
+        ctx.draw_image(
+          img,
+          src.position.0,
+          src.position.1,
+          local_w,
+          local_h,
+          ox,
+          oy,
+          local_w,
+          local_h,
+        )
+        oy += tile_h
+      }
+      ox += tile_w
     }
   }
-  let img = @capture_app.create_image()
-  img.set_src(@capture_app.Buffer::from_bytes(img_bytes))
-  ctx.save()
-
-  // Transform logic: 
-  // 1. Move to drawing position
-  ctx.translate(x, y)
-  // 2. Apply the sprite's transform matrix
-  ctx.transform(
-    transform.a,
-    transform.b,
-    transform.c,
-    transform.d,
-    transform.tx,
-    transform.ty,
-  )
-
-  // Draw using source rectangle from spritesheet
-  ctx.draw_image(
-    img, offset_x, offset_y, width, height, 0.0, 0.0, width, height,
-  )
   ctx.restore()
 }
 
 ///|
-pub fn register_key_events(pressed_keys : Set[@inputs.Code]) -> Unit {
-  ignore(pressed_keys)
-}
-
-///|
-pub fn register_mouse_events(
-  mouse : @inputs.Mouse,
-  mouse_movement : @inputs.MouseMovement,
-) -> Unit {
-  ignore(mouse)
-  ignore(mouse_movement)
-}
-
-///|
-pub fn lock_mouse(locked : Ref[Bool]) -> Unit {
-  ignore(locked)
-}
-
-///|
-pub fn draw_text(
-  text~ : String,
-  x~ : Double,
-  y~ : Double,
-  font~ : String,
-  color~ : String,
-  align~ : @math.HAlign,
-  baseline~ : @math.VAlign,
-) -> Unit {
+fn render_text(command : @render2d_types.TextDrawCommand2D) -> Unit {
   let ctx = @capture_app.get_ctx().unwrap()
   ctx.save()
-  ctx.set_fill_style(color)
-  ctx.set_font(font)
-  let align_value = match align {
-    @math.HAlign::Left => "left"
-    @math.HAlign::Center => "center"
-    @math.HAlign::Right => "right"
-  }
-  let baseline_value = match baseline {
-    @math.VAlign::Top => "top"
-    @math.VAlign::Center => "center"
-    @math.VAlign::Bottom => "bottom"
-  }
-  ctx.set_text_align(align_value)
-  ctx.set_text_baseline(baseline_value)
-  ctx.fill_text(text, x, y)
+  ctx.set_fill_style(color_to_css(command.style.color))
+  ctx.set_global_alpha(command.style.color.a)
+  ctx.set_font(font_to_css(command.style))
+  ctx.set_text_align(align_to_css(command.style.align))
+  ctx.set_text_baseline(baseline_to_css(command.style.baseline))
+  ctx.fill_text(command.text, command.position.0, command.position.1)
   ctx.restore()
 }
 
 ///|
-pub fn draw_color_rect(
-  x~ : Double,
-  y~ : Double,
-  width~ : Double,
-  height~ : Double,
-  color~ : String,
-  stroke_color~ : String,
-) -> Unit {
+fn render_rect(command : @render2d_types.RectDrawCommand2D) -> Unit {
   let ctx = @capture_app.get_ctx().unwrap()
+  let rect = command.rect
   ctx.save()
-  ctx.set_fill_style(color)
-  ctx.fill_rect(x, y, width, height)
-  if stroke_color != "" {
-    ctx.set_stroke_style(stroke_color)
-    ctx.stroke_rect(x, y, width, height)
+  ctx.set_fill_style(color_to_css(command.fill_color))
+  ctx.set_global_alpha(command.fill_color.a)
+  ctx.fill_rect(rect.position.0, rect.position.1, rect.size.0, rect.size.1)
+  match command.stroke_color {
+    Some(color) => {
+      ctx.set_stroke_style(color_to_css(color))
+      ctx.stroke_rect(
+        rect.position.0,
+        rect.position.1,
+        rect.size.0,
+        rect.size.1,
+      )
+    }
+    None => ()
   }
   ctx.restore()
 }
 
 ///|
-pub fn draw_color_circle(
-  x~ : Double,
-  y~ : Double,
-  radius~ : Double,
-  color~ : String,
-  stroke_color~ : String,
-) -> Unit {
-  ignore(x)
-  ignore(y)
-  ignore(radius)
-  ignore(color)
-  ignore(stroke_color)
+fn render_commands(commands : Array[@render2d_types.DrawCommand2D]) -> Unit {
+  for command in commands {
+    match command {
+      Image(image) => render_image(image)
+      Text(text) => render_text(text)
+      Rect(rect) => render_rect(rect)
+      Circle(_) => ()
+      GradientRect(_) => ()
+    }
+  }
 }
 
 ///|
-pub fn draw_gradient_rect(
-  x~ : Double,
-  y~ : Double,
-  width~ : Double,
-  height~ : Double,
-  color_start~ : String,
-  color_end~ : String,
-) -> Unit {
-  ignore(x)
-  ignore(y)
-  ignore(width)
-  ignore(height)
-  ignore(color_start)
-  ignore(color_end)
+pub fn submit_frame(frame : @render_pipeline.RenderFrame) -> Unit {
+  render_commands(frame.frame2d.world_commands)
+  render_commands(frame.frame2d.overlay_commands)
 }
 
 ///|
-pub fn play_audio(
-  audio_path~ : String,
-  volume~ : Double,
-  loop_~ : Bool,
-) -> Unit {
-  ignore(audio_path)
-  ignore(volume)
-  ignore(loop_)
-}
-
-///|
-pub fn get_canvas_size() -> @math.Vec2D {
-  Vec2D(default_backend.canvas_width, default_backend.canvas_height)
-}
-
-///|
-pub fn get_zoom() -> Double {
-  default_backend.zoom
-}
-
-///|
-pub fn preload_img(path : String) -> Unit {
+pub fn register_font(family : String, path : String) -> Unit {
+  ignore(family)
   ignore(path)
 }
 
 ///|
-pub fn preload_audio(path : String) -> Unit {
-  ignore(path)
+pub fn measure_text(
+  style : @render2d_types.TextStyle2D,
+  text : String,
+) -> @math.Vec2D {
+  let width = text.length().to_double() * style.size * 0.6
+  let height = style.size
+  @math.Vec2D(width, height)
 }
 
 ///|
-pub fn set_time_scale(scale : Double) -> Unit {
-  ignore(scale)
+pub fn capability_warning(feature : String, fallback : String) -> Unit {
+  ignore(feature)
+  ignore(fallback)
 }
-
-///|
-pub fn load_font(font : String, path : String) -> Unit {
-  ignore(font)
-  ignore(path)
-}
-
-///|
-pub fn get_realtime_delta() -> Double {
-  0.016
-}
-
-///|
-pub fn get_time_scale() -> Double {
-  1.0
-}
-
-// FFI Bindings removed (moved to capture_canvas)

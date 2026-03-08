@@ -47,8 +47,8 @@ fn setup_world_map_ui_scene() -> Unit {
   @world_map_ui.reset_world_map_ui_for_test()
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(920.0)
-    .with_canvas_height(640.0)
+    .with_viewport_width(920.0)
+    .with_viewport_height(640.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(@world_map_ui.world_map_ui_system)
     .add_system(@io_service.io_system, system_name="io_system"),

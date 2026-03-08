@@ -37,8 +37,8 @@ fn load_test_mob() -> @monster.Mob raise {
 fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise {
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(220.0)
-    .with_canvas_height(160.0)
+    .with_viewport_width(220.0)
+    .with_viewport_height(160.0)
     .add_plugin(@plugins.default_plugin),
   )
 

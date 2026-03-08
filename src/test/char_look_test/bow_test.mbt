@@ -92,8 +92,8 @@ async test "character with bow equipment" {
   // Initialize test app and run one loop
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(200.0)
-    .with_canvas_height(200.0)
+    .with_viewport_width(200.0)
+    .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)

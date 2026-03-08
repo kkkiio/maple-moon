@@ -8,6 +8,9 @@ using @char_stance {type StanceId}
 using @types {type BodyDrawInfo}
 
 ///|
+using @selene_ui {type Ui}
+
+///|
 struct CharLook {
   root_entity : @entity.Entity
   stance : @utils.Nominal[StanceId]
@@ -106,6 +109,16 @@ pub fn CharLook::new(
     equip_entities: Map::new(),
     face_entity: None,
   }
+}
+
+///|
+fn CharLook::spawn_sprite_child(self : CharLook) -> @entity.Entity {
+  let child = self.root_entity.spawn_child()
+  match @selene_ui.uis.get(self.root_entity) {
+    Some(ui) => @selene_ui.uis.set(child, ui)
+    None => ()
+  }
+  child
 }
 
 ///|
@@ -795,7 +808,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     let animation = nx_animation_to_selene_animation(anim, loop_~) // TODO: cache animation
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
-      self.root_entity.spawn_child()
+      self.spawn_sprite_child()
     })
     let sprite = ensure_sprite_with_z(
       entity,
@@ -827,7 +840,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
       let entity = self.body_entities.get_or_init(name, fn() {
-        self.root_entity.spawn_child()
+        self.spawn_sprite_child()
       })
       let current_frame = if @sprite.sprites.get(entity)
         is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
@@ -879,7 +892,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         // We use slot + part as key to avoid collision (e.g. Mail + mail vs Mail + mailArm)
         let key = slot.to_string() + "_" + part
         let entity = self.equip_entities.get_or_init(key, fn() {
-          self.root_entity.spawn_child()
+          self.spawn_sprite_child()
         })
 
         // Determine Z-index
@@ -922,7 +935,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       let entity = match self.face_entity {
         Some(e) => e
         None => {
-          let e = self.root_entity.spawn_child()
+          let e = self.spawn_sprite_child()
           self.face_entity = Some(e)
           e
         }
@@ -1536,7 +1549,7 @@ fn CharLook::play_climbing_animations(
     let animation = nx_animation_to_selene_animation(anim, loop_~)
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
-      self.root_entity.spawn_child()
+      self.spawn_sprite_child()
     })
     let z_index = if layer == HairLayer::BACK {
       @types.BodyLayer::HEAD.int_value() + 5
@@ -1573,7 +1586,7 @@ fn CharLook::play_climbing_animations(
       let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
-        self.root_entity.spawn_child()
+        self.spawn_sprite_child()
       })
       // Simplified frame logic for climbing (loop 0)
       let current_frame = 0
@@ -1601,7 +1614,7 @@ fn CharLook::play_climbing_animations(
         }
         let key = slot.to_string() + "_" + part
         let entity = self.equip_entities.get_or_init(key, fn() {
-          self.root_entity.spawn_child()
+          self.spawn_sprite_child()
         })
         let current_frame = if @sprite.sprites.get(entity)
           is Some({ sprite_type: Animation(_, frame~, ..), .. }) {

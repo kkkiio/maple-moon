@@ -10,7 +10,7 @@ pub impl ToJson for DebugSprite with to_json(self) {
           "Picture",
           {
             "size": [picture.size.0, picture.size.1],
-            "tile_path": picture.tile_path,
+            "tile_path": @asset.image_path(picture.image).unwrap_or(""),
             "transform": {
               "a": picture.transform.a,
               "b": picture.transform.b,
@@ -58,7 +58,7 @@ pub(all) struct DebugFrame(@sprite.AnimationFrame)
 ///|
 pub impl ToJson for DebugFrame with to_json(self) {
   let r : Map[String, Json] = {
-    "sprite_path": self.sprite_path,
+    "sprite_path": @asset.image_path(self.image).unwrap_or(""),
     "size": [self.size.0, self.size.1],
   }
   if self.offset != @math.Vec2D::zero() {

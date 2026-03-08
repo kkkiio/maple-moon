@@ -29,7 +29,6 @@ struct SelectCharUI {
 
 ///|
 pub(all) struct SelectCharUIResource {
-  name_tag : @ui.NameTagResource
   ani18 : @sprite.Animation
 }
 
@@ -37,7 +36,7 @@ pub(all) struct SelectCharUIResource {
 struct SelectableCharacterUI {
   cid : Int
   char_look : @char_look.CharLook
-  name_tag : @ui.NameTag
+  name : String
 }
 
 ///|
@@ -63,62 +62,6 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "origin": [216, 221],
       "z": 0,
       "__i": "/assets/ui/login.img/char_select/light18.png",
-    },
-  }
-  let name_tag_res : Json = {
-    "0": {
-      "0": {
-        "__h": 23,
-        "__w": 6,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [0, 0],
-      },
-      "1": {
-        "__h": 23,
-        "__w": 1,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [12, 0],
-      },
-      "2": {
-        "__h": 23,
-        "__w": 6,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [6, 0],
-      },
-    },
-    "1": {
-      "0": {
-        "__h": 23,
-        "__w": 6,
-        // "_inlink": "CharSelect/nameTag/0/0",
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [0, 0],
-      },
-      "1": {
-        "__h": 23,
-        "__w": 1,
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [13, 0],
-      },
-      "2": {
-        "__h": 23,
-        "__w": 6,
-        // "_inlink": "CharSelect/nameTag/0/2",
-        "origin": [0, 0],
-        "z": 0,
-        "__i": "/assets/ui/login.img/char_select/name_tag.png",
-        "__off": [6, 0],
-      },
     },
   }
   // let bt_new_res : Json = {
@@ -214,11 +157,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
   //   },
   // }
   let ani18 : @resource.NxAnimation = @json.from_json(ani18_res)
-  {
-    name_tag: @json.from_json(name_tag_res),
-    // bt_new: @json.from_json(bt_new_res),
-    ani18: nx_animation_to_selene_animation(ani18),
-  }
+  { ani18: nx_animation_to_selene_animation(ani18) }
 }
 
 ///|
@@ -236,8 +175,6 @@ pub async fn SelectCharUI::new(
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
-  // ui_model.dimension = @struct.Point::new(800, 600)
-
   let back13 = @sprite.Animation::single_frame(
     "/assets/ui/login.img/char_select/back13.png",
     @selene_math.Vec2D(800, 600),
@@ -245,7 +182,7 @@ pub async fn SelectCharUI::new(
   )
   let ani17 = @sprite.Animation::new([
     @sprite.AnimationFrame::{
-      sprite_path: "/assets/ui/login.img/char_select/light17.png",
+      image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
       pivot: @selene_math.Vec2D(121, 252), // origin
@@ -256,7 +193,7 @@ pub async fn SelectCharUI::new(
       //     "delay": 3000,
     },
     @sprite.AnimationFrame::{
-      sprite_path: "/assets/ui/login.img/char_select/light17.png",
+      image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
       pivot: @selene_math.Vec2D(121, 252), // origin
@@ -269,7 +206,7 @@ pub async fn SelectCharUI::new(
   ])
   let ani19 : @sprite.Animation = @sprite.Animation::new([
     @sprite.AnimationFrame::{
-      sprite_path: "/assets/ui/login.img/char_select/light19.png",
+      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       size: @selene_math.Vec2D(355, 312),
       offset: @selene_math.Vec2D(0, 0),
       pivot: @selene_math.Vec2D(156, 177), // origin
@@ -281,7 +218,7 @@ pub async fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @sprite.AnimationFrame::{
-      sprite_path: "/assets/ui/login.img/char_select/light19.png",
+      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
       pivot: @selene_math.Vec2D(156, 177), // origin
@@ -292,7 +229,7 @@ pub async fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @sprite.AnimationFrame::{
-      sprite_path: "/assets/ui/login.img/char_select/light19.png",
+      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
       pivot: @selene_math.Vec2D(156, 177), // origin
@@ -338,7 +275,7 @@ pub async fn SelectCharUI::new(
   for i, character in characters {
     let entity = characters_entities[i]
     characters_ui.push(
-      to_selectable_character_ui(entity, i, character, resources, mod),
+      to_selectable_character_ui(entity, i, character, mod, entities),
     )
   }
   entities.append(characters_entities)
@@ -455,6 +392,24 @@ pub async fn SelectCharUI::new(
 }
 
 ///|
+fn spawn_character_name_entity(
+  parent : @entity.Entity,
+  name : String,
+  entities : Array[@entity.Entity],
+) -> Unit {
+  let text_entity = parent.spawn_child(offset=@selene_math.Vec2D(0, 54))
+  entities.push(text_entity)
+  @selene_ui.uis.set(text_entity, @selene_ui.Ui::new())
+  let text = @sprite.Text::new(
+    name,
+    color="white",
+    font="13px Arial",
+    align=@selene_math.HAlign::Center,
+  )
+  @sprite.sprites.set(text_entity, @sprite.Sprite::from_text(text, 10))
+}
+
+///|
 pub async fn load_char_look(
   entity : @entity.Entity,
   mod : @char_look.CharLookMod,
@@ -480,62 +435,21 @@ pub async fn to_selectable_character_ui(
   entity : @entity.Entity,
   i : Int,
   character : SelectableCharacter,
-  resource : SelectCharUIResource,
   mod : CharLookMod,
+  entities : Array[@entity.Entity],
 ) -> SelectableCharacterUI {
   let char_look = load_char_look(entity, mod, character)
   let { cid, name } = character
-  // render_elements.push(
-  //   @ui.AreaButton::new(
-  //     get_character_slot_pos(i, 105, 144),
-  //     @struct.Point::new(50, 90),
-  //   )
-  //   |> @ui.Button::new(on_click=fn() {
-  //     self.select_slot = Some(i)
-  //     // (self.hooks.on_state_changed)()
-  //     None
-  //   })
-  //   |> @ui.Button::as_interactable,
-  // )
-  char_look.set_stance(StanceId::STAND1)
-  char_look.set_facing_right(true)
-  char_look.play_animations()
+  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   @position.positions.set(
     entity,
     @position.Position(get_character_slot_pos(i, 135, 234).to_vec2d()),
   )
-  // name_tag.set_selected(Some(i) == self.select_slot)
-  // render_elements.push(
-  //   @ui.StaticUI::new(name_tag, pos=get_character_slot_pos(i, 135, 234))
-  //   |> @ui.RenderElement::Static,
-  // )
-  {
-    cid,
-    char_look,
-    name_tag: @ui.NameTag::new(@graphics.FontId::A13M, name, resource.name_tag),
-  }
-}
-
-///|
-struct CharLookUI {
-  char_look : @char_look.CharLook
-  pos : @struct.Point[Int]
-}
-
-///|
-impl @graphics.Drawable for CharLookUI with draw(self, _) -> Unit {
-  self.char_look.draw(@graphics.DrawArgument::new(pos=self.pos), 0)
-}
-
-///|
-impl @ui.RenderUnit for CharLookUI with update(self) -> Unit {
-  ignore(self)
-  // self.char_look.update(@config.step_time_ms) |> ignore
-}
-
-///|
-pub impl ToJson for CharLookUI with to_json(self) -> Json {
-  { "char_look": self.char_look.to_json(), "pos": self.pos.to_json() }
+  char_look.set_stance(@char_stance.StanceId::STAND1)
+  char_look.set_facing_right(true)
+  char_look.play_animations()
+  spawn_character_name_entity(entity, name, entities)
+  { cid, char_look, name }
 }
 
 ///|
@@ -556,6 +470,9 @@ const PAGE_SIZE = 8
 let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
+let last_selected_character_id_for_test : Ref[Int?] = Ref::new(None)
+
+///|
 fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
   self.btn_select.destroy()
   for entity in self.entities {
@@ -571,6 +488,7 @@ async fn add_select_char_ui(mod : CharLookMod) -> SelectCharUI {
     slots,
     on_select_character=fn(slot) {
       guard select_char_ui.val is Some(ui) else { return }
+      last_selected_character_id_for_test.val = Some(ui.characters[slot].cid)
       @game_server.send(SelectCharMessage::{
         character_id: ui.characters[slot].cid,
       })
@@ -585,7 +503,7 @@ let select_char_loading_future : Ref[
 ] = Ref::new(None)
 
 ///|
-pub fn select_char_system(_delta : Double) -> Unit {
+pub fn select_char_ui_system(_delta : Double) -> Unit {
   guard @char_look.get_module() is Some(mod) else { return }
   guard game_state.phase is GamePhase::SelectCharacter else { return }
 
@@ -642,6 +560,49 @@ pub fn select_char_system(_delta : Double) -> Unit {
   match res {
     Ok(ui) => select_char_ui.val = Some(ui)
     Err(e) => abort("add select char ui failed: \{e.to_string()}")
+  }
+}
+
+///|
+pub fn reset_select_char_ui_for_test() -> Unit {
+  select_char_loading_future.val = None
+  last_selected_character_id_for_test.val = None
+  match select_char_ui.val {
+    Some(ui) => {
+      select_char_ui.val = None
+      ui.destroy()
+    }
+    None => ()
+  }
+}
+
+///|
+pub async fn init_select_char_ui_for_test(mod : CharLookMod) -> Unit {
+  reset_select_char_ui_for_test()
+  select_char_ui.val = Some(add_select_char_ui(mod))
+}
+
+///|
+pub fn get_select_char_ui_debug_state_for_test() -> Json {
+  match select_char_ui.val {
+    Some(ui) => {
+      let character_names = ui.characters.map(fn(character) { character.name })
+      {
+        "loaded": true,
+        "character_count": ui.characters.length(),
+        "character_names": character_names,
+        "selected_slot": ui.select_slot,
+        "last_selected_character_id": last_selected_character_id_for_test.val,
+      }
+    }
+    None =>
+      {
+        "loaded": false,
+        "character_count": 0,
+        "character_names": [],
+        "selected_slot": null,
+        "last_selected_character_id": last_selected_character_id_for_test.val,
+      }
   }
 }
 

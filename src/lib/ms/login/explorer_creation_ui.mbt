@@ -66,6 +66,27 @@ pub(all) struct ExplorerCreatorUIResource {
 }
 
 ///|
+struct CharLookUI {
+  char_look : @char_look.CharLook
+  pos : @struct.Point[Int]
+}
+
+///|
+impl @graphics.Drawable for CharLookUI with draw(self, _) -> Unit {
+  self.char_look.draw(@graphics.DrawArgument::new(pos=self.pos), 0)
+}
+
+///|
+impl @ui.RenderUnit for CharLookUI with update(self) -> Unit {
+  ignore(self)
+}
+
+///|
+pub impl ToJson for CharLookUI with to_json(self) -> Json {
+  { "char_look": self.char_look.to_json(), "pos": self.pos.to_json() }
+}
+
+///|
 pub(all) struct LookChoices {
   skins : Array[Int]
   haircolors : Array[Int]

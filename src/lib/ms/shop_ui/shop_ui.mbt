@@ -212,7 +212,7 @@ fn nx_texture_to_inventory_icon_animation(
   @sprite.Animation::new(
     [
       @sprite.AnimationFrame::{
-        sprite_path: texture.i,
+        image: @asset.load_image(texture.i),
         size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
         offset: @selene_math.Vec2D(
           texture.offset.x.to_double(),

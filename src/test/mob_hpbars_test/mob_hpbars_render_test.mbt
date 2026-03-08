@@ -25,8 +25,8 @@ async test "mob hpbar render snapshot" {
 
   @capture_app.init_app(
     @system.App::new()
-    .with_canvas_width(160.0)
-    .with_canvas_height(120.0)
+    .with_viewport_width(160.0)
+    .with_viewport_height(120.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system"),
   )

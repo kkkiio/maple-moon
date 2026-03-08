@@ -1,0 +1,46 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/select_char_ui"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/char_look",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/sprite",
+}
+
+// Values
+pub fn get_select_char_ui_debug_state_for_test() -> Json
+
+pub async fn init_select_char_ui_for_test(@char_look.CharLookMod) -> Unit
+
+pub async fn load_char_look(@entity.Entity, @char_look.CharLookMod, SelectableCharacter) -> @char_look.CharLook
+
+pub fn reset_select_char_ui_for_test() -> Unit
+
+pub fn select_char_ui_system(Double) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+pub async fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, @char_look.CharLookMod, Array[@entity.Entity]) -> SelectableCharacterUI
+
+// Errors
+
+// Types and methods
+type SelectCharUI
+pub async fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @char_look.CharLookMod, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
+
+pub(all) struct SelectCharUIResource {
+  ani18 : @sprite.Animation
+}
+pub fn SelectCharUIResource::load() -> Self raise
+
+pub(all) struct SelectableCharacter {
+  cid : Int
+  name : String
+}
+
+type SelectableCharacterUI
+
+// Type aliases
+
+// Traits
+

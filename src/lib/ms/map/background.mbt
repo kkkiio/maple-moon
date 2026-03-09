@@ -45,9 +45,9 @@ pub struct NxBackground {
   ani : Bool
   /// background set
   bS : String
-  /// frame width
+  /// horizontal tiling step in pixels. `0` means fallback to the frame width.
   cx : Int
-  /// frame height
+  /// vertical tiling step in pixels. `0` means fallback to the frame height.
   cy : Int
   f : Bool // TODO: what does it mean?
   /// whether the background is a foreground
@@ -138,7 +138,9 @@ pub struct BackgroundResource {
   t : BackgroundType
   x : Int
   y : Int
+  /// horizontal tiling step in pixels. `0` means fallback to the frame width.
   cx : Int
+  /// vertical tiling step in pixels. `0` means fallback to the frame height.
   cy : Int
   rx : Int
   ry : Int
@@ -151,6 +153,33 @@ struct BackgroundAnimationPath {
   animated : Bool
   no : Int
 } derive(Show, Eq, Hash)
+
+///|
+priv struct BackgroundOpacityFrameSpec {
+  start_opacity : Double
+  end_opacity : Double
+  delay_ms : Int
+}
+
+///|
+priv struct BackgroundOpacityAnimationSpec {
+  frames : Array[BackgroundOpacityFrameSpec]
+  zigzag : Bool
+}
+
+///|
+priv struct BackgroundOpacityAnimationState {
+  frames : Array[BackgroundOpacityFrameSpec]
+  zigzag : Bool
+  opacity : @utils.Linear
+  mut frame : Int
+  mut frame_step : Int
+  mut delay_ms : Int
+}
+
+///|
+let background_opacity_specs : Ref[Map[String, BackgroundOpacityAnimationSpec]] = Ref::new({},
+)
 
 ///|
 pub fn BackgroundAnimationPath::from_nx(
@@ -175,7 +204,12 @@ pub async fn load_background_animation(
     },
     no.to_string(),
   ])
-  @json.from_json(bg_res.value())
+  let animation_json = bg_res.value()
+  let animation : @resource.NxAnimation = @json.from_json(animation_json)
+  background_opacity_specs.val[background_animation_signature(animation)] = background_opacity_animation_spec_from_json(
+    animation_json,
+  )
+  animation
 }
 
 ///|
@@ -199,6 +233,11 @@ pub fn BackgroundResource::new(
 /// Background runtime data
 struct Background {
   animation : @resource.NxAnimation
+  opacity_animation : BackgroundOpacityAnimationState
+  base_opacity : Double
+  flipped : Bool
+  tile_step_x : Int
+  tile_step_y : Int
   horizontal_render : BackgroundDirRender
   vertical_render : BackgroundDirRender
 }
@@ -219,39 +258,9 @@ priv enum BackgroundDirRender {
 
 ///|
 fn Background::from_resource(res : BackgroundResource) -> Background {
-  // let animation = res.animation
-  // let t = res.t
-  // let dim_x = animation.get_dimensions().x
-  // let dim_y = animation.get_dimensions().y
-  // if dim_y <= 0 {
-  //   panic()
-  // }
-  // let opacity = res.opacity
-  // let flipped = res.flipped
-  // let cx = match res.cx {
-  //   0 => if dim_x > 0 { dim_x } else { 1 }
-  //   cx => cx
-  // }
-  // let cy = match res.cy {
-  //   0 => dim_y
-  //   cy => cy
-  // }
-  // let htile = match t {
-  //   BackgroundType::HTILED
-  //   | BackgroundType::HMOVEA
-  //   | BackgroundType::TILED
-  //   | BackgroundType::HMOVEB
-  //   | BackgroundType::VMOVEB => vwidth / cx + 3
-  //   _ => 1
-  // }
-  // let vtile = match t {
-  //   BackgroundType::VTILED
-  //   | BackgroundType::VMOVEA
-  //   | BackgroundType::TILED
-  //   | BackgroundType::HMOVEB
-  //   | BackgroundType::VMOVEB => vheight / cy + 3
-  //   _ => 1
-  // }
+  let (frame_w, frame_h) = res.animation.get_size()
+  let tile_step_x = if res.cx > 0 { res.cx } else { frame_w.max(1) }
+  let tile_step_y = if res.cy > 0 { res.cy } else { frame_h.max(1) }
   let horizontal_render = match res.t {
     BackgroundType::BG_NORMAL
     | BackgroundType::VTILED
@@ -267,7 +276,14 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
       } else {
         0.0
       }
-      BackgroundDirRender::Tiled(moving_speed~, offset=0.0)
+      BackgroundDirRender::Tiled(
+        moving_speed~,
+        offset=wrap_in_range(
+          res.x.to_double(),
+          start=-tile_step_x.to_double(),
+          end=0.0,
+        ),
+      )
     }
   }
   let vertical_render = match res.t {
@@ -285,89 +301,51 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
       } else {
         0.0
       }
-      BackgroundDirRender::Tiled(moving_speed~, offset=0.0)
+      BackgroundDirRender::Tiled(
+        moving_speed~,
+        offset=wrap_in_range(
+          res.y.to_double(),
+          start=-tile_step_y.to_double(),
+          end=0.0,
+        ),
+      )
     }
   }
-  { animation: res.animation, horizontal_render, vertical_render }
+  {
+    animation: res.animation,
+    opacity_animation: BackgroundOpacityAnimationState::new(
+      background_opacity_specs.val
+      .get(background_animation_signature(res.animation))
+      .unwrap_or(default_background_opacity_animation_spec()),
+    ),
+    base_opacity: res.opacity,
+    flipped: res.flipped,
+    tile_step_x,
+    tile_step_y,
+    horizontal_render,
+    vertical_render,
+  }
 }
 
 ///|
 fn new_background_sprite(background : Background, z : Int) -> @sprite.Sprite {
-  // let mut x = if self.move_obj.hmobile() {
-  //   self.move_obj.get_absolute_x(viewx, alpha)
-  // } else {
-  //   let shift_x = self.rx * (self.woffset.to_double() - viewx) / 100.0 +
-  //     self.woffset.to_double()
-  //   self.move_obj.get_absolute_x(shift_x, alpha)
-  // }
-  // let mut y = if self.move_obj.vmobile() {
-  //   self.move_obj.get_absolute_y(viewy, alpha)
-  // } else {
-  //   let shift_y = self.ry * (self.hoffset.to_double() - viewy) / 100.0 +
-  //     self.hoffset.to_double()
-  //   self.move_obj.get_absolute_y(shift_y, alpha)
-  // }
-  // if self.htile > 1 {
-  //   while x > 0 {
-  //     x -= self.cx
-  //   }
-  //   while x < -self.cx {
-  //     x += self.cx
-  //   }
-  // }
-  // if self.vtile > 1 {
-  //   while y > 0 {
-  //     y -= self.cy
-  //   }
-  //   while y < -self.cy {
-  //     y += self.cy
-  //   }
-  // }
-  // let ix = x
-  // let iy = y
-  // let tw = self.cx * self.htile
-  // let th = self.cy * self.vtile
-  // let mut tx = 0
-  // while tx < tw {
-  //   let mut ty = 0
-  //   while ty < th {
-  //     self.animation.draw(
-  //       @graphics.DrawArgument::new(
-  //         pos={ x: ix + tx, y: iy + ty },
-  //         flip=self.flipped,
-  //         opacity=self.opacity,
-  //       ),
-  //       alpha,
-  //     )
-  //     ty += self.cy
-  //   }
-  //   tx += self.cx
-  // }
-  let { animation, horizontal_render, vertical_render } = background
+  let { animation, flipped, .. } = background
   let texture = animation.frames[0].texture
-  let repeat : @selene_math.RepeatMode = match
-    (horizontal_render, vertical_render) {
-    (BackgroundDirRender::Normal(..), BackgroundDirRender::Normal(..)) =>
-      NoRepeat
-    (BackgroundDirRender::Tiled(..), BackgroundDirRender::Normal(..)) => RepeatX
-    (BackgroundDirRender::Normal(..), BackgroundDirRender::Tiled(..)) => RepeatY
-    (BackgroundDirRender::Tiled(..), BackgroundDirRender::Tiled(..)) => Repeat
-  }
-  let w = if horizontal_render is BackgroundDirRender::Tiled(..) {
-    @graphics.view_size.0 + texture.w * 3
-  } else {
-    texture.w
-  }
-  let h = if vertical_render is BackgroundDirRender::Tiled(..) {
-    @graphics.view_size.1 + texture.h * 3
-  } else {
-    texture.h
-  }
-  let size = @selene_math.Vec2D(w.to_double(), h.to_double())
   @sprite.Sprite::from_picture(
-    nx_texture_to_selene_picture(texture, size~, repeat~),
+    nx_texture_to_selene_picture(texture, flip_x=flipped),
     z,
+    alpha=background.current_opacity(),
   )
+}
+
+///|
+fn Background::update(self : Background, delta : Double) -> Unit {
+  self.opacity_animation.update((delta * 1000.0).to_int())
+}
+
+///|
+fn Background::current_opacity(self : Background) -> Double {
+  self.base_opacity * self.opacity_animation.current_opacity()
 }
 
 ///|
@@ -395,9 +373,12 @@ pub fn new_background_position(
     BackgroundDirRender::Normal(offset~, parallax_ratio~) =>
       parallax_shift(offset, parallax_ratio, X, camera_pos, view_size)
     BackgroundDirRender::Tiled(moving_speed~, ..) as tiled => {
-      // TODO: support get cx from background resource
-      let cx = background.animation.get_size().0
-      let x = move_along_axis(tiled.offset, moving_speed, delta, cx.to_double())
+      let x = move_along_axis(
+        tiled.offset,
+        moving_speed,
+        delta,
+        background.tile_step_x.to_double(),
+      )
       tiled.offset = x
       camera_pos[X] + tiled.offset
     }
@@ -406,9 +387,12 @@ pub fn new_background_position(
     BackgroundDirRender::Normal(offset~, parallax_ratio~) =>
       parallax_shift(offset, parallax_ratio, Y, camera_pos, view_size)
     BackgroundDirRender::Tiled(moving_speed~, ..) as tiled => {
-      // TODO: support get cy from background resource
-      let cy = background.animation.get_size().1
-      let y = move_along_axis(tiled.offset, moving_speed, delta, cy.to_double())
+      let y = move_along_axis(
+        tiled.offset,
+        moving_speed,
+        delta,
+        background.tile_step_y.to_double(),
+      )
       tiled.offset = y
       camera_pos[Y] + tiled.offset
     }
@@ -617,9 +601,164 @@ pub fn load_backgrounds(
 }
 
 ///|
+fn background_animation_signature(animation : @resource.NxAnimation) -> String {
+  let mut key = "blend=\{animation.blend};zigzag=\{animation.zigzag};"
+  for frame in animation.frames {
+    key += frame.texture.i
+    key += "#"
+    key += frame.delay.map_or("", fn(delay) { delay.to_string() })
+    key += ";"
+  }
+  key
+}
+
+///|
+fn background_opacity_animation_spec_from_json(
+  json : Json,
+) -> BackgroundOpacityAnimationSpec {
+  let blend = json is { "blend": Number(1, ..), .. }
+  let zigzag = json is { "zigzag": Number(1, ..), .. }
+  let frames = if json is { "0": _, .. } {
+    let items : Array[BackgroundOpacityFrameSpec] = []
+    for i = 0; ; i = i + 1 {
+      let frame_json = match json {
+        Object(obj) => obj.get(i.to_string()).unwrap_or(null)
+        _ => null
+      }
+      if frame_json == null {
+        break
+      }
+      items.push(background_opacity_frame_spec_from_json(frame_json))
+    }
+    items
+  } else {
+    [
+      background_opacity_frame_spec_from_json(
+        json,
+        default_delay_ms=if blend { 2500 } else { 100 },
+      ),
+    ]
+  }
+  if frames.is_empty() {
+    return default_background_opacity_animation_spec()
+  }
+  if blend && frames.length() == 1 {
+    let frame = frames[0]
+    frames.push({
+      ..frame,
+      start_opacity: frame.end_opacity,
+      end_opacity: frame.start_opacity,
+    })
+  }
+  { frames, zigzag }
+}
+
+///|
+fn background_opacity_frame_spec_from_json(
+  json : Json,
+  default_delay_ms? : Int = 100,
+) -> BackgroundOpacityFrameSpec {
+  let (start_opacity, end_opacity) = match json {
+    { "a0": Number(a0, ..), "a1": Number(a1, ..), .. } =>
+      (a0 / 255.0, a1 / 255.0)
+    { "a0": Number(a0, ..), .. } => {
+      let start = a0 / 255.0
+      (start, 1.0 - start)
+    }
+    { "a1": Number(a1, ..), .. } => {
+      let end = a1 / 255.0
+      (1.0 - end, end)
+    }
+    _ => (1.0, 1.0)
+  }
+  let delay_ms = match json {
+    { "delay": Number(delay, ..), .. } if delay != 0 => delay.to_int()
+    _ => default_delay_ms
+  }
+  { start_opacity, end_opacity, delay_ms }
+}
+
+///|
+fn default_background_opacity_animation_spec() -> BackgroundOpacityAnimationSpec {
+  {
+    frames: [{ start_opacity: 1.0, end_opacity: 1.0, delay_ms: 100 }],
+    zigzag: false,
+  }
+}
+
+///|
+fn BackgroundOpacityAnimationState::new(
+  spec : BackgroundOpacityAnimationSpec,
+) -> BackgroundOpacityAnimationState {
+  let first = spec.frames[0]
+  {
+    frames: spec.frames,
+    zigzag: spec.zigzag,
+    opacity: @utils.Linear::new(first.start_opacity),
+    frame: 0,
+    frame_step: 1,
+    delay_ms: first.delay_ms,
+  }
+}
+
+///|
+fn BackgroundOpacityAnimationState::current_opacity(
+  self : BackgroundOpacityAnimationState,
+) -> Double {
+  self.opacity.get()
+}
+
+///|
+fn BackgroundOpacityAnimationState::update(
+  self : BackgroundOpacityAnimationState,
+  timestep_ms : Int,
+) -> Unit {
+  if timestep_ms <= 0 {
+    return
+  }
+  let frame = self.frames[self.frame]
+  let delay_ms = if frame.delay_ms <= 0 { 100 } else { frame.delay_ms }
+  let opacity_step = timestep_ms.to_double() *
+    (frame.end_opacity - frame.start_opacity) /
+    delay_ms.to_double()
+  self.opacity.add(opacity_step)
+  if self.opacity.get() < 0.0 {
+    self.opacity.set(0.0)
+  } else if self.opacity.get() > 1.0 {
+    self.opacity.set(1.0)
+  }
+  if timestep_ms >= self.delay_ms {
+    let last_frame = self.frames.length() - 1
+    let mut next_frame = 0
+    if self.zigzag && last_frame > 0 {
+      if self.frame_step == 1 && self.frame == last_frame {
+        self.frame_step = -self.frame_step
+      } else if self.frame_step == -1 && self.frame == 0 {
+        self.frame_step = -self.frame_step
+      }
+      next_frame = self.frame + self.frame_step
+    } else if self.frame == last_frame {
+      next_frame = 0
+    } else {
+      next_frame = self.frame + 1
+    }
+    let delta = timestep_ms - self.delay_ms
+    self.frame = next_frame
+    self.delay_ms = self.frames[next_frame].delay_ms
+    if self.delay_ms > delta {
+      self.delay_ms -= delta
+    }
+    self.opacity.set(self.frames[next_frame].start_opacity)
+  } else {
+    self.opacity.normalize()
+    self.delay_ms -= timestep_ms
+  }
+}
+
+///|
 priv struct BackgroundsContext {
   backgrounds : Backgrounds
-  entities : Array[@entity.Entity]
+  entities : Array[Array[@entity.Entity]]
   mut back_visible : Bool
   mut fore_visible : Bool
   mut debug_index : Int?
@@ -635,8 +774,10 @@ let backgrounds_context : Ref[BackgroundsContext?] = Ref::new(None)
 /// - `backgrounds`: 背景数据.
 pub fn set_backgrounds(backgrounds : Backgrounds) -> Unit {
   if backgrounds_context.val is Some(ctx) {
-    for entity in ctx.entities {
-      entity.destroy()
+    for entities in ctx.entities {
+      for entity in entities {
+        entity.destroy()
+      }
     }
     ctx.entities.clear()
   }
@@ -729,35 +870,41 @@ pub fn get_background_visibility_state() -> BackgroundVisibilityState {
 pub fn background_system(delta : Double) -> Unit {
   guard backgrounds_context.val is Some(ctx) else { return }
   let { backgrounds, .. } = ctx
-  let expected = total_background_count(backgrounds)
-  if ctx.entities.length() != expected {
-    for entity in ctx.entities {
-      entity.destroy()
+  let expected = expected_background_entity_layout(backgrounds)
+  if !background_entity_layout_matches(ctx.entities, expected) {
+    for entities in ctx.entities {
+      for entity in entities {
+        entity.destroy()
+      }
     }
     ctx.entities.clear()
-    for _ in 0..<expected {
-      ctx.entities.push(@entity.Entity::new())
+    for count in expected {
+      let group : Array[@entity.Entity] = []
+      for _ in 0..<count {
+        group.push(@entity.Entity::new())
+      }
+      ctx.entities.push(group)
     }
     ctx.dirty = true
   }
-  if ctx.dirty {
-    refresh_background_sprites(ctx)
-    ctx.dirty = false
-  }
   // get camera position (top-left)
   let camera_pos = @camera.get_position()
+  if ctx.dirty {
+    refresh_background_sprites(ctx, camera_pos)
+    ctx.dirty = false
+  }
   let mut i = 0
   for b in backgrounds.backs {
     if should_render_background(ctx, i, false) {
-      let pos = new_background_position(b, camera_pos, delta)
-      @position.positions.set(ctx.entities[i], @position.Position(pos))
+      b.update(delta)
+      update_background_entities(ctx.entities[i], b, camera_pos, delta)
     }
     i += 1
   }
   for f in backgrounds.fores {
     if should_render_background(ctx, i, true) {
-      let pos = new_background_position(f, camera_pos, delta)
-      @position.positions.set(ctx.entities[i], @position.Position(pos))
+      f.update(delta)
+      update_background_entities(ctx.entities[i], f, camera_pos, delta)
     }
     i += 1
   }
@@ -767,27 +914,32 @@ pub fn background_system(delta : Double) -> Unit {
 /// 刷新背景精灵, 设置精灵的可见性。
 /// 
 /// WORKAROUND: 暂时给每个背景图一个递增的zindex, 模拟顺序渲染的效果, 但会导致 z 值太多了.
-fn refresh_background_sprites(ctx : BackgroundsContext) -> Unit {
+fn refresh_background_sprites(
+  ctx : BackgroundsContext,
+  camera_pos : @selene_math.Vec2D,
+) -> Unit {
   let mut idx = 0
   for i, b in ctx.backgrounds.backs {
-    let entity = ctx.entities[idx]
+    let entities = ctx.entities[idx]
     if should_render_background(ctx, idx, false) {
       let z = @graphics.BACKGROUND_ZINDEX + i
-      ensure_background_sprite(entity, b, z)
-      set_sprite_visibility(entity, true)
+      ensure_background_sprites(entities, b, z)
+      update_background_entities(entities, b, camera_pos, 0.0)
+      set_background_entities_visibility(entities, true)
     } else {
-      set_sprite_visibility(entity, false)
+      set_background_entities_visibility(entities, false)
     }
     idx += 1
   }
   for i, f in ctx.backgrounds.fores {
-    let entity = ctx.entities[idx]
+    let entities = ctx.entities[idx]
     if should_render_background(ctx, idx, true) {
       let z = @graphics.FOREGROUND_ZINDEX + i
-      ensure_background_sprite(entity, f, z)
-      set_sprite_visibility(entity, true)
+      ensure_background_sprites(entities, f, z)
+      update_background_entities(entities, f, camera_pos, 0.0)
+      set_background_entities_visibility(entities, true)
     } else {
-      set_sprite_visibility(entity, false)
+      set_background_entities_visibility(entities, false)
     }
     idx += 1
   }
@@ -819,22 +971,127 @@ fn total_background_count(backgrounds : Backgrounds) -> Int {
 }
 
 ///|
-fn ensure_background_sprite(
-  entity : @entity.Entity,
+fn ensure_background_sprites(
+  entities : Array[@entity.Entity],
   background : Background,
   z : Int,
 ) -> Unit {
-  if @sprite.sprites.get(entity) is Some(_) {
-    return
+  for entity in entities {
+    if @sprite.sprites.get(entity) is Some(_) {
+      continue
+    }
+    let sprite = new_background_sprite(background, z)
+    @sprite.sprites.set(entity, sprite)
   }
-  let sprite = new_background_sprite(background, z)
-  @sprite.sprites.set(entity, sprite)
 }
 
 ///|
-fn set_sprite_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
+fn set_background_entities_visibility(
+  entities : Array[@entity.Entity],
+  visible : Bool,
+) -> Unit {
+  for entity in entities {
+    if @sprite.sprites.get(entity) is Some(sprite) {
+      sprite.visible = visible
+    }
+  }
+}
+
+///|
+fn set_background_sprite_alpha(entity : @entity.Entity, alpha : Double) -> Unit {
   if @sprite.sprites.get(entity) is Some(sprite) {
-    sprite.visible = visible
+    @sprite.sprites.set(entity, { ..sprite, alpha, })
+  }
+}
+
+///|
+fn background_axis_sprite_count(
+  background : Background,
+  axis : @selene_math.Axis,
+) -> Int {
+  let view = if axis == X {
+    @graphics.view_size.0
+  } else {
+    @graphics.view_size.1
+  }
+  let render = if axis == X {
+    background.horizontal_render
+  } else {
+    background.vertical_render
+  }
+  match render {
+    BackgroundDirRender::Normal(..) => 1
+    BackgroundDirRender::Tiled(..) => {
+      let raw_step = if axis == X {
+        background.tile_step_x
+      } else {
+        background.tile_step_y
+      }
+      let step = raw_step.max(1)
+      view / step + 3
+    }
+  }
+}
+
+///|
+fn background_sprite_count(background : Background) -> Int {
+  background_axis_sprite_count(background, X) *
+  background_axis_sprite_count(background, Y)
+}
+
+///|
+fn expected_background_entity_layout(backgrounds : Backgrounds) -> Array[Int] {
+  let layout : Array[Int] = []
+  for background in backgrounds.backs {
+    layout.push(background_sprite_count(background))
+  }
+  for background in backgrounds.fores {
+    layout.push(background_sprite_count(background))
+  }
+  layout
+}
+
+///|
+fn background_entity_layout_matches(
+  entities : Array[Array[@entity.Entity]],
+  expected : Array[Int],
+) -> Bool {
+  if entities.length() != expected.length() {
+    return false
+  }
+  for i, group in entities {
+    if group.length() != expected[i] {
+      return false
+    }
+  }
+  true
+}
+
+///|
+fn update_background_entities(
+  entities : Array[@entity.Entity],
+  background : Background,
+  camera_pos : @selene_math.Vec2D,
+  delta : Double,
+) -> Unit {
+  let base_pos = new_background_position(background, camera_pos, delta)
+  let count_x = background_axis_sprite_count(background, X)
+  let count_y = background_axis_sprite_count(background, Y)
+  let alpha = background.current_opacity()
+  let step_x = background.tile_step_x.to_double()
+  let step_y = background.tile_step_y.to_double()
+  for index, entity in entities {
+    let tile_x = index % count_x
+    let tile_y = index / count_x
+    let pos = @selene_math.Vec2D(
+      base_pos.0 + tile_x.to_double() * step_x,
+      base_pos.1 + tile_y.to_double() * step_y,
+    )
+    @position.positions.set(entity, @position.Position(pos))
+    set_background_sprite_alpha(entity, alpha)
+    if @sprite.sprites.get(entity) is Some(sprite) {
+      sprite.visible = tile_x < count_x && tile_y < count_y
+    }
   }
 }
 
@@ -845,11 +1102,16 @@ fn set_sprite_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
 /// - `start`: 范围的起始位置。
 /// - `end`: 范围的结束位置。
 fn wrap_in_range(value : Double, start~ : Double, end~ : Double) -> Double {
-  if value >= end {
-    value - end
-  } else if value < start {
-    value + end
-  } else {
-    value
+  let width = end - start
+  if width <= 0.0 {
+    return value
   }
+  let mut wrapped = value
+  while wrapped >= end {
+    wrapped -= width
+  }
+  while wrapped < start {
+    wrapped += width
+  }
+  wrapped
 }

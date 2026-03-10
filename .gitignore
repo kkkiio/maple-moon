@@ -15,7 +15,7 @@ tools/
 
 # ignore for now
 assets/images
-assets/spritesheets
+# assets/spritesheets
 assets/map
 assets/map001
 assets/minimap

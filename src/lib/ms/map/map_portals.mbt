@@ -3,7 +3,8 @@ pub struct MapPortals {
   map_portals_animations : MapPortalAnimations
   id_portal_map : Map[Int, Portal]
   name_portal_id_map : Map[String, Int]
-  mut cooldown : Int
+  mut manual_cooldown : Int
+  mut auto_cooldown : Int
 }
 
 ///|
@@ -41,7 +42,8 @@ pub fn MapPortals::new(
   {
     id_portal_map: portals_by_id,
     name_portal_id_map,
-    cooldown: warpcd,
+    manual_cooldown: 0,
+    auto_cooldown: 0,
     map_portals_animations,
   }
 }
@@ -67,22 +69,65 @@ pub fn MapPortals::get_portal_by_name(
 }
 
 ///|
+fn MapPortals::find_warp_at_by_mode(
+  self : MapPortals,
+  playerpos : Point[Int],
+  auto_trigger : Bool,
+) -> PortalWarpInfo? {
+  let cooldown = if auto_trigger {
+    self.auto_cooldown
+  } else {
+    self.manual_cooldown
+  }
+  guard cooldown == 0 else { return None }
+  let matched = self.id_portal_map
+    .iter()
+    .map(fn(it) { it.1 })
+    .find_first(fn(portal) {
+      let portal_type = portal.get_type()
+      let matches_trigger_mode = if auto_trigger {
+        portal_type.is_auto_trigger()
+      } else {
+        portal_type.is_manual_trigger()
+      }
+      portal.warp_info.map_id < 999999999 &&
+      portal.bounds().contains(playerpos) &&
+      matches_trigger_mode
+    })
+  guard matched is Some(portal) else { return None }
+  if auto_trigger {
+    self.auto_cooldown = warpcd
+  } else {
+    self.manual_cooldown = warpcd
+  }
+  Some(portal.warp_info)
+}
+
+///|
+/// Find a manually triggered warp portal at `playerpos`.
+pub fn MapPortals::find_manual_warp_at(
+  self : MapPortals,
+  playerpos : Point[Int],
+) -> PortalWarpInfo? {
+  self.find_warp_at_by_mode(playerpos, false)
+}
+
+///|
+/// Find an auto-triggered warp portal at `playerpos`.
+pub fn MapPortals::find_auto_warp_at(
+  self : MapPortals,
+  playerpos : Point[Int],
+) -> PortalWarpInfo? {
+  self.find_warp_at_by_mode(playerpos, true)
+}
+
+///|
+/// Find a manually triggered warp portal at `playerpos`.
 pub fn MapPortals::find_warp_at(
   self : MapPortals,
   playerpos : Point[Int],
 ) -> PortalWarpInfo? {
-  guard self.cooldown == 0 else { return None }
-  self.cooldown = warpcd
-  if self.id_portal_map
-    .iter()
-    .map(fn(it) { it.1 })
-    .find_first(fn(portal) {
-      portal.warp_info.map_id < 999999999 && portal.bounds().contains(playerpos)
-    })
-    is Some(portal) {
-    return Some(portal.warp_info)
-  }
-  None
+  self.find_manual_warp_at(playerpos)
 }
 
 ///|
@@ -142,9 +187,23 @@ pub fn set_portals(
 }
 
 ///|
-/// Find warp portal at `playerpos` from current portals context.
+/// Find a manually triggered warp portal at `playerpos` from current portals context.
+pub fn find_manual_warp_at_current(playerpos : Point[Int]) -> PortalWarpInfo? {
+  portals_context.val.bind(fn(ctx) {
+    ctx.portals.find_manual_warp_at(playerpos)
+  })
+}
+
+///|
+/// Find an auto-triggered warp portal at `playerpos` from current portals context.
+pub fn find_auto_warp_at_current(playerpos : Point[Int]) -> PortalWarpInfo? {
+  portals_context.val.bind(fn(ctx) { ctx.portals.find_auto_warp_at(playerpos) })
+}
+
+///|
+/// Find a manually triggered warp portal at `playerpos` from current portals context.
 pub fn find_warp_at_current(playerpos : Point[Int]) -> PortalWarpInfo? {
-  portals_context.val.bind(fn(ctx) { ctx.portals.find_warp_at(playerpos) })
+  find_manual_warp_at_current(playerpos)
 }
 
 ///|
@@ -173,7 +232,7 @@ pub fn portal_system(_delta : Double) -> Unit {
   let touch_pos = (ctx.get_touch_pos)()
   for id, portal in ctx.portals.id_portal_map {
     match portal.get_type() {
-      PortalType::HIDDEN | PortalType::TOUCH => {
+      PortalType::HIDDEN | PortalType::COLLISION => {
         let entity = ctx.portal_entities.get(id)
         guard entity is Some(entity) else { abort("portal entity not found") }
         portal.update_touched(entity, touch_pos)
@@ -181,8 +240,11 @@ pub fn portal_system(_delta : Double) -> Unit {
       _ => ()
     }
   }
-  if ctx.portals.cooldown > 0 {
-    ctx.portals.cooldown -= 1
+  if ctx.portals.manual_cooldown > 0 {
+    ctx.portals.manual_cooldown -= 1
+  }
+  if ctx.portals.auto_cooldown > 0 {
+    ctx.portals.auto_cooldown -= 1
   }
 }
 
@@ -268,4 +330,105 @@ test "parse portals" {
       "pt": "REGULAR",
     },
   ])
+}
+
+///|
+fn make_test_portals(src : Array[NxPortal]) -> MapPortals {
+  MapPortals::new(src, 101010103, { animations: Map::new() })
+}
+
+///|
+test "manual and auto portal queries are split by portal type" {
+  let portals = make_test_portals([
+    {
+      pn: "goSleepy0",
+      tm: 105040300,
+      tn: "jumpSP",
+      x: 100,
+      y: 2058,
+      pt: PortalType::COLLISION,
+    },
+    {
+      pn: "under00",
+      tm: 101010102,
+      tn: "top00",
+      x: 200,
+      y: 100,
+      pt: PortalType::REGULAR,
+    },
+  ])
+  let invisible_portals = make_test_portals([
+    {
+      pn: "in00",
+      tm: 101000000,
+      tn: "out00",
+      x: 300,
+      y: 100,
+      pt: PortalType::INVISIBLE,
+    },
+  ])
+  inspect(
+    portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
+    content="Some(\"goSleepy0\")",
+  )
+  inspect(
+    portals.find_manual_warp_at(Point::new(100, 2058)) is None,
+    content="true",
+  )
+  inspect(
+    portals
+    .find_manual_warp_at(Point::new(200, 100))
+    .map(fn(warp) { warp.name }),
+    content="Some(\"under00\")",
+  )
+  inspect(
+    portals.find_auto_warp_at(Point::new(200, 100)) is None,
+    content="true",
+  )
+  inspect(
+    invisible_portals
+    .find_manual_warp_at(Point::new(300, 100))
+    .map(fn(warp) { warp.name }),
+    content="Some(\"in00\")",
+  )
+}
+
+///|
+test "manual and auto portal cooldowns are independent" {
+  let portals = make_test_portals([
+    {
+      pn: "goSleepy0",
+      tm: 105040300,
+      tn: "jumpSP",
+      x: 100,
+      y: 2058,
+      pt: PortalType::COLLISION,
+    },
+    {
+      pn: "under00",
+      tm: 101010102,
+      tn: "top00",
+      x: 100,
+      y: 2058,
+      pt: PortalType::REGULAR,
+    },
+  ])
+  inspect(
+    portals
+    .find_manual_warp_at(Point::new(100, 2058))
+    .map(fn(warp) { warp.name }),
+    content="Some(\"under00\")",
+  )
+  inspect(
+    portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
+    content="Some(\"goSleepy0\")",
+  )
+  inspect(
+    portals.find_manual_warp_at(Point::new(100, 2058)) is None,
+    content="true",
+  )
+  inspect(
+    portals.find_auto_warp_at(Point::new(100, 2058)) is None,
+    content="true",
+  )
 }

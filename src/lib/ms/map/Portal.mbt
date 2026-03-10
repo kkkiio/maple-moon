@@ -15,23 +15,66 @@ struct NxPortal {
 
 ///|
 pub(all) enum PortalType {
-  /// 出生点
+  /// Start Point (`sp`)。
+  ///
+  /// 用作出生/复活落点；通常 `tm = 999999999`，本身不触发传送。
   SPAWN = 0
-  /// A normal portal that is not visible and not hidden.
+  /// Portal Invisible (`pi`)。
+  ///
+  /// 不可见的普通传送门；需要玩家主动进入，资源层面可直接传送。
   INVISIBLE = 1
-  /// A shining portal.
+  /// Portal Visible (`pv`)。
+  ///
+  /// 常见的可见发光传送门；需要玩家主动进入，资源层面可直接传送。
   REGULAR = 2
-  TOUCH = 3
+  /// Portal Collision (`pc`)。
+  ///
+  /// 碰撞即触发的传送门；资源语义上属于自动触发 warp。
+  COLLISION = 3
+  /// Portal Changable (`pg`)。
+  ///
+  /// 资料页描述为“被其他 portal 指向时，会落到一个 `sp`”，细节仍不明确。
   TYPE4 = 4
+  /// Portal Changable Invisible (`pgi`)。
+  ///
+  /// 与 `TYPE4` 类似，但不可见；细节仍不明确。
   TYPE5 = 5
+  /// Town Portal Point (`tp`)。
+  ///
+  /// 用于 Mystic Door / Town Portal 这类双向门的落点与动画锚点。
   WARP = 6
+  /// Portal Script (`ps`)。
+  ///
+  /// 进入时执行 `script`，自身不直接依赖 `tm/tn` 做普通传送。
   SCRIPTED = 7
+  /// Portal Script Invisible (`psi`)。
+  ///
+  /// 不可见的脚本传送门；进入时执行 `script`。
   SCRIPTED_INVISIBLE = 8
-  SCRIPTED_TOUCH = 9
+  /// Portal Collision Script (`pcs`)。
+  ///
+  /// 碰撞即自动执行 `script`。
+  SCRIPTED_COLLISION = 9
+  /// Portal Hidden (`ph`)。
+  ///
+  /// 隐藏门；通常平时不明显，靠近/触碰后显示线索或门体。
   HIDDEN = 10
+  /// Portal Script Hidden (`psh`)。
+  ///
+  /// 带隐藏外观的脚本门；进入时执行 `script`，同时保留 hidden 表现。
   SCRIPTED_HIDDEN = 11
+  /// Portal Collision Jump (`pcj`)。
+  ///
+  /// 自动触发的弹跳门，只施加垂直冲量；常见于 jump quest。
   SPRING1 = 12
+  /// Portal Collision Custom (`pci`)。
+  ///
+  /// 自动触发的自定义冲量门，可按资源里的 `horizontalImpact` /
+  /// `verticalImpact` 施加 X/Y 方向速度。
   SPRING2 = 13
+  /// Portal Collision Changeable? (`pcig`)。
+  ///
+  /// 资料页标为未知类型；推测与 collision/changeable 相关，但未有可靠结论。
   TYPE14 = 14
 } derive(Eq, Compare, Show, ToJson, Hash)
 
@@ -41,13 +84,13 @@ pub fn PortalType::typebyid(id : Int) -> PortalType? {
     0 => PortalType::SPAWN
     1 => PortalType::INVISIBLE
     2 => PortalType::REGULAR
-    3 => PortalType::TOUCH
+    3 => PortalType::COLLISION
     4 => PortalType::TYPE4
     5 => PortalType::TYPE5
     6 => PortalType::WARP
     7 => PortalType::SCRIPTED
     8 => PortalType::SCRIPTED_INVISIBLE
-    9 => PortalType::SCRIPTED_TOUCH
+    9 => PortalType::SCRIPTED_COLLISION
     10 => PortalType::HIDDEN
     11 => PortalType::SCRIPTED_HIDDEN
     12 => PortalType::SPRING1
@@ -56,6 +99,19 @@ pub fn PortalType::typebyid(id : Int) -> PortalType? {
     _ => return None
   }
   Some(t)
+}
+
+///|
+pub fn PortalType::is_auto_trigger(self : PortalType) -> Bool {
+  match self {
+    PortalType::COLLISION => true
+    _ => false
+  }
+}
+
+///|
+pub fn PortalType::is_manual_trigger(self : PortalType) -> Bool {
+  not(self.is_auto_trigger())
 }
 
 ///|

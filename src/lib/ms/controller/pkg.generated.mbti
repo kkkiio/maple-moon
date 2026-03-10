@@ -1,8 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/controller"
 
+import {
+  "KKKIIO/maple-moon/lib/ms/map",
+  "KKKIIO/maple-moon/lib/ms/physics",
+  "KKKIIO/maple-moon/lib/ms/player",
+}
+
 // Values
 pub fn player_controller_system(Double) -> Unit
+
+pub fn try_trigger_auto_portal(@player.Player, @map.MapInfo, @physics.Physics) -> Bool
+
+pub fn try_trigger_manual_portal(@player.Player, @map.MapInfo, @physics.Physics) -> Bool
 
 // Errors
 

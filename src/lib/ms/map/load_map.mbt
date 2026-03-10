@@ -61,13 +61,13 @@ fn map_portal_to_minimap_portal(portal : NxPortal) -> MiniMapPortal {
     PortalType::SPAWN => 0
     PortalType::INVISIBLE => 1
     PortalType::REGULAR => 2
-    PortalType::TOUCH => 3
+    PortalType::COLLISION => 3
     PortalType::TYPE4 => 4
     PortalType::TYPE5 => 5
     PortalType::WARP => 6
     PortalType::SCRIPTED => 7
     PortalType::SCRIPTED_INVISIBLE => 8
-    PortalType::SCRIPTED_TOUCH => 9
+    PortalType::SCRIPTED_COLLISION => 9
     PortalType::HIDDEN => 10
     PortalType::SCRIPTED_HIDDEN => 11
     PortalType::SPRING1 => 12

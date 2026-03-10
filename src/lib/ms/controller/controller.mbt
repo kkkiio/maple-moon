@@ -31,20 +31,16 @@ fn has_action(actions : Array[@keymap.Action], target : @keymap.Action) -> Bool 
 }
 
 ///|
-fn check_portals(
+fn trigger_portal_transition(
   player : @player.Player,
   map_info : @map.MapInfo,
   physics : @physics.Physics,
-) -> Unit {
-  if player.is_attacking() {
-    return
-  }
-  let playerpos = player.character.get_position()
-  guard @map.find_warp_at_current(playerpos) is Some(warpinfo) else { return }
+  warpinfo : @map.PortalWarpInfo,
+) -> Bool {
   if warpinfo.intra_map {
     guard @map.get_portal_by_name_current(warpinfo.toname) is Some(spawn_point) else {
       @log.error("portal not found", data={ "warpinfo": warpinfo })
-      return
+      return false
     }
     let startpos = physics.get_y_below(spawn_point)
     player.respawn(startpos, map_info.is_underwater())
@@ -59,6 +55,41 @@ fn check_portals(
     stats.set_map_id(warpinfo.map_id)
     @game_server.send(message, log_level=@log.Level::INFO)
   }
+  true
+}
+
+///|
+/// Try to trigger a manually activated portal at the player's current position.
+pub fn try_trigger_manual_portal(
+  player : @player.Player,
+  map_info : @map.MapInfo,
+  physics : @physics.Physics,
+) -> Bool {
+  if player.is_attacking() {
+    return false
+  }
+  let playerpos = player.character.get_position()
+  guard @map.find_manual_warp_at_current(playerpos) is Some(warpinfo) else {
+    return false
+  }
+  trigger_portal_transition(player, map_info, physics, warpinfo)
+}
+
+///|
+/// Try to trigger an auto-activated portal at the player's current position.
+pub fn try_trigger_auto_portal(
+  player : @player.Player,
+  map_info : @map.MapInfo,
+  physics : @physics.Physics,
+) -> Bool {
+  if player.is_attacking() {
+    return false
+  }
+  let playerpos = player.character.get_position()
+  guard @map.find_auto_warp_at_current(playerpos) is Some(warpinfo) else {
+    return false
+  }
+  trigger_portal_transition(player, map_info, physics, warpinfo)
 }
 
 ///|
@@ -186,7 +217,7 @@ pub fn player_controller_system(_delta : Double) -> Unit {
       just_pressed_actions,
       @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
     ) {
-    check_portals(player, map_info, physics)
+    try_trigger_manual_portal(player, map_info, physics) |> ignore
   }
 
   for
@@ -214,5 +245,6 @@ pub fn player_controller_system(_delta : Double) -> Unit {
     }
   }
 
+  try_trigger_auto_portal(player, map_info, physics) |> ignore
   @player.tick_player(player, physics, map_info)
 }

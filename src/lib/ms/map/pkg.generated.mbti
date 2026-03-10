@@ -20,6 +20,10 @@ pub fn clear_runtime_context() -> Unit
 
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
 
+pub fn find_auto_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
+
+pub fn find_manual_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
+
 pub fn find_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
 
 pub fn get_background_visibility_state() -> BackgroundVisibilityState
@@ -188,8 +192,11 @@ pub struct MapPortals {
   map_portals_animations : MapPortalAnimations
   id_portal_map : Map[Int, Portal]
   name_portal_id_map : Map[String, Int]
-  mut cooldown : Int
+  mut manual_cooldown : Int
+  mut auto_cooldown : Int
 }
+pub fn MapPortals::find_auto_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
+pub fn MapPortals::find_manual_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::get_portal_by_name(Self, String) -> @res_types.Point[Int]?
 pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @res_types.Point[Int]?
@@ -378,19 +385,21 @@ pub(all) enum PortalType {
   SPAWN
   INVISIBLE
   REGULAR
-  TOUCH
+  COLLISION
   TYPE4
   TYPE5
   WARP
   SCRIPTED
   SCRIPTED_INVISIBLE
-  SCRIPTED_TOUCH
+  SCRIPTED_COLLISION
   HIDDEN
   SCRIPTED_HIDDEN
   SPRING1
   SPRING2
   TYPE14
 }
+pub fn PortalType::is_auto_trigger(Self) -> Bool
+pub fn PortalType::is_manual_trigger(Self) -> Bool
 pub fn PortalType::typebyid(Int) -> Self?
 pub impl Compare for PortalType
 pub impl Eq for PortalType

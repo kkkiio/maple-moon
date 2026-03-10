@@ -184,13 +184,16 @@ pub fn PhysicsObject::do_move(Self) -> Unit
 pub fn PhysicsObject::get_absolute(Self, Double, Double, Double) -> @res_types.Point[Int]
 pub fn PhysicsObject::get_absolute_x(Self, Double, Double) -> Int
 pub fn PhysicsObject::get_absolute_y(Self, Double, Double) -> Int
+pub fn PhysicsObject::get_hspeed(Self) -> Double
 pub fn PhysicsObject::get_last_x(Self) -> Int
 pub fn PhysicsObject::get_last_y(Self) -> Int
 pub fn PhysicsObject::get_position(Self) -> @res_types.Point[Int]
+pub fn PhysicsObject::get_vspeed(Self) -> Double
 pub fn PhysicsObject::get_x(Self) -> Int
 pub fn PhysicsObject::get_y(Self) -> Int
 pub fn PhysicsObject::is_flag_not_set(Self, PhysicsObjectFlag) -> Bool
 pub fn PhysicsObject::is_flag_set(Self, PhysicsObjectFlag) -> Bool
+pub fn PhysicsObject::is_on_ground(Self) -> Bool
 pub fn PhysicsObject::limitx(Self, Double) -> Unit
 pub fn PhysicsObject::limity(Self, Double) -> Unit
 pub fn PhysicsObject::new(on_pos_change~ : (@math.Vec2D) -> Unit) -> Self

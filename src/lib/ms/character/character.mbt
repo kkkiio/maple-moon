@@ -172,6 +172,12 @@ pub fn Character::is_climbing(self : Character) -> Bool {
 }
 
 ///|
+/// Return the current high-level character state.
+pub fn Character::get_state(self : Character) -> CharState {
+  self.state
+}
+
+///|
 pub fn Character::get_layer(self : Character) -> Int {
   if self.is_climbing() {
     7

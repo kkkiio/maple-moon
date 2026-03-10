@@ -415,6 +415,24 @@ pub fn PhysicsObject::get_position(self : PhysicsObject) -> Point[Int] {
 }
 
 ///|
+/// Return whether the object is currently attached to ground.
+pub fn PhysicsObject::is_on_ground(self : PhysicsObject) -> Bool {
+  self.on_ground
+}
+
+///|
+/// Return the current horizontal speed.
+pub fn PhysicsObject::get_hspeed(self : PhysicsObject) -> Double {
+  self.moving_object.hspeed
+}
+
+///|
+/// Return the current vertical speed.
+pub fn PhysicsObject::get_vspeed(self : PhysicsObject) -> Double {
+  self.moving_object.vspeed
+}
+
+///|
 /// Set full position immediately.
 pub fn PhysicsObject::set_position(
   self : PhysicsObject,

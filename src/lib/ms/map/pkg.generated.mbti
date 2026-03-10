@@ -140,6 +140,8 @@ pub impl @json.FromJson for BackgroundsResource
 type Ladder
 pub fn Ladder::felloff(Self, Int, Bool) -> Bool
 pub fn Ladder::from_resource(NxLadder) -> Self
+pub fn Ladder::get_bottom(Self) -> Int
+pub fn Ladder::get_top(Self) -> Int
 pub fn Ladder::get_x(Self) -> Int
 pub fn Ladder::inrange(Self, @res_types.Point[Int], Bool) -> Bool
 pub fn Ladder::is_ladder(Self) -> Bool

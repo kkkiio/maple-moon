@@ -278,6 +278,10 @@ fn Player::update(
         _ => ()
       }
       physics.move_object(self.character.get_phobj())
+      if self.character.state == CharState::LADDER ||
+        self.character.state == CharState::ROPE {
+        hold_at_climb_top_if_needed(self, physics)
+      }
 
       self.character.update(
         self.character.get_stancespeed(
@@ -440,6 +444,50 @@ fn get_player_state(state : CharState) -> Unit? {
 ///|
 fn is_action_down(action : @keymap.BasicActionId) -> Bool {
   @keymap.is_pressed(@keymap.Action::BASIC(action))
+}
+
+///|
+let climb_top_exit_tolerance : Double = 6.0
+
+///|
+fn has_climb_exit_ground(
+  physics : @physics.Physics,
+  ladder : @map.Ladder,
+) -> Bool {
+  let top = ladder.get_top().to_double()
+  let x = ladder.get_x().to_double()
+  let fhid = physics
+    .get_fht()
+    .get_fhid_below(x, top - climb_top_exit_tolerance)
+  if fhid <= 0 {
+    return false
+  }
+  let ground = physics.get_fht().get_ground_below_by_id(fhid, x)
+  (ground - top).abs() <= climb_top_exit_tolerance
+}
+
+///|
+fn hold_at_climb_top_if_needed(
+  player : Player,
+  physics : @physics.Physics,
+) -> Unit {
+  if not(is_action_down(@keymap.BasicActionId::MOVE_UP)) {
+    return
+  }
+  match player.get_ladder() {
+    Some(ladder) => {
+      if has_climb_exit_ground(physics, ladder) {
+        return
+      }
+      let top = ladder.get_top()
+      let phobj = player.character.get_phobj()
+      if phobj.get_y() < top {
+        phobj.set_y(top.to_double())
+        phobj.set_vspeed(0.0)
+      }
+    }
+    None => ()
+  }
 }
 
 ///|

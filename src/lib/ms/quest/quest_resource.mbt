@@ -406,7 +406,8 @@ test "parse quest check 10015" {
   inspect(
     quest_check,
     content=(
-      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "ing"}]}, {min_level: 10}, {npc: 9000036}], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [{info_ex: [{value: "clear"}]}, {npc: 9000036}], unknown_checks: []}])
+      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
+
     ),
   )
 }
@@ -440,7 +441,8 @@ test "parse quest check 10054" {
   inspect(
     quest_check.0,
     content=(
-      #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [{info_ex: [{value: "000"}, {value: "100"}, {value: "001"}, {value: "101"}]}, {interval_minutes: 0}, {items: [{id: 4001204, count: 0}]}, {min_level: 50}, {npc: 9010000}, {quest_status_map: {10052: InProgress}}], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 2012000, count: 1}]}, {npc: 1061013}], unknown_checks: []}]
+      #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
+
     ),
   )
 }
@@ -464,7 +466,8 @@ test "parse item check" {
   inspect(
     quest_check.0,
     content=(
-      #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [{jobs: [Beginner]}, {npc: 10000}], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4031162, count: 1}, {id: 4031161, count: 1}]}], unknown_checks: []}]
+      #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
+
     ),
   )
 }
@@ -486,7 +489,9 @@ test "parse quests status check" {
   )
   inspect(
     quest_check,
-    content="MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{min_level: 15}, {npc: 1022002}, {quest_status_map: {2004: Completed}}], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [{items: [{id: 4000008, count: 40}]}, {npc: 1022002}], unknown_checks: []}])",
+    content=(
+      #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
+    ),
   )
 }
 

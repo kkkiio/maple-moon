@@ -128,6 +128,18 @@ pub fn Ladder::get_x(self : Ladder) -> Int {
 }
 
 ///|
+/// Return the top y coordinate of the ladder or rope.
+pub fn Ladder::get_top(self : Ladder) -> Int {
+  self.y1
+}
+
+///|
+/// Return the bottom y coordinate of the ladder or rope.
+pub fn Ladder::get_bottom(self : Ladder) -> Int {
+  self.y2
+}
+
+///|
 /// Define the MapInfo struct and its methods
 pub struct MapInfo {
   field_limit : Int

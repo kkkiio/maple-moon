@@ -95,6 +95,7 @@ pub fn Character::get_oid(Self) -> Int
 pub fn Character::get_phobj(Self) -> @physics.PhysicsObject
 pub fn Character::get_position(Self) -> @res_types.Point[Int]
 pub fn Character::get_stancespeed(Self, Int) -> Double
+pub fn Character::get_state(Self) -> CharState
 pub fn Character::get_stats(Self) -> @char_stats.CharStats
 pub fn Character::get_weapontype(Self) -> @weapon.Type
 pub fn Character::is_alerted(Self) -> Bool

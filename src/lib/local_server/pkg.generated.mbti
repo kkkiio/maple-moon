@@ -7,12 +7,13 @@ import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/json",
   "moonbitlang/core/random",
+  "moonbitlang/core/ref",
 }
 
 // Values
 pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand) -> (Array[@server_proto.DropLootMessage], Int)
 
-pub let default_rand_seed : Ref[Bytes]
+pub let default_rand_seed : @ref.Ref[Bytes]
 
 pub fn init_server(LocalServer) -> Unit
 
@@ -22,7 +23,7 @@ pub fn server_system(LocalServer) -> Unit
 
 // Types and methods
 pub struct BrowserDB {
-  db_ref : Ref[@indexed_db.IndexedDB?]
+  db_ref : @ref.Ref[@indexed_db.IndexedDB?]
 }
 pub fn BrowserDB::new() -> Self
 pub impl DB for BrowserDB
@@ -41,7 +42,7 @@ pub async fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
 pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 
 pub struct MemoryDB {
-  stores : Ref[Map[String, Map[String, Json]]]
+  stores : @ref.Ref[Map[String, Map[String, Json]]]
 }
 pub fn MemoryDB::get_json(Self, String, String) -> Json?
 pub fn MemoryDB::new() -> Self

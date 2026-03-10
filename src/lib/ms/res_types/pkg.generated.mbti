@@ -32,8 +32,6 @@ pub fn Code::int_value(Self) -> Int
 pub impl Eq for Code
 
 pub(all) struct Color(Double, Double, Double, Double)
-
-
 pub fn Color::a(Self) -> Double
 pub fn Color::b(Self) -> Double
 pub fn Color::blend(Self, Self, Double) -> Self

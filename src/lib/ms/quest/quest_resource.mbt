@@ -407,7 +407,6 @@ test "parse quest check 10015" {
     quest_check,
     content=(
       #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
-
     ),
   )
 }
@@ -442,7 +441,6 @@ test "parse quest check 10054" {
     quest_check.0,
     content=(
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
-
     ),
   )
 }
@@ -467,7 +465,6 @@ test "parse item check" {
     quest_check.0,
     content=(
       #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
-
     ),
   )
 }

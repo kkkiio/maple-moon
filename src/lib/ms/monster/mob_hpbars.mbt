@@ -184,7 +184,7 @@ pub fn mob_hpbars_system(delta : Double) -> Unit {
     return
   }
 
-  for {
+  for ;; {
     guard hp_events.pop() is Some(event) else { break }
     ignore(event.player_level)
     guard mobs.get_mob(event.oid) is Some(mob) else { continue }

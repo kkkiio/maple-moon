@@ -7,6 +7,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/entity",
   "moonbitlang/core/json",
+  "moonbitlang/core/ref",
 }
 
 // Values
@@ -111,7 +112,7 @@ pub(all) struct Element {
   object : &Widget
   toggle_active : () -> Unit
   on_close : () -> Unit
-  runtime_state : Ref[RuntimeState?]
+  runtime_state : @ref.Ref[RuntimeState?]
 }
 pub fn Element::doubleclick(Self, @res_types.Point[Int]) -> Bool
 pub fn Element::draw(Self) -> Unit
@@ -159,7 +160,7 @@ pub(all) struct InteractiveArea {
   bounds : @res_types.Rectangle[Int]
   on_click : () -> Unit
   on_double_click : () -> Unit
-  state : Ref[ButtonState]
+  state : @ref.Ref[ButtonState]
 }
 pub impl ToJson for InteractiveArea
 

@@ -132,7 +132,7 @@ pub fn MapNpcs::new(
 
 ///|
 pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
-  for {
+  for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     let oid = spawn.get_oid()
     if not(self.npcs.contains(oid)) {

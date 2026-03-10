@@ -519,10 +519,23 @@ test "HTILED background position" {
     cloudy_sky_background,
     @graphics.BACKGROUND_ZINDEX,
   )
+  let count_x = background_axis_sprite_count(cloudy_sky_background, X)
+  let count_y = background_axis_sprite_count(cloudy_sky_background, Y)
+  let step_x = cloudy_sky_background.tile_step_x.to_double()
   guard cloudy_sky_background_sprite.sprite_type
-    is @sprite.Picture({ size, repeat: RepeatX, .. }) else {
-    fail("HTILED background sprite should be a picture with RepeatX")
+    is @sprite.Picture({ size, .. }) else {
+    fail("tiled background sprite should be a picture")
   }
+  assert_eq(count_y, 1, msg="HMOVEA background should only need one row")
+  assert_true(
+    count_x > 1,
+    msg="HMOVEA background should allocate multiple sprites to cover the viewport, count_x=\{count_x}",
+  )
+  assert_eq(
+    size.0.to_int(),
+    cloudy_sky_background.tile_step_x,
+    msg="default tile step should match the frame width",
+  )
   let camera_pos = @selene_math.Vec2D(1972, -268)
   let mut seconds = 60.0
   let delta = 1.0 / 60.0
@@ -533,9 +546,9 @@ test "HTILED background position" {
     )
     assert_true(
       backgroud_position.0 <= camera_pos.0 &&
-      backgroud_position.0 + @graphics.view_size.0.to_double() + size.0 >=
+      backgroud_position.0 + count_x.to_double() * step_x >=
       camera_pos.0 + @graphics.view_size.0.to_double(),
-      msg="background should horizontally cover the viewport, background_position=\{backgroud_position}, camera_pos=\{camera_pos}",
+      msg="background sprites should horizontally cover the viewport, background_position=\{backgroud_position}, camera_pos=\{camera_pos}, count_x=\{count_x}, step_x=\{step_x}",
     )
     match y {
       Some(y) =>

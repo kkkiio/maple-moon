@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/item"
 import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/ref",
 }
 
 // Values
@@ -72,11 +73,11 @@ pub async fn ItemData::load_item_data_with_loader(Int, @resource.AsyncLoader) ->
 
 pub struct ItemDataSystem {
   item_loader : @resource.AsyncLoader
-  pending_item_loads : Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
-  item_load_errors : Ref[Map[Int, String]]
-  consume_etc_preload_discovery : Ref[@utils.Future[Result[Array[Int], Error]]?]
-  consume_etc_preload_ids : Ref[Array[Int]]
-  consume_etc_preload_requested : Ref[Bool]
+  pending_item_loads : @ref.Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
+  item_load_errors : @ref.Ref[Map[Int, String]]
+  consume_etc_preload_discovery : @ref.Ref[@utils.Future[Result[Array[Int], Error]]?]
+  consume_etc_preload_ids : @ref.Ref[Array[Int]]
+  consume_etc_preload_requested : @ref.Ref[Bool]
 }
 pub fn ItemDataSystem::all_requested_ready_or_fail(Self, Array[Int]) -> Bool
 pub fn ItemDataSystem::consume_and_etc_preload_ready_or_fail(Self) -> Bool

@@ -456,9 +456,7 @@ fn has_climb_exit_ground(
 ) -> Bool {
   let top = ladder.get_top().to_double()
   let x = ladder.get_x().to_double()
-  let fhid = physics
-    .get_fht()
-    .get_fhid_below(x, top - climb_top_exit_tolerance)
+  let fhid = physics.get_fht().get_fhid_below(x, top - climb_top_exit_tolerance)
   if fhid <= 0 {
     return false
   }

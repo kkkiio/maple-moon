@@ -4,8 +4,6 @@ import {
   "moonbitlang/core/json",
 }
 
-warnings = "-reserved_keyword" // wait for moonbit team to rename the `virtual` option
-
 options(
-  virtual: { "has-default": true },
+  "virtual": { "has-default": true },
 )

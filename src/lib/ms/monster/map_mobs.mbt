@@ -81,7 +81,7 @@ pub fn MapMobs::add_mob(self : MapMobs, mob : Mob) -> Unit {
 
 ///|
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
-  for {
+  for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     if not(self.mobs.contains(spawn.oid)) {
       self.loading_mobs.push(

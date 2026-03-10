@@ -26,6 +26,67 @@ pub(all) struct FrameWithPath {
 }
 
 ///|
+fn spritesheet_ref_to_rel_path(spritesheet_ref : String) -> String {
+  let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
+  let rel_parts : Array[String] = []
+  let start_idx = if spritesheet_path_parts.length() >= 5 &&
+    spritesheet_path_parts[1] == "Character" &&
+    spritesheet_path_parts[3] == "spritesheets" {
+    4
+  } else {
+    2
+  }
+  for i = start_idx; i < spritesheet_path_parts.length(); i = i + 1 {
+    rel_parts.push(spritesheet_path_parts[i].to_string())
+  }
+  rel_parts.join("/")
+}
+
+///|
+fn detect_assets_root(output_dir : String) -> String raise {
+  let parts = output_dir.split("/").to_array()
+  let result : Array[String] = []
+  for part in parts {
+    result.push(part.to_string())
+    if part == "assets" {
+      return result.join("/")
+    }
+  }
+  fail("reanim output dir must be under assets: \{output_dir}")
+}
+
+///|
+fn copy_source_spritesheet(
+  spritesheet_ref : String,
+  spritesheet_dir : String,
+  assets_root : String,
+) -> Unit raise {
+  let rel_path = spritesheet_ref_to_rel_path(spritesheet_ref)
+  let src_json_path = "\{spritesheet_dir}/\{rel_path}.json"
+  let src_png_path = "\{spritesheet_dir}/\{rel_path}.png"
+  let dst_json_path = "\{assets_root}/\{spritesheet_ref}.json"
+  let dst_png_path = "\{assets_root}/\{spritesheet_ref}.png"
+
+  let dst_parts = dst_json_path.split("/").to_array()
+  dst_parts.pop() |> ignore
+  @fsx.mkdir_sync_recursive(dst_parts.join("/"))
+
+  if @fsx.exists_sync(src_json_path) {
+    let src_json = @fsx.read_file_sync(src_json_path, "utf-8")
+    @fsx.write_file_sync(dst_json_path, src_json)
+  } else {
+    fail("missing source atlas json: \{src_json_path}")
+  }
+
+  if @fsx.exists_sync(src_png_path) {
+    let src_png = read_file_buffer_ffi(src_png_path)
+    write_file_buffer_ffi(dst_png_path, src_png)
+  } else {
+    fail("missing source atlas png: \{src_png_path}")
+  }
+}
+
+///|
 /// Recursively collect all frame resources from a JSON tree
 pub fn collect_all_frames(
   json : Json,
@@ -295,22 +356,12 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
     "count": spritesheet_paths.length(),
   })
 
+  let assets_root = detect_assets_root(args.output)
+
   // Load all atlases
   let atlases : Map[String, @resource.SpritesheetMetadata] = {}
   for spritesheet_ref in spritesheet_paths {
-    let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
-    let rel_parts : Array[String] = []
-    let start_idx = if spritesheet_path_parts.length() >= 5 &&
-      spritesheet_path_parts[1] == "Character" &&
-      spritesheet_path_parts[3] == "spritesheets" {
-      4
-    } else {
-      2
-    }
-    for i = start_idx; i < spritesheet_path_parts.length(); i = i + 1 {
-      rel_parts.push(spritesheet_path_parts[i].to_string())
-    }
-    let rel_path = rel_parts.join("/")
+    let rel_path = spritesheet_ref_to_rel_path(spritesheet_ref)
     let atlas_path = "\{args.spritesheet_dir}/\{rel_path}.json"
     if @fsx.exists_sync(atlas_path) {
       @log.debug("loading atlas", data={ "path": atlas_path })
@@ -330,6 +381,13 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
         "path": atlas_path,
         "frame_count": metadata.frames.length(),
       })
+      if args.keep_source_sheets {
+        copy_source_spritesheet(
+          spritesheet_ref,
+          args.spritesheet_dir,
+          assets_root,
+        )
+      }
     } else {
       @log.warn("atlas not found", data={ "path": atlas_path })
     }
@@ -368,19 +426,7 @@ pub async fn process_spritesheet(args : CliArgs) -> Unit {
     resize=args.resize,
     keep_source_sheets=args.keep_source_sheets,
     load_spritesheet=fn(spritesheet_ref : String) {
-      let spritesheet_path_parts = spritesheet_ref.split("/").to_array()
-      let rel_parts : Array[String] = []
-      let start_idx = if spritesheet_path_parts.length() >= 5 &&
-        spritesheet_path_parts[1] == "Character" &&
-        spritesheet_path_parts[3] == "spritesheets" {
-        4
-      } else {
-        2
-      }
-      for i = start_idx; i < spritesheet_path_parts.length(); i = i + 1 {
-        rel_parts.push(spritesheet_path_parts[i].to_string())
-      }
-      let rel_path = rel_parts.join("/")
+      let rel_path = spritesheet_ref_to_rel_path(spritesheet_ref)
       let png_path = "\{args.spritesheet_dir}/\{rel_path}.png"
       @log.debug("loading spritesheet", data={ "path": png_path })
       read_file_buffer_ffi(png_path)

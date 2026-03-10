@@ -84,7 +84,8 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 ### 禁止 fallback
 
 除非必要, 否则不要写 fallback 逻辑, 干扰问题排查. 可以在函数返回值后加`raise`关键词, 让错误继续往上传播.
-`test` 里抛出错误是推荐的.
+
+MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 ### 使用 Js 模块
 

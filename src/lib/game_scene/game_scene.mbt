@@ -63,7 +63,6 @@ fn respawn_player(
   portals : @map.MapPortals,
   physics : @physics.Physics,
 ) -> Unit {
-  // TODO: Music
   guard portals.get_portal_pos_by_id(portal_id) is Some(spawn_point) else {
     @log.fatal("portal not found", data={ "portal_id": portal_id })
   }
@@ -188,6 +187,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
     SelectCharacter => {
       stage_ref.val = None
+      @bgm.clear_bgm()
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
@@ -446,6 +446,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @map.set_portals(sence_map.portals, get_touch_pos=fn() {
         @player.get_player().map(fn(player) { player.character.get_position() })
       })
+      @bgm.sync_map_bgm(sence_map.map_info.get_bgm())
       respawn_player(
         player,
         portal_id,

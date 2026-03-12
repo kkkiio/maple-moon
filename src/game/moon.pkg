@@ -2,6 +2,7 @@ import {
   "moonbitlang/core/random",
   "Milky2018/selene/system",
   "Milky2018/selene/plugins",
+  "Milky2018/selene/audio",
   "KKKIIO/maple-moon/lib/ms/cursor",
   "KKKIIO/maple-moon/lib/ms/select_char_ui",
   "KKKIIO/maple-moon/lib/graphics",

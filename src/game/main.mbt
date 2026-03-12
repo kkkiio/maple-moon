@@ -56,6 +56,11 @@ fn main {
   .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
   .add_system(game_start, schedule=Startup)
   .add_system(@cursor.cursor_system, system_name="cursor_system")
+  .add_system(
+    @audio.audio_event_playback_system,
+    system_name="audio_event_playback_system",
+  )
+  .add_system(@audio.audio_playback_system, system_name="audio_playback_system")
   .add_system(@ui.ui_system, system_name="ui_system")
   .add_system(@ui.number_system, system_name="number_system")
   .add_system(

@@ -119,6 +119,7 @@ pub fn new_regular_attack() -> SpecialMove {
     attack: true,
     skill: false,
     apply_useeffects: fn(_) {  },
+    apply_use_sfx: fn(_) {  },
     apply_actions: fn(char, attack_type) { ra.apply_actions(char, attack_type) },
     make_attack: fn(char, i, attack_type, degenerate) {
       make_regular_attack(char, i.get_bulletid(), attack_type, degenerate)
@@ -128,6 +129,7 @@ pub fn new_regular_attack() -> SpecialMove {
       can_use_regular_attack_internal(weapon_type, bullet)
     },
     apply_hit_effects: fn(_, _) {  },
+    apply_hit_sfx: fn(_, _) {  },
     get_afterimage: fn() { Map::new() },
   }
 }

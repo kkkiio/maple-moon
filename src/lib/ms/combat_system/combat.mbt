@@ -116,6 +116,7 @@ fn Combat::execute_attack_pipeline(
   strict_afterimage~ : Bool,
 ) -> AttackResult? {
   act.apply_useeffects(character)
+  act.apply_use_sfx(character)
   act.apply_actions(character, attack_type)
   guard self.apply_attack_afterimage(
     character, act, after_images, strict_afterimage,
@@ -618,6 +619,7 @@ fn Combat::apply_damage_effect(self : Combat, effect : DamageEffect) -> Unit {
   mob.apply_damage(effect.damage, effect.toleft)
   let act = effect.sp_move
   act.apply_hit_effects(effect.user, mob)
+  act.apply_hit_sfx(effect.user, mob)
 }
 
 ///|

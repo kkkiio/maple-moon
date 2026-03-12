@@ -2,7 +2,33 @@
 using @server_proto {type StatsEntry}
 
 ///|
+fn read_skill_sfx_until(
+  reader_id : Int,
+  expected_count : Int,
+) -> Array[@skill_sfx.SkillSfxEvent] {
+  let events = @skill_sfx.read_new_events(reader_id)
+  if events.length() >= expected_count {
+    return events
+  }
+  for _ in 0..<240 {
+    match @bullet.get_current_bullet_system() {
+      Some(system) => system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
+      None => ()
+    }
+    for event in @skill_sfx.read_new_events(reader_id) {
+      events.push(event)
+    }
+    if events.length() >= expected_count {
+      return events
+    }
+  }
+  events
+}
+
+///|
 test "use_move_integration_test" {
+  @skill_sfx.clear_events()
+  let sfx_reader_id = @skill_sfx.register_reader()
   // 1. Setup Global Combat
   let mobs : @monster.MapMobs = @monster.MapMobs::new()
   @bullet.set_current_bullet_system(Some(@bullet.BulletSystem::new()))
@@ -156,6 +182,7 @@ test "use_move_integration_test" {
 
   // 6. Trigger use_move (0 is Regular Attack)
   @skill_cast.use_move(cc, 0)
+  inspect(@skill_sfx.read_new_events(sfx_reader_id), content="[]")
   let events = @combat_system.read_new_events(reader_id)
   for event in events {
     let mut total_damage = 0
@@ -166,6 +193,8 @@ test "use_move_integration_test" {
     }
     attach_damage = Some(total_damage)
   }
+  @skill_sfx.unregister_reader(sfx_reader_id)
+  @skill_sfx.gc_consumed_events()
   @combat_system.unregister_reader(reader_id)
   @combat_system.gc_consumed_events()
   match attach_damage {
@@ -176,6 +205,7 @@ test "use_move_integration_test" {
 
 ///|
 async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
+  @skill_sfx.clear_events()
   @resource.set_skill_loader(
     @resource.AsyncLoader::new(
       "test_local_skill",
@@ -351,7 +381,14 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
 
   // 3) Scenario A/B: primary by cast range, splash by aoe range.
   let reader_id = @combat_system.register_reader()
+  let sfx_reader_id = @skill_sfx.register_reader()
   @skill_cast.use_move(cc, skill_id)
+  let sfx_events1 = read_skill_sfx_until(sfx_reader_id, 3)
+  inspect(sfx_events1.length(), content="3")
+  inspect(sfx_events1[0].skill_id(), content="3101005")
+  inspect(sfx_events1[0].stage(), content="Use")
+  inspect(sfx_events1[1].stage(), content="Hit")
+  inspect(sfx_events1[2].stage(), content="Hit")
   let events1 = @combat_system.read_new_events(reader_id)
   let hit_targets1 : Array[Int] = events1
     .iter()
@@ -363,6 +400,10 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
   // 4) Scenario C: no primary target => no hit.
   character.set_position({ x: -1200, y: 0 })
   @skill_cast.use_move(cc, skill_id)
+  let sfx_events2 = @skill_sfx.read_new_events(sfx_reader_id)
+  inspect(sfx_events2.length(), content="1")
+  inspect(sfx_events2[0].skill_id(), content="3101005")
+  inspect(sfx_events2[0].stage(), content="Use")
   let events2 = @combat_system.read_new_events(reader_id)
   let hit_targets2 : Array[Int] = events2
     .iter()
@@ -370,6 +411,8 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
     .collect()
   assert_true(hit_targets2.is_empty())
 
+  @skill_sfx.unregister_reader(sfx_reader_id)
+  @skill_sfx.gc_consumed_events()
   @combat_system.unregister_reader(reader_id)
   @combat_system.gc_consumed_events()
 }

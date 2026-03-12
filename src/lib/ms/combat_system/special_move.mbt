@@ -15,6 +15,7 @@ pub(all) struct SpecialMove {
   attack : Bool
   skill : Bool
   apply_useeffects : (@character.Character) -> Unit
+  apply_use_sfx : (@character.Character) -> Unit
   apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
   // TODO: find a better place for inventory arguments
   make_attack : (
@@ -26,6 +27,7 @@ pub(all) struct SpecialMove {
   get_bullet : (@character.Character, Int) -> @resource.NxAnimation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
+  apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @char_look.NxAfterImage]
 } derive(Show)
 
@@ -59,6 +61,14 @@ pub fn SpecialMove::apply_actions(
   attack_type : @combat_proto.AttackType,
 ) -> Unit {
   (self.apply_actions)(char, attack_type)
+}
+
+///|
+pub fn SpecialMove::apply_use_sfx(
+  self : SpecialMove,
+  char : @character.Character,
+) -> Unit {
+  (self.apply_use_sfx)(char)
 }
 
 ///|
@@ -101,6 +111,15 @@ pub fn SpecialMove::apply_hit_effects(
   mob : @monster.Mob,
 ) -> Unit {
   (self.apply_hit_effects)(attack_user, mob)
+}
+
+///|
+pub fn SpecialMove::apply_hit_sfx(
+  self : SpecialMove,
+  attack_user : @combat_proto.AttackUser,
+  mob : @monster.Mob,
+) -> Unit {
+  (self.apply_hit_sfx)(attack_user, mob)
 }
 
 ///|

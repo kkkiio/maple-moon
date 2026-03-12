@@ -159,6 +159,8 @@ pub impl SkillAction for SingleAction
 type Skill
 pub fn Skill::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn Skill::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn Skill::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn Skill::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn Skill::apply_useeffects(Self, @character.Character) -> Unit
 pub fn Skill::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn Skill::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]
@@ -167,22 +169,28 @@ pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
 pub async fn Skill::load(Int) -> Self
 pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
-pub fn Skill::new(Int, Json, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
+pub fn Skill::new(Int, Json, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
+
+type SkillSound
 
 pub(all) struct SpecialMove {
   id : Int
   attack : Bool
   skill : Bool
   apply_useeffects : (@character.Character) -> Unit
+  apply_use_sfx : (@character.Character) -> Unit
   apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
   make_attack : (@character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
   get_bullet : (@character.Character, Int) -> @resource.NxAnimation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
+  apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @char_look.NxAfterImage]
 }
 pub fn SpecialMove::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn SpecialMove::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn SpecialMove::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn SpecialMove::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn SpecialMove::apply_useeffects(Self, @character.Character) -> Unit
 pub fn SpecialMove::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn SpecialMove::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]

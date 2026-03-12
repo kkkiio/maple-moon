@@ -15,6 +15,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/bullet",
+  "KKKIIO/maple-moon/lib/ms/skill_sfx",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/legacy_types",
   "KKKIIO/maple-moon/lib/ui",

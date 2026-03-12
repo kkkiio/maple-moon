@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/skill_sfx"
+
+// Values
+pub fn clear_events() -> Unit
+
+pub fn gc_consumed_events() -> Unit
+
+pub fn play_skill_hit(Int) -> Unit
+
+pub fn play_skill_use(Int) -> Unit
+
+pub fn read_new_events(Int) -> Array[SkillSfxEvent]
+
+pub fn register_reader() -> Int
+
+pub fn unregister_reader(Int) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) struct SkillSfxEvent {
+  skill_id : Int
+  stage : SkillSfxStage
+  path : String
+}
+pub fn SkillSfxEvent::path(Self) -> String
+pub fn SkillSfxEvent::skill_id(Self) -> Int
+pub fn SkillSfxEvent::stage(Self) -> SkillSfxStage
+pub impl Eq for SkillSfxEvent
+pub impl Show for SkillSfxEvent
+
+pub(all) enum SkillSfxStage {
+  Use
+  Hit
+}
+pub impl Eq for SkillSfxStage
+pub impl Show for SkillSfxStage
+
+// Type aliases
+
+// Traits
+

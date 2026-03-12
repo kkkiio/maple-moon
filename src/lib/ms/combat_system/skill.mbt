@@ -2,6 +2,7 @@
 struct Skill {
   action : &SkillAction
   bullet : (@character.Character, Int) -> @resource.NxAnimation
+  sound : SkillSound
   use_effect : UseEffect
   hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   // affected_effects : &SkillAffectedEffect
@@ -25,6 +26,7 @@ pub async fn Skill::load(skill_id : Int) -> Skill {
     data.master_level,
     data.stats,
     data.req_weapon,
+    SkillSound::new(skill_id),
     make_use_effect(data.src, skill_id),
     make_hit_effect(data.src),
   )
@@ -38,6 +40,7 @@ pub fn Skill::new(
   master_level : Int,
   stats : Map[Int, @skill.Stats],
   req_weapon : @weapon.Type,
+  sound : SkillSound,
   use_effect : UseEffect,
   hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit,
 ) -> Skill raise {
@@ -126,6 +129,7 @@ pub fn Skill::new(
     projectile,
     action,
     bullet,
+    sound,
     use_effect,
     hit_effect,
     is_attack,
@@ -159,6 +163,11 @@ pub fn Skill::apply_useeffects(
   user : @character.Character,
 ) -> Unit {
   (self.use_effect)(user)
+}
+
+///|
+pub fn Skill::apply_use_sfx(self : Skill, _user : @character.Character) -> Unit {
+  self.sound.play_use()
 }
 
 ///|
@@ -316,6 +325,15 @@ pub fn Skill::apply_hit_effects(
   target : @monster.Mob,
 ) -> Unit {
   (self.hit_effect)(user, target)
+}
+
+///|
+pub fn Skill::apply_hit_sfx(
+  self : Skill,
+  _user : @combat_proto.AttackUser,
+  _target : @monster.Mob,
+) -> Unit {
+  self.sound.play_hit()
 }
 
 ///|

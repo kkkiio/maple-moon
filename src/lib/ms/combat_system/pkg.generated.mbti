@@ -15,6 +15,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/event",
   "moonbitlang/core/json",
 }
 
@@ -23,13 +24,13 @@ pub fn clear_events() -> Unit
 
 pub fn combat_system(Double) -> Unit
 
-pub fn gc_consumed_events() -> Unit
-
 pub fn get_basic_effect() -> BasicEffect
 
 pub fn get_combat() -> Combat?
 
 pub fn get_regular_attack_bullet(Int) -> @resource.NxAnimation
+
+pub let hit_event_bus : @event.Events[HitEvent]
 
 pub fn is_empty() -> Bool
 
@@ -48,10 +49,6 @@ pub fn new_regular_attack() -> SpecialMove
 
 pub fn push_event(HitEvent) -> Unit
 
-pub fn read_new_events(Int) -> Array[HitEvent]
-
-pub fn register_reader() -> Int
-
 pub fn set_combat(Combat?) -> Unit
 
 pub fn set_player(&DamagableCharacter?) -> Unit
@@ -59,8 +56,6 @@ pub fn set_player(&DamagableCharacter?) -> Unit
 pub fn show_teleport_effect(@character.Character) -> Unit
 
 pub fn teleport_phobj(@physics.PhysicsObject, Bool, @physics.Physics) -> Unit
-
-pub fn unregister_reader(Int) -> Unit
 
 // Errors
 

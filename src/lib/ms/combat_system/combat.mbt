@@ -785,7 +785,7 @@ pub fn combat_system(_delta : Double) -> Unit {
       None => ()
     }
   }
-  for i in 0..<@logic_fps.get_logic_times() {
+  for _ in 0..<@logic_fps.get_logic_times() {
     combat.update()
   }
 }

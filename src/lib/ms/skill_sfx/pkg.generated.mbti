@@ -1,20 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/skill_sfx"
 
+import {
+  "Milky2018/selene/event",
+}
+
 // Values
 pub fn clear_events() -> Unit
-
-pub fn gc_consumed_events() -> Unit
 
 pub fn play_skill_hit(Int) -> Unit
 
 pub fn play_skill_use(Int) -> Unit
 
-pub fn read_new_events(Int) -> Array[SkillSfxEvent]
-
-pub fn register_reader() -> Int
-
-pub fn unregister_reader(Int) -> Unit
+pub let skill_sfx_event_bus : @event.Events[SkillSfxEvent]
 
 // Errors
 

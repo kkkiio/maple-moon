@@ -14,6 +14,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/random",
   "Milky2018/selene/entity",
+  "Milky2018/selene/event",
   "moonbitlang/async",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/test/local_loader",

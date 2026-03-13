@@ -11,7 +11,9 @@ let passive_randomizer_ref : Ref[@random.Rand] = Ref::new(@random.Rand::new())
 let passive_skills : Array[&PassiveSkill] = []
 
 ///|
-let passive_reader_id : Ref[Int?] = Ref::new(None)
+let passive_reader : Ref[@event.EventReader[@combat_system.HitEvent]?] = Ref::new(
+  None,
+)
 
 ///|
 /// Set the shared passive randomizer instance.
@@ -54,13 +56,13 @@ pub fn register_passive_skill(skill : &PassiveSkill) -> Unit {
 }
 
 ///|
-fn get_passive_reader_id() -> Int {
-  match passive_reader_id.val {
-    Some(reader_id) => reader_id
+fn get_passive_reader() -> @event.EventReader[@combat_system.HitEvent] {
+  match passive_reader.val {
+    Some(reader) => reader
     None => {
-      let reader_id = @combat_system.register_reader()
-      passive_reader_id.val = Some(reader_id)
-      reader_id
+      let reader : @event.EventReader[@combat_system.HitEvent] = @event.EventReader::new()
+      passive_reader.val = Some(reader)
+      reader
     }
   }
 }
@@ -76,13 +78,12 @@ pub fn passive_system(_delta : Double) -> Unit {
     get_skill_data_fn: default_get_skill_data,
     trigger_extra_attack_fn: default_trigger_extra_attack,
   }
-  let reader_id = get_passive_reader_id()
-  let events = @combat_system.read_new_events(reader_id)
+  let reader = get_passive_reader()
+  let events = @combat_system.hit_event_bus.read(reader)
   for event in events {
     // Notify all registered passive skills
     for skill in passive_skills {
       skill.on_hit(ctx, event)
     }
   }
-  @combat_system.gc_consumed_events()
 }

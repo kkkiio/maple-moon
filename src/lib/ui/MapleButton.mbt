@@ -87,18 +87,6 @@ pub impl @json.FromJson for MapleButtonResource with from_json(
   animations
 }
 
-// ///|
-
-///|
-pub fn MapleButton::from_resource(
-  src : @resource.NxNode,
-  pos? : Point[Int] = @struct.Point::default(),
-) -> MapleButton {
-  ...
-  // let res = MapleButtonResource::from_resource(src)
-  // MapleButton::new(res, pos~)
-}
-
 ///|
 pub fn MapleButton::new(
   res : MapleButtonResource,

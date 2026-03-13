@@ -168,7 +168,6 @@ pub(all) struct MapleButton {
   entity : @entity.Entity
 }
 pub fn MapleButton::destroy(Self) -> Unit
-pub fn MapleButton::from_resource(@resource.NxNode, pos? : @res_types.Point[Int]) -> Self
 pub fn MapleButton::new(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub impl UIButton for MapleButton
 

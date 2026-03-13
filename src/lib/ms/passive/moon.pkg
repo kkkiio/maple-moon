@@ -8,6 +8,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/skill_cast",
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/weapon",
+  "Milky2018/selene/event",
 }
 
 import {

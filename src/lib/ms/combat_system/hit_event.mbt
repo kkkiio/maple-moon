@@ -51,93 +51,29 @@ pub fn HitEvent::is_user_input(self : HitEvent) -> Bool {
 }
 
 ///|
-/// Global event queue for hit events, consumed by passive skill system
-let hit_event_queue : Array[HitEvent] = Array::new()
+/// Global event bus for hit events, consumed by passive skill system.
+pub let hit_event_bus : @event.Events[HitEvent] = @event.Events::new()
 
 ///|
-let hit_event_readers : Map[Int, Int] = {}
+fn init {
+  hit_event_bus.register()
+}
 
 ///|
-let next_reader_id : Ref[Int] = Ref::new(1)
-
-///|
-/// Push a hit event to the global queue
+/// Push a hit event to the global event bus.
 pub fn push_event(event : HitEvent) -> Unit {
-  hit_event_queue.push(event)
+  hit_event_bus.send(event)
 }
 
 ///|
-/// Register a reader cursor for hit events.
-/// New reader starts at current queue tail (will only read future events).
-pub fn register_reader() -> Int {
-  let reader_id = next_reader_id.val
-  next_reader_id.val += 1
-  hit_event_readers.set(reader_id, hit_event_queue.length())
-  reader_id
-}
-
-///|
-/// Unregister a reader cursor.
-pub fn unregister_reader(reader_id : Int) -> Unit {
-  ignore(hit_event_readers.remove(reader_id))
-}
-
-///|
-/// Read all unread hit events for a reader and advance its cursor.
-pub fn read_new_events(reader_id : Int) -> Array[HitEvent] {
-  guard hit_event_readers.get(reader_id) is Some(cursor) else { return [] }
-  let events = Array::new()
-  let queue_len = hit_event_queue.length()
-  for i in cursor..<queue_len {
-    events.push(hit_event_queue[i])
-  }
-  hit_event_readers.set(reader_id, queue_len)
-  events
-}
-
-///|
-/// Garbage-collect hit events that all readers have consumed.
-pub fn gc_consumed_events() -> Unit {
-  if hit_event_readers.is_empty() {
-    hit_event_queue.clear()
-    return
-  }
-  let mut min_cursor = hit_event_queue.length()
-  for _, cursor in hit_event_readers {
-    if cursor < min_cursor {
-      min_cursor = cursor
-    }
-  }
-  guard min_cursor > 0 else { return }
-
-  let retained = Array::new()
-  for i in min_cursor..<hit_event_queue.length() {
-    retained.push(hit_event_queue[i])
-  }
-  hit_event_queue.clear()
-  for event in retained {
-    hit_event_queue.push(event)
-  }
-
-  let reader_ids = hit_event_readers.keys().to_array()
-  for reader_id in reader_ids {
-    guard hit_event_readers.get(reader_id) is Some(cursor) else { continue }
-    hit_event_readers.set(reader_id, cursor - min_cursor)
-  }
-}
-
-///|
-/// Check if the global event queue is empty
+/// Check if the global event bus has buffered events in the current window.
 pub fn is_empty() -> Bool {
-  hit_event_queue.is_empty()
+  let reader : @event.EventReader[HitEvent] = @event.EventReader::new()
+  hit_event_bus.read(reader).is_empty()
 }
 
 ///|
-/// Clear all events from the global queue
+/// Clear all buffered hit events.
 pub fn clear_events() -> Unit {
-  hit_event_queue.clear()
-  let reader_ids = hit_event_readers.keys().to_array()
-  for reader_id in reader_ids {
-    hit_event_readers.set(reader_id, 0)
-  }
+  hit_event_bus.clear()
 }

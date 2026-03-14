@@ -1,15 +1,11 @@
 import {
   "moonbitlang/core/random",
-  "KKKIIO/maple-moon/lib/utils",
-  "KKKIIO/maple-moon/lib/randx",
-  "KKKIIO/maple-moon/lib/net",
+  "moonbitlang/core/immut/hashmap" @immut/hashmap,
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/job",
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/char_stats",
-  "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/markup_text",
@@ -17,9 +13,8 @@ import {
   "rami3l/js-ffi/js",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/game_server",
 }
-
-warnings = "-A"
 
 options(
   link: {

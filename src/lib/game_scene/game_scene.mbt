@@ -271,8 +271,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             match after_image_name {
               Some(after_image_name) => {
                 let after_image_res = @resource.get_afterimage_loader()
-                  .load_res_async(["\{after_image_name}.img"])
-                  .value()
+                  .load_resource(["\{after_image_name}.img"])
                 let after_images = @json.from_json(after_image_res)
                 @char_look.set_after_images(after_image_name, after_images)
               }
@@ -523,7 +522,7 @@ fn new_stage(
 pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "set_field",
-    @net.Opcode::SET_FIELD.int_value(),
+    @server_proto.Opcode::SET_FIELD.int_value(),
     fn(json : Json) -> Unit raise {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }

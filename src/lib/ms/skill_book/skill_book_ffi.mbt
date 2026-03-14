@@ -149,8 +149,8 @@ pub fn transfer_one_sp(
     is Some(slot_no) else {
     return "not found item id \{item_id.int_value()}"
   }
-  mod.network.send_message({
-    slot_no: slot_no.inner(),
+  @game_server.send(@server_proto.UseSPResetMessage::{
+    slot_no: slot_no.0,
     item_id: item_id.int_value(),
     to: to_skill_id,
     from: from_skill_id,
@@ -170,21 +170,5 @@ enum SpResetItemId {
 pub fn SpResetItemId::int_value(self : SpResetItemId) -> Int = "%identity"
 
 ///|
-priv struct SpResetItemMessage {
-  slot_no : Int
-  item_id : Int
-  to : Int
-  from : Int
-} derive(Show)
 
 ///|
-impl @net.OutMessage for SpResetItemMessage with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::USE_CASH_ITEM)
-  // check Cosmic/src/main/java/net/server/channel/handlers/UseCashItemHandler.java
-  packet
-  ..write_short(self.slot_no)
-  ..write_int(self.item_id)
-  ..write_int(self.to)
-  ..write_int(self.from)
-  packet
-}

@@ -8,7 +8,7 @@ pub(all) struct TalkToNpcMessage {
 
 ///|
 pub impl ClientMessage for TalkToNpcMessage with type_code() {
-  @net.ClientOpcode::TALK_TO_NPC.int_value()
+  ClientOpcode::TALK_TO_NPC.int_value()
 }
 
 ///|
@@ -21,7 +21,7 @@ pub(all) struct NpcTalkMoreMessage {
 
 ///|
 pub impl ClientMessage for NpcTalkMoreMessage with type_code() {
-  @net.ClientOpcode::NPC_TALK_MORE.int_value()
+  ClientOpcode::NPC_TALK_MORE.int_value()
 }
 
 ///|
@@ -37,7 +37,7 @@ pub(all) struct NpcSpawnMessage {
 
 ///|
 pub impl ServerMessage for NpcSpawnMessage with type_code() {
-  @net.Opcode::SPAWN_NPC.int_value()
+  Opcode::SPAWN_NPC.int_value()
 }
 
 ///|
@@ -54,5 +54,5 @@ pub(all) struct NpcSpawnControllerMessage {
 
 ///|
 pub impl ServerMessage for NpcSpawnControllerMessage with type_code() {
-  @net.Opcode::SPAWN_NPC_C.int_value()
+  Opcode::SPAWN_NPC_C.int_value()
 }

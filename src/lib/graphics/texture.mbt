@@ -105,17 +105,3 @@ pub fn Texture::get_origin(self : Texture) -> @struct.Point[Int] {
 pub fn Texture::get_dimensions(self : Texture) -> @struct.Point[Int] {
   self.dimensions
 }
-
-///|
-pub impl Drawable for Texture with draw(self : Texture, args : DrawArgument) -> Unit {
-  // match self.bitmap {
-  //   None => ()
-  //   Some(bitmap) =>
-  //     GraphicsGL::get().draw_bitmap(
-  //       bitmap,
-  //       args.get_rectangle(self.origin, self.dimensions),
-  //       args.color,
-  //       args.angle,
-  //     )
-  // }
-}

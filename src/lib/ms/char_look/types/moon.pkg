@@ -1,7 +1,7 @@
 import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/char_stance",
 }
-
-warnings = "-A"

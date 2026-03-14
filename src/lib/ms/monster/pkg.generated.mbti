@@ -262,7 +262,7 @@ pub fn MobSpecialAttack::new(NxMobAttackInfo, Int, Int) -> Self raise
 
 type Module
 pub fn Module::get_map_mobs(Self) -> MapMobs
-pub fn Module::make_handlers(Self, () -> @char_stats.CharStats?) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_handlers(Self, () -> @char_stats.CharStats?) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::new() -> Self
 
 pub struct NxMob {

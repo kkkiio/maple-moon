@@ -10,8 +10,8 @@ struct TilesObjsLayer {
 
 ///|
 pub async fn load_tileset(ts : String) -> NxTileSet {
-  let node = get_tile_loader().load_res_async([ts + ".img"])
-  @json.from_json(node.value())
+  let json = get_tile_loader().load_resource([ts + ".img"])
+  @json.from_json(json)
 }
 
 ///|

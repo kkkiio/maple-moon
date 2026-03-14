@@ -179,7 +179,7 @@ fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
 pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "inventory_logic_modify_inventory",
-    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    @server_proto.Opcode::MODIFY_INVENTORY.int_value(),
     fn(message_json : Json) -> Unit raise {
       let message : @server_proto.ModifyInventoryMessage = @json.from_json(
         message_json,
@@ -195,10 +195,10 @@ pub fn Inventory::apply_local_modify_inventory_message(
   message : @server_proto.ModifyInventoryMessage,
 ) -> Unit {
   @log.info("apply_local_modify_inventory_message before", data={
-    "mods": message.mods,
-    "movement": message.movement,
-    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
-    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
+    "mods": message.mods.to_json(),
+    "movement": message.movement.to_json(),
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1).to_json(),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11).to_json(),
   })
   for mod in message.mods {
     match mod.mode {
@@ -246,8 +246,8 @@ pub fn Inventory::apply_local_modify_inventory_message(
     }
   }
   @log.info("apply_local_modify_inventory_message after", data={
-    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
-    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1).to_json(),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11).to_json(),
   })
   match @player.get_player() {
     Some(player) => self.recalc_stats(player.character.get_weapontype())

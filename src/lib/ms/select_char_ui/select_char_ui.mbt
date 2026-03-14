@@ -585,7 +585,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "select_char",
-    @net.Opcode::SET_FIELD.int_value(),
+    @server_proto.Opcode::SET_FIELD.int_value(),
     json => {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is SetField(stats={ map_id, portal_id, .. }, ..) else {

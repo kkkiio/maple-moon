@@ -11,8 +11,6 @@ struct Configuration {
   mut macs : String
   mut hwid : String
   mut volume_serial_number : String
-  mut worldid : Int
-  mut channelid : Int
   mut admin : Bool
   settings : Map[String, String]
 }
@@ -23,8 +21,6 @@ fn Configuration::default() -> Configuration {
     macs: "",
     hwid: "",
     volume_serial_number: "",
-    worldid: 0,
-    channelid: 0,
     admin: false,
     settings: Map::new(),
   }

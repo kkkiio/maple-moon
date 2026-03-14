@@ -158,7 +158,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 
 ///|
 async fn load_ui_resources() -> UiResources {
-  let item = @ui.ui_window_2_loader().load_res_async(["Item"]).value()
+  let item = @ui.ui_window_2_loader().load_resource(["Item"])
   parse_ui_resources_from_item_json(item)
 }
 
@@ -654,7 +654,7 @@ pub fn setup_game_server_handlers() -> Unit {
   game_server_handlers_registered.val = true
   @game_server.add_server_message_handler(
     "inventory_ui_change_stats_meso",
-    @net.Opcode::CHANGE_STATS.int_value(),
+    @server_proto.Opcode::CHANGE_STATS.int_value(),
     fn(json : Json) -> Unit raise {
       let message : @server_proto.ChangeStatsMesoMessage = @json.from_json(json)
       let state = state_ref.val
@@ -666,7 +666,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "inventory_ui_modify_inventory",
-    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    @server_proto.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
       let _msg : ModifyInventoryMessage = @json.from_json(json)
     },

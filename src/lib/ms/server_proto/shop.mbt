@@ -20,7 +20,7 @@ pub(all) struct OpenNpcShopMessage {
 
 ///|
 pub impl ServerMessage for OpenNpcShopMessage with type_code() {
-  @net.Opcode::OPEN_NPC_SHOP.int_value()
+  Opcode::OPEN_NPC_SHOP.int_value()
 }
 
 ///|
@@ -31,7 +31,7 @@ pub(all) struct ConfirmShopTransactionMessage {
 
 ///|
 pub impl ServerMessage for ConfirmShopTransactionMessage with type_code() {
-  @net.Opcode::CONFIRM_SHOP_TRANSACTION.int_value()
+  Opcode::CONFIRM_SHOP_TRANSACTION.int_value()
 }
 
 ///|
@@ -47,5 +47,5 @@ pub(all) struct NpcShopActionMessage {
 
 ///|
 pub impl ClientMessage for NpcShopActionMessage with type_code() {
-  @net.ClientOpcode::NPC_SHOP_ACTION.int_value()
+  ClientOpcode::NPC_SHOP_ACTION.int_value()
 }

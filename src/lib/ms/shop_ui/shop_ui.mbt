@@ -454,7 +454,7 @@ impl @json.FromJson for NxShop with from_json(json, path) {
 
 ///|
 async fn load_ui_resources() -> UiResources {
-  let shop2 = @ui.ui_window_2_loader().load_res_async(["Shop2"]).value()
+  let shop2 = @ui.ui_window_2_loader().load_resource(["Shop2"])
   parse_ui_resources_from_shop2_json(shop2)
 }
 
@@ -1068,7 +1068,7 @@ pub fn setup_game_server_handlers() -> Unit {
   game_server_handlers_registered.val = true
   @game_server.add_server_message_handler(
     "shop_ui_set_field",
-    @net.Opcode::SET_FIELD.int_value(),
+    @server_proto.Opcode::SET_FIELD.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : SetFieldMessage = @json.from_json(json)
       guard msg is SetField(inventory_entry~, ..) else { return }
@@ -1081,7 +1081,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "shop_ui_open_npc_shop",
-    @net.Opcode::OPEN_NPC_SHOP.int_value(),
+    @server_proto.Opcode::OPEN_NPC_SHOP.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : OpenNpcShopMessage = @json.from_json(json)
       let state = state_ref.val
@@ -1090,7 +1090,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "shop_ui_confirm_transaction",
-    @net.Opcode::CONFIRM_SHOP_TRANSACTION.int_value(),
+    @server_proto.Opcode::CONFIRM_SHOP_TRANSACTION.int_value(),
     fn(json : Json) -> Unit raise {
       let _msg : ConfirmShopTransactionMessage = @json.from_json(json)
       let state = state_ref.val
@@ -1101,7 +1101,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "shop_ui_change_stats_meso",
-    @net.Opcode::CHANGE_STATS.int_value(),
+    @server_proto.Opcode::CHANGE_STATS.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : ChangeStatsMesoMessage = @json.from_json(json)
       let state = state_ref.val
@@ -1113,7 +1113,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "shop_ui_modify_inventory",
-    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    @server_proto.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : ModifyInventoryMessage = @json.from_json(json)
       let state = state_ref.val

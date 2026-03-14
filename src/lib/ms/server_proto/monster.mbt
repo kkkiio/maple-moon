@@ -16,7 +16,7 @@ pub(all) struct MoveMonsterMessage {
 
 ///|
 pub impl ClientMessage for MoveMonsterMessage with type_code() {
-  @net.ClientOpcode::MOVE_MONSTER.int_value()
+  ClientOpcode::MOVE_MONSTER.int_value()
 }
 
 ///|
@@ -32,7 +32,7 @@ pub(all) struct MobSpawnMessage {
 
 ///|
 pub impl ServerMessage for MobSpawnMessage with type_code() {
-  @net.Opcode::SPAWN_MOB.int_value()
+  Opcode::SPAWN_MOB.int_value()
 }
 
 ///|
@@ -45,7 +45,7 @@ pub(all) struct MobDamageMessage {
 
 ///|
 pub impl ClientMessage for MobDamageMessage with type_code() {
-  @net.ClientOpcode::CLOSE_ATTACK.int_value()
+  ClientOpcode::CLOSE_ATTACK.int_value()
 }
 
 ///|
@@ -56,7 +56,7 @@ pub(all) struct MobHpMessage {
 
 ///|
 pub impl ServerMessage for MobHpMessage with type_code() {
-  @net.Opcode::SHOW_MOB_HP.int_value()
+  Opcode::SHOW_MOB_HP.int_value()
 }
 
 ///|
@@ -67,7 +67,7 @@ pub(all) struct KillMobMessage {
 
 ///|
 pub impl ServerMessage for KillMobMessage with type_code() {
-  @net.Opcode::KILL_MOB.int_value()
+  Opcode::KILL_MOB.int_value()
 }
 
 ///|
@@ -84,7 +84,7 @@ pub(all) struct MobSpawnControllerMessage {
 
 ///|
 pub impl ServerMessage for MobSpawnControllerMessage with type_code() {
-  @net.Opcode::SPAWN_MOB_C.int_value()
+  Opcode::SPAWN_MOB_C.int_value()
 }
 
 ///|

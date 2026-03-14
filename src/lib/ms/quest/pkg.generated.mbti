@@ -58,7 +58,7 @@ type Module
 pub fn Module::get_map_quests(Self) -> MapQuests
 pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
 pub async fn Module::load(@net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_handlers(Self) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]
 pub fn Module::new(QuestResource, MapQuestsResource, @net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
 

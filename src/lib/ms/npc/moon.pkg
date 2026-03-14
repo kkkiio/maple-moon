@@ -10,7 +10,6 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
   "KKKIIO/maple-moon/lib/randx",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/game_server",

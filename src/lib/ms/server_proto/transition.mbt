@@ -10,7 +10,7 @@ pub(all) struct ChangeMapMessage {
 
 ///|
 pub impl ClientMessage for ChangeMapMessage with type_code() {
-  @net.ClientOpcode::CHANGE_MAP.int_value()
+  ClientOpcode::CHANGE_MAP.int_value()
 }
 
 ///|
@@ -27,7 +27,7 @@ pub(all) enum SetFieldMessage {
 
 ///|
 pub impl ServerMessage for SetFieldMessage with type_code() {
-  @net.Opcode::SET_FIELD.int_value()
+  Opcode::SET_FIELD.int_value()
 }
 
 ///|
@@ -153,7 +153,7 @@ pub(all) struct SelectCharMessage {
 
 ///|
 pub impl ClientMessage for SelectCharMessage with type_code() {
-  @net.ClientOpcode::SELECT_CHAR.int_value()
+  ClientOpcode::SELECT_CHAR.int_value()
 }
 
 ///|
@@ -167,5 +167,5 @@ pub(all) struct PlayerMapTransferMessage(Unit) derive (
 
 ///|
 pub impl ClientMessage for PlayerMapTransferMessage with type_code() {
-  @net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()
+  ClientOpcode::PLAYER_MAP_TRANSFER.int_value()
 }

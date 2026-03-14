@@ -2,7 +2,6 @@ import {
   "moonbitlang/core/math",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/logic_fps",

@@ -15,5 +15,5 @@ pub(all) enum AdminCommandMessage {
 
 ///|
 pub impl ClientMessage for AdminCommandMessage with type_code() {
-  @net.ClientOpcode::ADMIN_COMMAND.int_value()
+  ClientOpcode::ADMIN_COMMAND.int_value()
 }

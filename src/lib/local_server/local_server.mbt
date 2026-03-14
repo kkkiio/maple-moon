@@ -150,33 +150,33 @@ pub fn init_server(server : LocalServer) -> Unit {
 
 ///|
 pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
-  self.client_message_handler_map[@net.ClientOpcode::SELECT_CHAR.int_value()] = v => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::SELECT_CHAR.int_value()] = v => {
     self.on_select_char(v)
   }
-  self.client_message_handler_map[@net.ClientOpcode::CHAR_LIST_REQUEST.int_value()] = _ => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::CHAR_LIST_REQUEST.int_value()] = _ => {
     self.on_character_list_request()
   }
-  self.client_message_handler_map[@net.ClientOpcode::CREATE_CHAR.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::CREATE_CHAR.int_value()] = json => {
     self.on_create_char(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = v => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::CHANGE_MAP.int_value()] = v => {
     self.on_change_map(v)
   }
-  self.client_message_handler_map[@net.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = _ => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::PLAYER_MAP_TRANSFER.int_value()] = _ => {
     self.map_transfer_ready = true
     self.flush_pending_mob_spawns()
     self.flush_pending_npc_spawns()
   }
-  self.client_message_handler_map[@net.ClientOpcode::CLOSE_ATTACK.int_value()] = v => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::CLOSE_ATTACK.int_value()] = v => {
     self.on_mob_damage(v)
   }
-  self.client_message_handler_map[@net.ClientOpcode::RANGED_ATTACK.int_value()] = v => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::RANGED_ATTACK.int_value()] = v => {
     self.on_mob_damage(v)
   }
-  self.client_message_handler_map[@net.ClientOpcode::MAGIC_ATTACK.int_value()] = v => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::MAGIC_ATTACK.int_value()] = v => {
     self.on_mob_damage(v)
   }
-  self.client_message_handler_map[@net.ClientOpcode::MOVE_MONSTER.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::MOVE_MONSTER.int_value()] = json => {
     let msg : MoveMonsterMessage = @json.from_json(json)
     match self.mobs.get(msg.oid) {
       Some(mob) =>
@@ -184,25 +184,25 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
       None => ()
     }
   }
-  self.client_message_handler_map[@net.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::PICKUP_ITEM.int_value()] = json => {
     self.on_pickup_item(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::USE_ITEM.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::USE_ITEM.int_value()] = json => {
     self.on_use_item(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::MOVE_ITEM.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::MOVE_ITEM.int_value()] = json => {
     self.on_move_item(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
     self.on_talk_to_npc(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
     ()
   }
-  self.client_message_handler_map[@net.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
     self.on_npc_shop_action(json)
   }
-  self.client_message_handler_map[@net.ClientOpcode::ADMIN_COMMAND.int_value()] = json => {
+  self.client_message_handler_map[@server_proto.ClientOpcode::ADMIN_COMMAND.int_value()] = json => {
     self.on_admin_command(json)
   }
 }

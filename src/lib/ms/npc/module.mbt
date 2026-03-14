@@ -1,47 +1,9 @@
 ///|
-pub fn parse_spawn_npc(recv : @net.InPacket) -> NpcSpawn raise {
-  let oid = recv.read_int()
-  let id = recv.read_int()
-  let position = recv.read_point()
-  let flip = recv.read_bool()
-  let fh = recv.read_ushort()
-  recv.read_short() |> ignore // 'rx'
-  recv.read_short() |> ignore // 'ry'
-  { oid, id, position, flip, fh }
-}
-
-///|
-pub fn handle_spawn_npc_parsed(npcs : MapNpcs, npc : NpcSpawn) -> Unit {
-  npcs.spawn(npc)
-}
-
-///|
 pub struct SpawnNpcController {
   mode : Int
   oid : Int
   npc : NpcSpawn?
 } derive(Show, ToJson)
-
-///|
-pub fn parse_spawn_npc_controller(
-  recv : @net.InPacket,
-) -> SpawnNpcController raise {
-  let mode = recv.read_byte()
-  let oid = recv.read_int()
-  let npc = if mode == 0 {
-    None
-  } else {
-    let id = recv.read_int()
-    let position = recv.read_point()
-    let flip = recv.read_bool()
-    let fh = recv.read_ushort()
-    recv.read_short() |> ignore // 'rx'
-    recv.read_short() |> ignore // 'ry'
-    recv.read_bool() |> ignore // 'minimap'
-    Some({ oid, id, position, flip, fh })
-  }
-  { mode, oid, npc }
-}
 
 ///|
 pub fn handle_spawn_npc_controller_parsed(
@@ -216,27 +178,6 @@ fn make_talk_message(c : TalkChoice) -> @server_proto.NpcTalkMoreMessage {
 ///|
 pub fn on_npc_talk_choice(c : TalkChoice) -> Unit {
   @game_server.send(make_talk_message(c))
-}
-
-///|
-pub fn parse_npc_dialogue(recv : @net.InPacket) -> NpcDialogue raise {
-  recv.skip(1)
-  let npcid = recv.read_int()
-  let msgtype = recv.read_byte() // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
-  let speaker = recv.read_byte()
-  let text = recv.read_string()
-  let (style_b0, style_b1) = if recv.available() > 0 && msgtype == 0 {
-    (recv.read_ubyte(), recv.read_ubyte())
-  } else {
-    (0, 0)
-  }
-  guard TalkType::from_int(msgtype, style_b0, style_b1) is Some(t) else {
-    fail("unknown talk type: \{msgtype}, \{style_b0}, \{style_b1}")
-  }
-  guard Speaker::from_int(speaker) is Some(speaker) else {
-    fail("unknown speaker: \{speaker}")
-  }
-  { npcid, t, speaker, text }
 }
 
 ///|

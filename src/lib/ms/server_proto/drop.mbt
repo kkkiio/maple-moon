@@ -15,7 +15,7 @@ pub(all) struct DropLootMessage {
 
 ///|
 pub impl ServerMessage for DropLootMessage with type_code() {
-  @net.Opcode::DROP_LOOT.int_value()
+  Opcode::DROP_LOOT.int_value()
 }
 
 ///|
@@ -27,7 +27,7 @@ pub(all) struct RemoveLootMessage {
 
 ///|
 pub impl ServerMessage for RemoveLootMessage with type_code() {
-  @net.Opcode::REMOVE_LOOT.int_value()
+  Opcode::REMOVE_LOOT.int_value()
 }
 
 ///|
@@ -39,7 +39,7 @@ pub(all) struct PickupItemMessage {
 
 ///|
 pub impl ClientMessage for PickupItemMessage with type_code() {
-  @net.ClientOpcode::PICKUP_ITEM.int_value()
+  ClientOpcode::PICKUP_ITEM.int_value()
 }
 
 ///|
@@ -50,7 +50,7 @@ pub(all) struct ChangeStatsMesoMessage {
 
 ///|
 pub impl ServerMessage for ChangeStatsMesoMessage with type_code() {
-  @net.Opcode::CHANGE_STATS.int_value()
+  Opcode::CHANGE_STATS.int_value()
 }
 
 ///|
@@ -61,7 +61,7 @@ pub(all) struct ShowStatusMesoGainMessage {
 
 ///|
 pub impl ServerMessage for ShowStatusMesoGainMessage with type_code() {
-  @net.Opcode::SHOW_STATUS_INFO.int_value()
+  Opcode::SHOW_STATUS_INFO.int_value()
 }
 
 ///|
@@ -93,5 +93,5 @@ pub(all) struct ModifyInventoryMessage {
 
 ///|
 pub impl ServerMessage for ModifyInventoryMessage with type_code() {
-  @net.Opcode::MODIFY_INVENTORY.int_value()
+  Opcode::MODIFY_INVENTORY.int_value()
 }

@@ -17,16 +17,3 @@ pub fn TileUnit::new(
 ) -> TileUnit {
   { texture, rows, cols, row_height, col_width }
 }
-
-///|
-pub impl Drawable for TileUnit with draw(self : TileUnit, args : DrawArgument) -> Unit {
-  for row in 0..<self.rows {
-    for col in 0..<self.cols {
-      self.texture.draw({
-        ..args,
-        pos: args.pos +
-        @struct.Point::new(col * self.col_width, row * self.row_height),
-      })
-    }
-  }
-}

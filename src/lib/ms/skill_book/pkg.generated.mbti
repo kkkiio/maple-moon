@@ -33,7 +33,7 @@ pub fn watch_skill_book(Module, (SkillBookEvent) -> Bool) -> Unit
 type Module
 pub async fn Module::load(() -> @player.Player?, @net.Network, @resource.SyncLoader, @combat_system.Combat, @inventory.Inventory) -> Self noraise
 pub async fn Module::load_player_skill_book(Self, @job.Job) -> &@legacy_types.SkillBook
-pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_handlers(Self) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 
 type SkillBook
 pub fn SkillBook::collect_required(Self, Int) -> @hashmap.HashMap[Int, Int]

@@ -1,19 +1,15 @@
 import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/math",
   "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "KKKIIO/maple-moon/lib/quadtree",
-  "KKKIIO/maple-moon/lib/utils",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/config",
-  "KKKIIO/maple-moon/lib/utils/lru_cache",
   "KKKIIO/maple-moon/lib/log",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/entity",
   "Milky2018/selene/asset",
-  "KKKIIO/maple-moon/lib/ms/logic_fps",
 }
-
-warnings = "-A"
 
 options(
   targets: {

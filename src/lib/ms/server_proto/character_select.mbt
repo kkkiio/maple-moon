@@ -17,7 +17,7 @@ pub(all) struct CharacterListRequestMessage(Unit) derive (
 
 ///|
 pub impl ClientMessage for CharacterListRequestMessage with type_code() {
-  @net.ClientOpcode::CHAR_LIST_REQUEST.int_value()
+  ClientOpcode::CHAR_LIST_REQUEST.int_value()
 }
 
 ///|
@@ -49,7 +49,7 @@ pub(all) struct CreateCharacterMessage {
 
 ///|
 pub impl ClientMessage for CreateCharacterMessage with type_code() {
-  @net.ClientOpcode::CREATE_CHAR.int_value()
+  ClientOpcode::CREATE_CHAR.int_value()
 }
 
 ///|

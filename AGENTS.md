@@ -25,11 +25,12 @@
 每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.
 更具体的说明写在代码的 Doc comments 里.
 
-## 验证
+## Build and test commands
 
 修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新 js 内容:
 
 ```bash
+moon check
 moon fmt
 moon info
 moon build --release

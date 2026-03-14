@@ -56,9 +56,7 @@ async fn load_item_text_bundle_cached(
   if item_text_bundle_cache.get(bundle) is Some(cached) {
     return cached
   }
-  let bundle_json = string_loader.load_res_async([bundle]).value() catch {
-      _ => Json::null()
-    }
+  let bundle_json = string_loader.load_resource([bundle])
   item_text_bundle_cache.set(bundle, bundle_json)
   bundle_json
 }
@@ -96,9 +94,7 @@ pub async fn ItemData::load(
       let equip_id = EquipId::parse(item_id)
       let category = equip_id.category
       let equip_zid = equip_id.zid
-      let src = character_loader
-        .load_res_async([category, "\{equip_zid}.img"])
-        .value()
+      let src = character_loader.load_resource([category, "\{equip_zid}.img"])
       let strsrc = load_item_text_src(string_loader, "Eqp.img", [
         "Eqp",
         category,
@@ -222,7 +218,7 @@ async fn load_item_bundle_cached(
   if bundle_cache.get(key) is Some(cached) {
     return cached
   }
-  let bundle_json = item_loader.load_res_async([category, bundle]).value()
+  let bundle_json = item_loader.load_resource([category, bundle])
   bundle_cache.set(key, bundle_json)
   bundle_json
 }

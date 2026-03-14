@@ -60,7 +60,7 @@ pub fn map_npcs_system(_delta : Double) -> Unit {
 pub fn setup_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "spawn_npc",
-    @net.Opcode::SPAWN_NPC.int_value(),
+    @server_proto.Opcode::SPAWN_NPC.int_value(),
     fn(json) raise {
       guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
       let msg : @server_proto.NpcSpawnMessage = @json.from_json(json)
@@ -69,7 +69,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "spawn_npc_controller",
-    @net.Opcode::SPAWN_NPC_C.int_value(),
+    @server_proto.Opcode::SPAWN_NPC_C.int_value(),
     fn(json) raise {
       guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
       let msg : @server_proto.NpcSpawnControllerMessage = @json.from_json(json)
@@ -333,23 +333,47 @@ pub async fn Npc::load(
     @position.positions.set(entity, @position.Position(pos))
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut src = npc_loader.load_res_async([strid])
-  let strsrc = string_loader.load_res_async(["Npc.img", id.to_string()])
-  let link = src["info"]["link"].get_string()
-  if not(link.is_empty()) {
-    src = npc_loader.load_res_async([link + ".img"])
+  let mut src = npc_loader.load_resource([strid])
+  let strsrc = string_loader.load_resource(["Npc.img", id.to_string()])
+  let link = match src {
+    { "info": { "link": String(link), .. }, .. } => link
+    _ => ""
   }
-  let info = src["info"]
-  ignore(info["hideName"].get_bool() catch { _ => panic() })
-  // let mouse_only = info["talkMouseOnly"].get_bool?().unwrap()
-  let scripted = (not(info["script"].is_null()) || info["shop"].get_bool()) catch {
-    _ => panic()
+  if not(link.is_empty()) {
+    src = npc_loader.load_resource([link + ".img"])
+  }
+  let info = match src {
+    { "info": info, .. } => info
+    _ => Json::null()
+  }
+  let scripted = match info {
+    Object(obj) =>
+      match obj.get("script") {
+        Some(s) =>
+          match s {
+            Null => false
+            _ => true
+          }
+        None =>
+          match obj.get("shop") {
+            Some(True) => true
+            _ => false
+          }
+      }
+    _ => false
   }
   let dialogue = {}
   let mut i = 0
   while true {
     let key = "d\{i}"
-    let str = strsrc[key].get_string()
+    let str = match strsrc {
+      Object(obj) =>
+        match obj.get(key) {
+          Some(String(s)) => s
+          _ => ""
+        }
+      _ => ""
+    }
     if str.is_empty() {
       break
     }
@@ -359,31 +383,55 @@ pub async fn Npc::load(
   let animations = {}
   let states = []
   let lines = {}
-  for npcnode in src {
-    let state = npcnode.name()
-    if state != "info" {
-      let nx_anim : @resource.NxAnimation = @json.from_json(npcnode.value()) catch {
-        _ => panic()
+  match src {
+    Object(src_obj) =>
+      for state, npc_val in src_obj {
+        if state != "info" {
+          let nx_anim : @resource.NxAnimation = @json.from_json(npc_val) catch {
+            _ => panic()
+          }
+          let selene = @resource.nx_animation_to_selene_animation(
+            nx_anim,
+            loop_=true,
+          )
+          animations[state] = {
+            selene,
+            duration_ms: nx_animation_duration_ms(nx_anim),
+            dimensions: nx_animation_dimensions(nx_anim),
+          }
+          states.push(state)
+        }
+        match npc_val {
+          { "speak": Object(speak_arr), .. } =>
+            for _, speak_node in speak_arr {
+              match speak_node {
+                String(key) => {
+                  let str = match strsrc {
+                    Object(obj) =>
+                      match obj.get(key) {
+                        Some(String(s)) => s
+                        _ => ""
+                      }
+                    _ => ""
+                  }
+                  lines.get_or_init(state, fn() { Array::new() }).push(str)
+                }
+                _ => ()
+              }
+            }
+          _ => ()
+        }
       }
-      let selene = @resource.nx_animation_to_selene_animation(
-        nx_anim,
-        loop_=true,
-      )
-      animations[state] = {
-        selene,
-        duration_ms: nx_animation_duration_ms(nx_anim),
-        dimensions: nx_animation_dimensions(nx_anim),
-      }
-      states.push(state)
-    }
-    for speaknode in npcnode["speak"] {
-      lines
-      .get_or_init(state, fn() { Array::new() })
-      .push(strsrc[speaknode.get_string()].get_string())
-    }
+    _ => ()
   }
-  let name = strsrc["name"].get_string()
-  let func = strsrc["func"].get_string()
+  let name = match strsrc {
+    { "name": String(s), .. } => s
+    _ => ""
+  }
+  let func = match strsrc {
+    { "func": String(s), .. } => s
+    _ => ""
+  }
   let npc_id = id
   let flip = not(fl)
   // let control = cnt

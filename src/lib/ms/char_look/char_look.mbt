@@ -385,217 +385,6 @@ fn CharLook::draw_climbing(
 }
 
 ///|
-fn CharLook::draw_impl(
-  self : CharLook,
-  args : @graphics.DrawArgument,
-  interstance : StanceId,
-  interexpression : ExpressionId,
-  interframe : Int,
-  interexpframe : Int,
-) -> Unit {
-  if interstance == StanceId::DEAD {
-    return self.draw_dead(
-      args, interstance, interexpression, interframe, interexpframe,
-    )
-  }
-  if StanceId::is_climbing(interstance) {
-    return self.draw_climbing(args, interstance, interframe)
-  }
-  let drawables = self.make_draw_front(
-    interstance, interexpression, interframe, interexpframe,
-  )
-  for drawable in drawables {
-    drawable.draw(args)
-  }
-}
-
-///|
-pub fn CharLook::make_draw_front(
-  self : CharLook,
-  stance : StanceId,
-  expression : ExpressionId,
-  stance_frame : Int,
-  expr_frame : Int,
-) -> Array[&@graphics.Drawable] {
-  let drawables : Array[&@graphics.Drawable] = []
-  fn make_hair_draw(layer) {
-    { hair: self.hair, layer, frame: stance_frame, stance }
-  }
-
-  fn make_face_draw() {
-    {
-      face: self.face,
-      expression,
-      exp_frame: expr_frame,
-      draw_info: self.draw_info,
-      stance,
-      stance_frame,
-    }
-  }
-
-  fn make_body_draw(layer) {
-    { body: self.full_body, layer, frame: stance_frame, stance }
-  }
-
-  fn make_equip_draw(slot, layer) {
-    {
-      equips: self.equips,
-      stance,
-      slot,
-      layer,
-      frame: stance_frame,
-      draw_info: self.draw_info,
-    }
-  }
-
-  drawables.push(make_hair_draw(HairLayer::BELOW_BODY))
-  drawables.push(make_equip_draw(@slot.Id::CAPE, @clothing.ClothingLayer::CAPE))
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::SHIELD,
-      @clothing.ClothingLayer::SHIELD_BELOW_BODY,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_BELOW_BODY,
-    ),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP_BELOW_BODY),
-  )
-  drawables.push(make_body_draw(@types.BodyLayer::BODY))
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::WRIST_OVER_BODY),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::GLOVE_OVER_BODY),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::SHOES, @clothing.ClothingLayer::SHOES),
-  )
-  drawables.push(make_body_draw(@types.BodyLayer::ARM_BELOW_HEAD))
-  if self.equips.has_overall() {
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAIL),
-    )
-  } else {
-    drawables.push(
-      make_equip_draw(
-        @slot.Id::BOTTOM_DEFAULT,
-        @clothing.ClothingLayer::PANTS_DEFAULT,
-      ),
-    )
-    drawables.push(
-      make_equip_draw(@slot.Id::BOTTOM, @clothing.ClothingLayer::PANTS),
-    )
-    drawables.push(
-      make_equip_draw(
-        @slot.Id::TOP_DEFAULT,
-        @clothing.ClothingLayer::TOP_DEFAULT,
-      ),
-    )
-    drawables.push(make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::TOP))
-  }
-  drawables.push(make_body_draw(@types.BodyLayer::ARM_BELOW_HEAD_OVER_MAIL))
-  drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
-  drawables.push(
-    make_equip_draw(@slot.Id::SHIELD, @clothing.ClothingLayer::SHIELD_OVER_HAIR),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::EARACC, @clothing.ClothingLayer::EARRINGS),
-  )
-  drawables.push(make_body_draw(@types.BodyLayer::HEAD))
-  drawables.push(make_hair_draw(HairLayer::SHADE))
-  drawables.push(make_face_draw())
-  drawables.push(
-    make_equip_draw(@slot.Id::FACE, @clothing.ClothingLayer::FACE_ACC),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::EYE_ACC, @clothing.ClothingLayer::EYE_ACC),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::SHIELD, @clothing.ClothingLayer::SHIELD),
-  )
-  match self.equips.getcaptype() {
-    @equip.CapType::NONE => drawables.push(make_hair_draw(HairLayer::OVER_HEAD))
-    @equip.CapType::HEADBAND => {
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP),
-      )
-      drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
-      drawables.push(make_hair_draw(HairLayer::OVER_HEAD))
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP_OVER_HAIR),
-      )
-    }
-    @equip.CapType::HALF_COVER => {
-      drawables.push(make_hair_draw(HairLayer::HAIR_LAYER_DEFAULT))
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP),
-      )
-    }
-    @equip.CapType::FULL_COVER =>
-      drawables.push(
-        make_equip_draw(@slot.Id::HAT, @clothing.ClothingLayer::CAP),
-      )
-    _ => ()
-  }
-  drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON_BELOW_ARM),
-  )
-  let twohanded : Bool = self.is_twohanded(stance)
-  if twohanded {
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAILARM),
-    )
-    drawables.push(make_body_draw(@types.BodyLayer::ARM))
-    drawables.push(
-      make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON),
-    )
-  } else {
-    drawables.push(
-      make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON),
-    )
-    drawables.push(make_body_draw(@types.BodyLayer::ARM))
-    drawables.push(
-      make_equip_draw(@slot.Id::TOP, @clothing.ClothingLayer::MAILARM),
-    )
-  }
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::WRIST),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::GLOVE),
-  )
-  drawables.push(
-    make_equip_draw(
-      @slot.Id::WEAPON,
-      @clothing.ClothingLayer::WEAPON_OVER_GLOVE,
-    ),
-  )
-  drawables.push(make_body_draw(@types.BodyLayer::HAND_BELOW_WEAPON))
-  drawables.push(make_body_draw(@types.BodyLayer::ARM_OVER_HAIR))
-  drawables.push(make_body_draw(@types.BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON))
-  drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON_OVER_HAND),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::WEAPON, @clothing.ClothingLayer::WEAPON_OVER_BODY),
-  )
-  drawables.push(make_body_draw(@types.BodyLayer::HAND_OVER_HAIR))
-  drawables.push(make_body_draw(@types.BodyLayer::HAND_OVER_WEAPON))
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::WRIST_OVER_HAIR),
-  )
-  drawables.push(
-    make_equip_draw(@slot.Id::GLOVES, @clothing.ClothingLayer::GLOVE_OVER_HAIR),
-  )
-  drawables
-}
-
-///|
 struct BodyLayerDrawable {
   body : FullBody
   stance : StanceId
@@ -614,14 +403,6 @@ pub impl ToJson for BodyLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub impl @graphics.Drawable for BodyLayerDrawable with draw(
-  self : BodyLayerDrawable,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  self.body.draw(self.stance, self.layer, self.frame, args)
-}
-
-///|
 struct EquipLayerDrawable {
   equips : @equip.CharEquips
   stance : StanceId
@@ -637,15 +418,6 @@ pub impl ToJson for EquipLayerDrawable with to_json(self) -> Json {
 }
 
 ///|
-// TODO: Migrate to animation-based rendering
-pub impl @graphics.Drawable for EquipLayerDrawable with draw(
-  self : EquipLayerDrawable,
-  _args : @graphics.DrawArgument,
-) -> Unit {
-  ignore(self)
-}
-
-///|
 struct FaceDrawable {
   face : Face
   expression : ExpressionId
@@ -656,18 +428,18 @@ struct FaceDrawable {
 }
 
 ///|
-pub impl @graphics.Drawable for FaceDrawable with draw(
-  self : FaceDrawable,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  let faceshift = self.draw_info.get_face_pos(self.stance, self.stance_frame)
-  self.face.draw(
-    self.expression,
-    self.exp_frame,
-    args +
-    @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default()),
-  )
-}
+// pub impl @graphics.Drawable for FaceDrawable with draw(
+//   self : FaceDrawable,
+//   args : @graphics.DrawArgument,
+// ) -> Unit {
+//   let faceshift = self.draw_info.get_face_pos(self.stance, self.stance_frame)
+//   self.face.draw(
+//     self.expression,
+//     self.exp_frame,
+//     args +
+//     @graphics.DrawArgument::new9(faceshift, false, @struct.Point::default()),
+//   )
+// }
 
 ///|
 pub impl ToJson for FaceDrawable with to_json(self) -> Json {
@@ -699,12 +471,12 @@ pub impl ToJson for HairDrawable with to_json(self) -> Json {
 }
 
 ///|
-pub impl @graphics.Drawable for HairDrawable with draw(
-  self : HairDrawable,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  self.hair.draw(self.stance, self.layer, self.frame, args)
-}
+// pub impl @graphics.Drawable for HairDrawable with draw(
+//   self : HairDrawable,
+//   args : @graphics.DrawArgument,
+// ) -> Unit {
+//   self.hair.draw(self.stance, self.layer, self.frame, args)
+// }
 
 ///|
 pub fn CharLook::draw(
@@ -994,24 +766,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
     }
     None => ()
   }
-}
-
-///|
-pub fn CharLook::draw_with_stance(
-  self : CharLook,
-  position : @struct.Point[Int],
-  flip : Bool,
-  interstance : StanceId,
-  interexpression : ExpressionId,
-) -> Unit {
-  let interstance = self.equips.adjust_stance(interstance)
-  self.draw_impl(
-    @graphics.DrawArgument::new(pos=position, flip~),
-    interstance,
-    interexpression,
-    0,
-    0,
-  )
 }
 
 ///|
@@ -1375,14 +1129,6 @@ pub fn CharLook::get_body(self : CharLook) -> FullBody {
 
 ///|
 struct NoopDrawable(Unit) derive(ToJson)
-
-///|
-pub impl @graphics.Drawable for NoopDrawable with draw(
-  _ : NoopDrawable,
-  _ : @graphics.DrawArgument,
-) -> Unit {
-
-}
 
 ///|
 pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {

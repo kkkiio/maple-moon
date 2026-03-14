@@ -8,7 +8,6 @@ struct SkillBook {
 
 ///|
 pub async fn SkillBook::load(
-  string_loader : @resource.SyncLoader,
   job : @job.Job,
   watchers : Array[SkillBookWatcher],
 ) -> SkillBook {
@@ -53,10 +52,12 @@ pub impl @legacy_types.SkillBook for SkillBook with get_level(
 pub fn SkillBook::collect_required(
   self : SkillBook,
   id : Int,
-) -> @immut/hashmap.T[Int, Int] {
+) -> @immut/hashmap.HashMap[Int, Int] {
   self.available_skills
   .get(id)
-  .map_or(@immut/hashmap.new(), fn(skill_data) -> @immut/hashmap.T[Int, Int] {
+  .map_or(@immut/hashmap.new(), fn(
+    skill_data,
+  ) -> @immut/hashmap.HashMap[Int, Int] {
     skill_data.req_skills
   })
 }
@@ -100,22 +101,12 @@ pub fn SkillBook::get_skill_data(
 pub type SkillBookWatcher = (SkillBookEvent) -> Bool
 
 ///|
-pub fn increase_sp(mod : Module, skill_id : Int) -> Unit {
-  mod.network.send_message({ skill_id, }, log_level=@log.Level::INFO)
+pub fn increase_sp(_mod : Module, skill_id : Int) -> Unit {
+  @game_server.send(@server_proto.SpendSPMessage::{ skill_id })
 }
 
 ///|
 /// Requests a skill level increase by spending SP
-priv struct SpendSPPacket {
-  skill_id : Int
-} derive(Show)
-
-///|
-impl @net.OutMessage for SpendSPPacket with pack(self) -> @net.OutPacket {
-  let packet = @net.OutPacket::new(@net.ClientOpcode::SPEND_SP)
-  packet..write_time()..write_int(self.skill_id)
-  packet
-}
 
 ///|
 fn check_required(skillbook : SkillBook, id : Int) -> Bool {

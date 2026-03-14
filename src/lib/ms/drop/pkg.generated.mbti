@@ -64,7 +64,7 @@ pub impl Drop for MesoDrop
 type Module
 pub fn Module::get_map_drops(Self) -> MapDrops
 pub async fn Module::load() -> Self
-pub fn Module::make_handlers(Self, (Int) -> @physics.PhysicsObject?) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_handlers(Self, (Int) -> @physics.PhysicsObject?) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 
 pub struct RemoveLoot {
   mode : Int

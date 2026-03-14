@@ -1,4 +1,5 @@
 ///|
+#deprecated("use @sprite.Text instead")
 struct Text {
   font : FontId
   alignment : TextAlignment
@@ -41,13 +42,14 @@ pub fn Text::draw(
       { ..point, x, }
     }
   }
-  GraphicsGL::get().draw_text(
-    image,
-    self.text,
-    point,
-    self.nametag,
-    text_y_clip~,
-  )
+  // GraphicsGL::get().draw_text(
+  //   image,
+  //   self.text,
+  //   point,
+  //   self.nametag,
+  //   text_y_clip~,
+  // )
+  ...
 }
 
 ///|
@@ -75,20 +77,7 @@ pub fn Text::get_text(self : Text) -> String {
 
 ///|
 pub fn Text::get_or_init_image(self : Text) -> Image {
-  match self.image {
-    Some(image) => image
-    None => {
-      let image = GraphicsGL::get().create_text_image({
-        text: self.text,
-        font_id: self.font,
-        max_width: self.max_width,
-        text_alignment: self.alignment,
-        color: self.color |> Color::from_name |> @struct.IntColor::from_color,
-      })
-      self.image = Some(image)
-      image
-    }
-  }
+  ...
 }
 
 ///|

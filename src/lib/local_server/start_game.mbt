@@ -65,7 +65,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
     )
     let set_field_json = set_field_message.to_json()
     default_server.server_message_queue.push(
-      (@net.Opcode::SET_FIELD.int_value(), set_field_json),
+      (@server_proto.Opcode::SET_FIELD.int_value(), set_field_json),
     )
     default_server.spawn_mobs_for_map(default_server.last_map_id)
   })

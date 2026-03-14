@@ -638,20 +638,20 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
 ///|
 pub fn Mob::update_movement(self : Mob) -> Unit {
   @game_server.send(
-    new_move_mob_packet(
-      self.oid,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      self.get_position(),
-      @physics.Movement::from_physics_object(
+    @server_proto.MoveMonsterMessage::{
+      oid: self.oid,
+      move_id: 1,
+      nibbles: 0,
+      action: 0,
+      skill: 0,
+      skill_level: 0,
+      option: 0,
+      start_pos: self.get_position(),
+      movement: @physics.Movement::from_physics_object(
         self.phobj,
         self.stance.int_value(),
       ),
-    ),
+    },
     log_level=@log.Level::TRACE,
   )
 }
@@ -667,20 +667,20 @@ pub fn Mob::update_movement_ex(
   option : Int,
 ) -> Unit {
   @game_server.send(
-    new_move_mob_packet(
-      self.oid,
-      t,
+    @server_proto.MoveMonsterMessage::{
+      oid: self.oid,
+      move_id: t,
       nibbles,
       action,
       skill,
       skill_level,
       option,
-      self.get_position(),
-      @physics.Movement::from_physics_object(
+      start_pos: self.get_position(),
+      movement: @physics.Movement::from_physics_object(
         self.phobj,
         self.stance.int_value(),
       ),
-    ),
+    },
   )
 }
 

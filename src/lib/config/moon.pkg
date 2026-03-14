@@ -1,7 +1,6 @@
 import {
+  "moonbitlang/core/strconv",
 }
-
-warnings = "-A"
 
 options(
   targets: { "local_storage.js.mbt": [ "js" ] },

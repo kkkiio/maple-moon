@@ -56,17 +56,17 @@ pub(all) enum Opcode {
   SHOW_FOREIGN_EFFECT = 198
   GIVE_FOREIGN_BUFF = 199
   CANCEL_FOREIGN_BUFF = 200
-  SHOW_ITEM_GAIN_INCHAT = 206 // TODO: Rename this (Terribly named)
+  SHOW_ITEM_GAIN_INCHAT // TODO: Rename this (Terribly named)
   /// Player
   ADD_COOLDOWN = 234
   /// MapObject
   /// Spawn a monster for a player who is NOT controlling it.
   /// The client will not calculate AI or physics for this mob.
+  /// For local server (single player), we always use this.
   SPAWN_MOB = 0xEC
   KILL_MOB = 0xED
   /// Spawn a monster for a player who IS controlling it.
   /// The client will calculate AI and physics for this mob.
-  /// For local server (single player), we always use this.
   SPAWN_MOB_C = 0xEE
   MOB_MOVED = 239
   MOB_MOVE_RESPONSE = 240
@@ -91,7 +91,7 @@ pub(all) enum Opcode {
   PLAYER_INTERACTION = 314
   /// Cash Shop
   SET_CASH_SHOP = 127
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Show, ToJson, FromJson)
 
 ///|
 pub fn Opcode::int_value(self : Opcode) -> Int = "%identity"
@@ -206,11 +206,77 @@ pub fn Opcode::from_int(v : Int) -> Opcode raise UnknownOpCodeError {
 }
 
 ///|
-suberror UnknownOpCodeError {
+pub(all) suberror UnknownOpCodeError {
   UnknownOpCodeError(Int)
 }
 
 ///|
 pub impl Hash for Opcode with hash_combine(self : Opcode, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
+}
+
+///|
+/// Opcodes for packets sent from the client to the server associated with version 83 of the game
+pub(all) enum ClientOpcode {
+  LOGIN = 1
+  CHAR_LIST_REQUEST = 5
+  SERVER_STATUS_REQUEST = 6
+  ACCEPT_TOS = 7
+  SET_GENDER = 8
+  SERVERLIST_REQUEST = 11
+  SELECT_CHAR = 19
+  PLAYER_LOGIN = 20
+  NAME_CHAR = 21
+  CREATE_CHAR = 22
+  DELETE_CHAR = 23
+  PONG = 24
+  REGISTER_PIC = 29
+  SELECT_CHAR_PIC = 30
+  LOGIN_START = 35
+  CHANGE_MAP = 0x26
+  CHANGE_CHANNEL = 39
+  ENTER_CASHSHOP = 40
+  MOVE_PLAYER = 41
+  CLOSE_ATTACK = 44
+  RANGED_ATTACK = 45
+  MAGIC_ATTACK = 46
+  TAKE_DAMAGE = 48
+  GENERAL_CHAT = 49
+  TALK_TO_NPC = 58
+  NPC_TALK_MORE = 60
+  NPC_SHOP_ACTION = 61
+  GIVE_FAME = 95
+  CHAR_INFO_REQUEST = 97
+  GATHER_ITEMS = 69
+  SORT_ITEMS = 70
+  MOVE_ITEM = 71
+  USE_ITEM = 0x48
+  USE_CASH_ITEM = 0x4F
+  SCROLL_EQUIP = 86
+  DROP_MESOS = 94
+  SPEND_AP = 87
+  HEAL_OVER_TIME = 89
+  SPEND_SP = 90
+  CHANGE_KEYMAP = 135
+  USE_SKILL = 91
+  QUEST_ACTION = 0x6B
+  PLAYER_INTERACTION = 123
+  PARTY_OPERATION = 124
+  ADMIN_COMMAND = 128
+  MOVE_MONSTER = 188
+  PICKUP_ITEM = 202
+  DAMAGE_REACTOR = 205
+  PLAYER_MAP_TRANSFER = 207
+  PLAYER_UPDATE = 223
+} derive(Eq, Compare, Show, ToJson, FromJson)
+
+///|
+pub fn ClientOpcode::int_value(self : ClientOpcode) -> Int = "%identity"
+
+///|
+pub fn ClientOpcode::log_level(self : ClientOpcode) -> @log.Level {
+  match self {
+    MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE
+    _ => @log.Level::INFO
+  }
 }

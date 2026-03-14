@@ -8,7 +8,6 @@ struct MapQuests {
   quests_resource : QuestResource
   npc_quests_map : Map[Int, Array[Int]]
   mut player_deps : PlayerDeps? // TODO: init on new
-  network : @net.Network
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit
   get_player_deps : (@player.Player) -> PlayerDeps
 }
@@ -24,11 +23,11 @@ priv struct PlayerDeps {
 /// Resources for MapQuests - holds icons for different quest states
 struct MapQuestsResource {
   /// Icon shown when a quest is available from an NPC
-  available_quest_icon : @graphics.Animation
+  available_quest_icon : @resource.NxAnimation
   /// Icon shown when a quest is in progress with an NPC
-  inprogress_quest_icon : @graphics.Animation
+  inprogress_quest_icon : @resource.NxAnimation
   /// Icon shown when a quest can be completed with an NPC
-  completed_quest_icon : @graphics.Animation
+  completed_quest_icon : @resource.NxAnimation
 }
 
 ///|
@@ -44,17 +43,21 @@ pub async fn MapQuestsResource::load() -> MapQuestsResource {
   let completed_quest_icon = ui_window_2_loader.load_res_async([
     "QuestIcon", "2",
   ])
-  {
-    available_quest_icon: @graphics.Animation::from_resource_ex(
-      available_quest_icon,
-    ),
-    inprogress_quest_icon: @graphics.Animation::from_resource_ex(
-      inprogress_quest_icon,
-    ),
-    completed_quest_icon: @graphics.Animation::from_resource_ex(
-      completed_quest_icon,
-    ),
-  }
+  // {
+  //   available_quest_icon: @graphics.Animation::from_resource_ex(
+  //     available_quest_icon,
+  //   ),
+  //   inprogress_quest_icon: @graphics.Animation::from_resource_ex(
+  //     inprogress_quest_icon,
+  //   ),
+  //   completed_quest_icon: @graphics.Animation::from_resource_ex(
+  //     completed_quest_icon,
+  //   ),
+  // }
+  ignore(available_quest_icon)
+  ignore(inprogress_quest_icon)
+  ignore(completed_quest_icon)
+  ...
 }
 
 ///|
@@ -62,7 +65,6 @@ fn MapQuests::new(
   resource : MapQuestsResource,
   quests_resource : QuestResource,
   npc_quests_map : Map[Int, Array[Int]],
-  network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
   get_player_deps : (@player.Player) -> PlayerDeps,
 ) -> MapQuests {
@@ -72,7 +74,6 @@ fn MapQuests::new(
     quests_resource,
     npc_quests_map,
     player_deps: None,
-    network,
     open_npc_talk_ui,
     get_player_deps,
   }
@@ -211,7 +212,7 @@ pub fn MapQuests::send_cursor(
       if pressed {
         guard self.quests_resource.quest_say_map.get(quest.quest_id)
           is Some(phase_says)  // must have a say
-        talk_about_quest(quest, phase_says, self.network, self.open_npc_talk_ui)
+        talk_about_quest(quest, phase_says, self.open_npc_talk_ui)
         return Some(@ui.CursorState::IDLE)
       }
       return Some(@ui.CursorState::CAN_CLICK)
@@ -225,7 +226,7 @@ pub fn MapQuests::send_cursor(
 priv struct NpcQuest {
   npc_id : Int
   npc_object : @physics.MovingObject
-  icon : @graphics.Animation
+  icon : @resource.NxAnimation
   icon_offset : @struct.Point[Int]
   quest_id : Int
   in_progress_quest : (InProgressQuest, Bool)? // (quest, is_completed)
@@ -237,7 +238,7 @@ fn NpcQuest::new(
   in_progress_quest : (InProgressQuest, Bool)?,
   npc_id : Int,
   npc_object : @physics.MovingObject,
-  icon : @graphics.Animation,
+  icon : @resource.NxAnimation,
 ) -> NpcQuest {
   @log.debug("show quest icon", data={ "npc_id": npc_id, "quest_id": quest_id })
   {
@@ -264,7 +265,7 @@ impl @map_object.MapObject for NpcQuest with get_oid(self) {
 
 ///|
 impl @map_object.MapObject for NpcQuest with update(self, _) {
-  self.icon.update(timestep=2) |> ignore
+  // self.icon.update(timestep=2) |> ignore
   7
 }
 
@@ -292,11 +293,14 @@ fn NpcQuest::inrange(
   viewpos : @struct.Point[Int],
 ) -> Bool {
   let absp = self.get_position() + viewpos
-  let dim = self.icon.get_dimensions()
-  @struct.Rectangle::from4(
-    absp.x - dim.x / 2,
-    absp.x + dim.x / 2,
-    absp.y - dim.y,
-    absp.y,
-  ).contains(cursorpos)
+  // let dim = self.icon.get_dimensions()
+  // @struct.Rectangle::from4(
+  //   absp.x - dim.x / 2,
+  //   absp.x + dim.x / 2,
+  //   absp.y - dim.y,
+  //   absp.y,
+  // ).contains(cursorpos)
+  ignore(cursorpos)
+  ignore(absp)
+  ...
 }

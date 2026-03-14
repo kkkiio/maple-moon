@@ -1,2 +1,2 @@
 ///|
-pub using @maple_stat {type Id as MapleStatId}
+pub type MapleStatId = @maple_stat.Id

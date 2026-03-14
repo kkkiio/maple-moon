@@ -47,7 +47,7 @@ pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
     None => {
       let loader = get_skill_loader()
       // Load the full bundle: [bundle_key] -> returns { "skill": { "2101002": {...} } }
-      let json = loader.load_res_async([bundle_key]).value() catch {
+      let json = loader.load_resource([bundle_key]) catch {
           _ => raise INVALID_DATA("Failed to load bundle: " + bundle_key)
         }
       bundle_cache.set(bundle_key, json)
@@ -60,8 +60,7 @@ pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
 
   // 5. Load text data (skill name, description)
   let text_json = get_string_loader()
-    .load_res_async(["Skill.img", strid])
-    .value() catch {
+    .load_resource(["Skill.img", strid]) catch {
       _ => Json::null()
     }
 
@@ -99,7 +98,7 @@ pub async fn preload_skills(
     if not(bundle_cache.contains(bundle_key)) {
       let loader = get_skill_loader()
       // Load full bundle
-      let json = loader.load_res_async([bundle_key]).value() catch {
+      let json = loader.load_resource([bundle_key]) catch {
           _ => raise INVALID_DATA("Failed to preload bundle: " + bundle_key)
         }
       bundle_cache.set(bundle_key, json)

@@ -9,7 +9,7 @@ pub(all) struct UseItemMessage {
 
 ///|
 pub impl ClientMessage for UseItemMessage with type_code() {
-  @net.ClientOpcode::USE_ITEM.int_value()
+  ClientOpcode::USE_ITEM.int_value()
 }
 
 ///|
@@ -27,5 +27,5 @@ pub(all) struct MoveItemMessage {
 
 ///|
 pub impl ClientMessage for MoveItemMessage with type_code() {
-  @net.ClientOpcode::MOVE_ITEM.int_value()
+  ClientOpcode::MOVE_ITEM.int_value()
 }

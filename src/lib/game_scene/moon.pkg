@@ -1,7 +1,6 @@
 import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/utils",

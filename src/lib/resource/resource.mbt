@@ -3,38 +3,8 @@
 type ImageLoader
 
 ///|
-#deprecated("use AsyncLoader instead")
-struct SyncLoader {}
-
-///|
-pub async fn SyncLoader::load(
-  name : String,
-  data_url : String,
-  image_loader : ImageLoader,
-) -> SyncLoader raise Error {
-  ...
-  // let loader : SyncResourceLoader = SyncResourceLoader::make(data_url).wait()
-  //   |> @js.Value::cast
-  // SyncLoader::new(name, loader, image_loader)
-}
-
-///|
-pub fn SyncLoader::load_res(self : SyncLoader, path : Array[String]) -> NxNode {
-  ...
-  // {
-  //   loader_name: self.name,
-  //   image_loader: Some(self.image_loader),
-  //   name: path.last().unwrap(),
-  //   desc: self.loader.load_desc(join_path(path)).as_moonjson(),
-  //   path: path |> @immut/array.from_array,
-  // }
-}
-
-///|
 #deprecated("use Json instead")
 struct NxNode {
-  loader_name : String
-  image_loader : ImageLoader? // TODO: remove optional
   name : String
   desc : Json
   path : @immut/array.T[String]
@@ -42,13 +12,7 @@ struct NxNode {
 
 ///|
 pub fn NxNode::from_test_value(value : Json) -> NxNode {
-  {
-    loader_name: "",
-    image_loader: None,
-    name: "",
-    desc: value,
-    path: @immut/array.from_array([]),
-  }
+  { name: "", desc: value, path: @immut/array.from_array([]) }
 }
 
 ///|
@@ -77,27 +41,6 @@ pub fn NxNode::op_get(self : NxNode, name : String) -> NxNode {
     .unwrap_or(Json::null()),
     path: self.path.push(name),
   }
-}
-
-///|
-pub fn NxNode::contains(self : NxNode, name : String) -> Bool {
-  match self.desc {
-    Json::Object(it) => it.contains(name)
-    _ => false
-  }
-}
-
-///|
-pub fn NxNode::get_children_count(self : NxNode) -> Int {
-  match self.desc {
-    Json::Object(it) => it.size()
-    _ => 0
-  }
-}
-
-///|
-pub fn NxNode::get_bool(self : NxNode) -> Bool raise LoadError {
-  self.get_int() != 0
 }
 
 ///|
@@ -202,43 +145,6 @@ pub fn NxNode::is_null(self : NxNode) -> Bool {
 }
 
 ///|
-pub fn NxNode::as_string(self : NxNode) -> String raise LoadError {
-  match self.desc {
-    Json::String(it) => it
-    _ as a => raise LoadError("expect string, got \{a}, path=\{self.path}")
-  }
-}
-
-///|
-pub fn NxNode::get_bitmap(self : NxNode) -> Bitmap? {
-  try {
-    match self.desc {
-      { "__i": Json::String(path), .. } =>
-        Some({
-          // image: self.image_loader.unwrap().load_image_by_path(path),
-          image: panic(),
-          width: self["__w"].as_int(),
-          height: self["__h"].as_int(),
-        })
-      { "__b": Json::Number(bid), .. } =>
-        Some({
-          image: self.image_loader.unwrap().load_image(bid.to_int()),
-          width: self["__w"].as_int(),
-          height: self["__h"].as_int(),
-        })
-      _ => None
-    }
-  } catch {
-    _ => None
-  }
-}
-
-///|
-pub fn NxNode::get_image_loader(self : NxNode) -> ImageLoader {
-  self.image_loader.unwrap()
-}
-
-///|
 pub(all) struct Bitmap {
   image : Image
   width : Int
@@ -247,33 +153,17 @@ pub(all) struct Bitmap {
 
 ///|
 pub impl ToJson for Bitmap with to_json(self) -> Json {
+  ignore(self)
   {}
 }
 
 ///|
-fn join_path(parts : Array[String]) -> String {
+fn join_path(parts : ArrayView[String]) -> String {
   parts.join("/")
 }
 
 ///|
 pub(all) struct ResPath(Array[String]) derive(Eq)
-
-///|
-pub fn NxNode::as_point(self : NxNode) -> @struct.Point[Int] raise LoadError {
-  match self.value() {
-    [Json::Number(x, ..), Json::Number(y, ..)] =>
-      { x: x.to_int(), y: y.to_int() }
-    Json::Null => @struct.Point::default()
-    _ as a => raise LoadError("expect array, got \{a}, path=\{self.path}")
-  }
-}
-
-///|
-pub fn NxNode::as_rectangle(self : NxNode) -> @struct.Rectangle[Int] raise {
-  let left_top = self["lt"].as_point()
-  let right_bottom = self["rb"].as_point()
-  @struct.Rectangle::new(left_top, right_bottom)
-}
 
 ///|
 /// Array of T which json key is index

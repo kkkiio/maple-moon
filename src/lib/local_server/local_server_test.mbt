@@ -274,7 +274,7 @@ async test "local server consumes use item and emits modify inventory" {
   let modified : Ref[Array[@server_proto.ModifyInventoryMessage]] = Ref::new([])
   server.add_server_message_handler(
     "test_use_item_modify",
-    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    @server_proto.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : @server_proto.ModifyInventoryMessage = @json.from_json(json)
       modified.val.push(msg)
@@ -330,7 +330,7 @@ async test "local server equips item and emits source plus equipped updates" {
   let modified : Ref[Array[@server_proto.ModifyInventoryMessage]] = Ref::new([])
   server.add_server_message_handler(
     "test_move_item_modify",
-    @net.Opcode::MODIFY_INVENTORY.int_value(),
+    @server_proto.Opcode::MODIFY_INVENTORY.int_value(),
     fn(json : Json) -> Unit raise {
       let msg : @server_proto.ModifyInventoryMessage = @json.from_json(json)
       modified.val.push(msg)

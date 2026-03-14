@@ -143,24 +143,11 @@ pub fn enqueue_hp_event(oid : Int, percent : Int, player_level : Int) -> Unit {
 }
 
 ///|
-/// Handle `SHOW_MOB_HP` packet and enqueue an hp bar update event.
-pub fn handle_show_mob_hp_packet(
-  player_stats_getter : () -> @char_stats.CharStats?,
-  recv : @net.InPacket,
-) -> Unit raise {
-  guard player_stats_getter() is Some(player_stats) else { return }
-  let oid = recv.read_int()
-  let hppercent = recv.read_byte()
-  let player_level = player_stats.get_stat(@maple_stat.Id::LEVEL)
-  enqueue_hp_event(oid, hppercent, player_level)
-}
-
-///|
 /// Register local server message handler for mob hp updates.
 pub fn setup_mob_hpbar_game_server_handlers() -> Unit {
   @game_server.add_server_message_handler(
     "mob_hp",
-    @net.Opcode::SHOW_MOB_HP.int_value(),
+    @server_proto.Opcode::SHOW_MOB_HP.int_value(),
     fn(json) raise {
       let msg : MobHpMessage = @json.from_json(json)
       enqueue_hp_event(msg.oid, msg.percent, 0)

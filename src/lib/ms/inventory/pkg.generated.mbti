@@ -80,7 +80,7 @@ pub impl ToJson for ModificationMode
 type Module
 pub fn Module::get_inventory(Self) -> Inventory
 pub fn Module::load(() -> @player.Player?) -> Self
-pub fn Module::make_handlers(Self) -> Map[@net.Opcode, (@net.InPacket) -> Unit]
+pub fn Module::make_handlers(Self) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]
 pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
 

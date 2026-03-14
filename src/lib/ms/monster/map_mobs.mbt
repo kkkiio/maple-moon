@@ -377,7 +377,7 @@ pub fn setup_game_server_handlers() -> Unit {
   register_scene_cleanup_once()
   @game_server.add_server_message_handler(
     "spawn_mob",
-    @net.Opcode::SPAWN_MOB.int_value(),
+    @server_proto.Opcode::SPAWN_MOB.int_value(),
     fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : MobSpawnMessage = @json.from_json(json)
@@ -395,7 +395,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "spawn_mob_controller",
-    @net.Opcode::SPAWN_MOB_C.int_value(),
+    @server_proto.Opcode::SPAWN_MOB_C.int_value(),
     fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : MobSpawnControllerMessage = @json.from_json(json)
@@ -413,7 +413,7 @@ pub fn setup_game_server_handlers() -> Unit {
   )
   @game_server.add_server_message_handler(
     "kill_mob",
-    @net.Opcode::KILL_MOB.int_value(),
+    @server_proto.Opcode::KILL_MOB.int_value(),
     fn(json) raise {
       guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
       let msg : KillMobMessage = @json.from_json(json)

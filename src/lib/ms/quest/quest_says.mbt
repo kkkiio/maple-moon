@@ -2,7 +2,6 @@
 fn talk_about_quest(
   npc_quest : NpcQuest,
   quest_says : Array[QuestPhaseSays],
-  network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Unit {
   let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
@@ -18,7 +17,7 @@ fn talk_about_quest(
     quest_met,
   )
   guard args is Some(args)  // should always have some words to say
-  open_npc_talk_ui(bind_io(args, npc_quest, network, open_npc_talk_ui))
+  open_npc_talk_ui(bind_io(args, npc_quest, open_npc_talk_ui))
 }
 
 ///|
@@ -189,7 +188,6 @@ pub fn next_talk(
 fn bind_io(
   args : QuestTalk,
   npc_quest : NpcQuest,
-  network : @net.Network,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> @npc.TalkArgs {
   match args.expect_response {
@@ -201,9 +199,7 @@ fn bind_io(
           guard c is Some(_) else { return }
           let next_args = fun()
           guard next_args is Some(next_args) else { return }
-          open_npc_talk_ui(
-            bind_io(next_args, npc_quest, network, open_npc_talk_ui),
-          )
+          open_npc_talk_ui(bind_io(next_args, npc_quest, open_npc_talk_ui))
         }),
         speaker: @npc.Speaker::NPC_LEFT,
       }
@@ -215,12 +211,10 @@ fn bind_io(
           guard c is Some(c) else { return }
           let (next_args, action) = fun(c)
           if action is Some(action) {
-            execute_action(action, npc_quest, network)
+            execute_action(action, npc_quest)
           }
           guard next_args is Some(next_args) else { return }
-          open_npc_talk_ui(
-            bind_io(next_args, npc_quest, network, open_npc_talk_ui),
-          )
+          open_npc_talk_ui(bind_io(next_args, npc_quest, open_npc_talk_ui))
         }),
         speaker: @npc.Speaker::NPC_LEFT,
       }
@@ -232,7 +226,7 @@ fn bind_io(
           guard c is Some(_) else { return }
           let action = fun()
           guard action is Some(action) else { return }
-          execute_action(action, npc_quest, network)
+          execute_action(action, npc_quest)
         }),
         speaker: @npc.Speaker::NPC_LEFT,
       }
@@ -244,9 +238,7 @@ fn bind_io(
           guard c is Some(c) else { return }
           let next_args = fun(c)
           guard next_args is Some(next_args) else { return }
-          open_npc_talk_ui(
-            bind_io(next_args, npc_quest, network, open_npc_talk_ui),
-          )
+          open_npc_talk_ui(bind_io(next_args, npc_quest, open_npc_talk_ui))
         }),
         speaker: @npc.Speaker::NPC_LEFT,
       }
@@ -254,26 +246,23 @@ fn bind_io(
 }
 
 ///|
-fn execute_action(
-  action : Action,
-  npc_quest : NpcQuest,
-  network : @net.Network,
-) -> Unit {
-  match action {
-    StartQuest =>
-      network.send_message(
-        QuestActionMessage::StartQuest(
-          quest_id=npc_quest.quest_id,
-          npc_id=npc_quest.npc_id,
-        ),
-      )
-    CompleteQuest =>
-      network.send_message(
-        QuestActionMessage::CompleteQuest(
-          quest_id=npc_quest.quest_id,
-          npc_id=npc_quest.npc_id,
-          selection=None, // TODO: what selection should be sent?
-        ),
-      )
-  }
+fn execute_action(action : Action, npc_quest : NpcQuest) -> Unit {
+  ...
+  // match action {
+  //   StartQuest =>
+  //     network.send_message(
+  //       QuestActionMessage::StartQuest(
+  //         quest_id=npc_quest.quest_id,
+  //         npc_id=npc_quest.npc_id,
+  //       ),
+  //     )
+  //   CompleteQuest =>
+  //     network.send_message(
+  //       QuestActionMessage::CompleteQuest(
+  //         quest_id=npc_quest.quest_id,
+  //         npc_id=npc_quest.npc_id,
+  //         selection=None, // TODO: what selection should be sent?
+  //       ),
+  //     )
+  // }
 }

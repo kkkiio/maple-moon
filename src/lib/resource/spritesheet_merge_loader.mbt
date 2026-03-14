@@ -80,7 +80,7 @@ pub fn patch_image(
   spritesheet_jsons : Map[String, SpritesheetMetadata],
   base_url? : String = OLD_BASE_URL,
 ) -> Json raise {
-  preorder_replace(data, fn(data) {
+  preorder_replace(data, data => {
     let filled = fill_offset_from_spritesheet_json(data, spritesheet_jsons).unwrap_or(
       data,
     )

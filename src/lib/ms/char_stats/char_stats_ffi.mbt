@@ -55,12 +55,12 @@ pub fn watch_player_total_stat(
 }
 
 ///|
-pub fn spend_ap(mod : Module, stat_name : String) -> Unit {
+pub fn spend_ap(_mod : Module, stat_name : String) -> Unit {
   guard @maple_stat.Id::from_name(stat_name) is Some(stat) else {
     @log.error("unrecognized stat_name", data={ "stat_name": stat_name })
     return
   }
-  mod.network.send_message({ stat, })
+  @game_server.send(@server_proto.SpendAPMessage::{ stat_id: stat.int_value() })
 }
 
 ///|
@@ -101,13 +101,3 @@ pub struct Assign {
 } derive(Default)
 
 ///|
-priv struct SpendAPMessage {
-  stat : @maple_stat.Id
-} derive(Show)
-
-///|
-impl @net.OutMessage for SpendAPMessage with pack(self) -> @net.OutPacket {
-  @net.OutPacket::new(@net.ClientOpcode::SPEND_AP)
-  ..write_time()
-  ..write_int(self.stat.int_value())
-}

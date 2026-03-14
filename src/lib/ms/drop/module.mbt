@@ -7,8 +7,8 @@ struct Module {
 priv struct MapDropsContext {
   mut map_drops : MapDrops?
   mut loading : @utils.Future[Result[MapDrops, Error]]?
-  pending_spawns : Array[DropLoot]
-  pending_removes : Array[RemoveLoot]
+  pending_spawns : Array[DropSpawn]
+  pending_removes : Array[(Int, Int)]
   mut physics : @physics.Physics?
 }
 
@@ -39,20 +39,6 @@ pub fn Module::get_map_drops(self : Module) -> MapDrops {
 }
 
 ///|
-pub fn Module::make_handlers(
-  self : Module,
-  get_character_by_id_fn : (Int) -> @physics.PhysicsObject?,
-) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
-  [
-    @net.make_handler(@net.DROP_LOOT, parse_drop_loot, (drop : DropLoot) => {
-      handle_drop_loot_parsed(self.map_drops, drop)
-    }),
-    @net.make_handler(@net.REMOVE_LOOT, parse_remove_loot, (remove : RemoveLoot) => {
-      handle_remove_loot_parsed(self.map_drops, remove, get_character_by_id_fn)
-    }),
-  ]
-  |> Map::from_array
-}
 
 ///|
 pub fn setup_game_server_handlers() -> Unit {
@@ -68,42 +54,36 @@ pub fn setup_game_server_handlers() -> Unit {
   }
   @game_server.add_server_message_handler(
     "drop_loot",
-    @net.Opcode::DROP_LOOT.int_value(),
+    @server_proto.Opcode::DROP_LOOT.int_value(),
     json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let drop : @server_proto.DropLootMessage = @json.from_json(json)
-      let parsed : DropLoot = {
-        mode: drop.mode,
+      let spawn : DropSpawn = {
         oid: drop.oid,
-        meso: drop.meso,
         item_id: drop.item_id,
+        meso: drop.meso,
         owner: drop.owner,
-        pickuptype: drop.pickuptype,
-        dropto: drop.dropto,
-        dropfrom: drop.dropfrom,
+        start: drop.dropfrom,
+        dest: drop.dropto,
+        drop_type: drop.pickuptype,
+        mode: drop.mode,
         player_drop: drop.player_drop,
       }
       match ctx.map_drops {
-        Some(map_drops) => handle_drop_loot_parsed(map_drops, parsed)
-        None => ctx.pending_spawns.push(parsed)
+        Some(map_drops) => map_drops.spawn(spawn)
+        None => ctx.pending_spawns.push(spawn)
       }
     },
   )
   @game_server.add_server_message_handler(
     "remove_loot",
-    @net.Opcode::REMOVE_LOOT.int_value(),
+    @server_proto.Opcode::REMOVE_LOOT.int_value(),
     json => {
       guard map_drops_ctx.val is Some(ctx) else { return }
       let remove : @server_proto.RemoveLootMessage = @json.from_json(json)
-      let parsed : RemoveLoot = {
-        mode: remove.mode,
-        oid: remove.oid,
-        cid: remove.cid,
-      }
       match ctx.map_drops {
-        Some(map_drops) =>
-          handle_remove_loot_parsed(map_drops, parsed, fn(_id) { None })
-        None => ctx.pending_removes.push(parsed)
+        Some(map_drops) => map_drops.remove(remove.oid, remove.mode, None) // TODO: looter
+        None => ctx.pending_removes.push((remove.oid, remove.mode))
       }
     },
   )
@@ -152,10 +132,10 @@ pub fn map_drops_system(_delta : Double) -> Unit {
             ctx.map_drops = Some(map_drops)
             ctx.loading = None
             for drop in ctx.pending_spawns {
-              handle_drop_loot_parsed(map_drops, drop)
+              map_drops.spawn(drop)
             }
             for remove in ctx.pending_removes {
-              handle_remove_loot_parsed(map_drops, remove, fn(_id) { None })
+              map_drops.remove(remove.0, remove.1, None)
             }
             ctx.pending_spawns.clear()
             ctx.pending_removes.clear()

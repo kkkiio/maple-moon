@@ -1,10 +1,8 @@
 ///|
 struct Module {
   player_getter : () -> @player.Player?
-  network : @net.Network
   mut player_skill_book : (SkillBook, Ref[Bool])?
   watchers : Array[SkillBookWatcher]
-  string_loader : @resource.SyncLoader
   combat : @combat_system.Combat
   inventory : @inventory.Inventory
 }
@@ -12,47 +10,29 @@ struct Module {
 ///|
 pub async fn Module::load(
   player_getter : () -> @player.Player?,
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
   combat : @combat_system.Combat,
   inventory : @inventory.Inventory,
 ) -> Module noraise {
   // let skill_book_resource = @ui.ui_window_2_loader().load_resource(["Skill"])
-  Module::new(player_getter, network, string_loader, combat, inventory)
+  Module::new(player_getter, combat, inventory)
 }
 
 ///|
 fn Module::new(
   player_getter : () -> @player.Player?,
-  network : @net.Network,
-  string_loader : @resource.SyncLoader,
   combat : @combat_system.Combat,
   inventory : @inventory.Inventory,
 ) -> Module {
   {
     player_getter,
-    network,
     player_skill_book: None,
     watchers: [],
-    string_loader,
     combat,
     inventory,
   }
 }
 
 ///|
-pub fn Module::make_handlers(
-  self : Module,
-) -> Map[@net.Opcode, (@net.InPacket) -> Unit] {
-  [
-    @net.make_handler(@net.UPDATE_SKILL, parse_skill_update, fn(
-      update : SkillUpdate,
-    ) {
-      handle_skill_update(self.player_getter, update)
-    }),
-  ]
-  |> Map::from_array
-}
 
 ///|
 // pub fn Module::make_actions(
@@ -114,7 +94,7 @@ pub async fn Module::load_player_skill_book(
   self : Module,
   job : @job.Job,
 ) -> &@legacy_types.SkillBook {
-  let skill_book = SkillBook::load(self.string_loader, job, self.watchers)
+  let skill_book = SkillBook::load(job, self.watchers)
   if self.player_skill_book is Some((_, cont_listen)) {
     cont_listen.val = false // dispose
   }

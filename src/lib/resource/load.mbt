@@ -35,12 +35,18 @@ pub async fn AsyncLoader::load_res_async(
 ) -> NxNode {
   let promise = self.loader.load_data(join_path(path))
   {
-    loader_name: self.name,
-    image_loader: None,
     name: path.last().unwrap(),
     desc: promise,
     path: path |> @immut/array.from_array,
   }
+}
+
+///|
+pub async fn AsyncLoader::load_resource(
+  self : AsyncLoader,
+  path : ArrayView[String],
+) -> Json {
+  self.loader.load_data(join_path(path))
 }
 
 ///|
@@ -133,7 +139,7 @@ fn get_by_path(obj : Json, path : String) -> Json {
   }
   let parts = path.split("/")
   parts.fold(init=obj, fn(acc, part) {
-    guard acc.as_object() is Some(obj) else {
+    guard acc is Object(obj) else {
       null // TODO: throw error
     }
     guard obj.get(part.to_string()) is Some(value) else {

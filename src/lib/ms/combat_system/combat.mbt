@@ -342,7 +342,7 @@ fn Combat::resolve_attack_targets(
   match get_range_semantics(act.get_id()) {
     RangeSemantics::LegacySingleRange => {
       let range = make_attack_range(attack)
-      find_closest_mob(self.mobs, range, attack.origin, attack.mobcount)
+      find_closest_mob(self.mobs, range, attack.origin, attack.max_target_count)
     }
     RangeSemantics::ProjectileThenAoe => {
       // Stage 1: primary target is resolved by regular ranged cast range.
@@ -363,7 +363,7 @@ fn Combat::resolve_attack_targets(
         self.mobs,
         aoe_range,
         center,
-        attack.mobcount,
+        attack.max_target_count,
       )
       let targets = [primary_oid]
       for oid in splash {
@@ -371,7 +371,7 @@ fn Combat::resolve_attack_targets(
           targets.push(oid)
         }
       }
-      targets.iter().take(attack.mobcount).collect()
+      targets.iter().take(attack.max_target_count).collect()
     }
   }
 }

@@ -271,7 +271,7 @@ pub fn Mob::new(
   let can_jump = nx_mob.meta.can_jump
   let can_fly = nx_mob.meta.can_fly
   let can_move = nx_mob.meta.can_move
-  let name = mob_names[monster_id.to_string()]
+  let _name = mob_names[monster_id.to_string()]
 
   //TODO: sound
 

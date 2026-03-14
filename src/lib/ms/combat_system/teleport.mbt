@@ -1,20 +1,4 @@
 ///|
-/// 传送技能.
-/// MVP Implementation Note:
-/// This is a simplified debug teleport that bypasses validity checks.
-///
-/// A proper production implementation should:
-/// 1. Raycast Check (Wall Check):
-///    - Cast a ray from (current_x, current_y) to (new_x, new_y).
-///    - If it hits a wall (foothold with vertical component / wall property), stop there.
-///
-/// 2. Foothold Probe (Ground Check):
-///    - At the target (new_x, new_y), cast a ray downwards (e.g. +100px).
-///    - If a valid foothold is found, snap new_y to that foothold's y-level.
-///    - If no foothold is found (void) or inside a wall, the teleport should fail.
-///
-/// 3. Map Bounds Check:
-///    - Clamp new_x/new_y within the map boundaries.
 fn teleport(
   character : @character.Character,
   physics : @physics.Physics,

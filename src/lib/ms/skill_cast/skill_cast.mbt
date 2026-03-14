@@ -1,4 +1,13 @@
 ///|
+using @combat_system {
+  type SpecialMove,
+  type RegularAttack,
+  type RegularAction,
+  make_regular_attack,
+  get_regular_attack_bullet,
+}
+
+///|
 /// Global registry of available moves.
 pub let move_map : Map[Int, @combat_system.SpecialMove] = Map::new()
 
@@ -23,7 +32,7 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
     guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
       return
     }
-    (@combat_system.new_regular_attack(), Some(weapon))
+    (new_regular_attack(weapon.get_type()), Some(weapon))
   } else if move_map.get(move_id) is Some(act) {
     if act.is_attack() {
       guard character.get_look().get_equips().get_weapon() is Some(weapon) else {
@@ -63,4 +72,43 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
     None => Map::new()
   }
   combat.apply_move(cc, act, after_images)
+}
+
+///|
+pub fn new_regular_attack(weapon_type : @weapon.Type) -> SpecialMove {
+  let ra = RegularAttack::{ action: RegularAction::default() }
+  {
+    id: 0,
+    attack: true,
+    skill: false,
+    apply_useeffects: fn(_) {  },
+    apply_use_sfx: fn(_) {  },
+    apply_actions: fn(char, attack_type) { ra.apply_actions(char, attack_type) },
+    make_attack: fn(char, i, attack_type, degenerate) {
+      make_regular_attack(
+        char,
+        i.get_bulletid(),
+        attack_type,
+        degenerate,
+        max_target_count=match weapon_type {
+          @weapon.SWORD_1H
+          | @weapon.SWORD_2H
+          | @weapon.AXE_1H
+          | @weapon.AXE_2H
+          | @weapon.MACE_1H
+          | @weapon.MACE_2H
+          | @weapon.POLEARM
+          | @weapon.SPEAR => 3
+          _ => 1
+        },
+      )
+    },
+    get_bullet: fn(_char, value) { get_regular_attack_bullet(value) },
+    can_use: fn(_, weapon_type, _, _, _, bullet) {
+      can_use_regular_attack(weapon_type, bullet)
+    },
+    apply_hit_effects: fn(_, _) {  },
+    apply_hit_sfx: fn(_, _) {  },
+    get_afterimage: fn() { Map::new() },
+  }
 }

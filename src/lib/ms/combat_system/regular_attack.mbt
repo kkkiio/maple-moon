@@ -18,6 +18,7 @@ pub fn make_regular_attack(
   bullet_id : Int,
   attacktype : @combat_proto.AttackType,
   degenerate : Bool,
+  max_target_count? : Int = 1,
 ) -> @combat_proto.Attack {
   let t = attacktype
   let mut mindamage = character.stats.get_mindamage().to_double()
@@ -64,7 +65,7 @@ pub fn make_regular_attack(
     toleft,
     speed,
     skill: 0,
-    mobcount: 1,
+    max_target_count,
     hitcount: 1,
     stance: character.get_look().get_stance().int_value(),
     hrange: 1.0,
@@ -112,7 +113,7 @@ fn can_use_regular_attack_internal(
 }
 
 ///|
-pub fn new_regular_attack() -> SpecialMove {
+fn new_regular_attack() -> SpecialMove {
   let ra = RegularAttack::{ action: RegularAction::default() }
   {
     id: 0,

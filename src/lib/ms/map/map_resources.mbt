@@ -25,11 +25,11 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
   @log.info("loading raw map resource", data={ "path": path })
-  let src = get_mapx_loader().load_res_async(path)
-  guard not(src.is_null()) else {
+  let src = get_mapx_loader().load_resource(path)
+  if src is Null {
     raise @resource.LoadError("map not found, id=\{map_id}")
   }
-  let nx_map : NxMap = @json.from_json(src.value()) catch {
+  let nx_map : NxMap = @json.from_json(src) catch {
     err => fail("failed to parse nx map: \{err.to_string()}")
   }
   let tilesets = {}
@@ -64,7 +64,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
     tilesets,
     object_animation_sets,
     background_animation_sets,
-    root: src.value(),
+    root: src,
   }
 }
 

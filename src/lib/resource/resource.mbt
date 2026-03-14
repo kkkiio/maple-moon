@@ -31,7 +31,7 @@ pub fn NxNode::op_get(self : NxNode, name : String) -> NxNode {
 ///|
 pub fn NxNode::get_string(self : NxNode) -> String {
   match self.desc {
-    Json::Number(it) => it.to_string()
+    Json::Number(it, ..) => it.to_string()
     Json::String(it) => it
     _ => ""
   }
@@ -50,17 +50,9 @@ pub fn NxNode::iter(self : NxNode) -> Iter[NxNode] {
       .iter()
       .map(fn(kv) {
         let (k, v) = kv
-        { ..self, name: k, desc: v, path: self.path.push(k) }
+        { name: k, desc: v, path: self.path.push(k) }
       })
     _ => Iter::empty()
-  }
-}
-
-///|
-pub fn NxNode::is_null(self : NxNode) -> Bool {
-  match self.desc {
-    Json::Null => true
-    _ => false
   }
 }
 

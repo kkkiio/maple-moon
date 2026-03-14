@@ -228,7 +228,7 @@ pub fn Skill::make_attack(
     toleft,
     speed,
     skill: self.skill_id,
-    mobcount: stats.mobcount,
+    max_target_count: stats.mobcount,
     hrange: stats.hrange,
   }
   match attack.t {

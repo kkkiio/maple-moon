@@ -24,7 +24,8 @@ pub(all) struct Attack {
   accuracy : Int
   playerlevel : Int
   mut hitcount : Int
-  mut mobcount : Int
+  /// max number of targets this attack can hit.
+  max_target_count : Int
   speed : Int
   mut stance : Int
   mut skill : Int

@@ -70,7 +70,7 @@ pub(all) struct Character {
   mut attacking : Bool
   mut facing_right : Bool
   name : String
-  name_label : @graphics.Text
+  // name_label : @graphics.Text
   // chat_balloon: ChatBalloon
   // recurring_effects: RecurringEffect
   invincible : @utils.TimedBool
@@ -142,13 +142,13 @@ pub fn Character::new(
     attacking: false,
     facing_right: false,
     name,
-    name_label: @graphics.Text::new(
-      text=name,
-      @graphics.FontId::A13M,
-      @graphics.TextAlignment::CENTER,
-      @struct.ColorName::WHITE,
-      nametag=true,
-    ),
+    // name_label: @graphics.Text::new(
+    //   text=name,
+    //   @graphics.FontId::A13M,
+    //   @graphics.TextAlignment::CENTER,
+    //   @struct.ColorName::WHITE,
+    //   nametag=true,
+    // ),
     state: CharState::STAND,
     invincible: @utils.TimedBool::default(),
     get_skilllevel,
@@ -224,7 +224,7 @@ pub fn Character::draw(
   //     }
 
   // If ever changing code for namelabel confirm placements with map 10000
-  self.name_label.draw(absp + @struct.Point::new(0, -4))
+  // self.name_label.draw(absp + @struct.Point::new(0, -4))
   // chat_balloon_.draw(absp - Point<int16_t>(0, 85));
 
   //     recurring_effects_.drawabove(absp, alpha);

@@ -84,7 +84,7 @@ pub struct Mob {
   can_jump : Bool
   can_fly : Bool
   is_boss : Bool
-  name_label : @graphics.Text
+  // name_label : @graphics.Text
   randomizer : @random.Rand
   mut anim_time : Double
   mut movements : Array[@physics.Movement]
@@ -315,13 +315,13 @@ pub fn Mob::new(
   }
   let fly_direction = STRAIGHT
   let counter = 0
-  let name_label = @graphics.Text::new(
-    text=name,
-    @graphics.FontId::A13M,
-    @graphics.TextAlignment::CENTER,
-    @struct.ColorName::WHITE,
-    nametag=true,
-  )
+  // let name_label = @graphics.Text::new(
+  //   text=name,
+  //   @graphics.FontId::A13M,
+  //   @graphics.TextAlignment::CENTER,
+  //   @struct.ColorName::WHITE,
+  //   nametag=true,
+  // )
   {
     entity,
     oid: object_id,
@@ -346,7 +346,7 @@ pub fn Mob::new(
     can_jump,
     can_fly,
     is_boss,
-    name_label,
+    // name_label,
     randomizer,
     anim_time: 0.0,
     movements: [],
@@ -666,22 +666,20 @@ pub fn Mob::update_movement_ex(
   skill_level : Int,
   option : Int,
 ) -> Unit {
-  @game_server.send(
-    @server_proto.MoveMonsterMessage::{
-      oid: self.oid,
-      move_id: t,
-      nibbles,
-      action,
-      skill,
-      skill_level,
-      option,
-      start_pos: self.get_position(),
-      movement: @physics.Movement::from_physics_object(
-        self.phobj,
-        self.stance.int_value(),
-      ),
-    },
-  )
+  @game_server.send(@server_proto.MoveMonsterMessage::{
+    oid: self.oid,
+    move_id: t,
+    nibbles,
+    action,
+    skill,
+    skill_level,
+    option,
+    start_pos: self.get_position(),
+    movement: @physics.Movement::from_physics_object(
+      self.phobj,
+      self.stance.int_value(),
+    ),
+  })
 }
 
 ///|

@@ -8,7 +8,6 @@ import { InspectorPanel } from './components/InspectorPanel';
 import { MapSelector } from './components/MapSelector';
 import { StatusPanel } from './components/StatusPanel';
 import { EditorAPI, EditorSceneGraph, initMoonBitEngine } from './engine/bridge';
-import mapDataRaw from './utils/map.img.json';
 
 const DEFAULT_MAP_ID = '100030000';
 
@@ -31,16 +30,25 @@ export default function EditorApp() {
   const [selectedObj, setSelectedObj] = useState<any | null>(null);
   const [api, setApi] = useState<EditorAPI | null>(null);
   const [selectedMapId, setSelectedMapId] = useState<string>(DEFAULT_MAP_ID);
+  const [mapDataRaw, setMapDataRaw] = useState<any>(null);
   const editorApiRef = useRef<EditorAPI | null>(null);
   const lastSceneRevisionRef = useRef<number>(-1);
   const wasLoadingRef = useRef<boolean>(false);
 
+  useEffect(() => {
+    fetch('/assets/String/Map.img.json')
+      .then(r => r.json())
+      .then(setMapDataRaw)
+      .catch(e => console.error("Failed to load Map.img.json:", e));
+  }, []);
+
   const { mapOptions, mapIdSet } = useMemo(() => {
     const options: { group: string; items: { value: string; label: string }[] }[] = [];
     const ids = new Set<string>();
+    if (!mapDataRaw) return { mapOptions: options, mapIdSet: ids };
     for (const [region, maps] of Object.entries(mapDataRaw)) {
       const items: { value: string; label: string }[] = [];
-      for (const [id, info] of Object.entries(maps)) {
+      for (const [id, info] of Object.entries(maps as any)) {
         // @ts-ignore
         const label = `${info.mapName} (${id})`;
         items.push({ value: id, label });
@@ -51,9 +59,10 @@ export default function EditorApp() {
       }
     }
     return { mapOptions: options, mapIdSet: ids };
-  }, []);
+  }, [mapDataRaw]);
 
   useEffect(() => {
+    if (mapIdSet.size === 0) return;
     const search = new URLSearchParams(window.location.search);
     const mapId = search.get('mapId');
     const validMapId = mapId && mapIdSet.has(mapId) ? mapId : DEFAULT_MAP_ID;

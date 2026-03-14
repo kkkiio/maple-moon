@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/mapeditor"
+package "KKKIIO/maple-moon/map_editor"
 
 import {
   "KKKIIO/maple-moon/lib/ms/map",

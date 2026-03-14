@@ -156,7 +156,7 @@ export async function initMoonBitEngine(
         Object.assign(globalThis, importObject);
 
         // Load the MoonBit module
-        const m = await import("../../target/js/release/build/mapeditor/mapeditor.js");
+        const m = await import("../../target/js/release/build/map_editor/map_editor.js");
 
         // Start the editor engine
         if (m.start_editor) {

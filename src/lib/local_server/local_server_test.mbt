@@ -1,4 +1,144 @@
 ///|
+struct StarterCharacterLoader {
+  dummy : Unit
+}
+
+///|
+fn StarterCharacterLoader::new() -> StarterCharacterLoader {
+  { dummy: () }
+}
+
+///|
+struct StarterStringLoader {
+  dummy : Unit
+}
+
+///|
+fn StarterStringLoader::new() -> StarterStringLoader {
+  { dummy: () }
+}
+
+///|
+struct EmptyItemLoader {
+  dummy : Unit
+}
+
+///|
+fn EmptyItemLoader::new() -> EmptyItemLoader {
+  { dummy: () }
+}
+
+///|
+fn mock_icon(path : String) -> Json {
+  { "__i": path, "__w": 1, "__h": 1, "origin": [0, 0] }
+}
+
+///|
+fn mock_equip_entry() -> Json {
+  {
+    "info": {
+      "icon": mock_icon("images/Item/mock_icon.png"),
+      "iconRaw": mock_icon("images/Item/mock_icon_raw.png"),
+    },
+  }
+}
+
+///|
+pub impl @resource.AsyncResourceLoader for StarterCharacterLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self.dummy)
+  match path.to_string() {
+    "Coat/01040002.img" => mock_equip_entry()
+    "Pants/01060002.img" => mock_equip_entry()
+    "Shoes/01072001.img" => mock_equip_entry()
+    "Weapon/01302000.img" => mock_equip_entry()
+    other => fail("unexpected starter character path: \{other}")
+  }
+}
+
+///|
+pub impl @resource.AsyncResourceLoader for StarterStringLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self.dummy)
+  match path.to_string() {
+    "Eqp.img" =>
+      {
+        "Eqp": {
+          "Coat": { "1040002": { "name": "White Undershirt" } },
+          "Pants": { "1060002": { "name": "Blue Jean Shorts" } },
+          "Shoes": { "1072001": { "name": "Red Rubber Boots" } },
+          "Weapon": { "1302000": { "name": "Sword" } },
+        },
+      }
+    other => fail("unexpected starter string path: \{other}")
+  }
+}
+
+///|
+pub impl @resource.AsyncResourceLoader for EmptyItemLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self.dummy)
+  fail("unexpected starter item path: \{path.to_string()}")
+}
+
+///|
+async test "local server creates default character without item preload" {
+  @resource.set_character_loader(
+    @resource.AsyncLoader::new(
+      "starter_character_loader",
+      loader=StarterCharacterLoader::new(),
+      base_url="/assets",
+    ),
+  )
+  @resource.set_string_loader(
+    @resource.AsyncLoader::new(
+      "starter_string_loader",
+      loader=StarterStringLoader::new(),
+      base_url="/assets",
+    ),
+  )
+  @resource.set_item_loader(
+    @resource.AsyncLoader::new(
+      "empty_item_loader",
+      loader=EmptyItemLoader::new(),
+      base_url="/assets",
+    ),
+  )
+  let db = MemoryDB::new()
+  let server = LocalServer::new(db~)
+  server.init_routes()
+  let responses : Ref[Array[@server_proto.CharacterListMessage]] = Ref::new([])
+  server.add_server_message_handler(
+    "test_character_list",
+    @server_proto.CharacterListMessage::type_code(),
+    fn(json : Json) -> Unit raise {
+      let msg : @server_proto.CharacterListMessage = @json.from_json(json)
+      responses.val.push(msg)
+    },
+  )
+
+  server.send_client_message(
+    @server_proto.CharacterListRequestMessage::default(),
+  )
+  server_system(server)
+  ignore(@io_service.wait_future(@io_service.submit_background_task(() => ())))
+  server_system(server)
+
+  inspect(responses.val.length(), content="1")
+  inspect(responses.val[0].characters.length(), content="1")
+  inspect(
+    responses.val[0].characters[0].look.equips.get(5).unwrap(),
+    content="1040002",
+  )
+}
+
+///|
 async test "local server character snapshot roundtrip keeps inventory data" {
   let character_id = 1
   let core_store = "character_core"

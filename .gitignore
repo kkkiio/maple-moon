@@ -21,13 +21,14 @@ assets/spritesheets/UI
 assets/map
 assets/map001
 assets/minimap
-src/lib/resource/AGENTS.md
+assets/sound
 src/App.vue
 
 _build
 target
 
-.agent
 .codex
 .claude
 CLAUDE.md
+
+.env.dev

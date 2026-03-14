@@ -106,8 +106,8 @@ test "use_move_integration_test" {
     _ => Map::new()
   }
   let weapon_icons = (
-    weapon_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
-    weapon_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+    weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    weapon_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let weapon_item = @item.ItemData::{
     src: weapon_node,
@@ -306,8 +306,8 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
     _ => Map::new()
   }
   let weapon_icons = (
-    weapon_info.get("icon").map(fn(json) { @json.from_json(json) }).unwrap(),
-    weapon_info.get("iconRaw").map(fn(json) { @json.from_json(json) }).unwrap(),
+    weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
+    weapon_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
   let weapon_item = @item.ItemData::{
     src: weapon_node,

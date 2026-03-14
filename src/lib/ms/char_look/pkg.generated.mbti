@@ -40,6 +40,8 @@ pub let layers_by_name : @sorted_map.SortedMap[String, HairLayer]
 
 pub fn set_after_images(String, NxAfterImages) -> Unit
 
+pub fn set_module(CharLookMod) -> Unit
+
 pub fn update_after_image_system(Double) -> Unit
 
 // Errors
@@ -212,6 +214,7 @@ pub(all) struct LookEntry {
 pub impl Default for LookEntry
 pub impl Show for LookEntry
 pub impl ToJson for LookEntry
+pub impl @json.FromJson for LookEntry
 
 type NoopDrawable
 pub impl @graphics.Drawable for NoopDrawable

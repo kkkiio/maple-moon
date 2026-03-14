@@ -56,7 +56,7 @@ priv struct WorldMapTooltipResource {
 priv struct WorldMapLink {
   link_img_texture : @resource.NxTexture
   link_map : String
-  tooltip : String
+  // tooltip : String
 }
 
 ///|
@@ -637,7 +637,7 @@ fn parse_world_map_page_resource(
     map_links.push({
       link_img_texture: link.link.link_img,
       link_map: link.link.link_map,
-      tooltip: link.tooltip,
+      // tooltip: link.tooltip,
     })
   }
   let map_spots = []

@@ -28,6 +28,7 @@ fn game_start(_delta : Double) -> Unit {
   @passive.set_passive_randomizer(@random.Rand::new())
   @game_server.init_server()
   @select_char_ui.setup_game_server_handlers()
+  @explorer_creation_ui.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @npc.setup_game_server_handlers()
   @monster.setup_game_server_handlers()
@@ -82,6 +83,15 @@ fn main {
   .add_system(
     @select_char_ui.select_char_ui_system,
     system_name="select_char_ui_system",
+  )
+  .add_system(
+    @explorer_creation_ui.explorer_creation_ui_system,
+    system_name="explorer_creation_ui_system",
+  )
+  .add_system(@npc_talk_ui.npc_talk_ui_system, system_name="npc_talk_ui_system")
+  .add_system(
+    @status_bar_ui.status_bar_ui_system,
+    system_name="status_bar_ui_system",
   )
   .add_system(
     @game_scene.scene_transition_system,

@@ -185,7 +185,7 @@ pub fn get_stage() -> Stage? {
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
-    SelectCharacter => {
+    SelectCharacter | ExplorerCharacterCreation => {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()
@@ -504,7 +504,11 @@ fn new_stage(
   @character.register_character(player.get_character())
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
-  let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, npc_loader~, string_loader~)
+  let map_npcs = @npc.MapNpcs::new(
+    @npc_talk_ui.open_npc_talk_ui,
+    npc_loader~,
+    string_loader~,
+  )
   let monster_module = @monster.Module::new()
   let stage = Stage::new(
     map_module.get_portals_animations(),

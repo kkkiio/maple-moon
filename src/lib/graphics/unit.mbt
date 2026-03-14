@@ -1,4 +1,5 @@
 ///|
+#deprecated("use @selene.Sprite")
 pub(all) struct RenderSpec {
   drawables : Array[&Drawable]
   statefuls : Array[&Stateful]

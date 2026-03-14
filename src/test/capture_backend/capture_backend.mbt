@@ -16,7 +16,7 @@ fn load_image(path : String) -> @capture_app.Image {
 
 ///|
 fn color_to_css(color : @render.Color) -> String {
-  "rgba(\{color.r.to_int()}, \{color.g.to_int()}, \{color.b.to_int()}, \{color.a})"
+  "rgba(\{color.r.reinterpret_as_int()}, \{color.g.reinterpret_as_int()}, \{color.b.reinterpret_as_int()}, \{color.a})"
 }
 
 ///|

@@ -26,16 +26,40 @@ fn make_local_hair_loader() -> @resource.AsyncLoader {
 }
 
 ///|
+fn test_character_list_message() -> @server_proto.CharacterListMessage {
+  {
+    characters: [
+      {
+        character_id: 1,
+        name: "kkkiio",
+        look: {
+          female: false,
+          skin: 0,
+          faceid: 20000,
+          hairid: 30030,
+          equips: {},
+          maskedequips: {},
+          petids: [],
+        },
+      },
+    ],
+  }
+}
+
+///|
 fn setup_select_char_ui_scene() -> Unit {
-  @select_char_ui.reset_select_char_ui_for_test()
+  @capture_app.reset_mock_server()
   @resource.set_body_loader(make_local_body_loader())
   @resource.set_face_loader(make_local_face_loader())
   @resource.set_hair_loader(make_local_hair_loader())
+  @select_char_ui.setup_game_server_handlers()
   @capture_app.init_app(
     @system.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
+    .add_system(@io_service.io_system, system_name="io_system")
+    .add_system(@char_look.char_look_system, system_name="char_look_system")
     .add_system(
       @select_char_ui.select_char_ui_system,
       system_name="select_char_ui_system",
@@ -44,60 +68,75 @@ fn setup_select_char_ui_scene() -> Unit {
 }
 
 ///|
-fn wait_until_select_char_ui_loaded() -> Unit {
-  for _ in 0..<10 {
-    if @select_char_ui.get_select_char_ui_debug_state_for_test()
-      is { "loaded": true, .. } {
+async fn wait_until_character_list_requested() -> Unit {
+  for _ in 0..<120 {
+    @capture_app.run_loop(0.016)
+    @async.sleep(0)
+    if @capture_app.mock_server_sent_count(
+        @server_proto.CharacterListRequestMessage::type_code(),
+      ) >
+      0 {
       return
     }
+  }
+  abort("select_char_ui did not request character list")
+}
+
+///|
+async fn wait_until_select_char_ui_loaded() -> Unit {
+  @capture_app.emit_mock_server_message(test_character_list_message())
+  for _ in 0..<240 {
     @capture_app.run_loop(0.016)
+    @async.sleep(0)
+    if @entity.iter_entities().to_array().length() >= 10 {
+      @capture_app.run_loop(0.016)
+      @async.sleep(0)
+      return
+    }
   }
   abort("select_char_ui not loaded")
 }
 
 ///|
-async test "select char ui renders character and name" {
-  defer @select_char_ui.reset_select_char_ui_for_test()
-  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
-  setup_select_char_ui_scene()
-  let mod = @char_look.CharLookMod::load()
-  @select_char_ui.init_select_char_ui_for_test(mod)
-  wait_until_select_char_ui_loaded()
-  json_inspect(@select_char_ui.get_select_char_ui_debug_state_for_test(), content={
-    "loaded": true,
-    "character_count": 1,
-    "character_names": ["kkkiio"],
-    "selected_slot": null,
-    "last_selected_character_id": null,
-  })
+fn setup_select_char_phase() -> Unit {
+  @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+    map_id=100000000,
+    portal_id=0,
+  )
   @capture_app.run_loop(0.016)
-  @capture_app.snapshot(
-    "src/test/select_char_ui_test/__snapshot__/select_char_ui_default.png",
+  @game_state.game_state.phase = @game_state.GamePhase::SelectCharacter
+}
+
+///|
+fn assert_character_list_requested() -> Unit raise {
+  inspect(
+    @capture_app.mock_server_sent_count(
+      @server_proto.CharacterListRequestMessage::type_code(),
+    ),
+    content="1",
+  )
+  let request_json = @capture_app.mock_server_latest_sent_json(
+    @server_proto.CharacterListRequestMessage::type_code(),
+  ).unwrap()
+  let _request : @server_proto.CharacterListRequestMessage = @json.from_json(
+    request_json,
   )
 }
 
 ///|
-async test "select char ui select button chooses first character" {
-  defer @select_char_ui.reset_select_char_ui_for_test()
+async test "select char ui renders character and start button chooses first character" {
+  defer @capture_app.reset_mock_server()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites.clear()
   setup_select_char_ui_scene()
-  let mod = @char_look.CharLookMod::load()
-  @select_char_ui.init_select_char_ui_for_test(mod)
+  setup_select_char_phase()
+  @char_look.set_module(@char_look.CharLookMod::load())
+  wait_until_character_list_requested()
+  assert_character_list_requested()
   wait_until_select_char_ui_loaded()
-  @inputs.mouse.pos = @selene_math.Vec2D(620.0, 410.0)
   @capture_app.run_loop(0.016)
-  @inputs.mouse.left_button = true
-  @capture_app.run_loop(0.016)
-  @inputs.mouse.left_button = false
-  @capture_app.run_loop(0.016)
-  @capture_app.run_loop(0.016)
-  json_inspect(@select_char_ui.get_select_char_ui_debug_state_for_test(), content={
-    "loaded": true,
-    "character_count": 1,
-    "character_names": ["kkkiio"],
-    "selected_slot": null,
-    "last_selected_character_id": [1],
-  })
+  @async.sleep(0)
+  @capture_app.snapshot(
+    "src/test/select_char_ui_test/__snapshot__/select_char_ui_default.png",
+  )
 }

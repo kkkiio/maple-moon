@@ -3,18 +3,13 @@ package "KKKIIO/maple-moon/lib/ms/select_char_ui"
 
 import {
   "KKKIIO/maple-moon/lib/ms/char_look",
+  "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
 }
 
 // Values
-pub fn get_select_char_ui_debug_state_for_test() -> Json
-
-pub async fn init_select_char_ui_for_test(@char_look.CharLookMod) -> Unit
-
 pub async fn load_char_look(@entity.Entity, @char_look.CharLookMod, SelectableCharacter) -> @char_look.CharLook
-
-pub fn reset_select_char_ui_for_test() -> Unit
 
 pub fn select_char_ui_system(Double) -> Unit
 
@@ -30,12 +25,15 @@ pub async fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter],
 
 pub(all) struct SelectCharUIResource {
   ani18 : @sprite.Animation
+  bt_new : @ui.MapleButtonResource
+  bt_select : @ui.MapleButtonResource
 }
 pub fn SelectCharUIResource::load() -> Self raise
 
 pub(all) struct SelectableCharacter {
   cid : Int
   name : String
+  look : @char_look.LookEntry
 }
 
 type SelectableCharacterUI

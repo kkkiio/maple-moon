@@ -35,13 +35,10 @@ pub fn parse_csv_line(line : String) -> Array[String] {
 ///|
 /// Strip optional surrounding double quotes and trim spaces.
 pub fn strip_quotes(s : String) -> String {
-  let trimmed = s.trim().to_string()
-  if trimmed.length() >= 2 &&
-    trimmed.has_prefix("\"") &&
-    trimmed.has_suffix("\"") {
-    return trimmed[1:trimmed.length() - 1].to_string() catch { _ => trimmed }
+  match s.trim() {
+    ['"', .. inner, '"'] => inner.to_string()
+    val => val.to_string()
   }
-  trimmed
 }
 
 ///|

@@ -155,7 +155,7 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
 ///|
 /// progress data is a 3-digit string that contains kill counts for each monster
 fn check_mob_progress_data(progress_data : StringView) -> Unit raise {
-  guard progress_data.iter().all(Char::is_ascii_digit(_)) &&
+  guard progress_data.iter().all(v => Char::is_ascii_digit(v)) &&
     progress_data.length() % 3 == 0 else {
     fail("Invalid progress data: \{progress_data}")
   }

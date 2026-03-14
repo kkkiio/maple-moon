@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/explorer_creation_ui"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/char_look",
+}
+
+// Values
+pub fn close_explorer_creation_ui() -> Unit
+
+pub fn explorer_creation_ui_system(Double) -> Unit
+
+pub fn open_explorer_creation_ui(@char_look.CharLookMod) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+type UiStage
+pub impl Eq for UiStage
+
+// Type aliases
+
+// Traits
+

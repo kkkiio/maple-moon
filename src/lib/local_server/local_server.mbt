@@ -1,7 +1,10 @@
 ///|
 using @server_proto {
   type ChangeStatsMesoMessage,
+  type CharacterListEntry,
+  type CharacterListMessage,
   trait ClientMessage,
+  type CreateCharacterResultMessage,
   trait ServerMessage,
   type ChangeMapMessage,
   type DropLootMessage,
@@ -53,6 +56,7 @@ struct LocalServer {
   mut player_meso : Int
   mut current_character_id : Int
   mut character_revision : Int
+  character_roster : Array[CharacterListEntry]
   player_items : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]]
   slot_max_by_tab : Map[InventoryType, Int]
   mobs : Map[Int, ServerMob]
@@ -101,6 +105,7 @@ pub fn LocalServer::new(
     player_meso: 0,
     current_character_id: 1,
     character_revision: 0,
+    character_roster: [],
     player_items: {
       let m : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]] = Map::new()
       m.set(InventoryType::EQUIP, Map::new())
@@ -148,6 +153,12 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@net.ClientOpcode::SELECT_CHAR.int_value()] = v => {
     self.on_select_char(v)
   }
+  self.client_message_handler_map[@net.ClientOpcode::CHAR_LIST_REQUEST.int_value()] = _ => {
+    self.on_character_list_request()
+  }
+  self.client_message_handler_map[@net.ClientOpcode::CREATE_CHAR.int_value()] = json => {
+    self.on_create_char(json)
+  }
   self.client_message_handler_map[@net.ClientOpcode::CHANGE_MAP.int_value()] = v => {
     self.on_change_map(v)
   }
@@ -194,6 +205,188 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@net.ClientOpcode::ADMIN_COMMAND.int_value()] = json => {
     self.on_admin_command(json)
   }
+}
+
+///|
+priv struct CreateCharRequest {
+  name : String
+  job : Int
+  face : Int
+  hair : Int
+  hairc : Int
+  skin : Int
+  top : Int
+  bot : Int
+  shoes : Int
+  weapon : Int
+  female : Bool
+} derive(FromJson)
+
+///|
+fn default_character_look() -> @char_look.LookEntry {
+  {
+    female: false,
+    skin: 0,
+    faceid: 20000,
+    hairid: 30030,
+    equips: Map::from_array([
+      (@slot.Id::TOP.int_value(), 1040002),
+      (@slot.Id::BOTTOM.int_value(), 1060002),
+      (@slot.Id::SHOES.int_value(), 1072001),
+      (@slot.Id::WEAPON.int_value(), 1302000),
+    ]),
+    maskedequips: {},
+    petids: [],
+  }
+}
+
+///|
+fn default_character_entry() -> CharacterListEntry {
+  { character_id: 1, name: "kkkiio", look: default_character_look() }
+}
+
+///|
+async fn make_equipped_inventory_entry(
+  slot_id : @slot.Id,
+  item_id : Int,
+) -> InventoryItemEntry {
+  new_inventory_item_entry(
+    InventoryType::EQUIPPED,
+    slot_id.int_value(),
+    item_id,
+    1,
+  )
+}
+
+///|
+async fn LocalServer::apply_character_look_to_inventory(
+  self : LocalServer,
+  look : @char_look.LookEntry,
+) -> Unit {
+  self.reset_player_inventory_state()
+  guard self.player_items.get(InventoryType::EQUIPPED) is Some(equipped_items) else {
+    return
+  }
+  let item_ids = [
+    (@slot.Id::TOP, look.equips.get(@slot.Id::TOP.int_value())),
+    (@slot.Id::BOTTOM, look.equips.get(@slot.Id::BOTTOM.int_value())),
+    (@slot.Id::SHOES, look.equips.get(@slot.Id::SHOES.int_value())),
+    (@slot.Id::WEAPON, look.equips.get(@slot.Id::WEAPON.int_value())),
+  ]
+  for item in item_ids {
+    let (slot_id, item_id) = item
+    match item_id {
+      Some(id) =>
+        equipped_items.set(
+          slot_id.int_value(),
+          make_equipped_inventory_entry(slot_id, id),
+        )
+      None => ()
+    }
+  }
+}
+
+///|
+async fn LocalServer::init_character_storage(
+  self : LocalServer,
+  entry : CharacterListEntry,
+) -> Unit {
+  self.current_character_id = entry.character_id
+  self.last_map_id = 100000000
+  self.last_portal_id = 0
+  self.player_meso = 0
+  self.apply_character_look_to_inventory(entry.look)
+  self.save_character(entry.character_id)
+  self.save_character_roster()
+}
+
+///|
+fn LocalServer::find_character_entry(
+  self : LocalServer,
+  character_id : Int,
+) -> CharacterListEntry? {
+  for entry in self.character_roster {
+    if entry.character_id == character_id {
+      return Some(entry)
+    }
+  }
+  None
+}
+
+///|
+fn LocalServer::on_character_list_request(self : LocalServer) -> Unit {
+  @io_service.execute_background(async fn() {
+    if self.character_roster.is_empty() {
+      let loaded = self.load_character_roster()
+      if not(loaded) {
+        let entry = default_character_entry()
+        self.character_roster.push(entry)
+        self.init_character_storage(entry)
+      }
+    }
+    self.send_server_message(CharacterListMessage::{
+      characters: self.character_roster.copy(),
+    })
+  })
+}
+
+///|
+fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
+  let request : CreateCharRequest = @json.from_json(json)
+  @io_service.execute_background(
+    async fn() {
+      if self.character_roster.is_empty() {
+        let entry = default_character_entry()
+        self.character_roster.push(entry)
+        self.init_character_storage(entry)
+      }
+      let normalized_hair_id = request.hair + request.hairc
+      for entry in self.character_roster {
+        if entry.name == request.name {
+          self.send_server_message(CreateCharacterResultMessage::{
+            success: false,
+            character: None,
+            error: Some("Character name already exists"),
+          })
+          return
+        }
+      }
+      let mut next_id = 1
+      for entry in self.character_roster {
+        if entry.character_id >= next_id {
+          next_id = entry.character_id + 1
+        }
+      }
+      let entry : CharacterListEntry = {
+        character_id: next_id,
+        name: request.name,
+        look: {
+          female: request.female,
+          skin: request.skin,
+          faceid: request.face,
+          hairid: normalized_hair_id,
+          equips: Map::from_array([
+            (@slot.Id::TOP.int_value(), request.top),
+            (@slot.Id::BOTTOM.int_value(), request.bot),
+            (@slot.Id::SHOES.int_value(), request.shoes),
+            (@slot.Id::WEAPON.int_value(), request.weapon),
+          ]),
+          maskedequips: {},
+          petids: [],
+        },
+      }
+      self.character_roster.push(entry)
+      self.init_character_storage(entry)
+      self.send_server_message(CreateCharacterResultMessage::{
+        success: true,
+        character: Some(entry),
+        error: None,
+      })
+    },
+    on_error=fn(err) {
+      @log.error("failed to create character", data={ "error": err })
+    },
+  )
 }
 
 ///|
@@ -270,29 +463,38 @@ fn LocalServer::spawn_drops_for_mob(
 ///|
 fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
   let msg : PickupItemMessage = @json.from_json(json)
-  guard self.drops.get(msg.oid) is Some(drop) else { return }
-  if drop.meso {
-    let gain = drop.item_id
-    self.player_meso += gain
-    self.save_character_core_snapshot()
-    self.send_server_message(ChangeStatsMesoMessage::{ meso: self.player_meso })
-    self.send_server_message(ShowStatusMesoGainMessage::{ gain, })
-    self.drops.remove(msg.oid) |> ignore
-    self.send_server_message(@server_proto.RemoveLootMessage::{
-      mode: 2,
-      oid: msg.oid,
-      cid: Some(1),
-    })
-    return
-  }
-  guard self.apply_pickup_item(drop.item_id) else { return }
-  self.save_character_inventory_snapshot()
-  self.drops.remove(msg.oid) |> ignore
-  self.send_server_message(@server_proto.RemoveLootMessage::{
-    mode: 2,
-    oid: msg.oid,
-    cid: Some(1),
-  })
+  @io_service.execute_background(
+    async fn() {
+      guard self.drops.get(msg.oid) is Some(drop) else { return }
+      if drop.meso {
+        let gain = drop.item_id
+        self.player_meso += gain
+        self.save_character_core_snapshot()
+        self.send_server_message(ChangeStatsMesoMessage::{
+          meso: self.player_meso,
+        })
+        self.send_server_message(ShowStatusMesoGainMessage::{ gain, })
+        self.drops.remove(msg.oid) |> ignore
+        self.send_server_message(@server_proto.RemoveLootMessage::{
+          mode: 2,
+          oid: msg.oid,
+          cid: Some(1),
+        })
+        return
+      }
+      guard self.apply_pickup_item(drop.item_id) else { return }
+      self.save_character_inventory_snapshot()
+      self.drops.remove(msg.oid) |> ignore
+      self.send_server_message(@server_proto.RemoveLootMessage::{
+        mode: 2,
+        oid: msg.oid,
+        cid: Some(1),
+      })
+    },
+    on_error=fn(err) {
+      @log.error("failed to pick up item", data={ "error": err, "oid": msg.oid })
+    },
+  )
 }
 
 ///|
@@ -525,16 +727,20 @@ fn LocalServer::on_unequip_item(
 }
 
 ///|
-fn new_inventory_item_entry(
+async fn new_inventory_item_entry(
   invtype : InventoryType,
   slot : Int,
   item_id : Int,
   count : Int,
 ) -> InventoryItemEntry {
-  let load_equip_stats = fn(
-    item_id : Int,
-  ) -> @resource.EnumMap[@maple_stat.EquipStatId, Int] {
-    let item_data = @item.request_item_data(item_id)
+  if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
+    let item_data = @item.ItemData::load_item_data(item_id) catch {
+      err =>
+        @log.fatal("failed to load item data for new equip", data={
+          "item_id": item_id,
+          "error": err.to_string(),
+        })
+    }
     let equip_data = @data.EquipData::parse_item_data(item_data) catch {
       err =>
         @log.fatal("failed to parse equip data for new equip", data={
@@ -549,9 +755,6 @@ fn new_inventory_item_entry(
         stats.set(stat_id, value)
       }
     }
-    @resource.EnumMap(stats)
-  }
-  if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
     InventoryItemEntry::Equip(
       invtype~,
       slot~,
@@ -560,7 +763,7 @@ fn new_inventory_item_entry(
       expire=0,
       slots=7,
       level=0,
-      stats=load_equip_stats(item_id),
+      stats=@resource.EnumMap(stats),
       owner="",
       flag=0,
       itemlevel=0,
@@ -582,7 +785,10 @@ fn new_inventory_item_entry(
 }
 
 ///|
-fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
+async fn LocalServer::apply_pickup_item(
+  self : LocalServer,
+  item_id : Int,
+) -> Bool {
   guard InventoryType::by_item_id(item_id) is Some(invtype) else {
     return false
   }

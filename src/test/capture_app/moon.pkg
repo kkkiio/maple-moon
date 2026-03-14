@@ -4,6 +4,8 @@ import {
   "Milky2018/selene/commands",
   "Milky2018/selene/entity",
   "Milky2018/selene/system_set",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
+  "moonbitlang/core/json",
   "moonbitlang/core/set",
   "moonbitlang/x/fs",
   "moonbitlang/x/path",

@@ -8,8 +8,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/net",
-  "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/ui",
 }
 
 // Values
@@ -75,11 +73,6 @@ type Module
 pub fn Module::load(@net.Network) -> Self
 pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
 pub fn Module::new_char_stats(Self, @server_proto.StatsEntry, () -> @weapon.Type, @job.Job) -> CharStats
-
-type StatusBarUI
-pub fn StatusBarUI::new(CharStats, @ui.Hooks, @resource.SyncLoader) -> Self raise
-pub fn StatusBarUI::update(Self) -> Unit
-pub impl @ui.Widget for StatusBarUI
 
 // Type aliases
 pub using @maple_stat {type Id as MapleStatId}

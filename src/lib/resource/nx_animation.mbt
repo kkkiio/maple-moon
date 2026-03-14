@@ -33,7 +33,11 @@ pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture ra
     is { "__i": String(i), "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
     raise @json.JsonDecodeError((path, "invalid nx texture=\{json}"))
   }
-  let i = i
+  if i.contains("#") {
+    raise @json.JsonDecodeError(
+      (path, "\{i} still uses '#'-framed __i, reanim output expected"),
+    )
+  }
   let w = w.to_int()
   let h = h.to_int()
   let offset = if json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } {

@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/npc"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
@@ -15,7 +14,7 @@ import {
 // Values
 pub fn clear_map_npcs() -> Unit
 
-pub fn handle_npc_dialogue(&@ui.Container, @markup_text.RefRender, @resource.AsyncLoader, NpcTalkResource, NpcDialogue) -> Unit
+pub fn handle_npc_dialogue((TalkArgs) -> Unit, NpcDialogue) -> Unit
 
 pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
 
@@ -88,29 +87,6 @@ pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncL
 pub impl Show for NpcSpawn
 pub impl ToJson for NpcSpawn
 
-pub(all) struct NpcTalkResource {
-  top : @graphics.Texture
-  fill : @graphics.Texture
-  bottom : @graphics.Texture
-  nametag : @graphics.Texture
-  bt_yes : @ui.MapleButtonResource
-  bt_no : @ui.MapleButtonResource
-  bt_ok : @ui.MapleButtonResource
-  bt_next : @ui.MapleButtonResource
-  bt_prev : @ui.MapleButtonResource
-  bt_close : @ui.MapleButtonResource
-  bt_qstart : @ui.MapleButtonResource
-  bt_qyes : @ui.MapleButtonResource
-  bt_qno : @ui.MapleButtonResource
-  bt_qcyes : @ui.MapleButtonResource
-  bt_qcno : @ui.MapleButtonResource
-  bt_qgiveup : @ui.MapleButtonResource
-  bt_qafter : @ui.MapleButtonResource
-  bt_my_level : @ui.MapleButtonResource
-  bt_all_level : @ui.MapleButtonResource
-}
-pub fn NpcTalkResource::from_resource(@resource.NxNode) -> Self
-
 pub struct SpawnNpcController {
   mode : Int
   oid : Int
@@ -177,12 +153,6 @@ pub impl Eq for TalkType
 pub impl Hash for TalkType
 pub impl Show for TalkType
 pub impl ToJson for TalkType
-
-type UINpcTalk
-pub fn UINpcTalk::change_text(Self, Int, TalkAction, Speaker, String) -> Unit raise
-pub fn UINpcTalk::const_focused() -> Bool
-pub fn UINpcTalk::new(NpcTalkResource, @ui.Hooks, @resource.AsyncLoader, @markup_text.RefRender) -> Self
-pub impl @ui.Widget for UINpcTalk
 
 // Type aliases
 

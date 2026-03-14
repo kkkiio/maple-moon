@@ -8,13 +8,9 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "Milky2018/selene/sprite",
   "Milky2018/selene/position",
-  "Milky2018/selene/ui" @sui,
-  "Milky2018/selene/collision",
-  "Milky2018/selene/event",
   "Milky2018/selene/math" @selene_math,
+  "Milky2018/selene/sprite",
   "Milky2018/selene/entity",
-  "Milky2018/selene/inputs",
-  "Milky2018/selene/asset",
   "KKKIIO/maple-moon/lib/ms/logic_fps",
 }
 

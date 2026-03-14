@@ -188,6 +188,7 @@ pub fn OutlinedText::new(FontId, TextAlignment, @res_types.ColorName, @res_types
 pub fn OutlinedText::width(Self) -> Int
 pub impl ToJson for OutlinedText
 
+#deprecated
 pub(all) struct RenderSpec {
   drawables : Array[&Drawable]
   statefuls : Array[&Stateful]

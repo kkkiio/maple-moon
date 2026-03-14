@@ -2,13 +2,18 @@
 using @resource {nx_animation_to_selene_animation}
 
 ///|
-using @char_look {type CharLookMod, type CharLook}
+using @char_look {type CharLookMod}
 
 ///|
-using @io_service {execute_background}
+using @server_proto {
+  type CharacterListMessage,
+  type CharacterListRequestMessage,
+  type SelectCharMessage,
+  type SetFieldMessage,
+}
 
 ///|
-using @server_proto {type SetFieldMessage, type SelectCharMessage}
+using @explorer_creation_ui {open_explorer_creation_ui}
 
 ///|
 using @game_state {type GamePhase, game_state}
@@ -23,13 +28,15 @@ struct SelectCharUI {
   // 每项：(entity, frame_counter_ref, segments)
   // segment: (duration_frames, from_alpha, to_alpha)
   animations : Array[(@entity.Entity, Ref[Int], Array[(Int, Double, Double)])]
-  btn_select : @ui.MapleButton
+  buttons : Array[SeleneButton]
   entities : Array[@entity.Entity]
 }
 
 ///|
 pub(all) struct SelectCharUIResource {
   ani18 : @sprite.Animation
+  bt_new : @ui.MapleButtonResource
+  bt_select : @ui.MapleButtonResource
 }
 
 ///|
@@ -37,6 +44,12 @@ struct SelectableCharacterUI {
   cid : Int
   char_look : @char_look.CharLook
   name : String
+}
+
+///|
+priv struct SeleneButton {
+  button : @ui.MapleButton
+  entity : @entity.Entity
 }
 
 ///|
@@ -64,107 +77,99 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "__i": "/assets/ui/login.img/char_select/light18.png",
     },
   }
-  // let bt_new_res : Json = {
-  //   "disabled": {
-  //     "0": {
-  //       "__h": 37,
-  //       "__w": 110,
-  //       "origin": [0, 0],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28164",
-  //     },
-  //   },
-  //   "keyFocused": {
-  //     "0": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "origin": [-85, 17],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //     "1": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
-  //       "delay": "50",
-  //       "origin": [-85, 16],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //     "2": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
-  //       "delay": "50",
-  //       "origin": [-85, 15],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //     "3": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
-  //       "delay": "50",
-  //       "origin": [-85, 14],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //     "4": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
-  //       "delay": "50",
-  //       "origin": [-85, 15],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //     "5": {
-  //       "__h": 25,
-  //       "__w": 35,
-  //       "_inlink": "CharSelect/BtNew/keyFocused/0",
-  //       "delay": "50",
-  //       "origin": [-85, 16],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28165",
-  //     },
-  //   },
-  //   "mouseOver": {
-  //     "0": {
-  //       "__h": 37,
-  //       "__w": 110,
-  //       "origin": [0, 0],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28162",
-  //     },
-  //   },
-  //   "normal": {
-  //     "0": {
-  //       "__h": 37,
-  //       "__w": 110,
-  //       "origin": [0, 0],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28161",
-  //     },
-  //   },
-  //   "pressed": {
-  //     "0": {
-  //       "__h": 37,
-  //       "__w": 110,
-  //       "origin": [0, 0],
-  //       "z": 0,
-  //       "__i": "spritesheets/UI/Login.img/CharSelect/BtNew#28163",
-  //     },
-  //   },
-  // }
+  let bt_new_res : Json = {
+    "disabled": {
+      "0": {
+        "__h": 37,
+        "__w": 110,
+        "__off": [110, 37],
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+      },
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 37,
+        "__w": 110,
+        "__off": [0, 37],
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+      },
+    },
+    "normal": {
+      "0": {
+        "__h": 37,
+        "__w": 110,
+        "__off": [0, 0],
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+      },
+    },
+    "pressed": {
+      "0": {
+        "__h": 37,
+        "__w": 110,
+        "__off": [110, 0],
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+      },
+    },
+  }
   let ani18 : @resource.NxAnimation = @json.from_json(ani18_res)
-  { ani18: nx_animation_to_selene_animation(ani18) }
+  let bt_select_res : Json = {
+    "normal": {
+      "0": {
+        "__h": 52,
+        "__w": 140,
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+      },
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 52,
+        "__w": 140,
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+      },
+    },
+    "pressed": {
+      "0": {
+        "__h": 52,
+        "__w": 140,
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+      },
+    },
+    "disabled": {
+      "0": {
+        "__h": 52,
+        "__w": 140,
+        "origin": [0, 0],
+        "z": 0,
+        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+      },
+    },
+  }
+  {
+    ani18: nx_animation_to_selene_animation(ani18),
+    bt_new: @json.from_json(bt_new_res),
+    bt_select: @json.from_json(bt_select_res),
+  }
 }
 
 ///|
 pub(all) struct SelectableCharacter {
   cid : Int
-  // char_look : @char_look.CharLook
   name : String
+  look : @char_look.LookEntry
 }
 
 ///|
@@ -279,98 +284,44 @@ pub async fn SelectCharUI::new(
     )
   }
   entities.append(characters_entities)
-  let res : Map[@ui.ButtonState, @resource.NxAnimation] = {}
-  res[NORMAL] = {
-    frames: [
-      {
-        texture: {
-          i: "/assets/ui/login.img/char_select/bt_select.png",
-          w: 140,
-          h: 52,
-          offset: @struct.Point::new(0, 0),
-          origin: @struct.Point::new(0, 0),
-        },
-        delay: None,
-        head: None,
-        bounds: None,
-      },
-    ],
-    blend: false,
-    zigzag: false,
+  fn spawn_button(
+    entities : Array[@entity.Entity],
+    res : @ui.MapleButtonResource,
+    x : Int,
+    y : Int,
+    on_click : () -> Unit,
+  ) -> SeleneButton {
+    let entity = @entity.Entity::new()
+    entities.push(entity)
+    @position.positions.set(
+      entity,
+      @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    )
+    @selene_ui.uis.set(entity, @selene_ui.Ui::new())
+    let button = @ui.MapleButton::new(
+      res,
+      pos=@struct.Point::new(x, y),
+      on_click~,
+    )
+    @sprite.sprites.set(
+      entity,
+      @sprite.Sprite::from_animation(button.current_selene_animation(), 10),
+    )
+    { button, entity }
   }
-  res[MOUSEOVER] = {
-    frames: [
-      {
-        texture: {
-          i: "/assets/ui/login.img/char_select/bt_select.png",
-          w: 140,
-          h: 52,
-          offset: @struct.Point::new(140, 0),
-          origin: @struct.Point::new(0, 0),
-        },
-        delay: None,
-        head: None,
-        bounds: None,
-      },
-    ],
-    blend: false,
-    zigzag: false,
-  }
-  res[PRESSED] = {
-    frames: [
-      {
-        texture: {
-          i: "/assets/ui/login.img/char_select/bt_select.png",
-          w: 140,
-          h: 52,
-          offset: @struct.Point::new(280, 0),
-          origin: @struct.Point::new(0, 0),
-        },
-        delay: None,
-        head: None,
-        bounds: None,
-      },
-    ],
-    blend: false,
-    zigzag: false,
-  }
-  res[DISABLED] = {
-    frames: [
-      {
-        texture: {
-          i: "/assets/ui/login.img/char_select/bt_select.png",
-          w: 140,
-          h: 52,
-          offset: @struct.Point::new(420, 0),
-          origin: @struct.Point::new(0, 0),
-        },
-        delay: None,
-        head: None,
-        bounds: None,
-      },
-    ],
-    blend: false,
-    zigzag: false,
-  }
-  let btn_select = @ui.MapleButton::new(
-    @ui.MapleButtonResource(res),
-    pos=@struct.Point::new(601, 393),
-    on_click=fn() {
-      // guard self.select_slot is Some(slot) else { return None }
-      let slot = 0 // TODO: get slot from UI
-      on_select_character(slot)
-    },
+  let btn_select = spawn_button(entities, resources.bt_select, 601, 393, fn() {
+    let slot = 0
+    on_select_character(slot)
+  })
+  let btn_new = spawn_button(
+    entities,
+    resources.bt_new,
+    200,
+    495,
+    on_new_character,
   )
-  // render_elements.push(
-  //   @ui.MapleButton::new(resources.bt_new, pos=@struct.Point::new(200, 495))
-  //   |> @ui.Button::new(on_click=fn() {
-  //     (self.on_new_character)()
-  //     None
-  //   })
-  //   |> @ui.Button::as_interactable,
-  // )
   {
-    btn_select,
+    buttons: [btn_select, btn_new],
     entities,
     select_slot: None,
     on_new_character,
@@ -413,21 +364,13 @@ fn spawn_character_name_entity(
 pub async fn load_char_look(
   entity : @entity.Entity,
   mod : @char_look.CharLookMod,
-  _character : SelectableCharacter, // TODO: use character look data
+  character : SelectableCharacter,
 ) -> @char_look.CharLook {
-  let draw_info = mod.draw_info
-  let stance_bodys_map = mod.stance_bodys_map.0
-  let stance_heads_map = mod.stance_heads_map.0
-  let hair = @char_look.Hair::load(30030, draw_info)
-  let face = @char_look.Face::load(20000)
-  @char_look.CharLook::new(
-    entity,
-    {},
-    @char_look.FullBody::new(0, draw_info, stance_bodys_map, stance_heads_map),
-    hair,
-    face,
-    draw_info,
-  )
+  let look = character.look
+  let body = mod.load_body_by_skin_id(look.skin)
+  let hair = mod.load_hair_by_id(look.hairid)
+  let face = mod.load_face_by_id(look.faceid)
+  @char_look.CharLook::load(entity, look, body, hair, face, mod.draw_info)
 }
 
 ///|
@@ -439,7 +382,7 @@ pub async fn to_selectable_character_ui(
   entities : Array[@entity.Entity],
 ) -> SelectableCharacterUI {
   let char_look = load_char_look(entity, mod, character)
-  let { cid, name } = character
+  let { cid, name, .. } = character
   @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   @position.positions.set(
     entity,
@@ -464,34 +407,58 @@ fn get_character_slot_pos(
 }
 
 ///|
-const PAGE_SIZE = 8
-
-///|
 let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
-let last_selected_character_id_for_test : Ref[Int?] = Ref::new(None)
-
-///|
 fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
-  self.btn_select.destroy()
   for entity in self.entities {
     entity.destroy()
   }
 }
 
 ///|
-async fn add_select_char_ui(mod : CharLookMod) -> SelectCharUI {
-  let slots = [{ cid: 1, name: "kkkiio" }]
+let character_list_ref : Ref[Array[SelectableCharacter]?] = Ref::new(None)
+
+///|
+let character_list_requested_ref : Ref[Bool] = Ref::new(false)
+
+///|
+fn clear_select_char_ui_runtime() -> Unit {
+  select_char_loading_future.val = None
+  match select_char_ui.val {
+    Some(ui) => {
+      select_char_ui.val = None
+      ui.destroy()
+    }
+    None => ()
+  }
+}
+
+///|
+fn reset_select_char_ui_runtime_state() -> Unit {
+  clear_select_char_ui_runtime()
+  character_list_ref.val = None
+  character_list_requested_ref.val = false
+}
+
+///|
+async fn add_select_char_ui(
+  mod : CharLookMod,
+  slots : Array[SelectableCharacter],
+) -> SelectCharUI {
   SelectCharUI::new(
     SelectCharUIResource::load(),
     slots,
     on_select_character=fn(slot) {
       guard select_char_ui.val is Some(ui) else { return }
-      last_selected_character_id_for_test.val = Some(ui.characters[slot].cid)
       @game_server.send(SelectCharMessage::{
         character_id: ui.characters[slot].cid,
       })
+    },
+    on_new_character=fn() {
+      reset_select_char_ui_runtime_state()
+      @game_state.game_state.phase = @game_state.GamePhase::ExplorerCharacterCreation
+      open_explorer_creation_ui(mod)
     },
     mod,
   )
@@ -505,10 +472,33 @@ let select_char_loading_future : Ref[
 ///|
 pub fn select_char_ui_system(_delta : Double) -> Unit {
   guard @char_look.get_module() is Some(mod) else { return }
-  guard game_state.phase is GamePhase::SelectCharacter else { return }
+  guard game_state.phase is GamePhase::SelectCharacter else {
+    reset_select_char_ui_runtime_state()
+    return
+  }
 
   // If UI is already loaded, update animations
   if select_char_ui.val is Some(ui) {
+    let mouse_pos = @inputs.mouse.pos
+    let mouse_x = mouse_pos[@selene_math.X].to_int()
+    let mouse_y = mouse_pos[@selene_math.Y].to_int()
+    let is_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
+    let just_pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
+    let just_released = @inputs.is_mouse_just_released(
+      @inputs.MouseButton::Left,
+    )
+    for button in ui.buttons {
+      button.button.update_pointer(
+        mouse_x, mouse_y, is_pressed, just_pressed, just_released,
+      )
+      @sprite.sprites.set(
+        button.entity,
+        @sprite.Sprite::from_animation(
+          button.button.current_selene_animation(),
+          10,
+        ),
+      )
+    }
     for item in ui.animations {
       let (entity, counter, segments) = item
       // 计算总帧数
@@ -544,10 +534,20 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
     return
   }
 
+  guard character_list_ref.val is Some(characters) else {
+    if not(character_list_requested_ref.val) {
+      character_list_requested_ref.val = true
+      @game_server.send(CharacterListRequestMessage::default())
+    }
+    return
+  }
+
   // If not loading yet, start background task
   guard select_char_loading_future.val is Some(fut) else {
     select_char_loading_future.val = Some(
-      @io_service.submit_background_task(fn() { add_select_char_ui(mod) }),
+      @io_service.submit_background_task(() => {
+        add_select_char_ui(mod, characters)
+      }),
     )
     return
   }
@@ -564,66 +564,40 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
 }
 
 ///|
-pub fn reset_select_char_ui_for_test() -> Unit {
-  select_char_loading_future.val = None
-  last_selected_character_id_for_test.val = None
-  match select_char_ui.val {
-    Some(ui) => {
-      select_char_ui.val = None
-      ui.destroy()
-    }
-    None => ()
-  }
-}
-
-///|
-pub async fn init_select_char_ui_for_test(mod : CharLookMod) -> Unit {
-  reset_select_char_ui_for_test()
-  select_char_ui.val = Some(add_select_char_ui(mod))
-}
-
-///|
-pub fn get_select_char_ui_debug_state_for_test() -> Json {
-  match select_char_ui.val {
-    Some(ui) => {
-      let character_names = ui.characters.map(fn(character) { character.name })
-      {
-        "loaded": true,
-        "character_count": ui.characters.length(),
-        "character_names": character_names,
-        "selected_slot": ui.select_slot,
-        "last_selected_character_id": last_selected_character_id_for_test.val,
-      }
-    }
-    None =>
-      {
-        "loaded": false,
-        "character_count": 0,
-        "character_names": [],
-        "selected_slot": null,
-        "last_selected_character_id": last_selected_character_id_for_test.val,
-      }
-  }
-}
-
-///|
 pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "select_char_list",
+    CharacterListMessage::type_code(),
+    json => {
+      let message : CharacterListMessage = @json.from_json(json)
+      character_list_ref.val = Some(
+        message.characters.map(fn(character) {
+          {
+            cid: character.character_id,
+            name: character.name,
+            look: character.look,
+          }
+        }),
+      )
+      character_list_requested_ref.val = false
+      clear_select_char_ui_runtime()
+    },
+  )
   @game_server.add_server_message_handler(
     "select_char",
     @net.Opcode::SET_FIELD.int_value(),
-    fn(json) {
+    json => {
       let set_field_message : SetFieldMessage = @json.from_json(json)
       guard set_field_message is SetField(stats={ map_id, portal_id, .. }, ..) else {
         return
       }
-      guard select_char_ui.val is Some(ui) else { return }
+      guard select_char_ui.val is Some(_) else { return }
       @game_state.game_state.phase = @game_state.GamePhase::GameStart(
         map_id~,
         portal_id~,
         set_field_message~,
       )
-      select_char_ui.val = None
-      ui.destroy()
+      reset_select_char_ui_runtime_state()
     },
   )
 }

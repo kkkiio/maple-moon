@@ -13,9 +13,16 @@ fn LocalServer::on_admin_command(self : LocalServer, json : Json) -> Unit raise 
       if quantity <= 0 {
         return
       }
-      if self.add_item_to_inventory(item_id, quantity) {
-        self.save_character_inventory_snapshot()
-      }
+      @io_service.execute_background(
+        async fn() {
+          if self.add_item_to_inventory(item_id, quantity) {
+            self.save_character_inventory_snapshot()
+          }
+        },
+        on_error=fn(err) {
+          @log.error("failed to add admin item", data={ "error": err })
+        },
+      )
     }
     Warp(map_id~, portal_id~) => {
       if map_id <= 0 {

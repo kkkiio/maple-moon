@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/server_proto"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
@@ -42,6 +43,32 @@ pub impl Show for ChangeStatsMesoMessage
 pub impl ToJson for ChangeStatsMesoMessage
 pub impl @json.FromJson for ChangeStatsMesoMessage
 
+pub(all) struct CharacterListEntry {
+  character_id : Int
+  name : String
+  look : @char_look.LookEntry
+}
+pub impl Show for CharacterListEntry
+pub impl ToJson for CharacterListEntry
+pub impl @json.FromJson for CharacterListEntry
+
+pub(all) struct CharacterListMessage {
+  characters : Array[CharacterListEntry]
+}
+pub impl ServerMessage for CharacterListMessage
+pub impl Show for CharacterListMessage
+pub impl ToJson for CharacterListMessage
+pub impl @json.FromJson for CharacterListMessage
+
+pub(all) struct CharacterListRequestMessage(Unit)
+#deprecated
+pub fn CharacterListRequestMessage::inner(Self) -> Unit
+pub impl ClientMessage for CharacterListRequestMessage
+pub impl Default for CharacterListRequestMessage
+pub impl Show for CharacterListRequestMessage
+pub impl ToJson for CharacterListRequestMessage
+pub impl @json.FromJson for CharacterListRequestMessage
+
 pub(all) struct ConfirmShopTransactionMessage {
   code : Int
 }
@@ -49,6 +76,34 @@ pub impl ServerMessage for ConfirmShopTransactionMessage
 pub impl Show for ConfirmShopTransactionMessage
 pub impl ToJson for ConfirmShopTransactionMessage
 pub impl @json.FromJson for ConfirmShopTransactionMessage
+
+pub(all) struct CreateCharacterMessage {
+  name : String
+  job : Int
+  face : Int
+  hair : Int
+  hairc : Int
+  skin : Int
+  top : Int
+  bot : Int
+  shoes : Int
+  weapon : Int
+  female : Bool
+}
+pub impl ClientMessage for CreateCharacterMessage
+pub impl Show for CreateCharacterMessage
+pub impl ToJson for CreateCharacterMessage
+pub impl @json.FromJson for CreateCharacterMessage
+
+pub(all) struct CreateCharacterResultMessage {
+  success : Bool
+  character : CharacterListEntry?
+  error : String?
+}
+pub impl ServerMessage for CreateCharacterResultMessage
+pub impl Show for CreateCharacterResultMessage
+pub impl ToJson for CreateCharacterResultMessage
+pub impl @json.FromJson for CreateCharacterResultMessage
 
 pub(all) struct DropLootMessage {
   mode : Int

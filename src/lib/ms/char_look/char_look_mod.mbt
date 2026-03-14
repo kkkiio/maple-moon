@@ -53,6 +53,14 @@ pub fn get_module() -> CharLookMod? {
 }
 
 ///|
+/// Install a preloaded char look module for environments that bootstrap
+/// systems manually, such as tests.
+pub fn set_module(module : CharLookMod) -> Unit {
+  mod.val = Some(module)
+  loading_mod_future.val = None
+}
+
+///|
 let loading_mod_future : Ref[Future[Result[CharLookMod, Error]]?] = Ref::new(
   None,
 )

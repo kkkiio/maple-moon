@@ -24,6 +24,13 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
   let default_server = self
   let select_char_message : SelectCharMessage = @json.from_json(json)
   default_server.current_character_id = select_char_message.character_id
+  guard default_server.find_character_entry(default_server.current_character_id)
+    is Some(entry) else {
+    @log.fatal("Player character metadata missing! Aborting.", data={
+      "character_id": default_server.current_character_id.to_string(),
+    })
+    return
+  }
   @io_service.execute_background(async fn() {
     let has_save_data = default_server.load_character(
       default_server.current_character_id,
@@ -40,8 +47,8 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
 
     let set_field_message = SetFieldMessage::SetField(
       stats=StatsEntry::{
-        name: "kkkiio",
-        female: false,
+        name: entry.name,
+        female: entry.look.female,
         stats: default_player_stats(),
         i64stats: @resource.EnumMap::default(),
         map_id: default_server.last_map_id,

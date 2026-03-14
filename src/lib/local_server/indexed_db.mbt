@@ -11,6 +11,9 @@ let character_core_store_name : String = "character_core"
 let character_inventory_store_name : String = "character_inventory"
 
 ///|
+let character_roster_store_name : String = "character_roster"
+
+///|
 /// Generic async persistence backend.
 pub(open) trait DB {
   async save_json(Self, String, String, Json) -> Unit
@@ -34,8 +37,9 @@ async fn BrowserDB::ensure_indexed_db(
   if self.db_ref.val is Some(db) {
     return db
   }
-  let db = @indexed_db.open(local_server_db_name, 2, [
+  let db = @indexed_db.open(local_server_db_name, 3, [
     character_meta_store_name, character_core_store_name, character_inventory_store_name,
+    character_roster_store_name,
   ])
   self.db_ref.val = Some(db)
   db
@@ -134,6 +138,39 @@ fn inventory_tabs() -> Array[@server_proto.InventoryType] {
     @server_proto.InventoryType::CASH,
     @server_proto.InventoryType::EQUIPPED,
   ]
+}
+
+///|
+fn character_roster_key() -> String {
+  "account:default:characters"
+}
+
+///|
+pub async fn LocalServer::save_character_roster(self : LocalServer) -> Unit {
+  self.db.save_json(character_roster_store_name, character_roster_key(), {
+    "characters": self.character_roster.to_json(),
+  })
+}
+
+///|
+pub async fn LocalServer::load_character_roster(self : LocalServer) -> Bool {
+  guard self.db.load_json(character_roster_store_name, character_roster_key())
+    is Some(data) else {
+    return false
+  }
+  match data {
+    { "characters": Array(chars), .. } => {
+      self.character_roster.clear()
+      for char_json in chars {
+        let entry : @server_proto.CharacterListEntry = @json.from_json(
+          char_json,
+        )
+        self.character_roster.push(entry)
+      }
+      true
+    }
+    _ => false
+  }
 }
 
 ///|

@@ -3,12 +3,10 @@ package "KKKIIO/maple-moon/lib/ms/login"
 
 import {
   "KKKIIO/maple-moon/lib/config",
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/ui",
 }
 
 // Values
@@ -35,68 +33,20 @@ type CharListMessage
 pub impl Show for CharListMessage
 pub impl ToJson for CharListMessage
 
-type CharLookUI
-pub impl ToJson for CharLookUI
-
-type CloudUI
-pub impl @graphics.Drawable for CloudUI
-pub impl @ui.RenderUnit for CloudUI
-pub impl ToJson for CloudUI
-
 type ConnectChannelTask
 pub fn ConnectChannelTask::update(Self) -> Bool
-
-type ExplorerCreatorUI
-pub fn ExplorerCreatorUI::new(ExplorerCreatorUIResource, @ui.Hooks, (@char_look.LookEntry, (@char_look.CharLook) -> Unit) -> Unit, on_create_char? : (NewCharacterSettings) -> Unit) -> Self
-pub impl @ui.Widget for ExplorerCreatorUI
-
-pub(all) struct ExplorerCreatorUIResource {
-  male_choices : LookChoices
-  female_choices : LookChoices
-  sky : @graphics.Texture
-  cloud : @graphics.Texture
-  nameboard : @graphics.Texture
-  board_gender_top : @graphics.Animation
-  board_gender_mid : @graphics.Animation
-  board_gender_bottom : @graphics.Animation
-  board_char_set : @graphics.Animation
-  back14 : @graphics.Animation
-  signboard2 : @graphics.Animation
-  bt_gender_male : @ui.MapleButtonResource
-  bt_gender_female : @ui.MapleButtonResource
-  bt_left : @ui.MapleButtonResource
-  bt_right : @ui.MapleButtonResource
-  bt_yes : @ui.MapleButtonResource
-  bt_no : @ui.MapleButtonResource
-  avatar_sel : Array[@graphics.Animation]
-}
-pub async fn ExplorerCreatorUIResource::load(@resource.SyncLoader) -> Self
 
 type LoginResult
 pub impl Show for LoginResult
 
-pub(all) struct LookChoices {
-  skins : Array[Int]
-  haircolors : Array[Int]
-  faces : Array[Int]
-  hairs : Array[Int]
-  tops : Array[Int]
-  bots : Array[Int]
-  shoes : Array[Int]
-  weapons : Array[Int]
-}
-
 type Module
 pub fn Module::get_selected_char(Self) -> @character.CharEntry?
 pub fn Module::handle_login_result(Self, LoginResult) -> Unit
-pub async fn Module::load(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage) -> Self
+pub async fn Module::load(@net.Network, @char_look.CharLookMod, @config.LocalStorage) -> Self
 pub fn Module::login(Self, String, String, (String) -> Unit) -> Unit
 pub fn Module::login_last_used(Self, (String) -> Unit) -> Unit
-pub fn Module::new(@net.Network, &@ui.Container, @char_look.CharLookMod, @config.LocalStorage, @resource.SyncLoader) -> Self
+pub fn Module::new(@net.Network, @char_look.CharLookMod, @config.LocalStorage, @resource.SyncLoader) -> Self
 pub fn Module::update(Self) -> Unit
-
-type NewCharacterSettings
-pub impl Default for NewCharacterSettings
 
 type ServerStatus
 pub impl Show for ServerStatus

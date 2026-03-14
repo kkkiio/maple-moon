@@ -6,6 +6,7 @@ pub(all) struct GameState {
 ///|
 pub(all) enum GamePhase {
   SelectCharacter
+  ExplorerCharacterCreation
   GameStart(
     map_id~ : Int,
     portal_id~ : Int,

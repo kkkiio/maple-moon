@@ -8,6 +8,11 @@
 
 使用 `selene` , 非常新且小巧的 2D 游戏引擎, 便于学习。缺少功能时，先要对比其他现代游戏引擎的实现，再提出改进方案。
 
+## Mandatory skills workflow
+
+- 缺少资源时，使用 `resource-processing-workflow` skill 处理.
+- 添加/修改 UI, 画面元素时，使用 `render-snapshot-test-loop` skill 处理.
+
 ## 文档
 
 每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.
@@ -180,10 +185,4 @@ test {
 
 ### 资源
 
-资源放在 `./assets` 目录下, 目前还没提交到 git 仓库, 暂时用 `.gitignore` 忽略了, 等资源格式和组织方式确定/稳定后, 再提交到 git 仓库.
-
-详情阅读 [builtin_resource_loaders.mbt](src/lib/resource/builtin_resource_loaders.mbt) .
-
-### 地图资源
-
-地图资源通常位于 `assets/map/mapX/YYYYYYY.img.json`, 结构参考[文档](./src/lib/ms/map/README.mbt.md).
+local server 是可以异步读取资源的, 客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.

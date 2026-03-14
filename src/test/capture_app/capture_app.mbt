@@ -367,7 +367,8 @@ pub fn to_buffer() -> Buffer {
 
 ///|
 pub fn snapshot(path : String) -> Unit raise {
-  let actual = to_buffer().to_bytes()
+  let actual_buffer = to_buffer()
+  let actual = actual_buffer.to_bytes()
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
   if update_snapshot || !@fs.path_exists(path) {
     let dir = @path.Path(path).dirname().to_string()
@@ -375,10 +376,35 @@ pub fn snapshot(path : String) -> Unit raise {
     @fs.write_bytes_to_file(path, actual)
   } else {
     let expected = @fs.read_file_to_bytes(path)
-    if actual != expected {
-      abort(snapshot_mismatch_msg(path, actual, expected))
+    if actual != expected &&
+      not(
+        png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)),
+      ) {
+      fail(snapshot_mismatch_msg(path, actual, expected))
     }
   }
+}
+
+///|
+pub fn reset_mock_server() -> Unit {
+  reset_mock_server_state()
+}
+
+///|
+pub fn[T : @server_proto.ServerMessage] emit_mock_server_message(
+  message : T,
+) -> Unit raise {
+  emit_mock_server_state(T::type_code(), message.to_json())
+}
+
+///|
+pub fn mock_server_sent_count(type_code : Int) -> Int {
+  mock_server_sent_count_internal(type_code)
+}
+
+///|
+pub fn mock_server_latest_sent_json(type_code : Int) -> Json? {
+  mock_server_latest_sent_json_internal(type_code)
 }
 
 ///|
@@ -514,6 +540,35 @@ pub extern "js" fn Buffer::to_bytes(self : Buffer) -> Bytes =
 pub extern "js" fn Buffer::from_bytes(bytes : Bytes) -> Buffer =
   #|(bytes) => {
   #|  return Buffer.from(bytes);
+  #|}
+
+///|
+pub extern "js" fn png_buffers_equal_by_pixels(
+  actual : Buffer,
+  expected : Buffer,
+) -> Bool =
+  #|(actual, expected) => {
+  #|  const { createCanvas, Image } = require('canvas');
+  #|  const toPixels = (buf) => {
+  #|    const img = new Image();
+  #|    img.src = buf;
+  #|    const canvas = createCanvas(img.width, img.height);
+  #|    const ctx = canvas.getContext('2d');
+  #|    ctx.drawImage(img, 0, 0);
+  #|    return {
+  #|      width: img.width,
+  #|      height: img.height,
+  #|      data: ctx.getImageData(0, 0, img.width, img.height).data,
+  #|    };
+  #|  };
+  #|  const lhs = toPixels(actual);
+  #|  const rhs = toPixels(expected);
+  #|  if (lhs.width !== rhs.width || lhs.height !== rhs.height) return false;
+  #|  if (lhs.data.length !== rhs.data.length) return false;
+  #|  for (let i = 0; i < lhs.data.length; i++) {
+  #|    if (lhs.data[i] !== rhs.data[i]) return false;
+  #|  }
+  #|  return true;
   #|}
 
 ///|

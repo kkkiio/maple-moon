@@ -293,8 +293,8 @@ pub(all) enum TalkAction {
   SEND_OK((Unit?) -> Unit)
   SEND_NEXT((Unit?) -> Unit)
   SEND_PREV((Unit?) -> Unit)
-  SEND_SIMPLE((Int?) -> Unit) // select option
-  SEND_NEXT_PREV((Bool?) -> Unit) // next or prev
+  SEND_SIMPLE((Int?) -> Unit)
+  SEND_NEXT_PREV((Bool?) -> Unit)
 } derive(Show)
 
 ///|
@@ -310,7 +310,7 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
     Some(str) =>
       Some({
         npc_id: self.npc_id,
-        talk_action: SEND_NEXT(fn(_c) {  }), // TODO: init outside
+        talk_action: SEND_NEXT(fn(_c) {  }),
         speaker: Speaker::NPC_LEFT,
         str,
       })

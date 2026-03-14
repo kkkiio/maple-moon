@@ -1,7 +1,6 @@
 ///|
 struct Module {
   network : @net.Network
-  ui_container : &@ui.Container
   char_look_module : @char_look.CharLookMod
   local_storage : @config.LocalStorage
   characters : Array[@character.CharEntry]
@@ -18,7 +17,6 @@ struct Module {
 ///|
 pub async fn Module::load(
   network : @net.Network,
-  ui_container : &@ui.Container,
   char_look_module : @char_look.CharLookMod,
   local_storage : @config.LocalStorage,
 ) -> Module {
@@ -27,22 +25,18 @@ pub async fn Module::load(
     "https://maple-res.kkkiiox.work/UI/Login.img.json",
     @resource.ImageLoader::get_path_image_loader(),
   )
-  Module::new(
-    network, ui_container, char_look_module, local_storage, login_loader,
-  )
+  Module::new(network, char_look_module, local_storage, login_loader)
 }
 
 ///|
 pub fn Module::new(
   network : @net.Network,
-  ui_container : &@ui.Container,
   char_look_module : @char_look.CharLookMod,
   local_storage : @config.LocalStorage,
   login_loader : @resource.SyncLoader,
 ) -> Module {
   {
     network,
-    ui_container,
     char_look_module,
     characters: [],
     selected_index: None,
@@ -450,40 +444,8 @@ fn handle_char_list(mod : Module, message : CharListMessage) -> Unit {
 
 ///|
 async fn on_new_character(mod : Module) -> Unit {
-  let res = ExplorerCreatorUIResource::load(mod.login_loader)
-  mod.ui_container.add_ui(
-    @ui.Element::new(
-      fn(hooks) {
-        ExplorerCreatorUI::new(
-          res,
-          hooks,
-          fn(entry, cb) {
-            @io_service.execute_background(fn() {
-              let char_look = mod.char_look_module.load_char_look(entry)
-              cb(char_look)
-            })
-          },
-          on_create_char=fn(s) {
-            mod.network.send_message({
-              name: s.name,
-              job: s.job,
-              face: s.face_id,
-              hair: s.hair_id,
-              hairc: s.hair_color_id,
-              skin: s.skin_id,
-              top: s.top_id,
-              bot: s.bot_id,
-              shoes: s.shoe_id,
-              weapon: s.weapon_id,
-              female: s.female,
-            })
-          },
-        )
-      },
-      @ui.UIElementType::CLASS_CREATION,
-    ),
-    false,
-  )
+  ignore(mod)
+  ...
 }
 
 ///|
@@ -532,7 +494,6 @@ pub fn handle_add_new_char_entry(
   character : @character.CharEntry,
 ) -> Unit {
   mod.characters.push(character)
-  mod.ui_container.remove_ui(@ui.UIElementType::CLASS_CREATION)
   // TODO: show character selection UI
 }
 

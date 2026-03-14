@@ -33,11 +33,13 @@ pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit
 pub fn LocalServer::init_routes(Self) -> Unit
 pub async fn LocalServer::load_character(Self, Int) -> Bool
 pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
+pub async fn LocalServer::load_character_roster(Self) -> Bool
 pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
 pub async fn LocalServer::save_character(Self, Int) -> Unit
 pub async fn LocalServer::save_character_core(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
+pub async fn LocalServer::save_character_roster(Self) -> Unit
 #callsite(autofill(loc))
 pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 

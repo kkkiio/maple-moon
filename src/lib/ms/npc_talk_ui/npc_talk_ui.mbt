@@ -1,0 +1,960 @@
+///|
+using @npc {type TalkArgs}
+
+///|
+pub(all) struct NpcTalkResource {
+  top : @resource.NxTexture
+  fill : @resource.NxTexture
+  bottom : @resource.NxTexture
+  bar : @resource.NxTexture
+  bt_yes : @ui.MapleButtonResource
+  bt_no : @ui.MapleButtonResource
+  bt_ok : @ui.MapleButtonResource
+  bt_next : @ui.MapleButtonResource
+  bt_prev : @ui.MapleButtonResource
+  bt_close : @ui.MapleButtonResource
+  bt_qstart : @ui.MapleButtonResource
+  bt_qyes : @ui.MapleButtonResource
+  bt_qno : @ui.MapleButtonResource
+  bt_qcyes : @ui.MapleButtonResource
+  bt_qcno : @ui.MapleButtonResource
+  bt_qgiveup : @ui.MapleButtonResource
+  bt_qafter : @ui.MapleButtonResource
+  bt_my_level : @ui.MapleButtonResource
+  bt_all_level : @ui.MapleButtonResource
+}
+
+///|
+fn json_to_texture(json : Json) -> @resource.NxTexture raise {
+  @json.from_json(json)
+}
+
+///|
+pub fn NpcTalkResource::from_resource(
+  util_dlg_ex : Json,
+) -> NpcTalkResource raise {
+  match util_dlg_ex {
+    {
+      "t": top,
+      "c": fill,
+      "s": bottom,
+      "bar": bar,
+      "BtYes": bt_yes,
+      "BtNo": bt_no,
+      "BtOK": bt_ok,
+      "BtNext": bt_next,
+      "BtPrev": bt_prev,
+      "BtClose": bt_close,
+      "BtQStart": bt_qstart,
+      "BtQYes": bt_qyes,
+      "BtQNo": bt_qno,
+      "BtQCYes": bt_qcyes,
+      "BtQCNo": bt_qcno,
+      "BtQGiveup": bt_qgiveup,
+      "BtQAfter": bt_qafter,
+      "BtMyLevel": bt_my_level,
+      "BtAllLevel": bt_all_level,
+      ..
+    } =>
+      {
+        top: json_to_texture(top),
+        fill: json_to_texture(fill),
+        bottom: json_to_texture(bottom),
+        bar: json_to_texture(bar),
+        bt_yes: @json.from_json(bt_yes),
+        bt_no: @json.from_json(bt_no),
+        bt_ok: @json.from_json(bt_ok),
+        bt_next: @json.from_json(bt_next),
+        bt_prev: @json.from_json(bt_prev),
+        bt_close: @json.from_json(bt_close),
+        bt_qstart: @json.from_json(bt_qstart),
+        bt_qyes: @json.from_json(bt_qyes),
+        bt_qno: @json.from_json(bt_qno),
+        bt_qcyes: @json.from_json(bt_qcyes),
+        bt_qcno: @json.from_json(bt_qcno),
+        bt_qgiveup: @json.from_json(bt_qgiveup),
+        bt_qafter: @json.from_json(bt_qafter),
+        bt_my_level: @json.from_json(bt_my_level),
+        bt_all_level: @json.from_json(bt_all_level),
+      }
+    _ => fail("invalid UtilDlgEx json")
+  }
+}
+
+///|
+priv struct TextRun {
+  text : String
+  color : ColorName
+  bold : Bool
+}
+
+///|
+priv struct SelectionLine {
+  option : Int
+  runs : Array[TextRun]
+}
+
+///|
+priv struct NPCTalkContent {
+  body_lines : Array[Array[TextRun]]
+  selections : Array[SelectionLine]
+}
+
+///|
+priv struct ChoiceArea {
+  bounds : @struct.Rectangle[Int]
+  on_click : () -> Unit
+}
+
+///|
+priv struct SeleneButton {
+  button : @ui.MapleButton
+  entity : @entity.Entity
+}
+
+///|
+priv struct UINpcTalk {
+  resource : NpcTalkResource
+  args : TalkArgs
+  content : NPCTalkContent
+  entities : Array[@entity.Entity]
+  buttons : Array[SeleneButton]
+  choice_areas : Array[ChoiceArea]
+  mut pressed_choice : Int?
+  mut window_pos : Point[Int]
+  mut body_height : Int
+}
+
+///|
+const NPC_TALK_Z : Int = @graphics.UI_ZINDEX + 100
+
+///|
+const CONTENT_X = 166
+
+///|
+const CONTENT_Y = 19
+
+///|
+const LINE_GAP = 4
+
+///|
+const MIN_BODY_HEIGHT = 76
+
+///|
+const NORMAL_FONT = "13px Menlo"
+
+///|
+const BOLD_FONT = "bold 13px Menlo"
+
+///|
+let npc_talk_ui_ref : Ref[UINpcTalk?] = Ref::new(None)
+
+///|
+let npc_talk_resource_ref : Ref[NpcTalkResource?] = Ref::new(None)
+
+///|
+let npc_talk_loading_ref : Ref[@utils.Future[Result[NpcTalkResource, Error]]?] = Ref::new(
+  None,
+)
+
+///|
+let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref::new(None)
+
+///|
+fn default_ref_render() -> @markup_text.RefRender {
+  @markup_text.RefRender::new(fn() {
+    if @player.get_player() is Some(player) {
+      let name = player.get_stats().get_name()
+      if not(name.is_empty()) {
+        return name
+      }
+    }
+    "Player"
+  })
+}
+
+///|
+async fn load_npc_talk_resource() -> NpcTalkResource {
+  let src : Json = @resource.get_ui_window_2_loader()
+    .load_res_async(["UtilDlgEx"])
+    .value()
+  NpcTalkResource::from_resource(src)
+}
+
+///|
+/// Store a parsed NPC talk resource in the shared runtime cache.
+pub fn cache_npc_talk_resource(resource : NpcTalkResource) -> Unit {
+  npc_talk_loading_ref.val = None
+  npc_talk_resource_ref.val = Some(resource)
+}
+
+///|
+pub fn is_npc_talk_ui_open() -> Bool {
+  npc_talk_ui_ref.val is Some(_)
+}
+
+///|
+/// Describe the currently open NPC talk UI for blackbox assertions.
+pub fn describe_npc_talk_ui() -> Json {
+  match npc_talk_ui_ref.val {
+    Some(ui) => {
+      let body_lines : Array[Json] = ui.content.body_lines.map(fn(line) {
+        line.map(fn(run) { run.text }).join("").to_json()
+      })
+      let selections : Array[Json] = ui.content.selections.map(fn(selection) {
+        {
+          "option": selection.option.to_json(),
+          "text": selection.runs.map(fn(run) { run.text }).join("").to_json(),
+        }
+      })
+      {
+        "open": true,
+        "body_lines": body_lines,
+        "selections": selections.to_json(),
+        "button_count": ui.buttons.length().to_json(),
+        "choice_area_count": ui.choice_areas.length().to_json(),
+        "window_pos": {
+          "x": ui.window_pos.x.to_json(),
+          "y": ui.window_pos.y.to_json(),
+        },
+        "body_height": ui.body_height.to_json(),
+      }
+    }
+    None => { "open": false }
+  }
+}
+
+///|
+pub fn close_npc_talk_ui() -> Unit {
+  npc_talk_pending_args_ref.val = None
+  match npc_talk_ui_ref.val {
+    Some(ui) => {
+      ui.destroy()
+      npc_talk_ui_ref.val = None
+    }
+    None => ()
+  }
+}
+
+///|
+pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
+  close_npc_talk_ui()
+  if npc_talk_resource_ref.val is None && npc_talk_loading_ref.val is None {
+    npc_talk_loading_ref.val = Some(
+      @io_service.submit_background_task(async fn() { load_npc_talk_resource() }),
+    )
+  }
+  npc_talk_pending_args_ref.val = Some(args)
+}
+
+///|
+pub fn npc_talk_ui_system(_delta : Double) -> Unit {
+  guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
+    close_npc_talk_ui()
+    return
+  }
+  poll_npc_talk_resource()
+  poll_npc_talk_open_request()
+  match npc_talk_ui_ref.val {
+    Some(ui) => ui.update()
+    None => ()
+  }
+}
+
+///|
+fn poll_npc_talk_resource() -> Unit {
+  guard npc_talk_resource_ref.val is None else { return }
+  guard npc_talk_loading_ref.val is Some(future) else { return }
+  match future.poll() {
+    Some(Ok(resource)) => {
+      npc_talk_loading_ref.val = None
+      npc_talk_resource_ref.val = Some(resource)
+    }
+    Some(Err(err)) => {
+      npc_talk_loading_ref.val = None
+      npc_talk_pending_args_ref.val = None
+      @log.error("failed to load npc talk resource", data={
+        "error": err.to_string(),
+      })
+    }
+    None => ()
+  }
+}
+
+///|
+fn poll_npc_talk_open_request() -> Unit {
+  guard npc_talk_ui_ref.val is None else { return }
+  guard npc_talk_pending_args_ref.val is Some(args) else { return }
+  guard npc_talk_resource_ref.val is Some(resource) else { return }
+  let content = convert_npc_text(args.str, default_ref_render()) catch {
+    err => {
+      npc_talk_pending_args_ref.val = None
+      @log.error("failed to parse npc talk text", data={
+        "error": err.to_string(),
+      })
+      return
+    }
+  }
+  npc_talk_pending_args_ref.val = None
+  let ui = UINpcTalk::new(resource, args, content)
+  ui.rebuild_scene()
+  npc_talk_ui_ref.val = Some(ui)
+}
+
+///|
+fn UINpcTalk::new(
+  resource : NpcTalkResource,
+  args : TalkArgs,
+  content : NPCTalkContent,
+) -> UINpcTalk {
+  {
+    resource,
+    args,
+    content,
+    entities: [],
+    buttons: [],
+    choice_areas: [],
+    pressed_choice: None,
+    window_pos: Point::default(),
+    body_height: MIN_BODY_HEIGHT,
+  }
+}
+
+///|
+fn UINpcTalk::destroy(self : UINpcTalk) -> Unit {
+  self.buttons.clear()
+  self.choice_areas.clear()
+  for entity in self.entities {
+    @selene_ui.uis.remove(entity) |> ignore
+    entity.destroy()
+  }
+  self.entities.clear()
+}
+
+///|
+fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
+  self.destroy()
+  self.body_height = self.measure_body_height()
+  self.window_pos = Point::new(
+    400 - self.resource.top.w / 2,
+    240 - self.body_height / 2,
+  )
+  self.spawn_window()
+  self.spawn_nameplate()
+  self.spawn_body_text()
+  self.spawn_action_buttons()
+}
+
+///|
+fn UINpcTalk::measure_body_height(self : UINpcTalk) -> Int {
+  let body_lines_height = self.content.body_lines.fold(init=0, fn(acc, line) {
+    acc + line_height(line)
+  })
+  let selection_height = self.content.selections.fold(init=0, fn(
+    acc,
+    selection,
+  ) {
+    acc + line_height(selection.runs) + LINE_GAP
+  })
+  @cmp.maximum(MIN_BODY_HEIGHT, body_lines_height + selection_height + 20)
+}
+
+///|
+fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
+  let fill_height = self.body_height
+  self.spawn_picture(
+    @resource.nx_texture_to_selene_picture(self.resource.top),
+    self.window_pos.x,
+    self.window_pos.y,
+    NPC_TALK_Z,
+  )
+  let fill = @resource.nx_texture_to_selene_picture(
+    self.resource.fill,
+    size=@selene_math.Vec2D(
+      self.resource.fill.w.to_double(),
+      fill_height.to_double(),
+    ),
+  )
+  self.spawn_picture(
+    fill,
+    self.window_pos.x,
+    self.window_pos.y + self.resource.top.h,
+    NPC_TALK_Z,
+  )
+  self.spawn_picture(
+    @resource.nx_texture_to_selene_picture(self.resource.bottom),
+    self.window_pos.x,
+    self.window_pos.y + self.resource.top.h + fill_height,
+    NPC_TALK_Z,
+  )
+}
+
+///|
+fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
+  let speaker_y = (
+      self.resource.top.h + self.body_height + self.resource.bottom.h
+    ) /
+    2
+  let speaker_pos = self.window_pos + Point::new(100, 11 + speaker_y)
+  let center_x = speaker_pos.x + self.resource.bar.w / 2
+  self.spawn_picture(
+    @resource.nx_texture_to_selene_picture(self.resource.bar),
+    speaker_pos.x,
+    speaker_pos.y,
+    NPC_TALK_Z + 2,
+  )
+  // TODO: sprite.Text 无法直接复刻原版 name tag 字体描边效果，先降级成普通文本。
+  self.spawn_text(
+    "",
+    center_x,
+    speaker_pos.y - 4,
+    NPC_TALK_Z + 3,
+    color="white",
+    font="11px Menlo",
+    align=@selene_math.Center,
+  )
+  |> ignore
+}
+
+///|
+fn UINpcTalk::spawn_body_text(self : UINpcTalk) -> Unit {
+  let mut y = self.window_pos.y + CONTENT_Y
+  for line in self.content.body_lines {
+    self.spawn_runs(line, self.window_pos.x + CONTENT_X, y, NPC_TALK_Z + 4)
+    |> ignore
+    y += line_height(line)
+  }
+  if not(self.content.body_lines.is_empty()) {
+    y += LINE_GAP
+  }
+  for selection in self.content.selections {
+    let bounds = self.spawn_runs(
+      selection.runs,
+      self.window_pos.x + CONTENT_X,
+      y,
+      NPC_TALK_Z + 5,
+    )
+    match self.args.talk_action {
+      SEND_SIMPLE(callback) =>
+        self.choice_areas.push({
+          bounds,
+          on_click: fn() {
+            close_npc_talk_ui()
+            callback(Some(selection.option))
+          },
+        })
+      _ => ()
+    }
+    y += line_height(selection.runs) + LINE_GAP
+  }
+}
+
+///|
+fn UINpcTalk::spawn_action_buttons(self : UINpcTalk) -> Unit {
+  let y = self.window_pos.y + self.body_height + 48
+  let close_x = self.window_pos.x + 9
+  fn spawn_callback(
+    button : @ui.MapleButtonResource,
+    x : Int,
+    y : Int,
+    callback,
+  ) {
+    self.spawn_button(button, x, y, callback)
+  }
+  match self.args.talk_action {
+    SEND_YESNO(callback) => {
+      spawn_callback(self.resource.bt_yes, self.window_pos.x + 389, y, fn() {
+        close_npc_talk_ui()
+        callback(Some(true))
+      })
+      spawn_callback(self.resource.bt_no, self.window_pos.x + 461, y, fn() {
+        close_npc_talk_ui()
+        callback(Some(false))
+      })
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+    }
+    SEND_NEXT(callback) => {
+      spawn_callback(self.resource.bt_next, self.window_pos.x + 461, y - 30, fn() {
+        close_npc_talk_ui()
+        callback(Some(()))
+      })
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+    }
+    SEND_PREV(callback) => {
+      spawn_callback(self.resource.bt_prev, self.window_pos.x + 367, y - 30, fn() {
+        close_npc_talk_ui()
+        callback(Some(()))
+      })
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+    }
+    SEND_NEXT_PREV(callback) => {
+      spawn_callback(self.resource.bt_prev, self.window_pos.x + 367, y - 30, fn() {
+        close_npc_talk_ui()
+        callback(Some(false))
+      })
+      spawn_callback(self.resource.bt_next, self.window_pos.x + 461, y - 30, fn() {
+        close_npc_talk_ui()
+        callback(Some(true))
+      })
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+    }
+    SEND_OK(callback) => {
+      spawn_callback(self.resource.bt_ok, self.window_pos.x + 469, y, fn() {
+        close_npc_talk_ui()
+        callback(Some(()))
+      })
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+    }
+    SEND_SIMPLE(callback) =>
+      spawn_callback(self.resource.bt_close, close_x, y, fn() {
+        close_npc_talk_ui()
+        callback(None)
+      })
+  }
+}
+
+///|
+fn UINpcTalk::spawn_picture(
+  self : UINpcTalk,
+  picture : @sprite.Picture,
+  x : Int,
+  y : Int,
+  z : Int,
+) -> Unit {
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  @sprite.sprites.set(entity, @sprite.Sprite::from_picture(picture, z))
+  @position.positions.set(
+    entity,
+    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+  )
+  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
+}
+
+///|
+fn UINpcTalk::spawn_text(
+  self : UINpcTalk,
+  text : String,
+  x : Int,
+  y : Int,
+  z : Int,
+  color? : String = "black",
+  font? : String = NORMAL_FONT,
+  align? : @selene_math.HAlign = @selene_math.Left,
+) -> @sprite.Text {
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  let sprite_text = @sprite.Text::new(
+    text,
+    color~,
+    font~,
+    baseline=@selene_math.Top,
+    align~,
+  )
+  @sprite.sprites.set(entity, @sprite.Sprite::from_text(sprite_text, z))
+  @position.positions.set(
+    entity,
+    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+  )
+  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
+  sprite_text
+}
+
+///|
+fn UINpcTalk::spawn_button(
+  self : UINpcTalk,
+  resource : @ui.MapleButtonResource,
+  x : Int,
+  y : Int,
+  on_click : () -> Unit,
+) -> Unit {
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  @position.positions.set(
+    entity,
+    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+  )
+  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
+  let button = @ui.MapleButton::new(resource, pos=Point::new(x, y), on_click~)
+  @sprite.sprites.set(
+    entity,
+    @sprite.Sprite::from_animation(
+      button.current_selene_animation(),
+      NPC_TALK_Z + 8,
+    ),
+  )
+  self.buttons.push({ button, entity })
+}
+
+///|
+fn UINpcTalk::spawn_runs(
+  self : UINpcTalk,
+  runs : Array[TextRun],
+  x : Int,
+  y : Int,
+  z : Int,
+) -> @struct.Rectangle[Int] {
+  let mut cursor_x = x
+  let mut max_height = 16
+  for run in runs {
+    guard not(run.text.is_empty()) else { continue }
+    // TODO: sprite.Text 暂不支持原版 NPC 对话中的描边/特殊字效，这里只保留颜色和粗体。
+    let font = if run.bold { BOLD_FONT } else { NORMAL_FONT }
+    let text = self.spawn_text(
+      run.text,
+      cursor_x,
+      y,
+      z,
+      color=run.color.css_name(),
+      font~,
+    )
+    let size = @sprite.measure_text_size(text)
+    cursor_x += size[@selene_math.X].to_int()
+    max_height = @cmp.maximum(max_height, size[@selene_math.Y].to_int())
+  }
+  @struct.Rectangle::from4(x, cursor_x, y, y + max_height)
+}
+
+///|
+fn UINpcTalk::update(self : UINpcTalk) -> Unit {
+  let mouse_pos = @inputs.mouse.pos
+  let mouse_x = mouse_pos[@selene_math.X].to_int()
+  let mouse_y = mouse_pos[@selene_math.Y].to_int()
+  let point = Point::new(mouse_x, mouse_y)
+  let is_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
+  let just_pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
+  let just_released = @inputs.is_mouse_just_released(@inputs.MouseButton::Left)
+  for button in self.buttons {
+    button.button.update_pointer(
+      mouse_x, mouse_y, is_pressed, just_pressed, just_released,
+    )
+    @sprite.sprites.set(
+      button.entity,
+      @sprite.Sprite::from_animation(
+        button.button.current_selene_animation(),
+        NPC_TALK_Z + 8,
+      ),
+    )
+  }
+  if just_pressed {
+    self.pressed_choice = None
+    for i, area in self.choice_areas {
+      if area.bounds.contains(point) {
+        self.pressed_choice = Some(i)
+        break
+      }
+    }
+  }
+  if just_released {
+    match self.pressed_choice {
+      Some(index) =>
+        match self.choice_areas.get(index) {
+          Some(area) => if area.bounds.contains(point) { (area.on_click)() }
+          None => ()
+        }
+      None => ()
+    }
+    self.pressed_choice = None
+  }
+}
+
+///|
+fn line_height(runs : Array[TextRun]) -> Int {
+  let mut height = 16
+  for run in runs {
+    guard not(run.text.is_empty()) else { continue }
+    let text = @sprite.Text::new(
+      run.text,
+      color=run.color.css_name(),
+      font=if run.bold { BOLD_FONT } else { NORMAL_FONT },
+      baseline=@selene_math.Top,
+    )
+    let size = @sprite.measure_text_size(text)
+    height = @cmp.maximum(height, size[@selene_math.Y].to_int())
+  }
+  height + LINE_GAP
+}
+
+///|
+fn convert_npc_text(
+  raw_text : String,
+  name_loader : @markup_text.RefRender,
+) -> NPCTalkContent raise {
+  let tag_replace_map : Map[
+    Char,
+    (@markup_text.Style, StringView) -> Array[TextRun] raise,
+  ] = {
+    'o': fn(style, value) {
+      resolve_reference(style, value, fn(v) { name_loader.get_mob_name(v) })
+    },
+    'p': fn(style, value) {
+      resolve_reference(style, value, fn(v) { name_loader.get_npc_name(v) })
+    },
+    'm': fn(style, value) {
+      resolve_reference(style, value, fn(v) {
+        name_loader.get_map_name(v).to_string()
+      })
+    },
+    't': fn(style, value) {
+      resolve_reference(style, value, fn(v) {
+        name_loader.get_item_name(v).to_string()
+      })
+    },
+    'h': fn(style, _value) {
+      [
+        TextRun::{
+          text: name_loader.get_player_name(),
+          color: style.color,
+          bold: style.bold,
+        },
+      ]
+    },
+  }
+  let selections = []
+  let body_lines = [[]]
+  let mut opening_selection : (Int, Array[@markup_text.Node])? = None
+  let mut trim_newline = false
+  let mut current_style : @markup_text.Style = {
+    color: ColorName::BLACK,
+    bold: false,
+  }
+  let nodes = @markup_text.parse_markup(raw_text, tag_map)
+  for node in nodes {
+    match node {
+      Text(text) => {
+        if opening_selection is Some((_, selection_nodes)) {
+          selection_nodes.push(node)
+          continue
+        }
+        let normalized = if trim_newline &&
+          (text.to_string() == "\r\n" || text.to_string() == "\n") {
+          ""
+        } else {
+          text.to_string()
+        }
+        trim_newline = false
+        append_runs_to_lines(
+          body_lines,
+          text_runs_for_text(normalized, current_style),
+        )
+      }
+      Tag('L', payload) => {
+        if opening_selection is Some((index, selection_nodes)) {
+          selections.push({
+            option: index,
+            runs: flatten_runs(
+              build_runs_from_nodes(
+                selection_nodes,
+                current_style,
+                tag_replace_map,
+                trim_end_newline=true,
+              ),
+            ),
+          })
+        }
+        opening_selection = Some((@strconv.parse_int(payload.to_string()), []))
+      }
+      Tag('l', _) => {
+        guard opening_selection is Some((index, selection_nodes)) else {
+          raise ParseTalkError("selection close without open")
+        }
+        opening_selection = None
+        selections.push({
+          option: index,
+          runs: flatten_runs(
+            build_runs_from_nodes(
+              selection_nodes, current_style, tag_replace_map,
+            ),
+          ),
+        })
+        trim_newline = true
+      }
+      Tag(tag, payload) => {
+        if opening_selection is Some((_, selection_nodes)) {
+          selection_nodes.push(node)
+          continue
+        }
+        current_style = apply_style_or_append_runs(
+          body_lines, current_style, tag, payload, tag_replace_map,
+        )
+      }
+    }
+  }
+  if opening_selection is Some((index, selection_nodes)) {
+    selections.push({
+      option: index,
+      runs: flatten_runs(
+        build_runs_from_nodes(
+          selection_nodes,
+          current_style,
+          tag_replace_map,
+          trim_end_newline=true,
+        ),
+      ),
+    })
+  }
+  { body_lines: trim_trailing_blank_lines(body_lines), selections }
+}
+
+///|
+fn apply_style_or_append_runs(
+  body_lines : Array[Array[TextRun]],
+  current_style : @markup_text.Style,
+  tag : Char,
+  payload : StringView,
+  tag_replace_map : Map[
+    Char,
+    (@markup_text.Style, StringView) -> Array[TextRun] raise,
+  ],
+) -> @markup_text.Style raise {
+  if @markup_text.font_weight_tag_map.get(tag) is Some(bold) {
+    { ..current_style, bold, }
+  } else if @markup_text.color_map.get(tag) is Some(color) {
+    { ..current_style, color, }
+  } else {
+    match tag_replace_map.get(tag) {
+      Some(replace) => {
+        append_runs_to_lines(body_lines, replace(current_style, payload))
+        current_style
+      }
+      None =>
+        // TODO: richer Maple-specific text effects are not implemented yet for sprite.Text.
+        current_style
+    }
+  }
+}
+
+///|
+fn build_runs_from_nodes(
+  nodes : Array[@markup_text.Node],
+  style : @markup_text.Style,
+  tag_replace_map : Map[
+    Char,
+    (@markup_text.Style, StringView) -> Array[TextRun] raise,
+  ],
+  trim_end_newline? : Bool = false,
+) -> Array[Array[TextRun]] raise {
+  let lines = [[]]
+  let mut current_style = style
+  for i, node in nodes {
+    match node {
+      Text(text) => {
+        let mut raw = text.to_string()
+        if trim_end_newline && i == nodes.length() - 1 {
+          raw = raw.trim_end(chars="\n").to_string()
+        }
+        append_runs_to_lines(lines, text_runs_for_text(raw, current_style))
+      }
+      Tag(tag, payload) =>
+        current_style = apply_style_or_append_runs(
+          lines, current_style, tag, payload, tag_replace_map,
+        )
+    }
+  }
+  lines
+}
+
+///|
+fn resolve_reference(
+  style : @markup_text.Style,
+  value : StringView,
+  provider : (StringView) -> String raise,
+) -> Array[TextRun] raise {
+  [TextRun::{ text: provider(value), color: style.color, bold: style.bold }]
+}
+
+///|
+fn text_runs_for_text(
+  raw_text : String,
+  style : @markup_text.Style,
+) -> Array[TextRun] {
+  if raw_text.is_empty() {
+    return []
+  }
+  [TextRun::{ text: raw_text, color: style.color, bold: style.bold }]
+}
+
+///|
+fn append_runs_to_lines(
+  lines : Array[Array[TextRun]],
+  runs : Array[TextRun],
+) -> Unit {
+  for run in runs {
+    let parts = run.text
+      .replace_all(old="\r\n", new="\n")
+      .split("\n")
+      .to_array()
+    for i, part in parts {
+      if not(part.is_empty()) {
+        let line = lines[lines.length() - 1]
+        line.push({ ..run, text: part.to_string() })
+      }
+      if i + 1 < parts.length() {
+        lines.push([])
+      }
+    }
+  }
+}
+
+///|
+fn flatten_runs(lines : Array[Array[TextRun]]) -> Array[TextRun] {
+  let merged = []
+  for i, line in lines {
+    if i > 0 {
+      merged.push(TextRun::{ text: " ", color: ColorName::BLACK, bold: false })
+    }
+    for run in line {
+      merged.push(run)
+    }
+  }
+  merged
+}
+
+///|
+fn trim_trailing_blank_lines(
+  lines : Array[Array[TextRun]],
+) -> Array[Array[TextRun]] {
+  let trimmed = lines.copy()
+  while not(trimmed.is_empty()) && trimmed.last().unwrap_or([]).is_empty() {
+    trimmed.pop() |> ignore
+  }
+  if trimmed.is_empty() {
+    [[]]
+  } else {
+    trimmed
+  }
+}
+
+///|
+let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
+  .iter()
+  .concat(
+    [
+      ('L', @markup_text.MarkupType::Pair),
+      ('l', @markup_text.MarkupType::SelfClosing),
+    ].iter(),
+  )
+  |> Map::from_iter
+
+///|
+pub(all) suberror ParseTalkError {
+  ParseTalkError(String)
+} derive(Show)
+
+///|
+using @struct {type ColorName, type Point}

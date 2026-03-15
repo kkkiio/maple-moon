@@ -8,24 +8,68 @@
 
 使用 `selene`, 非常新且小巧的 2D 游戏引擎, 便于学习. 缺少功能时, 先停下, 对比其他现代游戏引擎的实现, 提出改进方案.
 
-## Project overview
+## Policies & Mandatory Rules
 
-- `docs/` - 游戏策划文档
-- `src/lib/ms` - 游戏模块源码
-- `src/test/` - 集成测试用例
-- `assets/` - 资源文件
+### Mandatory Skill Usage
 
-## Mandatory skills workflow
+#### `$resource-processing-workflow`
 
-- 缺少资源时，使用 `resource-processing-workflow` skill 处理.
-- 添加/修改 UI, 画面元素时，使用 `render-snapshot-test-loop` skill 处理.
+缺少资源时使用.
 
-## 文档
+#### `$render-snapshot-test-loop`
+
+添加/修改了 UI, 画面元素后, 必须使用.
+
+### Package README
 
 每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.
-更具体的说明写在代码的 Doc comments 里.
 
-## Build and test commands
+### Doc comments
+
+所有 public symbol 都要写 Doc comments, 包括:
+
+- `pub fn`.
+- `pub enum`, 尽量给每个 variant 加注释.
+- `pub struct`, 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
+
+````moonbit
+///|
+/// Get the largest element of a non-empty `Array`.
+///
+/// # Example
+/// ```moonbit
+/// inspect(my_maximum([1,2,3,4,5,6]), content="6")
+/// ```
+///
+/// # Panics
+/// Panics if the `xs` is empty.
+pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
+  ...
+}
+````
+
+### 禁止 fallback
+
+除非明确要求, 否则不写 fallback 逻辑, 避免干扰问题排查. 可以在函数返回值后加 `raise` 关键词, 让错误继续往上传播.
+
+MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
+
+## Project Structure
+
+### Repo Structure & Important Files
+
+- `docs/`: 游戏策划文档.
+- `src/lib/ms`: 游戏模块源码.
+- `src/test/`: 集成测试用例.
+- `assets/`: 资源文件.
+
+### Agents Core Runtime Guidelines
+
+- `src/apps/game/game.mbt` 是游戏运行的入口, 负责注册 game systems.
+
+## Operation Guide
+
+### Testing & Automated Checks
 
 修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新 js 内容:
 
@@ -66,39 +110,7 @@ UPDATE_CANVAS_SNAPS=true moon test <test-target>
 
 `moon test --update` 只用于 MoonBit 官方的 `inspect`/文本快照更新，不用于 canvas PNG 快照更新。
 
-## Coding Style
-
-### 注释
-
-所有 public symbol 都要写 Doc comments, 包括:
-
-- `pub fn`.
-- `pub enum`, 尽量给每个 variant 加注释.
-- `pub struct`, 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
-
-Write documentation using `///` comments (started with `///|` to delimit the block code)
-
-````moonbit
-///|
-/// Get the largest element of a non-empty `Array`.
-///
-/// # Example
-/// ```moonbit
-/// inspect(my_maximum([1,2,3,4,5,6]), content="6")
-/// ```
-///
-/// # Panics
-/// Panics if the `xs` is empty.
-pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
-  ...
-}
-````
-
-### 禁止 fallback
-
-除非必要, 否则不要写 fallback 逻辑, 干扰问题排查. 可以在函数返回值后加`raise`关键词, 让错误继续往上传播.
-
-MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
+## Utilities & Tips
 
 ### 使用 Js 模块
 

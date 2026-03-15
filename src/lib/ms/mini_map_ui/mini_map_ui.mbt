@@ -22,26 +22,27 @@ pub struct MiniMapUIResource {
 ///|
 /// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub async fn MiniMapUIResource::load() -> MiniMapUIResource {
-  let mini_map_json : Json = @resource.get_ui_window_2_loader()
-    .load_res_async(["MiniMap"])
-    .value() catch {
-      e => {
-        @log.error("failed to load UIWindow2 MiniMap resource", data={
-          "error": e,
-        })
-        panic()
-      }
+  let mini_map_json : Json = @resource.get_ui_window_2_loader().load_resource([
+    "MiniMap",
+  ]) catch {
+    e => {
+      @log.error("failed to load UIWindow2 MiniMap resource", data={
+        "error": e,
+      })
+      panic()
     }
-  let map_helper_minimap_json : Json = @resource.get_map_latest_loader()
-    .load_res_async(["MapHelper.img", "minimap"])
-    .value() catch {
-      e => {
-        @log.error("failed to load MapHelper minimap resource", data={
-          "error": e,
-        })
-        panic()
-      }
+  }
+  let map_helper_minimap_json : Json = @resource.get_map_latest_loader().load_resource([
+      "MapHelper.img", "minimap",
+    ],
+  ) catch {
+    e => {
+      @log.error("failed to load MapHelper minimap resource", data={
+        "error": e,
+      })
+      panic()
     }
+  }
   mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
 }
 

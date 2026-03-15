@@ -4,20 +4,34 @@ fn talk_about_quest(
   quest_says : Array[QuestPhaseSays],
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Unit {
-  let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0.phase })
-  let says = quest_says[phase]
+  if build_talk_args_for_quest(npc_quest, quest_says, open_npc_talk_ui)
+    is Some(talk_args) {
+    open_npc_talk_ui(talk_args)
+  }
+}
+
+///|
+pub fn build_talk_args_for_quest(
+  npc_quest : NpcQuest,
+  quest_says : Array[QuestPhaseSays],
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+) -> @npc.TalkArgs? {
+  let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0 })
+  guard quest_says.get(phase) is Some(says) else { return None }
   let quest_met = npc_quest.in_progress_quest.map_or(None, fn(it) { Some(it.1) })
-  let args = next_talk(
-    says,
-    if says.ask {
-      Ask(next=0, expect_answer=0, error_replys=[], answer=0)
-    } else {
-      Narrative(next=0)
-    },
-    quest_met,
-  )
-  guard args is Some(args)  // should always have some words to say
-  open_npc_talk_ui(bind_io(args, npc_quest, open_npc_talk_ui))
+  guard next_talk(
+      says,
+      if says.ask {
+        Ask(next=0, expect_answer=0, error_replys=[], answer=0)
+      } else {
+        Narrative(next=0)
+      },
+      quest_met,
+    )
+    is Some(args) else {
+    return None
+  }
+  Some(bind_io(args, npc_quest, open_npc_talk_ui))
 }
 
 ///|

@@ -195,7 +195,7 @@ pub async fn load_background_animation(
   path : BackgroundAnimationPath,
 ) -> @resource.NxAnimation {
   let { animated, no } = path
-  let bg_res = bs_loader.load_res_async([
+  let bg_res = bs_loader.load_resource([
     background_set_name + ".img",
     if animated {
       "ani"
@@ -204,7 +204,7 @@ pub async fn load_background_animation(
     },
     no.to_string(),
   ])
-  let animation_json = bg_res.value()
+  let animation_json = bg_res
   let animation : @resource.NxAnimation = @json.from_json(animation_json)
   background_opacity_specs.val[background_animation_signature(animation)] = background_opacity_animation_spec_from_json(
     animation_json,

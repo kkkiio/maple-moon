@@ -64,16 +64,10 @@ pub fn AfterImage::update(Self, Int, Int) -> Unit
 
 type AfterImageEntry
 
-type BodyLayerDrawable
-pub impl @graphics.Drawable for BodyLayerDrawable
-pub impl ToJson for BodyLayerDrawable
-
 type CharLook
 pub fn CharLook::add_equip(Self, @item.ItemData, @slot.Id) -> Unit raise
 pub fn CharLook::attack(Self, Bool) -> Unit
 pub fn CharLook::attack_by_stance(Self, @char_stance.StanceId) -> Unit
-pub fn CharLook::draw(Self, @graphics.DrawArgument, Double) -> Unit
-pub fn CharLook::draw_with_stance(Self, @res_types.Point[Int], Bool, @char_stance.StanceId, ExpressionId) -> Unit
 pub fn CharLook::get_attackdelay(Self, Int, Int) -> Int
 pub fn CharLook::get_body(Self) -> FullBody
 pub fn CharLook::get_delay(Self, @char_stance.StanceId, Int) -> Int
@@ -87,7 +81,6 @@ pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::is_animation_finished(Self) -> Bool
 pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
 pub async fn CharLook::load(@entity.Entity, LookEntry, FullBody, Hair, Face, @types.BodyDrawInfo) -> Self
-pub fn CharLook::make_draw_front(Self, @char_stance.StanceId, ExpressionId, Int, Int) -> Array[&@graphics.Drawable]
 pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @types.BodyDrawInfo) -> Self
 pub fn CharLook::play_animations(Self) -> Unit
 pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
@@ -112,10 +105,6 @@ pub async fn CharLookMod::load_char_look(Self, LookEntry) -> CharLook
 pub async fn CharLookMod::load_face_by_id(Self, Int) -> Face
 pub async fn CharLookMod::load_hair_by_id(Self, Int) -> Hair
 pub fn CharLookMod::new(NxStanceLooks[@types.NxStanceBody], NxStanceLooks[@types.NxMultiPartFrame], @types.BodyDrawInfo) -> Self
-
-type EquipLayerDrawable
-pub impl @graphics.Drawable for EquipLayerDrawable
-pub impl ToJson for EquipLayerDrawable
 
 pub(all) enum ExpressionId {
   DEFAULT
@@ -159,10 +148,6 @@ pub fn Face::nextframe(Self, ExpressionId, Int) -> Int
 pub impl Default for Face
 pub impl ToJson for Face
 
-type FaceDrawable
-pub impl @graphics.Drawable for FaceDrawable
-pub impl ToJson for FaceDrawable
-
 type FaceFrame
 pub fn FaceFrame::from_resource(Json) -> Self raise
 
@@ -182,10 +167,6 @@ pub fn Hair::getcolor(Self) -> String
 pub async fn Hair::load(Int, @types.BodyDrawInfo) -> Self
 pub fn Hair::parse(Int, NxStanceLooks[@types.NxMultiPartFrame], @types.BodyDrawInfo) -> Self
 pub impl ToJson for Hair
-
-type HairDrawable
-pub impl @graphics.Drawable for HairDrawable
-pub impl ToJson for HairDrawable
 
 pub(all) enum HairLayer {
   HAIR_LAYER_DEFAULT
@@ -217,7 +198,6 @@ pub impl ToJson for LookEntry
 pub impl @json.FromJson for LookEntry
 
 type NoopDrawable
-pub impl @graphics.Drawable for NoopDrawable
 pub impl ToJson for NoopDrawable
 
 #alias(AfterImageResource, deprecated)

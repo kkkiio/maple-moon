@@ -41,8 +41,8 @@ async fn get_target_by_map_id_and_portal_name(
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
-  let node = loader.load_res_async(path)
-  guard node.value() is { "portal": Object(portals), .. } else { return None }
+  let node = loader.load_resource(path)
+  guard node is { "portal": Object(portals), .. } else { return None }
   for _, portal in portals {
     if portal
       is { "pn": String(pn), "tm": Number(tm, ..), "tn": String(tn), .. } &&
@@ -71,8 +71,8 @@ async fn get_portal_id_by_map_id_and_portal_name(
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
-  let node = loader.load_res_async(path)
-  guard node.value() is { "portal": Object(portals), .. } else { return None }
+  let node = loader.load_resource(path)
+  guard node is { "portal": Object(portals), .. } else { return None }
   for id_str, portal in portals {
     if portal is { "pn": String(pn), .. } && pn == portal_name {
       return Some(@strconv.parse_int(id_str))

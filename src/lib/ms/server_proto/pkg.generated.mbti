@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/server_proto"
 
 import {
+  "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
@@ -13,6 +14,9 @@ import {
 // Values
 
 // Errors
+pub(all) suberror UnknownOpCodeError {
+  UnknownOpCodeError(Int)
+}
 
 // Types and methods
 pub(all) enum AdminCommandMessage {
@@ -68,6 +72,66 @@ pub impl Default for CharacterListRequestMessage
 pub impl Show for CharacterListRequestMessage
 pub impl ToJson for CharacterListRequestMessage
 pub impl @json.FromJson for CharacterListRequestMessage
+
+pub(all) enum ClientOpcode {
+  LOGIN
+  CHAR_LIST_REQUEST
+  SERVER_STATUS_REQUEST
+  ACCEPT_TOS
+  SET_GENDER
+  SERVERLIST_REQUEST
+  SELECT_CHAR
+  PLAYER_LOGIN
+  NAME_CHAR
+  CREATE_CHAR
+  DELETE_CHAR
+  PONG
+  REGISTER_PIC
+  SELECT_CHAR_PIC
+  LOGIN_START
+  CHANGE_MAP
+  CHANGE_CHANNEL
+  ENTER_CASHSHOP
+  MOVE_PLAYER
+  CLOSE_ATTACK
+  RANGED_ATTACK
+  MAGIC_ATTACK
+  TAKE_DAMAGE
+  GENERAL_CHAT
+  TALK_TO_NPC
+  NPC_TALK_MORE
+  NPC_SHOP_ACTION
+  GIVE_FAME
+  CHAR_INFO_REQUEST
+  GATHER_ITEMS
+  SORT_ITEMS
+  MOVE_ITEM
+  USE_ITEM
+  USE_CASH_ITEM
+  SCROLL_EQUIP
+  DROP_MESOS
+  SPEND_AP
+  HEAL_OVER_TIME
+  SPEND_SP
+  CHANGE_KEYMAP
+  USE_SKILL
+  QUEST_ACTION
+  PLAYER_INTERACTION
+  PARTY_OPERATION
+  ADMIN_COMMAND
+  MOVE_MONSTER
+  PICKUP_ITEM
+  DAMAGE_REACTOR
+  PLAYER_MAP_TRANSFER
+  PLAYER_UPDATE
+}
+pub fn ClientOpcode::int_value(Self) -> Int
+pub fn ClientOpcode::log_level(Self) -> @log.Level
+pub impl Compare for ClientOpcode
+pub impl Eq for ClientOpcode
+pub impl Show for ClientOpcode
+pub impl ToJson for ClientOpcode
+pub impl @json.FromJson for ClientOpcode
 
 pub(all) struct ConfirmShopTransactionMessage {
   code : Int
@@ -317,6 +381,85 @@ pub impl Show for NpcTalkMoreMessage
 pub impl ToJson for NpcTalkMoreMessage
 pub impl @json.FromJson for NpcTalkMoreMessage
 
+pub(all) enum Opcode {
+  LOGIN_RESULT
+  SERVER_STATUS
+  SERVER_LIST
+  CHAR_LIST
+  SERVER_IP
+  CHARNAME_RESPONSE
+  ADD_NEWCHAR_ENTRY
+  DELCHAR_RESPONSE
+  PING
+  LAST_CONNECTED_WORLD
+  RECOMMENDED_WORLDS
+  CHECK_SPW_RESULT
+  MODIFY_INVENTORY
+  CHANGE_CHANNEL
+  CHANGE_STATS
+  GIVE_BUFF
+  CANCEL_BUFF
+  RECALCULATE_STATS
+  UPDATE_SKILL
+  FAME_RESPONSE
+  SHOW_STATUS_INFO
+  GATHER_RESULT
+  SORT_RESULT
+  UPDATE_QUEST_INFO
+  SERVER_MESSAGE
+  WEEK_EVENT_MESSAGE
+  SKILL_MACROS
+  SET_FIELD
+  WHISPER
+  FIELD_EFFECT
+  SPAWN_CHAR
+  REMOVE_CHAR
+  CHAT_RECEIVED
+  SCROLL_RESULT
+  SPAWN_PET
+  CHAR_MOVED
+  ATTACKED_CLOSE
+  ATTACKED_RANGED
+  ATTACKED_MAGIC
+  UPDATE_CHARLOOK
+  SHOW_FOREIGN_EFFECT
+  GIVE_FOREIGN_BUFF
+  CANCEL_FOREIGN_BUFF
+  SHOW_ITEM_GAIN_INCHAT
+  ADD_COOLDOWN
+  SPAWN_MOB
+  KILL_MOB
+  SPAWN_MOB_C
+  MOB_MOVED
+  MOB_MOVE_RESPONSE
+  APPLY_MONSTER_STATUS
+  CANCEL_MONSTER_STATUS
+  SHOW_MOB_HP
+  SPAWN_NPC
+  SPAWN_NPC_C
+  SET_NPC_SCRIPTABLE
+  DROP_LOOT
+  REMOVE_LOOT
+  HIT_REACTOR
+  SPAWN_REACTOR
+  REMOVE_REACTOR
+  NPC_DIALOGUE
+  OPEN_NPC_SHOP
+  CONFIRM_SHOP_TRANSACTION
+  KEYMAP
+  CHAR_INFO
+  PLAYER_INTERACTION
+  SET_CASH_SHOP
+}
+pub fn Opcode::from_int(Int) -> Self raise UnknownOpCodeError
+pub fn Opcode::int_value(Self) -> Int
+pub impl Compare for Opcode
+pub impl Eq for Opcode
+pub impl Hash for Opcode
+pub impl Show for Opcode
+pub impl ToJson for Opcode
+pub impl @json.FromJson for Opcode
+
 pub(all) struct OpenNpcShopMessage {
   npc_id : Int
   items : Array[ShopItem]
@@ -352,6 +495,15 @@ pub impl Default for PlayerQuestLogInfo
 pub impl Show for PlayerQuestLogInfo
 pub impl ToJson for PlayerQuestLogInfo
 pub impl @json.FromJson for PlayerQuestLogInfo
+
+pub(all) enum QuestFailureOperation {
+  NoMeso
+  WornByCharacter
+  NotHavingItem
+}
+pub impl Show for QuestFailureOperation
+pub impl ToJson for QuestFailureOperation
+pub impl @json.FromJson for QuestFailureOperation
 
 pub(all) struct RemoveLootMessage {
   mode : Int
@@ -392,6 +544,25 @@ pub impl Show for ShopItem
 pub impl ToJson for ShopItem
 pub impl @json.FromJson for ShopItem
 
+pub(all) struct ShowStatusExpGainMessage {
+  white : Bool
+  gain : Int
+  in_chat : Bool
+  bonus_event_exp : Int
+  third_monster_kill_event : Int
+  wedding_bonus : Int
+  quest_bonus_rate : Int?
+  party_bonus_multiplier : Int
+  party_bonus : Int
+  equip_bonus : Int
+  internet_cafe_bonus : Int
+  rainbow_week_bonus : Int
+}
+pub impl ServerMessage for ShowStatusExpGainMessage
+pub impl Show for ShowStatusExpGainMessage
+pub impl ToJson for ShowStatusExpGainMessage
+pub impl @json.FromJson for ShowStatusExpGainMessage
+
 pub(all) struct ShowStatusMesoGainMessage {
   gain : Int
 }
@@ -409,6 +580,22 @@ pub(all) struct SkillEntry {
 pub impl Show for SkillEntry
 pub impl ToJson for SkillEntry
 pub impl @json.FromJson for SkillEntry
+
+pub(all) struct SpendAPMessage {
+  stat_id : Int
+}
+pub impl ClientMessage for SpendAPMessage
+pub impl Show for SpendAPMessage
+pub impl ToJson for SpendAPMessage
+pub impl @json.FromJson for SpendAPMessage
+
+pub(all) struct SpendSPMessage {
+  skill_id : Int
+}
+pub impl ClientMessage for SpendSPMessage
+pub impl Show for SpendSPMessage
+pub impl ToJson for SpendSPMessage
+pub impl @json.FromJson for SpendSPMessage
 
 pub(all) struct StatsEntry {
   name : String
@@ -431,6 +618,20 @@ pub impl Show for TalkToNpcMessage
 pub impl ToJson for TalkToNpcMessage
 pub impl @json.FromJson for TalkToNpcMessage
 
+pub(all) enum UpdateQuestInfoMessage {
+  AddQuestTimeLimit(size~ : Int, quest_id~ : Int, time~ : Int)
+  RemoveQuestTimeLimit(position~ : Int, quest_id~ : Int)
+  QuestUpdate(quest_id~ : Int, npc_id~ : Int)
+  QuestFinish(quest_id~ : Int, npc_id~ : Int, next_quest~ : Int)
+  QuestError(quest_id~ : Int)
+  QuestExpire(quest_id~ : Int)
+  QuestFailure(operation~ : QuestFailureOperation)
+}
+pub impl ServerMessage for UpdateQuestInfoMessage
+pub impl Show for UpdateQuestInfoMessage
+pub impl ToJson for UpdateQuestInfoMessage
+pub impl @json.FromJson for UpdateQuestInfoMessage
+
 pub(all) struct UseItemMessage {
   slot_no : Int
   item_id : Int
@@ -439,6 +640,17 @@ pub impl ClientMessage for UseItemMessage
 pub impl Show for UseItemMessage
 pub impl ToJson for UseItemMessage
 pub impl @json.FromJson for UseItemMessage
+
+pub(all) struct UseSPResetMessage {
+  slot_no : Int
+  item_id : Int
+  to : Int
+  from : Int
+}
+pub impl ClientMessage for UseSPResetMessage
+pub impl Show for UseSPResetMessage
+pub impl ToJson for UseSPResetMessage
+pub impl @json.FromJson for UseSPResetMessage
 
 // Type aliases
 

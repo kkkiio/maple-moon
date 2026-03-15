@@ -684,22 +684,19 @@ async fn load_ui_resources(
 ) -> UiResources {
   let ui_json = match ui_json {
     Some(json) => json
-    None =>
-      @resource.get_ui_window_2_loader().load_res_async(["WorldMap"]).value()
+    None => @resource.get_ui_window_2_loader().load_resource(["WorldMap"])
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.get_ui_window_2_loader()
-      .load_res_async(["ToolTip", "WorldMap"])
-      .value()
+      @resource.get_ui_window_2_loader().load_resource(["ToolTip", "WorldMap"])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.get_map_latest_loader()
-      .load_res_async(["MapHelper.img", "worldMap"])
-      .value()
+      @resource.get_map_latest_loader().load_resource([
+        "MapHelper.img", "worldMap",
+      ])
   }
   let ui = parse_world_map_ui_resource(ui_json)
   let marker = parse_world_map_marker_resource(map_helper_json)
@@ -715,10 +712,7 @@ async fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None =>
-      @resource.get_map_world_map_loader()
-      .load_res_async(["\{name}.img"])
-      .value()
+    None => @resource.get_map_world_map_loader().load_resource(["\{name}.img"])
   }
   (name, parse_world_map_page_resource(name, json, marker))
 }

@@ -258,6 +258,18 @@ pub fn get_string_loader() -> AsyncLoader {
 }
 
 ///|
+/// Register quest loader.
+pub fn set_quest_loader(loader : AsyncLoader) -> Unit {
+  register_async_loader("quest", loader)
+}
+
+///|
+/// Get quest loader.
+pub fn get_quest_loader() -> AsyncLoader {
+  get_async_loader("quest")
+}
+
+///|
 /// Loader interface for text resources.
 pub(open) trait TextResourceLoader {
   async load_text(self : Self, path : String) -> String

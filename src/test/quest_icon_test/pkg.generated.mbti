@@ -1,8 +1,7 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/apps/game"
+package "KKKIIO/maple-moon/test/quest_icon_test"
 
 // Values
-pub fn install_builtin_resource_loaders() -> Unit
 
 // Errors
 

@@ -95,4 +95,3 @@ pub fn Movement::hasmoved(self : Movement, newmove : Movement) -> Bool {
   newmove.lastx != self.lastx ||
   newmove.lasty != self.lasty
 }
-

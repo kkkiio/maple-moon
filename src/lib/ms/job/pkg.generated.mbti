@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/job"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
@@ -34,12 +33,12 @@ pub async fn Job::load(id? : Int) -> Self
 pub fn Job::new(Int, Level, Map[Int, JobData]) -> Self
 
 pub(all) struct JobData {
-  icon : @graphics.Texture
+  icon : @resource.NxTexture
   skill_ids : Array[Int]
   name : String
 }
 pub async fn JobData::load(Int) -> Self
-pub fn JobData::new(@resource.NxNode, String) -> Self
+pub fn JobData::new(Json, String) -> Self
 
 pub(all) enum JobId {
   BEGINNER
@@ -145,7 +144,6 @@ pub impl Eq for Level
 pub impl Hash for Level
 
 type Module
-pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
 pub fn Module::new((Int) -> Unit) -> Self
 
 // Type aliases

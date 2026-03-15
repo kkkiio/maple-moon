@@ -452,6 +452,20 @@ fn get_string_loader() -> @resource.AsyncLoader {
 }
 
 ///|
+let quest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "quest",
+    loader=@resource.DirResourceLoader::new("/assets/Quest"),
+    base_url="/assets",
+  )
+})
+
+///|
+fn get_quest_loader() -> @resource.AsyncLoader {
+  quest_loader.get()
+}
+
+///|
 /// Install default resource loaders for the game runtime.
 pub fn install_builtin_resource_loaders() -> Unit {
   @resource.set_mapx_loader(get_mapx_loader())
@@ -474,6 +488,7 @@ pub fn install_builtin_resource_loaders() -> Unit {
   @resource.set_ui_window_4_loader(get_ui_window_4_loader())
   @resource.set_npc_loader(get_npc_loader())
   @resource.set_string_loader(get_string_loader())
+  @resource.set_quest_loader(get_quest_loader())
   @resource.set_csv_loader(
     @resource.CsvLoader::new(loader=FetchCsvTextLoader::new()),
   )

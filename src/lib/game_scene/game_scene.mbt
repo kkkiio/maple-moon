@@ -190,6 +190,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @bgm.clear_bgm()
       clear_active_scene_map()
       @map.clear_runtime_context()
+      @quest.clear_active_module()
       @npc.clear_map_npcs()
       @character.clear_character_registry()
       @mini_map_ui.clear_current_map()
@@ -199,7 +200,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       return
     }
     GameStart(map_id~, portal_id~, set_field_message~) => {
-      guard set_field_message is SetField(stats~, inventory_entry~, ..) else {
+      guard set_field_message is SetField(stats~, inventory_entry~, quests~, ..) else {
         return
       }
       if get_loading_data() is None {
@@ -270,8 +271,10 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             }
             match after_image_name {
               Some(after_image_name) => {
-                let after_image_res = @resource.get_afterimage_loader()
-                  .load_resource(["\{after_image_name}.img"])
+                let after_image_res = @resource.get_afterimage_loader().load_resource([
+                    "\{after_image_name}.img",
+                  ],
+                )
                 let after_images = @json.from_json(after_image_res)
                 @char_look.set_after_images(after_image_name, after_images)
               }
@@ -294,9 +297,14 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             }
             let npc_loader = @resource.get_npc_loader()
             let string_loader = @resource.get_string_loader()
+            let quest_module = @quest.Module::load(
+              @inventory.inventory.val,
+              @markup_text.RefRender::new(fn() { stats.name }),
+              @npc_talk_ui.open_npc_talk_ui,
+            )
             (
               weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
-              string_loader,
+              string_loader, quest_module,
             )
           }),
         )
@@ -316,6 +324,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         face,
         npc_loader,
         string_loader,
+        quest_module,
       ) = match res {
         Ok(data) => data
         Err(e) => {
@@ -368,12 +377,16 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         Some(_) => ()
         None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
       }
+      @quest.set_active_module(quest_module)
       @item_use_events.clear_intents()
       match @player.get_player() {
-        Some(player) =>
+        Some(player) => {
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
+          @quest.bind_player(player)
+        }
         None => ()
       }
+      @quest.handle_player_quest_info(quests)
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       let global_inv = @inventory.inventory.val

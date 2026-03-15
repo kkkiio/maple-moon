@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/cmp",
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/lib/resource",
@@ -9,13 +10,16 @@ import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ui",
   "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/map_object",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/job",
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "KKKIIO/maple-moon/lib/game_server",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/sprite",
+  "Milky2018/selene/math" @selene_math,
 }
 
 options(

@@ -20,6 +20,8 @@ pub async fn load_skill_move(Int) -> @combat_system.SpecialMove
 
 pub let move_map : Map[Int, @combat_system.SpecialMove]
 
+pub fn new_regular_attack(@weapon.Type) -> @combat_system.SpecialMove
+
 pub fn register_move(@combat_system.SpecialMove) -> Unit
 
 pub fn use_move(&@combat_system.CombatCharacter, Int) -> Unit

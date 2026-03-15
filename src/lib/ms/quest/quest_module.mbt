@@ -1,6 +1,7 @@
 ///|
 struct Module {
   quests_resource : QuestResource
+  quest_checks_raw : Json
   ref_render : @markup_text.RefRender
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
@@ -9,29 +10,178 @@ struct Module {
 }
 
 ///|
+let active_module : Ref[Module?] = Ref::new(None)
+
+///|
+pub(all) struct DemoQuestSelection {
+  /// Selected quest id.
+  quest_id : Int
+  /// NPC template id bound to the selected quest.
+  npc_id : Int
+  /// Whether phase0 check includes a level requirement.
+  has_level_check : Bool
+} derive(Show)
+
+///|
+let selected_demo_quest : Ref[DemoQuestSelection?] = Ref::new(None)
+
+///|
+/// Registers the active quest module instance for global query entrypoints.
+pub fn set_active_module(module : Module) -> Unit {
+  active_module.val = Some(module)
+}
+
+///|
+/// Clears the active quest module binding.
+pub fn clear_active_module() -> Unit {
+  active_module.val = None
+  selected_demo_quest.val = None
+}
+
+///|
+/// Queries the quest-icon state for one NPC from the active quest module.
+pub fn query_npc_icon(npc_id : Int) -> QuestIconQueryResult? {
+  active_module.val.bind(fn(module) { module.query_npc_icon(npc_id) })
+}
+
+///|
+/// Builds NPC talk arguments for one quest interaction from the active module.
+pub fn build_quest_talk_args(quest_id : Int, npc_id : Int) -> @npc.TalkArgs? {
+  active_module.val.bind(fn(module) {
+    module.build_quest_talk_args(quest_id, npc_id, @npc.request_quest_talk)
+  })
+}
+
+///|
+/// Refreshes one quest state in the active module.
+pub fn refresh_quest(quest_id : Int) -> Unit {
+  match active_module.val {
+    Some(module) => module.map_quests.update_quest(quest_id)
+    None => ()
+  }
+}
+
+///|
+/// Binds current player to quest runtime checks.
+pub fn bind_player(player : @player.Player) -> Unit {
+  match active_module.val {
+    Some(module) => module.map_quests.set_player(player)
+    None => ()
+  }
+}
+
+///|
+/// Applies `SET_FIELD` quest log snapshot to active quest module.
+pub fn handle_player_quest_info(player_quests : PlayerQuestLogInfo) -> Unit {
+  match active_module.val {
+    Some(module) => module.handle_player_quest_info(player_quests)
+    None => ()
+  }
+}
+
+///|
+/// Returns selected low-restriction demo quest in current runtime.
+pub fn get_demo_quest_selection() -> DemoQuestSelection? {
+  selected_demo_quest.val
+}
+
+///|
+/// Selects one low-restriction quest from current map NPC ids for icon validation.
+pub fn select_demo_quest_by_npcs(npc_ids : Array[Int]) -> DemoQuestSelection? {
+  let selection = active_module.val.bind(fn(module) {
+    module.select_demo_quest_by_npcs(npc_ids)
+  })
+  selected_demo_quest.val = selection
+  selection
+}
+
+///|
+/// Registers quest packet handlers used by the runtime.
+pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "update_quest_info",
+    @server_proto.Opcode::UPDATE_QUEST_INFO.int_value(),
+    fn(json) raise {
+      let msg : UpdateQuestInfoMessage = @json.from_json(json)
+      handle_update_quest_info_message(msg)
+    },
+  )
+}
+
+///|
+fn handle_update_quest_info_message(msg : UpdateQuestInfoMessage) -> Unit {
+  match msg {
+    QuestUpdate(quest_id~, ..) => refresh_quest(quest_id)
+    QuestFinish(quest_id~, next_quest=0, ..) => refresh_quest(quest_id)
+    _ => ()
+  }
+}
+
+///|
 pub async fn Module::load(
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
-  ...
-  // let quest_resource_loader : @resource.AsyncLoader = @resource.AsyncLoader::new(
-  //   "Quest",
-  //   loader=@resource.AsyncResourceLoader::new_async_resource_loader(
-  //     @resource.DirResourceLoader::new("https://maple-res.kkkiiox.work/Quest"),
-  //   ),
-  // )
-  // let quests_resource = quest_resource_loader.load_res_async(["nx"])
-  // let map_quests_resource = MapQuestsResource::load()
-  // let quests_resource : QuestResource = @json.from_json(quests_resource.value())
-  // Module::new(
-  //   quests_resource, map_quests_resource, network, inventory, ref_render, open_npc_talk_ui,
-  // )
+  let quest_resource_loader = @resource.get_quest_loader()
+  let raw = quest_resource_loader.load_resource(["nx"])
+  let quests_resource : QuestResource = @json.from_json(raw) catch {
+    e => {
+      @log.error("failed to decode quest resource", data={
+        "error": e.to_string(),
+      })
+      panic()
+    }
+  }
+  let map_quests_resource = MapQuestsResource::load()
+  let quest_checks_raw = match raw {
+    { "Check.img": check_raw, .. } => check_raw
+    _ => Json::null()
+  }
+  Module::new_internal(
+    quests_resource, quest_checks_raw, map_quests_resource, inventory, ref_render,
+    open_npc_talk_ui,
+  )
 }
 
 ///|
 pub fn Module::new(
   quests_resource : QuestResource,
+  map_quests_resource : MapQuestsResource,
+  inventory : @inventory.Inventory,
+  ref_render : @markup_text.RefRender,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+) -> Module {
+  Module::new_internal(
+    quests_resource,
+    Json::null(),
+    map_quests_resource,
+    inventory,
+    ref_render,
+    open_npc_talk_ui,
+  )
+}
+
+///|
+/// Creates a quest module with explicit raw `Check.img` JSON for strict filtering.
+pub fn Module::new_with_raw_checks(
+  quests_resource : QuestResource,
+  quest_checks_raw : Json,
+  map_quests_resource : MapQuestsResource,
+  inventory : @inventory.Inventory,
+  ref_render : @markup_text.RefRender,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+) -> Module {
+  Module::new_internal(
+    quests_resource, quest_checks_raw, map_quests_resource, inventory, ref_render,
+    open_npc_talk_ui,
+  )
+}
+
+///|
+fn Module::new_internal(
+  quests_resource : QuestResource,
+  quest_checks_raw : Json,
   map_quests_resource : MapQuestsResource,
   inventory : @inventory.Inventory,
   ref_render : @markup_text.RefRender,
@@ -52,8 +202,9 @@ pub fn Module::new(
       acc
     })
   let player_quest_log = Ref::new(PlayerQuestLog::default())
-  {
+  let module = {
     quests_resource,
+    quest_checks_raw,
     ref_render,
     player_quest_log,
     quest_log_listeners: [],
@@ -72,6 +223,185 @@ pub fn Module::new(
     ),
     inventory,
   }
+  set_active_module(module)
+  module
+}
+
+///|
+fn Module::select_demo_quest_by_npcs(
+  self : Module,
+  npc_ids : Array[Int],
+) -> DemoQuestSelection? {
+  let seen : Map[Int, Unit] = {}
+  let mut candidate_count = 0
+  for npc_id in npc_ids {
+    if seen.contains(npc_id) {
+      continue
+    }
+    seen.set(npc_id, ())
+    let quest_ids = list_quests_by_npc(self.map_quests.npc_quests_map, npc_id)
+    for quest_id in quest_ids {
+      let (low_restriction, has_level_check) = is_low_restriction_phase0(
+        self.quest_checks_raw,
+        self.quests_resource.quest_checks_map,
+        quest_id,
+        npc_id,
+      )
+      if not(low_restriction) {
+        continue
+      }
+      candidate_count = candidate_count + 1
+      if self.map_quests.query_npc_icon(npc_id)
+        is Some({ quest_id: shown_quest_id, .. }) &&
+        shown_quest_id == quest_id {
+        let selection = { quest_id, npc_id, has_level_check }
+        @log.info("selected low restriction quest for quest icon validation", data={
+          "quest_id": quest_id,
+          "npc_id": npc_id,
+          "has_level_check": has_level_check,
+        })
+        return Some(selection)
+      }
+      self.log_low_restriction_rejection(quest_id, npc_id)
+    }
+  }
+  @log.warn("no low restriction quest icon is currently visible", data={
+    "npc_count": npc_ids.length(),
+    "candidate_count": candidate_count,
+  })
+  None
+}
+
+///|
+fn Module::log_low_restriction_rejection(
+  self : Module,
+  quest_id : Int,
+  npc_id : Int,
+) -> Unit {
+  guard self.quests_resource.quest_checks_map.get(quest_id) is Some(all_checks) else {
+    @log.warn("low restriction quest rejected: missing check data", data={
+      "quest_id": quest_id,
+      "npc_id": npc_id,
+    })
+    return
+  }
+  guard all_checks.get(0) is Some(check0) else {
+    @log.warn("low restriction quest rejected: missing phase0", data={
+      "quest_id": quest_id,
+      "npc_id": npc_id,
+    })
+    return
+  }
+  let status = self.player_quest_log.val.get_quest(quest_id)
+  if not(is_quest_status_can_start(status, check0.repeatable)) {
+    @log.warn("low restriction quest rejected: status cannot start", data={
+      "quest_id": quest_id,
+      "npc_id": npc_id,
+      "status": status,
+    })
+    return
+  }
+  guard self.map_quests.player_deps
+    is Some({ player_quest_log, item_count_provider, char_stats_provider }) else {
+    @log.warn("low restriction quest rejected: player deps not initialized", data={
+      "quest_id": quest_id,
+      "npc_id": npc_id,
+    })
+    return
+  }
+  match
+    check_quest_requirements(
+      check0, item_count_provider, char_stats_provider, player_quest_log, quest_id,
+      0,
+    ) {
+    Ok(_) =>
+      @log.warn("low restriction quest rejected: icon conflict or priority", data={
+        "quest_id": quest_id,
+        "npc_id": npc_id,
+      })
+    Err(err) =>
+      @log.warn("low restriction quest rejected: start requirement not met", data={
+        "quest_id": quest_id,
+        "npc_id": npc_id,
+        "reason": err,
+      })
+  }
+}
+
+///|
+fn is_low_restriction_phase0(
+  quest_checks_raw : Json,
+  quest_checks_map : Map[Int, Array[QuestPhaseChecks]],
+  quest_id : Int,
+  npc_id : Int,
+) -> (Bool, Bool) {
+  match is_low_restriction_phase0_raw(quest_checks_raw, quest_id, npc_id) {
+    Some(result) => return result
+    None => ()
+  }
+  is_low_restriction_phase0_from_checks(quest_checks_map, quest_id, npc_id)
+}
+
+///|
+fn is_low_restriction_phase0_raw(
+  quest_checks_raw : Json,
+  quest_id : Int,
+  npc_id : Int,
+) -> (Bool, Bool)? {
+  guard quest_checks_raw
+    .as_object()
+    .bind(fn(it) { it.get(quest_id.to_string()) })
+    .bind(fn(it) { it.as_object() })
+    .bind(fn(it) { it.get("0") })
+    .bind(fn(it) { it.as_object() })
+    is Some(phase0) else {
+    return None
+  }
+  guard phase0.get("npc") is Some(Number(raw_npc, ..)) else {
+    return Some((false, false))
+  }
+  if raw_npc.to_int() != npc_id {
+    return Some((false, false))
+  }
+  let has_level_check = phase0.contains("lvmin")
+  for key, _ in phase0 {
+    if key == "item" ||
+      key == "mob" ||
+      key == "quest" ||
+      key == "job" ||
+      key == "interval" ||
+      key == "infoex" {
+      return Some((false, false))
+    }
+  }
+  Some((true, has_level_check))
+}
+
+///|
+fn is_low_restriction_phase0_from_checks(
+  quest_checks_map : Map[Int, Array[QuestPhaseChecks]],
+  quest_id : Int,
+  npc_id : Int,
+) -> (Bool, Bool) {
+  guard quest_checks_map.get(quest_id) is Some(all_checks) else {
+    return (false, false)
+  }
+  guard all_checks.get(0) is Some(phase0) else { return (false, false) }
+  guard phase0.npc is Some(phase_npc) else { return (false, false) }
+  if phase_npc != npc_id {
+    return (false, false)
+  }
+  // Fallback path used when raw Check.img JSON is unavailable in tests.
+  // Keep it conservative and only accept simple NPC / level quests.
+  if phase0.repeatable ||
+    phase0.info_number is Some(_) ||
+    phase0.unknown_checks.length() > 0 ||
+    phase0.monster_hunts.length() > 0 ||
+    phase0.checks.length() > 2 {
+    return (false, false)
+  }
+  let has_level_check = phase0.checks.length() == 2
+  (true, has_level_check)
 }
 
 // ///|
@@ -158,6 +488,24 @@ pub fn Module::get_map_quests(self : Module) -> MapQuests {
 }
 
 ///|
+pub fn Module::query_npc_icon(
+  self : Module,
+  npc_id : Int,
+) -> QuestIconQueryResult? {
+  self.map_quests.query_npc_icon(npc_id)
+}
+
+///|
+pub fn Module::build_quest_talk_args(
+  self : Module,
+  quest_id : Int,
+  npc_id : Int,
+  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
+) -> @npc.TalkArgs? {
+  self.map_quests.build_quest_talk_args(quest_id, npc_id, open_npc_talk_ui)
+}
+
+///|
 /// PlayerQuestLog stores information on the quest log of an individual character
 priv struct PlayerQuestLog {
   in_progress : Map[Int, InProgressQuest]
@@ -215,7 +563,7 @@ priv enum StartedQuest {
 } derive(Show)
 
 ///|
-using @server_proto {type PlayerQuestLogInfo}
+using @server_proto {type PlayerQuestLogInfo, type UpdateQuestInfoMessage}
 
 // ///|
 // pub fn parse_player_quest_info(
@@ -237,24 +585,6 @@ using @server_proto {type PlayerQuestLogInfo}
 //   }
 //   { started, completed }
 // }
-
-///|
-priv enum UpdateQuestInfoMessage {
-  AddQuestTimeLimit(Int, Int, Int) // size, quest_id, time
-  RemoveQuestTimeLimit(Int, Int) // position, quest_id
-  QuestUpdate(Int, Int) // quest_id, npc
-  QuestFinish(Int, Int, Int) // quest_id, npc, next_quest
-  QuestError(Int) // quest_id
-  QuestExpire(Int) // quest_id
-  QuestFailure(QuestFailureOperation)
-} derive(Show)
-
-///|
-priv enum QuestFailureOperation {
-  NoMeso
-  WornByCharacter
-  NotHavingItem
-} derive(Show)
 
 // ///|
 // fn parse_update_quest_info(
@@ -687,8 +1017,9 @@ fn Module::handle_update_quest_info(
   msg : UpdateQuestInfoMessage,
 ) -> Unit {
   match msg {
-    QuestUpdate(quest_id, _) => self.map_quests.update_quest(quest_id)
-    QuestFinish(quest_id, _, 0) => self.map_quests.update_quest(quest_id)
-    ...
+    QuestUpdate(quest_id~, ..) => self.map_quests.update_quest(quest_id)
+    QuestFinish(quest_id~, next_quest=0, ..) =>
+      self.map_quests.update_quest(quest_id)
+    _ => ()
   }
 }

@@ -168,21 +168,21 @@ pub(all) struct NumberSet {
 pub async fn NumberSet::load() -> NumberSet {
   let loader = get_effect_loader()
   // 'No' for Number
-  let no_red_1 = loader.load_res_async(["BasicEff.img", "NoRed1"]).value()
+  let no_red_1 = loader.load_resource(["BasicEff.img", "NoRed1"])
     |> @json.from_json
-  let no_red_0 = loader.load_res_async(["BasicEff.img", "NoRed0"]).value()
+  let no_red_0 = loader.load_resource(["BasicEff.img", "NoRed0"])
     |> @json.from_json
-  let no_cri_1 = loader.load_res_async(["BasicEff.img", "NoCri1"]).value()
+  let no_cri_1 = loader.load_resource(["BasicEff.img", "NoCri1"])
     |> @json.from_json
-  let no_cri_0 = loader.load_res_async(["BasicEff.img", "NoCri0"]).value()
+  let no_cri_0 = loader.load_resource(["BasicEff.img", "NoCri0"])
     |> @json.from_json
-  let no_violet_1 = loader.load_res_async(["BasicEff.img", "NoViolet1"]).value()
+  let no_violet_1 = loader.load_resource(["BasicEff.img", "NoViolet1"])
     |> @json.from_json
-  let no_violet_0 = loader.load_res_async(["BasicEff.img", "NoViolet0"]).value()
+  let no_violet_0 = loader.load_resource(["BasicEff.img", "NoViolet0"])
     |> @json.from_json
-  let no_blue_1 = loader.load_res_async(["BasicEff.img", "NoBlue1"]).value()
+  let no_blue_1 = loader.load_resource(["BasicEff.img", "NoBlue1"])
     |> @json.from_json
-  let no_blue_0 = loader.load_res_async(["BasicEff.img", "NoBlue0"]).value()
+  let no_blue_0 = loader.load_resource(["BasicEff.img", "NoBlue0"])
     |> @json.from_json
   let red_skins : Skins = { big: no_red_1, small: no_red_0 }
   let cri_skins : Skins = { big: no_cri_1, small: no_cri_0 }

@@ -920,8 +920,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
     let prefix = (map_id / 100000000).to_string()
     let strid = @utils.stoi_left_pad0(map_id, 9)
     let path = ["Map\{prefix}", "\{strid}.img"]
-    let node_res = loader.load_res_async(path)
-    guard node_res.value() is { "life": Object(life_map), .. } else { return }
+    let node_res = loader.load_resource(path)
+    guard node_res is { "life": Object(life_map), .. } else { return }
     for _, entity in life_map {
       if self.spawn_batch_id != batch_id {
         return
@@ -951,9 +951,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           let mob_loader = @resource.get_mob_loader()
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
           let mob_path = ["\{mob_strid}.img"]
-          let mob_node = mob_loader.load_res_async(mob_path)
-          guard mob_node.value()
-            is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
+          let mob_node = mob_loader.load_resource(mob_path)
+          guard mob_node is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
             continue
           }
           self.pending_mob_spawns.push({

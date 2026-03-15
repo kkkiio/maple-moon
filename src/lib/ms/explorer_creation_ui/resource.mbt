@@ -98,9 +98,7 @@ fn load_button_visual(json : Json) -> @ui.MapleButtonResource raise {
 ///|
 async fn load_resource() -> ExplorerCreationUIResource {
   let login_loader = get_login_loader()
-  let mkinfo = get_etc_loader()
-    .load_res_async(["MakeCharInfo.img", "Info"])
-    .value()
+  let mkinfo = get_etc_loader().load_resource(["MakeCharInfo.img", "Info"])
   let male_choices = match mkinfo {
     { "CharMale": Object(_) as char_male, .. } => parse_choices(char_male)
     _ => fail("missing CharMale choices")
@@ -110,12 +108,12 @@ async fn load_resource() -> ExplorerCreationUIResource {
     _ => fail("missing CharFemale choices")
   }
   let map001_loader = get_map001_loader()
-  let customize_char_src = login_loader
-    .load_res_async(["Login.img", "CustomizeChar", "000"])
-    .value()
-  let signboard2_src = @resource.get_map_latest_loader()
-    .load_res_async(["Obj", "login.img", "NewChar", "signboard", "2"])
-    .value()
+  let customize_char_src = login_loader.load_resource([
+    "Login.img", "CustomizeChar", "000",
+  ])
+  let signboard2_src = @resource.get_map_latest_loader().load_resource([
+    "Obj", "login.img", "NewChar", "signboard", "2",
+  ])
   let board_src = match customize_char_src {
     { "board": Object(_) as board_src, .. } => board_src
     _ => fail("missing board")
@@ -124,15 +122,13 @@ async fn load_resource() -> ExplorerCreationUIResource {
     { "genderSelect": Object(_) as gender_select_src, .. } => gender_select_src
     _ => fail("missing genderSelect")
   }
-  let sky_src = map001_loader
-    .load_res_async(["Back", "login.img", "back", "2"])
-    .value()
-  let cloud_src = map001_loader
-    .load_res_async(["Back", "login.img", "back", "27"])
-    .value()
-  let back14_src = map001_loader
-    .load_res_async(["Back", "login.img", "back", "14"])
-    .value()
+  let sky_src = map001_loader.load_resource(["Back", "login.img", "back", "2"])
+  let cloud_src = map001_loader.load_resource([
+    "Back", "login.img", "back", "27",
+  ])
+  let back14_src = map001_loader.load_resource([
+    "Back", "login.img", "back", "14",
+  ])
   let sky_texture : @resource.NxTexture = @json.from_json(sky_src)
   let sky = @resource.nx_texture_to_selene_picture(
     sky_texture,

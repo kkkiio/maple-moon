@@ -9,9 +9,11 @@ pub(all) struct BulletData {
 pub async fn BulletData::load(strid : String) -> BulletData {
   guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @item.get_item_loader()
-    .load_res_async(["Consume", prefix.to_string() + ".img", strid])
-    .value()
+  let src = @item.get_item_loader().load_resource([
+    "Consume",
+    prefix.to_string() + ".img",
+    strid,
+  ])
   let id = strid.trim_start(chars="0").to_string() |> @strconv.parse_int
   let item_data = @item.ItemData::load(
     id,

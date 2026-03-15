@@ -133,6 +133,16 @@ pub fn make_local_string_loader() -> @resource.AsyncLoader {
 }
 
 ///|
+/// Creates a quest loader that reads from local `assets/Quest`.
+pub fn make_local_quest_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new(
+    "test_local_quest",
+    base_url="/assets",
+    loader=LocalDirResourceLoader::new("assets/Quest"),
+  )
+}
+
+///|
 /// Creates a string loader that always returns empty JSON.
 ///
 /// This is useful for snapshot tests that intentionally assert UI layout without

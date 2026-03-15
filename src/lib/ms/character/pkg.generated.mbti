@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/character"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_stats",
@@ -78,14 +77,12 @@ pub(all) struct Character {
   mut attacking : Bool
   mut facing_right : Bool
   name : String
-  name_label : @graphics.Text
   invincible : @utils.TimedBool
   get_skilllevel : (Int) -> Int
   alerted : @utils.TimedBool
 }
 pub fn Character::attack_by_action(Self, String) -> Unit
 pub fn Character::attack_by_stance(Self, @char_stance.StanceId) -> Unit
-pub fn Character::draw(Self, Double, Double, Double) -> Unit
 pub fn Character::get_attackdelay(Self, Int) -> Int
 pub fn Character::get_entity(Self) -> @entity.Entity
 pub fn Character::get_layer(Self) -> Int

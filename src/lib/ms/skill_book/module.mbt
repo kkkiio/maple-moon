@@ -23,13 +23,7 @@ fn Module::new(
   combat : @combat_system.Combat,
   inventory : @inventory.Inventory,
 ) -> Module {
-  {
-    player_getter,
-    player_skill_book: None,
-    watchers: [],
-    combat,
-    inventory,
-  }
+  { player_getter, player_skill_book: None, watchers: [], combat, inventory }
 }
 
 ///|

@@ -12,7 +12,10 @@ pub fn[T : @server_proto.ClientMessage] send(
 ) -> Unit {
   ignore(log_level)
   ignore(loc)
-  @capture_app.record_mock_server_sent_message(T::type_code(), message.to_json())
+  @capture_app.record_mock_server_sent_message(
+    T::type_code(),
+    message.to_json(),
+  )
 }
 
 ///|

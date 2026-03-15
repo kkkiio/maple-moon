@@ -5,7 +5,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "Milky2018/selene/math",
   "Milky2018/selene/sprite",
-  "moonbitlang/core/immut/array",
   "moonbitlang/core/json",
 }
 
@@ -49,6 +48,8 @@ pub fn get_mob_loader() -> AsyncLoader
 pub fn get_npc_loader() -> AsyncLoader
 
 pub fn get_object_loader() -> AsyncLoader
+
+pub fn get_quest_loader() -> AsyncLoader
 
 pub fn get_skill_loader() -> AsyncLoader
 
@@ -110,6 +111,8 @@ pub fn set_npc_loader(AsyncLoader) -> Unit
 
 pub fn set_object_loader(AsyncLoader) -> Unit
 
+pub fn set_quest_loader(AsyncLoader) -> Unit
+
 pub fn set_skill_loader(AsyncLoader) -> Unit
 
 pub fn set_string_loader(AsyncLoader) -> Unit
@@ -128,15 +131,8 @@ pub impl Show for LoadError
 
 // Types and methods
 type AsyncLoader
-pub async fn AsyncLoader::load_res_async(Self, Array[String]) -> NxNode
+pub async fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
 pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader, base_url? : String, image_base_url? : String) -> Self
-
-pub(all) struct Bitmap {
-  image : Image
-  width : Int
-  height : Int
-}
-pub impl ToJson for Bitmap
 
 type CompositeAsyncResourceLoader
 pub fn CompositeAsyncResourceLoader::new(Map[String, &AsyncResourceLoader]) -> Self
@@ -212,27 +208,8 @@ pub impl @json.FromJson for NxFrame
 
 #deprecated
 type NxNode
-pub fn NxNode::as_int(Self) -> Int raise LoadError
-pub fn NxNode::as_point(Self) -> @res_types.Point[Int] raise LoadError
-pub fn NxNode::as_rectangle(Self) -> @res_types.Rectangle[Int] raise
-pub fn NxNode::as_strict_bool(Self) -> Bool raise LoadError
-pub fn NxNode::as_string(Self) -> String raise LoadError
-pub fn NxNode::contains(Self, String) -> Bool
-pub fn NxNode::from_test_value(Json) -> Self
-pub fn NxNode::get_bitmap(Self) -> Bitmap?
-pub fn NxNode::get_bool(Self) -> Bool raise LoadError
-pub fn NxNode::get_children_count(Self) -> Int
-pub fn NxNode::get_float(Self) -> Double raise LoadError
-pub fn NxNode::get_float_field(Self, String, default? : Double) -> Double raise LoadError
-pub fn NxNode::get_image_loader(Self) -> ImageLoader
-pub fn NxNode::get_int(Self) -> Int raise LoadError
-pub fn NxNode::get_int_field(Self, String, default? : Int) -> Int raise LoadError
-pub fn NxNode::get_string(Self) -> String
-pub fn NxNode::is_null(Self) -> Bool
 pub fn NxNode::iter(Self) -> Iter[Self]
-pub fn NxNode::name(Self) -> String
 pub fn NxNode::op_get(Self, String) -> Self
-pub fn NxNode::path(Self) -> @array.T[String]
 pub fn NxNode::value(Self) -> Json
 
 pub(all) struct NxTexture {
@@ -270,11 +247,6 @@ pub(all) struct SpritesheetMetadata {
   frames : Map[String, SpritesheetImageMetadata]
 }
 pub impl @json.FromJson for SpritesheetMetadata
-
-#deprecated
-type SyncLoader
-pub async fn SyncLoader::load(String, String, ImageLoader) -> Self
-pub fn SyncLoader::load_res(Self, Array[String]) -> NxNode
 
 pub struct TextLoader {
   loader : &TextResourceLoader

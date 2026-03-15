@@ -21,7 +21,7 @@ pub(all) struct Attack {
   accuracy : Int
   playerlevel : Int
   mut hitcount : Int
-  mut mobcount : Int
+  max_target_count : Int
   speed : Int
   mut stance : Int
   mut skill : Int

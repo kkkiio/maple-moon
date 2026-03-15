@@ -175,9 +175,9 @@ fn default_ref_render() -> @markup_text.RefRender {
 
 ///|
 async fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.get_ui_window_2_loader()
-    .load_res_async(["UtilDlgEx"])
-    .value()
+  let src : Json = @resource.get_ui_window_2_loader().load_resource([
+    "UtilDlgEx",
+  ])
   NpcTalkResource::from_resource(src)
 }
 

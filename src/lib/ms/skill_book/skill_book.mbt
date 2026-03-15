@@ -102,7 +102,7 @@ pub type SkillBookWatcher = (SkillBookEvent) -> Bool
 
 ///|
 pub fn increase_sp(_mod : Module, skill_id : Int) -> Unit {
-  @game_server.send(@server_proto.SpendSPMessage::{ skill_id })
+  @game_server.send(@server_proto.SpendSPMessage::{ skill_id, })
 }
 
 ///|

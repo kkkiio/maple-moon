@@ -29,19 +29,6 @@ pub fn AsyncLoader::new(
 }
 
 ///|
-pub async fn AsyncLoader::load_res_async(
-  self : AsyncLoader,
-  path : Array[String],
-) -> NxNode {
-  let promise = self.loader.load_data(join_path(path))
-  {
-    name: path.last().unwrap(),
-    desc: promise,
-    path: path |> @immut/array.from_array,
-  }
-}
-
-///|
 pub async fn AsyncLoader::load_resource(
   self : AsyncLoader,
   path : ArrayView[String],

@@ -13,4 +13,3 @@ priv enum QuestActionMessage {
   // Complete a quest via a script.
   ScriptedEndQuest(quest_id~ : Int, npc_id~ : Int)
 } derive(Show)
-

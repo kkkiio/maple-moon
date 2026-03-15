@@ -54,6 +54,10 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 
 MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
+### 只写黑盒测试
+
+`*_test.mbt` 文件是黑盒测试. 不允许写 `_for_test` 的 public symbol.
+
 ## Project Structure
 
 ### Repo Structure & Important Files
@@ -79,8 +83,6 @@ moon fmt
 moon info
 moon build --release
 ```
-
-只写黑盒测试.
 
 执行 `moon test` 前先加载测试环境变量，避免 `selene-canvas` 在 Node.js 下因缺少 DOM 报错：
 

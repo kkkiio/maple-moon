@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/quest"
 
 import {
-  "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/npc",
@@ -10,21 +9,36 @@ import {
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/net",
+  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/entity",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn forfeit_quest_ffi(Module, Int) -> Unit
+pub fn bind_player(@player.Player) -> Unit
+
+pub fn build_quest_talk_args(Int, Int) -> @npc.TalkArgs?
+
+pub fn build_talk_args_for_quest(NpcQuest, Array[QuestPhaseSays], (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
+
+pub fn clear_active_module() -> Unit
+
+pub fn get_demo_quest_selection() -> DemoQuestSelection?
+
+pub fn handle_player_quest_info(@server_proto.PlayerQuestLogInfo) -> Unit
 
 pub fn next_talk(QuestPhaseSays, TalkState, Bool?) -> QuestTalk?
 
-pub fn parse_player_quest_info(@net.InPacket) -> @server_proto.PlayerQuestLogInfo raise
+pub fn query_npc_icon(Int) -> QuestIconQueryResult?
 
-pub fn parse_quest_desc(String, ref_name_provider? : &QuestTextRefProvider) -> String raise
+pub fn refresh_quest(Int) -> Unit
 
-pub fn watch_quest_log_ffi(Module, (Array[QuestFFI]) -> Bool) -> Unit
+pub fn select_demo_quest_by_npcs(Array[Int]) -> DemoQuestSelection?
+
+pub fn set_active_module(Module) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
 
 // Errors
 
@@ -35,6 +49,13 @@ pub enum Action {
 }
 pub impl Show for Action
 
+pub(all) struct DemoQuestSelection {
+  quest_id : Int
+  npc_id : Int
+  has_level_check : Bool
+}
+pub impl Show for DemoQuestSelection
+
 pub enum ExpectResponse {
   NEXT(() -> QuestTalk?)
   YES_NO((Bool) -> (QuestTalk?, Action?))
@@ -43,32 +64,53 @@ pub enum ExpectResponse {
 }
 
 type MapQuests
-pub fn MapQuests::add_npc(Self, Int, @physics.MovingObject) -> Unit
+pub fn MapQuests::add_npc(Self, Int, @entity.Entity, @physics.MovingObject) -> Unit
+pub fn MapQuests::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
 pub fn MapQuests::clear(Self) -> Unit
+pub fn MapQuests::query_npc_icon(Self, Int) -> QuestIconQueryResult?
 pub fn MapQuests::remove_npc(Self, Int) -> Unit
 pub fn MapQuests::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
 pub fn MapQuests::set_player(Self, @player.Player) -> Unit
-pub fn MapQuests::update(Self, @physics.Physics) -> Unit
 pub fn MapQuests::update_quest(Self, Int) -> Unit
 
 type MapQuestsResource
 pub async fn MapQuestsResource::load() -> Self
+pub fn MapQuestsResource::new(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
 
 type Module
+pub fn Module::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
 pub fn Module::get_map_quests(Self) -> MapQuests
 pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
-pub async fn Module::load(@net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::make_handlers(Self) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
-pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]
-pub fn Module::new(QuestResource, MapQuestsResource, @net.Network, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub async fn Module::load(@inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::new(QuestResource, MapQuestsResource, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::new_with_raw_checks(QuestResource, Json, MapQuestsResource, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
 
-pub struct QuestFFI {
-  id : Int
-  name : String
-  desc : String
-  progress : String
-  completed_time : Double
+pub(all) struct NpcQuest {
+  npc_id : Int
+  icon_state : QuestIconState
+  icon : @resource.NxAnimation
+  icon_offset : @res_types.Point[Int]
+  icon_size : @res_types.Point[Int]
+  quest_id : Int
+  in_progress_quest : (Int, Bool)?
 }
+
+pub(all) struct QuestIconQueryResult {
+  npc_id : Int
+  quest_id : Int
+  state : QuestIconState
+}
+
+pub(all) enum QuestIconState {
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+}
+pub impl Eq for QuestIconState
+pub impl Show for QuestIconState
+pub impl ToJson for QuestIconState
+pub impl @json.FromJson for QuestIconState
 
 type QuestInfo
 pub impl Show for QuestInfo
@@ -119,11 +161,7 @@ pub(all) enum TalkState {
 }
 pub impl Show for TalkState
 
-type TestQuestRefNameProvider
-pub impl Default for TestQuestRefNameProvider
-
 // Type aliases
 
 // Traits
-trait QuestTextRefProvider
 

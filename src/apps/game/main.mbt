@@ -36,6 +36,8 @@ fn game_start(_delta : Double) -> Unit {
   @inventory_ui.setup_game_server_handlers()
   @inventory.setup_game_server_handlers()
   @shop_ui.setup_game_server_handlers()
+  @quest.setup_game_server_handlers()
+  @quest_icon.set_context(@quest.query_npc_icon, @quest.build_quest_talk_args)
   @inventory_ui.init_inventory_ui()
   @shop_ui.init_shop_ui()
   @gm.install()
@@ -110,6 +112,7 @@ fn main {
     @world_map_ui.world_map_ui_system,
     system_name="world_map_ui_system",
   )
+  .add_system(@quest_icon.quest_icon_system, system_name="quest_icon_system")
   .add_system(@npc.map_npcs_system, system_name="map_npcs_system")
   .add_system(@monster.map_monsters_system, system_name="map_monsters_system")
   .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system")

@@ -6,31 +6,29 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/entity",
 }
 
 // Values
+pub fn claim_click_this_frame() -> Unit
+
 pub fn clear_map_npcs() -> Unit
 
 pub fn handle_npc_dialogue((TalkArgs) -> Unit, NpcDialogue) -> Unit
 
 pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
 
-pub fn handle_spawn_npc_parsed(MapNpcs, NpcSpawn) -> Unit
+pub fn list_npc_anchors() -> Array[NpcAnchor]
 
 pub fn map_npcs_system(Double) -> Unit
 
 pub fn on_npc_talk_choice(TalkChoice) -> Unit
 
-pub fn parse_npc_dialogue(@net.InPacket) -> NpcDialogue raise
-
-pub fn parse_spawn_npc(@net.InPacket) -> NpcSpawn raise
-
-pub fn parse_spawn_npc_controller(@net.InPacket) -> SpawnNpcController raise
-
 pub fn parse_talk_content(String, mod_provider? : (@markup_text.Style, StringView) -> String raise, npc_provider? : (@markup_text.Style, StringView) -> String raise, map_provider? : (@markup_text.Style, StringView) -> String raise, item_provider? : (@markup_text.Style, StringView) -> String raise, player_name_provider? : (@markup_text.Style, StringView) -> String raise) -> TalkContent raise
+
+pub fn request_quest_talk(TalkArgs) -> Unit
 
 pub fn set_npcs(MapNpcsContext) -> Unit
 
@@ -71,6 +69,13 @@ pub async fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, B
 pub fn Npc::set_stance(Self, String) -> Unit
 pub fn Npc::talk(Self) -> TalkArgs?
 pub fn Npc::update(Self, @physics.Physics) -> Unit
+
+pub(all) struct NpcAnchor {
+  oid : Int
+  npc_id : Int
+  entity : @entity.Entity
+  npc_object : @physics.MovingObject
+}
 
 pub struct NpcDialogue {
   npcid : Int

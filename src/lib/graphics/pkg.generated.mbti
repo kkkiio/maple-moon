@@ -6,7 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
-  "moonbitlang/core/json",
 }
 
 // Values
@@ -48,34 +47,8 @@ pub fn nx_animation_to_selene_sprite(@resource.NxAnimation, z? : Int, loop_? : B
 pub let view_size : (Int, Int)
 
 // Errors
-pub(all) suberror LoadError {
-  NotFound
-  InvalidFormat(String)
-}
-pub impl Show for LoadError
 
 // Types and methods
-#deprecated
-type Animation
-pub fn Animation::draw(Self, DrawArgument, Double) -> Unit
-#deprecated
-pub fn Animation::from_resource(@resource.NxNode) -> Self
-#deprecated
-pub fn Animation::from_resource_ex(@resource.NxNode) -> Self raise
-pub fn Animation::get_bounds(Self) -> @res_types.Rectangle[Int]
-pub fn Animation::get_delay_until(Self, Int) -> Int
-pub fn Animation::get_dimensions(Self) -> @res_types.Point[Int]
-pub fn Animation::get_head(Self) -> @res_types.Point[Int]
-pub fn Animation::get_origin(Self) -> @res_types.Point[Int]
-#deprecated
-pub fn Animation::new(AnimationResource) -> Self
-pub fn Animation::reset(Self) -> Unit
-pub fn Animation::update(Self, timestep? : Int) -> Bool
-pub impl Default for Animation
-
-type AnimationResource
-pub impl @json.FromJson for AnimationResource
-
 type Charset
 pub fn Charset::create_text(Self, String) -> TextureText
 pub fn Charset::draw_char(Self, Char, DrawArgument) -> Unit
@@ -147,92 +120,11 @@ pub impl Eq for FontId
 pub impl Hash for FontId
 pub impl Show for FontId
 
-type Frame
-pub fn Frame::draw(Self, DrawArgument) -> Unit
-pub fn Frame::end_opacity(Self) -> Int
-pub fn Frame::get_bounds(Self) -> @res_types.Rectangle[Int]
-pub fn Frame::get_delay(Self) -> Int
-pub fn Frame::get_dimensions(Self) -> @res_types.Point[Int]
-pub fn Frame::get_head(Self) -> @res_types.Point[Int]
-pub fn Frame::get_origin(Self) -> @res_types.Point[Int]
-pub fn Frame::new(FrameResource, default_delay? : Int) -> Self
-pub fn Frame::opcstep(Self, Int) -> Double
-pub fn Frame::scalestep(Self, Int) -> Double
-pub fn Frame::start_opacity(Self) -> Int
-pub fn Frame::start_scale(Self) -> Int
-
-type FrameResource
-pub impl @json.FromJson for FrameResource
-
 type GameText
 pub fn GameText::draw(Self, DrawArgument) -> Int
 pub fn GameText::new(Charset, String, Int) -> Self
 
-type GraphicsGL
-pub fn GraphicsGL::clear(Self) -> Unit
-pub fn GraphicsGL::clear_scene(Self) -> Unit
-pub fn GraphicsGL::create_text_image(Self, TextKey) -> Image
-pub fn GraphicsGL::draw_bitmap(Self, @resource.Bitmap, @res_types.Rectangle[Int], @res_types.Color, Double) -> Unit
-pub fn GraphicsGL::draw_rectangle(Self, Int, Int, Int, Int, Double, Double, Double, Double) -> Unit
-pub fn GraphicsGL::draw_screen_fill(Self, Double, Double, Double, Double) -> Unit
-pub fn GraphicsGL::flush(Self, Double) -> Unit
-pub fn GraphicsGL::get() -> Self
-
 type Image
-
-type OutlinedText
-pub fn OutlinedText::change_color(Self, @res_types.ColorName) -> Unit
-pub fn OutlinedText::change_text(Self, String) -> Unit
-pub fn OutlinedText::draw(Self, @res_types.Point[Int]) -> Unit
-pub fn OutlinedText::new(FontId, TextAlignment, @res_types.ColorName, @res_types.ColorName) -> Self
-pub fn OutlinedText::width(Self) -> Int
-pub impl ToJson for OutlinedText
-
-#deprecated
-pub(all) struct RenderSpec {
-  drawables : Array[&Drawable]
-  statefuls : Array[&Stateful]
-}
-pub impl ToJson for RenderSpec
-
-pub(all) struct ShadowText {
-  mut top : Text
-  mut shadow : Text
-}
-pub fn ShadowText::change_color(Self, @res_types.ColorName) -> Unit
-pub fn ShadowText::change_text(Self, String) -> Unit
-pub fn ShadowText::draw(Self, @res_types.Point[Int]) -> Unit
-pub fn ShadowText::new(FontId, TextAlignment, @res_types.ColorName, @res_types.ColorName) -> Self
-pub fn ShadowText::width(Self) -> Int
-
-pub(all) struct Sprite {
-  mut animation : Animation
-  mut state_args : DrawArgument
-}
-pub fn Sprite::draw(Self, @res_types.Point[Int], Double) -> Unit
-pub fn Sprite::from_resource(@resource.NxNode, state_args? : DrawArgument) -> Self
-pub fn Sprite::get_dimensions(Self) -> @res_types.Point[Int]
-pub fn Sprite::get_origin(Self) -> @res_types.Point[Int]
-pub fn Sprite::height(Self) -> Int
-pub fn Sprite::new(Animation, DrawArgument) -> Self
-pub fn Sprite::reset(Self) -> Unit
-pub fn Sprite::update(Self, timestep? : Int) -> Bool
-pub fn Sprite::width(Self) -> Int
-pub impl Default for Sprite
-pub impl ToJson for Sprite
-
-type Text
-pub fn Text::change_color(Self, @res_types.ColorName) -> Unit
-pub fn Text::change_text(Self, String) -> Unit
-pub fn Text::dimensions(Self) -> @res_types.Point[Int]
-pub fn Text::draw(Self, @res_types.Point[Int], text_y_clip? : @res_types.Range[Int]?) -> Unit
-pub fn Text::get_or_init_image(Self) -> Image
-pub fn Text::get_text(Self) -> String
-pub fn Text::height(Self) -> Int
-pub fn Text::new(FontId, TextAlignment, @res_types.ColorName, text? : String, nametag? : Bool, max_width? : Int) -> Self
-pub fn Text::width(Self) -> Int
-pub fn Text::with_text(Self, String) -> Self
-pub impl ToJson for Text
 
 pub(all) enum TextAlignment {
   LEFT
@@ -246,42 +138,11 @@ type TextKey
 pub impl Eq for TextKey
 pub impl Hash for TextKey
 
-#deprecated
-pub(all) struct Texture {
-  bitmap : @sprite.AnimationFrame?
-  mut origin : @res_types.Point[Int]
-  dimensions : @res_types.Point[Int]
-}
-pub fn Texture::from_resource(@resource.NxNode) -> Self
-pub fn Texture::get_dimensions(Self) -> @res_types.Point[Int]
-pub fn Texture::get_origin(Self) -> @res_types.Point[Int]
-pub fn Texture::height(Self) -> Int
-pub fn Texture::load(@resource.NxTexture) -> Self
-pub fn Texture::shift(Self, @res_types.Point[Int]) -> Unit
-pub fn Texture::to_string(Self) -> String
-pub fn Texture::width(Self) -> Int
-pub impl Drawable for Texture
-pub impl Default for Texture
-pub impl ToJson for Texture
-
 type TextureText
 pub fn TextureText::draw(Self, DrawArgument) -> Int
 pub impl ToJson for TextureText
 
-type TileUnit
-pub fn TileUnit::new(Texture, rows? : Int, cols? : Int, row_height? : Int, col_width? : Int) -> Self
-pub impl Drawable for TileUnit
-pub impl ToJson for TileUnit
-
 // Type aliases
-pub using @resource {type NxNode}
 
 // Traits
-pub(open) trait Drawable : ToJson {
-  draw(Self, DrawArgument) -> Unit
-}
-
-pub(open) trait Stateful : ToJson {
-  update(Self, Int) -> Unit
-}
 

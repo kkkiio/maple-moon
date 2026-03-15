@@ -41,11 +41,9 @@ pub fn make_attack_range(@combat_proto.Attack) -> @res_types.Rectangle[Int]
 
 pub fn make_hit_effect(Json) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
-pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
+pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool, max_target_count? : Int) -> @combat_proto.Attack
 
 pub fn make_use_effect(Json, Int) -> UseEffect raise
-
-pub fn new_regular_attack() -> SpecialMove
 
 pub fn push_event(HitEvent) -> Unit
 

@@ -17,9 +17,7 @@ pub(all) struct MobSkill {
 
 ///|
 pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = get_skill_loader()
-    .load_res_async(["MobSkill.img", id.to_string()])
-    .value()
+  let src = get_skill_loader().load_resource(["MobSkill.img", id.to_string()])
   MobSkill::new(id, level, src)
 }
 

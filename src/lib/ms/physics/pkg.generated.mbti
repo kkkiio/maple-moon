@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ms/physics"
 
 import {
   "KKKIIO/maple-moon/lib/ms/res_types",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/math",
   "moonbitlang/core/json",
@@ -22,15 +21,11 @@ pub let gravforce : Double
 
 pub let groundslip : Double
 
-pub fn parse_movements(@net.InPacket) -> Array[Movement] raise
-
 pub let slopefactor : Double
 
 pub let swimfriction : Double
 
 pub let swimgravforce : Double
-
-pub fn write_movement(@net.OutPacket, Movement) -> Unit
 
 // Errors
 

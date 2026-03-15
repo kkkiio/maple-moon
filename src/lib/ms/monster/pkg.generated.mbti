@@ -2,12 +2,9 @@
 package "KKKIIO/maple-moon/lib/ms/monster"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
-  "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
@@ -29,18 +26,6 @@ pub fn create_mob_spawn(Int, Int, Int, Int, Int, Bool, Int, @res_types.Point[Int
 pub fn enqueue_hp_event(Int, Int, Int) -> Unit
 
 pub fn get_map_mobs() -> MapMobs?
-
-pub fn handle_kill_mob(MapMobs, @net.InPacket) -> Unit raise
-
-pub fn handle_mob_move_response(MobCombat, @net.InPacket) -> Unit raise
-
-pub fn handle_mob_moved(MapMobs, MobCombat, @net.InPacket) -> Unit raise
-
-pub fn handle_show_mob_hp_packet(() -> @char_stats.CharStats?, @net.InPacket) -> Unit raise
-
-pub fn handle_spawn_mob(MapMobs, @net.InPacket) -> Unit raise
-
-pub fn handle_spawn_mob_controller(MapMobs, @net.InPacket) -> Unit raise
 
 pub fn map_monsters_system(Double) -> Unit
 
@@ -118,7 +103,6 @@ pub struct Mob {
   can_jump : Bool
   can_fly : Bool
   is_boss : Bool
-  name_label : @graphics.Text
   randomizer : @random.Rand
   mut anim_time : Double
   mut movements : Array[@physics.Movement]
@@ -262,7 +246,6 @@ pub fn MobSpecialAttack::new(NxMobAttackInfo, Int, Int) -> Self raise
 
 type Module
 pub fn Module::get_map_mobs(Self) -> MapMobs
-pub fn Module::make_handlers(Self, () -> @char_stats.CharStats?) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
 pub fn Module::new() -> Self
 
 pub struct NxMob {

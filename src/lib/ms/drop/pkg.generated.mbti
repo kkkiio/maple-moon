@@ -4,22 +4,13 @@ package "KKKIIO/maple-moon/lib/ms/drop"
 import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
 }
 
 // Values
 pub fn clear_map_drops() -> Unit
 
-pub fn handle_drop_loot_parsed(MapDrops, DropLoot) -> Unit
-
-pub fn handle_remove_loot_parsed(MapDrops, RemoveLoot, (Int) -> @physics.PhysicsObject?) -> Unit
-
 pub fn map_drops_system(Double) -> Unit
-
-pub fn parse_drop_loot(@net.InPacket) -> DropLoot raise
-
-pub fn parse_remove_loot(@net.InPacket) -> RemoveLoot raise
 
 pub fn set_map_physics(@physics.Physics) -> Unit
 
@@ -30,20 +21,6 @@ pub fn try_pickup_at(@res_types.Point[Int]) -> Bool
 // Errors
 
 // Types and methods
-pub struct DropLoot {
-  mode : Int
-  oid : Int
-  meso : Bool
-  item_id : Int
-  owner : Int
-  pickuptype : Int
-  dropto : @res_types.Point[Int]
-  dropfrom : @res_types.Point[Int]
-  player_drop : Bool
-}
-pub impl Show for DropLoot
-pub impl ToJson for DropLoot
-
 type DropSpawn
 
 type ItemDrop
@@ -64,14 +41,6 @@ pub impl Drop for MesoDrop
 type Module
 pub fn Module::get_map_drops(Self) -> MapDrops
 pub async fn Module::load() -> Self
-pub fn Module::make_handlers(Self, (Int) -> @physics.PhysicsObject?) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
-
-pub struct RemoveLoot {
-  mode : Int
-  oid : Int
-  cid : Int?
-}
-pub impl Show for RemoveLoot
 
 // Type aliases
 

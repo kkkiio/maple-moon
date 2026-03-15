@@ -2,15 +2,12 @@
 package "KKKIIO/maple-moon/lib/ms/inventory"
 
 import {
-  "KKKIIO/maple-moon/lib/game_mod",
   "KKKIIO/maple-moon/lib/legacy_types",
   "KKKIIO/maple-moon/lib/ms/equip/data",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
-  "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
-  "KKKIIO/maple-moon/lib/net",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
   "moonbitlang/core/ref",
@@ -24,8 +21,6 @@ pub fn find_equip_slot(Inventory, @data.EquipData) -> @slot.Id
 pub fn handle_item(Inventory, @server_proto.InventoryItemEntry) -> Unit
 
 pub let inventory : @ref.Ref[Inventory]
-
-pub fn parse_item(@net.InPacket, @server_proto.InventoryType, Int) -> @server_proto.InventoryItemEntry raise
 
 pub fn setup_game_server_handlers() -> Unit
 
@@ -77,12 +72,10 @@ type ModificationMode
 pub impl Show for ModificationMode
 pub impl ToJson for ModificationMode
 
-type Module
-pub fn Module::get_inventory(Self) -> Inventory
-pub fn Module::load(() -> @player.Player?) -> Self
-pub fn Module::make_handlers(Self) -> Map[@server_proto.Opcode, (@net.InPacket) -> Unit]
-pub fn Module::make_show_status_info_handlers(Self) -> Map[Int, (@net.InPacket) -> &@game_mod.SubRouteAction raise]
-pub fn Module::make_stat_handlers(Self) -> Map[@maple_stat.Id, (Int) -> Bool]
+pub struct Module {
+  inventory : Inventory
+}
+pub fn Module::new(Inventory) -> Self
 
 type Movement
 pub fn Movement::from_int(Int) -> Self raise @utils.UnknownEnum

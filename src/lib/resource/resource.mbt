@@ -29,15 +29,6 @@ pub fn NxNode::op_get(self : NxNode, name : String) -> NxNode {
 }
 
 ///|
-pub fn NxNode::get_string(self : NxNode) -> String {
-  match self.desc {
-    Json::Number(it, ..) => it.to_string()
-    Json::String(it) => it
-    _ => ""
-  }
-}
-
-///|
 pub(all) suberror LoadError {
   LoadError(String)
 } derive(Show)

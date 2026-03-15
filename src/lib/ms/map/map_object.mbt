@@ -34,13 +34,13 @@ pub async fn load_obj_animation(
   key : ObjectAnimationPath,
 ) -> NxAnimation {
   let { l0, l1, l2 } = key
-  let res = get_object_loader().load_res_async([
+  let res = get_object_loader().load_resource([
     "\{object_set_name}.img",
     l0,
     l1,
     l2,
   ])
-  @json.from_json(res.value())
+  @json.from_json(res)
 }
 
 ///|

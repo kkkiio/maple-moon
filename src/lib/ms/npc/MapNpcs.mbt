@@ -15,7 +15,22 @@ pub(all) struct MapNpcsContext {
 }
 
 ///|
+pub(all) struct NpcAnchor {
+  /// NPC object id in current map runtime.
+  oid : Int
+  /// NPC template id.
+  npc_id : Int
+  /// NPC root entity for hierarchy attach.
+  entity : @entity.Entity
+  /// NPC physics object for world position query.
+  npc_object : @physics.MovingObject
+}
+
+///|
 let map_npcs_ctx : Ref[MapNpcsContext?] = Ref::new(None)
+
+///|
+let click_claimed_this_frame : Ref[Bool] = Ref::new(false)
 
 ///|
 pub fn set_npcs(ctx : MapNpcsContext) -> Unit {
@@ -29,11 +44,15 @@ pub fn clear_map_npcs() -> Unit {
     None => ()
   }
   map_npcs_ctx.val = None
+  click_claimed_this_frame.val = false
 }
 
 ///|
 pub fn map_npcs_system(_delta : Double) -> Unit {
-  guard map_npcs_ctx.val is Some({ map_npcs, physics }) else { return }
+  guard map_npcs_ctx.val is Some({ map_npcs, physics }) else {
+    click_claimed_this_frame.val = false
+    return
+  }
   let times = @logic_fps.get_logic_times()
   for i = 0; i < times; i = i + 1 {
     map_npcs.update(physics)
@@ -49,11 +68,46 @@ pub fn map_npcs_system(_delta : Double) -> Unit {
     -camera_pos[@selene_math.Y].to_int(),
   )
   let pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
-  match map_npcs.send_cursor(pressed, cursor_pos, view_pos) {
+  let cursor_state = if pressed && click_claimed_this_frame.val {
+    None
+  } else {
+    map_npcs.send_cursor(pressed, cursor_pos, view_pos)
+  }
+  match cursor_state {
     Some(@ui.CursorState::CAN_CLICK) =>
       @cursor.request_cursor_state(@ui.CursorState::CAN_CLICK)
     _ => ()
   }
+  click_claimed_this_frame.val = false
+}
+
+///|
+/// Claims left-click for this frame so NPC default click handling is skipped.
+pub fn claim_click_this_frame() -> Unit {
+  click_claimed_this_frame.val = true
+}
+
+///|
+/// Opens NPC talk UI through npc module state machine.
+pub fn request_quest_talk(args : TalkArgs) -> Unit {
+  guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
+  (map_npcs.open_npc_talk_ui)(args)
+}
+
+///|
+/// Returns anchors for all loaded NPCs in current map.
+pub fn list_npc_anchors() -> Array[NpcAnchor] {
+  guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return [] }
+  let anchors = []
+  for _, npc in map_npcs.npcs {
+    anchors.push({
+      oid: npc.get_oid(),
+      npc_id: npc.get_npc_id(),
+      entity: npc.entity,
+      npc_object: npc.get_npc_object(),
+    })
+  }
+  anchors
 }
 
 ///|

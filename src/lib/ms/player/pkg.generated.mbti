@@ -50,7 +50,6 @@ pub fn Player::change_job(Self, Int) -> Unit
 pub fn Player::change_skill(Self, Int, Int, Int, Int) -> Unit
 pub fn Player::check_ladders(Self, @map.MapInfo, Bool) -> Unit
 pub fn Player::damage(Self, @combat_proto.MobAttack) -> @combat_proto.MobAttackResult
-pub fn Player::draw(Self, Int, Double, Double, Double) -> Unit
 pub fn Player::get_climbforce(Self) -> Double
 pub fn Player::get_flyforce(Self) -> Double
 pub fn Player::get_jumpforce(Self) -> Double

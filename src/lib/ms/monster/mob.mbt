@@ -124,8 +124,8 @@ pub async fn Mob::load(
   let mob_loader = @resource.get_mob_loader()
   let strid = @utils.stoi_left_pad0(mid, 7)
   try {
-    let src = mob_loader.load_res_async([strid + ".img"])
-    let nx_mob : NxMob = src.value() |> @json.from_json
+    let src = mob_loader.load_resource([strid + ".img"])
+    let nx_mob : NxMob = src |> @json.from_json
     // let info : MobInfo = src["info"].value() |> @json.from_json
     // let animations = if info.link is Some(link) {
     //   let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])

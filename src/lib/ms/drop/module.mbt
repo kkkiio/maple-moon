@@ -29,8 +29,8 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 ///|
 pub async fn Module::load() -> Module {
   let special_item_loader = @resource.get_item_special_loader()
-  let src = special_item_loader.load_res_async(["0900.img"])
-  { map_drops: MapDrops::new(src.value()) }
+  let src = special_item_loader.load_resource(["0900.img"])
+  { map_drops: MapDrops::new(src) }
 }
 
 ///|

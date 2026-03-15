@@ -1,3 +1,7 @@
 import {
   "rami3l/js-ffi/js",
 }
+
+options(
+  "supported-targets": "js",
+)

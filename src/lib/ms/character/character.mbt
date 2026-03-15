@@ -187,54 +187,6 @@ pub fn Character::get_layer(self : Character) -> Int {
 }
 
 ///|
-pub fn Character::draw(
-  self : Character,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-
-  //     recurring_effects_.drawbelow(absp, alpha);
-
-  let color = if self.invincible.get() {
-    let phi = self.invincible.alpha() * 30
-    let rgb = 0.9 - 0.5 * @math.sin(phi).abs()
-    @struct.Color::new_rgba(rgb, rgb, rgb, 1.0)
-  } else {
-    @struct.Code::CWHITE.color()
-  }
-  self.look.draw(
-    @graphics.DrawArgument::from_point_and_color(absp, color),
-    alpha,
-  )
-
-  //     if (iron_body_) {
-  //         float ibalpha = iron_body_.alpha();
-  //         float scale = 1.0f + ibalpha;
-  //         float opacity = 1.0f - ibalpha;
-
-  //         self.look.draw(DrawArgument(absp, scale, scale, opacity), alpha);
-  //     }
-
-  //     for (const auto &pet : pets_) {
-  //         if (pet.get_itemid()) {
-  //             pet.draw(viewx, viewy, alpha);
-  //         }
-  //     }
-
-  // If ever changing code for namelabel confirm placements with map 10000
-  // self.name_label.draw(absp + @struct.Point::new(0, -4))
-  // chat_balloon_.draw(absp - Point<int16_t>(0, 85));
-
-  //     recurring_effects_.drawabove(absp, alpha);
-
-  // for number in self.damage_numbers {
-  //   number.draw(viewx, viewy, alpha)
-  // }
-}
-
-///|
 /// speed is the multiplier of the timestep.
 pub fn Character::update(self : Character, speed : Double) -> Unit {
   // TODO: implement recurring_effects

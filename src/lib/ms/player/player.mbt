@@ -415,19 +415,6 @@ pub fn Player::set_position(self : Player, x : Int, y : Int) -> Unit {
 }
 
 ///|
-pub fn Player::draw(
-  self : Player,
-  layer : Int,
-  viewx : Double,
-  viewy : Double,
-  alpha : Double,
-) -> Unit {
-  if layer == self.character.get_layer() {
-    self.character.draw(viewx, viewy, alpha)
-  }
-}
-
-///|
 fn get_player_state(state : CharState) -> Unit? {
   match state {
     CharState::STAND => Some(())

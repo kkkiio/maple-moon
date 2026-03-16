@@ -1,9 +1,4 @@
 ///|
-fn parse_json_file_local(path : String) -> Json raise {
-  @json.parse(@fs.read_file_to_string(path))
-}
-
-///|
 fn setup_ui_window2_loader_local() -> Unit {
   @resource.set_ui_window_2_loader(
     @resource.AsyncLoader::new(

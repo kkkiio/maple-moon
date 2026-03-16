@@ -71,7 +71,7 @@ fn to_logstr(
   buf.write_string("loc=")
   buf.write_string(loc.to_string())
   buf.write_string(" msg=")
-  buf.write_string(msg)
+  Show::output(msg, buf)
   if data is Some(data) {
     for k, v in data {
       buf.write_string(" ")

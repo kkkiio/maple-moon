@@ -260,7 +260,7 @@ fn bind_io(
 }
 
 ///|
-fn execute_action(action : Action, npc_quest : NpcQuest) -> Unit {
+fn execute_action(_action : Action, _npc_quest : NpcQuest) -> Unit {
   ...
   // match action {
   //   StartQuest =>

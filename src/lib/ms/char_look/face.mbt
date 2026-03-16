@@ -151,19 +151,6 @@ pub fn Face::new(faceid : Int, facenode : Json) -> Face raise {
 }
 
 ///|
-pub fn Face::draw(
-  self : Face,
-  expression : ExpressionId,
-  frame : Int,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  // match self.expressions[expression].get(frame) {
-  //   Some(frameit) => frameit.texture.draw(args)
-  //   None => ()
-  // }
-}
-
-///|
 pub fn Face::nextframe(
   self : Face,
   expression : ExpressionId,

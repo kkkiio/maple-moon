@@ -55,8 +55,8 @@ pub fn get_module() -> CharLookMod? {
 ///|
 /// Install a preloaded char look module for environments that bootstrap
 /// systems manually, such as tests.
-pub fn set_module(module : CharLookMod) -> Unit {
-  mod.val = Some(module)
+pub fn set_module(m : CharLookMod) -> Unit {
+  mod.val = Some(m)
   loading_mod_future.val = None
 }
 
@@ -80,18 +80,6 @@ pub fn char_look_system(_delta : Double) -> Unit {
     Ok(m) => mod.val = Some(m)
     Err(e) => abort("loading char look module failed, error=\{e}")
   }
-}
-
-///|
-pub async fn CharLookMod::load_char_look(
-  _self : CharLookMod,
-  _entry : LookEntry,
-) -> CharLook {
-  // let body = self.load_body_by_skin_id(entry.skin)
-  // let hair = self.load_hair_by_id(entry.hairid)
-  // let face = self.load_face_by_id(entry.faceid)
-  // CharLook::load(entry, body, hair, face, self.draw_info)
-  ...
 }
 
 ///|

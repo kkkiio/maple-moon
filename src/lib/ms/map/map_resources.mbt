@@ -27,7 +27,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   @log.info("loading raw map resource", data={ "path": path })
   let src = get_mapx_loader().load_resource(path)
   if src is Null {
-    raise @resource.LoadError("map not found, id=\{map_id}")
+    fail("map not found, id=\{map_id}")
   }
   let nx_map : NxMap = @json.from_json(src) catch {
     err => fail("failed to parse nx map: \{err.to_string()}")

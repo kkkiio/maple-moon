@@ -699,22 +699,14 @@ fn convert_npc_text(
     Char,
     (@markup_text.Style, StringView) -> Array[TextRun] raise,
   ] = {
-    'o': fn(style, value) {
-      resolve_reference(style, value, fn(v) { name_loader.get_mob_name(v) })
-    },
-    'p': fn(style, value) {
-      resolve_reference(style, value, fn(v) { name_loader.get_npc_name(v) })
-    },
-    'm': fn(style, value) {
-      resolve_reference(style, value, fn(v) {
-        name_loader.get_map_name(v).to_string()
-      })
-    },
-    't': fn(style, value) {
-      resolve_reference(style, value, fn(v) {
-        name_loader.get_item_name(v).to_string()
-      })
-    },
+    'o': (style, value) =>
+      resolve_reference(style, value, (v) => name_loader.get_mob_name(v)),
+    'p': (style, value) =>
+      resolve_reference(style, value, (v) => name_loader.get_npc_name(v)),
+    'm': (style, value) =>
+      resolve_reference(style, value, (v) => name_loader.get_map_name(v).to_string()),
+    't': (style, value) =>
+      resolve_reference(style, value, (v) => name_loader.get_item_name(v).to_string()),
     'h': fn(style, _value) {
       [
         TextRun::{

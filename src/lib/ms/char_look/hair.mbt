@@ -114,24 +114,6 @@ pub fn Hair::parse(
 }
 
 ///|
-pub fn Hair::draw(
-  self : Hair,
-  stance : StanceId,
-  layer : HairLayer,
-  frame : Int,
-  args : @graphics.DrawArgument,
-) -> Unit {
-  // let frameit = self.stances
-  //   .get(stance)
-  //   .bind(fn(it) { it.get(layer) })
-  //   .bind(fn(it) { it.get(frame) })
-  // match frameit {
-  //   None => ()
-  //   Some(frameit) => frameit.draw(args)
-  // }
-}
-
-///|
 pub fn Hair::get_name(self : Hair) -> String {
   self.name
 }

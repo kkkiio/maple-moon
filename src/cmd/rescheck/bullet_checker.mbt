@@ -19,19 +19,7 @@ fn check_bullet_resources(ctx : RescheckContext) -> Array[CheckIssue] {
       )
       continue
     }
-    let prefix = bullet_id[:4].to_string() catch {
-      _ => {
-        issues.push(
-          make_issue(
-            "bullet",
-            Error,
-            "lib/ms/bullet/module.mbt",
-            "invalid bullet id: \{bullet_id}",
-          ),
-        )
-        continue
-      }
-    }
+    let prefix = bullet_id[:4].to_string()
     match bullet_ids_by_prefix.get(prefix) {
       Some(ids) => ids.push(bullet_id)
       None => bullet_ids_by_prefix.set(prefix, [bullet_id])
@@ -265,9 +253,7 @@ fn bullet_unique_paths(paths : Array[String]) -> Array[String] {
 fn bullet_resolve_asset_relative_path(raw_path : String) -> String {
   let path = normalize_path(raw_path).trim_start(chars="/").to_string()
   if path.has_prefix("assets/") {
-    path[7:path.length()].to_string() catch {
-      _ => path
-    }
+    path[7:path.length()].to_string()
   } else {
     path
   }

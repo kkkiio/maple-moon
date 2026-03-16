@@ -53,13 +53,11 @@ fn mock_consume_0299_bundle_json() -> Json {
 }
 
 ///|
-struct MockStringLoader {
-  dummy : Unit
-}
+struct MockStringLoader {}
 
 ///|
 fn MockStringLoader::new() -> MockStringLoader {
-  { dummy: () }
+  MockStringLoader::{  }
 }
 
 ///|

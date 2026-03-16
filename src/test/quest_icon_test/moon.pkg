@@ -15,7 +15,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/quest_icon",
-  "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/ms/inventory",

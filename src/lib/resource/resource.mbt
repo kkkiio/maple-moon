@@ -3,51 +3,6 @@
 type ImageLoader
 
 ///|
-#deprecated("use Json instead")
-struct NxNode {
-  name : String
-  desc : Json
-  path : @immut/array.T[String]
-}
-
-///|
-pub fn NxNode::value(self : NxNode) -> Json {
-  self.desc
-}
-
-///|
-pub fn NxNode::op_get(self : NxNode, name : String) -> NxNode {
-  {
-    ..self,
-    name,
-    desc: self.desc
-    .as_object()
-    .bind(fn(it) { it.get(name) })
-    .unwrap_or(Json::null()),
-    path: self.path.push(name),
-  }
-}
-
-///|
-pub(all) suberror LoadError {
-  LoadError(String)
-} derive(Show)
-
-///|
-pub fn NxNode::iter(self : NxNode) -> Iter[NxNode] {
-  match self.desc {
-    Json::Object(it) =>
-      it
-      .iter()
-      .map(fn(kv) {
-        let (k, v) = kv
-        { name: k, desc: v, path: self.path.push(k) }
-      })
-    _ => Iter::empty()
-  }
-}
-
-///|
 fn join_path(parts : ArrayView[String]) -> String {
   parts.join("/")
 }

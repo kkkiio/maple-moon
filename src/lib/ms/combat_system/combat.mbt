@@ -4,7 +4,7 @@ using @combat_proto {type AttackResult}
 ///|
 struct Combat {
   mobs : @monster.MapMobs
-  regular_attack : SpecialMove
+  regular_attack : CombatAction
   // TODO: Add reactors
   damage_effects : @utils.TimedQueue[DamageEffect]
   // damage_numbers : Array[@ui.Number]
@@ -56,7 +56,7 @@ pub fn Combat::update(self : Combat) -> Unit {
 pub fn Combat::apply_move(
   self : Combat,
   cc : &CombatCharacter,
-  act : SpecialMove,
+  act : CombatAction,
   after_images : Map[String, @char_look.NxAfterImage],
 ) -> Unit {
   let character = cc.get_character()
@@ -106,7 +106,7 @@ pub fn Combat::apply_move(
 fn Combat::execute_attack_pipeline(
   self : Combat,
   character : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   inventory : &@legacy_types.Inventory,
   attack_type~ : @combat_proto.AttackType,
   degenerate~ : Bool,
@@ -142,7 +142,7 @@ fn Combat::execute_attack_pipeline(
 fn Combat::apply_attack_afterimage(
   _ : Combat,
   character : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   after_images : Map[String, @char_look.NxAfterImage]?,
   strict_afterimage : Bool,
 ) -> Bool {
@@ -191,7 +191,7 @@ fn Combat::apply_attack_afterimage(
 pub fn Combat::apply_attack_to_mobs(
   self : Combat,
   character : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   attack : @combat_proto.Attack,
   mob_targets : Array[Int],
   result : AttackResult,
@@ -242,7 +242,7 @@ pub fn Combat::apply_attack_to_mobs(
 pub fn Combat::trigger_extra_attack(
   self : Combat,
   character : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   targets : Array[Int],
 ) -> Unit {
   guard character.get_look().get_equips().get_weapon() is Some(_weapon) else {
@@ -268,7 +268,7 @@ pub fn Combat::trigger_extra_attack(
 fn Combat::apply_result_movement(
   self : Combat,
   cc : &CombatCharacter,
-  act : SpecialMove,
+  act : CombatAction,
   result : AttackResult,
 ) -> Unit {
   if act.get_id() == @skill.SkillId::RUSH_HERO.int_value() ||
@@ -336,7 +336,7 @@ fn get_range_semantics(move_id : Int) -> RangeSemantics {
 fn Combat::resolve_attack_targets(
   self : Combat,
   character : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   attack : @combat_proto.Attack,
 ) -> Array[Int] {
   match get_range_semantics(act.get_id()) {
@@ -383,7 +383,7 @@ priv struct DamageEffect {
   damage : Int
   toleft : Bool
   target_oid : Int
-  sp_move : SpecialMove
+  sp_move : CombatAction
   send_damage_to_server : Bool
 }
 
@@ -391,7 +391,7 @@ priv struct DamageEffect {
 fn Combat::extract_effects(
   self : Combat,
   user : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   result : AttackResult,
 ) -> Unit {
   let attack_user : @combat_proto.AttackUser = {
@@ -488,7 +488,7 @@ fn Combat::extract_effects(
 fn Combat::extract_projectile_then_aoe_effects(
   self : Combat,
   user : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   result : AttackResult,
   attack_user : @combat_proto.AttackUser,
 ) -> Unit {
@@ -538,7 +538,7 @@ fn Combat::extract_projectile_then_aoe_effects(
 fn Combat::apply_projectile_then_aoe_hit(
   self : Combat,
   attack_user : @combat_proto.AttackUser,
-  act : SpecialMove,
+  act : CombatAction,
   result : AttackResult,
 ) -> Unit {
   for oid, vec in result.damage_lines {
@@ -585,7 +585,7 @@ fn Combat::place_numbers(
 ///|
 fn miss_bullet_target_position(
   user : @character.Character,
-  act : SpecialMove,
+  act : CombatAction,
   result : AttackResult,
 ) -> @struct.Point[Int] {
   if get_range_semantics(act.get_id()) == RangeSemantics::ProjectileThenAoe {
@@ -667,7 +667,7 @@ fn resolve_attack_type(
 pub fn Combat::can_use(
   self : Combat,
   cc : &CombatCharacter,
-  act : SpecialMove,
+  act : CombatAction,
 ) -> ForbidReason {
   let character = cc.get_character()
   let skill_book = cc.get_skill_book()

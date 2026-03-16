@@ -40,7 +40,7 @@ pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
     }
   }
   if footholds.length() == 0 {
-    raise @resource.LoadError("no footholds")
+    fail("no footholds")
   }
   let leftw = footholds.values().map(fn(f) { f.l() }).minimum().unwrap_or(30000)
   let rightw = footholds

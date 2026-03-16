@@ -2,25 +2,25 @@
 using @quest {type QuestIconQueryResult, type QuestIconState}
 
 ///|
-struct QuestIconResources {
+priv struct QuestIconResources {
   available : @resource.NxAnimation
   in_progress : @resource.NxAnimation
   completed : @resource.NxAnimation
 }
 
 ///|
-struct QuestIconContext {
+priv struct QuestIconContext {
   query_npc_icon : (Int) -> QuestIconQueryResult?
   build_quest_talk_args : (Int, Int) -> @npc.TalkArgs?
 }
 
 ///|
-struct QuestIconRuntime {
-  oid : Int
+priv struct QuestIconRuntime {
+  _oid : Int
   npc_id : Int
   quest_id : Int
   state : QuestIconState
-  npc_entity : @entity.Entity
+  _npc_entity : @entity.Entity
   npc_object : @physics.MovingObject
   icon_entity : @entity.Entity
   icon_offset : @struct.Point[Int]
@@ -237,11 +237,11 @@ fn upsert_runtime(
       ),
     )
     runtime_by_oid.val.set(oid, {
-      oid,
+      _oid: oid,
       npc_id: anchor.npc_id,
       quest_id: desired.quest_id,
       state: desired.state,
-      npc_entity: anchor.entity,
+      _npc_entity: anchor.entity,
       npc_object: anchor.npc_object,
       icon_entity,
       icon_offset: default_icon_offset(),
@@ -250,7 +250,7 @@ fn upsert_runtime(
   } else if runtime_by_oid.val.get(oid) is Some(runtime) {
     runtime_by_oid.val.set(oid, {
       ..runtime,
-      npc_entity: anchor.entity,
+      _npc_entity: anchor.entity,
       npc_object: anchor.npc_object,
     })
   }

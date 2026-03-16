@@ -10,7 +10,7 @@ pub(all) enum ForbidReason {
 } derive(Eq)
 
 ///|
-pub(all) struct SpecialMove {
+pub(all) struct CombatAction {
   id : Int
   attack : Bool
   skill : Bool
@@ -32,31 +32,31 @@ pub(all) struct SpecialMove {
 } derive(Show)
 
 ///|
-pub fn SpecialMove::get_id(self : SpecialMove) -> Int {
+pub fn CombatAction::get_id(self : CombatAction) -> Int {
   self.id
 }
 
 ///|
-pub fn SpecialMove::is_attack(self : SpecialMove) -> Bool {
+pub fn CombatAction::is_attack(self : CombatAction) -> Bool {
   self.attack
 }
 
 ///|
-pub fn SpecialMove::is_skill(self : SpecialMove) -> Bool {
+pub fn CombatAction::is_skill(self : CombatAction) -> Bool {
   self.skill
 }
 
 ///|
-pub fn SpecialMove::apply_useeffects(
-  self : SpecialMove,
+pub fn CombatAction::apply_useeffects(
+  self : CombatAction,
   char : @character.Character,
 ) -> Unit {
   (self.apply_useeffects)(char)
 }
 
 ///|
-pub fn SpecialMove::apply_actions(
-  self : SpecialMove,
+pub fn CombatAction::apply_actions(
+  self : CombatAction,
   char : @character.Character,
   attack_type : @combat_proto.AttackType,
 ) -> Unit {
@@ -64,16 +64,16 @@ pub fn SpecialMove::apply_actions(
 }
 
 ///|
-pub fn SpecialMove::apply_use_sfx(
-  self : SpecialMove,
+pub fn CombatAction::apply_use_sfx(
+  self : CombatAction,
   char : @character.Character,
 ) -> Unit {
   (self.apply_use_sfx)(char)
 }
 
 ///|
-pub fn SpecialMove::make_attack(
-  self : SpecialMove,
+pub fn CombatAction::make_attack(
+  self : CombatAction,
   char : @character.Character,
   inventory : &@legacy_types.Inventory,
   attack_type : @combat_proto.AttackType,
@@ -83,8 +83,8 @@ pub fn SpecialMove::make_attack(
 }
 
 ///|
-pub fn SpecialMove::get_bullet(
-  self : SpecialMove,
+pub fn CombatAction::get_bullet(
+  self : CombatAction,
   char : @character.Character,
   value : Int,
 ) -> @resource.NxAnimation {
@@ -92,8 +92,8 @@ pub fn SpecialMove::get_bullet(
 }
 
 ///|
-pub fn SpecialMove::can_use(
-  self : SpecialMove,
+pub fn CombatAction::can_use(
+  self : CombatAction,
   value : Int,
   weapon_type : @weapon.Type,
   job : @job.Job,
@@ -105,8 +105,8 @@ pub fn SpecialMove::can_use(
 }
 
 ///|
-pub fn SpecialMove::apply_hit_effects(
-  self : SpecialMove,
+pub fn CombatAction::apply_hit_effects(
+  self : CombatAction,
   attack_user : @combat_proto.AttackUser,
   mob : @monster.Mob,
 ) -> Unit {
@@ -114,8 +114,8 @@ pub fn SpecialMove::apply_hit_effects(
 }
 
 ///|
-pub fn SpecialMove::apply_hit_sfx(
-  self : SpecialMove,
+pub fn CombatAction::apply_hit_sfx(
+  self : CombatAction,
   attack_user : @combat_proto.AttackUser,
   mob : @monster.Mob,
 ) -> Unit {
@@ -123,8 +123,8 @@ pub fn SpecialMove::apply_hit_sfx(
 }
 
 ///|
-pub fn SpecialMove::get_afterimage(
-  self : SpecialMove,
+pub fn CombatAction::get_afterimage(
+  self : CombatAction,
 ) -> Map[String, @char_look.NxAfterImage] {
   (self.get_afterimage)()
 }

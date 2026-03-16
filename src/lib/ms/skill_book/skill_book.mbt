@@ -3,7 +3,6 @@ struct SkillBook {
   skill_entries : Map[Int, SkillEntry]
   available_skills : Map[Int, @skill.SkillData]
   watchers : Array[SkillBookWatcher]
-  randomizer : @random.Rand
 }
 
 ///|
@@ -22,16 +21,15 @@ pub async fn SkillBook::load(
     let skill_data = skill_data
     available_skills.set(skill_data.id, skill_data)
   }
-  SkillBook::new(available_skills, watchers, @random.Rand::new())
+  SkillBook::new(available_skills, watchers)
 }
 
 ///|
 pub fn SkillBook::new(
   available_skills : Map[Int, @skill.SkillData],
   watchers : Array[SkillBookWatcher],
-  randomizer : @random.Rand,
 ) -> SkillBook {
-  { skill_entries: Map::new(), available_skills, watchers, randomizer }
+  { skill_entries: Map::new(), available_skills, watchers }
 }
 
 ///|
@@ -101,25 +99,12 @@ pub fn SkillBook::get_skill_data(
 pub type SkillBookWatcher = (SkillBookEvent) -> Bool
 
 ///|
-pub fn increase_sp(_mod : Module, skill_id : Int) -> Unit {
+pub fn increase_sp(skill_id : Int) -> Unit {
   @game_server.send(@server_proto.SpendSPMessage::{ skill_id, })
 }
 
 ///|
 /// Requests a skill level increase by spending SP
-
-///|
-fn check_required(skillbook : SkillBook, id : Int) -> Bool {
-  let required = skillbook.collect_required(id)
-  for req in required {
-    let (req_skill_id, req_level) = req
-    let req_skill_level = skillbook.get_level(req_skill_id)
-    if req_skill_level < req_level {
-      return false
-    }
-  }
-  return true
-}
 
 // ///|
 // fn is_upgradable(
@@ -188,3 +173,52 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
   .iter()
   .concat([('c', @markup_text.MarkupType::Pair)].iter())
   |> Map::from_iter
+
+///|
+pub struct SkillBookEvent {
+  kind : String
+  data_event : SkillBookDataEvent?
+  level_event : SkillBookLevelEvent?
+}
+
+///|
+pub struct SkillBookDataEvent {
+  skill_groups : Array[SkillGroup]
+}
+
+///|
+pub struct SkillGroup {
+  job_level_value : Int
+  skills : Array[SkillUIData]
+}
+
+///|
+pub struct SkillBookLevelEvent {
+  skill_id : Int
+  level : Int
+  available_sp : Int
+}
+
+///|
+/// Data structure for representing a skill in the UI
+pub struct SkillUIData {
+  id : Int
+  name : String
+  desc : String
+  level : Int
+  master_level : Int
+  icon : @resource.Image
+  enabled : Bool
+  job_level_value : Int
+}
+
+///|
+enum SpResetItemId {
+  SP_RESET_1ST_JOB = 5050001
+  SP_RESET_2ND_JOB = 5050002
+  SP_RESET_3RD_JOB = 5050003
+  SP_RESET_4TH_JOB = 5050004
+} derive(Show)
+
+///|
+pub fn SpResetItemId::int_value(self : SpResetItemId) -> Int = "%identity"

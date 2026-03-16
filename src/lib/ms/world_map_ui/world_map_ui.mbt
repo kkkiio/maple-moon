@@ -465,7 +465,7 @@ fn truncate_text(text : String, max_len : Int) -> String {
   if text.length() <= max_len {
     return text
   }
-  (try! text[:max_len]).to_string() + "..."
+  text[:max_len].to_string() + "..."
 }
 
 ///|

@@ -24,7 +24,6 @@ using @server_proto {
   type UseItemMessage,
   type InventoryEntry,
   type InventoryItemEntry,
-  type PlayerQuestLogInfo,
   type InventoryType,
 }
 
@@ -210,7 +209,7 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
 ///|
 priv struct CreateCharRequest {
   name : String
-  job : Int
+  _job : Int
   face : Int
   hair : Int
   hairc : Int

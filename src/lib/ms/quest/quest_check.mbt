@@ -138,7 +138,7 @@ impl QuestCheck for MonsterHuntCheck with check(self, context) {
     // Each monster hunt uses 3 digits in the progress string
     let start_pos = i * 3
     let current_count = @strconv.parse_int(
-      progress_data.substring(start=start_pos, end=start_pos + 3),
+      progress_data[start_pos : start_pos + 3].to_string(),
       base=10,
     ) catch {
       e => return Err("Invalid progress data: \{e}")

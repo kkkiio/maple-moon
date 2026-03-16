@@ -113,7 +113,7 @@ fn can_use_regular_attack_internal(
 }
 
 ///|
-fn new_regular_attack() -> SpecialMove {
+fn new_regular_attack() -> CombatAction {
   let ra = RegularAttack::{ action: RegularAction::default() }
   {
     id: 0,

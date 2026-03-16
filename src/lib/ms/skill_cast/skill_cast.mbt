@@ -1,6 +1,6 @@
 ///|
 using @combat_system {
-  type SpecialMove,
+  type CombatAction,
   type RegularAttack,
   type RegularAction,
   make_regular_attack,
@@ -9,17 +9,17 @@ using @combat_system {
 
 ///|
 /// Global registry of available moves.
-pub let move_map : Map[Int, @combat_system.SpecialMove] = Map::new()
+pub let move_map : Map[Int, @combat_system.CombatAction] = Map::new()
 
 ///|
 /// Register a move into the global cast registry.
-pub fn register_move(sp_move : @combat_system.SpecialMove) -> Unit {
+pub fn register_move(sp_move : @combat_system.CombatAction) -> Unit {
   move_map.set(sp_move.get_id(), sp_move)
 }
 
 ///|
 /// Get a registered skill move by id.
-pub fn get_skill_move(move_id : Int) -> @combat_system.SpecialMove? {
+pub fn get_skill_move(move_id : Int) -> @combat_system.CombatAction? {
   move_map.get(move_id)
 }
 
@@ -75,7 +75,7 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
 }
 
 ///|
-pub fn new_regular_attack(weapon_type : @weapon.Type) -> SpecialMove {
+pub fn new_regular_attack(weapon_type : @weapon.Type) -> CombatAction {
   let ra = RegularAttack::{ action: RegularAction::default() }
   {
     id: 0,

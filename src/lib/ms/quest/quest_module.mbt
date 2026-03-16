@@ -27,8 +27,8 @@ let selected_demo_quest : Ref[DemoQuestSelection?] = Ref::new(None)
 
 ///|
 /// Registers the active quest module instance for global query entrypoints.
-pub fn set_active_module(module : Module) -> Unit {
-  active_module.val = Some(module)
+pub fn set_active_module(mod : Module) -> Unit {
+  active_module.val = Some(mod)
 }
 
 ///|
@@ -41,14 +41,14 @@ pub fn clear_active_module() -> Unit {
 ///|
 /// Queries the quest-icon state for one NPC from the active quest module.
 pub fn query_npc_icon(npc_id : Int) -> QuestIconQueryResult? {
-  active_module.val.bind(fn(module) { module.query_npc_icon(npc_id) })
+  active_module.val.bind(fn(m) { m.query_npc_icon(npc_id) })
 }
 
 ///|
 /// Builds NPC talk arguments for one quest interaction from the active module.
 pub fn build_quest_talk_args(quest_id : Int, npc_id : Int) -> @npc.TalkArgs? {
-  active_module.val.bind(fn(module) {
-    module.build_quest_talk_args(quest_id, npc_id, @npc.request_quest_talk)
+  active_module.val.bind(fn(m) {
+    m.build_quest_talk_args(quest_id, npc_id, @npc.request_quest_talk)
   })
 }
 
@@ -56,7 +56,7 @@ pub fn build_quest_talk_args(quest_id : Int, npc_id : Int) -> @npc.TalkArgs? {
 /// Refreshes one quest state in the active module.
 pub fn refresh_quest(quest_id : Int) -> Unit {
   match active_module.val {
-    Some(module) => module.map_quests.update_quest(quest_id)
+    Some(m) => m.map_quests.update_quest(quest_id)
     None => ()
   }
 }
@@ -65,7 +65,7 @@ pub fn refresh_quest(quest_id : Int) -> Unit {
 /// Binds current player to quest runtime checks.
 pub fn bind_player(player : @player.Player) -> Unit {
   match active_module.val {
-    Some(module) => module.map_quests.set_player(player)
+    Some(m) => m.map_quests.set_player(player)
     None => ()
   }
 }
@@ -74,7 +74,7 @@ pub fn bind_player(player : @player.Player) -> Unit {
 /// Applies `SET_FIELD` quest log snapshot to active quest module.
 pub fn handle_player_quest_info(player_quests : PlayerQuestLogInfo) -> Unit {
   match active_module.val {
-    Some(module) => module.handle_player_quest_info(player_quests)
+    Some(m) => m.handle_player_quest_info(player_quests)
     None => ()
   }
 }
@@ -88,8 +88,8 @@ pub fn get_demo_quest_selection() -> DemoQuestSelection? {
 ///|
 /// Selects one low-restriction quest from current map NPC ids for icon validation.
 pub fn select_demo_quest_by_npcs(npc_ids : Array[Int]) -> DemoQuestSelection? {
-  let selection = active_module.val.bind(fn(module) {
-    module.select_demo_quest_by_npcs(npc_ids)
+  let selection = active_module.val.bind(fn(m) {
+    m.select_demo_quest_by_npcs(npc_ids)
   })
   selected_demo_quest.val = selection
   selection
@@ -202,7 +202,7 @@ fn Module::new_internal(
       acc
     })
   let player_quest_log = Ref::new(PlayerQuestLog::default())
-  let module = {
+  let mod = {
     quests_resource,
     quest_checks_raw,
     ref_render,
@@ -223,8 +223,8 @@ fn Module::new_internal(
     ),
     inventory,
   }
-  set_active_module(module)
-  module
+  set_active_module(mod)
+  mod
 }
 
 ///|
@@ -746,7 +746,7 @@ fn PlayerQuestLog::add_in_progress_quest(
 ///|
 priv struct ShowForfeitQuestAction {
   quest_id : Int
-  mod : Module
+  _mod : Module
 }
 
 ///|
@@ -754,7 +754,7 @@ fn ShowForfeitQuestAction::new(
   quest_id : Int,
   mod : Module,
 ) -> ShowForfeitQuestAction {
-  { quest_id, mod }
+  { quest_id, _mod: mod }
 }
 
 ///|
@@ -779,7 +779,7 @@ priv struct ShowCompleteQuestMessage {
 ///|
 priv struct ShowCompleteQuestAction {
   message : ShowCompleteQuestMessage
-  mod : Module
+  _mod : Module
 }
 
 ///|
@@ -787,7 +787,7 @@ fn ShowCompleteQuestAction::new(
   message : ShowCompleteQuestMessage,
   mod : Module,
 ) -> ShowCompleteQuestAction {
-  { message, mod }
+  { message, _mod: mod }
 }
 
 ///|

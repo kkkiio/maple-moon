@@ -27,7 +27,7 @@ pub fn EquipData::parse_item_data(
         stat,
         info
         .get(key)
-        .bind(fn(it) { it.as_number() })
+        .bind(fn(it) { if it is Number(it, ..) { Some(it) } else { None } })
         .map_or(0, fn(it) { it.to_int() }),
       )
     })
@@ -38,7 +38,7 @@ pub fn EquipData::parse_item_data(
       let (key, stat) = it
       info
       .get(key)
-      .bind(fn(it) { it.as_number() })
+      .bind(fn(it) { if it is Number(it, ..) { Some(it) } else { None } })
       .map(fn(it) { (stat, it.to_int()) })
     })
     |> Map::from_iter()

@@ -1,9 +1,0 @@
-import {
-  "moonbitlang/core/json",
-  "moonbitlang/x/sys",
-  "KKKIIO/maple-moon/lib/fsx",
-}
-
-options(
-  "is-main": true,
-)

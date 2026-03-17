@@ -12,6 +12,7 @@ priv struct QuestIconResources {
 priv struct QuestIconContext {
   query_npc_icon : (Int) -> QuestIconQueryResult?
   build_quest_talk_args : (Int, Int) -> @npc.TalkArgs?
+  get_query_revision : () -> Int
 }
 
 ///|
@@ -42,6 +43,15 @@ let quest_icon_loading : Ref[@utils.Future[Result[QuestIconResources, Error]]?] 
 let runtime_by_oid : Ref[Map[Int, QuestIconRuntime]] = Ref::new({})
 
 ///|
+let npc_icon_cache : Ref[Map[Int, CachedNpcIconQuery]] = Ref::new({})
+
+///|
+priv struct CachedNpcIconQuery {
+  revision : Int
+  result : QuestIconQueryResult?
+}
+
+///|
 const QUEST_ICON_ZINDEX_OFFSET = 5000
 
 ///|
@@ -54,8 +64,14 @@ fn default_icon_offset() -> @struct.Point[Int] {
 pub fn set_context(
   query_npc_icon : (Int) -> QuestIconQueryResult?,
   build_quest_talk_args : (Int, Int) -> @npc.TalkArgs?,
+  get_query_revision : () -> Int,
 ) -> Unit {
-  quest_icon_context.val = Some({ query_npc_icon, build_quest_talk_args })
+  quest_icon_context.val = Some({
+    query_npc_icon,
+    build_quest_talk_args,
+    get_query_revision,
+  })
+  npc_icon_cache.val.clear()
   ensure_resource_loading()
 }
 
@@ -66,6 +82,7 @@ pub fn clear_context() -> Unit {
     destroy_icon_entity(runtime.icon_entity)
   }
   runtime_by_oid.val.clear()
+  npc_icon_cache.val.clear()
   quest_icon_context.val = None
 }
 
@@ -202,7 +219,7 @@ fn upsert_runtime(
   resources : QuestIconResources,
 ) -> Unit {
   let oid = anchor.oid
-  let desired = (context.query_npc_icon)(anchor.npc_id)
+  let desired = query_npc_icon_cached(anchor.npc_id, context)
   guard desired is Some(desired) else {
     remove_runtime(oid)
     return
@@ -217,6 +234,7 @@ fn upsert_runtime(
   }
 
   if should_replace {
+    let previous = runtime_by_oid.val.get(oid)
     remove_runtime(oid)
     let icon = state_to_icon(resources, desired.state)
     let icon_entity = anchor.entity.spawn_child(
@@ -247,6 +265,21 @@ fn upsert_runtime(
       icon_offset: default_icon_offset(),
       icon_size: nx_animation_dimensions(icon),
     })
+    if previous is Some(runtime) {
+      @log.debug("quest icon state changed", data={
+        "npc_id": anchor.npc_id,
+        "from_quest_id": runtime.quest_id,
+        "to_quest_id": desired.quest_id,
+        "from_state": runtime.state.to_json(),
+        "to_state": desired.state.to_json(),
+      })
+    } else {
+      @log.debug("quest icon shown", data={
+        "npc_id": anchor.npc_id,
+        "quest_id": desired.quest_id,
+        "state": desired.state.to_json(),
+      })
+    }
   } else if runtime_by_oid.val.get(oid) is Some(runtime) {
     runtime_by_oid.val.set(oid, {
       ..runtime,
@@ -260,7 +293,24 @@ fn upsert_runtime(
 fn remove_runtime(oid : Int) -> Unit {
   if runtime_by_oid.val.get(oid) is Some(runtime) {
     destroy_icon_entity(runtime.icon_entity)
+    npc_icon_cache.val.remove(runtime.npc_id)
     runtime_by_oid.val.remove(oid)
+  }
+}
+
+///|
+fn query_npc_icon_cached(
+  npc_id : Int,
+  context : QuestIconContext,
+) -> QuestIconQueryResult? {
+  let revision = (context.get_query_revision)()
+  match npc_icon_cache.val.get(npc_id) {
+    Some(cached) if cached.revision == revision => cached.result
+    _ => {
+      let result = (context.query_npc_icon)(npc_id)
+      npc_icon_cache.val.set(npc_id, { revision, result })
+      result
+    }
   }
 }
 

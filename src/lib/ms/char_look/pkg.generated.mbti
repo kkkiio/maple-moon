@@ -101,7 +101,6 @@ pub struct CharLookMod {
 }
 pub async fn CharLookMod::load() -> Self
 pub async fn CharLookMod::load_body_by_skin_id(Self, Int) -> FullBody
-pub async fn CharLookMod::load_char_look(Self, LookEntry) -> CharLook
 pub async fn CharLookMod::load_face_by_id(Self, Int) -> Face
 pub async fn CharLookMod::load_hair_by_id(Self, Int) -> Hair
 pub fn CharLookMod::new(NxStanceLooks[@types.NxStanceBody], NxStanceLooks[@types.NxMultiPartFrame], @types.BodyDrawInfo) -> Self
@@ -139,7 +138,6 @@ pub impl Hash for ExpressionId
 pub impl ToJson for ExpressionId
 
 type Face
-pub fn Face::draw(Self, ExpressionId, Int, @graphics.DrawArgument) -> Unit
 pub fn Face::get_delay(Self, ExpressionId, Int) -> Int
 pub fn Face::get_name(Self) -> String
 pub async fn Face::load(Int) -> Self
@@ -161,7 +159,6 @@ pub fn FullBody::new(Int, @types.BodyDrawInfo, Map[@char_stance.StanceId, Array[
 pub impl ToJson for FullBody
 
 type Hair
-pub fn Hair::draw(Self, @char_stance.StanceId, HairLayer, Int, @graphics.DrawArgument) -> Unit
 pub fn Hair::get_name(Self) -> String
 pub fn Hair::getcolor(Self) -> String
 pub async fn Hair::load(Int, @types.BodyDrawInfo) -> Self

@@ -14,15 +14,15 @@ pub fn can_use_regular_attack(@weapon.Type, Int) -> @combat_system.ForbidReason
 
 pub fn check_attack_type(@character.Character, &@legacy_types.Inventory, Bool) -> (Bool, @combat_proto.AttackType)
 
-pub fn get_skill_move(Int) -> @combat_system.SpecialMove?
+pub fn get_skill_move(Int) -> @combat_system.CombatAction?
 
-pub async fn load_skill_move(Int) -> @combat_system.SpecialMove
+pub async fn load_skill_move(Int) -> @combat_system.CombatAction
 
-pub let move_map : Map[Int, @combat_system.SpecialMove]
+pub let move_map : Map[Int, @combat_system.CombatAction]
 
-pub fn new_regular_attack(@weapon.Type) -> @combat_system.SpecialMove
+pub fn new_regular_attack(@weapon.Type) -> @combat_system.CombatAction
 
-pub fn register_move(@combat_system.SpecialMove) -> Unit
+pub fn register_move(@combat_system.CombatAction) -> Unit
 
 pub fn use_move(&@combat_system.CombatCharacter, Int) -> Unit
 

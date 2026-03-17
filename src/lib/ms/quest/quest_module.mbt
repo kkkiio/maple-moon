@@ -13,6 +13,19 @@ struct Module {
 let active_module : Ref[Module?] = Ref::new(None)
 
 ///|
+let quest_icon_query_revision_ref : Ref[Int] = Ref::new(0)
+
+///|
+let inventory_changed_reader_ref : Ref[
+  @event.EventReader[@inventory.InventoryChangedEvent]?,
+] = Ref::new(None)
+
+///|
+let char_stats_changed_reader_ref : Ref[
+  @event.EventReader[@char_stats.CharStatsChangedEvent]?,
+] = Ref::new(None)
+
+///|
 pub(all) struct DemoQuestSelection {
   /// Selected quest id.
   quest_id : Int
@@ -29,6 +42,7 @@ let selected_demo_quest : Ref[DemoQuestSelection?] = Ref::new(None)
 /// Registers the active quest module instance for global query entrypoints.
 pub fn set_active_module(mod : Module) -> Unit {
   active_module.val = Some(mod)
+  bump_quest_icon_query_revision()
 }
 
 ///|
@@ -36,27 +50,41 @@ pub fn set_active_module(mod : Module) -> Unit {
 pub fn clear_active_module() -> Unit {
   active_module.val = None
   selected_demo_quest.val = None
+  bump_quest_icon_query_revision()
 }
 
 ///|
 /// Queries the quest-icon state for one NPC from the active quest module.
 pub fn query_npc_icon(npc_id : Int) -> QuestIconQueryResult? {
+  consume_external_state_events()
   active_module.val.bind(fn(m) { m.query_npc_icon(npc_id) })
 }
 
 ///|
 /// Builds NPC talk arguments for one quest interaction from the active module.
 pub fn build_quest_talk_args(quest_id : Int, npc_id : Int) -> @npc.TalkArgs? {
+  consume_external_state_events()
   active_module.val.bind(fn(m) {
     m.build_quest_talk_args(quest_id, npc_id, @npc.request_quest_talk)
   })
 }
 
 ///|
+/// Returns monotonic revision used by quest-icon query caches.
+pub fn quest_icon_query_revision() -> Int {
+  consume_external_state_events()
+  quest_icon_query_revision_ref.val
+}
+
+///|
 /// Refreshes one quest state in the active module.
 pub fn refresh_quest(quest_id : Int) -> Unit {
+  consume_external_state_events()
   match active_module.val {
-    Some(m) => m.map_quests.update_quest(quest_id)
+    Some(m) => {
+      m.map_quests.update_quest(quest_id)
+      bump_quest_icon_query_revision()
+    }
     None => ()
   }
 }
@@ -64,8 +92,12 @@ pub fn refresh_quest(quest_id : Int) -> Unit {
 ///|
 /// Binds current player to quest runtime checks.
 pub fn bind_player(player : @player.Player) -> Unit {
+  consume_external_state_events()
   match active_module.val {
-    Some(m) => m.map_quests.set_player(player)
+    Some(m) => {
+      m.map_quests.set_player(player)
+      bump_quest_icon_query_revision()
+    }
     None => ()
   }
 }
@@ -73,8 +105,12 @@ pub fn bind_player(player : @player.Player) -> Unit {
 ///|
 /// Applies `SET_FIELD` quest log snapshot to active quest module.
 pub fn handle_player_quest_info(player_quests : PlayerQuestLogInfo) -> Unit {
+  consume_external_state_events()
   match active_module.val {
-    Some(m) => m.handle_player_quest_info(player_quests)
+    Some(m) => {
+      m.handle_player_quest_info(player_quests)
+      bump_quest_icon_query_revision()
+    }
     None => ()
   }
 }
@@ -114,6 +150,52 @@ fn handle_update_quest_info_message(msg : UpdateQuestInfoMessage) -> Unit {
     QuestUpdate(quest_id~, ..) => refresh_quest(quest_id)
     QuestFinish(quest_id~, next_quest=0, ..) => refresh_quest(quest_id)
     _ => ()
+  }
+}
+
+///|
+fn bump_quest_icon_query_revision() -> Unit {
+  quest_icon_query_revision_ref.val = quest_icon_query_revision_ref.val + 1
+}
+
+///|
+fn get_inventory_changed_reader() -> @event.EventReader[
+  @inventory.InventoryChangedEvent,
+] {
+  match inventory_changed_reader_ref.val {
+    Some(reader) => reader
+    None => {
+      let reader : @event.EventReader[@inventory.InventoryChangedEvent] = @event.EventReader::new()
+      inventory_changed_reader_ref.val = Some(reader)
+      reader
+    }
+  }
+}
+
+///|
+fn get_char_stats_changed_reader() -> @event.EventReader[
+  @char_stats.CharStatsChangedEvent,
+] {
+  match char_stats_changed_reader_ref.val {
+    Some(reader) => reader
+    None => {
+      let reader : @event.EventReader[@char_stats.CharStatsChangedEvent] = @event.EventReader::new()
+      char_stats_changed_reader_ref.val = Some(reader)
+      reader
+    }
+  }
+}
+
+///|
+fn consume_external_state_events() -> Unit {
+  let inventory_events = @inventory.inventory_changed_event_bus.read(
+    get_inventory_changed_reader(),
+  )
+  let char_stat_events = @char_stats.char_stats_changed_event_bus.read(
+    get_char_stats_changed_reader(),
+  )
+  if not(inventory_events.is_empty()) || not(char_stat_events.is_empty()) {
+    bump_quest_icon_query_revision()
   }
 }
 
@@ -647,6 +729,7 @@ pub fn Module::handle_player_quest_info(
     self.quests_resource,
     player_quests,
   )
+  bump_quest_icon_query_revision()
   self.quest_log_listeners.retain(fn(listener) {
     listener(self.player_quest_log.val)
   })
@@ -1017,9 +1100,14 @@ fn Module::handle_update_quest_info(
   msg : UpdateQuestInfoMessage,
 ) -> Unit {
   match msg {
-    QuestUpdate(quest_id~, ..) => self.map_quests.update_quest(quest_id)
-    QuestFinish(quest_id~, next_quest=0, ..) =>
+    QuestUpdate(quest_id~, ..) => {
       self.map_quests.update_quest(quest_id)
+      bump_quest_icon_query_revision()
+    }
+    QuestFinish(quest_id~, next_quest=0, ..) => {
+      self.map_quests.update_quest(quest_id)
+      bump_quest_icon_query_revision()
+    }
     _ => ()
   }
 }

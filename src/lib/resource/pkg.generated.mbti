@@ -124,10 +124,6 @@ pub fn set_ui_window_2_loader(AsyncLoader) -> Unit
 pub fn set_ui_window_4_loader(AsyncLoader) -> Unit
 
 // Errors
-pub(all) suberror LoadError {
-  LoadError(String)
-}
-pub impl Show for LoadError
 
 // Types and methods
 type AsyncLoader
@@ -205,12 +201,6 @@ pub(all) struct NxFrame {
 }
 pub impl Show for NxFrame
 pub impl @json.FromJson for NxFrame
-
-#deprecated
-type NxNode
-pub fn NxNode::iter(Self) -> Iter[Self]
-pub fn NxNode::op_get(Self, String) -> Self
-pub fn NxNode::value(Self) -> Json
 
 pub(all) struct NxTexture {
   i : String

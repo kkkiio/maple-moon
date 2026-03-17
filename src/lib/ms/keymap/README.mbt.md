@@ -13,3 +13,38 @@
 - 动作列表接口 `pressed_actions` / `just_pressed_actions`
 
 默认映射由场景侧（`game_scene`）定义并在游戏开始时初始化，`keymap` 不关心默认配置内容。
+
+## 可执行示例
+
+```mbt check
+///|
+test "set and get keymap" {
+  let mapping : @keymap.Keymap = {}
+  @keymap.set_keymap(mapping)
+  inspect(@keymap.get_keymap() is Some(_), content="true")
+}
+
+///|
+test "collect actions with empty mapping" {
+  let mapping : @keymap.Keymap = {}
+  inspect(
+    @keymap.get_action(mapping, @inputs.Code::ArrowUp),
+    content="None",
+  )
+}
+
+///|
+test "query mapped action" {
+  let mapping : @keymap.Keymap = Map::from_array([
+    (
+      @inputs.Code::ArrowUp,
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
+    ),
+  ])
+  inspect(
+    @keymap.get_action(mapping, @inputs.Code::ArrowUp),
+    content=
+      "Some(BASIC(MOVE_UP))",
+  )
+}
+```

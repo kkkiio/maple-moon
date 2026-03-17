@@ -72,6 +72,7 @@ async test "quest_icon_system renders snapshot and handles click dispatch" {
   @quest_icon.set_resources_for_test(available, in_progress, completed)
 
   let build_called = Ref::new(false)
+  let revision = Ref::new(1)
   @quest_icon.set_context(
     fn(npc_id) {
       if npc_id == 1012000 {
@@ -89,6 +90,7 @@ async test "quest_icon_system renders snapshot and handles click dispatch" {
         talk_action: @npc.TalkAction::SEND_OK(fn(_ok) {  }),
       })
     },
+    fn() { revision.val },
   )
 
   let npc_entity = @entity.Entity::new()
@@ -109,4 +111,40 @@ async test "quest_icon_system renders snapshot and handles click dispatch" {
   @quest_icon.quest_icon_system(0.016)
   @inputs.just_pressed_mouse.left_button = false
   inspect(build_called.val, content="true")
+}
+
+///|
+async test "quest_icon_system caches query results by revision" {
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites.clear()
+  defer @quest_icon.clear_context()
+
+  setup_quest_icon_app()
+  let (available, in_progress, completed) = load_quest_icon_animations()
+  @quest_icon.set_resources_for_test(available, in_progress, completed)
+
+  let revision = Ref::new(7)
+  let query_count = Ref::new(0)
+  @quest_icon.set_context(
+    fn(npc_id) {
+      query_count.val = query_count.val + 1
+      Some({ npc_id, quest_id: 2000, state: @quest.QuestIconState::AVAILABLE })
+    },
+    fn(_quest_id, _npc_id) { None },
+    fn() { revision.val },
+  )
+
+  let npc_entity = @entity.Entity::new()
+  let npc_object = @physics.MovingObject::new(on_pos_change=fn(pos) {
+    @position.positions.set(npc_entity, @position.Position(pos))
+  })
+  npc_object.set_position(@selene_math.Vec2D(260.0, 220.0))
+  @quest_icon.upsert_npc(2, 1012001, npc_entity, npc_object)
+
+  run_frames_local(6)
+  inspect(query_count.val, content="1")
+
+  revision.val = 8
+  @quest_icon.upsert_npc(2, 1012001, npc_entity, npc_object)
+  inspect(query_count.val, content="2")
 }

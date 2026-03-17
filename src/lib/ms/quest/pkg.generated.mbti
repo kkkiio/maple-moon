@@ -32,6 +32,8 @@ pub fn next_talk(QuestPhaseSays, TalkState, Bool?) -> QuestTalk?
 
 pub fn query_npc_icon(Int) -> QuestIconQueryResult?
 
+pub fn quest_icon_query_revision() -> Int
+
 pub fn refresh_quest(Int) -> Unit
 
 pub fn select_demo_quest_by_npcs(Array[Int]) -> DemoQuestSelection?

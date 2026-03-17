@@ -8,7 +8,7 @@ pub(all) enum BasicActionId {
   JUMP
   ATTACK
   PICKUP
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show)
 
 ///|
 /// 可绑定动作：基础动作 / 技能 / 物品。
@@ -16,7 +16,7 @@ pub(all) enum Action {
   BASIC(BasicActionId)
   SKILL(Int)
   ITEM(Int)
-} derive(Eq, Hash)
+} derive(Eq, Hash, Show)
 
 ///|
 pub type Keymap = Map[@inputs.Code, Action]

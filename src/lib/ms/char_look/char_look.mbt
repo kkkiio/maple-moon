@@ -102,7 +102,7 @@ pub async fn CharLook::load(
     .iter()
     .map(fn(it) {
       let (slot_id, itemid) = it
-      fn() {
+      () => {
         let itemdata = @item.ItemData::load_item_data(itemid)
         (slot_id, itemdata)
       }

@@ -14,3 +14,10 @@
 - `/assets/sound/Skill.img/<skill_id>/Hit.mp3`
 
 当前不做资源存在性预检查，不做 manifest，也不做多目标 `Hit` 去重。
+
+## 接入示例
+
+```moonbit nocheck
+@skill_sfx.play_skill_use(1001004)
+@skill_sfx.play_skill_hit(1001004)
+```

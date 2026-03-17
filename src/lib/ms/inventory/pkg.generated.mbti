@@ -10,6 +10,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/event",
   "moonbitlang/core/ref",
 }
 
@@ -21,6 +22,8 @@ pub fn find_equip_slot(Inventory, @data.EquipData) -> @slot.Id
 pub fn handle_item(Inventory, @server_proto.InventoryItemEntry) -> Unit
 
 pub let inventory : @ref.Ref[Inventory]
+
+pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent]
 
 pub fn setup_game_server_handlers() -> Unit
 
@@ -59,6 +62,22 @@ pub fn Inventory::set_meso(Self, Int) -> Unit
 pub fn Inventory::set_slotmax(Self, @server_proto.InventoryType, Int) -> Unit
 pub fn Inventory::use_item(Self, Int) -> Unit
 pub impl @legacy_types.Inventory for Inventory
+
+pub struct InventoryChangedEvent {
+  kind : InventoryChangedKind
+  tab : @server_proto.InventoryType?
+  slot : Int?
+}
+pub impl Eq for InventoryChangedEvent
+pub impl Show for InventoryChangedEvent
+
+pub enum InventoryChangedKind {
+  ITEM
+  MESO
+  RESET
+}
+pub impl Eq for InventoryChangedKind
+pub impl Show for InventoryChangedKind
 
 pub struct Item {
   item_id : Int

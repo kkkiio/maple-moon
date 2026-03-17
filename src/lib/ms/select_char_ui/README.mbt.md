@@ -14,7 +14,14 @@
 - `select_char_ui_system`
 - `setup_game_server_handlers`
 
-测试约定：
+## 接入示例
 
-- 渲染回归使用 `@capture_app.snapshot(...)`
-- 调试状态通过 package 内的测试辅助函数导出，避免直接依赖内部实体细节
+```moonbit nocheck
+@select_char_ui.setup_game_server_handlers()
+
+@system.App::new()
+.add_system(
+  @select_char_ui.select_char_ui_system,
+  system_name="select_char_ui_system",
+)
+```

@@ -37,7 +37,9 @@ fn game_start(_delta : Double) -> Unit {
   @inventory.setup_game_server_handlers()
   @shop_ui.setup_game_server_handlers()
   @quest.setup_game_server_handlers()
-  @quest_icon.set_context(@quest.query_npc_icon, @quest.build_quest_talk_args)
+  @quest_icon.set_context(
+    @quest.query_npc_icon, @quest.build_quest_talk_args, @quest.quest_icon_query_revision,
+  )
   @inventory_ui.init_inventory_ui()
   @shop_ui.init_shop_ui()
   @gm.install()

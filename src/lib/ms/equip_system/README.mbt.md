@@ -6,3 +6,10 @@
 - `TryUse`: 校验槽位后发 `UseItemMessage`。
 
 该包是上层业务编排层，避免把玩家状态判定写回 `inventory`。
+
+## 接入示例
+
+```moonbit nocheck
+@system.App::new()
+.add_system(@equip_system.equip_system, system_name="equip_system")
+```

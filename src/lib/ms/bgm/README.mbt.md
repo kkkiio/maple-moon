@@ -17,3 +17,12 @@
 - `/assets/sound/BgmXX.img/Name.mp3`
 
 不处理技能音效、UI 音效或其他 `Sound.nx` 路径。
+
+## 接入示例
+
+```moonbit nocheck
+@bgm.sync_map_bgm("Bgm00.img/FloralLife")
+
+// 离开地图/关闭游戏时
+@bgm.clear_bgm()
+```

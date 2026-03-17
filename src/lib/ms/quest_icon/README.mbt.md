@@ -15,6 +15,19 @@
 
 主要 API：
 
-- `set_context(query_npc_icon, build_quest_talk_args)`
+- `set_context(query_npc_icon, build_quest_talk_args, get_query_revision)`
 - `clear_context()`
 - `quest_icon_system(delta)`
+
+## 接入示例
+
+```moonbit nocheck
+@quest_icon.set_context(
+  @quest.query_npc_icon,
+  @quest.build_quest_talk_args,
+  @quest.quest_icon_query_revision,
+)
+
+@system.App::new()
+.add_system(@quest_icon.quest_icon_system, system_name="quest_icon_system")
+```

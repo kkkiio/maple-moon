@@ -23,4 +23,13 @@
 - `move_map`
 - `check_attack_type`
 - `can_use_regular_attack`
-- `parse_cooldowns`（已删除旧代码）
+
+## 接入示例
+
+```moonbit nocheck
+let regular = @combat_system.new_regular_attack(@weapon.Type::SWORD_1H)
+@combat_system.register_move(regular)
+
+// 由 skill_cast 在时序层调用
+@skill_cast.use_move(player, regular.skill.id)
+```

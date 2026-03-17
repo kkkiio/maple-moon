@@ -17,7 +17,15 @@
 - `explorer_creation_ui_system`
 - `setup_game_server_handlers`
 
-测试约定：
+## 接入示例
 
-- 不提供 `_for_test` 公共接口
-- 黑盒测试通过正式 system、网络消息、副作用和快照完成
+```moonbit nocheck
+@explorer_creation_ui.setup_game_server_handlers()
+@explorer_creation_ui.open_explorer_creation_ui(char_look_mod)
+
+@system.App::new()
+.add_system(
+  @explorer_creation_ui.explorer_creation_ui_system,
+  system_name="explorer_creation_ui_system",
+)
+```

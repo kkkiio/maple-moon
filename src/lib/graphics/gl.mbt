@@ -1,6 +1,6 @@
 ///|
 #external
-type Image
+priv type Image
 
 ///|
 fn Image::width(self : Image) -> Int = "bitmap" "width"

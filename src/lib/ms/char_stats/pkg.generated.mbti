@@ -7,10 +7,13 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
+  "Milky2018/selene/event",
 }
 
 // Values
 pub const LEVEL_CAP : Int = 201
+
+pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent]
 
 pub let exp_table : FixedArray[Int64]
 
@@ -67,6 +70,22 @@ pub fn CharStats::set_stat(Self, @maple_stat.Id, Int) -> Unit
 pub fn CharStats::set_total(Self, @maple_stat.EquipStatId, Int) -> Unit
 pub fn CharStats::watch_i64stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int64, Int64) -> IterResult) -> Unit
 pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int, Int) -> IterResult) -> Unit
+
+pub struct CharStatsChangedEvent {
+  kind : CharStatsChangedKind
+  stat : @maple_stat.Id?
+  total_stat : @maple_stat.EquipStatId?
+}
+pub impl Eq for CharStatsChangedEvent
+pub impl Show for CharStatsChangedEvent
+
+pub enum CharStatsChangedKind {
+  BASE_STAT
+  I64_STAT
+  TOTAL_STAT
+}
+pub impl Eq for CharStatsChangedKind
+pub impl Show for CharStatsChangedKind
 
 type Module
 pub fn Module::load() -> Self

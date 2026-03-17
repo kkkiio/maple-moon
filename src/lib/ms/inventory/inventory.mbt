@@ -26,6 +26,36 @@ enum ModificationMode {
 } derive(Show, ToJson)
 
 ///|
+pub enum InventoryChangedKind {
+  /// Item content in one inventory tab changed.
+  ITEM
+  /// Meso amount changed.
+  MESO
+  /// Inventory state was fully reset.
+  RESET
+} derive(Eq, Show)
+
+///|
+/// Minimal inventory change event used by downstream cache invalidation.
+pub struct InventoryChangedEvent {
+  /// Change category.
+  kind : InventoryChangedKind
+  /// Inventory tab if this is an item change.
+  tab : TypeId?
+  /// Slot index when known.
+  slot : Int?
+} derive(Eq, Show)
+
+///|
+/// Global inventory change event bus.
+pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @event.Events::new()
+
+///|
+fn init {
+  inventory_changed_event_bus.register()
+}
+
+///|
 /// Return the move type by value
 pub fn Movement::from_int(value : Int) -> Movement raise @utils.UnknownEnum {
   match value {
@@ -71,6 +101,7 @@ pub fn Inventory::clear(self : Inventory) -> Unit {
   self.pets.clear()
   self.meso = 0
   self.total_stats.map.clear()
+  inventory_changed_event_bus.send({ kind: RESET, tab: None, slot: None })
 }
 
 ///|
@@ -156,11 +187,17 @@ fn Inventory::remove_slot_entry(
     self.equips.remove(slot_item.unique_id)
     self.items.remove(slot_item.unique_id)
     self.pets.remove(slot_item.unique_id)
+    inventory_changed_event_bus.send({
+      kind: ITEM,
+      tab: Some(invtype),
+      slot: Some(slot),
+    })
   }
 }
 
 ///|
 fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
+  inventory_changed_event_bus.send({ kind: ITEM, tab: Some(t), slot: None })
   match self.item_listeners_map.get(t) {
     Some(listeners) => {
       let survivors = Array::new()
@@ -304,6 +341,7 @@ pub fn Inventory::get_meso(self : Inventory) -> Int {
 /// Set the meso amount.
 pub fn Inventory::set_meso(self : Inventory, meso : Int) -> Unit {
   self.meso = meso
+  inventory_changed_event_bus.send({ kind: MESO, tab: None, slot: None })
   self.meso_listeners.retain(fn(listener) { listener(meso) })
 }
 
@@ -505,6 +543,7 @@ pub fn Inventory::modify(
 
 ///|
 fn Inventory::notify_item_listeners(self : Inventory, t : TypeId) -> Unit {
+  inventory_changed_event_bus.send({ kind: ITEM, tab: Some(t), slot: None })
   match self.item_listeners_map.get(t) {
     Some(listeners) => listeners.retain(fn(listener) { listener() })
     None => ()

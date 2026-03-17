@@ -15,4 +15,5 @@ import {
   "moonbitlang/core/json" @json,
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/log",
+  "Milky2018/selene/event",
 }

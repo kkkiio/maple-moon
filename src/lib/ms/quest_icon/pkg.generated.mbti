@@ -20,7 +20,7 @@ pub fn refresh_quest(Int) -> Unit
 
 pub fn remove_npc(Int) -> Unit
 
-pub fn set_context((Int) -> @quest.QuestIconQueryResult?, (Int, Int) -> @npc.TalkArgs?) -> Unit
+pub fn set_context((Int) -> @quest.QuestIconQueryResult?, (Int, Int) -> @npc.TalkArgs?, () -> Int) -> Unit
 
 pub fn set_resources_for_test(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Unit
 
@@ -29,11 +29,6 @@ pub fn upsert_npc(Int, Int, @entity.Entity, @physics.MovingObject) -> Unit
 // Errors
 
 // Types and methods
-type QuestIconContext
-
-type QuestIconResources
-
-type QuestIconRuntime
 
 // Type aliases
 

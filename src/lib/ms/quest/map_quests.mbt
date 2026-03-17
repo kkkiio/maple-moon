@@ -366,7 +366,6 @@ fn NpcQuest::new(
   icon_state : QuestIconState,
   icon : @resource.NxAnimation,
 ) -> NpcQuest {
-  @log.debug("show quest icon", data={ "npc_id": npc_id, "quest_id": quest_id })
   {
     quest_id,
     in_progress_quest,

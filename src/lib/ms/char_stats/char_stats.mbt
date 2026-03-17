@@ -27,6 +27,36 @@ struct CharStats {
 }
 
 ///|
+pub enum CharStatsChangedKind {
+  /// Base integer stat changed.
+  BASE_STAT
+  /// Base i64 stat changed.
+  I64_STAT
+  /// Computed total stat changed.
+  TOTAL_STAT
+} derive(Eq, Show)
+
+///|
+/// Minimal char-stats change event for cache invalidation.
+pub struct CharStatsChangedEvent {
+  /// Change category.
+  kind : CharStatsChangedKind
+  /// Base stat id for `BASE_STAT`/`I64_STAT`.
+  stat : @maple_stat.Id?
+  /// Total stat id for `TOTAL_STAT`.
+  total_stat : @maple_stat.EquipStatId?
+} derive(Eq, Show)
+
+///|
+/// Global char-stats change event bus.
+pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent] = @event.Events::new()
+
+///|
+fn init {
+  char_stats_changed_event_bus.register()
+}
+
+///|
 using @server_proto {type StatsEntry}
 
 ///|
@@ -153,6 +183,11 @@ pub fn CharStats::set_stat(
       })
     None => ()
   }
+  char_stats_changed_event_bus.send({
+    kind: BASE_STAT,
+    stat: Some(stat),
+    total_stat: None,
+  })
 }
 
 ///|
@@ -169,6 +204,11 @@ pub fn CharStats::set_i64stat(
       IterResult::IterEnd => false
       IterResult::IterContinue => true
     }
+  })
+  char_stats_changed_event_bus.send({
+    kind: I64_STAT,
+    stat: Some(stat),
+    total_stat: None,
   })
 }
 
@@ -219,6 +259,11 @@ pub fn CharStats::set_total(
       listeners.retain(fn(listener) { listener(old_value, new_value) })
     None => ()
   }
+  char_stats_changed_event_bus.send({
+    kind: TOTAL_STAT,
+    stat: None,
+    total_stat: Some(stat),
+  })
 }
 
 ///|

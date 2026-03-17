@@ -3,38 +3,26 @@ package "KKKIIO/maple-moon/lib/ms/skill_book"
 
 import {
   "KKKIIO/maple-moon/lib/legacy_types",
-  "KKKIIO/maple-moon/lib/ms/combat_system",
-  "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/job",
-  "KKKIIO/maple-moon/lib/ms/player",
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/resource",
   "moonbitlang/core/immut/hashmap",
-  "moonbitlang/core/random",
 }
 
 // Values
-pub fn increase_sp(Module, Int) -> Unit
+pub fn increase_sp(Int) -> Unit
 
 pub fn markup_to_html(String) -> String raise
-
-pub fn transfer_one_sp(Module, Int, Int, Int) -> String
-
-pub fn watch_skill_book(Module, (SkillBookEvent) -> Bool) -> Unit
 
 // Errors
 
 // Types and methods
-type Module
-pub async fn Module::load(() -> @player.Player?, @combat_system.Combat, @inventory.Inventory) -> Self noraise
-pub async fn Module::load_player_skill_book(Self, @job.Job) -> &@legacy_types.SkillBook
-
 type SkillBook
 pub fn SkillBook::collect_required(Self, Int) -> @hashmap.HashMap[Int, Int]
 pub fn SkillBook::get_masterlevel(Self, Int) -> Int
 pub fn SkillBook::get_skill_data(Self, Int) -> @skill.SkillData?
 pub async fn SkillBook::load(@job.Job, Array[(SkillBookEvent) -> Bool]) -> Self
-pub fn SkillBook::new(Map[Int, @skill.SkillData], Array[(SkillBookEvent) -> Bool], @random.Rand) -> Self
+pub fn SkillBook::new(Map[Int, @skill.SkillData], Array[(SkillBookEvent) -> Bool]) -> Self
 pub impl @legacy_types.SkillBook for SkillBook
 
 pub struct SkillBookDataEvent {

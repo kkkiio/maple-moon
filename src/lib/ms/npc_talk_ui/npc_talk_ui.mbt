@@ -161,16 +161,14 @@ let npc_talk_loading_ref : Ref[@utils.Future[Result[NpcTalkResource, Error]]?] =
 let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref::new(None)
 
 ///|
-fn default_ref_render() -> @markup_text.RefRender {
-  @markup_text.RefRender::new(fn() {
-    if @player.get_player() is Some(player) {
-      let name = player.get_stats().get_name()
-      if not(name.is_empty()) {
-        return name
-      }
+fn current_player_name() -> String {
+  if @player.get_player() is Some(player) {
+    let name = player.get_stats().get_name()
+    if not(name.is_empty()) {
+      return name
     }
-    "Player"
-  })
+  }
+  "Player"
 }
 
 ///|
@@ -286,7 +284,7 @@ fn poll_npc_talk_open_request() -> Unit {
   guard npc_talk_ui_ref.val is None else { return }
   guard npc_talk_pending_args_ref.val is Some(args) else { return }
   guard npc_talk_resource_ref.val is Some(resource) else { return }
-  let content = convert_npc_text(args.str, default_ref_render()) catch {
+  let content = convert_npc_text(args.str) catch {
     err => {
       npc_talk_pending_args_ref.val = None
       @log.error("failed to parse npc talk text", data={
@@ -691,34 +689,27 @@ fn line_height(runs : Array[TextRun]) -> Int {
 }
 
 ///|
-fn convert_npc_text(
-  raw_text : String,
-  name_loader : @markup_text.RefRender,
-) -> NPCTalkContent raise {
+fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
   let tag_replace_map : Map[
     Char,
     (@markup_text.Style, StringView) -> Array[TextRun] raise,
   ] = {
     'o': (style, value) => {
-      resolve_reference(style, value, v => name_loader.get_mob_name(v))
+      resolve_reference(style, value, v => @markup_text.resolve_mob_name(v))
     },
     'p': (style, value) => {
-      resolve_reference(style, value, v => name_loader.get_npc_name(v))
+      resolve_reference(style, value, v => @markup_text.resolve_npc_name(v))
     },
     'm': (style, value) => {
-      resolve_reference(style, value, v => {
-        name_loader.get_map_name(v).to_string()
-      })
+      resolve_reference(style, value, v => @markup_text.resolve_map_name(v))
     },
     't': (style, value) => {
-      resolve_reference(style, value, v => {
-        name_loader.get_item_name(v).to_string()
-      })
+      resolve_reference(style, value, v => @markup_text.resolve_item_name(v))
     },
     'h': fn(style, _value) {
       [
         TextRun::{
-          text: name_loader.get_player_name(),
+          text: current_player_name(),
           color: style.color,
           bold: style.bold,
         },

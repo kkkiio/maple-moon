@@ -295,11 +295,15 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               let sk = @skill_cast.load_skill_move(skill_id)
               @skill_cast.register_move(sk)
             }
+            @markup_text.preload_reference_data()
+            if not(@markup_text.is_reference_data_ready()) {
+              @log.fatal("markup_text reference data is not ready")
+              panic()
+            }
             let npc_loader = @resource.get_npc_loader()
             let string_loader = @resource.get_string_loader()
             let quest_module = @quest.Module::load(
               @inventory.inventory.val,
-              @markup_text.RefRender::new(fn() { stats.name }),
               @npc_talk_ui.open_npc_talk_ui,
             )
             (

@@ -92,11 +92,11 @@ async test "select demo quest from real quest assets" {
   setup_ui_window2_loader_local()
   @resource.set_quest_loader(@local_loader.make_local_quest_loader())
   let raw = parse_json_file("assets/Quest/nx.json") catch { _ => panic() }
-  let quest_module = @quest.Module::load(
-    @inventory.Inventory::new(),
-    @markup_text.RefRender::new(fn() { "Maple" }),
-    fn(_args) {  },
-  )
+  let quest_module = @quest.Module::load(@inventory.Inventory::new(), fn(
+    _args,
+  ) {
+
+  })
   @quest.set_active_module(quest_module)
   let player = make_test_player() catch { _ => panic() }
   @player.set_player(player)

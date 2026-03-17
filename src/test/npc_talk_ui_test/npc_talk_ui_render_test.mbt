@@ -4,6 +4,16 @@ fn parse_json_file(path : String) -> Json raise {
 }
 
 ///|
+async fn get_npc_dialogue_text(npc_id : Int, key : String) -> String {
+  let string_loader = @local_loader.make_local_string_loader()
+  let src = string_loader.load_resource(["Npc.img", npc_id.to_string(), key])
+  match src {
+    String(text) => text
+    _ => panic()
+  }
+}
+
+///|
 fn make_test_look() -> @char_look.CharLook raise {
   let entity = @entity.Entity::new()
   let bodynode = parse_json_file("assets/Character/Body/00002000.img.json")
@@ -70,7 +80,7 @@ fn setup_test_player() -> Unit raise {
 }
 
 ///|
-fn setup_npc_talk_scene(args : @npc.TalkArgs) -> Unit {
+async fn setup_npc_talk_scene(args : @npc.TalkArgs) -> Unit {
   @npc_talk_ui.close_npc_talk_ui()
   @entity.iter_entities().each(fn(entity) { entity.destroy() })
   @sprite.sprites.clear()
@@ -100,6 +110,9 @@ fn setup_npc_talk_scene(args : @npc.TalkArgs) -> Unit {
       ),
     ),
   )
+  @resource.set_string_loader(@local_loader.make_local_string_loader())
+  @markup_text.clear_reference_data()
+  @markup_text.preload_reference_data()
   @npc_talk_ui.cache_npc_talk_resource(
     @npc_talk_ui.NpcTalkResource::from_resource(
       parse_json_file("assets/ui/UIWindow2.img/UtilDlgEx.json") catch {
@@ -129,20 +142,28 @@ fn teardown_npc_talk_scene() -> Unit {
 }
 
 ///|
-test "npc talk ui renders dialog snapshots" {
+fn assert_npc_talk_snapshot(name : String) -> Unit raise {
+  @capture_app.snapshot("src/test/npc_talk_ui_test/__snapshot__/\{name}.png")
+}
+
+///|
+async test "npc talk ui renders dialog snapshots" {
   defer teardown_npc_talk_scene()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites.clear()
+  let npc_1002001_d1 = get_npc_dialogue_text(1002001, "d1")
+  let npc_1012102_d0 = get_npc_dialogue_text(1012102, "d0")
+  let npc_1061003_d0 = get_npc_dialogue_text(1061003, "d0")
   setup_npc_talk_scene({
-    npc_id: 1012000,
+    npc_id: 1002001,
     speaker: @npc.Speaker::NPC_LEFT,
-    str: "欢迎来到 Maple Moon。\n当前对话框已迁移到 selene。",
+    str: npc_1002001_d1,
     talk_action: @npc.TalkAction::SEND_OK(fn(_ok) {  }),
   })
   json_inspect(@npc_talk_ui.describe_npc_talk_ui(), content={
     "open": true,
     "body_lines": [
-      "欢迎来到 Maple Moon。", "当前对话框已迁移到 selene。",
+      "Oh~ So it seems that you have delievered Weird Medicine to Maya...! Thanks. Now Maya can get better now. huh? Sparkling Rock It is still very beautiful~",
     ],
     "selections": [],
     "button_count": 2,
@@ -150,23 +171,43 @@ test "npc talk ui renders dialog snapshots" {
     "window_pos": { "x": 141, "y": 202 },
     "body_height": 76,
   })
+  assert_npc_talk_snapshot("npc_talk_ui_real_1002001_d1")
   teardown_npc_talk_scene()
   setup_npc_talk_scene({
-    npc_id: 1012000,
+    npc_id: 1012102,
     speaker: @npc.Speaker::NPC_LEFT,
-    str: "请选择你的行动。#L0#接受委托#l\r\n#L1#稍后再来#l",
-    talk_action: @npc.TalkAction::SEND_SIMPLE(fn(_selection) {  }),
+    str: npc_1012102_d0,
+    talk_action: @npc.TalkAction::SEND_OK(fn(_ok) {  }),
   })
   json_inspect(@npc_talk_ui.describe_npc_talk_ui(), content={
     "open": true,
-    "body_lines": ["请选择你的行动。"],
-    "selections": [
-      { "option": 0, "text": "接受委托" },
-      { "option": 1, "text": "稍后再来" },
+    "body_lines": [
+      "Ah~! It is really getting to me!!! Blue Mushroom... Oh... Are you a stranger?",
     ],
-    "button_count": 1,
-    "choice_area_count": 2,
-    "window_pos": { "x": 141, "y": 196 },
-    "body_height": 88,
+    "selections": [],
+    "button_count": 2,
+    "choice_area_count": 0,
+    "window_pos": { "x": 141, "y": 202 },
+    "body_height": 76,
   })
+  assert_npc_talk_snapshot("npc_talk_ui_real_1012102_d0")
+  teardown_npc_talk_scene()
+  setup_npc_talk_scene({
+    npc_id: 1061003,
+    speaker: @npc.Speaker::NPC_LEFT,
+    str: npc_1061003_d0,
+    talk_action: @npc.TalkAction::SEND_OK(fn(_ok) {  }),
+  })
+  json_inspect(@npc_talk_ui.describe_npc_talk_ui(), content={
+    "open": true,
+    "body_lines": [
+      "Welcome to the VIP sauna of the Sleepywood Hotel. Actually I need some help here ...",
+    ],
+    "selections": [],
+    "button_count": 2,
+    "choice_area_count": 0,
+    "window_pos": { "x": 141, "y": 202 },
+    "body_height": 76,
+  })
+  assert_npc_talk_snapshot("npc_talk_ui_real_1061003_d0")
 }

@@ -2,7 +2,6 @@
 struct Module {
   quests_resource : QuestResource
   quest_checks_raw : Json
-  ref_render : @markup_text.RefRender
   quest_log_listeners : Array[(PlayerQuestLog) -> Bool]
   map_quests : MapQuests
   inventory : @inventory.Inventory
@@ -202,7 +201,6 @@ fn consume_external_state_events() -> Unit {
 ///|
 pub async fn Module::load(
   inventory : @inventory.Inventory,
-  ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
   let quest_resource_loader = @resource.get_quest_loader()
@@ -221,8 +219,7 @@ pub async fn Module::load(
     _ => Json::null()
   }
   Module::new_internal(
-    quests_resource, quest_checks_raw, map_quests_resource, inventory, ref_render,
-    open_npc_talk_ui,
+    quests_resource, quest_checks_raw, map_quests_resource, inventory, open_npc_talk_ui,
   )
 }
 
@@ -231,7 +228,6 @@ pub fn Module::new(
   quests_resource : QuestResource,
   map_quests_resource : MapQuestsResource,
   inventory : @inventory.Inventory,
-  ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
   Module::new_internal(
@@ -239,7 +235,6 @@ pub fn Module::new(
     Json::null(),
     map_quests_resource,
     inventory,
-    ref_render,
     open_npc_talk_ui,
   )
 }
@@ -251,12 +246,10 @@ pub fn Module::new_with_raw_checks(
   quest_checks_raw : Json,
   map_quests_resource : MapQuestsResource,
   inventory : @inventory.Inventory,
-  ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
   Module::new_internal(
-    quests_resource, quest_checks_raw, map_quests_resource, inventory, ref_render,
-    open_npc_talk_ui,
+    quests_resource, quest_checks_raw, map_quests_resource, inventory, open_npc_talk_ui,
   )
 }
 
@@ -266,7 +259,6 @@ fn Module::new_internal(
   quest_checks_raw : Json,
   map_quests_resource : MapQuestsResource,
   inventory : @inventory.Inventory,
-  ref_render : @markup_text.RefRender,
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Module {
   let npc_quests_map = quests_resource.quest_checks_map
@@ -287,7 +279,6 @@ fn Module::new_internal(
   let mod = {
     quests_resource,
     quest_checks_raw,
-    ref_render,
     player_quest_log,
     quest_log_listeners: [],
     map_quests: MapQuests::new( // TODO: update npc quests map when quest is completed

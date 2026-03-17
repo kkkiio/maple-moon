@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ms/quest"
 
 import {
   "KKKIIO/maple-moon/lib/ms/inventory",
-  "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/player",
@@ -83,9 +82,9 @@ type Module
 pub fn Module::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
 pub fn Module::get_map_quests(Self) -> MapQuests
 pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
-pub async fn Module::load(@inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::new(QuestResource, MapQuestsResource, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::new_with_raw_checks(QuestResource, Json, MapQuestsResource, @inventory.Inventory, @markup_text.RefRender, (@npc.TalkArgs) -> Unit) -> Self
+pub async fn Module::load(@inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::new(QuestResource, MapQuestsResource, @inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
+pub fn Module::new_with_raw_checks(QuestResource, Json, MapQuestsResource, @inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
 pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
 
 pub(all) struct NpcQuest {

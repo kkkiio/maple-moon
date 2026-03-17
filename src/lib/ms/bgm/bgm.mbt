@@ -63,7 +63,7 @@ pub fn sync_map_bgm(bgm_key : String) -> Unit {
   @audio.attach_audio(
     entity,
     @audio.AudioPlayer::from_path(path),
-    settings=@audio.PlaybackSettings::looped().with_volume(1.0),
+    settings=@audio.PlaybackSettings::looped().with_volume(0.7),
   )
   let state = bgm_state.val
   state.current_key = Some(bgm_key)

@@ -18,6 +18,10 @@ using @struct {type ColorName}
 pub let npc_tag : (Char, MarkupType) = ('p', MarkupType::Pair)
 
 ///|
+/// #o[mobid]# - Shows the name of the mob.
+pub let mob_tag : (Char, MarkupType) = ('o', MarkupType::Pair)
+
+///|
 /// #m[mapid]# - Shows the name of the map.
 pub let map_tag : (Char, MarkupType) = ('m', MarkupType::Pair)
 
@@ -40,6 +44,7 @@ pub let common_tags : Map[Char, MarkupType] = color_map
   )
   .concat(
     [
+      (mob_tag.0, mob_tag.1),
       (npc_tag.0, npc_tag.1),
       (map_tag.0, map_tag.1),
       (item_tag.0, item_tag.1),
@@ -49,70 +54,154 @@ pub let common_tags : Map[Char, MarkupType] = color_map
   |> Map::from_iter
 
 ///|
-struct RefRender {
-  get_player_name : () -> String
+priv struct ReferenceData {
+  npc_img : Json
+  mob_img : Json
+  map_img : Json
+  eqp_img : Json
+  consume_img : Json
+  ins_img : Json
+  etc_img : Json
+  cash_img : Json
 }
 
 ///|
-pub fn RefRender::new(get_player_name : () -> String) -> RefRender {
-  { get_player_name, }
+let reference_data_ref : Ref[ReferenceData?] = Ref::new(None)
+
+///|
+pub(all) suberror ResolveReferenceError {
+  DataNotReady
+  InvalidId(String)
+  PathNotFound(String)
+  NameNotFound(String)
+} derive(Show)
+
+///|
+pub async fn preload_reference_data() -> Unit {
+  if reference_data_ref.val is Some(_) {
+    return
+  }
+  let loader = @resource.get_string_loader()
+  reference_data_ref.val = Some({
+    npc_img: loader.load_resource(["Npc.img"]),
+    mob_img: loader.load_resource(["Mob.img"]),
+    map_img: loader.load_resource(["Map.img"]),
+    eqp_img: loader.load_resource(["Eqp.img"]),
+    consume_img: loader.load_resource(["Consume.img"]),
+    ins_img: loader.load_resource(["Ins.img"]),
+    etc_img: loader.load_resource(["Etc.img"]),
+    cash_img: loader.load_resource(["Cash.img"]),
+  })
 }
 
 ///|
-pub fn RefRender::get_npc_name(self : RefRender, nid : StringView) -> String {
-  // self.string_loader.load_res(["Npc.img", nid.to_string(), "name"]).get_string()
-  ...
+pub fn clear_reference_data() -> Unit {
+  reference_data_ref.val = None
 }
 
 ///|
-pub fn RefRender::get_mob_name(self : RefRender, mid : StringView) -> String {
-  // self.string_loader
-  // .load_res(["Mob.img", mid.trim_start("0").to_string(), "name"])
-  // .get_string()
-  ...
+pub fn is_reference_data_ready() -> Bool {
+  reference_data_ref.val is Some(_)
 }
 
 ///|
-pub fn RefRender::get_map_name(
-  self : RefRender,
-  v : StringView,
-) -> String raise {
-  let mapid = @strconv.parse_int(v.to_string())
-  let map_category = @map.get_map_category(mapid)
-  // let map_info = self.string_loader.load_res([
-  //   "Map.img",
-  //   map_category,
-  //   mapid.to_string(),
-  // ])
-  // map_info["mapName"].get_string()
-  ...
+pub fn resolve_npc_name(nid : StringView) -> String raise {
+  let data = require_reference_data()
+  get_name_by_path(data.npc_img, ["\{nid.to_string()}", "name"], "npc:\{nid}")
 }
 
 ///|
-pub fn RefRender::get_item_name(
-  self : RefRender,
-  v : StringView,
-) -> String raise {
+pub fn resolve_mob_name(mid : StringView) -> String raise {
+  let normalized = mid.trim_start(chars="0").to_string()
+  guard not(normalized.is_empty()) else {
+    raise InvalidId("invalid mob id: \{mid.to_string()}")
+  }
+  let data = require_reference_data()
+  get_name_by_path(data.mob_img, [normalized, "name"], "mob:\{mid}")
+}
+
+///|
+pub fn resolve_map_name(v : StringView) -> String raise {
+  let map_id_str = v.to_string()
+  let map_id = @strconv.parse_int(map_id_str) catch {
+    _ => raise InvalidId("invalid map id: \{map_id_str}")
+  }
+  let category = @map.get_map_category(map_id)
+  let data = require_reference_data()
+  get_name_by_path(
+    data.map_img,
+    [category, map_id_str, "mapName"],
+    "map:\{map_id_str}",
+  )
+}
+
+///|
+pub fn resolve_item_name(v : StringView) -> String raise {
   let item_id_str = v.to_string()
-  let item_id = @strconv.parse_int(item_id_str)
-  let path_parts = match @item.parse_category1(item_id) {
+  let item_id = @strconv.parse_int(item_id_str) catch {
+    _ => raise InvalidId("invalid item id: \{item_id_str}")
+  }
+  let data = require_reference_data()
+  let path = match @item.parse_category1(item_id) {
     Some(@item.Category1::EQUIP) =>
       match @item.parse_equip_category(item_id) {
-        Some(sub_category) =>
-          ["Eqp.img", "Eqp", sub_category, item_id_str, "name"]
-        None => fail("equip sub-category not found, item_id: \{item_id}")
+        Some(category) => [category, item_id_str, "name"]
+        None => raise InvalidId("invalid equip category: \{item_id}")
       }
-    Some(@item.Category1::CONSUME) => ["Consume.img", item_id_str, "name"]
-    Some(@item.Category1::INSTALL) => ["Ins.img", item_id_str, "name"]
-    Some(@item.Category1::ETC) => ["Etc.img", "Etc", item_id_str, "name"]
-    Some(@item.Category1::CASH) => ["Cash.img", item_id_str, "name"]
-    None => fail("unknown category, item_id: \{item_id}")
+    Some(@item.Category1::CONSUME) => [item_id_str, "name"]
+    Some(@item.Category1::INSTALL) => [item_id_str, "name"]
+    Some(@item.Category1::ETC) => ["Etc", item_id_str, "name"]
+    Some(@item.Category1::CASH) => [item_id_str, "name"]
+    None => raise InvalidId("unknown item category: \{item_id}")
   }
-  // self.string_loader.load_res(path_parts).get_string()
-  ...
+  let root = match @item.parse_category1(item_id) {
+    Some(@item.Category1::EQUIP) => data.eqp_img
+    Some(@item.Category1::CONSUME) => data.consume_img
+    Some(@item.Category1::INSTALL) => data.ins_img
+    Some(@item.Category1::ETC) => data.etc_img
+    Some(@item.Category1::CASH) => data.cash_img
+    None => raise InvalidId("unknown item category: \{item_id}")
+  }
+  get_name_by_path(root, path, "item:\{item_id_str}")
 }
 
 ///|
-pub fn RefRender::get_player_name(self : RefRender) -> String {
-  (self.get_player_name)()
+fn require_reference_data() -> ReferenceData raise {
+  match reference_data_ref.val {
+    Some(data) => data
+    None => raise DataNotReady
+  }
+}
+
+///|
+fn get_name_by_path(
+  root : Json,
+  path : Array[String],
+  label : String,
+) -> String raise {
+  let value = get_json_by_path(root, path, label)
+  match value {
+    String(name) => name
+    _ => raise NameNotFound("name not found: \{label}, path=\{path}")
+  }
+}
+
+///|
+fn get_json_by_path(
+  root : Json,
+  path : Array[String],
+  label : String,
+) -> Json raise {
+  let mut current = root
+  for key in path {
+    current = match current {
+      Object(obj) =>
+        match obj.get(key) {
+          Some(next) => next
+          None => raise PathNotFound("path not found: \{label}, key=\{key}")
+        }
+      _ => raise PathNotFound("path not object: \{label}, key=\{key}")
+    }
+  }
+  current
 }

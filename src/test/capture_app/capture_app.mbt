@@ -53,7 +53,7 @@ pub fn set_ctx(c : Context2D) -> Unit {
 }
 
 ///|
-fn set_key(system : @system.RegisteredSystem, index : Int) -> String {
+fn set_key(system : @app.RegisteredSystem, index : Int) -> String {
   match system.in_set {
     Some(set) => set.name
     None => "__system_\{index}"
@@ -62,13 +62,13 @@ fn set_key(system : @system.RegisteredSystem, index : Int) -> String {
 
 ///|
 fn sort_systems_by_set(
-  systems : Array[@system.RegisteredSystem],
-) -> Array[@system.RegisteredSystem] {
+  systems : Array[@app.RegisteredSystem],
+) -> Array[@app.RegisteredSystem] {
   if systems.length() <= 1 {
     return systems
   }
 
-  let group_members : Map[String, Array[@system.RegisteredSystem]] = Map::new()
+  let group_members : Map[String, Array[@app.RegisteredSystem]] = Map::new()
   let group_order : Map[String, Int] = Map::new()
   let group_keys : Array[String] = []
 
@@ -156,7 +156,7 @@ fn sort_systems_by_set(
     }
   }
 
-  let ordered : Array[@system.RegisteredSystem] = []
+  let ordered : Array[@app.RegisteredSystem] = []
   for key in sorted_keys {
     for system in group_members.get(key).unwrap_or([]) {
       ordered.push(system)
@@ -167,10 +167,10 @@ fn sort_systems_by_set(
 
 ///|
 fn collect_systems(
-  systems : Array[@system.RegisteredSystem],
+  systems : Array[@app.RegisteredSystem],
   matcher : (@system.Schedule) -> Bool,
-) -> Array[@system.RegisteredSystem] {
-  let selected : Array[@system.RegisteredSystem] = []
+) -> Array[@app.RegisteredSystem] {
+  let selected : Array[@app.RegisteredSystem] = []
   for system in systems {
     if matcher(system.schedule) {
       selected.push(system)
@@ -180,7 +180,7 @@ fn collect_systems(
 }
 
 ///|
-fn should_run(system : @system.RegisteredSystem) -> Bool {
+fn should_run(system : @app.RegisteredSystem, world : @ecs.World) -> Bool {
   let schedule_allows = match system.schedule {
     OnEnter(condition) => condition()
     OnExit(condition) => condition()
@@ -190,23 +190,27 @@ fn should_run(system : @system.RegisteredSystem) -> Bool {
     return false
   }
   match system.run_if {
-    Some(condition) => condition()
+    Some(condition) => condition(world)
     None => true
   }
 }
 
 ///|
-fn run_stage(systems : Array[@system.RegisteredSystem], delta : Double) -> Unit {
+fn run_stage(
+  systems : Array[@app.RegisteredSystem],
+  world : @ecs.World,
+) -> Unit {
+  @ecs.set_current_world(world)
   for system in systems {
-    if should_run(system) {
-      (system.system)(delta)
+    if should_run(system, world) {
+      (system.system)(world)
     }
   }
 }
 
 ///|
 /// Initialize the test app by extracting systems from App and setting up canvas.
-pub fn init_app(app : @system.App) -> Unit {
+pub fn init_app(app : @app.App) -> Unit {
   if app.zoom <= 0.0 {
     abort("App::with_zoom must be a positive number")
   }
@@ -234,14 +238,18 @@ pub fn init_app(app : @system.App) -> Unit {
   global_state.accumulator = 0.0
   global_state.latest_frame = None
 
-  for plugin in app.plugins {
-    plugin(app)
+  @ecs.set_current_world(app.world)
+  for register_event in app.event_registrations {
+    register_event(app.world)
   }
 
   let startup_systems = collect_systems(app.systems, fn(schedule) {
     schedule is Startup
   })
-  run_stage(startup_systems, 0.0)
+  @time.set_delta(0.0)
+  run_stage(startup_systems, app.world)
+  @commands.commands_flush_system(app.world, 0.0)
+  @entity.entity_flush_system(0.0)
 
   let frame_first = collect_systems(app.systems, fn(schedule) {
     schedule is First
@@ -293,36 +301,44 @@ pub fn init_app(app : @system.App) -> Unit {
   })
 
   let game_loop : (Double) -> Unit = fn(delta) {
+    @ecs.set_current_world(app.world)
+    app.world.advance_frame()
+    @time.begin_frame(delta)
+    let delta = @time.delta()
     @event.event_frame_update_system(delta)
-    run_stage(frame_first, delta)
-    run_stage(frame_pre, delta)
-    run_stage(frame_on_exit, delta)
-    run_stage(frame_on_enter, delta)
-    run_stage(frame_update, delta)
-    run_stage(frame_post, delta)
+    run_stage(frame_first, app.world)
+    run_stage(frame_pre, app.world)
+    run_stage(frame_on_exit, app.world)
+    run_stage(frame_on_enter, app.world)
+    run_stage(frame_update, app.world)
+    run_stage(frame_post, app.world)
     @event.event_observer_dispatch_system(delta)
-    run_stage(frame_last, delta)
-    @commands.commands_flush_system(delta)
+    run_stage(frame_last, app.world)
+    @commands.commands_flush_system(app.world, delta)
     @entity.entity_flush_system(delta)
 
     global_state.accumulator += delta
     let mut fixed_steps = 0
     while global_state.accumulator >= global_state.fixed_dt &&
           fixed_steps < global_state.max_fixed_steps {
-      @event.event_fixed_update_system(global_state.fixed_dt)
-      run_stage(fixed_first, global_state.fixed_dt)
-      run_stage(fixed_pre, global_state.fixed_dt)
-      run_stage(fixed_update, global_state.fixed_dt)
-      run_stage(fixed_post, global_state.fixed_dt)
-      run_stage(fixed_last, global_state.fixed_dt)
-      @commands.commands_flush_system(global_state.fixed_dt)
-      @entity.entity_flush_system(global_state.fixed_dt)
+      app.world.advance_fixed_step()
+      @time.use_fixed_delta(global_state.fixed_dt)
+      let fixed_delta = @time.delta()
+      @event.event_fixed_update_system(fixed_delta)
+      run_stage(fixed_first, app.world)
+      run_stage(fixed_pre, app.world)
+      run_stage(fixed_update, app.world)
+      run_stage(fixed_post, app.world)
+      run_stage(fixed_last, app.world)
+      @commands.commands_flush_system(app.world, fixed_delta)
+      @entity.entity_flush_system(fixed_delta)
       global_state.accumulator -= global_state.fixed_dt
       fixed_steps += 1
     }
     if fixed_steps >= global_state.max_fixed_steps {
       global_state.accumulator = 0.0
     }
+    @time.use_frame_delta()
     let alpha = if global_state.fixed_dt <= 0.0 {
       1.0
     } else {
@@ -330,12 +346,15 @@ pub fn init_app(app : @system.App) -> Unit {
     }
     @system.set_render_alpha(alpha)
   }
-  let render_loop : (Double) -> Unit = fn(delta) {
+  let render_loop : (Double) -> Unit = fn(_delta) {
+    @ecs.set_current_world(app.world)
+    @time.use_frame_delta()
+    let delta = @time.delta()
     @event.event_render_update_system(delta)
-    run_stage(render_extract, delta)
-    run_stage(render_prepare, delta)
-    run_stage(render_stage, delta)
-    run_stage(render_cleanup, delta)
+    run_stage(render_extract, app.world)
+    run_stage(render_prepare, app.world)
+    run_stage(render_stage, app.world)
+    run_stage(render_cleanup, app.world)
   }
 
   global_state.render_loop = Some(render_loop)
@@ -511,6 +530,8 @@ fn render_commands(commands : Array[@render2d_types.DrawCommand2D]) -> Unit {
       Rect(rect) => render_rect(rect)
       Circle(_) => ()
       GradientRect(_) => ()
+      PushClip(_) => ()
+      PopClip => ()
     }
   }
 }
@@ -527,7 +548,7 @@ fn flush_latest_frame_to_canvas() -> Unit {
   match global_state.latest_frame {
     Some(frame) => {
       render_commands(frame.frame2d.world_commands)
-      render_commands(frame.frame2d.overlay_commands)
+      render_commands(frame.frame2d.ui_commands)
     }
     None => ()
   }

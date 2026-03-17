@@ -8,8 +8,7 @@ Parse `shops.csv` and `shopitems.csv`, then build NPC shop data used by local se
 ///|
 test "parse shops and shopitems" {
   let shops_csv = "shopid,npcid\n1,9010000\n"
-  let shopitems_csv =
-    "shopid,itemid,price,pitch,position,time,charge_price,buyable\n1,2000000,50,0,0,0,0,100\n"
+  let shopitems_csv = "shopid,itemid,price,pitch,position,time,charge_price,buyable\n1,2000000,50,0,0,0,0,100\n"
 
   let shops = @shop_sheet.parse_shop_rows(shops_csv)
   inspect(shops.length(), content="1")
@@ -22,8 +21,7 @@ test "parse shops and shopitems" {
 ///|
 test "build npc shop map" {
   let shops_csv = "shopid,npcid\n1,9010000\n"
-  let shopitems_csv =
-    "shopid,itemid,price,pitch,position,time,charge_price,buyable\n1,2000000,50,0,0,0,0,100\n"
+  let shopitems_csv = "shopid,itemid,price,pitch,position,time,charge_price,buyable\n1,2000000,50,0,0,0,0,100\n"
   let npc_map = @shop_sheet.build_npc_shop_map(shops_csv, shopitems_csv)
   guard npc_map.get(9010000) is Some(shop) else { fail("missing npc shop") }
   inspect(shop.npc_id, content="9010000")

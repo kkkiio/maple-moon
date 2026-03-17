@@ -101,12 +101,11 @@ fn ExplorerCreationUI::spawn_entity(
 ) -> Unit {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|
@@ -138,17 +137,16 @@ fn ExplorerCreationUI::spawn_button(
 ) -> Unit {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  @position.positions.set(
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   let button = @ui.MapleButton::new(
     res,
     pos=@struct.Point::new(x, y),
     on_click~,
   )
-  @sprite.sprites.set(
+  @sprite.sprites().set(
     entity,
     @sprite.Sprite::from_animation(button.current_selene_animation(), 10),
   )
@@ -216,7 +214,6 @@ fn ExplorerCreationUI::request_preview_if_needed(
             config_to_look_entry(config, self.resource).faceid,
           )
           let entity = @entity.Entity::new()
-          @selene_ui.uis.set(entity, @selene_ui.Ui::new())
           let look = @char_look.CharLook::load(
             entity,
             config_to_look_entry(config, self.resource),
@@ -465,7 +462,7 @@ fn ExplorerCreationUI::update(self : ExplorerCreationUI) -> Unit {
     button.button.update_pointer(
       mouse_x, mouse_y, is_pressed, just_pressed, just_released,
     )
-    @sprite.sprites.set(
+    @sprite.sprites().set(
       button.entity,
       @sprite.Sprite::from_animation(
         button.button.current_selene_animation(),

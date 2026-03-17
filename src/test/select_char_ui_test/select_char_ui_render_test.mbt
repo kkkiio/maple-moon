@@ -53,18 +53,26 @@ fn setup_select_char_ui_scene() -> Unit {
   @resource.set_face_loader(make_local_face_loader())
   @resource.set_hair_loader(make_local_hair_loader())
   @select_char_ui.setup_game_server_handlers()
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@io_service.io_system, system_name="io_system")
-    .add_system(@char_look.char_look_system, system_name="char_look_system")
     .add_system(
-      @select_char_ui.select_char_ui_system,
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @char_look.char_look_system(@time.delta()) },
+      system_name="char_look_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @select_char_ui.select_char_ui_system(@time.delta()) },
       system_name="select_char_ui_system",
-    ),
-  )
+    )
+  @capture_app.init_app(app)
 }
 
 ///|
@@ -127,7 +135,7 @@ fn assert_character_list_requested() -> Unit raise {
 async test "select char ui renders character and start button chooses first character" {
   defer @capture_app.reset_mock_server()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_select_char_ui_scene()
   setup_select_char_phase()
   @char_look.set_module(@char_look.CharLookMod::load())

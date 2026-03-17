@@ -48,7 +48,7 @@ fn set_rect_sprite(
   color : String,
 ) -> Unit {
   let rect = @sprite.ColorRect::new(@selene_math.Vec2D(width, height), color)
-  @sprite.sprites.set(
+  @sprite.sprites().set(
     entity,
     @sprite.Sprite::from_color_rect(rect, @graphics.MOB_HP_BAR_ZINDEX),
   )

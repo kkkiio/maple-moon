@@ -183,7 +183,7 @@ pub fn Portal::update_touched(
 ) -> Unit {
   self.touched = touch_pos is Some(touch_pos) &&
     self.bounds().contains(touch_pos)
-  guard @sprite.sprites.get(entity) is Some(sp) else { return }
+  guard @sprite.sprites().get(entity) is Some(sp) else { return }
   if self.t != PortalType::HIDDEN || self.touched {
     sp.visible = true
   } else {

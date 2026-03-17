@@ -52,13 +52,14 @@ fn setup_mini_map_ui_scene_with_data(
     load_real_map_helper_minimap_json(),
   )
   @mini_map_ui.clear_current_map()
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(420.0)
     .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@mini_map_ui.mini_map_ui_system),
-  )
+    .add_system(Update, fn(_world) {
+      @mini_map_ui.mini_map_ui_system(@time.delta())
+    })
+  @capture_app.init_app(app)
   @mini_map_ui.set_current_map(map_id, map_name, street_name, mini_map_resource)
 
   for _ in 0..<8 {
@@ -69,7 +70,7 @@ fn setup_mini_map_ui_scene_with_data(
 ///|
 test "mini map ui renders normal frame" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_mini_map_ui_scene_with_data(
     120010000,
     "Nautilus",
@@ -130,7 +131,7 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
 ///|
 test "mini map ui renders portal marker from real map 100030000" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_mini_map_ui_scene_with_data(
     100030000,
     "Henesys",

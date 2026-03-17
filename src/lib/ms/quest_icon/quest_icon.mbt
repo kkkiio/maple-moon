@@ -247,7 +247,7 @@ fn upsert_runtime(
       icon,
       loop_=true,
     )
-    @sprite.sprites.set(
+    @sprite.sprites().set(
       icon_entity,
       @sprite.Sprite::from_animation(
         icon_animation,
@@ -374,7 +374,7 @@ fn state_to_icon(
 
 ///|
 fn destroy_icon_entity(icon_entity : @entity.Entity) -> Unit {
-  @sprite.sprites.remove(icon_entity)
+  @sprite.sprites().remove(icon_entity)
   icon_entity.destroy()
 }
 

@@ -41,7 +41,7 @@ pub fn add_effect(
   }
   let sprite = @sprite.Sprite::from_animation(sprite_anim, z, transform~)
   let child = parent.spawn_child()
-  @sprite.sprites.set(child, sprite)
+  @sprite.sprites().set(child, sprite)
   @sprite.play_animation(child, sprite_anim, loop_~, transform~)
   let duration = nx_animation_duration(animation)
   let ttl = duration.to_double() / 1000

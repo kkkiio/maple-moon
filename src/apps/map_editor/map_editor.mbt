@@ -6,33 +6,63 @@ const CAMERA_SPEED : Double = 640.0
 
 ///|
 pub fn start_editor() -> Unit {
-  @system.App::new()
-  .with_image_smooth(false)
-  .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
-  .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
-  .with_fps(@graphics.fps)
-  .add_plugin(@plugins.default_plugin)
-  .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
-  .add_system(
-    start_map_loading_system,
-    schedule=Startup,
+  let mut app = @app.App::new()
+    .with_image_smooth(false)
+    .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
+    .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
+    .with_fps(@graphics.fps)
+    .add_plugin(@plugins.default_plugin)
+  app = app.add_system(
+    Update,
+    fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
+    system_name="logic_fps_system",
+  )
+  app = app.add_system(
+    Startup,
+    fn(_world) { start_map_loading_system(@time.delta()) },
     system_name="viewer_startup",
   )
-  .add_system(map_loading_poll_system, system_name="map_loader")
-  .add_system(camera_control_system, system_name="camera_controller")
-  .add_system(@map.background_system, system_name="background_system")
-  .add_system(@map.tile_objects_system, system_name="tile_objects_system")
-  .add_system(@map.portal_system, system_name="portal_system")
-  .add_system(
-    @monster.map_monsters_system,
+  app = app.add_system(
+    Update,
+    fn(_world) { map_loading_poll_system(@time.delta()) },
+    system_name="map_loader",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { camera_control_system(@time.delta()) },
+    system_name="camera_controller",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @map.background_system(@time.delta()) },
+    system_name="background_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @map.tile_objects_system(@time.delta()) },
+    system_name="tile_objects_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @map.portal_system(@time.delta()) },
+    system_name="portal_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @monster.map_monsters_system(@time.delta()) },
     system_name="monster_rendering_system",
   )
-  .add_system(
-    viewer_visibility_input_system,
+  app = app.add_system(
+    Update,
+    fn(_world) { viewer_visibility_input_system(@time.delta()) },
     system_name="viewer_visibility_controls",
   )
-  .add_system(render_debug_overlay, system_name="debug_overlay")
-  .run()
+  app = app.add_system(
+    Update,
+    fn(_world) { render_debug_overlay(@time.delta()) },
+    system_name="debug_overlay",
+  )
+  app.run()
 }
 
 ///|
@@ -209,7 +239,7 @@ fn finalize_scene(
     ((borders.first() + borders.second()) / 2).to_double(),
   )
   let entity = ensure_camera_entity()
-  @position.positions.set(entity, @position.Position(center))
+  @position.positions().set(entity, @position.Position(center))
   let map_limits = MapLimits::{
     left: walls.first().to_double(),
     right: walls.second().to_double(),
@@ -290,7 +320,7 @@ fn camera_control_system(delta : Double) -> Unit {
   if direction.distance() == 0.0 {
     return
   }
-  let current_pos = @position.positions
+  let current_pos = @position.positions()
     .get(entity)
     .map(fn(pos) { pos.0 })
     .unwrap_or(@selene_math.Vec2D::zero())
@@ -300,7 +330,7 @@ fn camera_control_system(delta : Double) -> Unit {
     Some({ map_limits, .. }) => clamp_vec(next_pos, map_limits)
     None => next_pos
   }
-  @position.positions.set(entity, @position.Position(clamped_pos))
+  @position.positions().set(entity, @position.Position(clamped_pos))
 }
 
 ///|

@@ -471,9 +471,8 @@ fn truncate_text(text : String, max_len : Int) -> String {
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites.remove(entity) |> ignore
-    @position.positions.remove(entity) |> ignore
-    @selene_ui.uis.remove(entity) |> ignore
+    @sprite.sprites().remove(entity) |> ignore
+    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -985,12 +984,11 @@ fn spawn_sprite(
 ) -> Unit {
   let entity = @entity.Entity::new()
   state.render_entities.push(entity)
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|
@@ -1009,12 +1007,11 @@ fn spawn_rect(
     @selene_math.Vec2D(width.to_double(), height.to_double()),
     color,
   )
-  @sprite.sprites.set(entity, @sprite.Sprite::from_color_rect(rect, z))
-  @position.positions.set(
+  @sprite.sprites().set(entity, @sprite.Sprite::from_color_rect(rect, z))
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|
@@ -1070,12 +1067,11 @@ fn spawn_text(
     baseline=@selene_math.Top,
     align=@selene_math.Left,
   )
-  @sprite.sprites.set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions.set(
+  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|

@@ -2,13 +2,13 @@
 async test "character stabO1" {
   // Initialize test app
   @capture_app.init_app(
-    @system.App::new()
+    @app.App::new()
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
   )
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   let bodynode = @fs.read_file_to_string(
       "assets/Character/Body/00002000.img.json",
     )
@@ -85,7 +85,7 @@ async test "character stabO1" {
   // Frame 0
   @capture_app.run_loop(0.016)
   @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_0.png")
-  let sprites : Array[@test_snapshots.DebugSprite] = @sprite.sprites
+  let sprites : Array[@test_snapshots.DebugSprite] = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
@@ -218,7 +218,7 @@ async test "character stabO1" {
   @capture_app.run_loop(0.1)
   // let buffer1 = @capture_app.to_buffer().to_bytes()
   // assert_eq(buffer0, buffer1, msg="frame 0 not sync")
-  let sprites1 : Array[@test_snapshots.DebugSprite] = @sprite.sprites
+  let sprites1 : Array[@test_snapshots.DebugSprite] = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()
@@ -229,7 +229,7 @@ async test "character stabO1" {
     @capture_app.run_loop(0.1)
   }
   @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_1.png")
-  let sprites = @sprite.sprites
+  let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()

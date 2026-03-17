@@ -75,7 +75,7 @@ pub fn Tile::attach_entity(
   z_offset : Int,
 ) -> Unit {
   guard self.texture is Some(texture) else {
-    @sprite.sprites.remove(entity)
+    @sprite.sprites().remove(entity)
     return
   }
   let animation = nx_animation_to_selene_animation(@resource.NxAnimation::{
@@ -86,8 +86,8 @@ pub fn Tile::attach_entity(
     zigzag: false,
   })
   let sprite = @sprite.Sprite::from_animation(animation, self.z + z_offset)
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(
       @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),

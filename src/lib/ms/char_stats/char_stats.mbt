@@ -53,7 +53,7 @@ pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent] = @e
 
 ///|
 fn init {
-  char_stats_changed_event_bus.register()
+  char_stats_changed_event_bus.register_to_world(@ecs.require_current_world())
 }
 
 ///|

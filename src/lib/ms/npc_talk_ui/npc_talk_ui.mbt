@@ -323,7 +323,6 @@ fn UINpcTalk::destroy(self : UINpcTalk) -> Unit {
   self.buttons.clear()
   self.choice_areas.clear()
   for entity in self.entities {
-    @selene_ui.uis.remove(entity) |> ignore
     entity.destroy()
   }
   self.entities.clear()
@@ -536,12 +535,11 @@ fn UINpcTalk::spawn_picture(
 ) -> Unit {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  @sprite.sprites.set(entity, @sprite.Sprite::from_picture(picture, z))
-  @position.positions.set(
+  @sprite.sprites().set(entity, @sprite.Sprite::from_picture(picture, z))
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|
@@ -564,12 +562,11 @@ fn UINpcTalk::spawn_text(
     baseline=@selene_math.Top,
     align~,
   )
-  @sprite.sprites.set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions.set(
+  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   sprite_text
 }
 
@@ -583,13 +580,12 @@ fn UINpcTalk::spawn_button(
 ) -> Unit {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  @position.positions.set(
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   let button = @ui.MapleButton::new(resource, pos=Point::new(x, y), on_click~)
-  @sprite.sprites.set(
+  @sprite.sprites().set(
     entity,
     @sprite.Sprite::from_animation(
       button.current_selene_animation(),
@@ -641,7 +637,7 @@ fn UINpcTalk::update(self : UINpcTalk) -> Unit {
     button.button.update_pointer(
       mouse_x, mouse_y, is_pressed, just_pressed, just_released,
     )
-    @sprite.sprites.set(
+    @sprite.sprites().set(
       button.entity,
       @sprite.Sprite::from_animation(
         button.button.current_selene_animation(),

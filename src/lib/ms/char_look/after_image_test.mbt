@@ -27,7 +27,7 @@ fn create_test_resource() -> NxAfterImage {
 ///|
 fn is_after_image_displayed(entity : @entity.Entity) -> Bool {
   entity.is_alive() &&
-  @sprite.sprites.get(entity) is Some(sprite) &&
+  @sprite.sprites().get(entity) is Some(sprite) &&
   sprite.visible
 }
 

@@ -268,9 +268,8 @@ pub async fn SelectCharUI::new(
     ] {
     let (s, pos) = t
     let entity = @entity.Entity::new()
-    @position.positions.set(entity, @position.Position(pos))
-    @selene_ui.uis.set(entity, @selene_ui.Ui::new())
-    @sprite.sprites.set(entity, @sprite.Sprite::from_animation(s, 0))
+    @position.positions().set(entity, @position.Position(pos))
+    @sprite.sprites().set(entity, @sprite.Sprite::from_animation(s, 0))
     entities.push(entity)
   }
   let characters_entities = Array::makei(characters.length(), fn(_) {
@@ -293,17 +292,16 @@ pub async fn SelectCharUI::new(
   ) -> SeleneButton {
     let entity = @entity.Entity::new()
     entities.push(entity)
-    @position.positions.set(
+    @position.positions().set(
       entity,
       @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
     )
-    @selene_ui.uis.set(entity, @selene_ui.Ui::new())
     let button = @ui.MapleButton::new(
       res,
       pos=@struct.Point::new(x, y),
       on_click~,
     )
-    @sprite.sprites.set(
+    @sprite.sprites().set(
       entity,
       @sprite.Sprite::from_animation(button.current_selene_animation(), 10),
     )
@@ -350,14 +348,13 @@ fn spawn_character_name_entity(
 ) -> Unit {
   let text_entity = parent.spawn_child(offset=@selene_math.Vec2D(0, 54))
   entities.push(text_entity)
-  @selene_ui.uis.set(text_entity, @selene_ui.Ui::new())
   let text = @sprite.Text::new(
     name,
     color="white",
     font="13px Arial",
     align=@selene_math.HAlign::Center,
   )
-  @sprite.sprites.set(text_entity, @sprite.Sprite::from_text(text, 10))
+  @sprite.sprites().set(text_entity, @sprite.Sprite::from_text(text, 10))
 }
 
 ///|
@@ -383,8 +380,7 @@ pub async fn to_selectable_character_ui(
 ) -> SelectableCharacterUI {
   let char_look = load_char_look(entity, mod, character)
   let { cid, name, .. } = character
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
-  @position.positions.set(
+  @position.positions().set(
     entity,
     @position.Position(get_character_slot_pos(i, 135, 234).to_vec2d()),
   )
@@ -491,7 +487,7 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
       button.button.update_pointer(
         mouse_x, mouse_y, is_pressed, just_pressed, just_released,
       )
-      @sprite.sprites.set(
+      @sprite.sprites().set(
         button.entity,
         @sprite.Sprite::from_animation(
           button.button.current_selene_animation(),
@@ -524,8 +520,8 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
         acc += dur
       }
       let alpha_norm = alpha_val / 255.0
-      // if @sprite.sprites.get(entity) is Some(spr) {
-      //   @sprite.sprites.set(entity, { ..spr, alpha: alpha_norm })
+      // if @sprite.sprites().get(entity) is Some(spr) {
+      //   @sprite.sprites().set(entity, { ..spr, alpha: alpha_norm })
       // }
       // TODO: modify upstream selene to support alpha
       ignore(entity)

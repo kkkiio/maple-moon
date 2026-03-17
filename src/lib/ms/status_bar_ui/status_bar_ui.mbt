@@ -22,9 +22,8 @@ const STATUS_FONT = "bold 12px Menlo"
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites.remove(entity) |> ignore
-    @position.positions.remove(entity) |> ignore
-    @selene_ui.uis.remove(entity) |> ignore
+    @sprite.sprites().remove(entity) |> ignore
+    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -48,12 +47,11 @@ fn spawn_text(
     baseline=@selene_math.Top,
     align~,
   )
-  @sprite.sprites.set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions.set(
+  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|

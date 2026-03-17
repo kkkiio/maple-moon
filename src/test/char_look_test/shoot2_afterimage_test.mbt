@@ -1,7 +1,7 @@
 ///|
 async test "crossbow shoot2 afterimage without range should render" {
   @capture_app.init_app(
-    @system.App::new()
+    @app.App::new()
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
@@ -10,8 +10,8 @@ async test "crossbow shoot2 afterimage without range should render" {
   let host = @entity.Entity::new()
   defer host.destroy()
   defer @char_look.clear_after_image(host)
-  defer @sprite.sprites.clear()
-  @position.positions.set(host, @position.Position(Vec2D(100.0, 100.0)))
+  defer @sprite.sprites().clear()
+  @position.positions().set(host, @position.Position(Vec2D(100.0, 100.0)))
 
   let after_image_node = @fs.read_file_to_string(
       "assets/Character/Afterimage/crossBow.img.json",
@@ -34,7 +34,7 @@ async test "crossbow shoot2 afterimage without range should render" {
   )
   @char_look.update_after_image_system(0.016)
   @capture_app.run_loop(0.016)
-  let sprites = @sprite.sprites.iter().collect()
+  let sprites = @sprite.sprites().iter().collect()
   assert_true(sprites.length() > 0)
 
   @capture_app.snapshot(

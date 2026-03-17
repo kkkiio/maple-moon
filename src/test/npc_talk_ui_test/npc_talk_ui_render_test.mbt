@@ -83,7 +83,7 @@ fn setup_test_player() -> Unit raise {
 async fn setup_npc_talk_scene(args : @npc.TalkArgs) -> Unit {
   @npc_talk_ui.close_npc_talk_ui()
   @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  @sprite.sprites.clear()
+  @sprite.sprites().clear()
   @game_state.game_state.phase = @game_state.GamePhase::GameActive(
     map_id=100000000,
     portal_id=0,
@@ -91,16 +91,16 @@ async fn setup_npc_talk_scene(args : @npc.TalkArgs) -> Unit {
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_key_system(0.0)
   @inputs.mouse.pos = @selene_math.Vec2D(0.0, 0.0)
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(
-      @npc_talk_ui.npc_talk_ui_system,
+      Update,
+      fn(_world) { @npc_talk_ui.npc_talk_ui_system(@time.delta()) },
       system_name="npc_talk_ui_system",
-    ),
-  )
+    )
+  @capture_app.init_app(app)
   @resource.set_ui_window_2_loader(
     @resource.AsyncLoader::new(
       "test_local_ui_window_2",
@@ -150,7 +150,7 @@ fn assert_npc_talk_snapshot(name : String) -> Unit raise {
 async test "npc talk ui renders dialog snapshots" {
   defer teardown_npc_talk_scene()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   let npc_1002001_d1 = get_npc_dialogue_text(1002001, "d1")
   let npc_1012102_d0 = get_npc_dialogue_text(1012102, "d0")
   let npc_1061003_d0 = get_npc_dialogue_text(1061003, "d0")

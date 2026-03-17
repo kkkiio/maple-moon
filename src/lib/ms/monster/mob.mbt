@@ -252,7 +252,7 @@ pub fn Mob::new(
 ) -> Mob {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(entity, @position.Position(pos))
+    @position.positions().set(entity, @position.Position(pos))
   })
 
   // Use data from nx_mob
@@ -555,7 +555,7 @@ pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
 
 ///|
 pub fn Mob::destroy(self : Mob) -> Unit {
-  @sprite.sprites.remove(self.entity)
+  @sprite.sprites().remove(self.entity)
   self.entity.destroy()
 }
 

@@ -169,7 +169,7 @@ fn load_map_runtime_102000001() -> (@physics.Physics, @map.MapInfo) {
 ///|
 fn npc_sprite_zindices() -> Array[Int] {
   let zs : Array[Int] = []
-  for _, sprite in @sprite.sprites {
+  for _, sprite in @sprite.sprites() {
     match @test_snapshots.DebugSprite(sprite).to_json() {
       {
         "draw": [
@@ -211,7 +211,7 @@ fn normalize_camera_limits(
 ///|
 fn setup_camera(position : @math.Vec2D, map_info : @map.MapInfo) -> Unit {
   let camera_anchor = @entity.Entity::new()
-  @position.positions.set(camera_anchor, @position.Position(position))
+  @position.positions().set(camera_anchor, @position.Position(position))
   @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
   @camera.set_follow_x(true)
   @camera.set_follow_y(true)
@@ -235,17 +235,36 @@ fn spawn_npc_from_json(map_npcs : @npc.MapNpcs, json : Json) -> Unit {
 
 ///|
 async fn setup_shop_scene_npcs() -> Unit {
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
-    .add_system(@map.background_system, system_name="background_system")
-    .add_system(@map.tile_objects_system, system_name="tile_objects_system")
-    .add_system(@npc.map_npcs_system, system_name="map_npcs_system")
-    .add_system(@io_service.io_system, system_name="io_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
+      system_name="logic_fps_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @map.background_system(@time.delta()) },
+      system_name="background_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @map.tile_objects_system(@time.delta()) },
+      system_name="tile_objects_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @npc.map_npcs_system(@time.delta()) },
+      system_name="map_npcs_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+  @capture_app.init_app(app)
 
   let (physics, map_info) = load_map_runtime_102000001()
   setup_camera(
@@ -301,7 +320,7 @@ async test "shop scene npc render snapshot on map 102000001" {
   defer @map.clear_runtime_context()
   defer @npc.clear_map_npcs()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
 
   setup_shop_scene_npcs()
 

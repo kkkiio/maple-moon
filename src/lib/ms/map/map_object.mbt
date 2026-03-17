@@ -80,8 +80,8 @@ pub fn Obj::attach_entity(
     self.z + z_offset,
     transform~,
   )
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(
       @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),

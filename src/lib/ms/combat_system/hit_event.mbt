@@ -56,7 +56,7 @@ pub let hit_event_bus : @event.Events[HitEvent] = @event.Events::new()
 
 ///|
 fn init {
-  hit_event_bus.register()
+  hit_event_bus.register_to_world(@ecs.require_current_world())
 }
 
 ///|

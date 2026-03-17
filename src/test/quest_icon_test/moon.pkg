@@ -27,6 +27,8 @@ import {
   "Milky2018/selene/position",
   "Milky2018/selene/sprite",
   "Milky2018/selene/system",
+  "Milky2018/selene/time",
+  "Milky2018/selene/app" @app,
 } for "test"
 
 options(

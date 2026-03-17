@@ -256,7 +256,7 @@ fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
     }
     let entity = @entity.Entity::new()
     let position = portal.get_position()
-    @position.positions.set(
+    @position.positions().set(
       entity,
       @position.Position(
         @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
@@ -267,7 +267,7 @@ fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
         animation,
         @graphics.PORTAL_ZINDEX,
       )
-      @sprite.sprites.set(entity, sprite)
+      @sprite.sprites().set(entity, sprite)
     }
     ctx.portal_entities.set(id, entity)
   }

@@ -1,7 +1,7 @@
 ///|
 test "damage number" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   // 'No' for Number
   let no_red_1 : DamageSkin = @json.from_json(
     @json.parse(
@@ -49,7 +49,7 @@ test "damage number" {
   let blue_skins : Skins = Skins::{ big: no_blue_1, small: no_blue_0 }
   let number_set = NumberSet::{ red_skins, cri_skins, violet_skins, blue_skins }
   number_set.show_number(HIT_NORMAL, 100, 0)
-  let sprites = @sprite.sprites
+  let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
     .collect()

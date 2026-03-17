@@ -24,11 +24,11 @@ pub fn Bullet::new(
     @graphics.CHAR_LOOK_ZINDEX + 100,
     transform~,
   )
-  @sprite.sprites.set(entity, sprite)
+  @sprite.sprites().set(entity, sprite)
   @sprite.play_animation(entity, sprite_animation, loop_=true, transform~)
 
   let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(entity, @position.Position(pos))
+    @position.positions().set(entity, @position.Position(pos))
   })
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
   move_obj.set_y(origin.y.to_double() - 26.0)

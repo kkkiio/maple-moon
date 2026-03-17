@@ -38,6 +38,7 @@ pub(all) enum Action {
 }
 pub impl Eq for Action
 pub impl Hash for Action
+pub impl Show for Action
 
 pub(all) enum BasicActionId {
   MOVE_UP
@@ -50,6 +51,7 @@ pub(all) enum BasicActionId {
 }
 pub impl Eq for BasicActionId
 pub impl Hash for BasicActionId
+pub impl Show for BasicActionId
 
 // Type aliases
 pub type Keymap = Map[@inputs.Code, Action]

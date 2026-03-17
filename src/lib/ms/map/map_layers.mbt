@@ -438,7 +438,7 @@ fn ensure_tile_sprite(
   entity : @entity.Entity,
   z_offset : Int,
 ) -> Unit {
-  if @sprite.sprites.get(entity) is Some(_) {
+  if @sprite.sprites().get(entity) is Some(_) {
     return
   }
   tile.attach_entity(entity, z_offset)
@@ -450,7 +450,7 @@ fn ensure_obj_sprite(
   entity : @entity.Entity,
   z_offset : Int,
 ) -> Unit {
-  if @sprite.sprites.get(entity) is Some(_) {
+  if @sprite.sprites().get(entity) is Some(_) {
     return
   }
   obj.attach_entity(entity, z_offset)
@@ -458,7 +458,7 @@ fn ensure_obj_sprite(
 
 ///|
 fn set_entity_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
-  if @sprite.sprites.get(entity) is Some(sprite) {
+  if @sprite.sprites().get(entity) is Some(sprite) {
     sprite.visible = visible
   }
 }

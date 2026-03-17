@@ -3,7 +3,8 @@ package "KKKIIO/maple-moon/test/capture_app"
 
 import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "Milky2018/selene/system",
+  "Milky2018/selene/app",
+  "Milky2018/selene/render_pipeline",
   "moonbitlang/core/json",
 }
 
@@ -20,7 +21,7 @@ pub fn emit_mock_server_state(Int, Json) -> Unit raise
 
 pub fn get_ctx() -> Context2D?
 
-pub fn init_app(@system.App) -> Unit
+pub fn init_app(@app.App) -> Unit
 
 pub fn mock_server_latest_sent_json(Int) -> Json?
 
@@ -45,6 +46,8 @@ pub fn set_canvas(Canvas) -> Unit
 pub fn set_ctx(Context2D) -> Unit
 
 pub fn snapshot(String) -> Unit raise
+
+pub fn submit_frame(@render_pipeline.RenderFrame) -> Unit
 
 pub fn to_buffer() -> Buffer
 

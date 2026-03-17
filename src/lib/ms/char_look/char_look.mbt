@@ -8,9 +8,6 @@ using @char_stance {type StanceId}
 using @types {type BodyDrawInfo}
 
 ///|
-using @selene_ui {type Ui}
-
-///|
 struct CharLook {
   root_entity : @entity.Entity
   stance : @utils.Nominal[StanceId]
@@ -157,10 +154,6 @@ pub fn CharLook::new(
 ///|
 fn CharLook::spawn_sprite_child(self : CharLook) -> @entity.Entity {
   let child = self.root_entity.spawn_child()
-  match @selene_ui.uis.get(self.root_entity) {
-    Some(ui) => @selene_ui.uis.set(child, ui)
-    None => ()
-  }
   child
 }
 
@@ -172,14 +165,14 @@ fn CharLook::updatetwohanded(self : CharLook) -> Unit {
 
 ///|
 pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
-  @position.positions.set(self.root_entity, @position.Position(pos))
+  @position.positions().set(self.root_entity, @position.Position(pos))
 }
 
 ///|
 /// Set animation playback speed for all sprite entities used by this look.
 pub fn CharLook::set_animation_speed(self : CharLook, speed : Double) -> Unit {
   fn set_speed_if_animation(entity : @entity.Entity) {
-    if @sprite.sprites.get(entity)
+    if @sprite.sprites().get(entity)
       is Some({ sprite_type: Animation(_, ..), .. }) {
       @sprite.set_animation_speed(entity, speed)
     }
@@ -240,7 +233,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   let loop_ = should_loop(stance)
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
-      if @sprite.sprites.get(entity) is Some(sprite) {
+      if @sprite.sprites().get(entity) is Some(sprite) {
         sprite.visible = false
       }
     }
@@ -327,7 +320,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()
       })
-      let current_frame = if @sprite.sprites.get(entity)
+      let current_frame = if @sprite.sprites().get(entity)
         is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
         // Use frame directly as requested, correcting for potential bounds
         if frame < layers.length() {
@@ -386,7 +379,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         // Since play_animation sets a single Z for the whole animation in Selene's Sprite,
         // we usually take the Z of the first frame or force them to be consistent.
         // Looking at the data, usually layers are consistent across frames for a single motion.
-        let current_frame = if @sprite.sprites.get(entity)
+        let current_frame = if @sprite.sprites().get(entity)
           is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
           if frame < layers.length() {
             frame
@@ -626,7 +619,7 @@ pub fn CharLook::get_frame(self : CharLook) -> Int {
   // Try to find the "body" entity which drives the main animation
   match self.body_entities.get("body") {
     Some(entity) =>
-      match @sprite.sprites.get(entity) {
+      match @sprite.sprites().get(entity) {
         Some({ sprite_type: Animation(_, frame~, ..), .. }) => frame
         _ => 0
       }
@@ -915,17 +908,17 @@ fn ensure_sprite_with_z(
   z : Int,
   transform : @selene_math.Transform,
 ) -> @sprite.Sprite {
-  if @sprite.sprites.get(entity) is Some(sprite) {
+  if @sprite.sprites().get(entity) is Some(sprite) {
     @sprite.set_animation_transform(entity, transform)
     if sprite.zindex != z {
       let sprite = { ..sprite, zindex: z }
-      @sprite.sprites.set(entity, sprite)
+      @sprite.sprites().set(entity, sprite)
       return sprite
     }
     return sprite
   }
   let sprite = @sprite.Sprite::from_animation(animation, z, transform~)
-  @sprite.sprites.set(entity, sprite)
+  @sprite.sprites().set(entity, sprite)
   sprite
 }
 
@@ -965,7 +958,7 @@ fn CharLook::play_climbing_animations(
   let loop_ = true
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
-      if @sprite.sprites.get(entity) is Some(sprite) {
+      if @sprite.sprites().get(entity) is Some(sprite) {
         sprite.visible = false
       }
     }
@@ -1075,7 +1068,7 @@ fn CharLook::play_climbing_animations(
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.spawn_sprite_child()
         })
-        let current_frame = if @sprite.sprites.get(entity)
+        let current_frame = if @sprite.sprites().get(entity)
           is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
           if frame < layers.length() {
             frame
@@ -1106,7 +1099,7 @@ fn CharLook::play_climbing_animations(
   // Skip Face Animation for Climbing
   match self.face_entity {
     Some(e) =>
-      if @sprite.sprites.get(e) is Some(sprite) {
+      if @sprite.sprites().get(e) is Some(sprite) {
         sprite.visible = false
       }
     None => ()

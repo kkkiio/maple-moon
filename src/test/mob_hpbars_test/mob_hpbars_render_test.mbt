@@ -21,15 +21,18 @@ async test "mob hpbar render snapshot" {
   defer @monster.clear_map_monsters()
   defer @monster.mob_hpbars_system(0.0)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
 
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(160.0)
     .with_viewport_height(120.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@monster.mob_hpbars_system, system_name="mob_hpbars_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @monster.mob_hpbars_system(@time.delta()) },
+      system_name="mob_hpbars_system",
+    )
+  @capture_app.init_app(app)
   let camera_anchor = @entity.Entity::new()
   @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
   @camera.set_follow_x(true)
@@ -41,7 +44,7 @@ async test "mob hpbar render snapshot" {
   @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
   map_mobs.for_each_mob(fn(_, mob) {
     mob.update(@physics.empty_physics()) |> ignore
-    @position.positions.set(
+    @position.positions().set(
       mob.get_entity(),
       @position.Position(@math.Vec2D(90.0, 80.0)),
     )

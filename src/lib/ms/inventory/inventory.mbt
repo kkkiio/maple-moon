@@ -52,7 +52,7 @@ pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @ev
 
 ///|
 fn init {
-  inventory_changed_event_bus.register()
+  inventory_changed_event_bus.register_to_world(@ecs.require_current_world())
 }
 
 ///|

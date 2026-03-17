@@ -384,7 +384,7 @@ pub async fn Npc::load(
 ) -> Npc {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(entity, @position.Position(pos))
+    @position.positions().set(entity, @position.Position(pos))
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_resource([strid])
@@ -581,14 +581,15 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
   } else {
     @selene_math.Transform::new()
   }
-  if @sprite.sprites.get(self.entity) is None ||
+  if @sprite.sprites().get(self.entity) is None ||
     self.last_synced_stance != Some(self.stance) {
     let sprite = @sprite.Sprite::from_animation(animation.selene, z, transform~)
-    @sprite.sprites.set(self.entity, sprite)
+    @sprite.sprites().set(self.entity, sprite)
     self.last_synced_stance = Some(self.stance)
   } else {
-    match @sprite.sprites.get(self.entity) {
-      Some(sprite) => @sprite.sprites.set(self.entity, { ..sprite, zindex: z })
+    match @sprite.sprites().get(self.entity) {
+      Some(sprite) =>
+        @sprite.sprites().set(self.entity, { ..sprite, zindex: z })
       None => ()
     }
   }
@@ -640,7 +641,7 @@ pub fn Npc::get_oid(self : Npc) -> Int {
 
 ///|
 pub fn Npc::destroy(self : Npc) -> Unit {
-  @sprite.sprites.remove(self.entity)
+  @sprite.sprites().remove(self.entity)
   self.entity.destroy()
 }
 

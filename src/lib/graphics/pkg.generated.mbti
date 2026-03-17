@@ -124,8 +124,6 @@ type GameText
 pub fn GameText::draw(Self, DrawArgument) -> Int
 pub fn GameText::new(Charset, String, Int) -> Self
 
-type Image
-
 pub(all) enum TextAlignment {
   LEFT
   CENTER

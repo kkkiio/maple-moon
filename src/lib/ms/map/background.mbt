@@ -990,11 +990,11 @@ fn ensure_background_sprites(
   z : Int,
 ) -> Unit {
   for entity in entities {
-    if @sprite.sprites.get(entity) is Some(_) {
+    if @sprite.sprites().get(entity) is Some(_) {
       continue
     }
     let sprite = new_background_sprite(background, z)
-    @sprite.sprites.set(entity, sprite)
+    @sprite.sprites().set(entity, sprite)
   }
 }
 
@@ -1004,7 +1004,7 @@ fn set_background_entities_visibility(
   visible : Bool,
 ) -> Unit {
   for entity in entities {
-    if @sprite.sprites.get(entity) is Some(sprite) {
+    if @sprite.sprites().get(entity) is Some(sprite) {
       sprite.visible = visible
     }
   }
@@ -1012,8 +1012,8 @@ fn set_background_entities_visibility(
 
 ///|
 fn set_background_sprite_alpha(entity : @entity.Entity, alpha : Double) -> Unit {
-  if @sprite.sprites.get(entity) is Some(sprite) {
-    @sprite.sprites.set(entity, { ..sprite, alpha, })
+  if @sprite.sprites().get(entity) is Some(sprite) {
+    @sprite.sprites().set(entity, { ..sprite, alpha, })
   }
 }
 
@@ -1100,9 +1100,9 @@ fn update_background_entities(
       base_pos.0 + tile_x.to_double() * step_x,
       base_pos.1 + tile_y.to_double() * step_y,
     )
-    @position.positions.set(entity, @position.Position(pos))
+    @position.positions().set(entity, @position.Position(pos))
     set_background_sprite_alpha(entity, alpha)
-    if @sprite.sprites.get(entity) is Some(sprite) {
+    if @sprite.sprites().get(entity) is Some(sprite) {
       sprite.visible = tile_x < count_x && tile_y < count_y
     }
   }

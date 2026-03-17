@@ -145,7 +145,7 @@ pub fn AfterImage::attach(self : AfterImage, parent : @entity.Entity) -> Unit {
 ///|
 pub fn AfterImage::dispose(self : AfterImage) -> Unit {
   if self.entity is Some(e) {
-    @sprite.sprites.remove(e)
+    @sprite.sprites().remove(e)
     e.destroy()
     self.entity = None
   }
@@ -182,7 +182,7 @@ pub fn AfterImage::update(
         @graphics.CHAR_LOOK_ZINDEX,
         transform~,
       )
-      @sprite.sprites.set(e, sprite)
+      @sprite.sprites().set(e, sprite)
       @sprite.play_animation(e, self.animation, loop_=false, transform~)
     }
   }

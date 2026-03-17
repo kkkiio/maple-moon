@@ -41,7 +41,7 @@ fn DropBase::new(
 ) -> DropBase {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(entity, @position.Position(pos))
+    @position.positions().set(entity, @position.Position(pos))
   })
   phobj.set_position(
     @selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()),
@@ -208,10 +208,10 @@ pub impl Drop for MesoDrop with update(
   let angle = self.base.angle.get()
   let opacity = self.base.opacity.get()
   // Check if sprite already exists
-  match @sprite.sprites.get(entity) {
+  match @sprite.sprites().get(entity) {
     Some(sprite) => {
       // Update existing sprite: alpha and transform
-      @sprite.sprites.set(entity, { ..sprite, alpha: opacity })
+      @sprite.sprites().set(entity, { ..sprite, alpha: opacity })
       @sprite.set_animation_transform(
         entity,
         @selene_math.Transform::from_rotation_rad(angle),
@@ -225,7 +225,7 @@ pub impl Drop for MesoDrop with update(
         alpha=opacity,
         transform=@selene_math.Transform::from_rotation_rad(angle),
       )
-      @sprite.sprites.set(entity, sprite)
+      @sprite.sprites().set(entity, sprite)
     }
   }
   layer
@@ -233,7 +233,7 @@ pub impl Drop for MesoDrop with update(
 
 ///|
 pub impl Drop for MesoDrop with destroy(self : MesoDrop) -> Unit {
-  @sprite.sprites.remove(self.base.entity)
+  @sprite.sprites().remove(self.base.entity)
   self.base.entity.destroy()
 }
 
@@ -320,14 +320,14 @@ pub impl Drop for ItemDrop with update(
   let opacity = self.base.opacity.get()
   // For ItemDrop, we use Picture which doesn't support rotation transform
   // We only update alpha for PICKED_UP fade effect
-  match @sprite.sprites.get(entity) {
+  match @sprite.sprites().get(entity) {
     Some(sprite) =>
       // Update existing sprite: alpha only
-      @sprite.sprites.set(entity, { ..sprite, alpha: opacity })
+      @sprite.sprites().set(entity, { ..sprite, alpha: opacity })
     None => {
       // Create new sprite with initial alpha
       let sprite = @sprite.Sprite::from_picture(self.icon, z, alpha=opacity)
-      @sprite.sprites.set(entity, sprite)
+      @sprite.sprites().set(entity, sprite)
     }
   }
   layer
@@ -337,7 +337,7 @@ pub impl Drop for ItemDrop with update(
 
 ///|
 pub impl Drop for ItemDrop with destroy(self : ItemDrop) -> Unit {
-  @sprite.sprites.remove(self.base.entity)
+  @sprite.sprites().remove(self.base.entity)
   self.base.entity.destroy()
 }
 

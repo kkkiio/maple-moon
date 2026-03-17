@@ -7,7 +7,7 @@ using @types {type NxStanceBody}
 ///|
 async test "character stand1" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   let bodynode = @fs.read_file_to_string(
       "assets/Character/Body/00002000.img.json",
     )
@@ -172,14 +172,14 @@ async test "character stand1" {
   look.play_animations()
   // Initialize test app and run one loop
   @capture_app.init_app(
-    @system.App::new()
+    @app.App::new()
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
   @capture_app.snapshot("src/test/char_look_test/__snapshot__/stand1.png")
-  let sprites = @sprite.sprites
+  let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
   json_inspect(sprites, content=[

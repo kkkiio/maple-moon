@@ -98,14 +98,21 @@ async fn preload_shop_items_for_snapshot(
 
 ///|
 async fn setup_shop_ui_scene() -> Unit {
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(820.0)
     .with_viewport_height(620.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@shop_ui.shop_ui_system, system_name="shop_ui_system")
-    .add_system(@io_service.io_system, system_name="io_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @shop_ui.shop_ui_system(@time.delta()) },
+      system_name="shop_ui_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+  @capture_app.init_app(app)
 
   @local_loader.install_local_csv_loader()
   let character_loader = @local_loader.make_local_character_loader()
@@ -131,7 +138,7 @@ async fn setup_shop_ui_scene() -> Unit {
 async test "shop ui renders perion style panel (map 102000001)" {
   defer @shop_ui.set_shop_visible_for_test(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_shop_ui_scene()
   @capture_app.snapshot(
     "src/test/shop_ui_test/__snapshot__/shop_ui_map_102000001.png",
@@ -142,7 +149,7 @@ async test "shop ui renders perion style panel (map 102000001)" {
 async test "shop ui renders etc sell tab (map 102000001)" {
   defer @shop_ui.set_shop_visible_for_test(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_shop_ui_scene()
   @shop_ui.set_sell_tab_index_for_test(2)
   for _ in 0..<2 {

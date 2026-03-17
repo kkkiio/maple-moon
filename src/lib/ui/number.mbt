@@ -112,7 +112,7 @@ fn Number::update(self : Number) -> Bool {
     let x = self.move_obj.crnt_x()
     let y = self.move_obj.crnt_y()
     let pos_vec = @selene_math.Vec2D(x, y)
-    @position.positions.set(self.parent_entity, @position.Position(pos_vec))
+    @position.positions().set(self.parent_entity, @position.Position(pos_vec))
   }
   finished
 }
@@ -239,7 +239,7 @@ pub fn NumberSet::show_number(
 
   // Create Parent Entity
   let parent_entity = @entity.Entity::new()
-  @position.positions.set(parent_entity, @position.Position(Vec2D::zero()))
+  @position.positions().set(parent_entity, @position.Position(Vec2D::zero()))
 
   // Spawn Children
   let start_offset = @struct.Point::new(0, -shift)
@@ -256,7 +256,7 @@ pub fn NumberSet::show_number(
           anim,
           @graphics.DAMAGE_NUMBER_ZINDEX,
         )
-        @sprite.sprites.set(child, sprite)
+        @sprite.sprites().set(child, sprite)
       }
       None => ()
     }

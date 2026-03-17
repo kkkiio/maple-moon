@@ -340,7 +340,7 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }
 
     // Check for direction/animation change
-    if @sprite.sprites.get(entity) is None ||
+    if @sprite.sprites().get(entity) is None ||
       mob.last_synced_stance != Some(mob.stance) {
       // Create or Replace sprite
       let flip = mob.stance.face_right && not(mob.no_flip)
@@ -354,17 +354,17 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
         layer * MAP_LAYER_STRIDE +
         MOB_ZINDEX_OFFSET
       let sprite = @sprite.Sprite::from_animation(anim.selene, z, transform~)
-      @sprite.sprites.set(entity, sprite)
+      @sprite.sprites().set(entity, sprite)
       mob.last_synced_stance = Some(mob.stance)
     } else {
       // Only update Z
-      match @sprite.sprites.get(entity) {
+      match @sprite.sprites().get(entity) {
         Some(sprite) => {
           let layer = mob.get_layer()
           let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
             layer * MAP_LAYER_STRIDE +
             MOB_ZINDEX_OFFSET
-          @sprite.sprites.set(entity, { ..sprite, zindex: z })
+          @sprite.sprites().set(entity, { ..sprite, zindex: z })
         }
         None => ()
       }

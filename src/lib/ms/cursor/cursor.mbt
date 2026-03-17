@@ -56,8 +56,7 @@ pub fn Cursor::new() -> Cursor {
     ),
   )
   let entity = @entity.Entity::new()
-  @sprite.sprites.set(entity, sprites.get(CursorState::IDLE).unwrap())
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
+  @sprite.sprites().set(entity, sprites.get(CursorState::IDLE).unwrap())
   { state: CursorState::IDLE, inactive_seconds: 0, sprites, entity }
 }
 
@@ -70,11 +69,11 @@ pub fn Cursor::set_state(self : Cursor, state : CursorState) -> Unit {
 
 ///|
 pub fn Cursor::set_position(self : Cursor, position : @math.Vec2D) -> Unit {
-  if @position.positions.get(self.entity) is Some(old_position) &&
+  if @position.positions().get(self.entity) is Some(old_position) &&
     old_position.0 == position {
     return
   }
-  @position.positions.set(self.entity, position)
+  @position.positions().set(self.entity, @position.Position(position))
   self.inactive_seconds = 0.0
 }
 
@@ -110,7 +109,7 @@ pub fn cursor_system(delta : Double) -> Unit {
   }
   requested_state.val = None
   if cursor.inactive_seconds == 0.0 { // reset
-    @sprite.sprites.set(cursor.entity, cursor.get_sprite())
+    @sprite.sprites().set(cursor.entity, cursor.get_sprite())
   }
   match cursor.state {
     CursorState::CAN_CLICK
@@ -121,6 +120,6 @@ pub fn cursor_system(delta : Double) -> Unit {
     _ => cursor.inactive_seconds += delta
   }
   if cursor.inactive_seconds >= HIDE_SECONDS.to_double() {
-    @sprite.sprites.remove(cursor.entity)
+    @sprite.sprites().remove(cursor.entity)
   }
 }

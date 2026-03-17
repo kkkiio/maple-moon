@@ -491,14 +491,13 @@ fn spawn_minimap_sprite_entity(
   ui_pos : @struct.Point[Int],
 ) -> Unit {
   let entity = @entity.Entity::new()
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(
       @selene_math.Vec2D(ui_pos.x.to_double(), ui_pos.y.to_double()),
     ),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
   entities.push(entity)
 }
 
@@ -506,7 +505,7 @@ fn spawn_minimap_sprite_entity(
 fn sync_minimap_entity_positions(ui : MiniMapUI) -> Unit {
   let ui_pos = ui.ui_model.position
   for entity in ui.entities {
-    @position.positions.set(
+    @position.positions().set(
       entity,
       @position.Position(
         @selene_math.Vec2D(ui_pos.x.to_double(), ui_pos.y.to_double()),
@@ -640,9 +639,8 @@ fn ensure_mini_map_ui_state() -> MiniMapUIState {
 ///|
 fn clear_entities(ui : MiniMapUI) -> Unit {
   for entity in ui.entities {
-    @sprite.sprites.remove(entity) |> ignore
-    @position.positions.remove(entity) |> ignore
-    @selene_ui.uis.remove(entity) |> ignore
+    @sprite.sprites().remove(entity) |> ignore
+    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   ui.entities.clear()

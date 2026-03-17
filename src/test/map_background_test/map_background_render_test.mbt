@@ -44,19 +44,30 @@ async fn load_backgrounds_101010102() -> @map.Backgrounds {
 
 ///|
 async fn setup_background_scene_101010102() -> Unit {
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@logic_fps.logic_fps_system, system_name="logic_fps_system")
-    .add_system(@map.background_system, system_name="background_system")
-    .add_system(@io_service.io_system, system_name="io_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
+      system_name="logic_fps_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @map.background_system(@time.delta()) },
+      system_name="background_system",
+    )
+    .add_system(
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+  @capture_app.init_app(app)
   let backgrounds = load_backgrounds_101010102()
   @map.set_backgrounds(backgrounds)
   let camera_anchor = @entity.Entity::new()
-  @position.positions.set(
+  @position.positions().set(
     camera_anchor,
     @position.Position(@math.Vec2D(-760.0, -760.0)),
   )
@@ -70,7 +81,7 @@ async fn setup_background_scene_101010102() -> Unit {
 fn min_sprite_alpha() -> Double {
   let mut found = false
   let mut min_alpha = 1.0
-  for _, sprite in @sprite.sprites {
+  for _, sprite in @sprite.sprites() {
     found = true
     if sprite.alpha < min_alpha {
       min_alpha = sprite.alpha
@@ -85,7 +96,7 @@ fn min_sprite_alpha() -> Double {
 ///|
 fn visible_sprite_count() -> Int {
   let mut count = 0
-  for _, sprite in @sprite.sprites {
+  for _, sprite in @sprite.sprites() {
     if sprite.visible {
       count += 1
     }
@@ -96,7 +107,7 @@ fn visible_sprite_count() -> Int {
 ///|
 async test "map 101010102 background alpha animation snapshot" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
 
   setup_background_scene_101010102()
   @capture_app.run_loop(0.016)

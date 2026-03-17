@@ -176,8 +176,8 @@ pub fn bullet_system(_delta : Double) -> Unit {
 
 ///|
 fn clear_entity(entity : @entity.Entity) -> Unit {
-  @sprite.sprites.remove(entity)
-  @position.positions.remove(entity)
+  @sprite.sprites().remove(entity)
+  @position.positions().remove(entity)
   if entity.is_alive() {
     entity.destroy()
   }

@@ -31,7 +31,7 @@ pub let skill_sfx_event_bus : @event.Events[SkillSfxEvent] = @event.Events::new(
 
 ///|
 fn init {
-  skill_sfx_event_bus.register()
+  skill_sfx_event_bus.register_to_world(@ecs.require_current_world())
 }
 
 ///|

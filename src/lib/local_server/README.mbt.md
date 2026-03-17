@@ -10,6 +10,7 @@ it is burdensome to implement full client features, so this package provides an 
 `LocalServer::new` requires a `db` dependency:
 
 ```moonbit nocheck
+///|
 let server = @local_server.LocalServer::new(db=@local_server.BrowserDB::new())
 ```
 

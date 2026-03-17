@@ -43,13 +43,16 @@ async fn load_quest_icon_animations() -> (
 
 ///|
 fn setup_quest_icon_app() -> Unit {
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@quest_icon.quest_icon_system, system_name="quest_icon_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @quest_icon.quest_icon_system(@time.delta()) },
+      system_name="quest_icon_system",
+    )
+  @capture_app.init_app(app)
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_key_system(0.0)
 }
@@ -64,7 +67,7 @@ fn run_frames_local(times : Int) -> Unit {
 ///|
 async test "quest_icon_system renders snapshot and handles click dispatch" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   defer @quest_icon.clear_context()
 
   setup_quest_icon_app()
@@ -95,7 +98,7 @@ async test "quest_icon_system renders snapshot and handles click dispatch" {
 
   let npc_entity = @entity.Entity::new()
   let npc_object = @physics.MovingObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(npc_entity, @position.Position(pos))
+    @position.positions().set(npc_entity, @position.Position(pos))
   })
   npc_object.set_position(@selene_math.Vec2D(240.0, 200.0))
   @quest_icon.upsert_npc(1, 1012000, npc_entity, npc_object)
@@ -116,7 +119,7 @@ async test "quest_icon_system renders snapshot and handles click dispatch" {
 ///|
 async test "quest_icon_system caches query results by revision" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   defer @quest_icon.clear_context()
 
   setup_quest_icon_app()
@@ -136,7 +139,7 @@ async test "quest_icon_system caches query results by revision" {
 
   let npc_entity = @entity.Entity::new()
   let npc_object = @physics.MovingObject::new(on_pos_change=fn(pos) {
-    @position.positions.set(npc_entity, @position.Position(pos))
+    @position.positions().set(npc_entity, @position.Position(pos))
   })
   npc_object.set_position(@selene_math.Vec2D(260.0, 220.0))
   @quest_icon.upsert_npc(2, 1012001, npc_entity, npc_object)

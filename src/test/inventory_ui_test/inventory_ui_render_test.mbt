@@ -39,17 +39,21 @@ fn make_inventory_entry() -> InventoryEntry {
 
 ///|
 async fn setup_inventory_ui_test_scene() -> Unit {
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(
-      @inventory_ui.inventory_ui_system,
+      Update,
+      fn(_world) { @inventory_ui.inventory_ui_system(@time.delta()) },
       system_name="inventory_ui_system",
     )
-    .add_system(@io_service.io_system, system_name="io_system"),
-  )
+    .add_system(
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+  @capture_app.init_app(app)
 
   let character_loader = @local_loader.make_local_character_loader()
   let item_loader = @local_loader.make_local_item_loader()
@@ -79,7 +83,7 @@ async fn setup_inventory_ui_test_scene() -> Unit {
 async test "inventory ui renders equip tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_inventory_ui_test_scene()
   @capture_app.snapshot(
     "src/test/inventory_ui_test/__snapshot__/inventory_ui_default.png",
@@ -90,7 +94,7 @@ async test "inventory ui renders equip tab with icon count and meso" {
 async test "inventory ui renders use tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_inventory_ui_test_scene()
   @inventory_ui.set_tab_index_for_test(1)
   for _ in 0..<2 {

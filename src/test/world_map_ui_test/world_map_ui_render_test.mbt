@@ -45,14 +45,19 @@ fn load_world_map_tooltip_json_for_test() -> Json raise {
 ///|
 fn setup_world_map_ui_scene() -> Unit {
   @world_map_ui.reset_world_map_ui_for_test()
-  @capture_app.init_app(
-    @system.App::new()
+  let app = @app.App::new()
     .with_viewport_width(920.0)
     .with_viewport_height(640.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(@world_map_ui.world_map_ui_system)
-    .add_system(@io_service.io_system, system_name="io_system"),
-  )
+    .add_system(Update, fn(_world) {
+      @world_map_ui.world_map_ui_system(@time.delta())
+    })
+    .add_system(
+      Update,
+      fn(_world) { @io_service.io_system(@time.delta()) },
+      system_name="io_system",
+    )
+  @capture_app.init_app(app)
   @world_map_ui.set_world_map_ui_json_for_test(
     load_world_map_ui_json_for_test() catch {
       _ => panic()
@@ -90,7 +95,7 @@ fn setup_world_map_ui_scene() -> Unit {
 test "world map ui opens at current root and reopens from root page" {
   defer @world_map_ui.reset_world_map_ui_for_test()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_world_map_ui_scene()
   json_inspect(@world_map_ui.get_world_map_debug_state_for_test(), content={
     "visible": true,
@@ -139,7 +144,7 @@ test "world map ui opens at current root and reopens from root page" {
 test "world map ui escape closes search before navigating to parent" {
   defer @world_map_ui.reset_world_map_ui_for_test()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_world_map_ui_scene()
   @world_map_ui.open_world_map_page_for_test("WorldMap011")
   for _ in 0..<20 {
@@ -177,7 +182,7 @@ test "world map ui escape closes search before navigating to parent" {
 test "world map ui renders root page snapshot" {
   defer @world_map_ui.reset_world_map_ui_for_test()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_world_map_ui_scene()
   @capture_app.snapshot(
     "src/test/world_map_ui_test/__snapshot__/world_map_ui_root.png",
@@ -188,7 +193,7 @@ test "world map ui renders root page snapshot" {
 test "world map ui renders hovered spot tooltip snapshot" {
   defer @world_map_ui.reset_world_map_ui_for_test()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   setup_world_map_ui_scene()
   @world_map_ui.set_hovered_spot_index_for_test(Some(7))
   for _ in 0..<2 {

@@ -36,7 +36,7 @@ fn load_test_mob() -> @monster.Mob raise {
 ///|
 fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise {
   @capture_app.init_app(
-    @system.App::new()
+    @app.App::new()
     .with_viewport_width(220.0)
     .with_viewport_height(160.0)
     .add_plugin(@plugins.default_plugin),
@@ -49,19 +49,22 @@ fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise 
   @camera.camera_system(0.016)
 
   let background = @entity.Entity::new()
-  @position.positions.set(background, @position.Position(@math.Vec2D(0.0, 0.0)))
+  @position.positions().set(
+    background,
+    @position.Position(@math.Vec2D(0.0, 0.0)),
+  )
   let bg_rect = @sprite.ColorRect::new(
     @math.Vec2D(220.0, 160.0),
     "rgba(30, 60, 110, 1)",
   )
-  @sprite.sprites.set(
+  @sprite.sprites().set(
     background,
     @sprite.Sprite::from_color_rect(bg_rect, @graphics.BACKGROUND_ZINDEX),
   )
 
   let mob = load_test_mob()
   mob.update(@physics.empty_physics()) |> ignore
-  @position.positions.set(
+  @position.positions().set(
     mob.get_entity(),
     @position.Position(@math.Vec2D(110.0, 95.0)),
   )
@@ -75,7 +78,7 @@ fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise 
 ///|
 async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites.clear()
+  defer @sprite.sprites().clear()
   let (animation, _resource_z) = load_final_attack_hit_animation()
   setup_effect_scene(animation, @graphics.EFFECT_ZINDEX)
   @capture_app.snapshot(

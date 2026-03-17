@@ -148,9 +148,8 @@ fn new_slot_max_map() -> Map[InventoryType, Int] {
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites.remove(entity) |> ignore
-    @position.positions.remove(entity) |> ignore
-    @selene_ui.uis.remove(entity) |> ignore
+    @sprite.sprites().remove(entity) |> ignore
+    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -254,12 +253,11 @@ fn spawn_ui_sprite(
 ) -> Unit {
   let entity = @entity.Entity::new()
   entities.push(entity)
-  @sprite.sprites.set(entity, sprite)
-  @position.positions.set(
+  @sprite.sprites().set(entity, sprite)
+  @position.positions().set(
     entity,
     @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
   )
-  @selene_ui.uis.set(entity, @selene_ui.Ui::new())
 }
 
 ///|
@@ -442,7 +440,7 @@ fn render_inventory(state : State) -> Unit {
 
   // Hide all slot entities by default
   for slot_entity in state.slot_entities {
-    @selene_ui.uis.remove(slot_entity)
+
   }
 
   guard state.ui_resources is Some(ui_resources) else { return }
@@ -542,12 +540,11 @@ fn render_inventory(state : State) -> Unit {
       // Update persistent slot entity for interaction
       if i < state.slot_entities.length() {
         let slot_entity = state.slot_entities[i]
-        @position.positions.set(
+        @position.positions().set(
           slot_entity,
           @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
         )
-        @selene_ui.uis.set(slot_entity, @selene_ui.Ui::new())
-        @collision.shapes.set(
+        @collision.shapes().set(
           slot_entity,
           @collision.CollisionShape::Rect(
             size=@selene_math.Vec2D(
@@ -611,12 +608,12 @@ pub fn init_inventory_ui() -> Unit {
     for i in 0..<MAX_VISIBLE_SLOTS {
       let entity = @entity.Entity::new()
       state.slot_entities.push(entity)
-      @position.positions.set(
+      @position.positions().set(
         entity,
         @position.Position(@selene_math.Vec2D(0.0, 0.0)),
       )
       // We don't set Ui yet to keep it non-interactive until render
-      @collision.shapes.set(
+      @collision.shapes().set(
         entity,
         @collision.CollisionShape::Rect(
           size=@selene_math.Vec2D(
@@ -627,7 +624,7 @@ pub fn init_inventory_ui() -> Unit {
         ),
       )
       let pickable = @collision.Pickable::new()
-      @collision.pickables.set(entity, pickable)
+      @collision.pickables().set(entity, pickable)
       let slot_no = i + 1
       @event.observe_entity(@collision.pointer_event_bus, entity, fn(trigger) {
         let event = trigger.event

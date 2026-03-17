@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Change Verification"
+  short_description: "Verify code changes, API exports, and README sync."
+  default_prompt: "Use this skill after code edits to run moon info and verify public API exposure and README.mbt.md consistency."

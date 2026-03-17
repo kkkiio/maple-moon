@@ -50,5 +50,5 @@ app.add_system(@mini_map_ui.mini_map_ui_system, system_name="mini_map_ui_system"
 - 更新 PNG 快照：
 
 ```bash
-source .env.test && UPDATE_CANVAS_SNAPS=true moon test src/test/mini_map_ui_test
+source scripts/test-env.sh && UPDATE_CANVAS_SNAPS=true moon test src/test/mini_map_ui_test
 ```

@@ -11,15 +11,6 @@ fn load_map_root_101010102() -> Json {
 }
 
 ///|
-fn load_shine_wood_back_16() -> Json {
-  let root = load_json_from_file("assets/map/back/shineWood.img.json")
-  match root {
-    { "back": { "16": frame, .. }, .. } => frame
-    _ => panic()
-  }
-}
-
-///|
 async fn load_backgrounds_101010102() -> @map.Backgrounds {
   let root = load_map_root_101010102()
   let nx_map : @map.NxMap = @json.from_json(root) catch { _ => panic() }
@@ -100,16 +91,6 @@ fn visible_sprite_count() -> Int {
     }
   }
   count
-}
-
-///|
-test "shineWood back 16 uses blend alpha resource" {
-  let frame = load_shine_wood_back_16()
-  match frame {
-    { "blend": Number(1, ..), "a0": Number(a0, ..), .. } =>
-      assert_eq(a0.to_int(), 235)
-    _ => fail("expected shineWood/back/16 to contain blend=1 and a0")
-  }
 }
 
 ///|

@@ -402,7 +402,7 @@ fn Module::log_low_restriction_rejection(
         "npc_id": npc_id,
       })
     Err(err) =>
-      @log.warn("low restriction quest rejected: start requirement not met", data={
+      @log.debug("low restriction quest rejected: start requirement not met", data={
         "quest_id": quest_id,
         "npc_id": npc_id,
         "reason": err,

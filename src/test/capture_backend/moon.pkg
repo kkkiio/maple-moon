@@ -1,12 +1,8 @@
 import {
-  "Milky2018/selene/asset",
   "Milky2018/selene/math",
-  "Milky2018/selene/render",
   "Milky2018/selene/render2d_types",
   "Milky2018/selene/render_pipeline",
   "KKKIIO/maple-moon/test/capture_app",
-  "moonbitlang/core/cmp",
-  "moonbitlang/x/fs",
 }
 
 options(

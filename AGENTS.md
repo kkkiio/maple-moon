@@ -88,7 +88,7 @@ moon build --release
 
 ```bash
 # 在仓库根目录执行
-source .env.test && moon test
+source scripts/test-env.sh && moon test
 ```
 
 ### Moonbit 快照测试

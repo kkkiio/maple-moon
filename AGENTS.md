@@ -16,7 +16,7 @@
 
 缺少资源时使用.
 
-#### `$render-snapshot-test-loop`
+#### `$snapshot-test`
 
 添加/修改了 UI, 画面元素后, 必须使用.
 

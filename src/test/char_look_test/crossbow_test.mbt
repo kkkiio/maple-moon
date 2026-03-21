@@ -1,7 +1,7 @@
 // No using here to avoid duplicate declaration in the same package
 
 ///|
-async test "character with bow equipment" {
+async test "character with crossbow equipment" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
@@ -57,7 +57,7 @@ async test "character with bow equipment" {
   look.set_stance(StanceId::STAND2)
   look.set_pos(Vec2D(100.0, 100.0))
 
-  // Add Bow (Item ID 1462000)
+  // Add Crossbow (Item ID 1462000)
   let weapon_node = @fs.read_file_to_string(
       "assets/Character/Weapon/01462000.img.json",
     )
@@ -76,7 +76,7 @@ async test "character with bow equipment" {
     item_id: 1462000,
     price: 0,
     gender: 0,
-    name: "Bow",
+    name: "Crossbow",
     desc: "",
     category: "Weapon",
     valid: true,
@@ -99,7 +99,10 @@ async test "character with bow equipment" {
   @capture_app.run_loop(0.016)
 
   // Snapshot
-  @capture_app.snapshot("src/test/char_look_test/__snapshot__/bow_stand1.png")
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/crossbow_stand1.png",
+    expect="A character stands facing left, holding a purple and golden crossbow. The weapon is held upright by its purple stock, and its curved golden limbs are visible near the character's upper back/shoulder area.",
+  )
 
   let sprites = @sprite.sprites()
     .iter()

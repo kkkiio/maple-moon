@@ -13,13 +13,13 @@ pub async fn snapshot(path : String, expect? : String) -> Unit {
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
   if should_write_snapshot {
+    let dir = @path.Path(path).dirname().to_string()
+    @fs.create_dir(dir)
+    @fs.write_bytes_to_file(path, actual)
     if expect is Some(expect_text) {
       let api_key = require_openrouter_api_key()
       assert_snapshot_expect(actual_buffer, expect_text, api_key, path)
     }
-    let dir = @path.Path(path).dirname().to_string()
-    @fs.create_dir(dir)
-    @fs.write_bytes_to_file(path, actual)
   } else {
     let expected = @fs.read_file_to_bytes(path)
     if actual != expected &&
@@ -54,14 +54,14 @@ async fn assert_snapshot_expect(
   let messages : Json = [
     {
       "role": "system",
-      "content": "You evaluate whether a partial screenshot from a 2D game matches an expectation. The image is only a local crop/frame, so judge only visible content and do not assume off-screen elements. Return strict JSON only.",
+      "content": "You evaluate whether a partial screenshot from a 2D game matches an expectation. The image is only a local crop/frame, so judge only visible content and do not assume off-screen elements. Return strict XML only.",
     },
     {
       "role": "user",
       "content": [
         {
           "type": "text",
-          "text": "Context: this is a local screenshot of a running 2D game scene/UI. Expectation: \{expect}",
+          "text": "Context: this is a local screenshot of a running 2D game scene/UI. Expectation: \{expect}\n\nOutput exactly this XML structure and nothing else:\n<analysis>\n  <observations>visible facts from image only</observations>\n  <comparison>compare observations with expectation</comparison>\n  <verdict>\n    <pass>true|false</pass>\n    <reason>brief reason</reason>\n  </verdict>\n</analysis>",
         },
         { "type": "image_url", "imageUrl": { "url": image_data_url } },
       ],
@@ -70,22 +70,6 @@ async fn assert_snapshot_expect(
   let request_params : Json = {
     "model": OPENROUTER_MODEL,
     "temperature": 0,
-    "responseFormat": {
-      "type": "json_schema",
-      "jsonSchema": {
-        "name": "snapshot_expect_verdict",
-        "strict": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "pass": { "type": "boolean" },
-            "reason": { "type": "string" },
-          },
-          "required": ["pass", "reason"],
-          "additionalProperties": false,
-        },
-      },
-    },
     "messages": messages,
   }
   let raw : String = openrouter_chat_send(api_key, request_params.stringify()).wait()
@@ -94,23 +78,64 @@ async fn assert_snapshot_expect(
     "expect": expect,
     "raw_response": raw,
   })
-  let parsed = @json.parse(raw) catch {
-    _ =>
-      fail(
-        "snapshot expect check returned invalid JSON, path=\{path}, raw=\{raw}",
-      )
+  let verdict = parse_snapshot_expect_xml(raw)
+  if verdict.pass {
+    return
   }
-  match parsed {
-    { "pass": True, "reason": String(_), .. } => ()
-    { "pass": False, "reason": String(reason), .. } =>
-      fail("snapshot expect mismatch: \{path}, reason=\{reason}")
-    { "pass": False, .. } =>
-      fail("snapshot expect mismatch: \{path}, reason=<missing>")
-    _ =>
-      fail(
-        "snapshot expect check returned unexpected payload, path=\{path}, payload=\{raw}",
-      )
+  let reason = if verdict.reason == "" { "<missing>" } else { verdict.reason }
+  fail("snapshot expect mismatch: \{path}, reason=\{reason}")
+}
+
+///|
+priv struct SnapshotExpectVerdict {
+  pass : Bool
+  reason : String
+}
+
+///|
+fn parse_snapshot_expect_xml(raw : String) -> SnapshotExpectVerdict raise {
+  let (analysis_body, analysis_rest) = consume_xml_tag(raw, "analysis")
+  guard analysis_rest.trim() == "" else {
+    fail("snapshot expect XML has unexpected trailing content")
   }
+  let (_, after_observations) = consume_xml_tag(analysis_body, "observations")
+  let (_, after_comparison) = consume_xml_tag(after_observations, "comparison")
+  let (verdict_body, after_verdict) = consume_xml_tag(
+    after_comparison, "verdict",
+  )
+  guard after_verdict.trim() == "" else {
+    fail("snapshot expect XML has unexpected content after <verdict>")
+  }
+  let (pass_text, after_pass) = consume_xml_tag(verdict_body, "pass")
+  let (reason, after_reason) = consume_xml_tag(after_pass, "reason")
+  guard after_reason.trim() == "" else {
+    fail("snapshot expect XML verdict has unexpected extra content")
+  }
+  let pass = match pass_text.trim().to_string() {
+    "true" => true
+    "false" => false
+    _ => fail("snapshot expect XML <pass> must be true or false")
+  }
+  { pass, reason: reason.trim().to_string() }
+}
+
+///|
+fn consume_xml_tag(input : String, tag : String) -> (String, String) raise {
+  let normalized = input.trim()
+  let open = "<\{tag}>"
+  let close = "</\{tag}>"
+  let open_parts = normalized.split(open).to_array()
+  guard open_parts is [prefix, after_open] else {
+    fail("snapshot expect XML missing tag: \{open}")
+  }
+  guard prefix.trim() == "" else {
+    fail("snapshot expect XML unexpected content before \{open}")
+  }
+  let close_parts = after_open.split(close).to_array()
+  guard close_parts is [content, rest] else {
+    fail("snapshot expect XML missing closing tag: \{close}")
+  }
+  (content.trim().to_string(), rest.to_string())
 }
 
 ///|

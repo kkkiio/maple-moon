@@ -8,7 +8,7 @@
   保持原有行为，按 PNG bytes / 像素一致性做断言。
 - `@capture_app.snapshot(path, expect="...")`:
   仅在快照更新模式下触发语义校验（`UPDATE_CANVAS_SNAPS=true` 或首次生成快照文件）。
-  会调用 OpenRouter 的 `google/gemini-3.1-flash-lite-preview`，判断截图是否符合 `expect` 描述。
+  会调用视觉模型判断截图是否符合 `expect` 描述；不满足预期时测试失败。
 
 语义校验需要 `OPENROUTER_API_KEY` 环境变量；缺失时测试会失败。
 

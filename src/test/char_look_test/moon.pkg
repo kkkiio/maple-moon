@@ -11,7 +11,6 @@ import {
   "Milky2018/selene/entity",
   "Milky2018/selene/position",
   "KKKIIO/maple-moon/test/capture_app",
-  "Milky2018/selene/system",
   "Milky2018/selene/app" @app,
   "Milky2018/selene/plugins",
   "KKKIIO/maple-moon/lib/ms/char_stance",

@@ -791,9 +791,6 @@ pub fn CharLook::get_body(self : CharLook) -> FullBody {
 }
 
 ///|
-struct NoopDrawable(Unit) derive(ToJson)
-
-///|
 pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {
   self.root_entity
 }

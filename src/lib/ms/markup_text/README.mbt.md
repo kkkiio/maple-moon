@@ -1,6 +1,6 @@
 # markup_text
 
-负责解析 Maple 对话文本中的通用标记（颜色、粗体、引用标签等），并提供引用名称解析。
+负责解析 Maple 对话文本中的通用标记（颜色、粗体、下划线、引用标签等），并提供引用名称解析。
 
 ## 运行时约束
 
@@ -20,6 +20,8 @@ let mob_name = @markup_text.resolve_mob_name("2220100"[:])
 let map_name = @markup_text.resolve_map_name("105040300"[:])
 let item_name = @markup_text.resolve_item_name("4031006"[:])
 ```
+
+`Style` 会跟踪颜色、粗体和下划线状态，供 HTML 输出或游戏内富文本渲染复用。
 
 ## 错误行为
 

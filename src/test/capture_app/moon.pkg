@@ -13,10 +13,12 @@ import {
   "Milky2018/selene/entity",
   "Milky2018/selene/system_set",
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "KKKIIO/maple-moon/lib/log",
   "moonbitlang/core/cmp",
   "moonbitlang/core/json",
   "moonbitlang/core/set",
   "moonbitlang/x/fs",
   "moonbitlang/x/path",
   "moonbitlang/x/sys",
+  "rami3l/js-ffi/js",
 }

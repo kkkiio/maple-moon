@@ -1,4 +1,7 @@
 ///|
+using @resource {nx_animation_to_selene_animation}
+
+///|
 // This acts as a manual component system for "LifeTime".
 let active_effects : Array[EffectEntity] = []
 

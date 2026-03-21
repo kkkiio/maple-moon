@@ -3,8 +3,8 @@ import {
   "Milky2018/selene/math",
   "Milky2018/selene/entity",
   "Milky2018/selene/position",
+  "Milky2018/selene/camera",
   "KKKIIO/maple-moon/lib/ui",
-  "Milky2018/selene/ui" @selene_ui,
   "Milky2018/selene/inputs",
   "KKKIIO/maple-moon/lib/graphics",
 }

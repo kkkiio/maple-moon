@@ -161,7 +161,7 @@ pub fn markup_to_html(origin : String) -> String raise {
   let nodes = @markup_text.parse_markup(origin, tag_map)
   let html = @markup_text.to_html(
     nodes,
-    { color: @struct.ColorName::BLACK, bold: false },
+    { color: @struct.ColorName::BLACK, bold: false, underline: false },
     @markup_text.color_map,
     { 'c': fn(_, v) { "<div style=\"display: list-item;\">\{v}</div>" } },
   )

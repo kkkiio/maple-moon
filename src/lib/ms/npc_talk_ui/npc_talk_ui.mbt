@@ -7,26 +7,59 @@ pub(all) struct NpcTalkResource {
   fill : @resource.NxTexture
   bottom : @resource.NxTexture
   bar : @resource.NxTexture
-  bt_yes : @ui.MapleButtonResource
-  bt_no : @ui.MapleButtonResource
-  bt_ok : @ui.MapleButtonResource
-  bt_next : @ui.MapleButtonResource
-  bt_prev : @ui.MapleButtonResource
-  bt_close : @ui.MapleButtonResource
-  bt_qstart : @ui.MapleButtonResource
-  bt_qyes : @ui.MapleButtonResource
-  bt_qno : @ui.MapleButtonResource
-  bt_qcyes : @ui.MapleButtonResource
-  bt_qcno : @ui.MapleButtonResource
-  bt_qgiveup : @ui.MapleButtonResource
-  bt_qafter : @ui.MapleButtonResource
-  bt_my_level : @ui.MapleButtonResource
-  bt_all_level : @ui.MapleButtonResource
+  bt_yes : NpcTalkButtonResource
+  bt_no : NpcTalkButtonResource
+  bt_ok : NpcTalkButtonResource
+  bt_next : NpcTalkButtonResource
+  bt_prev : NpcTalkButtonResource
+  bt_close : NpcTalkButtonResource
+  bt_qstart : NpcTalkButtonResource
+  bt_qyes : NpcTalkButtonResource
+  bt_qno : NpcTalkButtonResource
+  bt_qcyes : NpcTalkButtonResource
+  bt_qcno : NpcTalkButtonResource
+  bt_qgiveup : NpcTalkButtonResource
+  bt_qafter : NpcTalkButtonResource
+  bt_my_level : NpcTalkButtonResource
+  bt_all_level : NpcTalkButtonResource
+}
+
+///|
+pub(all) struct NpcTalkButtonResource {
+  normal : @resource.NxTexture
+  mouse_over : @resource.NxTexture
+  pressed : @resource.NxTexture
+  disabled : @resource.NxTexture
 }
 
 ///|
 fn json_to_texture(json : Json) -> @resource.NxTexture raise {
   @json.from_json(json)
+}
+
+///|
+fn first_frame_texture(
+  animation : @resource.NxAnimation,
+  label : String,
+) -> @resource.NxTexture raise {
+  guard animation.frames.length() > 0 else {
+    fail("invalid button animation without frame: \{label}")
+  }
+  animation.frames[0].texture
+}
+
+///|
+fn json_to_button_resource(
+  json : Json,
+  label : String,
+) -> NpcTalkButtonResource raise {
+  let button : @ui.NxMapleButton = @json.from_json(json)
+  {
+    normal: first_frame_texture(button.normal, "\{label}.normal"),
+    mouse_over: first_frame_texture(button.mouse_over, "\{label}.mouseOver"),
+    pressed: first_frame_texture(button.pressed, "\{label}.pressed"),
+    disabled: first_frame_texture(button.disabled, "\{label}.disabled"),
+  }
 }
 
 ///|
@@ -61,21 +94,21 @@ pub fn NpcTalkResource::from_resource(
         fill: json_to_texture(fill),
         bottom: json_to_texture(bottom),
         bar: json_to_texture(bar),
-        bt_yes: @json.from_json(bt_yes),
-        bt_no: @json.from_json(bt_no),
-        bt_ok: @json.from_json(bt_ok),
-        bt_next: @json.from_json(bt_next),
-        bt_prev: @json.from_json(bt_prev),
-        bt_close: @json.from_json(bt_close),
-        bt_qstart: @json.from_json(bt_qstart),
-        bt_qyes: @json.from_json(bt_qyes),
-        bt_qno: @json.from_json(bt_qno),
-        bt_qcyes: @json.from_json(bt_qcyes),
-        bt_qcno: @json.from_json(bt_qcno),
-        bt_qgiveup: @json.from_json(bt_qgiveup),
-        bt_qafter: @json.from_json(bt_qafter),
-        bt_my_level: @json.from_json(bt_my_level),
-        bt_all_level: @json.from_json(bt_all_level),
+        bt_yes: json_to_button_resource(bt_yes, "BtYes"),
+        bt_no: json_to_button_resource(bt_no, "BtNo"),
+        bt_ok: json_to_button_resource(bt_ok, "BtOK"),
+        bt_next: json_to_button_resource(bt_next, "BtNext"),
+        bt_prev: json_to_button_resource(bt_prev, "BtPrev"),
+        bt_close: json_to_button_resource(bt_close, "BtClose"),
+        bt_qstart: json_to_button_resource(bt_qstart, "BtQStart"),
+        bt_qyes: json_to_button_resource(bt_qyes, "BtQYes"),
+        bt_qno: json_to_button_resource(bt_qno, "BtQNo"),
+        bt_qcyes: json_to_button_resource(bt_qcyes, "BtQCYes"),
+        bt_qcno: json_to_button_resource(bt_qcno, "BtQCNo"),
+        bt_qgiveup: json_to_button_resource(bt_qgiveup, "BtQGiveup"),
+        bt_qafter: json_to_button_resource(bt_qafter, "BtQAfter"),
+        bt_my_level: json_to_button_resource(bt_my_level, "BtMyLevel"),
+        bt_all_level: json_to_button_resource(bt_all_level, "BtAllLevel"),
       }
     _ => fail("invalid UtilDlgEx json")
   }
@@ -86,12 +119,13 @@ priv struct TextRun {
   text : String
   color : ColorName
   bold : Bool
+  underline : Bool
 }
 
 ///|
 priv struct SelectionLine {
   option : Int
-  runs : Array[TextRun]
+  lines : Array[Array[TextRun]]
 }
 
 ///|
@@ -101,15 +135,17 @@ priv struct NPCTalkContent {
 }
 
 ///|
-priv struct ChoiceArea {
-  bounds : @struct.Rectangle[Int]
-  on_click : () -> Unit
+priv struct SelectionButton {
+  entity : @entity.Entity
+  option : Int
 }
 
 ///|
-priv struct SeleneButton {
-  button : @ui.MapleButton
+priv struct ActionButton {
+  resource : NpcTalkButtonResource
   entity : @entity.Entity
+  enabled : Bool
+  on_click : () -> Unit
 }
 
 ///|
@@ -118,9 +154,9 @@ priv struct UINpcTalk {
   args : TalkArgs
   content : NPCTalkContent
   entities : Array[@entity.Entity]
-  buttons : Array[SeleneButton]
-  choice_areas : Array[ChoiceArea]
-  mut pressed_choice : Int?
+  buttons : Array[ActionButton]
+  selection_buttons : Array[SelectionButton]
+  click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   mut window_pos : Point[Int]
   mut body_height : Int
 }
@@ -138,13 +174,13 @@ const CONTENT_Y = 19
 const LINE_GAP = 4
 
 ///|
-const MIN_BODY_HEIGHT = 76
+const FIXED_BODY_HEIGHT = 76
 
 ///|
-const NORMAL_FONT = "13px Menlo"
+const CONTENT_RIGHT_PADDING = 36
 
 ///|
-const BOLD_FONT = "bold 13px Menlo"
+const TEXT_LINE_HEIGHT = 1.25
 
 ///|
 let npc_talk_ui_ref : Ref[UINpcTalk?] = Ref::new(None)
@@ -196,13 +232,49 @@ pub fn is_npc_talk_ui_open() -> Bool {
 pub fn describe_npc_talk_ui() -> Json {
   match npc_talk_ui_ref.val {
     Some(ui) => {
+      let mut has_z = false
+      let mut z_min = 0
+      let mut z_max = 0
+      fn update_z(z : Int) -> Unit {
+        if has_z {
+          if z < z_min {
+            z_min = z
+          }
+          if z > z_max {
+            z_max = z
+          }
+        } else {
+          has_z = true
+          z_min = z
+          z_max = z
+        }
+      }
+      for entity in ui.entities {
+        match @selene_ui.z_indexes().get(entity) {
+          Some(z) => update_z(z.value)
+          None => ()
+        }
+      }
+      if not(has_z) {
+        z_min = NPC_TALK_Z
+        z_max = NPC_TALK_Z
+      }
+      let window_w = ui.resource.top.w
+      let window_h = ui.resource.top.h + ui.body_height + ui.resource.bottom.h
+      let window_left = ui.window_pos.x
+      let window_top = ui.window_pos.y
+      let window_right = window_left + window_w
+      let window_bottom = window_top + window_h
       let body_lines : Array[Json] = ui.content.body_lines.map(fn(line) {
         line.map(fn(run) { run.text }).join("").to_json()
       })
       let selections : Array[Json] = ui.content.selections.map(fn(selection) {
         {
           "option": selection.option.to_json(),
-          "text": selection.runs.map(fn(run) { run.text }).join("").to_json(),
+          "text": selection.lines
+          .map(fn(line) { line.map(fn(run) { run.text }).join("") })
+          .join("\n")
+          .to_json(),
         }
       })
       {
@@ -210,11 +282,19 @@ pub fn describe_npc_talk_ui() -> Json {
         "body_lines": body_lines,
         "selections": selections.to_json(),
         "button_count": ui.buttons.length().to_json(),
-        "choice_area_count": ui.choice_areas.length().to_json(),
+        "choice_area_count": ui.selection_buttons.length().to_json(),
         "window_pos": {
           "x": ui.window_pos.x.to_json(),
           "y": ui.window_pos.y.to_json(),
         },
+        "window_size": { "w": window_w.to_json(), "h": window_h.to_json() },
+        "window_rect": {
+          "left": window_left.to_json(),
+          "top": window_top.to_json(),
+          "right": window_right.to_json(),
+          "bottom": window_bottom.to_json(),
+        },
+        "z_range": { "min": z_min.to_json(), "max": z_max.to_json() },
         "body_height": ui.body_height.to_json(),
       }
     }
@@ -311,17 +391,17 @@ fn UINpcTalk::new(
     content,
     entities: [],
     buttons: [],
-    choice_areas: [],
-    pressed_choice: None,
+    selection_buttons: [],
+    click_reader: @event.EventReader::new(),
     window_pos: Point::default(),
-    body_height: MIN_BODY_HEIGHT,
+    body_height: FIXED_BODY_HEIGHT,
   }
 }
 
 ///|
 fn UINpcTalk::destroy(self : UINpcTalk) -> Unit {
   self.buttons.clear()
-  self.choice_areas.clear()
+  self.selection_buttons.clear()
   for entity in self.entities {
     entity.destroy()
   }
@@ -344,45 +424,39 @@ fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
 
 ///|
 fn UINpcTalk::measure_body_height(self : UINpcTalk) -> Int {
-  let body_lines_height = self.content.body_lines.fold(init=0, fn(acc, line) {
-    acc + line_height(line)
-  })
-  let selection_height = self.content.selections.fold(init=0, fn(
-    acc,
-    selection,
-  ) {
-    acc + line_height(selection.runs) + LINE_GAP
-  })
-  @cmp.maximum(MIN_BODY_HEIGHT, body_lines_height + selection_height + 20)
+  ignore(self)
+  FIXED_BODY_HEIGHT
 }
 
 ///|
 fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
   let fill_height = self.body_height
-  self.spawn_picture(
-    @resource.nx_texture_to_selene_picture(self.resource.top),
-    self.window_pos.x,
-    self.window_pos.y,
-    NPC_TALK_Z,
-  )
-  let fill = @resource.nx_texture_to_selene_picture(
-    self.resource.fill,
-    size=@selene_math.Vec2D(
-      self.resource.fill.w.to_double(),
-      fill_height.to_double(),
+  ignore(
+    self.spawn_image_node(
+      self.resource.top,
+      self.window_pos.x,
+      self.window_pos.y,
+      NPC_TALK_Z,
     ),
   )
-  self.spawn_picture(
-    fill,
-    self.window_pos.x,
-    self.window_pos.y + self.resource.top.h,
-    NPC_TALK_Z,
+  ignore(
+    self.spawn_image_node(
+      self.resource.fill,
+      self.window_pos.x,
+      self.window_pos.y + self.resource.top.h,
+      NPC_TALK_Z,
+      fit=@selene_ui.ImageFit::Stretch,
+      width=self.resource.fill.w,
+      height=fill_height,
+    ),
   )
-  self.spawn_picture(
-    @resource.nx_texture_to_selene_picture(self.resource.bottom),
-    self.window_pos.x,
-    self.window_pos.y + self.resource.top.h + fill_height,
-    NPC_TALK_Z,
+  ignore(
+    self.spawn_image_node(
+      self.resource.bottom,
+      self.window_pos.x,
+      self.window_pos.y + self.resource.top.h + fill_height,
+      NPC_TALK_Z,
+    ),
   )
 }
 
@@ -393,56 +467,66 @@ fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
     ) /
     2
   let speaker_pos = self.window_pos + Point::new(100, 11 + speaker_y)
-  let center_x = speaker_pos.x + self.resource.bar.w / 2
-  self.spawn_picture(
-    @resource.nx_texture_to_selene_picture(self.resource.bar),
-    speaker_pos.x,
-    speaker_pos.y,
-    NPC_TALK_Z + 2,
+  ignore(
+    self.spawn_image_node(
+      self.resource.bar,
+      speaker_pos.x,
+      speaker_pos.y,
+      NPC_TALK_Z + 2,
+    ),
   )
-  // TODO: sprite.Text 无法直接复刻原版 name tag 字体描边效果，先降级成普通文本。
-  self.spawn_text(
-    "",
-    center_x,
-    speaker_pos.y - 4,
-    NPC_TALK_Z + 3,
-    color="white",
-    font="11px Menlo",
-    align=@selene_math.Center,
-  )
-  |> ignore
 }
 
 ///|
 fn UINpcTalk::spawn_body_text(self : UINpcTalk) -> Unit {
-  let mut y = self.window_pos.y + CONTENT_Y
-  for line in self.content.body_lines {
-    self.spawn_runs(line, self.window_pos.x + CONTENT_X, y, NPC_TALK_Z + 4)
-    |> ignore
-    y += line_height(line)
+  let x = self.window_pos.x + CONTENT_X
+  let y = self.window_pos.y + CONTENT_Y
+  let width = self.content_width()
+  let total_height = @cmp.maximum(1, self.body_height - 10)
+  let selection_count = self.content.selections.length()
+  let selection_gap_total = if selection_count <= 1 {
+    0
+  } else {
+    (selection_count - 1) * LINE_GAP
   }
-  if not(self.content.body_lines.is_empty()) {
-    y += LINE_GAP
-  }
-  for selection in self.content.selections {
-    let bounds = self.spawn_runs(
-      selection.runs,
-      self.window_pos.x + CONTENT_X,
-      y,
-      NPC_TALK_Z + 5,
+  let selection_slot_height = if selection_count == 0 {
+    0
+  } else {
+    @cmp.maximum(
+      16,
+      total_height / @cmp.maximum(1, selection_count + 1) - LINE_GAP,
     )
-    match self.args.talk_action {
-      SEND_SIMPLE(callback) =>
-        self.choice_areas.push({
-          bounds,
-          on_click: fn() {
-            close_npc_talk_ui()
-            callback(Some(selection.option))
-          },
-        })
-      _ => ()
-    }
-    y += line_height(selection.runs) + LINE_GAP
+  }
+  let selection_total_height = if selection_count == 0 {
+    0
+  } else {
+    selection_slot_height * selection_count + selection_gap_total
+  }
+  let body_height = @cmp.maximum(1, total_height - selection_total_height)
+  ignore(
+    self.spawn_rich_text_block(
+      flatten_text_lines(self.content.body_lines),
+      x,
+      y,
+      width,
+      body_height,
+      NPC_TALK_Z + 4,
+    ),
+  )
+  let selection_start_gap = if selection_count == 0 { 0 } else { LINE_GAP }
+  let mut selection_y = y + body_height + selection_start_gap
+  for selection in self.content.selections {
+    let entity = self.spawn_rich_text_block(
+      flatten_text_lines(selection.lines),
+      x,
+      selection_y,
+      width,
+      selection_slot_height,
+      NPC_TALK_Z + 5,
+      clickable=true,
+    )
+    self.selection_buttons.push({ entity, option: selection.option })
+    selection_y += selection_slot_height + LINE_GAP
   }
 }
 
@@ -451,12 +535,12 @@ fn UINpcTalk::spawn_action_buttons(self : UINpcTalk) -> Unit {
   let y = self.window_pos.y + self.body_height + 48
   let close_x = self.window_pos.x + 9
   fn spawn_callback(
-    button : @ui.MapleButtonResource,
+    button : NpcTalkButtonResource,
     x : Int,
     y : Int,
     callback,
   ) {
-    self.spawn_button(button, x, y, callback)
+    ignore(self.spawn_action_button(button, x, y, callback))
   }
   match self.args.talk_action {
     SEND_YESNO(callback) => {
@@ -526,162 +610,233 @@ fn UINpcTalk::spawn_action_buttons(self : UINpcTalk) -> Unit {
 }
 
 ///|
-fn UINpcTalk::spawn_picture(
+fn ui_image_from_texture(
+  texture : @resource.NxTexture,
+  fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
+) -> @selene_ui.UiImage {
+  @selene_ui.UiImage::new(
+    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    texture.i,
+    fit~,
+  )
+}
+
+///|
+fn ui_image_region_from_texture(
+  texture : @resource.NxTexture,
+) -> @selene_ui.UiImageRegion {
+  @selene_ui.UiImageRegion::new({
+    position: @selene_math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  })
+}
+
+///|
+fn UINpcTalk::set_image_texture(
   self : UINpcTalk,
-  picture : @sprite.Picture,
-  x : Int,
-  y : Int,
-  z : Int,
+  entity : @entity.Entity,
+  texture : @resource.NxTexture,
+  fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> Unit {
-  let entity = @entity.Entity::new()
-  self.entities.push(entity)
-  @sprite.sprites().set(entity, @sprite.Sprite::from_picture(picture, z))
-  @position.positions().set(
+  ignore(self)
+  @selene_ui.ui_images().set(entity, ui_image_from_texture(texture, fit~))
+  @selene_ui.ui_image_regions().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    ui_image_region_from_texture(texture),
   )
 }
 
 ///|
-fn UINpcTalk::spawn_text(
+fn UINpcTalk::spawn_image_node(
   self : UINpcTalk,
-  text : String,
+  texture : @resource.NxTexture,
   x : Int,
   y : Int,
   z : Int,
-  color? : String = "black",
-  font? : String = NORMAL_FONT,
-  align? : @selene_math.HAlign = @selene_math.Left,
-) -> @sprite.Text {
+  fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
+  width? : Int = texture.w,
+  height? : Int = texture.h,
+) -> @entity.Entity {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  let sprite_text = @sprite.Text::new(
-    text,
-    color~,
-    font~,
-    baseline=@selene_math.Top,
-    align~,
-  )
-  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions().set(
+  @selene_ui.nodes().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
   )
-  sprite_text
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  self.set_image_texture(entity, texture, fit~)
+  entity
 }
 
 ///|
-fn UINpcTalk::spawn_button(
+fn UINpcTalk::spawn_action_button(
   self : UINpcTalk,
-  resource : @ui.MapleButtonResource,
+  resource : NpcTalkButtonResource,
   x : Int,
   y : Int,
   on_click : () -> Unit,
 ) -> Unit {
-  let entity = @entity.Entity::new()
-  self.entities.push(entity)
-  @position.positions().set(
-    entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-  )
-  let button = @ui.MapleButton::new(resource, pos=Point::new(x, y), on_click~)
-  @sprite.sprites().set(
-    entity,
-    @sprite.Sprite::from_animation(
-      button.current_selene_animation(),
-      NPC_TALK_Z + 8,
-    ),
-  )
-  self.buttons.push({ button, entity })
-}
-
-///|
-fn UINpcTalk::spawn_runs(
-  self : UINpcTalk,
-  runs : Array[TextRun],
-  x : Int,
-  y : Int,
-  z : Int,
-) -> @struct.Rectangle[Int] {
-  let mut cursor_x = x
-  let mut max_height = 16
-  for run in runs {
-    guard not(run.text.is_empty()) else { continue }
-    // TODO: sprite.Text 暂不支持原版 NPC 对话中的描边/特殊字效，这里只保留颜色和粗体。
-    let font = if run.bold { BOLD_FONT } else { NORMAL_FONT }
-    let text = self.spawn_text(
-      run.text,
-      cursor_x,
-      y,
-      z,
-      color=run.color.css_name(),
-      font~,
-    )
-    let size = @sprite.measure_text_size(text)
-    cursor_x += size[@selene_math.X].to_int()
-    max_height = @cmp.maximum(max_height, size[@selene_math.Y].to_int())
-  }
-  @struct.Rectangle::from4(x, cursor_x, y, y + max_height)
+  let entity = self.spawn_image_node(resource.normal, x, y, NPC_TALK_Z + 8)
+  @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+  self.buttons.push({ resource, entity, enabled: true, on_click })
 }
 
 ///|
 fn UINpcTalk::update(self : UINpcTalk) -> Unit {
-  let mouse_pos = @inputs.mouse.pos
-  let mouse_x = mouse_pos[@selene_math.X].to_int()
-  let mouse_y = mouse_pos[@selene_math.Y].to_int()
-  let point = Point::new(mouse_x, mouse_y)
-  let is_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
-  let just_pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
-  let just_released = @inputs.is_mouse_just_released(@inputs.MouseButton::Left)
   for button in self.buttons {
-    button.button.update_pointer(
-      mouse_x, mouse_y, is_pressed, just_pressed, just_released,
-    )
-    @sprite.sprites().set(
-      button.entity,
-      @sprite.Sprite::from_animation(
-        button.button.current_selene_animation(),
-        NPC_TALK_Z + 8,
-      ),
-    )
+    let texture = if not(button.enabled) {
+      button.resource.disabled
+    } else {
+      match @selene_ui.interactions().get(button.entity) {
+        Some(@selene_ui.Interaction::Pressed) => button.resource.pressed
+        Some(@selene_ui.Interaction::Hovered) => button.resource.mouse_over
+        _ => button.resource.normal
+      }
+    }
+    self.set_image_texture(button.entity, texture)
   }
-  if just_pressed {
-    self.pressed_choice = None
-    for i, area in self.choice_areas {
-      if area.bounds.contains(point) {
-        self.pressed_choice = Some(i)
+  let click_events = @selene_ui.click_event_bus.read(self.click_reader)
+  for event in click_events {
+    guard event.button is @inputs.MouseButton::Left else { continue }
+    let mut handled = false
+    for button in self.buttons {
+      if button.entity == event.entity {
+        handled = true
+        (button.on_click)()
         break
       }
     }
-  }
-  if just_released {
-    match self.pressed_choice {
-      Some(index) =>
-        match self.choice_areas.get(index) {
-          Some(area) => if area.bounds.contains(point) { (area.on_click)() }
-          None => ()
-        }
+    if handled {
+      continue
+    }
+    guard self.args.talk_action is SEND_SIMPLE(callback) else { continue }
+    match self.selection_button_option(event.entity) {
+      Some(option) => {
+        close_npc_talk_ui()
+        callback(Some(option))
+      }
       None => ()
     }
-    self.pressed_choice = None
   }
 }
 
 ///|
-fn line_height(runs : Array[TextRun]) -> Int {
-  let mut height = 16
-  for run in runs {
-    guard not(run.text.is_empty()) else { continue }
-    let text = @sprite.Text::new(
-      run.text,
-      color=run.color.css_name(),
-      font=if run.bold { BOLD_FONT } else { NORMAL_FONT },
-      baseline=@selene_math.Top,
-    )
-    let size = @sprite.measure_text_size(text)
-    height = @cmp.maximum(height, size[@selene_math.Y].to_int())
+fn UINpcTalk::content_width(self : UINpcTalk) -> Int {
+  @cmp.maximum(1, self.resource.top.w - CONTENT_X - CONTENT_RIGHT_PADDING)
+}
+
+///|
+fn UINpcTalk::selection_button_option(
+  self : UINpcTalk,
+  entity : @entity.Entity,
+) -> Int? {
+  for button in self.selection_buttons {
+    if button.entity == entity {
+      return Some(button.option)
+    }
   }
-  height + LINE_GAP
+  None
+}
+
+///|
+fn flatten_text_lines(lines : Array[Array[TextRun]]) -> Array[TextRun] {
+  let flattened : Array[TextRun] = []
+  for i, line in lines {
+    for run in line {
+      flattened.push(run)
+    }
+    if i + 1 < lines.length() {
+      flattened.push(TextRun::{
+        text: "\n",
+        color: ColorName::BLACK,
+        bold: false,
+        underline: false,
+      })
+    }
+  }
+  flattened
+}
+
+///|
+fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
+  @selene_ui.text_fonts().set(
+    entity,
+    @selene_ui.TextFont::new(family="Menlo", size=13.0, bold=run.bold),
+  )
+  @selene_ui.text_colors().set(
+    entity,
+    @selene_ui.TextColor::from_css(run.color.css_name()),
+  )
+  if run.underline {
+    @selene_ui.underlines().set(entity, @selene_ui.Underline::new())
+    @selene_ui.underline_colors().set(
+      entity,
+      @selene_ui.UnderlineColor::new(
+        @selene_ui.parse_color(run.color.css_name()),
+      ),
+    )
+  }
+}
+
+///|
+fn UINpcTalk::spawn_rich_text_block(
+  self : UINpcTalk,
+  runs : Array[TextRun],
+  x : Int,
+  y : Int,
+  width : Int,
+  height : Int,
+  z : Int,
+  clickable? : Bool = false,
+) -> @entity.Entity {
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      overflow_x=@selene_ui.Overflow::Clip,
+      overflow_y=@selene_ui.Overflow::Clip,
+    ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(
+      align=@selene_math.Left,
+      baseline=@selene_math.Top,
+      line_height=TEXT_LINE_HEIGHT,
+      wrap=@selene_ui.TextWrap::WordWrap,
+      overflow=@selene_ui.TextOverflow::Clip,
+    ),
+  )
+  if clickable {
+    @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+  }
+  let first = runs
+    .get(0)
+    .unwrap_or(TextRun::{
+      text: "",
+      color: ColorName::BLACK,
+      bold: false,
+      underline: false,
+    })
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(first.text))
+  set_text_style(entity, first)
+  for i in 1..<runs.length() {
+    let run = runs[i]
+    let child = entity.spawn_child()
+    @selene_ui.text_spans().set(child, @selene_ui.TextSpan::new(run.text))
+    set_text_style(child, run)
+  }
+  entity
 }
 
 ///|
@@ -708,6 +863,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
           text: current_player_name(),
           color: style.color,
           bold: style.bold,
+          underline: style.underline,
         },
       ]
     },
@@ -719,6 +875,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
   let mut current_style : @markup_text.Style = {
     color: ColorName::BLACK,
     bold: false,
+    underline: false,
   }
   let nodes = @markup_text.parse_markup(raw_text, tag_map)
   for node in nodes {
@@ -744,7 +901,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
         if opening_selection is Some((index, selection_nodes)) {
           selections.push({
             option: index,
-            runs: flatten_runs(
+            lines: trim_trailing_blank_lines(
               build_runs_from_nodes(
                 selection_nodes,
                 current_style,
@@ -763,7 +920,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
         opening_selection = None
         selections.push({
           option: index,
-          runs: flatten_runs(
+          lines: trim_trailing_blank_lines(
             build_runs_from_nodes(
               selection_nodes, current_style, tag_replace_map,
             ),
@@ -785,7 +942,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
   if opening_selection is Some((index, selection_nodes)) {
     selections.push({
       option: index,
-      runs: flatten_runs(
+      lines: trim_trailing_blank_lines(
         build_runs_from_nodes(
           selection_nodes,
           current_style,
@@ -811,6 +968,8 @@ fn apply_style_or_append_runs(
 ) -> @markup_text.Style raise {
   if @markup_text.font_weight_tag_map.get(tag) is Some(bold) {
     { ..current_style, bold, }
+  } else if @markup_text.underline_tag_map.get(tag) is Some(underline) {
+    { ..current_style, underline, }
   } else if @markup_text.color_map.get(tag) is Some(color) {
     { ..current_style, color, }
   } else {
@@ -862,7 +1021,14 @@ fn resolve_reference(
   value : StringView,
   provider : (StringView) -> String raise,
 ) -> Array[TextRun] raise {
-  [TextRun::{ text: provider(value), color: style.color, bold: style.bold }]
+  [
+    TextRun::{
+      text: provider(value),
+      color: style.color,
+      bold: style.bold,
+      underline: style.underline,
+    },
+  ]
 }
 
 ///|
@@ -873,7 +1039,14 @@ fn text_runs_for_text(
   if raw_text.is_empty() {
     return []
   }
-  [TextRun::{ text: raw_text, color: style.color, bold: style.bold }]
+  [
+    TextRun::{
+      text: raw_text,
+      color: style.color,
+      bold: style.bold,
+      underline: style.underline,
+    },
+  ]
 }
 
 ///|
@@ -896,20 +1069,6 @@ fn append_runs_to_lines(
       }
     }
   }
-}
-
-///|
-fn flatten_runs(lines : Array[Array[TextRun]]) -> Array[TextRun] {
-  let merged = []
-  for i, line in lines {
-    if i > 0 {
-      merged.push(TextRun::{ text: " ", color: ColorName::BLACK, bold: false })
-    }
-    for run in line {
-      merged.push(run)
-    }
-  }
-  merged
 }
 
 ///|

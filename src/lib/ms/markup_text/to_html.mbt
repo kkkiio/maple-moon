@@ -20,6 +20,8 @@ pub fn to_html(
       Node::Tag(tag, payload) =>
         if font_weight_tag_map.get(tag) is Some(b) {
           current_style = { ..current_style, bold: b }
+        } else if underline_tag_map.get(tag) is Some(underline) {
+          current_style = { ..current_style, underline, }
         } else if color_map.get(tag) is Some(color) {
           current_style = { ..current_style, color, }
         } else {
@@ -78,13 +80,17 @@ fn escape_html(raw : String) -> String {
 pub(all) struct Style {
   color : ColorName
   bold : Bool
+  underline : Bool
 }
 
 ///|
 pub fn Style::to_css_style(self : Style) -> String {
+  let declarations : Array[String] = ["color: \{self.color}"]
   if self.bold {
-    "color: \{self.color}, font-weight: bold;"
-  } else {
-    "color: \{self.color}"
+    declarations.push("font-weight: bold")
   }
+  if self.underline {
+    declarations.push("text-decoration: underline")
+  }
+  declarations.join("; ").to_string() + ";"
 }

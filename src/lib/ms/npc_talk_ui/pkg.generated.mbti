@@ -4,7 +4,6 @@ package "KKKIIO/maple-moon/lib/ms/npc_talk_ui"
 import {
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/ui",
 }
 
 // Values
@@ -27,26 +26,33 @@ pub(all) suberror ParseTalkError {
 pub impl Show for ParseTalkError
 
 // Types and methods
+pub(all) struct NpcTalkButtonResource {
+  normal : @resource.NxTexture
+  mouse_over : @resource.NxTexture
+  pressed : @resource.NxTexture
+  disabled : @resource.NxTexture
+}
+
 pub(all) struct NpcTalkResource {
   top : @resource.NxTexture
   fill : @resource.NxTexture
   bottom : @resource.NxTexture
   bar : @resource.NxTexture
-  bt_yes : @ui.MapleButtonResource
-  bt_no : @ui.MapleButtonResource
-  bt_ok : @ui.MapleButtonResource
-  bt_next : @ui.MapleButtonResource
-  bt_prev : @ui.MapleButtonResource
-  bt_close : @ui.MapleButtonResource
-  bt_qstart : @ui.MapleButtonResource
-  bt_qyes : @ui.MapleButtonResource
-  bt_qno : @ui.MapleButtonResource
-  bt_qcyes : @ui.MapleButtonResource
-  bt_qcno : @ui.MapleButtonResource
-  bt_qgiveup : @ui.MapleButtonResource
-  bt_qafter : @ui.MapleButtonResource
-  bt_my_level : @ui.MapleButtonResource
-  bt_all_level : @ui.MapleButtonResource
+  bt_yes : NpcTalkButtonResource
+  bt_no : NpcTalkButtonResource
+  bt_ok : NpcTalkButtonResource
+  bt_next : NpcTalkButtonResource
+  bt_prev : NpcTalkButtonResource
+  bt_close : NpcTalkButtonResource
+  bt_qstart : NpcTalkButtonResource
+  bt_qyes : NpcTalkButtonResource
+  bt_qno : NpcTalkButtonResource
+  bt_qcyes : NpcTalkButtonResource
+  bt_qcno : NpcTalkButtonResource
+  bt_qgiveup : NpcTalkButtonResource
+  bt_qafter : NpcTalkButtonResource
+  bt_my_level : NpcTalkButtonResource
+  bt_all_level : NpcTalkButtonResource
 }
 pub fn NpcTalkResource::from_resource(Json) -> Self raise
 

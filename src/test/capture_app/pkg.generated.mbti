@@ -45,7 +45,7 @@ pub fn set_canvas(Canvas) -> Unit
 
 pub fn set_ctx(Context2D) -> Unit
 
-pub fn snapshot(String) -> Unit raise
+pub async fn snapshot(String, expect? : String) -> Unit
 
 pub fn submit_frame(@render_pipeline.RenderFrame) -> Unit
 
@@ -56,6 +56,7 @@ pub fn to_buffer() -> Buffer
 // Types and methods
 pub type Buffer
 pub fn Buffer::from_bytes(Bytes) -> Self
+pub fn Buffer::to_base64(Self) -> String
 pub fn Buffer::to_bytes(Self) -> Bytes
 
 pub type Canvas

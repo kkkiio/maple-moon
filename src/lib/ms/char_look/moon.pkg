@@ -20,7 +20,6 @@ import {
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/position",
   "Milky2018/selene/entity",
-  "Milky2018/selene/ui" @selene_ui,
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/char_stance",
 }

@@ -96,7 +96,8 @@ pub fn request_cursor_state(state : CursorState) -> Unit {
 ///|
 pub fn cursor_system(delta : Double) -> Unit {
   // sync pos and state
-  cursor.set_position(@inputs.mouse.pos)
+  let camera_pos = @camera.get_position()
+  cursor.set_position(@inputs.mouse.pos + camera_pos)
   let mouse_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
   if mouse_pressed {
     cursor.set_state(CursorState::CLICKING)

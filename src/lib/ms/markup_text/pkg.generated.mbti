@@ -40,6 +40,8 @@ pub fn resolve_npc_name(StringView) -> String raise
 
 pub fn to_html(Array[Node], Style, Map[Char, @res_types.ColorName], Map[Char, (Style, StringView) -> String raise], trim_end_newline? : Bool) -> String raise
 
+pub let underline_tag_map : Map[Char, Bool]
+
 pub fn write_text_as_html(StringBuilder, StringView, Style, trim_end_newline? : Bool) -> Unit
 
 // Errors
@@ -71,6 +73,7 @@ pub enum Node {
 pub(all) struct Style {
   color : @res_types.ColorName
   bold : Bool
+  underline : Bool
 }
 pub fn Style::to_css_style(Self) -> String
 

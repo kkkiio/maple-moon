@@ -35,7 +35,7 @@ pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture ra
   }
   if i.contains("#") {
     raise @json.JsonDecodeError(
-      (path, "\{i} still uses '#'-framed __i, reanim output expected"),
+      (path, "invalid '#'-framed syntax: \{i}, set offset if using spritesheet"),
     )
   }
   let w = w.to_int()

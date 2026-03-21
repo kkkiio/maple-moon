@@ -86,7 +86,11 @@ pub fn parse_talk_content(
   let selections = []
   let mut opening_selection : (Int, Array[@markup_text.Node])? = None
   let mut trim_newline = false
-  let mut current_style : Style = { color: ColorName::BLACK, bold: false }
+  let mut current_style : Style = {
+    color: ColorName::BLACK,
+    bold: false,
+    underline: false,
+  }
   fn close_selection(
     index : Int,
     nodes : Array[@markup_text.Node],
@@ -147,6 +151,8 @@ pub fn parse_talk_content(
         }
         if @markup_text.font_weight_tag_map.get(tag) is Some(b) {
           current_style = { ..current_style, bold: b }
+        } else if @markup_text.underline_tag_map.get(tag) is Some(underline) {
+          current_style = { ..current_style, underline, }
         } else if @markup_text.color_map.get(tag) is Some(color) {
           current_style = { ..current_style, color, }
         } else {

@@ -146,6 +146,7 @@ fn fill_offset_from_spritesheet_json(
   frame_json : Json,
   spritesheet_jsons : Map[String, SpritesheetMetadata],
 ) -> Json? raise {
+  guard frame_json is Object(frame_json) else { return None }
   guard frame_json is { "__i": String(spritesheet_path), .. } &&
     spritesheet_path.contains("#") else {
     return None
@@ -173,7 +174,7 @@ fn fill_offset_from_spritesheet_json(
   let x = v.frame.x
   let y = v.frame.y
   let new_obj = {}
-  for k, v in frame_json.as_object().unwrap() {
+  for k, v in frame_json {
     new_obj[k] = v
   }
   new_obj["__off"] = Json::array([

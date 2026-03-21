@@ -11,6 +11,9 @@ pub let color_map : Map[Char, ColorName] = {
 pub let font_weight_tag_map : Map[Char, Bool] = { 'n': false, 'e': true }
 
 ///|
+pub let underline_tag_map : Map[Char, Bool] = { 'u': true, 'n': false }
+
+///|
 using @struct {type ColorName}
 
 ///|
@@ -41,6 +44,9 @@ pub let common_tags : Map[Char, MarkupType] = color_map
     font_weight_tag_map
     .keys()
     .map(fn(c : Char) { (c, MarkupType::SelfClosing) }),
+  )
+  .concat(
+    underline_tag_map.keys().map(fn(c : Char) { (c, MarkupType::SelfClosing) }),
   )
   .concat(
     [

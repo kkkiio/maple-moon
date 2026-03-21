@@ -8,8 +8,6 @@ pub type Context2D
 pub type Image
 
 ///|
-
-///|
 priv struct GlobalState {
   mut canvas : Canvas?
   mut ctx : Context2D?
@@ -561,6 +559,7 @@ pub fn submit_frame(frame : @render_pipeline.RenderFrame) -> Unit {
 
 ///|
 /// Execute one loop iteration: run game loop and render loop.
+/// 
 /// Canvas draw is deferred until `to_buffer`/`snapshot`.
 pub fn run_loop(delta : Double) -> Unit {
   match global_state.game_loop {
@@ -578,26 +577,6 @@ pub fn run_loop(delta : Double) -> Unit {
 pub fn to_buffer() -> Buffer {
   flush_latest_frame_to_canvas()
   global_state.canvas.unwrap().to_buffer("image/png")
-}
-
-///|
-pub fn snapshot(path : String) -> Unit raise {
-  let actual_buffer = to_buffer()
-  let actual = actual_buffer.to_bytes()
-  let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
-  if update_snapshot || !@fs.path_exists(path) {
-    let dir = @path.Path(path).dirname().to_string()
-    @fs.create_dir(dir)
-    @fs.write_bytes_to_file(path, actual)
-  } else {
-    let expected = @fs.read_file_to_bytes(path)
-    if actual != expected &&
-      not(
-        png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)),
-      ) {
-      fail(snapshot_mismatch_msg(path, actual, expected))
-    }
-  }
 }
 
 ///|
@@ -755,35 +734,6 @@ pub extern "js" fn Buffer::to_bytes(self : Buffer) -> Bytes =
 pub extern "js" fn Buffer::from_bytes(bytes : Bytes) -> Buffer =
   #|(bytes) => {
   #|  return Buffer.from(bytes);
-  #|}
-
-///|
-pub extern "js" fn png_buffers_equal_by_pixels(
-  actual : Buffer,
-  expected : Buffer,
-) -> Bool =
-  #|(actual, expected) => {
-  #|  const { createCanvas, Image } = require('canvas');
-  #|  const toPixels = (buf) => {
-  #|    const img = new Image();
-  #|    img.src = buf;
-  #|    const canvas = createCanvas(img.width, img.height);
-  #|    const ctx = canvas.getContext('2d');
-  #|    ctx.drawImage(img, 0, 0);
-  #|    return {
-  #|      width: img.width,
-  #|      height: img.height,
-  #|      data: ctx.getImageData(0, 0, img.width, img.height).data,
-  #|    };
-  #|  };
-  #|  const lhs = toPixels(actual);
-  #|  const rhs = toPixels(expected);
-  #|  if (lhs.width !== rhs.width || lhs.height !== rhs.height) return false;
-  #|  if (lhs.data.length !== rhs.data.length) return false;
-  #|  for (let i = 0; i < lhs.data.length; i++) {
-  #|    if (lhs.data[i] !== rhs.data[i]) return false;
-  #|  }
-  #|  return true;
   #|}
 
 ///|

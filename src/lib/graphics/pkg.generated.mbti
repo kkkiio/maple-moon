@@ -50,7 +50,6 @@ pub let view_size : (Int, Int)
 
 // Types and methods
 type Charset
-pub fn Charset::create_text(Self, String) -> TextureText
 pub fn Charset::draw_char(Self, Char, DrawArgument) -> Unit
 pub fn Charset::draw_text(Self, String, DrawArgument) -> Int
 pub fn Charset::draw_text_with_hspace(Self, String, Int, DrawArgument) -> Int
@@ -135,10 +134,6 @@ pub impl Hash for TextAlignment
 type TextKey
 pub impl Eq for TextKey
 pub impl Hash for TextKey
-
-type TextureText
-pub fn TextureText::draw(Self, DrawArgument) -> Int
-pub impl ToJson for TextureText
 
 // Type aliases
 

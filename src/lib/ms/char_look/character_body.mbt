@@ -171,24 +171,6 @@ let skintypes : Array[String] = [
 ]
 
 ///|
-pub fn FullBody::draw(
-  _self : FullBody,
-  _stance : StanceId,
-  _layer : @types.BodyLayer,
-  _frame : Int,
-  _args : @graphics.DrawArgument,
-) -> Unit {
-  // let frameit = self.stances
-  //   .get(stance)
-  //   .bind(fn(it) { it.get(layer) })
-  //   .bind(fn(it) { it.get(frame) })
-  // match frameit {
-  //   Some(v) => v.draw(args)
-  //   None => ()
-  // }
-}
-
-///|
 pub fn FullBody::get_name(self : FullBody) -> String {
   self.name
 }

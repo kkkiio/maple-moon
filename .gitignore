@@ -23,7 +23,7 @@ assets/map001
 assets/minimap
 assets/sound
 assets/Quest
-src/App.vue
+assets/Npc
 
 _build
 target
@@ -33,3 +33,4 @@ target
 CLAUDE.md
 
 .env.dev
+.env.test

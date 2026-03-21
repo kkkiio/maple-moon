@@ -194,9 +194,6 @@ pub impl Show for LookEntry
 pub impl ToJson for LookEntry
 pub impl @json.FromJson for LookEntry
 
-type NoopDrawable
-pub impl ToJson for NoopDrawable
-
 #alias(AfterImageResource, deprecated)
 pub(all) struct NxAfterImage {
   animation : @resource.NxAnimation

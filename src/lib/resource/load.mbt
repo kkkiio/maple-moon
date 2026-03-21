@@ -11,21 +11,17 @@ pub(open) trait AsyncResourceLoader {
 
 ///|
 struct AsyncLoader {
-  name : String
   loader : &AsyncResourceLoader
 }
 
 ///|
 pub fn AsyncLoader::new(
-  name : String,
+  _name : String,
   loader~ : &AsyncResourceLoader,
   base_url? : String = OLD_BASE_URL,
   image_base_url? : String = base_url,
 ) -> AsyncLoader {
-  {
-    name,
-    loader: SpritesheetMergeLoader::new(loader, base_url, image_base_url),
-  }
+  { loader: SpritesheetMergeLoader::new(loader, base_url, image_base_url) }
 }
 
 ///|

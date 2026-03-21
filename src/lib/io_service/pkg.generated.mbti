@@ -12,8 +12,6 @@ pub fn io_system(Double) -> Unit
 
 pub fn[T] submit_background_task(async () -> T) -> @utils.Future[Result[T, Error]]
 
-pub async fn[T] wait_future(@utils.Future[T]) -> T
-
 // Errors
 
 // Types and methods

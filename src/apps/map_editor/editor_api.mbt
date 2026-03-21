@@ -64,8 +64,8 @@ fn get_scene_graph() -> EditorSceneGraph? {
 }
 
 ///|
-pub fn export_scene_graph_ffi() -> @js.Optional[EditorSceneGraph] {
-  @js.Optional::from_option(get_scene_graph())
+pub fn export_scene_graph_ffi() -> JsOptional[EditorSceneGraph] {
+  JsOptional::from_option(get_scene_graph())
 }
 
 ///|

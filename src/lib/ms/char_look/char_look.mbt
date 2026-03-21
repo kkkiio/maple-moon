@@ -95,18 +95,17 @@ pub async fn CharLook::load(
   face : Face,
   draw_info : @types.BodyDrawInfo,
 ) -> CharLook {
-  let equips = entry.equips
+  let async_ops = entry.equips
     .iter()
     .map(fn(it) {
       let (slot_id, itemid) = it
-      () => {
+      async fn() {
         let itemdata = @item.ItemData::load_item_data(itemid)
         (slot_id, itemdata)
       }
     })
     |> Array::from_iter()
-    |> @js.async_all()
-    |> Map::from_array()
+  let equips = @async.all(async_ops.view()) |> Map::from_array()
   CharLook::new(entity, equips, body, hair, face, draw_info)
 }
 

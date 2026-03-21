@@ -30,16 +30,6 @@ pub fn execute_background(
 }
 
 ///|
-pub async fn[T] wait_future(future : Future[T]) -> T {
-  if future.poll() is Some(res) {
-    return res
-  }
-  @js.suspend(fn(resume_ok, _resume_err) {
-    poll_tasks.push(future.map(fn(res) { resume_ok(res) }))
-  })
-}
-
-///|
 /// A queue of tasks to be polled.
 let poll_tasks : Array[Future[Unit]] = Array::new()
 
@@ -56,3 +46,8 @@ pub fn io_system(_delta : Double) -> Unit {
 
 ///|
 using @utils {type Future}
+
+///|
+fn spawn_background(f : async () -> Unit) -> Unit {
+  @js_async.Promise::from_async(f) |> ignore
+}

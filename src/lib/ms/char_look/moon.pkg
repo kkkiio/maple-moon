@@ -15,7 +15,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/ms/clothing",
   "KKKIIO/maple-moon/lib/ms/item",
-  "rami3l/js-ffi/js",
+  "moonbitlang/async",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/position",

@@ -57,10 +57,10 @@ pub async fn Job::load(id? : Int = 0) -> Job {
       async fn() { (subid, JobData::load(subid)) }
     })
     |> Array::from_iter
-  let data_list = @js.async_all(async_ops)
+  let data_list = @async.all(async_ops.view())
   let sub_job_data_map = Map::new()
-  for _, it in data_list {
-    let (subid, data) = it
+  for item in data_list {
+    let (subid, data) = item
     sub_job_data_map[subid] = data
   }
   Job::new(id, level, sub_job_data_map)

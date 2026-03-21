@@ -1,8 +1,6 @@
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/math",
-  "KKKIIO/maple-moon/lib/ms/res_types" @struct,
-  "KKKIIO/maple-moon/lib/quadtree",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,

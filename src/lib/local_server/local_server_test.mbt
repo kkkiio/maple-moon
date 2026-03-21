@@ -127,8 +127,7 @@ async test "local server creates default character without item preload" {
     @server_proto.CharacterListRequestMessage::default(),
   )
   server_system(server)
-  ignore(@io_service.wait_future(@io_service.submit_background_task(() => ())))
-  server_system(server)
+  @async.pause()
 
   inspect(responses.val.length(), content="1")
   inspect(responses.val[0].characters.length(), content="1")

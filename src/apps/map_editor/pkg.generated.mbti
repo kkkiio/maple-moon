@@ -6,7 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
-  "rami3l/js-ffi/js",
 }
 
 // Values
@@ -14,7 +13,7 @@ pub fn export_editor_status_ffi() -> EditorStatus
 
 pub fn export_mouse_info_ffi() -> MouseInfo
 
-pub fn export_scene_graph_ffi() -> @js.Optional[EditorSceneGraph]
+pub fn export_scene_graph_ffi() -> JsOptional[EditorSceneGraph]
 
 pub fn export_tile_obj_visibility_state_ffi() -> EditorTileObjVisibilityState
 
@@ -103,6 +102,8 @@ pub(all) struct EditorTileObjVisibilityState {
 }
 pub impl Show for EditorTileObjVisibilityState
 pub impl ToJson for EditorTileObjVisibilityState
+
+type JsOptional[_]
 
 pub struct LayerVisibility {
   mut backgrounds : Bool

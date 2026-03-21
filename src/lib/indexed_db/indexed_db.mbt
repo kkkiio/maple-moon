@@ -1,7 +1,23 @@
 ///|
+#external
+type JSValue
+
+///|
+fn[X] JSValue::make(v : X) -> JSValue = "%identity"
+
+///|
+fn[X] JSValue::cast(self : JSValue) -> X = "%identity"
+
+///|
+extern "js" fn JSValue::is_null(self : JSValue) -> Bool = "(v) => v === null"
+
+///|
+extern "js" fn JSValue::is_undefined(self : JSValue) -> Bool = "(v) => v === undefined"
+
+///|
 /// Browser IndexedDB-backed implementation.
 pub struct IndexedDB {
-  db : @js.Value
+  db : JSValue
 }
 
 ///|
@@ -11,9 +27,9 @@ pub async fn open(
   version : Int,
   stores : Array[String],
 ) -> IndexedDB {
-  let stores_value = @js.Value::cast_from(stores)
+  let stores_value : JSValue = JSValue::make(stores)
   let db = indexed_db_open_promise(name, version, stores_value).wait()
-  IndexedDB::{ db: @js.Value::cast_from(db) }
+  IndexedDB::{ db: JSValue::make(db) }
 }
 
 ///|
@@ -33,7 +49,7 @@ pub fn IndexedDB::save_json_promise(
   store : String,
   key : String,
   data : Json,
-) -> @js.Promise {
+) -> @js_async.Promise[JSValue] {
   let json_str = data.stringify()
   save_json_promise(self.db, store, key, json_str)
 }
@@ -43,7 +59,7 @@ pub fn IndexedDB::load_json_promise(
   self : IndexedDB,
   store : String,
   key : String,
-) -> @js.Promise {
+) -> @js_async.Promise[JSValue] {
   load_json_promise(self.db, store, key)
 }
 
@@ -54,10 +70,10 @@ pub async fn IndexedDB::load_json(
   key : String,
 ) -> Json? {
   let val = load_json_promise(self.db, store, key).wait()
-  if @js.Value::is_null(val) || @js.Value::is_undefined(val) {
+  if val.is_null() || val.is_undefined() {
     None
   } else {
-    let json_str : String = @js.Value::cast(val)
+    let json_str : String = val.cast()
     (@json.parse(json_str) |> Some) catch {
       _ => None
     }
@@ -70,8 +86,8 @@ pub async fn IndexedDB::load_json(
 extern "js" fn indexed_db_open_promise(
   name : String,
   version : Int,
-  stores : @js.Value,
-) -> @js.Promise =
+  stores : JSValue,
+) -> @js_async.Promise[JSValue] =
   #| (name, version, stores) => new Promise((resolve, reject) => {
   #|   const req = indexedDB.open(name, version);
   #|   req.onsuccess = () => resolve(req.result);
@@ -88,11 +104,11 @@ extern "js" fn indexed_db_open_promise(
 
 ///|
 extern "js" fn save_json_promise(
-  db : @js.Value,
+  db : JSValue,
   store : String,
   key : String,
   json_str : String,
-) -> @js.Promise =
+) -> @js_async.Promise[JSValue] =
   #| (db, store, key, json_str) => new Promise((resolve, reject) => {
   #|   const tx = db.transaction(store, "readwrite");
   #|   const objStore = tx.objectStore(store);
@@ -103,10 +119,10 @@ extern "js" fn save_json_promise(
 
 ///|
 extern "js" fn load_json_promise(
-  db : @js.Value,
+  db : JSValue,
   store : String,
   key : String,
-) -> @js.Promise =
+) -> @js_async.Promise[JSValue] =
   #| (db, store, key) => new Promise((resolve, reject) => {
   #|   const tx = db.transaction(store, "readonly");
   #|   const objStore = tx.objectStore(store);

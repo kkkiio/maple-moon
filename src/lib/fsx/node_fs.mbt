@@ -19,17 +19,21 @@ pub fn write_file_sync(path : String, content : String) -> Unit = "writeFileSync
 pub fn mkdir_sync(path : String) -> Unit = "mkdirSync"
 
 ///|
-/// Creates directories synchronously with `recursive: true` in Node.js runtime.
+#external
+priv type JSValue
+
+///|
 #module("node:fs")
 extern "js" fn mkdir_sync_with_options(
   path : String,
-  options : @js.Value,
+  options : JSValue,
 ) -> Unit = "mkdirSync"
+
+///|
+extern "js" fn create_recursive_options() -> JSValue = "() => ({ recursive: true })"
 
 ///|
 /// Creates a directory path recursively in Node.js runtime.
 pub fn mkdir_sync_recursive(path : String) -> Unit {
-  let options = @js.Object::new()
-  options["recursive"] = true
-  mkdir_sync_with_options(path, options.to_value())
+  mkdir_sync_with_options(path, create_recursive_options())
 }

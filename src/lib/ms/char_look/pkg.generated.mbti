@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/ms/char_look"
 
 import {
-  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/char_look/types",
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/equip",
@@ -153,7 +152,6 @@ pub(all) struct FullBody {
   stances : Map[@char_stance.StanceId, Map[String, (Array[@resource.NxFrame], Array[@types.BodyLayer])]]
   name : String
 }
-pub fn FullBody::draw(Self, @char_stance.StanceId, @types.BodyLayer, Int, @graphics.DrawArgument) -> Unit
 pub fn FullBody::get_name(Self) -> String
 pub fn FullBody::new(Int, @types.BodyDrawInfo, Map[@char_stance.StanceId, Array[@types.NxStanceBody]], Map[@char_stance.StanceId, Array[@types.NxMultiPartFrame]]) -> Self
 pub impl ToJson for FullBody

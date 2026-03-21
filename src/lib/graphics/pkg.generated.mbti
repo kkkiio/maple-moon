@@ -2,10 +2,8 @@
 package "KKKIIO/maple-moon/lib/graphics"
 
 import {
-  "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/entity",
-  "Milky2018/selene/sprite",
 }
 
 // Values
@@ -41,99 +39,11 @@ pub let fps : UInt
 
 pub let map_layers : FixedArray[Int]
 
-#deprecated
-pub fn nx_animation_to_selene_sprite(@resource.NxAnimation, z? : Int, loop_? : Bool) -> @sprite.Sprite
-
 pub let view_size : (Int, Int)
 
 // Errors
 
 // Types and methods
-type Charset
-pub fn Charset::draw_char(Self, Char, DrawArgument) -> Unit
-pub fn Charset::draw_text(Self, String, DrawArgument) -> Int
-pub fn Charset::draw_text_with_hspace(Self, String, Int, DrawArgument) -> Int
-pub fn Charset::from_resource(Json, CharsetAlignment) -> Self raise
-pub fn Charset::getw(Self, Char) -> Int
-pub fn Charset::new(Json, CharsetAlignment) -> Self raise
-pub impl Default for Charset
-pub impl ToJson for Charset
-
-pub(all) enum CharsetAlignment {
-  LEFT
-  CENTER
-  RIGHT
-}
-pub impl Compare for CharsetAlignment
-pub impl Eq for CharsetAlignment
-
-pub(all) struct DrawArgument {
-  pos : @res_types.Point[Int]
-  center : @res_types.Point[Int]
-  stretch : @res_types.Point[Int]
-  xscale : Double
-  yscale : Double
-  angle : Double
-  color : @res_types.Color
-}
-pub fn DrawArgument::add_opacity(Self, Double) -> Self
-pub fn DrawArgument::add_pos(Self, @res_types.Point[Int]) -> Self
-pub fn DrawArgument::from_point_and_color(@res_types.Point[Int], @res_types.Color) -> Self
-pub fn DrawArgument::from_pos_and_stretch(@res_types.Point[Int], @res_types.Point[Int]) -> Self
-pub fn DrawArgument::from_xy(Int, Int) -> Self
-pub fn DrawArgument::get_pos(Self) -> @res_types.Point[Int]
-pub fn DrawArgument::get_rectangle(Self, @res_types.Point[Int], @res_types.Point[Int]) -> @res_types.Rectangle[Int]
-pub fn DrawArgument::merge(Self, Self) -> Self
-pub fn DrawArgument::new(pos? : @res_types.Point[Int], flip? : Bool, opacity? : Double, angle? : Double) -> Self
-pub fn DrawArgument::new10(@res_types.Point[Int], @res_types.Point[Int], Double, Double, Double) -> Self
-pub fn DrawArgument::new12(Double, Double, Double) -> Self
-pub fn DrawArgument::new13(@res_types.Point[Int], Double, Double, Double) -> Self
-pub fn DrawArgument::new14(@res_types.Point[Int], Bool, opacity? : Double) -> Self
-pub fn DrawArgument::new15(Double, @res_types.Point[Int], Bool, Double) -> Self
-pub fn DrawArgument::new16(@res_types.Point[Int], @res_types.Point[Int], @res_types.Point[Int], Double, Double, Double, Double) -> Self
-pub fn DrawArgument::new17(@res_types.Point[Int], @res_types.Point[Int], @res_types.Point[Int], Double, Double, @res_types.Color, Double) -> Self
-pub fn DrawArgument::new6(Double, @res_types.Point[Int], Double) -> Self
-pub fn DrawArgument::new7(@res_types.Point[Int], Double) -> Self
-pub fn DrawArgument::new9(@res_types.Point[Int], Bool, @res_types.Point[Int]) -> Self
-pub fn DrawArgument::new_ex(pos? : @res_types.Point[Int], stretch? : @res_types.Point[Int], opacity? : Double, angle? : Double) -> Self
-pub fn DrawArgument::new_scale(position? : @res_types.Point[Int], scale? : Double) -> Self
-pub impl Add for DrawArgument
-pub impl Default for DrawArgument
-pub impl Show for DrawArgument
-pub impl Sub for DrawArgument
-pub impl ToJson for DrawArgument
-
-pub(all) enum FontId {
-  A11M
-  A11B
-  A12M
-  A12B
-  A13M
-  A13B
-  A15B
-  A18M
-}
-pub fn FontId::height(Self) -> Int
-pub fn FontId::is_bold(Self) -> Bool
-pub impl Eq for FontId
-pub impl Hash for FontId
-pub impl Show for FontId
-
-type GameText
-pub fn GameText::draw(Self, DrawArgument) -> Int
-pub fn GameText::new(Charset, String, Int) -> Self
-
-pub(all) enum TextAlignment {
-  LEFT
-  CENTER
-  RIGHT
-}
-pub impl Eq for TextAlignment
-pub impl Hash for TextAlignment
-
-type TextKey
-pub impl Eq for TextKey
-pub impl Hash for TextKey
 
 // Type aliases
 

@@ -5,5 +5,5 @@ import {
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
-  "rami3l/js-ffi/js",
+  "moonbitlang/async",
 }

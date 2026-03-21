@@ -80,31 +80,36 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
     (path, "")
   }
   let path = join_dir(self.rootPath, child.to_string() + ".json")
-  let text : String = fetch_string(path)
-  let root_value : Json = @json.parse(text)
+  let root_value : Json = fetch_json(path)
   get_by_path(root_value, rest.to_string())
 }
 
 ///|
-extern "js" fn js_fetch_json_string(path : String) -> @js.Promise =
-  #| (p) => fetch(p).then((res) => {
-  #|  const contentType = res.headers.get('content-type') || '';
-  #|  if (!contentType.includes('application/json')) {
-  #|    throw new Error(`expected JSON response, got content-type: ${contentType}`);
-  #|  }
-  #|  return res.text();
-  #|})
+#external
+priv type Response
 
 ///|
-async fn fetch_string(path : String) -> String {
-  (js_fetch_json_string(path).wait() catch {
-    @js.Error_(e) => {
-      let message : String = e.get_with_string("message")
-      fail("failed to fetch string: \{path}, error=\{message}")
-    }
+extern "js" fn Response::text(self : Response) -> String =
+  #| (r) => r.text()
+
+///|
+extern "js" fn Response::content_type(self : Response) -> String =
+  #| (r) => r.headers.get('content-type') || ''
+
+///|
+extern "js" fn js_fetch(path : String) -> @js_async.Promise[Response] =
+  #| (p) => fetch(p)
+
+///|
+async fn fetch_json(path : String) -> Json {
+  let response = js_fetch(path).wait() catch {
     e => fail("failed to fetch string: \{path}, error=\{e}")
-  })
-  |> @js.Value::cast
+  }
+  let content_type = response.content_type()
+  if !content_type.contains("application/json") {
+    fail("expected JSON response, got content-type: \{content_type}")
+  }
+  response.text() |> @json.parse
 }
 
 ///|

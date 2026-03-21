@@ -15,10 +15,9 @@ pub async fn SkillBook::load(
     .flat_map(fn(it) { it.skill_ids.iter() })
     .map(fn(skill_id) { async fn() { @skill.SkillData::load(skill_id) } })
     |> Array::from_iter
-  let it = @js.async_all(async_ops)
+  let it = @async.all(async_ops.view())
   let available_skills = Map::new()
   for skill_data in it {
-    let skill_data = skill_data
     available_skills.set(skill_data.id, skill_data)
   }
   SkillBook::new(available_skills, watchers)

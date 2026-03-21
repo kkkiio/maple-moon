@@ -40,12 +40,12 @@ pub impl AsyncResourceLoader for SpritesheetMergeLoader with load_data(
   })
   // load all the spritesheet json and cache them
   if spritesheet_paths.length() > 0 {
-    (@js.async_all(
+    (@async.all(
       spritesheet_paths.map(fn(path) {
         async fn() {
           let spritesheet_json_url = join_2path(self.base_url, path + ".json")
-          let fetched = fetch_string(spritesheet_json_url)
-          let j = @json.from_json(@json.parse(fetched)) catch {
+          let fetched = fetch_json(spritesheet_json_url)
+          let j = @json.from_json(fetched) catch {
             e =>
               fail(
                 "failed to parse spritesheet json, error=\{e}, path=\{spritesheet_json_url}",

@@ -41,13 +41,13 @@ fn FetchCsvTextLoader::new() -> FetchCsvTextLoader {
 }
 
 ///|
-extern "js" fn fetch_text(path : String) -> @js.Promise =
+extern "js" fn fetch_text(path : String) -> @js_async.Promise[String] =
   #| (p) => fetch(p).then((res) => res.text())
 
 ///|
 impl @resource.CsvTextLoader for FetchCsvTextLoader with load_text(self, path) -> String {
   ignore(self.dummy)
-  fetch_text(path).wait() |> @js.Value::cast
+  fetch_text(path).wait()
 }
 
 ///|

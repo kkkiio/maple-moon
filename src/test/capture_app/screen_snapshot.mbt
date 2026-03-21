@@ -89,7 +89,6 @@ async fn assert_snapshot_expect(
     "messages": messages,
   }
   let raw : String = openrouter_chat_send(api_key, request_params.stringify()).wait()
-    |> @js.Value::cast
   @log.debug("snapshot expect raw response", data={
     "path": path,
     "expect": expect,
@@ -118,7 +117,7 @@ async fn assert_snapshot_expect(
 extern "js" fn openrouter_chat_send(
   api_key : String,
   chat_generation_params_json : String,
-) -> @js.Promise =
+) -> @js_async.Promise[String] =
   #| async (apiKey, chatGenerationParamsJson) => {
   #|   const { OpenRouter } = await import("@openrouter/sdk");
   #|   const openRouter = new OpenRouter({ apiKey });

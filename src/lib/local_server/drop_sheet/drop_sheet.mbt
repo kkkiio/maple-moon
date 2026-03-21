@@ -1,5 +1,5 @@
 ///|
-/// A row in drop CSV files.
+/// A row in drop TSV files.
 pub struct NxMobDropRow {
   /// Dropper id. `-1` is used by global drop sheet.
   dropperid : Int
@@ -16,40 +16,19 @@ pub struct NxMobDropRow {
 }
 
 ///|
-/// Parse rows from a drop CSV text.
-pub fn parse_drop_rows(csv_content : String) -> Array[NxMobDropRow] {
+/// Parse rows from a drop TSV text.
+pub fn parse_drop_rows(tsv_content : String) -> Array[NxMobDropRow] {
   let rows : Array[NxMobDropRow] = []
-  let lines = csv_content.split("\n").collect()
-
-  for i = 1; i < lines.length(); i = i + 1 {
-    let line = lines[i].trim()
-    if line.is_empty() {
-      continue
-    }
-
-    let fields = @csv.parse_csv_line(line.to_string())
-    if fields.length() < 7 {
-      continue
-    }
-
-    let dropperid = @strconv.parse_int(@csv.strip_quotes(fields[1])) catch {
-      _ => continue
-    }
-    let itemid = @strconv.parse_int(@csv.strip_quotes(fields[2])) catch {
-      _ => continue
-    }
-    let min_qty = @strconv.parse_int(@csv.strip_quotes(fields[3])) catch {
-      _ => continue
-    }
-    let max_qty = @strconv.parse_int(@csv.strip_quotes(fields[4])) catch {
-      _ => continue
-    }
-    let questid = @strconv.parse_int(@csv.strip_quotes(fields[5])) catch {
-      _ => continue
-    }
-    let chance = @strconv.parse_int(@csv.strip_quotes(fields[6])) catch {
-      _ => continue
-    }
+  let sheet = @data_sheet.parse_tsv_sheet(tsv_content, "drop_sheet.tsv") catch {
+    _ => return rows
+  }
+  for row in sheet.rows() {
+    let dropperid = row.get_int("dropperid") catch { _ => continue }
+    let itemid = row.get_int("itemid") catch { _ => continue }
+    let min_qty = row.get_int("minimum_quantity") catch { _ => continue }
+    let max_qty = row.get_int("maximum_quantity") catch { _ => continue }
+    let questid = row.get_int("questid") catch { _ => continue }
+    let chance = row.get_int("chance") catch { _ => continue }
 
     rows.push({
       dropperid,
@@ -67,10 +46,10 @@ pub fn parse_drop_rows(csv_content : String) -> Array[NxMobDropRow] {
 ///|
 /// Build map grouped by `dropperid`.
 pub fn build_drop_row_map(
-  csv_content : String,
+  tsv_content : String,
 ) -> Map[Int, Array[NxMobDropRow]] {
   let grouped : Map[Int, Array[NxMobDropRow]] = {}
-  for row in parse_drop_rows(csv_content) {
+  for row in parse_drop_rows(tsv_content) {
     match grouped.get(row.dropperid) {
       Some(list) => list.push(row)
       None => grouped.set(row.dropperid, [row])
@@ -80,11 +59,11 @@ pub fn build_drop_row_map(
 }
 
 ///|
-/// Load and parse drop rows through registered CSV loader.
+/// Load and parse drop rows through registered TSV loader.
 pub async fn load_drop_row_map(
-  csv_loader : @resource.CsvLoader,
+  tsv_loader : @resource.CsvLoader,
   path : String,
 ) -> Map[Int, Array[NxMobDropRow]] {
-  let content = csv_loader.load_text(path)
+  let content = tsv_loader.load_text(path)
   build_drop_row_map(content)
 }

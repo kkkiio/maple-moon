@@ -120,7 +120,7 @@ fn check_shop_equip_item_resources(
   ctx : RescheckContext,
   issues : Array[CheckIssue],
 ) -> Unit {
-  let shops_rel_file = "data/shops.csv"
+  let shops_rel_file = "data/shops.tsv"
   let shops_abs_file = path_join(ctx.assets_root, shops_rel_file)
   if not(file_exists(shops_abs_file)) {
     issues.push(
@@ -128,7 +128,7 @@ fn check_shop_equip_item_resources(
     )
     return
   }
-  let shopitems_rel_file = "data/shopitems.csv"
+  let shopitems_rel_file = "data/shopitems.tsv"
   let shopitems_abs_file = path_join(ctx.assets_root, shopitems_rel_file)
   if not(file_exists(shopitems_abs_file)) {
     issues.push(
@@ -192,23 +192,24 @@ fn collect_shop_equip_refs(
 ) -> Array[ShopEquipRef] {
   let refs : Array[ShopEquipRef] = []
   let seen : Map[String, Bool] = Map::new()
-  let lines = read_text_file(shopitems_file_abs_path).split("\n").collect()
-  if lines.length() == 0 {
-    issues.push(
-      make_issue("item", Error, "data/shopitems.csv", "shopitems.csv is empty"),
-    )
-    return refs
-  }
-  let header = @csv.parse_csv_header(lines[0].to_string())
-  for i = 1; i < lines.length(); i = i + 1 {
-    let line = lines[i].trim()
-    if line.is_empty() {
-      continue
+  let sheet = @data_sheet.parse_tsv_sheet(
+    read_text_file(shopitems_file_abs_path),
+    "data/shopitems.tsv",
+  ) catch {
+    err => {
+      issues.push(
+        make_issue(
+          "item",
+          Error,
+          "data/shopitems.tsv",
+          "invalid shopitems.tsv: \{err}",
+        ),
+      )
+      return refs
     }
-    let fields = @csv.parse_csv_line(line.to_string())
-    let item_id = @csv.parse_csv_int_field_or_default(
-      fields, header, "itemid", -1,
-    )
+  }
+  for row in sheet.rows() {
+    let item_id = row.get_int_or_default("itemid", -1)
     if item_id <= 0 {
       continue
     }
@@ -436,7 +437,7 @@ fn append_missing_bundle_id(
 
 ///|
 fn collect_drop_item_refs(ctx : RescheckContext) -> Array[ItemRef] {
-  let files = ["data/mob_drops.csv", "data/drop_data_global.csv"]
+  let files = ["data/mob_drops.tsv", "data/drop_data_global.tsv"]
   let refs : Array[ItemRef] = []
   let seen : Map[String, Bool] = Map::new()
 
@@ -445,20 +446,11 @@ fn collect_drop_item_refs(ctx : RescheckContext) -> Array[ItemRef] {
     if not(file_exists(abs_file)) {
       continue
     }
-    let content = read_text_file(abs_file)
-    let lines = content.split("\n").collect()
-    for i = 1; i < lines.length(); i = i + 1 {
-      let line = lines[i].trim()
-      if line.is_empty() {
-        continue
-      }
-      let fields = @csv.parse_csv_line(line.to_string())
-      if fields.length() < 3 {
-        continue
-      }
-      let item_id = @strconv.parse_int(@csv.strip_quotes(fields[2])) catch {
-        _ => continue
-      }
+    let sheet = @data_sheet.parse_tsv_sheet(read_text_file(abs_file), rel_file) catch {
+      _ => continue
+    }
+    for row in sheet.rows() {
+      let item_id = row.get_int("itemid") catch { _ => continue }
       if item_id <= 0 {
         continue
       }

@@ -1,14 +1,14 @@
 # Drop Sheet
 
-Parse mob drop CSV resources (`mob_drops.csv`, `drop_data_global.csv`) into typed rows grouped by `dropperid`.
+Parse mob drop TSV resources (`mob_drops.tsv`, `drop_data_global.tsv`) into typed rows grouped by `dropperid`.
 
 ## 可执行示例
 
 ```mbt check
 ///|
 test "parse drop rows" {
-  let csv = "id,dropperid,itemid,minimum_quantity,maximum_quantity,questid,chance\n1,100100,2000005,1,2,0,100000\n"
-  let rows = @drop_sheet.parse_drop_rows(csv)
+  let tsv = "id\tdropperid\titemid\tminimum_quantity\tmaximum_quantity\tquestid\tchance\n1\t100100\t2000005\t1\t2\t0\t100000\n"
+  let rows = @drop_sheet.parse_drop_rows(tsv)
   inspect(rows.length(), content="1")
   inspect(rows[0].dropperid, content="100100")
   inspect(rows[0].itemid, content="2000005")
@@ -16,8 +16,8 @@ test "parse drop rows" {
 
 ///|
 test "group rows by dropperid" {
-  let csv = "id,dropperid,itemid,minimum_quantity,maximum_quantity,questid,chance\n1,100100,2000005,1,2,0,100000\n2,100100,4000000,1,1,0,250000\n"
-  let grouped = @drop_sheet.build_drop_row_map(csv)
+  let tsv = "id\tdropperid\titemid\tminimum_quantity\tmaximum_quantity\tquestid\tchance\n1\t100100\t2000005\t1\t2\t0\t100000\n2\t100100\t4000000\t1\t1\t0\t250000\n"
+  let grouped = @drop_sheet.build_drop_row_map(tsv)
   guard grouped.get(100100) is Some(rows) else { fail("missing dropper") }
   inspect(rows.length(), content="2")
 }

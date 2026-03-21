@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "moonbitlang/x/sys",
-  "KKKIIO/maple-moon/lib/csv",
+  "KKKIIO/maple-moon/lib/data_sheet",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/bullet",
 }

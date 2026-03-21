@@ -1,14 +1,14 @@
 ///|
-/// A row in `shops.csv`.
+/// A row in `shops.tsv`.
 pub struct NxShopRow {
-  /// Shop id in `shops.csv`.
+  /// Shop id in `shops.tsv`.
   shop_id : Int
-  /// NPC id in `shops.csv`.
+  /// NPC id in `shops.tsv`.
   npc_id : Int
 }
 
 ///|
-/// A row in `shopitems.csv`.
+/// A row in `shopitems.tsv`.
 pub struct NxShopItemRow {
   /// Shop id this item belongs to.
   shop_id : Int
@@ -29,100 +29,33 @@ pub struct NxShopItemRow {
 }
 
 ///|
-/// Parse all rows from `shops.csv`.
-pub fn parse_shop_rows(csv_text : String) -> Array[NxShopRow] raise {
+/// Parse all rows from `shops.tsv`.
+pub fn parse_shop_rows(tsv_text : String) -> Array[NxShopRow] raise {
   let rows : Array[NxShopRow] = []
-  let lines = csv_text.split("\n").collect()
-  if lines.length() == 0 {
-    fail("shops.csv is empty")
-  }
-  let header = @csv.parse_csv_header(lines[0].to_string())
-  for i = 1; i < lines.length(); i = i + 1 {
-    let line = lines[i].trim()
-    if line.is_empty() {
-      continue
-    }
-    let fields = @csv.parse_csv_line(line.to_string())
-    rows.push({
-      shop_id: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "shopid",
-        i + 1,
-        "shops.csv",
-      ),
-      npc_id: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "npcid",
-        i + 1,
-        "shops.csv",
-      ),
-    })
+  let sheet = @data_sheet.parse_tsv_sheet(tsv_text, "shops.tsv")
+  for row in sheet.rows() {
+    rows.push({ shop_id: row.get_int("shopid"), npc_id: row.get_int("npcid") })
   }
   rows
 }
 
 ///|
-/// Parse all rows from `shopitems.csv`.
+/// Parse all rows from `shopitems.tsv`.
 pub fn parse_shop_item_rows(
-  csv_text : String,
+  tsv_text : String,
 ) -> Map[Int, Array[NxShopItemRow]] raise {
   let rows : Map[Int, Array[NxShopItemRow]] = {}
-  let lines = csv_text.split("\n").collect()
-  if lines.length() == 0 {
-    fail("shopitems.csv is empty")
-  }
-  let header = @csv.parse_csv_header(lines[0].to_string())
-  for i = 1; i < lines.length(); i = i + 1 {
-    let line = lines[i].trim()
-    if line.is_empty() {
-      continue
-    }
-    let fields = @csv.parse_csv_line(line.to_string())
+  let sheet = @data_sheet.parse_tsv_sheet(tsv_text, "shopitems.tsv")
+  for row in sheet.rows() {
     let row : NxShopItemRow = {
-      shop_id: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "shopid",
-        i + 1,
-        "shopitems.csv",
-      ),
-      item_id: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "itemid",
-        i + 1,
-        "shopitems.csv",
-      ),
-      price: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "price",
-        i + 1,
-        "shopitems.csv",
-      ),
-      pitch: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "pitch",
-        i + 1,
-        "shopitems.csv",
-      ),
-      position: @csv.parse_csv_int_field(
-        fields,
-        header,
-        "position",
-        i + 1,
-        "shopitems.csv",
-      ),
-      time: @csv.parse_csv_int_field_or_default(fields, header, "time", 0),
-      charge_price: @csv.parse_csv_int_field_or_default(
-        fields, header, "charge_price", 0,
-      ),
-      buyable: @csv.parse_csv_int_field_or_default(
-        fields, header, "buyable", 1000,
-      ),
+      shop_id: row.get_int("shopid"),
+      item_id: row.get_int("itemid"),
+      price: row.get_int("price"),
+      pitch: row.get_int("pitch"),
+      position: row.get_int("position"),
+      time: row.get_int_or_default("time", 0),
+      charge_price: row.get_int_or_default("charge_price", 0),
+      buyable: row.get_int_or_default("buyable", 1000),
     }
     match rows.get(row.shop_id) {
       Some(items) => items.push(row)
@@ -133,13 +66,13 @@ pub fn parse_shop_item_rows(
 }
 
 ///|
-/// Build map from npc id to open-shop message using parsed CSV text.
+/// Build map from npc id to open-shop message using parsed TSV text.
 pub fn build_npc_shop_map(
-  shops_csv : String,
-  shopitems_csv : String,
+  shops_tsv : String,
+  shopitems_tsv : String,
 ) -> Map[Int, @server_proto.OpenNpcShopMessage] raise {
-  let shops = parse_shop_rows(shops_csv)
-  let items_by_shop = parse_shop_item_rows(shopitems_csv)
+  let shops = parse_shop_rows(shops_tsv)
+  let items_by_shop = parse_shop_item_rows(shopitems_tsv)
   let by_npc_id : Map[Int, @server_proto.OpenNpcShopMessage] = {}
   for shop in shops {
     if shop.shop_id <= 0 {
@@ -164,13 +97,13 @@ pub fn build_npc_shop_map(
 }
 
 ///|
-/// Load and build NPC shop map through registered CSV loader.
+/// Load and build NPC shop map through registered TSV loader.
 pub async fn load_npc_shop_map(
-  csv_loader : @resource.CsvLoader,
-  shops_path? : String = "/assets/data/shops.csv",
-  shopitems_path? : String = "/assets/data/shopitems.csv",
+  tsv_loader : @resource.CsvLoader,
+  shops_path? : String = "/assets/data/shops.tsv",
+  shopitems_path? : String = "/assets/data/shopitems.tsv",
 ) -> Map[Int, @server_proto.OpenNpcShopMessage] {
-  let shops_csv = csv_loader.load_text(shops_path)
-  let shopitems_csv = csv_loader.load_text(shopitems_path)
-  build_npc_shop_map(shops_csv, shopitems_csv)
+  let shops_tsv = tsv_loader.load_text(shops_path)
+  let shopitems_tsv = tsv_loader.load_text(shopitems_path)
+  build_npc_shop_map(shops_tsv, shopitems_tsv)
 }

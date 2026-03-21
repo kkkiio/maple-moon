@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/lib/ms/mini_map_ui"
 
 import {
   "KKKIIO/maple-moon/lib/ms/map",
+  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/entity",
-  "Milky2018/selene/sprite",
   "moonbitlang/core/json",
 }
 
@@ -39,15 +39,15 @@ pub fn MiniMapUI::new(MiniMapUIResource, @ui.UIModel) -> Self
 pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource?) -> Unit
 
 pub struct MiniMapUIResource {
-  portal_marker : @sprite.Animation
-  minmap_middle_left : @sprite.AnimationFrame
-  minmap_middle_right : @sprite.AnimationFrame
-  minmap_up_center : @sprite.AnimationFrame
-  minmap_up_left : @sprite.AnimationFrame
-  minmap_up_right : @sprite.AnimationFrame
-  minmap_down_center : @sprite.AnimationFrame
-  minmap_down_left : @sprite.AnimationFrame
-  minmap_down_right : @sprite.AnimationFrame
+  portal_marker : @resource.NxTexture
+  minmap_middle_left : @resource.NxTexture
+  minmap_middle_right : @resource.NxTexture
+  minmap_up_center : @resource.NxTexture
+  minmap_up_left : @resource.NxTexture
+  minmap_up_right : @resource.NxTexture
+  minmap_down_center : @resource.NxTexture
+  minmap_down_left : @resource.NxTexture
+  minmap_down_right : @resource.NxTexture
 }
 pub async fn MiniMapUIResource::load() -> Self
 

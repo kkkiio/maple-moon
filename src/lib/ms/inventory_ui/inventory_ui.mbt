@@ -28,29 +28,34 @@ priv struct State {
   mut slot_max_by_tab : Map[InventoryType, Int]
   mut ui_resources : UiResources?
   mut ui_loading : @utils.Future[Result[UiResources, Error]]?
-  icon_by_item_id : Map[Int, @sprite.Animation]
-  icon_loading : Map[Int, Bool]
-  render_entities : Array[@entity.Entity]
-  slot_entities : Array[@entity.Entity]
+  icon_by_item_id : Map[Int, @resource.NxTexture]
+  ui_entities : Array[@entity.Entity]
+  tab_buttons : Array[TabButton]
+  slot_buttons : Array[SlotButton]
+  click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   mut binding_version : Int
+  mut last_clicked_slot : Int?
+  mut double_click_window : Double
 }
 
 ///|
 priv struct UiResources {
-  full_backgrnd : @sprite.Picture
-  full_backgrnd2 : @sprite.Picture
-  full_backgrnd3 : @sprite.Picture
-  tab_btn_resources : Array[(@sprite.Animation, @sprite.Animation)]
-  tab_hitboxes : Array[TabHitbox]
+  full_backgrnd : @resource.NxTexture
+  full_backgrnd2 : @resource.NxTexture
+  full_backgrnd3 : @resource.NxTexture
+  tab_btn_resources : Array[(@resource.NxTexture, @resource.NxTexture)]
 }
 
 ///|
-priv struct TabHitbox {
+priv struct TabButton {
   tab_index : Int
-  left : Int
-  top : Int
-  width : Int
-  height : Int
+  entity : @entity.Entity
+}
+
+///|
+priv struct SlotButton {
+  slot_no : Int
+  entity : @entity.Entity
 }
 
 ///|
@@ -73,10 +78,13 @@ let state_ref : Ref[State] = Ref::new({
   ui_resources: None,
   ui_loading: None,
   icon_by_item_id: Map::new(),
-  icon_loading: Map::new(),
-  render_entities: [],
-  slot_entities: [],
+  ui_entities: [],
+  tab_buttons: [],
+  slot_buttons: [],
+  click_reader: @event.EventReader::new(),
   binding_version: 0,
+  last_clicked_slot: None,
+  double_click_window: 0.0,
 })
 
 ///|
@@ -127,6 +135,9 @@ const COUNT_TEXT_BOTTOM_PADDING : Int = 2
 const COUNT_TEXT_HEIGHT_PX : Int = 11
 
 ///|
+const DOUBLE_CLICK_WINDOW_SECONDS : Double = 0.35
+
+///|
 fn new_items_map() -> Map[InventoryType, Array[DisplayItem]] {
   let map = Map::new()
   for tab in tabs {
@@ -148,8 +159,6 @@ fn new_slot_max_map() -> Map[InventoryType, Int] {
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites().remove(entity) |> ignore
-    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -185,7 +194,6 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
         full_backgrnd3_json,
       )
       let tab_btn_resources = []
-      let tab_hitboxes = []
       for i in 0..<tabs.length() {
         let key = i.to_string()
         guard disabled_tabs.get(key) is Some(disabled_tab_json) else {
@@ -200,64 +208,122 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
         let enabled_tab : @resource.NxTexture = @json.from_json(
           enabled_tab_json,
         )
-        tab_btn_resources.push(
-          (
-            nx_texture_to_static_animation(disabled_tab),
-            nx_texture_to_static_animation(enabled_tab),
-          ),
-        )
-        tab_hitboxes.push({
-          tab_index: i,
-          left: PANEL_X - disabled_tab.origin.x,
-          top: PANEL_Y - disabled_tab.origin.y,
-          width: disabled_tab.w,
-          height: disabled_tab.h,
-        })
+        tab_btn_resources.push((disabled_tab, enabled_tab))
       }
-      {
-        full_backgrnd: @resource.nx_texture_to_selene_picture(full_backgrnd),
-        full_backgrnd2: @resource.nx_texture_to_selene_picture(full_backgrnd2),
-        full_backgrnd3: @resource.nx_texture_to_selene_picture(full_backgrnd3),
-        tab_btn_resources,
-        tab_hitboxes,
-      }
+      { full_backgrnd, full_backgrnd2, full_backgrnd3, tab_btn_resources }
     }
     _ => fail("invalid UIWindow2 Item.json")
   }
 }
 
 ///|
-fn nx_texture_to_static_animation(
-  texture : @resource.NxTexture,
-) -> @sprite.Animation {
-  @sprite.Animation::single_frame(
-    texture.i,
+fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+  @selene_ui.UiImage::new(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-    offset=@selene_math.Vec2D(
-      texture.offset.x.to_double(),
-      texture.offset.y.to_double(),
-    ),
-    pivot=@selene_math.Vec2D(
-      texture.origin.x.to_double(),
-      texture.origin.y.to_double(),
-    ),
+    texture.i,
   )
 }
 
 ///|
-fn spawn_ui_sprite(
+fn ui_image_region_from_texture(
+  texture : @resource.NxTexture,
+) -> @selene_ui.UiImageRegion {
+  @selene_ui.UiImageRegion::new({
+    position: @selene_math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  })
+}
+
+///|
+fn set_image_texture(
+  entity : @entity.Entity,
+  texture : @resource.NxTexture,
+) -> Unit {
+  @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
+  @selene_ui.ui_image_regions().set(
+    entity,
+    ui_image_region_from_texture(texture),
+  )
+}
+
+///|
+fn spawn_image_node(
   entities : Array[@entity.Entity],
-  sprite : @sprite.Sprite,
+  texture : @resource.NxTexture,
   x : Int,
   y : Int,
-) -> Unit {
+  z : Int,
+  width? : Int = texture.w,
+  height? : Int = texture.h,
+) -> @entity.Entity {
   let entity = @entity.Entity::new()
   entities.push(entity)
-  @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
+  @selene_ui.nodes().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
   )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  set_image_texture(entity, texture)
+  entity
+}
+
+///|
+fn spawn_text_node(
+  entities : Array[@entity.Entity],
+  text : String,
+  x : Int,
+  y : Int,
+  z : Int,
+  width : Int,
+  height : Int,
+  align? : @selene_math.HAlign = @selene_math.Left,
+  font_size? : Double = 11.0,
+) -> @entity.Entity {
+  let entity = @entity.Entity::new()
+  entities.push(entity)
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(
+      align~,
+      baseline=@selene_math.Top,
+      wrap=@selene_ui.TextWrap::NoWrap,
+      overflow=@selene_ui.TextOverflow::Clip,
+    ),
+  )
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.text_colors().set(
+    entity,
+    @selene_ui.TextColor::from_css("#0b1f2a"),
+  )
+  @selene_ui.text_fonts().set(
+    entity,
+    @selene_ui.TextFont::new(family="Menlo", size=font_size),
+  )
+  entity
+}
+
+///|
+fn texture_draw_x(panel_x : Int, texture : @resource.NxTexture) -> Int {
+  panel_x - texture.origin.x
+}
+
+///|
+fn texture_draw_y(panel_y : Int, texture : @resource.NxTexture) -> Int {
+  panel_y - texture.origin.y
 }
 
 ///|
@@ -341,7 +407,7 @@ fn ensure_icon_loading(state : State, item_id : Int) -> Unit {
     return
   }
   let item_data = @item.request_item_data(item_id)
-  let icon = nx_texture_to_inventory_icon_animation(item_data.get_icon(false))
+  let icon = item_data.get_icon(false)
   state.icon_by_item_id.set(item_id, icon)
 }
 
@@ -390,59 +456,15 @@ fn poll_icon_loading(state : State) -> Bool {
 }
 
 ///|
-fn nx_texture_to_inventory_icon_animation(
-  texture : @resource.NxTexture,
-) -> @sprite.Animation {
-  @sprite.Animation::new(
-    [
-      @sprite.AnimationFrame::{
-        image: @asset.load_image(texture.i),
-        size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-        offset: @selene_math.Vec2D(
-          texture.offset.x.to_double(),
-          texture.offset.y.to_double(),
-        ),
-        pivot: @selene_math.Vec2D(
-          texture.origin.x.to_double(),
-          texture.origin.y.to_double(),
-        ),
-        duration: 1.0,
-      },
-    ],
-    loop_=true,
-  )
-}
-
-///|
 fn clear_render(state : State) -> Unit {
-  clear_entities(state.render_entities)
-}
-
-///|
-fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2D) -> Int? {
-  let x = pos[@selene_math.X]
-  let y = pos[@selene_math.Y]
-  for hitbox in resources.tab_hitboxes {
-    let left = hitbox.left.to_double()
-    let top = hitbox.top.to_double()
-    let right = (hitbox.left + hitbox.width).to_double()
-    let bottom = (hitbox.top + hitbox.height).to_double()
-    if x >= left && x < right && y >= top && y < bottom {
-      return Some(hitbox.tab_index)
-    }
-  }
-  None
+  clear_entities(state.ui_entities)
+  state.tab_buttons.clear()
+  state.slot_buttons.clear()
 }
 
 ///|
 fn render_inventory(state : State) -> Unit {
   clear_render(state)
-
-  // Hide all slot entities by default
-  for slot_entity in state.slot_entities {
-
-  }
-
   guard state.ui_resources is Some(ui_resources) else { return }
 
   let panel_x = state.panel_x
@@ -451,36 +473,46 @@ fn render_inventory(state : State) -> Unit {
   let slot_start_y = panel_y + SLOT_START_Y_OFFSET
 
   let z = UI_BASE_Z + 10
-  spawn_ui_sprite(
-    state.render_entities,
-    @sprite.Sprite::from_picture(ui_resources.full_backgrnd, z),
-    panel_x,
-    panel_y,
+  ignore(
+    spawn_image_node(
+      state.ui_entities,
+      ui_resources.full_backgrnd,
+      texture_draw_x(panel_x, ui_resources.full_backgrnd),
+      texture_draw_y(panel_y, ui_resources.full_backgrnd),
+      z,
+    ),
   )
-  spawn_ui_sprite(
-    state.render_entities,
-    @sprite.Sprite::from_picture(ui_resources.full_backgrnd2, z + 1),
-    panel_x,
-    panel_y,
+  ignore(
+    spawn_image_node(
+      state.ui_entities,
+      ui_resources.full_backgrnd2,
+      texture_draw_x(panel_x, ui_resources.full_backgrnd2),
+      texture_draw_y(panel_y, ui_resources.full_backgrnd2),
+      z + 1,
+    ),
   )
-  spawn_ui_sprite(
-    state.render_entities,
-    @sprite.Sprite::from_picture(ui_resources.full_backgrnd3, z + 2),
-    panel_x,
-    panel_y,
+  ignore(
+    spawn_image_node(
+      state.ui_entities,
+      ui_resources.full_backgrnd3,
+      texture_draw_x(panel_x, ui_resources.full_backgrnd3),
+      texture_draw_y(panel_y, ui_resources.full_backgrnd3),
+      z + 2,
+    ),
   )
-  let meso_text = @sprite.Text::new(
-    state.meso.to_string(),
-    color="#0b1f2a",
-    font="12px Menlo",
-    baseline=@selene_math.Top,
-    align=@selene_math.Right,
-  )
-  spawn_ui_sprite(
-    state.render_entities,
-    @sprite.Sprite::from_text(meso_text, z + 4),
-    panel_x + MESO_LABEL_X_OFFSET,
-    panel_y + MESO_LABEL_Y_OFFSET,
+  let meso_anchor_x = panel_x + MESO_LABEL_X_OFFSET
+  ignore(
+    spawn_text_node(
+      state.ui_entities,
+      state.meso.to_string(),
+      meso_anchor_x - 120,
+      panel_y + MESO_LABEL_Y_OFFSET,
+      z + 4,
+      120,
+      16,
+      align=@selene_math.Right,
+      font_size=12.0,
+    ),
   )
 
   let current_tab = tabs[state.tab_index]
@@ -505,72 +537,76 @@ fn render_inventory(state : State) -> Unit {
       let col = i % SLOT_COLUMNS
       let x = slot_start_x + col * SLOT_WIDTH
       let y = slot_start_y + row * SLOT_HEIGHT
+      let slot_entity = @entity.Entity::new()
+      state.ui_entities.push(slot_entity)
+      @selene_ui.nodes().set(
+        slot_entity,
+        @selene_ui.Node::absolute(
+          @selene_math.Vec2D(x.to_double(), y.to_double()),
+          size=@selene_math.Vec2D(
+            SLOT_WIDTH.to_double(),
+            SLOT_HEIGHT.to_double(),
+          ),
+        ),
+      )
+      @selene_ui.z_indexes().set(slot_entity, @selene_ui.ZIndex::new(z + 6))
+      @selene_ui.buttons().set(slot_entity, @selene_ui.Button::new())
+      state.slot_buttons.push({ slot_no: slot_index, entity: slot_entity })
 
       match slot_map.get(slot_index) {
         Some(item) => {
           match state.icon_by_item_id.get(item.item_id) {
             Some(icon) =>
-              spawn_ui_sprite(
-                state.render_entities,
-                @sprite.Sprite::from_animation(icon, z + 3),
-                x,
-                y + INVENTORY_ICON_BASELINE_Y,
+              ignore(
+                spawn_image_node(
+                  state.ui_entities,
+                  icon,
+                  x - icon.origin.x,
+                  y + INVENTORY_ICON_BASELINE_Y - icon.origin.y,
+                  z + 3,
+                ),
               )
             None => ()
           }
           if item.count > 1 {
-            let count_text = @sprite.Text::new(
-              item.count.to_string(),
-              color="#0b1f2a",
-              font="11px Menlo",
-              baseline=@selene_math.Top,
-              align=@selene_math.Right,
-            )
-            spawn_ui_sprite(
-              state.render_entities,
-              @sprite.Sprite::from_text(count_text, z + 3),
-              x + SLOT_WIDTH - 2,
-              y + SLOT_HEIGHT - COUNT_TEXT_HEIGHT_PX - COUNT_TEXT_BOTTOM_PADDING,
+            ignore(
+              spawn_text_node(
+                state.ui_entities,
+                item.count.to_string(),
+                x + SLOT_WIDTH - 2 - 34,
+                y +
+                SLOT_HEIGHT -
+                COUNT_TEXT_HEIGHT_PX -
+                COUNT_TEXT_BOTTOM_PADDING,
+                z + 4,
+                34,
+                COUNT_TEXT_HEIGHT_PX + 2,
+                align=@selene_math.Right,
+              ),
             )
           }
         }
         None => ()
-      }
-
-      // Update persistent slot entity for interaction
-      if i < state.slot_entities.length() {
-        let slot_entity = state.slot_entities[i]
-        @position.positions().set(
-          slot_entity,
-          @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-        )
-        @collision.shapes().set(
-          slot_entity,
-          @collision.CollisionShape::Rect(
-            size=@selene_math.Vec2D(
-              SLOT_WIDTH.to_double(),
-              SLOT_HEIGHT.to_double(),
-            ),
-            offset=@selene_math.Vec2D(0.0, 0.0),
-          ),
-        )
       }
     }
   }
 
   for i in 0..<tabs.length() {
     let (disabled_tab, enabled_tab) = ui_resources.tab_btn_resources[i]
-    let tab_sprite = if i == state.tab_index {
+    let tab_texture = if i == state.tab_index {
       enabled_tab
     } else {
       disabled_tab
     }
-    spawn_ui_sprite(
-      state.render_entities,
-      @sprite.Sprite::from_animation(tab_sprite, z + 3),
-      panel_x,
-      panel_y,
+    let tab_entity = spawn_image_node(
+      state.ui_entities,
+      tab_texture,
+      texture_draw_x(panel_x, tab_texture),
+      texture_draw_y(panel_y, tab_texture),
+      z + 5,
     )
+    @selene_ui.buttons().set(tab_entity, @selene_ui.Button::new())
+    state.tab_buttons.push({ tab_index: i, entity: tab_entity })
   }
 }
 
@@ -593,8 +629,9 @@ fn register_scene_cleanup_once() -> Unit {
       state.ui_resources = None
       state.ui_loading = None
       state.icon_by_item_id.clear()
-      state.icon_loading.clear()
       state.binding_version += 1
+      state.last_clicked_slot = None
+      state.double_click_window = 0.0
     }
     true
   })
@@ -603,40 +640,6 @@ fn register_scene_cleanup_once() -> Unit {
 ///|
 pub fn init_inventory_ui() -> Unit {
   register_scene_cleanup_once()
-  let state = state_ref.val
-  if state.slot_entities.is_empty() {
-    for i in 0..<MAX_VISIBLE_SLOTS {
-      let entity = @entity.Entity::new()
-      state.slot_entities.push(entity)
-      @position.positions().set(
-        entity,
-        @position.Position(@selene_math.Vec2D(0.0, 0.0)),
-      )
-      // We don't set Ui yet to keep it non-interactive until render
-      @collision.shapes().set(
-        entity,
-        @collision.CollisionShape::Rect(
-          size=@selene_math.Vec2D(
-            SLOT_WIDTH.to_double(),
-            SLOT_HEIGHT.to_double(),
-          ),
-          offset=@selene_math.Vec2D(0.0, 0.0),
-        ),
-      )
-      let pickable = @collision.Pickable::new()
-      @collision.pickables().set(entity, pickable)
-      let slot_no = i + 1
-      @event.observe_entity(@collision.pointer_event_bus, entity, fn(trigger) {
-        let event = trigger.event
-        if event.button is @inputs.MouseButton::Left &&
-          event.phase is @collision.PointerPhase::DoubleClicked {
-          let type_id = tabs[state_ref.val.tab_index]
-          @inventory.use_item_at_slot(type_id, slot_no) |> ignore
-        }
-      })
-      |> ignore
-    }
-  }
 }
 
 ///|
@@ -725,6 +728,8 @@ pub fn set_inventory_visible(visible : Bool) -> Unit {
   }
   state.visible = visible
   if not(visible) {
+    state.last_clicked_slot = None
+    state.double_click_window = 0.0
     clear_render(state)
     return
   }
@@ -793,29 +798,81 @@ fn poll_ui_resources(state : State) -> Bool {
 }
 
 ///|
-/// System for rendering and toggling the display-only inventory UI.
-pub fn inventory_ui_system(_delta : Double) -> Unit {
-  let state = state_ref.val
-  let mut dirty = false
-
-  if @inputs.is_just_pressed(@inputs.KeyI) {
-    state.visible = not(state.visible)
-    dirty = true
+fn find_clicked_tab_index(state : State, entity : @entity.Entity) -> Int? {
+  for button in state.tab_buttons {
+    if button.entity == entity {
+      return Some(button.tab_index)
+    }
   }
+  None
+}
 
-  if state.visible && @inputs.is_mouse_just_released(@inputs.MouseButton::Left) {
-    match state.ui_resources {
-      Some(resources) =>
-        match find_clicked_tab(resources, @inputs.mouse.pos) {
-          Some(next_tab) =>
-            if state.tab_index != next_tab {
-              state.tab_index = next_tab
-              dirty = true
+///|
+fn find_clicked_slot(state : State, entity : @entity.Entity) -> Int? {
+  for button in state.slot_buttons {
+    if button.entity == entity {
+      return Some(button.slot_no)
+    }
+  }
+  None
+}
+
+///|
+fn process_click_events(state : State) -> Bool {
+  let mut dirty = false
+  let click_events = @selene_ui.click_event_bus.read(state.click_reader)
+  for event in click_events {
+    guard event.button is @inputs.MouseButton::Left else { continue }
+    match find_clicked_tab_index(state, event.entity) {
+      Some(next_tab) =>
+        if state.tab_index != next_tab {
+          state.tab_index = next_tab
+          state.last_clicked_slot = None
+          state.double_click_window = 0.0
+          dirty = true
+        }
+      None =>
+        match find_clicked_slot(state, event.entity) {
+          Some(slot_no) =>
+            if state.last_clicked_slot is Some(last_slot) &&
+              last_slot == slot_no &&
+              state.double_click_window > 0.0 {
+              state.last_clicked_slot = None
+              state.double_click_window = 0.0
+              let type_id = tabs[state.tab_index]
+              @inventory.use_item_at_slot(type_id, slot_no) |> ignore
+            } else {
+              state.last_clicked_slot = Some(slot_no)
+              state.double_click_window = DOUBLE_CLICK_WINDOW_SECONDS
             }
           None => ()
         }
-      None => ()
     }
+  }
+  dirty
+}
+
+///|
+/// System for rendering and toggling the display-only inventory UI.
+pub fn inventory_ui_system(delta : Double) -> Unit {
+  let state = state_ref.val
+  let mut dirty = false
+
+  if state.double_click_window > 0.0 {
+    state.double_click_window -= delta
+    if state.double_click_window <= 0.0 {
+      state.double_click_window = 0.0
+      state.last_clicked_slot = None
+    }
+  }
+
+  if @inputs.is_just_pressed(@inputs.KeyI) {
+    state.visible = not(state.visible)
+    if not(state.visible) {
+      state.last_clicked_slot = None
+      state.double_click_window = 0.0
+    }
+    dirty = true
   }
 
   if poll_ui_resources(state) {
@@ -827,13 +884,16 @@ pub fn inventory_ui_system(_delta : Double) -> Unit {
   }
 
   if not(state.visible) {
-    if state.render_entities.length() > 0 {
+    if state.ui_entities.length() > 0 {
       clear_render(state)
     }
     return
   }
 
-  if dirty || state.render_entities.is_empty() {
+  if dirty || state.ui_entities.is_empty() {
+    render_inventory(state)
+  }
+  if process_click_events(state) {
     render_inventory(state)
   }
 }

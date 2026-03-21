@@ -89,12 +89,20 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
 priv type Response
 
 ///|
-extern "js" fn Response::text(self : Response) -> String =
+extern "js" fn Response::text(self : Response) -> @js_async.Promise[String] =
   #| (r) => r.text()
 
 ///|
 extern "js" fn Response::content_type(self : Response) -> String =
   #| (r) => r.headers.get('content-type') || ''
+
+///|
+extern "js" fn Response::is_ok(self : Response) -> Bool =
+  #| (r) => r.ok
+
+///|
+extern "js" fn Response::status(self : Response) -> Int =
+  #| (r) => r.status
 
 ///|
 extern "js" fn js_fetch(path : String) -> @js_async.Promise[Response] =
@@ -105,11 +113,16 @@ async fn fetch_json(path : String) -> Json {
   let response = js_fetch(path).wait() catch {
     e => fail("failed to fetch string: \{path}, error=\{e}")
   }
+  if !response.is_ok() {
+    fail("failed to fetch string: \{path}, status=\{response.status()}")
+  }
   let content_type = response.content_type()
   if !content_type.contains("application/json") {
-    fail("expected JSON response, got content-type: \{content_type}")
+    fail(
+      "expected JSON response, got content-type: \{content_type}, path=\{path}",
+    )
   }
-  response.text() |> @json.parse
+  response.text().wait() |> @json.parse
 }
 
 ///|

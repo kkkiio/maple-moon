@@ -6,17 +6,17 @@ using @struct {type Point}
 /// Contains parsed graphical assets for markers and the background canvas.
 pub struct MiniMapUIResource {
   /// Marker for portals.
-  portal_marker : @sprite.Animation
+  portal_marker : @resource.NxTexture
   // Window frame elements for Normal mode
   // minmap_middle_center : @graphics.Animation
-  minmap_middle_left : @sprite.AnimationFrame
-  minmap_middle_right : @sprite.AnimationFrame
-  minmap_up_center : @sprite.AnimationFrame
-  minmap_up_left : @sprite.AnimationFrame
-  minmap_up_right : @sprite.AnimationFrame
-  minmap_down_center : @sprite.AnimationFrame
-  minmap_down_left : @sprite.AnimationFrame
-  minmap_down_right : @sprite.AnimationFrame
+  minmap_middle_left : @resource.NxTexture
+  minmap_middle_right : @resource.NxTexture
+  minmap_up_center : @resource.NxTexture
+  minmap_up_left : @resource.NxTexture
+  minmap_up_right : @resource.NxTexture
+  minmap_down_center : @resource.NxTexture
+  minmap_down_left : @resource.NxTexture
+  minmap_down_right : @resource.NxTexture
 }
 
 ///|
@@ -64,21 +64,18 @@ fn mini_map_ui_resource_from_json(
     let minmap_down_center = nx_mini_map_ui.min_map.s
     let minmap_down_left = nx_mini_map_ui.min_map.sw
     let minmap_down_right = nx_mini_map_ui.min_map.se
-    let portal_marker = @resource.nx_animation_to_selene_animation(
-      map_helper_minimap.portal,
-      loop_=true,
-    )
+    let portal_marker = first_frame_texture(map_helper_minimap.portal)
     {
       portal_marker,
       // minmap_middle_center,
-      minmap_middle_left: nx_texture_to_frame(minmap_middle_left),
-      minmap_middle_right: nx_texture_to_frame(minmap_middle_right),
-      minmap_up_center: nx_texture_to_frame(minmap_up_center),
-      minmap_up_left: nx_texture_to_frame(minmap_up_left),
-      minmap_up_right: nx_texture_to_frame(minmap_up_right),
-      minmap_down_center: nx_texture_to_frame(minmap_down_center),
-      minmap_down_left: nx_texture_to_frame(minmap_down_left),
-      minmap_down_right: nx_texture_to_frame(minmap_down_right),
+      minmap_middle_left,
+      minmap_middle_right,
+      minmap_up_center,
+      minmap_up_left,
+      minmap_up_right,
+      minmap_down_center,
+      minmap_down_left,
+      minmap_down_right,
     }
   } catch {
     e => {
@@ -86,6 +83,16 @@ fn mini_map_ui_resource_from_json(
       panic()
     }
   }
+}
+
+///|
+fn first_frame_texture(
+  animation : @resource.NxAnimation,
+) -> @resource.NxTexture {
+  if animation.frames.is_empty() {
+    panic()
+  }
+  animation.frames[0].texture
 }
 
 ///|
@@ -185,7 +192,7 @@ pub fn MiniMapUI::new(
   resource : MiniMapUIResource,
   ui_model : @ui.UIModel,
 ) -> MiniMapUI {
-  ui_model.position = @struct.Point::new(128, 20)
+  ui_model.position = @struct.Point::new(0, 0)
   ui_model.dimension = @struct.Point::new(0, 0)
   {
     resource,
@@ -207,29 +214,8 @@ pub fn MiniMapUI::set_map(
 ) -> Unit {
   self.region_name = map_name
   self.town_name = street_name
-  for entity in self.entities {
-    entity.destroy()
-  }
-  self.entities.clear()
+  clear_entities(self)
   match self.type_ {
-    // MIN =>
-    //   return {
-    //     render_elements: [
-    //       @ui.RenderElement::Static(
-    //         @ui.StaticUI::new_ex(
-    //           @ui.TextUI(
-    //             @graphics.Text::new(
-    //               @graphics.FontId::A12M,
-    //               @graphics.TextAlignment::LEFT,
-    //               @struct.ColorName::WHITE,
-    //               text=map_info.get_full_name(),
-    //             ),
-    //           ),
-    //           args=@graphics.DrawArgument::new(pos=@struct.Point::new(7, -3)),
-    //         ),
-    //       ),
-    //     ],
-    //   }
     NORMAL => {
       let map_dimensions = mini_map_resources.map_or(Point::default(), fn(it) {
         @struct.Point::new(
@@ -264,32 +250,16 @@ pub fn MiniMapUI::set_map(
         let down_y_offset = 17 + m_stretch
         (20, m_stretch, down_y_offset)
       }
-      // Normal sprites queue
-      // (7, 10) is the top left corner of the inner window
-      // 114 = 128 (width of left and right borders) - 14 (width of middle borders
-      // * 2). 27 = height of inner frame drawn on up and down borders
-      let frames = []
-      // frames.push(
-      //   @graphics.Sprite::new(
-      //     self.resource.minmap_middle_center,
-      //     @graphics.DrawArgument::from_pos_and_stretch(
-      //       Point::new(7, 10),
-      //       Point::new(c_stretch + 114, m_stretch + 27),
-      //     ),
-      //   ),
-      // )
+      let frames : Array[MiniMapFrameDraw] = []
       if mini_map_resources is Some(res) {
-        let canvas_sprite = @sprite.Sprite::from_animation(
-          @resource.nx_animation_to_selene_animation(res.canvas),
-          @graphics.MINI_MAP_ZINDEX_,
-          offset=@selene_math.Vec2D(
-            map_draw_origin_x_.to_double(),
-            map_draw_origin_y_.to_double(),
-          ),
-        )
-        frames.push(canvas_sprite)
+        frames.push({
+          texture: first_frame_texture(res.canvas),
+          x: map_draw_origin_x_,
+          y: map_draw_origin_y_,
+          z: @graphics.MINI_MAP_ZINDEX_,
+        })
       }
-      push_repeated_frame_y(
+      push_repeated_texture_y(
         frames,
         self.resource.minmap_middle_left,
         @graphics.MINI_MAP_ZINDEX_,
@@ -299,7 +269,7 @@ pub fn MiniMapUI::set_map(
       )
       let ur_x_offset = CENTER_START_X_ + c_stretch
       let middle_right_x_ = ur_x_offset + 55
-      push_repeated_frame_y(
+      push_repeated_texture_y(
         frames,
         self.resource.minmap_middle_right,
         @graphics.MINI_MAP_ZINDEX_,
@@ -307,7 +277,7 @@ pub fn MiniMapUI::set_map(
         ML_MR_Y_,
         m_stretch + 1,
       )
-      push_repeated_frame_x(
+      push_repeated_texture_x(
         frames,
         self.resource.minmap_up_center,
         @graphics.MINI_MAP_ZINDEX_,
@@ -315,21 +285,19 @@ pub fn MiniMapUI::set_map(
         0,
         c_stretch + 1,
       )
-      frames.push(
-        @sprite.Sprite::from_animation(
-          @sprite.Animation::new([self.resource.minmap_up_left]),
-          @graphics.MINI_MAP_ZINDEX_,
-          offset=window_ul_pos_,
-        ),
-      )
-      frames.push(
-        @sprite.Sprite::from_animation(
-          @sprite.Animation::new([self.resource.minmap_up_right]),
-          @graphics.MINI_MAP_ZINDEX_,
-          offset=@selene_math.Vec2D(ur_x_offset.to_double(), 0) + window_ul_pos_,
-        ),
-      )
-      push_repeated_frame_x(
+      frames.push({
+        texture: self.resource.minmap_up_left,
+        x: 0,
+        y: 0,
+        z: @graphics.MINI_MAP_ZINDEX_,
+      })
+      frames.push({
+        texture: self.resource.minmap_up_right,
+        x: ur_x_offset,
+        y: 0,
+        z: @graphics.MINI_MAP_ZINDEX_,
+      })
+      push_repeated_texture_x(
         frames,
         self.resource.minmap_down_center,
         @graphics.MINI_MAP_ZINDEX_,
@@ -337,38 +305,36 @@ pub fn MiniMapUI::set_map(
         down_y_offset + 18,
         c_stretch + 1,
       )
-      frames.push(
-        @sprite.Sprite::from_animation(
-          @sprite.Animation::new([self.resource.minmap_down_left]),
-          @graphics.MINI_MAP_ZINDEX_,
-          offset=@selene_math.Vec2D(0, down_y_offset.to_double()),
-        ),
-      )
-      frames.push(
-        @sprite.Sprite::from_animation(
-          @sprite.Animation::new([self.resource.minmap_down_right]),
-          @graphics.MINI_MAP_ZINDEX_,
-          offset=@selene_math.Vec2D(
-            ur_x_offset.to_double(),
-            down_y_offset.to_double(),
-          ),
-        ),
-      )
-      for sprite in frames {
-        spawn_minimap_sprite_entity(
+      frames.push({
+        texture: self.resource.minmap_down_left,
+        x: 0,
+        y: down_y_offset,
+        z: @graphics.MINI_MAP_ZINDEX_,
+      })
+      frames.push({
+        texture: self.resource.minmap_down_right,
+        x: ur_x_offset,
+        y: down_y_offset,
+        z: @graphics.MINI_MAP_ZINDEX_,
+      })
+      for frame in frames {
+        spawn_minimap_texture_entity(
           self.entities,
-          sprite,
+          frame.texture,
           self.ui_model.position,
+          frame.x,
+          frame.y,
+          frame.z,
         )
       }
       let _normal_dimensions = Point::new(ur_x_offset + 64, down_y_offset + 27)
       self.ui_model.dimension = _normal_dimensions
       if mini_map_resources is Some(res) {
-        let portal_marker = self.resource.portal_marker
         let portals = res.portals
-        let marker_sprite = portal_marker
-        let mark_sprite_dim = marker_sprite.frames[0].size
-        let marker_offset = mark_sprite_dim.scalar_div(2)
+        let marker_offset = @selene_math.Vec2D(
+          (self.resource.portal_marker.w / 2).to_double(),
+          (self.resource.portal_marker.h / 2).to_double(),
+        )
         let marker_pos_offset = @selene_math.Vec2D(0, 65)
         for portal in portals {
           match portal.pt {
@@ -387,55 +353,21 @@ pub fn MiniMapUI::set_map(
                   map_draw_origin_x_.to_double(),
                   map_draw_origin_y_.to_double(),
                 )
-              let sprite = @sprite.Sprite::from_animation(
-                portal_marker,
-                @graphics.MINI_MAP_ZINDEX_ + 1,
-                offset=marker_pos,
-              )
-              spawn_minimap_sprite_entity(
+              spawn_minimap_texture_entity(
                 self.entities,
-                sprite,
+                self.resource.portal_marker,
                 self.ui_model.position,
+                marker_pos[@selene_math.X].to_int(),
+                marker_pos[@selene_math.Y].to_int(),
+                @graphics.MINI_MAP_ZINDEX_ + 1,
               )
             }
             _ => ()
           }
         }
-        //         draw_movable_markers(position_, alpha);
-
-        //         if (list_npc_enabled_) {
-        //             draw_npclist(normal_dimensions_, alpha);
-        //         }
       }
     }
   }
-
-  // } else {
-  //     for (const auto &sprite : max_sprites_) {
-  //         sprite.draw(position_, alpha);
-  //     }
-
-  //     region_text_.draw(position_ + Point<int16_t>(48, 14));
-  //     town_text_.draw(position_ + Point<int16_t>(48, 28));
-
-  //     if (has_map_) {
-  //         Animation portal_marker(marker_["portal"]);
-
-  //         for (const auto &sprite : static_marker_info_) {
-  //             portal_marker.draw(
-  //                 position_ + sprite.second + Point<int16_t>(0, MAX_ADJ_),
-  //                 alpha);
-  //         }
-
-  //         draw_movable_markers(position_ + Point<int16_t>(0, MAX_ADJ_),
-  //                              alpha);
-
-  //         if (list_npc_enabled_) {
-  //             draw_npclist(max_dimensions_, alpha);
-  //         }
-  //     }
-  // }
-
 }
 
 ///|
@@ -463,94 +395,88 @@ const ML_MR_Y_ = 17
 // const LISTNPC_TEXT_WIDTH_ = 114
 
 ///|
-let window_ul_pos_ : @selene_math.Vec2D = @selene_math.Vec2D(0, 0)
-
-///|
-fn nx_texture_to_frame(
-  nx_texture : @resource.NxTexture,
-) -> @sprite.AnimationFrame {
-  @sprite.AnimationFrame::{
-    image: @asset.load_image(nx_texture.i),
-    size: @selene_math.Vec2D(nx_texture.w.to_double(), nx_texture.h.to_double()),
-    offset: @selene_math.Vec2D(
-      nx_texture.offset.x.to_double(),
-      nx_texture.offset.y.to_double(),
-    ),
-    pivot: @selene_math.Vec2D(
-      nx_texture.origin.x.to_double(),
-      nx_texture.origin.y.to_double(),
-    ),
-    duration: 0.0,
-  }
+priv struct MiniMapFrameDraw {
+  texture : @resource.NxTexture
+  x : Int
+  y : Int
+  z : Int
 }
 
 ///|
-fn spawn_minimap_sprite_entity(
+fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+  @selene_ui.UiImage::new(
+    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    texture.i,
+  )
+}
+
+///|
+fn ui_image_region_from_texture(
+  texture : @resource.NxTexture,
+) -> @selene_ui.UiImageRegion {
+  @selene_ui.UiImageRegion::new({
+    position: @selene_math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  })
+}
+
+///|
+fn spawn_minimap_texture_entity(
   entities : Array[@entity.Entity],
-  sprite : @sprite.Sprite,
+  texture : @resource.NxTexture,
   ui_pos : @struct.Point[Int],
+  local_x : Int,
+  local_y : Int,
+  z : Int,
 ) -> Unit {
   let entity = @entity.Entity::new()
-  @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
+  @selene_ui.nodes().set(
     entity,
-    @position.Position(
-      @selene_math.Vec2D(ui_pos.x.to_double(), ui_pos.y.to_double()),
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(
+        (ui_pos.x + local_x - texture.origin.x).to_double(),
+        (ui_pos.y + local_y - texture.origin.y).to_double(),
+      ),
+      size=@selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
+  @selene_ui.ui_image_regions().set(
+    entity,
+    ui_image_region_from_texture(texture),
   )
   entities.push(entity)
 }
 
 ///|
-fn sync_minimap_entity_positions(ui : MiniMapUI) -> Unit {
-  let ui_pos = ui.ui_model.position
-  for entity in ui.entities {
-    @position.positions().set(
-      entity,
-      @position.Position(
-        @selene_math.Vec2D(ui_pos.x.to_double(), ui_pos.y.to_double()),
-      ),
-    )
-  }
-}
-
-///|
-fn push_repeated_frame_x(
-  frames : Array[@sprite.Sprite],
-  frame : @sprite.AnimationFrame,
+fn push_repeated_texture_x(
+  frames : Array[MiniMapFrameDraw],
+  texture : @resource.NxTexture,
   z : Int,
   start_x : Int,
   y : Int,
   count : Int,
 ) -> Unit {
   for i in 0..<count {
-    frames.push(
-      @sprite.Sprite::from_animation(
-        @sprite.Animation::new([frame]),
-        z,
-        offset=@selene_math.Vec2D((start_x + i).to_double(), y.to_double()),
-      ),
-    )
+    frames.push({ texture, x: start_x + i, y, z })
   }
 }
 
 ///|
-fn push_repeated_frame_y(
-  frames : Array[@sprite.Sprite],
-  frame : @sprite.AnimationFrame,
+fn push_repeated_texture_y(
+  frames : Array[MiniMapFrameDraw],
+  texture : @resource.NxTexture,
   z : Int,
   x : Int,
   start_y : Int,
   count : Int,
 ) -> Unit {
   for i in 0..<count {
-    frames.push(
-      @sprite.Sprite::from_animation(
-        @sprite.Animation::new([frame]),
-        z,
-        offset=@selene_math.Vec2D(x.to_double(), (start_y + i).to_double()),
-      ),
-    )
+    frames.push({ texture, x, y: start_y + i, z })
   }
 }
 
@@ -639,8 +565,6 @@ fn ensure_mini_map_ui_state() -> MiniMapUIState {
 ///|
 fn clear_entities(ui : MiniMapUI) -> Unit {
   for entity in ui.entities {
-    @sprite.sprites().remove(entity) |> ignore
-    @position.positions().remove(entity) |> ignore
     entity.destroy()
   }
   ui.entities.clear()
@@ -696,5 +620,4 @@ pub fn mini_map_ui_system(_delta : Double) -> Unit {
     ui.set_map(map_id, map_name, street_name, mini_map_res)
     pending_map.val = None
   }
-  sync_minimap_entity_positions(ui)
 }

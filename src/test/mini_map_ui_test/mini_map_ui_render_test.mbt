@@ -68,7 +68,7 @@ fn setup_mini_map_ui_scene_with_data(
 }
 
 ///|
-test "mini map ui renders normal frame" {
+async test "mini map ui renders normal frame" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   setup_mini_map_ui_scene_with_data(
@@ -129,7 +129,7 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
 }
 
 ///|
-test "mini map ui renders portal marker from real map 100030000" {
+async test "mini map ui renders portal marker from real map 100030000" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   setup_mini_map_ui_scene_with_data(

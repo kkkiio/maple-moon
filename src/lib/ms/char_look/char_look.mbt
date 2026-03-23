@@ -460,24 +460,6 @@ pub fn CharLook::set_stance(self : CharLook, st : StanceId) -> Unit {
 }
 
 ///|
-fn CharLook::change_body(self : CharLook, body : FullBody) -> CharLook {
-  { ..self, full_body: body }
-}
-
-///|
-fn CharLook::change_hair(self : CharLook, hair : Hair) -> CharLook {
-  { ..self, hair, }
-}
-
-///|
-fn CharLook::change_face(self : CharLook, face : Face) -> CharLook {
-  { ..self, face, }
-}
-
-///|
-let default_stance : StanceId = StanceId::STAND1
-
-///|
 // pub fn CharLook::update(self : CharLook, timestep : Int) -> Bool {
 // if timestep == 0 {
 //   self.stance.normalize()

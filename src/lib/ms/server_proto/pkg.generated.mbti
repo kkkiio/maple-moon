@@ -496,6 +496,16 @@ pub impl Show for PlayerQuestLogInfo
 pub impl ToJson for PlayerQuestLogInfo
 pub impl @json.FromJson for PlayerQuestLogInfo
 
+pub(all) enum QuestActionMessage {
+  StartQuest(quest_id~ : Int, npc_id~ : Int)
+  CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
+  ForfeitQuest(quest_id~ : Int)
+}
+pub impl ClientMessage for QuestActionMessage
+pub impl Show for QuestActionMessage
+pub impl ToJson for QuestActionMessage
+pub impl @json.FromJson for QuestActionMessage
+
 pub(all) enum QuestFailureOperation {
   NoMeso
   WornByCharacter

@@ -34,6 +34,21 @@ pub impl ServerMessage for UpdateQuestInfoMessage with type_code() {
 }
 
 ///|
+pub(all) enum QuestActionMessage {
+  /// Start one quest from NPC dialogue.
+  StartQuest(quest_id~ : Int, npc_id~ : Int)
+  /// Complete one quest from NPC dialogue.
+  CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
+  /// Forfeit one in-progress quest.
+  ForfeitQuest(quest_id~ : Int)
+} derive(Show, ToJson, @json.FromJson)
+
+///|
+pub impl ClientMessage for QuestActionMessage with type_code() {
+  ClientOpcode::QUEST_ACTION.int_value()
+}
+
+///|
 /// Local-server SHOW_STATUS_INFO (quest exp gain) sync event.
 pub(all) struct ShowStatusExpGainMessage {
   /// Whether gain popup uses white style.

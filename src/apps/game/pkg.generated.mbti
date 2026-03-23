@@ -2,6 +2,8 @@
 package "KKKIIO/maple-moon/apps/game"
 
 // Values
+pub fn app_resource_setup_system(Double) -> Unit
+
 pub fn install_builtin_resource_loaders() -> Unit
 
 // Errors

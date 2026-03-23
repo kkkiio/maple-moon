@@ -2,53 +2,38 @@
 package "KKKIIO/maple-moon/lib/ms/quest"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/npc",
-  "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/ms/player",
-  "KKKIIO/maple-moon/lib/ms/res_types",
-  "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/ui",
-  "Milky2018/selene/entity",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn bind_player(@player.Player) -> Unit
-
-pub fn build_quest_talk_args(Int, Int) -> @npc.TalkArgs?
-
-pub fn build_talk_args_for_quest(NpcQuest, Array[QuestPhaseSays], (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
-
 pub fn clear_active_module() -> Unit
 
-pub fn get_demo_quest_selection() -> DemoQuestSelection?
+pub async fn load_quest_resource() -> (QuestResource, Json)
 
-pub fn handle_player_quest_info(@server_proto.PlayerQuestLogInfo) -> Unit
-
-pub fn next_talk(QuestPhaseSays, TalkState, Bool?) -> QuestTalk?
-
-pub fn query_npc_icon(Int) -> QuestIconQueryResult?
-
-pub fn quest_icon_query_revision() -> Int
-
-pub fn refresh_quest(Int) -> Unit
-
-pub fn select_demo_quest_by_npcs(Array[Int]) -> DemoQuestSelection?
+pub fn quest_log_revision() -> Int
 
 pub fn set_active_module(Module) -> Unit
-
-pub fn setup_game_server_handlers() -> Unit
 
 // Errors
 
 // Types and methods
-pub enum Action {
-  StartQuest
-  CompleteQuest
+pub(all) struct CheckContext {
+  log : PlayerQuestLog
+  item_count_provider : (Int) -> Int
+  char_stats_provider : () -> @char_stats.CharStats
+  quest_id : Int
+  phase : Int
 }
-pub impl Show for Action
+
+pub(all) struct CompletedQuest {
+  quest_id : Int
+  quest_info : NxQuestInfo
+  completion_time : Int64
+}
+pub impl Show for CompletedQuest
 
 pub(all) struct DemoQuestSelection {
   quest_id : Int
@@ -57,112 +42,150 @@ pub(all) struct DemoQuestSelection {
 }
 pub impl Show for DemoQuestSelection
 
-pub enum ExpectResponse {
-  NEXT(() -> QuestTalk?)
-  YES_NO((Bool) -> (QuestTalk?, Action?))
-  OK(() -> Action?)
-  SELECT((Int) -> QuestTalk?)
+pub(all) struct InProgressQuest {
+  quest_id : Int
+  quest_info : NxQuestInfo
+  checks : Array[NxQuestPhaseChecks]
+  acts : Array[NxQuestPhaseAct]
+  mut progress_data : String
+  mut phase : Int
+  info_number_progress_map : Map[Int, String]
 }
+pub fn InProgressQuest::get_phase_progress(Self, Int) -> String
+pub impl Show for InProgressQuest
 
-type MapQuests
-pub fn MapQuests::add_npc(Self, Int, @entity.Entity, @physics.MovingObject) -> Unit
-pub fn MapQuests::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
-pub fn MapQuests::clear(Self) -> Unit
-pub fn MapQuests::query_npc_icon(Self, Int) -> QuestIconQueryResult?
-pub fn MapQuests::remove_npc(Self, Int) -> Unit
-pub fn MapQuests::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
-pub fn MapQuests::set_player(Self, @player.Player) -> Unit
-pub fn MapQuests::update_quest(Self, Int) -> Unit
-
-type MapQuestsResource
-pub async fn MapQuestsResource::load() -> Self
-pub fn MapQuestsResource::new(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
+type InfoExCheck
+pub impl QuestCheck for InfoExCheck
+pub impl Show for InfoExCheck
 
 type Module
-pub fn Module::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
-pub fn Module::get_map_quests(Self) -> MapQuests
-pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
 pub async fn Module::load(@inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::new(QuestResource, MapQuestsResource, @inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::new_with_raw_checks(QuestResource, Json, MapQuestsResource, @inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
+pub fn Module::new(QuestResource) -> Self
+pub fn Module::new_with_raw_checks(QuestResource, Json) -> Self
 
-pub(all) struct NpcQuest {
-  npc_id : Int
-  icon_state : QuestIconState
-  icon : @resource.NxAnimation
-  icon_offset : @res_types.Point[Int]
-  icon_size : @res_types.Point[Int]
-  quest_id : Int
-  in_progress_quest : (Int, Bool)?
+type MonHuntCheck
+pub impl Show for MonHuntCheck
+pub impl @json.FromJson for MonHuntCheck
+
+pub(all) struct NxHint {
+  says : Array[String]
+  answer : Int
 }
+pub impl Default for NxHint
+pub impl Show for NxHint
 
-pub(all) struct QuestIconQueryResult {
-  npc_id : Int
-  quest_id : Int
-  state : QuestIconState
+pub(all) struct NxHints {
+  base : Array[NxHint]
+  item : Array[String]
+  npc : Array[String]
 }
+pub impl Show for NxHints
 
-pub(all) enum QuestIconState {
-  AVAILABLE
-  IN_PROGRESS
-  COMPLETED
+pub(all) struct NxLost {
+  says : Array[String]
+  yes_reply : Array[String]
 }
-pub impl Eq for QuestIconState
-pub impl Show for QuestIconState
-pub impl ToJson for QuestIconState
-pub impl @json.FromJson for QuestIconState
+pub impl Show for NxLost
 
-type QuestInfo
-pub impl Show for QuestInfo
-
-type QuestPhaseAct
-pub impl Default for QuestPhaseAct
-pub impl Show for QuestPhaseAct
-pub impl @json.FromJson for QuestPhaseAct
-
-type QuestPhaseChecks
-pub impl Default for QuestPhaseChecks
-pub impl Show for QuestPhaseChecks
-
-type QuestPhaseSays
-pub impl Default for QuestPhaseSays
-pub impl Show for QuestPhaseSays
-pub impl @json.FromJson for QuestPhaseSays
-
-pub struct QuestResource {
-  quest_info_map : Map[Int, QuestInfo]
-  quest_checks_map : Map[Int, Array[QuestPhaseChecks]]
-  quest_say_map : Map[Int, Array[QuestPhaseSays]]
-  quest_acts_map : Map[Int, Array[QuestPhaseAct]]
+pub(all) struct NxQuestInfo {
+  name : String
+  parent : String?
+  area : Int
+  order : Int?
+  auto_complete : Bool
+  auto_start : Bool
+  one_shot : Bool
+  descriptions : Array[String]
 }
-pub impl @json.FromJson for QuestResource
+pub impl Show for NxQuestInfo
+pub impl @json.FromJson for NxQuestInfo
 
-pub(all) enum QuestStatus {
+type NxQuestPhaseAct
+pub impl Default for NxQuestPhaseAct
+pub impl Show for NxQuestPhaseAct
+pub impl @json.FromJson for NxQuestPhaseAct
+
+pub(all) struct NxQuestPhaseChecks {
+  npc : Int?
+  info_number : Int?
+  repeatable : Bool
+  monster_hunts : Array[MonHuntCheck]
+  checks : Array[&QuestCheck]
+  unknown_checks : Array[String]
+}
+pub impl Default for NxQuestPhaseChecks
+pub impl Show for NxQuestPhaseChecks
+
+pub(all) struct NxQuestPhaseSays {
+  says : Array[String]
+  ask : Bool
+  yes_reply : Array[String]
+  no_reply : Array[String]
+  stop : NxHints?
+  restore_lost : NxLost?
+}
+pub impl Default for NxQuestPhaseSays
+pub impl Show for NxQuestPhaseSays
+pub impl @json.FromJson for NxQuestPhaseSays
+
+pub(all) enum NxQuestStatus {
   NotStarted
   InProgress
   Completed
 }
-pub fn QuestStatus::from_int(Int) -> Self?
-pub fn QuestStatus::int_value(Self) -> Unit
-pub impl Eq for QuestStatus
-pub impl Hash for QuestStatus
-pub impl Show for QuestStatus
+pub fn NxQuestStatus::from_int(Int) -> Self?
+pub fn NxQuestStatus::int_value(Self) -> Unit
+pub impl Eq for NxQuestStatus
+pub impl Hash for NxQuestStatus
+pub impl Show for NxQuestStatus
 
-pub struct QuestTalk {
-  content : String
-  expect_response : ExpectResponse
+pub(all) struct PlayerQuestLog {
+  in_progress : Map[Int, InProgressQuest]
+  completed : Map[Int, CompletedQuest]
 }
+pub fn PlayerQuestLog::get_quest(Self, Int) -> StartedQuest?
+pub impl Default for PlayerQuestLog
+pub impl Show for PlayerQuestLog
 
-pub(all) enum TalkState {
-  Narrative(next~ : Int)
-  YesReply(next~ : Int)
-  NoReply(next~ : Int)
-  Ask(next~ : Int, expect_answer~ : Int, error_replys~ : Array[String], answer~ : Int)
+pub(all) struct QuestLogCompletedRaw {
+  quest_id : Int
+  name : String
+  completion_time : Int64
 }
-pub impl Show for TalkState
+pub impl Show for QuestLogCompletedRaw
+
+pub(all) struct QuestLogInProgressRaw {
+  quest_id : Int
+  name : String
+  progress_data : String
+  phase : Int
+}
+pub impl Show for QuestLogInProgressRaw
+
+pub(all) struct QuestLogSnapshotRaw {
+  in_progress : Array[QuestLogInProgressRaw]
+  completed : Array[QuestLogCompletedRaw]
+}
+pub impl Show for QuestLogSnapshotRaw
+
+pub struct QuestResource {
+  quest_info_map : Map[Int, NxQuestInfo]
+  quest_checks_map : Map[Int, Array[NxQuestPhaseChecks]]
+  quest_say_map : Map[Int, Array[NxQuestPhaseSays]]
+  quest_acts_map : Map[Int, Array[NxQuestPhaseAct]]
+}
+pub impl @json.FromJson for QuestResource
+
+pub enum StartedQuest {
+  InProgress(InProgressQuest)
+  Completed(CompletedQuest)
+}
+pub impl Show for StartedQuest
 
 // Type aliases
 
 // Traits
+pub trait QuestCheck : Show {
+  check(Self, CheckContext) -> Result[Unit, String]
+}
 

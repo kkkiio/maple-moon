@@ -1,4 +1,7 @@
 ///|
+using @quest {type PlayerQuestLog}
+
+///|
 /// Display quest status icons above NPCs.
 ///
 /// Shows quest availability/completion icons above NPCs and enables quest
@@ -196,43 +199,36 @@ fn MapQuests::query_npc_quest(self : MapQuests, npc_id : Int) -> NpcQuest? {
     return None
   }
 
-  let quest_ids = list_quests_by_npc(self.npc_quests_map, npc_id)
-
-  let mut selected : NpcQuest? = None
-  for quest_id in quest_ids {
-    let stated_quest = player_quest_log.get_quest(quest_id)
-    match stated_quest {
-      Some(InProgress(quest)) => {
-        if quest.checks.get(quest.phase) is Some(check) {
-          match
-            check_quest_requirements(
-              check,
-              item_count_provider,
-              char_stats_provider,
-              player_quest_log,
-              quest_id,
-              quest.phase,
-            ) {
-            Ok(_) => {
-              selected = Some(
-                NpcQuest::new(
-                  quest_id,
-                  Some((quest.phase, true)),
-                  npc_id,
-                  QuestIconState::COMPLETED,
-                  self.resource.completed_quest_icon,
-                ),
-              )
-              break
-            }
-            Err(err) =>
-              @log.debug("quest completion check failed", data={
-                "quest_id": quest_id,
-                "error": err,
-              })
-          }
-        }
-        selected = Some(
+  for quest_id, quest in player_quest_log.in_progress {
+    guard quest.checks.get(quest.phase) is Some(check) else { continue }
+    if check.npc != Some(npc_id) {
+      continue
+    }
+    match
+      check_quest_requirements(
+        check,
+        item_count_provider,
+        char_stats_provider,
+        player_quest_log,
+        quest_id,
+        quest.phase,
+      ) {
+      Ok(_) =>
+        return Some(
+          NpcQuest::new(
+            quest_id,
+            Some((quest.phase, true)),
+            npc_id,
+            QuestIconState::COMPLETED,
+            self.resource.completed_quest_icon,
+          ),
+        )
+      Err(err) => {
+        @log.debug("quest completion check failed", data={
+          "quest_id": quest_id,
+          "error": err,
+        })
+        return Some(
           NpcQuest::new(
             quest_id,
             Some((quest.phase, false)),
@@ -241,33 +237,30 @@ fn MapQuests::query_npc_quest(self : MapQuests, npc_id : Int) -> NpcQuest? {
             self.resource.inprogress_quest_icon,
           ),
         )
-        break
       }
-      _ => ()
     }
   }
 
-  if selected is None {
-    if filter_acceptable_quests(
-        quest_ids.iter(),
-        self.quests_resource,
-        item_count_provider,
-        char_stats_provider,
-        player_quest_log,
-      ).next()
-      is Some((quest_id, _)) {
-      selected = Some(
-        NpcQuest::new(
-          quest_id,
-          None,
-          npc_id,
-          QuestIconState::AVAILABLE,
-          self.resource.available_quest_icon,
-        ),
-      )
-    }
+  let quest_ids = list_quests_by_npc(self.npc_quests_map, npc_id)
+  if filter_acceptable_quests(
+      quest_ids.iter(),
+      self.quests_resource,
+      item_count_provider,
+      char_stats_provider,
+      player_quest_log,
+    ).next()
+    is Some((quest_id, _)) {
+    return Some(
+      NpcQuest::new(
+        quest_id,
+        None,
+        npc_id,
+        QuestIconState::AVAILABLE,
+        self.resource.available_quest_icon,
+      ),
+    )
   }
-  selected
+  None
 }
 
 ///|
@@ -395,9 +388,6 @@ fn NpcQuest::inrange(
 }
 
 ///|
-const QUEST_ICON_ZINDEX_OFFSET = 5000
-
-///|
 fn spawn_icon_runtime(
   quest : NpcQuest,
   npc_entity : @entity.Entity,
@@ -421,23 +411,4 @@ fn spawn_icon_runtime(
     ),
   )
   { npc_entity, npc_object, icon_entity, quest }
-}
-
-///|
-fn destroy_icon_entity(icon_entity : @entity.Entity) -> Unit {
-  @sprite.sprites().remove(icon_entity)
-  icon_entity.destroy()
-}
-
-///|
-fn nx_animation_dimensions(
-  animation : @resource.NxAnimation,
-) -> @struct.Point[Int] {
-  let mut width = 0
-  let mut height = 0
-  for frame in animation.frames {
-    width = @cmp.maximum(width, frame.texture.w)
-    height = @cmp.maximum(height, frame.texture.h)
-  }
-  @struct.Point::new(width, height)
 }

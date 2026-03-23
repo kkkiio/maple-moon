@@ -143,9 +143,6 @@ pub impl Compare for Level
 pub impl Eq for Level
 pub impl Hash for Level
 
-type Module
-pub fn Module::new((Int) -> Unit) -> Self
-
 // Type aliases
 
 // Traits

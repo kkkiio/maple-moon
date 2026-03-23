@@ -1,7 +1,10 @@
 ///|
+using @quest {type NxQuestPhaseSays}
+
+///|
 fn talk_about_quest(
   npc_quest : NpcQuest,
-  quest_says : Array[QuestPhaseSays],
+  quest_says : Array[NxQuestPhaseSays],
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Unit {
   if build_talk_args_for_quest(npc_quest, quest_says, open_npc_talk_ui)
@@ -13,7 +16,7 @@ fn talk_about_quest(
 ///|
 pub fn build_talk_args_for_quest(
   npc_quest : NpcQuest,
-  quest_says : Array[QuestPhaseSays],
+  quest_says : Array[NxQuestPhaseSays],
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> @npc.TalkArgs? {
   let phase = npc_quest.in_progress_quest.map_or(0, fn(it) { it.0 })
@@ -69,7 +72,7 @@ pub(all) enum TalkState {
 
 ///|
 pub fn next_talk(
-  says : QuestPhaseSays,
+  says : NxQuestPhaseSays,
   state : TalkState,
   quest_met : Bool?,
 ) -> QuestTalk? {
@@ -260,23 +263,22 @@ fn bind_io(
 }
 
 ///|
-fn execute_action(_action : Action, _npc_quest : NpcQuest) -> Unit {
-  ...
-  // match action {
-  //   StartQuest =>
-  //     network.send_message(
-  //       QuestActionMessage::StartQuest(
-  //         quest_id=npc_quest.quest_id,
-  //         npc_id=npc_quest.npc_id,
-  //       ),
-  //     )
-  //   CompleteQuest =>
-  //     network.send_message(
-  //       QuestActionMessage::CompleteQuest(
-  //         quest_id=npc_quest.quest_id,
-  //         npc_id=npc_quest.npc_id,
-  //         selection=None, // TODO: what selection should be sent?
-  //       ),
-  //     )
-  // }
+fn execute_action(action : Action, npc_quest : NpcQuest) -> Unit {
+  match action {
+    StartQuest =>
+      @game_server.send(
+        @server_proto.QuestActionMessage::StartQuest(
+          quest_id=npc_quest.quest_id,
+          npc_id=npc_quest.npc_id,
+        ),
+      )
+    CompleteQuest =>
+      @game_server.send(
+        @server_proto.QuestActionMessage::CompleteQuest(
+          quest_id=npc_quest.quest_id,
+          npc_id=npc_quest.npc_id,
+          selection=None,
+        ),
+      )
+  }
 }

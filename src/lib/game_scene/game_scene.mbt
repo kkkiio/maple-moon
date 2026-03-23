@@ -185,6 +185,7 @@ pub fn get_stage() -> Stage? {
 ///|
 pub fn scene_transition_system(_delta : Double) -> Unit {
   match @game_state.game_state.phase {
+    GameSetup(..) => ()
     SelectCharacter | ExplorerCharacterCreation => {
       stage_ref.val = None
       @bgm.clear_bgm()
@@ -302,13 +303,9 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             }
             let npc_loader = @resource.get_npc_loader()
             let string_loader = @resource.get_string_loader()
-            let quest_module = @quest.Module::load(
-              @inventory.inventory.val,
-              @npc_talk_ui.open_npc_talk_ui,
-            )
             (
               weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
-              string_loader, quest_module,
+              string_loader,
             )
           }),
         )
@@ -328,7 +325,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         face,
         npc_loader,
         string_loader,
-        quest_module,
       ) = match res {
         Ok(data) => data
         Err(e) => {
@@ -381,16 +377,15 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         Some(_) => ()
         None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
       }
-      @quest.set_active_module(quest_module)
       @item_use_events.clear_intents()
       match @player.get_player() {
         Some(player) => {
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
-          @quest.bind_player(player)
+          @quest_icon.bind_player(player)
         }
         None => ()
       }
-      @quest.handle_player_quest_info(quests)
+      @quest_log.handle_player_quest_info(quests)
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       let global_inv = @inventory.inventory.val

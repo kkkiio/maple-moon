@@ -5,6 +5,7 @@ pub(all) struct GameState {
 
 ///|
 pub(all) enum GamePhase {
+  GameSetup(mut loading~ : @utils.Future[Result[Unit, Error]]?)
   SelectCharacter
   ExplorerCharacterCreation
   GameStart(
@@ -21,4 +22,4 @@ pub(all) enum GamePhase {
 }
 
 ///|
-pub let game_state : GameState = { phase: GamePhase::SelectCharacter }
+pub let game_state : GameState = { phase: GamePhase::GameSetup(loading=None) }

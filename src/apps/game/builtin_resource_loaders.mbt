@@ -1,3 +1,4 @@
+///|
 /// 定义一些内置的资源的加载器.
 /// 
 /// 部分资源还保存在 r2:maple 存储里, 旧域名是 maple-res.kkkiiox.work.
@@ -6,29 +7,7 @@
 /// 对于从 r2 迁移的资源, 它们引用的子资源路径往往是相对于旧域名根目录的.
 /// 例如: 资源中引用 `"images/Map/29108.png"`, 而本地实际存储在 `"assets/images/Map/29108.png"`.
 /// 为了兼容这种情况, `@resource.AsyncLoader` 提供了 `base_url` 和 `image_base_url` 选项来修正路径解析.
-
-///|
-/// Lazy initialization.
-priv struct Lazy[T] {
-  mut val : T?
-  init_f : () -> T
-}
-
-///|
-fn[T] Lazy::new(init_f : () -> T) -> Lazy[T] {
-  { val: None, init_f }
-}
-
-///|
-/// get value or init.
-fn[T] Lazy::get(self : Lazy[T]) -> T {
-  if self.val is Some(val) {
-    return val
-  }
-  let val = (self.init_f)()
-  self.val = Some(val)
-  val
-}
+using @lazy {type Lazy}
 
 ///|
 priv struct FetchCsvTextLoader {

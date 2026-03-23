@@ -10,7 +10,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/npc",
-  "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
@@ -29,7 +28,7 @@ pub fn find_equipped_item_id(Array[@server_proto.InventoryItemEntry], @slot.Id) 
 
 pub fn get_active_scene_map() -> @map.SceneMap?
 
-pub fn get_loading_data() -> @utils.Future[Result[(@item.ItemData?, @item.ItemData?, @item.ItemData?, @item.ItemData?, @char_look.Hair, @char_look.Face, @resource.AsyncLoader, @resource.AsyncLoader, @quest.Module), Error]]?
+pub fn get_loading_data() -> @utils.Future[Result[(@item.ItemData?, @item.ItemData?, @item.ItemData?, @item.ItemData?, @char_look.Hair, @char_look.Face, @resource.AsyncLoader, @resource.AsyncLoader), Error]]?
 
 pub fn get_stage() -> Stage?
 
@@ -43,7 +42,7 @@ pub fn scene_transition_system(Double) -> Unit
 
 pub fn set_active_scene_map(@map.SceneMap) -> Unit
 
-pub fn set_loading_data(@utils.Future[Result[(@item.ItemData?, @item.ItemData?, @item.ItemData?, @item.ItemData?, @char_look.Hair, @char_look.Face, @resource.AsyncLoader, @resource.AsyncLoader, @quest.Module), Error]]) -> Unit
+pub fn set_loading_data(@utils.Future[Result[(@item.ItemData?, @item.ItemData?, @item.ItemData?, @item.ItemData?, @char_look.Hair, @char_look.Face, @resource.AsyncLoader, @resource.AsyncLoader), Error]]) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 

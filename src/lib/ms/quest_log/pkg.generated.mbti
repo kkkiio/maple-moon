@@ -1,0 +1,84 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/quest_log"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/quest",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn apply_forfeit_quest(Int) -> Result[Unit, String]
+
+pub fn forfeit(Int) -> Result[Unit, String]
+
+pub fn get_snapshot() -> QuestLogSnapshot
+
+pub fn handle_player_quest_info(@server_proto.PlayerQuestLogInfo) -> Unit
+
+pub fn quest_log_revision() -> Int
+
+pub fn revision() -> Int
+
+pub fn setup(@quest.QuestResource) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+type Module
+pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
+
+pub(all) struct QuestLogCompletedRaw {
+  quest_id : Int
+  name : String
+  completion_time : Int64
+}
+pub impl Show for QuestLogCompletedRaw
+
+pub(all) struct QuestLogEntryCompleted {
+  quest_id : Int
+  name : String
+  completion_time : Int64
+}
+pub impl Show for QuestLogEntryCompleted
+pub impl ToJson for QuestLogEntryCompleted
+pub impl @json.FromJson for QuestLogEntryCompleted
+
+pub(all) struct QuestLogEntryInProgress {
+  quest_id : Int
+  name : String
+  progress_data : String
+  phase : Int
+}
+pub impl Show for QuestLogEntryInProgress
+pub impl ToJson for QuestLogEntryInProgress
+pub impl @json.FromJson for QuestLogEntryInProgress
+
+pub(all) struct QuestLogInProgressRaw {
+  quest_id : Int
+  name : String
+  progress_data : String
+  phase : Int
+}
+pub impl Show for QuestLogInProgressRaw
+
+pub(all) struct QuestLogSnapshot {
+  in_progress : Array[QuestLogEntryInProgress]
+  completed : Array[QuestLogEntryCompleted]
+}
+pub impl Show for QuestLogSnapshot
+pub impl ToJson for QuestLogSnapshot
+pub impl @json.FromJson for QuestLogSnapshot
+
+pub(all) struct QuestLogSnapshotRaw {
+  in_progress : Array[QuestLogInProgressRaw]
+  completed : Array[QuestLogCompletedRaw]
+}
+pub impl Show for QuestLogSnapshotRaw
+
+// Type aliases
+
+// Traits
+

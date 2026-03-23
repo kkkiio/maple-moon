@@ -18,7 +18,7 @@
 
 #### `$snapshot-test`
 
-添加/修改了 UI, 画面元素后, 必须使用.
+使用该 skill 写测试.
 
 ### Package README
 
@@ -66,6 +66,9 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 - `src/lib/ms`: 游戏模块源码.
 - `src/test/`: 集成测试用例.
 - `assets/`: 资源文件.
+- `.env.test`: 测试环境配置文件. 包含 API Key 等敏感信息.
+- `src/lib/local_server/`: 本地服务器实现.
+- `src/lib/ms/server_proto/`: 客户端与(本地)服务器通信的协议定义.
 
 ### Agents Core Runtime Guidelines
 

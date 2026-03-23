@@ -32,9 +32,9 @@ fn LocalServer::get_shop_by_npc_id(
 ///|
 fn LocalServer::load_npc_shop_database(self : LocalServer) -> Unit {
   @io_service.execute_background(async fn() {
-    let csv_loader = @resource.get_csv_loader()
-    let by_npc_id = @shop_sheet.load_npc_shop_map(csv_loader)
+    let tsv_loader = @resource.get_csv_loader()
+    let by_npc_id = @shop_sheet.load_npc_shop_map(tsv_loader)
     self.npc_shop_db = Some(NpcShopDatabase::from_map(by_npc_id))
-    @log.info("Loaded shops.csv and shopitems.csv", data={})
+    @log.info("Loaded shops.tsv and shopitems.tsv", data={})
   })
 }

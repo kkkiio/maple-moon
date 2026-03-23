@@ -8,19 +8,7 @@ fn LocalServer::on_talk_to_npc(self : LocalServer, json : Json) -> Unit raise {
           self.active_shop = Some(shop)
           self.send_server_message(shop)
         }
-        None => {
-          let (quest_id, npc_id) = match @quest.get_demo_quest_selection() {
-            Some(selection) if selection.npc_id == npc_id =>
-              (selection.quest_id, selection.npc_id)
-            _ => (npc_id, npc_id)
-          }
-          self.send_server_message(
-            @server_proto.UpdateQuestInfoMessage::QuestUpdate(
-              quest_id~,
-              npc_id~,
-            ),
-          )
-        }
+        None => ()
       }
     None => ()
   }

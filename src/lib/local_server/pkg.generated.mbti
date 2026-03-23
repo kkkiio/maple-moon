@@ -11,7 +11,7 @@ import {
 }
 
 // Values
-pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand) -> (Array[@server_proto.DropLootMessage], Int)
+pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand, active_quest_ids? : Map[Int, Unit]) -> (Array[@server_proto.DropLootMessage], Int)
 
 pub let default_rand_seed : @ref.Ref[Bytes]
 
@@ -39,6 +39,7 @@ pub async fn LocalServer::save_character(Self, Int) -> Unit
 pub async fn LocalServer::save_character_core(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
 pub async fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
+pub async fn LocalServer::save_character_quest_data(Self, Int, Int) -> Unit
 pub async fn LocalServer::save_character_roster(Self) -> Unit
 #callsite(autofill(loc))
 pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
@@ -51,11 +52,11 @@ pub fn MemoryDB::new() -> Self
 pub impl DB for MemoryDB
 
 type MobDropDatabase
-pub fn MobDropDatabase::from_csv(String) -> Self
+pub fn MobDropDatabase::from_tsv(String) -> Self
 pub fn MobDropDatabase::get_drops(Self, Int) -> Array[MobDropEntry]
 pub fn MobDropDatabase::get_mob_ids(Self) -> Iter[Int]
 pub fn MobDropDatabase::has_drops(Self, Int) -> Bool
-pub fn MobDropDatabase::roll_drops(Self, Int, @random.Rand) -> Array[(Int, Int)]
+pub fn MobDropDatabase::roll_drops(Self, Int, @random.Rand, active_quest_ids? : Map[Int, Unit]) -> Array[(Int, Int)]
 
 pub(all) struct MobDropEntry {
   dropperid : Int

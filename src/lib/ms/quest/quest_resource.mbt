@@ -1,9 +1,9 @@
 ///|
 pub struct QuestResource {
-  quest_info_map : Map[Int, QuestInfo]
-  quest_checks_map : Map[Int, Array[QuestPhaseChecks]]
-  quest_say_map : Map[Int, Array[QuestPhaseSays]]
-  quest_acts_map : Map[Int, Array[QuestPhaseAct]]
+  quest_info_map : Map[Int, NxQuestInfo]
+  quest_checks_map : Map[Int, Array[NxQuestPhaseChecks]]
+  quest_say_map : Map[Int, Array[NxQuestPhaseSays]]
+  quest_acts_map : Map[Int, Array[NxQuestPhaseAct]]
 }
 
 ///|
@@ -24,10 +24,10 @@ pub impl @json.FromJson for QuestResource with from_json(json, path) {
 
 ///|
 priv struct QuestNxResource {
-  quest_info_map : IntMap[QuestInfo]
-  quest_checks_map : IntMap[@resource.MapBasedArray[QuestPhaseChecks]]
-  quest_say_map : IntMap[@resource.MapBasedArray[QuestPhaseSays]]
-  quest_acts_map : IntMap[@resource.MapBasedArray[QuestPhaseAct]]
+  quest_info_map : IntMap[NxQuestInfo]
+  quest_checks_map : IntMap[@resource.MapBasedArray[NxQuestPhaseChecks]]
+  quest_say_map : IntMap[@resource.MapBasedArray[NxQuestPhaseSays]]
+  quest_acts_map : IntMap[@resource.MapBasedArray[NxQuestPhaseAct]]
 } derive (
   FromJson(
     fields(
@@ -40,7 +40,7 @@ priv struct QuestNxResource {
 )
 
 ///|
-struct QuestInfo {
+pub(all) struct NxQuestInfo {
   name : String
   parent : String?
   area : Int
@@ -52,7 +52,7 @@ struct QuestInfo {
 } derive(Show)
 
 ///|
-impl @json.FromJson for QuestInfo with from_json(json, path) {
+pub impl @json.FromJson for NxQuestInfo with from_json(json, path) {
   match json {
     Object(
       {
@@ -125,7 +125,7 @@ test "parse quest info" {
     #|     "parent": "Today's Mission! "
     #|   }
   let json = @json.parse(q10015)
-  let quest_info : QuestInfo = @json.from_json(json)
+  let quest_info : NxQuestInfo = @json.from_json(json)
   inspect(
     quest_info,
     content=(
@@ -148,7 +148,7 @@ test "parse quest 10200" {
     #|  "oneShot": 1
     #|}
   let json = @json.parse(q10200)
-  let quest_info : QuestInfo = @json.from_json(json)
+  let quest_info : NxQuestInfo = @json.from_json(json)
   inspect(
     quest_info,
     content=(
@@ -170,7 +170,7 @@ test "parse quest info number desc" {
     #|  "parent": "Maya and the Weird Medicine"
     #|}
   let json = @json.parse(q2003)
-  let quest_info : QuestInfo = @json.from_json(json)
+  let quest_info : NxQuestInfo = @json.from_json(json)
   inspect(
     quest_info,
     content=(
@@ -201,7 +201,7 @@ test "parse number index not desc" {
     #|  "parent": "New Year : New Year's Wishes"
     #|}
   let json = @json.parse(q8833)
-  let quest_info : QuestInfo = @json.from_json(json)
+  let quest_info : NxQuestInfo = @json.from_json(json)
   inspect(
     quest_info,
     content=(
@@ -211,7 +211,7 @@ test "parse number index not desc" {
 }
 
 ///|
-struct QuestPhaseChecks {
+pub(all) struct NxQuestPhaseChecks {
   npc : Int?
   info_number : Int?
   repeatable : Bool
@@ -244,15 +244,15 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
 }
 
 ///|
-priv struct MonHuntCheck {
+struct MonHuntCheck {
   id : Int
   count : Int
 } derive(Show, @json.FromJson)
 
 ///|
-impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
+impl @json.FromJson for NxQuestPhaseChecks with from_json(json, path) {
   let obj = match json {
-    Null => return QuestPhaseChecks::default()
+    Null => return NxQuestPhaseChecks::default()
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -291,7 +291,7 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
         checks.push({ info_ex, })
       }
       "quest" => {
-        let quest_status_map : Array[QuestStatusCheck] = @resource.parse_map_based_array(
+        let quest_status_map : Array[NxQuestStatusCheck] = @resource.parse_map_based_array(
           value,
           path~,
         )
@@ -331,13 +331,13 @@ impl @json.FromJson for QuestPhaseChecks with from_json(json, path) {
 }
 
 ///|
-priv struct QuestStatusCheck {
+priv struct NxQuestStatusCheck {
   id : Int
-  state : QuestStatus
+  state : NxQuestStatus
 }
 
 ///|
-impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
+impl @json.FromJson for NxQuestStatusCheck with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -350,30 +350,30 @@ impl @json.FromJson for QuestStatusCheck with from_json(json, path) {
 }
 
 ///|
-pub(all) enum QuestStatus {
+pub(all) enum NxQuestStatus {
   NotStarted = 0
   InProgress = 1
   Completed = 2
 } derive(Show, Eq, Hash)
 
 ///|
-pub fn QuestStatus::int_value(self : QuestStatus) = "%identity"
+pub fn NxQuestStatus::int_value(self : NxQuestStatus) = "%identity"
 
 ///|
-pub fn QuestStatus::from_int(int_value : Int) -> QuestStatus? {
+pub fn NxQuestStatus::from_int(int_value : Int) -> NxQuestStatus? {
   let status = match int_value {
-    0 => QuestStatus::NotStarted
-    1 => QuestStatus::InProgress
-    2 => QuestStatus::Completed
+    0 => NxQuestStatus::NotStarted
+    1 => NxQuestStatus::InProgress
+    2 => NxQuestStatus::Completed
     _ => return None
   }
   Some(status)
 }
 
 ///|
-impl @json.FromJson for QuestStatus with from_json(json, path) {
+impl @json.FromJson for NxQuestStatus with from_json(json, path) {
   let int_value = @json.from_json(json, path~)
-  if QuestStatus::from_int(int_value) is Some(status) {
+  if NxQuestStatus::from_int(int_value) is Some(status) {
     status
   } else {
     raise @json.JsonDecodeError((path, "Unknown quest status: \{int_value}"))
@@ -400,7 +400,7 @@ test "parse quest check 10015" {
     #|  }
     #|}
   let json = @json.parse(check_10015)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
+  let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
   inspect(
@@ -434,7 +434,7 @@ test "parse quest check 10054" {
     #|    "1": { "item": { "0": { "count": 1, "id": 2012000 } }, "npc": 1061013 }
     #|  }
   let json = @json.parse(check_10054)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
+  let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
   inspect(
@@ -458,7 +458,7 @@ test "parse item check" {
     #|   }
     #| }
   let json = @json.parse(check_1008)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
+  let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
   inspect(
@@ -481,7 +481,7 @@ test "parse quests status check" {
     #|   "1": { "item": { "0": { "count": 40, "id": 4000008 } }, "npc": 1022002 }
     #| }
   let json = @json.parse(check_2005)
-  let quest_check : @resource.MapBasedArray[QuestPhaseChecks] = @json.from_json(
+  let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
   inspect(
@@ -509,38 +509,38 @@ impl @json.FromJson for ItemCount with from_json(json, path) {
 }
 
 ///|
-struct QuestPhaseSays {
+pub(all) struct NxQuestPhaseSays {
   says : Array[String]
   ask : Bool
   yes_reply : Array[String]
   no_reply : Array[String]
-  stop : Hints?
-  restore_lost : Lost?
+  stop : NxHints?
+  restore_lost : NxLost?
 } derive(Show, Default)
 
 ///|
-priv struct Hints {
-  base : Array[Hint]
+pub(all) struct NxHints {
+  base : Array[NxHint]
   item : Array[String]
   npc : Array[String]
 } derive(Show)
 
 ///|
-priv struct Hint { // TODO: figure out the meaning of this
+pub(all) struct NxHint { // TODO: figure out the meaning of this
   says : Array[String]
   answer : Int
 } derive(Show, Default)
 
 ///|
-priv struct Lost {
+pub(all) struct NxLost {
   says : Array[String]
   yes_reply : Array[String]
 } derive(Show)
 
 ///|
-pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
+pub impl @json.FromJson for NxQuestPhaseSays with from_json(json, path) {
   let obj = match json {
-    Null => return QuestPhaseSays::default() // TODO: figure out the meaning of this
+    Null => return NxQuestPhaseSays::default() // TODO: figure out the meaning of this
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -553,11 +553,11 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
     obj.get("no").unwrap_or(Json::null()),
     path=path.add_key("no"),
   )
-  let stop_hint : Nullable[Hints] = @json.from_json(
+  let stop_hint : Nullable[NxHints] = @json.from_json(
     obj.get("stop").unwrap_or(Json::null()),
     path=path.add_key("stop"),
   )
-  let restore_lost : Nullable[Lost] = @json.from_json(
+  let restore_lost : Nullable[NxLost] = @json.from_json(
     obj.get("lost").unwrap_or(Json::null()),
     path=path.add_key("lost"),
   )
@@ -577,8 +577,8 @@ pub impl @json.FromJson for QuestPhaseSays with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for Hints with from_json(json, path) {
-  let base : @resource.MapBasedArray[Hint] = @json.from_json(json, path~)
+impl @json.FromJson for NxHints with from_json(json, path) {
+  let base : @resource.MapBasedArray[NxHint] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -598,9 +598,9 @@ impl @json.FromJson for Hints with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for Hint with from_json(json, path) {
+impl @json.FromJson for NxHint with from_json(json, path) {
   let obj = match json {
-    Null => return Hint::default() // TODO: figure out the meaning of this
+    Null => return NxHint::default() // TODO: figure out the meaning of this
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -613,7 +613,7 @@ impl @json.FromJson for Hint with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for Lost with from_json(json, path) {
+impl @json.FromJson for NxLost with from_json(json, path) {
   let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
@@ -626,7 +626,7 @@ impl @json.FromJson for Lost with from_json(json, path) {
 }
 
 ///|
-struct QuestPhaseAct {
+struct NxQuestPhaseAct {
   exp : Int?
   mesos : Int?
   items : Array[ActItem]
@@ -641,9 +641,9 @@ priv struct ActItem {
 } derive(Show)
 
 ///|
-pub impl @json.FromJson for QuestPhaseAct with from_json(json, path) {
+pub impl @json.FromJson for NxQuestPhaseAct with from_json(json, path) {
   let obj = match json {
-    Null => return QuestPhaseAct::default()
+    Null => return NxQuestPhaseAct::default()
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }

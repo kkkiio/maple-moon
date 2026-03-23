@@ -42,4 +42,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/keymap",
   "Milky2018/selene/inputs",
+  "KKKIIO/maple-moon/lib/ms/quest_log",
+  "KKKIIO/maple-moon/lib/ms/quest_icon",
 }

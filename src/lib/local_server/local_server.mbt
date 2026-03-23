@@ -17,6 +17,7 @@ using @server_proto {
   type ShowStatusMesoGainMessage,
   type MoveMonsterMessage,
   type SetFieldMessage,
+  type QuestActionMessage,
   type SelectCharMessage,
   type MobSpawnControllerMessage,
   type NpcSpawnControllerMessage,
@@ -69,6 +70,9 @@ struct LocalServer {
   mut drop_db : MobDropDatabase?
   mut global_drop_db : MobDropDatabase?
   drop_rng : @random.Rand
+  mut quest_defs : Map[Int, QuestDefinition]
+  started_quests : Map[Int, String]
+  mut completed_quests : Map[Int, Int64]
 }
 
 ///|
@@ -135,12 +139,16 @@ pub fn LocalServer::new(
     drop_db: None,
     global_drop_db: None,
     drop_rng,
+    quest_defs: {},
+    started_quests: {},
+    completed_quests: make_default_completed_quests(),
   }
 }
 
 ///|
 pub fn init_server(server : LocalServer) -> Unit {
   server.init_routes()
+  server.init_quest_runtime()
   // 加载掉落数据库
   server.load_drop_databases()
   // 加载 NPC 商店数据库
@@ -200,6 +208,9 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   }
   self.client_message_handler_map[@server_proto.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
     self.on_npc_shop_action(json)
+  }
+  self.client_message_handler_map[@server_proto.ClientOpcode::QUEST_ACTION.int_value()] = json => {
+    self.on_quest_action(json)
   }
   self.client_message_handler_map[@server_proto.ClientOpcode::ADMIN_COMMAND.int_value()] = json => {
     self.on_admin_command(json)
@@ -439,6 +450,10 @@ fn LocalServer::spawn_drops_for_mob(
   self : LocalServer,
   mob : ServerMob,
 ) -> Unit {
+  let active_quest_ids : Map[Int, Unit] = {}
+  for quest_id, _ in self.started_quests {
+    active_quest_ids.set(quest_id, ())
+  }
   let (messages, next_oid) = calculate_mob_drops(
     mob.id,
     mob.x,
@@ -447,6 +462,7 @@ fn LocalServer::spawn_drops_for_mob(
     self.drop_db,
     self.global_drop_db,
     self.drop_rng,
+    active_quest_ids~,
   )
   for msg in messages {
     if not(msg.meso) &&
@@ -861,6 +877,7 @@ fn LocalServer::reset_player_inventory_state(self : LocalServer) -> Unit {
   for _, items in self.player_items {
     items.clear()
   }
+  self.set_default_quest_state()
 }
 
 ///|
@@ -880,6 +897,22 @@ fn LocalServer::save_character_inventory_snapshot(self : LocalServer) -> Unit {
     on_error=fn(err) {
       @log.error("failed to save character inventory snapshot", data={
         "error": err,
+      })
+    },
+  )
+}
+
+///|
+fn LocalServer::save_character_quest_snapshot(self : LocalServer) -> Unit {
+  @io_service.execute_background(
+    async fn() {
+      let revision = self.bump_character_revision()
+      self.save_character_quest_data(self.current_character_id, revision)
+      self.save_character_meta(self.current_character_id, revision, "quest")
+    },
+    on_error=fn(err) {
+      @log.error("failed to save character quest snapshot", data={
+        "error": err.to_string(),
       })
     },
   )
@@ -1083,19 +1116,19 @@ pub fn server_system(server : LocalServer) -> Unit {
 ///|
 /// 加载怪物掉落数据库
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
-  let csv_loader = @resource.get_csv_loader()
+  let tsv_loader = @resource.get_csv_loader()
   // 加载怪物特定掉落
   @io_service.execute_background(async fn() {
-    let text : String = csv_loader.load_text("/assets/data/mob_drops.csv")
-    self.drop_db = Some(MobDropDatabase::from_csv(text))
-    @log.info("Loaded mob_drops.csv", data={})
+    let text : String = tsv_loader.load_text("/assets/data/mob_drops.tsv")
+    self.drop_db = Some(MobDropDatabase::from_tsv(text))
+    @log.info("Loaded mob_drops.tsv", data={})
   })
   // 加载全局掉落
   @io_service.execute_background(async fn() {
-    let text : String = csv_loader.load_text(
-      "/assets/data/drop_data_global.csv",
+    let text : String = tsv_loader.load_text(
+      "/assets/data/drop_data_global.tsv",
     )
-    self.global_drop_db = Some(MobDropDatabase::from_csv(text))
-    @log.info("Loaded drop_data_global.csv", data={})
+    self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
+    @log.info("Loaded drop_data_global.tsv", data={})
   })
 }

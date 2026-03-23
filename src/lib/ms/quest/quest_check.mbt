@@ -1,10 +1,10 @@
 ///|
-priv trait QuestCheck: Show {
+pub trait QuestCheck: Show {
   check(Self, CheckContext) -> Result[Unit, String]
 }
 
 ///|
-priv struct CheckContext {
+pub(all) struct CheckContext {
   log : PlayerQuestLog
   item_count_provider : (Int) -> Int
   char_stats_provider : () -> @char_stats.CharStats
@@ -53,12 +53,12 @@ impl QuestCheck for IntervalMinutesCheck with check(_self, _context) {
 /// This method validates quest progress by comparing the character's current progress values
 /// against the expected values defined in the quest's infoEx data. The progress values are
 /// retrieved from either this quest or another quest specified by infoNumber.
-priv struct InfoExCheck {
+struct InfoExCheck {
   info_ex : Array[InfoEx]
 } derive(Show)
 
 ///|
-impl QuestCheck for InfoExCheck with check(self, context) {
+pub impl QuestCheck for InfoExCheck with check(self, context) {
   if self.info_ex.is_empty() {
     return Ok(())
   }
@@ -78,7 +78,7 @@ impl QuestCheck for InfoExCheck with check(self, context) {
 
 ///|
 priv struct QuestsStatusCheck {
-  quest_status_map : Map[Int, QuestStatus]
+  quest_status_map : Map[Int, NxQuestStatus]
 } derive(Show)
 
 ///|
@@ -86,9 +86,9 @@ impl QuestCheck for QuestsStatusCheck with check(self, context) {
   for quest_id, expected_status in self.quest_status_map {
     let stated_quest = context.log.get_quest(quest_id)
     let quest_status = match stated_quest {
-      Some(InProgress(_)) => QuestStatus::InProgress
-      Some(Completed(_)) => QuestStatus::Completed
-      None => QuestStatus::NotStarted
+      Some(InProgress(_)) => NxQuestStatus::InProgress
+      Some(Completed(_)) => NxQuestStatus::Completed
+      None => NxQuestStatus::NotStarted
     }
     if quest_status != expected_status {
       return Err(

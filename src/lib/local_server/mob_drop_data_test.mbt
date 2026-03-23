@@ -4,14 +4,14 @@ extern "js" fn read_file_to_string(path : String) -> String =
   #| (path) => require('node:fs').readFileSync(path, 'utf-8')
 
 ///|
-test "MobDropDatabase::from_csv with real Cosmic format" {
-  let csv =
-    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
-    #|1,100100,4000019,1,1,0,200000
-    #|2,100100,2000000,1,1,0,10000
-    #|3,100101,4000020,1,1,0,250000
+test "MobDropDatabase::from_tsv with real Cosmic format" {
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	200000
+    #|2	100100	2000000	1	1	0	10000
+    #|3	100101	4000020	1	1	0	250000
 
-  let db = MobDropDatabase::from_csv(csv)
+  let db = MobDropDatabase::from_tsv(tsv)
 
   // 验证怪物ID列表
   let mob_ids = db.get_mob_ids().collect()
@@ -39,11 +39,11 @@ test "MobDropDatabase::from_csv with real Cosmic format" {
 
 ///|
 test "MobDropDatabase::has_drops" {
-  let csv =
-    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
-    #|1,100100,4000019,1,1,0,200000
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	200000
 
-  let db = MobDropDatabase::from_csv(csv)
+  let db = MobDropDatabase::from_tsv(tsv)
   inspect(db.has_drops(100100), content="true")
   inspect(db.has_drops(999999), content="false")
 }
@@ -117,13 +117,13 @@ test "MobDropEntry::roll_drop with 0% chance" {
 
 ///|
 test "MobDropDatabase::roll_drops" {
-  let csv =
-    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
-    #|1,100100,4000019,1,1,0,1000000
-    #|2,100100,2000000,1,1,0,1000000
-    #|3,100100,0,10,10,0,1000000
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	1000000
+    #|2	100100	2000000	1	1	0	1000000
+    #|3	100100	0	10	10	0	1000000
 
-  let db = MobDropDatabase::from_csv(csv)
+  let db = MobDropDatabase::from_tsv(tsv)
 
   // 100%概率，应该所有都掉落
   let rand = @random.Rand::new()
@@ -139,12 +139,12 @@ test "MobDropDatabase::roll_drops" {
 
 ///|
 test "MobDropDatabase::roll_drops filters quest drops" {
-  let csv =
-    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
-    #|1,100100,4000019,1,1,0,1000000
-    #|2,100100,4000020,1,1,2001,1000000
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	1000000
+    #|2	100100	4000020	1	1	2001	1000000
 
-  let db = MobDropDatabase::from_csv(csv)
+  let db = MobDropDatabase::from_tsv(tsv)
 
   let rand = @random.Rand::new()
   let drops = db.roll_drops(100100, rand)
@@ -153,26 +153,53 @@ test "MobDropDatabase::roll_drops filters quest drops" {
 }
 
 ///|
-test "parse csv with empty lines" {
-  let csv =
-    #|"id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
-    #|1,100100,4000019,1,1,0,200000
+test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	1000000
+    #|2	100100	4031164	1	1	2084	1000000
+
+  let db = MobDropDatabase::from_tsv(tsv)
+
+  let no_quest_rand = @random.Rand::new()
+  let drops_without_quest = db.roll_drops(100100, no_quest_rand, active_quest_ids={})
+  inspect(drops_without_quest.length(), content="1")
+  inspect(drops_without_quest[0].0, content="4000019")
+
+  let active_quests : Map[Int, Unit] = { 2084: () }
+  let started_quest_rand = @random.Rand::new()
+  let drops_with_quest = db.roll_drops(
+    100100,
+    started_quest_rand,
+    active_quest_ids=active_quests,
+  )
+  inspect(drops_with_quest.length(), content="2")
+  let dropped_item_ids = drops_with_quest.map(fn(it) { it.0 })
+  assert_true(dropped_item_ids.contains(4000019))
+  assert_true(dropped_item_ids.contains(4031164))
+}
+
+///|
+test "parse tsv with empty lines" {
+  let tsv =
+    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
+    #|1	100100	4000019	1	1	0	200000
     #|
-    #|2,100101,4000020,1,1,0,250000
+    #|2	100101	4000020	1	1	0	250000
     #|
 
-  let db = MobDropDatabase::from_csv(csv)
+  let db = MobDropDatabase::from_tsv(tsv)
   inspect(db.get_drops(100100).length(), content="1")
   inspect(db.get_drops(100101).length(), content="1")
 }
 
 ///|
-/// 测试 calculate_mob_drops 纯函数 - 使用 assets/data/mob_drops.csv 中真实的猪猪掉落配置
+/// 测试 calculate_mob_drops 纯函数 - 使用 assets/data/mob_drops.tsv 中真实的猪猪掉落配置
 /// 使用固定随机种子，让结果可预测，用 inspect 输出具体掉落内容
-/// 真实数据位置：assets/data/mob_drops.csv (dropperid=1210100)
+/// 真实数据位置：assets/data/mob_drops.tsv (dropperid=1210100)
 test "calculate_mob_drops for pig with real config" {
-  let csv_content : String = read_file_to_string("assets/data/mob_drops.csv")
-  let drop_db = MobDropDatabase::from_csv(csv_content)
+  let tsv_content : String = read_file_to_string("assets/data/mob_drops.tsv")
+  let drop_db = MobDropDatabase::from_tsv(tsv_content)
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品
   let pig_drops = drop_db.get_drops(1210100)

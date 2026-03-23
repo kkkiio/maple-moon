@@ -2,7 +2,7 @@
 fn default_player_stats() -> @resource.EnumMap[@maple_stat.Id, Int] {
   @resource.EnumMap(
     Map::from_array([
-      (@maple_stat.Id::LEVEL, 30),
+      (@maple_stat.Id::LEVEL, 50),
       (@maple_stat.Id::JOB, 0),
       (@maple_stat.Id::STR, 12),
       (@maple_stat.Id::DEX, 120),
@@ -18,12 +18,6 @@ fn default_player_stats() -> @resource.EnumMap[@maple_stat.Id, Int] {
     ]),
   )
 }
-
-///|
-const DEMO_QUEST_ID : Int = 2050
-
-///|
-const DEMO_QUEST_PROGRESS_DATA : String = ""
 
 ///|
 fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
@@ -67,10 +61,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       },
       skills=[],
       cooldowns=@resource.EnumMap::default(),
-      quests={
-        started: [(DEMO_QUEST_ID, DEMO_QUEST_PROGRESS_DATA)],
-        completed: [],
-      },
+      quests=default_server.build_player_quest_log_info(),
     )
     let set_field_json = set_field_message.to_json()
     default_server.server_message_queue.push(

@@ -23,7 +23,7 @@ extern "js" fn new_seed_from_time() -> Bytes =
   #| }
 
 ///|
-fn game_start(_delta : Double) -> Unit {
+fn game_start() -> Unit {
   @local_server.default_rand_seed.val = new_seed_from_time()
   @passive.set_passive_randomizer(@random.Rand::new())
   @game_server.init_server()
@@ -36,10 +36,7 @@ fn game_start(_delta : Double) -> Unit {
   @inventory_ui.setup_game_server_handlers()
   @inventory.setup_game_server_handlers()
   @shop_ui.setup_game_server_handlers()
-  @quest.setup_game_server_handlers()
-  @quest_icon.set_context(
-    @quest.query_npc_icon, @quest.build_quest_talk_args, @quest.quest_icon_query_revision,
-  )
+  @quest_log.setup_game_server_handlers()
   @inventory_ui.init_inventory_ui()
   @shop_ui.init_shop_ui()
   @gm.install()
@@ -63,7 +60,12 @@ fn main {
     fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
     system_name="logic_fps_system",
   )
-  app = app.add_system(Startup, fn(_world) { game_start(@time.delta()) })
+  app = app.add_system(
+    Update,
+    fn(_world) { app_resource_setup_system(@time.delta()) },
+    system_name="app_resource_setup_system",
+  )
+  app = app.add_system(Startup, fn(_world) { game_start() })
   app = app.add_system(
     Update,
     fn(_world) { @cursor.cursor_system(@time.delta()) },
@@ -190,6 +192,11 @@ fn main {
     Update,
     fn(_world) { @quest_icon.quest_icon_system(@time.delta()) },
     system_name="quest_icon_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @quest_log_ui.quest_log_ui_system(@time.delta()) },
+    system_name="quest_log_ui_system",
   )
   app = app.add_system(
     Update,

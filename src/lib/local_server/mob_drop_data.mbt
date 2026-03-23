@@ -18,22 +18,22 @@ struct MobDropDatabase {
 }
 
 ///|
-/// 从CSV字符串解析掉落数据库
+/// 从TSV字符串解析掉落数据库
 ///
 /// # 参数
-/// - `csv_content`: CSV格式的字符串内容，包含表头
+/// - `tsv_content`: TSV格式的字符串内容，包含表头
 ///
 /// # 格式
-/// 表头: "id","dropperid","itemid","minimum_quantity","maximum_quantity","questid","chance"
+/// 表头: id<TAB>dropperid<TAB>itemid<TAB>minimum_quantity<TAB>maximum_quantity<TAB>questid<TAB>chance
 /// - dropperid: 怪物ID
 /// - itemid: 物品ID (0表示金币)
 /// - minimum_quantity: 最小数量
 /// - maximum_quantity: 最大数量
 /// - questid: 关联任务ID (0表示无任务限制)
 /// - chance: 掉落概率 (基数 1000000)
-pub fn MobDropDatabase::from_csv(csv_content : String) -> MobDropDatabase {
+pub fn MobDropDatabase::from_tsv(tsv_content : String) -> MobDropDatabase {
   let drops : Map[Int, Array[MobDropEntry]] = {}
-  let by_dropper = @drop_sheet.build_drop_row_map(csv_content)
+  let by_dropper = @drop_sheet.build_drop_row_map(tsv_content)
   for dropperid, rows in by_dropper {
     let entries : Array[MobDropEntry] = []
     for row in rows {
@@ -113,14 +113,14 @@ pub fn MobDropDatabase::roll_drops(
   self : MobDropDatabase,
   dropperid : Int,
   rand : @random.Rand,
+  active_quest_ids? : Map[Int, Unit] = {},
 ) -> Array[(Int, Int)] {
   // 返回 (itemid, quantity) 列表
   let result : Array[(Int, Int)] = []
   let entries = self.get_drops(dropperid)
 
   for entry in entries {
-    // Local server 暂不支持 quest 条件判定，先过滤任务限定掉落（questid != 0）。
-    if entry.questid != 0 {
+    if entry.questid != 0 && not(active_quest_ids.contains(entry.questid)) {
       continue
     }
     if entry.roll_drop(rand) {
@@ -153,6 +153,7 @@ pub fn calculate_mob_drops(
   drop_db : MobDropDatabase?,
   global_drop_db : MobDropDatabase?,
   rand : @random.Rand,
+  active_quest_ids? : Map[Int, Unit] = {},
 ) -> (Array[@server_proto.DropLootMessage], Int) {
   let messages : Array[@server_proto.DropLootMessage] = []
   let mut drop_index = 0
@@ -163,7 +164,7 @@ pub fn calculate_mob_drops(
   // 1. 生成怪物特定掉落
   match drop_db {
     Some(db) => {
-      let drops = db.roll_drops(mob_id, rand)
+      let drops = db.roll_drops(mob_id, rand, active_quest_ids~)
       for item in drops {
         drop_index += 1
         current_oid += 1
@@ -190,7 +191,7 @@ pub fn calculate_mob_drops(
   // 2. 生成全局掉落
   match global_drop_db {
     Some(db) => {
-      let global_drops = db.roll_drops(-1, rand) // continent -1 表示全局
+      let global_drops = db.roll_drops(-1, rand, active_quest_ids~) // continent -1 表示全局
       for item in global_drops {
         drop_index += 1
         current_oid += 1
@@ -218,31 +219,10 @@ pub fn calculate_mob_drops(
 }
 
 ///|
-test "parse_csv_line basic" {
-  let line = "1,100100,4000019,1,1,0,200000"
-  let fields = @csv.parse_csv_line(line)
-  inspect(fields.length(), content="7")
-  inspect(fields[0], content="1")
-  inspect(fields[1], content="100100")
-  inspect(fields[2], content="4000019")
-  inspect(fields[3], content="1")
-  inspect(fields[4], content="1")
-  inspect(fields[5], content="0")
-  inspect(fields[6], content="200000")
-}
-
-///|
-test "parse_csv_line with quoted fields" {
-  let line = "\"1\",\"100100\",\"4000019\",\"1\",\"1\",\"0\",\"200000\""
-  let fields = @csv.parse_csv_line(line)
-  inspect(fields.length(), content="7")
-  inspect(@csv.strip_quotes(fields[1]), content="100100")
-  inspect(@csv.strip_quotes(fields[2]), content="4000019")
-}
-
-///|
-test "strip_quotes" {
-  inspect(@csv.strip_quotes("\"hello\""), content="hello")
-  inspect(@csv.strip_quotes("hello"), content="hello")
-  inspect(@csv.strip_quotes("\"100100\""), content="100100")
+test "parse_tsv_rows basic" {
+  let tsv = "id\tdropperid\titemid\tminimum_quantity\tmaximum_quantity\tquestid\tchance\n1\t100100\t4000019\t1\t1\t0\t200000\n"
+  let rows = @drop_sheet.parse_drop_rows(tsv)
+  inspect(rows.length(), content="1")
+  inspect(rows[0].dropperid, content="100100")
+  inspect(rows[0].itemid, content="4000019")
 }

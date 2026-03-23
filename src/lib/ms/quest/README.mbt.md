@@ -1,5 +1,13 @@
 # Quest Module
 
+## Quest Log Facade Hooks
+
+`quest` 包会维护任务日志底层状态，并对外提供 quest-log facade 所需入口：
+
+- `quest_log_snapshot_raw()`：导出任务日志原始快照（进行中 + 已完成）。
+- `quest_log_revision()`：任务日志修订号。
+- `apply_forfeit_quest(quest_id)`：执行放弃任务并发包。
+
 ## 任务要素
 
 - 任务描述 QuestInfo.img

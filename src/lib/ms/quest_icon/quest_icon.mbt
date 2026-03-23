@@ -1,7 +1,4 @@
 ///|
-using @quest {type QuestIconQueryResult, type QuestIconState}
-
-///|
 priv struct QuestIconResources {
   available : @resource.NxAnimation
   in_progress : @resource.NxAnimation
@@ -11,7 +8,6 @@ priv struct QuestIconResources {
 ///|
 priv struct QuestIconContext {
   query_npc_icon : (Int) -> QuestIconQueryResult?
-  build_quest_talk_args : (Int, Int) -> @npc.TalkArgs?
   get_query_revision : () -> Int
 }
 
@@ -27,9 +23,6 @@ priv struct QuestIconRuntime {
   icon_offset : @struct.Point[Int]
   icon_size : @struct.Point[Int]
 }
-
-///|
-let quest_icon_context : Ref[QuestIconContext?] = Ref::new(None)
 
 ///|
 let quest_icon_resources : Ref[QuestIconResources?] = Ref::new(None)
@@ -60,33 +53,6 @@ fn default_icon_offset() -> @struct.Point[Int] {
 }
 
 ///|
-/// Installs quest query callbacks consumed by `quest_icon_system`.
-pub fn set_context(
-  query_npc_icon : (Int) -> QuestIconQueryResult?,
-  build_quest_talk_args : (Int, Int) -> @npc.TalkArgs?,
-  get_query_revision : () -> Int,
-) -> Unit {
-  quest_icon_context.val = Some({
-    query_npc_icon,
-    build_quest_talk_args,
-    get_query_revision,
-  })
-  npc_icon_cache.val.clear()
-  ensure_resource_loading()
-}
-
-///|
-/// Clears all quest-icon runtimes and detaches the current quest context.
-pub fn clear_context() -> Unit {
-  for _, runtime in runtime_by_oid.val {
-    destroy_icon_entity(runtime.icon_entity)
-  }
-  runtime_by_oid.val.clear()
-  npc_icon_cache.val.clear()
-  quest_icon_context.val = None
-}
-
-///|
 /// Overrides icon resources for tests to avoid async loader dependency.
 pub fn set_resources_for_test(
   available : @resource.NxAnimation,
@@ -102,18 +68,30 @@ pub fn set_resources_for_test(
 pub fn quest_icon_system(_delta : Double) -> Unit {
   ensure_resource_loading()
   poll_loading_result()
-  guard quest_icon_context.val is Some(context) else { return }
   guard quest_icon_resources.val is Some(resources) else { return }
+  let inventory_events = @inventory.inventory_changed_event_bus.read(
+    get_inventory_changed_reader(),
+  )
+  let char_stat_events = @char_stats.char_stats_changed_event_bus.read(
+    get_char_stats_changed_reader(),
+  )
+  if not(inventory_events.is_empty()) || not(char_stat_events.is_empty()) {
+    bump_quest_icon_query_revision()
+  }
 
+  let context = {
+    query_npc_icon,
+    get_query_revision: quest_icon_query_revision,
+  }
   let anchors = @npc.list_npc_anchors()
   if not(anchors.is_empty()) {
     sync_runtimes(anchors, context, resources)
-    if @quest.get_demo_quest_selection() is None {
+    if get_demo_quest_selection() is None {
       let npc_ids = anchors.map(fn(anchor) { anchor.npc_id })
-      ignore(@quest.select_demo_quest_by_npcs(npc_ids))
+      ignore(select_demo_quest_by_npcs(npc_ids))
     }
   }
-  handle_cursor(context)
+  handle_cursor()
 }
 
 ///|
@@ -126,8 +104,12 @@ pub fn upsert_npc(
   npc_entity : @entity.Entity,
   npc_object : @physics.MovingObject,
 ) -> Unit {
-  guard quest_icon_context.val is Some(context) else { return }
   guard quest_icon_resources.val is Some(resources) else { return }
+
+  let context = {
+    query_npc_icon,
+    get_query_revision: quest_icon_query_revision,
+  }
   upsert_runtime(
     { oid, npc_id, entity: npc_entity, npc_object },
     context,
@@ -139,12 +121,6 @@ pub fn upsert_npc(
 /// Removes one NPC quest-icon runtime by NPC object id.
 pub fn remove_npc(oid : Int) -> Unit {
   remove_runtime(oid)
-}
-
-///|
-/// Refresh hook for one quest update.
-pub fn refresh_quest(_quest_id : Int) -> Unit {
-  // event-driven refresh hook; current implementation refreshes every frame.
 }
 
 ///|
@@ -315,7 +291,7 @@ fn query_npc_icon_cached(
 }
 
 ///|
-fn handle_cursor(context : QuestIconContext) -> Unit {
+fn handle_cursor() -> Unit {
   let mouse_pos = @inputs.mouse.pos
   let cursor_pos = @struct.Point::new(
     mouse_pos[@selene_math.X].to_int(),
@@ -330,8 +306,7 @@ fn handle_cursor(context : QuestIconContext) -> Unit {
   for _, runtime in runtime_by_oid.val {
     if inrange(runtime, cursor_pos, view_pos) {
       if pressed {
-        if (context.build_quest_talk_args)(runtime.quest_id, runtime.npc_id)
-          is Some(args) {
+        if build_quest_talk_args(runtime.quest_id, runtime.npc_id) is Some(args) {
           @npc.request_quest_talk(args)
           @npc.claim_click_this_frame()
           return
@@ -366,9 +341,9 @@ fn state_to_icon(
   state : QuestIconState,
 ) -> @resource.NxAnimation {
   match state {
-    @quest.QuestIconState::AVAILABLE => resources.available
-    @quest.QuestIconState::IN_PROGRESS => resources.in_progress
-    @quest.QuestIconState::COMPLETED => resources.completed
+    QuestIconState::AVAILABLE => resources.available
+    QuestIconState::IN_PROGRESS => resources.in_progress
+    QuestIconState::COMPLETED => resources.completed
   }
 }
 
@@ -390,3 +365,30 @@ fn nx_animation_dimensions(
   }
   @struct.Point::new(width, height)
 }
+
+///|
+using @lazy {type Lazy}
+
+///|
+let inventory_changed_reader_ref : Lazy[
+  @event.EventReader[@inventory.InventoryChangedEvent],
+] = Lazy::new(fn() { @event.EventReader::new() })
+
+///|
+fn get_inventory_changed_reader() -> @event.EventReader[
+  @inventory.InventoryChangedEvent,
+] {
+  inventory_changed_reader_ref.get()
+}
+
+///|
+fn get_char_stats_changed_reader() -> @event.EventReader[
+  @char_stats.CharStatsChangedEvent,
+] {
+  char_stats_changed_reader_ref.get()
+}
+
+///|
+let char_stats_changed_reader_ref : Lazy[
+  @event.EventReader[@char_stats.CharStatsChangedEvent],
+] = Lazy::new(fn() { @event.EventReader::new() })

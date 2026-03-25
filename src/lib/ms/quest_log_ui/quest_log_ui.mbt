@@ -51,22 +51,53 @@ priv struct QuestLogUiState {
 }
 
 ///|
-let state_ref : Ref[QuestLogUiState] = Ref::new({
-  visible: false,
-  selected_tab: 0,
-  panel_x: 300,
-  panel_y: 160,
-  last_revision: -1,
-  ui_resource: None,
-  ui_loading: None,
-  render_entities: [],
-  tab_buttons: [],
-  action_buttons: [],
-  click_reader: @event.EventReader::new(),
-})
+let states_by_world_ref : Ref[Map[UInt, QuestLogUiState]] = Ref::new(Map::new())
+
+///|
+fn make_initial_state() -> QuestLogUiState {
+  {
+    visible: false,
+    selected_tab: 0,
+    panel_x: 300,
+    panel_y: 160,
+    last_revision: -1,
+    ui_resource: None,
+    ui_loading: None,
+    render_entities: [],
+    tab_buttons: [],
+    action_buttons: [],
+    click_reader: @event.EventReader::new(),
+  }
+}
+
+///|
+fn state() -> QuestLogUiState {
+  let world_id = @ecs.require_current_world().id()
+  states_by_world_ref.val.get_or_init(world_id, make_initial_state)
+}
 
 ///|
 const QUEST_LOG_BASE_Z : Int = @graphics.UI_ZINDEX + 80
+
+///|
+const QUEST_LOG_TAB_COUNT : Int = 2
+
+///|
+const QUEST_LOG_DEBUG_PACKAGE : String = "quest_log"
+
+///|
+fn tab_debug_name(tab_index : Int) -> String {
+  match tab_index {
+    0 => "tab.in_progress"
+    1 => "tab.completed"
+    _ => abort("invalid quest-log tab index: \{tab_index}")
+  }
+}
+
+///|
+fn ui_tab_texture_index(tab_index : Int) -> Int {
+  tab_index + 1
+}
 
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
@@ -204,8 +235,8 @@ fn parse_tab_textures(
 ) -> Array[@resource.NxTexture] raise {
   guard src is Object(obj) else { fail("invalid tab json: \{label}") }
   let result = []
-  for i in 0..<3 {
-    let key = i.to_string()
+  for i in 0..<QUEST_LOG_TAB_COUNT {
+    let key = ui_tab_texture_index(i).to_string()
     guard obj.get(key) is Some(value) else {
       fail("missing tab state: \{label}.\{key}")
     }
@@ -269,6 +300,9 @@ fn texture_draw_y(panel_y : Int, texture : @resource.NxTexture) -> Int {
 
 ///|
 fn clear_render(state : QuestLogUiState) -> Unit {
+  for tab_button in state.tab_buttons {
+    @console.unregister_ui_entity(tab_button.entity)
+  }
   clear_entities(state.render_entities)
   state.tab_buttons.clear()
   state.action_buttons.clear()
@@ -364,19 +398,7 @@ fn render_entries(
         )
       }
     }
-    _ =>
-      ignore(
-        spawn_text_node(
-          state.render_entities,
-          "Tab reserved for future quest category.",
-          left,
-          top,
-          QUEST_LOG_BASE_Z + 30,
-          260,
-          20,
-          color="#777777",
-        ),
-      )
+    _ => abort("invalid quest-log tab index: \{state.selected_tab}")
   }
 }
 
@@ -425,7 +447,7 @@ fn render_quest_log(state : QuestLogUiState) -> Unit {
     ),
   )
 
-  for tab in 0..<3 {
+  for tab in 0..<QUEST_LOG_TAB_COUNT {
     let texture = if tab == state.selected_tab {
       res.tab_enabled[tab]
     } else {
@@ -440,6 +462,11 @@ fn render_quest_log(state : QuestLogUiState) -> Unit {
     )
     @selene_ui.buttons().set(entity, @selene_ui.Button::new())
     state.tab_buttons.push({ tab_index: tab, entity })
+    @console.register_ui_entity(
+      QUEST_LOG_DEBUG_PACKAGE,
+      tab_debug_name(tab),
+      entity,
+    )
   }
 
   spawn_action_button(
@@ -580,14 +607,14 @@ fn update_button_visuals(state : QuestLogUiState) -> Unit {
 ///|
 /// Opens the quest-log UI window.
 pub fn open_quest_log_ui() -> Unit {
-  let state = state_ref.val
+  let state = state()
   state.visible = true
 }
 
 ///|
 /// Closes quest-log UI and clears its entities.
 pub fn close_quest_log_ui() -> Unit {
-  let state = state_ref.val
+  let state = state()
   state.visible = false
   clear_render(state)
 }
@@ -595,7 +622,7 @@ pub fn close_quest_log_ui() -> Unit {
 ///|
 /// Toggles quest-log UI visibility.
 pub fn toggle_quest_log_ui() -> Unit {
-  let state = state_ref.val
+  let state = state()
   state.visible = not(state.visible)
   if not(state.visible) {
     clear_render(state)
@@ -605,13 +632,13 @@ pub fn toggle_quest_log_ui() -> Unit {
 ///|
 /// Returns whether quest-log UI is currently open.
 pub fn is_quest_log_ui_open() -> Bool {
-  state_ref.val.visible
+  state().visible
 }
 
 ///|
 /// Quest-log UI system.
 pub fn quest_log_ui_system(_delta : Double) -> Unit {
-  let state = state_ref.val
+  let state = state()
   guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
     close_quest_log_ui()
     return
@@ -628,9 +655,12 @@ pub fn quest_log_ui_system(_delta : Double) -> Unit {
     close_quest_log_ui()
     return
   }
+  if state.selected_tab < 0 || state.selected_tab >= QUEST_LOG_TAB_COUNT {
+    state.selected_tab = 0
+  }
   let mut dirty = false
   if @inputs.is_just_pressed(@inputs.Code::Tab) {
-    state.selected_tab = (state.selected_tab + 1) % 3
+    state.selected_tab = (state.selected_tab + 1) % QUEST_LOG_TAB_COUNT
     dirty = true
   }
   if poll_ui_resource(state) {

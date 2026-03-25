@@ -7,9 +7,18 @@
 ## Public API
 
 - `register_state_section`
-- `register_ui_provider`
+- `register_ui_entity`
+- `unregister_ui_entity`
+- `list_ui_entries`
+- `click_registered_ui`
+- `clear_input_injection`
+- `console_input_injection_system`
 - `register_command`
 - `install`
+
+## Integration
+
+将 `console_input_injection_system` 注册到 `First` 调度，保证输入注入发生在输入系统 (`PreUpdate`) 之前。
 
 ## Runtime Globals
 
@@ -19,7 +28,7 @@
 globalThis.render_game_to_text();
 $console.help();
 $console.ui.list();
-$console.ui.click("select_char.new_character");
+$console.ui.click("quest_log", "tab.completed");
 await $console.step(20);
 $console.cmd("meso", "1000000");
 $console.cmd("item", "1302007", "1");

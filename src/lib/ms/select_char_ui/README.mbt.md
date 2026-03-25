@@ -14,8 +14,12 @@
 - `select_char_ui_system`
 - `setup_game_server_handlers`
 - `is_select_char_ui_open`（调试可见性）
-- `list_debug_clickable_ids`（调试点击项列表）
-- `click_debug_new_character`（调试触发创建角色）
+
+调试点击：
+
+- 该模块会在创建/销毁 UI 时自动向 `console` 注册/反注册实体：
+  - package: `select_char`
+  - ui: `new_character`
 
 ## 接入示例
 

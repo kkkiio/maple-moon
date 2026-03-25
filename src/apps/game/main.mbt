@@ -243,5 +243,10 @@ fn main {
     fn(_world) { @io_service.io_system(@time.delta()) },
     system_name="io_system",
   )
+  app = app.add_system(
+    Update,
+    fn(_world) { @console.console_input_injection_system(@time.delta()) },
+    system_name="console_input_injection_system",
+  )
   app.run()
 }

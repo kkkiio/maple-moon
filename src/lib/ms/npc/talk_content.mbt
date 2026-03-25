@@ -13,7 +13,6 @@ test "test text" {
     result.text_html,
     content=(
       #|<span style="color: black;">Take this ship and you&#039;ll head off to a bigger continent. For </span><span style="color: black; font-weight: bold;">150 mesos</span><span style="color: black;">, I&#039;ll take you to </span><span style="color: blue;">Victoria Island</span><span style="color: black;">. The thing is, once you leave this place, you can&#039;t ever come back. What do you think? Do you want to go to Victoria Island?</span>
-
     ),
   )
 }

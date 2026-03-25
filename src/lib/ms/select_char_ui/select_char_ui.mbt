@@ -342,6 +342,7 @@ pub async fn SelectCharUI::new(
   )
   @selene_ui.z_indexes().set(new_click_entity, @selene_ui.ZIndex::new(3000))
   @selene_ui.buttons().set(new_click_entity, @selene_ui.Button::new())
+  @console.register_ui_entity("select_char", "new_character", new_click_entity)
   {
     buttons: [btn_select],
     click_reader: @event.EventReader::new(),
@@ -433,6 +434,7 @@ let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
 fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
+  @console.unregister_ui_entity(self.new_character_click_entity)
   for entity in self.entities {
     entity.destroy()
   }
@@ -600,38 +602,10 @@ pub fn is_select_char_ui_open() -> Bool {
 }
 
 ///|
-/// Returns clickable debug ids exposed by select-character UI.
-pub fn list_debug_clickable_ids() -> Array[String] {
-  guard game_state.phase is GamePhase::SelectCharacter else { return [] }
-  guard select_char_ui.val is Some(_) else { return [] }
-  ["select_char.new_character"]
-}
-
-///|
-/// Clicks the debug `New Character` action if select-character UI is open.
-pub fn click_debug_new_character() -> Bool {
-  guard game_state.phase is GamePhase::SelectCharacter else { return false }
-  guard select_char_ui.val is Some(ui) else { return false }
-  (ui.on_new_character)()
-  true
-}
-
-///|
 fn init {
   @console.register_state_section("select_char", fn() {
     { "open": is_select_char_ui_open() }
   })
-  @console.register_ui_provider(
-    "select_char",
-    fn() { list_debug_clickable_ids() },
-    fn(id) {
-      if id == "select_char.new_character" {
-        click_debug_new_character()
-      } else {
-        false
-      }
-    },
-  )
 }
 
 ///|

@@ -13,13 +13,13 @@ pub async fn snapshot(path : String, expect? : String) -> Unit {
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
   if should_write_snapshot {
-    let dir = @path.Path(path).dirname().to_string()
-    @fs.create_dir(dir)
-    @fs.write_bytes_to_file(path, actual)
     if expect is Some(expect_text) {
       let api_key = require_openrouter_api_key()
       assert_snapshot_expect(actual_buffer, expect_text, api_key, path)
     }
+    let dir = @path.Path(path).dirname().to_string()
+    @fs.create_dir(dir)
+    @fs.write_bytes_to_file(path, actual)
   } else {
     let expected = @fs.read_file_to_bytes(path)
     if actual != expected &&

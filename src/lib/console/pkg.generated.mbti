@@ -1,14 +1,28 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/console"
 
+import {
+  "Milky2018/selene/entity",
+}
+
 // Values
+pub fn clear_input_injection() -> Unit
+
+pub fn click_registered_ui(String, String) -> Json
+
+pub fn console_input_injection_system(Double) -> Unit
+
 pub fn install() -> Unit
+
+pub fn list_ui_entries() -> Json
 
 pub fn register_command(String, (Array[String]) -> Json) -> Unit
 
 pub fn register_state_section(String, () -> Json) -> Unit
 
-pub fn register_ui_provider(String, () -> Array[String], (String) -> Bool) -> Unit
+pub fn register_ui_entity(String, String, @entity.Entity) -> Unit
+
+pub fn unregister_ui_entity(@entity.Entity) -> Unit
 
 // Errors
 

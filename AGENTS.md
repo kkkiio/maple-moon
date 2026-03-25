@@ -73,6 +73,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 - `.env.test`: 测试环境配置文件. 包含 API Key 等敏感信息.
 - `src/lib/local_server/`: 本地服务器实现.
 - `src/lib/ms/server_proto/`: 客户端与(本地)服务器通信的协议定义.
+- `src/lib/console/`: 游戏调试控制台, agent 调试时使用.
 
 ### Agents Core Runtime Guidelines
 
@@ -97,27 +98,6 @@ moon build --release
 # 在仓库根目录执行
 source scripts/test-env.sh && moon test
 ```
-
-### Moonbit 快照测试
-
-使用 `inspect`/`json_inspect` 做快照断言, 不要自己填/修改 `content` 参数, 用 `moon test --update` 更新快照.
-
-### Canvas 快照测试
-
-涉及画面回归时，统一使用 `@capture_app.snapshot(path)` 做图片快照断言.
-
-`@capture_app.snapshot` 的规则:
-
-- 当快照文件不存在，或设置了 `UPDATE_CANVAS_SNAPS=true` 时，写入/更新 PNG 快照。
-- 其他情况下，按 PNG bytes 全等比较；不一致则测试失败。
-
-更新图片快照使用:
-
-```bash
-UPDATE_CANVAS_SNAPS=true moon test <test-target>
-```
-
-`moon test --update` 只用于 MoonBit 官方的 `inspect`/文本快照更新，不用于 canvas PNG 快照更新。
 
 ## Utilities & Tips
 

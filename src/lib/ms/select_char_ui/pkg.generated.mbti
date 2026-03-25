@@ -9,11 +9,7 @@ import {
 }
 
 // Values
-pub fn click_debug_new_character() -> Bool
-
 pub fn is_select_char_ui_open() -> Bool
-
-pub fn list_debug_clickable_ids() -> Array[String]
 
 pub async fn load_char_look(@entity.Entity, @char_look.CharLookMod, SelectableCharacter) -> @char_look.CharLook
 

@@ -6,10 +6,12 @@
 
 - `Q` 键切换显示。
 - `Esc` 关闭窗口。
-- 目前支持 3 个 tab：
+- 目前支持 2 个 tab：
   - Tab0：进行中任务
   - Tab1：已完成任务
-  - Tab2：预留占位（未启用）
+- 打开窗口后会向 `console` 注册可点击实体：
+  - package: `quest_log`, ui: `tab.in_progress`
+  - package: `quest_log`, ui: `tab.completed`
 
 ## 使用方式
 

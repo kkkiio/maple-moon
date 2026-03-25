@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/json",
+  "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/io_service",
@@ -13,8 +14,10 @@ import {
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/asset",
   "Milky2018/selene/entity",
+  "Milky2018/selene/event",
   "Milky2018/selene/inputs",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/position",
   "Milky2018/selene/sprite",
+  "Milky2018/selene/ui" @selene_ui,
 }

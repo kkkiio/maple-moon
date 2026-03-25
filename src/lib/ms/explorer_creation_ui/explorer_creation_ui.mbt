@@ -69,6 +69,21 @@ pub fn close_explorer_creation_ui() -> Unit {
 }
 
 ///|
+/// Returns whether explorer creation UI scene is currently mounted.
+pub fn is_explorer_creation_ui_open() -> Bool {
+  @game_state.game_state.phase
+  is @game_state.GamePhase::ExplorerCharacterCreation &&
+  creation_ui_ref.val is Some(_)
+}
+
+///|
+fn init {
+  @console.register_state_section("explorer_creation", fn() {
+    { "open": is_explorer_creation_ui_open() }
+  })
+}
+
+///|
 fn new_random_name(randomizer : @random.Rand) -> String {
   "explorer" + @randx.next_int(randomizer, 10000, from=4).to_string()
 }

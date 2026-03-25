@@ -10,6 +10,8 @@ pub fn close_explorer_creation_ui() -> Unit
 
 pub fn explorer_creation_ui_system(Double) -> Unit
 
+pub fn is_explorer_creation_ui_open() -> Bool
+
 pub fn open_explorer_creation_ui(@char_look.CharLookMod) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit

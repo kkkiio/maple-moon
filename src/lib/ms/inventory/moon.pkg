@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/ms/equip/data" @equip_data,
   "KKKIIO/maple-moon/lib/ms/equip/slot" @equip_slot,
   "KKKIIO/maple-moon/lib/ms/weapon",

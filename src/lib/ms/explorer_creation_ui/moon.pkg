@@ -2,6 +2,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/random",
   "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/io_service",

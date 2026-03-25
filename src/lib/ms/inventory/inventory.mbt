@@ -51,8 +51,29 @@ pub struct InventoryChangedEvent {
 pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @event.Events::new()
 
 ///|
+fn parse_int_arg(args : Array[String], index : Int, default : Int) -> Int {
+  guard index >= 0 && index < args.length() else { return default }
+  @strconv.parse_int(args[index]) catch {
+    _ => default
+  }
+}
+
+///|
 fn init {
   inventory_changed_event_bus.register_to_world(@ecs.require_current_world())
+  @console.register_command("meso", fn(args) {
+    let meso = parse_int_arg(args, 0, 0)
+    @game_server.send(@server_proto.AdminCommandMessage::SetMeso(meso~))
+    { "ok": true, "code": "OK", "message": "meso command sent", "args": args }
+  })
+  @console.register_command("item", fn(args) {
+    let item_id = parse_int_arg(args, 0, 0)
+    let quantity = parse_int_arg(args, 1, 1)
+    @game_server.send(
+      @server_proto.AdminCommandMessage::AddItem(item_id~, quantity~),
+    )
+    { "ok": true, "code": "OK", "message": "item command sent", "args": args }
+  })
 }
 
 ///|

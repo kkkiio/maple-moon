@@ -24,9 +24,8 @@ priv struct ExplorerCreationUIResource {
 fn get_etc_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Etc",
-    loader=@resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Etc",
-    ),
+    loader=@resource.DirResourceLoader::new("/assets/Etc"),
+    base_url="/assets",
   )
 }
 
@@ -35,10 +34,9 @@ fn get_map001_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "map001",
     loader=@resource.CompositeAsyncResourceLoader::new({
-      "Back/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Map001/Back",
-      ),
+      "Back/": @resource.DirResourceLoader::new("/assets/Map001/Back"),
     }),
+    base_url="/assets",
   )
 }
 
@@ -46,7 +44,8 @@ fn get_map001_loader() -> @resource.AsyncLoader {
 fn get_login_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Login",
-    loader=@resource.DirResourceLoader::new("https://maple-res.kkkiiox.work/UI"),
+    loader=@resource.DirResourceLoader::new("/assets/UI"),
+    base_url="/assets",
   )
 }
 
@@ -91,8 +90,21 @@ fn json_to_picture(json : Json) -> @sprite.Picture raise {
 }
 
 ///|
-fn load_button_visual(json : Json) -> @ui.MapleButtonResource raise {
-  @json.from_json(json)
+fn load_button_visual(json : Json) -> @ui.NxMapleButton raise {
+  let normalized : Json = match json {
+    { "normal": normal, "mouseOver": mouse_over, "pressed": pressed, .. } =>
+      {
+        "normal": normal,
+        "mouseOver": mouse_over,
+        "pressed": pressed,
+        "disabled": match json {
+          { "disabled": disabled, .. } => disabled
+          _ => normal
+        },
+      }
+    _ => json
+  }
+  @json.from_json(normalized)
 }
 
 ///|
@@ -197,41 +209,53 @@ async fn load_resource() -> ExplorerCreationUIResource {
     signboard2: @resource.nx_animation_to_selene_animation(
       @json.from_json(signboard2_src),
     ),
-    bt_gender_male: load_button_visual(
-      match gender_select_src {
-        { "male": male, .. } => male
-        _ => fail("missing male button")
-      },
+    bt_gender_male: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match gender_select_src {
+          { "male": male, .. } => male
+          _ => fail("missing male button")
+        },
+      ),
     ),
-    bt_gender_female: load_button_visual(
-      match gender_select_src {
-        { "female": female, .. } => female
-        _ => fail("missing female button")
-      },
+    bt_gender_female: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match gender_select_src {
+          { "female": female, .. } => female
+          _ => fail("missing female button")
+        },
+      ),
     ),
-    bt_left: load_button_visual(
-      match customize_char_src {
-        { "BtLeft": bt_left, .. } => bt_left
-        _ => fail("missing BtLeft")
-      },
+    bt_left: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match customize_char_src {
+          { "BtLeft": bt_left, .. } => bt_left
+          _ => fail("missing BtLeft")
+        },
+      ),
     ),
-    bt_right: load_button_visual(
-      match customize_char_src {
-        { "BtRight": bt_right, .. } => bt_right
-        _ => fail("missing BtRight")
-      },
+    bt_right: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match customize_char_src {
+          { "BtRight": bt_right, .. } => bt_right
+          _ => fail("missing BtRight")
+        },
+      ),
     ),
-    bt_yes: load_button_visual(
-      match customize_char_src {
-        { "BtYes": bt_yes, .. } => bt_yes
-        _ => fail("missing BtYes")
-      },
+    bt_yes: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match customize_char_src {
+          { "BtYes": bt_yes, .. } => bt_yes
+          _ => fail("missing BtYes")
+        },
+      ),
     ),
-    bt_no: load_button_visual(
-      match customize_char_src {
-        { "BtNo": bt_no, .. } => bt_no
-        _ => fail("missing BtNo")
-      },
+    bt_no: @ui.MapleButtonResource::from_nx(
+      load_button_visual(
+        match customize_char_src {
+          { "BtNo": bt_no, .. } => bt_no
+          _ => fail("missing BtNo")
+        },
+      ),
     ),
     nameboard: json_to_picture(
       match customize_char_src {

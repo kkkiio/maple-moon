@@ -39,7 +39,7 @@ fn game_start() -> Unit {
   @quest_log.setup_game_server_handlers()
   @inventory_ui.init_inventory_ui()
   @shop_ui.init_shop_ui()
-  @gm.install()
+  @console.install()
 }
 
 ///|

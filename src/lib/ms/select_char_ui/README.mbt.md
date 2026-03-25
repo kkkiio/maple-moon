@@ -13,6 +13,9 @@
 
 - `select_char_ui_system`
 - `setup_game_server_handlers`
+- `is_select_char_ui_open`（调试可见性）
+- `list_debug_clickable_ids`（调试点击项列表）
+- `click_debug_new_character`（调试触发创建角色）
 
 ## 接入示例
 

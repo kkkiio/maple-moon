@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/console"
+
+// Values
+pub fn install() -> Unit
+
+pub fn register_command(String, (Array[String]) -> Json) -> Unit
+
+pub fn register_state_section(String, () -> Json) -> Unit
+
+pub fn register_ui_provider(String, () -> Array[String], (String) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

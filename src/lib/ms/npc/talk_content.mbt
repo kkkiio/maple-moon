@@ -12,7 +12,8 @@ test "test text" {
   inspect(
     result.text_html,
     content=(
-      #|<span style="color: black">Take this ship and you&#039;ll head off to a bigger continent. For </span><span style="color: black, font-weight: bold;">150 mesos</span><span style="color: black">, I&#039;ll take you to </span><span style="color: blue">Victoria Island</span><span style="color: black">. The thing is, once you leave this place, you can&#039;t ever come back. What do you think? Do you want to go to Victoria Island?</span>
+      #|<span style="color: black;">Take this ship and you&#039;ll head off to a bigger continent. For </span><span style="color: black; font-weight: bold;">150 mesos</span><span style="color: black;">, I&#039;ll take you to </span><span style="color: blue;">Victoria Island</span><span style="color: black;">. The thing is, once you leave this place, you can&#039;t ever come back. What do you think? Do you want to go to Victoria Island?</span>
+
     ),
   )
 }
@@ -28,16 +29,16 @@ test "test selections" {
     #|#L4##m120000000# (80 mesos)#l
   let result = parse_talk_content(template)
   json_inspect(result.selections, content=[
-    ["blue", 0, "104000000<span style=\"color: blue\"> (100 mesos)</span>"],
-    ["blue", 1, "102000000<span style=\"color: blue\"> (100 mesos)</span>"],
-    ["blue", 2, "100000000<span style=\"color: blue\"> (100 mesos)</span>"],
-    ["blue", 3, "103000000<span style=\"color: blue\"> (100 mesos)</span>"],
-    ["blue", 4, "120000000<span style=\"color: blue\"> (80 mesos)</span>"],
+    ["blue", 0, "104000000<span style=\"color: blue;\"> (100 mesos)</span>"],
+    ["blue", 1, "102000000<span style=\"color: blue;\"> (100 mesos)</span>"],
+    ["blue", 2, "100000000<span style=\"color: blue;\"> (100 mesos)</span>"],
+    ["blue", 3, "103000000<span style=\"color: blue;\"> (100 mesos)</span>"],
+    ["blue", 4, "120000000<span style=\"color: blue;\"> (80 mesos)</span>"],
   ])
   inspect(
     result.text_html,
     content=(
-      #|<span style="color: black">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br/>
+      #|<span style="color: black;">We have a special 90% discount for beginners.Choose your destination, for fees will change from place to place.</span><br/>
       #|
     ),
   )
@@ -51,8 +52,8 @@ test "test no options" {
   inspect(
     result.text_html,
     content=(
-      #|<span style="color: black">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It&#039;s a bit pricey, but... for only 10,000 mesos, we&#039;ll take you safely to the </span><br/>
-      #|<span style="color: black"></span><span style="color: blue">Ant Tunnel</span><span style="color: black">.</span>
+      #|<span style="color: black;">Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It&#039;s a bit pricey, but... for only 10,000 mesos, we&#039;ll take you safely to the </span><br/>
+      #|<span style="color: black;"></span><span style="color: blue;">Ant Tunnel</span><span style="color: black;">.</span>
     ),
   )
 }
@@ -201,17 +202,17 @@ test "parse quiz" {
   let template = "Which of these NPC's will not NOT see at Kerning City?\\r\\n#L0##b1. Don Giovanni#k #l\\r\\n#L1##b2. Andre#k #l\\r\\n#L2##b3. Mong From the Kong#k #l\\r\\n#L3##b4. Valen#k \\r\\n#L4##b5. Don Hwang#k #l"
   let result = parse_talk_content(template)
   json_inspect(result.selections, content=[
-    ["black", 0, "<span style=\"color: blue\">1. Don Giovanni</span> "],
-    ["black", 1, "<span style=\"color: blue\">2. Andre</span> "],
-    ["black", 2, "<span style=\"color: blue\">3. Mong From the Kong</span> "],
-    ["black", 3, "<span style=\"color: blue\">4. Valen</span> "],
-    ["black", 4, "<span style=\"color: blue\">5. Don Hwang</span> "],
+    ["black", 0, "<span style=\"color: blue;\">1. Don Giovanni</span> "],
+    ["black", 1, "<span style=\"color: blue;\">2. Andre</span> "],
+    ["black", 2, "<span style=\"color: blue;\">3. Mong From the Kong</span> "],
+    ["black", 3, "<span style=\"color: blue;\">4. Valen</span> "],
+    ["black", 4, "<span style=\"color: blue;\">5. Don Hwang</span> "],
   ])
   inspect(
     result.text_html,
     content=(
-      #|<span style="color: black">Which of these NPC&#039;s will not NOT see at Kerning City?</span><br/>
-      #|<span style="color: black"></span>
+      #|<span style="color: black;">Which of these NPC&#039;s will not NOT see at Kerning City?</span><br/>
+      #|<span style="color: black;"></span>
     ),
   )
 }

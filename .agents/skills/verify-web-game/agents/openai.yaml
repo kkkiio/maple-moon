@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Web Game"
+  short_description: "Replay web game flows and verify artifacts."
+  default_prompt: "Verify a web game flow with Playwright replay artifacts (screenshots, text-state JSON, and error logs), then report pass/fail with concrete evidence."

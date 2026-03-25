@@ -29,6 +29,8 @@ struct SelectCharUI {
   // segment: (duration_frames, from_alpha, to_alpha)
   animations : Array[(@entity.Entity, Ref[Int], Array[(Int, Double, Double)])]
   buttons : Array[SeleneButton]
+  click_reader : @event.EventReader[@selene_ui.UiClickEvent]
+  new_character_click_entity : @entity.Entity
   entities : Array[@entity.Entity]
 }
 
@@ -158,10 +160,12 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       },
     },
   }
+  let bt_new : @ui.NxMapleButton = @json.from_json(bt_new_res)
+  let bt_select : @ui.NxMapleButton = @json.from_json(bt_select_res)
   {
     ani18: nx_animation_to_selene_animation(ani18),
-    bt_new: @json.from_json(bt_new_res),
-    bt_select: @json.from_json(bt_select_res),
+    bt_new: @ui.MapleButtonResource::from_nx(bt_new),
+    bt_select: @ui.MapleButtonResource::from_nx(bt_select),
   }
 }
 
@@ -311,15 +315,37 @@ pub async fn SelectCharUI::new(
     let slot = 0
     on_select_character(slot)
   })
-  let btn_new = spawn_button(
-    entities,
-    resources.bt_new,
-    200,
-    495,
-    on_new_character,
+  let new_button_entity = @entity.Entity::new()
+  entities.push(new_button_entity)
+  @position.positions().set(
+    new_button_entity,
+    @position.Position(@selene_math.Vec2D(200.0, 495.0)),
   )
+  @sprite.sprites().set(
+    new_button_entity,
+    @sprite.Sprite::from_animation(
+      resources.bt_new.selene_animations[@ui.ButtonState::NORMAL],
+      10,
+    ),
+  )
+  let new_click_entity = @entity.Entity::new()
+  entities.push(new_click_entity)
+  @selene_ui.nodes().set(
+    new_click_entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(200.0, 495.0),
+      size=@selene_math.Vec2D(
+        resources.bt_new.dimensions.x.to_double(),
+        resources.bt_new.dimensions.y.to_double(),
+      ),
+    ),
+  )
+  @selene_ui.z_indexes().set(new_click_entity, @selene_ui.ZIndex::new(3000))
+  @selene_ui.buttons().set(new_click_entity, @selene_ui.Button::new())
   {
-    buttons: [btn_select, btn_new],
+    buttons: [btn_select],
+    click_reader: @event.EventReader::new(),
+    new_character_click_entity: new_click_entity,
     entities,
     select_slot: None,
     on_new_character,
@@ -527,6 +553,14 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
       ignore(entity)
       ignore(alpha_norm)
     }
+    let click_events = @selene_ui.click_event_bus.read(ui.click_reader)
+    for event in click_events {
+      guard event.button is @inputs.MouseButton::Left else { continue }
+      if event.entity == ui.new_character_click_entity {
+        (ui.on_new_character)()
+        break
+      }
+    }
     return
   }
 
@@ -557,6 +591,47 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
     Ok(ui) => select_char_ui.val = Some(ui)
     Err(e) => abort("add select char ui failed: \{e.to_string()}")
   }
+}
+
+///|
+/// Returns whether select-character UI is currently mounted.
+pub fn is_select_char_ui_open() -> Bool {
+  select_char_ui.val is Some(_)
+}
+
+///|
+/// Returns clickable debug ids exposed by select-character UI.
+pub fn list_debug_clickable_ids() -> Array[String] {
+  guard game_state.phase is GamePhase::SelectCharacter else { return [] }
+  guard select_char_ui.val is Some(_) else { return [] }
+  ["select_char.new_character"]
+}
+
+///|
+/// Clicks the debug `New Character` action if select-character UI is open.
+pub fn click_debug_new_character() -> Bool {
+  guard game_state.phase is GamePhase::SelectCharacter else { return false }
+  guard select_char_ui.val is Some(ui) else { return false }
+  (ui.on_new_character)()
+  true
+}
+
+///|
+fn init {
+  @console.register_state_section("select_char", fn() {
+    { "open": is_select_char_ui_open() }
+  })
+  @console.register_ui_provider(
+    "select_char",
+    fn() { list_debug_clickable_ids() },
+    fn(id) {
+      if id == "select_char.new_character" {
+        click_debug_new_character()
+      } else {
+        false
+      }
+    },
+  )
 }
 
 ///|

@@ -80,7 +80,7 @@ pub(all) struct MapleButtonResource {
   selene_animations : Map[ButtonState, @sprite.Animation]
   dimensions : @res_types.Point[Int]
 }
-pub impl @json.FromJson for MapleButtonResource
+pub fn MapleButtonResource::from_nx(NxMapleButton) -> Self
 
 type Number
 pub fn Number::row_height(Bool) -> Int

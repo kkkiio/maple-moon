@@ -10,13 +10,6 @@
 - 发送 `CREATE_CHAR`
 - 处理创建结果并返回 `SelectCharacter`
 
-对外入口：
-
-- `open_explorer_creation_ui`
-- `close_explorer_creation_ui`
-- `explorer_creation_ui_system`
-- `setup_game_server_handlers`
-
 ## 接入示例
 
 ```moonbit nocheck

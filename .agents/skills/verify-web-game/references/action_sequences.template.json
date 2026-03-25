@@ -1,0 +1,23 @@
+{
+  "scenario": "create-character-minimal",
+  "notes": [
+    "Replace mouse_x/mouse_y with your actual button location.",
+    "Keep steps small and deterministic."
+  ],
+  "steps": [
+    {
+      "buttons": [],
+      "frames": 8
+    },
+    {
+      "buttons": ["left_mouse_button"],
+      "frames": 2,
+      "mouse_x": 120,
+      "mouse_y": 80
+    },
+    {
+      "buttons": [],
+      "frames": 18
+    }
+  ]
+}

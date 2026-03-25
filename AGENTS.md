@@ -20,6 +20,10 @@
 
 使用该 skill 写测试.
 
+#### `$verify-web-game`
+
+使用该 skill 验证修改后的游戏.
+
 ### Package README
 
 每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.

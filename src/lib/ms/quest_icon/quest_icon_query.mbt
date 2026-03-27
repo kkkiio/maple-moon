@@ -11,7 +11,6 @@ struct Module {
   quests_resource : QuestResource
   quest_checks_raw : Json
   map_quests : MapQuests
-  player_quest_log : @quest.PlayerQuestLog
 }
 
 ///|
@@ -132,18 +131,13 @@ pub fn setup(
         @inventory.inventory.val.get_item_count(item_id)
       },
       char_stats_provider: fn() { player.get_stats() },
-      player_quest_log: @quest.PlayerQuestLog::default(),
+      player_quest_log: @quest_log.current_player_quest_log(),
     }
   }
   let map_quests = MapQuests::new(
     map_quests_resource, quests_resource, npc_quests_map, open_npc_talk_ui, get_player_deps,
   )
-  let mod = {
-    quests_resource,
-    quest_checks_raw,
-    map_quests,
-    player_quest_log: @quest.PlayerQuestLog::default(),
-  }
+  let mod = { quests_resource, quest_checks_raw, map_quests }
   active_module.val = Some(mod)
   bump_quest_icon_query_revision()
 }
@@ -213,7 +207,7 @@ fn Module::log_low_restriction_rejection(
     })
     return
   }
-  let status = self.player_quest_log.get_quest(quest_id)
+  let status = @quest_log.current_player_quest_log().get_quest(quest_id)
   if not(is_quest_status_can_start(status, check0.repeatable)) {
     @log.warn("low restriction quest rejected: status cannot start", data={
       "quest_id": quest_id,

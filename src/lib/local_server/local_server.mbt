@@ -327,12 +327,7 @@ fn LocalServer::find_character_entry(
 fn LocalServer::on_character_list_request(self : LocalServer) -> Unit {
   @io_service.execute_background(async fn() {
     if self.character_roster.is_empty() {
-      let loaded = self.load_character_roster()
-      if not(loaded) {
-        let entry = default_character_entry()
-        self.character_roster.push(entry)
-        self.init_character_storage(entry)
-      }
+      ignore(self.load_character_roster())
     }
     self.send_server_message(CharacterListMessage::{
       characters: self.character_roster.copy(),

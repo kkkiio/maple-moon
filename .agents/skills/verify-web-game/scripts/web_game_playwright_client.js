@@ -9,6 +9,7 @@ function parseArgs(argv) {
     pauseMs: 250,
     headless: true,
     screenshotDir: "output/web-game",
+    profileDir: null,
     actionsFile: null,
     actionsJson: null,
     click: null,
@@ -31,6 +32,9 @@ function parseArgs(argv) {
       i++;
     } else if (arg === "--screenshot-dir" && next) {
       args.screenshotDir = next;
+      i++;
+    } else if (arg === "--profile-dir" && next) {
+      args.profileDir = next;
       i++;
     } else if (arg === "--actions-file" && next) {
       args.actionsFile = next;
@@ -263,11 +267,22 @@ async function main() {
   const args = parseArgs(process.argv);
   ensureDir(args.screenshotDir);
 
-  const browser = await chromium.launch({
-    channel: "chrome",
-    headless: args.headless,
-  });
-  const page = await browser.newPage();
+  let browser = null;
+  let context = null;
+  if (args.profileDir) {
+    ensureDir(args.profileDir);
+    context = await chromium.launchPersistentContext(args.profileDir, {
+      channel: "chrome",
+      headless: args.headless,
+    });
+  } else {
+    browser = await chromium.launch({
+      channel: "chrome",
+      headless: args.headless,
+    });
+    context = await browser.newContext();
+  }
+  const page = context.pages().length > 0 ? context.pages()[0] : await context.newPage();
   const consoleErrors = new ConsoleErrorTracker();
 
   page.on("console", (msg) => {
@@ -347,7 +362,10 @@ async function main() {
     }
   }
 
-  await browser.close();
+  await context.close();
+  if (browser) {
+    await browser.close();
+  }
 }
 
 main().catch((err) => {

@@ -10,10 +10,8 @@ Run reproducible game replays and judge outcomes from artifacts.
 ## Set Skill Paths Once
 
 ```bash
-export PROJECT_ROOT="/Users/xieziheng/projects/maple-moon"
 export VERIFY_WEB_GAME_HOME="$PROJECT_ROOT/.agents/skills/verify-web-game"
 export WEB_GAME_CLIENT="$VERIFY_WEB_GAME_HOME/scripts/web_game_playwright_client.js"
-export WEB_GAME_WEBGPU_PROBE="$VERIFY_WEB_GAME_HOME/scripts/check_playwright_webgpu.js"
 export WEB_GAME_ACTIONS_TEMPLATE="$VERIFY_WEB_GAME_HOME/references/action_sequences.template.json"
 ```
 
@@ -24,24 +22,6 @@ Expose these browser globals before verification:
 - `window.render_game_to_text(): string` returning concise JSON string.
 - Prefer `window.advanceTime(ms)` for deterministic stepping.
 - Provide stable clickable IDs through your console/debug API for reusable action sequences.
-
-## WebGPU-First Precheck
-
-Always check WebGPU in the same Playwright context before replay:
-
-```bash
-node "$WEB_GAME_WEBGPU_PROBE" --url http://127.0.0.1:8080 --headless 0
-```
-
-Then run headless precheck if needed:
-
-```bash
-node "$WEB_GAME_WEBGPU_PROBE" --url http://127.0.0.1:8080 --headless 1
-```
-
-Probe output includes `navigator_gpu`, `adapter_found`, `adapter_features`, `adapter_limits`.
-
-If headed is `true` and headless is `false`, treat this as environment mismatch. Continue replay in headed mode and record that in the report.
 
 ## Replay Workflow
 
@@ -57,6 +37,7 @@ Example:
 ```bash
 node "$WEB_GAME_CLIENT" \
   --url http://127.0.0.1:8080 \
+  --profile-dir ./output/web-game/profile/default \
   --actions-file ./tmp/create-character-actions.json \
   --iterations 2 \
   --pause-ms 350 \
@@ -88,13 +69,12 @@ If any condition fails, declare **FAIL**, point to exact artifact paths, apply m
 Return a concise report containing:
 
 1. Scenario and action file used.
-2. WebGPU probe result (headed/headless).
-3. Artifact evidence paths:
+2. Artifact evidence paths:
    - screenshot
    - state
    - error
-4. PASS/FAIL verdict and reason.
-5. Next minimal fix if failed.
+3. PASS/FAIL verdict and reason.
+4. Next minimal fix if failed.
 
 ## References
 

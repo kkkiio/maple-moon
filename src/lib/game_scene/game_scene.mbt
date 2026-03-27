@@ -378,6 +378,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
       }
       @item_use_events.clear_intents()
+      @quest_log.handle_player_quest_info(quests)
       match @player.get_player() {
         Some(player) => {
           apply_equipped_stats(player.get_stats(), inventory_entry.items)
@@ -385,7 +386,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
         }
         None => ()
       }
-      @quest_log.handle_player_quest_info(quests)
       clear_loading_data()
       @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       let global_inv = @inventory.inventory.val

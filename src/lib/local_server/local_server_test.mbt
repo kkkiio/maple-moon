@@ -107,7 +107,7 @@ pub impl @resource.AsyncResourceLoader for EmptyMapxLoader with load_data(
 }
 
 ///|
-async test "local server creates default character without item preload" {
+async test "local server character list is empty when roster is missing" {
   @resource.set_character_loader(
     @resource.AsyncLoader::new(
       "starter_character_loader",
@@ -151,11 +151,7 @@ async test "local server creates default character without item preload" {
   @async.pause()
 
   inspect(responses.val.length(), content="1")
-  inspect(responses.val[0].characters.length(), content="1")
-  inspect(
-    responses.val[0].characters[0].look.equips.get(5).unwrap(),
-    content="1040002",
-  )
+  inspect(responses.val[0].characters.length(), content="0")
 }
 
 ///|

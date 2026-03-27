@@ -45,6 +45,9 @@ priv struct CachedNpcIconQuery {
 }
 
 ///|
+let last_quest_log_revision : Ref[Int] = Ref::new(-1)
+
+///|
 const QUEST_ICON_ZINDEX_OFFSET = 5000
 
 ///|
@@ -69,6 +72,13 @@ pub fn quest_icon_system(_delta : Double) -> Unit {
   ensure_resource_loading()
   poll_loading_result()
   guard quest_icon_resources.val is Some(resources) else { return }
+  let quest_log_rev = @quest_log.revision()
+  if quest_log_rev != last_quest_log_revision.val {
+    if @player.get_player() is Some(player) {
+      bind_player(player)
+      last_quest_log_revision.val = quest_log_rev
+    }
+  }
   let inventory_events = @inventory.inventory_changed_event_bus.read(
     get_inventory_changed_reader(),
   )

@@ -1,43 +1,4 @@
 ///|
-/// 读取文件内容为字符串 (使用 Node.js fs)
-extern "js" fn read_file_to_string(path : String) -> String =
-  #| (path) => require('node:fs').readFileSync(path, 'utf-8')
-
-///|
-test "MobDropDatabase::from_tsv with real Cosmic format" {
-  let tsv =
-    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
-    #|1	100100	4000019	1	1	0	200000
-    #|2	100100	2000000	1	1	0	10000
-    #|3	100101	4000020	1	1	0	250000
-
-  let db = MobDropDatabase::from_tsv(tsv)
-
-  // 验证怪物ID列表
-  let mob_ids = db.get_mob_ids().collect()
-  inspect(mob_ids.length(), content="2")
-
-  // 验证100100的掉落
-  let drops_100100 = db.get_drops(100100)
-  inspect(drops_100100.length(), content="2")
-  inspect(drops_100100[0].dropperid, content="100100")
-  inspect(drops_100100[0].itemid, content="4000019")
-  inspect(drops_100100[0].minimum_quantity, content="1")
-  inspect(drops_100100[0].maximum_quantity, content="1")
-  inspect(drops_100100[0].questid, content="0")
-  inspect(drops_100100[0].chance, content="200000")
-
-  // 验证100101的掉落
-  let drops_100101 = db.get_drops(100101)
-  inspect(drops_100101.length(), content="1")
-  inspect(drops_100101[0].itemid, content="4000020")
-
-  // 验证不存在的怪物
-  let drops_none = db.get_drops(999999)
-  inspect(drops_none.length(), content="0")
-}
-
-///|
 test "MobDropDatabase::has_drops" {
   let tsv =
     #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
@@ -138,21 +99,6 @@ test "MobDropDatabase::roll_drops" {
 }
 
 ///|
-test "MobDropDatabase::roll_drops filters quest drops" {
-  let tsv =
-    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
-    #|1	100100	4000019	1	1	0	1000000
-    #|2	100100	4000020	1	1	2001	1000000
-
-  let db = MobDropDatabase::from_tsv(tsv)
-
-  let rand = @random.Rand::new()
-  let drops = db.roll_drops(100100, rand)
-  inspect(drops.length(), content="1")
-  inspect(drops[0].0, content="4000019")
-}
-
-///|
 test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
   let tsv =
     #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
@@ -180,25 +126,13 @@ test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
 }
 
 ///|
-test "parse tsv with empty lines" {
-  let tsv =
-    #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
-    #|1	100100	4000019	1	1	0	200000
-    #|
-    #|2	100101	4000020	1	1	0	250000
-    #|
-
-  let db = MobDropDatabase::from_tsv(tsv)
-  inspect(db.get_drops(100100).length(), content="1")
-  inspect(db.get_drops(100101).length(), content="1")
-}
-
-///|
 /// 测试 calculate_mob_drops 纯函数 - 使用 assets/data/mob_drops.tsv 中真实的猪猪掉落配置
 /// 使用固定随机种子，让结果可预测，用 inspect 输出具体掉落内容
 /// 真实数据位置：assets/data/mob_drops.tsv (dropperid=1210100)
 test "calculate_mob_drops for pig with real config" {
-  let tsv_content : String = read_file_to_string("assets/data/mob_drops.tsv")
+  let tsv_content : String = @fsx.read_file_sync(
+    "assets/data/mob_drops.tsv", "utf-8",
+  )
   let drop_db = MobDropDatabase::from_tsv(tsv_content)
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品

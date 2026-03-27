@@ -93,6 +93,15 @@ pub fn handle_player_quest_info(player_quests : PlayerQuestLogInfo) -> Unit {
 }
 
 ///|
+/// Returns current runtime player quest log snapshot for cross-module queries.
+pub fn current_player_quest_log() -> PlayerQuestLog {
+  match active_module.val {
+    Some(m) => m.player_quest_log.val
+    None => @quest.PlayerQuestLog::default()
+  }
+}
+
+///|
 fn bump_quest_log_revision() -> Unit {
   quest_log_revision_ref.val = quest_log_revision_ref.val + 1
 }

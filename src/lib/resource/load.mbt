@@ -21,7 +21,8 @@ pub fn AsyncLoader::new(
   base_url? : String = OLD_BASE_URL,
   image_base_url? : String = base_url,
 ) -> AsyncLoader {
-  { loader: SpritesheetMergeLoader::new(loader, base_url, image_base_url) }
+  ignore(image_base_url)
+  { loader, }
 }
 
 ///|

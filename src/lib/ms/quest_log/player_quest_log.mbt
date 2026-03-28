@@ -19,10 +19,6 @@ struct Module {
 let active_module : Ref[Module?] = Ref::new(None)
 
 ///|
-/// Quest-log change event bus.
-let quest_log_event_bus : @event.Events[(PlayerQuestLog) -> Bool] = @event.Events::new()
-
-///|
 /// Raw in-progress quest-log entry exported for the `quest_log` facade.
 pub(all) struct QuestLogInProgressRaw {
   /// Quest id.

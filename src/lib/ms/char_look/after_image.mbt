@@ -195,7 +195,7 @@ pub fn AfterImage::update(
 ///|
 /// Entry storing an AfterImage with its frame getter function.
 /// The get_frame_fn is called each update to get the current animation frame.
-struct AfterImageEntry {
+priv struct AfterImageEntry {
   after_image : AfterImage
   get_frame_fn : () -> Int
 }

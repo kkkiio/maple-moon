@@ -1,11 +1,13 @@
 ///|
 struct MapNpcs {
   open_npc_talk_ui : (TalkArgs) -> Unit
+  is_npc_talk_ui_open : () -> Bool
   npcs : Map[Int, Npc]
   loading_npcs : Array[@utils.Future[Result[Npc, Error]]]
   spawns : @queue.Queue[NpcSpawn]
   npc_loader : @resource.AsyncLoader
   string_loader : @resource.AsyncLoader
+  pointer_reader : @event.EventReader[@physics2d.PointerEvent]
 }
 
 ///|
@@ -30,9 +32,6 @@ pub(all) struct NpcAnchor {
 let map_npcs_ctx : Ref[MapNpcsContext?] = Ref::new(None)
 
 ///|
-let click_claimed_this_frame : Ref[Bool] = Ref::new(false)
-
-///|
 pub fn set_npcs(ctx : MapNpcsContext) -> Unit {
   map_npcs_ctx.val = Some(ctx)
 }
@@ -44,53 +43,25 @@ pub fn clear_map_npcs() -> Unit {
     None => ()
   }
   map_npcs_ctx.val = None
-  click_claimed_this_frame.val = false
 }
 
 ///|
 pub fn map_npcs_system(_delta : Double) -> Unit {
-  guard map_npcs_ctx.val is Some({ map_npcs, physics }) else {
-    click_claimed_this_frame.val = false
-    return
-  }
+  guard map_npcs_ctx.val is Some({ map_npcs, physics }) else { return }
   let times = @logic_fps.get_logic_times()
   for i = 0; i < times; i = i + 1 {
     map_npcs.update(physics)
   }
-  let mouse_pos = @inputs.mouse.pos
-  let cursor_pos = @struct.Point::new(
-    mouse_pos[@selene_math.X].to_int(),
-    mouse_pos[@selene_math.Y].to_int(),
-  )
-  let camera_pos = @camera.get_position()
-  let view_pos = @struct.Point::new(
-    -camera_pos[@selene_math.X].to_int(),
-    -camera_pos[@selene_math.Y].to_int(),
-  )
-  let pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
-  let cursor_state = if pressed && click_claimed_this_frame.val {
-    None
-  } else {
-    map_npcs.send_cursor(pressed, cursor_pos, view_pos)
-  }
-  match cursor_state {
-    Some(@ui.CursorState::CAN_CLICK) =>
-      @cursor.request_cursor_state(@ui.CursorState::CAN_CLICK)
-    _ => ()
-  }
-  click_claimed_this_frame.val = false
-}
-
-///|
-/// Claims left-click for this frame so NPC default click handling is skipped.
-pub fn claim_click_this_frame() -> Unit {
-  click_claimed_this_frame.val = true
+  map_npcs.handle_pointer_events()
 }
 
 ///|
 /// Opens NPC talk UI through npc module state machine.
 pub fn request_quest_talk(args : TalkArgs) -> Unit {
   guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
+  if (map_npcs.is_npc_talk_ui_open)() {
+    return
+  }
   (map_npcs.open_npc_talk_ui)(args)
 }
 
@@ -169,16 +140,19 @@ pub fn MapNpcs::apply_spawn_npc_controller_message(
 ///|
 pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
+  is_npc_talk_ui_open : () -> Bool,
   npc_loader~ : @resource.AsyncLoader,
   string_loader~ : @resource.AsyncLoader,
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
+    is_npc_talk_ui_open,
     npcs: Map::new(),
     loading_npcs: Array::new(),
     spawns: @queue.new(),
     npc_loader,
     string_loader,
+    pointer_reader: @event.EventReader::new(),
   }
 }
 
@@ -240,33 +214,47 @@ pub fn MapNpcs::clear(self : MapNpcs) -> Unit {
 }
 
 ///|
-pub fn MapNpcs::send_cursor(
-  self : MapNpcs,
-  pressed : Bool,
-  position : @struct.Point[Int],
-  viewpos : @struct.Point[Int],
-) -> @ui.CursorState? {
-  for _, map_object in self.npcs {
-    let npc = map_object
-    if npc.entity.is_alive() && npc.inrange(position, viewpos) {
-      if pressed {
-        match npc.talk() {
-          Some(talk_args) =>
-            (self.open_npc_talk_ui)({
-              ..talk_args,
-              talk_action: SEND_NEXT(fn(next) {
-                on_npc_talk_choice(TalkChoice::SEND_NEXT(next~))
-              }),
-            })
-          None => ()
-        }
-        @game_server.send(@server_proto.TalkToNpcMessage::{ oid: npc.get_oid() })
-        return Some(@ui.CursorState::IDLE)
-      }
-      return Some(@ui.CursorState::CAN_CLICK)
+fn MapNpcs::npc_by_entity(self : MapNpcs, entity : @entity.Entity) -> Npc? {
+  for _, npc in self.npcs {
+    if npc.entity == entity {
+      return Some(npc)
     }
   }
   None
+}
+
+///|
+fn MapNpcs::open_talk_if_idle(self : MapNpcs, npc : Npc) -> Unit {
+  if (self.is_npc_talk_ui_open)() {
+    return
+  }
+  match npc.talk() {
+    Some(talk_args) =>
+      (self.open_npc_talk_ui)({
+        ..talk_args,
+        talk_action: SEND_NEXT(fn(next) {
+          on_npc_talk_choice(TalkChoice::SEND_NEXT(next~))
+        }),
+      })
+    None => ()
+  }
+}
+
+///|
+fn MapNpcs::handle_pointer_events(self : MapNpcs) -> Unit {
+  let events = @physics2d.pointer_event_bus.read(self.pointer_reader)
+  let mut opened_this_frame = false
+  for event in events {
+    guard event.button is @inputs.MouseButton::Left else { continue }
+    guard event.phase is @physics2d.PointerPhase::JustPressed else { continue }
+    guard self.npc_by_entity(event.entity) is Some(npc) else { continue }
+    if opened_this_frame || (self.is_npc_talk_ui_open)() {
+      continue
+    }
+    self.open_talk_if_idle(npc)
+    @game_server.send(@server_proto.TalkToNpcMessage::{ oid: npc.get_oid() })
+    opened_this_frame = true
+  }
 }
 
 ///|
@@ -555,6 +543,7 @@ pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Unit {
     None => ()
   }
   self.sync_sprite()
+  self.sync_pickable()
 }
 
 ///|
@@ -596,30 +585,36 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
 }
 
 ///|
-pub fn Npc::is_scripted(self : Npc) -> Bool {
-  self.scripted
+fn Npc::click_rect(self : Npc) -> (@selene_math.Vec2D, @selene_math.Vec2D)? {
+  guard self.animations.get(self.stance) is Some(animation) else { return None }
+  let width = animation.dimensions.x.to_double()
+  let height = animation.dimensions.y.to_double()
+  Some(
+    (
+      @selene_math.Vec2D(width, height),
+      @selene_math.Vec2D(-width / 2.0, -height),
+    ),
+  )
 }
 
 ///|
-pub fn Npc::inrange(
-  self : Npc,
-  cursorpos : @struct.Point[Int],
-  viewpos : @struct.Point[Int],
-) -> Bool {
-  if not(self.entity.is_alive()) {
-    return false
+fn Npc::sync_pickable(self : Npc) -> Unit {
+  guard self.entity.is_alive() else { return }
+  guard self.click_rect() is Some((size, offset)) else { return }
+  if @physics2d.pickables().get(self.entity) is None {
+    @physics2d.pickables().set(self.entity, @physics2d.Pickable::new())
+  } else if @physics2d.pickables().get(self.entity) is Some(pickable) {
+    pickable.active = true
   }
-  let absp = self.phobj.get_position() + viewpos
-  let dim = self.animations
-    .get(self.stance)
-    .map(fn(animation) { animation.dimensions })
-    .unwrap_or_default()
-  @struct.Rectangle::from4(
-    absp.x - dim.x / 2,
-    absp.x + dim.x / 2,
-    absp.y - dim.y,
-    absp.y,
-  ).contains(cursorpos)
+  @physics2d.shapes().set(
+    self.entity,
+    @physics2d.CollisionShape::Rect(size~, offset~),
+  )
+}
+
+///|
+pub fn Npc::is_scripted(self : Npc) -> Bool {
+  self.scripted
 }
 
 ///|
@@ -642,6 +637,8 @@ pub fn Npc::get_oid(self : Npc) -> Int {
 ///|
 pub fn Npc::destroy(self : Npc) -> Unit {
   @sprite.sprites().remove(self.entity)
+  @physics2d.pickables().remove(self.entity)
+  @physics2d.shapes().remove(self.entity)
   self.entity.destroy()
 }
 

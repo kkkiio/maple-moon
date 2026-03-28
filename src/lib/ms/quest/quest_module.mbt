@@ -1,16 +1,4 @@
 ///|
-struct Module {
-  quests_resource : QuestResource
-  quest_checks_raw : Json
-}
-
-///|
-let active_module : Ref[Module?] = Ref::new(None)
-
-///|
-let quest_log_revision_ref : Ref[Int] = Ref::new(0)
-
-///|
 pub(all) struct DemoQuestSelection {
   /// Selected quest id.
   quest_id : Int
@@ -54,31 +42,6 @@ pub(all) struct QuestLogSnapshotRaw {
 } derive(Show)
 
 ///|
-/// Registers the active quest module instance for global query entrypoints.
-pub fn set_active_module(mod : Module) -> Unit {
-  active_module.val = Some(mod)
-  bump_quest_log_revision()
-}
-
-///|
-/// Clears the active quest module binding.
-pub fn clear_active_module() -> Unit {
-  active_module.val = None
-  bump_quest_log_revision()
-}
-
-///|
-/// Returns monotonic revision used by quest-log query caches.
-pub fn quest_log_revision() -> Int {
-  quest_log_revision_ref.val
-}
-
-///|
-fn bump_quest_log_revision() -> Unit {
-  quest_log_revision_ref.val = quest_log_revision_ref.val + 1
-}
-
-///|
 /// 异步加载 Quest 资源,返回 (QuestResource, Json)
 pub async fn load_quest_resource() -> (QuestResource, Json) {
   let quest_resource_loader = @resource.get_quest_loader()
@@ -89,39 +52,6 @@ pub async fn load_quest_resource() -> (QuestResource, Json) {
     _ => Json::null()
   }
   (quests_resource, quest_checks_raw)
-}
-
-///|
-pub async fn Module::load(
-  inventory : @inventory.Inventory,
-  open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
-) -> Module {
-  let result = load_quest_resource()
-  Module::new_internal(result.0, result.1)
-}
-
-///|
-pub fn Module::new(quests_resource : QuestResource) -> Module {
-  Module::new_internal(quests_resource, Json::null())
-}
-
-///|
-/// Creates a quest module with explicit raw `Check.img` JSON for strict filtering.
-pub fn Module::new_with_raw_checks(
-  quests_resource : QuestResource,
-  quest_checks_raw : Json,
-) -> Module {
-  Module::new_internal(quests_resource, quest_checks_raw)
-}
-
-///|
-fn Module::new_internal(
-  quests_resource : QuestResource,
-  quest_checks_raw : Json,
-) -> Module {
-  let mod = { quests_resource, quest_checks_raw }
-  set_active_module(mod)
-  mod
 }
 
 // ///|
@@ -331,25 +261,6 @@ pub enum StartedQuest {
 //       }
 //   }
 // }
-
-///|
-priv struct ShowForfeitQuestAction {
-  quest_id : Int
-  _mod : Module
-}
-
-///|
-fn ShowForfeitQuestAction::new(
-  quest_id : Int,
-  mod : Module,
-) -> ShowForfeitQuestAction {
-  { quest_id, _mod: mod }
-}
-
-///|
-impl Show for ShowForfeitQuestAction with output(self, logger) {
-  logger.write_string("{quest_id:\{self.quest_id}}")
-}
 
 // ///|
 // impl @game_mod.SubRouteAction for ShowForfeitQuestAction with handle(self) -> Unit {

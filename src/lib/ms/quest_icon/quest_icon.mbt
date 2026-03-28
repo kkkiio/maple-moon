@@ -101,7 +101,7 @@ pub fn quest_icon_system(_delta : Double) -> Unit {
       ignore(select_demo_quest_by_npcs(npc_ids))
     }
   }
-  handle_cursor()
+  handle_pointer_clicks()
 }
 
 ///|
@@ -223,6 +223,7 @@ fn upsert_runtime(
     let previous = runtime_by_oid.val.get(oid)
     remove_runtime(oid)
     let icon = state_to_icon(resources, desired.state)
+    let icon_size = nx_animation_dimensions(icon)
     let icon_entity = anchor.entity.spawn_child(
       offset=@selene_math.Vec2D(
         default_icon_offset().x.to_double(),
@@ -240,6 +241,20 @@ fn upsert_runtime(
         @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
       ),
     )
+    @physics2d.pickables().set(icon_entity, @physics2d.Pickable::new())
+    @physics2d.shapes().set(
+      icon_entity,
+      @physics2d.CollisionShape::Rect(
+        size=@selene_math.Vec2D(
+          icon_size.x.to_double(),
+          icon_size.y.to_double(),
+        ),
+        offset=@selene_math.Vec2D(
+          -icon_size.x.to_double() / 2.0,
+          -icon_size.y.to_double(),
+        ),
+      ),
+    )
     runtime_by_oid.val.set(oid, {
       _oid: oid,
       npc_id: anchor.npc_id,
@@ -249,7 +264,7 @@ fn upsert_runtime(
       npc_object: anchor.npc_object,
       icon_entity,
       icon_offset: default_icon_offset(),
-      icon_size: nx_animation_dimensions(icon),
+      icon_size,
     })
     if previous is Some(runtime) {
       @log.debug("quest icon state changed", data={
@@ -301,48 +316,22 @@ fn query_npc_icon_cached(
 }
 
 ///|
-fn handle_cursor() -> Unit {
-  let mouse_pos = @inputs.mouse.pos
-  let cursor_pos = @struct.Point::new(
-    mouse_pos[@selene_math.X].to_int(),
-    mouse_pos[@selene_math.Y].to_int(),
-  )
-  let camera_pos = @camera.get_position()
-  let view_pos = @struct.Point::new(
-    -camera_pos[@selene_math.X].to_int(),
-    -camera_pos[@selene_math.Y].to_int(),
-  )
-  let pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
-  for _, runtime in runtime_by_oid.val {
-    if inrange(runtime, cursor_pos, view_pos) {
-      if pressed {
-        if build_quest_talk_args(runtime.quest_id, runtime.npc_id) is Some(args) {
-          @npc.request_quest_talk(args)
-          @npc.claim_click_this_frame()
-          return
-        }
-        return
-      }
-      @cursor.request_cursor_state(@ui.CursorState::CAN_CLICK)
+fn handle_pointer_clicks() -> Unit {
+  if @npc_talk_ui.is_npc_talk_ui_open() {
+    return
+  }
+  let events = @physics2d.pointer_event_bus.read(get_pointer_event_reader())
+  for event in events {
+    guard event.button is @inputs.MouseButton::Left else { continue }
+    guard event.phase is @physics2d.PointerPhase::JustPressed else { continue }
+    guard find_runtime_by_icon_entity(event.entity) is Some(runtime) else {
+      continue
+    }
+    if build_quest_talk_args(runtime.quest_id, runtime.npc_id) is Some(args) {
+      @npc.request_quest_talk(args)
       return
     }
   }
-}
-
-///|
-fn inrange(
-  runtime : QuestIconRuntime,
-  cursor_pos : @struct.Point[Int],
-  view_pos : @struct.Point[Int],
-) -> Bool {
-  let abs = runtime.npc_object.get_position() + runtime.icon_offset + view_pos
-  let dim = runtime.icon_size
-  @struct.Rectangle::from4(
-    abs.x - dim.x / 2,
-    abs.x + dim.x / 2,
-    abs.y - dim.y,
-    abs.y,
-  ).contains(cursor_pos)
 }
 
 ///|
@@ -359,6 +348,8 @@ fn state_to_icon(
 
 ///|
 fn destroy_icon_entity(icon_entity : @entity.Entity) -> Unit {
+  @physics2d.pickables().remove(icon_entity)
+  @physics2d.shapes().remove(icon_entity)
   @sprite.sprites().remove(icon_entity)
   icon_entity.destroy()
 }
@@ -402,3 +393,24 @@ fn get_char_stats_changed_reader() -> @event.EventReader[
 let char_stats_changed_reader_ref : Lazy[
   @event.EventReader[@char_stats.CharStatsChangedEvent],
 ] = Lazy::new(fn() { @event.EventReader::new() })
+
+///|
+let pointer_event_reader_ref : Lazy[@event.EventReader[@physics2d.PointerEvent]] = Lazy::new(fn() {
+    @event.EventReader::new()
+  },
+)
+
+///|
+fn get_pointer_event_reader() -> @event.EventReader[@physics2d.PointerEvent] {
+  pointer_event_reader_ref.get()
+}
+
+///|
+fn find_runtime_by_icon_entity(entity : @entity.Entity) -> QuestIconRuntime? {
+  for _, runtime in runtime_by_oid.val {
+    if runtime.icon_entity == entity {
+      return Some(runtime)
+    }
+  }
+  None
+}

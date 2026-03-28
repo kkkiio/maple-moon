@@ -68,11 +68,6 @@ fn main {
   app = app.add_system(Startup, fn(_world) { game_start() })
   app = app.add_system(
     Update,
-    fn(_world) { @cursor.cursor_system(@time.delta()) },
-    system_name="cursor_system",
-  )
-  app = app.add_system(
-    Update,
     fn(_world) { @audio.audio_event_playback_system(@time.delta()) },
     system_name="audio_event_playback_system",
   )
@@ -202,6 +197,11 @@ fn main {
     Update,
     fn(_world) { @npc.map_npcs_system(@time.delta()) },
     system_name="map_npcs_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(_world) { @cursor.cursor_system(@time.delta()) },
+    system_name="cursor_system",
   )
   app = app.add_system(
     Update,

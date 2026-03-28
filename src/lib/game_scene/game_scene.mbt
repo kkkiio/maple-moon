@@ -191,7 +191,6 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
       @bgm.clear_bgm()
       clear_active_scene_map()
       @map.clear_runtime_context()
-      @quest.clear_active_module()
       @npc.clear_map_npcs()
       @character.clear_character_registry()
       @mini_map_ui.clear_current_map()
@@ -517,6 +516,7 @@ fn new_stage(
   // self.combat.set_cooldowns(cooldowns)
   let map_npcs = @npc.MapNpcs::new(
     @npc_talk_ui.open_npc_talk_ui,
+    @npc_talk_ui.is_npc_talk_ui_open,
     npc_loader~,
     string_loader~,
   )

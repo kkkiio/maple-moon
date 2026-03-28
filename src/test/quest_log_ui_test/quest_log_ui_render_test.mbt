@@ -24,7 +24,7 @@ fn reset_quest_log_ui_test_state() -> Unit {
 }
 
 ///|
-async fn setup_scene() -> Unit {
+fn setup_scene() -> Unit {
   let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
@@ -50,7 +50,6 @@ async fn setup_scene() -> Unit {
   @inputs.advanced_key_system(0.0)
 
   setup_local_loaders()
-  ignore(@quest.Module::load(@inventory.Inventory::new(), fn(_args) { () }))
   @quest_log.handle_player_quest_info({
     started: [(1000, "3")],
     completed: [(2000, 123456)],
@@ -72,12 +71,11 @@ async fn setup_scene() -> Unit {
 async test "quest_log_ui renders in-progress & completed tab" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
-  defer @quest.clear_active_module()
   setup_scene()
 
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
-    expect="Quest Log window is open and readable. IN-PROGRESS is the active highlighted tab. COMPLETED is visible but inactive.",
+    img_description="Quest Log window is open and readable. IN-PROGRESS is the active highlighted tab. COMPLETED is visible but inactive.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
@@ -87,7 +85,7 @@ async test "quest_log_ui renders in-progress & completed tab" {
   }
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
-    expect="Quest Log window remains open after clicking the COMPLETED tab. COMPLETED is the active highlighted tab, and IN-PROGRESS is inactive.",
+    img_description="Quest Log window remains open after clicking the COMPLETED tab. COMPLETED is the active highlighted tab, and IN-PROGRESS is inactive.",
   )
 }
 

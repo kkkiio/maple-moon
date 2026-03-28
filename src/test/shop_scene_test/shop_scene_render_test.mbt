@@ -284,7 +284,12 @@ async fn setup_shop_scene_npcs() -> Unit {
     loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
     base_url="/assets",
   )
-  let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, npc_loader~, string_loader~)
+  let map_npcs = @npc.MapNpcs::new(
+    fn(_args) {  },
+    fn() { false },
+    npc_loader~,
+    string_loader~,
+  )
   @npc.set_npcs({ map_npcs, physics })
 
   spawn_npc_from_json(map_npcs, {

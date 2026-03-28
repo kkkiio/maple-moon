@@ -424,8 +424,26 @@ fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
 
 ///|
 fn UINpcTalk::measure_body_height(self : UINpcTalk) -> Int {
-  ignore(self)
-  FIXED_BODY_HEIGHT
+  let body_line_count = @cmp.maximum(1, self.content.body_lines.length())
+  let selection_line_count = self.content.selections.fold(init=0, fn(
+    acc,
+    selection,
+  ) {
+    acc + @cmp.maximum(1, selection.lines.length())
+  })
+  let selection_count = self.content.selections.length()
+  let line_pixel_height = 17
+  let selection_gap_total = if selection_count <= 1 {
+    0
+  } else {
+    (selection_count - 1) * LINE_GAP
+  }
+  let selection_start_gap = if selection_count == 0 { 0 } else { LINE_GAP }
+  let needed = (body_line_count + selection_line_count) * line_pixel_height +
+    selection_gap_total +
+    selection_start_gap +
+    10
+  @cmp.maximum(FIXED_BODY_HEIGHT, needed)
 }
 
 ///|
@@ -462,11 +480,12 @@ fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
 
 ///|
 fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
-  let speaker_y = (
-      self.resource.top.h + self.body_height + self.resource.bottom.h
-    ) /
-    2
-  let speaker_pos = self.window_pos + Point::new(100, 11 + speaker_y)
+  let window_bottom = self.window_pos.y +
+    self.resource.top.h +
+    self.body_height +
+    self.resource.bottom.h
+  let speaker_y = window_bottom - self.resource.bar.h - 7
+  let speaker_pos = Point::new(self.window_pos.x + 100, speaker_y)
   ignore(
     self.spawn_image_node(
       self.resource.bar,

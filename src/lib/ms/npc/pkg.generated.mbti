@@ -7,13 +7,10 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/entity",
 }
 
 // Values
-pub fn claim_click_this_frame() -> Unit
-
 pub fn clear_map_npcs() -> Unit
 
 pub fn handle_npc_dialogue((TalkArgs) -> Unit, NpcDialogue) -> Unit
@@ -45,9 +42,8 @@ type MapNpcs
 pub fn MapNpcs::apply_spawn_npc_controller_message(Self, @server_proto.NpcSpawnControllerMessage) -> Unit
 pub fn MapNpcs::apply_spawn_npc_message(Self, @server_proto.NpcSpawnMessage) -> Unit
 pub fn MapNpcs::clear(Self) -> Unit
-pub fn MapNpcs::new((TalkArgs) -> Unit, npc_loader~ : @resource.AsyncLoader, string_loader~ : @resource.AsyncLoader) -> Self
+pub fn MapNpcs::new((TalkArgs) -> Unit, () -> Bool, npc_loader~ : @resource.AsyncLoader, string_loader~ : @resource.AsyncLoader) -> Self
 pub fn MapNpcs::remove(Self, Int) -> Unit
-pub fn MapNpcs::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
 pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
 pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
 
@@ -63,7 +59,6 @@ pub fn Npc::get_name(Self) -> String
 pub fn Npc::get_npc_id(Self) -> Int
 pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
 pub fn Npc::get_oid(Self) -> Int
-pub fn Npc::inrange(Self, @res_types.Point[Int], @res_types.Point[Int]) -> Bool
 pub fn Npc::is_scripted(Self) -> Bool
 pub async fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
 pub fn Npc::set_stance(Self, String) -> Unit

@@ -146,5 +146,6 @@ async test "select char ui renders character and start button chooses first char
   @async.sleep(0)
   @capture_app.snapshot(
     "src/test/select_char_ui_test/__snapshot__/select_char_ui_default.png",
+    img_description="Select character UI is open with one character, showing character preview, name, and start button.",
   )
 }

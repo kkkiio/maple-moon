@@ -5,7 +5,6 @@ import {
   "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
-  "Milky2018/selene/sprite",
 }
 
 // Values
@@ -13,19 +12,17 @@ pub const HIDE_SECONDS : Int = 12
 
 pub fn cursor_system(Double) -> Unit
 
-pub fn request_cursor_state(@ui.CursorState) -> Unit
-
 // Errors
 
 // Types and methods
 pub(all) struct Cursor {
   mut state : @ui.CursorState
   mut inactive_seconds : Double
-  sprites : Map[@ui.CursorState, @sprite.Sprite]
+  mut state_seconds : Double
+  mut last_mouse_pos : @math.Vec2D
   entity : @entity.Entity
 }
 pub fn Cursor::new() -> Self
-pub fn Cursor::set_position(Self, @math.Vec2D) -> Unit
 pub fn Cursor::set_state(Self, @ui.CursorState) -> Unit
 
 // Type aliases

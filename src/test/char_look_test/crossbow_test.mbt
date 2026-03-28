@@ -101,7 +101,7 @@ async test "character with crossbow equipment" {
   // Snapshot
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_stand1.png",
-    expect="A character stands facing left, holding a purple and golden crossbow. The weapon is held upright by its purple stock, and its curved golden limbs are visible near the character's upper back/shoulder area.",
+    img_description="A character stands facing left, holding a purple and golden crossbow. The weapon is held upright by its purple stock, and its curved golden limbs are visible near the character's upper back/shoulder area.",
   )
 
   let sprites = @sprite.sprites()

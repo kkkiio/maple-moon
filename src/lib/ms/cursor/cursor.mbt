@@ -5,10 +5,23 @@ using @ui {type CursorState}
 const CURSOR_ZINDEX : Int = @graphics.CURSOR_ZINDEX
 
 ///|
+const CAN_CLICK_FRAME_WIDTH : Double = 30.0
+
+///|
+const CAN_CLICK_FRAME_HEIGHT : Double = 30.0
+
+///|
+const CAN_CLICK_FRAME_COUNT : Int = 2
+
+///|
+const CAN_CLICK_FRAME_SECONDS : Double = 0.15
+
+///|
 pub(all) struct Cursor {
   mut state : CursorState
   mut inactive_seconds : Double
-  sprites : Map[CursorState, @sprite.Sprite]
+  mut state_seconds : Double
+  mut last_mouse_pos : @math.Vec2D
   entity : @entity.Entity
 }
 
@@ -17,47 +30,14 @@ pub const HIDE_SECONDS : Int = 12
 
 ///|
 pub fn Cursor::new() -> Cursor {
-  let sprites = {}
-  sprites.set(
-    CursorState::IDLE,
-    @sprite.Sprite::from_animation(
-      @sprite.Animation::single_frame(
-        "/assets/ui/cursor/cursor_idle.png",
-        @math.Vec2D(24.0, 28.0),
-      ),
-      CURSOR_ZINDEX,
-      offset=-@math.Vec2D(0, 3),
-    ),
-  )
-  sprites.set(
-    CursorState::CAN_CLICK,
-    @sprite.Sprite::from_animation(
-      @sprite.Animation::new(
-        @sprite.frames_from_atlas(
-          "/assets/ui/cursor/cursor_can_click.png",
-          2,
-          width=30,
-          height=30,
-        ),
-        loop_=true,
-      ),
-      CURSOR_ZINDEX,
-      offset=-@math.Vec2D(4, 6),
-    ),
-  )
-  sprites.set(
-    CursorState::CLICKING,
-    @sprite.Sprite::from_animation(
-      @sprite.Animation::single_frame(
-        "/assets/ui/cursor/cursor_clicking.png",
-        @math.Vec2D(24.0, 28.0),
-      ),
-      CURSOR_ZINDEX,
-    ),
-  )
   let entity = @entity.Entity::new()
-  @sprite.sprites().set(entity, sprites.get(CursorState::IDLE).unwrap())
-  { state: CursorState::IDLE, inactive_seconds: 0, sprites, entity }
+  {
+    state: CursorState::IDLE,
+    inactive_seconds: 0.0,
+    state_seconds: 0.0,
+    last_mouse_pos: @math.Vec2D(-9999999.0, -9999999.0),
+    entity,
+  }
 }
 
 ///|
@@ -65,53 +45,135 @@ pub fn Cursor::set_state(self : Cursor, state : CursorState) -> Unit {
   guard self.state != state else { return }
   self.state = state
   self.inactive_seconds = 0.0
+  self.state_seconds = 0.0
 }
 
 ///|
-pub fn Cursor::set_position(self : Cursor, position : @math.Vec2D) -> Unit {
-  if @position.positions().get(self.entity) is Some(old_position) &&
-    old_position.0 == position {
-    return
+fn ui_hovered_clickable() -> Bool {
+  match @selene_ui.hovered_entity() {
+    Some(entity) =>
+      match @selene_ui.buttons().get(entity) {
+        Some(button) => button.enabled
+        None => false
+      }
+    None => false
   }
-  @position.positions().set(self.entity, @position.Position(position))
-  self.inactive_seconds = 0.0
 }
 
 ///|
-fn Cursor::get_sprite(self : Cursor) -> @sprite.Sprite {
-  self.sprites.get(self.state).unwrap()
+fn world_pickable_hovered() -> Bool {
+  for entity, _ in @physics2d.pickables() {
+    if @collision.is_hover(entity) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+fn resolve_cursor_state() -> CursorState {
+  if @inputs.is_mouse_pressed(@inputs.MouseButton::Left) {
+    CursorState::CLICKING
+  } else if ui_hovered_clickable() || world_pickable_hovered() {
+    CursorState::CAN_CLICK
+  } else {
+    CursorState::IDLE
+  }
+}
+
+///|
+fn hide_cursor_entity(entity : @entity.Entity) -> Unit {
+  @selene_ui.nodes().remove(entity)
+  @selene_ui.z_indexes().remove(entity)
+  @selene_ui.ui_images().remove(entity)
+  @selene_ui.ui_image_regions().remove(entity)
+}
+
+///|
+fn cursor_texture_path(state : CursorState) -> String {
+  match state {
+    CursorState::CAN_CLICK => "/assets/ui/cursor/cursor_can_click.png"
+    CursorState::CLICKING => "/assets/ui/cursor/cursor_clicking.png"
+    _ => "/assets/ui/cursor/cursor_idle.png"
+  }
+}
+
+///|
+fn cursor_size(state : CursorState) -> @math.Vec2D {
+  match state {
+    CursorState::CAN_CLICK =>
+      @math.Vec2D(CAN_CLICK_FRAME_WIDTH, CAN_CLICK_FRAME_HEIGHT)
+    _ => @math.Vec2D(24.0, 28.0)
+  }
+}
+
+///|
+fn cursor_offset(state : CursorState) -> @math.Vec2D {
+  match state {
+    CursorState::CAN_CLICK => @math.Vec2D(-4.0, -6.0)
+    CursorState::IDLE => @math.Vec2D(0.0, -3.0)
+    _ => @math.Vec2D::zero()
+  }
+}
+
+///|
+fn cursor_frame_index(cursor : Cursor) -> Int {
+  if cursor.state != CursorState::CAN_CLICK {
+    return 0
+  }
+  let frame = (cursor.state_seconds / CAN_CLICK_FRAME_SECONDS).to_int()
+  frame % CAN_CLICK_FRAME_COUNT
+}
+
+///|
+fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2D) -> Unit {
+  let size = cursor_size(cursor.state)
+  let position = mouse_pos + cursor_offset(cursor.state)
+  @selene_ui.nodes().set(
+    cursor.entity,
+    @selene_ui.Node::absolute(position, size~),
+  )
+  @selene_ui.z_indexes().set(
+    cursor.entity,
+    @selene_ui.ZIndex::new(CURSOR_ZINDEX),
+  )
+  @selene_ui.ui_images().set(
+    cursor.entity,
+    @selene_ui.UiImage::new(size, cursor_texture_path(cursor.state)),
+  )
+  let frame = cursor_frame_index(cursor)
+  let frame_pos_x = if cursor.state == CursorState::CAN_CLICK {
+    frame.to_double() * CAN_CLICK_FRAME_WIDTH
+  } else {
+    0.0
+  }
+  @selene_ui.ui_image_regions().set(
+    cursor.entity,
+    @selene_ui.UiImageRegion::new({
+      position: @math.Vec2D(frame_pos_x, 0.0),
+      size,
+    }),
+  )
 }
 
 ///|
 let cursor : Cursor = Cursor::new()
 
 ///|
-let requested_state : Ref[CursorState?] = Ref::new(None)
-
-///|
-pub fn request_cursor_state(state : CursorState) -> Unit {
-  requested_state.val = Some(state)
-}
-
-///|
 pub fn cursor_system(delta : Double) -> Unit {
-  // sync pos and state
-  let camera_pos = @camera.get_position()
-  cursor.set_position(@inputs.mouse.pos + camera_pos)
-  let mouse_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
-  if mouse_pressed {
-    cursor.set_state(CursorState::CLICKING)
-  } else {
-    cursor.set_state(CursorState::IDLE)
-    match requested_state.val {
-      Some(state) => cursor.set_state(state)
-      None => ()
-    }
+  if not(cursor.entity.is_alive()) {
+    cursor.entity.respawn()
+    cursor.state_seconds = 0.0
+    cursor.inactive_seconds = 0.0
+    cursor.last_mouse_pos = @math.Vec2D(-9999999.0, -9999999.0)
   }
-  requested_state.val = None
-  if cursor.inactive_seconds == 0.0 { // reset
-    @sprite.sprites().set(cursor.entity, cursor.get_sprite())
+  let mouse_pos = @inputs.mouse.pos
+  if mouse_pos != cursor.last_mouse_pos {
+    cursor.last_mouse_pos = mouse_pos
+    cursor.inactive_seconds = 0.0
   }
+  cursor.set_state(resolve_cursor_state())
+  cursor.state_seconds += @cmp.maximum(0.0, delta)
   match cursor.state {
     CursorState::CAN_CLICK
     | CursorState::CAN_CLICK2
@@ -121,6 +183,8 @@ pub fn cursor_system(delta : Double) -> Unit {
     _ => cursor.inactive_seconds += delta
   }
   if cursor.inactive_seconds >= HIDE_SECONDS.to_double() {
-    @sprite.sprites().remove(cursor.entity)
+    hide_cursor_entity(cursor.entity)
+  } else {
+    sync_cursor_ui(cursor, mouse_pos)
   }
 }

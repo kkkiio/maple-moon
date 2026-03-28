@@ -2,7 +2,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/animation" @selene_animation,
-  "Milky2018/selene/asset" @selene_asset,
+  "Milky2018/selene/asset",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
   "Milky2018/selene/render" @selene_render,

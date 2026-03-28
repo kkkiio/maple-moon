@@ -1,11 +1,136 @@
 ///|
+using @resource {type NxTexture, type NxAnimation}
+
+///|
+pub(all) struct PictureSpec {
+  image : @asset.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  repeat : @math.RepeatMode
+  flip_x : Bool
+}
+
+///|
+pub(all) struct AnimationStep {
+  image : @asset.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  duration : Double
+}
+
+///|
+pub(all) struct AnimationPlayable {
+  steps : Array[AnimationStep]
+  loop_ : Bool
+  native_eligible : Bool
+}
+
+///|
+pub fn nx_texture_to_picture_spec(
+  texture : NxTexture,
+  size? : @math.Vec2D,
+  repeat? : @math.RepeatMode = NoRepeat,
+  flip_x? : Bool = false,
+) -> PictureSpec {
+  guard repeat is NoRepeat || texture.offset is { x: 0, y: 0 } else {
+    abort("tiled texture in spritesheet is not supported")
+  }
+  let resolved_size : @math.Vec2D = size.unwrap_or(
+    @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  )
+  let rect : @math.Rect = {
+    position: @math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  }
+  {
+    image: @asset.load_image(texture.i),
+    rect,
+    size: resolved_size,
+    origin: @math.Vec2D(
+      texture.origin.x.to_double(),
+      texture.origin.y.to_double(),
+    ),
+    repeat,
+    flip_x,
+  }
+}
+
+///|
+pub fn nx_animation_to_playable(
+  src : NxAnimation,
+  loop_? : Bool = false,
+) -> AnimationPlayable {
+  let steps : Array[AnimationStep] = []
+  for frame in src.frames {
+    let delay_ms = match frame.delay {
+      Some(d) => if d <= 0 { 100 } else { d }
+      None => 100
+    }
+    let texture = frame.texture
+    steps.push({
+      image: @asset.load_image(texture.i),
+      rect: {
+        position: @math.Vec2D(
+          texture.offset.x.to_double(),
+          texture.offset.y.to_double(),
+        ),
+        size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+      },
+      size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+      origin: @math.Vec2D(
+        texture.origin.x.to_double(),
+        texture.origin.y.to_double(),
+      ),
+      duration: delay_ms.to_double() / 1000.0,
+    })
+  }
+  let effective_steps = if src.zigzag && steps.length() > 2 {
+    let expanded = steps.copy()
+    for i = steps.length() - 2; i >= 1; i = i - 1 {
+      expanded.push(steps[i])
+    }
+    expanded
+  } else {
+    steps
+  }
+  {
+    steps: effective_steps,
+    loop_,
+    native_eligible: is_native_eligible(effective_steps),
+  }
+}
+
+///|
+fn is_native_eligible(steps : Array[AnimationStep]) -> Bool {
+  guard steps.length() > 0 else { return false }
+  let first = steps[0]
+  for step in steps {
+    if step.image != first.image {
+      return false
+    }
+    if step.size != first.size {
+      return false
+    }
+    if step.origin != first.origin {
+      return false
+    }
+  }
+  true
+}
+
+///|
 pub(all) struct Picture {
-  spec : @resource.NxPictureSpec
+  spec : PictureSpec
 }
 
 ///|
 pub(all) struct NativeBackend {
-  image : @selene_asset.ImageHandle
+  image : @asset.ImageHandle
   layout : @sprite.TextureAtlasLayoutHandle
   graph : @selene_animation.AnimationGraphHandle
   node : @selene_animation.AnimationNodeIndex
@@ -20,13 +145,13 @@ pub(all) enum AnimationBackend {
 
 ///|
 pub(all) struct Animation {
-  playback : @resource.NxAnimationPlayable
+  playback : AnimationPlayable
   backend : AnimationBackend
 }
 
 ///|
 pub(all) struct AnimationFrame {
-  image : @selene_asset.ImageHandle
+  image : @asset.ImageHandle
   size : @math.Vec2D
   offset : @math.Vec2D
   pivot : @math.Vec2D
@@ -50,7 +175,7 @@ pub fn Animation::new(
   frames : Array[AnimationFrame],
   loop_? : Bool = true,
 ) -> Animation {
-  let steps : Array[@resource.NxAnimationStep] = frames.map(fn(frame) {
+  let steps : Array[AnimationStep] = frames.map(fn(frame) {
     {
       image: frame.image,
       rect: { position: frame.offset, size: frame.size },
@@ -63,7 +188,7 @@ pub fn Animation::new(
       },
     }
   })
-  let playback : @resource.NxAnimationPlayable = {
+  let playback : AnimationPlayable = {
     steps,
     loop_,
     native_eligible: is_native_eligible_steps(steps),
@@ -80,13 +205,13 @@ pub fn Animation::single_frame(
   duration? : Double = 1.0,
 ) -> Animation {
   Animation::new([
-    { image: @selene_asset.load_image(path), size, offset, pivot, duration },
+    { image: @asset.load_image(path), size, offset, pivot, duration },
   ])
 }
 
 ///|
 pub fn Animation::single_frame_from_image(
-  image : @selene_asset.ImageHandle,
+  image : @asset.ImageHandle,
   size : @math.Vec2D,
   offset? : @math.Vec2D = @math.Vec2D::zero(),
   pivot? : @math.Vec2D = @math.Vec2D::zero(),
@@ -120,31 +245,27 @@ pub fn frame_origin_at(animation : Animation, index : Int) -> @math.Vec2D? {
 
 ///|
 pub fn from_nx_texture(
-  texture : @resource.NxTexture,
+  texture : NxTexture,
   size? : @math.Vec2D,
   repeat? : @math.RepeatMode = NoRepeat,
   flip_x? : Bool = false,
 ) -> Picture {
   let spec = match size {
-    Some(v) =>
-      @resource.nx_texture_to_picture_spec(texture, size=v, repeat~, flip_x~)
-    None => @resource.nx_texture_to_picture_spec(texture, repeat~, flip_x~)
+    Some(v) => nx_texture_to_picture_spec(texture, size=v, repeat~, flip_x~)
+    None => nx_texture_to_picture_spec(texture, repeat~, flip_x~)
   }
   { spec, }
 }
 
 ///|
-pub fn from_nx_animation(
-  src : @resource.NxAnimation,
-  loop_? : Bool = false,
-) -> Animation {
-  let playback = @resource.nx_animation_to_playable(src, loop_~)
+pub fn from_nx_animation(src : NxAnimation, loop_? : Bool = false) -> Animation {
+  let playback = nx_animation_to_playable(src, loop_~)
   let backend = build_backend(playback)
   { playback, backend }
 }
 
 ///|
-fn build_backend(playback : @resource.NxAnimationPlayable) -> AnimationBackend {
+fn build_backend(playback : AnimationPlayable) -> AnimationBackend {
   if !playback.native_eligible || playback.steps.is_empty() {
     return Scripted
   }
@@ -191,7 +312,7 @@ fn build_backend(playback : @resource.NxAnimationPlayable) -> AnimationBackend {
 }
 
 ///|
-fn is_native_eligible_steps(steps : Array[@resource.NxAnimationStep]) -> Bool {
+fn is_native_eligible_steps(steps : Array[AnimationStep]) -> Bool {
   guard steps.length() > 0 else { return false }
   let first = steps[0]
   for step in steps {

@@ -330,6 +330,7 @@ const MAP_LAYER_STRIDE = 5000
 
 ///|
 /// Advance map monster simulation once in fixed schedule.
+// TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn map_monsters_fixed_system(_world : @ecs.World) -> Unit {
   guard map_mobs_ctx.val is Some({ map_mobs, physics }) else { return }
   map_mobs.update(physics)

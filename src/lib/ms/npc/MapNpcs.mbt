@@ -47,6 +47,7 @@ pub fn clear_map_npcs() -> Unit {
 
 ///|
 /// Advance NPC runtime state once in fixed schedule.
+// TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn map_npcs_fixed_system(_world : @ecs.World) -> Unit {
   guard map_npcs_ctx.val is Some({ map_npcs, physics }) else { return }
   map_npcs.update(physics)

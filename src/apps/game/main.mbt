@@ -78,7 +78,7 @@ fn main {
     system_name="ui_system",
   )
   app = app.add_system(
-    FixedUpdate,
+    Update,
     fn(world) { @ui.number_system(world) },
     system_name="number_system",
   )

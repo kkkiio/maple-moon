@@ -62,8 +62,9 @@ let active_numbers : Array[Number] = []
 
 ///|
 pub fn number_system(_world : @ecs.World) -> Unit {
+  let delta = @cmp.minimum(@time.delta(), max_number_delta_sec)
   active_numbers.retain(fn(num) {
-    let finished = num.update()
+    let finished = num.update(delta)
     if finished {
       false
     } else {
@@ -90,12 +91,12 @@ pub(all) enum NumberType {
 
 ///|
 // Internal update logic
-fn Number::update(self : Number) -> Bool {
-  // Update physics
-  self.move_obj.do_move()
+fn Number::update(self : Number, delta : Double) -> Bool {
+  let next_y = self.move_obj.crnt_y() + rise_speed_per_sec * delta
+  self.move_obj.set_y(next_y)
 
   // Update opacity/lifetime
-  self.opacity.add(-fade_step)
+  self.opacity.add(-fade_per_sec * delta)
   let finished = self.opacity.last() <= 0.0
   if finished {
     self.parent_entity.destroy()
@@ -111,7 +112,13 @@ fn Number::update(self : Number) -> Bool {
 }
 
 ///|
-let fade_step : Double = @logic_fps.STEP_TIME_MS.to_double() / 500
+let rise_speed_per_sec : Double = -31.25
+
+///|
+let fade_per_sec : Double = 2.0
+
+///|
+let max_number_delta_sec : Double = 0.05
 
 ///|
 pub fn Number::set_x(self : Number, headx : Int) -> Unit {
@@ -284,7 +291,6 @@ pub fn NumberSet::show_number(
   })
   move_obj.set_x(x.to_double())
   move_obj.set_y(starty.to_double())
-  move_obj.set_vspeed(-0.25)
   let opacity = @utils.Linear::new(1.5)
   let number = { parent_entity, move_obj, opacity }
   active_numbers.push(number)

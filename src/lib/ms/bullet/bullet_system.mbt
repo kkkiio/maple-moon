@@ -164,6 +164,7 @@ pub fn get_current_bullet_system() -> BulletSystem? {
 /// Selene system entry for bullet simulation.
 ///
 /// This runs only during `GameActive` and advances by fixed logic steps.
+// TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn bullet_system(_world : @ecs.World) -> Unit {
   register_scene_cleanup_once()
   guard @game_state.game_state.phase is GameActive(..) else { return }

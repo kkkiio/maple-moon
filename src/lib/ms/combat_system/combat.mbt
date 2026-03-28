@@ -763,6 +763,7 @@ pub fn set_player(player : &DamagableCharacter?) -> Unit {
 }
 
 ///|
+// TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn combat_system(_world : @ecs.World) -> Unit {
   guard combat_ref.val is Some(combat) else { return }
   guard @game_state.game_state.phase is GameActive(..) else { return }

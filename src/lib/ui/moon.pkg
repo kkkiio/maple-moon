@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/cmp",
   "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "moonbitlang/core/json",
@@ -12,8 +13,8 @@ import {
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/sprite",
   "Milky2018/selene/entity",
-  "KKKIIO/maple-moon/lib/ms/logic_fps",
   "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
 }
 
 import {

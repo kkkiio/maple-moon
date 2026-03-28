@@ -159,6 +159,7 @@ pub fn map_drops_loading_system(_world : @ecs.World) -> Unit {
 
 ///|
 /// Advance drop simulation once in fixed schedule.
+// TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn map_drops_fixed_system(_world : @ecs.World) -> Unit {
   guard map_drops_ctx.val is Some(ctx) else { return }
   guard ctx.map_drops is Some(map_drops) else { return }

@@ -940,7 +940,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.active_shop = None
   self.npc_id_by_oid.clear()
   @io_service.execute_background(async fn() {
-    let loader = @resource.get_async_loader("mapx")
+    let loader = @resource.require_async_loader("mapx")
     let prefix = (map_id / 100000000).to_string()
     let strid = @utils.stoi_left_pad0(map_id, 9)
     let path = ["Map\{prefix}", "\{strid}.img"]
@@ -972,7 +972,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             fh: fh.to_int(),
             team: -1,
           }
-          let mob_loader = @resource.get_async_loader("mob")
+          let mob_loader = @resource.require_async_loader("mob")
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
           let mob_path = ["\{mob_strid}.img"]
           let mob_node = mob_loader.load_resource(mob_path)

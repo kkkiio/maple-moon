@@ -69,7 +69,7 @@ pub fn MapQuestsResource::new(
 ///|
 /// Loads the graphical resources for quest icons.
 pub async fn MapQuestsResource::load() -> MapQuestsResource {
-  let loader = @resource.get_async_loader("ui_window_2")
+  let loader = @resource.require_async_loader("ui_window_2")
   let available_json = loader.load_resource(["QuestIcon", "0"]) catch {
     e => {
       @log.error("failed to load quest icon", data={

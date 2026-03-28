@@ -27,6 +27,10 @@ pub fn from_nx_texture(@resource.NxTexture, size? : @math.Vec2D, repeat? : @math
 
 pub fn is_animation_finished(@entity.Entity) -> Bool
 
+pub fn nx_animation_to_playable(@resource.NxAnimation, loop_? : Bool) -> AnimationPlayable
+
+pub fn nx_texture_to_picture_spec(@resource.NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> PictureSpec
+
 pub fn play_animation(@entity.Entity, Animation, loop_? : Bool, transform? : @math.Transform) -> Unit
 
 pub fn set_animation_speed(@entity.Entity, Double) -> Unit
@@ -43,7 +47,7 @@ pub fn stop_animation(@entity.Entity) -> Unit
 
 // Types and methods
 pub(all) struct Animation {
-  playback : @resource.NxAnimationPlayable
+  playback : AnimationPlayable
   backend : AnimationBackend
 }
 pub fn Animation::new(Array[AnimationFrame], loop_? : Bool) -> Self
@@ -63,6 +67,20 @@ pub(all) struct AnimationFrame {
   duration : Double
 }
 
+pub(all) struct AnimationPlayable {
+  steps : Array[AnimationStep]
+  loop_ : Bool
+  native_eligible : Bool
+}
+
+pub(all) struct AnimationStep {
+  image : @asset_types.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  duration : Double
+}
+
 pub(all) struct NativeBackend {
   image : @asset_types.ImageHandle
   layout : @sprite.TextureAtlasLayoutHandle
@@ -72,7 +90,16 @@ pub(all) struct NativeBackend {
 }
 
 pub(all) struct Picture {
-  spec : @resource.NxPictureSpec
+  spec : PictureSpec
+}
+
+pub(all) struct PictureSpec {
+  image : @asset_types.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  repeat : @math.RepeatMode
+  flip_x : Bool
 }
 
 // Type aliases

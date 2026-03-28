@@ -21,7 +21,7 @@ pub fn previous_phase() -> GamePhase?
 
 pub fn set_next_phase(GamePhase) -> Unit
 
-pub fn transition((GamePhase) -> Bool, (GamePhase) -> Bool) -> () -> Bool
+pub fn transition(from~ : (GamePhase) -> Bool, to~ : (GamePhase) -> Bool) -> () -> Bool
 
 // Errors
 

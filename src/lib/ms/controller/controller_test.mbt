@@ -131,10 +131,9 @@ fn setup_controller_env(
 ) -> (@player.Player, @map.MapInfo) raise {
   let (map_info, physics) = load_map_runtime(map_id)
   @map.set_runtime_context(map_info, physics)
-  @game_state.init_state(@game_state.GamePhase::GameActive(
-    map_id~,
-    portal_id=0,
-  ))
+  @game_state.init_state(
+    @game_state.GamePhase::GameActive(map_id~, portal_id=0),
+  )
   install_test_keymap()
   apply_keyboard_snapshot([])
   let player = make_test_player(map_id + start_x.abs() + start_y.abs())

@@ -44,9 +44,7 @@ pub fn set_next_phase(phase : GamePhase) -> Unit {
 }
 
 ///|
-pub fn in_phase(
-  predicate : (GamePhase) -> Bool,
-) -> (@ecs.World) -> Bool {
+pub fn in_phase(predicate : (GamePhase) -> Bool) -> (@ecs.World) -> Bool {
   let cond = @state.in_state(require_state(), predicate)
   fn(_world) { cond() }
 }

@@ -185,7 +185,7 @@ pub async fn CharLookMod::load_face_by_id(
 
 ///|
 async fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
-  let bodynode = @resource.get_async_loader("body").load_resource([
+  let bodynode = @resource.require_async_loader("body").load_resource([
     "00002000.img",
   ])
   let v : NxStanceLooks[@types.NxStanceBody] = @json.from_json(bodynode)
@@ -194,7 +194,7 @@ async fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
 
 ///|
 async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
-  let headnode = @resource.get_async_loader("body").load_resource([
+  let headnode = @resource.require_async_loader("body").load_resource([
     "00012000.img",
   ])
   let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode)

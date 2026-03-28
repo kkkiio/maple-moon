@@ -15,6 +15,7 @@ pub(all) struct MapMobsContext {
 let map_mobs_ctx : Ref[MapMobsContext?] = Ref::new(None)
 
 ///|
+
 ///|
 pub fn set_mobs(ctx : MapMobsContext) -> Unit {
   map_mobs_ctx.val = Some(ctx)

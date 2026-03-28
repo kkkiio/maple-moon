@@ -441,7 +441,7 @@ fn parse_quest_ui_resource(json : Json) -> QuestLogUiResource raise {
 
 ///|
 async fn load_quest_ui_resource() -> QuestLogUiResource {
-  let raw : Json = @resource.get_async_loader("ui_window_2").load_resource([
+  let raw : Json = @resource.require_async_loader("ui_window_2").load_resource([
     "Quest",
   ])
   parse_quest_ui_resource(raw)

@@ -180,9 +180,9 @@ pub fn reset_player_position() -> Unit {
 let stage_ref : Ref[Stage?] = Ref::new(None)
 
 ///|
-let transiting_loading_ref : Ref[
-  @utils.Future[Result[@map.SceneMap, Error]]?,
-] = Ref::new(None)
+let transiting_loading_ref : Ref[@utils.Future[Result[@map.SceneMap, Error]]?] = Ref::new(
+  None,
+)
 
 ///|
 pub fn get_stage() -> Stage? {
@@ -195,8 +195,8 @@ pub fn get_stage() -> Stage? {
 pub fn scene_transition_system(_world : @ecs.World) -> Unit {
   match @game_state.current_phase() {
     @game_state.GamePhase::GameSetup => ()
-    @game_state.GamePhase::SelectCharacter |
-    @game_state.GamePhase::ExplorerCharacterCreation => {
+    @game_state.GamePhase::SelectCharacter
+    | @game_state.GamePhase::ExplorerCharacterCreation => {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()
@@ -278,10 +278,9 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
             }
             match after_image_name {
               Some(after_image_name) => {
-                let after_image_res = @resource.get_async_loader("afterimage").load_resource([
-                    "\{after_image_name}.img",
-                  ],
-                )
+                let after_image_res = @resource.require_async_loader(
+                  "afterimage",
+                ).load_resource(["\{after_image_name}.img"])
                 let after_images = @json.from_json(after_image_res)
                 @char_look.set_after_images(after_image_name, after_images)
               }
@@ -307,8 +306,8 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
               @log.fatal("markup_text reference data is not ready")
               panic()
             }
-            let npc_loader = @resource.get_async_loader("npc")
-            let string_loader = @resource.get_async_loader("string")
+            let npc_loader = @resource.require_async_loader("npc")
+            let string_loader = @resource.require_async_loader("string")
             (
               weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
               string_loader,
@@ -412,10 +411,9 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       transiting_loading_ref.val = None
-      @game_state.set_next_phase(@game_state.GamePhase::GameTransiting(
-        map_id~,
-        portal_id~,
-      ))
+      @game_state.set_next_phase(
+        @game_state.GamePhase::GameTransiting(map_id~, portal_id~),
+      )
     }
     @game_state.GamePhase::GameTransiting(map_id~, portal_id~) => {
       let stage = stage_ref.val.unwrap()
@@ -439,10 +437,9 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       set_active_scene_map(sence_map)
       @map.set_runtime_context(sence_map.map_info, sence_map.physics)
       transiting_loading_ref.val = None
-      @game_state.set_next_phase(@game_state.GamePhase::GameActive(
-        map_id~,
-        portal_id~,
-      ))
+      @game_state.set_next_phase(
+        @game_state.GamePhase::GameActive(map_id~, portal_id~),
+      )
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @npc.set_npcs({ map_npcs: stage.npcs, physics: sence_map.physics })
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
@@ -551,10 +548,9 @@ pub fn setup_game_server_handlers() -> Unit {
       @npc.clear_map_npcs()
       @character.clear_character_registry()
       transiting_loading_ref.val = None
-      @game_state.set_next_phase(@game_state.GamePhase::GameTransiting(
-        map_id~,
-        portal_id~,
-      ))
+      @game_state.set_next_phase(
+        @game_state.GamePhase::GameTransiting(map_id~, portal_id~),
+      )
     },
   )
 }

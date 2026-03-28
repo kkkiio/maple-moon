@@ -209,7 +209,7 @@ fn current_player_name() -> String {
 
 ///|
 async fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.get_async_loader("ui_window_2").load_resource([
+  let src : Json = @resource.require_async_loader("ui_window_2").load_resource([
     "UtilDlgEx",
   ])
   NpcTalkResource::from_resource(src)

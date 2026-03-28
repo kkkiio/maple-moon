@@ -44,7 +44,7 @@ pub(all) struct QuestLogSnapshotRaw {
 ///|
 /// 异步加载 Quest 资源,返回 (QuestResource, Json)
 pub async fn load_quest_resource() -> (QuestResource, Json) {
-  let quest_resource_loader = @resource.get_async_loader("quest")
+  let quest_resource_loader = @resource.require_async_loader("quest")
   let raw = quest_resource_loader.load_resource(["nx"])
   let quests_resource : QuestResource = @json.from_json(raw)
   let quest_checks_raw = match raw {

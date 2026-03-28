@@ -108,10 +108,9 @@ async fn wait_until_select_char_ui_loaded() -> Unit {
 
 ///|
 fn setup_select_char_phase() -> Unit {
-  @game_state.init_state(@game_state.GamePhase::GameActive(
-    map_id=100000000,
-    portal_id=0,
-  ))
+  @game_state.init_state(
+    @game_state.GamePhase::GameActive(map_id=100000000, portal_id=0),
+  )
   @game_state.init_state(@game_state.GamePhase::SelectCharacter)
 }
 

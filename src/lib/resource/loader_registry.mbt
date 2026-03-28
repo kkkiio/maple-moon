@@ -10,7 +10,7 @@ pub fn register_async_loader(name : String, loader : AsyncLoader) -> Unit {
 
 ///|
 /// Get a registered async loader by name.
-pub fn get_async_loader(name : String) -> AsyncLoader {
+pub fn require_async_loader(name : String) -> AsyncLoader {
   match async_loader_registry.get(name) {
     Some(loader) => loader
     None => panic()

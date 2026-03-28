@@ -5,7 +5,9 @@ let loading_ref : Ref[@utils.Future[Result[Unit, Error]]?] = Ref::new(None)
 
 ///|
 pub fn app_resource_setup_system(_world : @ecs.World) -> Unit {
-  guard @game_state.current_phase() is @game_state.GamePhase::GameSetup else { return }
+  guard @game_state.current_phase() is @game_state.GamePhase::GameSetup else {
+    return
+  }
   guard loading_ref.val is Some(loading) else {
     loading_ref.val = Some(
       @io_service.submit_background_task(async fn() {

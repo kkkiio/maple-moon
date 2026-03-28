@@ -16,6 +16,7 @@ priv struct MapDropsContext {
 let map_drops_ctx : Ref[MapDropsContext?] = Ref::new(None)
 
 ///|
+
 ///|
 fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
   @io_service.submit_background_task(async fn() {
@@ -26,7 +27,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 
 ///|
 pub async fn Module::load() -> Module {
-  let special_item_loader = @resource.get_async_loader("item_special")
+  let special_item_loader = @resource.require_async_loader("item_special")
   let src = special_item_loader.load_resource(["0900.img"])
   { map_drops: MapDrops::new(src) }
 }

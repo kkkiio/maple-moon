@@ -27,6 +27,7 @@ struct BulletSystem {
 let current_bullet_system_ref : Ref[BulletSystem?] = Ref::new(None)
 
 ///|
+
 ///|
 /// Create an empty bullet runtime state.
 pub fn BulletSystem::new() -> BulletSystem {

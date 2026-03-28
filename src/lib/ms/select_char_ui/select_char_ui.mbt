@@ -486,7 +486,9 @@ async fn add_select_char_ui(
     },
     on_new_character=fn() {
       reset_select_char_ui_runtime_state()
-      @game_state.set_next_phase(@game_state.GamePhase::ExplorerCharacterCreation)
+      @game_state.set_next_phase(
+        @game_state.GamePhase::ExplorerCharacterCreation,
+      )
       open_explorer_creation_ui(mod)
     },
     mod,
@@ -642,11 +644,13 @@ pub fn setup_game_server_handlers() -> Unit {
         return
       }
       guard select_char_ui.val is Some(_) else { return }
-      @game_state.set_next_phase(@game_state.GamePhase::GameStart(
-        map_id~,
-        portal_id~,
-        set_field_message~,
-      ))
+      @game_state.set_next_phase(
+        @game_state.GamePhase::GameStart(
+          map_id~,
+          portal_id~,
+          set_field_message~,
+        ),
+      )
       reset_select_char_ui_runtime_state()
     },
   )

@@ -66,7 +66,7 @@ fn cleanup_for_leave_world(_world : @ecs.World) -> Unit {
 fn main {
   install_builtin_resource_loaders()
   @item.set_item_data_system(
-    @item.ItemDataSystem::new(@resource.get_async_loader("item")),
+    @item.ItemDataSystem::new(@resource.require_async_loader("item")),
   )
   let app = @app.App::new()
     .with_image_smooth(false)

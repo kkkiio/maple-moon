@@ -32,9 +32,10 @@ fn load_quest_2090_quiz_text() -> String raise {
 
 ///|
 async fn setup_npc_talk_resource_cache() -> Unit {
-  let util_dlg_ex = @resource.get_async_loader("ui_window_2").load_resource([
-    "UtilDlgEx",
-  ])
+  let util_dlg_ex = @resource.require_async_loader("ui_window_2").load_resource([
+      "UtilDlgEx",
+    ],
+  )
   let resource = @npc_talk_ui.NpcTalkResource::from_resource(util_dlg_ex) catch {
     err => fail("failed to parse UtilDlgEx: \{err.to_string()}")
   }
@@ -72,10 +73,9 @@ async fn setup_scene() -> Unit {
   setup_local_loaders()
   setup_npc_talk_resource_cache()
 
-  @game_state.init_state(@game_state.GamePhase::GameActive(
-    map_id=103000000,
-    portal_id=0,
-  ))
+  @game_state.init_state(
+    @game_state.GamePhase::GameActive(map_id=103000000, portal_id=0),
+  )
 
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_mouse_system(0.0)

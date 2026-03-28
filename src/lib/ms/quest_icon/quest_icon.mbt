@@ -165,7 +165,7 @@ fn poll_loading_result() -> Unit {
 
 ///|
 async fn load_resources() -> QuestIconResources {
-  let loader = @resource.get_async_loader("ui_window_2")
+  let loader = @resource.require_async_loader("ui_window_2")
   let available_json = loader.load_resource(["QuestIcon", "0"])
   let inprogress_json = loader.load_resource(["QuestIcon", "1"])
   let completed_json = loader.load_resource(["QuestIcon", "2"])

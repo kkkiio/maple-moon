@@ -166,7 +166,7 @@ pub(all) struct NumberSet {
 
 ///|
 pub async fn NumberSet::load() -> NumberSet {
-  let loader = @resource.get_async_loader("effect")
+  let loader = @resource.require_async_loader("effect")
   // 'No' for Number
   let no_red_1 = loader.load_resource(["BasicEff.img", "NoRed1"])
     |> @json.from_json

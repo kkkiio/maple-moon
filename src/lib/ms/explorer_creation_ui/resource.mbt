@@ -123,9 +123,10 @@ async fn load_resource() -> ExplorerCreationUIResource {
   let customize_char_src = login_loader.load_resource([
     "Login.img", "CustomizeChar", "000",
   ])
-  let signboard2_src = @resource.get_async_loader("map_latest").load_resource([
-    "Obj", "login.img", "NewChar", "signboard", "2",
-  ])
+  let signboard2_src = @resource.require_async_loader("map_latest").load_resource([
+      "Obj", "login.img", "NewChar", "signboard", "2",
+    ],
+  )
   let board_src = match customize_char_src {
     { "board": Object(_) as board_src, .. } => board_src
     _ => fail("missing board")

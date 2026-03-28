@@ -121,7 +121,7 @@ pub async fn Mob::load(
   position : @struct.Point[Int],
   randomizer : @random.Rand,
 ) -> Mob {
-  let mob_loader = @resource.get_async_loader("mob")
+  let mob_loader = @resource.require_async_loader("mob")
   let strid = @utils.stoi_left_pad0(mid, 7)
   try {
     let src = mob_loader.load_resource([strid + ".img"])

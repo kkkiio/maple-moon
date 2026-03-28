@@ -3,8 +3,6 @@ package "KKKIIO/maple-moon/lib/resource"
 
 import {
   "KKKIIO/maple-moon/lib/ms/res_types",
-  "Milky2018/selene/asset_types",
-  "Milky2018/selene/math",
   "moonbitlang/core/json",
 }
 
@@ -13,17 +11,11 @@ pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
 
 pub fn collect_spritesheet_paths(Json) -> Array[String]
 
-pub fn get_async_loader(String) -> AsyncLoader
-
 pub fn get_csv_loader() -> CsvLoader
 
 pub fn get_csv_loader_by_name(String) -> CsvLoader
 
 pub fn get_text_loader(String) -> TextLoader
-
-pub fn nx_animation_to_playable(NxAnimation, loop_? : Bool) -> NxAnimationPlayable
-
-pub fn nx_texture_to_picture_spec(NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> NxPictureSpec
 
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
 
@@ -36,6 +28,8 @@ pub fn register_async_loader(String, AsyncLoader) -> Unit
 pub fn register_csv_loader(String, CsvLoader) -> Unit
 
 pub fn register_text_loader(String, TextLoader) -> Unit
+
+pub fn require_async_loader(String) -> AsyncLoader
 
 pub fn set_csv_loader(CsvLoader) -> Unit
 
@@ -109,20 +103,6 @@ pub fn NxAnimation::get_size(Self) -> (Int, Int)
 pub impl Show for NxAnimation
 pub impl @json.FromJson for NxAnimation
 
-pub(all) struct NxAnimationPlayable {
-  steps : Array[NxAnimationStep]
-  loop_ : Bool
-  native_eligible : Bool
-}
-
-pub(all) struct NxAnimationStep {
-  image : @asset_types.ImageHandle
-  rect : @math.Rect
-  size : @math.Vec2D
-  origin : @math.Vec2D
-  duration : Double
-}
-
 pub(all) struct NxFrame {
   texture : NxTexture
   delay : Int?
@@ -131,15 +111,6 @@ pub(all) struct NxFrame {
 }
 pub impl Show for NxFrame
 pub impl @json.FromJson for NxFrame
-
-pub(all) struct NxPictureSpec {
-  image : @asset_types.ImageHandle
-  rect : @math.Rect
-  size : @math.Vec2D
-  origin : @math.Vec2D
-  repeat : @math.RepeatMode
-  flip_x : Bool
-}
 
 pub(all) struct NxTexture {
   i : String

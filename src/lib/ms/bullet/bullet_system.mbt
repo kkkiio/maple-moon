@@ -27,8 +27,6 @@ struct BulletSystem {
 let current_bullet_system_ref : Ref[BulletSystem?] = Ref::new(None)
 
 ///|
-let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
-
 ///|
 /// Create an empty bullet runtime state.
 pub fn BulletSystem::new() -> BulletSystem {
@@ -107,21 +105,8 @@ pub fn BulletSystem::clear(self : BulletSystem) -> Unit {
 }
 
 ///|
-fn register_scene_cleanup_once() -> Unit {
-  if scene_cleanup_registered.val {
-    return
-  }
-  scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(_reason) {
-    clear_current_bullet_system()
-    true
-  })
-}
-
-///|
 /// Register the current scene's bullet runtime state.
 pub fn set_current_bullet_system(system : BulletSystem?) -> Unit {
-  register_scene_cleanup_once()
   current_bullet_system_ref.val = system
 }
 
@@ -161,13 +146,22 @@ pub fn get_current_bullet_system() -> BulletSystem? {
 }
 
 ///|
+pub fn clear_for_change_map() -> Unit {
+  clear_current_bullet_system()
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_current_bullet_system()
+}
+
+///|
 /// Selene system entry for bullet simulation.
 ///
 /// This runs only during `GameActive` and advances by fixed logic steps.
 // TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn bullet_system(_world : @ecs.World) -> Unit {
-  register_scene_cleanup_once()
-  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @game_state.current_phase() is GameActive(..) else { return }
   guard @monster.get_map_mobs() is Some(_) else { return }
   guard current_bullet_system_ref.val is Some(system) else { return }
   system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())

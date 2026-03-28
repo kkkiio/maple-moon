@@ -201,7 +201,7 @@ fn handle_direction_action(
 ///|
 /// Handle frame-based player input sampling and action dispatch.
 pub fn player_controller_input_system(_world : @ecs.World) -> Unit {
-  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @game_state.current_phase() is GameActive(..) else { return }
   guard @map.get_runtime_context() is Some((map_info, physics)) else { return }
   guard @player.get_player() is Some(player) else { return }
   let just_pressed_actions = @keymap.just_pressed_actions()
@@ -253,7 +253,7 @@ pub fn player_controller_input_system(_world : @ecs.World) -> Unit {
 /// Advance player movement and state once in fixed schedule.
 // TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn player_controller_fixed_system(_world : @ecs.World) -> Unit {
-  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @game_state.current_phase() is GameActive(..) else { return }
   guard @map.get_runtime_context() is Some((map_info, physics)) else { return }
   guard @player.get_player() is Some(player) else { return }
   @player.tick_player(player, physics, map_info)

@@ -10,6 +10,10 @@ import {
 // Values
 pub fn bind_inventory(@inventory.Inventory) -> Unit
 
+pub fn clear_for_change_map() -> Unit
+
+pub fn clear_for_leave_world() -> Unit
+
 pub fn init_inventory_ui() -> Unit
 
 pub fn inventory_ui_system(@ecs.World) -> Unit

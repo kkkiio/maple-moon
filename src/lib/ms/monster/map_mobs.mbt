@@ -15,8 +15,6 @@ pub(all) struct MapMobsContext {
 let map_mobs_ctx : Ref[MapMobsContext?] = Ref::new(None)
 
 ///|
-let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
-
 ///|
 pub fn set_mobs(ctx : MapMobsContext) -> Unit {
   map_mobs_ctx.val = Some(ctx)
@@ -40,15 +38,13 @@ pub fn clear_map_monsters() -> Unit {
 }
 
 ///|
-fn register_scene_cleanup_once() -> Unit {
-  if scene_cleanup_registered.val {
-    return
-  }
-  scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(_reason) {
-    clear_map_monsters()
-    true
-  })
+pub fn clear_for_change_map() -> Unit {
+  clear_map_monsters()
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_map_monsters()
 }
 
 ///|
@@ -392,7 +388,6 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
 
 ///|
 pub fn setup_game_server_handlers() -> Unit {
-  register_scene_cleanup_once()
   @game_server.add_server_message_handler(
     "spawn_mob",
     @server_proto.Opcode::SPAWN_MOB.int_value(),

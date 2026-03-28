@@ -20,6 +20,10 @@ pub fn apply_move_attack(MobSpecialAttack, Mob) -> Unit
 
 pub fn apply_move_skill(MobSkill, Mob) -> Unit
 
+pub fn clear_for_change_map() -> Unit
+
+pub fn clear_for_leave_world() -> Unit
+
 pub fn clear_map_monsters() -> Unit
 
 pub fn create_mob_spawn(Int, Int, Int, Int, Int, Bool, Int, @res_types.Point[Int]) -> MobSpawn

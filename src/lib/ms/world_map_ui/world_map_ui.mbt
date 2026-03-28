@@ -479,28 +479,39 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 }
 
 ///|
+fn clear_scene(reason_is_change_map : Bool) -> Unit {
+  let state = state_ref.val
+  clear_entities(state.render_entities)
+  state.hovered_spot_index = None
+  state.hovered_link_index = None
+  state.pressed_button = None
+  state.current_page = None
+  state.page_loading = None
+  state.page_cache.clear()
+  state.visible = false
+  state.search_visible = false
+  if !reason_is_change_map {
+    state.ui_resources = None
+    state.ui_loading = None
+  }
+}
+
+///|
+pub fn clear_for_change_map() -> Unit {
+  clear_scene(true)
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_scene(false)
+}
+
+///|
 fn register_scene_cleanup_once() -> Unit {
   if cleanup_registered_ref.val {
     return
   }
   cleanup_registered_ref.val = true
-  @game_state.listen_scene_clear(fn(reason) {
-    let state = state_ref.val
-    clear_entities(state.render_entities)
-    state.hovered_spot_index = None
-    state.hovered_link_index = None
-    state.pressed_button = None
-    state.current_page = None
-    state.page_loading = None
-    state.page_cache.clear()
-    state.visible = false
-    state.search_visible = false
-    if reason != @game_state.SceneClearReason::ChangeMap {
-      state.ui_resources = None
-      state.ui_loading = None
-    }
-    true
-  })
 }
 
 ///|

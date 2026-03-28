@@ -16,8 +16,6 @@ priv struct MapDropsContext {
 let map_drops_ctx : Ref[MapDropsContext?] = Ref::new(None)
 
 ///|
-let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
-
 ///|
 fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
   @io_service.submit_background_task(async fn() {
@@ -42,7 +40,6 @@ pub fn Module::get_map_drops(self : Module) -> MapDrops {
 
 ///|
 pub fn setup_game_server_handlers() -> Unit {
-  register_scene_cleanup_once()
   if map_drops_ctx.val is None {
     map_drops_ctx.val = Some({
       map_drops: None,
@@ -90,18 +87,6 @@ pub fn setup_game_server_handlers() -> Unit {
 }
 
 ///|
-fn register_scene_cleanup_once() -> Unit {
-  if scene_cleanup_registered.val {
-    return
-  }
-  scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(_reason) {
-    clear_map_drops()
-    true
-  })
-}
-
-///|
 pub fn set_map_physics(physics : @physics.Physics) -> Unit {
   if map_drops_ctx.val is Some(ctx) {
     ctx.physics = Some(physics)
@@ -119,6 +104,16 @@ pub fn clear_map_drops() -> Unit {
     ctx.pending_removes.clear()
     ctx.physics = None
   }
+}
+
+///|
+pub fn clear_for_change_map() -> Unit {
+  clear_map_drops()
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_map_drops()
 }
 
 ///|

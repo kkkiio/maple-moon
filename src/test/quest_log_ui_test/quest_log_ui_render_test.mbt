@@ -51,6 +51,7 @@ async fn setup_scene() -> Unit {
       system_name="io_system",
     )
   @capture_app.init_app(app)
+  @game_state.init_state(@game_state.GamePhase::GameSetup)
 
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_key_system(0.0)
@@ -60,10 +61,10 @@ async fn setup_scene() -> Unit {
     started: [(2085, ""), (2091, "3")],
     completed: [(2000, 123456)],
   })
-  @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+  @game_state.init_state(@game_state.GamePhase::GameActive(
     map_id=100000000,
     portal_id=0,
-  )
+  ))
   // Flush one frame of empty input before opening UI to avoid stale key edge states.
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @capture_app.run_loop(0.016)
@@ -111,10 +112,10 @@ async test "quest_log_ui renders in-progress & completed tab" {
 test "quest_log_ui closes on escape" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
-  @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+  @game_state.init_state(@game_state.GamePhase::GameActive(
     map_id=100000000,
     portal_id=0,
-  )
+  ))
   @quest_log_ui.open_quest_log_ui()
   let pressed = @inputs.empty_input_snapshot()
   pressed.pressed_keys.add(@inputs.Code::Escape)

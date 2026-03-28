@@ -9,6 +9,10 @@ import {
 }
 
 // Values
+pub fn clear_for_change_map() -> Unit
+
+pub fn clear_for_leave_world() -> Unit
+
 pub fn clear_map_drops() -> Unit
 
 pub fn map_drops_fixed_system(@ecs.World) -> Unit

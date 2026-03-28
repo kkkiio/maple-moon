@@ -1045,27 +1045,33 @@ fn close_shop(state : State) -> Unit {
 }
 
 ///|
-fn register_scene_cleanup_once() -> Unit {
-  if scene_cleanup_registered.val {
-    return
-  }
-  scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(_reason) {
-    let state = state_ref.val
-    state.visible = false
-    state.pending_open_shop = None
-    state.pending_open_shop_item_ids = []
-    state.open_shop = None
-    state.selected_buy_slot = None
-    state.selected_sell_slot = None
-    clear_entities(state.render_entities)
-    true
-  })
+fn clear_scene() -> Unit {
+  let state = state_ref.val
+  state.visible = false
+  state.pending_open_shop = None
+  state.pending_open_shop_item_ids = []
+  state.open_shop = None
+  state.selected_buy_slot = None
+  state.selected_sell_slot = None
+  clear_entities(state.render_entities)
+}
+
+///|
+pub fn clear_for_change_map() -> Unit {
+  clear_scene()
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_scene()
 }
 
 ///|
 pub fn init_shop_ui() -> Unit {
-  register_scene_cleanup_once()
+  if scene_cleanup_registered.val {
+    return
+  }
+  scene_cleanup_registered.val = true
 }
 
 ///|

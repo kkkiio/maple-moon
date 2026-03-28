@@ -71,7 +71,7 @@ pub fn close_explorer_creation_ui() -> Unit {
 ///|
 /// Returns whether explorer creation UI scene is currently mounted.
 pub fn is_explorer_creation_ui_open() -> Bool {
-  @game_state.game_state.phase
+  @game_state.current_phase()
   is @game_state.GamePhase::ExplorerCharacterCreation &&
   creation_ui_ref.val is Some(_)
 }
@@ -203,7 +203,7 @@ fn ExplorerCreationUI::destroy(self : ExplorerCreationUI) -> Unit {
 ///|
 fn return_to_select_character() -> Unit {
   close_explorer_creation_ui()
-  @game_state.game_state.phase = @game_state.GamePhase::SelectCharacter
+  @game_state.set_next_phase(@game_state.GamePhase::SelectCharacter)
 }
 
 ///|
@@ -505,7 +505,7 @@ fn ExplorerCreationUI::update(self : ExplorerCreationUI) -> Unit {
 ///|
 /// System driving explorer creation UI lifecycle.
 pub fn explorer_creation_ui_system(_world : @ecs.World) -> Unit {
-  guard @game_state.game_state.phase
+  guard @game_state.current_phase()
     is @game_state.GamePhase::ExplorerCharacterCreation else {
     return
   }

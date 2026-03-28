@@ -617,34 +617,40 @@ fn render_inventory(state : State) -> Unit {
 }
 
 ///|
-fn register_scene_cleanup_once() -> Unit {
-  if scene_cleanup_registered.val {
-    return
+fn clear_scene(reason_is_change_map : Bool) -> Unit {
+  let state = state_ref.val
+  clear_render(state)
+  if !reason_is_change_map {
+    state.visible = false
+    state.tab_index = 0
+    state.panel_x = PANEL_X
+    state.panel_y = PANEL_Y
+    state.items_by_tab = new_items_map()
+    state.slot_max_by_tab = new_slot_max_map()
+    state.ui_resources = None
+    state.ui_loading = None
+    state.icon_by_item_id.clear()
+    state.binding_version += 1
+    state.active_slot = None
   }
-  scene_cleanup_registered.val = true
-  @game_state.listen_scene_clear(fn(reason) {
-    let state = state_ref.val
-    clear_render(state)
-    if reason != @game_state.SceneClearReason::ChangeMap {
-      state.visible = false
-      state.tab_index = 0
-      state.panel_x = PANEL_X
-      state.panel_y = PANEL_Y
-      state.items_by_tab = new_items_map()
-      state.slot_max_by_tab = new_slot_max_map()
-      state.ui_resources = None
-      state.ui_loading = None
-      state.icon_by_item_id.clear()
-      state.binding_version += 1
-      state.active_slot = None
-    }
-    true
-  })
+}
+
+///|
+pub fn clear_for_change_map() -> Unit {
+  clear_scene(true)
+}
+
+///|
+pub fn clear_for_leave_world() -> Unit {
+  clear_scene(false)
 }
 
 ///|
 pub fn init_inventory_ui() -> Unit {
-  register_scene_cleanup_once()
+  if scene_cleanup_registered.val {
+    return
+  }
+  scene_cleanup_registered.val = true
 }
 
 ///|

@@ -6,6 +6,10 @@ import {
 }
 
 // Values
+pub fn clear_for_change_map() -> Unit
+
+pub fn clear_for_leave_world() -> Unit
+
 pub fn get_world_map_debug_state_for_test() -> Json
 
 pub fn handle_world_map_escape_for_test() -> Unit

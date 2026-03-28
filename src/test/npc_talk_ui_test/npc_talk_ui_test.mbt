@@ -63,6 +63,7 @@ async fn setup_scene() -> Unit {
       system_name="io_system",
     )
   @capture_app.init_app(app)
+  @game_state.init_state(@game_state.GamePhase::GameSetup)
   let camera_anchor = @entity.Entity::new()
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2D(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
@@ -71,10 +72,10 @@ async fn setup_scene() -> Unit {
   setup_local_loaders()
   setup_npc_talk_resource_cache()
 
-  @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+  @game_state.init_state(@game_state.GamePhase::GameActive(
     map_id=103000000,
     portal_id=0,
-  )
+  ))
 
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_mouse_system(0.0)

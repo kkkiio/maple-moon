@@ -1298,7 +1298,7 @@ pub fn is_quest_log_ui_open() -> Bool {
 /// Quest-log UI system.
 pub fn quest_log_ui_system(_world : @ecs.World) -> Unit {
   let state = state()
-  guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
+  guard @game_state.current_phase() is @game_state.GamePhase::GameActive(..) else {
     close_quest_log_ui()
     return
   }

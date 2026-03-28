@@ -327,7 +327,7 @@ pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
 
 ///|
 pub fn npc_talk_ui_system(_world : @ecs.World) -> Unit {
-  guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
+  guard @game_state.current_phase() is @game_state.GamePhase::GameActive(..) else {
     close_npc_talk_ui()
     return
   }

@@ -161,7 +161,7 @@ pub fn Stage::listen_map_change(
 ///|
 /// reset player position. for debug
 pub fn reset_player_position() -> Unit {
-  guard @game_state.game_state.phase
+  guard @game_state.current_phase()
     is @game_state.GamePhase::GameActive(portal_id~, ..) else {
     return
   }
@@ -180,6 +180,11 @@ pub fn reset_player_position() -> Unit {
 let stage_ref : Ref[Stage?] = Ref::new(None)
 
 ///|
+let transiting_loading_ref : Ref[
+  @utils.Future[Result[@map.SceneMap, Error]]?,
+] = Ref::new(None)
+
+///|
 pub fn get_stage() -> Stage? {
   stage_ref.val
 }
@@ -188,9 +193,10 @@ pub fn get_stage() -> Stage? {
 
 ///|
 pub fn scene_transition_system(_world : @ecs.World) -> Unit {
-  match @game_state.game_state.phase {
-    GameSetup(..) => ()
-    SelectCharacter | ExplorerCharacterCreation => {
+  match @game_state.current_phase() {
+    @game_state.GamePhase::GameSetup => ()
+    @game_state.GamePhase::SelectCharacter |
+    @game_state.GamePhase::ExplorerCharacterCreation => {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()
@@ -198,12 +204,9 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       @npc.clear_map_npcs()
       @character.clear_character_registry()
       @mini_map_ui.clear_current_map()
-      @game_state.emit_scene_clear(
-        @game_state.SceneClearReason::LeaveToSelectCharacter,
-      )
       return
     }
-    GameStart(map_id~, portal_id~, set_field_message~) => {
+    @game_state.GamePhase::GameStart(map_id~, portal_id~, set_field_message~) => {
       guard set_field_message is SetField(stats~, inventory_entry~, quests~, ..) else {
         return
       }
@@ -390,7 +393,6 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
         None => ()
       }
       clear_loading_data()
-      @game_state.emit_scene_clear(@game_state.SceneClearReason::GameStart)
       let global_inv = @inventory.inventory.val
       global_inv.clear()
       global_inv.set_meso(inventory_entry.meso)
@@ -409,16 +411,16 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       clear_active_scene_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
-      @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
+      transiting_loading_ref.val = None
+      @game_state.set_next_phase(@game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
-        loading_map=None,
-      )
+      ))
     }
-    GameTransiting(map_id~, portal_id~, loading_map~) as t => {
+    @game_state.GamePhase::GameTransiting(map_id~, portal_id~) => {
       let stage = stage_ref.val.unwrap()
-      guard loading_map is Some(fut) else {
-        t.loading_map = Some(
+      guard transiting_loading_ref.val is Some(fut) else {
+        transiting_loading_ref.val = Some(
           @io_service.submit_background_task(async fn() {
             let map_resources = @map.load_map_resources_by_id(map_id)
             @map.create_scene_map(map_resources, stage.map_portals_animations)
@@ -436,10 +438,11 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       }
       set_active_scene_map(sence_map)
       @map.set_runtime_context(sence_map.map_info, sence_map.physics)
-      @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+      transiting_loading_ref.val = None
+      @game_state.set_next_phase(@game_state.GamePhase::GameActive(
         map_id~,
         portal_id~,
-      )
+      ))
       // 设置怪物上下文，让怪物生成消息能被正确处理
       @npc.set_npcs({ map_npcs: stage.npcs, physics: sence_map.physics })
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
@@ -547,12 +550,11 @@ pub fn setup_game_server_handlers() -> Unit {
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       @character.clear_character_registry()
-      @game_state.emit_scene_clear(@game_state.SceneClearReason::ChangeMap)
-      @game_state.game_state.phase = @game_state.GamePhase::GameTransiting(
+      transiting_loading_ref.val = None
+      @game_state.set_next_phase(@game_state.GamePhase::GameTransiting(
         map_id~,
         portal_id~,
-        loading_map=None,
-      )
+      ))
     },
   )
 }

@@ -131,7 +131,7 @@ fn clear_status_bar() -> Unit {
 ///|
 /// Render the in-game status bar HUD with selene text sprites.
 pub fn status_bar_ui_system(_world : @ecs.World) -> Unit {
-  guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
+  guard @game_state.current_phase() is @game_state.GamePhase::GameActive(..) else {
     clear_status_bar()
     return
   }

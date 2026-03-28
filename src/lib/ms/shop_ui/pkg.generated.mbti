@@ -7,6 +7,10 @@ import {
 }
 
 // Values
+pub fn clear_for_change_map() -> Unit
+
+pub fn clear_for_leave_world() -> Unit
+
 pub fn init_shop_ui() -> Unit
 
 pub fn set_inventory_entry_for_test(@server_proto.InventoryEntry) -> Unit

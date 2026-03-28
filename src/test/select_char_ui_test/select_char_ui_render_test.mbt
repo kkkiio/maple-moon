@@ -73,6 +73,7 @@ fn setup_select_char_ui_scene() -> Unit {
       system_name="select_char_ui_system",
     )
   @capture_app.init_app(app)
+  @game_state.init_state(@game_state.GamePhase::GameSetup)
 }
 
 ///|
@@ -107,12 +108,11 @@ async fn wait_until_select_char_ui_loaded() -> Unit {
 
 ///|
 fn setup_select_char_phase() -> Unit {
-  @game_state.game_state.phase = @game_state.GamePhase::GameActive(
+  @game_state.init_state(@game_state.GamePhase::GameActive(
     map_id=100000000,
     portal_id=0,
-  )
-  @capture_app.run_loop(0.016)
-  @game_state.game_state.phase = @game_state.GamePhase::SelectCharacter
+  ))
+  @game_state.init_state(@game_state.GamePhase::SelectCharacter)
 }
 
 ///|

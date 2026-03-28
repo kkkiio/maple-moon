@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/cursor"
 
 import {
   "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
 }
@@ -10,7 +11,7 @@ import {
 // Values
 pub const HIDE_SECONDS : Int = 12
 
-pub fn cursor_system(Double) -> Unit
+pub fn cursor_system(@ecs.World) -> Unit
 
 // Errors
 

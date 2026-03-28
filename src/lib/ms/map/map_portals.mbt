@@ -12,7 +12,7 @@ let warpcd : Int = 48
 
 ///|
 struct MapPortalAnimations {
-  animations : Map[PortalType, @sprite.Animation]
+  animations : Map[PortalType, @ms_animation.Animation]
 }
 
 ///|
@@ -132,23 +132,41 @@ pub fn MapPortals::find_warp_at(
 
 ///|
 pub fn MapPortalAnimations::load() -> MapPortalAnimations {
-  let ani1 = @sprite.Animation::new(
-    @sprite.frames_from_atlas(
-      "/assets/portal/continue.png",
-      7,
-      width=128,
-      height=122,
-      pivot=@selene_math.Vec2D(62, 119),
-    ),
+  fn atlas_animation(
+    path : String,
+    frame_count : Int,
+    frame_width : Double,
+    frame_height : Double,
+    pivot : @selene_math.Vec2D,
+  ) -> @ms_animation.Animation {
+    let image = @selene_asset.load_image(path)
+    let frames : Array[@ms_animation.AnimationFrame] = []
+    for frame_index = 0
+        frame_index < frame_count
+        frame_index = frame_index + 1 {
+      frames.push({
+        image,
+        size: @selene_math.Vec2D(frame_width, frame_height),
+        offset: @selene_math.Vec2D(frame_width * frame_index.to_double(), 0.0),
+        pivot,
+        duration: 0.1,
+      })
+    }
+    @ms_animation.Animation::new(frames, loop_=true)
+  }
+  let ani1 = atlas_animation(
+    "/assets/portal/continue.png",
+    7,
+    128.0,
+    122.0,
+    @selene_math.Vec2D(62, 119),
   )
-  let ani2 = @sprite.Animation::new(
-    @sprite.frames_from_atlas(
-      "/assets/portal/regular.png",
-      8,
-      width=89,
-      height=257,
-      pivot=@selene_math.Vec2D(44, 248),
-    ),
+  let ani2 = atlas_animation(
+    "/assets/portal/regular.png",
+    8,
+    89.0,
+    257.0,
+    @selene_math.Vec2D(44, 248),
   )
   {
     animations: Map::from_array([
@@ -223,7 +241,7 @@ pub fn get_portal_pos_by_id_current(portal_id : Int) -> Point[Int]? {
 }
 
 ///|
-pub fn portal_system(_delta : Double) -> Unit {
+pub fn portal_system(_world : @ecs.World) -> Unit {
   guard portals_context.val is Some(ctx) else { return }
   if ctx.dirty {
     ensure_portal_entities(ctx)
@@ -256,14 +274,12 @@ fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
     }
     let entity = @entity.Entity::new()
     let position = portal.get_position()
-    @position.positions().set(
+    @transform2d.set_xy(
       entity,
-      @position.Position(
-        @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
-      ),
+      @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
     )
     if portal.animation is Some(animation) {
-      let sprite = @sprite.Sprite::from_animation(
+      let sprite = @ms_animation.sprite_from_animation(
         animation,
         @graphics.PORTAL_ZINDEX,
       )

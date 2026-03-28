@@ -22,9 +22,10 @@ pub struct MiniMapUIResource {
 ///|
 /// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub async fn MiniMapUIResource::load() -> MiniMapUIResource {
-  let mini_map_json : Json = @resource.get_ui_window_2_loader().load_resource([
-    "MiniMap",
-  ]) catch {
+  let mini_map_json : Json = @resource.get_async_loader("ui_window_2").load_resource([
+      "MiniMap",
+    ],
+  ) catch {
     e => {
       @log.error("failed to load UIWindow2 MiniMap resource", data={
         "error": e,
@@ -32,7 +33,7 @@ pub async fn MiniMapUIResource::load() -> MiniMapUIResource {
       panic()
     }
   }
-  let map_helper_minimap_json : Json = @resource.get_map_latest_loader().load_resource([
+  let map_helper_minimap_json : Json = @resource.get_async_loader("map_latest").load_resource([
       "MapHelper.img", "minimap",
     ],
   ) catch {
@@ -404,23 +405,25 @@ priv struct MiniMapFrameDraw {
 
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+  let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     texture.i,
+    source=Some(source),
   )
 }
 
 ///|
-fn ui_image_region_from_texture(
+fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
-) -> @selene_ui.UiImageRegion {
-  @selene_ui.UiImageRegion::new({
+) -> @render2d_types.ImageRegion2D {
+  {
     position: @selene_math.Vec2D(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
     size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-  })
+  }
 }
 
 ///|
@@ -445,10 +448,6 @@ fn spawn_minimap_texture_entity(
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
-  @selene_ui.ui_image_regions().set(
-    entity,
-    ui_image_region_from_texture(texture),
-  )
   entities.push(entity)
 }
 
@@ -612,7 +611,7 @@ fn poll_or_start_ui_loading(state : MiniMapUIState) -> Unit {
 }
 
 ///|
-pub fn mini_map_ui_system(_delta : Double) -> Unit {
+pub fn mini_map_ui_system(_world : @ecs.World) -> Unit {
   let state = ensure_mini_map_ui_state()
   poll_or_start_ui_loading(state)
   guard state.ui is Some(ui) else { return }

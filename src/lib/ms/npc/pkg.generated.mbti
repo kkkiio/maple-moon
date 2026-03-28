@@ -7,6 +7,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
 }
 
@@ -19,7 +20,9 @@ pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
 
 pub fn list_npc_anchors() -> Array[NpcAnchor]
 
-pub fn map_npcs_system(Double) -> Unit
+pub fn map_npcs_fixed_system(@ecs.World) -> Unit
+
+pub fn map_npcs_pointer_system(@ecs.World) -> Unit
 
 pub fn on_npc_talk_choice(TalkChoice) -> Unit
 

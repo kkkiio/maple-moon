@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/npc_talk_ui"
 import {
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/ecs",
 }
 
 // Values
@@ -15,7 +16,7 @@ pub fn describe_npc_talk_ui() -> Json
 
 pub fn is_npc_talk_ui_open() -> Bool
 
-pub fn npc_talk_ui_system(Double) -> Unit
+pub fn npc_talk_ui_system(@ecs.World) -> Unit
 
 pub fn open_npc_talk_ui(@npc.TalkArgs) -> Unit
 

@@ -2,13 +2,14 @@
 package "KKKIIO/maple-moon/lib/ms/monster"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
-  "Milky2018/selene/sprite",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
   "moonbitlang/core/random",
@@ -27,9 +28,11 @@ pub fn enqueue_hp_event(Int, Int, Int) -> Unit
 
 pub fn get_map_mobs() -> MapMobs?
 
-pub fn map_monsters_system(Double) -> Unit
+pub fn map_monsters_fixed_system(@ecs.World) -> Unit
 
-pub fn mob_hpbars_system(Double) -> Unit
+pub fn map_monsters_render_system(@ecs.World) -> Unit
+
+pub fn mob_hpbars_system(@ecs.World) -> Unit
 
 pub fn set_mobs(MapMobsContext) -> Unit
 
@@ -150,7 +153,7 @@ pub fn Mob::use_skill(Self, MobSkill) -> Unit
 
 pub(all) struct MobAnimation {
   nx : @resource.NxAnimation
-  selene : @sprite.Animation
+  selene : @animation.Animation
 }
 
 pub(all) struct MobAnimations {

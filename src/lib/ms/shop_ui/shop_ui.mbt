@@ -38,27 +38,27 @@ priv struct State {
   mut ui_resources : UiResources?
   mut ui_loading : @utils.Future[Result[UiResources, Error]]?
   mut items_by_tab : Map[InventoryType, Array[DisplayInventoryItem]]
-  icon_by_item_id : Map[Int, @sprite.Animation]
+  icon_by_item_id : Map[Int, @ms_animation.Animation]
   item_name_by_id : Map[Int, String]
   render_entities : Array[@entity.Entity]
 }
 
 ///|
 priv struct UiResources {
-  backgrnd : @sprite.Picture
-  backgrnd2 : @sprite.Picture
-  backgrnd3 : @sprite.Picture
-  backgrnd4 : @sprite.Picture
-  select_buy : @sprite.Picture
-  select_sell : @sprite.Picture
-  meso_icon : @sprite.Picture
-  buy_tab_enabled : @sprite.Animation
-  sell_tab_resources : Array[(@sprite.Animation, @sprite.Animation)]
+  backgrnd : @ms_animation.Picture
+  backgrnd2 : @ms_animation.Picture
+  backgrnd3 : @ms_animation.Picture
+  backgrnd4 : @ms_animation.Picture
+  select_buy : @ms_animation.Picture
+  select_sell : @ms_animation.Picture
+  meso_icon : @ms_animation.Picture
+  buy_tab_enabled : @ms_animation.Animation
+  sell_tab_resources : Array[(@ms_animation.Animation, @ms_animation.Animation)]
   sell_tab_hitboxes : Array[TabHitbox]
-  buy_button_normal : @sprite.Animation
-  sell_button_normal : @sprite.Animation
-  exit_button_normal : @sprite.Animation
-  checkbox_off : @sprite.Animation
+  buy_button_normal : @ms_animation.Animation
+  sell_button_normal : @ms_animation.Animation
+  exit_button_normal : @ms_animation.Animation
+  checkbox_off : @ms_animation.Animation
 }
 
 ///|
@@ -162,7 +162,7 @@ fn new_items_map() -> Map[InventoryType, Array[DisplayInventoryItem]] {
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
     @sprite.sprites().remove(entity) |> ignore
-    @position.positions().remove(entity) |> ignore
+    @transform2d.remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -178,10 +178,7 @@ fn spawn_ui_sprite(
   let entity = @entity.Entity::new()
   entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
-    entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-  )
+  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -193,23 +190,38 @@ fn make_text_sprite(
   z : Int,
   align? : @selene_math.HAlign = @selene_math.Left,
 ) -> Unit {
-  let txt = @sprite.Text::new(
-    text,
-    color=SHOP_TEXT_COLOR,
-    font="11px Menlo",
-    baseline=@selene_math.Top,
-    align~,
+  let entity = @entity.Entity::new()
+  entities.push(entity)
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(240.0, 18.0),
+    ),
   )
-  spawn_ui_sprite(entities, @sprite.Sprite::from_text(txt, z), x, y)
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.text_fonts().set(
+    entity,
+    @selene_ui.TextFont::from_css("11px Menlo"),
+  )
+  @selene_ui.text_colors().set(
+    entity,
+    @selene_ui.TextColor::from_css(SHOP_TEXT_COLOR),
+  )
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
+  )
 }
 
 ///|
 fn nx_texture_to_inventory_icon_animation(
   texture : @resource.NxTexture,
-) -> @sprite.Animation {
-  @sprite.Animation::new(
+) -> @ms_animation.Animation {
+  @ms_animation.Animation::new(
     [
-      @sprite.AnimationFrame::{
+      @ms_animation.AnimationFrame::{
         image: @asset.load_image(texture.i),
         size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
         offset: @selene_math.Vec2D(
@@ -230,8 +242,8 @@ fn nx_texture_to_inventory_icon_animation(
 ///|
 fn nx_texture_to_static_animation(
   texture : @resource.NxTexture,
-) -> @sprite.Animation {
-  @sprite.Animation::single_frame(
+) -> @ms_animation.Animation {
+  @ms_animation.Animation::single_frame(
     texture.i,
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     offset=@selene_math.Vec2D(
@@ -459,7 +471,9 @@ async fn load_ui_resources() -> UiResources {
 ///|
 fn parse_ui_resources_from_shop2_json(shop2_json : Json) -> UiResources raise {
   let nx_shop : NxShop = @json.from_json(shop2_json)
-  let sell_tab_resources : Array[(@sprite.Animation, @sprite.Animation)] = []
+  let sell_tab_resources : Array[
+    (@ms_animation.Animation, @ms_animation.Animation),
+  ] = []
   let sell_tab_hitboxes : Array[TabHitbox] = []
   for i in 0..<tabs.length() {
     let key = i.to_string()
@@ -490,13 +504,13 @@ fn parse_ui_resources_from_shop2_json(shop2_json : Json) -> UiResources raise {
   }
   let tab_buy_enabled = nx_shop.tab_buy.enabled[0]
   {
-    backgrnd: @resource.nx_texture_to_selene_picture(nx_shop.backgrnd),
-    backgrnd2: @resource.nx_texture_to_selene_picture(nx_shop.backgrnd2),
-    backgrnd3: @resource.nx_texture_to_selene_picture(nx_shop.backgrnd3),
-    backgrnd4: @resource.nx_texture_to_selene_picture(nx_shop.backgrnd4),
-    select_buy: @resource.nx_texture_to_selene_picture(nx_shop.select),
-    select_sell: @resource.nx_texture_to_selene_picture(nx_shop.select2),
-    meso_icon: @resource.nx_texture_to_selene_picture(nx_shop.meso),
+    backgrnd: @ms_animation.from_nx_texture(nx_shop.backgrnd),
+    backgrnd2: @ms_animation.from_nx_texture(nx_shop.backgrnd2),
+    backgrnd3: @ms_animation.from_nx_texture(nx_shop.backgrnd3),
+    backgrnd4: @ms_animation.from_nx_texture(nx_shop.backgrnd4),
+    select_buy: @ms_animation.from_nx_texture(nx_shop.select),
+    select_sell: @ms_animation.from_nx_texture(nx_shop.select2),
+    meso_icon: @ms_animation.from_nx_texture(nx_shop.meso),
     buy_tab_enabled: nx_texture_to_static_animation(tab_buy_enabled),
     sell_tab_resources,
     sell_tab_hitboxes,
@@ -830,25 +844,25 @@ fn render_shop_ui(state : State) -> Unit {
 
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_picture(resources.backgrnd, z),
+    @ms_animation.sprite_from_picture(resources.backgrnd, z),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_picture(resources.backgrnd2, z + 1),
+    @ms_animation.sprite_from_picture(resources.backgrnd2, z + 1),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_picture(resources.backgrnd3, z + 2),
+    @ms_animation.sprite_from_picture(resources.backgrnd3, z + 2),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_picture(resources.backgrnd4, z + 3),
+    @ms_animation.sprite_from_picture(resources.backgrnd4, z + 3),
     px,
     py,
   )
@@ -856,7 +870,7 @@ fn render_shop_ui(state : State) -> Unit {
   // OpenMapleClient: TabBuy overall button is kept in pressed/enabled state.
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_animation(resources.buy_tab_enabled, z + 5),
+    @ms_animation.sprite_from_animation(resources.buy_tab_enabled, z + 5),
     px,
     py,
   )
@@ -870,7 +884,7 @@ fn render_shop_ui(state : State) -> Unit {
     }
     spawn_ui_sprite(
       state.render_entities,
-      @sprite.Sprite::from_animation(sprite, z + 5),
+      @ms_animation.sprite_from_animation(sprite, z + 5),
       px,
       py,
     )
@@ -878,25 +892,25 @@ fn render_shop_ui(state : State) -> Unit {
 
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_animation(resources.buy_button_normal, z + 5),
+    @ms_animation.sprite_from_animation(resources.buy_button_normal, z + 5),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_animation(resources.sell_button_normal, z + 5),
+    @ms_animation.sprite_from_animation(resources.sell_button_normal, z + 5),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_animation(resources.exit_button_normal, z + 5),
+    @ms_animation.sprite_from_animation(resources.exit_button_normal, z + 5),
     px,
     py,
   )
   spawn_ui_sprite(
     state.render_entities,
-    @sprite.Sprite::from_animation(resources.checkbox_off, z + 5),
+    @ms_animation.sprite_from_animation(resources.checkbox_off, z + 5),
     px,
     py,
   )
@@ -922,7 +936,7 @@ fn render_shop_ui(state : State) -> Unit {
         if state.selected_buy_slot == Some(slot) {
           spawn_ui_sprite(
             state.render_entities,
-            @sprite.Sprite::from_picture(resources.select_buy, z + 7),
+            @ms_animation.sprite_from_picture(resources.select_buy, z + 7),
             px + BUY_SELECTION_X_OFFSET,
             py + SELECTION_Y_OFFSET + i * ROW_HEIGHT,
           )
@@ -931,7 +945,7 @@ fn render_shop_ui(state : State) -> Unit {
           Some(icon) =>
             spawn_ui_sprite(
               state.render_entities,
-              @sprite.Sprite::from_animation(icon, z + 6),
+              @ms_animation.sprite_from_animation(icon, z + 6),
               px + 12,
               py + 116 + i * ROW_HEIGHT + 42,
             )
@@ -949,7 +963,7 @@ fn render_shop_ui(state : State) -> Unit {
         )
         spawn_ui_sprite(
           state.render_entities,
-          @sprite.Sprite::from_picture(resources.meso_icon, z + 6),
+          @ms_animation.sprite_from_picture(resources.meso_icon, z + 6),
           px + 50,
           py + 145 + i * ROW_HEIGHT,
         )
@@ -976,7 +990,7 @@ fn render_shop_ui(state : State) -> Unit {
     if state.selected_sell_slot == Some(item.slot) {
       spawn_ui_sprite(
         state.render_entities,
-        @sprite.Sprite::from_picture(resources.select_sell, z + 7),
+        @ms_animation.sprite_from_picture(resources.select_sell, z + 7),
         px + SELL_SELECTION_X_OFFSET,
         py + SELECTION_Y_OFFSET + i * ROW_HEIGHT,
       )
@@ -985,7 +999,7 @@ fn render_shop_ui(state : State) -> Unit {
       Some(icon) =>
         spawn_ui_sprite(
           state.render_entities,
-          @sprite.Sprite::from_animation(icon, z + 6),
+          @ms_animation.sprite_from_animation(icon, z + 6),
           px + 286,
           py + 116 + i * ROW_HEIGHT + 42,
         )
@@ -1240,7 +1254,7 @@ fn poll_ui_resources(state : State) -> Bool {
 
 ///|
 /// Sprite-based NPC shop ui system.
-pub fn shop_ui_system(_delta : Double) -> Unit {
+pub fn shop_ui_system(_world : @ecs.World) -> Unit {
   let state = state_ref.val
   let mut dirty = false
   if poll_open_shop_preload(state) {

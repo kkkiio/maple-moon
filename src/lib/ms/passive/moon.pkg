@@ -9,6 +9,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "Milky2018/selene/event",
+  "Milky2018/selene/ecs",
 }
 
 import {
@@ -27,8 +28,10 @@ import {
   "moonbitlang/core/json",
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/ecs",
 } for "test"
 
 import {
   "KKKIIO/maple-moon/lib/legacy_types",
+  "Milky2018/selene/ecs",
 } for "wbtest"

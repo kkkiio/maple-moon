@@ -108,21 +108,24 @@ pub impl @resource.AsyncResourceLoader for EmptyMapxLoader with load_data(
 
 ///|
 async test "local server character list is empty when roster is missing" {
-  @resource.set_character_loader(
+  @resource.register_async_loader(
+    "character",
     @resource.AsyncLoader::new(
       "starter_character_loader",
       loader=StarterCharacterLoader::new(),
       base_url="/assets",
     ),
   )
-  @resource.set_string_loader(
+  @resource.register_async_loader(
+    "string",
     @resource.AsyncLoader::new(
       "starter_string_loader",
       loader=StarterStringLoader::new(),
       base_url="/assets",
     ),
   )
-  @resource.set_item_loader(
+  @resource.register_async_loader(
+    "item",
     @resource.AsyncLoader::new(
       "empty_item_loader",
       loader=EmptyItemLoader::new(),
@@ -554,7 +557,8 @@ async test "set field quest log reflects persisted quest state" {
     "started": { "2085": "" },
     "completed": { "2083": 0, "2084": 0, "2089": 0 },
   })
-  @resource.set_mapx_loader(
+  @resource.register_async_loader(
+    "mapx",
     @resource.AsyncLoader::new(
       "empty_mapx_loader",
       loader=EmptyMapxLoader::new(),

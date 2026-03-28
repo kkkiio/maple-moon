@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/graphics"
 
 import {
   "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
 }
 
@@ -33,7 +34,7 @@ pub const UI_ZINDEX : Int = 100000
 
 pub fn add_effect(@entity.Entity, @resource.NxAnimation, z? : Int, speed? : Double, flip? : Bool) -> Unit
 
-pub fn effect_layer_system(Double) -> Unit
+pub fn effect_layer_system(@ecs.World) -> Unit
 
 pub let fps : UInt
 

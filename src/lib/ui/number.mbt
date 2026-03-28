@@ -1,18 +1,13 @@
 ///|
-using @resource {
-  get_effect_loader,
-  nx_animation_to_selene_animation,
-  type NxFrame,
-  type NxAnimation,
-}
+using @resource {type NxFrame, type NxAnimation}
 
 ///|
 using @selene_math {type Vec2D}
 
 ///|
-/// 类似于 Charset, 但是专门用于 DamageSkin, 存储 selene @sprite.Picture
+/// 类似于 Charset, 但是专门用于 DamageSkin, 存储 selene @ms_animation.Picture
 struct DamageSkin {
-  sprites : Map[Char, @sprite.Animation]
+  sprites : Map[Char, @ms_animation.Animation]
 }
 
 ///|
@@ -41,7 +36,7 @@ pub impl @json.FromJson for DamageSkin with from_json(json, path) {
         bounds: None,
       }
       let anim = NxAnimation::{ frames: [frame], blend: false, zigzag: false }
-      let pic = nx_animation_to_selene_animation(anim)
+      let pic = @ms_animation.from_nx_animation(anim)
       sprites.set(c, pic)
     } catch {
       _ => ()
@@ -53,7 +48,10 @@ pub impl @json.FromJson for DamageSkin with from_json(json, path) {
 ///|
 fn DamageSkin::get_width(self : DamageSkin, c : Char) -> Int {
   match self.sprites.get(c) {
-    Some(anim) => anim.frames[0].size.0.to_int()
+    Some(anim) =>
+      @ms_animation.frame_size_at(anim, 0)
+      .map(fn(size) { size.0.to_int() })
+      .unwrap_or(0)
     None => 0
   }
 }
@@ -63,19 +61,14 @@ fn DamageSkin::get_width(self : DamageSkin, c : Char) -> Int {
 let active_numbers : Array[Number] = []
 
 ///|
-pub fn number_system(_delta : Double) -> Unit {
-  let times = @logic_fps.get_logic_times()
-  if times == 0 {
-    return
-  }
+pub fn number_system(_world : @ecs.World) -> Unit {
   active_numbers.retain(fn(num) {
-    for i = 0; i < times; i = i + 1 {
-      let finished = num.update()
-      if finished {
-        return false
-      }
+    let finished = num.update()
+    if finished {
+      false
+    } else {
+      true
     }
-    true
   })
 }
 
@@ -112,7 +105,7 @@ fn Number::update(self : Number) -> Bool {
     let x = self.move_obj.crnt_x()
     let y = self.move_obj.crnt_y()
     let pos_vec = @selene_math.Vec2D(x, y)
-    @position.positions().set(self.parent_entity, @position.Position(pos_vec))
+    @transform2d.set_xy(self.parent_entity, pos_vec)
   }
   finished
 }
@@ -166,7 +159,7 @@ pub(all) struct NumberSet {
 
 ///|
 pub async fn NumberSet::load() -> NumberSet {
-  let loader = get_effect_loader()
+  let loader = @resource.get_async_loader("effect")
   // 'No' for Number
   let no_red_1 = loader.load_resource(["BasicEff.img", "NoRed1"])
     |> @json.from_json
@@ -239,7 +232,7 @@ pub fn NumberSet::show_number(
 
   // Create Parent Entity
   let parent_entity = @entity.Entity::new()
-  @position.positions().set(parent_entity, @position.Position(Vec2D::zero()))
+  @transform2d.set_xy(parent_entity, Vec2D::zero())
 
   // Spawn Children
   let start_offset = @struct.Point::new(0, -shift)
@@ -251,8 +244,9 @@ pub fn NumberSet::show_number(
           offset.x.to_double(),
           offset.y.to_double(),
         )
-        let child = parent_entity.spawn_child(offset=offset_vec)
-        let sprite = @sprite.Sprite::from_animation(
+        let child = parent_entity.spawn_child()
+        @transform2d.set_xy(child, offset_vec)
+        let sprite = @ms_animation.sprite_from_animation(
           anim,
           @graphics.DAMAGE_NUMBER_ZINDEX,
         )

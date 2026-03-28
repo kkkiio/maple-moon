@@ -5,11 +5,12 @@ import {
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/skill",
+  "Milky2018/selene/ecs",
   "moonbitlang/core/random",
 }
 
 // Values
-pub fn passive_system(Double) -> Unit
+pub fn passive_system(@ecs.World) -> Unit
 
 pub fn register_passive_skill(&PassiveSkill) -> Unit
 

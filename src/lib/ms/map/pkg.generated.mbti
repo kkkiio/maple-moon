@@ -2,17 +2,18 @@
 package "KKKIIO/maple-moon/lib/ms/map"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
-  "Milky2018/selene/sprite",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn background_system(Double) -> Unit
+pub fn background_system(@ecs.World) -> Unit
 
 pub fn clear_background_debug() -> Unit
 
@@ -50,7 +51,7 @@ pub async fn load_tileset(String) -> NxTileSet
 
 pub fn new_background_position(Background, @math.Vec2D, Double) -> @math.Vec2D
 
-pub fn portal_system(Double) -> Unit
+pub fn portal_system(@ecs.World) -> Unit
 
 pub fn reset_tile_obj_visibility() -> Unit
 
@@ -76,7 +77,7 @@ pub fn set_tiles_visible(Bool) -> Unit
 
 pub fn step_background_debug(Int) -> Unit
 
-pub fn tile_objects_system(Double) -> Unit
+pub fn tile_objects_system(@ecs.World) -> Unit
 
 // Errors
 
@@ -380,7 +381,7 @@ pub fn Portal::get_name(Self) -> String
 pub fn Portal::get_position(Self) -> @res_types.Point[Int]
 pub fn Portal::get_type(Self) -> PortalType
 pub fn Portal::getwarpinfo(Self) -> PortalWarpInfo
-pub fn Portal::new(@sprite.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
+pub fn Portal::new(@animation.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
 pub fn Portal::update_touched(Self, @entity.Entity, @res_types.Point[Int]?) -> Unit
 
 pub(all) enum PortalType {

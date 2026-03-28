@@ -2,18 +2,19 @@
 package "KKKIIO/maple-moon/lib/ui"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
-  "Milky2018/selene/sprite",
+  "Milky2018/selene/ecs",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn number_system(Double) -> Unit
+pub fn number_system(@ecs.World) -> Unit
 
 pub fn show_number(NumberType, Int, Int, x? : Int) -> Unit
 
-pub fn ui_system(Double) -> Unit
+pub fn ui_system(@ecs.World) -> Unit
 
 pub fn ui_window_2_loader() -> @resource.AsyncLoader
 
@@ -71,13 +72,13 @@ pub(all) struct MapleButton {
   mut pressed : Bool
 }
 pub fn MapleButton::contains(Self, Int, Int) -> Bool
-pub fn MapleButton::current_selene_animation(Self) -> @sprite.Animation
+pub fn MapleButton::current_selene_animation(Self) -> @animation.Animation
 pub fn MapleButton::new(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub fn MapleButton::set_enabled(Self, Bool) -> Unit
 pub fn MapleButton::update_pointer(Self, Int, Int, Bool, Bool, Bool) -> Unit
 
 pub(all) struct MapleButtonResource {
-  selene_animations : Map[ButtonState, @sprite.Animation]
+  selene_animations : Map[ButtonState, @animation.Animation]
   dimensions : @res_types.Point[Int]
 }
 pub fn MapleButtonResource::from_nx(NxMapleButton) -> Self

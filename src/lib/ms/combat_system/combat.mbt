@@ -763,7 +763,7 @@ pub fn set_player(player : &DamagableCharacter?) -> Unit {
 }
 
 ///|
-pub fn combat_system(_delta : Double) -> Unit {
+pub fn combat_system(_world : @ecs.World) -> Unit {
   guard combat_ref.val is Some(combat) else { return }
   guard @game_state.game_state.phase is GameActive(..) else { return }
   guard @monster.get_map_mobs() is Some(mobs) else { return }
@@ -785,7 +785,5 @@ pub fn combat_system(_delta : Double) -> Unit {
       None => ()
     }
   }
-  for _ in 0..<@logic_fps.get_logic_times() {
-    combat.update()
-  }
+  combat.update()
 }

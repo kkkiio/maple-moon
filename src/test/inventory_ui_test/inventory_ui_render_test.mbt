@@ -45,21 +45,24 @@ async fn setup_inventory_ui_test_scene() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(_world) { @inventory_ui.inventory_ui_system(@time.delta()) },
+      fn(world) { @inventory_ui.inventory_ui_system(world) },
       system_name="inventory_ui_system",
     )
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
   @capture_app.init_app(app)
 
   let character_loader = @local_loader.make_local_character_loader()
   let item_loader = @local_loader.make_local_item_loader()
-  @resource.set_character_loader(character_loader)
-  @resource.set_item_loader(item_loader)
-  @resource.set_string_loader(@local_loader.make_local_string_loader())
+  @resource.register_async_loader("character", character_loader)
+  @resource.register_async_loader("item", item_loader)
+  @resource.register_async_loader(
+    "string",
+    @local_loader.make_local_string_loader(),
+  )
   let equip_data = @item.ItemData::load(1060002, character_loader, item_loader)
   let use_data = @item.ItemData::load(2000000, character_loader, item_loader)
   @item.ItemData::add_item_data(1060002, equip_data)

@@ -2,22 +2,22 @@
 priv struct ExplorerCreationUIResource {
   male_choices : LookChoices
   female_choices : LookChoices
-  sky : @sprite.Picture
-  cloud : @sprite.Picture
-  nameboard : @sprite.Picture
-  board_gender_top : @sprite.Animation
-  board_gender_mid : @sprite.Animation
-  board_gender_bottom : @sprite.Animation
-  board_char_set : @sprite.Animation
-  back14 : @sprite.Animation
-  signboard2 : @sprite.Animation
+  sky : @ms_animation.Picture
+  cloud : @ms_animation.Picture
+  nameboard : @ms_animation.Picture
+  board_gender_top : @ms_animation.Animation
+  board_gender_mid : @ms_animation.Animation
+  board_gender_bottom : @ms_animation.Animation
+  board_char_set : @ms_animation.Animation
+  back14 : @ms_animation.Animation
+  signboard2 : @ms_animation.Animation
   bt_gender_male : @ui.MapleButtonResource
   bt_gender_female : @ui.MapleButtonResource
   bt_left : @ui.MapleButtonResource
   bt_right : @ui.MapleButtonResource
   bt_yes : @ui.MapleButtonResource
   bt_no : @ui.MapleButtonResource
-  avatar_sel : Array[@sprite.Animation]
+  avatar_sel : Array[@ms_animation.Animation]
 }
 
 ///|
@@ -84,9 +84,9 @@ fn parse_choices(json : Json) -> LookChoices raise {
 }
 
 ///|
-fn json_to_picture(json : Json) -> @sprite.Picture raise {
+fn json_to_picture(json : Json) -> @ms_animation.Picture raise {
   let texture : @resource.NxTexture = @json.from_json(json)
-  @resource.nx_texture_to_selene_picture(texture)
+  @ms_animation.from_nx_texture(texture)
 }
 
 ///|
@@ -123,7 +123,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
   let customize_char_src = login_loader.load_resource([
     "Login.img", "CustomizeChar", "000",
   ])
-  let signboard2_src = @resource.get_map_latest_loader().load_resource([
+  let signboard2_src = @resource.get_async_loader("map_latest").load_resource([
     "Obj", "login.img", "NewChar", "signboard", "2",
   ])
   let board_src = match customize_char_src {
@@ -142,13 +142,13 @@ async fn load_resource() -> ExplorerCreationUIResource {
     "Back", "login.img", "back", "14",
   ])
   let sky_texture : @resource.NxTexture = @json.from_json(sky_src)
-  let sky = @resource.nx_texture_to_selene_picture(
+  let sky = @ms_animation.from_nx_texture(
     sky_texture,
     size=@selene_math.Vec2D(800.0, 400.0),
     repeat=@selene_math.Repeat,
   )
   let cloud = json_to_picture(cloud_src)
-  let avatar_sel : Array[@sprite.Animation] = []
+  let avatar_sel : Array[@ms_animation.Animation] = []
   let avatar_sel_src = match customize_char_src {
     { "avatarSel": Object(_) as avatar_sel_src, .. } => avatar_sel_src
     _ => fail("missing avatarSel")
@@ -163,7 +163,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
       _ => fail("missing avatarSel normal")
     }
     avatar_sel.push(
-      @resource.nx_animation_to_selene_animation(@json.from_json(normal_json)),
+      @ms_animation.from_nx_animation(@json.from_json(normal_json)),
     )
   }
   {
@@ -171,7 +171,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
     female_choices,
     sky,
     cloud,
-    board_gender_top: @resource.nx_animation_to_selene_animation(
+    board_gender_top: @ms_animation.from_nx_animation(
       @json.from_json(
         match board_src {
           { "genderTop": gender_top, .. } => gender_top
@@ -179,7 +179,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
         },
       ),
     ),
-    board_gender_mid: @resource.nx_animation_to_selene_animation(
+    board_gender_mid: @ms_animation.from_nx_animation(
       @json.from_json(
         match board_src {
           { "boardMid": board_mid, .. } => board_mid
@@ -187,7 +187,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
         },
       ),
     ),
-    board_gender_bottom: @resource.nx_animation_to_selene_animation(
+    board_gender_bottom: @ms_animation.from_nx_animation(
       @json.from_json(
         match board_src {
           { "boardBottom": board_bottom, .. } => board_bottom
@@ -195,7 +195,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
         },
       ),
     ),
-    board_char_set: @resource.nx_animation_to_selene_animation(
+    board_char_set: @ms_animation.from_nx_animation(
       @json.from_json(
         match customize_char_src {
           { "charSet": char_set, .. } => char_set
@@ -203,12 +203,8 @@ async fn load_resource() -> ExplorerCreationUIResource {
         },
       ),
     ),
-    back14: @resource.nx_animation_to_selene_animation(
-      @json.from_json(back14_src),
-    ),
-    signboard2: @resource.nx_animation_to_selene_animation(
-      @json.from_json(signboard2_src),
-    ),
+    back14: @ms_animation.from_nx_animation(@json.from_json(back14_src)),
+    signboard2: @ms_animation.from_nx_animation(@json.from_json(signboard2_src)),
     bt_gender_male: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match gender_select_src {

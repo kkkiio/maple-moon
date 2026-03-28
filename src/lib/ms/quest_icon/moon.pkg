@@ -1,4 +1,5 @@
 import {
+  "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "moonbitlang/core/cmp",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/log",
@@ -16,6 +17,7 @@ import {
   "Milky2018/selene/inputs",
   "Milky2018/selene/physics2d",
   "Milky2018/selene/math" @selene_math,
+  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
   "Milky2018/selene/sprite",
   "KKKIIO/maple-moon/lib/ms/player",
   "moonbitlang/core/cmp",
@@ -39,4 +41,5 @@ import {
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/event",
   "KKKIIO/maple-moon/lib/lazy",
+  "Milky2018/selene/ecs",
 }

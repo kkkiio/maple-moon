@@ -1,8 +1,6 @@
-///|
-using @resource {nx_animation_to_selene_animation}
+// This acts as a manual component system for "LifeTime".
 
 ///|
-// This acts as a manual component system for "LifeTime".
 let active_effects : Array[EffectEntity] = []
 
 ///|
@@ -12,7 +10,8 @@ priv struct EffectEntity {
 }
 
 ///|
-pub fn effect_layer_system(delta : Double) -> Unit {
+pub fn effect_layer_system(_world : @ecs.World) -> Unit {
+  let delta = @time.delta()
   active_effects.retain(fn(effect) {
     effect.ttl -= delta
     if effect.ttl > 0 {
@@ -36,16 +35,21 @@ pub fn add_effect(
 ) -> Unit {
   ignore(speed)
   let loop_ = false
-  let sprite_anim = nx_animation_to_selene_animation(animation, loop_~)
+  let sprite_anim = @ms_animation.from_nx_animation(animation, loop_~)
   let transform = if flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
     @selene_math.Transform::new()
   }
-  let sprite = @sprite.Sprite::from_animation(sprite_anim, z, transform~)
+  let sprite = @ms_animation.sprite_from_animation(sprite_anim, z, transform~)
   let child = parent.spawn_child()
   @sprite.sprites().set(child, sprite)
-  @sprite.play_animation(child, sprite_anim, loop_~, transform~)
+  // Selene uses transform.z as render depth. Keep the legacy `z` contract.
+  @transform.transforms().set(
+    child,
+    @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+  )
+  @ms_animation.play_animation(child, sprite_anim, loop_~, transform~)
   let duration = nx_animation_duration(animation)
   let ttl = duration.to_double() / 1000
 

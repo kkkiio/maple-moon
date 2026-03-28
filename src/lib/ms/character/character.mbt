@@ -135,7 +135,7 @@ pub fn Character::new(
   let char_base = {
     entity,
     base: MapObjectBase::new(oid, on_pos_change=fn(pos) {
-      @position.positions().set(entity, @position.Position(pos))
+      @transform2d.set_xy(entity, pos)
     }),
     look,
     stats,

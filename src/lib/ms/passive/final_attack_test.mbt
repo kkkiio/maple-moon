@@ -172,14 +172,16 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 
 ///|
 async test "sword_fa_fighter_triggers_with_sword_1h" {
-  @resource.set_skill_loader(
+  @resource.register_async_loader(
+    "skill",
     @resource.AsyncLoader::new(
       "test_local_skill",
       base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
     ),
   )
-  @resource.set_string_loader(
+  @resource.register_async_loader(
+    "string",
     @resource.AsyncLoader::new(
       "test_local_string",
       base_url="/assets",

@@ -68,7 +68,7 @@ pub fn set_resources_for_test(
 
 ///|
 /// Runs quest-icon lifecycle, runtime sync, hit-test, and click dispatch.
-pub fn quest_icon_system(_delta : Double) -> Unit {
+pub fn quest_icon_system(_world : @ecs.World) -> Unit {
   ensure_resource_loading()
   poll_loading_result()
   guard quest_icon_resources.val is Some(resources) else { return }
@@ -165,7 +165,7 @@ fn poll_loading_result() -> Unit {
 
 ///|
 async fn load_resources() -> QuestIconResources {
-  let loader = @resource.get_ui_window_2_loader()
+  let loader = @resource.get_async_loader("ui_window_2")
   let available_json = loader.load_resource(["QuestIcon", "0"])
   let inprogress_json = loader.load_resource(["QuestIcon", "1"])
   let completed_json = loader.load_resource(["QuestIcon", "2"])
@@ -224,19 +224,18 @@ fn upsert_runtime(
     remove_runtime(oid)
     let icon = state_to_icon(resources, desired.state)
     let icon_size = nx_animation_dimensions(icon)
-    let icon_entity = anchor.entity.spawn_child(
-      offset=@selene_math.Vec2D(
+    let icon_entity = anchor.entity.spawn_child()
+    @transform2d.set_xy(
+      icon_entity,
+      @selene_math.Vec2D(
         default_icon_offset().x.to_double(),
         default_icon_offset().y.to_double(),
       ),
     )
-    let icon_animation = @resource.nx_animation_to_selene_animation(
-      icon,
-      loop_=true,
-    )
+    let icon_animation = @ms_animation.from_nx_animation(icon, loop_=true)
     @sprite.sprites().set(
       icon_entity,
-      @sprite.Sprite::from_animation(
+      @ms_animation.sprite_from_animation(
         icon_animation,
         @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
       ),

@@ -1,7 +1,7 @@
 ///|
 /// App 级别的资源初始化系统
 /// 在 GameSetup 阶段异步加载静态资源，完成后切换到 SelectCharacter
-pub fn app_resource_setup_system(_delta : Double) -> Unit {
+pub fn app_resource_setup_system(_world : @ecs.World) -> Unit {
   guard @game_state.game_state.phase is GameSetup(loading~) else { return }
   if loading is None {
     @game_state.game_state.phase = GameSetup(

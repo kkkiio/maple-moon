@@ -4,4 +4,5 @@ import {
   "Milky2018/selene/inputs",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/ui" @selene_ui,
+  "Milky2018/selene/ecs",
 }

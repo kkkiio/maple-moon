@@ -17,7 +17,10 @@ pub(all) struct MobSkill {
 
 ///|
 pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = get_skill_loader().load_resource(["MobSkill.img", id.to_string()])
+  let src = @resource.get_async_loader("skill").load_resource([
+    "MobSkill.img",
+    id.to_string(),
+  ])
   MobSkill::new(id, level, src)
 }
 
@@ -200,6 +203,3 @@ pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
     effect.apply(func)
   }
 }
-
-///|
-using @resource {get_skill_loader}

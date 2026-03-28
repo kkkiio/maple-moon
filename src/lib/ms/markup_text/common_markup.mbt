@@ -87,7 +87,7 @@ pub async fn preload_reference_data() -> Unit {
   if reference_data_ref.val is Some(_) {
     return
   }
-  let loader = @resource.get_string_loader()
+  let loader = @resource.get_async_loader("string")
   reference_data_ref.val = Some({
     npc_img: loader.load_resource(["Npc.img"]),
     mob_img: loader.load_resource(["Mob.img"]),

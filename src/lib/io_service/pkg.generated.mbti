@@ -3,12 +3,13 @@ package "KKKIIO/maple-moon/lib/io_service"
 
 import {
   "KKKIIO/maple-moon/lib/utils",
+  "Milky2018/selene/ecs",
 }
 
 // Values
 pub fn execute_background(async () -> Unit, on_error? : (Error) -> Unit) -> Unit
 
-pub fn io_system(Double) -> Unit
+pub fn io_system(@ecs.World) -> Unit
 
 pub fn[T] submit_background_task(async () -> T) -> @utils.Future[Result[T, Error]]
 

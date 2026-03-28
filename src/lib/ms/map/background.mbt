@@ -1,7 +1,4 @@
 ///|
-using @resource {nx_texture_to_selene_picture}
-
-///|
 pub(all) enum BackgroundType {
   BG_NORMAL = 0
   /// horizontal tiled background. spans the viewport horizontally.
@@ -331,8 +328,8 @@ fn Background::from_resource(res : BackgroundResource) -> Background {
 fn new_background_sprite(background : Background, z : Int) -> @sprite.Sprite {
   let { animation, flipped, .. } = background
   let texture = animation.frames[0].texture
-  @sprite.Sprite::from_picture(
-    nx_texture_to_selene_picture(texture, flip_x=flipped),
+  @ms_animation.sprite_from_picture(
+    @ms_animation.from_nx_texture(texture, flip_x=flipped),
     z,
     alpha=background.current_opacity(),
   )
@@ -515,24 +512,17 @@ test "HTILED background position" {
   let cloudy_sky_background : Background = Background::from_resource(
     cloudy_sky_background_resource,
   )
-  let cloudy_sky_background_sprite : @sprite.Sprite = new_background_sprite(
-    cloudy_sky_background,
-    @graphics.BACKGROUND_ZINDEX,
-  )
   let count_x = background_axis_sprite_count(cloudy_sky_background, X)
   let count_y = background_axis_sprite_count(cloudy_sky_background, Y)
   let step_x = cloudy_sky_background.tile_step_x.to_double()
-  guard cloudy_sky_background_sprite.sprite_type
-    is @sprite.Picture({ size, .. }) else {
-    fail("tiled background sprite should be a picture")
-  }
+  let (width, _) = cloudy_sky_background_resource.animation.get_size()
   assert_eq(count_y, 1, msg="HMOVEA background should only need one row")
   assert_true(
     count_x > 1,
     msg="HMOVEA background should allocate multiple sprites to cover the viewport, count_x=\{count_x}",
   )
   assert_eq(
-    size.0.to_int(),
+    width,
     cloudy_sky_background.tile_step_x,
     msg="default tile step should match the frame width",
   )
@@ -880,7 +870,8 @@ pub fn get_background_visibility_state() -> BackgroundVisibilityState {
 
 ///|
 /// 背景系统. 负责初始化背景, 更新背景的位置, 实现视差滚动、循环滚动等效果.
-pub fn background_system(delta : Double) -> Unit {
+pub fn background_system(_world : @ecs.World) -> Unit {
+  let delta = @time.delta()
   guard backgrounds_context.val is Some(ctx) else { return }
   let { backgrounds, .. } = ctx
   let expected = expected_background_entity_layout(backgrounds)
@@ -901,7 +892,7 @@ pub fn background_system(delta : Double) -> Unit {
     ctx.dirty = true
   }
   // get camera position (top-left)
-  let camera_pos = @camera.get_position()
+  let camera_pos = @ms_camera.current_camera_top_left()
   if ctx.dirty {
     refresh_background_sprites(ctx, camera_pos)
     ctx.dirty = false
@@ -1004,16 +995,21 @@ fn set_background_entities_visibility(
   visible : Bool,
 ) -> Unit {
   for entity in entities {
-    if @sprite.sprites().get(entity) is Some(sprite) {
-      sprite.visible = visible
-    }
+    @visibility.visibilities().set(
+      entity,
+      if visible {
+        @visibility.Visibility::Visible
+      } else {
+        @visibility.Visibility::Hidden
+      },
+    )
   }
 }
 
 ///|
 fn set_background_sprite_alpha(entity : @entity.Entity, alpha : Double) -> Unit {
   if @sprite.sprites().get(entity) is Some(sprite) {
-    @sprite.sprites().set(entity, { ..sprite, alpha, })
+    sprite.color = @sprite.color_from_css("rgba(255, 255, 255, \{alpha})")
   }
 }
 
@@ -1100,11 +1096,16 @@ fn update_background_entities(
       base_pos.0 + tile_x.to_double() * step_x,
       base_pos.1 + tile_y.to_double() * step_y,
     )
-    @position.positions().set(entity, @position.Position(pos))
+    @transform2d.set_xy(entity, pos)
     set_background_sprite_alpha(entity, alpha)
-    if @sprite.sprites().get(entity) is Some(sprite) {
-      sprite.visible = tile_x < count_x && tile_y < count_y
-    }
+    @visibility.visibilities().set(
+      entity,
+      if tile_x < count_x && tile_y < count_y {
+        @visibility.Visibility::Visible
+      } else {
+        @visibility.Visibility::Hidden
+      },
+    )
   }
 }
 

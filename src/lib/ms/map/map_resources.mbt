@@ -15,9 +15,6 @@ pub(all) struct MapRawResources {
 }
 
 ///|
-using @resource {get_mapx_loader, get_background_set_loader}
-
-///|
 /// Loads the raw map resources by map id.
 pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   guard map_id >= 0 else { fail("invalid map_id=\{map_id}") }
@@ -25,7 +22,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
   @log.info("loading raw map resource", data={ "path": path })
-  let src = get_mapx_loader().load_resource(path)
+  let src = @resource.get_async_loader("mapx").load_resource(path)
   if src is Null {
     fail("map not found, id=\{map_id}")
   }
@@ -46,7 +43,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
       sets[path] = load_obj_animation(obj.oS, path)
     }
   }
-  let bs_loader = get_background_set_loader()
+  let bs_loader = @resource.get_async_loader("background_set")
   let background_animation_sets = {}
   for background in nx_map.back.0 {
     if background.bS == "" {

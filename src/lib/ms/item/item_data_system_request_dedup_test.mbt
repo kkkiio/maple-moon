@@ -97,8 +97,9 @@ async test "item data loader should not request same bundle json twice" {
     loader=counting_loader,
     base_url="/assets",
   )
-  @resource.set_character_loader(async_loader)
-  @resource.set_string_loader(
+  @resource.register_async_loader("character", async_loader)
+  @resource.register_async_loader(
+    "string",
     @resource.AsyncLoader::new(
       "mock_string_loader",
       loader=MockStringLoader::new(),

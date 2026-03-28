@@ -1,7 +1,11 @@
 ///|
 async fn setup_local_loaders() -> Unit {
-  @resource.set_quest_loader(@local_loader.make_local_quest_loader())
-  @resource.set_ui_window_2_loader(
+  @resource.register_async_loader(
+    "quest",
+    @local_loader.make_local_quest_loader(),
+  )
+  @resource.register_async_loader(
+    "ui_window_2",
     @resource.AsyncLoader::new(
       "test_local_ui_window_2",
       base_url="/assets",
@@ -33,17 +37,17 @@ async fn setup_scene() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       First,
-      fn(_world) { @console.console_input_injection_system(@time.delta()) },
+      fn(world) { @console.console_input_injection_system(world) },
       system_name="console_input_injection_system",
     )
     .add_system(
       Update,
-      fn(_world) { @quest_log_ui.quest_log_ui_system(@time.delta()) },
+      fn(world) { @quest_log_ui.quest_log_ui_system(world) },
       system_name="quest_log_ui_system",
     )
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
   @capture_app.init_app(app)
@@ -116,6 +120,6 @@ test "quest_log_ui closes on escape" {
   pressed.pressed_keys.add(@inputs.Code::Escape)
   @inputs.apply_input_snapshot(pressed)
   @inputs.advanced_key_system(0.0)
-  @quest_log_ui.quest_log_ui_system(0.016)
+  @quest_log_ui.quest_log_ui_system(@ecs.require_current_world())
   assert_false(@quest_log_ui.is_quest_log_ui_open())
 }

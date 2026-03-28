@@ -10,9 +10,9 @@
 ## 接入示例
 
 ```moonbit nocheck
-@resource.set_mapx_loader(my_map_loader)
-@resource.set_npc_loader(my_npc_loader)
+@resource.register_async_loader("mapx", my_map_loader)
+@resource.register_async_loader("npc", my_npc_loader)
 
-let map_loader = @resource.get_mapx_loader()
+let map_loader = @resource.get_async_loader("mapx")
 let raw = await map_loader.load_resource(["Map", "Map0", "100000000"])
 ```

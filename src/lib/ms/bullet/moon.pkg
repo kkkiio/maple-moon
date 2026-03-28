@@ -12,7 +12,8 @@ import {
   "KKKIIO/maple-moon/lib/ms/logic_fps",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
-  "Milky2018/selene/position",
+  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "Milky2018/selene/ecs",
 }
 
 import {

@@ -38,7 +38,7 @@ let loading_mod_future : Ref[Future[Result[UIMod, Error]]?] = Ref::new(None)
 ///|
 /// UI system update function. Call this in the game loop to load UI resources.
 /// Once loaded, resources can be accessed via get_ui_module() or get_number_set().
-pub fn ui_system(_delta : Double) -> Unit {
+pub fn ui_system(_world : @ecs.World) -> Unit {
   // Already loaded
   if ui_mod.val is Some(_) {
     return

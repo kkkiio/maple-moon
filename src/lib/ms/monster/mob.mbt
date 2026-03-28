@@ -17,7 +17,7 @@ pub(all) struct Stance {
 ///|
 pub(all) struct MobAnimation {
   nx : @resource.NxAnimation
-  selene : @sprite.Animation
+  selene : @ms_animation.Animation
 }
 
 ///|
@@ -121,7 +121,7 @@ pub async fn Mob::load(
   position : @struct.Point[Int],
   randomizer : @random.Rand,
 ) -> Mob {
-  let mob_loader = @resource.get_mob_loader()
+  let mob_loader = @resource.get_async_loader("mob")
   let strid = @utils.stoi_left_pad0(mid, 7)
   try {
     let src = mob_loader.load_resource([strid + ".img"])
@@ -252,7 +252,7 @@ pub fn Mob::new(
 ) -> Mob {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions().set(entity, @position.Position(pos))
+    @transform2d.set_xy(entity, pos)
   })
 
   // Use data from nx_mob

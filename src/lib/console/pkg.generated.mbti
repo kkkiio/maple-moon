@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/console"
 
 import {
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
 }
 
@@ -10,7 +11,7 @@ pub fn clear_input_injection() -> Unit
 
 pub fn click_registered_ui(String, String) -> Json
 
-pub fn console_input_injection_system(Double) -> Unit
+pub fn console_input_injection_system(@ecs.World) -> Unit
 
 pub fn install() -> Unit
 

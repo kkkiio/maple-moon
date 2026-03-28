@@ -264,7 +264,7 @@ pub fn clear_input_injection() -> Unit {
 
 ///|
 /// Applies queued console UI click injection in two frames: press then release.
-pub fn console_input_injection_system(_delta : Double) -> Unit {
+pub fn console_input_injection_system(_world : @ecs.World) -> Unit {
   match pending_ui_click_ref.val {
     Some(UiClickInjectionState::PressQueued(pos)) => {
       @inputs.mouse.pos = pos

@@ -3,12 +3,13 @@ package "KKKIIO/maple-moon/lib/ms/explorer_creation_ui"
 
 import {
   "KKKIIO/maple-moon/lib/ms/char_look",
+  "Milky2018/selene/ecs",
 }
 
 // Values
 pub fn close_explorer_creation_ui() -> Unit
 
-pub fn explorer_creation_ui_system(Double) -> Unit
+pub fn explorer_creation_ui_system(@ecs.World) -> Unit
 
 pub fn is_explorer_creation_ui_open() -> Bool
 

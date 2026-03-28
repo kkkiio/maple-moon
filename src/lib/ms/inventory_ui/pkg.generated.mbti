@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/inventory_ui"
 import {
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "Milky2018/selene/ecs",
 }
 
 // Values
@@ -11,7 +12,7 @@ pub fn bind_inventory(@inventory.Inventory) -> Unit
 
 pub fn init_inventory_ui() -> Unit
 
-pub fn inventory_ui_system(Double) -> Unit
+pub fn inventory_ui_system(@ecs.World) -> Unit
 
 pub fn set_inventory_entry(@server_proto.InventoryEntry) -> Unit
 

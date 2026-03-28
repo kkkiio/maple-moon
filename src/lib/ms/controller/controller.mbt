@@ -199,7 +199,8 @@ fn handle_direction_action(
 }
 
 ///|
-pub fn player_controller_system(_delta : Double) -> Unit {
+/// Handle frame-based player input sampling and action dispatch.
+pub fn player_controller_input_system(_world : @ecs.World) -> Unit {
   guard @game_state.game_state.phase is GameActive(..) else { return }
   guard @map.get_runtime_context() is Some((map_info, physics)) else { return }
   guard @player.get_player() is Some(player) else { return }
@@ -246,5 +247,13 @@ pub fn player_controller_system(_delta : Double) -> Unit {
   }
 
   try_trigger_auto_portal(player, map_info, physics) |> ignore
+}
+
+///|
+/// Advance player movement and state once in fixed schedule.
+pub fn player_controller_fixed_system(_world : @ecs.World) -> Unit {
+  guard @game_state.game_state.phase is GameActive(..) else { return }
+  guard @map.get_runtime_context() is Some((map_info, physics)) else { return }
+  guard @player.get_player() is Some(player) else { return }
   @player.tick_player(player, physics, map_info)
 }

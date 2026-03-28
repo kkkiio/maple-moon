@@ -1,5 +1,5 @@
 ///|
-pub fn look_sync_system(_delta : Double) -> Unit {
+pub fn look_sync_system(_world : @ecs.World) -> Unit {
   guard @player.get_player() is Some(player) else { return }
   let look = player.character.look
   let inventory = @inventory.inventory.val

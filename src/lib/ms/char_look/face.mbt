@@ -118,7 +118,9 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 ///|
 pub async fn Face::load(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
-  let facenode = @resource.get_face_loader().load_resource(["\{strid}.img"])
+  let facenode = @resource.get_async_loader("face").load_resource([
+    "\{strid}.img",
+  ])
   Face::new(faceid, facenode)
 }
 

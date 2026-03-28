@@ -12,8 +12,6 @@ pub fn get_item_data_system() -> ItemDataSystem
 
 pub fn get_item_gender(Int) -> Int
 
-pub fn get_item_loader() -> @resource.AsyncLoader
-
 pub fn parse_category1(Int) -> Category1?
 
 pub fn parse_equip_category(Int) -> String?

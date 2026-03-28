@@ -27,8 +27,8 @@ fn create_test_resource() -> NxAfterImage {
 ///|
 fn is_after_image_displayed(entity : @entity.Entity) -> Bool {
   entity.is_alive() &&
-  @sprite.sprites().get(entity) is Some(sprite) &&
-  sprite.visible
+  @sprite.sprites().get(entity) is Some(_) &&
+  @visibility.is_visible(entity)
 }
 
 ///|
@@ -42,7 +42,8 @@ test "AfterImage display logic" {
 
   // Case 1: first_frame = 0, should display immediately
   add_after_image(entity, get_frame_fn, resource, true)
-  update_after_image_system(0.016)
+  @time.set_delta(0.016)
+  update_after_image_system(@ecs.require_current_world())
 
   // Verify display via child sprite presence
   let children = @entity.Entity::get_children(entity)
@@ -63,18 +64,21 @@ test "AfterImage with first_frame > 0" {
   add_after_image(entity, get_frame_fn, resource, true)
 
   // Frame 0: should NOT display
-  update_after_image_system(0.016)
+  @time.set_delta(0.016)
+  update_after_image_system(@ecs.require_current_world())
   let child = @entity.Entity::get_children(entity)[0]
   inspect(is_after_image_displayed(child), content="false")
 
   // Frame 4: should NOT display
   current_frame = 4
-  update_after_image_system(0.016)
+  @time.set_delta(0.016)
+  update_after_image_system(@ecs.require_current_world())
   inspect(is_after_image_displayed(child), content="false")
 
   // Frame 5: should display
   current_frame = 5
-  update_after_image_system(0.016)
+  @time.set_delta(0.016)
+  update_after_image_system(@ecs.require_current_world())
   inspect(is_after_image_displayed(child), content="true")
   clear_after_image(entity)
 }

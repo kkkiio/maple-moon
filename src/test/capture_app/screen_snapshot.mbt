@@ -20,9 +20,26 @@ pub async fn snapshot(path : String, img_description~ : String) -> Unit {
         "img_description check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
       )
     }
-    assert_snapshot_expect(actual_buffer, img_description, api_key, path)
+    let verdict = snapshot_verdict(
+      actual_buffer, img_description, api_key, path,
+    )
     let dir = @path.Path(path).dirname().to_string()
     @fs.create_dir(dir)
+    if not(verdict.pass) {
+      let ext = @path.Path(path).extname()
+      let wrong_img_path = path.chop_suffix(ext).unwrap_or(path) +
+        ".wrong" +
+        ext
+      @fs.write_bytes_to_file(wrong_img_path.to_string(), actual)
+      let reason = if verdict.reason == "" {
+        "<missing>"
+      } else {
+        verdict.reason
+      }
+      fail(
+        "snapshot does not match expectation, new_img=\{wrong_img_path}, reason=\{reason}",
+      )
+    }
     @fs.write_bytes_to_file(path, actual)
   } else {
     let expected = @fs.read_file_to_bytes(path)
@@ -39,12 +56,12 @@ pub async fn snapshot(path : String, img_description~ : String) -> Unit {
 const OPENROUTER_MODEL : String = "google/gemini-3.1-flash-lite-preview"
 
 ///|
-async fn assert_snapshot_expect(
+async fn snapshot_verdict(
   actual_buffer : Buffer,
   expect : String,
   api_key : String,
   path : String,
-) -> Unit {
+) -> SnapshotExpectVerdict {
   let image_data_url = "data:image/png;base64,\{actual_buffer.to_base64()}"
   let messages : Json = [
     {
@@ -73,12 +90,7 @@ async fn assert_snapshot_expect(
     "expect": expect,
     "raw_response": raw,
   })
-  let verdict = parse_snapshot_expect_xml(raw)
-  if verdict.pass {
-    return
-  }
-  let reason = if verdict.reason == "" { "<missing>" } else { verdict.reason }
-  fail("snapshot expect mismatch: \{path}, reason=\{reason}")
+  parse_snapshot_expect_xml(raw)
 }
 
 ///|

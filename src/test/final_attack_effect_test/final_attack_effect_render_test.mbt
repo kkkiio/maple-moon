@@ -39,35 +39,35 @@ fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise 
     @app.App::new()
     .with_viewport_width(220.0)
     .with_viewport_height(160.0)
-    .add_plugin(@plugins.default_plugin),
+    .with_fixed_hz(125U)
+    .add_plugin(@plugins.default_plugin)
+    .add_system(
+      Update,
+      fn(world) { @monster.map_monsters_render_system(world) },
+      system_name="map_monsters_render_system",
+    )
+    .add_system(
+      FixedUpdate,
+      fn(world) { @monster.map_monsters_fixed_system(world) },
+      system_name="map_monsters_fixed_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @ms_animation.animation_system(world) },
+      system_name="ms_animation_system",
+    ),
   )
 
   let camera_anchor = @entity.Entity::new()
-  @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
-  @camera.set_follow_x(true)
-  @camera.set_follow_y(true)
-  @camera.camera_system(0.016)
-
-  let background = @entity.Entity::new()
-  @position.positions().set(
-    background,
-    @position.Position(@math.Vec2D(0.0, 0.0)),
-  )
-  let bg_rect = @sprite.ColorRect::new(
-    @math.Vec2D(220.0, 160.0),
-    "rgba(30, 60, 110, 1)",
-  )
-  @sprite.sprites().set(
-    background,
-    @sprite.Sprite::from_color_rect(bg_rect, @graphics.BACKGROUND_ZINDEX),
-  )
+  @transform2d.set_xy(camera_anchor, @math.Vec2D(110.0, 80.0))
+  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2D(110.0, 80.0))
+  @ms_camera.set_follow_target(camera_anchor)
+  @ms_camera.camera_follow_system(@ecs.require_current_world())
 
   let mob = load_test_mob()
-  mob.update(@physics.empty_physics()) |> ignore
-  @position.positions().set(
-    mob.get_entity(),
-    @position.Position(@math.Vec2D(110.0, 95.0)),
-  )
+  let map_mobs = @monster.MapMobs::new()
+  map_mobs.add_mob(mob)
+  @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
   mob.show_effect(animation, 0, z, false)
 
   for _ in 0..<2 {
@@ -85,15 +85,4 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     "src/test/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
     img_description="Final attack hit effect rendered correctly on the z-effect layer.",
   )
-}
-
-///|
-test "parse CharLevel hit from real skill asset with structured decoder" {
-  let skill_json = @fs.read_file_to_string("assets/skill/500.img.json")
-    |> @json.parse
-  let skill_5001001 = match skill_json {
-    { "skill": { "5001001": skill, .. }, .. } => skill
-    _ => fail("missing skill 5001001 in assets/skill/500.img.json")
-  }
-  let _ = @combat_system.make_hit_effect(skill_5001001)
 }

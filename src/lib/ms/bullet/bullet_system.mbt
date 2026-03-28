@@ -164,20 +164,18 @@ pub fn get_current_bullet_system() -> BulletSystem? {
 /// Selene system entry for bullet simulation.
 ///
 /// This runs only during `GameActive` and advances by fixed logic steps.
-pub fn bullet_system(_delta : Double) -> Unit {
+pub fn bullet_system(_world : @ecs.World) -> Unit {
   register_scene_cleanup_once()
   guard @game_state.game_state.phase is GameActive(..) else { return }
   guard @monster.get_map_mobs() is Some(_) else { return }
   guard current_bullet_system_ref.val is Some(system) else { return }
-  for _ in 0..<@logic_fps.get_logic_times() {
-    system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
-  }
+  system.update(timestep=@logic_fps.STEP_TIME_MS.to_int64())
 }
 
 ///|
 fn clear_entity(entity : @entity.Entity) -> Unit {
   @sprite.sprites().remove(entity)
-  @position.positions().remove(entity)
+  @transform2d.remove(entity)
   if entity.is_alive() {
     entity.destroy()
   }

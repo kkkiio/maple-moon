@@ -19,7 +19,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/game_state",
-  "Milky2018/selene/camera",
+  "KKKIIO/maple-moon/lib/ms/camera" @ms_camera,
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/ms/weapon",
@@ -43,4 +43,5 @@ import {
   "Milky2018/selene/inputs",
   "KKKIIO/maple-moon/lib/ms/quest_log",
   "KKKIIO/maple-moon/lib/ms/quest_icon",
+  "Milky2018/selene/ecs",
 }

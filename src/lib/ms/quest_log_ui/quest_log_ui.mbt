@@ -166,23 +166,25 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+  let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     texture.i,
+    source=Some(source),
   )
 }
 
 ///|
-fn ui_image_region_from_texture(
+fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
-) -> @selene_ui.UiImageRegion {
-  @selene_ui.UiImageRegion::new({
+) -> @render2d_types.ImageRegion2D {
+  {
     position: @selene_math.Vec2D(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
     size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-  })
+  }
 }
 
 ///|
@@ -191,10 +193,6 @@ fn set_image_texture(
   texture : @resource.NxTexture,
 ) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
-  @selene_ui.ui_image_regions().set(
-    entity,
-    ui_image_region_from_texture(texture),
-  )
 }
 
 ///|
@@ -270,13 +268,6 @@ fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
     entity,
     @selene_ui.TextColor::from_css(run.color),
   )
-  if run.underline {
-    @selene_ui.underlines().set(entity, @selene_ui.Underline::new())
-    @selene_ui.underline_colors().set(
-      entity,
-      @selene_ui.UnderlineColor::new(@selene_ui.parse_color(run.color)),
-    )
-  }
 }
 
 ///|
@@ -311,17 +302,22 @@ fn spawn_rich_text_block(
       overflow=@selene_ui.TextOverflow::Clip,
     ),
   )
+  let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
+    @selene_ui.TextSpan::new(
+      run.text,
+      font=Some(
+        @selene_ui.TextFont::new(family="Menlo", size=12.0, bold=run.bold),
+      ),
+      color=Some(@selene_ui.TextColor::from_css(run.color)),
+      bold=run.bold,
+      underline=run.underline,
+    )
+  })
+  @selene_ui.texts().set(entity, @selene_ui.Text::from_spans(spans))
   let first = runs
     .get(0)
     .unwrap_or({ text: "", color: "#0b1f2a", bold: false, underline: false })
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(first.text))
   set_text_style(entity, first)
-  for i in 1..<runs.length() {
-    let run = runs[i]
-    let child = entity.spawn_child()
-    @selene_ui.text_spans().set(child, @selene_ui.TextSpan::new(run.text))
-    set_text_style(child, run)
-  }
   entity
 }
 
@@ -445,7 +441,9 @@ fn parse_quest_ui_resource(json : Json) -> QuestLogUiResource raise {
 
 ///|
 async fn load_quest_ui_resource() -> QuestLogUiResource {
-  let raw : Json = @resource.get_ui_window_2_loader().load_resource(["Quest"])
+  let raw : Json = @resource.get_async_loader("ui_window_2").load_resource([
+    "Quest",
+  ])
   parse_quest_ui_resource(raw)
 }
 
@@ -1298,7 +1296,7 @@ pub fn is_quest_log_ui_open() -> Bool {
 
 ///|
 /// Quest-log UI system.
-pub fn quest_log_ui_system(_delta : Double) -> Unit {
+pub fn quest_log_ui_system(_world : @ecs.World) -> Unit {
   let state = state()
   guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
     close_quest_log_ui()

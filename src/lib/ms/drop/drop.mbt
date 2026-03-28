@@ -41,7 +41,7 @@ fn DropBase::new(
 ) -> DropBase {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions().set(entity, @position.Position(pos))
+    @transform2d.set_xy(entity, pos)
   })
   phobj.set_position(
     @selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()),
@@ -152,7 +152,7 @@ fn DropBase::expire(
 ///|
 struct MesoDrop {
   base : DropBase
-  icon : @sprite.Animation
+  icon : @ms_animation.Animation
 }
 
 ///|
@@ -167,7 +167,7 @@ pub fn MesoDrop::new(
   icon : @resource.NxAnimation,
 ) -> MesoDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
-  let selene_anim = @resource.nx_animation_to_selene_animation(icon, loop_=true)
+  let selene_anim = @ms_animation.from_nx_animation(icon, loop_=true)
   { base, icon: selene_anim }
 }
 
@@ -211,15 +211,15 @@ pub impl Drop for MesoDrop with update(
   match @sprite.sprites().get(entity) {
     Some(sprite) => {
       // Update existing sprite: alpha and transform
-      @sprite.sprites().set(entity, { ..sprite, alpha: opacity })
-      @sprite.set_animation_transform(
+      sprite.color = @sprite.color_from_css("rgba(255, 255, 255, \{opacity})")
+      @ms_animation.set_animation_transform(
         entity,
         @selene_math.Transform::from_rotation_rad(angle),
       )
     }
     None => {
       // Create new sprite with initial transform
-      let sprite = @sprite.Sprite::from_animation(
+      let sprite = @ms_animation.sprite_from_animation(
         self.icon,
         z,
         alpha=opacity,
@@ -263,7 +263,7 @@ pub impl Drop for MesoDrop with expire(
 ///|
 struct ItemDrop {
   base : DropBase
-  icon : @sprite.Picture
+  icon : @ms_animation.Picture
 }
 
 ///|
@@ -279,7 +279,7 @@ pub fn ItemDrop::new(
   icon : @resource.NxTexture,
 ) -> ItemDrop {
   let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
-  let selene_picture = @resource.nx_texture_to_selene_picture(icon)
+  let selene_picture = @ms_animation.from_nx_texture(icon)
   { base, icon: selene_picture }
 }
 
@@ -323,10 +323,14 @@ pub impl Drop for ItemDrop with update(
   match @sprite.sprites().get(entity) {
     Some(sprite) =>
       // Update existing sprite: alpha only
-      @sprite.sprites().set(entity, { ..sprite, alpha: opacity })
+      sprite.color = @sprite.color_from_css("rgba(255, 255, 255, \{opacity})")
     None => {
       // Create new sprite with initial alpha
-      let sprite = @sprite.Sprite::from_picture(self.icon, z, alpha=opacity)
+      let sprite = @ms_animation.sprite_from_picture(
+        self.icon,
+        z,
+        alpha=opacity,
+      )
       @sprite.sprites().set(entity, sprite)
     }
   }

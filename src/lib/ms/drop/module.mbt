@@ -28,7 +28,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 
 ///|
 pub async fn Module::load() -> Module {
-  let special_item_loader = @resource.get_item_special_loader()
+  let special_item_loader = @resource.get_async_loader("item_special")
   let src = special_item_loader.load_resource(["0900.img"])
   { map_drops: MapDrops::new(src) }
 }
@@ -122,7 +122,8 @@ pub fn clear_map_drops() -> Unit {
 }
 
 ///|
-pub fn map_drops_system(_delta : Double) -> Unit {
+/// Poll async drop loading and map transition pending operations.
+pub fn map_drops_loading_system(_world : @ecs.World) -> Unit {
   guard map_drops_ctx.val is Some(ctx) else { return }
   if ctx.map_drops is None {
     match ctx.loading {
@@ -154,12 +155,15 @@ pub fn map_drops_system(_delta : Double) -> Unit {
       }
     }
   }
+}
+
+///|
+/// Advance drop simulation once in fixed schedule.
+pub fn map_drops_fixed_system(_world : @ecs.World) -> Unit {
+  guard map_drops_ctx.val is Some(ctx) else { return }
   guard ctx.map_drops is Some(map_drops) else { return }
   guard ctx.physics is Some(physics) else { return }
-  let times = @logic_fps.get_logic_times()
-  for i = 0; i < times; i = i + 1 {
-    map_drops.update(physics)
-  }
+  map_drops.update(physics)
 }
 
 ///|

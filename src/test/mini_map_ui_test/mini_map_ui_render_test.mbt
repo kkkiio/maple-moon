@@ -56,9 +56,7 @@ fn setup_mini_map_ui_scene_with_data(
     .with_viewport_width(420.0)
     .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)
-    .add_system(Update, fn(_world) {
-      @mini_map_ui.mini_map_ui_system(@time.delta())
-    })
+    .add_system(Update, fn(world) { @mini_map_ui.mini_map_ui_system(world) })
   @capture_app.init_app(app)
   @mini_map_ui.set_current_map(map_id, map_name, street_name, mini_map_resource)
 

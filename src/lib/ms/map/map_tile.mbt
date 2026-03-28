@@ -78,19 +78,17 @@ pub fn Tile::attach_entity(
     @sprite.sprites().remove(entity)
     return
   }
-  let animation = nx_animation_to_selene_animation(@resource.NxAnimation::{
+  let animation = @ms_animation.from_nx_animation(@resource.NxAnimation::{
     frames: [
       @resource.NxFrame::{ texture, delay: None, head: None, bounds: None },
     ],
     blend: false,
     zigzag: false,
   })
-  let sprite = @sprite.Sprite::from_animation(animation, self.z + z_offset)
+  let sprite = @ms_animation.sprite_from_animation(animation, self.z + z_offset)
   @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
+  @transform2d.set_xy(
     entity,
-    @position.Position(
-      @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
-    ),
+    @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
   )
 }

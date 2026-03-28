@@ -1,7 +1,4 @@
 ///|
-using @resource {nx_animation_to_selene_animation}
-
-///|
 fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
   let mob_animations : MobAnimations = @json.from_json(src)
   let animations : Map[StanceType, MobAnimation] = Map::new()
@@ -48,7 +45,7 @@ pub(all) struct MobAnimations {
 ///|
 fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
   let nx : @resource.NxAnimation = @json.from_json(src)
-  let selene = nx_animation_to_selene_animation(nx)
+  let selene = @ms_animation.from_nx_animation(nx)
   { nx, selene }
 }
 
@@ -57,7 +54,7 @@ fn nx_animation_to_mob_animation(
   nx : @resource.NxAnimation,
   loop_~ : Bool,
 ) -> MobAnimation {
-  let selene = nx_animation_to_selene_animation(nx, loop_~)
+  let selene = @ms_animation.from_nx_animation(nx, loop_~)
   { nx, selene }
 }
 

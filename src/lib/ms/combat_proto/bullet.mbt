@@ -10,25 +10,22 @@ pub fn Bullet::new(
   origin : @struct.Point[Int],
   toleft : Bool,
 ) -> Bullet {
-  let sprite_animation = @resource.nx_animation_to_selene_animation(
-    animation,
-    loop_=true,
-  )
+  let sprite_animation = @ms_animation.from_nx_animation(animation, loop_=true)
   let transform = if toleft {
     @selene_math.Transform::new()
   } else {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   }
-  let sprite = @sprite.Sprite::from_animation(
+  let sprite = @ms_animation.sprite_from_animation(
     sprite_animation,
     @graphics.CHAR_LOOK_ZINDEX + 100,
     transform~,
   )
   @sprite.sprites().set(entity, sprite)
-  @sprite.play_animation(entity, sprite_animation, loop_=true, transform~)
+  @ms_animation.play_animation(entity, sprite_animation, loop_=true, transform~)
 
   let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
-    @position.positions().set(entity, @position.Position(pos))
+    @transform2d.set_xy(entity, pos)
   })
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
   move_obj.set_y(origin.y.to_double() - 26.0)

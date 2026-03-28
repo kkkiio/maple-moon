@@ -5,10 +5,13 @@ import {
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/player",
+  "Milky2018/selene/ecs",
 }
 
 // Values
-pub fn player_controller_system(Double) -> Unit
+pub fn player_controller_fixed_system(@ecs.World) -> Unit
+
+pub fn player_controller_input_system(@ecs.World) -> Unit
 
 pub fn try_trigger_auto_portal(@player.Player, @map.MapInfo, @physics.Physics) -> Bool
 

@@ -1,7 +1,4 @@
 ///|
-using @resource {nx_animation_to_selene_animation}
-
-///|
 using @char_stance {type StanceId}
 
 ///|
@@ -164,17 +161,14 @@ fn CharLook::updatetwohanded(self : CharLook) -> Unit {
 
 ///|
 pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
-  @position.positions().set(self.root_entity, @position.Position(pos))
+  @transform2d.set_xy(self.root_entity, pos)
 }
 
 ///|
 /// Set animation playback speed for all sprite entities used by this look.
 pub fn CharLook::set_animation_speed(self : CharLook, speed : Double) -> Unit {
   fn set_speed_if_animation(entity : @entity.Entity) {
-    if @sprite.sprites().get(entity)
-      is Some({ sprite_type: Animation(_, ..), .. }) {
-      @sprite.set_animation_speed(entity, speed)
-    }
+    @ms_animation.set_animation_speed(entity, speed)
   }
 
   for entity in self.body_entities.values() {
@@ -232,9 +226,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   let loop_ = should_loop(stance)
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
-      if @sprite.sprites().get(entity) is Some(sprite) {
-        sprite.visible = false
-      }
+      set_entity_visible(entity, false)
     }
   }
 
@@ -282,7 +274,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = nx_animation_to_selene_animation(anim, loop_~) // TODO: cache animation
+    let animation = @ms_animation.from_nx_animation(anim, loop_~) // TODO: cache animation
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.spawn_sprite_child()
@@ -293,8 +285,8 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       layer.z() + @graphics.CHAR_LOOK_ZINDEX,
       transform,
     )
-    sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_~, transform~)
+    set_entity_visible(entity, true)
+    @ms_animation.play_animation(entity, animation, loop_~, transform~)
   }
   if self.full_body.stances.get(stance) is Some(stance_stances) {
     for name, it in stance_stances {
@@ -312,32 +304,24 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         blend: false,
         zigzag: false,
       } // Reconstruct approximate NxAnimation container
-      let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
+      let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()
       })
-      let current_frame = if @sprite.sprites().get(entity)
-        is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
-        // Use frame directly as requested, correcting for potential bounds
-        if frame < layers.length() {
-          frame
-        } else {
-          0
-        }
-      } else {
-        0
-      }
+      let frame = @ms_animation.current_frame_index(entity)
+      let current_frame = if frame < layers.length() { frame } else { 0 }
       let sprite = ensure_sprite_with_z(
         entity,
         animation,
         layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
         transform,
       )
-      sprite.visible = true
-      @sprite.play_animation(entity, animation, loop_~, transform~)
+      ignore(sprite)
+      set_entity_visible(entity, true)
+      @ms_animation.play_animation(entity, animation, loop_~, transform~)
     }
   }
   // Weapon animation
@@ -378,16 +362,8 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         // Since play_animation sets a single Z for the whole animation in Selene's Sprite,
         // we usually take the Z of the first frame or force them to be consistent.
         // Looking at the data, usually layers are consistent across frames for a single motion.
-        let current_frame = if @sprite.sprites().get(entity)
-          is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
-          if frame < layers.length() {
-            frame
-          } else {
-            0
-          }
-        } else {
-          0
-        }
+        let frame = @ms_animation.current_frame_index(entity)
+        let current_frame = if frame < layers.length() { frame } else { 0 }
         let z_layer = if layers.length() > 0 {
           layers[current_frame].int_value()
         } else {
@@ -599,11 +575,7 @@ pub fn CharLook::get_stance(self : CharLook) -> StanceId {
 pub fn CharLook::get_frame(self : CharLook) -> Int {
   // Try to find the "body" entity which drives the main animation
   match self.body_entities.get("body") {
-    Some(entity) =>
-      match @sprite.sprites().get(entity) {
-        Some({ sprite_type: Animation(_, frame~, ..), .. }) => frame
-        _ => 0
-      }
+    Some(entity) => @ms_animation.current_frame_index(entity)
     None => 0
   }
 }
@@ -779,7 +751,7 @@ pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {
 ///|
 pub fn CharLook::is_animation_finished(self : CharLook) -> Bool {
   match self.body_entities.get("body") {
-    Some(entity) => @sprite.is_animation_finished(entity)
+    Some(entity) => @ms_animation.is_animation_finished(entity)
     None => false
   }
 }
@@ -821,8 +793,7 @@ fn attach_face(
     i += 1
   }
   if frames.length() > 0 {
-    let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
-    let animation = nx_animation_to_selene_animation(nx_anim, loop_=true)
+    let source_frame = frames[0]
     let transform = facing_transform(flip_x)
 
     // Face Animation Sync
@@ -834,29 +805,49 @@ fn attach_face(
         }
       None => []
     }
-    let face_frames = []
+    let face_anim_frames : Array[@ms_animation.AnimationFrame] = []
     if body_delays.length() > 0 {
       for i = 0; i < body_delays.length(); i = i + 1 {
         let face_pos = draw_info.get_face_pos(stance, i)
-        let source_frame = animation.frames[0]
-        let frame = {
-          ..source_frame,
-          pivot: source_frame.pivot -
+        face_anim_frames.push({
+          image: @selene_asset.load_image(source_frame.texture.i),
+          size: @selene_math.Vec2D(
+            source_frame.texture.w.to_double(),
+            source_frame.texture.h.to_double(),
+          ),
+          offset: @selene_math.Vec2D(
+            source_frame.texture.offset.x.to_double(),
+            source_frame.texture.offset.y.to_double(),
+          ),
+          pivot: @selene_math.Vec2D(
+            source_frame.texture.origin.x.to_double(),
+            source_frame.texture.origin.y.to_double(),
+          ) -
           @selene_math.Vec2D(face_pos.x.to_double(), face_pos.y.to_double()),
           duration: body_delays[i].unwrap_or(100).to_double() / 1000.0,
-        }
-        face_frames.push(frame)
+        })
       }
     } else {
       let face_pos = draw_info.get_face_pos(stance, 0)
-      let frame = {
-        ..animation.frames[0],
-        pivot: animation.frames[0].pivot -
+      face_anim_frames.push({
+        image: @selene_asset.load_image(source_frame.texture.i),
+        size: @selene_math.Vec2D(
+          source_frame.texture.w.to_double(),
+          source_frame.texture.h.to_double(),
+        ),
+        offset: @selene_math.Vec2D(
+          source_frame.texture.offset.x.to_double(),
+          source_frame.texture.offset.y.to_double(),
+        ),
+        pivot: @selene_math.Vec2D(
+          source_frame.texture.origin.x.to_double(),
+          source_frame.texture.origin.y.to_double(),
+        ) -
         @selene_math.Vec2D(face_pos.x.to_double(), face_pos.y.to_double()),
-      }
-      face_frames.push(frame)
+        duration: 0.1,
+      })
     }
-    let animation = @sprite.Animation::new(face_frames, loop_=true)
+    let animation = @ms_animation.Animation::new(face_anim_frames, loop_=true)
     let sprite = ensure_sprite_with_z(
       entity,
       animation,
@@ -865,8 +856,9 @@ fn attach_face(
       1,
       transform,
     )
-    sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_=true, transform~)
+    ignore(sprite)
+    set_entity_visible(entity, true)
+    @ms_animation.play_animation(entity, animation, loop_=true, transform~)
   }
 }
 
@@ -880,22 +872,50 @@ fn facing_transform(flip_x : Bool) -> @selene_math.Transform {
 }
 
 ///|
+fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
+  match @transform.transforms().get(entity) {
+    Some(t) =>
+      @transform.transforms().set(entity, {
+        ..t,
+        translation: @selene_math.Vec3::new(
+          t.translation.x,
+          t.translation.y,
+          z.to_double(),
+        ),
+      })
+    None =>
+      @transform.transforms().set(
+        entity,
+        @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+      )
+  }
+}
+
+///|
+fn set_entity_visible(entity : @entity.Entity, visible : Bool) -> Unit {
+  @visibility.visibilities().set(
+    entity,
+    if visible {
+      @visibility.Visibility::Visible
+    } else {
+      @visibility.Visibility::Hidden
+    },
+  )
+}
+
+///|
 fn ensure_sprite_with_z(
   entity : @entity.Entity,
-  animation : @sprite.Animation,
+  animation : @ms_animation.Animation,
   z : Int,
   transform : @selene_math.Transform,
 ) -> @sprite.Sprite {
+  set_entity_z(entity, z)
   if @sprite.sprites().get(entity) is Some(sprite) {
-    @sprite.set_animation_transform(entity, transform)
-    if sprite.zindex != z {
-      let sprite = { ..sprite, zindex: z }
-      @sprite.sprites().set(entity, sprite)
-      return sprite
-    }
+    @ms_animation.set_animation_transform(entity, transform)
     return sprite
   }
-  let sprite = @sprite.Sprite::from_animation(animation, z, transform~)
+  let sprite = @ms_animation.sprite_from_animation(animation, z, transform~)
   @sprite.sprites().set(entity, sprite)
   sprite
 }
@@ -916,7 +936,7 @@ fn attach_equipment(
     { ..f, delay, }
   })
   let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
-  let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
+  let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
   let transform = facing_transform(flip_x)
   let sprite = ensure_sprite_with_z(
     entity,
@@ -924,8 +944,9 @@ fn attach_equipment(
     z + @graphics.CHAR_LOOK_ZINDEX,
     transform,
   )
-  sprite.visible = true
-  @sprite.play_animation(entity, animation, loop_~, transform~)
+  ignore(sprite)
+  set_entity_visible(entity, true)
+  @ms_animation.play_animation(entity, animation, loop_~, transform~)
 }
 
 ///|
@@ -936,9 +957,7 @@ fn CharLook::play_climbing_animations(
   let loop_ = true
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
-      if @sprite.sprites().get(entity) is Some(sprite) {
-        sprite.visible = false
-      }
+      set_entity_visible(entity, false)
     }
   }
 
@@ -976,7 +995,7 @@ fn CharLook::play_climbing_animations(
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = nx_animation_to_selene_animation(anim, loop_~)
+    let animation = @ms_animation.from_nx_animation(anim, loop_~)
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.spawn_sprite_child()
@@ -992,8 +1011,9 @@ fn CharLook::play_climbing_animations(
       z_index + @graphics.CHAR_LOOK_ZINDEX,
       transform,
     )
-    sprite.visible = true
-    @sprite.play_animation(entity, animation, loop_~, transform~)
+    ignore(sprite)
+    set_entity_visible(entity, true)
+    @ms_animation.play_animation(entity, animation, loop_~, transform~)
   }
 
   // Body Animation
@@ -1013,7 +1033,7 @@ fn CharLook::play_climbing_animations(
         blend: false,
         zigzag: false,
       }
-      let animation = nx_animation_to_selene_animation(nx_anim, loop_~)
+      let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()
@@ -1026,8 +1046,9 @@ fn CharLook::play_climbing_animations(
         layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
         transform,
       )
-      sprite.visible = true
-      @sprite.play_animation(entity, animation, loop_~, transform~)
+      ignore(sprite)
+      set_entity_visible(entity, true)
+      @ms_animation.play_animation(entity, animation, loop_~, transform~)
     }
   }
 
@@ -1046,16 +1067,8 @@ fn CharLook::play_climbing_animations(
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.spawn_sprite_child()
         })
-        let current_frame = if @sprite.sprites().get(entity)
-          is Some({ sprite_type: Animation(_, frame~, ..), .. }) {
-          if frame < layers.length() {
-            frame
-          } else {
-            0
-          }
-        } else {
-          0
-        }
+        let frame = @ms_animation.current_frame_index(entity)
+        let current_frame = if frame < layers.length() { frame } else { 0 }
         let z_layer = if layers.length() > 0 {
           layers[current_frame].int_value()
         } else {
@@ -1076,10 +1089,7 @@ fn CharLook::play_climbing_animations(
 
   // Skip Face Animation for Climbing
   match self.face_entity {
-    Some(e) =>
-      if @sprite.sprites().get(e) is Some(sprite) {
-        sprite.visible = false
-      }
+    Some(e) => set_entity_visible(e, false)
     None => ()
   }
 }

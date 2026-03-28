@@ -1,7 +1,4 @@
 ///|
-using @resource {get_body_loader}
-
-///|
 using @utils {type Future}
 
 ///|
@@ -45,39 +42,47 @@ pub fn CharLookMod::new(
 }
 
 ///|
-let mod : Ref[CharLookMod?] = Ref::new(None)
+let mods_by_world : Ref[Map[UInt, CharLookMod]] = Ref::new(Map::new())
 
 ///|
 pub fn get_module() -> CharLookMod? {
-  mod.val
+  let world_id = @ecs.require_current_world().id()
+  mods_by_world.val.get(world_id)
 }
 
 ///|
 /// Install a preloaded char look module for environments that bootstrap
 /// systems manually, such as tests.
 pub fn set_module(m : CharLookMod) -> Unit {
-  mod.val = Some(m)
-  loading_mod_future.val = None
+  let world_id = @ecs.require_current_world().id()
+  mods_by_world.val[world_id] = m
+  loading_mod_futures_by_world.val.remove(world_id)
 }
 
 ///|
-let loading_mod_future : Ref[Future[Result[CharLookMod, Error]]?] = Ref::new(
-  None,
-)
+let loading_mod_futures_by_world : Ref[
+  Map[UInt, Future[Result[CharLookMod, Error]]],
+] = Ref::new(Map::new())
 
 ///|
 /// Load char look module if not loaded yet.
-pub fn char_look_system(_delta : Double) -> Unit {
-  if mod.val is Some(_) {
+pub fn char_look_system(_world : @ecs.World) -> Unit {
+  let world_id = _world.id()
+  if mods_by_world.val.get(world_id) is Some(_) {
     return
   }
-  guard loading_mod_future.val is Some(fut) else {
-    loading_mod_future.val = Some(submit_background_task(CharLookMod::load))
+  guard loading_mod_futures_by_world.val.get(world_id) is Some(fut) else {
+    loading_mod_futures_by_world.val[world_id] = submit_background_task(
+      CharLookMod::load,
+    )
     return
   }
   guard fut.poll() is Some(res) else { return }
   match res {
-    Ok(m) => mod.val = Some(m)
+    Ok(m) => {
+      mods_by_world.val[world_id] = m
+      loading_mod_futures_by_world.val.remove(world_id)
+    }
     Err(e) => abort("loading char look module failed, error=\{e}")
   }
 }
@@ -180,14 +185,18 @@ pub async fn CharLookMod::load_face_by_id(
 
 ///|
 async fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
-  let bodynode = get_body_loader().load_resource(["00002000.img"])
+  let bodynode = @resource.get_async_loader("body").load_resource([
+    "00002000.img",
+  ])
   let v : NxStanceLooks[@types.NxStanceBody] = @json.from_json(bodynode)
   v
 }
 
 ///|
 async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
-  let headnode = get_body_loader().load_resource(["00012000.img"])
+  let headnode = @resource.get_async_loader("body").load_resource([
+    "00012000.img",
+  ])
   let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode)
   v
 }

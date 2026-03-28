@@ -14,8 +14,8 @@ test "passive_system_consumes_events" {
   }
   @combat_system.push_event(event)
 
-  passive_system(0.016)
-  passive_system(0.016)
+  passive_system(@ecs.require_current_world())
+  passive_system(@ecs.require_current_world())
 
   assert_eq(mock.call_count.val, 1)
   assert_false(mock.last_event.val is None)
@@ -117,7 +117,7 @@ test "passive_system_calls_mock_skill" {
 
   assert_eq(mock.call_count.val, 0)
 
-  passive_system(0.016)
+  passive_system(@ecs.require_current_world())
 
   assert_eq(mock.call_count.val, 3)
 
@@ -135,7 +135,7 @@ test "passive_system_calls_mock_skill" {
     @combat_system.push_event(event)
   }
 
-  passive_system(0.016)
+  passive_system(@ecs.require_current_world())
 
   assert_eq(mock.call_count.val, 5)
 

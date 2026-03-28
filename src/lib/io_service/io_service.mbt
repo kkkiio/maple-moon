@@ -35,7 +35,7 @@ let poll_tasks : Array[Future[Unit]] = Array::new()
 
 ///|
 /// Run the submitted tasks.
-pub fn io_system(_delta : Double) -> Unit {
+pub fn io_system(_world : @ecs.World) -> Unit {
   poll_tasks.retain(fn(future) {
     match future.poll() {
       Some(_) => false

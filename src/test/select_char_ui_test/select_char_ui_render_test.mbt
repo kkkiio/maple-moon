@@ -49,9 +49,9 @@ fn test_character_list_message() -> @server_proto.CharacterListMessage {
 ///|
 fn setup_select_char_ui_scene() -> Unit {
   @capture_app.reset_mock_server()
-  @resource.set_body_loader(make_local_body_loader())
-  @resource.set_face_loader(make_local_face_loader())
-  @resource.set_hair_loader(make_local_hair_loader())
+  @resource.register_async_loader("body", make_local_body_loader())
+  @resource.register_async_loader("face", make_local_face_loader())
+  @resource.register_async_loader("hair", make_local_hair_loader())
   @select_char_ui.setup_game_server_handlers()
   let app = @app.App::new()
     .with_viewport_width(800.0)
@@ -59,17 +59,17 @@ fn setup_select_char_ui_scene() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
     .add_system(
       Update,
-      fn(_world) { @char_look.char_look_system(@time.delta()) },
+      fn(world) { @char_look.char_look_system(world) },
       system_name="char_look_system",
     )
     .add_system(
       Update,
-      fn(_world) { @select_char_ui.select_char_ui_system(@time.delta()) },
+      fn(world) { @select_char_ui.select_char_ui_system(world) },
       system_name="select_char_ui_system",
     )
   @capture_app.init_app(app)

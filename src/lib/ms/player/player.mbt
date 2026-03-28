@@ -727,14 +727,11 @@ pub fn set_player(player : Player) -> Unit {
 }
 
 ///|
-/// Advances player physics/animation for one logic frame.
+/// Advances player physics/animation for one fixed logic step.
 pub fn tick_player(
   player : Player,
   physics : @physics.Physics,
   map_info : @map.MapInfo,
 ) -> Unit {
-  let times = @logic_fps.get_logic_times()
-  for _ in 0..<times {
-    player.update(physics, map_info)
-  }
+  player.update(physics, map_info)
 }

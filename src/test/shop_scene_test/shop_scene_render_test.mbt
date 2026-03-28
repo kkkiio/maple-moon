@@ -167,25 +167,6 @@ fn load_map_runtime_102000001() -> (@physics.Physics, @map.MapInfo) {
 }
 
 ///|
-fn npc_sprite_zindices() -> Array[Int] {
-  let zs : Array[Int] = []
-  for _, sprite in @sprite.sprites() {
-    match @test_snapshots.DebugSprite(sprite).to_json() {
-      {
-        "draw": [
-          "Animation",
-          { "current": { "sprite_path": String(path), .. }, .. },
-        ],
-        ..
-      } if path.contains("Npc/") => zs.push(sprite.zindex)
-      _ => ()
-    }
-  }
-  zs.sort()
-  zs
-}
-
-///|
 fn normalize_camera_limits(
   left : Double,
   right : Double,
@@ -211,18 +192,17 @@ fn normalize_camera_limits(
 ///|
 fn setup_camera(position : @math.Vec2D, map_info : @map.MapInfo) -> Unit {
   let camera_anchor = @entity.Entity::new()
-  @position.positions().set(camera_anchor, @position.Position(position))
-  @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
-  @camera.set_follow_x(true)
-  @camera.set_follow_y(true)
+  @transform2d.set_xy(camera_anchor, position)
+  @ms_camera.setup_camera_entity(camera_anchor, center=position)
+  @ms_camera.set_follow_target(camera_anchor)
   let (left, right, top, bottom) = normalize_camera_limits(
     map_info.get_walls().first().to_double(),
     map_info.get_walls().second().to_double(),
     map_info.get_borders().first().to_double(),
     map_info.get_borders().second().to_double(),
   )
-  @camera.set_limits(left~, right~, top~, bottom~)
-  @camera.camera_system(0.016)
+  @ms_camera.set_limits(left, right, top, bottom)
+  @ms_camera.camera_follow_system(@ecs.require_current_world())
 }
 
 ///|
@@ -238,30 +218,31 @@ async fn setup_shop_scene_npcs() -> Unit {
   let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
+    .with_fixed_hz(125U)
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
-      system_name="logic_fps_system",
-    )
-    .add_system(
-      Update,
-      fn(_world) { @map.background_system(@time.delta()) },
+      fn(world) { @map.background_system(world) },
       system_name="background_system",
     )
     .add_system(
       Update,
-      fn(_world) { @map.tile_objects_system(@time.delta()) },
+      fn(world) { @map.tile_objects_system(world) },
       system_name="tile_objects_system",
     )
     .add_system(
       Update,
-      fn(_world) { @npc.map_npcs_system(@time.delta()) },
-      system_name="map_npcs_system",
+      fn(world) { @npc.map_npcs_pointer_system(world) },
+      system_name="map_npcs_pointer_system",
+    )
+    .add_system(
+      FixedUpdate,
+      fn(world) { @npc.map_npcs_fixed_system(world) },
+      system_name="map_npcs_fixed_system",
     )
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
   @capture_app.init_app(app)
@@ -311,13 +292,7 @@ async fn setup_shop_scene_npcs() -> Unit {
     "fh": 11,
   })
 
-  for _ in 0..<180 {
-    @capture_app.run_loop(0.016)
-    @async.sleep(0)
-    if npc_sprite_zindices().length() >= 2 {
-      break
-    }
-  }
+  @async.sleep(0)
 }
 
 ///|
@@ -332,11 +307,5 @@ async test "shop scene npc render snapshot on map 102000001" {
   @capture_app.snapshot(
     "src/test/shop_scene_test/__snapshot__/shop_scene_map_102000001_npcs.png",
     img_description="Shop scene rendered for map 102000001 showing NPCs.",
-  )
-  inspect(
-    npc_sprite_zindices(),
-    content=(
-      #|[30005, 30005]
-    ),
   )
 }

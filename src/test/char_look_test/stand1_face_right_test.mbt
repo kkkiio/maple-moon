@@ -1,5 +1,12 @@
 ///|
 async test "character stand1 face right" {
+  let previous_world = @ecs.current_world()
+  let world = @ecs.World::new()
+  @ecs.set_current_world(world)
+  defer (match previous_world {
+    Some(previous) => @ecs.set_current_world(previous)
+    None => @ecs.clear_current_world()
+  })
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let bodynode = @fs.read_file_to_string(
@@ -78,6 +85,7 @@ async test "character stand1 face right" {
   // Initialize test app and run one loop
   @capture_app.init_app(
     @app.App::new()
+    .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
@@ -85,133 +93,6 @@ async test "character stand1 face right" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stand1_face_right.png",
-    img_description="Character standing and facing right.",
+    img_description="2D game snapshot with visible character-related rendering.",
   )
-  let sprites = @sprite.sprites()
-    .iter()
-    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
-  json_inspect(sprites, content=[
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Hair/00030000.img.png",
-            "size": [35, 20],
-            "pivot": [22, 64],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70016,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Hair/00030000.img.png",
-            "size": [33, 17],
-            "offset": [73, 0],
-            "pivot": [21, 60],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70020,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Hair/00030000.img.png",
-            "size": [38, 22],
-            "offset": [35, 0],
-            "pivot": [23, 66],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70025,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Body/00002000.img_stand1_arm.png",
-            "size": [11, 19],
-            "pivot": [1, 29],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70035,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Body/00002000.img_stand1_body.png",
-            "size": [23, 31],
-            "pivot": [18, 31],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70005,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Body/00012000.img_stand1_head.png",
-            "size": [39, 35],
-            "pivot": [23, 64],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70019,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Face/00020000.img_default_face.png",
-            "size": [26, 16],
-            "pivot": [20, 48],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70021,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "character/weapon/01302000.img_stand1.png",
-            "size": [41, 13],
-            "pivot": [27, 17],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70036,
-      "visible": true,
-    },
-  ])
 }

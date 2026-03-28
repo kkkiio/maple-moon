@@ -47,11 +47,32 @@ fn set_rect_sprite(
   height : Double,
   color : String,
 ) -> Unit {
-  let rect = @sprite.ColorRect::new(@selene_math.Vec2D(width, height), color)
   @sprite.sprites().set(
     entity,
-    @sprite.Sprite::from_color_rect(rect, @graphics.MOB_HP_BAR_ZINDEX),
+    @sprite.Sprite::from_color(
+      @sprite.color_from_css(color),
+      @selene_math.Vec2D(width, height),
+    ),
   )
+  if @transform.transforms().get(entity) is Some(current) {
+    @transform.transforms().set(entity, {
+      ..current,
+      translation: @selene_math.Vec3::new(
+        current.translation.x,
+        current.translation.y,
+        @graphics.MOB_HP_BAR_ZINDEX.to_double(),
+      ),
+    })
+  } else {
+    @transform.transforms().set(
+      entity,
+      @transform.Transform::from_xyz(
+        0.0,
+        0.0,
+        @graphics.MOB_HP_BAR_ZINDEX.to_double(),
+      ),
+    )
+  }
 }
 
 ///|
@@ -63,33 +84,45 @@ fn upsert_fill_sprite(state : MobHpBarState) -> Unit {
 
 ///|
 fn create_hpbar_state(parent : @entity.Entity) -> MobHpBarState {
+  fn spawn_child_at(
+    parent : @entity.Entity,
+    offset : @selene_math.Vec2D,
+  ) -> @entity.Entity {
+    let child = parent.spawn_child()
+    @transform2d.set_xy(child, offset)
+    child
+  }
   let root = parent.spawn_child()
-  let frame_bg = root.spawn_child(
-    offset=@selene_math.Vec2D((-HP_BAR_WIDTH / 2).to_double(), 0.0),
+  let frame_bg = spawn_child_at(
+    root,
+    @selene_math.Vec2D((-HP_BAR_WIDTH / 2).to_double(), 0.0),
   )
-  let frame_top = root.spawn_child(
-    offset=@selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 1.0),
+  let frame_top = spawn_child_at(
+    root,
+    @selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 1.0),
   )
-  let frame_bottom = root.spawn_child(
-    offset=@selene_math.Vec2D(
+  let frame_bottom = spawn_child_at(
+    root,
+    @selene_math.Vec2D(
       (1 - HP_BAR_WIDTH / 2).to_double(),
       (HP_BAR_HEIGHT - 2).to_double(),
     ),
   )
-  let frame_left = root.spawn_child(
-    offset=@selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 2.0),
+  let frame_left = spawn_child_at(
+    root,
+    @selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 2.0),
   )
-  let frame_right = root.spawn_child(
-    offset=@selene_math.Vec2D(
-      (HP_BAR_WIDTH - 2 - HP_BAR_WIDTH / 2).to_double(),
-      2.0,
-    ),
+  let frame_right = spawn_child_at(
+    root,
+    @selene_math.Vec2D((HP_BAR_WIDTH - 2 - HP_BAR_WIDTH / 2).to_double(), 2.0),
   )
-  let fill_light = root.spawn_child(
-    offset=@selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 3.0),
+  let fill_light = spawn_child_at(
+    root,
+    @selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 3.0),
   )
-  let fill_dark = root.spawn_child(
-    offset=@selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 6.0),
+  let fill_dark = spawn_child_at(
+    root,
+    @selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 6.0),
   )
 
   set_rect_sprite(
@@ -133,7 +166,7 @@ fn refresh_hpbar_state(mob : Mob, state : MobHpBarState) -> Unit {
   let head = mob.get_head_position()
   let body = mob.get_position()
   let offset = (head - body).shift_y(HP_BAR_TOP_SHIFT).to_vec2d()
-  state.root.set_offset(offset)
+  @transform2d.set_xy(state.root, offset)
 }
 
 ///|
@@ -157,7 +190,8 @@ pub fn setup_mob_hpbar_game_server_handlers() -> Unit {
 
 ///|
 /// ECS system that updates and renders mob hp bars using selene child entities.
-pub fn mob_hpbars_system(delta : Double) -> Unit {
+pub fn mob_hpbars_system(_world : @ecs.World) -> Unit {
+  let delta = @time.delta()
   guard get_map_mobs() is Some(mobs) else {
     while hp_events.pop() is Some(_) {
 

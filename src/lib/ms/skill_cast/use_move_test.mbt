@@ -204,14 +204,16 @@ test "use_move_integration_test" {
 ///|
 async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
   @skill_sfx.clear_events()
-  @resource.set_skill_loader(
+  @resource.register_async_loader(
+    "skill",
     @resource.AsyncLoader::new(
       "test_local_skill",
       base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
     ),
   )
-  @resource.set_string_loader(
+  @resource.register_async_loader(
+    "string",
     @resource.AsyncLoader::new(
       "test_local_string",
       base_url="/assets",

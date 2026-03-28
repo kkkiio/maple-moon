@@ -19,10 +19,10 @@ priv enum ButtonId {
 
 ///|
 priv struct ButtonStateResource {
-  normal : @sprite.Animation
-  mouse_over : @sprite.Animation
-  pressed : @sprite.Animation
-  disabled : @sprite.Animation
+  normal : @ms_animation.Animation
+  mouse_over : @ms_animation.Animation
+  pressed : @ms_animation.Animation
+  disabled : @ms_animation.Animation
   normal_texture : @resource.NxTexture
 }
 
@@ -38,8 +38,8 @@ priv struct WorldMapUIResource {
 
 ///|
 priv struct WorldMapMarkerResource {
-  cur_pos : @sprite.Animation
-  npc_pos : Array[@sprite.Animation]
+  cur_pos : @ms_animation.Animation
+  npc_pos : Array[@ms_animation.Animation]
   map_images : Array[@resource.NxTexture]
   map_image_sizes : Array[(Int, Int)]
 }
@@ -472,7 +472,7 @@ fn truncate_text(text : String, max_len : Int) -> String {
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
     @sprite.sprites().remove(entity) |> ignore
-    @position.positions().remove(entity) |> ignore
+    @transform2d.remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -506,10 +506,10 @@ fn register_scene_cleanup_once() -> Unit {
 ///|
 fn make_button_state_resource(src : @ui.NxMapleButton) -> ButtonStateResource {
   {
-    normal: @resource.nx_animation_to_selene_animation(src.normal),
-    mouse_over: @resource.nx_animation_to_selene_animation(src.mouse_over),
-    pressed: @resource.nx_animation_to_selene_animation(src.pressed),
-    disabled: @resource.nx_animation_to_selene_animation(src.disabled),
+    normal: @ms_animation.from_nx_animation(src.normal),
+    mouse_over: @ms_animation.from_nx_animation(src.mouse_over),
+    pressed: @ms_animation.from_nx_animation(src.pressed),
+    disabled: @ms_animation.from_nx_animation(src.disabled),
     normal_texture: src.normal.frames[0].texture,
   }
 }
@@ -558,10 +558,10 @@ fn parse_world_map_ui_resource(json : Json) -> WorldMapUIResource raise {
 fn parse_world_map_marker_resource(json : Json) -> WorldMapMarkerResource raise {
   let src : NxWorldMapMarker = @json.from_json(json)
   let npc_pos = [
-    @resource.nx_animation_to_selene_animation(src.npc_pos0, loop_=true),
-    @resource.nx_animation_to_selene_animation(src.npc_pos1, loop_=true),
-    @resource.nx_animation_to_selene_animation(src.npc_pos2, loop_=true),
-    @resource.nx_animation_to_selene_animation(src.npc_pos3, loop_=true),
+    @ms_animation.from_nx_animation(src.npc_pos0, loop_=true),
+    @ms_animation.from_nx_animation(src.npc_pos1, loop_=true),
+    @ms_animation.from_nx_animation(src.npc_pos2, loop_=true),
+    @ms_animation.from_nx_animation(src.npc_pos3, loop_=true),
   ]
   let map_textures = [
     src.map_image0,
@@ -576,7 +576,7 @@ fn parse_world_map_marker_resource(json : Json) -> WorldMapMarkerResource raise 
     map_image_sizes.push((texture.w, texture.h))
   }
   {
-    cur_pos: @resource.nx_animation_to_selene_animation(src.cur_pos, loop_=true),
+    cur_pos: @ms_animation.from_nx_animation(src.cur_pos, loop_=true),
     npc_pos,
     map_images,
     map_image_sizes,
@@ -683,17 +683,20 @@ async fn load_ui_resources(
 ) -> UiResources {
   let ui_json = match ui_json {
     Some(json) => json
-    None => @resource.get_ui_window_2_loader().load_resource(["WorldMap"])
+    None =>
+      @resource.get_async_loader("ui_window_2").load_resource(["WorldMap"])
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.get_ui_window_2_loader().load_resource(["ToolTip", "WorldMap"])
+      @resource.get_async_loader("ui_window_2").load_resource([
+        "ToolTip", "WorldMap",
+      ])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.get_map_latest_loader().load_resource([
+      @resource.get_async_loader("map_latest").load_resource([
         "MapHelper.img", "worldMap",
       ])
   }
@@ -711,7 +714,8 @@ async fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None => @resource.get_map_world_map_loader().load_resource(["\{name}.img"])
+    None =>
+      @resource.get_async_loader("map_world_map").load_resource(["\{name}.img"])
   }
   (name, parse_world_map_page_resource(name, json, marker))
 }
@@ -985,10 +989,7 @@ fn spawn_sprite(
   let entity = @entity.Entity::new()
   state.render_entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
-    entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-  )
+  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -1003,14 +1004,16 @@ fn spawn_rect(
 ) -> Unit {
   let entity = @entity.Entity::new()
   state.render_entities.push(entity)
-  let rect = @sprite.ColorRect::new(
-    @selene_math.Vec2D(width.to_double(), height.to_double()),
-    color,
-  )
-  @sprite.sprites().set(entity, @sprite.Sprite::from_color_rect(rect, z))
-  @position.positions().set(
+  @sprite.sprites().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    @sprite.Sprite::from_color(
+      @sprite.color_from_css(color),
+      @selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
+  )
+  @transform.transforms().set(
+    entity,
+    @transform.Transform::from_xyz(x.to_double(), y.to_double(), z.to_double()),
   )
 }
 
@@ -1022,7 +1025,7 @@ fn spawn_texture(
   y : Int,
   z : Int,
 ) -> Unit {
-  let animation = @sprite.Animation::single_frame_from_image(
+  let animation = @ms_animation.Animation::single_frame_from_image(
     @asset.load_image(texture.i),
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     offset=@selene_math.Vec2D(
@@ -1034,18 +1037,18 @@ fn spawn_texture(
       texture.origin.y.to_double(),
     ),
   )
-  spawn_sprite(state, @sprite.Sprite::from_animation(animation, z), x, y)
+  spawn_sprite(state, @ms_animation.sprite_from_animation(animation, z), x, y)
 }
 
 ///|
 fn spawn_animation(
   state : State,
-  animation : @sprite.Animation,
+  animation : @ms_animation.Animation,
   x : Int,
   y : Int,
   z : Int,
 ) -> Unit {
-  spawn_sprite(state, @sprite.Sprite::from_animation(animation, z), x, y)
+  spawn_sprite(state, @ms_animation.sprite_from_animation(animation, z), x, y)
 }
 
 ///|
@@ -1060,17 +1063,23 @@ fn spawn_text(
 ) -> Unit {
   let entity = @entity.Entity::new()
   state.render_entities.push(entity)
-  let sprite_text = @sprite.Text::new(
-    text,
-    color~,
-    font~,
-    baseline=@selene_math.Top,
-    align=@selene_math.Left,
-  )
-  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions().set(
+  @selene_ui.nodes().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(320.0, 20.0),
+    ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.text_fonts().set(entity, @selene_ui.TextFont::from_css(font))
+  @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css(color))
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(
+      align=@selene_math.Left,
+      baseline=@selene_math.Top,
+    ),
   )
 }
 
@@ -1482,7 +1491,7 @@ pub fn reset_world_map_ui_for_test() -> Unit {
 
 ///|
 /// Sprite-based world map ui system.
-pub fn world_map_ui_system(_delta : Double) -> Unit {
+pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
   register_scene_cleanup_once()
   let state = state_ref.val
   let mut dirty = state.dirty

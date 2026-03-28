@@ -9,6 +9,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "moonbitlang/core/json",
 }
@@ -28,7 +29,7 @@ pub fn query_npc_icon(Int) -> QuestIconQueryResult?
 
 pub fn quest_icon_query_revision() -> Int
 
-pub fn quest_icon_system(Double) -> Unit
+pub fn quest_icon_system(@ecs.World) -> Unit
 
 pub fn refresh_all() -> Unit
 

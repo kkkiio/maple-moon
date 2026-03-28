@@ -86,7 +86,6 @@ fn hide_cursor_entity(entity : @entity.Entity) -> Unit {
   @selene_ui.nodes().remove(entity)
   @selene_ui.z_indexes().remove(entity)
   @selene_ui.ui_images().remove(entity)
-  @selene_ui.ui_image_regions().remove(entity)
 }
 
 ///|
@@ -137,22 +136,19 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2D) -> Unit {
     cursor.entity,
     @selene_ui.ZIndex::new(CURSOR_ZINDEX),
   )
-  @selene_ui.ui_images().set(
-    cursor.entity,
-    @selene_ui.UiImage::new(size, cursor_texture_path(cursor.state)),
-  )
   let frame = cursor_frame_index(cursor)
   let frame_pos_x = if cursor.state == CursorState::CAN_CLICK {
     frame.to_double() * CAN_CLICK_FRAME_WIDTH
   } else {
     0.0
   }
-  @selene_ui.ui_image_regions().set(
+  @selene_ui.ui_images().set(
     cursor.entity,
-    @selene_ui.UiImageRegion::new({
-      position: @math.Vec2D(frame_pos_x, 0.0),
+    @selene_ui.UiImage::new(
       size,
-    }),
+      cursor_texture_path(cursor.state),
+      source=Some({ position: @math.Vec2D(frame_pos_x, 0.0), size }),
+    ),
   )
 }
 
@@ -160,7 +156,8 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2D) -> Unit {
 let cursor : Cursor = Cursor::new()
 
 ///|
-pub fn cursor_system(delta : Double) -> Unit {
+pub fn cursor_system(_world : @ecs.World) -> Unit {
+  let delta = @time.delta()
   if not(cursor.entity.is_alive()) {
     cursor.entity.respawn()
     cursor.state_seconds = 0.0

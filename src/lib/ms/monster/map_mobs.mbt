@@ -329,12 +329,16 @@ const MOB_ZINDEX_OFFSET = 2000
 const MAP_LAYER_STRIDE = 5000
 
 ///|
-pub fn map_monsters_system(_delta : Double) -> Unit {
+/// Advance map monster simulation once in fixed schedule.
+pub fn map_monsters_fixed_system(_world : @ecs.World) -> Unit {
   guard map_mobs_ctx.val is Some({ map_mobs, physics }) else { return }
-  let times = @logic_fps.get_logic_times()
-  for i = 0; i < times; i = i + 1 {
-    map_mobs.update(physics)
-  }
+  map_mobs.update(physics)
+}
+
+///|
+/// Sync monster render state in frame update schedule.
+pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
+  guard map_mobs_ctx.val is Some({ map_mobs, .. }) else { return }
   for _oid, mob in map_mobs.mobs {
     let entity = mob.entity
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }
@@ -353,20 +357,33 @@ pub fn map_monsters_system(_delta : Double) -> Unit {
       let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
         layer * MAP_LAYER_STRIDE +
         MOB_ZINDEX_OFFSET
-      let sprite = @sprite.Sprite::from_animation(anim.selene, z, transform~)
+      let sprite = @ms_animation.sprite_from_animation(
+        anim.selene,
+        z,
+        transform~,
+      )
       @sprite.sprites().set(entity, sprite)
       mob.last_synced_stance = Some(mob.stance)
     } else {
       // Only update Z
-      match @sprite.sprites().get(entity) {
-        Some(sprite) => {
-          let layer = mob.get_layer()
-          let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
-            layer * MAP_LAYER_STRIDE +
-            MOB_ZINDEX_OFFSET
-          @sprite.sprites().set(entity, { ..sprite, zindex: z })
-        }
-        None => ()
+      let layer = mob.get_layer()
+      let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
+        layer * MAP_LAYER_STRIDE +
+        MOB_ZINDEX_OFFSET
+      if @transform.transforms().get(entity) is Some(current) {
+        @transform.transforms().set(entity, {
+          ..current,
+          translation: @selene_math.Vec3::new(
+            current.translation.x,
+            current.translation.y,
+            z.to_double(),
+          ),
+        })
+      } else {
+        @transform.transforms().set(
+          entity,
+          @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+        )
       }
     }
   }

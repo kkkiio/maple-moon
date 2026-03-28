@@ -3,8 +3,8 @@ package "KKKIIO/maple-moon/lib/resource"
 
 import {
   "KKKIIO/maple-moon/lib/ms/res_types",
+  "Milky2018/selene/asset_types",
   "Milky2018/selene/math",
-  "Milky2018/selene/sprite",
   "moonbitlang/core/json",
 }
 
@@ -13,59 +13,17 @@ pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
 
 pub fn collect_spritesheet_paths(Json) -> Array[String]
 
-pub fn get_afterimage_loader() -> AsyncLoader
-
 pub fn get_async_loader(String) -> AsyncLoader
-
-pub fn get_background_set_loader() -> AsyncLoader
-
-pub fn get_body_loader() -> AsyncLoader
-
-pub fn get_character_loader() -> AsyncLoader
 
 pub fn get_csv_loader() -> CsvLoader
 
 pub fn get_csv_loader_by_name(String) -> CsvLoader
 
-pub fn get_effect_loader() -> AsyncLoader
-
-pub fn get_face_loader() -> AsyncLoader
-
-pub fn get_hair_loader() -> AsyncLoader
-
-pub fn get_item_loader() -> AsyncLoader
-
-pub fn get_item_special_loader() -> AsyncLoader
-
-pub fn get_map_latest_loader() -> AsyncLoader
-
-pub fn get_map_world_map_loader() -> AsyncLoader
-
-pub fn get_mapx_loader() -> AsyncLoader
-
-pub fn get_mob_loader() -> AsyncLoader
-
-pub fn get_npc_loader() -> AsyncLoader
-
-pub fn get_object_loader() -> AsyncLoader
-
-pub fn get_quest_loader() -> AsyncLoader
-
-pub fn get_skill_loader() -> AsyncLoader
-
-pub fn get_string_loader() -> AsyncLoader
-
 pub fn get_text_loader(String) -> TextLoader
 
-pub fn get_tile_loader() -> AsyncLoader
+pub fn nx_animation_to_playable(NxAnimation, loop_? : Bool) -> NxAnimationPlayable
 
-pub fn get_ui_window_2_loader() -> AsyncLoader
-
-pub fn get_ui_window_4_loader() -> AsyncLoader
-
-pub fn nx_animation_to_selene_animation(NxAnimation, loop_? : Bool) -> @sprite.Animation
-
-pub fn nx_texture_to_selene_picture(NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> @sprite.Picture
+pub fn nx_texture_to_picture_spec(NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> NxPictureSpec
 
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
 
@@ -79,49 +37,7 @@ pub fn register_csv_loader(String, CsvLoader) -> Unit
 
 pub fn register_text_loader(String, TextLoader) -> Unit
 
-pub fn set_afterimage_loader(AsyncLoader) -> Unit
-
-pub fn set_background_set_loader(AsyncLoader) -> Unit
-
-pub fn set_body_loader(AsyncLoader) -> Unit
-
-pub fn set_character_loader(AsyncLoader) -> Unit
-
 pub fn set_csv_loader(CsvLoader) -> Unit
-
-pub fn set_effect_loader(AsyncLoader) -> Unit
-
-pub fn set_face_loader(AsyncLoader) -> Unit
-
-pub fn set_hair_loader(AsyncLoader) -> Unit
-
-pub fn set_item_loader(AsyncLoader) -> Unit
-
-pub fn set_item_special_loader(AsyncLoader) -> Unit
-
-pub fn set_map_latest_loader(AsyncLoader) -> Unit
-
-pub fn set_map_world_map_loader(AsyncLoader) -> Unit
-
-pub fn set_mapx_loader(AsyncLoader) -> Unit
-
-pub fn set_mob_loader(AsyncLoader) -> Unit
-
-pub fn set_npc_loader(AsyncLoader) -> Unit
-
-pub fn set_object_loader(AsyncLoader) -> Unit
-
-pub fn set_quest_loader(AsyncLoader) -> Unit
-
-pub fn set_skill_loader(AsyncLoader) -> Unit
-
-pub fn set_string_loader(AsyncLoader) -> Unit
-
-pub fn set_tile_loader(AsyncLoader) -> Unit
-
-pub fn set_ui_window_2_loader(AsyncLoader) -> Unit
-
-pub fn set_ui_window_4_loader(AsyncLoader) -> Unit
 
 // Errors
 
@@ -193,6 +109,20 @@ pub fn NxAnimation::get_size(Self) -> (Int, Int)
 pub impl Show for NxAnimation
 pub impl @json.FromJson for NxAnimation
 
+pub(all) struct NxAnimationPlayable {
+  steps : Array[NxAnimationStep]
+  loop_ : Bool
+  native_eligible : Bool
+}
+
+pub(all) struct NxAnimationStep {
+  image : @asset_types.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  duration : Double
+}
+
 pub(all) struct NxFrame {
   texture : NxTexture
   delay : Int?
@@ -201,6 +131,15 @@ pub(all) struct NxFrame {
 }
 pub impl Show for NxFrame
 pub impl @json.FromJson for NxFrame
+
+pub(all) struct NxPictureSpec {
+  image : @asset_types.ImageHandle
+  rect : @math.Rect
+  size : @math.Vec2D
+  origin : @math.Vec2D
+  repeat : @math.RepeatMode
+  flip_x : Bool
+}
 
 pub(all) struct NxTexture {
   i : String

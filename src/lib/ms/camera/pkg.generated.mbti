@@ -1,0 +1,61 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/camera"
+
+import {
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+}
+
+// Values
+pub fn camera_entity() -> @entity.Entity?
+
+pub fn camera_follow_system(@ecs.World) -> Unit
+
+pub fn clear_follow_target() -> Unit
+
+pub fn clear_limits() -> Unit
+
+pub fn current_camera_center() -> @math.Vec2D
+
+pub fn current_camera_top_left() -> @math.Vec2D
+
+pub fn ensure_camera_entity(center? : @math.Vec2D) -> @entity.Entity
+
+pub fn set_camera_center(@math.Vec2D) -> Unit
+
+pub fn set_follow_target(@entity.Entity, offset? : @math.Vec2D) -> Unit
+
+pub fn set_limits(Double, Double, Double, Double) -> Unit
+
+pub fn setup_camera_entity(@entity.Entity, center? : @math.Vec2D) -> Unit
+
+pub fn viewport_to_world(@math.Vec2D) -> @math.Vec2D
+
+pub fn world_to_viewport(@math.Vec2D) -> @math.Vec2D
+
+// Errors
+
+// Types and methods
+pub(all) struct CameraLimits {
+  left : Double
+  right : Double
+  top : Double
+  bottom : Double
+}
+
+pub(all) struct CameraRuntime {
+  mut camera_entity : @entity.Entity?
+  mut follow_target : FollowTarget?
+  mut limits : CameraLimits?
+}
+
+pub(all) struct FollowTarget {
+  entity : @entity.Entity
+  offset : @math.Vec2D
+}
+
+// Type aliases
+
+// Traits
+

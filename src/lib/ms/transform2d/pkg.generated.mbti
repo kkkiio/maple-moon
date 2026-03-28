@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/transform2d"
+
+import {
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+}
+
+// Values
+pub fn get_xy(@entity.Entity) -> @math.Vec2D?
+
+pub fn remove(@entity.Entity) -> Unit
+
+pub fn set_xy(@entity.Entity, @math.Vec2D) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

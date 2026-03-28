@@ -209,7 +209,7 @@ fn current_player_name() -> String {
 
 ///|
 async fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.get_ui_window_2_loader().load_resource([
+  let src : Json = @resource.get_async_loader("ui_window_2").load_resource([
     "UtilDlgEx",
   ])
   NpcTalkResource::from_resource(src)
@@ -326,7 +326,7 @@ pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
 }
 
 ///|
-pub fn npc_talk_ui_system(_delta : Double) -> Unit {
+pub fn npc_talk_ui_system(_world : @ecs.World) -> Unit {
   guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
     close_npc_talk_ui()
     return
@@ -633,24 +633,26 @@ fn ui_image_from_texture(
   texture : @resource.NxTexture,
   fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> @selene_ui.UiImage {
+  let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     fit~,
+    source=Some(source),
   )
 }
 
 ///|
-fn ui_image_region_from_texture(
+fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
-) -> @selene_ui.UiImageRegion {
-  @selene_ui.UiImageRegion::new({
+) -> @render2d_types.ImageRegion2D {
+  {
     position: @selene_math.Vec2D(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
     size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-  })
+  }
 }
 
 ///|
@@ -662,10 +664,6 @@ fn UINpcTalk::set_image_texture(
 ) -> Unit {
   ignore(self)
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture, fit~))
-  @selene_ui.ui_image_regions().set(
-    entity,
-    ui_image_region_from_texture(texture),
-  )
 }
 
 ///|
@@ -792,15 +790,6 @@ fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
     entity,
     @selene_ui.TextColor::from_css(run.color.css_name()),
   )
-  if run.underline {
-    @selene_ui.underlines().set(entity, @selene_ui.Underline::new())
-    @selene_ui.underline_colors().set(
-      entity,
-      @selene_ui.UnderlineColor::new(
-        @selene_ui.parse_color(run.color.css_name()),
-      ),
-    )
-  }
 }
 
 ///|
@@ -839,6 +828,18 @@ fn UINpcTalk::spawn_rich_text_block(
   if clickable {
     @selene_ui.buttons().set(entity, @selene_ui.Button::new())
   }
+  let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
+    @selene_ui.TextSpan::new(
+      run.text,
+      font=Some(
+        @selene_ui.TextFont::new(family="Menlo", size=13.0, bold=run.bold),
+      ),
+      color=Some(@selene_ui.TextColor::from_css(run.color.css_name())),
+      bold=run.bold,
+      underline=run.underline,
+    )
+  })
+  @selene_ui.texts().set(entity, @selene_ui.Text::from_spans(spans))
   let first = runs
     .get(0)
     .unwrap_or(TextRun::{
@@ -847,14 +848,7 @@ fn UINpcTalk::spawn_rich_text_block(
       bold: false,
       underline: false,
     })
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(first.text))
   set_text_style(entity, first)
-  for i in 1..<runs.length() {
-    let run = runs[i]
-    let child = entity.spawn_child()
-    @selene_ui.text_spans().set(child, @selene_ui.TextSpan::new(run.text))
-    set_text_style(child, run)
-  }
   entity
 }
 

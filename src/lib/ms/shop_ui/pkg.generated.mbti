@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/shop_ui"
 
 import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "Milky2018/selene/ecs",
 }
 
 // Values
@@ -22,7 +23,7 @@ pub fn set_shop_visible_for_test(Bool) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 
-pub fn shop_ui_system(Double) -> Unit
+pub fn shop_ui_system(@ecs.World) -> Unit
 
 // Errors
 

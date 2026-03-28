@@ -1,9 +1,5 @@
 ///|
-using @resource {
-  nx_animation_to_selene_animation,
-  get_object_loader,
-  type NxAnimation,
-}
+using @resource {type NxAnimation}
 
 ///|
 /// Represents an obj (map decoration) on a map.
@@ -34,7 +30,7 @@ pub async fn load_obj_animation(
   key : ObjectAnimationPath,
 ) -> NxAnimation {
   let { l0, l1, l2 } = key
-  let res = get_object_loader().load_resource([
+  let res = @resource.get_async_loader("object").load_resource([
     "\{object_set_name}.img",
     l0,
     l1,
@@ -69,23 +65,21 @@ pub fn Obj::attach_entity(
   entity : @entity.Entity,
   z_offset : Int,
 ) -> Unit {
-  let animation = nx_animation_to_selene_animation(self.animation, loop_=true)
+  let animation = @ms_animation.from_nx_animation(self.animation, loop_=true)
   let transform = if self.flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
     @selene_math.Transform::new()
   }
-  let sprite = @sprite.Sprite::from_animation(
+  let sprite = @ms_animation.sprite_from_animation(
     animation,
     self.z + z_offset,
     transform~,
   )
   @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
+  @transform2d.set_xy(
     entity,
-    @position.Position(
-      @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
-    ),
+    @selene_math.Vec2D(self.pos.x.to_double(), self.pos.y.to_double()),
   )
 }
 

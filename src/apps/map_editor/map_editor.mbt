@@ -11,12 +11,8 @@ pub fn start_editor() -> Unit {
     .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
     .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
     .with_fps(@graphics.fps)
+    .with_fixed_hz(125U)
     .add_plugin(@plugins.default_plugin)
-  app = app.add_system(
-    Update,
-    fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
-    system_name="logic_fps_system",
-  )
   app = app.add_system(
     Startup,
     fn(_world) { start_map_loading_system(@time.delta()) },
@@ -34,23 +30,28 @@ pub fn start_editor() -> Unit {
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.background_system(@time.delta()) },
+    fn(world) { @map.background_system(world) },
     system_name="background_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.tile_objects_system(@time.delta()) },
+    fn(world) { @map.tile_objects_system(world) },
     system_name="tile_objects_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.portal_system(@time.delta()) },
+    fn(world) { @map.portal_system(world) },
     system_name="portal_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @monster.map_monsters_system(@time.delta()) },
+    fn(world) { @monster.map_monsters_render_system(world) },
     system_name="monster_rendering_system",
+  )
+  app = app.add_system(
+    FixedUpdate,
+    fn(world) { @monster.map_monsters_fixed_system(world) },
+    system_name="monster_fixed_system",
   )
   app = app.add_system(
     Update,
@@ -239,7 +240,7 @@ fn finalize_scene(
     ((borders.first() + borders.second()) / 2).to_double(),
   )
   let entity = ensure_camera_entity()
-  @position.positions().set(entity, @position.Position(center))
+  @transform2d.set_xy(entity, center)
   let map_limits = MapLimits::{
     left: walls.first().to_double(),
     right: walls.second().to_double(),
@@ -252,7 +253,7 @@ fn finalize_scene(
     map_limits.top,
     map_limits.bottom,
   )
-  @camera.set_limits(top~, bottom~, left~, right~)
+  @ms_camera.set_limits(left, right, top, bottom)
   viewer_state.val.scene_state = Some({ raw_resources, scene_map, map_limits })
 
   // Initialize Physics
@@ -301,7 +302,7 @@ fn ensure_camera_entity() -> @entity.Entity {
     Some(entity) => entity
     None => {
       let entity = @entity.Entity::new()
-      @camera.attach_entity(entity, @selene_math.Vec2D::zero())
+      @ms_camera.setup_camera_entity(entity, center=@selene_math.Vec2D::zero())
       viewer_state.val.camera_entity = Some(entity)
       entity
     }
@@ -320,17 +321,16 @@ fn camera_control_system(delta : Double) -> Unit {
   if direction.distance() == 0.0 {
     return
   }
-  let current_pos = @position.positions()
-    .get(entity)
-    .map(fn(pos) { pos.0 })
-    .unwrap_or(@selene_math.Vec2D::zero())
+  let current_pos = @transform2d.get_xy(entity).unwrap_or(
+    @selene_math.Vec2D::zero(),
+  )
   let next_pos = current_pos +
     direction.normalize().scalar_mul(CAMERA_SPEED * delta)
   let clamped_pos = match viewer_state.val.scene_state {
     Some({ map_limits, .. }) => clamp_vec(next_pos, map_limits)
     None => next_pos
   }
-  @position.positions().set(entity, @position.Position(clamped_pos))
+  @transform2d.set_xy(entity, clamped_pos)
 }
 
 ///|

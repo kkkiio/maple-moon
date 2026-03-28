@@ -37,14 +37,14 @@ pub impl @json.FromJson for NxMapleButton with from_json(
 ///|
 /// Parsed MapleStory button visuals for selene-based UIs.
 pub(all) struct MapleButtonResource {
-  selene_animations : Map[ButtonState, @sprite.Animation]
+  selene_animations : Map[ButtonState, @ms_animation.Animation]
   dimensions : Point[Int]
 }
 
 ///|
 /// Build a runtime button resource from parsed nx button data.
 pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource {
-  let selene_animations : Map[ButtonState, @sprite.Animation] = {}
+  let selene_animations : Map[ButtonState, @ms_animation.Animation] = {}
   let states : Array[(ButtonState, @resource.NxAnimation)] = [
     (ButtonState::NORMAL, src.normal),
     (ButtonState::PRESSED, src.pressed),
@@ -53,9 +53,7 @@ pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource 
   ]
   for item in states {
     let (state, animation) = item
-    selene_animations[state] = @resource.nx_animation_to_selene_animation(
-      animation,
-    )
+    selene_animations[state] = @ms_animation.from_nx_animation(animation)
   }
   let (width, height) = src.normal.get_size()
   { selene_animations, dimensions: { x: width, y: height } }
@@ -166,6 +164,6 @@ pub fn MapleButton::update_pointer(
 /// Returns the selene animation for the current visual state.
 pub fn MapleButton::current_selene_animation(
   self : MapleButton,
-) -> @sprite.Animation {
+) -> @ms_animation.Animation {
   self.resource.selene_animations.get(self.current_state()).unwrap()
 }

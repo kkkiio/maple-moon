@@ -1,4 +1,5 @@
 import {
+  "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "moonbitlang/core/random",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
@@ -13,7 +14,8 @@ import {
   "KKKIIO/maple-moon/lib/ms/combat_proto" @combat,
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/io_service",
-  "Milky2018/selene/position",
+  "Milky2018/selene/transform",
+  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/game_state",
@@ -21,6 +23,8 @@ import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
 }
 
 import {

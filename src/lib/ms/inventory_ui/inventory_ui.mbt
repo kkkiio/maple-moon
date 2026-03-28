@@ -34,8 +34,7 @@ priv struct State {
   slot_buttons : Array[SlotButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   mut binding_version : Int
-  mut last_clicked_slot : Int?
-  mut double_click_window : Double
+  mut active_slot : Int?
 }
 
 ///|
@@ -83,8 +82,7 @@ let state_ref : Ref[State] = Ref::new({
   slot_buttons: [],
   click_reader: @event.EventReader::new(),
   binding_version: 0,
-  last_clicked_slot: None,
-  double_click_window: 0.0,
+  active_slot: None,
 })
 
 ///|
@@ -133,9 +131,6 @@ const COUNT_TEXT_BOTTOM_PADDING : Int = 2
 
 ///|
 const COUNT_TEXT_HEIGHT_PX : Int = 11
-
-///|
-const DOUBLE_CLICK_WINDOW_SECONDS : Double = 0.35
 
 ///|
 fn new_items_map() -> Map[InventoryType, Array[DisplayItem]] {
@@ -218,23 +213,25 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
 
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+  let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
     @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
     texture.i,
+    source=Some(source),
   )
 }
 
 ///|
-fn ui_image_region_from_texture(
+fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
-) -> @selene_ui.UiImageRegion {
-  @selene_ui.UiImageRegion::new({
+) -> @render2d_types.ImageRegion2D {
+  {
     position: @selene_math.Vec2D(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
     size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-  })
+  }
 }
 
 ///|
@@ -243,10 +240,6 @@ fn set_image_texture(
   texture : @resource.NxTexture,
 ) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
-  @selene_ui.ui_image_regions().set(
-    entity,
-    ui_image_region_from_texture(texture),
-  )
 }
 
 ///|
@@ -551,6 +544,19 @@ fn render_inventory(state : State) -> Unit {
       )
       @selene_ui.z_indexes().set(slot_entity, @selene_ui.ZIndex::new(z + 6))
       @selene_ui.buttons().set(slot_entity, @selene_ui.Button::new())
+      if state.active_slot == Some(slot_index) {
+        @selene_ui.background_colors().set(
+          slot_entity,
+          @selene_ui.BackgroundColor::from_css("rgba(255, 207, 74, 0.18)"),
+        )
+        @selene_ui.outlines().set(
+          slot_entity,
+          @selene_ui.Outline::new(
+            @selene_ui.Val::px(2.0),
+            @selene_ui.BorderColor::from_css("#ffcf4a").color,
+          ),
+        )
+      }
       state.slot_buttons.push({ slot_no: slot_index, entity: slot_entity })
 
       match slot_map.get(slot_index) {
@@ -630,8 +636,7 @@ fn register_scene_cleanup_once() -> Unit {
       state.ui_loading = None
       state.icon_by_item_id.clear()
       state.binding_version += 1
-      state.last_clicked_slot = None
-      state.double_click_window = 0.0
+      state.active_slot = None
     }
     true
   })
@@ -678,6 +683,7 @@ pub fn setup_game_server_handlers() -> Unit {
 pub fn bind_inventory(inventory : Inventory) -> Unit {
   let state = state_ref.val
   state.binding_version += 1
+  state.active_slot = None
   let current_binding = state.binding_version
   refresh_from_inventory(state, inventory)
   for tab in tabs {
@@ -728,11 +734,11 @@ pub fn set_inventory_visible(visible : Bool) -> Unit {
   }
   state.visible = visible
   if not(visible) {
-    state.last_clicked_slot = None
-    state.double_click_window = 0.0
+    state.active_slot = None
     clear_render(state)
     return
   }
+  state.active_slot = None
   render_inventory(state)
 }
 
@@ -766,6 +772,7 @@ pub fn set_tab_index_for_test(tab_index : Int) -> Unit {
     return
   }
   state.tab_index = tab_index
+  state.active_slot = None
   if state.visible {
     render_inventory(state)
   }
@@ -818,59 +825,55 @@ fn find_clicked_slot(state : State, entity : @entity.Entity) -> Int? {
 }
 
 ///|
-fn process_click_events(state : State) -> Bool {
+fn process_click_events(state : State) -> (Bool, Bool) {
   let mut dirty = false
+  let mut clicked_slot_or_tab = false
   let click_events = @selene_ui.click_event_bus.read(state.click_reader)
   for event in click_events {
     guard event.button is @inputs.MouseButton::Left else { continue }
     match find_clicked_tab_index(state, event.entity) {
-      Some(next_tab) =>
+      Some(next_tab) => {
+        clicked_slot_or_tab = true
         if state.tab_index != next_tab {
           state.tab_index = next_tab
-          state.last_clicked_slot = None
-          state.double_click_window = 0.0
+          state.active_slot = None
           dirty = true
         }
+      }
       None =>
         match find_clicked_slot(state, event.entity) {
-          Some(slot_no) =>
-            if state.last_clicked_slot is Some(last_slot) &&
-              last_slot == slot_no &&
-              state.double_click_window > 0.0 {
-              state.last_clicked_slot = None
-              state.double_click_window = 0.0
+          Some(slot_no) => {
+            clicked_slot_or_tab = true
+            if state.active_slot == Some(slot_no) {
+              state.active_slot = None
               let type_id = tabs[state.tab_index]
               @inventory.use_item_at_slot(type_id, slot_no) |> ignore
             } else {
-              state.last_clicked_slot = Some(slot_no)
-              state.double_click_window = DOUBLE_CLICK_WINDOW_SECONDS
+              state.active_slot = Some(slot_no)
             }
-          None => ()
+            dirty = true
+          }
+          None =>
+            if state.active_slot is Some(_) {
+              state.active_slot = None
+              dirty = true
+            }
         }
     }
   }
-  dirty
+  (dirty, clicked_slot_or_tab)
 }
 
 ///|
 /// System for rendering and toggling the display-only inventory UI.
-pub fn inventory_ui_system(delta : Double) -> Unit {
+pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
   let state = state_ref.val
   let mut dirty = false
-
-  if state.double_click_window > 0.0 {
-    state.double_click_window -= delta
-    if state.double_click_window <= 0.0 {
-      state.double_click_window = 0.0
-      state.last_clicked_slot = None
-    }
-  }
 
   if @inputs.is_just_pressed(@inputs.KeyI) {
     state.visible = not(state.visible)
     if not(state.visible) {
-      state.last_clicked_slot = None
-      state.double_click_window = 0.0
+      state.active_slot = None
     }
     dirty = true
   }
@@ -893,7 +896,15 @@ pub fn inventory_ui_system(delta : Double) -> Unit {
   if dirty || state.ui_entities.is_empty() {
     render_inventory(state)
   }
-  if process_click_events(state) {
+  let (click_dirty, clicked_slot_or_tab) = process_click_events(state)
+  if click_dirty {
+    render_inventory(state)
+    return
+  }
+  if @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left) &&
+    state.active_slot is Some(_) &&
+    not(clicked_slot_or_tab) {
+    state.active_slot = None
     render_inventory(state)
   }
 }

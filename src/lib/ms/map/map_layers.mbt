@@ -10,7 +10,7 @@ struct TilesObjsLayer {
 
 ///|
 pub async fn load_tileset(ts : String) -> NxTileSet {
-  let json = get_tile_loader().load_resource([ts + ".img"])
+  let json = @resource.get_async_loader("tile").load_resource([ts + ".img"])
   @json.from_json(json)
 }
 
@@ -178,7 +178,7 @@ pub fn set_tiles_objs(tiles_objs : MapLayers) -> Unit {
 
 ///|
 /// Tile 与 Obj 的刷新系统，在 App 的系统调度中注册，用于懒加载实体与切换可见性。
-pub fn tile_objects_system(_delta : Double) -> Unit {
+pub fn tile_objects_system(_world : @ecs.World) -> Unit {
   guard tile_objects_context.val is Some(ctx) else { return }
   ensure_tile_entities(ctx)
   ensure_obj_entities(ctx)
@@ -458,9 +458,14 @@ fn ensure_obj_sprite(
 
 ///|
 fn set_entity_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
-  if @sprite.sprites().get(entity) is Some(sprite) {
-    sprite.visible = visible
-  }
+  @visibility.visibilities().set(
+    entity,
+    if visible {
+      @visibility.Visibility::Visible
+    } else {
+      @visibility.Visibility::Hidden
+    },
+  )
 }
 
 ///|
@@ -497,6 +502,3 @@ fn obj_is_visible(ctx : TileObjectsContext, obj : Obj) -> Bool {
 fn[T] in_bounds(arr : Array[T], index : Int) -> Bool {
   index >= 0 && index < arr.length()
 }
-
-///|
-using @resource {get_tile_loader}

@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/ms/world_map_ui"
 
+import {
+  "Milky2018/selene/ecs",
+}
+
 // Values
 pub fn get_world_map_debug_state_for_test() -> Json
 
@@ -32,7 +36,7 @@ pub fn set_world_map_visible(Bool) -> Unit
 
 pub fn toggle_world_map() -> Unit
 
-pub fn world_map_ui_system(Double) -> Unit
+pub fn world_map_ui_system(@ecs.World) -> Unit
 
 // Errors
 

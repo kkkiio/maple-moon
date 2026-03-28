@@ -1,7 +1,4 @@
 ///|
-using @resource {nx_animation_to_selene_animation}
-
-///|
 using @char_look {type CharLookMod}
 
 ///|
@@ -36,7 +33,7 @@ struct SelectCharUI {
 
 ///|
 pub(all) struct SelectCharUIResource {
-  ani18 : @sprite.Animation
+  ani18 : @ms_animation.Animation
   bt_new : @ui.MapleButtonResource
   bt_select : @ui.MapleButtonResource
 }
@@ -163,7 +160,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
   let bt_new : @ui.NxMapleButton = @json.from_json(bt_new_res)
   let bt_select : @ui.NxMapleButton = @json.from_json(bt_select_res)
   {
-    ani18: nx_animation_to_selene_animation(ani18),
+    ani18: @ms_animation.from_nx_animation(ani18),
     bt_new: @ui.MapleButtonResource::from_nx(bt_new),
     bt_select: @ui.MapleButtonResource::from_nx(bt_select),
   }
@@ -184,13 +181,13 @@ pub async fn SelectCharUI::new(
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
-  let back13 = @sprite.Animation::single_frame(
+  let back13 = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/back13.png",
     @selene_math.Vec2D(800, 600),
-    //   "origin": [392, 297],
+    //   "origin": [392, 297]
   )
-  let ani17 = @sprite.Animation::new([
-    @sprite.AnimationFrame::{
+  let ani17 = @ms_animation.Animation::new([
+    @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
@@ -201,7 +198,7 @@ pub async fn SelectCharUI::new(
       //     "a1": 50,
       //     "delay": 3000,
     },
-    @sprite.AnimationFrame::{
+    @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2D(505, 242),
       offset: @selene_math.Vec2D(0, 0),
@@ -213,8 +210,8 @@ pub async fn SelectCharUI::new(
       //     "delay": 3000,
     },
   ])
-  let ani19 : @sprite.Animation = @sprite.Animation::new([
-    @sprite.AnimationFrame::{
+  let ani19 : @ms_animation.Animation = @ms_animation.Animation::new([
+    @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       size: @selene_math.Vec2D(355, 312),
       offset: @selene_math.Vec2D(0, 0),
@@ -226,7 +223,7 @@ pub async fn SelectCharUI::new(
       //     "delay": 2300,
       // "origin": [156, 177],
     },
-    @sprite.AnimationFrame::{
+    @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
@@ -237,7 +234,7 @@ pub async fn SelectCharUI::new(
       // "delay": 3300,
       // "origin": [156, 177],
     },
-    @sprite.AnimationFrame::{
+    @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2D(312, 0),
       size: @selene_math.Vec2D(355, 312),
@@ -250,15 +247,15 @@ pub async fn SelectCharUI::new(
       // "origin": [156, 177],
     },
   ])
-  let frame = @sprite.Animation::single_frame(
+  let frame = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/frame.png",
     @selene_math.Vec2D(800, 600),
-    //   "origin": [400, 300],
+    //   "origin": [400, 300]
   )
-  let step2 = @sprite.Animation::single_frame(
+  let step2 = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/select_character_btn.png",
     @selene_math.Vec2D(127, 45),
-    //   "origin": [0, 0],
+    //   "origin": [0, 0]
   )
   let entities = []
   for
@@ -272,8 +269,8 @@ pub async fn SelectCharUI::new(
     ] {
     let (s, pos) = t
     let entity = @entity.Entity::new()
-    @position.positions().set(entity, @position.Position(pos))
-    @sprite.sprites().set(entity, @sprite.Sprite::from_animation(s, 0))
+    @transform2d.set_xy(entity, pos)
+    @sprite.sprites().set(entity, @ms_animation.sprite_from_animation(s, 0))
     entities.push(entity)
   }
   let characters_entities = Array::makei(characters.length(), fn(_) {
@@ -296,9 +293,9 @@ pub async fn SelectCharUI::new(
   ) -> SeleneButton {
     let entity = @entity.Entity::new()
     entities.push(entity)
-    @position.positions().set(
+    @transform2d.set_xy(
       entity,
-      @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
     )
     let button = @ui.MapleButton::new(
       res,
@@ -307,7 +304,7 @@ pub async fn SelectCharUI::new(
     )
     @sprite.sprites().set(
       entity,
-      @sprite.Sprite::from_animation(button.current_selene_animation(), 10),
+      @ms_animation.sprite_from_animation(button.current_selene_animation(), 10),
     )
     { button, entity }
   }
@@ -317,13 +314,10 @@ pub async fn SelectCharUI::new(
   })
   let new_button_entity = @entity.Entity::new()
   entities.push(new_button_entity)
-  @position.positions().set(
-    new_button_entity,
-    @position.Position(@selene_math.Vec2D(200.0, 495.0)),
-  )
+  @transform2d.set_xy(new_button_entity, @selene_math.Vec2D(200.0, 495.0))
   @sprite.sprites().set(
     new_button_entity,
-    @sprite.Sprite::from_animation(
+    @ms_animation.sprite_from_animation(
       resources.bt_new.selene_animations[@ui.ButtonState::NORMAL],
       10,
     ),
@@ -373,15 +367,29 @@ fn spawn_character_name_entity(
   name : String,
   entities : Array[@entity.Entity],
 ) -> Unit {
-  let text_entity = parent.spawn_child(offset=@selene_math.Vec2D(0, 54))
-  entities.push(text_entity)
-  let text = @sprite.Text::new(
-    name,
-    color="white",
-    font="13px Arial",
-    align=@selene_math.HAlign::Center,
+  let text_entity = parent.spawn_child()
+  @transform.transforms().set(
+    text_entity,
+    @transform.Transform::from_xyz(0.0, 54.0, 10.0),
   )
-  @sprite.sprites().set(text_entity, @sprite.Sprite::from_text(text, 10))
+  entities.push(text_entity)
+  @text2d.text2ds().set(text_entity, @text2d.Text2d::new())
+  @selene_ui.texts().set(text_entity, @selene_ui.Text::new(name))
+  @selene_ui.text_colors().set(
+    text_entity,
+    @selene_ui.TextColor::from_css("white"),
+  )
+  @selene_ui.text_fonts().set(
+    text_entity,
+    @selene_ui.TextFont::from_css("13px Arial"),
+  )
+  @selene_ui.text_layouts().set(
+    text_entity,
+    @selene_ui.TextLayout::new(
+      align=@selene_math.HAlign::Center,
+      baseline=@selene_math.VAlign::Top,
+    ),
+  )
 }
 
 ///|
@@ -407,10 +415,7 @@ pub async fn to_selectable_character_ui(
 ) -> SelectableCharacterUI {
   let char_look = load_char_look(entity, mod, character)
   let { cid, name, .. } = character
-  @position.positions().set(
-    entity,
-    @position.Position(get_character_slot_pos(i, 135, 234).to_vec2d()),
-  )
+  @transform2d.set_xy(entity, get_character_slot_pos(i, 135, 234).to_vec2d())
   char_look.set_stance(@char_stance.StanceId::STAND1)
   char_look.set_facing_right(true)
   char_look.play_animations()
@@ -494,7 +499,7 @@ let select_char_loading_future : Ref[
 ] = Ref::new(None)
 
 ///|
-pub fn select_char_ui_system(_delta : Double) -> Unit {
+pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
   guard @char_look.get_module() is Some(mod) else { return }
   guard game_state.phase is GamePhase::SelectCharacter else {
     reset_select_char_ui_runtime_state()
@@ -517,7 +522,7 @@ pub fn select_char_ui_system(_delta : Double) -> Unit {
       )
       @sprite.sprites().set(
         button.entity,
-        @sprite.Sprite::from_animation(
+        @ms_animation.sprite_from_animation(
           button.button.current_selene_animation(),
           10,
         ),

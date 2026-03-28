@@ -70,7 +70,7 @@ fn get_passive_reader() -> @event.EventReader[@combat_system.HitEvent] {
 ///|
 /// Passive skill system - processes hit events and triggers passive effects
 /// Should be called after combat_system in the game loop
-pub fn passive_system(_delta : Double) -> Unit {
+pub fn passive_system(_world : @ecs.World) -> Unit {
   let ctx = PassiveContext::{
     randomizer: passive_randomizer_ref.val,
     get_character_fn: @character.get_character_by_oid,

@@ -46,23 +46,19 @@ fn game_start() -> Unit {
 fn main {
   install_builtin_resource_loaders()
   @item.set_item_data_system(
-    @item.ItemDataSystem::new(@resource.get_item_loader()),
+    @item.ItemDataSystem::new(@resource.get_async_loader("item")),
   )
   let mut app = @app.App::new()
     .with_image_smooth(false)
     .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
     .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
     .with_fps(@graphics.fps)
+    .with_fixed_hz(@logic_fps.LOGIC_FPS.reinterpret_as_uint())
     .add_plugin(@plugins.default_plugin)
   // .add_plugin(@plugins.debug_plugin)
   app = app.add_system(
     Update,
-    fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
-    system_name="logic_fps_system",
-  )
-  app = app.add_system(
-    Update,
-    fn(_world) { app_resource_setup_system(@time.delta()) },
+    fn(world) { app_resource_setup_system(world) },
     system_name="app_resource_setup_system",
   )
   app = app.add_system(Startup, fn(_world) { game_start() })
@@ -78,27 +74,27 @@ fn main {
   )
   app = app.add_system(
     Update,
-    fn(_world) { @ui.ui_system(@time.delta()) },
+    fn(world) { @ui.ui_system(world) },
     system_name="ui_system",
   )
   app = app.add_system(
-    Update,
-    fn(_world) { @ui.number_system(@time.delta()) },
+    FixedUpdate,
+    fn(world) { @ui.number_system(world) },
     system_name="number_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @inventory_ui.inventory_ui_system(@time.delta()) },
+    fn(world) { @inventory_ui.inventory_ui_system(world) },
     system_name="inventory_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @shop_ui.shop_ui_system(@time.delta()) },
+    fn(world) { @shop_ui.shop_ui_system(world) },
     system_name="shop_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @equip_system.equip_system(@time.delta()) },
+    fn(world) { @equip_system.equip_system(world) },
     system_name="equip_system",
   )
   app = app.add_system(
@@ -108,129 +104,157 @@ fn main {
   )
   app = app.add_system(
     Update,
-    fn(_world) { @char_look.char_look_system(@time.delta()) },
+    fn(world) { @ms_animation.animation_system(world) },
+    system_name="ms_animation_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(world) { @char_look.char_look_system(world) },
     system_name="char_look_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @char_look.update_after_image_system(@time.delta()) },
+    fn(world) { @char_look.update_after_image_system(world) },
     system_name="after_image_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @graphics.effect_layer_system(@time.delta()) },
+    fn(world) { @graphics.effect_layer_system(world) },
     system_name="effect_layer_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @select_char_ui.select_char_ui_system(@time.delta()) },
+    fn(world) { @select_char_ui.select_char_ui_system(world) },
     system_name="select_char_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) {
-      @explorer_creation_ui.explorer_creation_ui_system(@time.delta())
-    },
+    fn(world) { @explorer_creation_ui.explorer_creation_ui_system(world) },
     system_name="explorer_creation_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @npc_talk_ui.npc_talk_ui_system(@time.delta()) },
+    fn(world) { @npc_talk_ui.npc_talk_ui_system(world) },
     system_name="npc_talk_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @status_bar_ui.status_bar_ui_system(@time.delta()) },
+    fn(world) { @status_bar_ui.status_bar_ui_system(world) },
     system_name="status_bar_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @game_scene.scene_transition_system(@time.delta()) },
+    fn(world) { @game_scene.scene_transition_system(world) },
     system_name="scene_transition_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @game_scene.look_sync_system(@time.delta()) },
+    fn(world) { @game_scene.look_sync_system(world) },
     system_name="look_sync_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @controller.player_controller_system(@time.delta()) },
-    system_name="player_controller_system",
+    fn(world) { @controller.player_controller_input_system(world) },
+    system_name="player_controller_input_system",
+  )
+  app = app.add_system(
+    FixedUpdate,
+    fn(world) { @controller.player_controller_fixed_system(world) },
+    system_name="player_controller_fixed_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.background_system(@time.delta()) },
+    fn(world) { @ms_camera.camera_follow_system(world) },
+    system_name="camera_follow_system",
+  )
+  app = app.add_system(
+    Update,
+    fn(world) { @map.background_system(world) },
     system_name="background_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.tile_objects_system(@time.delta()) },
+    fn(world) { @map.tile_objects_system(world) },
     system_name="tile_objects_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @map.portal_system(@time.delta()) },
+    fn(world) { @map.portal_system(world) },
     system_name="portal_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @mini_map_ui.mini_map_ui_system(@time.delta()) },
+    fn(world) { @mini_map_ui.mini_map_ui_system(world) },
     system_name="mini_map_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @world_map_ui.world_map_ui_system(@time.delta()) },
+    fn(world) { @world_map_ui.world_map_ui_system(world) },
     system_name="world_map_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @quest_icon.quest_icon_system(@time.delta()) },
+    fn(world) { @quest_icon.quest_icon_system(world) },
     system_name="quest_icon_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @quest_log_ui.quest_log_ui_system(@time.delta()) },
+    fn(world) { @quest_log_ui.quest_log_ui_system(world) },
     system_name="quest_log_ui_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @npc.map_npcs_system(@time.delta()) },
-    system_name="map_npcs_system",
+    fn(world) { @npc.map_npcs_pointer_system(world) },
+    system_name="map_npcs_pointer_system",
+  )
+  app = app.add_system(
+    FixedUpdate,
+    fn(world) { @npc.map_npcs_fixed_system(world) },
+    system_name="map_npcs_fixed_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @cursor.cursor_system(@time.delta()) },
+    fn(world) { @cursor.cursor_system(world) },
     system_name="cursor_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @monster.map_monsters_system(@time.delta()) },
-    system_name="map_monsters_system",
+    fn(world) { @monster.map_monsters_render_system(world) },
+    system_name="map_monsters_render_system",
+  )
+  app = app.add_system(
+    FixedUpdate,
+    fn(world) { @monster.map_monsters_fixed_system(world) },
+    system_name="map_monsters_fixed_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @monster.mob_hpbars_system(@time.delta()) },
+    fn(world) { @monster.mob_hpbars_system(world) },
     system_name="mob_hpbars_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @drop.map_drops_system(@time.delta()) },
-    system_name="map_drops_system",
+    fn(world) { @drop.map_drops_loading_system(world) },
+    system_name="map_drops_loading_system",
   )
   app = app.add_system(
-    Update,
-    fn(_world) { @bullet.bullet_system(@time.delta()) },
+    FixedUpdate,
+    fn(world) { @drop.map_drops_fixed_system(world) },
+    system_name="map_drops_fixed_system",
+  )
+  app = app.add_system(
+    FixedUpdate,
+    fn(world) { @bullet.bullet_system(world) },
     system_name="bullet_system",
   )
   app = app.add_system(
-    Update,
-    fn(_world) { @combat_system.combat_system(@time.delta()) },
+    FixedUpdate,
+    fn(world) { @combat_system.combat_system(world) },
     system_name="combat_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @passive.passive_system(@time.delta()) },
+    fn(world) { @passive.passive_system(world) },
     system_name="passive_system",
   )
   app = app.add_system(
@@ -240,12 +264,12 @@ fn main {
   )
   app = app.add_system(
     Update,
-    fn(_world) { @io_service.io_system(@time.delta()) },
+    fn(world) { @io_service.io_system(world) },
     system_name="io_system",
   )
   app = app.add_system(
     Update,
-    fn(_world) { @console.console_input_injection_system(@time.delta()) },
+    fn(world) { @console.console_input_injection_system(world) },
     system_name="console_input_injection_system",
   )
   app.run()

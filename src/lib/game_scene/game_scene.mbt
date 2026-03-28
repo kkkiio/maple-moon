@@ -34,7 +34,7 @@ pub fn Stage::new(
   // damage_number_set : @ui.NumberSet,
   // network : @net.Network,
   // bullet_module : @bullet.Module,
-  // combat : @combat_system.Combat,
+  // combat : @combat_system.Combat
 ) -> Stage {
   {
     map_portals_animations,
@@ -81,11 +81,15 @@ fn respawn_player(
     "bottom": bottom,
   })
   player.respawn(startpos, map_info.is_underwater())
-  @camera.attach_entity(player.entity, @selene_math.Vec2D(16.0, 16.0))
+  ignore(@ms_camera.ensure_camera_entity())
+  @ms_camera.set_follow_target(
+    player.entity,
+    offset=@selene_math.Vec2D(16.0, 16.0),
+  )
   let (left, right, top, bottom) = normalize_camera_limits(
     left, right, top, bottom,
   )
-  @camera.set_limits(left~, right~, top~, bottom~)
+  @ms_camera.set_limits(left, right, top, bottom)
 }
 
 ///|
@@ -183,7 +187,7 @@ pub fn get_stage() -> Stage? {
 ///|
 
 ///|
-pub fn scene_transition_system(_delta : Double) -> Unit {
+pub fn scene_transition_system(_world : @ecs.World) -> Unit {
   match @game_state.game_state.phase {
     GameSetup(..) => ()
     SelectCharacter | ExplorerCharacterCreation => {
@@ -271,7 +275,7 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
             }
             match after_image_name {
               Some(after_image_name) => {
-                let after_image_res = @resource.get_afterimage_loader().load_resource([
+                let after_image_res = @resource.get_async_loader("afterimage").load_resource([
                     "\{after_image_name}.img",
                   ],
                 )
@@ -300,8 +304,8 @@ pub fn scene_transition_system(_delta : Double) -> Unit {
               @log.fatal("markup_text reference data is not ready")
               panic()
             }
-            let npc_loader = @resource.get_npc_loader()
-            let string_loader = @resource.get_string_loader()
+            let npc_loader = @resource.get_async_loader("npc")
+            let string_loader = @resource.get_async_loader("string")
             (
               weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
               string_loader,

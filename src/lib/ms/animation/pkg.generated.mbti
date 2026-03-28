@@ -1,0 +1,81 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/animation"
+
+import {
+  "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/asset_types",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+  "Milky2018/selene/sprite",
+}
+
+// Values
+pub fn animation_system(@ecs.World) -> Unit
+
+pub fn current_frame_index(@entity.Entity) -> Int
+
+pub fn frame_count(Animation) -> Int
+
+pub fn frame_origin_at(Animation, Int) -> @math.Vec2D?
+
+pub fn frame_size_at(Animation, Int) -> @math.Vec2D?
+
+pub fn from_nx_animation(@resource.NxAnimation, loop_? : Bool) -> Animation
+
+pub fn from_nx_texture(@resource.NxTexture, size? : @math.Vec2D, repeat? : @math.RepeatMode, flip_x? : Bool) -> Picture
+
+pub fn is_animation_finished(@entity.Entity) -> Bool
+
+pub fn play_animation(@entity.Entity, Animation, loop_? : Bool, transform? : @math.Transform) -> Unit
+
+pub fn set_animation_speed(@entity.Entity, Double) -> Unit
+
+pub fn set_animation_transform(@entity.Entity, @math.Transform) -> Unit
+
+pub fn sprite_from_animation(Animation, Int, transform? : @math.Transform, alpha? : Double) -> @sprite.Sprite
+
+pub fn sprite_from_picture(Picture, Int, alpha? : Double) -> @sprite.Sprite
+
+pub fn stop_animation(@entity.Entity) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) struct Animation {
+  playback : @resource.NxAnimationPlayable
+  backend : AnimationBackend
+}
+pub fn Animation::new(Array[AnimationFrame], loop_? : Bool) -> Self
+pub fn Animation::single_frame(String, @math.Vec2D, offset? : @math.Vec2D, pivot? : @math.Vec2D, duration? : Double) -> Self
+pub fn Animation::single_frame_from_image(@asset_types.ImageHandle, @math.Vec2D, offset? : @math.Vec2D, pivot? : @math.Vec2D, duration? : Double) -> Self
+
+pub(all) enum AnimationBackend {
+  Native(NativeBackend)
+  Scripted
+}
+
+pub(all) struct AnimationFrame {
+  image : @asset_types.ImageHandle
+  size : @math.Vec2D
+  offset : @math.Vec2D
+  pivot : @math.Vec2D
+  duration : Double
+}
+
+pub(all) struct NativeBackend {
+  image : @asset_types.ImageHandle
+  layout : @sprite.TextureAtlasLayoutHandle
+  graph : @Milky2018/selene/animation.AnimationGraphHandle
+  node : @Milky2018/selene/animation.AnimationNodeIndex
+  anchor : @sprite.Anchor
+}
+
+pub(all) struct Picture {
+  spec : @resource.NxPictureSpec
+}
+
+// Type aliases
+
+// Traits
+

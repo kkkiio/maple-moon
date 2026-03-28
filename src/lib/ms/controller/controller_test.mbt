@@ -174,8 +174,8 @@ fn advance_controller_frames(
       pressed
     }
     apply_keyboard_snapshot(frame_pressed)
-    @logic_fps.logic_fps_system(0.008)
-    player_controller_system(0.008)
+    player_controller_input_system(@ecs.require_current_world())
+    player_controller_fixed_system(@ecs.require_current_world())
   }
   apply_keyboard_snapshot([])
 }

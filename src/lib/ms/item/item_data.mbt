@@ -87,7 +87,7 @@ pub async fn ItemData::load(
   item_loader : AsyncLoader,
 ) -> ItemData {
   let zid = "0\{item_id}"
-  let string_loader = @resource.get_string_loader()
+  let string_loader = @resource.get_async_loader("string")
   let (category, src, strsrc) : (String, Json, Json) = match
     parse_category1(item_id).unwrap_or_error(INVALID_ITEM_ID(item_id)) {
     EQUIP => {
@@ -246,7 +246,7 @@ fn ItemData::get_loaded(id : Int) -> ItemData? {
 
 ///|
 pub async fn ItemData::load_item_data(id : Int) -> ItemData {
-  ItemData::load_item_data_with_loader(id, get_item_loader())
+  ItemData::load_item_data_with_loader(id, @resource.get_async_loader("item"))
 }
 
 ///|
@@ -257,7 +257,11 @@ pub async fn ItemData::load_item_data_with_loader(
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load(id, @resource.get_character_loader(), item_loader)
+  let data = ItemData::load(
+    id,
+    @resource.get_async_loader("character"),
+    item_loader,
+  )
   cache.set(id, data)
   data
 }
@@ -357,9 +361,4 @@ pub fn ItemData::get_info(self : ItemData) -> Map[String, Json] {
     { "info": Object(info), .. } => info
     _ => Map::new()
   }
-}
-
-///|
-pub fn get_item_loader() -> @resource.AsyncLoader {
-  @resource.get_item_loader()
 }

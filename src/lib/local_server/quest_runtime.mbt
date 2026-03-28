@@ -41,7 +41,7 @@ fn LocalServer::set_default_quest_state(self : LocalServer) -> Unit {
 fn LocalServer::init_quest_runtime(self : LocalServer) -> Unit {
   @io_service.execute_background(
     async fn() {
-      let loader = @resource.get_quest_loader()
+      let loader = @resource.get_async_loader("quest")
       let raw = loader.load_resource(["nx"]) catch {
         err => {
           @log.error("failed to load quest nx for local server runtime", data={
@@ -464,7 +464,7 @@ fn LocalServer::match_item_requirement(
 }
 
 ///|
-fn LocalServer::player_level(self : LocalServer) -> Int {
+fn LocalServer::player_level(_self : LocalServer) -> Int {
   50
 }
 

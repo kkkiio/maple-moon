@@ -37,7 +37,7 @@ async fn get_target_by_map_id_and_portal_name(
   if map_id <= 0 {
     return None
   }
-  let loader = get_mapx_loader()
+  let loader = @resource.get_async_loader("mapx")
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]
@@ -67,7 +67,7 @@ async fn get_portal_id_by_map_id_and_portal_name(
   if map_id <= 0 {
     return None
   }
-  let loader = get_mapx_loader()
+  let loader = @resource.get_async_loader("mapx")
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let path = ["Map\{prefix}", "\{strid}.img"]

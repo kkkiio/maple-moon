@@ -50,31 +50,25 @@ async fn setup_background_scene_101010102() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(_world) { @logic_fps.logic_fps_system(@time.delta()) },
-      system_name="logic_fps_system",
-    )
-    .add_system(
-      Update,
-      fn(_world) { @map.background_system(@time.delta()) },
+      fn(world) { @map.background_system(world) },
       system_name="background_system",
     )
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
   @capture_app.init_app(app)
   let backgrounds = load_backgrounds_101010102()
   @map.set_backgrounds(backgrounds)
   let camera_anchor = @entity.Entity::new()
-  @position.positions().set(
+  @transform2d.set_xy(camera_anchor, @math.Vec2D(-760.0, -760.0))
+  @ms_camera.setup_camera_entity(
     camera_anchor,
-    @position.Position(@math.Vec2D(-760.0, -760.0)),
+    center=@transform2d.get_xy(camera_anchor).unwrap_or(@math.Vec2D::zero()),
   )
-  @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
-  @camera.set_follow_x(true)
-  @camera.set_follow_y(true)
-  @camera.camera_system(0.016)
+  @ms_camera.set_follow_target(camera_anchor)
+  @ms_camera.camera_follow_system(@ecs.require_current_world())
 }
 
 ///|
@@ -83,8 +77,8 @@ fn min_sprite_alpha() -> Double {
   let mut min_alpha = 1.0
   for _, sprite in @sprite.sprites() {
     found = true
-    if sprite.alpha < min_alpha {
-      min_alpha = sprite.alpha
+    if sprite.color.a < min_alpha {
+      min_alpha = sprite.color.a
     }
   }
   if not(found) {
@@ -96,8 +90,8 @@ fn min_sprite_alpha() -> Double {
 ///|
 fn visible_sprite_count() -> Int {
   let mut count = 0
-  for _, sprite in @sprite.sprites() {
-    if sprite.visible {
+  for entity, _ in @sprite.sprites() {
+    if @visibility.is_visible(entity) {
       count += 1
     }
   }

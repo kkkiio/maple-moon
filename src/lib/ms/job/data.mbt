@@ -8,8 +8,9 @@ pub(all) struct JobData {
 ///|
 pub async fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
-  let src = get_skill_loader().load_resource([strid + ".img"])
-  let name = match get_string_loader().load_resource(["Skill.img", strid]) {
+  let src = @resource.get_async_loader("skill").load_resource([strid + ".img"])
+  let name = match
+    @resource.get_async_loader("string").load_resource(["Skill.img", strid]) {
     { "bookName": String(name), .. } => name
     _ => ""
   }
@@ -39,6 +40,3 @@ pub fn JobData::new(src : Json, name : String) -> JobData {
   }
   { icon, skill_ids: skills, name }
 }
-
-///|
-using @resource {get_skill_loader, get_string_loader}

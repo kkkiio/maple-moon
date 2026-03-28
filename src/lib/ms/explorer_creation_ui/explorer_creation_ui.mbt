@@ -117,10 +117,7 @@ fn ExplorerCreationUI::spawn_entity(
   let entity = @entity.Entity::new()
   self.entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @position.positions().set(
-    entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-  )
+  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -132,14 +129,26 @@ fn ExplorerCreationUI::spawn_text(
   z : Int,
   align? : @selene_math.HAlign = @selene_math.Left,
 ) -> Unit {
-  let sprite_text = @sprite.Text::new(
-    text,
-    color="black",
-    font="12px Menlo",
-    baseline=@selene_math.Top,
-    align~,
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(220.0, 20.0),
+    ),
   )
-  self.spawn_entity(@sprite.Sprite::from_text(sprite_text, z), x, y)
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.text_fonts().set(
+    entity,
+    @selene_ui.TextFont::from_css("12px Menlo"),
+  )
+  @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css("black"))
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
+  )
 }
 
 ///|
@@ -152,10 +161,7 @@ fn ExplorerCreationUI::spawn_button(
 ) -> Unit {
   let entity = @entity.Entity::new()
   self.entities.push(entity)
-  @position.positions().set(
-    entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
-  )
+  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
   let button = @ui.MapleButton::new(
     res,
     pos=@struct.Point::new(x, y),
@@ -163,7 +169,7 @@ fn ExplorerCreationUI::spawn_button(
   )
   @sprite.sprites().set(
     entity,
-    @sprite.Sprite::from_animation(button.current_selene_animation(), 10),
+    @ms_animation.sprite_from_animation(button.current_selene_animation(), 10),
   )
   self.buttons.push({ button, entity })
 }
@@ -291,19 +297,23 @@ fn ExplorerCreationUI::make_submit_packet(
 
 ///|
 fn ExplorerCreationUI::build_common_scene(self : ExplorerCreationUI) -> Unit {
-  self.spawn_entity(@sprite.Sprite::from_picture(self.resource.sky, 0), 0, -100)
   self.spawn_entity(
-    @sprite.Sprite::from_picture(self.resource.cloud, 1),
+    @ms_animation.sprite_from_picture(self.resource.sky, 0),
+    0,
+    -100,
+  )
+  self.spawn_entity(
+    @ms_animation.sprite_from_picture(self.resource.cloud, 1),
     self.cloud_x.to_int(),
     310,
   )
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.back14, 2),
+    @ms_animation.sprite_from_animation(self.resource.back14, 2),
     250,
     302,
   )
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.signboard2, 3),
+    @ms_animation.sprite_from_animation(self.resource.signboard2, 3),
     234,
     235,
   )
@@ -315,17 +325,17 @@ fn ExplorerCreationUI::build_common_scene(self : ExplorerCreationUI) -> Unit {
 ///|
 fn ExplorerCreationUI::build_gender_scene(self : ExplorerCreationUI) -> Unit {
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.board_gender_top, 5),
+    @ms_animation.sprite_from_animation(self.resource.board_gender_top, 5),
     486,
     95,
   )
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.board_gender_mid, 5),
+    @ms_animation.sprite_from_animation(self.resource.board_gender_mid, 5),
     486,
     209,
   )
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.board_gender_bottom, 5),
+    @ms_animation.sprite_from_animation(self.resource.board_gender_bottom, 5),
     486,
     329,
   )
@@ -348,14 +358,14 @@ fn ExplorerCreationUI::build_gender_scene(self : ExplorerCreationUI) -> Unit {
 ///|
 fn ExplorerCreationUI::build_customize_scene(self : ExplorerCreationUI) -> Unit {
   self.spawn_entity(
-    @sprite.Sprite::from_animation(self.resource.board_char_set, 5),
+    @ms_animation.sprite_from_animation(self.resource.board_char_set, 5),
     486,
     95,
   )
   for i, anim in self.resource.avatar_sel {
     let offset_index = if i >= 2 { i + 1 } else { i }
     self.spawn_entity(
-      @sprite.Sprite::from_animation(anim, 6),
+      @ms_animation.sprite_from_animation(anim, 6),
       497,
       197 + offset_index * 18,
     )
@@ -397,7 +407,7 @@ fn ExplorerCreationUI::build_customize_scene(self : ExplorerCreationUI) -> Unit 
 ///|
 fn ExplorerCreationUI::build_confirm_scene(self : ExplorerCreationUI) -> Unit {
   self.spawn_entity(
-    @sprite.Sprite::from_picture(self.resource.nameboard, 5),
+    @ms_animation.sprite_from_picture(self.resource.nameboard, 5),
     486,
     95,
   )
@@ -433,7 +443,7 @@ fn ExplorerCreationUI::build_submitting_scene(
   self : ExplorerCreationUI,
 ) -> Unit {
   self.spawn_entity(
-    @sprite.Sprite::from_picture(self.resource.nameboard, 5),
+    @ms_animation.sprite_from_picture(self.resource.nameboard, 5),
     486,
     95,
   )
@@ -479,7 +489,7 @@ fn ExplorerCreationUI::update(self : ExplorerCreationUI) -> Unit {
     )
     @sprite.sprites().set(
       button.entity,
-      @sprite.Sprite::from_animation(
+      @ms_animation.sprite_from_animation(
         button.button.current_selene_animation(),
         10,
       ),
@@ -494,7 +504,7 @@ fn ExplorerCreationUI::update(self : ExplorerCreationUI) -> Unit {
 
 ///|
 /// System driving explorer creation UI lifecycle.
-pub fn explorer_creation_ui_system(_delta : Double) -> Unit {
+pub fn explorer_creation_ui_system(_world : @ecs.World) -> Unit {
   guard @game_state.game_state.phase
     is @game_state.GamePhase::ExplorerCharacterCreation else {
     return

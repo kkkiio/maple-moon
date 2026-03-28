@@ -146,7 +146,7 @@ fn PortalWarpInfo::new(
 
 ///|
 struct Portal {
-  animation : @sprite.Animation?
+  animation : @ms_animation.Animation?
   t : PortalType
   name : String
   position : Point[Int]
@@ -156,7 +156,7 @@ struct Portal {
 
 ///|
 pub fn Portal::new(
-  animation : @sprite.Animation?,
+  animation : @ms_animation.Animation?,
   t : PortalType,
   name : String,
   intramap : Bool,
@@ -183,12 +183,15 @@ pub fn Portal::update_touched(
 ) -> Unit {
   self.touched = touch_pos is Some(touch_pos) &&
     self.bounds().contains(touch_pos)
-  guard @sprite.sprites().get(entity) is Some(sp) else { return }
-  if self.t != PortalType::HIDDEN || self.touched {
-    sp.visible = true
-  } else {
-    sp.visible = false
-  }
+  let visible = self.t != PortalType::HIDDEN || self.touched
+  @visibility.visibilities().set(
+    entity,
+    if visible {
+      @visibility.Visibility::Visible
+    } else {
+      @visibility.Visibility::Hidden
+    },
+  )
 }
 
 ///|

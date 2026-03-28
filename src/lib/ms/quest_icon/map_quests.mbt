@@ -69,7 +69,7 @@ pub fn MapQuestsResource::new(
 ///|
 /// Loads the graphical resources for quest icons.
 pub async fn MapQuestsResource::load() -> MapQuestsResource {
-  let loader = @resource.get_ui_window_2_loader()
+  let loader = @resource.get_async_loader("ui_window_2")
   let available_json = loader.load_resource(["QuestIcon", "0"]) catch {
     e => {
       @log.error("failed to load quest icon", data={
@@ -393,19 +393,18 @@ fn spawn_icon_runtime(
   npc_entity : @entity.Entity,
   npc_object : @physics.MovingObject,
 ) -> NpcQuestRuntime {
-  let icon_entity = npc_entity.spawn_child(
-    offset=@selene_math.Vec2D(
+  let icon_entity = npc_entity.spawn_child()
+  @transform2d.set_xy(
+    icon_entity,
+    @selene_math.Vec2D(
       quest.icon_offset.x.to_double(),
       quest.icon_offset.y.to_double(),
     ),
   )
-  let icon_animation = @resource.nx_animation_to_selene_animation(
-    quest.icon,
-    loop_=true,
-  )
+  let icon_animation = @ms_animation.from_nx_animation(quest.icon, loop_=true)
   @sprite.sprites().set(
     icon_entity,
-    @sprite.Sprite::from_animation(
+    @ms_animation.sprite_from_animation(
       icon_animation,
       @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
     ),

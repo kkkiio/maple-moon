@@ -15,7 +15,10 @@ async test "resolve reference requires preload" {
 
 ///|
 async test "resolve reference after preload" {
-  @resource.set_string_loader(@local_loader.make_local_string_loader())
+  @resource.register_async_loader(
+    "string",
+    @local_loader.make_local_string_loader(),
+  )
   @markup_text.clear_reference_data()
   @markup_text.preload_reference_data()
 
@@ -31,7 +34,10 @@ async test "resolve reference after preload" {
 
 ///|
 async test "resolve reference invalid id raises" {
-  @resource.set_string_loader(@local_loader.make_local_string_loader())
+  @resource.register_async_loader(
+    "string",
+    @local_loader.make_local_string_loader(),
+  )
   @markup_text.clear_reference_data()
   @markup_text.preload_reference_data()
 

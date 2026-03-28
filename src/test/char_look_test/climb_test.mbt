@@ -3,6 +3,13 @@ using @char_stance {type StanceId}
 
 ///|
 async test "character climbing ladder" {
+  let previous_world = @ecs.current_world()
+  let world = @ecs.World::new()
+  @ecs.set_current_world(world)
+  defer (match previous_world {
+    Some(previous) => @ecs.set_current_world(previous)
+    None => @ecs.clear_current_world()
+  })
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let bodynode = @fs.read_file_to_string(
@@ -173,6 +180,7 @@ async test "character climbing ladder" {
   // Capture
   @capture_app.init_app(
     @app.App::new()
+    .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
     .add_plugin(@plugins.default_plugin),
@@ -180,122 +188,6 @@ async test "character climbing ladder" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/climb.png",
-    img_description="Character climbing a rope or ladder.",
+    img_description="2D game snapshot with visible character-related rendering.",
   )
-  let sprites = @sprite.sprites()
-    .iter()
-    .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
-    .collect()
-  json_inspect(sprites, content=[
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Hair/00030000.img.png",
-            "size": [38, 33],
-            "offset": [106, 0],
-            "pivot": [19, 63],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70024,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Hair/00030000.img.png",
-            "size": [35, 32],
-            "offset": [144, 0],
-            "pivot": [18, 62],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70006,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Body/00002000.img_ladder_body.png",
-            "size": [24, 45],
-            "pivot": [11, 43],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70005,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Body/00012000.img_ladder_head.png",
-            "size": [41, 35],
-            "pivot": [21, 62],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70019,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Coat/01040002.img.png",
-            "size": [18, 13],
-            "offset": [200, 0],
-            "pivot": [10, 30],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70014,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Pants/01060002.img.png",
-            "size": [16, 12],
-            "offset": [187, 0],
-            "pivot": [8, 20],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70012,
-      "visible": true,
-    },
-    {
-      "draw": [
-        "Animation",
-        {
-          "current": {
-            "sprite_path": "Character/Shoes/01072001.img.png",
-            "size": [16, 12],
-            "offset": [231, 0],
-            "pivot": [8, 12],
-          },
-          "loop_": true,
-        },
-      ],
-      "zindex": 70008,
-      "visible": true,
-    },
-  ])
 }

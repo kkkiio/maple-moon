@@ -1,6 +1,7 @@
 ///|
 fn setup_local_loaders() -> Unit {
-  @resource.set_ui_window_2_loader(
+  @resource.register_async_loader(
+    "ui_window_2",
     @resource.AsyncLoader::new(
       "test_local_ui_window_2",
       base_url="/assets",
@@ -31,7 +32,7 @@ fn load_quest_2090_quiz_text() -> String raise {
 
 ///|
 async fn setup_npc_talk_resource_cache() -> Unit {
-  let util_dlg_ex = @resource.get_ui_window_2_loader().load_resource([
+  let util_dlg_ex = @resource.get_async_loader("ui_window_2").load_resource([
     "UtilDlgEx",
   ])
   let resource = @npc_talk_ui.NpcTalkResource::from_resource(util_dlg_ex) catch {
@@ -48,25 +49,24 @@ async fn setup_scene() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(_world) { @npc_talk_ui.npc_talk_ui_system(@time.delta()) },
+      fn(world) { @npc_talk_ui.npc_talk_ui_system(world) },
       system_name="npc_talk_ui_system",
     )
     .add_system(
       Update,
-      fn(_world) { @cursor.cursor_system(@time.delta()) },
+      fn(world) { @cursor.cursor_system(world) },
       system_name="cursor_system",
     )
     .add_system(
       Update,
-      fn(_world) { @io_service.io_system(@time.delta()) },
+      fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
   @capture_app.init_app(app)
   let camera_anchor = @entity.Entity::new()
-  @camera.attach_entity(camera_anchor, @math.Vec2D(0.0, 0.0))
-  @camera.set_follow_x(true)
-  @camera.set_follow_y(true)
-  @camera.camera_system(0.016)
+  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2D(0.0, 0.0))
+  @ms_camera.set_follow_target(camera_anchor)
+  @ms_camera.camera_follow_system(@ecs.require_current_world())
 
   setup_local_loaders()
   setup_npc_talk_resource_cache()

@@ -263,13 +263,9 @@ fn is_low_restriction_phase0_raw(
   quest_id : Int,
   npc_id : Int,
 ) -> (Bool, Bool)? {
-  guard quest_checks_raw
-    .as_object()
-    .bind(fn(it) { it.get(quest_id.to_string()) })
-    .bind(fn(it) { it.as_object() })
-    .bind(fn(it) { it.get("0") })
-    .bind(fn(it) { it.as_object() })
-    is Some(phase0) else {
+  guard quest_checks_raw is Object(it) &&
+    it.get(quest_id.to_string()) is Some(Object(it2)) &&
+    it2.get("0") is Some(Object(phase0)) else {
     return None
   }
   guard phase0.get("npc") is Some(Number(raw_npc, ..)) else {

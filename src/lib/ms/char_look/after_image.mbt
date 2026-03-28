@@ -1,7 +1,7 @@
 ///|
 /// 残影. 角色移动或攻击时，在身后留下的半透明或特效化的影子效果，用来表现速度感或技能的威力。
 pub struct AfterImage {
-  animation : @sprite.Animation
+  animation : @ms_animation.Animation
   range : @struct.Rectangle[Int]
   first_frame : Int
   facing_right : Bool
@@ -124,7 +124,7 @@ fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
   let displayed = false
 
   // Create selene Sprite
-  let selene_anim = nx_animation_to_selene_animation(animation)
+  let selene_anim = @ms_animation.from_nx_animation(animation)
   {
     animation: selene_anim,
     range,
@@ -177,13 +177,13 @@ pub fn AfterImage::update(
       }
       // Attach sprite and play
       // Use CHAR_LOOK_ZINDEX to align with character rendering layer
-      let sprite = @sprite.Sprite::from_animation(
+      let sprite = @ms_animation.sprite_from_animation(
         self.animation,
         @graphics.CHAR_LOOK_ZINDEX,
         transform~,
       )
       @sprite.sprites().set(e, sprite)
-      @sprite.play_animation(e, self.animation, loop_=false, transform~)
+      @ms_animation.play_animation(e, self.animation, loop_=false, transform~)
     }
   }
 }
@@ -201,9 +201,14 @@ struct AfterImageEntry {
 }
 
 ///|
-/// Global storage for active AfterImages, keyed by host entity.
-/// Follows Selene's pattern (e.g., `@sprite.sprites`).
-pub let after_images : Map[@entity.Entity, AfterImageEntry] = Map::new()
+/// Per-world active after-images keyed by host entity.
+let after_images_by_world : Map[UInt, Map[@entity.Entity, AfterImageEntry]] = Map::new()
+
+///|
+fn after_images() -> Map[@entity.Entity, AfterImageEntry] {
+  let world_id = @ecs.require_current_world().id()
+  after_images_by_world.get_or_init(world_id, fn() { Map::new() })
+}
 
 ///|
 /// Add an AfterImage to an entity, disposing any existing one.
@@ -218,6 +223,7 @@ pub fn add_after_image(
   resource : NxAfterImage,
   facing_right : Bool,
 ) -> Unit {
+  let after_images = after_images()
   // Dispose old if exists
   if after_images.get(entity) is Some(old) {
     old.after_image.dispose()
@@ -230,12 +236,14 @@ pub fn add_after_image(
 ///|
 /// Get the current AfterImage for an entity.
 pub fn get_after_image(entity : @entity.Entity) -> AfterImage? {
+  let after_images = after_images()
   after_images.get(entity).map(fn(entry) { entry.after_image })
 }
 
 ///|
 /// Clear/remove the AfterImage for an entity.
 pub fn clear_after_image(entity : @entity.Entity) -> Unit {
+  let after_images = after_images()
   if after_images.get(entity) is Some(old) {
     old.after_image.dispose()
   }
@@ -245,7 +253,9 @@ pub fn clear_after_image(entity : @entity.Entity) -> Unit {
 ///|
 /// Update all AfterImages based on their frame getter function.
 /// Should be called from the main game loop.
-pub fn update_after_image_system(delta : Double) -> Unit {
+pub fn update_after_image_system(_world : @ecs.World) -> Unit {
+  let delta = @time.delta()
+  let after_images = after_images()
   let to_remove : Array[@entity.Entity] = []
   for entity, entry in after_images {
     if not(entity.is_alive()) {

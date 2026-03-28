@@ -22,8 +22,12 @@ const STATUS_FONT = "bold 12px Menlo"
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites().remove(entity) |> ignore
-    @position.positions().remove(entity) |> ignore
+    @text2d.text2ds().remove(entity) |> ignore
+    @selene_ui.texts().remove(entity) |> ignore
+    @selene_ui.text_fonts().remove(entity) |> ignore
+    @selene_ui.text_colors().remove(entity) |> ignore
+    @selene_ui.text_layouts().remove(entity) |> ignore
+    @transform2d.remove(entity) |> ignore
     entity.destroy()
   }
   entities.clear()
@@ -40,17 +44,23 @@ fn spawn_text(
 ) -> Unit {
   let entity = @entity.Entity::new()
   entities.push(entity)
-  let sprite_text = @sprite.Text::new(
-    text,
-    color=STATUS_TEXT_COLOR,
-    font=STATUS_FONT,
-    baseline=@selene_math.Top,
-    align~,
-  )
-  @sprite.sprites().set(entity, @sprite.Sprite::from_text(sprite_text, z))
-  @position.positions().set(
+  @transform.transforms().set(
     entity,
-    @position.Position(@selene_math.Vec2D(x.to_double(), y.to_double())),
+    @transform.Transform::from_xyz(x.to_double(), y.to_double(), z.to_double()),
+  )
+  @text2d.text2ds().set(entity, @text2d.Text2d::new())
+  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.text_fonts().set(
+    entity,
+    @selene_ui.TextFont::from_css(STATUS_FONT),
+  )
+  @selene_ui.text_colors().set(
+    entity,
+    @selene_ui.TextColor::from_css(STATUS_TEXT_COLOR),
+  )
+  @selene_ui.text_layouts().set(
+    entity,
+    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
   )
 }
 
@@ -120,7 +130,7 @@ fn clear_status_bar() -> Unit {
 
 ///|
 /// Render the in-game status bar HUD with selene text sprites.
-pub fn status_bar_ui_system(_delta : Double) -> Unit {
+pub fn status_bar_ui_system(_world : @ecs.World) -> Unit {
   guard @game_state.game_state.phase is @game_state.GamePhase::GameActive(..) else {
     clear_status_bar()
     return

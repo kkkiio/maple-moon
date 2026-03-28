@@ -46,12 +46,16 @@ pub fn clear_map_npcs() -> Unit {
 }
 
 ///|
-pub fn map_npcs_system(_delta : Double) -> Unit {
+/// Advance NPC runtime state once in fixed schedule.
+pub fn map_npcs_fixed_system(_world : @ecs.World) -> Unit {
   guard map_npcs_ctx.val is Some({ map_npcs, physics }) else { return }
-  let times = @logic_fps.get_logic_times()
-  for i = 0; i < times; i = i + 1 {
-    map_npcs.update(physics)
-  }
+  map_npcs.update(physics)
+}
+
+///|
+/// Handle frame-based NPC pointer interactions.
+pub fn map_npcs_pointer_system(_world : @ecs.World) -> Unit {
+  guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
   map_npcs.handle_pointer_events()
 }
 
@@ -315,7 +319,7 @@ struct Npc {
 
 ///|
 priv struct NpcAnimation {
-  selene : @sprite.Animation
+  selene : @ms_animation.Animation
   duration_ms : Int
   dimensions : @struct.Point[Int]
 }
@@ -372,7 +376,7 @@ pub async fn Npc::load(
 ) -> Npc {
   let entity = @entity.Entity::new()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
-    @position.positions().set(entity, @position.Position(pos))
+    @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_resource([strid])
@@ -432,10 +436,7 @@ pub async fn Npc::load(
           let nx_anim : @resource.NxAnimation = @json.from_json(npc_val) catch {
             _ => panic()
           }
-          let selene = @resource.nx_animation_to_selene_animation(
-            nx_anim,
-            loop_=true,
-          )
+          let selene = @ms_animation.from_nx_animation(nx_anim, loop_=true)
           animations[state] = {
             selene,
             duration_ms: nx_animation_duration_ms(nx_anim),
@@ -572,14 +573,29 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
   }
   if @sprite.sprites().get(self.entity) is None ||
     self.last_synced_stance != Some(self.stance) {
-    let sprite = @sprite.Sprite::from_animation(animation.selene, z, transform~)
+    let sprite = @ms_animation.sprite_from_animation(
+      animation.selene,
+      z,
+      transform~,
+    )
     @sprite.sprites().set(self.entity, sprite)
     self.last_synced_stance = Some(self.stance)
   } else {
-    match @sprite.sprites().get(self.entity) {
-      Some(sprite) =>
-        @sprite.sprites().set(self.entity, { ..sprite, zindex: z })
-      None => ()
+    match @transform.transforms().get(self.entity) {
+      Some(current) =>
+        @transform.transforms().set(self.entity, {
+          ..current,
+          translation: @selene_math.Vec3::new(
+            current.translation.x,
+            current.translation.y,
+            z.to_double(),
+          ),
+        })
+      None =>
+        @transform.transforms().set(
+          self.entity,
+          @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+        )
     }
   }
 }

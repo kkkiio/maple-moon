@@ -3,19 +3,11 @@ package "KKKIIO/maple-moon/lib/ms/quest"
 
 import {
   "KKKIIO/maple-moon/lib/ms/char_stats",
-  "KKKIIO/maple-moon/lib/ms/inventory",
-  "KKKIIO/maple-moon/lib/ms/npc",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn clear_active_module() -> Unit
-
 pub async fn load_quest_resource() -> (QuestResource, Json)
-
-pub fn quest_log_revision() -> Int
-
-pub fn set_active_module(Module) -> Unit
 
 // Errors
 
@@ -57,11 +49,6 @@ pub impl Show for InProgressQuest
 type InfoExCheck
 pub impl QuestCheck for InfoExCheck
 pub impl Show for InfoExCheck
-
-type Module
-pub async fn Module::load(@inventory.Inventory, (@npc.TalkArgs) -> Unit) -> Self
-pub fn Module::new(QuestResource) -> Self
-pub fn Module::new_with_raw_checks(QuestResource, Json) -> Self
 
 type MonHuntCheck
 pub impl Show for MonHuntCheck

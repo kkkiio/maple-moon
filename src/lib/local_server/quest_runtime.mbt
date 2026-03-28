@@ -366,10 +366,21 @@ fn LocalServer::handle_forfeit_quest(
   self : LocalServer,
   quest_id : Int,
 ) -> Unit {
-  if self.started_quests.contains(quest_id) {
-    self.started_quests.remove(quest_id) |> ignore
-    self.save_character_quest_snapshot()
+  if not(self.started_quests.contains(quest_id)) {
+    @log.warn("local server forfeit quest rejected", data={
+      "quest_id": quest_id,
+      "reason": "quest not started",
+    })
+    self.send_server_message(
+      @server_proto.UpdateQuestInfoMessage::QuestError(quest_id~),
+    )
+    return
   }
+  self.started_quests.remove(quest_id) |> ignore
+  self.save_character_quest_snapshot()
+  self.send_server_message(
+    @server_proto.UpdateQuestInfoMessage::QuestExpire(quest_id~),
+  )
 }
 
 ///|

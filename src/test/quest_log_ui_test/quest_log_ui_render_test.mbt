@@ -1,5 +1,5 @@
 ///|
-fn setup_local_loaders() -> Unit {
+async fn setup_local_loaders() -> Unit {
   @resource.set_quest_loader(@local_loader.make_local_quest_loader())
   @resource.set_ui_window_2_loader(
     @resource.AsyncLoader::new(
@@ -10,6 +10,8 @@ fn setup_local_loaders() -> Unit {
       ),
     ),
   )
+  let (quest_resource, _) = @quest.load_quest_resource()
+  @quest_log.setup(quest_resource)
 }
 
 ///|
@@ -24,7 +26,7 @@ fn reset_quest_log_ui_test_state() -> Unit {
 }
 
 ///|
-fn setup_scene() -> Unit {
+async fn setup_scene() -> Unit {
   let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
@@ -51,7 +53,7 @@ fn setup_scene() -> Unit {
 
   setup_local_loaders()
   @quest_log.handle_player_quest_info({
-    started: [(1000, "3")],
+    started: [(2085, ""), (2091, "3")],
     completed: [(2000, 123456)],
   })
   @game_state.game_state.phase = @game_state.GamePhase::GameActive(
@@ -75,7 +77,19 @@ async test "quest_log_ui renders in-progress & completed tab" {
 
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
-    img_description="Quest Log window is open and readable. IN-PROGRESS is the active highlighted tab. COMPLETED is visible but inactive.",
+    img_description="Quest log UI showing the in-progress tab with a list of active quests.",
+  )
+
+  let click_row_ok = @console.click_registered_ui(
+    "quest_log", "row.in_progress.3",
+  )
+  assert_true(click_row_ok is { "ok": true, .. })
+  for _ in 0..<3 {
+    @capture_app.run_loop(0.016)
+  }
+  @capture_app.snapshot(
+    "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
+    img_description="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
@@ -85,7 +99,7 @@ async test "quest_log_ui renders in-progress & completed tab" {
   }
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
-    img_description="Quest Log window remains open after clicking the COMPLETED tab. COMPLETED is the active highlighted tab, and IN-PROGRESS is inactive.",
+    img_description="Quest log UI showing the completed tab with a list of finished quests.",
   )
 }
 

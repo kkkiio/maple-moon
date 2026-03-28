@@ -84,7 +84,10 @@ async test "character stabO1" {
 
   // Frame 0
   @capture_app.run_loop(0.016)
-  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_0.png")
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/stabO1_0.png",
+    img_description="Character performing the first frame of the stabO1 animation.",
+  )
   let sprites : Array[@test_snapshots.DebugSprite] = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })
@@ -228,7 +231,10 @@ async test "character stabO1" {
   for i = 0; i < 4; i = i + 1 {
     @capture_app.run_loop(0.1)
   }
-  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stabO1_1.png")
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/stabO1_1.png",
+    img_description="Character performing the second frame of the stabO1 animation.",
+  )
   let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })

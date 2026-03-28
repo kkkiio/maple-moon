@@ -39,5 +39,6 @@ async test "crossbow shoot2 afterimage without range should render" {
 
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage.png",
+    img_description="Character shooting a crossbow with an afterimage effect visible.",
   )
 }

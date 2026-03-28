@@ -9,6 +9,8 @@ pub(all) struct QuestLogEntryInProgress {
   progress_data : String
   /// Current phase index.
   phase : Int
+  /// Current phase description from quest data.
+  phase_description : String
 } derive(Show, ToJson, @json.FromJson)
 
 ///|
@@ -44,6 +46,7 @@ pub fn get_snapshot() -> QuestLogSnapshot {
       name: it.name,
       progress_data: it.progress_data,
       phase: it.phase,
+      phase_description: it.phase_description,
     }
   })
   in_progress.sort_by(fn(lhs, rhs) {
@@ -85,6 +88,9 @@ fn Module::quest_log_snapshot_raw(self : Module) -> QuestLogSnapshotRaw {
         name: quest.quest_info.name,
         progress_data: quest.get_phase_progress(quest.phase),
         phase: quest.phase,
+        phase_description: quest.quest_info.descriptions
+        .get(quest.phase)
+        .unwrap_or(""),
       }
     })
     .collect()
@@ -172,6 +178,17 @@ fn Module::apply_update_quest_info(
       }
       bump_quest_log_revision()
     }
+    QuestExpire(quest_id~) =>
+      if self.player_quest_log.val.in_progress.contains(quest_id) {
+        self.player_quest_log.val.in_progress.remove(quest_id) |> ignore
+        bump_quest_log_revision()
+      }
+    QuestError(quest_id~) =>
+      @log.warn("quest update failed", data={ "quest_id": quest_id })
+    QuestFailure(operation~) =>
+      @log.warn("quest operation failure", data={
+        "operation": operation.to_json(),
+      })
     _ => ()
   }
 }

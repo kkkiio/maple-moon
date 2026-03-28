@@ -178,7 +178,10 @@ async test "character stand1" {
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
-  @capture_app.snapshot("src/test/char_look_test/__snapshot__/stand1.png")
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/stand1.png",
+    img_description="Character standing in the default stand1 pose.",
+  )
   let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })

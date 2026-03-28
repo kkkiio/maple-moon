@@ -58,5 +58,6 @@ async test "mob hpbar render snapshot" {
 
   @capture_app.snapshot(
     "src/test/mob_hpbars_test/__snapshot__/mob_hpbar_default.png",
+    img_description="Mob HP bar is rendered correctly above the monster.",
   )
 }

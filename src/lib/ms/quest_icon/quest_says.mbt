@@ -79,6 +79,20 @@ pub fn next_talk(
   // @log.info({ "state": state }, "next_talk")
   match state {
     Narrative(next=i) => {
+      if i == 0 && quest_met == Some(false) {
+        if says.stop is Some(hints) {
+          let unmet_text = if hints.item.get(0) is Some(text) {
+            Some(text)
+          } else if hints.npc.get(0) is Some(text) {
+            Some(text)
+          } else {
+            None
+          }
+          if unmet_text is Some(text) {
+            return Some({ content: text, expect_response: OK(fn() { None }) })
+          }
+        }
+      }
       // TODO: show hint according to the un met requirements (item, npc, etc.)
       guard says.says.get(i) is Some(str) else { return None }
       let last = says.says.get(i + 1) is None

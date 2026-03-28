@@ -4,19 +4,15 @@
 
 ## 快照断言
 
-- `@capture_app.snapshot(path)`:
-  保持原有行为，按 PNG bytes / 像素一致性做断言。
-- `@capture_app.snapshot(path, expect="...")`:
+- `@capture_app.snapshot(path, img_description="...")`:
   仅在快照更新模式下触发语义校验（`UPDATE_CANVAS_SNAPS=true` 或首次生成快照文件）。
-  会调用视觉模型判断截图是否符合 `expect` 描述；不满足预期时测试失败。
+  会调用视觉模型判断截图是否符合 `img_description` 描述；不满足预期时测试失败。
 
 语义校验需要 `OPENROUTER_API_KEY` 环境变量；缺失时测试会失败。
 
 ```mbt nocheck
-@capture_app.snapshot("src/test/example/__snapshot__/demo.png")
-
 @capture_app.snapshot(
   "src/test/example/__snapshot__/demo.png",
-  expect="A panel with title text is visible at top-left.",
+  img_description="A panel with title text is visible at top-left.",
 )
 ```

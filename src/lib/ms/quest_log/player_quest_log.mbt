@@ -33,6 +33,8 @@ pub(all) struct QuestLogInProgressRaw {
   progress_data : String
   /// Current phase index.
   phase : Int
+  /// Current phase description from quest info.
+  phase_description : String
 } derive(Show)
 
 ///|
@@ -70,11 +72,9 @@ pub fn apply_forfeit_quest(quest_id : Int) -> Result[Unit, String] {
   match active_module.val {
     Some(m) =>
       if m.player_quest_log.val.in_progress.contains(quest_id) {
-        m.player_quest_log.val.in_progress.remove(quest_id) |> ignore
         @game_server.send(
           @server_proto.QuestActionMessage::ForfeitQuest(quest_id~),
         )
-        bump_quest_log_revision()
         Ok(())
       } else {
         Err("quest \{quest_id} is not in progress")

@@ -178,7 +178,10 @@ async test "character climbing ladder" {
     .add_plugin(@plugins.default_plugin),
   )
   @capture_app.run_loop(0.016)
-  @capture_app.snapshot("src/test/char_look_test/__snapshot__/climb.png")
+  @capture_app.snapshot(
+    "src/test/char_look_test/__snapshot__/climb.png",
+    img_description="Character climbing a rope or ladder.",
+  )
   let sprites = @sprite.sprites()
     .iter()
     .map(fn(it) { @test_snapshots.DebugSprite(it.1) })

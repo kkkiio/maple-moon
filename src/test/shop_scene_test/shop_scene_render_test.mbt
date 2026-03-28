@@ -331,6 +331,7 @@ async test "shop scene npc render snapshot on map 102000001" {
 
   @capture_app.snapshot(
     "src/test/shop_scene_test/__snapshot__/shop_scene_map_102000001_npcs.png",
+    img_description="Shop scene rendered for map 102000001 showing NPCs.",
   )
   inspect(
     npc_sprite_zindices(),

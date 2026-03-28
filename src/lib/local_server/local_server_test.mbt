@@ -611,3 +611,88 @@ async test "set field quest log reflects persisted quest state" {
     _ => fail("expected SetField message")
   }
 }
+
+///|
+async test "local server forfeit quest emits QuestExpire and removes started quest" {
+  let character_id = 1
+  let db = MemoryDB::new()
+  db.save_json("character_quest", "char:\{character_id}:quests", {
+    "character_id": character_id,
+    "revision": 1,
+    "started": { "2091": "" },
+    "completed": {},
+  })
+  let server = LocalServer::new(db~)
+  server.init_routes()
+  let _ = server.load_character(character_id)
+  let updates : Ref[Array[@server_proto.UpdateQuestInfoMessage]] = Ref::new([])
+  server.add_server_message_handler(
+    "test_forfeit_success_update",
+    @server_proto.Opcode::UPDATE_QUEST_INFO.int_value(),
+    fn(json : Json) -> Unit raise {
+      let msg : @server_proto.UpdateQuestInfoMessage = @json.from_json(json)
+      updates.val.push(msg)
+    },
+  )
+  server.send_client_message(
+    @server_proto.QuestActionMessage::ForfeitQuest(quest_id=2091),
+  )
+  server_system(server)
+  server_system(server)
+  server.save_character_quest_data(character_id, 2)
+  guard db.get_json("character_quest", "char:\{character_id}:quests")
+    is Some(saved_snapshot) else {
+    fail("missing quest snapshot")
+  }
+  inspect(saved_snapshot is { "started": { }, .. }, content="true")
+  inspect(updates.val.length(), content="1")
+  inspect(
+    updates.val[0]
+    is @server_proto.UpdateQuestInfoMessage::QuestExpire(quest_id=2091),
+    content="true",
+  )
+}
+
+///|
+async test "local server forfeit invalid quest emits QuestError and keeps state" {
+  let character_id = 1
+  let db = MemoryDB::new()
+  db.save_json("character_quest", "char:\{character_id}:quests", {
+    "character_id": character_id,
+    "revision": 1,
+    "started": { "2084": "" },
+    "completed": {},
+  })
+  let server = LocalServer::new(db~)
+  server.init_routes()
+  let _ = server.load_character(character_id)
+  let updates : Ref[Array[@server_proto.UpdateQuestInfoMessage]] = Ref::new([])
+  server.add_server_message_handler(
+    "test_forfeit_error_update",
+    @server_proto.Opcode::UPDATE_QUEST_INFO.int_value(),
+    fn(json : Json) -> Unit raise {
+      let msg : @server_proto.UpdateQuestInfoMessage = @json.from_json(json)
+      updates.val.push(msg)
+    },
+  )
+  server.send_client_message(
+    @server_proto.QuestActionMessage::ForfeitQuest(quest_id=2091),
+  )
+  server_system(server)
+  server_system(server)
+  server.save_character_quest_data(character_id, 2)
+  guard db.get_json("character_quest", "char:\{character_id}:quests")
+    is Some(saved_snapshot) else {
+    fail("missing quest snapshot")
+  }
+  inspect(
+    saved_snapshot is { "started": { "2084": "", .. }, .. },
+    content="true",
+  )
+  inspect(updates.val.length(), content="1")
+  inspect(
+    updates.val[0]
+    is @server_proto.UpdateQuestInfoMessage::QuestError(quest_id=2091),
+    content="true",
+  )
+}

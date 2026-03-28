@@ -53,6 +53,7 @@ pub(all) struct QuestLogEntryInProgress {
   name : String
   progress_data : String
   phase : Int
+  phase_description : String
 }
 pub impl Show for QuestLogEntryInProgress
 pub impl ToJson for QuestLogEntryInProgress
@@ -63,6 +64,7 @@ pub(all) struct QuestLogInProgressRaw {
   name : String
   progress_data : String
   phase : Int
+  phase_description : String
 }
 pub impl Show for QuestLogInProgressRaw
 

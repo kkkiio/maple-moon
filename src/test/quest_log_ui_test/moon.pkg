@@ -1,8 +1,10 @@
 import {
+  "moonbitlang/core/json",
   "moonbitlang/async",
   "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/io_service",
+  "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/quest_log",
   "KKKIIO/maple-moon/lib/ms/quest_log_ui",
   "KKKIIO/maple-moon/lib/resource",

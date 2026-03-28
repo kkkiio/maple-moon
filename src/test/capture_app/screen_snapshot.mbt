@@ -5,24 +5,22 @@
 /// 
 /// If the `UPDATE_CANVAS_SNAPS` environment variable is set to `"true"`, the snapshot file will be updated.
 /// 
-/// If `img_description` is provided and snapshot is in update mode (`UPDATE_CANVAS_SNAPS=true` or snapshot file missing),
-/// use OpenRouter vision model to assert semantic expectation.
-pub async fn snapshot(path : String, img_description? : String) -> Unit {
+/// Use `img_description` to provide semantic expectation for the snapshot.
+/// If snapshot is in update mode (`UPDATE_CANVAS_SNAPS=true` or snapshot file missing),
+/// use vision model to assert semantic expectation.
+pub async fn snapshot(path : String, img_description~ : String) -> Unit {
   let actual_buffer = to_buffer()
   let actual = actual_buffer.to_bytes()
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
   if should_write_snapshot {
-    if img_description is Some(expect_text) {
-      let api_key = match @sys.get_env_var("OPENROUTER_API_KEY") {
-        Some(v) if v != "" => v
-        _ =>
-          fail(
-            "img_description check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
-          )
-      }
-      assert_snapshot_expect(actual_buffer, expect_text, api_key, path)
+    guard @sys.get_env_var("OPENROUTER_API_KEY") is Some(api_key) &&
+      api_key != "" else {
+      fail(
+        "img_description check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
+      )
     }
+    assert_snapshot_expect(actual_buffer, img_description, api_key, path)
     let dir = @path.Path(path).dirname().to_string()
     @fs.create_dir(dir)
     @fs.write_bytes_to_file(path, actual)

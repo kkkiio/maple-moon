@@ -85,6 +85,7 @@ async test "character stand1 face right" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stand1_face_right.png",
+    img_description="Character standing and facing right.",
   )
   let sprites = @sprite.sprites()
     .iter()

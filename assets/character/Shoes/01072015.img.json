@@ -15,7 +15,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           73,
           119
@@ -37,7 +37,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           78,
           107
@@ -59,7 +59,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           97,
           119
@@ -83,7 +83,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           145
@@ -105,7 +105,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           48
@@ -129,7 +129,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           78,
           107
@@ -151,7 +151,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           60
@@ -173,7 +173,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           121,
           119
@@ -190,7 +190,7 @@
         -3,
         32
       ],
-      "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+      "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
       "__off": [
         0,
         75
@@ -203,7 +203,7 @@
         -3,
         32
       ],
-      "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+      "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
       "__off": [
         81,
         44
@@ -237,7 +237,7 @@
           6
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           81,
           20
@@ -261,7 +261,7 @@
           6
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           0
@@ -283,7 +283,7 @@
           6
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           12
@@ -307,7 +307,7 @@
           3
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           85
@@ -331,7 +331,7 @@
           3
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           85
@@ -353,7 +353,7 @@
           3
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           85
@@ -377,7 +377,7 @@
           5
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           24
@@ -399,7 +399,7 @@
           5
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           31,
           145
@@ -423,7 +423,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           66
@@ -445,7 +445,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           66
@@ -467,7 +467,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           66
@@ -491,7 +491,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           103,
           107
@@ -513,7 +513,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           103,
           107
@@ -535,7 +535,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           103,
           107
@@ -557,7 +557,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           103,
           107
@@ -579,7 +579,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           103,
           107
@@ -603,7 +603,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           49,
           119
@@ -625,7 +625,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           39
@@ -647,7 +647,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           39
@@ -671,7 +671,7 @@
           6
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           106
@@ -695,7 +695,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           81,
           10
@@ -717,7 +717,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           81,
           34
@@ -741,7 +741,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           27,
           96
@@ -763,7 +763,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           37,
           62
@@ -787,7 +787,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           59,
           134
@@ -809,7 +809,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           62
@@ -831,7 +831,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           52
@@ -855,7 +855,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           81,
           96
@@ -877,7 +877,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           27,
           75
@@ -899,7 +899,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           11
@@ -923,7 +923,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           25,
           119
@@ -945,7 +945,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           58,
           75
@@ -967,7 +967,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           0
@@ -991,7 +991,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           22
@@ -1013,7 +1013,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           38,
           52
@@ -1035,7 +1035,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           23
@@ -1057,7 +1057,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           11
@@ -1081,7 +1081,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           76
@@ -1103,7 +1103,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           86
@@ -1125,7 +1125,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           96
@@ -1149,7 +1149,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           76
@@ -1171,7 +1171,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           86
@@ -1193,7 +1193,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           96
@@ -1217,7 +1217,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           50
@@ -1239,7 +1239,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           37
@@ -1261,7 +1261,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           32
@@ -1285,7 +1285,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           121,
           119
@@ -1307,7 +1307,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           60
@@ -1329,7 +1329,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           57,
           86
@@ -1353,7 +1353,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           54,
           96
@@ -1375,7 +1375,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           23,
           134
@@ -1397,7 +1397,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           70
@@ -1421,7 +1421,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           27,
           86
@@ -1443,7 +1443,7 @@
           5
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           119
@@ -1465,7 +1465,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           18,
           145
@@ -1487,7 +1487,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           81,
           0
@@ -1511,7 +1511,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           56
@@ -1533,7 +1533,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           90
@@ -1555,7 +1555,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           42
@@ -1579,7 +1579,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           107
@@ -1601,7 +1601,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           89,
           75
@@ -1623,7 +1623,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           38,
           42
@@ -1647,7 +1647,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           22
@@ -1669,7 +1669,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           38,
           52
@@ -1691,7 +1691,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           0
@@ -1713,7 +1713,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           41,
           134
@@ -1737,7 +1737,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           46
@@ -1759,7 +1759,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           80
@@ -1781,7 +1781,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           43,
           0
@@ -1805,7 +1805,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           0
@@ -1827,7 +1827,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           28
@@ -1849,7 +1849,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           43,
           10
@@ -1873,7 +1873,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           86,
           86
@@ -1895,7 +1895,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           52,
           107
@@ -1917,7 +1917,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           43,
           20
@@ -1941,7 +1941,7 @@
           5
         ],
         "z": "backShoes",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           73
@@ -1963,7 +1963,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           145,
           116
@@ -1985,7 +1985,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           117,
           16
@@ -2007,7 +2007,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           43,
           30
@@ -2031,7 +2031,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           91
@@ -2053,7 +2053,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           26,
           107
@@ -2075,7 +2075,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           63
@@ -2097,7 +2097,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           134
@@ -2121,7 +2121,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           91
@@ -2143,7 +2143,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           26,
           107
@@ -2165,7 +2165,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           167,
           63
@@ -2187,7 +2187,7 @@
           5
         ],
         "z": "shoesOverPants",
-        "__i": "/Character/Shoes/spritesheets/01072015.img.png",
+        "__i": "assets/Character/Shoes/spritesheets/01072015.img.png",
         "__off": [
           0,
           134

@@ -12,7 +12,7 @@
         34,
         59
       ],
-      "__i": "mob/9400655.img_die1.png",
+      "__i": "assets/mob/9400655.img_die1.png",
       "__off": [
         0,
         0
@@ -30,7 +30,7 @@
         34,
         59
       ],
-      "__i": "mob/9400655.img_die1.png",
+      "__i": "assets/mob/9400655.img_die1.png",
       "__off": [
         65,
         0
@@ -50,7 +50,7 @@
         34,
         59
       ],
-      "__i": "mob/9400655.img_die1.png",
+      "__i": "assets/mob/9400655.img_die1.png",
       "__off": [
         130,
         0
@@ -78,7 +78,7 @@
         34,
         0
       ],
-      "__i": "mob/9400655.img_hit1.png",
+      "__i": "assets/mob/9400655.img_hit1.png",
       "__off": [
         0,
         0
@@ -124,7 +124,7 @@
         34,
         0
       ],
-      "__i": "mob/9400655.img_jump.png",
+      "__i": "assets/mob/9400655.img_jump.png",
       "__off": [
         0,
         0
@@ -152,7 +152,7 @@
         32,
         0
       ],
-      "__i": "mob/9400655.img_move.png",
+      "__i": "assets/mob/9400655.img_move.png",
       "__off": [
         0,
         0
@@ -178,7 +178,7 @@
         31,
         -3
       ],
-      "__i": "mob/9400655.img_move.png",
+      "__i": "assets/mob/9400655.img_move.png",
       "__off": [
         64,
         0
@@ -204,7 +204,7 @@
         32,
         0
       ],
-      "__i": "mob/9400655.img_move.png",
+      "__i": "assets/mob/9400655.img_move.png",
       "__off": [
         128,
         0
@@ -232,7 +232,7 @@
         36,
         0
       ],
-      "__i": "mob/9400655.img_stand.png",
+      "__i": "assets/mob/9400655.img_stand.png",
       "__off": [
         0,
         0
@@ -258,7 +258,7 @@
         36,
         0
       ],
-      "__i": "mob/9400655.img_stand.png",
+      "__i": "assets/mob/9400655.img_stand.png",
       "__off": [
         63,
         0

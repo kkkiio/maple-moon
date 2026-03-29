@@ -1,2278 +1,4054 @@
 {
-	"0": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_0_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_0_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_0_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_0_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_0_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_0_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_0_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_0_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_0_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_0_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_0_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_0_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"1": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_1_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_1_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_1_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_1_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_1_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_1_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_1_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_1_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_1_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_1_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_1_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_1_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"2": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_2_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_2_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_2_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_2_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_2_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_2_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_2_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_2_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_2_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_2_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_2_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_2_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"3": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_3_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_3_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_3_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_3_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_3_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_3_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_3_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_3_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_3_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_3_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_3_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_3_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"4": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_4_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_4_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_4_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_4_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_4_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_4_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_4_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_4_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_4_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_4_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_4_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_4_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"5": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_5_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_5_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_5_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_5_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_5_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_5_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_5_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_5_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_5_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_5_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_5_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_5_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"6": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_6_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_6_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_6_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_6_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_6_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_6_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_6_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_6_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_6_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_6_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_6_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_6_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"7": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_7_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_7_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_7_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_7_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_7_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_7_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_7_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_7_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_7_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_7_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_7_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_7_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"8": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_8_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_8_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_8_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_8_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_8_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_8_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_8_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_8_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_8_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_8_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_8_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_8_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"9": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 28,
-					"__w": 75,
-					"delay": 30,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_9_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 28,
-					"__w": 75,
-					"a1": 0,
-					"delay": 200,
-					"origin": [75, 19],
-					"__i": "Character/Afterimage/swordOL.img_9_proneStab_1.png",
-					"__off": [75, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 84,
-					"delay": 30,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_9_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 84,
-					"a1": 0,
-					"delay": 200,
-					"origin": [84, 37],
-					"__i": "Character/Afterimage/swordOL.img_9_stabO1_1.png",
-					"__off": [84, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 37,
-					"__w": 83,
-					"delay": 30,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_9_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 37,
-					"__w": 83,
-					"a1": 0,
-					"delay": 200,
-					"origin": [83, 37],
-					"__i": "Character/Afterimage/swordOL.img_9_stabO2_1.png",
-					"__off": [83, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 113,
-					"delay": 30,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_9_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 113,
-					"a1": 0,
-					"delay": 200,
-					"origin": [113, 39],
-					"__i": "Character/Afterimage/swordOL.img_9_stabOF_2.png",
-					"__off": [113, 0]
-				}
-			},
-			"lt": [-110, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 69,
-					"__w": 97,
-					"a1": 0,
-					"delay": 200,
-					"origin": [97, 69],
-					"__i": "Character/Afterimage/swordOL.img_9_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-88, -62],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 82,
-					"__w": 88,
-					"a1": 0,
-					"delay": 200,
-					"origin": [80, 59],
-					"__i": "Character/Afterimage/swordOL.img_9_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 17]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 56,
-					"__w": 110,
-					"a1": 0,
-					"delay": 200,
-					"origin": [110, 56],
-					"__i": "Character/Afterimage/swordOL.img_9_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 57,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 50],
-					"__i": "Character/Afterimage/swordOL.img_9_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"10": {
-		"proneStab": {
-			"1": {
-				"0": {
-					"__h": 31,
-					"__w": 96,
-					"delay": 30,
-					"origin": [82, 21],
-					"__i": "Character/Afterimage/swordOL.img_10_proneStab_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 31,
-					"__w": 96,
-					"a1": 0,
-					"delay": 200,
-					"origin": [82, 21],
-					"__i": "Character/Afterimage/swordOL.img_10_proneStab_1.png",
-					"__off": [96, 0]
-				}
-			},
-			"lt": [-74, -11],
-			"rb": [-15, 1]
-		},
-		"stabO1": {
-			"1": {
-				"0": {
-					"__h": 39,
-					"__w": 100,
-					"delay": 30,
-					"origin": [89, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabO1_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 100,
-					"a1": 0,
-					"delay": 200,
-					"origin": [89, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabO1_1.png",
-					"__off": [100, 0]
-				}
-			},
-			"lt": [-84, -30],
-			"rb": [-20, -15]
-		},
-		"stabO2": {
-			"1": {
-				"0": {
-					"__h": 39,
-					"__w": 100,
-					"delay": 30,
-					"origin": [90, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabO2_1.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 100,
-					"a1": 0,
-					"delay": 200,
-					"origin": [90, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabO2_1.png",
-					"__off": [100, 0]
-				}
-			},
-			"lt": [-83, -30],
-			"rb": [-12, -16]
-		},
-		"stabOF": {
-			"2": {
-				"0": {
-					"__h": 39,
-					"__w": 121,
-					"delay": 30,
-					"origin": [121, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabOF_2.png",
-					"__off": [0, 0]
-				},
-				"1": {
-					"__h": 39,
-					"__w": 121,
-					"a1": 0,
-					"delay": 200,
-					"origin": [121, 39],
-					"__i": "Character/Afterimage/swordOL.img_10_stabOF_2.png",
-					"__off": [121, 0]
-				}
-			},
-			"lt": [-113, -32],
-			"rb": [-40, -11]
-		},
-		"swingO1": {
-			"2": {
-				"0": {
-					"__h": 83,
-					"__w": 98,
-					"a1": 0,
-					"delay": 200,
-					"origin": [98, 80],
-					"__i": "Character/Afterimage/swordOL.img_10_swingO1_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-90, -72],
-			"rb": [-18, -6]
-		},
-		"swingO2": {
-			"2": {
-				"0": {
-					"__h": 93,
-					"__w": 93,
-					"a1": 0,
-					"delay": 200,
-					"origin": [81, 55],
-					"__i": "Character/Afterimage/swordOL.img_10_swingO2_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-73, -50],
-			"rb": [5, 23]
-		},
-		"swingO3": {
-			"2": {
-				"0": {
-					"__h": 60,
-					"__w": 111,
-					"a1": 0,
-					"delay": 200,
-					"origin": [111, 58],
-					"__i": "Character/Afterimage/swordOL.img_10_swingO3_2.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-102, -50],
-			"rb": [-22, -10]
-		},
-		"swingOF": {
-			"3": {
-				"0": {
-					"__h": 64,
-					"__w": 144,
-					"a1": 0,
-					"delay": 200,
-					"origin": [132, 55],
-					"__i": "Character/Afterimage/swordOL.img_10_swingOF_3.png",
-					"__off": [0, 0]
-				}
-			},
-			"lt": [-123, -48],
-			"rb": [13, -1]
-		}
-	},
-	"charge": {
-		"1": {
-			"proneStab": {
-				"1": {
-					"0": {
-						"__h": 45,
-						"__w": 94,
-						"delay": 50,
-						"origin": [74, 26],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_proneStab_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 45,
-						"__w": 94,
-						"a1": 0,
-						"delay": 300,
-						"origin": [74, 26],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_proneStab_1.png",
-						"__off": [94, 0]
-					}
-				},
-				"lt": [-74, -11],
-				"rb": [-15, 1]
-			},
-			"stabO1": {
-				"1": {
-					"0": {
-						"__h": 46,
-						"__w": 103,
-						"delay": 50,
-						"origin": [94, 46],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabO1_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 46,
-						"__w": 103,
-						"a1": 0,
-						"delay": 300,
-						"origin": [94, 46],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabO1_1.png",
-						"__off": [103, 0]
-					}
-				},
-				"lt": [-84, -30],
-				"rb": [-20, -15]
-			},
-			"stabO2": {
-				"1": {
-					"0": {
-						"__h": 46,
-						"__w": 105,
-						"delay": 50,
-						"origin": [83, 46],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabO2_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 46,
-						"__w": 105,
-						"a1": 0,
-						"delay": 300,
-						"origin": [83, 46],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabO2_1.png",
-						"__off": [105, 0]
-					}
-				},
-				"lt": [-83, -30],
-				"rb": [-12, -16]
-			},
-			"stabOF": {
-				"2": {
-					"0": {
-						"__h": 64,
-						"__w": 128,
-						"delay": 50,
-						"origin": [116, 52],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabOF_2.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 64,
-						"__w": 128,
-						"a1": 0,
-						"delay": 300,
-						"origin": [116, 52],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_stabOF_2.png",
-						"__off": [128, 0]
-					}
-				},
-				"lt": [-110, -32],
-				"rb": [-40, -11]
-			},
-			"swingO1": {
-				"2": {
-					"0": {
-						"__h": 76,
-						"__w": 125,
-						"a1": 0,
-						"delay": 300,
-						"origin": [114, 76],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_swingO1_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-88, -62],
-				"rb": [-18, -6]
-			},
-			"swingO2": {
-				"2": {
-					"0": {
-						"__h": 83,
-						"__w": 128,
-						"a1": 0,
-						"delay": 300,
-						"origin": [95, 58],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_swingO2_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-73, -50],
-				"rb": [5, 17]
-			},
-			"swingO3": {
-				"2": {
-					"0": {
-						"__h": 55,
-						"__w": 123,
-						"a1": 0,
-						"delay": 300,
-						"origin": [119, 54],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_swingO3_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-102, -50],
-				"rb": [-22, -10]
-			},
-			"swingOF": {
-				"3": {
-					"0": {
-						"__h": 55,
-						"__w": 158,
-						"a1": 0,
-						"delay": 300,
-						"origin": [153, 46],
-						"__i": "Character/Afterimage/swordOL.img_charge_1_swingOF_3.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-123, -48],
-				"rb": [13, -1]
-			}
-		},
-		"2": {
-			"proneStab": {
-				"1": {
-					"0": {
-						"__h": 29,
-						"__w": 97,
-						"delay": 50,
-						"origin": [74, 19],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_proneStab_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 29,
-						"__w": 97,
-						"a1": 0,
-						"delay": 300,
-						"origin": [74, 19],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_proneStab_1.png",
-						"__off": [97, 0]
-					}
-				},
-				"lt": [-74, -11],
-				"rb": [-15, 1]
-			},
-			"stabO1": {
-				"1": {
-					"0": {
-						"__h": 39,
-						"__w": 106,
-						"delay": 50,
-						"origin": [94, 39],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabO1_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 39,
-						"__w": 106,
-						"a1": 0,
-						"delay": 300,
-						"origin": [94, 39],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabO1_1.png",
-						"__off": [106, 0]
-					}
-				},
-				"lt": [-84, -30],
-				"rb": [-20, -15]
-			},
-			"stabO2": {
-				"1": {
-					"0": {
-						"__h": 39,
-						"__w": 108,
-						"delay": 50,
-						"origin": [82, 39],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabO2_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 39,
-						"__w": 108,
-						"a1": 0,
-						"delay": 300,
-						"origin": [82, 39],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabO2_1.png",
-						"__off": [108, 0]
-					}
-				},
-				"lt": [-83, -30],
-				"rb": [-12, -16]
-			},
-			"stabOF": {
-				"2": {
-					"0": {
-						"__h": 43,
-						"__w": 114,
-						"delay": 50,
-						"origin": [114, 43],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabOF_2.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 43,
-						"__w": 114,
-						"a1": 0,
-						"delay": 300,
-						"origin": [114, 43],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_stabOF_2.png",
-						"__off": [114, 0]
-					}
-				},
-				"lt": [-110, -32],
-				"rb": [-40, -11]
-			},
-			"swingO1": {
-				"2": {
-					"0": {
-						"__h": 76,
-						"__w": 109,
-						"a1": 0,
-						"delay": 300,
-						"origin": [99, 76],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_swingO1_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-88, -62],
-				"rb": [-18, -6]
-			},
-			"swingO2": {
-				"2": {
-					"0": {
-						"__h": 82,
-						"__w": 120,
-						"a1": 0,
-						"delay": 300,
-						"origin": [105, 57],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_swingO2_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-73, -50],
-				"rb": [5, 17]
-			},
-			"swingO3": {
-				"2": {
-					"0": {
-						"__h": 56,
-						"__w": 121,
-						"a1": 0,
-						"delay": 300,
-						"origin": [121, 56],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_swingO3_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-102, -50],
-				"rb": [-22, -10]
-			},
-			"swingOF": {
-				"3": {
-					"0": {
-						"__h": 56,
-						"__w": 168,
-						"a1": 0,
-						"delay": 300,
-						"origin": [156, 48],
-						"__i": "Character/Afterimage/swordOL.img_charge_2_swingOF_3.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-123, -48],
-				"rb": [13, -1]
-			}
-		},
-		"3": {
-			"proneStab": {
-				"1": {
-					"0": {
-						"__h": 33,
-						"__w": 88,
-						"delay": 50,
-						"origin": [74, 21],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_proneStab_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 33,
-						"__w": 88,
-						"a1": 0,
-						"delay": 300,
-						"origin": [74, 21],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_proneStab_1.png",
-						"__off": [88, 0]
-					}
-				},
-				"lt": [-74, -11],
-				"rb": [-15, 1]
-			},
-			"stabO1": {
-				"1": {
-					"0": {
-						"__h": 42,
-						"__w": 93,
-						"delay": 50,
-						"origin": [90, 42],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabO1_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 42,
-						"__w": 93,
-						"a1": 0,
-						"delay": 300,
-						"origin": [90, 42],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabO1_1.png",
-						"__off": [93, 0]
-					}
-				},
-				"lt": [-84, -30],
-				"rb": [-20, -15]
-			},
-			"stabO2": {
-				"1": {
-					"0": {
-						"__h": 41,
-						"__w": 100,
-						"delay": 50,
-						"origin": [86, 41],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabO2_1.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 41,
-						"__w": 100,
-						"a1": 0,
-						"delay": 300,
-						"origin": [86, 41],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabO2_1.png",
-						"__off": [100, 0]
-					}
-				},
-				"lt": [-83, -30],
-				"rb": [-12, -16]
-			},
-			"stabOF": {
-				"2": {
-					"0": {
-						"__h": 44,
-						"__w": 115,
-						"delay": 50,
-						"origin": [115, 44],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabOF_2.png",
-						"__off": [0, 0]
-					},
-					"1": {
-						"__h": 44,
-						"__w": 115,
-						"a1": 0,
-						"delay": 300,
-						"origin": [115, 44],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_stabOF_2.png",
-						"__off": [115, 0]
-					}
-				},
-				"lt": [-110, -32],
-				"rb": [-40, -11]
-			},
-			"swingO1": {
-				"2": {
-					"0": {
-						"__h": 72,
-						"__w": 101,
-						"a1": 0,
-						"delay": 300,
-						"origin": [101, 72],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_swingO1_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-88, -62],
-				"rb": [-18, -6]
-			},
-			"swingO2": {
-				"2": {
-					"0": {
-						"__h": 83,
-						"__w": 109,
-						"a1": 0,
-						"delay": 300,
-						"origin": [91, 58],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_swingO2_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-73, -50],
-				"rb": [5, 17]
-			},
-			"swingO3": {
-				"2": {
-					"0": {
-						"__h": 53,
-						"__w": 115,
-						"a1": 0,
-						"delay": 300,
-						"origin": [115, 53],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_swingO3_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-102, -50],
-				"rb": [-22, -10]
-			},
-			"swingOF": {
-				"3": {
-					"0": {
-						"__h": 61,
-						"__w": 147,
-						"a1": 0,
-						"delay": 300,
-						"origin": [144, 54],
-						"__i": "Character/Afterimage/swordOL.img_charge_3_swingOF_3.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-123, -48],
-				"rb": [13, -1]
-			}
-		},
-		"5": {
-			"proneStab": {
-				"1": {
-					"0": {
-						"__h": 58,
-						"__w": 100,
-						"delay": 50,
-						"origin": [92, 33],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_proneStab_1.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-74, -11],
-				"rb": [-15, 1]
-			},
-			"stabO1": {
-				"1": {
-					"0": {
-						"__h": 48,
-						"__w": 91,
-						"delay": 50,
-						"origin": [91, 48],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_stabO1_1.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-84, -30],
-				"rb": [-20, -15]
-			},
-			"stabO2": {
-				"1": {
-					"0": {
-						"__h": 48,
-						"__w": 115,
-						"delay": 50,
-						"origin": [95, 43],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_stabO2_1.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-83, -30],
-				"rb": [-12, -16]
-			},
-			"stabOF": {
-				"2": {
-					"0": {
-						"__h": 79,
-						"__w": 128,
-						"delay": 50,
-						"origin": [128, 61],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_stabOF_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-110, -32],
-				"rb": [-40, -11]
-			},
-			"swingO1": {
-				"2": {
-					"0": {
-						"__h": 107,
-						"__w": 184,
-						"a1": 0,
-						"delay": 300,
-						"origin": [134, 81],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_swingO1_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-88, -62],
-				"rb": [-18, -6]
-			},
-			"swingO2": {
-				"2": {
-					"0": {
-						"__h": 105,
-						"__w": 101,
-						"a1": 0,
-						"delay": 300,
-						"origin": [89, 68],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_swingO2_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-73, -50],
-				"rb": [5, 17]
-			},
-			"swingO3": {
-				"2": {
-					"0": {
-						"__h": 76,
-						"__w": 128,
-						"a1": 0,
-						"delay": 300,
-						"origin": [121, 61],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_swingO3_2.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-102, -50],
-				"rb": [-22, -10]
-			},
-			"swingOF": {
-				"3": {
-					"0": {
-						"__h": 83,
-						"__w": 167,
-						"a1": 0,
-						"delay": 300,
-						"origin": [153, 59],
-						"__i": "Character/Afterimage/swordOL.img_charge_5_swingOF_3.png",
-						"__off": [0, 0]
-					}
-				},
-				"lt": [-123, -48],
-				"rb": [13, -1]
-			}
-		}
-	}
+  "0": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_0_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "1": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_1_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "2": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_2_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "3": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_3_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "4": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_4_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "5": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_5_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "6": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_6_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "7": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_7_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "8": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_8_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "9": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 28,
+          "__w": 75,
+          "delay": 30,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 28,
+          "__w": 75,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            75,
+            19
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_proneStab_1.png",
+          "__off": [
+            75,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 84,
+          "delay": 30,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 84,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            84,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabO1_1.png",
+          "__off": [
+            84,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 37,
+          "__w": 83,
+          "delay": 30,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 37,
+          "__w": 83,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            83,
+            37
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabO2_1.png",
+          "__off": [
+            83,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 113,
+          "delay": 30,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 113,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            113,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_stabOF_2.png",
+          "__off": [
+            113,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -110,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 69,
+          "__w": 97,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            97,
+            69
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -88,
+        -62
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 82,
+          "__w": 88,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            80,
+            59
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        17
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 56,
+          "__w": 110,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            110,
+            56
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 57,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            50
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_9_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "10": {
+    "proneStab": {
+      "1": {
+        "0": {
+          "__h": 31,
+          "__w": 96,
+          "delay": 30,
+          "origin": [
+            82,
+            21
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_proneStab_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 31,
+          "__w": 96,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            82,
+            21
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_proneStab_1.png",
+          "__off": [
+            96,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -74,
+        -11
+      ],
+      "rb": [
+        -15,
+        1
+      ]
+    },
+    "stabO1": {
+      "1": {
+        "0": {
+          "__h": 39,
+          "__w": 100,
+          "delay": 30,
+          "origin": [
+            89,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabO1_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 100,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            89,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabO1_1.png",
+          "__off": [
+            100,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -84,
+        -30
+      ],
+      "rb": [
+        -20,
+        -15
+      ]
+    },
+    "stabO2": {
+      "1": {
+        "0": {
+          "__h": 39,
+          "__w": 100,
+          "delay": 30,
+          "origin": [
+            90,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabO2_1.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 100,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            90,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabO2_1.png",
+          "__off": [
+            100,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -83,
+        -30
+      ],
+      "rb": [
+        -12,
+        -16
+      ]
+    },
+    "stabOF": {
+      "2": {
+        "0": {
+          "__h": 39,
+          "__w": 121,
+          "delay": 30,
+          "origin": [
+            121,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabOF_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        },
+        "1": {
+          "__h": 39,
+          "__w": 121,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            121,
+            39
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_stabOF_2.png",
+          "__off": [
+            121,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -113,
+        -32
+      ],
+      "rb": [
+        -40,
+        -11
+      ]
+    },
+    "swingO1": {
+      "2": {
+        "0": {
+          "__h": 83,
+          "__w": 98,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            98,
+            80
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_swingO1_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -90,
+        -72
+      ],
+      "rb": [
+        -18,
+        -6
+      ]
+    },
+    "swingO2": {
+      "2": {
+        "0": {
+          "__h": 93,
+          "__w": 93,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            81,
+            55
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_swingO2_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -73,
+        -50
+      ],
+      "rb": [
+        5,
+        23
+      ]
+    },
+    "swingO3": {
+      "2": {
+        "0": {
+          "__h": 60,
+          "__w": 111,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            111,
+            58
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_swingO3_2.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -102,
+        -50
+      ],
+      "rb": [
+        -22,
+        -10
+      ]
+    },
+    "swingOF": {
+      "3": {
+        "0": {
+          "__h": 64,
+          "__w": 144,
+          "a1": 0,
+          "delay": 200,
+          "origin": [
+            132,
+            55
+          ],
+          "__i": "assets/Character/Afterimage/swordOL.img_10_swingOF_3.png",
+          "__off": [
+            0,
+            0
+          ]
+        }
+      },
+      "lt": [
+        -123,
+        -48
+      ],
+      "rb": [
+        13,
+        -1
+      ]
+    }
+  },
+  "charge": {
+    "1": {
+      "proneStab": {
+        "1": {
+          "0": {
+            "__h": 45,
+            "__w": 94,
+            "delay": 50,
+            "origin": [
+              74,
+              26
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_proneStab_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 45,
+            "__w": 94,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              74,
+              26
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_proneStab_1.png",
+            "__off": [
+              94,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -74,
+          -11
+        ],
+        "rb": [
+          -15,
+          1
+        ]
+      },
+      "stabO1": {
+        "1": {
+          "0": {
+            "__h": 46,
+            "__w": 103,
+            "delay": 50,
+            "origin": [
+              94,
+              46
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabO1_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 46,
+            "__w": 103,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              94,
+              46
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabO1_1.png",
+            "__off": [
+              103,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -84,
+          -30
+        ],
+        "rb": [
+          -20,
+          -15
+        ]
+      },
+      "stabO2": {
+        "1": {
+          "0": {
+            "__h": 46,
+            "__w": 105,
+            "delay": 50,
+            "origin": [
+              83,
+              46
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabO2_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 46,
+            "__w": 105,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              83,
+              46
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabO2_1.png",
+            "__off": [
+              105,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -83,
+          -30
+        ],
+        "rb": [
+          -12,
+          -16
+        ]
+      },
+      "stabOF": {
+        "2": {
+          "0": {
+            "__h": 64,
+            "__w": 128,
+            "delay": 50,
+            "origin": [
+              116,
+              52
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabOF_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 64,
+            "__w": 128,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              116,
+              52
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_stabOF_2.png",
+            "__off": [
+              128,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -110,
+          -32
+        ],
+        "rb": [
+          -40,
+          -11
+        ]
+      },
+      "swingO1": {
+        "2": {
+          "0": {
+            "__h": 76,
+            "__w": 125,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              114,
+              76
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_swingO1_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -88,
+          -62
+        ],
+        "rb": [
+          -18,
+          -6
+        ]
+      },
+      "swingO2": {
+        "2": {
+          "0": {
+            "__h": 83,
+            "__w": 128,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              95,
+              58
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_swingO2_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -73,
+          -50
+        ],
+        "rb": [
+          5,
+          17
+        ]
+      },
+      "swingO3": {
+        "2": {
+          "0": {
+            "__h": 55,
+            "__w": 123,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              119,
+              54
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_swingO3_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -102,
+          -50
+        ],
+        "rb": [
+          -22,
+          -10
+        ]
+      },
+      "swingOF": {
+        "3": {
+          "0": {
+            "__h": 55,
+            "__w": 158,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              153,
+              46
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_1_swingOF_3.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -123,
+          -48
+        ],
+        "rb": [
+          13,
+          -1
+        ]
+      }
+    },
+    "2": {
+      "proneStab": {
+        "1": {
+          "0": {
+            "__h": 29,
+            "__w": 97,
+            "delay": 50,
+            "origin": [
+              74,
+              19
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_proneStab_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 29,
+            "__w": 97,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              74,
+              19
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_proneStab_1.png",
+            "__off": [
+              97,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -74,
+          -11
+        ],
+        "rb": [
+          -15,
+          1
+        ]
+      },
+      "stabO1": {
+        "1": {
+          "0": {
+            "__h": 39,
+            "__w": 106,
+            "delay": 50,
+            "origin": [
+              94,
+              39
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabO1_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 39,
+            "__w": 106,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              94,
+              39
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabO1_1.png",
+            "__off": [
+              106,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -84,
+          -30
+        ],
+        "rb": [
+          -20,
+          -15
+        ]
+      },
+      "stabO2": {
+        "1": {
+          "0": {
+            "__h": 39,
+            "__w": 108,
+            "delay": 50,
+            "origin": [
+              82,
+              39
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabO2_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 39,
+            "__w": 108,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              82,
+              39
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabO2_1.png",
+            "__off": [
+              108,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -83,
+          -30
+        ],
+        "rb": [
+          -12,
+          -16
+        ]
+      },
+      "stabOF": {
+        "2": {
+          "0": {
+            "__h": 43,
+            "__w": 114,
+            "delay": 50,
+            "origin": [
+              114,
+              43
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabOF_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 43,
+            "__w": 114,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              114,
+              43
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_stabOF_2.png",
+            "__off": [
+              114,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -110,
+          -32
+        ],
+        "rb": [
+          -40,
+          -11
+        ]
+      },
+      "swingO1": {
+        "2": {
+          "0": {
+            "__h": 76,
+            "__w": 109,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              99,
+              76
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_swingO1_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -88,
+          -62
+        ],
+        "rb": [
+          -18,
+          -6
+        ]
+      },
+      "swingO2": {
+        "2": {
+          "0": {
+            "__h": 82,
+            "__w": 120,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              105,
+              57
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_swingO2_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -73,
+          -50
+        ],
+        "rb": [
+          5,
+          17
+        ]
+      },
+      "swingO3": {
+        "2": {
+          "0": {
+            "__h": 56,
+            "__w": 121,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              121,
+              56
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_swingO3_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -102,
+          -50
+        ],
+        "rb": [
+          -22,
+          -10
+        ]
+      },
+      "swingOF": {
+        "3": {
+          "0": {
+            "__h": 56,
+            "__w": 168,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              156,
+              48
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_2_swingOF_3.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -123,
+          -48
+        ],
+        "rb": [
+          13,
+          -1
+        ]
+      }
+    },
+    "3": {
+      "proneStab": {
+        "1": {
+          "0": {
+            "__h": 33,
+            "__w": 88,
+            "delay": 50,
+            "origin": [
+              74,
+              21
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_proneStab_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 33,
+            "__w": 88,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              74,
+              21
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_proneStab_1.png",
+            "__off": [
+              88,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -74,
+          -11
+        ],
+        "rb": [
+          -15,
+          1
+        ]
+      },
+      "stabO1": {
+        "1": {
+          "0": {
+            "__h": 42,
+            "__w": 93,
+            "delay": 50,
+            "origin": [
+              90,
+              42
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabO1_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 42,
+            "__w": 93,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              90,
+              42
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabO1_1.png",
+            "__off": [
+              93,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -84,
+          -30
+        ],
+        "rb": [
+          -20,
+          -15
+        ]
+      },
+      "stabO2": {
+        "1": {
+          "0": {
+            "__h": 41,
+            "__w": 100,
+            "delay": 50,
+            "origin": [
+              86,
+              41
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabO2_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 41,
+            "__w": 100,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              86,
+              41
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabO2_1.png",
+            "__off": [
+              100,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -83,
+          -30
+        ],
+        "rb": [
+          -12,
+          -16
+        ]
+      },
+      "stabOF": {
+        "2": {
+          "0": {
+            "__h": 44,
+            "__w": 115,
+            "delay": 50,
+            "origin": [
+              115,
+              44
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabOF_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__h": 44,
+            "__w": 115,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              115,
+              44
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_stabOF_2.png",
+            "__off": [
+              115,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -110,
+          -32
+        ],
+        "rb": [
+          -40,
+          -11
+        ]
+      },
+      "swingO1": {
+        "2": {
+          "0": {
+            "__h": 72,
+            "__w": 101,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              101,
+              72
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_swingO1_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -88,
+          -62
+        ],
+        "rb": [
+          -18,
+          -6
+        ]
+      },
+      "swingO2": {
+        "2": {
+          "0": {
+            "__h": 83,
+            "__w": 109,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              91,
+              58
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_swingO2_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -73,
+          -50
+        ],
+        "rb": [
+          5,
+          17
+        ]
+      },
+      "swingO3": {
+        "2": {
+          "0": {
+            "__h": 53,
+            "__w": 115,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              115,
+              53
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_swingO3_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -102,
+          -50
+        ],
+        "rb": [
+          -22,
+          -10
+        ]
+      },
+      "swingOF": {
+        "3": {
+          "0": {
+            "__h": 61,
+            "__w": 147,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              144,
+              54
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_3_swingOF_3.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -123,
+          -48
+        ],
+        "rb": [
+          13,
+          -1
+        ]
+      }
+    },
+    "5": {
+      "proneStab": {
+        "1": {
+          "0": {
+            "__h": 58,
+            "__w": 100,
+            "delay": 50,
+            "origin": [
+              92,
+              33
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_proneStab_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -74,
+          -11
+        ],
+        "rb": [
+          -15,
+          1
+        ]
+      },
+      "stabO1": {
+        "1": {
+          "0": {
+            "__h": 48,
+            "__w": 91,
+            "delay": 50,
+            "origin": [
+              91,
+              48
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_stabO1_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -84,
+          -30
+        ],
+        "rb": [
+          -20,
+          -15
+        ]
+      },
+      "stabO2": {
+        "1": {
+          "0": {
+            "__h": 48,
+            "__w": 115,
+            "delay": 50,
+            "origin": [
+              95,
+              43
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_stabO2_1.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -83,
+          -30
+        ],
+        "rb": [
+          -12,
+          -16
+        ]
+      },
+      "stabOF": {
+        "2": {
+          "0": {
+            "__h": 79,
+            "__w": 128,
+            "delay": 50,
+            "origin": [
+              128,
+              61
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_stabOF_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -110,
+          -32
+        ],
+        "rb": [
+          -40,
+          -11
+        ]
+      },
+      "swingO1": {
+        "2": {
+          "0": {
+            "__h": 107,
+            "__w": 184,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              134,
+              81
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_swingO1_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -88,
+          -62
+        ],
+        "rb": [
+          -18,
+          -6
+        ]
+      },
+      "swingO2": {
+        "2": {
+          "0": {
+            "__h": 105,
+            "__w": 101,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              89,
+              68
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_swingO2_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -73,
+          -50
+        ],
+        "rb": [
+          5,
+          17
+        ]
+      },
+      "swingO3": {
+        "2": {
+          "0": {
+            "__h": 76,
+            "__w": 128,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              121,
+              61
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_swingO3_2.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -102,
+          -50
+        ],
+        "rb": [
+          -22,
+          -10
+        ]
+      },
+      "swingOF": {
+        "3": {
+          "0": {
+            "__h": 83,
+            "__w": 167,
+            "a1": 0,
+            "delay": 300,
+            "origin": [
+              153,
+              59
+            ],
+            "__i": "assets/Character/Afterimage/swordOL.img_charge_5_swingOF_3.png",
+            "__off": [
+              0,
+              0
+            ]
+          }
+        },
+        "lt": [
+          -123,
+          -48
+        ],
+        "rb": [
+          13,
+          -1
+        ]
+      }
+    }
+  }
 }

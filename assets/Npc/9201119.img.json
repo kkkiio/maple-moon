@@ -14,7 +14,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5016.png"
+      "__i": "assets/images/Npc/5016.png"
     },
     "1": {
       "__h": 99,
@@ -24,7 +24,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5017.png"
+      "__i": "assets/images/Npc/5017.png"
     },
     "2": {
       "__h": 99,
@@ -34,7 +34,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5018.png"
+      "__i": "assets/images/Npc/5018.png"
     },
     "3": {
       "__h": 99,
@@ -44,7 +44,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5019.png"
+      "__i": "assets/images/Npc/5019.png"
     },
     "speak": {
       "0": "n0",
@@ -60,7 +60,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5005.png"
+      "__i": "assets/images/Npc/5005.png"
     },
     "1": {
       "__h": 99,
@@ -70,17 +70,7 @@
         65,
         98
       ],
-      "__i": "images/Npc/5006.png"
-    },
-    "10": {
-      "__h": 99,
-      "__w": 129,
-      "delay": 150,
-      "origin": [
-        65,
-        98
-      ],
-      "__i": "images/Npc/5015.png"
+      "__i": "assets/images/Npc/5006.png"
     },
     "2": {
       "__h": 99,
@@ -90,7 +80,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5007.png"
+      "__i": "assets/images/Npc/5007.png"
     },
     "3": {
       "__h": 99,
@@ -100,7 +90,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5008.png"
+      "__i": "assets/images/Npc/5008.png"
     },
     "4": {
       "__h": 98,
@@ -110,7 +100,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5009.png"
+      "__i": "assets/images/Npc/5009.png"
     },
     "5": {
       "__h": 98,
@@ -120,7 +110,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5010.png"
+      "__i": "assets/images/Npc/5010.png"
     },
     "6": {
       "__h": 100,
@@ -130,7 +120,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5011.png"
+      "__i": "assets/images/Npc/5011.png"
     },
     "7": {
       "__h": 99,
@@ -140,7 +130,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5012.png"
+      "__i": "assets/images/Npc/5012.png"
     },
     "8": {
       "__h": 99,
@@ -150,7 +140,7 @@
         66,
         98
       ],
-      "__i": "images/Npc/5013.png"
+      "__i": "assets/images/Npc/5013.png"
     },
     "9": {
       "__h": 99,
@@ -160,7 +150,17 @@
         66,
         98
       ],
-      "__i": "images/Npc/5014.png"
+      "__i": "assets/images/Npc/5014.png"
+    },
+    "10": {
+      "__h": 99,
+      "__w": 129,
+      "delay": 150,
+      "origin": [
+        65,
+        98
+      ],
+      "__i": "assets/images/Npc/5015.png"
     }
   },
   "stand": {
@@ -172,7 +172,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5003.png"
+      "__i": "assets/images/Npc/5003.png"
     },
     "1": {
       "__h": 99,
@@ -182,7 +182,7 @@
         64,
         98
       ],
-      "__i": "images/Npc/5004.png"
+      "__i": "assets/images/Npc/5004.png"
     }
   }
 }

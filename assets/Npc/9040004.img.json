@@ -11,7 +11,7 @@
         39,
         83
       ],
-      "__i": "images/Npc/1312.png"
+      "__i": "assets/images/Npc/1312.png"
     },
     "guildRank": 1
   },
@@ -24,7 +24,7 @@
         236
       ],
       "z": 0,
-      "__i": "images/Npc/1313.png"
+      "__i": "assets/images/Npc/1313.png"
     }
   }
 }

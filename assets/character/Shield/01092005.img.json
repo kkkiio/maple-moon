@@ -15,7 +15,7 @@
           5
         ],
         "z": "shieldOverHair",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           32,
           26
@@ -37,7 +37,7 @@
           6
         ],
         "z": "shieldOverHair",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           51,
           0
@@ -59,7 +59,7 @@
           6
         ],
         "z": "shieldOverHair",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           51,
           22
@@ -83,7 +83,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           127,
           0
@@ -105,7 +105,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           127,
           0
@@ -129,7 +129,7 @@
           6
         ],
         "z": "shieldOverHair",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           51,
           0
@@ -151,7 +151,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           42
@@ -173,7 +173,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           21
@@ -190,7 +190,7 @@
         -4,
         26
       ],
-      "__i": "/Character/Shield/spritesheets/01092005.img.png",
+      "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
       "__off": [
         0,
         0
@@ -203,7 +203,7 @@
         -5,
         26
       ],
-      "__i": "/Character/Shield/spritesheets/01092005.img.png",
+      "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
       "__off": [
         26,
         0
@@ -237,7 +237,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           127,
           21
@@ -261,7 +261,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           15,
           48
@@ -285,7 +285,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           15,
           48
@@ -307,7 +307,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           15,
           48
@@ -331,7 +331,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           16,
           91
@@ -353,7 +353,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           32,
           91
@@ -377,7 +377,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           48,
           91
@@ -399,7 +399,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           64,
           91
@@ -423,7 +423,7 @@
           5
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           0,
           48
@@ -445,7 +445,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           80,
           91
@@ -467,7 +467,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           96,
           91
@@ -491,7 +491,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           0,
           70
@@ -513,7 +513,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           16,
           70
@@ -535,7 +535,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           32,
           70
@@ -559,7 +559,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           48,
           70
@@ -581,7 +581,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           64,
           70
@@ -603,7 +603,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           0
@@ -627,7 +627,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           21
@@ -649,7 +649,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           42
@@ -671,7 +671,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           95,
           63
@@ -695,7 +695,7 @@
           5
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           66,
           0
@@ -717,7 +717,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           111,
           0
@@ -739,7 +739,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           111,
           21
@@ -763,7 +763,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           111,
           42
@@ -785,7 +785,7 @@
           6
         ],
         "z": "backShield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           66,
           22
@@ -807,7 +807,7 @@
           6
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           111,
           63
@@ -829,7 +829,7 @@
           5
         ],
         "z": "shieldBelowBody",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           0,
           91
@@ -853,7 +853,7 @@
           7
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           17,
           26
@@ -875,7 +875,7 @@
           6
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           81,
           0
@@ -897,7 +897,7 @@
           7
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           17,
           26
@@ -919,7 +919,7 @@
           6
         ],
         "z": "shield",
-        "__i": "/Character/Shield/spritesheets/01092005.img.png",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
         "__off": [
           0,
           26

@@ -15,7 +15,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           36
@@ -35,7 +35,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           14
@@ -57,7 +57,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           18
@@ -77,7 +77,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           138,
           185
@@ -99,7 +99,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           54
@@ -119,7 +119,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           147,
           185
@@ -143,7 +143,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           90
@@ -163,7 +163,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           115
@@ -185,7 +185,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           90
@@ -205,7 +205,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           115
@@ -229,7 +229,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           18
@@ -249,7 +249,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           138,
           185
@@ -271,7 +271,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           83,
           149
@@ -291,7 +291,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           133,
           132
@@ -313,7 +313,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           15,
           185
@@ -333,7 +333,7 @@
           4
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           98
@@ -350,7 +350,7 @@
         -2,
         29
       ],
-      "__i": "/Character/Coat/spritesheets/01040037.img.png",
+      "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
       "__off": [
         71,
         0
@@ -363,7 +363,7 @@
         -2,
         29
       ],
-      "__i": "/Character/Coat/spritesheets/01040037.img.png",
+      "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
       "__off": [
         71,
         29
@@ -398,7 +398,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           108
@@ -418,7 +418,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           125
@@ -442,7 +442,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           109
@@ -464,7 +464,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           21,
           109
@@ -488,7 +488,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           0
@@ -508,7 +508,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           135
@@ -532,7 +532,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           0
@@ -552,7 +552,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           135
@@ -574,7 +574,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           0
@@ -594,7 +594,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           115,
           132
@@ -618,7 +618,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           42,
           109
@@ -640,7 +640,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           126
@@ -664,7 +664,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           64
@@ -684,7 +684,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           15,
           203
@@ -706,7 +706,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           91
@@ -726,7 +726,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           88,
           203
@@ -748,7 +748,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           91
@@ -768,7 +768,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           88,
           203
@@ -792,7 +792,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           37
@@ -812,7 +812,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           44,
           203
@@ -834,7 +834,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           55
@@ -854,7 +854,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           119,
           125
@@ -876,7 +876,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           73
@@ -896,7 +896,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           206
@@ -918,7 +918,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           91
@@ -938,7 +938,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           55,
           203
@@ -960,7 +960,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           129,
           149
@@ -980,7 +980,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           66,
           203
@@ -1004,7 +1004,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           72
@@ -1024,7 +1024,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           196
@@ -1046,7 +1046,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           0
@@ -1066,7 +1066,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           105
@@ -1088,7 +1088,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           0
@@ -1108,7 +1108,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           105
@@ -1132,7 +1132,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           56
@@ -1152,7 +1152,7 @@
           3
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           217,
           42
@@ -1176,7 +1176,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           26,
           91
@@ -1196,7 +1196,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           126
@@ -1218,7 +1218,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           126,
           109
@@ -1238,7 +1238,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           82,
           125
@@ -1262,7 +1262,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           21
@@ -1282,7 +1282,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           190
@@ -1304,7 +1304,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           72
@@ -1324,7 +1324,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           162
@@ -1348,7 +1348,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           104,
           168
@@ -1368,7 +1368,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           101
@@ -1390,7 +1390,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           29,
           56
@@ -1410,7 +1410,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           166,
           168
@@ -1432,7 +1432,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           49,
           91
@@ -1452,7 +1452,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           101,
           125
@@ -1476,7 +1476,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           0
@@ -1496,7 +1496,7 @@
           4
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           91,
           91
@@ -1518,7 +1518,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           19
@@ -1538,7 +1538,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           79,
           132
@@ -1560,7 +1560,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           58,
           56
@@ -1580,7 +1580,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           77,
           203
@@ -1604,7 +1604,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           80
@@ -1624,7 +1624,7 @@
           4
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           203
@@ -1646,7 +1646,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           149
@@ -1666,7 +1666,7 @@
           5
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           42,
           132
@@ -1688,7 +1688,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           39,
           0
@@ -1708,7 +1708,7 @@
           5
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           0
@@ -1732,7 +1732,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           30,
           36
@@ -1752,7 +1752,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           82
@@ -1774,7 +1774,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           36
@@ -1794,7 +1794,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           97,
           132
@@ -1816,7 +1816,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           67,
           149
@@ -1836,7 +1836,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           30,
           203
@@ -1856,7 +1856,7 @@
           8
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           42,
           140
@@ -1878,7 +1878,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           58,
           56
@@ -1898,7 +1898,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           77,
           203
@@ -1922,7 +1922,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           162
@@ -1942,7 +1942,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           137
@@ -1964,7 +1964,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           144
@@ -1984,7 +1984,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           149
@@ -2006,7 +2006,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           0
@@ -2026,7 +2026,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           161
@@ -2050,7 +2050,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           185
@@ -2070,7 +2070,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           60
@@ -2092,7 +2092,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           0
@@ -2112,7 +2112,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           75
@@ -2134,7 +2134,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           18
@@ -2154,7 +2154,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           90
@@ -2178,7 +2178,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           18,
           168
@@ -2198,7 +2198,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           28,
           212
@@ -2220,7 +2220,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           36,
           168
@@ -2240,7 +2240,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           173
@@ -2262,7 +2262,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           72,
           168
@@ -2282,7 +2282,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           178,
           185
@@ -2306,7 +2306,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           15,
           185
@@ -2326,7 +2326,7 @@
           4
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           98
@@ -2348,7 +2348,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           83,
           149
@@ -2368,7 +2368,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           133,
           132
@@ -2390,7 +2390,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           132
@@ -2410,7 +2410,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           69
@@ -2434,7 +2434,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           27,
           72
@@ -2454,7 +2454,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           109
@@ -2476,7 +2476,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           30,
           185
@@ -2496,7 +2496,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           110,
           91
@@ -2518,7 +2518,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           54,
           168
@@ -2538,7 +2538,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           38,
           212
@@ -2562,7 +2562,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           39,
           16
@@ -2584,7 +2584,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           15
@@ -2606,7 +2606,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           56
@@ -2628,7 +2628,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           0
@@ -2648,7 +2648,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           42
@@ -2672,7 +2672,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           98,
           185
@@ -2692,7 +2692,7 @@
           4
         ],
         "z": "mailArmOverHairBelowWeapon",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           28
@@ -2712,7 +2712,7 @@
           8
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           21,
           132
@@ -2734,7 +2734,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           61
@@ -2754,7 +2754,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           151,
           168
@@ -2776,7 +2776,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           108
@@ -2796,7 +2796,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           111,
           185
@@ -2820,7 +2820,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           20
@@ -2840,7 +2840,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           61,
           132
@@ -2862,7 +2862,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           125,
           40
@@ -2882,7 +2882,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           120,
           168
@@ -2904,7 +2904,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           126
@@ -2924,7 +2924,7 @@
           5
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           104,
           109
@@ -2948,7 +2948,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           30,
           36
@@ -2968,7 +2968,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           82
@@ -2990,7 +2990,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           36
@@ -3010,7 +3010,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           97,
           132
@@ -3032,7 +3032,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           51,
           149
@@ -3052,7 +3052,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           0
@@ -3072,7 +3072,7 @@
           8
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           156,
           185
@@ -3094,7 +3094,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           150,
           109
@@ -3114,7 +3114,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           167,
           185
@@ -3138,7 +3138,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           59,
           185
@@ -3158,7 +3158,7 @@
           4
         ],
         "z": "mailArmOverHairBelowWeapon",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           80
@@ -3178,7 +3178,7 @@
           8
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           87,
           56
@@ -3200,7 +3200,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           97,
           149
@@ -3220,7 +3220,7 @@
           5
         ],
         "z": "mailArmOverHairBelowWeapon",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           182
@@ -3240,7 +3240,7 @@
           6
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           136,
           168
@@ -3262,7 +3262,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           36
@@ -3282,7 +3282,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           72,
           185
@@ -3306,7 +3306,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           99,
           46
@@ -3328,7 +3328,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           54,
           72
@@ -3348,7 +3348,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           59,
           140
@@ -3370,7 +3370,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           54
@@ -3390,7 +3390,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           82,
           109
@@ -3414,7 +3414,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           72
@@ -3434,7 +3434,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           193,
           185
@@ -3456,7 +3456,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           88,
           168
@@ -3476,7 +3476,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           72,
           91
@@ -3498,7 +3498,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           90
@@ -3518,7 +3518,7 @@
           5
         ],
         "z": "mailArmBelowHead",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           212
@@ -3542,7 +3542,7 @@
           10
         ],
         "z": "backMailChestOverPants",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           63,
           109
@@ -3564,7 +3564,7 @@
           10
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           124,
           185
@@ -3584,7 +3584,7 @@
           5
         ],
         "z": "mailArmBelowHeadOverMailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           93
@@ -3606,7 +3606,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           44,
           185
@@ -3626,7 +3626,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           0,
           168
@@ -3648,7 +3648,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           111,
           149
@@ -3668,7 +3668,7 @@
           5
         ],
         "z": "mailArmOverHair",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           85,
           185
@@ -3692,7 +3692,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           35,
           149
@@ -3712,7 +3712,7 @@
           3
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           115
@@ -3734,7 +3734,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           187,
           144
@@ -3754,7 +3754,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           60,
           36
@@ -3776,7 +3776,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           35,
           149
@@ -3796,7 +3796,7 @@
           3
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           212,
           115
@@ -3818,7 +3818,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           78,
           72
@@ -3838,7 +3838,7 @@
           2
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           14,
           212
@@ -3862,7 +3862,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           18,
           149
@@ -3882,7 +3882,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           15
@@ -3904,7 +3904,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           170,
           126
@@ -3924,7 +3924,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           30
@@ -3946,7 +3946,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           18,
           149
@@ -3966,7 +3966,7 @@
           5
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           15
@@ -3988,7 +3988,7 @@
           9
         ],
         "z": "mailChest",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           147,
           149
@@ -4008,7 +4008,7 @@
           4
         ],
         "z": "mailArm",
-        "__i": "/Character/Coat/spritesheets/01040037.img.png",
+        "__i": "assets/Character/Coat/spritesheets/01040037.img.png",
         "__off": [
           203,
           45

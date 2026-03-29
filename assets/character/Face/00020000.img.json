@@ -15,7 +15,7 @@
           11
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_angry_face.png",
+        "__i": "assets/Character/Face/00020000.img_angry_face.png",
         "__off": [
           0,
           0
@@ -39,7 +39,7 @@
           10
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_bewildered_face.png",
+        "__i": "assets/Character/Face/00020000.img_bewildered_face.png",
         "__off": [
           0,
           0
@@ -64,7 +64,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_blaze_face.png",
+        "__i": "assets/Character/Face/00020000.img_blaze_face.png",
         "__off": [
           0,
           0
@@ -87,7 +87,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_blaze_face.png",
+        "__i": "assets/Character/Face/00020000.img_blaze_face.png",
         "__off": [
           30,
           0
@@ -112,7 +112,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_blink_face.png",
+        "__i": "assets/Character/Face/00020000.img_blink_face.png",
         "__off": [
           0,
           0
@@ -135,7 +135,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_blink_face.png",
+        "__i": "assets/Character/Face/00020000.img_blink_face.png",
         "__off": [
           26,
           0
@@ -158,7 +158,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_blink_face.png",
+        "__i": "assets/Character/Face/00020000.img_blink_face.png",
         "__off": [
           52,
           0
@@ -183,7 +183,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_bowing_face.png",
+        "__i": "assets/Character/Face/00020000.img_bowing_face.png",
         "__off": [
           0,
           0
@@ -206,7 +206,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_bowing_face.png",
+        "__i": "assets/Character/Face/00020000.img_bowing_face.png",
         "__off": [
           37,
           0
@@ -230,7 +230,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_cheers_face.png",
+        "__i": "assets/Character/Face/00020000.img_cheers_face.png",
         "__off": [
           0,
           0
@@ -254,7 +254,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_chu_face.png",
+        "__i": "assets/Character/Face/00020000.img_chu_face.png",
         "__off": [
           0,
           0
@@ -278,7 +278,7 @@
           6
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_cry_face.png",
+        "__i": "assets/Character/Face/00020000.img_cry_face.png",
         "__off": [
           0,
           0
@@ -303,7 +303,7 @@
           0
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_dam_face.png",
+        "__i": "assets/Character/Face/00020000.img_dam_face.png",
         "__off": [
           0,
           0
@@ -326,7 +326,7 @@
           0
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_dam_face.png",
+        "__i": "assets/Character/Face/00020000.img_dam_face.png",
         "__off": [
           24,
           0
@@ -349,7 +349,7 @@
         8
       ],
       "z": "face",
-      "__i": "Character/Face/00020000.img_default_face.png"
+      "__i": "assets/Character/Face/00020000.img_default_face.png"
     }
   },
   "despair": {
@@ -369,7 +369,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_despair_face.png",
+        "__i": "assets/Character/Face/00020000.img_despair_face.png",
         "__off": [
           0,
           0
@@ -392,7 +392,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_despair_face.png",
+        "__i": "assets/Character/Face/00020000.img_despair_face.png",
         "__off": [
           44,
           0
@@ -417,7 +417,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_glitter_face.png",
+        "__i": "assets/Character/Face/00020000.img_glitter_face.png",
         "__off": [
           0,
           0
@@ -440,7 +440,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_glitter_face.png",
+        "__i": "assets/Character/Face/00020000.img_glitter_face.png",
         "__off": [
           27,
           0
@@ -464,7 +464,7 @@
           7
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_hit_face.png",
+        "__i": "assets/Character/Face/00020000.img_hit_face.png",
         "__off": [
           0,
           0
@@ -489,7 +489,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_hot_face.png",
+        "__i": "assets/Character/Face/00020000.img_hot_face.png",
         "__off": [
           0,
           0
@@ -512,7 +512,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_hot_face.png",
+        "__i": "assets/Character/Face/00020000.img_hot_face.png",
         "__off": [
           46,
           0
@@ -537,7 +537,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_hum_face.png",
+        "__i": "assets/Character/Face/00020000.img_hum_face.png",
         "__off": [
           0,
           0
@@ -560,7 +560,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_hum_face.png",
+        "__i": "assets/Character/Face/00020000.img_hum_face.png",
         "__off": [
           25,
           0
@@ -590,7 +590,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_love_face.png",
+        "__i": "assets/Character/Face/00020000.img_love_face.png",
         "__off": [
           0,
           0
@@ -613,7 +613,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_love_face.png",
+        "__i": "assets/Character/Face/00020000.img_love_face.png",
         "__off": [
           27,
           0
@@ -637,7 +637,7 @@
           7
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_oops_face.png",
+        "__i": "assets/Character/Face/00020000.img_oops_face.png",
         "__off": [
           0,
           0
@@ -662,7 +662,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_pain_face.png",
+        "__i": "assets/Character/Face/00020000.img_pain_face.png",
         "__off": [
           0,
           0
@@ -686,7 +686,7 @@
           6
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_shine_face.png",
+        "__i": "assets/Character/Face/00020000.img_shine_face.png",
         "__off": [
           0,
           0
@@ -710,7 +710,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_smile_face.png",
+        "__i": "assets/Character/Face/00020000.img_smile_face.png",
         "__off": [
           0,
           0
@@ -734,7 +734,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_stunned_face.png",
+        "__i": "assets/Character/Face/00020000.img_stunned_face.png",
         "__off": [
           0,
           0
@@ -758,7 +758,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_troubled_face.png",
+        "__i": "assets/Character/Face/00020000.img_troubled_face.png",
         "__off": [
           0,
           0
@@ -783,7 +783,7 @@
           24
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_vomit_face.png",
+        "__i": "assets/Character/Face/00020000.img_vomit_face.png",
         "__off": [
           0,
           0
@@ -806,7 +806,7 @@
           24
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_vomit_face.png",
+        "__i": "assets/Character/Face/00020000.img_vomit_face.png",
         "__off": [
           28,
           0
@@ -830,7 +830,7 @@
           8
         ],
         "z": "face",
-        "__i": "Character/Face/00020000.img_wink_face.png",
+        "__i": "assets/Character/Face/00020000.img_wink_face.png",
         "__off": [
           0,
           0

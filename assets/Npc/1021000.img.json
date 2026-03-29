@@ -1,7 +1,7 @@
 {
   "arm": {
     "0": {
-      "__i": "images/Npc/9674.png",
+      "__i": "assets/images/Npc/9674.png",
       "__h": 79,
       "__w": 57,
       "delay": 5000,
@@ -20,7 +20,7 @@
   },
   "side": {
     "0": {
-      "__i": "images/Npc/9673.png",
+      "__i": "assets/images/Npc/9673.png",
       "__h": 79,
       "__w": 39,
       "delay": 5000,
@@ -33,7 +33,7 @@
   },
   "stand": {
     "0": {
-      "__i": "images/Npc/9670.png",
+      "__i": "assets/images/Npc/9670.png",
       "__h": 79,
       "__w": 40,
       "delay": 1200,
@@ -44,7 +44,7 @@
       "z": 0
     },
     "1": {
-      "__i": "images/Npc/9671.png",
+      "__i": "assets/images/Npc/9671.png",
       "__h": 79,
       "__w": 40,
       "delay": 100,
@@ -55,7 +55,7 @@
       "z": 0
     },
     "2": {
-      "__i": "images/Npc/9672.png",
+      "__i": "assets/images/Npc/9672.png",
       "__h": 79,
       "__w": 40,
       "delay": 150,

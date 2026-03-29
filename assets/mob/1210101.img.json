@@ -12,7 +12,7 @@
         43,
         56
       ],
-      "__i": "mob/1210101.img_die1.png",
+      "__i": "assets/mob/1210101.img_die1.png",
       "__off": [
         0,
         0
@@ -30,7 +30,7 @@
         43,
         56
       ],
-      "__i": "mob/1210101.img_die1.png",
+      "__i": "assets/mob/1210101.img_die1.png",
       "__off": [
         78,
         0
@@ -50,7 +50,7 @@
         43,
         56
       ],
-      "__i": "mob/1210101.img_die1.png",
+      "__i": "assets/mob/1210101.img_die1.png",
       "__off": [
         156,
         0
@@ -78,7 +78,7 @@
         30,
         0
       ],
-      "__i": "mob/1210101.img_hit1.png",
+      "__i": "assets/mob/1210101.img_hit1.png",
       "__off": [
         0,
         0
@@ -124,7 +124,7 @@
         33,
         0
       ],
-      "__i": "mob/1210101.img_jump.png",
+      "__i": "assets/mob/1210101.img_jump.png",
       "__off": [
         0,
         0
@@ -152,7 +152,7 @@
         34,
         0
       ],
-      "__i": "mob/1210101.img_move.png",
+      "__i": "assets/mob/1210101.img_move.png",
       "__off": [
         0,
         0
@@ -178,7 +178,7 @@
         34,
         0
       ],
-      "__i": "mob/1210101.img_move.png",
+      "__i": "assets/mob/1210101.img_move.png",
       "__off": [
         67,
         0
@@ -204,7 +204,7 @@
         33,
         -4
       ],
-      "__i": "mob/1210101.img_move.png",
+      "__i": "assets/mob/1210101.img_move.png",
       "__off": [
         134,
         0
@@ -232,7 +232,7 @@
         34,
         0
       ],
-      "__i": "mob/1210101.img_stand.png",
+      "__i": "assets/mob/1210101.img_stand.png",
       "__off": [
         0,
         0
@@ -258,7 +258,7 @@
         34,
         0
       ],
-      "__i": "mob/1210101.img_stand.png",
+      "__i": "assets/mob/1210101.img_stand.png",
       "__off": [
         69,
         0
@@ -284,7 +284,7 @@
         35,
         0
       ],
-      "__i": "mob/1210101.img_stand.png",
+      "__i": "assets/mob/1210101.img_stand.png",
       "__off": [
         138,
         0

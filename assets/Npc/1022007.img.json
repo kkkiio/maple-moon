@@ -9,7 +9,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/907.png"
+      "__i": "assets/images/Npc/907.png"
     },
     "1": {
       "__h": 74,
@@ -19,67 +19,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/908.png"
-    },
-    "10": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 500,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/910.png"
-    },
-    "11": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/908.png"
-    },
-    "12": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/909.png"
-    },
-    "13": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 500,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/911.png"
-    },
-    "14": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/909.png"
-    },
-    "15": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/908.png"
+      "__i": "assets/images/Npc/908.png"
     },
     "2": {
       "__h": 74,
@@ -89,7 +29,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/909.png"
+      "__i": "assets/images/Npc/909.png"
     },
     "3": {
       "__h": 74,
@@ -99,7 +39,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/908.png"
+      "__i": "assets/images/Npc/908.png"
     },
     "4": {
       "__h": 74,
@@ -109,7 +49,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/910.png"
+      "__i": "assets/images/Npc/910.png"
     },
     "5": {
       "__h": 74,
@@ -119,7 +59,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/908.png"
+      "__i": "assets/images/Npc/908.png"
     },
     "6": {
       "__h": 74,
@@ -129,7 +69,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/910.png"
+      "__i": "assets/images/Npc/910.png"
     },
     "7": {
       "__h": 74,
@@ -139,7 +79,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/908.png"
+      "__i": "assets/images/Npc/908.png"
     },
     "8": {
       "__h": 74,
@@ -149,7 +89,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/909.png"
+      "__i": "assets/images/Npc/909.png"
     },
     "9": {
       "__h": 74,
@@ -159,7 +99,67 @@
         27,
         74
       ],
-      "__i": "images/Npc/908.png"
+      "__i": "assets/images/Npc/908.png"
+    },
+    "10": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 500,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/910.png"
+    },
+    "11": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/908.png"
+    },
+    "12": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/909.png"
+    },
+    "13": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 500,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/911.png"
+    },
+    "14": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/909.png"
+    },
+    "15": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/908.png"
     },
     "speak": {
       "0": "s0",
@@ -175,7 +175,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/902.png"
+      "__i": "assets/images/Npc/902.png"
     },
     "1": {
       "__h": 74,
@@ -185,27 +185,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/903.png"
-    },
-    "10": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/903.png"
-    },
-    "11": {
-      "__h": 74,
-      "__w": 53,
-      "delay": 100,
-      "origin": [
-        27,
-        74
-      ],
-      "__i": "images/Npc/904.png"
+      "__i": "assets/images/Npc/903.png"
     },
     "2": {
       "__h": 74,
@@ -215,7 +195,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/904.png"
+      "__i": "assets/images/Npc/904.png"
     },
     "3": {
       "__h": 74,
@@ -225,7 +205,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/905.png"
+      "__i": "assets/images/Npc/905.png"
     },
     "4": {
       "__h": 74,
@@ -235,7 +215,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/903.png"
+      "__i": "assets/images/Npc/903.png"
     },
     "5": {
       "__h": 74,
@@ -245,7 +225,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/904.png"
+      "__i": "assets/images/Npc/904.png"
     },
     "6": {
       "__h": 74,
@@ -255,7 +235,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/906.png"
+      "__i": "assets/images/Npc/906.png"
     },
     "7": {
       "__h": 74,
@@ -265,7 +245,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/903.png"
+      "__i": "assets/images/Npc/903.png"
     },
     "8": {
       "__h": 74,
@@ -275,7 +255,7 @@
         27,
         74
       ],
-      "__i": "images/Npc/904.png"
+      "__i": "assets/images/Npc/904.png"
     },
     "9": {
       "__h": 74,
@@ -285,7 +265,27 @@
         27,
         74
       ],
-      "__i": "images/Npc/906.png"
+      "__i": "assets/images/Npc/906.png"
+    },
+    "10": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/903.png"
+    },
+    "11": {
+      "__h": 74,
+      "__w": 53,
+      "delay": 100,
+      "origin": [
+        27,
+        74
+      ],
+      "__i": "assets/images/Npc/904.png"
     }
   }
 }

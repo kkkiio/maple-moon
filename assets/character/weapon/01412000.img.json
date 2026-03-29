@@ -15,7 +15,7 @@
           10
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           118,
           124
@@ -37,7 +37,7 @@
           10
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           155
@@ -59,7 +59,7 @@
           10
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           59,
           155
@@ -83,7 +83,7 @@
           5
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           0
@@ -105,7 +105,7 @@
           5
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           0
@@ -125,7 +125,7 @@
         0,
         32
       ],
-      "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+      "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
       "__off": [
         269,
         53
@@ -138,7 +138,7 @@
         0,
         32
       ],
-      "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+      "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
       "__off": [
         269,
         85
@@ -175,7 +175,7 @@
           5
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           31
@@ -199,7 +199,7 @@
           3
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           64,
           84
@@ -223,7 +223,7 @@
           3
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           64,
           84
@@ -245,7 +245,7 @@
           3
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           104
@@ -269,7 +269,7 @@
           5
         ],
         "z": "weapon",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           20,
           40
@@ -291,7 +291,7 @@
           5
         ],
         "z": "weapon",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           64
@@ -315,7 +315,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           84,
           0
@@ -337,7 +337,7 @@
           5
         ],
         "z": "weapon",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           84,
           20
@@ -361,7 +361,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           84,
           40
@@ -383,7 +383,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           84,
           60
@@ -405,7 +405,7 @@
           5
         ],
         "z": "weapon",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           84
@@ -429,7 +429,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           186
@@ -451,7 +451,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           97
@@ -473,7 +473,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           59,
           124
@@ -497,7 +497,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           223
@@ -519,7 +519,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           148,
           0
@@ -541,7 +541,7 @@
           5
         ],
         "z": "weaponBelowBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           53,
           223
@@ -565,7 +565,7 @@
           5
         ],
         "z": "weaponBelowBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           20,
           0
@@ -587,7 +587,7 @@
           5
         ],
         "z": "weaponOverBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           269,
           0
@@ -609,7 +609,7 @@
           5
         ],
         "z": "weaponOverBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           106,
           223
@@ -633,7 +633,7 @@
           5
         ],
         "z": "weaponOverBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           20,
           20
@@ -655,7 +655,7 @@
           5
         ],
         "z": "weaponOverBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           118,
           155
@@ -677,7 +677,7 @@
           5
         ],
         "z": "weaponBelowBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           148,
           59
@@ -701,7 +701,7 @@
           5
         ],
         "z": "backWeapon",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           0
@@ -723,7 +723,7 @@
           5
         ],
         "z": "weaponBelowBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           179,
           0
@@ -745,7 +745,7 @@
           5
         ],
         "z": "weaponBelowArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           159,
           223
@@ -767,7 +767,7 @@
           5
         ],
         "z": "weaponBelowBody",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           212,
           223
@@ -791,7 +791,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           62
@@ -813,7 +813,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           132
@@ -835,7 +835,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           210,
           62
@@ -857,7 +857,7 @@
           7
         ],
         "z": "weaponOverArm",
-        "__i": "/Character/Weapon/spritesheets/01412000.img.png",
+        "__i": "assets/Character/Weapon/spritesheets/01412000.img.png",
         "__off": [
           0,
           124

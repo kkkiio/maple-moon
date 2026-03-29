@@ -72,10 +72,23 @@ fn list_ui_entries_json() -> Json {
   cleanup_invalid_ui_entities()
   let entries : Array[Json] = []
   for entity, entry in ui_entries_by_entity_ref.val {
+    let rect_json : Json = match @selene_ui.global_ui_nodes().get(entity) {
+      Some(global_ui_node) => {
+        let rect = global_ui_node.screen_rect
+        ({
+          "x": rect.position[@selene_math.X],
+          "y": rect.position[@selene_math.Y],
+          "w": rect.size[@selene_math.X],
+          "h": rect.size[@selene_math.Y],
+        } : Json)
+      }
+      None => Json::null()
+    }
     entries.push({
       "package": entry.package_name,
       "name": entry.ui_name,
       "alive": entity.is_alive(),
+      "rect": rect_json,
     })
   }
   entries.to_json()
@@ -117,6 +130,16 @@ fn click_registered_ui_impl(package_name : String, ui_name : String) -> Json {
     "message": "click queued",
     "package": package_name,
     "name": ui_name,
+    "click_pos": {
+      "x": pos[@selene_math.X],
+      "y": pos[@selene_math.Y],
+    },
+    "rect": {
+      "x": rect.position[@selene_math.X],
+      "y": rect.position[@selene_math.Y],
+      "w": rect.size[@selene_math.X],
+      "h": rect.size[@selene_math.Y],
+    },
   }
 }
 

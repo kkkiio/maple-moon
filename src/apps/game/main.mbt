@@ -312,7 +312,7 @@ fn main {
       system_name="io_system",
     )
     .add_system(
-      Update,
+      First,
       fn(world) { @console.console_input_injection_system(world) },
       system_name="console_input_injection_system",
     )

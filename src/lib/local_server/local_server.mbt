@@ -217,7 +217,7 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
 ///|
 priv struct CreateCharRequest {
   name : String
-  _job : Int
+  job : Int
   face : Int
   hair : Int
   hairc : Int
@@ -335,6 +335,7 @@ fn LocalServer::on_character_list_request(self : LocalServer) -> Unit {
 ///|
 fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
   let request : CreateCharRequest = @json.from_json(json)
+  ignore(request.job)
   @io_service.execute_background(
     async fn() {
       if self.character_roster.is_empty() {

@@ -9,8 +9,6 @@ import {
 // Values
 pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
 
-pub fn collect_spritesheet_paths(Json) -> Array[String]
-
 pub fn get_csv_loader() -> CsvLoader
 
 pub fn get_csv_loader_by_name(String) -> CsvLoader
@@ -20,8 +18,6 @@ pub fn get_text_loader(String) -> TextLoader
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
 
 pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -> Array[T] raise @json.JsonDecodeError
-
-pub fn patch_image(Json, Map[String, SpritesheetMetadata], base_url? : String) -> Json raise
 
 pub fn register_async_loader(String, AsyncLoader) -> Unit
 
@@ -127,26 +123,6 @@ pub(all) struct ResPath(Array[String])
 #deprecated
 pub fn ResPath::inner(Self) -> Array[String]
 pub impl Eq for ResPath
-
-pub(all) struct SpritesheetFrameMetadata {
-  x : Int
-  y : Int
-}
-pub impl @json.FromJson for SpritesheetFrameMetadata
-
-pub(all) struct SpritesheetImageMetadata {
-  frame : SpritesheetFrameMetadata
-}
-pub impl @json.FromJson for SpritesheetImageMetadata
-
-type SpritesheetMergeLoader
-pub fn SpritesheetMergeLoader::new(&AsyncResourceLoader, String, String) -> Self
-pub impl AsyncResourceLoader for SpritesheetMergeLoader
-
-pub(all) struct SpritesheetMetadata {
-  frames : Map[String, SpritesheetImageMetadata]
-}
-pub impl @json.FromJson for SpritesheetMetadata
 
 pub struct TextLoader {
   loader : &TextResourceLoader

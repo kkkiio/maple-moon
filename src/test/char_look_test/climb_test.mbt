@@ -188,6 +188,6 @@ async test "character climbing ladder" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/climb.png",
-    img_description="2D game snapshot with visible character-related rendering.",
+    visual_desc="2D game snapshot with visible character-related rendering.",
   )
 }

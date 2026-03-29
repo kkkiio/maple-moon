@@ -67,6 +67,6 @@ async test "mob hpbar render snapshot" {
 
   @capture_app.snapshot(
     "src/test/mob_hpbars_test/__snapshot__/mob_hpbar_default.png",
-    img_description="A mob is visible and its HP bar is rendered above the mob, horizontally centered.",
+    visual_desc="A mob is visible and its HP bar is rendered above the mob, horizontally centered.",
   )
 }

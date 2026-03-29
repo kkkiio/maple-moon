@@ -68,6 +68,7 @@ pub fn clear_resource() -> Unit {
 ///|
 /// Character presentation runtime update system.
 pub fn char_look_system(_world : @ecs.World) -> Unit {
+  char_look_animation_tick_system(_world)
   char_look_layer_system(_world)
 }
 

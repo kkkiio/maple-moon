@@ -19,6 +19,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/time",
+  "Milky2018/selene/transform",
 } for "test"
 
 options(

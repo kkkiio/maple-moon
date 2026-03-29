@@ -107,10 +107,7 @@ async test "crossbow shoot2 afterimage without range should render" {
   let collection = @char_look.AfterImage::get_collection("crossBow", 0)
   guard collection.get("shoot2") is Some(shoot2_resource) else { panic() }
 
-  let get_frame_fn = fn() { look.get_frame() }
-  @char_look.add_after_image(
-    after_image_host, get_frame_fn, shoot2_resource, false,
-  )
+  @char_look.add_after_image(after_image_host, look, shoot2_resource, false)
   // Drive character animation to the frame where shoot2 afterimage should appear.
   let mut ticks = 0
   while look.get_frame() < shoot2_resource.first_frame && ticks < 60 {
@@ -127,6 +124,6 @@ async test "crossbow shoot2 afterimage without range should render" {
 
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage.png",
-    img_description="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
+    visual_desc="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
   )
 }

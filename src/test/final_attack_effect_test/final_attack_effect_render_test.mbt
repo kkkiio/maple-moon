@@ -83,6 +83,6 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   setup_effect_scene(animation, @graphics.EFFECT_ZINDEX)
   @capture_app.snapshot(
     "src/test/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
-    img_description="Final attack hit effect rendered correctly on the z-effect layer.",
+    visual_desc="Final attack hit effect rendered correctly on the z-effect layer.",
   )
 }

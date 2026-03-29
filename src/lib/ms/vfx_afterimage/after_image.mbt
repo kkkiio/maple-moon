@@ -192,11 +192,9 @@ pub fn AfterImage::update(
 // ============================================================================
 
 ///|
-/// Entry storing an AfterImage with its frame getter function.
-/// The get_frame_fn is called each update to get the current animation frame.
 priv struct AfterImageEntry {
   after_image : AfterImage
-  get_frame_fn : () -> Int
+  look : @cp.CharLook
 }
 
 ///|
@@ -214,11 +212,11 @@ fn after_images() -> Map[@entity.Entity, AfterImageEntry] {
 /// 
 /// Parameters:
 /// - `entity`: The character's root entity (used for keying and as parent for AfterImage sprite)
-/// - `get_frame_fn`: A function that returns the current animation frame
+/// - `look`: The character look used as frame source
 /// - `after_image`: The AfterImage to add
 pub fn add_after_image(
   entity : @entity.Entity,
-  get_frame_fn : () -> Int,
+  look : @cp.CharLook,
   resource : NxAfterImage,
   facing_right : Bool,
 ) -> Unit {
@@ -229,7 +227,7 @@ pub fn add_after_image(
   }
   let after_image = AfterImage::new(resource, facing_right)
   after_image.attach(entity)
-  after_images.set(entity, { after_image, get_frame_fn })
+  after_images.set(entity, { after_image, look })
 }
 
 ///|
@@ -250,7 +248,7 @@ pub fn clear_after_image(entity : @entity.Entity) -> Unit {
 }
 
 ///|
-/// Update all AfterImages based on their frame getter function.
+/// Update all AfterImages based on character look frame.
 /// Should be called from the main game loop.
 pub fn update_after_image_system(_world : @ecs.World) -> Unit {
   let delta = @time.delta()
@@ -262,8 +260,7 @@ pub fn update_after_image_system(_world : @ecs.World) -> Unit {
       to_remove.push(entity)
       continue
     }
-    // Get frame from the callback
-    let frame = (entry.get_frame_fn)()
+    let frame = entry.look.get_frame()
     entry.after_image.update(frame, (delta * 1000.0).to_int())
   }
   // Clean up dead entities

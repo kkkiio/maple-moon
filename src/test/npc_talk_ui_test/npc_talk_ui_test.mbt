@@ -263,6 +263,6 @@ async test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content"
 
   @capture_app.snapshot(
     "src/test/npc_talk_ui_test/__snapshot__/npc_talk_ui_quest_2090.png",
-    img_description="NPC talk UI for quest 2090 quiz is open with multiple options. The cursor rendered by cursor_system is visible on top of the dialog and not occluded by UI layers. The window is tall enough to avoid clipping the content.",
+    visual_desc="NPC talk UI for quest 2090 quiz is open with multiple options. The cursor rendered by cursor_system is visible on top of the dialog and not occluded by UI layers. The window is tall enough to avoid clipping the content.",
   )
 }

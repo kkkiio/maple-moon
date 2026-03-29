@@ -94,7 +94,7 @@ async test "character stabO1" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stabO1_0.png",
-    img_description="2D game frame from animation test.",
+    visual_desc="2D game frame from animation test.",
   )
 
   // still frame 0

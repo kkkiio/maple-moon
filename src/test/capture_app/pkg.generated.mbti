@@ -45,7 +45,7 @@ pub fn set_canvas(Canvas) -> Unit
 
 pub fn set_ctx(Context2D) -> Unit
 
-pub async fn snapshot(String, img_description~ : String) -> Unit
+pub async fn snapshot(String, visual_desc~ : String) -> Unit
 
 pub fn submit_frame(@render_pipeline.RenderFrame) -> Unit
 

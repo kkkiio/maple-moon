@@ -18,6 +18,8 @@ import {
 // Values
 pub fn byaction(Int) -> ExpressionId
 
+pub fn char_look_animation_tick_system(@ecs.World) -> Unit
+
 pub fn char_look_layer_system(@ecs.World) -> Unit
 
 pub fn char_look_system(@ecs.World) -> Unit

@@ -472,6 +472,18 @@ let character_list_ref : Ref[Array[SelectableCharacter]?] = Ref::new(None)
 let character_list_requested_ref : Ref[Bool] = Ref::new(false)
 
 ///|
+let select_char_requested_ref : Ref[Bool] = Ref::new(false)
+
+///|
+fn send_select_char_once(character_id : Int) -> Unit {
+  if select_char_requested_ref.val {
+    return
+  }
+  select_char_requested_ref.val = true
+  @game_server.send(SelectCharMessage::{ character_id, })
+}
+
+///|
 fn clear_select_char_ui_runtime() -> Unit {
   select_char_loading_future.val = None
   match select_char_ui.val {
@@ -488,6 +500,7 @@ fn reset_select_char_ui_runtime_state() -> Unit {
   clear_select_char_ui_runtime()
   character_list_ref.val = None
   character_list_requested_ref.val = false
+  select_char_requested_ref.val = false
 }
 
 ///|
@@ -501,9 +514,7 @@ async fn add_select_char_ui(
     on_select_character=fn(slot) {
       guard select_char_ui.val is Some(ui) else { return }
       guard slot >= 0 && slot < ui.characters.length() else { return }
-      @game_server.send(SelectCharMessage::{
-        character_id: ui.characters[slot].cid,
-      })
+      send_select_char_once(ui.characters[slot].cid)
     },
     on_new_character=fn() {
       reset_select_char_ui_runtime_state()
@@ -589,9 +600,7 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
       if event.entity == ui.select_click_entity {
         let slot = 0
         guard slot >= 0 && slot < ui.characters.length() else { break }
-        @game_server.send(SelectCharMessage::{
-          character_id: ui.characters[slot].cid,
-        })
+        send_select_char_once(ui.characters[slot].cid)
         break
       }
       if event.entity == ui.new_character_click_entity {
@@ -661,6 +670,7 @@ pub fn setup_game_server_handlers() -> Unit {
         }),
       )
       character_list_requested_ref.val = false
+      select_char_requested_ref.val = false
       clear_select_char_ui_runtime()
     },
   )

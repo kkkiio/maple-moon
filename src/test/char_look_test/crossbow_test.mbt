@@ -109,6 +109,6 @@ async test "character with crossbow equipment" {
   // Snapshot
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_stand1.png",
-    img_description="A character stands facing left while holding and firing a crossbow, with a shooting effect rendered in front of the weapon.",
+    visual_desc="A character stands facing left while holding and firing a crossbow, with a shooting effect rendered in front of the weapon.",
   )
 }

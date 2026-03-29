@@ -11,7 +11,7 @@ import {
 }
 
 // Values
-pub fn add_after_image(@entity.Entity, () -> Int, @vfx_afterimage.NxAfterImage, Bool) -> Unit
+pub fn add_after_image(@entity.Entity, @character_presentation.CharLook, @vfx_afterimage.NxAfterImage, Bool) -> Unit
 
 pub fn byaction(Int) -> @character_presentation.ExpressionId
 

@@ -103,7 +103,7 @@ async fn snapshot_afterimage_case(
   facing_right : Bool,
   host_shift_x : Double,
   snapshot_path : String,
-  img_description : String,
+  visual_desc : String,
 ) -> Unit {
   let previous_world = @ecs.current_world()
   let world = @ecs.World::new()
@@ -162,10 +162,7 @@ async fn snapshot_afterimage_case(
   let collection = @char_look.AfterImage::get_collection(after_image_name, 0)
   guard collection.get(stance_key) is Some(resource) else { panic() }
 
-  let get_frame_fn = fn() { look.get_frame() }
-  @char_look.add_after_image(
-    after_image_host, get_frame_fn, resource, facing_right,
-  )
+  @char_look.add_after_image(after_image_host, look, resource, facing_right)
 
   let mut ticks = 0
   while look.get_frame() < resource.first_frame && ticks < 60 {
@@ -176,5 +173,5 @@ async fn snapshot_afterimage_case(
   @time.set_delta(0.016)
   @capture_app.run_loop(0.016)
 
-  @capture_app.snapshot(snapshot_path, img_description~)
+  @capture_app.snapshot(snapshot_path, visual_desc~)
 }

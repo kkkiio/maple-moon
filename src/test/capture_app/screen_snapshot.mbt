@@ -5,10 +5,10 @@
 /// 
 /// If the `UPDATE_CANVAS_SNAPS` environment variable is set to `"true"`, the snapshot file will be updated.
 /// 
-/// Use `img_description` to provide semantic expectation for the snapshot.
+/// Use `visual_desc` to provide semantic expectation for the snapshot.
 /// If snapshot is in update mode (`UPDATE_CANVAS_SNAPS=true` or snapshot file missing),
 /// use vision model to assert semantic expectation.
-pub async fn snapshot(path : String, img_description~ : String) -> Unit {
+pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {
   let actual_buffer = to_buffer()
   let actual = actual_buffer.to_bytes()
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
@@ -17,12 +17,10 @@ pub async fn snapshot(path : String, img_description~ : String) -> Unit {
     guard @sys.get_env_var("OPENROUTER_API_KEY") is Some(api_key) &&
       api_key != "" else {
       fail(
-        "img_description check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
+        "visual_desc check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
       )
     }
-    let verdict = snapshot_verdict(
-      actual_buffer, img_description, api_key, path,
-    )
+    let verdict = snapshot_verdict(actual_buffer, visual_desc, api_key, path)
     let dir = @path.Path(path).dirname().to_string()
     @fs.create_dir(dir)
     if not(verdict.pass) {

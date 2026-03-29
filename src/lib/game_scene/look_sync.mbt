@@ -8,6 +8,8 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
 
   // Track which slots we've seen in inventory
   let inventory_slots = Map::new()
+  let mut add_or_update_count = 0
+  let mut remove_count = 0
 
   // Use equip-slot semantic range instead of slot_max(EQUIPPED).
   // Some SetField payloads do not carry EQUIPPED slotmax explicitly.
@@ -22,7 +24,17 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
     if current_id != item.item_id {
       // Need change
       match @item.request_item_data_if_ready(item.item_id) {
-        Some(data) => look.add_equip(data, slot_id) catch { _ => () }
+        Some(data) => {
+          @log.info("look_sync_apply_equip", data={
+            "slot_id": slot_id.int_value().to_json(),
+            "inventory_item_id": item.item_id.to_json(),
+            "current_look_item_id": current_id.to_json(),
+          })
+          look.add_equip(data, slot_id) catch {
+            _ => ()
+          }
+          add_or_update_count = add_or_update_count + 1
+        }
         None => () // Will try again next frame
       }
     }
@@ -33,7 +45,20 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
   for slot_tuple in look_equips {
     let (slot_id, _) = slot_tuple
     if not(inventory_slots.contains(slot_id)) {
+      @log.info("look_sync_remove_equip", data={
+        "slot_id": slot_id.int_value().to_json(),
+      })
       look.remove_equip(slot_id)
+      remove_count = remove_count + 1
     }
+  }
+
+  if add_or_update_count > 0 || remove_count > 0 {
+    @log.info("look_sync_summary", data={
+      "add_or_update_count": add_or_update_count.to_json(),
+      "remove_count": remove_count.to_json(),
+      "stance": look.get_stance().to_string().to_json(),
+      "frame": look.get_frame().to_json(),
+    })
   }
 }

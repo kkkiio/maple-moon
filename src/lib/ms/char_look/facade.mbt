@@ -91,13 +91,11 @@ pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
 ///|
 pub fn add_after_image(
   entity : @entity.Entity,
-  get_frame_fn : () -> Int,
+  look : CharLook,
   after_image : NxAfterImage,
   facing_right : Bool,
 ) -> Unit {
-  @vfx_afterimage.add_after_image(
-    entity, get_frame_fn, after_image, facing_right,
-  )
+  @vfx_afterimage.add_after_image(entity, look, after_image, facing_right)
 }
 
 ///|

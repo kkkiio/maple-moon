@@ -37,15 +37,44 @@ priv struct DynamicLayerTrack {
 }
 
 ///|
+priv struct LocalAnimationFrame {
+  texture : @resource.NxTexture
+  duration : Double
+}
+
+///|
+priv struct LocalAnimationState {
+  frames : Array[LocalAnimationFrame]
+  loop_ : Bool
+  transform : @selene_math.Transform
+  mut frame_index : Int
+  mut elapsed : Double
+  mut speed : Double
+  mut finished : Bool
+}
+
+///|
 let dynamic_layer_tracks_by_world : Map[
   UInt,
   Map[@entity.Entity, DynamicLayerTrack],
 ] = Map::new()
 
 ///|
+let local_animation_states_by_world : Map[
+  UInt,
+  Map[@entity.Entity, LocalAnimationState],
+] = Map::new()
+
+///|
 fn dynamic_layer_tracks() -> Map[@entity.Entity, DynamicLayerTrack] {
   let world_id = @ecs.require_current_world().id()
   dynamic_layer_tracks_by_world.get_or_init(world_id, fn() { Map::new() })
+}
+
+///|
+fn local_animation_states() -> Map[@entity.Entity, LocalAnimationState] {
+  let world_id = @ecs.require_current_world().id()
+  local_animation_states_by_world.get_or_init(world_id, fn() { Map::new() })
 }
 
 ///|
@@ -93,11 +122,192 @@ fn update_dynamic_layer_tracks(_world : @ecs.World) -> Unit {
       dead_entities.push(entity)
       continue
     }
-    let frame = @ms_animation.current_frame_index(track.frame_entity)
+    let frame = local_current_frame(track.frame_entity)
     set_entity_z(entity, current_z_by_frame(track.z_layers, frame))
   }
   for entity in dead_entities {
     tracks.remove(entity)
+  }
+}
+
+///|
+fn local_frames_from_nx_animation(
+  src : @resource.NxAnimation,
+) -> Array[LocalAnimationFrame] {
+  let frames : Array[LocalAnimationFrame] = []
+  for frame in src.frames {
+    let duration = match frame.delay {
+      Some(delay) => if delay <= 0 { 0.1 } else { delay.to_double() / 1000.0 }
+      None => 0.1
+    }
+    frames.push({ texture: frame.texture, duration })
+  }
+  if src.zigzag && frames.length() > 2 {
+    let expanded = frames.copy()
+    for i = frames.length() - 2; i >= 1; i = i - 1 {
+      expanded.push(frames[i])
+    }
+    expanded
+  } else {
+    frames
+  }
+}
+
+///|
+fn start_local_animation(
+  entity : @entity.Entity,
+  nx_animation : @resource.NxAnimation,
+  loop_ : Bool,
+  transform : @selene_math.Transform,
+) -> Unit {
+  start_local_animation_frames(
+    entity,
+    local_frames_from_nx_animation(nx_animation),
+    loop_,
+    transform,
+  )
+}
+
+///|
+fn start_local_animation_frames(
+  entity : @entity.Entity,
+  frames : Array[LocalAnimationFrame],
+  loop_ : Bool,
+  transform : @selene_math.Transform,
+) -> Unit {
+  let states = local_animation_states()
+  guard !frames.is_empty() else {
+    states.remove(entity)
+    return
+  }
+  let speed = states.get(entity).map_or(1.0, fn(state) { state.speed })
+  states.set(entity, {
+    frames,
+    loop_,
+    transform,
+    frame_index: 0,
+    elapsed: 0.0,
+    speed,
+    finished: false,
+  })
+  apply_local_frame(entity, states.get(entity).unwrap())
+}
+
+///|
+fn set_local_speed(entity : @entity.Entity, speed : Double) -> Unit {
+  let safe_speed = if speed < 0.0 { 0.0 } else { speed }
+  if local_animation_states().get(entity) is Some(state) {
+    state.speed = safe_speed
+  }
+}
+
+///|
+fn local_current_frame(entity : @entity.Entity) -> Int {
+  local_animation_states()
+  .get(entity)
+  .map_or(0, fn(state) { state.frame_index })
+}
+
+///|
+fn local_is_finished(entity : @entity.Entity) -> Bool {
+  local_animation_states()
+  .get(entity)
+  .map_or(true, fn(state) { state.finished })
+}
+
+///|
+pub fn char_look_animation_tick_system(_world : @ecs.World) -> Unit {
+  let states = local_animation_states_by_world.get_or_init(_world.id(), fn() {
+    Map::new()
+  })
+  let delta = @time.delta()
+  let dead_entities : Array[@entity.Entity] = []
+  let pairs = states.to_array()
+  for _, pair in pairs {
+    let (entity, state) = pair
+    if !entity.is_alive() {
+      dead_entities.push(entity)
+      continue
+    }
+    if state.finished || state.frames.is_empty() || state.speed <= 0.0 {
+      continue
+    }
+    state.elapsed += delta * state.speed
+    let mut advanced = false
+    while true {
+      let duration = if state.frames[state.frame_index].duration <= 0.0 {
+        0.001
+      } else {
+        state.frames[state.frame_index].duration
+      }
+      if state.elapsed < duration {
+        break
+      }
+      state.elapsed -= duration
+      state.frame_index += 1
+      advanced = true
+      if state.frame_index >= state.frames.length() {
+        if state.loop_ {
+          state.frame_index = 0
+        } else {
+          state.frame_index = state.frames.length() - 1
+          state.finished = true
+          break
+        }
+      }
+    }
+    if advanced {
+      apply_local_frame(entity, state)
+    }
+  }
+  for entity in dead_entities {
+    states.remove(entity)
+  }
+}
+
+///|
+fn apply_local_frame(
+  entity : @entity.Entity,
+  state : LocalAnimationState,
+) -> Unit {
+  let frame = state.frames[state.frame_index]
+  let texture = frame.texture
+  let size = @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double())
+  let rect : @selene_math.Rect = {
+    position: @selene_math.Vec2D(
+      texture.offset.x.to_double(),
+      texture.offset.y.to_double(),
+    ),
+    size,
+  }
+  let origin = @selene_math.Vec2D(
+    texture.origin.x.to_double() - state.transform.tx,
+    texture.origin.y.to_double() - state.transform.ty,
+  )
+  let flip_x = state.transform.a < 0.0
+  let anchor = anchor_from_origin(origin, size, flip_x~)
+  let image = @selene_asset.load_image(texture.i)
+  match @sprite.sprites().get(entity) {
+    Some(sprite) =>
+      @sprite.sprites().set(entity, {
+        ..sprite,
+        image: Some(image),
+        rect: Some(rect),
+        custom_size: Some(size),
+        anchor,
+        flip_x,
+      })
+    None =>
+      @sprite.sprites().set(
+        entity,
+        @sprite.Sprite::new(
+          image=Some(image),
+          rect=Some(rect),
+          custom_size=Some(size),
+          anchor~,
+          flip_x~,
+        ),
+      )
   }
 }
 
@@ -246,7 +456,7 @@ pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
 /// Set animation playback speed for all sprite entities used by this look.
 pub fn CharLook::set_animation_speed(self : CharLook, speed : Double) -> Unit {
   fn set_speed_if_animation(entity : @entity.Entity) {
-    @ms_animation.set_animation_speed(entity, speed)
+    set_local_speed(entity, speed)
   }
 
   for entity in self.body_entities.values() {
@@ -309,6 +519,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       set_entity_visible(entity, false)
+      local_animation_states().remove(entity)
     }
   }
 
@@ -356,20 +567,17 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = @ms_animation.from_nx_animation(anim, loop_~) // TODO: cache animation
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.spawn_sprite_child()
     })
-    let sprite = ensure_sprite_with_z(
+    ensure_sprite_with_z(
       entity,
-      animation,
       layer.z() + @graphics.CHAR_LOOK_ZINDEX,
       transform,
     )
-    ignore(sprite)
     set_entity_visible(entity, true)
-    @ms_animation.play_animation(entity, animation, loop_~, transform~)
+    start_local_animation(entity, anim, loop_, transform)
   }
   if self.full_body.stances.get(stance) is Some(stance_stances) {
     for name, it in stance_stances {
@@ -387,7 +595,6 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         blend: false,
         zigzag: false,
       } // Reconstruct approximate NxAnimation container
-      let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
@@ -398,16 +605,14 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       let z_layers = layers.map(fn(layer) {
         layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
       })
-      let sprite = ensure_sprite_with_z(
+      ensure_sprite_with_z(
         entity,
-        animation,
         current_z_by_frame(z_layers, current_frame),
         transform,
       )
-      ignore(sprite)
       set_entity_visible(entity, true)
       self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
-      @ms_animation.play_animation(entity, animation, loop_~, transform~)
+      start_local_animation(entity, nx_anim, loop_, transform)
     }
   }
   // Weapon animation
@@ -454,15 +659,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         })
         let z_layer = current_z_by_frame(z_layers, current_frame) -
           @graphics.CHAR_LOOK_ZINDEX
-        attach_equipment(
-          entity,
-          stance,
-          self.flip,
-          frames,
-          z_layer,
-          body_delays,
-          loop_,
-        )
+        attach_equipment(entity, self.flip, frames, z_layer, body_delays, loop_)
         self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       }
     }
@@ -638,6 +835,12 @@ pub fn CharLook::add_equip(
   itemdata : @item.ItemData,
   slot : @slot.Id,
 ) -> Unit raise {
+  @log.info("charlook_add_equip", data={
+    "slot_id": slot.int_value().to_json(),
+    "item_id": itemdata.item_id.to_json(),
+    "stance": self.stance.get().to_string().to_json(),
+    "frame": self.get_frame().to_json(),
+  })
   self.equips.add_equip(itemdata, slot, self.draw_info)
   self.updatetwohanded()
   self.play_animations()
@@ -645,6 +848,11 @@ pub fn CharLook::add_equip(
 
 ///|
 pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
+  @log.info("charlook_remove_equip", data={
+    "slot_id": slot.int_value().to_json(),
+    "stance": self.stance.get().to_string().to_json(),
+    "frame": self.get_frame().to_json(),
+  })
   self.equips.remove_equip(slot)
   if slot == @slot.Id::WEAPON {
     self.updatetwohanded()
@@ -661,7 +869,7 @@ pub fn CharLook::get_stance(self : CharLook) -> StanceId {
 pub fn CharLook::get_frame(self : CharLook) -> Int {
   // Try to find the "body" entity which drives the main animation
   match self.body_entities.get("body") {
-    Some(entity) => @ms_animation.current_frame_index(entity)
+    Some(entity) => local_current_frame(entity)
     None => 0
   }
 }
@@ -837,7 +1045,7 @@ pub fn CharLook::get_root_entity(self : CharLook) -> @entity.Entity {
 ///|
 pub fn CharLook::is_animation_finished(self : CharLook) -> Bool {
   match self.body_entities.get("body") {
-    Some(entity) => @ms_animation.is_animation_finished(entity)
+    Some(entity) => local_is_finished(entity)
     None => false
   }
 }
@@ -891,60 +1099,49 @@ fn attach_face(
         }
       None => []
     }
-    let face_anim_frames : Array[@ms_animation.AnimationFrame] = []
+    let face_local_frames : Array[LocalAnimationFrame] = []
     if body_delays.length() > 0 {
       for i = 0; i < body_delays.length(); i = i + 1 {
         let face_pos = draw_info.get_face_pos(stance, i)
-        face_anim_frames.push({
-          image: @selene_asset.load_image(source_frame.texture.i),
-          size: @selene_math.Vec2D(
-            source_frame.texture.w.to_double(),
-            source_frame.texture.h.to_double(),
-          ),
-          offset: @selene_math.Vec2D(
-            source_frame.texture.offset.x.to_double(),
-            source_frame.texture.offset.y.to_double(),
-          ),
-          pivot: @selene_math.Vec2D(
-            source_frame.texture.origin.x.to_double(),
-            source_frame.texture.origin.y.to_double(),
-          ) -
-          @selene_math.Vec2D(face_pos.x.to_double(), face_pos.y.to_double()),
+        face_local_frames.push({
+          texture: {
+            i: source_frame.texture.i,
+            w: source_frame.texture.w,
+            h: source_frame.texture.h,
+            offset: source_frame.texture.offset,
+            origin: @struct.Point::new(
+              source_frame.texture.origin.x - face_pos.x,
+              source_frame.texture.origin.y - face_pos.y,
+            ),
+          },
           duration: body_delays[i].unwrap_or(100).to_double() / 1000.0,
         })
       }
     } else {
       let face_pos = draw_info.get_face_pos(stance, 0)
-      face_anim_frames.push({
-        image: @selene_asset.load_image(source_frame.texture.i),
-        size: @selene_math.Vec2D(
-          source_frame.texture.w.to_double(),
-          source_frame.texture.h.to_double(),
-        ),
-        offset: @selene_math.Vec2D(
-          source_frame.texture.offset.x.to_double(),
-          source_frame.texture.offset.y.to_double(),
-        ),
-        pivot: @selene_math.Vec2D(
-          source_frame.texture.origin.x.to_double(),
-          source_frame.texture.origin.y.to_double(),
-        ) -
-        @selene_math.Vec2D(face_pos.x.to_double(), face_pos.y.to_double()),
+      face_local_frames.push({
+        texture: {
+          i: source_frame.texture.i,
+          w: source_frame.texture.w,
+          h: source_frame.texture.h,
+          offset: source_frame.texture.offset,
+          origin: @struct.Point::new(
+            source_frame.texture.origin.x - face_pos.x,
+            source_frame.texture.origin.y - face_pos.y,
+          ),
+        },
         duration: 0.1,
       })
     }
-    let animation = @ms_animation.Animation::new(face_anim_frames, loop_=true)
-    let sprite = ensure_sprite_with_z(
+    ensure_sprite_with_z(
       entity,
-      animation,
       @graphics.CHAR_LOOK_ZINDEX +
       @clothing.ClothingLayer::FACE_ACC.int_value() -
       1,
       transform,
     )
-    ignore(sprite)
     set_entity_visible(entity, true)
-    @ms_animation.play_animation(entity, animation, loop_=true, transform~)
+    start_local_animation_frames(entity, face_local_frames, true, transform)
   }
 }
 
@@ -990,26 +1187,37 @@ fn set_entity_visible(entity : @entity.Entity, visible : Bool) -> Unit {
 }
 
 ///|
+fn anchor_from_origin(
+  origin : @selene_math.Vec2D,
+  size : @selene_math.Vec2D,
+  flip_x? : Bool = false,
+) -> @sprite.Anchor {
+  let width = if size.0 <= 0.0 { 1.0 } else { size.0 }
+  let height = if size.1 <= 0.0 { 1.0 } else { size.1 }
+  let x = origin.0 / width - 0.5
+  @sprite.Anchor(
+    @selene_math.Vec2D(if flip_x { -x } else { x }, 0.5 - origin.1 / height),
+  )
+}
+
+///|
 fn ensure_sprite_with_z(
   entity : @entity.Entity,
-  animation : @ms_animation.Animation,
   z : Int,
   transform : @selene_math.Transform,
-) -> @sprite.Sprite {
+) -> Unit {
   set_entity_z(entity, z)
   if @sprite.sprites().get(entity) is Some(sprite) {
-    @ms_animation.set_animation_transform(entity, transform)
-    return sprite
+    let flip_x = transform.a < 0.0
+    if sprite.flip_x != flip_x {
+      @sprite.sprites().set(entity, { ..sprite, flip_x, })
+    }
   }
-  let sprite = @ms_animation.sprite_from_animation(animation, z, transform~)
-  @sprite.sprites().set(entity, sprite)
-  sprite
 }
 
 ///|
 fn attach_equipment(
   entity : @entity.Entity,
-  stance : StanceId,
   flip_x : Bool,
   frames : Array[@resource.NxFrame],
   z : Int,
@@ -1022,17 +1230,10 @@ fn attach_equipment(
     { ..f, delay, }
   })
   let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
-  let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
   let transform = facing_transform(flip_x)
-  let sprite = ensure_sprite_with_z(
-    entity,
-    animation,
-    z + @graphics.CHAR_LOOK_ZINDEX,
-    transform,
-  )
-  ignore(sprite)
+  ensure_sprite_with_z(entity, z + @graphics.CHAR_LOOK_ZINDEX, transform)
   set_entity_visible(entity, true)
-  @ms_animation.play_animation(entity, animation, loop_~, transform~)
+  start_local_animation(entity, nx_anim, loop_, transform)
 }
 
 ///|
@@ -1048,6 +1249,7 @@ fn CharLook::play_climbing_animations(
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       set_entity_visible(entity, false)
+      local_animation_states().remove(entity)
     }
   }
 
@@ -1085,7 +1287,6 @@ fn CharLook::play_climbing_animations(
       { ..f, delay, }
     })
     let anim = { ..anim, frames, }
-    let animation = @ms_animation.from_nx_animation(anim, loop_~)
     let transform = facing_transform(flip_x)
     let entity = self.hair_entities.get_or_init(layer, fn() {
       self.spawn_sprite_child()
@@ -1095,15 +1296,13 @@ fn CharLook::play_climbing_animations(
     } else {
       layer.z()
     }
-    let sprite = ensure_sprite_with_z(
+    ensure_sprite_with_z(
       entity,
-      animation,
       z_index + @graphics.CHAR_LOOK_ZINDEX,
       transform,
     )
-    ignore(sprite)
     set_entity_visible(entity, true)
-    @ms_animation.play_animation(entity, animation, loop_~, transform~)
+    start_local_animation(entity, anim, loop_, transform)
   }
 
   // Body Animation
@@ -1123,7 +1322,6 @@ fn CharLook::play_climbing_animations(
         blend: false,
         zigzag: false,
       }
-      let animation = @ms_animation.from_nx_animation(nx_anim, loop_~)
       let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()
@@ -1133,16 +1331,14 @@ fn CharLook::play_climbing_animations(
       let z_layers = layers.map(fn(layer) {
         layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
       })
-      let sprite = ensure_sprite_with_z(
+      ensure_sprite_with_z(
         entity,
-        animation,
         current_z_by_frame(z_layers, current_frame),
         transform,
       )
-      ignore(sprite)
       set_entity_visible(entity, true)
       self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
-      @ms_animation.play_animation(entity, animation, loop_~, transform~)
+      start_local_animation(entity, nx_anim, loop_, transform)
     }
   }
 
@@ -1167,15 +1363,7 @@ fn CharLook::play_climbing_animations(
         })
         let z_layer = current_z_by_frame(z_layers, current_frame) -
           @graphics.CHAR_LOOK_ZINDEX
-        attach_equipment(
-          entity,
-          stance,
-          self.flip,
-          frames,
-          z_layer,
-          body_delays,
-          loop_,
-        )
+        attach_equipment(entity, self.flip, frames, z_layer, body_delays, loop_)
         self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       }
     }

@@ -81,7 +81,7 @@ async test "mini map ui renders normal frame" {
   )
   @capture_app.snapshot(
     "src/test/mini_map_ui_test/__snapshot__/mini_map_ui_normal.png",
-    img_description="Mini map UI is displayed showing the map layout, player position, and other standard elements.",
+    visual_desc="Mini map UI is displayed showing the map layout, player position, and other standard elements.",
   )
 }
 
@@ -139,6 +139,6 @@ async test "mini map ui renders portal marker from real map 100030000" {
   )
   @capture_app.snapshot(
     "src/test/mini_map_ui_test/__snapshot__/mini_map_ui_with_portal_marker.png",
-    img_description="Mini map UI is displayed with portal markers visible on the map.",
+    visual_desc="Mini map UI is displayed with portal markers visible on the map.",
   )
 }

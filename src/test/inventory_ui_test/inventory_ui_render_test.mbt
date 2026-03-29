@@ -90,7 +90,7 @@ async test "inventory ui renders equip tab with icon count and meso" {
   setup_inventory_ui_test_scene()
   @capture_app.snapshot(
     "src/test/inventory_ui_test/__snapshot__/inventory_ui_default.png",
-    img_description="Inventory UI is displayed showing the default equip tab with items.",
+    visual_desc="Inventory UI is displayed showing the default equip tab with items.",
   )
 }
 
@@ -106,6 +106,6 @@ async test "inventory ui renders use tab with icon count and meso" {
   }
   @capture_app.snapshot(
     "src/test/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
-    img_description="Inventory UI is displayed showing the use tab with items.",
+    visual_desc="Inventory UI is displayed showing the use tab with items.",
   )
 }

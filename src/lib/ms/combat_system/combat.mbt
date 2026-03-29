@@ -176,10 +176,9 @@ fn Combat::apply_attack_afterimage(
     return false
   }
   let look = character.get_look()
-  let get_frame_fn = fn() { look.get_frame() }
   @char_look.add_after_image(
     character.get_entity(),
-    get_frame_fn,
+    look,
     after_image,
     character.is_facing_right(),
   )

@@ -111,7 +111,7 @@ async test "map 101010102 background alpha animation snapshot" {
   assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
-    img_description="Map background rendered with initial alpha transparency.",
+    visual_desc="Map background rendered with initial alpha transparency.",
   )
 
   for _ in 0..<78 {
@@ -123,6 +123,6 @@ async test "map 101010102 background alpha animation snapshot" {
   assert_true(mid_alpha < start_alpha)
   @capture_app.snapshot(
     "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
-    img_description="Map background rendered with mid-level alpha transparency.",
+    visual_desc="Map background rendered with mid-level alpha transparency.",
   )
 }

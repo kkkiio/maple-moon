@@ -188,6 +188,6 @@ async test "character stand1" {
   @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stand1.png",
-    img_description="2D game snapshot with visible character-related rendering.",
+    visual_desc="A 2D side-view game screenshot showing a standing character facing left, with black hair, light blue top, dark shorts, and red boots.",
   )
 }

@@ -81,7 +81,7 @@ async test "quest_log_ui renders in-progress & completed tab" {
 
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
-    img_description="Quest log UI showing the in-progress tab with a list of active quests.",
+    visual_desc="Quest log UI showing the in-progress tab with a list of active quests.",
   )
 
   let click_row_ok = @console.click_registered_ui(
@@ -93,7 +93,7 @@ async test "quest_log_ui renders in-progress & completed tab" {
   }
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
-    img_description="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
+    visual_desc="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
@@ -103,7 +103,7 @@ async test "quest_log_ui renders in-progress & completed tab" {
   }
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
-    img_description="Quest log UI showing the completed tab with a list of finished quests.",
+    visual_desc="Quest log UI showing the completed tab with a list of finished quests.",
   )
 }
 

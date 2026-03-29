@@ -244,6 +244,13 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
           inventory_entry.items,
           @slot.Id::SHOES,
         )
+        @log.info("set_field_equipped_snapshot", data={
+          "weapon_id": weapon_id.to_json(),
+          "top_id": top_id.to_json(),
+          "bottom_id": bottom_id.to_json(),
+          "shoes_id": shoes_id.to_json(),
+          "inventory_item_count": inventory_entry.items.length().to_json(),
+        })
         set_loading_data(
           @io_service.submit_background_task(async fn() {
             let hair = @char_look.Hair::load(30000, draw_info)

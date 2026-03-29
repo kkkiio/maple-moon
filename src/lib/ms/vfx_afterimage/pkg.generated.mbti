@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/vfx_afterimage"
 
 import {
   "KKKIIO/maple-moon/lib/ms/animation",
+  "KKKIIO/maple-moon/lib/ms/character_presentation",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
@@ -11,7 +12,7 @@ import {
 }
 
 // Values
-pub fn add_after_image(@entity.Entity, () -> Int, NxAfterImage, Bool) -> Unit
+pub fn add_after_image(@entity.Entity, @character_presentation.CharLook, NxAfterImage, Bool) -> Unit
 
 pub fn clear_after_image(@entity.Entity) -> Unit
 

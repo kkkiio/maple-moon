@@ -37,6 +37,16 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
   look.set_stance(@char_stance.StanceId::STABO1)
   look.play_animations()
 
+  fn sprite_z(entity : @entity.Entity) -> Double {
+    @transform.transforms().get(entity).map_or(0.0, fn(t) { t.translation.z })
+  }
+  let frame0_z : Map[@entity.Entity, Double] = Map::new()
+  for child in @entity.Entity::get_children(host) {
+    if @sprite.sprites().get(child) is Some(_) {
+      frame0_z.set(child, sprite_z(child))
+    }
+  }
+
   let mut ticks = 0
   while look.get_frame() < 1 && ticks < 60 {
     @time.set_delta(0.016)
@@ -44,16 +54,15 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
     ticks = ticks + 1
   }
   inspect(look.get_frame(), content="1")
-  let frame_indices : Array[Int] = []
+  let mut changed_layer_count = 0
   for child in @entity.Entity::get_children(host) {
     if @sprite.sprites().get(child) is Some(_) {
-      frame_indices.push(@ms_animation.current_frame_index(child))
+      if frame0_z.get(child) is Some(before_z) {
+        if before_z != sprite_z(child) {
+          changed_layer_count = changed_layer_count + 1
+        }
+      }
     }
   }
-  assert_true(frame_indices.length() > 0)
-  for frame in frame_indices {
-    if frame != 1 {
-      fail("found unsynchronized frame index: \{frame}")
-    }
-  }
+  assert_true(changed_layer_count > 0)
 }

@@ -27,10 +27,15 @@ Expose these browser globals before verification:
 
 1. Start game server/dev server.
 2. Prepare an action sequence JSON (copy from template).
-3. Run replay client for each stage (`pre`, `post`, or more scenarios).
-4. Open generated screenshots and verify visuals.
-5. Compare `state-i.json` with screenshot content.
-6. Check `errors-i.json`; fail on new `console.error` or `pageerror`.
+3. Reuse one stable `--profile-dir` across related runs (`pre`/`post`/rerun) for the same scenario; do not create a fresh profile each time unless intentionally testing first-run state.
+4. Prefer console ID clicks (`console_ui_click`) over raw pixel click to reduce flakiness.
+5. Insert explicit waits (`wait_ui`, `wait_state`) between key actions; do not assume one click immediately reaches next phase.
+6. Check both runtime errors and network errors (`bad-responses-*.json`).
+7. If a run times out, inspect `action-trace-*.json` first to find the exact failed step.
+8. Run replay client for each stage (`pre`, `post`, or more scenarios).
+9. Open generated screenshots and verify visuals.
+10. Compare `state-i.json` with screenshot content.
+11. Check `errors-i.json`; fail on new `console.error` or `pageerror`.
 
 Example:
 
@@ -50,8 +55,34 @@ Each iteration generates:
 - `shot-i.png`
 - `state-i.json` (when `render_game_to_text` exists)
 - `errors-i.json` (when errors appear)
+- `bad-responses-i.json` (when HTTP >= 400 occurs)
+- `action-trace-i.json` (executed steps with click/wait results)
 
 In the client script, one `i` means one replay loop (`for (let i = 0; i < iterations; i++)`).
+
+## Action DSL (Recommended)
+
+In addition to legacy `{ buttons, frames }`, script now supports:
+
+- `{ "type": "console_ui_click", "package": "select_char", "name": "new_character", "step_frames": 8 }`
+- `{ "type": "wait_ui", "package": "explorer_creation", "name": "gender_male", "max_frames": 1200, "step_frames": 10 }`
+- `{ "type": "wait_state", "path": "phase", "equals": "ExplorerCharacterCreation", "max_frames": 1800 }`
+- `{ "type": "wait_state", "path": "explorer_creation.stage.0", "equals": "ConfirmingName" }`
+- `{ "type": "console_step", "frames": 30 }`
+- `{ "type": "sleep", "ms": 300 }`
+
+`console_ui_click` defaults to strict mode: if click result is not `QUEUED`, replay fails immediately.
+
+## Debug Heuristics
+
+When chain fails, prioritize these checks:
+
+1. `action-trace-*.json`: did click return `QUEUED`? did `wait_state` timeout?
+2. `state-*.json`: did phase/stage actually advance?
+3. `errors-*.json`:
+   - `Missing field ...` usually means client/server proto mismatch.
+   - `invalid '#'-framed syntax ... set offset` usually means resource not reanimated to `__off`.
+4. `bad-responses-*.json`: repeated 404 usually indicates missing/misaligned assets path.
 
 ## Agent Acceptance Standard
 

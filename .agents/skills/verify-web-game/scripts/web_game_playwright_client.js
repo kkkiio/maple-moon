@@ -228,8 +228,171 @@ class ConsoleErrorTracker {
   }
 }
 
-async function doChoreography(page, canvas, steps) {
+class BadResponseTracker {
+  constructor() {
+    this._seen = new Set();
+    this._bad = [];
+  }
+
+  ingest(resp) {
+    const key = JSON.stringify(resp);
+    if (this._seen.has(key)) return;
+    this._seen.add(key);
+    this._bad.push(resp);
+  }
+
+  drain() {
+    const next = [...this._bad];
+    this._bad = [];
+    return next;
+  }
+}
+
+async function stepFrames(page, frames) {
+  const n = Math.max(1, Number(frames || 1));
+  await page.evaluate(async (count) => {
+    for (let i = 0; i < count; i++) {
+      if (globalThis.$console && typeof globalThis.$console.step === "function") {
+        await globalThis.$console.step(1);
+      } else if (typeof globalThis.advanceTime === "function") {
+        await globalThis.advanceTime(1000 / 60);
+      } else {
+        await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+      }
+    }
+  }, n);
+}
+
+function getByPath(obj, pathExpr) {
+  if (!pathExpr) return obj;
+  const parts = String(pathExpr)
+    .split(".")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  let cur = obj;
+  for (const part of parts) {
+    if (cur == null) return undefined;
+    if (Array.isArray(cur) && /^\d+$/.test(part)) {
+      cur = cur[Number(part)];
+      continue;
+    }
+    cur = cur[part];
+  }
+  return cur;
+}
+
+async function readStateJson(page) {
+  const text = await page.evaluate(() => {
+    if (typeof globalThis.render_game_to_text !== "function") return null;
+    return globalThis.render_game_to_text();
+  });
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function matchWaitState(state, step) {
+  if (!state) return false;
+  const current = getByPath(state, step.path);
+  if (Object.prototype.hasOwnProperty.call(step, "equals")) {
+    return current === step.equals;
+  }
+  if (Object.prototype.hasOwnProperty.call(step, "not_equals")) {
+    return current !== step.not_equals;
+  }
+  if (Array.isArray(step.in)) {
+    return step.in.includes(current);
+  }
+  if (Array.isArray(step.not_in)) {
+    return !step.not_in.includes(current);
+  }
+  return false;
+}
+
+async function doChoreography(page, canvas, steps, trace) {
+  trace.push({ type: "sequence_start", total_steps: steps.length });
   for (const step of steps) {
+    const type = step && typeof step === "object" ? step.type : null;
+    if (type === "console_step") {
+      const frames = step.frames || 1;
+      await stepFrames(page, frames);
+      trace.push({ type, frames });
+      continue;
+    }
+    if (type === "sleep") {
+      const ms = Number(step.ms || 0);
+      await sleep(ms);
+      trace.push({ type, ms });
+      continue;
+    }
+    if (type === "console_ui_click") {
+      const pkg = step.package;
+      const name = step.name;
+      const result = await page.evaluate(({ pkg, name }) => {
+        if (!globalThis.$console || !globalThis.$console.ui) {
+          return { ok: false, code: "CONSOLE_MISSING", message: "$console.ui is unavailable" };
+        }
+        return globalThis.$console.ui.click(pkg, name);
+      }, { pkg, name });
+      const frames = step.step_frames || 2;
+      await stepFrames(page, frames);
+      trace.push({ type, package: pkg, name, result, step_frames: frames });
+      const strict = step.strict !== false;
+      if (strict && result && result.code && result.code !== "QUEUED") {
+        throw new Error(`console_ui_click failed: ${pkg}.${name}, code=${result.code}`);
+      }
+      continue;
+    }
+    if (type === "wait_state") {
+      const maxFrames = Number(step.max_frames || 1800);
+      const chunk = Math.max(1, Number(step.step_frames || 10));
+      let matched = false;
+      let last = null;
+      for (let i = 0; i < maxFrames; i += chunk) {
+        await stepFrames(page, chunk);
+        last = await readStateJson(page);
+        if (matchWaitState(last, step)) {
+          matched = true;
+          break;
+        }
+      }
+      trace.push({
+        type,
+        path: step.path,
+        equals: step.equals,
+        not_equals: step.not_equals,
+        matched,
+      });
+      if (!matched && step.strict !== false) {
+        throw new Error(`wait_state timeout: path=${step.path}`);
+      }
+      continue;
+    }
+    if (type === "wait_ui") {
+      const maxFrames = Number(step.max_frames || 1200);
+      const chunk = Math.max(1, Number(step.step_frames || 10));
+      let matched = false;
+      const pkg = step.package;
+      const name = step.name;
+      for (let i = 0; i < maxFrames; i += chunk) {
+        await stepFrames(page, chunk);
+        const state = await readStateJson(page);
+        const entries = Array.isArray(state?.clickable_ui_entries) ? state.clickable_ui_entries : [];
+        if (entries.some((e) => e.package === pkg && e.name === name)) {
+          matched = true;
+          break;
+        }
+      }
+      trace.push({ type, package: pkg, name, matched });
+      if (!matched && step.strict !== false) {
+        throw new Error(`wait_ui timeout: ${pkg}.${name}`);
+      }
+      continue;
+    }
+
     const buttons = new Set(step.buttons || []);
     for (const button of buttons) {
       if (button === "left_mouse_button" || button === "right_mouse_button") {
@@ -245,13 +408,7 @@ async function doChoreography(page, canvas, steps) {
     }
 
     const frames = step.frames || 1;
-    for (let i = 0; i < frames; i++) {
-      await page.evaluate(async () => {
-        if (typeof window.advanceTime === "function") {
-          await window.advanceTime(1000 / 60);
-        }
-      });
-    }
+    await stepFrames(page, frames);
 
     for (const button of buttons) {
       if (button === "left_mouse_button" || button === "right_mouse_button") {
@@ -260,6 +417,7 @@ async function doChoreography(page, canvas, steps) {
         await page.keyboard.up(buttonNameToKey[button]);
       }
     }
+    trace.push({ type: "legacy_buttons", buttons: [...buttons], frames });
   }
 }
 
@@ -284,6 +442,7 @@ async function main() {
   }
   const page = context.pages().length > 0 ? context.pages()[0] : await context.newPage();
   const consoleErrors = new ConsoleErrorTracker();
+  const badResponses = new BadResponseTracker();
 
   page.on("console", (msg) => {
     if (msg.type() !== "error") return;
@@ -291,6 +450,10 @@ async function main() {
   });
   page.on("pageerror", (err) => {
     consoleErrors.ingest({ type: "pageerror", text: String(err) });
+  });
+  page.on("response", (resp) => {
+    if (resp.status() < 400) return;
+    badResponses.ingest({ status: resp.status(), url: resp.url() });
   });
 
   await page.addInitScript({ content: makeVirtualTimeShim() });
@@ -335,8 +498,9 @@ async function main() {
   }
 
   for (let i = 0; i < args.iterations; i++) {
+    const trace = [];
     if (!canvas) canvas = await getCanvasHandle(page);
-    await doChoreography(page, canvas, steps);
+    await doChoreography(page, canvas, steps, trace);
     await sleep(args.pauseMs);
 
     const shotPath = path.join(args.screenshotDir, `shot-${i}.png`);
@@ -351,12 +515,24 @@ async function main() {
     if (text) {
       fs.writeFileSync(path.join(args.screenshotDir, `state-${i}.json`), text);
     }
+    fs.writeFileSync(
+      path.join(args.screenshotDir, `action-trace-${i}.json`),
+      JSON.stringify(trace, null, 2)
+    );
 
     const freshErrors = consoleErrors.drain();
     if (freshErrors.length) {
       fs.writeFileSync(
         path.join(args.screenshotDir, `errors-${i}.json`),
         JSON.stringify(freshErrors, null, 2)
+      );
+      break;
+    }
+    const bad = badResponses.drain();
+    if (bad.length) {
+      fs.writeFileSync(
+        path.join(args.screenshotDir, `bad-responses-${i}.json`),
+        JSON.stringify(bad, null, 2)
       );
       break;
     }

@@ -1,29 +1,25 @@
 ///|
-async test "crossbow shoot2 afterimage without range should render" {
-  let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
-  @ecs.set_current_world(world)
-  defer (match previous_world {
-    Some(previous) => @ecs.set_current_world(previous)
-    None => @ecs.clear_current_world()
-  })
-  @capture_app.init_app(
-    @app.App::new()
-    .with_world(world)
-    .with_viewport_width(200.0)
-    .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin),
-  )
+fn weapon_name_for(item_id : Int) -> String {
+  match item_id {
+    1302000 => "Sword"
+    1312001 => "Axe"
+    1452000 => "Bow"
+    1462000 => "Crossbow"
+    _ => "Weapon"
+  }
+}
 
-  let host = @entity.Entity::new()
-  defer host.destroy()
-  let after_image_host = host.spawn_child()
-  defer @char_look.clear_after_image(after_image_host)
-  defer @sprite.sprites().clear()
-  @transform2d.set_xy(host, Vec2D(100.0, 100.0))
-  // Keep the effect closer to the muzzle side for left-facing shoot pose.
-  @transform2d.set_xy(after_image_host, Vec2D(-16.0, 0.0))
+///|
+fn weapon_file_id(item_id : Int) -> String {
+  let mut text = item_id.to_string()
+  while text.length() < 8 {
+    text = "0" + text
+  }
+  text
+}
 
+///|
+fn load_test_look(host : @entity.Entity) -> @char_look.CharLook raise {
   let bodynode = @fs.read_file_to_string(
       "assets/Character/Body/00002000.img.json",
     )
@@ -47,7 +43,7 @@ async test "crossbow shoot2 afterimage without range should render" {
     )
     |> @json.parse
     |> @json.from_json
-  let look = @char_look.CharLook::new(
+  @char_look.CharLook::new(
     host,
     {},
     @char_look.FullBody::new(
@@ -64,8 +60,13 @@ async test "crossbow shoot2 afterimage without range should render" {
     ),
     draw_info,
   )
+}
+
+///|
+fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
+  let weapon_file = weapon_file_id(item_id)
   let weapon_node = @fs.read_file_to_string(
-      "assets/Character/Weapon/01462000.img.json",
+      "assets/Character/Weapon/\{weapon_file}.img.json",
     )
     |> @json.parse
   let weapon_info = match weapon_node {
@@ -76,13 +77,13 @@ async test "crossbow shoot2 afterimage without range should render" {
     weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
     weapon_info.get("iconRaw").map(json => @json.from_json(json)).unwrap(),
   )
-  let weapon_item = @item.ItemData::{
+  @item.ItemData::{
     src: weapon_node,
     icons: weapon_icons,
-    item_id: 1462000,
+    item_id,
     price: 0,
     gender: 0,
-    name: "Crossbow",
+    name: weapon_name_for(item_id),
     desc: "",
     category: "Weapon",
     valid: true,
@@ -91,29 +92,71 @@ async test "crossbow shoot2 afterimage without range should render" {
     unsellable: false,
     cash_item: false,
   }
+}
+
+///|
+async fn snapshot_afterimage_case(
+  item_id : Int,
+  stance : @char_stance.StanceId,
+  stance_key : String,
+  after_image_name : String,
+  facing_right : Bool,
+  host_shift_x : Double,
+  snapshot_path : String,
+  img_description : String,
+) -> Unit raise {
+  let previous_world = @ecs.current_world()
+  let world = @ecs.World::new()
+  @ecs.set_current_world(world)
+  defer (match previous_world {
+    Some(previous) => @ecs.set_current_world(previous)
+    None => @ecs.clear_current_world()
+  })
+  @capture_app.init_app(
+    @app.App::new()
+    .with_world(world)
+    .with_viewport_width(220.0)
+    .with_viewport_height(220.0)
+    .add_plugin(@plugins.default_plugin),
+  )
+
+  let host = @entity.Entity::new()
+  defer host.destroy()
+  let after_image_host = host.spawn_child()
+  defer @char_look.clear_after_image(after_image_host)
+  defer @sprite.sprites().clear()
+  @transform2d.set_xy(host, Vec2D(110.0, 110.0))
+  @transform2d.set_xy(after_image_host, Vec2D(host_shift_x, 0.0))
+
+  let look = load_test_look(host)
+  let weapon_item = load_weapon_item(item_id)
   look.add_equip(weapon_item, @slot.Id::WEAPON)
-  look.set_stance(StanceId::SHOOT2)
+  look.set_facing_right(facing_right)
+  look.set_stance(stance)
   look.play_animations()
 
   let after_image_node = @fs.read_file_to_string(
-      "assets/Character/Afterimage/crossBow.img.json",
+      "assets/Character/Afterimage/\{after_image_name}.img.json",
     )
     |> @json.parse
   let after_images : @char_look.NxAfterImages = @json.from_json(
     after_image_node,
   )
-  @char_look.set_after_images("crossBow", after_images)
+  @char_look.set_after_images(after_image_name, after_images)
 
-  let collection = @char_look.AfterImage::get_collection("crossBow", 0)
-  guard collection.get("shoot2") is Some(shoot2_resource) else { panic() }
+  let collection = @char_look.AfterImage::get_collection(after_image_name, 0)
+  guard collection.get(stance_key) is Some(resource) else { panic() }
 
   let get_frame_fn = fn() { look.get_frame() }
   @char_look.add_after_image(
-    after_image_host, get_frame_fn, shoot2_resource, false,
+    after_image_host,
+    get_frame_fn,
+    resource,
+    facing_right,
   )
-  // Drive character animation to the frame where shoot2 afterimage should appear.
+
   let mut ticks = 0
-  while look.get_frame() < shoot2_resource.first_frame && ticks < 60 {
+  while look.get_frame() < resource.first_frame && ticks < 60 {
     @time.set_delta(0.016)
     @capture_app.run_loop(0.016)
     @char_look.update_after_image_system(@ecs.require_current_world())
@@ -122,11 +165,6 @@ async test "crossbow shoot2 afterimage without range should render" {
   @time.set_delta(0.016)
   @capture_app.run_loop(0.016)
   @char_look.update_after_image_system(@ecs.require_current_world())
-  let sprites = @sprite.sprites().iter().collect()
-  assert_true(sprites.length() > 0)
 
-  @capture_app.snapshot(
-    "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage.png",
-    img_description="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
-  )
+  @capture_app.snapshot(snapshot_path, img_description=img_description)
 }

@@ -13,7 +13,7 @@ pub fn explorer_creation_ui_system(@ecs.World) -> Unit
 
 pub fn is_explorer_creation_ui_open() -> Bool
 
-pub fn open_explorer_creation_ui(@character_presentation.CharLookMod) -> Unit
+pub fn open_explorer_creation_ui(@character_presentation.CharacterPresentationResource) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 

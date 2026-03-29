@@ -12,19 +12,19 @@ import {
 // Values
 pub fn is_select_char_ui_open() -> Bool
 
-pub async fn load_char_look(@entity.Entity, @character_presentation.CharLookMod, SelectableCharacter) -> @character_presentation.CharLook
+pub async fn load_char_look(@entity.Entity, @character_presentation.CharacterPresentationResource, SelectableCharacter) -> @character_presentation.CharLook
 
 pub fn select_char_ui_system(@ecs.World) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 
-pub async fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, @character_presentation.CharLookMod, Array[@entity.Entity]) -> SelectableCharacterUI
+pub async fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, @character_presentation.CharacterPresentationResource, Array[@entity.Entity]) -> SelectableCharacterUI
 
 // Errors
 
 // Types and methods
 type SelectCharUI
-pub async fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharLookMod, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
+pub async fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharacterPresentationResource, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
 
 pub(all) struct SelectCharUIResource {
   ani18 : @animation.Animation

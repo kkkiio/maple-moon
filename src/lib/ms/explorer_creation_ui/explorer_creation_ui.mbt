@@ -20,7 +20,7 @@ priv struct PreviewState {
 ///|
 priv struct ExplorerCreationUI {
   resource : ExplorerCreationUIResource
-  char_look_mod : @char_look.CharLookMod
+  char_presentation_resource : @char_look.CharacterPresentationResource
   model : ExplorerCreationModel
   randomizer : @random.Rand
   preview : PreviewState
@@ -52,25 +52,32 @@ let creation_ui_ref : Ref[ExplorerCreationUI?] = Ref::new(None)
 ///|
 let creation_ui_loading_future : Ref[
   @utils.Future[
-    Result[(ExplorerCreationUIResource, @char_look.CharLookMod), Error],
+    Result[
+      (ExplorerCreationUIResource, @char_look.CharacterPresentationResource),
+      Error,
+    ],
   ]?,
 ] = Ref::new(None)
 
 ///|
-let opening_char_look_mod_ref : Ref[@char_look.CharLookMod?] = Ref::new(None)
+let opening_char_presentation_resource_ref : Ref[
+  @char_look.CharacterPresentationResource?,
+] = Ref::new(None)
 
 ///|
 /// Open explorer creation UI.
-pub fn open_explorer_creation_ui(mod : @char_look.CharLookMod) -> Unit {
+pub fn open_explorer_creation_ui(
+  resource : @char_look.CharacterPresentationResource,
+) -> Unit {
   close_explorer_creation_ui()
-  opening_char_look_mod_ref.val = Some(mod)
+  opening_char_presentation_resource_ref.val = Some(resource)
 }
 
 ///|
 /// Close explorer creation UI and clear pending tasks.
 pub fn close_explorer_creation_ui() -> Unit {
   creation_ui_loading_future.val = None
-  opening_char_look_mod_ref.val = None
+  opening_char_presentation_resource_ref.val = None
   match creation_ui_ref.val {
     Some(ui) => {
       ui.destroy()
@@ -153,12 +160,12 @@ fn new_random_name(randomizer : @random.Rand) -> String {
 ///|
 fn new_ui(
   resource : ExplorerCreationUIResource,
-  char_look_mod : @char_look.CharLookMod,
+  char_presentation_resource : @char_look.CharacterPresentationResource,
 ) -> ExplorerCreationUI {
   let randomizer = @random.Rand::new()
   {
     resource,
-    char_look_mod,
+    char_presentation_resource,
     model: new_model(randomizer, resource),
     randomizer,
     preview: { loading: None, loaded: None },
@@ -306,17 +313,17 @@ fn ExplorerCreationUI::request_preview_if_needed(
     Some(_) => ()
     None => {
       let config = self.model.config
-      let mod = self.char_look_mod
-      let draw_info = mod.draw_info
+      let resource = self.char_presentation_resource
+      let draw_info = resource.draw_info
       self.preview.loading = Some(
         @io_service.submit_background_task(async fn() {
-          let body = mod.load_body_by_skin_id(
+          let body = resource.load_body_by_skin_id(
             config_to_look_entry(config, self.resource).skin,
           )
-          let hair = mod.load_hair_by_id(
+          let hair = resource.load_hair_by_id(
             config_to_look_entry(config, self.resource).hairid,
           )
-          let face = mod.load_face_by_id(
+          let face = resource.load_face_by_id(
             config_to_look_entry(config, self.resource).faceid,
           )
           let entity = @entity.Entity::new()
@@ -683,11 +690,13 @@ pub fn explorer_creation_ui_system(_world : @ecs.World) -> Unit {
     return
   }
 
-  guard opening_char_look_mod_ref.val is Some(char_look_mod) else { return }
+  guard opening_char_presentation_resource_ref.val is Some(resource) else {
+    return
+  }
   guard creation_ui_loading_future.val is Some(fut) else {
     creation_ui_loading_future.val = Some(
       @io_service.submit_background_task(async fn() {
-        (load_resource(), char_look_mod)
+        (load_resource(), resource)
       }),
     )
     return

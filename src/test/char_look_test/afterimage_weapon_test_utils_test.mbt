@@ -104,7 +104,7 @@ async fn snapshot_afterimage_case(
   host_shift_x : Double,
   snapshot_path : String,
   img_description : String,
-) -> Unit raise {
+) -> Unit {
   let previous_world = @ecs.current_world()
   let world = @ecs.World::new()
   @ecs.set_current_world(world)
@@ -117,7 +117,22 @@ async fn snapshot_afterimage_case(
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(220.0)
-    .add_plugin(@plugins.default_plugin),
+    .add_plugin(@plugins.default_plugin)
+    .add_system(
+      Update,
+      fn(world) { @ms_animation.animation_system(world) },
+      system_name="ms_animation_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @cp.char_look_system(world) },
+      system_name="char_look_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @char_look.update_after_image_system(world) },
+      system_name="after_image_system",
+    ),
   )
 
   let host = @entity.Entity::new()
@@ -149,22 +164,17 @@ async fn snapshot_afterimage_case(
 
   let get_frame_fn = fn() { look.get_frame() }
   @char_look.add_after_image(
-    after_image_host,
-    get_frame_fn,
-    resource,
-    facing_right,
+    after_image_host, get_frame_fn, resource, facing_right,
   )
 
   let mut ticks = 0
   while look.get_frame() < resource.first_frame && ticks < 60 {
     @time.set_delta(0.016)
     @capture_app.run_loop(0.016)
-    @char_look.update_after_image_system(@ecs.require_current_world())
     ticks = ticks + 1
   }
   @time.set_delta(0.016)
   @capture_app.run_loop(0.016)
-  @char_look.update_after_image_system(@ecs.require_current_world())
 
-  @capture_app.snapshot(snapshot_path, img_description=img_description)
+  @capture_app.snapshot(snapshot_path, img_description~)
 }

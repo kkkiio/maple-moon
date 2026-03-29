@@ -18,17 +18,25 @@ import {
 // Values
 pub fn byaction(Int) -> ExpressionId
 
+pub fn char_look_layer_system(@ecs.World) -> Unit
+
 pub fn char_look_system(@ecs.World) -> Unit
+
+pub fn clear_resource() -> Unit
 
 pub let expression_names : @sorted_map.SortedMap[ExpressionId, String]
 
-pub fn get_module() -> CharLookMod?
+pub fn get_module() -> CharacterPresentationResource?
+
+pub fn get_resource() -> CharacterPresentationResource?
 
 pub let hair_names : Map[String, String]
 
+pub fn insert_resource(CharacterPresentationResource) -> Unit
+
 pub let layers_by_name : @sorted_map.SortedMap[String, HairLayer]
 
-pub fn set_module(CharLookMod) -> Unit
+pub fn set_module(CharacterPresentationResource) -> Unit
 
 // Errors
 
@@ -60,19 +68,19 @@ pub fn CharLook::set_pos(Self, @math.Vec2D) -> Unit
 pub fn CharLook::set_stance(Self, @char_stance.StanceId) -> Unit
 pub impl ToJson for CharLook
 
-pub struct CharLookMod {
+pub struct CharacterPresentationResource {
   draw_info : @character_body.BodyDrawInfo
-  stance_bodys_map : NxStanceLooks[@character_body.NxStanceBody]
-  stance_heads_map : NxStanceLooks[@character_body.NxMultiPartFrame]
+  stance_bodys_map : @character_body.NxStanceLooks[@character_body.NxStanceBody]
+  stance_heads_map : @character_body.NxStanceLooks[@character_body.NxMultiPartFrame]
   hair_cache : Map[Int, Hair]
   face_types : Map[Int, Face]
   body_cache : Map[Int, FullBody]
 }
-pub async fn CharLookMod::load() -> Self
-pub async fn CharLookMod::load_body_by_skin_id(Self, Int) -> FullBody
-pub async fn CharLookMod::load_face_by_id(Self, Int) -> Face
-pub async fn CharLookMod::load_hair_by_id(Self, Int) -> Hair
-pub fn CharLookMod::new(NxStanceLooks[@character_body.NxStanceBody], NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
+pub async fn CharacterPresentationResource::load() -> Self
+pub async fn CharacterPresentationResource::load_body_by_skin_id(Self, Int) -> FullBody
+pub async fn CharacterPresentationResource::load_face_by_id(Self, Int) -> Face
+pub async fn CharacterPresentationResource::load_hair_by_id(Self, Int) -> Hair
+pub fn CharacterPresentationResource::new(@character_body.NxStanceLooks[@character_body.NxStanceBody], @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 
 pub(all) enum ExpressionId {
   DEFAULT
@@ -130,7 +138,7 @@ type Hair
 pub fn Hair::get_name(Self) -> String
 pub fn Hair::getcolor(Self) -> String
 pub async fn Hair::load(Int, @character_body.BodyDrawInfo) -> Self
-pub fn Hair::parse(Int, NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
+pub fn Hair::parse(Int, @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 pub impl ToJson for Hair
 
 pub(all) enum HairLayer {
@@ -161,11 +169,6 @@ pub impl Default for LookEntry
 pub impl Show for LookEntry
 pub impl ToJson for LookEntry
 pub impl @json.FromJson for LookEntry
-
-pub(all) struct NxStanceLooks[T](Map[@char_stance.StanceId, Array[T]])
-#deprecated
-pub fn[T] NxStanceLooks::inner(Self[T]) -> Map[@char_stance.StanceId, Array[T]]
-pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T]
 
 // Type aliases
 

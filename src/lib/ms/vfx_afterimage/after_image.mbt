@@ -10,7 +10,6 @@ pub struct AfterImage {
 }
 
 ///|
-#alias(AfterImageResource, deprecated)
 pub(all) struct NxAfterImage {
   animation : @resource.NxAnimation
   range : @struct.Rectangle[Int]

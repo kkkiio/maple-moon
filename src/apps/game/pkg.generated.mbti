@@ -2,6 +2,9 @@
 package "KKKIIO/maple-moon/apps/game"
 
 import {
+  "KKKIIO/maple-moon/lib/ms/character_presentation",
+  "KKKIIO/maple-moon/lib/ms/quest",
+  "KKKIIO/maple-moon/lib/ms/quest_icon",
   "Milky2018/selene/ecs",
 }
 
@@ -13,6 +16,14 @@ pub fn install_builtin_resource_loaders() -> Unit
 // Errors
 
 // Types and methods
+pub(all) struct AppResources {
+  char_presentation_resource : @character_presentation.CharacterPresentationResource
+  quest_resource : @quest.QuestResource
+  quest_progress : Json
+  map_quests_resource : @quest_icon.MapQuestsResource
+}
+pub fn AppResources::install(Self) -> Unit
+pub async fn AppResources::load() -> Self
 
 // Type aliases
 

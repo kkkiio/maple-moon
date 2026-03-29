@@ -227,8 +227,10 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
 
       // 1. 如果没有开始加载数据，启动后台任务加载开局资源
       guard get_loading_data() is Some(fut) else {
-        guard @char_look.get_module() is Some(char_look_mod) else { return }
-        let draw_info = char_look_mod.draw_info
+        guard @char_look.get_resource() is Some(char_presentation_resource) else {
+          return
+        }
+        let draw_info = char_presentation_resource.draw_info
         let weapon_id = find_equipped_item_id(
           inventory_entry.items,
           @slot.Id::WEAPON,
@@ -340,10 +342,12 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
 
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
-        guard @char_look.get_module() is Some(char_look_mod) else { return }
-        let draw_info = char_look_mod.draw_info
-        let stance_bodys_map = char_look_mod.stance_bodys_map.0
-        let stance_heads_map = char_look_mod.stance_heads_map.0
+        guard @char_look.get_resource() is Some(char_presentation_resource) else {
+          return
+        }
+        let draw_info = char_presentation_resource.draw_info
+        let stance_bodys_map = char_presentation_resource.stance_bodys_map.0
+        let stance_heads_map = char_presentation_resource.stance_heads_map.0
         let entity = @entity.Entity::new()
         let look = @char_look.CharLook::new(
           entity,

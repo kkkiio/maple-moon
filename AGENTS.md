@@ -62,6 +62,10 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 `*_test.mbt` 文件是黑盒测试. 不允许写 `_for_test` 的 public symbol.
 
+### 清理 warning
+
+在修改代码后, 运行 `moon check` , 如果有 warning, 优先处理 warning, 直到没有 warning.
+
 ## Project Structure
 
 ### Repo Structure & Important Files

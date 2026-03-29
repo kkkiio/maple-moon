@@ -1,5 +1,5 @@
 ///|
-using @char_look {type CharLookMod}
+using @char_look {type CharacterPresentationResource}
 
 ///|
 using @server_proto {
@@ -178,7 +178,7 @@ pub(all) struct SelectableCharacter {
 pub async fn SelectCharUI::new(
   resources : SelectCharUIResource,
   characters : Array[SelectableCharacter],
-  mod : CharLookMod,
+  resource : CharacterPresentationResource,
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
@@ -281,7 +281,7 @@ pub async fn SelectCharUI::new(
   for i, character in characters {
     let entity = characters_entities[i]
     characters_ui.push(
-      to_selectable_character_ui(entity, i, character, mod, entities),
+      to_selectable_character_ui(entity, i, character, resource, entities),
     )
   }
   entities.append(characters_entities)
@@ -414,14 +414,14 @@ fn spawn_character_name_entity(
 ///|
 pub async fn load_char_look(
   entity : @entity.Entity,
-  mod : @char_look.CharLookMod,
+  resource : @char_look.CharacterPresentationResource,
   character : SelectableCharacter,
 ) -> @char_look.CharLook {
   let look = character.look
-  let body = mod.load_body_by_skin_id(look.skin)
-  let hair = mod.load_hair_by_id(look.hairid)
-  let face = mod.load_face_by_id(look.faceid)
-  @char_look.CharLook::load(entity, look, body, hair, face, mod.draw_info)
+  let body = resource.load_body_by_skin_id(look.skin)
+  let hair = resource.load_hair_by_id(look.hairid)
+  let face = resource.load_face_by_id(look.faceid)
+  @char_look.CharLook::load(entity, look, body, hair, face, resource.draw_info)
 }
 
 ///|
@@ -429,10 +429,10 @@ pub async fn to_selectable_character_ui(
   entity : @entity.Entity,
   i : Int,
   character : SelectableCharacter,
-  mod : CharLookMod,
+  resource : CharacterPresentationResource,
   entities : Array[@entity.Entity],
 ) -> SelectableCharacterUI {
-  let char_look = load_char_look(entity, mod, character)
+  let char_look = load_char_look(entity, resource, character)
   let { cid, name, .. } = character
   @transform2d.set_xy(entity, get_character_slot_pos(i, 135, 234).to_vec2d())
   char_look.set_stance(@char_stance.StanceId::STAND1)
@@ -492,7 +492,7 @@ fn reset_select_char_ui_runtime_state() -> Unit {
 
 ///|
 async fn add_select_char_ui(
-  mod : CharLookMod,
+  resource : CharacterPresentationResource,
   slots : Array[SelectableCharacter],
 ) -> SelectCharUI {
   SelectCharUI::new(
@@ -510,9 +510,9 @@ async fn add_select_char_ui(
       @game_state.set_next_phase(
         @game_state.GamePhase::ExplorerCharacterCreation,
       )
-      open_explorer_creation_ui(mod)
+      open_explorer_creation_ui(resource)
     },
-    mod,
+    resource,
   )
 }
 
@@ -523,7 +523,7 @@ let select_char_loading_future : Ref[
 
 ///|
 pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
-  guard @char_look.get_module() is Some(mod) else { return }
+  guard @char_look.get_resource() is Some(resource) else { return }
   guard @game_state.current_phase() is GamePhase::SelectCharacter else {
     reset_select_char_ui_runtime_state()
     return
@@ -614,7 +614,7 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
   guard select_char_loading_future.val is Some(fut) else {
     select_char_loading_future.val = Some(
       @io_service.submit_background_task(() => {
-        add_select_char_ui(mod, characters)
+        add_select_char_ui(resource, characters)
       }),
     )
     return

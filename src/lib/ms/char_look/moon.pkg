@@ -1,4 +1,5 @@
 import {
+  "KKKIIO/maple-moon/lib/ms/character_body" @cb,
   "KKKIIO/maple-moon/lib/ms/character_presentation" @cp,
   "KKKIIO/maple-moon/lib/ms/vfx_afterimage" @vfx_afterimage,
   "moonbitlang/core/json",

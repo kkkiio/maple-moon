@@ -27,6 +27,83 @@ struct CharLook {
   weapon_entities : Map[String, @entity.Entity]
   equip_entities : Map[String, @entity.Entity]
   mut face_entity : @entity.Entity?
+  tracked_layer_entities : Map[@entity.Entity, Unit]
+}
+
+///|
+priv struct DynamicLayerTrack {
+  z_layers : Array[Int]
+  frame_entity : @entity.Entity
+}
+
+///|
+let dynamic_layer_tracks_by_world : Map[
+  UInt,
+  Map[@entity.Entity, DynamicLayerTrack],
+] = Map::new()
+
+///|
+fn dynamic_layer_tracks() -> Map[@entity.Entity, DynamicLayerTrack] {
+  let world_id = @ecs.require_current_world().id()
+  dynamic_layer_tracks_by_world.get_or_init(world_id, fn() { Map::new() })
+}
+
+///|
+fn CharLook::clear_dynamic_layer_tracks(self : CharLook) -> Unit {
+  let tracks = dynamic_layer_tracks()
+  for entity, _ in self.tracked_layer_entities {
+    tracks.remove(entity)
+  }
+  self.tracked_layer_entities.clear()
+}
+
+///|
+fn CharLook::track_dynamic_layers(
+  self : CharLook,
+  entity : @entity.Entity,
+  z_layers : Array[Int],
+  frame_entity : @entity.Entity,
+) -> Unit {
+  if z_layers.length() == 0 {
+    return
+  }
+  dynamic_layer_tracks().set(entity, { z_layers, frame_entity })
+  self.tracked_layer_entities.set(entity, ())
+}
+
+///|
+fn current_z_by_frame(z_layers : Array[Int], frame : Int) -> Int {
+  if z_layers.length() == 0 {
+    @graphics.CHAR_LOOK_ZINDEX
+  } else if frame < z_layers.length() {
+    z_layers[frame]
+  } else {
+    z_layers[z_layers.length() - 1]
+  }
+}
+
+///|
+fn update_dynamic_layer_tracks(_world : @ecs.World) -> Unit {
+  let tracks = dynamic_layer_tracks_by_world.get_or_init(_world.id(), fn() {
+    Map::new()
+  })
+  let dead_entities : Array[@entity.Entity] = []
+  for entity, track in tracks {
+    if !entity.is_alive() || !track.frame_entity.is_alive() {
+      dead_entities.push(entity)
+      continue
+    }
+    let frame = @ms_animation.current_frame_index(track.frame_entity)
+    set_entity_z(entity, current_z_by_frame(track.z_layers, frame))
+  }
+  for entity in dead_entities {
+    tracks.remove(entity)
+  }
+}
+
+///|
+pub fn char_look_layer_system(world : @ecs.World) -> Unit {
+  update_dynamic_layer_tracks(world)
 }
 
 ///|
@@ -144,6 +221,7 @@ pub fn CharLook::new(
     weapon_entities: Map::new(),
     equip_entities: Map::new(),
     face_entity: None,
+    tracked_layer_entities: Map::new(),
   }
 }
 
@@ -224,6 +302,10 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
   }
 
   let loop_ = should_loop(stance)
+  self.clear_dynamic_layer_tracks()
+  let frame_driver_entity = self.body_entities.get_or_init("body", fn() {
+    self.spawn_sprite_child()
+  })
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       set_entity_visible(entity, false)
@@ -285,6 +367,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       layer.z() + @graphics.CHAR_LOOK_ZINDEX,
       transform,
     )
+    ignore(sprite)
     set_entity_visible(entity, true)
     @ms_animation.play_animation(entity, animation, loop_~, transform~)
   }
@@ -311,16 +394,19 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()
       })
-      let frame = @ms_animation.current_frame_index(entity)
-      let current_frame = if frame < layers.length() { frame } else { 0 }
+      let current_frame = 0
+      let z_layers = layers.map(fn(layer) {
+        layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
+      })
       let sprite = ensure_sprite_with_z(
         entity,
         animation,
-        layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        current_z_by_frame(z_layers, current_frame),
         transform,
       )
       ignore(sprite)
       set_entity_visible(entity, true)
+      self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       @ms_animation.play_animation(entity, animation, loop_~, transform~)
     }
   }
@@ -362,13 +448,12 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         // Since play_animation sets a single Z for the whole animation in Selene's Sprite,
         // we usually take the Z of the first frame or force them to be consistent.
         // Looking at the data, usually layers are consistent across frames for a single motion.
-        let frame = @ms_animation.current_frame_index(entity)
-        let current_frame = if frame < layers.length() { frame } else { 0 }
-        let z_layer = if layers.length() > 0 {
-          layers[current_frame].int_value()
-        } else {
-          0
-        }
+        let current_frame = 0
+        let z_layers = layers.map(fn(layer) {
+          layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
+        })
+        let z_layer = current_z_by_frame(z_layers, current_frame) -
+          @graphics.CHAR_LOOK_ZINDEX
         attach_equipment(
           entity,
           stance,
@@ -378,6 +463,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
           body_delays,
           loop_,
         )
+        self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       }
     }
   }
@@ -955,6 +1041,10 @@ fn CharLook::play_climbing_animations(
   stance : StanceId,
 ) -> Unit {
   let loop_ = true
+  self.clear_dynamic_layer_tracks()
+  let frame_driver_entity = self.body_entities.get_or_init("body", fn() {
+    self.spawn_sprite_child()
+  })
   fn reset_sprites_hide(entities : Iter[@entity.Entity]) {
     for entity in entities {
       set_entity_visible(entity, false)
@@ -1040,14 +1130,18 @@ fn CharLook::play_climbing_animations(
       })
       // Simplified frame logic for climbing (loop 0)
       let current_frame = 0
+      let z_layers = layers.map(fn(layer) {
+        layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
+      })
       let sprite = ensure_sprite_with_z(
         entity,
         animation,
-        layers[current_frame].int_value() + @graphics.CHAR_LOOK_ZINDEX,
+        current_z_by_frame(z_layers, current_frame),
         transform,
       )
       ignore(sprite)
       set_entity_visible(entity, true)
+      self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       @ms_animation.play_animation(entity, animation, loop_~, transform~)
     }
   }
@@ -1067,13 +1161,12 @@ fn CharLook::play_climbing_animations(
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.spawn_sprite_child()
         })
-        let frame = @ms_animation.current_frame_index(entity)
-        let current_frame = if frame < layers.length() { frame } else { 0 }
-        let z_layer = if layers.length() > 0 {
-          layers[current_frame].int_value()
-        } else {
-          0
-        }
+        let current_frame = 0
+        let z_layers = layers.map(fn(layer) {
+          layer.int_value() + @graphics.CHAR_LOOK_ZINDEX
+        })
+        let z_layer = current_z_by_frame(z_layers, current_frame) -
+          @graphics.CHAR_LOOK_ZINDEX
         attach_equipment(
           entity,
           stance,
@@ -1083,6 +1176,7 @@ fn CharLook::play_climbing_animations(
           body_delays,
           loop_,
         )
+        self.track_dynamic_layers(entity, z_layers, frame_driver_entity)
       }
     }
   }

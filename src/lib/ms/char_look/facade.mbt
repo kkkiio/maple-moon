@@ -4,7 +4,7 @@ pub type CharLook = @cp.CharLook
 
 ///|
 /// Backward-compatible facade for character presentation module runtime.
-pub type CharLookMod = @cp.CharLookMod
+pub type CharacterPresentationResource = @cp.CharacterPresentationResource
 
 ///|
 /// Backward-compatible facade for serialized look entry.
@@ -32,7 +32,7 @@ pub type HairLayer = @cp.HairLayer
 
 ///|
 /// Backward-compatible facade for stance animation maps.
-pub type NxStanceLooks[T] = @cp.NxStanceLooks[T]
+pub type NxStanceLooks[T] = @cb.NxStanceLooks[T]
 
 ///|
 /// Backward-compatible facade for after-image runtime object.
@@ -64,13 +64,18 @@ pub fn byaction(action : Int) -> ExpressionId {
 }
 
 ///|
-pub fn get_module() -> CharLookMod? {
-  @cp.get_module()
+pub fn get_resource() -> CharacterPresentationResource? {
+  @cp.get_resource()
 }
 
 ///|
-pub fn set_module(m : CharLookMod) -> Unit {
-  @cp.set_module(m)
+pub fn insert_resource(resource : CharacterPresentationResource) -> Unit {
+  @cp.insert_resource(resource)
+}
+
+///|
+pub fn clear_resource() -> Unit {
+  @cp.clear_resource()
 }
 
 ///|

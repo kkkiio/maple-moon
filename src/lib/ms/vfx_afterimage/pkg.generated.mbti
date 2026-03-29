@@ -39,7 +39,6 @@ pub fn AfterImage::get_first_frame(Self) -> Int
 pub fn AfterImage::get_range(Self) -> @res_types.Rectangle[Int]
 pub fn AfterImage::update(Self, Int, Int) -> Unit
 
-#alias(AfterImageResource, deprecated)
 pub(all) struct NxAfterImage {
   animation : @resource.NxAnimation
   range : @res_types.Rectangle[Int]

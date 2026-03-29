@@ -1,11 +1,8 @@
 ///|
-using @utils {type Future}
+using @types {type NxStanceLooks}
 
 ///|
-using @io_service {submit_background_task}
-
-///|
-pub struct CharLookMod {
+pub struct CharacterPresentationResource {
   draw_info : @types.BodyDrawInfo
   stance_bodys_map : NxStanceLooks[@types.NxStanceBody]
   stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame]
@@ -15,22 +12,24 @@ pub struct CharLookMod {
 }
 
 ///|
-pub async fn CharLookMod::load() -> CharLookMod {
+pub async fn CharacterPresentationResource::load() -> CharacterPresentationResource {
   let stance_bodys_map = load_stance_bodys_map()
   let stance_heads_map = load_stance_heads_map()
   let draw_info = @types.BodyDrawInfo::new(
     stance_bodys_map.0,
     stance_heads_map.0,
   )
-  CharLookMod::new(stance_bodys_map, stance_heads_map, draw_info)
+  CharacterPresentationResource::new(
+    stance_bodys_map, stance_heads_map, draw_info,
+  )
 }
 
 ///|
-pub fn CharLookMod::new(
+pub fn CharacterPresentationResource::new(
   stance_bodys_map : NxStanceLooks[@types.NxStanceBody],
   stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame],
   draw_info : @types.BodyDrawInfo,
-) -> CharLookMod {
+) -> CharacterPresentationResource {
   {
     hair_cache: Map::new(),
     draw_info,
@@ -42,54 +41,39 @@ pub fn CharLookMod::new(
 }
 
 ///|
-let mods_by_world : Ref[Map[UInt, CharLookMod]] = Ref::new(Map::new())
+let resources_by_world : Ref[Map[UInt, CharacterPresentationResource]] = Ref::new(
+  Map::new(),
+)
 
 ///|
-pub fn get_module() -> CharLookMod? {
+pub fn get_resource() -> CharacterPresentationResource? {
   let world_id = @ecs.require_current_world().id()
-  mods_by_world.val.get(world_id)
+  resources_by_world.val.get(world_id)
 }
 
 ///|
-/// Install a preloaded char look module for environments that bootstrap
-/// systems manually, such as tests.
-pub fn set_module(m : CharLookMod) -> Unit {
+/// Insert character presentation resource for the current world.
+pub fn insert_resource(resource : CharacterPresentationResource) -> Unit {
   let world_id = @ecs.require_current_world().id()
-  mods_by_world.val[world_id] = m
-  loading_mod_futures_by_world.val.remove(world_id)
+  resources_by_world.val[world_id] = resource
 }
 
 ///|
-let loading_mod_futures_by_world : Ref[
-  Map[UInt, Future[Result[CharLookMod, Error]]],
-] = Ref::new(Map::new())
+/// Clear character presentation resource for the current world.
+pub fn clear_resource() -> Unit {
+  let world_id = @ecs.require_current_world().id()
+  resources_by_world.val.remove(world_id)
+}
 
 ///|
-/// Load char look module if not loaded yet.
+/// Character presentation runtime update system.
 pub fn char_look_system(_world : @ecs.World) -> Unit {
-  let world_id = _world.id()
-  if mods_by_world.val.get(world_id) is Some(_) {
-    return
-  }
-  guard loading_mod_futures_by_world.val.get(world_id) is Some(fut) else {
-    loading_mod_futures_by_world.val[world_id] = submit_background_task(
-      CharLookMod::load,
-    )
-    return
-  }
-  guard fut.poll() is Some(res) else { return }
-  match res {
-    Ok(m) => {
-      mods_by_world.val[world_id] = m
-      loading_mod_futures_by_world.val.remove(world_id)
-    }
-    Err(e) => abort("loading char look module failed, error=\{e}")
-  }
+  char_look_layer_system(_world)
 }
 
 ///|
-pub async fn CharLookMod::load_body_by_skin_id(
-  self : CharLookMod,
+pub async fn CharacterPresentationResource::load_body_by_skin_id(
+  self : CharacterPresentationResource,
   skin_id : Int,
 ) -> FullBody {
   let body = FullBody::new(
@@ -103,8 +87,8 @@ pub async fn CharLookMod::load_body_by_skin_id(
 }
 
 ///|
-pub async fn CharLookMod::load_hair_by_id(
-  self : CharLookMod,
+pub async fn CharacterPresentationResource::load_hair_by_id(
+  self : CharacterPresentationResource,
   hair_id : Int,
 ) -> Hair {
   let hair = Hair::load(hair_id, self.draw_info)
@@ -113,13 +97,25 @@ pub async fn CharLookMod::load_hair_by_id(
 }
 
 ///|
-pub async fn CharLookMod::load_face_by_id(
-  self : CharLookMod,
+pub async fn CharacterPresentationResource::load_face_by_id(
+  self : CharacterPresentationResource,
   face_id : Int,
 ) -> Face {
   let face = Face::load(face_id)
   self.face_types.set(face_id, face)
   face
+}
+
+///|
+/// Backward-compatible alias for migration.
+pub fn get_module() -> CharacterPresentationResource? {
+  get_resource()
+}
+
+///|
+/// Backward-compatible alias for migration.
+pub fn set_module(resource : CharacterPresentationResource) -> Unit {
+  insert_resource(resource)
 }
 
 // ///|
@@ -198,27 +194,4 @@ async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
   ])
   let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode)
   v
-}
-
-///|
-pub(all) struct NxStanceLooks[T](Map[StanceId, Array[T]])
-
-///|
-pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(
-  json,
-  path,
-) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expect object"))
-  }
-  let map = Map::new()
-  for k, v in obj {
-    guard StanceId::from_name(k) is Some(stance_id) else { continue }
-    let nodes : Array[T] = @resource.parse_map_based_array(
-      v,
-      path=path.add_key(k),
-    )
-    map.set(stance_id, nodes)
-  }
-  map
 }

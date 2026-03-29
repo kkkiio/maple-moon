@@ -137,7 +137,7 @@ async test "select char ui renders character and start button chooses first char
   defer @sprite.sprites().clear()
   setup_select_char_ui_scene()
   setup_select_char_phase()
-  @char_look.set_module(@char_look.CharLookMod::load())
+  @char_look.insert_resource(@char_look.CharacterPresentationResource::load())
   wait_until_character_list_requested()
   assert_character_list_requested()
   wait_until_select_char_ui_loaded()

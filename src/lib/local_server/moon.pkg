@@ -23,3 +23,7 @@ import {
   "moonbitlang/async",
   "KKKIIO/maple-moon/lib/fsx",
 } for "test"
+
+options(
+  "supported-targets": "js",
+)

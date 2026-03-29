@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ms/combat_system"
 
 import {
   "KKKIIO/maple-moon/lib/legacy_types",
-  "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
@@ -12,6 +11,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/skill",
+  "KKKIIO/maple-moon/lib/ms/vfx_afterimage",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
@@ -69,7 +69,7 @@ pub impl SkillAction for ByLevelAction
 
 type Combat
 pub fn Combat::apply_attack_to_mobs(Self, @character.Character, CombatAction, @combat_proto.Attack, Array[Int], @combat_proto.AttackResult, Bool) -> Unit
-pub fn Combat::apply_move(Self, &CombatCharacter, CombatAction, Map[String, @char_look.NxAfterImage]) -> Unit
+pub fn Combat::apply_move(Self, &CombatCharacter, CombatAction, Map[String, @vfx_afterimage.NxAfterImage]) -> Unit
 pub fn Combat::can_use(Self, &CombatCharacter, CombatAction) -> ForbidReason
 pub fn Combat::draw(Self, Double, Double, Double) -> Unit
 pub fn Combat::new(@monster.MapMobs) -> Self
@@ -89,7 +89,7 @@ pub(all) struct CombatAction {
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
-  get_afterimage : () -> Map[String, @char_look.NxAfterImage]
+  get_afterimage : () -> Map[String, @vfx_afterimage.NxAfterImage]
 }
 pub fn CombatAction::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn CombatAction::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -97,7 +97,7 @@ pub fn CombatAction::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob)
 pub fn CombatAction::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn CombatAction::apply_useeffects(Self, @character.Character) -> Unit
 pub fn CombatAction::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
-pub fn CombatAction::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]
+pub fn CombatAction::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
 pub fn CombatAction::get_bullet(Self, @character.Character, Int) -> @resource.NxAnimation
 pub fn CombatAction::get_id(Self) -> Int
 pub fn CombatAction::is_attack(Self) -> Bool
@@ -185,7 +185,7 @@ pub fn Skill::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Uni
 pub fn Skill::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn Skill::apply_useeffects(Self, @character.Character) -> Unit
 pub fn Skill::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
-pub fn Skill::get_afterimage(Self) -> Map[String, @char_look.NxAfterImage]
+pub fn Skill::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
 pub fn Skill::get_bullet(Self, @character.Character, Int) -> @resource.NxAnimation
 pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool

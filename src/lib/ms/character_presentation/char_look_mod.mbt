@@ -92,7 +92,6 @@ pub async fn CharLookMod::load_body_by_skin_id(
   self : CharLookMod,
   skin_id : Int,
 ) -> FullBody {
-  guard skin_id == 0 else { fail("only support default skin for now") }
   let body = FullBody::new(
     skin_id,
     self.draw_info,

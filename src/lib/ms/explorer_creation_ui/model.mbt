@@ -54,24 +54,20 @@ fn choices_for_config(
 ///|
 fn random_initial_config(
   female : Bool,
-  randomizer : @random.Rand,
+  _randomizer : @random.Rand,
   resource : ExplorerCreationUIResource,
 ) -> ExplorerLookConfig {
-  let choices = if female {
-    resource.female_choices
-  } else {
-    resource.male_choices
-  }
+  ignore(resource)
   {
     female,
-    skin_idx: @randx.next_int(randomizer, choices.skins.length()),
-    hair_color_idx: @randx.next_int(randomizer, choices.haircolors.length()),
-    face_idx: @randx.next_int(randomizer, choices.faces.length()),
-    hair_idx: @randx.next_int(randomizer, choices.hairs.length()),
-    top_idx: @randx.next_int(randomizer, choices.tops.length()),
-    bot_idx: @randx.next_int(randomizer, choices.bots.length()),
-    shoe_idx: @randx.next_int(randomizer, choices.shoes.length()),
-    weapon_idx: @randx.next_int(randomizer, choices.weapons.length()),
+    skin_idx: 0,
+    hair_color_idx: 0,
+    face_idx: 0,
+    hair_idx: 0,
+    top_idx: 0,
+    bot_idx: 0,
+    shoe_idx: 0,
+    weapon_idx: 0,
   }
 }
 

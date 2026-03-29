@@ -67,6 +67,29 @@ struct Clothing {
 } derive(Show)
 
 ///|
+/// Resolve weapon-like anchor shift from draw-info and weapon frame `map`.
+///
+/// Returns `base_anchor_position - parent_pos`.
+pub fn resolve_anchor_shift(
+  drawinfo : @types.BodyDrawInfo,
+  stance : StanceId,
+  frame : Int,
+  parent_key : String,
+  parent_pos : @struct.Point[Int],
+) -> @struct.Point[Int] raise {
+  let base = if parent_key == "handMove" {
+    drawinfo.get_hand_position(stance, frame)
+  } else if parent_key == "hand" {
+    drawinfo.get_arm_position(stance, frame)
+  } else if parent_key == "navel" {
+    drawinfo.get_body_position(stance, frame)
+  } else {
+    fail("unknown anchor key: \{parent_key}")
+  }
+  base - parent_pos
+}
+
+///|
 pub fn Clothing::from_resource(
   item_data : @item.ItemData,
   drawinfo : @types.BodyDrawInfo,
@@ -103,6 +126,12 @@ pub fn Clothing::from_resource(
     _ => if two_handed { StanceId::WALK2 } else { StanceId::WALK1 }
   }
   let src = item_data.src
+  let nx_weapon = if eq_slot == @slot.Id::WEAPON {
+    let parsed : NxWeapon = @json.from_json(src)
+    Some(parsed)
+  } else {
+    None
+  }
   let stances : Map[
     StanceId,
     Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
@@ -122,11 +151,47 @@ pub fn Clothing::from_resource(
         // Check if partnode has texture data (__i field)
         guard partnode is Object(part_obj) else { continue }
         guard part_obj.contains("__i") else { continue }
-        let mut z = chlayer
-        let zs = match part_obj.get("z") {
-          Some(String(s)) => s
-          _ => ""
+        let (tex, zs, parent, parentpos) = match (eq_slot, nx_weapon) {
+          (@slot.Id::WEAPON, Some(nx_weapon)) => {
+            guard nx_weapon.get_part(stancename, frame, part) is Some(nx_part) else {
+              fail(
+                "missing NxWeapon part: action=\{stancename}, frame=\{frame}, part=\{part}",
+              )
+            }
+            (
+              nx_part.texture,
+              nx_part.z,
+              nx_part.anchor.parent_key,
+              nx_part.anchor.parent_pos,
+            )
+          }
+          _ => {
+            let zs = match part_obj.get("z") {
+              Some(String(s)) => s
+              _ => ""
+            }
+            // Parse map data for parent position
+            let (parent, parentpos) = match part_obj.get("map") {
+              Some(Object(map_obj)) => {
+                let mut result = ("", @struct.Point::default())
+                for key, value in map_obj {
+                  match value {
+                    Array([Number(x, ..), Number(y, ..)]) => {
+                      result = (key, @struct.Point::new(x.to_int(), y.to_int()))
+                      break
+                    }
+                    _ => ()
+                  }
+                }
+                result
+              }
+              _ => ("", @struct.Point::default())
+            }
+            let tex : @resource.NxTexture = @json.from_json(partnode)
+            (tex, zs, parent, parentpos)
+          }
         }
+        let mut z = chlayer
         if part == "mailArm" {
           z = ClothingLayer::MAILARM
         } else {
@@ -134,23 +199,6 @@ pub fn Clothing::from_resource(
             Some(sublayer) => z = sublayer
             None => ()
           }
-        }
-        // Parse map data for parent position
-        let (parent, parentpos) = match part_obj.get("map") {
-          Some(Object(map_obj)) => {
-            let mut result = ("", @struct.Point::default())
-            for key, value in map_obj {
-              match value {
-                Array([Number(x, ..), Number(y, ..)]) => {
-                  result = (key, @struct.Point::new(x.to_int(), y.to_int()))
-                  break
-                }
-                _ => ()
-              }
-            }
-            result
-          }
-          _ => ("", @struct.Point::default())
         }
         let shift = match eq_slot {
           @slot.Id::FACE => -parentpos
@@ -165,19 +213,22 @@ pub fn Clothing::from_resource(
           @slot.Id::HAT | @slot.Id::EARACC | @slot.Id::EYE_ACC =>
             drawinfo.get_face_pos(stance, frame) - parentpos
           @slot.Id::SHIELD | @slot.Id::WEAPON =>
-            (if parent == "handMove" {
-              drawinfo.get_hand_position(stance, frame)
-            } else if parent == "hand" {
-              drawinfo.get_arm_position(stance, frame)
-            } else if parent == "navel" {
-              drawinfo.get_body_position(stance, frame)
+            if eq_slot == @slot.Id::WEAPON {
+              resolve_anchor_shift(drawinfo, stance, frame, parent, parentpos)
             } else {
-              @struct.Point::default()
-            }) -
-            parentpos
+              (if parent == "handMove" {
+                drawinfo.get_hand_position(stance, frame)
+              } else if parent == "hand" {
+                drawinfo.get_arm_position(stance, frame)
+              } else if parent == "navel" {
+                drawinfo.get_body_position(stance, frame)
+              } else {
+                @struct.Point::default()
+              }) -
+              parentpos
+            }
           _ => @struct.Point::default()
         }
-        let tex : @resource.NxTexture = @json.from_json(partnode)
         let tex = { ..tex, origin: tex.origin - shift }
         let nx_frame = @resource.NxFrame::{
           texture: tex,

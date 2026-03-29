@@ -27,6 +27,7 @@ struct SelectCharUI {
   animations : Array[(@entity.Entity, Ref[Int], Array[(Int, Double, Double)])]
   buttons : Array[SeleneButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
+  select_click_entity : @entity.Entity
   new_character_click_entity : @entity.Entity
   entities : Array[@entity.Entity]
 }
@@ -312,6 +313,23 @@ pub async fn SelectCharUI::new(
     let slot = 0
     on_select_character(slot)
   })
+  let select_click_entity = @entity.Entity::new()
+  entities.push(select_click_entity)
+  @selene_ui.nodes().set(
+    select_click_entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(601.0, 393.0),
+      size=@selene_math.Vec2D(
+        resources.bt_select.dimensions.x.to_double(),
+        resources.bt_select.dimensions.y.to_double(),
+      ),
+    ),
+  )
+  @selene_ui.z_indexes().set(select_click_entity, @selene_ui.ZIndex::new(3000))
+  @selene_ui.buttons().set(select_click_entity, @selene_ui.Button::new())
+  @console.register_ui_entity(
+    "select_char", "select_character", select_click_entity,
+  )
   let new_button_entity = @entity.Entity::new()
   entities.push(new_button_entity)
   @transform2d.set_xy(new_button_entity, @selene_math.Vec2D(200.0, 495.0))
@@ -340,6 +358,7 @@ pub async fn SelectCharUI::new(
   {
     buttons: [btn_select],
     click_reader: @event.EventReader::new(),
+    select_click_entity,
     new_character_click_entity: new_click_entity,
     entities,
     select_slot: None,
@@ -439,6 +458,7 @@ let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
 
 ///|
 fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
+  @console.unregister_ui_entity(self.select_click_entity)
   @console.unregister_ui_entity(self.new_character_click_entity)
   for entity in self.entities {
     entity.destroy()
@@ -480,6 +500,7 @@ async fn add_select_char_ui(
     slots,
     on_select_character=fn(slot) {
       guard select_char_ui.val is Some(ui) else { return }
+      guard slot >= 0 && slot < ui.characters.length() else { return }
       @game_server.send(SelectCharMessage::{
         character_id: ui.characters[slot].cid,
       })
@@ -565,6 +586,14 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
     let click_events = @selene_ui.click_event_bus.read(ui.click_reader)
     for event in click_events {
       guard event.button is @inputs.MouseButton::Left else { continue }
+      if event.entity == ui.select_click_entity {
+        let slot = 0
+        guard slot >= 0 && slot < ui.characters.length() else { break }
+        @game_server.send(SelectCharMessage::{
+          character_id: ui.characters[slot].cid,
+        })
+        break
+      }
       if event.entity == ui.new_character_click_entity {
         (ui.on_new_character)()
         break

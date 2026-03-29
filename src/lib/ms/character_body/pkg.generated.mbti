@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/character_body"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/char_stance",
+  "KKKIIO/maple-moon/lib/ms/res_types",
+  "KKKIIO/maple-moon/lib/resource",
+  "moonbitlang/core/json",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type BodyDrawInfo
+pub fn BodyDrawInfo::default() -> Self
+pub fn BodyDrawInfo::get_action(Self, String, Int) -> NxStanceBodyAction?
+pub fn BodyDrawInfo::get_arm_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::get_attack_delay(Self, String, Int) -> Int
+pub fn BodyDrawInfo::get_body_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::get_delay(Self, @char_stance.StanceId, Int) -> Int
+pub fn BodyDrawInfo::get_face_pos(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::get_hair_pos(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::get_hand_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::get_head_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
+pub fn BodyDrawInfo::new(Map[@char_stance.StanceId, Array[NxStanceBody]], Map[@char_stance.StanceId, Array[NxMultiPartFrame]]) -> Self
+pub fn BodyDrawInfo::next_action_frame(Self, String, Int) -> Int
+pub fn BodyDrawInfo::next_frame(Self, @char_stance.StanceId, Int) -> Int
+
+pub(all) enum BodyLayer {
+  BODY
+  ARM
+  ARM_BELOW_HEAD
+  ARM_BELOW_HEAD_OVER_MAIL
+  ARM_OVER_HAIR
+  ARM_OVER_HAIR_BELOW_WEAPON
+  HAND_BELOW_WEAPON
+  HAND_OVER_HAIR
+  HAND_OVER_WEAPON
+  HEAD
+}
+pub fn BodyLayer::from_name(String) -> Self?
+pub fn BodyLayer::int_value(Self) -> Int
+pub impl Compare for BodyLayer
+pub impl Eq for BodyLayer
+pub impl Hash for BodyLayer
+pub impl Show for BodyLayer
+pub impl ToJson for BodyLayer
+
+pub(all) struct NxBodyLayerTexture {
+  z : BodyLayer?
+  texture : @resource.NxAnimation
+  map : ShiftMap
+}
+pub impl @json.FromJson for NxBodyLayerTexture
+
+pub(all) struct NxMultiPartFrame {
+  part_texture_map : Map[String, NxBodyLayerTexture]
+  delay : Int?
+}
+pub impl @json.FromJson for NxMultiPartFrame
+
+pub enum NxStanceBody {
+  Action(NxStanceBodyAction)
+  MultiPartFrame(NxMultiPartFrame)
+}
+pub impl @json.FromJson for NxStanceBody
+
+pub(all) struct NxStanceBodyAction {
+  stance : @char_stance.StanceId
+  frame : Int
+  delay : Int
+  mov : @res_types.Point[Int]
+  attack_frame : Bool
+}
+pub fn NxStanceBodyAction::default() -> Self
+pub fn NxStanceBodyAction::get_delay(Self) -> Int
+pub fn NxStanceBodyAction::get_frame(Self) -> Int
+pub fn NxStanceBodyAction::get_move(Self) -> @res_types.Point[Int]
+pub fn NxStanceBodyAction::get_stance(Self) -> @char_stance.StanceId
+pub fn NxStanceBodyAction::is_attack_frame(Self) -> Bool
+pub impl @json.FromJson for NxStanceBodyAction
+
+pub(all) struct ShiftMap(Map[String, @res_types.Point[Int]])
+#deprecated
+pub fn ShiftMap::inner(Self) -> Map[String, @res_types.Point[Int]]
+pub impl @json.FromJson for ShiftMap
+
+// Type aliases
+
+// Traits
+

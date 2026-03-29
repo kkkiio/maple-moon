@@ -1,0 +1,173 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/lib/ms/character_presentation"
+
+import {
+  "KKKIIO/maple-moon/lib/ms/char_stance",
+  "KKKIIO/maple-moon/lib/ms/character_body",
+  "KKKIIO/maple-moon/lib/ms/equip",
+  "KKKIIO/maple-moon/lib/ms/equip/slot",
+  "KKKIIO/maple-moon/lib/ms/item",
+  "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+  "moonbitlang/core/immut/sorted_map",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn byaction(Int) -> ExpressionId
+
+pub fn char_look_system(@ecs.World) -> Unit
+
+pub let expression_names : @sorted_map.SortedMap[ExpressionId, String]
+
+pub fn get_module() -> CharLookMod?
+
+pub let hair_names : Map[String, String]
+
+pub let layers_by_name : @sorted_map.SortedMap[String, HairLayer]
+
+pub fn set_module(CharLookMod) -> Unit
+
+// Errors
+
+// Types and methods
+type CharLook
+pub fn CharLook::add_equip(Self, @item.ItemData, @slot.Id) -> Unit raise
+pub fn CharLook::attack(Self, Bool) -> Unit
+pub fn CharLook::attack_by_stance(Self, @char_stance.StanceId) -> Unit
+pub fn CharLook::get_attackdelay(Self, Int, Int) -> Int
+pub fn CharLook::get_body(Self) -> FullBody
+pub fn CharLook::get_delay(Self, @char_stance.StanceId, Int) -> Int
+pub fn CharLook::get_equips(Self) -> @equip.CharEquips
+pub fn CharLook::get_face(Self) -> Face
+pub fn CharLook::get_frame(Self) -> Int
+pub fn CharLook::get_hair(Self) -> Hair
+pub fn CharLook::get_root_entity(Self) -> @entity.Entity
+pub fn CharLook::get_stance(Self) -> @char_stance.StanceId
+pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
+pub fn CharLook::is_animation_finished(Self) -> Bool
+pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
+pub async fn CharLook::load(@entity.Entity, LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
+pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
+pub fn CharLook::play_animations(Self) -> Unit
+pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
+pub fn CharLook::set_action(Self, String) -> Unit
+pub fn CharLook::set_animation_speed(Self, Double) -> Unit
+pub fn CharLook::set_facing_right(Self, Bool) -> Unit
+pub fn CharLook::set_pos(Self, @math.Vec2D) -> Unit
+pub fn CharLook::set_stance(Self, @char_stance.StanceId) -> Unit
+pub impl ToJson for CharLook
+
+pub struct CharLookMod {
+  draw_info : @character_body.BodyDrawInfo
+  stance_bodys_map : NxStanceLooks[@character_body.NxStanceBody]
+  stance_heads_map : NxStanceLooks[@character_body.NxMultiPartFrame]
+  hair_cache : Map[Int, Hair]
+  face_types : Map[Int, Face]
+  body_cache : Map[Int, FullBody]
+}
+pub async fn CharLookMod::load() -> Self
+pub async fn CharLookMod::load_body_by_skin_id(Self, Int) -> FullBody
+pub async fn CharLookMod::load_face_by_id(Self, Int) -> Face
+pub async fn CharLookMod::load_hair_by_id(Self, Int) -> Hair
+pub fn CharLookMod::new(NxStanceLooks[@character_body.NxStanceBody], NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
+
+pub(all) enum ExpressionId {
+  DEFAULT
+  BLINK
+  HIT
+  SMILE
+  TROUBLED
+  CRY
+  ANGRY
+  BEWILDERED
+  STUNNED
+  BLAZE
+  BOWING
+  CHEERS
+  CHU
+  DAM
+  DESPAIR
+  GLITTER
+  HOT
+  HUM
+  LOVE
+  OOPS
+  PAIN
+  SHINE
+  VOMIT
+  WINK
+}
+pub impl Compare for ExpressionId
+pub impl Default for ExpressionId
+pub impl Eq for ExpressionId
+pub impl Hash for ExpressionId
+pub impl ToJson for ExpressionId
+
+type Face
+pub fn Face::get_delay(Self, ExpressionId, Int) -> Int
+pub fn Face::get_name(Self) -> String
+pub async fn Face::load(Int) -> Self
+pub fn Face::new(Int, Json) -> Self raise
+pub fn Face::nextframe(Self, ExpressionId, Int) -> Int
+pub impl Default for Face
+pub impl ToJson for Face
+
+type FaceFrame
+pub fn FaceFrame::from_resource(Json) -> Self raise
+
+pub(all) struct FullBody {
+  stances : Map[@char_stance.StanceId, Map[String, (Array[@resource.NxFrame], Array[@character_body.BodyLayer])]]
+  name : String
+}
+pub fn FullBody::get_name(Self) -> String
+pub fn FullBody::new(Int, @character_body.BodyDrawInfo, Map[@char_stance.StanceId, Array[@character_body.NxStanceBody]], Map[@char_stance.StanceId, Array[@character_body.NxMultiPartFrame]]) -> Self
+pub impl ToJson for FullBody
+
+type Hair
+pub fn Hair::get_name(Self) -> String
+pub fn Hair::getcolor(Self) -> String
+pub async fn Hair::load(Int, @character_body.BodyDrawInfo) -> Self
+pub fn Hair::parse(Int, NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
+pub impl ToJson for Hair
+
+pub(all) enum HairLayer {
+  HAIR_LAYER_DEFAULT
+  BELOW_BODY
+  OVER_HEAD
+  SHADE
+  BACK
+  BELOW_CAP
+}
+pub fn HairLayer::z(Self) -> Int
+pub impl Compare for HairLayer
+pub impl Eq for HairLayer
+pub impl Hash for HairLayer
+pub impl Show for HairLayer
+pub impl ToJson for HairLayer
+
+pub(all) struct LookEntry {
+  female : Bool
+  skin : Int
+  faceid : Int
+  hairid : Int
+  equips : Map[Int, Int]
+  maskedequips : Map[Int, Int]
+  petids : Array[Int]
+}
+pub impl Default for LookEntry
+pub impl Show for LookEntry
+pub impl ToJson for LookEntry
+pub impl @json.FromJson for LookEntry
+
+pub(all) struct NxStanceLooks[T](Map[@char_stance.StanceId, Array[T]])
+#deprecated
+pub fn[T] NxStanceLooks::inner(Self[T]) -> Map[@char_stance.StanceId, Array[T]]
+pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T]
+
+// Type aliases
+
+// Traits
+

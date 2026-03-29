@@ -16,10 +16,6 @@ priv struct PreviewState {
 }
 
 ///|
-priv struct SeleneButton {
-  button : @ui.MapleButton
-  entity : @entity.Entity
-}
 
 ///|
 priv struct ExplorerCreationUI {
@@ -29,9 +25,25 @@ priv struct ExplorerCreationUI {
   randomizer : @random.Rand
   preview : PreviewState
   entities : Array[@entity.Entity]
-  buttons : Array[SeleneButton]
+  click_bindings : Array[(@entity.Entity, UiAction)]
+  click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   mut dirty : Bool
   mut cloud_x : Double
+  mut debug_click_event_total : Int
+  mut debug_action_total : Int
+  mut debug_last_action : String?
+}
+
+///|
+priv enum UiAction {
+  ChooseMale
+  ChooseFemale
+  CancelToSelect
+  PrevPart(String)
+  NextPart(String)
+  CustomizeConfirm
+  ConfirmSubmit
+  ConfirmBack
 }
 
 ///|
@@ -79,13 +91,63 @@ pub fn is_explorer_creation_ui_open() -> Bool {
 ///|
 fn init {
   @console.register_state_section("explorer_creation", fn() {
-    { "open": is_explorer_creation_ui_open() }
+    let (stage, error, click_event_total, action_total, last_action) = match
+      creation_ui_ref.val {
+      Some(ui) =>
+        (
+          Some(stage_to_string(ui.model.stage)),
+          ui.model.error_message,
+          ui.debug_click_event_total,
+          ui.debug_action_total,
+          ui.debug_last_action,
+        )
+      None => (None, None, 0, 0, None)
+    }
+    let mouse = @inputs.mouse.pos
+    {
+      "open": is_explorer_creation_ui_open(),
+      "stage": stage,
+      "error": error,
+      "mouse": [mouse[@selene_math.X], mouse[@selene_math.Y]],
+      "click_event_total": click_event_total,
+      "action_total": action_total,
+      "last_action": last_action,
+    }
   })
 }
 
 ///|
+fn stage_to_string(stage : UiStage) -> String {
+  match stage {
+    UiStage::ChoosingGender => "ChoosingGender"
+    UiStage::CustomizingLook => "CustomizingLook"
+    UiStage::ConfirmingName => "ConfirmingName"
+    UiStage::Submitting => "Submitting"
+  }
+}
+
+///|
+extern "js" fn now_millis() -> Int =
+  #| () => Math.trunc(Date.now())
+
+///|
+fn action_to_string(action : UiAction) -> String {
+  match action {
+    UiAction::ChooseMale => "ChooseMale"
+    UiAction::ChooseFemale => "ChooseFemale"
+    UiAction::CancelToSelect => "CancelToSelect"
+    UiAction::PrevPart(part) => "PrevPart(\{part})"
+    UiAction::NextPart(part) => "NextPart(\{part})"
+    UiAction::CustomizeConfirm => "CustomizeConfirm"
+    UiAction::ConfirmSubmit => "ConfirmSubmit"
+    UiAction::ConfirmBack => "ConfirmBack"
+  }
+}
+
+///|
 fn new_random_name(randomizer : @random.Rand) -> String {
-  "explorer" + @randx.next_int(randomizer, 10000, from=4).to_string()
+  ignore(randomizer)
+  "explorer" + now_millis().to_string()
 }
 
 ///|
@@ -101,9 +163,13 @@ fn new_ui(
     randomizer,
     preview: { loading: None, loaded: None },
     entities: [],
-    buttons: [],
+    click_bindings: [],
+    click_reader: @event.EventReader::new(),
     dirty: true,
     cloud_x: 200.0,
+    debug_click_event_total: 0,
+    debug_action_total: 0,
+    debug_last_action: None,
   }
 }
 
@@ -152,32 +218,51 @@ fn ExplorerCreationUI::spawn_text(
 }
 
 ///|
-fn ExplorerCreationUI::spawn_button(
+fn ExplorerCreationUI::spawn_click_button(
   self : ExplorerCreationUI,
   res : @ui.MapleButtonResource,
   x : Int,
   y : Int,
-  on_click : () -> Unit,
+  action : UiAction,
+  debug_name : String,
 ) -> Unit {
-  let entity = @entity.Entity::new()
-  self.entities.push(entity)
-  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
-  let button = @ui.MapleButton::new(
-    res,
-    pos=@struct.Point::new(x, y),
-    on_click~,
+  let button_entity = @entity.Entity::new()
+  self.entities.push(button_entity)
+  @transform2d.set_xy(
+    button_entity,
+    @selene_math.Vec2D(x.to_double(), y.to_double()),
   )
   @sprite.sprites().set(
-    entity,
-    @ms_animation.sprite_from_animation(button.current_selene_animation(), 10),
+    button_entity,
+    @ms_animation.sprite_from_animation(
+      res.selene_animations[@ui.ButtonState::NORMAL],
+      10,
+    ),
   )
-  self.buttons.push({ button, entity })
+
+  let click_entity = @entity.Entity::new()
+  self.entities.push(click_entity)
+  @selene_ui.nodes().set(
+    click_entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(
+        res.dimensions.x.to_double(),
+        res.dimensions.y.to_double(),
+      ),
+    ),
+  )
+  @selene_ui.z_indexes().set(click_entity, @selene_ui.ZIndex::new(3000))
+  @selene_ui.buttons().set(click_entity, @selene_ui.Button::new())
+  self.click_bindings.push((click_entity, action))
+  @console.register_ui_entity("explorer_creation", debug_name, click_entity)
 }
 
 ///|
 fn ExplorerCreationUI::clear_scene(self : ExplorerCreationUI) -> Unit {
-  self.buttons.clear()
+  self.click_bindings.clear()
   for entity in self.entities {
+    @console.unregister_ui_entity(entity)
     entity.destroy()
   }
   self.entities.clear()
@@ -340,19 +425,27 @@ fn ExplorerCreationUI::build_gender_scene(self : ExplorerCreationUI) -> Unit {
     329,
   )
   self.spawn_text("Choose your gender", 580, 162, 9, align=@selene_math.Center)
-  self.spawn_button(self.resource.bt_gender_male, 487, 109, fn() {
-    self.model.config.female = false
-    self.model.stage = UiStage::CustomizingLook
-    self.model.error_message = None
-    self.dirty = true
-  })
-  self.spawn_button(self.resource.bt_gender_female, 485, 109, fn() {
-    self.model.config.female = true
-    self.model.stage = UiStage::CustomizingLook
-    self.model.error_message = None
-    self.dirty = true
-  })
-  self.spawn_button(self.resource.bt_no, 640, 394, return_to_select_character)
+  self.spawn_click_button(
+    self.resource.bt_gender_male,
+    487,
+    109,
+    UiAction::ChooseMale,
+    "gender_male",
+  )
+  self.spawn_click_button(
+    self.resource.bt_gender_female,
+    567,
+    109,
+    UiAction::ChooseFemale,
+    "gender_female",
+  )
+  self.spawn_click_button(
+    self.resource.bt_no,
+    640,
+    394,
+    UiAction::CancelToSelect,
+    "gender_cancel",
+  )
 }
 
 ///|
@@ -384,24 +477,35 @@ fn ExplorerCreationUI::build_customize_scene(self : ExplorerCreationUI) -> Unit 
       9,
       align=@selene_math.Center,
     )
-    self.spawn_button(self.resource.bt_left, 552, 198 + i * 18, fn() {
-      update_config_index(self.model, self.resource, part, -1)
-      self.model.error_message = None
-      self.dirty = true
-    })
-    self.spawn_button(self.resource.bt_right, 684, 198 + i * 18, fn() {
-      update_config_index(self.model, self.resource, part, 1)
-      self.model.error_message = None
-      self.dirty = true
-    })
+    self.spawn_click_button(
+      self.resource.bt_left,
+      552,
+      198 + i * 18,
+      UiAction::PrevPart(part),
+      "customize_prev_\{part}",
+    )
+    self.spawn_click_button(
+      self.resource.bt_right,
+      684,
+      198 + i * 18,
+      UiAction::NextPart(part),
+      "customize_next_\{part}",
+    )
   }
-  self.spawn_button(self.resource.bt_yes, 514, 394, fn() {
-    self.model.generated_name = new_random_name(self.randomizer)
-    self.model.stage = UiStage::ConfirmingName
-    self.model.error_message = None
-    self.dirty = true
-  })
-  self.spawn_button(self.resource.bt_no, 640, 394, return_to_select_character)
+  self.spawn_click_button(
+    self.resource.bt_yes,
+    514,
+    394,
+    UiAction::CustomizeConfirm,
+    "customize_yes",
+  )
+  self.spawn_click_button(
+    self.resource.bt_no,
+    640,
+    394,
+    UiAction::CancelToSelect,
+    "customize_cancel",
+  )
 }
 
 ///|
@@ -426,16 +530,20 @@ fn ExplorerCreationUI::build_confirm_scene(self : ExplorerCreationUI) -> Unit {
     9,
     align=@selene_math.Center,
   )
-  self.spawn_button(self.resource.bt_yes, 514, 394, fn() {
-    self.model.stage = UiStage::Submitting
-    self.model.error_message = None
-    @game_server.send(self.make_submit_packet())
-    self.dirty = true
-  })
-  self.spawn_button(self.resource.bt_no, 640, 394, fn() {
-    self.model.stage = UiStage::CustomizingLook
-    self.dirty = true
-  })
+  self.spawn_click_button(
+    self.resource.bt_yes,
+    514,
+    394,
+    UiAction::ConfirmSubmit,
+    "confirm_yes",
+  )
+  self.spawn_click_button(
+    self.resource.bt_no,
+    640,
+    394,
+    UiAction::ConfirmBack,
+    "confirm_no",
+  )
 }
 
 ///|
@@ -477,28 +585,88 @@ fn ExplorerCreationUI::rebuild_scene(self : ExplorerCreationUI) -> Unit {
 ///|
 fn ExplorerCreationUI::update(self : ExplorerCreationUI) -> Unit {
   self.cloud_x += 0.5
-  let mouse_pos = @inputs.mouse.pos
-  let mouse_x = mouse_pos[@selene_math.X].to_int()
-  let mouse_y = mouse_pos[@selene_math.Y].to_int()
-  let is_pressed = @inputs.is_mouse_pressed(@inputs.MouseButton::Left)
-  let just_pressed = @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left)
-  let just_released = @inputs.is_mouse_just_released(@inputs.MouseButton::Left)
-  for button in self.buttons {
-    button.button.update_pointer(
-      mouse_x, mouse_y, is_pressed, just_pressed, just_released,
-    )
-    @sprite.sprites().set(
-      button.entity,
-      @ms_animation.sprite_from_animation(
-        button.button.current_selene_animation(),
-        10,
-      ),
-    )
+  let click_events = @selene_ui.click_event_bus.read(self.click_reader)
+  for event in click_events {
+    guard event.button is @inputs.MouseButton::Left else { continue }
+    self.debug_click_event_total = self.debug_click_event_total + 1
+    for binding in self.click_bindings {
+      let (entity, action) = binding
+      if entity == event.entity {
+        self.apply_action(action)
+        break
+      }
+    }
   }
   self.request_preview_if_needed()
   self.poll_preview()
   if self.dirty {
     self.rebuild_scene()
+  }
+}
+
+///|
+fn ExplorerCreationUI::apply_action(
+  self : ExplorerCreationUI,
+  action : UiAction,
+) -> Unit {
+  self.debug_action_total = self.debug_action_total + 1
+  self.debug_last_action = Some(action_to_string(action))
+  match action {
+    UiAction::ChooseMale => {
+      self.model.config.female = false
+      self.model.config.skin_idx = 0
+      self.model.config.hair_color_idx = 0
+      self.model.config.face_idx = 0
+      self.model.config.hair_idx = 0
+      self.model.config.top_idx = 0
+      self.model.config.bot_idx = 0
+      self.model.config.shoe_idx = 0
+      self.model.config.weapon_idx = 0
+      self.model.stage = UiStage::CustomizingLook
+      self.model.error_message = None
+      self.dirty = true
+    }
+    UiAction::ChooseFemale => {
+      self.model.config.female = true
+      self.model.config.skin_idx = 0
+      self.model.config.hair_color_idx = 0
+      self.model.config.face_idx = 0
+      self.model.config.hair_idx = 0
+      self.model.config.top_idx = 0
+      self.model.config.bot_idx = 0
+      self.model.config.shoe_idx = 0
+      self.model.config.weapon_idx = 0
+      self.model.stage = UiStage::CustomizingLook
+      self.model.error_message = None
+      self.dirty = true
+    }
+    UiAction::CancelToSelect => return_to_select_character()
+    UiAction::PrevPart(part) => {
+      update_config_index(self.model, self.resource, part, -1)
+      self.model.error_message = None
+      self.dirty = true
+    }
+    UiAction::NextPart(part) => {
+      update_config_index(self.model, self.resource, part, 1)
+      self.model.error_message = None
+      self.dirty = true
+    }
+    UiAction::CustomizeConfirm => {
+      self.model.generated_name = new_random_name(self.randomizer)
+      self.model.stage = UiStage::ConfirmingName
+      self.model.error_message = None
+      self.dirty = true
+    }
+    UiAction::ConfirmSubmit => {
+      self.model.stage = UiStage::Submitting
+      self.model.error_message = None
+      @game_server.send(self.make_submit_packet())
+      self.dirty = true
+    }
+    UiAction::ConfirmBack => {
+      self.model.stage = UiStage::CustomizingLook
+      self.dirty = true
+    }
   }
 }
 

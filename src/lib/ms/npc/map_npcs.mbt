@@ -382,33 +382,15 @@ pub async fn Npc::load(
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut src = npc_loader.load_resource([strid])
   let strsrc = string_loader.load_resource(["Npc.img", id.to_string()])
-  let link = match src {
-    { "info": { "link": String(link), .. }, .. } => link
-    _ => ""
+  let mut nx_npc : NxNpc = @json.from_json(src)
+  match nx_npc.info.link {
+    Some(link) => {
+      src = npc_loader.load_resource([link + ".img"])
+      nx_npc = @json.from_json(src)
+    }
+    None => ()
   }
-  if not(link.is_empty()) {
-    src = npc_loader.load_resource([link + ".img"])
-  }
-  let info = match src {
-    { "info": info, .. } => info
-    _ => Json::null()
-  }
-  let scripted = match info {
-    Object(obj) =>
-      match obj.get("script") {
-        Some(s) =>
-          match s {
-            Null => false
-            _ => true
-          }
-        None =>
-          match obj.get("shop") {
-            Some(True) => true
-            _ => false
-          }
-      }
-    _ => false
-  }
+  let scripted = nx_npc.info.scripted
   let dialogue = {}
   let mut i = 0
   while true {
@@ -429,44 +411,14 @@ pub async fn Npc::load(
   }
   let animations = {}
   let states = []
-  let lines = {}
-  match src {
-    Object(src_obj) =>
-      for state, npc_val in src_obj {
-        if state != "info" {
-          let nx_anim : @resource.NxAnimation = @json.from_json(npc_val) catch {
-            _ => panic()
-          }
-          let selene = @ms_animation.from_nx_animation(nx_anim, loop_=true)
-          animations[state] = {
-            selene,
-            duration_ms: nx_animation_duration_ms(nx_anim),
-            dimensions: nx_animation_dimensions(nx_anim),
-          }
-          states.push(state)
-        }
-        match npc_val {
-          { "speak": Object(speak_arr), .. } =>
-            for _, speak_node in speak_arr {
-              match speak_node {
-                String(key) => {
-                  let str = match strsrc {
-                    Object(obj) =>
-                      match obj.get(key) {
-                        Some(String(s)) => s
-                        _ => ""
-                      }
-                    _ => ""
-                  }
-                  lines.get_or_init(state, fn() { Array::new() }).push(str)
-                }
-                _ => ()
-              }
-            }
-          _ => ()
-        }
-      }
-    _ => ()
+  for state, nx_anim in nx_npc.animations {
+    let selene = @ms_animation.from_nx_animation(nx_anim, loop_=true)
+    animations[state] = {
+      selene,
+      duration_ms: nx_animation_duration_ms(nx_anim),
+      dimensions: nx_animation_dimensions(nx_anim),
+    }
+    states.push(state)
   }
   let name = match strsrc {
     { "name": String(s), .. } => s

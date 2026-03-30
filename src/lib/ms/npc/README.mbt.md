@@ -1,5 +1,28 @@
 # NPC
 
+## NxNpc
+
+`NxNpc` 用于解析 `Npc/<id>.img` 模板资源（不含地图 `life` 刷新点）：
+
+- `info.link`: NPC 模板链接（可选）。
+- `info.scripted`: 归一化脚本标志（`script != null || shop == true`）。
+- `info.speak_keys_by_state`: 每个节点的 `speak` key 列表。
+- `animations`: 以原始节点名为 key 的 `NxAnimation`。
+
+示例：
+
+```mbt nocheck
+///|
+test {
+  let src : Json = {
+    "info": { "speak": { "0": "n0" } },
+    "stand": { "0": { "__i": "assets/images/Npc/1.png", "__w": 40, "__h": 79 } },
+  }
+  let nx_npc : NxNpc = @json.from_json(src)
+  inspect(nx_npc.animations.contains("stand"), content="true")
+}
+```
+
 ## NPC Talk
 
 NPC 任务对话案例。

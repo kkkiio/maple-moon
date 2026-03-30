@@ -9,6 +9,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -89,6 +90,19 @@ pub fn NpcSpawn::get_oid(Self) -> Int
 pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
 pub impl Show for NpcSpawn
 pub impl ToJson for NpcSpawn
+
+pub struct NxNpc {
+  info : NxNpcInfo
+  animations : Map[String, @resource.NxAnimation]
+}
+pub impl @json.FromJson for NxNpc
+
+pub struct NxNpcInfo {
+  link : String?
+  scripted : Bool
+  speak_keys_by_state : Map[String, Array[String]]
+}
+pub impl @json.FromJson for NxNpcInfo
 
 pub struct SpawnNpcController {
   mode : Int

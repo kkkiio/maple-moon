@@ -346,6 +346,40 @@ async function doChoreography(page, canvas, steps, trace) {
       }
       continue;
     }
+    if (type === "console_cmd") {
+      const name = step.name;
+      const cmdArgs = Array.isArray(step.args) ? step.args : [];
+      const result = await page.evaluate(async ({ name, cmdArgs }) => {
+        if (!globalThis.$console || typeof globalThis.$console.cmd !== "function") {
+          return { ok: false, code: "CONSOLE_MISSING", message: "$console.cmd is unavailable" };
+        }
+        try {
+          return await Promise.resolve(globalThis.$console.cmd(name, ...cmdArgs));
+        } catch (err) {
+          return {
+            ok: false,
+            code: "CMD_THROW",
+            message: err && (err.stack || err.message || String(err)),
+          };
+        }
+      }, { name, cmdArgs });
+      const frames = Number(step.step_frames || 0);
+      if (frames > 0) {
+        await stepFrames(page, frames);
+      }
+      trace.push({ type, name, args: cmdArgs, result, step_frames: frames });
+      const strict = step.strict !== false;
+      const expectedCode = step.expected_code;
+      if (strict) {
+        if (expectedCode && (!result || result.code !== expectedCode)) {
+          throw new Error(`console_cmd failed: ${name}, expected_code=${expectedCode}, code=${result && result.code}`);
+        }
+        if (result && Object.prototype.hasOwnProperty.call(result, "ok") && result.ok === false) {
+          throw new Error(`console_cmd failed: ${name}, code=${result.code}`);
+        }
+      }
+      continue;
+    }
     if (type === "wait_state") {
       const maxFrames = Number(step.max_frames || 1800);
       const chunk = Math.max(1, Number(step.step_frames || 10));

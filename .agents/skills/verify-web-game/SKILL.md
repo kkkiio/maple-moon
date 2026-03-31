@@ -32,10 +32,12 @@ Expose these browser globals before verification:
 5. Insert explicit waits (`wait_ui`, `wait_state`) between key actions; do not assume one click immediately reaches next phase.
 6. Check both runtime errors and network errors (`bad-responses-*.json`).
 7. If a run times out, inspect `action-trace-*.json` first to find the exact failed step.
-8. Run replay client for each stage (`pre`, `post`, or more scenarios).
-9. Open generated screenshots and verify visuals.
-10. Compare `state-i.json` with screenshot content.
-11. Check `errors-i.json`; fail on new `console.error` or `pageerror`.
+8. For map-entity validation (NPC/Mob), prefer `console_cmd("temp_set_field_enter", mapId, portalId)` as the entry action.
+9. Run replay client for each stage (`pre`, `post`, or more scenarios).
+10. Keep replay bounded with `wait_state(max_frames=...)`; never wait without timeout.
+11. Open generated screenshots and verify visuals.
+12. Compare `state-i.json` with screenshot content.
+13. Check `errors-i.json`; fail on new `console.error` or `pageerror`.
 
 Example:
 
@@ -65,6 +67,7 @@ In the client script, one `i` means one replay loop (`for (let i = 0; i < iterat
 In addition to legacy `{ buttons, frames }`, script now supports:
 
 - `{ "type": "console_ui_click", "package": "select_char", "name": "new_character", "step_frames": 8 }`
+- `{ "type": "console_cmd", "name": "temp_set_field_enter", "args": ["103000000", "0"], "expected_code": "SET_FIELD_SENT", "step_frames": 12 }`
 - `{ "type": "wait_ui", "package": "explorer_creation", "name": "gender_male", "max_frames": 1200, "step_frames": 10 }`
 - `{ "type": "wait_state", "path": "phase", "equals": "ExplorerCharacterCreation", "max_frames": 1800 }`
 - `{ "type": "wait_state", "path": "explorer_creation.stage.0", "equals": "ConfirmingName" }`
@@ -72,6 +75,11 @@ In addition to legacy `{ buttons, frames }`, script now supports:
 - `{ "type": "sleep", "ms": 300 }`
 
 `console_ui_click` defaults to strict mode: if click result is not `QUEUED`, replay fails immediately.
+`console_cmd` also defaults to strict mode: if `result.ok == false` or `expected_code` mismatch, replay fails immediately.
+
+`temp_set_field_enter` note:
+- This command is registered by `local_server` (not select_char_ui).
+- It triggers server-side `SET_FIELD` and map spawn chain, so it is suitable for NPC visibility verification.
 
 ## Debug Heuristics
 
@@ -92,6 +100,7 @@ Declare **PASS** only when all are true:
 2. `state-last.json` confirms expected phase/state transition.
 3. No new runtime error in `errors-last.json`.
 4. Result is reproducible for at least 2 iterations.
+5. For NPC scenarios, at least one NPC is visible in `shot-last.png`.
 
 If any condition fails, declare **FAIL**, point to exact artifact paths, apply minimal fix, and rerun.
 

@@ -13,7 +13,9 @@
 ## Artifacts
 - Screenshot(s):
 - State JSON(s):
+- Action trace JSON(s):
 - Error JSON(s):
+- Bad response JSON(s):
 
 ## Verdict
 - PASS / FAIL:

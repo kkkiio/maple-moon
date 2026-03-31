@@ -1,23 +1,27 @@
 {
-  "scenario": "create-character-minimal",
+  "scenario": "npc-temp-setfield",
   "notes": [
-    "Replace mouse_x/mouse_y with your actual button location.",
-    "Keep steps small and deterministic."
+    "Use local_server console command temp_set_field_enter to trigger server-side SET_FIELD + spawn chain.",
+    "Prefer wait_state(GameActive) with bounded max_frames to avoid long hangs."
   ],
   "steps": [
     {
-      "buttons": [],
-      "frames": 8
+      "type": "console_cmd",
+      "name": "temp_set_field_enter",
+      "args": ["103000000", "0"],
+      "expected_code": "SET_FIELD_SENT",
+      "step_frames": 12
     },
     {
-      "buttons": ["left_mouse_button"],
-      "frames": 2,
-      "mouse_x": 120,
-      "mouse_y": 80
+      "type": "wait_state",
+      "path": "phase",
+      "equals": "GameActive",
+      "max_frames": 1800,
+      "step_frames": 10
     },
     {
-      "buttons": [],
-      "frames": 18
+      "type": "console_step",
+      "frames": 240
     }
   ]
 }

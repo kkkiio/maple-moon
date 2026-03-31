@@ -1,0 +1,10 @@
+{
+  "info": {
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    },
+    "trunkPut": "100"
+  },
+  "animations_path": "Npc/Npc/1052017.img/animation.json"
+}

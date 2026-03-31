@@ -1,0 +1,21 @@
+{
+  "info": {
+    "default": {
+      "__b": 3647,
+      "__w": 46,
+      "__h": 69,
+      "delay": "2350",
+      "origin": [
+        23,
+        69
+      ]
+    },
+    "hideName": "1",
+    "script": {
+      "0": {
+        "script": "tutorialSkip"
+      }
+    }
+  },
+  "animations_path": "Npc/Npc/0002007.img/animation.json"
+}

@@ -1,0 +1,65 @@
+{
+  "frames": [
+    {
+      "filename": "stand/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 61,
+        "h": 55
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 61,
+        "h": 55
+      },
+      "sourceSize": {
+        "w": 61,
+        "h": 55
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "animation.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 61,
+      "h": 55
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "stand",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_stand",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 61,
+              "h": 55
+            },
+            "pivot": {
+              "x": 0.4918032786885246,
+              "y": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "mc_move"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "Npc/Npc/2042002.img/animation.json"
+}

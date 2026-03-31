@@ -24,15 +24,13 @@ pub(all) struct CompletedQuest {
   quest_id : Int
   quest_info : NxQuestInfo
   completion_time : Int64
-}
-pub impl Show for CompletedQuest
+} derive(Show)
 
 pub(all) struct DemoQuestSelection {
   quest_id : Int
   npc_id : Int
   has_level_check : Bool
-}
-pub impl Show for DemoQuestSelection
+} derive(Show)
 
 pub(all) struct InProgressQuest {
   quest_id : Int
@@ -42,37 +40,29 @@ pub(all) struct InProgressQuest {
   mut progress_data : String
   mut phase : Int
   info_number_progress_map : Map[Int, String]
-}
+} derive(Show)
 pub fn InProgressQuest::get_phase_progress(Self, Int) -> String
-pub impl Show for InProgressQuest
 
-type InfoExCheck
+type InfoExCheck derive(Show)
 pub impl QuestCheck for InfoExCheck
-pub impl Show for InfoExCheck
 
-type MonHuntCheck
-pub impl Show for MonHuntCheck
-pub impl @json.FromJson for MonHuntCheck
+type MonHuntCheck derive(Show, @json.FromJson)
 
 pub(all) struct NxHint {
   says : Array[String]
   answer : Int
-}
-pub impl Default for NxHint
-pub impl Show for NxHint
+} derive(Default, Show)
 
 pub(all) struct NxHints {
   base : Array[NxHint]
   item : Array[String]
   npc : Array[String]
-}
-pub impl Show for NxHints
+} derive(Show)
 
 pub(all) struct NxLost {
   says : Array[String]
   yes_reply : Array[String]
-}
-pub impl Show for NxLost
+} derive(Show)
 
 pub(all) struct NxQuestInfo {
   name : String
@@ -83,13 +73,10 @@ pub(all) struct NxQuestInfo {
   auto_start : Bool
   one_shot : Bool
   descriptions : Array[String]
-}
-pub impl Show for NxQuestInfo
+} derive(Show)
 pub impl @json.FromJson for NxQuestInfo
 
-type NxQuestPhaseAct
-pub impl Default for NxQuestPhaseAct
-pub impl Show for NxQuestPhaseAct
+type NxQuestPhaseAct derive(Default, Show)
 pub impl @json.FromJson for NxQuestPhaseAct
 
 pub(all) struct NxQuestPhaseChecks {
@@ -99,9 +86,7 @@ pub(all) struct NxQuestPhaseChecks {
   monster_hunts : Array[MonHuntCheck]
   checks : Array[&QuestCheck]
   unknown_checks : Array[String]
-}
-pub impl Default for NxQuestPhaseChecks
-pub impl Show for NxQuestPhaseChecks
+} derive(Default, Show)
 
 pub(all) struct NxQuestPhaseSays {
   says : Array[String]
@@ -110,50 +95,40 @@ pub(all) struct NxQuestPhaseSays {
   no_reply : Array[String]
   stop : NxHints?
   restore_lost : NxLost?
-}
-pub impl Default for NxQuestPhaseSays
-pub impl Show for NxQuestPhaseSays
+} derive(Default, Show)
 pub impl @json.FromJson for NxQuestPhaseSays
 
 pub(all) enum NxQuestStatus {
   NotStarted
   InProgress
   Completed
-}
+} derive(Eq, Hash, Show)
 pub fn NxQuestStatus::from_int(Int) -> Self?
 pub fn NxQuestStatus::int_value(Self) -> Unit
-pub impl Eq for NxQuestStatus
-pub impl Hash for NxQuestStatus
-pub impl Show for NxQuestStatus
 
 pub(all) struct PlayerQuestLog {
   in_progress : Map[Int, InProgressQuest]
   completed : Map[Int, CompletedQuest]
-}
+} derive(Default, Show)
 pub fn PlayerQuestLog::get_quest(Self, Int) -> StartedQuest?
-pub impl Default for PlayerQuestLog
-pub impl Show for PlayerQuestLog
 
 pub(all) struct QuestLogCompletedRaw {
   quest_id : Int
   name : String
   completion_time : Int64
-}
-pub impl Show for QuestLogCompletedRaw
+} derive(Show)
 
 pub(all) struct QuestLogInProgressRaw {
   quest_id : Int
   name : String
   progress_data : String
   phase : Int
-}
-pub impl Show for QuestLogInProgressRaw
+} derive(Show)
 
 pub(all) struct QuestLogSnapshotRaw {
   in_progress : Array[QuestLogInProgressRaw]
   completed : Array[QuestLogCompletedRaw]
-}
-pub impl Show for QuestLogSnapshotRaw
+} derive(Show)
 
 pub struct QuestResource {
   quest_info_map : Map[Int, NxQuestInfo]
@@ -166,8 +141,7 @@ pub impl @json.FromJson for QuestResource
 pub enum StartedQuest {
   InProgress(InProgressQuest)
   Completed(CompletedQuest)
-}
-pub impl Show for StartedQuest
+} derive(Show)
 
 // Type aliases
 

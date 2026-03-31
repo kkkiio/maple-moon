@@ -75,7 +75,7 @@ async fn get_portal_id_by_map_id_and_portal_name(
   guard node is { "portal": Object(portals), .. } else { return None }
   for id_str, portal in portals {
     if portal is { "pn": String(pn), .. } && pn == portal_name {
-      return Some(@strconv.parse_int(id_str))
+      return Some(@string.parse_int(id_str))
     }
   }
   None

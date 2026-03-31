@@ -21,8 +21,8 @@ struct CharStats {
   mut stance : Double
   mut reduce_damage : Double
   female : Bool
-  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]]
-  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]]
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> Bool]]
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]]
   total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
 }
 
@@ -64,8 +64,8 @@ pub fn CharStats::new(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
   job : @job.Job,
-  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]],
-  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]],
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> Bool]],
+  i64stat_listeners : Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]],
   total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]],
 ) -> CharStats {
   let cs : CharStats = {
@@ -175,12 +175,7 @@ pub fn CharStats::set_stat(
   self.base_stats.set(stat, value)
   match self.stat_listeners.get(stat) {
     Some(listeners) =>
-      listeners.retain(fn(listener) {
-        match listener(old_value, value) {
-          IterResult::IterEnd => false
-          IterResult::IterContinue => true
-        }
-      })
+      listeners.retain(fn(listener) { listener(old_value, value) })
     None => ()
   }
   char_stats_changed_event_bus.send({
@@ -199,12 +194,7 @@ pub fn CharStats::set_i64stat(
   let old_value = self.get_i64stat(stat)
   self.base_i64stats.set(stat, value)
   guard self.i64stat_listeners.get(stat) is Some(listeners) else { return }
-  listeners.retain(fn(listener) {
-    match listener(old_value, value) {
-      IterResult::IterEnd => false
-      IterResult::IterContinue => true
-    }
-  })
+  listeners.retain(fn(listener) { listener(old_value, value) })
   char_stats_changed_event_bus.send({
     kind: I64_STAT,
     stat: Some(stat),
@@ -450,13 +440,12 @@ pub fn CharStats::watch_stat_changes(
   self : CharStats,
   stat_id : MapleStatId,
   trigger_now? : Bool = false,
-  listener : (Int, Int) -> IterResult,
+  listener : (Int, Int) -> Bool,
 ) -> Unit {
   if trigger_now {
     let v = self.get_stat(stat_id)
-    match listener(v, v) {
-      IterResult::IterEnd => return
-      IterResult::IterContinue => ()
+    if !listener(v, v) {
+      return
     }
   }
   self.stat_listeners.get_or_init(stat_id, fn() { Array::new() }).push(listener)
@@ -467,13 +456,12 @@ pub fn CharStats::watch_i64stat_changes(
   self : CharStats,
   stat_id : @maple_stat.Id,
   trigger_now? : Bool = false,
-  listener : (Int64, Int64) -> IterResult,
+  listener : (Int64, Int64) -> Bool,
 ) -> Unit {
   if trigger_now {
     let v = self.get_i64stat(stat_id)
-    match listener(v, v) {
-      IterResult::IterEnd => return
-      IterResult::IterContinue => ()
+    if !listener(v, v) {
+      return
     }
   }
   self.i64stat_listeners

@@ -34,7 +34,7 @@ pub fn JobData::new(src : Json, name : String) -> JobData {
       { "skill": Object(skill), .. } => skill
       _ => {}
     }) {
-    let skill_id = @strconv.parse_int(subname) catch { _ => 0 }
+    let skill_id = @string.parse_int(subname) catch { _ => 0 }
     if skill_id == 0 {
       continue
     }

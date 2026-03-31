@@ -116,7 +116,7 @@ fn collect_actions_in(
   let actions = []
   let seen : Map[Action, Bool] = Map::new()
   for code, action in mapping {
-    if is_triggered(code) && not(seen.contains(action)) {
+    if is_triggered(code) && !seen.contains(action) {
       seen[action] = true
       actions.push(action)
     }

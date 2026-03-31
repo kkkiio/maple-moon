@@ -6,7 +6,7 @@ struct Module {
 ///|
 fn parse_int_arg(args : Array[String], index : Int, default : Int) -> Int {
   guard index >= 0 && index < args.length() else { return default }
-  @strconv.parse_int(args[index]) catch {
+  @string.parse_int(args[index]) catch {
     _ => default
   }
 }

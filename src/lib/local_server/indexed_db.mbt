@@ -348,13 +348,13 @@ fn LocalServer::load_character_quest_data(
     { "started": Object(started_map), "completed": Object(completed_map), .. } => {
       self.started_quests.clear()
       for quest_id_str, progress_json in started_map {
-        let quest_id = @strconv.parse_int(quest_id_str) catch { _ => continue }
+        let quest_id = @string.parse_int(quest_id_str) catch { _ => continue }
         guard progress_json is String(progress) else { continue }
         self.started_quests.set(quest_id, progress)
       }
       self.completed_quests.clear()
       for quest_id_str, time_json in completed_map {
-        let quest_id = @strconv.parse_int(quest_id_str) catch { _ => continue }
+        let quest_id = @string.parse_int(quest_id_str) catch { _ => continue }
         guard time_json is Number(completion_time, ..) else { continue }
         self.completed_quests.set(quest_id, completion_time.to_int64())
       }

@@ -36,7 +36,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       default_server.current_character_id,
     )
 
-    if not(has_save_data) {
+    if !has_save_data {
       @log.fatal("Player character save data missing! Aborting.", data={
         "character_id": default_server.current_character_id.to_string(),
       })

@@ -53,7 +53,7 @@ pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @ev
 ///|
 fn parse_int_arg(args : Array[String], index : Int, default : Int) -> Int {
   guard index >= 0 && index < args.length() else { return default }
-  @strconv.parse_int(args[index]) catch {
+  @string.parse_int(args[index]) catch {
     _ => default
   }
 }
@@ -656,7 +656,7 @@ pub fn find_equip_slot(
   guard eqslot is @equip_slot.Id::RING1 else { return eqslot }
   [@equip_slot.Id::RING2, @equip_slot.Id::RING3, @equip_slot.Id::RING4]
   .iter()
-  .find_first(fn(slot) { not(inv.has_equipped(slot)) })
+  .find_first(fn(slot) { !inv.has_equipped(slot) })
   .unwrap_or(@equip_slot.Id::RING1)
 }
 

@@ -59,7 +59,7 @@ pub impl @json.FromJson for NxCharLevelHit with from_json(json, path) {
   let levels = Map::new()
   for level, value in obj {
     let entry : NxHitEntry = @json.from_json(value, path=path.add_key(level))
-    let parsed_level = @strconv.parse_int(level) catch {
+    let parsed_level = @string.parse_int(level) catch {
       _ =>
         raise @json.JsonDecodeError((path.add_key(level), "expect numeric key"))
     }
@@ -79,7 +79,7 @@ pub impl @json.FromJson for NxSkillLevelHit with from_json(json, path) {
   let levels = Map::new()
   for level, value in obj {
     let entry : NxHitEntry = @json.from_json(value, path=path.add_key(level))
-    let parsed_level = @strconv.parse_int(level) catch {
+    let parsed_level = @string.parse_int(level) catch {
       _ =>
         raise @json.JsonDecodeError((path.add_key(level), "expect numeric key"))
     }

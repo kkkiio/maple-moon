@@ -68,7 +68,7 @@ pub impl @json.FromJson for NxQuestInfo with from_json(json, path) {
     ) => {
       let description_map : Map[Int, String] = {}
       for key, value in obj {
-        let i = @strconv.parse_int(key) catch { _ => continue }
+        let i = @string.parse_int(key) catch { _ => continue }
         if i < 0 || i > 10 { // assume there are at most 10 phases
           continue
         }
@@ -236,7 +236,7 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
   match json {
     Number(n, ..) => n.to_int()
     String(s) =>
-      @strconv.parse_int(s) catch {
+      @string.parse_int(s) catch {
         _ => raise @json.JsonDecodeError((path, "expect stringified int"))
       }
     _ => raise @json.JsonDecodeError((path, "expect number or string"))

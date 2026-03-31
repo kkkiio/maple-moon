@@ -272,7 +272,7 @@ fn finalize_scene(
     guard life.type_ == "m" else { continue }
     let oid = oid_counter
     oid_counter += 1
-    let id = @strconv.parse_int(life.id) catch { _ => 0 }
+    let id = @string.parse_int(life.id) catch { _ => 0 }
     mobs.spawn(
       @monster.create_mob_spawn(
         oid,
@@ -398,9 +398,7 @@ fn normalize_camera_limits(
 
 ///|
 fn toggle_background_visibility() -> Unit {
-  viewer_state.val.layer_visibility.backgrounds = not(
-    viewer_state.val.layer_visibility.backgrounds,
-  )
+  viewer_state.val.layer_visibility.backgrounds = !viewer_state.val.layer_visibility.backgrounds
   apply_visibility_to_modules()
 }
 
@@ -419,7 +417,7 @@ fn clamp(value : Double, min_value : Double, max_value : Double) -> Double {
 fn apply_visibility_to_modules() -> Unit {
   let visibility = viewer_state.val.layer_visibility
   @map.set_background_visibility(visibility.backgrounds, visibility.backgrounds)
-  if not(visibility.backgrounds) {
+  if !visibility.backgrounds {
     @map.clear_background_debug()
   }
 }

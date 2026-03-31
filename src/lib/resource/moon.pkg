@@ -4,4 +4,9 @@ import {
   "moonbitlang/core/buffer",
   "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "moonbitlang/async/js_async",
+  "Milky2018/selene/asset",
+  "Milky2018/selene/animation" @selene_animation,
+  "Milky2018/selene/math",
+  "Milky2018/selene/sprite",
+  "moonbitlang/core/string",
 }

@@ -20,8 +20,7 @@ pub fn setup_game_server_handlers() -> Unit
 // Errors
 
 // Types and methods
-type UiStage
-pub impl Eq for UiStage
+type UiStage derive(Eq)
 
 // Type aliases
 

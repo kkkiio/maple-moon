@@ -85,7 +85,7 @@ fn MapleButton::update_visual_state(
   hovered : Bool,
   is_pressed : Bool,
 ) -> Unit {
-  self.state = if not(self.enabled) {
+  self.state = if !self.enabled {
     ButtonState::DISABLED
   } else if self.pressed && is_pressed && hovered {
     ButtonState::PRESSED
@@ -115,7 +115,7 @@ pub fn MapleButton::new(
 ///|
 pub fn MapleButton::set_enabled(self : MapleButton, enabled : Bool) -> Unit {
   self.enabled = enabled
-  if not(enabled) {
+  if !enabled {
     self.pressed = false
     self.state = ButtonState::DISABLED
   } else {
@@ -142,7 +142,7 @@ pub fn MapleButton::update_pointer(
   just_released : Bool,
 ) -> Unit {
   let hovered = self.contains(x, y)
-  if not(self.enabled) {
+  if !self.enabled {
     self.pressed = false
     self.state = ButtonState::DISABLED
     return

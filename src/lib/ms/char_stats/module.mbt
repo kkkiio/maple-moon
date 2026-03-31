@@ -1,7 +1,7 @@
 ///|
 struct Module {
-  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> IterResult]]
-  i64stat_listeners : Map[MapleStatId, Array[(Int64, Int64) -> IterResult]]
+  stat_listeners : Map[MapleStatId, Array[(Int, Int) -> Bool]]
+  i64stat_listeners : Map[MapleStatId, Array[(Int64, Int64) -> Bool]]
   total_listeners : Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]
   mut player_char_stats : CharStats?
 }

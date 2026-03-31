@@ -178,7 +178,7 @@ pub fn MesoDrop::new(
 //   viewy : Double,
 //   alpha : Double,
 // ) -> Unit {
-//   if not(self.base.entity.is_alive()) {
+//   if !(self.base.entity.is_alive()) {
 //     return
 //   }
 //   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
@@ -290,7 +290,7 @@ pub fn ItemDrop::new(
 //   viewy : Double,
 //   alpha : Double,
 // ) -> Unit {
-//   if not(self.base.entity.is_alive()) {
+//   if !(self.base.entity.is_alive()) {
 //     return
 //   }
 //   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)

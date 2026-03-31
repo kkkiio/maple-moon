@@ -15,19 +15,14 @@ pub fn watch_player_char_stat(
     Some(stats) => {
       let value = stats.get_stat(stat)
       let cont = listener(value, value)
-      if not(cont) {
+      if !cont {
         return
       }
     }
     None => ()
   }
   let listeners = mod.stat_listeners.get_or_init(stat, fn() { Array::new() })
-  listeners.push(fn(old_value, new_value) {
-    match listener(old_value, new_value) {
-      true => IterResult::IterContinue
-      false => IterResult::IterEnd
-    }
-  })
+  listeners.push(listener)
 }
 
 ///|
@@ -44,7 +39,7 @@ pub fn watch_player_total_stat(
     Some(stats) => {
       let value = stats.get_total(stat)
       let cont = listener(value, value)
-      if not(cont) {
+      if !cont {
         return
       }
     }

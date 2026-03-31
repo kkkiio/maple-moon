@@ -77,7 +77,7 @@ fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "action": String(action), .. } {
-        actions.set(@strconv.parse_int(level), action)
+        actions.set(@string.parse_int(level), action)
       }
     }
   }

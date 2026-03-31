@@ -31,7 +31,7 @@ async fn load_backgrounds_101010102() -> @map.Backgrounds {
     let set_map = background_animation_sets.get_or_init(background.bS, fn() {
       {}
     })
-    if not(set_map.contains(path)) {
+    if !set_map.contains(path) {
       set_map[path] = @map.load_background_animation(
         background_loader,
         background.bS,
@@ -81,7 +81,7 @@ fn min_sprite_alpha() -> Double {
       min_alpha = sprite.color.a
     }
   }
-  if not(found) {
+  if !found {
     panic()
   }
   min_alpha

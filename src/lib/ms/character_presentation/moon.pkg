@@ -26,6 +26,7 @@ import {
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "Milky2018/selene/ecs",
+  "moonbitlang/core/string",
 }
 
 import {

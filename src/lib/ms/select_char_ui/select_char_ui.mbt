@@ -19,8 +19,6 @@ using @game_state {type GamePhase}
 struct SelectCharUI {
   characters : Array[SelectableCharacterUI]
   on_new_character : () -> Unit
-  select_slot : Int?
-  resource : SelectCharUIResource
   // 以数组配置驱动三段光照动画，减少重复代码
   // 每项：(entity, frame_counter_ref, segments)
   // segment: (duration_frames, from_alpha, to_alpha)
@@ -42,8 +40,6 @@ pub(all) struct SelectCharUIResource {
 ///|
 struct SelectableCharacterUI {
   cid : Int
-  char_look : @char_look.CharLook
-  name : String
 }
 
 ///|
@@ -361,10 +357,8 @@ pub async fn SelectCharUI::new(
     select_click_entity,
     new_character_click_entity: new_click_entity,
     entities,
-    select_slot: None,
     on_new_character,
     characters: characters_ui,
-    resource: resources,
     animations: [
       // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
       (entities[1], Ref::new(0), [(180, 255.0, 50.0), (180, 50.0, 255.0)]),
@@ -439,7 +433,7 @@ pub async fn to_selectable_character_ui(
   char_look.set_facing_right(true)
   char_look.play_animations()
   spawn_character_name_entity(entity, name, entities)
-  { cid, char_look, name }
+  { cid, }
 }
 
 ///|
@@ -612,7 +606,7 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
   }
 
   guard character_list_ref.val is Some(characters) else {
-    if not(character_list_requested_ref.val) {
+    if !character_list_requested_ref.val {
       character_list_requested_ref.val = true
       @game_server.send(CharacterListRequestMessage::default())
     }

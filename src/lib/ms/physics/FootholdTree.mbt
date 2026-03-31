@@ -79,7 +79,7 @@ pub fn FootholdTree::limit_movement(
     } else {
       crnt_x <= wall && next_x >= wall
     }
-    if not(collision) && phobj.is_flag_set(PhysicsObjectFlag::TURN_AT_EDGES) {
+    if !collision && phobj.is_flag_set(PhysicsObjectFlag::TURN_AT_EDGES) {
       wall = self.get_edge(phobj.fh_id, left)
       collision = if left {
         crnt_x >= wall && next_x <= wall

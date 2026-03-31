@@ -39,13 +39,9 @@ pub(all) enum BodyLayer {
   HAND_OVER_HAIR
   HAND_OVER_WEAPON
   HEAD
-}
+} derive(Compare, Eq, Hash, Show)
 pub fn BodyLayer::from_name(String) -> Self?
 pub fn BodyLayer::int_value(Self) -> Int
-pub impl Compare for BodyLayer
-pub impl Eq for BodyLayer
-pub impl Hash for BodyLayer
-pub impl Show for BodyLayer
 pub impl ToJson for BodyLayer
 
 pub(all) struct NxBodyLayerTexture {
@@ -87,10 +83,9 @@ pub(all) struct NxStanceLooks[T](Map[@char_stance.StanceId, Array[T]])
 pub fn[T] NxStanceLooks::inner(Self[T]) -> Map[@char_stance.StanceId, Array[T]]
 pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T]
 
-pub(all) struct ShiftMap(Map[String, @res_types.Point[Int]])
+pub(all) struct ShiftMap(Map[String, @res_types.Point[Int]]) derive(@json.FromJson)
 #deprecated
 pub fn ShiftMap::inner(Self) -> Map[String, @res_types.Point[Int]]
-pub impl @json.FromJson for ShiftMap
 
 // Type aliases
 

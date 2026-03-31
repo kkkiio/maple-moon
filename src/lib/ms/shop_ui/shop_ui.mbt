@@ -300,7 +300,7 @@ fn parse_texture_array(
   }
   let kvs : Array[(Int, @resource.NxTexture)] = []
   for key, value in obj {
-    let index = @strconv.parse_int(key) catch {
+    let index = @string.parse_int(key) catch {
       _ =>
         raise @json.JsonDecodeError((path.add_key(key), "tab key is not int"))
     }
@@ -526,11 +526,11 @@ fn ensure_item_visual(state : State, item_id : Int) -> Unit {
   guard @item.request_item_data_if_ready(item_id) is Some(item_data) else {
     return
   }
-  if not(state.icon_by_item_id.contains(item_id)) {
+  if !state.icon_by_item_id.contains(item_id) {
     let icon = nx_texture_to_inventory_icon_animation(item_data.get_icon(false))
     state.icon_by_item_id.set(item_id, icon)
   }
-  if not(state.item_name_by_id.contains(item_id)) {
+  if !state.item_name_by_id.contains(item_id) {
     state.item_name_by_id.set(item_id, item_data.name)
   }
 }
@@ -538,11 +538,11 @@ fn ensure_item_visual(state : State, item_id : Int) -> Unit {
 ///|
 fn ensure_item_visual_loaded(state : State, item_id : Int) -> Unit {
   let item_data = @item.request_item_data(item_id)
-  if not(state.icon_by_item_id.contains(item_id)) {
+  if !state.icon_by_item_id.contains(item_id) {
     let icon = nx_texture_to_inventory_icon_animation(item_data.get_icon(false))
     state.icon_by_item_id.set(item_id, icon)
   }
-  if not(state.item_name_by_id.contains(item_id)) {
+  if !state.item_name_by_id.contains(item_id) {
     state.item_name_by_id.set(item_id, item_data.name)
   }
 }
@@ -591,10 +591,8 @@ fn begin_open_shop(state : State, shop : OpenNpcShopMessage) -> Unit {
 ///|
 fn poll_open_shop_preload(state : State) -> Bool {
   guard state.pending_open_shop is Some(shop) else { return false }
-  if not(
-      @item.get_item_data_system().all_requested_ready_or_fail(
-        state.pending_open_shop_item_ids,
-      ),
+  if !@item.get_item_data_system().all_requested_ready_or_fail(
+      state.pending_open_shop_item_ids,
     ) {
     return false
   }
@@ -680,7 +678,7 @@ fn apply_modify_inventory_message(
       break
     }
   }
-  if not(replaced) {
+  if !replaced {
     tab_items.push(display_item)
   }
   tab_items.sort_by(slot_sort)
@@ -1028,7 +1026,7 @@ fn render_shop_ui(state : State) -> Unit {
 
 ///|
 fn close_shop(state : State) -> Unit {
-  if not(state.visible) {
+  if !state.visible {
     return
   }
   state.visible = false
@@ -1191,7 +1189,7 @@ pub fn set_inventory_entry_for_test(entry : InventoryEntry) -> Unit {
 pub fn set_shop_visible_for_test(visible : Bool) -> Unit {
   let state = state_ref.val
   state.visible = visible
-  if not(visible) {
+  if !visible {
     state.pending_open_shop = None
     state.pending_open_shop_item_ids = []
     clear_entities(state.render_entities)
@@ -1266,7 +1264,7 @@ pub fn shop_ui_system(_world : @ecs.World) -> Unit {
   if poll_open_shop_preload(state) {
     dirty = true
   }
-  if not(state.visible) {
+  if !state.visible {
     if state.render_entities.length() > 0 {
       clear_entities(state.render_entities)
     }

@@ -17,7 +17,7 @@ pub fn resolve_anchor_shift(@character_body.BodyDrawInfo, @char_stance.StanceId,
 // Errors
 
 // Types and methods
-type Clothing
+type Clothing derive(Show)
 pub fn Clothing::from_resource(@item.ItemData, @character_body.BodyDrawInfo) -> Self raise
 pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
 pub fn Clothing::get_eqslot(Self) -> @slot.Id
@@ -27,7 +27,6 @@ pub fn Clothing::get_stand(Self) -> @char_stance.StanceId
 pub fn Clothing::get_vslot(Self) -> String
 pub fn Clothing::get_walk(Self) -> @char_stance.StanceId
 pub fn Clothing::is_twohanded(Self) -> Bool
-pub impl Show for Clothing
 
 pub(all) enum ClothingLayer {
   CAPE
@@ -67,46 +66,37 @@ pub(all) enum ClothingLayer {
   RING
   BACK_SHIELD
   BACK_WEAPON
-}
+} derive(Eq, Hash, Show)
 pub fn ClothingLayer::int_value(Self) -> Int
-pub impl Eq for ClothingLayer
-pub impl Hash for ClothingLayer
-pub impl Show for ClothingLayer
 pub impl ToJson for ClothingLayer
 
 pub(all) struct NxMapAnchor {
   parent_key : String
   parent_pos : @res_types.Point[Int]
-}
-pub impl Eq for NxMapAnchor
-pub impl Show for NxMapAnchor
+} derive(Eq, Show)
 pub impl @json.FromJson for NxMapAnchor
 
 pub(all) struct NxWeapon {
   actions : Map[String, NxWeaponAction]
-}
+} derive(Show)
 pub fn NxWeapon::get_part(Self, String, Int, String) -> NxWeaponPart?
-pub impl Show for NxWeapon
 pub impl @json.FromJson for NxWeapon
 
 pub(all) struct NxWeaponAction {
   frames : Map[Int, NxWeaponFrame]
-}
-pub impl Show for NxWeaponAction
+} derive(Show)
 pub impl @json.FromJson for NxWeaponAction
 
 pub(all) struct NxWeaponFrame {
   parts : Map[String, NxWeaponPart]
-}
-pub impl Show for NxWeaponFrame
+} derive(Show)
 pub impl @json.FromJson for NxWeaponFrame
 
 pub(all) struct NxWeaponPart {
   texture : @resource.NxTexture
   z : String
   anchor : NxMapAnchor
-}
-pub impl Show for NxWeaponPart
+} derive(Show)
 pub impl @json.FromJson for NxWeaponPart
 
 // Type aliases

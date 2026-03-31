@@ -11,6 +11,7 @@ import {
   "KKKIIO/maple-moon/lib/graphics",
   "Milky2018/selene/ecs",
   "Milky2018/selene/time",
+  "moonbitlang/core/string",
 }
 
 import {

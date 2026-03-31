@@ -11,12 +11,12 @@ fn check_ui_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   let ui_window4_dir = "ui/UIWindow4.img"
   let ui_window2_abs = path_join(ctx.assets_root, ui_window2_dir)
   let ui_window4_abs = path_join(ctx.assets_root, ui_window4_dir)
-  if not(file_exists(ui_window2_abs)) {
+  if !file_exists(ui_window2_abs) {
     issues.push(
       make_issue("ui", Error, ui_window2_dir, "missing UIWindow2 directory"),
     )
   }
-  if not(file_exists(ui_window4_abs)) {
+  if !file_exists(ui_window4_abs) {
     issues.push(
       make_issue("ui", Error, ui_window4_dir, "missing UIWindow4 directory"),
     )
@@ -24,7 +24,7 @@ fn check_ui_resources(ctx : RescheckContext) -> Array[CheckIssue] {
 
   let item_rel = "ui/UIWindow2.img/Item.json"
   let item_abs = path_join(ctx.assets_root, item_rel)
-  if not(file_exists(item_abs)) {
+  if !file_exists(item_abs) {
     issues.push(
       make_issue("ui", Error, item_rel, "missing UI item window resource json"),
     )
@@ -126,7 +126,7 @@ fn check_texture_value(
   }
   let image_rel_path = resolve_ui_image_path(texture.i)
   let image_abs_path = path_join(ctx.assets_root, image_rel_path)
-  if not(file_exists(image_abs_path)) {
+  if !file_exists(image_abs_path) {
     issues.push(
       make_issue(
         "ui",

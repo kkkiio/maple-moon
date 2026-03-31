@@ -12,6 +12,8 @@ pub(open) trait AsyncResourceLoader {
 ///|
 struct AsyncLoader {
   loader : &AsyncResourceLoader
+  base_url : String
+  image_base_url : String
 }
 
 ///|
@@ -21,8 +23,7 @@ pub fn AsyncLoader::new(
   base_url? : String = OLD_BASE_URL,
   image_base_url? : String = base_url,
 ) -> AsyncLoader {
-  ignore(image_base_url)
-  { loader, }
+  { loader, base_url, image_base_url }
 }
 
 ///|
@@ -31,6 +32,44 @@ pub async fn AsyncLoader::load_resource(
   path : ArrayView[String],
 ) -> Json {
   self.loader.load_data(join_path(path))
+}
+
+///|
+/// Resolve a JSON resource path to a fetchable URL/path.
+///
+/// Rules:
+/// - `http://` / `https://` stays unchanged.
+/// - Absolute paths (for example `/assets/...`) stay unchanged.
+/// - Relative paths are resolved against `base_url`.
+pub fn AsyncLoader::resolve_json_path(
+  self : AsyncLoader,
+  path : String,
+) -> String {
+  resolve_path(path, self.base_url)
+}
+
+///|
+/// Resolve an image resource path to a fetchable URL/path.
+///
+/// Rules:
+/// - `http://` / `https://` stays unchanged.
+/// - Absolute paths (for example `/assets/...`) stay unchanged.
+/// - Relative paths are resolved against `image_base_url`.
+pub fn AsyncLoader::resolve_image_path(
+  self : AsyncLoader,
+  path : String,
+) -> String {
+  resolve_path(path, self.image_base_url)
+}
+
+///|
+/// Load a JSON object by full/relative path instead of loader key path.
+pub async fn AsyncLoader::load_json_by_path(
+  self : AsyncLoader,
+  path : String,
+) -> Json {
+  let resolved = self.resolve_json_path(path)
+  fetch_json(resolved)
 }
 
 ///|
@@ -124,6 +163,25 @@ async fn fetch_json(path : String) -> Json {
     )
   }
   response.text().wait() |> @json.parse
+}
+
+///|
+fn is_http_url(path : String) -> Bool {
+  path.has_prefix("http://") || path.has_prefix("https://")
+}
+
+///|
+fn is_absolute_path(path : String) -> Bool {
+  path.has_prefix("/")
+}
+
+///|
+fn resolve_path(path : String, base : String) -> String {
+  if is_http_url(path) || is_absolute_path(path) {
+    path
+  } else {
+    join_dir(base, path)
+  }
 }
 
 ///|

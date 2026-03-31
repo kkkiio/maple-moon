@@ -80,7 +80,7 @@ pub fn MapMobs::add_mob(self : MapMobs, mob : Mob) -> Unit {
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
-    if not(self.mobs.contains(spawn.oid)) {
+    if !self.mobs.contains(spawn.oid) {
       self.loading_mobs.push(
         @io_service.submit_background_task(async fn() {
           spawn.instantiate(self.randomizer)
@@ -345,7 +345,7 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
     if @sprite.sprites().get(entity) is None ||
       mob.last_synced_stance != Some(mob.stance) {
       // Create or Replace sprite
-      let flip = mob.stance.face_right && not(mob.no_flip)
+      let flip = mob.stance.face_right && !mob.no_flip
       let transform = if flip {
         @selene_math.Transform::from_scale(-1.0, 1.0)
       } else {

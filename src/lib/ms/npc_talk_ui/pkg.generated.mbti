@@ -23,8 +23,7 @@ pub fn open_npc_talk_ui(@npc.TalkArgs) -> Unit
 // Errors
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
-}
-pub impl Show for ParseTalkError
+} derive(Show)
 
 // Types and methods
 pub(all) struct NpcTalkButtonResource {

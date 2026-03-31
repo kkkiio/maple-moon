@@ -200,7 +200,7 @@ let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref::new(None)
 fn current_player_name() -> String {
   if @player.get_player() is Some(player) {
     let name = player.get_stats().get_name()
-    if not(name.is_empty()) {
+    if !name.is_empty() {
       return name
     }
   }
@@ -255,7 +255,7 @@ pub fn describe_npc_talk_ui() -> Json {
           None => ()
         }
       }
-      if not(has_z) {
+      if !has_z {
         z_min = NPC_TALK_Z
         z_max = NPC_TALK_Z
       }
@@ -707,7 +707,7 @@ fn UINpcTalk::spawn_action_button(
 ///|
 fn UINpcTalk::update(self : UINpcTalk) -> Unit {
   for button in self.buttons {
-    let texture = if not(button.enabled) {
+    let texture = if !button.enabled {
       button.resource.disabled
     } else {
       match @selene_ui.interactions().get(button.entity) {
@@ -924,7 +924,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
             ),
           })
         }
-        opening_selection = Some((@strconv.parse_int(payload.to_string()), []))
+        opening_selection = Some((@string.parse_int(payload.to_string()), []))
       }
       Tag('l', _) => {
         guard opening_selection is Some((index, selection_nodes)) else {
@@ -1073,7 +1073,7 @@ fn append_runs_to_lines(
       .split("\n")
       .to_array()
     for i, part in parts {
-      if not(part.is_empty()) {
+      if !part.is_empty() {
         let line = lines[lines.length() - 1]
         line.push({ ..run, text: part.to_string() })
       }
@@ -1089,7 +1089,7 @@ fn trim_trailing_blank_lines(
   lines : Array[Array[TextRun]],
 ) -> Array[Array[TextRun]] {
   let trimmed = lines.copy()
-  while not(trimmed.is_empty()) && trimmed.last().unwrap_or([]).is_empty() {
+  while !trimmed.is_empty() && trimmed.last().unwrap_or([]).is_empty() {
     trimmed.pop() |> ignore
   }
   if trimmed.is_empty() {

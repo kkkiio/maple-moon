@@ -17,6 +17,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/monster" @monster,
   "KKKIIO/maple-moon/lib/ms/physics" @physics,
+  "moonbitlang/core/string",
 }
 
 options(

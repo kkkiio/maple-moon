@@ -146,6 +146,7 @@ pub fn LocalServer::new(
 pub fn init_server(server : LocalServer) -> Unit {
   server.init_routes()
   server.init_quest_runtime()
+  server.register_debug_console_commands()
   // 加载掉落数据库
   server.load_drop_databases()
   // 加载 NPC 商店数据库
@@ -458,7 +459,7 @@ fn LocalServer::spawn_drops_for_mob(
     active_quest_ids~,
   )
   for msg in messages {
-    if not(msg.meso) &&
+    if !msg.meso &&
       InventoryType::by_item_id(msg.item_id) == Some(InventoryType::EQUIP) {
       continue
     }
@@ -716,7 +717,7 @@ fn LocalServer::on_unequip_item(
   guard self.player_items.get(InventoryType::EQUIPPED) is Some(equipped_items) else {
     return
   }
-  guard not(equip_items.contains(to_slot)) else { return }
+  guard !equip_items.contains(to_slot) else { return }
   guard equipped_items.get(equipped_slot) is Some(equipped_entry) else {
     return
   }
@@ -857,7 +858,7 @@ fn find_next_empty_slot(
   slot_max : Int,
 ) -> Int? {
   for slot in 1..<=slot_max {
-    if not(items.contains(slot)) {
+    if !items.contains(slot) {
       return Some(slot)
     }
   }
@@ -961,7 +962,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           "fh": Number(fh, ..),
           ..
         } => {
-          let monster_id = @strconv.parse_int(id_str)
+          let monster_id = @string.parse_int(id_str)
           self.last_object_id += 1
           let spawn_msg = MobSpawnControllerMessage::{
             oid: self.last_object_id,
@@ -995,7 +996,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           ..
         } => {
           self.last_object_id += 1
-          let npc_id = @strconv.parse_int(id_str)
+          let npc_id = @string.parse_int(id_str)
           self.pending_npc_spawns.push(NpcSpawnControllerMessage::{
             mode: 1,
             oid: self.last_object_id,

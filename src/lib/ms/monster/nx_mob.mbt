@@ -154,7 +154,7 @@ pub impl @json.FromJson for NxMob with from_json(json, path) {
     if key.has_prefix("attack") {
       try {
         let suffix = key[6:] // remove "attack"
-        let id = @strconv.parse_int(suffix)
+        let id = @string.parse_int(suffix)
         // check children count > 0 equivalent
         let has_children = match value {
           Object(o) => o.length() > 0

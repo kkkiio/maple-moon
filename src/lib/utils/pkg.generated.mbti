@@ -25,9 +25,8 @@ pub fn to_hex_string(UInt) -> String
 // Errors
 pub(all) suberror UnknownEnum {
   UnknownEnum(Int)
-}
+} derive(Show)
 pub fn UnknownEnum::to_string(Self) -> String
-pub impl Show for UnknownEnum
 
 // Types and methods
 type BiMap[K, V]
@@ -56,7 +55,7 @@ pub(all) struct DefaultMap[K, V] {
 pub fn[K, V] DefaultMap::new(() -> V) -> Self[K, V]
 pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
 
-pub(all) struct Duration(Int)
+pub(all) struct Duration(Int) derive(Compare, Eq, Show)
 pub fn Duration::from_micro(Int) -> Self
 pub fn Duration::from_milliseconds(Int) -> Self
 #deprecated
@@ -64,9 +63,6 @@ pub fn Duration::inner(Self) -> Int
 pub fn Duration::to_micro_seconds(Self) -> Int
 pub fn Duration::to_milliseconds(Self) -> Int
 pub fn Duration::to_seconds(Self) -> Int
-pub impl Compare for Duration
-pub impl Eq for Duration
-pub impl Show for Duration
 
 type Future[T]
 pub fn[T] Future::all_of(Array[Self[T]]) -> Self[Array[T]]
@@ -82,7 +78,7 @@ pub fn[T] Future::new(() -> T?) -> Self[T]
 pub fn[T] Future::poll(Self[T]) -> T?
 pub fn[T] Future::tap(Self[T], (T) -> Unit) -> Self[T]
 
-type Linear
+type Linear derive(Default, Show, ToJson)
 pub fn Linear::add(Self, Double) -> Unit
 pub fn Linear::get(Self, alpha? : Double) -> Double
 pub fn Linear::last(Self) -> Double
@@ -91,33 +87,26 @@ pub fn Linear::normalize(Self) -> Unit
 pub fn Linear::normalized(Self) -> Bool
 pub fn Linear::plus(Self, Double) -> Double
 pub fn Linear::set(Self, Double) -> Unit
-pub impl Default for Linear
-pub impl Show for Linear
-pub impl ToJson for Linear
 
-type Nominal[T]
+type Nominal[T] derive(Default)
 pub fn[T] Nominal::get(Self[T], alpha? : Double) -> T
 pub fn[T] Nominal::last(Self[T]) -> T
 pub fn[T] Nominal::next(Self[T], T, Double) -> Unit
 pub fn[T] Nominal::normalize(Self[T]) -> Unit
 pub fn[T : Eq] Nominal::normalized(Self[T]) -> Bool
 pub fn[T] Nominal::set(Self[T], T) -> Unit
-pub impl[T : Default] Default for Nominal[T]
 
 type Singleton[T]
 pub fn[T] Singleton::must_get(Self[T]) -> T
 pub fn[T] Singleton::new() -> Self[T]
 pub fn[T] Singleton::set(Self[T], T) -> Unit
 
-pub(all) struct TimePoint(Int64)
+pub(all) struct TimePoint(Int64) derive(Compare, Default, Eq)
 pub fn TimePoint::add_duration(Self, Duration) -> Self
 pub fn TimePoint::from_micro(Double) -> Self
 #deprecated
 pub fn TimePoint::inner(Self) -> Int64
 pub fn TimePoint::since(Self, Self) -> Duration
-pub impl Compare for TimePoint
-pub impl Default for TimePoint
-pub impl Eq for TimePoint
 
 type Timed[T]
 pub impl[T] Compare for Timed[T]

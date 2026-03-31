@@ -85,7 +85,7 @@ pub fn quest_icon_system(_world : @ecs.World) -> Unit {
   let char_stat_events = @char_stats.char_stats_changed_event_bus.read(
     get_char_stats_changed_reader(),
   )
-  if not(inventory_events.is_empty()) || not(char_stat_events.is_empty()) {
+  if !inventory_events.is_empty() || !char_stat_events.is_empty() {
     bump_quest_icon_query_revision()
   }
 
@@ -94,7 +94,7 @@ pub fn quest_icon_system(_world : @ecs.World) -> Unit {
     get_query_revision: quest_icon_query_revision,
   }
   let anchors = @npc.list_npc_anchors()
-  if not(anchors.is_empty()) {
+  if !anchors.is_empty() {
     sync_runtimes(anchors, context, resources)
     if get_demo_quest_selection() is None {
       let npc_ids = anchors.map(fn(anchor) { anchor.npc_id })
@@ -189,7 +189,7 @@ fn sync_runtimes(
   }
   let removed = []
   for oid, _ in runtime_by_oid.val {
-    if not(seen_oids.contains(oid)) {
+    if !seen_oids.contains(oid) {
       removed.push(oid)
     }
   }
@@ -215,7 +215,7 @@ fn upsert_runtime(
     Some(runtime) =>
       runtime.quest_id != desired.quest_id ||
       runtime.state != desired.state ||
-      not(runtime.icon_entity.is_alive())
+      !runtime.icon_entity.is_alive()
     None => true
   }
 

@@ -119,7 +119,7 @@ pub fn resolve_npc_name(nid : StringView) -> String raise {
 ///|
 pub fn resolve_mob_name(mid : StringView) -> String raise {
   let normalized = mid.trim_start(chars="0").to_string()
-  guard not(normalized.is_empty()) else {
+  guard !normalized.is_empty() else {
     raise InvalidId("invalid mob id: \{mid.to_string()}")
   }
   let data = require_reference_data()
@@ -129,7 +129,7 @@ pub fn resolve_mob_name(mid : StringView) -> String raise {
 ///|
 pub fn resolve_map_name(v : StringView) -> String raise {
   let map_id_str = v.to_string()
-  let map_id = @strconv.parse_int(map_id_str) catch {
+  let map_id = @string.parse_int(map_id_str) catch {
     _ => raise InvalidId("invalid map id: \{map_id_str}")
   }
   let category = @map.get_map_category(map_id)
@@ -144,7 +144,7 @@ pub fn resolve_map_name(v : StringView) -> String raise {
 ///|
 pub fn resolve_item_name(v : StringView) -> String raise {
   let item_id_str = v.to_string()
-  let item_id = @strconv.parse_int(item_id_str) catch {
+  let item_id = @string.parse_int(item_id_str) catch {
     _ => raise InvalidId("invalid item id: \{item_id_str}")
   }
   let data = require_reference_data()

@@ -44,7 +44,7 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
   let look_equips = look.get_equips().iter().to_array()
   for slot_tuple in look_equips {
     let (slot_id, _) = slot_tuple
-    if not(inventory_slots.contains(slot_id)) {
+    if !inventory_slots.contains(slot_id) {
       @log.info("look_sync_remove_equip", data={
         "slot_id": slot_id.int_value().to_json(),
       })

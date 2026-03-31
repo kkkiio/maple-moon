@@ -11,9 +11,7 @@ pub(all) enum Direction {
   TR
   TL
   BR
-}
-pub impl Eq for Direction
-pub impl Show for Direction
+} derive(Eq, Show)
 
 pub struct Node[K, V] {
   key : K

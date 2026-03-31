@@ -29,13 +29,10 @@ pub(all) enum EquipStatId {
   HANDS
   SPEED
   JUMP
-}
+} derive(Compare, Eq, Hash)
 pub fn EquipStatId::from_name(String) -> Self?
 pub fn EquipStatId::int_value(Self) -> Int
 pub fn EquipStatId::name(Self) -> String
-pub impl Compare for EquipStatId
-pub impl Eq for EquipStatId
-pub impl Hash for EquipStatId
 pub impl Show for EquipStatId
 pub impl ToJson for EquipStatId
 pub impl @json.FromJson for EquipStatId
@@ -61,13 +58,10 @@ pub(all) enum Id {
   MESO
   PET
   GACHAEXP
-}
+} derive(Compare, Eq, Hash)
 pub fn Id::from_name(String) -> Self?
 pub fn Id::int_value(Self) -> Int
 pub fn Id::name(Self) -> String
-pub impl Compare for Id
-pub impl Eq for Id
-pub impl Hash for Id
 pub impl Show for Id
 pub impl ToJson for Id
 pub impl @json.FromJson for Id

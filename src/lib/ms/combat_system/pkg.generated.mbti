@@ -90,7 +90,7 @@ pub(all) struct CombatAction {
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @vfx_afterimage.NxAfterImage]
-}
+} derive(Show)
 pub fn CombatAction::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn CombatAction::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
 pub fn CombatAction::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -103,7 +103,6 @@ pub fn CombatAction::get_id(Self) -> Int
 pub fn CombatAction::is_attack(Self) -> Bool
 pub fn CombatAction::is_skill(Self) -> Bool
 pub fn CombatAction::make_attack(Self, @character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
-pub impl Show for CombatAction
 
 pub(all) enum ForbidReason {
   FBR_NONE
@@ -113,8 +112,7 @@ pub(all) enum ForbidReason {
   FBR_BULLETCOST
   FBR_COOLDOWN
   FBR_OTHER
-}
-pub impl Eq for ForbidReason
+} derive(Eq)
 
 type FuncSkillAction
 pub impl SkillAction for FuncSkillAction
@@ -125,25 +123,20 @@ pub(all) struct HitEvent {
   source : HitSource
   target_oids : Array[Int]
   result : @combat_proto.AttackResult
-}
+} derive(Show, ToJson)
 pub fn HitEvent::attacker_oid(Self) -> Int
 pub fn HitEvent::is_user_input(Self) -> Bool
 pub fn HitEvent::move_id(Self) -> Int
 pub fn HitEvent::source(Self) -> HitSource
 pub fn HitEvent::target_oids(Self) -> Array[Int]
-pub impl Show for HitEvent
-pub impl ToJson for HitEvent
 
 pub(all) enum HitSource {
   UserInput
   Passive(Int)
-}
-pub impl Show for HitSource
-pub impl ToJson for HitSource
+} derive(Show, ToJson)
 
-type NoAction
+type NoAction derive(Default)
 pub impl SkillAction for NoAction
-pub impl Default for NoAction
 
 type NxCharLevelHit
 pub impl @json.FromJson for NxCharLevelHit
@@ -163,12 +156,10 @@ pub impl @json.FromJson for NxSkillLevelHit
 pub(all) enum RangeSemantics {
   LegacySingleRange
   ProjectileThenAoe
-}
-pub impl Eq for RangeSemantics
+} derive(Eq)
 
-type RegularAction
+type RegularAction derive(Default)
 pub impl SkillAction for RegularAction
-pub impl Default for RegularAction
 
 pub(all) struct RegularAttack {
   action : RegularAction

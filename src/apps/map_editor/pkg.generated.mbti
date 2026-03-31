@@ -49,22 +49,18 @@ pub(all) struct EditorBackground {
   ry : Int
   type_val : Int
   front : Bool
-}
-pub impl Show for EditorBackground
-pub impl ToJson for EditorBackground
+} derive(Show, ToJson)
 
 pub(all) struct EditorLayer {
   index : Int
   tiles : Array[@map.NxTileRef]
   objects : Array[@map.NxObj]
-}
-pub impl Show for EditorLayer
+} derive(Show)
 
 pub(all) struct EditorSceneGraph {
   backgrounds : Array[EditorBackground]
   layers : Array[EditorLayer]
-}
-pub impl Show for EditorSceneGraph
+} derive(Show)
 
 pub(all) struct EditorStatus {
   loading : Bool
@@ -81,17 +77,13 @@ pub(all) struct EditorStatus {
   bg_debug_index : Int?
   bg_total_layers : Int
   fps : Double
-}
-pub impl Show for EditorStatus
-pub impl ToJson for EditorStatus
+} derive(Show, ToJson)
 
 pub(all) struct EditorTileObjLayerVisibility {
   layer : Int
   tiles_visible : Bool
   objs_visible : Bool
-}
-pub impl Show for EditorTileObjLayerVisibility
-pub impl ToJson for EditorTileObjLayerVisibility
+} derive(Show, ToJson)
 
 pub(all) struct EditorTileObjVisibilityState {
   tiles_visible : Bool
@@ -99,9 +91,7 @@ pub(all) struct EditorTileObjVisibilityState {
   layers : Array[EditorTileObjLayerVisibility]
   tile_items : Array[Array[Bool]]
   obj_items : Array[Array[Bool]]
-}
-pub impl Show for EditorTileObjVisibilityState
-pub impl ToJson for EditorTileObjVisibilityState
+} derive(Show, ToJson)
 
 type JsOptional[_]
 
@@ -114,16 +104,14 @@ pub struct MapLimits {
   right : Double
   top : Double
   bottom : Double
-}
-pub impl Show for MapLimits
+} derive(Show)
 
 pub(all) struct MouseInfo {
   screen_x : Int
   screen_y : Int
   world_x : Int
   world_y : Int
-}
-pub impl Show for MouseInfo
+} derive(Show)
 
 pub struct SceneState {
   raw_resources : @map.MapRawResources

@@ -39,17 +39,13 @@ pub(all) enum CharEffectId {
   SCROLL_SUCCESS
   SCROLL_FAILURE
   MONSTER_CARD
-}
-pub impl Eq for CharEffectId
-pub impl Hash for CharEffectId
+} derive(Eq, Hash)
 
 pub(all) struct CharEntry {
   stats : @server_proto.StatsEntry
   look : @character_presentation.LookEntry
   id : Int
-}
-pub impl Show for CharEntry
-pub impl ToJson for CharEntry
+} derive(Show, ToJson)
 
 pub(all) enum CharState {
   WALK
@@ -62,11 +58,8 @@ pub(all) enum CharState {
   ROPE
   DIED
   SIT
-}
+} derive(Compare, Eq, Show)
 pub fn CharState::stance_value(Self, facing_right~ : Bool) -> Int
-pub impl Compare for CharState
-pub impl Eq for CharState
-pub impl Show for CharState
 
 pub(all) struct Character {
   entity : @entity.Entity

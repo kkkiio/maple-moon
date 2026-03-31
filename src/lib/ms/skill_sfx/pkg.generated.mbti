@@ -21,19 +21,15 @@ pub(all) struct SkillSfxEvent {
   skill_id : Int
   stage : SkillSfxStage
   path : String
-}
+} derive(Eq, Show)
 pub fn SkillSfxEvent::path(Self) -> String
 pub fn SkillSfxEvent::skill_id(Self) -> Int
 pub fn SkillSfxEvent::stage(Self) -> SkillSfxStage
-pub impl Eq for SkillSfxEvent
-pub impl Show for SkillSfxEvent
 
 pub(all) enum SkillSfxStage {
   Use
   Hit
-}
-pub impl Eq for SkillSfxStage
-pub impl Show for SkillSfxStage
+} derive(Eq, Show)
 
 // Type aliases
 

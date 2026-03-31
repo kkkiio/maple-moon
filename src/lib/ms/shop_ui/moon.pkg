@@ -19,4 +19,5 @@ import {
   "Milky2018/selene/sprite",
   "Milky2018/selene/asset",
   "Milky2018/selene/ecs",
+  "moonbitlang/core/string",
 }

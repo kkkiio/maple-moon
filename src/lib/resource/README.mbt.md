@@ -4,8 +4,8 @@
 
 约束：
 
-- 本包不做业务缓存。
-- 业务缓存放在调用方（例如 `skill`、`quest_icon`）。
+- 通用树形资源（`AsyncLoader::load_resource`）不做业务缓存。
+- Aseprite NPC 动画通过 `AnimationLoader` 在本包内做编译结果缓存（key 为规范化后的 `animations_path`），避免重复构图与注册资产。
 
 ## 接入示例
 
@@ -15,4 +15,14 @@
 
 let map_loader = @resource.get_async_loader("mapx")
 let raw = await map_loader.load_resource(["Map", "Map0", "100000000"])
+```
+
+## NPC Aseprite 动画
+
+```moonbit nocheck
+let npc_loader = @resource.require_async_loader("npc")
+let animation_loader = @resource.AnimationLoader::new(npc_loader)
+let loaded = await animation_loader.load("Npc/Npc/0002007.img/animation.json")
+let stand = loaded.clip("stand")
+ignore(stand)
 ```

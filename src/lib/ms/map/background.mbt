@@ -960,7 +960,7 @@ fn should_render_background(
   } else {
     ctx.back_visible
   }
-  if not(base_visible) {
+  if !base_visible {
     return false
   }
   match ctx.debug_index {

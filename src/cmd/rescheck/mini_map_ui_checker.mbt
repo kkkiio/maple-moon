@@ -8,7 +8,7 @@ fn check_mini_map_ui_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   let issues : Array[CheckIssue] = []
   let mini_map_rel = "ui/UIWindow2.img/MiniMap.json"
   let mini_map_abs = path_join(ctx.assets_root, mini_map_rel)
-  if not(file_exists(mini_map_abs)) {
+  if !file_exists(mini_map_abs) {
     issues.push(
       make_issue(
         "mini_map_ui",
@@ -56,7 +56,7 @@ fn check_map_helper_minimap(
 ) -> Unit {
   let rel_path = "spritesheets/Map/MapHelper.img/minimap.json"
   let abs_path = path_join(ctx.assets_root, rel_path)
-  if not(file_exists(abs_path)) {
+  if !file_exists(abs_path) {
     issues.push(
       make_issue(
         "mini_map_ui",

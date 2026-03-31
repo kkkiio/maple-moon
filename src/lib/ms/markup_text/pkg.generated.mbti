@@ -48,16 +48,14 @@ pub fn write_text_as_html(StringBuilder, StringView, Style, trim_end_newline? : 
 pub(all) suberror ParseError {
   UnknownTag(Char)
   MissingMarkupClose
-}
-pub impl Show for ParseError
+} derive(Show)
 
 pub(all) suberror ResolveReferenceError {
   DataNotReady
   InvalidId(String)
   PathNotFound(String)
   NameNotFound(String)
-}
-pub impl Show for ResolveReferenceError
+} derive(Show)
 
 // Types and methods
 pub(all) enum MarkupType {

@@ -7,7 +7,7 @@ fn register_json_format_checker() -> Checker {
 fn check_json_format(ctx : RescheckContext) -> Array[CheckIssue] {
   let issues : Array[CheckIssue] = []
   for abs_path in ctx.all_files {
-    if not(is_json_file(abs_path)) {
+    if !is_json_file(abs_path) {
       continue
     }
     let rel_path = path_relative(abs_path, ctx.assets_root)

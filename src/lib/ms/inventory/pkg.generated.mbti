@@ -67,17 +67,13 @@ pub struct InventoryChangedEvent {
   kind : InventoryChangedKind
   tab : @server_proto.InventoryType?
   slot : Int?
-}
-pub impl Eq for InventoryChangedEvent
-pub impl Show for InventoryChangedEvent
+} derive(Eq, Show)
 
 pub enum InventoryChangedKind {
   ITEM
   MESO
   RESET
-}
-pub impl Eq for InventoryChangedKind
-pub impl Show for InventoryChangedKind
+} derive(Eq, Show)
 
 pub struct Item {
   item_id : Int
@@ -87,22 +83,16 @@ pub struct Item {
 }
 pub fn Item::new(Int, Int64, String, Int) -> Self
 
-type ModificationMode
-pub impl Show for ModificationMode
-pub impl ToJson for ModificationMode
+type ModificationMode derive(Show, ToJson)
 
 pub struct Module {
   inventory : Inventory
 }
 pub fn Module::new(Inventory) -> Self
 
-type Movement
+type Movement derive(Eq, Hash, Show, ToJson)
 pub fn Movement::from_int(Int) -> Self raise @utils.UnknownEnum
 pub fn Movement::int_value(Self) -> Int
-pub impl Eq for Movement
-pub impl Hash for Movement
-pub impl Show for Movement
-pub impl ToJson for Movement
 
 pub struct SlotItem {
   unique_id : Int
@@ -110,13 +100,9 @@ pub struct SlotItem {
   mut count : Int
 }
 
-pub struct SlotNo(Int)
+pub struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)
 #deprecated
 pub fn SlotNo::inner(Self) -> Int
-pub impl Eq for SlotNo
-pub impl Hash for SlotNo
-pub impl Show for SlotNo
-pub impl ToJson for SlotNo
 
 pub struct WithItemSlot {
   slot_no : SlotNo

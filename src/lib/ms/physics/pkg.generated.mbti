@@ -30,7 +30,7 @@ pub let swimgravforce : Double
 // Errors
 
 // Types and methods
-type Foothold
+type Foothold derive(Default, Show)
 pub fn Foothold::b(Self) -> Int
 pub fn Foothold::ground_below(Self, Double) -> Double
 pub fn Foothold::hcontains(Self, Int) -> Bool
@@ -57,8 +57,6 @@ pub fn Foothold::x1(Self) -> Int
 pub fn Foothold::x2(Self) -> Int
 pub fn Foothold::y1(Self) -> Int
 pub fn Foothold::y2(Self) -> Int
-pub impl Default for Foothold
-pub impl Show for Foothold
 
 type FootholdTree
 pub fn FootholdTree::from_resource(NxFootholdTree) -> Self raise
@@ -82,22 +80,14 @@ pub struct Movement {
   fh : Int
   newstate : Int
   duration : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub fn Movement::default() -> Self
 pub fn Movement::from_coords(Int, Int, Int, Int, Int, Int) -> Self
 pub fn Movement::from_physics_object(PhysicsObject, Int) -> Self
 pub fn Movement::hasmoved(Self, Self) -> Bool
 pub fn Movement::new(MovementType, Int, Int, Int, Int, Int, Int, Int, Int) -> Self
-pub impl Show for Movement
-pub impl ToJson for Movement
-pub impl @json.FromJson for Movement
 
-type MovementType
-pub impl Compare for MovementType
-pub impl Eq for MovementType
-pub impl Show for MovementType
-pub impl ToJson for MovementType
-pub impl @json.FromJson for MovementType
+type MovementType derive(Compare, Eq, Show, ToJson, @json.FromJson)
 
 pub struct MovingObject {
   x : @utils.Linear
@@ -142,8 +132,7 @@ pub(all) struct NxFoothold {
   x2 : Int
   y1 : Int
   y2 : Int
-}
-pub impl @json.FromJson for NxFoothold
+} derive(@json.FromJson)
 
 pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]])
 #deprecated
@@ -208,12 +197,8 @@ pub(all) enum PhysicsObjectFlag {
   NO_GRAVITY
   TURN_AT_EDGES
   CHECK_BELOW
-}
+} derive(Compare, Eq, Show, ToJson)
 pub fn PhysicsObjectFlag::int_value(Self) -> Int
-pub impl Compare for PhysicsObjectFlag
-pub impl Eq for PhysicsObjectFlag
-pub impl Show for PhysicsObjectFlag
-pub impl ToJson for PhysicsObjectFlag
 
 pub(all) enum PhysicsObjectType {
   NORMAL
@@ -221,11 +206,7 @@ pub(all) enum PhysicsObjectType {
   SWIMMING
   FLYING
   FIXATED
-}
-pub impl Compare for PhysicsObjectType
-pub impl Eq for PhysicsObjectType
-pub impl Show for PhysicsObjectType
-pub impl ToJson for PhysicsObjectType
+} derive(Compare, Eq, Show, ToJson)
 
 // Type aliases
 

@@ -1,6 +1,7 @@
 import {
   "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "moonbitlang/core/json",
+  "moonbitlang/core/string",
   "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/game_server",

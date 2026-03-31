@@ -3,6 +3,9 @@ package "KKKIIO/maple-moon/lib/resource"
 
 import {
   "KKKIIO/maple-moon/lib/ms/res_types",
+  "Milky2018/selene/animation",
+  "Milky2018/selene/asset_types",
+  "Milky2018/selene/sprite",
   "moonbitlang/core/json",
 }
 
@@ -32,9 +35,18 @@ pub fn set_csv_loader(CsvLoader) -> Unit
 // Errors
 
 // Types and methods
+pub(all) struct AnimationLoader {
+  loader : AsyncLoader
+}
+pub async fn AnimationLoader::load(Self, String) -> LoadedAnimations
+pub fn AnimationLoader::new(AsyncLoader) -> Self
+
 type AsyncLoader
+pub async fn AsyncLoader::load_json_by_path(Self, String) -> Json
 pub async fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
 pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader, base_url? : String, image_base_url? : String) -> Self
+pub fn AsyncLoader::resolve_image_path(Self, String) -> String
+pub fn AsyncLoader::resolve_json_path(Self, String) -> String
 
 type CompositeAsyncResourceLoader
 pub fn CompositeAsyncResourceLoader::new(Map[String, &AsyncResourceLoader]) -> Self
@@ -50,11 +62,10 @@ type DirResourceLoader
 pub fn DirResourceLoader::new(String) -> Self
 pub impl AsyncResourceLoader for DirResourceLoader
 
-pub(all) struct EnumMap[K, V](Map[K, V])
+pub(all) struct EnumMap[K, V](Map[K, V]) derive(Show)
 #deprecated
 pub fn[K, V] EnumMap::inner(Self[K, V]) -> Map[K, V]
 pub impl[K, V] Default for EnumMap[K, V]
-pub impl[K : Show, V : Show] Show for EnumMap[K, V]
 pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
 pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
 
@@ -67,36 +78,39 @@ type ImageLoader
 pub fn ImageLoader::get_path_image_loader() -> Self
 pub fn ImageLoader::load_image(Self, Int) -> Image
 
-pub struct IntMap[T](Map[Int, T])
+pub struct IntMap[T](Map[Int, T]) derive(Show)
 #deprecated
 pub fn[T] IntMap::inner(Self[T]) -> Map[Int, T]
-pub impl[T : Show] Show for IntMap[T]
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
+
+pub(all) struct LoadedAnimations {
+  clips : Map[String, SeleneClip]
+  tags : Array[String]
+}
+pub fn LoadedAnimations::clip(Self, String) -> SeleneClip raise
+pub fn LoadedAnimations::list_tags(Self) -> Array[String]
 
 #external
 pub type LoadedImage
 pub fn LoadedImage::height(Self) -> Int
 pub fn LoadedImage::width(Self) -> Int
 
-pub struct MapBasedArray[T](Array[T])
+pub struct MapBasedArray[T](Array[T]) derive(Show)
 #deprecated
 pub fn[T] MapBasedArray::inner(Self[T]) -> Array[T]
-pub impl[T : Show] Show for MapBasedArray[T]
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T]
 
-pub struct Nullable[T](T?)
+pub struct Nullable[T](T?) derive(Show)
 #deprecated
 pub fn[T] Nullable::inner(Self[T]) -> T?
-pub impl[T : Show] Show for Nullable[T]
 pub impl[T : @json.FromJson] @json.FromJson for Nullable[T]
 
 pub(all) struct NxAnimation {
   frames : Array[NxFrame]
   blend : Bool
   zigzag : Bool
-}
+} derive(Show)
 pub fn NxAnimation::get_size(Self) -> (Int, Int)
-pub impl Show for NxAnimation
 pub impl @json.FromJson for NxAnimation
 
 pub(all) struct NxFrame {
@@ -104,8 +118,7 @@ pub(all) struct NxFrame {
   delay : Int?
   head : @res_types.Point[Int]?
   bounds : @res_types.Rectangle[Int]?
-}
-pub impl Show for NxFrame
+} derive(Show)
 pub impl @json.FromJson for NxFrame
 
 pub(all) struct NxTexture {
@@ -114,15 +127,23 @@ pub(all) struct NxTexture {
   h : Int
   offset : @res_types.Point[Int]
   origin : @res_types.Point[Int]
-}
+} derive(Show)
 pub fn NxTexture::get_size(Self) -> (Int, Int)
-pub impl Show for NxTexture
 pub impl @json.FromJson for NxTexture
 
-pub(all) struct ResPath(Array[String])
+pub(all) struct ResPath(Array[String]) derive(Eq)
 #deprecated
 pub fn ResPath::inner(Self) -> Array[String]
-pub impl Eq for ResPath
+
+pub(all) struct SeleneClip {
+  image : @asset_types.ImageHandle
+  layout : @sprite.TextureAtlasLayoutHandle
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+  anchor : @sprite.Anchor
+  duration_ms : Int
+  dimensions : @res_types.Point[Int]
+}
 
 pub struct TextLoader {
   loader : &TextResourceLoader

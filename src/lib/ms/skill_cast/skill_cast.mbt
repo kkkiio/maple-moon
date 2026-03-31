@@ -47,7 +47,7 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
     return
   }
 
-  guard not(act.is_attack() && not(cc.can_attack())) else { return }
+  guard !(act.is_attack() && !cc.can_attack()) else { return }
 
   let reason = combat.can_use(cc, act)
   guard reason == @combat_system.ForbidReason::FBR_NONE else {

@@ -470,11 +470,11 @@ fn set_entity_visibility(entity : @entity.Entity, visible : Bool) -> Unit {
 
 ///|
 fn tile_is_visible(ctx : TileObjectsContext, tile : Tile) -> Bool {
-  if not(ctx.tiles_visible) {
+  if !ctx.tiles_visible {
     return false
   }
   guard in_bounds(ctx.tile_layer_visible, tile.layer) else { return false }
-  if not(ctx.tile_layer_visible[tile.layer]) {
+  if !ctx.tile_layer_visible[tile.layer] {
     return false
   }
   guard in_bounds(ctx.tile_item_visible, tile.layer) else { return false }
@@ -485,11 +485,11 @@ fn tile_is_visible(ctx : TileObjectsContext, tile : Tile) -> Bool {
 
 ///|
 fn obj_is_visible(ctx : TileObjectsContext, obj : Obj) -> Bool {
-  if not(ctx.objs_visible) {
+  if !ctx.objs_visible {
     return false
   }
   guard in_bounds(ctx.obj_layer_visible, obj.layer) else { return false }
-  if not(ctx.obj_layer_visible[obj.layer]) {
+  if !ctx.obj_layer_visible[obj.layer] {
     return false
   }
   guard in_bounds(ctx.obj_item_visible, obj.layer) else { return false }

@@ -51,15 +51,13 @@ pub fn upsert_npc(Int, Int, @entity.Entity, @physics.MovingObject) -> Unit
 pub enum Action {
   StartQuest
   CompleteQuest
-}
-pub impl Show for Action
+} derive(Show)
 
 pub(all) struct DemoQuestSelection {
   quest_id : Int
   npc_id : Int
   has_level_check : Bool
-}
-pub impl Show for DemoQuestSelection
+} derive(Show)
 
 pub enum ExpectResponse {
   NEXT(() -> QuestTalk?)
@@ -105,11 +103,7 @@ pub(all) enum QuestIconState {
   AVAILABLE
   IN_PROGRESS
   COMPLETED
-}
-pub impl Eq for QuestIconState
-pub impl Show for QuestIconState
-pub impl ToJson for QuestIconState
-pub impl @json.FromJson for QuestIconState
+} derive(Eq, Show, ToJson, @json.FromJson)
 
 pub struct QuestTalk {
   content : String
@@ -121,8 +115,7 @@ pub(all) enum TalkState {
   YesReply(next~ : Int)
   NoReply(next~ : Int)
   Ask(next~ : Int, expect_answer~ : Int, error_replys~ : Array[String], answer~ : Int)
-}
-pub impl Show for TalkState
+} derive(Show)
 
 // Type aliases
 

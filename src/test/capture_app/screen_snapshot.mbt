@@ -23,7 +23,7 @@ pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {
     let verdict = snapshot_verdict(actual_buffer, visual_desc, api_key, path)
     let dir = @path.Path(path).dirname().to_string()
     @fs.create_dir(dir)
-    if not(verdict.pass) {
+    if !verdict.pass {
       let ext = @path.Path(path).extname()
       let wrong_img_path = path.chop_suffix(ext).unwrap_or(path) +
         ".wrong" +
@@ -42,9 +42,7 @@ pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {
   } else {
     let expected = @fs.read_file_to_bytes(path)
     if actual != expected &&
-      not(
-        png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)),
-      ) {
+      !png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)) {
       fail(snapshot_mismatch_msg(path, actual, expected))
     }
   }

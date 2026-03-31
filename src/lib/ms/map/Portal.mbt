@@ -111,7 +111,7 @@ pub fn PortalType::is_auto_trigger(self : PortalType) -> Bool {
 
 ///|
 pub fn PortalType::is_manual_trigger(self : PortalType) -> Bool {
-  not(self.is_auto_trigger())
+  !self.is_auto_trigger()
 }
 
 ///|

@@ -66,7 +66,7 @@ fn new_by_level_use_effect(
       let effect = new_skill_use_effect_effect(
         use_effect_get_path(sub, ["effect"]),
       )
-      effects.push((@strconv.parse_int(level), effect))
+      effects.push((@string.parse_int(level), effect))
     }
   }
   effects.sort_by_key(fn(it) { it.0 })

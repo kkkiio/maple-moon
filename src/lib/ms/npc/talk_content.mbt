@@ -120,9 +120,8 @@ pub fn parse_talk_content(
           opening_selection = None
           close_selection(index, nodes, true)
         }
-        let index = @strconv.parse_int(payload.to_string(), base=10) catch {
-          @strconv.StrConvError(_) =>
-            raise ParseTalkError("invalid selection index: \{payload}")
+        let index = @string.parse_int(payload.to_string(), base=10) catch {
+          _ => raise ParseTalkError("invalid selection index: \{payload}")
         }
         opening_selection = Some((index, []))
       }

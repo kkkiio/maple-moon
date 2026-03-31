@@ -158,7 +158,7 @@ pub fn Character::new(
     if new > old {
       char_base.show_effect_id(CharEffectId::LEVEL_UP)
     }
-    IterContinue
+    true
   })
   char_base
 }

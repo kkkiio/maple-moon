@@ -123,11 +123,10 @@ pub(all) enum JobId {
   EVAN8
   EVAN9
   EVAN10
-}
+} derive(Eq)
 pub fn JobId::from_int(Int) -> Self?
 pub fn JobId::get_name_by_id(Self) -> String
 pub fn JobId::int_value(Self) -> Int
-pub impl Eq for JobId
 pub impl Show for JobId
 pub impl @json.FromJson for JobId
 
@@ -137,11 +136,8 @@ pub(all) enum Level {
   SECOND
   THIRD
   FOURTH
-}
+} derive(Compare, Eq, Hash)
 pub fn Level::int_value(Self) -> Int
-pub impl Compare for Level
-pub impl Eq for Level
-pub impl Hash for Level
 
 // Type aliases
 

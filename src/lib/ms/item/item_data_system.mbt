@@ -1,23 +1,8 @@
 ///|
-let consume_bundle_files : Array[String] = [
-  "0200.img", "0201.img", "0202.img", "0203.img", "0204.img", "0205.img", "0206.img",
-  "0207.img", "0210.img", "0221.img", "0228.img", "0229.img", "0233.img", "0234.img",
-  "0238.img",
-]
-
-///|
-let etc_bundle_files : Array[String] = [
-  "0400.img", "0401.img", "0402.img", "0403.img", "0413.img", "0416.img",
-]
-
-///|
 pub struct ItemDataSystem {
   item_loader : @resource.AsyncLoader
   pending_item_loads : Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
   item_load_errors : Ref[Map[Int, String]]
-  consume_etc_preload_discovery : Ref[@utils.Future[Result[Array[Int], Error]]?]
-  consume_etc_preload_ids : Ref[Array[Int]]
-  consume_etc_preload_requested : Ref[Bool]
 }
 
 ///|
@@ -29,9 +14,6 @@ pub fn ItemDataSystem::new(
     item_loader,
     pending_item_loads: Ref::new(Map::new()),
     item_load_errors: Ref::new(Map::new()),
-    consume_etc_preload_discovery: Ref::new(None),
-    consume_etc_preload_ids: Ref::new([]),
-    consume_etc_preload_requested: Ref::new(false),
   }
 }
 
@@ -53,42 +35,6 @@ pub fn get_item_data_system() -> ItemDataSystem {
   let system = ItemDataSystem::new(@resource.require_async_loader("item"))
   item_data_system_ref.val = Some(system)
   system
-}
-
-///|
-fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
-  guard json is Object(items) else {
-    @log.fatal("invalid item bundle json, expected object")
-  }
-  for item_id_str, _ in items {
-    let item_id = @strconv.parse_int(item_id_str) catch { _ => continue }
-    id_set.set(item_id, true)
-  }
-}
-
-///|
-async fn ItemDataSystem::discover_consume_and_etc_item_ids(
-  self : ItemDataSystem,
-) -> Array[Int] {
-  preload_item_text_bundles(@resource.require_async_loader("string"))
-  let id_set : Map[Int, Bool] = Map::new()
-  for bundle in consume_bundle_files {
-    let bundle_json = load_item_bundle_cached(
-      "Consume",
-      bundle,
-      self.item_loader,
-    )
-    collect_item_ids_from_bundle(bundle_json, id_set)
-  }
-  for bundle in etc_bundle_files {
-    let bundle_json = load_item_bundle_cached("Etc", bundle, self.item_loader)
-    collect_item_ids_from_bundle(bundle_json, id_set)
-  }
-  let ids : Array[Int] = []
-  for item_id, _ in id_set {
-    ids.push(item_id)
-  }
-  ids
 }
 
 ///|
@@ -136,40 +82,6 @@ pub fn ItemDataSystem::request_many(
 }
 
 ///|
-/// Starts discovery and preload requests for all items in `assets/Item/Consume`
-/// and `assets/Item/Etc`.
-///
-/// This function is idempotent and safe to call every frame.
-pub fn ItemDataSystem::request_consume_and_etc_preload(
-  self : ItemDataSystem,
-) -> Unit {
-  if self.consume_etc_preload_requested.val {
-    return
-  }
-  guard self.consume_etc_preload_discovery.val is Some(discovery) else {
-    self.consume_etc_preload_discovery.val = Some(
-      @io_service.submit_background_task(async fn() {
-        self.discover_consume_and_etc_item_ids()
-      }),
-    )
-    return
-  }
-  match discovery.poll() {
-    Some(Ok(ids)) => {
-      self.consume_etc_preload_ids.val = ids
-      self.consume_etc_preload_requested.val = true
-      self.consume_etc_preload_discovery.val = None
-      self.request_many(ids)
-    }
-    Some(Err(err)) =>
-      @log.fatal("failed to discover consume/etc preload items", data={
-        "error": err.to_string(),
-      })
-    None => ()
-  }
-}
-
-///|
 /// Return `true` only when all requested items are loaded.
 /// Panic immediately if any requested item has a recorded load error.
 pub fn ItemDataSystem::all_requested_ready_or_fail(
@@ -187,20 +99,6 @@ pub fn ItemDataSystem::all_requested_ready_or_fail(
     }
   }
   true
-}
-
-///|
-/// Returns whether consume/etc preload is ready.
-///
-/// Panics immediately if any preloaded item failed.
-pub fn ItemDataSystem::consume_and_etc_preload_ready_or_fail(
-  self : ItemDataSystem,
-) -> Bool {
-  self.request_consume_and_etc_preload()
-  if not(self.consume_etc_preload_requested.val) {
-    return false
-  }
-  self.all_requested_ready_or_fail(self.consume_etc_preload_ids.val)
 }
 
 ///|

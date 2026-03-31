@@ -23,55 +23,37 @@ pub(all) enum AdminCommandMessage {
   SetMeso(meso~ : Int)
   AddItem(item_id~ : Int, quantity~ : Int)
   Warp(map_id~ : Int, portal_id~ : Int)
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for AdminCommandMessage
-pub impl Show for AdminCommandMessage
-pub impl ToJson for AdminCommandMessage
-pub impl @json.FromJson for AdminCommandMessage
 
 pub(all) struct ChangeMapMessage {
   died : Bool
   target_id : Int
   target_p : String
   use_wheel : Bool
-}
+} derive(ToJson, @json.FromJson)
 pub impl ClientMessage for ChangeMapMessage
-pub impl ToJson for ChangeMapMessage
-pub impl @json.FromJson for ChangeMapMessage
 
 pub(all) struct ChangeStatsMesoMessage {
   meso : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for ChangeStatsMesoMessage
-pub impl Show for ChangeStatsMesoMessage
-pub impl ToJson for ChangeStatsMesoMessage
-pub impl @json.FromJson for ChangeStatsMesoMessage
 
 pub(all) struct CharacterListEntry {
   character_id : Int
   name : String
   look : @character_presentation.LookEntry
-}
-pub impl Show for CharacterListEntry
-pub impl ToJson for CharacterListEntry
-pub impl @json.FromJson for CharacterListEntry
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct CharacterListMessage {
   characters : Array[CharacterListEntry]
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for CharacterListMessage
-pub impl Show for CharacterListMessage
-pub impl ToJson for CharacterListMessage
-pub impl @json.FromJson for CharacterListMessage
 
-pub(all) struct CharacterListRequestMessage(Unit)
+pub(all) struct CharacterListRequestMessage(Unit) derive(Default, Show, ToJson, @json.FromJson)
 #deprecated
 pub fn CharacterListRequestMessage::inner(Self) -> Unit
 pub impl ClientMessage for CharacterListRequestMessage
-pub impl Default for CharacterListRequestMessage
-pub impl Show for CharacterListRequestMessage
-pub impl ToJson for CharacterListRequestMessage
-pub impl @json.FromJson for CharacterListRequestMessage
 
 pub(all) enum ClientOpcode {
   LOGIN
@@ -124,22 +106,14 @@ pub(all) enum ClientOpcode {
   DAMAGE_REACTOR
   PLAYER_MAP_TRANSFER
   PLAYER_UPDATE
-}
+} derive(Compare, Eq, Show, ToJson, @json.FromJson)
 pub fn ClientOpcode::int_value(Self) -> Int
 pub fn ClientOpcode::log_level(Self) -> @log.Level
-pub impl Compare for ClientOpcode
-pub impl Eq for ClientOpcode
-pub impl Show for ClientOpcode
-pub impl ToJson for ClientOpcode
-pub impl @json.FromJson for ClientOpcode
 
 pub(all) struct ConfirmShopTransactionMessage {
   code : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for ConfirmShopTransactionMessage
-pub impl Show for ConfirmShopTransactionMessage
-pub impl ToJson for ConfirmShopTransactionMessage
-pub impl @json.FromJson for ConfirmShopTransactionMessage
 
 pub(all) struct CreateCharacterMessage {
   name : String
@@ -153,21 +127,15 @@ pub(all) struct CreateCharacterMessage {
   shoes : Int
   weapon : Int
   female : Bool
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for CreateCharacterMessage
-pub impl Show for CreateCharacterMessage
-pub impl ToJson for CreateCharacterMessage
-pub impl @json.FromJson for CreateCharacterMessage
 
 pub(all) struct CreateCharacterResultMessage {
   success : Bool
   character : CharacterListEntry?
   error : String?
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for CreateCharacterResultMessage
-pub impl Show for CreateCharacterResultMessage
-pub impl ToJson for CreateCharacterResultMessage
-pub impl @json.FromJson for CreateCharacterResultMessage
 
 pub(all) struct DropLootMessage {
   mode : Int
@@ -179,30 +147,20 @@ pub(all) struct DropLootMessage {
   dropto : @res_types.Point[Int]
   dropfrom : @res_types.Point[Int]
   player_drop : Bool
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for DropLootMessage
-pub impl Show for DropLootMessage
-pub impl ToJson for DropLootMessage
-pub impl @json.FromJson for DropLootMessage
 
 pub(all) struct InventoryEntry {
   meso : Int
   slot_maxs : @resource.EnumMap[InventoryType, Int]
   items : Array[InventoryItemEntry]
-}
-pub impl Default for InventoryEntry
-pub impl Show for InventoryEntry
-pub impl ToJson for InventoryEntry
-pub impl @json.FromJson for InventoryEntry
+} derive(Default, Show, ToJson, @json.FromJson)
 
 pub(all) enum InventoryItemEntry {
   Equip(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, expire~ : Int64, slots~ : Int, level~ : Int, stats~ : @resource.EnumMap[@maple_stat.EquipStatId, Int], owner~ : String, flag~ : Int, itemlevel~ : Int, itemexp~ : Int, vicious~ : Int)
   Pet(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, petname~ : String)
   Item(invtype~ : InventoryType, slot~ : Int, id~ : Int, cash~ : Bool, expire~ : Int64, count~ : Int, owner~ : String, flag~ : Int)
-}
-pub impl Show for InventoryItemEntry
-pub impl ToJson for InventoryItemEntry
-pub impl @json.FromJson for InventoryItemEntry
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) enum InventoryType {
   EQUIP
@@ -211,42 +169,28 @@ pub(all) enum InventoryType {
   ETC
   CASH
   EQUIPPED
-}
+} derive(Eq, Hash, Show, ToJson, @json.FromJson)
 pub fn InventoryType::by_item_id(Int) -> Self?
 pub fn InventoryType::by_value(Int) -> Self?
 pub fn InventoryType::int_value(Self) -> Int
-pub impl Eq for InventoryType
-pub impl Hash for InventoryType
-pub impl Show for InventoryType
-pub impl ToJson for InventoryType
-pub impl @json.FromJson for InventoryType
 
 pub(all) struct KillMobMessage {
   oid : Int
   animation : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for KillMobMessage
-pub impl Show for KillMobMessage
-pub impl ToJson for KillMobMessage
-pub impl @json.FromJson for KillMobMessage
 
 pub(all) struct MobDamageMessage {
   oid : Int
   damage : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for MobDamageMessage
-pub impl Show for MobDamageMessage
-pub impl ToJson for MobDamageMessage
-pub impl @json.FromJson for MobDamageMessage
 
 pub(all) struct MobHpMessage {
   oid : Int
   percent : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for MobHpMessage
-pub impl Show for MobHpMessage
-pub impl ToJson for MobHpMessage
-pub impl @json.FromJson for MobHpMessage
 
 pub(all) struct MobSpawnControllerMessage {
   mode : Int
@@ -257,10 +201,8 @@ pub(all) struct MobSpawnControllerMessage {
   stance : Int
   fh : Int
   team : Int
-}
+} derive(ToJson, @json.FromJson)
 pub impl ServerMessage for MobSpawnControllerMessage
-pub impl ToJson for MobSpawnControllerMessage
-pub impl @json.FromJson for MobSpawnControllerMessage
 
 pub(all) struct MobSpawnMessage {
   oid : Int
@@ -270,19 +212,14 @@ pub(all) struct MobSpawnMessage {
   stance : Int
   fh : Int
   team : Int
-}
+} derive(ToJson, @json.FromJson)
 pub impl ServerMessage for MobSpawnMessage
-pub impl ToJson for MobSpawnMessage
-pub impl @json.FromJson for MobSpawnMessage
 
 pub(all) struct ModifyInventoryMessage {
   mods : Array[ModifyInventoryMod]
   movement : Int?
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for ModifyInventoryMessage
-pub impl Show for ModifyInventoryMessage
-pub impl ToJson for ModifyInventoryMessage
-pub impl @json.FromJson for ModifyInventoryMessage
 
 pub(all) struct ModifyInventoryMod {
   mode : ModifyInventoryMode
@@ -290,10 +227,7 @@ pub(all) struct ModifyInventoryMod {
   pos : Int
   arg : Int
   item : InventoryItemEntry?
-}
-pub impl Show for ModifyInventoryMod
-pub impl ToJson for ModifyInventoryMod
-pub impl @json.FromJson for ModifyInventoryMod
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) enum ModifyInventoryMode {
   ADD
@@ -301,21 +235,15 @@ pub(all) enum ModifyInventoryMode {
   SWAP
   REMOVE
   ADD_COUNT
-}
-pub impl Show for ModifyInventoryMode
-pub impl ToJson for ModifyInventoryMode
-pub impl @json.FromJson for ModifyInventoryMode
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct MoveItemMessage {
   invtype : InventoryType
   slot : Int
   action : Int
   qty : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for MoveItemMessage
-pub impl Show for MoveItemMessage
-pub impl ToJson for MoveItemMessage
-pub impl @json.FromJson for MoveItemMessage
 
 pub(all) struct MoveMonsterMessage {
   oid : Int
@@ -327,22 +255,16 @@ pub(all) struct MoveMonsterMessage {
   option : Int
   start_pos : @res_types.Point[Int]
   movement : @physics.Movement
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for MoveMonsterMessage
-pub impl Show for MoveMonsterMessage
-pub impl ToJson for MoveMonsterMessage
-pub impl @json.FromJson for MoveMonsterMessage
 
 pub(all) struct NpcShopActionMessage {
   mode : Int
   slot : Int
   item_id : Int
   qty : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for NpcShopActionMessage
-pub impl Show for NpcShopActionMessage
-pub impl ToJson for NpcShopActionMessage
-pub impl @json.FromJson for NpcShopActionMessage
 
 pub(all) struct NpcSpawnControllerMessage {
   mode : Int
@@ -352,11 +274,8 @@ pub(all) struct NpcSpawnControllerMessage {
   y : Int
   flip : Bool
   fh : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for NpcSpawnControllerMessage
-pub impl Show for NpcSpawnControllerMessage
-pub impl ToJson for NpcSpawnControllerMessage
-pub impl @json.FromJson for NpcSpawnControllerMessage
 
 pub(all) struct NpcSpawnMessage {
   oid : Int
@@ -365,21 +284,15 @@ pub(all) struct NpcSpawnMessage {
   y : Int
   flip : Bool
   fh : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for NpcSpawnMessage
-pub impl Show for NpcSpawnMessage
-pub impl ToJson for NpcSpawnMessage
-pub impl @json.FromJson for NpcSpawnMessage
 
 pub(all) struct NpcTalkMoreMessage {
   lastmsg : Int
   response : Int
   selection : Int?
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for NpcTalkMoreMessage
-pub impl Show for NpcTalkMoreMessage
-pub impl ToJson for NpcTalkMoreMessage
-pub impl @json.FromJson for NpcTalkMoreMessage
 
 pub(all) enum Opcode {
   LOGIN_RESULT
@@ -450,97 +363,63 @@ pub(all) enum Opcode {
   CHAR_INFO
   PLAYER_INTERACTION
   SET_CASH_SHOP
-}
+} derive(Compare, Eq, Show, ToJson, @json.FromJson)
 pub fn Opcode::from_int(Int) -> Self raise UnknownOpCodeError
 pub fn Opcode::int_value(Self) -> Int
-pub impl Compare for Opcode
-pub impl Eq for Opcode
 pub impl Hash for Opcode
-pub impl Show for Opcode
-pub impl ToJson for Opcode
-pub impl @json.FromJson for Opcode
 
 pub(all) struct OpenNpcShopMessage {
   npc_id : Int
   items : Array[ShopItem]
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for OpenNpcShopMessage
-pub impl Show for OpenNpcShopMessage
-pub impl ToJson for OpenNpcShopMessage
-pub impl @json.FromJson for OpenNpcShopMessage
 
 pub(all) struct PickupItemMessage {
   oid : Int
   position : @res_types.Point[Int]
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for PickupItemMessage
-pub impl Show for PickupItemMessage
-pub impl ToJson for PickupItemMessage
-pub impl @json.FromJson for PickupItemMessage
 
-pub(all) struct PlayerMapTransferMessage(Unit)
+pub(all) struct PlayerMapTransferMessage(Unit) derive(Default, Show, ToJson, @json.FromJson)
 #deprecated
 pub fn PlayerMapTransferMessage::inner(Self) -> Unit
 pub impl ClientMessage for PlayerMapTransferMessage
-pub impl Default for PlayerMapTransferMessage
-pub impl Show for PlayerMapTransferMessage
-pub impl ToJson for PlayerMapTransferMessage
-pub impl @json.FromJson for PlayerMapTransferMessage
 
 pub(all) struct PlayerQuestLogInfo {
   started : Array[(Int, String)]
   completed : Array[(Int, Int64)]
-}
-pub impl Default for PlayerQuestLogInfo
-pub impl Show for PlayerQuestLogInfo
-pub impl ToJson for PlayerQuestLogInfo
-pub impl @json.FromJson for PlayerQuestLogInfo
+} derive(Default, Show, ToJson, @json.FromJson)
 
 pub(all) enum QuestActionMessage {
   StartQuest(quest_id~ : Int, npc_id~ : Int)
   CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
   ForfeitQuest(quest_id~ : Int)
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for QuestActionMessage
-pub impl Show for QuestActionMessage
-pub impl ToJson for QuestActionMessage
-pub impl @json.FromJson for QuestActionMessage
 
 pub(all) enum QuestFailureOperation {
   NoMeso
   WornByCharacter
   NotHavingItem
-}
-pub impl Show for QuestFailureOperation
-pub impl ToJson for QuestFailureOperation
-pub impl @json.FromJson for QuestFailureOperation
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct RemoveLootMessage {
   mode : Int
   oid : Int
   cid : Int?
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for RemoveLootMessage
-pub impl Show for RemoveLootMessage
-pub impl ToJson for RemoveLootMessage
-pub impl @json.FromJson for RemoveLootMessage
 
 pub(all) struct SelectCharMessage {
   character_id : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for SelectCharMessage
-pub impl Show for SelectCharMessage
-pub impl ToJson for SelectCharMessage
-pub impl @json.FromJson for SelectCharMessage
 
 pub(all) enum SetFieldMessage {
   ChangeMap(map_id~ : Int, portal_id~ : Int)
   SetField(stats~ : StatsEntry, inventory_entry~ : InventoryEntry, skills~ : Array[SkillEntry], cooldowns~ : @resource.EnumMap[Int, Int], quests~ : PlayerQuestLogInfo)
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for SetFieldMessage
-pub impl Show for SetFieldMessage
-pub impl ToJson for SetFieldMessage
-pub impl @json.FromJson for SetFieldMessage
 
 pub(all) struct ShopItem {
   id : Int
@@ -549,10 +428,7 @@ pub(all) struct ShopItem {
   time : Int
   charge_price : Int
   buyable : Int
-}
-pub impl Show for ShopItem
-pub impl ToJson for ShopItem
-pub impl @json.FromJson for ShopItem
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct ShowStatusExpGainMessage {
   white : Bool
@@ -567,45 +443,30 @@ pub(all) struct ShowStatusExpGainMessage {
   equip_bonus : Int
   internet_cafe_bonus : Int
   rainbow_week_bonus : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for ShowStatusExpGainMessage
-pub impl Show for ShowStatusExpGainMessage
-pub impl ToJson for ShowStatusExpGainMessage
-pub impl @json.FromJson for ShowStatusExpGainMessage
 
 pub(all) struct ShowStatusMesoGainMessage {
   gain : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for ShowStatusMesoGainMessage
-pub impl Show for ShowStatusMesoGainMessage
-pub impl ToJson for ShowStatusMesoGainMessage
-pub impl @json.FromJson for ShowStatusMesoGainMessage
 
 pub(all) struct SkillEntry {
   skill_id : Int
   level : Int
   masterlevel : Int
   expiration : Int64
-}
-pub impl Show for SkillEntry
-pub impl ToJson for SkillEntry
-pub impl @json.FromJson for SkillEntry
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct SpendAPMessage {
   stat_id : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for SpendAPMessage
-pub impl Show for SpendAPMessage
-pub impl ToJson for SpendAPMessage
-pub impl @json.FromJson for SpendAPMessage
 
 pub(all) struct SpendSPMessage {
   skill_id : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for SpendSPMessage
-pub impl Show for SpendSPMessage
-pub impl ToJson for SpendSPMessage
-pub impl @json.FromJson for SpendSPMessage
 
 pub(all) struct StatsEntry {
   name : String
@@ -614,19 +475,12 @@ pub(all) struct StatsEntry {
   i64stats : @resource.EnumMap[@maple_stat.Id, Int64]
   map_id : Int
   portal_id : Int
-}
-pub impl Default for StatsEntry
-pub impl Show for StatsEntry
-pub impl ToJson for StatsEntry
-pub impl @json.FromJson for StatsEntry
+} derive(Default, Show, ToJson, @json.FromJson)
 
 pub(all) struct TalkToNpcMessage {
   oid : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for TalkToNpcMessage
-pub impl Show for TalkToNpcMessage
-pub impl ToJson for TalkToNpcMessage
-pub impl @json.FromJson for TalkToNpcMessage
 
 pub(all) enum UpdateQuestInfoMessage {
   AddQuestTimeLimit(size~ : Int, quest_id~ : Int, time~ : Int)
@@ -636,31 +490,22 @@ pub(all) enum UpdateQuestInfoMessage {
   QuestError(quest_id~ : Int)
   QuestExpire(quest_id~ : Int)
   QuestFailure(operation~ : QuestFailureOperation)
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ServerMessage for UpdateQuestInfoMessage
-pub impl Show for UpdateQuestInfoMessage
-pub impl ToJson for UpdateQuestInfoMessage
-pub impl @json.FromJson for UpdateQuestInfoMessage
 
 pub(all) struct UseItemMessage {
   slot_no : Int
   item_id : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for UseItemMessage
-pub impl Show for UseItemMessage
-pub impl ToJson for UseItemMessage
-pub impl @json.FromJson for UseItemMessage
 
 pub(all) struct UseSPResetMessage {
   slot_no : Int
   item_id : Int
   to : Int
   from : Int
-}
+} derive(Show, ToJson, @json.FromJson)
 pub impl ClientMessage for UseSPResetMessage
-pub impl Show for UseSPResetMessage
-pub impl ToJson for UseSPResetMessage
-pub impl @json.FromJson for UseSPResetMessage
 
 // Type aliases
 

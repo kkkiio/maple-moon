@@ -84,12 +84,12 @@ fn validate_selected_modules(
   }
   let mut ok = true
   for name in selected {
-    if not(known.contains(name)) {
+    if !known.contains(name) {
       println("Error: unknown module '\{name}'")
       ok = false
     }
   }
-  if not(ok) {
+  if !ok {
     println("Available modules:")
     for check in checks {
       println("  - \{check.name}")
@@ -102,14 +102,14 @@ fn validate_selected_modules(
 fn main {
   guard parse_args() is Some(args) else { return }
 
-  if not(file_exists(args.assets_root)) {
+  if !file_exists(args.assets_root) {
     println("Error: assets root not found: \{args.assets_root}")
     @sys.exit(2)
     return
   }
 
   let checks = all_checkers()
-  if not(validate_selected_modules(args.only_modules, checks)) {
+  if !validate_selected_modules(args.only_modules, checks) {
     @sys.exit(2)
     return
   }

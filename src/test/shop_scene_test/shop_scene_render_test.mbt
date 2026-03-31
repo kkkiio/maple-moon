@@ -89,7 +89,7 @@ fn load_map_runtime_102000001() -> (@physics.Physics, @map.MapInfo) {
   let tilesets : Map[String, @map.NxTileSet] = {}
   for layer in nx_map.layers {
     match layer.info {
-      Some({ tS }) if not(tilesets.contains(tS)) =>
+      Some({ tS }) if !tilesets.contains(tS) =>
         tilesets[tS] = @json.from_json(
           load_local_node_json("assets/map/tile", [tS + ".img"]),
         ) catch {
@@ -107,7 +107,7 @@ fn load_map_runtime_102000001() -> (@physics.Physics, @map.MapInfo) {
     for obj in layer.obj {
       let key = @map.ObjectAnimationPath::from_obj(obj)
       let set_map = object_animation_sets.get_or_init(obj.oS, fn() { {} })
-      if not(set_map.contains(key)) {
+      if !set_map.contains(key) {
         let anim_node = load_local_node_json("assets/map/obj", [
           obj.oS + ".img",
           obj.l0,
@@ -131,7 +131,7 @@ fn load_map_runtime_102000001() -> (@physics.Physics, @map.MapInfo) {
     let set_map = background_animation_sets.get_or_init(background.bS, fn() {
       {}
     })
-    if not(set_map.contains(key)) {
+    if !set_map.contains(key) {
       let anim_node = load_local_node_json("assets/map/back", [
         background.bS + ".img",
         if background.ani {

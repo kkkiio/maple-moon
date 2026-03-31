@@ -28,8 +28,7 @@ pub fn skill_cache_stats() -> (Int, Int)
 pub(all) suberror SkillLoadError {
   NOT_FOUND(Int)
   INVALID_DATA(String)
-}
-pub impl Show for SkillLoadError
+} derive(Show)
 
 // Types and methods
 pub(all) struct SkillData {
@@ -155,11 +154,9 @@ pub(all) enum SkillId {
   FLASH_JUMP
   TRIPLE_THROW
   MESO_EXPLOSION
-}
+} derive(Eq, Hash)
 pub fn SkillId::from_int(Int) -> Self?
 pub fn SkillId::int_value(Self) -> Int
-pub impl Eq for SkillId
-pub impl Hash for SkillId
 
 type SkillNxResource
 pub fn SkillNxResource::simplify(Self) -> SkillResource
@@ -186,9 +183,7 @@ pub(all) struct Stats {
   ignoredef : Double
   hrange : Double
   range : @res_types.Rectangle[Int]
-}
-pub impl Show for Stats
-pub impl ToJson for Stats
+} derive(Show, ToJson)
 
 type WeaponType
 pub impl @json.FromJson for WeaponType

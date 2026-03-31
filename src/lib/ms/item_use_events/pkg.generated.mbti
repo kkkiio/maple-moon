@@ -18,9 +18,7 @@ pub fn push_intent(ItemUseIntent) -> Unit
 pub(all) enum ItemUseIntent {
   TryEquip(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
   TryUse(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
-}
-pub impl Show for ItemUseIntent
-pub impl ToJson for ItemUseIntent
+} derive(Show, ToJson)
 
 // Type aliases
 

@@ -49,6 +49,8 @@ import {
   "Milky2018/selene/ecs",
 }
 
+supported_targets = "js"
+
 options(
   "is-main": true,
   overrides: [
@@ -60,5 +62,4 @@ options(
     "KKKIIO/maple-moon/lib/utils/abort_with_log",
     "KKKIIO/maple-moon/lib/local_server/local_server_workaround",
   ],
-  "supported-targets": "js",
 )

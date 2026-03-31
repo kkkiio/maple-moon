@@ -30,18 +30,13 @@ pub(all) struct Attack {
   mut range : @res_types.Rectangle[Int]
   mut hrange : Double
   toleft : Bool
-}
-pub impl Show for Attack
-pub impl ToJson for Attack
+} derive(Show, ToJson)
 
 pub(all) enum AttackDamageType {
   DMG_WEAPON(min~ : Double, max~ : Double)
   DMG_MAGIC(Int)
   DMG_FIXED(Int)
-}
-pub impl Eq for AttackDamageType
-pub impl Show for AttackDamageType
-pub impl ToJson for AttackDamageType
+} derive(Eq, Show, ToJson)
 
 pub(all) struct AttackResult {
   t : AttackType
@@ -59,20 +54,15 @@ pub(all) struct AttackResult {
   damage_lines : Map[Int, Array[(Int, Bool)]]
   mut first_oid : Int
   mut last_oid : Int
-}
+} derive(Show, ToJson)
 pub fn AttackResult::default() -> Self
 pub fn AttackResult::new(Attack) -> Self
-pub impl Show for AttackResult
-pub impl ToJson for AttackResult
 
 pub(all) enum AttackType {
   CLOSE
   RANGED
   MAGIC
-}
-pub impl Eq for AttackType
-pub impl Show for AttackType
-pub impl ToJson for AttackType
+} derive(Eq, Show, ToJson)
 
 pub(all) struct AttackUser {
   skill_level : Int

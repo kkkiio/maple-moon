@@ -14,7 +14,7 @@ Current APIs:
 
 ```moonbit nocheck
 let out_dir = "target/tmp"
-if not(@fsx.exists_sync(out_dir)) {
+if !(@fsx.exists_sync(out_dir)) {
   @fsx.mkdir_sync_recursive(out_dir)
 }
 

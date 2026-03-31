@@ -1,0 +1,82 @@
+///|
+struct MockBasicItemLoader {}
+
+///|
+fn basic_mock_icon(path : String) -> Json {
+  { "__i": path, "__w": 1, "__h": 1, "origin": [0, 0] }
+}
+
+///|
+fn basic_mock_item_entry(icon_path : String, icon_raw_path : String) -> Json {
+  {
+    "info": {
+      "icon": basic_mock_icon(icon_path),
+      "iconRaw": basic_mock_icon(icon_raw_path),
+    },
+  }
+}
+
+///|
+pub impl @resource.AsyncResourceLoader for MockBasicItemLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self)
+  match path.to_string() {
+    "Consume/0200.img" =>
+      {
+        "02000000": basic_mock_item_entry(
+          "images/Item/consume_icon.png", "images/Item/consume_icon_raw.png",
+        ),
+      }
+    "Etc/0400.img" =>
+      {
+        "04000000": basic_mock_item_entry(
+          "images/Item/etc_icon.png", "images/Item/etc_icon_raw.png",
+        ),
+      }
+    p if p.has_prefix("Consume/") || p.has_prefix("Etc/") => {}
+    _ => fail("unexpected item bundle path: \{path}")
+  }
+}
+
+///|
+struct MockBasicStringLoader {}
+
+///|
+pub impl @resource.AsyncResourceLoader for MockBasicStringLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self)
+  match path.to_string() {
+    "Consume.img" => { "2000000": { "name": "apple", "desc": "red potion" } }
+    "Etc.img" => { "Etc": { "4000000": { "name": "ore", "desc": "gray ore" } } }
+    "Eqp.img" | "Ins.img" | "Cash.img" => {}
+    _ => fail("unexpected string bundle path: \{path}")
+  }
+}
+
+///|
+async test "basic item resource should preload consume/etc and install to cache" {
+  let item_loader = @resource.AsyncLoader::new(
+    "mock_basic_item_loader",
+    loader=MockBasicItemLoader::{  },
+    base_url="/assets",
+  )
+  let string_loader = @resource.AsyncLoader::new(
+    "mock_basic_string_loader",
+    loader=MockBasicStringLoader::{  },
+    base_url="/assets",
+  )
+  @resource.register_async_loader("item", item_loader)
+  @resource.register_async_loader("string", string_loader)
+  set_item_data_system(ItemDataSystem::new(item_loader))
+
+  let basic_resource = BasicItemResource::load(item_loader, string_loader)
+  inspect(basic_resource.ids().length(), content="2")
+
+  basic_resource.install()
+  inspect(request_item_data(2000000).get_category(), content="Consume")
+  inspect(request_item_data(4000000).get_category(), content="Etc")
+}

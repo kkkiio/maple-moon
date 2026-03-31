@@ -111,7 +111,7 @@ pub impl @json.FromJson for NxWeaponAction with from_json(json, path) -> NxWeapo
   }
   let frames = Map::new()
   for frame_key, frame_json in action_obj {
-    let frame_idx = @strconv.parse_int(frame_key) catch {
+    let frame_idx = @string.parse_int(frame_key) catch {
       _ =>
         raise @json.JsonDecodeError(
           (path.add_key(frame_key), "NxWeaponAction: frame key must be int"),

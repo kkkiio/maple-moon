@@ -8,9 +8,15 @@ import {
 }
 
 // Values
+pub fn clear_resource() -> Unit
+
 pub fn get_item_data_system() -> ItemDataSystem
 
 pub fn get_item_gender(Int) -> Int
+
+pub fn get_resource() -> BasicItemResource?
+
+pub fn insert_resource(BasicItemResource) -> Unit
 
 pub fn parse_category1(Int) -> Category1?
 
@@ -29,10 +35,17 @@ pub(all) suberror LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
   INVALID_DATA(String)
-}
-pub impl Show for LoadDataError
+} derive(Show)
 
 // Types and methods
+pub struct BasicItemResource {
+  ids : Array[Int]
+  items_by_id : Map[Int, ItemData]
+}
+pub fn BasicItemResource::ids(Self) -> Array[Int]
+pub fn BasicItemResource::install(Self) -> Unit
+pub async fn BasicItemResource::load(@resource.AsyncLoader, @resource.AsyncLoader) -> Self
+
 pub enum Category1 {
   EQUIP
   CONSUME
@@ -73,15 +86,10 @@ pub struct ItemDataSystem {
   item_loader : @resource.AsyncLoader
   pending_item_loads : @ref.Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
   item_load_errors : @ref.Ref[Map[Int, String]]
-  consume_etc_preload_discovery : @ref.Ref[@utils.Future[Result[Array[Int], Error]]?]
-  consume_etc_preload_ids : @ref.Ref[Array[Int]]
-  consume_etc_preload_requested : @ref.Ref[Bool]
 }
 pub fn ItemDataSystem::all_requested_ready_or_fail(Self, Array[Int]) -> Bool
-pub fn ItemDataSystem::consume_and_etc_preload_ready_or_fail(Self) -> Bool
 pub fn ItemDataSystem::new(@resource.AsyncLoader) -> Self
 pub fn ItemDataSystem::request(Self, Int) -> Unit
-pub fn ItemDataSystem::request_consume_and_etc_preload(Self) -> Unit
 pub fn ItemDataSystem::request_many(Self, Array[Int]) -> Unit
 pub fn ItemDataSystem::run(Self, Double) -> Unit
 

@@ -20,7 +20,7 @@ pub impl @json.FromJson for NxStanceBodyAction with from_json(value, path) {
       let sgndelay = match value {
         { "delay": Json::Number(n, ..), .. } => n.to_int()
         { "delay": Json::String(s), .. } =>
-          @strconv.parse_int(s) catch {
+          @string.parse_int(s) catch {
             e => raise @json.JsonDecodeError((path, e.to_string()))
           }
         _ => 100

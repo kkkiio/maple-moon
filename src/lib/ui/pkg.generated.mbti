@@ -28,9 +28,7 @@ pub(all) enum ButtonState {
   DISABLED
   MOUSEOVER
   PRESSED
-}
-pub impl Eq for ButtonState
-pub impl Hash for ButtonState
+} derive(Eq, Hash)
 
 pub(all) enum CursorState {
   IDLE
@@ -53,11 +51,7 @@ pub(all) enum CursorState {
   CHAT_BAR_BLTRDRAG
   CHAT_BAR_MOVE
   CHAT_BAR_BRTLDRAG
-}
-pub impl Compare for CursorState
-pub impl Eq for CursorState
-pub impl Hash for CursorState
-pub impl Show for CursorState
+} derive(Compare, Eq, Hash, Show)
 
 type DamageSkin
 pub impl Default for DamageSkin
@@ -92,10 +86,9 @@ pub(all) struct NumberSet {
   cri_skins : Skins
   violet_skins : Skins
   blue_skins : Skins
-}
+} derive(Default)
 pub async fn NumberSet::load() -> Self
 pub fn NumberSet::show_number(Self, NumberType, Int, Int, x? : Int) -> Unit
-pub impl Default for NumberSet
 
 pub(all) enum NumberType {
   HIT_NORMAL
@@ -116,8 +109,7 @@ pub impl @json.FromJson for NxMapleButton
 pub(all) struct Skins {
   big : DamageSkin
   small : DamageSkin
-}
-pub impl Default for Skins
+} derive(Default)
 
 pub struct UIMod {
   number_set : NumberSet

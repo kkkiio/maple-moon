@@ -115,7 +115,7 @@ pub fn setup(
       Some(check) =>
         match check.npc {
           Some(npc_id) => {
-            if not(npc_quests_map.contains(npc_id)) {
+            if !npc_quests_map.contains(npc_id) {
               npc_quests_map[npc_id] = []
             }
             npc_quests_map[npc_id].push(quest_id)
@@ -162,7 +162,7 @@ fn Module::select_demo_quest_by_npcs(
         quest_id,
         npc_id,
       )
-      if not(low_restriction) {
+      if !low_restriction {
         continue
       }
       candidate_count = candidate_count + 1
@@ -208,7 +208,7 @@ fn Module::log_low_restriction_rejection(
     return
   }
   let status = @quest_log.current_player_quest_log().get_quest(quest_id)
-  if not(is_quest_status_can_start(status, check0.repeatable)) {
+  if !is_quest_status_can_start(status, check0.repeatable) {
     @log.warn("low restriction quest rejected: status cannot start", data={
       "quest_id": quest_id,
       "npc_id": npc_id,
@@ -345,7 +345,7 @@ fn filter_acceptable_quests(
       .get(phase)
       .map_or(true, fn(checks) {
         let status = quest_log.get_quest(quest_id)
-        if not(is_quest_status_can_start(status, checks.repeatable)) {
+        if !is_quest_status_can_start(status, checks.repeatable) {
           return false
         }
         if check_quest_requirements(

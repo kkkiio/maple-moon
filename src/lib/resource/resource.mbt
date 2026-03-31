@@ -75,7 +75,7 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
   }
   let map = {}
   for key, value in obj {
-    let k = @strconv.parse_int(key) catch {
+    let k = @string.parse_int(key) catch {
       _ => raise @json.JsonDecodeError((path, "expect numberic string key"))
     }
     let value : T = @json.from_json(value, path=path.add_key(key))

@@ -33,8 +33,7 @@ pub struct Assign {
   dex : Int
   int : Int
   luk : Int
-}
-pub impl Default for Assign
+} derive(Default)
 
 type CharStats
 pub fn CharStats::add_value(Self, @maple_stat.EquipStatId, Int) -> Unit
@@ -62,30 +61,26 @@ pub fn CharStats::get_total(Self, @maple_stat.EquipStatId) -> Int
 pub fn CharStats::get_weapon_type(Self) -> @weapon.Type
 pub fn CharStats::init_totalstats(Self) -> Unit
 pub fn CharStats::is_damage_buffed(Self) -> Bool
-pub fn CharStats::new(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> IterResult]], Map[@maple_stat.Id, Array[(Int64, Int64) -> IterResult]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
+pub fn CharStats::new(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> Bool]], Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
 pub fn CharStats::set_exp(Self, Int64) -> Unit
 pub fn CharStats::set_i64stat(Self, @maple_stat.Id, Int64) -> Unit
 pub fn CharStats::set_map_id(Self, Int) -> Unit
 pub fn CharStats::set_stat(Self, @maple_stat.Id, Int) -> Unit
 pub fn CharStats::set_total(Self, @maple_stat.EquipStatId, Int) -> Unit
-pub fn CharStats::watch_i64stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int64, Int64) -> IterResult) -> Unit
-pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int, Int) -> IterResult) -> Unit
+pub fn CharStats::watch_i64stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int64, Int64) -> Bool) -> Unit
+pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int, Int) -> Bool) -> Unit
 
 pub struct CharStatsChangedEvent {
   kind : CharStatsChangedKind
   stat : @maple_stat.Id?
   total_stat : @maple_stat.EquipStatId?
-}
-pub impl Eq for CharStatsChangedEvent
-pub impl Show for CharStatsChangedEvent
+} derive(Eq, Show)
 
 pub enum CharStatsChangedKind {
   BASE_STAT
   I64_STAT
   TOTAL_STAT
-}
-pub impl Eq for CharStatsChangedKind
-pub impl Show for CharStatsChangedKind
+} derive(Eq, Show)
 
 type Module
 pub fn Module::load() -> Self

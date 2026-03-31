@@ -92,7 +92,7 @@ pub fn Row::get_string(self : Row, col : String) -> String raise {
 /// Raises when the field is missing or not a valid integer.
 pub fn Row::get_int(self : Row, col : String) -> Int raise {
   let text = self.get_string(col)
-  @strconv.parse_int(text) catch {
+  @string.parse_int(text) catch {
     _ =>
       fail(
         "invalid int '\{col}' at line \{self.line_no} in \{self.source_name}",

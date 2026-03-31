@@ -39,13 +39,11 @@ pub(all) enum Id {
   HEART
   TOP_DEFAULT
   BOTTOM_DEFAULT
-}
+} derive(Eq, Show)
 pub fn Id::from_int(Int) -> Self
 pub fn Id::int_value(Self) -> Int
 pub fn Id::length() -> Int
-pub impl Eq for Id
 pub impl Hash for Id
-pub impl Show for Id
 pub impl ToJson for Id
 
 // Type aliases

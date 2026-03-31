@@ -35,10 +35,7 @@ pub(all) enum Action {
   BASIC(BasicActionId)
   SKILL(Int)
   ITEM(Int)
-}
-pub impl Eq for Action
-pub impl Hash for Action
-pub impl Show for Action
+} derive(Eq, Hash, Show)
 
 pub(all) enum BasicActionId {
   MOVE_UP
@@ -48,10 +45,7 @@ pub(all) enum BasicActionId {
   JUMP
   ATTACK
   PICKUP
-}
-pub impl Eq for BasicActionId
-pub impl Hash for BasicActionId
-pub impl Show for BasicActionId
+} derive(Eq, Hash, Show)
 
 // Type aliases
 pub type Keymap = Map[@inputs.Code, Action]

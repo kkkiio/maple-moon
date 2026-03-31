@@ -228,7 +228,7 @@ pub fn mob_hpbars_system(_world : @ecs.World) -> Unit {
       to_remove.push(oid)
       continue
     }
-    if not(mob.is_alive()) {
+    if !mob.is_alive() {
       if state.root.is_alive() {
         state.root.destroy()
       }

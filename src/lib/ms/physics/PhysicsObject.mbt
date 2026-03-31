@@ -339,7 +339,7 @@ pub fn PhysicsObject::is_flag_not_set(
   self : PhysicsObject,
   f : PhysicsObjectFlag,
 ) -> Bool {
-  not(self.is_flag_set(f))
+  !self.is_flag_set(f)
 }
 
 ///|

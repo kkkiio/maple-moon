@@ -215,13 +215,9 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       }
       let player_item_ids = collect_inventory_item_ids(inventory_entry.items)
       let item_data_system = @item.get_item_data_system()
-      item_data_system.request_consume_and_etc_preload()
       item_data_system.request_many(player_item_ids)
 
-      if not(item_data_system.consume_and_etc_preload_ready_or_fail()) {
-        return
-      }
-      if not(item_data_system.all_requested_ready_or_fail(player_item_ids)) {
+      if !item_data_system.all_requested_ready_or_fail(player_item_ids) {
         return
       }
 
@@ -311,7 +307,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
               @skill_cast.register_move(sk)
             }
             @markup_text.preload_reference_data()
-            if not(@markup_text.is_reference_data_ready()) {
+            if !@markup_text.is_reference_data_ready() {
               @log.fatal("markup_text reference data is not ready")
               panic()
             }

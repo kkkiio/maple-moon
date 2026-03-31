@@ -41,7 +41,7 @@ pub impl @json.FromJson for NxAfterImage with from_json(json, path) -> NxAfterIm
   let mut first_frame = 0
   let mut animation_json = Json::null()
   for key, value in obj {
-    try @strconv.parse_int(key) catch {
+    try @string.parse_int(key) catch {
       _ => continue
     } noraise {
       frame_num => {
@@ -78,7 +78,7 @@ pub impl @json.FromJson for NxAfterImages with from_json(json, path) -> NxAfterI
   let level_map = Map::new()
   for level_key, level_val in obj {
     guard level_val is Object(level_val) else { continue }
-    let level = @strconv.parse_int(level_key) catch { _ => continue }
+    let level = @string.parse_int(level_key) catch { _ => continue }
     let stance_map = Map::new()
     for stance_key, stance_val in level_val {
       let stance = stance_key
@@ -166,7 +166,7 @@ pub fn AfterImage::update(
   stframe : Int,
   _timestep : Int,
 ) -> Unit {
-  if not(self.displayed) && stframe >= self.first_frame {
+  if !self.displayed && stframe >= self.first_frame {
     self.displayed = true
     if self.entity is Some(e) {
       let transform = if self.facing_right {
@@ -255,7 +255,7 @@ pub fn update_after_image_system(_world : @ecs.World) -> Unit {
   let after_images = after_images()
   let to_remove : Array[@entity.Entity] = []
   for entity, entry in after_images {
-    if not(entity.is_alive()) {
+    if !entity.is_alive() {
       entry.after_image.dispose()
       to_remove.push(entity)
       continue

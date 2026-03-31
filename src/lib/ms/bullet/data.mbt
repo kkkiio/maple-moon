@@ -14,7 +14,7 @@ pub async fn BulletData::load(strid : String) -> BulletData {
     prefix.to_string() + ".img",
     strid,
   ])
-  let id = strid.trim_start(chars="0").to_string() |> @strconv.parse_int
+  let id = strid.trim_start(chars="0").to_string() |> @string.parse_int
   let item_data = @item.ItemData::load(
     id,
     @resource.require_async_loader("character"),

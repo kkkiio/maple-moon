@@ -46,7 +46,7 @@ pub(all) enum StanceId {
   SWINGTF
   WALK1
   WALK2
-}
+} derive(Compare, Eq, Hash)
 pub fn StanceId::baseof(Self) -> Self
 pub fn StanceId::by_state(Int) -> Self
 pub fn StanceId::count() -> Int
@@ -55,10 +55,7 @@ pub fn StanceId::int_value(Self) -> Int
 pub fn StanceId::is_attack(Self) -> Bool
 pub fn StanceId::is_climbing(Self) -> Bool
 pub fn StanceId::name(Self) -> String
-pub impl Compare for StanceId
 pub impl Default for StanceId
-pub impl Eq for StanceId
-pub impl Hash for StanceId
 pub impl Show for StanceId
 pub impl ToJson for StanceId
 

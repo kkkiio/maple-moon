@@ -31,7 +31,7 @@ fn check_bullet_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   for prefix in prefixes {
     let rel_file = "Item/Consume/\{prefix}.img.json"
     let abs_file = path_join(ctx.assets_root, rel_file)
-    if not(file_exists(abs_file)) {
+    if !file_exists(abs_file) {
       issues.push(
         make_issue(
           "bullet",
@@ -160,7 +160,7 @@ fn bullet_validate_texture_field(
       }
       let image_rel_path = bullet_resolve_asset_relative_path(texture.i)
       let image_abs_path = path_join(ctx.assets_root, image_rel_path)
-      if not(file_exists(image_abs_path)) {
+      if !file_exists(image_abs_path) {
         issues.push(
           make_issue(
             "bullet",
@@ -200,7 +200,7 @@ fn bullet_check_image_refs_field(
       for raw_path in uniq {
         let image_rel_path = bullet_resolve_asset_relative_path(raw_path)
         let image_abs_path = path_join(ctx.assets_root, image_rel_path)
-        if not(file_exists(image_abs_path)) {
+        if !file_exists(image_abs_path) {
           issues.push(
             make_issue(
               "bullet",
@@ -241,7 +241,7 @@ fn bullet_unique_paths(paths : Array[String]) -> Array[String] {
   let seen : Map[String, Bool] = {}
   let unique : Array[String] = []
   for p in paths {
-    if not(seen.contains(p)) {
+    if !seen.contains(p) {
       seen[p] = true
       unique.push(p)
     }

@@ -1,4 +1,4 @@
 ///|
 pub fn ints(start? : Int = 0) -> Iter[Int] {
-  start.until(@int.max_value)
+  start.until(@int.MAX_VALUE)
 }

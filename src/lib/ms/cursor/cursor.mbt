@@ -158,7 +158,7 @@ let cursor : Cursor = Cursor::new()
 ///|
 pub fn cursor_system(_world : @ecs.World) -> Unit {
   let delta = @time.delta()
-  if not(cursor.entity.is_alive()) {
+  if !cursor.entity.is_alive() {
     cursor.entity.respawn()
     cursor.state_seconds = 0.0
     cursor.inactive_seconds = 0.0

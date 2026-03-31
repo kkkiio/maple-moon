@@ -11,7 +11,7 @@
 
 ```moonbit nocheck
 @markup_text.preload_reference_data()
-if not(@markup_text.is_reference_data_ready()) {
+if !(@markup_text.is_reference_data_ready()) {
   fail("reference data is not ready")
 }
 

@@ -20,4 +20,5 @@ import {
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/render2d_types" @render2d_types,
   "Milky2018/selene/ui" @selene_ui,
+  "moonbitlang/core/string",
 }

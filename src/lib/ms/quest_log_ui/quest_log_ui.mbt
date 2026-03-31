@@ -558,7 +558,7 @@ fn apply_style_tag(style : TextStyleState, tag : Char) -> TextStyleState? {
 fn current_player_name() -> String {
   if @player.get_player() is Some(player) {
     let name = player.get_stats().get_name()
-    if not(name.is_empty()) {
+    if !name.is_empty() {
       return name
     }
   }
@@ -571,7 +571,7 @@ fn replace_pair_tag_runtime(tag : Char, payload : StringView) -> String? {
   match tag {
     't' => Some(@markup_text.resolve_item_name(payload)) catch { _ => None }
     'c' => {
-      let item_id = @strconv.parse_int(raw) catch { _ => -1 }
+      let item_id = @string.parse_int(raw) catch { _ => -1 }
       if item_id < 0 {
         None
       } else {
@@ -1250,7 +1250,7 @@ fn process_click_events(state : QuestLogUiState) -> Bool {
 ///|
 fn update_button_visuals(state : QuestLogUiState) -> Unit {
   for button in state.action_buttons {
-    let texture = if not(button.enabled) {
+    let texture = if !button.enabled {
       button.resource.disabled
     } else {
       match @selene_ui.interactions().get(button.entity) {
@@ -1282,8 +1282,8 @@ pub fn close_quest_log_ui() -> Unit {
 /// Toggles quest-log UI visibility.
 pub fn toggle_quest_log_ui() -> Unit {
   let state = state()
-  state.visible = not(state.visible)
-  if not(state.visible) {
+  state.visible = !state.visible
+  if !state.visible {
     clear_render(state)
   }
 }
@@ -1307,7 +1307,7 @@ pub fn quest_log_ui_system(_world : @ecs.World) -> Unit {
     toggle_quest_log_ui()
     return
   }
-  if not(state.visible) {
+  if !state.visible {
     return
   }
   if @inputs.is_just_pressed(@inputs.Code::Escape) {

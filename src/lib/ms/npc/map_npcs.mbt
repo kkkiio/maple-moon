@@ -168,7 +168,7 @@ pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     let oid = spawn.get_oid()
-    if not(self.npcs.contains(oid)) {
+    if !self.npcs.contains(oid) {
       self.loading_npcs.push(
         @io_service.submit_background_task(async fn() {
           spawn.instantiate(self.npc_loader, self.string_loader, physics)
@@ -320,7 +320,7 @@ struct Npc {
 
 ///|
 priv struct NpcAnimation {
-  selene : @ms_animation.Animation
+  clip : @resource.SeleneClip
   duration_ms : Int
   dimensions : @struct.Point[Int]
 }
@@ -352,7 +352,7 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
   match
     self.dialogue
     .get("d0")
-    .filter(fn(strs) { not(strs.is_empty()) })
+    .filter(fn(strs) { !strs.is_empty() })
     .map(fn(strs) { strs[0] }) {
     Some(str) =>
       Some({
@@ -380,17 +380,16 @@ pub async fn Npc::load(
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut src = npc_loader.load_resource([strid])
+  let mut src = npc_loader.load_json_by_path("Npc/Npc/\{strid}/mx.json")
   let strsrc = string_loader.load_resource(["Npc.img", id.to_string()])
-  let mut nx_npc : NxNpc = @json.from_json(src)
-  match nx_npc.info.link {
-    Some(link) => {
-      src = npc_loader.load_resource([link + ".img"])
-      nx_npc = @json.from_json(src)
-    }
-    None => ()
+  let mut mx_npc : MxNpc = @json.from_json(src)
+  if mx_npc.info.link is Some(link) {
+    src = npc_loader.load_json_by_path("Npc/Npc/\{link}.img/mx.json")
+    mx_npc = @json.from_json(src)
   }
-  let scripted = nx_npc.info.scripted
+  let animation_loader = @resource.AnimationLoader::new(npc_loader)
+  let loaded_aseprite = animation_loader.load(mx_npc.animations_path)
+  let scripted = mx_npc.info.scripted
   let dialogue = {}
   let mut i = 0
   while true {
@@ -409,14 +408,14 @@ pub async fn Npc::load(
     dialogue.get_or_init(key, fn() { Array::new() }).push(str)
     i += 1
   }
-  let animations = {}
-  let states = []
-  for state, nx_anim in nx_npc.animations {
-    let selene = @ms_animation.from_nx_animation(nx_anim, loop_=true)
+  let animations : Map[String, NpcAnimation] = {}
+  let states : Array[String] = []
+  for state in loaded_aseprite.list_tags() {
+    let clip = loaded_aseprite.clip(state)
     animations[state] = {
-      selene,
-      duration_ms: nx_animation_duration_ms(nx_anim),
-      dimensions: nx_animation_dimensions(nx_anim),
+      clip,
+      duration_ms: clip.duration_ms,
+      dimensions: clip.dimensions,
     }
     states.push(state)
   }
@@ -429,9 +428,15 @@ pub async fn Npc::load(
     _ => ""
   }
   let npc_id = id
-  let flip = not(fl)
+  let flip = !fl
   // let control = cnt
-  let stance = "stand"
+  let stance = if states.contains("stand") {
+    "stand"
+  } else if !states.is_empty() {
+    states[0]
+  } else {
+    fail("npc \{id} has no animation states")
+  }
   phobj.set_fhid(f)
   phobj.set_position(
     @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
@@ -471,7 +476,7 @@ pub async fn Npc::load(
 //     Some(ani) => ani.draw(@graphics.DrawArgument::new14(absp, self.flip), alpha)
 //     None => ()
 //   }
-//   if not(self.hide_name) {
+//   if !(self.hide_name) {
 //     self.name_label.draw(absp + @struct.Point::new(0, -4))
 //     self.func_label.draw(absp + @struct.Point::new(0, 18))
 //   }
@@ -479,7 +484,7 @@ pub async fn Npc::load(
 
 ///|
 pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Unit {
-  if not(self.entity.is_alive()) {
+  if !self.entity.is_alive() {
     return
   }
   physics.move_object(self.phobj)
@@ -526,12 +531,9 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
   }
   if @sprite.sprites().get(self.entity) is None ||
     self.last_synced_stance != Some(self.stance) {
-    let sprite = @ms_animation.sprite_from_animation(
-      animation.selene,
-      z,
-      transform~,
-    )
-    @sprite.sprites().set(self.entity, sprite)
+    ignore(transform)
+    ignore(z)
+    play_aseprite_clip(self.entity, animation.clip, self.flip)
     self.last_synced_stance = Some(self.stance)
   } else {
     match @transform.transforms().get(self.entity) {
@@ -551,6 +553,57 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
         )
     }
   }
+}
+
+///|
+fn play_aseprite_clip(
+  entity : @entity.Entity,
+  clip : @resource.SeleneClip,
+  flip_x : Bool,
+) -> Unit {
+  @selene_animation.animation_target_ids().set(
+    entity,
+    @selene_animation.AnimationTargetId::new("self"),
+  )
+  @selene_animation.animated_bys().set(
+    entity,
+    @selene_animation.AnimatedBy::new(entity),
+  )
+  @selene_animation.animation_graph_handles().set(entity, clip.graph)
+  let player = @selene_animation.animation_players().get_or_init(entity, fn() {
+    @selene_animation.AnimationPlayer::new()
+  })
+  ignore(
+    player.play(clip.node, repeat=@selene_animation.RepeatAnimation::Forever),
+  )
+
+  let anchor = if flip_x { mirror_anchor_x(clip.anchor) } else { clip.anchor }
+  match @sprite.sprites().get(entity) {
+    Some(sprite) =>
+      @sprite.sprites().set(entity, {
+        ..sprite,
+        image: Some(clip.image),
+        texture_atlas: Some(@sprite.TextureAtlas::new(clip.layout)),
+        anchor,
+        flip_x,
+      })
+    None =>
+      @sprite.sprites().set(
+        entity,
+        @sprite.Sprite::new(
+          image=Some(clip.image),
+          texture_atlas=Some(@sprite.TextureAtlas::new(clip.layout)),
+          anchor~,
+          flip_x~,
+        ),
+      )
+  }
+}
+
+///|
+fn mirror_anchor_x(anchor : @sprite.Anchor) -> @sprite.Anchor {
+  let @sprite.Anchor(v) = anchor
+  @sprite.Anchor(@selene_math.Vec2D(-v.0, v.1))
 }
 
 ///|
@@ -605,6 +658,12 @@ pub fn Npc::get_oid(self : Npc) -> Int {
 
 ///|
 pub fn Npc::destroy(self : Npc) -> Unit {
+  if @selene_animation.animation_players().get(self.entity) is Some(player) {
+    ignore(player.stop_all())
+  }
+  @selene_animation.animation_graph_handles().remove(self.entity)
+  @selene_animation.animation_target_ids().remove(self.entity)
+  @selene_animation.animated_bys().remove(self.entity)
   @sprite.sprites().remove(self.entity)
   @physics2d.pickables().remove(self.entity)
   @physics2d.shapes().remove(self.entity)
@@ -624,38 +683,3 @@ pub fn Npc::get_npc_id(self : Npc) -> Int {
 }
 
 ///|
-fn nx_frame_delay_ms(frame : @resource.NxFrame) -> Int {
-  match frame.delay {
-    Some(delay) => if delay <= 0 { 100 } else { delay }
-    None => 100
-  }
-}
-
-///|
-fn nx_animation_duration_ms(animation : @resource.NxAnimation) -> Int {
-  let base = animation.frames.fold(init=0, fn(acc, frame) {
-    acc + nx_frame_delay_ms(frame)
-  })
-  if animation.zigzag && animation.frames.length() > 2 {
-    let mut zigzag_extra = 0
-    for i = animation.frames.length() - 2; i >= 1; i = i - 1 {
-      zigzag_extra += nx_frame_delay_ms(animation.frames[i])
-    }
-    base + zigzag_extra
-  } else {
-    base
-  }
-}
-
-///|
-fn nx_animation_dimensions(
-  animation : @resource.NxAnimation,
-) -> @struct.Point[Int] {
-  let mut width = 0
-  let mut height = 0
-  for frame in animation.frames {
-    width = @cmp.maximum(width, frame.texture.w)
-    height = @cmp.maximum(height, frame.texture.h)
-  }
-  @struct.Point::new(width, height)
-}

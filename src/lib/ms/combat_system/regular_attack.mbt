@@ -32,7 +32,7 @@ pub fn make_regular_attack(
   let accuracy = character.stats.get_total(@maple_stat.EquipStatId::ACC)
   let playerlevel = character.stats.get_stat(@maple_stat.Id::LEVEL)
   let origin = character.get_position()
-  let toleft = character.facing_right |> not()
+  let toleft = !character.facing_right
   let speed = @character.get_integer_attackspeed(
     character.get_look(),
     character.stats,

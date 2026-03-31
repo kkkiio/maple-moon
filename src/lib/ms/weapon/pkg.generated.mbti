@@ -11,8 +11,7 @@ import {
 // Errors
 pub(all) suberror UnknownWeaponType {
   UnknownWeaponType(Int)
-}
-pub impl Show for UnknownWeaponType
+} derive(Show)
 
 // Types and methods
 pub(all) enum Type {
@@ -34,11 +33,9 @@ pub(all) enum Type {
   KNUCKLE
   GUN
   CASH
-}
+} derive(Eq, ToJson)
 pub fn Type::by_value(Int) -> Self raise UnknownWeaponType
 pub fn Type::int_value(Self) -> Int
-pub impl Eq for Type
-pub impl ToJson for Type
 
 type WeaponData
 pub fn WeaponData::from_item_data(@item.ItemData) -> Self raise

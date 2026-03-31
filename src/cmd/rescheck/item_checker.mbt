@@ -22,7 +22,7 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   for category in categories {
     let rel_dir = "Item/\{category}"
     let abs_dir = path_join(ctx.assets_root, rel_dir)
-    if not(file_exists(abs_dir)) {
+    if !file_exists(abs_dir) {
       issues.push(
         make_issue("item", Error, rel_dir, "missing item category directory"),
       )
@@ -37,12 +37,12 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   for item_ref in refs {
     let rel_file = "Item/\{item_ref.category}/\{item_ref.file_name}"
     let abs_file = path_join(ctx.assets_root, rel_file)
-    if not(file_exists(abs_file)) {
+    if !file_exists(abs_file) {
       append_missing_bundle_id(missing_bundle_ids, rel_file, item_ref.item_id)
       continue
     }
 
-    if not(checked_file.contains(abs_file)) {
+    if !checked_file.contains(abs_file) {
       checked_file[abs_file] = true
       let content = read_text_file(abs_file)
       let json = @json.parse(content) catch {
@@ -64,7 +64,7 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
     guard parsed_file.get(abs_file) is Some(bundle) else { continue }
     match bundle {
       Object(obj) =>
-        if not(obj.contains(item_ref.zid)) {
+        if !obj.contains(item_ref.zid) {
           issues.push(
             make_issue(
               "item",
@@ -122,7 +122,7 @@ fn check_shop_equip_item_resources(
 ) -> Unit {
   let shops_rel_file = "data/shops.tsv"
   let shops_abs_file = path_join(ctx.assets_root, shops_rel_file)
-  if not(file_exists(shops_abs_file)) {
+  if !file_exists(shops_abs_file) {
     issues.push(
       make_issue("item", Error, shops_rel_file, "missing npc shop data file"),
     )
@@ -130,7 +130,7 @@ fn check_shop_equip_item_resources(
   }
   let shopitems_rel_file = "data/shopitems.tsv"
   let shopitems_abs_file = path_join(ctx.assets_root, shopitems_rel_file)
-  if not(file_exists(shopitems_abs_file)) {
+  if !file_exists(shopitems_abs_file) {
     issues.push(
       make_issue(
         "item",
@@ -146,7 +146,7 @@ fn check_shop_equip_item_resources(
   for equip_ref in equip_refs {
     let equip_rel_file = "Character/\{equip_ref.category}/\{equip_ref.file_name}"
     let equip_abs_file = path_join(ctx.assets_root, equip_rel_file)
-    if not(file_exists(equip_abs_file)) {
+    if !file_exists(equip_abs_file) {
       issues.push(
         make_issue(
           "item",
@@ -157,7 +157,7 @@ fn check_shop_equip_item_resources(
       )
       continue
     }
-    if not(parsed_file.contains(equip_abs_file)) {
+    if !parsed_file.contains(equip_abs_file) {
       let content = read_text_file(equip_abs_file)
       let json = @json.parse(content) catch {
         e => {
@@ -278,7 +278,7 @@ fn validate_equip_json_images(
                 ),
               )
             }
-            if not(obj.contains("__off")) {
+            if !obj.contains("__off") {
               issues.push(
                 make_issue(
                   "item",
@@ -290,7 +290,7 @@ fn validate_equip_json_images(
             }
             let image_rel_path = resolve_asset_relative_path(image_path)
             let image_abs_path = path_join(ctx.assets_root, image_rel_path)
-            if not(file_exists(image_abs_path)) {
+            if !file_exists(image_abs_path) {
               issues.push(
                 make_issue(
                   "item",
@@ -385,7 +385,7 @@ fn validate_texture_field(
       }
       let image_rel_path = resolve_item_image_path(texture.i)
       let image_abs_path = path_join("assets", image_rel_path)
-      if not(file_exists(image_abs_path)) {
+      if !file_exists(image_abs_path) {
         issues.push(
           make_issue(
             "item",
@@ -443,7 +443,7 @@ fn collect_drop_item_refs(ctx : RescheckContext) -> Array[ItemRef] {
 
   for rel_file in files {
     let abs_file = path_join(ctx.assets_root, rel_file)
-    if not(file_exists(abs_file)) {
+    if !file_exists(abs_file) {
       continue
     }
     let sheet = @data_sheet.parse_tsv_sheet(read_text_file(abs_file), rel_file) catch {

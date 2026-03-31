@@ -91,7 +91,7 @@ pub fn BulletSystem::update(self : BulletSystem, timestep~ : Int64) -> Unit {
       (active_bullet.on_hit)()
       clear_entity(active_bullet.entity)
     }
-    not(hit)
+    !hit
   })
 }
 

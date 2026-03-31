@@ -6,7 +6,7 @@ pub fn parse_markup(
 ) -> Array[Node] raise ParseError {
   let nodes = []
   let mut rest_text = text[:]
-  while not(rest_text.is_empty()) {
+  while !rest_text.is_empty() {
     guard rest_text.find("#") is Some(markup_start) else {
       nodes.push(to_text(rest_text))
       break

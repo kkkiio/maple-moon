@@ -36,17 +36,13 @@ pub(all) struct QuestLogCompletedRaw {
   quest_id : Int
   name : String
   completion_time : Int64
-}
-pub impl Show for QuestLogCompletedRaw
+} derive(Show)
 
 pub(all) struct QuestLogEntryCompleted {
   quest_id : Int
   name : String
   completion_time : Int64
-}
-pub impl Show for QuestLogEntryCompleted
-pub impl ToJson for QuestLogEntryCompleted
-pub impl @json.FromJson for QuestLogEntryCompleted
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct QuestLogEntryInProgress {
   quest_id : Int
@@ -54,10 +50,7 @@ pub(all) struct QuestLogEntryInProgress {
   progress_data : String
   phase : Int
   phase_description : String
-}
-pub impl Show for QuestLogEntryInProgress
-pub impl ToJson for QuestLogEntryInProgress
-pub impl @json.FromJson for QuestLogEntryInProgress
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct QuestLogInProgressRaw {
   quest_id : Int
@@ -65,22 +58,17 @@ pub(all) struct QuestLogInProgressRaw {
   progress_data : String
   phase : Int
   phase_description : String
-}
-pub impl Show for QuestLogInProgressRaw
+} derive(Show)
 
 pub(all) struct QuestLogSnapshot {
   in_progress : Array[QuestLogEntryInProgress]
   completed : Array[QuestLogEntryCompleted]
-}
-pub impl Show for QuestLogSnapshot
-pub impl ToJson for QuestLogSnapshot
-pub impl @json.FromJson for QuestLogSnapshot
+} derive(Show, ToJson, @json.FromJson)
 
 pub(all) struct QuestLogSnapshotRaw {
   in_progress : Array[QuestLogInProgressRaw]
   completed : Array[QuestLogCompletedRaw]
-}
-pub impl Show for QuestLogSnapshotRaw
+} derive(Show)
 
 // Type aliases
 

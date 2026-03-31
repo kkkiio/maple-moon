@@ -49,7 +49,7 @@ pub fn[T : Eq + Compare] Rectangle::contains(
   self : Rectangle[T],
   v : Point[T],
 ) -> Bool {
-  not(self.straight()) &&
+  !self.straight() &&
   v.x >= self.left() &&
   v.x <= self.right() &&
   v.y >= self.top() &&

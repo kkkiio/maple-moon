@@ -68,7 +68,7 @@ fn parse_quest_definitions(raw : Json) -> Map[Int, QuestDefinition] {
     return defs
   }
   for quest_id_text, check_json in check_img {
-    let quest_id = @strconv.parse_int(quest_id_text) catch { _ => continue }
+    let quest_id = @string.parse_int(quest_id_text) catch { _ => continue }
     let act_json = act_img.get_or_default(quest_id_text, Json::null())
     let def = parse_quest_definition(quest_id, check_json, act_json)
     if def.phase0_npc is Some(_) || def.phase1_npc is Some(_) {
@@ -210,7 +210,7 @@ fn parse_phase_act(
 fn parse_int_json(json : Json) -> Int? {
   match json {
     Number(v, ..) => Some(v.to_int())
-    String(s) => Some(@strconv.parse_int(s)) catch { _ => None }
+    String(s) => Some(@string.parse_int(s)) catch { _ => None }
     _ => None
   }
 }
@@ -366,7 +366,7 @@ fn LocalServer::handle_forfeit_quest(
   self : LocalServer,
   quest_id : Int,
 ) -> Unit {
-  if not(self.started_quests.contains(quest_id)) {
+  if !self.started_quests.contains(quest_id) {
     @log.warn("local server forfeit quest rejected", data={
       "quest_id": quest_id,
       "reason": "quest not started",
@@ -402,12 +402,12 @@ fn LocalServer::can_start_quest(
     return Err("level too low")
   }
   for quest_id, expected_state in def.phase0_required_quests {
-    if not(self.match_quest_state(quest_id, expected_state)) {
+    if !self.match_quest_state(quest_id, expected_state) {
       return Err("quest prerequisite not met")
     }
   }
   for req in def.phase0_items {
-    if not(self.match_item_requirement(req)) {
+    if !self.match_item_requirement(req) {
       return Err("item requirement not met")
     }
   }
@@ -420,14 +420,14 @@ fn LocalServer::can_complete_quest(
   def : QuestDefinition,
   npc_id : Int,
 ) -> Result[Unit, String] {
-  if not(self.started_quests.contains(def.quest_id)) {
+  if !self.started_quests.contains(def.quest_id) {
     return Err("quest not started")
   }
   if def.phase1_npc is Some(expected_npc) && expected_npc != npc_id {
     return Err("unexpected completion npc")
   }
   for req in def.phase1_items {
-    if not(self.match_item_requirement(req)) {
+    if !self.match_item_requirement(req) {
       return Err("item requirement not met")
     }
   }
@@ -442,8 +442,8 @@ fn LocalServer::match_quest_state(
 ) -> Bool {
   match expected_state {
     0 =>
-      not(self.started_quests.contains(quest_id)) &&
-      not(self.completed_quests.contains(quest_id))
+      !self.started_quests.contains(quest_id) &&
+      !self.completed_quests.contains(quest_id)
     1 => self.started_quests.contains(quest_id)
     2 => self.completed_quests.contains(quest_id)
     _ => true
@@ -583,13 +583,13 @@ async fn LocalServer::apply_quest_item_effects(
   }
   for effect in effects {
     if effect.count < 0 &&
-      not(self.remove_item_from_inventory(effect.id, -effect.count)) {
+      !self.remove_item_from_inventory(effect.id, -effect.count) {
       return false
     }
   }
   for effect in effects {
     if effect.count > 0 && effect.prop is None {
-      if not(self.add_item_to_inventory(effect.id, effect.count)) {
+      if !self.add_item_to_inventory(effect.id, effect.count) {
         return false
       }
     }
@@ -613,7 +613,7 @@ async fn LocalServer::apply_quest_item_effects(
       }
       selected_weight -= weight
     }
-    if selected is Some(it) && not(self.add_item_to_inventory(it.id, it.count)) {
+    if selected is Some(it) && !self.add_item_to_inventory(it.id, it.count) {
       return false
     }
   }

@@ -92,7 +92,7 @@ pub fn watch_inventory_by_kind(
 /// Watch meso changes
 pub fn watch_meso(mod : Module, watcher : (Int) -> Bool) -> Unit {
   let cont = watcher(mod.inventory.get_meso())
-  if not(cont) {
+  if !cont {
     return
   }
   mod.inventory.listen_meso_changes(watcher)

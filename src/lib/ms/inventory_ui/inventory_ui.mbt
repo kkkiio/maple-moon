@@ -377,7 +377,7 @@ fn prepare_from_entry(state : State, entry : InventoryEntry) -> Unit {
 
   for entry in entry.items {
     guard display_item_from_entry(entry) is Some(item) else { continue }
-    if not(is_visible_tab(item.tab)) {
+    if !is_visible_tab(item.tab) {
       continue
     }
     let tab_items = state.items_by_tab.get(item.tab).unwrap_or([])
@@ -739,7 +739,7 @@ pub fn set_inventory_visible(visible : Bool) -> Unit {
     return
   }
   state.visible = visible
-  if not(visible) {
+  if !visible {
     state.active_slot = None
     clear_render(state)
     return
@@ -877,8 +877,8 @@ pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
   let mut dirty = false
 
   if @inputs.is_just_pressed(@inputs.KeyI) {
-    state.visible = not(state.visible)
-    if not(state.visible) {
+    state.visible = !state.visible
+    if !state.visible {
       state.active_slot = None
     }
     dirty = true
@@ -892,7 +892,7 @@ pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
     dirty = true
   }
 
-  if not(state.visible) {
+  if !state.visible {
     if state.ui_entities.length() > 0 {
       clear_render(state)
     }
@@ -909,7 +909,7 @@ pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
   }
   if @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left) &&
     state.active_slot is Some(_) &&
-    not(clicked_slot_or_tab) {
+    !clicked_slot_or_tab {
     state.active_slot = None
     render_inventory(state)
   }

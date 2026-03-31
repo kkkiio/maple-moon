@@ -13,7 +13,7 @@ pub fn check_attack_type(
       | @weapon.Type::CROSSBOW
       | @weapon.Type::CLAW
       | @weapon.Type::GUN => {
-        let degenerate = not(inventory.has_projectile())
+        let degenerate = !inventory.has_projectile()
         (
           degenerate,
           if degenerate {
@@ -24,7 +24,7 @@ pub fn check_attack_type(
         )
       }
       @weapon.Type::WAND | @weapon.Type::STAFF => {
-        let degenerate = not(skill)
+        let degenerate = !skill
         (
           degenerate,
           if degenerate {

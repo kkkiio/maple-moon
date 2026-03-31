@@ -70,7 +70,7 @@ pub fn MobDropDatabase::has_drops(
   dropperid : Int,
 ) -> Bool {
   match self.drops.get(dropperid) {
-    Some(list) => not(list.is_empty())
+    Some(list) => !list.is_empty()
     None => false
   }
 }
@@ -120,7 +120,7 @@ pub fn MobDropDatabase::roll_drops(
   let entries = self.get_drops(dropperid)
 
   for entry in entries {
-    if entry.questid != 0 && not(active_quest_ids.contains(entry.questid)) {
+    if entry.questid != 0 && !active_quest_ids.contains(entry.questid) {
       continue
     }
     if entry.roll_drop(rand) {

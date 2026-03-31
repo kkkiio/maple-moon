@@ -73,7 +73,7 @@ async fn LocalServer::on_npc_shop_buy(
     self.send_shop_confirm(2)
     return
   }
-  if not(self.add_item_to_inventory(item.id, msg.qty)) {
+  if !self.add_item_to_inventory(item.id, msg.qty) {
     self.send_shop_confirm(3)
     return
   }

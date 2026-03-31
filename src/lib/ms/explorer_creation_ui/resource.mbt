@@ -70,14 +70,14 @@ fn parse_choices(json : Json) -> LookChoices raise {
   let bots = obj.get("5").map_or([], parse_choice_values)
   let shoes = obj.get("6").map_or([], parse_choice_values)
   let weapons = obj.get("7").map_or([], parse_choice_values)
-  guard not(faces.is_empty()) &&
-    not(hairs.is_empty()) &&
-    not(haircolors.is_empty()) &&
-    not(skins.is_empty()) &&
-    not(tops.is_empty()) &&
-    not(bots.is_empty()) &&
-    not(shoes.is_empty()) &&
-    not(weapons.is_empty()) else {
+  guard !faces.is_empty() &&
+    !hairs.is_empty() &&
+    !haircolors.is_empty() &&
+    !skins.is_empty() &&
+    !tops.is_empty() &&
+    !bots.is_empty() &&
+    !shoes.is_empty() &&
+    !weapons.is_empty() else {
     fail("MakeCharInfo choices are incomplete")
   }
   { faces, hairs, haircolors, skins, tops, bots, shoes, weapons }

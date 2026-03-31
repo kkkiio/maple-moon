@@ -84,11 +84,8 @@ pub fn tile_objects_system(@ecs.World) -> Unit
 // Types and methods
 type Background
 
-type BackgroundAnimationPath
+type BackgroundAnimationPath derive(Eq, Hash, Show)
 pub fn BackgroundAnimationPath::from_nx(NxBackground) -> Self
-pub impl Eq for BackgroundAnimationPath
-pub impl Hash for BackgroundAnimationPath
-pub impl Show for BackgroundAnimationPath
 
 pub struct BackgroundResource {
   animation : @resource.NxAnimation
@@ -111,31 +108,25 @@ pub(all) enum BackgroundType {
   TILED
   HMOVEA
   VMOVEA
-}
+} derive(Compare, Eq, Show, ToJson)
 pub fn BackgroundType::from_int(Int) -> Self?
 pub fn BackgroundType::int_value(Self) -> Int
-pub impl Compare for BackgroundType
-pub impl Eq for BackgroundType
-pub impl Show for BackgroundType
-pub impl ToJson for BackgroundType
 
 pub struct BackgroundVisibilityState {
   back_visible : Bool
   fore_visible : Bool
   debug_index : Int?
   total_layers : Int
-}
-pub impl Show for BackgroundVisibilityState
+} derive(Show)
 
 pub struct Backgrounds {
   backs : Array[Background]
   fores : Array[Background]
 }
 
-pub struct BackgroundsResource(Array[NxBackground])
+pub struct BackgroundsResource(Array[NxBackground]) derive(Show)
 #deprecated
 pub fn BackgroundsResource::inner(Self) -> Array[NxBackground]
-pub impl Show for BackgroundsResource
 pub impl @json.FromJson for BackgroundsResource
 
 type Ladder
@@ -181,9 +172,7 @@ pub fn MapInfo::new() -> Self
 
 pub struct MapLayerInfoResource {
   tS : String
-}
-pub impl Show for MapLayerInfoResource
-pub impl @json.FromJson for MapLayerInfoResource
+} derive(Show, @json.FromJson)
 
 type MapLayers
 pub fn MapLayers::new(Map[String, NxTileSet], Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxLayer]) -> Self
@@ -241,18 +230,15 @@ pub enum MiniMapPortalType {
   SPRING1
   SPRING2
   TYPE14
-}
+} derive(Eq, Show)
 pub fn MiniMapPortalType::from_int(Int) -> Self
-pub impl Eq for MiniMapPortalType
-pub impl Show for MiniMapPortalType
 
 pub struct MiniMapResource {
   mag : Int
   center_x : Int
   center_y : Int
   canvas : @resource.NxAnimation
-}
-pub impl @json.FromJson for MiniMapResource
+} derive(@json.FromJson)
 
 pub(all) struct MiniMapRuntimeResource {
   canvas : @resource.NxAnimation
@@ -279,8 +265,7 @@ pub struct NxBackground {
   type_ : BackgroundType
   x : Int
   y : Int
-}
-pub impl Show for NxBackground
+} derive(Show)
 pub impl @json.FromJson for NxBackground
 
 type NxLadder
@@ -290,8 +275,7 @@ pub struct NxLayer {
   info : MapLayerInfoResource?
   tile : Array[NxTileRef]
   obj : Array[NxObj]
-}
-pub impl Show for NxLayer
+} derive(Show)
 pub impl @json.FromJson for NxLayer
 
 pub struct NxLife {
@@ -306,8 +290,7 @@ pub struct NxLife {
   type_ : String
   x : Int
   y : Int
-}
-pub impl Show for NxLife
+} derive(Show)
 pub impl @json.FromJson for NxLife
 
 pub struct NxMap {
@@ -330,14 +313,10 @@ pub struct NxObj {
   y : Int
   z : Int
   zM : Int
-}
-pub impl Show for NxObj
+} derive(Show)
 pub impl @json.FromJson for NxObj
 
-type NxPortal
-pub impl Show for NxPortal
-pub impl ToJson for NxPortal
-pub impl @json.FromJson for NxPortal
+type NxPortal derive(Show, ToJson, @json.FromJson)
 
 type NxSeat
 pub impl @json.FromJson for NxSeat
@@ -355,9 +334,7 @@ pub struct NxTileRef {
   x : Int
   y : Int
   zM : Int
-}
-pub impl Show for NxTileRef
-pub impl @json.FromJson for NxTileRef
+} derive(Show, @json.FromJson)
 
 pub struct NxTileSet {
   groups : Map[String, Array[NxTile]]
@@ -369,11 +346,8 @@ pub fn Obj::attach_entity(Self, @entity.Entity, Int) -> Unit
 pub fn Obj::get_z(Self) -> Int
 pub fn Obj::new(NxObj, @resource.NxAnimation, Int, Int) -> Self
 
-type ObjectAnimationPath
+type ObjectAnimationPath derive(Eq, Hash, Show)
 pub fn ObjectAnimationPath::from_obj(NxObj) -> Self
-pub impl Eq for ObjectAnimationPath
-pub impl Hash for ObjectAnimationPath
-pub impl Show for ObjectAnimationPath
 
 type Portal
 pub fn Portal::bounds(Self) -> @res_types.Rectangle[Int]
@@ -400,15 +374,10 @@ pub(all) enum PortalType {
   SPRING1
   SPRING2
   TYPE14
-}
+} derive(Compare, Eq, Hash, Show, ToJson)
 pub fn PortalType::is_auto_trigger(Self) -> Bool
 pub fn PortalType::is_manual_trigger(Self) -> Bool
 pub fn PortalType::typebyid(Int) -> Self?
-pub impl Compare for PortalType
-pub impl Eq for PortalType
-pub impl Hash for PortalType
-pub impl Show for PortalType
-pub impl ToJson for PortalType
 pub impl @json.FromJson for PortalType
 
 pub(all) struct PortalWarpInfo {
@@ -416,8 +385,7 @@ pub(all) struct PortalWarpInfo {
   toname : String
   name : String
   intra_map : Bool
-}
-pub impl Show for PortalWarpInfo
+} derive(Show)
 
 pub(all) struct SceneMap {
   id : Int
@@ -444,15 +412,13 @@ pub struct TileObjVisibilityState {
   layers : Array[TileObjectsVisibility]
   tile_items : Array[Array[Bool]]
   obj_items : Array[Array[Bool]]
-}
-pub impl Show for TileObjVisibilityState
+} derive(Show)
 
 pub struct TileObjectsVisibility {
   layer : Int
   tiles_visible : Bool
   objs_visible : Bool
-}
-pub impl Show for TileObjectsVisibility
+} derive(Show)
 
 type TilesObjsLayer
 pub fn TilesObjsLayer::from_resources(Int, NxTileSet?, Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxTileRef], Array[NxObj], Int) -> Self

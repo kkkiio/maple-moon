@@ -167,9 +167,7 @@ pub(all) struct MobAnimations {
   jump : @resource.NxAnimation?
   hit1 : @resource.NxAnimation
   die1 : @resource.NxAnimation
-}
-pub impl Show for MobAnimations
-pub impl @json.FromJson for MobAnimations
+} derive(Show, @json.FromJson)
 
 pub(all) struct MobBuff {
   time : Int
@@ -202,8 +200,7 @@ pub struct MobInfo {
   undead : Bool
   boss : Bool
   no_flip : Bool
-}
-pub impl ToJson for MobInfo
+} derive(ToJson)
 pub impl @json.FromJson for MobInfo
 
 pub(all) struct MobMultiUseEffect {
@@ -289,8 +286,7 @@ pub struct NxMobMeta {
   can_move : Bool
   can_jump : Bool
   can_fly : Bool
-}
-pub impl ToJson for NxMobMeta
+} derive(ToJson)
 
 pub struct NxMobSkillEntry {
   skill_id : Int
@@ -301,12 +297,11 @@ pub struct NxMobSkillEntry {
 pub(all) struct Stance {
   t : StanceType
   face_right : Bool
-}
+} derive(Eq)
 pub fn Stance::flip(Self) -> Self
 pub fn Stance::from_byte(Int) -> Self
 pub fn Stance::from_type(StanceType) -> Self
 pub fn Stance::int_value(Self) -> Int
-pub impl Eq for Stance
 
 pub(all) enum StanceType {
   MOVE
@@ -315,9 +310,7 @@ pub(all) enum StanceType {
   HIT
   DIE
   SKILL
-}
-pub impl Eq for StanceType
-pub impl Hash for StanceType
+} derive(Eq, Hash)
 
 // Type aliases
 

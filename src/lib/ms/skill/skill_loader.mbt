@@ -96,7 +96,7 @@ pub async fn preload_skills(
   // Load each bundle and its skills
   for bundle_key, ids in by_bundle {
     // Preload bundle if not cached
-    if not(bundle_cache.contains(bundle_key)) {
+    if !bundle_cache.contains(bundle_key) {
       let loader = @resource.require_async_loader("skill")
       // Load full bundle
       let json = loader.load_resource([bundle_key]) catch {

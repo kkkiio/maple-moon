@@ -38,8 +38,7 @@ pub fn setup_game_server_handlers() -> Unit
 // Errors
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
-}
-pub impl Show for ParseTalkError
+} derive(Show)
 
 // Types and methods
 type MapNpcs
@@ -55,6 +54,19 @@ pub(all) struct MapNpcsContext {
   map_npcs : MapNpcs
   physics : @physics.Physics
 }
+
+pub struct MxNpc {
+  info : MxNpcInfo
+  animations_path : String
+}
+pub impl @json.FromJson for MxNpc
+
+pub struct MxNpcInfo {
+  link : String?
+  scripted : Bool
+  speak_keys : Array[String]
+}
+pub impl @json.FromJson for MxNpcInfo
 
 type Npc
 pub fn Npc::destroy(Self) -> Unit
@@ -81,47 +93,26 @@ pub struct NpcDialogue {
   t : TalkType
   speaker : Speaker
   text : String
-}
-pub impl Show for NpcDialogue
-pub impl ToJson for NpcDialogue
+} derive(Show, ToJson)
 
-type NpcSpawn
+type NpcSpawn derive(Show, ToJson)
 pub fn NpcSpawn::get_oid(Self) -> Int
 pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
-pub impl Show for NpcSpawn
-pub impl ToJson for NpcSpawn
-
-pub struct NxNpc {
-  info : NxNpcInfo
-  animations : Map[String, @resource.NxAnimation]
-}
-pub impl @json.FromJson for NxNpc
-
-pub struct NxNpcInfo {
-  link : String?
-  scripted : Bool
-  speak_keys_by_state : Map[String, Array[String]]
-}
-pub impl @json.FromJson for NxNpcInfo
 
 pub struct SpawnNpcController {
   mode : Int
   oid : Int
   npc : NpcSpawn?
-}
-pub impl Show for SpawnNpcController
-pub impl ToJson for SpawnNpcController
+} derive(Show, ToJson)
 
 pub(all) enum Speaker {
   NPC_LEFT
   NPC_RIGHT
   PLAYER_LEFT
   PLAYER_RIGHT
-}
+} derive(Show, ToJson)
 pub fn Speaker::from_int(Int) -> Self?
 pub fn Speaker::int_value(Self) -> Int
-pub impl Show for Speaker
-pub impl ToJson for Speaker
 
 pub(all) enum TalkAction {
   SEND_YESNO((Bool?) -> Unit)
@@ -130,8 +121,7 @@ pub(all) enum TalkAction {
   SEND_PREV((Unit?) -> Unit)
   SEND_SIMPLE((Int?) -> Unit)
   SEND_NEXT_PREV((Bool?) -> Unit)
-}
-pub impl Show for TalkAction
+} derive(Show)
 
 pub(all) struct TalkArgs {
   npc_id : Int
@@ -147,14 +137,12 @@ pub(all) enum TalkChoice {
   SEND_NEXT(next~ : Unit?)
   SEND_NEXT_PREV(next~ : Bool?)
   SEND_PREV(prev~ : Unit?)
-}
-pub impl Show for TalkChoice
+} derive(Show)
 
 pub(all) struct TalkContent {
   text_html : String
   selections : Array[(@res_types.ColorName, Int, String)]
-}
-pub impl Show for TalkContent
+} derive(Show)
 
 pub enum TalkType {
   SEND_YESNO
@@ -163,13 +151,10 @@ pub enum TalkType {
   SEND_NEXT
   SEND_NEXT_PREV
   SEND_PREV
-}
+} derive(Eq, Show, ToJson)
 pub fn TalkType::from_int(Int, Int, Int) -> Self?
 pub fn TalkType::int_value(Self) -> Int
-pub impl Eq for TalkType
 pub impl Hash for TalkType
-pub impl Show for TalkType
-pub impl ToJson for TalkType
 
 // Type aliases
 

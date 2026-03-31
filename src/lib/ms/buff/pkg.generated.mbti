@@ -99,11 +99,9 @@ pub(all) enum StatId {
   CURSE
   SEDUCE
   SLOW
-}
+} derive(Compare, Eq)
 pub fn StatId::hash(Self) -> Int
 pub fn StatId::int_value(Self) -> Int
-pub impl Compare for StatId
-pub impl Eq for StatId
 pub impl Hash for StatId
 
 // Type aliases

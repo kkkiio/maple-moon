@@ -49,7 +49,7 @@ pub fn Combat::update(self : Combat) -> Unit {
     ) {
     self.apply_damage_effect(dmg_eff)
   }
-  // self.damage_numbers.retain(fn(dn) { not(dn.update()) })
+  // self.damage_numbers.retain(fn(dn) { !(dn.update()) })
 }
 
 ///|
@@ -366,7 +366,7 @@ fn Combat::resolve_attack_targets(
       )
       let targets = [primary_oid]
       for oid in splash {
-        if not(targets.contains(oid)) {
+        if !targets.contains(oid) {
           targets.push(oid)
         }
       }
@@ -397,7 +397,7 @@ fn Combat::extract_effects(
     skill_level: (user.get_skilllevel)(act.get_id()),
     level: user.get_stats().get_stat(@maple_stat.Id::LEVEL),
     second_weapon: user.is_two_handed(),
-    flip: not(result.toleft),
+    flip: !result.toleft,
   }
   if result.bullet != 0 {
     if get_range_semantics(act.get_id()) == RangeSemantics::ProjectileThenAoe {
@@ -636,7 +636,7 @@ fn resolve_attack_type(
       | @weapon.Type::CROSSBOW
       | @weapon.Type::CLAW
       | @weapon.Type::GUN => {
-        let degenerate = not(inventory.has_projectile())
+        let degenerate = !inventory.has_projectile()
         (
           degenerate,
           if degenerate {
@@ -647,7 +647,7 @@ fn resolve_attack_type(
         )
       }
       @weapon.Type::WAND | @weapon.Type::STAFF => {
-        let degenerate = not(skill)
+        let degenerate = !skill
         (
           degenerate,
           if degenerate {
@@ -767,7 +767,7 @@ pub fn combat_system(_world : @ecs.World) -> Unit {
   guard combat_ref.val is Some(combat) else { return }
   guard @game_state.current_phase() is GameActive(..) else { return }
   guard @monster.get_map_mobs() is Some(mobs) else { return }
-  if player_ref.val is Some(player) && not(player.is_invincible()) {
+  if player_ref.val is Some(player) && !player.is_invincible() {
     let moving_object : @physics.MovingObject = player.get_phobj().moving_object
     match mobs.find_colliding(moving_object) {
       Some(oid_id) =>

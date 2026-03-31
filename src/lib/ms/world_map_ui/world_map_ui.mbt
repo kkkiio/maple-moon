@@ -609,7 +609,7 @@ fn parse_map_ids(json : Json) -> Array[Int] raise {
       let ids = []
       for _, value in obj {
         match value {
-          String(id) => ids.push(@strconv.parse_int(id))
+          String(id) => ids.push(@string.parse_int(id))
           Number(id, ..) => ids.push(id.to_int())
           _ => fail("invalid mapNo entry")
         }
@@ -624,7 +624,7 @@ fn parse_map_ids(json : Json) -> Array[Int] raise {
 fn parse_int_value(json : Json) -> Int raise {
   match json {
     Number(value, ..) => value.to_int()
-    String(value) => @strconv.parse_int(value)
+    String(value) => @string.parse_int(value)
     _ => fail("invalid int json")
   }
 }
@@ -958,7 +958,7 @@ fn handle_click(
     return true
   }
   if point_in_hitbox(search_button, pos) {
-    state.search_visible = not(state.search_visible)
+    state.search_visible = !state.search_visible
     state.dirty = true
     return true
   }
@@ -1361,7 +1361,7 @@ pub fn set_world_map_visible(visible : Bool) -> Unit {
 /// Toggles world map visibility.
 pub fn toggle_world_map() -> Unit {
   let state = state_ref.val
-  set_world_map_visible(not(state.visible))
+  set_world_map_visible(!state.visible)
 }
 
 ///|
@@ -1512,7 +1512,7 @@ pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
     toggle_world_map()
     return
   }
-  if not(state.visible) {
+  if !state.visible {
     if state.render_entities.length() > 0 {
       clear_entities(state.render_entities)
     }

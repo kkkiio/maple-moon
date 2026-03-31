@@ -313,7 +313,7 @@ let skill_flags : Map[SkillId, (Bool, Bool)] = Map::from_array([
 
 ///|
 pub fn SkillData::is_attack(self : SkillData) -> Bool {
-  not(self.passive) && self.is_attack
+  !self.passive && self.is_attack
 }
 
 ///|
@@ -331,7 +331,7 @@ impl @json.FromJson for NxLevelStats with from_json(json, path) -> NxLevelStats 
     raise @json.JsonDecodeError((path, "expect object"))
   }
   for key, value in levels {
-    let level = @strconv.parse_int(key) catch {
+    let level = @string.parse_int(key) catch {
       _ => raise @json.JsonDecodeError((path, "invalid level"))
     }
     let stat = match value {

@@ -338,7 +338,7 @@ pub impl @json.FromJson for LookEntry with from_json(json, path) {
     }
     let result = Map::new()
     for key, item in obj {
-      let slot_id = @strconv.parse_int(key) catch {
+      let slot_id = @string.parse_int(key) catch {
         _ => raise @json.JsonDecodeError((path.add_key(key), "invalid int key"))
       }
       let item_id : Int = @json.from_json(item, path=path.add_key(key))
@@ -835,7 +835,7 @@ pub fn CharLook::add_equip(
   itemdata : @item.ItemData,
   slot : @slot.Id,
 ) -> Unit raise {
-  @log.info("charlook_add_equip", data={
+  @log.debug("charlook_add_equip", data={
     "slot_id": slot.int_value().to_json(),
     "item_id": itemdata.item_id.to_json(),
     "stance": self.stance.get().to_string().to_json(),
@@ -895,7 +895,7 @@ pub fn CharLook::get_attackdelay(
 pub fn CharLook::attack(self : CharLook, degenerate : Bool) -> Unit {
   guard self.equips.get_weapon() is Some(weapon) else { return }
   let attacktype = weapon.get_attack()
-  if attacktype == 9 && not(degenerate) {
+  if attacktype == 9 && !degenerate {
     self.set_stance(StanceId::SHOT)
     self.set_action("handgun")
   } else {
@@ -912,7 +912,7 @@ pub fn CharLook::attack_by_stance(
   self : CharLook,
   newstance : StanceId,
 ) -> Unit {
-  if not(self.action is None) || newstance == StanceId::NONE {
+  if !(self.action is None) || newstance == StanceId::NONE {
     return
   }
   match newstance {

@@ -159,13 +159,13 @@ pub fn Player::new(
       //   log_level=@log.Level::INFO,
       // )
     }
-    IterContinue
+    true
   })
   stats.watch_stat_changes(@maple_stat.Id::HP, fn(old_hp, new_hp) {
     if new_hp > old_hp {
       p.character.show_heal_number(new_hp - old_hp)
     }
-    IterContinue
+    true
   })
   p
 }
@@ -201,13 +201,13 @@ fn Player::update(
       let player = self
       match self.character.state {
         STAND =>
-          if not(player.character.get_phobj().enablejd) {
+          if !player.character.get_phobj().enablejd {
             player.character
             .get_phobj()
             .set_flag(@physics.PhysicsObjectFlag::CHECK_BELOW)
           }
         WALK => {
-          if not(player.is_attacking()) && haswalkinput(player) {
+          if !player.is_attacking() && haswalkinput(player) {
             let hforce = if player.character.is_facing_right() {
               player.get_walkforce()
             } else {
@@ -217,7 +217,7 @@ fn Player::update(
             .get_phobj()
             .set_hforce(player.character.get_phobj().hforce + hforce)
           }
-          if not(player.character.get_phobj().enablejd) {
+          if !player.character.get_phobj().enablejd {
             player.character
             .get_phobj()
             .set_flag(@physics.PhysicsObjectFlag::CHECK_BELOW)
@@ -243,12 +243,12 @@ fn Player::update(
           }
         }
         PRONE => {
-          if not(player.character.get_phobj().enablejd) {
+          if !player.character.get_phobj().enablejd {
             player.character
             .get_phobj()
             .set_flag(@physics.PhysicsObjectFlag::CHECK_BELOW)
           }
-          if not(is_action_down(@keymap.BasicActionId::MOVE_DOWN)) {
+          if !is_action_down(@keymap.BasicActionId::MOVE_DOWN) {
             player.set_state(CharState::STAND)
           }
         }
@@ -324,12 +324,12 @@ fn Player::update(
       } else {
         match self.character.state {
           STAND =>
-            if not(player.character.get_phobj().on_ground) {
+            if !player.character.get_phobj().on_ground {
               player.set_state(CharState::FALL)
             }
           WALK =>
             if player.character.get_phobj().on_ground {
-              if not(haswalkinput(player)) ||
+              if !haswalkinput(player) ||
                 player.character.get_phobj().moving_object.hspeed == 0.0 {
                 player.set_state(CharState::STAND)
               }
@@ -456,7 +456,7 @@ fn hold_at_climb_top_if_needed(
   player : Player,
   physics : @physics.Physics,
 ) -> Unit {
-  if not(is_action_down(@keymap.BasicActionId::MOVE_UP)) {
+  if !is_action_down(@keymap.BasicActionId::MOVE_UP) {
     return
   }
   match player.get_ladder() {
@@ -477,7 +477,7 @@ fn hold_at_climb_top_if_needed(
 
 ///|
 pub fn Player::set_facing_right(self : Player, facing_right : Bool) -> Unit {
-  if not(self.character.attacking) {
+  if !self.character.attacking {
     self.character.set_facing_right(facing_right)
   }
 }
@@ -610,7 +610,7 @@ pub fn Player::damage(self : Player, attack : MobAttack) -> MobAttackResult {
   let missed = damage <= 0
   let immovable = self.get_ladder() is Some(_) ||
     self.character.state is CharState::DIED
-  let knockback = not(missed) && not(immovable)
+  let knockback = !missed && !immovable
   if knockback && @randx.above(self.randomizer, self.stats.get_stance()) {
     self.character.get_phobj().moving_object.set_hspeed(
       if fromleft {
@@ -634,9 +634,9 @@ pub fn Player::get_skills(self : Player) -> &SkillBook {
 
 ///|
 pub fn Player::can_attack(self : Player) -> Bool {
-  not(self.character.attacking) &&
-  not(self.character.is_climbing()) &&
-  not(self.character.is_sitting()) &&
+  !self.character.attacking &&
+  !self.character.is_climbing() &&
+  !self.character.is_sitting() &&
   self.character.look.get_equips().has_weapon()
 }
 

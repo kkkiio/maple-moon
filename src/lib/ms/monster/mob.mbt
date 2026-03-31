@@ -54,7 +54,7 @@ pub fn Stance::from_type(t : StanceType) -> Stance {
 
 ///|
 pub fn Stance::flip(self : Stance) -> Stance {
-  { t: self.t, face_right: not(self.face_right) }
+  { t: self.t, face_right: !self.face_right }
 }
 
 ///|
@@ -177,7 +177,7 @@ pub struct MobInfo {
 ///|
 pub impl @json.FromJson for MobInfo with from_json(json, path) {
   let link = if json is { "link": String(link), .. } {
-    Some(@strconv.parse_int(link)) catch {
+    Some(@string.parse_int(link)) catch {
       _ => raise @json.JsonDecodeError((path, "invalid link"))
     }
   } else {
@@ -378,7 +378,7 @@ pub fn Mob::get_entity(self : Mob) -> @entity.Entity {
 
 ///|
 pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
-  if not(self.entity.is_alive()) {
+  if !self.entity.is_alive() {
     return self.phobj.fhlayer
   }
   let mut aniend = false
@@ -427,8 +427,8 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
   }
 
   // TODO: add buffs animation?
-  if not(self.dying) {
-    if not(self.can_fly) {
+  if !self.dying {
+    if !self.can_fly {
       if self.phobj.is_flag_not_set(@physics.PhysicsObjectFlag::TURN_AT_EDGES) {
         self.stance = self.stance.flip()
         self.phobj.set_flag(@physics.PhysicsObjectFlag::TURN_AT_EDGES)
@@ -574,7 +574,7 @@ pub fn Mob::set_control(self : Mob, mode : Int) -> Unit {
 
 ///|
 pub fn Mob::is_alive(self : Mob) -> Bool {
-  self.entity.is_alive() && not(self.dying)
+  self.entity.is_alive() && !self.dying
 }
 
 ///|
@@ -583,7 +583,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
     range.get_vertical().delta().is_neg() {
     @log.fatal("invalid range", data={ "range": range })
   }
-  if not(self.entity.is_alive()) {
+  if !self.entity.is_alive() {
     return false
   }
   match self.animations.get(self.stance.t) {
@@ -592,7 +592,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
       let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
-      let bounds = if self.stance.face_right && not(self.no_flip) {
+      let bounds = if self.stance.face_right && !self.no_flip {
         raw_bounds.flip_x()
       } else {
         raw_bounds
@@ -605,7 +605,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
 
 ///|
 pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
-  if not(self.is_alive()) {
+  if !self.is_alive() {
     return None
   }
   match self.animations.get(self.stance.t) {
@@ -613,7 +613,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
       let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
-      let bounds = if self.stance.face_right && not(self.no_flip) {
+      let bounds = if self.stance.face_right && !self.no_flip {
         raw_bounds.flip_x()
       } else {
         raw_bounds
@@ -626,7 +626,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
 
 ///|
 pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
-  if not(self.touch_damage) {
+  if !self.touch_damage {
     return @combat.MobAttack::default()
   }
   let minattack = (self.watk.to_double() * 0.8).to_int()
@@ -720,7 +720,7 @@ pub fn Mob::get_head_position(
   position
   .unwrap_or(self.get_position())
   .shift_x(
-    if self.stance.face_right && not(self.no_flip) {
+    if self.stance.face_right && !self.no_flip {
       -head.x
     } else {
       head.x
@@ -836,7 +836,7 @@ pub fn Mob::show_effect(
   z : Int,
   flip : Bool,
 ) -> Unit {
-  if not(self.entity.is_alive()) {
+  if !self.entity.is_alive() {
     return
   }
   // TODO: add shift
@@ -939,7 +939,7 @@ fn Mob::next_damage(
   critical : Double,
 ) -> (Int, Bool) {
   let hit = @randx.below(self.randomizer, hitchance)
-  if not(hit) {
+  if !hit {
     return (0, false)
   }
   let damagecap = 999999
@@ -1002,7 +1002,7 @@ pub fn Mob::apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
   } else if self.control &&
     self.is_alive() &&
     damage >= self.knockback &&
-    not(self.is_boss) {
+    !self.is_boss {
     self.counter = 170
     self.set_stance({ t: StanceType::HIT, face_right: toleft })
     self.update_movement()

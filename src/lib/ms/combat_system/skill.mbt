@@ -198,7 +198,7 @@ pub fn Skill::make_attack(
   let playerlevel = chr.stats.get_stat(@maple_stat.Id::LEVEL)
   let range = chr.stats.get_range()
   let origin = chr.get_position()
-  let toleft = chr.facing_right |> not()
+  let toleft = !chr.facing_right
   let speed = @character.get_integer_attackspeed(chr.get_look(), chr.stats)
   let level = (chr.get_skilllevel)(self.skill_id)
   let stats = self.stats.get(level).unwrap()
@@ -235,7 +235,7 @@ pub fn Skill::make_attack(
     @combat_proto.AttackType::RANGED => attack.hitcount = stats.bulletcount
     _ => attack.hitcount = stats.attackcount
   }
-  if not(stats.range.is_empty()) {
+  if !stats.range.is_empty() {
     attack.range = stats.range
   }
   if self.projectile && attack.bullet == 0 {
@@ -252,7 +252,7 @@ pub fn Skill::make_attack(
   }
   if self.over_regular {
     attack.stance = chr.get_look().get_stance().int_value()
-    if attack.t == @combat_proto.AttackType::CLOSE && not(self.projectile) {
+    if attack.t == @combat_proto.AttackType::CLOSE && !self.projectile {
       // Use afterimage range if available, otherwise keep default range
       if @char_look.get_after_image(chr.entity) is Some(after_image) {
         let after_image_range = after_image.get_range()
@@ -431,7 +431,7 @@ fn skill_get_path(json : Json, keys : Array[String]) -> Json {
 ///|
 fn json_has_children(json : Json) -> Bool {
   match json {
-    Object(obj) => not(obj.is_empty())
+    Object(obj) => !obj.is_empty()
     _ => false
   }
 }

@@ -54,7 +54,7 @@ pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
   loop self.spawns.pop() {
     Some(spawn) => {
       let oid = spawn.oid
-      if not(self.drops.contains(oid)) {
+      if !self.drops.contains(oid) {
         let itemid = spawn.item_id
         let meso = spawn.meso
         if meso {

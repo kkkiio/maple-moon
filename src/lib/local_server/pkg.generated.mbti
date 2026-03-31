@@ -78,31 +78,20 @@ pub(all) struct StorageEquipData {
   itemlevel : Int
   itemexp : Int
   vicious : Int
-}
-pub impl Default for StorageEquipData
-pub impl Show for StorageEquipData
-pub impl ToJson for StorageEquipData
-pub impl @json.FromJson for StorageEquipData
+} derive(Default, Show, ToJson, @json.FromJson)
 
 pub(all) struct StorageItemData {
   item_id : Int
   slot : Int
   count : Int
-}
-pub impl Default for StorageItemData
-pub impl Show for StorageItemData
-pub impl ToJson for StorageItemData
-pub impl @json.FromJson for StorageItemData
+} derive(Default, Show, ToJson, @json.FromJson)
 
 pub(all) enum StorageItemEntry {
   Equip(StorageEquipData)
   Item(StorageItemData)
-}
+} derive(Show, ToJson, @json.FromJson)
 pub fn StorageItemEntry::from_server_proto(@server_proto.InventoryItemEntry) -> Self
 pub fn StorageItemEntry::to_server_proto(Self, @server_proto.InventoryType) -> @server_proto.InventoryItemEntry
-pub impl Show for StorageItemEntry
-pub impl ToJson for StorageItemEntry
-pub impl @json.FromJson for StorageItemEntry
 
 // Type aliases
 

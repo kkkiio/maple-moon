@@ -109,20 +109,16 @@ pub(all) enum ExpressionId {
   SHINE
   VOMIT
   WINK
-}
-pub impl Compare for ExpressionId
+} derive(Compare, Eq, Hash)
 pub impl Default for ExpressionId
-pub impl Eq for ExpressionId
-pub impl Hash for ExpressionId
 pub impl ToJson for ExpressionId
 
-type Face
+type Face derive(Default)
 pub fn Face::get_delay(Self, ExpressionId, Int) -> Int
 pub fn Face::get_name(Self) -> String
 pub async fn Face::load(Int) -> Self
 pub fn Face::new(Int, Json) -> Self raise
 pub fn Face::nextframe(Self, ExpressionId, Int) -> Int
-pub impl Default for Face
 pub impl ToJson for Face
 
 type FaceFrame
@@ -150,12 +146,8 @@ pub(all) enum HairLayer {
   SHADE
   BACK
   BELOW_CAP
-}
+} derive(Compare, Eq, Hash, Show)
 pub fn HairLayer::z(Self) -> Int
-pub impl Compare for HairLayer
-pub impl Eq for HairLayer
-pub impl Hash for HairLayer
-pub impl Show for HairLayer
 pub impl ToJson for HairLayer
 
 pub(all) struct LookEntry {
@@ -166,10 +158,7 @@ pub(all) struct LookEntry {
   equips : Map[Int, Int]
   maskedequips : Map[Int, Int]
   petids : Array[Int]
-}
-pub impl Default for LookEntry
-pub impl Show for LookEntry
-pub impl ToJson for LookEntry
+} derive(Default, Show, ToJson)
 pub impl @json.FromJson for LookEntry
 
 // Type aliases

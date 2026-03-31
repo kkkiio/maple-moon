@@ -62,7 +62,7 @@ fn BySkillLevelBullet::new(src : Json, id : Int) -> BySkillLevelBullet raise {
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "ball": ball, .. } {
-        bullets.set(@strconv.parse_int(level), Ball::new(ball))
+        bullets.set(@string.parse_int(level), Ball::new(ball))
       }
     }
   }

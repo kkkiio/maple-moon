@@ -406,7 +406,7 @@ fn get_ui_window_4_loader() -> @resource.AsyncLoader {
 let npc_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "npc",
-    loader=@resource.DirResourceLoader::new("/assets/Npc"),
+    loader=@resource.FileJsonResourceLoader::new("/assets"),
     base_url="/assets",
   )
 })

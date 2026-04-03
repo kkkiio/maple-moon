@@ -42,10 +42,10 @@ pub async fn AnimationLoader::load(Self, String) -> LoadedAnimations
 pub fn AnimationLoader::new(AsyncLoader) -> Self
 
 type AsyncLoader
-pub async fn AsyncLoader::load_json_by_path(Self, String) -> Json
+pub async fn AsyncLoader::load_data(Self, String) -> Json
+pub fn AsyncLoader::load_image(Self, String) -> @asset_types.ImageHandle
 pub async fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
 pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader, base_url? : String, image_base_url? : String) -> Self
-pub fn AsyncLoader::resolve_image_path(Self, String) -> String
 pub fn AsyncLoader::resolve_json_path(Self, String) -> String
 
 type CompositeAsyncResourceLoader
@@ -68,6 +68,10 @@ pub fn[K, V] EnumMap::inner(Self[K, V]) -> Map[K, V]
 pub impl[K, V] Default for EnumMap[K, V]
 pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
 pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
+
+type FileJsonResourceLoader
+pub fn FileJsonResourceLoader::new(String) -> Self
+pub impl AsyncResourceLoader for FileJsonResourceLoader
 
 #external
 pub type Image

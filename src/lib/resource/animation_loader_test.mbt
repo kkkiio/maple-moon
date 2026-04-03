@@ -26,7 +26,7 @@ fn make_loader() -> AsyncLoader {
 }
 
 ///|
-test "async loader resolves json/image path with base urls" {
+test "async loader resolves json path with base urls" {
   let loader = make_loader()
   inspect(
     loader.resolve_json_path("Npc/Npc/0002007.img/animation.json"),
@@ -39,10 +39,6 @@ test "async loader resolves json/image path with base urls" {
   inspect(
     loader.resolve_json_path("https://example.com/a.json"),
     content="https://example.com/a.json",
-  )
-  inspect(
-    loader.resolve_image_path("Npc/Npc/0002007.img/animation.png"),
-    content="/assets/Npc/Npc/0002007.img/animation.png",
   )
 }
 

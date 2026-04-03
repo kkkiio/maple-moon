@@ -69,7 +69,7 @@ pub async fn AnimationLoader::load(
   match animation_cache.get(json_url) {
     Some(cached) => cached
     None => {
-      let src = self.loader.load_json_by_path(animations_path)
+      let src = self.loader.load_data(animations_path)
       let compiled = compile_loaded_animations(self.loader, src, json_url)
       animation_cache.set(json_url, compiled)
       compiled
@@ -135,8 +135,7 @@ fn compile_loaded_animations(
     ),
   )
 
-  let resolved_image = resolve_meta_image_path(loader, json_url, image_ref)
-  let image = @asset.load_image(resolved_image)
+  let image = load_meta_image(loader, json_url, image_ref)
 
   let clip_handles : Array[@selene_animation.AnimationClipHandle] = []
   let tag_names : Array[String] = []
@@ -297,19 +296,19 @@ fn anchor_from_pivot(pivot : @math.Vec2D) -> @sprite.Anchor {
 }
 
 ///|
-fn resolve_meta_image_path(
+fn load_meta_image(
   loader : AsyncLoader,
   json_url : String,
   image_ref : String,
-) -> String {
+) -> @asset.ImageHandle {
   if image_ref.has_prefix("http://") ||
     image_ref.has_prefix("https://") ||
     image_ref.has_prefix("/") {
-    image_ref
+    loader.load_image(image_ref)
   } else if image_ref.contains("/") {
-    loader.resolve_image_path(image_ref)
+    loader.load_image(image_ref)
   } else {
-    join_dir(parent_dir(json_url), image_ref)
+    loader.load_image(join_dir(parent_dir(json_url), image_ref))
   }
 }
 

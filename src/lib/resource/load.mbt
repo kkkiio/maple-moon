@@ -35,6 +35,12 @@ pub async fn AsyncLoader::load_resource(
 }
 
 ///|
+/// Load a JSON object by resource data path.
+pub async fn AsyncLoader::load_data(self : AsyncLoader, path : String) -> Json {
+  self.loader.load_data(path)
+}
+
+///|
 /// Resolve a JSON resource path to a fetchable URL/path.
 ///
 /// Rules:
@@ -49,27 +55,18 @@ pub fn AsyncLoader::resolve_json_path(
 }
 
 ///|
-/// Resolve an image resource path to a fetchable URL/path.
+/// Load an image by full/relative path.
 ///
 /// Rules:
 /// - `http://` / `https://` stays unchanged.
 /// - Absolute paths (for example `/assets/...`) stay unchanged.
 /// - Relative paths are resolved against `image_base_url`.
-pub fn AsyncLoader::resolve_image_path(
+pub fn AsyncLoader::load_image(
   self : AsyncLoader,
   path : String,
-) -> String {
-  resolve_path(path, self.image_base_url)
-}
-
-///|
-/// Load a JSON object by full/relative path instead of loader key path.
-pub async fn AsyncLoader::load_json_by_path(
-  self : AsyncLoader,
-  path : String,
-) -> Json {
-  let resolved = self.resolve_json_path(path)
-  fetch_json(resolved)
+) -> @asset.ImageHandle {
+  let resolved = resolve_path(path, self.image_base_url)
+  @asset.load_image(resolved)
 }
 
 ///|

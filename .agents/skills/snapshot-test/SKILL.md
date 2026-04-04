@@ -42,7 +42,8 @@ json_inspect(@npc_talk_ui.describe_npc_talk_ui(), content={
 - 不为测试改正式资源加载链路（例如 `src/lib/resource/load.mbt`）。
 - 让“测试注入”和“正式流程”复用同一份解析函数，避免双份解析逻辑。
 - 固定画布尺寸、UI 位置、输入和帧推进次数，保证快照稳定可复现。
-- 调用 `@capture_app.snapshot(".../__snapshot__/xxx.png")` 产出或比对 PNG。
+- 调用 `@capture_app.snapshot(".../__snapshot__/xxx.png", visual_desc="...")` 产出或比对 PNG。
+- `visual_desc` 应该是纯视觉描述, 让普通玩家也能理解图片内容, 不能包含内部动作名.
 
 ### 2. 执行测试生成快照
 

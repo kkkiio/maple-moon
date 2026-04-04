@@ -1,6 +1,6 @@
 ---
 name: resource-processing-workflow
-description: 处理 Maple Moon 资源下载、迁移、reanim 重打包与加载校验。用于新增或修复资源（尤其是 r2 到 assets 迁移）、排查 `failed to fetch`、贴图缺失，并统一资源格式到可运行状态时。
+description: 处理 Maple Moon 资源迁移、导出与加载校验。用于新增或修复资源、排查 `failed to fetch`、贴图缺失，并将资源统一到 `tiled(.tmj/.tsj)` 与 `aseprite(json+png)` 运行格式。
 ---
 
 # Resource Processing Workflow
@@ -9,86 +9,63 @@ description: 处理 Maple Moon 资源下载、迁移、reanim 重打包与加载
 
 职责边界：
 
-- `nx_maple_res` 项目(路径从`NX_MAPLE_RES_PATH`环境变量或`.env.dev`文件获取) 负责原始 `.nx` 输入、`cache/` 中间产物、`reanim` 处理
-- `./assets` 只负责最终运行时
+- `nx_maple_res` 项目（路径从 `NX_MAPLE_RES_PATH` 环境变量或 `.env.dev` 获取）负责原始 `.nx` 输入和导出工具链。
+- `./assets` 只存放最终运行时资源（含 `map.tmj`、外部 `tilesets/*.tsj`、spritesheet 的 `json+png` 等）。
 
 ## 1. 识别资源来源与目标格式
 
 明确输出目标：
 
 - 运行产物在 `./assets/`
-- 需要统一帧偏移时，目标 JSON 应包含 `__off`
+- 地图资源优先使用 Tiled 格式：`.tmj` + `.tsj`
+- 动画/图集资源优先使用 Aseprite 格式：`json+png`
 
 ## 1.1 资源来源
 
-有两大来源：
+当前权威来源是：
 
-- 旧流程派生缓存：`$NX_MAPLE_RES_PATH/cache/r2/*`（常见 `__i: "...#frame"`）.
-  - 部分资源还在远程存储 `r2:maple`, 需使用 `rclone` 从 `r2:maple` 下载到本地`$NX_MAPLE_RES_PATH/cache/r2`.
-- 权威原始输入：`$NX_MAPLE_RES_PATH/assets/<Package>.nx`
-  - `.nx` 导出中间产物：`$NX_MAPLE_RES_PATH/cache/nx_export/<Package>.nx/{nx.json,bitmaps/*}`（`__b`）
+- 原始输入：`$NX_MAPLE_RES_PATH/assets/<Package>.nx`
+- 导出工具：`nx_maple_res/cmd/main`
 
-优先选择旧流程派生缓存. 因为 `.nx` 文件目前还不全.
+中间产物目录是 `nx_maple_res` 项目内的
+`$NX_MAPLE_RES_PATH/cache/nx_export`，不作为长期依赖。
 
 ## 1.2 根据来源处理
 
-- 如果 `cache/r2` 已有同名资源, 直接进入 reanim 处理流程.
-- 如果 `cache/r2` 没有, 先从 `r2:maple` 拉取到 `cache/r2`, 再进入 reanim 处理流程.
-- 如果两者都没有, 再考虑从 `.nx` 导出.
-- 如果发现 `cache/r2` 结构异常、或怀疑旧流程产物有误，优先回到 `.nx` 重新导出。
-- 长期方向是逐步减少对 `cache/r2` 的依赖。
+- 缺资源时，优先确认对应 `.nx` 节点是否存在。
+- 存在则直接走 `nx_maple_res` 导出流程生成目标资源。
+- 如果导出结果异常，先定位节点路径和导出参数，再修复导出工具或资源映射，不回退到旧缓存体系。
 
-## 2. 从 r2 拉取最小必要资源
+## 2. 迁移导出流程（以 `nx_maple_res export` 为主）
 
-- 使用 `rclone` 从 `r2:maple` **只拉到 `$NX_MAPLE_RES_PATH/cache/r2`**，不要直接拉到 `./assets`，避免污染运行时资源目录。
-- 优先精确同步缺失文件，不做全量拉取.
-
-示例:
-
-```bash
-cd $NX_MAPLE_RES_PATH
-rclone copy -v --no-update-modtime r2:maple cache/r2 --include 'Map/Obj/trap.img.json'
-# rclone copy -v --no-update-modtime r2:maple cache/r2 --files-from /tmp/missing.txt
-```
-
-## 3. 使用 reanim 生成带 `__off` 的产物
-
-```bash
-moon run --target js cmd/reanim -- <input.json> <maple-moon-assets-output-dir> --spritesheet-dir <dir>
-```
-
-## 3.1 从 `.nx` 取资源时使用 `nx_maple_res`
-
-- `nx_maple_res` 负责从 `.nx` 里按节点导出原始 JSON 与 bitmap，不直接产出 Maple Moon 运行资源。
-- 推荐流程：
+优先用 `nx_maple_res` 一次导出可运行资源：
 
 ```bash
 cd $NX_MAPLE_RES_PATH
 
-moon run cmd/main -- to_json assets/Map.nx --nodepath WorldMap --output cache/nx_export/Map.nx/WorldMap.json
-moon run cmd/main -- save_bitmap assets/Map.nx WorldMap --out-dir cache/nx_export
-
-moon run cmd/main -- to_json assets/Map.nx --nodepath MapHelper.img/worldMap --output cache/nx_export/Map.nx/maphelper_worldmap.json
-moon run cmd/main -- save_bitmap assets/Map.nx MapHelper.img/worldMap --out-dir cache/nx_export
+moon run --target native cmd/main -- export \
+  --include 'Map/Map1/102000001.img' \
+  --out-dir $MAPLE_MOON_PATH/assets/map \
+  assets/Map.nx
 ```
 
-- 上一步的导出结果仍是 `__b` 原始格式，必须再走 `reanim`：
+说明：
 
-```bash
-cd $NX_MAPLE_RES_PATH
+- `Map.nx` 导出后应在目标目录生成 `Map/.../mx.json` + `map.tmj` + `tilesets/*.tsj` + 贴图文件。
+- 推荐始终使用 `--include` 精确导出，避免无关资源大面积改动。
 
-moon run --target js cmd/reanim -- cache/nx_export/Map.nx/WorldMap.json $MAPLE_MOON_PATH/assets/map/WorldMap --bitmaps-dir cache/nx_export/Map.nx/bitmaps
-moon run --target js cmd/reanim -- cache/nx_export/Map.nx/maphelper_worldmap.json $MAPLE_MOON_PATH/assets/spritesheets/Map/MapHelper.img --bitmaps-dir cache/nx_export/Map.nx/bitmaps
-```
+## 3. 关于 `NxAnimation` / `NxTexture`
 
-- 当 `WorldMap` 是一个大节点集合时，先按顶层子节点拆分成多个 `WorldMapXXX.img.json` 再分别运行 `reanim`，避免把所有页面错误地合成到一个文件里。
-- `MapHelper.img/worldMap` 这类单节点资源可直接整体跑一次 `reanim`。
-- `nx_maple_res` 导出的 JSON 只用于中间产物，默认写到 `cache/nx_export`，不要直接提交。
+迁移到 Tiled + Aseprite 不代表废弃 `NxAnimation` / `NxTexture`：
+
+- 这套格式仍然用于部分运行时模块（例如角色、特效、UI 等）。
+- 当目标模块仍消费 `NxAnimation` / `NxTexture` 时，继续保留该格式资源，不强行转换成 `tmj/tsj`。
+- `$NX_MAPLE_RES_PATH/cache/nx_export` 仍可作为排查导出问题的中间层，但默认不提交。
 
 ## 4. 完整性校验
 
-- 检查每个 JSON 的引用是否都存在于 `$MAPLE_MOON_PATH/assets/`。
-- 检查期望 reanim 的 JSON 是否含 `__off`。
+- 检查 `mx.json` 指向的 `map.tmj` 是否存在，`tmj` 引用的 `tsj/png` 是否存在。
+- 检查资源路径是否与 loader 前缀一致。
 - 运行构建验证：
 
 ```bash
@@ -98,4 +75,4 @@ moon run --target js cmd/rescheck
 ## 5. loader 对齐
 
 - 处理后资源需与 `src/lib/resource/builtin_resource_loaders.mbt` 的 `base_url` 与目录前缀一致。
-- 遇到运行时报 `failed to fetch`，先验证 `./assets` 路径是否真实存在，再看 loader 映射。
+- 遇到运行时报 `failed to fetch`，先验证 `./assets` 路径是否真实存在，再看 loader 映射与 `mx.json` 路径。

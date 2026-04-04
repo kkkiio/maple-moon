@@ -1,57 +1,14 @@
 ///|
-fn load_json_from_file(path : String) -> Json {
-  (@fs.read_file_to_string(path) |> @json.parse) catch {
-    _ => panic()
-  }
-}
-
-///|
-fn load_map_root_101010102() -> Json {
-  load_json_from_file("assets/map/map1/101010102.img.json")
-}
-
-///|
-async fn load_backgrounds_101010102() -> @map.Backgrounds {
-  let root = load_map_root_101010102()
-  let nx_map : @map.NxMap = @json.from_json(root) catch { _ => panic() }
-  let background_loader = @resource.AsyncLoader::new(
-    "test_background",
-    loader=@local_loader.LocalDirResourceLoader::new("assets/map/back"),
-    base_url="/assets",
-  )
-  let background_animation_sets : Map[
-    String,
-    Map[@map.BackgroundAnimationPath, @resource.NxAnimation],
-  ] = {}
-  for background in nx_map.back.0 {
-    if background.bS == "" {
-      continue
-    }
-    let path = @map.BackgroundAnimationPath::from_nx(background)
-    let set_map = background_animation_sets.get_or_init(background.bS, fn() {
-      {}
-    })
-    if !set_map.contains(path) {
-      set_map[path] = @map.load_background_animation(
-        background_loader,
-        background.bS,
-        path,
-      )
-    }
-  }
-  @map.load_backgrounds(nx_map.back, background_animation_sets)
-}
-
-///|
-async fn setup_background_scene_101010102() -> Unit {
+async fn setup_tiled_background_scene_101010102() -> Unit {
+  @local_loader.install_resource_env_for_test()
   let app = @app.App::new()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(world) { @map.background_system(world) },
-      system_name="background_system",
+      fn(world) { @map.tiled_background_motion_system(world) },
+      system_name="tiled_background_motion_system",
     )
     .add_system(
       Update,
@@ -59,10 +16,10 @@ async fn setup_background_scene_101010102() -> Unit {
       system_name="io_system",
     )
   @capture_app.init_app(app)
-  let backgrounds = load_backgrounds_101010102()
-  @map.set_backgrounds(backgrounds)
+  let raw = @map.load_map_resources_by_id(101010102)
+  @map.set_tiled_map(raw.tiled_map)
   let camera_anchor = @entity.Entity::new()
-  @transform2d.set_xy(camera_anchor, @math.Vec2D(-760.0, -760.0))
+  @transform2d.set_xy(camera_anchor, @math.Vec2D(0.0, 0.0))
   @ms_camera.setup_camera_entity(
     camera_anchor,
     center=@transform2d.get_xy(camera_anchor).unwrap_or(@math.Vec2D::zero()),
@@ -99,30 +56,33 @@ fn visible_sprite_count() -> Int {
 }
 
 ///|
-async test "map 101010102 background alpha animation snapshot" {
+async test "map 101010102 tiled background render snapshot" {
+  defer @map.clear_tiled_map()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
-  setup_background_scene_101010102()
-  @capture_app.run_loop(0.016)
-
-  let start_alpha = min_sprite_alpha()
-  assert_true(start_alpha < 1.0)
-  assert_true(visible_sprite_count() > 0)
-  @capture_app.snapshot(
-    "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
-    visual_desc="Map background rendered with initial alpha transparency.",
-  )
-
-  for _ in 0..<78 {
+  setup_tiled_background_scene_101010102()
+  for _ in 0..<80 {
     @capture_app.run_loop(0.016)
   }
 
-  let mid_alpha = min_sprite_alpha()
-  assert_true(mid_alpha >= 0.0)
-  assert_true(mid_alpha < start_alpha)
+  let start_alpha = min_sprite_alpha()
+  assert_true(start_alpha >= 0.0)
+  assert_true(visible_sprite_count() > 0)
+  @capture_app.snapshot(
+    "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
+    visual_desc="Large green tree trunks and vines fill most of the screen, with lighter tree layers visible in the far background.",
+  )
+
+  for _ in 0..<12 {
+    @capture_app.run_loop(0.016)
+  }
+
+  let after_motion_alpha = min_sprite_alpha()
+  assert_true(after_motion_alpha >= 0.0)
+  assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
-    visual_desc="Map background rendered with mid-level alpha transparency.",
+    visual_desc="Overlapping foreground and background tree layers create a dense forest view, with thick trunks crossing the center of the screen.",
   )
 }

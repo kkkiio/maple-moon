@@ -151,12 +151,25 @@ async fn fetch_json(path : String) -> Json {
     fail("failed to fetch string: \{path}, status=\{response.status()}")
   }
   let content_type = response.content_type()
-  if !content_type.contains("application/json") {
+  if !is_json_content_type(content_type, path) {
     fail(
       "expected JSON response, got content-type: \{content_type}, path=\{path}",
     )
   }
   response.text().wait() |> @json.parse
+}
+
+///|
+fn is_json_content_type(content_type : String, path : String) -> Bool {
+  if content_type.contains("application/json") {
+    return true
+  }
+  if content_type.is_empty() {
+    return path.has_suffix(".json") ||
+      path.has_suffix(".tmj") ||
+      path.has_suffix(".tsj")
+  }
+  false
 }
 
 ///|

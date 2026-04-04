@@ -6,6 +6,7 @@
 /// If the `UPDATE_CANVAS_SNAPS` environment variable is set to `"true"`, the snapshot file will be updated.
 /// 
 /// Use `visual_desc` to provide semantic expectation for the snapshot.
+/// The visual_desc should be a short, human-readable, independent description of the expected content of the snapshot.
 /// If snapshot is in update mode (`UPDATE_CANVAS_SNAPS=true` or snapshot file missing),
 /// use vision model to assert semantic expectation.
 pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {

@@ -1,6 +1,5 @@
 import {
   "moonbitlang/core/json",
-  "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/log",

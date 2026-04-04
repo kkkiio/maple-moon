@@ -1,6 +1,7 @@
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
+  "moonbitlang/core/string",
   "moonbitlang/x/sys",
   "KKKIIO/maple-moon/lib/data_sheet",
   "KKKIIO/maple-moon/lib/resource",

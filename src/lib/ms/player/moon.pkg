@@ -18,4 +18,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/combat_system",
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/char_stance",
+  "KKKIIO/maple-moon/lib/graphics",
+  "Milky2018/selene/transform",
+  "Milky2018/selene/math",
 }

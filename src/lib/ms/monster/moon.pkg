@@ -18,7 +18,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/game_server",
-  "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/ms/logic_fps",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "Milky2018/selene/sprite",

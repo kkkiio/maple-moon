@@ -94,6 +94,16 @@ let tiled_background_motion_states_ref : Ref[
 ] = Ref::new(Map::new())
 
 ///|
+let tiled_object_spawn_reader : Ref[
+  @event.EventReader[@tiled.TiledObjectSpawnedEvent],
+] = Ref::new(@event.EventReader::new())
+
+///|
+let tiled_image_layer_spawn_reader : Ref[
+  @event.EventReader[@tiled.TiledImageLayerSpawnedEvent],
+] = Ref::new(@event.EventReader::new())
+
+///|
 priv struct TiledBackgroundMotionState {
   base_offset : @selene_math.Vec2D
   velocity : @selene_math.Vec2D
@@ -117,6 +127,111 @@ fn tiled_property_int_optional(
     Some(_) => None
     None => None
   }
+}
+
+///|
+fn tiled_object_int_optional_soft(
+  obj : @tiled.TiledObject,
+  name : String,
+) -> Int? {
+  match obj.property(name) {
+    Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
+    Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
+    Some(@tiled.TiledPropertyValue::String(value)) => {
+      let parsed = try? @string.parse_int(value)
+      match parsed {
+        Ok(parsed) => Some(parsed)
+        Err(_) => None
+      }
+    }
+    Some(_) => None
+    None => None
+  }
+}
+
+///|
+fn parse_map_layer_name(name : String) -> (Int, String)? {
+  let parts = name.split("_").to_array()
+  if parts.length() != 3 || parts[0] != "layer" {
+    return None
+  }
+  if parts[2] != "obj" && parts[2] != "tile" {
+    return None
+  }
+  let parsed = try? @string.parse_int(parts[1])
+  match parsed {
+    Ok(layer) => Some((layer, parts[2].to_string()))
+    Err(_) => None
+  }
+}
+
+///|
+fn parse_background_index(name : String, prefix : String) -> Int? {
+  if !name.has_prefix(prefix) {
+    return None
+  }
+  let suffix = name[prefix.length():name.length()].to_string()
+  let parsed = try? @string.parse_int(suffix)
+  match parsed {
+    Ok(index) => Some(index)
+    Err(_) => None
+  }
+}
+
+///|
+fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
+  match @transform.transforms().get(entity) {
+    Some(current) =>
+      @transform.transforms().set(entity, {
+        ..current,
+        translation: @selene_math.Vec3::new(
+          current.translation.x,
+          current.translation.y,
+          z.to_double(),
+        ),
+      })
+    None =>
+      @transform.transforms().set(
+        entity,
+        @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+      )
+  }
+}
+
+///|
+fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit {
+  guard parse_map_layer_name(event.layer.name) is Some((layer_from_name, kind)) else {
+    return
+  }
+  let layer = tiled_object_int_optional_soft(event.object, "layer").unwrap_or(
+    layer_from_name,
+  )
+  let z = match kind {
+    "obj" => {
+      let z = tiled_object_int_optional_soft(event.object, "z").unwrap_or(0)
+      let zM = tiled_object_int_optional_soft(event.object, "zM").unwrap_or(0)
+      @graphics.map_obj_z(layer, z, zM)
+    }
+    "tile" => {
+      let zM = tiled_object_int_optional_soft(event.object, "zM").unwrap_or(0)
+      @graphics.map_tile_z(layer, zM)
+    }
+    _ => return
+  }
+  set_entity_z(event.object_entity, z)
+}
+
+///|
+fn apply_map_image_layer_z(event : @tiled.TiledImageLayerSpawnedEvent) -> Unit {
+  let name = event.layer.name
+  let z = if parse_background_index(name, "background_back_") is Some(index) {
+    @graphics.BACKGROUND_ZINDEX + index
+  } else if parse_background_index(name, "background_front_") is Some(index) {
+    @graphics.FOREGROUND_ZINDEX + index
+  } else {
+    return
+  }
+  set_entity_z(event.layer_entity, z)
 }
 
 ///|
@@ -155,6 +270,22 @@ pub fn set_tiled_map(map : @tiled.TiledMap) -> Unit {
     }
   }
   @tiled.respawn_tiled_map_into_entity(root, map)
+  let object_events = @tiled.tiled_object_spawned_event_bus.read(
+    tiled_object_spawn_reader.val,
+  )
+  for event in object_events {
+    if event.map_entity == root {
+      apply_map_object_z(event)
+    }
+  }
+  let image_layer_events = @tiled.tiled_image_layer_spawned_event_bus.read(
+    tiled_image_layer_spawn_reader.val,
+  )
+  for event in image_layer_events {
+    if event.map_entity == root {
+      apply_map_image_layer_z(event)
+    }
+  }
   reload_tiled_background_motion_states(root)
 }
 

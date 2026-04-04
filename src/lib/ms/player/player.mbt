@@ -151,6 +151,7 @@ pub fn Player::new(
   }
   p.set_state(CharState::STAND)
   p.set_facing_right(true)
+  sync_player_world_z(p)
   stats.watch_stat_changes(@maple_stat.Id::HP, fn(_old, hp) {
     if hp <= 0 {
       p.set_state(@character.CharState::DIED)
@@ -734,4 +735,29 @@ pub fn tick_player(
   map_info : @map.MapInfo,
 ) -> Unit {
   player.update(physics, map_info)
+  sync_player_world_z(player)
+}
+
+///|
+fn sync_player_world_z(player : Player) -> Unit {
+  let layer = player.character.get_layer()
+  let world_y = player.character.get_position().y
+  let root_z = @graphics.map_player_z(layer, world_y) -
+    @graphics.CHAR_LOOK_ZINDEX
+  match @transform.transforms().get(player.entity) {
+    Some(current) =>
+      @transform.transforms().set(player.entity, {
+        ..current,
+        translation: @math.Vec3::new(
+          current.translation.x,
+          current.translation.y,
+          root_z.to_double(),
+        ),
+      })
+    None =>
+      @transform.transforms().set(
+        player.entity,
+        @transform.Transform::from_xyz(0.0, 0.0, root_z.to_double()),
+      )
+  }
 }

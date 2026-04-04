@@ -515,15 +515,11 @@ pub fn Npc::set_stance(self : Npc, st : String) -> Unit {
 }
 
 ///|
-const NPC_ZINDEX_OFFSET = 4
-
-///|
 fn Npc::sync_sprite(self : Npc) -> Unit {
   guard self.entity.is_alive() else { return }
   guard self.animations.get(self.stance) is Some(animation) else { return }
-  let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
-    self.phobj.fhlayer +
-    NPC_ZINDEX_OFFSET
+  let pos = self.phobj.get_position()
+  let z = @graphics.map_npc_z(self.phobj.fhlayer, pos.y)
   let transform = if self.flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {

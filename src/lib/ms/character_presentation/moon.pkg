@@ -30,5 +30,4 @@ import {
 }
 
 import {
-  "Milky2018/selene/ecs",
 } for "test"

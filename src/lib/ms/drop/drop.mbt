@@ -204,7 +204,8 @@ pub impl Drop for MesoDrop with update(
 ) -> Int {
   let layer = self.base.update(physics)
   let entity = self.base.entity
-  let z = @graphics.DROP_LAYER_ZINDEX + layer
+  let y = self.base.phobj.get_position().y
+  let z = @graphics.map_drop_z(layer, y)
   let angle = self.base.angle.get()
   let opacity = self.base.opacity.get()
   // Check if sprite already exists
@@ -316,7 +317,8 @@ pub impl Drop for ItemDrop with update(
 ) -> Int {
   let layer = self.base.update(physics)
   let entity = self.base.entity
-  let z = @graphics.DROP_LAYER_ZINDEX + layer
+  let y = self.base.phobj.get_position().y
+  let z = @graphics.map_drop_z(layer, y)
   let opacity = self.base.opacity.get()
   // For ItemDrop, we use Picture which doesn't support rotation transform
   // We only update alpha for PICKED_UP fade effect

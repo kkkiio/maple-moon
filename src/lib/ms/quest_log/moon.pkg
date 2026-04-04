@@ -1,6 +1,5 @@
 import {
   "moonbitlang/core/json",
-  "Milky2018/selene/event",
   "KKKIIO/maple-moon/lib/game_server",
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/log",

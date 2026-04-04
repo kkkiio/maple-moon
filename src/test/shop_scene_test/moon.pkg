@@ -1,11 +1,11 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/string",
   "moonbitlang/async",
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/npc",
-  "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/test/capture_app",

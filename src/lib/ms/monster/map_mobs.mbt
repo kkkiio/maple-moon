@@ -320,12 +320,6 @@ pub async fn MobSpawn::instantiate(
 }
 
 ///|
-const MOB_ZINDEX_OFFSET = 2000
-
-///|
-const MAP_LAYER_STRIDE = 5000
-
-///|
 /// Advance map monster simulation once in fixed schedule.
 // TODO: Split non-fixed-step logic out of this FixedUpdate system into a separate Update system function.
 pub fn map_monsters_fixed_system(_world : @ecs.World) -> Unit {
@@ -352,9 +346,8 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
         @selene_math.Transform::new()
       }
       let layer = mob.get_layer()
-      let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
-        layer * MAP_LAYER_STRIDE +
-        MOB_ZINDEX_OFFSET
+      let y = mob.get_position().y
+      let z = @graphics.map_mob_z(layer, y)
       let sprite = @ms_animation.sprite_from_animation(
         anim.selene,
         z,
@@ -365,9 +358,8 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
     } else {
       // Only update Z
       let layer = mob.get_layer()
-      let z = @graphics.OBJECT_TILE_LAYER_ZINDEX +
-        layer * MAP_LAYER_STRIDE +
-        MOB_ZINDEX_OFFSET
+      let y = mob.get_position().y
+      let z = @graphics.map_mob_z(layer, y)
       if @transform.transforms().get(entity) is Some(current) {
         @transform.transforms().set(entity, {
           ..current,

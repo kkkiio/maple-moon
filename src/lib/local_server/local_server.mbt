@@ -942,36 +942,29 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.active_shop = None
   self.npc_id_by_oid.clear()
   @io_service.execute_background(async fn() {
-    let loader = @resource.require_async_loader("mapx")
-    let prefix = (map_id / 100000000).to_string()
-    let strid = @utils.stoi_left_pad0(map_id, 9)
-    let path = ["Map\{prefix}", "\{strid}.img"]
-    let node_res = loader.load_resource(path)
-    guard node_res is { "life": Object(life_map), .. } else { return }
-    for _, entity in life_map {
+    guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }
+    let life_layer = require_life_layer(map)
+    for entity in life_layer.objects {
       if self.spawn_batch_id != batch_id {
         return
       }
-      match entity {
-        {
-          "type": String("m"),
-          "id": String(id_str),
-          "x": Number(x, ..),
-          "y": Number(y, ..),
-          "f": Number(f, ..),
-          "fh": Number(fh, ..),
-          ..
-        } => {
-          let monster_id = @string.parse_int(id_str)
+      let life_type = tiled_object_string_required(entity, "type")
+      match life_type {
+        "m" => {
+          let monster_id = tiled_object_int_like_required(entity, "id")
+          let x = tiled_object_int_required(entity, "x")
+          let y = tiled_object_int_required(entity, "y")
+          let f = tiled_object_int_or_default(entity, "f", 0)
+          let fh = tiled_object_int_required(entity, "fh")
           self.last_object_id += 1
           let spawn_msg = MobSpawnControllerMessage::{
             oid: self.last_object_id,
             id: monster_id,
             mode: 1, // Passive Control
-            x: x.to_int(),
-            y: y.to_int(),
-            stance: f.to_int(),
-            fh: fh.to_int(),
+            x,
+            y,
+            stance: f,
+            fh,
             team: -1,
           }
           let mob_loader = @resource.require_async_loader("mob")
@@ -986,25 +979,21 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             max_hp: max_hp.to_int(),
           })
         }
-        {
-          "type": String("n"),
-          "id": String(id_str),
-          "x": Number(x, ..),
-          "y": Number(y, ..),
-          "f": Number(f, ..),
-          "fh": Number(fh, ..),
-          ..
-        } => {
+        "n" => {
+          let npc_id = tiled_object_int_like_required(entity, "id")
+          let x = tiled_object_int_required(entity, "x")
+          let y = tiled_object_int_required(entity, "y")
+          let f = tiled_object_int_or_default(entity, "f", 0)
+          let fh = tiled_object_int_required(entity, "fh")
           self.last_object_id += 1
-          let npc_id = @string.parse_int(id_str)
           self.pending_npc_spawns.push(NpcSpawnControllerMessage::{
             mode: 1,
             oid: self.last_object_id,
             id: npc_id,
-            x: x.to_int(),
-            y: y.to_int(),
-            flip: f.to_int() != 0,
-            fh: fh.to_int(),
+            x,
+            y,
+            flip: f != 0,
+            fh,
           })
           self.npc_id_by_oid.set(self.last_object_id, npc_id)
         }

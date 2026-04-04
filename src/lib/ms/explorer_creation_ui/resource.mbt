@@ -25,7 +25,6 @@ fn get_etc_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Etc",
     loader=@resource.DirResourceLoader::new("/assets/Etc"),
-    base_url="/assets",
   )
 }
 
@@ -36,7 +35,6 @@ fn get_map001_loader() -> @resource.AsyncLoader {
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Back/": @resource.DirResourceLoader::new("/assets/Map001/Back"),
     }),
-    base_url="/assets",
   )
 }
 
@@ -45,7 +43,6 @@ fn get_login_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Login",
     loader=@resource.DirResourceLoader::new("/assets/UI"),
-    base_url="/assets",
   )
 }
 

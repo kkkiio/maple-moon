@@ -27,3 +27,11 @@ let server = @local_server.LocalServer::new(db=@local_server.BrowserDB::new())
 @system.App::new()
 .add_system(delta => @local_server.server_system(server), system_name="local_server_system")
 ```
+
+## Map Resource Contract
+
+`local_server/transition` now resolves portal target data from exported map resources:
+
+- read `MapX/<mapId>.img/mx.json`
+- follow `tiled_path` to load `map.tmj`
+- read `portal` object layer (`pn/tm/tn`) and compute `portal_id` by object order

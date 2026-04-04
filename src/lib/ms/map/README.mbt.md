@@ -1,41 +1,36 @@
 # Map
 
-其结构主要包含:
+`ms/map` 现在是严格的 TMJ 主链路，不再提供旧 `NxMap` 背景/Tile/Obj 渲染路径。
 
-- `info`: 地图元数据 (背景音乐 bgm, 是否游泳 swim, 限制等)
-- `back`: 背景图层
-- `life`: NPC 和怪物
-- `portal`: 传送门信息
-- `foothold`: 地形/物理碰撞信息
+## 资源入口
 
-## 背景
+- `MapX/<mapId>.img/mx.json`
+  - 仅包含 `tiled_path`
+- `map.tmj`
+  - 地图主体数据（`portal` / `life` / `foothold` / `ladderRope` / `seat` / `miniMap`）
 
-- `front` 表示是否是前景，默认是 false
-- `ani` 表示是否是动画，默认是 false
+## 运行时构建
 
-```mbt nocheck
-///|
-test {
-  let json : Json = {
-    "0": {
-      "a": 255,
-      "bS": "",
-      "cx": 0,
-      "cy": 0,
-      "no": 0,
-      "rx": 0,
-      "ry": 0,
-      "type": 0,
-      "x": 0,
-      "y": 0,
-    },
-  }
-  let map_tiles_objs_resource : BackgroundsResource = @json.from_json(json)
-  inspect(
-    map_tiles_objs_resource,
-    content=(
-      #|BackgroundsResource([{a: 255, ani: false, bS: "", cx: 0, cy: 0, f: false, front: false, no: 0, rx: 0, ry: 0, type_: BG_NORMAL, x: 0, y: 0}])
-    ),
-  )
-}
-```
+- `load_map_resources_by_id`:
+  - 读取 `mx.json` + `map.tmj`
+- `create_scene_map`:
+  - `from_tiled*` 直接投影到运行时类型：
+  - `MapInfo`
+  - `MapPortals`
+  - `Physics`（经 `from_tiled_foothold_tree`）
+  - `MiniMapRuntimeResource`
+
+## 渲染路径
+
+- 地图渲染统一走 `selene/tiled`：
+  - `set_tiled_map`
+  - `clear_tiled_map`
+  - `tiled_background_motion_system`（仅补 `type4/type5` Maple 背景运动）
+- `SceneMap` 保留字段：
+  - `id`
+  - `tiled_map`
+  - `life_spawns`
+  - `physics`
+  - `map_info`
+  - `portals`
+  - `mini_map_resources`

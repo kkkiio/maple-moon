@@ -11,19 +11,16 @@ pub(open) trait AsyncResourceLoader {
 
 ///|
 struct AsyncLoader {
+  source : String
   loader : &AsyncResourceLoader
-  base_url : String
-  image_base_url : String
 }
 
 ///|
 pub fn AsyncLoader::new(
-  _name : String,
+  name : String,
   loader~ : &AsyncResourceLoader,
-  base_url? : String = OLD_BASE_URL,
-  image_base_url? : String = base_url,
 ) -> AsyncLoader {
-  { loader, base_url, image_base_url }
+  { source: name, loader }
 }
 
 ///|
@@ -44,28 +41,28 @@ pub async fn AsyncLoader::load_data(self : AsyncLoader, path : String) -> Json {
 /// Resolve a JSON resource path to a fetchable URL/path.
 ///
 /// Rules:
-/// - `http://` / `https://` stays unchanged.
-/// - Absolute paths (for example `/assets/...`) stay unchanged.
-/// - Relative paths are resolved against `base_url`.
+/// - Absolute paths(`/...`) are passed through.
+/// - Relative paths are resolved by internal source rules.
+/// - `http(s)` is forbidden and will fail.
 pub fn AsyncLoader::resolve_json_path(
   self : AsyncLoader,
   path : String,
 ) -> String {
-  resolve_path(path, self.base_url)
+  resolve_resource_path(self.source, path)
 }
 
 ///|
 /// Load an image by full/relative path.
 ///
 /// Rules:
-/// - `http://` / `https://` stays unchanged.
-/// - Absolute paths (for example `/assets/...`) stay unchanged.
-/// - Relative paths are resolved against `image_base_url`.
+/// - Absolute paths(`/...`) are passed through.
+/// - Relative paths are resolved by internal source rules.
+/// - `http(s)` is forbidden and will fail.
 pub fn AsyncLoader::load_image(
   self : AsyncLoader,
   path : String,
 ) -> @asset.ImageHandle {
-  let resolved = resolve_path(path, self.image_base_url)
+  let resolved = resolve_resource_path(self.source, path)
   @asset.load_image(resolved)
 }
 
@@ -163,25 +160,6 @@ async fn fetch_json(path : String) -> Json {
 }
 
 ///|
-fn is_http_url(path : String) -> Bool {
-  path.has_prefix("http://") || path.has_prefix("https://")
-}
-
-///|
-fn is_absolute_path(path : String) -> Bool {
-  path.has_prefix("/")
-}
-
-///|
-fn resolve_path(path : String, base : String) -> String {
-  if is_http_url(path) || is_absolute_path(path) {
-    path
-  } else {
-    join_dir(base, path)
-  }
-}
-
-///|
 fn join_dir(root : String, path : String) -> String {
   // remove '/' from the end of root and the beginning of path
   let root = root.strip_suffix("/").unwrap_or(root)
@@ -205,6 +183,3 @@ fn get_by_path(obj : Json, path : String) -> Json {
     value
   })
 }
-
-///|
-pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"

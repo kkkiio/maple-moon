@@ -7,3 +7,8 @@ pub fn ui_window_2_loader() -> @resource.AsyncLoader {
 pub fn ui_window_4_loader() -> @resource.AsyncLoader {
   @resource.require_async_loader("ui_window_4")
 }
+
+///|
+pub fn ui_slice_loader() -> @resource.AsyncLoader {
+  @resource.require_async_loader("ui_slice")
+}

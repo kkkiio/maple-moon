@@ -232,6 +232,174 @@ pub fn MapInfo::from_resource(
 }
 
 ///|
+pub fn MapInfo::from_tiled_map(
+  map : @tiled.TiledMap,
+  walls : Range[Int],
+  borders : Range[Int],
+) -> MapInfo raise {
+  let map_walls = match
+    (tiled_map_int(map, "VRLeft"), tiled_map_int(map, "VRRight")) {
+    (Some(left), Some(right)) => Range::new(left, right)
+    _ => walls
+  }
+  let map_borders = match
+    (tiled_map_int(map, "VRTop"), tiled_map_int(map, "VRBottom")) {
+    (Some(top), Some(bottom)) => Range::new(top, bottom)
+    _ => borders
+  }
+  let bgm = normalize_bgm_path(tiled_map_string_or_default(map, "bgm", ""))
+  {
+    field_limit: tiled_map_int_or_default(map, "fieldLimit", 0),
+    cloud: tiled_map_bool_or_default(map, "cloud", false),
+    bgm,
+    map_desc: tiled_map_string_or_default(map, "mapDesc", ""),
+    map_name: tiled_map_string_or_default(map, "mapName", ""),
+    street_name: tiled_map_string_or_default(map, "streetName", ""),
+    map_mark: tiled_map_string_or_default(map, "mapMark", ""),
+    swim: tiled_map_bool_or_default(map, "swim", false),
+    town: tiled_map_bool_or_default(map, "town", false),
+    hide_minimap: tiled_map_bool_or_default(map, "hideMinimap", false),
+    map_walls,
+    map_borders,
+    seats: from_tiled_seats(map),
+    ladders: from_tiled_ladders(map),
+  }
+}
+
+///|
+fn normalize_bgm_path(bgmpath : String) -> String {
+  match bgmpath.to_array().search('/') {
+    Some(split) =>
+      (bgmpath.view(start_offset=0, end_offset=split) +
+      ".img/" +
+      bgmpath.view(start_offset=split + 1)).to_string()
+    None => bgmpath
+  }
+}
+
+///|
+fn from_tiled_seats(map : @tiled.TiledMap) -> Array[Seat] raise {
+  guard map.object_layer("seat") is Some(layer) else { return [] }
+  let seats = []
+  for obj in layer.objects {
+    guard obj.point else {
+      fail("seat object must be point, object_id=\{obj.id}")
+    }
+    seats.push({ pos: Point::new(obj.x.to_int(), obj.y.to_int()) })
+  }
+  seats
+}
+
+///|
+fn from_tiled_ladders(map : @tiled.TiledMap) -> Array[Ladder] raise {
+  guard map.object_layer("ladderRope") is Some(layer) else { return [] }
+  let ladders = []
+  for obj in layer.objects {
+    let l = mapinfo_object_bool_required(obj, "l")
+    let (x, y1, y2) = if obj.polyline.length() >= 2 {
+      let p1 = obj.polyline[0]
+      let p2 = obj.polyline[1]
+      let x1 = (obj.x + p1.x).to_int()
+      let x2 = (obj.x + p2.x).to_int()
+      if x1 != x2 {
+        fail("ladder polyline must be vertical, object_id=\{obj.id}")
+      }
+      let y1 = (obj.y + p1.y).to_int()
+      let y2 = (obj.y + p2.y).to_int()
+      (x1, @cmp.minimum(y1, y2), @cmp.maximum(y1, y2))
+    } else {
+      (
+        obj.x.to_int(),
+        mapinfo_object_int_required(obj, "y1"),
+        mapinfo_object_int_required(obj, "y2"),
+      )
+    }
+    ladders.push({ x, y1, y2, ladder: l })
+  }
+  ladders
+}
+
+///|
+fn tiled_map_int_or_default(
+  map : @tiled.TiledMap,
+  name : String,
+  default : Int,
+) -> Int raise {
+  tiled_map_int(map, name).unwrap_or(default)
+}
+
+///|
+fn tiled_map_int(map : @tiled.TiledMap, name : String) -> Int? raise {
+  match map.property(name) {
+    Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
+    Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
+    Some(_) => fail("map property '\{name}' must be int")
+    None => None
+  }
+}
+
+///|
+fn tiled_map_bool_or_default(
+  map : @tiled.TiledMap,
+  name : String,
+  default : Bool,
+) -> Bool raise {
+  match map.property(name) {
+    Some(@tiled.TiledPropertyValue::Bool(value)) => value
+    Some(@tiled.TiledPropertyValue::Int(value)) => value != 0
+    Some(@tiled.TiledPropertyValue::String("true")) => true
+    Some(@tiled.TiledPropertyValue::String("false")) => false
+    Some(_) => fail("map property '\{name}' must be bool")
+    None => default
+  }
+}
+
+///|
+fn tiled_map_string_or_default(
+  map : @tiled.TiledMap,
+  name : String,
+  default : String,
+) -> String raise {
+  match map.property(name) {
+    Some(@tiled.TiledPropertyValue::String(value)) => value
+    Some(@tiled.TiledPropertyValue::Int(value)) => value.to_string()
+    Some(@tiled.TiledPropertyValue::Float(value)) => value.to_string()
+    Some(_) => fail("map property '\{name}' must be string")
+    None => default
+  }
+}
+
+///|
+fn mapinfo_object_int_required(
+  obj : @tiled.TiledObject,
+  name : String,
+) -> Int raise {
+  match obj.property(name) {
+    Some(@tiled.TiledPropertyValue::Int(value)) => value
+    Some(@tiled.TiledPropertyValue::Float(value)) => value.to_int()
+    Some(_) =>
+      fail("object property '\{name}' must be int, object_id=\{obj.id}")
+    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+  }
+}
+
+///|
+fn mapinfo_object_bool_required(
+  obj : @tiled.TiledObject,
+  name : String,
+) -> Bool raise {
+  match obj.property(name) {
+    Some(@tiled.TiledPropertyValue::Bool(value)) => value
+    Some(@tiled.TiledPropertyValue::Int(value)) => value != 0
+    Some(@tiled.TiledPropertyValue::String("true")) => true
+    Some(@tiled.TiledPropertyValue::String("false")) => false
+    Some(_) =>
+      fail("object property '\{name}' must be bool, object_id=\{obj.id}")
+    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+  }
+}
+
+///|
 fn json_get_int(obj : Map[String, Json], key : String) -> Int {
   match obj.get(key) {
     Some(Number(n, ..)) => n.to_int()

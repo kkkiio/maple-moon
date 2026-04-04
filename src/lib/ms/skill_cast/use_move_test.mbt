@@ -208,7 +208,6 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
     "skill",
     @resource.AsyncLoader::new(
       "test_local_skill",
-      base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
     ),
   )
@@ -216,7 +215,6 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
     "string",
     @resource.AsyncLoader::new(
       "test_local_string",
-      base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
     ),
   )

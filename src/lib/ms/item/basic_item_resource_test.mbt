@@ -59,16 +59,12 @@ pub impl @resource.AsyncResourceLoader for MockBasicStringLoader with load_data(
 
 ///|
 async test "basic item resource should preload consume/etc and install to cache" {
-  let item_loader = @resource.AsyncLoader::new(
-    "mock_basic_item_loader",
-    loader=MockBasicItemLoader::{  },
-    base_url="/assets",
-  )
-  let string_loader = @resource.AsyncLoader::new(
-    "mock_basic_string_loader",
-    loader=MockBasicStringLoader::{  },
-    base_url="/assets",
-  )
+  let item_loader = @resource.AsyncLoader::new("mock_basic_item_loader", loader=MockBasicItemLoader::{
+
+  })
+  let string_loader = @resource.AsyncLoader::new("mock_basic_string_loader", loader=MockBasicStringLoader::{
+
+  })
   @resource.register_async_loader("item", item_loader)
   @resource.register_async_loader("string", string_loader)
   set_item_data_system(ItemDataSystem::new(item_loader))

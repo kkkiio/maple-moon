@@ -6,17 +6,18 @@ import {
   "Milky2018/selene/animation",
   "Milky2018/selene/asset_types",
   "Milky2018/selene/sprite",
+  "Milky2018/selene/tiled",
   "moonbitlang/core/json",
 }
 
 // Values
-pub const OLD_BASE_URL : String = "https://maple-res.kkkiiox.work"
-
 pub fn get_csv_loader() -> CsvLoader
 
 pub fn get_csv_loader_by_name(String) -> CsvLoader
 
 pub fn get_text_loader(String) -> TextLoader
+
+pub async fn load_tiled_map_from_mx(AsyncLoader, Array[String]) -> (String, @tiled.TiledMap)
 
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
 
@@ -45,7 +46,7 @@ type AsyncLoader
 pub async fn AsyncLoader::load_data(Self, String) -> Json
 pub fn AsyncLoader::load_image(Self, String) -> @asset_types.ImageHandle
 pub async fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
-pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader, base_url? : String, image_base_url? : String) -> Self
+pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader) -> Self
 pub fn AsyncLoader::resolve_json_path(Self, String) -> String
 
 type CompositeAsyncResourceLoader

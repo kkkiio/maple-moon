@@ -60,7 +60,6 @@ pub fn AnimationLoader::new(loader : AsyncLoader) -> AnimationLoader {
 /// `animations_path` can be:
 /// - relative to resource root (for example `Npc/Npc/0002007.img/animation.json`)
 /// - absolute (`/assets/...`)
-/// - full URL (`https://...`)
 pub async fn AnimationLoader::load(
   self : AnimationLoader,
   animations_path : String,
@@ -192,7 +191,7 @@ fn compile_loaded_animations(
       layout: atlas_layout,
       graph: graph_handle,
       node: nodes[idx],
-      anchor: anchor_from_pivot(pivot),
+      anchor: anchor_from_pivot(pivot, first.size),
       duration_ms: durations_ms[idx],
       dimensions: first.size,
     })
@@ -291,8 +290,36 @@ fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2D] {
 }
 
 ///|
-fn anchor_from_pivot(pivot : @math.Vec2D) -> @sprite.Anchor {
-  @sprite.Anchor(@math.Vec2D(pivot.0 - 0.5, 0.5 - pivot.1))
+fn anchor_from_pivot(
+  pivot : @math.Vec2D,
+  size : @struct.Point[Int],
+) -> @sprite.Anchor raise {
+  guard size.x > 0 && size.y > 0 else {
+    fail("invalid frame size for pivot conversion: \{size.x}x\{size.y}")
+  }
+  let normalized_x = pivot.0 / size.x.to_double()
+  let normalized_y = pivot.1 / size.y.to_double()
+  @sprite.Anchor(@math.Vec2D(normalized_x - 0.5, 0.5 - normalized_y))
+}
+
+///|
+test "anchor_from_pivot supports aseprite pixel pivot" {
+  let @sprite.Anchor(v) = anchor_from_pivot(
+    @math.Vec2D(30.0, 79.0),
+    @struct.Point::new(57, 79),
+  )
+  inspect(v.0, content="0.02631578947368418")
+  inspect(v.1, content="-0.5")
+}
+
+///|
+test "anchor_from_pivot preserves legacy normalized-equivalent center" {
+  let @sprite.Anchor(v) = anchor_from_pivot(
+    @math.Vec2D(29.0, 50.0),
+    @struct.Point::new(58, 100),
+  )
+  inspect(v.0, content="0")
+  inspect(v.1, content="0")
 }
 
 ///|
@@ -301,9 +328,7 @@ fn load_meta_image(
   json_url : String,
   image_ref : String,
 ) -> @asset.ImageHandle {
-  if image_ref.has_prefix("http://") ||
-    image_ref.has_prefix("https://") ||
-    image_ref.has_prefix("/") {
+  if image_ref.has_prefix("/") {
     loader.load_image(image_ref)
   } else if image_ref.contains("/") {
     loader.load_image(image_ref)

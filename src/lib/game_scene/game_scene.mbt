@@ -200,6 +200,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()
+      @map.clear_tiled_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       @character.clear_character_registry()
@@ -415,6 +416,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       }
       @inventory_ui.bind_inventory(global_inv)
       clear_active_scene_map()
+      @map.clear_tiled_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       transiting_loading_ref.val = None
@@ -442,6 +444,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
         }
       }
       set_active_scene_map(sence_map)
+      @map.set_tiled_map(sence_map.tiled_map)
       @map.set_runtime_context(sence_map.map_info, sence_map.physics)
       transiting_loading_ref.val = None
       @game_state.set_next_phase(
@@ -462,8 +465,6 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       @passive.register_passive_skill(@passive.sword_fa_fighter_passive)
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
-      @map.set_backgrounds(sence_map.backgrounds)
-      @map.set_tiles_objs(sence_map.tiles_objs)
       @map.set_portals(sence_map.portals, get_touch_pos=fn() {
         @player.get_player().map(fn(player) { player.character.get_position() })
       })
@@ -551,6 +552,7 @@ pub fn setup_game_server_handlers() -> Unit {
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
       @item_use_events.clear_intents()
       clear_active_scene_map()
+      @map.clear_tiled_map()
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       @character.clear_character_registry()

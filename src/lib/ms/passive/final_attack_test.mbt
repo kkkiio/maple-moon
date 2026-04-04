@@ -176,7 +176,6 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
     "skill",
     @resource.AsyncLoader::new(
       "test_local_skill",
-      base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
     ),
   )
@@ -184,7 +183,6 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
     "string",
     @resource.AsyncLoader::new(
       "test_local_string",
-      base_url="/assets",
       loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
     ),
   )

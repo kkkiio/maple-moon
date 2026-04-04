@@ -5,19 +5,16 @@ import {
   "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
-  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "Milky2018/selene/tiled",
   "moonbitlang/core/json",
 }
 
 // Values
-pub fn background_system(@ecs.World) -> Unit
-
-pub fn clear_background_debug() -> Unit
-
 pub fn clear_runtime_context() -> Unit
+
+pub fn clear_tiled_map() -> Unit
 
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
 
@@ -27,7 +24,11 @@ pub fn find_manual_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
 
 pub fn find_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
 
-pub fn get_background_visibility_state() -> BackgroundVisibilityState
+pub fn from_tiled_foothold_tree(@tiled.TiledMap) -> @physics.NxFootholdTree raise
+
+pub fn from_tiled_life_spawns(@tiled.TiledMap) -> Array[NxLife] raise
+
+pub fn from_tiled_mini_map_resource(@tiled.TiledMap) -> MiniMapResource? raise
 
 pub fn get_map_category(Int) -> String
 
@@ -37,98 +38,21 @@ pub fn get_portal_pos_by_id_current(Int) -> @res_types.Point[Int]?
 
 pub fn get_runtime_context() -> (MapInfo, @physics.Physics)?
 
-pub fn get_tile_objects_visibility() -> TileObjVisibilityState
-
-pub async fn load_background_animation(@resource.AsyncLoader, String, BackgroundAnimationPath) -> @resource.NxAnimation
-
-pub fn load_backgrounds(BackgroundsResource, Map[String, Map[BackgroundAnimationPath, @resource.NxAnimation]]) -> Backgrounds
-
 pub async fn load_map_resources_by_id(Int) -> MapRawResources
 
-pub async fn load_obj_animation(String, ObjectAnimationPath) -> @resource.NxAnimation
-
-pub async fn load_tileset(String) -> NxTileSet
-
-pub fn new_background_position(Background, @math.Vec2D, Double) -> @math.Vec2D
-
 pub fn portal_system(@ecs.World) -> Unit
-
-pub fn reset_tile_obj_visibility() -> Unit
-
-pub fn set_background_visibility(Bool, Bool) -> Unit
-
-pub fn set_backgrounds(Backgrounds) -> Unit
-
-pub fn set_layer_visibility(Int, Bool, Bool) -> Unit
-
-pub fn set_obj_visibility(Int, Int, Bool) -> Unit
-
-pub fn set_objs_visible(Bool) -> Unit
 
 pub fn set_portals(MapPortals, get_touch_pos? : () -> @res_types.Point[Int]?) -> Unit
 
 pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
-pub fn set_tile_visibility(Int, Int, Bool) -> Unit
+pub fn set_tiled_map(@tiled.TiledMap) -> Unit
 
-pub fn set_tiles_objs(MapLayers) -> Unit
-
-pub fn set_tiles_visible(Bool) -> Unit
-
-pub fn step_background_debug(Int) -> Unit
-
-pub fn tile_objects_system(@ecs.World) -> Unit
+pub fn tiled_background_motion_system(@ecs.World) -> Unit
 
 // Errors
 
 // Types and methods
-type Background
-
-type BackgroundAnimationPath derive(Eq, Hash, Show)
-pub fn BackgroundAnimationPath::from_nx(NxBackground) -> Self
-
-pub struct BackgroundResource {
-  animation : @resource.NxAnimation
-  t : BackgroundType
-  x : Int
-  y : Int
-  cx : Int
-  cy : Int
-  rx : Int
-  ry : Int
-  opacity : Double
-  flipped : Bool
-}
-pub fn BackgroundResource::new(NxBackground, @resource.NxAnimation) -> Self
-
-pub(all) enum BackgroundType {
-  BG_NORMAL
-  HTILED
-  VTILED
-  TILED
-  HMOVEA
-  VMOVEA
-} derive(Compare, Eq, Show, ToJson)
-pub fn BackgroundType::from_int(Int) -> Self?
-pub fn BackgroundType::int_value(Self) -> Int
-
-pub struct BackgroundVisibilityState {
-  back_visible : Bool
-  fore_visible : Bool
-  debug_index : Int?
-  total_layers : Int
-} derive(Show)
-
-pub struct Backgrounds {
-  backs : Array[Background]
-  fores : Array[Background]
-}
-
-pub struct BackgroundsResource(Array[NxBackground]) derive(Show)
-#deprecated
-pub fn BackgroundsResource::inner(Self) -> Array[NxBackground]
-pub impl @json.FromJson for BackgroundsResource
-
 type Ladder
 pub fn Ladder::felloff(Self, Int, Bool) -> Bool
 pub fn Ladder::from_resource(NxLadder) -> Self
@@ -163,19 +87,13 @@ pub struct MapInfo {
 pub fn MapInfo::find_ladder(Self, @res_types.Point[Int], Bool) -> Ladder?
 pub fn MapInfo::findseat(Self, @res_types.Point[Int]) -> Seat?
 pub fn MapInfo::from_resource(Json, @res_types.Range[Int], @res_types.Range[Int]) -> Self
+pub fn MapInfo::from_tiled_map(@tiled.TiledMap, @res_types.Range[Int], @res_types.Range[Int]) -> Self raise
 pub fn MapInfo::get_bgm(Self) -> String
 pub fn MapInfo::get_borders(Self) -> @res_types.Range[Int]
 pub fn MapInfo::get_full_name(Self) -> String
 pub fn MapInfo::get_walls(Self) -> @res_types.Range[Int]
 pub fn MapInfo::is_underwater(Self) -> Bool
 pub fn MapInfo::new() -> Self
-
-pub struct MapLayerInfoResource {
-  tS : String
-} derive(Show, @json.FromJson)
-
-type MapLayers
-pub fn MapLayers::new(Map[String, NxTileSet], Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxLayer]) -> Self
 
 type MapPortalAnimations
 pub fn MapPortalAnimations::load() -> Self
@@ -190,21 +108,22 @@ pub struct MapPortals {
 pub fn MapPortals::find_auto_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_manual_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
+pub fn MapPortals::from_tiled_map(@tiled.TiledMap, Int, MapPortalAnimations) -> Self raise
 pub fn MapPortals::get_portal_by_name(Self, String) -> @res_types.Point[Int]?
 pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @res_types.Point[Int]?
 pub fn MapPortals::new(Array[NxPortal], Int, MapPortalAnimations) -> Self
 
 pub(all) struct MapRawResources {
   id : Int
-  nx_map : NxMap
-  tilesets : Map[String, NxTileSet]
-  object_animation_sets : Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]]
-  background_animation_sets : Map[String, Map[BackgroundAnimationPath, @resource.NxAnimation]]
-  root : Json
+  mx_map : MxMap
+  tiled_map : @tiled.TiledMap
 }
-pub fn MapRawResources::get_backgrounds(Self) -> BackgroundsResource
-pub fn MapRawResources::get_layers(Self) -> Array[NxLayer]
-pub fn MapRawResources::get_portals(Self) -> Array[NxPortal]
+
+pub(all) struct MiniMapCanvas {
+  path : String
+  width : Int
+  height : Int
+}
 
 pub(all) struct MiniMapPortal {
   x : Int
@@ -237,46 +156,31 @@ pub struct MiniMapResource {
   mag : Int
   center_x : Int
   center_y : Int
-  canvas : @resource.NxAnimation
-} derive(@json.FromJson)
+  canvas_path : String
+  canvas_width : Int
+  canvas_height : Int
+}
+pub impl @json.FromJson for MiniMapResource
 
 pub(all) struct MiniMapRuntimeResource {
-  canvas : @resource.NxAnimation
+  canvas : MiniMapCanvas
   draw_data : MapDrawData
   portals : Array[MiniMapPortal]
 }
+pub fn MiniMapRuntimeResource::from_tiled(MiniMapResource, MapPortals) -> Self
 pub fn MiniMapRuntimeResource::load(MiniMapResource, Array[MiniMapPortal]) -> Self
 
 type Module
 pub fn Module::get_portals_animations(Self) -> MapPortalAnimations
 pub fn Module::load() -> Self
 
-pub struct NxBackground {
-  a : Int
-  ani : Bool
-  bS : String
-  cx : Int
-  cy : Int
-  f : Bool
-  front : Bool
-  no : Int
-  rx : Int
-  ry : Int
-  type_ : BackgroundType
-  x : Int
-  y : Int
-} derive(Show)
-pub impl @json.FromJson for NxBackground
+pub struct MxMap {
+  tiled_path : String
+}
+pub impl @json.FromJson for MxMap
 
 type NxLadder
 pub impl @json.FromJson for NxLadder
-
-pub struct NxLayer {
-  info : MapLayerInfoResource?
-  tile : Array[NxTileRef]
-  obj : Array[NxObj]
-} derive(Show)
-pub impl @json.FromJson for NxLayer
 
 pub struct NxLife {
   cy : Int
@@ -293,61 +197,10 @@ pub struct NxLife {
 } derive(Show)
 pub impl @json.FromJson for NxLife
 
-pub struct NxMap {
-  layers : Array[NxLayer]
-  back : BackgroundsResource
-  portal : Array[NxPortal]
-  foothold : @physics.NxFootholdTree
-  mini_map : MiniMapResource?
-  life : Array[NxLife]
-}
-pub impl @json.FromJson for NxMap
-
-pub struct NxObj {
-  f : Bool
-  l0 : String
-  l1 : String
-  l2 : String
-  oS : String
-  x : Int
-  y : Int
-  z : Int
-  zM : Int
-} derive(Show)
-pub impl @json.FromJson for NxObj
-
 type NxPortal derive(Show, ToJson, @json.FromJson)
 
 type NxSeat
 pub impl @json.FromJson for NxSeat
-
-pub struct NxTile {
-  texture : @resource.NxTexture
-  z : Int
-  zm : Int?
-}
-pub impl @json.FromJson for NxTile
-
-pub struct NxTileRef {
-  no : Int
-  u : String
-  x : Int
-  y : Int
-  zM : Int
-} derive(Show, @json.FromJson)
-
-pub struct NxTileSet {
-  groups : Map[String, Array[NxTile]]
-}
-pub impl @json.FromJson for NxTileSet
-
-type Obj
-pub fn Obj::attach_entity(Self, @entity.Entity, Int) -> Unit
-pub fn Obj::get_z(Self) -> Int
-pub fn Obj::new(NxObj, @resource.NxAnimation, Int, Int) -> Self
-
-type ObjectAnimationPath derive(Eq, Hash, Show)
-pub fn ObjectAnimationPath::from_obj(NxObj) -> Self
 
 type Portal
 pub fn Portal::bounds(Self) -> @res_types.Rectangle[Int]
@@ -389,8 +242,8 @@ pub(all) struct PortalWarpInfo {
 
 pub(all) struct SceneMap {
   id : Int
-  tiles_objs : MapLayers
-  backgrounds : Backgrounds
+  tiled_map : @tiled.TiledMap
+  life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo
   portals : MapPortals
@@ -401,27 +254,6 @@ type Seat
 pub fn Seat::from_resource(NxSeat) -> Self
 pub fn Seat::getpos(Self) -> @res_types.Point[Int]
 pub fn Seat::inrange(Self, @res_types.Point[Int]) -> Bool
-
-type Tile
-pub fn Tile::attach_entity(Self, @entity.Entity, Int) -> Unit
-pub fn Tile::new(NxTileRef, NxTileSet?, Int, Int) -> Self
-
-pub struct TileObjVisibilityState {
-  tiles_visible : Bool
-  objs_visible : Bool
-  layers : Array[TileObjectsVisibility]
-  tile_items : Array[Array[Bool]]
-  obj_items : Array[Array[Bool]]
-} derive(Show)
-
-pub struct TileObjectsVisibility {
-  layer : Int
-  tiles_visible : Bool
-  objs_visible : Bool
-} derive(Show)
-
-type TilesObjsLayer
-pub fn TilesObjsLayer::from_resources(Int, NxTileSet?, Map[String, Map[ObjectAnimationPath, @resource.NxAnimation]], Array[NxTileRef], Array[NxObj], Int) -> Self
 
 // Type aliases
 

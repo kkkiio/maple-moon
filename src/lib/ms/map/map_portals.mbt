@@ -49,6 +49,62 @@ pub fn MapPortals::new(
 }
 
 ///|
+pub fn MapPortals::from_tiled_map(
+  map : @tiled.TiledMap,
+  mapid : Int,
+  map_portals_animations : MapPortalAnimations,
+) -> MapPortals raise {
+  guard map.object_layer("portal") is Some(portal_layer) else {
+    fail("missing `portal` layer in map.tmj")
+  }
+  let src = []
+  for obj in portal_layer.objects {
+    src.push(nx_portal_from_tiled_object(obj))
+  }
+  MapPortals::new(src, mapid, map_portals_animations)
+}
+
+///|
+fn nx_portal_from_tiled_object(obj : @tiled.TiledObject) -> NxPortal raise {
+  let pn = tiled_object_string_required(obj, "pn")
+  let tm = tiled_object_int_required(obj, "tm")
+  let tn = tiled_object_string_required(obj, "tn")
+  let pt_id = tiled_object_int_required(obj, "pt")
+  let pt = match PortalType::typebyid(pt_id) {
+    Some(pt) => pt
+    None => fail("invalid portal type `pt=\{pt_id}`, object_id=\{obj.id}")
+  }
+  { pn, tm, tn, x: obj.x.to_int(), y: obj.y.to_int(), pt }
+}
+
+///|
+fn tiled_object_string_required(
+  obj : @tiled.TiledObject,
+  name : String,
+) -> String raise {
+  match obj.property(name) {
+    Some(@tiled.TiledPropertyValue::String(value)) => value
+    Some(_) =>
+      fail("object property '\{name}' must be string, object_id=\{obj.id}")
+    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+  }
+}
+
+///|
+fn tiled_object_int_required(
+  obj : @tiled.TiledObject,
+  name : String,
+) -> Int raise {
+  match obj.property(name) {
+    Some(@tiled.TiledPropertyValue::Int(value)) => value
+    Some(@tiled.TiledPropertyValue::Float(value)) => value.to_int()
+    Some(_) =>
+      fail("object property '\{name}' must be int, object_id=\{obj.id}")
+    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+  }
+}
+
+///|
 pub fn MapPortals::get_portal_pos_by_id(
   self : MapPortals,
   portal_id : Int,

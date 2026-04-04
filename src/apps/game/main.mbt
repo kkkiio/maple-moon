@@ -64,7 +64,7 @@ fn cleanup_for_leave_world(_world : @ecs.World) -> Unit {
 
 ///|
 fn main {
-  install_builtin_resource_loaders()
+  install_resource_env(Prod)
   @item.set_item_data_system(
     @item.ItemDataSystem::new(@resource.require_async_loader("item")),
   )
@@ -213,18 +213,13 @@ fn main {
     )
     .add_system(
       Update,
-      fn(world) { @map.background_system(world) },
-      system_name="background_system",
-    )
-    .add_system(
-      Update,
-      fn(world) { @map.tile_objects_system(world) },
-      system_name="tile_objects_system",
-    )
-    .add_system(
-      Update,
       fn(world) { @map.portal_system(world) },
       system_name="portal_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @map.tiled_background_motion_system(world) },
+      system_name="tiled_background_motion_system",
     )
     .add_system(
       Update,

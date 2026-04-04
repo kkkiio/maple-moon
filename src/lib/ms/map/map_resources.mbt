@@ -1,17 +1,22 @@
 ///|
 pub(all) struct MapRawResources {
   id : Int
-  nx_map : NxMap
-  tilesets : Map[String, NxTileSet]
-  object_animation_sets : Map[
-    String,
-    Map[ObjectAnimationPath, @resource.NxAnimation],
-  ]
-  background_animation_sets : Map[
-    String,
-    Map[BackgroundAnimationPath, @resource.NxAnimation],
-  ]
-  root : Json
+  mx_map : MxMap
+  tiled_map : @tiled.TiledMap
+}
+
+///|
+pub struct MxMap {
+  tiled_path : String
+}
+
+///|
+pub impl @json.FromJson for MxMap with from_json(json, path) {
+  match json {
+    { "tiled_path": String(tiled_path), .. } if tiled_path.length() > 0 =>
+      { tiled_path, }
+    _ => raise @json.JsonDecodeError((path, "missing `tiled_path`"))
+  }
 }
 
 ///|
@@ -20,213 +25,14 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   guard map_id >= 0 else { fail("invalid map_id=\{map_id}") }
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
-  let path = ["Map\{prefix}", "\{strid}.img"]
-  @log.info("loading raw map resource", data={ "path": path })
-  let src = @resource.require_async_loader("mapx").load_resource(path)
-  if src is Null {
-    fail("map not found, id=\{map_id}")
-  }
-  let nx_map : NxMap = @json.from_json(src) catch {
-    err => fail("failed to parse nx map: \{err.to_string()}")
-  }
-  let tilesets = {}
-  for layer in nx_map.layers {
-    if layer.info is Some({ tS }) {
-      tilesets[tS] = load_tileset(tS)
-    }
-  }
-  let object_animation_sets = {}
-  for layer in nx_map.layers {
-    for obj in layer.obj {
-      let path = ObjectAnimationPath::from_obj(obj)
-      let sets = object_animation_sets.get_or_init(obj.oS, fn() { Map::new() })
-      sets[path] = load_obj_animation(obj.oS, path)
-    }
-  }
-  let bs_loader = @resource.require_async_loader("background_set")
-  let background_animation_sets = {}
-  for background in nx_map.back.0 {
-    if background.bS == "" {
-      continue
-    }
-    let sets = background_animation_sets.get_or_init(background.bS, fn() {
-      Map::new()
-    })
-    let path = BackgroundAnimationPath::from_nx(background)
-    sets[path] = load_background_animation(bs_loader, background.bS, path)
-  }
-  {
-    id: map_id,
-    nx_map,
-    tilesets,
-    object_animation_sets,
-    background_animation_sets,
-    root: src,
-  }
+  let mx_path = ["Map", "Map\{prefix}", "\{strid}.img", "mx.json"]
+  @log.info("loading map mx resource", data={ "path": mx_path })
+  let loader = @resource.require_async_loader("mapx")
+  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(
+    loader, mx_path,
+  )
+  { id: map_id, mx_map: { tiled_path, }, tiled_map }
 }
-
-///|
-pub fn MapRawResources::get_layers(self : MapRawResources) -> Array[NxLayer] {
-  self.nx_map.layers
-}
-
-///|
-pub fn MapRawResources::get_backgrounds(
-  self : MapRawResources,
-) -> BackgroundsResource {
-  self.nx_map.back
-}
-
-///|
-pub fn MapRawResources::get_portals(self : MapRawResources) -> Array[NxPortal] {
-  self.nx_map.portal
-}
-
-///|
-pub struct NxMap {
-  layers : Array[NxLayer]
-  back : BackgroundsResource
-  portal : Array[NxPortal]
-  foothold : @physics.NxFootholdTree
-  mini_map : MiniMapResource?
-  life : Array[NxLife]
-}
-
-///|
-pub impl @json.FromJson for NxMap with from_json(json, path) {
-  let layers = @resource.parse_map_based_array(json, path~)
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let back : BackgroundsResource = if obj.get("back") is Some(back) {
-    @json.from_json(back, path=path.add_key("back"))
-  } else {
-    BackgroundsResource([])
-  }
-  let portal : Array[NxPortal] = if obj.get("portal") is Some(portal) {
-    @resource.parse_map_based_array(portal, path=path.add_key("portal"))
-  } else {
-    []
-  }
-  let foothold = if obj.get("foothold") is Some(foothold) {
-    @json.from_json(foothold, path=path.add_key("foothold"))
-  } else {
-    @physics.NxFootholdTree(Map::new())
-  }
-  let mini_map = if obj.get("miniMap") is Some(mini_map) {
-    Some(@json.from_json(mini_map, path=path.add_key("miniMap")))
-  } else {
-    None
-  }
-  let life : Array[NxLife] = if obj.get("life") is Some(life) {
-    @resource.parse_map_based_array(life, path=path.add_key("life"))
-  } else {
-    []
-  }
-  { layers, back, portal, foothold, mini_map, life }
-}
-
-///|
-pub struct NxLayer {
-  info : MapLayerInfoResource?
-  tile : Array[NxTileRef]
-  obj : Array[NxObj]
-} derive(Show)
-
-///|
-pub impl @json.FromJson for NxLayer with from_json(json, path) {
-  guard json is Object(obj) else {
-    raise @json.JsonDecodeError((path, "expected object"))
-  }
-  let info = if obj is { "info": Object(_) as info, .. } {
-    Some(@json.from_json(info, path=path.add_key("info")))
-  } else {
-    None
-  }
-  let tile = if obj is { "tile": Object(_) as tile, .. } {
-    @resource.parse_map_based_array(tile, path=path.add_key("tile"))
-  } else {
-    []
-  }
-  let obj = if obj is { "obj": Object(_) as obj, .. } {
-    @resource.parse_map_based_array(obj, path=path.add_key("obj"))
-  } else {
-    []
-  }
-  { info, tile, obj }
-}
-
-///|
-test "parse empty layer" {
-  let data =
-    #|{
-    #|    "info": null,
-    #|    "obj": null,
-    #|    "tile": null
-    #|}
-  let json = @json.parse(data)
-  let layer : NxLayer = @json.from_json(json)
-  inspect(layer, content="{info: None, tile: [], obj: []}")
-}
-
-///|
-pub struct NxTileRef {
-  /// tile index
-  no : Int
-  /// group name
-  u : String
-  x : Int
-  y : Int
-  zM : Int
-} derive(@json.FromJson, Show)
-
-///|
-pub struct NxObj {
-  f : Bool
-  l0 : String
-  l1 : String
-  l2 : String
-  oS : String
-  x : Int
-  y : Int
-  z : Int
-  zM : Int
-} derive(Show)
-
-///|
-pub impl @json.FromJson for NxObj with from_json(json, path) {
-  match json {
-    {
-      "f": Number(f, ..),
-      "l0": String(l0),
-      "l1": String(l1),
-      "l2": String(l2),
-      "oS": String(oS),
-      "x": Number(x, ..),
-      "y": Number(y, ..),
-      "z": Number(z, ..),
-      "zM": Number(zM, ..),
-      ..
-    } =>
-      {
-        f: f != 0,
-        l0,
-        l1,
-        l2,
-        oS,
-        x: x.to_int(),
-        y: y.to_int(),
-        z: z.to_int(),
-        zM: zM.to_int(),
-      }
-    _ => raise @json.JsonDecodeError((path, "missing obj fields"))
-  }
-}
-
-///|
-pub struct MapLayerInfoResource {
-  tS : String
-} derive(@json.FromJson, Show)
 
 ///|
 pub struct NxLife {

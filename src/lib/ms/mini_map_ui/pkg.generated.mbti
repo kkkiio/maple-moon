@@ -41,14 +41,7 @@ pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource
 
 pub struct MiniMapUIResource {
   portal_marker : @resource.NxTexture
-  minmap_middle_left : @resource.NxTexture
-  minmap_middle_right : @resource.NxTexture
-  minmap_up_center : @resource.NxTexture
-  minmap_up_left : @resource.NxTexture
-  minmap_up_right : @resource.NxTexture
-  minmap_down_center : @resource.NxTexture
-  minmap_down_left : @resource.NxTexture
-  minmap_down_right : @resource.NxTexture
+  frame_slice : @ui.UiSliceResource
 }
 pub async fn MiniMapUIResource::load() -> Self
 

@@ -100,10 +100,46 @@ pub impl @resource.AsyncResourceLoader for EmptyItemLoader with load_data(
 ///|
 pub impl @resource.AsyncResourceLoader for EmptyMapxLoader with load_data(
   self,
-  _path,
+  path,
 ) -> Json {
   ignore(self.dummy)
-  { "life": {} }
+  let p = path.to_string()
+  if p.has_suffix("mx.json") {
+    return { "tiled_path": "Map/Map1/100000000.img/map.tmj" }
+  }
+  if p.has_suffix("map.tmj") {
+    return {
+      "type": "map",
+      "width": 1,
+      "height": 1,
+      "tilewidth": 1,
+      "tileheight": 1,
+      "layers": [
+        {
+          "id": 1,
+          "name": "portal",
+          "type": "objectgroup",
+          "objects": [
+            {
+              "id": 1,
+              "x": 0,
+              "y": 0,
+              "point": true,
+              "properties": [
+                { "name": "pn", "type": "string", "value": "sp" },
+                { "name": "tm", "type": "int", "value": 100000000 },
+                { "name": "tn", "type": "string", "value": "sp" },
+                { "name": "pt", "type": "int", "value": 0 },
+              ],
+            },
+          ],
+        },
+        { "id": 2, "name": "life", "type": "objectgroup", "objects": [] },
+      ],
+      "tilesets": [],
+    }
+  }
+  fail("unexpected mapx path: \{p}")
 }
 
 ///|
@@ -113,7 +149,6 @@ async test "local server character list is empty when roster is missing" {
     @resource.AsyncLoader::new(
       "starter_character_loader",
       loader=StarterCharacterLoader::new(),
-      base_url="/assets",
     ),
   )
   @resource.register_async_loader(
@@ -121,7 +156,6 @@ async test "local server character list is empty when roster is missing" {
     @resource.AsyncLoader::new(
       "starter_string_loader",
       loader=StarterStringLoader::new(),
-      base_url="/assets",
     ),
   )
   @resource.register_async_loader(
@@ -129,7 +163,6 @@ async test "local server character list is empty when roster is missing" {
     @resource.AsyncLoader::new(
       "empty_item_loader",
       loader=EmptyItemLoader::new(),
-      base_url="/assets",
     ),
   )
   let db = MemoryDB::new()
@@ -562,7 +595,6 @@ async test "set field quest log reflects persisted quest state" {
     @resource.AsyncLoader::new(
       "empty_mapx_loader",
       loader=EmptyMapxLoader::new(),
-      base_url="/assets",
     ),
   )
 

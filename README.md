@@ -13,4 +13,3 @@ moon build --watch
 
 Visit http://localhost:8080 to play the game.
 
-Visit http://localhost:8080/map_editor to open the map editor.

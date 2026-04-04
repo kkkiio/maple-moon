@@ -7,6 +7,7 @@
 - 通用树形资源（`AsyncLoader::load_resource`）不做业务缓存。
 - 文件路径资源可使用 `AsyncLoader::load_data` 直接读取 JSON。
 - 图片资源统一通过 `AsyncLoader::load_image` 加载。
+- 路径解析统一由 package 内部 resolver 处理：允许绝对路径(`/...`)，禁止 `http(s)` 路径。
 - Aseprite NPC 动画通过 `AnimationLoader` 在本包内做编译结果缓存（key 为规范化后的 `animations_path`），避免重复构图与注册资产。
 
 ## 接入示例

@@ -7,16 +7,8 @@ using @struct {type Point}
 pub struct MiniMapUIResource {
   /// Marker for portals.
   portal_marker : @resource.NxTexture
-  // Window frame elements for Normal mode
-  // minmap_middle_center : @graphics.Animation
-  minmap_middle_left : @resource.NxTexture
-  minmap_middle_right : @resource.NxTexture
-  minmap_up_center : @resource.NxTexture
-  minmap_up_left : @resource.NxTexture
-  minmap_up_right : @resource.NxTexture
-  minmap_down_center : @resource.NxTexture
-  minmap_down_left : @resource.NxTexture
-  minmap_down_right : @resource.NxTexture
+  /// Window frame slice used by material nodes.
+  frame_slice : @ui.UiSliceResource
 }
 
 ///|
@@ -43,40 +35,27 @@ pub async fn MiniMapUIResource::load() -> MiniMapUIResource {
       panic()
     }
   }
-  mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
+  let frame_slice = @ui.load_ui_slice_resource(
+    @ui.ui_slice_loader(),
+    "ui/UIWindow2.img/MiniMap/MinMap/slice.json",
+  )
+  mini_map_ui_resource_from_json(
+    mini_map_json, map_helper_minimap_json, frame_slice,
+  )
 }
 
 ///|
 fn mini_map_ui_resource_from_json(
-  mini_map_json : Json,
+  _mini_map_json : Json,
   map_helper_minimap_json : Json,
+  frame_slice : @ui.UiSliceResource,
 ) -> MiniMapUIResource {
   try {
-    let nx_mini_map_ui : NxMiniMapUI = @json.from_json(mini_map_json)
     let map_helper_minimap : NxMapHelperMiniMap = @json.from_json(
       map_helper_minimap_json,
     )
-    let minmap_middle_left = nx_mini_map_ui.min_map.w
-    let minmap_middle_right = nx_mini_map_ui.min_map.e
-    let minmap_up_center = nx_mini_map_ui.min_map.n
-    let minmap_up_left = nx_mini_map_ui.min_map.nw
-    let minmap_up_right = nx_mini_map_ui.min_map.ne
-    let minmap_down_center = nx_mini_map_ui.min_map.s
-    let minmap_down_left = nx_mini_map_ui.min_map.sw
-    let minmap_down_right = nx_mini_map_ui.min_map.se
     let portal_marker = first_frame_texture(map_helper_minimap.portal)
-    {
-      portal_marker,
-      // minmap_middle_center,
-      minmap_middle_left,
-      minmap_middle_right,
-      minmap_up_center,
-      minmap_up_left,
-      minmap_up_right,
-      minmap_down_center,
-      minmap_down_left,
-      minmap_down_right,
-    }
+    { portal_marker, frame_slice }
   } catch {
     e => {
       @log.error("error loading mini map ui resource", data={ "error": e })
@@ -218,10 +197,7 @@ pub fn MiniMapUI::set_map(
   match self.type_ {
     NORMAL => {
       let map_dimensions = mini_map_resources.map_or(Point::default(), fn(it) {
-        @struct.Point::new(
-          it.canvas.frames[0].texture.w,
-          it.canvas.frames[0].texture.h,
-        )
+        @struct.Point::new(it.canvas.width, it.canvas.height)
       })
       // 48 (offset for text) + longer text's width + 10 (space for right side
       // border)
@@ -251,72 +227,34 @@ pub fn MiniMapUI::set_map(
         (20, m_stretch, down_y_offset)
       }
       let frames : Array[MiniMapFrameDraw] = []
+      let window_height = self.resource.frame_slice.top +
+        m_stretch +
+        self.resource.frame_slice.bottom
+      spawn_minimap_material_entity(
+        self.entities,
+        self.resource.frame_slice.material,
+        self.ui_model.position,
+        0,
+        0,
+        window_width,
+        window_height,
+        @graphics.MINI_MAP_ZINDEX_,
+      )
       if mini_map_resources is Some(res) {
         frames.push({
-          texture: first_frame_texture(res.canvas),
+          texture: {
+            i: res.canvas.path,
+            w: res.canvas.width,
+            h: res.canvas.height,
+            offset: @struct.Point::default(),
+            origin: @struct.Point::default(),
+          },
           x: map_draw_origin_x_,
           y: map_draw_origin_y_,
           z: @graphics.MINI_MAP_ZINDEX_,
         })
       }
-      push_repeated_texture_y(
-        frames,
-        self.resource.minmap_middle_left,
-        @graphics.MINI_MAP_ZINDEX_,
-        0,
-        ML_MR_Y_,
-        m_stretch + 1,
-      )
       let ur_x_offset = CENTER_START_X_ + c_stretch
-      let middle_right_x_ = ur_x_offset + 55
-      push_repeated_texture_y(
-        frames,
-        self.resource.minmap_middle_right,
-        @graphics.MINI_MAP_ZINDEX_,
-        middle_right_x_,
-        ML_MR_Y_,
-        m_stretch + 1,
-      )
-      push_repeated_texture_x(
-        frames,
-        self.resource.minmap_up_center,
-        @graphics.MINI_MAP_ZINDEX_,
-        CENTER_START_X_,
-        0,
-        c_stretch + 1,
-      )
-      frames.push({
-        texture: self.resource.minmap_up_left,
-        x: 0,
-        y: 0,
-        z: @graphics.MINI_MAP_ZINDEX_,
-      })
-      frames.push({
-        texture: self.resource.minmap_up_right,
-        x: ur_x_offset,
-        y: 0,
-        z: @graphics.MINI_MAP_ZINDEX_,
-      })
-      push_repeated_texture_x(
-        frames,
-        self.resource.minmap_down_center,
-        @graphics.MINI_MAP_ZINDEX_,
-        CENTER_START_X_,
-        down_y_offset + 18,
-        c_stretch + 1,
-      )
-      frames.push({
-        texture: self.resource.minmap_down_left,
-        x: 0,
-        y: down_y_offset,
-        z: @graphics.MINI_MAP_ZINDEX_,
-      })
-      frames.push({
-        texture: self.resource.minmap_down_right,
-        x: ur_x_offset,
-        y: down_y_offset,
-        z: @graphics.MINI_MAP_ZINDEX_,
-      })
       for frame in frames {
         spawn_minimap_texture_entity(
           self.entities,
@@ -327,7 +265,7 @@ pub fn MiniMapUI::set_map(
           frame.z,
         )
       }
-      let _normal_dimensions = Point::new(ur_x_offset + 64, down_y_offset + 27)
+      let _normal_dimensions = Point::new(window_width, window_height)
       self.ui_model.dimension = _normal_dimensions
       if mini_map_resources is Some(res) {
         let portals = res.portals
@@ -372,12 +310,6 @@ pub fn MiniMapUI::set_map(
 
 ///|
 const CENTER_START_X_ = 64
-
-///|
-// const BTN_MIN_Y_ = 4
-
-///|
-const ML_MR_Y_ = 17
 
 ///|
 // const MAX_ADJ_ = 40
@@ -451,31 +383,33 @@ fn spawn_minimap_texture_entity(
 }
 
 ///|
-fn push_repeated_texture_x(
-  frames : Array[MiniMapFrameDraw],
-  texture : @resource.NxTexture,
+fn spawn_minimap_material_entity(
+  entities : Array[@entity.Entity],
+  material : @selene_ui.UiMaterialHandle,
+  ui_pos : @struct.Point[Int],
+  local_x : Int,
+  local_y : Int,
+  width : Int,
+  height : Int,
   z : Int,
-  start_x : Int,
-  y : Int,
-  count : Int,
 ) -> Unit {
-  for i in 0..<count {
-    frames.push({ texture, x: start_x + i, y, z })
-  }
-}
-
-///|
-fn push_repeated_texture_y(
-  frames : Array[MiniMapFrameDraw],
-  texture : @resource.NxTexture,
-  z : Int,
-  x : Int,
-  start_y : Int,
-  count : Int,
-) -> Unit {
-  for i in 0..<count {
-    frames.push({ texture, x, y: start_y + i, z })
-  }
+  let entity = @entity.Entity::new()
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(
+        (ui_pos.x + local_x).to_double(),
+        (ui_pos.y + local_y).to_double(),
+      ),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.material_nodes().set(
+    entity,
+    @selene_ui.MaterialNode::new(material),
+  )
+  entities.push(entity)
 }
 
 ///|
@@ -575,16 +509,25 @@ fn poll_or_start_ui_loading(state : MiniMapUIState) -> Unit {
   }
   if mini_map_json_override.val is Some(mini_map_json) {
     if map_helper_minimap_json_override.val is Some(map_helper_minimap_json) {
-      let resource = mini_map_ui_resource_from_json(
-        mini_map_json, map_helper_minimap_json,
+      if state.loading is None {
+        state.loading = Some(
+          @io_service.submit_background_task(async fn() {
+            let frame_slice = @ui.load_ui_slice_resource(
+              @ui.ui_slice_loader(),
+              "ui/UIWindow2.img/MiniMap/MinMap/slice.json",
+            )
+            mini_map_ui_resource_from_json(
+              mini_map_json, map_helper_minimap_json, frame_slice,
+            )
+          }),
+        )
+      }
+    } else {
+      @log.fatal(
+        "mini map test override missing map helper minimap json; call set_map_helper_minimap_json_for_test",
       )
-      let ui_model = @ui.UIModel::new(Point::new(0, 20), Point::new(0, 0))
-      state.ui = Some(MiniMapUI::new(resource, ui_model))
       return
     }
-    @log.fatal(
-      "mini map test override missing map helper minimap json; call set_map_helper_minimap_json_for_test",
-    )
   }
   match state.loading {
     Some(future) =>

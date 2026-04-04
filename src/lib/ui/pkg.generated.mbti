@@ -10,9 +10,13 @@ import {
 }
 
 // Values
+pub async fn load_ui_slice_resource(@resource.AsyncLoader, String) -> UiSliceResource
+
 pub fn number_system(@ecs.World) -> Unit
 
 pub fn show_number(NumberType, Int, Int, x? : Int) -> Unit
+
+pub fn ui_slice_loader() -> @resource.AsyncLoader
 
 pub fn ui_system(@ecs.World) -> Unit
 
@@ -127,6 +131,22 @@ pub fn UIModel::is_active(Self) -> Bool
 pub fn UIModel::makeactive(Self) -> Unit
 pub fn UIModel::new(@res_types.Point[Int], @res_types.Point[Int], active? : Bool) -> Self
 pub fn UIModel::toggle_active(Self) -> Unit
+
+pub(all) enum UiSliceKind {
+  NineSlice
+  ThreeSliceV
+} derive(Eq, Show)
+
+pub struct UiSliceResource {
+  material : @Milky2018/selene/ui.UiMaterialHandle
+  kind : UiSliceKind
+  width : Int
+  height : Int
+  left : Int
+  right : Int
+  top : Int
+  bottom : Int
+}
 
 // Type aliases
 

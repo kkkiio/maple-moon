@@ -5,6 +5,12 @@ pub struct LocalDirResourceLoader {
 }
 
 ///|
+/// Async resource loader that reads a JSON file by full relative path.
+pub struct LocalFileJsonResourceLoader {
+  root_path : String
+}
+
+///|
 /// Async resource loader that always returns `null`.
 pub struct NullResourceLoader {
   dummy : Unit
@@ -21,6 +27,14 @@ pub struct LocalCsvTextLoader {
 pub fn LocalDirResourceLoader::new(
   root_path : String,
 ) -> LocalDirResourceLoader {
+  { root_path, }
+}
+
+///|
+/// Creates a local file-json loader rooted at `root_path`.
+pub fn LocalFileJsonResourceLoader::new(
+  root_path : String,
+) -> LocalFileJsonResourceLoader {
   { root_path, }
 }
 
@@ -65,6 +79,19 @@ pub impl @resource.AsyncResourceLoader for NullResourceLoader with load_data(
 }
 
 ///|
+pub impl @resource.AsyncResourceLoader for LocalFileJsonResourceLoader with load_data(
+  self,
+  path,
+) -> Json {
+  let normalized = path.strip_prefix("/").unwrap_or(path)
+  let file_path = join_dir(self.root_path, normalized.to_string())
+  let text = @fs.read_file_to_string(file_path)
+  @json.parse(text) catch {
+    _ => abort("invalid json in local file loader: \{file_path}")
+  }
+}
+
+///|
 pub impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(
   self,
   path,
@@ -79,7 +106,6 @@ pub impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(
 pub fn make_local_item_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_item",
-    base_url="/assets",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Consume/": LocalDirResourceLoader::new("assets/Item/Consume"),
       "Cash/": LocalDirResourceLoader::new("assets/Item/Cash"),
@@ -107,7 +133,6 @@ pub fn use_local_item_data_system() -> Unit {
 pub fn make_local_character_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_character",
-    base_url="/assets",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Pants/": LocalDirResourceLoader::new("assets/Character/Pants"),
       "Weapon/": LocalDirResourceLoader::new("assets/Character/Weapon"),
@@ -127,7 +152,6 @@ pub fn make_local_character_loader() -> @resource.AsyncLoader {
 pub fn make_local_string_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_string",
-    base_url="/assets",
     loader=LocalDirResourceLoader::new("assets/String"),
   )
 }
@@ -137,7 +161,6 @@ pub fn make_local_string_loader() -> @resource.AsyncLoader {
 pub fn make_local_quest_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_quest",
-    base_url="/assets",
     loader=LocalDirResourceLoader::new("assets/Quest"),
   )
 }
@@ -150,7 +173,6 @@ pub fn make_local_quest_loader() -> @resource.AsyncLoader {
 pub fn make_null_string_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_null_string",
-    base_url="/assets",
     loader=NullResourceLoader::new(),
   )
 }
@@ -165,6 +187,47 @@ pub fn make_local_csv_loader() -> @resource.CsvLoader {
 /// Installs local CSV loader into resource registry.
 pub fn install_local_csv_loader() -> Unit {
   @resource.set_csv_loader(make_local_csv_loader())
+}
+
+///|
+/// Installs a default local-fs-backed resource environment for tests.
+///
+/// This keeps test path-resolution rules aligned with runtime rules while
+/// swapping the underlying JSON/CSV I/O backend to local filesystem.
+pub fn install_resource_env_for_test() -> Unit {
+  @resource.register_async_loader("item", make_local_item_loader())
+  @resource.register_async_loader("character", make_local_character_loader())
+  @resource.register_async_loader("string", make_local_string_loader())
+  @resource.register_async_loader("quest", make_local_quest_loader())
+  @resource.register_async_loader(
+    "npc",
+    @resource.AsyncLoader::new(
+      "test_npc",
+      loader=LocalFileJsonResourceLoader::new("assets"),
+    ),
+  )
+  @resource.register_async_loader(
+    "mapx",
+    @resource.AsyncLoader::new(
+      "test_mapx",
+      loader=LocalFileJsonResourceLoader::new("assets/map"),
+    ),
+  )
+  @resource.register_async_loader(
+    "ui_window_2",
+    @resource.AsyncLoader::new(
+      "test_local_ui_window_2",
+      loader=LocalDirResourceLoader::new("assets/ui/UIWindow2.img"),
+    ),
+  )
+  @resource.register_async_loader(
+    "ui_slice",
+    @resource.AsyncLoader::new(
+      "test_local_ui_slice",
+      loader=LocalFileJsonResourceLoader::new("assets"),
+    ),
+  )
+  install_local_csv_loader()
 }
 
 ///|

@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/npc_talk_ui"
 import {
   "KKKIIO/maple-moon/lib/ms/npc",
   "KKKIIO/maple-moon/lib/resource",
+  "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/ecs",
 }
 
@@ -34,9 +35,7 @@ pub(all) struct NpcTalkButtonResource {
 }
 
 pub(all) struct NpcTalkResource {
-  top : @resource.NxTexture
-  fill : @resource.NxTexture
-  bottom : @resource.NxTexture
+  window_slice : @ui.UiSliceResource
   bar : @resource.NxTexture
   bt_yes : NpcTalkButtonResource
   bt_no : NpcTalkButtonResource
@@ -54,7 +53,7 @@ pub(all) struct NpcTalkResource {
   bt_my_level : NpcTalkButtonResource
   bt_all_level : NpcTalkButtonResource
 }
-pub fn NpcTalkResource::from_resource(Json) -> Self raise
+pub fn NpcTalkResource::from_resource(Json, @ui.UiSliceResource) -> Self raise
 
 // Type aliases
 

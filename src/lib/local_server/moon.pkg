@@ -18,6 +18,7 @@ import {
   "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/local_server/drop_sheet" @drop_sheet,
   "KKKIIO/maple-moon/lib/local_server/shop_sheet" @shop_sheet,
+  "Milky2018/selene/tiled",
   "moonbitlang/core/string",
 }
 

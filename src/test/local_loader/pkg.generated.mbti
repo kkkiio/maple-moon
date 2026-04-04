@@ -9,6 +9,8 @@ import {
 // Values
 pub fn install_local_csv_loader() -> Unit
 
+pub fn install_resource_env_for_test() -> Unit
+
 pub fn make_local_character_loader() -> @resource.AsyncLoader
 
 pub fn make_local_csv_loader() -> @resource.CsvLoader
@@ -39,6 +41,12 @@ pub struct LocalDirResourceLoader {
 }
 pub fn LocalDirResourceLoader::new(String) -> Self
 pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader
+
+pub struct LocalFileJsonResourceLoader {
+  root_path : String
+}
+pub fn LocalFileJsonResourceLoader::new(String) -> Self
+pub impl @resource.AsyncResourceLoader for LocalFileJsonResourceLoader
 
 pub struct NullResourceLoader {
   dummy : Unit

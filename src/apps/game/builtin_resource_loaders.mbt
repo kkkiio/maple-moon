@@ -1,12 +1,10 @@
 ///|
 /// 定义一些内置的资源的加载器.
 /// 
-/// 部分资源还保存在 r2:maple 存储里, 旧域名是 maple-res.kkkiiox.work.
-/// 这些资源需要先复制回本地处理, 再放到 assets 目录下. 参考 resource-processing-workflow skill.
-/// 
-/// 对于从 r2 迁移的资源, 它们引用的子资源路径往往是相对于旧域名根目录的.
-/// 例如: 资源中引用 `"images/Map/29108.png"`, 而本地实际存储在 `"assets/images/Map/29108.png"`.
-/// 为了兼容这种情况, `@resource.AsyncLoader` 提供了 `base_url` 和 `image_base_url` 选项来修正路径解析.
+/// 资源路径解析由 `resource` 包内部的 PathResolver 统一处理:
+/// - 允许绝对路径(`/...`)
+/// - 禁止 `http(s)` 路径
+/// - 相对路径按 source 规则映射到本地 assets 根目录
 using @lazy {type Lazy}
 
 ///|
@@ -38,40 +36,10 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
   if mapx_loader.val is Some(loader) {
     return loader
   }
-  let loader = @resource.CompositeAsyncResourceLoader::new({
-    "Map0/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map0",
-    ),
-    "Map1/": @resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Map/Map1",
-      "/assets/map/map1",
-    ),
-    "Map2/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map2",
-    ),
-    "Map3/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map3",
-    ),
-    "Map4/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map4",
-    ),
-    "Map5/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map5",
-    ),
-    "Map6/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map6",
-    ),
-    "Map7/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map7",
-    ),
-    "Map8/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map8",
-    ),
-    "Map9/": @resource.DirResourceLoader::new(
-      "https://maple-res.kkkiiox.work/Map/Map9",
-    ),
-  })
-  let loader = @resource.AsyncLoader::new("mapx", loader~, base_url="/assets")
+  let loader = @resource.AsyncLoader::new(
+    "mapx",
+    loader=@resource.FileJsonResourceLoader::new("/assets/map"),
+  )
   mapx_loader.val = Some(loader)
   loader
 }
@@ -86,7 +54,6 @@ let map_latest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
         "/assets/spritesheets/Map/MapHelper.img",
       ),
     }),
-    base_url="/assets",
   )
 })
 
@@ -100,7 +67,6 @@ let map_world_map_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "map_world_map",
     loader=@resource.DirResourceLoader::new("/assets/map/WorldMap"),
-    base_url="/assets",
   )
 })
 
@@ -117,7 +83,6 @@ let background_set_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
       // "https://maple-res.kkkiiox.work/Map/Back",
       "/assets/map/back",
     ),
-    base_url="/assets",
   )
 })
 
@@ -135,7 +100,6 @@ let object_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
       // "https://maple-res.kkkiiox.work/Map/Obj",
       "/assets/map/obj",
     ),
-    base_url="/assets",
   )
 })
 
@@ -153,7 +117,6 @@ let tile_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
       // "https://maple-res.kkkiiox.work/Map/Tile",
       "/assets/map/tile",
     ),
-    base_url="/assets",
   )
 })
 
@@ -171,7 +134,6 @@ let mob_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
       // "https://maple-res.kkkiiox.work/Mob",
       "/assets/Mob",
     ),
-    base_url="/assets",
   )
 })
 
@@ -189,7 +151,6 @@ let skill_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
       // "https://maple-res.kkkiiox.work/Skill",
       "/assets/skill",
     ),
-    base_url="/assets",
   )
 })
 
@@ -202,7 +163,6 @@ fn get_skill_loader() -> @resource.AsyncLoader {
 let character_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "character",
-    base_url="/assets",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Pants/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Pants",
@@ -216,9 +176,7 @@ let character_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
         // "https://maple-res.kkkiiox.work/Character/Coat",
         "/assets/Character/Coat",
       ),
-      "Cap/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Cap",
-      ),
+      "Cap/": @resource.DirResourceLoader::new("/assets/Character/Cap"),
       "Longcoat/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Longcoat",
         "/assets/Character/Longcoat",
@@ -231,11 +189,9 @@ let character_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
         // "https://maple-res.kkkiiox.work/Character/Shoes",
         "/assets/Character/Shoes",
       ),
-      "Glove/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Glove",
-      ),
+      "Glove/": @resource.DirResourceLoader::new("/assets/Character/Glove"),
       "Accessory/": @resource.DirResourceLoader::new(
-        "https://maple-res.kkkiiox.work/Character/Accessory",
+        "/assets/Character/Accessory",
       ),
     }),
   )
@@ -250,7 +206,6 @@ fn get_character_loader() -> @resource.AsyncLoader {
 let afterimage_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "afterimage",
-    base_url="/assets",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Afterimage",
       "/assets/Character/Afterimage",
@@ -267,7 +222,6 @@ fn get_afterimage_loader() -> @resource.AsyncLoader {
 let body_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "body",
-    base_url="/assets",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Body",
       "/assets/Character/Body",
@@ -284,7 +238,6 @@ fn get_body_loader() -> @resource.AsyncLoader {
 let effect_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "effect",
-    base_url="/assets",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "BasicEff.img/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Effect/BasicEff.img",
@@ -307,7 +260,6 @@ fn get_effect_loader() -> @resource.AsyncLoader {
 let face_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "face",
-    base_url="/assets",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Face",
       "/assets/Character/Face",
@@ -324,7 +276,6 @@ fn get_face_loader() -> @resource.AsyncLoader {
 let hair_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "hair",
-    base_url="/assets",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Hair",
       "/assets/Character/Hair",
@@ -341,7 +292,6 @@ fn get_hair_loader() -> @resource.AsyncLoader {
 let item_special_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "item_special",
-    base_url="/assets",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Item/Special",
       "/assets/Item/Special",
@@ -358,7 +308,6 @@ fn get_item_special_loader() -> @resource.AsyncLoader {
 let item_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "item",
-    base_url="/assets",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Consume/": @resource.DirResourceLoader::new("/assets/Item/Consume"),
       "Cash/": @resource.DirResourceLoader::new("/assets/Item/Cash"),
@@ -379,7 +328,6 @@ let ui_window_2_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "UI/UIWindow2.img",
     loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow2.img"),
-    base_url="/assets",
   )
 })
 
@@ -393,7 +341,6 @@ let ui_window_4_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "UI/UIWindow4.img",
     loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow4.img"),
-    base_url="/assets",
   )
 })
 
@@ -403,11 +350,23 @@ fn get_ui_window_4_loader() -> @resource.AsyncLoader {
 }
 
 ///|
+let ui_slice_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
+  @resource.AsyncLoader::new(
+    "ui_slice",
+    loader=@resource.FileJsonResourceLoader::new("/assets"),
+  )
+})
+
+///|
+fn get_ui_slice_loader() -> @resource.AsyncLoader {
+  ui_slice_loader.get()
+}
+
+///|
 let npc_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "npc",
     loader=@resource.FileJsonResourceLoader::new("/assets"),
-    base_url="/assets",
   )
 })
 
@@ -421,7 +380,6 @@ let string_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "string",
     loader=@resource.DirResourceLoader::new("/assets/String"),
-    base_url="/assets",
   )
 })
 
@@ -435,7 +393,6 @@ let quest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "quest",
     loader=@resource.DirResourceLoader::new("/assets/Quest"),
-    base_url="/assets",
   )
 })
 
@@ -465,12 +422,30 @@ pub fn install_builtin_resource_loaders() -> Unit {
   @resource.register_async_loader("item", get_item_loader())
   @resource.register_async_loader("ui_window_2", get_ui_window_2_loader())
   @resource.register_async_loader("ui_window_4", get_ui_window_4_loader())
+  @resource.register_async_loader("ui_slice", get_ui_slice_loader())
   @resource.register_async_loader("npc", get_npc_loader())
   @resource.register_async_loader("string", get_string_loader())
   @resource.register_async_loader("quest", get_quest_loader())
   @resource.set_csv_loader(
     @resource.CsvLoader::new(loader=FetchCsvTextLoader::new()),
   )
+}
+
+///|
+pub enum ResourceEnvMode {
+  Prod
+  Test
+}
+
+///|
+pub fn install_resource_env(mode : ResourceEnvMode) -> Unit {
+  ignore(Test)
+  match mode {
+    Prod => install_builtin_resource_loaders()
+    // Test environment keeps the same resolver/loader rules.
+    // Concrete I/O backend can be swapped by test harness when needed.
+    Test => install_builtin_resource_loaders()
+  }
 }
 
 // let status_bar_loader = @resource.SyncLoader::load(

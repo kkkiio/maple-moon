@@ -3,9 +3,7 @@ using @npc {type TalkArgs}
 
 ///|
 pub(all) struct NpcTalkResource {
-  top : @resource.NxTexture
-  fill : @resource.NxTexture
-  bottom : @resource.NxTexture
+  window_slice : @ui.UiSliceResource
   bar : @resource.NxTexture
   bt_yes : NpcTalkButtonResource
   bt_no : NpcTalkButtonResource
@@ -65,12 +63,10 @@ fn json_to_button_resource(
 ///|
 pub fn NpcTalkResource::from_resource(
   util_dlg_ex : Json,
+  window_slice : @ui.UiSliceResource,
 ) -> NpcTalkResource raise {
   match util_dlg_ex {
     {
-      "t": top,
-      "c": fill,
-      "s": bottom,
       "bar": bar,
       "BtYes": bt_yes,
       "BtNo": bt_no,
@@ -90,9 +86,7 @@ pub fn NpcTalkResource::from_resource(
       ..
     } =>
       {
-        top: json_to_texture(top),
-        fill: json_to_texture(fill),
-        bottom: json_to_texture(bottom),
+        window_slice,
         bar: json_to_texture(bar),
         bt_yes: json_to_button_resource(bt_yes, "BtYes"),
         bt_no: json_to_button_resource(bt_no, "BtNo"),
@@ -212,7 +206,11 @@ async fn load_npc_talk_resource() -> NpcTalkResource {
   let src : Json = @resource.require_async_loader("ui_window_2").load_resource([
     "UtilDlgEx",
   ])
-  NpcTalkResource::from_resource(src)
+  let window_slice = @ui.load_ui_slice_resource(
+    @ui.ui_slice_loader(),
+    "ui/UIWindow2.img/UtilDlgEx/slice.json",
+  )
+  NpcTalkResource::from_resource(src, window_slice)
 }
 
 ///|
@@ -259,8 +257,10 @@ pub fn describe_npc_talk_ui() -> Json {
         z_min = NPC_TALK_Z
         z_max = NPC_TALK_Z
       }
-      let window_w = ui.resource.top.w
-      let window_h = ui.resource.top.h + ui.body_height + ui.resource.bottom.h
+      let window_w = ui.resource.window_slice.width
+      let window_h = ui.resource.window_slice.top +
+        ui.body_height +
+        ui.resource.window_slice.bottom
       let window_left = ui.window_pos.x
       let window_top = ui.window_pos.y
       let window_right = window_left + window_w
@@ -413,7 +413,7 @@ fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
   self.destroy()
   self.body_height = self.measure_body_height()
   self.window_pos = Point::new(
-    400 - self.resource.top.w / 2,
+    400 - self.resource.window_slice.width / 2,
     240 - self.body_height / 2,
   )
   self.spawn_window()
@@ -448,31 +448,16 @@ fn UINpcTalk::measure_body_height(self : UINpcTalk) -> Int {
 
 ///|
 fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
-  let fill_height = self.body_height
+  let window_height = self.resource.window_slice.top +
+    self.body_height +
+    self.resource.window_slice.bottom
   ignore(
-    self.spawn_image_node(
-      self.resource.top,
+    self.spawn_material_node(
+      self.resource.window_slice.material,
       self.window_pos.x,
       self.window_pos.y,
-      NPC_TALK_Z,
-    ),
-  )
-  ignore(
-    self.spawn_image_node(
-      self.resource.fill,
-      self.window_pos.x,
-      self.window_pos.y + self.resource.top.h,
-      NPC_TALK_Z,
-      fit=@selene_ui.ImageFit::Stretch,
-      width=self.resource.fill.w,
-      height=fill_height,
-    ),
-  )
-  ignore(
-    self.spawn_image_node(
-      self.resource.bottom,
-      self.window_pos.x,
-      self.window_pos.y + self.resource.top.h + fill_height,
+      self.resource.window_slice.width,
+      window_height,
       NPC_TALK_Z,
     ),
   )
@@ -481,9 +466,9 @@ fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
 ///|
 fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
   let window_bottom = self.window_pos.y +
-    self.resource.top.h +
+    self.resource.window_slice.top +
     self.body_height +
-    self.resource.bottom.h
+    self.resource.window_slice.bottom
   let speaker_y = window_bottom - self.resource.bar.h - 7
   let speaker_pos = Point::new(self.window_pos.x + 100, speaker_y)
   ignore(
@@ -692,6 +677,33 @@ fn UINpcTalk::spawn_image_node(
 }
 
 ///|
+fn UINpcTalk::spawn_material_node(
+  self : UINpcTalk,
+  material : @selene_ui.UiMaterialHandle,
+  x : Int,
+  y : Int,
+  width : Int,
+  height : Int,
+  z : Int,
+) -> @entity.Entity {
+  let entity = @entity.Entity::new()
+  self.entities.push(entity)
+  @selene_ui.nodes().set(
+    entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2D(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+    ),
+  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.material_nodes().set(
+    entity,
+    @selene_ui.MaterialNode::new(material),
+  )
+  entity
+}
+
+///|
 fn UINpcTalk::spawn_action_button(
   self : UINpcTalk,
   resource : NpcTalkButtonResource,
@@ -745,7 +757,10 @@ fn UINpcTalk::update(self : UINpcTalk) -> Unit {
 
 ///|
 fn UINpcTalk::content_width(self : UINpcTalk) -> Int {
-  @cmp.maximum(1, self.resource.top.w - CONTENT_X - CONTENT_RIGHT_PADDING)
+  @cmp.maximum(
+    1,
+    self.resource.window_slice.width - CONTENT_X - CONTENT_RIGHT_PADDING,
+  )
 }
 
 ///|

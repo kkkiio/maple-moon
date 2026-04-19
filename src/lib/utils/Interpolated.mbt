@@ -45,7 +45,7 @@ pub fn[T] Nominal::next(self : Nominal[T], value : T, thrs : Double) -> Unit {
 struct Linear {
   mut now : Double
   mut before : Double
-} derive(Default, Show, ToJson)
+} derive(Default, Debug, ToJson)
 
 ///|
 pub fn Linear::new(init : Double) -> Linear {

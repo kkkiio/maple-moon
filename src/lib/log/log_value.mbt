@@ -3,14 +3,14 @@
 pub(all) struct JsonValue(Json)
 
 ///|
-pub impl Show for JsonValue with output(self, logger) {
-  logger.write_string(self.0.stringify())
+pub impl Debug for JsonValue with to_repr(self) {
+  Repr::literal(self.0.stringify())
 }
 
 ///|
 pub(all) struct HexInt(Int)
 
 ///|
-pub impl Show for HexInt with output(self, logger) {
-  logger.write_string(@utils.to_hex_string(self.0.reinterpret_as_uint()))
+pub impl Debug for HexInt with to_repr(self) {
+  Repr::integer(@utils.to_hex_string(self.0.reinterpret_as_uint()))
 }

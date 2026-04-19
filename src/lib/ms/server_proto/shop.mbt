@@ -9,14 +9,14 @@ pub(all) struct ShopItem {
   time : Int
   charge_price : Int
   buyable : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 /// Server message that opens NPC shop UI with items.
 pub(all) struct OpenNpcShopMessage {
   npc_id : Int
   items : Array[ShopItem]
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for OpenNpcShopMessage with type_code() {
@@ -27,7 +27,7 @@ pub impl ServerMessage for OpenNpcShopMessage with type_code() {
 /// Server message for transaction confirmation code.
 pub(all) struct ConfirmShopTransactionMessage {
   code : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for ConfirmShopTransactionMessage with type_code() {
@@ -43,7 +43,7 @@ pub(all) struct NpcShopActionMessage {
   slot : Int
   item_id : Int
   qty : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for NpcShopActionMessage with type_code() {

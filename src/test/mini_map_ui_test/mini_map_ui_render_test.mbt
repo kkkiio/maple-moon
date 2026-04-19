@@ -47,6 +47,7 @@ fn setup_mini_map_ui_scene_with_data(
   street_name : String,
   mini_map_resource : @map.MiniMapRuntimeResource?,
 ) -> Unit {
+  @local_loader.install_resource_env_for_test()
   @mini_map_ui.set_minimap_json_for_test(load_real_mini_map_ui_json())
   @mini_map_ui.set_map_helper_minimap_json_for_test(
     load_real_map_helper_minimap_json(),
@@ -60,7 +61,7 @@ fn setup_mini_map_ui_scene_with_data(
   @capture_app.init_app(app)
   @mini_map_ui.set_current_map(map_id, map_name, street_name, mini_map_resource)
 
-  for _ in 0..<8 {
+  for _ in 0..<300 {
     @capture_app.run_loop(0.016)
   }
 }

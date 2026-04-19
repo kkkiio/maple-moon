@@ -2,7 +2,6 @@
 fn make_local_body_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_body",
-    base_url="/assets",
     loader=@local_loader.LocalDirResourceLoader::new("assets/Character/Body"),
   )
 }
@@ -11,7 +10,6 @@ fn make_local_body_loader() -> @resource.AsyncLoader {
 fn make_local_face_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_face",
-    base_url="/assets",
     loader=@local_loader.LocalDirResourceLoader::new("assets/Character/Face"),
   )
 }
@@ -20,7 +18,6 @@ fn make_local_face_loader() -> @resource.AsyncLoader {
 fn make_local_hair_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "test_local_hair",
-    base_url="/assets",
     loader=@local_loader.LocalDirResourceLoader::new("assets/Character/Hair"),
   )
 }

@@ -5,7 +5,7 @@ pub(all) enum HitSource {
   UserInput
   /// Passive skill triggered attack (cannot trigger passives again)
   Passive(Int)
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 /// Event fired when an attack hits one or more targets
@@ -15,7 +15,7 @@ pub(all) struct HitEvent {
   source : HitSource
   target_oids : Array[Int]
   result : @combat_proto.AttackResult
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 /// Get attacker's OID from hit event

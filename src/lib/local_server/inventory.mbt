@@ -8,20 +8,20 @@ pub(all) struct StorageEquipData {
   itemlevel : Int
   itemexp : Int
   vicious : Int
-} derive(Show, Default, ToJson, @json.FromJson)
+} derive(Debug, Default, ToJson, @json.FromJson)
 
 ///|
 pub(all) struct StorageItemData {
   item_id : Int
   slot : Int
   count : Int
-} derive(Show, Default, ToJson, @json.FromJson)
+} derive(Debug, Default, ToJson, @json.FromJson)
 
 ///|
 pub(all) enum StorageItemEntry {
   Equip(StorageEquipData)
   Item(StorageItemData)
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub fn StorageItemEntry::from_server_proto(

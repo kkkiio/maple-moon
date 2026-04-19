@@ -80,7 +80,7 @@ pub(all) suberror ResolveReferenceError {
   InvalidId(String)
   PathNotFound(String)
   NameNotFound(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub async fn preload_reference_data() -> Unit {

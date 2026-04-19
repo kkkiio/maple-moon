@@ -21,11 +21,11 @@ pub(all) enum BodyLayer {
   HAND_OVER_HAIR = 48
   HAND_OVER_WEAPON = 49
   HEAD = 19
-} derive(Eq, Compare, Show, Hash)
+} derive(Eq, Compare, Debug, Hash)
 
 ///|
 pub impl ToJson for BodyLayer with to_json(self) {
-  self.to_string().to_json()
+  self.name().to_json()
 }
 
 ///|
@@ -49,4 +49,21 @@ pub fn BodyLayer::from_name(name : String) -> BodyLayer? {
     _ => return None
   }
   Some(it)
+}
+
+///|
+pub fn BodyLayer::name(self : BodyLayer) -> String {
+  match self {
+    BodyLayer::BODY => "body"
+    BodyLayer::ARM => "arm"
+    BodyLayer::ARM_BELOW_HEAD => "armBelowHead"
+    BodyLayer::ARM_BELOW_HEAD_OVER_MAIL => "armBelowHeadOverMailChest"
+    BodyLayer::ARM_OVER_HAIR => "armOverHair"
+    BodyLayer::ARM_OVER_HAIR_BELOW_WEAPON => "armOverHairBelowWeapon"
+    BodyLayer::HAND_BELOW_WEAPON => "handBelowWeapon"
+    BodyLayer::HAND_OVER_HAIR => "handOverHair"
+    BodyLayer::HAND_OVER_WEAPON => "handOverWeapon"
+    BodyLayer::HEAD => "head"
+    BodyLayer::HEAD => "backHead"
+  }
 }

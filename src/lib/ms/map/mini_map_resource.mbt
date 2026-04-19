@@ -87,7 +87,7 @@ pub enum MiniMapPortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub fn MiniMapPortalType::from_int(id : Int) -> MiniMapPortalType {

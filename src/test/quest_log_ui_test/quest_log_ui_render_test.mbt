@@ -1,19 +1,6 @@
 ///|
 async fn setup_local_loaders() -> Unit {
-  @resource.register_async_loader(
-    "quest",
-    @local_loader.make_local_quest_loader(),
-  )
-  @resource.register_async_loader(
-    "ui_window_2",
-    @resource.AsyncLoader::new(
-      "test_local_ui_window_2",
-      base_url="/assets",
-      loader=@local_loader.LocalDirResourceLoader::new(
-        "assets/ui/UIWindow2.img",
-      ),
-    ),
-  )
+  @local_loader.install_resource_env_for_test()
   let (quest_resource, _) = @quest.load_quest_resource()
   @quest_log.setup(quest_resource)
 }

@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -39,9 +40,10 @@ pub(all) enum BodyLayer {
   HAND_OVER_HAIR
   HAND_OVER_WEAPON
   HEAD
-} derive(Compare, Eq, Hash, Show)
+} derive(Compare, Eq, Hash, @debug.Debug)
 pub fn BodyLayer::from_name(String) -> Self?
 pub fn BodyLayer::int_value(Self) -> Int
+pub fn BodyLayer::name(Self) -> String
 pub impl ToJson for BodyLayer
 
 pub(all) struct NxBodyLayerTexture {

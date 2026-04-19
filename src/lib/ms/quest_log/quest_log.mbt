@@ -11,7 +11,7 @@ pub(all) struct QuestLogEntryInProgress {
   phase : Int
   /// Current phase description from quest data.
   phase_description : String
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 /// One completed quest entry exposed by `quest_log` facade.
@@ -22,7 +22,7 @@ pub(all) struct QuestLogEntryCompleted {
   name : String
   /// Completion timestamp from server snapshot.
   completion_time : Int64
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 /// Quest-log snapshot returned by `get_snapshot()`.
@@ -31,7 +31,7 @@ pub(all) struct QuestLogSnapshot {
   in_progress : Array[QuestLogEntryInProgress]
   /// Completed quests.
   completed : Array[QuestLogEntryCompleted]
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 /// Returns current quest-log snapshot.
@@ -186,9 +186,7 @@ fn Module::apply_update_quest_info(
     QuestError(quest_id~) =>
       @log.warn("quest update failed", data={ "quest_id": quest_id })
     QuestFailure(operation~) =>
-      @log.warn("quest operation failure", data={
-        "operation": operation.to_json(),
-      })
+      @log.warn("quest operation failure", data={ "operation": operation })
     _ => ()
   }
 }

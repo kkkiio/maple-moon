@@ -173,7 +173,7 @@ pub(all) enum JobId {
   EVAN8 = 2216
   EVAN9 = 2217
   EVAN10 = 2218
-} derive(Eq)
+} derive(Eq, Debug)
 
 ///|
 pub fn JobId::int_value(self : JobId) -> Int = "%identity"

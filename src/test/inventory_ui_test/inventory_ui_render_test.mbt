@@ -55,14 +55,9 @@ async fn setup_inventory_ui_test_scene() -> Unit {
     )
   @capture_app.init_app(app)
 
-  let character_loader = @local_loader.make_local_character_loader()
-  let item_loader = @local_loader.make_local_item_loader()
-  @resource.register_async_loader("character", character_loader)
-  @resource.register_async_loader("item", item_loader)
-  @resource.register_async_loader(
-    "string",
-    @local_loader.make_local_string_loader(),
-  )
+  @local_loader.install_resource_env_for_test()
+  let character_loader = @resource.require_async_loader("character")
+  let item_loader = @resource.require_async_loader("item")
   let equip_data = @item.ItemData::load(1060002, character_loader, item_loader)
   let use_data = @item.ItemData::load(2000000, character_loader, item_loader)
   @item.ItemData::add_item_data(1060002, equip_data)

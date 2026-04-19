@@ -6,7 +6,7 @@ pub(all) struct DemoQuestSelection {
   npc_id : Int
   /// Whether phase0 check includes a level requirement.
   has_level_check : Bool
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Raw in-progress quest-log entry exported for the `quest_log` facade.
@@ -19,7 +19,7 @@ pub(all) struct QuestLogInProgressRaw {
   progress_data : String
   /// Current phase index.
   phase : Int
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Raw completed quest-log entry exported for the `quest_log` facade.
@@ -30,7 +30,7 @@ pub(all) struct QuestLogCompletedRaw {
   name : String
   /// Completion timestamp.
   completion_time : Int64
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Raw quest-log snapshot exported for the `quest_log` facade.
@@ -39,7 +39,7 @@ pub(all) struct QuestLogSnapshotRaw {
   in_progress : Array[QuestLogInProgressRaw]
   /// Completed entries.
   completed : Array[QuestLogCompletedRaw]
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// 异步加载 Quest 资源,返回 (QuestResource, Json)
@@ -137,7 +137,7 @@ pub async fn load_quest_resource() -> (QuestResource, Json) {
 pub(all) struct PlayerQuestLog {
   in_progress : Map[Int, InProgressQuest]
   completed : Map[Int, CompletedQuest]
-} derive(Show, Default)
+} derive(Debug, Default)
 
 ///|
 pub(all) struct InProgressQuest {
@@ -148,7 +148,7 @@ pub(all) struct InProgressQuest {
   mut progress_data : String
   mut phase : Int
   info_number_progress_map : Map[Int, String]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn InProgressQuest::get_phase_progress(
@@ -167,7 +167,7 @@ pub(all) struct CompletedQuest {
   quest_id : Int
   quest_info : NxQuestInfo
   completion_time : Int64
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn PlayerQuestLog::get_quest(
@@ -187,7 +187,7 @@ pub fn PlayerQuestLog::get_quest(
 pub enum StartedQuest {
   InProgress(InProgressQuest)
   Completed(CompletedQuest)
-} derive(Show)
+} derive(Debug)
 
 // ///|
 // pub fn parse_player_quest_info(

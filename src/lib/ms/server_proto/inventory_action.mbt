@@ -5,7 +5,7 @@
 pub(all) struct UseItemMessage {
   slot_no : Int
   item_id : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for UseItemMessage with type_code() {
@@ -23,7 +23,7 @@ pub(all) struct MoveItemMessage {
   slot : Int
   action : Int
   qty : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for MoveItemMessage with type_code() {

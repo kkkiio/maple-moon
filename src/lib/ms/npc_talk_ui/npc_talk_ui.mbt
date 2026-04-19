@@ -1128,7 +1128,7 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
 ///|
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 using @struct {type ColorName, type Point}

@@ -8,6 +8,7 @@ import {
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/tiled",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -149,7 +150,7 @@ pub enum MiniMapPortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 pub fn MiniMapPortalType::from_int(Int) -> Self
 
 pub struct MiniMapResource {
@@ -194,10 +195,10 @@ pub struct NxLife {
   type_ : String
   x : Int
   y : Int
-} derive(Show)
+} derive(@debug.Debug)
 pub impl @json.FromJson for NxLife
 
-type NxPortal derive(Show, ToJson, @json.FromJson)
+type NxPortal derive(ToJson, @debug.Debug, @json.FromJson)
 
 type NxSeat
 pub impl @json.FromJson for NxSeat
@@ -227,7 +228,7 @@ pub(all) enum PortalType {
   SPRING1
   SPRING2
   TYPE14
-} derive(Compare, Eq, Hash, Show, ToJson)
+} derive(Compare, Eq, Hash, ToJson, @debug.Debug)
 pub fn PortalType::is_auto_trigger(Self) -> Bool
 pub fn PortalType::is_manual_trigger(Self) -> Bool
 pub fn PortalType::typebyid(Int) -> Self?
@@ -238,7 +239,7 @@ pub(all) struct PortalWarpInfo {
   toname : String
   name : String
   intra_map : Bool
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct SceneMap {
   id : Int

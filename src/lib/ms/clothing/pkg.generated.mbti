@@ -8,6 +8,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -17,7 +18,7 @@ pub fn resolve_anchor_shift(@character_body.BodyDrawInfo, @char_stance.StanceId,
 // Errors
 
 // Types and methods
-type Clothing derive(Show)
+type Clothing derive(@debug.Debug)
 pub fn Clothing::from_resource(@item.ItemData, @character_body.BodyDrawInfo) -> Self raise
 pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
 pub fn Clothing::get_eqslot(Self) -> @slot.Id
@@ -66,37 +67,37 @@ pub(all) enum ClothingLayer {
   RING
   BACK_SHIELD
   BACK_WEAPON
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, @debug.Debug)
 pub fn ClothingLayer::int_value(Self) -> Int
 pub impl ToJson for ClothingLayer
 
 pub(all) struct NxMapAnchor {
   parent_key : String
   parent_pos : @res_types.Point[Int]
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 pub impl @json.FromJson for NxMapAnchor
 
 pub(all) struct NxWeapon {
   actions : Map[String, NxWeaponAction]
-} derive(Show)
+} derive(@debug.Debug)
 pub fn NxWeapon::get_part(Self, String, Int, String) -> NxWeaponPart?
 pub impl @json.FromJson for NxWeapon
 
 pub(all) struct NxWeaponAction {
   frames : Map[Int, NxWeaponFrame]
-} derive(Show)
+} derive(@debug.Debug)
 pub impl @json.FromJson for NxWeaponAction
 
 pub(all) struct NxWeaponFrame {
   parts : Map[String, NxWeaponPart]
-} derive(Show)
+} derive(@debug.Debug)
 pub impl @json.FromJson for NxWeaponFrame
 
 pub(all) struct NxWeaponPart {
   texture : @resource.NxTexture
   z : String
   anchor : NxMapAnchor
-} derive(Show)
+} derive(@debug.Debug)
 pub impl @json.FromJson for NxWeaponPart
 
 // Type aliases

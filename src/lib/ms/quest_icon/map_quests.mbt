@@ -26,7 +26,7 @@ pub(all) enum QuestIconState {
   IN_PROGRESS
   /// Quest is active and can be completed at NPC.
   COMPLETED
-} derive(Eq, Show, ToJson, @json.FromJson)
+} derive(Eq, Debug, ToJson, @json.FromJson)
 
 ///|
 pub(all) struct QuestIconQueryResult {
@@ -70,52 +70,13 @@ pub fn MapQuestsResource::new(
 /// Loads the graphical resources for quest icons.
 pub async fn MapQuestsResource::load() -> MapQuestsResource {
   let loader = @resource.require_async_loader("ui_window_2")
-  let available_json = loader.load_resource(["QuestIcon", "0"]) catch {
-    e => {
-      @log.error("failed to load quest icon", data={
-        "state": "available",
-        "error": e,
-      })
-      panic()
-    }
-  }
-  let inprogress_json = loader.load_resource(["QuestIcon", "1"]) catch {
-    e => {
-      @log.error("failed to load quest icon", data={
-        "state": "inprogress",
-        "error": e,
-      })
-      panic()
-    }
-  }
-  let completed_json = loader.load_resource(["QuestIcon", "2"]) catch {
-    e => {
-      @log.error("failed to load quest icon", data={
-        "state": "completed",
-        "error": e,
-      })
-      panic()
-    }
-  }
+  let available_json = loader.load_resource(["QuestIcon", "0"])
+  let inprogress_json = loader.load_resource(["QuestIcon", "1"])
+  let completed_json = loader.load_resource(["QuestIcon", "2"])
   {
-    available_quest_icon: @json.from_json(available_json) catch {
-      e => {
-        @log.error("failed to decode available quest icon", data={ "error": e })
-        panic()
-      }
-    },
-    inprogress_quest_icon: @json.from_json(inprogress_json) catch {
-      e => {
-        @log.error("failed to decode inprogress quest icon", data={ "error": e })
-        panic()
-      }
-    },
-    completed_quest_icon: @json.from_json(completed_json) catch {
-      e => {
-        @log.error("failed to decode completed quest icon", data={ "error": e })
-        panic()
-      }
-    },
+    available_quest_icon: @json.from_json(available_json),
+    inprogress_quest_icon: @json.from_json(inprogress_json),
+    completed_quest_icon: @json.from_json(completed_json),
   }
 }
 

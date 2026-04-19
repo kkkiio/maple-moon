@@ -1,5 +1,5 @@
 ///|
-pub trait QuestCheck: Show {
+pub trait QuestCheck: Debug {
   check(Self, CheckContext) -> Result[Unit, String]
 }
 
@@ -15,7 +15,7 @@ pub(all) struct CheckContext {
 ///|
 priv struct MinLevelCheck {
   min_level : Int
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for MinLevelCheck with check(self, context) {
@@ -29,7 +29,7 @@ impl QuestCheck for MinLevelCheck with check(self, context) {
 ///|
 priv struct NpcCheck {
   npc : Int
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for NpcCheck with check(_self, _context) {
@@ -40,7 +40,7 @@ impl QuestCheck for NpcCheck with check(_self, _context) {
 ///|
 priv struct IntervalMinutesCheck {
   interval_minutes : Int
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for IntervalMinutesCheck with check(_self, _context) {
@@ -55,7 +55,7 @@ impl QuestCheck for IntervalMinutesCheck with check(_self, _context) {
 /// retrieved from either this quest or another quest specified by infoNumber.
 struct InfoExCheck {
   info_ex : Array[InfoEx]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl QuestCheck for InfoExCheck with check(self, context) {
@@ -79,7 +79,7 @@ pub impl QuestCheck for InfoExCheck with check(self, context) {
 ///|
 priv struct QuestsStatusCheck {
   quest_status_map : Map[Int, NxQuestStatus]
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for QuestsStatusCheck with check(self, context) {
@@ -92,7 +92,7 @@ impl QuestCheck for QuestsStatusCheck with check(self, context) {
     }
     if quest_status != expected_status {
       return Err(
-        "Expected quest \{quest_id} status \{expected_status}, got \{quest_status}",
+        "Expected quest \{quest_id} status \{expected_status.to_repr()}, got \{quest_status.to_repr()}",
       )
     }
   }
@@ -102,7 +102,7 @@ impl QuestCheck for QuestsStatusCheck with check(self, context) {
 ///|
 priv struct JobsCheck {
   jobs : Array[@job.JobId]
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for JobsCheck with check(self, context) {
@@ -118,7 +118,7 @@ impl QuestCheck for JobsCheck with check(self, context) {
 ///|
 priv struct MonsterHuntCheck {
   monster_hunts : Array[MonHuntCheck]
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for MonsterHuntCheck with check(self, context) {
@@ -164,7 +164,7 @@ fn check_mob_progress_data(progress_data : StringView) -> Unit raise {
 ///|
 priv struct ItemCheck {
   items : Array[ItemCount]
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl QuestCheck for ItemCheck with check(self, context) {

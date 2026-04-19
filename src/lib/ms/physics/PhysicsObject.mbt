@@ -265,7 +265,7 @@ pub(all) enum PhysicsObjectType {
   FLYING
   /// Fixed foothold attachment without auto update.
   FIXATED
-} derive(Eq, Compare, Show, ToJson)
+} derive(Eq, Compare, Debug, ToJson)
 
 ///|
 /// Bit flags controlling optional physics behaviors.
@@ -276,7 +276,7 @@ pub(all) enum PhysicsObjectFlag {
   TURN_AT_EDGES = 0x0002
   /// Re-check foothold below for jump-down support.
   CHECK_BELOW = 0x0004
-} derive(Eq, Compare, Show, ToJson)
+} derive(Eq, Compare, Debug, ToJson)
 
 ///|
 /// Return underlying bit value of flag.

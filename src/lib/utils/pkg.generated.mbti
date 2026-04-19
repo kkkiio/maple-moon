@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/utils"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn advance_futures(Array[Future[Unit]]) -> Unit
 
@@ -23,10 +27,6 @@ pub fn stoi_left_pad0(Int, Int) -> String
 pub fn to_hex_string(UInt) -> String
 
 // Errors
-pub(all) suberror UnknownEnum {
-  UnknownEnum(Int)
-} derive(Show)
-pub fn UnknownEnum::to_string(Self) -> String
 
 // Types and methods
 type BiMap[K, V]
@@ -55,7 +55,7 @@ pub(all) struct DefaultMap[K, V] {
 pub fn[K, V] DefaultMap::new(() -> V) -> Self[K, V]
 pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
 
-pub(all) struct Duration(Int) derive(Compare, Eq, Show)
+pub(all) struct Duration(Int) derive(Compare, Eq, @debug.Debug)
 pub fn Duration::from_micro(Int) -> Self
 pub fn Duration::from_milliseconds(Int) -> Self
 #deprecated
@@ -78,7 +78,7 @@ pub fn[T] Future::new(() -> T?) -> Self[T]
 pub fn[T] Future::poll(Self[T]) -> T?
 pub fn[T] Future::tap(Self[T], (T) -> Unit) -> Self[T]
 
-type Linear derive(Default, Show, ToJson)
+type Linear derive(Default, ToJson, @debug.Debug)
 pub fn Linear::add(Self, Double) -> Unit
 pub fn Linear::get(Self, alpha? : Double) -> Double
 pub fn Linear::last(Self) -> Double

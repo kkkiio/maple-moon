@@ -13,12 +13,12 @@ pub(all) enum HairLayer {
   SHADE = 20
   BACK = 5
   BELOW_CAP = 6
-} derive(Eq, Compare, Show, Hash)
+} derive(Eq, Compare, Debug, Hash)
 
 ///|
-pub impl ToJson for HairLayer with to_json(self) {
-  self.to_string().to_json()
-}
+// pub impl ToJson for HairLayer with to_json(self) {
+//   self.to_string().to_json()
+// }
 
 ///|
 pub fn HairLayer::z(self : HairLayer) -> Int = "%identity"

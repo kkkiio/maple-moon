@@ -72,7 +72,7 @@ test "I'm Bored 1" {
     "0": "Which of these monsters will you NOT see near Kerning City? \\r\\n#L0##b1. Stump#k #l\\r\\r#L1##b2. Blue Mushroom#k #l\\r\\n#L2##b3. Slime#k #l\\r\\n#L3##b4. Ribbon Pig#k #l\\r\\n#L4##b5. Hector#k #l",
     "1": "Which of these NPC's will not NOT see at Kerning City?\\r\\n#L0##b1. Don Giovanni#k #l\\r\\n#L1##b2. Andre#k #l\\r\\n#L2##b3. Mong From the Kong#k #l\\r\\n#L3##b4. Valen#k \\r\\n#L4##b5. Don Hwang#k #l",
     "2": "To make your way to Orbis, which of these towns will you have to go to get on board for the trip?\\r\\n#L0##b1. Ellinia#k #l\\r\\n#L1##b2. El Nath#k #l\\r\\n#L3##b3. Perion#k #l\\r\\n#L4##b4. Henesys#k #l",
-    "3": "Wow, you're pretty good! You should be starring on a quiz show, the way you're answering these questions!",
+    "3": "Wow, you're pretty good! You should be starring on a quiz Debug, the way you're answering these questions!",
     "ask": 1,
     "stop": {
       "0": {

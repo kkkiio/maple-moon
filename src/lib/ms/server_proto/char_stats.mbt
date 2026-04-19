@@ -1,7 +1,7 @@
 ///|
 pub(all) struct SpendAPMessage {
   stat_id : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for SpendAPMessage with type_code() {

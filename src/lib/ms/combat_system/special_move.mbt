@@ -29,7 +29,7 @@ pub(all) struct CombatAction {
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @char_look.NxAfterImage]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn CombatAction::get_id(self : CombatAction) -> Int {

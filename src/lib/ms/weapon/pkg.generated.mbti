@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/weapon"
 import {
   "KKKIIO/maple-moon/lib/ms/equip/data",
   "KKKIIO/maple-moon/lib/ms/item",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -11,7 +12,7 @@ import {
 // Errors
 pub(all) suberror UnknownWeaponType {
   UnknownWeaponType(Int)
-} derive(Show)
+} derive(@debug.Debug)
 
 // Types and methods
 pub(all) enum Type {

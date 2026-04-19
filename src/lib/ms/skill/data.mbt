@@ -40,7 +40,7 @@ pub(all) struct Stats {
   ignoredef : Double
   hrange : Double
   range : @struct.Rectangle[Int]
-} derive(ToJson, Show)
+} derive(ToJson, Debug)
 
 ///|
 /// Load skill data asynchronously with caching.

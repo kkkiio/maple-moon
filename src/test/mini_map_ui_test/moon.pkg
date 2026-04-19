@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/mini_map_ui",
   "KKKIIO/maple-moon/test/capture_app",
+  "KKKIIO/maple-moon/test/local_loader",
   "Milky2018/selene/entity",
   "Milky2018/selene/plugins",
   "Milky2018/selene/sprite",

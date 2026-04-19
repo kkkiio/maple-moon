@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/quest_log"
 import {
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -36,13 +37,13 @@ pub(all) struct QuestLogCompletedRaw {
   quest_id : Int
   name : String
   completion_time : Int64
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct QuestLogEntryCompleted {
   quest_id : Int
   name : String
   completion_time : Int64
-} derive(Show, ToJson, @json.FromJson)
+} derive(ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) struct QuestLogEntryInProgress {
   quest_id : Int
@@ -50,7 +51,7 @@ pub(all) struct QuestLogEntryInProgress {
   progress_data : String
   phase : Int
   phase_description : String
-} derive(Show, ToJson, @json.FromJson)
+} derive(ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) struct QuestLogInProgressRaw {
   quest_id : Int
@@ -58,17 +59,17 @@ pub(all) struct QuestLogInProgressRaw {
   progress_data : String
   phase : Int
   phase_description : String
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct QuestLogSnapshot {
   in_progress : Array[QuestLogEntryInProgress]
   completed : Array[QuestLogEntryCompleted]
-} derive(Show, ToJson, @json.FromJson)
+} derive(ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) struct QuestLogSnapshotRaw {
   in_progress : Array[QuestLogInProgressRaw]
   completed : Array[QuestLogCompletedRaw]
-} derive(Show)
+} derive(@debug.Debug)
 
 // Type aliases
 

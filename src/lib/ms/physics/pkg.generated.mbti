@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/math",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -30,7 +31,7 @@ pub let swimgravforce : Double
 // Errors
 
 // Types and methods
-type Foothold derive(Default, Show)
+type Foothold derive(Default, @debug.Debug)
 pub fn Foothold::b(Self) -> Int
 pub fn Foothold::ground_below(Self, Double) -> Double
 pub fn Foothold::hcontains(Self, Int) -> Bool
@@ -80,14 +81,14 @@ pub struct Movement {
   fh : Int
   newstate : Int
   duration : Int
-} derive(Show, ToJson, @json.FromJson)
+} derive(ToJson, @debug.Debug, @json.FromJson)
 pub fn Movement::default() -> Self
 pub fn Movement::from_coords(Int, Int, Int, Int, Int, Int) -> Self
 pub fn Movement::from_physics_object(PhysicsObject, Int) -> Self
 pub fn Movement::hasmoved(Self, Self) -> Bool
 pub fn Movement::new(MovementType, Int, Int, Int, Int, Int, Int, Int, Int) -> Self
 
-type MovementType derive(Compare, Eq, Show, ToJson, @json.FromJson)
+type MovementType derive(Compare, Eq, ToJson, @debug.Debug, @json.FromJson)
 
 pub struct MovingObject {
   x : @utils.Linear
@@ -197,7 +198,7 @@ pub(all) enum PhysicsObjectFlag {
   NO_GRAVITY
   TURN_AT_EDGES
   CHECK_BELOW
-} derive(Compare, Eq, Show, ToJson)
+} derive(Compare, Eq, ToJson, @debug.Debug)
 pub fn PhysicsObjectFlag::int_value(Self) -> Int
 
 pub(all) enum PhysicsObjectType {
@@ -206,7 +207,7 @@ pub(all) enum PhysicsObjectType {
   SWIMMING
   FLYING
   FIXATED
-} derive(Compare, Eq, Show, ToJson)
+} derive(Compare, Eq, ToJson, @debug.Debug)
 
 // Type aliases
 

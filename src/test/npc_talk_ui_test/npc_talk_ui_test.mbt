@@ -1,15 +1,6 @@
 ///|
 fn setup_local_loaders() -> Unit {
-  @resource.register_async_loader(
-    "ui_window_2",
-    @resource.AsyncLoader::new(
-      "test_local_ui_window_2",
-      base_url="/assets",
-      loader=@local_loader.LocalDirResourceLoader::new(
-        "assets/ui/UIWindow2.img",
-      ),
-    ),
-  )
+  @local_loader.install_resource_env_for_test()
 }
 
 ///|
@@ -36,7 +27,13 @@ async fn setup_npc_talk_resource_cache() -> Unit {
       "UtilDlgEx",
     ],
   )
-  let resource = @npc_talk_ui.NpcTalkResource::from_resource(util_dlg_ex) catch {
+  let window_slice = @ui.load_ui_slice_resource(
+    @resource.require_async_loader("ui_slice"),
+    "ui/UIWindow2.img/UtilDlgEx/slice.json",
+  )
+  let resource = @npc_talk_ui.NpcTalkResource::from_resource(
+    util_dlg_ex, window_slice,
+  ) catch {
     err => fail("failed to parse UtilDlgEx: \{err.to_string()}")
   }
   @npc_talk_ui.cache_npc_talk_resource(resource)
@@ -135,130 +132,32 @@ async test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content"
     { "body_height": Number(v, ..), .. } => v.to_int()
     _ => fail("missing body_height")
   }
-  fn val_to_json(v : @selene_ui.Val) -> Json {
+  fn val_px(v : @selene_ui.Val) -> Double? {
     match v {
-      @selene_ui.Val::Px(value) => { "kind": "px", "value": value.to_json() }
-      @selene_ui.Val::Percent(value) =>
-        { "kind": "percent", "value": value.to_json() }
-      @selene_ui.Val::Auto => { "kind": "auto" }
+      @selene_ui.Val::Px(value) => Some(value)
+      _ => None
     }
   }
-  let cursor_nodes : Array[Json] = @selene_ui.nodes()
-    .iter()
-    .map(fn(it) {
-      let (entity, node) = it
-      let z = match @selene_ui.z_indexes().get(entity) {
-        Some(v) => v.value.to_json()
-        None => Json::null()
-      }
-      let has_image = @selene_ui.ui_images().contains(entity)
-      (
-        {
-          "z": z,
-          "left": val_to_json(node.left),
-          "top": val_to_json(node.top),
-          "has_image": has_image.to_json(),
-        } : Json)
-    })
-    .collect()
-  json_inspect(cursor_nodes, content=[
-    {
-      "z": 100100,
-      "left": { "kind": "px", "value": 141 },
-      "top": { "kind": "px", "value": 166 },
-      "has_image": true,
-    },
-    {
-      "z": 100100,
-      "left": { "kind": "px", "value": 141 },
-      "top": { "kind": "px", "value": 194 },
-      "has_image": true,
-    },
-    {
-      "z": 100100,
-      "left": { "kind": "px", "value": 141 },
-      "top": { "kind": "px", "value": 343 },
-      "has_image": true,
-    },
-    {
-      "z": 100102,
-      "left": { "kind": "px", "value": 241 },
-      "top": { "kind": "px", "value": 361 },
-      "has_image": true,
-    },
-    {
-      "z": 100104,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 185 },
-      "has_image": false,
-    },
-    {
-      "z": 100105,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 217 },
-      "has_image": false,
-    },
-    {
-      "z": 100105,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 240 },
-      "has_image": false,
-    },
-    {
-      "z": 100105,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 263 },
-      "has_image": false,
-    },
-    {
-      "z": 100105,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 286 },
-      "has_image": false,
-    },
-    {
-      "z": 100105,
-      "left": { "kind": "px", "value": 307 },
-      "top": { "kind": "px", "value": 309 },
-      "has_image": false,
-    },
-    {
-      "z": 100108,
-      "left": { "kind": "px", "value": 150 },
-      "top": { "kind": "px", "value": 363 },
-      "has_image": true,
-    },
-    {
-      "z": 200000,
-      "left": { "kind": "px", "value": 360 },
-      "top": { "kind": "px", "value": 257 },
-      "has_image": true,
-    },
-  ])
-
   let mut has_cursor_node = false
-  for entry in cursor_nodes {
-    match entry {
-      {
-        "z": Number(z, ..),
-        "left": { "kind": "px", "value": Number(left, ..), .. },
-        "top": { "kind": "px", "value": Number(top, ..), .. },
-        "has_image": True,
-        ..
-      } =>
-        if z.to_int() == @graphics.CURSOR_ZINDEX &&
-          left >= 340.0 &&
-          left <= 370.0 &&
-          top >= 250.0 &&
-          top <= 270.0 {
-          has_cursor_node = true
-        }
-      _ => ()
+  let mut has_window_material = false
+  for it in @selene_ui.nodes().iter() {
+    let (entity, node) = it
+    let z = @selene_ui.z_indexes().get(entity).map_or(0, fn(it) { it.value })
+    if z == 100100 && @selene_ui.material_nodes().contains(entity) {
+      has_window_material = true
+    }
+    guard @selene_ui.ui_images().contains(entity) else { continue }
+    guard z == @graphics.CURSOR_ZINDEX else { continue }
+    guard val_px(node.left) is Some(left) else { continue }
+    guard val_px(node.top) is Some(top) else { continue }
+    if left >= 340.0 && left <= 370.0 && top >= 250.0 && top <= 270.0 {
+      has_cursor_node = true
     }
   }
 
   assert_true(z_max < @graphics.CURSOR_ZINDEX)
   assert_true(body_height > 76)
+  assert_true(has_window_material)
   assert_true(has_cursor_node)
 
   @capture_app.snapshot(

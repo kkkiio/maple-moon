@@ -9,8 +9,8 @@ import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/event",
+  "moonbitlang/core/debug",
   "moonbitlang/core/ref",
 }
 
@@ -67,13 +67,13 @@ pub struct InventoryChangedEvent {
   kind : InventoryChangedKind
   tab : @server_proto.InventoryType?
   slot : Int?
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 
 pub enum InventoryChangedKind {
   ITEM
   MESO
   RESET
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 
 pub struct Item {
   item_id : Int
@@ -83,15 +83,15 @@ pub struct Item {
 }
 pub fn Item::new(Int, Int64, String, Int) -> Self
 
-type ModificationMode derive(Show, ToJson)
+type ModificationMode derive(ToJson, @debug.Debug)
 
 pub struct Module {
   inventory : Inventory
 }
 pub fn Module::new(Inventory) -> Self
 
-type Movement derive(Eq, Hash, Show, ToJson)
-pub fn Movement::from_int(Int) -> Self raise @utils.UnknownEnum
+type Movement derive(Eq, Hash, ToJson, @debug.Debug)
+pub fn Movement::from_int(Int) -> Self?
 pub fn Movement::int_value(Self) -> Int
 
 pub struct SlotItem {
@@ -100,7 +100,7 @@ pub struct SlotItem {
   mut count : Int
 }
 
-pub struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)
+pub struct SlotNo(Int) derive(Eq, Hash, ToJson, @debug.Debug)
 #deprecated
 pub fn SlotNo::inner(Self) -> Int
 

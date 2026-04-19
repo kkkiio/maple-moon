@@ -25,7 +25,7 @@ pub(all) struct NxTexture {
   /// ignore(left_top)
   /// ```
   origin : Point[Int]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
@@ -68,7 +68,7 @@ pub(all) struct NxFrame {
   head : Point[Int]?
   /// 碰撞检测边界框 (lt: 左上角, rb: 右下角)，用于判断攻击范围
   bounds : Rectangle[Int]?
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
@@ -97,7 +97,7 @@ pub(all) struct NxAnimation {
   frames : Array[NxFrame]
   blend : Bool
   zigzag : Bool
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// animation is a map based array or a single frame

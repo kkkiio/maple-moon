@@ -11,7 +11,7 @@ struct NxPortal {
   y : Int
   /// portal type
   pt : PortalType
-} derive(Show, @json.FromJson, ToJson)
+} derive(Debug, @json.FromJson, ToJson)
 
 ///|
 pub(all) enum PortalType {
@@ -76,7 +76,7 @@ pub(all) enum PortalType {
   ///
   /// 资料页标为未知类型；推测与 collision/changeable 相关，但未有可靠结论。
   TYPE14 = 14
-} derive(Eq, Compare, Show, ToJson, Hash)
+} derive(Eq, Compare, Debug, ToJson, Hash)
 
 ///|
 pub fn PortalType::typebyid(id : Int) -> PortalType? {
@@ -132,7 +132,7 @@ pub(all) struct PortalWarpInfo {
   name : String
   /// whether the target is in the current map
   intra_map : Bool
-} derive(Show)
+} derive(Debug)
 
 ///|
 fn PortalWarpInfo::new(

@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/indexed_db",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/random",
   "moonbitlang/core/ref",
@@ -78,18 +79,18 @@ pub(all) struct StorageEquipData {
   itemlevel : Int
   itemexp : Int
   vicious : Int
-} derive(Default, Show, ToJson, @json.FromJson)
+} derive(Default, ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) struct StorageItemData {
   item_id : Int
   slot : Int
   count : Int
-} derive(Default, Show, ToJson, @json.FromJson)
+} derive(Default, ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) enum StorageItemEntry {
   Equip(StorageEquipData)
   Item(StorageItemData)
-} derive(Show, ToJson, @json.FromJson)
+} derive(ToJson, @debug.Debug, @json.FromJson)
 pub fn StorageItemEntry::from_server_proto(@server_proto.InventoryItemEntry) -> Self
 pub fn StorageItemEntry::to_server_proto(Self, @server_proto.InventoryType) -> @server_proto.InventoryItemEntry
 

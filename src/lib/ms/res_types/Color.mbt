@@ -68,7 +68,7 @@ pub(all) enum ColorName {
   SUPERNOVA
   CHARTREUSE
   MALIBU
-} derive(Eq)
+} derive(Eq, Debug)
 
 ///|
 pub fn ColorName::css_name(self : ColorName) -> String {
@@ -315,7 +315,7 @@ pub fn ColorName::int_value(self : ColorName) -> Int {
 }
 
 ///|
-pub(all) struct Color(Double, Double, Double, Double) derive(Show, Eq, ToJson)
+pub(all) struct Color(Double, Double, Double, Double) derive(Debug, Eq, ToJson)
 
 ///|
 pub fn Color::new_rgba(
@@ -398,7 +398,7 @@ pub impl Div for Color with div(self, o) {
 }
 
 ///|
-struct IntColor(Int) derive(Show, Eq, Hash)
+struct IntColor(Int) derive(Debug, Eq, Hash)
 
 ///|
 pub fn IntColor::from_color(color : Color) -> IntColor {

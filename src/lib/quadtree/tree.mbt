@@ -4,7 +4,7 @@ pub(all) enum Direction {
   TR
   TL
   BR
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub(open) trait QuadCompare {
@@ -172,9 +172,11 @@ fn[K, V : QuadCompare] Tree::set_link(
     node.parent = None
     return
   }
-  loop start {
-    Some(next) => continue next.add_or_next(node)
-    None => break
+  for state = start {
+    match state {
+      Some(next) => continue next.add_or_next(node)
+      None => break
+    }
   }
 }
 

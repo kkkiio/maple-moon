@@ -6,7 +6,7 @@
 pub(all) struct NxMapAnchor {
   parent_key : String
   parent_pos : @struct.Point[Int]
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Weapon-part rendering node in one frame.
@@ -18,19 +18,19 @@ pub(all) struct NxWeaponPart {
   texture : @resource.NxTexture
   z : String
   anchor : NxMapAnchor
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// All renderable parts in a single weapon action frame.
 pub(all) struct NxWeaponFrame {
   parts : Map[String, NxWeaponPart]
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Frame table of a single weapon action (e.g. `shoot2`).
 pub(all) struct NxWeaponAction {
   frames : Map[Int, NxWeaponFrame]
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Structured weapon resource parsed from item JSON source.
@@ -38,7 +38,7 @@ pub(all) struct NxWeaponAction {
 /// Keys are action names (`stand1`, `shoot2`, etc.).
 pub(all) struct NxWeapon {
   actions : Map[String, NxWeaponAction]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxMapAnchor with from_json(json, path) -> NxMapAnchor raise @json.JsonDecodeError {

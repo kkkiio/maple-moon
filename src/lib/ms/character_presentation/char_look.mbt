@@ -325,7 +325,7 @@ pub(all) struct LookEntry {
   equips : Map[Int, Int]
   maskedequips : Map[Int, Int]
   petids : Array[Int]
-} derive(Show, ToJson, Default)
+} derive(Debug, ToJson, Default)
 
 ///|
 pub impl @json.FromJson for LookEntry with from_json(json, path) {
@@ -629,7 +629,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
         let (frames, layers) = it
         if frames.length() != layers.length() {
           @log.error("equipment frames.length() != layers.length()", data={
-            "slot": slot.to_string(),
+            "slot": slot,
             "part": part,
             "frames": frames.length(),
             "layers": layers.length(),
@@ -642,7 +642,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
 
         // Get or init entity for this specific part
         // We use slot + part as key to avoid collision (e.g. Mail + mail vs Mail + mailArm)
-        let key = slot.to_string() + "_" + part
+        let key = slot.int_value().to_string() + "_" + part
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.spawn_sprite_child()
         })
@@ -836,10 +836,10 @@ pub fn CharLook::add_equip(
   slot : @slot.Id,
 ) -> Unit raise {
   @log.debug("charlook_add_equip", data={
-    "slot_id": slot.int_value().to_json(),
-    "item_id": itemdata.item_id.to_json(),
-    "stance": self.stance.get().to_string().to_json(),
-    "frame": self.get_frame().to_json(),
+    "slot_id": slot,
+    "item_id": itemdata.item_id,
+    "stance": self.stance.get(),
+    "frame": self.get_frame(),
   })
   self.equips.add_equip(itemdata, slot, self.draw_info)
   self.updatetwohanded()
@@ -849,9 +849,9 @@ pub fn CharLook::add_equip(
 ///|
 pub fn CharLook::remove_equip(self : CharLook, slot : @slot.Id) -> Unit {
   @log.info("charlook_remove_equip", data={
-    "slot_id": slot.int_value().to_json(),
-    "stance": self.stance.get().to_string().to_json(),
-    "frame": self.get_frame().to_json(),
+    "slot_id": slot,
+    "stance": self.stance.get(),
+    "frame": self.get_frame(),
   })
   self.equips.remove_equip(slot)
   if slot == @slot.Id::WEAPON {
@@ -1353,7 +1353,7 @@ fn CharLook::play_climbing_animations(
         if frames.length() == 0 {
           continue
         }
-        let key = slot.to_string() + "_" + part
+        let key = slot.int_value().to_string() + "_" + part
         let entity = self.equip_entities.get_or_init(key, fn() {
           self.spawn_sprite_child()
         })

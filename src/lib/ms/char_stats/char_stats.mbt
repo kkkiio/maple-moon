@@ -34,7 +34,7 @@ pub enum CharStatsChangedKind {
   I64_STAT
   /// Computed total stat changed.
   TOTAL_STAT
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Minimal char-stats change event for cache invalidation.
@@ -45,7 +45,7 @@ pub struct CharStatsChangedEvent {
   stat : @maple_stat.Id?
   /// Total stat id for `TOTAL_STAT`.
   total_stat : @maple_stat.EquipStatId?
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Global char-stats change event bus.

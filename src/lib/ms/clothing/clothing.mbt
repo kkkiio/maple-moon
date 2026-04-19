@@ -41,14 +41,14 @@ pub(all) enum ClothingLayer {
   RING
   BACK_SHIELD
   BACK_WEAPON
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, Debug)
 
 ///|
 pub fn ClothingLayer::int_value(self : ClothingLayer) -> Int = "%identity"
 
 ///|
 pub impl ToJson for ClothingLayer with to_json(self) {
-  self.to_string().to_json()
+  self.to_repr().to_string().to_json()
 }
 
 ///|
@@ -64,7 +64,7 @@ struct Clothing {
   vslot : String
   two_handed : Bool
   // transparent : Bool
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Resolve weapon-like anchor shift from draw-info and weapon frame `map`.

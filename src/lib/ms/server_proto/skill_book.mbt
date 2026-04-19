@@ -1,7 +1,7 @@
 ///|
 pub(all) struct SpendSPMessage {
   skill_id : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for SpendSPMessage with type_code() {
@@ -14,7 +14,7 @@ pub(all) struct UseSPResetMessage {
   item_id : Int
   to : Int
   from : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for UseSPResetMessage with type_code() {

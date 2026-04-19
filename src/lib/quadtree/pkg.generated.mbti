@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/quadtree"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
@@ -11,7 +15,7 @@ pub(all) enum Direction {
   TR
   TL
   BR
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 
 pub struct Node[K, V] {
   key : K

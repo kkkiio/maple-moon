@@ -13,6 +13,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -45,7 +46,7 @@ pub(all) struct CharEntry {
   stats : @server_proto.StatsEntry
   look : @character_presentation.LookEntry
   id : Int
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
 pub(all) enum CharState {
   WALK
@@ -58,7 +59,7 @@ pub(all) enum CharState {
   ROPE
   DIED
   SIT
-} derive(Compare, Eq, Show)
+} derive(Compare, Eq, @debug.Debug)
 pub fn CharState::stance_value(Self, facing_right~ : Bool) -> Int
 
 pub(all) struct Character {

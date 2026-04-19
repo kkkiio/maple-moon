@@ -23,7 +23,7 @@ pub(all) enum CharState {
   ROPE
   DIED
   SIT
-} derive(Eq, Compare, Show)
+} derive(Eq, Compare, Debug)
 
 ///|
 pub(all) enum Facing {
@@ -403,7 +403,7 @@ pub(all) struct CharEntry {
   stats : StatsEntry
   look : @char_look.LookEntry
   id : Int
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 /// Whether the character is alerted. When alerted, some operations are forbidden, like changing equips.

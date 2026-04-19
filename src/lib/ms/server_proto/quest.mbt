@@ -8,7 +8,7 @@ pub(all) enum QuestFailureOperation {
   WornByCharacter
   /// Required item is missing.
   NotHavingItem
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub(all) enum UpdateQuestInfoMessage {
@@ -26,7 +26,7 @@ pub(all) enum UpdateQuestInfoMessage {
   QuestExpire(quest_id~ : Int)
   /// Quest operation failure detail.
   QuestFailure(operation~ : QuestFailureOperation)
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub impl ServerMessage for UpdateQuestInfoMessage with type_code() {
@@ -41,7 +41,7 @@ pub(all) enum QuestActionMessage {
   CompleteQuest(quest_id~ : Int, npc_id~ : Int, selection~ : Int?)
   /// Forfeit one in-progress quest.
   ForfeitQuest(quest_id~ : Int)
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub impl ClientMessage for QuestActionMessage with type_code() {
@@ -75,7 +75,7 @@ pub(all) struct ShowStatusExpGainMessage {
   internet_cafe_bonus : Int
   /// Rainbow week bonus EXP.
   rainbow_week_bonus : Int
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub impl ServerMessage for ShowStatusExpGainMessage with type_code() {

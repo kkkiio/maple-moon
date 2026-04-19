@@ -270,14 +270,14 @@ fn upsert_runtime(
         "npc_id": anchor.npc_id,
         "from_quest_id": runtime.quest_id,
         "to_quest_id": desired.quest_id,
-        "from_state": runtime.state.to_json(),
-        "to_state": desired.state.to_json(),
+        "from_state": runtime.state,
+        "to_state": desired.state,
       })
     } else {
       @log.debug("quest icon shown", data={
         "npc_id": anchor.npc_id,
         "quest_id": desired.quest_id,
-        "state": desired.state.to_json(),
+        "state": desired.state,
       })
     }
   } else if runtime_by_oid.val.get(oid) is Some(runtime) {

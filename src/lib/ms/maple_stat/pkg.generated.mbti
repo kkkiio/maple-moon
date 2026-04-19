@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/maple_stat"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -29,7 +30,7 @@ pub(all) enum EquipStatId {
   HANDS
   SPEED
   JUMP
-} derive(Compare, Eq, Hash)
+} derive(Compare, Eq, Hash, @debug.Debug)
 pub fn EquipStatId::from_name(String) -> Self?
 pub fn EquipStatId::int_value(Self) -> Int
 pub fn EquipStatId::name(Self) -> String
@@ -58,7 +59,7 @@ pub(all) enum Id {
   MESO
   PET
   GACHAEXP
-} derive(Compare, Eq, Hash)
+} derive(Compare, Eq, Hash, @debug.Debug)
 pub fn Id::from_name(String) -> Self?
 pub fn Id::int_value(Self) -> Int
 pub fn Id::name(Self) -> String

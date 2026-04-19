@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/item"
 import {
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/debug",
   "moonbitlang/core/ref",
 }
 
@@ -35,7 +36,7 @@ pub(all) suberror LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
   INVALID_DATA(String)
-} derive(Show)
+} derive(@debug.Debug)
 
 // Types and methods
 pub struct BasicItemResource {

@@ -1,14 +1,4 @@
 ///|
-pub(all) suberror UnknownEnum {
-  UnknownEnum(Int)
-} derive(Show)
-
-///|
-pub fn UnknownEnum::to_string(self : UnknownEnum) -> String {
-  "UnknownEnum(\{self})"
-}
-
-///|
 pub fn[T, E] flatten_ok(resutls : Array[Result[T, E]]) -> Result[Array[T], E] {
   let results = Array::new(capacity=resutls.length())
   for result in resutls {

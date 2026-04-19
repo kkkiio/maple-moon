@@ -7,7 +7,7 @@ struct Foothold {
   layer : Int
   horizontal : @struct.Range[Int]
   vertical : @struct.Range[Int]
-} derive(Default, Show)
+} derive(Default, Debug)
 
 ///|
 /// Raw foothold node from map JSON.

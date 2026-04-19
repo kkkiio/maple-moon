@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/res_types"
 
 import {
   "Milky2018/selene/math",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -30,7 +31,7 @@ pub(all) enum Code {
 pub fn Code::color(Self) -> Color
 pub fn Code::int_value(Self) -> Int
 
-pub(all) struct Color(Double, Double, Double, Double) derive(Eq, Show, ToJson)
+pub(all) struct Color(Double, Double, Double, Double) derive(Eq, ToJson, @debug.Debug)
 pub fn Color::a(Self) -> Double
 pub fn Color::b(Self) -> Double
 pub fn Color::blend(Self, Self, Double) -> Self
@@ -80,14 +81,14 @@ pub(all) enum ColorName {
   SUPERNOVA
   CHARTREUSE
   MALIBU
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub fn ColorName::color(Self) -> Color
 pub fn ColorName::css_name(Self) -> String
 pub fn ColorName::int_value(Self) -> Int
 pub impl Show for ColorName
 pub impl ToJson for ColorName
 
-type IntColor derive(Eq, Hash, Show)
+type IntColor derive(Eq, Hash, @debug.Debug)
 pub fn IntColor::a(Self) -> Int
 pub fn IntColor::b(Self) -> Int
 pub fn IntColor::from_color(Color) -> Self
@@ -97,7 +98,7 @@ pub fn IntColor::r(Self) -> Int
 pub(all) struct Point[T] {
   x : T
   y : T
-} derive(Default, Eq, Show)
+} derive(Default, Eq, @debug.Debug)
 pub fn Point::distance(Self[Int], Self[Int]) -> Int
 pub fn[T] Point::new(T, T) -> Self[T]
 pub fn[T : Add] Point::shift_x(Self[T], T) -> Self[T]
@@ -113,7 +114,7 @@ pub impl @json.FromJson for Point[Int]
 pub(all) struct Range[T] {
   a : T
   b : T
-} derive(Default, Eq, Show)
+} derive(Default, Eq, @debug.Debug)
 pub fn Range::center(Self[Int]) -> Int
 pub fn[T : Compare] Range::contains(Self[T], T) -> Bool
 pub fn[T : Compare] Range::contains_range(Self[T], Self[T]) -> Bool
@@ -131,7 +132,7 @@ pub impl[T : Add] Add for Range[T]
 pub impl[T : Neg] Neg for Range[T]
 pub impl[T : Sub] Sub for Range[T]
 
-type Rectangle[T] derive(Default, Eq, Show, ToJson)
+type Rectangle[T] derive(Default, Eq, ToJson, @debug.Debug)
 pub fn[T] Rectangle::bottom(Self[T]) -> T
 pub fn[T : Eq + Compare] Rectangle::contains(Self[T], Point[T]) -> Bool
 pub fn Rectangle::flip_x(Self[Int]) -> Self[Int]

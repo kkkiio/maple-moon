@@ -31,7 +31,7 @@ pub(all) struct QuestLogInProgressRaw {
   phase : Int
   /// Current phase description from quest info.
   phase_description : String
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Raw completed quest-log entry exported for the `quest_log` facade.
@@ -42,7 +42,7 @@ pub(all) struct QuestLogCompletedRaw {
   name : String
   /// Completion timestamp.
   completion_time : Int64
-} derive(Show)
+} derive(Debug)
 
 ///|
 /// Raw quest-log snapshot exported for the `quest_log` facade.
@@ -51,7 +51,7 @@ pub(all) struct QuestLogSnapshotRaw {
   in_progress : Array[QuestLogInProgressRaw]
   /// Completed entries.
   completed : Array[QuestLogCompletedRaw]
-} derive(Show)
+} derive(Debug)
 
 ///|
 let quest_log_revision_ref : Ref[Int] = Ref::new(0)

@@ -3,7 +3,7 @@
 pub(all) enum UiSliceKind {
   NineSlice
   ThreeSliceV
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Parsed UI slice resource and prepared material handle for rendering.

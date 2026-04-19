@@ -18,9 +18,9 @@ pub fn handle_item(inventory : Inventory, item : InventoryItemEntry) -> Unit {
     ) => {
       // Debug trace: verify how SetField inventory equip entries are ingested.
       @log.info("inventory_handle_item_equip", data={
-        "invtype": invtype.to_json(),
-        "slot": slot.to_json(),
-        "item_id": id.to_json(),
+        "invtype": invtype,
+        "slot": slot,
+        "item_id": id,
       })
       inventory.add_equip(
         invtype,

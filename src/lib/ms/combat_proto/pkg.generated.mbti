@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -30,13 +31,13 @@ pub(all) struct Attack {
   mut range : @res_types.Rectangle[Int]
   mut hrange : Double
   toleft : Bool
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
 pub(all) enum AttackDamageType {
   DMG_WEAPON(min~ : Double, max~ : Double)
   DMG_MAGIC(Int)
   DMG_FIXED(Int)
-} derive(Eq, Show, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 pub(all) struct AttackResult {
   t : AttackType
@@ -54,7 +55,7 @@ pub(all) struct AttackResult {
   damage_lines : Map[Int, Array[(Int, Bool)]]
   mut first_oid : Int
   mut last_oid : Int
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 pub fn AttackResult::default() -> Self
 pub fn AttackResult::new(Attack) -> Self
 
@@ -62,7 +63,7 @@ pub(all) enum AttackType {
   CLOSE
   RANGED
   MAGIC
-} derive(Eq, Show, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 pub(all) struct AttackUser {
   skill_level : Int

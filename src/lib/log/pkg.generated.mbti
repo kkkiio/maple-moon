@@ -1,27 +1,31 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/log"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 #callsite(autofill(loc))
-pub fn debug(String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
+pub fn debug(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 #callsite(autofill(loc))
-pub fn error(String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
+pub fn error(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 #callsite(autofill(loc))
-pub fn[T] fatal(String, data? : Map[String, &Show], loc~ : SourceLoc) -> T
+pub fn[T] fatal(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> T
 
 #callsite(autofill(loc))
-pub fn info(String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
+pub fn info(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 #callsite(autofill(loc))
-pub fn log(Level, String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
+pub fn log(Level, String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 #callsite(autofill(loc))
 pub fn[T] unwrap_err(Result[T, Error], loc~ : SourceLoc) -> T
 
 #callsite(autofill(loc))
-pub fn warn(String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
+pub fn warn(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 // Errors
 
@@ -29,12 +33,12 @@ pub fn warn(String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit
 pub(all) struct HexInt(Int)
 #deprecated
 pub fn HexInt::inner(Self) -> Int
-pub impl Show for HexInt
+pub impl @debug.Debug for HexInt
 
 pub(all) struct JsonValue(Json)
 #deprecated
 pub fn JsonValue::inner(Self) -> Json
-pub impl Show for JsonValue
+pub impl @debug.Debug for JsonValue
 
 pub(all) enum Level {
   TRACE

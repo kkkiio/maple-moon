@@ -32,11 +32,11 @@ pub(all) enum Id {
   HEART // TODO: What is the proper value for this?
   TOP_DEFAULT
   BOTTOM_DEFAULT
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub impl ToJson for Id with to_json(self) -> Json {
-  self.to_string().to_json()
+  self.to_repr().to_string().to_json()
 }
 
 ///|

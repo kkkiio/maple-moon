@@ -9,6 +9,7 @@ import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -38,7 +39,7 @@ pub fn setup_game_server_handlers() -> Unit
 // Errors
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
-} derive(Show)
+} derive(@debug.Debug)
 
 // Types and methods
 type MapNpcs
@@ -93,9 +94,9 @@ pub struct NpcDialogue {
   t : TalkType
   speaker : Speaker
   text : String
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
-type NpcSpawn derive(Show, ToJson)
+type NpcSpawn derive(ToJson, @debug.Debug)
 pub fn NpcSpawn::get_oid(Self) -> Int
 pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
 
@@ -103,14 +104,14 @@ pub struct SpawnNpcController {
   mode : Int
   oid : Int
   npc : NpcSpawn?
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
 pub(all) enum Speaker {
   NPC_LEFT
   NPC_RIGHT
   PLAYER_LEFT
   PLAYER_RIGHT
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 pub fn Speaker::from_int(Int) -> Self?
 pub fn Speaker::int_value(Self) -> Int
 
@@ -121,7 +122,7 @@ pub(all) enum TalkAction {
   SEND_PREV((Unit?) -> Unit)
   SEND_SIMPLE((Int?) -> Unit)
   SEND_NEXT_PREV((Bool?) -> Unit)
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct TalkArgs {
   npc_id : Int
@@ -137,12 +138,12 @@ pub(all) enum TalkChoice {
   SEND_NEXT(next~ : Unit?)
   SEND_NEXT_PREV(next~ : Bool?)
   SEND_PREV(prev~ : Unit?)
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct TalkContent {
   text_html : String
   selections : Array[(@res_types.ColorName, Int, String)]
-} derive(Show)
+} derive(@debug.Debug)
 
 pub enum TalkType {
   SEND_YESNO
@@ -151,7 +152,7 @@ pub enum TalkType {
   SEND_NEXT
   SEND_NEXT_PREV
   SEND_PREV
-} derive(Eq, Show, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 pub fn TalkType::from_int(Int, Int, Int) -> Self?
 pub fn TalkType::int_value(Self) -> Int
 pub impl Hash for TalkType

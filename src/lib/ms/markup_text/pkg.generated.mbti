@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/markup_text"
 
 import {
   "KKKIIO/maple-moon/lib/ms/res_types",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -48,14 +49,14 @@ pub fn write_text_as_html(StringBuilder, StringView, Style, trim_end_newline? : 
 pub(all) suberror ParseError {
   UnknownTag(Char)
   MissingMarkupClose
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) suberror ResolveReferenceError {
   DataNotReady
   InvalidId(String)
   PathNotFound(String)
   NameNotFound(String)
-} derive(Show)
+} derive(@debug.Debug)
 
 // Types and methods
 pub(all) enum MarkupType {

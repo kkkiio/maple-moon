@@ -21,7 +21,7 @@ pub(all) enum Id {
   MESO = 0x40000
   PET = 0x180008
   GACHAEXP = 0x200000
-} derive(Eq, Compare, Hash)
+} derive(Eq, Compare, Hash, Debug)
 
 ///|
 pub fn Id::int_value(self : Id) -> Int = "%identity"

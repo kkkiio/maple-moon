@@ -2,7 +2,7 @@
 struct LeftOver {
   w : Int
   h : Int
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 impl QuadCompare for LeftOver with compare_to(self, other) {

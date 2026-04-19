@@ -4,7 +4,7 @@
 /// Ask server to start NPC dialogue.
 pub(all) struct TalkToNpcMessage {
   oid : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for TalkToNpcMessage with type_code() {
@@ -17,7 +17,7 @@ pub(all) struct NpcTalkMoreMessage {
   lastmsg : Int
   response : Int
   selection : Int?
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for NpcTalkMoreMessage with type_code() {
@@ -33,7 +33,7 @@ pub(all) struct NpcSpawnMessage {
   y : Int
   flip : Bool
   fh : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for NpcSpawnMessage with type_code() {
@@ -50,7 +50,7 @@ pub(all) struct NpcSpawnControllerMessage {
   y : Int
   flip : Bool
   fh : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for NpcSpawnControllerMessage with type_code() {

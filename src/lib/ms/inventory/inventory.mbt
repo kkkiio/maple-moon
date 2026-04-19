@@ -4,7 +4,7 @@ enum Movement {
   MOVE_INTERNAL
   MOVE_UNEQUIP
   MOVE_EQUIP
-} derive(Eq, Hash, Show, ToJson)
+} derive(Eq, Hash, Debug, ToJson)
 
 ///|
 pub fn Movement::int_value(self : Movement) -> Int {
@@ -23,7 +23,7 @@ enum ModificationMode {
   SWAP
   REMOVE
   ADD_COUNT
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 pub enum InventoryChangedKind {
@@ -33,7 +33,7 @@ pub enum InventoryChangedKind {
   MESO
   /// Inventory state was fully reset.
   RESET
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Minimal inventory change event used by downstream cache invalidation.
@@ -44,7 +44,7 @@ pub struct InventoryChangedEvent {
   tab : TypeId?
   /// Slot index when known.
   slot : Int?
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 /// Global inventory change event bus.
@@ -78,14 +78,15 @@ fn init {
 
 ///|
 /// Return the move type by value
-pub fn Movement::from_int(value : Int) -> Movement raise @utils.UnknownEnum {
-  match value {
+pub fn Movement::from_int(value : Int) -> Movement? {
+  let res = match value {
     -1 => Movement::MOVE_NONE
     0 => Movement::MOVE_INTERNAL
     1 => Movement::MOVE_UNEQUIP
     2 => Movement::MOVE_EQUIP
-    _ => raise @utils.UnknownEnum(value)
+    _ => return None
   }
+  Some(res)
 }
 
 ///|
@@ -253,10 +254,10 @@ pub fn Inventory::apply_local_modify_inventory_message(
   message : @server_proto.ModifyInventoryMessage,
 ) -> Unit {
   @log.info("apply_local_modify_inventory_message before", data={
-    "mods": message.mods.to_json(),
-    "movement": message.movement.to_json(),
-    "equip_1": self.get_item_id(TypeId::EQUIP, 1).to_json(),
-    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11).to_json(),
+    "mods": message.mods,
+    "movement": message.movement,
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
   })
   for mod in message.mods {
     match mod.mode {
@@ -293,7 +294,7 @@ pub fn Inventory::apply_local_modify_inventory_message(
     }
   }
   let movement = match message.movement {
-    Some(v) => Movement::from_int(v) catch { _ => Movement::MOVE_INTERNAL }
+    Some(v) => Movement::from_int(v).unwrap_or(Movement::MOVE_INTERNAL)
     None => Movement::MOVE_INTERNAL
   }
   for mod in message.mods {
@@ -304,8 +305,8 @@ pub fn Inventory::apply_local_modify_inventory_message(
     }
   }
   @log.info("apply_local_modify_inventory_message after", data={
-    "equip_1": self.get_item_id(TypeId::EQUIP, 1).to_json(),
-    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11).to_json(),
+    "equip_1": self.get_item_id(TypeId::EQUIP, 1),
+    "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
   })
   match @player.get_player() {
     Some(player) => self.recalc_stats(player.character.get_weapontype())
@@ -745,4 +746,4 @@ pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {
 
 ///|
 /// Slot number. starts from 1
-pub struct SlotNo(Int) derive(Eq, Hash, Show, ToJson)
+pub struct SlotNo(Int) derive(Eq, Hash, Debug, ToJson)

@@ -58,7 +58,9 @@ fn mini_map_ui_resource_from_json(
     { portal_marker, frame_slice }
   } catch {
     e => {
-      @log.error("error loading mini map ui resource", data={ "error": e })
+      @log.error("error loading mini map ui resource", data={
+        "error": e.to_string(),
+      })
       panic()
     }
   }

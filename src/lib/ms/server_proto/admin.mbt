@@ -11,7 +11,7 @@ pub(all) enum AdminCommandMessage {
   AddItem(item_id~ : Int, quantity~ : Int)
   /// Warp current character to target map and portal id.
   Warp(map_id~ : Int, portal_id~ : Int)
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for AdminCommandMessage with type_code() {

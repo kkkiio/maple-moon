@@ -59,4 +59,4 @@ pub enum Node {
 pub(all) suberror ParseError {
   UnknownTag(Char)
   MissingMarkupClose
-} derive(Show)
+} derive(Debug)

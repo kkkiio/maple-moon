@@ -7,7 +7,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/quest_log",
   "KKKIIO/maple-moon/lib/ms/quest_log_ui",
-  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/test/capture_app",
   "KKKIIO/maple-moon/test/local_loader",
   "Milky2018/selene/entity",

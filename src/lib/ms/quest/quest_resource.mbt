@@ -49,7 +49,7 @@ pub(all) struct NxQuestInfo {
   auto_start : Bool
   one_shot : Bool
   descriptions : Array[String]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxQuestInfo with from_json(json, path) {
@@ -126,7 +126,7 @@ test "parse quest info" {
     #|   }
   let json = @json.parse(q10015)
   let quest_info : NxQuestInfo = @json.from_json(json)
-  inspect(
+  debug_inspect(
     quest_info,
     content=(
       #|{name: "Obtain the Special Agent Badge!", parent: Some("Today's Mission! "), area: 50, order: Some(1), auto_complete: true, auto_start: false, one_shot: false, descriptions: ["", "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.", "Today's mission has been completed."]}
@@ -149,7 +149,7 @@ test "parse quest 10200" {
     #|}
   let json = @json.parse(q10200)
   let quest_info : NxQuestInfo = @json.from_json(json)
-  inspect(
+  debug_inspect(
     quest_info,
     content=(
       #|{name: "Richie Gold is Here", parent: None, area: 50, order: None, auto_complete: true, auto_start: true, one_shot: true, descriptions: ["A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.", "Let's try to make a deal with #b#p2084001##k.", "I engaged in a transaction with #b#p2084001##k."]}
@@ -171,7 +171,7 @@ test "parse quest info number desc" {
     #|}
   let json = @json.parse(q2003)
   let quest_info : NxQuestInfo = @json.from_json(json)
-  inspect(
+  debug_inspect(
     quest_info,
     content=(
       #|{name: "Finding Sophia", parent: Some("Maya and the Weird Medicine"), area: 30, order: Some(2), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["2", "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.", "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k."]}
@@ -202,7 +202,7 @@ test "parse number index not desc" {
     #|}
   let json = @json.parse(q8833)
   let quest_info : NxQuestInfo = @json.from_json(json)
-  inspect(
+  debug_inspect(
     quest_info,
     content=(
       #|{name: "New Year's Wishes 1", parent: Some("New Year : New Year's Wishes"), area: 30, order: Some(1), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "The Maple Administrator opened my present for me! Sweet!"]}
@@ -218,12 +218,12 @@ pub(all) struct NxQuestPhaseChecks {
   monster_hunts : Array[MonHuntCheck]
   checks : Array[&QuestCheck]
   unknown_checks : Array[String]
-} derive(Show, Default)
+} derive(Debug, Default)
 
 ///|
 priv struct InfoEx {
   value : String
-} derive(Show, @json.FromJson)
+} derive(Debug, @json.FromJson)
 
 ///|
 using @resource {type Nullable}
@@ -247,7 +247,7 @@ impl @json.FromJson for NumbericInt with from_json(json, path) {
 struct MonHuntCheck {
   id : Int
   count : Int
-} derive(Show, @json.FromJson)
+} derive(Debug, @json.FromJson)
 
 ///|
 impl @json.FromJson for NxQuestPhaseChecks with from_json(json, path) {
@@ -354,7 +354,7 @@ pub(all) enum NxQuestStatus {
   NotStarted = 0
   InProgress = 1
   Completed = 2
-} derive(Show, Eq, Hash)
+} derive(Debug, Eq, Hash)
 
 ///|
 pub fn NxQuestStatus::int_value(self : NxQuestStatus) = "%identity"
@@ -403,7 +403,7 @@ test "parse quest check 10015" {
   let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect(
+  debug_inspect(
     quest_check,
     content=(
       #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
@@ -437,7 +437,7 @@ test "parse quest check 10054" {
   let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect(
+  debug_inspect(
     quest_check.0,
     content=(
       #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
@@ -461,7 +461,7 @@ test "parse item check" {
   let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect(
+  debug_inspect(
     quest_check.0,
     content=(
       #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
@@ -484,7 +484,7 @@ test "parse quests status check" {
   let quest_check : @resource.MapBasedArray[NxQuestPhaseChecks] = @json.from_json(
     json,
   )
-  inspect(
+  debug_inspect(
     quest_check,
     content=(
       #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
@@ -496,7 +496,7 @@ test "parse quests status check" {
 priv struct ItemCount {
   id : Int
   count : Int // 0 means should not hold the item
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl @json.FromJson for ItemCount with from_json(json, path) {
@@ -516,26 +516,26 @@ pub(all) struct NxQuestPhaseSays {
   no_reply : Array[String]
   stop : NxHints?
   restore_lost : NxLost?
-} derive(Show, Default)
+} derive(Debug, Default)
 
 ///|
 pub(all) struct NxHints {
   base : Array[NxHint]
   item : Array[String]
   npc : Array[String]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub(all) struct NxHint { // TODO: figure out the meaning of this
   says : Array[String]
   answer : Int
-} derive(Show, Default)
+} derive(Debug, Default)
 
 ///|
 pub(all) struct NxLost {
   says : Array[String]
   yes_reply : Array[String]
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxQuestPhaseSays with from_json(json, path) {
@@ -631,14 +631,14 @@ struct NxQuestPhaseAct {
   mesos : Int?
   items : Array[ActItem]
   unknown_acts : Array[String]
-} derive(Show, Default)
+} derive(Debug, Default)
 
 ///|
 priv struct ActItem {
   id : Int
   count : Int?
   period : Int?
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub impl @json.FromJson for NxQuestPhaseAct with from_json(json, path) {

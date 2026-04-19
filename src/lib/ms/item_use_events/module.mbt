@@ -9,7 +9,7 @@ pub(all) enum ItemUseIntent {
   )
   /// Try using one item from `USE` tab.
   TryUse(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 let queue_ref : Ref[Array[ItemUseIntent]] = Ref::new([])

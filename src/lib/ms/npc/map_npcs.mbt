@@ -269,7 +269,7 @@ struct NpcSpawn {
   position : @struct.Point[Int]
   flip : Bool
   fh : Int
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 pub fn NpcSpawn::get_oid(self : NpcSpawn) -> Int {
@@ -342,7 +342,7 @@ pub(all) enum TalkAction {
   SEND_PREV((Unit?) -> Unit)
   SEND_SIMPLE((Int?) -> Unit)
   SEND_NEXT_PREV((Bool?) -> Unit)
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn Npc::talk(self : Npc) -> TalkArgs? {

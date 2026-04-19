@@ -2,7 +2,7 @@
 struct Rectangle[T] {
   lt : Point[T]
   rb : Point[T]
-} derive(Eq, Default, Show, ToJson)
+} derive(Eq, Default, Debug, ToJson)
 
 ///|
 pub fn[T] Rectangle::new(lt : Point[T], rb : Point[T]) -> Rectangle[T] {

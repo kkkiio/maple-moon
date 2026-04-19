@@ -24,7 +24,7 @@ pub(all) struct DemoQuestSelection {
   npc_id : Int
   /// Whether phase0 check includes a level requirement.
   has_level_check : Bool
-} derive(Show)
+} derive(Debug)
 
 ///|
 let quest_icon_query_revision_ref : Ref[Int] = Ref::new(0)

@@ -11,7 +11,7 @@ pub(all) struct DropLootMessage {
   dropto : @struct.Point[Int]
   dropfrom : @struct.Point[Int]
   player_drop : Bool
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for DropLootMessage with type_code() {
@@ -23,7 +23,7 @@ pub(all) struct RemoveLootMessage {
   mode : Int
   oid : Int
   cid : Int?
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for RemoveLootMessage with type_code() {
@@ -35,7 +35,7 @@ pub impl ServerMessage for RemoveLootMessage with type_code() {
 pub(all) struct PickupItemMessage {
   oid : Int
   position : @struct.Point[Int]
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for PickupItemMessage with type_code() {
@@ -46,7 +46,7 @@ pub impl ClientMessage for PickupItemMessage with type_code() {
 /// Local-server CHANGE_STATS (meso only) sync event.
 pub(all) struct ChangeStatsMesoMessage {
   meso : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for ChangeStatsMesoMessage with type_code() {
@@ -57,7 +57,7 @@ pub impl ServerMessage for ChangeStatsMesoMessage with type_code() {
 /// Local-server SHOW_STATUS_INFO (meso gain) sync event.
 pub(all) struct ShowStatusMesoGainMessage {
   gain : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for ShowStatusMesoGainMessage with type_code() {
@@ -72,7 +72,7 @@ pub(all) enum ModifyInventoryMode {
   SWAP
   REMOVE
   ADD_COUNT
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 /// Local-server MODIFY_INVENTORY single mod entry.
@@ -82,14 +82,14 @@ pub(all) struct ModifyInventoryMod {
   pos : Int
   arg : Int
   item : InventoryItemEntry?
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 /// Local-server MODIFY_INVENTORY sync event (batch + movement).
 pub(all) struct ModifyInventoryMessage {
   mods : Array[ModifyInventoryMod]
   movement : Int?
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for ModifyInventoryMessage with type_code() {

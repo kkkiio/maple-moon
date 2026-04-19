@@ -15,7 +15,7 @@ pub(all) enum EquipStatId {
   HANDS = 12
   SPEED = 13
   JUMP = 14
-} derive(Eq, Compare, Hash)
+} derive(Eq, Compare, Hash, Debug)
 
 ///|
 pub fn EquipStatId::int_value(self : EquipStatId) -> Int = "%identity"

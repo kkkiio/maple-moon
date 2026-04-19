@@ -23,7 +23,7 @@ pub(all) enum SetFieldMessage {
     cooldowns~ : @resource.EnumMap[Int, Int],
     quests~ : PlayerQuestLogInfo
   )
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub impl ServerMessage for SetFieldMessage with type_code() {
@@ -38,14 +38,14 @@ pub(all) struct StatsEntry {
   i64stats : @resource.EnumMap[@maple_stat.Id, Int64]
   map_id : Int
   portal_id : Int
-} derive(Show, Default, ToJson, @json.FromJson)
+} derive(Debug, Default, ToJson, @json.FromJson)
 
 ///|
 pub(all) struct InventoryEntry {
   meso : Int
   slot_maxs : @resource.EnumMap[InventoryType, Int]
   items : Array[InventoryItemEntry]
-} derive(Show, Default, ToJson, @json.FromJson)
+} derive(Debug, Default, ToJson, @json.FromJson)
 
 ///|
 pub(all) struct SkillEntry {
@@ -53,13 +53,13 @@ pub(all) struct SkillEntry {
   level : Int
   masterlevel : Int
   expiration : Int64
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 pub(all) struct PlayerQuestLogInfo {
   started : Array[(Int, String)]
   completed : Array[(Int, Int64)]
-} derive(Show, Default, ToJson, @json.FromJson)
+} derive(Debug, Default, ToJson, @json.FromJson)
 
 ///|
 pub(all) enum InventoryType {
@@ -69,7 +69,7 @@ pub(all) enum InventoryType {
   ETC
   CASH
   EQUIPPED
-} derive(Eq, Hash, Show, ToJson, @json.FromJson)
+} derive(Eq, Hash, Debug, ToJson, @json.FromJson)
 
 ///|
 pub fn InventoryType::int_value(self : InventoryType) -> Int {
@@ -110,6 +110,11 @@ pub fn InventoryType::by_value(value : Int) -> InventoryType? {
 }
 
 ///|
+pub impl Show for InventoryType with output(self, logger) {
+  logger.write_string(self.to_repr().to_string())
+}
+
+///|
 pub(all) enum InventoryItemEntry {
   Equip(
     invtype~ : InventoryType,
@@ -143,13 +148,13 @@ pub(all) enum InventoryItemEntry {
     owner~ : String,
     flag~ : Int
   )
-} derive(Show, ToJson, @json.FromJson)
+} derive(Debug, ToJson, @json.FromJson)
 
 ///|
 /// Tell the server which character was picked.
 pub(all) struct SelectCharMessage {
   character_id : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for SelectCharMessage with type_code() {
@@ -159,7 +164,7 @@ pub impl ClientMessage for SelectCharMessage with type_code() {
 ///|
 /// Tell the server that the client has finished map transition and can receive map objects.
 pub(all) struct PlayerMapTransferMessage(Unit) derive (
-  Show,
+  Debug,
   Default,
   ToJson,
   FromJson,

@@ -26,9 +26,9 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
       match @item.request_item_data_if_ready(item.item_id) {
         Some(data) => {
           @log.info("look_sync_apply_equip", data={
-            "slot_id": slot_id.int_value().to_json(),
-            "inventory_item_id": item.item_id.to_json(),
-            "current_look_item_id": current_id.to_json(),
+            "slot_id": slot_id.int_value(),
+            "inventory_item_id": item.item_id,
+            "current_look_item_id": current_id,
           })
           look.add_equip(data, slot_id) catch {
             _ => ()
@@ -46,7 +46,7 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
     let (slot_id, _) = slot_tuple
     if !inventory_slots.contains(slot_id) {
       @log.info("look_sync_remove_equip", data={
-        "slot_id": slot_id.int_value().to_json(),
+        "slot_id": slot_id.int_value(),
       })
       look.remove_equip(slot_id)
       remove_count = remove_count + 1
@@ -55,10 +55,10 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
 
   if add_or_update_count > 0 || remove_count > 0 {
     @log.info("look_sync_summary", data={
-      "add_or_update_count": add_or_update_count.to_json(),
-      "remove_count": remove_count.to_json(),
-      "stance": look.get_stance().to_string().to_json(),
-      "frame": look.get_frame().to_json(),
+      "add_or_update_count": add_or_update_count,
+      "remove_count": remove_count,
+      "stance": look.get_stance(),
+      "frame": look.get_frame(),
     })
   }
 }

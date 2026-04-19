@@ -91,7 +91,7 @@ pub(all) enum Opcode {
   PLAYER_INTERACTION = 314
   /// Cash Shop
   SET_CASH_SHOP = 127
-} derive(Eq, Compare, Show, ToJson, FromJson)
+} derive(Eq, Compare, Debug, ToJson, FromJson)
 
 ///|
 pub fn Opcode::int_value(self : Opcode) -> Int = "%identity"
@@ -268,7 +268,7 @@ pub(all) enum ClientOpcode {
   DAMAGE_REACTOR = 205
   PLAYER_MAP_TRANSFER = 207
   PLAYER_UPDATE = 223
-} derive(Eq, Compare, Show, ToJson, FromJson)
+} derive(Eq, Compare, Debug, ToJson, FromJson)
 
 ///|
 pub fn ClientOpcode::int_value(self : ClientOpcode) -> Int = "%identity"

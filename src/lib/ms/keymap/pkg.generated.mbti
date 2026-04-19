@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/keymap"
 
 import {
   "Milky2018/selene/inputs",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -35,7 +36,7 @@ pub(all) enum Action {
   BASIC(BasicActionId)
   SKILL(Int)
   ITEM(Int)
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, @debug.Debug)
 
 pub(all) enum BasicActionId {
   MOVE_UP
@@ -45,7 +46,7 @@ pub(all) enum BasicActionId {
   JUMP
   ATTACK
   PICKUP
-} derive(Eq, Hash, Show)
+} derive(Eq, Hash, @debug.Debug)
 
 // Type aliases
 pub type Keymap = Map[@inputs.Code, Action]

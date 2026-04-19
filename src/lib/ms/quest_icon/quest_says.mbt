@@ -55,7 +55,7 @@ pub enum ExpectResponse {
 pub enum Action {
   StartQuest
   CompleteQuest
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub(all) enum TalkState {
@@ -68,7 +68,7 @@ pub(all) enum TalkState {
     error_replys~ : Array[String],
     answer~ : Int
   )
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn next_talk(

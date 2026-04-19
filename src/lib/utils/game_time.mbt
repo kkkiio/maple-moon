@@ -15,7 +15,7 @@ pub fn TimePoint::add_duration(
 }
 
 ///|
-pub(all) struct Duration(Int) derive(Eq, Compare, Show)
+pub(all) struct Duration(Int) derive(Eq, Compare, Debug)
 
 ///|
 pub fn Duration::from_micro(i : Int) -> Duration {

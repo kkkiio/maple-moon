@@ -6,7 +6,7 @@ enum MovementType {
   RELATIVE
   CHAIR
   JUMPDOWN
-} derive(Eq, Compare, Show, ToJson, FromJson)
+} derive(Eq, Compare, Debug, ToJson, FromJson)
 
 ///|
 /// One movement segment parsed from packet or built from physics state.
@@ -20,7 +20,7 @@ pub struct Movement {
   fh : Int
   newstate : Int
   duration : Int
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 /// Build an empty movement segment.

@@ -2,7 +2,7 @@
 pub(all) struct Point[T] {
   x : T
   y : T
-} derive(Eq, Show, Default)
+} derive(Eq, Debug, Default)
 
 ///|
 pub fn[T] Point::new(x : T, y : T) -> Point[T] {

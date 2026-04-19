@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/item_use_events"
 
 import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -18,7 +19,7 @@ pub fn push_intent(ItemUseIntent) -> Unit
 pub(all) enum ItemUseIntent {
   TryEquip(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
   TryUse(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
 // Type aliases
 

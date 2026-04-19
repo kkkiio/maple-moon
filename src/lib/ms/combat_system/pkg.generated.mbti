@@ -17,6 +17,7 @@ import {
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/ecs",
   "Milky2018/selene/event",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -90,7 +91,7 @@ pub(all) struct CombatAction {
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   get_afterimage : () -> Map[String, @vfx_afterimage.NxAfterImage]
-} derive(Show)
+} derive(@debug.Debug)
 pub fn CombatAction::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn CombatAction::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
 pub fn CombatAction::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -123,7 +124,7 @@ pub(all) struct HitEvent {
   source : HitSource
   target_oids : Array[Int]
   result : @combat_proto.AttackResult
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 pub fn HitEvent::attacker_oid(Self) -> Int
 pub fn HitEvent::is_user_input(Self) -> Bool
 pub fn HitEvent::move_id(Self) -> Int
@@ -133,7 +134,7 @@ pub fn HitEvent::target_oids(Self) -> Array[Int]
 pub(all) enum HitSource {
   UserInput
   Passive(Int)
-} derive(Show, ToJson)
+} derive(ToJson, @debug.Debug)
 
 type NoAction derive(Default)
 pub impl SkillAction for NoAction

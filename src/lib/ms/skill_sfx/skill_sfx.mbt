@@ -2,14 +2,14 @@
 pub(all) enum SkillSfxStage {
   Use
   Hit
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub(all) struct SkillSfxEvent {
   skill_id : Int
   stage : SkillSfxStage
   path : String
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 pub fn SkillSfxEvent::skill_id(self : SkillSfxEvent) -> Int {

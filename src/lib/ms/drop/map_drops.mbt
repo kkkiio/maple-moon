@@ -51,34 +51,36 @@ pub fn MapDrops::spawn(self : MapDrops, spawn : DropSpawn) -> Unit {
 
 ///|
 pub fn MapDrops::update(self : MapDrops, physics : @physics.Physics) -> Unit {
-  loop self.spawns.pop() {
-    Some(spawn) => {
-      let oid = spawn.oid
-      if !self.drops.contains(oid) {
-        let itemid = spawn.item_id
-        let meso = spawn.meso
-        if meso {
-          let mesotype = if itemid > 999 {
-            BAG
-          } else if itemid > 99 {
-            BUNDLE
-          } else if itemid > 49 {
-            GOLD
+  for elem = self.spawns.pop() {
+    match elem {
+      Some(spawn) => {
+        let oid = spawn.oid
+        if !self.drops.contains(oid) {
+          let itemid = spawn.item_id
+          let meso = spawn.meso
+          if meso {
+            let mesotype = if itemid > 999 {
+              BAG
+            } else if itemid > 99 {
+              BUNDLE
+            } else if itemid > 49 {
+              GOLD
+            } else {
+              BRONZE
+            }
+            let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
+            let drop = spawn.instantiate_meso(icon)
+            self.drops.set(drop.get_oid(), drop)
           } else {
-            BRONZE
+            let item_data = @item.request_item_data(itemid)
+            let drop = spawn.instantiate_item(item_data.get_icon(true))
+            self.drops.set(drop.get_oid(), drop)
           }
-          let icon = self.meso_icons.get(mesotype).unwrap() // TODO: handle error
-          let drop = spawn.instantiate_meso(icon)
-          self.drops.set(drop.get_oid(), drop)
-        } else {
-          let item_data = @item.request_item_data(itemid)
-          let drop = spawn.instantiate_item(item_data.get_icon(true))
-          self.drops.set(drop.get_oid(), drop)
         }
+        continue self.spawns.pop()
       }
-      continue self.spawns.pop()
+      None => break
     }
-    None => break
   }
   let to_remove = Array::new()
   for oid, drop in self.drops {

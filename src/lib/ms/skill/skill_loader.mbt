@@ -17,15 +17,15 @@ let skill_cache : Map[Int, SkillData] = {}
 pub(all) suberror SkillLoadError {
   NOT_FOUND(Int)
   INVALID_DATA(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
-pub impl Show for SkillLoadError with to_string(self) -> String {
-  match self {
-    NOT_FOUND(id) => "Skill not found: " + id.to_string()
-    INVALID_DATA(msg) => "Invalid skill data: " + msg
-  }
-}
+// pub impl Show for SkillLoadError with output(self, buf : StringBuilder) -> Unit {
+//   match self {
+//     NOT_FOUND(id) => buf.write_string("Skill not found: " + id.to_string())
+//     INVALID_DATA(msg) => buf.write_string("Invalid skill data: " + msg)
+//   }
+// }
 
 ///|
 /// Load a single skill with caching.

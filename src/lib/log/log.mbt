@@ -3,7 +3,7 @@
 pub fn log(
   level : Level,
   msg : String,
-  data? : Map[String, &Show],
+  data? : Map[String, &Debug],
   loc~ : SourceLoc,
 ) -> Unit {
   match level {
@@ -19,7 +19,7 @@ pub fn log(
 #callsite(autofill(loc))
 pub fn debug(
   msg : String,
-  data? : Map[String, &Show],
+  data? : Map[String, &Debug],
   loc~ : SourceLoc,
 ) -> Unit {
   log_debug(to_logstr(msg, data?, loc))
@@ -27,13 +27,21 @@ pub fn debug(
 
 ///|
 #callsite(autofill(loc))
-pub fn info(msg : String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit {
+pub fn info(
+  msg : String,
+  data? : Map[String, &Debug],
+  loc~ : SourceLoc,
+) -> Unit {
   log_info(to_logstr(msg, data?, loc))
 }
 
 ///|
 #callsite(autofill(loc))
-pub fn warn(msg : String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit {
+pub fn warn(
+  msg : String,
+  data? : Map[String, &Debug],
+  loc~ : SourceLoc,
+) -> Unit {
   log_warn(to_logstr(msg, data?, loc))
 }
 
@@ -41,7 +49,7 @@ pub fn warn(msg : String, data? : Map[String, &Show], loc~ : SourceLoc) -> Unit 
 #callsite(autofill(loc))
 pub fn error(
   msg : String,
-  data? : Map[String, &Show],
+  data? : Map[String, &Debug],
   loc~ : SourceLoc,
 ) -> Unit {
   log_error(to_logstr(msg, data?, loc))
@@ -52,7 +60,7 @@ pub fn error(
 #callsite(autofill(loc))
 pub fn[T] fatal(
   msg : String,
-  data? : Map[String, &Show],
+  data? : Map[String, &Debug],
   loc~ : SourceLoc,
 ) -> T {
   log_error(to_logstr(msg, data?, loc))
@@ -62,7 +70,7 @@ pub fn[T] fatal(
 ///|
 fn to_logstr(
   msg : String,
-  data? : Map[String, &Show],
+  data? : Map[String, &Debug],
   loc : SourceLoc,
 ) -> String {
   let buf = StringBuilder::new(
@@ -77,7 +85,7 @@ fn to_logstr(
       buf.write_string(" ")
       buf.write_string(k)
       buf.write_string("=")
-      Show::output(v, buf)
+      Debug::to_repr(v).output(buf)
     }
   }
   buf.to_string()

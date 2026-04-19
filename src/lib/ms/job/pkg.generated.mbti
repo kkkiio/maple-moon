@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -123,7 +124,7 @@ pub(all) enum JobId {
   EVAN8
   EVAN9
   EVAN10
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub fn JobId::from_int(Int) -> Self?
 pub fn JobId::get_name_by_id(Self) -> String
 pub fn JobId::int_value(Self) -> Int

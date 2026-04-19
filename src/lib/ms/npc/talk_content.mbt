@@ -2,7 +2,7 @@
 pub(all) struct TalkContent {
   text_html : String // Assume no text after selections
   selections : Array[(ColorName, Int, String)]
-} derive(Show)
+} derive(Debug)
 
 ///|
 test "test text" {
@@ -187,7 +187,7 @@ let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
 ///|
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 using @struct {type ColorName}

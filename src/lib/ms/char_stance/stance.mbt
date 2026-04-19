@@ -36,7 +36,7 @@ pub(all) enum StanceId {
   SWINGTF = 33
   WALK1 = 34
   WALK2 = 35
-} derive(Eq, Compare, Hash)
+} derive(Eq, Compare, Hash, Debug)
 
 ///|
 pub impl Show for StanceId with output(self, logger) {

@@ -3,7 +3,7 @@ pub struct SpawnNpcController {
   mode : Int
   oid : Int
   npc : NpcSpawn?
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 pub fn handle_spawn_npc_controller_parsed(
@@ -25,7 +25,7 @@ pub enum TalkType {
   SEND_NEXT
   SEND_NEXT_PREV
   SEND_PREV
-} derive(Show, Eq, ToJson)
+} derive(Debug, Eq, ToJson)
 
 ///|
 pub fn TalkType::from_int(
@@ -72,7 +72,7 @@ pub struct NpcDialogue {
   t : TalkType
   speaker : Speaker
   text : String
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 pub(all) enum Speaker {
@@ -80,7 +80,7 @@ pub(all) enum Speaker {
   NPC_RIGHT = 1
   PLAYER_LEFT = 2
   PLAYER_RIGHT = 3
-} derive(Show, ToJson)
+} derive(Debug, ToJson)
 
 ///|
 pub fn Speaker::from_int(i : Int) -> Speaker? {
@@ -105,7 +105,7 @@ pub(all) enum TalkChoice {
   SEND_NEXT(next~ : Unit?)
   SEND_NEXT_PREV(next~ : Bool?)
   SEND_PREV(prev~ : Unit?)
-} derive(Show)
+} derive(Debug)
 
 ///|
 fn make_talk_message(c : TalkChoice) -> @server_proto.NpcTalkMoreMessage {

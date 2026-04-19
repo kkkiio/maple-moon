@@ -12,7 +12,7 @@ pub(all) struct ResPath(Array[String]) derive(Eq)
 
 ///|
 /// Array of T which json key is index
-pub struct MapBasedArray[T](Array[T]) derive(Show)
+pub struct MapBasedArray[T](Array[T]) derive(Debug)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
@@ -48,7 +48,7 @@ pub fn[T : @json.FromJson] parse_map_based_array(
 }
 
 ///|
-pub struct Nullable[T](T?) derive(Show)
+pub struct Nullable[T](T?) derive(Debug)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
@@ -63,7 +63,7 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
 }
 
 ///|
-pub struct IntMap[T](Map[Int, T]) derive(Show)
+pub struct IntMap[T](Map[Int, T]) derive(Debug)
 
 ///|
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
@@ -85,7 +85,7 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
 }
 
 ///|
-pub(all) struct EnumMap[K, V](Map[K, V]) derive(Show)
+pub(all) struct EnumMap[K, V](Map[K, V]) derive(Debug)
 
 ///|
 pub impl[K, V] Default for EnumMap[K, V] with default() -> EnumMap[K, V] {

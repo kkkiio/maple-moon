@@ -25,7 +25,7 @@
 - 地图渲染统一走 `selene/tiled`：
   - `set_tiled_map`
   - `clear_tiled_map`
-  - `tiled_background_motion_system`（仅补 `type4/type5` Maple 背景运动）
+  - `tiled_background_motion_system`（Maple 背景坐标/视差/平铺由本项目运行时接管）
 - `SceneMap` 保留字段：
   - `id`
   - `tiled_map`

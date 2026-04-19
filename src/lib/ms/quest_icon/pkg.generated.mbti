@@ -11,6 +11,7 @@ import {
   "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -51,13 +52,13 @@ pub fn upsert_npc(Int, Int, @entity.Entity, @physics.MovingObject) -> Unit
 pub enum Action {
   StartQuest
   CompleteQuest
-} derive(Show)
+} derive(@debug.Debug)
 
 pub(all) struct DemoQuestSelection {
   quest_id : Int
   npc_id : Int
   has_level_check : Bool
-} derive(Show)
+} derive(@debug.Debug)
 
 pub enum ExpectResponse {
   NEXT(() -> QuestTalk?)
@@ -103,7 +104,7 @@ pub(all) enum QuestIconState {
   AVAILABLE
   IN_PROGRESS
   COMPLETED
-} derive(Eq, Show, ToJson, @json.FromJson)
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 
 pub struct QuestTalk {
   content : String
@@ -115,7 +116,7 @@ pub(all) enum TalkState {
   YesReply(next~ : Int)
   NoReply(next~ : Int)
   Ask(next~ : Int, expect_answer~ : Int, error_replys~ : Array[String], answer~ : Int)
-} derive(Show)
+} derive(@debug.Debug)
 
 // Type aliases
 

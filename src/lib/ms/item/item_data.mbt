@@ -312,7 +312,7 @@ pub(all) suberror LoadDataError {
   INVALID_ITEM_ID(Int)
   DATA_NOT_FOUND(Int)
   INVALID_DATA(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 pub fn parse_equip_category(id : Int) -> String? {

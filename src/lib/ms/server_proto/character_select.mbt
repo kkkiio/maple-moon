@@ -9,7 +9,7 @@ const LOCAL_OPCODE_CREATE_CHARACTER_RESULT = 0x5001
 ///|
 /// Request the current character list from local server.
 pub(all) struct CharacterListRequestMessage(Unit) derive (
-  Show,
+  Debug,
   Default,
   ToJson,
   FromJson,
@@ -45,7 +45,7 @@ pub(all) struct CreateCharacterMessage {
   weapon : Int
   /// Whether the character is female.
   female : Bool
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ClientMessage for CreateCharacterMessage with type_code() {
@@ -61,14 +61,14 @@ pub(all) struct CharacterListEntry {
   name : String
   /// Character look used by preview UI.
   look : @char_look.LookEntry
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 /// Local-server character list response.
 pub(all) struct CharacterListMessage {
   /// Available characters for the current local account.
   characters : Array[CharacterListEntry]
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for CharacterListMessage with type_code() {
@@ -84,7 +84,7 @@ pub(all) struct CreateCharacterResultMessage {
   character : CharacterListEntry?
   /// Error text when creation failed.
   error : String?
-} derive(Show, ToJson, FromJson)
+} derive(Debug, ToJson, FromJson)
 
 ///|
 pub impl ServerMessage for CreateCharacterResultMessage with type_code() {

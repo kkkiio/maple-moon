@@ -8,6 +8,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
   "Milky2018/selene/event",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -74,13 +75,13 @@ pub struct CharStatsChangedEvent {
   kind : CharStatsChangedKind
   stat : @maple_stat.Id?
   total_stat : @maple_stat.EquipStatId?
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 
 pub enum CharStatsChangedKind {
   BASE_STAT
   I64_STAT
   TOTAL_STAT
-} derive(Eq, Show)
+} derive(Eq, @debug.Debug)
 
 type Module
 pub fn Module::load() -> Self

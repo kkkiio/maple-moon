@@ -63,7 +63,7 @@ async fn setup_scene() -> Unit {
   @capture_app.init_app(app)
   @game_state.init_state(@game_state.GamePhase::GameSetup)
   let camera_anchor = @entity.Entity::new()
-  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2D(0.0, 0.0))
+  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
   @ms_camera.camera_follow_system(@ecs.require_current_world())
 
@@ -76,7 +76,7 @@ async fn setup_scene() -> Unit {
 
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_mouse_system(0.0)
-  @inputs.mouse.pos = @math.Vec2D(360.0, 260.0)
+  @inputs.mouse.pos = @math.Vec2(360.0, 260.0)
   @inputs.mouse.left_button = false
 
   @npc_talk_ui.open_npc_talk_ui({
@@ -89,7 +89,7 @@ async fn setup_scene() -> Unit {
   })
 
   for _ in 0..<12 {
-    @inputs.mouse.pos = @math.Vec2D(360.0, 260.0)
+    @inputs.mouse.pos = @math.Vec2(360.0, 260.0)
     @inputs.mouse.left_button = false
     @capture_app.run_loop(0.016)
   }

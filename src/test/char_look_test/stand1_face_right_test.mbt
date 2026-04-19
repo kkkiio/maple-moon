@@ -52,7 +52,7 @@ async test "character stand1 face right" {
   )
   look.set_stance(StanceId::STAND1)
   look.set_facing_right(true)
-  look.set_pos(Vec2D(100.0, 100.0))
+  look.set_pos(Vec2(100.0, 100.0))
   let weapon_node = @fs.read_file_to_string(
       "assets/Character/Weapon/01302000.img.json",
     )

@@ -215,7 +215,7 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
-    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     source=Some(source),
   )
@@ -226,11 +226,11 @@ fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
-    position: @selene_math.Vec2D(
+    position: @selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
   }
 }
 
@@ -257,8 +257,8 @@ fn spawn_image_node(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -283,8 +283,8 @@ fn spawn_text_node(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -535,8 +535,8 @@ fn render_inventory(state : State) -> Unit {
       @selene_ui.nodes().set(
         slot_entity,
         @selene_ui.Node::absolute(
-          @selene_math.Vec2D(x.to_double(), y.to_double()),
-          size=@selene_math.Vec2D(
+          @selene_math.Vec2(x.to_double(), y.to_double()),
+          size=@selene_math.Vec2(
             SLOT_WIDTH.to_double(),
             SLOT_HEIGHT.to_double(),
           ),

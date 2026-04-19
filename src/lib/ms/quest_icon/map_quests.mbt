@@ -357,7 +357,7 @@ fn spawn_icon_runtime(
   let icon_entity = npc_entity.spawn_child()
   @transform2d.set_xy(
     icon_entity,
-    @selene_math.Vec2D(
+    @selene_math.Vec2(
       quest.icon_offset.x.to_double(),
       quest.icon_offset.y.to_double(),
     ),

@@ -104,7 +104,7 @@ pub fn[T] Point::new(T, T) -> Self[T]
 pub fn[T : Add] Point::shift_x(Self[T], T) -> Self[T]
 pub fn[T : Add] Point::shift_y(Self[T], T) -> Self[T]
 pub fn[T : Eq] Point::straight(Self[T]) -> Bool
-pub fn Point::to_vec2d(Self[Int]) -> @math.Vec2D
+pub fn Point::to_vec2d(Self[Int]) -> @math.Vec2
 pub impl[T : Add] Add for Point[T]
 pub impl[T : Neg] Neg for Point[T]
 pub impl[T : Sub] Sub for Point[T]

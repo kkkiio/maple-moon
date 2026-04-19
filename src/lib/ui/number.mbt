@@ -2,7 +2,7 @@
 using @resource {type NxFrame, type NxAnimation}
 
 ///|
-using @selene_math {type Vec2D}
+using @selene_math {type Vec2}
 
 ///|
 /// 类似于 Charset, 但是专门用于 DamageSkin, 存储 selene @ms_animation.Picture
@@ -105,7 +105,7 @@ fn Number::update(self : Number, delta : Double) -> Bool {
     // move_obj stores world coordinates. get_absolute adds view offset which we DON'T want for selene entities.
     let x = self.move_obj.crnt_x()
     let y = self.move_obj.crnt_y()
-    let pos_vec = @selene_math.Vec2D(x, y)
+    let pos_vec = @selene_math.Vec2(x, y)
     @transform2d.set_xy(self.parent_entity, pos_vec)
   }
   finished
@@ -239,7 +239,7 @@ pub fn NumberSet::show_number(
 
   // Create Parent Entity
   let parent_entity = @entity.Entity::new()
-  @transform2d.set_xy(parent_entity, Vec2D::zero())
+  @transform2d.set_xy(parent_entity, Vec2::zero())
 
   // Spawn Children
   let start_offset = @struct.Point::new(0, -shift)
@@ -247,7 +247,7 @@ pub fn NumberSet::show_number(
   fn spawn_sprite(skin : DamageSkin, c : Char, offset : @struct.Point[Int]) {
     match skin.sprites.get(c) {
       Some(anim) => {
-        let offset_vec = @selene_math.Vec2D(
+        let offset_vec = @selene_math.Vec2(
           offset.x.to_double(),
           offset.y.to_double(),
         )

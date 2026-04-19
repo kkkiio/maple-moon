@@ -272,15 +272,15 @@ fn apply_local_frame(
 ) -> Unit {
   let frame = state.frames[state.frame_index]
   let texture = frame.texture
-  let size = @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double())
+  let size = @selene_math.Vec2(texture.w.to_double(), texture.h.to_double())
   let rect : @selene_math.Rect = {
-    position: @selene_math.Vec2D(
+    position: @selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
     size,
   }
-  let origin = @selene_math.Vec2D(
+  let origin = @selene_math.Vec2(
     texture.origin.x.to_double() - state.transform.tx,
     texture.origin.y.to_double() - state.transform.ty,
   )
@@ -448,7 +448,7 @@ fn CharLook::updatetwohanded(self : CharLook) -> Unit {
 }
 
 ///|
-pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2D) -> Unit {
+pub fn CharLook::set_pos(self : CharLook, pos : @selene_math.Vec2) -> Unit {
   @transform2d.set_xy(self.root_entity, pos)
 }
 
@@ -1188,15 +1188,15 @@ fn set_entity_visible(entity : @entity.Entity, visible : Bool) -> Unit {
 
 ///|
 fn anchor_from_origin(
-  origin : @selene_math.Vec2D,
-  size : @selene_math.Vec2D,
+  origin : @selene_math.Vec2,
+  size : @selene_math.Vec2,
   flip_x? : Bool = false,
 ) -> @sprite.Anchor {
   let width = if size.0 <= 0.0 { 1.0 } else { size.0 }
   let height = if size.1 <= 0.0 { 1.0 } else { size.1 }
   let x = origin.0 / width - 0.5
   @sprite.Anchor(
-    @selene_math.Vec2D(if flip_x { -x } else { x }, 0.5 - origin.1 / height),
+    @selene_math.Vec2(if flip_x { -x } else { x }, 0.5 - origin.1 / height),
   )
 }
 

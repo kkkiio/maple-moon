@@ -5,8 +5,8 @@ using @resource {type NxTexture, type NxAnimation}
 pub(all) struct PictureSpec {
   image : @asset.ImageHandle
   rect : @math.Rect
-  size : @math.Vec2D
-  origin : @math.Vec2D
+  size : @math.Vec2
+  origin : @math.Vec2
   repeat : @math.RepeatMode
   flip_x : Bool
 }
@@ -15,8 +15,8 @@ pub(all) struct PictureSpec {
 pub(all) struct AnimationStep {
   image : @asset.ImageHandle
   rect : @math.Rect
-  size : @math.Vec2D
-  origin : @math.Vec2D
+  size : @math.Vec2
+  origin : @math.Vec2
   duration : Double
 }
 
@@ -30,28 +30,28 @@ pub(all) struct AnimationPlayable {
 ///|
 pub fn nx_texture_to_picture_spec(
   texture : NxTexture,
-  size? : @math.Vec2D,
+  size? : @math.Vec2,
   repeat? : @math.RepeatMode = NoRepeat,
   flip_x? : Bool = false,
 ) -> PictureSpec {
   guard repeat is NoRepeat || texture.offset is { x: 0, y: 0 } else {
     abort("tiled texture in spritesheet is not supported")
   }
-  let resolved_size : @math.Vec2D = size.unwrap_or(
-    @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+  let resolved_size : @math.Vec2 = size.unwrap_or(
+    @math.Vec2(texture.w.to_double(), texture.h.to_double()),
   )
   let rect : @math.Rect = {
-    position: @math.Vec2D(
+    position: @math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    size: @math.Vec2(texture.w.to_double(), texture.h.to_double()),
   }
   {
     image: @asset.load_image(texture.i),
     rect,
     size: resolved_size,
-    origin: @math.Vec2D(
+    origin: @math.Vec2(
       texture.origin.x.to_double(),
       texture.origin.y.to_double(),
     ),
@@ -75,14 +75,14 @@ pub fn nx_animation_to_playable(
     steps.push({
       image: @asset.load_image(texture.i),
       rect: {
-        position: @math.Vec2D(
+        position: @math.Vec2(
           texture.offset.x.to_double(),
           texture.offset.y.to_double(),
         ),
-        size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+        size: @math.Vec2(texture.w.to_double(), texture.h.to_double()),
       },
-      size: @math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-      origin: @math.Vec2D(
+      size: @math.Vec2(texture.w.to_double(), texture.h.to_double()),
+      origin: @math.Vec2(
         texture.origin.x.to_double(),
         texture.origin.y.to_double(),
       ),
@@ -152,9 +152,9 @@ pub(all) struct Animation {
 ///|
 pub(all) struct AnimationFrame {
   image : @asset.ImageHandle
-  size : @math.Vec2D
-  offset : @math.Vec2D
-  pivot : @math.Vec2D
+  size : @math.Vec2
+  offset : @math.Vec2
+  pivot : @math.Vec2
   duration : Double
 }
 
@@ -199,9 +199,9 @@ pub fn Animation::new(
 ///|
 pub fn Animation::single_frame(
   path : String,
-  size : @math.Vec2D,
-  offset? : @math.Vec2D = @math.Vec2D::zero(),
-  pivot? : @math.Vec2D = @math.Vec2D::zero(),
+  size : @math.Vec2,
+  offset? : @math.Vec2 = @math.Vec2::zero(),
+  pivot? : @math.Vec2 = @math.Vec2::zero(),
   duration? : Double = 1.0,
 ) -> Animation {
   Animation::new([
@@ -212,9 +212,9 @@ pub fn Animation::single_frame(
 ///|
 pub fn Animation::single_frame_from_image(
   image : @asset.ImageHandle,
-  size : @math.Vec2D,
-  offset? : @math.Vec2D = @math.Vec2D::zero(),
-  pivot? : @math.Vec2D = @math.Vec2D::zero(),
+  size : @math.Vec2,
+  offset? : @math.Vec2 = @math.Vec2::zero(),
+  pivot? : @math.Vec2 = @math.Vec2::zero(),
   duration? : Double = 1.0,
 ) -> Animation {
   Animation::new([{ image, size, offset, pivot, duration }])
@@ -226,7 +226,7 @@ pub fn frame_count(animation : Animation) -> Int {
 }
 
 ///|
-pub fn frame_size_at(animation : Animation, index : Int) -> @math.Vec2D? {
+pub fn frame_size_at(animation : Animation, index : Int) -> @math.Vec2? {
   if index < 0 || index >= animation.playback.steps.length() {
     None
   } else {
@@ -235,7 +235,7 @@ pub fn frame_size_at(animation : Animation, index : Int) -> @math.Vec2D? {
 }
 
 ///|
-pub fn frame_origin_at(animation : Animation, index : Int) -> @math.Vec2D? {
+pub fn frame_origin_at(animation : Animation, index : Int) -> @math.Vec2? {
   if index < 0 || index >= animation.playback.steps.length() {
     None
   } else {
@@ -246,7 +246,7 @@ pub fn frame_origin_at(animation : Animation, index : Int) -> @math.Vec2D? {
 ///|
 pub fn from_nx_texture(
   texture : NxTexture,
-  size? : @math.Vec2D,
+  size? : @math.Vec2,
   repeat? : @math.RepeatMode = NoRepeat,
   flip_x? : Bool = false,
 ) -> Picture {
@@ -362,7 +362,7 @@ pub fn sprite_from_animation(
   guard animation.playback.steps.length() > 0 else {
     return @sprite.Sprite::from_color(
       white_with_alpha(alpha),
-      @math.Vec2D(1.0, 1.0),
+      @math.Vec2(1.0, 1.0),
     )
   }
   let step = animation.playback.steps[0]
@@ -372,7 +372,7 @@ pub fn sprite_from_animation(
     rect=Some(step.rect),
     custom_size=Some(step.size),
     anchor=anchor_from_origin(
-      @math.Vec2D(step.origin.0 - transform.tx, step.origin.1 - transform.ty),
+      @math.Vec2(step.origin.0 - transform.tx, step.origin.1 - transform.ty),
       step.size,
       flip_x~,
     ),
@@ -475,7 +475,7 @@ pub fn set_animation_transform(
           t.translation.z,
         ),
       })
-    None => @transform2d.set_xy(entity, @math.Vec2D(transform.tx, transform.ty))
+    None => @transform2d.set_xy(entity, @math.Vec2(transform.tx, transform.ty))
   }
 }
 
@@ -586,20 +586,20 @@ fn apply_scripted_step(entity : @entity.Entity, state : ScriptedState) -> Unit {
 
 ///|
 fn anchor_from_origin(
-  origin : @math.Vec2D,
-  size : @math.Vec2D,
+  origin : @math.Vec2,
+  size : @math.Vec2,
   flip_x? : Bool = false,
 ) -> @sprite.Anchor {
   let w = if size.0 <= 0.0 { 1.0 } else { size.0 }
   let h = if size.1 <= 0.0 { 1.0 } else { size.1 }
   let x = origin.0 / w - 0.5
-  @sprite.Anchor(@math.Vec2D(if flip_x { -x } else { x }, 0.5 - origin.1 / h))
+  @sprite.Anchor(@math.Vec2(if flip_x { -x } else { x }, 0.5 - origin.1 / h))
 }
 
 ///|
 fn mirror_anchor_x(anchor : @sprite.Anchor) -> @sprite.Anchor {
   let @sprite.Anchor(v) = anchor
-  @sprite.Anchor(@math.Vec2D(-v.0, v.1))
+  @sprite.Anchor(@math.Vec2(-v.0, v.1))
 }
 
 ///|

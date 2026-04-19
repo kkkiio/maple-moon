@@ -129,12 +129,12 @@ fn parse_ui_slice_json(
   let handle = @selene_ui.register_ui_material_asset(
     @selene_ui.UiMaterialAsset::from_draw(fn(context) {
       let bounds_rect : @selene_math.Rect = {
-        position: @selene_math.Vec2D(bx.to_double(), by.to_double()),
-        size: @selene_math.Vec2D(bw.to_double(), bh.to_double()),
+        position: @selene_math.Vec2(bx.to_double(), by.to_double()),
+        size: @selene_math.Vec2(bw.to_double(), bh.to_double()),
       }
       let center_rect : @selene_math.Rect = {
-        position: @selene_math.Vec2D(cx.to_double(), cy.to_double()),
-        size: @selene_math.Vec2D(cw.to_double(), ch.to_double()),
+        position: @selene_math.Vec2(cx.to_double(), cy.to_double()),
+        size: @selene_math.Vec2(cw.to_double(), ch.to_double()),
       }
       draw_ui_slice_material(
         image,
@@ -199,6 +199,9 @@ fn push_image(
     transform: @selene_math.Transform::new(),
     repeat: @selene_math.NoRepeat,
     color: @selene_ui.rgba(255, 255, 255, 1.0),
+    uv_transform: @selene_math.Transform::identity(),
+    alpha_mode: @render.AlphaMode2D::Blend,
+    blend_mode: @render.BlendMode2D::Alpha,
   })
 }
 
@@ -243,34 +246,34 @@ fn draw_ui_slice_material(
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx, dy),
-          size: @selene_math.Vec2D(dw, top.to_double()),
+          position: @selene_math.Vec2(dx, dy),
+          size: @selene_math.Vec2(dw, top.to_double()),
         },
         {
-          position: @selene_math.Vec2D(bx, by),
-          size: @selene_math.Vec2D(bw, top.to_double()),
-        },
-      )
-      push_image(
-        image,
-        {
-          position: @selene_math.Vec2D(dx, dy + top.to_double()),
-          size: @selene_math.Vec2D(dw, dst_center_h),
-        },
-        {
-          position: @selene_math.Vec2D(bx + cx, by + cy),
-          size: @selene_math.Vec2D(cw, ch),
+          position: @selene_math.Vec2(bx, by),
+          size: @selene_math.Vec2(bw, top.to_double()),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx, dy + dh - bottom.to_double()),
-          size: @selene_math.Vec2D(dw, bottom.to_double()),
+          position: @selene_math.Vec2(dx, dy + top.to_double()),
+          size: @selene_math.Vec2(dw, dst_center_h),
         },
         {
-          position: @selene_math.Vec2D(bx, by + bh - bottom.to_double()),
-          size: @selene_math.Vec2D(bw, bottom.to_double()),
+          position: @selene_math.Vec2(bx + cx, by + cy),
+          size: @selene_math.Vec2(cw, ch),
+        },
+      )
+      push_image(
+        image,
+        {
+          position: @selene_math.Vec2(dx, dy + dh - bottom.to_double()),
+          size: @selene_math.Vec2(dw, bottom.to_double()),
+        },
+        {
+          position: @selene_math.Vec2(bx, by + bh - bottom.to_double()),
+          size: @selene_math.Vec2(bw, bottom.to_double()),
         },
       )
     }
@@ -278,123 +281,123 @@ fn draw_ui_slice_material(
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx, dy),
-          size: @selene_math.Vec2D(left.to_double(), top.to_double()),
+          position: @selene_math.Vec2(dx, dy),
+          size: @selene_math.Vec2(left.to_double(), top.to_double()),
         },
         {
-          position: @selene_math.Vec2D(bx, by),
-          size: @selene_math.Vec2D(left.to_double(), top.to_double()),
-        },
-      )
-      push_image(
-        image,
-        {
-          position: @selene_math.Vec2D(dx + left.to_double(), dy),
-          size: @selene_math.Vec2D(dst_center_w, top.to_double()),
-        },
-        {
-          position: @selene_math.Vec2D(bx + left.to_double(), by),
-          size: @selene_math.Vec2D(cw, top.to_double()),
+          position: @selene_math.Vec2(bx, by),
+          size: @selene_math.Vec2(left.to_double(), top.to_double()),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx + dw - right.to_double(), dy),
-          size: @selene_math.Vec2D(right.to_double(), top.to_double()),
+          position: @selene_math.Vec2(dx + left.to_double(), dy),
+          size: @selene_math.Vec2(dst_center_w, top.to_double()),
         },
         {
-          position: @selene_math.Vec2D(bx + bw - right.to_double(), by),
-          size: @selene_math.Vec2D(right.to_double(), top.to_double()),
+          position: @selene_math.Vec2(bx + left.to_double(), by),
+          size: @selene_math.Vec2(cw, top.to_double()),
+        },
+      )
+      push_image(
+        image,
+        {
+          position: @selene_math.Vec2(dx + dw - right.to_double(), dy),
+          size: @selene_math.Vec2(right.to_double(), top.to_double()),
+        },
+        {
+          position: @selene_math.Vec2(bx + bw - right.to_double(), by),
+          size: @selene_math.Vec2(right.to_double(), top.to_double()),
         },
       )
 
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx, dy + top.to_double()),
-          size: @selene_math.Vec2D(left.to_double(), dst_center_h),
+          position: @selene_math.Vec2(dx, dy + top.to_double()),
+          size: @selene_math.Vec2(left.to_double(), dst_center_h),
         },
         {
-          position: @selene_math.Vec2D(bx, by + top.to_double()),
-          size: @selene_math.Vec2D(left.to_double(), ch),
+          position: @selene_math.Vec2(bx, by + top.to_double()),
+          size: @selene_math.Vec2(left.to_double(), ch),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             dx + left.to_double(),
             dy + top.to_double(),
           ),
-          size: @selene_math.Vec2D(dst_center_w, dst_center_h),
+          size: @selene_math.Vec2(dst_center_w, dst_center_h),
         },
         {
-          position: @selene_math.Vec2D(bx + cx, by + cy),
-          size: @selene_math.Vec2D(cw, ch),
+          position: @selene_math.Vec2(bx + cx, by + cy),
+          size: @selene_math.Vec2(cw, ch),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             dx + dw - right.to_double(),
             dy + top.to_double(),
           ),
-          size: @selene_math.Vec2D(right.to_double(), dst_center_h),
+          size: @selene_math.Vec2(right.to_double(), dst_center_h),
         },
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             bx + bw - right.to_double(),
             by + top.to_double(),
           ),
-          size: @selene_math.Vec2D(right.to_double(), ch),
+          size: @selene_math.Vec2(right.to_double(), ch),
         },
       )
 
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(dx, dy + dh - bottom.to_double()),
-          size: @selene_math.Vec2D(left.to_double(), bottom.to_double()),
+          position: @selene_math.Vec2(dx, dy + dh - bottom.to_double()),
+          size: @selene_math.Vec2(left.to_double(), bottom.to_double()),
         },
         {
-          position: @selene_math.Vec2D(bx, by + bh - bottom.to_double()),
-          size: @selene_math.Vec2D(left.to_double(), bottom.to_double()),
+          position: @selene_math.Vec2(bx, by + bh - bottom.to_double()),
+          size: @selene_math.Vec2(left.to_double(), bottom.to_double()),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             dx + left.to_double(),
             dy + dh - bottom.to_double(),
           ),
-          size: @selene_math.Vec2D(dst_center_w, bottom.to_double()),
+          size: @selene_math.Vec2(dst_center_w, bottom.to_double()),
         },
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             bx + left.to_double(),
             by + bh - bottom.to_double(),
           ),
-          size: @selene_math.Vec2D(cw, bottom.to_double()),
+          size: @selene_math.Vec2(cw, bottom.to_double()),
         },
       )
       push_image(
         image,
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             dx + dw - right.to_double(),
             dy + dh - bottom.to_double(),
           ),
-          size: @selene_math.Vec2D(right.to_double(), bottom.to_double()),
+          size: @selene_math.Vec2(right.to_double(), bottom.to_double()),
         },
         {
-          position: @selene_math.Vec2D(
+          position: @selene_math.Vec2(
             bx + bw - right.to_double(),
             by + bh - bottom.to_double(),
           ),
-          size: @selene_math.Vec2D(right.to_double(), bottom.to_double()),
+          size: @selene_math.Vec2(right.to_double(), bottom.to_double()),
         },
       )
     }

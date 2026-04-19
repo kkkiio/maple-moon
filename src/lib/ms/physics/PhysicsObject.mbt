@@ -8,13 +8,13 @@ pub struct MovingObject {
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
-  mut on_pos_change : (@selene_math.Vec2D) -> Unit
+  mut on_pos_change : (@selene_math.Vec2) -> Unit
 }
 
 ///|
 /// Create a moving object with zeroed position/speed.
 pub fn MovingObject::new(
-  on_pos_change~ : (@selene_math.Vec2D) -> Unit,
+  on_pos_change~ : (@selene_math.Vec2) -> Unit,
 ) -> MovingObject {
   {
     x: @utils.Linear::default(),
@@ -39,28 +39,28 @@ pub fn MovingObject::do_move(self : MovingObject) -> Unit {
   let y = self.y.get() + self.vspeed
   self.x.set(x)
   self.y.set(y)
-  (self.on_pos_change)(@selene_math.Vec2D(x, y))
+  (self.on_pos_change)(@selene_math.Vec2(x, y))
 }
 
 ///|
 /// Set x immediately and notify position callback.
 pub fn MovingObject::set_x(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
-  (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
+  (self.on_pos_change)(@selene_math.Vec2(d, self.y.get()))
 }
 
 ///|
 /// Set y immediately and notify position callback.
 pub fn MovingObject::set_y(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
-  (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
+  (self.on_pos_change)(@selene_math.Vec2(self.x.get(), d))
 }
 
 ///|
 /// Set full position immediately and notify callback.
 pub fn MovingObject::set_position(
   self : MovingObject,
-  d : @selene_math.Vec2D,
+  d : @selene_math.Vec2,
 ) -> Unit {
   self.x.set(d.0)
   self.y.set(d.1)
@@ -72,7 +72,7 @@ pub fn MovingObject::set_position(
 pub fn MovingObject::limitx(self : MovingObject, d : Double) -> Unit {
   self.x.set(d)
   self.hspeed = 0.0
-  (self.on_pos_change)(@selene_math.Vec2D(d, self.y.get()))
+  (self.on_pos_change)(@selene_math.Vec2(d, self.y.get()))
 }
 
 ///|
@@ -80,7 +80,7 @@ pub fn MovingObject::limitx(self : MovingObject, d : Double) -> Unit {
 pub fn MovingObject::limity(self : MovingObject, d : Double) -> Unit {
   self.y.set(d)
   self.vspeed = 0.0
-  (self.on_pos_change)(@selene_math.Vec2D(self.x.get(), d))
+  (self.on_pos_change)(@selene_math.Vec2(self.x.get(), d))
 }
 
 ///|
@@ -247,7 +247,7 @@ pub fn MovingObject::set_hspeed(self : MovingObject, hspeed : Double) -> Unit {
 /// Replace position-change callback.
 pub fn MovingObject::set_on_pos_change(
   self : MovingObject,
-  on_pos_change : (@selene_math.Vec2D) -> Unit,
+  on_pos_change : (@selene_math.Vec2) -> Unit,
 ) -> Unit {
   self.on_pos_change = on_pos_change
 }
@@ -305,7 +305,7 @@ pub struct PhysicsObject {
 ///|
 /// Create a physics object with default NORMAL state.
 pub fn PhysicsObject::new(
-  on_pos_change~ : (@selene_math.Vec2D) -> Unit,
+  on_pos_change~ : (@selene_math.Vec2) -> Unit,
 ) -> PhysicsObject {
   {
     moving_object: MovingObject::new(on_pos_change~),
@@ -436,7 +436,7 @@ pub fn PhysicsObject::get_vspeed(self : PhysicsObject) -> Double {
 /// Set full position immediately.
 pub fn PhysicsObject::set_position(
   self : PhysicsObject,
-  d : @selene_math.Vec2D,
+  d : @selene_math.Vec2,
 ) -> Unit {
   self.moving_object.set_position(d)
 }

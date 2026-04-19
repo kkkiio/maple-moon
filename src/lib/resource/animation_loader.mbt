@@ -129,7 +129,7 @@ fn compile_loaded_animations(
   let first = frames[0]
   let atlas_layout = @sprite.register_texture_atlas_layout(
     @sprite.TextureAtlasLayout::new(
-      @math.Vec2D(first.size.x.to_double(), first.size.y.to_double()),
+      @math.Vec2(first.size.x.to_double(), first.size.y.to_double()),
       frames.map(fn(frame) { frame.rect }),
     ),
   )
@@ -229,7 +229,7 @@ fn parse_frames(frames_json : Array[Json]) -> Array[FrameItem] raise {
       duration.to_double() / 1000.0
     }
     frames.push({
-      rect: { position: @math.Vec2D(x, y), size: @math.Vec2D(w, h) },
+      rect: { position: @math.Vec2(x, y), size: @math.Vec2(w, h) },
       duration_s,
       size: @struct.Point::new(wi, hi),
     })
@@ -267,7 +267,7 @@ fn parse_tag_ranges(
 }
 
 ///|
-fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2D] {
+fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2] {
   let anchors = Map::new()
   for slice in slices_json {
     guard slice is { "name": String(name), "keys": Array(keys), .. } else {
@@ -284,14 +284,14 @@ fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2D] {
       .strip_prefix("anchor_")
       .map(fn(v) { v.to_string() })
       .unwrap_or(name)
-    anchors[tag] = @math.Vec2D(px, py)
+    anchors[tag] = @math.Vec2(px, py)
   }
   anchors
 }
 
 ///|
 fn anchor_from_pivot(
-  pivot : @math.Vec2D,
+  pivot : @math.Vec2,
   size : @struct.Point[Int],
 ) -> @sprite.Anchor raise {
   guard size.x > 0 && size.y > 0 else {
@@ -299,13 +299,13 @@ fn anchor_from_pivot(
   }
   let normalized_x = pivot.0 / size.x.to_double()
   let normalized_y = pivot.1 / size.y.to_double()
-  @sprite.Anchor(@math.Vec2D(normalized_x - 0.5, 0.5 - normalized_y))
+  @sprite.Anchor(@math.Vec2(normalized_x - 0.5, 0.5 - normalized_y))
 }
 
 ///|
 test "anchor_from_pivot supports aseprite pixel pivot" {
   let @sprite.Anchor(v) = anchor_from_pivot(
-    @math.Vec2D(30.0, 79.0),
+    @math.Vec2(30.0, 79.0),
     @struct.Point::new(57, 79),
   )
   inspect(v.0, content="0.02631578947368418")
@@ -315,7 +315,7 @@ test "anchor_from_pivot supports aseprite pixel pivot" {
 ///|
 test "anchor_from_pivot preserves legacy normalized-equivalent center" {
   let @sprite.Anchor(v) = anchor_from_pivot(
-    @math.Vec2D(29.0, 50.0),
+    @math.Vec2(29.0, 50.0),
     @struct.Point::new(58, 100),
   )
   inspect(v.0, content="0")

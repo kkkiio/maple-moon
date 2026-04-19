@@ -412,8 +412,8 @@ fn render_image(command : @render2d_types.ImageDrawCommand2D) -> Unit {
     Some(src) => src
     None =>
       {
-        position: @math.Vec2D(0.0, 0.0),
-        size: @math.Vec2D(img.width(), img.height()),
+        position: @math.Vec2(0.0, 0.0),
+        size: @math.Vec2(img.width(), img.height()),
       }
   }
   let dest_pos = command.destination.position

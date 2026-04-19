@@ -28,7 +28,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
 
   let host = @entity.Entity::new()
   defer host.destroy()
-  @transform2d.set_xy(host, Vec2D(110.0, 110.0))
+  @transform2d.set_xy(host, Vec2(110.0, 110.0))
 
   let look = load_test_look(host)
   let weapon_item = load_weapon_item(1312001)

@@ -620,7 +620,7 @@ fn ui_image_from_texture(
 ) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
-    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     fit~,
     source=Some(source),
@@ -632,11 +632,11 @@ fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
-    position: @selene_math.Vec2D(
+    position: @selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
   }
 }
 
@@ -667,8 +667,8 @@ fn UINpcTalk::spawn_image_node(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -691,8 +691,8 @@ fn UINpcTalk::spawn_material_node(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -823,8 +823,8 @@ fn UINpcTalk::spawn_rich_text_block(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
       overflow_x=@selene_ui.Overflow::Clip,
       overflow_y=@selene_ui.Overflow::Clip,
     ),

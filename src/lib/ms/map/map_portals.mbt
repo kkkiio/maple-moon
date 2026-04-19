@@ -193,7 +193,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
     frame_count : Int,
     frame_width : Double,
     frame_height : Double,
-    pivot : @selene_math.Vec2D,
+    pivot : @selene_math.Vec2,
   ) -> @ms_animation.Animation {
     let image = @selene_asset.load_image(path)
     let frames : Array[@ms_animation.AnimationFrame] = []
@@ -202,8 +202,8 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
         frame_index = frame_index + 1 {
       frames.push({
         image,
-        size: @selene_math.Vec2D(frame_width, frame_height),
-        offset: @selene_math.Vec2D(frame_width * frame_index.to_double(), 0.0),
+        size: @selene_math.Vec2(frame_width, frame_height),
+        offset: @selene_math.Vec2(frame_width * frame_index.to_double(), 0.0),
         pivot,
         duration: 0.1,
       })
@@ -215,14 +215,14 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
     7,
     128.0,
     122.0,
-    @selene_math.Vec2D(62, 119),
+    @selene_math.Vec2(62, 119),
   )
   let ani2 = atlas_animation(
     "/assets/portal/regular.png",
     8,
     89.0,
     257.0,
-    @selene_math.Vec2D(44, 248),
+    @selene_math.Vec2(44, 248),
   )
   {
     animations: Map::from_array([
@@ -332,7 +332,7 @@ fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
     let position = portal.get_position()
     @transform2d.set_xy(
       entity,
-      @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
+      @selene_math.Vec2(position.x.to_double(), position.y.to_double()),
     )
     if portal.animation is Some(animation) {
       let sprite = @ms_animation.sprite_from_animation(

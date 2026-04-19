@@ -747,8 +747,8 @@ fn make_hitbox(left : Int, top : Int, width : Int, height : Int) -> Hitbox {
 }
 
 ///|
-fn point_in_hitbox(hitbox : Hitbox, pos : @selene_math.Vec2D) -> Bool {
-  let @selene_math.Vec2D(x, y) = pos
+fn point_in_hitbox(hitbox : Hitbox, pos : @selene_math.Vec2) -> Bool {
+  let @selene_math.Vec2(x, y) = pos
   let x = x.to_int()
   let y = y.to_int()
   x >= hitbox.left &&
@@ -1002,7 +1002,7 @@ fn spawn_sprite(
   let entity = @entity.Entity::new()
   state.render_entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
+  @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -1021,7 +1021,7 @@ fn spawn_rect(
     entity,
     @sprite.Sprite::from_color(
       @sprite.color_from_css(color),
-      @selene_math.Vec2D(width.to_double(), height.to_double()),
+      @selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @transform.transforms().set(
@@ -1040,12 +1040,12 @@ fn spawn_texture(
 ) -> Unit {
   let animation = @ms_animation.Animation::single_frame_from_image(
     @asset.load_image(texture.i),
-    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-    offset=@selene_math.Vec2D(
+    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
+    offset=@selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    pivot=@selene_math.Vec2D(
+    pivot=@selene_math.Vec2(
       texture.origin.x.to_double(),
       texture.origin.y.to_double(),
     ),
@@ -1079,8 +1079,8 @@ fn spawn_text(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(320.0, 20.0),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(320.0, 20.0),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))

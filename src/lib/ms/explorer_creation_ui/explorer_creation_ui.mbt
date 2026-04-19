@@ -190,7 +190,7 @@ fn ExplorerCreationUI::spawn_entity(
   let entity = @entity.Entity::new()
   self.entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
+  @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -207,8 +207,8 @@ fn ExplorerCreationUI::spawn_text(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(220.0, 20.0),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(220.0, 20.0),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -237,7 +237,7 @@ fn ExplorerCreationUI::spawn_click_button(
   self.entities.push(button_entity)
   @transform2d.set_xy(
     button_entity,
-    @selene_math.Vec2D(x.to_double(), y.to_double()),
+    @selene_math.Vec2(x.to_double(), y.to_double()),
   )
   @sprite.sprites().set(
     button_entity,
@@ -252,8 +252,8 @@ fn ExplorerCreationUI::spawn_click_button(
   @selene_ui.nodes().set(
     click_entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(
         res.dimensions.x.to_double(),
         res.dimensions.y.to_double(),
       ),
@@ -351,7 +351,7 @@ fn ExplorerCreationUI::poll_preview(self : ExplorerCreationUI) -> Unit {
     Ok((look, config)) =>
       if config == self.model.config {
         self.destroy_loaded_preview()
-        look.set_pos(@selene_math.Vec2D(394.0, 339.0))
+        look.set_pos(@selene_math.Vec2(394.0, 339.0))
         look.set_stance(@char_stance.StanceId::STAND1)
         look.set_facing_right(true)
         look.play_animations()

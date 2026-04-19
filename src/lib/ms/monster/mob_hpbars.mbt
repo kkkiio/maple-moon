@@ -51,7 +51,7 @@ fn set_rect_sprite(
     entity,
     @sprite.Sprite::from_color(
       @sprite.color_from_css(color),
-      @selene_math.Vec2D(width, height),
+      @selene_math.Vec2(width, height),
     ),
   )
   if @transform.transforms().get(entity) is Some(current) {
@@ -86,7 +86,7 @@ fn upsert_fill_sprite(state : MobHpBarState) -> Unit {
 fn create_hpbar_state(parent : @entity.Entity) -> MobHpBarState {
   fn spawn_child_at(
     parent : @entity.Entity,
-    offset : @selene_math.Vec2D,
+    offset : @selene_math.Vec2,
   ) -> @entity.Entity {
     let child = parent.spawn_child()
     @transform2d.set_xy(child, offset)
@@ -95,34 +95,34 @@ fn create_hpbar_state(parent : @entity.Entity) -> MobHpBarState {
   let root = parent.spawn_child()
   let frame_bg = spawn_child_at(
     root,
-    @selene_math.Vec2D((-HP_BAR_WIDTH / 2).to_double(), 0.0),
+    @selene_math.Vec2((-HP_BAR_WIDTH / 2).to_double(), 0.0),
   )
   let frame_top = spawn_child_at(
     root,
-    @selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 1.0),
+    @selene_math.Vec2((1 - HP_BAR_WIDTH / 2).to_double(), 1.0),
   )
   let frame_bottom = spawn_child_at(
     root,
-    @selene_math.Vec2D(
+    @selene_math.Vec2(
       (1 - HP_BAR_WIDTH / 2).to_double(),
       (HP_BAR_HEIGHT - 2).to_double(),
     ),
   )
   let frame_left = spawn_child_at(
     root,
-    @selene_math.Vec2D((1 - HP_BAR_WIDTH / 2).to_double(), 2.0),
+    @selene_math.Vec2((1 - HP_BAR_WIDTH / 2).to_double(), 2.0),
   )
   let frame_right = spawn_child_at(
     root,
-    @selene_math.Vec2D((HP_BAR_WIDTH - 2 - HP_BAR_WIDTH / 2).to_double(), 2.0),
+    @selene_math.Vec2((HP_BAR_WIDTH - 2 - HP_BAR_WIDTH / 2).to_double(), 2.0),
   )
   let fill_light = spawn_child_at(
     root,
-    @selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 3.0),
+    @selene_math.Vec2((3 - HP_BAR_WIDTH / 2).to_double(), 3.0),
   )
   let fill_dark = spawn_child_at(
     root,
-    @selene_math.Vec2D((3 - HP_BAR_WIDTH / 2).to_double(), 6.0),
+    @selene_math.Vec2((3 - HP_BAR_WIDTH / 2).to_double(), 6.0),
   )
 
   set_rect_sprite(

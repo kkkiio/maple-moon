@@ -9,6 +9,7 @@ import {
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/physics",
   "Milky2018/selene/asset",
+  "Milky2018/selene/render",
   "Milky2018/selene/render2d",
   "Milky2018/selene/render2d_types",
   "Milky2018/selene/sprite",

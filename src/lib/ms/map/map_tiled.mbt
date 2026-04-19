@@ -108,13 +108,13 @@ let maple_camera_y_offset = 80.0
 
 ///|
 priv struct TiledBackgroundMotionState {
-  base_screen_offset : @selene_math.Vec2D
-  moving_world_pos : @selene_math.Vec2D
-  ratio : @selene_math.Vec2D
-  speed : @selene_math.Vec2D
+  base_screen_offset : @selene_math.Vec2
+  moving_world_pos : @selene_math.Vec2
+  ratio : @selene_math.Vec2
+  speed : @selene_math.Vec2
   moving_axis : (Bool, Bool)
   repeat : (Bool, Bool)
-  tile_step : @selene_math.Vec2D
+  tile_step : @selene_math.Vec2
 }
 
 ///|
@@ -324,13 +324,13 @@ fn reload_tiled_background_motion_states(root : @entity.Entity) -> Unit {
     let x_mode = maple_background_axis_mode(background_type, @selene_math.X, rx)
     let y_mode = maple_background_axis_mode(background_type, @selene_math.Y, ry)
     states[layer_entity] = {
-      base_screen_offset: @selene_math.Vec2D(layer.offset_x, layer.offset_y),
-      moving_world_pos: @selene_math.Vec2D(layer.offset_x, layer.offset_y),
-      ratio: @selene_math.Vec2D(x_mode.1, y_mode.1),
-      speed: @selene_math.Vec2D(x_mode.2, y_mode.2),
+      base_screen_offset: @selene_math.Vec2(layer.offset_x, layer.offset_y),
+      moving_world_pos: @selene_math.Vec2(layer.offset_x, layer.offset_y),
+      ratio: @selene_math.Vec2(x_mode.1, y_mode.1),
+      speed: @selene_math.Vec2(x_mode.2, y_mode.2),
       moving_axis: (x_mode.0, y_mode.0),
       repeat: (instance.image_layer.repeat_x, instance.image_layer.repeat_y),
-      tile_step: @selene_math.Vec2D(step_x.to_double(), step_y.to_double()),
+      tile_step: @selene_math.Vec2(step_x.to_double(), step_y.to_double()),
     }
   }
   tiled_background_motion_states_ref.val = states
@@ -403,11 +403,11 @@ pub fn tiled_background_motion_system(_world : @ecs.World) -> Unit {
   let screen_size = @system.get_screen_size()
   let bottom_right = @camera.viewport_to_world(screen_size)
   let view_size = bottom_right - camera_top_left
-  let view_half = @selene_math.Vec2D(
+  let view_half = @selene_math.Vec2(
     view_size[@selene_math.X] * 0.5,
     view_size[@selene_math.Y] * 0.5,
   )
-  let camera_for_formula = @selene_math.Vec2D(
+  let camera_for_formula = @selene_math.Vec2(
     camera_top_left[@selene_math.X],
     camera_top_left[@selene_math.Y] - maple_camera_y_offset,
   )
@@ -448,13 +448,13 @@ pub fn tiled_background_motion_system(_world : @ecs.World) -> Unit {
     } else {
       screen_y
     }
-    let world_pos = @selene_math.Vec2D(
+    let world_pos = @selene_math.Vec2(
       camera_top_left[@selene_math.X] + wrapped_screen_x,
       camera_top_left[@selene_math.Y] + wrapped_screen_y,
     )
     tiled_background_motion_states_ref.val.set(layer_entity, {
       ..state,
-      moving_world_pos: @selene_math.Vec2D(
+      moving_world_pos: @selene_math.Vec2(
         next_moving_world_x, next_moving_world_y,
       ),
     })

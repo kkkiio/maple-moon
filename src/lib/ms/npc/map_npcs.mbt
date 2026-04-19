@@ -439,7 +439,7 @@ pub async fn Npc::load(
   }
   phobj.set_fhid(f)
   phobj.set_position(
-    @selene_math.Vec2D(position.x.to_double(), position.y.to_double()),
+    @selene_math.Vec2(position.x.to_double(), position.y.to_double()),
   )
   {
     entity,
@@ -599,19 +599,16 @@ fn play_aseprite_clip(
 ///|
 fn mirror_anchor_x(anchor : @sprite.Anchor) -> @sprite.Anchor {
   let @sprite.Anchor(v) = anchor
-  @sprite.Anchor(@selene_math.Vec2D(-v.0, v.1))
+  @sprite.Anchor(@selene_math.Vec2(-v.0, v.1))
 }
 
 ///|
-fn Npc::click_rect(self : Npc) -> (@selene_math.Vec2D, @selene_math.Vec2D)? {
+fn Npc::click_rect(self : Npc) -> (@selene_math.Vec2, @selene_math.Vec2)? {
   guard self.animations.get(self.stance) is Some(animation) else { return None }
   let width = animation.dimensions.x.to_double()
   let height = animation.dimensions.y.to_double()
   Some(
-    (
-      @selene_math.Vec2D(width, height),
-      @selene_math.Vec2D(-width / 2.0, -height),
-    ),
+    (@selene_math.Vec2(width, height), @selene_math.Vec2(-width / 2.0, -height)),
   )
 }
 

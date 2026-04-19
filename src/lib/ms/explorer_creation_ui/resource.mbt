@@ -142,7 +142,7 @@ async fn load_resource() -> ExplorerCreationUIResource {
   let sky_texture : @resource.NxTexture = @json.from_json(sky_src)
   let sky = @ms_animation.from_nx_texture(
     sky_texture,
-    size=@selene_math.Vec2D(800.0, 400.0),
+    size=@selene_math.Vec2(800.0, 400.0),
     repeat=@selene_math.Repeat,
   )
   let cloud = json_to_picture(cloud_src)

@@ -86,7 +86,7 @@ fn normalize_camera_limits(
 }
 
 ///|
-fn setup_camera(position : @math.Vec2D, map_info : @map.MapInfo) -> Unit {
+fn setup_camera(position : @math.Vec2, map_info : @map.MapInfo) -> Unit {
   let camera_anchor = @entity.Entity::new()
   @transform2d.set_xy(camera_anchor, position)
   @ms_camera.setup_camera_entity(camera_anchor, center=position)
@@ -169,7 +169,7 @@ async fn setup_shop_scene_npcs() -> Unit {
   @map.set_tiled_map(scene_map.tiled_map)
   @map.set_runtime_context(scene_map.map_info, scene_map.physics)
 
-  setup_camera(@math.Vec2D(380.0, 460.0), scene_map.map_info)
+  setup_camera(@math.Vec2(380.0, 460.0), scene_map.map_info)
 
   let map_npcs = @npc.MapNpcs::new(
     fn(_args) {  },
@@ -196,7 +196,7 @@ async fn setup_shop_scene_npcs() -> Unit {
   if anchors.is_empty() {
     panic()
   }
-  setup_camera(@math.Vec2D(-500.0, 320.0), scene_map.map_info)
+  setup_camera(@math.Vec2(-500.0, 320.0), scene_map.map_info)
   for _ in 0..<30 {
     @capture_app.run_loop(0.016)
   }

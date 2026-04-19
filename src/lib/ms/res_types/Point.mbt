@@ -70,6 +70,6 @@ pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
 }
 
 ///|
-pub fn Point::to_vec2d(self : Point[Int]) -> @selene_math.Vec2D {
-  @selene_math.Vec2D(self.x.to_double(), self.y.to_double())
+pub fn Point::to_vec2d(self : Point[Int]) -> @selene_math.Vec2 {
+  @selene_math.Vec2(self.x.to_double(), self.y.to_double())
 }

@@ -20,8 +20,8 @@ fn load_test_mob() -> @monster.Mob raise {
 fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
   let stand = @ms_animation.Animation::single_frame(
     "/assets/mob/0100101.img_stand.png",
-    @math.Vec2D(35.0, 34.0),
-    pivot=@math.Vec2D(16.0, 34.0),
+    @math.Vec2(35.0, 34.0),
+    pivot=@math.Vec2(16.0, 34.0),
   )
   @sprite.sprites().set(entity, @ms_animation.sprite_from_animation(stand, 0))
 }
@@ -43,8 +43,8 @@ async test "mob hpbar render snapshot" {
       system_name="mob_hpbars_system",
     )
   @capture_app.init_app(app)
-  let mob_pos = @math.Vec2D(80.0, 86.0)
-  let camera_center = @math.Vec2D(80.0, 62.0)
+  let mob_pos = @math.Vec2(80.0, 86.0)
+  let camera_center = @math.Vec2(80.0, 62.0)
   let camera_anchor = @entity.Entity::new()
   @ms_camera.setup_camera_entity(camera_anchor, center=camera_center)
   @ms_camera.set_follow_target(camera_anchor)

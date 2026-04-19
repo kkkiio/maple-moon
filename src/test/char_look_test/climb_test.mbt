@@ -54,7 +54,7 @@ async test "character climbing ladder" {
 
   // Set Climbing Stance
   look.set_stance(StanceId::LADDER)
-  look.set_pos(Vec2D(100.0, 100.0))
+  look.set_pos(Vec2(100.0, 100.0))
 
   // Add Weapon
   let weapon_node = @fs.read_file_to_string(

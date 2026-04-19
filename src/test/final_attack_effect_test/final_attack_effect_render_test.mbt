@@ -59,8 +59,8 @@ fn setup_effect_scene(animation : @resource.NxAnimation, z : Int) -> Unit raise 
   )
 
   let camera_anchor = @entity.Entity::new()
-  @transform2d.set_xy(camera_anchor, @math.Vec2D(110.0, 80.0))
-  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2D(110.0, 80.0))
+  @transform2d.set_xy(camera_anchor, @math.Vec2(110.0, 80.0))
+  @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(110.0, 80.0))
   @ms_camera.set_follow_target(camera_anchor)
   @ms_camera.camera_follow_system(@ecs.require_current_world())
 

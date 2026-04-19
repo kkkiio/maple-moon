@@ -178,7 +178,7 @@ fn spawn_ui_sprite(
   let entity = @entity.Entity::new()
   entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @transform2d.set_xy(entity, @selene_math.Vec2D(x.to_double(), y.to_double()))
+  @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
 }
 
 ///|
@@ -195,8 +195,8 @@ fn make_text_sprite(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-      size=@selene_math.Vec2D(240.0, 18.0),
+      @selene_math.Vec2(x.to_double(), y.to_double()),
+      size=@selene_math.Vec2(240.0, 18.0),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -223,12 +223,12 @@ fn nx_texture_to_inventory_icon_animation(
     [
       @ms_animation.AnimationFrame::{
         image: @asset.load_image(texture.i),
-        size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-        offset: @selene_math.Vec2D(
+        size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
+        offset: @selene_math.Vec2(
           texture.offset.x.to_double(),
           texture.offset.y.to_double(),
         ),
-        pivot: @selene_math.Vec2D(
+        pivot: @selene_math.Vec2(
           texture.origin.x.to_double(),
           texture.origin.y.to_double(),
         ),
@@ -245,12 +245,12 @@ fn nx_texture_to_static_animation(
 ) -> @ms_animation.Animation {
   @ms_animation.Animation::single_frame(
     texture.i,
-    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
-    offset=@selene_math.Vec2D(
+    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
+    offset=@selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    pivot=@selene_math.Vec2D(
+    pivot=@selene_math.Vec2(
       texture.origin.x.to_double(),
       texture.origin.y.to_double(),
     ),
@@ -794,7 +794,7 @@ fn find_slot_index(items : Array[DisplayInventoryItem], slot : Int) -> Int? {
 }
 
 ///|
-fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2D) -> Int? {
+fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2) -> Int? {
   let x = pos[@selene_math.X]
   let y = pos[@selene_math.Y]
   for hitbox in resources.sell_tab_hitboxes {
@@ -812,7 +812,7 @@ fn find_clicked_tab(resources : UiResources, pos : @selene_math.Vec2D) -> Int? {
 ///|
 fn find_clicked_row(
   state : State,
-  pos : @selene_math.Vec2D,
+  pos : @selene_math.Vec2,
   list_x : Int,
   list_width : Int,
 ) -> Int? {

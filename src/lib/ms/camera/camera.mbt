@@ -9,7 +9,7 @@ pub(all) struct CameraLimits {
 ///|
 pub(all) struct FollowTarget {
   entity : @entity.Entity
-  offset : @math.Vec2D
+  offset : @math.Vec2
 }
 
 ///|
@@ -29,7 +29,7 @@ let runtime_ref : Ref[CameraRuntime] = Ref::new({
 ///|
 pub fn setup_camera_entity(
   entity : @entity.Entity,
-  center? : @math.Vec2D = @system.get_screen_size().scalar_mul(0.5),
+  center? : @math.Vec2 = @system.get_screen_size().scalar_mul(0.5),
 ) -> Unit {
   runtime_ref.val.camera_entity = Some(entity)
   @selene_camera.cameras().set(entity, @selene_camera.Camera::new())
@@ -45,7 +45,7 @@ pub fn setup_camera_entity(
 
 ///|
 pub fn ensure_camera_entity(
-  center? : @math.Vec2D = @system.get_screen_size().scalar_mul(0.5),
+  center? : @math.Vec2 = @system.get_screen_size().scalar_mul(0.5),
 ) -> @entity.Entity {
   match runtime_ref.val.camera_entity {
     Some(entity) if entity.is_alive() => entity
@@ -65,7 +65,7 @@ pub fn camera_entity() -> @entity.Entity? {
 ///|
 pub fn set_follow_target(
   entity : @entity.Entity,
-  offset? : @math.Vec2D = @math.Vec2D::zero(),
+  offset? : @math.Vec2 = @math.Vec2::zero(),
 ) -> Unit {
   runtime_ref.val.follow_target = Some({ entity, offset })
 }
@@ -91,7 +91,7 @@ pub fn clear_limits() -> Unit {
 }
 
 ///|
-pub fn current_camera_center() -> @math.Vec2D {
+pub fn current_camera_center() -> @math.Vec2 {
   match runtime_ref.val.camera_entity {
     Some(entity) =>
       @transform2d.get_xy(entity).unwrap_or(
@@ -102,13 +102,13 @@ pub fn current_camera_center() -> @math.Vec2D {
 }
 
 ///|
-pub fn set_camera_center(pos : @math.Vec2D) -> Unit {
+pub fn set_camera_center(pos : @math.Vec2) -> Unit {
   let entity = ensure_camera_entity(center=pos)
   @transform2d.set_xy(entity, pos)
 }
 
 ///|
-pub fn viewport_to_world(viewport_pos : @math.Vec2D) -> @math.Vec2D {
+pub fn viewport_to_world(viewport_pos : @math.Vec2) -> @math.Vec2 {
   match active_camera_view() {
     Some((camera, global, projection)) =>
       camera.viewport_to_world_2d(global, projection, viewport_pos)
@@ -117,7 +117,7 @@ pub fn viewport_to_world(viewport_pos : @math.Vec2D) -> @math.Vec2D {
 }
 
 ///|
-pub fn world_to_viewport(world_pos : @math.Vec2D) -> @math.Vec2D {
+pub fn world_to_viewport(world_pos : @math.Vec2) -> @math.Vec2 {
   match active_camera_view() {
     Some((camera, global, projection)) =>
       camera.world_to_viewport(global, projection, world_pos)
@@ -126,8 +126,8 @@ pub fn world_to_viewport(world_pos : @math.Vec2D) -> @math.Vec2D {
 }
 
 ///|
-pub fn current_camera_top_left() -> @math.Vec2D {
-  viewport_to_world(@math.Vec2D(0.0, 0.0))
+pub fn current_camera_top_left() -> @math.Vec2 {
+  viewport_to_world(@math.Vec2(0.0, 0.0))
 }
 
 ///|
@@ -141,7 +141,7 @@ pub fn camera_follow_system(_world : @ecs.World) -> Unit {
 }
 
 ///|
-fn clamp_center(center : @math.Vec2D) -> @math.Vec2D {
+fn clamp_center(center : @math.Vec2) -> @math.Vec2 {
   guard runtime_ref.val.limits is Some(limits) else { return center }
   let half = @system.get_screen_size().scalar_mul(0.5 / @system.get_zoom())
   let min_x = limits.left + half[@math.X]
@@ -158,7 +158,7 @@ fn clamp_center(center : @math.Vec2D) -> @math.Vec2D {
   } else {
     clamp(center[@math.Y], min_y, max_y)
   }
-  @math.Vec2D(x, y)
+  @math.Vec2(x, y)
 }
 
 ///|

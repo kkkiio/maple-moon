@@ -20,9 +20,9 @@ async test "crossbow shoot2 afterimage without range should render" {
   let after_image_host = host.spawn_child()
   defer @char_look.clear_after_image(after_image_host)
   defer @sprite.sprites().clear()
-  @transform2d.set_xy(host, Vec2D(100.0, 100.0))
+  @transform2d.set_xy(host, Vec2(100.0, 100.0))
   // Keep the effect closer to the muzzle side for left-facing shoot pose.
-  @transform2d.set_xy(after_image_host, Vec2D(-16.0, 0.0))
+  @transform2d.set_xy(after_image_host, Vec2(-16.0, 0.0))
 
   let bodynode = @fs.read_file_to_string(
       "assets/Character/Body/00002000.img.json",

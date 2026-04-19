@@ -180,15 +180,15 @@ pub async fn SelectCharUI::new(
 ) -> SelectCharUI {
   let back13 = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/back13.png",
-    @selene_math.Vec2D(800, 600),
+    @selene_math.Vec2(800, 600),
     //   "origin": [392, 297]
   )
   let ani17 = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
-      size: @selene_math.Vec2D(505, 242),
-      offset: @selene_math.Vec2D(0, 0),
-      pivot: @selene_math.Vec2D(121, 252), // origin
+      size: @selene_math.Vec2(505, 242),
+      offset: @selene_math.Vec2(0, 0),
+      pivot: @selene_math.Vec2(121, 252), // origin
       duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 255,
@@ -197,9 +197,9 @@ pub async fn SelectCharUI::new(
     },
     @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
-      size: @selene_math.Vec2D(505, 242),
-      offset: @selene_math.Vec2D(0, 0),
-      pivot: @selene_math.Vec2D(121, 252), // origin
+      size: @selene_math.Vec2(505, 242),
+      offset: @selene_math.Vec2(0, 0),
+      pivot: @selene_math.Vec2(121, 252), // origin
       duration: 3.0,
       //     "origin": [121, 252],
       //     "a0": 50,
@@ -210,9 +210,9 @@ pub async fn SelectCharUI::new(
   let ani19 : @ms_animation.Animation = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
-      size: @selene_math.Vec2D(355, 312),
-      offset: @selene_math.Vec2D(0, 0),
-      pivot: @selene_math.Vec2D(156, 177), // origin
+      size: @selene_math.Vec2(355, 312),
+      offset: @selene_math.Vec2(0, 0),
+      pivot: @selene_math.Vec2(156, 177), // origin
       duration: 2.3,
       //     "origin": [156, 177],
       //     "a0": 200,
@@ -222,9 +222,9 @@ pub async fn SelectCharUI::new(
     },
     @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
-      offset: @selene_math.Vec2D(312, 0),
-      size: @selene_math.Vec2D(355, 312),
-      pivot: @selene_math.Vec2D(156, 177), // origin
+      offset: @selene_math.Vec2(312, 0),
+      size: @selene_math.Vec2(355, 312),
+      pivot: @selene_math.Vec2(156, 177), // origin
       duration: 3.3,
       // "a0": 80,
       // "a1": 255,
@@ -233,9 +233,9 @@ pub async fn SelectCharUI::new(
     },
     @ms_animation.AnimationFrame::{
       image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
-      offset: @selene_math.Vec2D(312, 0),
-      size: @selene_math.Vec2D(355, 312),
-      pivot: @selene_math.Vec2D(156, 177), // origin
+      offset: @selene_math.Vec2(312, 0),
+      size: @selene_math.Vec2(355, 312),
+      pivot: @selene_math.Vec2(156, 177), // origin
       duration: 1.0,
       // "_inlink": "ani/19/1",
       // "a0": 255,
@@ -246,23 +246,23 @@ pub async fn SelectCharUI::new(
   ])
   let frame = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/frame.png",
-    @selene_math.Vec2D(800, 600),
+    @selene_math.Vec2(800, 600),
     //   "origin": [400, 300]
   )
   let step2 = @ms_animation.Animation::single_frame(
     "/assets/ui/login.img/char_select/select_character_btn.png",
-    @selene_math.Vec2D(127, 45),
+    @selene_math.Vec2(127, 45),
     //   "origin": [0, 0]
   )
   let entities = []
   for
     t in [
-      (back13, @selene_math.Vec2D(0, 0)),
-      (ani17, @selene_math.Vec2D(151 - 121, 283 - 252)), //   "origin": [121, 252],
-      (resources.ani18, @selene_math.Vec2D(365 - 216, 252 - 221)), // "origin": [216, 221],
-      (ani19, @selene_math.Vec2D(191 - 156, 208 - 177)), // "origin": [156, 177],
-      (frame, @selene_math.Vec2D(0, 0)),
-      (step2, @selene_math.Vec2D(40, 0)),
+      (back13, @selene_math.Vec2(0, 0)),
+      (ani17, @selene_math.Vec2(151 - 121, 283 - 252)), //   "origin": [121, 252],
+      (resources.ani18, @selene_math.Vec2(365 - 216, 252 - 221)), // "origin": [216, 221],
+      (ani19, @selene_math.Vec2(191 - 156, 208 - 177)), // "origin": [156, 177],
+      (frame, @selene_math.Vec2(0, 0)),
+      (step2, @selene_math.Vec2(40, 0)),
     ] {
     let (s, pos) = t
     let entity = @entity.Entity::new()
@@ -290,10 +290,7 @@ pub async fn SelectCharUI::new(
   ) -> SeleneButton {
     let entity = @entity.Entity::new()
     entities.push(entity)
-    @transform2d.set_xy(
-      entity,
-      @selene_math.Vec2D(x.to_double(), y.to_double()),
-    )
+    @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
     let button = @ui.MapleButton::new(
       res,
       pos=@struct.Point::new(x, y),
@@ -314,8 +311,8 @@ pub async fn SelectCharUI::new(
   @selene_ui.nodes().set(
     select_click_entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(601.0, 393.0),
-      size=@selene_math.Vec2D(
+      @selene_math.Vec2(601.0, 393.0),
+      size=@selene_math.Vec2(
         resources.bt_select.dimensions.x.to_double(),
         resources.bt_select.dimensions.y.to_double(),
       ),
@@ -328,7 +325,7 @@ pub async fn SelectCharUI::new(
   )
   let new_button_entity = @entity.Entity::new()
   entities.push(new_button_entity)
-  @transform2d.set_xy(new_button_entity, @selene_math.Vec2D(200.0, 495.0))
+  @transform2d.set_xy(new_button_entity, @selene_math.Vec2(200.0, 495.0))
   @sprite.sprites().set(
     new_button_entity,
     @ms_animation.sprite_from_animation(
@@ -341,8 +338,8 @@ pub async fn SelectCharUI::new(
   @selene_ui.nodes().set(
     new_click_entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(200.0, 495.0),
-      size=@selene_math.Vec2D(
+      @selene_math.Vec2(200.0, 495.0),
+      size=@selene_math.Vec2(
         resources.bt_new.dimensions.x.to_double(),
         resources.bt_new.dimensions.y.to_double(),
       ),

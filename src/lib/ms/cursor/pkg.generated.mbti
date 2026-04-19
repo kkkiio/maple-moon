@@ -20,7 +20,7 @@ pub(all) struct Cursor {
   mut state : @ui.CursorState
   mut inactive_seconds : Double
   mut state_seconds : Double
-  mut last_mouse_pos : @math.Vec2D
+  mut last_mouse_pos : @math.Vec2
   entity : @entity.Entity
 }
 pub fn Cursor::new() -> Self

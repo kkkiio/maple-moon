@@ -44,7 +44,7 @@ fn DropBase::new(
     @transform2d.set_xy(entity, pos)
   })
   phobj.set_position(
-    @selene_math.Vec2D(start.x.to_double(), (start.y - 4).to_double()),
+    @selene_math.Vec2(start.x.to_double(), (start.y - 4).to_double()),
   )
   let (state, base_y) = match mode {
     0 | 1 => {
@@ -83,7 +83,7 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
       self.state = DropState::FLOATING
       self.angle.set(0.0)
       self.phobj.set_position(
-        @selene_math.Vec2D(
+        @selene_math.Vec2(
           self.dest.x.to_double(),
           (self.dest.y - 4).to_double(),
         ),

@@ -21,7 +21,7 @@ pub(all) struct Cursor {
   mut state : CursorState
   mut inactive_seconds : Double
   mut state_seconds : Double
-  mut last_mouse_pos : @math.Vec2D
+  mut last_mouse_pos : @math.Vec2
   entity : @entity.Entity
 }
 
@@ -35,7 +35,7 @@ pub fn Cursor::new() -> Cursor {
     state: CursorState::IDLE,
     inactive_seconds: 0.0,
     state_seconds: 0.0,
-    last_mouse_pos: @math.Vec2D(-9999999.0, -9999999.0),
+    last_mouse_pos: @math.Vec2(-9999999.0, -9999999.0),
     entity,
   }
 }
@@ -98,20 +98,20 @@ fn cursor_texture_path(state : CursorState) -> String {
 }
 
 ///|
-fn cursor_size(state : CursorState) -> @math.Vec2D {
+fn cursor_size(state : CursorState) -> @math.Vec2 {
   match state {
     CursorState::CAN_CLICK =>
-      @math.Vec2D(CAN_CLICK_FRAME_WIDTH, CAN_CLICK_FRAME_HEIGHT)
-    _ => @math.Vec2D(24.0, 28.0)
+      @math.Vec2(CAN_CLICK_FRAME_WIDTH, CAN_CLICK_FRAME_HEIGHT)
+    _ => @math.Vec2(24.0, 28.0)
   }
 }
 
 ///|
-fn cursor_offset(state : CursorState) -> @math.Vec2D {
+fn cursor_offset(state : CursorState) -> @math.Vec2 {
   match state {
-    CursorState::CAN_CLICK => @math.Vec2D(-4.0, -6.0)
-    CursorState::IDLE => @math.Vec2D(0.0, -3.0)
-    _ => @math.Vec2D::zero()
+    CursorState::CAN_CLICK => @math.Vec2(-4.0, -6.0)
+    CursorState::IDLE => @math.Vec2(0.0, -3.0)
+    _ => @math.Vec2::zero()
   }
 }
 
@@ -125,7 +125,7 @@ fn cursor_frame_index(cursor : Cursor) -> Int {
 }
 
 ///|
-fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2D) -> Unit {
+fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit {
   let size = cursor_size(cursor.state)
   let position = mouse_pos + cursor_offset(cursor.state)
   @selene_ui.nodes().set(
@@ -147,7 +147,7 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2D) -> Unit {
     @selene_ui.UiImage::new(
       size,
       cursor_texture_path(cursor.state),
-      source=Some({ position: @math.Vec2D(frame_pos_x, 0.0), size }),
+      source=Some({ position: @math.Vec2(frame_pos_x, 0.0), size }),
     ),
   )
 }
@@ -162,7 +162,7 @@ pub fn cursor_system(_world : @ecs.World) -> Unit {
     cursor.entity.respawn()
     cursor.state_seconds = 0.0
     cursor.inactive_seconds = 0.0
-    cursor.last_mouse_pos = @math.Vec2D(-9999999.0, -9999999.0)
+    cursor.last_mouse_pos = @math.Vec2(-9999999.0, -9999999.0)
   }
   let mouse_pos = @inputs.mouse.pos
   if mouse_pos != cursor.last_mouse_pos {

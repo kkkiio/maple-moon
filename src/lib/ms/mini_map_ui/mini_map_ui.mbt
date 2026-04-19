@@ -271,25 +271,25 @@ pub fn MiniMapUI::set_map(
       self.ui_model.dimension = _normal_dimensions
       if mini_map_resources is Some(res) {
         let portals = res.portals
-        let marker_offset = @selene_math.Vec2D(
+        let marker_offset = @selene_math.Vec2(
           (self.resource.portal_marker.w / 2).to_double(),
           (self.resource.portal_marker.h / 2).to_double(),
         )
-        let marker_pos_offset = @selene_math.Vec2D(0, 65)
+        let marker_pos_offset = @selene_math.Vec2(0, 65)
         for portal in portals {
           match portal.pt {
             @map.MiniMapPortalType::REGULAR => {
-              let marker_pos = (@selene_math.Vec2D(
+              let marker_pos = (@selene_math.Vec2(
                   portal.x.to_double(),
                   portal.y.to_double(),
                 ) +
                 marker_pos_offset +
-                @selene_math.Vec2D(
+                @selene_math.Vec2(
                   res.draw_data.center_x.to_double(),
                   res.draw_data.center_y.to_double(),
                 )).scalar_div(res.draw_data.scale.to_double()) -
                 marker_offset +
-                @selene_math.Vec2D(
+                @selene_math.Vec2(
                   map_draw_origin_x_.to_double(),
                   map_draw_origin_y_.to_double(),
                 )
@@ -340,7 +340,7 @@ priv struct MiniMapFrameDraw {
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::new(
-    @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     source=Some(source),
   )
@@ -351,11 +351,11 @@ fn ui_image_source_from_texture(
   texture : @resource.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
-    position: @selene_math.Vec2D(
+    position: @selene_math.Vec2(
       texture.offset.x.to_double(),
       texture.offset.y.to_double(),
     ),
-    size: @selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+    size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
   }
 }
 
@@ -372,11 +372,11 @@ fn spawn_minimap_texture_entity(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(
+      @selene_math.Vec2(
         (ui_pos.x + local_x - texture.origin.x).to_double(),
         (ui_pos.y + local_y - texture.origin.y).to_double(),
       ),
-      size=@selene_math.Vec2D(texture.w.to_double(), texture.h.to_double()),
+      size=@selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
@@ -399,11 +399,11 @@ fn spawn_minimap_material_entity(
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
-      @selene_math.Vec2D(
+      @selene_math.Vec2(
         (ui_pos.x + local_x).to_double(),
         (ui_pos.y + local_y).to_double(),
       ),
-      size=@selene_math.Vec2D(width.to_double(), height.to_double()),
+      size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))

@@ -28,8 +28,8 @@ let ui_entity_by_key_ref : Ref[Map[String, @entity.Entity]] = Ref::new(
 
 ///|
 priv enum UiClickInjectionState {
-  PressQueued(@selene_math.Vec2D)
-  ReleaseQueued(@selene_math.Vec2D)
+  PressQueued(@selene_math.Vec2)
+  ReleaseQueued(@selene_math.Vec2)
 }
 
 ///|
@@ -120,7 +120,7 @@ fn click_registered_ui_impl(package_name : String, ui_name : String) -> Json {
     }
   }
   let rect = global_ui_node.screen_rect
-  let pos = @selene_math.Vec2D(
+  let pos = @selene_math.Vec2(
     rect.position[@selene_math.X] + rect.size[@selene_math.X] / 2.0,
     rect.position[@selene_math.Y] + rect.size[@selene_math.Y] / 2.0,
   )

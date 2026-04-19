@@ -62,7 +62,7 @@ async test "character with crossbow equipment" {
   )
 
   look.set_stance(StanceId::STAND2)
-  look.set_pos(Vec2D(100.0, 100.0))
+  look.set_pos(Vec2(100.0, 100.0))
 
   // Add Crossbow (Item ID 1462000)
   let weapon_node = @fs.read_file_to_string(

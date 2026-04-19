@@ -95,7 +95,7 @@ pub struct MovingObject {
   y : @utils.Linear
   mut hspeed : Double
   mut vspeed : Double
-  mut on_pos_change : (@math.Vec2D) -> Unit
+  mut on_pos_change : (@math.Vec2) -> Unit
 }
 pub fn MovingObject::crnt_x(Self) -> Double
 pub fn MovingObject::crnt_y(Self) -> Double
@@ -114,13 +114,13 @@ pub fn MovingObject::limity(Self, Double) -> Unit
 pub fn MovingObject::mobile(Self) -> Bool
 pub fn MovingObject::movexuntil(Self, Double, Int) -> Unit
 pub fn MovingObject::moveyuntil(Self, Double, Int) -> Unit
-pub fn MovingObject::new(on_pos_change~ : (@math.Vec2D) -> Unit) -> Self
+pub fn MovingObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn MovingObject::next_x(Self) -> Double
 pub fn MovingObject::next_y(Self) -> Double
 pub fn MovingObject::normalize(Self) -> Unit
 pub fn MovingObject::set_hspeed(Self, Double) -> Unit
-pub fn MovingObject::set_on_pos_change(Self, (@math.Vec2D) -> Unit) -> Unit
-pub fn MovingObject::set_position(Self, @math.Vec2D) -> Unit
+pub fn MovingObject::set_on_pos_change(Self, (@math.Vec2) -> Unit) -> Unit
+pub fn MovingObject::set_position(Self, @math.Vec2) -> Unit
 pub fn MovingObject::set_vspeed(Self, Double) -> Unit
 pub fn MovingObject::set_x(Self, Double) -> Unit
 pub fn MovingObject::set_y(Self, Double) -> Unit
@@ -181,13 +181,13 @@ pub fn PhysicsObject::is_flag_set(Self, PhysicsObjectFlag) -> Bool
 pub fn PhysicsObject::is_on_ground(Self) -> Bool
 pub fn PhysicsObject::limitx(Self, Double) -> Unit
 pub fn PhysicsObject::limity(Self, Double) -> Unit
-pub fn PhysicsObject::new(on_pos_change~ : (@math.Vec2D) -> Unit) -> Self
+pub fn PhysicsObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn PhysicsObject::set_fhid(Self, Int) -> Unit
 pub fn PhysicsObject::set_fhlayer(Self, Int) -> Unit
 pub fn PhysicsObject::set_flag(Self, PhysicsObjectFlag) -> Unit
 pub fn PhysicsObject::set_hforce(Self, Double) -> Unit
 pub fn PhysicsObject::set_hspeed(Self, Double) -> Unit
-pub fn PhysicsObject::set_position(Self, @math.Vec2D) -> Unit
+pub fn PhysicsObject::set_position(Self, @math.Vec2) -> Unit
 pub fn PhysicsObject::set_t(Self, PhysicsObjectType) -> Unit
 pub fn PhysicsObject::set_vforce(Self, Double) -> Unit
 pub fn PhysicsObject::set_vspeed(Self, Double) -> Unit

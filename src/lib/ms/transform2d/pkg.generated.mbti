@@ -7,11 +7,11 @@ import {
 }
 
 // Values
-pub fn get_xy(@entity.Entity) -> @math.Vec2D?
+pub fn get_xy(@entity.Entity) -> @math.Vec2?
 
 pub fn remove(@entity.Entity) -> Unit
 
-pub fn set_xy(@entity.Entity, @math.Vec2D) -> Unit
+pub fn set_xy(@entity.Entity, @math.Vec2) -> Unit
 
 // Errors
 

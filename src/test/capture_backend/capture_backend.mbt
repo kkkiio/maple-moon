@@ -13,10 +13,10 @@ pub fn register_font(family : String, path : String) -> Unit {
 pub fn measure_text(
   style : @render2d_types.TextStyle2D,
   text : String,
-) -> @math.Vec2D {
+) -> @math.Vec2 {
   let width = text.length().to_double() * style.size * 0.6
   let height = style.size
-  @math.Vec2D(width, height)
+  @math.Vec2(width, height)
 }
 
 ///|

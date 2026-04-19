@@ -67,7 +67,7 @@ pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
 pub fn CharLook::set_action(Self, String) -> Unit
 pub fn CharLook::set_animation_speed(Self, Double) -> Unit
 pub fn CharLook::set_facing_right(Self, Bool) -> Unit
-pub fn CharLook::set_pos(Self, @math.Vec2D) -> Unit
+pub fn CharLook::set_pos(Self, @math.Vec2) -> Unit
 pub fn CharLook::set_stance(Self, @char_stance.StanceId) -> Unit
 pub impl ToJson for CharLook
 

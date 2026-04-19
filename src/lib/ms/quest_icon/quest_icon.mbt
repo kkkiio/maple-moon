@@ -227,7 +227,7 @@ fn upsert_runtime(
     let icon_entity = anchor.entity.spawn_child()
     @transform2d.set_xy(
       icon_entity,
-      @selene_math.Vec2D(
+      @selene_math.Vec2(
         default_icon_offset().x.to_double(),
         default_icon_offset().y.to_double(),
       ),
@@ -244,11 +244,8 @@ fn upsert_runtime(
     @physics2d.shapes().set(
       icon_entity,
       @physics2d.CollisionShape::Rect(
-        size=@selene_math.Vec2D(
-          icon_size.x.to_double(),
-          icon_size.y.to_double(),
-        ),
-        offset=@selene_math.Vec2D(
+        size=@selene_math.Vec2(icon_size.x.to_double(), icon_size.y.to_double()),
+        offset=@selene_math.Vec2(
           -icon_size.x.to_double() / 2.0,
           -icon_size.y.to_double(),
         ),

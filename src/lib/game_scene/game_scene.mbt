@@ -84,7 +84,7 @@ fn respawn_player(
   ignore(@ms_camera.ensure_camera_entity())
   @ms_camera.set_follow_target(
     player.entity,
-    offset=@selene_math.Vec2D(16.0, 16.0),
+    offset=@selene_math.Vec2(16.0, 16.0),
   )
   let (left, right, top, bottom) = normalize_camera_limits(
     left, right, top, bottom,

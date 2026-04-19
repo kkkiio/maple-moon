@@ -140,8 +140,8 @@ async fn snapshot_afterimage_case(
   let after_image_host = host.spawn_child()
   defer @char_look.clear_after_image(after_image_host)
   defer @sprite.sprites().clear()
-  @transform2d.set_xy(host, Vec2D(110.0, 110.0))
-  @transform2d.set_xy(after_image_host, Vec2D(host_shift_x, 0.0))
+  @transform2d.set_xy(host, Vec2(110.0, 110.0))
+  @transform2d.set_xy(after_image_host, Vec2(host_shift_x, 0.0))
 
   let look = load_test_look(host)
   let weapon_item = load_weapon_item(item_id)

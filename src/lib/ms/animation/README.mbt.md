@@ -2,7 +2,7 @@
 
 统一动画运行时门面。
 
-- 输入：`resource` 层的 `NxAnimation` / `NxTexture` 描述。
+- 输入：`resource` 层的 `NxAnimation` / `NxTexture`，以及已编译的 `SeleneClip`。
 - 输出：可直接挂到实体的 sprite 与播放控制 API。
 - 后端：
   - `Native`：单图源 + 固定 origin + 固定尺寸，走 Selene `TextureAtlas + AnimationClip/Graph/Player`。
@@ -11,6 +11,7 @@
 ## 主要 API
 
 - `from_nx_animation`
+- `from_selene_clip`
 - `from_nx_texture`
 - `sprite_from_animation`
 - `sprite_from_picture`

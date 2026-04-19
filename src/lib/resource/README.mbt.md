@@ -8,6 +8,7 @@
 - 文件路径资源可使用 `AsyncLoader::load_data` 直接读取 JSON。
 - 图片资源统一通过 `AsyncLoader::load_image` 加载。
 - 路径解析统一由 package 内部 resolver 处理：允许绝对路径(`/...`)，禁止 `http(s)` 路径。
+- `resolve_ref(base_path, ref_path)` 可把声明文件中的相对引用一次性归一为 canonical 绝对路径（`/assets/...`）。
 - Aseprite NPC 动画通过 `AnimationLoader` 在本包内做编译结果缓存（key 为规范化后的 `animations_path`），避免重复构图与注册资产。
 
 ## 接入示例
@@ -19,10 +20,16 @@
 let map_loader = @resource.get_async_loader("mapx")
 let raw = await map_loader.load_resource(["Map", "Map0", "100000000"])
 let npc_loader = @resource.require_async_loader("npc")
-let mx = await npc_loader.load_data("Npc/Npc/0002007.img/mx.json")
+let mx_path = "Npc/Npc/0002007.img/mx.json"
+let mx = await npc_loader.load_data(mx_path)
+let anim_path = @resource.resolve_ref(
+  npc_loader.resolve_json_path(mx_path),
+  "animation.json",
+)
 let image = npc_loader.load_image("Npc/Npc/0002007.img/animation.png")
 ignore(mx)
 ignore(image)
+ignore(anim_path)
 ```
 
 ## NPC Aseprite 动画

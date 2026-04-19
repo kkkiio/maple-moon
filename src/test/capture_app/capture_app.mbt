@@ -601,25 +601,6 @@ pub fn mock_server_latest_sent_json(type_code : Int) -> Json? {
   mock_server_latest_sent_json_internal(type_code)
 }
 
-///|
-fn snapshot_mismatch_msg(
-  path : String,
-  actual : Bytes,
-  expected : Bytes,
-) -> String {
-  if actual.length() != expected.length() {
-    return "snapshot mismatch: \{path}, size changed: expected=\{expected.length()}, actual=\{actual.length()}"
-  }
-  let mut idx = 0
-  while idx < actual.length() {
-    if actual[idx] != expected[idx] {
-      return "snapshot mismatch: \{path}, first diff at byte=\{idx}, expected=\{expected[idx].to_int()}, actual=\{actual[idx].to_int()}"
-    }
-    idx += 1
-  }
-  "snapshot mismatch: \{path}"
-}
-
 // canvas module
 
 ///|

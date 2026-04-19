@@ -64,6 +64,5 @@ pub fn BodyLayer::name(self : BodyLayer) -> String {
     BodyLayer::HAND_OVER_HAIR => "handOverHair"
     BodyLayer::HAND_OVER_WEAPON => "handOverWeapon"
     BodyLayer::HEAD => "head"
-    BodyLayer::HEAD => "backHead"
   }
 }

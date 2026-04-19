@@ -19,10 +19,10 @@ async fn setup_tiled_background_scene_101010102() -> Unit {
   let raw = @map.load_map_resources_by_id(101010102)
   @map.set_tiled_map(raw.tiled_map)
   let camera_anchor = @entity.Entity::new()
-  @transform2d.set_xy(camera_anchor, @math.Vec2D(0.0, 0.0))
+  @transform2d.set_xy(camera_anchor, @math.Vec2(0.0, 0.0))
   @ms_camera.setup_camera_entity(
     camera_anchor,
-    center=@transform2d.get_xy(camera_anchor).unwrap_or(@math.Vec2D::zero()),
+    center=@transform2d.get_xy(camera_anchor).unwrap_or(@math.Vec2::zero()),
   )
   @ms_camera.set_follow_target(camera_anchor)
   @ms_camera.camera_follow_system(@ecs.require_current_world())

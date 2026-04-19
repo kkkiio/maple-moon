@@ -184,7 +184,7 @@ test "use_move_integration_test" {
 
   // 6. Trigger use_move (0 is Regular Attack)
   @skill_cast.use_move(cc, 0)
-  inspect(@skill_sfx.skill_sfx_event_bus.read(sfx_reader), content="[]")
+  debug_inspect(@skill_sfx.skill_sfx_event_bus.read(sfx_reader), content="[]")
   let events = @combat_system.hit_event_bus.read(reader)
   for event in events {
     let mut total_damage = 0
@@ -384,11 +384,11 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
   ignore(@skill_sfx.skill_sfx_event_bus.read(sfx_reader))
   @skill_cast.use_move(cc, skill_id)
   let sfx_events1 = read_skill_sfx_until(sfx_reader, 3)
-  inspect(sfx_events1.length(), content="3")
-  inspect(sfx_events1[0].skill_id(), content="3101005")
-  inspect(sfx_events1[0].stage(), content="Use")
-  inspect(sfx_events1[1].stage(), content="Hit")
-  inspect(sfx_events1[2].stage(), content="Hit")
+  debug_inspect(sfx_events1.length(), content="3")
+  debug_inspect(sfx_events1[0].skill_id(), content="3101005")
+  debug_inspect(sfx_events1[0].stage(), content="Use")
+  debug_inspect(sfx_events1[1].stage(), content="Hit")
+  debug_inspect(sfx_events1[2].stage(), content="Hit")
   let events1 = @combat_system.hit_event_bus.read(reader)
   let hit_targets1 : Array[Int] = events1
     .iter()
@@ -401,9 +401,9 @@ async test "arrow_bomb_bow_should_use_cast_range_then_aoe_range" {
   character.set_position({ x: -1200, y: 0 })
   @skill_cast.use_move(cc, skill_id)
   let sfx_events2 = @skill_sfx.skill_sfx_event_bus.read(sfx_reader)
-  inspect(sfx_events2.length(), content="1")
-  inspect(sfx_events2[0].skill_id(), content="3101005")
-  inspect(sfx_events2[0].stage(), content="Use")
+  debug_inspect(sfx_events2.length(), content="1")
+  debug_inspect(sfx_events2[0].skill_id(), content="3101005")
+  debug_inspect(sfx_events2[0].stage(), content="Use")
   let events2 = @combat_system.hit_event_bus.read(reader)
   let hit_targets2 : Array[Int] = events2
     .iter()

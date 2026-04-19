@@ -91,9 +91,7 @@ fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
     _ => fail("missing foothold")
   }
   let foothold_tree : @physics.NxFootholdTree = @json.from_json(foothold_json)
-  let physics = @physics.Physics::from_resource(foothold_tree) catch {
-    _ => fail("failed to build physics")
-  }
+  let physics = @physics.Physics::from_resource(foothold_tree)
   let map_info = @map.MapInfo::from_resource(
     map_json,
     physics.get_fht().get_walls(),
@@ -200,15 +198,25 @@ test "105040000 rope 10 should hold at top when climbing into empty air" {
   ])
   let state = player.get_character().get_state()
   let y = player.get_character().get_phobj().get_y()
-  assert_eq(state, @character.CharState::ROPE)
+  debug_inspect(
+    state,
+    content=(
+      #|ROPE
+    ),
+  )
   assert_eq(y, rope_hold_empty_air_top)
-  match player.get_ladder() {
-    Some(current_rope) => assert_eq(current_rope.get_x(), rope_hold_empty_air_x)
-    None => fail("expected to remain on rope")
-  }
+  let current_rope = player
+    .get_ladder()
+    .unwrap_or_error(Failure::Failure("expected to remain on rope"))
+  assert_eq(current_rope.get_x(), rope_hold_empty_air_x)
 
   advance_controller_frames(5, [@inputs.Code::ArrowUp])
-  assert_eq(player.get_character().get_state(), @character.CharState::ROPE)
+  debug_inspect(
+    player.get_character().get_state(),
+    content=(
+      #|ROPE
+    ),
+  )
   assert_eq(player.get_character().get_phobj().get_y(), rope.get_top())
   teardown_controller_env()
 }
@@ -268,7 +276,12 @@ test "held at empty-air top can still jump off" {
   advance_controller_frames(280, [@inputs.Code::ArrowUp], just_pressed=[
     @inputs.Code::ArrowUp,
   ])
-  assert_eq(player.get_character().get_state(), @character.CharState::ROPE)
+  debug_inspect(
+    player.get_character().get_state(),
+    content=(
+      #|ROPE
+    ),
+  )
   advance_controller_frames(1, [@inputs.Code::ArrowLeft, @inputs.Code::Space], just_pressed=[
     @inputs.Code::ArrowLeft,
     @inputs.Code::Space,

@@ -20,5 +20,10 @@ test "char_look facade forwards afterimage api" {
   let resources : NxAfterImages = @json.from_json(resource_json)
   set_after_images("compat-forward", resources)
   let collection = AfterImage::get_collection("compat-forward", 0)
-  inspect(collection.contains("shoot1"), content="true")
+  debug_inspect(
+    collection.contains("shoot1"),
+    content=(
+      #|true
+    ),
+  )
 }

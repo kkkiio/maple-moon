@@ -148,11 +148,6 @@ fn main {
     )
     .add_system(
       Update,
-      fn(world) { @ms_animation.animation_system(world) },
-      system_name="ms_animation_system",
-    )
-    .add_system(
-      Update,
       fn(world) { @char_look.char_look_system(world) },
       system_name="char_look_system",
     )

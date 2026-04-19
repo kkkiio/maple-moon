@@ -27,7 +27,10 @@ test "set and get keymap" {
 ///|
 test "collect actions with empty mapping" {
   let mapping : @keymap.Keymap = {}
-  inspect(@keymap.get_action(mapping, @inputs.Code::ArrowUp), content="None")
+  debug_inspect(
+    @keymap.get_action(mapping, @inputs.Code::ArrowUp),
+    content="None",
+  )
 }
 
 ///|
@@ -38,7 +41,7 @@ test "query mapped action" {
       @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
     ),
   ])
-  inspect(
+  debug_inspect(
     @keymap.get_action(mapping, @inputs.Code::ArrowUp),
     content="Some(BASIC(MOVE_UP))",
   )

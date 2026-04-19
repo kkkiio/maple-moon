@@ -44,12 +44,12 @@ pub fn add_effect(
   let sprite = @ms_animation.sprite_from_animation(sprite_anim, z, transform~)
   let child = parent.spawn_child()
   @sprite.sprites().set(child, sprite)
+  @ms_animation.play_animation(child, sprite_anim, loop_~, transform~)
   // Selene uses transform.z as render depth. Keep the legacy `z` contract.
   @transform.transforms().set(
     child,
     @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
   )
-  @ms_animation.play_animation(child, sprite_anim, loop_~, transform~)
   let duration = nx_animation_duration(animation)
   let ttl = duration.to_double() / 1000
 

@@ -14,39 +14,52 @@ pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {
   let actual = actual_buffer.to_bytes()
   let update_snapshot = @sys.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
-  if should_write_snapshot {
-    guard @sys.get_env_var("OPENROUTER_API_KEY") is Some(api_key) &&
-      api_key != "" else {
-      fail(
-        "visual_desc check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
-      )
+  try {
+    if should_write_snapshot {
+      guard @sys.get_env_var("OPENROUTER_API_KEY") is Some(api_key) &&
+        api_key != "" else {
+        fail(
+          "visual_desc check requires OPENROUTER_API_KEY in environment, do you forget to load .env.test?",
+        )
+      }
+      let verdict = snapshot_verdict(actual_buffer, visual_desc, api_key, path)
+      let dir = @path.Path(path).dirname().to_string()
+      @fs.create_dir(dir)
+      if !verdict.pass {
+        let reason = if verdict.reason == "" {
+          "<missing>"
+        } else {
+          verdict.reason
+        }
+        raise SnapshotError::Mismatch(
+          msg="snapshot does not match expectation, reason=\{reason}",
+        )
+      }
+      @fs.write_bytes_to_file(path, actual)
+    } else {
+      let expected = @fs.read_file_to_bytes(path)
+      if actual == expected ||
+        png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)) {
+        return
+      }
+      raise SnapshotError::Mismatch(msg="snapshot mismatch: \{path}")
     }
-    let verdict = snapshot_verdict(actual_buffer, visual_desc, api_key, path)
-    let dir = @path.Path(path).dirname().to_string()
-    @fs.create_dir(dir)
-    if !verdict.pass {
+  } catch {
+    SnapshotError::Mismatch(msg~) => {
       let ext = @path.Path(path).extname()
       let wrong_img_path = path.chop_suffix(ext).unwrap_or(path) +
         ".wrong" +
         ext
       @fs.write_bytes_to_file(wrong_img_path.to_string(), actual)
-      let reason = if verdict.reason == "" {
-        "<missing>"
-      } else {
-        verdict.reason
-      }
-      fail(
-        "snapshot does not match expectation, new_img=\{wrong_img_path}, reason=\{reason}",
-      )
+      fail(msg + ", new snapshot saved to: \{wrong_img_path}")
     }
-    @fs.write_bytes_to_file(path, actual)
-  } else {
-    let expected = @fs.read_file_to_bytes(path)
-    if actual != expected &&
-      !png_buffers_equal_by_pixels(actual_buffer, Buffer::from_bytes(expected)) {
-      fail(snapshot_mismatch_msg(path, actual, expected))
-    }
+    e => raise e
   }
+}
+
+///|
+priv suberror SnapshotError {
+  Mismatch(msg~ : String)
 }
 
 ///|

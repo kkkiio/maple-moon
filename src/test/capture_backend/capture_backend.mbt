@@ -39,3 +39,48 @@ pub fn pop_clip_rect() -> Unit {
 pub fn reset_clip_stack() -> Unit {
   ()
 }
+
+///|
+pub fn capture_frame_png() -> Bytes? {
+  None
+}
+
+///|
+pub fn capture_frame_png_to_file(path : String) -> Bool {
+  ignore(path)
+  false
+}
+
+///|
+pub fn render_offscreen_png(
+  frame : @render_pipeline.RenderFrame,
+  width : Int,
+  height : Int,
+) -> Bytes? {
+  ignore(frame)
+  ignore(width)
+  ignore(height)
+  None
+}
+
+///|
+pub fn image_region_is_fully_transparent(
+  path : String,
+  rect : @math.Rect,
+) -> Bool? {
+  ignore(path)
+  ignore(rect)
+  None
+}
+
+///|
+pub fn export_texture_region_png(
+  image_path : String,
+  rect : @math.Rect,
+  out_path : String,
+) -> Bool {
+  ignore(image_path)
+  ignore(rect)
+  ignore(out_path)
+  false
+}

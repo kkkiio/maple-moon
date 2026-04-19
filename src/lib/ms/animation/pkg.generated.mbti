@@ -25,6 +25,8 @@ pub fn from_nx_animation(@resource.NxAnimation, loop_? : Bool) -> Animation
 
 pub fn from_nx_texture(@resource.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> Picture
 
+pub fn from_selene_clip(@resource.SeleneClip, loop_? : Bool) -> Animation
+
 pub fn is_animation_finished(@entity.Entity) -> Bool
 
 pub fn nx_animation_to_playable(@resource.NxAnimation, loop_? : Bool) -> AnimationPlayable

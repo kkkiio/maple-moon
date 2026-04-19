@@ -1,5 +1,5 @@
 ///|
-using @resource {type NxTexture, type NxAnimation}
+using @resource {type NxTexture, type NxAnimation, type SeleneClip}
 
 ///|
 pub(all) struct PictureSpec {
@@ -262,6 +262,47 @@ pub fn from_nx_animation(src : NxAnimation, loop_? : Bool = false) -> Animation 
   let playback = nx_animation_to_playable(src, loop_~)
   let backend = build_backend(playback)
   { playback, backend }
+}
+
+///|
+/// Build a native animation from one compiled Selene clip.
+pub fn from_selene_clip(clip : SeleneClip, loop_? : Bool = true) -> Animation {
+  let playback : AnimationPlayable = {
+    steps: [
+      {
+        image: clip.image,
+        rect: {
+          position: @math.Vec2::zero(),
+          size: @math.Vec2(
+            clip.dimensions.x.to_double(),
+            clip.dimensions.y.to_double(),
+          ),
+        },
+        size: @math.Vec2(
+          clip.dimensions.x.to_double(),
+          clip.dimensions.y.to_double(),
+        ),
+        origin: @math.Vec2::zero(),
+        duration: if clip.duration_ms <= 0 {
+          0.001
+        } else {
+          clip.duration_ms.to_double() / 1000.0
+        },
+      },
+    ],
+    loop_,
+    native_eligible: true,
+  }
+  {
+    playback,
+    backend: Native({
+      image: clip.image,
+      layout: clip.layout,
+      graph: clip.graph,
+      node: clip.node,
+      anchor: clip.anchor,
+    }),
+  }
 }
 
 ///|

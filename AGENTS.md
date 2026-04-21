@@ -66,6 +66,10 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 在修改代码后, 运行 `moon check` , 如果有 warning, 优先处理 warning, 直到没有 warning.
 
+### Effectless new
+
+`new` 函数不要带`async`, 如果需要异步初始化, 使用 `load` 作为函数名.
+
 ## Project Structure
 
 ### Repo Structure & Important Files

@@ -130,9 +130,9 @@ fn get_tile_loader() -> @resource.AsyncLoader {
 let mob_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "mob",
-    loader=@resource.DirResourceLoader::new(
-      // "https://maple-res.kkkiiox.work/Mob",
-      "/assets/Mob",
+    loader=@resource.FileJsonResourceLoader::new(
+      // "https://maple-res.kkkiiox.work/mob",
+      "/assets/mob",
     ),
   )
 })

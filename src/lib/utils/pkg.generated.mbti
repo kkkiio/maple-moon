@@ -42,8 +42,6 @@ pub fn[T] BoolPair::op_get(Self[T], Bool) -> T
 pub impl[T : Default] Default for BoolPair[T]
 
 pub(all) struct Counter[K, V](Map[K, V])
-#deprecated
-pub fn[K, V] Counter::inner(Self[K, V]) -> Map[K, V]
 pub fn[K, V] Counter::new() -> Self[K, V]
 pub fn[K : Hash + Eq, V : Default] Counter::op_get(Self[K, V], K) -> V
 pub fn[K : Hash + Eq, V] Counter::op_set(Self[K, V], K, V) -> Unit
@@ -58,8 +56,6 @@ pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
 pub(all) struct Duration(Int) derive(Compare, Eq, @debug.Debug)
 pub fn Duration::from_micro(Int) -> Self
 pub fn Duration::from_milliseconds(Int) -> Self
-#deprecated
-pub fn Duration::inner(Self) -> Int
 pub fn Duration::to_micro_seconds(Self) -> Int
 pub fn Duration::to_milliseconds(Self) -> Int
 pub fn Duration::to_seconds(Self) -> Int
@@ -104,8 +100,6 @@ pub fn[T] Singleton::set(Self[T], T) -> Unit
 pub(all) struct TimePoint(Int64) derive(Compare, Default, Eq)
 pub fn TimePoint::add_duration(Self, Duration) -> Self
 pub fn TimePoint::from_micro(Double) -> Self
-#deprecated
-pub fn TimePoint::inner(Self) -> Int64
 pub fn TimePoint::since(Self, Self) -> Duration
 
 type Timed[T]

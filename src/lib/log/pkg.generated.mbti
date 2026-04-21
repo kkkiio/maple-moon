@@ -31,13 +31,9 @@ pub fn warn(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Uni
 
 // Types and methods
 pub(all) struct HexInt(Int)
-#deprecated
-pub fn HexInt::inner(Self) -> Int
 pub impl @debug.Debug for HexInt
 
 pub(all) struct JsonValue(Json)
-#deprecated
-pub fn JsonValue::inner(Self) -> Json
 pub impl @debug.Debug for JsonValue
 
 pub(all) enum Level {

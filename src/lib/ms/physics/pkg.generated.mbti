@@ -136,8 +136,6 @@ pub(all) struct NxFoothold {
 } derive(@json.FromJson)
 
 pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]])
-#deprecated
-pub fn NxFootholdTree::inner(Self) -> Map[Int, Map[Int, Map[Int, NxFoothold]]]
 pub impl @json.FromJson for NxFootholdTree
 
 pub struct Physics {

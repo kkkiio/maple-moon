@@ -12,7 +12,17 @@ async test "crossbow shoot2 afterimage without range should render" {
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin),
+    .add_plugin(@plugins.default_plugin)
+    .add_system(
+      Update,
+      fn(world) { @cp.char_look_system(world) },
+      system_name="char_look_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @char_look.update_after_image_system(world) },
+      system_name="after_image_system",
+    ),
   )
 
   let host = @entity.Entity::new()
@@ -113,17 +123,15 @@ async test "crossbow shoot2 afterimage without range should render" {
   while look.get_frame() < shoot2_resource.first_frame && ticks < 60 {
     @time.set_delta(0.016)
     @capture_app.run_loop(0.016)
-    @char_look.update_after_image_system(@ecs.require_current_world())
     ticks = ticks + 1
   }
   @time.set_delta(0.016)
   @capture_app.run_loop(0.016)
-  @char_look.update_after_image_system(@ecs.require_current_world())
   let sprites = @sprite.sprites().iter().collect()
   assert_true(sprites.length() > 0)
 
   @capture_app.snapshot(
-    "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage.png",
+    "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage_left.png",
     visual_desc="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
   )
 }

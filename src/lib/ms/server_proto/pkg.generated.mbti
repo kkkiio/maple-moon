@@ -52,8 +52,6 @@ pub(all) struct CharacterListMessage {
 pub impl ServerMessage for CharacterListMessage
 
 pub(all) struct CharacterListRequestMessage(Unit) derive(Default, ToJson, @debug.Debug, @json.FromJson)
-#deprecated
-pub fn CharacterListRequestMessage::inner(Self) -> Unit
 pub impl ClientMessage for CharacterListRequestMessage
 
 pub(all) enum ClientOpcode {
@@ -383,8 +381,6 @@ pub(all) struct PickupItemMessage {
 pub impl ClientMessage for PickupItemMessage
 
 pub(all) struct PlayerMapTransferMessage(Unit) derive(Default, ToJson, @debug.Debug, @json.FromJson)
-#deprecated
-pub fn PlayerMapTransferMessage::inner(Self) -> Unit
 pub impl ClientMessage for PlayerMapTransferMessage
 
 pub(all) struct PlayerQuestLogInfo {

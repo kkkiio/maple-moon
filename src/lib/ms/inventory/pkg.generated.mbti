@@ -101,8 +101,6 @@ pub struct SlotItem {
 }
 
 pub struct SlotNo(Int) derive(Eq, Hash, ToJson, @debug.Debug)
-#deprecated
-pub fn SlotNo::inner(Self) -> Int
 
 pub struct WithItemSlot {
   slot_no : SlotNo

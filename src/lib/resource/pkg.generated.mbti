@@ -67,8 +67,6 @@ pub fn DirResourceLoader::new(String) -> Self
 pub impl AsyncResourceLoader for DirResourceLoader
 
 pub(all) struct EnumMap[K, V](Map[K, V]) derive(@debug.Debug)
-#deprecated
-pub fn[K, V] EnumMap::inner(Self[K, V]) -> Map[K, V]
 pub impl[K, V] Default for EnumMap[K, V]
 pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
 pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
@@ -87,8 +85,6 @@ pub fn ImageLoader::get_path_image_loader() -> Self
 pub fn ImageLoader::load_image(Self, Int) -> Image
 
 pub struct IntMap[T](Map[Int, T]) derive(@debug.Debug)
-#deprecated
-pub fn[T] IntMap::inner(Self[T]) -> Map[Int, T]
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
 
 pub(all) struct LoadedAnimations {
@@ -104,13 +100,9 @@ pub fn LoadedImage::height(Self) -> Int
 pub fn LoadedImage::width(Self) -> Int
 
 pub struct MapBasedArray[T](Array[T]) derive(@debug.Debug)
-#deprecated
-pub fn[T] MapBasedArray::inner(Self[T]) -> Array[T]
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T]
 
 pub struct Nullable[T](T?) derive(@debug.Debug)
-#deprecated
-pub fn[T] Nullable::inner(Self[T]) -> T?
 pub impl[T : @json.FromJson] @json.FromJson for Nullable[T]
 
 pub(all) struct NxAnimation {
@@ -140,8 +132,6 @@ pub fn NxTexture::get_size(Self) -> (Int, Int)
 pub impl @json.FromJson for NxTexture
 
 pub(all) struct ResPath(Array[String]) derive(Eq)
-#deprecated
-pub fn ResPath::inner(Self) -> Array[String]
 
 pub(all) struct SeleneClip {
   image : @asset_types.ImageHandle

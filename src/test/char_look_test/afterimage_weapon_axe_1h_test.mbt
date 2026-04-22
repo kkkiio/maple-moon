@@ -8,6 +8,6 @@ async test "weapon afterimage coverage: axe_1h" {
     true,
     10.0,
     "src/test/char_look_test/__snapshot__/axe_1h_stabO1_afterimage.png",
-    "A character faces right and attacks with a one-handed melee weapon, with a translucent slash effect following the weapon arc.",
+    "A character faces right and performs a one-handed melee thrust, with a translucent slash effect aligned near the weapon tip.",
   )
 }

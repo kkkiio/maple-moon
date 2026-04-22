@@ -16,6 +16,5 @@ import {
   "Milky2018/selene/entity",
   "KKKIIO/maple-moon/lib/ms/logic_fps",
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ms/char_stance",
 }

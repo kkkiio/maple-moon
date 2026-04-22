@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/character"
 
 import {
+  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/char_stance",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/character_presentation",
@@ -10,7 +11,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
-  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
   "Milky2018/selene/entity",
   "moonbitlang/core/debug",
@@ -102,7 +102,7 @@ pub fn Character::set_alerted(Self, Int) -> Unit
 pub fn Character::set_facing_right(Self, Bool) -> Unit
 pub fn Character::set_position(Self, @res_types.Point[Int]) -> Unit
 pub fn Character::set_state(Self, CharState) -> Unit
-pub fn Character::show_attack_effect(Self, @resource.NxAnimation, Int) -> Unit
+pub fn Character::show_attack_effect(Self, @graphics.EffectAnimation, Int) -> Unit
 pub fn Character::show_damage(Self, Int) -> Unit
 pub fn Character::show_effect_id(Self, CharEffectId) -> Unit
 pub fn Character::show_heal_number(Self, Int) -> Unit

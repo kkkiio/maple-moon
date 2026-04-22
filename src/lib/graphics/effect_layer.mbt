@@ -10,6 +10,12 @@ priv struct EffectEntity {
 }
 
 ///|
+pub(all) struct EffectAnimation {
+  animation : @ms_animation.Animation
+  duration_ms : Int
+}
+
+///|
 pub fn effect_layer_system(_world : @ecs.World) -> Unit {
   let delta = @time.delta()
   active_effects.retain(fn(effect) {
@@ -36,6 +42,25 @@ pub fn add_effect(
   ignore(speed)
   let loop_ = false
   let sprite_anim = @ms_animation.from_nx_animation(animation, loop_~)
+  add_effect_animation(
+    parent,
+    { animation: sprite_anim, duration_ms: nx_animation_duration(animation) },
+    z~,
+    speed~,
+    flip~,
+  )
+}
+
+///|
+pub fn add_effect_animation(
+  parent : @entity.Entity,
+  effect : EffectAnimation,
+  z? : Int = 0,
+  speed? : Double = 1.0,
+  flip? : Bool = false,
+) -> Unit {
+  let sprite_anim = effect.animation
+  let loop_ = false
   let transform = if flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
@@ -45,13 +70,17 @@ pub fn add_effect(
   let child = parent.spawn_child()
   @sprite.sprites().set(child, sprite)
   @ms_animation.play_animation(child, sprite_anim, loop_~, transform~)
+  @ms_animation.set_animation_speed(child, speed)
   // Selene uses transform.z as render depth. Keep the legacy `z` contract.
   @transform.transforms().set(
     child,
     @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
   )
-  let duration = nx_animation_duration(animation)
-  let ttl = duration.to_double() / 1000
+  let ttl = if effect.duration_ms <= 0 {
+    0.001
+  } else {
+    effect.duration_ms.to_double() / 1000
+  }
 
   // Register to global list
   active_effects.push({ entity: child, ttl })

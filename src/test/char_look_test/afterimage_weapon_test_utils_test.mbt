@@ -120,11 +120,6 @@ async fn snapshot_afterimage_case(
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
-      fn(world) { @ms_animation.animation_system(world) },
-      system_name="ms_animation_system",
-    )
-    .add_system(
-      Update,
       fn(world) { @cp.char_look_system(world) },
       system_name="char_look_system",
     )

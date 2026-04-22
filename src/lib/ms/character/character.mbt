@@ -348,13 +348,13 @@ pub fn Character::show_heal_number(self : Character, n : Int) -> Unit {
 ///|
 pub fn Character::show_attack_effect(
   self : Character,
-  toshow : @resource.NxAnimation,
+  toshow : @graphics.EffectAnimation,
   z : Int,
 ) -> Unit {
   let attackspeed = get_real_attackspeed(
     get_integer_attackspeed(self.look, self.stats),
   )
-  @graphics.add_effect(
+  @graphics.add_effect_animation(
     self.entity,
     toshow,
     z=@graphics.EFFECT_ZINDEX + z,

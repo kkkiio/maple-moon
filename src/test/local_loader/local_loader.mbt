@@ -62,9 +62,7 @@ pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader with load_data
   }
   let file_path = join_dir(self.root_path, child.to_string() + ".json")
   let text = @fs.read_file_to_string(file_path)
-  let root_value : Json = @json.parse(text) catch {
-    _ => abort("invalid json in local loader: \{file_path}")
-  }
+  let root_value : Json = @json.parse(text)
   get_by_path(root_value, rest.to_string())
 }
 
@@ -83,12 +81,14 @@ pub impl @resource.AsyncResourceLoader for LocalFileJsonResourceLoader with load
   self,
   path,
 ) -> Json {
-  let normalized = path.strip_prefix("/").unwrap_or(path)
-  let file_path = join_dir(self.root_path, normalized.to_string())
-  let text = @fs.read_file_to_string(file_path)
-  @json.parse(text) catch {
-    _ => abort("invalid json in local file loader: \{file_path}")
+  let normalized = path.strip_prefix("/").unwrap_or(path).to_string()
+  let file_path = if normalized.has_prefix("assets/") {
+    normalized
+  } else {
+    join_dir(self.root_path, normalized)
   }
+  let text = @fs.read_file_to_string(file_path)
+  @json.parse(text)
 }
 
 ///|
@@ -105,7 +105,7 @@ pub impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(
 /// Creates an item loader that always reads from local `assets/Item`.
 pub fn make_local_item_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
-    "test_local_item",
+    "item",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Consume/": LocalDirResourceLoader::new("assets/Item/Consume"),
       "Cash/": LocalDirResourceLoader::new("assets/Item/Cash"),
@@ -132,7 +132,7 @@ pub fn use_local_item_data_system() -> Unit {
 /// Creates a character loader that always reads from local `assets/Character`.
 pub fn make_local_character_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
-    "test_local_character",
+    "character",
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Pants/": LocalDirResourceLoader::new("assets/Character/Pants"),
       "Weapon/": LocalDirResourceLoader::new("assets/Character/Weapon"),
@@ -151,7 +151,7 @@ pub fn make_local_character_loader() -> @resource.AsyncLoader {
 /// Creates a string loader that reads from local `assets/String`.
 pub fn make_local_string_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
-    "test_local_string",
+    "string",
     loader=LocalDirResourceLoader::new("assets/String"),
   )
 }
@@ -160,8 +160,26 @@ pub fn make_local_string_loader() -> @resource.AsyncLoader {
 /// Creates a quest loader that reads from local `assets/Quest`.
 pub fn make_local_quest_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
-    "test_local_quest",
+    "quest",
     loader=LocalDirResourceLoader::new("assets/Quest"),
+  )
+}
+
+///|
+/// Creates a mob loader that reads from local `assets/mob`.
+pub fn make_local_mob_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new(
+    "mob",
+    loader=LocalFileJsonResourceLoader::new("assets/mob"),
+  )
+}
+
+///|
+/// Creates a skill loader that reads from local `assets/skill`.
+pub fn make_local_skill_loader() -> @resource.AsyncLoader {
+  @resource.AsyncLoader::new(
+    "skill",
+    loader=LocalFileJsonResourceLoader::new("assets/skill"),
   )
 }
 
@@ -171,10 +189,7 @@ pub fn make_local_quest_loader() -> @resource.AsyncLoader {
 /// This is useful for snapshot tests that intentionally assert UI layout without
 /// localized item-name text.
 pub fn make_null_string_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "test_null_string",
-    loader=NullResourceLoader::new(),
-  )
+  @resource.AsyncLoader::new("string", loader=NullResourceLoader::new())
 }
 
 ///|
@@ -197,33 +212,35 @@ pub fn install_local_csv_loader() -> Unit {
 pub fn install_resource_env_for_test() -> Unit {
   @resource.register_async_loader("item", make_local_item_loader())
   @resource.register_async_loader("character", make_local_character_loader())
+  @resource.register_async_loader("mob", make_local_mob_loader())
+  @resource.register_async_loader("skill", make_local_skill_loader())
   @resource.register_async_loader("string", make_local_string_loader())
   @resource.register_async_loader("quest", make_local_quest_loader())
   @resource.register_async_loader(
     "npc",
     @resource.AsyncLoader::new(
-      "test_npc",
+      "npc",
       loader=LocalFileJsonResourceLoader::new("assets"),
     ),
   )
   @resource.register_async_loader(
     "mapx",
     @resource.AsyncLoader::new(
-      "test_mapx",
+      "mapx",
       loader=LocalFileJsonResourceLoader::new("assets/map"),
     ),
   )
   @resource.register_async_loader(
     "ui_window_2",
     @resource.AsyncLoader::new(
-      "test_local_ui_window_2",
+      "ui_window_2",
       loader=LocalDirResourceLoader::new("assets/ui/UIWindow2.img"),
     ),
   )
   @resource.register_async_loader(
     "ui_slice",
     @resource.AsyncLoader::new(
-      "test_local_ui_slice",
+      "ui_slice",
       loader=LocalFileJsonResourceLoader::new("assets"),
     ),
   )

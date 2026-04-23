@@ -1,19 +1,15 @@
 ///|
-fn load_test_mob() -> @monster.Mob raise {
-  let mob_json = @fs.read_file_to_string("assets/mob/0100101.img.json")
-    |> @json.parse
-  let nx_mob : @monster.NxMob = @json.from_json(mob_json)
-  let mob = @monster.Mob::new(
-    nx_mob,
+async fn load_test_mob() -> @monster.Mob {
+  @monster.Mob::load(
+    1001,
+    100101,
     0,
     0,
     0,
     false,
     @struct.Point::new(100, 95),
-    object_id=1001,
-    monster_id=100101,
+    @random.Rand::new(),
   )
-  mob
 }
 
 ///|
@@ -28,6 +24,7 @@ fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
 
 ///|
 async test "mob hpbar render snapshot" {
+  @local_loader.install_resource_env_for_test()
   defer @monster.clear_map_monsters()
   defer @monster.mob_hpbars_system(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
@@ -42,13 +39,17 @@ async test "mob hpbar render snapshot" {
       fn(world) { @monster.mob_hpbars_system(world) },
       system_name="mob_hpbars_system",
     )
+    .add_system(
+      Update,
+      fn(world) { @ms_camera.camera_follow_system(world) },
+      system_name="camera_follow_system",
+    )
   @capture_app.init_app(app)
   let mob_pos = @math.Vec2(80.0, 86.0)
   let camera_center = @math.Vec2(80.0, 62.0)
   let camera_anchor = @entity.Entity::new()
   @ms_camera.setup_camera_entity(camera_anchor, center=camera_center)
   @ms_camera.set_follow_target(camera_anchor)
-  @ms_camera.camera_follow_system(@ecs.require_current_world())
 
   let map_mobs = @monster.MapMobs::new()
   map_mobs.add_mob(load_test_mob())

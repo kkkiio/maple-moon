@@ -30,34 +30,15 @@ pub fn effect_layer_system(_world : @ecs.World) -> Unit {
 
 ///|
 /// Adds an effect to the given parent entity.
-/// 
+///
 /// TODO: support speed
 pub fn add_effect(
-  parent : @entity.Entity,
-  animation : @resource.NxAnimation,
-  z? : Int = 0,
-  speed? : Double = 1.0,
-  flip? : Bool = false,
-) -> Unit {
-  ignore(speed)
-  let loop_ = false
-  let sprite_anim = @ms_animation.from_nx_animation(animation, loop_~)
-  add_effect_animation(
-    parent,
-    { animation: sprite_anim, duration_ms: nx_animation_duration(animation) },
-    z~,
-    speed~,
-    flip~,
-  )
-}
-
-///|
-pub fn add_effect_animation(
   parent : @entity.Entity,
   effect : EffectAnimation,
   z? : Int = 0,
   speed? : Double = 1.0,
   flip? : Bool = false,
+  offset? : @selene_math.Vec2 = @selene_math.Vec2(0.0, 0.0),
 ) -> Unit {
   let sprite_anim = effect.animation
   let loop_ = false
@@ -74,7 +55,7 @@ pub fn add_effect_animation(
   // Selene uses transform.z as render depth. Keep the legacy `z` contract.
   @transform.transforms().set(
     child,
-    @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+    @transform.Transform::from_xyz(offset.0, offset.1, z.to_double()),
   )
   let ttl = if effect.duration_ms <= 0 {
     0.001
@@ -84,25 +65,4 @@ pub fn add_effect_animation(
 
   // Register to global list
   active_effects.push({ entity: child, ttl })
-}
-
-///|
-fn nx_animation_duration(src : @resource.NxAnimation) -> Int {
-  let delays = src.frames.map(fn(frame) {
-    match frame.delay {
-      Some(d) => if d <= 0 { 100 } else { d }
-      None => 100
-    }
-  })
-  let base_duration = delays.iter().fold(init=0, fn(acc, d) { acc + d })
-  if src.zigzag && delays.length() > 2 {
-    let mut extra = 0
-    // add durations of frames N-2 down to 1
-    for i = delays.length() - 2; i >= 1; i = i - 1 {
-      extra += delays[i]
-    }
-    base_duration + extra
-  } else {
-    base_duration
-  }
 }

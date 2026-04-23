@@ -1,12 +1,10 @@
 # `ms/animation`
 
-统一动画运行时门面。
+统一动画运行时门面（单一 Selene 后端）。
 
 - 输入：`resource` 层的 `NxAnimation` / `NxTexture`，以及已编译的 `SeleneClip`。
 - 输出：可直接挂到实体的 sprite 与播放控制 API。
-- 后端：
-  - `Native`：单图源 + 固定 origin + 固定尺寸，走 Selene `TextureAtlas + AnimationClip/Graph/Player`。
-  - `Scripted`：逐帧 pivot/多图源/变尺寸，走 `ms/animation` 自有系统。
+- 后端：仅 Selene `TextureAtlas + AnimationClip/Graph/Player`。
 
 ## 主要 API
 
@@ -20,4 +18,3 @@
 - `set_animation_speed`
 - `is_animation_finished`
 - `stop_animation`
-- `animation_system`

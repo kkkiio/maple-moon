@@ -303,18 +303,6 @@ pub fn init_app(app : @app.App) -> Unit {
     app.world.advance_frame()
     @time.begin_frame(delta)
     let delta = @time.delta()
-    @event.event_frame_update_system(delta)
-    run_stage(frame_first, app.world)
-    run_stage(frame_pre, app.world)
-    run_stage(frame_on_exit, app.world)
-    run_stage(frame_on_enter, app.world)
-    run_stage(frame_update, app.world)
-    run_stage(frame_post, app.world)
-    @event.event_observer_dispatch_system(delta)
-    run_stage(frame_last, app.world)
-    @commands.commands_flush_system(app.world, delta)
-    @entity.entity_flush_system(delta)
-
     global_state.accumulator += delta
     let mut fixed_steps = 0
     while global_state.accumulator >= global_state.fixed_dt &&
@@ -337,6 +325,18 @@ pub fn init_app(app : @app.App) -> Unit {
       global_state.accumulator = 0.0
     }
     @time.use_frame_delta()
+    let delta = @time.delta()
+    @event.event_frame_update_system(delta)
+    run_stage(frame_first, app.world)
+    run_stage(frame_pre, app.world)
+    run_stage(frame_on_exit, app.world)
+    run_stage(frame_on_enter, app.world)
+    run_stage(frame_update, app.world)
+    run_stage(frame_post, app.world)
+    @event.event_observer_dispatch_system(delta)
+    run_stage(frame_last, app.world)
+    @commands.commands_flush_system(app.world, delta)
+    @entity.entity_flush_system(delta)
     let alpha = if global_state.fixed_dt <= 0.0 {
       1.0
     } else {

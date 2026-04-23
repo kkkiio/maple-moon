@@ -4,22 +4,13 @@ package "KKKIIO/maple-moon/lib/ms/animation"
 import {
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/asset_types",
-  "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
   "Milky2018/selene/sprite",
 }
 
 // Values
-pub fn animation_system(@ecs.World) -> Unit
-
-pub fn current_frame_index(@entity.Entity) -> Int
-
-pub fn frame_count(Animation) -> Int
-
-pub fn frame_origin_at(Animation, Int) -> @math.Vec2?
-
-pub fn frame_size_at(Animation, Int) -> @math.Vec2?
+pub fn animation_dimensions(Animation) -> @math.Vec2
 
 pub fn from_nx_animation(@resource.NxAnimation, loop_? : Bool) -> Animation
 
@@ -28,8 +19,6 @@ pub fn from_nx_texture(@resource.NxTexture, size? : @math.Vec2, repeat? : @math.
 pub fn from_selene_clip(@resource.SeleneClip, loop_? : Bool) -> Animation
 
 pub fn is_animation_finished(@entity.Entity) -> Bool
-
-pub fn nx_animation_to_playable(@resource.NxAnimation, loop_? : Bool) -> AnimationPlayable
 
 pub fn nx_texture_to_picture_spec(@resource.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> PictureSpec
 
@@ -49,17 +38,12 @@ pub fn stop_animation(@entity.Entity) -> Unit
 
 // Types and methods
 pub(all) struct Animation {
-  playback : AnimationPlayable
-  backend : AnimationBackend
+  clip : @resource.SeleneClip
+  loop_ : Bool
 }
 pub fn Animation::new(Array[AnimationFrame], loop_? : Bool) -> Self
 pub fn Animation::single_frame(String, @math.Vec2, offset? : @math.Vec2, pivot? : @math.Vec2, duration? : Double) -> Self
 pub fn Animation::single_frame_from_image(@asset_types.ImageHandle, @math.Vec2, offset? : @math.Vec2, pivot? : @math.Vec2, duration? : Double) -> Self
-
-pub(all) enum AnimationBackend {
-  Native(NativeBackend)
-  Scripted
-}
 
 pub(all) struct AnimationFrame {
   image : @asset_types.ImageHandle
@@ -67,28 +51,6 @@ pub(all) struct AnimationFrame {
   offset : @math.Vec2
   pivot : @math.Vec2
   duration : Double
-}
-
-pub(all) struct AnimationPlayable {
-  steps : Array[AnimationStep]
-  loop_ : Bool
-  native_eligible : Bool
-}
-
-pub(all) struct AnimationStep {
-  image : @asset_types.ImageHandle
-  rect : @math.Rect
-  size : @math.Vec2
-  origin : @math.Vec2
-  duration : Double
-}
-
-pub(all) struct NativeBackend {
-  image : @asset_types.ImageHandle
-  layout : @sprite.TextureAtlasLayoutHandle
-  graph : @Milky2018/selene/animation.AnimationGraphHandle
-  node : @Milky2018/selene/animation.AnimationNodeIndex
-  anchor : @sprite.Anchor
 }
 
 pub(all) struct Picture {

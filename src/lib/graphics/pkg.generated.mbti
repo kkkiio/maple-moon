@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/lib/graphics"
 
 import {
   "KKKIIO/maple-moon/lib/ms/animation",
-  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
+  "Milky2018/selene/math",
 }
 
 // Values
@@ -59,9 +59,7 @@ pub const PORTAL_ZINDEX : Int = 79000
 
 pub const UI_ZINDEX : Int = 100000
 
-pub fn add_effect(@entity.Entity, @resource.NxAnimation, z? : Int, speed? : Double, flip? : Bool) -> Unit
-
-pub fn add_effect_animation(@entity.Entity, EffectAnimation, z? : Int, speed? : Double, flip? : Bool) -> Unit
+pub fn add_effect(@entity.Entity, EffectAnimation, z? : Int, speed? : Double, flip? : Bool, offset? : @math.Vec2) -> Unit
 
 pub fn clamp_map_local(Int) -> Int
 

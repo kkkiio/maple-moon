@@ -2,7 +2,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "moonbitlang/core/json",
   "moonbitlang/core/math",
-  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/entity",

@@ -34,6 +34,10 @@ pub fn require_async_loader(String) -> AsyncLoader
 
 pub fn resolve_ref(String, String) -> String
 
+pub fn resolve_ref_from_dir(String, String) -> String
+
+pub fn resolve_resource_path(String, String) -> String
+
 pub fn set_csv_loader(CsvLoader) -> Unit
 
 // Errors
@@ -141,6 +145,8 @@ pub(all) struct SeleneClip {
   anchor : @sprite.Anchor
   duration_ms : Int
   dimensions : @res_types.Point[Int]
+  frame_durations_ms : Array[Int]
+  frame_alphas : Array[Double]
 }
 
 pub struct TextLoader {

@@ -374,6 +374,15 @@ fn compile_frames_to_selene_clip(
     clip_handle,
   ])
   let graph_handle = @selene_animation.register_animation_graph_asset(graph)
+  let frame_durations_ms = frames.map(fn(frame) {
+    let ms = (frame.duration * 1000.0).to_int()
+    if ms <= 0 {
+      1
+    } else {
+      ms
+    }
+  })
+  let frame_alphas = frames.map(fn(_frame) { 1.0 })
   {
     image: first.image,
     layout,
@@ -382,6 +391,8 @@ fn compile_frames_to_selene_clip(
     anchor: anchor_from_origin(first.pivot, first.size),
     duration_ms: (clip.duration * 1000.0).to_int(),
     dimensions: @struct.Point::new(first.size.0.to_int(), first.size.1.to_int()),
+    frame_durations_ms,
+    frame_alphas,
   }
 }
 

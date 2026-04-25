@@ -2,6 +2,7 @@
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
+  background_animations : Map[String, @resource.SeleneClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo
@@ -38,6 +39,7 @@ pub fn create_scene_map(
   {
     id: raw.id,
     tiled_map,
+    background_animations: raw.background_animations,
     life_spawns,
     physics,
     map_info,

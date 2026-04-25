@@ -32,9 +32,9 @@
 
 所有 public symbol 都要写 Doc comments, 包括:
 
-- `pub fn`.
-- `pub enum`, 尽量给每个 variant 加注释.
-- `pub struct`, 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
+- `pub fn`. 写功能描述, 解释参数和返回值, 说明边缘情况, 并附带 `Example`.
+- `pub enum`. 尽量给每个 variant 加注释.
+- `pub struct`. 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
 
 ````moonbit
 ///|

@@ -192,7 +192,7 @@ pub fn get_stage() -> Stage? {
 ///|
 
 ///|
-pub fn scene_transition_system(_world : @ecs.World) -> Unit {
+pub fn scene_transition_system(world : @ecs.World) -> Unit {
   match @game_state.current_phase() {
     @game_state.GamePhase::GameSetup => ()
     @game_state.GamePhase::SelectCharacter
@@ -200,7 +200,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()
-      @map.clear_tiled_map()
+      @map.clear_tiled_map(world)
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       @character.clear_character_registry()
@@ -416,7 +416,7 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
       }
       @inventory_ui.bind_inventory(global_inv)
       clear_active_scene_map()
-      @map.clear_tiled_map()
+      @map.clear_tiled_map(world)
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       transiting_loading_ref.val = None
@@ -444,7 +444,13 @@ pub fn scene_transition_system(_world : @ecs.World) -> Unit {
         }
       }
       set_active_scene_map(sence_map)
-      @map.set_tiled_map(sence_map.tiled_map)
+      @map.set_tiled_map(
+        world,
+        sence_map.tiled_map,
+        background_animations=sence_map.background_animations,
+      ) catch {
+        e => abort("fail to create scene map: \{e}")
+      }
       @map.set_runtime_context(sence_map.map_info, sence_map.physics)
       transiting_loading_ref.val = None
       @game_state.set_next_phase(
@@ -552,7 +558,7 @@ pub fn setup_game_server_handlers() -> Unit {
       guard set_field_message is ChangeMap(map_id~, portal_id~) else { return }
       @item_use_events.clear_intents()
       clear_active_scene_map()
-      @map.clear_tiled_map()
+      @map.clear_tiled_map(@ecs.require_current_world())
       @map.clear_runtime_context()
       @npc.clear_map_npcs()
       @character.clear_character_registry()

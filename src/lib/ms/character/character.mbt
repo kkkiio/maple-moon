@@ -354,7 +354,7 @@ pub fn Character::show_attack_effect(
   let attackspeed = get_real_attackspeed(
     get_integer_attackspeed(self.look, self.stats),
   )
-  @graphics.add_effect_animation(
+  @graphics.add_effect(
     self.entity,
     toshow,
     z=@graphics.EFFECT_ZINDEX + z,

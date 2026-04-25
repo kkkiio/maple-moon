@@ -98,11 +98,38 @@ pub fn resolve_ref(base_path : String, ref_path : String) -> String {
 }
 
 ///|
+/// Resolve one resource reference against a base directory path.
+///
+/// `base_dir` is treated as directory path (for example `/assets/Mob/1210102.img`
+/// or `Mob/1210102.img`).
+///
+/// Rules:
+/// - `http(s)` is forbidden.
+/// - absolute `ref_path` (`/...`) is normalized and returned.
+/// - relative `ref_path` is resolved against `base_dir`.
+/// - output is canonical absolute logical resource path (`/assets/...`).
+pub fn resolve_ref_from_dir(base_dir : String, ref_path : String) -> String {
+  if is_http_url(base_dir) {
+    abort("network base dir is forbidden: \{base_dir}")
+  }
+  if is_http_url(ref_path) {
+    abort("network ref path is forbidden: \{ref_path}")
+  }
+  let normalized_ref = ref_path.replace(old="\\", new="/")
+  if is_absolute_path(normalized_ref) {
+    return normalize_absolute_resource_path(normalized_ref)
+  }
+  let normalized_base_dir = normalize_absolute_resource_path(base_dir)
+  normalize_absolute_resource_path(
+    join_dir(normalized_base_dir, normalized_ref),
+  )
+}
+
+///|
 let source_root_map : Map[String, String] = {
   // mapx keeps dedicated map root for tiled source-path semantics.
   "mapx": "/assets/map",
   "empty_mapx_loader": "/assets/map",
-  "test_mapx": "/assets/map",
 
   // builtin runtime loaders
   "map_latest": "/assets",
@@ -110,8 +137,8 @@ let source_root_map : Map[String, String] = {
   "background_set_loader": "/assets",
   "object_loader": "/assets",
   "tile": "/assets",
-  "mob": "/assets",
-  "skill": "/assets",
+  "mob": "/assets/mob",
+  "skill": "/assets/skill",
   "character": "/assets",
   "afterimage": "/assets",
   "body": "/assets",
@@ -120,47 +147,32 @@ let source_root_map : Map[String, String] = {
   "hair": "/assets",
   "item_special": "/assets",
   "item": "/assets",
-  "UI/UIWindow2.img": "/assets",
-  "UI/UIWindow4.img": "/assets",
+  "ui_window_2": "/assets",
+  "ui_window_4": "/assets",
   "ui_slice": "/assets",
   "npc": "/assets",
   "string": "/assets",
   "quest": "/assets",
 
-  // tests / fixtures / local loaders
+  // app-specific loaders
   "starter_character_loader": "/assets",
   "starter_string_loader": "/assets",
   "empty_item_loader": "/assets",
-  "dummy": "/assets",
-  "test_local_skill": "/assets",
-  "test_local_string": "/assets",
   "Etc": "/assets",
   "map001": "/assets",
   "Login": "/assets",
-  "counting_item_loader": "/assets",
-  "mock_string_loader": "/assets",
-  "mock_basic_item_loader": "/assets",
-  "mock_basic_string_loader": "/assets",
-  "test_local_body": "/assets",
-  "test_local_face": "/assets",
-  "test_local_hair": "/assets",
-  "test_npc": "/assets",
-  "test_string": "/assets",
-  "test_local_effect": "/assets",
-  "test_local_item": "/assets",
-  "test_local_character": "/assets",
-  "test_local_quest": "/assets",
-  "test_null_string": "/assets",
-  "test_local_ui_window_2": "/assets",
-  "test_local_ui_slice": "/assets",
 }
 
 ///|
-fn resolve_resource_path(source : String, path : String) -> String {
-  let base_path = match source_root_map.get(source) {
-    Some(root) => join_dir(root, "__source__.json")
+/// Resolve a logical resource path by `source` root mapping.
+///
+/// This API is shared by production and test environments. `source` must be a
+/// business-domain source key (for example `mob`, `skill`, `item`).
+pub fn resolve_resource_path(source : String, path : String) -> String {
+  let base_dir = match source_root_map.get(source) {
+    Some(root) => root
     None =>
       abort("path resolver source not registered: \{source}, path=\{path}")
   }
-  resolve_ref(base_path, path)
+  resolve_ref_from_dir(base_dir, path)
 }

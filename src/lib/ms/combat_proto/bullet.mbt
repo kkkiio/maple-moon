@@ -6,11 +6,11 @@ struct Bullet {
 ///|
 pub fn Bullet::new(
   entity : @entity.Entity,
-  animation : @resource.NxAnimation,
+  animation : @ms_animation.Animation,
   origin : @struct.Point[Int],
   toleft : Bool,
 ) -> Bullet {
-  let sprite_animation = @ms_animation.from_nx_animation(animation, loop_=true)
+  let sprite_animation = animation
   let transform = if toleft {
     @selene_math.Transform::new()
   } else {

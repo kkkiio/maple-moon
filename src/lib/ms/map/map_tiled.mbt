@@ -86,12 +86,7 @@ fn validate_foothold_refs(
 }
 
 ///|
-let tiled_root_ref : Ref[@entity.Entity?] = Ref::new(None)
-
-///|
-let tiled_background_motion_states_ref : Ref[
-  Map[@entity.Entity, TiledBackgroundMotionState],
-] = Ref::new(Map::new())
+let tiled_root_world_stores : Map[UInt, @entity.Entity] = Map::new()
 
 ///|
 let tiled_object_spawn_reader : Ref[
@@ -102,96 +97,6 @@ let tiled_object_spawn_reader : Ref[
 let tiled_image_layer_spawn_reader : Ref[
   @event.EventReader[@tiled.TiledImageLayerSpawnedEvent],
 ] = Ref::new(@event.EventReader::new())
-
-///|
-let maple_camera_y_offset = 80.0
-
-///|
-priv struct TiledBackgroundMotionState {
-  base_screen_offset : @selene_math.Vec2
-  moving_world_pos : @selene_math.Vec2
-  ratio : @selene_math.Vec2
-  speed : @selene_math.Vec2
-  moving_axis : (Bool, Bool)
-  repeat : (Bool, Bool)
-  tile_step : @selene_math.Vec2
-}
-
-///|
-fn tiled_property_int_optional(
-  layer : @tiled.TiledLayer,
-  name : String,
-) -> Int? {
-  match layer.property(name) {
-    Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
-    Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
-    Some(@tiled.TiledPropertyValue::String(value)) => {
-      let parsed = try? @string.parse_int(value)
-      match parsed {
-        Ok(parsed) => Some(parsed)
-        Err(_) => None
-      }
-    }
-    Some(_) => None
-    None => None
-  }
-}
-
-///|
-fn is_background_image_layer(name : String) -> Bool {
-  parse_background_index(name, "background_back_") is Some(_) ||
-  parse_background_index(name, "background_front_") is Some(_)
-}
-
-///|
-fn maple_background_move_speed(ratio : Int) -> Double {
-  (ratio * @logic_fps.LOGIC_FPS).to_double() / 16.0
-}
-
-///|
-fn maple_background_axis_mode(
-  background_type : Int,
-  axis : @selene_math.Axis,
-  ratio : Int,
-) -> (Bool, Double, Double) {
-  if background_type == 4 && axis == @selene_math.X {
-    return (true, 0.0, maple_background_move_speed(ratio))
-  }
-  if background_type == 5 && axis == @selene_math.Y {
-    return (true, 0.0, maple_background_move_speed(ratio))
-  }
-  (false, ratio.to_double() / 100.0, 0.0)
-}
-
-///|
-fn maple_background_axis_screen(
-  camera_top_left : Double,
-  view_half : Double,
-  base_screen_offset : Double,
-  moving_world_pos : Double,
-  ratio : Double,
-  moving : Bool,
-) -> Double {
-  if moving {
-    return moving_world_pos - camera_top_left
-  }
-  base_screen_offset + ratio * (camera_top_left + view_half) + view_half
-}
-
-///|
-fn wrap_tiled_screen(value : Double, step : Double) -> Double {
-  if step <= 0.0 {
-    return value
-  }
-  let mut wrapped = value
-  while wrapped > 0.0 {
-    wrapped -= step
-  }
-  while wrapped < -step {
-    wrapped += step
-  }
-  wrapped
-}
 
 ///|
 fn tiled_object_int_optional_soft(
@@ -225,19 +130,6 @@ fn parse_map_layer_name(name : String) -> (Int, String)? {
   let parsed = try? @string.parse_int(parts[1])
   match parsed {
     Ok(layer) => Some((layer, parts[2].to_string()))
-    Err(_) => None
-  }
-}
-
-///|
-fn parse_background_index(name : String, prefix : String) -> Int? {
-  if !name.has_prefix(prefix) {
-    return None
-  }
-  let suffix = name[prefix.length():name.length()].to_string()
-  let parsed = try? @string.parse_int(suffix)
-  match parsed {
-    Ok(index) => Some(index)
     Err(_) => None
   }
 }
@@ -299,62 +191,14 @@ fn apply_map_image_layer_z(event : @tiled.TiledImageLayerSpawnedEvent) -> Unit {
 }
 
 ///|
-fn reload_tiled_background_motion_states(root : @entity.Entity) -> Unit {
-  let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map::new()
-  for pair in @tiled.tiled_image_layer_instances().to_array() {
-    let layer_entity = pair.0
-    let instance = pair.1
-    if instance.map_entity != root {
-      continue
-    }
-    let layer = instance.layer
-    if !is_background_image_layer(layer.name) {
-      continue
-    }
-    let background_type = tiled_property_int_optional(layer, "type")
-    guard background_type is Some(background_type) else { continue }
-    let rx = tiled_property_int_optional(layer, "rx").unwrap_or(0)
-    let ry = tiled_property_int_optional(layer, "ry").unwrap_or(0)
-    let cx = tiled_property_int_optional(layer, "cx").unwrap_or(0)
-    let cy = tiled_property_int_optional(layer, "cy").unwrap_or(0)
-    let image_width = instance.image_layer.image_width.unwrap_or(1).max(1)
-    let image_height = instance.image_layer.image_height.unwrap_or(1).max(1)
-    let step_x = if cx > 0 { cx } else { image_width }
-    let step_y = if cy > 0 { cy } else { image_height }
-    let x_mode = maple_background_axis_mode(background_type, @selene_math.X, rx)
-    let y_mode = maple_background_axis_mode(background_type, @selene_math.Y, ry)
-    states[layer_entity] = {
-      base_screen_offset: @selene_math.Vec2(layer.offset_x, layer.offset_y),
-      moving_world_pos: @selene_math.Vec2(layer.offset_x, layer.offset_y),
-      ratio: @selene_math.Vec2(x_mode.1, y_mode.1),
-      speed: @selene_math.Vec2(x_mode.2, y_mode.2),
-      moving_axis: (x_mode.0, y_mode.0),
-      repeat: (instance.image_layer.repeat_x, instance.image_layer.repeat_y),
-      tile_step: @selene_math.Vec2(step_x.to_double(), step_y.to_double()),
-    }
-  }
-  tiled_background_motion_states_ref.val = states
-}
-
-///|
-fn disable_selene_parallax_for_backgrounds(
-  event : @tiled.TiledImageLayerSpawnedEvent,
-) -> Unit {
-  if is_background_image_layer(event.layer.name) {
-    @tiled.tiled_parallax_layers().remove(event.layer_entity)
-  }
-}
-
-///|
-pub fn set_tiled_map(map : @tiled.TiledMap) -> Unit {
-  let root = match tiled_root_ref.val {
-    Some(root) => root
-    None => {
-      let root = @entity.Entity::new()
-      tiled_root_ref.val = Some(root)
-      root
-    }
-  }
+pub fn set_tiled_map(
+  world : @ecs.World,
+  map : @tiled.TiledMap,
+  background_animations? : Map[String, @resource.SeleneClip] = {},
+) -> Unit raise {
+  let root = tiled_root_world_stores.get_or_init(world.id, fn() {
+    @entity.Entity::new()
+  })
   let spawn_settings = {
     ..@tiled.default_tiled_spawn_settings(),
     image_layer_hook: Some(disable_selene_parallax_for_backgrounds),
@@ -376,173 +220,18 @@ pub fn set_tiled_map(map : @tiled.TiledMap) -> Unit {
       apply_map_image_layer_z(event)
     }
   }
-  reload_tiled_background_motion_states(root)
+  set_tiled_backgrounds(
+    world, map, root, image_layer_events, background_animations,
+  )
 }
 
 ///|
-pub fn clear_tiled_map() -> Unit {
-  tiled_background_motion_states_ref.val = Map::new()
-  match tiled_root_ref.val {
-    Some(root) => {
-      @tiled.despawn_tiled_tree(root)
-      tiled_root_ref.val = None
-    }
-    None => ()
+pub fn clear_tiled_map(world : @ecs.World) -> Unit {
+  clear_tiled_backgrounds(world)
+  if tiled_root_world_stores.get(world.id) is Some(root) {
+    @tiled.despawn_tiled_tree(root)
+    tiled_root_world_stores.remove(world.id)
   }
-}
-
-///|
-/// Updates Maple backgrounds exported as Tiled imagelayers using
-/// OpenMapleClient-compatible coordinate formulas.
-pub fn tiled_background_motion_system(_world : @ecs.World) -> Unit {
-  if tiled_background_motion_states_ref.val.is_empty() {
-    return
-  }
-  let delta = @time.delta()
-  let camera_top_left = @camera.current_camera_top_left()
-  let screen_size = @system.get_screen_size()
-  let bottom_right = @camera.viewport_to_world(screen_size)
-  let view_size = bottom_right - camera_top_left
-  let view_half = @selene_math.Vec2(
-    view_size[@selene_math.X] * 0.5,
-    view_size[@selene_math.Y] * 0.5,
-  )
-  let camera_for_formula = @selene_math.Vec2(
-    camera_top_left[@selene_math.X],
-    camera_top_left[@selene_math.Y] - maple_camera_y_offset,
-  )
-  for pair in tiled_background_motion_states_ref.val.to_array() {
-    let layer_entity = pair.0
-    let state = pair.1
-    let mut next_moving_world_x = state.moving_world_pos[@selene_math.X]
-    if state.moving_axis.0 {
-      next_moving_world_x += state.speed[@selene_math.X] * delta
-    }
-    let mut next_moving_world_y = state.moving_world_pos[@selene_math.Y]
-    if state.moving_axis.1 {
-      next_moving_world_y += state.speed[@selene_math.Y] * delta
-    }
-    let screen_x = maple_background_axis_screen(
-      camera_for_formula[@selene_math.X],
-      view_half[@selene_math.X],
-      state.base_screen_offset[@selene_math.X],
-      next_moving_world_x,
-      state.ratio[@selene_math.X],
-      state.moving_axis.0,
-    )
-    let screen_y = maple_background_axis_screen(
-      camera_for_formula[@selene_math.Y],
-      view_half[@selene_math.Y],
-      state.base_screen_offset[@selene_math.Y],
-      next_moving_world_y,
-      state.ratio[@selene_math.Y],
-      state.moving_axis.1,
-    )
-    let wrapped_screen_x = if state.repeat.0 {
-      wrap_tiled_screen(screen_x, state.tile_step[@selene_math.X])
-    } else {
-      screen_x
-    }
-    let wrapped_screen_y = if state.repeat.1 {
-      wrap_tiled_screen(screen_y, state.tile_step[@selene_math.Y])
-    } else {
-      screen_y
-    }
-    let world_pos = @selene_math.Vec2(
-      camera_top_left[@selene_math.X] + wrapped_screen_x,
-      camera_top_left[@selene_math.Y] + wrapped_screen_y,
-    )
-    tiled_background_motion_states_ref.val.set(layer_entity, {
-      ..state,
-      moving_world_pos: @selene_math.Vec2(
-        next_moving_world_x, next_moving_world_y,
-      ),
-    })
-    @transform2d.set_xy(layer_entity, world_pos)
-  }
-}
-
-///|
-test "background axis mode mapping covers type0~5" {
-  let x0 = maple_background_axis_mode(0, @selene_math.X, -40)
-  let y0 = maple_background_axis_mode(0, @selene_math.Y, -5)
-  assert_false(x0.0)
-  assert_false(y0.0)
-  assert_eq(x0.1, -0.4)
-  assert_eq(y0.1, -0.05)
-  assert_eq(x0.2, 0.0)
-  assert_eq(y0.2, 0.0)
-
-  let x1 = maple_background_axis_mode(1, @selene_math.X, 30)
-  let y1 = maple_background_axis_mode(1, @selene_math.Y, -20)
-  assert_false(x1.0)
-  assert_false(y1.0)
-  assert_eq(x1.1, 0.3)
-  assert_eq(y1.1, -0.2)
-
-  let x2 = maple_background_axis_mode(2, @selene_math.X, 25)
-  let y2 = maple_background_axis_mode(2, @selene_math.Y, -45)
-  assert_false(x2.0)
-  assert_false(y2.0)
-  assert_eq(x2.1, 0.25)
-  assert_eq(y2.1, -0.45)
-
-  let x3 = maple_background_axis_mode(3, @selene_math.X, -70)
-  let y3 = maple_background_axis_mode(3, @selene_math.Y, 10)
-  assert_false(x3.0)
-  assert_false(y3.0)
-  assert_eq(x3.1, -0.7)
-  assert_eq(y3.1, 0.1)
-
-  let x4 = maple_background_axis_mode(4, @selene_math.X, -5)
-  let y4 = maple_background_axis_mode(4, @selene_math.Y, -3)
-  assert_true(x4.0)
-  assert_false(y4.0)
-  assert_eq(x4.1, 0.0)
-  assert_eq(y4.1, -0.03)
-  assert_true(x4.2 < 0.0)
-  assert_eq(y4.2, 0.0)
-
-  let x5 = maple_background_axis_mode(5, @selene_math.X, -7)
-  let y5 = maple_background_axis_mode(5, @selene_math.Y, -9)
-  assert_false(x5.0)
-  assert_true(y5.0)
-  assert_eq(x5.1, -0.07)
-  assert_eq(y5.1, 0.0)
-  assert_eq(x5.2, 0.0)
-  assert_true(y5.2 < 0.0)
-}
-
-///|
-test "parallax screen axis matches OpenMapleClient formula" {
-  let screen_x = maple_background_axis_screen(
-    1691.0, 400.0, -66.0, 0.0, -0.4, false,
-  )
-  let expected = -66.0 + -40.0 * (400.0 + 1691.0) / 100.0 + 400.0
-  assert_true((screen_x - expected).abs() < 0.000001)
-
-  let camera_top_left_y = 733.0
-  let view_half_y = 300.0
-  let screen_y = maple_background_axis_screen(
-    camera_top_left_y - maple_camera_y_offset,
-    view_half_y,
-    -12.0,
-    0.0,
-    -0.5,
-    false,
-  )
-  let expected_y = -12.0 +
-    -50.0 * (view_half_y + camera_top_left_y - maple_camera_y_offset) / 100.0 +
-    view_half_y
-  assert_true((screen_y - expected_y).abs() < 0.000001)
-}
-
-///|
-test "repeat wrap keeps value in [-step, 0]" {
-  assert_eq(wrap_tiled_screen(150.0, 1024.0), -874.0)
-  assert_eq(wrap_tiled_screen(-1400.0, 1024.0), -376.0)
-  assert_eq(wrap_tiled_screen(0.0, 1024.0), 0.0)
-  assert_eq(wrap_tiled_screen(-1024.0, 1024.0), -1024.0)
 }
 
 ///|

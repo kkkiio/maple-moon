@@ -3,6 +3,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
+  background_animations : Map[String, @resource.SeleneClip]
 }
 
 ///|
@@ -31,7 +32,44 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(
     loader, mx_path,
   )
-  { id: map_id, mx_map: { tiled_path, }, tiled_map }
+  let animation_loader = @resource.AnimationLoader::new(loader)
+  let background_animations = load_tiled_background_animations(
+    tiled_path, tiled_map, animation_loader,
+  )
+  { id: map_id, mx_map: { tiled_path, }, tiled_map, background_animations }
+}
+
+///|
+fn aseprite_to_json_path(path : String) -> String? {
+  if path.has_suffix(".aseprite") {
+    return Some(path.strip_suffix(".aseprite").unwrap().to_string() + ".json")
+  }
+  None
+}
+
+///|
+async fn load_tiled_background_animations(
+  tiled_path : String,
+  tiled_map : @tiled.TiledMap,
+  animation_loader : @resource.AnimationLoader,
+) -> Map[String, @resource.SeleneClip] {
+  let loaded : Map[String, @resource.SeleneClip] = {}
+  for layer in tiled_map.layers {
+    guard layer.kind is ImageLayer(image_layer) else { continue }
+    guard image_layer.image is Some(image_path) else { continue }
+    guard aseprite_to_json_path(image_path) is Some(json_path) else { continue }
+    let resolved_json_path = @resource.resolve_ref(tiled_path, json_path)
+    let clips = animation_loader.load(resolved_json_path)
+    let clip = if clips.list_tags().contains("main") {
+      clips.clip("main")
+    } else if clips.list_tags().is_empty() {
+      fail("no tags in background animation: \{resolved_json_path}")
+    } else {
+      clips.clip(clips.list_tags()[0])
+    }
+    loaded[layer.name] = clip
+  }
+  loaded
 }
 
 ///|

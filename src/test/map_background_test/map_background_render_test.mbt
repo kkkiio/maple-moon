@@ -17,7 +17,11 @@ async fn setup_tiled_background_scene_101010102() -> Unit {
     )
   @capture_app.init_app(app)
   let raw = @map.load_map_resources_by_id(101010102)
-  @map.set_tiled_map(raw.tiled_map)
+  @map.set_tiled_map(
+    @ecs.require_current_world(),
+    raw.tiled_map,
+    background_animations=raw.background_animations,
+  )
   let camera_anchor = @entity.Entity::new()
   @transform2d.set_xy(camera_anchor, @math.Vec2(0.0, 0.0))
   @ms_camera.setup_camera_entity(
@@ -56,8 +60,8 @@ fn visible_sprite_count() -> Int {
 }
 
 ///|
-async test "map 101010102 tiled background render snapshot" {
-  defer @map.clear_tiled_map()
+async test "map 101010102 tween lighting alpha background" {
+  defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
@@ -74,7 +78,7 @@ async test "map 101010102 tiled background render snapshot" {
     visual_desc="Large green tree trunks and vines fill most of the screen, with lighter tree layers visible in the far background.",
   )
 
-  for _ in 0..<12 {
+  for _ in 0..<78 {
     @capture_app.run_loop(0.016)
   }
 

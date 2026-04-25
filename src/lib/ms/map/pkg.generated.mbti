@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
+  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/tiled",
@@ -15,7 +16,7 @@ import {
 // Values
 pub fn clear_runtime_context() -> Unit
 
-pub fn clear_tiled_map() -> Unit
+pub fn clear_tiled_map(@ecs.World) -> Unit
 
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
 
@@ -47,7 +48,7 @@ pub fn set_portals(MapPortals, get_touch_pos? : () -> @res_types.Point[Int]?) ->
 
 pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
-pub fn set_tiled_map(@tiled.TiledMap) -> Unit
+pub fn set_tiled_map(@ecs.World, @tiled.TiledMap, background_animations? : Map[String, @resource.SeleneClip]) -> Unit raise
 
 pub fn tiled_background_motion_system(@ecs.World) -> Unit
 
@@ -118,6 +119,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
+  background_animations : Map[String, @resource.SeleneClip]
 }
 
 pub(all) struct MiniMapCanvas {
@@ -179,6 +181,19 @@ pub struct MxMap {
   tiled_path : String
 }
 pub impl @json.FromJson for MxMap
+
+pub(all) enum NxBackgroundType {
+  BG_NORMAL
+  HTILED
+  VTILED
+  TILED
+  HMOVEA
+  VMOVEA
+  HMOVEB
+  VMOVEB
+} derive(@debug.Debug)
+pub fn NxBackgroundType::from_int(Int) -> Self?
+pub fn NxBackgroundType::int_value(Self) -> Int
 
 type NxLadder
 pub impl @json.FromJson for NxLadder
@@ -244,6 +259,7 @@ pub(all) struct PortalWarpInfo {
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
+  background_animations : Map[String, @resource.SeleneClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo

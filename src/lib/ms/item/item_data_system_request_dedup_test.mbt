@@ -92,17 +92,11 @@ impl @resource.AsyncResourceLoader for MockStringLoader with load_data(
 ///|
 async test "item data loader should not request same bundle json twice" {
   let counting_loader = CountingItemBundleLoader::new()
-  let async_loader = @resource.AsyncLoader::new(
-    "counting_item_loader",
-    loader=counting_loader,
-  )
+  let async_loader = @resource.AsyncLoader::new("item", loader=counting_loader)
   @resource.register_async_loader("character", async_loader)
   @resource.register_async_loader(
     "string",
-    @resource.AsyncLoader::new(
-      "mock_string_loader",
-      loader=MockStringLoader::new(),
-    ),
+    @resource.AsyncLoader::new("string", loader=MockStringLoader::new()),
   )
 
   ignore(ItemData::load_item_data_with_loader(2999998, async_loader))

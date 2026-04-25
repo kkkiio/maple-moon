@@ -17,7 +17,7 @@ impl AsyncResourceLoader for DummyResourceLoader with load_data(self, path) -> J
 
 ///|
 fn make_loader() -> AsyncLoader {
-  AsyncLoader::new("dummy", loader=DummyResourceLoader::new())
+  AsyncLoader::new("npc", loader=DummyResourceLoader::new())
 }
 
 ///|

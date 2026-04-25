@@ -15,6 +15,10 @@ pub(all) struct SeleneClip {
   duration_ms : Int
   /// Frame dimensions used by gameplay picking bounds.
   dimensions : @struct.Point[Int]
+  /// Per-frame durations in milliseconds for this tag range.
+  frame_durations_ms : Array[Int]
+  /// Per-frame alpha multipliers resolved from optional layer/cel metadata.
+  frame_alphas : Array[Double]
 }
 
 ///|
@@ -82,8 +86,10 @@ let animation_cache : Map[String, LoadedAnimations] = Map::new()
 ///|
 priv struct FrameItem {
   rect : @math.Rect
+  duration_ms : Int
   duration_s : Double
   size : @struct.Point[Int]
+  alpha : Double
 }
 
 ///|
@@ -100,20 +106,31 @@ fn compile_loaded_animations(
   src : Json,
   json_url : String,
 ) -> LoadedAnimations raise {
-  guard src
-    is {
-      "frames": Array(frames_json),
-      "meta": {
-        "image": String(image_ref),
-        "frameTags": Array(tags_json),
-        "slices": Array(slices_json),
-        ..
-      },
-      ..
-    } else {
+  guard src is { "frames": Array(frames_json), "meta": Object(meta_obj), .. } else {
     fail(
       "invalid aseprite animation json: missing frames/meta/image/frameTags/slices",
     )
+  }
+  let image_ref = match meta_obj.get("image") {
+    Some(String(image_ref)) => image_ref
+    _ =>
+      fail(
+        "invalid aseprite animation json: missing frames/meta/image/frameTags/slices",
+      )
+  }
+  let tags_json = match meta_obj.get("frameTags") {
+    Some(Array(tags_json)) => tags_json
+    _ =>
+      fail(
+        "invalid aseprite animation json: missing frames/meta/image/frameTags/slices",
+      )
+  }
+  let slices_json = match meta_obj.get("slices") {
+    Some(Array(slices_json)) => slices_json
+    _ =>
+      fail(
+        "invalid aseprite animation json: missing frames/meta/image/frameTags/slices",
+      )
   }
   guard !frames_json.is_empty() else {
     fail("invalid aseprite animation json: empty frames")
@@ -122,7 +139,11 @@ fn compile_loaded_animations(
     fail("invalid aseprite animation json: empty frameTags")
   }
 
-  let frames = parse_frames(frames_json)
+  let frame_alpha_by_index = parse_frame_alpha_by_index(
+    meta_obj.get("layers"),
+    frames_json.length(),
+  )
+  let frames = parse_frames(frames_json, frame_alpha_by_index)
   let ranges = parse_tag_ranges(tags_json, frames.length())
   let anchor_by_tag = parse_anchor_by_tag(slices_json)
 
@@ -139,6 +160,8 @@ fn compile_loaded_animations(
   let clip_handles : Array[@selene_animation.AnimationClipHandle] = []
   let tag_names : Array[String] = []
   let durations_ms : Array[Int] = []
+  let tag_frame_durations : Array[Array[Int]] = []
+  let tag_frame_alphas : Array[Array[Double]] = []
   for range in ranges {
     if range.direction != "forward" {
       fail(
@@ -147,6 +170,8 @@ fn compile_loaded_animations(
     }
     let keys : Array[@selene_animation.ScalarKeyframe] = []
     let mut t = 0.0
+    let frame_durations_ms : Array[Int] = []
+    let frame_alphas : Array[Double] = []
     for idx = range.from; idx <= range.to; idx = idx + 1 {
       let frame = frames[idx]
       keys.push({
@@ -156,6 +181,8 @@ fn compile_loaded_animations(
         out_tangent: None,
       })
       t += frame.duration_s
+      frame_durations_ms.push(frame.duration_ms)
+      frame_alphas.push(frame.alpha)
     }
     let clip = @selene_animation.AnimationClip::new(
       "npc/aseprite/\{range.name}",
@@ -172,6 +199,8 @@ fn compile_loaded_animations(
     clip_handles.push(@selene_animation.register_animation_clip_asset(clip))
     tag_names.push(range.name)
     durations_ms.push((clip.duration * 1000.0).to_int())
+    tag_frame_durations.push(frame_durations_ms)
+    tag_frame_alphas.push(frame_alphas)
   }
 
   let (graph, nodes) = @selene_animation.AnimationGraph::from_clips(
@@ -194,15 +223,20 @@ fn compile_loaded_animations(
       anchor: anchor_from_pivot(pivot, first.size),
       duration_ms: durations_ms[idx],
       dimensions: first.size,
+      frame_durations_ms: tag_frame_durations[idx],
+      frame_alphas: tag_frame_alphas[idx],
     })
   }
   { clips, tags: tag_names }
 }
 
 ///|
-fn parse_frames(frames_json : Array[Json]) -> Array[FrameItem] raise {
+fn parse_frames(
+  frames_json : Array[Json],
+  frame_alpha_by_index : Array[Double],
+) -> Array[FrameItem] raise {
   let frames : Array[FrameItem] = []
-  for frame in frames_json {
+  for idx, frame in frames_json {
     guard frame
       is {
         "frame": {
@@ -230,11 +264,74 @@ fn parse_frames(frames_json : Array[Json]) -> Array[FrameItem] raise {
     }
     frames.push({
       rect: { position: @math.Vec2(x, y), size: @math.Vec2(w, h) },
+      duration_ms: duration,
       duration_s,
       size: @struct.Point::new(wi, hi),
+      alpha: frame_alpha_by_index[idx],
     })
   }
   frames
+}
+
+///|
+fn parse_frame_alpha_by_index(
+  layers_json : Json?,
+  frame_len : Int,
+) -> Array[Double] {
+  let frame_alpha : Array[Double] = []
+  for _ in 0..<frame_len {
+    frame_alpha.push(1.0)
+  }
+  guard layers_json is Some(Array(layers)) else { return frame_alpha }
+  for layer in layers {
+    guard layer is Object(layer_obj) else { continue }
+    let layer_alpha = parse_optional_opacity(layer_obj.get("opacity"))
+    match layer_obj.get("cels") {
+      Some(Array(cels)) => {
+        let has_any_cel = Ref::new(false)
+        for cel in cels {
+          guard cel is Object(cel_obj) else { continue }
+          let frame_index = match cel_obj.get("frame") {
+            Some(Number(frame_index, ..)) => frame_index.to_int()
+            _ => continue
+          }
+          if frame_index < 0 || frame_index >= frame_len {
+            continue
+          }
+          let cel_alpha = parse_optional_opacity(cel_obj.get("opacity"))
+          frame_alpha[frame_index] = frame_alpha[frame_index] *
+            layer_alpha *
+            cel_alpha
+          has_any_cel.val = true
+        }
+        if !has_any_cel.val {
+          for i = 0; i < frame_len; i = i + 1 {
+            frame_alpha[i] = frame_alpha[i] * layer_alpha
+          }
+        }
+      }
+      _ =>
+        for i = 0; i < frame_len; i = i + 1 {
+          frame_alpha[i] = frame_alpha[i] * layer_alpha
+        }
+    }
+  }
+  frame_alpha
+}
+
+///|
+fn parse_optional_opacity(value : Json?) -> Double {
+  let raw = match value {
+    Some(Number(opacity, ..)) => opacity.to_int()
+    _ => 255
+  }
+  if raw <= 0 {
+    0.0
+  } else if raw >= 255 {
+    1.0
+  } else {
+    raw.to_double() / 255.0
+  }
 }
 
 ///|
@@ -320,6 +417,30 @@ test "anchor_from_pivot preserves legacy normalized-equivalent center" {
   )
   inspect(v.0, content="0")
   inspect(v.1, content="0")
+}
+
+///|
+test "parse frame alpha by index applies layer and cel opacity" {
+  let factors = parse_frame_alpha_by_index(
+    Some(
+      Json::array([
+        Json::object({
+          "name": Json::string("main"),
+          "opacity": Json::number(200.0),
+          "cels": Json::array([
+            Json::object({
+              "frame": Json::number(0.0),
+              "opacity": Json::number(128.0),
+            }),
+          ]),
+        }),
+      ]),
+    ),
+    2,
+  )
+  inspect(factors.length(), content="2")
+  assert_true((factors[0] - 0.3936947327950788).abs() < 0.000000000001)
+  inspect(factors[1], content="1")
 }
 
 ///|

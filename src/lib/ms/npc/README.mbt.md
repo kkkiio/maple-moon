@@ -7,7 +7,7 @@
 - `info.link`: NPC 模板链接（可选）。
 - `info.scripted`: 归一化脚本标志（`script != null || shop == true`）。
 - `info.speak_keys`: `info.speak` 的 key 列表。
-- `animations_path`: Aseprite `animation.json` 路径（默认相对 `assets`）。
+- `animations_path`: Aseprite `animation.json` 引用路径（推荐写成相对 `mx.json` 的路径）。
 
 示例：
 
@@ -16,10 +16,10 @@
 test {
   let src : Json = {
     "info": { "speak": { "0": "n0" } },
-    "animations_path": "Npc/Npc/0002007.img/animation.json",
+    "animations_path": "animation.json",
   }
   let mx_npc : MxNpc = @json.from_json(src)
-  inspect(mx_npc.animations_path, content="Npc/Npc/0002007.img/animation.json")
+  inspect(mx_npc.animations_path, content="animation.json")
 }
 ```
 

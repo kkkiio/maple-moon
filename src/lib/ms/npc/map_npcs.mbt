@@ -380,15 +380,22 @@ pub async fn Npc::load(
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut src = npc_loader.load_data("Npc/Npc/\{strid}/mx.json")
+  let mut mx_path = "Npc/Npc/\{strid}/mx.json"
+  let mut src = npc_loader.load_data(mx_path)
   let strsrc = string_loader.load_resource(["Npc.img", id.to_string()])
   let mut mx_npc : MxNpc = @json.from_json(src)
   if mx_npc.info.link is Some(link) {
-    src = npc_loader.load_data("Npc/Npc/\{link}.img/mx.json")
+    mx_path = "Npc/Npc/\{link}.img/mx.json"
+    src = npc_loader.load_data(mx_path)
     mx_npc = @json.from_json(src)
   }
   let animation_loader = @resource.AnimationLoader::new(npc_loader)
-  let loaded_aseprite = animation_loader.load(mx_npc.animations_path)
+  let loaded_aseprite = animation_loader.load(
+    @resource.resolve_ref(
+      npc_loader.resolve_json_path(mx_path),
+      mx_npc.animations_path,
+    ),
+  )
   let scripted = mx_npc.info.scripted
   let dialogue = {}
   let mut i = 0

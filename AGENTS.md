@@ -14,11 +14,11 @@
 
 #### `$resource-processing-workflow`
 
-缺少资源时使用.
+缺少资源时使用. 可以导出 aseprite, tiled 资源, 以及以 JSON 格式导出 nx 资源.
 
 #### `$snapshot-test`
 
-使用该 skill 写测试.
+项目主要用快照测试验证逻辑和画面, 使用该 skill 编写和执行测试.
 
 #### `$verify-web-game`
 
@@ -32,9 +32,7 @@
 
 所有 public symbol 都要写 Doc comments, 包括:
 
-- `pub fn`. 写功能描述, 解释参数和返回值, 说明边缘情况, 并附带 `Example`.
-- `pub enum`. 尽量给每个 variant 加注释.
-- `pub struct`. 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
+- `pub fn`. 写功能描述, 说明边缘情况, 并附带 `Example`.
 
 ````moonbit
 ///|
@@ -52,6 +50,9 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 }
 ````
 
+- `pub enum`. 尽量给每个 variant 加注释.
+- `pub struct`. 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
+
 ### 禁止 fallback
 
 除非明确要求, 否则不写 fallback 逻辑, 避免干扰问题排查. 可以在函数返回值后加 `raise` 关键词, 让错误继续往上传播.
@@ -61,10 +62,6 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 ### 只写黑盒测试
 
 `*_test.mbt` 文件是黑盒测试. 不允许写 `_for_test` 的 public symbol.
-
-### 清理 warning
-
-在修改代码后, 运行 `moon check` , 如果有 warning, 优先处理 warning, 直到没有 warning.
 
 ### Effectless new
 
@@ -100,7 +97,7 @@ moon info
 moon build --release
 ```
 
-执行 `moon test` 前先加载测试环境变量，避免 `selene-canvas` 在 Node.js 下因缺少 DOM 报错：
+执行 `moon test` 前先加载测试环境变量，避免 `selene-webgpu` 在 Node.js 下因缺少 DOM 报错：
 
 ```bash
 # 在仓库根目录执行
@@ -168,29 +165,42 @@ match path {
 }
 ```
 
-- `lexmatch` 正则匹配
+- `=~` 正则匹配
 
 ```mbt
+const REGEX_IDENT_START = re"[A-Za-z_]"
+const REGEX_IDENT_CONT = re"[A-Za-z0-9_]*"
 test {
-  let text = "xxabbbcyy"
-  lexmatch text {
-    (before, "a" ("b*" as b) "c", after) => {
-      inspect(before, content="xx")
-      inspect(b, content="bbb")
-      inspect(after, content="yy")
-    }
-    _ => fail("")
+  let input = " let_name = 42 "
+  if (input =~ (
+      (REGEX_IDENT_START + REGEX_IDENT_CONT) as ident,
+      before=head,
+      after=tail
+    )) {
+    assert_true(head is " ")
+    assert_true(ident is "let_name")
+    assert_true(tail is " = 42 ")
+  } else {
+    fail("expected identifier")
   }
 
-  if text lexmatch? ("a" ("b*" as b) "c") && b.length() > 0 {
-    inspect(b, content="bbb")
+  if ("abc" =~ (re"b", before~, after~)) {
+    assert_true(before is "a")
+    assert_true(after is "c")
+  } else {
+    fail("expected middle match")
   }
 
-  let keyword = "iff"
-  lexmatch keyword with longest {
-    ("if|[a-z]*" as ident) => inspect(ident, content="iff")
-    _ => fail("")
+  let source : StringView = "abc"
+  if (source =~ (re"." as ch, after=rest)) {
+    assert_eq(ch, 'a')
+    assert_true(rest is "bc")
+  } else {
+    fail("expected leading char")
   }
+
+  assert_true("zabc!" =~ re"abc")
+  assert_true(!("zabc!" =~ re"^abc"))
 }
 ```
 
@@ -202,4 +212,5 @@ test {
 
 ### 资源
 
-local server 是可以异步读取资源的, 客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.
+local server 是可以异步读取资源的.
+客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.

@@ -19,11 +19,21 @@ pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with load_data(
     .strip_prefix("/")
     .unwrap_or(path.to_string())
     .to_string()
-  let rel = normalize_mapx_test_path(raw_rel)
+  let rel = normalize_test_resource_path(root.to_string(), raw_rel)
   let full_path = "\{root}/\{rel}"
   (@fs.read_file_to_string(full_path) |> @json.parse) catch {
     _ => null
   }
+}
+
+///|
+fn normalize_test_resource_path(root : String, path : String) -> String {
+  let normalized_root = root.strip_prefix("/").unwrap_or(root).to_string()
+  let rel = match path.strip_prefix("\{normalized_root}/") {
+    Some(rest) => rest.to_string()
+    None => path.strip_prefix("assets/").unwrap_or(path).to_string()
+  }
+  normalize_mapx_test_path(rel)
 }
 
 ///|
@@ -42,21 +52,18 @@ fn setup_resource_loaders() -> Unit {
   @resource.register_async_loader(
     "mapx",
     @resource.AsyncLoader::new(
-      "test_mapx",
+      "mapx",
       loader=FlatJsonFileLoader::new("assets/map"),
     ),
   )
   @resource.register_async_loader(
     "npc",
-    @resource.AsyncLoader::new(
-      "test_npc",
-      loader=FlatJsonFileLoader::new("assets"),
-    ),
+    @resource.AsyncLoader::new("npc", loader=FlatJsonFileLoader::new("assets")),
   )
   @resource.register_async_loader(
     "string",
     @resource.AsyncLoader::new(
-      "test_string",
+      "string",
       loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
     ),
   )
@@ -98,7 +105,6 @@ fn setup_camera(position : @math.Vec2, map_info : @map.MapInfo) -> Unit {
     map_info.get_borders().second().to_double(),
   )
   @ms_camera.set_limits(left, right, top, bottom)
-  @ms_camera.camera_follow_system(@ecs.require_current_world())
 }
 
 ///|
@@ -139,6 +145,11 @@ async fn setup_shop_scene_npcs() -> Unit {
     .add_plugin(@plugins.default_plugin)
     .add_system(
       Update,
+      fn(world) { @ms_camera.camera_follow_system(world) },
+      system_name="camera_follow_system",
+    )
+    .add_system(
+      Update,
       fn(world) { @npc.map_npcs_pointer_system(world) },
       system_name="map_npcs_pointer_system",
     )
@@ -166,7 +177,11 @@ async fn setup_shop_scene_npcs() -> Unit {
     }
   }
   guard npc_lives.length() > 0 else { panic() }
-  @map.set_tiled_map(scene_map.tiled_map)
+  @map.set_tiled_map(
+    @ecs.require_current_world(),
+    scene_map.tiled_map,
+    background_animations=scene_map.background_animations,
+  )
   @map.set_runtime_context(scene_map.map_info, scene_map.physics)
 
   setup_camera(@math.Vec2(380.0, 460.0), scene_map.map_info)
@@ -205,7 +220,7 @@ async fn setup_shop_scene_npcs() -> Unit {
 ///|
 async test "shop scene npc render snapshot on map 102000001" {
   defer @map.clear_runtime_context()
-  defer @map.clear_tiled_map()
+  defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @npc.clear_map_npcs()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()

@@ -1,0 +1,201 @@
+{
+  "frames": [
+    {
+      "filename": "arm/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 79
+      },
+      "duration": 5000
+    },
+    {
+      "filename": "side/0",
+      "frame": {
+        "x": 57,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 79
+      },
+      "duration": 5000
+    },
+    {
+      "filename": "stand/0",
+      "frame": {
+        "x": 114,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 79
+      },
+      "duration": 1200
+    },
+    {
+      "filename": "stand/1",
+      "frame": {
+        "x": 171,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 79
+      },
+      "duration": 100
+    },
+    {
+      "filename": "stand/2",
+      "frame": {
+        "x": 228,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 79
+      },
+      "duration": 150
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "animation.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 285,
+      "h": 79
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "arm",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      },
+      {
+        "name": "side",
+        "from": 1,
+        "to": 1,
+        "direction": "forward"
+      },
+      {
+        "name": "stand",
+        "from": 2,
+        "to": 4,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_arm",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 57,
+              "h": 79
+            },
+            "pivot": {
+              "x": 30,
+              "y": 79
+            }
+          }
+        ]
+      },
+      {
+        "name": "anchor_side",
+        "keys": [
+          {
+            "frame": 1,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 57,
+              "h": 79
+            },
+            "pivot": {
+              "x": 30,
+              "y": 79
+            }
+          }
+        ]
+      },
+      {
+        "name": "anchor_stand",
+        "keys": [
+          {
+            "frame": 2,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 57,
+              "h": 79
+            },
+            "pivot": {
+              "x": 30,
+              "y": 79
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

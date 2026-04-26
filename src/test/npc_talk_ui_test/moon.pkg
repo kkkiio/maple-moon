@@ -20,7 +20,6 @@ import {
   "Milky2018/selene/entity",
   "Milky2018/selene/math" @math,
   "Milky2018/selene/app" @app,
-  "Milky2018/selene/ecs",
 } for "test"
 
 options(

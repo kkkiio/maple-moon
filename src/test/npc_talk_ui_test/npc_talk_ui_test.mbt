@@ -60,12 +60,16 @@ async fn setup_scene() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
+    .add_system(
+      Update,
+      fn(world) { @ms_camera.camera_follow_system(world) },
+      system_name="camera_follow_system",
+    )
   @capture_app.init_app(app)
   @game_state.init_state(@game_state.GamePhase::GameSetup)
   let camera_anchor = @entity.Entity::new()
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
-  @ms_camera.camera_follow_system(@ecs.require_current_world())
 
   setup_local_loaders()
   setup_npc_talk_resource_cache()

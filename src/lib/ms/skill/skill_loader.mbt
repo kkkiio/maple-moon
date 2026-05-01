@@ -13,13 +13,6 @@ let bundle_cache : Map[String, Json] = {}
 let skill_cache : Map[Int, SkillData] = {}
 
 ///|
-/// Load error types
-pub(all) suberror SkillLoadError {
-  NOT_FOUND(Int)
-  INVALID_DATA(String)
-} derive(Debug)
-
-///|
 // pub impl Show for SkillLoadError with output(self, buf : StringBuilder) -> Unit {
 //   match self {
 //     NOT_FOUND(id) => buf.write_string("Skill not found: " + id.to_string())
@@ -30,7 +23,7 @@ pub(all) suberror SkillLoadError {
 ///|
 /// Load a single skill with caching.
 /// First loads the bundle, then extracts the specific skill.
-pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
+pub async fn load_skill(id : Int) -> SkillData {
   // 1. Check skill-level cache
   if skill_cache.get(id) is Some(cached) {
     return cached
@@ -47,16 +40,21 @@ pub async fn load_skill(id : Int) -> SkillData raise SkillLoadError {
     None => {
       let loader = @resource.require_async_loader("skill")
       // Load the full bundle: [bundle_key] -> returns { "skill": { "2101002": {...} } }
-      let json = loader.load_resource([bundle_key]) catch {
-        _ => raise INVALID_DATA("Failed to load bundle: " + bundle_key)
-      }
+      let json = loader.load_resource([bundle_key])
       bundle_cache.set(bundle_key, json)
       json
     }
   }
 
   // 4. Extract skill data from bundle
-  let skill_json = extract_skill_from_bundle(bundle_json, strid, id)
+  let skill_json = match bundle_json {
+    { "skill": Object(skill_obj), .. } =>
+      match skill_obj.get(strid) {
+        Some(skill_data) => skill_data
+        None => fail("skill not found, id=\{id}")
+      }
+    _ => fail("skill not found, id=\{id}")
+  }
 
   // 5. Load text data (skill name, description)
   let text_json = @resource.require_async_loader("string").load_resource([
@@ -81,9 +79,7 @@ pub fn get_cached_skill(id : Int) -> SkillData? {
 ///|
 /// Preload a batch of skills (e.g., when character is created).
 /// Groups by bundle to minimize network requests.
-pub async fn preload_skills(
-  skill_ids : Array[Int],
-) -> Unit raise SkillLoadError {
+pub async fn preload_skills(skill_ids : Array[Int]) -> Unit {
   // Group by bundle
   let by_bundle : Map[String, Array[Int]] = {}
   for id in skill_ids {
@@ -99,9 +95,7 @@ pub async fn preload_skills(
     if !bundle_cache.contains(bundle_key) {
       let loader = @resource.require_async_loader("skill")
       // Load full bundle
-      let json = loader.load_resource([bundle_key]) catch {
-        _ => raise INVALID_DATA("Failed to preload bundle: " + bundle_key)
-      }
+      let json = loader.load_resource([bundle_key])
       bundle_cache.set(bundle_key, json)
     }
 
@@ -135,31 +129,14 @@ pub fn get_skill_max_level(id : Int) -> Int {
 }
 
 ///|
-/// Extract skill JSON from bundle.
-fn extract_skill_from_bundle(
-  bundle_json : Json,
-  strid : String,
-  id : Int,
-) -> Json raise SkillLoadError {
-  guard bundle_json is Object(bundle_obj) else { raise NOT_FOUND(id) }
-  guard bundle_obj.get("skill") is Some(Object(skill_obj)) else {
-    raise NOT_FOUND(id)
-  }
-  guard skill_obj.get(strid) is Some(skill_data) else { raise NOT_FOUND(id) }
-  skill_data
-}
-
-///|
 /// Parse skill data from JSON.
 fn parse_skill_data(
   id : Int,
   skill_json : Json,
   text_json : Json,
-) -> SkillData raise SkillLoadError {
+) -> SkillData raise {
   // Parse skill resource data
-  let skill_res : SkillNxResource = @json.from_json(skill_json) catch {
-    _ => raise INVALID_DATA("Failed to parse skill JSON")
-  }
+  let skill_res : SkillNxResource = @json.from_json(skill_json)
 
   // Parse text data (fallback to empty if missing)
   let text_res : SkillTextResource = @json.from_json(text_json) catch {

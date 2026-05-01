@@ -15,8 +15,16 @@ pub(all) struct Stance {
 } derive(Eq)
 
 ///|
+pub(all) struct MobAnimationMeta {
+  total_duration_ms : Int
+  first_head : @struct.Point[Int]?
+  first_bounds : @struct.Rectangle[Int]?
+  loop_ : Bool
+}
+
+///|
 pub(all) struct MobAnimation {
-  nx : @resource.NxAnimation
+  meta : MobAnimationMeta
   selene : @ms_animation.Animation
 }
 
@@ -69,6 +77,7 @@ pub struct Mob {
   attacks : Map[Int, MobSpecialAttack]
   skill_stands : Map[Int, MobAnimation]
   attack_stands : Map[Int, MobAnimation]
+  effect_animations : Map[String, MobAnimation]
   buffs : Array[MobBuff]
   level : Int
   speed : Double
@@ -100,7 +109,7 @@ pub struct Mob {
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
-  src : NxMob
+  src : MxMob
 }
 
 ///|
@@ -123,30 +132,133 @@ pub async fn Mob::load(
 ) -> Mob {
   let mob_loader = @resource.require_async_loader("mob")
   let strid = @utils.stoi_left_pad0(mid, 7)
-  try {
-    let src = mob_loader.load_resource([strid + ".img"])
-    let nx_mob : NxMob = src |> @json.from_json
-    // let info : MobInfo = src["info"].value() |> @json.from_json
-    // let animations = if info.link is Some(link) {
-    //   let link_mob = mob_loader.load_res_async([link.to_string() + ".img"])
-    //   load_animations(link_mob.value())
-    // } else {
-    //   load_animations(src.value())
-    // }
-    Mob::new(
-      nx_mob,
-      object_id=oi,
-      monster_id=mid,
-      mode,
-      st,
-      fh,
-      newspawn,
-      position,
-      randomizer~,
+  let mx_path = "Mob/\{strid}.img/mx.json"
+  let mx_src = mob_loader.load_data(mx_path)
+  let mx_mob : MxMob = @json.from_json(mx_src)
+  let runtime = load_mx_runtime(
+    mx_mob,
+    mob_loader,
+    mob_loader.resolve_json_path(mx_path),
+  )
+  Mob::new(
+    mx_mob,
+    runtime,
+    object_id=oi,
+    monster_id=mid,
+    mode,
+    st,
+    fh,
+    newspawn,
+    position,
+    randomizer~,
+  )
+}
+
+///|
+priv struct MxMobRuntime {
+  animations : Map[StanceType, MobAnimation]
+  attack_stands : Map[Int, MobAnimation]
+  skill_stands : Map[Int, MobAnimation]
+  effect_animations : Map[String, MobAnimation]
+}
+
+///|
+async fn load_mx_runtime(
+  mx_mob : MxMob,
+  mob_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> MxMobRuntime {
+  let animation_loader = @resource.AnimationLoader::new(mob_loader)
+  let effect_animations : Map[String, MobAnimation] = {}
+  for path_key, animation_path in mx_mob.mx_animations {
+    let clip = load_mx_clip(
+      animation_loader, animation_path, path_key, base_path,
     )
-  } catch {
-    e => fail("Mob::load failed, mid=\{mid}, e=\{e}")
+    let mut found_stance_node : MxMobAnimNode? = None
+    for _, node in mx_mob.stance_nodes {
+      if node.path_key == path_key {
+        found_stance_node = Some(node)
+        break
+      }
+    }
+    let meta = match found_stance_node {
+      Some(node) =>
+        {
+          total_duration_ms: node.total_duration_ms,
+          first_head: node.first_head,
+          first_bounds: node.first_bounds,
+          loop_: node.loop_,
+        }
+      None =>
+        {
+          total_duration_ms: clip.duration_ms,
+          first_head: None,
+          first_bounds: None,
+          loop_: false,
+        }
+    }
+    effect_animations[path_key] = {
+      meta,
+      selene: @ms_animation.from_selene_clip(clip, loop_=meta.loop_),
+    }
   }
+
+  let animations : Map[StanceType, MobAnimation] = {}
+  for key, node in mx_mob.stance_nodes {
+    match effect_animations.get(node.path_key) {
+      Some(anim) =>
+        match key {
+          "stand" => animations[StanceType::STAND] = anim
+          "move" => animations[StanceType::MOVE] = anim
+          "fly" => {
+            animations[StanceType::STAND] = anim
+            animations[StanceType::MOVE] = anim
+          }
+          "jump" => animations[StanceType::JUMP] = anim
+          "hit1" => animations[StanceType::HIT] = anim
+          "die1" => animations[StanceType::DIE] = anim
+          _ => ()
+        }
+      None =>
+        fail("missing mx_animations ref for stance node: \{node.path_key}")
+    }
+  }
+
+  let attack_stands : Map[Int, MobAnimation] = {}
+  for attack_id, attack_node in mx_mob.attack_nodes {
+    match effect_animations.get(attack_node.animation_path_key) {
+      Some(anim) => attack_stands[attack_id] = anim
+      None =>
+        fail(
+          "missing mx_animations ref for attack animation: \{attack_node.animation_path_key}",
+        )
+    }
+  }
+  let skill_stands : Map[Int, MobAnimation] = {}
+  for skill_id, skill_node in mx_mob.skill_nodes {
+    match effect_animations.get(skill_node.animation_path_key) {
+      Some(anim) => skill_stands[skill_id] = anim
+      None =>
+        fail(
+          "missing mx_animations ref for skill animation: \{skill_node.animation_path_key}",
+        )
+    }
+  }
+
+  { animations, attack_stands, skill_stands, effect_animations }
+}
+
+///|
+async fn load_mx_clip(
+  animation_loader : @resource.AnimationLoader,
+  animation_path : String,
+  tag : String,
+  base_path : String,
+) -> @resource.SeleneClip {
+  let loaded = animation_loader.load(
+    @resource.resolve_ref(base_path, animation_path),
+  )
+  loaded.clip(tag)
 }
 
 ///|
@@ -175,72 +287,94 @@ pub struct MobInfo {
 } derive(ToJson)
 
 ///|
-pub impl @json.FromJson for MobInfo with from_json(json, path) {
-  let link = if json is { "link": String(link), .. } {
-    Some(@string.parse_int(link)) catch {
-      _ => raise @json.JsonDecodeError((path, "invalid link"))
-    }
-  } else {
-    None
-  }
-  let fly_speed = if json is { "flySpeed": Number(fly_speed, ..), .. } {
-    fly_speed
-  } else {
-    0.0
-  }
-  let boss = json is { "boss": Number(1, ..), .. }
-  let no_flip = json is { "noFlip": Number(1, ..), .. }
-  match json {
-    {
-      "MADamage": Number(ma_damage, ..),
-      "MDDamage": Number(md_damage, ..),
-      "PADamage": Number(pa_damage, ..),
-      "PDDamage": Number(pd_damage, ..),
-      "acc": Number(acc, ..),
-      "bodyAttack": Number(body_attack, ..),
-      "eva": Number(eva, ..),
-      "exp": Number(exp, ..),
-      "fs": Number(fs, ..),
-      "level": Number(level, ..),
-      "maxHP": Number(max_hp, ..),
-      "maxMP": Number(max_mp, ..),
-      "mobType": Number(mob_type, ..),
-      "pushed": Number(pushed, ..),
-      "speed": Number(speed, ..),
-      "summonType": Number(summon_type, ..),
-      "undead": Number(undead, ..),
-      ..
-    } =>
-      {
-        magic_damage: ma_damage.to_int(),
-        md_damage: md_damage.to_int(),
-        pa_damage: pa_damage.to_int(),
-        pd_damage: pd_damage.to_int(),
-        acc: acc.to_int(),
-        body_attack: body_attack == 1,
-        eva: eva.to_int(),
-        exp: exp.to_int(),
-        fs,
-        fly_speed,
-        level: level.to_int(),
-        link,
-        max_hp: max_hp.to_int(),
-        max_mp: max_mp.to_int(),
-        mob_type: mob_type.to_int(),
-        pushed: pushed.to_int(),
-        speed,
-        summon_type: summon_type.to_int(),
-        undead: undead == 1,
-        boss,
-        no_flip,
+fn parse_info_int(
+  root : Map[String, Json],
+  path : @json.JsonPath,
+  key : String,
+  default_value : Int,
+) -> Int raise @json.JsonDecodeError {
+  match root.get(key) {
+    Some(Number(v, ..)) => v.to_int()
+    Some(String(raw)) =>
+      @string.parse_int(raw) catch {
+        _ =>
+          raise @json.JsonDecodeError(
+            (path.add_key(key), "invalid int-like value"),
+          )
       }
-    _ => raise @json.JsonDecodeError((path, "missing info fields"))
+    Some(_) =>
+      raise @json.JsonDecodeError((path.add_key(key), "invalid int-like value"))
+    None => default_value
   }
 }
 
 ///|
-pub fn Mob::new(
-  nx_mob : NxMob,
+fn parse_info_double(
+  root : Map[String, Json],
+  path : @json.JsonPath,
+  key : String,
+  default_value : Double,
+) -> Double raise @json.JsonDecodeError {
+  match root.get(key) {
+    Some(Number(v, ..)) => v
+    Some(String(raw)) =>
+      @string.parse_int(raw).to_double() catch {
+        _ =>
+          raise @json.JsonDecodeError(
+            (path.add_key(key), "invalid numeric-like value"),
+          )
+      }
+    Some(_) =>
+      raise @json.JsonDecodeError(
+        (path.add_key(key), "invalid numeric-like value"),
+      )
+    None => default_value
+  }
+}
+
+///|
+pub impl @json.FromJson for MobInfo with from_json(json, path) {
+  guard json is Object(root) else {
+    raise @json.JsonDecodeError((path, "missing info fields"))
+  }
+  let link = match root.get("link") {
+    Some(String(link)) =>
+      Some(@string.parse_int(link)) catch {
+        _ => raise @json.JsonDecodeError((path.add_key("link"), "invalid link"))
+      }
+    _ => None
+  }
+  let boss = parse_info_int(root, path, "boss", 0) == 1
+  let no_flip = parse_info_int(root, path, "noFlip", 0) == 1
+  {
+    magic_damage: parse_info_int(root, path, "MADamage", 0),
+    md_damage: parse_info_int(root, path, "MDDamage", 0),
+    pa_damage: parse_info_int(root, path, "PADamage", 0),
+    pd_damage: parse_info_int(root, path, "PDDamage", 0),
+    acc: parse_info_int(root, path, "acc", 0),
+    body_attack: parse_info_int(root, path, "bodyAttack", 0) == 1,
+    eva: parse_info_int(root, path, "eva", 0),
+    exp: parse_info_int(root, path, "exp", 0),
+    fs: parse_info_double(root, path, "fs", 0.0),
+    fly_speed: parse_info_double(root, path, "flySpeed", 0.0),
+    level: parse_info_int(root, path, "level", 0),
+    link,
+    max_hp: parse_info_int(root, path, "maxHP", 0),
+    max_mp: parse_info_int(root, path, "maxMP", 0),
+    mob_type: parse_info_int(root, path, "mobType", 0),
+    pushed: parse_info_int(root, path, "pushed", 0),
+    speed: parse_info_double(root, path, "speed", 0.0),
+    summon_type: parse_info_int(root, path, "summonType", 0),
+    undead: parse_info_int(root, path, "undead", 0) == 1,
+    boss,
+    no_flip,
+  }
+}
+
+///|
+fn Mob::new(
+  mx_mob : MxMob,
+  runtime : MxMobRuntime,
   mode : Int,
   st : Int,
   fh : Int,
@@ -255,8 +389,8 @@ pub fn Mob::new(
     @transform2d.set_xy(entity, pos)
   })
 
-  // Use data from nx_mob
-  let info = nx_mob.info
+  // Use data from mx_mob
+  let info = mx_mob.info
   let level = info.level
   let watk = info.pa_damage
   let wdef = info.pd_damage
@@ -268,25 +402,16 @@ pub fn Mob::new(
   let touch_damage = info.body_attack
   let is_boss = info.boss
   let no_flip = info.no_flip
-  let can_jump = nx_mob.meta.can_jump
-  let can_fly = nx_mob.meta.can_fly
-  let can_move = nx_mob.meta.can_move
+  let can_jump = runtime.animations.get(StanceType::JUMP) is Some(_)
+  let can_fly = mx_mob.stance_nodes.get("fly") is Some(_)
+  let can_move = runtime.animations.get(StanceType::MOVE) is Some(_) || can_fly
   let _name = mob_names[monster_id.to_string()]
 
   //TODO: sound
 
-  // Skills are already parsed in nx_mob.skills
-  let skill_stands = Map::new()
-  for skill_id, entry in nx_mob.skills {
-    skill_stands.set(skill_id, entry.animation)
-  }
-
-  // Attacks are already parsed in nx_mob.attacks
-  let attack_stands : Map[Int, MobAnimation] = Map::new()
-  for id, entry in nx_mob.attacks {
-    attack_stands.set(id, entry.animation)
-  }
-  let animations = nx_mob.animations
+  let skill_stands = runtime.skill_stands
+  let attack_stands = runtime.attack_stands
+  let animations = runtime.animations
 
   // init or risk crash
   match animations.get(StanceType::STAND) {
@@ -302,6 +427,7 @@ pub fn Mob::new(
   }
   let id = monster_id
   phobj.set_position(position.to_vec2d())
+  @transform2d.set_xy(entity, position.to_vec2d())
   let control = mode > 0
   let aggro = mode == 2
   phobj.set_fhid(fh)
@@ -331,6 +457,7 @@ pub fn Mob::new(
     attacks: Map::new(),
     skill_stands,
     attack_stands,
+    effect_animations: runtime.effect_animations,
     buffs: [],
     level,
     speed,
@@ -362,7 +489,7 @@ pub fn Mob::new(
     fading: false,
     fade_in: newspawn,
     opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
-    src: nx_mob,
+    src: mx_mob,
   }
 }
 
@@ -385,10 +512,11 @@ pub fn Mob::update(self : Mob, physics : @physics.Physics) -> Int {
   match self.animations.get(self.stance.t) {
     Some(anim) => {
       self.anim_time += @logic_fps.STEP_TIME_MS.to_double()
-      // Estimate duration from frames
-      let total_delay = anim.nx.frames
-        .iter()
-        .fold(init=0, fn(acc, f) { acc + f.delay.unwrap_or(100) })
+      let total_delay = if anim.meta.total_duration_ms <= 0 {
+        1
+      } else {
+        anim.meta.total_duration_ms
+      }
       if self.anim_time >= total_delay.to_double() {
         if self.stance.t == StanceType::DIE {
           aniend = true // Die animation ends
@@ -588,8 +716,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      // Use frame 0 bounds as hitbox approximation (Selene handles animation playback)
-      let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
+      let raw_bounds = anim.meta.first_bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
       let bounds = if self.stance.face_right && !self.no_flip {
@@ -610,7 +737,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let raw_bounds = anim.nx.frames[0].bounds.unwrap_or(
+      let raw_bounds = anim.meta.first_bounds.unwrap_or(
         @struct.Rectangle::default(),
       )
       let bounds = if self.stance.face_right && !self.no_flip {
@@ -714,7 +841,7 @@ pub fn Mob::get_head_position(
   position? : @struct.Point[Int],
 ) -> @struct.Point[Int] {
   let head = match self.animations.get(self.stance.t) {
-    Some(anim) => anim.nx.frames[0].head.unwrap_or(@struct.Point::default())
+    Some(anim) => anim.meta.first_head.unwrap_or(@struct.Point::default())
     None => @struct.Point::default()
   }
   position
@@ -763,16 +890,13 @@ pub fn Mob::get_move_skill(
 }
 
 ///|
-pub fn Mob::get_move_attack(
-  self : Mob,
-  move_id : Int,
-) -> MobSpecialAttack raise {
+pub fn Mob::get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack {
   match self.attacks.get(move_id) {
     Some(ma) => ma
     None =>
-      match self.src.attacks.get(move_id) {
+      match self.src.attack_nodes.get(move_id) {
         Some(entry) => {
-          let new_attack = MobSpecialAttack::new(entry.info, self.id, move_id)
+          let new_attack = MobSpecialAttack::new(entry)
           self.attacks.set(move_id, new_attack)
           new_attack
         }
@@ -799,26 +923,22 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 }
 
 ///|
-pub fn MobSpecialAttack::new(
-  info : NxMobAttackInfo,
-  _mob_id : Int,
-  move_id : Int,
-) -> MobSpecialAttack raise {
-  let effects_arr = info.effects.map(fn(e) {
-    Effect::{ animation: e.animation.nx, z: e.z }
+pub fn MobSpecialAttack::new(node : MxMobAttackNode) -> MobSpecialAttack {
+  let effects_arr = node.effects.map(fn(e) {
+    Effect::{ path_key: e.path_key, z: e.z }
   })
   let has_multi = effects_arr.length() > 1 ||
-    info.effects.iter().find_first(fn(e) { e.is_area_warning }) is Some(_)
+    node.effects.iter().find_first(fn(e) { e.is_area_warning }) is Some(_)
   let use_effect : &MobSkillUseEffect = if has_multi {
     { effects: effects_arr } as &MobSkillUseEffect
   } else if effects_arr.length() == 1 {
     { effect: effects_arr[0] } as &MobSkillUseEffect
   } else {
     // Should not happen for valid attacks, but construct a dummy
-    let dummy = Effect::{ animation: @json.from_json(Json::null()), z: 0 }
+    let dummy = Effect::{ path_key: "", z: 0 }
     { effect: dummy } as &MobSkillUseEffect
   }
-  { move_id, use_effect }
+  { move_id: node.id, use_effect }
   // hit_effect_ = std::make_unique<MobSingleHitEffect>(src["level"][4]);
 
   // hit_effect_ =
@@ -831,7 +951,7 @@ pub fn MobSpecialAttack::new(
 ///|
 pub fn Mob::show_effect(
   self : Mob,
-  animation : @resource.NxAnimation,
+  effect : @graphics.EffectAnimation,
   pos : Int,
   z : Int,
   flip : Bool,
@@ -839,18 +959,50 @@ pub fn Mob::show_effect(
   if !self.entity.is_alive() {
     return
   }
-  // TODO: add shift
-  ignore(pos)
-  // let shift = match pos {
-  //   0 => self.get_head_position(position=@struct.Point::default())
-  //   _ => @struct.Point::default()
-  // }
+  let shift = match pos {
+    0 => self.get_head_position(position=@struct.Point::default())
+    _ => @struct.Point::default()
+  }
   @graphics.add_effect(
     self.entity,
-    animation,
+    effect,
+    z=@graphics.EFFECT_ZINDEX + z,
+    flip~,
+    offset=@selene_math.Vec2(shift.x.to_double(), shift.y.to_double()),
+  )
+}
+
+///|
+pub fn Mob::show_effect_path(
+  self : Mob,
+  path_key : String,
+  z : Int,
+  flip : Bool,
+) -> Unit {
+  if !self.entity.is_alive() || path_key == "" {
+    return
+  }
+  let animation = match self.resolve_effect_animation(path_key) {
+    Some(animation) => animation
+    None => abort("missing effect animation for path_key=\{path_key}")
+  }
+  @graphics.add_effect(
+    self.entity,
+    {
+      animation: animation.selene,
+      duration_ms: animation.meta.total_duration_ms,
+    },
     z=@graphics.EFFECT_ZINDEX + z,
     flip~,
   )
+}
+
+///|
+fn Mob::resolve_effect_animation(
+  self : Mob,
+  path_key : String,
+) -> MobAnimation? {
+  self.effect_animations.get(path_key)
 }
 
 ///|

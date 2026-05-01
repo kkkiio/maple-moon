@@ -32,6 +32,8 @@ pub fn register_text_loader(String, TextLoader) -> Unit
 
 pub fn require_async_loader(String) -> AsyncLoader
 
+pub fn resolve_json_resource_path(String, String) -> (String, Array[String])
+
 pub fn resolve_ref(String, String) -> String
 
 pub fn resolve_ref_from_dir(String, String) -> String

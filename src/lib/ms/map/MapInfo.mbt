@@ -216,7 +216,7 @@ pub fn MapInfo::from_resource(
   {
     field_limit: json_get_int(info_obj, "fieldLimit"),
     cloud: json_get_bool(info_obj, "cloud"),
-    bgm: bgm.to_string(),
+    bgm: bgm.to_owned(),
     map_desc: json_get_string(info_obj, "mapDesc"),
     map_name: json_get_string(info_obj, "mapName"),
     street_name: json_get_string(info_obj, "streetName"),
@@ -272,7 +272,7 @@ fn normalize_bgm_path(bgmpath : String) -> String {
     Some(split) =>
       (bgmpath.view(start_offset=0, end_offset=split) +
       ".img/" +
-      bgmpath.view(start_offset=split + 1)).to_string()
+      bgmpath.view(start_offset=split + 1)).to_owned()
     None => bgmpath
   }
 }

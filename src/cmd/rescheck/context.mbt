@@ -27,7 +27,7 @@ struct Checker {
 fn normalize_path(path : String) -> String {
   let s = path.replace_all(old="\\", new="/")
   if s.has_prefix("./") {
-    return s[2:s.length()].to_string()
+    return s[2:s.length()].to_owned()
   }
   s
 }
@@ -53,7 +53,7 @@ fn path_relative(abs_path : String, root : String) -> String {
   let a = normalize_path(abs_path)
   let r = normalize_path(root)
   if a.has_prefix(r + "/") {
-    return a[r.length() + 1:a.length()].to_string()
+    return a[r.length() + 1:a.length()].to_owned()
   }
   a
 }

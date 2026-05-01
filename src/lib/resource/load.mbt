@@ -90,7 +90,7 @@ pub impl AsyncResourceLoader for CompositeAsyncResourceLoader with load_data(
   } nobreak {
     fail("path not found: \{path}")
   }
-  loader.load_data(path.to_string())
+  loader.load_data(path)
 }
 
 ///|
@@ -113,9 +113,9 @@ pub impl AsyncResourceLoader for DirResourceLoader with load_data(self, path) ->
   } else {
     (path, "")
   }
-  let path = join_dir(self.rootPath, child.to_string() + ".json")
+  let path = join_dir(self.rootPath, child.to_owned() + ".json")
   let root_value : Json = fetch_json(path)
-  get_by_path(root_value, rest.to_string())
+  get_by_path(root_value, rest.to_owned())
 }
 
 ///|
@@ -190,7 +190,7 @@ fn get_by_path(obj : Json, path : String) -> Json {
     guard acc is Object(obj) else {
       null // TODO: throw error
     }
-    guard obj.get(part.to_string()) is Some(value) else {
+    guard obj.get(part.to_owned()) is Some(value) else {
       null // TODO: throw error
     }
     value

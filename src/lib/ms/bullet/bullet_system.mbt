@@ -1,6 +1,6 @@
 ///|
 priv struct BulletSpawn {
-  animation : @resource.NxAnimation
+  animation : @ms_animation.Animation
   origin : @struct.Point[Int]
   toleft : Bool
   target : @struct.Point[Int]
@@ -41,7 +41,7 @@ pub fn BulletSystem::new() -> BulletSystem {
 pub fn BulletSystem::spawn(
   self : BulletSystem,
   delay : Int64,
-  animation : @resource.NxAnimation,
+  animation : @ms_animation.Animation,
   origin : @struct.Point[Int],
   toleft : Bool,
   target : @struct.Point[Int],
@@ -117,7 +117,7 @@ pub fn set_current_bullet_system(system : BulletSystem?) -> Unit {
 /// Panics if the runtime has not been initialized.
 pub fn spawn_bullet(
   delay : Int64,
-  animation : @resource.NxAnimation,
+  animation : @ms_animation.Animation,
   origin : @struct.Point[Int],
   toleft : Bool,
   target : @struct.Point[Int],

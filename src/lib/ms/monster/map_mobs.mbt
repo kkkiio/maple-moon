@@ -354,6 +354,15 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
         transform~,
       )
       @sprite.sprites().set(entity, sprite)
+      let pos = mob.get_position()
+      @transform.transforms().set(
+        entity,
+        @transform.Transform::from_xyz(
+          pos.x.to_double(),
+          pos.y.to_double(),
+          z.to_double(),
+        ),
+      )
       mob.last_synced_stance = Some(mob.stance)
     } else {
       // Only update Z
@@ -370,9 +379,14 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
           ),
         })
       } else {
+        let pos = mob.get_position()
         @transform.transforms().set(
           entity,
-          @transform.Transform::from_xyz(0.0, 0.0, z.to_double()),
+          @transform.Transform::from_xyz(
+            pos.x.to_double(),
+            pos.y.to_double(),
+            z.to_double(),
+          ),
         )
       }
     }

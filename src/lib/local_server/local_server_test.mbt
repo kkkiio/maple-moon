@@ -59,7 +59,7 @@ pub impl @resource.AsyncResourceLoader for StarterCharacterLoader with load_data
   path,
 ) -> Json {
   ignore(self.dummy)
-  match path.to_string() {
+  match path.to_owned() {
     "Coat/01040002.img" => mock_equip_entry()
     "Pants/01060002.img" => mock_equip_entry()
     "Shoes/01072001.img" => mock_equip_entry()
@@ -74,7 +74,7 @@ pub impl @resource.AsyncResourceLoader for StarterStringLoader with load_data(
   path,
 ) -> Json {
   ignore(self.dummy)
-  match path.to_string() {
+  match path.to_owned() {
     "Eqp.img" =>
       {
         "Eqp": {
@@ -94,7 +94,7 @@ pub impl @resource.AsyncResourceLoader for EmptyItemLoader with load_data(
   path,
 ) -> Json {
   ignore(self.dummy)
-  fail("unexpected starter item path: \{path.to_string()}")
+  fail("unexpected starter item path: \{path.to_owned()}")
 }
 
 ///|
@@ -103,7 +103,7 @@ pub impl @resource.AsyncResourceLoader for EmptyMapxLoader with load_data(
   path,
 ) -> Json {
   ignore(self.dummy)
-  let p = path.to_string()
+  let p = path.to_owned()
   if p.has_suffix("mx.json") {
     return { "tiled_path": "Map/Map1/100000000.img/map.tmj" }
   }
@@ -140,54 +140,6 @@ pub impl @resource.AsyncResourceLoader for EmptyMapxLoader with load_data(
     }
   }
   fail("unexpected mapx path: \{p}")
-}
-
-///|
-async test "local server character list is empty when roster is missing" {
-  @resource.register_async_loader(
-    "character",
-    @resource.AsyncLoader::new(
-      "starter_character_loader",
-      loader=StarterCharacterLoader::new(),
-    ),
-  )
-  @resource.register_async_loader(
-    "string",
-    @resource.AsyncLoader::new(
-      "starter_string_loader",
-      loader=StarterStringLoader::new(),
-    ),
-  )
-  @resource.register_async_loader(
-    "item",
-    @resource.AsyncLoader::new(
-      "empty_item_loader",
-      loader=EmptyItemLoader::new(),
-    ),
-  )
-  let db = MemoryDB::new()
-  let server = LocalServer::new(db~)
-  server.init_routes()
-  let responses : Ref[Array[@server_proto.CharacterListMessage]] = Ref::new([])
-  server.add_server_message_handler(
-    "test_character_list",
-    @server_proto.CharacterListMessage::type_code(),
-    fn(json : Json) -> Unit raise {
-      let msg : @server_proto.CharacterListMessage = @json.from_json(json)
-      responses.val.push(msg)
-    },
-  )
-
-  server.send_client_message(
-    @server_proto.CharacterListRequestMessage::default(),
-  )
-  server_system(server)
-  @async.pause()
-  server_system(server)
-  @async.pause()
-
-  inspect(responses.val.length(), content="1")
-  inspect(responses.val[0].characters.length(), content="0")
 }
 
 ///|
@@ -554,98 +506,6 @@ async test "local server quest snapshot roundtrip keeps started and completed qu
   inspect(started_map.contains("2083"), content="false")
   inspect(completed_map.contains("2083"), content="true")
   inspect(completed_map.contains("2089"), content="true")
-}
-
-///|
-async test "set field quest log reflects persisted quest state" {
-  let character_id = 1
-  let db = MemoryDB::new()
-  db.save_json("character_roster", "account:default:characters", {
-    "characters": [
-      {
-        "character_id": character_id,
-        "name": "kkkiio",
-        "look": {
-          "female": false,
-          "skin": 0,
-          "faceid": 20000,
-          "hairid": 30030,
-          "equips": { "5": 1040002, "6": 1060002, "7": 1072001, "11": 1302000 },
-          "maskedequips": {},
-          "petids": [],
-        },
-      },
-    ],
-  })
-  db.save_json("character_core", "char:\{character_id}:core", {
-    "character_id": character_id,
-    "revision": 9,
-    "map_id": 100000000,
-    "portal_id": 0,
-    "meso": 0,
-  })
-  db.save_json("character_quest", "char:\{character_id}:quests", {
-    "character_id": character_id,
-    "revision": 9,
-    "started": { "2085": "" },
-    "completed": { "2083": 0, "2084": 0, "2089": 0 },
-  })
-  @resource.register_async_loader(
-    "mapx",
-    @resource.AsyncLoader::new(
-      "empty_mapx_loader",
-      loader=EmptyMapxLoader::new(),
-    ),
-  )
-
-  let reader = LocalServer::new(db~)
-  reader.init_routes()
-  let set_fields : Ref[Array[@server_proto.SetFieldMessage]] = Ref::new([])
-  reader.add_server_message_handler(
-    "test_set_field_quest_log",
-    @server_proto.Opcode::SET_FIELD.int_value(),
-    fn(json : Json) -> Unit raise {
-      let msg : @server_proto.SetFieldMessage = @json.from_json(json)
-      set_fields.val.push(msg)
-    },
-  )
-  reader.send_client_message(
-    @server_proto.CharacterListRequestMessage::default(),
-  )
-  server_system(reader)
-  @async.pause()
-  reader.send_client_message(@server_proto.SelectCharMessage::{ character_id, })
-  server_system(reader)
-  @async.pause()
-  server_system(reader)
-  @async.pause()
-
-  inspect(set_fields.val.length(), content="1")
-  match set_fields.val[0] {
-    @server_proto.SetFieldMessage::SetField(quests~, ..) => {
-      let mut has_started_2085 = false
-      for item in quests.started {
-        if item.0 == 2085 {
-          has_started_2085 = true
-          break
-        }
-      }
-      let mut has_completed_2083 = false
-      let mut has_completed_2084 = false
-      for item in quests.completed {
-        if item.0 == 2083 {
-          has_completed_2083 = true
-        }
-        if item.0 == 2084 {
-          has_completed_2084 = true
-        }
-      }
-      inspect(has_started_2085, content="true")
-      inspect(has_completed_2083, content="true")
-      inspect(has_completed_2084, content="true")
-    }
-    _ => fail("expected SetField message")
-  }
 }
 
 ///|

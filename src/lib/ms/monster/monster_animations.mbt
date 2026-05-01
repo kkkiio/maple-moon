@@ -47,8 +47,7 @@ pub(all) struct MobAnimations {
 ///|
 fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
   let nx : @resource.NxAnimation = @json.from_json(src)
-  let selene = @ms_animation.from_nx_animation(nx)
-  { nx, selene }
+  nx_animation_to_mob_animation(nx, loop_=false)
 }
 
 ///|
@@ -57,7 +56,21 @@ fn nx_animation_to_mob_animation(
   loop_~ : Bool,
 ) -> MobAnimation {
   let selene = @ms_animation.from_nx_animation(nx, loop_~)
-  { nx, selene }
+  let delays = nx.frames.map(fn(frame) { frame.delay.unwrap_or(100) })
+  let single_total = delays.fold(init=0, fn(acc, value) { acc + value })
+  let total_duration_ms = if nx.zigzag {
+    single_total * 2
+  } else {
+    single_total
+  }
+  let first = nx.frames[0]
+  let meta : MobAnimationMeta = {
+    total_duration_ms: @cmp.maximum(1, total_duration_ms),
+    first_head: first.head,
+    first_bounds: first.bounds,
+    loop_,
+  }
+  { meta, selene }
 }
 
 ///|
@@ -190,7 +203,146 @@ test "parse monster" {
   debug_inspect(
     animations,
     content=(
-      #|{fly: None, stand: Some({frames: [{texture: {i: "mob/0100101.img_stand.png", w: 35, h: 34, offset: {x: 0, y: 0}, origin: {x: 16, y: 34}}, delay: None, head: Some({x: -4, y: -34}), bounds: Some({lt: {x: -16, y: -34}, rb: {x: 19, y: 0}})}], blend: false, zigzag: false}), move_: Some({frames: [{texture: {i: "mob/0100101.img_move.png", w: 44, h: 34, offset: {x: 0, y: 0}, origin: {x: 16, y: 34}}, delay: Some(120), head: Some({x: -4, y: -34}), bounds: Some({lt: {x: -16, y: -34}, rb: {x: 19, y: 0}})}, {texture: {i: "mob/0100101.img_move.png", w: 44, h: 34, offset: {x: 44, y: 0}, origin: {x: 16, y: 34}}, delay: Some(120), head: Some({x: -3, y: -34}), bounds: Some({lt: {x: -13, y: -34}, rb: {x: 24, y: 0}})}, {texture: {i: "mob/0100101.img_move.png", w: 44, h: 34, offset: {x: 88, y: 0}, origin: {x: 16, y: 34}}, delay: Some(120), head: Some({x: -2, y: -34}), bounds: Some({lt: {x: -10, y: -34}, rb: {x: 29, y: 0}})}, {texture: {i: "mob/0100101.img_move.png", w: 44, h: 34, offset: {x: 132, y: 0}, origin: {x: 16, y: 34}}, delay: Some(120), head: Some({x: -1, y: -34}), bounds: Some({lt: {x: -7, y: -34}, rb: {x: 34, y: 0}})}], blend: false, zigzag: true}), jump: None, hit1: {frames: [{texture: {i: "mob/0100101.img_hit1.png", w: 41, h: 39, offset: {x: 0, y: 0}, origin: {x: 16, y: 39}}, delay: Some(600), head: Some({x: -3, y: -37}), bounds: Some({lt: {x: -16, y: -39}, rb: {x: 25, y: 0}})}], blend: false, zigzag: false}, die1: {frames: [{texture: {i: "mob/0100101.img_die1.png", w: 56, h: 32, offset: {x: 0, y: 0}, origin: {x: 30, y: 32}}, delay: Some(180), head: Some({x: -4, y: -34}), bounds: None}, {texture: {i: "mob/0100101.img_die1.png", w: 56, h: 32, offset: {x: 56, y: 0}, origin: {x: 30, y: 32}}, delay: Some(180), head: Some({x: -6, y: -22}), bounds: None}, {texture: {i: "mob/0100101.img_die1.png", w: 56, h: 32, offset: {x: 112, y: 0}, origin: {x: 30, y: 32}}, delay: Some(300), head: Some({x: -10, y: -12}), bounds: None}], blend: false, zigzag: false}}
+      #|{
+      #|  fly: None,
+      #|  stand: Some(
+      #|    {
+      #|      frames: [
+      #|        {
+      #|          texture: {
+      #|            i: "mob/0100101.img_stand.png",
+      #|            w: 35,
+      #|            h: 34,
+      #|            offset: { x: 0, y: 0 },
+      #|            origin: { x: 16, y: 34 },
+      #|          },
+      #|          delay: None,
+      #|          head: Some({ x: -4, y: -34 }),
+      #|          bounds: Some({ lt: { x: -16, y: -34 }, rb: { x: 19, y: 0 } }),
+      #|        },
+      #|      ],
+      #|      blend: false,
+      #|      zigzag: false,
+      #|    },
+      #|  ),
+      #|  move_: Some(
+      #|    {
+      #|      frames: [
+      #|        {
+      #|          texture: {
+      #|            i: "mob/0100101.img_move.png",
+      #|            w: 44,
+      #|            h: 34,
+      #|            offset: { x: 0, y: 0 },
+      #|            origin: { x: 16, y: 34 },
+      #|          },
+      #|          delay: Some(120),
+      #|          head: Some({ x: -4, y: -34 }),
+      #|          bounds: Some({ lt: { x: -16, y: -34 }, rb: { x: 19, y: 0 } }),
+      #|        },
+      #|        {
+      #|          texture: {
+      #|            i: "mob/0100101.img_move.png",
+      #|            w: 44,
+      #|            h: 34,
+      #|            offset: { x: 44, y: 0 },
+      #|            origin: { x: 16, y: 34 },
+      #|          },
+      #|          delay: Some(120),
+      #|          head: Some({ x: -3, y: -34 }),
+      #|          bounds: Some({ lt: { x: -13, y: -34 }, rb: { x: 24, y: 0 } }),
+      #|        },
+      #|        {
+      #|          texture: {
+      #|            i: "mob/0100101.img_move.png",
+      #|            w: 44,
+      #|            h: 34,
+      #|            offset: { x: 88, y: 0 },
+      #|            origin: { x: 16, y: 34 },
+      #|          },
+      #|          delay: Some(120),
+      #|          head: Some({ x: -2, y: -34 }),
+      #|          bounds: Some({ lt: { x: -10, y: -34 }, rb: { x: 29, y: 0 } }),
+      #|        },
+      #|        {
+      #|          texture: {
+      #|            i: "mob/0100101.img_move.png",
+      #|            w: 44,
+      #|            h: 34,
+      #|            offset: { x: 132, y: 0 },
+      #|            origin: { x: 16, y: 34 },
+      #|          },
+      #|          delay: Some(120),
+      #|          head: Some({ x: -1, y: -34 }),
+      #|          bounds: Some({ lt: { x: -7, y: -34 }, rb: { x: 34, y: 0 } }),
+      #|        },
+      #|      ],
+      #|      blend: false,
+      #|      zigzag: true,
+      #|    },
+      #|  ),
+      #|  jump: None,
+      #|  hit1: {
+      #|    frames: [
+      #|      {
+      #|        texture: {
+      #|          i: "mob/0100101.img_hit1.png",
+      #|          w: 41,
+      #|          h: 39,
+      #|          offset: { x: 0, y: 0 },
+      #|          origin: { x: 16, y: 39 },
+      #|        },
+      #|        delay: Some(600),
+      #|        head: Some({ x: -3, y: -37 }),
+      #|        bounds: Some({ lt: { x: -16, y: -39 }, rb: { x: 25, y: 0 } }),
+      #|      },
+      #|    ],
+      #|    blend: false,
+      #|    zigzag: false,
+      #|  },
+      #|  die1: {
+      #|    frames: [
+      #|      {
+      #|        texture: {
+      #|          i: "mob/0100101.img_die1.png",
+      #|          w: 56,
+      #|          h: 32,
+      #|          offset: { x: 0, y: 0 },
+      #|          origin: { x: 30, y: 32 },
+      #|        },
+      #|        delay: Some(180),
+      #|        head: Some({ x: -4, y: -34 }),
+      #|        bounds: None,
+      #|      },
+      #|      {
+      #|        texture: {
+      #|          i: "mob/0100101.img_die1.png",
+      #|          w: 56,
+      #|          h: 32,
+      #|          offset: { x: 56, y: 0 },
+      #|          origin: { x: 30, y: 32 },
+      #|        },
+      #|        delay: Some(180),
+      #|        head: Some({ x: -6, y: -22 }),
+      #|        bounds: None,
+      #|      },
+      #|      {
+      #|        texture: {
+      #|          i: "mob/0100101.img_die1.png",
+      #|          w: 56,
+      #|          h: 32,
+      #|          offset: { x: 112, y: 0 },
+      #|          origin: { x: 30, y: 32 },
+      #|        },
+      #|        delay: Some(300),
+      #|        head: Some({ x: -10, y: -12 }),
+      #|        bounds: None,
+      #|      },
+      #|    ],
+      #|    blend: false,
+      #|    zigzag: false,
+      #|  },
+      #|}
     ),
   )
 }

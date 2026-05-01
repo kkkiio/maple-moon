@@ -1,7 +1,7 @@
 ///|
 pub(all) struct BulletData {
   item_data : @item.ItemData
-  bullet : @resource.NxAnimation
+  bullet : @ms_animation.Animation
   watk : Int
 }
 
@@ -11,27 +11,56 @@ pub async fn BulletData::load(strid : String) -> BulletData {
   let prefix = strid[:4]
   let src = @resource.require_async_loader("item").load_resource([
     "Consume",
-    prefix.to_string() + ".img",
+    prefix.to_owned() + ".img",
     strid,
   ])
-  let id = strid.trim_start(chars="0").to_string() |> @string.parse_int
+  let id = strid.trim_start(chars="0") |> @string.parse_int
   let item_data = @item.ItemData::load(
     id,
     @resource.require_async_loader("character"),
     @resource.require_async_loader("item"),
   )
-  BulletData::new(src, item_data)
+  BulletData::new(src, item_data, strid)
 }
 
 ///|
-fn BulletData::new(src : Json, item_data : @item.ItemData) -> BulletData raise {
+fn read_mx_animation_ref(src : Json) -> String raise {
+  match src {
+    { "mx_animation": String(path), .. } => path
+    _ => fail("missing mx_animation in bullet node")
+  }
+}
+
+///|
+async fn load_bullet_native_animation(
+  item_loader : @resource.AsyncLoader,
+  strid : String,
+  bullet_src : Json,
+) -> @ms_animation.Animation {
+  let prefix = strid[:4]
+  let base_path = "/assets/Item/Consume/\{prefix}.img.json"
+  let ref_path = read_mx_animation_ref(bullet_src)
+  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let animation_loader = @resource.AnimationLoader::new(item_loader)
+  let loaded = animation_loader.load(resolved)
+  let clip = loaded.clip("main")
+  @ms_animation.from_selene_clip(clip, loop_=true)
+}
+
+///|
+async fn BulletData::new(
+  src : Json,
+  item_data : @item.ItemData,
+  strid : String,
+) -> BulletData {
   match src {
     { "bullet": bullet_src, "info": info, .. } => {
       let watk = match info {
         { "incPAD": Number(watk, ..), .. } => watk.to_int()
         _ => 0
       }
-      let bullet : @resource.NxAnimation = @json.from_json(bullet_src)
+      let item_loader = @resource.require_async_loader("item")
+      let bullet = load_bullet_native_animation(item_loader, strid, bullet_src)
       { item_data, bullet, watk }
     }
     _ => fail("Invalid bullet data")

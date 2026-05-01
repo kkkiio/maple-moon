@@ -129,7 +129,20 @@ test "parse quest info" {
   debug_inspect(
     quest_info,
     content=(
-      #|{name: "Obtain the Special Agent Badge!", parent: Some("Today's Mission! "), area: 50, order: Some(1), auto_complete: true, auto_start: false, one_shot: false, descriptions: ["", "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.", "Today's mission has been completed."]}
+      #|{
+      #|  name: "Obtain the Special Agent Badge!",
+      #|  parent: Some("Today's Mission! "),
+      #|  area: 50,
+      #|  order: Some(1),
+      #|  auto_complete: true,
+      #|  auto_start: false,
+      #|  one_shot: false,
+      #|  descriptions: [
+      #|    "",
+      #|    "Today's Mission!! \\r\\n<Hunt in the mini dungeon and obtain #b1 Special Agent Badge#k!>\\r\\nToday's mission is obtaining a #bSpecial Agent Badge#k.  According to rumors, the Special Agent Badge can be found in the mini dungeon...\\nI should go see Agent O whom Gaga introduced me to.  If I haven't been introduced to #bAgent O#k yet, I should first go see #bAgent Gaga#k.",
+      #|    "Today's mission has been completed.",
+      #|  ],
+      #|}
     ),
   )
 }
@@ -152,7 +165,20 @@ test "parse quest 10200" {
   debug_inspect(
     quest_info,
     content=(
-      #|{name: "Richie Gold is Here", parent: None, area: 50, order: None, auto_complete: true, auto_start: true, one_shot: true, descriptions: ["A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.", "Let's try to make a deal with #b#p2084001##k.", "I engaged in a transaction with #b#p2084001##k."]}
+      #|{
+      #|  name: "Richie Gold is Here",
+      #|  parent: None,
+      #|  area: 50,
+      #|  order: None,
+      #|  auto_complete: true,
+      #|  auto_start: true,
+      #|  one_shot: true,
+      #|  descriptions: [
+      #|    "A new, potentially powerful individual is creating a lot of buzz in the world of Maple. Let's click on the light bulb that's flashing on top of the individual's head.",
+      #|    "Let's try to make a deal with #b#p2084001##k.",
+      #|    "I engaged in a transaction with #b#p2084001##k.",
+      #|  ],
+      #|}
     ),
   )
 }
@@ -174,7 +200,20 @@ test "parse quest info number desc" {
   debug_inspect(
     quest_info,
     content=(
-      #|{name: "Finding Sophia", parent: Some("Maya and the Weird Medicine"), area: 30, order: Some(2), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["2", "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.", "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k."]}
+      #|{
+      #|  name: "Finding Sophia",
+      #|  parent: Some("Maya and the Weird Medicine"),
+      #|  area: 30,
+      #|  order: Some(2),
+      #|  auto_complete: false,
+      #|  auto_start: false,
+      #|  one_shot: false,
+      #|  descriptions: [
+      #|    "2",
+      #|    "Around \"The Victoria\" in Lith Harbor, I met this heavily-bearded crewmember called Teo. He said he has the #bWeird Medicine#k but he wasn't willing to give it up for free. Instead he said he'll trade with me for a #bsparkling rock#k. I mean, he does look like he knows Maya pretty well, but he still wants to make a deal with me, knowing how sick she is ...?? That's strange... anyway, to get that #bsparkling rock#k, I need to head over to Perion and talk to the #rSophia#k, the daughter of the owner of the department store there.",
+      #|    "I finally met Sophia, who's working at the department store in Perion. To make the sparkling rock, she said she needs #bArcon's blood#k.",
+      #|  ],
+      #|}
     ),
   )
 }
@@ -205,7 +244,20 @@ test "parse number index not desc" {
   debug_inspect(
     quest_info,
     content=(
-      #|{name: "New Year's Wishes 1", parent: Some("New Year : New Year's Wishes"), area: 30, order: Some(1), auto_complete: false, auto_start: false, one_shot: false, descriptions: ["Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!", "The Maple Administrator opened my present for me! Sweet!"]}
+      #|{
+      #|  name: "New Year's Wishes 1",
+      #|  parent: Some("New Year : New Year's Wishes"),
+      #|  area: 30,
+      #|  order: Some(1),
+      #|  auto_complete: false,
+      #|  auto_start: false,
+      #|  one_shot: false,
+      #|  descriptions: [
+      #|    "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!",
+      #|    "Can't believe its New Year's already! Looks like the Maple Administrator has something for me!",
+      #|    "The Maple Administrator opened my present for me! Sweet!",
+      #|  ],
+      #|}
     ),
   )
 }
@@ -406,7 +458,26 @@ test "parse quest check 10015" {
   debug_inspect(
     quest_check,
     content=(
-      #|MapBasedArray([{npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: ["dayByDay", "end", "start"]}, {npc: Some(9000036), info_number: Some(10024), repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
+      #|MapBasedArray(
+      #|  [
+      #|    {
+      #|      npc: Some(9000036),
+      #|      info_number: Some(10024),
+      #|      repeatable: false,
+      #|      monster_hunts: [],
+      #|      checks: [{ info_ex: [{ value: "ing" }] }, { min_level: 10 }, { npc: 9000036 }],
+      #|      unknown_checks: ["dayByDay", "end", "start"],
+      #|    },
+      #|    {
+      #|      npc: Some(9000036),
+      #|      info_number: Some(10024),
+      #|      repeatable: false,
+      #|      monster_hunts: [],
+      #|      checks: [{ info_ex: [{ value: "clear" }] }, { npc: 9000036 }],
+      #|      unknown_checks: [],
+      #|    },
+      #|  ],
+      #|)
     ),
   )
 }
@@ -440,7 +511,38 @@ test "parse quest check 10054" {
   debug_inspect(
     quest_check.0,
     content=(
-      #|[{npc: Some(9010000), info_number: Some(10057), repeatable: true, monster_hunts: [], checks: [], unknown_checks: ["end", "start"]}, {npc: Some(1061013), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
+      #|[
+      #|  {
+      #|    npc: Some(9010000),
+      #|    info_number: Some(10057),
+      #|    repeatable: true,
+      #|    monster_hunts: [],
+      #|    checks: [
+      #|      {
+      #|        info_ex: [
+      #|          { value: "000" },
+      #|          { value: "100" },
+      #|          { value: "001" },
+      #|          { value: "101" },
+      #|        ],
+      #|      },
+      #|      { interval_minutes: 0 },
+      #|      { items: [{ id: 4001204, count: 0 }] },
+      #|      { min_level: 50 },
+      #|      { npc: 9010000 },
+      #|      { quest_status_map: { 10052: InProgress } },
+      #|    ],
+      #|    unknown_checks: ["end", "start"],
+      #|  },
+      #|  {
+      #|    npc: Some(1061013),
+      #|    info_number: None,
+      #|    repeatable: false,
+      #|    monster_hunts: [],
+      #|    checks: [{ items: [{ id: 2012000, count: 1 }] }, { npc: 1061013 }],
+      #|    unknown_checks: [],
+      #|  },
+      #|]
     ),
   )
 }
@@ -464,7 +566,24 @@ test "parse item check" {
   debug_inspect(
     quest_check.0,
     content=(
-      #|[{npc: Some(10000), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: None, info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}]
+      #|[
+      #|  {
+      #|    npc: Some(10000),
+      #|    info_number: None,
+      #|    repeatable: false,
+      #|    monster_hunts: [],
+      #|    checks: [{ jobs: [BEGINNER] }, { npc: 10000 }],
+      #|    unknown_checks: [],
+      #|  },
+      #|  {
+      #|    npc: None,
+      #|    info_number: None,
+      #|    repeatable: false,
+      #|    monster_hunts: [],
+      #|    checks: [{ items: [{ id: 4031162, count: 1 }, { id: 4031161, count: 1 }] }],
+      #|    unknown_checks: [],
+      #|  },
+      #|]
     ),
   )
 }
@@ -487,7 +606,30 @@ test "parse quests status check" {
   debug_inspect(
     quest_check,
     content=(
-      #|MapBasedArray([{npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}, {npc: Some(1022002), info_number: None, repeatable: false, monster_hunts: [], checks: [], unknown_checks: []}])
+      #|MapBasedArray(
+      #|  [
+      #|    {
+      #|      npc: Some(1022002),
+      #|      info_number: None,
+      #|      repeatable: false,
+      #|      monster_hunts: [],
+      #|      checks: [
+      #|        { min_level: 15 },
+      #|        { npc: 1022002 },
+      #|        { quest_status_map: { 2004: Completed } },
+      #|      ],
+      #|      unknown_checks: [],
+      #|    },
+      #|    {
+      #|      npc: Some(1022002),
+      #|      info_number: None,
+      #|      repeatable: false,
+      #|      monster_hunts: [],
+      #|      checks: [{ items: [{ id: 4000008, count: 40 }] }, { npc: 1022002 }],
+      #|      unknown_checks: [],
+      #|    },
+      #|  ],
+      #|)
     ),
   )
 }

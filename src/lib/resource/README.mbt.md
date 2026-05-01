@@ -9,7 +9,9 @@
 - 图片资源统一通过 `AsyncLoader::load_image` 加载。
 - 路径解析统一由 package 内部 resolver 处理：允许绝对路径(`/...`)，禁止 `http(s)` 路径。
 - `resolve_ref(base_path, ref_path)` 可把声明文件中的相对引用一次性归一为 canonical 绝对路径（`/assets/...`）。
-- Aseprite NPC 动画通过 `AnimationLoader` 在本包内做编译结果缓存（key 为规范化后的 `animations_path`），避免重复构图与注册资产。
+- `resolve_json_resource_path(source, path)` 只解析 JSON 资源读取目标，返回 JSON 文件路径和文件内节点路径，不负责读取或解析 JSON。
+- Aseprite/NX 导出动画通过 `AnimationLoader` 在本包内做编译结果缓存（key 为规范化后的 `animations_path`），避免重复构图与注册资产。
+- packed spritesheet 以 `meta.size` 表示整张 atlas 尺寸，单帧 `frame` 表示 atlas rect，`sourceSize` 表示该 clip 的逻辑帧尺寸；不同 `frameTags` 可以有不同逻辑尺寸。
 
 ## 接入示例
 
@@ -32,7 +34,20 @@ ignore(image)
 ignore(anim_path)
 ```
 
-## NPC Aseprite 动画
+## JSON 资源路径
+
+```moonbit nocheck
+///|
+test "resolve item json file and node path" {
+  let (file_path, node_path) = @resource.resolve_json_resource_path(
+    "item", "Consume/0206.img/02060000",
+  )
+  inspect(file_path, content="/assets/Item/Consume/0206.img.json")
+  inspect(node_path, content="[\"02060000\"]")
+}
+```
+
+## Aseprite 动画
 
 ```moonbit nocheck
 let npc_loader = @resource.require_async_loader("npc")

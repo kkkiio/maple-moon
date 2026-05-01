@@ -914,10 +914,10 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
           continue
         }
         let normalized = if trim_newline &&
-          (text.to_string() == "\r\n" || text.to_string() == "\n") {
+          (text.to_owned() == "\r\n" || text.to_owned() == "\n") {
           ""
         } else {
-          text.to_string()
+          text.to_owned()
         }
         trim_newline = false
         append_runs_to_lines(
@@ -939,7 +939,7 @@ fn convert_npc_text(raw_text : String) -> NPCTalkContent raise {
             ),
           })
         }
-        opening_selection = Some((@string.parse_int(payload.to_string()), []))
+        opening_selection = Some((@string.parse_int(payload.to_owned()), []))
       }
       Tag('l', _) => {
         guard opening_selection is Some((index, selection_nodes)) else {
@@ -1028,9 +1028,9 @@ fn build_runs_from_nodes(
   for i, node in nodes {
     match node {
       Text(text) => {
-        let mut raw = text.to_string()
+        let mut raw = text.to_owned()
         if trim_end_newline && i == nodes.length() - 1 {
-          raw = raw.trim_end(chars="\n").to_string()
+          raw = raw.trim_end(chars="\n").to_owned()
         }
         append_runs_to_lines(lines, text_runs_for_text(raw, current_style))
       }
@@ -1090,7 +1090,7 @@ fn append_runs_to_lines(
     for i, part in parts {
       if !part.is_empty() {
         let line = lines[lines.length() - 1]
-        line.push({ ..run, text: part.to_string() })
+        line.push({ ..run, text: part.to_owned() })
       }
       if i + 1 < parts.length() {
         lines.push([])

@@ -92,21 +92,21 @@ pub fn MobSkill::get_buff(self : MobSkill) -> MobBuff {
 
 ///|
 struct Effect {
-  animation : @resource.NxAnimation
+  path_key : String
   z : Int
 }
 
 ///|
-pub fn Effect::new(src : Json) -> Effect raise {
-  { animation: @json.from_json(src), z: json_int(get_path(src, ["z"])) }
+pub fn Effect::new(src : Json) -> Effect {
+  { path_key: "", z: json_int(get_path(src, ["z"])) }
 }
 
 ///|
 pub fn Effect::apply(
   self : Effect,
-  func_show_effect : (@resource.NxAnimation, Int, Int, Bool) -> Unit,
+  func_show_effect : (String, Int, Int, Bool) -> Unit,
 ) -> Unit {
-  func_show_effect(self.animation, 1, self.z, false)
+  func_show_effect(self.path_key, 1, self.z, false)
   // mob.show_effect(animation_, 0, z_, true);
 }
 
@@ -143,7 +143,7 @@ pub(all) struct MobSingleUseEffect {
 }
 
 ///|
-pub fn MobSingleUseEffect::new(src : Json) -> MobSingleUseEffect raise {
+pub fn MobSingleUseEffect::new(src : Json) -> MobSingleUseEffect {
   { effect: Effect::new(src) }
 }
 
@@ -152,8 +152,9 @@ pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
   self : MobSingleUseEffect,
   mob : Mob,
 ) -> Unit {
-  self.effect.apply(fn(a : @resource.NxAnimation, b : Int, c : Int, d : Bool) {
-    mob.show_effect(a, b, c, d)
+  self.effect.apply(fn(a : String, b : Int, c : Int, d : Bool) {
+    ignore(b)
+    mob.show_effect_path(a, c, d)
   })
 }
 
@@ -166,7 +167,7 @@ pub(all) struct MobMultiUseEffect {
 pub fn MobMultiUseEffect::new(
   src : Json,
   area_warning : Bool,
-) -> MobMultiUseEffect raise {
+) -> MobMultiUseEffect {
   let effects = Array::new()
   if area_warning {
     let area_warning_json = get_path(src, ["areaWarning"])
@@ -193,10 +194,11 @@ pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
   self : MobMultiUseEffect,
   mob : Mob,
 ) -> Unit {
-  fn func(a : @resource.NxAnimation, b : Int, c : Int, d : Bool) {
+  fn func(a : String, b : Int, c : Int, d : Bool) {
     // TODO: show effect
     // ...
-    mob.show_effect(a, b, c, d)
+    ignore(b)
+    mob.show_effect_path(a, c, d)
   }
 
   for effect in self.effects {

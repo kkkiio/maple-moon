@@ -61,7 +61,9 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 ### 只写黑盒测试
 
-`*_test.mbt` 文件是黑盒测试. 不允许写 `_for_test` 的 public symbol.
+`*_test.mbt` 文件是黑盒测试. 不写 helper 函数.
+
+不允许写 `_for_test` 的 public symbol.
 
 ### Effectless new
 
@@ -79,6 +81,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 - `src/lib/local_server/`: 本地服务器实现.
 - `src/lib/ms/server_proto/`: 客户端与(本地)服务器通信的协议定义.
 - `src/lib/console/`: 游戏调试控制台, agent 调试时使用.
+- `src/test/local_loader/`: 本地测试资源加载器. 路径处理跟正式资源完全一致, 只是加载方式变成从本地文件读取.
 
 ### Agents Core Runtime Guidelines
 

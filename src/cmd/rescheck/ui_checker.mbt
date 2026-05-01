@@ -140,12 +140,12 @@ fn check_texture_value(
 
 ///|
 fn resolve_ui_image_path(raw_path : String) -> String {
-  let p = normalize_path(raw_path).trim_start(chars="/").to_string()
+  let p = normalize_path(raw_path).trim_start(chars="/").to_owned()
   let parts = p.split("/").to_array()
   if parts.length() > 1 && parts[0] == "assets" {
     let out : Array[String] = []
     for i = 1; i < parts.length(); i = i + 1 {
-      out.push(parts[i].to_string())
+      out.push(parts[i].to_owned())
     }
     out.join("/")
   } else {

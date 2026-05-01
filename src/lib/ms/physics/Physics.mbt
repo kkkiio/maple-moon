@@ -105,15 +105,15 @@ pub fn Physics::move_object(self : Physics, tomove : PhysicsObject) -> Unit {
   // Use the appropriate physics for the terrain the object is on
   match tomove.t {
     PhysicsObjectType::NORMAL => {
-      self.move_normal(tomove)
+      move_normal(tomove)
       self.fh_tree.limit_movement(tomove)
     }
     PhysicsObjectType::FLYING => {
-      self.move_flying(tomove)
+      move_flying(tomove)
       self.fh_tree.limit_movement(tomove)
     }
     PhysicsObjectType::SWIMMING => {
-      self.move_swimming(tomove)
+      move_swimming(tomove)
       self.fh_tree.limit_movement(tomove)
     }
     _ => ()
@@ -124,7 +124,7 @@ pub fn Physics::move_object(self : Physics, tomove : PhysicsObject) -> Unit {
 }
 
 ///|
-fn Physics::move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
+fn move_normal(phobj : PhysicsObject) -> Unit {
   phobj.vacc = 0.0
   phobj.hacc = 0.0
   if phobj.on_ground {
@@ -155,7 +155,7 @@ fn Physics::move_normal(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-fn Physics::move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
+fn move_flying(phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
   phobj.hforce = 0.0
@@ -177,7 +177,7 @@ fn Physics::move_flying(self : Physics, phobj : PhysicsObject) -> Unit {
 }
 
 ///|
-fn Physics::move_swimming(self : Physics, phobj : PhysicsObject) -> Unit {
+fn move_swimming(phobj : PhysicsObject) -> Unit {
   phobj.hacc = phobj.hforce
   phobj.vacc = phobj.vforce
   phobj.hforce = 0.0

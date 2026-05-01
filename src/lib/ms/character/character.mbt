@@ -62,7 +62,7 @@ pub fn CharState::stance_value(self : CharState, facing_right~ : Bool) -> Int {
 pub(all) struct Character {
   entity : @entity.Entity
   base : MapObjectBase
-  mut look : @char_look.CharLook
+  mut look : @cp.CharLook
   stats : @char_stats.CharStats
   // look_preview: CharLook
   // pets: Array[PetLook, 3]

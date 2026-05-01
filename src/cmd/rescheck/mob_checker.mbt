@@ -163,9 +163,9 @@ fn collect_i_refs_rec(json : Json, out : Array[String]) -> Unit {
 
 ///|
 fn resolve_asset_ref_path(raw : String) -> String {
-  let path = normalize_path(raw).trim_start(chars="/").to_string()
+  let path = normalize_path(raw).trim_start(chars="/").to_owned()
   if path.has_prefix("assets/") {
-    path[7:path.length()].to_string()
+    path[7:path.length()].to_owned()
   } else {
     path
   }

@@ -50,8 +50,8 @@ pub(all) suberror UnknownWeaponType {
 } derive(Debug)
 
 ///|
-pub fn Type::by_value(value : Int) -> Type raise UnknownWeaponType {
-  match value {
+pub fn Type::from_value(value : Int) -> Type? {
+  let t = match value {
     0 => NONE
     130 => SWORD_1H
     131 => AXE_1H
@@ -70,6 +70,7 @@ pub fn Type::by_value(value : Int) -> Type raise UnknownWeaponType {
     148 => KNUCKLE
     149 => GUN
     170 => CASH
-    _ => raise UnknownWeaponType(value)
+    _ => return None
   }
+  Some(t)
 }

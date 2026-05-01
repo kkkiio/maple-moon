@@ -19,17 +19,13 @@ pub fn get_skill_max_level(Int) -> Int
 
 pub fn is_skill_cached(Int) -> Bool
 
-pub async fn load_skill(Int) -> SkillData raise SkillLoadError
+pub async fn load_skill(Int) -> SkillData
 
-pub async fn preload_skills(Array[Int]) -> Unit raise SkillLoadError
+pub async fn preload_skills(Array[Int]) -> Unit
 
 pub fn skill_cache_stats() -> (Int, Int)
 
 // Errors
-pub(all) suberror SkillLoadError {
-  NOT_FOUND(Int)
-  INVALID_DATA(String)
-} derive(@debug.Debug)
 
 // Types and methods
 pub(all) struct SkillData {

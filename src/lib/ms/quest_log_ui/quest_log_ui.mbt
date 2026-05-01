@@ -567,11 +567,10 @@ fn current_player_name() -> String {
 
 ///|
 fn replace_pair_tag_runtime(tag : Char, payload : StringView) -> String? {
-  let raw = payload.to_string()
   match tag {
     't' => Some(@markup_text.resolve_item_name(payload)) catch { _ => None }
     'c' => {
-      let item_id = @string.parse_int(raw) catch { _ => -1 }
+      let item_id = @string.parse_int(payload) catch { _ => -1 }
       if item_id < 0 {
         None
       } else {
@@ -617,11 +616,11 @@ fn parse_rich_text_runs_core(
   let mut rest : StringView = raw[:]
   while true {
     guard rest.find("#") is Some(mark_pos) else {
-      push_run(runs, rest.to_string(), style)
+      push_run(runs, rest.to_owned(), style)
       break
     }
     if mark_pos > 0 {
-      push_run(runs, rest.view(end_offset=mark_pos).to_string(), style)
+      push_run(runs, rest.view(end_offset=mark_pos).to_owned(), style)
     }
     if mark_pos + 1 >= rest.length() {
       push_run(runs, "#", style)
@@ -639,13 +638,13 @@ fn parse_rich_text_runs_core(
       if pair_replacer(tag, payload) is Some(replaced) {
         push_run(runs, replaced, style)
       } else {
-        push_run(runs, "#\{tag}\{payload.to_string()}#", style)
+        push_run(runs, "#\{tag}\{payload.to_owned()}#", style)
       }
       rest = payload_part.view(start_offset=end_pos + 1)
       continue
     }
     // Keep unknown or incomplete tags as raw text.
-    push_run(runs, rest.view(start_offset=mark_pos).to_string(), style)
+    push_run(runs, rest.view(start_offset=mark_pos).to_owned(), style)
     break
   }
   runs
@@ -1355,7 +1354,7 @@ test "parse rich text reference and unknown tags" {
     payload,
   ) {
     match tag {
-      't' => Some("ITEM-\{payload.to_string()}")
+      't' => Some("ITEM-\{payload.to_owned()}")
       'c' => Some("7")
       _ => None
     }

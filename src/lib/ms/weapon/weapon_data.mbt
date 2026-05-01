@@ -14,7 +14,9 @@ pub fn WeaponData::from_item_data(
 ) -> WeaponData raise {
   let equip_data = @data.EquipData::parse_item_data(item_data)
   let prefix = item_data.item_id / 10000
-  let t = Type::by_value(prefix)
+  let t = Type::from_value(prefix).unwrap_or_error(
+    Failure::Failure("unknown weapon type, id=\{item_data.item_id}"),
+  )
   let two_handed = prefix == Type::STAFF.int_value() ||
     (
       prefix >= Type::SWORD_2H.int_value() &&

@@ -1,33 +1,100 @@
 ///|
-fn new_skill_use_effect_effect(
-  src : Json,
-) -> ((@character.Character) -> Unit) raise Error {
-  let animation : @resource.NxAnimation = @json.from_json(src)
-  let z = match src {
+priv struct SkillUseEffect {
+  effect : @graphics.EffectAnimation
+  z : Int
+}
+
+///|
+fn read_mx_animation_ref(src : Json) -> String raise {
+  match src {
+    { "mx_animation": String(path), .. } => path
+    _ => fail("missing mx_animation in skill use effect node")
+  }
+}
+
+///|
+fn read_effect_z(src : Json) -> Int {
+  match src {
     { "z": Number(z, ..), .. } => z.to_int()
+    { "z": String(raw), .. } =>
+      @string.parse_int(raw) catch {
+        _ => abort("invalid z in skill use effect node")
+      }
     _ => 0
   }
-  fn(c : @character.Character) -> Unit { c.show_attack_effect(animation, z) }
+}
+
+///|
+async fn load_skill_use_effect(
+  src : Json,
+  tag : String,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> SkillUseEffect {
+  let ref_path = read_mx_animation_ref(src)
+  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let animation_loader = @resource.AnimationLoader::new(skill_loader)
+  let loaded = animation_loader.load(resolved)
+  let clip = loaded.clip(tag)
+  {
+    effect: {
+      animation: @ms_animation.from_selene_clip(clip, loop_=false),
+      duration_ms: clip.duration_ms,
+    },
+    z: read_effect_z(src),
+  }
+}
+
+///|
+fn apply_skill_use_effect(
+  loaded : SkillUseEffect,
+) -> (@character.Character) -> Unit {
+  fn(c : @character.Character) -> Unit {
+    c.show_attack_effect(loaded.effect, loaded.z)
+  }
 }
 
 ///|
 /// An effect which displays an animation over the character's position
-fn new_single_use_effect(
+pub async fn new_single_use_effect(
   src : Json,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
 ) -> ((@character.Character) -> Unit) raise Error {
-  let effect = new_skill_use_effect_effect(use_effect_get_path(src, ["effect"]))
-  fn(c : @character.Character) -> Unit { effect(c) }
+  let effect = load_skill_use_effect(
+    use_effect_get_path(src, ["effect"]),
+    skill_animation_tag(["effect"]),
+    skill_loader,
+    base_path,
+  )
+  apply_skill_use_effect(effect)
 }
 
 ///|
 /// An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
-fn new_twohanded_use_effect(
+pub async fn new_twohanded_use_effect(
   src : Json,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = @utils.BoolPair::new(
-    new_skill_use_effect_effect(use_effect_get_path(src, ["effect", "0"])),
-    new_skill_use_effect_effect(use_effect_get_path(src, ["effect", "1"])),
+    apply_skill_use_effect(
+      load_skill_use_effect(
+        use_effect_get_path(src, ["effect", "0"]),
+        skill_animation_tag(["effect", "0"]),
+        skill_loader,
+        base_path,
+      ),
+    ),
+    apply_skill_use_effect(
+      load_skill_use_effect(
+        use_effect_get_path(src, ["effect", "1"]),
+        skill_animation_tag(["effect", "1"]),
+        skill_loader,
+        base_path,
+      ),
+    ),
   )
   fn(c : @character.Character) -> Unit {
     let twohanded = c.is_two_handed()
@@ -37,14 +104,25 @@ fn new_twohanded_use_effect(
 
 ///|
 /// An effect which displays multiple animations over the character's position
-fn new_multi_use_effect(
+pub async fn new_multi_use_effect(
   src : Json,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
   let mut no = -1
   let mut sub = use_effect_get_path(src, ["effect"])
   while sub != Json::null() {
-    effects.push(new_skill_use_effect_effect(sub))
+    let tag = if no < 0 {
+      skill_animation_tag(["effect"])
+    } else {
+      skill_animation_tag(["effect\{no}"])
+    }
+    effects.push(
+      apply_skill_use_effect(
+        load_skill_use_effect(sub, tag, skill_loader, base_path),
+      ),
+    )
     no += 1
     sub = use_effect_get_path(src, ["effect" + no.to_string()])
   }
@@ -57,14 +135,21 @@ fn new_multi_use_effect(
 
 ///|
 /// The animation changes with the character level
-fn new_by_level_use_effect(
+pub async fn new_by_level_use_effect(
   src : Json,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
 ) -> ((@character.Character) -> Unit) raise Error {
   let effects = []
   if src is { "CharLevel": Object(level_map), .. } {
     for level, sub in level_map {
-      let effect = new_skill_use_effect_effect(
-        use_effect_get_path(sub, ["effect"]),
+      let effect = apply_skill_use_effect(
+        load_skill_use_effect(
+          use_effect_get_path(sub, ["effect"]),
+          skill_animation_tag(["CharLevel", level, "effect"]),
+          skill_loader,
+          base_path,
+        ),
       )
       effects.push((@string.parse_int(level), effect))
     }
@@ -88,7 +173,7 @@ fn new_by_level_use_effect(
 
 ///|
 /// Use effect for Iron Body
-fn new_iron_body_use_effect() -> (@character.Character) -> Unit {
+pub fn new_iron_body_use_effect() -> (@character.Character) -> Unit {
   fn(c) { c.show_iron_body() }
 }
 

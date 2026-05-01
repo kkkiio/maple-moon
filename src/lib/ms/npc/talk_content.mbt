@@ -61,19 +61,19 @@ test "test no options" {
 pub fn parse_talk_content(
   text : String,
   mod_provider? : (Style, StringView) -> String raise = fn(_, v) {
-    v.to_string()
+    v.to_owned()
   },
   npc_provider? : (Style, StringView) -> String raise = fn(_, v) {
-    v.to_string()
+    v.to_owned()
   },
   map_provider? : (Style, StringView) -> String raise = fn(_, v) {
-    v.to_string()
+    v.to_owned()
   },
   item_provider? : (Style, StringView) -> String raise = fn(_, v) {
-    v.to_string()
+    v.to_owned()
   },
   player_name_provider? : (Style, StringView) -> String raise = fn(_, v) {
-    v.to_string()
+    v.to_owned()
   },
 ) -> TalkContent raise {
   let tag_replace_map = {
@@ -120,7 +120,7 @@ pub fn parse_talk_content(
           opening_selection = None
           close_selection(index, nodes, true)
         }
-        let index = @string.parse_int(payload.to_string(), base=10) catch {
+        let index = @string.parse_int(payload.to_owned(), base=10) catch {
           _ => raise ParseTalkError("invalid selection index: \{payload}")
         }
         opening_selection = Some((index, []))

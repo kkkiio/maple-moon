@@ -376,8 +376,8 @@ priv struct State {
   mut panel_x : Int
   mut panel_y : Int
   mut current_map_id : Int
-  mut current_map_name : String
-  mut current_street_name : String
+  // mut current_map_name : String
+  // mut current_street_name : String
   mut current_world_name : String
   mut current_user_root_world_name : String
   mut search_visible : Bool
@@ -401,8 +401,8 @@ let state_ref : Ref[State] = Ref::new({
   panel_x: 84,
   panel_y: 24,
   current_map_id: 100000000,
-  current_map_name: "",
-  current_street_name: "",
+  // current_map_name: "",
+  // current_street_name: "",
   current_world_name: "",
   current_user_root_world_name: "",
   search_visible: false,
@@ -465,7 +465,7 @@ fn truncate_text(text : String, max_len : Int) -> String {
   if text.length() <= max_len {
     return text
   }
-  text[:max_len].to_string() + "..."
+  text[:max_len].to_owned() + "..."
 }
 
 ///|
@@ -1322,8 +1322,10 @@ pub fn set_current_map(
   register_scene_cleanup_once()
   let state = state_ref.val
   state.current_map_id = map_id
-  state.current_map_name = map_name
-  state.current_street_name = street_name
+  ignore(map_name)
+  ignore(street_name)
+  // state.current_map_name = map_name
+  // state.current_street_name = street_name
   let root = current_root_world_name(map_id)
   state.current_user_root_world_name = root
   state.current_world_name = root
@@ -1482,8 +1484,8 @@ pub fn reset_world_map_ui_for_test() -> Unit {
   state.panel_x = 84
   state.panel_y = 24
   state.current_map_id = 100000000
-  state.current_map_name = ""
-  state.current_street_name = ""
+  // state.current_map_name = ""
+  // state.current_street_name = ""
   state.current_world_name = ""
   state.current_user_root_world_name = ""
   state.search_visible = false

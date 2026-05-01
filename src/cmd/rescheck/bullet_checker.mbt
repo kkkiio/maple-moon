@@ -19,7 +19,7 @@ fn check_bullet_resources(ctx : RescheckContext) -> Array[CheckIssue] {
       )
       continue
     }
-    let prefix = bullet_id[:4].to_string()
+    let prefix = bullet_id[:4].to_owned()
     match bullet_ids_by_prefix.get(prefix) {
       Some(ids) => ids.push(bullet_id)
       None => bullet_ids_by_prefix.set(prefix, [bullet_id])
@@ -251,9 +251,9 @@ fn bullet_unique_paths(paths : Array[String]) -> Array[String] {
 
 ///|
 fn bullet_resolve_asset_relative_path(raw_path : String) -> String {
-  let path = normalize_path(raw_path).trim_start(chars="/").to_string()
+  let path = normalize_path(raw_path).trim_start(chars="/").to_owned()
   if path.has_prefix("assets/") {
-    path[7:path.length()].to_string()
+    path[7:path.length()].to_owned()
   } else {
     path
   }

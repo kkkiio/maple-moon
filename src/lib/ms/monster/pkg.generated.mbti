@@ -2,6 +2,7 @@
 package "KKKIIO/maple-moon/lib/ms/monster"
 
 import {
+  "KKKIIO/maple-moon/lib/graphics",
   "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/physics",
@@ -49,8 +50,8 @@ pub fn setup_mob_hpbar_game_server_handlers() -> Unit
 
 // Types and methods
 type Effect
-pub fn Effect::apply(Self, (@resource.NxAnimation, Int, Int, Bool) -> Unit) -> Unit
-pub fn Effect::new(Json) -> Self raise
+pub fn Effect::apply(Self, (String, Int, Int, Bool) -> Unit) -> Unit
+pub fn Effect::new(Json) -> Self
 
 pub enum FlyDirection {
   STRAIGHT
@@ -96,6 +97,7 @@ pub struct Mob {
   attacks : Map[Int, MobSpecialAttack]
   skill_stands : Map[Int, MobAnimation]
   attack_stands : Map[Int, MobAnimation]
+  effect_animations : Map[String, MobAnimation]
   buffs : Array[MobBuff]
   level : Int
   speed : Double
@@ -126,7 +128,7 @@ pub struct Mob {
   mut fading : Bool
   mut fade_in : Bool
   opacity : @utils.Linear
-  src : NxMob
+  src : MxMob
 }
 pub fn Mob::apply_damage(Self, Int, Bool) -> Unit
 pub fn Mob::calculate_damage(Self, @combat_proto.Attack) -> Array[(Int, Bool)]
@@ -136,7 +138,7 @@ pub fn Mob::get_entity(Self) -> @entity.Entity
 pub fn Mob::get_head_position(Self, position? : @res_types.Point[Int]) -> @res_types.Point[Int]
 pub fn Mob::get_layer(Self) -> Int
 pub fn Mob::get_live_range(Self) -> @res_types.Rectangle[Int]?
-pub fn Mob::get_move_attack(Self, Int) -> MobSpecialAttack raise
+pub fn Mob::get_move_attack(Self, Int) -> MobSpecialAttack
 pub fn Mob::get_move_skill(Self, Int, Int) -> @utils.Future[Result[MobSkill, Error]]
 pub fn Mob::get_oid(Self) -> Int
 pub fn Mob::get_position(Self) -> @res_types.Point[Int]
@@ -145,11 +147,11 @@ pub fn Mob::is_alive(Self) -> Bool
 pub fn Mob::is_in_range(Self, @res_types.Rectangle[Int]) -> Bool
 pub fn Mob::kill(Self, Int) -> Unit
 pub async fn Mob::load(Int, Int, Int, Int, Int, Bool, @res_types.Point[Int], @random.Rand) -> Self
-pub fn Mob::new(NxMob, Int, Int, Int, Bool, @res_types.Point[Int], object_id~ : Int, monster_id~ : Int, randomizer? : @random.Rand) -> Self
 pub fn Mob::send_movement(Self, @res_types.Point[Int], Array[@physics.Movement]) -> Unit
 pub fn Mob::set_control(Self, Int) -> Unit
 pub fn Mob::set_stance(Self, Stance) -> Unit
-pub fn Mob::show_effect(Self, @resource.NxAnimation, Int, Int, Bool) -> Unit
+pub fn Mob::show_effect(Self, @graphics.EffectAnimation, Int, Int, Bool) -> Unit
+pub fn Mob::show_effect_path(Self, String, Int, Bool) -> Unit
 pub fn Mob::update(Self, @physics.Physics) -> Int
 pub fn Mob::update_movement(Self) -> Unit
 pub fn Mob::update_movement_ex(Self, Int, Int, Int, Int, Int, Int) -> Unit
@@ -157,8 +159,15 @@ pub fn Mob::use_attack(Self, MobSpecialAttack) -> Unit
 pub fn Mob::use_skill(Self, MobSkill) -> Unit
 
 pub(all) struct MobAnimation {
-  nx : @resource.NxAnimation
+  meta : MobAnimationMeta
   selene : @animation.Animation
+}
+
+pub(all) struct MobAnimationMeta {
+  total_duration_ms : Int
+  first_head : @res_types.Point[Int]?
+  first_bounds : @res_types.Rectangle[Int]?
+  loop_ : Bool
 }
 
 pub(all) struct MobAnimations {
@@ -207,13 +216,13 @@ pub impl @json.FromJson for MobInfo
 pub(all) struct MobMultiUseEffect {
   effects : Array[Effect]
 }
-pub fn MobMultiUseEffect::new(Json, Bool) -> Self raise
+pub fn MobMultiUseEffect::new(Json, Bool) -> Self
 pub impl MobSkillUseEffect for MobMultiUseEffect
 
 pub(all) struct MobSingleUseEffect {
   effect : Effect
 }
-pub fn MobSingleUseEffect::new(Json) -> Self raise
+pub fn MobSingleUseEffect::new(Json) -> Self
 pub impl MobSkillUseEffect for MobSingleUseEffect
 
 pub(all) struct MobSkill {
@@ -247,11 +256,60 @@ pub async fn MobSpawn::instantiate(Self, @random.Rand) -> Mob
 type MobSpecialAttack
 pub fn MobSpecialAttack::apply_useeffects(Self, Mob) -> Unit
 pub fn MobSpecialAttack::get_id(Self) -> Int
-pub fn MobSpecialAttack::new(NxMobAttackInfo, Int, Int) -> Self raise
+pub fn MobSpecialAttack::new(MxMobAttackNode) -> Self
 
 type Module
 pub fn Module::get_map_mobs(Self) -> MapMobs
 pub fn Module::new() -> Self
+
+pub struct MxMob {
+  info : MobInfo
+  stance_nodes : Map[String, MxMobAnimNode]
+  attack_nodes : Map[Int, MxMobAttackNode]
+  skill_nodes : Map[Int, MxMobSkillNode]
+  mx_animations : Map[String, String]
+}
+pub impl @json.FromJson for MxMob
+
+pub struct MxMobAnimNode {
+  path_key : String
+  total_duration_ms : Int
+  loop_ : Bool
+  first_head : @res_types.Point[Int]?
+  first_bounds : @res_types.Rectangle[Int]?
+}
+pub impl @json.FromJson for MxMobAnimNode
+
+pub struct MxMobAttackInfo {
+  range : @res_types.Rectangle[Int]?
+  type_ : Int
+  con_mp : Int
+  magic : Bool
+}
+pub impl @json.FromJson for MxMobAttackInfo
+
+pub struct MxMobAttackNode {
+  id : Int
+  info : MxMobAttackInfo
+  animation_path_key : String
+  effects : Array[MxMobEffectNode]
+}
+pub impl @json.FromJson for MxMobAttackNode
+
+pub struct MxMobEffectNode {
+  path_key : String
+  z : Int
+  is_area_warning : Bool
+}
+pub impl @json.FromJson for MxMobEffectNode
+
+pub struct MxMobSkillNode {
+  skill_id : Int
+  action : Int
+  animation_path_key : String
+  effects : Array[MxMobEffectNode]
+}
+pub impl @json.FromJson for MxMobSkillNode
 
 pub struct NxMob {
   info : MobInfo

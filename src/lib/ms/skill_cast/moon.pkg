@@ -10,24 +10,6 @@ import {
 }
 
 import {
-  "moonbitlang/x/fs",
   "moonbitlang/core/json",
   "moonbitlang/core/random",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/event",
-  "moonbitlang/async",
-  "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/test/local_loader",
-  "KKKIIO/maple-moon/lib/ms/monster",
-  "KKKIIO/maple-moon/lib/ms/bullet",
-  "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/ms/skill",
-  "KKKIIO/maple-moon/lib/ms/char_look",
-  "KKKIIO/maple-moon/lib/ms/char_look/types",
-  "KKKIIO/maple-moon/lib/ms/item",
-  "KKKIIO/maple-moon/lib/ms/equip/slot",
-  "KKKIIO/maple-moon/lib/ms/char_stats",
-  "KKKIIO/maple-moon/lib/ms/job",
-  "KKKIIO/maple-moon/lib/ms/logic_fps",
-  "KKKIIO/maple-moon/lib/ms/skill_sfx",
 } for "test"

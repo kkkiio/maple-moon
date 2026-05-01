@@ -2,6 +2,12 @@
 
 怪物
 
+## 资源加载
+
+- `NxMob`：保留碰撞框、head 点、攻击范围等运行时元数据。
+- `MxMob`：从 `Mob/<id>.img/mx.json` 读取 Aseprite 动画引用。
+- 运行时会把 `MxMob` 引用编译成 Selene native clip，并覆盖 `NxMob` 中的可播放动画后端。
+
 ## link
 
 有些怪物借用其他怪物的动画，比如战士二转任务里的火野猪和猴子。

@@ -129,7 +129,7 @@ fn parse_map_layer_name(name : String) -> (Int, String)? {
   }
   let parsed = try? @string.parse_int(parts[1])
   match parsed {
-    Ok(layer) => Some((layer, parts[2].to_string()))
+    Ok(layer) => Some((layer, parts[2].to_owned()))
     Err(_) => None
   }
 }

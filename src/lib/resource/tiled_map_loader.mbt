@@ -3,7 +3,7 @@ fn split_resource_path(path : String) -> Array[String] {
   path
   .split("/")
   .to_array()
-  .map(fn(part) { part.to_string() })
+  .map(fn(part) { part.to_owned() })
   .filter(fn(part) { part.length() > 0 })
 }
 

@@ -187,7 +187,7 @@ fn parse_background_index(name : String, prefix : String) -> Int? {
   if !name.has_prefix(prefix) {
     return None
   }
-  let suffix = name[prefix.length():name.length()].to_string()
+  let suffix = name[prefix.length():name.length()].to_owned()
   let parsed = try? @string.parse_int(suffix)
   match parsed {
     Ok(index) => Some(index)
@@ -481,7 +481,7 @@ fn ensure_background_tiles(
 ///|
 fn replace_aseprite_suffix(path : String) -> String? {
   if path.has_suffix(".aseprite") {
-    Some(path.strip_suffix(".aseprite").unwrap().to_string() + ".json")
+    Some(path.strip_suffix(".aseprite").unwrap().to_owned() + ".json")
   } else {
     None
   }

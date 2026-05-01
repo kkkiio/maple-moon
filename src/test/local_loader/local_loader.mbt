@@ -1,268 +1,108 @@
 ///|
-/// Async resource loader that reads test JSON resources from local filesystem.
-pub struct LocalDirResourceLoader {
-  root_path : String
+/// Local JSON loader that delegates resource path semantics to `resource`.
+priv struct LocalJsonResourceLoader {
+  source : String
 }
 
 ///|
-/// Async resource loader that reads a JSON file by full relative path.
-pub struct LocalFileJsonResourceLoader {
-  root_path : String
+priv struct LocalCsvTextLoader {}
+
+///|
+fn LocalJsonResourceLoader::new(source : String) -> LocalJsonResourceLoader {
+  { source, }
 }
 
 ///|
-/// Async resource loader that always returns `null`.
-pub struct NullResourceLoader {
-  dummy : Unit
+fn LocalCsvTextLoader::new() -> LocalCsvTextLoader {
+  LocalCsvTextLoader::{  }
 }
 
 ///|
-/// CSV text loader that reads test CSV files from local filesystem.
-pub struct LocalCsvTextLoader {
-  dummy : Unit
-}
-
-///|
-/// Creates a local directory loader rooted at `root_path`.
-pub fn LocalDirResourceLoader::new(
-  root_path : String,
-) -> LocalDirResourceLoader {
-  { root_path, }
-}
-
-///|
-/// Creates a local file-json loader rooted at `root_path`.
-pub fn LocalFileJsonResourceLoader::new(
-  root_path : String,
-) -> LocalFileJsonResourceLoader {
-  { root_path, }
-}
-
-///|
-/// Creates a null resource loader.
-pub fn NullResourceLoader::new() -> NullResourceLoader {
-  { dummy: () }
-}
-
-///|
-/// Creates a local CSV text loader.
-pub fn LocalCsvTextLoader::new() -> LocalCsvTextLoader {
-  { dummy: () }
-}
-
-///|
-pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader with load_data(
+impl @resource.AsyncResourceLoader for LocalJsonResourceLoader with load_data(
   self,
   path,
 ) -> Json {
-  let (child, rest) = if path.find("/") is Some(i) {
-    (path.view(start_offset=0, end_offset=i), path.view(start_offset=i + 1))
-  } else {
-    (path, "")
-  }
-  let file_path = join_dir(self.root_path, child.to_string() + ".json")
-  let text = @fs.read_file_to_string(file_path)
-  let root_value : Json = @json.parse(text)
-  get_by_path(root_value, rest.to_string())
+  let (file_path, node_path) = @resource.resolve_json_resource_path(
+    self.source,
+    path.to_owned(),
+  )
+  let root_value = load_json_from_local_path(file_path)
+  get_by_path(root_value, node_path)
 }
 
 ///|
-pub impl @resource.AsyncResourceLoader for NullResourceLoader with load_data(
-  self,
-  path,
-) -> Json {
-  ignore(self.dummy)
-  ignore(path)
-  Json::null()
-}
-
-///|
-pub impl @resource.AsyncResourceLoader for LocalFileJsonResourceLoader with load_data(
-  self,
-  path,
-) -> Json {
-  let normalized = path.strip_prefix("/").unwrap_or(path).to_string()
-  let file_path = if normalized.has_prefix("assets/") {
-    normalized
-  } else {
-    join_dir(self.root_path, normalized)
-  }
-  let text = @fs.read_file_to_string(file_path)
-  @json.parse(text)
-}
-
-///|
-pub impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(
-  self,
-  path,
-) -> String {
-  ignore(self.dummy)
+impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(self, path) -> String {
+  ignore(self)
   let fs_path = path.strip_prefix("/").unwrap_or(path)
-  @fs.read_file_to_string(fs_path.to_string())
+  @fs.read_file_to_string(fs_path.to_owned())
 }
 
 ///|
-/// Creates an item loader that always reads from local `assets/Item`.
-pub fn make_local_item_loader() -> @resource.AsyncLoader {
+fn make_local_loader(source : String) -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
-    "item",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "Consume/": LocalDirResourceLoader::new("assets/Item/Consume"),
-      "Cash/": LocalDirResourceLoader::new("assets/Item/Cash"),
-      "Etc/": LocalDirResourceLoader::new("assets/Item/Etc"),
-      "Install/": LocalDirResourceLoader::new("assets/Item/Install"),
-      "Pet/": LocalDirResourceLoader::new("assets/Item/Pet"),
-    }),
+    source,
+    loader=LocalJsonResourceLoader::new(source),
   )
 }
 
 ///|
-/// Creates an item-data system wired to the local test item loader.
-pub fn make_local_item_data_system() -> @item.ItemDataSystem {
-  @item.ItemDataSystem::new(make_local_item_loader())
-}
-
-///|
-/// Installs the local-loader-backed item-data system for tests.
-pub fn use_local_item_data_system() -> Unit {
-  @item.set_item_data_system(make_local_item_data_system())
-}
-
-///|
-/// Creates a character loader that always reads from local `assets/Character`.
-pub fn make_local_character_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "character",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "Pants/": LocalDirResourceLoader::new("assets/Character/Pants"),
-      "Weapon/": LocalDirResourceLoader::new("assets/Character/Weapon"),
-      "Coat/": LocalDirResourceLoader::new("assets/Character/Coat"),
-      "Cap/": LocalDirResourceLoader::new("assets/Character/Cap"),
-      "Longcoat/": LocalDirResourceLoader::new("assets/Character/Longcoat"),
-      "Shield/": LocalDirResourceLoader::new("assets/Character/Shield"),
-      "Shoes/": LocalDirResourceLoader::new("assets/Character/Shoes"),
-      "Glove/": LocalDirResourceLoader::new("assets/Character/Glove"),
-      "Accessory/": LocalDirResourceLoader::new("assets/Character/Accessory"),
-    }),
-  )
-}
-
-///|
-/// Creates a string loader that reads from local `assets/String`.
+/// Creates a string loader that reads String resources from the local assets.
 pub fn make_local_string_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "string",
-    loader=LocalDirResourceLoader::new("assets/String"),
-  )
+  make_local_loader("string")
 }
 
 ///|
-/// Creates a quest loader that reads from local `assets/Quest`.
-pub fn make_local_quest_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "quest",
-    loader=LocalDirResourceLoader::new("assets/Quest"),
-  )
-}
-
-///|
-/// Creates a mob loader that reads from local `assets/mob`.
-pub fn make_local_mob_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "mob",
-    loader=LocalFileJsonResourceLoader::new("assets/mob"),
-  )
-}
-
-///|
-/// Creates a skill loader that reads from local `assets/skill`.
-pub fn make_local_skill_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new(
-    "skill",
-    loader=LocalFileJsonResourceLoader::new("assets/skill"),
-  )
-}
-
-///|
-/// Creates a string loader that always returns empty JSON.
-///
-/// This is useful for snapshot tests that intentionally assert UI layout without
-/// localized item-name text.
-pub fn make_null_string_loader() -> @resource.AsyncLoader {
-  @resource.AsyncLoader::new("string", loader=NullResourceLoader::new())
-}
-
-///|
-/// Creates a CSV loader that reads local files.
-pub fn make_local_csv_loader() -> @resource.CsvLoader {
+fn make_local_csv_loader() -> @resource.CsvLoader {
   @resource.CsvLoader::new(loader=LocalCsvTextLoader::new())
 }
 
 ///|
-/// Installs local CSV loader into resource registry.
-pub fn install_local_csv_loader() -> Unit {
+fn install_local_csv_loader() -> Unit {
   @resource.set_csv_loader(make_local_csv_loader())
 }
 
 ///|
 /// Installs a default local-fs-backed resource environment for tests.
 ///
-/// This keeps test path-resolution rules aligned with runtime rules while
-/// swapping the underlying JSON/CSV I/O backend to local filesystem.
+/// Path resolution stays in `resource`; this package only reads the resolved
+/// JSON or CSV files from the local filesystem.
 pub fn install_resource_env_for_test() -> Unit {
-  @resource.register_async_loader("item", make_local_item_loader())
-  @resource.register_async_loader("character", make_local_character_loader())
-  @resource.register_async_loader("mob", make_local_mob_loader())
-  @resource.register_async_loader("skill", make_local_skill_loader())
+  @resource.register_async_loader("item", make_local_loader("item"))
+  @resource.register_async_loader(
+    "item_special",
+    make_local_loader("item_special"),
+  )
+  @resource.register_async_loader("character", make_local_loader("character"))
+  @resource.register_async_loader("mob", make_local_loader("mob"))
+  @resource.register_async_loader("skill", make_local_loader("skill"))
+  @resource.register_async_loader("body", make_local_loader("body"))
+  @resource.register_async_loader("face", make_local_loader("face"))
+  @resource.register_async_loader("hair", make_local_loader("hair"))
   @resource.register_async_loader("string", make_local_string_loader())
-  @resource.register_async_loader("quest", make_local_quest_loader())
-  @resource.register_async_loader(
-    "npc",
-    @resource.AsyncLoader::new(
-      "npc",
-      loader=LocalFileJsonResourceLoader::new("assets"),
-    ),
-  )
-  @resource.register_async_loader(
-    "mapx",
-    @resource.AsyncLoader::new(
-      "mapx",
-      loader=LocalFileJsonResourceLoader::new("assets/map"),
-    ),
-  )
+  @resource.register_async_loader("quest", make_local_loader("quest"))
+  @resource.register_async_loader("npc", make_local_loader("npc"))
+  @resource.register_async_loader("mapx", make_local_loader("mapx"))
   @resource.register_async_loader(
     "ui_window_2",
-    @resource.AsyncLoader::new(
-      "ui_window_2",
-      loader=LocalDirResourceLoader::new("assets/ui/UIWindow2.img"),
-    ),
+    make_local_loader("ui_window_2"),
   )
-  @resource.register_async_loader(
-    "ui_slice",
-    @resource.AsyncLoader::new(
-      "ui_slice",
-      loader=LocalFileJsonResourceLoader::new("assets"),
-    ),
-  )
+  @resource.register_async_loader("ui_slice", make_local_loader("ui_slice"))
+  @resource.register_async_loader("effect", make_local_loader("effect"))
   install_local_csv_loader()
 }
 
 ///|
-fn join_dir(root : String, path : String) -> String {
-  let normalized_root = root.strip_suffix("/").unwrap_or(root)
-  let normalized_path = path.strip_prefix("/").unwrap_or(path)
-  "\{normalized_root}/\{normalized_path}"
+fn load_json_from_local_path(path : String) -> Json raise {
+  let file_path = path.strip_prefix("/").unwrap_or(path)
+  let text = @fs.read_file_to_string(file_path.to_owned())
+  @json.parse(text)
 }
 
 ///|
-fn get_by_path(obj : Json, path : String) -> Json {
-  if path.is_empty() {
-    return obj
-  }
-  let parts = path.split("/")
-  parts.fold(init=obj, fn(acc, part) {
+fn get_by_path(obj : Json, path : Array[String]) -> Json {
+  path.fold(init=obj, fn(acc, part) {
     match acc {
-      Object(map) => map.get(part.to_string()).unwrap_or(null)
+      Object(map) => map.get(part).unwrap_or(null)
       _ => null
     }
   })

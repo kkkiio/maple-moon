@@ -22,7 +22,7 @@ pub impl @resource.AsyncResourceLoader for MockBasicItemLoader with load_data(
   path,
 ) -> Json {
   ignore(self)
-  match path.to_string() {
+  match path.to_owned() {
     "Consume/0200.img" =>
       {
         "02000000": basic_mock_item_entry(
@@ -49,7 +49,7 @@ pub impl @resource.AsyncResourceLoader for MockBasicStringLoader with load_data(
   path,
 ) -> Json {
   ignore(self)
-  match path.to_string() {
+  match path.to_owned() {
     "Consume.img" => { "2000000": { "name": "apple", "desc": "red potion" } }
     "Etc.img" => { "Etc": { "4000000": { "name": "ore", "desc": "gray ore" } } }
     "Eqp.img" | "Ins.img" | "Cash.img" => {}

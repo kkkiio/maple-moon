@@ -65,7 +65,7 @@ impl @resource.AsyncResourceLoader for CountingItemBundleLoader with load_data(
   self,
   path,
 ) -> Json {
-  let key = path.to_string()
+  let key = path.to_owned()
   self.increment(key)
   match key {
     "Consume/0299.img" => mock_consume_0299_bundle_json()
@@ -79,7 +79,7 @@ impl @resource.AsyncResourceLoader for MockStringLoader with load_data(
   path,
 ) -> Json {
   ignore(self)
-  match path.to_string() {
+  match path.to_owned() {
     "Consume.img" =>
       {
         "29999998": { "name": "mock item 1", "desc": "mock desc 1" },

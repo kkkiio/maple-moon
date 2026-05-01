@@ -35,7 +35,7 @@ pub(all) enum Type {
   GUN
   CASH
 } derive(Eq, ToJson)
-pub fn Type::by_value(Int) -> Self raise UnknownWeaponType
+pub fn Type::from_value(Int) -> Self?
 pub fn Type::int_value(Self) -> Int
 
 type WeaponData

@@ -51,15 +51,15 @@ pub fn write_text_as_html(
       text = text.trim_end(chars="\n")
     }
     text = text.replace_all(old="\n", new="<br/>\n")
-    builder.write_string(text.to_string())
+    builder.write_string(text.to_owned())
     return
   }
   // split lines
-  let lines = text.to_string().replace_all(old="\r\n", new="\n").split("\n")
+  let lines = text.to_owned().replace_all(old="\r\n", new="\n").split("\n")
   for
     line in lines
     .map(fn(line) {
-      "<span style=\"\{style.to_css_style()}\">\{escape_html(line.to_string())}</span>"
+      "<span style=\"\{style.to_css_style()}\">\{escape_html(line.to_owned())}</span>"
     })
     .intersperse("<br/>\n") {
     builder.write_string(line)

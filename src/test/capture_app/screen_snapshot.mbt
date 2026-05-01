@@ -50,7 +50,7 @@ pub async fn snapshot(path : String, visual_desc~ : String) -> Unit {
       let wrong_img_path = path.chop_suffix(ext).unwrap_or(path) +
         ".wrong" +
         ext
-      @fs.write_bytes_to_file(wrong_img_path.to_string(), actual)
+      @fs.write_bytes_to_file(wrong_img_path.to_owned(), actual)
       fail(msg + ", new snapshot saved to: \{wrong_img_path}")
     }
     e => raise e
@@ -128,12 +128,12 @@ fn parse_snapshot_expect_xml(raw : String) -> SnapshotExpectVerdict raise {
   guard after_reason.trim() == "" else {
     fail("snapshot expect XML verdict has unexpected extra content")
   }
-  let pass = match pass_text.trim().to_string() {
+  let pass = match pass_text.trim() {
     "true" => true
     "false" => false
     _ => fail("snapshot expect XML <pass> must be true or false")
   }
-  { pass, reason: reason.trim().to_string() }
+  { pass, reason: reason.trim().to_owned() }
 }
 
 ///|
@@ -152,7 +152,7 @@ fn consume_xml_tag(input : String, tag : String) -> (String, String) raise {
   guard close_parts is [content, rest] else {
     fail("snapshot expect XML missing closing tag: \{close}")
   }
-  (content.trim().to_string(), rest.to_string())
+  (content.trim().to_owned(), rest.to_owned())
 }
 
 ///|

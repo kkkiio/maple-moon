@@ -73,7 +73,7 @@ pub fn char_look_system(_world : @ecs.World) -> Unit {
 }
 
 ///|
-pub async fn CharacterPresentationResource::load_body_by_skin_id(
+pub fn CharacterPresentationResource::load_body_by_skin_id(
   self : CharacterPresentationResource,
   skin_id : Int,
 ) -> FullBody {

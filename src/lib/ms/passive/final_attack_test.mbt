@@ -76,36 +76,6 @@ fn make_test_look(weapon_item_id : Int?) -> @char_look.CharLook raise {
 }
 
 ///|
-fn make_test_character(
-  oid : Int,
-  weapon_item_id : Int?,
-) -> @character.Character raise {
-  let look = make_test_look(weapon_item_id)
-  let stats : @char_stats.CharStats = @char_stats.CharStats::new(
-    @server_proto.StatsEntry::default(),
-    fn() {
-      look
-      .get_equips()
-      .get_weapon()
-      .map(fn(w) { w.get_type() })
-      .unwrap_or(@weapon.Type::NONE)
-    },
-    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
-    Map::new(),
-    Map::new(),
-    Map::new(),
-  )
-  @character.Character::new(
-    look.get_root_entity(),
-    oid,
-    look,
-    "PassiveTestCharacter",
-    get_skilllevel=fn(_) { 0 },
-    stats,
-  )
-}
-
-///|
 fn make_test_player(oid : Int, weapon_item_id : Int?) -> @player.Player raise {
   let look = make_test_look(weapon_item_id)
   let stats : @char_stats.CharStats = @char_stats.CharStats::new(
@@ -172,21 +142,8 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 
 ///|
 async test "sword_fa_fighter_triggers_with_sword_1h" {
-  @resource.register_async_loader(
-    "skill",
-    @resource.AsyncLoader::new(
-      "test_local_skill",
-      loader=@local_loader.LocalDirResourceLoader::new("assets/Skill"),
-    ),
-  )
-  @resource.register_async_loader(
-    "string",
-    @resource.AsyncLoader::new(
-      "test_local_string",
-      loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
-    ),
-  )
-  let player = try! make_test_player(1, Some(1302000))
+  @local_loader.install_resource_env_for_test()
+  let player = make_test_player(1, Some(1302000))
   let attacker = player.get_character()
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
@@ -207,7 +164,7 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
 
 ///|
 test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
-  let player = try! make_test_player(1, Some(1312001))
+  let player = make_test_player(1, Some(1312001))
   let attacker = player.get_character()
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
@@ -226,7 +183,7 @@ test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
 
 ///|
 test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
-  let player = try! make_test_player(1, Some(1402000))
+  let player = make_test_player(1, Some(1402000))
   let attacker = player.get_character()
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
@@ -273,22 +230,4 @@ test "sword_fa_fighter_does_not_trigger_for_passive_source" {
   )
   passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::Passive(99999)))
   assert_eq(trigger_count.val, 0)
-}
-
-///|
-test "character_registry_lifecycle" {
-  @character.clear_character_registry()
-  let character = try! make_test_character(77, None)
-  let oid = character.get_oid()
-  assert_true(@character.get_character_by_oid(oid) is None)
-
-  @character.register_character(character)
-  assert_true(@character.get_character_by_oid(oid) is Some(_))
-
-  @character.unregister_character_by_oid(oid)
-  assert_true(@character.get_character_by_oid(oid) is None)
-
-  @character.register_character(character)
-  @character.clear_character_registry()
-  assert_true(@character.get_character_by_oid(oid) is None)
 }

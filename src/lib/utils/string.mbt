@@ -1,7 +1,7 @@
 ///|
 pub fn ellipsis(s : String, max_len : Int, ellipsis? : String = "..") -> String {
   if s.length() > max_len {
-    s.view(end_offset=max_len - ellipsis.length()).to_string() + ellipsis
+    s.view(end_offset=max_len - ellipsis.length()).to_owned() + ellipsis
   } else {
     s
   }

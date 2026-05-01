@@ -73,7 +73,7 @@ pub fn make_regular_attack(
 }
 
 ///|
-pub fn get_regular_attack_bullet(bulletid : Int) -> @resource.NxAnimation {
+pub fn get_regular_attack_bullet(bulletid : Int) -> @ms_animation.Animation {
   let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }

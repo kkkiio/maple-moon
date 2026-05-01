@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/lib/ms/combat_system"
 
 import {
   "KKKIIO/maple-moon/lib/legacy_types",
+  "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/char_stats",
   "KKKIIO/maple-moon/lib/ms/character",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
@@ -26,26 +27,46 @@ pub fn clear_events() -> Unit
 
 pub fn combat_system(@ecs.World) -> Unit
 
-pub fn get_basic_effect() -> BasicEffect
-
 pub fn get_combat() -> Combat?
 
-pub fn get_regular_attack_bullet(Int) -> @resource.NxAnimation
+pub fn get_regular_attack_bullet(Int) -> @animation.Animation
 
 pub let hit_event_bus : @event.Events[HitEvent]
 
 pub fn is_empty() -> Bool
+
+pub async fn load_teleport_use_effect() -> ((@character.Character) -> Unit)
 
 #callsite(autofill(loc))
 pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : SourceLoc) -> @utils.Future[Unit]
 
 pub fn make_attack_range(@combat_proto.Attack) -> @res_types.Rectangle[Int]
 
-pub fn make_hit_effect(Json) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
+pub async fn make_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
 
 pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool, max_target_count? : Int) -> @combat_proto.Attack
 
-pub fn make_use_effect(Json, Int) -> UseEffect raise
+pub async fn make_use_effect(Json, Int, @resource.AsyncLoader, String) -> UseEffect
+
+pub async fn new_by_level_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+
+pub async fn new_by_level_twohanded_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+
+pub async fn new_by_level_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+
+pub async fn new_by_skill_level_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+
+pub fn new_iron_body_use_effect() -> (@character.Character) -> Unit
+
+pub async fn new_multi_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+
+pub async fn new_single_hit_effect(NxHitEffect, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+
+pub async fn new_single_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+
+pub async fn new_twohanded_hit_effect(NxHitEffect, NxHitEffect, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+
+pub async fn new_twohanded_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
 
 pub fn push_event(HitEvent) -> Unit
 
@@ -53,18 +74,11 @@ pub fn set_combat(Combat?) -> Unit
 
 pub fn set_player(&DamagableCharacter?) -> Unit
 
-pub fn show_teleport_effect(@character.Character) -> Unit
-
 pub fn teleport_phobj(@physics.PhysicsObject, Bool, @physics.Physics) -> Unit
 
 // Errors
 
 // Types and methods
-pub struct BasicEffect {
-  teleport : @resource.NxAnimation
-}
-pub fn BasicEffect::load() -> Self raise
-
 type ByLevelAction
 pub impl SkillAction for ByLevelAction
 
@@ -86,7 +100,7 @@ pub(all) struct CombatAction {
   apply_use_sfx : (@character.Character) -> Unit
   apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
   make_attack : (@character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
-  get_bullet : (@character.Character, Int) -> @resource.NxAnimation
+  get_bullet : (@character.Character, Int) -> @animation.Animation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -99,7 +113,7 @@ pub fn CombatAction::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn CombatAction::apply_useeffects(Self, @character.Character) -> Unit
 pub fn CombatAction::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn CombatAction::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
-pub fn CombatAction::get_bullet(Self, @character.Character, Int) -> @resource.NxAnimation
+pub fn CombatAction::get_bullet(Self, @character.Character, Int) -> @animation.Animation
 pub fn CombatAction::get_id(Self) -> Int
 pub fn CombatAction::is_attack(Self) -> Bool
 pub fn CombatAction::is_skill(Self) -> Bool
@@ -178,12 +192,12 @@ pub fn Skill::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn Skill::apply_useeffects(Self, @character.Character) -> Unit
 pub fn Skill::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn Skill::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
-pub fn Skill::get_bullet(Self, @character.Character, Int) -> @resource.NxAnimation
+pub fn Skill::get_bullet(Self, @character.Character, Int) -> @animation.Animation
 pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
 pub async fn Skill::load(Int) -> Self
 pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
-pub fn Skill::new(Int, Json, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound, UseEffect, (@combat_proto.AttackUser, @monster.Mob) -> Unit) -> Self raise
+pub async fn Skill::new(Int, Json, @resource.AsyncLoader, String, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound) -> Self
 
 type SkillSound
 
@@ -191,8 +205,6 @@ type TwoHandedAction
 pub impl SkillAction for TwoHandedAction
 
 pub struct UseEffect((@character.Character) -> Unit)
-#deprecated
-pub fn UseEffect::inner(Self) -> (@character.Character) -> Unit
 
 // Type aliases
 

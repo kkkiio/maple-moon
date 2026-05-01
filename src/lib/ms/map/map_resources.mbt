@@ -42,7 +42,7 @@ pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
 ///|
 fn aseprite_to_json_path(path : String) -> String? {
   if path.has_suffix(".aseprite") {
-    return Some(path.strip_suffix(".aseprite").unwrap().to_string() + ".json")
+    return Some(path.strip_suffix(".aseprite").unwrap().to_owned() + ".json")
   }
   None
 }
@@ -147,7 +147,19 @@ test "parse misssing" {
   debug_inspect(
     life,
     content=(
-      #|{cy: 274, f: 0, fh: 126, hide: 0, id: "1012000", mob_time: None, rx0: 99, rx1: 199, type_: "n", x: 149, y: 267}
+      #|{
+      #|  cy: 274,
+      #|  f: 0,
+      #|  fh: 126,
+      #|  hide: 0,
+      #|  id: "1012000",
+      #|  mob_time: None,
+      #|  rx0: 99,
+      #|  rx1: 199,
+      #|  type_: "n",
+      #|  x: 149,
+      #|  y: 267,
+      #|}
     ),
   )
 }

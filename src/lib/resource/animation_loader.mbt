@@ -86,10 +86,17 @@ let animation_cache : Map[String, LoadedAnimations] = Map::new()
 ///|
 priv struct FrameItem {
   rect : @math.Rect
+  sprite_source_position : @struct.Point[Int]
   duration_ms : Int
   duration_s : Double
-  size : @struct.Point[Int]
   alpha : Double
+}
+
+///|
+priv struct AnchorInfo {
+  bounds_position : @struct.Point[Int]
+  dimensions : @struct.Point[Int]
+  pivot : @math.Vec2
 }
 
 ///|
@@ -143,14 +150,14 @@ fn compile_loaded_animations(
     meta_obj.get("layers"),
     frames_json.length(),
   )
+  let atlas_size = parse_meta_size(meta_obj)
   let frames = parse_frames(frames_json, frame_alpha_by_index)
   let ranges = parse_tag_ranges(tags_json, frames.length())
-  let anchor_by_tag = parse_anchor_by_tag(slices_json)
+  let anchor_by_tag = parse_anchor_info_by_tag(slices_json)
 
-  let first = frames[0]
   let atlas_layout = @sprite.register_texture_atlas_layout(
     @sprite.TextureAtlasLayout::new(
-      @math.Vec2(first.size.x.to_double(), first.size.y.to_double()),
+      @math.Vec2(atlas_size.x.to_double(), atlas_size.y.to_double()),
       frames.map(fn(frame) { frame.rect }),
     ),
   )
@@ -195,6 +202,14 @@ fn compile_loaded_animations(
         interpolation=@selene_animation.ChannelInterpolation::Step,
       ),
     )
+    clip.add_curve_to_target(
+      @selene_animation.AnimationTargetId::new("self"),
+      @selene_animation.VariableCurve::vec3(
+        sprite_anchor_field(),
+        build_sprite_anchor_keys(frames, range, anchor_by_tag),
+        interpolation=@selene_animation.ChannelInterpolation::Step,
+      ),
+    )
     clip.duration = if t <= 0.0 { 0.001 } else { t }
     clip_handles.push(@selene_animation.register_animation_clip_asset(clip))
     tag_names.push(range.name)
@@ -211,23 +226,39 @@ fn compile_loaded_animations(
   let clips : Map[String, SeleneClip] = Map::new(capacity=tag_names.length())
   for idx = 0; idx < tag_names.length(); idx = idx + 1 {
     let tag = tag_names[idx]
-    let pivot = match anchor_by_tag.get(tag) {
-      Some(pivot) => pivot
+    let anchor_info = match anchor_by_tag.get(tag) {
+      Some(info) => info
       None => fail("missing slice anchor_\{tag} in aseprite meta.slices")
     }
+    let tag_size = anchor_info.dimensions
     clips.set(tag, {
       image,
       layout: atlas_layout,
       graph: graph_handle,
       node: nodes[idx],
-      anchor: anchor_from_pivot(pivot, first.size),
+      anchor: frame_anchor(frames[ranges[idx].from], anchor_info),
       duration_ms: durations_ms[idx],
-      dimensions: first.size,
+      dimensions: tag_size,
       frame_durations_ms: tag_frame_durations[idx],
       frame_alphas: tag_frame_alphas[idx],
     })
   }
   { clips, tags: tag_names }
+}
+
+///|
+fn parse_meta_size(meta_obj : Map[String, Json]) -> @struct.Point[Int] raise {
+  match meta_obj.get("size") {
+    Some({ "w": Number(w, ..), "h": Number(h, ..), .. }) => {
+      let wi = w.to_int()
+      let hi = h.to_int()
+      guard wi > 0 && hi > 0 else {
+        fail("invalid aseprite meta.size: \{wi}x\{hi}")
+      }
+      @struct.Point::new(wi, hi)
+    }
+    _ => fail("invalid aseprite animation json: missing meta.size")
+  }
 }
 
 ///|
@@ -264,13 +295,22 @@ fn parse_frames(
     }
     frames.push({
       rect: { position: @math.Vec2(x, y), size: @math.Vec2(w, h) },
+      sprite_source_position: parse_frame_sprite_source_position(frame),
       duration_ms: duration,
       duration_s,
-      size: @struct.Point::new(wi, hi),
       alpha: frame_alpha_by_index[idx],
     })
   }
   frames
+}
+
+///|
+fn parse_frame_sprite_source_position(frame : Json) -> @struct.Point[Int] {
+  match frame {
+    { "spriteSourceSize": { "x": Number(x, ..), "y": Number(y, ..), .. }, .. } =>
+      @struct.Point::new(x.to_int(), y.to_int())
+    _ => @struct.Point::new(0, 0)
+  }
 }
 
 ///|
@@ -364,7 +404,9 @@ fn parse_tag_ranges(
 }
 
 ///|
-fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2] {
+fn parse_anchor_info_by_tag(
+  slices_json : Array[Json],
+) -> Map[String, AnchorInfo] {
   let anchors = Map::new()
   for slice in slices_json {
     guard slice is { "name": String(name), "keys": Array(keys), .. } else {
@@ -374,16 +416,115 @@ fn parse_anchor_by_tag(slices_json : Array[Json]) -> Map[String, @math.Vec2] {
     guard !keys.is_empty() else { continue }
     let first = keys[0]
     guard first
-      is { "pivot": { "x": Number(px, ..), "y": Number(py, ..), .. }, .. } else {
+      is {
+        "bounds": {
+          "x": Number(x, ..),
+          "y": Number(y, ..),
+          "w": Number(w, ..),
+          "h": Number(h, ..),
+          ..
+        },
+        "pivot": { "x": Number(px, ..), "y": Number(py, ..), .. },
+        ..
+      } else {
       continue
     }
+    let wi = w.to_int()
+    let hi = h.to_int()
+    guard wi > 0 && hi > 0 else { continue }
     let tag = name
       .strip_prefix("anchor_")
-      .map(fn(v) { v.to_string() })
+      .map(fn(v) { v.to_owned() })
       .unwrap_or(name)
-    anchors[tag] = @math.Vec2(px, py)
+    anchors[tag] = {
+      bounds_position: @struct.Point::new(x.to_int(), y.to_int()),
+      dimensions: @struct.Point::new(wi, hi),
+      pivot: @math.Vec2(px, py),
+    }
   }
   anchors
+}
+
+///|
+fn build_sprite_anchor_keys(
+  frames : Array[FrameItem],
+  range : TagRange,
+  anchor_by_tag : Map[String, AnchorInfo],
+) -> Array[@selene_animation.Vec3Keyframe] raise {
+  let info = match anchor_by_tag.get(range.name) {
+    Some(info) => info
+    None => fail("missing slice anchor_\{range.name} in aseprite meta.slices")
+  }
+  let keys : Array[@selene_animation.Vec3Keyframe] = []
+  let mut t = 0.0
+  for idx = range.from; idx <= range.to; idx = idx + 1 {
+    let frame = frames[idx]
+    let @sprite.Anchor(anchor) = frame_anchor(frame, info)
+    keys.push({
+      time: t,
+      value: @math.Vec3::new(anchor.0, anchor.1, 0.0),
+      in_tangent: None,
+      out_tangent: None,
+    })
+    t += frame.duration_s
+  }
+  keys
+}
+
+///|
+fn frame_anchor(frame : FrameItem, info : AnchorInfo) -> @sprite.Anchor raise {
+  let rect_w = frame.rect.size.0.to_int()
+  let rect_h = frame.rect.size.1.to_int()
+  guard rect_w > 0 && rect_h > 0 else {
+    fail("invalid frame rect size for anchor conversion")
+  }
+  let source_x = frame.sprite_source_position.x - info.bounds_position.x
+  let source_y = frame.sprite_source_position.y - info.bounds_position.y
+  let pivot_x = info.pivot.0 - source_x.to_double()
+  let pivot_y = info.pivot.1 - source_y.to_double()
+  anchor_from_pivot(
+    @math.Vec2(pivot_x, pivot_y),
+    @struct.Point::new(rect_w, rect_h),
+  )
+}
+
+///|
+let sprite_anchor_field_ref : Ref[@selene_animation.AnimatedFieldHandle?] = Ref::new(
+  None,
+)
+
+///|
+fn sprite_anchor_field() -> @selene_animation.AnimatedFieldHandle {
+  match sprite_anchor_field_ref.val {
+    Some(handle) => handle
+    None => {
+      let handle = @selene_animation.register_animated_field({
+        name: "Sprite.anchor",
+        kind: @selene_animation.AnimationValueKind::Vec3,
+        sample: fn(entity) {
+          let @sprite.Anchor(anchor) = @sprite.sprites()
+            .get(entity)
+            .map_or(@sprite.Anchor(@math.Vec2::zero()), fn(sprite) {
+              sprite.anchor
+            })
+          @selene_animation.AnimatedValue::Vec3(
+            @math.Vec3::new(anchor.0, anchor.1, 0.0),
+          )
+        },
+        apply: fn(entity, value) {
+          guard value is @selene_animation.AnimatedValue::Vec3(anchor)
+          guard @sprite.sprites().get(entity) is Some(sprite) else { return }
+          let x = if sprite.flip_x { -anchor.x } else { anchor.x }
+          @sprite.sprites().set(entity, {
+            ..sprite,
+            anchor: @sprite.Anchor(@math.Vec2(x, anchor.y)),
+          })
+        },
+      })
+      sprite_anchor_field_ref.val = Some(handle)
+      handle
+    }
+  }
 }
 
 ///|
@@ -441,6 +582,95 @@ test "parse frame alpha by index applies layer and cel opacity" {
   inspect(factors.length(), content="2")
   assert_true((factors[0] - 0.3936947327950788).abs() < 0.000000000001)
   inspect(factors[1], content="1")
+}
+
+///|
+test "compile packed aseprite json keeps per tag dimensions" {
+  let src : Json = {
+    "frames": [
+      {
+        "filename": "small/0",
+        "frame": { "x": 0, "y": 0, "w": 10, "h": 20 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 20 },
+        "sourceSize": { "w": 10, "h": 20 },
+        "duration": 80,
+      },
+      {
+        "filename": "large/0",
+        "frame": { "x": 10, "y": 0, "w": 30, "h": 40 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 40 },
+        "sourceSize": { "w": 30, "h": 40 },
+        "duration": 120,
+      },
+    ],
+    "meta": {
+      "image": "packed.png",
+      "size": { "w": 40, "h": 40 },
+      "frameTags": [
+        { "name": "small", "from": 0, "to": 0, "direction": "forward" },
+        { "name": "large", "from": 1, "to": 1, "direction": "forward" },
+      ],
+      "slices": [
+        {
+          "name": "anchor_small",
+          "keys": [
+            {
+              "frame": 0,
+              "bounds": { "x": 0, "y": 0, "w": 10, "h": 20 },
+              "pivot": { "x": 5, "y": 20 },
+            },
+          ],
+        },
+        {
+          "name": "anchor_large",
+          "keys": [
+            {
+              "frame": 1,
+              "bounds": { "x": 0, "y": 0, "w": 30, "h": 40 },
+              "pivot": { "x": 15, "y": 40 },
+            },
+          ],
+        },
+      ],
+    },
+  }
+  let loaded = compile_loaded_animations(
+    AsyncLoader::new("npc", loader=AnimationLoaderTestResourceLoader::new()),
+    src,
+    "/assets/test/skill__packed.json",
+  )
+  let small = loaded.clip("small")
+  let large = loaded.clip("large")
+  inspect(small.dimensions.x, content="10")
+  inspect(small.dimensions.y, content="20")
+  inspect(large.dimensions.x, content="30")
+  inspect(large.dimensions.y, content="40")
+  inspect(small.duration_ms, content="80")
+  inspect(large.duration_ms, content="120")
+}
+
+///|
+priv struct AnimationLoaderTestResourceLoader {
+  dummy : Unit
+}
+
+///|
+fn AnimationLoaderTestResourceLoader::new() -> AnimationLoaderTestResourceLoader {
+  { dummy: () }
+}
+
+///|
+impl AsyncResourceLoader for AnimationLoaderTestResourceLoader with load_data(
+  self,
+  path,
+) -> Json {
+  ignore(self.dummy)
+  ignore(path)
+  Json::null()
 }
 
 ///|

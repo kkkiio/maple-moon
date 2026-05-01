@@ -113,14 +113,14 @@ pub fn is_reference_data_ready() -> Bool {
 ///|
 pub fn resolve_npc_name(nid : StringView) -> String raise {
   let data = require_reference_data()
-  get_name_by_path(data.npc_img, ["\{nid.to_string()}", "name"], "npc:\{nid}")
+  get_name_by_path(data.npc_img, ["\{nid.to_owned()}", "name"], "npc:\{nid}")
 }
 
 ///|
 pub fn resolve_mob_name(mid : StringView) -> String raise {
-  let normalized = mid.trim_start(chars="0").to_string()
+  let normalized = mid.trim_start(chars="0").to_owned()
   guard !normalized.is_empty() else {
-    raise InvalidId("invalid mob id: \{mid.to_string()}")
+    raise InvalidId("invalid mob id: \{mid.to_owned()}")
   }
   let data = require_reference_data()
   get_name_by_path(data.mob_img, [normalized, "name"], "mob:\{mid}")
@@ -128,7 +128,7 @@ pub fn resolve_mob_name(mid : StringView) -> String raise {
 
 ///|
 pub fn resolve_map_name(v : StringView) -> String raise {
-  let map_id_str = v.to_string()
+  let map_id_str = v.to_owned()
   let map_id = @string.parse_int(map_id_str) catch {
     _ => raise InvalidId("invalid map id: \{map_id_str}")
   }
@@ -143,7 +143,7 @@ pub fn resolve_map_name(v : StringView) -> String raise {
 
 ///|
 pub fn resolve_item_name(v : StringView) -> String raise {
-  let item_id_str = v.to_string()
+  let item_id_str = v.to_owned()
   let item_id = @string.parse_int(item_id_str) catch {
     _ => raise InvalidId("invalid item id: \{item_id_str}")
   }

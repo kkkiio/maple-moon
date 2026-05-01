@@ -48,10 +48,7 @@ pub impl @json.FromJson for DamageSkin with from_json(json, path) {
 ///|
 fn DamageSkin::get_width(self : DamageSkin, c : Char) -> Int {
   match self.sprites.get(c) {
-    Some(anim) =>
-      @ms_animation.frame_size_at(anim, 0)
-      .map(fn(size) { size.0.to_int() })
-      .unwrap_or(0)
+    Some(anim) => @ms_animation.animation_dimensions(anim).0.to_int()
     None => 0
   }
 }
@@ -215,7 +212,7 @@ pub fn NumberSet::show_number(
     let number = damage.to_string().to_array()
     let first_num = number[0]
     let (rest_num, multiple) = if number.length() > 1 {
-      (number[1:].to_array(), true)
+      (number[1:], true)
     } else {
       ([], false)
     }

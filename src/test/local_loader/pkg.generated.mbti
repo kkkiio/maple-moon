@@ -2,61 +2,17 @@
 package "KKKIIO/maple-moon/test/local_loader"
 
 import {
-  "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/resource",
 }
 
 // Values
-pub fn install_local_csv_loader() -> Unit
-
 pub fn install_resource_env_for_test() -> Unit
 
-pub fn make_local_character_loader() -> @resource.AsyncLoader
-
-pub fn make_local_csv_loader() -> @resource.CsvLoader
-
-pub fn make_local_item_data_system() -> @item.ItemDataSystem
-
-pub fn make_local_item_loader() -> @resource.AsyncLoader
-
-pub fn make_local_mob_loader() -> @resource.AsyncLoader
-
-pub fn make_local_quest_loader() -> @resource.AsyncLoader
-
-pub fn make_local_skill_loader() -> @resource.AsyncLoader
-
 pub fn make_local_string_loader() -> @resource.AsyncLoader
-
-pub fn make_null_string_loader() -> @resource.AsyncLoader
-
-pub fn use_local_item_data_system() -> Unit
 
 // Errors
 
 // Types and methods
-pub struct LocalCsvTextLoader {
-  dummy : Unit
-}
-pub fn LocalCsvTextLoader::new() -> Self
-pub impl @resource.CsvTextLoader for LocalCsvTextLoader
-
-pub struct LocalDirResourceLoader {
-  root_path : String
-}
-pub fn LocalDirResourceLoader::new(String) -> Self
-pub impl @resource.AsyncResourceLoader for LocalDirResourceLoader
-
-pub struct LocalFileJsonResourceLoader {
-  root_path : String
-}
-pub fn LocalFileJsonResourceLoader::new(String) -> Self
-pub impl @resource.AsyncResourceLoader for LocalFileJsonResourceLoader
-
-pub struct NullResourceLoader {
-  dummy : Unit
-}
-pub fn NullResourceLoader::new() -> Self
-pub impl @resource.AsyncResourceLoader for NullResourceLoader
 
 // Type aliases
 

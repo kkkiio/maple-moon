@@ -13,8 +13,8 @@ let bgm_state : Ref[BgmState] = Ref::new({
 ///|
 fn bgm_asset_path(bgm_key : String) -> String? {
   guard bgm_key.find("/") is Some(split) else { return None }
-  let group = bgm_key[:split].to_string()
-  let name = bgm_key[split + 1:].to_string()
+  let group = bgm_key[:split]
+  let name = bgm_key[split + 1:]
   if !group.has_prefix("Bgm") || !group.has_suffix(".img") || name.is_empty() {
     return None
   }

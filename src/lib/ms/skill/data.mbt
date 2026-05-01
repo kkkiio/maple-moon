@@ -106,12 +106,8 @@ pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillN
     obj.get("req").unwrap_or(Json::null()),
     path=path.add_key("req"),
   )
-  let invisible : Bool = match obj.get("invisible") {
-    Some(Number(n, ..)) => n == 1
-    Some(Null) | None => false
-    _ =>
-      raise @json.JsonDecodeError((path.add_key("invisible"), "expect number"))
-  }
+  let invisible : Bool = obj is { "invisible": v, .. } &&
+    (v is Number(1, ..) || v is String("1") || v is True)
   let level_stats : NxLevelStats = @json.from_json(
     obj.get("level").unwrap_or(Json::null()),
     path=path.add_key("level"),
@@ -460,9 +456,13 @@ pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType 
   match json {
     Null => @weapon.Type::NONE
     Number(v, ..) =>
-      @weapon.Type::by_value(100 + v.to_int()) catch {
-        _ => raise @json.JsonDecodeError((path, "invalid weapon type"))
-      }
+      @weapon.Type::from_value(100 + v.to_int()).unwrap_or_error(
+        @json.JsonDecodeError((path, "invalid weapon type")),
+      )
+    String(s) if (try? @string.parse_int(s)) is Ok(v) =>
+      @weapon.Type::from_value(100 + v).unwrap_or_error(
+        @json.JsonDecodeError((path, "invalid weapon type")),
+      )
     _ => raise @json.JsonDecodeError((path, "expect number"))
   }
 }

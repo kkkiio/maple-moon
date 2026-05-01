@@ -80,7 +80,7 @@ pub struct CharacterPresentationResource {
   body_cache : Map[Int, FullBody]
 }
 pub async fn CharacterPresentationResource::load() -> Self
-pub async fn CharacterPresentationResource::load_body_by_skin_id(Self, Int) -> FullBody
+pub fn CharacterPresentationResource::load_body_by_skin_id(Self, Int) -> FullBody
 pub async fn CharacterPresentationResource::load_face_by_id(Self, Int) -> Face
 pub async fn CharacterPresentationResource::load_hair_by_id(Self, Int) -> Hair
 pub fn CharacterPresentationResource::new(@character_body.NxStanceLooks[@character_body.NxStanceBody], @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self

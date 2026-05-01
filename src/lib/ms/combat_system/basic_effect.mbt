@@ -1,72 +1,42 @@
-/// Basic effects are common animations that are reused across different skills or game events.
-/// For example, the "Teleport" animation is used by all Mage classes.
-/// Instead of duplicating this data in every skill's JSON, we embed it here.
-
 ///|
-using @graphics {add_effect}
-
-///|
-pub struct BasicEffect {
-  teleport : @resource.NxAnimation
-}
-
-///|
-pub fn BasicEffect::load() -> BasicEffect raise {
-  let teleport_json : Json = {
-    "0": {
-      "__h": 172,
-      "__w": 62,
-      "delay": 80,
-      "origin": [34, 122],
-      "__i": "/assets/Effect/BasicEff.img/Teleport.png",
-      "__off": [0, 0],
-    },
-    "1": {
-      "__h": 172,
-      "__w": 62,
-      "delay": 80,
-      "origin": [34, 122],
-      "__i": "/assets/Effect/BasicEff.img/Teleport.png",
-      "__off": [62, 0],
-    },
-    "2": {
-      "__h": 172,
-      "__w": 62,
-      "delay": 80,
-      "origin": [34, 122],
-      "__i": "/assets/Effect/BasicEff.img/Teleport.png",
-      "__off": [124, 0],
-    },
-    "3": {
-      "__h": 172,
-      "__w": 62,
-      "delay": 80,
-      "origin": [34, 122],
-      "__i": "/assets/Effect/BasicEff.img/Teleport.png",
-      "__off": [186, 0],
-    },
-  }
-  let teleport : @resource.NxAnimation = @json.from_json(teleport_json)
-  { teleport, }
-}
-
-///|
-let basic_effect : Ref[BasicEffect?] = Ref::new(None)
-
-///|
-pub fn get_basic_effect() -> BasicEffect {
-  match basic_effect.val {
-    Some(be) => be
-    None => {
-      let be = BasicEffect::load() catch { _ => panic() }
-      basic_effect.val = Some(be)
-      be
-    }
+fn read_basic_mx_animation_ref(src : Json) -> String {
+  match src {
+    { "mx_animation": String(path), .. } => path
+    _ => abort("missing mx_animation in Effect/BasicEff.img/Teleport")
   }
 }
 
 ///|
-pub fn show_teleport_effect(character : @character.Character) -> Unit {
-  let be = get_basic_effect()
-  add_effect(character.entity, be.teleport, z=@graphics.EFFECT_ZINDEX)
+fn read_basic_effect_z(src : Json) -> Int {
+  match src {
+    { "z": Number(z, ..), .. } => z.to_int()
+    { "z": String(raw), .. } =>
+      @string.parse_int(raw) catch {
+        _ => abort("invalid z in Effect/BasicEff.img/Teleport")
+      }
+    _ => 0
+  }
+}
+
+///|
+pub async fn load_teleport_use_effect() -> (@character.Character) -> Unit {
+  let effect_loader = @resource.require_async_loader("effect")
+  let teleport_node = effect_loader.load_resource(["BasicEff.img", "Teleport"])
+  let ref_path = read_basic_mx_animation_ref(teleport_node)
+  let resolved = @resource.resolve_ref(
+    "/assets/Effect/BasicEff.img/Teleport.json", ref_path,
+  )
+  let animation_loader = @resource.AnimationLoader::new(effect_loader)
+  let loaded = animation_loader.load(resolved)
+  let clip = loaded.clip("main") catch {
+    _ => abort("missing animation tag 'main': \{resolved}")
+  }
+  let effect : @graphics.EffectAnimation = {
+    animation: @ms_animation.from_selene_clip(clip, loop_=false),
+    duration_ms: clip.duration_ms,
+  }
+  let z = read_basic_effect_z(teleport_node)
+  fn(character : @character.Character) -> Unit {
+    character.show_attack_effect(effect, z)
+  }
 }

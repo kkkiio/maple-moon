@@ -17,6 +17,6 @@ pub impl AsyncResourceLoader for FileJsonResourceLoader with load_data(
   self,
   path,
 ) -> Json {
-  let full_path = join_dir(self.root_path, path.to_string())
+  let full_path = join_dir(self.root_path, path.to_owned())
   fetch_json(full_path)
 }

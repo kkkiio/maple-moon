@@ -1,12 +1,35 @@
 ///|
 priv struct Ball {
-  animation : @resource.NxAnimation
+  animation : @ms_animation.Animation
 }
 
 ///|
-fn Ball::new(src : Json) -> Ball raise {
-  let animation : @resource.NxAnimation = @json.from_json(src)
-  { animation, }
+async fn load_ball_animation(
+  src : Json,
+  tag : String,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> @ms_animation.Animation {
+  let ref_path = match src {
+    { "mx_animation": String(path), .. } => path
+    _ => fail("missing mx_animation in skill ball")
+  }
+  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let animation_loader = @resource.AnimationLoader::new(skill_loader)
+  let loaded = animation_loader.load(resolved)
+  let clip = loaded.clip(tag)
+  @ms_animation.from_selene_clip(clip, loop_=true)
+}
+
+///|
+async fn Ball::new(
+  src : Json,
+  tag : String,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> Ball {
+  let animation = load_ball_animation(src, tag, skill_loader, base_path)
+  Ball::{ animation, }
 }
 
 ///|
@@ -22,7 +45,7 @@ fn SkillRegularBullet::get(
   _self : SkillRegularBullet,
   _ : @character.Character,
   bulletid : Int,
-) -> @resource.NxAnimation {
+) -> @ms_animation.Animation {
   let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }
@@ -33,10 +56,15 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::new(src : Json) -> SingleBullet raise {
+async fn SingleBullet::new(
+  src : Json,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> SingleBullet {
   let ball = match src {
-    { "ball": ball, .. } => Ball::new(ball)
-    _ => Ball::new(Json::null())
+    { "ball": ball, .. } =>
+      Ball::new(ball, skill_animation_tag(["ball"]), skill_loader, base_path)
+    _ => fail("missing skill ball")
   }
   { ball, }
 }
@@ -46,7 +74,7 @@ fn SingleBullet::get(
   self : SingleBullet,
   _ : @character.Character,
   _ : Int,
-) -> @resource.NxAnimation {
+) -> @ms_animation.Animation {
   self.ball.animation
 }
 
@@ -57,12 +85,25 @@ priv struct BySkillLevelBullet {
 }
 
 ///|
-fn BySkillLevelBullet::new(src : Json, id : Int) -> BySkillLevelBullet raise {
+async fn BySkillLevelBullet::new(
+  src : Json,
+  id : Int,
+  skill_loader : @resource.AsyncLoader,
+  base_path : String,
+) -> BySkillLevelBullet {
   let bullets = Map::new()
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "ball": ball, .. } {
-        bullets.set(@string.parse_int(level), Ball::new(ball))
+        bullets.set(
+          @string.parse_int(level),
+          Ball::new(
+            ball,
+            skill_animation_tag(["level", level, "ball"]),
+            skill_loader,
+            base_path,
+          ),
+        )
       }
     }
   }
@@ -74,15 +115,10 @@ fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
   _ : Int,
-) -> @resource.NxAnimation {
+) -> @ms_animation.Animation {
   let level = (user.get_skilllevel)(self.skill_id)
   match self.bullets.get(level) {
     Some(ball) => ball.animation
-    None => {
-      let empty_ball = Ball::new(Json::null()) catch {
-        _ => @log.fatal("invalid empty skill bullet animation")
-      }
-      empty_ball.animation
-    }
+    None => @log.fatal("invalid missing skill bullet animation")
   }
 }

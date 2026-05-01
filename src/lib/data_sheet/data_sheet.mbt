@@ -31,7 +31,7 @@ pub fn parse_tsv_sheet(text : String, source_name : String) -> Sheet raise {
   }
   for i = 0; i < lines.length(); i = i + 1 {
     let line_no = i + 1
-    let line = lines[i].to_string()
+    let line = lines[i].to_owned()
     if i > 0 && i == lines.length() - 1 && line.is_empty() {
       // Keep Unix-style trailing newline support.
       continue
@@ -39,10 +39,10 @@ pub fn parse_tsv_sheet(text : String, source_name : String) -> Sheet raise {
     if line.is_empty() {
       fail("empty tsv line at line \{line_no} in \{source_name}")
     }
-    let fields = line.split("\t").to_array().map(s => s.to_string())
+    let fields = line.split("\t").to_array().map(s => s.to_owned())
     if i == 0 {
       for idx = 0; idx < fields.length(); idx = idx + 1 {
-        let col = fields[idx].trim().to_string()
+        let col = fields[idx].trim().to_owned()
         if col.is_empty() {
           fail("empty tsv header at line \{line_no} in \{source_name}")
         }

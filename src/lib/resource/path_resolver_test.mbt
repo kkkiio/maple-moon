@@ -46,9 +46,9 @@ test "resolve_ref_from_dir resolves by directory semantics" {
 test "resolve_ref_from_dir supports parent segments" {
   inspect(
     resolve_ref_from_dir(
-      "/assets/skill/110.img", "../111.img/animations/hit0.json",
+      "/assets/Skill/110.img", "../111.img/animations/hit0.json",
     ),
-    content="/assets/skill/111.img/animations/hit0.json",
+    content="/assets/Skill/111.img/animations/hit0.json",
   )
 }
 
@@ -64,7 +64,7 @@ test "resolve_resource_path keeps mob source root behavior" {
 test "resolve_resource_path keeps skill source root behavior" {
   inspect(
     resolve_resource_path("skill", "110.img.json"),
-    content="/assets/skill/110.img.json",
+    content="/assets/Skill/110.img.json",
   )
 }
 

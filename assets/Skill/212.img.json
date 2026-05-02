@@ -1,0 +1,6308 @@
+{
+  "info": {
+    "icon": {
+      "__i": "assets/Skill/212.img/bitmap/10778.png",
+      "__w": 26,
+      "__h": 30,
+      "origin": [
+        -4,
+        30
+      ]
+    }
+  },
+  "skill": {
+    "2121000": {
+      "action": {
+        "0": "alert3"
+      },
+      "affected": {
+        "0": {
+          "__i": "assets/Skill/212.img/bitmap/10806.png",
+          "__w": 129,
+          "__h": 156,
+          "delay": 60,
+          "origin": [
+            71,
+            157
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/212.img/bitmap/10807.png",
+          "__w": 153,
+          "__h": 161,
+          "delay": 60,
+          "origin": [
+            92,
+            162
+          ]
+        },
+        "10": {
+          "__i": "assets/Skill/212.img/bitmap/10816.png",
+          "__w": 206,
+          "__h": 204,
+          "delay": 60,
+          "origin": [
+            107,
+            154
+          ]
+        },
+        "11": {
+          "__i": "assets/Skill/212.img/bitmap/10817.png",
+          "__w": 206,
+          "__h": 203,
+          "delay": 60,
+          "origin": [
+            107,
+            153
+          ]
+        },
+        "12": {
+          "__i": "assets/Skill/212.img/bitmap/10818.png",
+          "__w": 206,
+          "__h": 203,
+          "delay": 60,
+          "origin": [
+            107,
+            153
+          ]
+        },
+        "13": {
+          "__i": "assets/Skill/212.img/bitmap/10819.png",
+          "__w": 206,
+          "__h": 203,
+          "delay": 60,
+          "origin": [
+            107,
+            153
+          ]
+        },
+        "14": {
+          "__i": "assets/Skill/212.img/bitmap/10820.png",
+          "__w": 214,
+          "__h": 203,
+          "delay": 60,
+          "origin": [
+            115,
+            153
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/212.img/bitmap/10808.png",
+          "__w": 155,
+          "__h": 166,
+          "delay": 60,
+          "origin": [
+            96,
+            167
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/212.img/bitmap/10809.png",
+          "__w": 181,
+          "__h": 167,
+          "delay": 60,
+          "origin": [
+            97,
+            168
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/212.img/bitmap/10810.png",
+          "__w": 178,
+          "__h": 166,
+          "delay": 60,
+          "origin": [
+            94,
+            167
+          ]
+        },
+        "5": {
+          "__i": "assets/Skill/212.img/bitmap/10811.png",
+          "__w": 174,
+          "__h": 167,
+          "delay": 60,
+          "origin": [
+            92,
+            168
+          ]
+        },
+        "6": {
+          "__i": "assets/Skill/212.img/bitmap/10812.png",
+          "__w": 167,
+          "__h": 166,
+          "delay": 60,
+          "origin": [
+            87,
+            167
+          ]
+        },
+        "7": {
+          "__i": "assets/Skill/212.img/bitmap/10813.png",
+          "__w": 152,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            78,
+            163
+          ]
+        },
+        "8": {
+          "__i": "assets/Skill/212.img/bitmap/10814.png",
+          "__w": 136,
+          "__h": 158,
+          "delay": 60,
+          "origin": [
+            70,
+            159
+          ]
+        },
+        "9": {
+          "__i": "assets/Skill/212.img/bitmap/10815.png",
+          "__w": 122,
+          "__h": 151,
+          "delay": 60,
+          "origin": [
+            68,
+            152
+          ]
+        }
+      },
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121000.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10779.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10781.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10780.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 10,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 30,
+          "x": 1
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 20,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 300,
+          "x": 5
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 30,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 330,
+          "x": 6
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 30,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 360,
+          "x": 6
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 30,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 390,
+          "x": 7
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 30,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 420,
+          "x": 7
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 30,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 450,
+          "x": 8
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 40,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 480,
+          "x": 8
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 40,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 510,
+          "x": 9
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 40,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 540,
+          "x": 9
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 40,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 570,
+          "x": 10
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 10,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 60,
+          "x": 1
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 40,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 600,
+          "x": 10
+        },
+        "21": {
+          "hs": "h21",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 50,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 630,
+          "x": 11
+        },
+        "22": {
+          "hs": "h22",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 50,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 660,
+          "x": 11
+        },
+        "23": {
+          "hs": "h23",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 50,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 690,
+          "x": 12
+        },
+        "24": {
+          "hs": "h24",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 50,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 720,
+          "x": 12
+        },
+        "25": {
+          "hs": "h25",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 50,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 750,
+          "x": 13
+        },
+        "26": {
+          "hs": "h26",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 60,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 780,
+          "x": 13
+        },
+        "27": {
+          "hs": "h27",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 60,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 810,
+          "x": 14
+        },
+        "28": {
+          "hs": "h28",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 60,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 840,
+          "x": 14
+        },
+        "29": {
+          "hs": "h29",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 60,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 870,
+          "x": 15
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 10,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 90,
+          "x": 2
+        },
+        "30": {
+          "hs": "h30",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 60,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 900,
+          "x": 15
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 10,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 120,
+          "x": 2
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 10,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 150,
+          "x": 3
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 20,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 180,
+          "x": 3
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 20,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 210,
+          "x": 4
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 20,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 240,
+          "x": 4
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -400,
+            -300
+          ],
+          "mpCon": 20,
+          "rb": [
+            400,
+            300
+          ],
+          "time": 270,
+          "x": 5
+        }
+      }
+    },
+    "2121001": {
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121001.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10821.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10823.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10822.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "keydown": {
+        "0": {
+          "__i": "assets/Skill/212.img/bitmap/10824.png",
+          "__w": 159,
+          "__h": 159,
+          "delay": 60,
+          "origin": [
+            88,
+            153
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/212.img/bitmap/10825.png",
+          "__w": 153,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            85,
+            155
+          ]
+        },
+        "10": {
+          "__i": "assets/Skill/212.img/bitmap/10834.png",
+          "__w": 153,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            85,
+            155
+          ]
+        },
+        "11": {
+          "__i": "assets/Skill/212.img/bitmap/10835.png",
+          "__w": 145,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            81,
+            156
+          ]
+        },
+        "12": {
+          "__i": "assets/Skill/212.img/bitmap/10836.png",
+          "__w": 145,
+          "__h": 163,
+          "delay": 60,
+          "origin": [
+            79,
+            157
+          ]
+        },
+        "13": {
+          "__i": "assets/Skill/212.img/bitmap/10837.png",
+          "__w": 158,
+          "__h": 164,
+          "delay": 60,
+          "origin": [
+            75,
+            157
+          ]
+        },
+        "14": {
+          "__i": "assets/Skill/212.img/bitmap/10838.png",
+          "__w": 154,
+          "__h": 163,
+          "delay": 60,
+          "origin": [
+            71,
+            157
+          ]
+        },
+        "15": {
+          "__i": "assets/Skill/212.img/bitmap/10839.png",
+          "__w": 172,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            91,
+            156
+          ]
+        },
+        "16": {
+          "__i": "assets/Skill/212.img/bitmap/10840.png",
+          "__w": 170,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            92,
+            155
+          ]
+        },
+        "17": {
+          "__i": "assets/Skill/212.img/bitmap/10841.png",
+          "__w": 166,
+          "__h": 161,
+          "delay": 60,
+          "origin": [
+            90,
+            155
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/212.img/bitmap/10826.png",
+          "__w": 145,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            81,
+            156
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/212.img/bitmap/10827.png",
+          "__w": 145,
+          "__h": 163,
+          "delay": 60,
+          "origin": [
+            79,
+            157
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/212.img/bitmap/10828.png",
+          "__w": 158,
+          "__h": 164,
+          "delay": 60,
+          "origin": [
+            75,
+            157
+          ]
+        },
+        "5": {
+          "__i": "assets/Skill/212.img/bitmap/10829.png",
+          "__w": 154,
+          "__h": 163,
+          "delay": 60,
+          "origin": [
+            71,
+            157
+          ]
+        },
+        "6": {
+          "__i": "assets/Skill/212.img/bitmap/10830.png",
+          "__w": 172,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            91,
+            156
+          ]
+        },
+        "7": {
+          "__i": "assets/Skill/212.img/bitmap/10831.png",
+          "__w": 170,
+          "__h": 162,
+          "delay": 60,
+          "origin": [
+            92,
+            155
+          ]
+        },
+        "8": {
+          "__i": "assets/Skill/212.img/bitmap/10832.png",
+          "__w": 166,
+          "__h": 161,
+          "delay": 60,
+          "origin": [
+            90,
+            155
+          ]
+        },
+        "9": {
+          "__i": "assets/Skill/212.img/bitmap/10833.png",
+          "__w": 159,
+          "__h": 159,
+          "delay": 60,
+          "origin": [
+            88,
+            153
+          ]
+        }
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mad": 160,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "10": {
+          "hs": "h10",
+          "mad": 250,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "11": {
+          "hs": "h11",
+          "mad": 260,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "12": {
+          "hs": "h12",
+          "mad": 270,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "13": {
+          "hs": "h13",
+          "mad": 280,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "14": {
+          "hs": "h14",
+          "mad": 290,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "15": {
+          "hs": "h15",
+          "mad": 300,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "16": {
+          "hs": "h16",
+          "mad": 310,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "17": {
+          "hs": "h17",
+          "mad": 320,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "18": {
+          "hs": "h18",
+          "mad": 330,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "19": {
+          "hs": "h19",
+          "mad": 340,
+          "mastery": 11,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "2": {
+          "hs": "h2",
+          "mad": 170,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "20": {
+          "hs": "h20",
+          "mad": 350,
+          "mastery": 11,
+          "mobCount": 6,
+          "mpCon": 40
+        },
+        "21": {
+          "hs": "h21",
+          "mad": 360,
+          "mastery": 11,
+          "mobCount": 6,
+          "mpCon": 55
+        },
+        "22": {
+          "hs": "h22",
+          "mad": 370,
+          "mastery": 12,
+          "mobCount": 6,
+          "mpCon": 55
+        },
+        "23": {
+          "hs": "h23",
+          "mad": 380,
+          "mastery": 12,
+          "mobCount": 6,
+          "mpCon": 55
+        },
+        "24": {
+          "hs": "h24",
+          "mad": 390,
+          "mastery": 12,
+          "mobCount": 6,
+          "mpCon": 55
+        },
+        "25": {
+          "hs": "h25",
+          "mad": 400,
+          "mastery": 13,
+          "mobCount": 6,
+          "mpCon": 55
+        },
+        "26": {
+          "hs": "h26",
+          "mad": 410,
+          "mastery": 13,
+          "mobCount": 6,
+          "mpCon": 54
+        },
+        "27": {
+          "hs": "h27",
+          "mad": 420,
+          "mastery": 13,
+          "mobCount": 6,
+          "mpCon": 53
+        },
+        "28": {
+          "hs": "h28",
+          "mad": 430,
+          "mastery": 14,
+          "mobCount": 6,
+          "mpCon": 52
+        },
+        "29": {
+          "hs": "h29",
+          "mad": 440,
+          "mastery": 14,
+          "mobCount": 6,
+          "mpCon": 51
+        },
+        "3": {
+          "hs": "h3",
+          "mad": 180,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "30": {
+          "hs": "h30",
+          "mad": 450,
+          "mastery": 14,
+          "mobCount": 6,
+          "mpCon": 50
+        },
+        "4": {
+          "hs": "h4",
+          "mad": 190,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "5": {
+          "hs": "h5",
+          "mad": 200,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "6": {
+          "hs": "h6",
+          "mad": 210,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "7": {
+          "hs": "h7",
+          "mad": 220,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "8": {
+          "hs": "h8",
+          "mad": 230,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 25
+        },
+        "9": {
+          "hs": "h9",
+          "mad": 240,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 25
+        }
+      },
+      "masterLevel": 10,
+      "prepare": {
+        "action": "dash",
+        "time": 0
+      },
+      "special": {
+        "0": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10852.png",
+            "__w": 205,
+            "__h": 205,
+            "delay": 150,
+            "origin": [
+              99,
+              100
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10853.png",
+            "__w": 230,
+            "__h": 223,
+            "delay": 150,
+            "origin": [
+              116,
+              113
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/10854.png",
+            "__w": 228,
+            "__h": 216,
+            "delay": 150,
+            "origin": [
+              115,
+              109
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/10855.png",
+            "__w": 230,
+            "__h": 221,
+            "delay": 150,
+            "origin": [
+              120,
+              113
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/10856.png",
+            "__w": 223,
+            "__h": 216,
+            "delay": 150,
+            "origin": [
+              124,
+              119
+            ]
+          }
+        },
+        "1": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10857.png",
+            "__w": 153,
+            "__h": 153,
+            "delay": 150,
+            "origin": [
+              74,
+              75
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10858.png",
+            "__w": 169,
+            "__h": 165,
+            "delay": 150,
+            "origin": [
+              84,
+              84
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/10859.png",
+            "__w": 170,
+            "__h": 160,
+            "delay": 150,
+            "origin": [
+              85,
+              81
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/10860.png",
+            "__w": 171,
+            "__h": 165,
+            "delay": 150,
+            "origin": [
+              88,
+              86
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/10861.png",
+            "__w": 167,
+            "__h": 160,
+            "delay": 150,
+            "origin": [
+              92,
+              89
+            ]
+          }
+        },
+        "2": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10862.png",
+            "__w": 85,
+            "__h": 86,
+            "delay": 150,
+            "origin": [
+              43,
+              43
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10863.png",
+            "__w": 112,
+            "__h": 111,
+            "delay": 150,
+            "origin": [
+              58,
+              59
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/10864.png",
+            "__w": 117,
+            "__h": 115,
+            "delay": 150,
+            "origin": [
+              60,
+              60
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/10865.png",
+            "__w": 108,
+            "__h": 103,
+            "delay": 150,
+            "origin": [
+              56,
+              54
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/10866.png",
+            "__w": 83,
+            "__h": 93,
+            "delay": 150,
+            "origin": [
+              46,
+              49
+            ]
+          }
+        },
+        "count": 1,
+        "duration": 900,
+        "interval": 60,
+        "start": 150
+      }
+    },
+    "2121002": {
+      "action": {
+        "0": "alert4"
+      },
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121002.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10867.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10869.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10868.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mpCon": 26,
+          "prop": 31,
+          "time": 10,
+          "x": 55
+        },
+        "10": {
+          "hs": "h10",
+          "mpCon": 35,
+          "prop": 40,
+          "time": 100,
+          "x": 100
+        },
+        "11": {
+          "hs": "h11",
+          "mpCon": 36,
+          "prop": 41,
+          "time": 110,
+          "x": 105
+        },
+        "12": {
+          "hs": "h12",
+          "mpCon": 37,
+          "prop": 42,
+          "time": 120,
+          "x": 110
+        },
+        "13": {
+          "hs": "h13",
+          "mpCon": 38,
+          "prop": 43,
+          "time": 130,
+          "x": 115
+        },
+        "14": {
+          "hs": "h14",
+          "mpCon": 39,
+          "prop": 44,
+          "time": 140,
+          "x": 120
+        },
+        "15": {
+          "hs": "h15",
+          "mpCon": 40,
+          "prop": 45,
+          "time": 150,
+          "x": 125
+        },
+        "16": {
+          "hs": "h16",
+          "mpCon": 41,
+          "prop": 46,
+          "time": 160,
+          "x": 130
+        },
+        "17": {
+          "hs": "h17",
+          "mpCon": 42,
+          "prop": 47,
+          "time": 170,
+          "x": 135
+        },
+        "18": {
+          "hs": "h18",
+          "mpCon": 43,
+          "prop": 48,
+          "time": 180,
+          "x": 140
+        },
+        "19": {
+          "hs": "h19",
+          "mpCon": 44,
+          "prop": 49,
+          "time": 190,
+          "x": 145
+        },
+        "2": {
+          "hs": "h2",
+          "mpCon": 27,
+          "prop": 32,
+          "time": 20,
+          "x": 60
+        },
+        "20": {
+          "hs": "h20",
+          "mpCon": 45,
+          "prop": 50,
+          "time": 200,
+          "x": 150
+        },
+        "21": {
+          "hs": "h21",
+          "mpCon": 46,
+          "prop": 51,
+          "time": 205,
+          "x": 155
+        },
+        "22": {
+          "hs": "h22",
+          "mpCon": 47,
+          "prop": 52,
+          "time": 210,
+          "x": 160
+        },
+        "23": {
+          "hs": "h23",
+          "mpCon": 48,
+          "prop": 53,
+          "time": 215,
+          "x": 165
+        },
+        "24": {
+          "hs": "h24",
+          "mpCon": 49,
+          "prop": 54,
+          "time": 220,
+          "x": 170
+        },
+        "25": {
+          "hs": "h25",
+          "mpCon": 50,
+          "prop": 55,
+          "time": 225,
+          "x": 175
+        },
+        "26": {
+          "hs": "h26",
+          "mpCon": 49,
+          "prop": 56,
+          "time": 230,
+          "x": 180
+        },
+        "27": {
+          "hs": "h27",
+          "mpCon": 48,
+          "prop": 57,
+          "time": 235,
+          "x": 185
+        },
+        "28": {
+          "hs": "h28",
+          "mpCon": 47,
+          "prop": 58,
+          "time": 240,
+          "x": 190
+        },
+        "29": {
+          "hs": "h29",
+          "mpCon": 46,
+          "prop": 59,
+          "time": 245,
+          "x": 195
+        },
+        "3": {
+          "hs": "h3",
+          "mpCon": 28,
+          "prop": 33,
+          "time": 30,
+          "x": 65
+        },
+        "30": {
+          "hs": "h30",
+          "mpCon": 45,
+          "prop": 60,
+          "time": 250,
+          "x": 200
+        },
+        "4": {
+          "hs": "h4",
+          "mpCon": 29,
+          "prop": 34,
+          "time": 40,
+          "x": 70
+        },
+        "5": {
+          "hs": "h5",
+          "mpCon": 30,
+          "prop": 35,
+          "time": 50,
+          "x": 75
+        },
+        "6": {
+          "hs": "h6",
+          "mpCon": 31,
+          "prop": 36,
+          "time": 60,
+          "x": 80
+        },
+        "7": {
+          "hs": "h7",
+          "mpCon": 32,
+          "prop": 37,
+          "time": 70,
+          "x": 85
+        },
+        "8": {
+          "hs": "h8",
+          "mpCon": 33,
+          "prop": 38,
+          "time": 80,
+          "x": 90
+        },
+        "9": {
+          "hs": "h9",
+          "mpCon": 34,
+          "prop": 39,
+          "time": 90,
+          "x": 95
+        }
+      },
+      "masterLevel": 10,
+      "special": {
+        "0": {
+          "__i": "assets/Skill/212.img/bitmap/10891.png",
+          "__w": 39,
+          "__h": 46,
+          "delay": 90,
+          "origin": [
+            22,
+            59
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/212.img/bitmap/10892.png",
+          "__w": 85,
+          "__h": 88,
+          "delay": 90,
+          "origin": [
+            47,
+            80
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/212.img/bitmap/10893.png",
+          "__w": 100,
+          "__h": 92,
+          "delay": 90,
+          "origin": [
+            54,
+            82
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/212.img/bitmap/10894.png",
+          "__w": 111,
+          "__h": 94,
+          "delay": 90,
+          "origin": [
+            59,
+            83
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/212.img/bitmap/10895.png",
+          "__w": 115,
+          "__h": 94,
+          "delay": 90,
+          "origin": [
+            61,
+            84
+          ]
+        },
+        "5": {
+          "__i": "assets/Skill/212.img/bitmap/10896.png",
+          "__w": 117,
+          "__h": 97,
+          "delay": 90,
+          "origin": [
+            60,
+            86
+          ]
+        }
+      }
+    },
+    "2121003": {
+      "ball": {
+        "mx_animation": "212.img/animations/skill__2121003.json"
+      },
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121003.json"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "pos": 1,
+          "mx_animation": "212.img/animations/skill__2121003.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10946.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10948.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10947.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 62,
+          "mastery": 1,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 80,
+          "mastery": 4,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 82,
+          "mastery": 4,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 84,
+          "mastery": 4,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 86,
+          "mastery": 5,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 88,
+          "mastery": 5,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 90,
+          "mastery": 5,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 92,
+          "mastery": 6,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 94,
+          "mastery": 6,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 96,
+          "mastery": 6,
+          "mobCount": 4,
+          "mpCon": 21,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 98,
+          "mastery": 7,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 64,
+          "mastery": 1,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 100,
+          "mastery": 7,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "21": {
+          "hs": "h21",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 102,
+          "mastery": 7,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "22": {
+          "hs": "h22",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 104,
+          "mastery": 8,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "23": {
+          "hs": "h23",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 106,
+          "mastery": 8,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "24": {
+          "hs": "h24",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 108,
+          "mastery": 8,
+          "mobCount": 5,
+          "mpCon": 31,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "25": {
+          "hs": "h25",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 110,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "26": {
+          "hs": "h26",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 112,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "27": {
+          "hs": "h27",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 114,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "28": {
+          "hs": "h28",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 116,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "29": {
+          "hs": "h29",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 118,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 66,
+          "mastery": 1,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "30": {
+          "hs": "h30",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 120,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 34,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 15
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 68,
+          "mastery": 2,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 70,
+          "mastery": 2,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 72,
+          "mastery": 2,
+          "mobCount": 2,
+          "mpCon": 15,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 74,
+          "mastery": 3,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 76,
+          "mastery": 3,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -300,
+            -100
+          ],
+          "mad": 78,
+          "mastery": 3,
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            -15,
+            0
+          ],
+          "time": 10
+        }
+      }
+    },
+    "2121004": {
+      "action": {
+        "0": "alert2"
+      },
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121004.json"
+      },
+      "effect0": {
+        "z": -1,
+        "mx_animation": "212.img/animations/skill__2121004.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10897.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10899.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10898.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "cooltime": 600,
+          "hs": "h1",
+          "time": 11,
+          "x": 1
+        },
+        "10": {
+          "cooltime": 600,
+          "hs": "h10",
+          "time": 20,
+          "x": 1
+        },
+        "11": {
+          "cooltime": 600,
+          "hs": "h11",
+          "time": 21,
+          "x": 1
+        },
+        "12": {
+          "cooltime": 600,
+          "hs": "h12",
+          "time": 22,
+          "x": 1
+        },
+        "13": {
+          "cooltime": 600,
+          "hs": "h13",
+          "time": 23,
+          "x": 1
+        },
+        "14": {
+          "cooltime": 600,
+          "hs": "h14",
+          "time": 24,
+          "x": 1
+        },
+        "15": {
+          "cooltime": 600,
+          "hs": "h15",
+          "time": 25,
+          "x": 1
+        },
+        "16": {
+          "cooltime": 600,
+          "hs": "h16",
+          "time": 26,
+          "x": 1
+        },
+        "17": {
+          "cooltime": 600,
+          "hs": "h17",
+          "time": 27,
+          "x": 1
+        },
+        "18": {
+          "cooltime": 600,
+          "hs": "h18",
+          "time": 28,
+          "x": 1
+        },
+        "19": {
+          "cooltime": 600,
+          "hs": "h19",
+          "time": 29,
+          "x": 1
+        },
+        "2": {
+          "cooltime": 600,
+          "hs": "h2",
+          "time": 12,
+          "x": 1
+        },
+        "20": {
+          "cooltime": 600,
+          "hs": "h20",
+          "time": 30,
+          "x": 1
+        },
+        "21": {
+          "cooltime": 600,
+          "hs": "h21",
+          "time": 31,
+          "x": 1
+        },
+        "22": {
+          "cooltime": 600,
+          "hs": "h22",
+          "time": 32,
+          "x": 1
+        },
+        "23": {
+          "cooltime": 600,
+          "hs": "h23",
+          "time": 33,
+          "x": 1
+        },
+        "24": {
+          "cooltime": 600,
+          "hs": "h24",
+          "time": 34,
+          "x": 1
+        },
+        "25": {
+          "cooltime": 600,
+          "hs": "h25",
+          "time": 35,
+          "x": 1
+        },
+        "26": {
+          "cooltime": 600,
+          "hs": "h26",
+          "time": 36,
+          "x": 1
+        },
+        "27": {
+          "cooltime": 600,
+          "hs": "h27",
+          "time": 37,
+          "x": 1
+        },
+        "28": {
+          "cooltime": 600,
+          "hs": "h28",
+          "time": 38,
+          "x": 1
+        },
+        "29": {
+          "cooltime": 600,
+          "hs": "h29",
+          "time": 39,
+          "x": 1
+        },
+        "3": {
+          "cooltime": 600,
+          "hs": "h3",
+          "time": 13,
+          "x": 1
+        },
+        "30": {
+          "cooltime": 600,
+          "hs": "h30",
+          "time": 40,
+          "x": 1
+        },
+        "4": {
+          "cooltime": 600,
+          "hs": "h4",
+          "time": 14,
+          "x": 1
+        },
+        "5": {
+          "cooltime": 600,
+          "hs": "h5",
+          "time": 15,
+          "x": 1
+        },
+        "6": {
+          "cooltime": 600,
+          "hs": "h6",
+          "time": 16,
+          "x": 1
+        },
+        "7": {
+          "cooltime": 600,
+          "hs": "h7",
+          "time": 17,
+          "x": 1
+        },
+        "8": {
+          "cooltime": 600,
+          "hs": "h8",
+          "time": 18,
+          "x": 1
+        },
+        "9": {
+          "cooltime": 600,
+          "hs": "h9",
+          "time": 19,
+          "x": 1
+        }
+      }
+    },
+    "2121005": {
+      "action": {
+        "0": "alert2"
+      },
+      "elemAttr": "i",
+      "hit": {
+        "0": {
+          "pos": 1,
+          "mx_animation": "212.img/animations/skill__2121005.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/10974.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/10976.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/10975.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mad": 153,
+          "mastery": 10,
+          "mpCon": 13,
+          "time": 15,
+          "x": 1
+        },
+        "10": {
+          "hs": "h10",
+          "mad": 180,
+          "mastery": 10,
+          "mpCon": 40,
+          "time": 60,
+          "x": 1
+        },
+        "11": {
+          "hs": "h11",
+          "mad": 184,
+          "mastery": 10,
+          "mpCon": 43,
+          "time": 65,
+          "x": 2
+        },
+        "12": {
+          "hs": "h12",
+          "mad": 188,
+          "mastery": 10,
+          "mpCon": 46,
+          "time": 70,
+          "x": 2
+        },
+        "13": {
+          "hs": "h13",
+          "mad": 192,
+          "mastery": 10,
+          "mpCon": 49,
+          "time": 75,
+          "x": 2
+        },
+        "14": {
+          "hs": "h14",
+          "mad": 196,
+          "mastery": 10,
+          "mpCon": 52,
+          "time": 80,
+          "x": 2
+        },
+        "15": {
+          "hs": "h15",
+          "mad": 200,
+          "mastery": 10,
+          "mpCon": 55,
+          "time": 85,
+          "x": 2
+        },
+        "16": {
+          "hs": "h16",
+          "mad": 204,
+          "mastery": 10,
+          "mpCon": 58,
+          "time": 90,
+          "x": 2
+        },
+        "17": {
+          "hs": "h17",
+          "mad": 208,
+          "mastery": 10,
+          "mpCon": 61,
+          "time": 95,
+          "x": 2
+        },
+        "18": {
+          "hs": "h18",
+          "mad": 212,
+          "mastery": 10,
+          "mpCon": 64,
+          "time": 100,
+          "x": 2
+        },
+        "19": {
+          "hs": "h19",
+          "mad": 216,
+          "mastery": 10,
+          "mpCon": 67,
+          "time": 105,
+          "x": 2
+        },
+        "2": {
+          "hs": "h2",
+          "mad": 156,
+          "mastery": 10,
+          "mpCon": 16,
+          "time": 20,
+          "x": 1
+        },
+        "20": {
+          "hs": "h20",
+          "mad": 220,
+          "mastery": 10,
+          "mpCon": 70,
+          "time": 110,
+          "x": 2
+        },
+        "21": {
+          "hs": "h21",
+          "mad": 225,
+          "mastery": 10,
+          "mpCon": 73,
+          "time": 115,
+          "x": 3
+        },
+        "22": {
+          "hs": "h22",
+          "mad": 230,
+          "mastery": 10,
+          "mpCon": 76,
+          "time": 120,
+          "x": 3
+        },
+        "23": {
+          "hs": "h23",
+          "mad": 235,
+          "mastery": 10,
+          "mpCon": 79,
+          "time": 125,
+          "x": 3
+        },
+        "24": {
+          "hs": "h24",
+          "mad": 240,
+          "mastery": 10,
+          "mpCon": 82,
+          "time": 130,
+          "x": 3
+        },
+        "25": {
+          "hs": "h25",
+          "mad": 245,
+          "mastery": 10,
+          "mpCon": 85,
+          "time": 135,
+          "x": 3
+        },
+        "26": {
+          "hs": "h26",
+          "mad": 250,
+          "mastery": 10,
+          "mpCon": 88,
+          "time": 140,
+          "x": 3
+        },
+        "27": {
+          "hs": "h27",
+          "mad": 255,
+          "mastery": 10,
+          "mpCon": 91,
+          "time": 145,
+          "x": 3
+        },
+        "28": {
+          "hs": "h28",
+          "mad": 260,
+          "mastery": 10,
+          "mpCon": 94,
+          "time": 150,
+          "x": 3
+        },
+        "29": {
+          "hs": "h29",
+          "mad": 265,
+          "mastery": 10,
+          "mpCon": 97,
+          "time": 155,
+          "x": 3
+        },
+        "3": {
+          "hs": "h3",
+          "mad": 159,
+          "mastery": 10,
+          "mpCon": 19,
+          "time": 25,
+          "x": 1
+        },
+        "30": {
+          "hs": "h30",
+          "mad": 270,
+          "mastery": 10,
+          "mpCon": 100,
+          "time": 160,
+          "x": 3
+        },
+        "4": {
+          "hs": "h4",
+          "mad": 162,
+          "mastery": 10,
+          "mpCon": 22,
+          "time": 30,
+          "x": 1
+        },
+        "5": {
+          "hs": "h5",
+          "mad": 165,
+          "mastery": 10,
+          "mpCon": 25,
+          "time": 35,
+          "x": 1
+        },
+        "6": {
+          "hs": "h6",
+          "mad": 168,
+          "mastery": 10,
+          "mpCon": 28,
+          "time": 40,
+          "x": 1
+        },
+        "7": {
+          "hs": "h7",
+          "mad": 171,
+          "mastery": 10,
+          "mpCon": 31,
+          "time": 45,
+          "x": 1
+        },
+        "8": {
+          "hs": "h8",
+          "mad": 174,
+          "mastery": 10,
+          "mpCon": 34,
+          "time": 50,
+          "x": 1
+        },
+        "9": {
+          "hs": "h9",
+          "mad": 177,
+          "mastery": 10,
+          "mpCon": 37,
+          "time": 55,
+          "x": 1
+        }
+      },
+      "req": {
+        "2121003": 5
+      },
+      "summon": {
+        "attack1": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11004.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11005.png",
+            "__w": 146,
+            "__h": 167,
+            "delay": 120,
+            "origin": [
+              63,
+              183
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11014.png",
+            "__w": 143,
+            "__h": 179,
+            "delay": 120,
+            "origin": [
+              66,
+              177
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11015.png",
+            "__w": 144,
+            "__h": 180,
+            "delay": 120,
+            "origin": [
+              66,
+              177
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11016.png",
+            "__w": 148,
+            "__h": 179,
+            "delay": 120,
+            "origin": [
+              66,
+              176
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11017.png",
+            "__w": 147,
+            "__h": 179,
+            "delay": 120,
+            "origin": [
+              64,
+              177
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11018.png",
+            "__w": 142,
+            "__h": 174,
+            "delay": 120,
+            "origin": [
+              62,
+              176
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11019.png",
+            "__w": 144,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              63,
+              179
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11020.png",
+            "__w": 144,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11021.png",
+            "__w": 144,
+            "__h": 164,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11022.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 90,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11006.png",
+            "__w": 148,
+            "__h": 170,
+            "delay": 120,
+            "origin": [
+              64,
+              184
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11007.png",
+            "__w": 153,
+            "__h": 172,
+            "delay": 120,
+            "origin": [
+              66,
+              186
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11008.png",
+            "__w": 157,
+            "__h": 175,
+            "delay": 120,
+            "origin": [
+              68,
+              188
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11009.png",
+            "__w": 159,
+            "__h": 178,
+            "delay": 120,
+            "origin": [
+              69,
+              188
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11010.png",
+            "__w": 159,
+            "__h": 179,
+            "delay": 120,
+            "origin": [
+              69,
+              188
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11011.png",
+            "__w": 159,
+            "__h": 176,
+            "delay": 120,
+            "origin": [
+              69,
+              188
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11012.png",
+            "__w": 159,
+            "__h": 176,
+            "delay": 120,
+            "origin": [
+              69,
+              188
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11013.png",
+            "__w": 141,
+            "__h": 179,
+            "delay": 120,
+            "origin": [
+              66,
+              177
+            ]
+          },
+          "info": {
+            "attackAfter": 1080,
+            "mobCount": 3,
+            "priority": "2121003",
+            "range": {
+              "lt": [
+                -200,
+                -150
+              ],
+              "rb": [
+                0,
+                30
+              ]
+            },
+            "type": 0
+          }
+        },
+        "die": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11023.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11024.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11033.png",
+            "__w": 128,
+            "__h": 137,
+            "delay": 120,
+            "origin": [
+              66,
+              134
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11034.png",
+            "__w": 135,
+            "__h": 139,
+            "a0": 255,
+            "a1": 0,
+            "delay": 120,
+            "origin": [
+              70,
+              135
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11025.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11026.png",
+            "__w": 146,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              63,
+              182
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11027.png",
+            "__w": 148,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              64,
+              182
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11028.png",
+            "__w": 150,
+            "__h": 174,
+            "delay": 120,
+            "origin": [
+              65,
+              182
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11029.png",
+            "__w": 153,
+            "__h": 181,
+            "delay": 120,
+            "origin": [
+              67,
+              182
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11030.png",
+            "__w": 143,
+            "__h": 161,
+            "delay": 120,
+            "origin": [
+              74,
+              155
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11031.png",
+            "__w": 155,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              80,
+              156
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11032.png",
+            "__w": 163,
+            "__h": 163,
+            "delay": 120,
+            "origin": [
+              84,
+              147
+            ]
+          }
+        },
+        "move": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10992.png",
+            "__w": 146,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              64,
+              182
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10993.png",
+            "__w": 148,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              65,
+              186
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/10994.png",
+            "__w": 150,
+            "__h": 170,
+            "delay": 180,
+            "origin": [
+              66,
+              190
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/10995.png",
+            "__w": 148,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              65,
+              192
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/10996.png",
+            "__w": 146,
+            "__h": 165,
+            "delay": 180,
+            "origin": [
+              64,
+              188
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/10997.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              63,
+              186
+            ]
+          }
+        },
+        "stand": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10998.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10999.png",
+            "__w": 146,
+            "__h": 166,
+            "delay": 180,
+            "origin": [
+              63,
+              185
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11000.png",
+            "__w": 148,
+            "__h": 166,
+            "delay": 180,
+            "origin": [
+              64,
+              188
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11001.png",
+            "__w": 146,
+            "__h": 166,
+            "delay": 180,
+            "origin": [
+              63,
+              191
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11002.png",
+            "__w": 144,
+            "__h": 164,
+            "delay": 180,
+            "origin": [
+              62,
+              188
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11003.png",
+            "__w": 142,
+            "__h": 168,
+            "delay": 180,
+            "origin": [
+              61,
+              185
+            ]
+          }
+        },
+        "summoned": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/10977.png",
+            "__w": 75,
+            "__h": 59,
+            "delay": 120,
+            "origin": [
+              37,
+              99
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/10978.png",
+            "__w": 78,
+            "__h": 95,
+            "delay": 120,
+            "origin": [
+              38,
+              126
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/10987.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/10988.png",
+            "__w": 206,
+            "__h": 215,
+            "delay": 120,
+            "origin": [
+              98,
+              189
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/10989.png",
+            "__w": 206,
+            "__h": 213,
+            "delay": 120,
+            "origin": [
+              98,
+              187
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/10990.png",
+            "__w": 206,
+            "__h": 211,
+            "delay": 120,
+            "origin": [
+              98,
+              185
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/10991.png",
+            "__w": 209,
+            "__h": 208,
+            "delay": 120,
+            "origin": [
+              98,
+              182
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/10979.png",
+            "__w": 123,
+            "__h": 152,
+            "delay": 120,
+            "origin": [
+              65,
+              139
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/10980.png",
+            "__w": 119,
+            "__h": 165,
+            "delay": 120,
+            "origin": [
+              61,
+              156
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/10981.png",
+            "__w": 118,
+            "__h": 159,
+            "delay": 120,
+            "origin": [
+              60,
+              155
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/10982.png",
+            "__w": 152,
+            "__h": 177,
+            "delay": 120,
+            "origin": [
+              66,
+              182
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/10983.png",
+            "__w": 150,
+            "__h": 169,
+            "delay": 120,
+            "origin": [
+              65,
+              182
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/10984.png",
+            "__w": 148,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              64,
+              182
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/10985.png",
+            "__w": 146,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              63,
+              182
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/10986.png",
+            "__w": 144,
+            "__h": 168,
+            "delay": 120,
+            "origin": [
+              62,
+              182
+            ]
+          }
+        }
+      }
+    },
+    "2121006": {
+      "action": {
+        "0": "paralyze"
+      },
+      "effect": {
+        "z": -1,
+        "mx_animation": "212.img/animations/skill__2121006.json"
+      },
+      "elemAttr": "s",
+      "hit": {
+        "0": {
+          "pos": 2,
+          "mx_animation": "212.img/animations/skill__2121006.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/11043.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/11045.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/11044.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mad": 133,
+          "mastery": 1,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "10": {
+          "hs": "h10",
+          "mad": 160,
+          "mastery": 4,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "11": {
+          "hs": "h11",
+          "mad": 163,
+          "mastery": 4,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "12": {
+          "hs": "h12",
+          "mad": 166,
+          "mastery": 4,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "13": {
+          "hs": "h13",
+          "mad": 169,
+          "mastery": 5,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "14": {
+          "hs": "h14",
+          "mad": 172,
+          "mastery": 5,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "15": {
+          "hs": "h15",
+          "mad": 175,
+          "mastery": 5,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "16": {
+          "hs": "h16",
+          "mad": 178,
+          "mastery": 6,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "17": {
+          "hs": "h17",
+          "mad": 181,
+          "mastery": 6,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "18": {
+          "hs": "h18",
+          "mad": 184,
+          "mastery": 6,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "19": {
+          "hs": "h19",
+          "mad": 187,
+          "mastery": 7,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "2": {
+          "hs": "h2",
+          "mad": 136,
+          "mastery": 1,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "20": {
+          "hs": "h20",
+          "mad": 190,
+          "mastery": 7,
+          "mpCon": 24,
+          "prop": 100,
+          "time": 10
+        },
+        "21": {
+          "hs": "h21",
+          "mad": 192,
+          "mastery": 7,
+          "mpCon": 30,
+          "prop": 100,
+          "time": 15
+        },
+        "22": {
+          "hs": "h22",
+          "mad": 194,
+          "mastery": 8,
+          "mpCon": 30,
+          "prop": 100,
+          "time": 15
+        },
+        "23": {
+          "hs": "h23",
+          "mad": 196,
+          "mastery": 8,
+          "mpCon": 30,
+          "prop": 100,
+          "time": 15
+        },
+        "24": {
+          "hs": "h24",
+          "mad": 198,
+          "mastery": 8,
+          "mpCon": 30,
+          "prop": 100,
+          "time": 15
+        },
+        "25": {
+          "hs": "h25",
+          "mad": 200,
+          "mastery": 9,
+          "mpCon": 30,
+          "prop": 100,
+          "time": 15
+        },
+        "26": {
+          "hs": "h26",
+          "mad": 202,
+          "mastery": 9,
+          "mpCon": 29,
+          "prop": 100,
+          "time": 15
+        },
+        "27": {
+          "hs": "h27",
+          "mad": 204,
+          "mastery": 9,
+          "mpCon": 28,
+          "prop": 100,
+          "time": 15
+        },
+        "28": {
+          "hs": "h28",
+          "mad": 206,
+          "mastery": 10,
+          "mpCon": 27,
+          "prop": 100,
+          "time": 15
+        },
+        "29": {
+          "hs": "h29",
+          "mad": 208,
+          "mastery": 10,
+          "mpCon": 26,
+          "prop": 100,
+          "time": 15
+        },
+        "3": {
+          "hs": "h3",
+          "mad": 139,
+          "mastery": 1,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "30": {
+          "hs": "h30",
+          "mad": 210,
+          "mastery": 10,
+          "mpCon": 25,
+          "prop": 100,
+          "time": 15
+        },
+        "4": {
+          "hs": "h4",
+          "mad": 142,
+          "mastery": 2,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "5": {
+          "hs": "h5",
+          "mad": 145,
+          "mastery": 2,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "6": {
+          "hs": "h6",
+          "mad": 148,
+          "mastery": 2,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "7": {
+          "hs": "h7",
+          "mad": 151,
+          "mastery": 3,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "8": {
+          "hs": "h8",
+          "mad": 154,
+          "mastery": 3,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        },
+        "9": {
+          "hs": "h9",
+          "mad": 157,
+          "mastery": 3,
+          "mpCon": 16,
+          "prop": 100,
+          "time": 5
+        }
+      },
+      "masterLevel": 10
+    },
+    "2121007": {
+      "action": {
+        "0": "meteor"
+      },
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121007.json"
+      },
+      "effect0": {
+        "z": -1,
+        "mx_animation": "212.img/animations/skill__2121007.json"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "hitAfter": 1800,
+          "mx_animation": "212.img/animations/skill__2121007.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/11072.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/11074.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/11073.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 330,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2100,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 420,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3000,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 430,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3100,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 440,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3200,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 450,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3300,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 460,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3400,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 470,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3500,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 480,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3600,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 490,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3700,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 500,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3800,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 510,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3900,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 340,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2200,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 520,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 4000,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "21": {
+          "hs": "h21",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 525,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3950,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "22": {
+          "hs": "h22",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 530,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3900,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "23": {
+          "hs": "h23",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 535,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3850,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "24": {
+          "hs": "h24",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 540,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3800,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "25": {
+          "hs": "h25",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 545,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3750,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "26": {
+          "hs": "h26",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 550,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3700,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "27": {
+          "hs": "h27",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 555,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3650,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "28": {
+          "hs": "h28",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 560,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3600,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "29": {
+          "hs": "h29",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 565,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3550,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 350,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2300,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "30": {
+          "hs": "h30",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 570,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3500,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 360,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2400,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 370,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2500,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 380,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2600,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 390,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2700,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 400,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2800,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 410,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 2900,
+          "rb": [
+            400,
+            250
+          ]
+        }
+      },
+      "tile": {
+        "0": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11143.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11144.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -70,
+              170
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11153.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -37,
+              187
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11154.png",
+            "__w": 99,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -36,
+              187
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11155.png",
+            "__w": 105,
+            "__h": 121,
+            "delay": 120,
+            "origin": [
+              -29,
+              186
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11156.png",
+            "__w": 183,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              48,
+              186
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11157.png",
+            "__w": 190,
+            "__h": 189,
+            "delay": 120,
+            "origin": [
+              55,
+              187
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11158.png",
+            "__w": 193,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              57,
+              187
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11159.png",
+            "__w": 193,
+            "__h": 187,
+            "delay": 120,
+            "origin": [
+              58,
+              186
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11160.png",
+            "__w": 194,
+            "__h": 186,
+            "delay": 120,
+            "origin": [
+              60,
+              185
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11161.png",
+            "__w": 193,
+            "__h": 184,
+            "delay": 120,
+            "origin": [
+              61,
+              183
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11162.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11145.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -63,
+              170
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11163.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11164.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11165.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 540,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11146.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -57,
+              170
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11147.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -56,
+              170
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11148.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -46,
+              182
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11149.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -43,
+              184
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11150.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -40,
+              186
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11151.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -35,
+              187
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11152.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -36,
+              187
+            ]
+          }
+        },
+        "1": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11166.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 120,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11167.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -67,
+              174
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11176.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -21,
+              199
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11177.png",
+            "__w": 139,
+            "__h": 81,
+            "delay": 120,
+            "origin": [
+              -20,
+              198
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11178.png",
+            "__w": 138,
+            "__h": 140,
+            "delay": 120,
+            "origin": [
+              -20,
+              198
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11179.png",
+            "__w": 234,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              75,
+              198
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11180.png",
+            "__w": 248,
+            "__h": 201,
+            "delay": 120,
+            "origin": [
+              88,
+              199
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11181.png",
+            "__w": 251,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              90,
+              198
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11182.png",
+            "__w": 252,
+            "__h": 199,
+            "delay": 120,
+            "origin": [
+              93,
+              197
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11183.png",
+            "__w": 252,
+            "__h": 197,
+            "delay": 120,
+            "origin": [
+              95,
+              196
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11184.png",
+            "__w": 252,
+            "__h": 194,
+            "delay": 120,
+            "origin": [
+              97,
+              193
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11185.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11168.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -58,
+              175
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11186.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11187.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11188.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 480,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11169.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -50,
+              175
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11170.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -48,
+              175
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11171.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -34,
+              191
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11172.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -29,
+              194
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11173.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -25,
+              197
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11174.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -19,
+              198
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11175.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -19,
+              199
+            ]
+          }
+        },
+        "2": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11189.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11190.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -65,
+              176
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11199.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -9,
+              206
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11200.png",
+            "__w": 169,
+            "__h": 74,
+            "delay": 120,
+            "origin": [
+              -8,
+              205
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11201.png",
+            "__w": 167,
+            "__h": 138,
+            "delay": 120,
+            "origin": [
+              -9,
+              204
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11202.png",
+            "__w": 263,
+            "__h": 205,
+            "delay": 120,
+            "origin": [
+              86,
+              204
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11203.png",
+            "__w": 279,
+            "__h": 207,
+            "delay": 120,
+            "origin": [
+              101,
+              205
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11204.png",
+            "__w": 282,
+            "__h": 207,
+            "delay": 120,
+            "origin": [
+              103,
+              205
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11205.png",
+            "__w": 284,
+            "__h": 205,
+            "delay": 120,
+            "origin": [
+              107,
+              204
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11206.png",
+            "__w": 284,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              109,
+              202
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11207.png",
+            "__w": 284,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              112,
+              199
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11208.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11191.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -55,
+              176
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11209.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11210.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 540,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11192.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -44,
+              176
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11193.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -42,
+              176
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11194.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -25,
+              196
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11195.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -20,
+              200
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11196.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -14,
+              203
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11197.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -7,
+              205
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11198.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -7,
+              205
+            ]
+          }
+        },
+        "3": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11211.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11212.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -79,
+              199
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11221.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -46,
+              216
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11222.png",
+            "__w": 99,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -45,
+              216
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11223.png",
+            "__w": 98,
+            "__h": 67,
+            "delay": 120,
+            "origin": [
+              -45,
+              215
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11224.png",
+            "__w": 104,
+            "__h": 114,
+            "delay": 120,
+            "origin": [
+              -40,
+              215
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11225.png",
+            "__w": 130,
+            "__h": 167,
+            "delay": 120,
+            "origin": [
+              -14,
+              216
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11226.png",
+            "__w": 194,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              48,
+              216
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11227.png",
+            "__w": 200,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              55,
+              216
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11228.png",
+            "__w": 201,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              57,
+              216
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11229.png",
+            "__w": 201,
+            "__h": 216,
+            "delay": 120,
+            "origin": [
+              58,
+              215
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11230.png",
+            "__w": 202,
+            "__h": 215,
+            "delay": 120,
+            "origin": [
+              60,
+              214
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11213.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -72,
+              199
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11231.png",
+            "__w": 202,
+            "__h": 213,
+            "delay": 120,
+            "origin": [
+              61,
+              212
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11232.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11233.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11234.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11235.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 300,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11214.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -66,
+              199
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11215.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -65,
+              199
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11216.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -55,
+              211
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11217.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -52,
+              213
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11218.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -49,
+              215
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11219.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -44,
+              216
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11220.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -45,
+              216
+            ]
+          }
+        },
+        "4": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11236.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 120,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11237.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -76,
+              203
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11246.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -30,
+              228
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11247.png",
+            "__w": 139,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -29,
+              227
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11248.png",
+            "__w": 138,
+            "__h": 67,
+            "delay": 120,
+            "origin": [
+              -29,
+              227
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11249.png",
+            "__w": 138,
+            "__h": 109,
+            "delay": 120,
+            "origin": [
+              -30,
+              227
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11250.png",
+            "__w": 148,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              -21,
+              228
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11251.png",
+            "__w": 245,
+            "__h": 230,
+            "delay": 120,
+            "origin": [
+              75,
+              228
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11252.png",
+            "__w": 257,
+            "__h": 230,
+            "delay": 120,
+            "origin": [
+              88,
+              228
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11253.png",
+            "__w": 258,
+            "__h": 229,
+            "delay": 120,
+            "origin": [
+              90,
+              227
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11254.png",
+            "__w": 260,
+            "__h": 228,
+            "delay": 120,
+            "origin": [
+              93,
+              226
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11255.png",
+            "__w": 259,
+            "__h": 225,
+            "delay": 120,
+            "origin": [
+              95,
+              224
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11238.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -67,
+              204
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11256.png",
+            "__w": 261,
+            "__h": 222,
+            "delay": 120,
+            "origin": [
+              97,
+              221
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11257.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11258.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11259.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11260.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 240,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11239.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -59,
+              204
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11240.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -57,
+              204
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11241.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -43,
+              220
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11242.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -38,
+              223
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11243.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -34,
+              226
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11244.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -28,
+              227
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11245.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -28,
+              228
+            ]
+          }
+        },
+        "5": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11261.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11262.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -74,
+              205
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11271.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -18,
+              235
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11272.png",
+            "__w": 169,
+            "__h": 70,
+            "delay": 120,
+            "origin": [
+              -17,
+              234
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11273.png",
+            "__w": 167,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -18,
+              233
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11274.png",
+            "__w": 168,
+            "__h": 110,
+            "delay": 120,
+            "origin": [
+              -18,
+              233
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11275.png",
+            "__w": 172,
+            "__h": 177,
+            "delay": 120,
+            "origin": [
+              -15,
+              234
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11276.png",
+            "__w": 275,
+            "__h": 237,
+            "delay": 120,
+            "origin": [
+              86,
+              235
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11277.png",
+            "__w": 288,
+            "__h": 236,
+            "delay": 120,
+            "origin": [
+              101,
+              234
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11278.png",
+            "__w": 289,
+            "__h": 236,
+            "delay": 120,
+            "origin": [
+              103,
+              234
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11279.png",
+            "__w": 292,
+            "__h": 233,
+            "delay": 120,
+            "origin": [
+              107,
+              232
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11280.png",
+            "__w": 291,
+            "__h": 231,
+            "delay": 120,
+            "origin": [
+              109,
+              230
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11263.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -64,
+              205
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11281.png",
+            "__w": 293,
+            "__h": 228,
+            "delay": 120,
+            "origin": [
+              112,
+              227
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11282.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11283.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11284.png",
+            "__w": 265,
+            "__h": 20,
+            "delay": 120,
+            "origin": [
+              123,
+              28
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11285.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11264.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -53,
+              205
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11265.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -51,
+              205
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11266.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -34,
+              225
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11267.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -29,
+              229
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11268.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -23,
+              232
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11269.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -16,
+              234
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11270.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -16,
+              234
+            ]
+          }
+        },
+        "6": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11286.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 30,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11287.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -150,
+              331
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11296.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -117,
+              348
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11297.png",
+            "__w": 99,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -116,
+              348
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11298.png",
+            "__w": 98,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -116,
+              347
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11299.png",
+            "__w": 99,
+            "__h": 100,
+            "delay": 120,
+            "origin": [
+              -116,
+              347
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11300.png",
+            "__w": 121,
+            "__h": 149,
+            "delay": 120,
+            "origin": [
+              -94,
+              348
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11301.png",
+            "__w": 153,
+            "__h": 208,
+            "delay": 120,
+            "origin": [
+              -64,
+              348
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11302.png",
+            "__w": 193,
+            "__h": 288,
+            "delay": 120,
+            "origin": [
+              -23,
+              348
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11303.png",
+            "__w": 263,
+            "__h": 350,
+            "delay": 120,
+            "origin": [
+              48,
+              348
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11304.png",
+            "__w": 270,
+            "__h": 350,
+            "delay": 120,
+            "origin": [
+              55,
+              348
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11305.png",
+            "__w": 271,
+            "__h": 349,
+            "delay": 120,
+            "origin": [
+              57,
+              347
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11288.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -143,
+              331
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11306.png",
+            "__w": 272,
+            "__h": 347,
+            "delay": 120,
+            "origin": [
+              58,
+              346
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11307.png",
+            "__w": 274,
+            "__h": 347,
+            "delay": 120,
+            "origin": [
+              60,
+              346
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11308.png",
+            "__w": 275,
+            "__h": 346,
+            "delay": 120,
+            "origin": [
+              61,
+              345
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11309.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11310.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/212.img/bitmap/11311.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/212.img/bitmap/11312.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 90,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11289.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -137,
+              331
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11290.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -136,
+              331
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11291.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -126,
+              343
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11292.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -123,
+              345
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11293.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -120,
+              347
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11294.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -115,
+              348
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11295.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -116,
+              348
+            ]
+          }
+        },
+        "7": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11313.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11314.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -142,
+              335
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11323.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -96,
+              360
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11324.png",
+            "__w": 139,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -95,
+              359
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11325.png",
+            "__w": 138,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -95,
+              359
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11326.png",
+            "__w": 138,
+            "__h": 75,
+            "delay": 120,
+            "origin": [
+              -96,
+              359
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11327.png",
+            "__w": 139,
+            "__h": 118,
+            "delay": 120,
+            "origin": [
+              -96,
+              360
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11328.png",
+            "__w": 160,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              -76,
+              360
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11329.png",
+            "__w": 206,
+            "__h": 278,
+            "delay": 120,
+            "origin": [
+              -29,
+              360
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11330.png",
+            "__w": 309,
+            "__h": 362,
+            "delay": 120,
+            "origin": [
+              75,
+              360
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11331.png",
+            "__w": 322,
+            "__h": 361,
+            "delay": 120,
+            "origin": [
+              88,
+              359
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11332.png",
+            "__w": 322,
+            "__h": 360,
+            "delay": 120,
+            "origin": [
+              90,
+              358
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11315.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -133,
+              336
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11333.png",
+            "__w": 326,
+            "__h": 359,
+            "delay": 120,
+            "origin": [
+              93,
+              357
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11334.png",
+            "__w": 328,
+            "__h": 358,
+            "delay": 120,
+            "origin": [
+              95,
+              357
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11335.png",
+            "__w": 329,
+            "__h": 356,
+            "delay": 120,
+            "origin": [
+              97,
+              355
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11336.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11337.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/212.img/bitmap/11338.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/212.img/bitmap/11339.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11316.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -125,
+              336
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11317.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -123,
+              336
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11318.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -109,
+              352
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11319.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -104,
+              355
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11320.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -100,
+              358
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11321.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -94,
+              359
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11322.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -94,
+              360
+            ]
+          }
+        },
+        "8": {
+          "0": {
+            "__i": "assets/Skill/212.img/bitmap/11340.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 90,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/212.img/bitmap/11341.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -138,
+              337
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/212.img/bitmap/11350.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -82,
+              367
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/212.img/bitmap/11351.png",
+            "__w": 169,
+            "__h": 70,
+            "delay": 120,
+            "origin": [
+              -81,
+              366
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/212.img/bitmap/11352.png",
+            "__w": 167,
+            "__h": 69,
+            "delay": 120,
+            "origin": [
+              -82,
+              365
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/212.img/bitmap/11353.png",
+            "__w": 168,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -82,
+              365
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/212.img/bitmap/11354.png",
+            "__w": 169,
+            "__h": 90,
+            "delay": 120,
+            "origin": [
+              -82,
+              366
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/212.img/bitmap/11355.png",
+            "__w": 174,
+            "__h": 137,
+            "delay": 120,
+            "origin": [
+              -79,
+              367
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/212.img/bitmap/11356.png",
+            "__w": 210,
+            "__h": 251,
+            "delay": 120,
+            "origin": [
+              -41,
+              366
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/212.img/bitmap/11357.png",
+            "__w": 336,
+            "__h": 368,
+            "delay": 120,
+            "origin": [
+              86,
+              367
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/212.img/bitmap/11358.png",
+            "__w": 351,
+            "__h": 368,
+            "delay": 120,
+            "origin": [
+              101,
+              366
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/212.img/bitmap/11359.png",
+            "__w": 351,
+            "__h": 366,
+            "delay": 120,
+            "origin": [
+              103,
+              364
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/212.img/bitmap/11342.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -128,
+              337
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/212.img/bitmap/11360.png",
+            "__w": 356,
+            "__h": 364,
+            "delay": 120,
+            "origin": [
+              107,
+              363
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/212.img/bitmap/11361.png",
+            "__w": 357,
+            "__h": 364,
+            "delay": 120,
+            "origin": [
+              109,
+              363
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/212.img/bitmap/11362.png",
+            "__w": 359,
+            "__h": 362,
+            "delay": 120,
+            "origin": [
+              112,
+              361
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/212.img/bitmap/11363.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/212.img/bitmap/11364.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/212.img/bitmap/11365.png",
+            "__w": 265,
+            "__h": 20,
+            "delay": 120,
+            "origin": [
+              123,
+              28
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/212.img/bitmap/11366.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 30,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/212.img/bitmap/11343.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -117,
+              337
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/212.img/bitmap/11344.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -115,
+              337
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/212.img/bitmap/11345.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -98,
+              357
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/212.img/bitmap/11346.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -93,
+              361
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/212.img/bitmap/11347.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -87,
+              364
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/212.img/bitmap/11348.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -80,
+              366
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/212.img/bitmap/11349.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -80,
+              366
+            ]
+          }
+        },
+        "effectDistance": 180
+      }
+    },
+    "2121008": {
+      "effect": {
+        "mx_animation": "212.img/animations/skill__2121008.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/212.img/bitmap/11367.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/212.img/bitmap/11369.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/212.img/bitmap/11368.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "cooltime": 600,
+          "hs": "h1",
+          "mpCon": 30,
+          "time": 1
+        },
+        "2": {
+          "cooltime": 540,
+          "hs": "h2",
+          "mpCon": 30,
+          "time": 1
+        },
+        "3": {
+          "cooltime": 480,
+          "hs": "h3",
+          "mpCon": 30,
+          "time": 1
+        },
+        "4": {
+          "cooltime": 420,
+          "hs": "h4",
+          "mpCon": 30,
+          "time": 1
+        },
+        "5": {
+          "cooltime": 360,
+          "hs": "h5",
+          "mpCon": 30,
+          "time": 1
+        }
+      }
+    }
+  }
+}

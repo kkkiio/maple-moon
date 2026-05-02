@@ -1,0 +1,5292 @@
+{
+  "info": {
+    "icon": {
+      "__i": "assets/Skill/1211.img/bitmap/11574.png",
+      "__w": 26,
+      "__h": 30,
+      "origin": [
+        -4,
+        30
+      ]
+    }
+  },
+  "skill": {
+    "12110000": {
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11575.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11577.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11576.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "x": 12
+        },
+        "10": {
+          "hs": "h10",
+          "x": 30
+        },
+        "11": {
+          "hs": "h11",
+          "x": 31
+        },
+        "12": {
+          "hs": "h12",
+          "x": 32
+        },
+        "13": {
+          "hs": "h13",
+          "x": 33
+        },
+        "14": {
+          "hs": "h14",
+          "x": 34
+        },
+        "15": {
+          "hs": "h15",
+          "x": 35
+        },
+        "16": {
+          "hs": "h16",
+          "x": 36
+        },
+        "17": {
+          "hs": "h17",
+          "x": 37
+        },
+        "18": {
+          "hs": "h18",
+          "x": 38
+        },
+        "19": {
+          "hs": "h19",
+          "x": 39
+        },
+        "2": {
+          "hs": "h2",
+          "x": 14
+        },
+        "20": {
+          "hs": "h20",
+          "x": 40
+        },
+        "3": {
+          "hs": "h3",
+          "x": 16
+        },
+        "4": {
+          "hs": "h4",
+          "x": 18
+        },
+        "5": {
+          "hs": "h5",
+          "x": 20
+        },
+        "6": {
+          "hs": "h6",
+          "x": 22
+        },
+        "7": {
+          "hs": "h7",
+          "x": 24
+        },
+        "8": {
+          "hs": "h8",
+          "x": 26
+        },
+        "9": {
+          "hs": "h9",
+          "x": 28
+        }
+      }
+    },
+    "12110001": {
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11578.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11580.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11579.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "x": 105,
+          "y": 102
+        },
+        "10": {
+          "hs": "h10",
+          "x": 150,
+          "y": 120
+        },
+        "11": {
+          "hs": "h11",
+          "x": 155,
+          "y": 121
+        },
+        "12": {
+          "hs": "h12",
+          "x": 160,
+          "y": 122
+        },
+        "13": {
+          "hs": "h13",
+          "x": 165,
+          "y": 123
+        },
+        "14": {
+          "hs": "h14",
+          "x": 170,
+          "y": 124
+        },
+        "15": {
+          "hs": "h15",
+          "x": 175,
+          "y": 125
+        },
+        "16": {
+          "hs": "h16",
+          "x": 180,
+          "y": 126
+        },
+        "17": {
+          "hs": "h17",
+          "x": 185,
+          "y": 127
+        },
+        "18": {
+          "hs": "h18",
+          "x": 190,
+          "y": 128
+        },
+        "19": {
+          "hs": "h19",
+          "x": 195,
+          "y": 129
+        },
+        "2": {
+          "hs": "h2",
+          "x": 110,
+          "y": 104
+        },
+        "20": {
+          "hs": "h20",
+          "x": 200,
+          "y": 130
+        },
+        "3": {
+          "hs": "h3",
+          "x": 115,
+          "y": 106
+        },
+        "4": {
+          "hs": "h4",
+          "x": 120,
+          "y": 108
+        },
+        "5": {
+          "hs": "h5",
+          "x": 125,
+          "y": 110
+        },
+        "6": {
+          "hs": "h6",
+          "x": 130,
+          "y": 112
+        },
+        "7": {
+          "hs": "h7",
+          "x": 135,
+          "y": 114
+        },
+        "8": {
+          "hs": "h8",
+          "x": 140,
+          "y": 116
+        },
+        "9": {
+          "hs": "h9",
+          "x": 145,
+          "y": 118
+        }
+      }
+    },
+    "12111002": {
+      "action": {
+        "0": "alert4"
+      },
+      "effect": {
+        "mx_animation": "1211.img/animations/skill__12111002.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11581.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11583.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11582.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 12,
+          "prop": 38,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 10
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 18,
+          "prop": 65,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 15
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 24,
+          "prop": 68,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 15
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 24,
+          "prop": 71,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 16
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 24,
+          "prop": 74,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 16
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 24,
+          "prop": 77,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 17
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 24,
+          "prop": 80,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 17
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 30,
+          "prop": 83,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 18
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 30,
+          "prop": 86,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 18
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 30,
+          "prop": 89,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 19
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 30,
+          "prop": 92,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 19
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 12,
+          "prop": 41,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 11
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -280,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 30,
+          "prop": 95,
+          "rb": [
+            280,
+            150
+          ],
+          "time": 20
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 12,
+          "prop": 44,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 11
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 12,
+          "prop": 47,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 12
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 12,
+          "prop": 50,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 12
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 18,
+          "prop": 53,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 13
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 18,
+          "prop": 56,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 13
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 18,
+          "prop": 59,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 14
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -250,
+            -150
+          ],
+          "mobCount": 6,
+          "mpCon": 18,
+          "prop": 62,
+          "rb": [
+            250,
+            150
+          ],
+          "time": 14
+        }
+      },
+      "mob": {
+        "0": {
+          "__i": "assets/Skill/1211.img/bitmap/11595.png",
+          "__w": 40,
+          "__h": 31,
+          "delay": 300,
+          "origin": [
+            13,
+            50
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/1211.img/bitmap/11596.png",
+          "__w": 40,
+          "__h": 31,
+          "delay": 300,
+          "origin": [
+            13,
+            50
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/1211.img/bitmap/11597.png",
+          "__w": 40,
+          "__h": 31,
+          "delay": 300,
+          "origin": [
+            13,
+            50
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/1211.img/bitmap/11598.png",
+          "__w": 40,
+          "__h": 31,
+          "delay": 300,
+          "origin": [
+            13,
+            50
+          ]
+        },
+        "pos": 2,
+        "repeat": 1
+      },
+      "req": {
+        "12110001": 3
+      }
+    },
+    "12111003": {
+      "action": {
+        "0": "meteor"
+      },
+      "effect": {
+        "mx_animation": "1211.img/animations/skill__12111003.json"
+      },
+      "effect0": {
+        "z": -1,
+        "mx_animation": "1211.img/animations/skill__12111003.json"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "hitAfter": 1800,
+          "mx_animation": "1211.img/animations/skill__12111003.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11599.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11601.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11600.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 310,
+          "mastery": 1,
+          "mobCount": 15,
+          "mpCon": 2100,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 400,
+          "mastery": 5,
+          "mobCount": 15,
+          "mpCon": 2500,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 410,
+          "mastery": 6,
+          "mobCount": 15,
+          "mpCon": 2600,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 420,
+          "mastery": 6,
+          "mobCount": 15,
+          "mpCon": 2600,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 430,
+          "mastery": 7,
+          "mobCount": 15,
+          "mpCon": 2700,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 440,
+          "mastery": 7,
+          "mobCount": 15,
+          "mpCon": 2700,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 450,
+          "mastery": 8,
+          "mobCount": 15,
+          "mpCon": 2800,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 460,
+          "mastery": 8,
+          "mobCount": 15,
+          "mpCon": 2800,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 470,
+          "mastery": 9,
+          "mobCount": 15,
+          "mpCon": 2900,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 480,
+          "mastery": 9,
+          "mobCount": 15,
+          "mpCon": 2900,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 490,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3000,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 320,
+          "mastery": 1,
+          "mobCount": 15,
+          "mpCon": 2100,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 500,
+          "mastery": 10,
+          "mobCount": 15,
+          "mpCon": 3000,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 330,
+          "mastery": 2,
+          "mobCount": 15,
+          "mpCon": 2200,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 340,
+          "mastery": 2,
+          "mobCount": 15,
+          "mpCon": 2200,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 350,
+          "mastery": 3,
+          "mobCount": 15,
+          "mpCon": 2300,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 360,
+          "mastery": 3,
+          "mobCount": 15,
+          "mpCon": 2300,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 370,
+          "mastery": 4,
+          "mobCount": 15,
+          "mpCon": 2400,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 380,
+          "mastery": 4,
+          "mobCount": 15,
+          "mpCon": 2400,
+          "rb": [
+            400,
+            250
+          ]
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -400,
+            -350
+          ],
+          "mad": 390,
+          "mastery": 5,
+          "mobCount": 15,
+          "mpCon": 2500,
+          "rb": [
+            400,
+            250
+          ]
+        }
+      },
+      "tile": {
+        "0": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11670.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11671.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -70,
+              170
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11680.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -37,
+              187
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11681.png",
+            "__w": 99,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -36,
+              187
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11682.png",
+            "__w": 105,
+            "__h": 121,
+            "delay": 120,
+            "origin": [
+              -29,
+              186
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11683.png",
+            "__w": 183,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              48,
+              186
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11684.png",
+            "__w": 190,
+            "__h": 189,
+            "delay": 120,
+            "origin": [
+              55,
+              187
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11685.png",
+            "__w": 193,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              57,
+              187
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11686.png",
+            "__w": 193,
+            "__h": 187,
+            "delay": 120,
+            "origin": [
+              58,
+              186
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11687.png",
+            "__w": 194,
+            "__h": 186,
+            "delay": 120,
+            "origin": [
+              60,
+              185
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11688.png",
+            "__w": 193,
+            "__h": 184,
+            "delay": 120,
+            "origin": [
+              61,
+              183
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11689.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11672.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -63,
+              170
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11690.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11691.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11692.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 540,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11673.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -57,
+              170
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11674.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -56,
+              170
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11675.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -46,
+              182
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11676.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -43,
+              184
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11677.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -40,
+              186
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11678.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -35,
+              187
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11679.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -36,
+              187
+            ]
+          }
+        },
+        "1": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11693.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 120,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11694.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -67,
+              174
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11703.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -21,
+              199
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11704.png",
+            "__w": 139,
+            "__h": 81,
+            "delay": 120,
+            "origin": [
+              -20,
+              198
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11705.png",
+            "__w": 138,
+            "__h": 140,
+            "delay": 120,
+            "origin": [
+              -20,
+              198
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11706.png",
+            "__w": 234,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              75,
+              198
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11707.png",
+            "__w": 248,
+            "__h": 201,
+            "delay": 120,
+            "origin": [
+              88,
+              199
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11708.png",
+            "__w": 251,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              90,
+              198
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11709.png",
+            "__w": 252,
+            "__h": 199,
+            "delay": 120,
+            "origin": [
+              93,
+              197
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11710.png",
+            "__w": 252,
+            "__h": 197,
+            "delay": 120,
+            "origin": [
+              95,
+              196
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11711.png",
+            "__w": 252,
+            "__h": 194,
+            "delay": 120,
+            "origin": [
+              97,
+              193
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11712.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11695.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -58,
+              175
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11713.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11714.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11715.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 480,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11696.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -50,
+              175
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11697.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -48,
+              175
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11698.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -34,
+              191
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11699.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -29,
+              194
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11700.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -25,
+              197
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11701.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -19,
+              198
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11702.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -19,
+              199
+            ]
+          }
+        },
+        "2": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11716.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11717.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -65,
+              176
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11726.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -9,
+              206
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11727.png",
+            "__w": 169,
+            "__h": 74,
+            "delay": 120,
+            "origin": [
+              -8,
+              205
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11728.png",
+            "__w": 167,
+            "__h": 138,
+            "delay": 120,
+            "origin": [
+              -9,
+              204
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11729.png",
+            "__w": 263,
+            "__h": 205,
+            "delay": 120,
+            "origin": [
+              86,
+              204
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11730.png",
+            "__w": 279,
+            "__h": 207,
+            "delay": 120,
+            "origin": [
+              101,
+              205
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11731.png",
+            "__w": 282,
+            "__h": 207,
+            "delay": 120,
+            "origin": [
+              103,
+              205
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11732.png",
+            "__w": 284,
+            "__h": 205,
+            "delay": 120,
+            "origin": [
+              107,
+              204
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11733.png",
+            "__w": 284,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              109,
+              202
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11734.png",
+            "__w": 284,
+            "__h": 200,
+            "delay": 120,
+            "origin": [
+              112,
+              199
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11735.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11718.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -55,
+              176
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11736.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11737.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 540,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11719.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -44,
+              176
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11720.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -42,
+              176
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11721.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -25,
+              196
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11722.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -20,
+              200
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11723.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -14,
+              203
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11724.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -7,
+              205
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11725.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -7,
+              205
+            ]
+          }
+        },
+        "3": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11738.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11739.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -79,
+              199
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11748.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -46,
+              216
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11749.png",
+            "__w": 99,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -45,
+              216
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11750.png",
+            "__w": 98,
+            "__h": 67,
+            "delay": 120,
+            "origin": [
+              -45,
+              215
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11751.png",
+            "__w": 104,
+            "__h": 114,
+            "delay": 120,
+            "origin": [
+              -40,
+              215
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11752.png",
+            "__w": 130,
+            "__h": 167,
+            "delay": 120,
+            "origin": [
+              -14,
+              216
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11753.png",
+            "__w": 194,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              48,
+              216
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11754.png",
+            "__w": 200,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              55,
+              216
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11755.png",
+            "__w": 201,
+            "__h": 218,
+            "delay": 120,
+            "origin": [
+              57,
+              216
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11756.png",
+            "__w": 201,
+            "__h": 216,
+            "delay": 120,
+            "origin": [
+              58,
+              215
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11757.png",
+            "__w": 202,
+            "__h": 215,
+            "delay": 120,
+            "origin": [
+              60,
+              214
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11740.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -72,
+              199
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11758.png",
+            "__w": 202,
+            "__h": 213,
+            "delay": 120,
+            "origin": [
+              61,
+              212
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11759.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11760.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11761.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11762.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 300,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11741.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -66,
+              199
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11742.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -65,
+              199
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11743.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -55,
+              211
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11744.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -52,
+              213
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11745.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -49,
+              215
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11746.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -44,
+              216
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11747.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -45,
+              216
+            ]
+          }
+        },
+        "4": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11763.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 120,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11764.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -76,
+              203
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11773.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -30,
+              228
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11774.png",
+            "__w": 139,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -29,
+              227
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11775.png",
+            "__w": 138,
+            "__h": 67,
+            "delay": 120,
+            "origin": [
+              -29,
+              227
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11776.png",
+            "__w": 138,
+            "__h": 109,
+            "delay": 120,
+            "origin": [
+              -30,
+              227
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11777.png",
+            "__w": 148,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              -21,
+              228
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11778.png",
+            "__w": 245,
+            "__h": 230,
+            "delay": 120,
+            "origin": [
+              75,
+              228
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11779.png",
+            "__w": 257,
+            "__h": 230,
+            "delay": 120,
+            "origin": [
+              88,
+              228
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11780.png",
+            "__w": 258,
+            "__h": 229,
+            "delay": 120,
+            "origin": [
+              90,
+              227
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11781.png",
+            "__w": 260,
+            "__h": 228,
+            "delay": 120,
+            "origin": [
+              93,
+              226
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11782.png",
+            "__w": 259,
+            "__h": 225,
+            "delay": 120,
+            "origin": [
+              95,
+              224
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11765.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -67,
+              204
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11783.png",
+            "__w": 261,
+            "__h": 222,
+            "delay": 120,
+            "origin": [
+              97,
+              221
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11784.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11785.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11786.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11787.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 240,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11766.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -59,
+              204
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11767.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -57,
+              204
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11768.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -43,
+              220
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11769.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -38,
+              223
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11770.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -34,
+              226
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11771.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -28,
+              227
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11772.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -28,
+              228
+            ]
+          }
+        },
+        "5": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11788.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11789.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -74,
+              205
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11798.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -18,
+              235
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11799.png",
+            "__w": 169,
+            "__h": 70,
+            "delay": 120,
+            "origin": [
+              -17,
+              234
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11800.png",
+            "__w": 167,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -18,
+              233
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11801.png",
+            "__w": 168,
+            "__h": 110,
+            "delay": 120,
+            "origin": [
+              -18,
+              233
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11802.png",
+            "__w": 172,
+            "__h": 177,
+            "delay": 120,
+            "origin": [
+              -15,
+              234
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11803.png",
+            "__w": 275,
+            "__h": 237,
+            "delay": 120,
+            "origin": [
+              86,
+              235
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11804.png",
+            "__w": 288,
+            "__h": 236,
+            "delay": 120,
+            "origin": [
+              101,
+              234
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11805.png",
+            "__w": 289,
+            "__h": 236,
+            "delay": 120,
+            "origin": [
+              103,
+              234
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11806.png",
+            "__w": 292,
+            "__h": 233,
+            "delay": 120,
+            "origin": [
+              107,
+              232
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11807.png",
+            "__w": 291,
+            "__h": 231,
+            "delay": 120,
+            "origin": [
+              109,
+              230
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11790.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -64,
+              205
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11808.png",
+            "__w": 293,
+            "__h": 228,
+            "delay": 120,
+            "origin": [
+              112,
+              227
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11809.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11810.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11811.png",
+            "__w": 265,
+            "__h": 20,
+            "delay": 120,
+            "origin": [
+              123,
+              28
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11812.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 180,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11791.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -53,
+              205
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11792.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -51,
+              205
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11793.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -34,
+              225
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11794.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -29,
+              229
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11795.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -23,
+              232
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11796.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -16,
+              234
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11797.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -16,
+              234
+            ]
+          }
+        },
+        "6": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11813.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 30,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11814.png",
+            "__w": 31,
+            "__h": 8,
+            "delay": 120,
+            "origin": [
+              -150,
+              331
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11823.png",
+            "__w": 98,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -117,
+              348
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11824.png",
+            "__w": 99,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -116,
+              348
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11825.png",
+            "__w": 98,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -116,
+              347
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11826.png",
+            "__w": 99,
+            "__h": 100,
+            "delay": 120,
+            "origin": [
+              -116,
+              347
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11827.png",
+            "__w": 121,
+            "__h": 149,
+            "delay": 120,
+            "origin": [
+              -94,
+              348
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11828.png",
+            "__w": 153,
+            "__h": 208,
+            "delay": 120,
+            "origin": [
+              -64,
+              348
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11829.png",
+            "__w": 193,
+            "__h": 288,
+            "delay": 120,
+            "origin": [
+              -23,
+              348
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11830.png",
+            "__w": 263,
+            "__h": 350,
+            "delay": 120,
+            "origin": [
+              48,
+              348
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11831.png",
+            "__w": 270,
+            "__h": 350,
+            "delay": 120,
+            "origin": [
+              55,
+              348
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11832.png",
+            "__w": 271,
+            "__h": 349,
+            "delay": 120,
+            "origin": [
+              57,
+              347
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11815.png",
+            "__w": 45,
+            "__h": 11,
+            "delay": 120,
+            "origin": [
+              -143,
+              331
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11833.png",
+            "__w": 272,
+            "__h": 347,
+            "delay": 120,
+            "origin": [
+              58,
+              346
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11834.png",
+            "__w": 274,
+            "__h": 347,
+            "delay": 120,
+            "origin": [
+              60,
+              346
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11835.png",
+            "__w": 275,
+            "__h": 346,
+            "delay": 120,
+            "origin": [
+              61,
+              345
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11836.png",
+            "__w": 132,
+            "__h": 88,
+            "delay": 120,
+            "origin": [
+              63,
+              88
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11837.png",
+            "__w": 137,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              65,
+              20
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/1211.img/bitmap/11838.png",
+            "__w": 140,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              67,
+              14
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/1211.img/bitmap/11839.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 90,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11816.png",
+            "__w": 57,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              -137,
+              331
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11817.png",
+            "__w": 59,
+            "__h": 18,
+            "delay": 120,
+            "origin": [
+              -136,
+              331
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11818.png",
+            "__w": 78,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -126,
+              343
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11819.png",
+            "__w": 86,
+            "__h": 34,
+            "delay": 120,
+            "origin": [
+              -123,
+              345
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11820.png",
+            "__w": 92,
+            "__h": 38,
+            "delay": 120,
+            "origin": [
+              -120,
+              347
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11821.png",
+            "__w": 101,
+            "__h": 41,
+            "delay": 120,
+            "origin": [
+              -115,
+              348
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11822.png",
+            "__w": 100,
+            "__h": 42,
+            "delay": 120,
+            "origin": [
+              -116,
+              348
+            ]
+          }
+        },
+        "7": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11840.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11841.png",
+            "__w": 44,
+            "__h": 10,
+            "delay": 120,
+            "origin": [
+              -142,
+              335
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11850.png",
+            "__w": 138,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -96,
+              360
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11851.png",
+            "__w": 139,
+            "__h": 57,
+            "delay": 120,
+            "origin": [
+              -95,
+              359
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11852.png",
+            "__w": 138,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -95,
+              359
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11853.png",
+            "__w": 138,
+            "__h": 75,
+            "delay": 120,
+            "origin": [
+              -96,
+              359
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11854.png",
+            "__w": 139,
+            "__h": 118,
+            "delay": 120,
+            "origin": [
+              -96,
+              360
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11855.png",
+            "__w": 160,
+            "__h": 188,
+            "delay": 120,
+            "origin": [
+              -76,
+              360
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11856.png",
+            "__w": 206,
+            "__h": 278,
+            "delay": 120,
+            "origin": [
+              -29,
+              360
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11857.png",
+            "__w": 309,
+            "__h": 362,
+            "delay": 120,
+            "origin": [
+              75,
+              360
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11858.png",
+            "__w": 322,
+            "__h": 361,
+            "delay": 120,
+            "origin": [
+              88,
+              359
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11859.png",
+            "__w": 322,
+            "__h": 360,
+            "delay": 120,
+            "origin": [
+              90,
+              358
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11842.png",
+            "__w": 62,
+            "__h": 16,
+            "delay": 120,
+            "origin": [
+              -133,
+              336
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11860.png",
+            "__w": 326,
+            "__h": 359,
+            "delay": 120,
+            "origin": [
+              93,
+              357
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11861.png",
+            "__w": 328,
+            "__h": 358,
+            "delay": 120,
+            "origin": [
+              95,
+              357
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11862.png",
+            "__w": 329,
+            "__h": 356,
+            "delay": 120,
+            "origin": [
+              97,
+              355
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11863.png",
+            "__w": 214,
+            "__h": 142,
+            "delay": 120,
+            "origin": [
+              100,
+              142
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11864.png",
+            "__w": 221,
+            "__h": 22,
+            "delay": 120,
+            "origin": [
+              104,
+              33
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/1211.img/bitmap/11865.png",
+            "__w": 227,
+            "__h": 17,
+            "delay": 120,
+            "origin": [
+              107,
+              23
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/1211.img/bitmap/11866.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 60,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11843.png",
+            "__w": 79,
+            "__h": 24,
+            "delay": 120,
+            "origin": [
+              -125,
+              336
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11844.png",
+            "__w": 83,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              -123,
+              336
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11845.png",
+            "__w": 110,
+            "__h": 43,
+            "delay": 120,
+            "origin": [
+              -109,
+              352
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11846.png",
+            "__w": 121,
+            "__h": 48,
+            "delay": 120,
+            "origin": [
+              -104,
+              355
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11847.png",
+            "__w": 130,
+            "__h": 53,
+            "delay": 120,
+            "origin": [
+              -100,
+              358
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11848.png",
+            "__w": 142,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -94,
+              359
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11849.png",
+            "__w": 141,
+            "__h": 60,
+            "delay": 120,
+            "origin": [
+              -94,
+              360
+            ]
+          }
+        },
+        "8": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11867.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 90,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11868.png",
+            "__w": 54,
+            "__h": 13,
+            "delay": 120,
+            "origin": [
+              -138,
+              337
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11877.png",
+            "__w": 168,
+            "__h": 73,
+            "delay": 120,
+            "origin": [
+              -82,
+              367
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11878.png",
+            "__w": 169,
+            "__h": 70,
+            "delay": 120,
+            "origin": [
+              -81,
+              366
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11879.png",
+            "__w": 167,
+            "__h": 69,
+            "delay": 120,
+            "origin": [
+              -82,
+              365
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11880.png",
+            "__w": 168,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -82,
+              365
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11881.png",
+            "__w": 169,
+            "__h": 90,
+            "delay": 120,
+            "origin": [
+              -82,
+              366
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11882.png",
+            "__w": 174,
+            "__h": 137,
+            "delay": 120,
+            "origin": [
+              -79,
+              367
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11883.png",
+            "__w": 210,
+            "__h": 251,
+            "delay": 120,
+            "origin": [
+              -41,
+              366
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11884.png",
+            "__w": 336,
+            "__h": 368,
+            "delay": 120,
+            "origin": [
+              86,
+              367
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11885.png",
+            "__w": 351,
+            "__h": 368,
+            "delay": 120,
+            "origin": [
+              101,
+              366
+            ]
+          },
+          "19": {
+            "__i": "assets/Skill/1211.img/bitmap/11886.png",
+            "__w": 351,
+            "__h": 366,
+            "delay": 120,
+            "origin": [
+              103,
+              364
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11869.png",
+            "__w": 75,
+            "__h": 19,
+            "delay": 120,
+            "origin": [
+              -128,
+              337
+            ]
+          },
+          "20": {
+            "__i": "assets/Skill/1211.img/bitmap/11887.png",
+            "__w": 356,
+            "__h": 364,
+            "delay": 120,
+            "origin": [
+              107,
+              363
+            ]
+          },
+          "21": {
+            "__i": "assets/Skill/1211.img/bitmap/11888.png",
+            "__w": 357,
+            "__h": 364,
+            "delay": 120,
+            "origin": [
+              109,
+              363
+            ]
+          },
+          "22": {
+            "__i": "assets/Skill/1211.img/bitmap/11889.png",
+            "__w": 359,
+            "__h": 362,
+            "delay": 120,
+            "origin": [
+              112,
+              361
+            ]
+          },
+          "23": {
+            "__i": "assets/Skill/1211.img/bitmap/11890.png",
+            "__w": 251,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              116,
+              166
+            ]
+          },
+          "24": {
+            "__i": "assets/Skill/1211.img/bitmap/11891.png",
+            "__w": 259,
+            "__h": 26,
+            "delay": 120,
+            "origin": [
+              120,
+              39
+            ]
+          },
+          "25": {
+            "__i": "assets/Skill/1211.img/bitmap/11892.png",
+            "__w": 265,
+            "__h": 20,
+            "delay": 120,
+            "origin": [
+              123,
+              28
+            ]
+          },
+          "26": {
+            "__i": "assets/Skill/1211.img/bitmap/11893.png",
+            "__w": 1,
+            "__h": 1,
+            "delay": 30,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11870.png",
+            "__w": 97,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              -117,
+              337
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11871.png",
+            "__w": 101,
+            "__h": 31,
+            "delay": 120,
+            "origin": [
+              -115,
+              337
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11872.png",
+            "__w": 133,
+            "__h": 52,
+            "delay": 120,
+            "origin": [
+              -98,
+              357
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11873.png",
+            "__w": 146,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              -93,
+              361
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11874.png",
+            "__w": 158,
+            "__h": 65,
+            "delay": 120,
+            "origin": [
+              -87,
+              364
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11875.png",
+            "__w": 172,
+            "__h": 71,
+            "delay": 120,
+            "origin": [
+              -80,
+              366
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11876.png",
+            "__w": 171,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              -80,
+              366
+            ]
+          }
+        },
+        "effectDistance": 180
+      }
+    },
+    "12111004": {
+      "action": {
+        "0": "alert2"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "pos": 1,
+          "mx_animation": "1211.img/animations/skill__12111004.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11894.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11896.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11895.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "invisible": 1,
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mad": 183,
+          "mastery": 1,
+          "mpCon": 13,
+          "time": 25
+        },
+        "10": {
+          "hs": "h10",
+          "mad": 210,
+          "mastery": 5,
+          "mpCon": 40,
+          "time": 70
+        },
+        "11": {
+          "hs": "h11",
+          "mad": 214,
+          "mastery": 6,
+          "mpCon": 43,
+          "time": 75
+        },
+        "12": {
+          "hs": "h12",
+          "mad": 218,
+          "mastery": 6,
+          "mpCon": 46,
+          "time": 80
+        },
+        "13": {
+          "hs": "h13",
+          "mad": 222,
+          "mastery": 7,
+          "mpCon": 49,
+          "time": 85
+        },
+        "14": {
+          "hs": "h14",
+          "mad": 226,
+          "mastery": 7,
+          "mpCon": 52,
+          "time": 90
+        },
+        "15": {
+          "hs": "h15",
+          "mad": 230,
+          "mastery": 8,
+          "mpCon": 55,
+          "time": 95
+        },
+        "16": {
+          "hs": "h16",
+          "mad": 234,
+          "mastery": 8,
+          "mpCon": 58,
+          "time": 100
+        },
+        "17": {
+          "hs": "h17",
+          "mad": 238,
+          "mastery": 9,
+          "mpCon": 61,
+          "time": 105
+        },
+        "18": {
+          "hs": "h18",
+          "mad": 242,
+          "mastery": 9,
+          "mpCon": 64,
+          "time": 110
+        },
+        "19": {
+          "hs": "h19",
+          "mad": 246,
+          "mastery": 10,
+          "mpCon": 67,
+          "time": 115
+        },
+        "2": {
+          "hs": "h2",
+          "mad": 186,
+          "mastery": 1,
+          "mpCon": 16,
+          "time": 30
+        },
+        "20": {
+          "hs": "h20",
+          "mad": 250,
+          "mastery": 10,
+          "mpCon": 70,
+          "time": 120
+        },
+        "3": {
+          "hs": "h3",
+          "mad": 189,
+          "mastery": 2,
+          "mpCon": 19,
+          "time": 35
+        },
+        "4": {
+          "hs": "h4",
+          "mad": 192,
+          "mastery": 2,
+          "mpCon": 22,
+          "time": 40
+        },
+        "5": {
+          "hs": "h5",
+          "mad": 195,
+          "mastery": 3,
+          "mpCon": 25,
+          "time": 45
+        },
+        "6": {
+          "hs": "h6",
+          "mad": 198,
+          "mastery": 3,
+          "mpCon": 28,
+          "time": 50
+        },
+        "7": {
+          "hs": "h7",
+          "mad": 201,
+          "mastery": 4,
+          "mpCon": 31,
+          "time": 55
+        },
+        "8": {
+          "hs": "h8",
+          "mad": 204,
+          "mastery": 4,
+          "mpCon": 34,
+          "time": 60
+        },
+        "9": {
+          "hs": "h9",
+          "mad": 207,
+          "mastery": 5,
+          "mpCon": 37,
+          "time": 65
+        }
+      },
+      "summon": {
+        "attack1": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11924.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11925.png",
+            "__w": 145,
+            "__h": 155,
+            "delay": 120,
+            "origin": [
+              58,
+              171
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11934.png",
+            "__w": 153,
+            "__h": 153,
+            "delay": 120,
+            "origin": [
+              67,
+              151
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11935.png",
+            "__w": 153,
+            "__h": 154,
+            "delay": 120,
+            "origin": [
+              67,
+              151
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11936.png",
+            "__w": 152,
+            "__h": 154,
+            "delay": 120,
+            "origin": [
+              66,
+              151
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11937.png",
+            "__w": 151,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              65,
+              156
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11938.png",
+            "__w": 149,
+            "__h": 158,
+            "delay": 120,
+            "origin": [
+              63,
+              162
+            ]
+          },
+          "15": {
+            "__i": "assets/Skill/1211.img/bitmap/11939.png",
+            "__w": 145,
+            "__h": 154,
+            "delay": 120,
+            "origin": [
+              59,
+              168
+            ]
+          },
+          "16": {
+            "__i": "assets/Skill/1211.img/bitmap/11940.png",
+            "__w": 143,
+            "__h": 155,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "17": {
+            "__i": "assets/Skill/1211.img/bitmap/11941.png",
+            "__w": 143,
+            "__h": 153,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "18": {
+            "__i": "assets/Skill/1211.img/bitmap/11942.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11926.png",
+            "__w": 148,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              60,
+              171
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11927.png",
+            "__w": 150,
+            "__h": 160,
+            "delay": 120,
+            "origin": [
+              61,
+              174
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11928.png",
+            "__w": 151,
+            "__h": 162,
+            "delay": 120,
+            "origin": [
+              61,
+              175
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11929.png",
+            "__w": 152,
+            "__h": 166,
+            "delay": 120,
+            "origin": [
+              62,
+              176
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11930.png",
+            "__w": 152,
+            "__h": 167,
+            "delay": 120,
+            "origin": [
+              62,
+              176
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11931.png",
+            "__w": 152,
+            "__h": 164,
+            "delay": 120,
+            "origin": [
+              62,
+              176
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11932.png",
+            "__w": 152,
+            "__h": 164,
+            "delay": 120,
+            "origin": [
+              62,
+              176
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11933.png",
+            "__w": 153,
+            "__h": 153,
+            "delay": 120,
+            "origin": [
+              67,
+              151
+            ]
+          },
+          "info": {
+            "attackAfter": 1080,
+            "mobCount": 3,
+            "priority": 2221003,
+            "range": {
+              "lt": [
+                -200,
+                -150
+              ],
+              "rb": [
+                0,
+                30
+              ]
+            },
+            "type": 0
+          }
+        },
+        "die": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11943.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11944.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11953.png",
+            "__w": 128,
+            "__h": 137,
+            "delay": 120,
+            "origin": [
+              67,
+              134
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11954.png",
+            "__w": 135,
+            "__h": 139,
+            "a0": 255,
+            "a1": 0,
+            "delay": 120,
+            "origin": [
+              71,
+              135
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11945.png",
+            "__w": 144,
+            "__h": 158,
+            "delay": 120,
+            "origin": [
+              57,
+              172
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11946.png",
+            "__w": 145,
+            "__h": 159,
+            "delay": 120,
+            "origin": [
+              58,
+              173
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11947.png",
+            "__w": 146,
+            "__h": 160,
+            "delay": 120,
+            "origin": [
+              59,
+              174
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11948.png",
+            "__w": 148,
+            "__h": 167,
+            "delay": 120,
+            "origin": [
+              61,
+              175
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11949.png",
+            "__w": 155,
+            "__h": 175,
+            "delay": 120,
+            "origin": [
+              68,
+              176
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11950.png",
+            "__w": 162,
+            "__h": 183,
+            "delay": 120,
+            "origin": [
+              75,
+              177
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11951.png",
+            "__w": 168,
+            "__h": 190,
+            "delay": 120,
+            "origin": [
+              81,
+              178
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11952.png",
+            "__w": 163,
+            "__h": 163,
+            "delay": 120,
+            "origin": [
+              85,
+              147
+            ]
+          }
+        },
+        "move": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11912.png",
+            "__w": 145,
+            "__h": 158,
+            "delay": 180,
+            "origin": [
+              57,
+              172
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11913.png",
+            "__w": 147,
+            "__h": 158,
+            "delay": 180,
+            "origin": [
+              59,
+              173
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11914.png",
+            "__w": 149,
+            "__h": 158,
+            "delay": 180,
+            "origin": [
+              61,
+              172
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11915.png",
+            "__w": 146,
+            "__h": 156,
+            "delay": 180,
+            "origin": [
+              58,
+              171
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11916.png",
+            "__w": 144,
+            "__h": 152,
+            "delay": 180,
+            "origin": [
+              56,
+              170
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11917.png",
+            "__w": 143,
+            "__h": 156,
+            "delay": 180,
+            "origin": [
+              55,
+              171
+            ]
+          }
+        },
+        "stand": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11918.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 180,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11919.png",
+            "__w": 144,
+            "__h": 156,
+            "delay": 180,
+            "origin": [
+              57,
+              172
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11920.png",
+            "__w": 145,
+            "__h": 156,
+            "delay": 180,
+            "origin": [
+              58,
+              173
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11921.png",
+            "__w": 144,
+            "__h": 158,
+            "delay": 180,
+            "origin": [
+              57,
+              174
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11922.png",
+            "__w": 143,
+            "__h": 155,
+            "delay": 180,
+            "origin": [
+              56,
+              173
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11923.png",
+            "__w": 143,
+            "__h": 158,
+            "delay": 180,
+            "origin": [
+              56,
+              172
+            ]
+          }
+        },
+        "summoned": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11897.png",
+            "__w": 75,
+            "__h": 59,
+            "delay": 120,
+            "origin": [
+              38,
+              99
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11898.png",
+            "__w": 78,
+            "__h": 95,
+            "delay": 120,
+            "origin": [
+              39,
+              126
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/11907.png",
+            "__w": 143,
+            "__h": 157,
+            "delay": 120,
+            "origin": [
+              56,
+              171
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/11908.png",
+            "__w": 206,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              99,
+              177
+            ]
+          },
+          "12": {
+            "__i": "assets/Skill/1211.img/bitmap/11909.png",
+            "__w": 206,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              99,
+              177
+            ]
+          },
+          "13": {
+            "__i": "assets/Skill/1211.img/bitmap/11910.png",
+            "__w": 206,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              99,
+              177
+            ]
+          },
+          "14": {
+            "__i": "assets/Skill/1211.img/bitmap/11911.png",
+            "__w": 209,
+            "__h": 203,
+            "delay": 120,
+            "origin": [
+              99,
+              177
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11899.png",
+            "__w": 123,
+            "__h": 152,
+            "delay": 120,
+            "origin": [
+              66,
+              139
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11900.png",
+            "__w": 149,
+            "__h": 187,
+            "delay": 120,
+            "origin": [
+              62,
+              178
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11901.png",
+            "__w": 148,
+            "__h": 181,
+            "delay": 120,
+            "origin": [
+              61,
+              177
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11902.png",
+            "__w": 143,
+            "__h": 171,
+            "delay": 120,
+            "origin": [
+              56,
+              176
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11903.png",
+            "__w": 147,
+            "__h": 162,
+            "delay": 120,
+            "origin": [
+              60,
+              175
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11904.png",
+            "__w": 146,
+            "__h": 160,
+            "delay": 120,
+            "origin": [
+              59,
+              174
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11905.png",
+            "__w": 145,
+            "__h": 159,
+            "delay": 120,
+            "origin": [
+              58,
+              173
+            ]
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11906.png",
+            "__w": 144,
+            "__h": 158,
+            "delay": 120,
+            "origin": [
+              57,
+              172
+            ]
+          }
+        }
+      }
+    },
+    "12111005": {
+      "action": {
+        "0": "flamegear"
+      },
+      "effect": {
+        "mx_animation": "1211.img/animations/skill__12111005.json"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "mx_animation": "1211.img/animations/skill__12111005.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/11963.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/11965.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/11964.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 22,
+          "mastery": 1,
+          "mpCon": 21,
+          "prop": 51,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 4
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 40,
+          "mastery": 4,
+          "mpCon": 30,
+          "prop": 60,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 16
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 42,
+          "mastery": 4,
+          "mpCon": 31,
+          "prop": 61,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 16
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 44,
+          "mastery": 4,
+          "mpCon": 32,
+          "prop": 62,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 16
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 46,
+          "mastery": 5,
+          "mpCon": 33,
+          "prop": 63,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 20
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 48,
+          "mastery": 5,
+          "mpCon": 34,
+          "prop": 64,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 20
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 50,
+          "mastery": 5,
+          "mpCon": 35,
+          "prop": 65,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 20
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 52,
+          "mastery": 6,
+          "mpCon": 36,
+          "prop": 66,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 24
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 54,
+          "mastery": 6,
+          "mpCon": 37,
+          "prop": 67,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 24
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 56,
+          "mastery": 6,
+          "mpCon": 38,
+          "prop": 68,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 24
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 58,
+          "mastery": 7,
+          "mpCon": 39,
+          "prop": 69,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 28
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 24,
+          "mastery": 1,
+          "mpCon": 22,
+          "prop": 52,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 4
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 60,
+          "mastery": 7,
+          "mpCon": 40,
+          "prop": 70,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 28
+        },
+        "21": {
+          "hs": "h21",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 62,
+          "mastery": 7,
+          "mpCon": 41,
+          "prop": 71,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 28
+        },
+        "22": {
+          "hs": "h22",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 64,
+          "mastery": 8,
+          "mpCon": 42,
+          "prop": 72,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 32
+        },
+        "23": {
+          "hs": "h23",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 66,
+          "mastery": 8,
+          "mpCon": 43,
+          "prop": 73,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 32
+        },
+        "24": {
+          "hs": "h24",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 68,
+          "mastery": 8,
+          "mpCon": 44,
+          "prop": 74,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 32
+        },
+        "25": {
+          "hs": "h25",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 70,
+          "mastery": 9,
+          "mpCon": 45,
+          "prop": 75,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 36
+        },
+        "26": {
+          "hs": "h26",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 72,
+          "mastery": 9,
+          "mpCon": 46,
+          "prop": 76,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 36
+        },
+        "27": {
+          "hs": "h27",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 74,
+          "mastery": 9,
+          "mpCon": 47,
+          "prop": 77,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 36
+        },
+        "28": {
+          "hs": "h28",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 76,
+          "mastery": 10,
+          "mpCon": 48,
+          "prop": 78,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 40
+        },
+        "29": {
+          "hs": "h29",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 78,
+          "mastery": 10,
+          "mpCon": 49,
+          "prop": 79,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 40
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 26,
+          "mastery": 1,
+          "mpCon": 23,
+          "prop": 53,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 4
+        },
+        "30": {
+          "hs": "h30",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 80,
+          "mastery": 10,
+          "mpCon": 50,
+          "prop": 80,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 40
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 28,
+          "mastery": 2,
+          "mpCon": 24,
+          "prop": 54,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 8
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 30,
+          "mastery": 2,
+          "mpCon": 25,
+          "prop": 55,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 8
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 32,
+          "mastery": 2,
+          "mpCon": 26,
+          "prop": 56,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 8
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 34,
+          "mastery": 3,
+          "mpCon": 27,
+          "prop": 57,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 12
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 36,
+          "mastery": 3,
+          "mpCon": 28,
+          "prop": 58,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 12
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -200,
+            -250
+          ],
+          "mad": 38,
+          "mastery": 3,
+          "mpCon": 29,
+          "prop": 59,
+          "rb": [
+            200,
+            30
+          ],
+          "time": 12
+        }
+      },
+      "mob": {
+        "0": {
+          "__i": "assets/Skill/1211.img/bitmap/12002.png",
+          "__w": 72,
+          "__h": 81,
+          "delay": 60,
+          "origin": [
+            35,
+            55
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/1211.img/bitmap/12003.png",
+          "__w": 74,
+          "__h": 86,
+          "delay": 60,
+          "origin": [
+            36,
+            60
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/1211.img/bitmap/12004.png",
+          "__w": 74,
+          "__h": 88,
+          "delay": 60,
+          "origin": [
+            36,
+            62
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/1211.img/bitmap/12005.png",
+          "__w": 75,
+          "__h": 91,
+          "delay": 60,
+          "origin": [
+            36,
+            65
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/1211.img/bitmap/12006.png",
+          "__w": 72,
+          "__h": 90,
+          "delay": 60,
+          "origin": [
+            35,
+            64
+          ]
+        },
+        "5": {
+          "__i": "assets/Skill/1211.img/bitmap/12007.png",
+          "__w": 71,
+          "__h": 85,
+          "delay": 60,
+          "origin": [
+            34,
+            59
+          ]
+        },
+        "6": {
+          "__i": "assets/Skill/1211.img/bitmap/12008.png",
+          "__w": 72,
+          "__h": 85,
+          "delay": 60,
+          "origin": [
+            36,
+            59
+          ]
+        },
+        "7": {
+          "__i": "assets/Skill/1211.img/bitmap/12009.png",
+          "__w": 70,
+          "__h": 88,
+          "delay": 60,
+          "origin": [
+            34,
+            62
+          ]
+        },
+        "pos": 2,
+        "repeat": 1
+      },
+      "tile": {
+        "0": {
+          "0": {
+            "__i": "assets/Skill/1211.img/bitmap/11990.png",
+            "__w": 438,
+            "__h": 266,
+            "delay": 60,
+            "origin": [
+              228,
+              248
+            ]
+          },
+          "1": {
+            "__i": "assets/Skill/1211.img/bitmap/11991.png",
+            "__w": 437,
+            "__h": 268,
+            "delay": 60,
+            "origin": [
+              229,
+              250
+            ]
+          },
+          "10": {
+            "__i": "assets/Skill/1211.img/bitmap/12000.png",
+            "__w": 437,
+            "__h": 268,
+            "delay": 60,
+            "origin": [
+              228,
+              250
+            ]
+          },
+          "11": {
+            "__i": "assets/Skill/1211.img/bitmap/12001.png",
+            "__w": 437,
+            "__h": 272,
+            "delay": 60,
+            "origin": [
+              228,
+              254
+            ]
+          },
+          "2": {
+            "__i": "assets/Skill/1211.img/bitmap/11992.png",
+            "__w": 438,
+            "__h": 273,
+            "delay": 60,
+            "origin": [
+              229,
+              255
+            ]
+          },
+          "3": {
+            "__i": "assets/Skill/1211.img/bitmap/11993.png",
+            "__w": 436,
+            "__h": 293,
+            "delay": 60,
+            "origin": [
+              229,
+              275
+            ]
+          },
+          "4": {
+            "__i": "assets/Skill/1211.img/bitmap/11994.png",
+            "__w": 436,
+            "__h": 299,
+            "delay": 60,
+            "origin": [
+              229,
+              281
+            ]
+          },
+          "5": {
+            "__i": "assets/Skill/1211.img/bitmap/11995.png",
+            "__w": 436,
+            "__h": 301,
+            "delay": 60,
+            "origin": [
+              229,
+              283
+            ]
+          },
+          "6": {
+            "__i": "assets/Skill/1211.img/bitmap/11996.png",
+            "__w": 435,
+            "__h": 303,
+            "delay": 60,
+            "origin": [
+              228,
+              285
+            ]
+          },
+          "7": {
+            "__i": "assets/Skill/1211.img/bitmap/11997.png",
+            "__w": 435,
+            "__h": 306,
+            "delay": 60,
+            "origin": [
+              228,
+              288
+            ]
+          },
+          "8": {
+            "__i": "assets/Skill/1211.img/bitmap/11998.png",
+            "__w": 434,
+            "__h": 309,
+            "delay": 60,
+            "origin": [
+              227,
+              291
+            ],
+            "z": 0
+          },
+          "9": {
+            "__i": "assets/Skill/1211.img/bitmap/11999.png",
+            "__w": 434,
+            "__h": 270,
+            "delay": 60,
+            "origin": [
+              227,
+              252
+            ]
+          }
+        }
+      }
+    },
+    "12111006": {
+      "action": {
+        "0": "firestrike"
+      },
+      "ball": {
+        "mx_animation": "1211.img/animations/skill__12111006.json"
+      },
+      "effect": {
+        "mx_animation": "1211.img/animations/skill__12111006.json"
+      },
+      "elemAttr": "f",
+      "hit": {
+        "0": {
+          "mx_animation": "1211.img/animations/skill__12111006.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/1211.img/bitmap/12017.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/1211.img/bitmap/12019.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/1211.img/bitmap/12018.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 73,
+          "mastery": 1,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "10": {
+          "hs": "h10",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 100,
+          "mastery": 4,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "11": {
+          "hs": "h11",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 102,
+          "mastery": 4,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "12": {
+          "hs": "h12",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 104,
+          "mastery": 4,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "13": {
+          "hs": "h13",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 106,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "14": {
+          "hs": "h14",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 108,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "15": {
+          "hs": "h15",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 110,
+          "mastery": 5,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "16": {
+          "hs": "h16",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 112,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "17": {
+          "hs": "h17",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 114,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "18": {
+          "hs": "h18",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 116,
+          "mastery": 6,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "19": {
+          "hs": "h19",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 118,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "2": {
+          "hs": "h2",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 76,
+          "mastery": 1,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "20": {
+          "hs": "h20",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 120,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "21": {
+          "hs": "h21",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 122,
+          "mastery": 7,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "22": {
+          "hs": "h22",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 124,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "23": {
+          "hs": "h23",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 126,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "24": {
+          "hs": "h24",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 128,
+          "mastery": 8,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "25": {
+          "hs": "h25",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 130,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "26": {
+          "hs": "h26",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 132,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "27": {
+          "hs": "h27",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 134,
+          "mastery": 9,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "28": {
+          "hs": "h28",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 136,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "29": {
+          "hs": "h29",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 138,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "3": {
+          "hs": "h3",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 79,
+          "mastery": 1,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "30": {
+          "hs": "h30",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 140,
+          "mastery": 10,
+          "mobCount": 6,
+          "mpCon": 26,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "4": {
+          "hs": "h4",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 82,
+          "mastery": 2,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "5": {
+          "hs": "h5",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 85,
+          "mastery": 2,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "6": {
+          "hs": "h6",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 88,
+          "mastery": 2,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "7": {
+          "hs": "h7",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 91,
+          "mastery": 3,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "8": {
+          "hs": "h8",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 94,
+          "mastery": 3,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "9": {
+          "hs": "h9",
+          "lt": [
+            -400,
+            -60
+          ],
+          "mad": 97,
+          "mastery": 3,
+          "mobCount": 6,
+          "mpCon": 14,
+          "rb": [
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

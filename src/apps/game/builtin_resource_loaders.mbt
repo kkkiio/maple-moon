@@ -149,7 +149,7 @@ let skill_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "skill",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Skill",
-      "/assets/skill",
+      "/assets/Skill",
     ),
   )
 })

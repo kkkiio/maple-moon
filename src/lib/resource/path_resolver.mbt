@@ -134,7 +134,7 @@ let source_root_map : Map[String, String] = {
   "object_loader": "/assets/map/obj",
   "tile": "/assets/map/tile",
   "mob": "/assets/mob",
-  "skill": "/assets/skill",
+  "skill": "/assets/Skill",
   "character": "/assets/Character",
   "afterimage": "/assets/Character/Afterimage",
   "body": "/assets/Character/Body",

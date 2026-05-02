@@ -21,7 +21,7 @@ pub async fn Skill::load(skill_id : Int) -> Skill {
   let data = @skill.SkillData::load(skill_id)
   let strid = @utils.stoi_left_pad0(skill_id, 7)
   let jobid = strid.view(end_offset=3)
-  let skill_base_path = "/assets/skill/\{jobid}.img.json"
+  let skill_base_path = "/assets/Skill/\{jobid}.img.json"
   let skill_loader = @resource.require_async_loader("skill")
   Skill::new(
     skill_id,

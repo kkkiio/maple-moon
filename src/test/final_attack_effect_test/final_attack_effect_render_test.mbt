@@ -27,7 +27,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
 
   let data = @skill.SkillData::load(1100002)
   let skill_loader = @resource.require_async_loader("skill")
-  let skill_base_path = "/assets/skill/110.img.json"
+  let skill_base_path = "/assets/Skill/110.img.json"
   let hit_effect = @combat_system.make_hit_effect(
     data.src,
     skill_loader,

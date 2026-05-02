@@ -1,0 +1,1818 @@
+{
+  "info": {
+    "icon": {
+      "__i": "assets/Skill/510.img/bitmap/13569.png",
+      "__w": 26,
+      "__h": 30,
+      "origin": [
+        -4,
+        30
+      ]
+    }
+  },
+  "skill": {
+    "5100000": {
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13570.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13572.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13571.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "x": 3,
+          "y": 2
+        },
+        "10": {
+          "hs": "h10",
+          "x": 30,
+          "y": 20
+        },
+        "2": {
+          "hs": "h2",
+          "x": 6,
+          "y": 4
+        },
+        "3": {
+          "hs": "h3",
+          "x": 9,
+          "y": 6
+        },
+        "4": {
+          "hs": "h4",
+          "x": 12,
+          "y": 8
+        },
+        "5": {
+          "hs": "h5",
+          "x": 15,
+          "y": 10
+        },
+        "6": {
+          "hs": "h6",
+          "x": 18,
+          "y": 12
+        },
+        "7": {
+          "hs": "h7",
+          "x": 21,
+          "y": 14
+        },
+        "8": {
+          "hs": "h8",
+          "x": 24,
+          "y": 16
+        },
+        "9": {
+          "hs": "h9",
+          "x": 27,
+          "y": 18
+        }
+      }
+    },
+    "5100001": {
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13573.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13575.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13574.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hs": "h1",
+          "mastery": 1,
+          "x": 1
+        },
+        "10": {
+          "hs": "h10",
+          "mastery": 5,
+          "x": 10
+        },
+        "11": {
+          "hs": "h11",
+          "mastery": 6,
+          "x": 11
+        },
+        "12": {
+          "hs": "h12",
+          "mastery": 6,
+          "x": 12
+        },
+        "13": {
+          "hs": "h13",
+          "mastery": 7,
+          "x": 13
+        },
+        "14": {
+          "hs": "h14",
+          "mastery": 7,
+          "x": 14
+        },
+        "15": {
+          "hs": "h15",
+          "mastery": 8,
+          "x": 15
+        },
+        "16": {
+          "hs": "h16",
+          "mastery": 8,
+          "x": 16
+        },
+        "17": {
+          "hs": "h17",
+          "mastery": 9,
+          "x": 17
+        },
+        "18": {
+          "hs": "h18",
+          "mastery": 9,
+          "x": 18
+        },
+        "19": {
+          "hs": "h19",
+          "mastery": 10,
+          "x": 19
+        },
+        "2": {
+          "hs": "h2",
+          "mastery": 1,
+          "x": 2
+        },
+        "20": {
+          "hs": "h20",
+          "mastery": 10,
+          "x": 20
+        },
+        "3": {
+          "hs": "h3",
+          "mastery": 2,
+          "x": 3
+        },
+        "4": {
+          "hs": "h4",
+          "mastery": 2,
+          "x": 4
+        },
+        "5": {
+          "hs": "h5",
+          "mastery": 3,
+          "x": 5
+        },
+        "6": {
+          "hs": "h6",
+          "mastery": 3,
+          "x": 6
+        },
+        "7": {
+          "hs": "h7",
+          "mastery": 4,
+          "x": 7
+        },
+        "8": {
+          "hs": "h8",
+          "mastery": 4,
+          "x": 8
+        },
+        "9": {
+          "hs": "h9",
+          "mastery": 5,
+          "x": 9
+        }
+      },
+      "skillType": 1
+    },
+    "5101002": {
+      "action": {
+        "0": "backspin"
+      },
+      "afterimage": {
+        "barehands": {
+          "backspin": {
+            "4": {
+              "0": {
+                "__i": "assets/Skill/510.img/bitmap/13614.png",
+                "__w": 1,
+                "__h": 1,
+                "delay": 60,
+                "origin": [
+                  0,
+                  0
+                ]
+              }
+            },
+            "lt": [
+              0,
+              -50
+            ],
+            "rb": [
+              140,
+              0
+            ]
+          }
+        },
+        "knuckle": {
+          "backspin": {
+            "4": {
+              "0": {
+                "__i": "assets/Skill/510.img/bitmap/13613.png",
+                "__w": 1,
+                "__h": 1,
+                "delay": 60,
+                "origin": [
+                  0,
+                  0
+                ]
+              }
+            },
+            "lt": [
+              0,
+              -50
+            ],
+            "rb": [
+              140,
+              0
+            ]
+          }
+        }
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101002.json"
+      },
+      "effect0": {
+        "z": "-1",
+        "mx_animation": "510.img/animations/skill__5101002.json"
+      },
+      "hit": {
+        "0": {
+          "mx_animation": "510.img/animations/skill__5101002.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13588.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13590.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13589.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "damage": 88,
+          "hs": "h1",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 12,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "10": {
+          "damage": 160,
+          "hs": "h10",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "11": {
+          "damage": 168,
+          "hs": "h11",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 22,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "12": {
+          "damage": 176,
+          "hs": "h12",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 22,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "13": {
+          "damage": 184,
+          "hs": "h13",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "14": {
+          "damage": 192,
+          "hs": "h14",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "15": {
+          "damage": 200,
+          "hs": "h15",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 26,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "16": {
+          "damage": 208,
+          "hs": "h16",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 26,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "17": {
+          "damage": 216,
+          "hs": "h17",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "18": {
+          "damage": 224,
+          "hs": "h18",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "19": {
+          "damage": 232,
+          "hs": "h19",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 30,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "2": {
+          "damage": 96,
+          "hs": "h2",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 12,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "20": {
+          "damage": 240,
+          "hs": "h20",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 30,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "3": {
+          "damage": 104,
+          "hs": "h3",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 14,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "4": {
+          "damage": 112,
+          "hs": "h4",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 14,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "5": {
+          "damage": 120,
+          "hs": "h5",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 16,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "6": {
+          "damage": 128,
+          "hs": "h6",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 16,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "7": {
+          "damage": 136,
+          "hs": "h7",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "8": {
+          "damage": 144,
+          "hs": "h8",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 18,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        },
+        "9": {
+          "damage": 152,
+          "hs": "h9",
+          "lt": [
+            0,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            140,
+            0
+          ],
+          "time": 1
+        }
+      },
+      "mob": {
+        "0": {
+          "__i": "assets/Skill/510.img/bitmap/13610.png",
+          "__w": 66,
+          "__h": 18,
+          "delay": 100,
+          "origin": [
+            33,
+            9
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/510.img/bitmap/13611.png",
+          "__w": 58,
+          "__h": 17,
+          "delay": 100,
+          "origin": [
+            29,
+            9
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/510.img/bitmap/13612.png",
+          "__w": 58,
+          "__h": 17,
+          "delay": 100,
+          "origin": [
+            28,
+            9
+          ]
+        },
+        "pos": 2,
+        "repeat": 1
+      }
+    },
+    "5101003": {
+      "action": {
+        "0": "doubleupper"
+      },
+      "afterimage": {
+        "barehands": {
+          "doubleupper": {
+            "1": {
+              "0": {
+                "__i": "assets/Skill/510.img/bitmap/13619.png",
+                "__w": 1,
+                "__h": 1,
+                "delay": 60,
+                "origin": [
+                  0,
+                  0
+                ]
+              }
+            },
+            "lt": [
+              -70,
+              -58
+            ],
+            "rb": [
+              -2,
+              10
+            ]
+          }
+        },
+        "knuckle": {
+          "doubleupper": {
+            "1": {
+              "0": {
+                "__i": "assets/Skill/510.img/bitmap/13618.png",
+                "__w": 1,
+                "__h": 1,
+                "delay": 60,
+                "origin": [
+                  0,
+                  0
+                ]
+              }
+            },
+            "lt": [
+              -70,
+              -58
+            ],
+            "rb": [
+              -2,
+              10
+            ]
+          }
+        }
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101003.json"
+      },
+      "hit": {
+        "0": {
+          "mx_animation": "510.img/animations/skill__5101003.json"
+        },
+        "1": {
+          "mx_animation": "510.img/animations/skill__5101003.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13615.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13617.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13616.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "attackCount": "2",
+          "damage": 100,
+          "hs": "h1",
+          "mpCon": 15,
+          "time": "1"
+        },
+        "10": {
+          "attackCount": "2",
+          "damage": 190,
+          "hs": "h10",
+          "mpCon": 20,
+          "time": "1"
+        },
+        "11": {
+          "attackCount": "2",
+          "damage": 200,
+          "hs": "h11",
+          "mpCon": 25,
+          "time": "1"
+        },
+        "12": {
+          "attackCount": "2",
+          "damage": 210,
+          "hs": "h12",
+          "mpCon": 25,
+          "time": "1"
+        },
+        "13": {
+          "attackCount": "2",
+          "damage": 220,
+          "hs": "h13",
+          "mpCon": 25,
+          "time": "1"
+        },
+        "14": {
+          "attackCount": "2",
+          "damage": 230,
+          "hs": "h14",
+          "mpCon": 25,
+          "time": "1"
+        },
+        "15": {
+          "attackCount": "2",
+          "damage": 240,
+          "hs": "h15",
+          "mpCon": 25,
+          "time": "1"
+        },
+        "16": {
+          "attackCount": "2",
+          "damage": 250,
+          "hs": "h16",
+          "mpCon": 30,
+          "time": "1"
+        },
+        "17": {
+          "attackCount": "2",
+          "damage": 260,
+          "hs": "h17",
+          "mpCon": 30,
+          "time": "1"
+        },
+        "18": {
+          "attackCount": "2",
+          "damage": 270,
+          "hs": "h18",
+          "mpCon": 30,
+          "time": "1"
+        },
+        "19": {
+          "attackCount": "2",
+          "damage": 280,
+          "hs": "h19",
+          "mpCon": 30,
+          "time": "1"
+        },
+        "2": {
+          "attackCount": "2",
+          "damage": 110,
+          "hs": "h2",
+          "mpCon": 15,
+          "time": "1"
+        },
+        "20": {
+          "attackCount": "2",
+          "damage": 290,
+          "hs": "h20",
+          "mpCon": 30,
+          "time": "1"
+        },
+        "3": {
+          "attackCount": "2",
+          "damage": 120,
+          "hs": "h3",
+          "mpCon": 15,
+          "time": "1"
+        },
+        "4": {
+          "attackCount": "2",
+          "damage": 130,
+          "hs": "h4",
+          "mpCon": 15,
+          "time": "1"
+        },
+        "5": {
+          "attackCount": "2",
+          "damage": 140,
+          "hs": "h5",
+          "mpCon": 15,
+          "time": "1"
+        },
+        "6": {
+          "attackCount": "2",
+          "damage": 150,
+          "hs": "h6",
+          "mpCon": 20,
+          "time": "1"
+        },
+        "7": {
+          "attackCount": "2",
+          "damage": 160,
+          "hs": "h7",
+          "mpCon": 20,
+          "time": "1"
+        },
+        "8": {
+          "attackCount": "2",
+          "damage": 170,
+          "hs": "h8",
+          "mpCon": 20,
+          "time": "1"
+        },
+        "9": {
+          "attackCount": "2",
+          "damage": 180,
+          "hs": "h9",
+          "mpCon": 20,
+          "time": "1"
+        }
+      },
+      "mob": {
+        "0": {
+          "__i": "assets/Skill/510.img/bitmap/13637.png",
+          "__w": 66,
+          "__h": 18,
+          "delay": 100,
+          "origin": [
+            33,
+            9
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/510.img/bitmap/13638.png",
+          "__w": 58,
+          "__h": 17,
+          "delay": 100,
+          "origin": [
+            29,
+            9
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/510.img/bitmap/13639.png",
+          "__w": 58,
+          "__h": 17,
+          "delay": 100,
+          "origin": [
+            28,
+            9
+          ]
+        },
+        "pos": 2,
+        "repeat": 1
+      }
+    },
+    "5101004": {
+      "action": {
+        "0": "screw"
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101004.json"
+      },
+      "hit": {
+        "0": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        },
+        "1": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        },
+        "2": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        },
+        "3": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        },
+        "4": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        },
+        "5": {
+          "mx_animation": "510.img/animations/skill__5101004.json"
+        }
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13640.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13642.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13641.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "keydown": {
+        "0": {
+          "__i": "assets/Skill/510.img/bitmap/13643.png",
+          "__w": 95,
+          "__h": 79,
+          "delay": 120,
+          "origin": [
+            47,
+            70
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/510.img/bitmap/13644.png",
+          "__w": 83,
+          "__h": 87,
+          "delay": 120,
+          "origin": [
+            42,
+            71
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/510.img/bitmap/13645.png",
+          "__w": 73,
+          "__h": 87,
+          "delay": 120,
+          "origin": [
+            35,
+            72
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/510.img/bitmap/13646.png",
+          "__w": 67,
+          "__h": 79,
+          "delay": 120,
+          "origin": [
+            33,
+            68
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/510.img/bitmap/13647.png",
+          "__w": 58,
+          "__h": 67,
+          "delay": 120,
+          "origin": [
+            29,
+            62
+          ]
+        },
+        "5": {
+          "__i": "assets/Skill/510.img/bitmap/13648.png",
+          "__w": 46,
+          "__h": 54,
+          "delay": 120,
+          "origin": [
+            23,
+            56
+          ]
+        },
+        "6": {
+          "__i": "assets/Skill/510.img/bitmap/13649.png",
+          "__w": 34,
+          "__h": 40,
+          "delay": 120,
+          "origin": [
+            18,
+            49
+          ]
+        },
+        "7": {
+          "__i": "assets/Skill/510.img/bitmap/13650.png",
+          "__w": 22,
+          "__h": 28,
+          "delay": 120,
+          "origin": [
+            13,
+            43
+          ]
+        }
+      },
+      "level": {
+        "1": {
+          "damage": 135,
+          "hs": "h1",
+          "lt": [
+            -100,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "10": {
+          "damage": 270,
+          "hs": "h10",
+          "lt": [
+            -140,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "11": {
+          "damage": 285,
+          "hs": "h11",
+          "lt": [
+            -150,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "12": {
+          "damage": 300,
+          "hs": "h12",
+          "lt": [
+            -150,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "13": {
+          "damage": 315,
+          "hs": "h13",
+          "lt": [
+            -160,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 32,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "14": {
+          "damage": 330,
+          "hs": "h14",
+          "lt": [
+            -160,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 32,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "15": {
+          "damage": 345,
+          "hs": "h15",
+          "lt": [
+            -170,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 32,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "16": {
+          "damage": 360,
+          "hs": "h16",
+          "lt": [
+            -170,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 32,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "17": {
+          "damage": 375,
+          "hs": "h17",
+          "lt": [
+            -180,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 36,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "18": {
+          "damage": 390,
+          "hs": "h18",
+          "lt": [
+            -180,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 36,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "19": {
+          "damage": 405,
+          "hs": "h19",
+          "lt": [
+            -190,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 36,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "2": {
+          "damage": 150,
+          "hs": "h2",
+          "lt": [
+            -100,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "20": {
+          "damage": 420,
+          "hs": "h20",
+          "lt": [
+            -200,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 36,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "3": {
+          "damage": 165,
+          "hs": "h3",
+          "lt": [
+            -110,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "4": {
+          "damage": 180,
+          "hs": "h4",
+          "lt": [
+            -110,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 20,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "5": {
+          "damage": 195,
+          "hs": "h5",
+          "lt": [
+            -120,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "6": {
+          "damage": 210,
+          "hs": "h6",
+          "lt": [
+            -120,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "7": {
+          "damage": 225,
+          "hs": "h7",
+          "lt": [
+            -130,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "8": {
+          "damage": 240,
+          "hs": "h8",
+          "lt": [
+            -130,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 24,
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "9": {
+          "damage": 255,
+          "hs": "h9",
+          "lt": [
+            -140,
+            -50
+          ],
+          "mobCount": 3,
+          "mpCon": 28,
+          "rb": [
+            0,
+            0
+          ]
+        }
+      },
+      "prepare": {
+        "action": "dash",
+        "time": 0
+      }
+    },
+    "5101005": {
+      "action": {
+        "0": "recovery"
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101005.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13665.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13667.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13666.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "cooltime": 70,
+          "hs": "h1",
+          "x": 10,
+          "y": 55
+        },
+        "10": {
+          "cooltime": 25,
+          "hs": "h10",
+          "x": 10,
+          "y": 100
+        },
+        "2": {
+          "cooltime": 65,
+          "hs": "h2",
+          "x": 10,
+          "y": 60
+        },
+        "3": {
+          "cooltime": 60,
+          "hs": "h3",
+          "x": 10,
+          "y": 65
+        },
+        "4": {
+          "cooltime": 55,
+          "hs": "h4",
+          "x": 10,
+          "y": 70
+        },
+        "5": {
+          "cooltime": 50,
+          "hs": "h5",
+          "x": 10,
+          "y": 75
+        },
+        "6": {
+          "cooltime": 45,
+          "hs": "h6",
+          "x": 10,
+          "y": 80
+        },
+        "7": {
+          "cooltime": 40,
+          "hs": "h7",
+          "x": 10,
+          "y": 85
+        },
+        "8": {
+          "cooltime": 35,
+          "hs": "h8",
+          "x": 10,
+          "y": 90
+        },
+        "9": {
+          "cooltime": 30,
+          "hs": "h9",
+          "x": 10,
+          "y": 95
+        }
+      }
+    },
+    "5101006": {
+      "action": {
+        "0": "alert2"
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101006.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13576.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13578.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13577.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "hpCon": 29,
+          "hs": "h1",
+          "mpCon": 29,
+          "time": 10,
+          "x": -2
+        },
+        "10": {
+          "hpCon": 20,
+          "hs": "h10",
+          "mpCon": 20,
+          "time": 100,
+          "x": -2
+        },
+        "11": {
+          "hpCon": 19,
+          "hs": "h11",
+          "mpCon": 19,
+          "time": 110,
+          "x": -2
+        },
+        "12": {
+          "hpCon": 18,
+          "hs": "h12",
+          "mpCon": 18,
+          "time": 120,
+          "x": -2
+        },
+        "13": {
+          "hpCon": 17,
+          "hs": "h13",
+          "mpCon": 17,
+          "time": 130,
+          "x": -2
+        },
+        "14": {
+          "hpCon": 16,
+          "hs": "h14",
+          "mpCon": 16,
+          "time": 140,
+          "x": -2
+        },
+        "15": {
+          "hpCon": 15,
+          "hs": "h15",
+          "mpCon": 15,
+          "time": 150,
+          "x": -2
+        },
+        "16": {
+          "hpCon": 14,
+          "hs": "h16",
+          "mpCon": 14,
+          "time": 160,
+          "x": -2
+        },
+        "17": {
+          "hpCon": 13,
+          "hs": "h17",
+          "mpCon": 13,
+          "time": 170,
+          "x": -2
+        },
+        "18": {
+          "hpCon": 12,
+          "hs": "h18",
+          "mpCon": 12,
+          "time": 180,
+          "x": -2
+        },
+        "19": {
+          "hpCon": 11,
+          "hs": "h19",
+          "mpCon": 11,
+          "time": 190,
+          "x": -2
+        },
+        "2": {
+          "hpCon": 28,
+          "hs": "h2",
+          "mpCon": 28,
+          "time": 20,
+          "x": -2
+        },
+        "20": {
+          "hpCon": 10,
+          "hs": "h20",
+          "mpCon": 10,
+          "time": 200,
+          "x": -2
+        },
+        "3": {
+          "hpCon": 27,
+          "hs": "h3",
+          "mpCon": 27,
+          "time": 30,
+          "x": -2
+        },
+        "4": {
+          "hpCon": 26,
+          "hs": "h4",
+          "mpCon": 26,
+          "time": 40,
+          "x": -2
+        },
+        "5": {
+          "hpCon": 25,
+          "hs": "h5",
+          "mpCon": 25,
+          "time": 50,
+          "x": -2
+        },
+        "6": {
+          "hpCon": 24,
+          "hs": "h6",
+          "mpCon": 24,
+          "time": 60,
+          "x": -2
+        },
+        "7": {
+          "hpCon": 23,
+          "hs": "h7",
+          "mpCon": 23,
+          "time": 70,
+          "x": -2
+        },
+        "8": {
+          "hpCon": 22,
+          "hs": "h8",
+          "mpCon": 22,
+          "time": 80,
+          "x": -2
+        },
+        "9": {
+          "hpCon": 21,
+          "hs": "h9",
+          "mpCon": 21,
+          "time": 90,
+          "x": -2
+        }
+      },
+      "req": {
+        "5100001": 5
+      },
+      "skillType": 2
+    },
+    "5101007": {
+      "affected": {
+        "0": {
+          "__i": "assets/Skill/510.img/bitmap/13698.png",
+          "__w": 102,
+          "__h": 82,
+          "delay": 150,
+          "origin": [
+            55,
+            82
+          ]
+        },
+        "1": {
+          "__i": "assets/Skill/510.img/bitmap/13699.png",
+          "__w": 117,
+          "__h": 92,
+          "delay": 150,
+          "origin": [
+            58,
+            92
+          ]
+        },
+        "2": {
+          "__i": "assets/Skill/510.img/bitmap/13700.png",
+          "__w": 112,
+          "__h": 96,
+          "delay": 150,
+          "origin": [
+            55,
+            91
+          ]
+        },
+        "3": {
+          "__i": "assets/Skill/510.img/bitmap/13701.png",
+          "__w": 109,
+          "__h": 109,
+          "delay": 150,
+          "origin": [
+            54,
+            95
+          ]
+        },
+        "4": {
+          "__i": "assets/Skill/510.img/bitmap/13702.png",
+          "__w": 107,
+          "__h": 109,
+          "delay": 150,
+          "origin": [
+            53,
+            95
+          ]
+        }
+      },
+      "effect": {
+        "mx_animation": "510.img/animations/skill__5101007.json"
+      },
+      "icon": {
+        "__i": "assets/Skill/510.img/bitmap/13685.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconDisabled": {
+        "__i": "assets/Skill/510.img/bitmap/13687.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "iconMouseOver": {
+        "__i": "assets/Skill/510.img/bitmap/13686.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ],
+        "z": 0
+      },
+      "level": {
+        "1": {
+          "cooltime": 35,
+          "hs": "h1",
+          "morph": 1002,
+          "mpCon": 11,
+          "prop": 37,
+          "time": 12
+        },
+        "10": {
+          "cooltime": 15,
+          "hs": "h10",
+          "morph": 1002,
+          "mpCon": 20,
+          "prop": 10,
+          "time": 30
+        },
+        "2": {
+          "cooltime": 35,
+          "hs": "h2",
+          "morph": 1002,
+          "mpCon": 12,
+          "prop": 34,
+          "time": 14
+        },
+        "3": {
+          "cooltime": 30,
+          "hs": "h3",
+          "morph": 1002,
+          "mpCon": 13,
+          "prop": 31,
+          "time": 16
+        },
+        "4": {
+          "cooltime": 30,
+          "hs": "h4",
+          "morph": 1002,
+          "mpCon": 14,
+          "prop": 28,
+          "time": 18
+        },
+        "5": {
+          "cooltime": 25,
+          "hs": "h5",
+          "morph": 1002,
+          "mpCon": 15,
+          "prop": 25,
+          "time": 20
+        },
+        "6": {
+          "cooltime": 25,
+          "hs": "h6",
+          "morph": 1002,
+          "mpCon": 16,
+          "prop": 22,
+          "time": 22
+        },
+        "7": {
+          "cooltime": 20,
+          "hs": "h7",
+          "morph": 1002,
+          "mpCon": 17,
+          "prop": 19,
+          "time": 24
+        },
+        "8": {
+          "cooltime": 20,
+          "hs": "h8",
+          "morph": 1002,
+          "mpCon": 18,
+          "prop": 16,
+          "time": 26
+        },
+        "9": {
+          "cooltime": 15,
+          "hs": "h9",
+          "morph": 1002,
+          "mpCon": 19,
+          "prop": 13,
+          "time": 28
+        }
+      }
+    }
+  }
+}

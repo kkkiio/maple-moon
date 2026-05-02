@@ -4,54 +4,24 @@ fn parse_json_file(path : String) -> Json raise {
 }
 
 ///|
-fn make_test_look(weapon_item_id : Int?) -> @char_look.CharLook raise {
-  let entity = @entity.Entity::new()
-  let bodynode = parse_json_file("assets/Character/Body/00002000.img.json")
-  let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
-    bodynode,
-  )
-  let headnode = parse_json_file("assets/Character/Body/00012000.img.json")
-  let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
-    headnode,
-  )
-  let draw_info = @types.BodyDrawInfo::new(
-    stance_bodys_map.0,
-    stance_heads_map.0,
-  )
-  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
-    parse_json_file("assets/Character/Hair/00030000.img.json"),
-  )
-  let look = @char_look.CharLook::new(
-    entity,
-    {},
-    @char_look.FullBody::new(
-      0,
-      draw_info,
-      stance_bodys_map.0,
-      stance_heads_map.0,
-    ),
-    @char_look.Hair::parse(0, hair_node, draw_info),
-    @char_look.Face::new(
-      20000,
-      parse_json_file("assets/Character/Face/00020000.img.json"),
-    ),
-    draw_info,
-  )
+async fn make_test_equips(weapon_item_id : Int?) -> @equip.CharEquips {
+  let res = @character_presentation.CharacterPresentationResource::load()
+  let draw_info = res.draw_info
+  let equips = @equip.CharEquips::new()
   match weapon_item_id {
     Some(item_id) => {
       let weapon_path = "assets/Character/Weapon/\{@utils.stoi_left_pad0(item_id, 8)}.img.json"
       let weapon_node = parse_json_file(weapon_path)
-      let info_map = match weapon_node {
-        { "info": Object(info), .. } => info
-        _ => panic()
+      guard weapon_node is { "info": Object(info_map), .. } else {
+        fail("Failed to parse weapon node for item \{item_id}")
       }
       let icon = match info_map.get("icon") {
         Some(v) => @json.from_json(v)
-        None => panic()
+        None => fail("Missing icon for item \{item_id}")
       }
       let icon_raw = match info_map.get("iconRaw") {
         Some(v) => @json.from_json(v)
-        None => panic()
+        None => fail("Missing iconRaw for item \{item_id}")
       }
       let weapon_item = @item.ItemData::{
         src: weapon_node,
@@ -68,46 +38,17 @@ fn make_test_look(weapon_item_id : Int?) -> @char_look.CharLook raise {
         unsellable: false,
         cash_item: false,
       }
-      look.add_equip(weapon_item, @slot.Id::WEAPON)
+      equips.add_equip(weapon_item, @slot.Id::WEAPON, draw_info)
     }
     None => ()
   }
-  look
-}
 
-///|
-fn make_test_player(oid : Int, weapon_item_id : Int?) -> @player.Player raise {
-  let look = make_test_look(weapon_item_id)
-  let stats : @char_stats.CharStats = @char_stats.CharStats::new(
-    @server_proto.StatsEntry::default(),
-    fn() {
-      look
-      .get_equips()
-      .get_weapon()
-      .map(fn(w) { w.get_type() })
-      .unwrap_or(@weapon.Type::NONE)
-    },
-    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
-    Map::new(),
-    Map::new(),
-    Map::new(),
-  )
-  let inventory = @legacy_types.MockInventory::default()
-  let player = @player.Player::new(
-    look.get_root_entity(),
-    oid,
-    "PassiveTestPlayer",
-    inventory,
-    look,
-    stats,
-  )
-  @player.set_player(player)
-  player
+  equips
 }
 
 ///|
 fn make_final_attack_test_ctx(
-  attacker : @character.Character?,
+  equips : @equip.CharEquips,
   trigger_count : Ref[Int],
   randomizer : @random.Rand,
   skill_level : Int,
@@ -115,12 +56,7 @@ fn make_final_attack_test_ctx(
 ) -> PassiveContext {
   PassiveContext::{
     randomizer,
-    get_character_fn: fn(oid) {
-      match attacker {
-        Some(chr) => if chr.get_oid() == oid { Some(chr) } else { None }
-        None => None
-      }
-    },
+    get_character_equips_fn: fn(_ : Int) -> @equip.CharEquips? { Some(equips) },
     get_skill_level_fn: fn(_attacker_oid, _skill_id) { skill_level },
     get_skill_data_fn: fn(_skill_id) { skill_data },
     trigger_extra_attack_fn: fn(_attacker_oid, _skill_id, _targets) {
@@ -143,14 +79,13 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 ///|
 async test "sword_fa_fighter_triggers_with_sword_1h" {
   @local_loader.install_resource_env_for_test()
-  let player = make_test_player(1, Some(1302000))
-  let attacker = player.get_character()
+  let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
   let skill_id = @skill.SkillId::SWORD_FA_FIGHTER.int_value()
   let skill_data = Some(@skill.SkillData::load(skill_id))
   let ctx = make_final_attack_test_ctx(
-    Some(attacker),
+    equips,
     trigger_count,
     @random.Rand::chacha8(seed=b"12345678901234567890123456789012"),
     1,
@@ -163,13 +98,12 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
 }
 
 ///|
-test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
-  let player = make_test_player(1, Some(1312001))
-  let attacker = player.get_character()
+async test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
+  let equips = make_test_equips(Some(1312001))
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
-    Some(attacker),
+    equips,
     trigger_count,
     @random.Rand::chacha8(seed=b"12345678901234567890123456789012"),
     1,
@@ -182,13 +116,12 @@ test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
 }
 
 ///|
-test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
-  let player = make_test_player(1, Some(1402000))
-  let attacker = player.get_character()
+async test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
+  let equips = make_test_equips(Some(1402000))
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
-    Some(attacker),
+    equips,
     trigger_count,
     @random.Rand::chacha8(seed=b"12345678901234567890123456789012"),
     1,
@@ -205,7 +138,7 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
-    None,
+    @equip.CharEquips::default(),
     trigger_count,
     @random.Rand::chacha8(seed=b"12345678901234567890123456789012"),
     1,
@@ -216,13 +149,12 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
 }
 
 ///|
-test "sword_fa_fighter_does_not_trigger_for_passive_source" {
-  let player = try! make_test_player(1, Some(1302000))
-  let attacker = player.get_character()
+async test "sword_fa_fighter_does_not_trigger_for_passive_source" {
+  let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref::new(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
-    Some(attacker),
+    equips,
     trigger_count,
     @random.Rand::chacha8(seed=b"12345678901234567890123456789012"),
     1,

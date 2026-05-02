@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/lib/ms/select_char_ui"
 import {
   "KKKIIO/maple-moon/lib/ms/animation",
   "KKKIIO/maple-moon/lib/ms/character_presentation",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ui",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
@@ -36,7 +37,7 @@ pub fn SelectCharUIResource::load() -> Self raise
 pub(all) struct SelectableCharacter {
   cid : Int
   name : String
-  look : @character_presentation.LookEntry
+  look : @server_proto.LookEntry
 }
 
 type SelectableCharacterUI

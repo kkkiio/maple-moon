@@ -3,7 +3,6 @@ package "KKKIIO/maple-moon/lib/ms/server_proto"
 
 import {
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/ms/character_presentation",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
@@ -43,7 +42,7 @@ pub impl ServerMessage for ChangeStatsMesoMessage
 pub(all) struct CharacterListEntry {
   character_id : Int
   name : String
-  look : @character_presentation.LookEntry
+  look : LookEntry
 } derive(ToJson, @debug.Debug, @json.FromJson)
 
 pub(all) struct CharacterListMessage {
@@ -179,6 +178,17 @@ pub(all) struct KillMobMessage {
   animation : Int
 } derive(ToJson, @debug.Debug, @json.FromJson)
 pub impl ServerMessage for KillMobMessage
+
+pub(all) struct LookEntry {
+  female : Bool
+  skin : Int
+  faceid : Int
+  hairid : Int
+  equips : Map[Int, Int]
+  maskedequips : Map[Int, Int]
+  petids : Array[Int]
+} derive(Default, ToJson, @debug.Debug)
+pub impl @json.FromJson for LookEntry
 
 pub(all) struct MobDamageMessage {
   oid : Int

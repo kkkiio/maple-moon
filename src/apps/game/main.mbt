@@ -138,8 +138,8 @@ fn main {
     )
     .add_system(
       Update,
-      fn(world) { @equip_system.equip_system(world) },
-      system_name="equip_system",
+      fn(world) { @equip_inventory.equip_inventory_system(world) },
+      system_name="equip_inventory_system",
     )
     .add_system(
       Update,

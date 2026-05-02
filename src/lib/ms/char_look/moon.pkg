@@ -7,14 +7,3 @@ import {
   "Milky2018/selene/entity",
   "Milky2018/selene/ecs",
 }
-
-import {
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/time",
-  "Milky2018/selene/sprite",
-  "Milky2018/selene/visibility",
-  "KKKIIO/maple-moon/lib/ms/res_types" @struct,
-  "KKKIIO/maple-moon/lib/resource",
-  "moonbitlang/x/fs" @fs,
-  "KKKIIO/maple-moon/lib/ms/char_stance" @char_stance,
-} for "test"

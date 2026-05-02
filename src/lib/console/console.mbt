@@ -236,6 +236,14 @@ extern "js" fn install_debug_bindings(
   #| };
 
 ///|
+/// This package currently only supports the JavaScript backend
+#cfg(not(target="js"))
+#coverage.skip
+fn install_debug_bindings() -> Unit {
+
+}
+
+///|
 /// Register one JSON state section used by `render_game_to_text`.
 pub fn register_state_section(name : String, handler : StateSectionFn) -> Unit {
   state_sections_ref.val.retain(fn(entry) { entry.0 != name })

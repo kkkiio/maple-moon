@@ -1,35 +1,4 @@
 ///|
-async fn load_final_attack_hit_animation() -> (@graphics.EffectAnimation, Int) {
-  let skill_json = @fs.read_file_to_string("assets/skill/110.img.json")
-    |> @json.parse
-  let hit_node = match skill_json {
-    { "skill": { "1100002": { "hit": { "0": hit0, .. }, .. }, .. }, .. } => hit0
-    _ => fail("missing final attack hit animation in assets/skill/110.img.json")
-  }
-  let mx_animation_ref = match hit_node {
-    { "mx_animation": String(path), .. } => path
-    _ => fail("missing mx_animation for final attack hit effect")
-  }
-  let z = match hit_node {
-    { "z": Number(z, ..), .. } => z.to_int()
-    _ => 0
-  }
-  let skill_loader = @resource.require_async_loader("skill")
-  let base_path = skill_loader.resolve_json_path("110.img.json")
-  let resolved = @resource.resolve_ref(base_path, mx_animation_ref)
-  let animation_loader = @resource.AnimationLoader::new(skill_loader)
-  let loaded = animation_loader.load(resolved)
-  let clip = loaded.clip("main")
-  (
-    {
-      animation: @ms_animation.from_selene_clip(clip, loop_=false),
-      duration_ms: clip.duration_ms,
-    },
-    z,
-  )
-}
-
-///|
 async fn load_test_mob() -> @monster.Mob {
   @monster.Mob::load(
     1001,
@@ -44,11 +13,34 @@ async fn load_test_mob() -> @monster.Mob {
 }
 
 ///|
-async fn setup_effect_scene(
-  world : @ecs.World,
-  animation : @graphics.EffectAnimation,
-  z : Int,
-) -> Unit {
+async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
+  @local_loader.install_resource_env_for_test()
+  let previous_world = @ecs.current_world()
+  let world = @ecs.World::new()
+  @ecs.set_current_world(world)
+  defer (match previous_world {
+    Some(previous) => @ecs.set_current_world(previous)
+    None => @ecs.clear_current_world()
+  })
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites().clear()
+
+  let data = @skill.SkillData::load(1100002)
+  let skill_loader = @resource.require_async_loader("skill")
+  let skill_base_path = "/assets/skill/110.img.json"
+  let hit_effect = @combat_system.make_hit_effect(
+    data.src,
+    skill_loader,
+    skill_base_path,
+  )
+
+  let user : @combat_proto.AttackUser = {
+    skill_level: 0,
+    level: 0,
+    second_weapon: false,
+    flip: false,
+  }
+
   @capture_app.init_app(
     @app.App::new()
     .with_world(world)
@@ -77,29 +69,15 @@ async fn setup_effect_scene(
   let map_mobs = @monster.MapMobs::new()
   map_mobs.add_mob(mob)
   @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
-  mob.show_effect(animation, 1, z, false)
+
+  hit_effect(user, mob)
 
   for _ in 0..<2 {
     @capture_app.run_loop(0.016)
   }
-}
 
-///|
-async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
-  @local_loader.install_resource_env_for_test()
-  let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
-  @ecs.set_current_world(world)
-  defer (match previous_world {
-    Some(previous) => @ecs.set_current_world(previous)
-    None => @ecs.clear_current_world()
-  })
-  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
-  defer @sprite.sprites().clear()
-  let (animation, _resource_z) = load_final_attack_hit_animation()
-  setup_effect_scene(world, animation, @graphics.EFFECT_ZINDEX)
   @capture_app.snapshot(
     "src/test/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
-    visual_desc="Final attack hit effect rendered correctly on the z-effect layer.",
+    visual_desc="A attack hit effect rendered on top of the monster",
   )
 }

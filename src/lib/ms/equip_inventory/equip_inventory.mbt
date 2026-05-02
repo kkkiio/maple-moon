@@ -1,6 +1,6 @@
 ///|
 /// Per-frame system that consumes all pending item-use intents.
-pub fn equip_system(_world : @ecs.World) -> Unit {
+pub fn equip_inventory_system(_world : @ecs.World) -> Unit {
   let intents = @item_use_events.drain_intents()
   for intent in intents {
     match intent {

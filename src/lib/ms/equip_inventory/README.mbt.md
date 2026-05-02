@@ -1,4 +1,6 @@
-# equip_system
+# equip_inventory
+
+## equip_inventory_system
 
 消费 `item_use_events` 队列，并在这里执行装备/使用道具请求。
 
@@ -7,9 +9,7 @@
 
 该包是上层业务编排层，避免把玩家状态判定写回 `inventory`。
 
-## 接入示例
-
 ```moonbit nocheck
 @system.App::new()
-.add_system(@equip_system.equip_system, system_name="equip_system")
+.add_system(@equip_inventory.equip_inventory_system, system_name="equip_inventory_system")
 ```

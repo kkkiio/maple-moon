@@ -5,19 +5,19 @@
 /// consume shared randomness, and trigger follow-up attacks.
 pub(all) struct PassiveContext {
   randomizer : @random.Rand
-  get_character_fn : (Int) -> @character.Character?
+  get_character_equips_fn : (Int) -> @equip.CharEquips?
   get_skill_level_fn : (Int, Int) -> Int
   get_skill_data_fn : (Int) -> @skill.SkillData?
   trigger_extra_attack_fn : (Int, Int, Array[Int]) -> Unit
 }
 
 ///|
-/// Get character by object id.
-pub fn PassiveContext::get_character(
+/// Get character equips by object id.
+pub fn PassiveContext::get_character_equips(
   self : PassiveContext,
   oid : Int,
-) -> @character.Character? {
-  (self.get_character_fn)(oid)
+) -> @equip.CharEquips? {
+  (self.get_character_equips_fn)(oid)
 }
 
 ///|

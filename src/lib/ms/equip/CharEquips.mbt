@@ -25,6 +25,11 @@ pub fn CharEquips::new() -> CharEquips {
 }
 
 ///|
+pub fn CharEquips::default() -> CharEquips {
+  CharEquips::new()
+}
+
+///|
 pub fn CharEquips::get_weapon(self : CharEquips) -> @weapon.WeaponData? {
   self.weapon_data
 }

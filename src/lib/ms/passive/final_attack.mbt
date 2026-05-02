@@ -40,8 +40,11 @@ pub impl PassiveSkill for SwordFaFighterPassive with on_hit(
   // Need at least one target hit
   guard event.target_oids().length() > 0 else { return }
   let attacker_oid = event.attacker_oid()
-  guard ctx.get_character(attacker_oid) is Some(attacker) else { return }
-  guard attacker.get_weapontype() == @weapon.Type::SWORD_1H else { return }
+  guard ctx.get_character_equips(attacker_oid) is Some(equips) else { return }
+  guard equips.get_weapon() is Some(weapon) &&
+    weapon.get_type() == @weapon.Type::SWORD_1H else {
+    return
+  }
   let trigger_prob = get_trigger_prob(ctx, attacker_oid)
   guard trigger_prob > 0.0 else { return }
   // Apply probability check to each target with the shared passive randomizer.

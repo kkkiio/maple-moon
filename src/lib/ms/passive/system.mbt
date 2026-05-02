@@ -73,7 +73,12 @@ fn get_passive_reader() -> @event.EventReader[@combat_system.HitEvent] {
 pub fn passive_system(_world : @ecs.World) -> Unit {
   let ctx = PassiveContext::{
     randomizer: passive_randomizer_ref.val,
-    get_character_fn: @character.get_character_by_oid,
+    get_character_equips_fn: fn(oid : Int) -> @equip.CharEquips? {
+      guard @character.get_character_by_oid(oid) is Some(character) else {
+        return None
+      }
+      Some(character.get_look().get_equips())
+    },
     get_skill_level_fn: default_get_skill_level,
     get_skill_data_fn: default_get_skill_data,
     trigger_extra_attack_fn: default_trigger_extra_attack,

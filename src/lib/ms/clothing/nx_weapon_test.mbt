@@ -48,6 +48,36 @@ test "NxWeapon parses shoot2 anchor origin and z" {
 }
 
 ///|
+test "NxWeapon skips empty frame placeholders" {
+  let src : Json = {
+    "heal": {
+      "0": {
+        "weapon": {
+          "__i": "assets/Character/Weapon/spritesheets/01402000.img.png",
+          "__w": 62,
+          "__h": 21,
+          "origin": [23, 10],
+          "z": "weaponOverArm",
+          "map": { "hand": [37, 9] },
+        },
+      },
+      "1": { "weapon": null },
+      "2": { "weapon": {} },
+    },
+  }
+  let nx_weapon : NxWeapon = @json.from_json(src)
+  guard nx_weapon.get_part("heal", 0, "weapon") is Some(_) else {
+    fail("expected renderable weapon part")
+  }
+  guard nx_weapon.get_part("heal", 1, "weapon") is None else {
+    fail("expected null placeholder to be skipped")
+  }
+  guard nx_weapon.get_part("heal", 2, "weapon") is None else {
+    fail("expected empty object placeholder to be skipped")
+  }
+}
+
+///|
 test "NxWeaponPart decode should fail when required fields are missing" {
   assert_decode_failed_as_weapon_part({
     "__i": "assets/Character/Weapon/spritesheets/01462000.img.png",

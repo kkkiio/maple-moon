@@ -7,6 +7,7 @@ using @server_proto {
   type CharacterListRequestMessage,
   type SelectCharMessage,
   type SetFieldMessage,
+  type LookEntry,
 }
 
 ///|
@@ -167,7 +168,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
 pub(all) struct SelectableCharacter {
   cid : Int
   name : String
-  look : @char_look.LookEntry
+  look : LookEntry
 }
 
 ///|

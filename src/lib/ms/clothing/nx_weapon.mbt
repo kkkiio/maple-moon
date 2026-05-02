@@ -92,14 +92,14 @@ pub impl @json.FromJson for NxWeaponFrame with from_json(json, path) -> NxWeapon
   }
   let parts = Map::new()
   for part_name, part_json in frame_obj {
+    guard part_json is Object(part_obj) && part_obj.contains("__i") else {
+      continue
+    }
     let part : NxWeaponPart = @json.from_json(
       part_json,
       path=path.add_key(part_name),
     )
     parts.set(part_name, part)
-  }
-  guard !parts.is_empty() else {
-    raise @json.JsonDecodeError((path, "NxWeaponFrame: no parts"))
   }
   { parts, }
 }

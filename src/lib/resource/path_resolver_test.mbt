@@ -74,7 +74,7 @@ test "resolve_json_resource_path splits item bundle and node path" {
     "item", "Consume/0206.img/02060000",
   )
   inspect(file_path, content="/assets/Item/Consume/0206.img.json")
-  json_inspect(node_path, content=(["02060000"]))
+  json_inspect(node_path, content=["02060000"])
 }
 
 ///|
@@ -83,7 +83,7 @@ test "resolve_json_resource_path keeps explicit json path as file path" {
     "npc", "/assets/Npc/Npc/1103002.img/mx.json",
   )
   inspect(file_path, content="/assets/Npc/Npc/1103002.img/mx.json")
-  json_inspect(node_path, content=([]))
+  json_inspect(node_path, content=[])
 }
 
 ///|
@@ -92,7 +92,7 @@ test "resolve_json_resource_path resolves ui bundle node path" {
     "ui_window_2", "ToolTip/WorldMap",
   )
   inspect(file_path, content="/assets/ui/UIWindow2.img/ToolTip.json")
-  json_inspect(node_path, content=(["WorldMap"]))
+  json_inspect(node_path, content=["WorldMap"])
 }
 
 ///|
@@ -101,5 +101,5 @@ test "resolve_json_resource_path resolves effect leaf files" {
     "effect", "BasicEff.img/Teleport",
   )
   inspect(file_path, content="/assets/Effect/BasicEff.img/Teleport.json")
-  json_inspect(node_path, content=([]))
+  json_inspect(node_path, content=[])
 }

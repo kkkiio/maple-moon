@@ -1,4 +1,7 @@
 ///|
+using @server_proto {type LookEntry}
+
+///|
 enum UiStage {
   ChoosingGender
   CustomizingLook
@@ -144,7 +147,7 @@ fn update_config_index(
 fn config_to_look_entry(
   config : ExplorerLookConfig,
   resource : ExplorerCreationUIResource,
-) -> @char_look.LookEntry {
+) -> LookEntry {
   let choices = choices_for_config(config, resource)
   {
     female: config.female,

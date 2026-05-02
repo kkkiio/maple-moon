@@ -60,7 +60,7 @@ pub(all) struct CharacterListEntry {
   /// Display name.
   name : String
   /// Character look used by preview UI.
-  look : @char_look.LookEntry
+  look : LookEntry
 } derive(Debug, ToJson, FromJson)
 
 ///|
@@ -89,4 +89,58 @@ pub(all) struct CreateCharacterResultMessage {
 ///|
 pub impl ServerMessage for CreateCharacterResultMessage with type_code() {
   LOCAL_OPCODE_CREATE_CHARACTER_RESULT
+}
+
+///|
+pub(all) struct LookEntry {
+  female : Bool
+  skin : Int
+  faceid : Int
+  hairid : Int
+  equips : Map[Int, Int]
+  maskedequips : Map[Int, Int]
+  petids : Array[Int]
+} derive(Debug, ToJson, Default)
+
+///|
+pub impl @json.FromJson for LookEntry with from_json(json, path) {
+  fn parse_int_map(
+    value : Json,
+    path : @json.JsonPath,
+  ) -> Map[Int, Int] raise @json.JsonDecodeError {
+    guard value is Object(obj) else {
+      raise @json.JsonDecodeError((path, "expect object"))
+    }
+    let result = Map::new()
+    for key, item in obj {
+      let slot_id = @string.parse_int(key) catch {
+        _ => raise @json.JsonDecodeError((path.add_key(key), "invalid int key"))
+      }
+      let item_id : Int = @json.from_json(item, path=path.add_key(key))
+      result.set(slot_id, item_id)
+    }
+    result
+  }
+  guard json
+    is {
+      "female": female,
+      "skin": skin,
+      "faceid": faceid,
+      "hairid": hairid,
+      "equips": equips,
+      "maskedequips": maskedequips,
+      "petids": petids,
+      ..
+    } else {
+    raise @json.JsonDecodeError((path, "invalid LookEntry"))
+  }
+  {
+    female: @json.from_json(female, path=path.add_key("female")),
+    skin: @json.from_json(skin, path=path.add_key("skin")),
+    faceid: @json.from_json(faceid, path=path.add_key("faceid")),
+    hairid: @json.from_json(hairid, path=path.add_key("hairid")),
+    equips: parse_int_map(equips, path.add_key("equips")),
+    maskedequips: parse_int_map(maskedequips, path.add_key("maskedequips")),
+    petids: @json.from_json(petids, path=path.add_key("petids")),
+  }
 }

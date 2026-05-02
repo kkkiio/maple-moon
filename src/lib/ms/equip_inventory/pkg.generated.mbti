@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "KKKIIO/maple-moon/lib/ms/equip_system"
+package "KKKIIO/maple-moon/lib/ms/equip_inventory"
 
 import {
   "Milky2018/selene/ecs",
 }
 
 // Values
-pub fn equip_system(@ecs.World) -> Unit
+pub fn equip_inventory_system(@ecs.World) -> Unit
 
 // Errors
 

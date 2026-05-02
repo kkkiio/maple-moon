@@ -58,8 +58,6 @@ pub using @character_presentation {type Hair}
 
 pub using @character_presentation {type HairLayer}
 
-pub using @character_presentation {type LookEntry}
-
 pub using @vfx_afterimage {type NxAfterImage}
 
 pub using @vfx_afterimage {type NxAfterImages}

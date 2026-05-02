@@ -26,6 +26,7 @@ using @server_proto {
   type InventoryEntry,
   type InventoryItemEntry,
   type InventoryType,
+  type LookEntry,
 }
 
 ///|
@@ -231,7 +232,7 @@ priv struct CreateCharRequest {
 } derive(FromJson)
 
 ///|
-fn default_character_look() -> @char_look.LookEntry {
+fn default_character_look() -> LookEntry {
   {
     female: false,
     skin: 0,
@@ -269,7 +270,7 @@ async fn make_equipped_inventory_entry(
 ///|
 async fn LocalServer::apply_character_look_to_inventory(
   self : LocalServer,
-  look : @char_look.LookEntry,
+  look : LookEntry,
 ) -> Unit {
   self.reset_player_inventory_state()
   guard self.player_items.get(InventoryType::EQUIPPED) is Some(equipped_items) else {

@@ -7,13 +7,13 @@ import {
   "KKKIIO/maple-moon/lib/ms/equip",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
   "KKKIIO/maple-moon/lib/ms/item",
+  "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",
   "moonbitlang/core/debug",
   "moonbitlang/core/immut/sorted_map",
-  "moonbitlang/core/json",
 }
 
 // Values
@@ -60,7 +60,7 @@ pub fn CharLook::get_stance(Self) -> @char_stance.StanceId
 pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::is_animation_finished(Self) -> Bool
 pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
-pub async fn CharLook::load(@entity.Entity, LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
+pub async fn CharLook::load(@entity.Entity, @server_proto.LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::play_animations(Self) -> Unit
 pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
@@ -149,17 +149,6 @@ pub(all) enum HairLayer {
   BELOW_CAP
 } derive(Compare, Eq, Hash, @debug.Debug)
 pub fn HairLayer::z(Self) -> Int
-
-pub(all) struct LookEntry {
-  female : Bool
-  skin : Int
-  faceid : Int
-  hairid : Int
-  equips : Map[Int, Int]
-  maskedequips : Map[Int, Int]
-  petids : Array[Int]
-} derive(Default, ToJson, @debug.Debug)
-pub impl @json.FromJson for LookEntry
 
 // Type aliases
 

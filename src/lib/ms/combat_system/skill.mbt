@@ -402,7 +402,7 @@ pub async fn make_hit_effect(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
-) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
+) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let by_level_hit = json_has_children(
     skill_get_path(src, ["CharLevel", "10", "hit"]),
   )

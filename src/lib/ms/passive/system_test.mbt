@@ -57,7 +57,7 @@ impl PassiveSkill for MockPassiveSkill with on_hit(
 fn make_system_test_ctx() -> PassiveContext {
   PassiveContext::{
     randomizer: @random.Rand::new(),
-    get_character_fn: fn(_oid) { None },
+    get_character_equips_fn: fn(_oid) { None },
     get_skill_level_fn: fn(_attacker_oid, _skill_id) { 0 },
     get_skill_data_fn: fn(_skill_id) { None },
     trigger_extra_attack_fn: fn(_attacker_oid, _skill_id, _targets) {  },

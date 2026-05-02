@@ -1,9 +1,9 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/string",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/res_types" @struct,
   "KKKIIO/maple-moon/lib/resource",
 }

@@ -5,7 +5,7 @@ using @char_stance {type StanceId}
 using @map_object {type MapObjectBase}
 
 ///|
-using @server_proto {type StatsEntry}
+using @server_proto {type StatsEntry, type LookEntry}
 
 ///|
 using @physics {type PhysicsObject}
@@ -266,14 +266,6 @@ pub fn Character::get_weapontype(self : Character) -> @weapon.Type {
 }
 
 ///|
-pub fn get_weapon_type_in_look(look : @char_look.CharLook) -> @weapon.Type {
-  look
-  .get_equips()
-  .get_weapon()
-  .map_or(@weapon.Type::NONE, fn(data) { data.get_type() })
-}
-
-///|
 /// Returns true if the character is invincible.
 pub fn Character::is_invincible(self : Character) -> Bool {
   self.invincible.get()
@@ -401,7 +393,7 @@ pub fn Character::get_stats(self : Character) -> @char_stats.CharStats {
 ///|
 pub(all) struct CharEntry {
   stats : StatsEntry
-  look : @char_look.LookEntry
+  look : LookEntry
   id : Int
 } derive(Debug, ToJson)
 

@@ -439,25 +439,25 @@ test "manual and auto portal queries are split by portal type" {
       pt: PortalType::INVISIBLE,
     },
   ])
-  inspect(
+  debug_inspect(
     portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
     content="Some(\"goSleepy0\")",
   )
-  inspect(
+  debug_inspect(
     portals.find_manual_warp_at(Point::new(100, 2058)) is None,
     content="true",
   )
-  inspect(
+  debug_inspect(
     portals
     .find_manual_warp_at(Point::new(200, 100))
     .map(fn(warp) { warp.name }),
     content="Some(\"under00\")",
   )
-  inspect(
+  debug_inspect(
     portals.find_auto_warp_at(Point::new(200, 100)) is None,
     content="true",
   )
-  inspect(
+  debug_inspect(
     invisible_portals
     .find_manual_warp_at(Point::new(300, 100))
     .map(fn(warp) { warp.name }),
@@ -485,21 +485,21 @@ test "manual and auto portal cooldowns are independent" {
       pt: PortalType::REGULAR,
     },
   ])
-  inspect(
+  debug_inspect(
     portals
     .find_manual_warp_at(Point::new(100, 2058))
     .map(fn(warp) { warp.name }),
     content="Some(\"under00\")",
   )
-  inspect(
+  debug_inspect(
     portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
     content="Some(\"goSleepy0\")",
   )
-  inspect(
+  debug_inspect(
     portals.find_manual_warp_at(Point::new(100, 2058)) is None,
     content="true",
   )
-  inspect(
+  debug_inspect(
     portals.find_auto_warp_at(Point::new(100, 2058)) is None,
     content="true",
   )

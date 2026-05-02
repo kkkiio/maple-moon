@@ -7,10 +7,6 @@ pub type CharLook = @cp.CharLook
 pub type CharacterPresentationResource = @cp.CharacterPresentationResource
 
 ///|
-/// Backward-compatible facade for serialized look entry.
-pub type LookEntry = @cp.LookEntry
-
-///|
 /// Backward-compatible facade for body visual resource container.
 pub type FullBody = @cp.FullBody
 
